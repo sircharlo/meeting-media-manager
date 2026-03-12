@@ -84,6 +84,7 @@ import {
   startZoomHelper,
   stopZoomHelper,
 } from 'src-electron/main/zoom-helper-manager';
+import { delay } from 'src/shared/vanilla';
 import upath from 'upath';
 
 const { openExternal, openPath } = shell;
@@ -385,6 +386,36 @@ handleIpcInvoke('listZoomWindows', async () => {
   }
 });
 
+async function fetchZoomDialogChildren(
+  className: string,
+  parentHandle?: number,
+): Promise<ZoomUIElement[]> {
+  try {
+    const url = new URL('http://127.0.0.1:5000/dialog_children');
+    url.searchParams.append('class_name', className);
+
+    if (parentHandle) {
+      url.searchParams.append('parent_handle', String(parentHandle));
+    }
+
+    const res = await fetch(url.toString());
+    const data = (await res.json()) as {
+      result: ZoomUIElement[];
+      success: boolean;
+    };
+
+    return data.success ? data.result || [] : [];
+  } catch (error) {
+    logToWindow(
+      mainWindowInfo.mainWindow,
+      'Failed to fetch Zoom dialog children',
+      { className, error: String(error), parentHandle },
+      'error',
+    );
+    return [];
+  }
+}
+
 async function sendZoomWindowKeysInternal(handle: number, keys: string) {
   try {
     const res = await fetch('http://127.0.0.1:5000/send_keys', {
@@ -410,23 +441,13 @@ async function sendZoomWindowKeysInternal(handle: number, keys: string) {
 async function showControlsIfHidden(handle: number) {
   try {
     console.log('showControlsIfHidden', handle);
-    const url = new URL('http://127.0.0.1:5000/dialog_children');
-    url.searchParams.append('class_name', 'ZPControlPanelClass');
-    url.searchParams.append('parent_handle', String(handle));
 
-    const res = await fetch(url.toString());
-    const data = (await res.json()) as {
-      result: ZoomUIElement[];
-      success: boolean;
-    };
-    console.log(data);
+    const result = await fetchZoomDialogChildren('ZPControlPanelClass', handle);
 
-    if (!data.success || !data.result?.length) {
+    if (!result.length) {
       const success = await sendZoomWindowKeysInternal(handle, '%');
       if (success) {
-        await new Promise((resolve) => {
-          setTimeout(resolve, 500);
-        });
+        await delay(500);
       }
     }
   } catch (error) {
@@ -439,54 +460,10 @@ async function showControlsIfHidden(handle: number) {
   }
 }
 
-// handleIpcInvoke('listZoomWindowChildren', async (_e, handle: number) => {
-//   try {
-//     const res = await fetch(
-//       `http://127.0.0.1:5000/window_children?window_handle=${handle}`,
-//     );
-//     const data = (await res.json()) as {
-//       result: ZoomUIElement[];
-//       success: boolean;
-//     };
-
-//     return data.result || [];
-//   } catch (error) {
-//     logToWindow(
-//       mainWindowInfo.mainWindow,
-//       'Failed to list Zoom window children',
-//       { error: String(error) },
-//       'error',
-//     );
-//     return [];
-//   }
-// });
-
 handleIpcInvoke(
   'getZoomDialogChildren',
   async (_e, className: string, parentHandle?: number) => {
-    try {
-      const url = new URL('http://127.0.0.1:5000/dialog_children');
-      url.searchParams.append('class_name', className);
-      if (parentHandle) {
-        url.searchParams.append('parent_handle', String(parentHandle));
-      }
-
-      const res = await fetch(url.toString());
-      const data = (await res.json()) as {
-        result: ZoomUIElement[];
-        success: boolean;
-      };
-
-      return data.result || [];
-    } catch (error) {
-      logToWindow(
-        mainWindowInfo.mainWindow,
-        'Failed to get Zoom dialog children',
-        { className, error: String(error), parentHandle },
-        'error',
-      );
-      return [];
-    }
+    return fetchZoomDialogChildren(className, parentHandle);
   },
 );
 

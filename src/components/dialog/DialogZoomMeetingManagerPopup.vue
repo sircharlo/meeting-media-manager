@@ -236,10 +236,6 @@ const clickZoomElement = async (element: ZoomUIElement) => {
     control_id: element.control_id,
     title: element.title,
   });
-  // if (success) {
-  //   // Refresh list after click to reflect changes (e.g. Mute -> Unmute)
-  //   setTimeout(listZoomMeetingControls, 500);
-  // }
 };
 
 const launchZoomMeeting = (id: string) => {
@@ -251,25 +247,6 @@ const listZoomWindows = async () => {
   zoomWindowChildren.value = [];
   zoomWindows.value = await listZoomWindowsApi();
 };
-
-// const listZoomWindowChildren = async (handle: number) => {
-//   zoomWindowChildren.value = [];
-//   zoomWindowChildren.value = await listZoomWindowChildrenApi(handle);
-// };
-
-// const listZoomMeetingControlsBoundary = async () => {
-//   if (!selectedZoomWindow.value) return;
-//   zoomWindowChildren.value = []; // Clear for loading state
-//   await listZoomMeetingControls();
-// };
-
-// const listZoomMeetingControls = async () => {
-//   if (!selectedZoomWindow.value?.handle) return;
-
-//   zoomWindowChildren.value = await listZoomMeetingControlsApi(
-//     selectedZoomWindow.value.handle,
-//   );
-// };
 
 const { t } = useI18n();
 

@@ -1,6 +1,5 @@
 import type { SettingsValues, ZoomUIElement } from 'src/types';
 
-import { Dialog } from 'quasar';
 import { ZOOM_CONTROL_IDS } from 'src/constants/zoom';
 import { delay } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -34,10 +33,7 @@ export const captureZoomButtonTitle = async (
       if (currentState.currentSettings) {
         // @ts-expect-error - dynamically setting key
         currentState.currentSettings[settingKey] = title;
-        Dialog.create({ message: `Successfully captured title: ${title}` });
       }
-    } else {
-      Dialog.create({ message: `Failed to capture title for ${controlId}` });
     }
   } catch (error) {
     errorCatcher(error);

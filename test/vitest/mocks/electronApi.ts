@@ -27,6 +27,9 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   checkForUpdates: () => void 0,
+  clickZoomElement: function (elementId) {
+    throw new Error('Function not implemented.');
+  },
   closeWebsiteWindow: function () {
     throw new Error('Function not implemented.');
   },
@@ -40,6 +43,9 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   downloadFile: function (url, saveDir, destFilename, lowPriority) {
+    throw new Error('Function not implemented.');
+  },
+  ensureZoomRequirements: function () {
     throw new Error('Function not implemented.');
   },
   executeQuery: function (dbPath, query) {
@@ -77,6 +83,12 @@ export const electronApi: ElectronApi = {
   getZipEntries: function () {
     throw new Error('Function not implemented.');
   },
+  getZoomDialogChildren: function () {
+    throw new Error('Function not implemented.');
+  },
+  getZoomElementTitle: function () {
+    throw new Error('Function not implemented.');
+  },
   inferExtension: async function (filename, filetype) {
     throw new Error('Function not implemented.');
   },
@@ -86,15 +98,12 @@ export const electronApi: ElectronApi = {
   isUsablePath: async function (path) {
     return true;
   },
+  isZoomPythonInstalled: function () {
+    throw new Error('Function not implemented.');
+  },
   launchZoomMeeting: function (meetingId) {
     throw new Error('Function not implemented.');
   },
-  // listZoomMeetingControls: async function (_handle?: number) {
-  //   return [];
-  // },
-  // listZoomWindowChildren: async function (_handle: number) {
-  //   return [];
-  // },
   listZoomWindows: async function () {
     return [];
   },
@@ -187,6 +196,9 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   robot,
+  sendZoomWindowKeys: function (keys) {
+    throw new Error('Function not implemented.');
+  },
   setAutoStartAtLogin: function (value) {
     throw new Error('Function not implemented.');
   },
@@ -194,6 +206,15 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   setHardwareAcceleration: function (disabled) {
+    throw new Error('Function not implemented.');
+  },
+  startZoomHelper: function () {
+    throw new Error('Function not implemented.');
+  },
+  stopZoomHelper: function () {
+    throw new Error('Function not implemented.');
+  },
+  toggleAuthorizedClose: function () {
     throw new Error('Function not implemented.');
   },
   toggleMediaWindow: function (show) {

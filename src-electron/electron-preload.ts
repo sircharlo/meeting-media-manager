@@ -29,11 +29,11 @@ import { executeQuery } from 'src-electron/preload/sqlite';
 import {
   closeWebsiteWindow,
   initWebsiteListeners,
-  launchZoomMeeting,
   navigateWebsiteWindow,
   openWebsiteWindow,
   zoomWebsiteWindow,
 } from 'src-electron/preload/website';
+import { launchZoomMeeting } from 'src-electron/preload/zoom';
 import path from 'upath';
 
 initCloseListeners();

@@ -7,22 +7,16 @@ import {
 import { IS_DEV, PLATFORM } from 'src-electron/constants';
 import { logToWindow } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
-import upath from 'upath';
+import upath, { resolve } from 'upath';
 
 const { join } = upath;
-
-function getAppRoot() {
-  const appPath = app.getAppPath();
-  // In dev, appPath is .quasar/dev-electron/, so we need to go up two levels to get the project root
-  return IS_DEV ? join(appPath, '../../') : appPath;
-}
 
 let pythonProcess: ChildProcessWithoutNullStreams | null = null;
 
 export async function ensureRequirementsInstalled(): Promise<boolean> {
-  const requirementsPath = join(getAppRoot(), 'requirements.txt');
+  const requirementsPath = getHelperPath('requirements.txt');
   return new Promise((resolve) => {
-    const child = spawn('python', [
+    const child = spawn(getPythonCommand(), [
       '-m',
       'pip',
       'install',
@@ -46,7 +40,7 @@ export async function ensureRequirementsInstalled(): Promise<boolean> {
 
 export async function isPythonInstalled(): Promise<boolean> {
   return new Promise((resolve) => {
-    exec('python --version', (error) => {
+    exec(getPythonCommand() + ' --version', (error) => {
       resolve(!error);
     });
   });
@@ -55,10 +49,10 @@ export async function isPythonInstalled(): Promise<boolean> {
 export function startZoomHelper() {
   if (pythonProcess || PLATFORM !== 'win32') return;
 
-  const helperPath = join(getAppRoot(), 'uia_helper.py');
+  const helperPath = getHelperPath('uia_helper.py');
 
   console.log(`[Zoom Helper] Starting ${helperPath}`);
-  pythonProcess = spawn('python', [helperPath]);
+  pythonProcess = spawn(getPythonCommand(), [helperPath]);
 
   pythonProcess.stdout.on('data', (data: Buffer) => {
     const msg = data.toString().trim();
@@ -94,6 +88,16 @@ export function startZoomHelper() {
       'warn',
     );
   });
+
+  pythonProcess.on('error', (err) => {
+    logToWindow(
+      mainWindowInfo.mainWindow,
+      `[Zoom Helper] Failed to start: ${err.message}`,
+      {},
+      'error',
+    );
+    pythonProcess = null;
+  });
 }
 
 export function stopZoomHelper() {
@@ -102,4 +106,16 @@ export function stopZoomHelper() {
     pythonProcess.kill();
     pythonProcess = null;
   }
+}
+
+function getHelperPath(filename: string): string {
+  if (IS_DEV) {
+    return join(resolve(join(app.getAppPath(), '../../')), filename);
+  }
+  // Electron puts extraResources here at build time
+  return join(process.resourcesPath, filename);
+}
+
+function getPythonCommand(): string {
+  return PLATFORM === 'win32' ? 'python' : 'python3';
 }

@@ -286,10 +286,7 @@ export interface SettingsValues {
   zoomMeetingManagerAutomateMeetingAudioSettings: boolean;
   zoomMeetingManagerAutomatePostMeetingAudioSettings: boolean;
   zoomMeetingManagerEnable: boolean;
-  zoomMeetingManagerEnableWaitingRoom: boolean;
   zoomMeetingManagerMeetingId: null | string;
-  zoomMeetingManagerPassword: null | string;
-  zoomMeetingManagerUsername: null | string;
   zoomScreenShareShortcut: null | string;
   zoomVideoOffTitle: null | string;
   zoomVideoOnTitle: null | string;
