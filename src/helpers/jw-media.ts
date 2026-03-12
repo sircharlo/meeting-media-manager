@@ -2876,6 +2876,7 @@ export const downloadAdditionalRemoteVideo = async (
     // Pinyin song substitution: use local pinyin file instead of downloading
     if (
       song &&
+      currentSettings?.lang === 'CHS' &&
       currentSettings?.enablePinyinSongs &&
       currentSettings?.pinyinSongFolder
     ) {
