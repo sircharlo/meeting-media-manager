@@ -290,6 +290,22 @@ whenever(
   },
 );
 
+const { data: playbackRateData } = useBroadcastChannel<
+  number | undefined,
+  number | undefined
+>({
+  name: 'playback-rate',
+});
+
+whenever(
+  () => playbackRateData.value,
+  (newRate) => {
+    if (currentMediaElement.value && newRate) {
+      currentMediaElement.value.playbackRate = newRate;
+    }
+  },
+);
+
 const { data: mediaCustomDuration } = useBroadcastChannel<
   string | undefined,
   string | undefined
@@ -642,6 +658,9 @@ const playMedia = () => {
       }
     };
 
+    if (playbackRateData.value) {
+      currentMediaElement.value.playbackRate = playbackRateData.value;
+    }
     currentMediaElement.value.currentTime = customMin.value;
     playMediaElement();
   } catch (e) {
