@@ -2873,6 +2873,16 @@ export const downloadAdditionalRemoteVideo = async (
     const currentStateStore = useCurrentStateStore();
     const currentSettings = currentStateStore.currentSettings;
 
+    const bestItem = findBestResolution(
+      mediaItemLinks,
+      currentSettings?.maxRes,
+    );
+    const bestItemUrl = bestItem
+      ? 'progressiveDownloadURL' in bestItem
+        ? bestItem.progressiveDownloadURL
+        : bestItem.file.url
+      : undefined;
+
     // Pinyin song substitution: use local pinyin file instead of downloading
     if (
       song &&
@@ -2893,20 +2903,13 @@ export const downloadAdditionalRemoteVideo = async (
           {
             song: song.toString(),
             title,
+            url: bestItemUrl,
           },
         );
       }
     }
 
-    const bestItem = findBestResolution(
-      mediaItemLinks,
-      currentSettings?.maxRes,
-    );
-    if (!bestItem) return undefined;
-    const bestItemUrl =
-      'progressiveDownloadURL' in bestItem
-        ? bestItem.progressiveDownloadURL
-        : bestItem.file.url;
+    if (!bestItem || !bestItemUrl) return undefined;
 
     const datedAdditionalMediaDir =
       await currentStateStore.getDatedAdditionalMediaDirectory();

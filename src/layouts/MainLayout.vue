@@ -506,7 +506,6 @@ watch(
     currentSettings.value?.disableMediaFetching,
     currentSettings.value?.excludeFootnotes,
     currentSettings.value?.excludeWtParagraphVideos,
-    currentSettings.value?.enablePinyinSongs,
   ],
   (newValues, oldValues) => {
     // Skip if this is the initial run (oldValues is undefined)
