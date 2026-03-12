@@ -131,6 +131,7 @@ import { isCoWeek, isMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addDayToExportQueue } from 'src/helpers/export-media';
 import {
+  addToAdditionMediaMapFromPath,
   copyToDatedAdditionalMedia,
   downloadAdditionalRemoteVideo,
   downloadFileIfNeeded,
@@ -277,7 +278,7 @@ const {
   readdir,
   unzip,
 } = globalThis.electronApi;
-const { remove, writeFile } = fs;
+const { pathExists, remove, writeFile } = fs;
 const { basename, join } = path;
 
 const { post: postMediaAction } = useBroadcastChannel<string, string>({
@@ -1142,6 +1143,113 @@ onMounted(() => {
         'Fetching media',
       );
       fetchMedia();
+    },
+  );
+
+  // Re-fetch media when pinyin songs toggle changes
+  // Strategy: remove additional songs, re-fetch dynamic, then re-add songs
+  // with the correct file (pinyin or normal) — same pattern as dynamic songs.
+  watch(
+    () => currentSettings.value?.enablePinyinSongs,
+    async (newVal, oldVal) => {
+      if (oldVal === undefined) return;
+      if (newVal === oldVal) return;
+
+      const pinyinFolder = currentSettings.value?.pinyinSongFolder;
+      const days = lookupPeriod.value?.[currentCongregation.value] ?? [];
+      const selectedDay = selectedDateObject.value;
+
+      // Step 1: Save additional song info from selected date only
+      const savedSongs: {
+        section: string;
+        songTrack: string;
+        streamUrl?: string;
+        thumbnailUrl?: string;
+        title?: string;
+      }[] = [];
+
+      if (selectedDay) {
+        for (const s of selectedDay.mediaSections ?? []) {
+          for (const item of s.items ?? []) {
+            if (item.source === 'additional' && item.tag?.type === 'song') {
+              savedSongs.push({
+                section: s.config.uniqueId,
+                songTrack: String(item.tag.value),
+                streamUrl: item.streamUrl,
+                thumbnailUrl: item.thumbnailUrl,
+                title: item.title,
+              });
+            }
+          }
+        }
+      }
+
+      // Step 2: Reset dynamic items for all days;
+      // remove additional songs only from selected date
+      days.forEach((day) => {
+        day.status = null;
+        const isSelected =
+          selectedDay && day.date?.getTime() === selectedDay.date?.getTime();
+        day.mediaSections?.forEach((s) => {
+          s.items = (s.items || []).filter(
+            (i) =>
+              i.source !== 'dynamic' &&
+              !(isSelected && i.source === 'additional' && i.tag?.type === 'song'),
+          );
+        });
+      });
+
+      // Step 3: Re-fetch dynamic media with new pinyin setting
+      await fetchMedia();
+
+      // Step 4: Re-add saved songs with current pinyin setting
+      for (const song of savedSongs) {
+        const trackNum = song.songTrack.padStart(3, '0');
+
+        if (newVal && pinyinFolder) {
+          // Pinyin mode: use local pinyin file
+          const pinyinPath = join(
+            pinyinFolder,
+            `sjjm_s-Pi_CHS_${trackNum}_r720P.mp4`,
+          );
+          if (await pathExists(pinyinPath)) {
+            await addToAdditionMediaMapFromPath(
+              pinyinPath,
+              song.section as MediaSectionIdentifier,
+              undefined,
+              {
+                song: song.songTrack,
+                title: song.title,
+                url: song.streamUrl,
+              },
+            );
+          }
+        } else if (song.streamUrl) {
+          // Normal mode: use cached file or download
+          const cacheDir =
+            await currentState.getDatedAdditionalMediaDirectory();
+          const normalPath = join(cacheDir, basename(song.streamUrl));
+          if (!(await pathExists(normalPath))) {
+            await downloadFileIfNeeded({
+              dir: cacheDir,
+              url: song.streamUrl,
+            });
+          }
+          if (await pathExists(normalPath)) {
+            await addToAdditionMediaMapFromPath(
+              normalPath,
+              song.section as MediaSectionIdentifier,
+              undefined,
+              {
+                song: song.songTrack,
+                thumbnailUrl: song.thumbnailUrl,
+                title: song.title,
+                url: song.streamUrl,
+              },
+            );
+          }
+        }
+      }
     },
   );
 });
