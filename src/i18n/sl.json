@@ -170,7 +170,7 @@
   "enableMediaWindowFadeTransitions-explain": "Ko je ta možnost omogočena, se multimedijsko okno postopoma pojavi in izgine, namesto da se pojavi/izgine brez prehoda. To zagotavlja bolj prijetno vizualno izkušnjo.",
   "enableMusicButton": "Omogoči predvajanje glasbe v ozadju",
   "enableMusicButton-explain": "Z le nekaj kliki omogoči predvajanje glasbe pred shodi in po njih.",
-  "enablePinyinSongs": "Prefer pinyin songs",
+  "enablePinyinSongs": "Daj prednost pesmim v pinjinu",
   "enablePinyinSongs-explain": "When a pinyin version of a meeting song is found in the pinyin song folder, it will be used instead of the standard song.",
   "pinyinSongFolder": "Pinyin song folder",
   "pinyinSongFolder-explain": "Folder containing pinyin video songs (e.g. sjjm_s-Pi_CHS_066_r720P.mp4). When a pinyin file matching the meeting song number is found, it will be played instead.",
