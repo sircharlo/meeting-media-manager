@@ -632,7 +632,6 @@
   "zoom-integration-explain": "Enable this to let M³ automatically start and stop Zoom screen sharing when media starts and stops playing.",
   "zoom-meeting-manager-meeting-id-missing": "Set Zoom meeting ID in settings to open Zoom Meeting Manager.",
   "zoom-out": "Zoom out",
-  "zoom-windows-found": "Zoom windows found",
   "zoomAudioMutedTitle": "Zoom audio button text (Muted)",
   "zoomAudioMutedTitle-explain": "Ensure the audio button is MUTED in Zoom, then click this button to capture its title.",
   "zoomAudioNotJoinedTitle": "Zoom audio button text (Join audio)",
