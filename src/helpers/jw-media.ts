@@ -1656,13 +1656,16 @@ export const dynamicMediaMapper = async (
           ? pathToFileURL(m.FilePath)
           : pubMediaId;
 
-        let isVideoFile = m.MimeType?.includes('video') || isVideo(m.FilePath);
-        let isAudioFile = m.MimeType?.includes('audio') || isAudio(m.FilePath);
+        const isVideoFile =
+          m.MimeType?.includes('video') || isVideo(m.FilePath);
+        const isAudioFile =
+          m.MimeType?.includes('audio') || isAudio(m.FilePath);
 
         // --- Pinyin song substitution --------------------------------------
         if (
           m.KeySymbol?.includes('sjj') &&
           m.Track &&
+          currentSettings?.lang === 'CHS' &&
           currentSettings?.enablePinyinSongs &&
           currentSettings?.pinyinSongFolder
         ) {
@@ -1673,8 +1676,6 @@ export const dynamicMediaMapper = async (
           );
           if (await pathExists(pinyinPath)) {
             fileUrl = pathToFileURL(pinyinPath);
-            isVideoFile = true;
-            isAudioFile = false;
           }
         }
 
