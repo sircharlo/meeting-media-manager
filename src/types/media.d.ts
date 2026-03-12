@@ -110,6 +110,7 @@ export interface MediaSection {
   bgColor?: string;
   jwIconKeyword?: string;
   label?: string;
+  publicTalkTitle?: string;
   repeat?: boolean; // Whether the section should repeat
   repeatInterval?: number; // Interval in seconds for images (default 10)
   uniqueId: MediaSectionIdentifier;
