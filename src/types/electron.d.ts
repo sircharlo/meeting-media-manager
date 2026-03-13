@@ -110,7 +110,7 @@ export interface ElectronApi {
   getZipEntries: (zipPath: string) => Promise<Record<string, number>>;
   getZoomDialogChildren: (
     className: string,
-    parentHandle?: number,
+    parentHandle: number,
   ) => Promise<ZoomUIElement[]>;
   getZoomElementState: (
     handle: number,
@@ -133,7 +133,7 @@ export interface ElectronApi {
   launchZoomMeeting: (meetingId: string) => void;
   // listZoomMeetingControls: (handle?: number) => Promise<ZoomUIElement[]>;
   // listZoomWindowChildren: (handle: number) => Promise<ZoomUIElement[]>;
-  listZoomWindows: () => Promise<ZoomWindow[]>;
+  listZoomWindows: (mainOnly?: boolean) => Promise<ZoomUIElement[]>;
   moveMediaWindow: (
     targetScreenNumber?: number,
     windowedMode?: boolean,
@@ -367,12 +367,7 @@ export interface ZoomUIElement {
   handle: null | number;
   help_text?: string;
   is_enabled?: boolean;
+  main_zoom_window?: boolean;
   pid: number;
-  title: string;
-}
-
-export interface ZoomWindow {
-  class_name: string;
-  handle: number;
   title: string;
 }

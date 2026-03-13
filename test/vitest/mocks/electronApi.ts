@@ -86,6 +86,9 @@ export const electronApi: ElectronApi = {
   getZoomDialogChildren: function () {
     throw new Error('Function not implemented.');
   },
+  getZoomElementState: function (handle, controlId) {
+    throw new Error('Function not implemented.');
+  },
   getZoomElementTitle: function () {
     throw new Error('Function not implemented.');
   },
@@ -104,7 +107,7 @@ export const electronApi: ElectronApi = {
   launchZoomMeeting: function (meetingId) {
     throw new Error('Function not implemented.');
   },
-  listZoomWindows: async function () {
+  listZoomWindows: async function (mainOnly = false) {
     return [];
   },
   moveMediaWindow: function (targetScreenNumber, windowedMode) {

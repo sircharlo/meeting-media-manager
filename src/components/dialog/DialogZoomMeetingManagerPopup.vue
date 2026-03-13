@@ -86,32 +86,6 @@
         </q-btn>
       </div>
 
-      <div v-if="zoomWindowChildren.length" class="row q-px-md q-pt-md">
-        <div class="col-12 text-caption text-weight-medium q-mb-xs">
-          {{ t('zoom-window-children-found') }}
-        </div>
-        <q-list dense>
-          <q-item
-            v-for="(child, index) in zoomWindowChildren"
-            :key="index"
-            v-ripple
-            class="child-item clickable-element"
-            clickable
-            @click="clickZoomElement(child)"
-          >
-            <q-item-section>
-              <q-item-label>
-                [{{ child.control_type }}]
-                {{ child.title || t('noDescription') }}
-              </q-item-label>
-              <q-item-label v-if="child.control_id" caption>
-                ID: {{ child.control_id }}
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </div>
-
       <div class="row q-px-md q-pt-md q-gutter-x-sm">
         <q-btn
           class="col"
@@ -153,7 +127,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ZoomUIElement, ZoomWindow } from 'src/types/electron';
+import type { ZoomUIElement } from 'src/types/electron';
 
 import { storeToRefs } from 'pinia';
 import { QMenu } from 'quasar';
@@ -172,11 +146,8 @@ const zoomMeetingManagerPopupRef = useTemplateRef<QMenu>(
 const open = defineModel<boolean>({ required: true });
 
 const {
-  clickZoomElement: clickZoomElementApi,
   launchZoomMeeting: launchZoomMeetingApi,
-  // listZoomMeetingControls: listZoomMeetingControlsApi,
-  // listZoomWindowChildren: listZoomWindowChildrenApi,
-  listZoomWindows: listZoomWindowsApi,
+  listZoomWindows: listMainZoomWindowsApi,
   startZoomHelper: startZoomHelperApi,
   stopZoomHelper: stopZoomHelperApi,
 } = globalThis.electronApi;
@@ -196,18 +167,8 @@ const meetingId = computed(
   () => currentSettings.value?.zoomMeetingManagerMeetingId?.trim() || '',
 );
 
-const zoomWindows = ref<ZoomWindow[]>([]);
-const selectedZoomWindow = ref<null | ZoomWindow>(null);
-const zoomWindowChildren = ref<ZoomUIElement[]>([]);
-
-const clickZoomElement = async (element: ZoomUIElement) => {
-  if (!selectedZoomWindow.value) return;
-  // const success =
-  await clickZoomElementApi(selectedZoomWindow.value.handle, {
-    control_id: element.control_id,
-    title: element.title,
-  });
-};
+const zoomWindows = ref<ZoomUIElement[]>([]);
+const selectedZoomWindow = ref<null | ZoomUIElement>(null);
 
 const launchZoomMeeting = (id: string) => {
   launchZoomMeetingApi(id);
@@ -215,19 +176,18 @@ const launchZoomMeeting = (id: string) => {
 
 const listZoomWindows = async () => {
   selectedZoomWindow.value = null;
-  zoomWindowChildren.value = [];
-  zoomWindows.value = await listZoomWindowsApi();
+  zoomWindows.value = await listMainZoomWindowsApi(true);
+  if (zoomWindows.value?.[0]) {
+    selectedZoomWindow.value = zoomWindows.value[0];
+  }
+  console.warn(zoomWindows.value);
 };
 
 const { t } = useI18n();
 
 // UI update handler
 watch(
-  () => [
-    zoomWindows.value.length,
-    zoomWindowChildren.value.length,
-    selectedZoomWindow.value,
-  ],
+  () => [zoomWindows.value.length, selectedZoomWindow.value],
   () => {
     setTimeout(() => {
       if (zoomMeetingManagerPopupRef.value) {

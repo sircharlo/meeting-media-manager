@@ -82,13 +82,11 @@ def _find_element_in_parent(window_handle, control_id, button_text):
 
 @app.route("/windows", methods=["GET"])
 def list_windows():
-    try:
+    def get_zoom_windows():
         windows = Desktop(backend="uia").windows()
-        result = []
+        res = []
         for w in windows:
-            title = w.window_text()
             class_name = w.class_name()
-
             # Filter for Zoom windows
             is_zoom = class_name in [
                 "ConfMultiTabContentWndClass",
@@ -97,18 +95,51 @@ def list_windows():
                 "zJoinAudioWndClass",
                 "ZPMeetingWndClass",
             ]
-
-            print(w, w.class_name())
-
             if is_zoom:
-                result.append(
+                is_main = False
+                if class_name == "ConfMultiTabContentWndClass":
+                    try:
+                        # Create a WindowSpecification from the handle to use child_window
+                        # Main Zoom window has a descendant with class ZPControlPanelClass (can be several levels deep)
+                        win_spec = Desktop(backend="uia").window(handle=w.handle)
+                        is_main = win_spec.child_window(
+                            class_name="ZPControlPanelClass"
+                        ).exists()
+                    except Exception:
+                        pass
+                res.append(
                     {
-                        "title": title or "",
+                        "title": w.window_text() or "",
                         "handle": w.handle,
                         "pid": w.process_id(),
                         "class_name": class_name,
+                        "main_zoom_window": is_main,
                     }
                 )
+        return res
+
+    try:
+        result = get_zoom_windows()
+
+        # If no main window found, try toggling Alt key to show controls
+        if result and not any(w["main_zoom_window"] for w in result):
+            # Try to send Alt to a ConfMultiTabContentWndClass first
+            candidates = [
+                w for w in result if w["class_name"] == "ConfMultiTabContentWndClass"
+            ]
+            if not candidates:
+                candidates = result
+
+            for w_info in candidates:
+                try:
+                    w = Desktop(backend="uia").window(handle=w_info["handle"])
+                    w.set_focus()
+                    w.type_keys("%")  # Alt key
+                    result = get_zoom_windows()
+                    if any(w["main_zoom_window"] for w in result):
+                        break
+                except Exception:
+                    continue
         return jsonify({"success": True, "result": result})
     except Exception as e:
         print(f"Error in list_windows: {traceback.format_exc()}")

@@ -15,6 +15,11 @@ const {
   listZoomWindows,
 } = globalThis.electronApi;
 
+const getMainZoomWindow = async () => {
+  const windows = await listZoomWindows(true);
+  return windows.at(0);
+};
+
 /**
  * Capture a Zoom button title and save it to settings
  */
@@ -23,12 +28,12 @@ export const captureZoomButtonTitle = async (
   controlId: string,
 ) => {
   try {
-    const windows = await listZoomWindows();
-    if (!windows?.[0]) {
+    const mainZoomWindow = await getMainZoomWindow();
+    if (!mainZoomWindow?.handle) {
       throw new Error('No Zoom window found');
     }
 
-    const title = await getZoomElementTitle(windows[0].handle, controlId);
+    const title = await getZoomElementTitle(mainZoomWindow.handle, controlId);
     if (title) {
       const currentState = useCurrentStateStore();
       if (currentState.currentSettings) {
@@ -97,7 +102,7 @@ const joinAudio = async (meetingHandle: number) => {
   // 2. Wait for join audio window to appear
   const joinAudioWnd = await waitForWindowByClassName('zJoinAudioWndClass');
 
-  if (joinAudioWnd) {
+  if (joinAudioWnd?.handle) {
     // 3. Click btn_connectAudio in that window
     await clickById(joinAudioWnd.handle, ZOOM_CONTROL_IDS.BTN_CONNECT_AUDIO);
   }
@@ -142,7 +147,10 @@ const leaveAudio = async (meetingHandle: number) => {
   await clickById(meetingHandle, ZOOM_CONTROL_IDS.BTN_AUDIO_MENU);
 
   // 2. Wait for menu to open
-  const children = await waitForDialogChildren('WCN_ModelessWnd');
+  const children = await waitForDialogChildren(
+    'WCN_ModelessWnd',
+    meetingHandle,
+  );
 
   console.warn(' [Zoom Automation] Menu children:', children);
 
@@ -191,6 +199,7 @@ const openParticipantsList = async (meetingHandle: number) => {
 };
 
 const findWindowByClassName = async (className: string) => {
+  // TODO: implement this in the python directly to streamline
   const windows = await listZoomWindows();
   return windows.find((w) => w.class_name === className);
 };
@@ -209,16 +218,19 @@ const waitForWindowByClassName = async (className: string) => {
   return window;
 };
 
-const waitForDialogChildren = async (dialogClassName: string) => {
+const waitForDialogChildren = async (
+  dialogClassName: string,
+  parentHandle: number,
+) => {
   let attempts = 0;
-  let children = await getZoomDialogChildren(dialogClassName);
+  let children = await getZoomDialogChildren(dialogClassName, parentHandle);
   while (children.length === 0) {
     await delay(100);
     attempts++;
     if (attempts > 100) {
       throw new Error(`Dialog children not found`);
     }
-    children = await getZoomDialogChildren(dialogClassName);
+    children = await getZoomDialogChildren(dialogClassName, parentHandle);
   }
   return children;
 };
@@ -233,7 +245,7 @@ const muteAllParticipants = async (
     'zChangeNameWndClass',
   );
 
-  if (muteAllConfirmWnd) {
+  if (muteAllConfirmWnd?.handle) {
     console.warn(
       ' [Zoom Automation] Mute All confirmation dialog found',
       muteAllConfirmWnd,
@@ -306,10 +318,13 @@ export const automateZoomMeetingSettings = async () => {
       return;
     }
 
-    const zoomWindows = await listZoomWindows();
-    if (!zoomWindows?.[0]) return;
+    const mainZoomWindow = await getMainZoomWindow();
+    const handle = mainZoomWindow?.handle;
+    if (!handle) {
+      console.warn(' [Zoom Automation] No main Zoom window found');
+      return;
+    }
 
-    const handle = zoomWindows[0].handle;
     console.log(' [Zoom Automation] Starting meeting settings sequence');
 
     // 1. Join computer audio
@@ -333,7 +348,7 @@ const askAllToUnmute = async (handle: number) => {
   await openParticipantsList(handle);
   await clickById(handle, ZOOM_CONTROL_IDS.BTN_MORE_PARTICIPANTS_OPTIONS);
   // Wait for the menu to open
-  const menuItems = await waitForDialogChildren('WCN_ModelessWnd');
+  const menuItems = await waitForDialogChildren('WCN_ModelessWnd', handle);
 
   if (menuItems) {
     console.warn(' [Zoom Automation] Menu items:', menuItems);
@@ -363,10 +378,13 @@ export const automateZoomPostMeetingSettings = async () => {
       return;
     }
 
-    const zoomWindows = await listZoomWindows();
-    if (!zoomWindows?.[0]) return;
+    const mainZoomWindow = await getMainZoomWindow();
+    const handle = mainZoomWindow?.handle;
+    if (!handle) {
+      console.warn(' [Zoom Automation] No handle found for main Zoom window');
+      return;
+    }
 
-    const handle = zoomWindows[0].handle;
     console.log(' [Zoom Automation] Starting post-meeting settings sequence');
 
     // 1. Leave computer audio

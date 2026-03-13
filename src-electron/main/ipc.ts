@@ -366,7 +366,7 @@ handleIpcInvoke(
     unzipFile(input, output, opts),
 );
 
-handleIpcInvoke('listZoomWindows', async () => {
+const getZoomWindows = async () => {
   try {
     const res = await fetch('http://127.0.0.1:5000/windows');
     const data = (await res.json()) as {
@@ -384,19 +384,21 @@ handleIpcInvoke('listZoomWindows', async () => {
     );
     return [];
   }
+};
+
+handleIpcInvoke('listZoomWindows', async (_e, mainOnly = false) => {
+  const windows = await getZoomWindows();
+  return mainOnly ? windows.filter((w) => w.main_zoom_window) : windows;
 });
 
 async function fetchZoomDialogChildren(
   className: string,
-  parentHandle?: number,
+  parentHandle: number,
 ): Promise<ZoomUIElement[]> {
   try {
     const url = new URL('http://127.0.0.1:5000/dialog_children');
     url.searchParams.append('class_name', className);
-
-    if (parentHandle) {
-      url.searchParams.append('parent_handle', String(parentHandle));
-    }
+    url.searchParams.append('parent_handle', String(parentHandle));
 
     const res = await fetch(url.toString());
     const data = (await res.json()) as {
@@ -440,8 +442,6 @@ async function sendZoomWindowKeysInternal(handle: number, keys: string) {
 
 async function showControlsIfHidden(handle: number) {
   try {
-    console.log('showControlsIfHidden', handle);
-
     const result = await fetchZoomDialogChildren('ZPControlPanelClass', handle);
 
     if (!result.length) {
@@ -462,7 +462,7 @@ async function showControlsIfHidden(handle: number) {
 
 handleIpcInvoke(
   'getZoomDialogChildren',
-  async (_e, className: string, parentHandle?: number) => {
+  async (_e, className: string, parentHandle: number) => {
     return fetchZoomDialogChildren(className, parentHandle);
   },
 );

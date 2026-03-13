@@ -88,7 +88,7 @@ const electronApi: ElectronApi = {
   isUsablePath: (p) => invoke('isUsablePath', p),
   isZoomPythonInstalled: () => invoke('isZoomPythonInstalled'),
   launchZoomMeeting,
-  listZoomWindows: () => invoke('listZoomWindows'),
+  listZoomWindows: (m) => invoke('listZoomWindows', m),
   moveMediaWindow: (t, w) => send('moveMediaWindow', t, w),
   navigateWebsiteWindow,
   onDownloadCancelled: (cb) => listen('downloadCancelled', cb),
