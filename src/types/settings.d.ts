@@ -124,6 +124,7 @@ export interface SettingsItem {
   actions?: SettingsItemAction[];
   beta?: boolean;
   depends?: (keyof SettingsValues)[] | keyof SettingsValues;
+  disableWhen?: (keyof SettingsValues)[] | keyof SettingsValues;
   group: SettingsGroupKey;
   hidden?: boolean;
   icon?: string;

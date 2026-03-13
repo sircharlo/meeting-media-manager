@@ -244,6 +244,7 @@ export const settingsDefinitions: SettingsItems = {
 
   // Integrations
   zoomEnable: {
+    disableWhen: 'zoomMeetingManagerEnable',
     group: 'integrations',
     subgroup: 'zoomIntegration',
     type: 'toggle',
@@ -263,6 +264,7 @@ export const settingsDefinitions: SettingsItems = {
   },
   zoomMeetingManagerEnable: {
     beta: true,
+    disableWhen: 'zoomEnable',
     group: 'integrations',
     platforms: ['win32'],
     subgroup: 'zoomMeetingManager',

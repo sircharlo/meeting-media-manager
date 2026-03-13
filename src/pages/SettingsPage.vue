@@ -83,6 +83,7 @@
                 >
                   <BaseInput
                     v-model="currentSettings[settingId]"
+                    :disable="isSettingDisabled(item)"
                     :item="item"
                     :setting-id="settingId"
                     :style="$q.screen.lt.sm ? 'width: 100%;max-width:100%' : ''"
@@ -282,6 +283,28 @@ const shouldShowSetting = (
   } else {
     // Single unless setting must NOT be effective for the item to be shown
     return !checkUnlessEffective(item.unless);
+  }
+};
+
+const isSettingDisabled = (item: SettingsItem): boolean => {
+  if (!item.disableWhen) return false;
+
+  const checkDisableEffective = (disableKey: keyof SettingsValues): boolean => {
+    const disableSetting = settingsDefinitions[disableKey];
+    if (!currentSettings.value?.[disableKey]) return false; // disabled, so not effective
+    // enabled, check if dependencies are satisfied
+    return (
+      !disableSetting?.depends ||
+      (Array.isArray(disableSetting.depends)
+        ? disableSetting.depends.every((d) => currentSettings.value?.[d])
+        : !!currentSettings.value?.[disableSetting.depends])
+    );
+  };
+
+  if (Array.isArray(item.disableWhen)) {
+    return item.disableWhen.some((dep) => checkDisableEffective(dep));
+  } else {
+    return checkDisableEffective(item.disableWhen);
   }
 };
 
