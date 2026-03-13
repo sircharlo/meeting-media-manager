@@ -3906,7 +3906,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/yauzl@npm:^2.10.3, @types/yauzl@npm:^2.9.1":
+"@types/yauzl@npm:^2.9.1":
   version: 2.10.3
   resolution: "@types/yauzl@npm:2.10.3"
   dependencies:
@@ -10646,7 +10646,6 @@ __metadata:
     "@types/ms": "npm:^2"
     "@types/node": "npm:^22.19.13"
     "@types/pretty-bytes": "npm:^5.2.0"
-    "@types/yauzl": "npm:^2.10.3"
     "@typescript-eslint/utils": "npm:^8.57.0"
     "@vitejs/plugin-vue": "npm:^6.0.5"
     "@vitest/eslint-plugin": "npm:^1.6.11"
@@ -10713,7 +10712,6 @@ __metadata:
     vue-zoomable: "npm:^1.2.8"
     webpack-iconfont-plugin-nodejs: "npm:^1.0.36"
     wrappy: "npm:^1.0.2"
-    yauzl: "npm:^3.2.1"
   languageName: unknown
   linkType: soft
 
@@ -16141,16 +16139,6 @@ __metadata:
     buffer-crc32: "npm:~0.2.3"
     fd-slicer: "npm:~1.1.0"
   checksum: 10c0/f265002af7541b9ec3589a27f5fb8f11cf348b53cc15e2751272e3c062cd73f3e715bc72d43257de71bbaecae446c3f1b14af7559e8ab0261625375541816422
-  languageName: node
-  linkType: hard
-
-"yauzl@npm:^3.2.1":
-  version: 3.2.1
-  resolution: "yauzl@npm:3.2.1"
-  dependencies:
-    buffer-crc32: "npm:~0.2.3"
-    pend: "npm:~1.2.0"
-  checksum: 10c0/fe1997a8ee53c42556789ca61a28278e9ea2ca8f68cae1ae9904edaf3b5fbbc5d5537a3fb8623ac82c2bd0bd9d67233ce593f1acaadfb8718489d9f06d1bb3d0
   languageName: node
   linkType: hard
 
