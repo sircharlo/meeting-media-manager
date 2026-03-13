@@ -51,35 +51,6 @@
             outlined
           />
         </div>
-        <div v-if="selectedZoomWindow" class="col-12">
-          <div class="row q-col-gutter-sm">
-            <!-- <div class="col-12">
-              <q-btn
-                v-if="selectedZoomWindow"
-                class="full-width q-mt-md"
-                color="primary"
-                no-caps
-                outline
-                @click="listZoomMeetingControlsBoundary"
-              >
-                <q-icon class="q-mr-sm" name="mmm-groups" size="xs" />
-                {{ t('list-zoom-meeting-controls') }}
-              </q-btn>
-            </div> -->
-            <!-- <div class="col-12">
-              <q-btn
-                class="full-width"
-                color="primary"
-                outline
-                unelevated
-                @click="listZoomWindowChildren(selectedZoomWindow.handle)"
-              >
-                <q-icon class="q-mr-sm" name="mmm-groups" size="xs" />
-                {{ t('list-zoom-window-children') }}
-              </q-btn>
-            </div> -->
-          </div>
-        </div>
       </div>
 
       <div

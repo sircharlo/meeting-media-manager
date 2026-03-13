@@ -78,6 +78,7 @@ const electronApi: ElectronApi = {
   getVideoDuration,
   getZipEntries: (p) => invoke('getZipEntries', p),
   getZoomDialogChildren: (c, p) => invoke('getZoomDialogChildren', c, p),
+  getZoomElementState: (h, c) => invoke('getZoomElementState', h, c),
   getZoomElementTitle: (h, c) => invoke('getZoomElementTitle', h, c),
   inferExtension,
   isArchitectureMismatch: () => invoke('isArchitectureMismatch'),

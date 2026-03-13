@@ -112,6 +112,14 @@ export interface ElectronApi {
     className: string,
     parentHandle?: number,
   ) => Promise<ZoomUIElement[]>;
+  getZoomElementState: (
+    handle: number,
+    controlId: string,
+  ) => Promise<null | {
+    legacy_state?: number;
+    toggle_state?: number;
+    value?: string;
+  }>;
   getZoomElementTitle: (
     handle: number,
     controlId: string,
@@ -259,6 +267,7 @@ export type ElectronIpcInvokeKey =
   | 'getUserDataPath'
   | 'getZipEntries'
   | 'getZoomDialogChildren'
+  | 'getZoomElementState'
   | 'getZoomElementTitle'
   | 'isArchitectureMismatch'
   | 'isDownloadComplete'

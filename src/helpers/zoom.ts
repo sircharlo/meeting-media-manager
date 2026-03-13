@@ -10,6 +10,7 @@ import { sendKeyboardShortcut } from './keyboard-shortcuts';
 const {
   clickZoomElement,
   getZoomDialogChildren,
+  getZoomElementState,
   getZoomElementTitle,
   listZoomWindows,
 } = globalThis.electronApi;
@@ -94,17 +95,26 @@ const joinAudio = async (meetingHandle: number) => {
   console.warn('Clicked on btn_muteAudio');
 
   // 2. Wait for join audio window to appear
-  await delay(1000);
-  const windows = await listZoomWindows();
-  console.warn('Windows found:', windows);
-  const joinAudioWnd = windows.find(
-    (w) => w.class_name === 'zJoinAudioWndClass',
-  );
+  const joinAudioWnd = await waitForWindowByClassName('zJoinAudioWndClass');
 
   if (joinAudioWnd) {
     // 3. Click btn_connectAudio in that window
     await clickById(joinAudioWnd.handle, ZOOM_CONTROL_IDS.BTN_CONNECT_AUDIO);
   }
+};
+
+const filterElementsByControlType = (
+  elements: ZoomUIElement[],
+  controlType: string,
+) => {
+  return elements.filter((e) => e.control_type === controlType);
+};
+
+const filterElementsByEnabledState = (
+  elements: ZoomUIElement[],
+  enabledState: boolean,
+) => {
+  return elements.filter((e) => e.is_enabled === enabledState);
 };
 
 /**
@@ -132,23 +142,19 @@ const leaveAudio = async (meetingHandle: number) => {
   await clickById(meetingHandle, ZOOM_CONTROL_IDS.BTN_AUDIO_MENU);
 
   // 2. Wait for menu to open
-  await delay(1000);
+  const children = await waitForDialogChildren('WCN_ModelessWnd');
 
-  // 3. Narrow search to descendants of the menu dialog (WCN_ModelessWnd)
-  const children = await getZoomDialogChildren(
-    'WCN_ModelessWnd',
-    meetingHandle,
-  );
   console.warn(' [Zoom Automation] Menu children:', children);
 
-  const menuItems = children.filter(
-    (c) => c.control_type === 'MenuItem' && c.is_enabled !== false,
-  );
+  const menuItems = filterElementsByControlType(children, 'MenuItem');
   console.warn(' [Zoom Automation] Menu items:', menuItems);
 
-  if (menuItems.length >= 2) {
+  const enabledMenuItems = filterElementsByEnabledState(menuItems, true);
+  console.warn(' [Zoom Automation] Enabled menu items:', enabledMenuItems);
+
+  if (enabledMenuItems.length >= 2) {
     // Zoom menu usually has "Leave Computer Audio" as the before-last item when connected
-    const leaveBtn = menuItems.at(-2);
+    const leaveBtn = enabledMenuItems.at(-2);
     console.warn(leaveBtn);
     if (leaveBtn) {
       // Use meetingHandle as the target window for the click, but specific element handle
@@ -159,6 +165,131 @@ const leaveAudio = async (meetingHandle: number) => {
       });
     }
   }
+};
+
+const participantsListIsOpen = async (meetingHandle: number) => {
+  const state = await getZoomElementState(
+    meetingHandle,
+    ZOOM_CONTROL_IDS.PARTICIPANTS_LIST,
+  );
+  return state;
+};
+
+const openParticipantsList = async (meetingHandle: number) => {
+  // check if participants list is already open
+  const state = await participantsListIsOpen(meetingHandle);
+  console.warn(' [Zoom Automation] Participants list state:', state);
+  if (state) {
+    console.log(' [Zoom Automation] Participants list is already open');
+    return;
+  }
+  await clickById(meetingHandle, ZOOM_CONTROL_IDS.BTN_PARTICIPANTS);
+  // Wait for panel to open by checking if the state changes
+  while (!(await participantsListIsOpen(meetingHandle))) {
+    await delay(100);
+  }
+};
+
+const findWindowByClassName = async (className: string) => {
+  const windows = await listZoomWindows();
+  return windows.find((w) => w.class_name === className);
+};
+
+const waitForWindowByClassName = async (className: string) => {
+  let attempts = 0;
+  let window = await findWindowByClassName(className);
+  while (!window) {
+    await delay(100);
+    attempts++;
+    if (attempts > 100) {
+      throw new Error(`Window ${className} not found`);
+    }
+    window = await findWindowByClassName(className);
+  }
+  return window;
+};
+
+const waitForDialogChildren = async (dialogClassName: string) => {
+  let attempts = 0;
+  let children = await getZoomDialogChildren(dialogClassName);
+  while (children.length === 0) {
+    await delay(100);
+    attempts++;
+    if (attempts > 100) {
+      throw new Error(`Dialog children not found`);
+    }
+    children = await getZoomDialogChildren(dialogClassName);
+  }
+  return children;
+};
+
+const muteAllParticipants = async (
+  meetingHandle: number,
+  preventSelfUnmute: boolean,
+) => {
+  await openParticipantsList(meetingHandle);
+  await clickById(meetingHandle, ZOOM_CONTROL_IDS.MUTE_ALL_BTN);
+  const muteAllConfirmWnd = await waitForWindowByClassName(
+    'zChangeNameWndClass',
+  );
+
+  if (muteAllConfirmWnd) {
+    console.warn(
+      ' [Zoom Automation] Mute All confirmation dialog found',
+      muteAllConfirmWnd,
+    );
+    const state = await getZoomElementState(
+      muteAllConfirmWnd.handle,
+      ZOOM_CONTROL_IDS.CHK_ALLOW_PARTICIPANTS_TO_UNMUTE,
+    );
+    console.log(' [Zoom Automation] Checkbox state:', state);
+
+    const unmuteCurrentlyAllowed =
+      state?.toggle_state === 1 || state?.legacy_state === 16;
+
+    const shouldAllowUnmute = !preventSelfUnmute;
+
+    if (unmuteCurrentlyAllowed === shouldAllowUnmute) {
+      console.log(
+        `[Zoom Automation] "Allow participants to unmute" already ${
+          shouldAllowUnmute ? 'checked' : 'unchecked'
+        }`,
+      );
+    } else {
+      await clickById(
+        muteAllConfirmWnd.handle,
+        ZOOM_CONTROL_IDS.CHK_ALLOW_PARTICIPANTS_TO_UNMUTE,
+      );
+
+      console.log(
+        `[Zoom Automation] ${
+          shouldAllowUnmute ? 'Checked' : 'Unchecked'
+        } "Allow participants to unmute"`,
+      );
+    }
+
+    // In this dialog, the "Yes" button has the controlID 'btn_rename'
+    await clickById(muteAllConfirmWnd.handle, ZOOM_CONTROL_IDS.BTN_RENAME);
+    console.log(' [Zoom Automation] Confirmed Mute All');
+  }
+};
+
+const turnHostVideoOn = async (handle: number) => {
+  const currentState = useCurrentStateStore();
+  await clickIfTitleMatches(
+    handle,
+    ZOOM_CONTROL_IDS.BTN_MUTE_VIDEO,
+    currentState.currentSettings?.zoomVideoOffTitle,
+  );
+};
+
+const turnHostVideoOff = async (handle: number) => {
+  const currentState = useCurrentStateStore();
+  await clickIfTitleMatches(
+    handle,
+    ZOOM_CONTROL_IDS.BTN_MUTE_VIDEO,
+    currentState.currentSettings?.zoomVideoOnTitle,
+  );
 };
 
 /**
@@ -185,33 +316,36 @@ export const automateZoomMeetingSettings = async () => {
     await joinAudio(handle);
 
     // 2. Turn on host video (if currently off)
-    await clickIfTitleMatches(
-      handle,
-      ZOOM_CONTROL_IDS.BTN_MUTE_VIDEO,
-      currentState.currentSettings?.zoomVideoOffTitle,
-    );
+    await turnHostVideoOn(handle);
 
-    // // 3. Mute everyone & disable unmute
-    // await clickById(handle, ZOOM_CONTROL_IDS.BTN_PARTICIPANTS);
-    // // Wait for panel to open
-    // await new Promise((resolve) => {
-    //   setTimeout(resolve, 500);
-    // });
-    // await clickById(handle, ZOOM_CONTROL_IDS.MUTE_ALL_BTN);
-
-    // // The "Mute All" button usually shows a dialog.
-    // // We might need to send "Enter" to confirm or click a specific button in that dialog.
-    // // Assuming the dialog has the focus or we can target it.
-    // await new Promise((resolve) => {
-    //   setTimeout(resolve, 500);
-    // });
-    // sendKeyboardShortcut('Enter', 'Zoom');
+    // 3. Mute everyone and prevent self-unmuting
+    await muteAllParticipants(handle, true);
 
     console.log(' [Zoom Automation] Meeting settings sequence completed');
   } catch (error) {
     errorCatcher(error, {
       contexts: { fn: { name: 'automateZoomMeetingSettings' } },
     });
+  }
+};
+
+const askAllToUnmute = async (handle: number) => {
+  await openParticipantsList(handle);
+  await clickById(handle, ZOOM_CONTROL_IDS.BTN_MORE_PARTICIPANTS_OPTIONS);
+  // Wait for the menu to open
+  const menuItems = await waitForDialogChildren('WCN_ModelessWnd');
+
+  if (menuItems) {
+    console.warn(' [Zoom Automation] Menu items:', menuItems);
+
+    const enabledMenuItems = filterElementsByEnabledState(menuItems, true);
+    console.warn(' [Zoom Automation] Enabled menu items:', enabledMenuItems);
+
+    if (enabledMenuItems?.[0]) {
+      // Click on the first enabled menu item, which is "Ask all participants to unmute"
+      await clickZoomElement(handle, enabledMenuItems[0]);
+      console.log(' [Zoom Automation] Asked all participants to unmute');
+    }
   }
 };
 
@@ -239,18 +373,13 @@ export const automateZoomPostMeetingSettings = async () => {
     await leaveAudio(handle);
 
     // 2. Turn off host video (if currently on)
-    await clickIfTitleMatches(
-      handle,
-      ZOOM_CONTROL_IDS.BTN_MUTE_VIDEO,
-      currentState.currentSettings?.zoomVideoOnTitle,
-    );
+    await turnHostVideoOff(handle);
 
-    // // 3. Allow everyone to unmute & Ask all to unmute
-    // await clickById(handle, ZOOM_CONTROL_IDS.BTN_PARTICIPANTS);
-    // await delay(500);
+    // 3. Allow everyone to unmute (by muting first)
+    await muteAllParticipants(handle, false);
 
-    // // "Ask All to Unmute" often appears in the same place as "Mute All" but with different state.
-    // await clickById(handle, ZOOM_CONTROL_IDS.MUTE_ALL_BTN);
+    // 4. Ask all to unmute
+    await askAllToUnmute(handle);
 
     console.log(' [Zoom Automation] Post-meeting settings sequence completed');
   } catch (error) {

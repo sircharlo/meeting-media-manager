@@ -7,9 +7,9 @@ import {
 import { IS_DEV, PLATFORM } from 'src-electron/constants';
 import { logToWindow } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
-import upath, { resolve } from 'upath';
+import upath from 'upath';
 
-const { join } = upath;
+const { join, resolve } = upath;
 
 let pythonProcess: ChildProcessWithoutNullStreams | null = null;
 

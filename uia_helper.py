@@ -19,8 +19,8 @@ def get_element_data(element):
     help_text = ""
     try:
         legacy_properties = element.legacy_properties()
-        print(f"Legacy properties: {legacy_properties}")
-        print(f"Legacy properties: {legacy_properties['Help']}")
+        # print(f"Legacy properties: {legacy_properties}")
+        # print(f"Legacy properties: {legacy_properties['Help']}")
         help_text = legacy_properties["Help"]
     except Exception:
         pass
@@ -93,6 +93,7 @@ def list_windows():
             is_zoom = class_name in [
                 "ConfMultiTabContentWndClass",
                 "WCN_ModelessWnd",
+                "zChangeNameWndClass",
                 "zJoinAudioWndClass",
                 "ZPMeetingWndClass",
             ]
@@ -189,6 +190,65 @@ def get_element_title():
 
     except Exception as e:
         print(f"Error in get_element_title: {traceback.format_exc()}")
+        return jsonify({"error": str(e), "success": False}), 500
+
+
+@app.route("/get_element_state", methods=["GET"])
+def get_element_state():
+    try:
+        window_handle = request.args.get("window_handle", type=int)
+        control_id = request.args.get("control_id")
+
+        if not window_handle or not control_id:
+            return (
+                jsonify(
+                    {
+                        "error": "window_handle and control_id are required",
+                        "success": False,
+                    }
+                ),
+                400,
+            )
+
+        win = Desktop(backend="uia").window(handle=window_handle)
+
+        target = None
+        for d in win.descendants():
+            try:
+                help_text = d.legacy_properties().get("Help", "")
+                if help_text and f'"{control_id}"' in help_text:
+                    target = d
+                    break
+            except Exception:
+                continue
+
+        if not target:
+            return jsonify(
+                {
+                    "error": f"Element with controlID {control_id} not found",
+                    "success": False,
+                }
+            ), 404
+
+        state = {}
+        try:
+            # Try TogglePattern first
+            state["toggle_state"] = target.get_toggle_state()  # 0=off, 1=on, 2=indet
+        except Exception:
+            pass
+
+        try:
+            # Fallback to LegacyIAccessible state
+            legacy = target.legacy_properties()
+            state["legacy_state"] = legacy.get("State")
+            state["value"] = legacy.get("Value")
+        except Exception:
+            pass
+
+        return jsonify({"success": True, "state": state})
+
+    except Exception as e:
+        print(f"Error in get_element_state: {traceback.format_exc()}")
         return jsonify({"error": str(e), "success": False}), 500
 
 

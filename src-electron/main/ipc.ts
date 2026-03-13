@@ -539,3 +539,34 @@ handleIpcInvoke(
     }
   },
 );
+
+handleIpcInvoke(
+  'getZoomElementState',
+  async (_e, handle: number, controlId: string) => {
+    try {
+      await showControlsIfHidden(handle);
+      const url = new URL('http://127.0.0.1:5000/get_element_state');
+      url.searchParams.append('window_handle', String(handle));
+      url.searchParams.append('control_id', controlId);
+
+      const res = await fetch(url.toString());
+      const data = (await res.json()) as {
+        state?: {
+          legacy_state?: number;
+          toggle_state?: number;
+          value?: string;
+        };
+        success: boolean;
+      };
+      return data.success ? data.state || null : null;
+    } catch (error) {
+      logToWindow(
+        mainWindowInfo.mainWindow,
+        'Failed to get Zoom element state',
+        { controlId, error: String(error), handle },
+        'error',
+      );
+      return null;
+    }
+  },
+);
