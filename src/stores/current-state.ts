@@ -12,6 +12,7 @@ import type {
 
 import { defineStore } from 'pinia';
 import { Platform } from 'quasar';
+import { i18n } from 'src/boot/i18n';
 import { LONG_MEDIA_DURATION } from 'src/constants/jw';
 import { settingsDefinitions } from 'src/constants/settings';
 import { isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
@@ -260,8 +261,12 @@ export const useCurrentStateStore = defineStore('current-state', {
           const { createTemporaryNotification } =
             await import('src/helpers/notifications');
           createTemporaryNotification({
-            caption: 'Please install Python and restart the app.',
-            message: 'Python is required for Zoom Meeting Manager.',
+            caption: (i18n.global.t as (key: string) => string)(
+              'zoom-meeting-manager-python-required-caption',
+            ),
+            message: (i18n.global.t as (key: string) => string)(
+              'zoom-meeting-manager-python-required-message',
+            ),
             timeout: 0,
             type: 'negative',
           });

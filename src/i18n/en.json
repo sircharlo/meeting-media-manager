@@ -631,6 +631,8 @@
   "zoom-in": "Zoom in",
   "zoom-integration-explain": "Enable this to let M³ automatically start and stop Zoom screen sharing when media starts and stops playing.",
   "zoom-meeting-manager-meeting-id-missing": "Set Zoom meeting ID in settings to open Zoom Meeting Manager.",
+  "zoom-meeting-manager-python-required-caption": "Please install Python",
+  "zoom-meeting-manager-python-required-message": "Python is required for Zoom Meeting Manager. Please install Python and restart the app.",
   "zoom-out": "Zoom out",
   "zoomAudioMutedTitle": "Zoom audio button text (Muted)",
   "zoomAudioMutedTitle-explain": "Ensure the audio button is MUTED in Zoom, then click this button to capture its title.",
