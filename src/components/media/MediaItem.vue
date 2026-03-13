@@ -819,6 +819,52 @@
               </q-item-section>
             </q-item>
             <q-item
+              v-if="
+                currentSettings?.enablePlaybackSpeedControl &&
+                isCurrentlyPlaying &&
+                (media.isVideo || media.isAudio) &&
+                mediaPlaying.action
+              "
+              clickable
+            >
+              <q-item-section avatar>
+                <q-icon name="mmm-media-settings" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('playback-speed') }}</q-item-label>
+              </q-item-section>
+              <q-item-section side>
+                <div class="row items-center no-wrap">
+                  <q-btn
+                    color="grey-7"
+                    dense
+                    :disable="playbackRate <= 0.5"
+                    flat
+                    icon="mmm-remove"
+                    round
+                    size="sm"
+                    @click.stop="changePlaybackRate(-0.1)"
+                  />
+                  <span
+                    class="text-caption text-weight-bold"
+                    style="min-width: 36px; text-align: center"
+                  >
+                    x{{ playbackRate.toFixed(1) }}
+                  </span>
+                  <q-btn
+                    color="grey-7"
+                    dense
+                    :disable="playbackRate >= 5.0"
+                    flat
+                    icon="mmm-plus"
+                    round
+                    size="sm"
+                    @click.stop="changePlaybackRate(0.1)"
+                  />
+                </div>
+              </q-item-section>
+            </q-item>
+            <q-item
               v-if="media.source === 'additional'"
               v-close-popup
               clickable
@@ -1633,6 +1679,16 @@ const saveMediaDuration = () => {
 
 const { post } = useBroadcastChannel<number, number>({ name: 'seek-to' });
 
+const { post: postPlaybackRate } = useBroadcastChannel<number, number>({
+  name: 'playback-rate',
+});
+const playbackRate = ref(1);
+const changePlaybackRate = (delta: number) => {
+  const newRate = Math.round((playbackRate.value + delta) * 10) / 10;
+  playbackRate.value = Math.min(5.0, Math.max(0.5, newRate));
+  postPlaybackRate(playbackRate.value);
+};
+
 const seekTo = (newSeekTo: null | number) => {
   if (newSeekTo !== null) {
     post(newSeekTo);
@@ -1663,6 +1719,8 @@ function stopMedia(forOtherMediaItem = false) {
   };
   mediaToStop.value = '';
   localFile.value = fileIsLocal();
+  playbackRate.value = 1;
+  postPlaybackRate(1);
 
   if (!forOtherMediaItem) {
     // Stop Zoom screen sharing when media is stopped (unless it's a media switch instead of a stop)
@@ -1679,6 +1737,13 @@ const isCurrentlyPlaying = computed(() => {
       mediaPlaying.value.url === props.media.streamUrl) &&
     mediaPlaying.value.uniqueId === props.media.uniqueId
   );
+});
+
+watch(isCurrentlyPlaying, (playing) => {
+  if (!playing && playbackRate.value !== 1) {
+    playbackRate.value = 1;
+    postPlaybackRate(1);
+  }
 });
 
 const mediaPan = ref<{ x: number; y: number }>({
