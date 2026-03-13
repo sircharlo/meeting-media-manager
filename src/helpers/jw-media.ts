@@ -2871,9 +2871,36 @@ export const downloadAdditionalRemoteVideo = async (
 ): Promise<string | undefined> => {
   try {
     const currentStateStore = useCurrentStateStore();
+    const currentSettings = currentStateStore.currentSettings;
+
+    // Pinyin song substitution: use local pinyin file instead of downloading
+    if (
+      song &&
+      currentSettings?.lang === 'CHS' &&
+      currentSettings?.enablePinyinSongs &&
+      currentSettings?.pinyinSongFolder
+    ) {
+      const trackNum = String(song).padStart(3, '0');
+      const pinyinPath = join(
+        currentSettings.pinyinSongFolder,
+        `sjjm_s-Pi_CHS_${trackNum}_r720P.mp4`,
+      );
+      if (await pathExists(pinyinPath)) {
+        return addToAdditionMediaMapFromPath(
+          pinyinPath,
+          section,
+          undefined,
+          {
+            song: song.toString(),
+            title,
+          },
+        );
+      }
+    }
+
     const bestItem = findBestResolution(
       mediaItemLinks,
-      currentStateStore.currentSettings?.maxRes,
+      currentSettings?.maxRes,
     );
     if (!bestItem) return undefined;
     const bestItemUrl =
