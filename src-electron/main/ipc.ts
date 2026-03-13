@@ -366,9 +366,13 @@ handleIpcInvoke(
     unzipFile(input, output, opts),
 );
 
-const getZoomWindows = async () => {
+const getZoomWindows = async (className?: string) => {
   try {
-    const res = await fetch('http://127.0.0.1:5000/windows');
+    const url = new URL('http://127.0.0.1:5000/windows');
+    if (className) {
+      url.searchParams.append('class_name', className);
+    }
+    const res = await fetch(url.toString());
     const data = (await res.json()) as {
       result: ZoomUIElement[];
       success: boolean;
@@ -386,10 +390,20 @@ const getZoomWindows = async () => {
   }
 };
 
-handleIpcInvoke('listZoomWindows', async (_e, mainOnly = false) => {
-  const windows = await getZoomWindows();
-  return mainOnly ? windows.filter((w) => w.main_zoom_window) : windows;
-});
+handleIpcInvoke(
+  'listZoomWindows',
+  async (_e, mainOnly = false, className?: string) => {
+    const windows = await getZoomWindows(className);
+
+    let result = windows;
+
+    if (mainOnly) {
+      result = windows.filter((w) => w.main_zoom_window);
+    }
+
+    return result;
+  },
+);
 
 async function fetchZoomDialogChildren(
   className: string,

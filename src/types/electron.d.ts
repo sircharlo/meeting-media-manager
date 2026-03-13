@@ -133,7 +133,10 @@ export interface ElectronApi {
   launchZoomMeeting: (meetingId: string) => void;
   // listZoomMeetingControls: (handle?: number) => Promise<ZoomUIElement[]>;
   // listZoomWindowChildren: (handle: number) => Promise<ZoomUIElement[]>;
-  listZoomWindows: (mainOnly?: boolean) => Promise<ZoomUIElement[]>;
+  listZoomWindows: (
+    mainOnly?: boolean,
+    className?: string,
+  ) => Promise<ZoomUIElement[]>;
   moveMediaWindow: (
     targetScreenNumber?: number,
     windowedMode?: boolean,

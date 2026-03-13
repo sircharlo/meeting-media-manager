@@ -199,9 +199,8 @@ const openParticipantsList = async (meetingHandle: number) => {
 };
 
 const findWindowByClassName = async (className: string) => {
-  // TODO: implement this in the python directly to streamline
-  const windows = await listZoomWindows();
-  return windows.find((w) => w.class_name === className);
+  const windows = await listZoomWindows(false, className);
+  return windows[0];
 };
 
 const waitForWindowByClassName = async (className: string) => {

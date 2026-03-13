@@ -107,7 +107,7 @@ export const electronApi: ElectronApi = {
   launchZoomMeeting: function (meetingId) {
     throw new Error('Function not implemented.');
   },
-  listZoomWindows: async function (mainOnly = false) {
+  listZoomWindows: async function (mainOnly = false, className?: string) {
     return [];
   },
   moveMediaWindow: function (targetScreenNumber, windowedMode) {

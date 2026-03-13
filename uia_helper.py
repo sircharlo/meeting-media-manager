@@ -82,20 +82,25 @@ def _find_element_in_parent(window_handle, control_id, button_text):
 
 @app.route("/windows", methods=["GET"])
 def list_windows():
-    def get_zoom_windows():
+    target_class_name = request.args.get("class_name")
+
+    def get_zoom_windows(class_name_filter=None):
         windows = Desktop(backend="uia").windows()
         res = []
         for w in windows:
             class_name = w.class_name()
-            # Filter for Zoom windows
-            is_zoom = class_name in [
-                "ConfMultiTabContentWndClass",
-                "WCN_ModelessWnd",
-                "zChangeNameWndClass",
-                "zJoinAudioWndClass",
-                "ZPMeetingWndClass",
-            ]
-            if is_zoom:
+            # Filter for Zoom windows or the requested class name
+            if class_name_filter:
+                is_match = class_name == class_name_filter
+            else:
+                is_match = class_name in [
+                    "ConfMultiTabContentWndClass",
+                    "WCN_ModelessWnd",
+                    "zChangeNameWndClass",
+                    "zJoinAudioWndClass",
+                    "ZPMeetingWndClass",
+                ]
+            if is_match:
                 is_main = False
                 if class_name == "ConfMultiTabContentWndClass":
                     try:
@@ -119,10 +124,14 @@ def list_windows():
         return res
 
     try:
-        result = get_zoom_windows()
+        result = get_zoom_windows(target_class_name)
 
-        # If no main window found, try toggling Alt key to show controls
-        if result and not any(w["main_zoom_window"] for w in result):
+        # If no main window found, try toggling Alt key to show controls (only for Zoom windows)
+        if (
+            not target_class_name
+            and result
+            and not any(w["main_zoom_window"] for w in result)
+        ):
             # Try to send Alt to a ConfMultiTabContentWndClass first
             candidates = [
                 w for w in result if w["class_name"] == "ConfMultiTabContentWndClass"

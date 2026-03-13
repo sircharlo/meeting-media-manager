@@ -35,7 +35,7 @@
             color="primary"
             outline
             unelevated
-            @click="listZoomWindows"
+            @click="listMainZoomWindows"
           >
             <q-icon class="q-mr-sm" name="mmm-groups" size="xs" />
             {{ t('list-zoom-windows') }}
@@ -145,23 +145,11 @@ const zoomMeetingManagerPopupRef = useTemplateRef<QMenu>(
 
 const open = defineModel<boolean>({ required: true });
 
-const {
-  launchZoomMeeting: launchZoomMeetingApi,
-  listZoomWindows: listMainZoomWindowsApi,
-  startZoomHelper: startZoomHelperApi,
-  stopZoomHelper: stopZoomHelperApi,
-} = globalThis.electronApi;
+const { launchZoomMeeting, listZoomWindows, startZoomHelper, stopZoomHelper } =
+  globalThis.electronApi;
 
 const currentState = useCurrentStateStore();
 const { currentSettings, zoomHelperLogs } = storeToRefs(currentState);
-
-const startZoomHelper = () => {
-  startZoomHelperApi();
-};
-
-const stopZoomHelper = () => {
-  stopZoomHelperApi();
-};
 
 const meetingId = computed(
   () => currentSettings.value?.zoomMeetingManagerMeetingId?.trim() || '',
@@ -170,13 +158,9 @@ const meetingId = computed(
 const zoomWindows = ref<ZoomUIElement[]>([]);
 const selectedZoomWindow = ref<null | ZoomUIElement>(null);
 
-const launchZoomMeeting = (id: string) => {
-  launchZoomMeetingApi(id);
-};
-
-const listZoomWindows = async () => {
+const listMainZoomWindows = async () => {
   selectedZoomWindow.value = null;
-  zoomWindows.value = await listMainZoomWindowsApi(true);
+  zoomWindows.value = await listZoomWindows(true);
   if (zoomWindows.value?.[0]) {
     selectedZoomWindow.value = zoomWindows.value[0];
   }
