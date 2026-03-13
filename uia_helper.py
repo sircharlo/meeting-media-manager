@@ -93,10 +93,11 @@ def list_windows():
                 is_match = class_name == class_name_filter
             else:
                 is_match = class_name in [
-                    "ConfMultiTabContentWndClass",
-                    "WCN_ModelessWnd",
-                    "zChangeNameWndClass",
-                    "zJoinAudioWndClass",
+                    "ConfMultiTabContentWndClass",  # Zoom windows (can be several)
+                    "WCN_ModelessWnd",  # Menu window
+                    "zChangeNameWndClass",  # Mute all participants dialog window
+                    "zJoinAudioWndClass",  # Join audio dialog window
+                    "ZPFloatToolbarClass",  # Floating share toolbar
                     "ZPMeetingWndClass",
                 ]
             if is_match:

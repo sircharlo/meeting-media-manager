@@ -1,6 +1,6 @@
 import type { SettingsValues, ZoomUIElement } from 'src/types';
 
-import { ZOOM_CONTROL_IDS } from 'src/constants/zoom';
+import { MEDIA_WINDOW_TITLE, ZOOM_CONTROL_IDS } from 'src/constants/zoom';
 import { delay } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
 
@@ -477,6 +477,115 @@ export const triggerZoomScreenShare = (startSharing: boolean) => {
       contexts: {
         fn: { name: 'triggerZoomScreenShare', startSharing },
       },
+    });
+  }
+};
+
+/**
+ * Automatically starts sharing the media player window in Zoom
+ */
+export const startSharingMediaInZoom = async () => {
+  try {
+    const mainZoomWindow = await getMainZoomWindow();
+    const handle = mainZoomWindow?.handle;
+    if (!handle) {
+      console.warn(' [Zoom Automation] No main Zoom window found for sharing');
+      return;
+    }
+
+    console.log(' [Zoom Automation] Starting media sharing sequence');
+
+    // 1. Click Start Share
+    await clickById(handle, ZOOM_CONTROL_IDS.BTN_SHARE_SCREEN);
+
+    // 2. Wait for share entrance window
+    const shareWnd = await waitForWindowByClassName('ZPShareEntranceClass');
+    if (!shareWnd?.handle) return;
+
+    // 3. Find and click Media Player window in the list
+    // It might take a moment to populate, so retry a few times
+    let clickedMedia = false;
+    for (let i = 0; i < 15; i++) {
+      clickedMedia = await globalThis.electronApi.clickZoomElement(
+        shareWnd.handle,
+        { title: MEDIA_WINDOW_TITLE },
+      );
+      if (clickedMedia) break;
+      await delay(200);
+    }
+
+    if (!clickedMedia) {
+      console.warn(
+        ' [Zoom Automation] Could not find media player window to share',
+      );
+      return;
+    }
+
+    // 4. Ensure Share Sound is checked
+    const audioState = await getZoomElementState(
+      shareWnd.handle,
+      ZOOM_CONTROL_IDS.CHK_SHARE_AUDIO,
+    );
+    if (audioState?.toggle_state !== 1) {
+      await clickById(shareWnd.handle, ZOOM_CONTROL_IDS.CHK_SHARE_AUDIO);
+    }
+
+    // 5. Ensure Optimize for Video is checked
+    const videoState = await getZoomElementState(
+      shareWnd.handle,
+      ZOOM_CONTROL_IDS.CHK_SHARE_VIDEO,
+    );
+    if (videoState?.toggle_state !== 1) {
+      await clickById(shareWnd.handle, ZOOM_CONTROL_IDS.CHK_SHARE_VIDEO);
+    }
+
+    // 6. Click Share
+    await clickById(shareWnd.handle, ZOOM_CONTROL_IDS.BTN_SHARE_CONFIRM);
+
+    console.log(' [Zoom Automation] Media sharing sequence completed');
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: { fn: { name: 'startSharingMediaInZoom' } },
+    });
+  }
+};
+
+/**
+ * Automatically stops sharing the screen in Zoom
+ */
+export const stopSharingMediaInZoom = async () => {
+  try {
+    console.log(' [Zoom Automation] Stopping media sharing sequence');
+
+    // Look for the float toolbar
+    const floatToolbar = await findWindowByClassName('ZPFloatToolbarClass');
+    if (!floatToolbar?.handle) {
+      console.warn(' [Zoom Automation] No ZPFloatToolbarClass window found');
+      return;
+    }
+
+    const children = await getZoomDialogChildren(
+      'ZPFloatToolbarClass',
+      floatToolbar.handle,
+    );
+    const buttons = filterElementsByControlType(children, 'Button');
+    const enabledButtons = filterElementsByEnabledState(buttons, true);
+
+    // The stop share button is always the last enabled button in this toolbar
+    const stopShareBtn = enabledButtons.at(-1);
+
+    if (stopShareBtn) {
+      await globalThis.electronApi.clickZoomElement(floatToolbar.handle, {
+        handle: stopShareBtn.handle,
+        title: stopShareBtn.title,
+      });
+      console.log(' [Zoom Automation] Stopped sharing');
+    } else {
+      console.warn(' [Zoom Automation] Could not find stop share button');
+    }
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: { fn: { name: 'stopSharingMediaInZoom' } },
     });
   }
 };
