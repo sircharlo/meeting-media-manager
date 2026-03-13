@@ -665,7 +665,7 @@ const notifyMainWindowAboutScreenOrWindowChange = throttleWithTrailing(() => {
 }, 250);
 
 function loadMediaWindowPrefs(): null | WindowState {
-  let mediaWindowStateFile: string | undefined = undefined;
+  let mediaWindowStateFile: string | undefined;
   try {
     mediaWindowStateFile = join(
       app.getPath('userData'),

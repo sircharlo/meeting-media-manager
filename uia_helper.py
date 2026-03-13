@@ -1,8 +1,9 @@
 import json
 import traceback
 
-from flask import Flask, jsonify, request
 from pywinauto import Application, Desktop, findwindows
+from flask import Flask, jsonify, request
+from waitress import serve
 
 app = Flask(__name__)
 
@@ -19,8 +20,6 @@ def get_element_data(element):
     help_text = ""
     try:
         legacy_properties = element.legacy_properties()
-        # print(f"Legacy properties: {legacy_properties}")
-        # print(f"Legacy properties: {legacy_properties['Help']}")
         help_text = legacy_properties["Help"]
     except Exception:
         pass
@@ -272,8 +271,8 @@ def get_element_state():
 
         state = {}
         try:
-            # Try TogglePattern first
-            state["toggle_state"] = target.get_toggle_state()  # 0=off, 1=on, 2=indet
+            # Try TogglePattern first: 0=off, 1=on, 2=indeterminate
+            state["toggle_state"] = target.get_toggle_state()
         except Exception:
             pass
 
@@ -350,4 +349,4 @@ def send_keys():
 
 
 if __name__ == "__main__":
-    app.run(port=5000)
+    serve(app, host="127.0.0.1", port=5000)
