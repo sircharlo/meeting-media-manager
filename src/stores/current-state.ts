@@ -69,6 +69,7 @@ interface Store {
   meetingDay: boolean;
   online: boolean;
   onlyShowInvalidSettings: boolean;
+  pinyinActive: boolean;
   selectedDate: string;
   websiteSelection: JwSite;
 }
@@ -470,6 +471,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       meetingDay: false,
       online: true,
       onlyShowInvalidSettings: false,
+      pinyinActive: false,
       selectedDate: formatDate(new Date(), 'YYYY/MM/DD'),
       websiteSelection: undefined,
     };

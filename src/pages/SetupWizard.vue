@@ -134,15 +134,40 @@
               :label="t('continue')"
               @click="
                 currentSettings.enableMediaDisplayButton = true;
-                step++;
+                step = currentSettings.lang === 'CHS' ? 6 : 7;
               "
             />
           </q-stepper-navigation>
         </q-step>
         <q-step
+          v-if="currentSettings?.lang === 'CHS'"
+          :disable="currentSettings?.lang !== 'CHS'"
           :done="step > 6"
-          icon="mmm-yeartext"
+          icon="mmm-music-note"
           :name="6"
+          :title="t('enablePinyinSongs')"
+        >
+          <p>{{ t('pinyinSongs-wizard') }}</p>
+          <p>{{ t('pinyinSongFolder-explain') }}</p>
+          <FolderInput v-model="currentSettings.pinyinSongFolder" />
+          <q-stepper-navigation class="q-gutter-sm">
+            <q-btn color="negative" flat :label="t('back')" @click="step = 5" />
+            <q-btn
+              color="primary"
+              :label="t('continue')"
+              @click="
+                if (currentSettings?.pinyinSongFolder) {
+                  currentSettings.enablePinyinSongs = true;
+                }
+                step = 7;
+              "
+            />
+          </q-stepper-navigation>
+        </q-step>
+        <q-step
+          :done="step > 7"
+          icon="mmm-yeartext"
+          :name="7"
           :title="t('yeartext')"
         >
           <!-- This icon is from the Material Design Icons collection -->
@@ -154,7 +179,12 @@
             }}
           </p>
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn color="negative" flat :label="t('back')" @click="step--" />
+            <q-btn
+              color="negative"
+              flat
+              :label="t('back')"
+              @click="step = currentSettings?.lang === 'CHS' ? 6 : 5"
+            />
             <q-btn
               color="primary"
               :label="t('continue')"
@@ -166,9 +196,9 @@
         <q-step
           v-if="regularProfile"
           :disable="!regularProfile"
-          :done="step > 7"
+          :done="step > 8"
           icon="mmm-calendar-month"
-          :name="7"
+          :name="8"
           :title="t('setupWizard.meetingDaysTimes')"
         >
           <p>
@@ -212,9 +242,9 @@
         <q-step
           v-if="regularProfile"
           :disable="!regularProfile"
-          :done="step > 8"
+          :done="step > 9"
           icon="mmm-download"
-          :name="8"
+          :name="9"
           :title="t('songbook-video-caching')"
         >
           <p class="text-subtitle1">
@@ -239,9 +269,9 @@
         <q-step
           v-if="regularProfile"
           :disable="!regularProfile"
-          :done="step > 9"
+          :done="step > 10"
           icon="mmm-almost-done"
-          :name="9"
+          :name="10"
           :title="t('almost-done')"
         >
           <p>
@@ -297,7 +327,12 @@
             }}
           </p>
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn color="negative" flat :label="t('back')" @click="step = 9" />
+            <q-btn
+              color="negative"
+              flat
+              :label="t('back')"
+              @click="step = 10"
+            />
             <q-btn color="primary" :label="t('continue')" @click="step++" />
           </q-stepper-navigation>
         </q-step>

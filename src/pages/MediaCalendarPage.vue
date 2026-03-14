@@ -131,6 +131,7 @@ import { isCoWeek, isMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addDayToExportQueue } from 'src/helpers/export-media';
 import {
+  addToAdditionMediaMapFromPath,
   copyToDatedAdditionalMedia,
   downloadAdditionalRemoteVideo,
   downloadFileIfNeeded,
@@ -277,7 +278,7 @@ const {
   readdir,
   unzip,
 } = globalThis.electronApi;
-const { remove, writeFile } = fs;
+const { pathExists, remove, writeFile } = fs;
 const { basename, join } = path;
 
 const { post: postMediaAction } = useBroadcastChannel<string, string>({
@@ -1117,6 +1118,107 @@ const checkMemorialDate = async () => {
   }
 };
 
+// Track pinyin setting across page navigations
+let lastPinyinState: boolean | undefined;
+
+// Handle pinyin state change: save additional songs, reset all media, re-fetch, re-add songs
+const handlePinyinChange = async (newPinyinActive: boolean) => {
+  const pinyinFolder = currentSettings.value?.pinyinSongFolder;
+  const days = lookupPeriod.value?.[currentCongregation.value] ?? [];
+  const selectedDay = selectedDateObject.value;
+
+  // Step 1: Save additional song info from selected date only
+  const savedSongs: {
+    section: string;
+    songTrack: string;
+    streamUrl?: string;
+    thumbnailUrl?: string;
+    title?: string;
+  }[] = [];
+
+  if (selectedDay) {
+    for (const s of selectedDay.mediaSections ?? []) {
+      for (const item of s.items ?? []) {
+        if (item.source === 'additional' && item.tag?.type === 'song') {
+          savedSongs.push({
+            section: s.config.uniqueId,
+            songTrack: String(item.tag.value),
+            streamUrl: item.streamUrl,
+            thumbnailUrl: item.thumbnailUrl,
+            title: item.title,
+          });
+        }
+      }
+    }
+  }
+
+  // Step 2: Reset dynamic items for all days;
+  // remove additional songs only from selected date
+  days.forEach((day) => {
+    day.status = null;
+    const isSelected =
+      selectedDay && day.date?.getTime() === selectedDay.date?.getTime();
+    day.mediaSections?.forEach((s) => {
+      s.items = (s.items || []).filter(
+        (i) =>
+          i.source !== 'dynamic' &&
+          !(isSelected && i.source === 'additional' && i.tag?.type === 'song'),
+      );
+    });
+  });
+
+  // Step 3: Re-fetch dynamic media with new pinyin setting
+  await fetchMedia();
+
+  // Step 4: Re-add saved songs with current pinyin setting
+  for (const song of savedSongs) {
+    const trackNum = song.songTrack.padStart(3, '0');
+
+    if (newPinyinActive && pinyinFolder) {
+      // Pinyin mode: use local pinyin file
+      const pinyinPath = join(
+        pinyinFolder,
+        `sjjm_s-Pi_CHS_${trackNum}_r720P.mp4`,
+      );
+      if (await pathExists(pinyinPath)) {
+        await addToAdditionMediaMapFromPath(
+          pinyinPath,
+          song.section as MediaSectionIdentifier,
+          undefined,
+          {
+            song: song.songTrack,
+            title: song.title,
+            url: song.streamUrl,
+          },
+        );
+      }
+    } else if (song.streamUrl) {
+      // Normal mode: use cached file or download
+      const cacheDir = await currentState.getDatedAdditionalMediaDirectory();
+      const normalPath = join(cacheDir, basename(song.streamUrl));
+      if (!(await pathExists(normalPath))) {
+        await downloadFileIfNeeded({
+          dir: cacheDir,
+          url: song.streamUrl,
+        });
+      }
+      if (await pathExists(normalPath)) {
+        await addToAdditionMediaMapFromPath(
+          normalPath,
+          song.section as MediaSectionIdentifier,
+          undefined,
+          {
+            song: song.songTrack,
+            thumbnailUrl: song.thumbnailUrl,
+            title: song.title,
+            url: song.streamUrl,
+          },
+        );
+      }
+    }
+  }
+};
+
 onMounted(() => {
   goToNextDayWithMedia();
 
@@ -1125,9 +1227,27 @@ onMounted(() => {
     selectedDate.value = formatDate(new Date(), 'YYYY/MM/DD');
   }
 
+  // Detect pinyin state change (settings disabled or toggled while page was unmounted)
+  let pinyinChanged = false;
+  if (!currentSettings.value?.enablePinyinSongs && currentState.pinyinActive) {
+    currentState.pinyinActive = false;
+    pinyinChanged = true;
+  } else if (
+    lastPinyinState !== undefined &&
+    lastPinyinState !== currentState.pinyinActive
+  ) {
+    pinyinChanged = true;
+  }
+  lastPinyinState = currentState.pinyinActive;
+
   sendObsSceneEvent('camera');
   if (urlVariables.value.base && urlVariables.value.mediator) {
-    fetchMedia();
+    if (pinyinChanged) {
+      // Full pinyin change handling (includes fetchMedia + additional song re-add)
+      handlePinyinChange(currentState.pinyinActive);
+    } else {
+      fetchMedia();
+    }
   } else {
     router.push('/settings');
   }
@@ -1136,12 +1256,28 @@ onMounted(() => {
   watch(
     () => urlVariables.value.mediator,
     () => {
-      console.log(
-        '🔄 [onMounted] urlVariables.value.mediator changed:',
-        urlVariables.value.mediator,
-        'Fetching media',
-      );
       fetchMedia();
+    },
+  );
+
+  // Force pinyinActive off when master setting is disabled
+  watch(
+    () => currentSettings.value?.enablePinyinSongs,
+    (newVal) => {
+      if (!newVal) {
+        currentState.pinyinActive = false;
+      }
+    },
+  );
+
+  // Re-fetch media when pinyin active state changes (header toggle or setting change)
+  watch(
+    () => currentState.pinyinActive,
+    async (newVal, oldVal) => {
+      if (oldVal === undefined) return;
+      if (newVal === oldVal) return;
+      lastPinyinState = newVal;
+      await handlePinyinChange(newVal);
     },
   );
 });
