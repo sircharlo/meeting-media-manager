@@ -997,6 +997,10 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   removeListenersLocal();
+  if (preMeetingClockInterval) {
+    clearInterval(preMeetingClockInterval);
+    preMeetingClockInterval = null;
+  }
 });
 
 const previousState = ref<{
@@ -1237,6 +1241,44 @@ watchImmediate(
   },
 );
 
+// Send pre-meeting clock remaining seconds to the media player page
+// 0 = hidden, >0 = remaining seconds before meeting start (max 300)
+const { post: postPreMeetingClock } = useBroadcastChannel<number, number>({
+  name: 'pre-meeting-clock',
+});
+
+let preMeetingClockInterval: null | ReturnType<typeof setInterval> = null;
+
+const checkPreMeetingClock = () => {
+  if (!currentSettings.value?.enablePreMeetingClock) {
+    postPreMeetingClock(0);
+    return;
+  }
+  const remaining = remainingTimeBeforeMeetingStart();
+  // Show clock when within 5 minutes (300 seconds) before meeting start
+  if (remaining > 0 && remaining <= 300) {
+    postPreMeetingClock(remaining);
+  } else {
+    postPreMeetingClock(0);
+  }
+};
+
+watchImmediate(
+  () => currentSettings.value?.enablePreMeetingClock,
+  (enabled) => {
+    if (preMeetingClockInterval) {
+      clearInterval(preMeetingClockInterval);
+      preMeetingClockInterval = null;
+    }
+    if (enabled) {
+      checkPreMeetingClock();
+      preMeetingClockInterval = setInterval(checkPreMeetingClock, 1000);
+    } else {
+      postPreMeetingClock(0);
+    }
+  },
+);
+
 // Receive media playing action from the media player page using useBroadcastChannel
 const { data: mediaPlayingAction } = useBroadcastChannel<
   MediaPlayingStateAction,
@@ -1274,6 +1316,7 @@ watchImmediate(
     });
     postOnline(online.value);
     postHideMediaLogo(currentSettings.value?.hideMediaLogo);
+    checkPreMeetingClock();
     if (!yeartextWatcherPaused.value) {
       postYeartext(yeartext.value);
     }
