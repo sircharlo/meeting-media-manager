@@ -453,6 +453,12 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'media-display',
     type: 'toggle',
   },
+  enablePublicTalkTitle: {
+    depends: 'enableMediaDisplayButton',
+    group: 'advanced',
+    subgroup: 'media-display',
+    type: 'toggle',
+  },
   hideMediaLogo: {
     depends: 'enableMediaDisplayButton',
     group: 'advanced',
@@ -616,6 +622,7 @@ export const defaultSettings: SettingsValues = {
   enableMediaWindowFadeTransitions: true,
   enableMusicButton: true,
   enablePinyinSongs: false,
+  enablePublicTalkTitle: false,
   enableSubtitles: false,
   excludeFootnotes: false,
   excludeTh: true,

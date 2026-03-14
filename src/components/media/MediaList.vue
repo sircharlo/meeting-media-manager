@@ -28,6 +28,17 @@
       @update-color="updateSectionColor"
       @update-label="updateSectionLabel"
     />
+    <!-- Talk Title Card -->
+    <PublicTalkTitleCard
+      v-if="
+        currentSettings?.enablePublicTalkTitle &&
+        (mediaList.config?.uniqueId === 'pt' ||
+          mediaList.config?.uniqueId === 'circuit-overseer')
+      "
+      :is-public-talk="mediaList.config?.uniqueId === 'pt'"
+      :media-list="mediaList"
+      @update-talk-title="updateTalkTitle"
+    />
     <!-- Empty State -->
     <SectionEmptyState
       v-if="(isEmpty || someItemsAreHidden) && !isDragging"
@@ -146,6 +157,7 @@ import MediaDivider from './MediaDivider.vue';
 import MediaGroup from './MediaGroup.vue';
 import MediaItem from './MediaItem.vue';
 import MediaSectionHeader from './MediaSectionHeader.vue';
+import PublicTalkTitleCard from './PublicTalkTitleCard.vue';
 import SectionEmptyState from './SectionEmptyState.vue';
 
 const props = defineProps<{
@@ -155,7 +167,7 @@ const props = defineProps<{
 }>();
 
 const currentState = useCurrentStateStore();
-const { selectedDateObject } = storeToRefs(currentState);
+const { currentSettings, selectedDateObject } = storeToRefs(currentState);
 
 // Ref to the section header
 const sectionHeaderRef = ref<InstanceType<typeof MediaSectionHeader> | null>(
@@ -187,6 +199,12 @@ const {
   updateSectionColor,
   updateSectionLabel,
 } = useMediaSection(props.mediaList);
+
+const updateTalkTitle = (title: string) => {
+  if (sectionData.value?.config) {
+    sectionData.value.config.publicTalkTitle = title;
+  }
+};
 
 import { useEventListener } from '@vueuse/core';
 // Use the media dividers composable
