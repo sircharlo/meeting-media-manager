@@ -840,7 +840,7 @@
                     dense
                     :disable="playbackRate <= 0.5"
                     flat
-                    icon="mmm-remove"
+                    icon="mmm-minus"
                     round
                     size="sm"
                     @click.stop="changePlaybackRate(-0.1)"
