@@ -135,46 +135,46 @@ Glasba v ozadju se samodejno predvaja pred shodi in se ustavi ob pravem času:
 M³ se lahko poveže z Zoomom za samodejno deljenje zaslona:
 
 1. **Vklopi povezavo** – V nastavitvah vklopi povezavo z Zoomom
-2. **Nastavi bližnjico** – Nastavi tipkovno bližnjico za deljenje zaslona, kot je določena v Zoomu. Poskrbi, da bo v Zoomu označena možnost »globalno« (angl. global).
+2. **Nastavi bližnjico** – Nastavi tipko za deljenje zaslona, kot je določena v Zoomu. Poskrbi, da bo v Zoomu označena možnost »global«.
 3. **Samodejni nadzor** – M³ bo samodejno vklapljal in izklapljal deljenje zaslona v Zoomu, ko bo to potrebno
 4. **Ročni nadzor** – Če je treba, lahko deljenje zaslona še vedno ročno upravljaš v Zoomu
 
 ## Združevanje z OBS Studiem {#user-guide-obs-integration}
 
-### Setting Up OBS Integration {#user-guide-obs-setup}
+### Nastavitev povezave z OBS {#user-guide-obs-setup}
 
-To use M³ with OBS Studio for hybrid meetings:
+Če želiš pri hibridnih shodih uporabljati M³ skupaj z OBS Studio:
 
-1. **Install OBS Studio** - Download and install OBS Studio
-2. **Enable WebSocket** - Install the WebSocket plugin in OBS
-3. **Configure M³** - Enter OBS port and password in M³ settings
-4. **Set Up Scenes** - Create scenes for camera, media, and other content
-5. **Test** - Verify playback works properly
+1. **Namesti OBS Studio** – Prenesi in namesti OBS Studio
+2. **Omogoči WebSocket** – Namesti vtičnik WebSocket v OBS
+3. **Nastavi M³** – V nastavitvah M³ vnesi vrata in geslo za dostop do OBS
+4. **Nastavi prizore** – Ustvari prizore za kamero, predvajanje multimedijske vsebine in drugo
+5. **Preizkusi** – Preveri, ali predvajanje deluje pravilno
 
-### OBS Scene Management {#obs-scene-management}
+### Upravljanje prizorov v OBS {#obs-scene-management}
 
-M³ automatically switches OBS scenes during presentations:
+M³ med predstavitvami samodejno preklaplja med prizori v programu OBS:
 
-- **Camera Scene** - Shows the lectern/camera view
-- **Media Scene** - Displays media content
-- **Image Scene** - Shows images (can be postponed if enabled)
-- **Automatic Switching** - Scenes change based on media type and settings
+- **Prizor kamere** – Prikaže pogled na govorniški pult
+- **Prizor multimedijske vsebine** – Prikaže multimedijsko vsebino
+- **Prikaz slike** – Prikaže slike ( lahko se odloži, če je ta možnost omogočena)
+- **Samodejno preklapljanje** – Prizori se spreminjajo glede na vrsto multimedijske vsebine in nastavitve
 
-### Advanced OBS Features {#advanced-obs}
+### Napredne funkcije OBS {#advanced-obs}
 
-#### Postpone Images {#user-guide-postpone-images}
+#### Odložitev prikazovanja slik {#user-guide-postpone-images}
 
-Enable this option to delay sharing images to OBS until manually triggered:
+Omogoči to možnost, če želiš, da se deljenje slik v OBS odloži, dokler ga ne sprožiš ročno:
 
-1. Enable "Postpone Images" in OBS settings
+1. V nastavitvah programa OBS omogoči možnost »Postpone Images«
 2. Slike bodo deljene šele, ko klikneš na gumb za njihovo prikazovanje z uporabo programa OBS Studio. To je koristno, če želiš sle slike naprej pokazati tistim, ki so prisotni v živo.
 
-#### Scene Switching Behavior {#user-guide-scene-switching}
+#### Način preklapljanja med prizori {#user-guide-scene-switching}
 
-Configure how M³ handles scene changes:
+Nastavi, kako naj M³ spreminja scene:
 
-- **Switch After Media** - Automatically return to previous scene
-- **Remember Previous Scene** - Restore the scene that was active before media
+- **Preklop po predvajanju** – Samodejni povratek na prejšnjo sceno
+- **Zapomni si prejšnji prizor** – Obnovi prizor, ki je bil aktiven pred predvajanjem
 
 ### Audio Configuration for Hybrid Meetings {#audio-configuration}
 
