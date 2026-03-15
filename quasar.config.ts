@@ -131,6 +131,10 @@ export default defineConfig((ctx) => {
         appId: APP_ID,
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: APP_NAME + '-${version}-${arch}.${ext}',
+        extraResources: [
+          { from: 'uia_helper.py', to: '.' },
+          { from: 'requirements.txt', to: '.' },
+        ],
         generateUpdatesFilesForAllChannels: true,
         linux: {
           category: 'Utility',
@@ -152,13 +156,11 @@ export default defineConfig((ctx) => {
           hardenedRuntime: true,
           icon: getIconPath('icns'),
           minimumSystemVersion: '10.15',
-          target: { 
+          target: {
+            arch: ['universal'],
             target: 'default',
-            arch: [
-              "universal",
-            ],
           },
-          x64ArchFiles: "**/@napi-rs/**",
+          x64ArchFiles: '**/@napi-rs/**',
         },
         nsis: {
           deleteAppDataOnUninstall: true,

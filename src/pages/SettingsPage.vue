@@ -83,6 +83,7 @@
                 >
                   <BaseInput
                     v-model="currentSettings[settingId]"
+                    :disable="isSettingDisabled(item)"
                     :item="item"
                     :setting-id="settingId"
                     :style="$q.screen.lt.sm ? 'width: 100%;max-width:100%' : ''"
@@ -115,7 +116,7 @@ import { whenever } from '@vueuse/core';
 import { useRouteParams } from '@vueuse/router';
 import BaseInput from 'components/form-inputs/BaseInput.vue';
 import { storeToRefs } from 'pinia';
-import { type QForm, useMeta, useQuasar } from 'quasar';
+import { Platform, type QForm, useMeta, useQuasar } from 'quasar';
 import DialogCongregationLookup from 'src/components/dialog/DialogCongregationLookup.vue';
 import { settingsDefinitions, settingsGroups } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -167,10 +168,13 @@ const expansionState = ref<Partial<Record<SettingsGroupKey, boolean>>>({});
 const settingsFormDynamic = useTemplateRef<QForm>('settingsFormDynamic');
 const settingsValid = ref(true);
 
-const settingsGroupsEntries = Object.entries(settingsGroups) as [
-  SettingsGroupKey,
-  SettingsGroup,
-][];
+let PLATFORM = 'darwin';
+if (Platform.is.win) PLATFORM = 'win32';
+else if (Platform.is.linux) PLATFORM = 'linux';
+
+const settingsGroupsEntries = Object.entries(settingsGroups).filter(
+  ([, group]) => !group.platforms || group.platforms.includes(PLATFORM),
+) as [SettingsGroupKey, SettingsGroup][];
 
 const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
   keyof SettingsItems,
@@ -232,6 +236,7 @@ const shouldShowSetting = (
   settingId: keyof SettingsValues,
 ): boolean => {
   if (item.hidden) return false;
+  if (item.platforms && !item.platforms.includes(PLATFORM)) return false;
 
   // Pinyin settings are only available when congregation language is CHS
   if (
@@ -278,6 +283,28 @@ const shouldShowSetting = (
   } else {
     // Single unless setting must NOT be effective for the item to be shown
     return !checkUnlessEffective(item.unless);
+  }
+};
+
+const isSettingDisabled = (item: SettingsItem): boolean => {
+  if (!item.disableWhen) return false;
+
+  const checkDisableEffective = (disableKey: keyof SettingsValues): boolean => {
+    const disableSetting = settingsDefinitions[disableKey];
+    if (!currentSettings.value?.[disableKey]) return false; // disabled, so not effective
+    // enabled, check if dependencies are satisfied
+    return (
+      !disableSetting?.depends ||
+      (Array.isArray(disableSetting.depends)
+        ? disableSetting.depends.every((d) => currentSettings.value?.[d])
+        : !!currentSettings.value?.[disableSetting.depends])
+    );
+  };
+
+  if (Array.isArray(item.disableWhen)) {
+    return item.disableWhen.some((dep) => checkDisableEffective(dep));
+  } else {
+    return checkDisableEffective(item.disableWhen);
   }
 };
 

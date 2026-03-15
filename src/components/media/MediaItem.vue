@@ -1053,7 +1053,11 @@ import { FOOTNOTE_TARGET_PARAGRAPH } from 'src/constants/jw';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getThumbnailUrl } from 'src/helpers/fs';
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
-import { triggerZoomScreenShare } from 'src/helpers/zoom';
+import {
+  startSharingMediaInZoom,
+  stopSharingMediaInZoom,
+  triggerZoomScreenShare,
+} from 'src/helpers/zoom';
 import { throttleWithTrailing, uuid } from 'src/shared/vanilla';
 import { isFileUrl } from 'src/utils/fs';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
@@ -1351,7 +1355,14 @@ const setMediaPlaying = async (
 ) => {
   if (!mediaPlaying.value.url) {
     // Start Zoom screen sharing when media starts playing and no media was playing before
-    triggerZoomScreenShare(true);
+    if (
+      currentSettings.value?.zoomMeetingManagerEnable &&
+      currentSettings.value?.zoomMeetingManagerAutomateMediaSharing
+    ) {
+      startSharingMediaInZoom();
+    } else {
+      triggerZoomScreenShare(true);
+    }
   } else if (isImage(mediaPlaying.value.url)) {
     stopMedia(true);
   }
@@ -1666,7 +1677,14 @@ function stopMedia(forOtherMediaItem = false) {
 
   if (!forOtherMediaItem) {
     // Stop Zoom screen sharing when media is stopped (unless it's a media switch instead of a stop)
-    triggerZoomScreenShare(false);
+    if (
+      currentSettings.value?.zoomMeetingManagerEnable &&
+      currentSettings.value?.zoomMeetingManagerAutomateMediaSharing
+    ) {
+      stopSharingMediaInZoom();
+    } else {
+      triggerZoomScreenShare(false);
+    }
     nextTick(() => {
       globalThis.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));
     });

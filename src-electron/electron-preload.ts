@@ -33,6 +33,7 @@ import {
   openWebsiteWindow,
   zoomWebsiteWindow,
 } from 'src-electron/preload/website';
+import { launchZoomMeeting } from 'src-electron/preload/zoom';
 import path from 'upath';
 
 initCloseListeners();
@@ -52,11 +53,13 @@ const getPathFromFileObject = (fo?: File | string) => {
 const electronApi: ElectronApi = {
   askForMediaAccess: () => send('askForMediaAccess'),
   checkForUpdates: () => send('checkForUpdates'),
+  clickZoomElement: (h, o) => invoke('clickZoomElement', h, o),
   closeWebsiteWindow,
   convertHeic,
   convertPdfToImages,
   createVideoFromNonVideo: (f, fP) => invoke('createVideoFromNonVideo', f, fP),
   downloadFile: (u, sD, dF, lP) => invoke('downloadFile', u, sD, dF, lP),
+  ensureZoomRequirements: () => invoke('ensureZoomRequirements'),
   executeQuery,
   fileUrlToPath,
   focusMediaWindow: () => send('focusMediaWindow'),
@@ -74,12 +77,18 @@ const electronApi: ElectronApi = {
   getUserDataPath: () => invoke('getUserDataPath'),
   getVideoDuration,
   getZipEntries: (p) => invoke('getZipEntries', p),
+  getZoomDialogChildren: (c, p) => invoke('getZoomDialogChildren', c, p),
+  getZoomElementState: (h, c) => invoke('getZoomElementState', h, c),
+  getZoomElementTitle: (h, c) => invoke('getZoomElementTitle', h, c),
   inferExtension,
   isArchitectureMismatch: () => invoke('isArchitectureMismatch'),
   isDownloadComplete: (downloadId: string) =>
     invoke('isDownloadComplete', downloadId),
   isDownloadErrorExpected: () => invoke('isDownloadErrorExpected'),
   isUsablePath: (p) => invoke('isUsablePath', p),
+  isZoomPythonInstalled: () => invoke('isZoomPythonInstalled'),
+  launchZoomMeeting,
+  listZoomWindows: (m, c) => invoke('listZoomWindows', m, c),
   moveMediaWindow: (t, w) => send('moveMediaWindow', t, w),
   navigateWebsiteWindow,
   onDownloadCancelled: (cb) => listen('downloadCancelled', cb),
@@ -115,9 +124,13 @@ const electronApi: ElectronApi = {
   registerShortcut: (n, s) => invoke('registerShortcut', n, s),
   removeListeners: (c) => removeAllIpcListeners(c),
   robot,
+  sendZoomWindowKeys: (h, k) => invoke('sendZoomWindowKeys', h, k),
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),
   setElectronUrlVariables: (v) => send('setElectronUrlVariables', v),
   setHardwareAcceleration: (v) => invoke('set-hardware-acceleration', v),
+  startZoomHelper: () => send('startZoomHelper'),
+  stopZoomHelper: () => send('stopZoomHelper'),
+  toggleAuthorizedClose: (v) => send('authorizedClose', v),
   toggleMediaWindow: (s, f) => send('toggleMediaWindow', s, f),
   unregisterAllShortcuts: () => send('unregisterAllShortcuts'),
   unregisterShortcut: (s) => send('unregisterShortcut', s),
