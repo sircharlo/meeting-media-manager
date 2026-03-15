@@ -543,10 +543,10 @@ export const settingsDefinitions: SettingsItems = {
   },
   enablePinyinSongs: {
     group: 'advanced',
-    hidden: true,
     type: 'toggle',
   },
   pinyinSongFolder: {
+    depends: 'enablePinyinSongs',
     group: 'advanced',
     subgroup: 'cache',
     type: 'path',
