@@ -58,6 +58,42 @@
   }
 }
 
+#yeartext .pt-subtitle {
+  font-size: 3.5vw;
+  line-height: normal;
+  margin-bottom: 0.5em;
+  font-weight: 400;
+  letter-spacing: 0.05rem;
+}
+
+#yeartext .pt-title {
+  font-size: 5vw;
+  line-height: normal;
+  font-weight: 400;
+  letter-spacing: 0.05rem;
+}
+
+#yeartext.cjk {
+  letter-spacing: 0;
+  font-family:
+    'Wt-ClearText-Bold-CJK', 'Microsoft YaHei UI', 'PingFang SC', 'Noto Serif Variable', serif;
+}
+
+#yeartext.cjk .pt-subtitle,
+#yeartext.cjk .pt-title {
+  letter-spacing: 0;
+}
+
+#yeartext.ko {
+  letter-spacing: -0.05em;
+  -webkit-text-stroke: 0.4px currentColor;
+}
+
+#yeartext.ko .pt-subtitle,
+#yeartext.ko .pt-title {
+  letter-spacing: -0.05em;
+}
+
 .q-pr-scroll {
   padding-right: 10px;
 }

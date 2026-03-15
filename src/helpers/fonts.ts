@@ -61,6 +61,23 @@ export const getJwIconFromKeyword = (keyword: number | string | undefined) => {
   return jwIconsGlyphMap?.[icon] || fallbackJwIconsGlyphMap[icon] || '';
 };
 
+export const setCjkFont = async () => {
+  try {
+    const fontPath = await getLocalFontPath('Wt-ClearText-Bold');
+    const fontFace = new FontFace(
+      'Wt-ClearText-Bold-CJK',
+      'url("' + fontPath + '")',
+      { unicodeRange: 'U+0020-2013, U+2015-207F' },
+    );
+    await fontFace.load();
+    document.fonts.add(fontFace);
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: { fn: { name: 'setCjkFont' } },
+    });
+  }
+};
+
 export const setElementFont = async (fontName: FontName) => {
   if (!fontName) return false;
 
