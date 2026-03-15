@@ -15,10 +15,28 @@
     <div
       v-if="fontsSet && !mediaPlayerCustomBackground"
       class="base-layer"
-      :class="{ 'blank-screen': isTransitioning }"
+      :class="{ 'blank-screen': isTransitioning, 'clock-active': showPreMeetingClock }"
     >
       <!-- eslint-disable next-line vue/no-v-html -->
       <div id="yeartext" class="center" v-html="sanitize(yeartext || '')" />
+      <div v-if="showPreMeetingClock" id="preMeetingClockContainer">
+        <div id="preMeetingClock">
+          {{ formattedCurrentTime }}
+        </div>
+        <div id="countdownTimer">
+          <svg viewBox="0 0 120 120">
+            <circle class="countdown-track" cx="60" cy="60" r="54" />
+            <circle
+              class="countdown-progress"
+              cx="60"
+              cy="60"
+              r="54"
+              :style="{ strokeDashoffset: countdownDashOffset }"
+            />
+          </svg>
+          <span class="countdown-text">{{ countdownText }}</span>
+        </div>
+      </div>
       <div
         v-if="!hideMediaLogo && jwIconsFontLoaded"
         id="yeartextLogoContainer"
@@ -825,6 +843,57 @@ const { data: yeartext } = useBroadcastChannel<
   name: 'yeartext',
 });
 
+const { data: preMeetingClockRemaining } = useBroadcastChannel<number, number>({
+  name: 'pre-meeting-clock',
+});
+
+const showPreMeetingClock = computed(
+  () => !!preMeetingClockRemaining.value && preMeetingClockRemaining.value > 0,
+);
+
+const remainingSeconds = computed(() => preMeetingClockRemaining.value || 0);
+
+const currentTime = ref(new Date());
+let clockInterval: null | ReturnType<typeof setInterval> = null;
+
+const formattedCurrentTime = computed(() => {
+  const d = currentTime.value;
+  const hours = d.getHours();
+  const period = hours < 12 ? 'AM' : 'PM';
+  const h12 = hours % 12 || 12;
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  const ss = String(d.getSeconds()).padStart(2, '0');
+  return `${String(h12).padStart(2, '0')}:${mm}:${ss} ${period}`;
+});
+
+const COUNTDOWN_TOTAL = 300; // 5 minutes in seconds
+const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * 54; // r=54
+
+const countdownDashOffset = computed(() => {
+  const elapsed = COUNTDOWN_TOTAL - remainingSeconds.value;
+  return (elapsed / COUNTDOWN_TOTAL) * CIRCLE_CIRCUMFERENCE;
+});
+
+const countdownText = computed(() => {
+  const mins = Math.floor(remainingSeconds.value / 60);
+  const secs = remainingSeconds.value % 60;
+  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+});
+
+watch(showPreMeetingClock, (show) => {
+  if (show) {
+    currentTime.value = new Date();
+    clockInterval = setInterval(() => {
+      currentTime.value = new Date();
+    }, 1000);
+  } else {
+    if (clockInterval) {
+      clearInterval(clockInterval);
+      clockInterval = null;
+    }
+  }
+});
+
 watchDeep(
   () => zoomPanState.value,
   (newZoomPanState) => {
@@ -1059,6 +1128,10 @@ onBeforeUnmount(() => {
   console.log('🎬 [MediaPlayerPage] onBeforeUnmount - cleaning up all media');
   cleanupMediaElement(mediaElement1.value);
   cleanupMediaElement(mediaElement2.value);
+  if (clockInterval) {
+    clearInterval(clockInterval);
+    clockInterval = null;
+  }
 });
 </script>
 
@@ -1101,5 +1174,14 @@ onBeforeUnmount(() => {
 .display-layer.is-live {
   opacity: 1;
   z-index: 3;
+}
+
+.base-layer.clock-active {
+  justify-content: flex-start;
+  padding-top: 20vh;
+}
+
+.base-layer.clock-active :deep(#yeartext) {
+  margin: 0 auto;
 }
 </style>

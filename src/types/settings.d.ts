@@ -214,6 +214,7 @@ export interface SettingsValues {
   enableMediaWindowFadeTransitions: boolean;
   enableMusicButton: boolean;
   enablePinyinSongs: boolean;
+  enablePreMeetingClock: boolean;
   enableSubtitles: boolean;
   excludeFootnotes: boolean;
   excludeTh: boolean;
