@@ -447,6 +447,9 @@ export const useCurrentStateStore = defineStore('current-state', {
       return textsForYear[lang] || (langFallback && textsForYear[langFallback]);
     },
   },
+  persist: {
+    pick: ['pinyinActive'],
+  },
   state: (): Store => {
     return {
       autoReturnFromWebsite: false,

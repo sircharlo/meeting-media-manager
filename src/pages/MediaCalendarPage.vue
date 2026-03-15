@@ -1227,6 +1227,27 @@ onMounted(() => {
     selectedDate.value = formatDate(new Date(), 'YYYY/MM/DD');
   }
 
+  // Restore pinyin state from persisted media (handles migration from non-persisted state)
+  if (
+    currentSettings.value?.enablePinyinSongs &&
+    currentSettings.value?.pinyinSongFolder &&
+    !currentState.pinyinActive
+  ) {
+    const days = lookupPeriod.value?.[currentCongregation.value] ?? [];
+    const hasPinyinMedia = days.some((day) =>
+      day.mediaSections?.some((section) =>
+        section.items?.some(
+          (item) =>
+            item.source === 'dynamic' &&
+            item.fileUrl?.includes('sjjm_s-Pi_CHS'),
+        ),
+      ),
+    );
+    if (hasPinyinMedia) {
+      currentState.pinyinActive = true;
+    }
+  }
+
   // Detect pinyin state change (settings disabled or toggled while page was unmounted)
   let pinyinChanged = false;
   if (!currentSettings.value?.enablePinyinSongs && currentState.pinyinActive) {
