@@ -1176,12 +1176,14 @@ onBeforeUnmount(() => {
   z-index: 3;
 }
 
-.base-layer.clock-active {
-  justify-content: flex-start;
-  padding-top: 20vh;
+.base-layer.clock-active :deep(#yeartext) {
+  transform: translateY(-5vh);
 }
 
-.base-layer.clock-active :deep(#yeartext) {
-  margin: 0 auto;
+.base-layer.clock-active :deep(#preMeetingClockContainer) {
+  position: absolute;
+  top: 57%;
+  left: 0;
+  right: 0;
 }
 </style>
