@@ -64,7 +64,7 @@
     "mousetrap": "^1.6.5",
     "ms": "^2.1.3",
     "music-metadata": "^11.12.3",
-    "obs-websocket-js": "^5.0.7",
+    "obs-websocket-js": "^5.0.8",
     "p-queue": "^9.1.0",
     "pdfjs-dist": "^5.5.207",
     "pinia": "^3.0.4",
