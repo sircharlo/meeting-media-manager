@@ -123,7 +123,7 @@
     "eslint-plugin-vue": "^10.8.0",
     "globals": "^17.4.0",
     "husky": "^9.1.7",
-    "lint-staged": "^16.3.3",
+    "lint-staged": "^16.4.0",
     "lodash-es": "^4.17.23",
     "msw": "^2.12.11",
     "postcss": "^8.5.8",
