@@ -29,7 +29,9 @@ queue_rules:
       - check-success = "build / build (windows-latest)"
       - or:
         - and: # translations
-          - author = github-actions[bot]
+          - or:
+            - author = github-actions[bot]
+            - author = sircharlo
           - title ~= (new translations|update translations progress)
         - and: # dependabot
           - author = dependabot[bot]
