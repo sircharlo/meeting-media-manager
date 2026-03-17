@@ -4,6 +4,14 @@
 
 Для повного списку змін між версіями перегляньте наш файл CHANGELOG.md на GitHub.
 
+## v26.3.0
+
+### ✨ Нові функції
+
+- ✨ \*\*Меморіальна Меморіальна Меморіальна Меморіальна Меморіал знаходиться поза бета! Додаток автоматично завантажить Меморіал Вітаємо відео та зображення, що відображається під час Меморіал, коли доступно на налаштованій мові.
+- ✨ **Playback Speed**: Додано швидкість відтворення візуальним індикатором та ручним скиданням. Ця функція видима лише при включенні в розширених налаштуваннях.
+- ✨ **Pinyin Songs**: Додано перемикач для заміни пісні pinyin для зустрічей, що відбулися китайською.
+
 ## v26.2.0
 
 ### ✨ Нові функції
@@ -83,7 +91,7 @@
 - ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
 - ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
 - ✨ **Media Crossfade**: Implemented crossfade transitions for media display, instead of the more abrupt fade-to-black transition that was present before.
-- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not.
+- ✨ **Музика Автозупинка**: Оптимізовано поведінку фонової музики автоматично зупинки, щоб поводитись так само, якщо музика була автоматично запущена, чи ні
 - ✨ **macOS Click-Through on Inactive Windows**: Enabled mouse click passthrough on the main window for macOS, which should make it easier to control the app even when it's not focused.
 
 ## v25.9.0
@@ -109,12 +117,11 @@
 - ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
 - ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
 
-### 🛠️ Improvements and Tweaks
+## v25.7.0
 
-- 🛠️ **Enhanced Section Headers**: New three-dots menu system with color picker, move up/down controls, repeat options, and delete functionality.
-- ✨ **Inline Title Editing**: Edit media item titles directly in the interface without opening separate dialogs.
-- 🛠️ **Improved Navigation**: Better keyboard shortcuts with scroll-to-selected functionality and enhanced media navigation.
-- 🛠️ **Visual Enhancements**: Animation support during sorting operations and improved drag-and-drop visual feedback.
+### ✨ Нові функції
+
+- Немає нових функцій для цього релізу!
 
 ## 25.6.0
 
@@ -123,47 +130,12 @@
 - ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
 - ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
 
-### 🛠️ Improvements and Tweaks
-
-- 🛠️ **Better mime type handling**: Improved support for MIME types for better media compatibility.
-- 🛠️ **Enhanced navigation drawer**: Improved mini state handling and added tooltip display for better user navigation.
-- 🛠️ **Linux compatibility**: Forced GTK 3 usage on Linux to prevent UI and launch issues.
-
 ## 25.5.0
 
 ### ✨ Нові функції
 
 - 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
 - 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
-
-### 🛠️ Improvements and Tweaks
-
-- 🔍 **Restore Zoom with `Ctrl` + `Scroll`**: Re-enable immediate zooming with the control + scroll gesture for easier navigation.
-- 👤 **Hide Unused CO Media**: Hide rather than skip unused media for Circuit Overseer visits to maintain a cleaner presentation.
-- 🎵 **Improve Duplicate Song Indicator**: Enhance the visual cue for duplicate songs to make them easier to identify.
-
-## 25.4.3
-
-### 🛠️ Improvements and Tweaks
-
-- ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
-
-## 25.4.2
-
-### 🛠️ Improvements and Tweaks
-
-- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
-
-## 25.4.1
-
-### 🛠️ Improvements and Tweaks
-
-- 🎬 **Виправлення призначення власного часу початку/завершення**: Запобігає неправильному застосуванню заданого часу початку та завершення до іншого відео.
-- 📝 **Дозволити невідповідні субтитри**: Дозволяє використовувати субтитри, навіть якщо вони не повністю відповідають медіафайлу.
-- 🪟 **Вимкнути заокруглені кути у Windows**: Видаляє заокруглені кути у вікні медіа у Windows.
-- 🖼 **Додати невикористані зображення до списку медіа**: Гарантує, що всі невикористані зображення будуть додані до списку медіа для повноти.
-- ➕ **Запобігти дублюванню розділів медіа**: Уникає створення кількох розділів медіа для одного й того ж елемента.
-- 📥 **Зберігати порядок файлів у плейлисті при імпорті**: Зберігайте оригінальний порядок файлів у плейлисті JWL під час імпорту.
 
 ## 25.4.0
 
@@ -172,23 +144,11 @@
 - 🇵🇭 **New Language: Tagalog**: Added support for Tagalog, expanding the app's multilingual capabilities.
 - 🎞 **Support for `.m4v` Video Format**: Now supports playback of `.m4v` files to improve media compatibility.
 
-### 🛠️ Improvements and Tweaks
-
-- 🎬 **Multiple Start/End Times for Single Video**: Allow a single video to appear in the media list multiple times with different custom start/end times.
-- 📤 **Include Grouped Media in Auto Export**: Automatically export grouped media items along with others.
-- 📡 **Correct `.m4v` Fetching from JW API**: Ensure `.m4v` files are correctly fetched from the JW API.
-
 ## 25.3.1
 
 ### ✨ Нові функції
 
 - 🌏 **Нова мова: корейська**: Додано підтримку корейської мови, що розширює доступність для більшої кількості користувачів.
-
-### 🛠️ Improvements and Tweaks
-
-- ⚡ **Покращена продуктивність і використання процесора**: Оптимізовано роботу для зменшення навантаження на процесор і підвищення ефективності.
-- 🔄 **Виправлення проблем із синхронізацією та збоями**: Усунуто різні помилки, пов’язані із синхронізацією та стабільністю, для підвищення надійності.
-- 📜 **Показувати примітки до випуску для існуючих зборів**: Забезпечено відображення приміток до випуску лише для зборів, які вже завантажені.
 
 ## 25.3.0
 
@@ -199,10 +159,52 @@
 - 📅 **Автоматична дата та фон для Спомину**: Автоматично визначає дату Спомину та готує фонове зображення для нього.
 - 📜 **Показувати примітки до релізу в додатку**: Відображати примітки до релізу безпосередньо в додатку, щоб користувачі могли легко переглядати зміни після оновлення.
 
-### 🛠️ Improvements and Tweaks
+## 25.2.1
 
-- ⚡ **Оптимізація інтелектуального очищення кешу**: Покращення механізму інтелектуального очищення кешу для кращої продуктивності та ефективності.
-- 📂 **Коректне розміщення медіа для районного наглядача**: Забезпечити правильне розміщення медіа для районного наглядача в відповідному розділі.
-- 📅 **Виключити медіа для регулярних зібрань під час Спомину**: Запобігти завантаженню стандартного медіа для зібрання під час Спомину, щоб уникнути помилок.
-- 📅 **Приховати розділи для зібрань під час Спомину**: Прибрати непотрібні розділи для зібрань під час Спомину для більш чистого виду.
-- 📖 **Виправлено завантаження відео Біблії жестовою мовою**: Коректне завантаження відео розділів Біблії жестовою мовою з JWL плейлістів.
+### ✨ Нові функції
+
+- 🔄 **Дозволити спроби повторного з'єднання**: застосувати можливість вручну примусити OBS підключатися при необхідності.
+- :wastebaskt: **Автоочищення дат старого експорту**: Автоматично видаляти папки з датами експорту для збереження сховища, які організовують пам'ять.
+
+## 25.2.0
+
+### ✨ Нові функції
+
+- 🌍 \*\*Використовуйте Системний локаль за замовчуванням \*\*: Автоматично виявляти та використовувати локаль системи для більш персоналізованого досвіду.
+- 🏷️ **Тег підтримки для експортованих Media**: Додати теґи метаданих до експортованих медіа файлів для кращої організації.
+- 🔄 **Автоматичне оновлення для стабільного зниження**: При потребі автоматично вмикати автоматичне пониження версій на стабільні релізи.
+- :globe_with_meridianse: **Розпакувати останні індекси мов MEP**: Отримуйте останні індекси мов MEPS безпосередньо з офіційного сайту, що забезпечує актуальну мову.
+
+## 25.1.0
+
+### ✨ Нові функції
+
+- 📅 **Відкрити попередні дані**: Дозволити відкриття попередніх дат поточного тижня, що буде корисно, коли пізніше буде перенесено день зустрічі.
+- 🛑 **Error Banner для OBS Studio**: Додати банер помилки, коли OBS Studio не з'єднаний у день зустрічі, забезпечуючи надання користувачів.
+- 📚 **Група медіа з публікації**: Група медіа з тієї ж реферальної публікації для більш чистого та організованого медіа-огляду.
+- 🎵 **Попередження про пісню на пісні**: Показувати попередження якщо пісні перераховані не один раз у списку відтворення на вихідних зустрічей.
+- 🔄 **Майбутній планувальник планування**: Увімкнути планування майбутніх змін розкладу зустрічей, який корисний для щорічних запланованих змін або для візиту колегічного наглядача до сусідньої громади.
+
+## 24.11.0
+
+### ✨ Нові функції
+
+- **функція**: Натискання веб-сайту тепер підтримується на macOS :rocke:
+- **функція**: Знайдені гарячі клавіші для зупинки, паузи та відновлення відтворення медіа-файлів 🚀
+- **функція**: Додано підтримку для налаштування веб-адреси, з якої слід завантажити медіа 🚀
+- **feat**: Додано OBS Studio миттєво вибирати сцени і перевантажений функціональність вибору сцен в налаштуваннях
+- **функція**: Розширена документація веб-сайту для підтримки інших мов
+
+## 24.10.10
+
+### ✨ Нові функції
+
+- **Нове**: Додані гарячі клавіші для переходу до наступного/попереднього медіаелемента
+- **Нове**: Додано праве меню для приховування медіаелементів та перейменування їх
+- **Нове**: Обрізані відео часи тепер поважаються в імпортованих списках JWL відтворення
+
+## 24.10.9
+
+### ✨ Нові функції
+
+- **feat**: Додано функцію для видалення всіх додаткових медіа-файлів за вибраний день

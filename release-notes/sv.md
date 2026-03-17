@@ -4,6 +4,14 @@
 
 För den fullständiga listan över ändringar mellan versioner, se vår CHANGELOG.md-fil på GitHub.
 
+## v26.3.0
+
+### ✨ Nya funktioner
+
+- ✨ **Minnesmedia**: Automatisk hämtning av minnesmedier är nu slut på beta! Appen laddar automatiskt ner Memorial Welcome Video och bild som visas under Memorial, när den finns i det konfigurerade språket.
+- ✨ **Uppspelningshastighet**: Lade till uppspelningshastighetskontroll med visuell indikator och manuell återställning. Denna funktion är endast synlig om den är aktiverad i avancerade inställningar.
+- ✨ **Pinyin låtar**: Lade till en växling för pinyin låtsubstitution för möten som hålls på kinesiska.
+
 ## v26.2.0
 
 ### ✨ Nya funktioner
@@ -83,7 +91,7 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 - ✨ **Mediafönstret alltid överst och helskärmsvisning**: Förbättrad alltid överst-funktion för mediafönstret, justera dynamiskt beroende på fullskärmsläget.
 - ✨ **Inställningar för datumvisning**: Lagt till en användarinställning för att ställa in formatet för datumvisning.
 - ✨ **Mediatoning**: Infört tonade övergångar för media, istället för den mer abrupta tona-till-svart övergången som fanns innan.
-- ✨ **Musik auto-stop**: Optimerat bakgrundsmusikens auto-stop för att bete sig på samma sätt oavsett om musiken startades automatiskt eller inte.
+- ✨ **Musik auto-srop**: Optimerat bakgrundsmusikens auto-stop för att bete sig på samma sätt oavsett om musiken startades automatiskt eller inte
 - ✨ **macOS Click-through för inaktiva fönster**: Aktiverade musklick som går igenom till huvudfönstret i macOS, vilket bör göra det enklare att styra appen även när den inte är i fokus.
 
 ## v25.9.0
@@ -109,12 +117,11 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 - ✨ **Avsnitt Upprepningsläge**: Aktivera kontinuerlig uppspelning inom specifika sektioner för sömlösa media-loopar.
 - ✨ **Zoomintegration**: Automatisk skärmdelning starta/stoppa koordination med medieuppspelning.
 
-### 🛠️ Förbättringar och justeringar
+## v25.7.0
 
-- 🛠️ **Förbättrade sektionshuvuden**: Nytt menysystem med tre prickar med färgväljare, flytta upp/ner kontroller, upprepa alternativ och ta bort funktionalitet.
-- ✨ **Inline titelredigering**: Redigera medietitlar direkt i gränssnittet utan att öppna separata dialogrutor.
-- 🛠️ **Förbättrad navigering**: Bättre kortkommandon med scroll-till-vald funktionalitet och förbättrad medienavigering.
-- 🛠️ **Visuella förbättringar**: Animeringsstöd vid sortering och förbättrad dra-och-släpp-visuell feedback.
+### ✨ Nya funktioner
+
+- Inga nya funktioner för denna utgåva!
 
 ## 25.6.0
 
@@ -123,47 +130,12 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 - ✨ **Anslutning med datapriser**: Lagt till en ny inställning för att minska användningen av bandbredd för nedladdning anslutningar med datapriser.
 - ✨ **Förbättrad mediehantering för streaming**: Bättre stöd för strömmade medier, vilket minskar latensrelaterade problem.
 
-### 🛠️ Förbättringar och justeringar
-
-- 🛠️ **Bättre hantering av mime-typer**: Förbättrat stöd för MIME-typer för bättre mediekompatibilitet.
-- 🛠️ **Förbättrad navigation**: Förbättrad hantering av miniläge och tillsatt verktygstips för bättre användarnavigering.
-- 🛠️ **Linuxkompatibilitet**: Tvingad användning av GTK 3 på Linux för att förhindra problem med UI och uppstart.
-
 ## 25.5.0
 
 ### ✨ Nya funktioner
 
 - 🖼️ **OBS fördröjningsalternativ för bilder**: Lägg till en OBS Studio-inställning för att fördröja scenändringar när bilder visas för att förbättra övergångar.
 - 🔊 **Stöd för .m4a Ljudformat**: Lagt till stöd för .m4a-ljudfiler för att utöka mediatyper.
-
-### 🛠️ Förbättringar och justeringar
-
-- 🔍 **Återställ Zoomning med Ctrl + Scroll**: Nollställning av zoomning för enklare navigering.
-- 👤 **Dölj medieobjekt för kretsbesöket**: Dölj istället för att hoppa över mediefiler som inte används för kretsbesöket, för att hålla en renare visning.
-- 🎵 **Hitta dubletter av sånger**: Gör det lättare att hitta dubletter av sånger.
-
-## 25.4.3
-
-### 🛠️ Förbättringar och justeringar
-
-- ➕ **Rensa mediefiler från v25.4.x**: Rensa automatiskt övergivna eller felplacerade mediefiler från v25.4.1 till v25.4.2 för att säkerställa att inga mediefiler saknas eller är på fel plats i medielistan.
-
-## 25.4.2
-
-### 🛠️ Förbättringar och justeringar
-
-- ➕ **Förhindra duplicerade mediefiler**: Undvik att lägga till vissa medieobjekt flera gånger i medielistan.
-
-## 25.4.1
-
-### 🛠️ Förbättringar och justeringar
-
-- 🎬 **Fixa anpassad start-/sluttidsuppgift**: Förhindra att anpassade start- och sluttider inte tillämpas felaktigt på fel video.
-- 📝 **Tillåt felaktiga undertexter**: Använd undertexter även om de inte matchar perfekt med videon.
-- 🪟 **Inaktivera rundade hörn på fönster**: Ta bort rundade hörn för mediafönstret i Windows.
-- 🖼️ **Inkludera bilder som inte är refererade i medielistan**: Se till att alla bilder läggs till i medielistan för enhetlighet.
-- ➕ **Förhindra duplicera mediesektioner**: Undvik att skapa flera mediesektioner för samma medieobjekt.
-- 📥 **Bevara ordning på spellistan vid import**: Behåll den ursprungliga ordningen för JWL spellistor under importprocessen.
 
 ## 25.4.0
 
@@ -172,23 +144,11 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 - 🇵🇭 **Nytt språk: Tagalog**: Lagt till stöd för Tagalog som utökar därmed appens flerspråkighet.
 - 🎞️ **Stöd för `.m4v` videoformat**: Stöder nu uppspelning av `.m4v`-filer för att förbättra mediekompatibiliteten.
 
-### 🛠️ Förbättringar och justeringar
-
-- 🎬 **Flera start-/sluttider för en video**: Tillåt att en enda video visas i medielistan flera gånger med olika anpassade start-/sluttider.
-- 📤 **Inkludera grupperade media i Auto export**: Exportera automatiskt grupperade mediaobjekt tillsammans med andra.
-- 📡 **Korrekt `.m4v` Hämtar från JW API**: Se till att `.m4v`-filer hämtas korrekt från JW API.
-
 ## 25.3.1
 
 ### ✨ Nya funktioner
 
 - 🌏 **Nytt språk: Koreanska**: Lägg till stöd för det Koreanska språket, utöka tillgängligheten för fler användare.
-
-### 🛠️ Förbättringar och justeringar
-
-- ⚡ **Förbättra prestanda och processoranvändning**: Optimera prestanda för att minska processoranvändningen och öka effektiviteten.
-- 🔄 **Fixa synkronisering och kraschproblem**: Lös olika synkroniserings- och stabilitetsproblem för att förbättra tillförlitligheten.
-- 📜 **Visa versionshistorik för befintliga församlingar**: Se till att versionshistoriken endast visas för församlingar som redan används.
 
 ## 25.3.0
 
@@ -199,10 +159,52 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 - 📅 **Automatisk datum och bakgrund för minneshögtiden**: Ställ in automatiskt bakgrundsbild och datum för minneshögtiden.
 - 📜 **Visa versionsinfo i appen**: Visa versionsinformation direkt i programmet så att användarna enkelt kan se vad som är ändrats efter en uppdatering.
 
-### 🛠️ Förbättringar och justeringar
+## 25.2.1
 
-- ⚡ **Optimera Smart Cache rensning**: Förbättra den smarta cache-mekanismen för bättre prestanda och effektivitet.
-- 📂 **Korrekt mediaplacering för kretsveckan**: Se till att kretsveckans media placeras i rätt avsnitt.
-- 📅 **Slipp det vanliga mötesmediat vid minneshögtiden**: Förhindra hämtning av standardmötesmedia för minneshögtiden för att förhindra fel.
-- 📅 **Dölj vanliga mötespunkter vid minneshögtiden**: Ta bort vanliga mötestillfällen under minneshögtiden för en renare layout.
-- 📖 **Ordna bibeln på teckenspråk**: Ladda ner videor för korrekt bibelkapitel från JWL spellistor.
+### ✨ Nya funktioner
+
+- :counterclockwise_arrow **Allow OBS Reconnection Attempts**: Introducera möjligheten att manuellt tvinga OBS att återansluta vid behov.
+- 🗑️ **Automatisk rensning Gamla Exportdatum**: Ta automatiskt bort föråldrade exportdatummappar för att hålla lagringen organiserad.
+
+## 25.2.0
+
+### ✨ Nya funktioner
+
+- 🌍 **Använd systemspråk efter standard**: Identifiera automatiskt och använd systemets lokal för en mer personlig upplevelse.
+- 🏷️ **Tagga stöd för exporterade media**: Lägg till metadatatataggar för exporterade mediefiler för bättre organisation.
+- :counterclockwise_arrow **Automatisk Beta till stabil nedgradering**: Tillåt automatiska nedgraderingar från betaversioner till stabila utgåvor vid behov.
+- 🌐 **Extrahera Senaste MEPS Språkindex**: Hämta de senaste MEPS-språkindexen direkt från den officiella webbplatsen, vilket garanterar aktuell språksupport.
+
+## 25.1.0
+
+### ✨ Nya funktioner
+
+- :kalender: **Öppna Tidigare datum**: Tillåt att öppna tidigare datum för den aktuella veckan, vilket är användbart när mötesdagen flyttas senare i veckan.
+- 🛑 **Felbanner för OBS Studio**: Lägg till en felbanner när OBS Studio inte är ansluten på en mötesdag, så att användarna blir varnade.
+- 📚 **Group Media by Publication**: Gruppmedia från samma refererade publikation för en renare och mer organiserad medieöversikt.
+- 🎵 **Duplicate Song Warning**: Visa en varning om låtar listas mer än en gång i medielistan för weekendmöten.
+- :counterclockwise_arrow **Framtida Schemaläggning**: Aktivera planeringen av framtida ändringar i mötesschemat vilket är användbart för årliga schemaändringar eller för kretsövervakarens besök i en närliggande församling.
+
+## 24.11.0
+
+### ✨ Nya funktioner
+
+- **funktion**: Presentera webbplatsen stöds nu på macOS 🚀
+- **funktion**: Introducerade kortkommandon för att stoppa, pausa och återuppta uppspelning av media 🚀
+- **feat**: Lade till stöd för att ställa in webbadressen från vilken media ska laddas ner 🚀
+- **funktion**: Lade till direktväljare av OBS Studio och omarbetad scenväljarfunktion i inställningarna
+- **feat**: Utökad dokumentationswebbplats för att stödja fler språk
+
+## 24.10.10
+
+### ✨ Nya funktioner
+
+- **new**: Lade till kortkommandon för att navigera till nästa medieobjekt
+- **nytt**: Lade till en högerklicksmeny till medieobjekt för att dölja medieobjekt och byta namn på dem
+- **ny**: Trimmade videotider respekteras nu i importerade JWL-spellistor
+
+## 24.10.9
+
+### ✨ Nya funktioner
+
+- **feat**: Lade till ett alternativ för att ta bort alla extra mediefiler för den valda dagen

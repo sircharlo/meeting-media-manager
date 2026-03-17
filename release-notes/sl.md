@@ -4,6 +4,14 @@
 
 Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.md na GitHubu.
 
+## v26.3.0
+
+### ✨ Nove funkcije
+
+- ✨ **Memorial Media**: Automatic Memorial media retrieval is now out of beta! The app will automatically download the Memorial Welcome Video and image to display during the Memorial, when available in the configured language.
+- ✨ **Playback Speed**: Added playback speed control with visual indicator, and manual reset. This feature is only visible if enabled in the advanced settings.
+- ✨ **Pinyin Songs**: Added a toggle for pinyin song substitution for meetings held in Chinese.
+
 ## v26.2.0
 
 ### ✨ Nove funkcije
@@ -109,12 +117,11 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 - ✨ **Način ponavljanja razdelka**: Omogočite neprekinjeno predvajanje znotraj določenih razdelkov za nemoteno predvajanje multimedije v zanki.
 - ✨ **Združevanje z Zoomom**: Samodejna uskladitev začetka in konca deljenja zaslona predvajanjem multimedije.
 
-### 🛠️ Izboljšave in popravki
+## v25.7.0
 
-- 🛠️ **Enhanced Section Headers**: New three-dots menu system with color picker, move up/down controls, repeat options, and delete functionality.
-- ✨ **Inline Title Editing**: Edit media item titles directly in the interface without opening separate dialogs.
-- 🛠️ **Improved Navigation**: Better keyboard shortcuts with scroll-to-selected functionality and enhanced media navigation.
-- 🛠️ **Visual Enhancements**: Animation support during sorting operations and improved drag-and-drop visual feedback.
+### ✨ Nove funkcije
+
+- No new features for this release!
 
 ## 25.6.0
 
@@ -123,47 +130,12 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 - ✨ **Nastavitev omejene povezave**: Dodana je bila nova nastavitev za zmanjšanje porabe pasovne širine za prenos pri omejenih povezavah.
 - ✨ **Izboljšano upravljanje pretakanih medijev**: Boljša podpora za pretakane medije, kar zmanjšuje težave, povezane z zakasnitvijo.
 
-### 🛠️ Izboljšave in popravki
-
-- 🛠️ **Boljše upravljanje vrst MIME**: Izboljšana podpora za vrste MIME za boljšo združljivost z medijskimi vsebinami.
-- 🛠️ **Izboljšan navigacijski predal**: Izboljšano upravljanje pomanjšanega stanja in dodan prikaz orodnih namigov za lažjo navigacijo.
-- 🛠️ **Združljivost z Linuxom**: Prisiljena uporaba knjižnice GTK 3 v Linuxu za preprečevanje težav z uporabniškim vmesnikom in zagonom.
-
 ## 25.5.0
 
 ### ✨ Nove funkcije
 
 - 🖼️ **Možnost zakasnitve za slike v programu OBS**: Dodaj nastavitev programa OBS Studio za zakasnitev spreminjanja scen pri prikazovanju slik, kar izboljša prehode.
 - 🔊 **Podpora za avdio format `.m4a`**: Dodajanje združljivosti za avdio datoteke `.m4a` za razširitev podprtih vrst multimedijskih datotek.
-
-### 🛠️ Izboljšave in popravki
-
-- 🔍 **Povrnitev povečave s `Ctrl` + `Scroll`**: Za lažjo navigacijo je možno ponovno omogočiti takojšnjo povečavo s kombinacijo tipke Ctrl in vrtenjem koleščka na miški.
-- 👤 **Skrij neuporabljeno multimedijsko vsebino ON**: Neuporabljeno multimedijsko vsebino za obiske okrajnega nadzornika skrijte, namesto preskočite, da bo predstavitev bolj jasna.
-- 🎵 **Izboljšaj prikazovalnik podvojenih pesmi**: Boljši vizualni prikaz podvojenih pesmi, da jih bo lažje prepoznati.
-
-## 25.4.3
-
-### 🛠️ Izboljšave in popravki
-
-- ➕ **Čiščenje multimedijskih datotek iz verzije v25.4.x**: Samodejno čiščenje preostalih ali napačno umeščenih multimedijskih datotek iz verzije v25.4.1 v verzijo v25.4.2, da na seznamu multimedijske vsebine ne bo manjkala nobena datoteka ali da ne bo na napačnem mestu.
-
-## 25.4.2
-
-### 🛠️ Izboljšave in popravki
-
-- ➕ **Preprečevanje podvojenih multimedijskih datotek**: Preprečitev večkratnega dodajanja nekaterih multimedijskih elementov na seznam multimedijske vsebine.
-
-## 25.4.1
-
-### 🛠️ Izboljšave in popravki
-
-- 🎬 **Popravek prilagoditve začetnega/končnega časa po meri**: Preprečite, da bi se začetni in končni čas nepravilno uporabila za napačen videoposnetek.
-- 📝 **Omogočanje neusklajenih podnapisov**: Omogočite uporabo podnapisov, tudi če se ne ujemajo popolnoma z multimedijsko datoteko.
-- 🪟 **Onemogočite zaobljene vogale v sistemu Windows**: Odstranite zaobljene vogale za multimedijsko okno v operacijskem sistemu Windows.
-- 🖼 **Vključitev slik, ki niso del referenc, na seznam multimedijskih datotek**: Na seznam multimedijskih datotek dodajte vse slike, ki niso del referenc.
-- ➕ **Preprečevanje podvojenih multimedijskih razdelkov**: Preprečite ustvarjanje več multimedijskih razdelkov za isti multimedijski element.
-- 📥 **Shrani vrstni red seznama predvajanja pri uvozu**: Pri uvozu se ohrani originalni vrstni red seznamov predvajanja JW Library.
 
 ## 25.4.0
 
@@ -172,23 +144,11 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 - 🇵🇭 **Nov jezik: tagalščina**: Dodana je bila podpora za tagalščino, s čimer so se razširile večjezične možnosti aplikacije.
 - 🎞 **Podpora za `.m4v` video format**: Zdaj podpira predvajanje datotek `.m4v`, s čimer je izboljšana združljivost multimedijskih vsebin.
 
-### 🛠️ Izboljšave in popravki
-
-- 🎬 **Več začetnih/končnih časov za en videoposnetek**: Omogočeno je, da se en videoposnetek večkrat prikaže na multimedijskem seznamu z različnimi začetnimi/končnimi časi, nastavljenimi po meri.
-- 📤 **Vključitev združenih medijev v samodejni izvoz**: Samodejno izvozi združene multimedijske datoteke skupaj z drugimi.
-- 📡 **Pravilno pridobivanje datotek `.m4v` iz vmesnika JW API**: Poskrbi, da se datoteke `.m4v` pravilno pridobivajo iz vmesnika JW API.
-
 ## 25.3.1
 
 ### ✨ Nove funkcije
 
 - 🌏 **Nov jezik: korejščina**: Dodana podpora za korejski jezik, s čimer se širi dostopnost za več uporabnikov.
-
-### 🛠️ Izboljšave in popravki
-
-- ⚡ **Izboljšana zmogljivost in uporaba procesorja**: Optimizacija delovanja za zmanjšanje porabe procesorja in povečanje učinkovitosti.
-- 🔄 **Odpravljene težave s sinhronizacijo in sesutjem**: Rešene so različne težave, povezane s sinhronizacijo in stabilnostjo, da se izboljša zanesljivost.
-- 📜 **Prikaži opombe ob izdaji za obstoječe občine**: Poskrbi, da se opombe o izdaji prikažejo le za občine, ki so že naložene.
 
 ## 25.3.0
 
@@ -199,10 +159,52 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 - 📅 **Samodejni datum spominske slovesnosti in ozadje**: Samodejno zaznavanje in nastavitev datuma spominske slovesnosti ter priprava slike za prikaz na zaslonu med spominsko slovenostjo.
 - 📜 **V aplikaciji prikaži opombe ob izdaji**: Prikaz opomb ob izdaji neposredno v aplikaciji, tako da lahko uporabniki po posodobitvi enostavno pregledajo spremembe.
 
-### 🛠️ Izboljšave in popravki
+## 25.2.1
 
-- ⚡ **Optimiziranje pametnega čiščenja predpomnilnika**: Izboljšan je mehanizem pametnega čiščenja predpomnilnika za boljšo zmogljivost in učinkovitost.
-- 📂 **Pravilna umestitev multimedijske vsebine okrajnega nadzornika**: Poskrbljeno je, da je multimedijska vsebina okrajnega nadzornika umeščena v pravi razdelek.
-- 📅 **Izključitev multimedijske vsebine rednih shodov v času spominske slovesnosti**: Za preprečitev napak je za spominsko slovenost onemogočeno pridobivanje multimedijske vsebine rednih shodov.
-- 📅 **Med spominsko slovenostjo so razdelki rednih shodov skriti**: Razdelki, ki med spominsko slovenostjo niso nepotrebni, so zaradi preglednosti skriti.
-- 📖 **Popravljeni so prenosi svetopisemskih videoposnetkov za znakovni jezik**: Iz seznamov predvajanja JWL se zdaj pravilno prenesejo videoposnetki poglavij Svetega pisma v znakovnem jeziku.
+### ✨ Nove funkcije
+
+- 🔄 **Allow OBS Reconnection Attempts**: Introduce the possibility to manually force OBS to reconnect when needed.
+- 🗑 **Auto Cleanup Old Export Date Folders**: Automatically remove outdated export date folders to keep storage organized.
+
+## 25.2.0
+
+### ✨ Nove funkcije
+
+- 🌍 **Use System Locale by Default**: Automatically detect and use the system's locale for a more personalized experience.
+- 🏷 **Tag Support for Exported Media**: Add metadata tags to exported media files for better organization.
+- 🔄 **Automatic Beta to Stable Downgrade**: Allow automatic downgrades from beta versions to stable releases when necessary.
+- 🌐 **Extract Latest MEPS Language Indexes**: Fetch the most recent MEPS language indexes directly from the official website, ensuring up-to-date language support.
+
+## 25.1.0
+
+### ✨ Nove funkcije
+
+- 📅 **Open Previous Dates**: Allow opening previous dates of the current week, which is useful when the meeting day is moved later in the week.
+- 🛑 **Error Banner for OBS Studio**: Add an error banner when OBS Studio is not connected on a meeting day, ensuring users are alerted.
+- 📚 **Group Media by Publication**: Group media from the same referred publication for a cleaner and more organized media overview.
+- 🎵 **Duplicate Song Warning**: Show a warning if songs are listed more than once in the media list for weekend meetings.
+- 🔄 **Future Schedule Planning**: Enable the planning of future meeting schedule changes, which is useful for yearly schedule changes or for the circuit overseer's visit to a neighboring congregation.
+
+## 24.11.0
+
+### ✨ Nove funkcije
+
+- **feat**: Presenting the website is now supported on macOS 🚀
+- **feat**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
+- **feat**: Added support for setting the web address from which media should be downloaded 🚀
+- **feat**: Added OBS Studio instant scene picker and overhauled scene picker functionality in settings
+- **feat**: Expanded documentation website to support more languages
+
+## 24.10.10
+
+### ✨ Nove funkcije
+
+- **new**: Added keyboard shortcuts to navigate to the next/previous media item
+- **new**: Added a right-click menu to media items to hide media items and rename them
+- **new**: Trimmed video times are now respected in imported JWL playlists
+
+## 24.10.9
+
+### ✨ Nove funkcije
+
+- **feat**: Added an option to delete all extra media files for the currently selected day
