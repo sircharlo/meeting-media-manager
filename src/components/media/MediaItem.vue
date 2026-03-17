@@ -476,6 +476,19 @@
                   {{ t('repeat') }}
                 </q-tooltip>
               </q-icon>
+              <q-btn
+                v-if="playbackRate !== 1"
+                color="negative"
+                icon="mmm-playback-speed"
+                outline
+                round
+                size="sm"
+                @click.stop="changePlaybackRate(0, true)"
+              >
+                <q-tooltip :delay="500">
+                  {{ t('playback-rate') }}
+                </q-tooltip>
+              </q-btn>
             </div>
           </div>
         </div>
@@ -828,7 +841,7 @@
               clickable
             >
               <q-item-section avatar>
-                <q-icon name="mmm-media-settings" />
+                <q-icon name="mmm-playback-speed" />
               </q-item-section>
               <q-item-section>
                 <q-item-label>{{ t('playback-speed') }}</q-item-label>
@@ -843,23 +856,24 @@
                     icon="mmm-minus"
                     round
                     size="sm"
-                    @click.stop="changePlaybackRate(-0.1)"
+                    @click.stop="changePlaybackRate(-0.5)"
                   />
                   <span
                     class="text-caption text-weight-bold"
                     style="min-width: 36px; text-align: center"
+                    @click.stop="changePlaybackRate(0, true)"
                   >
                     x{{ playbackRate.toFixed(1) }}
                   </span>
                   <q-btn
                     color="grey-7"
                     dense
-                    :disable="playbackRate >= 5.0"
+                    :disable="playbackRate >= 15"
                     flat
                     icon="mmm-plus"
                     round
                     size="sm"
-                    @click.stop="changePlaybackRate(0.1)"
+                    @click.stop="changePlaybackRate(0.5)"
                   />
                 </div>
               </q-item-section>
@@ -1679,13 +1693,20 @@ const saveMediaDuration = () => {
 
 const { post } = useBroadcastChannel<number, number>({ name: 'seek-to' });
 
+const playbackRate = ref(1);
+
 const { post: postPlaybackRate } = useBroadcastChannel<number, number>({
   name: 'playback-rate',
 });
-const playbackRate = ref(1);
-const changePlaybackRate = (delta: number) => {
+
+const changePlaybackRate = (delta: number, reset = false) => {
+  if (reset) {
+    playbackRate.value = 1;
+    postPlaybackRate(playbackRate.value);
+    return;
+  }
   const newRate = Math.round((playbackRate.value + delta) * 10) / 10;
-  playbackRate.value = Math.min(5.0, Math.max(0.5, newRate));
+  playbackRate.value = Math.min(15, Math.max(0.5, newRate));
   postPlaybackRate(playbackRate.value);
 };
 
