@@ -3565,12 +3565,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/fontkit@npm:^2.0.8":
-  version: 2.0.8
-  resolution: "@types/fontkit@npm:2.0.8"
+"@types/fontkit@npm:^2.0.9":
+  version: 2.0.9
+  resolution: "@types/fontkit@npm:2.0.9"
   dependencies:
     "@types/node": "npm:*"
-  checksum: 10c0/e5a124d468f17d3b74a07d38257fc38b8d3d1e3e1e68b1c4a3314beb274223499009f4a6c1d2f15a9928ad6643fb8bfca4881d13447cfbf5de1733ad6fd5d4b1
+  checksum: 10c0/a17af3b16b41fe8e03a65cf98aa9667bbc3d08377090b2e7c208122d8a8a113c1a31e7c3f6a1fce24c1703d3fc9297571a997aa6769e947a771f6bf7ed3c525d
   languageName: node
   linkType: hard
 
@@ -10657,7 +10657,7 @@ __metadata:
     "@sentry/vue": "npm:^10.42.0"
     "@types/better-sqlite3": "npm:^7.6.13"
     "@types/fluent-ffmpeg": "npm:^2.1.28"
-    "@types/fontkit": "npm:^2.0.8"
+    "@types/fontkit": "npm:^2.0.9"
     "@types/fs-extra": "npm:^11.0.4"
     "@types/heic-convert": "npm:^2.1.0"
     "@types/lodash-es": "npm:^4.17.12"
