@@ -125,7 +125,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "lodash-es": "^4.17.23",
-    "msw": "^2.12.11",
+    "msw": "^2.12.13",
     "postcss": "^8.5.8",
     "prettier": "^3.8.1",
     "rollup-plugin-visualizer": "^7.0.1",
