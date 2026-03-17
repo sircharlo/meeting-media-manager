@@ -8,7 +8,7 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 
 ### ✨ Uued funktsioonid
 
-- ✨ **Disk Space Check**: Added functionality to monitor and notify when disk space is low.
+- ✨ **Kettaruumi kontroll** – Lisatud funktsioon, mis jälgib kettaruumi ja annab märku, kui vaba ruumi on vähe.
 
 ## v26.1.5
 
