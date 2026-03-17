@@ -4,6 +4,14 @@
 
 Para a lista completa de alterações entre versões, consulte o ficheiro CHANGELOG.md no GitHub.
 
+## v26.3.0
+
+### ✨ Novas Funcionalidades
+
+- ✨ **Medida Memorial**: Recuperação automática de mídia Memorial está fora de uso! O app irá baixar automaticamente o Vídeo e a imagem Memorial de Boas Vindas durante o Memorial, quando disponíveis no idioma configurado.
+- ✨ **Velocidade de Reproduzir**: Controle de velocidade de reprodução adicionado com indicador visual e redefinição manual. Este recurso só é visível se ativado nas configurações avançadas.
+- ✨ **Pinyin Songs**: Adicionado uma alternância para a substituição de música pinyin para reuniões realizadas em chinês.
+
 ## v26.2.0
 
 ### ✨ Novas Funcionalidades
@@ -83,7 +91,7 @@ Para a lista completa de alterações entre versões, consulte o ficheiro CHANGE
 - ✨ Janela de Multimédia Sempre em Primeiro Plano & Comportamento em Ecrã Inteiro: Corrigido e melhorado o comportamento de manter a janela de média sempre em primeiro plano, ajustando-se dinamicamente consoante o estado de ecrã inteiro.
 - ✨ **Configurações de Formato de Data**: Adicionado uma configuração de usuário para configurar um formato de exibição de data.
 - ✨ **Media Crossfade**: transições de crossfade implementadas para a exibição de mídia, em vez da transição mais brusca para preta que estava presente antes.
-- ✨ **Música AutoStop**: Otimizou o comportamento da música de fundo auto-parar para se comportar da mesma maneira que a música foi auto-iniciada ou não.
+- ✨ **Música AutoStop**: Otimizou o comportamento da música de fundo auto-parar para se comportar da mesma maneira que a música foi auto-iniciada ou não
 - ✨ **macOS Click-Through no Windows Inativo**: Clique com o mouse habilitado sobre a janela principal para macOS, o que deve tornar mais fácil o controle do aplicativo, mesmo quando ele não está focado.
 
 ## v25.9.0
@@ -109,12 +117,11 @@ Para a lista completa de alterações entre versões, consulte o ficheiro CHANGE
 - ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
 - ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
 
-### 🛠️ Improvements and Tweaks
+## v25.7.0
 
-- 🛠️ **Enhanced Section Headers**: New three-dots menu system with color picker, move up/down controls, repeat options, and delete functionality.
-- ✨ **Inline Title Editing**: Edit media item titles directly in the interface without opening separate dialogs.
-- 🛠️ **Improved Navigation**: Better keyboard shortcuts with scroll-to-selected functionality and enhanced media navigation.
-- 🛠️ **Visual Enhancements**: Animation support during sorting operations and improved drag-and-drop visual feedback.
+### ✨ Novas Funcionalidades
+
+- Não há novos recursos para esta versão!
 
 ## 25.6.0
 
@@ -123,47 +130,12 @@ Para a lista completa de alterações entre versões, consulte o ficheiro CHANGE
 - ✨ **Definição de conexão limitada**: Adicionada uma nova configuração para reduzir o uso da largura de banda de download em conexões com medidor.
 - **Melhoria do tratamento de multimédia em fluxo contínuo**: Melhor suporte para multimédia em fluxo contínuo, reduzindo os problemas relacionados com a latência.
 
-### 🛠️ Improvements and Tweaks
-
-- 🛠️ **Melhor tratamento de tipos MIME**: Suporte melhorado para tipos MIME para uma melhor compatibilidade com a multimédia.
-- 🛠️ **Gaveta de navegação melhorada**: Melhoria do manuseamento do miniestado e adição de uma apresentação de dicas para uma melhor navegação do utilizador.
-- 🛠️ **Compatibilidade com Linux**: Uso forçado do GTK 3 no Linux para evitar a UI e iniciar problemas.
-
 ## 25.5.0
 
 ### ✨ Novas Funcionalidades
 
 - 🖼️ **Opção de atraso de OBS para imagens**: Adicionar uma definição OBS Studio para atrasar as alterações de cena ao apresentar imagens, melhorando as transições.
 - 🔊 **Suporte para o formato de áudio `.m4a`**: Adicionar compatibilidade para ficheiros de áudio `.m4a` para expandir os tipos de multimédia suportados.
-
-### 🛠️ Improvements and Tweaks
-
-- 🔍 **Restaurar o zoom com `Ctrl` + `Scroll`**: Reativar o zoom imediato com o gesto de controlo + scroll para facilitar a navegação.
-- 👤 **Ocultar multimédia não utilizada do Sup. Circuito**: Esconder em vez de saltar a multimédia não utilizada nas visitas do Superintendente de Circuito para manter uma apresentação mais limpa.
-- 🎵 **Melhorar o indicador de músicas duplicadas**: Melhorar a indicação visual de músicas duplicadas para facilitar a sua identificação.
-
-## 25.4.3
-
-### 🛠️ Improvements and Tweaks
-
-- ➕ Limpar Conteúdos da v25.4.x: Limpeza automática de conteúdos órfãos ou mal colocados das versões v25.4.1 a v25.4.2, garantindo que nenhuma multimédia esteja em falta ou no local errado na lista de multimédia.
-
-## 25.4.2
-
-### 🛠️ Improvements and Tweaks
-
-- ➕ Evitar Duplicação de Multimédia: Impede que certa multimédia seja adicionada várias vezes à lista de multimédia.
-
-## 25.4.1
-
-### 🛠️ Improvements and Tweaks
-
-- 🎬 Corrigir Atribuição Personalizada de Início/Fim: Impede que os tempos personalizados de início e fim sejam aplicados incorretamente ao vídeo errado.
-- 📝 Permitir Legendas Desajustadas: Permite o uso de legendas mesmo quando não correspondem perfeitamente ao ficheiro de multimédia.
-- 🪟 Desativar Canto Arredondado no Windows: Remove os cantos arredondados da janela de mídia no Windows.
-- 🖼 Incluir Imagens Não Referenciadas na Lista de Multimédia: Garante que todas as imagens não referenciadas sejam adicionadas à lista de multimédia para maior completude.
-- ➕ Evitar Secções de Multimédia Duplicadas: Impede a criação de várias secções de multimédia para o mesmo item de multimédia.
-- 📥 Preservar a Ordem da Playlist na Importação: Manter a ordem original das playlists JWL durante o processo de importação.
 
 ## 25.4.0
 
@@ -172,23 +144,11 @@ Para a lista completa de alterações entre versões, consulte o ficheiro CHANGE
 - 🇵🇭 **Novo Idioma: Tagalog**: Adicionado suporte para Tagalog, expandindo as capacidades multilingues da aplicação.
 - 🎞 **Suporte para o formato de vídeo `.m4v`**: Agora é possível reproduzir ficheiros `.m4v`, melhorando a compatibilidade com diferentes tipos de multimédia.
 
-### 🛠️ Improvements and Tweaks
-
-- 🎬 Vários Momentos de Início/Fim para um Único Vídeo: Permite que um único vídeo apareça várias vezes na lista de multimédia com diferentes momentos personalizados de início e fim.
-- 📤 Incluir Multimédia Agrupado na Exportação Automática: Exporta automaticamente os itens de multimédia agrupados juntamente com os restantes.
-- 📡 Correcção na Obtenção de.m4v a partir da API JW: Garante que os ficheiros.m4v são correctamente obtidos a partir da API JW.
-
 ## 25.3.1
 
 ### ✨ Novas Funcionalidades
 
 - : globe_showing_Asia-Austrália: **Novo Idioma: Coreano**: Adicionado suporte para o idioma coreano, expandindo a acessibilidade para mais utilizadores.
-
-### 🛠️ Improvements and Tweaks
-
-- ⚡ **Melhor desempenho e uso da CPU**: Otimização do desempenho para reduzir o uso da CPU e melhorar a eficiência.
-- 🔄 **Corrigir problemas de sincronização e 'crash'**: resolver vários problemas de estabilidade e sincronização para melhorar a confiabilidade.
-- 📜 **Mostrar Notas de Lançamento para Congregações Existentes**: Garante de que as notas de lançamento só são exibidas para congregações que já estão carregadas.
 
 ## 25.3.0
 
@@ -199,10 +159,52 @@ Para a lista completa de alterações entre versões, consulte o ficheiro CHANGE
 - 📅 Data e Plano de Fundo do Memorial Automáticos: Deteta e define automaticamente a data do Memorial e prepara a imagem de fundo correspondente.
 - 📜 Notas de Lançamento na Aplicação: Mostra as notas de lançamento diretamente na aplicação, permitindo aos utilizadores rever facilmente as alterações após uma atualização.
 
-### 🛠️ Improvements and Tweaks
+## 25.2.1
 
-- ⚡ Otimização da Limpeza Inteligente da Cache: Melhoria do mecanismo de limpeza da cache para maior desempenho e eficiência.
-- 📂 Correção da Colocação de Multimédia do Superintendente de Circuito: Garantir que os ficheiros multimédia do Superintendente de Circuito sejam colocados na secção correta.
-- 📅 Excluir Multimédia de Reuniões Regulares para a Comemoração: Impedir o descarregamento de multimédia das reuniões regulares para a Comemoração, de modo a evitar erros.
-- 📅 Ocultar Secções de Reuniões Regulares na Comemoração: Remover secções desnecessárias de reuniões durante o evento da Comemoração para um layout mais limpo.
-- 📖 Corrigir Downloads de Vídeos da Bíblia em Língua Gestual: Corrigir o download dos vídeos dos capítulos da Bíblia em Língua Gestual a partir das playlists JWL.
+### ✨ Novas Funcionalidades
+
+- 🔄 **Permitir tentativas de reconexão do OBS**: Introduza a possibilidade de forçar manualmente o OBS a se reconectar quando necessário.
+- 🗑️ **Limpeza automática de pastas de datas antigas de exportação**: Remover pastas de data de exportação desatualizadas automaticamente para manter o armazenamento organizado.
+
+## 25.2.0
+
+### ✨ Novas Funcionalidades
+
+- :globe_showing_Europe-África: **Use o Sistema Local por Padrão**: Detectar automaticamente e usar a localidade do sistema para uma experiência mais personalizada.
+- 🏷️ **Suporte a Tag para mídia exportada**: Adicionar tags de metadados aos arquivos de mídia exportados para melhor organização.
+- 🔄 **Beta Automático para Downgrade Estável**: Permite downgrades automáticos de versões beta para versões estáveis quando necessário.
+- 🌐 \*\*Extrair os índices de idioma de MEPS \*\*: buscar os índices de idiomas mais recentes dos eurodeputados diretamente do site oficial, garantindo o suporte a linguagem atualizada.
+
+## 25.1.0
+
+### ✨ Novas Funcionalidades
+
+- 📅 **Abrir Dados Anteriores**: Permitir abrir datas anteriores da semana atual, o que é útil quando o dia da reunião é movido mais tarde da semana.
+- 🛑 **Banner de erro para o OBS Studio**: Adicionar um banner de erro quando o OBS Studio não estiver conectado em um dia de reunião, garantindo que os usuários sejam alertados.
+- 📚 **Grupo de Mídia por Publicação**: Agrupar mídia na mesma publicação referenciada para uma visão mais limpa e mais organizada da mídia.
+- 🎵 **Aviso de música duplicado**: Mostrar um aviso se as músicas estiverem listadas mais de uma vez na lista de mídia das reuniões do fim de semana.
+- 🔄 **Planejamento futuro de programação**: Habilite o planejamento de futuras mudanças na programação de reuniões, que é útil para o agendamento de alterações anuais ou para a visita do circuito externo a uma congregação vizinha.
+
+## 24.11.0
+
+### ✨ Novas Funcionalidades
+
+- **feat**: a apresentação do site agora é suportada no macOS 🚀
+- **feat**: Atalhos do teclado introduzidos para parar, pausar e retomar a reprodução de mídia 🚀
+- **feat**: Suporte adicionado para definir o endereço da web de qual mídia deve ser baixada 🚀
+- **feat**: Adicionado OBS Studio instantâneo seletor de cena e reformulação da funcionalidade do seletor de cena em configurações
+- **feat**: Site de documentação expandido para oferecer suporte a mais idiomas
+
+## 24.10.10
+
+### ✨ Novas Funcionalidades
+
+- **novo**: Atalhos de teclado adicionados para navegar no item de mídia seguinte/anterior
+- **novo**: Adicionado um menu de clique direito à itens de mídia para ocultar itens de mídia e renomeá-los
+- **novo**: Os tempos de vídeo aparados agora são respeitados nas playlists importadas do JWL
+
+## 24.10.9
+
+### ✨ Novas Funcionalidades
+
+- **feat**: Adicionada uma opção para excluir todos os arquivos de mídia extras para o dia selecionado
