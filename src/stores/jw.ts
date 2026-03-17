@@ -229,14 +229,14 @@ function extractCssUrls(html: string, baseUrl: string): string[] {
 }
 
 /**
- * Finds the jw-icons-external font URL within CSS text
+ * Finds the jw-icons font URL within CSS text
  */
 function findIconUrlInCss(cssText: string, cssUrl: string): null | string {
   const fontFaceBlocks = cssText.match(/@font-face\s*\{[^}]*\}/gi);
   if (!fontFaceBlocks) return null;
 
   for (const block of fontFaceBlocks) {
-    if (block.includes('jw-icons-external')) {
+    if (block.includes('jw-icons')) {
       const fontMatch = new RegExp(
         /url\(["']?([^"']+\.(woff2?|ttf|otf)[^"']*)["']?\)/i,
       ).exec(block);
@@ -734,9 +734,9 @@ export const useJwStore = defineStore('jw-store', {
 
       return {
         AbyssinicaSIL: jsdelivr('abyssinica-sil', 'latin-400-normal.woff2'),
-        'JW-Icons':
+        'jw-icons-all':
           state.jwIconsUrl ||
-          getFontUrl('base', '/assets/fonts/jw-icons-external-d876da3.woff'),
+          getFontUrl('base', '/assets/fonts/jw-icons-all-81d446b.woff'),
         NotoNaskhArabic: jsdelivr(
           'noto-naskh-arabic:vf',
           'arabic-wght-normal.woff2',

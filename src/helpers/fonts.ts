@@ -266,6 +266,7 @@ const buildJwIconsMap = async (fontPath: string) => {
         }
       }
       jwIconsGlyphMap = map;
+      console.log('jwIconsGlyphMap', jwIconsGlyphMap);
     } catch (error) {
       errorCatcher(error, {
         contexts: { fn: { fontPath, name: 'buildJwIconsMap' } },
@@ -295,7 +296,7 @@ export const setElementFont = async (fontName: FontName) => {
       await fontFace.load();
       document.fonts.add(fontFace);
 
-      if (fontName === 'JW-Icons') {
+      if (fontName === 'jw-icons-all') {
         await buildJwIconsMap(fontPath);
       }
       return true;
@@ -365,7 +366,7 @@ const needsDownload = async (
     );
 
     if (!head.ok) {
-      if (fontName === 'JW-Icons') {
+      if (fontName === 'jw-icons-all') {
         await store.updateJwIconsUrl();
         return needsDownload(fontPath, fontName);
       }
@@ -392,7 +393,7 @@ const downloadFont = async (fontPath: string, fontName: FontName) => {
 
   let response = await fetchFont();
 
-  if (!response.ok && fontName === 'JW-Icons') {
+  if (!response.ok && fontName === 'jw-icons-all') {
     await store.updateJwIconsUrl();
     response = await fetchFont();
   }

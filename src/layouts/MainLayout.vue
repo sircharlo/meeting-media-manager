@@ -1045,7 +1045,7 @@ watchImmediate(
 
     if (shouldRun) {
       getJwMepsInfo();
-      setElementFont('JW-Icons');
+      setElementFont('jw-icons-all');
     }
 
     // Update previous state

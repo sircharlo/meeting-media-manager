@@ -177,14 +177,26 @@ jobs:
         if: runner.os == 'macOS' && github.actor != 'dependabot[bot]'
         run: security find-identity -v
       - name: Build and Publish Electron App
+        id: build
         run: |
           yarn generate:icons
           yarn generate:logos
           yarn build
+        continue-on-error: ${{ runner.os == 'macOS' }}
         env:
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          GITHUB_TOKEN: ${{ github.token }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          TEST_VERSION: ${{ secrets.TEST_VERSION }}
+
+      - name: Retry build without notarization (macOS agreement expired)
+        if: runner.os == 'macOS' && steps.build.outcome == 'failure'
+        run: |
+          echo "::warning::macOS notarization failed — likely an expired agreement. Producing unsigned build."
+          yarn build
+        env:
           GITHUB_TOKEN: ${{ github.token }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           TEST_VERSION: ${{ secrets.TEST_VERSION }}

@@ -1076,10 +1076,10 @@ const loadFonts = async () => {
   }
 
   try {
-    jwIconsFontLoaded.value = await setElementFont('JW-Icons');
+    jwIconsFontLoaded.value = await setElementFont('jw-icons-all');
   } catch (e) {
     errorCatcher(e, {
-      contexts: { fn: { fontName: 'JW-Icons', name: 'loadFonts' } },
+      contexts: { fn: { fontName: 'jw-icons-all', name: 'loadFonts' } },
     });
     jwIconsFontLoaded.value = false;
   }

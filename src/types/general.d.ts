@@ -19,7 +19,7 @@ export interface CacheList<T = unknown> {
 
 export type FontName =
   | 'AbyssinicaSIL'
-  | 'JW-Icons'
+  | 'jw-icons-all'
   | 'NotoNaskhArabic'
   | 'NotoNastaliqUrdu'
   | 'NotoSans'
