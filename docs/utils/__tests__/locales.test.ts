@@ -30,7 +30,6 @@ describe('Locales', () => {
       (f) => !localesKebab.includes(f),
     );
 
-    // expect(inactiveLocaleFiles).toHaveLength(0);
     if (inactiveLocaleFiles.length) {
       console.warn('Unused locales:', inactiveLocaleFiles);
     }
@@ -43,7 +42,6 @@ describe('Locales', () => {
       (f) => !localesKebab.includes(f),
     );
 
-    // expect(inactiveSrcFolders).toHaveLength(0);
     if (inactiveSrcFolders.length) {
       console.warn('Unused locale folders:', inactiveSrcFolders);
     }

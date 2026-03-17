@@ -2879,11 +2879,16 @@ export const downloadAdditionalRemoteVideo = async (
       mediaItemLinks,
       currentSettings?.maxRes,
     );
-    const bestItemUrl = bestItem
-      ? 'progressiveDownloadURL' in bestItem
-        ? bestItem.progressiveDownloadURL
-        : bestItem.file.url
-      : undefined;
+
+    let bestItemUrl: string | undefined;
+
+    if (bestItem) {
+      if ('progressiveDownloadURL' in bestItem) {
+        bestItemUrl = bestItem.progressiveDownloadURL;
+      } else {
+        bestItemUrl = bestItem.file.url;
+      }
+    }
 
     // Pinyin song substitution: use local pinyin file instead of downloading
     if (

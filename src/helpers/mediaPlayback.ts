@@ -151,7 +151,7 @@ const extractContentsFromJwpub = async (
   // First, only extract 'contents' from the JWPUB zip if it doesn't exist or is the wrong size
   const contentsStats = await stat(contentsPath).catch(() => undefined);
 
-  if (!contentsStats || contentsStats.size !== expectedContentsSize) {
+  if (contentsStats?.size !== expectedContentsSize) {
     if (contentsStats) {
       console.warn(
         `[jwpubExtractor] contents size mismatch: path ${contentsPath}, expected ${expectedContentsSize}, got ${contentsStats.size}. Re-extracting contents from ${jwpubPath}.`,

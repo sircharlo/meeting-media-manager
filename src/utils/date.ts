@@ -4,6 +4,8 @@ import type { DateLocale, DateOptions, DateUnitOptions } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { capitalize, pad } from 'src/utils/general';
 
+type PotentialDate = Date | number | string;
+
 /**
  * Helper to parse an object (Date, date-like, or generic object) to a Date.
  * @internal
@@ -321,7 +323,7 @@ export function addToDate(date: Date | string, mod: DateOptions) {
 }
 
 export function formatDate(
-  val: Date | number | string | undefined,
+  val: PotentialDate | undefined,
   mask?: string,
   dateLocale?: Required<DateLocale>,
 ): string {
@@ -369,8 +371,8 @@ export function formatDate(
  * @param unit The unit of measurement (default: 'days').
  */
 export function getDateDiff(
-  date: Date | number | string,
-  subtract: Date | number | string,
+  date: PotentialDate,
+  subtract: PotentialDate,
   unit: `${DateUnitOptions}s` | DateUnitOptions = 'days',
 ): number {
   const sub = new Date(subtract),
@@ -423,8 +425,8 @@ export function getDateDiff(
 }
 
 export function getMaxDate(
-  date: Date | number | string,
-  ...args: (Date | number | string)[]
+  date: PotentialDate,
+  ...args: PotentialDate[]
 ): Date {
   let t = new Date(date);
   Array.prototype.slice.call(args, 1).forEach((d) => {
@@ -434,10 +436,7 @@ export function getMaxDate(
   return t;
 }
 
-export function getMinDate(
-  date: Date | number | string,
-  ...args: (Date | number | string)[]
-) {
+export function getMinDate(date: PotentialDate, ...args: PotentialDate[]) {
   let t = new Date(date);
   Array.prototype.slice.call(args, 1).forEach((d) => {
     // @ts-expect-error: Date is not Number
@@ -446,10 +445,7 @@ export function getMinDate(
   return t;
 }
 
-export function subtractFromDate(
-  date: Date | number | string,
-  mod: DateOptions,
-) {
+export function subtractFromDate(date: PotentialDate, mod: DateOptions) {
   return getChange(date, mod, -1);
 }
 
@@ -488,11 +484,7 @@ function daysInMonth(date: Date) {
   return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 }
 
-function getChange(
-  date: Date | number | string,
-  rawMod: DateOptions,
-  sign: number,
-) {
+function getChange(date: PotentialDate, rawMod: DateOptions, sign: number) {
   const d = new Date(date),
     mod = normalizeMod(rawMod),
     t =
@@ -567,7 +559,7 @@ function normalizeMod(mod: DateOptions) {
   return acc;
 }
 
-function startOfDate(date: Date | number | string, unit: DateUnitOptions) {
+function startOfDate(date: PotentialDate, unit: DateUnitOptions) {
   const prefix = 'set';
   const t = new Date(date);
 
