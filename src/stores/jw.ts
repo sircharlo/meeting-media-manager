@@ -90,6 +90,7 @@ interface Store {
   lookupPeriod: Partial<Record<string, DateInfo[]>>;
   memorials: Partial<Record<number, `${number}/${number}/${number}`>>;
   urlVariables: UrlVariables;
+  yeartextFontUrls: Partial<Record<FontName, string>>;
   yeartexts: Partial<Record<number, Partial<Record<JwLangCode, string>>>>;
 }
 
@@ -678,17 +679,19 @@ export const useJwStore = defineStore('jw-store', {
             let match;
             while ((match = fontFaceRegex.exec(cssText)) !== null) {
               const cssName = match[1];
+              if (!cssName) continue;
+
               const fontName = wtFontCssNames[cssName];
               if (!fontName) continue;
 
               // Extract woff2 URL, falling back to woff
               const block = match[0];
-              const woff2Match = block.match(
+              const woff2Match = new RegExp(
                 /url\(["']?(https?:\/\/[^"')]+\.woff2)["']?\)/,
-              );
-              const woffMatch = block.match(
+              ).exec(block);
+              const woffMatch = new RegExp(
                 /url\(["']?(https?:\/\/[^"')]+\.woff)["']?\)/,
-              );
+              ).exec(block);
               const url = woff2Match?.[1] || woffMatch?.[1];
               if (url) {
                 this.yeartextFontUrls[fontName] = url;
@@ -727,13 +730,10 @@ export const useJwStore = defineStore('jw-store', {
       };
 
       const jsdelivr = (font: string, file: string) =>
-        `https://cdn.jsdelivr.net/fontsource/fonts/${font}/${file}`;
+        `https://cdn.jsdelivr.net/fontsource/fonts/${font}@latest/${file}`;
 
       return {
-        AbyssinicaSIL: jsdelivr(
-          'abyssinica-sil',
-          '400-normal/latin-400-normal.woff2',
-        ),
+        AbyssinicaSIL: jsdelivr('abyssinica-sil', 'latin-400-normal.woff2'),
         'JW-Icons':
           state.jwIconsUrl ||
           getFontUrl('base', '/assets/fonts/jw-icons-external-d876da3.woff'),
@@ -764,7 +764,7 @@ export const useJwStore = defineStore('jw-store', {
         ),
         NotoSansSC: jsdelivr(
           'noto-sans-sc',
-          '400-normal/chinese-simplified-400-normal.woff2',
+          'chinese-simplified-400-normal.woff',
         ),
         NotoSansTamil: jsdelivr(
           'noto-sans-tamil:vf',
@@ -772,7 +772,7 @@ export const useJwStore = defineStore('jw-store', {
         ),
         NotoSansTC: jsdelivr(
           'noto-sans-tc',
-          '400-normal/chinese-traditional-400-normal.woff2',
+          'chinese-traditional-400-normal.woff',
         ),
         NotoSansTelugu: jsdelivr(
           'noto-sans-telugu:vf',
