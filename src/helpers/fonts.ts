@@ -266,7 +266,6 @@ const buildJwIconsMap = async (fontPath: string) => {
         }
       }
       jwIconsGlyphMap = map;
-      console.log('jwIconsGlyphMap', jwIconsGlyphMap);
     } catch (error) {
       errorCatcher(error, {
         contexts: { fn: { fontPath, name: 'buildJwIconsMap' } },

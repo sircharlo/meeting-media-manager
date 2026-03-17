@@ -21,6 +21,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🐞 Bug Fixes
 
+- 🐞 **Icons Font**: Fixed an issue to ensure icons are properly displayed.
 - 🐞 **Section Repeat**: Fixed an issue to ensure sections are properly repeated when they only contain one item.
 - 🐞 **Error Handling**: Properly stringified Event errors and preserved caught errors in `getLocalFontPath`.
 - 🐞 **Cache Checking**: Fixed promise cache verification using the `in` operator instead of boolean coercion.
