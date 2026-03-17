@@ -118,7 +118,7 @@ Määra endale sobivad klaviatuuri otseteed. Pane tähele, et vaikimisi otseteed
 
 **Märge (\*)**: Globaalne kiirklahv – saadaval ka rakenduse fookuseta
 
-## Koostöö Zoomiga {#user-guide-zoom-integration}
+## Taustamuusika {#user-guide-background-music}
 
 ### Taustamuusika seadistamine {#background-music-setup}
 

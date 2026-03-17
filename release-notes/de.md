@@ -4,6 +4,14 @@
 
 Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in unserer CHANGELOG.md Datei auf GitHub.
 
+## v26.3.0
+
+### ✨ Neue Funktionen
+
+- ✨ **Memorial Media**: Automatische Erinnerungsmedien sind jetzt außer Beta! Die App wird automatisch das Memorial Welcome Video und das Bild herunterladen, das während der Memorial angezeigt wird, wenn es in der konfigurierten Sprache verfügbar ist.
+- ✨ **Wiedergabegeschwindigkeit**: Wiedergabegeschwindigkeit mit visueller Anzeige hinzugefügt und manuell zurückgesetzt. Diese Funktion ist nur sichtbar, wenn sie in den erweiterten Einstellungen aktiviert ist.
+- ✨ **Pinyin Songs**: Schalter für Pinyin Songsubstitution für Treffen auf Chinesisch hinzugefügt.
+
 ## v26.2.0
 
 ### ✨ Neue Funktionen
@@ -83,7 +91,7 @@ Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in uns
 - ✨ **Medienfenster immer im Vordergrund & Vollbildverhalten**: Verhalten "Immer im Vordergrund" für das Medienfenster behoben und verbessert, passt sich dynamisch basierend auf dem Vollbildstatus an.
 - ✨ **Einstellung für Datumsanzeigeformat**: Benutzereinstellung zur Konfiguration eines Datumsanzeigeformats hinzugefügt.
 - ✨ **Medien-Überblendung**: Überblendungsübergänge für die Medienanzeige implementiert, anstelle der abrupten Schwarzblende, die zuvor vorhanden war.
-- ✨ **Musik-Auto-Stopp**: Verhalten des automatischen Musik-Stopps optimiert, damit es sich gleich verhält, egal ob die Musik automatisch gestartet wurde oder nicht.
+- ✨ **Musik-Auto-Stopp**: Verhalten des automatischen Musik-Stopps optimiert, damit es sich gleich verhält, egal ob die Musik automatisch gestartet wurde oder nicht
 - ✨ **macOS-Klick-Durchgriff auf inaktive Fenster**: Mausklick-Durchgriff auf das Hauptfenster für macOS aktiviert, was die Steuerung der App erleichtern sollte, auch wenn sie nicht fokussiert ist.
 
 ## v25.9.0
@@ -109,12 +117,11 @@ Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in uns
 - ✨ **Abschnitts-Wiederholungsmodus**: Kontinuierliche Wiedergabe innerhalb bestimmter Abschnitte für nahtlose Medienschleifen aktivieren.
 - ✨ **Zoom-Integration**: Automatische Koordinierung des Starts/Stopps der Bildschirmfreigabe mit der Medienwiedergabe.
 
-### 🛠️ Verbesserungen und Anpassungen
+## v25.7.0
 
-- 🛠️ **Verbesserte Abschnittsüberschriften**: Neues Drei-Punkte-Menüsystem mit Farbwähler, Nach-oben/unten-Steuerelementen, Wiederholungsoptionen und Löschfunktion.
-- ✨ **Inline-Titelbearbeitung**: Medientitel direkt in der Oberfläche bearbeiten, ohne separate Dialoge zu öffnen.
-- 🛠️ **Verbesserte Navigation**: Bessere Tastenkürzel mit Scroll-to-Selected-Funktionalität und verbesserter Mediennavigation.
-- 🛠️ **Visuelle Verbesserungen**: Animationsunterstützung während Sortiervorgängen und verbessertes visuelles Feedback bei Drag-and-Drop.
+### ✨ Neue Funktionen
+
+- Keine neuen Features für diese Version!
 
 ## 25.6.0
 
@@ -123,47 +130,12 @@ Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in uns
 - ✨ **Einstellung für getaktete Verbindung**: Neue Einstellung hinzugefügt, um die Bandbreitennutzung bei getakteten Verbindungen zu reduzieren.
 - ✨ **Verbesserte Handhabung von gestreamten Medien**: Bessere Unterstützung für gestreamte Medien, Reduzierung von latenzbedingten Problemen.
 
-### 🛠️ Verbesserungen und Anpassungen
-
-- 🛠️ **Bessere MIME-Typ-Handhabung**: Verbesserte Unterstützung für MIME-Typen für bessere Medienkompatibilität.
-- 🛠️ **Verbesserte Navigationsleiste**: Verbesserte Handhabung des Mini-Status und Tooltip-Anzeige für eine bessere Benutzernavigation hinzugefügt.
-- 🛠️ **Linux-Kompatibilität**: Erzwungene GTK 3-Nutzung unter Linux, um UI- und Startprobleme zu vermeiden.
-
 ## 25.5.0
 
 ### ✨ Neue Funktionen
 
 - 🖼️ **OBS-Verzögerungsoption für Bilder**: OBS Studio-Einstellung hinzufügen, um Szenenwechsel bei der Anzeige von Bildern zu verzögern und Übergänge zu verbessern.
 - 🔊 **Unterstützung für `.m4a`-Audioformat**: Kompatibilität für `.m4a`-Audiodateien hinzugefügt, um unterstützte Medientypen zu erweitern.
-
-### 🛠️ Verbesserungen und Anpassungen
-
-- 🔍 **Zoom mit `Strg` + `Scroll` wiederherstellen**: Sofortiges Zoomen mit der Geste Steuerung + Scrollen für einfachere Navigation wieder aktiviert.
-- 👤 **Ungenutzte KA-Medien ausblenden**: Ungenutzte Medien für den Besuch des Kreisaufsehers ausblenden statt überspringen, um eine sauberere Präsentation zu erhalten.
-- 🎵 **Indikator für doppelte Lieder verbessern**: Visuellen Hinweis für doppelte Lieder verbessern, um sie leichter identifizierbar zu machen.
-
-## 25.4.3
-
-### 🛠️ Verbesserungen und Anpassungen
-
-- ➕ **Medien von v25.4.x bereinigen**: Automatische Bereinigung verwaister oder falsch platzierter Medien von v25.4.1 bis v25.4.2, um sicherzustellen, dass keine Medien fehlen oder an der falschen Stelle in der Medienliste stehen.
-
-## 25.4.2
-
-### 🛠️ Verbesserungen und Anpassungen
-
-- ➕ **Doppelte Medien verhindern**: Hinzufügen einiger Medienelemente mehrmals zur Medienliste vermeiden.
-
-## 25.4.1
-
-### 🛠️ Verbesserungen und Anpassungen
-
-- 🎬 **Zuweisung benutzerdefinierter Start-/Endzeiten korrigieren**: Verhindern, dass benutzerdefinierte Start- und Endzeiten fälschlicherweise auf das falsche Video angewendet werden.
-- 📝 **Nicht übereinstimmende Untertitel zulassen**: Verwendung von Untertiteln ermöglichen, auch wenn sie nicht perfekt zur Mediendatei passen.
-- 🪟 **Abgerundete Ecken unter Windows deaktivieren**: Abgerundete Ecken für das Medienfenster unter Windows entfernen.
-- 🖼 **Nicht referenzierte Bilder in Medienliste aufnehmen**: Sicherstellen, dass alle nicht referenzierten Bilder der Vollständigkeit halber zur Medienliste hinzugefügt werden.
-- ➕ **Doppelte Medienabschnitte verhindern**: Erstellen mehrerer Medienabschnitte für dasselbe Medienelement vermeiden.
-- 📥 **Playlist-Reihenfolge beim Import beibehalten**: Die ursprüngliche Reihenfolge von JWL-Playlists während des Importvorgangs beibehalten.
 
 ## 25.4.0
 
@@ -172,23 +144,11 @@ Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in uns
 - 🇵🇭 **Neue Sprache: Tagalog**: Unterstützung für Tagalog hinzugefügt, um die Mehrsprachigkeit der App zu erweitern.
 - 🎞️ **Unterstützung des `.m4v` Videoformats**: Unterstützt nun die Wiedergabe von `.m4v` Dateien, um die Medienkompatibilität zu verbessern.
 
-### 🛠️ Verbesserungen und Anpassungen
-
-- 🎬 **Mehrere Start/End-Zeiten für Einzelvideo**: Lasse ein einzelnes Video mehrfach in der Medienliste mit verschiedenen benutzerdefinierten Start-/Endzeiten erscheinen.
-- 📤 **Gruppierte Medien in den Auto-Export einbeziehen**: Gruppierte Medienelemente automatisch zusammen mit anderen exportieren.
-- 📡 **Korrektur beim Abruf von `.m4v` mittels JW API**: Sichergestellt, dass `.m4v` Dateien korrekt aus der JW API geholt werden.
-
 ## 25.3.1
 
 ### ✨ Neue Funktionen
 
 - 🌏 **Neue Sprache: Koreanisch**: Unterstützung für die koreanische Sprache hinzugefügt, um die Zugänglichkeit für mehr Benutzer zu erweitern.
-
-### 🛠️ Verbesserungen und Anpassungen
-
-- ⚡ **Leistungssteigerung und CPU-Auslastung**: Optimierte Performance um die CPU-Auslastung zu reduzieren und die Effizienz zu steigern.
-- 🔄 **Synchronisation- & Absturzprobleme behoben**: Es wurden verschiedene Synchronisation- und Stabilitätsprobleme behoben, um die Zuverlässigkeit zu verbessern.
-- 📜 **Versionshinweise für bestehende Versammlungen anzeigen**: Es wurde sichergestellt, dass Versionshinweise auch für bereits bestehende Versammlungen angezeigt werden.
 
 ## 25.3.0
 
@@ -199,10 +159,52 @@ Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in uns
 - 📅 **Automatisches Gedächtnismahl-Datum & Hintergrund**: Das Gedächtnismahl-Datum automatisch erkennen und festlegen sowie das Gedächtnismahl-Hintergrundbild vorbereiten.
 - 📜 **Versionshinweise in der App anzeigen**: Versionshinweise direkt in der Anwendung anzeigen, damit Benutzer Änderungen nach einem Update leicht überprüfen können.
 
-### 🛠️ Verbesserungen und Anpassungen
+## 25.2.1
 
-- ⚡ **Intelligentes Cache-Löschen optimieren**: Den Mechanismus zum intelligenten Löschen des Caches für bessere Leistung und Effizienz verbessern.
-- 📂 **Korrekte Platzierung von Kreisaufseher-Medien**: Sicherstellen, dass Kreisaufseher-Medien im richtigen Abschnitt platziert werden.
-- 📅 **Reguläre Zusammenkunftsmedien für Gedächtnismahl ausschließen**: Abrufen von Standard-Zusammenkunftsmedien für das Gedächtnismahl verhindern, um Fehler zu vermeiden.
-- 📅 **Reguläre Zusammenkunftsabschnitte beim Gedächtnismahl ausblenden**: Unnötige Zusammenkunftsabschnitte während des Gedächtnismahls für ein saubereres Layout entfernen.
-- 📖 **Downloads von Gebärdensprach-Bibelvideos korrigieren**: Gebärdensprach-Bibelkapitelvideos korrekt aus JWL-Playlists herunterladen.
+### ✨ Neue Funktionen
+
+- 🔄 **Erlaube OBS Reconnection Versuchs**: Führen Sie die Möglichkeit ein, OBS bei Bedarf manuell zu zwingen.
+- 🗑️ **Auto Cleanup Old Export Date Folders**: Entfernen Sie veraltete Exportdatumsordner automatisch, um den Speicher zu verwalten.
+
+## 25.2.0
+
+### ✨ Neue Funktionen
+
+- 🌍 **Benutzen Sie System Locale by Default**: Automatisch erkennen und nutzen Sie die Gebietsschema des Systems für eine personalisiertere Erfahrung.
+- 🏷️ **Tag Support for Exported Media**: Füge Metadaten-Tags zu exportierten Mediendateien für eine bessere Organisation hinzu.
+- 🔄 **Automatische Beta to Stable Downgrade**: Erlaube automatische Downgrades von Beta-Versionen zu stabilen Releases, falls nötig.
+- 🌐 **Neueste MEPS-Sprachindizes extrahieren**: Holen Sie die aktuellsten MEPS-Sprachindizes direkt von der offiziellen Website, um die aktuelle Sprachunterstützung zu gewährleisten.
+
+## 25.1.0
+
+### ✨ Neue Funktionen
+
+- 📅 **Vorherige Daten öffnen**: Erlaube das Öffnen früherer Termine der aktuellen Woche, was nützlich ist, wenn der Tagungstag später in der Woche verschoben wird.
+- 🛑 **Error Banner for OBS Studio**: Fügen Sie ein Fehlerbanner hinzu, wenn OBS Studio an einem Meetingtag nicht verbunden ist.
+- 📚 **Group Media by Publication**: Group Media aus der gleichen Publikation für einen saubereren und besser organisierten Medienüberblick.
+- 🎵 **Duplicate Song Warning**: Zeigt eine Warnung an, wenn Lieder mehr als einmal in der Medienliste für Wochenendmeetings aufgelistet werden.
+- 🔄 **Future Schedule Planning**: Aktiviere die Planung für zukünftige Termine , was nützlich ist für jährliche Änderungen des Zeitplans oder für den Besuch der Rennstrecke in einer benachbarten Gemeinde.
+
+## 24.11.0
+
+### ✨ Neue Funktionen
+
+- **feat**: Das Vorzeigen der Website wird jetzt auf macOS :rocket unterstützt:
+- **feat**: Eingeführte Tastaturkürzel zum Beenden, Pausieren und Fortsetzen der Medienwiedergabe 🚀
+- **feat**: Unterstützung für das Setzen der Web-Adresse, von der aus Medien heruntergeladen werden sollen 🚀
+- **feat**: OBS Studio Instant-Szenenauswahl und überarbeitete Szenenauswahl Funktionen in den Einstellungen hinzugefügt
+- **feat**: Erweiterte Dokumentations-Website, um mehr Sprachen zu unterstützen
+
+## 24.10.10
+
+### ✨ Neue Funktionen
+
+- **neu**: Tastaturkürzel zum nächsten/vorherigen Medienelement hinzugefügt
+- **neu**: Ein Rechtsklickmenü zu Medienelementen hinzugefügt, um Medienelemente auszublenden und umzubenennen
+- **new**: Trimmed Video-Zeiten werden jetzt in importierten JWL-Playlists respektiert
+
+## 24.10.9
+
+### ✨ Neue Funktionen
+
+- **feat**: Option hinzugefügt, um alle zusätzlichen Mediendateien für den aktuell ausgewählten Tag zu löschen
