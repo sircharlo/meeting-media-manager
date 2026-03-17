@@ -8,7 +8,7 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 
 ### ✨ Mitä uutta
 
-- ✨ **Memorial Media**: Automaattinen muistimedian haku on nyt pois betasta! Sovellus lataa Memorialin aikana näytettävän Memorial Welcome Video ja -kuvan automaattisesti, kun se on käytettävissä määritetyllä kielellä.
+- ✨ **Muistomedia**: Muistomedian automaattinen haku ei ole enää betavaiheessa! Sovellus lataa Memorialin aikana näytettävän Memorial Welcome Video ja -kuvan automaattisesti, kun se on käytettävissä määritetyllä kielellä.
 - ✨ **Toiston nopeus**: Lisätty toiston nopeuden säätö visuaalisella indikaattorilla ja palautus manuaalisesti. Tämä ominaisuus on näkyvissä vain, jos se on käytössä lisäasetuksissa.
 - ✨ **Pinyin Songs**: Lisätty toggle pinyin Song substitution for meetings held Chinese.
 
