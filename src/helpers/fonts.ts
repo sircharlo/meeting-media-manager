@@ -12,7 +12,7 @@ import { getFontsPath } from 'src/utils/fs';
 import { useJwStore } from 'stores/jw';
 
 const { fs, path } = globalThis.electronApi;
-const { ensureDir, exists, readFile, stat, writeFile } = fs;
+const { ensureDir, exists, readFile, writeFile } = fs;
 const { join } = path;
 
 let jwIconsGlyphMapPromise: null | Promise<void> = null;
@@ -242,6 +242,27 @@ export const loadYeartextFont = async (
 
 const fontFacePromises: Partial<Record<FontName, Promise<boolean>>> = {};
 const localFontPathPromises: Partial<Record<FontName, Promise<string>>> = {};
+const legacyFontFileNames: Partial<Record<FontName, string[]>> = {
+  'jw-icons-all': ['JW-Icons'],
+};
+
+const getFontPathCandidates = (fontsDir: string, fontName: FontName) => {
+  const fontNames = [fontName, ...(legacyFontFileNames[fontName] || [])];
+  return fontNames.map((name) => join(fontsDir, `${name}.woff2`));
+};
+
+const getExistingLocalFontPath = async (
+  fontsDir: string,
+  fontName: FontName,
+) => {
+  for (const fontPath of getFontPathCandidates(fontsDir, fontName)) {
+    if (await exists(fontPath)) {
+      return fontPath;
+    }
+  }
+
+  return null;
+};
 
 const buildJwIconsMap = async (fontPath: string) => {
   if (jwIconsGlyphMap) return;
@@ -350,51 +371,21 @@ const withTimeout = async <T>(
   }
 };
 
-const needsDownload = async (
-  fontPath: string,
-  fontName: FontName,
-): Promise<boolean> => {
-  if (!(await exists(fontPath))) return true;
-
-  const store = useJwStore();
-  const url = store.fontUrls[fontName];
-
-  try {
-    const head = await withTimeout(5000, (signal) =>
-      fetchRaw(url, { method: 'HEAD', signal }, true),
-    );
-
-    if (!head.ok) {
-      if (fontName === 'jw-icons-all') {
-        await store.updateJwIconsUrl();
-        return needsDownload(fontPath, fontName);
-      }
-      return false;
-    }
-
-    const remoteSize = head.headers.get('content-length');
-    if (!remoteSize) return true;
-
-    const localSize = (await stat(fontPath)).size;
-    return Number.parseInt(remoteSize, 10) !== localSize;
-  } catch {
-    return false;
-  }
-};
-
 const downloadFont = async (fontPath: string, fontName: FontName) => {
   const store = useJwStore();
+  const originalUrl = store.fontUrls[fontName];
 
-  const fetchFont = async () =>
-    withTimeout(30000, (signal) =>
-      fetchRaw(store.fontUrls[fontName], { method: 'GET', signal }),
-    );
+  const fetchFont = async (url: string) =>
+    withTimeout(30000, (signal) => fetchRaw(url, { method: 'GET', signal }));
 
-  let response = await fetchFont();
+  let response = await fetchFont(originalUrl);
 
   if (!response.ok && fontName === 'jw-icons-all') {
     await store.updateJwIconsUrl();
-    response = await fetchFont();
+    const fallbackUrl = store.fontUrls[fontName];
+    if (fallbackUrl && fallbackUrl !== originalUrl) {
+      response = await fetchFont(fallbackUrl);
+    }
   }
 
   if (!response.ok) {
@@ -414,12 +405,15 @@ export const getLocalFontPath = async (fontName: FontName) => {
     const fontsDir = await getFontsPath();
     const fontFileName = `${fontName}.woff2`;
     const fontPath = join(fontsDir, fontFileName);
+    const existingFontPath = await getExistingLocalFontPath(fontsDir, fontName);
+
+    if (existingFontPath) {
+      return existingFontPath;
+    }
 
     try {
-      if (await needsDownload(fontPath, fontName)) {
-        await ensureDir(fontsDir);
-        await downloadFont(fontPath, fontName);
-      }
+      await ensureDir(fontsDir);
+      await downloadFont(fontPath, fontName);
     } catch (error) {
       errorCatcher(error, {
         contexts: {
@@ -434,12 +428,15 @@ export const getLocalFontPath = async (fontName: FontName) => {
         },
       });
 
-      if (!(await exists(fontPath))) {
+      const fallbackPath = await getExistingLocalFontPath(fontsDir, fontName);
+      if (!fallbackPath) {
         throw new Error(
           `Failed to download font ${fontName} and no local copy exists`,
           { cause: error },
         );
       }
+
+      return fallbackPath;
     }
 
     return fontPath;
