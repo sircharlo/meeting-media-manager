@@ -39,8 +39,11 @@ def extract_new_features():
         
         # Extract "New Features" section
         # Look for ### ✨ New Features and capture everything until the next ### or ##
-        feature_match = re.search(r'(### ✨ New Features.*?)(\n###|\n##|$)', version_content, re.DOTALL)
-        
+        feature_match = re.search(
+            r'(### ✨ New Features(?:\n(?!##).*)*)',
+            version_content
+        )
+
         if feature_match:
             features = feature_match.group(1).strip()
             output.append(f"\n{version_header}\n\n{features}\n")
