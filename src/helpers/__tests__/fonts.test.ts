@@ -91,11 +91,13 @@ describe('getLocalFontPath', () => {
       1,
       firstUrl,
       expect.objectContaining({ method: 'GET' }),
+      false,
     );
     expect(fetchRaw).toHaveBeenNthCalledWith(
       2,
       dynamicUrl,
       expect.objectContaining({ method: 'GET' }),
+      false,
     );
     expect(await pathExists(fontPath)).toBe(true);
     expect(await readFile(fontPath)).toEqual(Buffer.from(downloadedFont));
