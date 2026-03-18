@@ -33,27 +33,13 @@ describe('getLocalFontPath', () => {
     const legacyFontPath = join(fontsDir, 'JW-Icons.woff2');
     await writeFile(legacyFontPath, Buffer.from('cached-font'));
 
-    const store = useJwStore();
-    store.urlVariables.base = 'example.org';
-    store.updateJwIconsUrl = vi.fn();
-
     const { fetchRaw } = await import('src/utils/api');
-    vi.mocked(fetchRaw).mockResolvedValue(
-      new Response('missing', { status: 404, statusText: 'Not Found' }),
-    );
     const { getLocalFontPath } = await import('../fonts');
 
     await expect(getLocalFontPath('jw-icons-all')).resolves.toBe(
       legacyFontPath,
     );
-    await new Promise<void>((resolve) => {
-      setTimeout(resolve, 0);
-    });
-    expect(fetchRaw).toHaveBeenCalledWith(
-      store.fontUrls['jw-icons-all'],
-      expect.objectContaining({ method: 'HEAD' }),
-      true,
-    );
+    expect(fetchRaw).not.toHaveBeenCalled();
   });
 
   it('reuses a cached .woff file when no .woff2 cache entry exists', async () => {
@@ -66,19 +52,12 @@ describe('getLocalFontPath', () => {
     store.urlVariables.base = 'example.org';
 
     const { fetchRaw } = await import('src/utils/api');
-    vi.mocked(fetchRaw).mockResolvedValue(
-      new Response('', {
-        headers: {
-          'content-length': String(Buffer.from('cached-font').length),
-        },
-        status: 200,
-      }),
-    );
     const { getLocalFontPath } = await import('../fonts');
 
     await expect(getLocalFontPath('Wt-ClearText-Bold')).resolves.toBe(
       cachedFontPath,
     );
+    expect(fetchRaw).not.toHaveBeenCalled();
   });
 
   it('falls back to the dynamically discovered jw-icons URL when the hard-coded URL 404s', async () => {

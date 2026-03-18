@@ -12,7 +12,7 @@ import { getFontsPath } from 'src/utils/fs';
 import { useJwStore } from 'stores/jw';
 
 const { fs, path } = globalThis.electronApi;
-const { ensureDir, exists, readFile, stat, writeFile } = fs;
+const { ensureDir, exists, readFile, writeFile } = fs;
 const { extname, join } = path;
 
 let jwIconsGlyphMapPromise: null | Promise<void> = null;
@@ -242,7 +242,6 @@ export const loadYeartextFont = async (
 
 const fontFacePromises: Partial<Record<FontName, Promise<boolean>>> = {};
 const localFontPathPromises: Partial<Record<FontName, Promise<string>>> = {};
-const fontRefreshPromises: Partial<Record<FontName, Promise<void>>> = {};
 const legacyFontFileNames: Partial<Record<FontName, string[]>> = {
   'jw-icons-all': ['JW-Icons'],
 };
@@ -434,49 +433,6 @@ const downloadFont = async (fontsDir: string, fontName: FontName) => {
   return fontPath;
 };
 
-const needsDownload = async (fontPath: string, fontName: FontName) => {
-  try {
-    const localSize = (await stat(fontPath)).size;
-    const { response: head } = await resolveFontRequest(fontName, 'HEAD');
-
-    const remoteSize = head.headers.get('content-length');
-    if (!remoteSize) return false;
-
-    return Number.parseInt(remoteSize, 10) !== localSize;
-  } catch {
-    return false;
-  }
-};
-
-const queueFontRefresh = (
-  fontsDir: string,
-  fontPath: string,
-  fontName: FontName,
-) => {
-  if (fontRefreshPromises[fontName]) {
-    return fontRefreshPromises[fontName];
-  }
-
-  fontRefreshPromises[fontName] = (async () => {
-    if (!(await needsDownload(fontPath, fontName))) return;
-
-    const refreshedFontPath = await downloadFont(fontsDir, fontName);
-    localFontPathPromises[fontName] = Promise.resolve(refreshedFontPath);
-  })()
-    .catch((error) => {
-      errorCatcher(error, {
-        contexts: {
-          fn: { fontName, fontPath, fontsDir, name: 'queueFontRefresh' },
-        },
-      });
-    })
-    .finally(() => {
-      fontRefreshPromises[fontName] = undefined;
-    });
-
-  return fontRefreshPromises[fontName];
-};
-
 export const getLocalFontPath = async (fontName: FontName) => {
   if (localFontPathPromises[fontName]) return localFontPathPromises[fontName];
 
@@ -485,7 +441,6 @@ export const getLocalFontPath = async (fontName: FontName) => {
     const existingFontPath = await getExistingLocalFontPath(fontsDir, fontName);
 
     if (existingFontPath) {
-      void queueFontRefresh(fontsDir, existingFontPath, fontName);
       return existingFontPath;
     }
 
