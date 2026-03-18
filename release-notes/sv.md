@@ -8,9 +8,9 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 
 ### ✨ Nya funktioner
 
-- ✨ **Minnesmedia**: Automatisk hämtning av minnesmedier är nu slut på beta! Appen laddar automatiskt ner Memorial Welcome Video och bild som visas under Memorial, när den finns i det konfigurerade språket.
-- ✨ **Uppspelningshastighet**: Lade till uppspelningshastighetskontroll med visuell indikator och manuell återställning. Denna funktion är endast synlig om den är aktiverad i avancerade inställningar.
-- ✨ **Pinyin låtar**: Lade till en växling för pinyin låtsubstitution för möten som hålls på kinesiska.
+- ✨ **Media för minneshögtid**: Automatisk hämtning av media för minneshögtiden är nu inte längre i beta! Appen laddar automatiskt ner välkomstvideo och bild för minneshögtiden, när de finns tillgängliga på det konfigurerade språket.
+- ✨ **Uppspelningshastighet**: La till uppspelningshastighetskontroll med visuell indikator och manuell återställning. Denna funktion är endast synlig om den är aktiverad i avancerade inställningar.
+- ✨ **Pinyinsånger**: Lade till en växlingsknapp för att ersätta sånger med pinyin vid möten som hålls på kinesiska.
 
 ## v26.2.0
 
@@ -91,7 +91,7 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 - ✨ **Mediafönstret alltid överst och helskärmsvisning**: Förbättrad alltid överst-funktion för mediafönstret, justera dynamiskt beroende på fullskärmsläget.
 - ✨ **Inställningar för datumvisning**: Lagt till en användarinställning för att ställa in formatet för datumvisning.
 - ✨ **Mediatoning**: Infört tonade övergångar för media, istället för den mer abrupta tona-till-svart övergången som fanns innan.
-- ✨ **Musik auto-srop**: Optimerat bakgrundsmusikens auto-stop för att bete sig på samma sätt oavsett om musiken startades automatiskt eller inte
+- ✨ **Automatiskt stopp av musik**: Beteendet för automatisk stopp av bakgrundsmusik har förbättrats så att det fungerar likadant oavsett om musiken startades automatiskt eller inte
 - ✨ **macOS Click-through för inaktiva fönster**: Aktiverade musklick som går igenom till huvudfönstret i macOS, vilket bör göra det enklare att styra appen även när den inte är i fokus.
 
 ## v25.9.0
@@ -121,7 +121,7 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 
 ### ✨ Nya funktioner
 
-- Inga nya funktioner för denna utgåva!
+- Inga nya funktioner i den här versionen!
 
 ## 25.6.0
 
@@ -163,48 +163,48 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 
 ### ✨ Nya funktioner
 
-- :counterclockwise_arrow **Allow OBS Reconnection Attempts**: Introducera möjligheten att manuellt tvinga OBS att återansluta vid behov.
-- 🗑️ **Automatisk rensning Gamla Exportdatum**: Ta automatiskt bort föråldrade exportdatummappar för att hålla lagringen organiserad.
+- 🔄 Tillåt återanslutningsförsök för OBS: Gör det möjligt att manuellt tvinga OBS att återansluta vid behov.
+- 🗑 **Automatisk rensning av gamla exportdatum-mappar**: Tar automatiskt bort föråldrade mappar för exportdatum för att hålla lagringen organiserad.
 
 ## 25.2.0
 
 ### ✨ Nya funktioner
 
-- 🌍 **Använd systemspråk efter standard**: Identifiera automatiskt och använd systemets lokal för en mer personlig upplevelse.
-- 🏷️ **Tagga stöd för exporterade media**: Lägg till metadatatataggar för exporterade mediefiler för bättre organisation.
-- :counterclockwise_arrow **Automatisk Beta till stabil nedgradering**: Tillåt automatiska nedgraderingar från betaversioner till stabila utgåvor vid behov.
-- 🌐 **Extrahera Senaste MEPS Språkindex**: Hämta de senaste MEPS-språkindexen direkt från den officiella webbplatsen, vilket garanterar aktuell språksupport.
+- 🌍 **Använd systemets språk som standard**: Identifierar och använder automatiskt systemets språk för en mer personlig upplevelse.
+- 🏷 **Taggstöd för exporterade mediafiler**: Lägg till metadatataggar i exporterade mediafiler för bättre organisering.
+- 🔄 **Automatisk nedgradering från beta till stabil version**: Tillåter automatisk nedgradering från betaversioner till stabila versioner vid behov.
+- 🌐 **Extrahera senaste MEPS-språkindex**: Hämtar de senaste MEPS-språkindexen direkt från den officiella webbplatsen, vilket säkerställer uppdaterat språkstöd.
 
 ## 25.1.0
 
 ### ✨ Nya funktioner
 
-- :kalender: **Öppna Tidigare datum**: Tillåt att öppna tidigare datum för den aktuella veckan, vilket är användbart när mötesdagen flyttas senare i veckan.
-- 🛑 **Felbanner för OBS Studio**: Lägg till en felbanner när OBS Studio inte är ansluten på en mötesdag, så att användarna blir varnade.
-- 📚 **Group Media by Publication**: Gruppmedia från samma refererade publikation för en renare och mer organiserad medieöversikt.
-- 🎵 **Duplicate Song Warning**: Visa en varning om låtar listas mer än en gång i medielistan för weekendmöten.
-- :counterclockwise_arrow **Framtida Schemaläggning**: Aktivera planeringen av framtida ändringar i mötesschemat vilket är användbart för årliga schemaändringar eller för kretsövervakarens besök i en närliggande församling.
+- 📅 **Öppna tidigare datum**: Tillåter att tidigare datum i den aktuella veckan öppnas, vilket är användbart när mötesdagen flyttas till senare i veckan.
+- 🛑 **Felbanner för OBS Studio**: Lägger till en felbanner när OBS Studio inte är anslutet på en mötesdag, så att användaren uppmärksammas.
+- 📚 **Gruppera media efter publikation**: Grupperar media från samma refererade publikation för en renare och mer organiserad mediaöversikt.
+- 🎵 **Varning för dubblettsånger**: Visar en varning om sånger förekommer mer än en gång i medialistan för helgmöten.
+- 🔄 **Planering av framtida scheman**: Möjliggör planering av framtida ändringar i mötesschemat, vilket är användbart vid årliga schemaändringar eller inför kretsbesök i en närliggande församling.
 
 ## 24.11.0
 
 ### ✨ Nya funktioner
 
-- **funktion**: Presentera webbplatsen stöds nu på macOS 🚀
-- **funktion**: Introducerade kortkommandon för att stoppa, pausa och återuppta uppspelning av media 🚀
-- **feat**: Lade till stöd för att ställa in webbadressen från vilken media ska laddas ner 🚀
-- **funktion**: Lade till direktväljare av OBS Studio och omarbetad scenväljarfunktion i inställningarna
-- **feat**: Utökad dokumentationswebbplats för att stödja fler språk
+- **Ny funktion**: Presentation av webbplatsen stöds nu på macOS 🚀
+- **Ny funktion**: Införde kortkommandon för att stoppa, pausa och återuppta uppspelning av media 🚀
+- **Ny funktion**: Lade till stöd för att ange webbadressen som media ska hämtas från 🚀
+- **Ny funktion**: Lade till en direkt scenväljare för OBS Studio och gjorde om scenväljarfunktionen i inställningarna 🚀
+- **Ny funktion**: Utökade dokumentationswebbplatsen med stöd för fler språk 🚀
 
 ## 24.10.10
 
 ### ✨ Nya funktioner
 
-- **new**: Lade till kortkommandon för att navigera till nästa medieobjekt
-- **nytt**: Lade till en högerklicksmeny till medieobjekt för att dölja medieobjekt och byta namn på dem
-- **ny**: Trimmade videotider respekteras nu i importerade JWL-spellistor
+- **Ny funktion**: Lade till kortkommandon för att gå till nästa/föregående media
+- **Ny funktion**: Lade till en snabbmeny för media som gör det möjligt att dölja och byta namn på media
+- **Ny funktion**: Trimmade videotider respekteras nu i importerade JWL-spellistor
 
 ## 24.10.9
 
 ### ✨ Nya funktioner
 
-- **feat**: Lade till ett alternativ för att ta bort alla extra mediefiler för den valda dagen
+- **Ny funktion**: Lade till ett alternativ för att ta bort alla extra media för den valda dagen 🚀
