@@ -12,8 +12,8 @@ import { getFontsPath } from 'src/utils/fs';
 import { useJwStore } from 'stores/jw';
 
 const { fs, path } = globalThis.electronApi;
-const { ensureDir, exists, readFile, stat, writeFile } = fs;
-const { join } = path;
+const { ensureDir, exists, readFile, writeFile } = fs;
+const { extname, join } = path;
 
 let jwIconsGlyphMapPromise: null | Promise<void> = null;
 let jwIconsGlyphMap: null | Record<string, string> = null;
@@ -242,6 +242,44 @@ export const loadYeartextFont = async (
 
 const fontFacePromises: Partial<Record<FontName, Promise<boolean>>> = {};
 const localFontPathPromises: Partial<Record<FontName, Promise<string>>> = {};
+const legacyFontFileNames: Partial<Record<FontName, string[]>> = {
+  'jw-icons-all': ['JW-Icons'],
+};
+const fontExtensions = ['woff2', 'woff'] as const;
+
+const getFontExtensionFromUrl = (url = '') => {
+  if (!url) return 'woff2';
+  const extension = extname(new URL(url).pathname).replace('.', '');
+  return fontExtensions.includes(extension as (typeof fontExtensions)[number])
+    ? (extension as (typeof fontExtensions)[number])
+    : 'woff2';
+};
+
+const getFontPath = (
+  fontsDir: string,
+  fontName: string,
+  extension: (typeof fontExtensions)[number],
+) => join(fontsDir, `${fontName}.${extension}`);
+
+const getFontPathCandidates = (fontsDir: string, fontName: FontName) => {
+  const fontNames = [fontName, ...(legacyFontFileNames[fontName] || [])];
+  return fontNames.flatMap((name) =>
+    fontExtensions.map((extension) => getFontPath(fontsDir, name, extension)),
+  );
+};
+
+const getExistingLocalFontPath = async (
+  fontsDir: string,
+  fontName: FontName,
+) => {
+  for (const fontPath of getFontPathCandidates(fontsDir, fontName)) {
+    if (await exists(fontPath)) {
+      return fontPath;
+    }
+  }
+
+  return null;
+};
 
 const buildJwIconsMap = async (fontPath: string) => {
   if (jwIconsGlyphMap) return;
@@ -350,51 +388,28 @@ const withTimeout = async <T>(
   }
 };
 
-const needsDownload = async (
-  fontPath: string,
+const resolveFontRequest = async (
   fontName: FontName,
-): Promise<boolean> => {
-  if (!(await exists(fontPath))) return true;
-
+  method: 'GET' | 'HEAD',
+) => {
   const store = useJwStore();
-  const url = store.fontUrls[fontName];
+  const originalUrl = store.fontUrls[fontName];
 
-  try {
-    const head = await withTimeout(5000, (signal) =>
-      fetchRaw(url, { method: 'HEAD', signal }, true),
+  const fetchFont = async (url: string) =>
+    withTimeout(method === 'HEAD' ? 5000 : 30000, (signal) =>
+      fetchRaw(url, { method, signal }, method === 'HEAD'),
     );
 
-    if (!head.ok) {
-      if (fontName === 'jw-icons-all') {
-        await store.updateJwIconsUrl();
-        return needsDownload(fontPath, fontName);
-      }
-      return false;
-    }
-
-    const remoteSize = head.headers.get('content-length');
-    if (!remoteSize) return true;
-
-    const localSize = (await stat(fontPath)).size;
-    return Number.parseInt(remoteSize, 10) !== localSize;
-  } catch {
-    return false;
-  }
-};
-
-const downloadFont = async (fontPath: string, fontName: FontName) => {
-  const store = useJwStore();
-
-  const fetchFont = async () =>
-    withTimeout(30000, (signal) =>
-      fetchRaw(store.fontUrls[fontName], { method: 'GET', signal }),
-    );
-
-  let response = await fetchFont();
+  let resolvedUrl = originalUrl;
+  let response = await fetchFont(resolvedUrl);
 
   if (!response.ok && fontName === 'jw-icons-all') {
     await store.updateJwIconsUrl();
-    response = await fetchFont();
+    const fallbackUrl = store.fontUrls[fontName];
+    if (fallbackUrl && fallbackUrl !== originalUrl) {
+      resolvedUrl = fallbackUrl;
+      response = await fetchFont(resolvedUrl);
+    }
   }
 
   if (!response.ok) {
@@ -403,8 +418,19 @@ const downloadFont = async (fontPath: string, fontName: FontName) => {
     );
   }
 
+  return { resolvedUrl, response };
+};
+
+const downloadFont = async (fontsDir: string, fontName: FontName) => {
+  const { resolvedUrl, response } = await resolveFontRequest(fontName, 'GET');
   const buffer = Buffer.from(await (await response.blob()).arrayBuffer());
+  const fontPath = getFontPath(
+    fontsDir,
+    fontName,
+    getFontExtensionFromUrl(resolvedUrl),
+  );
   await writeFile(fontPath, buffer);
+  return fontPath;
 };
 
 export const getLocalFontPath = async (fontName: FontName) => {
@@ -412,21 +438,22 @@ export const getLocalFontPath = async (fontName: FontName) => {
 
   localFontPathPromises[fontName] = (async () => {
     const fontsDir = await getFontsPath();
-    const fontFileName = `${fontName}.woff2`;
-    const fontPath = join(fontsDir, fontFileName);
+    const existingFontPath = await getExistingLocalFontPath(fontsDir, fontName);
+
+    if (existingFontPath) {
+      return existingFontPath;
+    }
 
     try {
-      if (await needsDownload(fontPath, fontName)) {
-        await ensureDir(fontsDir);
-        await downloadFont(fontPath, fontName);
-      }
+      await ensureDir(fontsDir);
+      return await downloadFont(fontsDir, fontName);
     } catch (error) {
+      const fallbackPath = await getExistingLocalFontPath(fontsDir, fontName);
       errorCatcher(error, {
         contexts: {
           fn: {
-            fontFileName,
             fontName,
-            fontPath,
+            fontPath: fallbackPath,
             fontsDir,
             name: 'getLocalFontPath',
             url: useJwStore().fontUrls[fontName],
@@ -434,15 +461,15 @@ export const getLocalFontPath = async (fontName: FontName) => {
         },
       });
 
-      if (!(await exists(fontPath))) {
+      if (!fallbackPath) {
         throw new Error(
           `Failed to download font ${fontName} and no local copy exists`,
           { cause: error },
         );
       }
-    }
 
-    return fontPath;
+      return fallbackPath;
+    }
   })();
 
   return localFontPathPromises[fontName];
