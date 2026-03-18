@@ -33,13 +33,52 @@ describe('getLocalFontPath', () => {
     const legacyFontPath = join(fontsDir, 'JW-Icons.woff2');
     await writeFile(legacyFontPath, Buffer.from('cached-font'));
 
-    const { getLocalFontPath } = await import('../fonts');
+    const store = useJwStore();
+    store.urlVariables.base = 'example.org';
+    store.updateJwIconsUrl = vi.fn();
+
     const { fetchRaw } = await import('src/utils/api');
+    vi.mocked(fetchRaw).mockResolvedValue(
+      new Response('missing', { status: 404, statusText: 'Not Found' }),
+    );
+    const { getLocalFontPath } = await import('../fonts');
 
     await expect(getLocalFontPath('jw-icons-all')).resolves.toBe(
       legacyFontPath,
     );
-    expect(fetchRaw).not.toHaveBeenCalled();
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 0);
+    });
+    expect(fetchRaw).toHaveBeenCalledWith(
+      store.fontUrls['jw-icons-all'],
+      expect.objectContaining({ method: 'HEAD' }),
+      true,
+    );
+  });
+
+  it('reuses a cached .woff file when no .woff2 cache entry exists', async () => {
+    const fontsDir = join(appDataPath, 'Fonts');
+    await ensureDir(fontsDir);
+    const cachedFontPath = join(fontsDir, 'Wt-ClearText-Bold.woff');
+    await writeFile(cachedFontPath, Buffer.from('cached-font'));
+
+    const store = useJwStore();
+    store.urlVariables.base = 'example.org';
+
+    const { fetchRaw } = await import('src/utils/api');
+    vi.mocked(fetchRaw).mockResolvedValue(
+      new Response('', {
+        headers: {
+          'content-length': String(Buffer.from('cached-font').length),
+        },
+        status: 200,
+      }),
+    );
+    const { getLocalFontPath } = await import('../fonts');
+
+    await expect(getLocalFontPath('Wt-ClearText-Bold')).resolves.toBe(
+      cachedFontPath,
+    );
   });
 
   it('falls back to the dynamically discovered jw-icons URL when the hard-coded URL 404s', async () => {
@@ -67,7 +106,7 @@ describe('getLocalFontPath', () => {
     const { getLocalFontPath } = await import('../fonts');
     const fontPath = await getLocalFontPath('jw-icons-all');
 
-    expect(fontPath).toBe(join(fontsDir, 'jw-icons-all.woff2'));
+    expect(fontPath).toBe(join(fontsDir, 'jw-icons-all.woff'));
     expect(store.updateJwIconsUrl).toHaveBeenCalledTimes(1);
     expect(fetchRaw).toHaveBeenNthCalledWith(
       1,
