@@ -1,7 +1,6 @@
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin';
 import vue from '@vitejs/plugin-vue';
 import { fileURLToPath } from 'node:url';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
 import pkg from './package.json';
@@ -12,7 +11,7 @@ export default defineConfig({
     define: { global: 'window' },
     target: ['chrome140', 'node22.19.0'],
   },
-  plugins: [tsconfigPaths()],
+  plugins: [],
   resolve: {
     alias: {
       app: fileURLToPath(new URL('.', import.meta.url)),
@@ -29,6 +28,7 @@ export default defineConfig({
       'src-electron': fileURLToPath(new URL('./src-electron', import.meta.url)),
       stores: fileURLToPath(new URL('./src/stores', import.meta.url)),
     },
+    tsconfigPaths: true,
   },
   test: {
     env: {
