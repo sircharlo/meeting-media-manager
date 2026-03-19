@@ -8,9 +8,9 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- ✨ **Memorial Media**: Automatic Memorial media retrieval is now out of beta! The app will automatically download the Memorial Welcome Video and image to display during the Memorial, when available in the configured language.
-- ✨ **Playback Speed**: Added playback speed control with visual indicator, and manual reset. This feature is only visible if enabled in the advanced settings.
-- ✨ **Pinyin Songs**: Added a toggle for pinyin song substitution for meetings held in Chinese.
+- ✨ **Multimedijska vsebina za spominsko slovesnost**: Samodejno pridobivanje multimedijske vsebine za spominsko slovesnost je zdaj iz beta faze! Aplikacija bo samodejno prenesla uvodni videoposnetek in sliko spominske slovesnosti, ki se bosta predvajala med slovesnostjo, če bosta na voljo v izbranem jeziku.
+- ✨ **Hitrost predvajanja**: Dodana je bila možnost nastavitve hitrosti predvajanja z vizualnim indikatorjem in ročno ponastavitvijo. Ta funkcija je vidna le, če je omogočena v naprednih nastavitvah.
+- ✨ **Pesmi v pinjinu**: Dodana je bila možnost vklopa ali izklopa zamenjave pesmi v pinjinu za shode v kitajščini.
 
 ## v26.2.0
 
@@ -121,7 +121,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- No new features for this release!
+- Ta izdaja ne prinaša novih funkcij!
 
 ## 25.6.0
 
