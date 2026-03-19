@@ -1,21 +1,20 @@
 import { validAnnouncements } from 'app/test/vitest/mocks/github';
 import { jwLangs, jwYeartext } from 'app/test/vitest/mocks/jw';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
-import { http, HttpResponse } from 'msw';
-import { fetchRaw } from 'src/utils/api';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 installPinia();
-
-import { setupServer } from 'msw/node';
 
 import {
   clearFetchCache,
   fetchAnnouncements,
   fetchJwLanguages,
   fetchLatestVersion,
+  fetchMemorials,
+  fetchRaw,
   fetchYeartext,
 } from '../api';
+import * as dateUtils from '../date';
 
 describe('fetchJwLanguages', () => {
   it('should fetch the jw languages', async () => {
@@ -46,7 +45,6 @@ describe('fetchLatestVersion', () => {
   });
 });
 
-// fetchRaw caching tests
 describe('fetchRaw caching', () => {
   const handledUrl = 'https://www.jw.org/en/languages/';
 
@@ -83,41 +81,34 @@ describe('fetchRaw caching', () => {
   });
 
   it('should cache HEAD requests when cache is true', async () => {
-    const fetchSpy = vi.spyOn(globalThis, 'fetch');
-    try {
-      await fetchRaw(handledUrl, { method: 'HEAD' }, true);
-      await fetchRaw(handledUrl, { method: 'HEAD' }, true);
-      expect(fetchSpy).toHaveBeenCalledTimes(1);
-    } catch (e) {
-      console.error(e);
-    }
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(new Response(null, { status: 200 }));
+
+    await fetchRaw(handledUrl, { method: 'HEAD' }, true);
+    await fetchRaw(handledUrl, { method: 'HEAD' }, true);
+
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should not cache POST requests even if cache is true', async () => {
-    const fetchSpy = vi.spyOn(globalThis, 'fetch');
-    try {
-      await fetchRaw(handledUrl, { method: 'POST' }, true);
-      await fetchRaw(handledUrl, { method: 'POST' }, true);
-      expect(fetchSpy).toHaveBeenCalledTimes(2);
-    } catch (e) {
-      console.error(e);
-    }
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(new Response('{}', { status: 200 }));
+
+    await fetchRaw(handledUrl, { method: 'POST' }, true);
+    await fetchRaw(handledUrl, { method: 'POST' }, true);
+
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
   });
 
-  const server = setupServer(
-    http.get('https://example.com/fail', () => {
-      return new HttpResponse(null, { status: 500 });
-    }),
-  );
-
-  server.listen();
-
   it('should not cache failed requests (non-2xx)', async () => {
-    const url = 'https://example.com/fail';
-    const fetchSpy = vi.spyOn(globalThis, 'fetch');
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(new Response(null, { status: 500 }));
 
-    await fetchRaw(url, undefined, true);
-    await fetchRaw(url, undefined, true);
+    await fetchRaw('https://example.com/fail', undefined, true);
+    await fetchRaw('https://example.com/fail', undefined, true);
 
     expect(fetchSpy).toHaveBeenCalledTimes(2);
   });
@@ -129,5 +120,55 @@ describe('fetchRaw caching', () => {
     await fetchRaw(handledUrl, { headers: { 'X-Test': '2' } }, true);
 
     expect(fetchSpy).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('fetchMemorials', () => {
+  const memorialsUrl = `${process.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/memorials.json`;
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    clearFetchCache();
+  });
+
+  it('filters out past, malformed, and non-numeric memorial entries', async () => {
+    vi.spyOn(dateUtils, 'isInPast').mockImplementation(
+      (value) => value === '2024/03/24',
+    );
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          2024: '2024/03/24',
+          2025: '2025/04/12',
+          2026: '2026/APR/01',
+          2028: '',
+          nope: '2027/04/01',
+        }),
+        { status: 200 },
+      ),
+    );
+
+    const memorials = await fetchMemorials();
+
+    expect(globalThis.fetch).toHaveBeenCalledWith(memorialsUrl, undefined);
+    expect(memorials).toEqual({ 2025: '2025/04/12' });
+  });
+
+  it('returns null when the memorial API response is unavailable', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(null, { status: 503 }),
+    );
+
+    const memorials = await fetchMemorials();
+
+    expect(memorials).toBeNull();
+  });
+
+  it('returns null when the memorial fetch throws', async () => {
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('offline'));
+
+    const memorials = await fetchMemorials();
+
+    expect(memorials).toBeNull();
   });
 });

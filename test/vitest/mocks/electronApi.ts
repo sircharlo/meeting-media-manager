@@ -2,7 +2,11 @@
 
 import type { ElectronApi } from 'src/types';
 
-import robot from '@jitsi/robotjs';
+const robot = {
+  getMousePos: () => ({ x: 0, y: 0 }),
+  mouseClick: () => undefined,
+  moveMouse: () => undefined,
+};
 import fs, { ensureDir } from 'fs-extra';
 import {
   fileUrlToPath,

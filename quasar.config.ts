@@ -69,14 +69,6 @@ export default defineConfig((ctx) => {
         version,
       },
       extendViteConf(viteConf) {
-        viteConf.optimizeDeps = mergeConfig(viteConf.optimizeDeps ?? {}, {
-          esbuildOptions: {
-            define: {
-              global: 'window',
-            },
-          },
-        });
-
         if (ctx.prod && !ctx.debug && ENABLE_SOURCE_MAPS) {
           viteConf.build = mergeConfig(viteConf.build ?? {}, {
             sourcemap: true,
