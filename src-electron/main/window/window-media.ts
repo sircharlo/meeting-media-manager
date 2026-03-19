@@ -347,6 +347,17 @@ function validateAndAdjustTarget(
   return target;
 }
 
+export const __testables = {
+  calculateAutoTarget,
+  findAlternativeScreen,
+  getMediaWindowState,
+  getPreferredScreenFromPrefs,
+  getTargetWhenOnMainScreen,
+  isWindowEffectivelyFullscreen,
+  shouldMoveWindowedToFullscreen,
+  validateAndAdjustTarget,
+};
+
 // =============================================================================
 // MAIN FUNCTION
 // =============================================================================
@@ -665,9 +676,8 @@ const notifyMainWindowAboutScreenOrWindowChange = throttleWithTrailing(() => {
 }, 250);
 
 function loadMediaWindowPrefs(): null | WindowState {
-  let mediaWindowStateFile: string | undefined = undefined;
   try {
-    mediaWindowStateFile = join(
+    const mediaWindowStateFile = join(
       app.getPath('userData'),
       'media-window-state.json',
     );
