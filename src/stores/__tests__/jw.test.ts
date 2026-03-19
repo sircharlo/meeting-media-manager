@@ -195,7 +195,18 @@ describe('JW Store', () => {
       const dateUtils = await import('src/utils/date');
       vi.mocked(dateUtils.getDateDiff).mockReturnValue(6);
       vi.mocked(api.fetchJwLanguages).mockResolvedValue([
-        { isSignLanguage: false, langcode: 'E', name: 'English' },
+        {
+          altSpellings: [],
+          direction: 'ltr',
+          hasWebContent: true,
+          isCounted: true,
+          isSignLanguage: false,
+          langcode: 'E',
+          name: 'English',
+          script: 'Latn',
+          symbol: 'en',
+          vernacularName: 'English',
+        },
       ]);
 
       await store.updateJwLanguages(true);
