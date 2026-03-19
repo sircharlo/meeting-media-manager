@@ -332,13 +332,13 @@ if (gotTheLock) {
 }
 
 // Silence EPIPE errors on stdout/stderr (common on Linux when quitting)
-process.stdout.on('error', (err) => {
+process.stdout.on('error', (err: NodeJS.ErrnoException) => {
   if (err.code === 'EPIPE') return;
   captureElectronError(err, {
     contexts: { fn: { name: 'process.stdout.on(error)' } },
   });
 });
-process.stderr.on('error', (err) => {
+process.stderr.on('error', (err: NodeJS.ErrnoException) => {
   if (err.code === 'EPIPE') return;
   captureElectronError(err, {
     contexts: { fn: { name: 'process.stderr.on(error)' } },
