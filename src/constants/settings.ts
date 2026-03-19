@@ -453,6 +453,12 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'media-display',
     type: 'toggle',
   },
+  enablePlaybackSpeedControl: {
+    depends: 'enableMediaDisplayButton',
+    group: 'advanced',
+    subgroup: 'media-display',
+    type: 'toggle',
+  },
   hideMediaLogo: {
     depends: 'enableMediaDisplayButton',
     group: 'advanced',
@@ -543,10 +549,10 @@ export const settingsDefinitions: SettingsItems = {
   },
   enablePinyinSongs: {
     group: 'advanced',
+    hidden: true,
     type: 'toggle',
   },
   pinyinSongFolder: {
-    depends: 'enablePinyinSongs',
     group: 'advanced',
     subgroup: 'cache',
     type: 'path',
@@ -616,6 +622,7 @@ export const defaultSettings: SettingsValues = {
   enableMediaWindowFadeTransitions: true,
   enableMusicButton: true,
   enablePinyinSongs: false,
+  enablePlaybackSpeedControl: false,
   enableSubtitles: false,
   excludeFootnotes: false,
   excludeTh: true,
