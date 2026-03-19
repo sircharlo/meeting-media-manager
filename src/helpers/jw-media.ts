@@ -1579,7 +1579,8 @@ export const dynamicMediaMapper = async (
   lookupDate: Date,
   source: 'additional' | 'dynamic' | 'playlist' | 'watched',
 ): Promise<MediaItem[]> => {
-  const { currentSettings } = useCurrentStateStore();
+  const currentStateStore = useCurrentStateStore();
+  const { currentSettings } = currentStateStore;
 
   try {
     const calculatedSource = source === 'playlist' ? 'additional' : source;
@@ -1667,6 +1668,7 @@ export const dynamicMediaMapper = async (
           m.Track &&
           currentSettings?.lang === 'CHS' &&
           currentSettings?.enablePinyinSongs &&
+          currentStateStore.pinyinActive &&
           currentSettings?.pinyinSongFolder
         ) {
           const trackNum = String(m.Track).padStart(3, '0');
@@ -2873,11 +2875,27 @@ export const downloadAdditionalRemoteVideo = async (
     const currentStateStore = useCurrentStateStore();
     const currentSettings = currentStateStore.currentSettings;
 
+    const bestItem = findBestResolution(
+      mediaItemLinks,
+      currentSettings?.maxRes,
+    );
+
+    let bestItemUrl: string | undefined;
+
+    if (bestItem) {
+      if ('progressiveDownloadURL' in bestItem) {
+        bestItemUrl = bestItem.progressiveDownloadURL;
+      } else {
+        bestItemUrl = bestItem.file.url;
+      }
+    }
+
     // Pinyin song substitution: use local pinyin file instead of downloading
     if (
       song &&
       currentSettings?.lang === 'CHS' &&
       currentSettings?.enablePinyinSongs &&
+      currentStateStore.pinyinActive &&
       currentSettings?.pinyinSongFolder
     ) {
       const trackNum = String(song).padStart(3, '0');
@@ -2886,27 +2904,15 @@ export const downloadAdditionalRemoteVideo = async (
         `sjjm_s-Pi_CHS_${trackNum}_r720P.mp4`,
       );
       if (await pathExists(pinyinPath)) {
-        return addToAdditionMediaMapFromPath(
-          pinyinPath,
-          section,
-          undefined,
-          {
-            song: song.toString(),
-            title,
-          },
-        );
+        return addToAdditionMediaMapFromPath(pinyinPath, section, undefined, {
+          song: song.toString(),
+          title,
+          url: bestItemUrl,
+        });
       }
     }
 
-    const bestItem = findBestResolution(
-      mediaItemLinks,
-      currentSettings?.maxRes,
-    );
-    if (!bestItem) return undefined;
-    const bestItemUrl =
-      'progressiveDownloadURL' in bestItem
-        ? bestItem.progressiveDownloadURL
-        : bestItem.file.url;
+    if (!bestItem || !bestItemUrl) return undefined;
 
     const datedAdditionalMediaDir =
       await currentStateStore.getDatedAdditionalMediaDirectory();

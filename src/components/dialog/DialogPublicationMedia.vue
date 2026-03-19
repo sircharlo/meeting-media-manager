@@ -405,6 +405,16 @@
                       >
                         {{ video.title }}
                       </div>
+                      <div
+                        v-if="video.downloaded"
+                        class="absolute-top-right q-ma-xs bg-semi-black rounded-borders-sm"
+                      >
+                        <q-icon
+                          color="positive"
+                          name="mmm-cloud-done"
+                          size="24px"
+                        />
+                      </div>
                     </q-img>
                   </q-card-section>
                 </div>
@@ -504,7 +514,7 @@ const { urlVariables } = storeToRefs(jwStore);
 const currentState = useCurrentStateStore();
 const { currentLangObject, currentSettings } = storeToRefs(currentState);
 
-const { executeQuery, path, pathToFileURL } = globalThis.electronApi;
+const { executeQuery, fs, path, pathToFileURL } = globalThis.electronApi;
 
 const { t } = useI18n();
 const { dateLocale } = useLocale();
@@ -990,14 +1000,23 @@ async function handleMediaResult(
 
   mediaFiles = findBestResolutions(mediaFiles, currentSettings.value?.maxRes);
 
-  if (mediaFiles.length > 0) {
-    // Set media items and switch to media step
-    mediaItems.value = mediaFiles.map((mediaLink, index) => ({
-      ...mediaLink,
-      downloaded: false, // TODO: Check if already downloaded
-      title: mediaLink.title || resultTitle || `Media ${index + 1}`,
-    }));
-    step.value = 'media';
+  const datedDir = await currentState.getDatedAdditionalMediaDirectory();
+
+  mediaItems.value = await Promise.all(
+    mediaFiles.map(async (mediaLink, index) => {
+      const url = mediaLink.file.url;
+      const filename = path.basename(url);
+      const downloaded = await fs.pathExists(path.join(datedDir, filename));
+      return {
+        ...mediaLink,
+        downloaded,
+        title: mediaLink.title || resultTitle || `Media ${index + 1}`,
+      };
+    }),
+  );
+  step.value = 'media';
+
+  if (mediaItems.value.length) {
     return true;
   }
 

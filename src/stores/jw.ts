@@ -90,6 +90,7 @@ interface Store {
   lookupPeriod: Partial<Record<string, DateInfo[]>>;
   memorials: Partial<Record<number, `${number}/${number}/${number}`>>;
   urlVariables: UrlVariables;
+  yeartextFontUrls: Partial<Record<FontName, string>>;
   yeartexts: Partial<Record<number, Partial<Record<JwLangCode, string>>>>;
 }
 
@@ -228,14 +229,14 @@ function extractCssUrls(html: string, baseUrl: string): string[] {
 }
 
 /**
- * Finds the jw-icons-external font URL within CSS text
+ * Finds the jw-icons font URL within CSS text
  */
 function findIconUrlInCss(cssText: string, cssUrl: string): null | string {
   const fontFaceBlocks = cssText.match(/@font-face\s*\{[^}]*\}/gi);
   if (!fontFaceBlocks) return null;
 
   for (const block of fontFaceBlocks) {
-    if (block.includes('jw-icons-external')) {
+    if (block.includes('jw-icons')) {
       const fontMatch = new RegExp(
         /url\(["']?([^"']+\.(woff2?|ttf|otf)[^"']*)["']?\)/i,
       ).exec(block);
@@ -643,6 +644,73 @@ export const useJwStore = defineStore('jw-store', {
         errorCatcher(error);
       }
     },
+    async updateYeartextFontUrls() {
+      try {
+        const wolUrl = `https://wol.${this.urlVariables.base}/en/wol/h/r1/lp-e`;
+        const response = await fetchRaw(wolUrl, undefined, true);
+        if (!response.ok) return;
+
+        const html = await response.text();
+        const cssUrls = extractCssUrls(html, this.urlVariables.base);
+
+        // WT/JW/Manna font names to search for in CSS @font-face declarations
+        const wtFontCssNames: Record<string, FontName> = {
+          WTClearTextGeorgian: 'WTClearTextGeorgian',
+          WTClearTextJapanese: 'WTClearTextJapanese',
+          WTMannaSansKaren: 'WTMannaSansKaren',
+          WTMannaSansMongolian: 'WTMannaSansMongolian',
+          WTMannaSansMyammar: 'WTMannaSansMyanmar', // CSS typo in JW.org
+          WTMannaSansMyanmar: 'WTMannaSansMyanmar',
+          WTMannaSansTibetan: 'WTMannaSansTibetan',
+          WTSetthaSpecial: 'WTSetthaSpecial',
+          WTTextNew: 'WTTextNew',
+          WTXBZSpecial: 'WTXBZSpecial',
+        };
+
+        for (const cssUrl of cssUrls) {
+          try {
+            const cssResponse = await fetchRaw(cssUrl, undefined, true);
+            if (!cssResponse.ok) continue;
+            const cssText = await cssResponse.text();
+
+            // Parse @font-face blocks for WT fonts
+            const fontFaceRegex =
+              /@font-face\s*\{[^}]*font-family:\s*['"]?(\w+)['"]?[^}]*\}/g;
+            let match;
+            while ((match = fontFaceRegex.exec(cssText)) !== null) {
+              const cssName = match[1];
+              if (!cssName) continue;
+
+              const fontName = wtFontCssNames[cssName];
+              if (!fontName) continue;
+
+              // Extract woff2 URL, falling back to woff
+              const block = match[0];
+              const woff2Match = new RegExp(
+                /url\(["']?(https?:\/\/[^"')]+\.woff2)["']?\)/,
+              ).exec(block);
+              const woffMatch = new RegExp(
+                /url\(["']?(https?:\/\/[^"')]+\.woff)["']?\)/,
+              ).exec(block);
+              const url = woff2Match?.[1] || woffMatch?.[1];
+              if (url) {
+                this.yeartextFontUrls[fontName] = url;
+              }
+            }
+          } catch (e) {
+            errorCatcher(e, {
+              contexts: {
+                fn: { args: { cssUrl }, name: 'updateYeartextFontUrls' },
+              },
+            });
+          }
+        }
+      } catch (e) {
+        errorCatcher(e, {
+          contexts: { fn: { name: 'updateYeartextFontUrls - main' } },
+        });
+      }
+    },
   },
   getters: {
     fontUrls: (state): Record<FontName, string> => {
@@ -661,15 +729,93 @@ export const useJwStore = defineStore('jw-store', {
         }
       };
 
+      const jsdelivr = (font: string, file: string) =>
+        `https://cdn.jsdelivr.net/fontsource/fonts/${font}@latest/${file}`;
+
       return {
-        'JW-Icons':
+        AbyssinicaSIL: jsdelivr('abyssinica-sil', 'latin-400-normal.woff2'),
+        'jw-icons-all':
           state.jwIconsUrl ||
-          getFontUrl('base', '/assets/fonts/jw-icons-external-d876da3.woff'),
+          getFontUrl('base', '/assets/fonts/jw-icons-all-81d446b.woff'),
+        NotoNaskhArabic: jsdelivr(
+          'noto-naskh-arabic:vf',
+          'arabic-wght-normal.woff2',
+        ),
+        NotoNastaliqUrdu: jsdelivr(
+          'noto-nastaliq-urdu:vf',
+          'arabic-wght-normal.woff2',
+        ),
+        NotoSans: jsdelivr('noto-sans:vf', 'latin-wght-normal.woff2'),
+        NotoSansBengali: jsdelivr(
+          'noto-sans-bengali:vf',
+          'bengali-wght-normal.woff2',
+        ),
+        NotoSansGurmukhi: jsdelivr(
+          'noto-sans-gurmukhi:vf',
+          'gurmukhi-wght-normal.woff2',
+        ),
+        NotoSansMalayalam: jsdelivr(
+          'noto-sans-malayalam:vf',
+          'malayalam-wght-normal.woff2',
+        ),
+        NotoSansOriya: jsdelivr(
+          'noto-sans-oriya:vf',
+          'oriya-wght-normal.woff2',
+        ),
+        NotoSansSC: jsdelivr(
+          'noto-sans-sc',
+          'chinese-simplified-400-normal.woff',
+        ),
+        NotoSansTamil: jsdelivr(
+          'noto-sans-tamil:vf',
+          'tamil-wght-normal.woff2',
+        ),
+        NotoSansTC: jsdelivr(
+          'noto-sans-tc',
+          'chinese-traditional-400-normal.woff',
+        ),
+        NotoSansTelugu: jsdelivr(
+          'noto-sans-telugu:vf',
+          'telugu-wght-normal.woff2',
+        ),
+        NotoSerifArmenian: jsdelivr(
+          'noto-serif-armenian:vf',
+          'armenian-wght-normal.woff2',
+        ),
+        NotoSerifDevanagari: jsdelivr(
+          'noto-serif-devanagari:vf',
+          'devanagari-wght-normal.woff2',
+        ),
+        NotoSerifGujarati: jsdelivr(
+          'noto-serif-gujarati:vf',
+          'gujarati-wght-normal.woff2',
+        ),
+        NotoSerifHebrew: jsdelivr(
+          'noto-serif-hebrew:vf',
+          'hebrew-wght-normal.woff2',
+        ),
+        NotoSerifKannada: jsdelivr(
+          'noto-serif-kannada:vf',
+          'kannada-wght-normal.woff2',
+        ),
+        NotoSerifKhmer: jsdelivr(
+          'noto-serif-khmer:vf',
+          'khmer-wght-normal.woff2',
+        ),
+        NotoSerifSinhala: jsdelivr(
+          'noto-serif-sinhala:vf',
+          'sinhala-wght-normal.woff2',
+        ),
+        'Wt-BaeumMyungjo': getFontUrl(
+          'mediator',
+          '/fonts/wt-baeum-myungjo/1.000/Wt-BaeumMyungjo-Regular.woff',
+        ),
         'Wt-ClearText-Bold': getFontUrl(
           'mediator',
           '/fonts/wt-clear-text/1.029/Wt-ClearText-Bold.woff2',
         ),
-      };
+        ...state.yeartextFontUrls,
+      } as Record<FontName, string>;
     },
   },
   persist: {
@@ -710,6 +856,7 @@ export const useJwStore = defineStore('jw-store', {
         mediator: 'https://b.jw-cdn.org/apis/mediator',
         pubMedia: 'https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS',
       },
+      yeartextFontUrls: {} as Partial<Record<FontName, string>>,
       yeartexts: {},
     };
   },

@@ -87,6 +87,7 @@ export interface MediaLink {
   bitRate: number;
   booknum: number;
   docid: number;
+  downloaded?: boolean;
   duration: number;
   edition: string;
   editionDescr: string;

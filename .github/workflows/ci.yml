@@ -50,6 +50,6 @@ jobs:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       MAC_CERTIFICATE_BASE64: ${{ secrets.MAC_CERTIFICATE_BASE64 }}
       MAC_CERTIFICATE_PASSWORD: ${{ secrets.MAC_CERTIFICATE_PASSWORD }}
-      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SENTRY_AUTH_TOKEN: ''
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      TEST_VERSION: ${{ (github.event_name == 'push' && 'false') || 'true' }} # TODO: only upload source maps for release builds
+      TEST_VERSION: 'true'

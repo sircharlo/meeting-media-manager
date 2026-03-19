@@ -1058,7 +1058,7 @@ watchImmediate(
 
     if (shouldRun) {
       getJwMepsInfo();
-      setElementFont('JW-Icons');
+      setElementFont('jw-icons-all');
     }
 
     // Update previous state
@@ -1078,6 +1078,30 @@ watchImmediate(
   () => currentSettings.value?.hideMediaLogo,
   (newHideMediaLogo) => {
     postHideMediaLogo(newHideMediaLogo);
+  },
+);
+
+// Send current writing script to the media player page for yeartext font selection
+const { post: postCurrentScript } = useBroadcastChannel<string, string>({
+  name: 'current-script',
+});
+
+watchImmediate(
+  () => currentState.currentLangObject?.script,
+  (script) => {
+    if (script) postCurrentScript(script);
+  },
+);
+
+// Send current language code for language-specific font overrides
+const { post: postCurrentLang } = useBroadcastChannel<string, string>({
+  name: 'current-lang',
+});
+
+watchImmediate(
+  () => currentSettings.value?.lang,
+  (lang) => {
+    if (lang) postCurrentLang(lang);
   },
 );
 

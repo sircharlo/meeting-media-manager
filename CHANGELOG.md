@@ -4,6 +4,37 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.3.0
+
+### ✨ New Features
+
+- ✨ **Memorial Media**: Automatic Memorial media retrieval is now out of beta! The app will automatically download the Memorial Welcome Video and image to display during the Memorial, when available in the configured language.
+- ✨ **Playback Speed**: Added playback speed control with visual indicator, and manual reset. This feature is only visible if enabled in the advanced settings.
+- ✨ **Pinyin Songs**: Added a toggle for pinyin song substitution for meetings held in Chinese.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Yeartext Fonts**: Greatly improved yeartext font display for non-Latin languages.
+- 🛠️ **Memorial**: Added notification regarding Memorial songs, ensured the Memorial Welcome Video loops automatically, and properly highlight Memorial day in the calendar.
+- 🛠️ **Downloads**: Added `isDownloadComplete` helper and implemented additional logging and try-catches for publication downloads.
+- 🛠️ **Congregation Lookup**: Improved congregation lookup language matching for Chinese variants.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Icons Font**: Fixed an issue to ensure icons are properly displayed.
+- 🐞 **Section Repeat**: Fixed an issue to ensure sections are properly repeated when they only contain one item.
+- 🐞 **Error Handling**: Properly stringified Event errors and preserved caught errors in `getLocalFontPath`.
+- 🐞 **Cache Checking**: Fixed promise cache verification using the `in` operator instead of boolean coercion.
+- 🐞 **Documentation**: Resolved various docs fixes.
+
+### 🔧 Chores
+
+- 🔧 **Refactoring**: Fixed various circular dependencies across different modules and architectures.
+- 🔧 **Code Quality**: Addressed various SonarQube minor fixes.
+- 🔧 **Dependencies**: Applied various dependency updates.
+
+Thanks to @DarkCodeYG for the contributions and new features!
+
 ## v26.2.4
 
 ### 🛠️ Improvements and Tweaks

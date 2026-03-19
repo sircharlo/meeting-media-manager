@@ -18,7 +18,12 @@
       :class="{ 'blank-screen': isTransitioning }"
     >
       <!-- eslint-disable next-line vue/no-v-html -->
-      <div id="yeartext" class="center" v-html="sanitize(yeartext || '')" />
+      <div
+        id="yeartext"
+        class="center"
+        :style="yeartextFontStyle"
+        v-html="sanitize(yeartext || '')"
+      />
       <div
         v-if="!hideMediaLogo && jwIconsFontLoaded"
         id="yeartextLogoContainer"
@@ -152,9 +157,14 @@ import {
 import DOMPurify from 'dompurify';
 import { useQuasar } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { getJwIconFromKeyword, setElementFont } from 'src/helpers/fonts';
+import {
+  getJwIconFromKeyword,
+  loadYeartextFont,
+  setElementFont,
+} from 'src/helpers/fonts';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
+import { useJwStore } from 'stores/jw';
 import {
   computed,
   onBeforeUnmount,
@@ -286,6 +296,22 @@ whenever(
   (newSeekTo) => {
     if (currentMediaElement.value) {
       currentMediaElement.value.currentTime = newSeekTo;
+    }
+  },
+);
+
+const { data: playbackRateData } = useBroadcastChannel<
+  number | undefined,
+  number | undefined
+>({
+  name: 'playback-rate',
+});
+
+whenever(
+  () => playbackRateData.value,
+  (newRate) => {
+    if (currentMediaElement.value && newRate) {
+      currentMediaElement.value.playbackRate = newRate;
     }
   },
 );
@@ -643,6 +669,9 @@ const playMedia = () => {
     };
 
     currentMediaElement.value.currentTime = customMin.value;
+    if (playbackRateData.value) {
+      currentMediaElement.value.playbackRate = playbackRateData.value;
+    }
     playMediaElement();
   } catch (e) {
     errorCatcher(e);
@@ -825,6 +854,47 @@ const { data: yeartext } = useBroadcastChannel<
   name: 'yeartext',
 });
 
+// Receive current writing script and language code for yeartext font selection
+const { data: currentScript } = useBroadcastChannel<string, string>({
+  name: 'current-script',
+});
+const { data: currentLang } = useBroadcastChannel<string, string>({
+  name: 'current-lang',
+});
+
+const jwStore = useJwStore();
+const yeartextFontFamily = ref('');
+
+watch(
+  () =>
+    [
+      currentScript.value,
+      currentLang.value,
+      urlVariables.value?.mediator,
+    ] as const,
+  async ([script, lang]) => {
+    if (script && urlVariables.value?.mediator) {
+      // Sync urlVariables to jw store for CDN font URL resolution
+      if (urlVariables.value.base) {
+        jwStore.$patch({
+          urlVariables: {
+            base: urlVariables.value.base,
+            mediator: urlVariables.value.mediator,
+            pubMedia: jwStore.urlVariables?.pubMedia ?? '',
+          },
+        });
+      }
+      yeartextFontFamily.value = await loadYeartextFont(script, lang);
+    }
+  },
+);
+
+const yeartextFontStyle = computed(() =>
+  yeartextFontFamily.value
+    ? { fontFamily: yeartextFontFamily.value }
+    : undefined,
+);
+
 watchDeep(
   () => zoomPanState.value,
   (newZoomPanState) => {
@@ -1006,10 +1076,10 @@ const loadFonts = async () => {
   }
 
   try {
-    jwIconsFontLoaded.value = await setElementFont('JW-Icons');
+    jwIconsFontLoaded.value = await setElementFont('jw-icons-all');
   } catch (e) {
     errorCatcher(e, {
-      contexts: { fn: { fontName: 'JW-Icons', name: 'loadFonts' } },
+      contexts: { fn: { fontName: 'jw-icons-all', name: 'loadFonts' } },
     });
     jwIconsFontLoaded.value = false;
   }

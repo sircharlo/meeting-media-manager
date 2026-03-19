@@ -17,7 +17,38 @@ export interface CacheList<T = unknown> {
   updated: Date | null | undefined;
 }
 
-export type FontName = 'JW-Icons' | 'Wt-ClearText-Bold';
+export type FontName =
+  | 'AbyssinicaSIL'
+  | 'jw-icons-all'
+  | 'NotoNaskhArabic'
+  | 'NotoNastaliqUrdu'
+  | 'NotoSans'
+  | 'NotoSansBengali'
+  | 'NotoSansGurmukhi'
+  | 'NotoSansMalayalam'
+  | 'NotoSansOriya'
+  | 'NotoSansSC'
+  | 'NotoSansTamil'
+  | 'NotoSansTC'
+  | 'NotoSansTelugu'
+  | 'NotoSerifArmenian'
+  | 'NotoSerifDevanagari'
+  | 'NotoSerifGujarati'
+  | 'NotoSerifHebrew'
+  | 'NotoSerifKannada'
+  | 'NotoSerifKhmer'
+  | 'NotoSerifSinhala'
+  | 'Wt-BaeumMyungjo'
+  | 'Wt-ClearText-Bold'
+  | 'WTClearTextGeorgian'
+  | 'WTClearTextJapanese'
+  | 'WTMannaSansKaren'
+  | 'WTMannaSansMongolian'
+  | 'WTMannaSansMyanmar'
+  | 'WTMannaSansTibetan'
+  | 'WTSetthaSpecial'
+  | 'WTTextNew'
+  | 'WTXBZSpecial';
 
 export interface UrlVariables {
   base: string;

@@ -44,11 +44,16 @@ export const getPubId = (
  * @returns The resolution of the media item.
  */
 const getMediaResolution = (m: MediaItemsMediatorFile | MediaLink) => {
-  if (/\d+p/.test(m.label)) {
-    return Number.parseInt(m.label.replaceAll(/\D/g, ''));
-  } else {
-    return m.frameHeight;
+  const label = m.label;
+
+  if (label.endsWith('p')) {
+    const value = Number(label.slice(0, -1));
+    if (!Number.isNaN(value)) {
+      return value;
+    }
   }
+
+  return m.frameHeight;
 };
 
 /**

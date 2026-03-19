@@ -71,6 +71,7 @@ interface Store {
   meetingDay: boolean;
   online: boolean;
   onlyShowInvalidSettings: boolean;
+  pinyinActive: boolean;
   selectedDate: string;
   websiteSelection: JwSite;
   zoomHelperLogs: string[];
@@ -516,6 +517,9 @@ export const useCurrentStateStore = defineStore('current-state', {
       return textsForYear[lang] || (langFallback && textsForYear[langFallback]);
     },
   },
+  persist: {
+    pick: ['pinyinActive'],
+  },
   state: (): Store => {
     return {
       autoReturnFromWebsite: false,
@@ -540,6 +544,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       meetingDay: false,
       online: true,
       onlyShowInvalidSettings: false,
+      pinyinActive: false,
       selectedDate: formatDate(new Date(), 'YYYY/MM/DD'),
       websiteSelection: undefined,
       zoomHelperLogs: [],

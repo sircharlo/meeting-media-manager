@@ -223,6 +223,7 @@ export interface SettingsValues {
   enableMediaWindowFadeTransitions: boolean;
   enableMusicButton: boolean;
   enablePinyinSongs: boolean;
+  enablePlaybackSpeedControl: boolean;
   enableSubtitles: boolean;
   excludeFootnotes: boolean;
   excludeTh: boolean;

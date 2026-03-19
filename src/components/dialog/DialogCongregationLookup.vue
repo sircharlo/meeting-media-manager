@@ -137,6 +137,7 @@ import { whenever } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
+import { locales } from 'src/constants/locales';
 import {
   applyScheduleToSettings,
   fetchMeetingLocations,
@@ -189,10 +190,18 @@ const lookupCongregation = async () => {
           (l) => l.langcode === location.properties.languageCode,
         );
         if (!languageIsAlreadyGood) {
-          location.properties.languageCode =
-            congregationLookupLanguages.value.find(
-              (l) => l.languageCode === location.properties.languageCode,
-            )?.writtenLanguageCode[0] || location.properties.languageCode;
+          const match = congregationLookupLanguages.value.find(
+            (l) => l.languageCode === location.properties.languageCode,
+          );
+          if (match?.writtenLanguageCode.length) {
+            const appLocaleCodes = new Set(locales.map((l) => l.langcode));
+            location.properties.languageCode =
+              match.writtenLanguageCode.find((code) =>
+                appLocaleCodes.has(code),
+              ) ||
+              match.writtenLanguageCode[0] ||
+              location.properties.languageCode;
+          }
         }
         return location;
       });

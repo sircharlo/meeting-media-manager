@@ -476,6 +476,19 @@
                   {{ t('repeat') }}
                 </q-tooltip>
               </q-icon>
+              <q-btn
+                v-if="playbackRate !== 1"
+                color="negative"
+                icon="mmm-playback-speed"
+                outline
+                round
+                size="sm"
+                @click.stop="changePlaybackRate(0, true)"
+              >
+                <q-tooltip :delay="500">
+                  {{ t('playback-rate') }}
+                </q-tooltip>
+              </q-btn>
             </div>
           </div>
         </div>
@@ -816,6 +829,53 @@
                       : t('repeat-media-item-explain')
                   }}
                 </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              v-if="
+                currentSettings?.enablePlaybackSpeedControl &&
+                isCurrentlyPlaying &&
+                (media.isVideo || media.isAudio) &&
+                mediaPlaying.action
+              "
+              clickable
+            >
+              <q-item-section avatar>
+                <q-icon name="mmm-playback-speed" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('playback-speed') }}</q-item-label>
+              </q-item-section>
+              <q-item-section side>
+                <div class="row items-center no-wrap">
+                  <q-btn
+                    color="grey-7"
+                    dense
+                    :disable="playbackRate <= 0.5"
+                    flat
+                    icon="mmm-minus"
+                    round
+                    size="sm"
+                    @click.stop="changePlaybackRate(-0.5)"
+                  />
+                  <span
+                    class="text-caption text-weight-bold"
+                    style="min-width: 36px; text-align: center"
+                    @click.stop="changePlaybackRate(0, true)"
+                  >
+                    x{{ playbackRate.toFixed(1) }}
+                  </span>
+                  <q-btn
+                    color="grey-7"
+                    dense
+                    :disable="playbackRate >= 15"
+                    flat
+                    icon="mmm-plus"
+                    round
+                    size="sm"
+                    @click.stop="changePlaybackRate(0.5)"
+                  />
+                </div>
               </q-item-section>
             </q-item>
             <q-item
@@ -1644,6 +1704,23 @@ const saveMediaDuration = () => {
 
 const { post } = useBroadcastChannel<number, number>({ name: 'seek-to' });
 
+const playbackRate = ref(1);
+
+const { post: postPlaybackRate } = useBroadcastChannel<number, number>({
+  name: 'playback-rate',
+});
+
+const changePlaybackRate = (delta: number, reset = false) => {
+  if (reset) {
+    playbackRate.value = 1;
+    postPlaybackRate(playbackRate.value);
+    return;
+  }
+  const newRate = Math.round((playbackRate.value + delta) * 10) / 10;
+  playbackRate.value = Math.min(15, Math.max(0.5, newRate));
+  postPlaybackRate(playbackRate.value);
+};
+
 const seekTo = (newSeekTo: null | number) => {
   if (newSeekTo !== null) {
     post(newSeekTo);
@@ -1674,6 +1751,8 @@ function stopMedia(forOtherMediaItem = false) {
   };
   mediaToStop.value = '';
   localFile.value = fileIsLocal();
+  playbackRate.value = 1;
+  postPlaybackRate(1);
 
   if (!forOtherMediaItem) {
     // Stop Zoom screen sharing when media is stopped (unless it's a media switch instead of a stop)
@@ -1697,6 +1776,13 @@ const isCurrentlyPlaying = computed(() => {
       mediaPlaying.value.url === props.media.streamUrl) &&
     mediaPlaying.value.uniqueId === props.media.uniqueId
   );
+});
+
+watch(isCurrentlyPlaying, (playing) => {
+  if (!playing && playbackRate.value !== 1) {
+    playbackRate.value = 1;
+    postPlaybackRate(1);
+  }
 });
 
 const mediaPan = ref<{ x: number; y: number }>({
