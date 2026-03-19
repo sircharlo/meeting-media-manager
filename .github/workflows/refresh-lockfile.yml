@@ -1,0 +1,40 @@
+name: Refresh Yarn Lockfile
+
+on:
+  workflow_dispatch:
+
+jobs:
+  refresh-lockfile:
+    name: Refresh lockfile
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.19.0
+          cache: 'yarn'
+
+      - name: Delete lockfile
+        run: rm -f yarn.lock
+
+      - name: Install dependencies
+        run: yarn install --no-immutable
+
+      - name: Commit and push new lockfile
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add yarn.lock
+          if git diff --staged --quiet; then
+            echo "No changes to yarn.lock, nothing to commit."
+          else
+            git commit -m "chore: refresh yarn.lock [skip ci]"
+            git push origin master
+          fi
