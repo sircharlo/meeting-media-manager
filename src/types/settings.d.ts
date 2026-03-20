@@ -149,6 +149,8 @@ export type SettingsItemAction =
   | 'zoomCaptureAudioMutedTitle'
   | 'zoomCaptureAudioNotJoinedTitle'
   | 'zoomCaptureAudioUnmutedTitle'
+  | 'zoomCaptureParticipantsButtonTitle'
+  | 'zoomCaptureShareButtonTitle'
   | 'zoomCaptureVideoOffTitle'
   | 'zoomCaptureVideoOnTitle';
 
@@ -289,7 +291,9 @@ export interface SettingsValues {
   zoomMeetingManagerAutomatePostMeetingAudioSettings: boolean;
   zoomMeetingManagerEnable: boolean;
   zoomMeetingManagerMeetingId: null | string;
+  zoomParticipantsButtonTitle: null | string;
   zoomScreenShareShortcut: null | string;
+  zoomShareButtonTitle: null | string;
   zoomVideoOffTitle: null | string;
   zoomVideoOnTitle: null | string;
 }

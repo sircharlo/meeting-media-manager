@@ -1,11 +1,14 @@
 import type { SettingsValues, ZoomUIElement } from 'src/types';
 
+import { i18n } from 'boot/i18n';
+import { Dialog } from 'quasar';
 import { MEDIA_WINDOW_TITLE, ZOOM_CONTROL_IDS } from 'src/constants/zoom';
 import { delay } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
 
 import { errorCatcher } from './error-catcher';
 import { sendKeyboardShortcut } from './keyboard-shortcuts';
+import { createTemporaryNotification } from './notifications';
 
 const {
   clickZoomElement,
@@ -41,6 +44,72 @@ export const captureZoomButtonTitle = async (
         currentState.currentSettings[settingKey] = title;
       }
     }
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
+/**
+ * Capture a Zoom tab item title from the "More" panel and save it to settings
+ */
+export const captureZoomTabTitle = async (settingKey: keyof SettingsValues) => {
+  try {
+    const mainZoomWindow = await getMainZoomWindow();
+    const handle = mainZoomWindow?.handle;
+    if (!handle) {
+      throw new Error('No Zoom window found');
+    }
+
+    await clickById(handle, ZOOM_CONTROL_IDS.BTN_MORE_PANEL_OPTIONS);
+
+    const popupWnd = await waitForWindowByClassName(
+      'ZGridMultiLevelPopupWndClass',
+    );
+    if (!popupWnd?.handle) {
+      throw new Error('No More panel popup found');
+    }
+
+    const children = await getZoomDialogChildren(
+      'ZGridMultiLevelPopupWndClass',
+      popupWnd.handle,
+    );
+
+    const tabItems = filterElementsByControlType(children, 'TabItem');
+    const options = tabItems
+      .filter((e) => e.title?.trim())
+      .map((e) => ({ label: e.title, value: e.title }));
+
+    if (options.length === 0) {
+      createTemporaryNotification({
+        group: 'zoom-settings',
+        icon: 'mmm-error',
+        message: 'No tab items found in the More panel',
+        type: 'negative',
+      });
+      return;
+    }
+
+    Dialog.create({
+      cancel: true,
+      message: (i18n.global.t as (key: string) => string)(
+        'zoom-select-button-message',
+      ),
+      options: {
+        items: options,
+        model: '',
+        type: 'radio',
+      },
+      persistent: true,
+      title: (i18n.global.t as (key: string) => string)('zoom-select-button'),
+    }).onOk((data: string) => {
+      if (data) {
+        const currentState = useCurrentStateStore();
+        if (currentState.currentSettings) {
+          // @ts-expect-error - dynamically setting key
+          currentState.currentSettings[settingKey] = data;
+        }
+      }
+    });
   } catch (error) {
     errorCatcher(error);
   }
@@ -93,6 +162,15 @@ const joinAudio = async (meetingHandle: number) => {
   );
 
   if (!clicked) {
+    createTemporaryNotification({
+      group: 'zoom-audio',
+      icon: 'mmm-info',
+      message: (i18n.global.t as (key: string) => string)(
+        'zoom-audio-already-joined',
+      ),
+      type: 'info',
+    });
+
     console.log(' [Zoom Automation] Already joined audio or title mismatch');
     return;
   }
@@ -106,6 +184,13 @@ const joinAudio = async (meetingHandle: number) => {
     // 3. Click btn_connectAudio in that window
     await clickById(joinAudioWnd.handle, ZOOM_CONTROL_IDS.BTN_CONNECT_AUDIO);
   }
+
+  createTemporaryNotification({
+    group: 'zoom-audio',
+    icon: 'mmm-info',
+    message: (i18n.global.t as (key: string) => string)('zoom-audio-joined'),
+    type: 'info',
+  });
 };
 
 const filterElementsByControlType = (
@@ -142,7 +227,6 @@ const leaveAudio = async (meetingHandle: number) => {
     }
   }
 
-  console.warn(' [Zoom Automation] Leaving computer audio');
   // 1. Click on btn_audioMenu
   await clickById(meetingHandle, ZOOM_CONTROL_IDS.BTN_AUDIO_MENU);
 
@@ -152,24 +236,25 @@ const leaveAudio = async (meetingHandle: number) => {
     meetingHandle,
   );
 
-  console.warn(' [Zoom Automation] Menu children:', children);
-
   const menuItems = filterElementsByControlType(children, 'MenuItem');
-  console.warn(' [Zoom Automation] Menu items:', menuItems);
 
   const enabledMenuItems = filterElementsByEnabledState(menuItems, true);
-  console.warn(' [Zoom Automation] Enabled menu items:', enabledMenuItems);
 
   if (enabledMenuItems.length >= 2) {
     // Zoom menu usually has "Leave Computer Audio" as the before-last item when connected
     const leaveBtn = enabledMenuItems.at(-2);
-    console.warn(leaveBtn);
     if (leaveBtn) {
       // Use meetingHandle as the target window for the click, but specific element handle
       // Also pass the title as a fallback for handle-less elements
       await clickZoomElement(meetingHandle, {
         handle: leaveBtn.handle,
         title: leaveBtn.title,
+      });
+      createTemporaryNotification({
+        group: 'zoom-audio',
+        icon: 'mmm-info',
+        message: (i18n.global.t as (key: string) => string)('zoom-audio-left'),
+        type: 'info',
       });
     }
   }
@@ -191,7 +276,38 @@ const openParticipantsList = async (meetingHandle: number) => {
     console.log(' [Zoom Automation] Participants list is already open');
     return;
   }
-  await clickById(meetingHandle, ZOOM_CONTROL_IDS.BTN_PARTICIPANTS);
+  const clicked = await globalThis.electronApi.clickZoomElement(meetingHandle, {
+    control_id: ZOOM_CONTROL_IDS.BTN_PARTICIPANTS,
+  });
+
+  if (!clicked) {
+    const currentState = useCurrentStateStore();
+    const targetTitle =
+      currentState.currentSettings?.zoomParticipantsButtonTitle;
+    if (targetTitle) {
+      console.log(
+        ' [Zoom Automation] Participants button not found, checking More panel',
+      );
+      await clickById(meetingHandle, ZOOM_CONTROL_IDS.BTN_MORE_PANEL_OPTIONS);
+
+      const popupWnd = await waitForWindowByClassName(
+        'ZGridMultiLevelPopupWndClass',
+      );
+      if (popupWnd?.handle) {
+        const clickedTab = await globalThis.electronApi.clickZoomElement(
+          popupWnd.handle,
+          {
+            title: targetTitle,
+          },
+        );
+        if (!clickedTab) {
+          console.warn(
+            ' [Zoom Automation] Participants tab item not found in More panel',
+          );
+        }
+      }
+    }
+  }
   // Wait for panel to open by checking if the state changes
   while (!(await participantsListIsOpen(meetingHandle))) {
     await delay(100);
@@ -271,7 +387,6 @@ const muteAllParticipants = async (
         muteAllConfirmWnd.handle,
         ZOOM_CONTROL_IDS.CHK_ALLOW_PARTICIPANTS_TO_UNMUTE,
       );
-
       console.log(
         `[Zoom Automation] ${
           shouldAllowUnmute ? 'Checked' : 'Unchecked'
@@ -279,9 +394,29 @@ const muteAllParticipants = async (
       );
     }
 
+    createTemporaryNotification({
+      group: 'zoom-participants-permissions',
+      icon: 'mmm-info',
+      message: (i18n.global.t as (key: string) => string)(
+        shouldAllowUnmute
+          ? 'zoom-participants-unmute-allowed'
+          : 'zoom-participants-unmute-disallowed',
+      ),
+      type: 'info',
+    });
+
     // In this dialog, the "Yes" button has the controlID 'btn_rename'
     await clickById(muteAllConfirmWnd.handle, ZOOM_CONTROL_IDS.BTN_RENAME);
     console.log(' [Zoom Automation] Confirmed Mute All');
+
+    createTemporaryNotification({
+      group: 'zoom-participants',
+      icon: 'mmm-info',
+      message: (i18n.global.t as (key: string) => string)(
+        'zoom-participants-muted',
+      ),
+      type: 'info',
+    });
   }
 };
 
@@ -292,6 +427,13 @@ const turnHostVideoOn = async (handle: number) => {
     ZOOM_CONTROL_IDS.BTN_MUTE_VIDEO,
     currentState.currentSettings?.zoomVideoOffTitle,
   );
+
+  createTemporaryNotification({
+    group: 'zoom-host',
+    icon: 'mmm-info',
+    message: (i18n.global.t as (key: string) => string)('zoom-host-video-on'),
+    type: 'info',
+  });
 };
 
 const turnHostVideoOff = async (handle: number) => {
@@ -301,6 +443,13 @@ const turnHostVideoOff = async (handle: number) => {
     ZOOM_CONTROL_IDS.BTN_MUTE_VIDEO,
     currentState.currentSettings?.zoomVideoOnTitle,
   );
+
+  createTemporaryNotification({
+    group: 'zoom-host',
+    icon: 'mmm-info',
+    message: (i18n.global.t as (key: string) => string)('zoom-host-video-off'),
+    type: 'info',
+  });
 };
 
 /**
@@ -359,6 +508,15 @@ const askAllToUnmute = async (handle: number) => {
       // Click on the first enabled menu item, which is "Ask all participants to unmute"
       await clickZoomElement(handle, enabledMenuItems[0]);
       console.log(' [Zoom Automation] Asked all participants to unmute');
+
+      createTemporaryNotification({
+        group: 'zoom-participants',
+        icon: 'mmm-info',
+        message: (i18n.global.t as (key: string) => string)(
+          'zoom-participants-asked-to-unmute',
+        ),
+        type: 'info',
+      });
     }
   }
 };
@@ -495,8 +653,52 @@ export const startSharingMediaInZoom = async () => {
 
     console.log(' [Zoom Automation] Starting media sharing sequence');
 
+    createTemporaryNotification({
+      group: 'zoom-sharing',
+      icon: 'mmm-info',
+      message: (i18n.global.t as (key: string) => string)(
+        'zoom-sharing-started',
+      ),
+      type: 'info',
+    });
+
     // 1. Click Start Share
-    await clickById(handle, ZOOM_CONTROL_IDS.BTN_SHARE_SCREEN);
+    const shareClicked = await globalThis.electronApi.clickZoomElement(handle, {
+      control_id: ZOOM_CONTROL_IDS.BTN_SHARE_SCREEN,
+    });
+
+    if (!shareClicked) {
+      const currentState = useCurrentStateStore();
+      const targetTitle = currentState.currentSettings?.zoomShareButtonTitle;
+      if (targetTitle) {
+        console.log(
+          ' [Zoom Automation] Share button not found, checking More panel',
+        );
+        await clickById(handle, ZOOM_CONTROL_IDS.BTN_MORE_PANEL_OPTIONS);
+
+        const popupWnd = await waitForWindowByClassName(
+          'ZGridMultiLevelPopupWndClass',
+        );
+        if (popupWnd?.handle) {
+          const clickedTab = await globalThis.electronApi.clickZoomElement(
+            popupWnd.handle,
+            {
+              title: targetTitle,
+            },
+          );
+          if (!clickedTab) {
+            console.warn(
+              ' [Zoom Automation] Share tab item not found in More panel',
+            );
+            throw new Error('Could not find Share button in More panel');
+          }
+        }
+      } else {
+        throw new Error(
+          'Share screen button not found and fallback title not configured',
+        );
+      }
+    }
 
     // 2. Wait for share entrance window
     const shareWnd = await waitForWindowByClassName('ZPShareEntranceClass');
@@ -518,6 +720,14 @@ export const startSharingMediaInZoom = async () => {
       console.warn(
         ' [Zoom Automation] Could not find media player window to share',
       );
+      createTemporaryNotification({
+        group: 'zoom-sharing',
+        icon: 'mmm-error',
+        message: (i18n.global.t as (key: string) => string)(
+          'zoom-sharing-failed',
+        ),
+        type: 'negative',
+      });
       return;
     }
 
@@ -528,6 +738,14 @@ export const startSharingMediaInZoom = async () => {
     );
     if (audioState?.toggle_state !== 1) {
       await clickById(shareWnd.handle, ZOOM_CONTROL_IDS.CHK_SHARE_AUDIO);
+      createTemporaryNotification({
+        group: 'zoom-sharing',
+        icon: 'mmm-info',
+        message: (i18n.global.t as (key: string) => string)(
+          'zoom-sharing-audio-enabled',
+        ),
+        type: 'info',
+      });
     }
 
     // 5. Ensure Optimize for Video is checked
@@ -537,13 +755,38 @@ export const startSharingMediaInZoom = async () => {
     );
     if (videoState?.toggle_state !== 1) {
       await clickById(shareWnd.handle, ZOOM_CONTROL_IDS.CHK_SHARE_VIDEO);
+      createTemporaryNotification({
+        group: 'zoom-sharing',
+        icon: 'mmm-info',
+        message: (i18n.global.t as (key: string) => string)(
+          'zoom-sharing-video-optimized',
+        ),
+        type: 'info',
+      });
     }
 
     // 6. Click Share
     await clickById(shareWnd.handle, ZOOM_CONTROL_IDS.BTN_SHARE_CONFIRM);
 
+    createTemporaryNotification({
+      group: 'zoom-sharing',
+      icon: 'mmm-info',
+      message: (i18n.global.t as (key: string) => string)(
+        'zoom-sharing-started',
+      ),
+      type: 'info',
+    });
+
     console.log(' [Zoom Automation] Media sharing sequence completed');
   } catch (error) {
+    createTemporaryNotification({
+      group: 'zoom-sharing',
+      icon: 'mmm-error',
+      message: (i18n.global.t as (key: string) => string)(
+        'zoom-sharing-failed',
+      ),
+      type: 'negative',
+    });
     errorCatcher(error, {
       contexts: { fn: { name: 'startSharingMediaInZoom' } },
     });
@@ -580,10 +823,34 @@ export const stopSharingMediaInZoom = async () => {
         title: stopShareBtn.title,
       });
       console.log(' [Zoom Automation] Stopped sharing');
+      createTemporaryNotification({
+        group: 'zoom-sharing',
+        icon: 'mmm-info',
+        message: (i18n.global.t as (key: string) => string)(
+          'zoom-sharing-stopped',
+        ),
+        type: 'info',
+      });
     } else {
       console.warn(' [Zoom Automation] Could not find stop share button');
+      createTemporaryNotification({
+        group: 'zoom-sharing',
+        icon: 'mmm-error',
+        message: (i18n.global.t as (key: string) => string)(
+          'zoom-sharing-stop-failed',
+        ),
+        type: 'negative',
+      });
     }
   } catch (error) {
+    createTemporaryNotification({
+      group: 'zoom-sharing',
+      icon: 'mmm-error',
+      message: (i18n.global.t as (key: string) => string)(
+        'zoom-sharing-stop-failed',
+      ),
+      type: 'negative',
+    });
     errorCatcher(error, {
       contexts: { fn: { name: 'stopSharingMediaInZoom' } },
     });

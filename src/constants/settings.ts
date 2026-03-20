@@ -327,6 +327,20 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'zoomMeetingManager',
     type: 'button',
   },
+  zoomParticipantsButtonTitle: {
+    actions: ['zoomCaptureParticipantsButtonTitle'],
+    group: 'integrations',
+    platforms: ['win32'],
+    subgroup: 'zoomMeetingManager',
+    type: 'button',
+  },
+  zoomShareButtonTitle: {
+    actions: ['zoomCaptureShareButtonTitle'],
+    group: 'integrations',
+    platforms: ['win32'],
+    subgroup: 'zoomMeetingManager',
+    type: 'button',
+  },
   zoomMeetingManagerAutomateMediaSharing: {
     depends: 'zoomMeetingManagerEnable',
     group: 'integrations',
@@ -761,7 +775,9 @@ export const defaultSettings: SettingsValues = {
   zoomMeetingManagerAutomatePostMeetingAudioSettings: false,
   zoomMeetingManagerEnable: false,
   zoomMeetingManagerMeetingId: null,
+  zoomParticipantsButtonTitle: null,
   zoomScreenShareShortcut: null,
+  zoomShareButtonTitle: null,
   zoomVideoOffTitle: null,
   zoomVideoOnTitle: null,
 };

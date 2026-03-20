@@ -1,6 +1,7 @@
 export const ZOOM_CONTROL_IDS = {
   BTN_AUDIO_MENU: 'btn_audioMenu',
   BTN_CONNECT_AUDIO: 'btn_connectAudio',
+  BTN_MORE_PANEL_OPTIONS: 'btn_more',
   BTN_MORE_PARTICIPANTS_OPTIONS: 'more_btn',
   BTN_MUTE_AUDIO: 'btn_muteAudio',
   BTN_MUTE_VIDEO: 'btn_muteVideo',

@@ -96,6 +96,7 @@ def list_windows():
                     "ConfMultiTabContentWndClass",  # Zoom windows (can be several)
                     "WCN_ModelessWnd",  # Menu window
                     "zChangeNameWndClass",  # Mute all participants dialog window
+                    "ZGridMultiLevelPopupWndClass",  # More panel popup
                     "zJoinAudioWndClass",  # Join audio dialog window
                     "ZPFloatToolbarClass",  # Floating share toolbar
                     "ZPMeetingWndClass",

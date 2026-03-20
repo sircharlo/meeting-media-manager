@@ -8,7 +8,7 @@ import type {
 import { ZOOM_CONTROL_IDS } from 'src/constants/zoom';
 import { syncMeetingSchedule } from 'src/helpers/congregation-schedule';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { captureZoomButtonTitle } from 'src/helpers/zoom';
+import { captureZoomButtonTitle, captureZoomTabTitle } from 'src/helpers/zoom';
 import { getDateDiff, getSpecificWeekday, isInPast } from 'src/utils/date';
 
 const requiredRule: ValidationRule = (val: boolean | string) =>
@@ -121,6 +121,10 @@ export const performActions = (actions: SettingsItemAction[] | undefined) => {
           'zoomVideoOnTitle',
           ZOOM_CONTROL_IDS.BTN_MUTE_VIDEO,
         );
+      } else if (action === 'zoomCaptureParticipantsButtonTitle') {
+        captureZoomTabTitle('zoomParticipantsButtonTitle');
+      } else if (action === 'zoomCaptureShareButtonTitle') {
+        captureZoomTabTitle('zoomShareButtonTitle');
       }
     } catch (error) {
       errorCatcher(error);
