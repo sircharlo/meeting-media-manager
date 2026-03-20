@@ -8,73 +8,73 @@
 
 ### ✨ 新功能
 
-- :sparkls: **Memorial Media**: 自动纪念媒体检索已经不再需要测试！ 应用将自动下载Memorial Welcome视频和图像，在使用配置语言时显示。
-- :sparkles：**播放速度** ：使用视觉指示器添加播放速度控制并手动重置。 此功能仅在高级设置启用时可见。
-- ✨ **Pinyin Songs**: 添加了一个用于替代中文会议的 Pinyin 歌曲的开关。
+- ✨ **纪念聚会的媒体**: 自动纪念聚会媒体检索已经不再需要测试！ 应用将自动下载纪念聚会欢迎视频和图像，在使用配置语言时显示。
+- ✨ **播放速度**：新增播放速度控制，并提供可视化指示器，支持手动重置。该功能仅在启用高级设置时可见。 此功能仅在高级设置启用时可见。
+- ✨ **拼音歌曲**：新增一个开关，可使用拼音歌曲替代中文会议歌曲。
 
 ## v26.2.0
 
 ### ✨ 新功能
 
-- ✨ **Disk Space Check**: Added functionality to monitor and notify when disk space is low.
+- ✨ **磁盘空间检测**：新增功能，用于监控磁盘空间并在空间不足时发出通知。
 
 ## v26.1.5
 
 ### ✨ 新功能
 
-- ✨ **Memorial Media**: Automatically fetch Memorial banner and intro video in supported languages when the Memorial date is selected.
+- ✨ **纪念聚会媒体**：选择纪念聚会日期时，会自动获取支持语言的纪念聚会横幅和开场视频。
 
 ## v26.1.0
 
 ### ✨ 新功能
 
-- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
-- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
-- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+- ✨ **聚会自动同步**：新增自动与官方网站同步会议日期和时间的功能。该功能默认启用，也可在高级设置中手动触发或关闭。 此功能默认启用，可以在高级设置中手动触发或禁用。
+- ✨ **未来时间的变更**：当通过网站查找创建会众时，如有可用信息，应用现在会包含未来的日程变更。
+- ✨ **整机安装共享缓存**：整机安装现在默认共享同一个数据文件夹，从而优化同一台电脑多个用户之间的存储和带宽使用。
 
 ## v25.12.2
 
 ### ✨ 新功能
 
-- ✨ **Zoom/Pan buttons**: Added the ability to press and hold zoom and pan buttons for continuous adjustment.
+- ✨ **缩放/平移按钮**：新增支持按住缩放和平移按钮以进行连续调整。
 
 ## v25.12.0
 
 ### ✨ 新功能
 
-- ✨ **Multi-Select Context Menu**: Added support for right-click menu actions when multiple media items are selected.
-- ✨ **Keyboard Shortcuts**: Added `Ctrl/Cmd+A` to select all media, `H` to hide selected media, and `Shift+Up/Down` for keyboard selection navigation.
-- ✨ **Watchtower Study Video Settings**: Added a setting to exclude extra Watchtower study videos.
-- ✨ **Collapsible Sections**: Added ability to collapse sections on non-meeting days for a cleaner view.
-- ✨ **JW Events Website**: Added the ability to present the JW Events website in addition to the main official website.
-- ✨ **Playlist Import Customization**: Allowed ability to customize the prefix that is added to media items when importing JW playlists.
-- ✨ **Website Mirroring Navigation**: Added a toggle to automatically navigate to the media list after website mirroring is stopped.
-- ✨ **OBS Recording Controls**: Added the ability to control OBS recordings.
-- ✨ **Yeartext Preview**: Added the ability to preview next year's yeartext as of December of every year.
-- ✨ **Update Notifications**: Added warning notifications if running a beta version or if updates are disabled, and improved update download progress display.
-- ✨ **Hardware Acceleration Settings**: Added an option to permanently disable hardware acceleration if needed.
+- ✨ **多选右键菜单**：当选择多个媒体项目时，新增支持右键菜单操作。
+- ✨ **键盘快捷键**：新增 `Ctrl/Cmd+A` 全选媒体，`H` 隐藏选中媒体，`Shift+Up/Down` 用于键盘选择导航。
+- ✨ **守望台研究班视频设置**: 添加了一个设置以排除额外的守望台研究班的视频。
+- ✨ **可折叠分区**：在非聚会日新增分区折叠功能，使界面更加整洁。
+- ✨ **JW Events 网站**：新增除了主官方网站外，还可以展示 JW Events 网站的功能。
+- ✨ **播放列表导入自定义**：新增在导入 JW 播放列表时，自定义添加到媒体项前缀的功能。
+- ✨ **网站镜像导航**：新增切换开关，在停止网站镜像后自动跳转到媒体列表。
+- ✨ **OBS 录制控制**：新增控制 OBS 录制的功能。
+- ✨ **年度经文预览**：新增每年 12 月可预览下一年度经文的功能。
+- ✨ **更新通知**：新增在运行测试版或禁用更新时的警告通知，并优化更新下载进度显示。
+- ✨ **硬件加速设置**：新增在需要时永久禁用硬件加速的选项。
 
 ## v25.11.0
 
 ### ✨ 新功能
 
-- ✨ **JWPUB Media Selection**: Added a way to select individual media from JWPUB files.
-- ✨ **Auto-Focus Media Window**: Added an optional setting to automatically focus the media window after Zoom screen sharing.
-- ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
-- ✨ **Meeting Recording**: Added a new meeting recording feature, to control an external recording app.
-- ✨ **Site Search**: Added ability to search for media or publications on the site using smart search.
-- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from JW.org, such as magazine, books, programs and invitations.
-- ✨ **Sign Language Improvements**: Added confirmation before playing entire files for sign languages and support for selecting multiple clips, such as for when multiple paragraphs are to be read consecutively.
-- ✨ **Clip Navigation**: Added duration display to clip list items and improved clip navigation.
-- 🛠️ **Media Display**: Ensured media display becomes visible when playback starts, even if it was hidden before.
+- ✨ **JWPUB 媒体选择**：新增可从 JWPUB 文件中选择单个媒体的功能。
+- ✨ **媒体窗口自动聚焦**：新增可选设置，在 Zoom 屏幕共享后自动聚焦媒体窗口。
+- ✨ **电视显示鼠标覆盖层**：优化网站窗口中的鼠标覆盖层，使电视显示时鼠标指针更清晰可见。
+- ✨ **会议录制**：新增会议录制功能，用于控制外部录制应用。
+- ✨ **站内搜索**：新增智能搜索功能，可在网站中搜索媒体或出版物。
+- ✨ **便捷手动导入出版物**：新增功能，可轻松从 JW.org 导入出版物，例如杂志、书籍、节目和邀请函。
+- ✨ **手语改进**：新增在播放完整手语文件前进行确认，并支持选择多个片段（例如连续朗读多个段落）。
+- ✨ **片段导航**：在片段列表中新增时长显示，并优化片段导航。
+- 🛠️ **媒体显示**：确保在开始播放时媒体显示自动可见，即使之前被隐藏。
 
 ## v25.10.1
 
 ### ✨ 新功能
 
-- ✨ **Setup Wizard – Zoom Step**: Added a Zoom integration step to the setup wizard for easier initial configuration.
-- ✨ **Screen Picker Enhancements**: Show an accurate visual representation of all screens, as well as the main window’s current size and location, in the display popup. This makes it easier to choose the correct screen on which the media window should be displayed.
-- ✨ **Media Window Preference**: The app will now remember the preferred screen on which the media window should be displayed, if specified by the user.
+- ✨ **设置向导 – Zoom 步骤**：在设置向导中新增 Zoom 集成步骤，方便初始配置。
+- ✨ **屏幕选择器增强**：在显示弹窗中展示所有屏幕的准确视觉表示，以及主窗口的当前大小和位置，使选择媒体窗口显示的屏幕更加容易。 这就更容易选择显示媒体窗口的正确屏幕。
+- ✨ **媒体窗口偏好**：应用现在会记住用户指定的媒体窗口显示屏幕偏好。
 
 ## v25.10.0
 
@@ -91,7 +91,7 @@
 - ✨ **媒体窗口总是在顶部 & 全屏行为**：修复并改进媒体窗口的顶部行为，并根据全屏状态动态调整。
 - ✨ **日期显示格式设置**: 添加了一个用户设置来配置日期显示格式。
 - ✨ **媒体相互淡入淡出** : 实现媒体显示的交叉淡入淡出的过渡，而不是以前存在的更突然淡出到黑色的过渡。
-- :sparkles：**音乐自动停止**：优化后台音乐自动停止的行为，不论音乐是否是自动启动的行为
+- ✨ **音乐自动停止**：优化后台音乐自动停止的行为，不论音乐是否是自动启动的行为
 - ✨ **macOS点击不活跃窗口**: 启用鼠标单击主窗口的 macOS, 这将使它更容易控制应用程序，即使它没有对准。
 
 ## v25.9.0
@@ -163,17 +163,17 @@
 
 ### ✨ 新功能
 
-- :countrockwise_arrows_buton: **允许 OBS 重连尝试**: 引入手动强制OBS 在需要时重新连接的可能性。
-- :wasket: **自动清理旧的导出日期文件夹**: 自动移除过时的导出日期文件夹以便保存存储。
+- 🔄 **允许 OBS 重连尝试**: 引入手动强制OBS 在需要时重新连接的可能性。
+- 🗑 **自动清理旧的导出日期文件夹**: 自动移除过时的导出日期文件夹以便保存存储。
 
 ## 25.2.0
 
 ### ✨ 新功能
 
-- :glube_showing_Europe-Africa: **使用系统区域设置**: 自动检测和使用系统区域设置以获得更个性化的体验。
-- 🏷️ **Tag Support for Exported Media** : 添加元数据标签到导出的媒体文件以便更好地组织组织。
-- :countrockwise_arrows_buton: **Automatic Beta to Stable Downgrade** : 允许在必要时从测试版自动降级到稳定发布版本。
-- :globe_with_meridian: **摘录最新MEPS 语言索引**: 直接从官方网站获取最新MEPS 语言索引，确保最新语言支持。
+- 🌍 **使用系统区域设置**: 自动检测和使用系统区域设置以获得更个性化的体验。
+- 🏷️ **导出媒体的标签** : 添加元数据标签到导出的媒体文件以便更好地组织组织。
+- 🔄 **Automatic Beta to Stable Downgrade** : 允许在必要时从测试版自动降级到稳定发布版本。
+- 🌐 \***摘录最新MEPS 语言索引**: 直接从官方网站获取最新MEPS 语言索引，确保最新语言支持。
 
 ## 25.1.0
 
