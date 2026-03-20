@@ -979,7 +979,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@iconify-json/simple-icons@npm:^1.2.68":
+"@iconify-json/simple-icons@npm:^1.2.69":
   version: 1.2.74
   resolution: "@iconify-json/simple-icons@npm:1.2.74"
   dependencies:
@@ -3047,9 +3047,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/app-vite@npm:^2.5.1":
-  version: 2.5.1
-  resolution: "@quasar/app-vite@npm:2.5.1"
+"@quasar/app-vite@npm:^2.5.2":
+  version: 2.5.2
+  resolution: "@quasar/app-vite@npm:2.5.2"
   dependencies:
     "@quasar/render-ssr-error": "npm:^1.0.4"
     "@quasar/ssl-certificate": "npm:^1.0.0"
@@ -3112,7 +3112,7 @@ __metadata:
       optional: true
   bin:
     quasar: bin/quasar.js
-  checksum: 10c0/f06e27d0c4f5a7dab7c54574c70605f146c29354ea591da95547f4243f238641e7a0294483429855a24a50b5cea0623d878b00021cd70b744013f98f381e3374
+  checksum: 10c0/a8b27f264ba16db96b5f6b61ca25ca218346cf2511098a46b114ed719fc2ae6ceb7355dbd1ac71308bbfc909c5de6ffa1fa6988f978399e43aaeadde8fe9a6b5
   languageName: node
   linkType: hard
 
@@ -3747,7 +3747,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@shikijs/core@npm:3.23.0, @shikijs/core@npm:^3.21.0":
+"@shikijs/core@npm:3.23.0, @shikijs/core@npm:^3.22.0":
   version: 3.23.0
   resolution: "@shikijs/core@npm:3.23.0"
   dependencies:
@@ -3798,7 +3798,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@shikijs/transformers@npm:^3.21.0":
+"@shikijs/transformers@npm:^3.22.0":
   version: 3.23.0
   resolution: "@shikijs/transformers@npm:3.23.0"
   dependencies:
@@ -3808,7 +3808,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@shikijs/types@npm:3.23.0, @shikijs/types@npm:^3.21.0":
+"@shikijs/types@npm:3.23.0, @shikijs/types@npm:^3.22.0":
   version: 3.23.0
   resolution: "@shikijs/types@npm:3.23.0"
   dependencies:
@@ -4544,7 +4544,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-vue@npm:^6.0.3, @vitejs/plugin-vue@npm:^6.0.5":
+"@vitejs/plugin-vue@npm:^6.0.4, @vitejs/plugin-vue@npm:^6.0.5":
   version: 6.0.5
   resolution: "@vitejs/plugin-vue@npm:6.0.5"
   dependencies:
@@ -4927,7 +4927,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/core@npm:14.2.1, @vueuse/core@npm:^14.1.0, @vueuse/core@npm:^14.2.1":
+"@vueuse/core@npm:14.2.1, @vueuse/core@npm:^14.2.0, @vueuse/core@npm:^14.2.1":
   version: 14.2.1
   resolution: "@vueuse/core@npm:14.2.1"
   dependencies:
@@ -4940,7 +4940,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/integrations@npm:^14.1.0":
+"@vueuse/integrations@npm:^14.2.0":
   version: 14.2.1
   resolution: "@vueuse/integrations@npm:14.2.1"
   dependencies:
@@ -8592,12 +8592,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"focus-trap@npm:^7.8.0":
-  version: 7.8.0
-  resolution: "focus-trap@npm:7.8.0"
+"focus-trap@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "focus-trap@npm:8.0.0"
   dependencies:
     tabbable: "npm:^6.4.0"
-  checksum: 10c0/b75f97c2896de569fc779f9b898b7c4a48b0605176b2a7a4b70a64bc2ae39a0b3c66fc7c8b2cd4e5d1e0a439b031e025a7cd1031d3a68ab652c0495bc14f070a
+  checksum: 10c0/b5a53a197f40e55b9817f9473cd231eaed315fed013cf41a6110c172780df733a221dd369068af6aa7307949e3c91ec3330810ab51f4c5f3c72aa475288246aa
   languageName: node
   linkType: hard
 
@@ -10770,7 +10770,7 @@ __metadata:
     "@numairawan/video-duration": "npm:^1.0.0"
     "@opentelemetry/api-logs": "npm:^0.213.0"
     "@pinia/testing": "npm:^1.0.3"
-    "@quasar/app-vite": "npm:^2.5.1"
+    "@quasar/app-vite": "npm:^2.5.2"
     "@quasar/extras": "npm:^1.17.0"
     "@quasar/icongenie": "npm:^4.0.0"
     "@quasar/quasar-app-extension-testing-unit-vitest": "npm:1.2.3"
@@ -10849,7 +10849,7 @@ __metadata:
     typescript: "npm:~5.9.3"
     upath: "npm:^2.0.1"
     vite: "npm:^8.0.1"
-    vitepress: "npm:^2.0.0-alpha.16"
+    vitepress: "npm:^2.0.0-alpha.17"
     vitest: "npm:^4.1.0"
     vue: "npm:^3.5.30"
     vue-eslint-parser: "npm:^10.4.0"
@@ -13824,7 +13824,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"shiki@npm:^3.21.0":
+"shiki@npm:^3.22.0":
   version: 3.23.0
   resolution: "shiki@npm:3.23.0"
   dependencies:
@@ -15495,27 +15495,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitepress@npm:^2.0.0-alpha.16":
-  version: 2.0.0-alpha.16
-  resolution: "vitepress@npm:2.0.0-alpha.16"
+"vitepress@npm:^2.0.0-alpha.17":
+  version: 2.0.0-alpha.17
+  resolution: "vitepress@npm:2.0.0-alpha.17"
   dependencies:
     "@docsearch/css": "npm:^4.5.3"
     "@docsearch/js": "npm:^4.5.3"
     "@docsearch/sidepanel-js": "npm:^4.5.3"
-    "@iconify-json/simple-icons": "npm:^1.2.68"
-    "@shikijs/core": "npm:^3.21.0"
-    "@shikijs/transformers": "npm:^3.21.0"
-    "@shikijs/types": "npm:^3.21.0"
+    "@iconify-json/simple-icons": "npm:^1.2.69"
+    "@shikijs/core": "npm:^3.22.0"
+    "@shikijs/transformers": "npm:^3.22.0"
+    "@shikijs/types": "npm:^3.22.0"
     "@types/markdown-it": "npm:^14.1.2"
-    "@vitejs/plugin-vue": "npm:^6.0.3"
+    "@vitejs/plugin-vue": "npm:^6.0.4"
     "@vue/devtools-api": "npm:^8.0.5"
     "@vue/shared": "npm:^3.5.27"
-    "@vueuse/core": "npm:^14.1.0"
-    "@vueuse/integrations": "npm:^14.1.0"
-    focus-trap: "npm:^7.8.0"
+    "@vueuse/core": "npm:^14.2.0"
+    "@vueuse/integrations": "npm:^14.2.0"
+    focus-trap: "npm:^8.0.0"
     mark.js: "npm:8.11.1"
     minisearch: "npm:^7.2.0"
-    shiki: "npm:^3.21.0"
+    shiki: "npm:^3.22.0"
     vite: "npm:^7.3.1"
     vue: "npm:^3.5.27"
   peerDependencies:
@@ -15531,7 +15531,7 @@ __metadata:
       optional: true
   bin:
     vitepress: bin/vitepress.js
-  checksum: 10c0/eab7893ee93b6afb70b6313e01fbd68004b9f973e201fdbba13ce86fddd028f207e810fecd5079612462a8bc2a4929b97bb15b805fced4ed8244b3b600609a40
+  checksum: 10c0/c74e10aa7b26bcba445c27635a299fb5d6750803d9fb3d50f2bb8db034352c4295a765909ed576113dc54029e04e93aabb17660ca6df66e10b6e66257e78acce
   languageName: node
   linkType: hard
 
