@@ -57,7 +57,8 @@ const electronApi: ElectronApi = {
   closeWebsiteWindow,
   convertHeic,
   convertPdfToImages,
-  createVideoFromNonVideo: (f, fP) => invoke('createVideoFromNonVideo', f, fP),
+  createVideoFromNonVideo: (f, fP, oD) =>
+    invoke('createVideoFromNonVideo', f, fP, oD),
   downloadFile: (u, sD, dF, lP) => invoke('downloadFile', u, sD, dF, lP),
   ensureZoomRequirements: () => invoke('ensureZoomRequirements'),
   executeQuery,

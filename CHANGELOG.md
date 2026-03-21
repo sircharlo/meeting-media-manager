@@ -4,6 +4,29 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.3.1
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Media Downloads**: Implemented downloaded check and visual indicator for publication media videos.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Fonts**: Fixed issues with remote font checks by preferring cached icon fonts and keeping offline fallbacks during refresh.
+- 🐞 **Typing**: Fixed Electron `errno` error typing.
+
+### 🧪 Testing
+
+- 🧪 **Coverage**: Added regression coverage for offline and window logic.
+- 🧪 **Fixtures**: Fixed JW language test fixture typing and `jw-icons` assertions.
+
+### 🔧 Chores
+
+- 🔧 **Dependencies**: Updated Electron and refreshed Yarn lockfile.
+- 🔧 **Cleanup**: Removed unused `qmarkdown` Quasar extension and unused `esbuild` Vite config options.
+- 🔧 **Refactoring**: Simplified `getMediaResolution` and replaced `vite-tsconfig-paths` plugin with `tsconfigPaths`.
+- 🔧 **CI/CD**: Improved release notes update script and configured CI to only upload source maps for release builds.
+
 ## v26.3.0
 
 ### ✨ New Features

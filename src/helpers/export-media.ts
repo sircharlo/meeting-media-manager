@@ -12,7 +12,7 @@ import { isCoWeek, isMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { setupFFmpeg } from 'src/helpers/fs';
 import { datesAreSame, formatDate, getSpecificWeekday } from 'src/utils/date';
-import { trimFilepathAsNeeded } from 'src/utils/fs';
+import { getTempPath, trimFilepathAsNeeded } from 'src/utils/fs';
 import { pad } from 'src/utils/general';
 import { isJwPlaylist, isVideo } from 'src/utils/media';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -412,7 +412,11 @@ const convertIfNeeded = async (
 
   try {
     const ffmpegPath = await setupFFmpeg();
-    return await createVideoFromNonVideo(sourceFilePath, ffmpegPath);
+    return await createVideoFromNonVideo(
+      sourceFilePath,
+      ffmpegPath,
+      await getTempPath(),
+    );
   } catch (error) {
     errorCatcher(error);
     return null;

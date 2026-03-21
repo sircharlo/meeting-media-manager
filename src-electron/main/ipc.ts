@@ -335,8 +335,8 @@ handleIpcInvoke(
 
 handleIpcInvoke(
   'createVideoFromNonVideo',
-  async (_e, path: string, ffmpegPath: string) =>
-    createVideoFromNonVideo(path, ffmpegPath),
+  async (_e, path: string, ffmpegPath: string, outputDir?: string) =>
+    createVideoFromNonVideo(path, ffmpegPath, outputDir),
 );
 
 handleIpcInvoke(
