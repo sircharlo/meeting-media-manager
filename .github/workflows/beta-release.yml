@@ -21,7 +21,7 @@ jobs:
       - id: set-msg
         name: Set commit message variable
         run: |
-          commitMessages=$(git log "$(git describe --tags --abbrev=0)..HEAD" --pretty=format:"%s" --no-merges | grep -E '^(feat|fix|chore|perf|docs):')
+          commitMessages=$(git log "$(git describe --tags --abbrev=0)..HEAD" --pretty=format:"%s" --no-merges | grep -Ei '^(feat|fix|chore|perf|docs):|^(fix(es|ed)?|add(s|ed)?|update(s|d)?|remov(e|es|ed)|refactor(s|ed)?|improve(s|d)?|revert(s|ed)?)\b')
           echo "Raw commit messages:"
           echo "$commitMessages"
           commitMessages="${commitMessages//'%'/'%25'}"
