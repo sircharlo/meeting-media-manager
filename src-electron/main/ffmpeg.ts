@@ -1,5 +1,7 @@
 import { pathExists } from 'fs-extra/esm';
+import { createHash } from 'node:crypto';
 import { stat } from 'node:fs/promises';
+import { basename, extname, join } from 'node:path';
 import { FULL_HD } from 'src/constants/media';
 import upath from 'upath';
 
@@ -120,12 +122,21 @@ const getMaxHeight = (dimensions: {
 export const createVideoFromNonVideo = async (
   originalFile: string,
   ffmpegPath: string,
+  outputDir?: string,
 ): Promise<string> => {
   const existingPromise = conversionQueue.get(originalFile);
   if (existingPromise) return existingPromise;
 
   const conversionPromise = (async (): Promise<string> => {
-    const convertedFilePath = changeExt(originalFile, '.mp4');
+    const convertedFilePath = outputDir
+      ? join(
+          outputDir,
+          `${basename(originalFile, extname(originalFile))}-${createHash('sha1')
+            .update(originalFile)
+            .digest('hex')
+            .slice(0, 8)}.mp4`,
+        )
+      : changeExt(originalFile, '.mp4');
 
     const canReuse = await shouldUseExistingConversion(
       originalFile,
