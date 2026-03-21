@@ -57,6 +57,24 @@ describe('ffmpeg.createVideoFromNonVideo', () => {
     expect(out.endsWith('.mp4')).toBe(true);
   });
 
+  it('writes converted files outside the source folder when outputDir is provided', async () => {
+    const { pathExists } = await import('fs-extra/esm');
+    const pathExistsMock = pathExists as unknown as Mock<
+      (p: string) => Promise<boolean>
+    >;
+    pathExistsMock.mockResolvedValue(true);
+
+    const out = await createVideoFromNonVideo(
+      '/tmp/source/a.jpg',
+      '/bin/ffmpeg',
+      '/tmp/cache',
+    );
+
+    expect(out.startsWith('/tmp/cache/')).toBe(true);
+    expect(out).not.toBe('/tmp/source/a.mp4');
+    expect(out.endsWith('.mp4')).toBe(true);
+  });
+
   it('converts image to mp4 - missing dimensions throws', async () => {
     const { pathExists } = await import('fs-extra/esm');
     const pathExistsMock = pathExists as unknown as Mock<
