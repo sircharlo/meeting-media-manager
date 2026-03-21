@@ -58,6 +58,7 @@ export interface ElectronApi {
   createVideoFromNonVideo: (
     originalFile: string,
     ffmpegPath: string,
+    outputDir?: string,
   ) => Promise<string>;
   downloadFile: (
     url: string,
