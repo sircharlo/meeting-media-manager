@@ -53,6 +53,11 @@ describe('isIgnoredUpdateError', () => {
         "Error: ENOENT: no such file or directory, unlink '/home/test/dir/meeting-media-manager-30.1.4-x86_64.AppImage'",
       ),
     ).toBe(true);
+    expect(
+      isIgnoredUpdateError(
+        "Error: ENOENT: no such file or directory, rename 'C:\\Users\\Test\\AppData\\Local\\meeting-media-manager-updater\\pending\\temp-meeting-media-manager-26.3.1-ia32.exe' -> 'C:\\Users\\Test\\AppData\\Local\\meeting-media-manager-updater\\pending\\meeting-media-manager-26.3.1-ia32.exe'",
+      ),
+    ).toBe(true);
   });
 
   it('should return false for non-ignored errors', () => {
