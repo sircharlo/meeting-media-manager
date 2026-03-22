@@ -7,6 +7,7 @@ import {
   mediaWindowInfo,
   moveMediaWindowThrottled,
 } from 'src-electron/main/window/window-media';
+import { log } from 'src/shared/vanilla';
 
 let isScreenListenerInitialized = false;
 
@@ -25,7 +26,11 @@ const onDisplayChanged = () => {
 
 export const initScreenListeners = () => {
   if (isScreenListenerInitialized) {
-    console.log('🔍 [initScreenListeners] Already initialized, skipping');
+    log(
+      '🔍 [initScreenListeners] Already initialized, skipping',
+      'electronScreen',
+      'log',
+    );
     return;
   }
 
@@ -45,7 +50,11 @@ export const initScreenListeners = () => {
       screen.on('display-removed', onDisplayChanged);
       screen.on('display-metrics-changed', onDisplayChanged);
 
-      console.log('🔍 [initScreenListeners] Screen listeners initialized');
+      log(
+        '🔍 [initScreenListeners] Screen listeners initialized',
+        'electronScreen',
+        'log',
+      );
     })
     .catch((e) => {
       isScreenListenerInitialized = false;

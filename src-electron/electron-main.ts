@@ -38,6 +38,7 @@ import {
   focusMainWindow,
   mainWindowInfo,
 } from 'src-electron/main/window/window-main';
+import { log } from 'src/shared/vanilla';
 import upath from 'upath';
 
 const { join, resolve } = upath;
@@ -86,7 +87,7 @@ initSentry({
         return null;
       }
     } catch (err) {
-      console.error(err);
+      log(err, 'electron', 'error');
     }
     return event;
   },
@@ -154,7 +155,7 @@ function createApplicationMenu() {
 if (gotTheLock) {
   // Check for crash loop on startup
   const crashCount = incrementCrashCount();
-  console.log(`Startup crash count: ${crashCount}`);
+  log(`Startup crash count: ${crashCount}`, 'electron', 'log');
 
   if (crashCount >= 3) {
     if (!isHwAccelDisabled()) {
@@ -178,9 +179,9 @@ if (gotTheLock) {
   // Check if hardware acceleration should be disabled
   if (isHwAccelDisabled()) {
     app.disableHardwareAcceleration();
-    console.log('Hardware acceleration disabled');
+    log('Hardware acceleration disabled', 'electron', 'log');
   } else {
-    console.log('Hardware acceleration enabled');
+    log('Hardware acceleration enabled', 'electron', 'log');
   }
 
   app.on('second-instance', () => {
@@ -243,8 +244,10 @@ if (gotTheLock) {
       );
 
       if (!isHwAccelDisabled()) {
-        console.log(
+        log(
           `Detected ${type} crash (${details.reason}). Disabling hardware acceleration for next run.`,
+          'electron',
+          'log',
         );
         // Persist to user prefs for next run and notify user
         setHwAccelDisabled(true, true);
@@ -253,7 +256,11 @@ if (gotTheLock) {
 
     if (type === 'Video Capture' && details.reason === 'crashed') {
       videoCaptureCrashCount++;
-      console.log(`Video Capture crash count: ${videoCaptureCrashCount}`);
+      log(
+        `Video Capture crash count: ${videoCaptureCrashCount}`,
+        'electron',
+        'log',
+      );
 
       if (videoCaptureCrashCount >= 2) {
         captureElectronError(
@@ -325,7 +332,7 @@ if (gotTheLock) {
 
   createWindowAndCaptureErrors();
 } else {
-  console.log('Another instance is running. Exiting...');
+  log('Another instance is running. Exiting...', 'electron', 'log');
   app.exit(2);
 }
 
@@ -355,7 +362,7 @@ function getCrashCount() {
       return typeof data.count === 'number' ? data.count : 0;
     }
   } catch (error) {
-    console.warn('Failed to read crash count:', error);
+    log('Failed to read crash count:', 'electron', 'warn', error);
   }
   return 0;
 }
@@ -374,7 +381,7 @@ function incrementCrashCount() {
     writeJsonSync(getCrashCountFilePath(), { count });
     return count;
   } catch (error) {
-    console.warn('Failed to write crash count:', error);
+    log('Failed to write crash count:', 'electron', 'warn', error);
     return 0;
   }
 }
@@ -387,7 +394,7 @@ function isHwAccelDisabled() {
       return data.disabled === true;
     }
   } catch (error) {
-    console.warn('Failed to read hw accel setting:', error);
+    log('Failed to read hw accel setting:', 'electron', 'warn', error);
   }
   return false;
 }
@@ -395,9 +402,9 @@ function isHwAccelDisabled() {
 function resetCrashCount() {
   try {
     writeJsonSync(getCrashCountFilePath(), { count: 0 });
-    console.log('Crash count reset to 0');
+    log('Crash count reset to 0', 'electron', 'log');
   } catch (error) {
-    console.warn('Failed to reset crash count:', error);
+    log('Failed to reset crash count:', 'electron', 'warn', error);
   }
 }
 
@@ -415,7 +422,7 @@ function setHwAccelDisabled(disabled: boolean, temporary = false) {
       }
     }
   } catch (error) {
-    console.warn('Failed to write hw accel setting:', error);
+    log('Failed to write hw accel setting:', 'electron', 'warn', error);
   }
 }
 
@@ -433,7 +440,7 @@ function wasHwAccelTemporarilyDisabled() {
       return data.disabled === true && data.temporary === true;
     }
   } catch (error) {
-    console.warn('Failed to read hw accel setting:', error);
+    log('Failed to read hw accel setting:', 'electron', 'warn', error);
   }
   return false;
 }

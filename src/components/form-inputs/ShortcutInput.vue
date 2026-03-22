@@ -83,6 +83,7 @@ import {
   isKeyCode,
   registerCustomShortcut,
 } from 'src/helpers/keyboardShortcuts';
+import { log } from 'src/shared/vanilla';
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -118,7 +119,7 @@ watch(
 );
 
 const handleKeyPress = (event: KeyboardEvent) => {
-  console.log('🎹 Key pressed:', event.code, event.key, {
+  log('🎹 Key pressed:', 'shortcutInput', 'log', event.code, event.key, {
     altKey: event.altKey,
     ctrlKey: event.ctrlKey,
     metaKey: event.metaKey,
@@ -164,7 +165,11 @@ const handleKeyPress = (event: KeyboardEvent) => {
 };
 
 const startListening = () => {
-  console.log('🎹 Starting keyboard listener for shortcut input');
+  log(
+    '🎹 Starting keyboard listener for shortcut input',
+    'shortcutInput',
+    'log',
+  );
   globalThis.addEventListener('keydown', handleKeyPress, { passive: false });
   // Focus the dialog to ensure it receives key events
   setTimeout(() => {
@@ -178,7 +183,11 @@ const startListening = () => {
 };
 
 const stopListening = () => {
-  console.log('🎹 Stopping keyboard listener for shortcut input');
+  log(
+    '🎹 Stopping keyboard listener for shortcut input',
+    'shortcutInput',
+    'log',
+  );
   globalThis.removeEventListener('keydown', handleKeyPress);
 };
 const shortcutPicker = ref(false);

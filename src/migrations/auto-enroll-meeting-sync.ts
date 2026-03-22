@@ -1,6 +1,7 @@
 import { storeToRefs } from 'pinia';
 import { fetchMeetingLocations } from 'src/helpers/congregation-schedule';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 
@@ -15,15 +16,19 @@ export const autoEnrollMeetingSync: MigrationFunction = async () => {
     const { congregations } = storeToRefs(congregationSettingsStore);
 
     if (!congregations.value) {
-      console.log(
+      log(
         'ℹ️ [autoEnrollMeetingSync] No congregation settings. Skipping for now.',
+        'migrations',
+        'log',
       );
       return false;
     }
 
     if (!online.value) {
-      console.log(
+      log(
         'ℹ️ [autoEnrollMeetingSync] No internet connection. Skipping for now.',
+        'migrations',
+        'log',
       );
       return false;
     }
@@ -31,27 +36,37 @@ export const autoEnrollMeetingSync: MigrationFunction = async () => {
     lookupInProgress.value = true;
 
     for (const id of Object.keys(congregations.value)) {
-      console.log(`ℹ️ [autoEnrollMeetingSync] Checking "${id}"...`);
+      log(
+        `ℹ️ [autoEnrollMeetingSync] Checking "${id}"...`,
+        'migrations',
+        'log',
+      );
 
       const congregationSettings = congregations.value?.[id];
 
       if (!congregationSettings) {
-        console.log(
+        log(
           `ℹ️ [autoEnrollMeetingSync] No settings for "${id}". Skipping.`,
+          'migrations',
+          'log',
         );
         continue;
       }
 
       if (!congregationSettings.congregationNameModified) {
-        console.log(
+        log(
           `ℹ️ [autoEnrollMeetingSync] "${id}" is not modified. Skipping.`,
+          'migrations',
+          'log',
         );
         continue;
       }
 
       if (!congregationSettings.congregationName) {
-        console.log(
+        log(
           `ℹ️ [autoEnrollMeetingSync] No name for "${id}". Skipping.`,
+          'migrations',
+          'log',
         );
         continue;
       }
@@ -66,13 +81,17 @@ export const autoEnrollMeetingSync: MigrationFunction = async () => {
       );
 
       if (exactMatch) {
-        console.log(
+        log(
           '✅ [autoEnrollMeetingSync] Exact match found. Enabling sync.',
+          'migrations',
+          'log',
         );
         congregationSettings.congregationNameModified = false;
       } else {
-        console.log(
+        log(
           'ℹ️ [autoEnrollMeetingSync] No exact match. Keeping manual settings.',
+          'migrations',
+          'log',
         );
       }
     }

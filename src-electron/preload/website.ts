@@ -1,10 +1,15 @@
 import type { JwSiteParams, NavigateWebsiteAction } from 'src/types';
 
 import { listen, send } from 'src-electron/preload/ipc';
+import { log } from 'src/shared/vanilla';
 
 export const initWebsiteListeners = () => {
   listen('websiteWindowClosed', () => {
-    console.log('[Electron] Website window closed, sending IPC event');
+    log(
+      '[Electron] Website window closed, sending IPC event',
+      'electron',
+      'log',
+    );
     send('websiteWindowClosed');
   });
 };

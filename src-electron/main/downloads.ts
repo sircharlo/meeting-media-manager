@@ -10,6 +10,7 @@ import {
 } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
+import { log } from 'src/shared/vanilla';
 import upath from 'upath';
 
 const { basename } = upath;
@@ -154,7 +155,11 @@ function logQueueBlockReason(
   hasHighPriorityActiveDownload: boolean,
 ): void {
   if (itemType === null && hasHighPriorityActiveDownload) {
-    console.log('High priority active. Not processing low priority items.');
+    log(
+      'High priority active. Not processing low priority items.',
+      'electronDownloads',
+      'log',
+    );
   }
 }
 
@@ -331,7 +336,14 @@ export async function downloadFile(
       downloadQueue.push(fileToDownload);
     }
 
-    console.log('fileToDownload', fileToDownload, 'lowPriority', lowPriority);
+    log(
+      'fileToDownload',
+      'electronDownloads',
+      'log',
+      fileToDownload,
+      'lowPriority',
+      lowPriority,
+    );
 
     // Trigger queue processing
     processQueue();
@@ -388,8 +400,10 @@ export async function isDownloadComplete(downloadId: string) {
 function stopLowPriorityDownloads() {
   const activeLowPriority = getActiveLowPriorityDownloads();
   activeLowPriority.forEach((download, key) => {
-    console.log(
+    log(
       'Pausing download to free slot:',
+      'electronDownloads',
+      'log',
       download.uuid || 'no-uuid',
       key,
     );
@@ -594,7 +608,14 @@ async function processQueue() {
 
   // Exit early if max active downloads reached
   if (!hasAvailableSlots(activeCount, maxActiveDownloads)) {
-    console.log('Queue full. Active:', activeCount, 'Max:', maxActiveDownloads);
+    log(
+      'Queue full. Active:',
+      'electronDownloads',
+      'log',
+      activeCount,
+      'Max:',
+      maxActiveDownloads,
+    );
     return;
   }
 
@@ -680,11 +701,11 @@ async function startDownload(
   });
 
   try {
-    console.log('Starting download via manager:', url);
+    log('Starting download via manager:', 'electronDownloads', 'log', url);
     const downloadId = await manager.download({
       callbacks: {
         onDownloadCancelled: async () => {
-          console.log('Download cancelled:', url);
+          log('Download cancelled:', 'electronDownloads', 'log', url);
           sendToWindow(mainWindowInfo.mainWindow, 'downloadCancelled', {
             id: key,
           });
@@ -692,7 +713,7 @@ async function startDownload(
           processQueue();
         },
         onDownloadCompleted: async ({ item }) => {
-          console.log('Download completed:', url);
+          log('Download completed:', 'electronDownloads', 'log', url);
           sendToWindow(mainWindowInfo.mainWindow, 'downloadCompleted', {
             filePath: item.getSavePath(),
             id: key,
@@ -708,7 +729,7 @@ async function startDownload(
           });
         },
         onDownloadStarted: async ({ item, resolvedFilename }) => {
-          console.log('Download started:', url);
+          log('Download started:', 'electronDownloads', 'log', url);
           sendToWindow(mainWindowInfo.mainWindow, 'downloadStarted', {
             filename: resolvedFilename,
             id: key,
@@ -717,7 +738,7 @@ async function startDownload(
         },
         onError: async (err, downloadData) => {
           if (quitStatus.isAppQuitting) return;
-          console.log('Download error:', url);
+          log('Download error:', 'electronDownloads', 'log', url);
           captureElectronError(err, {
             contexts: {
               fn: {
