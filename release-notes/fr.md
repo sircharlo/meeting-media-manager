@@ -4,13 +4,13 @@
 
 Pour la liste complète des changements entre les versions, consultez notre fichier CHANGELOG.md sur GitHub.
 
-## 3.0 v26.0
+## v26.3.0
 
 ### ✨ Nouvelles fonctionnalités
 
-- ✨ **Média Mémorial**: La récupération automatique des médias Mémoriaux est maintenant terminée ! L'application téléchargera automatiquement la vidéo et l'image de bienvenue du Mémorial à afficher pendant le Mémorial, si elle est disponible dans la langue configurée.
-- ✨ **Vitesse de lecture**: Ajout du contrôle de vitesse de lecture avec indicateur visuel, et réinitialisation manuelle. Cette fonctionnalité n'est visible que si elle est activée dans les paramètres avancés.
-- ✨ **Chansons de Pinyin**: Ajout d'un interrupteur de substitution de chansons de pinyin pour les réunions tenues en chinois.
+- ✨ **Médias pour Mémorial** : La récupération automatique des médias pour le Mémorial est désormais sortie de la phase bêta ! L'application téléchargera automatiquement la vidéo de bienvenue pour le Mémorial et l'image à afficher pendant le Mémorial, si elle est disponible dans la langue configurée.
+- ✨ **Vitesse de lecture** : Ajout du contrôle de vitesse de lecture avec indicateur visuel, et réinitialisation manuelle. Cette fonctionnalité n'est visible que si elle est activée dans les paramètres avancés.
+- ✨ **Cantiques en pinyin** : Ajout d'une option permettant d'activer ou de désactiver le remplacement des cantiques par leur version en pinyin pour les réunions en chinois.
 
 ## v26.2.0
 
@@ -91,7 +91,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 - ✨ **Comportement de la fenêtre multimédia** : correction et amélioration du comportement « toujours au premier plan » de la fenêtre multimédia, qui s'ajuste désormais dynamiquement en fonction du mode plein écran.
 - ✨ **Paramètre d'affichage de la date** : ajout d'un paramètre utilisateur permettant de configurer le format d'affichage de la date.
 - ✨ **Transition en fondu enchaîné pour les médias** : mise en place de transitions en fondu enchaîné pour l'affichage des médias, au lieu de la transition plus brusque qui était présente auparavant.
-- ✨ **Arrêt automatique de la musique** : Optimisation du comportement de l'arrêt automatique de la musique de fond afin qu'il se comporte de la même manière, que la musique ait été lancée automatiquement ou non.
+- ✨ **Arrêt automatique de la musique** : Optimisation du comportement de l'arrêt automatique de la musique de fond afin qu'il se comporte toujours de la même manière, que la musique ait été lancée automatiquement ou non.
 - ✨ **Clics sur les fenêtres inactives sous macOS** : désormais, les clics de souris sont pris en charge dans la fenêtre principale sous macOS même si elle n'est pas au premier plan, ce qui devrait faciliter le contrôle de l'application.
 
 ## v25.9.0
@@ -117,11 +117,11 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 - ✨ **Mode de répétition de section** : Activez la lecture en boucle dans des sections spécifiques pour des boucles de médias fluides.
 - ✨ **Intégration Zoom** : Coordination automatique du démarrage/arrêt du partage d'écran avec la lecture des médias.
 
-## 7.0 v25.0
+## v25.7.0
 
 ### ✨ Nouvelles fonctionnalités
 
-- Aucune nouvelle fonctionnalité pour cette version!
+- Aucune nouvelle fonctionnalité pour cette version !
 
 ## 25.6.0
 
@@ -142,7 +142,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 ### ✨ Nouvelles fonctionnalités
 
 - 🇵🇭 **Nouvelle langue : Tagalog** : Ajout du support pour le tagalog, étendant les capacités multilingues de l'application.
-- 🎞 **Support du format vidéo `.m4v`** : Support maintenant la lecture des fichiers `.m4v` pour améliorer la compatibilité des médias.
+- 🎞️ **Prise en charge du format `.m4v`**: Prise en charge de la lecture des fichiers `.m4v` pour améliorer la compatibilité avec les médias.
 
 ## 25.3.1
 
@@ -154,57 +154,57 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 ### ✨ Nouvelles fonctionnalités
 
-- 🎵 **Jouer de la musique de fond avec des vidéos** : Permettre à la musique de fond de continuer à jouer pendant que des vidéos sont visionnées.
-- 🎥 **Feed de la caméra pour les médias en langue des signes** : Ajoute la possibilité d'afficher un flux de caméra sur la fenêtre multimédia spécifiquement pour les réunions en langue des signes.
-- 📅 **Date et fond pour mémorial** : Détecte et définit automatiquement la date du mémorial et prépare l'image de fond pour le mémorial.
-- 📜 **Afficher les notes de version dans l'application** : afficher les notes de version directement dans l'application afin que les utilisateurs puissent facilement revoir les changements après une mise à jour.
+- 🎵 **Lecture de la musique de fond avec des vidéos** : Permettre à la musique de fond de continuer à jouer pendant que des vidéos sont visionnées.
+- 🎥 **Flux de la caméra pour les médias en langue des signes** : Ajoute la possibilité d'afficher un flux de caméra sur la fenêtre multimédia spécifiquement pour les réunions en langue des signes.
+- 📅 **Date et image de fond pour le Mémorial** : Détecte et définit automatiquement la date du mémorial et prépare l'image de fond pour le Mémorial.
+- 📜 **Affichage des notes de version** : Affichage des notes de version directement dans l'application afin que les utilisateurs puissent facilement revoir les changements après une mise à jour.
 
 ## 25.2.1
 
 ### ✨ Nouvelles fonctionnalités
 
-- 🔄 **Autoriser les tentatives de reconnexion OBS**: Introduire la possibilité de forcer manuellement OBS à se reconnecter si nécessaire.
-- 🗑️ **Nettoyage automatique des anciens dossiers de date d'exportation**: Supprime automatiquement les dossiers de date d'exportation obsolètes pour garder le stockage organisé.
+- 🔄 **Permettre les tentatives de reconnexion à OBS Studio** : Introduire la possibilité de forcer manuellement OBS Studio à se reconnecter si nécessaire.
+- 🗑️ **Nettoyage automatique des anciens dossiers exportés** : Supprime automatiquement les dossiers exportés obsolètes pour garder le stockage organisé.
 
 ## 25.2.0
 
 ### ✨ Nouvelles fonctionnalités
 
-- 🌍 **Utiliser la locale du système par défaut**: Détecte et utilise automatiquement la locale du système pour une expérience plus personnalisée.
-- 🏷️ **Support des balises pour les médias exportés**: Ajouter des balises de métadonnées aux fichiers multimédia exportés pour une meilleure organisation.
-- 🔄 **Automatic Beta to Stable Downgrade**: Permettre les downgrades automatiques des versions bêta aux versions stables si nécessaire.
-- 🌐 **Extract Latest MEPS Language Indexes**: Récupère les index de langue MEPS les plus récents directement depuis le site officiel, assurant une prise en charge des langues à jour.
+- 🌍 **Utiliser la locale du système par défaut** : Détecte et utilise automatiquement la locale du système pour une expérience plus personnalisée.
+- 🏷️ **Support des balises pour les médias exportés** : Ajouter des balises de métadonnées aux fichiers multimédia exportés pour une meilleure organisation.
+- 🔄 **Passage automatique de la version bêta à la version stable** : Permet de passer automatiquement d'une version bêta à une version stable lorsque cela s'avère nécessaire.
+- 🌐 **Extraction des derniers index linguistiques MEPS** : Récupération des index linguistiques MEPS les plus récents directement depuis le site officiel, garantissant ainsi une prise en charge linguistique à jour.
 
 ## 25.1.0
 
 ### ✨ Nouvelles fonctionnalités
 
-- 📅 **Ouvrir les données précédentes**: Permet l'ouverture des dates précédentes de la semaine en cours, ce qui est utile lorsque le jour de la réunion est déplacé plus tard dans la semaine.
-- 🛑 **Bannière d'erreur pour OBS Studio** : Ajoute une bannière d'erreur lorsque OBS Studio n'est pas connecté le jour de la réunion, en veillant à ce que les utilisateurs soient avertis.
-- 📚 **Group Media by Publication**: Grouper media from the same referred publication for a cleaner and more organized media overview.
-- 🎵 **Avertissement de double chanson**: Affiche un avertissement si les chansons sont listées plusieurs fois dans la liste des médias pour les réunions du week-end.
-- 🔄 **Planification future du calendrier**: Activer la planification des changements de calendrier de réunion qui est utile pour les changements d'horaire annuels ou pour la visite du superviseur du circuit à une congrégation voisine.
+- 📅 **Ouverture des dates passées** : permet d'ouvrir les dates passées de la semaine en cours, ce qui est utile lorsque la réunion est reportée à une date ultérieure dans la semaine.
+- 🛑 **Bannière d'erreur pour OBS Studio** : Ajoute une bannière d'erreur lorsque OBS Studio n'est pas connecté pendant un jour de la réunion, pour que les utilisateurs soient avertis.
+- 🚚 **Regrouper les médias par publication** : Regroupement des médias extraits d'une même publication pour obtenir une vue d'ensemble plus claire et mieux organisée.
+- 🎵 **Avertissement concernant les doublons** : Affichage d'un avertissement si des cantiques apparaissent plus d'une fois dans la liste des fichiers multimédias pour les réunions du week-end.
+- 👉 **Planification des horaires à venir** : permet de planifier les modifications futures des horaires des réunions, ce qui est utile pour les changements d'horaires annuels ou pour la visite du responsable de circonscription dans une assemblée locale voisine.
 
 ## 24.11.0
 
 ### ✨ Nouvelles fonctionnalités
 
-- **feat**: La présentation du site web est maintenant supportée sur macOS 🚀
-- **feat** : Introduction des raccourcis clavier pour arrêter, interrompre et reprendre la lecture des médias 🚀
-- **feat**: Ajout de la prise en charge de la configuration de l'adresse web à partir de laquelle le média doit être téléchargé 🚀
-- **feat** : Ajout du sélecteur de scène instantané d'OBS Studio et modification de la fonctionnalité de sélecteur de scène dans les paramètres
-- **feat** : Site de documentation étendu pour prendre en charge plus de langues
+- **fonctionnalité** : La présentation du site web est désormais prise en charge sur macOS 🚀
+- **fonctionnalité** : Ajout de raccourcis clavier pour arrêter, mettre en pause et reprendre la lecture multimédia 🚀
+- **fonctionnalité** : Possibilité de définir l'adresse Web à partir de laquelle les fichiers multimédias doivent être téléchargés 🚀
+- **fonctionnalité** : Ajout du sélecteur de scènes instantané pour OBS Studio et refonte de la fonctionnalité du sélecteur de scènes dans les paramètres
+- **fonctionnalité** : Amélioration du site web de documentation pour prendre en charge davantage de langues
 
 ## 24.10.10
 
 ### ✨ Nouvelles fonctionnalités
 
 - **nouveau** : Ajout de raccourcis clavier pour accéder à l'élément média suivant/précédent
-- **nouveau** : Ajout d'un menu avec le bouton droit de la souris pour masquer les médias et les renommer
-- **nouveau** : Les heures de vidéo coupées sont maintenant respectées dans les listes de lecture JWL importées
+- **nouveau** : Ajout d'un menu contextuel permettant de masquer et de renommer les éléments multimédias
+- **nouveau** : Les durées des vidéos découpées sont désormais prises en compte dans les listes de lecture JWL importées
 
 ## 24.10.9
 
 ### ✨ Nouvelles fonctionnalités
 
-- **feat** : Ajout d'une option pour supprimer tous les fichiers multimédias supplémentaires pour le jour sélectionné
+- **fonctionnalité** : Ajout d'une option pour supprimer tous les fichiers multimédias supplémentaires pour le jour sélectionné
