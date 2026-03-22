@@ -6,6 +6,7 @@ import { ensureDir, type Stats } from 'fs-extra';
 import { createWriteStream } from 'node:fs';
 import { mkdir, rm, stat, writeFile } from 'node:fs/promises';
 import { pipeline } from 'node:stream/promises';
+import { setTimeout as delay } from 'node:timers/promises';
 import {
   addElectronBreadcrumb,
   captureElectronError,
@@ -29,6 +30,9 @@ const ongoingDecompressions = new Map<string, Promise<UnzipResult[]>>();
 const MAX_FILES = 10000;
 const MAX_SIZE = 2000000000; // 2 GB
 const THRESHOLD_RATIO = 100;
+const PATH_PROBE_SETTLE_DELAY_MS = 50;
+const PATH_PROBE_RETRY_DELAY_MS = 50;
+const PATH_PROBE_RETRY_COUNT = 4;
 
 let defaultAppDataPath: null | string = null;
 
@@ -82,6 +86,86 @@ export async function getAppDataPath(): Promise<string> {
 
 const isUsablePathPromises = new Map<string, Promise<boolean>>();
 
+const WINDOWS_RETRYABLE_PROBE_CODES = new Set(['EBUSY', 'EPERM']);
+
+const getErrorCode = (error: unknown) => (error as { code?: string })?.code;
+
+const isRetryableProbeCleanupError = (error: unknown) =>
+  process.platform === 'win32' &&
+  WINDOWS_RETRYABLE_PROBE_CODES.has(getErrorCode(error) ?? '');
+
+const logProbeCleanupWarning = (
+  error: unknown,
+  basePath: string,
+  targetPath: string,
+  stage: 'directory' | 'file',
+) => {
+  addElectronBreadcrumb({
+    category: 'filesystem',
+    data: {
+      basePath,
+      code: getErrorCode(error),
+      stage,
+      targetPath,
+    },
+    level: 'warning',
+    message: `[isUsablePath] Probe cleanup skipped after transient lock`,
+  });
+};
+
+const cleanupProbePath = async (
+  targetPath: string,
+  options: { force: boolean; recursive?: boolean },
+  basePath: string,
+  stage: 'directory' | 'file',
+) => {
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt <= PATH_PROBE_RETRY_COUNT; attempt += 1) {
+    try {
+      await rm(targetPath, options);
+      return;
+    } catch (error) {
+      lastError = error;
+      if (
+        !isRetryableProbeCleanupError(error) ||
+        attempt === PATH_PROBE_RETRY_COUNT
+      ) {
+        break;
+      }
+      await delay(PATH_PROBE_RETRY_DELAY_MS);
+    }
+  }
+
+  if (isRetryableProbeCleanupError(lastError)) {
+    logProbeCleanupWarning(lastError, basePath, targetPath, stage);
+    return;
+  }
+
+  captureElectronError(lastError, {
+    contexts: {
+      fn: {
+        args: { basePath, stage, targetPath },
+        name: 'isUsablePath.cleanupProbePath',
+      },
+    },
+  });
+};
+
+const cleanupProbe = async (
+  basePath: string,
+  testDir: string,
+  testFile: string,
+) => {
+  await cleanupProbePath(testFile, { force: true }, basePath, 'file');
+  await cleanupProbePath(
+    testDir,
+    { force: true, recursive: true },
+    basePath,
+    'directory',
+  );
+};
+
 export function isUsablePath(basePath?: string): Promise<boolean> {
   if (!basePath) return Promise.resolve(false);
 
@@ -95,9 +179,9 @@ export function isUsablePath(basePath?: string): Promise<boolean> {
 
         const testFile = join(testDir, 'test.txt');
         await writeFile(testFile, 'ok');
+        await delay(PATH_PROBE_SETTLE_DELAY_MS);
 
-        await rm(testFile, { force: true });
-        await rm(testDir, { force: true, recursive: true });
+        await cleanupProbe(basePath, testDir, testFile);
 
         return true;
       } catch (e) {
