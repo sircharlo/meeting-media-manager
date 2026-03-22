@@ -1,4 +1,5 @@
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { log } from 'src/shared/vanilla';
 class ElectronApiManager {
   private initPromise: null | Promise<void> = null;
   private readonly pageName: string | undefined;
@@ -12,8 +13,10 @@ class ElectronApiManager {
     this.initPromise = new Promise((resolve, reject) => {
       // @ts-expect-error Assuming globalThis.electronApi is defined in the Electron context
       if (globalThis.electronApi?.path?.join) {
-        console.debug(
+        log(
           `[${this.pageName}] Electron API was available immediately.`,
+          'electron',
+          'debug',
         );
         resolve();
         return;
@@ -23,8 +26,10 @@ class ElectronApiManager {
       const check = () => {
         // @ts-expect-error Assuming globalThis.electronApi is defined in the Electron context
         if (globalThis.electronApi?.path?.join) {
-          console.debug(
+          log(
             `[${this.pageName}] Electron API became available after ${attempts} attempts.`,
+            'electron',
+            'debug',
           );
           resolve();
         } else if (attempts++ > 100) {
@@ -48,7 +53,7 @@ class ElectronApiManager {
 export async function initializeElectronApi(pageName: string) {
   try {
     const apiManager = new ElectronApiManager(pageName);
-    console.debug(`[${pageName}] About to wait for Electron API...`);
+    log(`[${pageName}] About to wait for Electron API...`, 'electron', 'debug');
     await apiManager.ensureReady();
   } catch (error) {
     errorCatcher(error, {

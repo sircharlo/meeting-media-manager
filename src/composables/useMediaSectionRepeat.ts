@@ -4,6 +4,7 @@ import { useBroadcastChannel } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { standardSections } from 'src/constants/media';
 import { findMediaSection } from 'src/helpers/media-sections';
+import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
 import { ref, watch } from 'vue';
 
@@ -97,20 +98,35 @@ export function useMediaSectionRepeat() {
   const startRepeatingSection = (sectionId: MediaSectionIdentifier) => {
     // Only allow custom sections to be repeated
     if (!isCustomSection(sectionId)) {
-      console.warn('Only custom sections can be repeated:', sectionId);
+      log(
+        'Only custom sections can be repeated:',
+        'mediaSectionRepeat',
+        'warn',
+        sectionId,
+      );
       return;
     }
 
     const sectionItems = getSectionMediaItems(sectionId);
     if (sectionItems.length === 0) {
-      console.warn('No items found in section:', sectionId);
+      log(
+        'No items found in section:',
+        'mediaSectionRepeat',
+        'warn',
+        sectionId,
+      );
       return;
     }
 
     // Check if the section has repeat enabled
     const sectionSettings = getSectionRepeatSettings(sectionId);
     if (!sectionSettings?.repeat) {
-      console.warn('Section repeat not enabled for:', sectionId);
+      log(
+        'Section repeat not enabled for:',
+        'mediaSectionRepeat',
+        'warn',
+        sectionId,
+      );
       return;
     }
 
@@ -185,8 +201,10 @@ export function useMediaSectionRepeat() {
     const nextUrl = nextItem.fileUrl || nextItem.streamUrl || '';
     const isSameItem = mediaPlaying.value.url === nextUrl;
 
-    console.log(
+    log(
       '🔄 [playNextItem] Playing next item:',
+      'mediaSectionRepeat',
+      'log',
       nextItem,
       'isSameItem:',
       isSameItem,
@@ -221,8 +239,10 @@ export function useMediaSectionRepeat() {
 
   // Handle media ended event - called when a media item finishes playing
   const handleMediaEnded = () => {
-    console.log(
+    log(
       '🔄 [handleMediaEnded] Handle media ended',
+      'mediaSectionRepeat',
+      'log',
       currentRepeatingSection.value,
       isRepeating.value,
     );
@@ -238,14 +258,21 @@ export function useMediaSectionRepeat() {
       (item) => item.uniqueId === currentPlayingUniqueId,
     );
 
-    console.log('🔄 [handleMediaEnded] Current item', currentItem);
+    log(
+      '🔄 [handleMediaEnded] Current item',
+      'mediaSectionRepeat',
+      'log',
+      currentItem,
+    );
 
     if (!currentItem) {
       return false;
     }
 
-    console.log(
+    log(
       '🔄 [handleMediaEnded] Current item is image',
+      'mediaSectionRepeat',
+      'log',
       currentItem.isImage,
     );
 
@@ -287,8 +314,10 @@ export function useMediaSectionRepeat() {
 
     if (section?.config) {
       section.config.repeatInterval = interval;
-      console.log(
+      log(
         '🔄 [updateSectionRepeatInterval] Updated interval:',
+        'mediaSectionRepeat',
+        'log',
         interval,
         'for section:',
         sectionId,

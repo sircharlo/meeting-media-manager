@@ -88,49 +88,88 @@ export const debounce = <T extends unknown[]>(
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const logPrefixes = {
+  api: '🌐 API',
   backgroundMusic: '🎵 Background Music',
   cacheAutoClear: '🧹 Cache Auto-Clear',
+  cleanup: '🧽 Cleanup',
   congregation: '⛪ Congregation',
+  congregationLookup: '🏛️ Congregation Lookup',
+  congregationSchedule: '🗓️ Congregation Schedule',
   coWeek: '📅 Co-Week',
+  customSections: '🧩 Custom Sections',
+  dateHelpers: '📆 Date Helpers',
+  dateUtils: '📆 Date Utils',
+  dialog: '🪟 Dialog',
+  display: '🖥️ Display',
   dividers: '🔤 Dividers',
+  electron: '⚡ Electron',
+  electronDependencies: '🧪 Electron Dependencies',
+  electronDownloads: '⬇️ Electron Downloads',
+  electronFilesystem: '📁 Electron Filesystem',
+  electronIpc: '🔌 Electron IPC',
+  electronScreen: '🖥️ Electron Screen',
+  electronUpdater: '🆕 Electron Updater',
+  electronWindow: '🪟 Electron Window',
+  errorHandling: '🚨 Error Handling',
+  fileImport: '📥 File Import',
+  filesystem: '📁 Filesystem',
+  jw: '📚 JW',
   jwPlaylist: '📋 JW Playlist',
+  jwpub: '📦 JWPub',
   keyboardShortcuts: '⌨️ Keyboard Shortcuts',
+  mainLayout: '🏠 Main Layout',
+  mediaCalendar: '🗓️ Media Calendar',
   mediaFetching: '🔍 Media Fetching',
+  mediaList: '🧾 Media List',
   mediaPlayback: '▶️ Media Playback',
+  mediaPlayer: '🎬 Media Player',
   mediaProcessing: '🔄 Media Processing',
+  mediaSectionRepeat: '🔁 Media Section Repeat',
+  mediaSections: '🗂️ Media Sections',
+  migrations: '🧱 Migrations',
   mwMedia: '🌅 Midweek Meeting Media',
+  obs: '📡 OBS',
+  publicationMedia: '📰 Publication Media',
+  shortcutInput: '🎹 Shortcut Input',
+  sqlite: '🗄️ SQLite',
+  stores: '🧠 Stores',
   watchedFolder: '📁 Watched Folder',
   weMedia: '🌅 Weekend Meeting Media',
+  zoom: '🔎 Zoom',
 } as const;
 
 export type LogPrefix = keyof typeof logPrefixes;
+export type LogType = 'debug' | 'error' | 'info' | 'log' | 'trace' | 'warn';
+
+type ConsoleMethod = (...args: unknown[]) => void;
+
+const getConsoleMethod = (type: LogType): ConsoleMethod => {
+  const consoleObject = Reflect.get(globalThis, 'console') as
+    | Partial<Record<LogType, ConsoleMethod>>
+    | undefined;
+
+  return consoleObject?.[type] ?? consoleObject?.log ?? (() => undefined);
+};
 
 export const log = (
-  message: string,
+  message: unknown,
   prefix?: LogPrefix,
-  type: 'debug' | 'error' | 'info' | 'log' | 'warn' = 'log',
+  type: LogType = 'log',
+  ...details: unknown[]
 ) => {
   try {
-    const logMessage = prefix ? `[${prefix}] ${message}` : message;
+    const prefixLabel = prefix ? `[${prefix}]` : '';
+    const logger = getConsoleMethod(type);
 
-    switch (type) {
-      case 'debug':
-        console.debug(logMessage);
-        break;
-      case 'error':
-        console.error(logMessage);
-        break;
-      case 'info':
-        console.info(logMessage);
-        break;
-      case 'log':
-        console.log(logMessage);
-        break;
-      case 'warn':
-        console.warn(logMessage);
-        break;
+    if (typeof message === 'string') {
+      const logMessage = prefixLabel ? `${prefixLabel} ${message}` : message;
+      logger(logMessage, ...details);
+      return;
     }
+
+    logger(prefixLabel || '[log]', message, ...details);
   } catch (error) {
-    console.error(error, { message, prefix, type });
+    const fallbackLogger = getConsoleMethod('error');
+    fallbackLogger(error, { details, message, prefix, type });
   }
 };

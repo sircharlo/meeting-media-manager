@@ -45,6 +45,7 @@ import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { obsConnect } from 'src/helpers/obs';
+import { log } from 'src/shared/vanilla';
 import { initObsWebSocket, obsWebSocketInfo } from 'src/utils/obs';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useObsStateStore } from 'stores/obs-state';
@@ -104,7 +105,7 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
         error instanceof OBSWebSocketError &&
         error.message.includes('OBS is not ready')
       ) {
-        console.log(`Retrying... (${attempts}/${maxRetries})`);
+        log(`Retrying... (${attempts}/${maxRetries})`, 'obs', 'log');
         await new Promise((resolve) => {
           setTimeout(resolve, retryInterval);
         });

@@ -15,6 +15,7 @@ import {
 import { urlVariables } from 'src-electron/main/session';
 import { captureElectronError, getIconPath } from 'src-electron/main/utils';
 import { StatefulBrowserWindow } from 'src-electron/main/window/window-state';
+import { log } from 'src/shared/vanilla';
 import upath from 'upath';
 
 const { join, resolve } = upath;
@@ -133,7 +134,7 @@ export function createWindow(
       if (devToolsOpenedCount <= 2) {
         win?.webContents.closeDevTools(); // Close devtools for the first two attempts
       } else {
-        console.debug('DevTools opened after 2 attempts'); // Log for debugging
+        log('DevTools opened after 2 attempts', 'electronWindow', 'debug'); // Log for debugging
       }
     });
   }

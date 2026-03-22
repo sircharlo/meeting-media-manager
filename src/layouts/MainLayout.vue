@@ -533,8 +533,10 @@ watch(
       );
 
       if (settingsChanged) {
-        console.log(
+        log(
           '⚙️ Settings changed (congregation unchanged), updating lookup period',
+          'mainLayout',
+          'log',
         );
         updateLookupPeriod({ reset: true });
       }
@@ -893,8 +895,7 @@ bcClose.onmessage = (event) => {
 
 const initListeners = () => {
   onLog(({ ctx, level, msg }) => {
-    console[level](`[main] ${msg}`, ctx);
-    log(msg, ctx as unknown as LogPrefix, level);
+    log(`[main] ${msg}`, ctx as unknown as LogPrefix, level, ctx);
   });
 
   onShortcut(({ shortcut }) => {
@@ -1149,8 +1150,10 @@ const checkYeartextPreview = async () => {
     // Check if language is configured
     if (!lang) return;
 
-    console.log(
+    log(
       '🔍 [checkYeartextPreview] Showing the yeartext preview notification',
+      'mainLayout',
+      'log',
     );
 
     // Show notification
@@ -1280,8 +1283,10 @@ const { data: mediaPlayingAction } = useBroadcastChannel<
 watchImmediate(
   () => mediaPlayingAction.value,
   (newMediaPlayingAction) => {
-    console.log(
+    log(
       '🔄 [onMounted] mediaPlayingAction changed:',
+      'mainLayout',
+      'log',
       newMediaPlayingAction,
     );
     mediaPlaying.value.action = newMediaPlayingAction;

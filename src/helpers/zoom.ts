@@ -1,3 +1,4 @@
+import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
 
 import { errorCatcher } from './error-catcher';
@@ -20,14 +21,16 @@ export const triggerZoomScreenShare = (startSharing: boolean) => {
     }
 
     const performTrigger = () => {
-      console.log(
+      log(
         ` [Zoom] ${startSharing ? 'Starting' : 'Stopping'} screen sharing with shortcut: ${zoomScreenShareShortcut}`,
+        'zoom',
+        'log',
       );
 
       // Send the keyboard shortcut
       sendKeyboardShortcut(zoomScreenShareShortcut, 'Zoom');
 
-      console.log(` [Zoom] Screen sharing shortcut sent successfully`);
+      log(` [Zoom] Screen sharing shortcut sent successfully`, 'zoom', 'log');
 
       // Only attempt to focus media window if the setting is enabled
       if (zoomAutoFocusMediaWindow) {
@@ -36,7 +39,11 @@ export const triggerZoomScreenShare = (startSharing: boolean) => {
         function triggerFocusMediaWindow(context = '') {
           try {
             focusMediaWindow();
-            console.log(` [Zoom] Media window focus requested${context}`);
+            log(
+              ` [Zoom] Media window focus requested${context}`,
+              'zoom',
+              'log',
+            );
           } catch (focusError) {
             errorCatcher(focusError, {
               contexts: {

@@ -8,6 +8,7 @@ import type {
 import { i18n } from 'boot/i18n';
 import { storeToRefs } from 'pinia';
 import { createTemporaryNotification } from 'src/helpers/notifications';
+import { log } from 'src/shared/vanilla';
 import { fetchJson } from 'src/utils/api';
 import { isInPast } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -129,8 +130,10 @@ export const syncMeetingSchedule = async (force = false) => {
 
     // Skip if a future change is already scheduled
     if (currentSettings.value.meetingScheduleChangeDate) {
-      console.log(
+      log(
         '🔄 [syncMeetingSchedule] Skipping lookup as a future change is already scheduled.',
+        'congregationSchedule',
+        'log',
       );
       return false;
     }

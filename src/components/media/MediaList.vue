@@ -192,6 +192,7 @@ import { useEventListener } from '@vueuse/core';
 // Use the media dividers composable
 import { useMediaDividers } from 'src/composables/useMediaDividers';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { log } from 'src/shared/vanilla';
 const { addDivider, deleteDivider, updateDividerColors, updateDividerTitle } =
   useMediaDividers(props.mediaList.config?.uniqueId);
 
@@ -223,8 +224,10 @@ function handleWatchedMediaPersistence(items: MediaItemType[]) {
     const watchedDayFolder = dirname(firstWatchedItemPath);
     if (!watchedDayFolder) return;
 
-    console.log(
+    log(
       '🔍 [updateMediaListItems] Saving section order for watched media items:',
+      'mediaList',
+      'log',
       watchedDayFolder,
       props.mediaList.config?.uniqueId,
       watchedItems,
@@ -308,13 +311,15 @@ const handleDeleteDivider = (dividerId: string) => {
 };
 
 const handleAddDivider = () => {
-  console.log('🎯 handleAddDivider called');
+  log('🎯 handleAddDivider called', 'mediaList', 'log');
   showAddDividerDialog.value = true;
 };
 
 const handleAddDividerResult = (title?: string, addToTop?: boolean) => {
-  console.log(
+  log(
     '✅ DialogAddDivider returned title:',
+    'mediaList',
+    'log',
     title,
     'addToTop:',
     addToTop,

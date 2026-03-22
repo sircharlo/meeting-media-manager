@@ -2,6 +2,7 @@
 import type { DateLocale, DateOptions, DateUnitOptions } from 'quasar';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { log } from 'src/shared/vanilla';
 import { capitalize, pad } from 'src/utils/general';
 
 type PotentialDate = Date | number | string;
@@ -107,7 +108,11 @@ export const dateFromString = (
     let date: Date;
 
     if (!lookupDate) {
-      console.warn("🔍 [dateFromString] No input, defaulting to today's date");
+      log(
+        "🔍 [dateFromString] No input, defaulting to today's date",
+        'dateUtils',
+        'warn',
+      );
       date = new Date();
     } else if (typeof lookupDate === 'object') {
       date = parseObjectToDate(lookupDate);

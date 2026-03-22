@@ -24,6 +24,7 @@ import {
   findMediaSection,
   getOrCreateMediaSection,
 } from 'src/helpers/media-sections';
+import { log } from 'src/shared/vanilla';
 import {
   fetchJwLanguages,
   fetchMemorials,
@@ -57,8 +58,10 @@ export const shouldUpdateList = (
     try {
       if (Number.isNaN(new Date(cacheList.updated).getTime())) return true; // Invalid date, update
     } catch (error) {
-      console.log(
+      log(
         'cacheList.updated is not a valid date',
+        'jw',
+        'log',
         cacheList.updated,
         error,
       );
@@ -149,8 +152,10 @@ export function replaceMissingMediaByPubMediaId(
       );
 
       if (!targetSection?.items) {
-        console.warn(
+        log(
           `Target section ${targetSectionId} not found in mediaSections`,
+          'jw',
+          'warn',
         );
         return;
       }
@@ -270,8 +275,10 @@ export const useJwStore = defineStore('jw-store', {
         );
 
         if (!period) {
-          console.log(
+          log(
             '🔄 [addToAdditionMediaMap] No period found, creating new one',
+            'jw',
+            'log',
           );
           period = {
             ...selectedDateObject,
@@ -297,8 +304,10 @@ export const useJwStore = defineStore('jw-store', {
           targetSection,
         );
 
-        console.log(
+        log(
           '🔄 [addToAdditionMediaMap] Target section:',
+          'jw',
+          'log',
           targetSection,
           targetSectionContainer,
         );

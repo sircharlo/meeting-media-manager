@@ -1,3 +1,5 @@
+import { log } from 'src/shared/vanilla';
+
 import { errorCatcher } from './error-catcher';
 
 /**
@@ -13,7 +15,11 @@ export const sendKeyboardShortcut = (
 
   try {
     const contextString = context ? `[${context}] ` : '';
-    console.log(`${contextString}Sending keyboard shortcut: ${shortcut}`);
+    log(
+      `${contextString}Sending keyboard shortcut: ${shortcut}`,
+      'keyboardShortcuts',
+      'log',
+    );
 
     const { robot } = globalThis.electronApi;
 

@@ -126,7 +126,7 @@ export const useCongregationSettingsStore = defineStore(
             },
           });
         } finally {
-          console.groupEnd();
+          log('Log group ended', 'congregation', 'debug');
         }
 
         return { updatedCount, updates };

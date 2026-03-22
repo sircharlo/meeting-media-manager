@@ -144,6 +144,7 @@ import {
   normalizeSchedule,
 } from 'src/helpers/congregation-schedule';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { log } from 'src/shared/vanilla';
 import { fetchJson } from 'src/utils/api';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -293,7 +294,12 @@ whenever(dialogValue, () => {
   results.value = [];
   lookupCongregation();
   setTimeout(() => {
-    console.log('🔍 Focusing input', congregationFilterInput.value);
+    log(
+      '🔍 Focusing input',
+      'congregationLookup',
+      'log',
+      congregationFilterInput.value,
+    );
     congregationFilterInput.value?.focus();
   }, 100);
 });

@@ -29,7 +29,7 @@
     "docs:lint": "node docs/utils/fix-doc-links.mjs && eslint -c ./eslint.config.js './docs/**/*.{js,ts,cjs,mjs,mts,vue}' && vue-tsc --noEmit -p docs/tsconfig.json",
     "docs:test": "node docs/utils/fix-doc-links.mjs && vitest --project docs",
     "format": "prettier \"**/*\" --ignore-unknown --write",
-    "lint": "eslint -c ./eslint.config.js './src/**/*.{js,ts,cjs,mjs,mts,vue}' && vue-tsc --noEmit -p tsconfig.json",
+    "lint": "eslint -c ./eslint.config.js './src/**/*.{js,ts,cjs,mjs,mts,vue}' './src-electron/**/*.{js,ts,cjs,mjs,mts}' && vue-tsc --noEmit -p tsconfig.json",
     "test:unit": "vitest --project quasar --project electron"
   },
   "dependencies": {
