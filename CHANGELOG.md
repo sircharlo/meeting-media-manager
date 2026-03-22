@@ -15,6 +15,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 ### 🔧 Chores
 
 - 🔧 **CI/CD**: Enhanced commit message filtering in workflow.
+- 🔧 **Logging**: Refactored logging.
 
 ## v26.3.1
 
