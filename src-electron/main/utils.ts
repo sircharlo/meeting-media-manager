@@ -232,6 +232,7 @@ export function isIgnoredUpdateError(
     ['504', 'Gateway'],
     ['504', 'HttpError'],
     ['60006', 'OSStatus'],
+    ['ENOENT', 'rename'],
     ['ENOENT', 'unlink'],
     ['EPERM', 'rename'],
     ['read-only', 'volume'],

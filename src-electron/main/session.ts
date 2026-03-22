@@ -16,6 +16,9 @@ export const urlVariables: UrlVariables = {
   pubMedia: '',
 };
 
+let sessionListenersInitialized = false;
+let webRequestHandlersRegistered = false;
+
 const getTrustedHostnames = () => {
   return TRUSTED_DOMAINS.concat(
     [
@@ -101,15 +104,11 @@ const applyCORSHeaders = (
   }
 };
 
-const updateSessionHeadersListener = () => {
-  const trustedHostnames = getTrustedHostnames();
-  const urls = trustedHostnames.flatMap((domain) => [
-    `*://*.${domain}/*`,
-    `*://${domain}/*`,
-  ]);
-
+const registerSessionHeadersListeners = () => {
+  if (webRequestHandlersRegistered) return;
+  webRequestHandlersRegistered = true;
   session.defaultSession.webRequest.onBeforeSendHeaders(
-    { urls },
+    { urls: ['*://*/*'] },
     (details, callback) => {
       if (isTrustedDomain(details.url) && details.requestHeaders) {
         const url = new URL(details.url);
@@ -126,7 +125,6 @@ export const setElectronUrlVariables = (variables: UrlVariables) => {
   urlVariables.base = variables.base;
   urlVariables.mediator = variables.mediator;
   urlVariables.pubMedia = variables.pubMedia;
-  updateSessionHeadersListener();
 };
 
 export const quitStatus = {
@@ -143,13 +141,16 @@ export const setShouldQuit = (quit: boolean) => {
 };
 
 export const initSessionListeners = () => {
+  if (sessionListenersInitialized) return;
+  sessionListenersInitialized = true;
+
   app.on('ready', () => {
     const currentUserAgent = session.defaultSession.getUserAgent();
     session.defaultSession.setUserAgent(
       currentUserAgent.replaceAll(/Electron[/\d.\s]*/g, ''),
     );
 
-    updateSessionHeadersListener();
+    registerSessionHeadersListeners();
 
     session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
       if (isSelf(details.url)) {
