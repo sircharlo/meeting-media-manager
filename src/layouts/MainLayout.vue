@@ -90,6 +90,7 @@ import { getOrCreateMediaSection } from 'src/helpers/media-sections';
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
+import { log, type LogPrefix } from 'src/shared/vanilla';
 import { useAppSettingsStore } from 'src/stores/app-settings';
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import {
@@ -206,33 +207,43 @@ const delayedCacheClear = () => {
     return;
 
   cacheClearTriggered = true;
-  console.group('🗑️ Cache Auto-Clear');
-  console.log(
+  log(
     '🗑️ Waiting 30 seconds and for downloads to complete before clearing cache...',
+    'cacheAutoClear',
+    'info',
   );
 
   // Wait at least 30 seconds and until no active downloads
   const checkAndClear = () => {
     if (hasActiveDownloads()) {
-      console.log('⏳ Downloads still in progress, waiting...');
+      log(
+        '⏳ Downloads still in progress, waiting...',
+        'cacheAutoClear',
+        'info',
+      );
       setTimeout(checkAndClear, 10000); // Check again in 10 seconds
       return;
     }
 
-    console.log('✅ No active downloads, proceeding with cache clear...');
+    log(
+      '✅ No active downloads, proceeding with cache clear...',
+      'cacheAutoClear',
+      'info',
+    );
     deleteCacheFiles('smart')
       .then(({ itemsDeleted }) => {
         if (itemsDeleted) {
-          console.log(`✅ Cleared ${itemsDeleted} cache item(s)`);
+          log(
+            `Cleared ${itemsDeleted} cache item(s)`,
+            'cacheAutoClear',
+            'info',
+          );
         } else {
-          console.log('ℹ️ No cache items needed clearing');
+          log('No cache items needed clearing', 'cacheAutoClear', 'info');
         }
-        console.groupEnd();
       })
       .catch((error) => {
-        console.log('❌ Error clearing cache:', error);
         errorCatcher(error);
-        console.groupEnd();
       });
   };
 
@@ -522,8 +533,10 @@ watch(
       );
 
       if (settingsChanged) {
-        console.log(
+        log(
           '⚙️ Settings changed (congregation unchanged), updating lookup period',
+          'mainLayout',
+          'log',
         );
         updateLookupPeriod({ reset: true });
       }
@@ -542,44 +555,42 @@ watch(
       return;
     }
 
-    console.group('👁️ CO Week Watcher');
-    console.log('👁️ CO Week watcher triggered:', {
-      congregation: {
-        new: newCurrentCongregation,
-        old: oldCurrentCongregation,
-      },
-      coWeek: { new: newCoWeek, old: oldCoWeek },
-    });
-
     if (newCurrentCongregation === oldCurrentCongregation) {
-      console.log('🏢 Congregation unchanged, checking CO week changes...');
+      log(
+        '🏢 Congregation unchanged, checking CO week changes...',
+        'coWeek',
+        'info',
+      );
 
       const weeksToUpdate = [newCoWeek, oldCoWeek].filter((week) => !!week);
 
       if (weeksToUpdate.length === 0) {
-        console.log('📅 No valid CO weeks to update');
+        log('📅 No valid CO weeks to update', 'coWeek', 'info');
         return;
       }
 
-      console.log(
-        `📅 Updating ${weeksToUpdate.length} CO week(s):`,
-        weeksToUpdate,
+      log(
+        `📅 Updating ${weeksToUpdate.length} CO week(s): ${JSON.stringify(weeksToUpdate)}`,
+        'coWeek',
+        'info',
       );
 
       for (const changedWeek of weeksToUpdate) {
         if (!changedWeek) continue;
-        console.log(`🎯 Updating lookup period for CO week: ${changedWeek}`);
+        log(
+          `🎯 Updating lookup period for CO week: ${changedWeek}`,
+          'coWeek',
+          'info',
+        );
         updateLookupPeriod({
           onlyForWeekIncluding: changedWeek,
           reset: true,
         });
       }
 
-      console.log('✅ CO week updates completed');
-      console.groupEnd();
+      log('✅ CO week updates completed', 'coWeek', 'info');
     } else {
-      console.log('🏢 Congregation changed, skipping CO week update');
-      console.groupEnd();
+      log('🏢 Congregation changed, skipping CO week update', 'coWeek', 'info');
     }
   },
 );
@@ -746,7 +757,6 @@ async function handleAddWatchFolderEvent(
   if (!changedPath) return;
 
   const watchedItems = (await watchedItemMapper(day, changedPath)) || [];
-  console.log('🔍 [MainLayout] watchedItems:', watchedItems);
 
   for (const watchedItem of watchedItems) {
     // Skip if already exists
@@ -773,8 +783,6 @@ async function handleAddWatchFolderEvent(
 
     // Add, then we’ll sort once after all inserts
     targetSection.items.push(watchedItem);
-
-    console.log('🔍 [MainLayout] targetSection.items:', targetSection.items);
   }
 
   // Sort sections once after adding
@@ -897,7 +905,7 @@ bcClose.onmessage = (event) => {
 
 const initListeners = () => {
   onLog(({ ctx, level, msg }) => {
-    console[level](`[main] ${msg}`, ctx);
+    log(`[main] ${msg}`, ctx as unknown as LogPrefix, level, ctx);
     if (msg.startsWith('[Zoom Helper]')) {
       currentState.addZoomHelperLog(msg);
     }
@@ -1116,9 +1124,6 @@ const { post: postYeartext } = useBroadcastChannel<
 // Function to check if we should show the yeartext preview notification
 const checkYeartextPreview = async () => {
   try {
-    console.log(
-      '🔍 [checkYeartextPreview] Checking if we should show the yeartext preview notification',
-    );
     // Only run if congregation is selected
     if (!currentCongregation.value) return;
 
@@ -1157,6 +1162,12 @@ const checkYeartextPreview = async () => {
 
     // Check if language is configured
     if (!lang) return;
+
+    log(
+      '🔍 [checkYeartextPreview] Showing the yeartext preview notification',
+      'mainLayout',
+      'log',
+    );
 
     // Show notification
     createTemporaryNotification({
@@ -1285,8 +1296,10 @@ const { data: mediaPlayingAction } = useBroadcastChannel<
 watchImmediate(
   () => mediaPlayingAction.value,
   (newMediaPlayingAction) => {
-    console.log(
+    log(
       '🔄 [onMounted] mediaPlayingAction changed:',
+      'mainLayout',
+      'log',
       newMediaPlayingAction,
     );
     mediaPlaying.value.action = newMediaPlayingAction;

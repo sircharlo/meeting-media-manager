@@ -8,7 +8,7 @@ import type {
 
 import { JPG_EXTENSIONS } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { uuid } from 'src/shared/vanilla';
+import { log, uuid } from 'src/shared/vanilla';
 import { formatDate } from 'src/utils/date';
 import { getTempPath } from 'src/utils/fs';
 import { isJwpub } from 'src/utils/media';
@@ -87,8 +87,10 @@ export async function identifyJwpub(jwpubPath: string) {
     try {
       jwpubEntries = await getZipEntries(jwpubPath);
     } catch (error) {
-      console.error(
+      log(
         `[identifyJwpub] Error reading JWPUB entries for ${jwpubPath}:`,
+        'mediaPlayback',
+        'error',
         error,
       );
       return;
@@ -138,8 +140,10 @@ const extractContentsFromJwpub = async (
   try {
     jwpubEntries = await getZipEntries(jwpubPath);
   } catch (error) {
-    console.error(
+    log(
       `[jwpubExtractor] Error reading JWPUB entries for ${jwpubPath}:`,
+      'mediaPlayback',
+      'error',
       error,
     );
     // If we can't read the entries to even start extraction, the file might be locked or damaged.
@@ -153,8 +157,10 @@ const extractContentsFromJwpub = async (
 
   if (contentsStats?.size !== expectedContentsSize) {
     if (contentsStats) {
-      console.warn(
+      log(
         `[jwpubExtractor] contents size mismatch: path ${contentsPath}, expected ${expectedContentsSize}, got ${contentsStats.size}. Re-extracting contents from ${jwpubPath}.`,
+        'mediaPlayback',
+        'warn',
       );
     }
     try {
@@ -204,8 +210,10 @@ const extractDbFromContents = async (outputPath: string, jwpubPath: string) => {
     : undefined;
   if (dbStats?.size !== expectedDbSize) {
     if (dbStats) {
-      console.warn(
+      log(
         `[jwpubExtractor] DB size mismatch: path ${dbFile}, expected ${expectedDbSize} (${expectedDbName}), got ${dbStats.size}. Re-extracting the contents from ${contentsPath}.`,
+        'mediaPlayback',
+        'warn',
       );
     }
     try {

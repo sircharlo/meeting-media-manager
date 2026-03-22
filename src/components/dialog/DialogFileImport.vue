@@ -150,6 +150,7 @@ import {
   VIDEO_EXTENSIONS,
 } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { log } from 'src/shared/vanilla';
 import { computed, onUnmounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -218,7 +219,11 @@ watch(
   (isProcessing, wasProcessing) => {
     // Only close if we were processing and now we're not
     if (wasProcessing && !isProcessing && dialogValue.value) {
-      console.log('🎯 File processing complete, auto-closing dialog');
+      log(
+        '🎯 File processing complete, auto-closing dialog',
+        'fileImport',
+        'log',
+      );
       dialogValue.value = false;
     }
   },
@@ -229,7 +234,11 @@ useEventListener(
   globalThis,
   'openJwPlaylistDialog',
   () => {
-    console.log('🎯 JW Playlist mode activated, closing file import dialog');
+    log(
+      '🎯 JW Playlist mode activated, closing file import dialog',
+      'fileImport',
+      'log',
+    );
     // Reset JW PUB data when switching to JW playlist dialog
     jwpubLoading.value = false;
     jwpubDb.value = '';
@@ -305,8 +314,10 @@ const { isOverDropZone } = useDropZone(dropArea, {
 });
 
 const handleJwpubImport = (jwpubImportDocument: DocumentItem) => {
-  console.log(
+  log(
     '🎯 Emitting openJwpubMediaPicker event for document:',
+    'fileImport',
+    'log',
     jwpubImportDocument,
   );
   globalThis.dispatchEvent(

@@ -6,6 +6,7 @@ import type {
 
 import { storeToRefs } from 'pinia';
 import { findMediaSection } from 'src/helpers/media-sections';
+import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed } from 'vue';
 
@@ -73,7 +74,10 @@ export function useMediaDividers(sectionId?: MediaSectionIdentifier) {
     if (!sectionMedia?.items) return;
     const sectionMediaCount = sectionMedia.items.length;
 
-    console.log('🔍 Adding divider:', { addToTop, title }, sectionMediaCount);
+    log(
+      `🔍 Adding divider: ${title} ${addToTop ? 'at top' : 'at bottom'}`,
+      'dividers',
+    );
 
     const newDivider: MediaItem = {
       sortOrderOriginal: addToTop ? 0 : sectionMediaCount,
@@ -92,11 +96,10 @@ export function useMediaDividers(sectionId?: MediaSectionIdentifier) {
       sectionMedia.items.push(newDivider);
     }
 
-    console.log('✅ Divider added:', {
-      dividerId: newDivider.uniqueId,
-      sectionId,
-      title,
-    });
+    log(
+      `✅ Divider added: ${title} ${addToTop ? 'at top' : 'at bottom'}`,
+      'dividers',
+    );
   };
 
   // Update divider title
@@ -116,7 +119,7 @@ export function useMediaDividers(sectionId?: MediaSectionIdentifier) {
     if (!divider) return;
 
     divider.title = newTitle;
-    console.log('✅ Divider title updated:', { dividerId, newTitle });
+    log(`✅ Divider title updated: ${newTitle}`, 'dividers');
   };
 
   // Update divider colors
@@ -141,11 +144,10 @@ export function useMediaDividers(sectionId?: MediaSectionIdentifier) {
 
     divider.bgColor = bgColor;
     divider.textColor = textColor;
-    console.log('✅ Divider colors updated:', {
-      bgColor,
-      dividerId,
-      textColor,
-    });
+    log(
+      `✅ Divider colors updated: ${dividerId} ${bgColor} ${textColor}`,
+      'dividers',
+    );
   };
 
   // Delete divider
@@ -165,7 +167,10 @@ export function useMediaDividers(sectionId?: MediaSectionIdentifier) {
     if (index === -1) return;
 
     media.splice(index, 1);
-    console.log('✅ Divider deleted:', { dividerId, sectionId });
+    log(
+      `✅ Divider ${dividerId} deleted from section ${sectionId}`,
+      'dividers',
+    );
   };
 
   // Move divider to new position
@@ -184,7 +189,10 @@ export function useMediaDividers(sectionId?: MediaSectionIdentifier) {
     if (!divider) return;
 
     divider.sortOrderOriginal = newPosition;
-    console.log('✅ Divider moved:', { dividerId, newPosition });
+    log(
+      `✅ Divider ${dividerId} moved to position ${newPosition} in section ${sectionId}`,
+      'dividers',
+    );
   };
 
   return {

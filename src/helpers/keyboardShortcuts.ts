@@ -2,6 +2,7 @@ import type { SettingsValues } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
+import { log } from 'src/shared/vanilla';
 import { isAnyDialogOpen } from 'src/utils/dialog-plugin';
 import { useCurrentStateStore } from 'stores/current-state';
 
@@ -48,7 +49,11 @@ const shortcutCallbacks: Partial<Record<keyof SettingsValues, () => void>> = {
 export const executeShortcut = (shortcutName: keyof SettingsValues) => {
   // Don't execute shortcuts if any dialog is open
   if (isAnyDialogOpen()) {
-    console.log('Shortcut blocked: dialog is open');
+    log(
+      `Shortcut ${shortcutName} blocked: dialog is open`,
+      'keyboardShortcuts',
+      'warn',
+    );
     return;
   }
 
@@ -68,7 +73,11 @@ export const executeShortcut = (shortcutName: keyof SettingsValues) => {
 export const executeLocalShortcut = (shortcutName: keyof SettingsValues) => {
   // Don't execute shortcuts if any dialog is open
   if (isAnyDialogOpen()) {
-    console.log('Local shortcut blocked: dialog is open');
+    log(
+      `Local shortcut ${shortcutName} blocked: dialog is open`,
+      'keyboardShortcuts',
+      'warn',
+    );
     return;
   }
 
@@ -161,38 +170,49 @@ export const registerCustomShortcut = (
 };
 
 export const registerAllCustomShortcuts = () => {
-  console.group('⌨️ Keyboard Shortcuts Registration');
   try {
     const currentState = useCurrentStateStore();
     if (!currentState.currentSettings) {
-      console.log('⚠️ No settings available for shortcuts');
-      console.groupEnd();
+      log(
+        '⚠️ No settings available for shortcuts',
+        'keyboardShortcuts',
+        'warn',
+      );
       return;
     }
     unregisterAllCustomShortcuts();
-    console.log('⌨️ Registering configured keyboard shortcuts');
+    log(
+      '⌨️ Registering configured keyboard shortcuts',
+      'keyboardShortcuts',
+      'info',
+    );
     for (const shortcutName of Object.keys(shortcutCallbacks)) {
       registerCustomShortcut(shortcutName as keyof SettingsValues);
     }
-    console.log('✅ Keyboard shortcuts registered successfully');
+    log(
+      '✅ Keyboard shortcuts registered successfully',
+      'keyboardShortcuts',
+      'info',
+    );
   } catch (error) {
-    console.log('❌ Error registering keyboard shortcuts:', error);
     errorCatcher(error);
-  } finally {
-    console.groupEnd();
   }
 };
 
 export const unregisterAllCustomShortcuts = () => {
-  console.group('⌨️ Keyboard Shortcuts Unregistration');
-  console.log('⌨️ Unregistering all currently active keyboard shortcuts');
+  log(
+    '⌨️ Unregistering all currently active keyboard shortcuts',
+    'keyboardShortcuts',
+    'info',
+  );
   try {
     unregisterAllShortcuts();
-    console.log('✅ Keyboard shortcuts unregistered successfully');
+    log(
+      '✅ Keyboard shortcuts unregistered successfully',
+      'keyboardShortcuts',
+      'info',
+    );
   } catch (error) {
-    console.log('❌ Error unregistering keyboard shortcuts:', error);
     errorCatcher(error);
-  } finally {
-    console.groupEnd();
   }
 };

@@ -112,6 +112,7 @@ import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { MW_MEETING_SECTIONS, WE_MEETING_SECTIONS } from 'src/constants/media';
 import { addSection, deleteSection } from 'src/helpers/media-sections';
+import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -177,7 +178,7 @@ const handleOrderChange = () => {
     ...sortableItems.value,
   ];
 
-  console.log('✅ Custom sections reordered:', {
+  log('✅ Custom sections reordered:', 'customSections', 'log', {
     newOrder: sortableItems.value.map((section) => ({
       label: section.config?.label,
       uniqueId: section.config?.uniqueId,
@@ -218,13 +219,13 @@ const handleDeleteSection = (uniqueId: string | undefined) => {
 const initializeValues = () => {
   const daySections = selectedDateObject.value?.mediaSections;
   if (!daySections) return;
-  console.log('🔍 initializeValues called', {
+  log('🔍 initializeValues called', 'customSections', 'log', {
     mediaSections: selectedDateObject.value?.mediaSections,
     selectedDateObject: !!selectedDateObject.value,
   });
 
   if (!selectedDateObject.value?.mediaSections) {
-    console.log('❌ No mediaSections available');
+    log('❌ No mediaSections available', 'customSections', 'log');
     return;
   }
 
@@ -266,7 +267,7 @@ const initializeValues = () => {
       uniqueId: section.config.uniqueId,
     }));
 
-  console.log('✅ Values initialized', {
+  log('✅ Values initialized', 'customSections', 'log', {
     hexValues: hexValues.value,
     labels: labels.value,
     sortableItems: sortableItems.value,
@@ -277,14 +278,16 @@ const initializeValues = () => {
 watch(
   () => [selectedDateObject.value?.mediaSections, dialogValue.value],
   ([mediaSections, isDialogOpen]) => {
-    console.log('👀 Watch triggered', {
+    log('👀 Watch triggered', 'customSections', 'log', {
       isDialogOpen,
       mediaSections: !!mediaSections,
     });
 
     if (isDialogOpen && mediaSections) {
-      console.log(
+      log(
         '🔄 Dialog opened or mediaSections changed, initializing values',
+        'customSections',
+        'log',
       );
       initializeValues();
     }

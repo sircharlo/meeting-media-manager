@@ -175,6 +175,7 @@ import {
   addJwpubDocumentMediaToFiles,
   resolveMultimediaPreviewPath,
 } from 'src/helpers/jw-media';
+import { log } from 'src/shared/vanilla';
 import {
   addFullFilePathToMultimediaItem,
   getDocumentMultimediaItems,
@@ -291,7 +292,7 @@ const addSelectedItems = async () => {
       .map((index) => mediaItems.value[index]?.MultimediaId)
       .filter((id): id is number => id !== undefined);
 
-    console.log('🎯 Selected multimedia IDs:', selectedMultimediaIds);
+    log('🎯 Selected multimedia IDs:', 'jwpub', 'log', selectedMultimediaIds);
 
     await addJwpubDocumentMediaToFiles(
       props.dbPath,

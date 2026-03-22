@@ -13,6 +13,7 @@ const { join } = path;
 
 import mepslangs from 'src/constants/mepslangs';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { log } from 'src/shared/vanilla';
 import { findFile, getPublicationDirectory } from 'src/utils/fs';
 import { useCurrentStateStore } from 'stores/current-state';
 
@@ -393,8 +394,10 @@ const fixSjjmItems = (
     const ordinal = sjjOrdinals[index];
     if (ordinal) {
       if (ordinal.BeginParagraphOrdinal !== item.BeginParagraphOrdinal) {
-        console.log(
+        log(
           '⚠️ BeginParagraphOrdinal mismatch for sjjm item; updating:',
+          'sqlite',
+          'log',
           item.MultimediaId,
           'from',
           item.BeginParagraphOrdinal,
@@ -404,8 +407,10 @@ const fixSjjmItems = (
         item.BeginParagraphOrdinal = ordinal.BeginParagraphOrdinal;
       }
       if (ordinal.EndParagraphOrdinal !== item.EndParagraphOrdinal) {
-        console.log(
+        log(
           '⚠️ EndParagraphOrdinal mismatch for sjjm item; updating:',
+          'sqlite',
+          'log',
           item.MultimediaId,
           'from',
           item.EndParagraphOrdinal,
@@ -415,8 +420,10 @@ const fixSjjmItems = (
         item.EndParagraphOrdinal = ordinal.EndParagraphOrdinal;
       }
       if (ordinal.SortPosition !== item.BeginPosition) {
-        console.log(
+        log(
           '⚠️ SortPosition mismatch for sjjm item; updating:',
+          'sqlite',
+          'log',
           item.MultimediaId,
           'from',
           item.BeginPosition,
@@ -457,8 +464,10 @@ const fixSjjmItems = (
       betweenItems.forEach((item) => {
         lastP++;
         lastS++;
-        console.log(
+        log(
           '⚠️ Incrementing ordinals for item between sjjm items:',
+          'sqlite',
+          'log',
           item.MultimediaId,
           'to p:',
           lastP,

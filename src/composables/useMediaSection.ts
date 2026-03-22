@@ -5,6 +5,7 @@ import {
   findMediaSection,
   getOrCreateMediaSection,
 } from 'src/helpers/media-sections';
+import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed, ref, watch } from 'vue';
 
@@ -149,7 +150,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
 
       if (newDate === oldDate || !Array.isArray(items)) return;
 
-      console.log('🔄 Updating expanded groups for section:', {
+      log('🔄 Updating expanded groups for section:', 'mediaSections', 'log', {
         itemCount: items.length,
         sectionId: mediaList.config?.uniqueId,
       });
@@ -158,19 +159,24 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
         (acc, item) => {
           if (item.children?.length && item.extractCaption) {
             acc[item.uniqueId] = !!item.cbs;
-            console.log('📂 Setting expanded state for group:', {
-              expanded: !!item.cbs,
-              hasChildren: !!item.children?.length,
-              hasExtractCaption: !!item.extractCaption,
-              uniqueId: item.uniqueId,
-            });
+            log(
+              '📂 Setting expanded state for group:',
+              'mediaSections',
+              'log',
+              {
+                expanded: !!item.cbs,
+                hasChildren: !!item.children?.length,
+                hasExtractCaption: !!item.extractCaption,
+                uniqueId: item.uniqueId,
+              },
+            );
           }
           return acc;
         },
         {} as Record<string, boolean>,
       );
 
-      console.log('✅ Expanded groups updated:', {
+      log('✅ Expanded groups updated:', 'mediaSections', 'log', {
         expandedGroups: expandedGroups.value,
         sectionId: mediaList.config?.uniqueId,
       });
@@ -180,20 +186,24 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
 
   // Actions
   const updateSectionLabel = (label: string) => {
-    console.log('🏷️ Updating section label:', {
+    log('🏷️ Updating section label:', 'mediaSections', 'log', {
       hasCustomSections: !!selectedDateObject.value?.mediaSections,
       newLabel: label,
       sectionId: mediaList.config?.uniqueId,
     });
 
     if (!sectionData.value?.config || !isCustomSection.value) {
-      console.warn('⚠️ No custom sections found for label update');
+      log(
+        '⚠️ No custom sections found for label update',
+        'mediaSections',
+        'warn',
+      );
       return;
     }
 
     const oldLabel = sectionData.value.config.label;
     sectionData.value.config.label = label;
-    console.log('✅ Section label updated:', {
+    log('✅ Section label updated:', 'mediaSections', 'log', {
       newLabel: label,
       oldLabel,
       sectionId: mediaList.config?.uniqueId,
@@ -201,20 +211,24 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   };
 
   const updateSectionColor = (bgColor: string) => {
-    console.log('🎨 Updating section color:', {
+    log('🎨 Updating section color:', 'mediaSections', 'log', {
       hasCustomSections: !!selectedDateObject.value?.mediaSections,
       newColor: bgColor,
       sectionId: mediaList.config?.uniqueId,
     });
 
     if (!sectionData.value?.config || !isCustomSection.value) {
-      console.warn('⚠️ No custom sections found for color update');
+      log(
+        '⚠️ No custom sections found for color update',
+        'mediaSections',
+        'warn',
+      );
       return;
     }
 
     const oldColor = sectionData.value.config.bgColor;
     sectionData.value.config.bgColor = bgColor;
-    console.log('✅ Section color updated:', {
+    log('✅ Section color updated:', 'mediaSections', 'log', {
       newColor: bgColor,
       oldColor,
       sectionId: mediaList.config?.uniqueId,
@@ -222,7 +236,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   };
 
   const updateSectionRepeat = (repeat: boolean, interval?: number) => {
-    console.log('🔄 Updating section repeat:', {
+    log('🔄 Updating section repeat:', 'mediaSections', 'log', {
       hasCustomSections: !!selectedDateObject.value?.mediaSections,
       newInterval: interval,
       newRepeat: repeat,
@@ -230,8 +244,10 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     });
 
     if (!sectionData.value?.config || !isCustomSection.value) {
-      console.warn(
+      log(
         '⚠️ No custom sections found for repeat update',
+        'mediaSections',
+        'warn',
         selectedDateObject.value?.mediaSections,
         isCustomSection.value,
       );
@@ -244,7 +260,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     if (interval !== undefined) {
       sectionData.value.config.repeatInterval = interval;
     }
-    console.log('✅ Section repeat updated:', {
+    log('✅ Section repeat updated:', 'mediaSections', 'log', {
       newInterval: interval,
       newRepeat: repeat,
       oldInterval,
@@ -254,14 +270,14 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   };
 
   const moveSection = (direction: 'down' | 'up') => {
-    console.log('📦 Moving section:', {
+    log('📦 Moving section:', 'mediaSections', 'log', {
       direction,
       hasCustomSections: !!selectedDateObject.value?.mediaSections,
       sectionId: mediaList.config?.uniqueId,
     });
 
     if (!selectedDateObject.value?.mediaSections || !isCustomSection.value) {
-      console.warn('⚠️ No custom sections found for move');
+      log('⚠️ No custom sections found for move', 'mediaSections', 'warn');
       return;
     }
 
@@ -271,8 +287,10 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     );
 
     if (currentIndex === -1) {
-      console.warn(
+      log(
         '⚠️ Section not found for move:',
+        'mediaSections',
+        'warn',
         mediaList.config?.uniqueId,
       );
       return;
@@ -281,7 +299,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
 
     if (newIndex < 0 || newIndex >= sections.length) {
-      console.warn('⚠️ Cannot move section: out of bounds');
+      log('⚠️ Cannot move section: out of bounds', 'mediaSections', 'warn');
       return;
     }
 
@@ -307,7 +325,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
       ...reorderedCustomSections,
     ];
 
-    console.log('✅ Section moved:', {
+    log('✅ Section moved:', 'mediaSections', 'log', {
       direction,
       fromIndex: currentIndex,
       sectionId: mediaList.config?.uniqueId,
@@ -316,13 +334,13 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   };
 
   const deleteSection = () => {
-    console.log('🗑️ Deleting section:', {
+    log('🗑️ Deleting section:', 'mediaSections', 'log', {
       hasCustomSections: !!selectedDateObject.value?.mediaSections,
       sectionId: mediaList.config?.uniqueId,
     });
 
     if (!selectedDateObject.value?.mediaSections || !isCustomSection.value) {
-      console.warn('⚠️ No custom sections found for deletion');
+      log('⚠️ No custom sections found for deletion', 'mediaSections', 'warn');
       return;
     }
 
@@ -351,26 +369,28 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
         selectedDateObject.value.mediaSections.splice(index, 1);
       }
 
-      console.log('✅ Section deleted:', {
+      log('✅ Section deleted:', 'mediaSections', 'log', {
         itemsMoved: itemsToMove.length,
         sectionId: mediaList.config?.uniqueId,
       });
     } else {
-      console.warn(
+      log(
         '⚠️ Section not found for deletion:',
+        'mediaSections',
+        'warn',
         mediaList.config?.uniqueId,
       );
     }
   };
 
   const addSong = (section: MediaSectionIdentifier | undefined) => {
-    console.log('🎵 Adding song to section:', {
+    log('🎵 Adding song to section:', 'mediaSections', 'log', {
       section,
       sectionId: mediaList.config?.uniqueId,
     });
 
     if (!section) {
-      console.warn('⚠️ No section specified for song addition');
+      log('⚠️ No section specified for song addition', 'mediaSections', 'warn');
       return;
     }
 

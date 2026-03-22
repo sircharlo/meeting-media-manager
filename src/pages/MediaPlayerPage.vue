@@ -163,6 +163,7 @@ import {
   setElementFont,
 } from 'src/helpers/fonts';
 import { createTemporaryNotification } from 'src/helpers/notifications';
+import { log } from 'src/shared/vanilla';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
 import { useJwStore } from 'stores/jw';
 import {
@@ -209,7 +210,11 @@ $q.iconMapFn = (iconName) => {
 const cleanupMediaElement = (element: HTMLMediaElement | null | undefined) => {
   if (!element) return;
 
-  console.log('🎬 [cleanupMediaElement] Cleaning up media element');
+  log(
+    '🎬 [cleanupMediaElement] Cleaning up media element',
+    'mediaPlayer',
+    'log',
+  );
 
   try {
     // Stop playback
@@ -335,7 +340,11 @@ whenever(
   () => mediaRepeatNow.value,
   () => {
     if (currentMediaElement.value) {
-      console.log('🎬 [mediaRepeatNow] Forcing replay of current item');
+      log(
+        '🎬 [mediaRepeatNow] Forcing replay of current item',
+        'mediaPlayer',
+        'log',
+      );
       currentMediaElement.value.currentTime = customMin.value;
       playMediaElement();
     }
@@ -460,8 +469,10 @@ watch(
   () => mediaCustomDuration.value,
   (newVal, oldVal) => {
     if (newVal !== oldVal && currentMediaElement.value) {
-      console.log(
+      log(
         '🎬 [mediaCustomDuration] Duration changed, seeking to:',
+        'mediaPlayer',
+        'log',
         customMin.value,
       );
       isEnding.value = false;
@@ -496,8 +507,10 @@ const triggerPlay = (force = false) => {
     return;
   }
 
-  console.log(
+  log(
     `🎬 [triggerPlay] Attempting to play video: ${mediaPlayingUrl.value}, readyState: ${currentMediaElement.value.readyState}, paused: ${currentMediaElement.value.paused}`,
+    'mediaPlayer',
+    'log',
   );
 
   currentMediaElement.value.play().catch((error: Error) => {
@@ -524,8 +537,10 @@ const playMediaElement = (wasPaused = false, websiteStream = false) => {
     return;
   }
 
-  console.log(
+  log(
     '🎬 [playMediaElement] Setting up video playback',
+    'mediaPlayer',
+    'log',
     wasPaused,
     websiteStream,
     mediaAction.value,
@@ -536,7 +551,7 @@ const playMediaElement = (wasPaused = false, websiteStream = false) => {
   }
 
   currentMediaElement.value.oncanplaythrough = () => {
-    console.log('🎬 [playMediaElement] Video can play through');
+    log('🎬 [playMediaElement] Video can play through', 'mediaPlayer', 'log');
     triggerPlay(websiteStream);
   };
 
@@ -546,7 +561,11 @@ const playMediaElement = (wasPaused = false, websiteStream = false) => {
     const checkAndPlay = () => {
       const element = currentMediaElement.value;
       if (element && mediaAction.value === 'play' && element.paused) {
-        console.log('🎬 [playMediaElement] Fallback: triggering play');
+        log(
+          '🎬 [playMediaElement] Fallback: triggering play',
+          'mediaPlayer',
+          'log',
+        );
         triggerPlay();
       }
     };
@@ -559,15 +578,20 @@ const playMediaElement = (wasPaused = false, websiteStream = false) => {
 };
 
 const endOrLoop = () => {
-  console.log('🎬 [endOrLoop] Video ended, repeat:', mediaRepeat.value);
+  log(
+    '🎬 [endOrLoop] Video ended, repeat:',
+    'mediaPlayer',
+    'log',
+    mediaRepeat.value,
+  );
   if (mediaRepeat.value) {
-    console.log('🎬 [endOrLoop] Looping video');
+    log('🎬 [endOrLoop] Looping video', 'mediaPlayer', 'log');
     if (currentMediaElement.value) {
       currentMediaElement.value.currentTime = customMin.value;
       playMediaElement();
     }
   } else {
-    console.log('🎬 [endOrLoop] Posting ended state');
+    log('🎬 [endOrLoop] Posting ended state', 'mediaPlayer', 'log');
     postLastEndTimestamp(Date.now());
     // Don't clear mediaCustomDuration immediately to avoid race condition
     // It will be cleared when the media state is handled by the main window
@@ -575,7 +599,7 @@ const endOrLoop = () => {
 };
 
 const handleVideoPause = () => {
-  console.log('⏸️ [handleVideoPause] Video paused');
+  log('⏸️ [handleVideoPause] Video paused', 'mediaPlayer', 'log');
   try {
     postCurrentTime(currentMediaElement.value?.currentTime || 0);
   } catch (e) {
@@ -584,8 +608,10 @@ const handleVideoPause = () => {
 };
 
 const handleVideoCanPlay = () => {
-  console.log(
+  log(
     '🔄 [handleVideoCanPlay] Video can play',
+    'mediaPlayer',
+    'log',
     mediaAction.value,
     currentMediaElement.value?.paused,
     currentMediaElement.value?.readyState,
@@ -601,7 +627,11 @@ const handleVideoCanPlay = () => {
     // Add a small delay to ensure the video is fully ready
     setTimeout(() => {
       if (mediaAction.value === 'play' && currentMediaElement.value?.paused) {
-        console.log('🎬 [handleVideoCanPlay] Triggering play after delay');
+        log(
+          '🎬 [handleVideoCanPlay] Triggering play after delay',
+          'mediaPlayer',
+          'log',
+        );
         triggerPlay();
       }
     }, 50);
@@ -612,8 +642,10 @@ const fadeOutDurationInSeconds = 0.3;
 const fadeOutDurationInMilliseconds = fadeOutDurationInSeconds * 1000;
 
 const playMedia = () => {
-  console.log(
+  log(
     '🔄 [playMedia] Playing media',
+    'mediaPlayer',
+    'log',
     mediaAction.value,
     currentMediaElement.value?.paused,
   );
@@ -682,7 +714,12 @@ const isTransitioning = ref(false);
 
 // Crossfade function to handle layer transitions
 const crossfadeToNewMedia = (newUrl: string) => {
-  console.log('🎬 [crossfadeToNewMedia] Starting crossfade to:', newUrl);
+  log(
+    '🎬 [crossfadeToNewMedia] Starting crossfade to:',
+    'mediaPlayer',
+    'log',
+    newUrl,
+  );
 
   // Determine which layer is currently live and which is not
   const currentLiveLayer = displayLayer1.value.isLive
@@ -721,7 +758,7 @@ const crossfadeToNewMedia = (newUrl: string) => {
 
 // Handle clearing media (fade out current layer)
 const clearCurrentMedia = () => {
-  console.log('🎬 [clearCurrentMedia] Clearing current media');
+  log('🎬 [clearCurrentMedia] Clearing current media', 'mediaPlayer', 'log');
 
   const currentLiveLayer = displayLayer1.value.isLive
     ? displayLayer1
@@ -731,7 +768,11 @@ const clearCurrentMedia = () => {
     // Skip zoom/pan animation when clearing media
     if (isImage(currentLiveLayer.value.url)) {
       skipZoomPanAnimation.value = true;
-      console.log('🎬 [clearCurrentMedia] Skipping zoom/pan animation');
+      log(
+        '🎬 [clearCurrentMedia] Skipping zoom/pan animation',
+        'mediaPlayer',
+        'log',
+      );
     }
 
     // Fade out the current layer
@@ -784,7 +825,14 @@ const clearCurrentMedia = () => {
 watch(
   () => mediaPlayingUrl.value,
   (newUrl, oldUrl) => {
-    console.log('🔄 [mediaPlayingUrl] URL changed:', oldUrl, '->', newUrl);
+    log(
+      '🔄 [mediaPlayingUrl] URL changed:',
+      'mediaPlayer',
+      'log',
+      oldUrl,
+      '->',
+      newUrl,
+    );
     isEnding.value = false;
 
     if (oldUrl && newUrl && !isAudio(newUrl)) {
@@ -807,7 +855,11 @@ watch(
 
       // For videos, ensure the element is properly reset when URL changes
       if ((isVideo(newUrl) || isAudio(newUrl)) && newUrl !== oldUrl) {
-        console.log('🎬 [mediaPlayingUrl] Resetting video element for new URL');
+        log(
+          '🎬 [mediaPlayingUrl] Resetting video element for new URL',
+          'mediaPlayer',
+          'log',
+        );
         // Pause current playback
         currentMediaElement.value.pause();
         // Reset current time
@@ -898,7 +950,12 @@ const yeartextFontStyle = computed(() =>
 watchDeep(
   () => zoomPanState.value,
   (newZoomPanState) => {
-    console.log('🎬 [zoomPanState] New zoom/pan state:', newZoomPanState);
+    log(
+      '🎬 [zoomPanState] New zoom/pan state:',
+      'mediaPlayer',
+      'log',
+      newZoomPanState,
+    );
     applyZoomPanState(newZoomPanState);
   },
 );
@@ -1109,8 +1166,10 @@ watchImmediate(
       somethingChanged.urlVariablesChanged ||
       somethingChanged.yeartextChanged
     ) {
-      console.log(
+      log(
         '🔄 [MediaPlayerPage] Setting initial values',
+        'mediaPlayer',
+        'log',
         somethingChanged,
         oldValues,
         newValues,
@@ -1126,7 +1185,11 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  console.log('🎬 [MediaPlayerPage] onBeforeUnmount - cleaning up all media');
+  log(
+    '🎬 [MediaPlayerPage] onBeforeUnmount - cleaning up all media',
+    'mediaPlayer',
+    'log',
+  );
   cleanupMediaElement(mediaElement1.value);
   cleanupMediaElement(mediaElement2.value);
 });

@@ -4,6 +4,19 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.3.2
+
+### 🐞 Bug Fixes
+
+- 🐞 **Export Issues with Watch Folder**: Prevented the watch folder mechanism from automatically adding generated MP4 files to the media list.
+- 🐞 **macOS**: Fixed macOS launch and window focus handling.
+- 🐞 **Stale Announcement**: Updated the OBS Studio `media-window-title-updated` announcement to add a `maxVersion` to prevent it from being displayed on versions where the issue has long been resolved.
+
+### 🔧 Chores
+
+- 🔧 **CI/CD**: Enhanced commit message filtering in workflow.
+- 🔧 **Logging**: Refactored logging.
+
 ## v26.3.1
 
 ### 🛠️ Improvements and Tweaks

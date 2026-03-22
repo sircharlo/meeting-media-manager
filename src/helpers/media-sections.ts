@@ -8,6 +8,7 @@ import type {
 
 import { getMeetingSections, standardSections } from 'src/constants/media';
 import { isCoWeek } from 'src/helpers/date';
+import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'src/stores/current-state';
 
 import { errorCatcher } from './error-catcher';
@@ -95,7 +96,7 @@ export const addSection = () => {
     items: [],
   });
 
-  console.log('✅ New section created:', {
+  log('✅ New section created:', 'mediaSections', 'log', {
     config: newSection,
     sectionId: newSectionId,
   });
@@ -125,7 +126,7 @@ export const deleteSection = (uniqueId: string) => {
     // Actually delete the section from mediaSections
     removeMediaSection(selectedDateObject.mediaSections, uniqueId);
 
-    console.log('✅ Section deleted:', {
+    log('✅ Section deleted:', 'mediaSections', 'log', {
       deletedSectionId: uniqueId,
       remainingSections: selectedDateObject.mediaSections.map(
         (s) => s.config.uniqueId,
@@ -302,8 +303,10 @@ export const saveWatchedMediaSectionOrder = async (
 
     // Update section order data for watched items
     mediaItems.forEach((item, index) => {
-      console.log(
+      log(
         '🔍 [saveWatchedMediaSectionOrder] Overwriting sortOrderOriginal',
+        'mediaSections',
+        'log',
         item,
         index,
       );
@@ -327,8 +330,10 @@ export const saveWatchedMediaSectionOrder = async (
       'utf-8',
     );
 
-    console.log(
+    log(
       `✅ Saved section order for ${sectionId} to ${sectionOrderFilePath}`,
+      'mediaSections',
+      'log',
     );
   } catch (error) {
     // Fail gracefully - if we can't save the order file, it's not a big deal
@@ -417,7 +422,7 @@ export const removeWatchedMediaSectionInfo = async (
         JSON.stringify(sectionOrderData, null, 2),
         'utf-8',
       );
-      console.log(`✅ Removed section info for ${filename}`);
+      log(`✅ Removed section info for ${filename}`, 'mediaSections', 'log');
     }
   } catch (error) {
     errorCatcher(error, {

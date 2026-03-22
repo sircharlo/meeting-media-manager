@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { log } from 'src/shared/vanilla';
 import { computed, ref } from 'vue';
 
 export interface DialogState {
@@ -20,7 +21,14 @@ export const useDialogStateStore = defineStore('dialogState', () => {
     component: string,
     props?: Record<string, unknown>,
   ) => {
-    console.log('🔄 [openDialog] Opening dialog:', id, component, props);
+    log(
+      '🔄 [openDialog] Opening dialog:',
+      'dialog',
+      'log',
+      id,
+      component,
+      props,
+    );
     openDialogs.value.set(id, {
       component,
       id,

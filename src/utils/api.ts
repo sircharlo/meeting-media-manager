@@ -10,6 +10,7 @@ import type {
 } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { log } from 'src/shared/vanilla';
 import { isInPast } from 'src/utils/date';
 import { betaUpdatesDisabled } from 'src/utils/fs';
 
@@ -41,13 +42,14 @@ export const fetchRaw = async (
     const cachedResponse = fetchCache.get(cacheKey);
     if (cachedResponse) {
       if (!process.env.VITEST) {
-        console.debug('fetchRaw (cached)', { cache, init, url });
+        log('fetchRaw (cached)', 'api', 'debug', { cache, init, url });
       }
       return cachedResponse.clone();
     }
   }
 
-  if (!process.env.VITEST) console.debug('fetchRaw', { cache, init, url });
+  if (!process.env.VITEST)
+    log('fetchRaw', 'api', 'debug', { cache, init, url });
 
   const response = await fetch(url, init);
 

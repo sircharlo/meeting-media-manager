@@ -5,17 +5,18 @@ import type {
 } from 'src/types';
 
 import { ipcRenderer } from 'electron/renderer';
+import { log } from 'src/shared/vanilla';
 
 export const invoke = (channel: ElectronIpcInvokeKey, ...args: unknown[]) => {
   if (process.env.DEBUGGING) {
-    console.debug('[preload] invoke', { args, channel });
+    log('[preload] invoke', 'electronIpc', 'debug', { args, channel });
   }
   return ipcRenderer.invoke(channel, ...args);
 };
 
 export const send = (channel: ElectronIpcSendKey, ...args: unknown[]) => {
   if (process.env.DEBUGGING) {
-    console.debug('[preload] send', { args, channel });
+    log('[preload] send', 'electronIpc', 'debug', { args, channel });
   }
   ipcRenderer.send(channel, ...args);
 };
@@ -26,7 +27,7 @@ export const listen = (
   callback: (args: any) => void,
 ) => {
   if (process.env.DEBUGGING) {
-    console.debug('[preload] listen', { channel });
+    log('[preload] listen', 'electronIpc', 'debug', { channel });
   }
   ipcRenderer.on(channel, (_e, args) => callback(args));
 };

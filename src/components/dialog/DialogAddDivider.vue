@@ -44,6 +44,7 @@
 <script setup lang="ts">
 import { whenever } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import { log } from 'src/shared/vanilla';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -72,7 +73,7 @@ const dividerTitleInput = ref<HTMLElement>();
 whenever(dialogValue, () => {
   if (dialogValue.value) {
     setTimeout(() => {
-      console.log('🔍 Focusing input', dividerTitleInput.value);
+      log('🔍 Focusing input', 'dividers', 'log', dividerTitleInput.value);
       dividerTitleInput.value?.focus();
     }, 100);
   }

@@ -18,7 +18,7 @@ import {
   JWPUB_EXTENSIONS,
   PDF_EXTENSIONS,
 } from 'src/constants/media';
-import { uuid } from 'src/shared/vanilla';
+import { log, uuid } from 'src/shared/vanilla';
 import upath from 'upath';
 import yauzl from 'yauzl';
 
@@ -60,14 +60,21 @@ export async function getAppDataPath(): Promise<string> {
   const usableSharedPath = await getSharedDataPath();
 
   if (usableSharedPath) {
-    console.log('📁 Using shared data path:', usableSharedPath);
+    log(
+      '📁 Using shared data path:',
+      'electronFilesystem',
+      'log',
+      usableSharedPath,
+    );
     defaultAppDataPath = usableSharedPath;
     return defaultAppDataPath;
   }
 
   defaultAppDataPath = app.getPath('userData');
-  console.log(
+  log(
     '📁 Shared data path not available, fallback to user data path:',
+    'electronFilesystem',
+    'log',
     defaultAppDataPath,
   );
   return defaultAppDataPath;
@@ -181,8 +188,10 @@ const createDirectory = async (
       state.zipfile.readEntry();
     } catch (e) {
       if (attempt < 3) {
-        console.warn(
+        log(
           `[unzipFile] Failed to create directory, retrying (${attempt}/3): ${fullPath}`,
+          'electronFilesystem',
+          'warn',
         );
         await new Promise((r) => {
           setTimeout(r, 100 * attempt);
@@ -250,8 +259,10 @@ const processFileEntry = async (
         e instanceof Error &&
         (e as { code?: string }).code === 'ENOENT'
       ) {
-        console.warn(
+        log(
           `[unzipFile] ENOENT during pipeline, retrying (${attempt}/3): ${fullPath}`,
+          'electronFilesystem',
+          'warn',
         );
         await new Promise((r) => {
           setTimeout(r, 100 * attempt);

@@ -2,6 +2,7 @@ import { defineStore } from '@quasar/app-vite/wrappers';
 import { createSentryPiniaPlugin } from '@sentry/vue';
 import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
+import { log } from 'src/shared/vanilla';
 
 /*
  * When adding new properties to stores, you should also
@@ -61,7 +62,7 @@ export default defineStore(() => {
           };
           return transformedState;
         } catch (error) {
-          console.error(error);
+          log(error, 'stores', 'error');
           return state;
         }
       },
