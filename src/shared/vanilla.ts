@@ -86,7 +86,6 @@ export const debounce = <T extends unknown[]>(
   };
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const logPrefixes = {
   api: '🌐 API',
   backgroundMusic: '🎵 Background Music',
@@ -158,7 +157,7 @@ export const log = (
   ...details: unknown[]
 ) => {
   try {
-    const prefixLabel = prefix ? `[${prefix}]` : '';
+    const prefixLabel = prefix ? `[${logPrefixes[prefix]}]` : '';
     const logger = getConsoleMethod(type);
 
     if (typeof message === 'string') {
