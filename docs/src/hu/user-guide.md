@@ -132,12 +132,12 @@ A háttérzene automatikusan elindul az összejövetel előtt és a megfelelő i
 
 ## Zoom integráció {#user-guide-zoom-integration}
 
-Az M³ használata az OBS Studio programmal hibrid összejövetelekhez:
+Az M³ integrálható a Zoom alkalmazással az automatikus képernyőmegosztás érdekében:
 
-1. **OBS Studio telepítése** - Töltse le és telepítse az OBS Studio programot
-2. **Gyorsbillentyű beállítása** – Állítsa be a Zoomban konfigurált képernyőmegosztási gyorsbillentyűt. Győződjön meg arról, hogy a Zoom alkalmazásban be van jelölve a „global” jelölőnégyzet.
-3. **M³ konfigurálása** - Adja meg az OBS portot és jelszót az M³ beállításaiban
-4. **Jelenetek beállítása** – Jelenetek létrehozása kamerához, médiához és egyéb tartalmakhoz
+1. **Integráció engedélyezése** – Engedélyezze a Zoom-integrációt a beállításokban
+2. **Gyorsbillentyű beállítása** – Állítsa be a Zoom-ban beállított képernyőmegosztási gyorsbillentyűt. Győződjön meg arról, hogy a Zoom alkalmazásban be van jelölve a "global" jelölőnégyzet.
+3. **Automatikus vezérlés** – Az M³ szükség szerint automatikusan be- és kikapcsolja a képernyőmegosztást a Zoom alkalmazásban
+4. **Kézi vezérlés** – Szükség esetén továbbra is kézzel vezérelheti a képernyőmegosztást a Zoom segítségével
 
 ## OBS Studio integráció {#user-guide-obs-integration}
 

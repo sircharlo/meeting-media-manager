@@ -35,6 +35,7 @@ import 'src-electron/main/security';
 import {
   authorizedClose,
   createMainWindow,
+  focusMainWindow,
   mainWindowInfo,
 } from 'src-electron/main/window/window-main';
 import upath from 'upath';
@@ -184,11 +185,8 @@ if (gotTheLock) {
 
   app.on('second-instance', () => {
     // Someone tried to run a second instance, we should focus our globalThis.
-    if (mainWindowInfo.mainWindow && !mainWindowInfo.mainWindow.isDestroyed()) {
-      if (mainWindowInfo.mainWindow.isMinimized())
-        mainWindowInfo.mainWindow.restore();
-      mainWindowInfo.mainWindow.show();
-    }
+    app.focus({ steal: true });
+    if (!focusMainWindow()) createWindowAndCaptureErrors();
   });
 
   if (PLATFORM === 'win32') {
@@ -322,7 +320,7 @@ if (gotTheLock) {
   });
 
   app.on('activate', () => {
-    createWindowAndCaptureErrors();
+    if (!focusMainWindow()) createWindowAndCaptureErrors();
   });
 
   createWindowAndCaptureErrors();
