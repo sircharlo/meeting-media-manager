@@ -42,6 +42,7 @@ import {
   unzipJwpub,
 } from 'src/helpers/mediaPlayback';
 import { updateLastUsedDate } from 'src/helpers/usage';
+import { log } from 'src/shared/vanilla';
 import { fetchMediaItems, fetchPubMediaLinks, fetchRaw } from 'src/utils/api';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import {
@@ -247,10 +248,11 @@ export const addToAdditionMediaMapFromPath = async (
           pathToFileURL(additionalFilePath),
       );
     }
-    console.log('🔄 [addToAdditionMediaMapFromPath] Adding media to section:', {
-      section,
-      uniqueId,
-    });
+    log(
+      `🔄 [addToAdditionMediaMapFromPath] Adding media to section: ${section}`,
+      'mediaProcessing',
+      'info',
+    );
     jwStore.addToAdditionMediaMap(
       [
         {
@@ -470,23 +472,28 @@ export const downloadFileIfNeeded = async ({
 export const fetchMedia = async () => {
   const currentStateStore = useCurrentStateStore();
   const { getMeetingType } = currentStateStore;
-  console.group('📥 Media Fetching');
   try {
     const currentStateStore = useCurrentStateStore();
     if (
       !currentStateStore.currentCongregation ||
       !!currentStateStore.currentSettings?.disableMediaFetching
     ) {
-      console.log('⏭️ Media fetching disabled or no congregation');
-      console.groupEnd();
+      log(
+        '⏭️ Media fetching disabled or no congregation',
+        'mediaFetching',
+        'info',
+      );
       return;
     }
 
     const jwStore = useJwStore();
 
     if (!jwStore.urlVariables.base || !jwStore.urlVariables.mediator) {
-      console.log('⚠️ Missing URL variables for media fetching');
-      console.groupEnd();
+      log(
+        '⚠️ Missing URL variables for media fetching',
+        'mediaFetching',
+        'warn',
+      );
       return;
     }
 
@@ -526,15 +533,15 @@ export const fetchMedia = async () => {
     const uniqueDays = dedupeDays(rawDays);
 
     if (uniqueDays.length !== rawDays.length) {
-      console.group('🔄 Day Deduplication');
-      console.log(
+      log(
         `📊 Reduced days from ${rawDays.length} to ${uniqueDays.length}`,
+        'mediaFetching',
+        'info',
       );
       jwStore.lookupPeriod[currentStateStore.currentCongregation] = uniqueDays;
-      console.groupEnd();
     }
 
-    console.group('🔍 Day Analysis');
+    log(`🔍 Day Analysis`, 'mediaFetching', 'info');
     const meetingsToFetch = (
       await Promise.all(
         jwStore.lookupPeriod[currentStateStore.currentCongregation]?.map(
@@ -549,8 +556,10 @@ export const fetchMedia = async () => {
               currentStateStore.currentSettings?.meteredConnection &&
               getDateDiff(day.date, new Date(), 'days') > 1
             ) {
-              console.log(
+              log(
                 `Skipping day ${index + 1} - ${day.date.toISOString().split('T')[0]} because metered connection is enabled and target date is after tomorrow`,
+                'mediaFetching',
+                'info',
               );
               return null;
             }
@@ -559,13 +568,16 @@ export const fetchMedia = async () => {
             const hasIncompleteOrErrorMeeting =
               getMeetingType(day.date) && day.status !== 'complete';
             if (hasIncompleteOrErrorMeeting) {
-              console.group(
+              log(
                 `📅 Day ${index + 1} - ${day.date.toISOString().split('T')[0]}`,
+                'mediaFetching',
+                'info',
               );
-              console.log('🔍 Incomplete or error meeting detected:', {
-                meeting: getMeetingType(day.date),
-                status: day.status,
-              });
+              log(
+                `🔍 Incomplete or error meeting detected: ${getMeetingType(day.date)} - ${day.status}`,
+                'mediaFetching',
+                'info',
+              );
             }
 
             // Condition 2: Missing media file
@@ -586,11 +598,10 @@ export const fetchMedia = async () => {
                 const isMissing = shouldCheckFile && !fileExists;
 
                 if (isMissing) {
-                  console.log(
-                    `    ❌ Missing media file at media[${mediaIndex}]`,
-                    {
-                      media,
-                    },
+                  log(
+                    `    ❌ Missing media file at media[${mediaIndex}]: ${media.fileUrl}`,
+                    'mediaFetching',
+                    'error',
                   );
                 }
 
@@ -605,11 +616,11 @@ export const fetchMedia = async () => {
             const hasDuplicates = uniqueIds.length > new Set(uniqueIds).size;
 
             if (hasDuplicates) {
-              console.log('⚠️ Duplicate uniqueIds found:', {
-                totalCount: uniqueIds.length,
-                uniqueCount: new Set(uniqueIds).size,
-                uniqueIds,
-              });
+              log(
+                `⚠️ Duplicate uniqueIds found: ${uniqueIds.length} total, ${new Set(uniqueIds).size} unique`,
+                'mediaFetching',
+                'error',
+              );
             }
 
             // Summary for this day
@@ -619,13 +630,11 @@ export const fetchMedia = async () => {
               hasDuplicates;
 
             if (shouldRefresh) {
-              console.log('✅ Day to be refreshed:', {
-                hasDuplicates,
-                hasIncompleteOrErrorMeeting,
-                hasMissingMediaFile,
-                index,
-              });
-              console.groupEnd();
+              log(
+                `✅ Day ${index + 1} - ${day.date.toISOString().split('T')[0]} to be refreshed`,
+                'mediaFetching',
+                'info',
+              );
             }
 
             return shouldRefresh ? day : null;
@@ -633,7 +642,6 @@ export const fetchMedia = async () => {
         ) || [],
       )
     ).filter((day) => !!day);
-    console.groupEnd();
 
     meetingsToFetch.forEach((day) => {
       day.status = null;
@@ -661,11 +669,11 @@ export const fetchMedia = async () => {
     }
     const queue = queues.meetings[currentStateStore.currentCongregation];
     if (meetingsToFetch.length) {
-      console.group('📥 Media Processing');
-      console.log('📋 Meetings to process:', {
-        count: meetingsToFetch.length,
-        meetings: meetingsToFetch,
-      });
+      log(
+        `📋 Meetings to process: ${meetingsToFetch.length}`,
+        'mediaFetching',
+        'info',
+      );
     }
     for (const day of meetingsToFetch) {
       try {
@@ -682,46 +690,44 @@ export const fetchMedia = async () => {
                   return 'Unknown';
               }
             };
-            console.group(
+            log(
               `📅 Processing ${meetingTypeDescription(meetingType)} Meeting - ${day.date.toISOString().split('T')[0]}`,
+              'mediaFetching',
+              'info',
             );
             if (!day) {
-              console.log('⚠️ No day data');
-              console.groupEnd();
+              log('⚠️ No day data', 'mediaFetching', 'warn');
               return;
             }
             const dayDate = day.date;
             if (!dayDate) {
               day.status = 'error';
-              console.log('❌ No date for day');
-              console.groupEnd();
+              log('❌ No date for day', 'mediaFetching', 'error');
               return;
             }
             let fetchResult = null;
             if (meetingType === 'we') {
-              console.log('🌅 Fetching weekend meeting media');
+              log('🌅 Fetching weekend meeting media', 'mediaFetching', 'info');
               fetchResult = await getWeMedia(dayDate);
             } else if (meetingType === 'mw') {
-              console.log('🌆 Fetching midweek meeting media');
+              log('🌆 Fetching midweek meeting media', 'mediaFetching', 'info');
               fetchResult = await getMwMedia(dayDate);
             }
             if (fetchResult) {
-              console.log('✅ Media fetched successfully');
+              log('✅ Media fetched successfully', 'mediaFetching', 'info');
               // Get all media from all sections for replacement
               if (!day.mediaSections) day.mediaSections = [];
               createMeetingSections(day);
               replaceMissingMediaByPubMediaId(day, fetchResult.media);
               day.status = fetchResult.error ? 'error' : 'complete';
             } else {
-              console.log('❌ Failed to fetch media');
+              log('❌ Failed to fetch media', 'mediaFetching', 'error');
               day.status = 'error';
             }
-            console.groupEnd();
           })
           .catch((error) => {
-            console.log('❌ Error during media processing:', error);
+            log('❌ Error during media processing:', 'mediaFetching', 'error');
             day.status = 'error';
-            console.groupEnd();
             throw error;
           });
       } catch (error) {
@@ -730,15 +736,12 @@ export const fetchMedia = async () => {
       }
     }
     await queue?.onIdle();
-    console.log('✅ All media processing completed');
+    log('✅ All media processing completed', 'mediaFetching', 'info');
     queue?.clear();
-    console.groupEnd();
     exportAllDays();
   } catch (error) {
-    console.log('❌ Error in fetchMedia:', error);
+    log('❌ Error in fetchMedia:', 'mediaFetching', 'error');
     errorCatcher(error);
-  } finally {
-    console.groupEnd(); // Close main Media Fetching group
   }
 };
 
@@ -1878,7 +1881,7 @@ export const watchedItemMapper: (
     // First, try to get section info and order from the section order file in the watched day folder
     try {
       const watchedDayFolder = dirname(watchedItemPath);
-      console.log('🔍 [watchedItemMapper] watchedDayFolder:', watchedDayFolder);
+      log(`watchedDayFolder: ${watchedDayFolder}`, 'watchedFolder', 'info');
       if (watchedDayFolder) {
         const { getWatchedMediaSectionInfo } =
           await import('src/helpers/media-sections');
@@ -1886,7 +1889,7 @@ export const watchedItemMapper: (
           watchedDayFolder,
           filename,
         );
-        console.log('🔍 [watchedItemMapper] sectionInfo:', sectionInfo);
+        log(`sectionInfo: ${sectionInfo}`, 'watchedFolder', 'info');
         if (sectionInfo) {
           section = sectionInfo.section;
           order = sectionInfo.order;
@@ -1948,7 +1951,11 @@ export const watchedItemMapper: (
 };
 
 export const getWeMedia = async (lookupDate: Date) => {
-  console.log('Getting weekend meeting media for date:', lookupDate);
+  log(
+    `Getting weekend meeting media for date: ${formatDate(lookupDate, 'YYYYMMDD')}`,
+    'weMedia',
+    'info',
+  );
   try {
     const currentStateStore = useCurrentStateStore();
     lookupDate = dateFromString(lookupDate);
@@ -2348,7 +2355,11 @@ export const getWeMedia = async (lookupDate: Date) => {
 };
 
 export const getMwMedia = async (lookupDate: Date) => {
-  console.log('Getting midweek meeting media for date:', lookupDate);
+  log(
+    `Getting midweek meeting media for date: ${formatDate(lookupDate, 'YYYYMMDD')}`,
+    'mwMedia',
+    'info',
+  );
   try {
     const currentStateStore = useCurrentStateStore();
     lookupDate = dateFromString(lookupDate);
@@ -2503,7 +2514,11 @@ export async function processMissingMediaInfo({
         m.IssueTagNumber.toString().endsWith('01')
       ) {
         m.KeySymbol = 'wp';
-        console.log('Updated magazine symbol to wp', m);
+        log(
+          `Updated magazine symbol to wp: ${m.KeySymbol}`,
+          'mediaProcessing',
+          'info',
+        );
       }
     }
 

@@ -212,6 +212,7 @@ import {
   resolveFilePath,
 } from 'src/helpers/jw-media';
 import { createTemporaryNotification } from 'src/helpers/notifications';
+import { log } from 'src/shared/vanilla';
 import { getTempPath } from 'src/utils/fs';
 import { isImage } from 'src/utils/media';
 import { findDb } from 'src/utils/sqlite';
@@ -626,8 +627,6 @@ async function processVideoItem(
 }
 
 const addSelectedItems = async () => {
-  console.group('📋 JW Playlist Processing');
-
   try {
     if (!selectedItems.value.length || !selectedDateObject.value) return;
 
@@ -659,14 +658,16 @@ const addSelectedItems = async () => {
     emit('import', { items: processedMediaItems });
 
     emit('ok');
-    console.log('✅ All items processed (parallel) and applied (ordered).');
+    log(
+      '✅ All items processed (parallel) and applied (ordered).',
+      'jwPlaylist',
+      'info',
+    );
   } catch (error) {
-    console.log('❌ Error processing playlist items:', error);
     errorCatcher(error);
   } finally {
     dialogValue.value = false;
     isProcessing.value = false;
-    console.groupEnd();
   }
 };
 
@@ -685,7 +686,7 @@ const resetSelection = () => {
 watch(
   () => props.jwPlaylistPath,
   (newPath: string) => {
-    console.log('🎯 jwPlaylistPath changed to:', newPath);
+    log(`🎯 jwPlaylistPath changed to: ${newPath}`, 'jwPlaylist', 'info');
     if (newPath) {
       loadPlaylistItems();
     }

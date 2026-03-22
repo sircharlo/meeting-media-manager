@@ -85,3 +85,47 @@ export const debounce = <T extends unknown[]>(
     }, delay);
   };
 };
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const logPrefixes = {
+  backgroundMusic: '🎵 Background Music',
+  cacheAutoClear: '🧹 Cache Auto-Clear',
+  congregation: '⛪ Congregation',
+  coWeek: '📅 Co-Week',
+  jwPlaylist: '📋 JW Playlist',
+  keyboardShortcuts: '⌨️ Keyboard Shortcuts',
+  mediaFetching: '🔍 Media Fetching',
+  mediaProcessing: '🔄 Media Processing',
+  mwMedia: '🌅 Midweek Meeting Media',
+  watchedFolder: '📁 Watched Folder',
+  weMedia: '🌅 Weekend Meeting Media',
+} as const;
+
+export type LogPrefix = keyof typeof logPrefixes;
+
+export const log = (
+  message: string,
+  prefix?: LogPrefix,
+  type: 'error' | 'info' | 'log' | 'warn' = 'log',
+) => {
+  try {
+    const logMessage = prefix ? `[${prefix}] ${message}` : message;
+
+    switch (type) {
+      case 'error':
+        console.error(logMessage);
+        break;
+      case 'info':
+        console.info(logMessage);
+        break;
+      case 'log':
+        console.log(logMessage);
+        break;
+      case 'warn':
+        console.warn(logMessage);
+        break;
+    }
+  } catch (error) {
+    console.error(error, { message, prefix, type });
+  }
+};
