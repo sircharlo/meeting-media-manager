@@ -106,6 +106,7 @@ import {
   obsStartRecording,
   obsStopRecording,
 } from 'src/helpers/obs';
+import { log } from 'src/shared/vanilla';
 import { isUUID } from 'src/utils/general';
 import { isImage } from 'src/utils/media';
 import { obsWebSocketInfo } from 'src/utils/obs';
@@ -189,7 +190,7 @@ watchImmediate(
 
     // --- 1. Setup event listener ---
     const handleRecordStateChanged = (data: { outputActive: boolean }) => {
-      console.log('RecordStateChanged', data);
+      log('RecordStateChanged', 'obs', 'log', data);
       isRecording.value = data.outputActive;
     };
     obsWebSocketInfo.obsWebSocket.on(

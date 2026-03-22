@@ -2,6 +2,7 @@ import type { PublicationFetcher } from 'src/types';
 
 import { Buffer } from 'buffer/';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { log } from 'src/shared/vanilla';
 import { getPubId } from 'src/utils/jw';
 
 const {
@@ -65,13 +66,18 @@ export const getCachedUserDataPath = async (): Promise<string> => {
     (await isUsablePath(customPath))
   ) {
     defaultDataPath = customPath;
-    console.log('📁 Using custom cache path:', customPath);
+    log('📁 Using custom cache path:', 'filesystem', 'log', customPath);
     return defaultDataPath;
   }
 
   // Fallback to resolved app data path
   defaultDataPath = await getAppDataPath();
-  console.log('📁 Using default app data path as cache path:', defaultDataPath);
+  log(
+    '📁 Using default app data path as cache path:',
+    'filesystem',
+    'log',
+    defaultDataPath,
+  );
   return defaultDataPath;
 };
 

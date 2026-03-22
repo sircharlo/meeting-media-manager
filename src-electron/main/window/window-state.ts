@@ -8,7 +8,7 @@ import {
 } from 'electron';
 import { ensureDirSync, readJsonSync, writeJsonSync } from 'fs-extra/esm';
 import { captureElectronError } from 'src-electron/main/utils';
-import { debounce } from 'src/shared/vanilla';
+import { debounce, log } from 'src/shared/vanilla';
 import upath from 'upath';
 
 const { dirname, join } = upath;
@@ -207,8 +207,10 @@ function ensureWindowVisibleOnSomeDisplay(
         notFullyBelowBounds &&
         notFullyAboveBounds;
 
-      console.log(
+      log(
         `Window is ${isVisible ? '' : 'not '}visible on display ${display.id}`,
+        'electronWindow',
+        'log',
       );
 
       return isVisible;
@@ -273,13 +275,11 @@ function refineOptionsAndState(
     ...restOriginalOptions
   } = options;
 
-  let savedState: null | WindowState = null;
-
-  savedState = readJsonSync(join(configFilePath, configFileName), {
-    throws: false,
-  });
-
-  savedState = validateState(savedState);
+  const savedState = validateState(
+    readJsonSync(join(configFilePath, configFileName), {
+      throws: false,
+    }),
+  );
 
   if (!savedState) return restOriginalOptions;
 

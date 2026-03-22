@@ -1,4 +1,5 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { log } from 'src/shared/vanilla';
 import upath from 'upath';
 import { describe, expect, it } from 'vitest';
 
@@ -128,8 +129,10 @@ describe('Electron Dependencies', () => {
     missingDeps.sort((a, b) => a.localeCompare(b));
 
     if (missingDeps.length > 0) {
-      console.error(
+      log(
         'The following dependencies are used in src-electron but not whitelisted in quasar.config.ts:',
+        'electronDependencies',
+        'error',
         missingDeps,
       );
     }
@@ -143,8 +146,10 @@ describe('Electron Dependencies', () => {
     undeclaredDeps.sort((a, b) => a.localeCompare(b));
 
     if (undeclaredDeps.length > 0) {
-      console.error(
+      log(
         'The following dependencies are used in src-electron but missing from package.json:',
+        'electronDependencies',
+        'error',
         undeclaredDeps,
       );
     }

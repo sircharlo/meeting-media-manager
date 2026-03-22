@@ -1,4 +1,5 @@
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { log } from 'src/shared/vanilla';
 import { sleep } from 'src/utils/general';
 import { initObsWebSocket, obsWebSocketInfo } from 'src/utils/obs';
 import { portNumberValidator } from 'src/utils/settings';
@@ -78,7 +79,7 @@ export const obsConnect = async (setup?: boolean) => {
 export const obsStartRecording = async (): Promise<boolean> => {
   try {
     if (!obsWebSocketInfo.obsWebSocket) {
-      console.warn('OBS WebSocket not connected');
+      log('OBS WebSocket not connected', 'obs', 'warn');
       return false;
     }
 
@@ -93,7 +94,7 @@ export const obsStartRecording = async (): Promise<boolean> => {
 export const obsStopRecording = async (): Promise<boolean> => {
   try {
     if (!obsWebSocketInfo.obsWebSocket) {
-      console.warn('OBS WebSocket not connected');
+      log('OBS WebSocket not connected', 'obs', 'warn');
       return false;
     }
 
@@ -108,7 +109,7 @@ export const obsStopRecording = async (): Promise<boolean> => {
 export const obsGetRecordingDirectory = async (): Promise<null | string> => {
   try {
     if (!obsWebSocketInfo.obsWebSocket) {
-      console.warn('OBS WebSocket not connected');
+      log('OBS WebSocket not connected', 'obs', 'warn');
       return null;
     }
 
@@ -124,7 +125,7 @@ export const obsGetRecordingDirectory = async (): Promise<null | string> => {
 export const obsGetRecordingState = async (): Promise<boolean> => {
   try {
     if (!obsWebSocketInfo.obsWebSocket) {
-      console.warn('OBS WebSocket not connected');
+      log('OBS WebSocket not connected', 'obs', 'warn');
       return false;
     }
 

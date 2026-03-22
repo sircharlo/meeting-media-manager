@@ -471,6 +471,7 @@ import {
   getJwMediaInfo,
   getPubMediaLinks,
 } from 'src/helpers/jw-media';
+import { log } from 'src/shared/vanilla';
 import { fetchJson, fetchPubMediaLinks } from 'src/utils/api';
 import { getLocalDate } from 'src/utils/date';
 import { getPublicationDirectoryContents } from 'src/utils/fs';
@@ -1021,7 +1022,12 @@ async function handleMediaResult(
   }
 
   // No media files available
-  console.log('❌ No media files available for:', publication);
+  log(
+    '❌ No media files available for:',
+    'publicationMedia',
+    'log',
+    publication,
+  );
   return false;
 }
 

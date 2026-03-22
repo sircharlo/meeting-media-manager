@@ -10,6 +10,7 @@ import {
 } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
+import { log } from 'src/shared/vanilla';
 import upath from 'upath';
 
 const { join } = upath;
@@ -52,17 +53,17 @@ export async function initUpdater() {
   });
 
   autoUpdater.on('update-available', (info) => {
-    console.log('Update available:', info);
+    log('Update available:', 'electronUpdater', 'log', info);
     sendToWindow(mainWindowInfo.mainWindow, 'update-available');
   });
 
   autoUpdater.on('download-progress', (info) => {
-    console.log('Update download progress:', info);
+    log('Update download progress:', 'electronUpdater', 'log', info);
     sendToWindow(mainWindowInfo.mainWindow, 'update-download-progress', info);
   });
 
   autoUpdater.on('update-downloaded', (info) => {
-    console.log('Update downloaded:', info);
+    log('Update downloaded:', 'electronUpdater', 'log', info);
     sendToWindow(mainWindowInfo.mainWindow, 'update-downloaded');
   });
 

@@ -1,7 +1,7 @@
 import type { OldAppConfig } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { uuid } from 'src/shared/vanilla';
+import { log, uuid } from 'src/shared/vanilla';
 import {
   buildNewPrefsObject,
   getOldPrefsPaths,
@@ -61,8 +61,10 @@ export const firstRun: MigrationFunction = async () => {
       }
 
       if (oldPrefsPaths.length === 0) {
-        console.warn(
+        log(
           '🔍 [migration] No old prefs paths found in:',
+          'migrations',
+          'warn',
           oldVersionPath,
         );
       }

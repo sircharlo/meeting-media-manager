@@ -29,10 +29,12 @@
               unelevated
               @click="
                 () => {
-                  console.log('🔍 [Full Screen Button] Clicked');
+                  log('🔍 [Full Screen Button] Clicked', 'display');
                   screenPreferences.preferWindowed = false;
-                  console.log(
+                  log(
                     '🔍 [Full Screen Button] Calling moveMediaWindow with:',
+                    'display',
+                    'log',
                     {
                       screen: screenPreferences.preferredScreenNumber,
                       fullscreen: true,
@@ -65,10 +67,12 @@
               unelevated
               @click="
                 () => {
-                  console.log('🔍 [Windowed Button] Clicked');
+                  log('🔍 [Windowed Button] Clicked', 'display');
                   screenPreferences.preferWindowed = true;
-                  console.log(
+                  log(
                     '🔍 [Windowed Button] Calling moveMediaWindow with:',
+                    'display',
+                    'log',
                     {
                       screen: screenPreferences.preferredScreenNumber,
                       fullscreen: false,
@@ -144,11 +148,18 @@
                   @click="
                     () => {
                       if (screen.mainWindow) return;
-                      console.log('🔍 [Screen Map] Clicked for index:', index);
+                      log(
+                        '🔍 [Screen Map] Clicked for index:',
+                        'display',
+                        'log',
+                        index,
+                      );
                       screenPreferences.preferredScreenNumber = index;
                       const isFullscreen = !screenPreferences.preferWindowed;
-                      console.log(
+                      log(
                         '🔍 [Screen Map] Calling moveMediaWindow with:',
+                        'display',
+                        'log',
                         { index, isFullscreen },
                       );
                       moveMediaWindow(index, isFullscreen);
@@ -355,6 +366,7 @@ import {
   unzipJwpub,
 } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
+import { log } from 'src/shared/vanilla';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import { getTempPath } from 'src/utils/fs';
 import { isImage, isJwpub } from 'src/utils/media';
@@ -583,14 +595,16 @@ const getCameras = async () => {
   // Only enumerate devices if it's a sign language congregation or a camera is already selected
   // This avoids triggering the Video Capture service for the vast majority of users
   if (!currentLangObject.value?.isSignLanguage && !displayCameraId.value) {
-    console.log(
+    log(
       '🎬 [getCameras] Skipping camera enumeration (not a sign language congregation and no camera selected)',
+      'display',
+      'log',
     );
     return;
   }
 
   try {
-    console.log('🎬 [getCameras] Enumerating video input devices');
+    log('🎬 [getCameras] Enumerating video input devices', 'display', 'log');
     cameras.value = (await navigator.mediaDevices.enumerateDevices())
       .filter((d) => d.kind === 'videoinput')
       .map((d) => ({ label: d.label, value: d.deviceId }));
@@ -722,7 +736,11 @@ watch(
   (isOpen) => {
     if (isOpen) {
       if (!stopListeningToScreens.value) {
-        console.log('🔍 [DialogDisplayPopup] Starting screen update listener');
+        log(
+          '🔍 [DialogDisplayPopup] Starting screen update listener',
+          'display',
+          'log',
+        );
         stopListeningToScreens.value = useEventListener(
           globalThis,
           'screen-trigger-update',
@@ -733,7 +751,11 @@ watch(
         );
       }
     } else if (stopListeningToScreens.value) {
-      console.log('🔍 [DialogDisplayPopup] Stopping screen update listener');
+      log(
+        '🔍 [DialogDisplayPopup] Stopping screen update listener',
+        'display',
+        'log',
+      );
       stopListeningToScreens.value();
       stopListeningToScreens.value = null;
     }

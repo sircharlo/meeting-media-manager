@@ -9,6 +9,7 @@ import type {
 import { updateLookupPeriod } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getLastUsedDate, LAST_USED_FILENAME } from 'src/helpers/usage';
+import { log } from 'src/shared/vanilla';
 import { dateFromString, getSpecificWeekday, isInPast } from 'src/utils/date';
 import {
   congPreferencesPath,
@@ -153,7 +154,7 @@ function isDirectoryUnused(
   if (isInUntouchable) return false;
 
   // Log debugging information
-  console.log('🗑️ File marked as unused:', {
+  log('🗑️ File marked as unused:', 'cleanup', 'log', {
     filePath,
     frequentlyUsedDirs: [...frequentlyUsedDirectories],
     isInFrequentlyUsed,
@@ -722,14 +723,14 @@ export const deleteCacheFiles = async (
   try {
     const analysis = await analyzeCacheFiles();
 
-    console.log('[Cache] Analyzed cache:', analysis);
+    log('[Cache] Analyzed cache:', 'cleanup', 'log', analysis);
 
     const filepathsToDelete =
       type === 'smart'
         ? Object.keys(analysis.unusedParentDirectories)
         : analysis.cacheFiles.map((f) => f.path);
 
-    console.log('[Cache] Filepaths to delete:', filepathsToDelete);
+    log('[Cache] Filepaths to delete:', 'cleanup', 'log', filepathsToDelete);
 
     // Delete cache files/directories
     const deletionResult =
@@ -745,11 +746,15 @@ export const deleteCacheFiles = async (
 
     // Update lookup period if deleting all cache
     if (type === 'all') {
-      console.log('[Cache] Updating lookup period (all cache cleared)');
+      log(
+        '[Cache] Updating lookup period (all cache cleared)',
+        'cleanup',
+        'log',
+      );
       updateLookupPeriod({ reset: true });
     }
 
-    console.log('[Cache] Cleared successfully', {
+    log('[Cache] Cleared successfully', 'cleanup', 'log', {
       ...deletionResult,
       filepathsToDelete,
       mode: type,

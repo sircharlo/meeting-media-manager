@@ -2,6 +2,7 @@ import type { QueryResponseItem } from 'src/types';
 
 import BetterSqlite3 from 'better-sqlite3';
 import { capturePreloadError } from 'src-electron/preload/log';
+import { log } from 'src/shared/vanilla';
 
 const queryCache = new Map();
 
@@ -13,7 +14,7 @@ export const executeQuery = <T extends object = QueryResponseItem>(
   const cacheKey = `${dbPath}:${query}:${JSON.stringify(params)}`;
   if (queryCache.has(cacheKey)) {
     const cachedResult = queryCache.get(cacheKey) as T[];
-    console.debug('executeQuery (cached)', {
+    log('executeQuery (cached)', 'sqlite', 'debug', {
       count: cachedResult.length,
       db: dbPath.split('/').pop(),
       query,
@@ -34,7 +35,7 @@ export const executeQuery = <T extends object = QueryResponseItem>(
       if ('Content' in item) delete item.Content;
     }
 
-    console.debug('executeQuery', {
+    log('executeQuery', 'sqlite', 'debug', {
       count: result.length,
       db: dbPath.split('/').pop(),
       params,
