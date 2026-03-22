@@ -1114,7 +1114,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { getThumbnailUrl } from 'src/helpers/fs';
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { triggerZoomScreenShare } from 'src/helpers/zoom';
-import { throttleWithTrailing, uuid } from 'src/shared/vanilla';
+import { log, throttleWithTrailing, uuid } from 'src/shared/vanilla';
 import { isFileUrl } from 'src/utils/fs';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
 import { sendObsSceneEvent } from 'src/utils/obs';
@@ -2061,7 +2061,6 @@ const tagTooltipText = computed(() => {
 // };
 
 const updateImageDuration = (newDuration: { label: string; value: number }) => {
-  console.log(newDuration);
   imageDuration.value = newDuration.value;
   // Update the section's repeat interval
   if (props.media.originalSection) {
@@ -2085,8 +2084,10 @@ watch(
 
       const updateProgress = () => {
         if (!imageStartTime.value || !isCurrentlyPlaying.value) {
-          console.debug(
-            '[MediaItem.vue] Stopping updateProgress: imageStartTime or isCurrentlyPlaying falsy',
+          log(
+            'Stopping updateProgress: imageStartTime or isCurrentlyPlaying falsy',
+            'mediaPlayback',
+            'debug',
           );
           return;
         }
@@ -2099,7 +2100,7 @@ watch(
           requestAnimationFrame(updateProgress);
         } else {
           postLastEndTimestamp(Date.now());
-          console.debug('[MediaItem.vue] Image progress reached 100%');
+          log('Image progress reached 100%', 'mediaPlayback');
         }
       };
 

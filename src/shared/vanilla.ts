@@ -92,9 +92,11 @@ const logPrefixes = {
   cacheAutoClear: '🧹 Cache Auto-Clear',
   congregation: '⛪ Congregation',
   coWeek: '📅 Co-Week',
+  dividers: '🔤 Dividers',
   jwPlaylist: '📋 JW Playlist',
   keyboardShortcuts: '⌨️ Keyboard Shortcuts',
   mediaFetching: '🔍 Media Fetching',
+  mediaPlayback: '▶️ Media Playback',
   mediaProcessing: '🔄 Media Processing',
   mwMedia: '🌅 Midweek Meeting Media',
   watchedFolder: '📁 Watched Folder',
@@ -106,12 +108,15 @@ export type LogPrefix = keyof typeof logPrefixes;
 export const log = (
   message: string,
   prefix?: LogPrefix,
-  type: 'error' | 'info' | 'log' | 'warn' = 'log',
+  type: 'debug' | 'error' | 'info' | 'log' | 'warn' = 'log',
 ) => {
   try {
     const logMessage = prefix ? `[${prefix}] ${message}` : message;
 
     switch (type) {
+      case 'debug':
+        console.debug(logMessage);
+        break;
       case 'error':
         console.error(logMessage);
         break;
