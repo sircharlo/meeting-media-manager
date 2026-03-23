@@ -29,7 +29,7 @@ export function getAppVersion() {
  * @param icon The icon name
  * @returns The icon path
  */
-export function getIconPath(icon: 'beta' | 'icon' | 'media-player') {
+export function getIconPath(icon: 'beta' | 'icon' | 'media-player' | 'timer') {
   const extByPlatform: Record<string, string> = {
     darwin: 'icns',
     win32: 'ico',

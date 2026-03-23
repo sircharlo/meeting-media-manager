@@ -31,7 +31,7 @@ export function createTimerWindow() {
     focusable: true,
     frame: false,
     height: HD_RESOLUTION[1],
-    icon: getIconPath('media-player'), // TODO: change icon
+    icon: getIconPath('timer'),
     minHeight: 110,
     minWidth: 195,
     opacity: 1,
