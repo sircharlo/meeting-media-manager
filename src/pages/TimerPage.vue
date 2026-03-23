@@ -4,7 +4,6 @@
     padding
     :style="containerStyles"
   >
-    <!-- <pre>aheadBehindMinutes: {{ timerData?.aheadBehindMinutes }}</pre> -->
     <transition mode="out-in" name="scale">
       <div :key="currentMode" :class="{ blink: paused }" :style="textStyles">
         {{ displayTime }}
@@ -136,12 +135,12 @@ const normalizeDay = (day: number) => (day === 0 ? 6 : day - 1);
 const getTodayMeetingInfo = (today: number, data: TimerData) => {
   const { meetingCountdownMinutes, mwDay, mwStartTime, weDay, weStartTime } =
     data;
-  if (parseInt(mwDay ?? '-1') === today && mwStartTime)
+  if (Number.parseInt(mwDay ?? '-1') === today && mwStartTime)
     return {
       countdownMinutes: meetingCountdownMinutes,
       startTime: mwStartTime,
     };
-  if (parseInt(weDay ?? '-1') === today && weStartTime)
+  if (Number.parseInt(weDay ?? '-1') === today && weStartTime)
     return {
       countdownMinutes: meetingCountdownMinutes,
       startTime: weStartTime,

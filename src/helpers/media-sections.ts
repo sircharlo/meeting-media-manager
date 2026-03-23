@@ -170,7 +170,7 @@ function getMeetingSectionConfigs(
     'circuit-overseer',
   ];
 
-  if (iconSections.includes(section as JwIconKeyword)) {
+  if (iconSections.includes(section)) {
     return {
       jwIconKeyword: section,
       uniqueId: section,

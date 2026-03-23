@@ -158,7 +158,6 @@
         />
       </div>
 
-      <!-- <template v-if="timerMode === 'countdown'"> -->
       <!-- Meeting Part Selection (only on meeting days) -->
       <template v-if="isMeetingDay(selectedDateObject?.date)">
         <template v-if="isMwMeetingDay(selectedDateObject?.date)">
@@ -405,7 +404,6 @@
           </q-item>
         </q-list>
       </div>
-      <!-- </template> -->
 
       <!-- Timer Controls -->
       <q-separator class="bg-accent-200 q-mb-md" />
@@ -627,7 +625,7 @@ const rebalancePartDurations = (
 ) => {
   const splitEditedPart = editedPartValue.split('-');
   const partIndexString = splitEditedPart[1];
-  const partIndex = parseInt(partIndexString || '0');
+  const partIndex = Number.parseInt(partIndexString || '0');
 
   let consumedMinutes = 0;
   for (let i = 1; i <= partIndex; i++) {
@@ -751,11 +749,10 @@ const exportPdfReport = async () => {
     theme: 'grid',
   });
 
-  // doc.save();
   doc.save(`Meeting_Report_${meetingDate}.pdf`);
 };
 
-const { getAllScreens, moveTimerWindow } = window.electronApi;
+const { getAllScreens, moveTimerWindow } = globalThis.electronApi;
 
 // Listen for timer page ready
 const { data: timerPageReady } = useBroadcastChannel<string, string>({
@@ -779,7 +776,7 @@ whenever(
   },
 );
 
-useEventListener(window, 'screen-trigger-update', fetchScreens, {
+useEventListener(globalThis, 'screen-trigger-update', fetchScreens, {
   passive: true,
 });
 

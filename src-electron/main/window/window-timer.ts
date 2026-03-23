@@ -148,10 +148,7 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
   });
 
   try {
-    if (
-      !timerWindowInfo.timerWindow ||
-      !timerWindowInfo.timerWindow.isVisible()
-    ) {
+    if (!timerWindowInfo.timerWindow?.isVisible()) {
       log(
         '🔍 [moveTimerWindow] Timer window not available or not visible',
         'timer',
@@ -188,18 +185,18 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
           b.height === timerWindowPrefs.height
         );
       });
-      if (preferredIndex !== -1) {
+      if (preferredIndex === -1) {
+        log(
+          '🔍 [moveTimerWindow] Preferred display index not found',
+          'timer',
+          'log',
+        );
+      } else {
         log(
           '🔍 [moveTimerWindow] Preferred display index:',
           'timer',
           'log',
           preferredIndex,
-        );
-      } else {
-        log(
-          '🔍 [moveTimerWindow] Preferred display index not found',
-          'timer',
-          'log',
         );
       }
     } else {
@@ -269,19 +266,17 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
           (s, index) => !s.mainWindow && index !== currentDisplayNr,
         );
 
-        if (alternativeScreen !== -1) {
-          targetDisplayNr = alternativeScreen;
-          targetFullscreen = true;
-          log(
-            '🔍 [moveTimerWindow] Moving fullscreen timer window to alternative screen:',
-            'timer',
-            'log',
-            targetDisplayNr,
-          );
-        } else {
+        if (alternativeScreen === -1) {
           // If no alternative found, try any non-main window screen
           const anyAlternativeScreen = screens.findIndex((s) => !s.mainWindow);
-          if (anyAlternativeScreen !== -1) {
+          if (anyAlternativeScreen === -1) {
+            log(
+              '🔍 [moveTimerWindow] No alternative screens available, keeping current position',
+              'timer',
+              'log',
+            );
+            return;
+          } else {
             targetDisplayNr = anyAlternativeScreen;
             targetFullscreen = true;
             log(
@@ -290,14 +285,16 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
               'log',
               targetDisplayNr,
             );
-          } else {
-            log(
-              '🔍 [moveTimerWindow] No alternative screens available, keeping current position',
-              'timer',
-              'log',
-            );
-            return;
           }
+        } else {
+          targetDisplayNr = alternativeScreen;
+          targetFullscreen = true;
+          log(
+            '🔍 [moveTimerWindow] Moving fullscreen timer window to alternative screen:',
+            'timer',
+            'log',
+            targetDisplayNr,
+          );
         }
       } else {
         log(
@@ -362,20 +359,20 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
         'log',
       );
       const alternativeScreen = screens.findIndex((s) => !s.mainWindow);
-      if (alternativeScreen !== -1) {
+      if (alternativeScreen === -1) {
+        targetFullscreen = false;
+        log(
+          '🔍 [moveTimerWindow] No alternative screen, going windowed',
+          'timer',
+          'log',
+        );
+      } else {
         targetDisplayNr = alternativeScreen;
         log(
           '🔍 [moveTimerWindow] Switched to screen:',
           'timer',
           'log',
           targetDisplayNr,
-        );
-      } else {
-        targetFullscreen = false;
-        log(
-          '🔍 [moveTimerWindow] No alternative screen, going windowed',
-          'timer',
-          'log',
         );
       }
     }
