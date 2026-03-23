@@ -1,4 +1,9 @@
-import type { MeetingPart, MeetingPartTimings, TimerData } from 'src/types';
+import type {
+  CustomTimerPart,
+  MeetingPart,
+  MeetingPartTimings,
+  TimerData,
+} from 'src/types';
 
 import {
   useBroadcastChannel,
@@ -19,6 +24,9 @@ import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const useTimer = () => {
+  const createCustomPartId = (): `custom-${string}` =>
+    `custom-${Math.random().toString(36).slice(2, 10)}`;
+
   const timerRunning = ref(false);
   const timerPaused = ref(false);
   const timerStartTime = ref<null | number>(null);
@@ -93,6 +101,65 @@ const useTimer = () => {
     ref<Record<MeetingPart, MeetingPartTimings>>(initialPartTimings);
 
   const { t } = useI18n();
+
+  const customTimerParts = computed<CustomTimerPart[]>(() => {
+    if (isMeetingDay(selectedDateObject.value?.date)) return [];
+    return selectedDateObject.value?.timerParts ?? [];
+  });
+
+  const ensureNonMeetingTimerParts = () => {
+    if (
+      isMeetingDay(selectedDateObject.value?.date) ||
+      !selectedDateObject.value
+    )
+      return;
+
+    if (selectedDateObject.value.timerParts?.length) {
+      selectedDateObject.value.timerParts.forEach((part) => {
+        if (!(part.id in partDurations.value)) {
+          partDurations.value[part.id] = part.duration;
+        }
+        if (!(part.id in partTimings.value)) {
+          partTimings.value[part.id] = { endTime: null, startTime: null };
+        }
+      });
+      return;
+    }
+
+    const sectionParts = (selectedDateObject.value.mediaSections ?? [])
+      .filter(
+        (section) => !!section.config?.label || !!section.config?.uniqueId,
+      )
+      .map((section, index) => ({
+        duration: 5,
+        id: createCustomPartId(),
+        label: section.config?.label || `${t('meeting-part')} ${index + 1}`,
+      }));
+
+    selectedDateObject.value.timerParts = sectionParts.length
+      ? sectionParts
+      : [
+          {
+            duration: 5,
+            id: createCustomPartId(),
+            label: `${t('meeting-part')} 1`,
+          },
+        ];
+
+    selectedDateObject.value.timerParts.forEach((part) => {
+      partDurations.value[part.id] = part.duration;
+      partTimings.value[part.id] = { endTime: null, startTime: null };
+    });
+  };
+
+  const syncCustomTimerPartState = () => {
+    customTimerParts.value.forEach((part, index) => {
+      part.duration = Math.max(1, Number(part.duration) || 1);
+      part.label ||= `${t('meeting-part')} ${index + 1}`;
+      partDurations.value[part.id] = part.duration;
+      partTimings.value[part.id] ??= { endTime: null, startTime: null };
+    });
+  };
 
   // Watch AYFM parts count to adjust durations
   watch(ayfmPartsCount, (newCount) => {
@@ -221,7 +288,13 @@ const useTimer = () => {
       });
       return options;
     }
-    return [];
+
+    ensureNonMeetingTimerParts();
+
+    return customTimerParts.value.map((part) => ({
+      label: `${part.label} (${part.duration} min.)`,
+      value: part.id,
+    }));
   });
 
   // Part durations in minutes (reactive)
@@ -253,6 +326,58 @@ const useTimer = () => {
   const currentState = useCurrentStateStore();
   const { currentSettings, selectedDateObject } = storeToRefs(currentState);
 
+  const addCustomTimerPart = () => {
+    ensureNonMeetingTimerParts();
+    if (!selectedDateObject.value) return;
+
+    const nextIndex = (selectedDateObject.value.timerParts?.length ?? 0) + 1;
+    const newPart: CustomTimerPart = {
+      duration: 5,
+      id: createCustomPartId(),
+      label: `${t('meeting-part')} ${nextIndex}`,
+    };
+
+    selectedDateObject.value.timerParts ??= [];
+    selectedDateObject.value.timerParts.push(newPart);
+    partDurations.value[newPart.id] = newPart.duration;
+    partTimings.value[newPart.id] = { endTime: null, startTime: null };
+
+    if (currentPart.value.startsWith('custom-')) {
+      currentPart.value = newPart.id;
+    }
+  };
+
+  const moveCustomTimerPart = (fromIndex: number, toIndex: number) => {
+    const parts = selectedDateObject.value?.timerParts;
+    if (
+      !parts ||
+      toIndex < 0 ||
+      toIndex >= parts.length ||
+      fromIndex === toIndex
+    )
+      return;
+
+    const [movedPart] = parts.splice(fromIndex, 1);
+    if (!movedPart) return;
+    parts.splice(toIndex, 0, movedPart);
+  };
+
+  const removeCustomTimerPart = (partId: MeetingPart) => {
+    const parts = selectedDateObject.value?.timerParts;
+    if (!parts) return;
+
+    if (parts.length <= 1) return;
+
+    selectedDateObject.value.timerParts = parts.filter(
+      (part) => part.id !== partId,
+    );
+
+    if (currentPart.value === partId) {
+      currentPart.value =
+        selectedDateObject.value.timerParts[0]?.id ?? currentPart.value;
+    }
+  };
+
   const handleTimerWindowVisibility = (visible: boolean) => {
     toggleTimerWindow(visible);
     currentState.setTimerWindowVisible(visible);
@@ -278,12 +403,11 @@ const useTimer = () => {
   };
 
   const calculateCountdownTarget = () => {
-    if (
-      !selectedDateObject.value ||
-      !isMeetingDay(selectedDateObject.value?.date) ||
-      timerMode.value === 'countup'
-    )
-      return 0;
+    if (!selectedDateObject.value || timerMode.value === 'countup') return 0;
+
+    if (!isMeetingDay(selectedDateObject.value?.date)) {
+      return (partDurations.value[currentPart.value] || 0) * 60;
+    }
 
     if (isWeMeetingDay(selectedDateObject.value?.date)) {
       if (currentPart.value === 'public-talk') {
@@ -336,9 +460,9 @@ const useTimer = () => {
       } else if (currentPart.value === 'bible-reading') {
         return partDurations.value['bible-reading'] * 60;
       } else if (currentPart.value.startsWith('ayfm-')) {
-        return partDurations.value[currentPart.value] * 60;
+        return (partDurations.value[currentPart.value] || 0) * 60;
       } else if (currentPart.value.startsWith('lac-')) {
-        return partDurations.value[currentPart.value] * 60;
+        return (partDurations.value[currentPart.value] || 0) * 60;
       } else if (currentPart.value === 'co-service-talk') {
         return partDurations.value['co-service-talk'] * 60;
       } else if (currentPart.value === 'cbs') {
@@ -379,6 +503,14 @@ const useTimer = () => {
   };
 
   const startTimer = () => {
+    if (!isMeetingDay(selectedDateObject.value?.date)) {
+      ensureNonMeetingTimerParts();
+      const firstCustomPart = customTimerParts.value[0];
+      if (!currentPart.value.startsWith('custom-') && firstCustomPart) {
+        currentPart.value = firstCustomPart.id;
+      }
+    }
+
     if (timerMode.value === 'countdown') {
       countdownTarget.value = calculateCountdownTarget();
     }
@@ -390,7 +522,10 @@ const useTimer = () => {
 
     // Log the start time for the current part
     partTimings.value[currentPart.value] = {
-      ...partTimings.value[currentPart.value],
+      ...(partTimings.value[currentPart.value] ?? {
+        endTime: null,
+        startTime: null,
+      }),
       startTime: Date.now(),
     };
 
@@ -437,7 +572,10 @@ const useTimer = () => {
 
     // Log the end time for the current part
     partTimings.value[currentPart.value] = {
-      ...partTimings.value[currentPart.value],
+      ...(partTimings.value[currentPart.value] ?? {
+        endTime: null,
+        startTime: null,
+      }),
       endTime: Date.now(),
     };
 
@@ -597,7 +735,39 @@ const useTimer = () => {
   // Get planned start time for a meeting part
   const getPlannedStartTime = (part: MeetingPart): null | number => {
     const date = selectedDateObject.value?.date;
-    if (!date || (!isWeMeetingDay(date) && !isMwMeetingDay(date))) return null;
+    if (!date) return null;
+
+    if (!isWeMeetingDay(date) && !isMwMeetingDay(date)) {
+      const parts = customTimerParts.value;
+      const index = parts.findIndex((customPart) => customPart.id === part);
+      if (index === -1) return null;
+
+      const anchorPart = parts.find(
+        (customPart) => partTimings.value[customPart.id]?.startTime,
+      );
+      const anchorStartTime = anchorPart
+        ? partTimings.value[anchorPart.id]?.startTime
+        : null;
+
+      if (!anchorPart || !anchorStartTime) return null;
+
+      const anchorIndex = parts.findIndex(
+        (customPart) => customPart.id === anchorPart.id,
+      );
+
+      let offsetMinutes = 0;
+      if (index >= anchorIndex) {
+        for (let i = anchorIndex; i < index; i++) {
+          offsetMinutes += parts[i]?.duration ?? 0;
+        }
+        return anchorStartTime + offsetMinutes * 60 * 1000;
+      }
+
+      for (let i = index; i < anchorIndex; i++) {
+        offsetMinutes += parts[i]?.duration ?? 0;
+      }
+      return anchorStartTime - offsetMinutes * 60 * 1000;
+    }
 
     const meetingStart = meetingStartTime.value?.getTime();
     if (!meetingStart) return null;
@@ -752,13 +922,32 @@ const useTimer = () => {
   watchImmediate(selectedDateObject, () => {
     cbsCustomEndTime.value = cbsAdaptiveDefaultEndTime.value;
     wtCustomEndTime.value = wtAdaptiveDefaultEndTime.value;
+    ensureNonMeetingTimerParts();
+    syncCustomTimerPartState();
+
+    if (!isMeetingDay(selectedDateObject.value?.date)) {
+      const firstCustomPart = customTimerParts.value[0];
+      if (firstCustomPart) {
+        currentPart.value = firstCustomPart.id;
+      }
+    }
   });
 
+  watch(
+    customTimerParts,
+    () => {
+      syncCustomTimerPartState();
+    },
+    { deep: true },
+  );
+
   return {
+    addCustomTimerPart,
     ayfmPartsCount,
     cbsCustomEndTime,
     cbsEndTimeRules,
     currentPart,
+    customTimerParts,
     elapsedSeconds,
     formattedTime,
     getDuration,
@@ -767,9 +956,11 @@ const useTimer = () => {
     handleTimerWindowVisibility,
     lacPartsCount,
     meetingPartsOptions,
+    moveCustomTimerPart,
     partDurations,
     partTimings, // Expose partTimings
     pauseTimer,
+    removeCustomTimerPart,
     resumeTimer,
     startTimer,
     stopTimer,

@@ -251,6 +251,87 @@
           </div>
         </template>
       </template>
+      <template v-else>
+        <q-separator class="bg-accent-200 q-mb-md" />
+        <div class="card-section-title row q-px-md">
+          {{ t('custom-timer-parts') }}
+        </div>
+        <div class="column q-px-md q-pb-sm q-gutter-sm">
+          <div
+            v-for="(part, index) in customTimerParts"
+            :key="part.id"
+            class="row items-center q-col-gutter-sm"
+          >
+            <div class="col">
+              <q-input
+                v-model="part.label"
+                dense
+                :disable="timerRunning"
+                filled
+                :label="t('meeting-part')"
+              />
+            </div>
+            <div class="col-4">
+              <q-input
+                v-model.number="part.duration"
+                dense
+                :disable="timerRunning"
+                filled
+                :label="t('duration-minutes')"
+                min="1"
+                type="number"
+              />
+            </div>
+            <div class="col-auto">
+              <div class="row q-gutter-xs">
+                <q-btn
+                  dense
+                  :disable="timerRunning || index === 0"
+                  flat
+                  icon="mmm-up"
+                  round
+                  @click="moveCustomTimerPart(index, index - 1)"
+                >
+                  <q-tooltip>{{ t('move-up') }}</q-tooltip>
+                </q-btn>
+                <q-btn
+                  dense
+                  :disable="
+                    timerRunning || index === customTimerParts.length - 1
+                  "
+                  flat
+                  icon="mmm-down"
+                  round
+                  @click="moveCustomTimerPart(index, index + 1)"
+                >
+                  <q-tooltip>{{ t('move-down') }}</q-tooltip>
+                </q-btn>
+                <q-btn
+                  color="negative"
+                  dense
+                  :disable="timerRunning || customTimerParts.length <= 1"
+                  flat
+                  icon="mmm-delete"
+                  round
+                  @click="removeCustomTimerPart(part.id)"
+                >
+                  <q-tooltip>{{ t('delete') }}</q-tooltip>
+                </q-btn>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <q-btn
+              color="primary"
+              :disable="timerRunning"
+              flat
+              icon="mmm-plus"
+              :label="t('add')"
+              @click="addCustomTimerPart"
+            />
+          </div>
+        </div>
+      </template>
       <q-separator class="bg-accent-200 q-mb-md" />
       <div class="card-section-title row q-px-md">
         {{ t('meeting-part') }}
@@ -269,16 +350,7 @@
             <q-item-section>
               <q-item-label>{{ part.label }}</q-item-label>
               <q-item-label caption>
-                {{
-                  partTimings[part.value]?.startTime
-                    ? partTimings[part.value]?.endTime
-                      ? getDuration(
-                          partTimings[part.value],
-                          partDurations[part.value],
-                        )
-                      : `${t('start-time')}: ${getTimeString(partTimings[part.value]?.startTime, true)}`
-                    : `${t('planned-start-time')}: ${getTimeString(getPlannedStartTime(part.value))}`
-                }}
+                {{ getPartStatusText(part.value) }}
               </q-item-label>
             </q-item-section>
             <q-item-section side>
@@ -296,8 +368,12 @@
                   size="sm"
                   @click="
                     () => {
-                      partTimings[part.value].startTime = null;
-                      partTimings[part.value].endTime = null;
+                      partTimings[part.value] ??= {
+                        endTime: null,
+                        startTime: null,
+                      };
+                      partTimings[part.value]!.startTime = null;
+                      partTimings[part.value]!.endTime = null;
                     }
                   "
                 >
@@ -446,15 +522,15 @@
       <q-card-section class="q-pt-none">
         <q-input
           v-model.number="editDuration"
-          label="Duration (minutes)"
+          :label="t('duration-minutes')"
           min="1"
           type="number"
         />
       </q-card-section>
 
       <q-card-actions align="right">
-        <q-btn v-close-popup flat label="Cancel" @click="cancelEdit" />
-        <q-btn v-close-popup flat label="Save" @click="saveEdit" />
+        <q-btn v-close-popup flat :label="t('cancel')" @click="cancelEdit" />
+        <q-btn v-close-popup flat :label="t('save')" @click="saveEdit" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -505,10 +581,12 @@ defineProps<{
 const open = defineModel<boolean>({ required: true });
 
 const {
+  addCustomTimerPart,
   ayfmPartsCount,
   cbsCustomEndTime,
   cbsEndTimeRules,
   currentPart,
+  customTimerParts,
   formattedTime,
   getDuration,
   getPlannedStartTime,
@@ -516,9 +594,11 @@ const {
   handleTimerWindowVisibility,
   lacPartsCount,
   meetingPartsOptions,
+  moveCustomTimerPart,
   partDurations,
   partTimings,
   pauseTimer,
+  removeCustomTimerPart,
   resumeTimer,
   startTimer,
   stopTimer,
@@ -600,6 +680,13 @@ const saveEdit = () => {
     );
   } else if (editedPartValue.startsWith('lac-')) {
     rebalancePartDurations('lac', editedPartValue, 15, lacPartsCount.value);
+  } else if (editedPartValue.startsWith('custom-')) {
+    const customPart = customTimerParts.value.find(
+      (part) => part.id === editedPartValue,
+    );
+    if (customPart) {
+      customPart.duration = newDuration;
+    }
   }
 
   editDialogOpen.value = false;
@@ -637,9 +724,9 @@ const exportPdfReport = async () => {
     const timings = partTimings.value[partValue];
     const duration = partDurations.value[partValue];
 
-    const formattedStartTime = getTimeString(timings?.startTime, true);
-    const formattedEndTime = getTimeString(timings?.endTime, true);
-    const formattedDuration = getDuration(timings, duration);
+    const formattedStartTime = getTimeString(timings?.startTime ?? null, true);
+    const formattedEndTime = getTimeString(timings?.endTime ?? null, true);
+    const formattedDuration = getDuration(timings ?? null, duration);
 
     tableRows.push([
       partOption.label,
@@ -770,6 +857,26 @@ const selectPart = (value: MeetingPart) => {
   usedParts.value.add(value);
   startTimer();
   selectingPart.value = false;
+};
+
+const getPartStatusText = (part: MeetingPart) => {
+  const timings = partTimings.value[part];
+  const duration = partDurations.value[part];
+
+  if (timings?.startTime) {
+    if (timings?.endTime) {
+      return getDuration(timings, duration);
+    }
+
+    return `${t('start-time')}: ${getTimeString(timings.startTime, true)}`;
+  }
+
+  const plannedStartTime = getPlannedStartTime(part);
+  if (plannedStartTime) {
+    return `${t('planned-start-time')}: ${getTimeString(plannedStartTime)}`;
+  }
+
+  return `${t('duration-minutes')}: ${duration || 0}`;
 };
 
 // Watch for timer mode changes
