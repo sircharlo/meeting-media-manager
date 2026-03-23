@@ -153,7 +153,7 @@ const getTodayMeetingInfo = (today: number, data: TimerData) => {
 const parseTime = (timeStr: string, base: Date) => {
   const [h, m] = timeStr.split(':').map(Number);
   const d = new Date(base);
-  if (!h || !m) return d;
+  if (Number.isNaN(h) || Number.isNaN(m)) return d;
   d.setHours(h, m, 0, 0);
   return d;
 };

@@ -7,7 +7,10 @@ import {
   mediaWindow,
   moveMediaWindow,
 } from 'src-electron/main/window/window-media';
-import { moveTimerWindow } from 'src-electron/main/window/window-timer';
+import {
+  moveTimerWindow,
+  timerWindow,
+} from 'src-electron/main/window/window-timer';
 
 export const initScreenListeners = () => {
   app.on('ready', () => {
@@ -71,6 +74,21 @@ export const getAllScreens = (): Display[] => {
     } catch (e) {
       captureElectronError(e, {
         contexts: { fn: { name: 'getAllScreens', window: 'mediaWindow' } },
+      });
+    }
+  }
+
+  if (timerWindow) {
+    try {
+      const timerWindowScreen = displays.find(
+        (display) =>
+          timerWindow &&
+          display.id === screen.getDisplayMatching(timerWindow.getBounds()).id,
+      );
+      if (timerWindowScreen) timerWindowScreen.timerWindow = true;
+    } catch (e) {
+      captureElectronError(e, {
+        contexts: { fn: { name: 'getAllScreens', window: 'timerWindow' } },
       });
     }
   }

@@ -13,6 +13,7 @@ import {
   isMwMeetingDay,
   isWeMeetingDay,
 } from 'src/helpers/date';
+import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -30,6 +31,25 @@ const useTimer = () => {
   const cbsCustomEndTime = ref('');
   const ayfmPartsCount = ref<number>(1);
   const lacPartsCount = ref<number>(1);
+
+  const distributePartDurations = (
+    prefix: 'ayfm' | 'lac',
+    count: number,
+    totalMinutes: number,
+  ) => {
+    const maxParts = prefix === 'ayfm' ? 5 : 3;
+    const base = Math.floor(totalMinutes / count);
+    const remainder = totalMinutes % count;
+
+    for (let i = 1; i <= maxParts; i++) {
+      const key = `${prefix}-${i}` as MeetingPart;
+      if (i <= count) {
+        partDurations.value[key] = base + (i <= remainder ? 1 : 0);
+      } else {
+        partDurations.value[key] = 0;
+      }
+    }
+  };
 
   const getTimeString = (timestamp: null | number, seconds = false): string => {
     try {
@@ -76,32 +96,12 @@ const useTimer = () => {
 
   // Watch AYFM parts count to adjust durations
   watch(ayfmPartsCount, (newCount) => {
-    const totalMinutes = 15 - newCount; // 15 minutes total, minus number of parts for 1 min of counsel each
-    const base = Math.floor(totalMinutes / newCount);
-    const remainder = totalMinutes % newCount;
-    for (let i = 1; i <= 5; i++) {
-      if (i <= newCount) {
-        const dur = base + (i <= remainder ? 1 : 0);
-        partDurations.value[`ayfm-${i}` as MeetingPart] = dur;
-      } else {
-        partDurations.value[`ayfm-${i}` as MeetingPart] = 0;
-      }
-    }
+    distributePartDurations('ayfm', newCount, 15 - newCount);
   });
 
   // Watch LAC parts count to adjust durations
   watch(lacPartsCount, (newCount) => {
-    const totalMinutes = 15;
-    const base = Math.floor(totalMinutes / newCount);
-    const remainder = totalMinutes % newCount;
-    for (let i = 1; i <= 3; i++) {
-      if (i <= newCount) {
-        const dur = base + (i <= remainder ? 1 : 0);
-        partDurations.value[`lac-${i}` as MeetingPart] = dur;
-      } else {
-        partDurations.value[`lac-${i}` as MeetingPart] = 0;
-      }
-    }
+    distributePartDurations('lac', newCount, 15);
   });
 
   const meetingPartsOptions = computed<
@@ -258,7 +258,7 @@ const useTimer = () => {
     currentState.setTimerWindowVisible(visible);
     if (visible) {
       // Broadcast initial timer settings
-      postTimerData({
+      safePostTimerData({
         aheadBehindMinutes: calculateAheadBehindMinutes(),
         enableMeetingCountdown: currentSettings.value?.enableMeetingCountdown,
         meetingCountdownMinutes: currentSettings.value?.meetingCountdownMinutes,
@@ -424,7 +424,7 @@ const useTimer = () => {
   const stopTimer = () => {
     pauseInterval();
     // Immediately send cleared timer data to external window
-    postTimerData({
+    safePostTimerData({
       mode: timerMode.value,
       paused: false,
       running: false,
@@ -507,6 +507,16 @@ const useTimer = () => {
     name: 'timer-display-data',
   });
 
+  const safePostTimerData = (timerData: TimerData) => {
+    try {
+      postTimerData(timerData);
+    } catch (error) {
+      void errorCatcher(error, {
+        contexts: { timer: { action: 'postTimerData' } },
+      });
+    }
+  };
+
   const updateTimerWindow = () => {
     // Send timer data to the timer window via broadcast channel
     const timerData = {
@@ -526,7 +536,7 @@ const useTimer = () => {
       weStartTime: currentSettings.value?.weStartTime,
     };
 
-    postTimerData(timerData);
+    safePostTimerData(timerData);
   };
 
   // Calculate ahead/behind minutes

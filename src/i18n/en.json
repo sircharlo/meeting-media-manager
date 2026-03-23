@@ -176,7 +176,7 @@
   "enableSubtitles": "Enable subtitles",
   "enableSubtitles-explain": "Enable subtitles by default for all videos.",
   "enableTimerDisplay": "Enable meeting timer display",
-  "enableTimerDisplay-explain": "Enable this to display a timer in a separate window that can be used to show timing information to speakers.",
+  "enableTimerDisplay-explain": "Enable this to display a timer in a separate window for speaker timing. This should only be enabled if approved by the local elders.",
   "end-time": "End time (hh:mm)",
   "enter-a-key-combination": "Enter a key combination",
   "enter-a-key-combination-now-using-your-keyboard": "Enter a key combination now using your keyboard.",
