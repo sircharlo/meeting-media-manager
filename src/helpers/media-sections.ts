@@ -1,3 +1,4 @@
+import type { JwIconKeyword } from 'src/constants/jw-icons';
 import type {
   DateInfo,
   MediaItem,
@@ -160,7 +161,7 @@ function getMeetingSectionConfigs(
   }
 
   // Sections that have icons
-  const iconSections: jwIconsKeys[] = [
+  const iconSections: JwIconKeyword[] = [
     'ayfm',
     'lac',
     'tgw',
@@ -169,7 +170,7 @@ function getMeetingSectionConfigs(
     'circuit-overseer',
   ];
 
-  if (iconSections.includes(section as jwIconsKeys)) {
+  if (iconSections.includes(section as JwIconKeyword)) {
     return {
       jwIconKeyword: section,
       uniqueId: section,

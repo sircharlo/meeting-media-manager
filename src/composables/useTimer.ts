@@ -6,7 +6,6 @@ import {
   watchImmediate,
 } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-import { jwIcons } from 'src/constants/jw-icons';
 import {
   isCoWeek,
   isMeetingDay,
@@ -14,6 +13,7 @@ import {
   isWeMeetingDay,
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { getJwIconFromKeyword } from 'src/helpers/fonts';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -121,12 +121,12 @@ const useTimer = () => {
         warning?: boolean;
       }[] = [
         {
-          icon: jwIcons['pt'],
+          icon: getJwIconFromKeyword('public-talk'),
           label: t('public-talk'),
           value: 'public-talk',
         },
         {
-          icon: jwIcons['wt'],
+          icon: getJwIconFromKeyword('wt'),
           label: t('wt'),
           value: 'wt',
         },
@@ -134,7 +134,7 @@ const useTimer = () => {
 
       if (isCoWeek(date)) {
         options.push({
-          icon: jwIcons['circuit-overseer'],
+          icon: getJwIconFromKeyword('co-final-talk'),
           label: t('co-final-talk'),
           value: 'co-final-talk',
         });
@@ -150,22 +150,22 @@ const useTimer = () => {
         warning?: boolean;
       }[] = [
         {
-          icon: jwIcons['introduction'],
+          icon: getJwIconFromKeyword('introduction'),
           label: t('introduction'),
           value: 'introduction',
         },
         {
-          icon: jwIcons['tgw'],
+          icon: getJwIconFromKeyword('treasures'),
           label: t('treasures-talk'),
           value: 'treasures',
         },
         {
-          icon: jwIcons['gems'],
+          icon: getJwIconFromKeyword('gems'),
           label: t('gems'),
           value: 'gems',
         },
         {
-          icon: jwIcons['bible-reading'],
+          icon: getJwIconFromKeyword('bible-reading'),
           label: t('bible-reading'),
           value: 'bible-reading',
         },
@@ -180,7 +180,7 @@ const useTimer = () => {
         const warning = totalDuration !== 15 - ayfmPartsCount.value;
         const dur = partDurations.value[`ayfm-${i}` as MeetingPart] || 14;
         options.push({
-          icon: jwIcons['ayfm-part'],
+          icon: getJwIconFromKeyword('ayfm-part'),
           label: t('ayfm-part', { duration: dur, part: i }),
           value: `ayfm-${i}` as MeetingPart,
           warning,
@@ -195,7 +195,7 @@ const useTimer = () => {
         const warning = totalDuration !== 15;
         const dur = partDurations.value[`lac-${i}` as MeetingPart] || 15;
         options.push({
-          icon: jwIcons['lac-part'],
+          icon: getJwIconFromKeyword('lac-part'),
           label: t('lac-part', { duration: dur, part: i }),
           value: `lac-${i}` as MeetingPart,
           warning,
@@ -203,19 +203,19 @@ const useTimer = () => {
       }
       if (isCo) {
         options.push({
-          icon: jwIcons['circuit-overseer'],
+          icon: getJwIconFromKeyword('co-service-talk'),
           label: t('co-service-talk'),
           value: 'co-service-talk',
         });
       } else {
         options.push({
-          icon: jwIcons['cbs'],
+          icon: getJwIconFromKeyword('cbs'),
           label: t('cbs'),
           value: 'cbs',
         });
       }
       options.push({
-        icon: jwIcons['concluding-comments'],
+        icon: getJwIconFromKeyword('concluding-comments'),
         label: t('concluding-comments'),
         value: 'concluding-comments',
       });
