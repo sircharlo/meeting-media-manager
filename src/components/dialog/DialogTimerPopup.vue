@@ -66,7 +66,7 @@
       <q-separator class="bg-accent-200 q-mb-md" />
 
       <template
-        v-if="!timerPreferences.preferWindowed && screenList?.length > 2"
+        v-if="!timerPreferences.preferWindowed && screenList?.length > 1"
       >
         <q-separator class="bg-accent-200 q-mb-md" />
         <div class="card-section-title row q-px-md">
@@ -110,9 +110,18 @@
                     'calc(' +
                     (screenRects[index]?.height ?? 0) +
                     '% - (var(--screen-gap) * 2))',
+                  borderRadius: '6px',
                 }"
+                unelevated
+                @click="
+                  () => {
+                    if (screen.mainWindow) return;
+                    timerPreferences.preferredScreenNumber = index;
+                    moveTimerWindow(index, !timerPreferences.preferWindowed);
+                  }
+                "
               >
-                <q-tooltip v-if="screen.mainWindow">
+                <q-tooltip v-if="screen.mainWindow" :delay="1000">
                   {{ t('main-window-is-on-this-screen') }}
                 </q-tooltip>
                 <q-icon
@@ -153,12 +162,7 @@
       <!-- Meeting Part Selection (only on meeting days) -->
       <template v-if="isMeetingDay(selectedDateObject?.date)">
         <template v-if="isMwMeetingDay(selectedDateObject?.date)">
-          <template
-            v-if="
-              timerMode === 'countdown' &&
-              isMwMeetingDay(selectedDateObject?.date)
-            "
-          >
+          <template v-if="timerMode === 'countdown'">
             <q-separator class="bg-accent-200 q-mb-md" />
             <div class="card-section-title row q-px-md">
               {{ t('ayfm') }}
@@ -221,25 +225,30 @@
               </div>
             </template>
           </template>
-          <template v-else-if="isWeMeetingDay(selectedDateObject?.date)">
-            <div class="row q-px-md q-py-sm">
-              {{ t('adapt-wt-duration-dynamically') }}
-            </div>
-            <div class="row q-px-md q-py-sm">
-              {{ t('wt-custom-end-time') }}
-            </div>
-            <div class="row q-px-md q-pb-sm">
-              <q-input
-                v-model="wtCustomEndTime"
-                class="full-width"
-                :disable="timerRunning"
-                filled
-                :label="t('end-time')"
-                mask="##:##"
-                :rules="wtEndTimeRules"
-              />
-            </div>
-          </template>
+        </template>
+        <template
+          v-else-if="
+            timerMode === 'countdown' &&
+            isWeMeetingDay(selectedDateObject?.date)
+          "
+        >
+          <div class="row q-px-md q-py-sm">
+            {{ t('adapt-wt-duration-dynamically') }}
+          </div>
+          <div class="row q-px-md q-py-sm">
+            {{ t('wt-custom-end-time') }}
+          </div>
+          <div class="row q-px-md q-pb-sm">
+            <q-input
+              v-model="wtCustomEndTime"
+              class="full-width"
+              :disable="timerRunning"
+              filled
+              :label="t('end-time')"
+              mask="##:##"
+              :rules="wtEndTimeRules"
+            />
+          </div>
         </template>
       </template>
       <q-separator class="bg-accent-200 q-mb-md" />
@@ -470,6 +479,7 @@ import {
   isMwMeetingDay,
   isWeMeetingDay,
 } from 'src/helpers/date';
+import { errorCatcher } from 'src/helpers/error-catcher';
 import { useAppSettingsStore } from 'src/stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, useTemplateRef, watch } from 'vue';
@@ -529,6 +539,41 @@ const editDialogOpen = ref(false);
 const editPart = ref<null | { label: string; value: MeetingPart }>(null);
 const editDuration = ref(0);
 
+const rebalancePartDurations = (
+  prefix: 'ayfm' | 'lac',
+  editedPartValue: MeetingPart,
+  totalMinutes: number,
+  totalParts: number,
+) => {
+  const splitEditedPart = editedPartValue.split('-');
+  const partIndexString = splitEditedPart[1];
+  const partIndex = parseInt(partIndexString || '0');
+
+  let consumedMinutes = 0;
+  for (let i = 1; i <= partIndex; i++) {
+    consumedMinutes +=
+      partDurations.value[`${prefix}-${i}` as MeetingPart] || 0;
+  }
+
+  const remainingMinutes = totalMinutes - consumedMinutes;
+  const remainingParts = totalParts - partIndex;
+
+  if (remainingParts > 0) {
+    const baseDuration = Math.floor(remainingMinutes / remainingParts);
+    let remainder = remainingMinutes % remainingParts;
+
+    for (let i = partIndex + 1; i <= totalParts; i++) {
+      partDurations.value[`${prefix}-${i}` as MeetingPart] =
+        baseDuration + (remainder > 0 ? 1 : 0);
+      if (remainder > 0) {
+        remainder--;
+      }
+    }
+  } else if (remainingParts === 0 && consumedMinutes !== totalMinutes) {
+    partDurations.value[editedPartValue] += totalMinutes - consumedMinutes;
+  }
+};
+
 // Open edit dialog for a part
 const openEditDialog = (part: { label: string; value: MeetingPart }) => {
   editPart.value = part;
@@ -546,66 +591,15 @@ const saveEdit = () => {
   // Update the edited part's duration
   partDurations.value[editedPartValue] = newDuration;
 
-  // Check if it's an AYFM or LAC part
-  const splitEditedPart = editedPartValue.split('-');
-  const partIndexString = splitEditedPart[1];
-  const partIndex = parseInt(partIndexString || '0');
   if (editedPartValue.startsWith('ayfm-')) {
-    const totalAyfmParts = ayfmPartsCount.value;
-    const totalAyfmMinutes = 15 - totalAyfmParts; // 15 minutes total, minus 1 minute for counsel per part
-
-    let consumedMinutes = 0;
-    for (let i = 1; i <= partIndex; i++) {
-      consumedMinutes += partDurations.value[`ayfm-${i}` as MeetingPart] || 0;
-    }
-
-    const remainingMinutes = totalAyfmMinutes - consumedMinutes;
-    const remainingParts = totalAyfmParts - partIndex;
-
-    if (remainingParts > 0) {
-      const baseDuration = Math.floor(remainingMinutes / remainingParts);
-      let remainder = remainingMinutes % remainingParts;
-
-      for (let i = partIndex + 1; i <= totalAyfmParts; i++) {
-        partDurations.value[`ayfm-${i}` as MeetingPart] =
-          baseDuration + (remainder > 0 ? 1 : 0);
-        if (remainder > 0) {
-          remainder--;
-        }
-      }
-    } else if (remainingParts === 0 && consumedMinutes !== totalAyfmMinutes) {
-      // If it's the last part and total time is off, adjust the last part
-      partDurations.value[editedPartValue] =
-        newDuration + (totalAyfmMinutes - consumedMinutes);
-    }
+    rebalancePartDurations(
+      'ayfm',
+      editedPartValue,
+      15 - ayfmPartsCount.value,
+      ayfmPartsCount.value,
+    );
   } else if (editedPartValue.startsWith('lac-')) {
-    const totalLacParts = lacPartsCount.value;
-    const totalLacMinutes = 15; // 15 minutes total
-
-    let consumedMinutes = 0;
-    for (let i = 1; i <= partIndex; i++) {
-      consumedMinutes += partDurations.value[`lac-${i}` as MeetingPart] || 0;
-    }
-
-    const remainingMinutes = totalLacMinutes - consumedMinutes;
-    const remainingParts = totalLacParts - partIndex;
-
-    if (remainingParts > 0) {
-      const baseDuration = Math.floor(remainingMinutes / remainingParts);
-      let remainder = remainingMinutes % remainingParts;
-
-      for (let i = partIndex + 1; i <= totalLacParts; i++) {
-        partDurations.value[`lac-${i}` as MeetingPart] =
-          baseDuration + (remainder > 0 ? 1 : 0);
-        if (remainder > 0) {
-          remainder--;
-        }
-      }
-    } else if (remainingParts === 0 && consumedMinutes !== totalLacMinutes) {
-      // If it's the last part and total time is off, adjust the last part
-      partDurations.value[editedPartValue] =
-        newDuration + (totalLacMinutes - consumedMinutes);
-    }
+    rebalancePartDurations('lac', editedPartValue, 15, lacPartsCount.value);
   }
 
   editDialogOpen.value = false;
@@ -631,8 +625,8 @@ const exportPdfReport = async () => {
   doc.text(`Meeting Report - ${meetingDate}`, 14, 22);
 
   const tableColumn = [
-    'Part',
-    'Start (hh:mm:ss)',
+    t('meeting-part'),
+    `${t('start-time')} (hh:mm:ss)`,
     'End (hh:mm:ss)',
     'Duration (mm:ss)',
   ];
@@ -643,8 +637,8 @@ const exportPdfReport = async () => {
     const timings = partTimings.value[partValue];
     const duration = partDurations.value[partValue];
 
-    const formattedStartTime = getTimeString(timings?.startTime);
-    const formattedEndTime = getTimeString(timings?.endTime);
+    const formattedStartTime = getTimeString(timings?.startTime, true);
+    const formattedEndTime = getTimeString(timings?.endTime, true);
     const formattedDuration = getDuration(timings, duration);
 
     tableRows.push([
@@ -685,7 +679,9 @@ const fetchScreens = async () => {
   try {
     screenList.value = await getAllScreens();
   } catch (error) {
-    console.error(error);
+    void errorCatcher(error, {
+      contexts: { timer: { action: 'fetchScreens' } },
+    });
   }
 };
 
@@ -744,8 +740,12 @@ const screenRects = computed(() => {
 
 // Selected when timer window is on this screen and it's not the app's main window
 const isTimerScreenSelected = (index: number, screen: Display) => {
-  void index; // index kept for potential future preference logic
-  return !!screen.timerWindow && !screen.mainWindow;
+  return (
+    (!!screen.timerWindow && !screen.mainWindow) ||
+    (!timerWindowVisible.value &&
+      timerPreferences.value.preferredScreenNumber === index &&
+      !screen.mainWindow)
+  );
 };
 
 // UI update handler

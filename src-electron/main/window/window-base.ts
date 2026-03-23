@@ -90,7 +90,12 @@ export function createWindow(
 
   // Show the window when it's ready
   win.on('ready-to-show', () => {
-    if (name !== 'media') win.show();
+    if (name === 'media') return;
+    if (name === 'timer') {
+      win.showInactive();
+      return;
+    }
+    win.show();
   });
 
   // Hide the menu bar

@@ -14,7 +14,7 @@ export let timerWindow: BrowserWindow | null = null;
 export function createTimerWindow() {
   // If the window is already open, just focus it
   if (timerWindow && !timerWindow.isDestroyed()) {
-    timerWindow.show();
+    timerWindow.showInactive();
     return;
   }
 
@@ -22,6 +22,7 @@ export function createTimerWindow() {
   timerWindow = createWindow('timer', {
     alwaysOnTop: false,
     backgroundColor: 'black',
+    focusable: true,
     frame: false,
     height: HD_RESOLUTION[1],
     icon: getIconPath('media-player'), // TODO: change icon
@@ -32,6 +33,10 @@ export function createTimerWindow() {
     thickFrame: false,
     title: 'Timer - M³',
     width: HD_RESOLUTION[0],
+  });
+
+  timerWindow.once('ready-to-show', () => {
+    timerWindow?.showInactive();
   });
 
   // For timer, maybe no aspect ratio, or 16/9 as well? Let's keep for now.
@@ -384,6 +389,7 @@ const setTimerWindowPosition = (displayNr?: number, fullscreen = false) => {
 
     if (fullscreen) {
       console.log('🔍 [setTimerWindowPosition] Going fullscreen');
+      timerWindow.setBounds(targetScreenBounds);
       timerWindow.setFullScreen(true);
       try {
         saveTimerWindowPrefs(targetDisplay.bounds);
@@ -429,13 +435,15 @@ const setTimerWindowPosition = (displayNr?: number, fullscreen = false) => {
 
       timerWindow.setFullScreen(false);
       timerWindow.setBounds(bounds);
+      saveTimerWindowPrefs(targetDisplay.bounds);
     }
 
     // Bring timer window to front if it's visible
     if (timerWindow.isVisible()) {
-      console.log('🔍 [setTimerWindowPosition] Bringing timer window to front');
-      timerWindow.focus();
-      timerWindow.show();
+      console.log(
+        '🔍 [setTimerWindowPosition] Refreshing visible timer window without stealing focus',
+      );
+      timerWindow.showInactive();
     }
 
     console.log('🔍 [setTimerWindowPosition] END - All changes queued');
