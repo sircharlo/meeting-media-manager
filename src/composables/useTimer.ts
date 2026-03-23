@@ -321,7 +321,7 @@ const useTimer = () => {
     wt: 60,
   });
 
-  const { toggleTimerWindow } = window.electronApi;
+  const { toggleTimerWindow } = globalThis.electronApi;
 
   const currentState = useCurrentStateStore();
   const { currentSettings, selectedDateObject } = storeToRefs(currentState);
@@ -427,15 +427,15 @@ const useTimer = () => {
           const meetingStartTime = new Date(selectedDateObject.value.date);
           if (!startHour || !startMinute) return 0;
           meetingStartTime.setHours(
-            parseInt(startHour),
-            parseInt(startMinute),
+            Number.parseInt(startHour),
+            Number.parseInt(startMinute),
             0,
             0,
           );
           const parts = wtCustomEndTime.value.split(':');
           const h = Number(parts[0]);
           const m = Number(parts[1]);
-          const endTime = new Date(meetingStartTime.getTime());
+          const endTime = new Date(meetingStartTime);
           endTime.setHours(h, m, 0, 0);
           const now = new Date();
           const remaining =
@@ -476,15 +476,15 @@ const useTimer = () => {
           const meetingStartTime = new Date(selectedDateObject.value.date);
           if (!startHour || !startMinute) return 0;
           meetingStartTime.setHours(
-            parseInt(startHour),
-            parseInt(startMinute),
+            Number.parseInt(startHour),
+            Number.parseInt(startMinute),
             0,
             0,
           );
           const parts = cbsCustomEndTime.value.split(':');
           const h = Number(parts[0]);
           const m = Number(parts[1]);
-          const endTime = new Date(meetingStartTime.getTime());
+          const endTime = new Date(meetingStartTime);
           endTime.setHours(h, m, 0, 0);
           const now = new Date();
           const remaining =
