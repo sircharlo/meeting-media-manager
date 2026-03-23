@@ -6,6 +6,7 @@ const mainChildRoute = (
   page: string,
   meta?: RouteRecordRaw['meta'],
   extra?: Partial<RouteRecordRaw>,
+  layout = 'MainLayout',
 ): RouteRecordRaw =>
   ({
     children: [
@@ -15,7 +16,7 @@ const mainChildRoute = (
         path: '',
       },
     ],
-    component: () => import('layouts/MainLayout.vue'),
+    component: () => import(`layouts/${layout}.vue`),
     meta,
     path,
     ...extra,
@@ -47,30 +48,23 @@ const routes: RouteRecordRaw[] = [
     title: 'titles.presentWebsite',
   }),
 
-  {
-    children: [
-      {
-        component: () => import('pages/MediaPlayerPage.vue'),
-        name: 'media-player',
-        path: '',
-      },
-    ],
-    component: () => import('layouts/MediaPlayerLayout.vue'),
-    meta: { title: 'titles.mediaPlayer' },
-    path: '/media-player',
-  },
-  {
-    children: [
-      {
-        component: () => import('pages/TimerPage.vue'),
-        name: 'timer',
-        path: '',
-      },
-    ],
-    component: () => import('layouts/TimerLayout.vue'),
-    meta: { title: 'Timer' },
-    path: '/timer',
-  },
+  mainChildRoute(
+    '/media-player',
+    'media-player',
+    'MediaPlayerPage',
+    { title: 'titles.mediaPlayer' },
+    undefined,
+    'MediaPlayerLayout',
+  ),
+
+  mainChildRoute(
+    '/timer',
+    'timer',
+    'TimerPage',
+    { title: 'Timer' },
+    undefined,
+    'TimerLayout',
+  ),
 
   mainChildRoute('/setup-wizard', 'setup-wizard', 'SetupWizard', {
     icon: 'mmm-configuration',
