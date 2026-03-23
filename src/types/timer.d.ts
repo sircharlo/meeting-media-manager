@@ -1,4 +1,4 @@
-export type MeetingPart =
+export type BuiltInMeetingPart =
   | 'abbreviated-wt'
   | 'ayfm-1'
   | 'ayfm-2'
@@ -19,6 +19,16 @@ export type MeetingPart =
   | 'song-and-optional-prayer'
   | 'treasures'
   | 'wt';
+
+export type CustomMeetingPart = `custom-${string}`;
+
+export interface CustomTimerPart {
+  duration: number;
+  id: CustomMeetingPart;
+  label: string;
+}
+
+export type MeetingPart = BuiltInMeetingPart | CustomMeetingPart;
 
 export interface MeetingPartTimings {
   endTime: null | number;
