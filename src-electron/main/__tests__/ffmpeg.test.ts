@@ -6,6 +6,15 @@ vi.mock('fs-extra/esm', () => ({
   pathExists: vi.fn(async () => false),
 }));
 
+vi.mock('node:fs/promises', () => ({
+  stat: vi.fn(async (p: string) => {
+    if (p.endsWith('.mp4')) {
+      return { mtimeMs: 200, size: 100 };
+    }
+    return { mtimeMs: 100, size: 100 };
+  }),
+}));
+
 const ffmpegOnMap: Record<string, (...args: unknown[]) => void> = {};
 const ffmpegChain = {
   noVideo: vi.fn().mockReturnThis(),
@@ -45,6 +54,24 @@ describe('ffmpeg.createVideoFromNonVideo', () => {
     >;
     pathExistsMock.mockResolvedValue(true);
     const out = await createVideoFromNonVideo('/tmp/a.mp3', '/bin/ffmpeg');
+    expect(out.endsWith('.mp4')).toBe(true);
+  });
+
+  it('writes converted files outside the source folder when outputDir is provided', async () => {
+    const { pathExists } = await import('fs-extra/esm');
+    const pathExistsMock = pathExists as unknown as Mock<
+      (p: string) => Promise<boolean>
+    >;
+    pathExistsMock.mockResolvedValue(true);
+
+    const out = await createVideoFromNonVideo(
+      '/tmp/source/a.jpg',
+      '/bin/ffmpeg',
+      '/tmp/cache',
+    );
+
+    expect(out.startsWith('/tmp/cache/')).toBe(true);
+    expect(out).not.toBe('/tmp/source/a.mp4');
     expect(out.endsWith('.mp4')).toBe(true);
   });
 

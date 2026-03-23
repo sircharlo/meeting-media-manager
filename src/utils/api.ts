@@ -10,75 +10,150 @@ import type {
 } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { log } from 'src/shared/vanilla';
+import { isInPast } from 'src/utils/date';
 import { betaUpdatesDisabled } from 'src/utils/fs';
+
+const fetchCache = new Map<string, Response>();
+
+/**
+ * Clears the fetch cache.
+ * @internal For testing purposes only.
+ */
+export const clearFetchCache = () => fetchCache.clear();
 
 /**
  * Fetches data from the given url.
  * @param url The url to fetch data from.
  * @param init Initialization options for the fetch.
+ * @param cache Whether to cache the response.
  * @returns The fetch response.
  */
-export const fetchRaw = async (url: string, init?: RequestInit) => {
-  if (!process.env.VITEST) console.debug('fetchRaw', { init, url });
-  return fetch(url, init);
-};
+export const fetchRaw = async (
+  url: string,
+  init?: RequestInit,
+  cache = false,
+) => {
+  const method = init?.method?.toUpperCase() || 'GET';
+  const isCacheable = cache && (method === 'GET' || method === 'HEAD');
+  const cacheKey = `${method}:${url}:${JSON.stringify(init?.headers || {})}`;
 
-/**
- * Fetches json data from the given url.
- * @param url The url to fetch json data from.
- * @param params The url search params.
- * @param online Whether to catch errors or not.
- * @returns The json data.
- */
+  if (isCacheable) {
+    const cachedResponse = fetchCache.get(cacheKey);
+    if (cachedResponse) {
+      if (!process.env.VITEST) {
+        log('fetchRaw (cached)', 'api', 'debug', { cache, init, url });
+      }
+      return cachedResponse.clone();
+    }
+  }
+
+  if (!process.env.VITEST)
+    log('fetchRaw', 'api', 'debug', { cache, init, url });
+
+  const response = await fetch(url, init);
+
+  if (isCacheable && response.ok) {
+    fetchCache.set(cacheKey, response.clone());
+  }
+
+  return response;
+};
+function buildUrl(url: string, params?: URLSearchParams) {
+  if (!params?.toString()) return url;
+  return `${url}?${params.toString()}`;
+}
+
+function isIgnored400ForPub(params?: URLSearchParams) {
+  const pub = params?.get('pub');
+  if (!pub) return false;
+  return ['S', 'CO'].some((p) => pub.startsWith(`${p}-`));
+}
+
+function isIgnoredStatus(status: number) {
+  return [403, 404, 429, 502].includes(status);
+}
+
+function isOkResponse(response: Response) {
+  return response.ok || response.status === 304;
+}
+
+function reportFetchJsonCatchError(
+  e: unknown,
+  url: string,
+  params?: URLSearchParams,
+) {
+  errorCatcher(e, {
+    contexts: {
+      fn: {
+        message: e instanceof Error ? e.message : '',
+        name: 'fetchJson',
+        params: Object.fromEntries(params || []),
+        responseUrl: buildUrl(url, params),
+        url,
+      },
+    },
+  });
+}
+
+function reportFetchJsonMainError(
+  response: Response,
+  url: string,
+  params?: URLSearchParams,
+) {
+  errorCatcher(new Error('Failed to fetch json!'), {
+    contexts: {
+      fn: {
+        headers: response.headers,
+        name: 'fetchJsonMain',
+        params: Object.fromEntries(params || []),
+        responseUrl: response.url,
+        status: response.status,
+        statusText: response.statusText,
+        type: response.type,
+        url,
+      },
+    },
+  });
+}
+
+async function shouldReportCaughtError(online: boolean) {
+  if (!online) return false;
+  return !(await globalThis.electronApi?.isDownloadErrorExpected());
+}
+
+function shouldReportStatus(response: Response, params?: URLSearchParams) {
+  if (isIgnoredStatus(response.status)) return false;
+  if (response.status === 400 && isIgnored400ForPub(params)) return false;
+  return true;
+}
+
+// ----------------------
+
 export const fetchJson = async <T>(
   url: string,
   params?: URLSearchParams,
   online = true,
 ): Promise<null | T> => {
+  if (!url) return null;
+
   try {
-    if (!url) return null;
-    const response = await fetchRaw(
-      `${url}${params ? '?' + params.toString() : ''}`,
-    );
-    if (response.ok || response.status === 304) {
+    const fullUrl = buildUrl(url, params);
+    const response = await fetchRaw(fullUrl, undefined, true);
+
+    if (isOkResponse(response)) {
       return await response.json();
-    } else if (
-      ![403, 404, 429, 502].includes(response.status) &&
-      !(
-        response.status === 400 &&
-        ['S', 'CO'].some((p) => params?.get('pub')?.startsWith(`${p}-`))
-      )
-    ) {
-      errorCatcher(new Error('Failed to fetch json!'), {
-        contexts: {
-          fn: {
-            headers: response.headers,
-            name: 'fetchJsonMain',
-            params: Object.fromEntries(params || []),
-            responseUrl: response.url,
-            status: response.status,
-            statusText: response.statusText,
-            type: response.type,
-            url,
-          },
-        },
-      });
+    }
+
+    if (shouldReportStatus(response, params)) {
+      reportFetchJsonMainError(response, url, params);
     }
   } catch (e) {
-    if (online && !(await window.electronApi?.isDownloadErrorExpected())) {
-      errorCatcher(e, {
-        contexts: {
-          fn: {
-            message: e instanceof Error ? e.message : '',
-            name: 'fetchJson',
-            params: Object.fromEntries(params || []),
-            responseUrl: `${url}?${params ? params.toString() : ''}`,
-            url,
-          },
-        },
-      });
+    if (await shouldReportCaughtError(online)) {
+      reportFetchJsonCatchError(e, url, params);
     }
   }
+
   return null;
 };
 
@@ -148,19 +223,47 @@ export const fetchMemorials = async (): Promise<null | Record<
   number,
   `${number}/${number}/${number}`
 >> => {
-  if (!process.env.repository) return null;
-  const result = await fetchJson<
-    Record<string, `${number}/${number}/${number}`>
-  >(
-    `${process.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/memorials.json`,
-  );
-  if (!result) return null;
-  const memorials: Record<number, `${number}/${number}/${number}`> = {};
-  for (const [key, value] of Object.entries(result)) {
-    const year = parseInt(key);
-    if (year && !isNaN(year)) memorials[year] = value;
+  try {
+    if (!process.env.repository) return null;
+    const result = await fetchJson<
+      Record<string, `${number}/${number}/${number}`>
+    >(
+      `${process.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/memorials.json`,
+    );
+    if (!result) return null;
+    const memorials: Record<number, `${number}/${number}/${number}`> = {};
+    for (const [key, value] of Object.entries(result)) {
+      try {
+        if (!key || !value || /[a-zA-Z]/.test(value)) continue;
+
+        const valueIsInPast = isInPast(value);
+        if (valueIsInPast) continue;
+
+        const year = Number.parseInt(key);
+        if (!year || Number.isNaN(year)) continue;
+
+        memorials[year] = value;
+      } catch (error) {
+        errorCatcher(error, {
+          contexts: {
+            fn: {
+              name: 'fetchMemorials loop',
+            },
+          },
+        });
+      }
+    }
+    return memorials;
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          name: 'fetchMemorials',
+        },
+      },
+    });
+    return null;
   }
-  return memorials;
 };
 
 /**
@@ -174,6 +277,8 @@ export const fetchReleaseNotes = async (
     if (!process.env.repository) return null;
     const res = await fetchRaw(
       `${process.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/release-notes/${lang}.md`,
+      undefined,
+      true,
     );
     if (!res.ok) return null;
     return await res.text();
@@ -209,12 +314,18 @@ export const fetchPubMediaLinks = async (
 ): Promise<null | Publication> => {
   try {
     const videoExtensions: (keyof PublicationFiles)[] = ['MP4', 'M4V'];
+    const shouldUsePub = publication.pub && publication.pub !== 'nwtsty';
+
+    const pubToUse = shouldUsePub ? publication.pub || '' : '';
+    const docidToUse = shouldUsePub
+      ? ''
+      : (publication.docid?.toString() ?? '');
     const params = {
       alllangs: '0',
       ...(publication.booknum
         ? { booknum: publication.booknum.toString() }
         : {}),
-      docid: !publication.pub ? publication.docid?.toString() || '' : '',
+      docid: docidToUse,
       fileformat:
         publication.fileformat &&
         videoExtensions.includes(publication.fileformat)
@@ -223,7 +334,7 @@ export const fetchPubMediaLinks = async (
       issue: publication.issue?.toString() || '',
       langwritten: publication.langwritten || '',
       output: 'json',
-      pub: publication.pub || '',
+      pub: pubToUse,
       track: publication.track?.toString() || '',
       txtCMSLang: 'E',
     };
@@ -238,11 +349,10 @@ export const fetchPubMediaLinks = async (
       publication.fileformat &&
       videoExtensions.includes(publication.fileformat)
     ) {
-      const videoFiles = videoExtensions
-        .map(
-          (ext) => response.files[publication.langwritten || 'E']?.[ext] || [],
-        )
-        .flat();
+      const mappedVideoFiles = videoExtensions.map(
+        (ext) => response.files[publication.langwritten || 'E']?.[ext] || [],
+      );
+      const videoFiles = mappedVideoFiles.flat();
       return {
         ...response,
         files: {
@@ -276,26 +386,48 @@ export const fetchMediaItems = async (
   try {
     const url = `${base}/v1/media-items/${publication.langwritten}`;
 
-    const id = [
-      publication.pub ? `pub-${publication.pub}` : `docid-${publication.docid}`,
-      publication.pub
-        ? publication.issue?.toString().replace(/(\d{6})00$/gm, '$1')
-        : null,
-      publication.track,
-      publication.fileformat?.toLowerCase().includes('mp4')
-        ? 'VIDEO'
-        : publication.fileformat?.toLowerCase().includes('mp3')
-          ? 'AUDIO'
-          : null,
-    ]
-      .filter((v) => !!v && v !== '0')
-      .join('_');
+    const getPublicationType = (fileformat?: string) => {
+      if (fileformat?.toLowerCase().includes('mp4')) return 'VIDEO';
+      if (fileformat?.toLowerCase().includes('mp3')) return 'AUDIO';
+      return null;
+    };
 
-    const response = await fetchJson<MediaItemsMediator>(
-      `${url}/${id}`,
+    const getId = (track?: null | number | string) =>
+      [
+        publication.pub
+          ? `pub-${publication.pub}`
+          : `docid-${publication.docid}`,
+        publication.pub
+          ? publication.issue?.toString().replaceAll(/(\d{6})00$/gm, '$1')
+          : null,
+        track,
+        getPublicationType(publication.fileformat),
+      ]
+        .filter((v, i) => v != null && (v.toString() !== '0' || i === 2))
+        .join('_');
+
+    let response = await fetchJson<MediaItemsMediator>(
+      `${url}/${getId(publication.track)}`,
       undefined,
       online,
     );
+
+    if (!response?.media?.length && !publication.track) {
+      for (const track of ['x', 0, 1]) {
+        if (track.toString() === publication.track?.toString()) continue;
+
+        const fallbackResponse = await fetchJson<MediaItemsMediator>(
+          `${url}/${getId(track)}`,
+          undefined,
+          online,
+        );
+        if (fallbackResponse?.media?.length) {
+          response = fallbackResponse;
+          break;
+        }
+      }
+    }
+
     return response;
   } catch (e) {
     errorCatcher(e);

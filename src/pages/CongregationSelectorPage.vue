@@ -30,23 +30,23 @@
               </template>
               <template
                 v-else-if="
-                  parseInt(congregations[id]?.mwDay ?? '') >= 0 &&
-                  parseInt(congregations[id]?.weDay ?? '') >= 0
+                  Number.parseInt(congregations[id]?.mwDay ?? '') >= 0 &&
+                  Number.parseInt(congregations[id]?.weDay ?? '') >= 0
                 "
               >
                 {{
                   getDateLocale(congregations[id]?.localAppLang).days[
-                    parseInt(congregations[id]?.mwDay ?? '') === 6
+                    Number.parseInt(congregations[id]?.mwDay ?? '') === 6
                       ? 0
-                      : parseInt(congregations[id]?.mwDay ?? '') + 1
+                      : Number.parseInt(congregations[id]?.mwDay ?? '') + 1
                   ]
                 }}
                 {{ congregations[id]?.mwStartTime }} |
                 {{
                   getDateLocale(congregations[id]?.localAppLang).days[
-                    parseInt(congregations[id]?.weDay ?? '') === 6
+                    Number.parseInt(congregations[id]?.weDay ?? '') === 6
                       ? 0
-                      : parseInt(congregations[id]?.weDay ?? '') + 1
+                      : Number.parseInt(congregations[id]?.weDay ?? '') + 1
                   ]
                 }}
                 {{ congregations[id]?.weStartTime }}
@@ -163,6 +163,22 @@ async function chooseCongregation(
   try {
     const invalidSettingsConfigured = await setCongregation(congregation);
     if (congregation) {
+      if (globalThis?.electronApi) {
+        globalThis.electronApi
+          .getLowDiskSpaceStatus()
+          .then((isLowDiskSpace) => {
+            if (isLowDiskSpace) {
+              createTemporaryNotification({
+                caption: t('low-disk-space-warning'),
+                icon: 'mmm-warning',
+                message: t('disk-space-is-running-low'),
+                timeout: 10000,
+                type: 'warning',
+              });
+            }
+          });
+      }
+
       updateYeartext({
         isSignLanguage: currentLangObject.value?.isSignLanguage,
         lang: currentSettings.value?.lang,
@@ -173,12 +189,10 @@ async function chooseCongregation(
       if (initialLoad) {
         // if (initialLoad || invalidSettings)
         router.push('/setup-wizard');
+      } else if (invalidSettingsConfigured) {
+        router.push('/settings');
       } else {
-        if (invalidSettingsConfigured) {
-          router.push('/settings');
-        } else {
-          router.push('/media-calendar/initial');
-        }
+        router.push('/media-calendar/initial');
       }
     }
   } catch (error) {
@@ -195,7 +209,7 @@ function createNewCongregation() {
   chooseCongregation(createCongregation(), true);
 }
 
-useEventListener(window, 'createNewCongregation', createNewCongregation, {
+useEventListener(globalThis, 'createNewCongregation', createNewCongregation, {
   passive: true,
 });
 

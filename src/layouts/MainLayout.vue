@@ -37,6 +37,7 @@ initializeElectronApi('MainLayout');
 
 import type { LanguageValue } from 'src/constants/locales';
 import type {
+  DateInfo,
   ElectronIpcListenKey,
   MediaItem,
   MediaSectionWithConfig,
@@ -62,6 +63,7 @@ import {
   cleanPersistedStores,
   deleteCacheFiles,
 } from 'src/helpers/cleanup';
+import { syncMeetingSchedule } from 'src/helpers/congregation-schedule';
 import {
   isMwMeetingDay,
   isWeMeetingDay,
@@ -85,19 +87,20 @@ import {
   unregisterAllCustomShortcuts,
 } from 'src/helpers/keyboardShortcuts';
 import { getOrCreateMediaSection } from 'src/helpers/media-sections';
-import { showMediaWindow } from 'src/helpers/mediaPlayback';
+import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
+import { log, type LogPrefix } from 'src/shared/vanilla';
 import { useAppSettingsStore } from 'src/stores/app-settings';
-import { fetchYeartext } from 'src/utils/api';
-import { formatDate, getSpecificWeekday, isInPast } from 'src/utils/date';
-import { kebabToCamelCase } from 'src/utils/general';
-import { useCongregationSettingsStore } from 'stores/congregation-settings';
+import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import {
   type MediaPlayingStateAction,
   useCurrentStateStore,
-} from 'stores/current-state';
-import { useJwStore } from 'stores/jw';
+} from 'src/stores/current-state';
+import { useJwStore } from 'src/stores/jw';
+import { fetchYeartext } from 'src/utils/api';
+import { formatDate, getSpecificWeekday, isInPast } from 'src/utils/date';
+import { kebabToCamelCase } from 'src/utils/general';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
@@ -142,9 +145,6 @@ const { locale, t } = useI18n({ useScope: 'global' });
 
 // Store initializations
 const congregationSettings = useCongregationSettingsStore();
-// congregationSettings.$subscribe((_, state) => {
-//   saveSettingsStoreToFile('congregations', state);
-// });
 
 const appSettings = useAppSettingsStore();
 const { displayCameraId } = storeToRefs(appSettings);
@@ -165,14 +165,12 @@ const {
 } = storeToRefs(currentState);
 
 const jwStore = useJwStore();
-// jwStore.$subscribe((_, state) => {
-//   saveSettingsStoreToFile('jw', state);
-// });
 
 const { updateJwLanguages, updateMemorials } = jwStore;
 const { lookupPeriod } = storeToRefs(jwStore);
 
 const {
+  isArchitectureMismatch,
   onDownloadCancelled,
   onDownloadCompleted,
   onDownloadError,
@@ -181,13 +179,14 @@ const {
   onGpuCrashDetected,
   onLog,
   onShortcut,
+  onVideoCaptureCrashDetected,
   onWatchFolderUpdate,
   path,
   pathToFileURL,
   removeListeners,
   setAutoStartAtLogin,
   setElectronUrlVariables,
-} = window.electronApi;
+} = globalThis.electronApi;
 const { basename, dirname } = path;
 updateMemorials(online.value);
 updateJwLanguages(online.value);
@@ -208,33 +207,43 @@ const delayedCacheClear = () => {
     return;
 
   cacheClearTriggered = true;
-  console.group('🗑️ Cache Auto-Clear');
-  console.log(
+  log(
     '🗑️ Waiting 30 seconds and for downloads to complete before clearing cache...',
+    'cacheAutoClear',
+    'info',
   );
 
   // Wait at least 30 seconds and until no active downloads
   const checkAndClear = () => {
     if (hasActiveDownloads()) {
-      console.log('⏳ Downloads still in progress, waiting...');
+      log(
+        '⏳ Downloads still in progress, waiting...',
+        'cacheAutoClear',
+        'info',
+      );
       setTimeout(checkAndClear, 10000); // Check again in 10 seconds
       return;
     }
 
-    console.log('✅ No active downloads, proceeding with cache clear...');
+    log(
+      '✅ No active downloads, proceeding with cache clear...',
+      'cacheAutoClear',
+      'info',
+    );
     deleteCacheFiles('smart')
       .then(({ itemsDeleted }) => {
-        if (!itemsDeleted) {
-          console.log('ℹ️ No cache items needed clearing');
+        if (itemsDeleted) {
+          log(
+            `Cleared ${itemsDeleted} cache item(s)`,
+            'cacheAutoClear',
+            'info',
+          );
         } else {
-          console.log(`✅ Cleared ${itemsDeleted} cache item(s)`);
+          log('No cache items needed clearing', 'cacheAutoClear', 'info');
         }
-        console.groupEnd();
       })
       .catch((error) => {
-        console.log('❌ Error clearing cache:', error);
         errorCatcher(error);
-        console.groupEnd();
       });
   };
 
@@ -252,29 +261,30 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
     }
 
     if (!newCongregation) {
-      showMediaWindow(false);
+      toggleMediaWindowVisibility(false);
       navigateToCongregationSelector();
       return; // exit early — no need to run notifications
     }
 
     setElectronUrlVariables(JSON.stringify(jwStore.urlVariables));
 
-    let year = new Date().getFullYear();
-    const memorialDate = jwStore.memorials[year];
-    if (memorialDate && isInPast(getSpecificWeekday(memorialDate, 6))) {
-      year++;
-    }
+    const year = new Date().getFullYear();
 
-    if (
-      currentSettings.value &&
-      memorialDate &&
-      currentSettings.value.memorialDate !== memorialDate
-    ) {
-      currentSettings.value.memorialDate = memorialDate ?? null;
+    const memorialDate =
+      jwStore.memorials[year] &&
+      !isInPast(getSpecificWeekday(jwStore.memorials[year], 6))
+        ? jwStore.memorials[year]
+        : jwStore.memorials[year + 1];
+
+    if (currentSettings.value && memorialDate) {
+      currentSettings.value.memorialDate = memorialDate;
     }
 
     downloadProgress.value = {};
-    updateLookupPeriod();
+
+    const scheduleChanged = !!(await syncMeetingSchedule());
+
+    updateLookupPeriod({ reset: scheduleChanged });
     downloadBackgroundMusic();
     delayedCacheClear();
 
@@ -290,6 +300,7 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
 
     const isBetaVersion = process.env.IS_BETA;
     const areUpdatesDisabled = await updatesDisabled();
+    const hasArchitectureMismatch = await isArchitectureMismatch();
 
     // Priority: beta warning first
     if (isBetaVersion) {
@@ -307,22 +318,85 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
         type: 'info',
       });
     }
+    if (hasArchitectureMismatch) {
+      createTemporaryNotification({
+        caption: t('architecture-mismatch-explain'),
+        icon: 'mmm-info',
+        message: t('architecture-mismatch'),
+        timeout: 30000,
+        type: 'info',
+      });
+    }
   } catch (error) {
     errorCatcher(error);
   }
 });
+
+watch(
+  () => [currentCongregation.value, currentSettings.value?.congregationName],
+  (
+    [newSelectedCong, newCongregationName],
+    [oldSelectedCong, oldCongregationName],
+  ) => {
+    if (
+      !currentSettings?.value ||
+      newSelectedCong !== oldSelectedCong ||
+      newCongregationName === oldCongregationName ||
+      !oldCongregationName ||
+      currentState.lookupInProgress
+    )
+      return;
+    currentSettings.value.congregationNameModified = true;
+  },
+);
+
+watch(
+  () => [
+    currentCongregation.value,
+    currentSettings.value?.congregationNameModified,
+  ],
+  (
+    [newSelectedCong, newCongregationNameModified],
+    [oldSelectedCong, oldCongregationNameModified],
+  ) => {
+    if (
+      !currentSettings.value ||
+      newSelectedCong !== oldSelectedCong ||
+      oldCongregationNameModified === undefined ||
+      newCongregationNameModified === undefined
+    )
+      return;
+
+    if (newCongregationNameModified && !oldCongregationNameModified) {
+      // Automatic sync is now disabled for this congregation
+      createTemporaryNotification({
+        caption: t('automatic-sync-disabled-explain'),
+        icon: 'mmm-warning',
+        message: t('automatic-sync-disabled'),
+        timeout: 10000,
+        type: 'warning',
+      });
+    } else if (!newCongregationNameModified && oldCongregationNameModified) {
+      // Automatic sync is now enabled for this congregation
+      createTemporaryNotification({
+        icon: 'mmm-check',
+        message: t('automatic-sync-enabled'),
+        timeout: 10000,
+        type: 'positive',
+      });
+    }
+  },
+);
 
 watch(online, (isNowOnline) => {
   try {
     const congregation = currentCongregation.value;
     if (!congregation) return;
 
-    const { /*downloads,*/ meetings } = queues;
-    // const downloadQueue = downloads[congregation];
+    const { meetings } = queues;
     const meetingQueue = meetings[congregation];
 
     if (isNowOnline) {
-      // downloadQueue?.start();
       meetingQueue?.start();
       jwStore.updateYeartext({
         isSignLanguage: currentLangObject.value?.isSignLanguage,
@@ -332,7 +406,6 @@ watch(online, (isNowOnline) => {
       });
       jwStore.updateJwLanguages(online.value);
     } else {
-      // downloadQueue?.pause();
       meetingQueue?.pause();
     }
   } catch (error) {
@@ -444,6 +517,7 @@ watch(
     currentSettings.value?.disableMediaFetching,
     currentSettings.value?.excludeFootnotes,
     currentSettings.value?.excludeWtParagraphVideos,
+    currentSettings.value?.enablePinyinSongs,
   ],
   (newValues, oldValues) => {
     // Skip if this is the initial run (oldValues is undefined)
@@ -459,8 +533,10 @@ watch(
       );
 
       if (settingsChanged) {
-        console.log(
+        log(
           '⚙️ Settings changed (congregation unchanged), updating lookup period',
+          'mainLayout',
+          'log',
         );
         updateLookupPeriod({ reset: true });
       }
@@ -479,44 +555,42 @@ watch(
       return;
     }
 
-    console.group('👁️ CO Week Watcher');
-    console.log('👁️ CO Week watcher triggered:', {
-      congregation: {
-        new: newCurrentCongregation,
-        old: oldCurrentCongregation,
-      },
-      coWeek: { new: newCoWeek, old: oldCoWeek },
-    });
-
     if (newCurrentCongregation === oldCurrentCongregation) {
-      console.log('🏢 Congregation unchanged, checking CO week changes...');
+      log(
+        '🏢 Congregation unchanged, checking CO week changes...',
+        'coWeek',
+        'info',
+      );
 
       const weeksToUpdate = [newCoWeek, oldCoWeek].filter((week) => !!week);
 
       if (weeksToUpdate.length === 0) {
-        console.log('📅 No valid CO weeks to update');
+        log('📅 No valid CO weeks to update', 'coWeek', 'info');
         return;
       }
 
-      console.log(
-        `📅 Updating ${weeksToUpdate.length} CO week(s):`,
-        weeksToUpdate,
+      log(
+        `📅 Updating ${weeksToUpdate.length} CO week(s): ${JSON.stringify(weeksToUpdate)}`,
+        'coWeek',
+        'info',
       );
 
       for (const changedWeek of weeksToUpdate) {
         if (!changedWeek) continue;
-        console.log(`🎯 Updating lookup period for CO week: ${changedWeek}`);
+        log(
+          `🎯 Updating lookup period for CO week: ${changedWeek}`,
+          'coWeek',
+          'info',
+        );
         updateLookupPeriod({
           onlyForWeekIncluding: changedWeek,
           reset: true,
         });
       }
 
-      console.log('✅ CO week updates completed');
-      console.groupEnd();
+      log('✅ CO week updates completed', 'coWeek', 'info');
     } else {
-      console.log('🏢 Congregation changed, skipping CO week update');
-      console.groupEnd();
+      log('🏢 Congregation changed, skipping CO week update', 'coWeek', 'info');
     }
   },
 );
@@ -549,7 +623,7 @@ watchImmediate(
   () => currentSettings.value?.disableHardwareAcceleration,
   (newDisableHardwareAcceleration) => {
     if (newDisableHardwareAcceleration !== undefined) {
-      window.electronApi.setHardwareAcceleration(
+      globalThis.electronApi.setHardwareAcceleration(
         newDisableHardwareAcceleration,
       );
       // Check if hardware acceleration is disabled via settings on startup
@@ -632,7 +706,14 @@ async function handleUnlinkCleanup(changedPath: string) {
       await removeWatchedMediaSectionInfo(watchedDayFolder, filename);
     }
   } catch (error) {
-    console.warn(`⚠️ Could not remove section order info: ${error}`);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          changedPath,
+          name: 'handleUnlinkCleanup',
+        },
+      },
+    });
   }
 }
 
@@ -647,13 +728,90 @@ function removeWatchedItems(
   }
 }
 
+const getTargetSectionId = (
+  originalSection?: string,
+  weMeeting?: boolean,
+  mwMeeting?: boolean,
+) => {
+  if (originalSection) return originalSection;
+  if (weMeeting) return 'pt';
+  if (mwMeeting) return 'lac';
+  return 'imported-media';
+};
+
+async function handleAddWatchFolderEvent(
+  dayObj: DateInfo,
+  day: string,
+  changedPath?: string,
+) {
+  if (!changedPath) return;
+
+  const watchedItems = (await watchedItemMapper(day, changedPath)) || [];
+
+  for (const watchedItem of watchedItems) {
+    // Skip if already exists
+    const exists = dayObj.mediaSections.some((s) =>
+      s.items?.some((i) => i.uniqueId === watchedItem.uniqueId),
+    );
+    if (exists) continue;
+
+    const weMeeting = isWeMeetingDay(dayObj.date);
+    const mwMeeting = isMwMeetingDay(dayObj.date);
+
+    const targetSectionId = getTargetSectionId(
+      watchedItem.originalSection,
+      weMeeting,
+      mwMeeting,
+    );
+
+    dayObj.mediaSections ??= [];
+    const targetSection = getOrCreateMediaSection(
+      dayObj.mediaSections,
+      targetSectionId,
+    );
+    targetSection.items ??= [];
+
+    // Add, then we’ll sort once after all inserts
+    targetSection.items.push(watchedItem);
+  }
+
+  // Sort sections once after adding
+  sortMediaItems(dayObj.mediaSections);
+}
+
+async function handleUnlinkWatchFolderEvent(
+  dayObj: DateInfo,
+  changedPath?: string,
+) {
+  if (!changedPath) return;
+  const targetUrl = pathToFileURL(changedPath).toString();
+  removeWatchedItems(
+    dayObj.mediaSections,
+    (item) => item?.source === 'watched' && item?.fileUrl === targetUrl,
+  );
+  await handleUnlinkCleanup(changedPath);
+}
+
+function sortMediaItems(sections: MediaSectionWithConfig[]) {
+  for (const section of sections) {
+    if (!section.items) continue;
+    section.items.sort((a, b) => {
+      const aOrder =
+        typeof a.sortOrderOriginal === 'number' ? a.sortOrderOriginal : 0;
+      const bOrder =
+        typeof b.sortOrderOriginal === 'number' ? b.sortOrderOriginal : 0;
+      return aOrder - bOrder || SORTER.compare(a.title, b.title);
+    });
+  }
+}
+
 const updateWatchFolderRef = async ({
   changedPath,
   day,
   event,
 }: Record<string, string>) => {
   try {
-    day = day?.replace(/-/g, '/');
+    day = day?.replaceAll('-', '/');
     if (!day) return;
 
     const dayObj = lookupPeriod.value[currentCongregation.value]?.find(
@@ -663,57 +821,7 @@ const updateWatchFolderRef = async ({
 
     switch (event) {
       case 'add':
-        if (!changedPath) return;
-        {
-          const watchedItems =
-            (await watchedItemMapper(day, changedPath)) || [];
-          console.log('🔍 [MainLayout] watchedItems:', watchedItems);
-
-          for (const watchedItem of watchedItems) {
-            // Skip if already exists
-            const exists = dayObj.mediaSections.some((s) =>
-              s.items?.some((i) => i.uniqueId === watchedItem.uniqueId),
-            );
-            if (exists) continue;
-
-            const weMeeting = isWeMeetingDay(dayObj.date);
-            const mwMeeting = isMwMeetingDay(dayObj.date);
-            const targetSectionId =
-              watchedItem.originalSection ||
-              (weMeeting ? 'pt' : mwMeeting ? 'lac' : 'imported-media');
-
-            dayObj.mediaSections ??= [];
-            const targetSection = getOrCreateMediaSection(
-              dayObj.mediaSections,
-              targetSectionId,
-            );
-            targetSection.items ??= [];
-
-            // Add, then we’ll sort once after all inserts
-            targetSection.items.push(watchedItem);
-
-            console.log(
-              '🔍 [MainLayout] targetSection.items:',
-              targetSection.items,
-            );
-          }
-
-          // Sort sections once after adding
-          for (const section of dayObj.mediaSections) {
-            if (!section.items) continue;
-            section.items.sort((a, b) => {
-              const aOrder =
-                typeof a.sortOrderOriginal === 'number'
-                  ? a.sortOrderOriginal
-                  : 0;
-              const bOrder =
-                typeof b.sortOrderOriginal === 'number'
-                  ? b.sortOrderOriginal
-                  : 0;
-              return aOrder - bOrder || SORTER.compare(a.title, b.title);
-            });
-          }
-        }
+        await handleAddWatchFolderEvent(dayObj, day, changedPath);
         break;
 
       case 'addDir':
@@ -727,15 +835,7 @@ const updateWatchFolderRef = async ({
         break;
 
       case 'unlink':
-        if (!changedPath) return;
-        {
-          const targetUrl = pathToFileURL(changedPath).toString();
-          removeWatchedItems(
-            dayObj.mediaSections,
-            (item) => item?.source === 'watched' && item?.fileUrl === targetUrl,
-          );
-          await handleUnlinkCleanup(changedPath);
-        }
+        await handleUnlinkWatchFolderEvent(dayObj, changedPath);
         break;
     }
   } catch (error) {
@@ -795,7 +895,7 @@ bcClose.onmessage = (event) => {
 
 const initListeners = () => {
   onLog(({ ctx, level, msg }) => {
-    console[level](`[main] ${msg}`, ctx);
+    log(`[main] ${msg}`, ctx as unknown as LogPrefix, level, ctx);
   });
 
   onShortcut(({ shortcut }) => {
@@ -810,7 +910,7 @@ const initListeners = () => {
   onDownloadStarted((args) => {
     const existing = downloadProgress.value[args.id];
     downloadProgress.value[args.id] = {
-      ...(existing || {}),
+      ...existing,
       complete: existing?.complete,
       error: existing?.error,
       filename: args.filename,
@@ -853,7 +953,17 @@ const initListeners = () => {
     });
   });
 
-  window.electronApi.onHardwareAccelerationTemporaryDisabled(() => {
+  onVideoCaptureCrashDetected(() => {
+    createTemporaryNotification({
+      caption: t('camera-access-required-explain'),
+      icon: 'mmm-error',
+      message: t('camera-access-required'),
+      timeout: 10000,
+      type: 'negative',
+    });
+  });
+
+  globalThis.electronApi.onHardwareAccelerationTemporaryDisabled(() => {
     createTemporaryNotification({
       caption: t('gpu-crash-detected-explain'),
       icon: 'mmm-warning',
@@ -875,6 +985,7 @@ const removeListenersLocal = () => {
     'downloadError',
     'downloadProgress',
     'gpu-crash-detected',
+    'video-capture-crash-detected',
   ];
 
   listeners.forEach((listener) => {
@@ -942,7 +1053,7 @@ watchImmediate(
 
     if (shouldRun) {
       getJwMepsInfo();
-      setElementFont('JW-Icons');
+      setElementFont('jw-icons-all');
     }
 
     // Update previous state
@@ -965,10 +1076,34 @@ watchImmediate(
   },
 );
 
+// Send current writing script to the media player page for yeartext font selection
+const { post: postCurrentScript } = useBroadcastChannel<string, string>({
+  name: 'current-script',
+});
+
+watchImmediate(
+  () => currentState.currentLangObject?.script,
+  (script) => {
+    if (script) postCurrentScript(script);
+  },
+);
+
+// Send current language code for language-specific font overrides
+const { post: postCurrentLang } = useBroadcastChannel<string, string>({
+  name: 'current-lang',
+});
+
+watchImmediate(
+  () => currentSettings.value?.lang,
+  (lang) => {
+    if (lang) postCurrentLang(lang);
+  },
+);
+
 // Send yeartext to the media player page using useBroadcastChannel
 const { post: postYeartext } = useBroadcastChannel<
-  string | undefined,
-  string | undefined
+  null | string | undefined,
+  null | string | undefined
 >({
   name: 'yeartext',
 });
@@ -976,9 +1111,6 @@ const { post: postYeartext } = useBroadcastChannel<
 // Function to check if we should show the yeartext preview notification
 const checkYeartextPreview = async () => {
   try {
-    console.log(
-      '🔍 [checkYeartextPreview] Checking if we should show the yeartext preview notification',
-    );
     // Only run if congregation is selected
     if (!currentCongregation.value) return;
 
@@ -1017,6 +1149,12 @@ const checkYeartextPreview = async () => {
 
     // Check if language is configured
     if (!lang) return;
+
+    log(
+      '🔍 [checkYeartextPreview] Showing the yeartext preview notification',
+      'mainLayout',
+      'log',
+    );
 
     // Show notification
     createTemporaryNotification({
@@ -1145,8 +1283,10 @@ const { data: mediaPlayingAction } = useBroadcastChannel<
 watchImmediate(
   () => mediaPlayingAction.value,
   (newMediaPlayingAction) => {
-    console.log(
+    log(
       '🔄 [onMounted] mediaPlayingAction changed:',
+      'mainLayout',
+      'log',
       newMediaPlayingAction,
     );
     mediaPlaying.value.action = newMediaPlayingAction;

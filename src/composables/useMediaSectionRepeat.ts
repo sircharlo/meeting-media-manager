@@ -4,6 +4,7 @@ import { useBroadcastChannel } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { standardSections } from 'src/constants/media';
 import { findMediaSection } from 'src/helpers/media-sections';
+import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
 import { ref, watch } from 'vue';
 
@@ -66,11 +67,11 @@ export function useMediaSectionRepeat() {
       const aOrder =
         typeof a.sortOrderOriginal === 'number'
           ? a.sortOrderOriginal
-          : parseInt(String(a.sortOrderOriginal)) || 0;
+          : Number.parseInt(String(a.sortOrderOriginal)) || 0;
       const bOrder =
         typeof b.sortOrderOriginal === 'number'
           ? b.sortOrderOriginal
-          : parseInt(String(b.sortOrderOriginal)) || 0;
+          : Number.parseInt(String(b.sortOrderOriginal)) || 0;
       return aOrder - bOrder;
     });
   };
@@ -97,20 +98,35 @@ export function useMediaSectionRepeat() {
   const startRepeatingSection = (sectionId: MediaSectionIdentifier) => {
     // Only allow custom sections to be repeated
     if (!isCustomSection(sectionId)) {
-      console.warn('Only custom sections can be repeated:', sectionId);
+      log(
+        'Only custom sections can be repeated:',
+        'mediaSectionRepeat',
+        'warn',
+        sectionId,
+      );
       return;
     }
 
     const sectionItems = getSectionMediaItems(sectionId);
     if (sectionItems.length === 0) {
-      console.warn('No items found in section:', sectionId);
+      log(
+        'No items found in section:',
+        'mediaSectionRepeat',
+        'warn',
+        sectionId,
+      );
       return;
     }
 
     // Check if the section has repeat enabled
     const sectionSettings = getSectionRepeatSettings(sectionId);
     if (!sectionSettings?.repeat) {
-      console.warn('Section repeat not enabled for:', sectionId);
+      log(
+        'Section repeat not enabled for:',
+        'mediaSectionRepeat',
+        'warn',
+        sectionId,
+      );
       return;
     }
 
@@ -178,7 +194,21 @@ export function useMediaSectionRepeat() {
       return;
     }
 
-    console.log('🔄 [playNextItem] Playing next item:', nextItem);
+    const { post: postMediaRepeatNow } = useBroadcastChannel<number, number>({
+      name: 'media-repeat-now',
+    });
+
+    const nextUrl = nextItem.fileUrl || nextItem.streamUrl || '';
+    const isSameItem = mediaPlaying.value.url === nextUrl;
+
+    log(
+      '🔄 [playNextItem] Playing next item:',
+      'mediaSectionRepeat',
+      'log',
+      nextItem,
+      'isSameItem:',
+      isSameItem,
+    );
 
     // Clear any existing image timer
     if (imageDisplayTimer.value) {
@@ -186,14 +216,6 @@ export function useMediaSectionRepeat() {
       imageDisplayTimer.value = null;
     }
 
-    // mediaPlaying.value.url = nextItem.fileUrl || nextItem.streamUrl || '';
-    // mediaPlaying.value.uniqueId = nextItem.uniqueId;
-    // mediaPlaying.value.subtitlesUrl = nextItem.subtitlesUrl || '';
-    // // Set the media to play
-    // mediaPlaying.value.action = '';
-    // nextTick(() => {
-    //   mediaPlaying.value.action = 'play';
-    // });
     mediaPlaying.value = {
       action: 'play',
       currentPosition: 0,
@@ -204,29 +226,23 @@ export function useMediaSectionRepeat() {
       seekTo: 0,
       subtitlesUrl: nextItem.subtitlesUrl || '',
       uniqueId: nextItem.uniqueId,
-      url: nextItem.fileUrl || nextItem.streamUrl || '',
+      url: nextUrl,
       zoom: 1,
     };
 
-    // // If this is an image, set up a timer to move to the next item
-    // if (nextItem.isImage) {
-    //   const sectionSettings = getSectionRepeatSettings(
-    //     currentRepeatingSection.value,
-    //   );
-    //   const interval = sectionSettings?.repeatInterval || 10;
-
-    //   imageDisplayTimer.value = window.setTimeout(() => {
-    //     // Post the last end timestamp to trigger handleMediaEnded for images
-    //     postLastEndTimestamp(Date.now());
-    //     playNextItem();
-    //   }, interval * 1000);
-    // }
+    if (isSameItem) {
+      // Direct broadcast to MediaPlayerPage to ensure it replays the same video
+      // without affecting OBS scenes or standard action flows
+      postMediaRepeatNow(Date.now());
+    }
   };
 
   // Handle media ended event - called when a media item finishes playing
   const handleMediaEnded = () => {
-    console.log(
+    log(
       '🔄 [handleMediaEnded] Handle media ended',
+      'mediaSectionRepeat',
+      'log',
       currentRepeatingSection.value,
       isRepeating.value,
     );
@@ -242,25 +258,26 @@ export function useMediaSectionRepeat() {
       (item) => item.uniqueId === currentPlayingUniqueId,
     );
 
-    console.log('🔄 [handleMediaEnded] Current item', currentItem);
+    log(
+      '🔄 [handleMediaEnded] Current item',
+      'mediaSectionRepeat',
+      'log',
+      currentItem,
+    );
 
     if (!currentItem) {
       return false;
     }
 
-    console.log(
+    log(
       '🔄 [handleMediaEnded] Current item is image',
+      'mediaSectionRepeat',
+      'log',
       currentItem.isImage,
     );
 
-    // For videos/audio, move to next item immediately
-    // For images, the timer should handle the transition
-    // if (!currentItem.isImage) {
     playNextItem();
     return true;
-    // }
-
-    // return true;
   };
 
   // Check if a section is currently being repeated
@@ -297,8 +314,10 @@ export function useMediaSectionRepeat() {
 
     if (section?.config) {
       section.config.repeatInterval = interval;
-      console.log(
+      log(
         '🔄 [updateSectionRepeatInterval] Updated interval:',
+        'mediaSectionRepeat',
+        'log',
         interval,
         'for section:',
         sectionId,

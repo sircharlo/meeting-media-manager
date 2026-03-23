@@ -4,6 +4,40 @@
 
 For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
 
+## v26.3.0
+
+### ✨ New Features
+
+- ✨ **Medios Memoriales**: ¡Los medios de comunicación conmemorativos automáticos ya no están en fase beta! La aplicación descargará automáticamente el vídeo de bienvenida Memorial y la imagen que se mostrará durante la Memorial, cuando esté disponible en el idioma configurado.
+- ✨ **Velocidad de reproducción**: Control de velocidad de reproducción añadido con indicador visual y reinicio manual. Esta característica sólo es visible si está habilitada en los ajustes avanzados.
+- ✨ **Pinyin Songs**: Añadido un interruptor para sustituir la canción pinyin para reuniones celebradas en chino.
+
+## v26.2.0
+
+### ✨ New Features
+
+- ✨ **Disk Space Check**: Added functionality to monitor and notify when disk space is low.
+
+## v26.1.5
+
+### ✨ New Features
+
+- ✨ **Memorial Media**: Automatically fetch Memorial banner and intro video in supported languages when the Memorial date is selected.
+
+## v26.1.0
+
+### ✨ New Features
+
+- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
+- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
+- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+
+## v25.12.2
+
+### ✨ New Features
+
+- ✨ **Zoom/Pan buttons**: Added the ability to press and hold zoom and pan buttons for continuous adjustment.
+
 ## v25.12.0
 
 ### ✨ New Features
@@ -57,7 +91,7 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 - ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
 - ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
 - ✨ **Media Crossfade**: Implemented crossfade transitions for media display, instead of the more abrupt fade-to-black transition that was present before.
-- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not.
+- ✨ **Autoparada de música**: Optimizó el comportamiento de la música de fondo auto-stop para comportarse de la misma manera si la música fue autoiniciada o no
 - ✨ **macOS Click-Through on Inactive Windows**: Enabled mouse click passthrough on the main window for macOS, which should make it easier to control the app even when it's not focused.
 
 ## v25.9.0
@@ -83,12 +117,11 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 - ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
 - ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
 
-### 🛠️ Improvements and Tweaks
+## v25.7.0
 
-- 🛠️ **Enhanced Section Headers**: New three-dots menu system with color picker, move up/down controls, repeat options, and delete functionality.
-- ✨ **Inline Title Editing**: Edit media item titles directly in the interface without opening separate dialogs.
-- 🛠️ **Improved Navigation**: Better keyboard shortcuts with scroll-to-selected functionality and enhanced media navigation.
-- 🛠️ **Visual Enhancements**: Animation support during sorting operations and improved drag-and-drop visual feedback.
+### ✨ New Features
+
+- ¡No hay nuevas características para esta versión!
 
 ## 25.6.0
 
@@ -97,47 +130,12 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 - ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
 - ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
 
-### 🛠️ Improvements and Tweaks
-
-- 🛠️ **Better mime type handling**: Improved support for MIME types for better media compatibility.
-- 🛠️ **Enhanced navigation drawer**: Improved mini state handling and added tooltip display for better user navigation.
-- 🛠️ **Linux compatibility**: Forced GTK 3 usage on Linux to prevent UI and launch issues.
-
 ## 25.5.0
 
 ### ✨ New Features
 
 - 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
 - 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
-
-### 🛠️ Improvements and Tweaks
-
-- 🔍 **Restore Zoom with `Ctrl` + `Scroll`**: Re-enable immediate zooming with the control + scroll gesture for easier navigation.
-- 👤 **Hide Unused CO Media**: Hide rather than skip unused media for Circuit Overseer visits to maintain a cleaner presentation.
-- 🎵 **Improve Duplicate Song Indicator**: Enhance the visual cue for duplicate songs to make them easier to identify.
-
-## 25.4.3
-
-### 🛠️ Improvements and Tweaks
-
-- ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
-
-## 25.4.2
-
-### 🛠️ Improvements and Tweaks
-
-- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
-
-## 25.4.1
-
-### 🛠️ Improvements and Tweaks
-
-- 🎬 **Fix Custom Start/End Time Assignment**: Prevent custom start and end times from being incorrectly applied to the wrong video.
-- 📝 **Allow Mismatched Subtitles**: Enable use of subtitles even when they do not perfectly match the media file.
-- 🪟 **Disable Rounded Corners on Windows**: Remove rounded corners for the media window on Windows.
-- 🖼 **Include Non-Referenced Images in Media List**: Ensure all non-referenced images are added to the media list for completeness.
-- ➕ **Prevent Duplicate Media Sections**: Avoid creating multiple media sections for the same media item.
-- 📥 **Preserve Playlist Order on Import**: Maintain the original order of JWL playlists during the import process.
 
 ## 25.4.0
 
@@ -146,23 +144,11 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 - 🇵🇭 **New Language: Tagalog**: Added support for Tagalog, expanding the app's multilingual capabilities.
 - 🎞 **Support for `.m4v` Video Format**: Now supports playback of `.m4v` files to improve media compatibility.
 
-### 🛠️ Improvements and Tweaks
-
-- 🎬 **Multiple Start/End Times for Single Video**: Allow a single video to appear in the media list multiple times with different custom start/end times.
-- 📤 **Include Grouped Media in Auto Export**: Automatically export grouped media items along with others.
-- 📡 **Correct `.m4v` Fetching from JW API**: Ensure `.m4v` files are correctly fetched from the JW API.
-
 ## 25.3.1
 
 ### ✨ New Features
 
 - 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
-
-### 🛠️ Improvements and Tweaks
-
-- ⚡ **Improve Performance & CPU Usage**: Optimize performance to reduce CPU usage and enhance efficiency.
-- 🔄 **Fix Synchronization & Crash Issues**: Resolve various sync-related and stability issues to improve reliability.
-- 📜 **Show Release Notes for Existing Congregations**: Ensure release notes are only displayed for congregations that are already loaded.
 
 ## 25.3.0
 
@@ -173,10 +159,52 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 - 📅 **Automatic Memorial Date & Background**: Automatically detect and set the Memorial date and prepare the Memorial background image.
 - 📜 **Show Release Notes In-App**: Display release notes directly in the application so users can easily review changes after an update.
 
-### 🛠️ Improvements and Tweaks
+## 25.2.1
 
-- ⚡ **Optimize Smart Cache Clearing**: Improve the smart cache-clearing mechanism for better performance and efficiency.
-- 📂 **Correct Circuit Overseer Media Placement**: Ensure Circuit Overseer media is placed in the correct section.
-- 📅 **Exclude Regular Meeting Media for Memorial**: Prevent fetching standard meeting media for the Memorial to prevent errors.
-- 📅 **Hide Regular Meeting Sections on Memorial**: Remove unnecessary meeting sections during the Memorial event for a cleaner layout.
-- 📖 **Fix Sign Language Bible Video Downloads**: Correctly download Sign Language Bible chapter videos from JWL playlists.
+### ✨ New Features
+
+- 🔄 **Permitir intentos de reconexión OBS**: Introduce la posibilidad de forzar manualmente a OBS a reconectarse cuando sea necesario.
+- 🗑️ **Auto Limpieza de carpetas antiguas de fecha de exportación**: Elimina automáticamente carpetas de fecha de exportación desactualizadas para mantener el almacenamiento organizado.
+
+## 25.2.0
+
+### ✨ New Features
+
+- :globe_showing_Europe-Prestaica: **Use System Locale por Default**: Detecte y use automáticamente la localización del sistema para una experiencia más personalizada.
+- 🏷️ **Tag Support for Exported Media**: Add metadata tags to exported media files for better organization.
+- 🔄 **Bajamiento estable de la Beta automática**: Permitir downgrades automáticas de versiones beta a versiones estables cuando sea necesario.
+- 🌐 **Extrae los últimos índices de idioma MEP**: Obtén los índices de idioma más recientes de MEPS directamente desde el sitio web oficial, garantizando un soporte de idioma actualizado.
+
+## 25.1.0
+
+### ✨ New Features
+
+- 📅 **Abrir fechas previas**: Permite abrir fechas anteriores de la semana actual, lo que es útil cuando el día de la reunión se mueve más tarde en la semana.
+- 🛑 **Error Banner para OBS Studio**: Añadir un banner de error cuando OBS Studio no está conectado en un día de reunión, asegurando que los usuarios estén alertados.
+- 📚 **Group Media by Publication**: Grupos de medios de comunicación de la misma publicación referida para una visión general de medios más limpia y organizada.
+- 🎵 **Aviso de canción duplicado**: Muestra una advertencia si las canciones aparecen más de una vez en la lista de medios para las reuniones de fin de semana.
+- 🔄 **Planificación de horario futuro**: Habilita la planificación de futuros cambios de horario de reunión, que es útil para los cambios de horario anuales o para la visita del supervisor del circuito a una congestión vecina.
+
+## 24.11.0
+
+### ✨ New Features
+
+- **característica**: La presentación del sitio web ahora es compatible con macOS 🚀
+- **característica**: Se presentaron atajos de teclado para parar, pausar y reanudar la reproducción de medios 🚀
+- **característica**: Se ha añadido soporte para establecer la dirección web desde la cual se debe descargar el medio 🚀
+- **característica**: Añadido selector de escena instantáneo OBS Studio y revisión de la funcionalidad del selector de escena en ajustes
+- **característica**: Sitio web de documentación ampliado para soportar más idiomas
+
+## 24.10.10
+
+### ✨ New Features
+
+- **nuevo**: Se añadieron atajos de teclado para navegar al siguiente elemento multimedia / anterior
+- **nuevo**: Se añadió un menú de clic derecho a los elementos multimedia para ocultar elementos multimedia y renombrarlos
+- **nuevo**: Los tiempos de vídeo recortados ahora son respetados en las listas de reproducción JWL importadas
+
+## 24.10.9
+
+### ✨ New Features
+
+- **función**: Se añadió una opción para eliminar todos los archivos multimedia adicionales del día seleccionado

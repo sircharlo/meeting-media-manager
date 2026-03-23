@@ -58,13 +58,19 @@
     :setting-id="settingId"
     use-input
   />
-  <!-- :use-input="settingId.toLowerCase().includes('lang')" -->
   <ShortcutInput
     v-else-if="item.type === 'shortcut'"
     v-model="model"
     :dialog-id="`shortcut-input-${settingId}`"
     :shortcut-name="settingId"
     v-bind="$attrs"
+  />
+  <q-btn
+    v-else-if="item.type === 'button'"
+    color="primary"
+    :label="t('update')"
+    outline
+    @click="performActions(item.actions)"
   />
   <pre v-else>{{ item }}</pre>
 </template>
@@ -80,6 +86,10 @@ import SliderInput from 'components/form-inputs/SliderInput.vue';
 import TextInput from 'components/form-inputs/TextInput.vue';
 import TimeInput from 'components/form-inputs/TimeInput.vue';
 import ToggleInput from 'components/form-inputs/ToggleInput.vue';
+import { performActions } from 'src/utils/settings';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 defineProps<{
   item: SettingsItem;

@@ -9,7 +9,7 @@
       </div>
       <div class="row q-px-md q-pt-md">
         {{
-          s34mpDb ? t('select-s34mp-media') : t('select-s34mp-to-add-pt-media')
+          s34Db ? t('select-s34mp-media') : t('select-s34mp-to-add-pt-media')
         }}
       </div>
       <div class="row q-px-md q-pt-md row items-center q-gutter-x-sm">
@@ -17,22 +17,20 @@
           <q-icon name="mmm-file" size="md" />
         </div>
         <div class="col text-subtitle2">
-          {{ s34mpDisplayName }}
+          {{ s34DisplayName }}
         </div>
-        <div v-if="s34mpDb || s34mpFile" class="col-grow text-caption">
-          <template
-            v-if="s34mpDb && s34mpInfo && filteredPublicTalks.length > 0"
-          >
-            {{ s34mpInfo.Year }}, v{{ s34mpInfo.VersionNumber }}
+        <div v-if="s34Db || s34File" class="col-grow text-caption">
+          <template v-if="s34Db && s34Info && filteredPublicTalks.length > 0">
+            {{ s34Info.Year }}, v{{ s34Info.VersionNumber }}
           </template>
           <q-spinner v-else color="primary" size="sm" />
         </div>
         <q-btn color="primary" outline @click="browse">
           <q-icon class="q-mr-sm" name="mmm-local-media" />
-          {{ s34mpDb ? t('replace') : t('browse') }}
+          {{ s34Db ? t('replace') : t('browse') }}
         </q-btn>
       </div>
-      <template v-if="s34mpDb">
+      <template v-if="s34Db">
         <div class="row q-px-md q-py-md">
           <q-input
             v-model="filter"
@@ -99,8 +97,8 @@ import type {
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
-import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
-import { decompressJwpub } from 'src/helpers/mediaPlayback';
+import { errorCatcher } from 'src/helpers/error-catcher';
+import { unzipJwpub } from 'src/helpers/mediaPlayback';
 import { getPublicationsPath } from 'src/utils/fs';
 import { findDb } from 'src/utils/sqlite';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -117,6 +115,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   cancel: [];
+  import: [data: { dbPath: string; doc: DocumentItem }];
   'update:modelValue': [value: boolean];
 }>();
 
@@ -132,10 +131,7 @@ const filter = ref('');
 const publicTalks = ref<DocumentItem[]>([]);
 const filteredPublicTalks = computed((): DocumentItem[] => {
   if (filter.value) {
-    const searchTerms = filter.value
-      .toLowerCase()
-      .split(/\s+/)
-      .filter((term) => term);
+    const searchTerms = filter.value.toLowerCase().split(/\s+/).filter(Boolean);
     return publicTalks.value.filter((s) =>
       searchTerms.every((term) => s.Title.toLowerCase().includes(term)),
     );
@@ -143,43 +139,54 @@ const filteredPublicTalks = computed((): DocumentItem[] => {
   return publicTalks.value;
 });
 
-const s34mpBasename = ref<string | undefined>();
-const s34mpFile = ref<string | undefined>();
-const s34mpDir = ref<string | undefined>();
-const s34mpDb = ref<string | undefined>();
-const s34mpInfo = ref<null | PublicationInfo>(null);
+const s34Basename = ref<string | undefined>();
+const s34File = ref<string | undefined>();
+const s34Dir = ref<string | undefined>();
+const s34Db = ref<string | undefined>();
+const s34Info = ref<null | PublicationInfo>(null);
 const isProcessing = ref<boolean>(false);
 
-const { executeQuery, fs, openFileDialog, path } = window.electronApi;
+const { executeQuery, fs, openFileDialog, path } = globalThis.electronApi;
 const { basename, extname, join } = path;
 
 const { ensureDir } = fs;
 
 const populatePublicTalks = async () => {
-  s34mpDb.value = await findDb(s34mpDir.value);
-  if (!s34mpDb.value) return;
+  s34Db.value = await findDb(s34Dir.value);
+  if (!s34Db.value) return;
   publicTalks.value = executeQuery<DocumentItem>(
-    s34mpDb.value,
+    s34Db.value,
     'SELECT DISTINCT Document.DocumentId, Title FROM Document INNER JOIN DocumentMultimedia ON Document.DocumentId = DocumentMultimedia.DocumentId',
   );
   const PublicationInfos = executeQuery<PublicationInfo>(
-    s34mpDb.value,
+    s34Db.value,
     'SELECT DISTINCT VersionNumber, Year FROM Publication',
   );
-  if (PublicationInfos[0]) s34mpInfo.value = PublicationInfos[0];
+  if (PublicationInfos[0]) s34Info.value = PublicationInfos[0];
 };
 
 const browse = async () => {
-  const s34mpFileSelection = await openFileDialog(true, 'jwpub');
-  if (!s34mpFileSelection || !s34mpFileSelection.filePaths.length) return;
-  s34mpFile.value = s34mpFileSelection.filePaths[0];
-  if (!s34mpDir.value) {
-    await setS34mp();
+  const s34FileSelection = await openFileDialog(true, 'jwpub');
+  if (!s34FileSelection || !s34FileSelection.filePaths.length) return;
+  s34File.value = s34FileSelection.filePaths[0];
+  if (!s34Dir.value) {
+    await setS34Info();
   }
-  if (s34mpDir.value) await ensureDir(s34mpDir.value);
-  if (s34mpFile.value) {
-    await decompressJwpub(s34mpFile.value, s34mpDir.value, true);
-    populatePublicTalks();
+  if (s34Dir.value && s34File.value) {
+    try {
+      await ensureDir(s34Dir.value);
+      await unzipJwpub(s34File.value, s34Dir.value, true);
+      populatePublicTalks();
+    } catch (error) {
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            name: 'DialogPublicTalkMediaPicker browse ensureDir',
+            s34Dir: s34Dir.value,
+          },
+        },
+      });
+    }
   }
 };
 
@@ -191,41 +198,32 @@ const dismissPopup = () => {
 };
 
 const addPublicTalkMedia = async (publicTalkDocId: DocumentItem) => {
-  if (!s34mpDb.value || !publicTalkDocId) return;
-  isProcessing.value = true;
-  try {
-    await addJwpubDocumentMediaToFiles(
-      s34mpDb.value,
-      publicTalkDocId,
-      props.section,
-      {
-        issue: currentCongregation.value,
-        langwritten: '',
-        pub: 'S-34mp',
-      },
-    );
-    dismissPopup();
-  } catch (error) {
-    console.error(error);
-  } finally {
-    isProcessing.value = false;
-  }
+  if (!s34Db.value || !publicTalkDocId) return;
+
+  // ✅ Always emit - parent handles section assignment
+  emit('import', { dbPath: s34Db.value, doc: publicTalkDocId });
+  dismissPopup();
 };
 
-const setS34mp = async () => {
-  s34mpBasename.value = `S-34mp_${currentCongregation.value}`;
-  s34mpDir.value = join(
-    await getPublicationsPath(currentSettings.value?.cacheFolder),
-    s34mpBasename.value,
-  );
+const setS34Info = async () => {
+  s34Basename.value = `S-34_${currentCongregation.value}`;
+  const publicationsPath = await getPublicationsPath();
+  s34Dir.value = join(publicationsPath, s34Basename.value);
 };
 
-const s34mpDisplayName = computed((): string => {
+const s34DisplayName = computed((): string => {
   try {
-    if (s34mpDb.value) return basename(s34mpDb.value, extname(s34mpDb.value));
+    if (s34Db.value) return basename(s34Db.value, extname(s34Db.value));
     return t('select-s34mp');
   } catch (e) {
-    console.error('Error getting S-34mp display name:', e);
+    errorCatcher(e, {
+      contexts: {
+        fn: {
+          name: 'DialogPublicTalkMediaPicker s34DisplayName',
+          s34Db: s34Db.value,
+        },
+      },
+    });
     return t('select-s34mp');
   }
 });
@@ -234,28 +232,30 @@ const resetDialogState = () => {
   // Reset all dialog state
   filter.value = '';
   publicTalks.value = [];
-  s34mpFile.value = undefined;
-  s34mpDb.value = undefined;
-  s34mpInfo.value = null;
+  s34File.value = undefined;
+  s34Dir.value = undefined;
+  s34Db.value = undefined;
+  s34Info.value = null;
+};
+
+const initialize = async () => {
+  if (currentSettings.value?.lang) {
+    await setS34Info();
+    await populatePublicTalks();
+  }
 };
 
 // Watch for dialog closing to reset state
 watch(
   () => dialogValue.value,
   (isOpen) => {
-    if (!isOpen) {
+    if (isOpen) {
+      // Initialize when dialog opens
+      initialize();
+    } else {
       // Reset state when dialog closes
       resetDialogState();
-    } else {
-      setS34mp().then(() => populatePublicTalks());
     }
   },
 );
-
-// Initialize when component mounts
-if (currentSettings.value?.lang) {
-  setS34mp().then(() => {
-    populatePublicTalks();
-  });
-}
 </script>

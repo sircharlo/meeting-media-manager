@@ -192,6 +192,7 @@
 
 <script setup lang="ts">
 import type {
+  DialogImportPayload,
   JwPlaylistItem,
   MediaSectionIdentifier,
   MultimediaItem,
@@ -201,7 +202,6 @@ import type {
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { JPG_EXTENSIONS } from 'src/constants/media';
-import { isCoWeek } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   downloadAdditionalRemoteVideo,
@@ -211,11 +211,12 @@ import {
   processMissingMediaInfo,
   resolveFilePath,
 } from 'src/helpers/jw-media';
+import { createTemporaryNotification } from 'src/helpers/notifications';
+import { log } from 'src/shared/vanilla';
 import { getTempPath } from 'src/utils/fs';
 import { isImage } from 'src/utils/media';
 import { findDb } from 'src/utils/sqlite';
 import { useCurrentStateStore } from 'stores/current-state';
-import { useJwStore } from 'stores/jw';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -231,6 +232,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   cancel: [];
+  import: [data: DialogImportPayload];
   ok: [];
   'update:modelValue': [value: boolean];
 }>();
@@ -257,11 +259,9 @@ const customPrefix = ref('');
 const includeNumbering = ref(true);
 
 const currentState = useCurrentStateStore();
-const { currentCongregation, selectedDate, selectedDateObject } =
-  storeToRefs(currentState);
-const jwStore = useJwStore();
+const { selectedDate, selectedDateObject } = storeToRefs(currentState);
 
-const { decompress, executeQuery, fs, path } = window.electronApi;
+const { executeQuery, fs, path, unzip } = globalThis.electronApi;
 const { pathExists, rename } = fs;
 const { basename, extname, join } = path;
 
@@ -274,10 +274,27 @@ const loadPlaylistItems = async () => {
     // Extract package
     const tempDir = await getTempPath();
     const outputPath = join(tempDir, basename(props.jwPlaylistPath));
-    await decompress(props.jwPlaylistPath, outputPath);
+
+    try {
+      await unzip(props.jwPlaylistPath, outputPath);
+    } catch (err) {
+      createTemporaryNotification({
+        icon: 'mmm-error',
+        message: t('error-reading-playlist-file'),
+        type: 'negative',
+      });
+      throw err;
+    }
 
     const dbFile = await findDb(outputPath);
-    if (!dbFile) return;
+    if (!dbFile) {
+      createTemporaryNotification({
+        icon: 'mmm-error',
+        message: t('error-reading-playlist-file'),
+        type: 'negative',
+      });
+      return;
+    }
 
     // ---- Get Playlist Name ----
     try {
@@ -365,7 +382,7 @@ const loadPlaylistItems = async () => {
 
         const VerseNumbers = verseRows.map((v) => {
           const match = v.Label.match(/\w+ (?:\d+:)?(\d+)/);
-          return match?.[1] ? parseInt(match[1]) : 0;
+          return match?.[1] ? Number.parseInt(match[1]) : 0;
         });
 
         // Determine best preview path
@@ -505,7 +522,11 @@ async function processNonVideoItem(
     VerseNumbers: item.VerseNumbers,
   };
 
-  await processMissingMediaInfo([multimediaItem], selectedDate.value, true);
+  await processMissingMediaInfo({
+    allMedia: [multimediaItem],
+    keepMediaLabels: true,
+    meetingDate: selectedDate.value,
+  });
 
   // nwt is excluded from mapping
   if (multimediaItem.KeySymbol === 'nwt') {
@@ -559,7 +580,7 @@ async function processSingleItem(
     StartTime,
     EndTime,
   );
-  return { mappedItems: result.mapped, order: index };
+  return { item, itemLabel, mappedItems: result.mapped, order: index };
 }
 async function processVideoItem(
   item: JwPlaylistItem,
@@ -568,6 +589,7 @@ async function processVideoItem(
   StartTime: null | number,
   EndTime: null | number,
   durationTicks: number,
+  sectionToUse?: MediaSectionIdentifier,
 ) {
   const lang = getJwLangCode(item.MepsLanguage) || 'E';
 
@@ -597,7 +619,7 @@ async function processVideoItem(
     item.ThumbnailFilePath || undefined,
     false,
     itemLabel,
-    props.section,
+    sectionToUse || props.section,
     customDuration,
   );
 
@@ -605,20 +627,20 @@ async function processVideoItem(
 }
 
 const addSelectedItems = async () => {
-  console.group('📋 JW Playlist Processing');
-  isProcessing.value = true;
-
   try {
     if (!selectedItems.value.length || !selectedDateObject.value) return;
 
     const selectedPlaylistItems = selectedItems.value
       .map((i) => playlistItems.value[i])
-      .filter(Boolean);
+      .filter((item): item is NonNullable<typeof item> => !!item)
+      .reverse();
 
     const outputPath = join(
       await getTempPath(),
       basename(props.jwPlaylistPath),
     );
+
+    isProcessing.value = true;
 
     // 🔥 Process all items *in parallel*
     const results = await Promise.all(
@@ -627,28 +649,25 @@ const addSelectedItems = async () => {
         .map((item, idx) => processSingleItem(item, idx, outputPath)),
     );
 
-    // 🔥 Apply mappings SEQUENTIALLY (preserves order)
-    for (const result of results.sort((a, b) => a.order - b.order)) {
-      if (!result?.mappedItems?.length) continue;
+    // 🔥 Build MediaItems from results (preserves order)
+    const processedMediaItems = results
+      .sort((a, b) => a.order - b.order)
+      .flatMap((result) => result?.mappedItems || []);
 
-      jwStore.addToAdditionMediaMap(
-        result.mappedItems,
-        props.section,
-        currentCongregation.value,
-        selectedDateObject.value,
-        isCoWeek(selectedDateObject.value.date),
-      );
-    }
+    // ✅ Always emit processed items - parent handles section assignment
+    emit('import', { items: processedMediaItems });
 
     emit('ok');
-    console.log('✅ All items processed (parallel) and applied (ordered).');
+    log(
+      '✅ All items processed (parallel) and applied (ordered).',
+      'jwPlaylist',
+      'info',
+    );
   } catch (error) {
-    console.log('❌ Error processing playlist items:', error);
     errorCatcher(error);
   } finally {
     dialogValue.value = false;
     isProcessing.value = false;
-    console.groupEnd();
   }
 };
 
@@ -667,7 +686,7 @@ const resetSelection = () => {
 watch(
   () => props.jwPlaylistPath,
   (newPath: string) => {
-    console.log('🎯 jwPlaylistPath changed to:', newPath);
+    log(`🎯 jwPlaylistPath changed to: ${newPath}`, 'jwPlaylist', 'info');
     if (newPath) {
       loadPlaylistItems();
     }

@@ -4,6 +4,343 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.3.2
+
+### 🐞 Bug Fixes
+
+- 🐞 **Export Issues with Watch Folder**: Prevented the watch folder mechanism from automatically adding generated MP4 files to the media list.
+- 🐞 **macOS**: Fixed macOS launch and window focus handling.
+- 🐞 **Stale Announcement**: Updated the OBS Studio `media-window-title-updated` announcement to add a `maxVersion` to prevent it from being displayed on versions where the issue has long been resolved.
+
+### 🔧 Chores
+
+- 🔧 **CI/CD**: Enhanced commit message filtering in workflow.
+- 🔧 **Logging**: Refactored logging.
+
+## v26.3.1
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Media Downloads**: Implemented downloaded check and visual indicator for publication media videos.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Fonts**: Fixed issues with remote font checks by preferring cached icon fonts and keeping offline fallbacks during refresh.
+- 🐞 **Typing**: Fixed Electron `errno` error typing.
+
+### 🧪 Testing
+
+- 🧪 **Coverage**: Added regression coverage for offline and window logic.
+- 🧪 **Fixtures**: Fixed JW language test fixture typing and `jw-icons` assertions.
+
+### 🔧 Chores
+
+- 🔧 **Dependencies**: Updated Electron and refreshed Yarn lockfile.
+- 🔧 **Cleanup**: Removed unused `qmarkdown` Quasar extension and unused `esbuild` Vite config options.
+- 🔧 **Refactoring**: Simplified `getMediaResolution` and replaced `vite-tsconfig-paths` plugin with `tsconfigPaths`.
+- 🔧 **CI/CD**: Improved release notes update script and configured CI to only upload source maps for release builds.
+
+## v26.3.0
+
+### ✨ New Features
+
+- ✨ **Memorial Media**: Automatic Memorial media retrieval is now out of beta! The app will automatically download the Memorial Welcome Video and image to display during the Memorial, when available in the configured language.
+- ✨ **Playback Speed**: Added playback speed control with visual indicator, and manual reset. This feature is only visible if enabled in the advanced settings.
+- ✨ **Pinyin Songs**: Added a toggle for pinyin song substitution for meetings held in Chinese.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Yeartext Fonts**: Greatly improved yeartext font display for non-Latin languages.
+- 🛠️ **Memorial**: Added notification regarding Memorial songs, ensured the Memorial Welcome Video loops automatically, and properly highlight Memorial day in the calendar.
+- 🛠️ **Downloads**: Added `isDownloadComplete` helper and implemented additional logging and try-catches for publication downloads.
+- 🛠️ **Congregation Lookup**: Improved congregation lookup language matching for Chinese variants.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Icons Font**: Fixed an issue to ensure icons are properly displayed.
+- 🐞 **Section Repeat**: Fixed an issue to ensure sections are properly repeated when they only contain one item.
+- 🐞 **Error Handling**: Properly stringified Event errors and preserved caught errors in `getLocalFontPath`.
+- 🐞 **Cache Checking**: Fixed promise cache verification using the `in` operator instead of boolean coercion.
+- 🐞 **Documentation**: Resolved various docs fixes.
+
+### 🔧 Chores
+
+- 🔧 **Refactoring**: Fixed various circular dependencies across different modules and architectures.
+- 🔧 **Code Quality**: Addressed various SonarQube minor fixes.
+- 🔧 **Dependencies**: Applied various dependency updates.
+
+Thanks to @DarkCodeYG for the contributions and new features!
+
+## v26.2.4
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **JWPUB Extractor**: Improved robustness of the JWPUB extractor and added a new JWPUB identification helper.
+- 🛠️ **Date Parsing**: Enhanced reliability of last-used date parsing.
+- 🛠️ **UI**: Improved reactivity of the download refresh button.
+- 🛠️ **Media Window**: Unified and improved fade-in/out logic for the media window.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Security**: Implemented protection against potential zip bomb attacks.
+- 🐞 **Path Validation**: Tightened logic for shared data and application data path validation to prevent unnecessary errors.
+- 🐞 **Stability**: Prevented crashes when the shared data path is unavailable.
+- 🐞 **OBS Studio Integration**: Simplified and stabilized OBS Studio helper logic.
+- 🐞 **Error Handling**: Replaced noisy error captures with breadcrumbs in zip operations for better debugging.
+- 🐞 **Build Configuration**: Improved architecture support for macOS builds.
+
+### 🔧 Chores
+
+- 🔧 **Refactoring**: Performed extensive simplification of logic across various modules, including media playback, filesystem helpers, SQLite operations, and Electron session management.
+- 🔧 **CI/CD**: Added SonarQube analysis to GitHub Actions and updated build workflows for better security and reliability.
+
+## v26.2.3
+
+### 🐞 Bug Fixes
+
+- 🐞 **Media Window**: Prevented the media window from being aggressively moved or resized on single-screen setups and improved focus logic.
+- 🐞 **Zoom Integration**: Resolved a potential conflict between Zoom focus events and window fade-in animations.
+- 🐞 **Downloads**: Fixed an issue where publications could sometimes be included in the cache cleanup process while still being downloaded.
+- 🐞 **Remote Video**: Corrected the thumbnail logic in the remote video dialog.
+
+### 🔧 Chores
+
+- 🔧 **Refactoring**: Simplified logic for media export, FFmpeg handling, unzip operations, downloads, cache cleanup, and background music.
+- 🔧 **Logging**: Reduced log verbosity when moving the media window.
+
+## v26.2.2
+
+### 🐞 Bug Fixes
+
+- 🐞 **Media Window**: Fixed media window fullscreen logic.
+- 🐞 **Permissions**: Resolved various disk permission issues.
+- 🐞 **Updates**: Ignored 502 errors during update checks.
+
+### 🔧 Chores
+
+- 🔧 **Security**: Pinned third-party GitHub Actions for improved security.
+
+## v26.2.1
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Media Import**: Changed the flow to allow section selection after choosing media.
+- 🛠️ **Cache Management**: Added the _lff_ brochure to the frequently used publications list to prevent it from being removed when automatically clearing the cache.
+- 🛠️ **UI**: Added rounded corners to the section selection modal.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Playlist Import**: Fixed an issue where the order of files in imported JW Playlists was sometimes reversed.
+- 🐞 **Window Visibility**: Resolved an issue where toggling media window visibility was inconsistent and where the window sometimes faded out when it shouldn't.
+- 🐞 **Stability**: Prevented test file deletion failures from being fatal errors.
+- 🐞 **Logging**: Reduced unnecessary log verbosity when ensuring window visibility.
+
+### 🔧 Chores
+
+- 🔧 **Refactoring**: Simplified the logic for adding media from dialogs.
+- 🔧 **Debugging**: Added breadcrumbs to the unzip process to improve debugging capabilities.
+
+## v26.2.0
+
+### ✨ New Features
+
+- ✨ **Disk Space Check**: Added functionality to monitor and notify when disk space is low.
+
+### 🛡️ Security Fixes
+
+- 🛡️ **SQL Injection**: Hardened the application against potential SQL injection vulnerabilities by using parameterized queries.
+- 🛡️ **Exploit Prevention**: Addressed various identified potential security vulnerabilities.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Download Priority**: Implemented a better download priority system. Manual downloads and media for upcoming meetings are now prioritized over other background downloads.
+- 🛠️ **Window Management**: Greatly improved window position memory and behavior.
+- 🛠️ **Media Processing**: Improved unzip reliability by ensuring all files are flushed before completion and refined the error flow during decompression.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Media Logic**: Prevented capturing out-of-range paragraph numbers and added a fallback for tracks with unusual naming conventions.
+
+### 🔧 Chores
+
+- 🔧 **Code Quality**: Performed extensive improvements based on SonarQube analysis to enhance maintainability and reliability.
+- 🔧 **Refactoring**: Moved utility functions like `throttle` and `debounce` to vanilla JavaScript and reduced unnecessary log chattiness.
+
+## v26.1.8
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Camera Feed**: Only initialize camera feeds for sign language congregations or when a camera has already been selected.
+- 🛠️ **Stability**: Added detection and warning for video capture crashes and integrated additional error catchers.
+- 🛠️ **Icons**: Improved reliability with dynamic icon font URL loading and glyph mapping, which should resolve some icon display issues.
+- 🛠️ **Performance**: Implemented caching for database queries, font setters, and path lookups to improve responsiveness.
+- 🛠️ **S-34 Forms**: Clarified support for both S-34 and S-34mp JWPUB files.
+- 🛠️ **Logging**: Reduced log verbosity when appropriate.
+- 🛠️ **UI**: Improved banner display by removing "inline-actions" parameter for action buttons.
+- 🛠️ **Cleanup**: Improved logic for cleaning persisted stores and congregation records.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Security**: Hardened GitHub Actions by pinning third-party actions and preventing template injection in workflows.
+- 🐞 **Updates**: Fixed path checks for beta and disabled updates and resolved beta release fetching logic.
+- 🐞 **Stability**: Resolved zip file processing issues and improved decompression logging.
+
+### 🧪 Testing
+
+- 🧪 **Test Reliability**: Fixed and improved various tests, including updater and flaky forbidden imports tests.
+
+### 🔧 Chores
+
+- 🔧 **Refactoring**: Improved Electron process separation and refactored ESLint configurations for restricted imports.
+- 🔧 **CI/CD**: Enhanced beta release cleanup scripts and dependency management.
+
+## v26.1.7
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Memorial Dates**: Added the 2028 Memorial date.
+- 🛠️ **Video Downloads**: Prevented very long videos from being automatically downloaded during meeting programs.
+- 🛠️ **OBS Integration**: Prevented scene change events from being sent when OBS integration is disabled.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Fonts**: Updated font URL to ensure reliable loading of icon fonts.
+- 🐞 **Media Notifications**: Prevented "missing media" notifications for long-duration streamed items.
+- 🐞 **Media Processing**: Fixed a missing call to process media info.
+- 🐞 **Paragraph Numbers**: Resolved a minor glitch in paragraph number detection.
+- 🐞 **Stability**: Resolved a potential race condition during file decompression.
+- 🐞 **Auto-Updater**: Improved error handling by ignoring `EPERM` and other noisy update-related errors.
+- 🐞 **Website Presentation**: Fixed hidden native cursor behavior in the website window.
+- 🐞 **JWPUB Extractor**: Enhanced the reliability of processing `.jwpub` files.
+
+## v26.1.6
+
+### 🐞 Bug Fixes
+
+- 🐞 **Cache Folder Management**: Improved creation of machine-wide cache folders on Windows and failure handling for non-writable folders.
+- 🐞 **Error Handling**: Improved debug logging.
+
+## v26.1.5
+
+### ✨ New Features
+
+- ✨ **Memorial Media**: Automatically fetch Memorial banner and intro video in supported languages when the Memorial date is selected.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Memorial Date Logic**: Improved Memorial date calculation and logic.
+- 🛠️ **Meeting Schedule Sync**: Simplified congregation meeting date and time synchronization logic.
+- 🛠️ **Yeartext**: Removed unnecessary padding around the yeartext display.
+- 🔧 **Performance**: Refactored `moveMediaWindow` to further reduce IPC chattiness and improve performance.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Zoom Screen Share**: Added a small delay before triggering Zoom screen share to ensure the media window is fully visible and selectable in the Zoom window picker.
+- 🐞 **Media Playback Settings**: Prevented the play button from showing when media playback is disabled in settings.
+- 🐞 **Unavailable Media Tooltips**: Prevented playback tooltips from appearing on unavailable media items.
+- 🐞 **Cache Folder Management**: Fixed creation of machine-wide cache folders on Windows and added graceful failure handling for non-writable folders.
+- 🐞 **Item Ordering**: Fixed `addUniqueByIdToTop` to correctly add items to the top of media lists.
+- 🐞 **Race Conditions**: Resolved potential race conditions during file download and extraction.
+- 🐞 **Error Handling**: Prevented various auto-updater errors from being logged.
+- 🐞 **Cache Cleanup**: Improved cache path cleanup logic.
+
+### 🧪 Testing
+
+- 🧪 **Test Reliability**: Fixed and improved various tests.
+
+## v26.1.4
+
+### 🐞 Bug Fixes
+
+- 🐞 **Path Join**: Fixed a bug where path.join() was being fed non-strings erroneously.
+
+## v26.1.3
+
+### 🐞 Bug Fixes
+
+- 🐞 **Shared Data Path**: Fixed a bug where the shared data path was being used even when it was not available or writable.
+
+## v26.1.2
+
+### 🐞 Bug Fixes
+
+- 🐞 **Automatic Meeting Schedule Sync**: Fixed some bugs in implementation to prevent repeated or mistimed schedule syncronizations.
+
+## v26.1.1
+
+### 🐞 Bug Fixes
+
+- 🐞 **Automatic Meeting Schedule Sync**: Fixed some bugs in implementation to prevent repeated or mistimed schedule syncronizations.
+
+## v26.1.0
+
+### ✨ New Features
+
+- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
+- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
+- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Bundled Google Fonts**: Needed Google fonts are now bundled with the app to ensure consistent rendering even when offline.
+- 🛠️ **Improved Lookup Period Updates**: The lookup period is now properly updated after a future schedule change is enacted, ensuring accurate media fetching.
+- 🛠️ **Enhanced Paragraph Number Detection**: Improved the `getParagraphNumbers` function for more accurate extraction of paragraph references from media captions.
+- 🛠️ **Better Screen Listener Initialization**: Improved initialization of screen listeners to prevent potential crashes and duplicate observer registrations.
+- 🛠️ **Smarter Media Window Positioning**: The media window is now only moved when necessary, reducing unnecessary synthetic repositions.
+- 🛠️ **Enhanced Renderer Crash Handling**: Improved handling of renderer crashes for better application stability.
+- 🛠️ **User-Friendly Playlist Error Messages**: Added clear error messages when JW playlist files are invalid or corrupted.
+- 🛠️ **Reduced Auto-Updater Noise**: Auto-updater timeouts and transient errors are now ignored to reduce unnecessary error notifications.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Yeartext Display**: Fixed yeartext font weight fallback and removed English yeartext fallback to show empty yeartext if no appropriate translation is found.
+- 🐞 **Migration Fixes**: Corrected migration order and logic to ensure smooth upgrades between versions.
+- 🐞 **Smart Cache Cleaning**: Prevented greedy deletions during smart cache clean, especially on system-wide installations, and improved cache path updates during migration.
+- 🐞 **Meeting Schedule Sync UI**: The automatic meeting schedule sync option is now hidden if the congregation name has been modified to avoid confusion.
+- 🐞 **Network Error Handling**: Reduced redundant errors for ip-api.com service failures.
+- 🐞 **Sign Language Video Seeking**: Fixed seeking issues for certain sign language publications.
+- 🐞 **Linux Cursor Stability**: Resolved potential cursor crashes in Linux while mirroring the display.
+- 🐞 **Documentation**: Fixed Chinese Simplified (cmn-hans) documentation.
+
+### 🔧 Chores
+
+- 🔧 **App Data Cleanup**: Set `deleteAppDataOnUninstall` to true for cleaner uninstallation on Windows.
+
+## v25.12.2
+
+### ✨ New Features
+
+- ✨ **Zoom/Pan buttons**: Added the ability to press and hold zoom and pan buttons for continuous adjustment.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Zoom functionality**: Increased the maximum zoom factor to 10x.
+- 🛠️ **Architecture check**: Added a warning notification when running the 32-bit version of the app on a 64-bit operating system.
+- 🛠️ **Export filenames**: Included the song number in exported media filenames for better identification.
+- 🛠️ **Export cleanup**: Automatically prune expired folders from the auto-export directory.
+- 🛠️ **Sign Language**: Improved visual indicators for downloadable Bible verses in sign language.
+- 🛠️ **Setup Wizard**: Added descriptions to better represent media window appearance regarding sign language.
+- 🛠️ **Publications**: Added the Isaiah book to the list of frequently used publications.
+- 🛠️ **Performance**: Dynamically load the `ElectronDownloadManager` only when required.
+- 🛠️ **Setup Wizard**: Added a search/filter to the language picker.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Stability**: Improved media element cleanup to prevent `EXCEPTION_ACCESS_VIOLATION_READ` crashes and addressed a potential memory leak in the decompression process.
+- 🐞 **Zoom/Pan**: Resolved crosstalk between zoom/pan actions, prevented accidental zooming while scrolling, prevented panning beyond image borders, and removed unwanted animations.
+- 🐞 **Auto-updater**: Improved error handling in the auto-updater to reduce noise from transient network issues and suppressed expected error messages.
+- 🐞 **Media fetching**: Optimized the order of language attempts when fetching media and fixed sorting issues for certain media items.
+- 🐞 **Export**: Ensured the export process is triggered once files finish downloading and respected visual section order in exported media.
+- 🐞 **Downloads**: Attempt to cancel all active downloads if all windows are closed and prevented errors when the application is closing.
+- 🐞 **Notifications**: Temporary notifications are now dismissed when switching congregations and fixed color glitches.
+- 🐞 **UI**: Fixed the "Add extra media" button visibility in the Circuit Overseer section header and addressed minor button length issues in the media list view.
+- 🐞 **Bible Dialog**: Prevented duplicate chapter or verse numbers from appearing in the Bible dialog.
+- 🐞 **Network**: Fixed errors occurring when the ip-api service is unavailable.
+
+### 🔧 Chores
+
+- 🔧 **Internal cleanup**: Various internal code cleanups, dependency updates, and logic improvements for better reliability.
+
 ## v25.12.1
 
 ### 🐞 Bug Fixes

@@ -1,9 +1,7 @@
-import type { BrowserWindow } from 'electron';
-
-import { PLATFORM } from 'src-electron/constants';
+import { BrowserWindow } from 'electron';
+import { PLATFORM, PRODUCT_NAME } from 'src-electron/constants';
 import { cancelAllDownloads } from 'src-electron/main/downloads';
-import { setShouldQuit } from 'src-electron/main/session';
-import { throttleWithTrailing } from 'src-electron/main/utils';
+import { setAppQuitting, setShouldQuit } from 'src-electron/main/session';
 import {
   closeOtherWindows,
   createWindow,
@@ -11,71 +9,100 @@ import {
 } from 'src-electron/main/window/window-base';
 import {
   createMediaWindow,
-  moveMediaWindow,
+  moveMediaWindowThrottled,
 } from 'src-electron/main/window/window-media';
-import { moveTimerWindow } from 'src-electron/main/window/window-timer';
 
-export let mainWindow: BrowserWindow | null = null;
+export const mainWindowInfo = {
+  mainWindow: null as BrowserWindow | null,
+};
+
 let closeAttempts = 0;
-export let authorizedClose = false;
+let isCreatingMainWindow = false;
+
+export const authorizedClose = {
+  authorized: false,
+};
 
 /**
  * Creates the main window
  */
 export function createMainWindow() {
+  // Reset app quitting state
+  setAppQuitting(false);
+
   // If the window is already open, just focus it
-  if (mainWindow && !mainWindow.isDestroyed()) {
-    mainWindow.show();
-    return;
+  if (focusMainWindow() || isCreatingMainWindow) return;
+
+  isCreatingMainWindow = true;
+
+  try {
+    // Create the browser window
+    mainWindowInfo.mainWindow = createWindow('main');
+
+    mainWindowInfo.mainWindow.on('move', moveMediaWindowThrottled);
+    if (PLATFORM !== 'darwin')
+      mainWindowInfo.mainWindow.on('moved', moveMediaWindowThrottled); // On macOS, the 'moved' event is just an alias for 'move'
+
+    mainWindowInfo.mainWindow.on('close', (e) => {
+      if (
+        mainWindowInfo.mainWindow &&
+        (authorizedClose.authorized || closeAttempts > 2)
+      ) {
+        cancelAllDownloads();
+        closeOtherWindows(mainWindowInfo.mainWindow);
+      } else {
+        setShouldQuit(false);
+        e.preventDefault();
+        sendToWindow(mainWindowInfo.mainWindow, 'attemptedClose');
+        closeAttempts++;
+        setTimeout(() => {
+          closeAttempts = 0;
+        }, 10000);
+      }
+    });
+
+    mainWindowInfo.mainWindow.on('closed', () => {
+      mainWindowInfo.mainWindow = null;
+    });
+
+    createMediaWindow();
+  } finally {
+    isCreatingMainWindow = false;
+  }
+}
+
+export function focusMainWindow() {
+  const mainWindow = getExistingMainWindow();
+
+  if (!mainWindow) return false;
+
+  if (mainWindow.isMinimized()) mainWindow.restore();
+  mainWindow.show();
+  mainWindow.focus();
+
+  return true;
+}
+
+const getExistingMainWindow = () => {
+  if (mainWindowInfo.mainWindow && !mainWindowInfo.mainWindow.isDestroyed()) {
+    return mainWindowInfo.mainWindow;
   }
 
-  // Create the browser window
-  mainWindow = createWindow('main');
-
-  const moveMediaWindowThrottled = throttleWithTrailing(
-    () => moveMediaWindow(),
-    100,
-  );
-  const moveTimerWindowThrottled = throttleWithTrailing(
-    () => moveTimerWindow(),
-    100,
-  );
-  mainWindow.on('move', () => {
-    moveMediaWindowThrottled();
-    moveTimerWindowThrottled();
-  });
-  if (PLATFORM !== 'darwin')
-    mainWindow.on('moved', () => {
-      moveMediaWindowThrottled();
-      moveTimerWindowThrottled();
-    }); // On macOS, the 'moved' event is just an alias for 'move'
-
-  mainWindow.on('close', (e) => {
-    if (mainWindow && (authorizedClose || closeAttempts > 2)) {
-      cancelAllDownloads();
-      closeOtherWindows(mainWindow);
-    } else {
-      setShouldQuit(false);
-      e.preventDefault();
-      sendToWindow(mainWindow, 'attemptedClose');
-      closeAttempts++;
-      setTimeout(() => {
-        closeAttempts = 0;
-      }, 10000);
-    }
+  const existingWindow = BrowserWindow.getAllWindows().find((window) => {
+    return !window.isDestroyed() && window.getTitle() === PRODUCT_NAME;
   });
 
-  mainWindow.on('closed', () => {
-    mainWindow = null;
-  });
+  if (existingWindow) {
+    mainWindowInfo.mainWindow = existingWindow;
+  }
 
-  createMediaWindow();
-}
+  return existingWindow ?? null;
+};
 
 /**
  * Toggles the authorizedClose state
  * @param authorized Whether the window is authorized to close
  */
 export function toggleAuthorizedClose(authorized: boolean) {
-  authorizedClose = authorized;
+  authorizedClose.authorized = authorized;
 }

@@ -25,7 +25,7 @@ O código fonte para este aplicativo está disponível para todos examinarem e v
 M3 suporta Windows, macOS e Linux:
 
 - **Windows**: Windows 10 e posterior (versões de 64-bit e 32-bit disponíveis)
-- **macOS**: macOS 10.15 (Catalina) e posterior (Suporte ao Intel e à Apple Silicon)
+- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
 - **Linux**: Distribuições Linux mais modernas (AppImage format)
 
 ### :globe_with_meridians: O M3 funciona no meu idioma? {#language-support}
@@ -73,7 +73,7 @@ Yes! M³ allows you to:
 - Download media for upcoming meetings automatically
 - Import custom media for any date
 
-### :open_file_folder: How do I import my own media files? {#import-media}
+### :file_folder: What is media auto-export? {#faq-media-export} :file_folder: What is media auto-export?
 
 You can import custom media in several ways:
 
@@ -170,7 +170,7 @@ Folder monitoring allows you to:
 1. Select a folder to watch for new files
 2. Automatically import new media files that are synced with cloud storage like Dropbox or OneDrive
 
-### :file_folder: What is media auto-export? {#faq-media-export}
+### :open_file_folder: How do I import my own media files? {#import-media}
 
 Media auto-export automatically:
 
@@ -292,7 +292,7 @@ Thank you for your interest in supporting the project! However, in the spirit of
 M³ is designed to work on a wide range of operating systems:
 
 - **Windows**: Windows 10 e posterior (versões de 64-bit e 32-bit disponíveis)
-- **macOS**: macOS 10.15 (Catalina) e posterior (Suporte ao Intel e à Apple Silicon)
+- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
 - **Linux**: Distribuições Linux mais modernas (AppImage format)
 
 M³ has the following hardware requirements:

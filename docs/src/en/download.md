@@ -50,7 +50,6 @@ onMounted(() => {
   const isMac = /Mac OS X|Macintosh|MacIntel/i.test(ua) || /Mac/i.test(platform)
   const isLinux = /Linux/i.test(ua) && !isAndroid(ua)
 
-  const isArm = /arm64|aarch64|Apple\s*Silicon/i.test(ua)
   const isIa32 = /\b(ia32|x86)\b/i.test(ua)
 
   function isAndroid(s: string) { return /Android/i.test(s) }
@@ -62,8 +61,7 @@ onMounted(() => {
   }
 
   if (isMac) {
-    const href = isArm ? downloads.macArm : downloads.macIntel
-    recommended.value = { href, label: isArm ? msg.value.macArm : msg.value.macIntel }
+    recommended.value = { href: downloads.macUniversal, label: msg.value.macUniversal }
     return
   }
 
@@ -96,8 +94,7 @@ onMounted(() => {
 
 ## macOS
 
-- **Apple Silicon (arm64) (.dmg)**: <a :href="downloads.macArm">Download</a>
-- **Intel (x64) (.dmg)**: <a :href="downloads.macIntel">Download</a>
+- **macOS (Universal) (.dmg)**: <a :href="downloads.macUniversal">Download</a>
 
 ## Linux
 

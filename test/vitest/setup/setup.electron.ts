@@ -6,7 +6,7 @@ vi.mock('src-electron/main/utils', async (importOriginal) => {
   const mod = await importOriginal<object>();
   return {
     ...mod,
-    captureElectronError: vi.fn(async (error: Error | string | unknown) => {
+    captureElectronError: vi.fn(async (error: unknown) => {
       if (
         error instanceof Error &&
         error.message === 'Function not implemented.'
@@ -21,7 +21,7 @@ vi.mock('src-electron/preload/log', async (importOriginal) => {
   const mod = await importOriginal<object>();
   return {
     ...mod,
-    capturePreloadError: vi.fn(async (error: Error | string | unknown) => {
+    capturePreloadError: vi.fn(async (error: unknown) => {
       if (
         error instanceof Error &&
         error.message === 'Function not implemented.'

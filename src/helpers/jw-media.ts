@@ -24,17 +24,25 @@ import {
   FEB_2023,
   FOOTNOTE_TARGET_PARAGRAPH,
   LAST_SONG_ORDINAL,
+  LONG_MEDIA_DURATION,
   MAX_SONGS,
 } from 'src/constants/jw';
 import mepslangs from 'src/constants/mepslangs';
 import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { exportAllDays } from 'src/helpers/export-media';
-import { getSubtitlesUrl, getThumbnailUrl } from 'src/helpers/fs';
 import {
-  decompressJwpub,
+  getSubtitlesUrl,
+  getThumbnailUrl,
+  registerMediaProviders,
+} from 'src/helpers/fs';
+import {
   getMediaFromJwPlaylist,
+  registerMediaPlaybackProviders,
+  unzipJwpub,
 } from 'src/helpers/mediaPlayback';
+import { updateLastUsedDate } from 'src/helpers/usage';
+import { log } from 'src/shared/vanilla';
 import { fetchMediaItems, fetchPubMediaLinks, fetchRaw } from 'src/utils/api';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import {
@@ -61,12 +69,15 @@ import {
   isVideo,
 } from 'src/utils/media';
 import {
+  addFullFilePathToMultimediaItem,
   findDb,
   getDocumentExtractItems,
   getDocumentMultimediaItems,
   getMediaVideoMarkers,
   getMultimediaMepsLangs,
   getPublicationInfoFromDb,
+  registerSqliteProviders,
+  tableExists,
 } from 'src/utils/sqlite';
 import { timeToSeconds } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -79,18 +90,55 @@ import {
 import { createMeetingSections } from './media-sections';
 
 const {
-  decompress,
   downloadFile,
   executeQuery,
   fileUrlToPath,
   fs,
+  isUsablePath: isUsablePathRaw,
   path,
   pathToFileURL,
   readdir,
   setElectronUrlVariables,
-} = window.electronApi;
-const { copy, ensureDir, exists, pathExists, remove, stat } = fs;
+  unzip,
+} = globalThis.electronApi;
+const { copy, exists, pathExists, remove, stat } = fs;
 const { basename, changeExt, dirname, extname, join } = path;
+
+const isUsablePathCache = new Map<string, boolean>();
+const inFlight = new Map<string, Promise<boolean>>();
+
+const memorialMediaCache = new Map<
+  JwLangCode,
+  { bg: string; introVideos: MultimediaItem[] }
+>();
+
+const memorialMediaInFlight = new Map<
+  JwLangCode,
+  Promise<undefined | { bg: string; introVideos: MultimediaItem[] }>
+>();
+
+const isUsablePath = async (path: string) => {
+  if (isUsablePathCache.has(path)) {
+    return isUsablePathCache.get(path);
+  }
+
+  if (!inFlight.has(path)) {
+    const promise = isUsablePathRaw(path)
+      .then((result) => {
+        isUsablePathCache.set(path, result);
+        inFlight.delete(path);
+        return result;
+      })
+      .catch((err) => {
+        inFlight.delete(path);
+        throw err;
+      });
+
+    inFlight.set(path, promise);
+  }
+
+  return inFlight.get(path);
+};
 
 export const getJwLangCode = (mepsId?: number): JwLangCode | null => {
   if (mepsId === undefined) return null;
@@ -111,6 +159,11 @@ export const copyToDatedAdditionalMedia = async (
   const jwStore = useJwStore();
   const datedAdditionalMediaDir =
     await currentStateStore.getDatedAdditionalMediaDirectory();
+
+  await updateLastUsedDate(
+    datedAdditionalMediaDir,
+    currentStateStore.selectedDate,
+  );
 
   try {
     if (!filepathToCopy || !(await exists(filepathToCopy))) return '';
@@ -195,10 +248,11 @@ export const addToAdditionMediaMapFromPath = async (
           pathToFileURL(additionalFilePath),
       );
     }
-    console.log('🔄 [addToAdditionMediaMapFromPath] Adding media to section:', {
-      section,
-      uniqueId,
-    });
+    log(
+      `🔄 [addToAdditionMediaMapFromPath] Adding media to section: ${section}`,
+      'mediaProcessing',
+      'info',
+    );
     jwStore.addToAdditionMediaMap(
       [
         {
@@ -283,10 +337,10 @@ export const addJwpubDocumentMediaToFiles = async (
         );
       }
     }
-    await processMissingMediaInfo(
-      filteredMultimediaItems,
-      meetingDate || currentStateStore.selectedDate,
-    );
+    await processMissingMediaInfo({
+      allMedia: filteredMultimediaItems,
+      meetingDate: meetingDate || currentStateStore.selectedDate,
+    });
     const mediaItems = currentStateStore.selectedDateObject
       ? await dynamicMediaMapper(
           filteredMultimediaItems,
@@ -309,7 +363,7 @@ export const addJwpubDocumentMediaToFiles = async (
 export const downloadFileIfNeeded = async ({
   dir,
   filename,
-  lowPriority = false,
+  lowPriority,
   meetingDate,
   size,
   url,
@@ -321,84 +375,125 @@ export const downloadFileIfNeeded = async ({
     };
   }
 
-  const currentStateStore = useCurrentStateStore();
-  await ensureDir(dir);
-  if (!filename) filename = basename(url);
-  const { default: sanitize } = await import('sanitize-filename');
-  filename = sanitize(filename);
-  const destinationPath = join(dir, filename);
-  const remoteSize: number =
-    size ||
-    (await fetchRaw(url, { method: 'HEAD' })
-      .then((response) => {
-        return +(response?.headers?.get('content-length') || 0);
-      })
-      .catch(() => 0));
-  if (await exists(destinationPath)) {
-    const statistics = await stat(destinationPath);
-    const localSize = statistics.size;
-    if (localSize === remoteSize) {
-      return {
-        new: false,
-        path: destinationPath,
-      };
+  let destinationPath = '';
+
+  try {
+    const currentStateStore = useCurrentStateStore();
+    const dirIsUsable = await isUsablePath(dir);
+    if (!dirIsUsable) throw new Error('Unusable path');
+    if (!filename) filename = basename(url);
+    const { default: sanitize } = await import('sanitize-filename');
+    filename = sanitize(filename);
+    destinationPath = join(dir, filename);
+    const remoteSize: number =
+      size ||
+      (await fetchRaw(url, { method: 'HEAD' }, true)
+        .then((response) => {
+          return +(response?.headers?.get('content-length') || 0);
+        })
+        .catch(() => 0));
+    if (await exists(destinationPath)) {
+      const statistics = await stat(destinationPath);
+      const localSize = statistics.size;
+      if (remoteSize > 0 && localSize === remoteSize) {
+        return {
+          new: false,
+          path: destinationPath,
+        };
+      }
     }
-  }
-  const downloadId = await downloadFile(url, dir, filename, lowPriority);
+    const downloadId = await downloadFile(url, dir, filename, lowPriority);
 
-  // Seed meeting date on progress right away so UI can group even before onDownloadStarted
-  if (downloadId) {
-    const seed = currentStateStore.downloadProgress[downloadId] || {};
-    currentStateStore.downloadProgress[downloadId] = {
-      ...(seed as Record<string, unknown>),
-      filename,
-      meetingDate:
-        (seed as { meetingDate?: string })?.meetingDate || meetingDate,
-    } as never;
-  }
+    // Seed meeting date on progress right away so UI can group even before onDownloadStarted
+    if (downloadId) {
+      const seed = currentStateStore.downloadProgress[downloadId] || {};
+      currentStateStore.downloadProgress[downloadId] = {
+        ...(seed as Record<string, unknown>),
+        filename,
+        meetingDate:
+          (seed as { meetingDate?: string })?.meetingDate || meetingDate,
+      } as never;
+    }
 
-  const result = await new Promise<DownloadedFile>((resolve) => {
-    const interval = setInterval(() => {
-      if (!downloadId) {
-        clearInterval(interval);
-        resolve({
-          error: true,
-          path: destinationPath,
-        });
-        return;
-      }
-      if (currentStateStore.downloadProgress[downloadId]?.complete) {
-        clearInterval(interval);
-        resolve({
-          new: true,
-          path: destinationPath,
-        });
-      }
-    }, 500); // Check every 500ms
-  });
-  return result;
+    const result = await new Promise<DownloadedFile>((resolve) => {
+      const interval = setInterval(() => {
+        if (!downloadId) {
+          clearInterval(interval);
+          resolve({
+            error: true,
+            path: destinationPath,
+          });
+          return;
+        }
+        if (currentStateStore.downloadProgress[downloadId]?.complete) {
+          clearInterval(interval);
+          // Small delay to ensure disk flush
+          setTimeout(async () => {
+            if (await exists(destinationPath)) {
+              const statistics = await stat(destinationPath);
+              if (statistics.size > 0) {
+                resolve({
+                  new: true,
+                  path: destinationPath,
+                });
+                return;
+              }
+            }
+            resolve({
+              error: true,
+              path: destinationPath,
+            });
+          }, 200);
+        }
+      }, 500); // Check every 500ms
+    });
+    return result;
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          dir,
+          filename,
+          lowPriority,
+          meetingDate,
+          name: 'downloadFileIfNeeded',
+          size,
+          url,
+        },
+      },
+    });
+    return {
+      error: true,
+      path: destinationPath,
+    };
+  }
 };
 
 export const fetchMedia = async () => {
   const currentStateStore = useCurrentStateStore();
   const { getMeetingType } = currentStateStore;
-  console.group('📥 Media Fetching');
   try {
     const currentStateStore = useCurrentStateStore();
     if (
       !currentStateStore.currentCongregation ||
       !!currentStateStore.currentSettings?.disableMediaFetching
     ) {
-      console.log('⏭️ Media fetching disabled or no congregation');
-      console.groupEnd();
+      log(
+        '⏭️ Media fetching disabled or no congregation',
+        'mediaFetching',
+        'info',
+      );
       return;
     }
 
     const jwStore = useJwStore();
 
     if (!jwStore.urlVariables.base || !jwStore.urlVariables.mediator) {
-      console.log('⚠️ Missing URL variables for media fetching');
-      console.groupEnd();
+      log(
+        '⚠️ Missing URL variables for media fetching',
+        'mediaFetching',
+        'warn',
+      );
       return;
     }
 
@@ -410,9 +505,7 @@ export const fetchMedia = async () => {
           const dateKey = new Date(day.date).toISOString().split('T')[0]; // Use yyyy-mm-dd format as key
           if (!dateKey) continue;
 
-          if (!dayMap.has(dateKey)) {
-            dayMap.set(dateKey, day);
-          } else {
+          if (dayMap.has(dateKey)) {
             const existing = dayMap.get(dateKey);
             if (!existing) continue;
 
@@ -423,6 +516,8 @@ export const fetchMedia = async () => {
             if (preferCurrent) {
               dayMap.set(dateKey, day);
             }
+          } else {
+            dayMap.set(dateKey, day);
           }
         }
 
@@ -438,21 +533,19 @@ export const fetchMedia = async () => {
     const uniqueDays = dedupeDays(rawDays);
 
     if (uniqueDays.length !== rawDays.length) {
-      console.group('🔄 Day Deduplication');
-      console.log(
+      log(
         `📊 Reduced days from ${rawDays.length} to ${uniqueDays.length}`,
+        'mediaFetching',
+        'info',
       );
       jwStore.lookupPeriod[currentStateStore.currentCongregation] = uniqueDays;
-      console.groupEnd();
     }
 
-    console.group('🔍 Day Analysis');
+    log(`🔍 Day Analysis`, 'mediaFetching', 'info');
     const meetingsToFetch = (
       await Promise.all(
         jwStore.lookupPeriod[currentStateStore.currentCongregation]?.map(
           async (day, index) => {
-            // console.log(`\nChecking day at index ${index}:`, day);
-
             // Skip non-meeting days entirely
             if (!getMeetingType(day.date)) {
               return null;
@@ -463,8 +556,10 @@ export const fetchMedia = async () => {
               currentStateStore.currentSettings?.meteredConnection &&
               getDateDiff(day.date, new Date(), 'days') > 1
             ) {
-              console.log(
+              log(
                 `Skipping day ${index + 1} - ${day.date.toISOString().split('T')[0]} because metered connection is enabled and target date is after tomorrow`,
+                'mediaFetching',
+                'info',
               );
               return null;
             }
@@ -473,13 +568,16 @@ export const fetchMedia = async () => {
             const hasIncompleteOrErrorMeeting =
               getMeetingType(day.date) && day.status !== 'complete';
             if (hasIncompleteOrErrorMeeting) {
-              console.group(
+              log(
                 `📅 Day ${index + 1} - ${day.date.toISOString().split('T')[0]}`,
+                'mediaFetching',
+                'info',
               );
-              console.log('🔍 Incomplete or error meeting detected:', {
-                meeting: getMeetingType(day.date),
-                status: day.status,
-              });
+              log(
+                `🔍 Incomplete or error meeting detected: ${getMeetingType(day.date)} - ${day.status}`,
+                'mediaFetching',
+                'info',
+              );
             }
 
             // Condition 2: Missing media file
@@ -500,11 +598,10 @@ export const fetchMedia = async () => {
                 const isMissing = shouldCheckFile && !fileExists;
 
                 if (isMissing) {
-                  console.log(
-                    `    ❌ Missing media file at media[${mediaIndex}]`,
-                    {
-                      media,
-                    },
+                  log(
+                    `    ❌ Missing media file at media[${mediaIndex}]: ${media.fileUrl}`,
+                    'mediaFetching',
+                    'error',
                   );
                 }
 
@@ -519,11 +616,11 @@ export const fetchMedia = async () => {
             const hasDuplicates = uniqueIds.length > new Set(uniqueIds).size;
 
             if (hasDuplicates) {
-              console.log('⚠️ Duplicate uniqueIds found:', {
-                totalCount: uniqueIds.length,
-                uniqueCount: new Set(uniqueIds).size,
-                uniqueIds,
-              });
+              log(
+                `⚠️ Duplicate uniqueIds found: ${uniqueIds.length} total, ${new Set(uniqueIds).size} unique`,
+                'mediaFetching',
+                'error',
+              );
             }
 
             // Summary for this day
@@ -533,13 +630,11 @@ export const fetchMedia = async () => {
               hasDuplicates;
 
             if (shouldRefresh) {
-              console.log('✅ Day to be refreshed:', {
-                hasDuplicates,
-                hasIncompleteOrErrorMeeting,
-                hasMissingMediaFile,
-                index,
-              });
-              console.groupEnd();
+              log(
+                `✅ Day ${index + 1} - ${day.date.toISOString().split('T')[0]} to be refreshed`,
+                'mediaFetching',
+                'info',
+              );
             }
 
             return shouldRefresh ? day : null;
@@ -547,72 +642,92 @@ export const fetchMedia = async () => {
         ) || [],
       )
     ).filter((day) => !!day);
-    console.groupEnd();
 
     meetingsToFetch.forEach((day) => {
       day.status = null;
     });
-    if (!queues.meetings[currentStateStore.currentCongregation]) {
+    if (queues.meetings[currentStateStore.currentCongregation]) {
+      queues.meetings[currentStateStore.currentCongregation]?.start();
+    } else {
       const { default: PQueue } = await import('p-queue');
       queues.meetings[currentStateStore.currentCongregation] = new PQueue({
         concurrency: 2,
       });
-    } else {
-      queues.meetings[currentStateStore.currentCongregation]?.start();
+
+      const q = queues.meetings[currentStateStore.currentCongregation];
+      if (q) {
+        const updateCount = () => {
+          currentStateStore.fetchingMeetingsCount = q.size + q.pending;
+        };
+        q.on('add', updateCount);
+        q.on('active', updateCount);
+        q.on('completed', updateCount);
+        q.on('idle', () => {
+          currentStateStore.fetchingMeetingsCount = 0;
+        });
+      }
     }
     const queue = queues.meetings[currentStateStore.currentCongregation];
     if (meetingsToFetch.length) {
-      console.group('📥 Media Processing');
-      console.log('📋 Meetings to process:', {
-        count: meetingsToFetch.length,
-        meetings: meetingsToFetch,
-      });
+      log(
+        `📋 Meetings to process: ${meetingsToFetch.length}`,
+        'mediaFetching',
+        'info',
+      );
     }
     for (const day of meetingsToFetch) {
       try {
         queue
           ?.add(async () => {
             const meetingType = getMeetingType(day.date);
-            console.group(
-              `📅 Processing ${meetingType === 'we' ? 'Weekend' : meetingType === 'mw' ? 'Midweek' : 'Unknown'} Meeting - ${day.date.toISOString().split('T')[0]}`,
+            const meetingTypeDescription = (meetingType: null | string) => {
+              switch (meetingType) {
+                case 'mw':
+                  return 'Midweek';
+                case 'we':
+                  return 'Weekend';
+                default:
+                  return 'Unknown';
+              }
+            };
+            log(
+              `📅 Processing ${meetingTypeDescription(meetingType)} Meeting - ${day.date.toISOString().split('T')[0]}`,
+              'mediaFetching',
+              'info',
             );
             if (!day) {
-              console.log('⚠️ No day data');
-              console.groupEnd();
+              log('⚠️ No day data', 'mediaFetching', 'warn');
               return;
             }
             const dayDate = day.date;
             if (!dayDate) {
               day.status = 'error';
-              console.log('❌ No date for day');
-              console.groupEnd();
+              log('❌ No date for day', 'mediaFetching', 'error');
               return;
             }
             let fetchResult = null;
             if (meetingType === 'we') {
-              console.log('🌅 Fetching weekend meeting media');
+              log('🌅 Fetching weekend meeting media', 'mediaFetching', 'info');
               fetchResult = await getWeMedia(dayDate);
             } else if (meetingType === 'mw') {
-              console.log('🌆 Fetching midweek meeting media');
+              log('🌆 Fetching midweek meeting media', 'mediaFetching', 'info');
               fetchResult = await getMwMedia(dayDate);
             }
             if (fetchResult) {
-              console.log('✅ Media fetched successfully');
+              log('✅ Media fetched successfully', 'mediaFetching', 'info');
               // Get all media from all sections for replacement
               if (!day.mediaSections) day.mediaSections = [];
               createMeetingSections(day);
               replaceMissingMediaByPubMediaId(day, fetchResult.media);
               day.status = fetchResult.error ? 'error' : 'complete';
             } else {
-              console.log('❌ Failed to fetch media');
+              log('❌ Failed to fetch media', 'mediaFetching', 'error');
               day.status = 'error';
             }
-            console.groupEnd();
           })
           .catch((error) => {
-            console.log('❌ Error during media processing:', error);
+            log('❌ Error during media processing:', 'mediaFetching', 'error');
             day.status = 'error';
-            console.groupEnd();
             throw error;
           });
       } catch (error) {
@@ -621,15 +736,12 @@ export const fetchMedia = async () => {
       }
     }
     await queue?.onIdle();
-    console.log('✅ All media processing completed');
+    log('✅ All media processing completed', 'mediaFetching', 'info');
     queue?.clear();
-    console.groupEnd();
     exportAllDays();
   } catch (error) {
-    console.log('❌ Error in fetchMedia:', error);
+    log('❌ Error in fetchMedia:', 'mediaFetching', 'error');
     errorCatcher(error);
-  } finally {
-    console.groupEnd(); // Close main Media Fetching group
   }
 };
 
@@ -640,52 +752,24 @@ export const getDbFromJWPUB = async (
   try {
     const jwpub = await downloadJwpub(publication, meetingDate);
     if (jwpub.error) return null;
-    const publicationDirectory = await getPublicationDirectory(
-      publication,
-      useCurrentStateStore().currentSettings?.cacheFolder,
-    );
+    const publicationDirectory = await getPublicationDirectory(publication);
     if (jwpub.new || !(await findDb(publicationDirectory))) {
-      await decompressJwpub(jwpub.path, publicationDirectory);
+      await unzipJwpub(jwpub.path, publicationDirectory);
     }
     const dbFile = await findDb(publicationDirectory);
-    if (!dbFile) {
-      return null;
-    } else {
-      return dbFile;
-    }
+    return dbFile ?? null;
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          args: { meetingDate, publication },
+          name: 'getDbFromJWPUB',
+        },
+      },
+    });
     return null;
   }
 };
-
-export async function addFullFilePathToMultimediaItem(
-  multimediaItem: MultimediaItem,
-  publication: PublicationFetcher,
-): Promise<MultimediaItem> {
-  try {
-    const paths = [
-      'FilePath',
-      'LinkedPreviewFilePath',
-      'CoverPictureFilePath',
-    ] as const;
-
-    const baseDir = await getPublicationDirectory(
-      publication,
-      useCurrentStateStore().currentSettings?.cacheFolder,
-    );
-
-    for (const path of paths) {
-      if (multimediaItem[path]) {
-        multimediaItem[path] = join(baseDir, multimediaItem[path]);
-      }
-    }
-    return multimediaItem;
-  } catch (error) {
-    errorCatcher(error);
-    return multimediaItem;
-  }
-}
 
 export const resolveFilePath = async (
   targetPath: string,
@@ -748,10 +832,7 @@ const getStudyBible = async () => {
       pub: 'nwtsty',
     };
     const currentStateStore = useCurrentStateStore();
-    const nwtStyDb_E_Promise = getDbFromJWPUB(
-      nwtStyPublication_E,
-      currentStateStore.selectedDate,
-    );
+    const nwtStyDb_E_Promise = getDbFromJWPUB(nwtStyPublication_E);
 
     const languages = [
       ...new Set([
@@ -776,10 +857,7 @@ const getStudyBible = async () => {
         langwritten,
         pub: 'nwtsty',
       };
-      nwtStyDb = await getDbFromJWPUB(
-        nwtStyPublication,
-        currentStateStore.selectedDate,
-      );
+      nwtStyDb = await getDbFromJWPUB(nwtStyPublication);
       if (nwtStyDb) break;
     }
 
@@ -799,10 +877,7 @@ const getStudyBible = async () => {
         langwritten,
         pub: 'nwt',
       };
-      nwtDb = await getDbFromJWPUB(
-        nwtPublication,
-        currentStateStore.selectedDate,
-      );
+      nwtDb = await getDbFromJWPUB(nwtPublication);
       if (nwtDb) break;
     }
 
@@ -909,8 +984,8 @@ export const getStudyBibleBooks: () => Promise<
             BibleBookId: localItem.ChapterNumber,
             CoverPictureFilePath: '',
             FilePath: '',
-            // Add other necessary default properties to avoid crashes
-            MepsLanguageIndex: 0, // Default to 0? Or undefined?
+            // Add other necessary default properties
+            MepsLanguageIndex: 0, // Default to English
             Title: localItem.Title,
           } as MultimediaItem);
         }
@@ -934,7 +1009,7 @@ export const getStudyBibleBooks: () => Promise<
       }>(nwtDb, chapterCountsQuery);
 
       chapterCountsNwt.forEach((nwtCount) => {
-        if (!chapterCounts.find((c) => c.BookNumber === nwtCount.BookNumber)) {
+        if (!chapterCounts.some((c) => c.BookNumber === nwtCount.BookNumber)) {
           chapterCounts.push(nwtCount);
         }
       });
@@ -1028,14 +1103,18 @@ export const getStudyBibleMedia = async (
             Multimedia AS CoverMultimedia ON CoverMultimedia.MultimediaId = m.LinkMultimediaId
         WHERE 
             m.CategoryType NOT IN (9, 10, 17)
-      ${bookNumber ? `AND bc.BookNumber = ${bookNumber}` : ''}
-      ${chapterNumber ? `AND bc.ChapterNumber = ${chapterNumber}` : ''}
+      ${bookNumber === undefined ? '' : `AND bc.BookNumber = ?`}
+      ${chapterNumber === undefined ? '' : `AND bc.ChapterNumber = ?`}
       ORDER BY bc.ChapterNumber, bv.BibleVerseId
     `;
 
+    const bibleBookMediaItemsParams = [bookNumber, chapterNumber].filter(
+      (v) => v !== undefined,
+    );
     const bibleBookMediaItems = executeQuery<MultimediaItem>(
       nwtStyDb,
       bibleBookMediaItemsQuery,
+      bibleBookMediaItemsParams,
     );
 
     // Fetch "Related" items (Introduction, etc.)
@@ -1060,13 +1139,16 @@ export const getStudyBibleMedia = async (
           Multimedia AS CoverMultimedia ON CoverMultimedia.MultimediaId = m.LinkMultimediaId
       WHERE 
           m.CategoryType NOT IN (9, 10, 17)
-    ${bookNumber ? `AND d.ChapterNumber = ${bookNumber}` : ''}
+    ${bookNumber === undefined ? '' : `AND d.ChapterNumber = ?`}
     ORDER BY m.MultimediaId
     `;
 
+    const bibleBookRelatedMediaItemsParams =
+      bookNumber === undefined ? [] : [bookNumber];
     const bibleBookRelatedMediaItems = executeQuery<MultimediaItem>(
       nwtStyDb,
       bibleBookRelatedMediaItemsQuery,
+      bibleBookRelatedMediaItemsParams,
     );
 
     let filteredMediaItems: MultimediaItem[] = [];
@@ -1086,22 +1168,27 @@ export const getStudyBibleMedia = async (
       const englishBibleBookMediaItems = executeQuery<MultimediaItem>(
         nwtStyDb_E,
         bibleBookMediaItemsQuery,
+        bibleBookMediaItemsParams,
       );
 
       const englishBibleBookRelatedMediaItems = executeQuery<MultimediaItem>(
         nwtStyDb_E,
         bibleBookRelatedMediaItemsQuery,
+        bibleBookRelatedMediaItemsParams,
       );
 
-      const englishItems =
-        chapterNumber === 0
-          ? englishBibleBookRelatedMediaItems
-          : chapterNumber && chapterNumber > 0
-            ? englishBibleBookMediaItems
-            : [
-                ...englishBibleBookMediaItems,
-                ...englishBibleBookRelatedMediaItems,
-              ];
+      let englishItems;
+
+      if (chapterNumber === 0) {
+        englishItems = englishBibleBookRelatedMediaItems;
+      } else if (chapterNumber && chapterNumber > 0) {
+        englishItems = englishBibleBookMediaItems;
+      } else {
+        englishItems = [
+          ...englishBibleBookMediaItems,
+          ...englishBibleBookRelatedMediaItems,
+        ];
+      }
 
       englishItems.forEach((englishItem) => {
         const styItem = filteredMediaItems.find(
@@ -1120,41 +1207,6 @@ export const getStudyBibleMedia = async (
       });
     }
 
-    // // Get all linked multimedia (thumbnails) for the current items
-    // const multimediaIds = filteredMediaItems.map((item) => item.MultimediaId);
-    // const linkedMultimediaQuery = `
-    //   SELECT MultimediaId, FilePath, LinkMultimediaId
-    //   FROM Multimedia
-    //   WHERE LinkMultimediaId IN (${multimediaIds.join(',')})
-    // `;
-
-    // const linkedMultimedia = multimediaIds.length
-    //   ? executeQuery<MultimediaItem>(nwtStyDb, linkedMultimediaQuery)
-    //   : [];
-
-    // // Create a map of video MultimediaId -> thumbnail FilePath
-    // const thumbnailMap = new Map<number, string>();
-    // linkedMultimedia.forEach((thumb) => {
-    //   if (thumb.LinkMultimediaId && thumb.FilePath) {
-    //     thumbnailMap.set(thumb.LinkMultimediaId, thumb.FilePath);
-    //   }
-    // });
-
-    // // Also get English thumbnails if needed
-    // if (nwtStyDb_E && nwtStyDb_E !== nwtStyDb && multimediaIds.length) {
-    //   const linkedMultimediaE = executeQuery<MultimediaItem>(
-    //     nwtStyDb_E,
-    //     linkedMultimediaQuery,
-    //   );
-    //   linkedMultimediaE.forEach((thumb) => {
-    //     if (thumb.LinkMultimediaId && thumb.FilePath) {
-    //       // Only add if not already in map (target language takes priority)
-    //       if (!thumbnailMap.has(thumb.LinkMultimediaId)) {
-    //         thumbnailMap.set(thumb.LinkMultimediaId, thumb.FilePath);
-    //       }
-    //     }
-    //   });
-    // }
     return {
       bibleBookDocumentsEndAtId: 0, // Not really needed anymore with new logic
       bibleBookDocumentsStartAtId: 0,
@@ -1162,36 +1214,28 @@ export const getStudyBibleMedia = async (
         filteredMediaItems
           // .filter((item) => !item.LinkMultimediaId) // Exclude images that are thumbnails
           .map(async (item) => {
+            const publication =
+              item.MepsLanguageIndex === 0
+                ? nwtStyPublication_E
+                : nwtStyPublication;
+
+            if (!item.KeySymbol && publication?.pub) {
+              item.KeySymbol = publication.pub;
+            }
+
             const isVideo =
               item.CategoryType === -1 || item.MimeType?.includes('video');
 
-            item = await addFullFilePathToMultimediaItem(
-              item,
-              item.MepsLanguageIndex === 0
-                ? nwtStyPublication_E
-                : (nwtStyPublication as PublicationFetcher),
-            );
+            item = await addFullFilePathToMultimediaItem(item, publication);
 
             // For videos, don't cache FilePath - we'll download on demand
             // For images, resolve the file path
             const updatedItem = isVideo ? { ...item, FilePath: '' } : item;
-
-            // // If this item has a linked thumbnail, resolve its path
-            // if (item.MultimediaId && thumbnailMap.has(item.MultimediaId)) {
-            //   const thumbPath = thumbnailMap.get(item.MultimediaId);
-            //   if (thumbPath) {
-            //     const baseDir = await getPublicationDirectory(
-            //       item.MepsLanguageIndex === 0
-            //         ? nwtStyPublication_E
-            //         : (nwtStyPublication as PublicationFetcher),
-            //       useCurrentStateStore().currentSettings?.cacheFolder,
-            //     );
-            //     updatedItem.CoverPictureFilePath = join(baseDir, thumbPath);
-            //   }
-            // }
-
             updatedItem.VerseNumber = item.VerseLabel
-              ? parseInt(item.VerseLabel?.match(/>(\d+)</)?.[1] || '', 10)
+              ? Number.parseInt(
+                  new RegExp(/>(\d+)</).exec(item.VerseLabel)?.[1] || '',
+                  10,
+                )
               : null;
             return updatedItem;
           }),
@@ -1207,7 +1251,7 @@ export const getStudyBibleMedia = async (
   }
 };
 
-export const getAudioBibleMedia = async (
+export const getBibleMedia = async (
   force = false,
   langwritten?: JwLangCode,
 ) => {
@@ -1219,9 +1263,9 @@ export const getAudioBibleMedia = async (
     if (!lang) return;
 
     if (!force) {
-      const audioFilesList = jwStore.jwBibleAudioFiles?.[lang];
-      if (audioFilesList && !shouldUpdateList(audioFilesList, 3)) {
-        return audioFilesList.list;
+      const bibleFilesList = jwStore.jwBibleFiles?.[lang];
+      if (bibleFilesList && !shouldUpdateList(bibleFilesList, 3)) {
+        return bibleFilesList.list;
       }
     }
 
@@ -1252,13 +1296,13 @@ export const getAudioBibleMedia = async (
       for (const lang of languages) {
         publication.booknum = booknum;
         publication.langwritten = lang;
-        const audioBibleMediaItems = await getPubMediaLinks(publication);
-        if (!audioBibleMediaItems) {
+        const bibleMediaItems = await getPubMediaLinks(publication);
+        if (!bibleMediaItems) {
           backupNameNeeded.push(booknum);
           returnedItems.push({ booknum });
           break;
         }
-        returnedItems.push(audioBibleMediaItems);
+        returnedItems.push(bibleMediaItems);
       }
     }
 
@@ -1289,7 +1333,7 @@ export const getAudioBibleMedia = async (
         };
       }
     }
-    jwStore.jwBibleAudioFiles[lang] = {
+    jwStore.jwBibleFiles[lang] = {
       list: returnedItems,
       updated: new Date(),
     };
@@ -1300,7 +1344,9 @@ export const getAudioBibleMedia = async (
   }
 };
 
-export const getMemorialBackground = async () => {
+export const getMemorialMedia = async (): Promise<
+  undefined | { bg: string; introVideos: MultimediaItem[] }
+> => {
   try {
     const currentStateStore = useCurrentStateStore();
     const year = new Date().getFullYear().toString().substring(2);
@@ -1312,31 +1358,95 @@ export const getMemorialBackground = async () => {
     ].filter((l): l is JwLangCode => !!l);
 
     for (const langwritten of languages) {
-      const pub: PublicationFetcher = {
-        fileformat: 'JWPUB',
-        langwritten,
-        pub: `mi${year}`,
-      };
-      const db = await getDbFromJWPUB(
-        pub,
-        currentStateStore.currentSettings?.memorialDate || undefined,
-      );
+      if (memorialMediaCache.has(langwritten)) {
+        return memorialMediaCache.get(langwritten);
+      }
 
-      if (!db) continue;
+      if (memorialMediaInFlight.has(langwritten)) {
+        return memorialMediaInFlight.get(langwritten);
+      }
 
-      const mediaItem = executeQuery<MultimediaItem>(
-        db,
-        `SELECT FilePath FROM Multimedia WHERE CategoryType = 26 LIMIT 1`,
-      )?.[0];
+      const fetchPromise = (async () => {
+        try {
+          const pub: PublicationFetcher = {
+            fileformat: 'JWPUB',
+            langwritten,
+            pub: `mi${year}`,
+          };
+          const db = await getDbFromJWPUB(pub);
 
-      if (!mediaItem) continue;
+          if (!db) return undefined;
 
-      const parsedItem = await addFullFilePathToMultimediaItem(mediaItem, pub);
-      return parsedItem.FilePath;
+          const hasDocMM = tableExists(db, 'DocumentMultimedia');
+          const joinDocMM = hasDocMM
+            ? 'INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId '
+            : '';
+
+          const bgItems = executeQuery<MultimediaItem>(
+            db,
+            `SELECT * FROM Multimedia ${joinDocMM} WHERE Multimedia.CategoryType = 26`,
+          );
+
+          const videoItems = executeQuery<MultimediaItem>(
+            db,
+            `SELECT * FROM Multimedia ${joinDocMM} WHERE Multimedia.CategoryType = -1` +
+              (hasDocMM
+                ? ' AND DocumentMultimedia.BeginParagraphOrdinal IS NULL'
+                : ''),
+          );
+
+          if (!bgItems[0] && !videoItems.length) return undefined;
+
+          const results: {
+            bg: string;
+            introVideos: MultimediaItem[];
+          } = {
+            bg: '',
+            introVideos: [],
+          };
+
+          if (bgItems[0]) {
+            const item = await addFullFilePathToMultimediaItem(bgItems[0], pub);
+            results.bg = item.FilePath;
+          }
+
+          if (videoItems.length) {
+            for (const item of videoItems) {
+              const parsedItem = await addFullFilePathToMultimediaItem(
+                item,
+                pub,
+              );
+              results.introVideos.push(parsedItem);
+            }
+
+            await processMissingMediaInfo({
+              allMedia: results.introVideos,
+              isDynamicMedia: true,
+              meetingDate: currentStateStore.currentSettings?.memorialDate,
+            });
+          }
+
+          if (results.bg || results.introVideos.length) {
+            memorialMediaCache.set(langwritten, results);
+          }
+          return results;
+        } finally {
+          memorialMediaInFlight.delete(langwritten);
+        }
+      })();
+
+      memorialMediaInFlight.set(langwritten, fetchPromise);
+      const result = await fetchPromise;
+      if (result) return result;
     }
   } catch (e) {
     errorCatcher(e);
   }
+};
+
+export const getMemorialBackground = async () => {
+  const result = await getMemorialMedia();
+  return result?.bg;
 };
 
 const getWtIssue = async (
@@ -1390,7 +1500,9 @@ const getWtIssue = async (
     );
     const weekNr = datedTexts
       ? datedTexts.findIndex((weekItem) => {
-          const mondayAsNumber = parseInt(formatDate(monday, 'YYYYMMDD'));
+          const mondayAsNumber = Number.parseInt(
+            formatDate(monday, 'YYYYMMDD'),
+          );
           return weekItem.FirstDateOffset === mondayAsNumber;
         })
       : -1;
@@ -1414,37 +1526,55 @@ const getParagraphNumbers = (
   caption: string,
 ) => {
   try {
-    if (!paragraphLabel) return '';
-    if (!caption) return paragraphLabel;
+    if (!caption) return paragraphLabel || '';
 
-    const numbers = [...caption.matchAll(/\d+/g)].map((match) =>
-      parseInt(match[0]),
-    ); // Find all numbers in the line
+    const numbers = [...caption.matchAll(/\d+/g)]
+      .map((m) => Number.parseInt(m[0]))
+      .filter((n) => n > 0 && n < 100);
 
-    if (
-      !numbers.length ||
-      !numbers.map((n) => n.toString()).includes(paragraphLabel.toString())
-    )
-      return paragraphLabel;
+    if (numbers.length === 0) return paragraphLabel || '';
     if (numbers.length === 1) return numbers[0];
 
-    const max = numbers[numbers.length - 1]; // Find the last number
+    // If paragraphLabel exists but isn't in caption, return it
+    if (paragraphLabel && !numbers.includes(Number(paragraphLabel))) {
+      return paragraphLabel;
+    }
 
-    if (!max) return paragraphLabel;
+    const first = numbers[0];
+    const last = numbers.at(-1);
 
-    // Find the first number less than or equal to max
-    const firstNumber = numbers.find((n) => n <= max);
-    if (!firstNumber) return paragraphLabel;
+    // Check if it's a simple range (no numbers between first and last that break the sequence)
+    const between = numbers.slice(1, -1);
+    if (first && last && between.some((n) => n > last || n < first))
+      return last;
 
-    const regex = new RegExp(`${firstNumber}.*${max}`);
-    const match = caption.match(regex);
-    if (match && match[0]?.length <= 15) return match[0];
+    // Try to extract the range string
+    const rangeMatch = new RegExp(`${first}.*?${last}`).exec(caption);
+    if (rangeMatch && rangeMatch[0]?.length <= 15) return rangeMatch[0];
 
-    return paragraphLabel;
+    return paragraphLabel || '';
   } catch (e) {
     errorCatcher(e);
     return paragraphLabel || '';
   }
+};
+
+const getTagType = (
+  isSongItem: boolean | string,
+  paragraphNumbers: number | string | undefined,
+) => {
+  if (isSongItem) return 'song';
+  if (paragraphNumbers) return 'paragraph';
+  return undefined;
+};
+
+const getTagValue = (
+  isSongItem: boolean | string,
+  paragraphNumbers: number | string | undefined,
+) => {
+  if (isSongItem) return isSongItem;
+  if (paragraphNumbers) return paragraphNumbers;
+  return undefined;
 };
 
 export const dynamicMediaMapper = async (
@@ -1452,7 +1582,8 @@ export const dynamicMediaMapper = async (
   lookupDate: Date,
   source: 'additional' | 'dynamic' | 'playlist' | 'watched',
 ): Promise<MediaItem[]> => {
-  const { currentSettings } = useCurrentStateStore();
+  const currentStateStore = useCurrentStateStore();
+  const { currentSettings } = currentStateStore;
 
   try {
     const calculatedSource = source === 'playlist' ? 'additional' : source;
@@ -1463,7 +1594,7 @@ export const dynamicMediaMapper = async (
     const lastParagraph = allMedia.at(-1)?.BeginParagraphOrdinal || 0;
 
     // --- Determine middle song paragraph ----------------------------------
-    const songs = allMedia.filter(isSong);
+    const songs = allMedia.filter((element) => isSong(element));
     const middleSongParagraph =
       !isAdditional && isMeetingMw && songs.length >= 2
         ? songs[1]?.BeginParagraphOrdinal || 0
@@ -1508,9 +1639,9 @@ export const dynamicMediaMapper = async (
           : [m.MepsDocumentId];
 
       const extra = [
-        m.MepsLanguageIndex !== undefined
-          ? getJwLangCode(m.MepsLanguageIndex)
-          : '',
+        m.MepsLanguageIndex === undefined
+          ? ''
+          : getJwLangCode(m.MepsLanguageIndex),
         m.Track,
       ];
 
@@ -1525,12 +1656,33 @@ export const dynamicMediaMapper = async (
         const pubMediaId = createPubMediaId(m);
         const isSongItem = isSong(m);
 
-        const fileUrl = isLikelyFile(m.FilePath)
+        let fileUrl = isLikelyFile(m.FilePath)
           ? pathToFileURL(m.FilePath)
           : pubMediaId;
 
-        const isVideoFile = isVideo(m.FilePath);
-        const isAudioFile = isAudio(m.FilePath);
+        const isVideoFile =
+          m.MimeType?.includes('video') || isVideo(m.FilePath);
+        const isAudioFile =
+          m.MimeType?.includes('audio') || isAudio(m.FilePath);
+
+        // --- Pinyin song substitution --------------------------------------
+        if (
+          m.KeySymbol?.includes('sjj') &&
+          m.Track &&
+          currentSettings?.lang === 'CHS' &&
+          currentSettings?.enablePinyinSongs &&
+          currentStateStore.pinyinActive &&
+          currentSettings?.pinyinSongFolder
+        ) {
+          const trackNum = String(m.Track).padStart(3, '0');
+          const pinyinPath = join(
+            currentSettings.pinyinSongFolder,
+            `sjjm_s-Pi_CHS_${trackNum}_r720P.mp4`,
+          );
+          if (await pathExists(pinyinPath)) {
+            fileUrl = pathToFileURL(pinyinPath);
+          }
+        }
 
         const duration = await resolveDuration(m, isVideoFile, isAudioFile);
 
@@ -1548,18 +1700,9 @@ export const dynamicMediaMapper = async (
           m.Caption,
         );
 
-        const tagType = isSongItem
-          ? 'song'
-          : paragraphNumbers
-            ? 'paragraph'
-            : undefined;
+        const tagType = getTagType(isSongItem, paragraphNumbers);
 
-        const tagValue =
-          tagType === 'song'
-            ? isSongItem
-            : tagType === 'paragraph'
-              ? paragraphNumbers
-              : undefined;
+        const tagValue = getTagValue(isSongItem, paragraphNumbers);
 
         const tag = tagType ? { type: tagType, value: tagValue } : undefined;
 
@@ -1573,11 +1716,15 @@ export const dynamicMediaMapper = async (
         const uniqueId = sanitizeId(`${datePart}-${durationPart}${fileUrl}`);
 
         // --- Section determination -----------------------------------------
-        let section: MediaSectionIdentifier = isAdditional
-          ? isMeetingWe
-            ? 'pt'
-            : 'imported-media'
-          : 'wt';
+        let section: MediaSectionIdentifier;
+
+        if (!isAdditional) {
+          section = 'wt';
+        } else if (isMeetingWe) {
+          section = 'pt';
+        } else {
+          section = 'imported-media';
+        }
 
         if (isMeetingMw && middleSongParagraph > 0) {
           if (m.BeginParagraphOrdinal >= middleSongParagraph) {
@@ -1634,18 +1781,16 @@ export const dynamicMediaMapper = async (
           return acc;
         }
 
-        if (!acc[item.extractCaption]) {
-          acc[item.extractCaption] = {
-            cbs: item.cbs,
-            children: [],
-            extractCaption: item.extractCaption,
-            sortOrderOriginal: item.sortOrderOriginal,
-            source: item.source,
-            title: item.extractCaption,
-            type: 'media',
-            uniqueId: `group-${item.extractCaption}`,
-          };
-        }
+        acc[item.extractCaption] ??= {
+          cbs: item.cbs,
+          children: [],
+          extractCaption: item.extractCaption,
+          sortOrderOriginal: item.sortOrderOriginal,
+          source: item.source,
+          title: item.extractCaption,
+          type: 'media',
+          uniqueId: `group-${item.extractCaption}`,
+        };
 
         acc[item.extractCaption]?.children?.push(item);
         return acc;
@@ -1691,7 +1836,7 @@ export const watchedItemMapper: (
     const currentStateStore = useCurrentStateStore();
     if (!parentDate || !watchedItemPath) return undefined;
 
-    const dateString = parentDate.replace(/-/g, '');
+    const dateString = parentDate.replaceAll('-', '');
 
     const fileUrl = pathToFileURL(watchedItemPath);
 
@@ -1709,11 +1854,7 @@ export const watchedItemMapper: (
               dateString,
             ),
           )
-        ).map((m) => ({ ...m, source: 'watched' }));
-        additionalMedia.filter(
-          (m) =>
-            m.customDuration && (m.customDuration.max || m.customDuration.min),
-        );
+        ).map((m: MediaItem) => ({ ...m, source: 'watched' }));
         return additionalMedia;
       }
       return undefined;
@@ -1740,30 +1881,38 @@ export const watchedItemMapper: (
     // First, try to get section info and order from the section order file in the watched day folder
     try {
       const watchedDayFolder = dirname(watchedItemPath);
-      console.log('🔍 [watchedItemMapper] watchedDayFolder:', watchedDayFolder);
+      log(`watchedDayFolder: ${watchedDayFolder}`, 'watchedFolder', 'info');
       if (watchedDayFolder) {
-        const { getWatchedMediaSectionInfo } = await import(
-          'src/helpers/media-sections'
-        );
+        const { getWatchedMediaSectionInfo } =
+          await import('src/helpers/media-sections');
         const sectionInfo = await getWatchedMediaSectionInfo(
           watchedDayFolder,
           filename,
         );
-        console.log('🔍 [watchedItemMapper] sectionInfo:', sectionInfo);
+        log(`sectionInfo: ${sectionInfo}`, 'watchedFolder', 'info');
         if (sectionInfo) {
           section = sectionInfo.section;
           order = sectionInfo.order;
         }
       }
     } catch (error) {
-      console.warn(`⚠️ Could not read section order file: ${error}`);
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            filename,
+            name: 'watchedItemMapper',
+            parentDate,
+            watchedItemPath,
+          },
+        },
+      });
     }
 
     // Fallback: Check if filename already has section information (legacy support)
     if (!section) {
-      const sectionMatch = filename.match(/^Section-([^-]+) - /);
+      const sectionMatch = new RegExp(/^Section-([^-]+) - /).exec(filename);
       if (sectionMatch) {
-        section = sectionMatch[1] as MediaSectionIdentifier;
+        section = sectionMatch[1];
       }
     }
 
@@ -1787,7 +1936,7 @@ export const watchedItemMapper: (
         isImage: image,
         isVideo: video,
         originalSection: section,
-        sortOrderOriginal: order !== undefined ? order : 'watched',
+        sortOrderOriginal: order ?? 'watched',
         source: 'watched',
         thumbnailUrl,
         title,
@@ -1802,7 +1951,11 @@ export const watchedItemMapper: (
 };
 
 export const getWeMedia = async (lookupDate: Date) => {
-  console.log('Getting weekend meeting media for date:', lookupDate);
+  log(
+    `Getting weekend meeting media for date: ${formatDate(lookupDate, 'YYYYMMDD')}`,
+    'weMedia',
+    'info',
+  );
   try {
     const currentStateStore = useCurrentStateStore();
     lookupDate = dateFromString(lookupDate);
@@ -1882,14 +2035,14 @@ export const getWeMedia = async (lookupDate: Date) => {
            WHEN dp.BeginPosition < (
              SELECT MIN(BeginPosition)
              FROM DocumentParagraph
-             WHERE DocumentId = ${docId}
+             WHERE DocumentId = ?
                AND ParagraphNumberLabel IS NOT NULL
                AND ParagraphNumberLabel != ''
            ) THEN 0
            WHEN dp.BeginPosition > (
              SELECT MAX(EndPosition)
              FROM DocumentParagraph
-             WHERE DocumentId = ${docId}
+             WHERE DocumentId = ?
                AND ParagraphNumberLabel IS NOT NULL
                AND ParagraphNumberLabel != ''
            ) THEN 0
@@ -1904,9 +2057,10 @@ export const getWeMedia = async (lookupDate: Date) => {
     		 LEFT JOIN Question q
            ON q.DocumentId = dm.DocumentId
            AND q.TargetParagraphOrdinal = dm.BeginParagraphOrdinal
-         WHERE dm.DocumentId = ${docId}
+         WHERE dm.DocumentId = ?
            AND m.CategoryType = -1
          ORDER BY dp.BeginPosition;`,
+      [docId, docId, docId],
     );
     const videosInParagraphs = videos.filter(
       (video) => !!video.TargetParagraphNumberLabel,
@@ -1967,9 +2121,11 @@ export const getWeMedia = async (lookupDate: Date) => {
       final.push(...withoutBegin);
     } else {
       const lastIndex = withBegin.length - 1;
-      final.push(...withBegin.slice(0, lastIndex));
-      final.push(...withoutBegin);
-      final.push(withBegin[lastIndex]);
+      final.push(
+        ...withBegin.slice(0, lastIndex),
+        ...withoutBegin,
+        withBegin[lastIndex],
+      );
     }
 
     final = final
@@ -2023,7 +2179,7 @@ export const getWeMedia = async (lookupDate: Date) => {
         const linkedItem = final.find(
           (i) => i.MultimediaId === item.LinkMultimediaId,
         );
-        if (linkedItem && linkedItem.FilePath) {
+        if (linkedItem?.FilePath) {
           item.FilePath = linkedItem.FilePath;
           item.LinkMultimediaId = null;
           linkedItem.LinkMultimediaId = linkedItem.MultimediaId;
@@ -2051,37 +2207,36 @@ export const getWeMedia = async (lookupDate: Date) => {
           INNER JOIN DocumentMultimedia
             ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId
           WHERE DataType = 2
-          AND DocumentId = ${docId}
+          AND DocumentId = ?
           ORDER BY BeginParagraphOrdinal
           LIMIT 2`,
+        [docId],
       );
-    } else {
-      if (!videosNotInParagraphs?.length) {
-        songs = [];
+    } else if (videosNotInParagraphs?.length) {
+      const sortedVideos = videosNotInParagraphs.toSorted(
+        (a, b) => (a.MultimediaId || 0) - (b.MultimediaId || 0),
+      );
+      if (sortedVideos.length <= 2) {
+        songs = sortedVideos;
       } else {
-        const sortedVideos = videosNotInParagraphs.sort(
-          (a, b) => (a.MultimediaId || 0) - (b.MultimediaId || 0),
+        // There are more than 2 videos for this WE meeting
+        // First, try to remove non-songs
+        songs = sortedVideos.filter(
+          (v) => !!v.Track && v.Track > 0 && v.KeySymbol?.includes('sjj'),
         );
-        if (sortedVideos.length <= 2) {
-          songs = sortedVideos;
-        } else {
-          // There are more than 2 videos for this WE meeting
-          // First, try to remove non-songs
-          songs = sortedVideos.filter(
-            (v) => !!v.Track && v.Track > 0 && v.KeySymbol?.includes('sjj'),
-          );
 
-          // If still more than 2, just take the first two
-          if (songs.length > 2) {
-            songs = sortedVideos.slice(0, 2).filter(Boolean);
-          }
+        // If still more than 2, just take the first two
+        if (songs.length > 2) {
+          songs = sortedVideos.slice(0, 2).filter(Boolean);
         }
       }
+    } else {
+      songs = [];
     }
 
     let songLangs: ('' | JwLangCode)[] = [];
     try {
-      songLangs = window.electronApi
+      songLangs = globalThis.electronApi
         .executeQuery<MultimediaExtractItem>(
           db,
           `SELECT Extract.ExtractId, Extract.Link, DocumentExtract.BeginParagraphOrdinal
@@ -2094,7 +2249,7 @@ export const getWeMedia = async (lookupDate: Date) => {
         )
         .sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal)
         .map((item) => {
-          const match = item.Link.match(/\/(.*)\//);
+          const match = new RegExp(/\/(.*)\//).exec(item.Link);
           const langOverride = match
             ? (match[1]?.split(':')[0] as JwLangCode)
             : '';
@@ -2125,10 +2280,10 @@ export const getWeMedia = async (lookupDate: Date) => {
           item.KeySymbol === mergedSongs[0]?.KeySymbol,
       );
 
-      if (index0 !== -1) {
-        allMedia[index0] = mergedSongs[0];
-      } else {
+      if (index0 === -1) {
         allMedia.unshift(mergedSongs[0]);
+      } else {
+        allMedia[index0] = mergedSongs[0];
       }
 
       if (mergedSongs[1]) {
@@ -2139,10 +2294,10 @@ export const getWeMedia = async (lookupDate: Date) => {
             item.KeySymbol === mergedSongs[1]?.KeySymbol,
         );
 
-        if (index1 !== -1) {
-          allMedia[index1] = mergedSongs[1];
-        } else {
+        if (index1 === -1) {
           allMedia.push(mergedSongs[1]);
+        } else {
+          allMedia[index1] = mergedSongs[1];
         }
       }
     }
@@ -2173,7 +2328,11 @@ export const getWeMedia = async (lookupDate: Date) => {
       );
       if (videoMarkers) media.VideoMarkers = videoMarkers;
     }
-    await processMissingMediaInfo(allMedia, formatDate(lookupDate, 'YYYYMMDD'));
+    await processMissingMediaInfo({
+      allMedia,
+      isDynamicMedia: true,
+      meetingDate: formatDate(lookupDate, 'YYYYMMDD'),
+    });
     const mediaForDay = await dynamicMediaMapper(
       allMedia,
       lookupDate,
@@ -2185,8 +2344,9 @@ export const getWeMedia = async (lookupDate: Date) => {
       media: { wt: mediaForDay },
     };
   } catch (e) {
-    errorCatcher(e);
-    console.error(e);
+    errorCatcher(e, {
+      contexts: { fn: { name: 'getWeMedia' } },
+    });
     return {
       error: true,
       media: {} as Record<string, MediaItem[]>,
@@ -2195,7 +2355,11 @@ export const getWeMedia = async (lookupDate: Date) => {
 };
 
 export const getMwMedia = async (lookupDate: Date) => {
-  console.log('Getting midweek meeting media for date:', lookupDate);
+  log(
+    `Getting midweek meeting media for date: ${formatDate(lookupDate, 'YYYYMMDD')}`,
+    'mwMedia',
+    'info',
+  );
   try {
     const currentStateStore = useCurrentStateStore();
     lookupDate = dateFromString(lookupDate);
@@ -2289,7 +2453,7 @@ export const getMwMedia = async (lookupDate: Date) => {
           item.Track === media.Track &&
           item.IssueTagNumber === media.IssueTagNumber,
       );
-      if (multimediaMepsLangItem?.MepsLanguageIndex) {
+      if (multimediaMepsLangItem?.MepsLanguageIndex !== undefined) {
         const mepsLang = getJwLangCode(
           multimediaMepsLangItem.MepsLanguageIndex,
         );
@@ -2297,10 +2461,11 @@ export const getMwMedia = async (lookupDate: Date) => {
       }
     }
     const errors =
-      (await processMissingMediaInfo(
+      (await processMissingMediaInfo({
         allMedia,
-        formatDate(lookupDate, 'YYYYMMDD'),
-      )) || [];
+        isDynamicMedia: true,
+        meetingDate: formatDate(lookupDate, 'YYYYMMDD'),
+      })) || [];
     const mediaForDay = await dynamicMediaMapper(
       allMedia,
       lookupDate,
@@ -2311,9 +2476,7 @@ export const getMwMedia = async (lookupDate: Date) => {
     const groupedMedia: Record<string, MediaItem[]> = {};
     mediaForDay.forEach((mediaItem) => {
       const section = mediaItem.originalSection || 'tgw'; // Default to 'tgw' if no section assigned
-      if (!groupedMedia[section]) {
-        groupedMedia[section] = [];
-      }
+      groupedMedia[section] ??= [];
       groupedMedia[section].push(mediaItem);
     });
 
@@ -2327,11 +2490,17 @@ export const getMwMedia = async (lookupDate: Date) => {
   }
 };
 
-export async function processMissingMediaInfo(
-  allMedia: MultimediaItem[],
-  meetingDate?: string,
+export async function processMissingMediaInfo({
+  allMedia,
+  isDynamicMedia = false,
   keepMediaLabels = false,
-) {
+  meetingDate,
+}: {
+  allMedia: MultimediaItem[];
+  isDynamicMedia?: boolean;
+  keepMediaLabels?: boolean;
+  meetingDate?: null | string;
+}) {
   try {
     const currentStateStore = useCurrentStateStore();
     const errors = [];
@@ -2341,11 +2510,15 @@ export async function processMissingMediaInfo(
       if (
         m.KeySymbol === 'w' &&
         m.IssueTagNumber &&
-        parseInt(m.IssueTagNumber.toString()) >= 20080101 &&
-        m.IssueTagNumber.toString().slice(-2) === '01'
+        Number.parseInt(m.IssueTagNumber.toString()) >= 20080101 &&
+        m.IssueTagNumber.toString().endsWith('01')
       ) {
         m.KeySymbol = 'wp';
-        console.log('Updated magazine symbol to wp', m);
+        log(
+          `Updated magazine symbol to wp: ${m.KeySymbol}`,
+          'mediaProcessing',
+          'info',
+        );
       }
     }
 
@@ -2366,20 +2539,18 @@ export async function processMissingMediaInfo(
     );
 
     for (const { media } of mediaToProcess) {
+      /* eslint-disable perfectionist/sort-sets */
+      // Languages to try, in order:
       const langsWritten = [
         ...new Set([
-          /* eslint-disable perfectionist/sort-sets */
-          currentStateStore.currentSettings?.langFallback &&
-            currentStateStore.currentSettings?.lang,
+          currentStateStore.currentSettings?.lang, // The language configured in the settings
           media.MepsLanguageIndex !== undefined &&
-            mepslangs[media.MepsLanguageIndex],
-          media.AlternativeLanguage,
-          !currentStateStore.currentSettings?.langFallback &&
-            currentStateStore.currentSettings?.lang,
-          currentStateStore.currentSettings?.langFallback,
-          /* eslint-enable perfectionist/sort-sets */
+            mepslangs[media.MepsLanguageIndex], // The language defined in the media item
+          media.AlternativeLanguage, // The alternative language defined in the media item
+          currentStateStore.currentSettings?.langFallback, // The language fallback configured in the settings
         ]),
       ];
+      /* eslint-enable perfectionist/sort-sets */
       for (const langwritten of langsWritten) {
         if (!langwritten || !(media.KeySymbol || media.MepsDocumentId)) {
           continue;
@@ -2396,7 +2567,7 @@ export async function processMissingMediaInfo(
         };
 
         if (media.KeySymbol === 'nwt') {
-          const pubs = await getAudioBibleMedia(false, langwritten);
+          const pubs = await getBibleMedia(false, langwritten);
           const bookMedia: MediaLink[] =
             Object.values(
               pubs?.find((p) => p.booknum === media.BookNumber)?.files?.[
@@ -2422,7 +2593,7 @@ export async function processMissingMediaInfo(
 
             const endVerse = chapterMedia.map((item) =>
               item.markers.markers.find(
-                (marker) => marker.verseNumber === verses[verses.length - 1],
+                (marker) => marker.verseNumber === verses.at(-1),
               ),
             )?.[0];
 
@@ -2434,7 +2605,7 @@ export async function processMissingMediaInfo(
 
           const uniqueId = await downloadAdditionalRemoteVideo(
             chapterMedia,
-            meetingDate,
+            meetingDate || undefined,
             media.ThumbnailFilePath,
             false,
             media.Label,
@@ -2458,6 +2629,7 @@ export async function processMissingMediaInfo(
               } = await downloadMissingMedia(
                 publicationFetcher,
                 meetingDate || currentStateStore.selectedDate,
+                isDynamicMedia,
               );
               media.FilePath = FilePath ?? media.FilePath;
               media.Label = keepMediaLabels
@@ -2547,16 +2719,16 @@ export const getJwMepsInfo = async () => {
     });
     if (!file.FilePath) return;
     const dir = dirname(file.FilePath);
-    await decompress(file.FilePath, dir);
+    await unzip(file.FilePath, dir);
     const msixbundle = await findFile(dir, '.msixbundle');
     if (!msixbundle) return;
-    await decompress(msixbundle, dir);
+    await unzip(msixbundle, dir);
     const msix = await findFile(dir, '_x64.msix');
     if (!msix) return;
-    await decompress(msix, dir);
+    await unzip(msix, dir);
     const mepsunit = await findFile(join(dir, 'Data'), '.db');
     if (!mepsunit) return;
-    const mepsLangs = window.electronApi
+    const mepsLangs = globalThis.electronApi
       .executeQuery<JwMepsLanguage>(
         mepsunit,
         'SELECT LanguageId, PrimaryIetfCode, Symbol FROM Language',
@@ -2578,11 +2750,13 @@ export const getJwMepsInfo = async () => {
 const downloadMissingMedia = async (
   publication: PublicationFetcher,
   meetingDate?: string,
+  isDynamicMedia = false,
 ) => {
   try {
-    const pubDir = await getPublicationDirectory(
-      publication,
-      useCurrentStateStore().currentSettings?.cacheFolder,
+    const pubDir = await getPublicationDirectory(publication);
+    await updateLastUsedDate(
+      pubDir,
+      meetingDate || useCurrentStateStore().selectedDate,
     );
     const responseObject = await getPubMediaLinks(publication, meetingDate);
     if (!responseObject?.files) {
@@ -2644,8 +2818,20 @@ const downloadMissingMedia = async (
       return { FilePath: '' };
     }
     const jwMediaInfo = await getJwMediaInfo(publication);
+
+    if (isDynamicMedia && (bestItem.duration || 0) > LONG_MEDIA_DURATION) {
+      return {
+        FilePath: '',
+        Label: bestItem.title,
+        StreamDuration: bestItem.duration,
+        StreamThumbnailUrl: jwMediaInfo.thumbnail,
+        StreamUrl: bestItem.file.url,
+      };
+    }
+
     const downloadedFile = await downloadFileIfNeeded({
       dir: pubDir,
+      lowPriority: true,
       meetingDate,
       size: bestItem.filesize,
       url: bestItem.file.url,
@@ -2668,6 +2854,11 @@ const downloadMissingMedia = async (
         await downloadFileIfNeeded({
           dir: pubDir,
           filename: itemFilename,
+          // High Priority (false) if meeting is Today or Tomorrow (diff <= 1)
+          // Low Priority (true) if meeting is in the future (diff > 1)
+          lowPriority: meetingDate
+            ? getDateDiff(meetingDate, new Date(), 'days') > 1
+            : false,
           meetingDate,
           url: itemUrl,
         });
@@ -2697,21 +2888,57 @@ export const downloadAdditionalRemoteVideo = async (
 ): Promise<string | undefined> => {
   try {
     const currentStateStore = useCurrentStateStore();
+    const currentSettings = currentStateStore.currentSettings;
+
     const bestItem = findBestResolution(
       mediaItemLinks,
-      currentStateStore.currentSettings?.maxRes,
+      currentSettings?.maxRes,
     );
-    if (!bestItem) return undefined;
-    const bestItemUrl =
-      'progressiveDownloadURL' in bestItem
-        ? bestItem.progressiveDownloadURL
-        : bestItem.file.url;
 
-    const uniqueId = await addToAdditionMediaMapFromPath(
-      join(
-        await currentStateStore.getDatedAdditionalMediaDirectory(),
-        basename(bestItemUrl),
-      ),
+    let bestItemUrl: string | undefined;
+
+    if (bestItem) {
+      if ('progressiveDownloadURL' in bestItem) {
+        bestItemUrl = bestItem.progressiveDownloadURL;
+      } else {
+        bestItemUrl = bestItem.file.url;
+      }
+    }
+
+    // Pinyin song substitution: use local pinyin file instead of downloading
+    if (
+      song &&
+      currentSettings?.lang === 'CHS' &&
+      currentSettings?.enablePinyinSongs &&
+      currentStateStore.pinyinActive &&
+      currentSettings?.pinyinSongFolder
+    ) {
+      const trackNum = String(song).padStart(3, '0');
+      const pinyinPath = join(
+        currentSettings.pinyinSongFolder,
+        `sjjm_s-Pi_CHS_${trackNum}_r720P.mp4`,
+      );
+      if (await pathExists(pinyinPath)) {
+        return addToAdditionMediaMapFromPath(pinyinPath, section, undefined, {
+          song: song.toString(),
+          title,
+          url: bestItemUrl,
+        });
+      }
+    }
+
+    if (!bestItem || !bestItemUrl) return undefined;
+
+    const datedAdditionalMediaDir =
+      await currentStateStore.getDatedAdditionalMediaDirectory();
+
+    await updateLastUsedDate(
+      datedAdditionalMediaDir,
+      meetingDate || currentStateStore.selectedDate,
+    );
+
+    await addToAdditionMediaMapFromPath(
+      join(datedAdditionalMediaDir, basename(bestItemUrl)),
       section,
       undefined,
       {
@@ -2726,13 +2953,16 @@ export const downloadAdditionalRemoteVideo = async (
     );
 
     downloadFileIfNeeded({
-      dir: await currentStateStore.getDatedAdditionalMediaDirectory(),
+      dir: datedAdditionalMediaDir,
+      // Additional media added by user should be a high priority download
+      lowPriority: false,
       meetingDate,
       size: bestItem.filesize,
       url: bestItemUrl,
     });
 
-    return uniqueId;
+    const key = bestItemUrl + datedAdditionalMediaDir;
+    return key;
   } catch (e) {
     errorCatcher(e);
     return undefined;
@@ -2769,9 +2999,9 @@ export function getBestImageUrl(
         // If none of the preferred sizes are found, return any other size
         const otherSizes = (
           Object.keys(images[key]) as (keyof ImageSizes)[]
-        ).filter((size) => !sizesToConsider.includes(size));
-        if (otherSizes[0]) {
-          return images[key][otherSizes[0]];
+        ).find((size) => !sizesToConsider.includes(size));
+        if (otherSizes) {
+          return images[key][otherSizes];
         }
       }
     }
@@ -2838,16 +3068,14 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
           ] || []
         : []
     )
-      .filter(isMediaLink)
+      .filter((element) => isMediaLink(element))
       .filter(
         (mediaLink) =>
           !publication.maxTrack || mediaLink.track < publication.maxTrack,
       );
 
-    const dir = await getPublicationDirectory(
-      publication,
-      currentStateStore.currentSettings?.cacheFolder,
-    );
+    const dir = await getPublicationDirectory(publication);
+    await updateLastUsedDate(dir, new Date());
     const filteredMediaItemLinks: MediaLink[] = [];
     for (const mediaItemLink of mediaLinks) {
       const currentTrack = mediaItemLink.track;
@@ -2870,6 +3098,7 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
       }
       downloadFileIfNeeded({
         dir,
+        // Background music should not be a high priority download
         lowPriority: true,
         size: mediaLink.filesize,
         url: mediaLink.file.url,
@@ -2950,7 +3179,7 @@ const downloadJwpub = async (
           ] || []
         : []
       )
-        .filter(isMediaLink)
+        .filter((element) => isMediaLink(element))
         .filter(
           (mediaLink) =>
             !publication.maxTrack || mediaLink.track < publication.maxTrack,
@@ -2959,11 +3188,16 @@ const downloadJwpub = async (
       return handleDownloadError();
     }
 
+    const dir = await getPublicationDirectory(publication);
+    await updateLastUsedDate(dir, meetingDate || new Date());
+
     return await downloadFileIfNeeded({
-      dir: await getPublicationDirectory(
-        publication,
-        currentStateStore.currentSettings?.cacheFolder,
-      ),
+      dir,
+      // High Priority (false) if meeting is Today or Tomorrow (diff <= 1)
+      // Low Priority (true) if meeting is in the future (diff > 1)
+      lowPriority: meetingDate
+        ? getDateDiff(meetingDate, new Date(), 'days') > 1
+        : false,
       meetingDate,
       size: mediaLinks[0]?.filesize,
       url: mediaLinks[0]?.file.url ?? '',
@@ -3023,9 +3257,13 @@ export const setUrlVariables = async (baseUrl: string | undefined) => {
     // delete all items in the array
     requestControllers.splice(0);
     requestControllers.push(controller);
-    const homePage = await fetchRaw(homePageUrl, {
-      signal: controller.signal,
-    })
+    const homePage = await fetchRaw(
+      homePageUrl,
+      {
+        signal: controller.signal,
+      },
+      true,
+    )
       .then((response) => {
         if (!response.ok) return null;
         return response.text();
@@ -3044,7 +3282,7 @@ export const setUrlVariables = async (baseUrl: string | undefined) => {
       return;
     }
 
-    const attributes = { ...(div?.[0]?.attribs || {}) };
+    const attributes = { ...div?.[0]?.attribs };
 
     if (attributes['data-mediator_url']) {
       jwStore.urlVariables.mediator = attributes['data-mediator_url'];
@@ -3068,3 +3306,18 @@ export const setUrlVariables = async (baseUrl: string | undefined) => {
     setElectronUrlVariables(JSON.stringify(jwStore.urlVariables));
   }
 };
+
+// Breaking circular dependencies by registering providers
+registerMediaProviders({
+  downloadFileIfNeeded,
+  getJwMediaInfo,
+});
+
+registerMediaPlaybackProviders({
+  dynamicMediaMapper,
+  processMissingMediaInfo,
+});
+
+registerSqliteProviders({
+  getDbFromJWPUB,
+});

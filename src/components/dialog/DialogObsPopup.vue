@@ -106,9 +106,10 @@ import {
   obsStartRecording,
   obsStopRecording,
 } from 'src/helpers/obs';
+import { log } from 'src/shared/vanilla';
 import { isUUID } from 'src/utils/general';
 import { isImage } from 'src/utils/media';
-import { obsWebSocket } from 'src/utils/obs';
+import { obsWebSocketInfo } from 'src/utils/obs';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useObsStateStore } from 'stores/obs-state';
 import { computed, ref } from 'vue';
@@ -123,7 +124,6 @@ const {
   currentSettings,
   mediaPlaying,
 } = storeToRefs(currentState);
-
 const obsState = useObsStateStore();
 const {
   currentScene,
@@ -141,7 +141,7 @@ const { t } = useI18n();
 const isRecording = ref(false);
 const obsRecordingFolder = ref<null | string>(null);
 
-const { openFolder } = window.electronApi;
+const { openFolder } = globalThis.electronApi;
 
 const notifySceneNotFound = () =>
   createTemporaryNotification({
@@ -183,21 +183,27 @@ watchImmediate(
   }),
   async ({ enabled, recordingControls }, _, onCleanup) => {
     // If OBS not enabled or no websocket → stop everything
-    if (!enabled || !obsWebSocket) return;
+    if (!enabled || !obsWebSocketInfo.obsWebSocket) return;
 
     // If recording controls disabled → stop everything
     if (!recordingControls) return;
 
     // --- 1. Setup event listener ---
     const handleRecordStateChanged = (data: { outputActive: boolean }) => {
-      console.log('RecordStateChanged', data);
+      log('RecordStateChanged', 'obs', 'log', data);
       isRecording.value = data.outputActive;
     };
-    obsWebSocket.on('RecordStateChanged', handleRecordStateChanged);
+    obsWebSocketInfo.obsWebSocket.on(
+      'RecordStateChanged',
+      handleRecordStateChanged,
+    );
 
     // Cleanup when settings change or component unmounts
     onCleanup(() => {
-      obsWebSocket?.off('RecordStateChanged', handleRecordStateChanged);
+      obsWebSocketInfo.obsWebSocket?.off(
+        'RecordStateChanged',
+        handleRecordStateChanged,
+      );
     });
 
     // --- 2. Initial recording state ---
@@ -214,32 +220,64 @@ watchImmediate(
 
 const resolvedScene = computed(() => {
   if (!currentSettings.value) return currentScene.value;
-  return currentSettings.value.obsSwitchSceneAfterMedia
-    ? currentSettings.value.obsRememberPreviouslyUsedScene
-      ? previousScene.value
-      : currentSettings.value.obsCameraScene
-    : currentSettings.value.obsCameraScene;
+  if (currentSettings.value.obsSwitchSceneAfterMedia) {
+    if (currentSettings.value.obsRememberPreviouslyUsedScene) {
+      return previousScene.value;
+    }
+    return currentSettings.value.obsCameraScene;
+  }
+  return currentSettings.value.obsCameraScene;
 });
+
+const ensureObsConnected = async () => {
+  if (!obsConnectionState.value?.startsWith('connect')) {
+    await obsConnect();
+  }
+  return obsConnectionState.value === 'connected';
+};
+
+const getProgramSceneFromType = (sceneType: ObsSceneType) => {
+  const settings = currentSettings.value;
+  const mediaScene = settings?.obsMediaScene || undefined;
+  const imageScene = settings?.obsImageScene || undefined;
+  const cameraScene = settings?.obsCameraScene || undefined;
+
+  let scene = mediaScene;
+
+  if (isImage(mediaPlaying.value.url) && imageScene) {
+    scene = imageScene;
+  }
+
+  currentSceneType.value = sceneType;
+
+  if (sceneType === 'camera') {
+    scene = settings?.obsRememberPreviouslyUsedScene
+      ? previousScene.value || cameraScene
+      : cameraScene;
+  }
+
+  return scene;
+};
+
+const getSetSceneArguments = (newProgramScene: string) => {
+  const hasSceneUuid = scenes.value?.every((scene) => 'sceneUuid' in scene);
+  const useUuid = hasSceneUuid && configuredScenesAreAllUUIDs.value;
+
+  return {
+    ...(useUuid
+      ? { sceneUuid: newProgramScene }
+      : { sceneName: newProgramScene }),
+  };
+};
 
 const setObsScene = async (sceneType?: ObsSceneType, desiredScene?: string) => {
   try {
-    if (!obsConnectionState.value?.startsWith('connect')) await obsConnect();
-    if (obsConnectionState.value !== 'connected') return;
+    if (!(await ensureObsConnected())) return;
+
     let newProgramScene: string | undefined = desiredScene;
+
     if (!desiredScene && sceneType) {
-      const mediaScene = currentSettings.value?.obsMediaScene || undefined;
-      const imageScene = currentSettings.value?.obsImageScene || undefined;
-      const cameraScene = currentSettings.value?.obsCameraScene || undefined;
-      newProgramScene = mediaScene ?? undefined;
-      if (isImage(mediaPlaying.value.url) && imageScene) {
-        newProgramScene = imageScene;
-      }
-      currentSceneType.value = sceneType;
-      if (sceneType === 'camera') {
-        newProgramScene = currentSettings.value?.obsRememberPreviouslyUsedScene
-          ? previousScene.value || cameraScene
-          : cameraScene;
-      }
+      newProgramScene = getProgramSceneFromType(sceneType);
     } else if (
       desiredScene &&
       currentSceneType.value === 'media' &&
@@ -248,23 +286,16 @@ const setObsScene = async (sceneType?: ObsSceneType, desiredScene?: string) => {
       previousScene.value = desiredScene;
       newProgramScene = undefined;
     }
-    if (newProgramScene) {
-      const hasSceneUuid = scenes.value?.every((scene) => 'sceneUuid' in scene);
 
-      if (sceneExists(newProgramScene)) {
-        obsWebSocket?.call('SetCurrentProgramScene', {
-          ...(hasSceneUuid &&
-            configuredScenesAreAllUUIDs.value && {
-              sceneUuid: newProgramScene,
-            }),
-          ...((!hasSceneUuid || !configuredScenesAreAllUUIDs.value) && {
-            sceneName: newProgramScene,
-          }),
-        });
-        // open.value = false;
-      } else {
-        notifySceneNotFound();
-      }
+    if (!newProgramScene) return;
+
+    if (sceneExists(newProgramScene)) {
+      obsWebSocketInfo.obsWebSocket?.call(
+        'SetCurrentProgramScene',
+        getSetSceneArguments(newProgramScene),
+      );
+    } else {
+      notifySceneNotFound();
     }
   } catch (error) {
     errorCatcher(error);
@@ -321,7 +352,7 @@ const getSceneIcon = (scene: null | string | undefined) => {
     return 'mmm-pip-scene';
   }
   const sceneIndex =
-    sceneList.value.findIndex((s) => s === scene) + 1 - baseScenesLength.value;
+    sceneList.value.indexOf(scene) + 1 - baseScenesLength.value;
   if (sceneIndex <= 10) {
     return `mmm-numeric-${sceneIndex}-box-outline`;
   }
@@ -340,10 +371,10 @@ const sceneColumnClass = computed(() => {
   return sceneCount >= 4 ? 'col-3' : 'col-4';
 });
 
-useEventListener(window, 'obsConnectFromSettings', obsSettingsConnect, {
+useEventListener(globalThis, 'obsConnectFromSettings', obsSettingsConnect, {
   passive: true,
 });
-useEventListener(window, 'obsSceneEvent', setObsSceneListener, {
+useEventListener(globalThis, 'obsSceneEvent', setObsSceneListener, {
   passive: true,
 });
 </script>

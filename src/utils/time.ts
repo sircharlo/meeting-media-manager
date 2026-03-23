@@ -15,7 +15,7 @@ export const formatTime = (time?: number | string) => {
     if (!time) return '00:00';
     if (typeof time === 'string') {
       // If the input is a string, convert it to a number
-      time = parseFloat(time);
+      time = Number.parseFloat(time);
     }
     if (Number.isNaN(time)) return '00:00';
     if (time < 0) return '00:00'; // Handle negative time gracefully
@@ -43,7 +43,7 @@ export const formatTime = (time?: number | string) => {
  */
 export const timeToSeconds = (time: string) => {
   try {
-    const parts = time.split(':').map(parseFloat);
+    const parts = time.split(':').map((element) => Number.parseFloat(element));
     if (parts.length === 3) {
       // Format: hh:mm:ss
       const [h, m, s] = parts;

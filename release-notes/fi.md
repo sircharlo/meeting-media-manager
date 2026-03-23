@@ -4,6 +4,40 @@
 
 Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELOG.md tiedosto GitHubissa.
 
+## v26,3.0
+
+### ✨ Mitä uutta
+
+- ✨ **Muistomedia**: Muistomedian automaattinen haku ei ole enää betavaiheessa! Sovellus lataa automaattisesti muistojuhlan tervetulovideon ja kuvan, kun ne ovat saatavilla määritetyllä kielellä.
+- ✨ **Toiston nopeus**: Lisätty toiston nopeuden säätö visuaalisella indikaattorilla ja palautus manuaalisesti. Tämä ominaisuus on näkyvissä vain, jos se on käytössä lisäasetuksissa.
+- ✨ **Pinyin-laulut**: Lisätty valintakytkin pinyin-laulujen korvaamiseen kiinankielisissä kokouksissa.
+
+## v26.2.0
+
+### ✨ Mitä uutta
+
+- ✨ Levytilan tarkistus: Lisätty toiminnallisuus, joka valvoo ja ilmoittaa, kun levytila on vähissä.
+
+## v26.1.5
+
+### ✨ Mitä uutta
+
+- ✨ **Muistojuhlamedia**: Hakee automaattisesti muistojuhlan bannerin ja intro-videon tuetuilla kielillä, kun muistojuhlan päivämäärä valitaan.
+
+## v26.1.0
+
+### ✨ Mitä uutta
+
+- ✨ **Automaattinen kokousaikataulun synkronointi**: Lisätty mahdollisuus synkronoida kokousten päivämäärät ja ajat automaattisesti virallisen verkkosivuston kanssa. Tämä toiminto on oletuksena käytössä, ja se voidaan käynnistää manuaalisesti tai poistaa käytöstä lisäasetuksissa.
+- ✨ **Tulevat aikataulumuutokset**: Sovellus ottaa nyt huomioon tulevat aikataulumuutokset luotaessa seurakuntaa verkkosivustohakua käyttäen, jos niitä on saatavilla.
+- ✨ **Jaettu välimuisti koko koneen laajuisille asennuksille**: Koko koneen laajuiset asennukset käyttävät nyt oletuksena yhteistä datakansiota, mikä optimoi tallennus- ja kaistanleveyden käytön useiden samalla tietokoneella olevien käyttäjien välillä.
+
+## v25.12.2
+
+### ✨ Mitä uutta
+
+- ✨ **Zoomaus/Pan painikkeet**: Lisätty kyky painaa ja pitää zoomausta ja pannupainikkeita jatkuvatoimiseen säätöön.
+
 ## v25.12.0
 
 ### ✨ Mitä uutta
@@ -57,7 +91,7 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 - ✨ **Mediaikkuna aina päällimmäisenä & koko näytön tila**: Korjattu ja parannettu mediaikkunan aina päällimmäisenä -käyttäytymistä niin, että se mukautuu dynaamisesti koko näytön tilan mukaan.
 - ✨ **Päivämäärän näyttömuoto**: Lisätty käyttäjäasetus päivämäärän näyttömuodon määrittämistä varten.
 - ✨ **Median ristihäivytys**: Toteutettu ristihäivytyssiirtymät medianäyttöön aiemman äkillisen mustaan häivytyksen sijaan.
-- ✨ **Musiikin auto-stop**: Optimoitu taustamusiikin automaattisen pysähdys. Toimii samalla tavalla riippumatta siitä, onko musiikki käynnistetty automaattisesti vai ei.
+- ✨ **Musiikin automaattinen pysäytys**: Taustamusiikin automaattisen pysäytyksen toimintaa on optimoitu siten, että se toimii samalla tavalla riippumatta siitä, käynnistettiinkö musiikki automaattisesti vai ei
 - ✨ **macOS:in napsautus passiivisissa ikkunoissa**: Mahdollistettu hiiren napsautusten läpivienti macOS:in pääikkunassa, jotta sovelluksen käyttö on helpompaa, vaikka ikkuna ei olisi aktiivinen.
 
 ## v25.9.0
@@ -83,12 +117,11 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 - ✨ **Osion toistotila**: Mahdollistaa jatkuvan toiston tietyissä osioissa, jotta toistosta tulee saumaton.
 - ✨ **Zoom-integraatio**: Automaattinen näytönjaon käynnistys ja pysäytys median toiston yhteydessä.
 
-### 🛠️ Parannuksia ja hienosäätöjä
+## v25,7,0
 
-- 🛠️ **Parannetut osioiden otsikot**: Uusi kolmen pisteen valikko, jossa on värivalitsin, siirrä ylös/alas -komennot, toistovaihtoehdot ja poisto-toiminto.
-- ✨ **Otsikoiden muokkaus suoraan**: Mahdollisuus muokata median otsikoita suoraan käyttöliittymässä ilman erillisiä valintaikkunoita.
-- 🛠️ **Parannettu navigointi**: Paremmat pikanäppäimet, “siirry valittuun” -toiminto ja parannettu medianavigointi.
-- 🛠️ **Visuaaliset parannukset**: Animaatiot lajittelun aikana ja parannettu vedä-ja-pudota -palautteen visuaalisuus.
+### ✨ Mitä uutta
+
+- Ei uusia ominaisuuksia tässä versiossa!
 
 ## 25.6.0
 
@@ -97,47 +130,12 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 - ✨ **Rajoitetun yhteyden asetus**: Lisätty uusi asetus, joka vähentää latauskaistan käyttöä rajoitetuilla yhteyksillä.
 - ✨ **Parannettu suoratoistetun median käsittely**: Parempi tuki suoratoistetulle medialle viiveongelmien vähentämiseksi.
 
-### 🛠️ Parannuksia ja hienosäätöjä
-
-- 🛠️ **Parempi MIME-tyyppien käsittely**: Parannettu MIME-tyyppien tuki median parempaa yhteensopivuutta varten.
-- 🛠️ **Parannettu navigointipaneeli**: Parannettu pienennetyn tilan hallinta ja lisätty työkaluvihjeet käyttäjäkokemuksen parantamiseksi.
-- 🛠️ **Linux-yhteensopivuus**: Pakotettu GTK 3:n käyttö Linuxissa käyttöliittymä- ja käynnistysongelmien estämiseksi.
-
 ## 25.5.0
 
 ### ✨ Mitä uutta
 
 - 🖼️ **OBS-viivekuvien asetus**: Lisätty OBS Studio -asetus, jolla voidaan viivästyttää näyttämön vaihtoa kuvien näyttämisen yhteydessä, mikä tekee siirtymistä sulavampaa.
 - 🔊 **Tuki `.m4a`-äänitiedostoille**: Lisätty yhteensopivuus `.m4a`-äänitiedostomuodon kanssa tuettujen mediatyyppien laajentamiseksi.
-
-### 🛠️ Parannuksia ja hienosäätöjä
-
-- 🔍 **Zoomin palautus `Ctrl` + `Scroll` -yhdistelmällä**: Palautettu välitön zoomaus ohjausnäppäin + vieritys -eleellä helpompaa navigointia varten.
-- 👤 **Piilota käyttämätön Kierrosvalvojan media**: Piilota käyttämätön media Kierrosvalvojan vierailuissa siistimmän esityksen takaamiseksi.
-- 🎵 **Parannettu kaksoiskappaleiden ilmaisin**: Parannettu visuaalista merkintää päällekkäisten laulujen tunnistamisen helpottamiseksi.
-
-## 25.4.3
-
-### 🛠️ Parannuksia ja hienosäätöjä
-
-- ➕ **Siivoa media v25.4.x-versioista**: Poistaa automaattisesti orvot tai väärin sijoitetut mediat versioista v25.4.1–v25.4.2 varmistaen, ettei media puutu tai ole väärässä paikassa medialistassa.
-
-## 25.4.2
-
-### 🛠️ Parannuksia ja hienosäätöjä
-
-- ➕ **Estä päällekkäinen media**: Estää joidenkin mediaelementtien lisäämisen useaan kertaan medialuetteloon.
-
-## 25.4.1
-
-### 🛠️ Parannuksia ja hienosäätöjä
-
-- 🎬 **Korjaa mukautettujen alku-/loppuaikojen määritys**: Estää mukautettujen alku- ja loppuaikojen väärän kohdistamisen videoihin.
-- 📝 **Salli yhteensopimattomat tekstitykset**: Mahdollistaa tekstitysten käytön, vaikka ne eivät täysin vastaisi mediatiedostoa.
-- 🪟 **Poista pyöristetyt kulmat Windowsissa**: Poistaa mediaikkunan pyöristetyt kulmat Windowsissa.
-- 🖼 **Sisällytä viittauksettomat kuvat medialuetteloon**: Varmistaa, että kaikki kuvat lisätään medialuetteloon täydellisyyden vuoksi.
-- ➕ **Estä päällekkäiset mediaosiot**: Estää saman mediatiedoston useiden osioiden luonnin.
-- 📥 **Säilytä soittolistan järjestys tuonnissa**: Säilyttää JWL-soittolistojen alkuperäisen järjestyksen tuonnin aikana.
 
 ## 25.4.0
 
@@ -146,23 +144,11 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 - 🇵🇭 **Uusi kieli: Tagalog**: Lisätty tuki Tagalogin kielelle, mikä laajentaa sovelluksen monikielisiä ominaisuuksia.
 - 🎞 **Tuki `.m4v`-videomuodolle**: Nyt tuetaan `.m4v`-tiedostojen toistoa median yhteensopivuuden parantamiseksi.
 
-### 🛠️ Parannuksia ja hienosäätöjä
-
-- 🎬 **Useita alku-/loppuaikoja yhdelle videolle**: Mahdollistaa yhden videon esiintymisen medialuettelossa useita kertoja eri mukautetuilla alku- ja loppuajoilla.
-- 📤 **Sisällytä ryhmitelty media automaattiseen vientiin**: Vie automaattisesti myös ryhmitetyt mediaelementit muiden mukana.
-- 📡 **Korjaa `.m4v`-tiedostojen haku JW API:sta**: Varmistaa, että `.m4v`-tiedostot haetaan oikein JW API:n kautta.
-
 ## 25.3.1
 
 ### ✨ Mitä uutta
 
 - 🌏 **Uusi kieli: korea**: Lisätty tuki korean kielelle, jotta sovellus olisi käytettävissä laajemmalle käyttäjäkunnalle.
-
-### 🛠️ Parannuksia ja hienosäätöjä
-
-- ⚡ **Parempi suorituskyky ja pienempi prosessorin käyttö**: Optimoitu suorituskykyä CPU:n kuormituksen vähentämiseksi ja tehokkuuden parantamiseksi.
-- 🔄 **Korjattu synkronointi- ja kaatumisongelmat**: Ratkaistu useita synkronointiin ja vakauteen liittyviä ongelmia luotettavuuden parantamiseksi.
-- 📜 **Näytä julkaisutiedot vain olemassa oleville seurakunnille**: Varmistaa, että julkaisutiedot näytetään vain jo ladatuille seurakunnille.
 
 ## 25.3.0
 
@@ -173,10 +159,52 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 - 📅 **Automaattinen muistojuhlan päivämäärä ja tausta**: Havaitsee automaattisesti muistojuhlan päivämäärän ja asettaa taustakuvan valmiiksi.
 - 📜 **Näytä julkaisutiedot sovelluksessa**: Näyttää julkaisutiedot suoraan sovelluksessa, jotta käyttäjät voivat helposti tarkastella muutoksia päivityksen jälkeen.
 
-### 🛠️ Parannuksia ja hienosäätöjä
+## 25.2.1
 
-- ⚡ **Optimoitu älykäs välimuistin tyhjennys**: Parannettu älykkään välimuistin tyhjennysmekanismia suorituskyvyn parantamiseksi.
-- 📂 **Korjattu Kierrosvalvojan median sijoittelu**: Varmistaa, että Kierrosvalvojan media sijoittuu oikeaan osioon.
-- 📅 **Poissulje tavallinen kokousmedia muistojuhlan aikana**: Estää tavallisen kokousmateriaalin noutamisen muistojuhlan yhteydessä virheiden välttämiseksi.
-- 📅 **Piilota tavalliset kokousosiot muistojuhlassa**: Poistaa tarpeettomat kokousosiot muistojuhlan aikana siistimmän ulkoasun takaamiseksi.
-- 📖 **Korjaa viittomakielisen Raamatuin Video Downloads**: Oikein lataa Sign Language Bible chapter videos from JWL playlists.
+### ✨ Mitä uutta
+
+- 🔄 **Salli OBS:n uudelleenyhdistämisyritykset**: Mahdollistaa OBS:n pakottamisen muodostamaan yhteyden uudelleen tarvittaessa.
+- 🗑 **Vanhojen vientipäivämääräkansioiden automaattinen poisto**: Poistaa automaattisesti vanhentuneet vientipäivämääräkansiot, jotta tallennustila pysyy järjestyksessä.
+
+## 25.2.0
+
+### ✨ Mitä uutta
+
+- 🌍 **Käytä järjestelmän kielialuetta oletuksena**: Tunnistaa ja käyttää automaattisesti järjestelmän kielialuetta henkilökohtaisemman käyttökokemuksen takaamiseksi.
+- 🏷 **Tuki viedylle medialle**: Lisää metatietotunnisteita vietyyn mediaan paremman järjestelyn mahdollistamiseksi.
+- 🔄 **Automaattinen siirtyminen betasta vakaaseen versioon**: Sallii automaattisen siirtymisen betaversioista vakaisiin versioihin tarvittaessa.
+- **Hae uusimmat MEPS-kielihakemistot**: Noutaa uusimmat MEPS-kielihakemistot suoraan viralliselta verkkosivustolta varmistaen ajantasaisen kielituen.
+
+## 25.1.0
+
+### ✨ Mitä uutta
+
+- 📅 **Avaa aiemmat päivämäärät**: Mahdollistaa kuluvan viikon aiempien päivämäärien avaamisen, mikä on hyödyllistä, kun kokouspäivä siirretään myöhemmäksi viikolla.
+- 🛑 **Virhebanneri OBS Studiolle**: Lisää virhebannerin, kun OBS Studio ei ole yhdistettynä kokouspäivänä, jotta käyttäjä huomaa tilanteen.
+- 📚 **Ryhmittele media julkaisun mukaan**: Ryhmittelee saman viitatun julkaisun mediaa selkeämpää ja järjestelmällisempää medianäkymää varten.
+- 🎵 **Varoitus päällekkäisistä lauluista**: Näyttää varoituksen, jos sama laulu esiintyy useammin kuin kerran medialuettelossa viikonloppukokouksia varten.
+- 🔄 **Tulevien aikataulujen suunnittelu**: Mahdollistaa tulevien kokousaikataulujen muutosten suunnittelun, mikä on hyödyllistä vuosittaisissa aikataulumuutoksissa tai kierrosvalvojan vieraillessa naapuriseurakunnassa.
+
+## 24.11.0
+
+### ✨ Mitä uutta
+
+- **Uusi ominaisuus**: Verkkosivun esittäminen on nyt tuettu macOS: llä 🚀
+- **Uusi ominaisuus**: Lisätty pikanäppäimet median toiston pysäyttämiseen, keskeyttämiseen ja jatkamiseen 🚀
+- **Uusi ominaisuus**: Lisätty tuki sen verkko-osoitteen määrittämiseen, josta media ladataan 🚀
+- **Uusi ominaisuus**: Lisätty OBS Studion välitön kohtausvalitsin sekä uudistettu kohtausvalitsimen toiminnallisuus asetuksissa
+- **Uusi ominaisuus**: Dokumentaatiosivustoa on laajennettu tukemaan useampia kieliä
+
+## 24.10.10
+
+### ✨ Mitä uutta
+
+- **Uusi ominaisuus**: Lisätty pikanäppäimet seuraavaan/edelliseen mediaan siirtymiseen
+- **Uusi ominaisuus**: Lisätty median pikavalikko, jonka avulla media voidaan piilottaa ja nimetä uudelleen
+- **Uusi ominaisuus**: Trimmattuja videon aikoja noudatetaan nyt tuoduissa JWL-soittolistoissa
+
+## 24.10.9
+
+### ✨ Mitä uutta
+
+- **Uusi ominaisuus**: Lisätty vaihtoehto poistaa kaikki ylimääräinen media valitulta päivältä

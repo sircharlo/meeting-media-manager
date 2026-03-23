@@ -8,23 +8,52 @@ import { camelToKebabCase } from '../general';
 
 describe('Locales', () => {
   it('should be defined and equal', async () => {
-    const locales = localeOptions.map((l) => l.value).sort();
-    const localesKebab = locales.map(camelToKebabCase).sort();
+    const locales = localeOptions
+      .map((l) => l.value)
+      .sort((a, b) => a.localeCompare(b));
+    const localesKebab = locales
+      .map((element) => camelToKebabCase(element))
+      .sort((a, b) => a.localeCompare(b));
 
-    const messages = Object.keys(docsMessages).sort();
+    const messages = Object.keys(docsMessages).sort((a, b) =>
+      a.localeCompare(b),
+    );
 
     expect(locales).toEqual(messages);
 
-    const localeFiles = (await readdir(resolve(__dirname, '../../locales')))
+    const allLocaleFiles = (await readdir(resolve(__dirname, '../../locales')))
       .filter((f) => f.endsWith('.json'))
       .map((f) => f.replace('.json', ''))
-      .sort();
+      .sort((a, b) => a.localeCompare(b));
+
+    const inactiveLocaleFiles = allLocaleFiles.filter(
+      (f) => !localesKebab.includes(f),
+    );
+
+    if (inactiveLocaleFiles.length) {
+      console.warn('Unused locales:', inactiveLocaleFiles);
+    }
+
+    const allSrcFolders = (await readdir(resolve(__dirname, '../../src')))
+      .filter((f) => f !== 'assets' && f !== 'public')
+      .sort((a, b) => a.localeCompare(b));
+
+    const inactiveSrcFolders = allSrcFolders.filter(
+      (f) => !localesKebab.includes(f),
+    );
+
+    if (inactiveSrcFolders.length) {
+      console.warn('Unused locale folders:', inactiveSrcFolders);
+    }
+
+    const localeFiles = allLocaleFiles.filter((f) => localesKebab.includes(f));
 
     expect(localesKebab).toEqual(localeFiles);
 
     const srcFolders = (await readdir(resolve(__dirname, '../../src')))
       .filter((f) => f !== 'assets' && f !== 'public')
-      .sort();
+      .filter((f) => localesKebab.includes(f))
+      .sort((a, b) => a.localeCompare(b));
 
     expect(localesKebab).toEqual(srcFolders);
   });
@@ -41,10 +70,11 @@ describe('Locales', () => {
         const links = [...page.matchAll(/link: (.+)/g)].map((m) => m[1]);
 
         return links.map((link) => {
-          const linkParts = link?.split('/') ?? [];
+          const slug =
+            link?.replace(/^\/+/, '').split('/').findLast(Boolean) ?? link;
           return {
             link,
-            linkPage: linkParts[2] ? linkParts[2] : linkParts[1],
+            linkPage: slug,
             locale,
           };
         });
@@ -54,7 +84,13 @@ describe('Locales', () => {
     localeUrls.flat().forEach((localeUrl) => {
       const { link, linkPage, locale } = localeUrl;
       if (link?.startsWith('https://')) return;
-      expect(link).toBe(`${locale === 'en' ? '' : `/${locale}`}/${linkPage}`);
+      const expectedLink = (locale: string, linkPage: string) => {
+        if (locale === 'en') {
+          return `/${linkPage}`;
+        }
+        return `/${locale}/${linkPage}`;
+      };
+      expect(link).toBe(expectedLink(locale, linkPage));
     });
   });
 

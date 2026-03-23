@@ -144,7 +144,6 @@
     "Português",
     "prefs",
     "pubmedia",
-    "qmarkdown",
     "riggles",
     "Română",
     "rtlcss",
@@ -261,5 +260,9 @@
   },
   "[xml]": {
     "editor.defaultFormatter": "PrateekMahendrakar.prettyxml"
+  },
+  "sonarlint.connectedMode.project": {
+    "connectionId": "sircharlo",
+    "projectKey": "sircharlo_meeting-media-manager"
   }
 }

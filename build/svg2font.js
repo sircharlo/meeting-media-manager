@@ -1,9 +1,9 @@
-import path from 'path';
+import path from 'node:path';
 import WebpackIconfontPluginNodejs from 'webpack-iconfont-plugin-nodejs';
 
 const dir = 'src';
 
-var options = {
+const options = {
   cssOutput: path.join(dir, 'css/mmm-icons.css'),
   // iconFont name prefix
   cssPrefix: 'mmm',

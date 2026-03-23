@@ -1,7 +1,7 @@
 import { app, session, shell } from 'electron';
 import { isSelf, isTrustedDomain } from 'src-electron/main/utils';
 import { logToWindow } from 'src-electron/main/window/window-base';
-import { mainWindow } from 'src-electron/main/window/window-main';
+import { mainWindowInfo } from 'src-electron/main/window/window-main';
 
 app.on('ready', () => {
   // Handle session permission requests from remote content
@@ -11,7 +11,7 @@ app.on('ready', () => {
       const url = webContents.getURL();
       if (!isSelf(url) && !isTrustedDomain(url)) {
         logToWindow(
-          mainWindow,
+          mainWindowInfo.mainWindow,
           'Blocked permission request from untrusted domain',
           url,
         );
@@ -23,7 +23,7 @@ app.on('ready', () => {
         callback(true);
       } else {
         logToWindow(
-          mainWindow,
+          mainWindowInfo.mainWindow,
           'Blocked permission request:',
           permission,
           'warn',
@@ -48,7 +48,7 @@ app.on('web-contents-created', (_event, contents) => {
     if (!isSelf(params.src) && !isTrustedDomain(params.src)) {
       event.preventDefault();
       logToWindow(
-        mainWindow,
+        mainWindowInfo.mainWindow,
         'Blocked webview from loading URL:',
         params.src,
         'warn',
@@ -61,7 +61,12 @@ app.on('web-contents-created', (_event, contents) => {
   contents.on('will-navigate', (event, navigationUrl) => {
     if (!isSelf(navigationUrl) && !isTrustedDomain(navigationUrl)) {
       event.preventDefault();
-      logToWindow(mainWindow, 'Blocked navigation to:', navigationUrl, 'warn');
+      logToWindow(
+        mainWindowInfo.mainWindow,
+        'Blocked navigation to:',
+        navigationUrl,
+        'warn',
+      );
     }
   });
 
@@ -74,7 +79,12 @@ app.on('web-contents-created', (_event, contents) => {
       });
     }
 
-    logToWindow(mainWindow, 'Blocked new window creation to:', url, 'warn');
+    logToWindow(
+      mainWindowInfo.mainWindow,
+      'Blocked new window creation to:',
+      url,
+      'warn',
+    );
 
     return { action: 'deny' };
   });

@@ -21,7 +21,7 @@ const {
   parseMediaFile,
   path,
   pathToFileURL,
-} = window.electronApi;
+} = globalThis.electronApi;
 const { exists } = fs;
 const { parse } = path;
 
@@ -176,7 +176,7 @@ export const isRemoteFile = (file: File | string): boolean => {
   if (typeof file === 'string') {
     filePath = file;
   } else if (file instanceof File) {
-    const path = window.electronApi?.getLocalPathFromFileObject?.(file);
+    const path = globalThis.electronApi?.getLocalPathFromFileObject?.(file);
     if (typeof path !== 'string') return false;
     filePath = path;
   } else {
@@ -248,12 +248,21 @@ export const getMetadataFromMediaPath = async (
           video.remove();
           resolve();
         };
-        video.onerror = (error) => {
-          if (typeof error === 'string') {
-            errorCatcher(new Error(error));
-          }
+        video.onerror = (event) => {
           video.remove();
-          reject(error);
+          const rejectionError = new Error(
+            `Failed to load video: ${mediaPath}`,
+          );
+          errorCatcher(rejectionError, {
+            contexts: {
+              fn: {
+                event: JSON.stringify(event, Object.getOwnPropertyNames(event)),
+                mediaPath,
+                name: 'getMetadataFromMediaPath',
+              },
+            },
+          });
+          reject(rejectionError);
         };
         video.load();
       });

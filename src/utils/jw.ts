@@ -1,5 +1,4 @@
 import type {
-  MaxRes,
   MediaItemsMediatorFile,
   MediaLink,
   PublicationFetcher,
@@ -23,8 +22,8 @@ export const getPubId = (
   if (
     pub === 'w' &&
     issue &&
-    parseInt(issue.toString()) >= 20080101 &&
-    issue.toString().slice(-2) === '01'
+    Number.parseInt(issue.toString()) >= 20080101 &&
+    issue.toString().endsWith('01')
   ) {
     pub = 'wp';
   }
@@ -45,11 +44,16 @@ export const getPubId = (
  * @returns The resolution of the media item.
  */
 const getMediaResolution = (m: MediaItemsMediatorFile | MediaLink) => {
-  if (/\d+p/.test(m.label)) {
-    return parseInt(m.label.replace(/\D/g, ''));
-  } else {
-    return m.frameHeight;
+  const label = m.label;
+
+  if (label.endsWith('p')) {
+    const value = Number(label.slice(0, -1));
+    if (!Number.isNaN(value)) {
+      return value;
+    }
   }
+
+  return m.frameHeight;
 };
 
 /**
@@ -60,7 +64,7 @@ const getMediaResolution = (m: MediaItemsMediatorFile | MediaLink) => {
  */
 export function findBestResolution(
   mediaLinks: MediaItemsMediatorFile[] | MediaLink[] | undefined,
-  maxRes: MaxRes | undefined,
+  maxRes: string | undefined,
 ) {
   try {
     if (!mediaLinks?.length) return null;
@@ -80,7 +84,9 @@ export function findBestResolution(
     });
 
     let bestItem = mediaLinks[0];
-    const parsedMaxRes = parseInt(maxRes?.replace(/\D/g, '') || '720');
+    const parsedMaxRes = Number.parseInt(
+      maxRes?.replaceAll(/\D/g, '') || '720',
+    );
     mediaLinks.forEach((m) => {
       if (parsedMaxRes && getMediaResolution(m) <= parsedMaxRes) {
         bestItem = m;
@@ -89,7 +95,7 @@ export function findBestResolution(
     return bestItem;
   } catch (e) {
     errorCatcher(e);
-    return mediaLinks?.length ? mediaLinks[mediaLinks.length - 1] : null;
+    return mediaLinks?.length ? mediaLinks.at(-1) : null;
   }
 }
 
@@ -101,88 +107,43 @@ export function findBestResolution(
  */
 export function findBestResolutions(
   mediaLinks: MediaLink[] | undefined,
-  maxRes: MaxRes | undefined,
+  maxRes: string | undefined,
 ): MediaLink[] {
   try {
     if (!mediaLinks?.length) return [];
-    if (mediaLinks.length === 1 && mediaLinks[0]) return mediaLinks;
 
+    // Filter out subtitled if there are non-subtitled versions available
+    let filteredLinks = mediaLinks;
     if (mediaLinks.some((m) => !m.subtitled)) {
-      mediaLinks = mediaLinks.filter((m) => !m.subtitled) as MediaLink[];
+      filteredLinks = mediaLinks.filter((m) => !m.subtitled);
     }
 
     // Group items by track number
     const trackGroups = new Map<number, MediaLink[]>();
-    mediaLinks?.forEach((item) => {
+    filteredLinks.forEach((item) => {
       const track = item.track;
       if (!trackGroups.has(track)) {
         trackGroups.set(track, []);
       }
-      const trackArray = trackGroups.get(track);
-      if (trackArray) {
-        trackArray.push(item);
-      }
+      trackGroups.get(track)?.push(item);
     });
 
-    // If all items have the same track, return the best single item
-    if (trackGroups.size === 1) {
-      const trackKeys = Array.from(trackGroups.keys());
-      if (trackKeys.length > 0) {
-        const trackKey = trackKeys[0];
-        if (trackKey === undefined) return [];
-        const singleTrackItems = trackGroups.get(trackKey);
-        if (singleTrackItems && singleTrackItems.length > 0) {
-          // Sort by resolution in ascending order
-          singleTrackItems.sort((a, b) => {
-            const aRes = getMediaResolution(a);
-            const bRes = getMediaResolution(b);
-            return aRes - bRes;
-          });
-
-          if (!singleTrackItems[0]) return [];
-          let bestItem: MediaLink = singleTrackItems[0];
-          const parsedMaxRes = parseInt(maxRes?.replace(/\D/g, '') || '720');
-          singleTrackItems.forEach((m) => {
-            if (parsedMaxRes && getMediaResolution(m) <= parsedMaxRes) {
-              bestItem = m;
-            }
-          });
-          return [bestItem] as MediaLink[];
-        }
-      }
-    }
-
-    // Multiple tracks: find best item for each track
+    // Find best item for each track
     const bestItems: MediaLink[] = [];
     const sortedTracks = Array.from(trackGroups.keys()).sort((a, b) => a - b);
 
-    sortedTracks.forEach((track) => {
+    for (const track of sortedTracks) {
       const trackItems = trackGroups.get(track);
-      if (trackItems && trackItems.length > 0) {
-        // Sort by resolution in ascending order
-        trackItems.sort((a, b) => {
-          const aRes = getMediaResolution(a);
-          const bRes = getMediaResolution(b);
-          return aRes - bRes;
-        });
-
-        if (!trackItems[0]) return null;
-        let bestItem = trackItems[0] as MediaLink;
-        const parsedMaxRes = parseInt(maxRes?.replace(/\D/g, '') || '720');
-        trackItems.forEach((m) => {
-          if (parsedMaxRes && getMediaResolution(m) <= parsedMaxRes) {
-            bestItem = m as MediaLink;
-          }
-        });
-        bestItems.push(bestItem);
+      const bestItem = findBestResolution(trackItems, maxRes);
+      if (bestItem) {
+        bestItems.push(bestItem as MediaLink);
       }
-    });
+    }
 
-    return bestItems.length > 0 ? (bestItems as MediaLink[]) : [];
+    return bestItems;
   } catch (e) {
     errorCatcher(e);
-    if (!mediaLinks) return [];
-    return mediaLinks?.length ? mediaLinks : [];
+    return mediaLinks || [];
   }
 }
 

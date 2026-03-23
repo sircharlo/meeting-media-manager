@@ -44,14 +44,6 @@ Kalendervyn visar ditt mötesschema och tillgänglig media:
 - **Mediaindikatorer** - Ikoner visar vilka typer av media som är tillgängliga
 - **Datumnavigering** - Använd piltangenterna för att navigera mellan månader
 
-<!-- ### Downloading Media {#downloading-media}
-
-::: info Note
-
-Download speed depends on your internet connection and the size of media files. Videos typically take longer to download than images.
-
-::: -->
-
 ### Organisera media {#organizing-media}
 
 M³ organiserar automatiskt media efter typ och mötesdel:
@@ -82,7 +74,7 @@ Mediaspelaren erbjuder omfattande inställningsmöjligheter:
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **Zoom/Pan** - Använd mushjulet för att zooma, dra för att panorera (bilder)
+- Zooma/Panorera – Zooma med mushjulet, dra för att panorera (gäller bilder)
 
 ### Avancerade visningsfunktioner{#advanced-presentation}
 
@@ -102,7 +94,7 @@ Ställ in anpassade start- och sluttider för media:
 För bilder och videor:
 
 - \*\*Zooma in/ut \*\* - Använd mushjulet eller används kontrollerna på miniatyrbilden
-- **Pan** - Klicka och dra miniatyren för att flytta runt bilden
+- **Panorera** - Klicka och dra miniatyren för att flytta runt bilden
 - **Återställ Zoom** - Klicka för att återgå till original zoom
 
 #### Kortkommandon {#user-guide-keyboard-shortcuts}
@@ -124,7 +116,7 @@ Ställ in anpassade kortkommandon för snabbare åtkomst. Observera att inga kor
 - **Stoppa mediet** - Stoppa medieuppspelning
 - **Musikväxling** - Styr bakgrundsmusiken
 
-**Note (\*):** Global shortcut - available even when the app is not focused
+**Obs (\*):** Global genväg - tillgänglig även när appen inte är fokuserad
 
 ## Bakgrundsmusik {#user-guide-background-music}
 
@@ -157,7 +149,7 @@ Att använda M³ med OBS Studio för hybridmöten:
 2. **Aktivera WebSocket** - Installera WebSocket-insticksmodulen i OBS
 3. **Ställ in M³** - Ange OBS-port och lösenord i M³-inställningarna
 4. **Ställ in scener** - Skapa scener för kamera, media och annat innehåll
-5. **Testa** - Kontrollera att uppspelningen fungerar korrekt
+5. **Test** - Kontrollera att uppspelningen fungerar korrekt
 
 ### OBS Scenhantering {#obs-scene-management}
 
@@ -271,7 +263,7 @@ Bevaka en mapp för nya mediefiler:
 1. **Aktivera mappbevakning** - Slå på mappbevakning i inställningar
 2. **Välj mapp** - Välj den mapp som ska bevakas
 3. **Automatisk import** - Nya filer läggs automatiskt till i M³
-4. **Organiserat** - Filerna organiseras efter datum baserat på mappstrukturen
+4. **Organisering** - Filerna organiseras efter datum baserat på mappstrukturen
 
 ### Mediaexport {#user-guide-media-export}
 
@@ -360,7 +352,7 @@ Ställ in anpassade kortkommandon för snabbare åtkomst:
 Om du stöter på problem:
 
 1. **Kontrollera dokumentation** - Granska denna guide och annan tillgänglig dokumentation
-2. **Sökproblem** - Leta efter liknande ärenden på GitHub
+2. **Sök ärenden** – Leta efter liknande ärenden på GitHub
 3. **Rapportera problem** - Skapa ett nytt ärende med detaljerad information
 
 ## Bästa praxis {#best-practices}
@@ -369,7 +361,7 @@ Om du stöter på problem:
 
 1. **Kontrollera nerladdningar** - Se till att alla medier är hämtade
 2. **Testa utrustningen** - Verifiera bildskärmar och ljudarbeten
-3. **Förbered Mediavisning** - Granska och organisera mediet för mötet, se till att inga mediefiler saknas
+3. **Förbered Media** - Granska och organisera mediet för mötet, se till att inga mediefiler saknas
 4. **Ställ in ljud** - För hybridmöten, aktivera Original Audio i Zoom eller ställ in "Dela datorljud"
 
 ### Under möten {#during-meetings}

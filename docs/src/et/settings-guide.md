@@ -140,7 +140,7 @@ Nädal, millal toimub järgmine ringkonnaülevaataja külastus.
 
 <!-- **Setting**: `memorialDate` -->
 
-Järgmise mälestusõhtu kuupäev (beeta-funktsioon).
+Järgmise mälestusõhtu kuupäev.
 
 **Formaat**: MM/DD/YYYY
 

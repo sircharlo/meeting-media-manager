@@ -1,42 +1,504 @@
-import { app, type BrowserWindow, type Rectangle } from 'electron';
-import fse from 'fs-extra';
-import { pathExistsSync, readJsonSync, writeJsonSync } from 'fs-extra/esm';
+import type { WindowState } from 'src-electron/main/window/window-state';
+
+import { app, type BrowserWindow, screen } from 'electron';
+import { pathExistsSync, readJsonSync } from 'fs-extra/esm';
 import { HD_RESOLUTION, PLATFORM } from 'src-electron/constants';
 import { getAllScreens, getWindowScreen } from 'src-electron/main/screen';
-import {
-  captureElectronError,
-  getIconPath,
-  throttleWithTrailing,
-} from 'src-electron/main/utils';
+import { captureElectronError, getIconPath } from 'src-electron/main/utils';
 import {
   createWindow,
   sendToWindow,
 } from 'src-electron/main/window/window-base';
-import { mainWindow } from 'src-electron/main/window/window-main';
+import { mainWindowInfo } from 'src-electron/main/window/window-main';
+import { log, throttleWithTrailing } from 'src/shared/vanilla';
 import upath from 'upath';
 
 const { join } = upath;
-const { readFileSync } = fse;
 
-export let mediaWindow: BrowserWindow | null = null;
+export const mediaWindowInfo = {
+  mediaWindow: null as BrowserWindow | null,
+};
+
+// =============================================================================
+// HELPER TYPES
+// =============================================================================
+
+interface MediaWindowState {
+  alwaysOnTop: boolean;
+  isCurrentlyFullscreen: boolean;
+  shouldBeMaximizable: boolean;
+}
+
+interface TargetDisplayInfo {
+  targetDisplayNr: number;
+  targetFullscreen: boolean;
+}
+
+interface WindowBoundsInfo {
+  currentBounds: Electron.Rectangle;
+  currentDisplayNr: number;
+  isEffectivelyFullscreen: boolean;
+  screenBounds: Electron.Rectangle | undefined;
+}
+
+// =============================================================================
+// HELPER FUNCTIONS - Window State Detection
+// =============================================================================
+
+/**
+ * Calculates target display info for automatic positioning
+ */
+function calculateAutoTarget(
+  boundsInfo: WindowBoundsInfo,
+  mediaWindow: BrowserWindow,
+  screens: ReturnType<typeof getAllScreens>,
+): null | TargetDisplayInfo {
+  const mainWindowScreen = screens.findIndex((s) => s.mainWindow);
+  const preferredIndex = getPreferredScreenFromPrefs(screens);
+
+  // 1. Preferred Screen Strategy
+  // Use preferred screen if applicable (and we have >= 3 screens)
+  if (
+    screens.length >= 3 &&
+    preferredIndex !== -1 &&
+    preferredIndex !== mainWindowScreen
+  ) {
+    return {
+      targetDisplayNr: preferredIndex,
+      targetFullscreen: true,
+    };
+  }
+
+  // 2. Windowed -> Fullscreen Strategy
+  // Check if windowed and should move to fullscreen
+  const windowedCheck = shouldMoveWindowedToFullscreen(
+    boundsInfo,
+    mediaWindow,
+    screens,
+  );
+  if (windowedCheck.shouldMove && windowedCheck.targetDisplayNr !== undefined) {
+    return {
+      targetDisplayNr: windowedCheck.targetDisplayNr,
+      targetFullscreen: true,
+    };
+  }
+
+  // 3. Main Screen Escape Strategy
+  // Check if on main screen and needs to move
+  const mainScreenTarget = getTargetWhenOnMainScreen(
+    screens,
+    boundsInfo.currentDisplayNr,
+    mainWindowScreen,
+  );
+
+  if (mainScreenTarget) {
+    return mainScreenTarget;
+  }
+
+  // 4. Single Screen Formatting
+  const isFullscreenOrMaximized =
+    boundsInfo.isEffectivelyFullscreen ||
+    mediaWindow.isFullScreen() ||
+    mediaWindow.isMaximized();
+
+  // Handle single screen with fullscreen window
+  if (screens.length === 1 && isFullscreenOrMaximized) {
+    return {
+      targetDisplayNr: 0,
+      targetFullscreen: false,
+    };
+  }
+
+  return null;
+}
+
+/**
+ * Checks and notifies if screen configuration changed
+ */
+function checkAndNotifyScreenChange(
+  screens: ReturnType<typeof getAllScreens>,
+  lastScreensConfig: { value: string },
+): void {
+  const screensConfig = JSON.stringify(screens.map((s) => s.bounds));
+
+  if (screensConfig !== lastScreensConfig.value) {
+    notifyMainWindowAboutScreenOrWindowChange();
+    lastScreensConfig.value = screensConfig;
+  }
+}
+
+/**
+ * Finds an alternative screen that doesn't contain the main window
+ */
+function findAlternativeScreen(
+  screens: ReturnType<typeof getAllScreens>,
+  currentDisplayNr: number,
+): number {
+  // Try to find a screen without main window, different from current
+  const alternativeScreen = screens.findIndex(
+    (s, index) => !s.mainWindow && index !== currentDisplayNr,
+  );
+
+  if (alternativeScreen !== -1) return alternativeScreen;
+
+  // Fallback: any screen without main window
+  return screens.findIndex((s) => !s.mainWindow);
+}
+
+// =============================================================================
+// HELPER FUNCTIONS - Screen Selection
+// =============================================================================
+
+/**
+ * Determines the state properties for the media window
+ */
+function getMediaWindowState(
+  boundsInfo: WindowBoundsInfo,
+  isCurrentlyFullscreen: boolean,
+  screens: ReturnType<typeof getAllScreens>,
+): MediaWindowState {
+  const shouldBeMaximizable = screens.length > 1;
+  const alwaysOnTop =
+    PLATFORM !== 'darwin' &&
+    !!(boundsInfo.isEffectivelyFullscreen || isCurrentlyFullscreen);
+
+  return {
+    alwaysOnTop,
+    isCurrentlyFullscreen,
+    shouldBeMaximizable,
+  };
+}
+
+/**
+ * Gets the preferred screen from saved preferences
+ */
+function getPreferredScreenFromPrefs(
+  screens: ReturnType<typeof getAllScreens>,
+): number {
+  if (screens.length <= 1) return -1;
+
+  const mediaWindowPrefs = loadMediaWindowPrefs();
+  if (!mediaWindowPrefs) return -1;
+
+  const preferredScreen = screen.getDisplayMatching({
+    height: mediaWindowPrefs.height,
+    width: mediaWindowPrefs.width,
+    x: mediaWindowPrefs.x || 0,
+    y: mediaWindowPrefs.y || 0,
+  });
+
+  const preferredIndex = screens.findIndex((s) => s.id === preferredScreen?.id);
+  return preferredIndex;
+}
+
+/**
+ * Determines the target display when window needs to move from main window screen
+ */
+function getTargetWhenOnMainScreen(
+  screens: ReturnType<typeof getAllScreens>,
+  currentDisplayNr: number,
+  mainWindowScreen: number,
+): null | TargetDisplayInfo {
+  if (currentDisplayNr !== mainWindowScreen) {
+    return null;
+  }
+
+  const alternativeScreen = findAlternativeScreen(screens, currentDisplayNr);
+
+  if (alternativeScreen === -1) {
+    // Handle single screen scenario
+    if (screens.length === 1) {
+      return {
+        targetDisplayNr: 0,
+        targetFullscreen: false,
+      };
+    }
+    return null;
+  }
+
+  return {
+    targetDisplayNr: alternativeScreen,
+    targetFullscreen: true,
+  };
+}
+
+/**
+ * Gets comprehensive information about the current window bounds
+ */
+function getWindowBoundsInfo(
+  mediaWindow: BrowserWindow,
+  screens: ReturnType<typeof getAllScreens>,
+): WindowBoundsInfo {
+  const currentBounds = mediaWindow.getBounds();
+  const currentDisplayNr = getWindowScreen(mediaWindow);
+  const currentScreen = screens[currentDisplayNr];
+  const screenBounds = currentScreen?.bounds;
+  const isEffectivelyFullscreen = isWindowEffectivelyFullscreen(
+    currentBounds,
+    screenBounds,
+  );
+
+  return {
+    currentBounds,
+    currentDisplayNr,
+    isEffectivelyFullscreen,
+    screenBounds,
+  };
+}
+
+/**
+ * Checks if the window is effectively fullscreen by comparing bounds
+ */
+function isWindowEffectivelyFullscreen(
+  windowBounds: Electron.Rectangle,
+  screenBounds: Electron.Rectangle | undefined,
+): boolean {
+  if (!screenBounds) return false;
+  return (
+    windowBounds.width >= screenBounds.width - 10 &&
+    windowBounds.height >= screenBounds.height - 10
+  );
+}
+
+/**
+ * Determines if the window should move to fullscreen on another display
+ */
+function shouldMoveWindowedToFullscreen(
+  boundsInfo: WindowBoundsInfo,
+  mediaWindow: BrowserWindow,
+  screens: ReturnType<typeof getAllScreens>,
+): { shouldMove: boolean; targetDisplayNr?: number } {
+  const isFullscreenOrMaximized =
+    mediaWindow.isFullScreen() ||
+    mediaWindow.isMaximized() ||
+    boundsInfo.isEffectivelyFullscreen;
+
+  if (isFullscreenOrMaximized) {
+    return { shouldMove: false };
+  }
+
+  if (screens.length <= 1) {
+    return { shouldMove: false };
+  }
+
+  const alternativeScreen = findAlternativeScreen(
+    screens,
+    boundsInfo.currentDisplayNr,
+  );
+
+  if (alternativeScreen === -1) {
+    return { shouldMove: false };
+  }
+
+  return { shouldMove: true, targetDisplayNr: alternativeScreen };
+}
+
+// =============================================================================
+// HELPER FUNCTIONS - Window State Management
+// =============================================================================
+
+/**
+ * Updates window properties based on state
+ */
+function updateWindowProperties(
+  mediaWindow: BrowserWindow,
+  currentState: MediaWindowState,
+  lastState: { alwaysOnTop?: boolean; maximizable?: boolean },
+): void {
+  if (lastState.maximizable !== currentState.shouldBeMaximizable) {
+    mediaWindow.setMaximizable(currentState.shouldBeMaximizable);
+    lastState.maximizable = currentState.shouldBeMaximizable;
+  }
+
+  if (lastState.alwaysOnTop !== currentState.alwaysOnTop) {
+    mediaWindow.setAlwaysOnTop(
+      currentState.alwaysOnTop,
+      currentState.alwaysOnTop ? 'screen-saver' : undefined,
+    );
+    lastState.alwaysOnTop = currentState.alwaysOnTop;
+  }
+}
+
+/**
+ * Validates and adjusts target display to prevent conflicts
+ */
+function validateAndAdjustTarget(
+  target: TargetDisplayInfo,
+  screens: ReturnType<typeof getAllScreens>,
+): TargetDisplayInfo {
+  const mainWindowScreen = screens.findIndex((s) => s.mainWindow);
+
+  // Prevent fullscreen on same monitor as main window
+  if (
+    target.targetFullscreen &&
+    target.targetDisplayNr === mainWindowScreen &&
+    screens.length > 1
+  ) {
+    const alternativeScreen = screens.findIndex((s) => !s.mainWindow);
+    if (alternativeScreen === -1) {
+      return { ...target, targetFullscreen: false };
+    }
+    return {
+      targetDisplayNr: alternativeScreen,
+      targetFullscreen: true,
+    };
+  }
+
+  return target;
+}
+
+export const __testables = {
+  calculateAutoTarget,
+  findAlternativeScreen,
+  getMediaWindowState,
+  getPreferredScreenFromPrefs,
+  getTargetWhenOnMainScreen,
+  isWindowEffectivelyFullscreen,
+  shouldMoveWindowedToFullscreen,
+  validateAndAdjustTarget,
+};
+
+// =============================================================================
+// MAIN FUNCTION
+// =============================================================================
+
+let lastAlwaysOnTop: boolean | undefined;
+let lastMaximizable: boolean | undefined;
+let lastScreensConfig = '';
+let hasInitialPositioningHappened = false;
+
+export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
+  try {
+    // Early exit validation
+    if (!mediaWindowInfo.mediaWindow || !mainWindowInfo.mainWindow) {
+      log(
+        '❌ [moveMediaWindow] No mediaWindow or mainWindow, returning',
+        'electronWindow',
+        'log',
+      );
+      return;
+    }
+
+    const screens = getAllScreens();
+    const lastScreensConfigRef = { value: lastScreensConfig };
+    checkAndNotifyScreenChange(screens, lastScreensConfigRef);
+    lastScreensConfig = lastScreensConfigRef.value;
+
+    // Get current window state
+    const boundsInfo = getWindowBoundsInfo(
+      mediaWindowInfo.mediaWindow,
+      screens,
+    );
+    const isCurrentlyFullscreen = boundsInfo.isEffectivelyFullscreen;
+
+    // Update window properties
+    const windowState = getMediaWindowState(
+      boundsInfo,
+      isCurrentlyFullscreen,
+      screens,
+    );
+    const lastStateRef = {
+      alwaysOnTop: lastAlwaysOnTop,
+      maximizable: lastMaximizable,
+    };
+    updateWindowProperties(
+      mediaWindowInfo.mediaWindow,
+      windowState,
+      lastStateRef,
+    );
+
+    if (screens.length === 1 && hasInitialPositioningHappened) {
+      return; // Already positioned on single screen
+    }
+
+    log('🔍 [moveMediaWindow] Called', 'electronWindow', 'log');
+
+    lastAlwaysOnTop = lastStateRef.alwaysOnTop;
+    lastMaximizable = lastStateRef.maximizable;
+
+    // Determine target display and mode
+    let targetInfo: null | TargetDisplayInfo = null;
+
+    if (displayNr !== undefined && fullscreen !== undefined) {
+      // Explicit parameters provided
+      targetInfo = { targetDisplayNr: displayNr, targetFullscreen: fullscreen };
+    } else {
+      // Calculate automatic target
+      targetInfo = calculateAutoTarget(
+        boundsInfo,
+        mediaWindowInfo.mediaWindow,
+        screens,
+      );
+    }
+
+    // Exit if no target determined
+    if (!targetInfo) {
+      log(
+        '🔍 [moveMediaWindow] No target determined, keeping current position',
+        'electronWindow',
+        'log',
+      );
+      return;
+    }
+
+    // Validate target display
+    if (
+      targetInfo.targetDisplayNr < 0 ||
+      targetInfo.targetDisplayNr >= screens.length
+    ) {
+      log(
+        '❌ [moveMediaWindow] Invalid display number:',
+        'electronWindow',
+        'log',
+        targetInfo.targetDisplayNr,
+      );
+      return;
+    }
+
+    // Validate and adjust target to prevent conflicts
+    targetInfo = validateAndAdjustTarget(targetInfo, screens);
+
+    // Apply the changes
+    setWindowPosition(targetInfo.targetDisplayNr, targetInfo.targetFullscreen);
+  } catch (e) {
+    captureElectronError(e, {
+      contexts: { fn: { name: 'moveMediaWindow' } },
+    });
+  } finally {
+    notifyMainWindowAboutScreenOrWindowChange();
+  }
+};
+
+export const moveMediaWindowThrottled = throttleWithTrailing(
+  () => moveMediaWindow(),
+  100,
+);
+
+// =============================================================================
+// EXISTING FUNCTIONS (unchanged)
+// =============================================================================
 
 /**
  * Creates the media window
  */
 export function createMediaWindow() {
   // If the window is already open, just focus it
-  if (mediaWindow && !mediaWindow.isDestroyed()) {
-    mediaWindow.show();
+  if (
+    mediaWindowInfo.mediaWindow &&
+    !mediaWindowInfo.mediaWindow.isDestroyed()
+  ) {
+    focusMediaWindow();
     return;
   }
 
   // Create the browser window
-  mediaWindow = createWindow('media', {
-    alwaysOnTop: true, // Always on top by default
+  mediaWindowInfo.mediaWindow = createWindow('media', {
+    alwaysOnTop: false, // Not always on top by default
     backgroundColor: 'black',
     frame: false,
     height: HD_RESOLUTION[1],
     icon: getIconPath('media-player'),
+    maximizable: false, // Not maximizable by default
     minHeight: 110,
     minWidth: 195,
     opacity: 1,
@@ -47,17 +509,19 @@ export function createMediaWindow() {
   });
 
   // Force aspect ratio
-  mediaWindow.setAspectRatio(16 / 9);
+  mediaWindowInfo.mediaWindow.setAspectRatio(16 / 9);
 
   // Check if only one screen is available and set to windowed mode with HD resolution
   const screens = getAllScreens();
   if (screens.length === 1 && screens[0]) {
-    console.log(
+    log(
       '🔍 [createMediaWindow] Only one screen available, checking if window needs repositioning',
+      'electronWindow',
+      'log',
     );
 
     // Get current window bounds
-    const currentBounds = mediaWindow.getBounds();
+    const currentBounds = mediaWindowInfo.mediaWindow.getBounds();
     const screenBounds = screens[0].bounds;
 
     // Check if current window is already within screen bounds and smaller than screen
@@ -73,17 +537,12 @@ export function createMediaWindow() {
       currentBounds.y + currentBounds.height <=
         screenBounds.y + screenBounds.height;
 
-    console.log('🔍 [createMediaWindow] Window position check:', {
-      currentBounds,
-      isSmallerThanScreen,
-      isWithinScreenBounds,
-      screenBounds,
-    });
-
     // Only reposition if window is not already properly positioned
     if (!isWithinScreenBounds || !isSmallerThanScreen) {
-      console.log(
+      log(
         '🔍 [createMediaWindow] Window needs repositioning, setting to windowed mode with HD resolution',
+        'electronWindow',
+        'log',
       );
 
       // Set windowed bounds to HD resolution
@@ -104,707 +563,294 @@ export function createMediaWindow() {
       const y =
         screenBounds.y + Math.floor((screenBounds.height - windowedHeight) / 2);
 
-      mediaWindow.setFullScreen(false);
+      mediaWindowInfo.mediaWindow.setFullScreen(false);
 
-      mediaWindow.setBounds({
+      mediaWindowInfo.mediaWindow.setBounds({
         height: windowedHeight,
-        width: windowedWidth,
-        x,
-        y,
-      });
-
-      console.log('🔍 [createMediaWindow] Set windowed bounds:', {
-        height: windowedHeight,
-        scale,
         width: windowedWidth,
         x,
         y,
       });
     } else {
-      console.log(
+      log(
         '🔍 [createMediaWindow] Window already properly positioned, keeping current bounds',
+        'electronWindow',
+        'log',
       );
     }
   }
 
-  mediaWindow.on('closed', () => {
-    mediaWindow = null;
+  mediaWindowInfo.mediaWindow.on('closed', () => {
+    mediaWindowInfo.mediaWindow = null;
   });
+
+  hasInitialPositioningHappened = true;
 }
 
 /**
- * Fade in the media window with opacity transition
+ * Fade the media window in or out with opacity transition
+ * @param direction Fade direction ('in' or 'out')
  * @param duration Transition duration in milliseconds (default: 300ms)
  */
-export function fadeInMediaWindow(duration = 300): Promise<void> {
-  return new Promise((resolve) => {
-    if (!mediaWindow || mediaWindow.isDestroyed()) {
-      resolve();
+export function fadeMediaWindow(direction: 'in' | 'out', duration = 300): void {
+  const win = mediaWindowInfo.mediaWindow;
+
+  if (!win || win.isDestroyed()) return;
+
+  const targetOpacity = direction === 'in' ? 1 : 0;
+
+  try {
+    const startOpacity = Math.max(0, win.getOpacity());
+
+    // Skip if already at target
+    if (
+      (direction === 'in' && win.isVisible() && startOpacity >= 0.99) ||
+      (direction === 'out' && startOpacity <= 0.01)
+    ) {
+      if (direction === 'in') {
+        focusMediaWindow();
+      } else {
+        win.hide();
+      }
       return;
     }
 
-    try {
-      // Set initial opacity to 0
-      mediaWindow.setOpacity(0);
+    if (direction === 'in') {
+      win.setOpacity(startOpacity);
+      focusMediaWindow();
+    }
 
-      // Show the window first if it's not visible
-      if (!mediaWindow.isVisible()) {
-        mediaWindow.show();
-      }
+    const opacityRange = Math.abs(targetOpacity - startOpacity);
 
-      // Gradually increase opacity
-      const steps = Math.max(10, Math.floor(duration / 30));
-      const stepDuration = duration / steps;
-      const opacityStep = 1 / steps;
-      let currentStep = 0;
+    const steps = Math.max(10, Math.floor(duration / 30));
+    const stepDuration = duration / steps;
+    const opacityStep = opacityRange / steps;
 
-      const fadeInterval = setInterval(() => {
-        currentStep++;
-        const newOpacity = Math.min(currentStep * opacityStep, 1);
+    let currentStep = 0;
 
-        try {
-          mediaWindow?.setOpacity(newOpacity);
-        } catch {
-          // Fallback: just show the window normally
-          if (mediaWindow && !mediaWindow.isDestroyed()) {
-            mediaWindow.setOpacity(1);
-          }
+    const fadeInterval = setInterval(() => {
+      currentStep++;
+
+      const newOpacity =
+        direction === 'in'
+          ? Math.min(startOpacity + currentStep * opacityStep, 1)
+          : Math.max(startOpacity - currentStep * opacityStep, 0);
+
+      try {
+        if (!win || win.isDestroyed()) {
           clearInterval(fadeInterval);
-          resolve();
+          clearTimeout(fallbackTimeout);
           return;
         }
 
-        if (currentStep >= steps) {
-          clearInterval(fadeInterval);
-          if (mediaWindow && !mediaWindow.isDestroyed()) {
-            mediaWindow.setOpacity(1);
-          }
-          resolve();
-        }
-      }, stepDuration);
-
-      // Fallback timeout
-      setTimeout(() => {
-        clearInterval(fadeInterval);
-        if (mediaWindow && !mediaWindow.isDestroyed()) {
-          mediaWindow.setOpacity(1);
-        }
-        resolve();
-      }, duration + 100);
-    } catch {
-      // Fallback: just show the window normally
-      if (mediaWindow && !mediaWindow.isDestroyed()) {
-        mediaWindow.show();
-        mediaWindow.setOpacity(1);
-      }
-      resolve();
-    }
-  });
-}
-
-/**
- * Fade out the media window with opacity transition
- * @param duration Transition duration in milliseconds (default: 300ms)
- */
-export function fadeOutMediaWindow(duration = 300): Promise<void> {
-  return new Promise((resolve) => {
-    if (!mediaWindow || mediaWindow.isDestroyed()) {
-      resolve();
-      return;
-    }
-
-    try {
-      // Gradually decrease opacity
-      const steps = Math.max(10, Math.floor(duration / 30));
-      const stepDuration = duration / steps;
-      const opacityStep = 1 / steps;
-      let currentStep = 0;
-
-      const fadeInterval = setInterval(() => {
-        currentStep++;
-        const newOpacity = Math.max(1 - currentStep * opacityStep, 0);
-
-        try {
-          mediaWindow?.setOpacity(newOpacity);
-        } catch {
-          // Fallback: just hide the window normally
-          if (mediaWindow && !mediaWindow.isDestroyed()) {
-            mediaWindow.hide();
-          }
-          clearInterval(fadeInterval);
-          resolve();
-          return;
-        }
+        win.setOpacity(newOpacity);
 
         if (currentStep >= steps) {
           clearInterval(fadeInterval);
-          if (mediaWindow && !mediaWindow.isDestroyed()) {
-            mediaWindow.hide();
-            mediaWindow.setOpacity(1);
-          }
-          resolve();
-        }
-      }, stepDuration);
+          clearTimeout(fallbackTimeout);
 
-      // Fallback timeout
-      setTimeout(() => {
-        clearInterval(fadeInterval);
-        if (mediaWindow && !mediaWindow.isDestroyed()) {
-          mediaWindow.hide();
-          mediaWindow.setOpacity(1);
+          if (!win.isDestroyed()) {
+            win.setOpacity(targetOpacity);
+
+            if (direction === 'out') {
+              win.hide();
+            }
+          }
         }
-        resolve();
-      }, duration + 100);
-    } catch {
-      // Fallback: just hide the window normally
-      if (mediaWindow && !mediaWindow.isDestroyed()) {
-        mediaWindow.hide();
-        mediaWindow.setOpacity(1);
+      } catch {
+        clearInterval(fadeInterval);
+        clearTimeout(fallbackTimeout);
+
+        if (win && !win.isDestroyed()) {
+          win.setOpacity(targetOpacity);
+          if (direction === 'out') win.hide();
+        }
       }
-      resolve();
+    }, stepDuration);
+
+    const fallbackTimeout = setTimeout(() => {
+      clearInterval(fadeInterval);
+      if (win && !win.isDestroyed()) {
+        win.setOpacity(targetOpacity);
+        if (direction === 'out') win.hide();
+      }
+    }, duration + 100);
+  } catch {
+    if (win && !win.isDestroyed()) {
+      win.setOpacity(targetOpacity);
+      if (direction === 'out') win.hide();
     }
-  });
+  }
 }
 
 const notifyMainWindowAboutScreenOrWindowChange = throttleWithTrailing(() => {
-  console.log(
-    '🔍 [notifyMainWindowAboutScreenOrWindowChange] Sending screenChange event',
-  );
-  sendToWindow(mainWindow, 'screenChange');
-}, 100);
+  sendToWindow(mainWindowInfo.mainWindow, 'screenChange');
+}, 250);
 
-export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
-  console.log('🔍 [moveMediaWindow] START - Called with:', {
-    displayNr,
-    fullscreen,
-  });
-
+function loadMediaWindowPrefs(): null | WindowState {
   try {
-    if (!mediaWindow || !mainWindow) {
-      console.log(
-        '❌ [moveMediaWindow] No mediaWindow or mainWindow, returning',
-      );
-      return;
-    }
-    notifyMainWindowAboutScreenOrWindowChange();
-
-    const screens = getAllScreens();
-    console.log('🔍 [moveMediaWindow] Available screens:', screens.length);
-
-    const currentBounds = mediaWindow.getBounds();
-    const currentDisplayNr = getWindowScreen(mediaWindow);
-
-    const currentScreen = screens[currentDisplayNr];
-    const screenBounds = currentScreen?.bounds;
-
-    // Set maximizable based on screen count
-    mediaWindow.setMaximizable(screens.length > 1);
-
-    // Set always on top based on fullscreen parameter and current fullscreen state
-    const isEffectivelyFullscreen =
-      screenBounds &&
-      currentBounds.width >= screenBounds.width - 10 &&
-      currentBounds.height >= screenBounds.height - 10;
-
-    const alwaysOnTop =
-      PLATFORM !== 'darwin' && !!(isEffectivelyFullscreen || fullscreen);
-
-    console.log('🔍 [moveMediaWindow] Setting always on top:', alwaysOnTop);
-    mediaWindow.setAlwaysOnTop(
-      alwaysOnTop,
-      alwaysOnTop ? 'screen-saver' : undefined,
+    const mediaWindowStateFile = join(
+      app.getPath('userData'),
+      'media-window-state.json',
     );
-
-    // Get current window state
-    const isCurrentlyFullscreen = mediaWindow.isFullScreen();
-
-    console.log('🔍 [moveMediaWindow] Window state details:', {
-      bounds: currentBounds,
-      isFullScreen: mediaWindow.isFullScreen(),
-      isMaximized: mediaWindow.isMaximized(),
-      isMinimized: mediaWindow.isMinimized(),
-      isVisible: mediaWindow.isVisible(),
-    });
-
-    console.log('🔍 [moveMediaWindow] Current state:', {
-      currentBounds,
-      currentDisplayNr,
-      currentScreen: screens[currentDisplayNr]?.bounds,
-      isCurrentlyFullscreen,
-    });
-
-    // Determine target display and mode
-    let targetDisplayNr = displayNr;
-    let targetFullscreen = fullscreen;
-
-    let preferredIndex = -1;
-    const mediaWindowPrefs = loadMediaWindowPrefs();
-    if (mediaWindowPrefs) {
-      preferredIndex = screens.findIndex((s) => {
-        const b = s.bounds;
-        return (
-          b.x === mediaWindowPrefs.x &&
-          b.y === mediaWindowPrefs.y &&
-          b.width === mediaWindowPrefs.width &&
-          b.height === mediaWindowPrefs.height
-        );
-      });
-      if (preferredIndex !== -1) {
-        console.log(
-          '🔍 [moveMediaWindow] Preferred display index:',
-          preferredIndex,
-        );
-      } else {
-        console.log('🔍 [moveMediaWindow] Preferred display index not found');
-      }
-    } else {
-      console.log('🔍 [moveMediaWindow] No preferred display geometry found');
-    }
-
-    if (targetDisplayNr === undefined || targetFullscreen === undefined) {
-      console.log(
-        '🔍 [moveMediaWindow] No parameters provided - checking if media window should move',
+    if (!pathExistsSync(mediaWindowStateFile)) {
+      log(
+        '🔍 [loadMediaWindowPrefs] File does not exist:',
+        'electronWindow',
+        'log',
+        mediaWindowStateFile,
       );
-
-      // Check if media window is fullscreen, maximized, or effectively fullscreen
-      const isFullscreenOrMaximized =
-        isCurrentlyFullscreen ||
-        mediaWindow.isMaximized() ||
-        isEffectivelyFullscreen;
-
-      console.log('🔍 [moveMediaWindow] Fullscreen detection:', {
-        heightMatch: screenBounds
-          ? currentBounds.height >= screenBounds.height - 10
-          : false,
-        isCurrentlyFullscreen,
-        isEffectivelyFullscreen,
-        isMaximized: mediaWindow.isMaximized(),
-        screenBounds,
-        widthMatch: screenBounds
-          ? currentBounds.width >= screenBounds.width - 10
-          : false,
-        windowBounds: currentBounds,
-      });
-
-      if (!isFullscreenOrMaximized) {
-        console.log(
-          '🔍 [moveMediaWindow] Media window is windowed, checking if it should go fullscreen',
-        );
-
-        // If windowed but multiple screens available, move to another screen and go fullscreen
-        if (screens.length > 1) {
-          const alternativeScreen = screens.findIndex(
-            (s, index) => !s.mainWindow && index !== currentDisplayNr,
-          );
-
-          if (alternativeScreen !== -1) {
-            targetDisplayNr = alternativeScreen;
-            targetFullscreen = true;
-            console.log(
-              '🔍 [moveMediaWindow] Moving windowed media window to alternative screen and going fullscreen:',
-              targetDisplayNr,
-            );
-          } else {
-            // If no alternative found, try any non-main window screen
-            const anyAlternativeScreen = screens.findIndex(
-              (s) => !s.mainWindow,
-            );
-            if (anyAlternativeScreen !== -1) {
-              targetDisplayNr = anyAlternativeScreen;
-              targetFullscreen = true;
-              console.log(
-                '🔍 [moveMediaWindow] Moving windowed media window to any alternative screen and going fullscreen:',
-                targetDisplayNr,
-              );
-            } else {
-              console.log(
-                '🔍 [moveMediaWindow] No alternative screens available, keeping current position',
-              );
-              return;
-            }
-          }
-        } else {
-          console.log(
-            '🔍 [moveMediaWindow] Only one screen available, keeping windowed',
-          );
-          return;
-        }
-      }
-
-      console.log(
-        '🔍 [moveMediaWindow] Media window is fullscreen/maximized, checking if it should move',
-      );
-
-      // If media window is fullscreen, check if it needs to move
-      const mainWindowScreen = screens.findIndex((s) => s.mainWindow);
-
-      console.log('🔍 [moveMediaWindow] Screen analysis:', {
-        currentDisplayNr,
-        mainWindowScreen,
-        screens: screens.map((s, i) => ({
-          index: i,
-          mainWindow: s.mainWindow,
-          mediaWindow: s.mediaWindow,
-        })),
-      });
-
-      // Prefer saved screen when applicable (fullscreen/maximized, 3+ displays, saved exists)
-      if (
-        (isFullscreenOrMaximized || isCurrentlyFullscreen) &&
-        screens.length >= 3 &&
-        preferredIndex !== -1 &&
-        preferredIndex !== mainWindowScreen
-      ) {
-        targetDisplayNr = preferredIndex;
-        targetFullscreen = true;
-        console.log('🔍 [moveMediaWindow] Using preferred screen:', {
-          preferredIndex,
-        });
-      } else {
-        console.log('🔍 [moveMediaWindow] Not using preferred screen');
-      }
-
-      // Only move if media window is on the same screen as main window
-      if (currentDisplayNr === mainWindowScreen) {
-        console.log(
-          '🔍 [moveMediaWindow] Media window is on main window screen, moving to alternative',
-        );
-
-        // Find an alternative screen
-        const alternativeScreen = screens.findIndex(
-          (s, index) => !s.mainWindow && index !== currentDisplayNr,
-        );
-
-        if (alternativeScreen !== -1) {
-          targetDisplayNr = alternativeScreen;
-          targetFullscreen = true;
-          console.log(
-            '🔍 [moveMediaWindow] Moving fullscreen media window to alternative screen:',
-            targetDisplayNr,
-          );
-        } else {
-          // If no alternative found, try any non-main window screen
-          const anyAlternativeScreen = screens.findIndex((s) => !s.mainWindow);
-          if (anyAlternativeScreen !== -1) {
-            targetDisplayNr = anyAlternativeScreen;
-            targetFullscreen = true;
-            console.log(
-              '🔍 [moveMediaWindow] Moving fullscreen media window to any alternative screen:',
-              targetDisplayNr,
-            );
-          } else {
-            console.log(
-              '🔍 [moveMediaWindow] No alternative screens available, checking if we need to resize for single screen',
-            );
-
-            if (screens.length === 1) {
-              console.log(
-                '🔍 [moveMediaWindow] Only one screen available, forcing windowed mode and resizing',
-              );
-              targetDisplayNr = 0;
-              targetFullscreen = false;
-
-              // Calculate windowed bounds (max 1/3 of screen size, 16:9 aspect ratio)
-              const screen = screens[0];
-              if (!screen) return;
-              const screenBounds = screen.bounds;
-              const maxWidth = Math.floor(screenBounds.width / 3);
-              const maxHeight = Math.floor(screenBounds.height / 3);
-
-              // Calculate dimensions maintaining 16:9 aspect ratio
-              let width = maxWidth;
-              let height = Math.floor(width * (9 / 16));
-
-              if (height > maxHeight) {
-                height = maxHeight;
-                width = Math.floor(height * (16 / 9));
-              }
-
-              // Position at top right
-              const x = screenBounds.x + screenBounds.width - width;
-              const y = screenBounds.y;
-
-              console.log('🔍 [moveMediaWindow] Calculated fallback bounds:', {
-                height,
-                maxHeight,
-                maxWidth,
-                width,
-                x,
-                y,
-              });
-
-              // Apply the calculated bounds immediately since we are about to call setWindowPosition
-              mediaWindow.setBounds({ height, width, x, y });
-            } else {
-              return;
-            }
-          }
-        }
-      } else {
-        console.log(
-          '🔍 [moveMediaWindow] Media window is already on different screen, checking if it should stay fullscreen',
-        );
-
-        // If fullscreen but only one screen available, go windowed
-        if (screens.length === 1) {
-          console.log(
-            '🔍 [moveMediaWindow] Only one screen available, setting fullscreen media window to windowed',
-          );
-          targetDisplayNr = 0; // Use the only available screen
-          targetFullscreen = false;
-        } else {
-          console.log(
-            '🔍 [moveMediaWindow] Multiple screens available, keeping current position',
-          );
-          return;
-        }
-      }
-    }
-
-    const mainWindowScreen = screens.findIndex((s) => s.mainWindow);
-
-    console.log('🔍 [moveMediaWindow] Target state:', {
-      targetDisplayNr,
-      targetFullscreen,
-      targetScreen: screens[targetDisplayNr]?.bounds,
-    });
-
-    // Validate target display
-    if (targetDisplayNr < 0 || targetDisplayNr >= screens.length) {
-      console.log(
-        '❌ [moveMediaWindow] Invalid display number:',
-        targetDisplayNr,
-      );
-      return;
-    }
-
-    let targetScreen = screens[targetDisplayNr];
-    if (!targetScreen) {
-      console.log('❌ [moveMediaWindow] Target screen not found');
-      return;
-    }
-
-    // Prevent fullscreen on same monitor as main window
-    if (
-      targetFullscreen &&
-      targetDisplayNr === mainWindowScreen &&
-      screens.length > 1
-    ) {
-      console.log(
-        '🔍 [moveMediaWindow] Preventing fullscreen on main window screen, switching to alternative',
-      );
-      const alternativeScreen = screens.findIndex((s) => !s.mainWindow);
-      if (alternativeScreen !== -1) {
-        targetDisplayNr = alternativeScreen;
-        targetScreen = screens[targetDisplayNr];
-        console.log(
-          '🔍 [moveMediaWindow] Switched to screen:',
-          targetDisplayNr,
-        );
-      } else {
-        targetFullscreen = false;
-        console.log(
-          '🔍 [moveMediaWindow] No alternative screen, going windowed',
-        );
-      }
-    }
-
-    console.log('🔍 [moveMediaWindow] Final target:', {
-      targetDisplayNr,
-      targetFullscreen,
-      targetScreen: targetScreen?.bounds,
-    });
-
-    // Apply the changes
-    setWindowPosition(targetDisplayNr, targetFullscreen);
-
-    console.log('🔍 [moveMediaWindow] END - Changes applied');
-  } catch (e) {
-    console.error('❌ [moveMediaWindow] Error:', e);
-    captureElectronError(e, {
-      contexts: { fn: { name: 'moveMediaWindow' } },
-    });
-  }
-};
-
-function loadMediaWindowPrefs(): null | Rectangle {
-  let filePath: string | undefined;
-  try {
-    filePath = join(app.getPath('userData'), 'media-window-prefs.json');
-    if (!pathExistsSync(filePath)) {
-      console.log('🔍 [loadMediaWindowPrefs] File does not exist:', filePath);
       return null;
     }
-    console.log('🔍 [loadMediaWindowPrefs] Loading prefs from:', filePath);
-    return readJsonSync(filePath);
+    return readJsonSync(mediaWindowStateFile, { throws: false });
   } catch (e) {
-    console.error('❌ [loadMediaWindowPrefs] Error:', e);
-    let fileContent: null | string = null;
-    if (filePath) {
-      try {
-        fileContent = readFileSync(filePath, 'utf-8');
-      } catch (e) {
-        console.error('❌ [loadMediaWindowPrefs] Error reading file:', e);
-        captureElectronError(e, {
-          contexts: {
-            fn: { fileContent, name: 'loadMediaWindowPrefs (fallback)' },
-          },
-        });
-      }
-    }
     captureElectronError(e, {
-      contexts: { fn: { fileContent, name: 'loadMediaWindowPrefs' } },
+      contexts: { fn: { name: 'loadMediaWindowPrefs' } },
     });
     return null;
   }
 }
 
-function saveMediaWindowPrefs(prefs: Rectangle) {
-  try {
-    const file = join(app.getPath('userData'), 'media-window-prefs.json');
-    console.log('🔍 [saveMediaWindowPrefs] Saving prefs to:', file);
-    writeJsonSync(file, prefs);
-  } catch (e) {
-    console.error('❌ [saveMediaWindowPrefs] Error:', e);
-    captureElectronError(e, {
-      contexts: { fn: { name: 'saveMediaWindowPrefs' } },
-    });
-  }
-}
+let isMovingWindow = false;
 
 const setWindowPosition = (displayNr?: number, fullscreen = true) => {
-  console.log('🔍 [setWindowPosition] START - Called with:', {
-    displayNr,
-    fullscreen,
-  });
+  if (isMovingWindow) {
+    log(
+      '🔍 [setWindowPosition] Already moving window, skipping',
+      'electronWindow',
+      'log',
+    );
+    return;
+  }
 
   try {
-    if (!mediaWindow) {
-      console.log('❌ [setWindowPosition] No mediaWindow, returning');
+    if (!mediaWindowInfo.mediaWindow) {
+      log(
+        '❌ [setWindowPosition] No mediaWindow, returning',
+        'electronWindow',
+        'log',
+      );
+      isMovingWindow = false;
       return;
     }
+    isMovingWindow = true;
 
     const screens = getAllScreens();
     const targetDisplay = screens[displayNr ?? 0];
     if (!targetDisplay) {
-      console.log(
+      log(
         '❌ [setWindowPosition] Target display not found:',
+        'electronWindow',
+        'log',
         displayNr,
       );
+      isMovingWindow = false;
       return;
     }
 
     const targetScreenBounds = targetDisplay.bounds;
-    console.log(
-      '🔍 [setWindowPosition] Target screen bounds:',
-      targetScreenBounds,
-    );
 
     const setWindowBounds = (
       bounds: Partial<Electron.Rectangle>,
       fullScreen = false,
     ) => {
-      console.log('🔍 [setWindowBounds] START - Called with:', {
-        bounds,
-        fullScreen,
-      });
-
-      if (!mediaWindow) {
-        console.log('❌ [setWindowBounds] No mediaWindow, returning');
-        return;
+      if (!mediaWindowInfo.mediaWindow) {
+        log(
+          '❌ [setWindowBounds] No mediaWindow, returning',
+          'electronWindow',
+          'log',
+        );
+        isMovingWindow = false;
+        return false;
       }
 
       // Get current state
-      const currentBounds = mediaWindow.getBounds();
-      const wasFullscreen = mediaWindow.isFullScreen();
-      console.log('🔍 [setWindowBounds] Current state:', {
+      const currentBounds = mediaWindowInfo.mediaWindow.getBounds();
+      const wasFullscreen = isWindowEffectivelyFullscreen(
         currentBounds,
-        wasFullscreen,
-      });
+        targetScreenBounds,
+      );
 
       // Set fullscreen state first if needed
       if (wasFullscreen !== fullScreen) {
-        console.log(
+        log(
           '🔍 [setWindowBounds] Changing fullscreen state:',
+          'electronWindow',
+          'log',
           wasFullscreen,
           '->',
           fullScreen,
         );
-        mediaWindow.setFullScreen(fullScreen);
-      } else {
-        console.log(
-          '🔍 [setWindowBounds] Fullscreen state unchanged:',
-          fullScreen,
+        mediaWindowInfo.mediaWindow.setFullScreen(fullScreen);
+      }
+
+      // Set bounds if changed
+      const boundsChanged =
+        currentBounds.x !== bounds.x ||
+        currentBounds.y !== bounds.y ||
+        currentBounds.width !== bounds.width ||
+        currentBounds.height !== bounds.height;
+
+      if (boundsChanged) {
+        log(
+          '🔍 [setWindowBounds] Setting bounds:',
+          'electronWindow',
+          'log',
+          bounds,
         );
+        mediaWindowInfo.mediaWindow.setBounds(bounds);
       }
 
-      // Set bounds
-      console.log('🔍 [setWindowBounds] Setting bounds:', bounds);
-      mediaWindow.setBounds(bounds);
+      // Focus media window
+      focusMediaWindow();
 
-      // Verify the changes
-      const newBounds = mediaWindow.getBounds();
-      const newFullscreen = mediaWindow.isFullScreen();
-      console.log('🔍 [setWindowBounds] New state:', {
-        newBounds,
-        newFullscreen,
-      });
-
-      notifyMainWindowAboutScreenOrWindowChange();
-
-      // Bring media window to front if it's visible
-      if (mediaWindow.isVisible()) {
-        console.log('🔍 [setWindowBounds] Bringing media window to front');
-        mediaWindow.focus();
-        mediaWindow.show();
-      }
-
-      console.log('🔍 [setWindowBounds] END - Changes applied');
+      isMovingWindow = false;
     };
 
     const handleMacFullScreenTransition = (callback: () => void) => {
-      if (PLATFORM === 'darwin' && mediaWindow?.isFullScreen()) {
-        console.log(
-          '🔍 [handleMacFullScreenTransition] macOS fullscreen transition needed',
+      if (!mediaWindowInfo.mediaWindow) {
+        log(
+          '❌ [handleMacFullScreenTransition] No mediaWindow, returning',
+          'electronWindow',
+          'log',
         );
-        mediaWindow?.once('leave-full-screen', () => {
-          console.log(
+        return;
+      }
+      const boundsInfo = getWindowBoundsInfo(
+        mediaWindowInfo.mediaWindow,
+        screens,
+      );
+      if (
+        PLATFORM === 'darwin' &&
+        isWindowEffectivelyFullscreen(
+          boundsInfo.currentBounds,
+          boundsInfo.screenBounds,
+        )
+      ) {
+        log(
+          '🔍 [handleMacFullScreenTransition] macOS fullscreen transition needed',
+          'electronWindow',
+          'log',
+        );
+        mediaWindowInfo.mediaWindow?.once('leave-full-screen', () => {
+          log(
             '🔍 [handleMacFullScreenTransition] Left fullscreen, executing callback',
+            'electronWindow',
+            'log',
           );
           callback();
         });
-        mediaWindow?.setFullScreen(false);
+        mediaWindowInfo.mediaWindow?.setFullScreen(false);
       } else {
-        console.log(
-          '🔍 [handleMacFullScreenTransition] No transition needed, executing callback immediately',
-        );
         callback();
       }
     };
 
     if (fullscreen) {
-      console.log('🔍 [setWindowPosition] Going fullscreen');
       handleMacFullScreenTransition(() => {
         setWindowBounds(targetScreenBounds, true);
-        try {
-          saveMediaWindowPrefs(targetDisplay.bounds);
-          console.log(
-            '🔍 [setWindowPosition] Saved preferred display geometry:',
-            targetDisplay.bounds,
-          );
-        } catch (e) {
-          console.error(
-            '❌ [setWindowPosition] Error saving preferred display geometry:',
-            e,
-          );
-          captureElectronError(e, {
-            contexts: { fn: { name: 'setWindowPosition.savePrefs' } },
-          });
-        }
       });
     } else {
-      console.log('🔍 [setWindowPosition] Going windowed');
-
       // Calculate windowed bounds (HD_RESOLUTION)
       const newBounds = (() => {
         const maxWidth = Math.min(
@@ -835,15 +881,6 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
             Math.floor((targetScreenBounds.height - height) / 2),
         };
 
-        console.log('🔍 [setWindowPosition] Calculated windowed bounds:', {
-          bounds,
-          maxHeight,
-          maxWidth,
-          scale,
-          scaleX,
-          scaleY,
-        });
-
         return bounds;
       })();
 
@@ -851,10 +888,8 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
         setWindowBounds(newBounds, false);
       });
     }
-
-    console.log('🔍 [setWindowPosition] END - All changes queued');
   } catch (err) {
-    console.error('❌ [setWindowPosition] Error:', err);
+    isMovingWindow = false;
     captureElectronError(err, {
       contexts: { fn: { name: 'setWindowPosition' } },
     });
@@ -866,17 +901,33 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
  */
 export function focusMediaWindow() {
   try {
-    if (mediaWindow && !mediaWindow.isDestroyed() && mediaWindow.isVisible()) {
-      console.log('🔍 [focusMediaWindow] Focusing media window');
-      mediaWindow.focus();
-      mediaWindow.show();
-    } else {
-      console.log(
+    if (
+      !mediaWindowInfo.mediaWindow ||
+      mediaWindowInfo.mediaWindow.isDestroyed()
+    ) {
+      log(
         '🔍 [focusMediaWindow] Media window not available for focusing',
+        'electronWindow',
+        'log',
       );
+      return;
     }
+
+    const screens = getAllScreens();
+    if (screens.length === 1) {
+      log(
+        '🔍 [focusMediaWindow] Single screen, showing inactive to prevent focus steal',
+        'electronWindow',
+        'log',
+      );
+      mediaWindowInfo.mediaWindow.showInactive();
+      return;
+    }
+
+    log('🔍 [focusMediaWindow] Focusing media window', 'electronWindow', 'log');
+    mediaWindowInfo.mediaWindow.show();
+    mediaWindowInfo.mediaWindow.focus();
   } catch (err) {
-    console.error('❌ [focusMediaWindow] Error:', err);
     captureElectronError(err, {
       contexts: { fn: { name: 'focusMediaWindow' } },
     });

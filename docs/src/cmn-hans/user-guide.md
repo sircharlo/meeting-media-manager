@@ -6,7 +6,7 @@
 
 ### 下载与安装 {#download-and-install}
 
-从 [下载页面](download)获取最新版本。 它能为您的设备推荐最佳版本并显示最新版本。
+从 [下载页面](download)获取最新版本。 从 [下载页面](download) 获取最新版本。它能为您的设备推荐最佳版本并显示最新版本。
 
 ### 首次启动 {#first-launch}
 
@@ -44,28 +44,20 @@ M³ 主界面包含以下关键区域：
 - **媒体指示** —— 以图标提示可用媒体类型
 - **日期导航** —— 使用方向键在不同月份间切换
 
-<!-- ### Downloading Media {#downloading-media}
-
-::: info Note
-
-Download speed depends on your internet connection and the size of media files. Videos typically take longer to download than images.
-
-::: -->
-
 ### 整理媒体 {#organizing-media}
 
 M³ 会按聚会类型与分区自动整理媒体：
 
-- **聚会分区** —— 例如公众讲演、取之于神话语等
-- **自定义分区** —— 当某日没有聚会安排时，您仍可自建分区添加媒体
+- **聚会部分** —— 例如公众讲演、上帝话语的宝藏等
+- **自定义部分** —— 当某日没有聚会安排时，您仍可自建新的部分添加媒体
 
 ## 媒体演示 {#media-presentation}
 
 ### 打开媒体播放器 {#opening-media-player}
 
-用于聚会中的媒体演示：
+聚会媒体的播放：
 
-1. 选择日期与要演示的媒体项
+1. 选择日期与播放的媒体项
 2. 点击播放按钮或使用快捷键
 3. 媒体将在“媒体显示”窗口中开始播放
 4. 使用控制项进行播放、暂停或导航
@@ -84,7 +76,7 @@ M³ 会按聚会类型与分区自动整理媒体：
 
 - **缩放/平移** —— 鼠标滚轮缩放、拖拽平移（用于图片）
 
-### 高级演示功能 {#advanced-presentation}
+### 高级播放功能 {#advanced-presentation}
 
 #### 自定义时段 {#custom-timing}
 
@@ -119,7 +111,7 @@ M³ 会按聚会类型与分区自动整理媒体：
 **可自定义快捷键**（在设置中启用后生效）：
 
 - **媒体窗口** —— 打开/关闭媒体窗口
-- **上一项/下一项** —— 媒体间导航
+- **上一项/下一项** —— 在媒体项之间导航
 - **暂停/继续** —— 控制播放
 - **停止播放** —— 停止播放
 - **背景音乐开关** —— 控制背景音乐
@@ -143,9 +135,9 @@ M³ 会按聚会类型与分区自动整理媒体：
 M³ 可与 Zoom 集成以自动切换共享：
 
 1. **启用集成** —— 在设置中开启 Zoom 集成
-2. **配置快捷键** —— 在 Zoom 中设置屏幕共享快捷键 ，并勾选“全局快捷键”
-3. **自动控制** —— M³ 将按需自动切换 Zoom 屏幕共享
-4. **手动优先** —— 如有需要，仍可在 Zoom 内手动操作
+2. **配置快捷键** —— 在 Zoom 中设置屏幕共享快捷键 ，并勾选“全局快捷键” ，并勾选“全局快捷键” ，并勾选“全局快捷键” 请确保已勾选“全局快捷键”
+3. **自动控制** —— M³ 将按需自动切换 Zoom 屏幕共享。
+4. **配置快捷键** —— 在 Zoom 中设置屏幕共享快捷键 ，并勾选“全局快捷键”
 
 ## OBS Studio 集成 {#user-guide-obs-integration}
 
@@ -168,21 +160,21 @@ M³ 可与 Zoom 集成以自动切换共享：
 - **图片场景** —— 显示图片（若启用“延迟图片”，将等待手动触发）
 - **自动切换** —— 基于媒体类型与设置自动变更
 
-### M³ 在本机播放带声音的媒体，但这些声音**不会**自动随视频流传到 OBS/Zoom。就像把 OBS 当作“虚拟摄像头” —— 只有画面，没有声音。因此必须明确配置 Zoom 去“听见”电脑声音。
+### 高级功能 {#advanced-obs}
 
 #### 延迟图像 {#user-guide-postpone-images}
 
 启用此选项以延迟共享图像到 OBS 直到手动触发：
 
-1. 在 OBS 设置中启用"延迟图像"
-2. 只有当您点击按钮以使用 OBS Studio 显示图像时，图像才会被共享。 这有助于首先将图像展示给亲自观看者。
+1. 在设置中启用“延迟图像”
+2. 只有当您点击按钮使用 OBS Studio 显示图像时，图像才会被共享。 这有助于首先将图像展示给亲自观看者。
 
 #### 场景切换行为 {#user-guide-scene-switching}
 
-配置 M3 如何处理场景变化：
+配置 M³ 如何处理场景变化。如果您使用混合聚会，请熟悉这些行为并进行练习，以确保演示顺畅。
 
-- **这不是 M³ 的限制**：使用任何播放器在 OBS+Zoom 的场景下都会有类似现象。若电脑音频路由设置合适（例如给媒体播放使用第二声卡，并让 Zoom 把它当“麦克风”采集），启用“原始音频”即可让 Zoom 捕获电脑正在播放的声音。
-- **反复练习** —— 熟悉并形成肌肉记忆
+- **上一项/下一项** —— 媒体间导航
+- **反复练习** —— 熟悉并形成肌肉记忆。
 
 ### 混合聚会音频配置 {#audio-configuration}
 
@@ -190,7 +182,7 @@ M³ 可与 Zoom 集成以自动切换共享：
 
 #### Zoom 音频设置 {#zoom-audio-settings}
 
-**每次开会前都要启用 Zoom 的“原始音频（Original Audio）”：**
+**每次聚会前都要启用 Zoom 的“原始音频（Original Audio）”：**
 
 1. **打开 Zoom** → **设置**
 2. 进入 **音频** → **高级**
@@ -198,7 +190,7 @@ M³ 可与 Zoom 集成以自动切换共享：
 4. 勾选 **“禁用回声消除”**（第一项）
 5. 勾选 **“禁用噪声抑制”**（第二项）
 6. **不勾选** **“禁用高保真音乐模式”**（第三项）
-7. **每次会议开始前**，在会议控制条中点击“Original Audio/原始音频”按钮
+7. **每次聚会开始前**，在会议控制条中点击“Original Audio/原始音频”按钮
 
 **替代方案：共享电脑声音**  
 如果“原始音频”在您的环境下效果不佳：
@@ -207,15 +199,15 @@ M³ 可与 Zoom 集成以自动切换共享：
 2. 勾选 **“共享电脑声音”**
 3. **注意**：每次新开 Zoom 会话都要重新开启
 
-**更简便的替代方案**：考虑改用 M³ 的 Zoom 集成。它使用 Zoom 原生屏幕共享，音频处理更直接，无需复杂设置。
+**最佳方案**：考虑使用 M3 的缩放集成而不是 OBS Studio 因为它使用Zoom的本地屏幕共享，可以更顺利地处理音频且不需要复杂的音频配置。
 
 #### 为什么需要这些设置 {#why-audio-config}
 
-M³ plays media with sound on your computer, but this audio is **not automatically transmitted** through the video stream to OBS Studio. This is the same behavior you would experience with any other media player.
+M³ 在您的电脑上播放带声音的媒体，但此音频**不会自动通过视频流传输**到 OBS Studio。这与您在使用任何其他媒体播放器时遇到的行为相同。  这是与任何其他媒体播放器相同的行为。
 
-**The audio issue is not related to M³** - it's a limitation of how OBS Studio video streaming works with Zoom. The video stream acts like a virtual camera without sound, just like a webcam, so you must explicitly configure Zoom to capture the computer's audio. This implies that your computer has two sound cards, and if this isn't the case, you probably won't be able to use the OBS Studio integration successfully.
+**音频问题与 M³ 无关** —— 这是 OBS Studio 视频流与 Zoom 配合使用时的一个限制。 视频流像一个没有声音的虚拟摄像头，因此您必须明确配置缩放来捕捉计算机的音频。 这意味着您的计算机有两个声音卡，如果不是这样，就有两个声音卡了。 您可能无法成功使用 OBS 工作室集成。
 
-**替代方案**：使用 Zoom 的“共享电脑声音”，或直接使用 M³ 的 Zoom 集成以简化音频流程。
+**更简便的替代方案**：考虑改用 M³ 的 Zoom 集成。它使用 Zoom 原生屏幕共享，音频处理更直接，无需复杂设置。
 
 #### 音频疑难解答 {#audio-troubleshooting}
 
@@ -225,13 +217,13 @@ M³ plays media with sound on your computer, but this audio is **not automatical
 - **音质差**：核对三项“原始音频”设置（前两项启用，第三项不启用）
 - **重启后无效**：每次新开 Zoom 会话都必须重新启用“原始音频”
 
-**最佳实践：**
+**最佳方法：**
 
 - 在聚会前测试音频路径与共享设置
 - 准备音频设置清单，方便执勤交接
 - 把“共享电脑声音”当作备选方案
 - **若寻求更简便方案，可优先使用 Zoom 集成**
-- 确保所有 AV 服事同工熟悉这些设置
+- 确保所有 AV员熟悉这些设置
 
 ## 媒体导入和管理 {#media-import}
 
@@ -248,7 +240,7 @@ M³ plays media with sound on your computer, but this audio is **not automatical
 ### 管理已导入媒体 {#managing-imported-media}
 
 - **按日期整理** —— 将媒体分配到具体日期
-- **自定义分区** —— 用于更细致的组织与分类
+- **自定义部分** —— 用于更细致的组织与分类
 - **编辑属性** —— 修改标题、说明与时段
 - **移除媒体** —— 删除不再需要的项目
 
@@ -260,7 +252,7 @@ M³ plays media with sound on your computer, but this audio is **not automatical
 2. 选择圣经书卷与章节
 3. 选择具体经文或经文范围
 4. 下载音频文件
-5. Use them
+5. 开始使用
 
 ## 文件夹监控与导出 {#user-guide-folder-monitoring}
 
@@ -279,7 +271,7 @@ M³ plays media with sound on your computer, but this audio is **not automatical
 
 1. **启用自动导出** —— 在设置中开启
 2. **选择导出位置** —— 指定保存路径
-3. **自动整理** —— 按日期与分区分类保存
+3. **自动整理** —— 按日期与部分分类保存
 4. **格式选项** —— 可转换为 MP4 以提升兼容性
 
 ## 网站演示 {#website-presentation}
@@ -307,7 +299,7 @@ M³ plays media with sound on your computer, but this audio is **not automatical
 1. **创建配置文件** —— 为不同会众建立独立配置
 2. **切换配置** —— 使用会众选择器在配置间切换
 3. **独立设置** —— 每个配置有独立的设置与媒体
-4. **共享资源** —— 在可能的情况下共享媒体文件以节省空间
+4. **共享资源** —— 尽可能共享媒体文件以节省空间。
 
 ### 键盘快捷键 {#keyboard-shortcuts-guide}
 

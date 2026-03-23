@@ -6,14 +6,26 @@ import type {
   MediaSectionWithConfig,
 } from 'src/types';
 
-import { defaultAdditionalSection } from 'src/composables/useMediaSection';
-import { jwIcons, type jwIconsKeys } from 'src/constants/jw-icons';
 import { getMeetingSections, standardSections } from 'src/constants/media';
 import { isCoWeek } from 'src/helpers/date';
+import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'src/stores/current-state';
 
+import { errorCatcher } from './error-catcher';
+
+export const defaultAdditionalSection = {
+  config: {
+    bgColor: 'rgb(148, 94, 181)',
+    uniqueId: 'imported-media',
+  },
+  items: [],
+};
+
 // Helper functions for array-based mediaSections
-export const findMediaSection = (
+export const findMediaSection: (
+  mediaSections: MediaSectionWithConfig[],
+  sectionId: MediaSectionIdentifier,
+) => MediaSectionWithConfig | undefined = (
   mediaSections: MediaSectionWithConfig[],
   sectionId: MediaSectionIdentifier,
 ): MediaSectionWithConfig | undefined => {
@@ -34,19 +46,20 @@ export const getOrCreateMediaSection = (
   sectionId: MediaSectionIdentifier,
   defaultConfig?: Partial<MediaSection>,
 ): MediaSectionWithConfig => {
-  let section = findMediaSection(mediaSections, sectionId);
+  const section = findMediaSection(mediaSections, sectionId);
   if (sectionId === 'imported-media') {
     defaultConfig = defaultAdditionalSection.config;
   }
   if (!section) {
-    section = {
+    const newSection = {
       config: {
         uniqueId: sectionId,
         ...defaultConfig,
       },
       items: [],
     };
-    mediaSections.push(section);
+    mediaSections.push(newSection);
+    return findMediaSection(mediaSections, sectionId) || newSection;
   }
   return section;
 };
@@ -83,7 +96,7 @@ export const addSection = () => {
     items: [],
   });
 
-  console.log('✅ New section created:', {
+  log('✅ New section created:', 'mediaSections', 'log', {
     config: newSection,
     sectionId: newSectionId,
   });
@@ -113,7 +126,7 @@ export const deleteSection = (uniqueId: string) => {
     // Actually delete the section from mediaSections
     removeMediaSection(selectedDateObject.mediaSections, uniqueId);
 
-    console.log('✅ Section deleted:', {
+    log('✅ Section deleted:', 'mediaSections', 'log', {
       deletedSectionId: uniqueId,
       remainingSections: selectedDateObject.mediaSections.map(
         (s) => s.config.uniqueId,
@@ -139,7 +152,9 @@ export const isStandardSection = (section: MediaSectionIdentifier) => {
   return standardSections.includes(section);
 };
 
-function getMeetingSectionConfigs(section?: MediaSectionIdentifier) {
+function getMeetingSectionConfigs(
+  section?: MediaSectionIdentifier,
+): MediaSection {
   if (!section) {
     return { bgColor: getRandomColor(), uniqueId: '' };
   }
@@ -156,7 +171,7 @@ function getMeetingSectionConfigs(section?: MediaSectionIdentifier) {
 
   if (iconSections.includes(section as jwIconsKeys)) {
     return {
-      jwIcon: jwIcons[section as jwIconsKeys],
+      jwIconKeyword: section,
       uniqueId: section,
     };
   }
@@ -172,31 +187,27 @@ export const createMeetingSections = (day: DateInfo) => {
   const currentState = useCurrentStateStore();
   const { getMeetingType } = currentState;
   const meetingType = getMeetingType(day.date);
-  console.log('🔍 [createMeetingSections] meetingType', meetingType, day);
 
   // Debug logging to help identify the issue
   if (day.date && typeof day.date === 'object' && !(day.date instanceof Date)) {
-    console.warn('🔍 [createMeetingSections] day.date is not a Date object:', {
-      constructor: (day.date as unknown as { constructor: { name: string } })
-        .constructor?.name,
-      keys: Object.keys(day.date),
-      type: typeof day.date,
-      value: day.date,
+    errorCatcher(new Error('createMeetingSections: Received non-Date object'), {
+      contexts: {
+        fn: {
+          dayDate: day.date,
+          name: 'createMeetingSections',
+          type: typeof day.date,
+          value: day.date,
+        },
+      },
     });
   }
 
   const sections = getMeetingSections(meetingType, isCoWeek(day.date));
-  console.log('🔍 [createMeetingSections] sections', sections);
   sections.forEach((section) => {
-    console.log('🔍 [createMeetingSections] section', section);
     const calculatedConfig = getMeetingSectionConfigs(section);
     const mediaSection = getOrCreateMediaSection(day.mediaSections, section);
     mediaSection.config = calculatedConfig;
   });
-  console.log(
-    '🔍 [createMeetingSections] day.mediaSections',
-    day.mediaSections,
-  );
 };
 
 export const getSectionBgColor = (section: MediaSection | undefined) => {
@@ -213,7 +224,7 @@ export const getTextColor = (section?: MediaSectionWithConfig) => {
   if (bgColor.startsWith('#')) {
     const hex = bgColor.replace('#', '');
     [r, g, b] = [0, 1, 2].map((i) =>
-      parseInt(
+      Number.parseInt(
         hex.length === 3
           ? hex.charAt(i) + hex.charAt(i)
           : hex.slice(i * 2, i * 2 + 2),
@@ -222,11 +233,18 @@ export const getTextColor = (section?: MediaSectionWithConfig) => {
     );
   } else if (bgColor.startsWith('rgb')) {
     [r, g, b] = bgColor
-      .replace(/rgba?|\(|\)|\s/g, '')
+      .replaceAll(/rgba?|\(|\)|\s/g, '')
       .split(',')
       .map(Number);
   } else {
-    console.warn('Invalid color format');
+    errorCatcher(new Error('Invalid color format'), {
+      contexts: {
+        fn: {
+          bgColor,
+          name: 'getTextColor',
+        },
+      },
+    });
     return '#ffffff'; // Default to white if invalid input
   }
 
@@ -255,7 +273,7 @@ export const saveWatchedMediaSectionOrder = async (
 ): Promise<void> => {
   try {
     // Access electron API functions
-    const { fileUrlToPath, fs, path } = window.electronApi;
+    const { fileUrlToPath, fs, path } = globalThis.electronApi;
     const { join } = path;
     const { exists, readFile, writeFile } = fs;
 
@@ -272,13 +290,23 @@ export const saveWatchedMediaSectionOrder = async (
         existingData = JSON.parse(fileContent);
       }
     } catch (error) {
-      console.warn('⚠️ Could not read existing section order file:', error);
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            datedFolderPath,
+            name: 'saveWatchedMediaSectionOrder',
+            sectionId,
+          },
+        },
+      });
     }
 
     // Update section order data for watched items
     mediaItems.forEach((item, index) => {
-      console.log(
+      log(
         '🔍 [saveWatchedMediaSectionOrder] Overwriting sortOrderOriginal',
+        'mediaSections',
+        'log',
         item,
         index,
       );
@@ -302,12 +330,22 @@ export const saveWatchedMediaSectionOrder = async (
       'utf-8',
     );
 
-    console.log(
+    log(
       `✅ Saved section order for ${sectionId} to ${sectionOrderFilePath}`,
+      'mediaSections',
+      'log',
     );
   } catch (error) {
     // Fail gracefully - if we can't save the order file, it's not a big deal
-    console.warn(`⚠️ Could not save section order file: ${error}`);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          datedFolderPath,
+          name: 'saveWatchedMediaSectionOrder',
+          sectionId,
+        },
+      },
+    });
   }
 };
 
@@ -320,7 +358,7 @@ export const getWatchedMediaSectionInfo = async (
 ): Promise<null | { order: number; section: MediaSectionIdentifier }> => {
   try {
     // Access electron API functions
-    const { fs, path } = window.electronApi;
+    const { fs, path } = globalThis.electronApi;
     const { join } = path;
     const { exists, readFile } = fs;
 
@@ -338,7 +376,15 @@ export const getWatchedMediaSectionInfo = async (
 
     return sectionOrderData[filename] || null;
   } catch (error) {
-    console.warn(`⚠️ Could not read section order file: ${error}`);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          datedFolderPath,
+          filename,
+          name: 'getWatchedMediaSectionInfo',
+        },
+      },
+    });
     return null;
   }
 };
@@ -352,7 +398,7 @@ export const removeWatchedMediaSectionInfo = async (
 ): Promise<void> => {
   try {
     // Access electron API functions
-    const { fs, path } = window.electronApi;
+    const { fs, path } = globalThis.electronApi;
     const { join } = path;
     const { exists, readFile, writeFile } = fs;
 
@@ -376,9 +422,17 @@ export const removeWatchedMediaSectionInfo = async (
         JSON.stringify(sectionOrderData, null, 2),
         'utf-8',
       );
-      console.log(`✅ Removed section info for ${filename}`);
+      log(`✅ Removed section info for ${filename}`, 'mediaSections', 'log');
     }
   } catch (error) {
-    console.warn(`⚠️ Could not update section order file: ${error}`);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          datedFolderPath,
+          filename,
+          name: 'removeWatchedMediaSectionInfo',
+        },
+      },
+    });
   }
 };

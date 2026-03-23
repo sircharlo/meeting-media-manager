@@ -140,10 +140,7 @@ import type {
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import {
-  downloadAdditionalRemoteVideo,
-  getBestImageUrl,
-} from 'src/helpers/jw-media';
+import { getBestImageUrl } from 'src/helpers/jw-media';
 import { fetchJson } from 'src/utils/api';
 import { formatTime } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -158,7 +155,7 @@ const jwStore = useJwStore();
 const { urlVariables } = storeToRefs(jwStore);
 
 const currentState = useCurrentStateStore();
-const { currentSettings, online, selectedDate } = storeToRefs(currentState);
+const { currentSettings, online } = storeToRefs(currentState);
 
 // Props
 const props = defineProps<{
@@ -169,6 +166,13 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   cancel: [];
+  import: [
+    data: {
+      mediaItemLinks: MediaItemsMediatorItem['files'];
+      thumbnailUrl?: string;
+      title?: string;
+    },
+  ];
   ok: [];
   'update:modelValue': [value: boolean];
 }>();
@@ -197,7 +201,7 @@ const remoteVideosFiltered = computed(() => {
     const searchTerms = remoteVideoFilter.value
       .toLowerCase()
       .split(/\s+/)
-      .filter((term) => term); // Remove empty terms
+      .filter(Boolean); // Remove empty terms
 
     // Check if all search terms are present
     useableVideos.value = useableVideos.value.filter((video) =>
@@ -276,7 +280,7 @@ const getJwVideos = async () => {
         online.value,
       );
       const newVideos = (request?.category?.media || []).filter(
-        (video) => !remoteVideos.value.find((v) => v.guid === video.guid),
+        (video) => !remoteVideos.value.some((v) => v.guid === video.guid),
       );
       remoteVideos.value.push(...newVideos);
       remoteVideos.value.sort((a, b) =>
@@ -290,34 +294,25 @@ const getJwVideos = async () => {
 };
 
 const addVideo = async (video: MediaItemsMediatorItem) => {
-  isProcessing.value = true;
-  try {
-    await downloadAdditionalRemoteVideo(
-      video.files,
-      selectedDate.value,
-      video.images?.lsr?.md,
-      false,
-      video.title,
-      props.section,
-    );
-    dialogValue.value = false;
-    emit('ok');
-  } catch (error) {
-    errorCatcher(error);
-  } finally {
-    isProcessing.value = false;
-  }
+  // ✅ Always emit - parent handles section assignment
+  emit('import', {
+    mediaItemLinks: video.files,
+    thumbnailUrl: getBestImageUrl(video.images, 'md'),
+    title: video.title,
+  });
+  dialogValue.value = false;
+  emit('ok');
 };
 
 // Watch for dialog opening to get JW videos and closing to reset state
 watch(
   () => dialogValue.value,
   (isOpen) => {
-    if (!isOpen) {
+    if (isOpen) {
+      getJwVideos();
+    } else {
       // Reset state when dialog closes
       resetDialogState();
-    } else {
-      getJwVideos();
     }
   },
 );

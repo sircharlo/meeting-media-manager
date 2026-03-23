@@ -1,4 +1,4 @@
-import { captureException } from '@sentry/electron/main';
+import { addBreadcrumb, captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
 import { app } from 'electron';
 import { fileURLToPath } from 'node:url';
@@ -6,9 +6,12 @@ import {
   IS_DEV,
   JW_DOMAINS,
   PLATFORM,
+  PRODUCT_NAME,
   TRUSTED_DOMAINS,
 } from 'src-electron/constants';
+import { isUsablePath } from 'src-electron/main/fs';
 import { urlVariables } from 'src-electron/main/session';
+import { log } from 'src/shared/vanilla';
 import upath from 'upath';
 
 const { join, resolve } = upath;
@@ -27,15 +30,74 @@ export function getAppVersion() {
  * @returns The icon path
  */
 export function getIconPath(icon: 'beta' | 'icon' | 'media-player') {
+  const extByPlatform: Record<string, string> = {
+    darwin: 'icns',
+    win32: 'ico',
+  };
+
+  const ext = extByPlatform[PLATFORM] ?? 'png';
+
   return resolve(
     join(
       fileURLToPath(
         new URL(IS_DEV ? './../../src-electron' : '.', import.meta.url),
       ),
       'icons',
-      `${icon}.${PLATFORM === 'win32' ? 'ico' : PLATFORM === 'darwin' ? 'icns' : 'png'}`,
+      `${icon}.${ext}`,
     ),
   );
+}
+
+let isMachineWideAlreadyLogged = false;
+
+/**
+ * Gets the shared data path for machine-wide installations
+ * @returns The shared data path or null if not available/writable
+ */
+export async function getSharedDataPath(): Promise<null | string> {
+  const isMachineWide = isMachineWideInstallation();
+
+  if (!isMachineWideAlreadyLogged) {
+    log(
+      `[getSharedDataPath] This app is ${isMachineWide ? '' : 'not '}installed machine-wide.`,
+      'electron',
+      'log',
+    );
+    isMachineWideAlreadyLogged = true;
+  }
+  if (!isMachineWide) return null;
+
+  log(`[getSharedDataPath] Platform is ${PLATFORM}`, 'electron', 'log');
+  const sharedPath =
+    PLATFORM === 'win32'
+      ? join(
+          process.env.ProgramData || String.raw`C:\ProgramData`,
+          PRODUCT_NAME || 'Meeting Media Manager',
+        )
+      : PLATFORM === 'darwin'
+        ? join(
+            '/Library/Application Support',
+            PRODUCT_NAME || 'Meeting Media Manager',
+          )
+        : join(
+            '/var/cache',
+            (PRODUCT_NAME || 'meeting-media-manager')
+              .toLowerCase()
+              .replaceAll(' ', '-'),
+          );
+  log(
+    `[getSharedDataPath] Shared path is configured as ${sharedPath}`,
+    'electron',
+    'log',
+  );
+
+  if (await isUsablePath(sharedPath)) {
+    log(`[getSharedDataPath] Shared path is usable`, 'electron', 'log');
+    return sharedPath;
+  }
+
+  log(`[getSharedDataPath] Shared path is not usable`, 'electron', 'log');
+  return null;
 }
 
 /**
@@ -58,6 +120,25 @@ export function isJwDomain(url: string): boolean {
 }
 
 /**
+ * Checks if the current installation is machine-wide
+ * @returns Whether the installation is machine-wide
+ */
+export function isMachineWideInstallation(): boolean {
+  const exe = app.getPath('exe');
+  if (PLATFORM === 'win32') {
+    return (
+      !!process.env.DEBUGGING || // Always show as machine-wide when debugging
+      (exe.toLowerCase().includes('program files') &&
+        !exe.toLowerCase().includes('users'))
+    );
+  } else if (PLATFORM === 'darwin') {
+    return exe.startsWith('/Applications') && !exe.startsWith('/Users');
+  } else {
+    return exe.startsWith('/usr') || exe.startsWith('/opt');
+  }
+}
+
+/**
  * Checks if a given url is the same as the current app url
  * @param url The url to check
  * @returns Whether the url is the same as the current app url
@@ -67,11 +148,14 @@ export function isSelf(url?: string): boolean {
     if (!url) return false;
     const parsedUrl = new URL(url);
 
+    if (process.env.DEV) {
+      return parsedUrl.origin === process.env.APP_URL;
+    }
+
     return (
-      (!!process.env.DEV && parsedUrl.origin === process.env.APP_URL) ||
-      (!process.env.DEV &&
-        parsedUrl.protocol === 'file:' &&
-        parsedUrl.pathname.endsWith('index.html'))
+      (parsedUrl.protocol === 'file:' &&
+        parsedUrl.pathname.toLowerCase().endsWith('index.html')) ||
+      parsedUrl.protocol === 'app:'
     );
   } catch {
     return false;
@@ -117,15 +201,131 @@ export const isValidUrl = (url: string): boolean => {
 };
 
 /**
- * Fetches a raw response from a given url
- * @param url The url to fetch
- * @param init The fetch init options
- * @returns The fetch response
+ * Checks if an update error should be ignored (not reported to Sentry)
+ * @param error The error to check
+ * @param message An optional additional message
+ * @returns Whether the error should be ignored
  */
-export const fetchRaw = async (url: string, init?: RequestInit) => {
-  console.debug('fetchRaw', { init, url });
-  return fetch(url, init);
-};
+export function isIgnoredUpdateError(
+  error: Error | string,
+  message?: string,
+): boolean {
+  const ignoreErrors = [
+    'EAI_AGAIN',
+    'ECONNREFUSED',
+    'ECONNRESET',
+    'ENOSPC',
+    'ENOTFOUND',
+    'EPIPE',
+    'ERR_CONNECTION_CLOSED',
+    'ERR_CONNECTION_RESET',
+    'ERR_CONNECTION_TIMED_OUT',
+    'ERR_NETWORK_CHANGED',
+    'SELF_SIGNED_CERT_IN_CHAIN',
+    'YAMLException',
+    'releases feed',
+    ['404', 'HttpError'],
+    ['502', 'HttpError'],
+    ['503', 'HttpError'],
+    ['504', 'Gateway'],
+    ['504', 'HttpError'],
+    ['60006', 'OSStatus'],
+    ['ENOENT', 'rename'],
+    ['ENOENT', 'unlink'],
+    ['EPERM', 'rename'],
+    ['read-only', 'volume'],
+  ];
+
+  const errorMsg = typeof error === 'string' ? error : error?.message;
+  const errorCode = (error as { code?: string })?.code;
+  const errorName = (error as Error)?.name;
+
+  return ignoreErrors.some((ignoreError) => {
+    const ignoreErrorArray = Array.isArray(ignoreError)
+      ? ignoreError
+      : [ignoreError];
+
+    return ignoreErrorArray.every(
+      (ignoreStr) =>
+        message?.includes(ignoreStr) ||
+        errorMsg?.includes(ignoreStr) ||
+        errorName?.includes(ignoreStr) ||
+        (typeof errorCode === 'string' && errorCode.includes(ignoreStr)),
+    );
+  });
+}
+
+/**
+ * Handles exceptions during fetchJsonFromMainProcess
+ * @param e The exception
+ * @param url The url that was being fetched
+ * @param params The url parameters
+ * @param options The fetch options
+ */
+async function handleFetchException(
+  e: unknown,
+  url: string,
+  params: undefined | URLSearchParams,
+  options: { silent?: boolean },
+) {
+  if (options.silent || isNetworkError(e)) return;
+
+  const { default: isOnline } = await import('is-online');
+  const online = await isOnline();
+
+  if (online) {
+    utils.captureElectronError(e, {
+      contexts: {
+        fn: {
+          message: e instanceof Error ? e.message : '',
+          name: 'fetchJsonFromMainProcess',
+          params: Object.fromEntries(params || []),
+          responseUrl: `${url}?${params ? params.toString() : ''}`,
+          url,
+        },
+      },
+    });
+  }
+}
+
+/**
+ * Checks if an error is a network-related error that should not be reported to Sentry
+ * @param error The error to check
+ * @returns Whether the error is a network error
+ */
+function isNetworkError(error: unknown): boolean {
+  try {
+    if (!(error instanceof Error)) return false;
+
+    if (error.name === 'AbortError' || error.name === 'ConnectTimeoutError') {
+      return true;
+    }
+
+    if (!error.message.includes('fetch failed')) return false;
+
+    const cause = error.cause as Record<string, unknown> | undefined;
+    if (!cause) return false;
+
+    const networkCodes = [
+      'ENOTFOUND',
+      'ETIMEDOUT',
+      'ECONNREFUSED',
+      'ECONNRESET',
+      'EAI_AGAIN',
+      'UND_ERR_CONNECT_TIMEOUT',
+    ];
+
+    const isNetworkCode =
+      typeof cause.code === 'string' && networkCodes.includes(cause.code);
+    const isTimeout =
+      cause.name === 'ConnectTimeoutError' || cause.name === 'TimeoutError';
+
+    return isNetworkCode || isTimeout;
+  } catch (e) {
+    captureElectronError(e);
+    return false;
+  }
+}
 
 /**
  * Fetches a json response from a given url
@@ -133,69 +333,88 @@ export const fetchRaw = async (url: string, init?: RequestInit) => {
  * @param params The url parameters
  * @returns The json response or null if the fetch failed
  */
-export const fetchJson = async <T>(
+/**
+ * Checks if a fetch response is successful or cached
+ * @param response The response to check
+ * @returns Whether the response is ok or 304
+ */
+function isResponseSuccessful(response: Response): boolean {
+  return response.ok || response.status === 304;
+}
+
+/**
+ * Checks if a fetch error should be reported to Sentry
+ * @param response The response to check
+ * @param params The url parameters
+ * @param options The fetch options
+ * @returns Whether the error should be reported
+ */
+function shouldReportStatusError(
+  response: Response,
+  params: undefined | URLSearchParams,
+  options: { silent?: boolean },
+): boolean {
+  if (options.silent) return false;
+  if ([403, 404, 429, 502].includes(response.status)) return false;
+
+  const isPubRequest = ['S', 'CO'].some((p) =>
+    params?.get('pub')?.startsWith(`${p}-`),
+  );
+  if (response.status === 400 && isPubRequest) return false;
+
+  return true;
+}
+
+/**
+ * Fetches a json response from a given url
+ * @param url The url to fetch
+ * @param params The url parameters
+ * @returns The json response or null if the fetch failed
+ */
+export const fetchJsonFromMainProcess = async <T>(
   url: string,
   params?: URLSearchParams,
-  options: { timeout?: number } = {},
+  options: { silent?: boolean; timeout?: number } = {},
 ): Promise<null | T> => {
+  if (!url) return null;
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => {
+    controller.abort();
+  }, options.timeout ?? 30000);
+
   try {
-    if (!url) return null;
+    const response = await fetch(
+      `${url}${params ? '?' + params.toString() : ''}`,
+      { signal: controller.signal },
+    );
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => {
-      controller.abort();
-    }, options.timeout ?? 30000);
-
-    try {
-      const response = await fetchRaw(
-        `${url}${params ? '?' + params.toString() : ''}`,
-        { signal: controller.signal },
-      );
-      if (response.ok || response.status === 304) {
-        return await response.json();
-      } else if (
-        ![403, 404, 429, 502].includes(response.status) &&
-        !(
-          response.status === 400 &&
-          ['S', 'CO'].some((p) => params?.get('pub')?.startsWith(`${p}-`))
-        )
-      ) {
-        captureElectronError(new Error('Failed to fetch json!'), {
-          contexts: {
-            fn: {
-              headers: response.headers,
-              name: 'fetchJson',
-              params: Object.fromEntries(params || []),
-              responseUrl: response.url,
-              status: response.status,
-              statusText: response.statusText,
-              type: response.type,
-              url,
-            },
-          },
-        });
-      }
-    } finally {
-      clearTimeout(timeoutId);
+    if (isResponseSuccessful(response)) {
+      return (await response.json()) as T;
     }
-  } catch (e) {
-    const { default: isOnline } = await import('is-online');
-    const online = await isOnline();
 
-    if (online) {
-      captureElectronError(e, {
+    if (shouldReportStatusError(response, params, options)) {
+      utils.captureElectronError(new Error('Failed to fetch json!'), {
         contexts: {
           fn: {
-            message: e instanceof Error ? e.message : '',
-            name: 'fetchJson',
+            headers: response.headers,
+            name: 'fetchJsonFromMainProcess',
             params: Object.fromEntries(params || []),
-            responseUrl: `${url}?${params ? params.toString() : ''}`,
+            responseUrl: response.url,
+            status: response.status,
+            statusText: response.statusText,
+            type: response.type,
             url,
           },
         },
       });
     }
+  } catch (e) {
+    await handleFetchException(e, url, params, options);
+  } finally {
+    clearTimeout(timeoutId);
   }
+
   return null;
 };
 
@@ -204,21 +423,21 @@ export const fetchJson = async <T>(
  * @param error The error to log
  * @param context The context to log with the error
  */
-export function captureElectronError(
-  error: Error | string | unknown,
-  context?: CaptureCtx,
-) {
-  if (error instanceof Error && error.cause) {
-    captureElectronError(error.cause, context);
-  }
-
+export function captureElectronError(error: unknown, context?: CaptureCtx) {
   if (IS_DEV) {
-    console.error(error);
-    console.warn('context', context);
+    log(error, 'electron', 'error');
+    log('context', 'electron', 'warn', context);
   } else {
     captureException(error, context);
   }
 }
+
+/**
+ * Internal object to allow spying on exported functions called within this module
+ */
+export const utils = {
+  captureElectronError,
+};
 
 /**
  * Throttles a function to only run once every `delay` milliseconds
@@ -229,7 +448,7 @@ export function captureElectronError(
 export const throttle = <T>(func: (...args: T[]) => void, delay: number) => {
   let prev = 0;
   return (...args: T[]) => {
-    const now = new Date().getTime();
+    const now = Date.now();
     if (now - prev > delay) {
       prev = now;
       return func(...args);
@@ -238,48 +457,20 @@ export const throttle = <T>(func: (...args: T[]) => void, delay: number) => {
 };
 
 /**
- * Throttles a function to run at regular intervals AND at the end
- * @param func The function to throttle
- * @param delay The delay in milliseconds
- * @returns The throttled function with trailing execution
+ * Adds a breadcrumb to Sentry
+ * @param breadcrumb The breadcrumb to add
  */
-export const throttleWithTrailing = <T>(
-  func: (...args: T[]) => void,
-  delay: number,
-) => {
-  let lastExecTime = 0;
-  let timeoutId: null | ReturnType<typeof setTimeout> = null;
-  let lastArgs: null | T[] = null;
-
-  return (...args: T[]) => {
-    const now = Date.now();
-    lastArgs = args;
-
-    // Execute immediately if enough time has passed
-    if (now - lastExecTime >= delay) {
-      lastExecTime = now;
-      func(...args);
-
-      // Clear any pending trailing execution
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-        timeoutId = null;
-      }
-    } else {
-      // Schedule trailing execution if not already scheduled
-      if (!timeoutId) {
-        timeoutId = setTimeout(
-          () => {
-            if (lastArgs) {
-              lastExecTime = Date.now();
-              func(...lastArgs);
-              timeoutId = null;
-              lastArgs = null;
-            }
-          },
-          delay - (now - lastExecTime),
-        );
-      }
-    }
-  };
-};
+export function addElectronBreadcrumb(
+  breadcrumb: Parameters<typeof addBreadcrumb>[0],
+) {
+  if (IS_DEV) {
+    log(
+      `[Breadcrumb] ${breadcrumb.category}: ${breadcrumb.message}`,
+      'electron',
+      'info',
+      breadcrumb.data,
+    );
+  } else {
+    addBreadcrumb(breadcrumb);
+  }
+}

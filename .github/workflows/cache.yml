@@ -26,10 +26,10 @@ jobs:
         run: |
           gh extension install actions/gh-actions-cache
 
-          REPO=${{ github.server_url }}/${{ github.repository }}
-          PR=${{ github.event.pull_request.number }}
-          BRANCH=${{ github.event.ref }}
-          REF=${{ inputs.branch || (github.event.pull_request.number && 'refs/pull/$PR/merge') || github.event.ref }}
+          REPO="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
+          PR="${PR_NUMBER}"
+          BRANCH="${EVENT_REF}"
+          REF="${CACHE_REF}"
 
           echo "Fetching list of cache key"
           echo "PR: $PR"
@@ -48,3 +48,8 @@ jobs:
           echo "Done"
         env:
           GH_TOKEN: ${{ github.token }}
+          GITHUB_SERVER_URL: ${{ github.server_url }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          EVENT_REF: ${{ github.event.ref }}
+          CACHE_REF: ${{ inputs.branch || (github.event.pull_request.number && 'refs/pull/${{ github.event.pull_request.number }}/merge') || github.event.ref }}

@@ -246,35 +246,16 @@
 </template>
 
 <script setup lang="ts">
-import type {
-  JwLangCode,
-  MediaSectionIdentifier,
-  MultimediaItem,
-  PublicationFetcher,
-} from 'src/types';
+import type { MediaSectionIdentifier, MultimediaItem } from 'src/types';
 
 import { whenever } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
-import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import {
-  addToAdditionMediaMapFromPath,
-  downloadAdditionalRemoteVideo,
-  getJwMediaInfo,
-  getPubMediaLinks,
-  getStudyBibleBooks,
-  getStudyBibleMedia,
-} from 'src/helpers/jw-media';
-import { convertImageIfNeeded } from 'src/utils/converters';
-import { useCurrentStateStore } from 'stores/current-state';
+import { getStudyBibleBooks, getStudyBibleMedia } from 'src/helpers/jw-media';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
-
-// Stores
-const currentState = useCurrentStateStore();
-const { currentSettings, selectedDate } = storeToRefs(currentState);
 
 // Props
 const props = defineProps<{
@@ -284,6 +265,9 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+  cancel: [];
+  import: [data: { items: MultimediaItem[] }];
+  ok: [];
   'update:modelValue': [value: boolean];
 }>();
 
@@ -308,7 +292,7 @@ const chaptersWithMedia = ref<Set<number>>(new Set());
 const bibleBooksHebrew = computed(() => {
   return Object.fromEntries(
     Object.entries(bibleBooks.value).filter(
-      ([bookNr]) => parseInt(bookNr) < 40,
+      ([bookNr]) => Number.parseInt(bookNr) < 40,
     ),
   );
 });
@@ -316,7 +300,7 @@ const bibleBooksHebrew = computed(() => {
 const bibleBooksGreek = computed(() => {
   return Object.fromEntries(
     Object.entries(bibleBooks.value).filter(
-      ([bookNr]) => parseInt(bookNr) >= 40,
+      ([bookNr]) => Number.parseInt(bookNr) >= 40,
     ),
   );
 });
@@ -343,32 +327,28 @@ const groupedMediaItems = computed(() => {
 
     // Handle "Chapter:Verse" format
     if (aLabel.includes(':') && bLabel.includes(':')) {
-      const aParts = aLabel.split(':').map((p) => parseInt(p));
-      const bParts = bLabel.split(':').map((p) => parseInt(p));
+      const aParts = aLabel.split(':').map((p) => Number.parseInt(p));
+      const bParts = bLabel.split(':').map((p) => Number.parseInt(p));
       const aVerse = aParts[1];
       const bVerse = bParts[1];
 
       if (
         aVerse !== undefined &&
         bVerse !== undefined &&
-        !isNaN(aVerse) &&
-        !isNaN(bVerse)
+        !Number.isNaN(aVerse) &&
+        !Number.isNaN(bVerse)
       ) {
         return aVerse - bVerse;
       }
     }
 
     // Fallback to simple integer parse (e.g. for Chapter numbers if used elsewhere)
-    const aNum = parseInt(aLabel);
-    const bNum = parseInt(bLabel);
-    if (!isNaN(aNum) && !isNaN(bNum)) return aNum - bNum;
+    const aNum = Number.parseInt(aLabel);
+    const bNum = Number.parseInt(bLabel);
+    if (!Number.isNaN(aNum) && !Number.isNaN(bNum)) return aNum - bNum;
 
-    // Put "General" or other text at the end (or beginning depending on preference, usually text < numbers in ASCII but we want Verse numbers sorted)
-    // Actually, if we have "General" and "1:1", parseInt("General") is NaN.
-    // Let's put defined numbers before NaNs? Or NaNs (General) first?
-    // Usually "General" (Introduction) comes before verses.
-    if (isNaN(aNum) && !isNaN(bNum)) return -1;
-    if (!isNaN(aNum) && isNaN(bNum)) return 1;
+    if (Number.isNaN(aNum) && !Number.isNaN(bNum)) return -1;
+    if (!Number.isNaN(aNum) && Number.isNaN(bNum)) return 1;
 
     return aLabel.localeCompare(bLabel);
   });
@@ -409,20 +389,14 @@ const fetchChapterMediaAvailability = async (bookNr: number) => {
     const result = await getStudyBibleMedia(bookNr);
 
     result.mediaItems.forEach((item) => {
-      // Check for explicit ChapterNumber (if available on item)
-      // The query returns it, but we need to make sure it's on the object.
-      // If not, we can try to parse it from VerseLabel or other fields.
-      // Based on logs, item has ChapterNumber.
       if (item.ChapterNumber !== undefined && item.ChapterNumber !== null) {
         chaptersSet.add(item.ChapterNumber);
       } else if (item.VerseLabel) {
-        // Try to parse from VerseLabel "Chapter:Verse"
         const match = item.VerseLabel.match(/>(\d+):/);
         if (match && match[1]) {
-          chaptersSet.add(parseInt(match[1]));
+          chaptersSet.add(Number.parseInt(match[1]));
         }
       }
-      // Also check for Introduction (Chapter 0)
       // Usually intro items have ChapterNumber 0 or are in related items
       if (item.ChapterNumber === 0) {
         chaptersSet.add(0);
@@ -498,77 +472,10 @@ const isSelected = (item: MultimediaItem) => {
 };
 
 const addSelectedMediaItems = async () => {
-  isProcessing.value = true;
-  try {
-    for (const mediaItem of selectedMediaItems.value) {
-      await addStudyBibleMedia(mediaItem);
-    }
-  } catch (error) {
-    errorCatcher(error);
-  } finally {
-    isProcessing.value = false;
-    resetState();
-    dialogValue.value = false;
-  }
-};
-
-const addStudyBibleMedia = async (mediaItem: MultimediaItem) => {
-  if (mediaItem.MimeType.includes('image')) {
-    mediaItem.FilePath = await convertImageIfNeeded(mediaItem.FilePath);
-    await addToAdditionMediaMapFromPath(
-      mediaItem.FilePath,
-      props.section,
-      undefined,
-      {
-        title: mediaItem.Label,
-      },
-    );
-  } else {
-    const mediaLookup: PublicationFetcher = {
-      docid: mediaItem.MepsDocumentId,
-      fileformat: 'MP4',
-      issue: mediaItem.IssueTagNumber || undefined,
-      langwritten: '',
-      pub: mediaItem.KeySymbol,
-      track: mediaItem.Track || undefined,
-    };
-
-    const langsToTry = [
-      ...new Set([
-        currentSettings.value?.lang,
-        currentSettings.value?.langFallback,
-        'E',
-      ]),
-    ].filter((l) => l !== undefined && l !== null);
-    let mediaInfo, mediaItemFiles;
-    for (const lang of langsToTry) {
-      if (!lang) continue;
-      mediaLookup.langwritten = lang as JwLangCode;
-      try {
-        [mediaItemFiles, mediaInfo] = await Promise.all([
-          getPubMediaLinks(mediaLookup),
-          getJwMediaInfo(mediaLookup),
-        ]);
-        if (mediaItemFiles && mediaInfo) break; // Exit loop if successful
-      } catch {
-        // Continue to the next language on failure
-      }
-    }
-
-    if (mediaItemFiles && mediaInfo && mediaLookup.langwritten) {
-      const { thumbnail, title } = mediaInfo;
-      downloadAdditionalRemoteVideo(
-        mediaItemFiles?.files?.[mediaLookup.langwritten]?.['MP4'] || [],
-        selectedDate.value,
-        thumbnail,
-        false,
-        title.replace(/^\d+\.\s*/, ''),
-        props.section,
-      );
-    } else {
-      console.error('Failed to fetch media for all languages.');
-    }
-  }
+  // ✅ Emit raw MultimediaItems - parent handles image conversion and video downloads
+  emit('import', { items: [...selectedMediaItems.value] });
+  resetState();
+  dialogValue.value = false;
 };
 </script>
 

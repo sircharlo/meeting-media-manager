@@ -9,42 +9,42 @@ hero:
   actions:
     - theme: brand
       text: Downloaden
-      link: /nl/download
+      link: ""
     - theme: brand
       text: Over M³
-      link: /nl/about
+      link: /about
     - theme: brand
-      text: Gebruikersgids
-      link: /nl/user-guide
+      text: Gebruikershandleiding
+      link: /user-guide
     - theme: brand
-      text: Instellingengids
-      link: /nl/settings-guide
+      text: Handleiding Instellingen
+      link: /settings-guide
     - theme: brand
       text: Veelgestelde vragen
-      link: /nl/faq
+      link: /faq
 features:
   - icon: 🚀
-    title: Automatisch Mediabeheer
-    details: Automatisch downloadt en organiseert afbeeldingen en video's voor gemeentebijeenkomsten in elke taal beschikbaar op de officiële website van Jehovah's Getuigen.
+    title: Automatisch mediabeheer
+    details: Downloadt en organiseert automatisch afbeeldingen en video's voor gemeentevergaderingen in elke taal die beschikbaar is op de officiële website van Jehovah's Getuigen.
   - icon: 🎦
-    title: Mediaprensentatie
-    details: Presenteer media eenvoudig tijdens hybride of persoonlijke bijeenkomsten met geavanceerde bediening, zoom-/pan-mogelijkheden en aangepaste timingopties.
+    title: Mediapresentatie
+    details: Presenteer media eenvoudig tijdens hybride of fysieke vergaderingen met geavanceerde bediening, zoom-/pan-mogelijkheden en aangepaste timingopties.
   - icon: 🎵
     title: Achtergrondmuzieksysteem
-    details: Intelligente achtergrondmuziek die automatisch stopt voordat bijeenkomsten beginnen en met één klik opnieuw kan worden gestart na bijeenkomsten.
+    details: Intelligente achtergrondmuziek die automatisch stopt voordat vergaderingen beginnen en met één klik opnieuw kan worden gestart na de vergadering.
   - icon: 🖥️
     title: Ondersteuning voor meerdere monitoren
-    details: Automatisch detecteert en beheert externe monitoren voor naadloze mediaprensentaties en website delen.
+    details: Detecteert en beheert automatisch externe monitoren voor naadloze mediapresentaties en schermdeling.
   - icon: 🌐
-    title: Meertalige Ondersteuning
+    title: Meertalige ondersteuning
     details: Download vergadering media in honderden talen en gebruik de interface van M³ in een van de vele beschikbare talen.
   - icon: 🧩
     title: Integraties
-    details: Naadloos integreert met Zoom of OBS Studio voor verbeterd mediabeheer en afspelen tijdens vergaderingen.
+    details: Integreert naadloos met Zoom of OBS Studio voor een geavanceerd mediabeheer tijdens vergaderingen.
   - icon: 📁
     title: Mapbewaking
     details: Automatisch media synchroniseren vanuit bewaakte mappen (zoals Dropbox of OneDrive) en media exporteren naar mappen.
   - icon: 🎯
     title: Geavanceerde functies
-    details: Importeer aangepaste media, JWPUB bestanden, afspeellijsten, audio Bijbelopnamen en beheer meerdere gemeenten.
+    details: Importeer aangepaste media, JWPUB-bestanden, afspeellijsten en audiobijbelopnamen, en beheer meerdere gemeenteprofielen.
 ---

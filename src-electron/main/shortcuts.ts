@@ -3,7 +3,7 @@ import type { SettingsValues } from 'src/types';
 import { globalShortcut } from 'electron';
 import { captureElectronError } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
-import { mainWindow } from 'src-electron/main/window/window-main';
+import { mainWindowInfo } from 'src-electron/main/window/window-main';
 
 export const registerShortcut = (
   name: keyof SettingsValues,
@@ -13,7 +13,7 @@ export const registerShortcut = (
   try {
     unregisterShortcut(keySequence);
     return globalShortcut.register(keySequence, () => {
-      sendToWindow(mainWindow, 'shortcut', { shortcut: name });
+      sendToWindow(mainWindowInfo.mainWindow, 'shortcut', { shortcut: name });
     });
   } catch (e) {
     captureElectronError(e, {

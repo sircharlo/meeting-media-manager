@@ -1,4 +1,3 @@
-import type decompress from 'decompress';
 import type {
   DiscussionCategory,
   ElectronIpcInvokeKey,
@@ -9,6 +8,7 @@ import type {
   MediaAccessStatus,
   NavigateWebsiteAction,
   SettingsValues,
+  UnzipOptions,
 } from 'src/types';
 
 import { homepage, repository } from 'app/package.json';
@@ -22,38 +22,52 @@ import {
 } from 'electron';
 import electronUpdater from 'electron-updater';
 const { autoUpdater } = electronUpdater;
+import { pathExistsSync } from 'fs-extra/esm';
+import { arch, platform } from 'node:os';
 import { PLATFORM } from 'src-electron/constants';
+import { getLowDiskSpaceStatus } from 'src-electron/main/disk-space';
 import {
   downloadFile,
+  isDownloadComplete,
   isDownloadErrorExpected,
 } from 'src-electron/main/downloads';
 import { createVideoFromNonVideo } from 'src-electron/main/ffmpeg';
 import {
-  decompressFile,
+  getAppDataPath,
+  getZipEntries,
+  isUsablePath,
   openFileDialog,
   openFolderDialog,
   unwatchFolders,
+  unzipFile,
   watchFolder,
 } from 'src-electron/main/fs';
 import { getAllScreens } from 'src-electron/main/screen';
-import { setElectronUrlVariables, shouldQuit } from 'src-electron/main/session';
+import { quitStatus, setElectronUrlVariables } from 'src-electron/main/session';
 import {
   registerShortcut,
   unregisterAllShortcuts,
   unregisterShortcut,
 } from 'src-electron/main/shortcuts';
-import { triggerUpdateCheck } from 'src-electron/main/updater';
-import { isSelf } from 'src-electron/main/utils';
+import {
+  getBetaUpdatesPath,
+  getUpdatesDisabledPath,
+  triggerUpdateCheck,
+} from 'src-electron/main/updater';
+import {
+  captureElectronError,
+  getSharedDataPath,
+  isSelf,
+} from 'src-electron/main/utils';
 import { logToWindow } from 'src-electron/main/window/window-base';
 import {
-  mainWindow,
+  mainWindowInfo,
   toggleAuthorizedClose,
 } from 'src-electron/main/window/window-main';
 import {
-  fadeInMediaWindow,
-  fadeOutMediaWindow,
+  fadeMediaWindow,
   focusMediaWindow,
-  mediaWindow,
+  mediaWindowInfo,
   moveMediaWindow,
 } from 'src-electron/main/window/window-media';
 import {
@@ -65,11 +79,13 @@ import {
   askForMediaAccess,
   createWebsiteWindow,
   navigateWebsiteWindow,
-  websiteWindow,
+  websiteWindowInfo,
   zoomWebsiteWindow,
 } from 'src-electron/main/window/window-website';
+import upath from 'upath';
 
 const { openExternal, openPath } = shell;
+const { join } = upath;
 
 // IPC send/on
 
@@ -79,16 +95,16 @@ function handleIpcSend(
   listener: (event: IpcMainEvent, ...args: any[]) => void,
 ) {
   ipcMain.on(channel, (e, ...args) => {
-    if (!isSelf(e.senderFrame?.url)) {
+    if (isSelf(e.senderFrame?.url)) {
+      logToWindow(mainWindowInfo.mainWindow, 'on', { args, channel }, 'debug');
+    } else {
       logToWindow(
-        mainWindow,
+        mainWindowInfo.mainWindow,
         `Blocked IPC send from ${e.senderFrame?.url}`,
         {},
         'warn',
       );
       return;
-    } else {
-      logToWindow(mainWindow, 'on', { args, channel }, 'debug');
     }
     listener(e, ...args);
   });
@@ -97,23 +113,16 @@ function handleIpcSend(
 handleIpcSend(
   'toggleMediaWindow',
   async (_e, show: boolean, enableFadeTransitions = false) => {
-    if (!mediaWindow) return;
+    const win = mediaWindowInfo.mediaWindow;
+    if (!win) return;
+
     if (show) {
       moveMediaWindow();
-      if (!mediaWindow.isVisible()) {
-        if (enableFadeTransitions) {
-          await fadeInMediaWindow(300);
-        } else {
-          mediaWindow.show();
-        }
-      }
-    } else {
-      if (enableFadeTransitions) {
-        await fadeOutMediaWindow(300);
-      } else {
-        mediaWindow.hide();
-      }
+
+      return enableFadeTransitions ? fadeMediaWindow('in') : win.show();
     }
+
+    return enableFadeTransitions ? fadeMediaWindow('out') : win.hide();
   },
 );
 
@@ -139,8 +148,12 @@ handleIpcSend('setElectronUrlVariables', (_e, variables: string) => {
 
 handleIpcSend('authorizedClose', () => {
   toggleAuthorizedClose(true);
-  if (shouldQuit) app.quit();
-  else if (mainWindow && !mainWindow.isDestroyed()) mainWindow.close();
+  if (quitStatus.shouldQuit) app.quit();
+  else if (
+    mainWindowInfo.mainWindow &&
+    !mainWindowInfo.mainWindow.isDestroyed()
+  )
+    mainWindowInfo.mainWindow.close();
 });
 
 handleIpcSend('toggleOpenAtLogin', (_e, openAtLogin: boolean) => {
@@ -153,7 +166,7 @@ handleIpcSend(
     if (show) {
       createWebsiteWindow(websiteParams);
     } else {
-      websiteWindow?.close();
+      websiteWindowInfo.websiteWindow?.close();
     }
   },
 );
@@ -230,24 +243,69 @@ function handleIpcInvoke<T = unknown>(
   ) => Promise<T>,
 ) {
   ipcMain.handle(channel, (e, ...args) => {
-    if (!isSelf(e.senderFrame?.url)) {
+    if (isSelf(e.senderFrame?.url)) {
       logToWindow(
-        mainWindow,
+        mainWindowInfo.mainWindow,
+        'handle',
+        { args, channel },
+        'debug',
+      );
+    } else {
+      logToWindow(
+        mainWindowInfo.mainWindow,
         `Blocked IPC invoke from ${e.senderFrame?.url}`,
         {},
         'warn',
       );
       return null;
-    } else {
-      logToWindow(mainWindow, 'handle', { args, channel }, 'debug');
     }
     return listener(e, ...args);
   });
 }
 
-handleIpcInvoke('getAppDataPath', async () => app.getPath('appData'));
+function isOS64Bit() {
+  try {
+    if (platform() === 'win32') {
+      // Check for the existence of the SysWOW64 directory
+      // PROGRAMFILES environment variable points to "C:\Program Files (x86)" for 32-bit apps on 64-bit systems
+      // process.env.SystemRoot points to the Windows directory (e.g., C:\Windows)
+      const sysWOW64Path = join(process.env.SystemRoot, 'SysWOW64');
+      return pathExistsSync(sysWOW64Path);
+    } else {
+      // For macOS and Linux, the os.arch() is usually reliable for the OS's capability
+      // (e.g., 'x64' or 'arm64')
+      return arch()?.includes('64') ?? false;
+    }
+  } catch (e) {
+    captureElectronError(e, {
+      contexts: {
+        fn: {
+          args: {
+            arch: arch(),
+            platform: platform(),
+            SystemRoot: process?.env?.SystemRoot,
+          },
+          name: 'isOS64Bit',
+        },
+      },
+    });
+    return false;
+  }
+}
+
+handleIpcInvoke('getAppDataPath', async () => getAppDataPath());
+handleIpcInvoke('getBetaUpdatesPath', async () => getBetaUpdatesPath());
+handleIpcInvoke('getLowDiskSpaceStatus', async () => getLowDiskSpaceStatus());
+handleIpcInvoke('getUpdatesDisabledPath', async () => getUpdatesDisabledPath());
+handleIpcInvoke('getSharedDataPath', async () => getSharedDataPath());
 handleIpcInvoke('getUserDataPath', async () => app.getPath('userData'));
 handleIpcInvoke('getLocales', async () => app.getPreferredSystemLanguages());
+handleIpcInvoke('isUsablePath', async (_e, p: string) => isUsablePath(p));
+
+handleIpcInvoke(
+  'isArchitectureMismatch',
+  async () => process.arch === 'ia32' && isOS64Bit(),
+);
 
 handleIpcInvoke(
   'getScreenAccessStatus',
@@ -258,6 +316,9 @@ handleIpcInvoke(
 );
 
 handleIpcInvoke('getAllScreens', async () => getAllScreens());
+handleIpcInvoke('isDownloadComplete', async (_e, downloadId: string) =>
+  isDownloadComplete(downloadId),
+);
 handleIpcInvoke('isDownloadErrorExpected', async () =>
   isDownloadErrorExpected(),
 );
@@ -270,8 +331,8 @@ handleIpcInvoke(
 
 handleIpcInvoke(
   'createVideoFromNonVideo',
-  async (_e, path: string, ffmpegPath: string) =>
-    createVideoFromNonVideo(path, ffmpegPath),
+  async (_e, path: string, ffmpegPath: string, outputDir?: string) =>
+    createVideoFromNonVideo(path, ffmpegPath, outputDir),
 );
 
 handleIpcInvoke(
@@ -296,13 +357,13 @@ handleIpcInvoke('openFolderDialog', async () => openFolderDialog());
 handleIpcInvoke('openFolder', async (_e, path: string) => openPath(path));
 
 handleIpcInvoke(
-  'decompress',
-  async (
-    _e,
-    input: string,
-    output: string,
-    opts?: decompress.DecompressOptions,
-  ) => decompressFile(input, output, opts),
+  'unzip',
+  async (_e, input: string, output: string, opts?: UnzipOptions) =>
+    unzipFile(input, output, opts),
+);
+
+handleIpcInvoke('getZipEntries', async (_e, zipPath: string) =>
+  getZipEntries(zipPath),
 );
 
 handleIpcSend('quitAndInstall', () => {

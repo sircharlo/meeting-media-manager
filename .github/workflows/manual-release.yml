@@ -1,0 +1,147 @@
+name: Manual Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  bump-version:
+    name: Bump version
+    runs-on: ubuntu-latest
+    if: github.repository == 'sircharlo/meeting-media-manager'
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
+
+      - name: Calculate and bump version
+        id: bump
+        run: python build/bump-version.py
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit and push changes
+        if: steps.bump.outputs.draft_exists != 'true'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          if git diff --staged --quiet; then
+            echo "Version is already correct, nothing to commit."
+          else
+            git commit -m "chore: bump version to ${{ steps.bump.outputs.new_version }} [skip ci]"
+            git push origin master
+          fi
+    outputs:
+      new_version: ${{ steps.bump.outputs.new_version }}
+      draft_exists: ${{ steps.bump.outputs.draft_exists }}
+
+  draft-release:
+    name: Draft release
+    runs-on: ubuntu-latest
+    needs: bump-version
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Clear existing draft release assets
+        run: |
+          if gh release view "v${{ needs.bump-version.outputs.new_version }}" > /dev/null 2>&1; then
+            echo "Release exists, clearing assets..."
+            gh release view "v${{ needs.bump-version.outputs.new_version }}" --json assets --jq '.assets[].name' | while read -r asset; do
+              echo "Deleting asset: $asset"
+              gh release delete-asset "v${{ needs.bump-version.outputs.new_version }}" "$asset" --yes
+            done
+          else
+            echo "Release does not exist, skipping asset clearing."
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Release Notes
+        id: extract_notes
+        run: |
+          VERSION="v${{ needs.bump-version.outputs.new_version }}"
+          CHANGELOG="CHANGELOG.md"
+          OUTPUT="release-notes.md"
+
+          # Initialize with a fallback message
+          echo "Release $VERSION" > $OUTPUT
+
+          if [ -f "$CHANGELOG" ]; then
+            # Find the line number of the version header
+            START_LINE=$(grep -n "^## $VERSION" "$CHANGELOG" | head -n 1 | cut -d: -f1)
+            
+            if [ -n "$START_LINE" ]; then
+              # Find the next version header line number relative to START_LINE
+              RELATIVE_NEXT_LINE=$(tail -n +$((START_LINE + 1)) "$CHANGELOG" | grep -n "^## v" | head -n 1 | cut -d: -f1)
+              
+              if [ -z "$RELATIVE_NEXT_LINE" ]; then
+                # No next version found, take from START_LINE to end of file
+                sed -n "${START_LINE},\$p" "$CHANGELOG" > $OUTPUT
+              else
+                # Calculate the absolute end line number and extract the range
+                END_LINE=$((START_LINE + RELATIVE_NEXT_LINE - 1))
+                sed -n "${START_LINE},${END_LINE}p" "$CHANGELOG" > $OUTPUT
+              fi
+            fi
+          fi
+        continue-on-error: true
+
+      - name: Create or update draft release
+        if: needs.bump-version.outputs.draft_exists != 'true'
+        id: create_release
+        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
+        with:
+          name: v${{ needs.bump-version.outputs.new_version }}
+          tag: v${{ needs.bump-version.outputs.new_version }}
+          commit: 'master'
+          draft: true
+          prerelease: false
+          bodyFile: release-notes.md
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+    outputs:
+      id: ${{ steps.create_release.outputs.id || '' }}
+
+  build:
+    needs: [bump-version, draft-release]
+    uses: ./.github/workflows/build.yml
+    with:
+      checkout-latest: true
+    secrets:
+      APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      MAC_CERTIFICATE_BASE64: ${{ secrets.MAC_CERTIFICATE_BASE64 }}
+      MAC_CERTIFICATE_PASSWORD: ${{ secrets.MAC_CERTIFICATE_PASSWORD }}
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      TEST_VERSION: 'false'
+
+  # publish-release:
+  #   name: 'Publish release'
+  #   runs-on: ubuntu-latest
+  #   needs: [bump-version, build]
+  #   permissions:
+  #     contents: write
+  #   steps:
+  #     - uses: ncipollo/release-action@v1
+  #       with:
+  #         name: v${{ needs.bump-version.outputs.new_version }}
+  #         tag: v${{ needs.bump-version.outputs.new_version }}
+  #         draft: false
+  #         prerelease: false
+  #         allowUpdates: true
+  #         omitBodyDuringUpdate: true
+  #         updateOnlyUnreleased: true
+  #         token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,13 +1,7 @@
 import type { SettingsGroups, SettingsItems, SettingsValues } from 'src/types';
 
 // Enum Types
-export const RESOLUTIONS = [
-  '240p',
-  '360p',
-  '480p',
-  '720p',
-  //'1080p'
-] as const;
+export const RESOLUTIONS = ['240p', '360p', '480p', '720p', '1080p'] as const;
 
 /* eslint-disable perfectionist/sort-objects */
 export const settingsGroups: SettingsGroups = {
@@ -71,6 +65,17 @@ export const settingsDefinitions: SettingsItems = {
     rules: ['notEmpty'],
     type: 'text',
   },
+  congregationNameModified: {
+    group: 'congregationMeetings',
+    hidden: true,
+    type: 'toggle',
+  },
+  relinkCongregationButton: {
+    actions: ['openCongregationLookup'],
+    depends: 'congregationNameModified',
+    group: 'congregationMeetings',
+    type: 'button',
+  },
   lang: {
     group: 'congregationMeetings',
     list: 'jwLanguages',
@@ -119,7 +124,7 @@ export const settingsDefinitions: SettingsItems = {
   memorialDate: {
     group: 'congregationMeetings',
     type: 'date',
-    beta: true,
+    beta: false,
     options: ['futureDate'],
     unless: 'disableMediaFetching',
   },
@@ -172,6 +177,14 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'meetingScheduleChange',
     type: 'time',
     unless: 'disableMediaFetching',
+  },
+  reSyncMeetingScheduleButton: {
+    actions: ['syncMeetingSchedule'],
+    depends: 'enableAutomaticMeetingScheduleUpdates',
+    group: 'congregationMeetings',
+    subgroup: 'meetingScheduleChange',
+    type: 'button',
+    unless: ['disableMediaFetching', 'congregationNameModified'],
   },
   // Media Retrieval and Playback
   meteredConnection: {
@@ -496,6 +509,12 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'media-display',
     type: 'toggle',
   },
+  enablePlaybackSpeedControl: {
+    depends: 'enableMediaDisplayButton',
+    group: 'advanced',
+    subgroup: 'media-display',
+    type: 'toggle',
+  },
   hideMediaLogo: {
     depends: 'enableMediaDisplayButton',
     group: 'advanced',
@@ -584,6 +603,16 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'cache',
     type: 'path',
   },
+  enablePinyinSongs: {
+    group: 'advanced',
+    hidden: true,
+    type: 'toggle',
+  },
+  pinyinSongFolder: {
+    group: 'advanced',
+    subgroup: 'cache',
+    type: 'path',
+  },
   enableCacheAutoClear: {
     depends: 'enableMediaDisplayButton',
     group: 'advanced',
@@ -596,6 +625,11 @@ export const settingsDefinitions: SettingsItems = {
     group: 'advanced',
     subgroup: 'dangerZone',
     type: 'text',
+  },
+  enableAutomaticMeetingScheduleUpdates: {
+    group: 'advanced',
+    type: 'toggle',
+    unless: ['congregationNameModified', 'disableMediaFetching'],
   },
   disableMediaFetching: {
     group: 'advanced',
@@ -623,6 +657,7 @@ export const defaultSettings: SettingsValues = {
   beginPlaybackPaused: false,
   cacheFolder: null,
   congregationName: null,
+  congregationNameModified: true,
   convertFilesToMp4: false,
   coWeek: null,
   customEventLastSongShortcut: null,
@@ -632,6 +667,7 @@ export const defaultSettings: SettingsValues = {
   darkMode: 'auto',
   disableHardwareAcceleration: false,
   disableMediaFetching: false,
+  enableAutomaticMeetingScheduleUpdates: true,
   enableCacheAutoClear: true,
   enableCustomEvents: false,
   enableExtraCache: false,
@@ -643,6 +679,8 @@ export const defaultSettings: SettingsValues = {
   enableMeetingAheadBehind: false,
   enableMeetingCountdown: false,
   enableMusicButton: true,
+  enablePinyinSongs: false,
+  enablePlaybackSpeedControl: false,
   enableSubtitles: false,
   enableTimerDisplay: false,
   excludeFootnotes: false,
@@ -684,10 +722,13 @@ export const defaultSettings: SettingsValues = {
   obsQuickToggle: false,
   obsRememberPreviouslyUsedScene: true,
   obsSwitchSceneAfterMedia: false,
+  pinyinSongFolder: null,
   recordingEnable: false,
   recordingFolder: null,
   recordingStartShortcut: null,
   recordingStopShortcut: null,
+  relinkCongregationButton: false,
+  reSyncMeetingScheduleButton: false,
   shortcutMediaNext: null,
   shortcutMediaPauseResume: null,
   shortcutMediaPrevious: null,

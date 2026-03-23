@@ -1,11 +1,28 @@
 import type { PublicationFetcher } from 'src/types';
 
-import { Buffer } from 'buffer';
+import { Buffer } from 'buffer/';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { log } from 'src/shared/vanilla';
 import { getPubId } from 'src/utils/jw';
 
-const { checkForUpdates, fileUrlToPath, fs, getUserDataPath, path, readdir } =
-  window.electronApi;
+const {
+  checkForUpdates,
+  fileUrlToPath,
+  fs,
+  getAppDataPath,
+  getBetaUpdatesPath,
+  getUpdatesDisabledPath,
+  isUsablePath: isUsablePathRaw,
+  path,
+  readdir,
+} = globalThis.electronApi;
+
+const isUsablePathPromises: Record<string, Promise<boolean>> = {};
+const isUsablePath = (path: string) => {
+  if (path in isUsablePathPromises) return isUsablePathPromises[path];
+  isUsablePathPromises[path] = isUsablePathRaw(path);
+  return isUsablePathPromises[path];
+};
 const {
   ensureDir,
   ensureFile,
@@ -17,10 +34,51 @@ const {
 } = fs;
 const { dirname, extname, join } = path;
 
-let cachedUserDataPath: null | string = null;
+let defaultDataPath: null | string = null;
 
-export const setCachedUserDataPath = async () => {
-  if (!cachedUserDataPath) cachedUserDataPath = await getUserDataPath();
+let getCacheFolderProvider: (() => string | undefined) | null = null;
+
+/**
+ * Registers a provider to retrieve the cache folder path.
+ * This helps avoid circular dependencies with stores.
+ * @param provider A function that returns the cache folder path.
+ */
+export const registerCachePathProvider = (
+  provider: () => string | undefined,
+) => {
+  getCacheFolderProvider = provider;
+};
+
+export const getCachedUserDataPath = async (): Promise<string> => {
+  const customPath = getCacheFolderProvider?.();
+
+  // Fast path: already resolved
+  if (defaultDataPath) {
+    if (!customPath || defaultDataPath === customPath) {
+      return defaultDataPath;
+    }
+  }
+
+  // Try custom path first
+  if (
+    customPath &&
+    defaultDataPath !== customPath &&
+    (await isUsablePath(customPath))
+  ) {
+    defaultDataPath = customPath;
+    log('📁 Using custom cache path:', 'filesystem', 'log', customPath);
+    return defaultDataPath;
+  }
+
+  // Fallback to resolved app data path
+  defaultDataPath = await getAppDataPath();
+  log(
+    '📁 Using default app data path as cache path:',
+    'filesystem',
+    'log',
+    defaultDataPath,
+  );
+  return defaultDataPath;
 };
 
 export const isFileUrl = (path?: string) => path?.startsWith('file://');
@@ -29,40 +87,51 @@ export const isFileUrl = (path?: string) => path?.startsWith('file://');
 
 const PUBLICATION_FOLDER = 'Publications';
 const CONG_PREFERENCES_FOLDER = 'Cong Preferences';
-const GLOBAL_PREFERENCES_FOLDER = 'Global Preferences';
 
 /**
  * Gets the full path of a directory in the cache folder.
  * @param paths The paths to the directory, relative to the cache folder.
  * @param create Whether to create the directory if it doesn't exist.
- * @param cacheDir The cache directory if it is not the default.
  * @returns The full path of the directory.
  */
-const getCachePath = async (
-  paths: string[],
-  create = false,
-  cacheDir?: null | string,
-) => {
-  const dir = join(
-    cacheDir || cachedUserDataPath || (await getUserDataPath()),
-    ...paths.filter((p) => !!p),
-  );
-  if (create) {
-    try {
+const getCachePath = async (paths: string | string[], create = false) => {
+  const pathArray = Array.isArray(paths) ? paths : [paths];
+  const parts = pathArray.filter((p) => !!p);
+
+  const buildPath = async (base: string) => {
+    const dir = join(base, ...parts);
+    if (create) {
       await ensureDir(dir);
-    } catch (e) {
-      errorCatcher(e);
     }
+    return dir;
+  };
+
+  try {
+    return await buildPath(await getCachedUserDataPath());
+  } catch (error) {
+    defaultDataPath = await getAppDataPath();
+    const fallbackPath = await buildPath(defaultDataPath);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          create,
+          fallbackPath,
+          name: 'getCachePath',
+          newDefaultDataPath: defaultDataPath,
+          paths,
+        },
+      },
+    });
+    return fallbackPath;
   }
-  return dir;
 };
 
-export const getFontsPath = () => getCachePath(['Fonts']);
-export const getTempPath = () => getCachePath(['Temp'], true);
-export const getPublicationsPath = (cacheDir?: null | string) =>
-  getCachePath([PUBLICATION_FOLDER], false, cacheDir);
-export const getAdditionalMediaPath = (cacheDir?: null | string) =>
-  getCachePath(['Additional Media'], false, cacheDir);
+export const getFontsPath = () => getCachePath('Fonts');
+export const getTempPath = () => getCachePath('Temp', true);
+export const getPublicationsPath = () =>
+  getCachePath(PUBLICATION_FOLDER, false);
+export const getAdditionalMediaPath = () =>
+  getCachePath('Additional Media', false);
 
 // Directories
 
@@ -86,13 +155,8 @@ export const getParentDirectory = (filepath?: string) => {
  */
 export const getPublicationDirectory = async (
   publication: PublicationFetcher,
-  cacheDir?: null | string,
 ) => {
-  return getCachePath(
-    [PUBLICATION_FOLDER, getPubId(publication)],
-    true,
-    cacheDir,
-  );
+  return getCachePath([PUBLICATION_FOLDER, getPubId(publication)], true);
 };
 
 /**
@@ -166,16 +230,14 @@ export const findFile = async (dir: string | undefined, search: string) => {
  * Gets the files inside a publication directory.
  * @param publication The publication to get the files of.
  * @param ext The extension filter to apply to the files.
- * @param cacheFolder The cache folder if it is not the default.
  * @returns The files inside the publication directory.
  */
 export const getPublicationDirectoryContents = async (
   publication: PublicationFetcher,
   ext?: string,
-  cacheFolder?: null | string,
 ) => {
   try {
-    const dir = await getPublicationDirectory(publication, cacheFolder);
+    const dir = await getPublicationDirectory(publication);
     if (!(await pathExists(dir))) return [];
     const items = await readdir(dir);
     return items
@@ -224,16 +286,12 @@ export const trimFilepathAsNeeded = (filepath: string, maxBytes = 230) => {
   return filepath;
 };
 
-// Global Preferences
-
-const disableUpdatesPath = () =>
-  getCachePath([GLOBAL_PREFERENCES_FOLDER, 'disable-updates']);
-
 /**
  * Checks if auto updates are disabled.
  * @returns Whether auto updates are disabled.
  */
-export const updatesDisabled = async () => exists(await disableUpdatesPath());
+export const updatesDisabled = async () =>
+  exists(await getUpdatesDisabledPath());
 
 /**
  * Toggles auto updates.
@@ -242,25 +300,22 @@ export const updatesDisabled = async () => exists(await disableUpdatesPath());
 export const toggleAutoUpdates = async (enable: boolean) => {
   try {
     if (enable) {
-      await remove(await disableUpdatesPath());
+      await remove(await getUpdatesDisabledPath());
       checkForUpdates();
     } else {
-      await ensureFile(await disableUpdatesPath());
+      await ensureFile(await getUpdatesDisabledPath());
     }
   } catch (error) {
     errorCatcher(error, { contexts: { fn: { name: 'enableUpdates' } } });
   }
 };
 
-const betaUpdatesPath = () =>
-  getCachePath([GLOBAL_PREFERENCES_FOLDER, 'beta-updates']);
-
 /**
  * Checks if beta updates are disabled.
  * @returns Wether beta updates are disabled.
  */
 export const betaUpdatesDisabled = async () =>
-  !(await exists(await betaUpdatesPath()));
+  !(await exists(await getBetaUpdatesPath()));
 
 /**
  * Toggles beta updates
@@ -269,9 +324,9 @@ export const betaUpdatesDisabled = async () =>
 export const toggleBetaUpdates = async (enable: boolean) => {
   try {
     if (enable) {
-      await ensureFile(await betaUpdatesPath());
+      await ensureFile(await getBetaUpdatesPath());
     } else {
-      await remove(await betaUpdatesPath());
+      await remove(await getBetaUpdatesPath());
     }
     checkForUpdates();
   } catch (error) {
@@ -279,8 +334,7 @@ export const toggleBetaUpdates = async (enable: boolean) => {
   }
 };
 
-export const congPreferencesPath = () =>
-  getCachePath([CONG_PREFERENCES_FOLDER]);
+export const congPreferencesPath = () => getCachePath(CONG_PREFERENCES_FOLDER);
 
 const lastVersionPath = (congId: string) =>
   getCachePath([CONG_PREFERENCES_FOLDER, congId, 'last-version']);

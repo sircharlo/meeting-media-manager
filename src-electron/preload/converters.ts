@@ -1,5 +1,5 @@
-import type { PDFPageProxy } from 'pdfjs-dist';
 import type { RenderParameters } from 'pdfjs-dist/types/src/display/api';
+import type { ConversionOptions } from 'src/types';
 
 import { writeFile } from 'fs-extra';
 import { ensureDir } from 'fs-extra/esm';
@@ -8,22 +8,6 @@ import { FULL_HD } from 'src/constants/media';
 import upath from 'upath';
 
 const { basename, join } = upath;
-
-export interface ConversionOptions {
-  /**
-   * the HEIC file buffer
-   */
-  buffer: ArrayBufferLike;
-  /**
-   * output format
-   */
-  format: 'JPEG' | 'PNG';
-  /**
-   * the JPEG compression quality, between 0 and 1
-   * @default 0.92
-   */
-  quality?: number;
-}
 
 export const convertHeic = async (image: ConversionOptions) => {
   try {
@@ -59,12 +43,6 @@ export const convertPdfToImages = async (
     const loadingTask = getDocument(pdfPath);
     const pdfDocument = await loadingTask.promise;
     const numPages = pdfDocument.numPages;
-
-    const promises: Promise<PDFPageProxy>[] = [];
-
-    for (let i = 1; i <= numPages; i++) {
-      promises.push(pdfDocument.getPage(i));
-    }
 
     for (let i = 1; i <= numPages; i++) {
       try {

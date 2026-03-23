@@ -25,8 +25,8 @@ describe('friendlyDayToJsDay', () => {
 describe('datesAreSame', () => {
   it('should return true if dates are the same', () => {
     const date1 = new Date(2025, 0, 15, 12, 0, 0, 0); // Jan 15, 2025 12:00
-    const date2 = new Date(date1.getTime());
-    const date3 = new Date(date1.getTime());
+    const date2 = new Date(date1);
+    const date3 = new Date(date1);
     date3.setHours(13); // Jan 15, 2025 13:00
     expect(datesAreSame(date1, date2)).toBe(true); // same calendar day
     expect(datesAreSame(date1, date3)).toBe(true); // same calendar day
@@ -34,8 +34,8 @@ describe('datesAreSame', () => {
 
   it('should return false if dates are not the same', () => {
     const date1 = new Date(2025, 0, 15, 12, 0, 0, 0); // Jan 15, 2025 12:00
-    const date2 = new Date(date1.getTime());
-    const date3 = new Date(date1.getTime());
+    const date2 = new Date(date1);
+    const date3 = new Date(date1);
     date2.setFullYear(date1.getFullYear() - 1); // Dec 15, 2024 12:00
     date3.setDate(date1.getDate() + 1); // Jan 16, 2025 12:00
     expect(datesAreSame(date1, date2)).toBe(false); // different calendar day

@@ -60,7 +60,7 @@ export function createWindow(
     show: false,
     title: PRODUCT_NAME,
     width: defaultSize.width,
-    ...(options ?? {}),
+    ...options,
     webPreferences: {
       backgroundThrottling: false,
       contextIsolation: true,
@@ -77,7 +77,7 @@ export function createWindow(
             ),
       sandbox: name === 'website',
       webSecurity: !IS_DEV,
-      ...(options?.webPreferences ?? {}),
+      ...options?.webPreferences,
     },
   };
   const win =
@@ -128,7 +128,7 @@ export function createWindow(
   } else {
     // Use absolute path for index.html in production builds
     const indexPath = resolve(app.getAppPath(), 'index.html');
-    win.loadFile(indexPath, { query: { page } });
+    win.loadFile(indexPath, { hash: `?page=${page}` });
   }
 
   // Devtools
@@ -142,7 +142,7 @@ export function createWindow(
       if (devToolsOpenedCount <= 2) {
         win?.webContents.closeDevTools(); // Close devtools for the first two attempts
       } else {
-        log('DevTools opened after 2 attempts'); // Log for debugging
+        log('DevTools opened after 2 attempts', 'electronWindow', 'debug'); // Log for debugging
       }
     });
   }

@@ -96,6 +96,10 @@
       </template>
     </q-form>
   </q-page>
+  <DialogCongregationLookup
+    v-model="showCongregationLookup"
+    :dialog-id="'settings-congregation-lookup'"
+  />
 </template>
 
 <script setup lang="ts">
@@ -112,17 +116,42 @@ import { useRouteParams } from '@vueuse/router';
 import BaseInput from 'components/form-inputs/BaseInput.vue';
 import { storeToRefs } from 'pinia';
 import { type QForm, useMeta, useQuasar } from 'quasar';
+import DialogCongregationLookup from 'src/components/dialog/DialogCongregationLookup.vue';
 import { settingsDefinitions, settingsGroups } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
-import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  useTemplateRef,
+  watch,
+} from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 useMeta({ title: t('settings') });
 
 const $q = useQuasar();
+
+const showCongregationLookup = ref(false);
+
+const openCongregationLookup = () => {
+  showCongregationLookup.value = true;
+};
+
+onMounted(() => {
+  globalThis.addEventListener('openCongregationLookup', openCongregationLookup);
+});
+
+onBeforeUnmount(() => {
+  globalThis.removeEventListener(
+    'openCongregationLookup',
+    openCongregationLookup,
+  );
+});
 
 // Store initializations
 const currentState = useCurrentStateStore();
@@ -202,6 +231,15 @@ const shouldShowSetting = (
   item: SettingsItem,
   settingId: keyof SettingsValues,
 ): boolean => {
+  if (item.hidden) return false;
+
+  // Pinyin settings are only available when congregation language is CHS
+  if (
+    ['enablePinyinSongs', 'pinyinSongFolder'].includes(settingId) &&
+    currentSettings.value?.lang !== 'CHS'
+  )
+    return false;
+
   // Check dependencies
   const dependenciesSatisfied =
     !item.depends ||

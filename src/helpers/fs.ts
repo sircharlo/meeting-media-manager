@@ -1,35 +1,68 @@
 import type {
   Asset,
+  DownloadedFile,
+  FileDownloader,
   FileItem,
+  JwMediaInfo,
   MultimediaItem,
   PublicationFetcher,
   Release,
 } from 'src/types';
 
-import { Buffer } from 'buffer';
+import { Buffer } from 'buffer/';
 import { Platform } from 'quasar';
 import { FULL_HD } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { downloadFileIfNeeded, getJwMediaInfo } from 'src/helpers/jw-media';
 import { fetchJson } from 'src/utils/api';
-import { getPublicationDirectory } from 'src/utils/fs';
+import { getCachedUserDataPath, getPublicationDirectory } from 'src/utils/fs';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
+let downloadFileIfNeededProvider:
+  | ((options: FileDownloader) => Promise<DownloadedFile>)
+  | null = null;
+let getJwMediaInfoProvider:
+  | ((publication: PublicationFetcher) => Promise<JwMediaInfo>)
+  | null = null;
+
+/**
+ * Registers media providers to avoid circular dependencies.
+ */
+export const registerMediaProviders = (providers: {
+  downloadFileIfNeeded: (options: FileDownloader) => Promise<DownloadedFile>;
+  getJwMediaInfo: (publication: PublicationFetcher) => Promise<JwMediaInfo>;
+}) => {
+  downloadFileIfNeededProvider = providers.downloadFileIfNeeded;
+  getJwMediaInfoProvider = providers.getJwMediaInfo;
+};
+
+const downloadFileIfNeeded = (options: FileDownloader) => {
+  if (!downloadFileIfNeededProvider) {
+    throw new Error('downloadFileIfNeededProvider not registered');
+  }
+  return downloadFileIfNeededProvider(options);
+};
+
+const getJwMediaInfo = (publication: PublicationFetcher) => {
+  if (!getJwMediaInfoProvider) {
+    throw new Error('getJwMediaInfoProvider not registered');
+  }
+  return getJwMediaInfoProvider(publication);
+};
+
 const {
-  decompress,
   downloadFile,
   fileUrlToPath,
   fs,
-  getUserDataPath,
   parseMediaFile,
   path,
   pathToFileURL,
   readdir,
   unwatchFolders,
+  unzip,
   watchFolder,
-} = window.electronApi;
+} = globalThis.electronApi;
 const { exists, pathExists, stat, writeFile } = fs;
 const { basename, dirname, extname, join, resolve } = path;
 
@@ -79,6 +112,39 @@ const getThumbnailFromMetadata = async (mediaPath: string) => {
   }
 };
 
+const waitOnce = (emitter: HTMLVideoElement, event: string): Promise<void> => {
+  return new Promise((resolve) => {
+    emitter.addEventListener(event, () => resolve(), {
+      once: true,
+      passive: true,
+    });
+  });
+};
+
+const captureVideoFrame = async (
+  videoRef: HTMLVideoElement,
+): Promise<{ blobUrl: string; imageData: Buffer }> => {
+  const canvas = document.createElement('canvas');
+  canvas.width = FULL_HD.width;
+  canvas.height = FULL_HD.height;
+
+  const ctx = canvas.getContext('2d');
+  if (!ctx) {
+    canvas.remove();
+    throw new Error('Failed to get canvas context');
+  }
+
+  ctx.drawImage(videoRef, 0, 0, canvas.width, canvas.height);
+  const imageUrl = canvas.toDataURL('image/jpeg');
+  const imageData = Buffer.from(imageUrl.split(',')[1] ?? '', 'base64');
+  const blobUrl = URL.createObjectURL(
+    new Blob([imageData], { type: 'image/jpeg' }),
+  );
+
+  canvas.remove();
+  return { blobUrl, imageData };
+};
+
 const getThumbnailFromVideoPath = async (
   videoPath: string,
   thumbnailPath: string,
@@ -107,89 +173,51 @@ const getThumbnailFromVideoPath = async (
     return url;
   }
 
-  return new Promise((resolve, reject) => {
-    const videoRef = document.createElement('video');
-    videoRef.src = pathToFileURL(videoPath);
-    videoRef.load();
+  const videoRef = document.createElement('video');
+  videoRef.src = pathToFileURL(videoPath);
+  videoRef.load();
 
-    videoRef.addEventListener(
-      'loadeddata',
-      () => {
-        videoRef.addEventListener(
-          'seeked',
-          async () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = FULL_HD.width;
-            canvas.height = FULL_HD.height;
+  try {
+    const errorPromise = new Promise<never>((_, reject) => {
+      videoRef.addEventListener(
+        'error',
+        (e) => {
+          reject(
+            new Error(
+              e.message || e.error?.message || 'Unknown VideoRef Error',
+              {
+                cause: e.error ?? e,
+              },
+            ),
+          );
+        },
+        { once: true, passive: true },
+      );
+    });
 
-            const ctx = canvas.getContext('2d');
+    const loadedPromise = waitOnce(videoRef, 'loadeddata');
 
-            const cleanup = () => {
-              canvas.remove();
-              videoRef.remove();
-            };
+    await Promise.race([loadedPromise, errorPromise]);
 
-            if (ctx) {
-              ctx.drawImage(videoRef, 0, 0, canvas.width, canvas.height);
-              const imageUrl = canvas.toDataURL('image/jpeg');
-              const imageData = Buffer.from(
-                imageUrl.split(',')[1] ?? '',
-                'base64',
-              );
+    videoRef.currentTime = 5; // Seek to 5 seconds to get the thumbnail
 
-              const saveImage = async () => {
-                await writeFile(thumbnailPath, imageData);
-                return thumbnailPath;
-              };
+    await Promise.race([waitOnce(videoRef, 'seeked'), errorPromise]);
 
-              const generateBlobURL = () => {
-                return URL.createObjectURL(
-                  new Blob([imageData], { type: 'image/jpeg' }),
-                );
-              };
+    const { blobUrl, imageData } = await captureVideoFrame(videoRef);
 
-              try {
-                if (
-                  !watcherEnabled ||
-                  !watchDir ||
-                  !dirname(thumbnailPath).startsWith(watchDir)
-                ) {
-                  resolve(await saveImage());
-                } else {
-                  resolve(generateBlobURL());
-                }
-                cleanup();
-              } catch (error) {
-                cleanup();
-                reject(error);
-              }
-            } else {
-              cleanup();
-              reject(new Error('Failed to get canvas context'));
-            }
-          },
-          { once: true, passive: true },
-        );
-
-        videoRef.currentTime = 5; // Seek to 5 seconds to get the thumbnail
-      },
-      { passive: true },
-    );
-
-    videoRef.addEventListener(
-      'error',
-      (e) => {
-        // Cleanup in case of error
-        videoRef.remove();
-        reject(
-          new Error(e.message || e.error?.message || 'Unknown VideoRef Error', {
-            cause: e.error ?? e,
-          }),
-        );
-      },
-      { passive: true },
-    );
-  });
+    if (
+      !watcherEnabled ||
+      !watchDir ||
+      !dirname(thumbnailPath).startsWith(watchDir)
+    ) {
+      await writeFile(thumbnailPath, imageData);
+      return thumbnailPath;
+    } else {
+      return blobUrl;
+    }
+  } finally {
+    videoRef.remove();
+  }
 };
 
 export const getThumbnailUrl = async (
@@ -261,23 +289,18 @@ export const getSubtitlesUrl = async (
         }
 
         const subtitlesFilename = basename(subtitles);
-        const subDirectory = await getPublicationDirectory(
-          subtitleFetcher,
-          currentState.currentSettings?.cacheFolder,
-        );
+        const subDirectory = await getPublicationDirectory(subtitleFetcher);
         await downloadFileIfNeeded({
           dir: subDirectory,
           filename: subtitlesFilename,
+          // Subtitles should not be a high priority download due to their small size
+          lowPriority: true,
           url: subtitles,
         });
         subtitlesPath = join(subDirectory, subtitlesFilename);
         if (await exists(subtitlesPath)) {
           subtitlesUrl = pathToFileURL(subtitlesPath);
-        } else {
-          subtitlesUrl = '';
         }
-      } else {
-        subtitlesUrl = '';
       }
     }
     return subtitlesUrl;
@@ -335,12 +358,8 @@ export const setupFFmpeg = async (): Promise<string> => {
       return currentState.ffmpegPath;
     }
 
-    await downloadFfmpeg(
-      version.browser_download_url,
-      ffmpegZipPath,
-      ffmpegDir,
-    );
-    const ffmpegPath = await decompressAndFindFFmpeg(ffmpegZipPath, ffmpegDir);
+    await downloadFfmpeg(version.browser_download_url, ffmpegDir);
+    const ffmpegPath = await unzipAndFindFFmpeg(ffmpegZipPath, ffmpegDir);
 
     currentState.ffmpegPath = ffmpegPath;
     return ffmpegPath;
@@ -350,41 +369,22 @@ export const setupFFmpeg = async (): Promise<string> => {
   }
 };
 
-// Decompress FFmpeg and find executable
-async function decompressAndFindFFmpeg(
-  zipPath: string,
-  dir: string,
-): Promise<string> {
-  const ffmpegPaths = await decompress(zipPath, dir);
-  if (!ffmpegPaths?.length) {
-    throw new Error('Could not decompress FFmpeg.');
-  }
-  const ffmpegFile = ffmpegPaths.find((f) => f.path.includes('ffmpeg'));
-  if (!ffmpegFile) {
-    throw new Error('Could not find FFmpeg.');
-  }
-  return join(dir, ffmpegFile.path);
-}
-
 // Download FFmpeg
-async function downloadFfmpeg(
-  url: string,
-  zipPath: string,
-  dir: string,
-): Promise<void> {
-  const downloadId = await downloadFile(url, dir);
+async function downloadFfmpeg(url: string, dir: string): Promise<void> {
+  // FFmpeg is a large file, so we don't want to download it as a high priority
+  const downloadId = await downloadFile(url, dir, undefined, true);
 
   await new Promise<void>((resolve, reject) => {
     const interval = setInterval(() => {
-      if (!downloadId) {
-        clearInterval(interval);
-        reject(new Error('Download failed'));
-      } else {
+      if (downloadId) {
         const progress = useCurrentStateStore().downloadProgress[downloadId];
         if (progress?.complete) {
           clearInterval(interval);
           resolve();
         }
+      } else {
+        clearInterval(interval);
+        reject(new Error('Download failed'));
       }
     }, 500);
   });
@@ -406,7 +406,8 @@ async function fetchLatestRelease(): Promise<Release> {
 
 // Get the FFmpeg directory path
 async function getFFmpegDirectory(): Promise<string> {
-  const ffmpegDir = join(await getUserDataPath(), 'ffmpeg');
+  const dataPath = await getCachedUserDataPath();
+  const ffmpegDir = join(dataPath, 'ffmpeg');
   return ffmpegDir;
 }
 
@@ -419,6 +420,22 @@ function getValidVersion(releases: Release, target: string): Asset {
     throw new Error(`Could not find valid FFmpeg versions for ${target}`);
   }
   return versions[0];
+}
+
+// Unzip FFmpeg and find executable
+async function unzipAndFindFFmpeg(
+  zipPath: string,
+  dir: string,
+): Promise<string> {
+  const ffmpegPaths = await unzip(zipPath, dir);
+  if (!ffmpegPaths?.length) {
+    throw new Error('Could not unzip FFmpeg.');
+  }
+  const ffmpegFile = ffmpegPaths.find((f) => f.path.includes('ffmpeg'));
+  if (!ffmpegFile) {
+    throw new Error('Could not find FFmpeg.');
+  }
+  return join(dir, ffmpegFile.path);
 }
 
 // Validate if an existing file is usable

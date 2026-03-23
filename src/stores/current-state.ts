@@ -1,6 +1,5 @@
 import type {
   DateInfo,
-  DownloadedFile,
   DownloadProgressItems,
   JwLanguage,
   JwSite,
@@ -12,21 +11,23 @@ import type {
 } from 'src/types';
 
 import { defineStore } from 'pinia';
+import { LONG_MEDIA_DURATION } from 'src/constants/jw';
 import { settingsDefinitions } from 'src/constants/settings';
 import { isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { datesAreSame, formatDate } from 'src/utils/date';
 import {
   getAdditionalMediaPath,
+  getCachedUserDataPath,
   isFileUrl,
-  setCachedUserDataPath,
+  registerCachePathProvider,
 } from 'src/utils/fs';
 import { isEmpty, isUUID } from 'src/utils/general';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
 
-const { fs, path } = window.electronApi;
+const { fs, path } = globalThis.electronApi;
 const { ensureDir } = fs;
 const { join } = path;
 
@@ -57,18 +58,18 @@ export interface Songbook {
 interface Store {
   autoReturnFromWebsite: boolean;
   currentCongregation: string;
-  downloadedFiles: Partial<
-    Record<string, DownloadedFile | Promise<DownloadedFile>>
-  >;
   downloadProgress: DownloadProgressItems;
   extractedFiles: Partial<Record<string, string>>;
+  fetchingMeetingsCount: number;
   ffmpegPath: string;
+  lookupInProgress: boolean;
   mediaPlaying: MediaPlayingState;
   mediaWindowCustomBackground: string;
   mediaWindowVisible: boolean;
   meetingDay: boolean;
   online: boolean;
   onlyShowInvalidSettings: boolean;
+  pinyinActive: boolean;
   selectedDate: string;
   timerWindowVisible: boolean;
   websiteSelection: JwSite;
@@ -81,13 +82,28 @@ const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
 
 export const useCurrentStateStore = defineStore('current-state', {
   actions: {
+    areDependenciesSatisfied(
+      settingsDefinition: SettingsItem,
+      congregation: string,
+    ): boolean {
+      const congregationSettingsStore = useCongregationSettingsStore();
+      if (!settingsDefinition.depends) return true;
+
+      if (Array.isArray(settingsDefinition.depends)) {
+        return settingsDefinition.depends.every(
+          (dep) => congregationSettingsStore.congregations[congregation]?.[dep],
+        );
+      }
+
+      return !!congregationSettingsStore.congregations[congregation]?.[
+        settingsDefinition.depends
+      ];
+    },
     async getDatedAdditionalMediaDirectory(destDate?: string) {
       try {
         if (!destDate) destDate = this.selectedDate;
         if (!destDate) return '';
-        const additionalMediaPath = await getAdditionalMediaPath(
-          this.currentSettings?.cacheFolder,
-        );
+        const additionalMediaPath = await getAdditionalMediaPath();
         const dateString = formatDate(new Date(destDate), 'YYYYMMDD');
         const datedAdditionalMediaDirectory = join(
           additionalMediaPath,
@@ -108,44 +124,25 @@ export const useCurrentStateStore = defineStore('current-state', {
         if (!congregation) congregation = this.currentCongregation;
         if (!congregation) return [];
         const invalidSettings = new Set<keyof SettingsValues>();
-        const { urlVariables } = useJwStore();
-        const congregationSettingsStore = useCongregationSettingsStore();
+
         for (const [
           settingsDefinitionId,
           settingsDefinition,
         ] of settingDefinitionEntries) {
-          if (settingsDefinition.rules?.includes('notEmpty')) {
-            // Check if dependencies are satisfied before applying notEmpty validation
-            const dependenciesSatisfied =
-              !settingsDefinition.depends ||
-              (Array.isArray(settingsDefinition.depends)
-                ? settingsDefinition.depends.every(
-                    (dep) =>
-                      congregationSettingsStore.congregations[
-                        congregation as string
-                      ]?.[dep],
-                  )
-                : congregationSettingsStore.congregations[congregation]?.[
-                    settingsDefinition.depends
-                  ]);
+          if (!settingsDefinition.rules?.includes('notEmpty')) continue;
 
-            // Only apply notEmpty validation if dependencies are satisfied
-            if (dependenciesSatisfied) {
-              if (
-                (settingsDefinitionId === 'baseUrl' &&
-                  !(urlVariables?.base && urlVariables?.mediator)) ||
-                (isEmpty(
-                  congregationSettingsStore.congregations[congregation]?.[
-                    settingsDefinitionId
-                  ],
-                ) &&
-                  (!settingsDefinition.rules?.includes('regular') ||
-                    !congregationSettingsStore.congregations[congregation]
-                      ?.disableMediaFetching))
-              ) {
-                invalidSettings.add(settingsDefinitionId);
-              }
-            }
+          if (
+            this.areDependenciesSatisfied(
+              settingsDefinition,
+              congregation as string,
+            ) &&
+            this.isSettingInvalid(
+              settingsDefinitionId,
+              settingsDefinition,
+              congregation as string,
+            )
+          ) {
+            invalidSettings.add(settingsDefinitionId);
           }
         }
         return [...invalidSettings];
@@ -166,11 +163,9 @@ export const useCurrentStateStore = defineStore('current-state', {
           datesAreSame(day.date, lookupDate),
         );
         if (!dateInfo?.date || !(dateInfo.date instanceof Date)) return null;
-        return isMwMeetingDay(dateInfo.date)
-          ? 'mw'
-          : isWeMeetingDay(dateInfo.date)
-            ? 'we'
-            : null;
+        if (isMwMeetingDay(dateInfo.date)) return 'mw';
+        if (isWeMeetingDay(dateInfo.date)) return 'we';
+        return null;
       } catch (error) {
         errorCatcher(error);
         return null;
@@ -181,6 +176,39 @@ export const useCurrentStateStore = defineStore('current-state', {
       if (!congregation) return false;
       return this.getInvalidSettings(congregation).length > 0;
     },
+    isSettingInvalid(
+      settingsDefinitionId: keyof SettingsItems,
+      settingsDefinition: SettingsItem,
+      congregation: string,
+    ): boolean {
+      const { urlVariables } = useJwStore();
+      const congregationSettingsStore = useCongregationSettingsStore();
+
+      if (
+        settingsDefinitionId === 'baseUrl' &&
+        !(urlVariables?.base && urlVariables?.mediator)
+      ) {
+        return true;
+      }
+
+      const settingValue =
+        congregationSettingsStore.congregations[congregation]?.[
+          settingsDefinitionId
+        ];
+
+      if (isEmpty(settingValue)) {
+        const isSkipRule =
+          settingsDefinition.rules?.includes('regular') &&
+          congregationSettingsStore.congregations[congregation]
+            ?.disableMediaFetching;
+
+        if (!isSkipRule) {
+          return true;
+        }
+      }
+
+      return false;
+    },
     setCongregation: async function (value: number | string) {
       if (!value) return false;
 
@@ -190,7 +218,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       dismissAllTemporaryNotifications();
 
       this.currentCongregation = value.toString();
-      await setCachedUserDataPath();
+      await getCachedUserDataPath();
       return this.getInvalidSettings(this.currentCongregation).length > 0;
     },
     setTimerWindowVisible(visible: boolean) {
@@ -206,7 +234,9 @@ export const useCurrentStateStore = defineStore('current-state', {
         this.currentSettings?.obsImageScene,
       ].filter((s): s is string => !!s);
 
-      const scenesAreUUIDS = configuredScenes.every(isUUID);
+      const scenesAreUUIDS = configuredScenes.every((element) =>
+        isUUID(element),
+      );
       return scenes
         .filter(
           (scene) =>
@@ -321,7 +351,7 @@ export const useCurrentStateStore = defineStore('current-state', {
     },
     isSelectedDayToday(): boolean {
       try {
-        const selectedDateObj = this.selectedDateObject as DateInfo | null;
+        const selectedDateObj = this.selectedDateObject;
         if (!selectedDateObj?.date) return false;
         return datesAreSame(selectedDateObj.date, new Date());
       } catch (error) {
@@ -360,7 +390,10 @@ export const useCurrentStateStore = defineStore('current-state', {
       );
 
       return allMedia.filter(
-        (media) => !media.children?.length && !isFileUrl(media.fileUrl),
+        (media) =>
+          (media.duration ?? 0) < LONG_MEDIA_DURATION && // Filter out long media
+          !media.children?.length && // Filter out media with children
+          !isFileUrl(media.fileUrl), // Filter out media with valid file URLs
       );
     },
     selectedDateObject: (state): DateInfo | null => {
@@ -381,13 +414,11 @@ export const useCurrentStateStore = defineStore('current-state', {
     },
     selectedDayMeetingType(): 'mw' | 'we' | null {
       try {
-        const selectedDateObj = this.selectedDateObject as DateInfo | null;
+        const selectedDateObj = this.selectedDateObject;
         if (!selectedDateObj?.date) return null;
-        return isMwMeetingDay(selectedDateObj.date)
-          ? 'mw'
-          : isWeMeetingDay(selectedDateObj.date)
-            ? 'we'
-            : null;
+        if (isMwMeetingDay(selectedDateObj.date)) return 'mw';
+        if (isWeMeetingDay(selectedDateObj.date)) return 'we';
+        return null;
       } catch (error) {
         errorCatcher(error);
         return null;
@@ -405,29 +436,33 @@ export const useCurrentStateStore = defineStore('current-state', {
           ),
       );
     },
-    yeartext(): string | undefined {
+    yeartext(): null | string | undefined {
       const { yeartexts } = useJwStore();
 
+      if (this.currentLangObject?.isSignLanguage || !this.currentSettings)
+        return null;
+
       const year = new Date().getFullYear();
-      if (!yeartexts[year]) return;
-      if (this.currentLangObject?.isSignLanguage) return;
-      if (!this.currentSettings) return;
-      const primary = yeartexts[year][this.currentSettings.lang];
-      const fallback = this.currentSettings.langFallback
-        ? yeartexts[year][this.currentSettings.langFallback]
-        : '';
-      const english = yeartexts[year]['E'];
-      return primary || fallback || english;
+      const textsForYear = yeartexts[year];
+      if (!textsForYear) return;
+
+      const { lang, langFallback } = this.currentSettings;
+
+      return textsForYear[lang] || (langFallback && textsForYear[langFallback]);
     },
+  },
+  persist: {
+    pick: ['pinyinActive'],
   },
   state: (): Store => {
     return {
       autoReturnFromWebsite: false,
       currentCongregation: '',
-      downloadedFiles: {},
       downloadProgress: {},
       extractedFiles: {},
+      fetchingMeetingsCount: 0,
       ffmpegPath: '',
+      lookupInProgress: false,
       mediaPlaying: {
         action: '',
         currentPosition: 0,
@@ -443,9 +478,14 @@ export const useCurrentStateStore = defineStore('current-state', {
       meetingDay: false,
       online: true,
       onlyShowInvalidSettings: false,
+      pinyinActive: false,
       selectedDate: formatDate(new Date(), 'YYYY/MM/DD'),
       timerWindowVisible: false,
       websiteSelection: undefined,
     };
   },
 });
+
+registerCachePathProvider(
+  () => useCurrentStateStore().currentSettings?.cacheFolder ?? undefined,
+);

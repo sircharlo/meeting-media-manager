@@ -2,7 +2,7 @@ import { defineStore } from '@quasar/app-vite/wrappers';
 import { createSentryPiniaPlugin } from '@sentry/vue';
 import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
-// import { PiniaSharedState } from 'pinia-shared-state';
+import { log } from 'src/shared/vanilla';
 
 /*
  * When adding new properties to stores, you should also
@@ -25,7 +25,7 @@ declare module 'pinia' {
  * with the Store instance.
  */
 
-export default defineStore((/* { ssrContext } */) => {
+export default defineStore(() => {
   const pinia = createPinia();
 
   pinia.use(piniaPluginPersistedstate);
@@ -39,9 +39,9 @@ export default defineStore((/* { ssrContext } */) => {
           // Transform the state to remove unneeded information that only takes up space
           const transformedState = {
             ...state,
-            jwBibleAudioFiles:
+            jwBibleFiles:
               'FILTERED (length: ' +
-              Object.keys(state.jwBibleAudioFiles || {}).length +
+              Object.keys(state.jwBibleFiles || {}).length +
               ')',
             jwLanguages:
               'FILTERED (length: ' +
@@ -62,7 +62,7 @@ export default defineStore((/* { ssrContext } */) => {
           };
           return transformedState;
         } catch (error) {
-          console.error(error);
+          log(error, 'stores', 'error');
           return state;
         }
       },

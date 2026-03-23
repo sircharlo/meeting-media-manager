@@ -4,179 +4,207 @@
 
 Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in unserer CHANGELOG.md Datei auf GitHub.
 
+## v26.3.0
+
+### ✨ Neue Funktionen
+
+- ✨ **Memorial Media**: Automatische Erinnerungsmedien sind jetzt außer Beta! Die App wird automatisch das Memorial Welcome Video und das Bild herunterladen, das während der Memorial angezeigt wird, wenn es in der konfigurierten Sprache verfügbar ist.
+- ✨ **Wiedergabegeschwindigkeit**: Wiedergabegeschwindigkeit mit visueller Anzeige hinzugefügt und manuell zurückgesetzt. Diese Funktion ist nur sichtbar, wenn sie in den erweiterten Einstellungen aktiviert ist.
+- ✨ **Pinyin Songs**: Schalter für Pinyin Songsubstitution für Treffen auf Chinesisch hinzugefügt.
+
+## v26.2.0
+
+### ✨ Neue Funktionen
+
+- ✨ **Speicherplatzprüfung**: Funktion hinzugefügt, um zu überwachen und zu benachrichtigen, wenn der Speicherplatz knapp wird.
+
+## v26.1.5
+
+### ✨ Neue Funktionen
+
+- ✨ **Gedächtnismahl-Medien**: Ruft automatisch das Gedächtnismahl-Banner und das Intro-Video in unterstützten Sprachen ab, wenn das Gedächtnismahl-Datum ausgewählt ist.
+
+## v26.1.0
+
+### ✨ Neue Funktionen
+
+- ✨ **Automatische Synchronisierung der Zusammenkunftspläne**: Funktion hinzugefügt, Zusammenkunftstage und -zeiten automatisch mit der offiziellen Website zu synchronisieren. Diese Funktion ist standardmäßig aktiviert und kann in den erweiterten Einstellungen manuell ausgelöst oder deaktiviert werden.
+- ✨ **Zukünftige Planänderungen**: Die App berücksichtigt nun zukünftige Planänderungen beim Erstellen einer Versammlung über die Website-Suche, falls verfügbar.
+- ✨ **Gemeinsamer Cache für maschinenweite Installationen**: Maschinenweite Installationen teilen sich nun standardmäßig einen gemeinsamen Datenordner, was Speicherplatz und Bandbreitennutzung über mehrere Benutzer auf demselben Computer hinweg optimiert.
+
+## v25.12.2
+
+### ✨ Neue Funktionen
+
+- ✨ **Zoom-/Schwenk-Schaltflächen**: Möglichkeit hinzugefügt, Zoom- und Schwenk-Schaltflächen für eine kontinuierliche Anpassung gedrückt zu halten.
+
 ## v25.12.0
 
 ### ✨ Neue Funktionen
 
-- ✨ **Multi-Select Context Menu**: Added support for right-click menu actions when multiple media items are selected.
-- ✨ **Keyboard Shortcuts**: Added `Ctrl/Cmd+A` to select all media, `H` to hide selected media, and `Shift+Up/Down` for keyboard selection navigation.
-- ✨ **Watchtower Study Video Settings**: Added a setting to exclude extra Watchtower study videos.
-- ✨ **Collapsible Sections**: Added ability to collapse sections on non-meeting days for a cleaner view.
-- ✨ **JW Events Website**: Added the ability to present the JW Events website in addition to the main official website.
-- ✨ **Playlist Import Customization**: Allowed ability to customize the prefix that is added to media items when importing JW playlists.
-- ✨ **Website Mirroring Navigation**: Added a toggle to automatically navigate to the media list after website mirroring is stopped.
-- ✨ **OBS Recording Controls**: Added the ability to control OBS recordings.
-- ✨ **Yeartext Preview**: Added the ability to preview next year's yeartext as of December of every year.
-- ✨ **Update Notifications**: Added warning notifications if running a beta version or if updates are disabled, and improved update download progress display.
-- ✨ **Hardware Acceleration Settings**: Added an option to permanently disable hardware acceleration if needed.
+- ✨ **Kontextmenü für Mehrfachauswahl**: Unterstützung für Rechtsklick-Menüaktionen hinzugefügt, wenn mehrere Medienelemente ausgewählt sind.
+- ✨ **Tastenkürzel**: `Strg/Cmd+A` zum Auswählen aller Medien, `H` zum Ausblenden ausgewählter Medien und `Umschalt+Oben/Unten` für die Tastaturnavigation hinzugefügt.
+- ✨ **Einstellungen für Wachtturm-Studienvideos**: Einstellung hinzugefügt, um zusätzliche Wachtturm-Studienvideos auszuschließen.
+- ✨ **Einklappbare Abschnitte**: Möglichkeit hinzugefügt, Abschnitte an Tagen ohne Zusammenkunft für eine übersichtlichere Ansicht einzuklappen.
+- ✨ **JW Events Website**: Möglichkeit hinzugefügt, die JW Events Website zusätzlich zur offiziellen Hauptwebsite zu präsentieren.
+- ✨ **Anpassung des Playlist-Imports**: Möglichkeit hinzugefügt, das Präfix anzupassen, das Medienelementen beim Importieren von JW-Playlists hinzugefügt wird.
+- ✨ **Navigation bei Website-Spiegelung**: Schalter hinzugefügt, um nach dem Stoppen der Website-Spiegelung automatisch zur Medienliste zu navigieren.
+- ✨ **OBS-Aufnahmesteuerung**: Möglichkeit hinzugefügt, OBS-Aufnahmen zu steuern.
+- ✨ **Jahrestext-Vorschau**: Möglichkeit hinzugefügt, den Jahrestext des nächsten Jahres ab Dezember jeden Jahres in der Vorschau anzuzeigen.
+- ✨ **Update-Benachrichtigungen**: Warnmeldungen hinzugefügt, wenn eine Beta-Version ausgeführt wird oder Updates deaktiviert sind, sowie verbesserte Anzeige des Update-Download-Fortschritts.
+- ✨ **Hardwarebeschleunigungs-Einstellungen**: Option hinzugefügt, die Hardwarebeschleunigung bei Bedarf dauerhaft zu deaktivieren.
 
 ## v25.11.0
 
 ### ✨ Neue Funktionen
 
-- ✨ **JWPUB Media Selection**: Added a way to select individual media from JWPUB files.
-- ✨ **Auto-Focus Media Window**: Added an optional setting to automatically focus the media window after Zoom screen sharing.
-- ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
-- ✨ **Meeting Recording**: Added a new meeting recording feature, to control an external recording app.
-- ✨ **Site Search**: Added ability to search for media or publications on the site using smart search.
-- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from JW.org, such as magazine, books, programs and invitations.
-- ✨ **Sign Language Improvements**: Added confirmation before playing entire files for sign languages and support for selecting multiple clips, such as for when multiple paragraphs are to be read consecutively.
-- ✨ **Clip Navigation**: Added duration display to clip list items and improved clip navigation.
-- 🛠️ **Media Display**: Ensured media display becomes visible when playback starts, even if it was hidden before.
+- ✨ **JWPUB-Medienauswahl**: Möglichkeit hinzugefügt, einzelne Medien aus JWPUB-Dateien auszuwählen.
+- ✨ **Medienfenster automatisch fokussieren**: Optionale Einstellung hinzugefügt, um das Medienfenster nach der Zoom-Bildschirmfreigabe automatisch zu fokussieren.
+- ✨ **Cursor-Overlay für TV-Anzeige**: Verbessertes Cursor-Overlay im Website-Fenster für bessere Sichtbarkeit des Mauszeigers auf TV-Bildschirmen.
+- ✨ **Zusammenkunftsaufnahme**: Neue Funktion zur Aufnahme von Zusammenkünften hinzugefügt, um eine externe Aufnahme-App zu steuern.
+- ✨ **Website-Suche**: Möglichkeit hinzugefügt, mithilfe der intelligenten Suche auf der Website nach Medien oder Publikationen zu suchen.
+- ✨ **Einfacher manueller Publikationsimport**: Funktion hinzugefügt, um Publikationen wie Zeitschriften, Bücher, Programme und Einladungen einfach von JW.org zu importieren.
+- ✨ **Verbesserungen für Gebärdensprache**: Bestätigung vor dem Abspielen ganzer Dateien für Gebärdensprachen und Unterstützung für die Auswahl mehrerer Clips hinzugefügt, z. B.
+- ✨ **Clip-Navigation**: Daueranzeige zu Clip-Listenelementen hinzugefügt und Clip-Navigation verbessert.
+- 🛠️ **Medienanzeige**: Sichergestellt, dass die Medienanzeige sichtbar wird, wenn die Wiedergabe beginnt, auch wenn sie zuvor ausgeblendet war.
 
 ## v25.10.1
 
 ### ✨ Neue Funktionen
 
-- ✨ **Setup Wizard – Zoom Step**: Added a Zoom integration step to the setup wizard for easier initial configuration.
-- ✨ **Screen Picker Enhancements**: Show an accurate visual representation of all screens, as well as the main window’s current size and location, in the display popup. This makes it easier to choose the correct screen on which the media window should be displayed.
-- ✨ **Media Window Preference**: The app will now remember the preferred screen on which the media window should be displayed, if specified by the user.
+- ✨ **Einrichtungsassistent – Zoom-Schritt**: Zoom-Integrationsschritt zum Einrichtungsassistenten für eine einfachere Erstkonfiguration hinzugefügt.
+- ✨ **Verbesserungen bei der Bildschirmauswahl**: Zeigt eine genaue visuelle Darstellung aller Bildschirme sowie die aktuelle Größe und Position des Hauptfensters im Anzeige-Popup an. Dies erleichtert die Auswahl des richtigen Bildschirms, auf dem das Medienfenster angezeigt werden soll.
+- ✨ **Präferenz für Medienfenster**: Die App merkt sich nun den bevorzugten Bildschirm, auf dem das Medienfenster angezeigt werden soll, falls vom Benutzer angegeben.
 
 ## v25.10.0
 
 ### ✨ Neue Funktionen
 
-- ✨ **Begin Playback Paused**: Added a new setting to allow playback to begin paused, which can be useful for AV operators to prepare their setup (such as starting Zoom sharing) before the media starts playing in the media window.
-- ✨ **Update Notifications**: Users will now be notified of updates through an in-app banner, which will also allow the user to install updates immediately, instead of waiting for the next app restart.
-- ✨ **Custom Events**: Added optional events hooks that can trigger keyboard shortcuts when certain events are detected. This can be useful for AV operators to execute actions automatically outside of the app. For example, smart lights could be turned on and off before and after media plays in auditoriums where projectors are used; or a script can be called after a meeting's last song has been played to automate various actions in a Zoom meeting.
+- ✨ **Wiedergabe pausiert beginnen**: Neue Einstellung hinzugefügt, die es ermöglicht, die Wiedergabe pausiert zu beginnen. Dies kann für AV-Operatoren nützlich sein, um ihr Setup vorzubereiten (z. B. Starten der Zoom-Freigabe), bevor die Medienwiedergabe im Medienfenster beginnt.
+- ✨ **Update-Benachrichtigungen**: Benutzer werden nun durch ein In-App-Banner über Updates benachrichtigt, das es dem Benutzer auch ermöglicht, Updates sofort zu installieren, anstatt auf den nächsten Neustart der App zu warten.
+- ✨ **Benutzerdefinierte Ereignisse**: Optionale Ereignis-Hooks hinzugefügt, die Tastenkürzel auslösen können, wenn bestimmte Ereignisse erkannt werden. Dies kann für AV-Operatoren nützlich sein, um Aktionen automatisch außerhalb der App auszuführen. Zum Beispiel könnten intelligente Lichter vor und nach dem Abspielen von Medien in Auditorien, in denen Projektoren verwendet werden, ein- und ausgeschaltet werden; oder ein Skript kann ausgeführt werden, nachdem das letzte Lied einer Zusammenkunft gespielt wurde, um verschiedene Aktionen in einem Zoom-Meeting zu automatisieren.
 
 ## v25.9.1
 
 ### ✨ Neue Funktionen
 
-- ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
-- ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
-- ✨ **Media Crossfade**: Implemented crossfade transitions for media display, instead of the more abrupt fade-to-black transition that was present before.
-- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not.
-- ✨ **macOS Click-Through on Inactive Windows**: Enabled mouse click passthrough on the main window for macOS, which should make it easier to control the app even when it's not focused.
+- ✨ **Medienfenster immer im Vordergrund & Vollbildverhalten**: Verhalten "Immer im Vordergrund" für das Medienfenster behoben und verbessert, passt sich dynamisch basierend auf dem Vollbildstatus an.
+- ✨ **Einstellung für Datumsanzeigeformat**: Benutzereinstellung zur Konfiguration eines Datumsanzeigeformats hinzugefügt.
+- ✨ **Medien-Überblendung**: Überblendungsübergänge für die Medienanzeige implementiert, anstelle der abrupten Schwarzblende, die zuvor vorhanden war.
+- ✨ **Musik-Auto-Stopp**: Verhalten des automatischen Musik-Stopps optimiert, damit es sich gleich verhält, egal ob die Musik automatisch gestartet wurde oder nicht
+- ✨ **macOS-Klick-Durchgriff auf inaktive Fenster**: Mausklick-Durchgriff auf das Hauptfenster für macOS aktiviert, was die Steuerung der App erleichtern sollte, auch wenn sie nicht fokussiert ist.
 
 ## v25.9.0
 
 ### ✨ Neue Funktionen
 
-- ✨ **Download Popup Enhancements**: Added refresh button and download grouping by date in the download popup.
-- ✨ **Watched Media Order Memory**: Added section order memory for watched media items.
+- ✨ **Verbesserungen am Download-Popup**: Aktualisieren-Schaltfläche und Download-Gruppierung nach Datum im Download-Popup hinzugefügt.
+- ✨ **Erinnerung an die Reihenfolge angesehener Medien**: Erinnerung an die Abschnittsreihenfolge für angesehene Medienelemente hinzugefügt.
 
 ## v25.8.3
 
 ### ✨ Neue Funktionen
 
-- ✨ **Media Window Fade Transitions**: Added a new advanced setting to make the media window fade in and out, providing smoother visual transitions.
-- ✨ **Image Duration Control and Progress Tracking**: Added image duration control and progress tracking capabilities for repeated sections.
+- ✨ **Überblendungen für Medienfenster**: Neue erweiterte Einstellung hinzugefügt, um das Medienfenster ein- und auszublenden, was weichere visuelle Übergänge bietet.
+- ✨ **Bilddauersteuerung und Fortschrittsverfolgung**: Bilddauersteuerung und Fortschrittsverfolgungsfunktionen für wiederholte Abschnitte hinzugefügt.
 
 ## v25.8.1
 
 ### ✨ Neue Funktionen
 
-- ✨ **Custom Media Sections**: Complete system for creating, editing, and managing custom media sections with color customization and drag-and-drop reordering.
-- ✨ **Media Dividers**: Add titled dividers within media lists for better organization with top/bottom positioning options.
-- ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
-- ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
+- ✨ **Benutzerdefinierte Medienabschnitte**: Vollständiges System zum Erstellen, Bearbeiten und Verwalten von benutzerdefinierten Medienabschnitten mit Farbanpassung und Drag-and-Drop-Sortierung.
+- ✨ **Medienteiler**: Titel-Teiler innerhalb von Medienlisten für eine bessere Organisation mit Optionen für die Positionierung oben/unten hinzufügen.
+- ✨ **Abschnitts-Wiederholungsmodus**: Kontinuierliche Wiedergabe innerhalb bestimmter Abschnitte für nahtlose Medienschleifen aktivieren.
+- ✨ **Zoom-Integration**: Automatische Koordinierung des Starts/Stopps der Bildschirmfreigabe mit der Medienwiedergabe.
 
-### 🛠️ Verbesserungen und Optimierungen
+## v25.7.0
 
-- 🛠️ **Enhanced Section Headers**: New three-dots menu system with color picker, move up/down controls, repeat options, and delete functionality.
-- ✨ **Inline Title Editing**: Edit media item titles directly in the interface without opening separate dialogs.
-- 🛠️ **Improved Navigation**: Better keyboard shortcuts with scroll-to-selected functionality and enhanced media navigation.
-- 🛠️ **Visual Enhancements**: Animation support during sorting operations and improved drag-and-drop visual feedback.
+### ✨ Neue Funktionen
+
+- Keine neuen Features für diese Version!
 
 ## 25.6.0
 
 ### ✨ Neue Funktionen
 
-- ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
-- ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
-
-### 🛠️ Verbesserungen und Optimierungen
-
-- 🛠️ **Better mime type handling**: Improved support for MIME types for better media compatibility.
-- 🛠️ **Enhanced navigation drawer**: Improved mini state handling and added tooltip display for better user navigation.
-- 🛠️ **Linux compatibility**: Forced GTK 3 usage on Linux to prevent UI and launch issues.
+- ✨ **Einstellung für getaktete Verbindung**: Neue Einstellung hinzugefügt, um die Bandbreitennutzung bei getakteten Verbindungen zu reduzieren.
+- ✨ **Verbesserte Handhabung von gestreamten Medien**: Bessere Unterstützung für gestreamte Medien, Reduzierung von latenzbedingten Problemen.
 
 ## 25.5.0
 
 ### ✨ Neue Funktionen
 
-- 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
-- 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
-
-### 🛠️ Verbesserungen und Optimierungen
-
-- 🔍 **Restore Zoom with `Ctrl` + `Scroll`**: Re-enable immediate zooming with the control + scroll gesture for easier navigation.
-- 👤 **Hide Unused CO Media**: Hide rather than skip unused media for Circuit Overseer visits to maintain a cleaner presentation.
-- 🎵 **Improve Duplicate Song Indicator**: Enhance the visual cue for duplicate songs to make them easier to identify.
-
-## 25.4.3
-
-### 🛠️ Verbesserungen und Optimierungen
-
-- ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
-
-## 25.4.2
-
-### 🛠️ Verbesserungen und Optimierungen
-
-- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
-
-## 25.4.1
-
-### 🛠️ Verbesserungen und Optimierungen
-
-- 🎬 **Fix Custom Start/End Time Assignment**: Prevent custom start and end times from being incorrectly applied to the wrong video.
-- 📝 **Allow Mismatched Subtitles**: Enable use of subtitles even when they do not perfectly match the media file.
-- 🪟 **Disable Rounded Corners on Windows**: Remove rounded corners for the media window on Windows.
-- 🖼 **Include Non-Referenced Images in Media List**: Ensure all non-referenced images are added to the media list for completeness.
-- ➕ **Prevent Duplicate Media Sections**: Avoid creating multiple media sections for the same media item.
-- 📥 **Preserve Playlist Order on Import**: Maintain the original order of JWL playlists during the import process.
+- 🖼️ **OBS-Verzögerungsoption für Bilder**: OBS Studio-Einstellung hinzufügen, um Szenenwechsel bei der Anzeige von Bildern zu verzögern und Übergänge zu verbessern.
+- 🔊 **Unterstützung für `.m4a`-Audioformat**: Kompatibilität für `.m4a`-Audiodateien hinzugefügt, um unterstützte Medientypen zu erweitern.
 
 ## 25.4.0
 
 ### ✨ Neue Funktionen
 
-- 🇵🇭 **Neue Sprache: Tagalog**: Unterstützung für Taglog hinzugefügt, um die Mehrsprachigkeit der App zu erweitern.
-- 🎞️ **Unterstützung des `.m4v` Video Format**: Unterstützt nun die Wiedergabe von `.m4v` Dateien, um die Medienkompatibilität zu verbessern.
-
-### 🛠️ Verbesserungen und Optimierungen
-
-- 🎬 **Mehrere Start/End-Zeiten für Einzelvideo**: Lasse ein einzelnes Video mehrfach in der Medienliste mit verschiedenen benutzerdefinierten Start-/Endzeiten erscheinen.
-- 📤 **Gruppierte Medien in den Auto-Export einbeziehen**: Gruppierte Medienelemente automatisch zusammen mit anderen exportieren.
-- 📡 **Korrektur beim Abruf von `.m4v` mittels JW API**: Sichergestellt, dass `.m4v` Dateien korrekt aus der JW API geholt werden.
+- 🇵🇭 **Neue Sprache: Tagalog**: Unterstützung für Tagalog hinzugefügt, um die Mehrsprachigkeit der App zu erweitern.
+- 🎞️ **Unterstützung des `.m4v` Videoformats**: Unterstützt nun die Wiedergabe von `.m4v` Dateien, um die Medienkompatibilität zu verbessern.
 
 ## 25.3.1
 
 ### ✨ Neue Funktionen
 
-- 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
-
-### 🛠️ Verbesserungen und Optimierungen
-
-- ⚡ **Leistungssteigerung und CPU-Auslastung**: Optimierte Performance um die CPU-Auslastung zu reduzieren und die Effizienz zu steigern.
-- 🔄 **Synchronisation- & Absturzprobleme behoben**: Es wurden verschiedene Synchronisation- und Stabilitätsprobleme behoben, um die Zuverlässigkeit zu verbessern.
-- 📜 **Versionshinweise für bestehende Versammlungen anzeigen**: Es wurde sichergestellt, dass Versionshinweise auch für bereits bestehende Versammlungen angezeigt werden.
+- 🌏 **Neue Sprache: Koreanisch**: Unterstützung für die koreanische Sprache hinzugefügt, um die Zugänglichkeit für mehr Benutzer zu erweitern.
 
 ## 25.3.0
 
 ### ✨ Neue Funktionen
 
 - 🎵 **Hintergrundmusik mit Videos**: Ermöglicht Hintergrundmusik weiter abzuspielen, während Videos angezeigt werden.
-- 🎥 **Camera Feed for Sign Language Media**: Add the ability to display a camera feed on the media window specifically for sign language users.
-- 📅 **Automatic Memorial Date & Background**: Automatically detect and set the Memorial date and prepare the Memorial background image.
-- 📜 **Show Release Notes In-App**: Display release notes directly in the application so users can easily review changes after an update.
+- 🎥 **Kamera-Feed für Gebärdensprachmedien**: Möglichkeit hinzufügen, einen Kamera-Feed im Medienfenster speziell für Gebärdensprachnutzer anzuzeigen.
+- 📅 **Automatisches Gedächtnismahl-Datum & Hintergrund**: Das Gedächtnismahl-Datum automatisch erkennen und festlegen sowie das Gedächtnismahl-Hintergrundbild vorbereiten.
+- 📜 **Versionshinweise in der App anzeigen**: Versionshinweise direkt in der Anwendung anzeigen, damit Benutzer Änderungen nach einem Update leicht überprüfen können.
 
-### 🛠️ Verbesserungen und Optimierungen
+## 25.2.1
 
-- ⚡ **Optimize Smart Cache Clearing**: Improve the smart cache-clearing mechanism for better performance and efficiency.
-- 📂 **Correct Circuit Overseer Media Placement**: Ensure Circuit Overseer media is placed in the correct section.
-- 📅 **Exclude Regular Meeting Media for Memorial**: Prevent fetching standard meeting media for the Memorial to prevent errors.
-- 📅 **Hide Regular Meeting Sections on Memorial**: Remove unnecessary meeting sections during the Memorial event for a cleaner layout.
-- 📖 **Fix Sign Language Bible Video Downloads**: Correctly download Sign Language Bible chapter videos from JWL playlists.
+### ✨ Neue Funktionen
+
+- 🔄 **Erlaube OBS Reconnection Versuchs**: Führen Sie die Möglichkeit ein, OBS bei Bedarf manuell zu zwingen.
+- 🗑️ **Auto Cleanup Old Export Date Folders**: Entfernen Sie veraltete Exportdatumsordner automatisch, um den Speicher zu verwalten.
+
+## 25.2.0
+
+### ✨ Neue Funktionen
+
+- 🌍 **Benutzen Sie System Locale by Default**: Automatisch erkennen und nutzen Sie die Gebietsschema des Systems für eine personalisiertere Erfahrung.
+- 🏷️ **Tag Support for Exported Media**: Füge Metadaten-Tags zu exportierten Mediendateien für eine bessere Organisation hinzu.
+- 🔄 **Automatische Beta to Stable Downgrade**: Erlaube automatische Downgrades von Beta-Versionen zu stabilen Releases, falls nötig.
+- 🌐 **Neueste MEPS-Sprachindizes extrahieren**: Holen Sie die aktuellsten MEPS-Sprachindizes direkt von der offiziellen Website, um die aktuelle Sprachunterstützung zu gewährleisten.
+
+## 25.1.0
+
+### ✨ Neue Funktionen
+
+- 📅 **Vorherige Daten öffnen**: Erlaube das Öffnen früherer Termine der aktuellen Woche, was nützlich ist, wenn der Tagungstag später in der Woche verschoben wird.
+- 🛑 **Error Banner for OBS Studio**: Fügen Sie ein Fehlerbanner hinzu, wenn OBS Studio an einem Meetingtag nicht verbunden ist.
+- 📚 **Group Media by Publication**: Group Media aus der gleichen Publikation für einen saubereren und besser organisierten Medienüberblick.
+- 🎵 **Duplicate Song Warning**: Zeigt eine Warnung an, wenn Lieder mehr als einmal in der Medienliste für Wochenendmeetings aufgelistet werden.
+- 🔄 **Future Schedule Planning**: Aktiviere die Planung für zukünftige Termine , was nützlich ist für jährliche Änderungen des Zeitplans oder für den Besuch der Rennstrecke in einer benachbarten Gemeinde.
+
+## 24.11.0
+
+### ✨ Neue Funktionen
+
+- **feat**: Das Vorzeigen der Website wird jetzt auf macOS :rocket unterstützt:
+- **feat**: Eingeführte Tastaturkürzel zum Beenden, Pausieren und Fortsetzen der Medienwiedergabe 🚀
+- **feat**: Unterstützung für das Setzen der Web-Adresse, von der aus Medien heruntergeladen werden sollen 🚀
+- **feat**: OBS Studio Instant-Szenenauswahl und überarbeitete Szenenauswahl Funktionen in den Einstellungen hinzugefügt
+- **feat**: Erweiterte Dokumentations-Website, um mehr Sprachen zu unterstützen
+
+## 24.10.10
+
+### ✨ Neue Funktionen
+
+- **neu**: Tastaturkürzel zum nächsten/vorherigen Medienelement hinzugefügt
+- **neu**: Ein Rechtsklickmenü zu Medienelementen hinzugefügt, um Medienelemente auszublenden und umzubenennen
+- **new**: Trimmed Video-Zeiten werden jetzt in importierten JWL-Playlists respektiert
+
+## 24.10.9
+
+### ✨ Neue Funktionen
+
+- **feat**: Option hinzugefügt, um alle zusätzlichen Mediendateien für den aktuell ausgewählten Tag zu löschen

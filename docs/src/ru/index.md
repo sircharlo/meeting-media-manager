@@ -9,19 +9,19 @@ hero:
   actions:
     - theme: brand
       text: Скачать
-      link: /ru/download
+      link: /download
     - theme: brand
       text: О программе
-      link: /ru/about
+      link: /about
     - theme: brand
       text: Руководство пользователя
-      link: /ru/user-guide
+      link: /user-guide
     - theme: brand
       text: Руководство по настройкам
-      link: /ru/settings-guide
+      link: /settings-guide
     - theme: brand
       text: ЧАВО
-      link: /ru/faq
+      link: /faq
 features:
   - icon: 🚀
     title: Автоматическое управление мультимедиа

@@ -2,7 +2,11 @@
 
 import type { ElectronApi } from 'src/types';
 
-import robot from '@jitsi/robotjs';
+const robot = {
+  getMousePos: () => ({ x: 0, y: 0 }),
+  mouseClick: () => undefined,
+  moveMouse: () => undefined,
+};
 import fs, { ensureDir } from 'fs-extra';
 import {
   fileUrlToPath,
@@ -14,9 +18,11 @@ import upath from 'upath';
 const { join } = upath;
 
 export const basePath = join(__dirname, '..', 'fs');
-const fakePath = async (path: string) => {
+const fakePath = async (path: string, create = true) => {
   const dir = join(basePath, path);
-  await ensureDir(dir);
+  if (create) {
+    await ensureDir(dir);
+  }
   return dir;
 };
 
@@ -37,9 +43,6 @@ export const electronApi: ElectronApi = {
   createVideoFromNonVideo: function (originalFile, ffmpegPath) {
     throw new Error('Function not implemented.');
   },
-  decompress: function (input, output, opts) {
-    throw new Error('Function not implemented.');
-  },
   downloadFile: function (url, saveDir, destFilename, lowPriority) {
     throw new Error('Function not implemented.');
   },
@@ -55,8 +58,12 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   getAppDataPath: async () => fakePath('app'),
+  getBetaUpdatesPath: async () => fakePath('app/beta-updates', false),
   getLocales: async () => [],
   getLocalPathFromFileObject: function (fileObject) {
+    throw new Error('Function not implemented.');
+  },
+  getLowDiskSpaceStatus: function () {
     throw new Error('Function not implemented.');
   },
   getNrOfPdfPages: function (pdfPath) {
@@ -65,14 +72,24 @@ export const electronApi: ElectronApi = {
   getScreenAccessStatus: function () {
     throw new Error('Function not implemented.');
   },
+  getSharedDataPath: async () => fakePath('/app/shared'),
+  getUpdatesDisabledPath: async () => fakePath('app/updates-disabled', false),
   getUserDataPath: async () => fakePath('app/meeting-media-manager'),
   getVideoDuration: function (filePath) {
+    throw new Error('Function not implemented.');
+  },
+  getZipEntries: function () {
     throw new Error('Function not implemented.');
   },
   inferExtension: async function (filename, filetype) {
     throw new Error('Function not implemented.');
   },
+  isArchitectureMismatch: async () => false,
+  isDownloadComplete: async () => null,
   isDownloadErrorExpected: async () => false,
+  isUsablePath: async function (path) {
+    return true;
+  },
   moveMediaWindow: function (targetScreenNumber, windowedMode) {
     throw new Error('Function not implemented.');
   },
@@ -121,6 +138,9 @@ export const electronApi: ElectronApi = {
   onUpdateError: function (callback) {
     console.log('onUpdateError called but not implemented');
   },
+  onVideoCaptureCrashDetected: function () {
+    throw new Error('Function not implemented.');
+  },
   onWatchFolderUpdate: function (callback) {
     throw new Error('Function not implemented.');
   },
@@ -150,6 +170,7 @@ export const electronApi: ElectronApi = {
   },
   path: upath,
   pathToFileURL,
+  PLATFORM: 'win32',
   quitAndInstall: function () {
     throw new Error('Function not implemented.');
   },
@@ -183,6 +204,9 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   unwatchFolders: function () {
+    throw new Error('Function not implemented.');
+  },
+  unzip: function (input, output, opts) {
     throw new Error('Function not implemented.');
   },
   watchFolder: function (path) {

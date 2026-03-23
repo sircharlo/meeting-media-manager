@@ -3,6 +3,7 @@ import type { ElectronApi } from 'src/types/electron';
 import robot from '@jitsi/robotjs';
 import { contextBridge, webUtils } from 'electron/renderer';
 import fs from 'fs-extra';
+import { PLATFORM } from 'src-electron/constants';
 import { initCloseListeners } from 'src-electron/preload/close';
 import {
   convertHeic,
@@ -38,14 +39,24 @@ initCloseListeners();
 initScreenListeners();
 initWebsiteListeners();
 
+const getPathFromFileObject = (fo?: File | string) => {
+  if (!fo) {
+    return '';
+  }
+  if (typeof fo === 'string') {
+    return fo;
+  }
+  return webUtils.getPathForFile(fo);
+};
+
 const electronApi: ElectronApi = {
   askForMediaAccess: () => send('askForMediaAccess'),
   checkForUpdates: () => send('checkForUpdates'),
   closeWebsiteWindow,
   convertHeic,
   convertPdfToImages,
-  createVideoFromNonVideo: (f, fP) => invoke('createVideoFromNonVideo', f, fP),
-  decompress: (i, o, op) => invoke('decompress', i, o, op),
+  createVideoFromNonVideo: (f, fP, oD) =>
+    invoke('createVideoFromNonVideo', f, fP, oD),
   downloadFile: (u, sD, dF, lP) => invoke('downloadFile', u, sD, dF, lP),
   executeQuery,
   fileUrlToPath,
@@ -53,15 +64,23 @@ const electronApi: ElectronApi = {
   fs,
   getAllScreens: () => invoke('getAllScreens'),
   getAppDataPath: () => invoke('getAppDataPath'),
+  getBetaUpdatesPath: () => invoke('getBetaUpdatesPath'),
   getLocales: () => invoke('getLocales'),
-  getLocalPathFromFileObject: (fo) =>
-    fo ? (typeof fo === 'string' ? fo : webUtils.getPathForFile(fo)) : '',
+  getLocalPathFromFileObject: (fo) => getPathFromFileObject(fo),
+  getLowDiskSpaceStatus: () => invoke('getLowDiskSpaceStatus'),
   getNrOfPdfPages,
   getScreenAccessStatus: () => invoke('getScreenAccessStatus'),
+  getSharedDataPath: () => invoke('getSharedDataPath'),
+  getUpdatesDisabledPath: () => invoke('getUpdatesDisabledPath'),
   getUserDataPath: () => invoke('getUserDataPath'),
   getVideoDuration,
+  getZipEntries: (p) => invoke('getZipEntries', p),
   inferExtension,
+  isArchitectureMismatch: () => invoke('isArchitectureMismatch'),
+  isDownloadComplete: (downloadId: string) =>
+    invoke('isDownloadComplete', downloadId),
   isDownloadErrorExpected: () => invoke('isDownloadErrorExpected'),
+  isUsablePath: (p) => invoke('isUsablePath', p),
   moveMediaWindow: (t, w) => send('moveMediaWindow', t, w),
   moveTimerWindow: (t, w) => send('moveTimerWindow', t, w),
   navigateWebsiteWindow,
@@ -79,6 +98,8 @@ const electronApi: ElectronApi = {
   onUpdateDownloaded: (cb) => listen('update-downloaded', cb),
   onUpdateDownloadProgress: (cb) => listen('update-download-progress', cb),
   onUpdateError: (cb) => listen('update-error', cb),
+  onVideoCaptureCrashDetected: (cb) =>
+    listen('video-capture-crash-detected', cb),
   onWatchFolderUpdate: (cb) => listen('watchFolderUpdate', cb),
   onWebsiteWindowClosed: (cb) => listen('websiteWindowClosed', cb),
   openDiscussion: (c, t, p) => send('openDiscussion', c, t, p),
@@ -90,6 +111,7 @@ const electronApi: ElectronApi = {
   parseMediaFile,
   path,
   pathToFileURL,
+  PLATFORM,
   quitAndInstall: () => send('quitAndInstall'),
   readdir: readDirectory,
   registerShortcut: (n, s) => invoke('registerShortcut', n, s),
@@ -103,6 +125,7 @@ const electronApi: ElectronApi = {
   unregisterAllShortcuts: () => send('unregisterAllShortcuts'),
   unregisterShortcut: (s) => send('unregisterShortcut', s),
   unwatchFolders: () => send('unwatchFolders'),
+  unzip: (i, o, op) => invoke('unzip', i, o, op),
   watchFolder: (p) => send('watchFolder', p),
   zoomWebsiteWindow,
 };

@@ -1,4 +1,4 @@
-import { Buffer } from 'buffer';
+import { Buffer } from 'buffer/';
 import { FULL_HD } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getTempPath } from 'src/utils/fs';
@@ -11,7 +11,7 @@ const {
   getNrOfPdfPages,
   path,
   pathToFileURL,
-} = window.electronApi;
+} = globalThis.electronApi;
 const { readFile, writeFile } = fs;
 const { parse } = path;
 
@@ -80,9 +80,19 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
         }
       };
 
-      img.onerror = function (error) {
+      img.onerror = function (event) {
+        const rejectionError = new Error(`Failed to load SVG: ${filepath}`);
         canvas.remove();
-        reject(error);
+        errorCatcher(rejectionError, {
+          contexts: {
+            fn: {
+              event: JSON.stringify(event, Object.getOwnPropertyNames(event)),
+              filepath,
+              name: 'convertSvgToJpg',
+            },
+          },
+        });
+        reject(rejectionError);
       };
     });
   } catch (error) {

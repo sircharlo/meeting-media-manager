@@ -2,12 +2,79 @@
 import type { DateLocale, DateOptions, DateUnitOptions } from 'quasar';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { log } from 'src/shared/vanilla';
 import { capitalize, pad } from 'src/utils/general';
 
+type PotentialDate = Date | number | string;
+
 /**
- * Creates a new date object from a date string.
- * @param lookupDate The date string to create the date object from.
- * @returns The date object.
+ * Helper to parse an object (Date, date-like, or generic object) to a Date.
+ * @internal
+ */
+const parseObjectToDate = (input: object): Date => {
+  // If it's already a Date object
+  if (input instanceof Date) {
+    return new Date(input);
+  }
+
+  // If it's a date-like object (has getTime method)
+  if (typeof (input as { getTime?: unknown }).getTime === 'function') {
+    const time = (input as { getTime: () => number }).getTime();
+    const date = new Date(time);
+    if (!Number.isNaN(date.getTime())) {
+      return date;
+    }
+  }
+
+  // Generic object conversion
+  if (Object.keys(input).length === 0) {
+    throw new Error('Cannot convert empty object to date');
+  }
+
+  const date = new Date(input as unknown as Date);
+  if (Number.isNaN(date.getTime())) {
+    throw new TypeError(
+      `Cannot convert object to date: ${typeof input} with keys: ${Object.keys(input).join(', ')}`,
+    );
+  }
+
+  return date;
+};
+
+/**
+ * Helper to parse a string to a Date, handling specific formats for local timezone.
+ * @internal
+ */
+const parseStringToDate = (input: string): Date => {
+  // Convert yyyymmdd to local date
+  if (/^\d{8}$/.test(input)) {
+    const year = Number.parseInt(input.slice(0, 4));
+    const month = Number.parseInt(input.slice(4, 6)) - 1;
+    const day = Number.parseInt(input.slice(6, 8));
+    return new Date(year, month, day);
+  }
+
+  // Handle ISO-like date string (YYYY-MM-DD) to local timezone
+  if (/^\d{4}-\d{2}-\d{2}$/.test(input)) {
+    const [year, month, day] = input.split('-').map(Number);
+    if (year && month && day) {
+      return new Date(year, month - 1, day);
+    }
+  }
+
+  // Fallback to standard constructor
+  const date = new Date(input);
+  if (Number.isNaN(date.getTime())) {
+    throw new TypeError(`Unsupported date string format: ${input}`);
+  }
+
+  return date;
+};
+
+/**
+ * Creates a new date object from a date string or object.
+ * @param lookupDate The input to create the date object from.
+ * @returns The date object at midnight local time.
  * @example
  * dateFromString('20210230')
  * dateFromString('2021-02-30')
@@ -16,110 +83,52 @@ import { capitalize, pad } from 'src/utils/general';
  */
 export const dateFromString = (
   lookupDate?: Date | string | { getTime: () => number },
-) => {
+): Date => {
   try {
-    // Debug logging to help identify the issue
+    // Debug logging for common issues
     if (
       lookupDate &&
       typeof lookupDate === 'object' &&
       !(lookupDate instanceof Date)
     ) {
-      console.warn('🔍 [dateFromString] Received non-Date object:', {
-        constructor: lookupDate.constructor?.name,
-        keys: Object.keys(lookupDate),
-        type: typeof lookupDate,
-        value: lookupDate,
+      errorCatcher(new Error('Received non-Date object'), {
+        contexts: {
+          fn: {
+            constructor: (lookupDate as { constructor?: { name: string } })
+              .constructor?.name,
+            keys: Object.keys(lookupDate),
+            name: 'dateFromString',
+            type: typeof lookupDate,
+            value: lookupDate,
+          },
+        },
       });
     }
 
     let date: Date;
 
-    // If no input, default to today's date
     if (!lookupDate) {
-      console.warn("🔍 [dateFromString] No input, defaulting to today's date");
+      log(
+        "🔍 [dateFromString] No input, defaulting to today's date",
+        'dateUtils',
+        'warn',
+      );
       date = new Date();
-    }
-    // If it's already a Date object
-    else if (lookupDate instanceof Date) {
-      date = new Date(lookupDate);
-    }
-    // If it's a date-like object (has getTime method)
-    else if (
-      typeof lookupDate === 'object' &&
-      lookupDate !== null &&
-      typeof lookupDate.getTime === 'function'
-    ) {
-      try {
-        date = new Date(lookupDate.getTime());
-        // Check if the result is valid
-        if (isNaN(date.getTime())) {
-          throw new Error('Invalid date object');
-        }
-      } catch {
-        throw new Error(`Cannot convert object to date: ${typeof lookupDate}`);
-      }
-    }
-    // If it's some other object, try to convert it to a Date
-    else if (typeof lookupDate === 'object' && lookupDate !== null) {
-      // Check if it's an empty object or has no useful properties
-      if (Object.keys(lookupDate).length === 0) {
-        throw new Error('Cannot convert empty object to date');
-      }
-
-      try {
-        date = new Date(lookupDate as unknown as Date);
-        // Check if the result is valid
-        if (isNaN(date.getTime())) {
-          throw new Error('Invalid date object');
-        }
-      } catch {
-        throw new Error(
-          `Cannot convert object to date: ${typeof lookupDate} with keys: ${Object.keys(lookupDate).join(', ')}`,
-        );
-      }
-    }
-    // Handle ISO strings or other formats
-    else if (typeof lookupDate === 'string') {
-      const parsedDate = lookupDate;
-
-      // Convert yyyymmdd to yyyy-mm-dd and create date in local timezone
-      if (/^\d{8}$/.test(parsedDate)) {
-        const year = parseInt(lookupDate.slice(0, 4));
-        const month = parseInt(lookupDate.slice(4, 6)) - 1; // Month is 0-indexed
-        const day = parseInt(lookupDate.slice(6, 8));
-        date = new Date(year, month, day);
-      } else {
-        // For other string formats, try to parse normally first
-        date = new Date(parsedDate);
-
-        // If it's an ISO date string (YYYY-MM-DD), convert to local timezone
-        if (/^\d{4}-\d{2}-\d{2}$/.test(parsedDate)) {
-          const [year, month, day] = parsedDate.split('-').map(Number);
-          if (!year || !month || !day) {
-            throw new Error(`Invalid date format: ${parsedDate}`);
-          }
-          date = new Date(year, month - 1, day); // Month is 0-indexed
-        }
-      }
-
-      // Additional validation for string dates that don't match expected formats
-      if (
-        isNaN(date.getTime()) &&
-        !/^\d{8}$/.test(parsedDate) &&
-        !/^\d{4}-\d{2}-\d{2}$/.test(parsedDate)
-      ) {
-        throw new Error(`Unsupported date string format: ${parsedDate}`);
-      }
+    } else if (typeof lookupDate === 'object') {
+      date = parseObjectToDate(lookupDate);
+    } else if (typeof lookupDate === 'string') {
+      date = parseStringToDate(lookupDate);
     } else {
-      throw new Error(`Unsupported input type: ${typeof lookupDate}`);
+      throw new TypeError(`Unsupported input type: ${typeof lookupDate}`);
     }
 
-    // Check if the date is valid
-    if (isNaN(date.getTime())) {
-      throw new Error(`Unsupported date format: ${lookupDate}`);
+    // Final validation and normalization
+    if (Number.isNaN(date.getTime())) {
+      throw new TypeError(
+        `Invalid date produced from: ${JSON.stringify(lookupDate)}`,
+      );
     }
 
-    // Return the date with time set to midnight in local timezone
     date.setHours(0, 0, 0, 0);
     return date;
   } catch (error) {
@@ -127,7 +136,6 @@ export const dateFromString = (
       contexts: { fn: { lookupDate, name: 'dateFromString' } },
     });
 
-    // Fallback: return today's date set to midnight
     const fallbackDate = new Date();
     fallbackDate.setHours(0, 0, 0, 0);
     return fallbackDate;
@@ -161,8 +169,8 @@ export const isInPast = (lookupDate: Date | string, includeToday = false) => {
  */
 export const friendlyDayToJsDay = (day?: number) => {
   try {
-    if (day === undefined || day === null) day = -1;
-    const firstDay = day === 6 ? 0 : parseInt(day.toString()) + 1;
+    day ??= -1;
+    const firstDay = day === 6 ? 0 : Number.parseInt(day.toString()) + 1;
     const correctedFirstDay = firstDay > 7 ? firstDay - 7 : firstDay;
     return correctedFirstDay;
   } catch (error) {
@@ -188,7 +196,7 @@ export const getLocalDate = (
       : dateObj;
   // Fallback safely if mask is invalid or produces empty
   const desired = formatDate(parsedDate, mask || 'D MMMM YYYY', locale);
-  if (desired && desired.trim()) return desired;
+  if (desired?.trim()) return desired;
   return formatDate(parsedDate, 'D MMMM YYYY', locale);
 };
 
@@ -320,7 +328,7 @@ export function addToDate(date: Date | string, mod: DateOptions) {
 }
 
 export function formatDate(
-  val: Date | number | string | undefined,
+  val: PotentialDate | undefined,
   mask?: string,
   dateLocale?: Required<DateLocale>,
 ): string {
@@ -330,8 +338,7 @@ export function formatDate(
 
   const date = new Date(val);
 
-  // @ts-expect-error: Date constructor can return NaN
-  if (isNaN(date)) {
+  if (Number.isNaN(date.getTime())) {
     return '';
   }
 
@@ -341,18 +348,36 @@ export function formatDate(
 
   const locale = getDateLocale(dateLocale);
 
-  return mask.replace(token, (match, text) =>
-    match in formatter
-      ? formatter[match as keyof typeof formatter](date, locale)
-      : text === void 0
-        ? match
-        : text.split('\\]').join(']'),
-  );
+  return mask.replaceAll(token, (match, text) => {
+    let replacement: string;
+
+    if (match in formatter) {
+      const value = formatter[match as keyof typeof formatter](date, locale);
+      replacement = value === null || value === undefined ? '' : String(value);
+    } else if (text === void 0) {
+      replacement = match;
+    } else {
+      replacement = text.split(String.raw`\]`).join(']');
+    }
+
+    return replacement;
+  });
 }
 
+/**
+ * Calculates the difference between two dates (`date` - `subtract`).
+ *
+ * The result equals the number of `units` to add to `subtract` to get `date`.
+ * - If `date` is in the future relative to `subtract`, the result is **positive**.
+ * - If `date` is in the past relative to `subtract`, the result is **negative**.
+ *
+ * @param date The target date.
+ * @param subtract The date to subtract involved in the operation.
+ * @param unit The unit of measurement (default: 'days').
+ */
 export function getDateDiff(
-  date: Date | number | string,
-  subtract: Date | number | string,
+  date: PotentialDate,
+  subtract: PotentialDate,
   unit: `${DateUnitOptions}s` | DateUnitOptions = 'days',
 ): number {
   const sub = new Date(subtract),
@@ -405,8 +430,8 @@ export function getDateDiff(
 }
 
 export function getMaxDate(
-  date: Date | number | string,
-  ...args: (Date | number | string)[]
+  date: PotentialDate,
+  ...args: PotentialDate[]
 ): Date {
   let t = new Date(date);
   Array.prototype.slice.call(args, 1).forEach((d) => {
@@ -416,10 +441,7 @@ export function getMaxDate(
   return t;
 }
 
-export function getMinDate(
-  date: Date | number | string,
-  ...args: (Date | number | string)[]
-) {
+export function getMinDate(date: PotentialDate, ...args: PotentialDate[]) {
   let t = new Date(date);
   Array.prototype.slice.call(args, 1).forEach((d) => {
     // @ts-expect-error: Date is not Number
@@ -428,10 +450,7 @@ export function getMinDate(
   return t;
 }
 
-export function subtractFromDate(
-  date: Date | number | string,
-  mod: DateOptions,
-) {
+export function subtractFromDate(date: PotentialDate, mod: DateOptions) {
   return getChange(date, mod, -1);
 }
 
@@ -470,11 +489,7 @@ function daysInMonth(date: Date) {
   return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 }
 
-function getChange(
-  date: Date | number | string,
-  rawMod: DateOptions,
-  sign: number,
-) {
+function getChange(date: PotentialDate, rawMod: DateOptions, sign: number) {
   const d = new Date(date),
     mod = normalizeMod(rawMod),
     t =
@@ -549,7 +564,7 @@ function normalizeMod(mod: DateOptions) {
   return acc;
 }
 
-function startOfDate(date: Date | number | string, unit: DateUnitOptions) {
+function startOfDate(date: PotentialDate, unit: DateUnitOptions) {
   const prefix = 'set';
   const t = new Date(date);
 

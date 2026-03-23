@@ -1,6 +1,10 @@
 import type { PublicationFetcher } from 'src/types';
 
 import { basePath } from 'app/test/vitest/mocks/electronApi';
+import { installPinia } from 'app/test/vitest/mocks/pinia';
+import { defaultSettings } from 'src/constants/settings';
+import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
+import { useCurrentStateStore } from 'src/stores/current-state';
 import { join } from 'upath';
 import { describe, expect, it } from 'vitest';
 
@@ -14,6 +18,7 @@ import {
   getPublicationsPath,
   getTempPath,
   isFileUrl,
+  registerCachePathProvider,
   removeEmptyDirs,
   toggleAutoUpdates,
   toggleBetaUpdates,
@@ -21,15 +26,21 @@ import {
   updatesDisabled,
 } from '../fs';
 
-const { fs } = window.electronApi;
+const { fs } = globalThis.electronApi;
 const { emptyDir, ensureFile, exists, remove } = fs;
+
+installPinia();
+
+registerCachePathProvider(
+  () => useCurrentStateStore().currentSettings?.cacheFolder ?? undefined,
+);
 
 describe('isFileUrl', () => {
   it('should correctly recognize file urls', () => {
     expect(isFileUrl('file:///path/to/file')).toBe(true);
     expect(isFileUrl('https://example.com')).toBe(false);
     expect(isFileUrl('/root/some-path')).toBe(false);
-    expect(isFileUrl('C:\\Users/User/some-path')).toBe(false);
+    expect(isFileUrl(String.raw`C:\Users/User/some-path`)).toBe(false);
   });
 });
 
@@ -51,18 +62,24 @@ describe('Paths', () => {
   });
 
   it('should overwrite default cache location', async () => {
-    const cacheDir = join(basePath, 'CustomCacheDir');
-    const paths = await Promise.all([
-      getPublicationsPath(cacheDir),
-      getAdditionalMediaPath(cacheDir),
-      getPublicationDirectory({ langwritten: 'E', pub: 'w' }, cacheDir),
-    ]);
+    const cacheFolder = join(basePath, 'CustomCacheDir');
+    const store = useCongregationSettingsStore();
+    store.congregations = {
+      'test-cong': {
+        ...defaultSettings,
+        cacheFolder,
+      },
+    };
+    useCurrentStateStore().currentCongregation = 'test-cong';
+    const paths = [
+      await getPublicationsPath(),
+      await getAdditionalMediaPath(),
+      await getPublicationDirectory({ langwritten: 'E', pub: 'w' }),
+    ];
 
     paths.forEach((path) => {
-      expect(path).toContain(cacheDir);
+      expect(path).toContain(cacheFolder);
     });
-
-    await remove(cacheDir);
   });
 });
 
@@ -131,18 +148,7 @@ describe('getPublicationDirectoryContents', () => {
     const filtered = await getPublicationDirectoryContents(pub, 'jpg');
     expect(filtered.length).toBe(2);
 
-    const customRoot = await getPublicationDirectory(
-      pub,
-      join(basePath, 'customCacheDir'),
-    );
-    const withCustomRoot = await getPublicationDirectoryContents(
-      pub,
-      undefined,
-      customRoot,
-    );
-    expect(withCustomRoot.length).toBe(0);
-
-    await Promise.all([root, customRoot].map((filepath) => remove(filepath)));
+    await remove(root);
   });
 });
 
@@ -184,6 +190,7 @@ describe('trimFilepathAsNeeded', () => {
 
 describe('auto updates', () => {
   it('should be toggleable', async () => {
+    await toggleAutoUpdates(true);
     expect(await updatesDisabled()).toBe(false); // default value
     await toggleAutoUpdates(false);
     expect(await updatesDisabled()).toBe(true);
@@ -194,6 +201,7 @@ describe('auto updates', () => {
 
 describe('beta updates', () => {
   it('should be toggleable', async () => {
+    await toggleBetaUpdates(false);
     expect(await betaUpdatesDisabled()).toBe(true); // default value
     await toggleBetaUpdates(true);
     expect(await betaUpdatesDisabled()).toBe(false);

@@ -8,7 +8,7 @@
     <div v-if="bannerColumnVisible" class="col">
       <q-slide-transition v-for="b in pageBanners" :key="b.key">
         <div class="row">
-          <q-banner :class="b.className" inline-actions rounded>
+          <q-banner :class="b.className" rounded>
             {{ t(b.textKey) }}
             <template #avatar>
               <q-avatar v-if="b.avatarClass" :class="b.avatarClass" size="lg">
@@ -93,8 +93,8 @@
       :document="selectedDocument"
       :model-value="showMediaPicker"
       :section="sectionToAddTo"
-      @cancel="onMediaPickerCancel"
-      @ok="onMediaPickerOk"
+      @cancel="onMediaPickerDismiss"
+      @ok="onMediaPickerDismiss"
       @update:model-value="showMediaPicker = $event"
     />
   </q-page>
@@ -105,6 +105,7 @@ import type {
   DocumentItem,
   MediaItem,
   MediaSectionIdentifier,
+  PublicationFetcher,
 } from 'src/types';
 
 import {
@@ -112,7 +113,7 @@ import {
   useEventListener,
   watchImmediate,
 } from '@vueuse/core';
-import { Buffer } from 'buffer';
+import { Buffer } from 'buffer/';
 import DialogFileImport from 'components/dialog/DialogFileImport.vue';
 import DialogJwpubMediaPicker from 'components/dialog/DialogJwpubMediaPicker.vue';
 import DialogSectionPicker from 'components/dialog/DialogSectionPicker.vue';
@@ -123,30 +124,40 @@ import Mousetrap from 'mousetrap';
 import { storeToRefs } from 'pinia';
 import { useMeta, useQuasar } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
-import { defaultAdditionalSection } from 'src/composables/useMediaSection';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { SORTER } from 'src/constants/general';
-import { jwIcons } from 'src/constants/jw-icons';
 import { getMeetingSections } from 'src/constants/media';
 import { isCoWeek, isMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addDayToExportQueue } from 'src/helpers/export-media';
 import {
+  addToAdditionMediaMapFromPath,
   copyToDatedAdditionalMedia,
+  downloadAdditionalRemoteVideo,
   downloadFileIfNeeded,
+  dynamicMediaMapper,
   fetchMedia,
-  getMemorialBackground,
+  getJwMediaInfo,
+  getMemorialMedia,
+  getPubMediaLinks,
 } from 'src/helpers/jw-media';
 import { sendKeyboardShortcut } from 'src/helpers/keyboard-shortcuts';
 import { executeLocalShortcut } from 'src/helpers/keyboardShortcuts';
 import {
   addSection,
+  defaultAdditionalSection,
   findMediaSection,
   getOrCreateMediaSection,
 } from 'src/helpers/media-sections';
-import { decompressJwpub, showMediaWindow } from 'src/helpers/mediaPlayback';
+import {
+  identifyJwpub,
+  toggleMediaWindowVisibility,
+  unzipJwpub,
+} from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
+import { updateLastUsedDate } from 'src/helpers/usage';
 import { triggerZoomScreenShare } from 'src/helpers/zoom';
+import { log, uuid } from 'src/shared/vanilla';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import {
   dateFromString,
@@ -155,8 +166,12 @@ import {
   getLocalDate,
   isInPast,
 } from 'src/utils/date';
-import { getPublicationDirectory, getTempPath } from 'src/utils/fs';
-import { uuid } from 'src/utils/general';
+import {
+  getParentDirectory,
+  getPublicationDirectory,
+  getTempPath,
+  isFileUrl,
+} from 'src/utils/fs';
 import {
   getMetadataFromMediaPath,
   isArchive,
@@ -170,17 +185,15 @@ import {
   isVideo,
 } from 'src/utils/media';
 import { sendObsSceneEvent } from 'src/utils/obs';
-import {
-  findDb,
-  getPublicationInfoFromDb,
-  tableExists,
-} from 'src/utils/sqlite';
+import { findDb, tableExists } from 'src/utils/sqlite';
 import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
 import { computed, nextTick, onMounted, ref, type Ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+
+const { sanitize } = DOMPurify;
 
 const $q = useQuasar();
 
@@ -214,6 +227,8 @@ const {
   currentCongregation,
   currentLangObject,
   currentSettings,
+  currentSongbook,
+  downloadProgress,
   isSelectedDayToday,
   mediaIsPlaying,
   mediaPaused,
@@ -253,16 +268,17 @@ watch(
 
 const {
   convertPdfToImages,
-  decompress,
   executeQuery,
+  fileUrlToPath,
   fs,
   getLocalPathFromFileObject,
   inferExtension,
   path,
   pathToFileURL,
   readdir,
-} = window.electronApi;
-const { ensureDir, exists, remove, writeFile } = fs;
+  unzip,
+} = globalThis.electronApi;
+const { pathExists, remove, writeFile } = fs;
 const { basename, join } = path;
 
 const { post: postMediaAction } = useBroadcastChannel<string, string>({
@@ -281,20 +297,31 @@ const appSettingsStore = useAppSettingsStore();
 watch(
   () => mediaPlaying.value.action,
   (newAction, oldAction) => {
+    log(
+      'mediaPlaying.value.action:',
+      'mediaCalendar',
+      'log',
+      oldAction,
+      '->',
+      newAction,
+    );
+
     if (newAction !== oldAction) postMediaAction(newAction);
 
     const isPlay = newAction === 'play';
     const isSignLang = currentLangObject.value?.isSignLanguage;
 
     // Always show media window when playing
-    if (isPlay) showMediaWindow(true);
+    if (isPlay) toggleMediaWindowVisibility(true);
 
     // Handle sign language special cases
     if (isSignLang) {
-      if (isPlay) return showMediaWindow(true);
+      if (isPlay) return toggleMediaWindowVisibility(true);
 
       const cameraId = appSettingsStore.displayCameraId;
-      return cameraId ? postCameraStream(cameraId) : showMediaWindow(false);
+      return cameraId
+        ? postCameraStream(cameraId)
+        : toggleMediaWindowVisibility(false);
     }
   },
 );
@@ -308,55 +335,6 @@ watch(
   (newSubtitlesUrl, oldSubtitlesUrl) => {
     if (newSubtitlesUrl !== oldSubtitlesUrl) postSubtitlesUrl(newSubtitlesUrl);
   },
-);
-
-const { post: postZoomPan } = useBroadcastChannel<
-  Partial<Record<string, number>>,
-  Partial<Record<string, number>>
->({ name: 'zoom-pan' });
-
-watch(
-  () => [mediaPlaying.value.zoom, mediaPlaying.value.pan],
-  (newValues, oldValues) => {
-    try {
-      const [newZoom, newPan] = newValues as [
-        number,
-        Partial<{ x: number; y: number }>,
-      ];
-      const [oldZoom, oldPan] = oldValues as [
-        number,
-        Partial<{ x: number; y: number }>,
-      ];
-      // Only pass the serializable zoomPan state (scale, x, y)
-      const serializableZoomPan =
-        newZoom && newPan
-          ? {
-              scale: newZoom,
-              x: newPan.x,
-              y: newPan.y,
-            }
-          : undefined;
-
-      const serializableOldZoomPan =
-        oldZoom && oldPan
-          ? {
-              scale: oldZoom,
-              x: oldPan.x,
-              y: oldPan.y,
-            }
-          : undefined;
-
-      if (
-        JSON.stringify(serializableZoomPan) !==
-        JSON.stringify(serializableOldZoomPan)
-      ) {
-        postZoomPan(serializableZoomPan ?? {});
-      }
-    } catch (error) {
-      errorCatcher(error);
-    }
-  },
-  { deep: true },
 );
 
 const { post: postMediaUrl } = useBroadcastChannel<string, string>({
@@ -443,17 +421,73 @@ const pageBanners = computed(() => {
 watch(
   () => [mediaPlaying.value.url, customDuration.value],
   ([newUrl, newCustomDuration], [oldUrl, oldCustomDuration]) => {
-    console.log('🔄 [watch] mediaPlaying.value.url', newUrl, oldUrl);
+    log(
+      '🔄 [watch] mediaPlaying.value.url',
+      'mediaCalendar',
+      'log',
+      newUrl,
+      oldUrl,
+    );
+
+    if (newUrl !== oldUrl) {
+      postMediaUrl(newUrl as string);
+    }
+
     if (
-      newUrl === oldUrl ||
-      (newCustomDuration &&
-        oldCustomDuration &&
-        JSON.stringify(newCustomDuration) === JSON.stringify(oldCustomDuration))
-    )
-      return;
-    postMediaUrl(newUrl as string);
-    postCustomDuration(JSON.stringify(newCustomDuration));
+      JSON.stringify(newCustomDuration) !== JSON.stringify(oldCustomDuration)
+    ) {
+      postCustomDuration(JSON.stringify(newCustomDuration));
+    }
   },
+);
+
+const { post: postZoomPan } = useBroadcastChannel<
+  Partial<Record<string, number>>,
+  Partial<Record<string, number>>
+>({ name: 'zoom-pan' });
+
+watch(
+  () => [mediaPlaying.value.zoom, mediaPlaying.value.pan],
+  (newValues, oldValues) => {
+    try {
+      const [newZoom, newPan] = newValues as [
+        number,
+        Partial<{ x: number; y: number }>,
+      ];
+      const [oldZoom, oldPan] = oldValues as [
+        number,
+        Partial<{ x: number; y: number }>,
+      ];
+      // Only pass the serializable zoomPan state (scale, x, y)
+      const serializableZoomPan =
+        newZoom && newPan
+          ? {
+              scale: newZoom,
+              x: newPan.x,
+              y: newPan.y,
+            }
+          : undefined;
+
+      const serializableOldZoomPan =
+        oldZoom && oldPan
+          ? {
+              scale: oldZoom,
+              x: oldPan.x,
+              y: oldPan.y,
+            }
+          : undefined;
+
+      if (
+        JSON.stringify(serializableZoomPan) !==
+        JSON.stringify(serializableOldZoomPan)
+      ) {
+        postZoomPan(serializableZoomPan ?? {});
+      }
+    } catch (error) {
+      errorCatcher(error);
+    }
+  },
+  { deep: true },
 );
 
 const { data: lastEndTimestamp } = useBroadcastChannel<
@@ -466,11 +500,21 @@ const { data: lastEndTimestamp } = useBroadcastChannel<
 watch(
   () => lastEndTimestamp.value,
   (newLastEndTimestamp) => {
-    console.log('🔄 [onMediaEnded] Media state data:', newLastEndTimestamp);
+    log(
+      '🔄 [onMediaEnded] Media state data:',
+      'mediaCalendar',
+      'log',
+      newLastEndTimestamp,
+    );
     if (newLastEndTimestamp) {
       // Handle section repeat logic first
       const repeatHandled = handleMediaEnded();
-      console.log('🔄 [onMediaEnded] Repeat handled:', repeatHandled);
+      log(
+        '🔄 [onMediaEnded] Repeat handled:',
+        'mediaCalendar',
+        'log',
+        repeatHandled,
+      );
       if (repeatHandled) return;
 
       triggerZoomScreenShare(false);
@@ -493,7 +537,7 @@ watch(
       postCustomDuration(undefined);
 
       nextTick(() => {
-        window.dispatchEvent(
+        globalThis.dispatchEvent(
           new CustomEvent<{ scrollToSelectedMedia: boolean }>(
             'shortcutMediaNext',
             {
@@ -530,23 +574,30 @@ watch(
     [newMediaPlaying, newMediaPaused, newMediaPlayingUrl],
     [, , oldMediaPlayingUrl],
   ) => {
-    console.log('🔄 [MediaCalendarPage] Media state watcher triggered:', {
-      enableCustomEvents: currentSettings.value?.enableCustomEvents,
-      newMediaPaused,
-      newMediaPlaying,
-      newMediaPlayingUrl,
-      oldMediaPlayingUrl,
-    });
+    log(
+      '🔄 [MediaCalendarPage] Media state watcher triggered:',
+      'mediaCalendar',
+      'log',
+      {
+        enableCustomEvents: currentSettings.value?.enableCustomEvents,
+        newMediaPaused,
+        newMediaPlaying,
+        newMediaPlayingUrl,
+        oldMediaPlayingUrl,
+      },
+    );
 
     // Custom integration events
     if (currentSettings.value?.enableCustomEvents) {
-      console.log('🔄 [CustomEvents] Custom events enabled');
+      log('🔄 [CustomEvents] Custom events enabled', 'mediaCalendar', 'log');
 
       if (newMediaPlaying && !oldMediaPlayingUrl) {
         // Media started playing (from nothing to something)
         if (currentSettings.value?.customEventMediaPlayShortcut) {
-          console.log(
+          log(
             '🔄 [CustomEvents] Sending media play event shortcut:',
+            'mediaCalendar',
+            'log',
             currentSettings.value?.customEventMediaPlayShortcut,
           );
           sendKeyboardShortcut(
@@ -557,8 +608,10 @@ watch(
       } else if (newMediaPaused && newMediaPlayingUrl) {
         // Media paused
         if (currentSettings.value?.customEventMediaPauseShortcut) {
-          console.log(
+          log(
             '🔄 [CustomEvents] Sending media pause event shortcut:',
+            'mediaCalendar',
+            'log',
             currentSettings.value?.customEventMediaPauseShortcut,
           );
           sendKeyboardShortcut(
@@ -569,8 +622,10 @@ watch(
       } else if (!newMediaPlaying && oldMediaPlayingUrl) {
         // Media stopped (from something to nothing)
         if (currentSettings.value?.customEventMediaStopShortcut) {
-          console.log(
+          log(
             '🔄 [CustomEvents] Sending media stop event shortcut:',
+            'mediaCalendar',
+            'log',
             currentSettings.value?.customEventMediaStopShortcut,
           );
           sendKeyboardShortcut(
@@ -581,14 +636,12 @@ watch(
 
         if (currentSettings.value?.customEventLastSongShortcut) {
           // Since the shortcut is set, check if this was the last song in the meeting
-          if (
-            selectedDateObject.value &&
-            selectedDayMeetingType.value &&
-            oldMediaPlayingUrl
-          ) {
+          if (selectedDateObject.value && selectedDayMeetingType.value) {
             // This is a meeting day and something was playing before
-            console.log(
+            log(
               '🔄 [CustomEvents Verbose] Checking if the last played media item was the last song in the meeting',
+              'mediaCalendar',
+              'log',
             );
 
             // Check if the stopped media was a song and if it's the last one
@@ -607,8 +660,10 @@ watch(
               );
             }
 
-            console.log(
+            log(
               '🔄 [CustomEvents Verbose] Total songs found in meeting:',
+              'mediaCalendar',
+              'log',
               allSongs.length,
             );
 
@@ -619,8 +674,10 @@ watch(
             const stoppedWasLastSong =
               allSongs.length > 0 && lastSongUrl === oldMediaPlayingUrl;
 
-            console.log(
+            log(
               '🔄 [CustomEvents Verbose] Last song detection variables:',
+              'mediaCalendar',
+              'log',
               {
                 lastSongUrl,
                 oldMediaPlayingUrl,
@@ -629,8 +686,10 @@ watch(
             );
 
             if (stoppedWasLastSong) {
-              console.log(
+              log(
                 '🔄 [CustomEvents] Sending last song played event shortcut:',
+                'mediaCalendar',
+                'log',
               );
               sendKeyboardShortcut(
                 currentSettings.value?.customEventLastSongShortcut,
@@ -647,55 +706,82 @@ watch(
       mediaSceneTimeout = null;
     }
 
-    if (
-      currentSettings.value?.obsPostponeImages &&
-      newMediaPlaying &&
-      !newMediaPaused &&
-      typeof newMediaPlayingUrl === 'string' &&
-      isImage(newMediaPlayingUrl)
-    ) {
-      console.log(
-        '🔄 [MediaCalendarPage] OBS image postponement active, skipping scene change',
-      );
-      return;
-    }
-
-    const targetScene = newMediaPaused
-      ? 'camera'
-      : newMediaPlaying
-        ? 'media'
-        : 'camera';
-    const wasPlayingBefore = !!oldMediaPlayingUrl;
-
-    console.log('🔄 [MediaCalendarPage] OBS scene decision:', {
-      newMediaPaused,
-      newMediaPlaying,
-      oldMediaPlayingUrl,
-      targetScene,
-      wasPlayingBefore,
-    });
-
-    if (targetScene === 'media') {
-      if (wasPlayingBefore) {
-        // If something was playing before, we change the scene immediately
-        console.log(
-          '🔄 [MediaCalendarPage] Switching to media scene immediately',
-        );
-        sendObsSceneEvent('media');
+    const getTargetScene = () => {
+      if (newMediaPaused) {
+        return 'camera';
+      } else if (newMediaPlaying) {
+        return 'media';
       } else {
-        // If nothing was already playing, we wait a bit before changing the scene to prevent seeing the fade effect in OBS
-        console.log('🔄 [MediaCalendarPage] Waiting for scene change delay');
-        mediaSceneTimeout = setTimeout(() => {
-          console.log(
-            '🔄 [MediaCalendarPage] Executing delayed media scene change',
+        return 'camera';
+      }
+    };
+
+    if (currentSettings.value?.obsEnable) {
+      if (
+        currentSettings.value?.obsPostponeImages &&
+        newMediaPlaying &&
+        !newMediaPaused &&
+        typeof newMediaPlayingUrl === 'string' &&
+        isImage(newMediaPlayingUrl)
+      ) {
+        log(
+          '🔄 [MediaCalendarPage] OBS image postponement active, skipping scene change',
+          'mediaCalendar',
+          'log',
+        );
+        return;
+      }
+
+      const targetScene = getTargetScene();
+      const wasPlayingBefore = !!oldMediaPlayingUrl;
+
+      log(
+        '🔄 [MediaCalendarPage] OBS scene decision:',
+        'mediaCalendar',
+        'log',
+        {
+          newMediaPaused,
+          newMediaPlaying,
+          oldMediaPlayingUrl,
+          targetScene,
+          wasPlayingBefore,
+        },
+      );
+
+      if (targetScene === 'media') {
+        if (wasPlayingBefore) {
+          // If something was playing before, we change the scene immediately
+          log(
+            '🔄 [MediaCalendarPage] Switching to media scene immediately',
+            'mediaCalendar',
+            'log',
           );
           sendObsSceneEvent('media');
-          mediaSceneTimeout = null;
-        }, changeDelay);
+        } else {
+          // If nothing was already playing, we wait a bit before changing the scene to prevent seeing the fade effect in OBS
+          log(
+            '🔄 [MediaCalendarPage] Waiting for scene change delay',
+            'mediaCalendar',
+            'log',
+          );
+          mediaSceneTimeout = setTimeout(() => {
+            log(
+              '🔄 [MediaCalendarPage] Executing delayed media scene change',
+              'mediaCalendar',
+              'log',
+            );
+            sendObsSceneEvent('media');
+            mediaSceneTimeout = null;
+          }, changeDelay);
+        }
+      } else {
+        log(
+          '🔄 [MediaCalendarPage] Switching to camera scene',
+          'mediaCalendar',
+          'log',
+        );
+        sendObsSceneEvent('camera');
       }
-    } else {
-      console.log('🔄 [MediaCalendarPage] Switching to camera scene');
-      sendObsSceneEvent('camera');
     }
   },
 );
@@ -750,6 +836,37 @@ watch(
       seenErrors.add(currentCongregation.value + missingFileUrl);
     });
   },
+);
+
+watch(
+  () => selectedDateObject.value,
+  async (newDateObject) => {
+    if (!newDateObject?.date || !newDateObject?.mediaSections) return;
+    const meetingDate = formatDate(newDateObject.date, 'YYYY-MM-DD');
+    const foldersToTouch = new Set<string>();
+
+    const collectFolders = (items: MediaItem[] | undefined) => {
+      items?.forEach((item) => {
+        if (item.fileUrl && isFileUrl(item.fileUrl)) {
+          const filePath = fileUrlToPath(item.fileUrl);
+          const folder = getParentDirectory(filePath);
+          if (folder) foldersToTouch.add(folder);
+        }
+        if (item.children) {
+          collectFolders(item.children);
+        }
+      });
+    };
+
+    Object.values(newDateObject.mediaSections).forEach((section) => {
+      collectFolders(section.items);
+    });
+
+    for (const folder of foldersToTouch) {
+      await updateLastUsedDate(folder, meetingDate);
+    }
+  },
+  { immediate: true },
 );
 
 const goToNextDayWithMedia = (ignoreTodaysDate = false) => {
@@ -818,7 +935,7 @@ const checkCoDate = () => {
 const sectionToAddTo = ref<MediaSectionIdentifier | undefined>();
 
 useEventListener<CustomEvent<{ section: MediaSectionIdentifier | undefined }>>(
-  window,
+  globalThis,
   'openFileImportDialog',
   async (e) => {
     sectionToAddTo.value = e.detail.section;
@@ -835,7 +952,7 @@ useEventListener<
     section: MediaSectionIdentifier | undefined;
   }>
 >(
-  window,
+  globalThis,
   'localFiles-browsed',
   (event) => {
     // Show section picker if more than one section exists
@@ -861,11 +978,16 @@ useEventListener<
     section: MediaSectionIdentifier | undefined;
   }>
 >(
-  window,
+  globalThis,
   'openJwPlaylistDialog',
   (e) => {
-    console.log('🎯 openJwPlaylistDialog event received:', e.detail);
-    window.dispatchEvent(
+    log(
+      '🎯 openJwPlaylistDialog event received:',
+      'mediaCalendar',
+      'log',
+      e.detail,
+    );
+    globalThis.dispatchEvent(
       new CustomEvent<{
         jwPlaylistPath: string;
         section: MediaSectionIdentifier | undefined;
@@ -876,7 +998,7 @@ useEventListener<
         },
       }),
     );
-    console.log('🎯 openJwPlaylistPicker event dispatched');
+    log('🎯 openJwPlaylistPicker event dispatched', 'mediaCalendar', 'log');
   },
   { passive: true },
 );
@@ -887,10 +1009,15 @@ useEventListener<
     document: DocumentItem;
   }>
 >(
-  window,
+  globalThis,
   'openJwpubMediaPicker',
   (e) => {
-    console.log('🎯 openJwpubMediaPicker event received:', e.detail);
+    log(
+      '🎯 openJwpubMediaPicker event received:',
+      'mediaCalendar',
+      'log',
+      e.detail,
+    );
     jwpubImportDb.value = e.detail?.dbPath;
     selectedDocument.value = e.detail?.document;
     showMediaPicker.value = true;
@@ -899,18 +1026,271 @@ useEventListener<
 );
 
 const checkMemorialDate = async () => {
-  let bg: string | undefined = mediaWindowCustomBackground.value;
   if (
-    selectedDate.value &&
-    selectedDate.value === currentSettings.value?.memorialDate
+    !selectedDate.value ||
+    selectedDate.value !== currentSettings.value?.memorialDate ||
+    !selectedDateObject.value?.mediaSections
   ) {
-    bg = await getMemorialBackground();
+    postCustomBackground(mediaWindowCustomBackground.value ?? '');
+    return;
   }
-  postCustomBackground(bg ?? '');
+
+  const introSection = getOrCreateMediaSection(
+    selectedDateObject.value.mediaSections,
+    'welcome-video',
+    { jwIconKeyword: 'welcome-video', label: t('welcome-video') },
+  );
+
+  const memorialSection = getOrCreateMediaSection(
+    selectedDateObject.value.mediaSections,
+    'memorial-talk',
+    { jwIconKeyword: 'memorial', label: t('memorial-talk') },
+  );
+
+  // Fetch the memorial media, including the background image and Welcome Video
+  createTemporaryNotification({
+    group: 'memorial-fetch',
+    icon: 'mmm-info',
+    message: t('attemptingToFetchMemorialBannerAndIntroVideo'),
+    type: 'ongoing',
+  });
+
+  const memorialMedia = await getMemorialMedia();
+  if (memorialMedia) {
+    createTemporaryNotification({
+      group: 'memorial-fetch',
+      icon: 'mmm-check',
+      message: t('memorialFetchSuccess'),
+      type: 'positive',
+    });
+
+    // Set the image to be displayed during the memorial
+    if (memorialMedia.bg) {
+      postCustomBackground(memorialMedia.bg);
+      createTemporaryNotification({
+        group: 'memorial-fetch-bg',
+        icon: 'mmm-check',
+        message: t('memorialFetchBgSuccess'),
+        type: 'positive',
+      });
+    } else {
+      createTemporaryNotification({
+        group: 'memorial-fetch-bg',
+        message: t('memorialFetchErrorNoBg'),
+        type: 'negative',
+      });
+    }
+
+    // If intro section is empty, attempt to set the Memorial Welcome Video
+    if (
+      introSection &&
+      !introSection.items?.length &&
+      memorialMedia.introVideos?.length
+    ) {
+      const mappedVideos = await dynamicMediaMapper(
+        memorialMedia.introVideos,
+        dateFromString(selectedDate.value),
+        'dynamic',
+      );
+
+      // If the items array is undefined, create an empty array
+      introSection.items ??= [];
+
+      // Loop through all media items found and set repeat to true
+      mappedVideos.forEach((video) => {
+        video.repeat = true;
+      });
+      introSection.items.push(...mappedVideos);
+
+      createTemporaryNotification({
+        group: 'memorial-fetch-video',
+        icon: 'mmm-check',
+        message: t('memorialFetchVideoSuccess'),
+        type: 'positive',
+      });
+    }
+  } else {
+    createTemporaryNotification({
+      group: 'memorial-fetch',
+      message: t('memorialFetchError'),
+      type: 'negative',
+    });
+  }
+
+  // Add the usual songs for memorial
+  if (memorialSection && !memorialSection.items?.length) {
+    createTemporaryNotification({
+      group: 'memorial-fetch',
+      icon: 'mmm-info',
+      message: t('memorialFetchSongs'),
+      type: 'ongoing',
+    });
+
+    const songsToAdd = [18, 25]; // Songs to add, in reverse order
+    let succesfulSongs = 0;
+    for (const songTrack of songsToAdd) {
+      const songTrackItem: PublicationFetcher = {
+        fileformat: 'MP4',
+        langwritten: currentSettings.value?.lang || 'E',
+        pub: currentSongbook.value?.pub,
+        track: songTrack,
+      };
+      try {
+        const [songTrackFiles, { thumbnail, title }] = await Promise.all([
+          getPubMediaLinks(songTrackItem),
+          getJwMediaInfo(songTrackItem),
+        ]);
+
+        const files =
+          songTrackFiles?.files?.[currentSettings.value?.lang || 'E']?.[
+            'MP4'
+          ] || [];
+
+        if (files.length > 0) {
+          const downloadId = await downloadAdditionalRemoteVideo(
+            files,
+            selectedDate.value,
+            thumbnail,
+            songTrack,
+            title.replace(/^\d+\.\s*/, ''),
+            'memorial-talk',
+          );
+          let downloadCompleted: boolean | null = null;
+          if (downloadId) {
+            while (downloadCompleted !== true) {
+              downloadCompleted =
+                await globalThis.electronApi?.isDownloadComplete(downloadId);
+              await new Promise((resolve) => {
+                setTimeout(resolve, 300);
+              });
+            }
+          }
+        }
+        succesfulSongs++;
+      } catch (error) {
+        errorCatcher(error);
+      }
+    }
+    if (succesfulSongs === songsToAdd.length) {
+      createTemporaryNotification({
+        group: 'memorial-fetch',
+        icon: 'mmm-check',
+        message: t('memorialFetchSongsSuccess'),
+        type: 'positive',
+      });
+    } else {
+      createTemporaryNotification({
+        group: 'memorial-fetch',
+        icon: 'mmm-error',
+        message: t('memorialFetchSongsError'),
+        type: 'negative',
+      });
+    }
+  }
+};
+
+// Track pinyin setting across page navigations
+let lastPinyinState: boolean | undefined;
+
+// Handle pinyin state change: save additional songs, reset all media, re-fetch, re-add songs
+const handlePinyinChange = async (newPinyinActive: boolean) => {
+  const pinyinFolder = currentSettings.value?.pinyinSongFolder;
+  const days = lookupPeriod.value?.[currentCongregation.value] ?? [];
+  const selectedDay = selectedDateObject.value;
+
+  // Step 1: Save additional song info from selected date only
+  const savedSongs: {
+    section: string;
+    songTrack: string;
+    streamUrl?: string;
+    thumbnailUrl?: string;
+    title?: string;
+  }[] = [];
+
+  if (selectedDay) {
+    for (const s of selectedDay.mediaSections ?? []) {
+      for (const item of s.items ?? []) {
+        if (item.source === 'additional' && item.tag?.type === 'song') {
+          savedSongs.push({
+            section: s.config.uniqueId,
+            songTrack: String(item.tag.value),
+            streamUrl: item.streamUrl,
+            thumbnailUrl: item.thumbnailUrl,
+            title: item.title,
+          });
+        }
+      }
+    }
+  }
+
+  // Step 2: Reset dynamic items for all days;
+  // remove additional songs only from selected date
+  days.forEach((day) => {
+    day.status = null;
+    const isSelected =
+      selectedDay && day.date?.getTime() === selectedDay.date?.getTime();
+    day.mediaSections?.forEach((s) => {
+      s.items = (s.items || []).filter(
+        (i) =>
+          i.source !== 'dynamic' &&
+          !(isSelected && i.source === 'additional' && i.tag?.type === 'song'),
+      );
+    });
+  });
+
+  // Step 3: Re-fetch dynamic media with new pinyin setting
+  await fetchMedia();
+
+  // Step 4: Re-add saved songs with current pinyin setting
+  for (const song of savedSongs) {
+    const trackNum = song.songTrack.padStart(3, '0');
+
+    if (newPinyinActive && pinyinFolder) {
+      // Pinyin mode: use local pinyin file
+      const pinyinPath = join(
+        pinyinFolder,
+        `sjjm_s-Pi_CHS_${trackNum}_r720P.mp4`,
+      );
+      if (await pathExists(pinyinPath)) {
+        await addToAdditionMediaMapFromPath(
+          pinyinPath,
+          song.section as MediaSectionIdentifier,
+          undefined,
+          {
+            song: song.songTrack,
+            title: song.title,
+            url: song.streamUrl,
+          },
+        );
+      }
+    } else if (song.streamUrl) {
+      // Normal mode: use cached file or download
+      const cacheDir = await currentState.getDatedAdditionalMediaDirectory();
+      const normalPath = join(cacheDir, basename(song.streamUrl));
+      if (!(await pathExists(normalPath))) {
+        await downloadFileIfNeeded({
+          dir: cacheDir,
+          url: song.streamUrl,
+        });
+      }
+      if (await pathExists(normalPath)) {
+        await addToAdditionMediaMapFromPath(
+          normalPath,
+          song.section as MediaSectionIdentifier,
+          undefined,
+          {
+            song: song.songTrack,
+            thumbnailUrl: song.thumbnailUrl,
+            title: song.title,
+            url: song.streamUrl,
+          },
+        );
+      }
+    }
+  }
 };
 
 onMounted(() => {
-  // generateMediaList();
   goToNextDayWithMedia();
 
   // If no date with media is found, go to todays date
@@ -918,9 +1298,48 @@ onMounted(() => {
     selectedDate.value = formatDate(new Date(), 'YYYY/MM/DD');
   }
 
+  // Restore pinyin state from persisted media (handles migration from non-persisted state)
+  if (
+    currentSettings.value?.enablePinyinSongs &&
+    currentSettings.value?.pinyinSongFolder &&
+    !currentState.pinyinActive
+  ) {
+    const days = lookupPeriod.value?.[currentCongregation.value] ?? [];
+    const hasPinyinMedia = days.some((day) =>
+      day.mediaSections?.some((section) =>
+        section.items?.some(
+          (item) =>
+            item.source === 'dynamic' &&
+            item.fileUrl?.includes('sjjm_s-Pi_CHS'),
+        ),
+      ),
+    );
+    if (hasPinyinMedia) {
+      currentState.pinyinActive = true;
+    }
+  }
+
+  // Detect pinyin state change (settings disabled or toggled while page was unmounted)
+  let pinyinChanged = false;
+  if (!currentSettings.value?.enablePinyinSongs && currentState.pinyinActive) {
+    currentState.pinyinActive = false;
+    pinyinChanged = true;
+  } else if (
+    lastPinyinState !== undefined &&
+    lastPinyinState !== currentState.pinyinActive
+  ) {
+    pinyinChanged = true;
+  }
+  lastPinyinState = currentState.pinyinActive;
+
   sendObsSceneEvent('camera');
   if (urlVariables.value.base && urlVariables.value.mediator) {
-    fetchMedia();
+    if (pinyinChanged) {
+      // Full pinyin change handling (includes fetchMedia + additional song re-add)
+      handlePinyinChange(currentState.pinyinActive);
+    } else {
+      fetchMedia();
+    }
   } else {
     router.push('/settings');
   }
@@ -929,12 +1348,28 @@ onMounted(() => {
   watch(
     () => urlVariables.value.mediator,
     () => {
-      console.log(
-        '🔄 [onMounted] urlVariables.value.mediator changed:',
-        urlVariables.value.mediator,
-        'Fetching media',
-      );
       fetchMedia();
+    },
+  );
+
+  // Force pinyinActive off when master setting is disabled
+  watch(
+    () => currentSettings.value?.enablePinyinSongs,
+    (newVal) => {
+      if (!newVal) {
+        currentState.pinyinActive = false;
+      }
+    },
+  );
+
+  // Re-fetch media when pinyin active state changes (header toggle or setting change)
+  watch(
+    () => currentState.pinyinActive,
+    async (newVal, oldVal) => {
+      if (oldVal === undefined) return;
+      if (newVal === oldVal) return;
+      lastPinyinState = newVal;
+      await handlePinyinChange(newVal);
     },
   );
 });
@@ -991,7 +1426,7 @@ watchImmediate(
     if (isWeMeetingDay(selectedDateObject.value.date)) {
       getOrCreateMediaSection(selectedDateObject.value.mediaSections, 'pt', {
         ...defaultAdditionalSection.config,
-        jwIcon: jwIcons.pt,
+        jwIconKeyword: 'pt',
         label: t('pt'),
       });
     }
@@ -1052,6 +1487,8 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
               baseFileName,
               file instanceof File ? file.type : undefined,
             ),
+            // Additional media added by user should be a high priority download
+            lowPriority: false,
             url: filepath,
           })
         ).path;
@@ -1074,7 +1511,8 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         const normalizeArray = (arr: (number | string)[]) =>
           arr.map((item) => {
             if (Number.isFinite(item)) return item;
-            if (typeof item === 'string') return parseInt(item, 10).toString();
+            if (typeof item === 'string')
+              return Number.parseInt(item, 10).toString();
             return item;
           });
         const matchingMissingItem = missingMedia.value.find((media) => {
@@ -1102,113 +1540,111 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
           filepath,
           await getTempPath(),
         );
-        // await addToFiles(convertedImages);
         files.push(...convertedImages);
       } else if (isJwpub(filepath)) {
-        console.log('🎯 [addToFiles] Processing JWPUB file:', filepath);
-        console.log('🎯 [addToFiles] Getting temp directory');
-        const tempDir = await getTempPath();
-        console.log('🎯 [addToFiles] Temp dir:', tempDir);
-        if (!tempDir) {
-          console.log('🎯 [addToFiles] No temp dir, returning');
-          return;
-        }
-
-        // Create unique temp directories to avoid conflicts
-        const tempExtractionDir = join(tempDir, `jwpub-${uuid()}`);
-        const tempContentsDir = join(tempDir, `jwpub-contents-${uuid()}`);
-
-        let tempDbFilePath: string | undefined;
-
+        log(
+          '🎯 [addToFiles] Processing JWPUB file:',
+          'mediaCalendar',
+          'log',
+          filepath,
+        );
         try {
-          // Extract JWPUB to disk (not memory)
-          console.log(
-            '🎯 [addToFiles] Extracting JWPUB to:',
-            tempExtractionDir,
-          );
-          await ensureDir(tempExtractionDir);
-          await decompress(filepath, tempExtractionDir);
-
-          // Check for 'contents' file
-          const contentsPath = join(tempExtractionDir, 'contents');
-          console.log(
-            '🎯 [addToFiles] Looking for contents file at:',
-            contentsPath,
-          );
-          if (!(await exists(contentsPath))) {
-            console.log('🎯 [addToFiles] No contents file found, returning');
-            return;
-          }
-
-          // Extract the 'contents' archive to disk (not memory)
-          console.log(
-            '🎯 [addToFiles] Extracting contents to:',
-            tempContentsDir,
-          );
-          await ensureDir(tempContentsDir);
-          await decompress(contentsPath, tempContentsDir);
-
-          // Find the .db file
-          console.log(
-            '🎯 [addToFiles] Looking for .db file in:',
-            tempContentsDir,
-          );
-          const files = await readdir(tempContentsDir);
-          const dbFile = files.find((f) => f.name.endsWith('.db'));
-          console.log('🎯 [addToFiles] Found db file:', dbFile ? 'yes' : 'no');
-          if (!dbFile) {
-            console.log('🎯 [addToFiles] No db file found, returning');
-            return;
-          }
-
-          tempDbFilePath = join(tempContentsDir, dbFile.name);
-          console.log('🎯 [addToFiles] Using db at:', tempDbFilePath);
-          console.log('🎯 [addToFiles] Checking if db file exists');
-          if (!(await exists(tempDbFilePath))) {
-            console.log('🎯 [addToFiles] Db file does not exist, returning');
-            return;
-          }
-          console.log('🎯 [addToFiles] Getting publication info from db');
-          const publication = getPublicationInfoFromDb(tempDbFilePath);
-          console.log('🎯 [addToFiles] Publication info:', publication);
-          console.log('🎯 [addToFiles] Getting publication directory');
-          const publicationDirectory = await getPublicationDirectory(
+          const publication = await identifyJwpub(filepath);
+          log(
+            '🎯 [addToFiles] Publication identified:',
+            'mediaCalendar',
+            'log',
             publication,
-            currentSettings.value?.cacheFolder,
           );
-          console.log(
+
+          if (!publication) {
+            errorCatcher('Could not identify JWPUB file', {
+              contexts: {
+                fn: {
+                  args: {
+                    filepath,
+                  },
+                  name: 'addToFiles (JWPUB identifyJwpub)',
+                },
+              },
+            });
+            return;
+          }
+
+          const publicationDirectory =
+            await getPublicationDirectory(publication);
+          log(
             '🎯 [addToFiles] Publication directory:',
+            'mediaCalendar',
+            'log',
             publicationDirectory,
           );
           if (!publicationDirectory) {
-            console.log('🎯 [addToFiles] No publication directory, returning');
+            errorCatcher(
+              '🎯 [addToFiles] Could not find publication directory',
+              {
+                contexts: {
+                  fn: {
+                    args: {
+                      filepath,
+                      publication,
+                    },
+                    name: 'addToFiles (JWPUB getPublicationDirectory)',
+                  },
+                },
+              },
+            );
             return;
           }
-          console.log(
-            '🎯 [addToFiles] Decompressing JWPUB to publication directory',
+
+          log(
+            '🎯 [addToFiles] Updating last used date for publication',
+            'mediaCalendar',
+            'log',
           );
-          const unzipDir = await decompressJwpub(
-            filepath,
+          await updateLastUsedDate(
             publicationDirectory,
+            selectedDateObject.value?.date || new Date(),
           );
-          console.log('🎯 [addToFiles] Unzip dir:', unzipDir);
-          console.log('🎯 [addToFiles] Finding db in unzip dir');
+
+          log(
+            '🎯 [addToFiles] Unzipping JWPUB to publication directory',
+            'mediaCalendar',
+            'log',
+          );
+          const unzipDir = await unzipJwpub(filepath, publicationDirectory);
+          log('🎯 [addToFiles] Unzip dir:', 'mediaCalendar', 'log', unzipDir);
+
           const db = await findDb(unzipDir);
-          console.log('🎯 [addToFiles] Db found:', db ? 'yes' : 'no');
+          log(
+            '🎯 [addToFiles] Db found:',
+            'mediaCalendar',
+            'log',
+            db ? 'yes' : 'no',
+          );
           if (!db) {
-            console.log('🎯 [addToFiles] No db found, returning');
+            errorCatcher('No db found after unzip', {
+              contexts: {
+                fn: {
+                  args: {
+                    filepath,
+                    unzipDir,
+                  },
+                  name: 'addToFiles (JWPUB findDb)',
+                },
+              },
+            });
             return;
           }
+
           jwpubImportDb.value = db;
-          console.log('🎯 [addToFiles] Set jwpubImportDb');
-          console.log('🎯 [addToFiles] Checking multimedia count');
-          if (
+          const multimediaCount =
             executeQuery<{ count: number }>(
               db,
               'SELECT COUNT(*) as count FROM Multimedia;',
-            )?.[0]?.count === 0
-          ) {
-            console.log('🎯 [addToFiles] No multimedia, showing notification');
+            )?.[0]?.count ?? 0;
+
+          if (multimediaCount === 0) {
             createTemporaryNotification({
               caption: basename(filepath),
               icon: 'mmm-jwpub',
@@ -1219,49 +1655,39 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
             jwpubImportDocuments.value = [];
             showFileImport.value = false;
           } else {
-            console.log('🎯 [addToFiles] Has multimedia, checking tables');
-            const documentMultimediaTableExists = tableExists(
-              db,
-              'DocumentMultimedia',
-            );
-            console.log(
-              '🎯 [addToFiles] DocumentMultimedia table exists:',
-              documentMultimediaTableExists,
-            );
-            const mmTable = documentMultimediaTableExists
+            const mmTable = tableExists(db, 'DocumentMultimedia')
               ? 'DocumentMultimedia'
               : 'Multimedia';
-            console.log('🎯 [addToFiles] Using mmTable:', mmTable);
-            console.log('🎯 [addToFiles] Executing query for documents');
             jwpubImportDocuments.value = executeQuery<DocumentItem>(
               db,
               `SELECT DISTINCT Document.DocumentId, Title FROM Document JOIN ${mmTable} ON Document.DocumentId = ${mmTable}.DocumentId;`,
             );
-            console.log(
-              '🎯 [addToFiles] Documents found:',
-              jwpubImportDocuments.value.length,
-            );
           }
-        } finally {
-          // Clean up temp directories
-          console.log('🎯 [addToFiles] Cleaning up temp directories');
-          remove(tempExtractionDir).catch((err) =>
-            console.error('Failed to remove temp extraction dir:', err),
-          );
-          remove(tempContentsDir).catch((err) =>
-            console.error('Failed to remove temp contents dir:', err),
-          );
+        } catch (error) {
+          errorCatcher(error, {
+            contexts: {
+              fn: {
+                args: { filepath },
+                name: 'addToFiles isJwpub',
+              },
+            },
+          });
         }
       } else if (isJwPlaylist(filepath) && selectedDateObject.value) {
         // Show playlist selection dialog
-        console.log('🎯 JW Playlist file detected:', filepath);
-        console.log('🎯 Section to add to:', sectionToAddTo.value);
+        log('🎯 JW Playlist file detected:', 'mediaCalendar', 'log', filepath);
+        log(
+          '🎯 Section to add to:',
+          'mediaCalendar',
+          'log',
+          sectionToAddTo.value,
+        );
 
         // Reset progress tracking since we're switching to JW playlist dialog
         totalFiles.value = 0;
         currentFile.value = 0;
 
-        window.dispatchEvent(
+        globalThis.dispatchEvent(
           new CustomEvent<{
             jwPlaylistPath: string;
             section: MediaSectionIdentifier | undefined;
@@ -1272,23 +1698,23 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
             },
           }),
         );
-        console.log('🎯 openJwPlaylistDialog event dispatched');
+        log('🎯 openJwPlaylistDialog event dispatched', 'mediaCalendar', 'log');
       } else if (isArchive(filepath)) {
-        console.log('🎯 Archive file detected:', filepath);
+        log('🎯 Archive file detected:', 'mediaCalendar', 'log', filepath);
         const unzipDirectory = join(await getTempPath(), basename(filepath));
-        console.log('🎯 Unzip directory:', unzipDirectory);
+        log('🎯 Unzip directory:', 'mediaCalendar', 'log', unzipDirectory);
         await remove(unzipDirectory);
-        console.log('🎯 Removed unzip directory');
-        await decompress(filepath, unzipDirectory);
-        console.log('🎯 Decompressed archive');
+        log('🎯 Removed unzip directory', 'mediaCalendar', 'log');
+        await unzip(filepath, unzipDirectory);
+        log('🎯 Unzipped archive', 'mediaCalendar', 'log');
         const files = await readdir(unzipDirectory);
-        console.log('🎯 Reading unzip directory', files);
+        log('🎯 Reading unzip directory', 'mediaCalendar', 'log', files);
         const filePaths = files.map((file) => join(unzipDirectory, file.name));
-        console.log('🎯 Mapping files', filePaths);
+        log('🎯 Mapping files', 'mediaCalendar', 'log', filePaths);
         await addToFiles(filePaths);
-        console.log('🎯 Added files');
+        log('🎯 Added files', 'mediaCalendar', 'log');
         await remove(unzipDirectory);
-        console.log('🎯 Removed unzip directory');
+        log('🎯 Removed unzip directory', 'mediaCalendar', 'log');
       } else {
         createTemporaryNotification({
           caption: filepath ? basename(filepath) : filepath,
@@ -1304,7 +1730,14 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         message: t('fileProcessError'),
         type: 'negative',
       });
-      errorCatcher(error);
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            args: { filepath },
+            name: 'addToFiles',
+          },
+        },
+      });
     }
     currentFile.value++;
   }
@@ -1314,7 +1747,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
 };
 
 const openImportMenu = (section: MediaSectionIdentifier | undefined) => {
-  window.dispatchEvent(
+  globalThis.dispatchEvent(
     new CustomEvent<{ section: MediaSectionIdentifier | undefined }>(
       'openImportMenu',
       {
@@ -1332,14 +1765,7 @@ const handleSectionSelected = (section: MediaSectionIdentifier) => {
   pendingFiles.value = [];
 };
 
-const onMediaPickerOk = () => {
-  showMediaPicker.value = false;
-  selectedDocument.value = undefined;
-  jwpubImportDb.value = '';
-  showFileImport.value = false;
-};
-
-const onMediaPickerCancel = () => {
+const onMediaPickerDismiss = () => {
   showMediaPicker.value = false;
   selectedDocument.value = undefined;
   jwpubImportDb.value = '';
@@ -1377,7 +1803,7 @@ const handleDrop = (event: DragEvent) => {
           .length === 0;
       if (noLocalDroppedFiles && droppedStuff.length > 0) {
         const html = event.dataTransfer.getData('text/html');
-        const sanitizedHtml = DOMPurify.sanitize(html);
+        const sanitizedHtml = sanitize(html);
         const src = new DOMParser()
           .parseFromString(sanitizedHtml, 'text/html')
           .querySelector('img')?.src;
@@ -1494,8 +1920,27 @@ watch(
   },
 );
 
+const filesDownloaded = computed(() =>
+  Object.values(downloadProgress.value)
+    .filter((p) => p.complete)
+    .map((p) => p.filename),
+);
+
+watch(
+  () => filesDownloaded.value,
+  () => {
+    if (selectedDateObject.value?.date) {
+      try {
+        addDayToExportQueue(selectedDateObject.value.date);
+      } catch (e) {
+        errorCatcher(e);
+      }
+    }
+  },
+);
+
 useEventListener(
-  window,
+  globalThis,
   'shortcutMediaNext',
   (event: CustomEvent<{ scrollToSelectedMedia: boolean }>) => {
     // Early return if no date selected
@@ -1530,14 +1975,14 @@ useEventListener(
     if (!nextSelectableId) return;
     selectedMediaItems.value = [nextSelectableId];
     if (event.detail?.scrollToSelectedMedia)
-      window.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
+      globalThis.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
     anchorId.value = nextSelectableId;
   },
   { passive: true },
 );
 
 useEventListener(
-  window,
+  globalThis,
   'shortcutMediaPrevious',
   (event: CustomEvent<{ scrollToSelectedMedia: boolean }>) => {
     // Early return if no date selected
@@ -1585,7 +2030,7 @@ useEventListener(
     if (!previousSelectableId) return;
     selectedMediaItems.value = [previousSelectableId];
     if (event.detail?.scrollToSelectedMedia)
-      window.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
+      globalThis.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
     anchorId.value = previousSelectableId;
   },
   { passive: true },
@@ -1881,7 +2326,7 @@ const handleMediaItemClick = (payload: {
   mediaItemId: string;
   sectionId: string | undefined;
 }) => {
-  console.log('Media item clicked:', payload.mediaItemId);
+  log('Media item clicked:', 'mediaCalendar', 'log', payload.mediaItemId);
   // Check if Ctrl/Cmd or Shift key is pressed for multiple selection
   const isCtrlPressed = payload.event.ctrlKey || payload.event.metaKey;
   const isShiftPressed = payload.event.shiftKey;
@@ -1898,7 +2343,7 @@ const handleMediaItemClick = (payload: {
     // Find all media items across all sections to determine the range
     const allMediaItems = mediaLists.value
       .flatMap((section) => (section.items || []).map((item) => item.uniqueId))
-      .filter((id) => id) as string[];
+      .filter(Boolean) as string[];
 
     const lastSelectedId =
       selectedMediaItems.value[selectedMediaItems.value.length - 1];
@@ -1923,15 +2368,19 @@ const handleMediaItemClick = (payload: {
 
 // Function to extend selection using Shift+Up/Shift+Down
 function extendSelection(direction: 'down' | 'up') {
-  console.trace('extendSelection triggered');
+  log('extendSelection triggered', 'mediaCalendar', 'trace');
 
-  console.log('🔄 [extendSelection] Starting function', {
+  log('🔄 [extendSelection] Starting function', 'mediaCalendar', 'log', {
     direction,
     selectedItemsCount: selectedMediaItems.value.length,
   });
 
   if (!selectedMediaItems.value.length) {
-    console.log('🔄 [extendSelection] No selected items, returning');
+    log(
+      '🔄 [extendSelection] No selected items, returning',
+      'mediaCalendar',
+      'log',
+    );
     return;
   }
 
@@ -1941,7 +2390,11 @@ function extendSelection(direction: 'down' | 'up') {
     .map((item) => item.uniqueId);
 
   if (!allMediaItems.length) {
-    console.log('🔄 [extendSelection] No media items available, returning');
+    log(
+      '🔄 [extendSelection] No media items available, returning',
+      'mediaCalendar',
+      'log',
+    );
     return;
   }
 
@@ -1951,19 +2404,25 @@ function extendSelection(direction: 'down' | 'up') {
       direction === 'up' ? 0 : selectedMediaItems.value.length - 1
     ];
   if (!lastSelectedId) {
-    console.log('🔄 [extendSelection] No last selected item, returning');
+    log(
+      '🔄 [extendSelection] No last selected item, returning',
+      'mediaCalendar',
+      'log',
+    );
     return;
   }
 
   const currentIndex = allMediaItems.indexOf(lastSelectedId);
   if (currentIndex === -1) {
-    console.log(
+    log(
       '🔄 [extendSelection] Current index not found in allMediaItems, returning',
+      'mediaCalendar',
+      'log',
     );
     return;
   }
 
-  console.log('🔄 [extendSelection] Initial state', {
+  log('🔄 [extendSelection] Initial state', 'mediaCalendar', 'log', {
     allMediaItemsCount: allMediaItems.length,
     currentIndex,
     direction,
@@ -1977,40 +2436,52 @@ function extendSelection(direction: 'down' | 'up') {
   // Handle boundary conditions (wrap around if needed)
   if (newIndex < 0) {
     newIndex = allMediaItems.length - 1; // Wrap to last item
-    console.log(
+    log(
       '🔄 [extendSelection] Wrapping newIndex to last item:',
+      'mediaCalendar',
+      'log',
       newIndex,
     );
   } else if (newIndex >= allMediaItems.length) {
     newIndex = 0; // Wrap to first item
-    console.log(
+    log(
       '🔄 [extendSelection] Wrapping newIndex to first item:',
+      'mediaCalendar',
+      'log',
       newIndex,
     );
   }
 
   const newMediaItemId = allMediaItems[newIndex];
   if (!newMediaItemId) {
-    console.log('🔄 [extendSelection] No new media item ID found, returning');
+    log(
+      '🔄 [extendSelection] No new media item ID found, returning',
+      'mediaCalendar',
+      'log',
+    );
     return;
   }
 
   // Find the anchor point (the first selected item that doesn't move)
   if (!anchorId.value) {
-    console.log(
+    log(
       '🔄 [extendSelection] No anchorId set, cannot extend selection, returning',
+      'mediaCalendar',
+      'log',
     );
     return;
   }
   const anchorIndex = allMediaItems.indexOf(anchorId.value);
   if (anchorIndex === -1) {
-    console.log(
+    log(
       '🔄 [extendSelection] Anchor index not found in allMediaItems, returning',
+      'mediaCalendar',
+      'log',
     );
     return;
   }
 
-  console.log('🔄 [extendSelection] Anchor and current info', {
+  log('🔄 [extendSelection] Anchor and current info', 'mediaCalendar', 'log', {
     anchorId,
     anchorIndex,
     currentIndex,
@@ -2023,8 +2494,10 @@ function extendSelection(direction: 'down' | 'up') {
   if (selectedMediaItems.value.length === 1) {
     // This is the first extension (going from 1 item to 2 items), set the direction
     lastExtendDirection.value = direction;
-    console.log(
+    log(
       '🔄 [extendSelection] Setting lastExtendDirection to',
+      'mediaCalendar',
+      'log',
       direction,
     );
   }
@@ -2038,14 +2511,14 @@ function extendSelection(direction: 'down' | 'up') {
     // if (!shouldExpand) {
     //   // We're shrinking, so update the direction to the current one for next time
     //   // lastExtendDirection.value = direction;
-    //   console.log(
+    //   log(
     //     '🔄 [extendSelection] Reversing direction, updating lastExtendDirection to',
     //     direction,
     //   );
     // }
   }
 
-  console.log('🔄 [extendSelection] Expansion decision', {
+  log('🔄 [extendSelection] Expansion decision', 'mediaCalendar', 'log', {
     currentDirection: direction,
     lastExtendDirection: lastExtendDirection.value,
     shouldExpand,
@@ -2053,17 +2526,22 @@ function extendSelection(direction: 'down' | 'up') {
 
   if (shouldExpand) {
     // Expanding the selection
-    console.log('🔄 [extendSelection] EXPANDING selection');
+    log('🔄 [extendSelection] EXPANDING selection', 'mediaCalendar', 'log');
     const newStartIndex = Math.min(anchorIndex, newIndex);
     const newEndIndex = Math.max(anchorIndex, newIndex);
     const newSelection = allMediaItems.slice(newStartIndex, newEndIndex + 1);
-    console.log('🔄 [extendSelection] New selection (expansion)', {
-      newSelection,
-    });
+    log(
+      '🔄 [extendSelection] New selection (expansion)',
+      'mediaCalendar',
+      'log',
+      {
+        newSelection,
+      },
+    );
     selectedMediaItems.value = newSelection;
   } else {
     // SHRINKING selection
-    console.log('🔄 [extendSelection] SHRINKING selection');
+    log('🔄 [extendSelection] SHRINKING selection', 'mediaCalendar', 'log');
 
     const sel = selectedMediaItems.value;
 
@@ -2088,7 +2566,7 @@ function extendSelection(direction: 'down' | 'up') {
     }
   }
 
-  console.log('🔄 [extendSelection] Final state', {
+  log('🔄 [extendSelection] Final state', 'mediaCalendar', 'log', {
     newHighlightedId: newMediaItemId,
     selectedItems: selectedMediaItems.value,
     selectedItemsCount: selectedMediaItems.value.length,

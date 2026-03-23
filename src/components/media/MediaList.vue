@@ -126,7 +126,10 @@
 </template>
 
 <script setup lang="ts">
-import type { MediaSectionWithConfig } from 'src/types';
+import type {
+  MediaItem as MediaItemType,
+  MediaSectionWithConfig,
+} from 'src/types';
 
 import DialogAddDivider from 'components/dialog/DialogAddDivider.vue';
 import { storeToRefs } from 'pinia';
@@ -188,6 +191,8 @@ const {
 import { useEventListener } from '@vueuse/core';
 // Use the media dividers composable
 import { useMediaDividers } from 'src/composables/useMediaDividers';
+import { errorCatcher } from 'src/helpers/error-catcher';
+import { log } from 'src/shared/vanilla';
 const { addDivider, deleteDivider, updateDividerColors, updateDividerTitle } =
   useMediaDividers(props.mediaList.config?.uniqueId);
 
@@ -195,6 +200,75 @@ const { addDivider, deleteDivider, updateDividerColors, updateDividerTitle } =
 const { dragDropContainer, isDragging, sortableItems } = useMediaDragAndDrop(
   sectionData.value?.items || [],
 );
+
+/**
+ * Handles saving the order of watched media items to the filesystem.
+ * This is only applicable when some items in the section are from the 'watched' source.
+ */
+function handleWatchedMediaPersistence(items: MediaItemType[]) {
+  if (!items.some((item) => item.source === 'watched')) return;
+
+  try {
+    const watchedItems = items.filter(
+      (item) => item.source === 'watched' && item.fileUrl,
+    );
+    const watchedItem = watchedItems[0];
+    if (!watchedItem) return;
+
+    const { fileUrlToPath, path } = globalThis.electronApi;
+    const { dirname } = path;
+
+    const firstWatchedItemPath = fileUrlToPath(watchedItem.fileUrl);
+    if (!firstWatchedItemPath) return;
+
+    const watchedDayFolder = dirname(firstWatchedItemPath);
+    if (!watchedDayFolder) return;
+
+    log(
+      '🔍 [updateMediaListItems] Saving section order for watched media items:',
+      'mediaList',
+      'log',
+      watchedDayFolder,
+      props.mediaList.config?.uniqueId,
+      watchedItems,
+    );
+    saveWatchedMediaSectionOrder(
+      watchedDayFolder,
+      props.mediaList.config?.uniqueId,
+      watchedItems,
+    );
+  } catch (error) {
+    // Fail gracefully - if we can't save the order file, it's not a big deal
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          mediaList: props.mediaList,
+          name: 'updateMediaListItems',
+          selectedDateObject: selectedDateObject.value,
+          sortableItems: items,
+        },
+      },
+    });
+  }
+}
+
+/**
+ * Updates the section data in the Pinia store to match the sorted order.
+ */
+function updateStoreMediaOrder(items: MediaItemType[]) {
+  if (!selectedDateObject.value || !props.mediaList.config) return;
+
+  const sectionIndex = selectedDateObject.value.mediaSections.findIndex(
+    (section) => section.config.uniqueId === props.mediaList.config.uniqueId,
+  );
+
+  if (
+    sectionIndex !== -1 &&
+    selectedDateObject.value.mediaSections[sectionIndex]
+  ) {
+    selectedDateObject.value.mediaSections[sectionIndex].items = items;
+  }
+}
 
 // Efficient watcher to ensure changes are persisted to the store
 // Only triggers when the actual array content changes, not on every re-render
@@ -206,61 +280,16 @@ watch(
       return;
 
     // Save section order information for watched media items
-    if (sortableItems.value.some((item) => item.source === 'watched')) {
-      try {
-        const watchedItems = sortableItems.value.filter(
-          (item) => item.source === 'watched' && item.fileUrl,
-        );
-        // Get the first watched item's file path to determine the watched day folder
-        const watchedItem = watchedItems[0];
-        if (watchedItem) {
-          const { fileUrlToPath, path } = window.electronApi;
-          const { dirname } = path;
-
-          const firstWatchedItemPath = fileUrlToPath(watchedItem.fileUrl);
-          if (firstWatchedItemPath) {
-            const watchedDayFolder = dirname(firstWatchedItemPath);
-            if (watchedDayFolder) {
-              console.log(
-                '🔍 [updateMediaListItems] Saving section order for watched media items:',
-                watchedDayFolder,
-                props.mediaList.config?.uniqueId,
-                watchedItems,
-              );
-              saveWatchedMediaSectionOrder(
-                watchedDayFolder,
-                props.mediaList.config?.uniqueId,
-                watchedItems,
-              );
-            }
-          }
-        }
-      } catch (error) {
-        // Fail gracefully - if we can't save the order file, it's not a big deal
-        console.warn(`⚠️ Could not save section order: ${error}`);
-      }
-    }
+    handleWatchedMediaPersistence(sortableItems.value);
 
     // Update the section data to match the sorted order
-    if (selectedDateObject.value && props.mediaList.config) {
-      const sectionIndex = selectedDateObject.value.mediaSections.findIndex(
-        (section) =>
-          section.config.uniqueId === props.mediaList.config.uniqueId,
-      );
-      if (
-        sectionIndex !== -1 &&
-        selectedDateObject.value.mediaSections[sectionIndex]
-      ) {
-        selectedDateObject.value.mediaSections[sectionIndex].items =
-          sortableItems.value;
-      }
-    }
+    updateStoreMediaOrder(sortableItems.value);
   },
   { flush: 'post' },
 );
 
 // Listen for sort order reset events
-useEventListener(window, 'reset-sort-order', () => {
+useEventListener(globalThis, 'reset-sort-order', () => {
   // Reset the sortable items to the original order from mediaList.items
   if (!sortableItems.value?.length || !props.mediaList.items?.length) return;
   sortableItems.value = props.mediaList.items;
@@ -282,13 +311,15 @@ const handleDeleteDivider = (dividerId: string) => {
 };
 
 const handleAddDivider = () => {
-  console.log('🎯 handleAddDivider called');
+  log('🎯 handleAddDivider called', 'mediaList', 'log');
   showAddDividerDialog.value = true;
 };
 
 const handleAddDividerResult = (title?: string, addToTop?: boolean) => {
-  console.log(
+  log(
     '✅ DialogAddDivider returned title:',
+    'mediaList',
+    'log',
     title,
     'addToTop:',
     addToTop,
@@ -346,11 +377,6 @@ defineExpose({
 
 .sortable-media {
   transition: background-color 0.2s ease;
-
-  // &.drop-here {
-  //   background-color: rgba(var(--q-primary), 0.1);
-  //   border: 2px dashed var(--q-primary);
-  // }
 }
 
 [data-dragging='true'] {

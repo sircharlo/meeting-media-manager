@@ -140,7 +140,7 @@ Veckan för nästa kretsvecka.
 
 <!-- **Setting**: `memorialDate` -->
 
-Datum för nästa minneshögtid (beta-funktion).
+Datum för nästa minneshögtid.
 
 **Format**: MM/DD/ÅÅÅÅ
 

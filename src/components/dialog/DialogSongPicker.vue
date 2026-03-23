@@ -97,6 +97,7 @@
 
 <script setup lang="ts">
 import type {
+  MediaItemsMediatorFile,
   MediaLink,
   MediaSectionIdentifier,
   PublicationFetcher,
@@ -106,11 +107,7 @@ import { watchOnce } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import {
-  downloadAdditionalRemoteVideo,
-  getJwMediaInfo,
-  getPubMediaLinks,
-} from 'src/helpers/jw-media';
+import { getJwMediaInfo, getPubMediaLinks } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { computed, ref, watch } from 'vue';
@@ -126,6 +123,14 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   cancel: [];
+  import: [
+    data: {
+      files: MediaItemsMediatorFile[] | MediaLink[];
+      songTrack: number;
+      thumbnail?: string;
+      title: string;
+    },
+  ];
   ok: [];
   'update:modelValue': [value: boolean];
 }>();
@@ -137,7 +142,7 @@ const dialogValue = computed({
 
 // Setup logic
 const currentState = useCurrentStateStore();
-const { currentSettings, currentSongbook, currentSongs, online, selectedDate } =
+const { currentSettings, currentSongbook, currentSongs, online } =
   storeToRefs(currentState);
 
 const jwStore = useJwStore();
@@ -169,10 +174,7 @@ watch(
 );
 const filteredSongs = computed((): MediaLink[] => {
   if (filter.value) {
-    const searchTerms = filter.value
-      .toLowerCase()
-      .split(/\s+/)
-      .filter((term) => term);
+    const searchTerms = filter.value.toLowerCase().split(/\s+/).filter(Boolean);
     return currentSongs.value?.filter((s) =>
       searchTerms.every((term) => s.title.toLowerCase().includes(term)),
     );
@@ -202,15 +204,21 @@ const addSong = async (songTrack: number) => {
         getPubMediaLinks(songTrackItem),
         getJwMediaInfo(songTrackItem),
       ]);
-      downloadAdditionalRemoteVideo(
+
+      const files =
         songTrackFiles?.files?.[currentSettings.value?.lang || 'E']?.['MP4'] ||
-          [],
-        selectedDate.value,
-        thumbnail,
+        [];
+
+      // ✅ Always emit - parent handles section assignment
+      emit('import', {
+        files,
         songTrack,
-        title.replace(/^\d+\.\s*/, ''),
-        props.section,
-      );
+        thumbnail,
+        title: title.replace(/^\d+\.\s*/, ''),
+      });
+      resetDialogState();
+      dialogValue.value = false;
+      emit('ok');
     }
   } catch (error) {
     errorCatcher(error);

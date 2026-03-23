@@ -112,6 +112,7 @@ import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { MW_MEETING_SECTIONS, WE_MEETING_SECTIONS } from 'src/constants/media';
 import { addSection, deleteSection } from 'src/helpers/media-sections';
+import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -140,13 +141,13 @@ const dialogValue = computed({
 const hexValues = ref<Record<string, string | undefined>>({});
 const labels = ref<Record<string, string | undefined>>({});
 
-const updateLabel = (uuid: string | undefined) => {
-  if (!uuid) return;
-  const newLabel = labels.value[uuid];
+const updateLabel = (uniqueId: string | undefined) => {
+  if (!uniqueId) return;
+  const newLabel = labels.value[uniqueId];
   if (!selectedDateObject.value?.mediaSections || !newLabel) return;
 
   const sectionData = selectedDateObject.value.mediaSections.find(
-    (section) => section.config.uniqueId === uuid,
+    (section) => section.config.uniqueId === uniqueId,
   );
   if (!sectionData?.config) return;
 
@@ -158,17 +159,17 @@ const handleOrderChange = () => {
   if (!selectedDateObject.value?.mediaSections) return;
 
   // Get standard sections (meeting sections) that should remain in their positions
-  const standardSections = [
+  const standardSections = new Set([
     'ayfm',
+    'circuit-overseer',
     'lac',
+    'pt',
     'tgw',
     'wt',
-    'pt',
-    'circuit-overseer',
-  ];
+  ]);
   const existingStandardSections =
     selectedDateObject.value.mediaSections.filter((section) =>
-      standardSections.includes(section.config.uniqueId),
+      standardSections.has(section.config.uniqueId),
     );
 
   // Reorder the sections: standard sections first, then reordered custom sections
@@ -177,7 +178,7 @@ const handleOrderChange = () => {
     ...sortableItems.value,
   ];
 
-  console.log('✅ Custom sections reordered:', {
+  log('✅ Custom sections reordered:', 'customSections', 'log', {
     newOrder: sortableItems.value.map((section) => ({
       label: section.config?.label,
       uniqueId: section.config?.uniqueId,
@@ -218,13 +219,13 @@ const handleDeleteSection = (uniqueId: string | undefined) => {
 const initializeValues = () => {
   const daySections = selectedDateObject.value?.mediaSections;
   if (!daySections) return;
-  console.log('🔍 initializeValues called', {
+  log('🔍 initializeValues called', 'customSections', 'log', {
     mediaSections: selectedDateObject.value?.mediaSections,
     selectedDateObject: !!selectedDateObject.value,
   });
 
   if (!selectedDateObject.value?.mediaSections) {
-    console.log('❌ No mediaSections available');
+    log('❌ No mediaSections available', 'customSections', 'log');
     return;
   }
 
@@ -249,12 +250,16 @@ const initializeValues = () => {
     }),
     {},
   );
-  const meetingSections =
-    WE_MEETING_SECTIONS.concat(MW_MEETING_SECTIONS).concat('circuit-overseer');
+  const meetingSections = new Set([
+    'circuit-overseer',
+    ...MW_MEETING_SECTIONS,
+    ...WE_MEETING_SECTIONS,
+  ]);
+
   sortableItems.value = daySections
     .filter(
       (section) =>
-        !meetingSections.includes(section.config.uniqueId) && !!section?.config,
+        !!section?.config && !meetingSections.has(section.config.uniqueId),
     )
     .map((section) => ({
       config: section.config,
@@ -262,7 +267,7 @@ const initializeValues = () => {
       uniqueId: section.config.uniqueId,
     }));
 
-  console.log('✅ Values initialized', {
+  log('✅ Values initialized', 'customSections', 'log', {
     hexValues: hexValues.value,
     labels: labels.value,
     sortableItems: sortableItems.value,
@@ -273,14 +278,16 @@ const initializeValues = () => {
 watch(
   () => [selectedDateObject.value?.mediaSections, dialogValue.value],
   ([mediaSections, isDialogOpen]) => {
-    console.log('👀 Watch triggered', {
+    log('👀 Watch triggered', 'customSections', 'log', {
       isDialogOpen,
       mediaSections: !!mediaSections,
     });
 
     if (isDialogOpen && mediaSections) {
-      console.log(
+      log(
         '🔄 Dialog opened or mediaSections changed, initializing values',
+        'customSections',
+        'log',
       );
       initializeValues();
     }

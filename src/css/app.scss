@@ -13,16 +13,14 @@
   @extend .one-hundred-vw;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:wght@100..900&display=swap');
-
 #yeartext {
-  font-family: 'Wt-ClearText-Bold', 'Noto Serif', serif;
+  font-family: 'Wt-ClearText-Bold', 'Noto Serif Variable', serif;
   align-content: center;
   text-align: center;
   color: white !important;
   font-size: 4vw;
   line-height: 2vw;
-  font-weight: 300;
+  font-weight: 400;
   margin: auto;
   bottom: 0;
   right: 0;
@@ -41,10 +39,10 @@
 }
 
 #yeartextLogoContainer {
-  font-size: 16vh;
+  font-size: 20vh;
   position: absolute;
-  bottom: 12vh;
-  right: 14vh;
+  bottom: 13vh;
+  right: 13vh;
   color: black !important;
   line-height: normal !important;
   box-sizing: unset;
@@ -53,10 +51,9 @@
   height: 12vh;
   width: 12vh;
   overflow: hidden;
-  font-family: 'JW-Icons';
 
   #yeartextLogo {
-    margin: -2.5vh -2vh;
+    margin: -5vh -4vh;
   }
 }
 
@@ -151,7 +148,6 @@ body.body--light {
 
   .media-section {
     background: white;
-    border-color: $accent-300;
     border: 1px solid $accent-300;
 
     & .q-item.selected-to-drag {
@@ -289,7 +285,6 @@ body.body--dark {
 
 .media-section {
   padding-left: 1.25em;
-  border-radius: 0.5em;
   padding-top: 1em;
   padding-bottom: 1em;
   position: relative;
@@ -312,6 +307,9 @@ body.body--dark {
   & .q-avatar {
     border-radius: 4px;
     padding-left: 0.5px;
+    height: 32px;
+    width: 32px;
+    margin-right: 12px;
   }
 
   &.tgw:before {
@@ -348,14 +346,8 @@ body.body--dark {
   }
 }
 
-.media-section .q-avatar {
-  height: 32px;
-  width: 32px;
-  margin-right: 12px;
-}
-
 .jw-icon {
-  font-family: 'JW-Icons';
+  font-family: 'jw-icons-all';
 
   .q-avatar__content {
     font-size: 22px;
@@ -404,7 +396,6 @@ body.body--dark {
 .q-btn {
   letter-spacing: 0.02em;
   font-weight: 400;
-  // font-size: 14px;
 }
 
 .q-menu,
@@ -473,32 +464,16 @@ body.body--dark {
   background: $treasures;
 }
 
-.text-tgw {
-  color: $treasures;
-}
-
 .bg-ayfm {
   background: $apply;
-}
-
-.text-ayfm {
-  color: $apply;
 }
 
 .bg-lac {
   background: $living;
 }
 
-.text-lac {
-  color: $living;
-}
-
 .bg-wt {
   background: $apply;
-}
-
-.text-wt {
-  color: $apply;
 }
 
 .bg-circuit-overseer,
@@ -518,24 +493,6 @@ body.body--dark {
 .text-bigger {
   font-size: 135%;
 }
-
-// .q-expansion-item .q-focus-helper,
-// .q-expansion-item .q-focus-helper::after,
-// .q-expansion-item .q-focus-helper::before {
-//   // border-radius: 0.75em !important;
-// }
-
-// .q-expansion-item__content > label:first-child::before,
-// .q-expansion-item__content > div:first-child::before {
-//   content: '';
-//   height: 1px;
-//   width: 100%;
-//   display: block;
-//   position: absolute;
-//   background: $accent-200;
-//   top: 0;
-//   left: 0;
-// }
 
 .q-field {
   border-radius: $generic-border-radius;
@@ -575,7 +532,7 @@ body.body--dark {
 }
 
 .q-dialog .q-dialog__inner > div,
-.q-menu .q-menu__inner >  div {
+.q-menu .q-menu__inner > div {
   max-height: 75vh;
 }
 
@@ -617,7 +574,6 @@ a {
 }
 
 .modal-confirm {
-  // font-size: 1.1em;
   & .text-bigger {
     font-size: 1.4em;
   }

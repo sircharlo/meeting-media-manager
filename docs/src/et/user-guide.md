@@ -1,393 +1,384 @@
-# User Guide {#user-guide}
+# Kasutusjuhend {#user-guide}
 
-This comprehensive user guide will help you master all the features of M³, from basic setup to advanced media presentation techniques.
+See põhjalik kasutusjuhend aitab sul omandada kõik M³ funktsioonid, alates põhilistest seadistustest kuni keerukate meedia esitamise tehnikateni.
 
-## Getting Started {#getting-started}
+## Alustamine {#getting-started}
 
-### Download and Install {#download-and-install}
+### Lae alla ja installi {#download-and-install}
 
-Get the latest version from the [Download page](download). It recommends the best build for your device and shows the latest version.
+Laadi alla viimane versioon [Allalaadimine] lehelt (download). See soovitab teie seadmele parima versiooni ja näitab viimast versiooni.
 
-### First Launch {#first-launch}
+### Esimene käivitus {#first-launch}
 
-When you first launch M³, you'll be guided through a setup wizard that will configure the essential settings for your congregation:
+Kui käivitad M³ esimest korda, juhendab sind seadistusviisard, mis konfigureerib sinu koguduse jaoks olulised seaded:
 
-1. **Choose your interface language** - This determines what language M³'s menus and buttons will be displayed in
-2. **Select profile type** - Choose "Regular" for normal congregation use or "Other" for special events
-3. **Configure congregation information** - Enter your congregation details or use the automatic lookup feature
-4. **Set up meeting schedule** - Configure your midweek and weekend meeting times
-5. **Optional features** - Configure OBS integration, background music, and other advanced features
+1. **Vali oma kasutajaliidese keel** – see määrab, millises keeles kuvatakse M³ menüüd ja nupud
+2. **Vali profiili tüüp** – vali „Tavaline” tavapäraseks koguduse kasutamiseks või „Muu” erakorraliste sündmuste jaoks
+3. **Koguduse andmete konfigureerimine** – Sisesta oma koguduse andmed või kasuta automaatset otsingufunktsiooni
+4. **Koosolekute ajakava seadistamine** – seadista oma nädala keskel ja nädalavahetusel toimuvate koosolekute ajad
+5. **Valikulised funktsioonid** – OBS-i koostöö, taustamuusika ja muude täiustatud funktsioonide konfigureerimine
 
 :::tip Nõuanne
 
-Take your time during setup - but you can always change these settings later in the Settings menu.
+Võta seadistamiseks aega - kuid saad seadeid alati hiljem menüüs „Seaded” muuta.
 
 :::
 
-### Main Interface Overview {#main-interface}
+### Kasutajaliidese ülevaade {#main-interface}
 
-The main M³ interface consists of several key areas:
+M³ kasutajaliides koosneb mitmest põhivaldkonnast:
 
-- **Navigation Drawer** - Access different sections and settings
-- **Calendar View** - Browse media by date
-- **Media List** - View and manage media for selected dates
-- **Toolbar** - Quick access to common functions
-- **Status Bar** - Shows download progress, and background music and OBS Studio connection status
+- **Navigatsioonimenüü** – juurdepääs erinevatele osadele ja seadistustele
+- **Kalendri vaade** – sirvi meediat kuupäeva järgi
+- **Meedialoend** – valitud kuupäevade meedia vaatamine ja haldamine
+- **Tööriistariba** – kiire juurdepääs tavalistele funktsioonidele
+- **Staatusriba** - Näitab allalaadimise edenemist, taustamuusika ja OBS Studio ühenduse staatust
 
-## Media Management {#user-guide-media-management}
+## Põhimeedia haldus {#user-guide-media-management}
 
-### Understanding the Calendar View {#calendar-view}
+### Kalendri vaate mõistmine {#calendar-view}
 
-The calendar view shows your meeting schedule and available media:
+Kalendri vaade näitab koosolekute ajakava ja kättesaadavaid meediakanaleid:
 
-- **Meeting Days** - Highlighted days show when meetings are scheduled
-- **Media Indicators** - Icons show what types of media are available
-- **Date Navigation** - Use arrow keys to navigate between months
+- **Koosolekute päevad** – esiletõstetud päevad näitavad, millal koosolekud on kavandatud
+- **Meediaindikaatorid** – ikoonid näitavad, millised meediatüübid on saadaval
+- **Kuupäeva navigeerimine** - Kasuta nooleklahve kuude vahel navigeerimiseks
 
-<!-- ### Downloading Media {#downloading-media}
+### Meedia organiseerimine {#organizing-media}
 
-::: info Note
+M³ korraldab meedia automaatselt koosoleku tüübi ja sektsiooni järgi:
 
-Download speed depends on your internet connection and the size of media files. Videos typically take longer to download than images.
+- **Koosoleku osad** – Meedia on rühmitatud koosoleku osade järgi (avalik kõne, Aarded Jumala sõnast jne)
+- **Kohandatud osad** – võid luua kohandatud osad täiendavate meediafailide jaoks, kui sellel konkreetsel päeval ei ole ühtegi koosolekut plaanis
 
-::: -->
+## Meedia esitlemine {#media-presentation}
 
-### Organizing Media {#organizing-media}
+### Meedia mängija avamine {#opening-media-player}
 
-M³ automatically organizes media by meeting type and section:
+Meedia esitamine koosoleku ajal:
 
-- **Meeting Sections** - Media is grouped by meeting parts (Public Talk, Treasures from God's Word, etc.)
-- **Custom Sections** - You can create custom sections for additional media if no meeting is scheduled on that particular day
+1. Vali kuupäev ja meedia, mida soovid esitada
+2. Klõpsa nuppu „Esita” või kasuta klaviatuuril kiirklahvi
+3. Meedia hakkab mängima meediaekraanil
+4. Kasuta juhtnuppe meedia esitamiseks, peatamiseks või navigeerimiseks
 
-## Media Presentation {#media-presentation}
+### Meediamängija juhtimispaneel {#media-player-controls}
 
-### Opening the Media Player {#opening-media-player}
+Meediamängija pakub põhjalikke juhtnuppe:
 
-To present media during a meeting:
-
-1. Select the date and media item you want to present
-2. Click the play button or use the keyboard shortcut
-3. The media will start playing on the media display
-4. Use the controls to play, pause, or navigate through media
-
-### Media Player Controls {#media-player-controls}
-
-The media player provides comprehensive controls:
-
-- **Play/Pause** - Start or pause media playback
-- **Stop** - Stop playback
+- **Esita/Peata** – Alusta või peata meedia taasesitust
+- **Peata** – Peata taasesitus
 
 <!-- - **Previous/Next** - Navigate between media items
 - **Volume** - Adjust playback volume -->
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **Zoom/Pan** - Use mouse wheel to zoom, drag to pan (for images)
+- **Suurenda/Liiguta** – Kasuta hiirerulli suurendamiseks, lohista pildi liigutamiseks
 
-### Advanced Presentation Features {#advanced-presentation}
+### Täiustatud esitlusfunktsioonid {#advanced-presentation}
 
-#### Custom Timing {#custom-timing}
+#### Kasutaja määratud ajastus {#custom-timing}
 
-Set custom start and end times for media:
+Määra meediale kohandatud algus- ja lõpuajad:
 
 <!-- 1. Right-click on a media item
 2. Select "Edit Timing" -->
 
-1. Click on the duration of a video on the top left of its thumbnail
-2. Set start and end times
-3. Save your changes
+1. Klõpsa video kestusel, mis asub pisipildi vasakus ülanurgas
+2. Salvesta alguse ja lõpu ajad
+3. Salvesta muudatused
 
-#### Zoom and Pan {#zoom-pan}
+#### Suurenda ja liiguta {#zoom-pan}
 
-For images and videos:
+Piltide ja videote puhul:
 
-- **Zoom In/Out** - Use mouse wheel or zoom controls on the thumbnail
-- **Pan** - Click and drag the thumbnail to move the image around
-- **Reset Zoom** - Click to return to original zoom
+- **Suum sisse/välja** – Kasuta hiirerulli või pisipildi suumikontrolle
+- **Nihutamine** – Klõpsa ja lohista, et pilti ümber paigutada
+- **Suurenduse lähtestamine** – Ühe klõpsuga algvaatele
 
-#### Keyboard Shortcuts {#user-guide-keyboard-shortcuts}
+#### Kiirklahvid {#user-guide-keyboard-shortcuts}
 
-Configure custom keyboard shortcuts for quick access. Note that no keyboard shortcuts are set by default.
+Määra endale sobivad klaviatuuri otseteed. Pane tähele, et vaikimisi otseteed puuduvad.
 
-**Built-in Media Controls** (when main window is focused and showing the media list):
+**Sisseehitatud meediakontrollid** (kui põhaken on fookuses ja näitab meedialoendit):
 
-- **Tab/Shift+Tab** - Navigate between media items
-- **Up/Down Arrow** - Navigate between media items
-- **Space** - Play/Pause media
-- **Escape** - Stop media
+- **Tab/Shift+Tab** – Navigeerimine meediaelementide vahel
+- **Nooled Üles/Alla** – Navigeeri meedialoendis
+- **Tühik** – Esita/Peata meedia
+- **Escape** – Peata meedia
 
-**Customizable Shortcuts** (when enabled in settings):
+**Kohandatavad otseteed** (kui seadetes lubatud):
 
-- **Media Window** - Open/close media window
-- **Previous/Next Media** - Navigate between media items
-- **Pause/Resume** - Control media playback
-- **Stop Media** - Stop media playback
-- **Music Toggle** - Control background music
+- **Meedia aken**: ava/sulge meedia aken
+- **Eelmine/Järgmine meedia** – Liigu meediaüksuste vahel
+- **Paus/Jätka** – Juhi taasesitust
+- **Peata meedia**: Peata meedia taasesitus
+- **Muusika lüliti** – Juhi taustamuusikat
 
-**Note (\*):** Global shortcut - available even when the app is not focused
+**Märge (\*)**: Globaalne kiirklahv – saadaval ka rakenduse fookuseta
 
-## Background Music {#user-guide-background-music}
+## Taustamuusika {#user-guide-background-music}
 
-### Setting Up Background Music {#background-music-setup}
+### Taustamuusika seadistamine {#background-music-setup}
 
-Background music automatically plays before meetings and stops at the appropriate time:
+Taustamuusika mängib automaatselt enne koosolekuid ja peatutab end õigel ajal:
 
-1. **Enable Music** - Turn on background music in settings
-2. **Auto-Start** - Music will start automatically when M³ launches, if appropriate
-3. **Meeting Stop** - Music stops automatically before meeting start time
-4. **Manual Control** - Use the music button in the status bar to start/stop manually
-5. **Restart** - Resume music after meetings with one click
+1. **Luba muusika** – Lülita taustamuusika seadetes sisse
+2. **Auto-start** – M³ käivitudes alustab muusika automaatselt, kui tingimused on täidetud
+3. \*\*Koosoleku algus \*\*– Muusika peatub automaatselt enne koosoleku algust
+4. **Käsijuhtimine** – Kasuta olekuribal nuppu muusika käsitsi käivitamiseks/peatamiseks
+5. **Taasesituse jätkamine** – Pärast koosolekut taaskäivita muusika ühe vajutusega
 
-## Zoom Integration {#user-guide-zoom-integration}
+## Koostöö Zoomiga {#user-guide-zoom-integration}
 
-M³ can integrate with Zoom for automatic screen sharing:
+M³ saab Zoomiga ühilduda automaatseks ekraani jagamiseks:
 
-1. **Enable Integration** - Turn on Zoom integration in settings
-2. **Configure Shortcut** - Set up the screen sharing keyboard shortcut that is configured in Zoom. Make sure that the "global" checkbox is checked in Zoom.
-3. **Automatic Control** - M³ will automatically toggle screen sharing in Zoom as needed
-4. **Manual Override** - You can still manually control screen sharing using Zoom if needed
+1. **Luba koostöö** – Lülita seadetes Zoomi koostöö sisse
+2. **Seadista otsetee** – Määra Zoomis ekraani jagamise klaviatuuri otsetee. Veendu, et „globaalne” märkeruut on Zoomis märgitud.
+3. **Automaatne juhtimine** – M³ lülitab Zoomis ekraani jagamise vajadusel automaatselt sisse/välja
+4. **Käsijuhtimise võimalus** – Vajadusel saad Zoomis ekraanijagamist endiselt käsitsi juhtida
 
-## OBS Studio Integration {#user-guide-obs-integration}
+## Koostöö OBS Studioga {#user-guide-obs-integration}
 
-### Setting Up OBS Integration {#user-guide-obs-setup}
+### OBS-i häälestus {#user-guide-obs-setup}
 
-To use M³ with OBS Studio for hybrid meetings:
+M³ kasutamine OBS Studioga hübriidkoosolekutel:
 
-1. **Install OBS Studio** - Download and install OBS Studio
-2. **Enable WebSocket** - Install the WebSocket plugin in OBS
-3. **Configure M³** - Enter OBS port and password in M³ settings
-4. **Set Up Scenes** - Create scenes for camera, media, and other content
-5. **Test** - Verify playback works properly
+1. **Paigalda OBS Studio** – Laadi alla ja installi OBS Studio
+2. **Luba WebSocket** – Paigalda OBS-i WebSocketi plugin, kui see pole veel olemas
+3. **Seadista M³** – Sisesta M³ seadetes OBS-i port ja parool
+4. **Seadista stseenid** – Loo stseenid kaamerale, meediale ja muule sisule
+5. **Test** - Kontrolli, et taasesitus toimib korrektselt
 
-### OBS Scene Management {#obs-scene-management}
+### OBS stseenide haldamine {#obs-scene-management}
 
-M³ automatically switches OBS scenes during presentations:
+M³ vahetab ettekannete ajal OBS-i stseene automaatselt:
 
-- **Camera Scene** - Shows the lectern/camera view
-- **Media Scene** - Displays media content
-- **Image Scene** - Shows images (can be postponed if enabled)
-- **Automatic Switching** - Scenes change based on media type and settings
+- **Kaamerastseen** – Näitab kõnepuldi/kaameravaadet
+- **Meediastseen** – Kuvab meediasisu
+- **Pildistseen** – Kuvab pilte (saab soovi korral edasi lükata)
+- **Automaatne lülitumine** – Stseenid vahetuvad meediatüübi ja seadete järgi
 
-### Advanced OBS Features {#advanced-obs}
+### OBS täiendavad võimalused {#advanced-obs}
 
-#### Postpone Images {#user-guide-postpone-images}
+#### Piltide jagamise viivitus {#user-guide-postpone-images}
 
-Enable this option to delay sharing images to OBS until manually triggered:
+Selle lubamisel jagatakse pilte OBS-i alles käsitsi käivitamisel:
 
-1. Enable "Postpone Images" in OBS settings
-2. Images will only be shared when you click the button to show them using OBS Studio. This is useful for showing images to in-person audience first.
+1. Aktiveeri „Postpone Images” OBS sätetes
+2. Pilte jagatakse alles siis, kui vajutad OBS Studios nuppu nende näitamiseks. See on kasulik, kui soovid pilte esmalt näidata kohalolijatele.
 
-#### Scene Switching Behavior {#user-guide-scene-switching}
+#### Stseenivahetuse seaded {#user-guide-scene-switching}
 
-Configure how M³ handles scene changes:
+Seadista, kuidas M³ stseenivahetust käsitleb:
 
-- **Switch After Media** - Automatically return to previous scene
-- **Remember Previous Scene** - Restore the scene that was active before media
+- **Vaheta pärast meediat** – Pöördu automaatselt eelmise stseeni juurde
+- **Pea meeles eelmine stseen** – Taasta stseen, mis oli meedia eel aktiivne
 
-### Audio Configuration for Hybrid Meetings {#audio-configuration}
+### Heli seadistamine hübriidkoosolekuteks {#audio-configuration}
 
-When using M³ with OBS Studio for hybrid meetings (in-person + Zoom), you need to configure audio settings to ensure meeting participants can hear the media:
+Kui kasutad M³ OBS Studioga hübriidkoosolekutel (kohapeal + Zoom), tuleb seada heli nii, et osalejad kuuleksid meediat:
 
-#### Zoom Audio Settings {#zoom-audio-settings}
+#### Zoomi heli seaded {#zoom-audio-settings}
 
-**Before every meeting, you must enable Original Audio in Zoom:**
+**Enne igat koosolekut luba Zoomis Original Audio:**
 
-1. **Open Zoom** and go to Settings
-2. **Navigate to Audio** → **Advanced**
-3. **Enable "Show in-meeting option to 'Enable Original Sound'"**
-4. **Check "Disable echo cancellation"** (first checkbox)
-5. **Check "Disable noise suppression"** (second checkbox)
-6. **Uncheck "Disable high-fidelity music mode"** (third checkbox)
-7. **Before starting each meeting**, click the "Original Audio" button in the meeting controls
+1. **Ava Zoom** ja mine Sätted
+2. **Audio** → **Advanced seadistus**
+3. **Luba „Show in-meeting option to ‘Enable Original Sound’”**
+4. \*\*Märgi „Disable echo cancellation” \*\*(esimene märkeruut)
+5. **Märgi „Disable noise suppression”** (teine märkeruut)
+6. **Eemalda märge „Disable high-fidelity music mode”** (kolmas märkeruut)
+7. **Enne koosolekut klõpsa** „Original Audio” nuppu koosoleku juhtnuppudes
 
-**Alternative: Share Computer Sound**
-If Original Audio doesn't work well in your setup:
+**Alternatiiv: Jaga arvuti heli** Kui Original Audio ei toimi sinu seadistuses hästi:
 
-1. **Before playing media**, go to **Advanced** tab in Zoom screen sharing options
-2. **Check "Share computer sound"**
-3. **Note**: This option must be enabled every time you start a new Zoom session
+1. **Enne esitust ava Zoomis ekraanijagamine** → Advanced
+2. **Märgi „Share computer sound”**
+3. **Märkus:** Seda valikut tuleb iga uue Zoomi seansi korral uuesti lubada
 
-**Best Alternative**: Consider using M³'s Zoom integration instead of OBS Studio, as it uses Zoom's native screen sharing which handles audio more seamlessly and doesn't require complex audio configuration.
+\*\*Parim alternatiiv: \*\*Kaalu M³ Zoomi integratsiooni kasutamist OBS-i asemel; see kasutab Zoomi enda ekraanijagamist, mis käsitleb heli sujuvamalt ega vaja keerukat heliseadistust.
 
-#### Why Audio Configuration is Necessary {#why-audio-config}
+#### Miks heli tuleb eraldi seadistada {#why-audio-config}
 
-M³ plays media with sound on your computer, but this audio is **not automatically transmitted** through the video stream to OBS Studio. This is the same behavior you would experience with any other media player.
+M³ mängib meediaheli sinu arvutis, kuid seda **ei edastata automaatselt** OBS Studio videovoogu. Samal viisil käitub ka iga teine meediamängija.
 
-**The audio issue is not related to M³** - it's a limitation of how OBS Studio video streaming works with Zoom. The video stream acts like a virtual camera without sound, just like a webcam, so you must explicitly configure Zoom to capture the computer's audio. This implies that your computer has two sound cards, and if this isn't the case, you probably won't be able to use the OBS Studio integration successfully.
+**Probleem pole M³-s** – see tuleneb viisist, kuidas OBS Studio Zoomiga videot voogedastab. Videovoog toimib kui helita virtuaalkaamera, seega tuleb Zoomis arvuti heli selgesõnaliselt püüda. See eeldab kahte helikaarti; kui seda pole, ei pruugi OBS-i integratsioon sul hästi toimida.
 
-**Alternative Solution**: Consider using the Zoom integration instead, as it uses Zoom's native screen and audio sharing, which handles audio more seamlessly.
+\*\*Soovituslik: \*\*Mine üle Zoomi integratsioonile, mis lahendab heli voogedastuse loomulikult.
 
-#### Troubleshooting Audio Issues {#audio-troubleshooting}
+#### Heliprobleemide tõrkeotsing {#audio-troubleshooting}
 
-**Common Problems:**
+**Levinud probleemid:**
 
-- **No audio in Zoom**: Check if Original Audio is enabled and properly configured
-- **Poor audio quality**: Verify the three Original Audio checkboxes are set correctly
-- **Audio not working after Zoom restart**: Original Audio settings must be re-enabled for each new Zoom session
+- **Heli puudub Zoomis**: kontrolli, et Original Audio on lubatud ja õigesti seadistatud
+- **Kehv helikvaliteet**: kontrolli kolme Original Audio märkeruutu (esimesed kaks sees, kolmas väljas)
+- **Pärast Zoomi taaskäivitust heli ei tööta**: Original Audio tuleb igas uues sessioonis uuesti lubada
 
-**Best Practices:**
+**Soovitused:**
 
-- Test audio configuration and sharing before meetings
-- Create a checklist for audio setup
-- Consider using "Share Computer Sound" as a backup option
-- **Consider using Zoom integration instead of OBS Studio** for simpler audio handling
-- Ensure all AV operators are familiar with these settings
+- Testi heli seadistust ja jagamist enne koosolekut
+- Koosta helisätte kontrollnimekiri
+- Kasuta varuplaanina „Share Computer Sound”
+- **Kaalu Zoomi koostöö kasutamist** OBS-i asemel lihtsama helihalduse nimel
+- Veendu, et kõik AV-vennad tunneksid neid sätteid
 
-## Media Import and Management {#media-import}
+## Media Import ja haldamine {#media-import}
 
-### Importing Custom Media {#importing-custom-media}
+### Oma meedia lisamine {#importing-custom-media}
 
-Add your own media files to M³:
+Lisa oma meediafailid M³-sse:
 
-1. **File Import** - Use the import button to add videos, images, or audio files
-2. **Drag and Drop** - Drag files directly into M³
-3. **Folder Monitoring** - Set up a watched folder for automatic imports
-4. **JWPUB Files and Playlists** - Import publications and playlists
-5. **Public Talk Media (S-34 / S-34mp)** - Import public talk media using S‑34 or S‑34mp JWPUB files
+1. **Faili import** - Kasuta importnuppu videote, piltide või helifailide lisamiseks
+2. **Lohista ja kukuta** - Lohista failid M³ aknasse
+3. **Kausta jälgimine** - Sea jälgitav kaust automaatseks impordiks
+4. **JWPUB failid ja esitusloendid** - Impordi väljaanded ja esitusloendid
+5. **Avaliku kõne meedia (S-34 / S-34mp)** – Impordi avaliku kõne meedia S‑34 või S‑34mp JWPUB-failidega
 
-### Managing Imported Media {#managing-imported-media}
+### Imporditud meedia haldamine {#managing-imported-media}
 
-- **Organize by Date** - Assign imported media to specific dates
-- **Custom Sections** - Create custom sections for organization
-- **Edit Properties** - Modify titles, descriptions, and timing
-- **Remove Media** - Delete unwanted media items
+- **Korralda kuupäeva järgi** - Seo imporditud meedia kindlate kuupäevadega
+- **Kohandatud jaotised** - Loo kohandatud jaotised korrastamiseks
+- \*\*Muuda omadusi \*\* - Muuda nimetusi, kirjeldusi, ajastusi
+- \*\*Kustutamine \*\* - Kustuta soovimatud üksused
 
-### Audio Bible Import {#audio-bible-import}
+### Audiopiibli lisamine {#audio-bible-import}
 
-Import audio recordings of Bible verses:
+Impordi Piibli salmide helisalvestised:
 
-1. Click the "Audio Bible" button
-2. Select the Bible book and chapter
-3. Choose specific verses or verse ranges
-4. Download the audio files
-5. Use them
+1. Klõpsa „Audio Bible” nuppu
+2. Vali Piibli raamat ja peatükk
+3. Valida konkreetseid salme või salmide hulka
+4. Laadi helifailid alla
+5. Kasuta neid
 
-## Folder Monitoring and Export {#user-guide-folder-monitoring}
+## Kausta jälgimine ja eksport {#user-guide-folder-monitoring}
 
-### Setting Up Folder Monitoring {#folder-monitoring-setup}
+### Kaustajälgimise seadistamine {#folder-monitoring-setup}
 
-Monitor a folder for new media files:
+Jälgi kausta uute meediafailide suhtes:
 
-1. **Enable Folder Watcher** - Turn on folder monitoring in settings
-2. **Select Folder** - Choose the folder to monitor
-3. **Automatic Import** - New files are automatically added to M³
-4. **Organization** - Files are organized by date based on folder structure
+1. **Kaustaseire** - Lülita seadetes kaustajälgimine sisse
+2. **Vali kaust** - Määra jälgitav kaust
+3. **Automaatne import** - Uued failid lisatakse M³-e automaatselt
+4. \*\*Organiseerimine \*\* - Kaustapuu kuupäevad määravad paigutuse
 
-### Media Export {#user-guide-media-export}
+### Meedia eksport {#user-guide-media-export}
 
-Automatically export media to organized folders:
+Ekspordi failid automaatselt jaotatud kaustadesse:
 
-1. **Enable Auto-Export** - Turn on media export in settings
-2. **Select Export Folder** - Choose where to save exported files
-3. **Automatic Organization** - Files are organized by date and section
-4. **Format Options** - Convert files to MP4 for better compatibility
+1. **Luba Auto-Export** - Lülita seadetes meedia eksport sisse
+2. **Vali ekspordikaust** - Määra asukoht, kuhu salvestada
+3. **Automaatne korraldus** - Failid jaotatakse kuupäeva ja jaotise järgi
+4. **Vormingud** - Teisenda MP4-ks parema ühilduvuse huvides
 
-## Website Presentation {#website-presentation}
+## Veebilehe kuvamine {#website-presentation}
 
-### Presenting the Official Website {#presenting-the-website}
+### Ametliku veebisaidi näitamine välistel ekraanidel: {#presenting-the-website}
 
-Share the official website on external displays:
+Ametliku veebisaidi näitamine välistel ekraanidel:
 
-1. **Open Website Mode** - Click the website presentation button
-2. **External Display** - The website opens in a new window
-3. **Navigation** - Use the browser controls to navigate
+1. **Käivita veebiesitlus** - Klõpsa veebiesitluse nuppu
+2. **Teine ekraan** - Veebileht avaneb uues aknas
+3. \*\*Navigeerimine \*\* - Kasuta brauseri juhtnuppe liikumiseks
 
-### Website Controls {#website-controls}
+### Brauseri juhtnupud {#website-controls}
 
-- **Navigation** - Standard browser navigation controls
-- **Refresh** - Reload the current page
-- **Close** - Exit website presentation mode
+- **Navigeerimine** - Tavalised brauseri liikumisnupud
+- \*\*Värskenda \*\* - Laadi praegune leht uuesti
+- \*\*Sulge \*\* - Välju veebiesitluse režiimist
 
-## Advanced Features {#user-guide-advanced-features}
+## Lisasätted {#user-guide-advanced-features}
 
-### Multiple Congregations {#user-guide-multiple-congregations}
+### Mitme koguduse tugi {#user-guide-multiple-congregations}
 
-Manage multiple congregations or groups:
+Halda mitut kogudust või gruppi:
 
-1. **Create Profiles** - Set up separate profiles for different congregations
-2. **Switch Profiles** - Use the congregation selector to switch between profiles
-3. **Separate Settings** - Each profile has its own settings and media
-4. **Shared Resources** - Media files are shared between profiles whenever possible
+1. **Loo profiilid** - Sea eri kogudustele eraldi profiilid
+2. **Vaheta profiile** - asuta koguduse valikut profiilide vahetamiseks
+3. **Profiilipõhised seaded** - Igal profiilil on oma seaded ja meedia
+4. **Jagatud ressursid** - Võimalusel jagatakse meediafaile profiilide vahel
 
-### Keyboard Shortcuts {#keyboard-shortcuts-guide}
+### Klaviatuuri otseteed {#keyboard-shortcuts-guide}
 
-Configure custom keyboard shortcuts for efficient operation:
+Loo endale sobivad kiirklahvid sujuvaks kasutuseks:
 
-1. **Enable Shortcuts** - Turn on keyboard shortcuts in settings
-2. **Configure Shortcuts** - Set up shortcuts for common actions
-3. **Practice** - Learn your shortcuts for faster operation
-4. **Customize** - Adjust shortcuts to match your preferences
+1. **Luba otseteed** - Lülita klaviatuuri otseteed seadetes sisse
+2. **Seadista otseteed** - Pane paika levinud toimingute kiirklahvid
+3. \*\*Harjuta \*\* - Õpi oma otseteed selgeks
+4. \*\*Kohanda \*\* - Sea otseteed oma eelistustele vastavaks
 
-## Troubleshooting {#troubleshooting-guide}
+## Probleemide lahendamine {#troubleshooting-guide}
 
-### Common Issues {#common-issues}
+### Levinud probleemid {#common-issues}
 
-#### Media Not Downloading {#user-guide-media-not-downloading}
+#### Meedia ei laadi alla {#user-guide-media-not-downloading}
 
-- Check your meeting schedule settings
-- Verify internet connection
-- Check if media is available in your selected language
+- Vaata üle koosoleku ajakava seaded
+- Veendu internetiühenduses
+- Kontrolli, kas meedia on sinu valitud keeles saadaval
 
-#### OBS Integration Not Working {#user-guide-obs-not-working}
+#### OBS ei ühildu {#user-guide-obs-not-working}
 
-- Verify OBS WebSocket plugin is installed
-- Check port and password settings
-- Ensure OBS is running
+- Kontrolli, kas OBS WebSocket plugin on paigaldatud
+- Kontrolli pordi ja parooli sätteid
+- Veendu, et OBS töötab
 
-#### Audio Issues in Zoom/OBS {#audio-issues}
+#### Heliprobleemid Zoomis/OBS-is {#audio-issues}
 
-- **No audio in Zoom**: Enable Original Audio in Zoom settings and before each meeting
-- **Poor audio quality**: Check the three Original Audio checkboxes (first two enabled, third disabled)
-- **Audio not working after restart**: Original Audio must be re-enabled for each new Zoom session
-- **Alternative solution**: Use "Share Computer Sound" option in Zoom screen sharing
+- **Zoomis pole heli:** luba Original Audio Zoomi sätetes ja enne iga koosolekut
+- \*\*Kehv kvaliteet: \*\*kontrolli kolme Original Audio ruutu (2 sees, 3 väljas)
+- \*\*Pärast taaskäivitust ei tööta: \*\*Original Audio tuleb igal Zoomi sessioonil uuesti lubada
+- **Alternatiiv**: kasuta Zoomis „Share Computer Sound” ekraanijagamisel
 
-#### Performance Issues {#user-guide-performance-issues}
+#### Jõudlusprobleemid {#user-guide-performance-issues}
 
-- Enable extra cache
-- Reduce maximum resolution
-- Clear old cached files
-- Check available disk space
+- Kasuta suuremat vahemälu
+- Vähenda maksimaalset eraldusvõimet
+- Puhasta vanad vahemälufailid
+- Veendu kettaruumi olemasolus
 
-#### Language Issues {#user-guide-language-issues}
+#### Keeleprobleemid {#user-guide-language-issues}
 
-- Check media language setting
-- Ensure language is available on JW.org
-- Try a fallback language
-- Verify interface language setting
+- Kontrolli meedia keelesätet
+- Veendu, et keel on JW.org-is saadaval
+- Proovi varukeelt
+- Kontrolli kasutajaliidese keelt
 
-### Getting Help {#getting-help}
+### Abi ja tugi {#getting-help}
 
-If you encounter issues:
+Kui tekib probleeme:
 
-1. **Check Documentation** - Review this guide and other available documentation
-2. **Search Issues** - Look for similar issues on GitHub
-3. **Report Problems** - Create a new issue with detailed information
+1. **Vaata dokumentatsiooni** – Uuri seda juhendit ja muud abi
+2. **Otsi** - Otsi GitHubist sarnaseid teemasid
+3. **Teata veast** - Loo uus teema ja kirjelda üksikasjad
 
-## Best Practices {#best-practices}
+## Soovitused {#best-practices}
 
-### Before Meetings {#before-meetings}
+### Enne koosolekuid {#before-meetings}
 
-1. **Check Downloads** - Ensure all media is downloaded
-2. **Test Equipment** - Verify displays and audio work
-3. **Prepare Media** - Review and organize media for the meeting; make sure no media files are missing
-4. **Configure Audio** - For hybrid meetings, enable Original Audio in Zoom or set up "Share Computer Sound"
+1. **Kontrolli allalaadimisi** - Veendu, et kogu meedia on alla laetud
+2. **Testi seadmeid** - Veendu ekraanide/heli toimimises
+3. **Valmista meedia** - Korrasta sisu – et ükski fail ei puuduks
+4. **Seadista heli** - Hübriidkoosolekute puhul luba Zoomis Original Audio või „Share Computer Sound”
 
-### During Meetings {#during-meetings}
+### Koosolekute ajal {#during-meetings}
 
-1. **Stay Focused** - Use the clean and distraction-free interface
-2. **Use Shortcuts** - Master keyboard shortcuts for smooth operation
-3. **Monitor Audio** - Keep an eye on volume levels, if that's part of your responsibilities
-4. **Be Prepared** - Have the next media item ready
-5. **Verify Audio** - For hybrid meetings, ensure Zoom participants can hear the media
+1. **Püsi keskendunud** - Kasuta programmi ainult vajaliku meediaga
+2. **Kasuta otseteid** - Kiirenda töövoogu lühiteedega
+3. **Jälgi heli** - Hoia helitasemetel silm peal
+4. **Ole valmis** - Pane järgmine üksus valmis
+5. **Kontrolli heli** -Veendu Zoomi osalejate kuulmises
 
-### After Meetings {#after-meetings}
+### Pärast koosolekuid {#after-meetings}
 
-1. **Start Background Music** - Start the playback of background music
-2. **Plan Ahead** - Prepare for the next meeting by making sure everything is in place
-3. **Clean Up** - Close media player when you're ready to leave
+1. **Käivita taustamuusika** - Käivita taustamuusika uuesti
+2. **Planeeri** - Valmistu järgmiseks korraks
+3. **Sulge rakendus** - Lõpeta ja sulge meediamängija
 
-### Regular Maintenance {#regular-maintenance}
+### Regulaarne hooldus {#regular-maintenance}
 
-1. **Update M³** - Keep the application updated
-2. **Clear Cache** - Periodically clear old cached files
-3. **Check Settings** - Review and update settings as needed
+1. **Uuenda M³** - Hoia rakendus värske
+2. **Tühjenda vahemälu** - Vahemälu puhastamine regulaarselt
+3. **Kontrolli sätteid** - Vaata aeg-ajalt üle ja uuenda

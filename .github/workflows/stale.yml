@@ -30,7 +30,7 @@ jobs:
       discussions: write
     steps:
       - name: Close stale Q&A discussions
-        uses: steffen-karlsson/stalesweeper@v1.1.1
+        uses: steffen-karlsson/stalesweeper@cbed739a89b490f703d8466fb59b37ddc0915889 # v1.1.1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           message: 'This discussion has automatically been closed due to inactivity. If this is still relevant, please open a new discussion.'

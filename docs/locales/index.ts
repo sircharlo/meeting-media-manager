@@ -1,65 +1,87 @@
+/* eslint-disable perfectionist/sort-imports */
 import {
   enabled as baseEnabled,
   type LanguageValue,
-  locales,
 } from '../../src/constants/locales';
 
-export const localeOptions = locales;
+export { locales as localeOptions } from '../../src/constants/locales';
+
 export const enabled: LanguageValue[] = baseEnabled.filter((l) => l !== 'en');
 
-// ! This file should import the JSON files for all languages configured in Crowdin.
+// ! This file will be updated by the update-langs script.
 
-import am from './am.json';
-import cmnHans from './cmn-hans.json';
-import de from './de.json';
-import el from './el.json';
+// 100.0% translated as of 2026-03-08
 import en from './en.json';
-import es from './es.json';
-import et from './et.json';
+
+// 99.7% translated as of 2026-03-08
+import cmnHans from './cmn-hans.json';
+
+// 99.2% translated as of 2026-03-08
 import fi from './fi.json';
+
+// 99.2% translated as of 2026-03-08
 import fr from './fr.json';
-import gaa from './gaa.json';
-import ht from './ht.json';
-import hu from './hu.json';
-import it from './it.json';
-import ko from './ko.json';
-import mg from './mg.json';
-import nl from './nl.json';
-import ptPt from './pt-pt.json';
-import pt from './pt.json';
-import ro from './ro.json';
-import ru from './ru.json';
-import rw from './rw.json';
-import sk from './sk.json';
+
+// 99.2% translated as of 2026-03-08
 import sl from './sl.json';
+
+// 99.1% translated as of 2026-03-08
+import ptPt from './pt-pt.json';
+
+// 98.4% translated as of 2026-03-08
 import sv from './sv.json';
-import sw from './sw.json';
-import tl from './tl.json';
+
+// 98.1% translated as of 2026-03-08
+import es from './es.json';
+
+// 97.9% translated as of 2026-03-08
+import de from './de.json';
+
+// 97.6% translated as of 2026-03-08
+import nl from './nl.json';
+
+// 97.3% translated as of 2026-03-08
+import hu from './hu.json';
+
+// 97.0% translated as of 2026-03-08
+import et from './et.json';
+
+// 96.8% translated as of 2026-03-08
+import ru from './ru.json';
+
+// 86.9% translated as of 2026-03-08
+import it from './it.json';
+
+// 79.6% translated as of 2026-03-08
+import ko from './ko.json';
+
+// 74.1% translated as of 2026-03-08
+import pt from './pt.json';
+
+// 57.0% translated as of 2026-03-08
 import uk from './uk.json';
 
+// 49.8% translated as of 2026-03-08
+import sw from './sw.json';
+
+// 46.4% translated as of 2026-03-08
+import tl from './tl.json';
+
 const messages: Record<LanguageValue, Partial<typeof en>> = {
-  am,
   cmnHans,
   de,
-  el,
   en,
   es,
   et,
   fi,
   fr,
-  gaa,
-  ht,
   hu,
   it,
   ko,
-  mg,
   nl,
   pt,
   ptPt,
-  ro,
   ru,
-  rw,
-  sk,
   sl,
   sv,
   sw,

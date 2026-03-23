@@ -93,7 +93,7 @@
                           item.KeySymbol,
                           item.IssueTagNumber,
                           item.MepsDocumentId,
-                          (item.MepsLanguageIndex &&
+                          (item.MepsLanguageIndex !== undefined &&
                             mepslangs[item.MepsLanguageIndex]) ||
                             '',
                           item.Track,
@@ -169,14 +169,15 @@ import type {
 } from 'src/types';
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
-import mepslangs from 'src/constants/mepslangs';
+import mepslangsImport from 'src/constants/mepslangs';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
-  addFullFilePathToMultimediaItem,
   addJwpubDocumentMediaToFiles,
   resolveMultimediaPreviewPath,
 } from 'src/helpers/jw-media';
+import { log } from 'src/shared/vanilla';
 import {
+  addFullFilePathToMultimediaItem,
   getDocumentMultimediaItems,
   getPublicationInfoFromDb,
 } from 'src/utils/sqlite';
@@ -185,7 +186,10 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-const { pathToFileURL } = window.electronApi;
+// Explicitly declare mepslangs for template use
+const mepslangs = mepslangsImport;
+
+const { pathToFileURL } = globalThis.electronApi;
 const props = defineProps<{
   dbPath: string;
   dialogId: string;
@@ -288,7 +292,7 @@ const addSelectedItems = async () => {
       .map((index) => mediaItems.value[index]?.MultimediaId)
       .filter((id): id is number => id !== undefined);
 
-    console.log('🎯 Selected multimedia IDs:', selectedMultimediaIds);
+    log('🎯 Selected multimedia IDs:', 'jwpub', 'log', selectedMultimediaIds);
 
     await addJwpubDocumentMediaToFiles(
       props.dbPath,

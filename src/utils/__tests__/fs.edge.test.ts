@@ -1,3 +1,4 @@
+import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { join } from 'upath';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -5,13 +6,14 @@ import {
   getParentDirectory,
   getPublicationDirectory,
   getPublicationDirectoryContents,
-  getPublicationsPath,
   isFileUrl,
   removeEmptyDirs,
   trimFilepathAsNeeded,
 } from '../fs';
 
-const { fs } = window.electronApi;
+installPinia();
+
+const { fs } = globalThis.electronApi;
 const { emptyDir, ensureDir, ensureFile, exists, remove } = fs;
 
 describe('fs edge cases', () => {
@@ -24,7 +26,7 @@ describe('fs edge cases', () => {
     it('rejects non-file URLs and paths', () => {
       expect(isFileUrl('https://example.com/file.txt')).toBe(false);
       expect(isFileUrl('C:/Users/test/file.txt')).toBe(false);
-      expect(isFileUrl('\\\\server\\share\\file.txt')).toBe(false);
+      expect(isFileUrl(String.raw`\\server\share\file.txt`)).toBe(false);
     });
   });
 
@@ -37,13 +39,12 @@ describe('fs edge cases', () => {
 
     it('handles file URL Windows path', () => {
       const parent = getParentDirectory('file:///C:/Users/Test/file.txt');
-      expect(parent.replace(/\\/g, '/')).toMatch(/^\/?C:\/Users\/Test$/);
+      expect(parent.replaceAll('\\', '/')).toMatch(/^\/?C:\/Users\/Test$/);
     });
   });
 
   describe('getPublicationDirectoryContents - ignores directories and filters correctly', () => {
     it('filters by extension and excludes directories', async () => {
-      const root = await getPublicationsPath();
       const pubDir = await getPublicationDirectory({
         issue: '0',
         langwritten: 'E',
@@ -63,7 +64,6 @@ describe('fs edge cases', () => {
           langwritten: 'E',
           pub: 'bt',
         });
-        console.log(root, all);
         expect(all.some((p) => p.path.endsWith('subdir'))).toBe(false);
         expect(all.length).toBe(3);
 
@@ -71,7 +71,6 @@ describe('fs edge cases', () => {
           { issue: '0', langwritten: 'E', pub: 'bt' },
           'JPG',
         );
-        console.log(jpgsUpper);
         expect(jpgsUpper.length).toBe(2);
       } finally {
         await remove(pubDir);

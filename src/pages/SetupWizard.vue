@@ -14,7 +14,6 @@
             v-model="currentSettings.localAppLang"
             list="appLanguages"
           />
-          <!-- :label="t('localAppLang')" -->
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn
               color="negative"
@@ -26,10 +25,6 @@
                 goToPage('/congregation-selector');
               "
             />
-            <!-- <q-btn :label="t('continue')" color="primary" @click="step++" />
-        </q-stepper-navigation>
-        <q-stepper-navigation class="q-gutter-sm">
-          <q-btn :label="t('back')" color="negative" flat @click="step--" /> -->
             <q-btn
               color="primary"
               :disable="!currentSettings.localAppLang"
@@ -125,9 +120,12 @@
           :title="t('lang')"
         >
           <p>{{ t('in-what-language-should-media-be-downloaded') }}</p>
-          <SelectInput v-model="currentSettings.lang" list="jwLanguages" />
-          <!-- use-input -->
-          <!-- :label="t('lang')" -->
+          <SelectInput
+            v-model="currentSettings.lang"
+            :label="t('lang')"
+            list="jwLanguages"
+            use-input
+          />
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn color="negative" flat :label="t('back')" @click="step--" />
             <q-btn
@@ -136,27 +134,57 @@
               :label="t('continue')"
               @click="
                 currentSettings.enableMediaDisplayButton = true;
-                step++;
+                step = currentSettings.lang === 'CHS' ? 6 : 7;
               "
             />
           </q-stepper-navigation>
         </q-step>
         <q-step
+          v-if="currentSettings?.lang === 'CHS'"
+          :disable="currentSettings?.lang !== 'CHS'"
           :done="step > 6"
-          icon="mmm-yeartext"
+          icon="mmm-music-note"
           :name="6"
+          :title="t('enablePinyinSongs')"
+        >
+          <p>{{ t('pinyinSongs-wizard') }}</p>
+          <p>{{ t('pinyinSongFolder-explain') }}</p>
+          <FolderInput v-model="currentSettings.pinyinSongFolder" />
+          <q-stepper-navigation class="q-gutter-sm">
+            <q-btn color="negative" flat :label="t('back')" @click="step = 5" />
+            <q-btn
+              color="primary"
+              :label="t('continue')"
+              @click="
+                if (currentSettings?.pinyinSongFolder) {
+                  currentSettings.enablePinyinSongs = true;
+                }
+                step = 7;
+              "
+            />
+          </q-stepper-navigation>
+        </q-step>
+        <q-step
+          :done="step > 7"
+          icon="mmm-yeartext"
+          :name="7"
           :title="t('yeartext')"
         >
           <!-- This icon is from the Material Design Icons collection -->
           <p>
             {{
-              t(
-                'notice-the-yeartext-is-now-being-displayed-on-the-external-monitor-but-lets-keep-going',
-              )
+              currentLangObject?.isSignLanguage
+                ? t('notice-the-media-window-is-now-being-displayed')
+                : t('notice-the-yeartext-is-now-being-displayed')
             }}
           </p>
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn color="negative" flat :label="t('back')" @click="step--" />
+            <q-btn
+              color="negative"
+              flat
+              :label="t('back')"
+              @click="step = currentSettings?.lang === 'CHS' ? 6 : 5"
+            />
             <q-btn
               color="primary"
               :label="t('continue')"
@@ -168,9 +196,9 @@
         <q-step
           v-if="regularProfile"
           :disable="!regularProfile"
-          :done="step > 7"
+          :done="step > 8"
           icon="mmm-calendar-month"
-          :name="7"
+          :name="8"
           :title="t('setupWizard.meetingDaysTimes')"
         >
           <p>
@@ -183,22 +211,18 @@
           <p class="text-subtitle2">{{ t('midweek-meeting') }}</p>
           <p class="q-gutter-sm row">
             <SelectInput v-model="currentSettings.mwDay" list="days" />
-            <!-- :label="t('mwDay')" -->
             <TimeInput
               v-model="currentSettings.mwStartTime"
               :options="['meetingTime']"
             />
-            <!-- :label="t('mwStartTime')" -->
           </p>
           <p class="text-subtitle2">{{ t('weekend-meeting') }}</p>
           <p class="q-gutter-sm row">
             <SelectInput v-model="currentSettings.weDay" list="days" />
-            <!-- :label="t('weDay')" -->
             <TimeInput
               v-model="currentSettings.weStartTime"
               :options="['meetingTime']"
             />
-            <!-- :label="t('weStartTime')" -->
           </p>
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn color="negative" flat :label="t('back')" @click="step--" />
@@ -218,9 +242,9 @@
         <q-step
           v-if="regularProfile"
           :disable="!regularProfile"
-          :done="step > 8"
+          :done="step > 9"
           icon="mmm-download"
-          :name="8"
+          :name="9"
           :title="t('songbook-video-caching')"
         >
           <p class="text-subtitle1">
@@ -245,9 +269,9 @@
         <q-step
           v-if="regularProfile"
           :disable="!regularProfile"
-          :done="step > 9"
+          :done="step > 10"
           icon="mmm-almost-done"
-          :name="9"
+          :name="10"
           :title="t('almost-done')"
         >
           <p>
@@ -303,7 +327,12 @@
             }}
           </p>
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn color="negative" flat :label="t('back')" @click="step = 9" />
+            <q-btn
+              color="negative"
+              flat
+              :label="t('back')"
+              @click="step = 10"
+            />
             <q-btn color="primary" :label="t('continue')" @click="step++" />
           </q-stepper-navigation>
         </q-step>
@@ -526,7 +555,6 @@
             v-model="currentSettings.obsCameraScene"
             list="obsScenes"
           />
-          <!-- :label="t('obsCameraScene')" -->
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn flat :label="t('back')" @click="step--" />
             <q-btn
@@ -555,7 +583,6 @@
             v-model="currentSettings.obsMediaScene"
             list="obsAllScenes"
           />
-          <!-- :label="t('obsMediaScene')" -->
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn flat :label="t('back')" @click="step--" />
             <q-btn
@@ -650,7 +677,6 @@ const { deleteCongregation } = congregationSettings;
 
 const regularProfile = ref(false);
 
-// const usingAtKh = ref(false);
 const obsUsed = ref(false);
 const obsIntegrate = ref(false);
 
@@ -658,7 +684,7 @@ const jwStore = useJwStore();
 const { updateYeartext } = jwStore;
 const router = useRouter();
 
-const { getLocales } = window.electronApi;
+const { getLocales } = globalThis.electronApi;
 
 if (currentSettings.value) {
   currentSettings.value.autoStartMusic = true;
@@ -698,20 +724,23 @@ watchImmediate(
 const loadSystemLocale = async () => {
   try {
     const systemLocales = await getLocales();
-    const availableLocales = localeOptions.map((l) =>
-      camelToKebabCase(l.value),
+    const availableLocales = new Set(
+      localeOptions.map((l) => camelToKebabCase(l.value).toLowerCase()),
     );
     let match: LanguageValue | undefined;
-    systemLocales.forEach((l) => {
-      if (match || !currentSettings.value) return;
-      if (availableLocales.includes(l.toLowerCase())) {
-        match = l.toLowerCase() as LanguageValue;
-      } else if (
-        availableLocales.includes(l.split('-')[0]?.toLowerCase() ?? '')
-      ) {
-        match = l.split('-')[0]?.toLowerCase() as LanguageValue;
+
+    for (const locale of systemLocales) {
+      if (match || !currentSettings.value) break;
+
+      const normalized = locale.toLowerCase();
+      const base = normalized.split('-')[0];
+
+      if (availableLocales.has(normalized)) {
+        match = normalized as LanguageValue;
+      } else if (base && availableLocales.has(base)) {
+        match = base as LanguageValue;
       }
-    });
+    }
 
     if (match && currentSettings.value) {
       currentSettings.value.localAppLang = match;

@@ -1,4 +1,4 @@
-import { exec } from 'child_process';
+import { exec } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import path from 'upath';
@@ -173,7 +173,7 @@ export default defineConfig({
     const messageLocale = kebabToCamelCase(pageLang) as LanguageValue;
     const isEnglish = pageData.relativePath.split('/').length === 1;
 
-    let createdDate = '';
+    let createdDate: string | undefined;
     try {
       const { stdout } = await execPromise(
         `git log --follow --format=%ad --date iso-strict ${fileURLToPath(
@@ -182,12 +182,38 @@ export default defineConfig({
       );
       createdDate = stdout.trim();
     } catch {
-      createdDate = '';
+      createdDate = undefined;
     }
 
     const lastUpdated = (
       pageData.lastUpdated ? new Date(pageData.lastUpdated) : new Date()
     ).toISOString();
+
+    let title = `${pageData.title} | M³ docs`;
+
+    if (pageData.frontmatter.layout === 'home') {
+      title =
+        (isEnglish ? messages.en.title : messages[messageLocale].title) || '';
+
+      const locale = isEnglish ? 'en' : pageLang;
+      const prefix = isEnglish ? '' : `/${locale}`;
+
+      // Re-stamp all hero action links based on their current (possibly corrupted) link value
+      const actions = pageData.frontmatter.hero?.actions;
+      if (Array.isArray(actions)) {
+        pageData.frontmatter.hero.actions = actions.map(
+          (action: { link: string; text: string; theme: string }) => {
+            // Extract just the page slug — last non-empty segment
+            const slug =
+              action.link
+                .replace(/^\/+/, '') // strip leading slashes
+                .split('/')
+                .findLast(Boolean) ?? action.link; // take last segment as the slug
+            return { ...action, link: `${prefix}/${slug}` };
+          },
+        );
+      }
+    }
 
     pageData.frontmatter.head ??= [];
     pageData.frontmatter.head.push(
@@ -236,24 +262,14 @@ export default defineConfig({
       [
         'meta',
         {
-          content:
-            pageData.frontmatter.layout === 'home'
-              ? isEnglish
-                ? messages['en'].title
-                : messages[messageLocale].title
-              : `${pageData.title} | M³ docs`,
+          content: title,
           name: 'twitter:title',
         },
       ],
       [
         'meta',
         {
-          content:
-            pageData.frontmatter.layout === 'home'
-              ? isEnglish
-                ? messages['en'].title
-                : messages[messageLocale].title
-              : `${pageData.title} | M³ docs`,
+          content: title,
           property: 'og:title',
         },
       ],
@@ -278,9 +294,9 @@ export default defineConfig({
           return [
             'link',
             {
-              href: (!isEnglish
-                ? canonicalUrl.replace(`/${pageLang}/`, `/${lang}/`)
-                : `${CANONICAL_URL}${lang}/${pageData.relativePath.replace('index.md', '').replace('.md', '')}`
+              href: (isEnglish
+                ? `${CANONICAL_URL}${lang}/${pageData.relativePath.replace('index.md', '').replace('.md', '')}`
+                : canonicalUrl.replace(`/${pageLang}/`, `/${lang}/`)
               ).replace('/en/', '/'),
               hreflang: lang,
               rel: 'alternate',
@@ -291,35 +307,37 @@ export default defineConfig({
         'script',
         {},
         `
-        const firstVisit = sessionStorage.getItem('firstVisit') !== 'false';
-        const parts = window.location.pathname.split('/');
-        const isEnglish = parts.length === 3;
+        {
+          const firstVisit = sessionStorage.getItem('firstVisit') !== 'false';
+          const parts = window.location.pathname.split('/');
+          const isEnglish = parts.length === 3;
 
-        if (firstVisit && isEnglish) {
-          const langs = [${localeOptions.filter((l) => enabled.includes(l.value)).map((l) => `"${camelToKebabCase(l.value)}"`)}]
+          if (firstVisit && isEnglish) {
+            const langs = [${localeOptions.filter((l) => enabled.includes(l.value)).map((l) => `"${camelToKebabCase(l.value)}"`)}]
 
-          function mapLang(lang) {
-            switch (lang) {
-              case 'zh':
-              case 'zh-CN':
-              case 'zh-TW':
-                return 'cmn-hans';
-              default:
-                return lang.toLowerCase();
+            function mapLang(lang) {
+              switch (lang) {
+                case 'zh':
+                case 'zh-CN':
+                case 'zh-TW':
+                  return 'cmn-hans';
+                default:
+                  return lang.toLowerCase();
+              }
             }
-          }
 
-          let match;
-          navigator.languages.forEach((lang) => {
-            const mapped = mapLang(lang);
-            if (!match) match = langs.find((l) => l === mapped);
-            if (!match) match = langs.find((l) => l === mapped.split('-')[0]);
-          })
+            let match;
+            navigator.languages.forEach((lang) => {
+              const mapped = mapLang(lang);
+              if (!match) match = langs.find((l) => l === mapped);
+              if (!match) match = langs.find((l) => l === mapped.split('-')[0]);
+            })
 
-          if (match) {
-            sessionStorage.setItem('firstVisit', false);
-            const page = isEnglish ? parts[2] : parts[3]
-            window.location.pathname = "${base}" + (match !== 'en' ? match + '/' : '') + page
+            if (match) {
+              sessionStorage.setItem('firstVisit', false);
+              const page = isEnglish ? parts[2] : parts[3]
+              window.location.pathname = "${base}" + (match !== 'en' ? match + '/' : '') + page
+            }
           }
         }
         `,

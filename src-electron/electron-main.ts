@@ -6,6 +6,7 @@ import {
   Menu,
   type MenuItem,
   type MenuItemConstructorOptions,
+  protocol,
   shell,
 } from 'electron';
 import { pathExistsSync, readJsonSync, writeJsonSync } from 'fs-extra/esm';
@@ -19,57 +20,87 @@ import { cancelAllDownloads } from 'src-electron/main/downloads';
 import { initScreenListeners } from 'src-electron/main/screen';
 import {
   initSessionListeners,
-  isAppQuitting,
+  quitStatus,
   setAppQuitting,
   setShouldQuit,
 } from 'src-electron/main/session';
 import { initUpdater } from 'src-electron/main/updater';
-import { captureElectronError } from 'src-electron/main/utils';
+import {
+  captureElectronError,
+  isIgnoredUpdateError,
+} from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import 'src-electron/main/ipc';
 import 'src-electron/main/security';
 import {
   authorizedClose,
   createMainWindow,
-  mainWindow,
+  focusMainWindow,
+  mainWindowInfo,
 } from 'src-electron/main/window/window-main';
+import { log } from 'src/shared/vanilla';
 import upath from 'upath';
 
 const { join, resolve } = upath;
 
+protocol.registerSchemesAsPrivileged([
+  {
+    privileges: {
+      allowServiceWorkers: true,
+      corsEnabled: true,
+      secure: true,
+      standard: true,
+      supportFetchAPI: true,
+    },
+    scheme: 'app',
+  },
+]);
+
 initSentry({
   beforeSend(event) {
     try {
-      const crashpad = event.contexts?.crashpad ?? event.contexts?.electron;
-      const dumpFile = crashpad?.['DumpWithoutCrashing-file'];
-      // Ignore known non-fatal native crash reports
-      if (typeof dumpFile === 'string' && dumpFile.includes('site_info.cc')) {
+      if (quitStatus.isAppQuitting) {
         return null;
       }
 
-      if (isAppQuitting) {
-        const error = event.exception?.values?.[0];
-        if (error?.value?.includes('Object has been destroyed')) {
-          // Ignore electron-dl-manager errors that occur after app quit
+      const crashpad = event.contexts?.crashpad ?? event.contexts?.electron;
+      const dumpFile = crashpad?.['DumpWithoutCrashing-file'];
+
+      // Ignore known non-fatal native crash reports
+      if (typeof dumpFile === 'string') {
+        // Filter site_info.cc crashes
+        if (dumpFile.includes('site_info.cc')) {
+          return null;
+        }
+
+        // Filter GPU/graphics diagnostic crashes
+        if (dumpFile.includes('dcomp_presenter.cc')) {
           return null;
         }
       }
+
+      const error = event.exception?.values?.[0];
+      if (
+        error?.value &&
+        (isIgnoredUpdateError(error.value) || error.value.includes('EPIPE'))
+      ) {
+        return null;
+      }
     } catch (err) {
-      console.error(err);
+      log(err, 'electron', 'error');
     }
     return event;
   },
   dsn: 'https://40b7d92d692d42814570d217655198db@o1401005.ingest.us.sentry.io/4507449197920256',
   environment: IS_TEST ? 'test' : process.env.NODE_ENV,
   release: `${name}@${version}`,
-  tracesSampleRate: 1.0,
+  tracesSampleRate: 1,
 });
 
 const gotTheLock = app.requestSingleInstanceLock();
 
 function createApplicationMenu() {
   const appMenu: MenuItem | MenuItemConstructorOptions = { role: 'appMenu' };
-
   const template: (MenuItem | MenuItemConstructorOptions)[] = [
     ...(PLATFORM === 'darwin' ? [appMenu] : []),
     { role: 'fileMenu' },
@@ -91,49 +122,50 @@ function createApplicationMenu() {
       role: 'help',
       submenu: [
         {
-          click: async () => {
-            await shell.openExternal(repository.url.replace('.git', ''));
+          click: () => {
+            shell.openExternal(repository.url.replace('.git', ''));
           },
           label: 'Learn More',
         },
         {
-          click: async () => {
-            await shell.openExternal(homepage);
+          click: () => {
+            shell.openExternal(homepage);
           },
           label: 'Documentation',
         },
         {
-          click: async () => {
-            await shell.openExternal(
-              repository.url.replace('.git', '/discussions'),
-            );
+          click: () => {
+            shell.openExternal(repository.url.replace('.git', '/discussions'));
           },
           label: 'Community Discussions',
         },
         {
-          click: async () => {
-            await shell.openExternal(bugs);
+          click: () => {
+            shell.openExternal(bugs);
           },
           label: 'Search Issues',
         },
       ],
     },
   ];
-  template.find((item) => item.role === 'viewMenu');
+
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
-if (!gotTheLock) {
-  app.exit(2);
-} else {
+if (gotTheLock) {
   // Check for crash loop on startup
   const crashCount = incrementCrashCount();
-  console.log(`Startup crash count: ${crashCount}`);
+  log(`Startup crash count: ${crashCount}`, 'electron', 'log');
 
   if (crashCount >= 3) {
     if (!isHwAccelDisabled()) {
-      console.error(
-        'Detected crash loop (3+ crashes). Disabling hardware acceleration.',
+      captureElectronError(
+        new Error(
+          'Detected crash loop (3+ crashes). Disabling hardware acceleration.',
+        ),
+        {
+          contexts: { fn: { name: 'initCrashListeners' } },
+        },
       );
       setHwAccelDisabled(true, true);
     }
@@ -147,17 +179,15 @@ if (!gotTheLock) {
   // Check if hardware acceleration should be disabled
   if (isHwAccelDisabled()) {
     app.disableHardwareAcceleration();
-    console.log('Hardware acceleration disabled');
+    log('Hardware acceleration disabled', 'electron', 'log');
   } else {
-    console.log('Hardware acceleration enabled');
+    log('Hardware acceleration enabled', 'electron', 'log');
   }
 
   app.on('second-instance', () => {
-    // Someone tried to run a second instance, we should focus our window.
-    if (mainWindow && !mainWindow.isDestroyed()) {
-      if (mainWindow.isMinimized()) mainWindow.restore();
-      mainWindow.show();
-    }
+    // Someone tried to run a second instance, we should focus our globalThis.
+    app.focus({ steal: true });
+    if (!focusMainWindow()) createWindowAndCaptureErrors();
   });
 
   if (PLATFORM === 'win32') {
@@ -187,50 +217,138 @@ if (!gotTheLock) {
   createApplicationMenu();
   initSessionListeners();
 
-  // Listen for child process crashes, especially GPU
-  app.on('child-process-gone', (_, details) => {
-    if (details.type === 'GPU') {
+  let videoCaptureCrashCount = 0;
+
+  function handleProcessCrash(
+    type: string,
+    details: Electron.Details | Electron.RenderProcessGoneDetails,
+  ) {
+    const isFatalRendererCrash =
+      type === 'Renderer' &&
+      'reason' in details &&
+      details.reason === 'crashed';
+
+    const isGpuCrash =
+      type === 'GPU' &&
+      details.reason !== 'killed' &&
+      details.reason !== 'clean-exit';
+
+    if (isGpuCrash || isFatalRendererCrash) {
       // Send to telemetry
-      captureException(new Error(`GPU process crashed: ${details.reason}`), {
-        extra: { ...details },
-        tags: { reason: details.reason, type: details.type },
-      });
+      captureException(
+        new Error(`${type} process crashed: ${details.reason}`),
+        {
+          extra: { ...details },
+          tags: { reason: details.reason, type },
+        },
+      );
+
       if (!isHwAccelDisabled()) {
+        log(
+          `Detected ${type} crash (${details.reason}). Disabling hardware acceleration for next run.`,
+          'electron',
+          'log',
+        );
         // Persist to user prefs for next run and notify user
         setHwAccelDisabled(true, true);
       }
     }
+
+    if (type === 'Video Capture' && details.reason === 'crashed') {
+      videoCaptureCrashCount++;
+      log(
+        `Video Capture crash count: ${videoCaptureCrashCount}`,
+        'electron',
+        'log',
+      );
+
+      if (videoCaptureCrashCount >= 2) {
+        captureElectronError(
+          new Error('Video Capture process crashed multiple times.'),
+          {
+            contexts: {
+              fn: {
+                crashCount: videoCaptureCrashCount,
+                details,
+                name: 'handleProcessCrash',
+              },
+            },
+          },
+        );
+
+        if (
+          mainWindowInfo.mainWindow &&
+          !mainWindowInfo.mainWindow.isDestroyed()
+        ) {
+          mainWindowInfo.mainWindow.webContents.send(
+            'video-capture-crash-detected',
+          );
+        }
+      }
+    }
+  }
+
+  // Listen for child process crashes, especially GPU
+  app.on('child-process-gone', (_, details) => {
+    handleProcessCrash(details.type, details);
+  });
+
+  // Listen for renderer crashes
+  app.on('render-process-gone', (_, __, details) => {
+    handleProcessCrash('Renderer', details);
   });
 
   // macOS default behavior is to keep the app running even after all windows are closed
-  app.on('window-all-closed', () => {
+  app.on('window-all-closed', async () => {
+    // Set app quitting state
     setAppQuitting(true);
     try {
-      cancelAllDownloads();
+      await cancelAllDownloads();
     } catch (error) {
-      console.error('Failed to cancel downloads:', error);
+      captureElectronError(error, {
+        contexts: { fn: { name: 'app.on(window-all-closed)' } },
+      });
     }
     if (PLATFORM !== 'darwin') app.quit();
   });
 
   app.on('before-quit', (e) => {
+    setAppQuitting(true);
     if (PLATFORM !== 'darwin') return;
-    if (!mainWindow || mainWindow.isDestroyed()) return;
-    if (authorizedClose) {
-      mainWindow.close();
+    if (!mainWindowInfo.mainWindow || mainWindowInfo.mainWindow.isDestroyed())
+      return;
+    if (authorizedClose.authorized) {
+      mainWindowInfo.mainWindow.close();
     } else {
       e.preventDefault();
       setShouldQuit(true);
-      sendToWindow(mainWindow, 'attemptedClose');
+      sendToWindow(mainWindowInfo.mainWindow, 'attemptedClose');
     }
   });
 
   app.on('activate', () => {
-    createWindowAndCaptureErrors();
+    if (!focusMainWindow()) createWindowAndCaptureErrors();
   });
 
   createWindowAndCaptureErrors();
+} else {
+  log('Another instance is running. Exiting...', 'electron', 'log');
+  app.exit(2);
 }
+
+// Silence EPIPE errors on stdout/stderr (common on Linux when quitting)
+process.stdout.on('error', (err: NodeJS.ErrnoException) => {
+  if (err.code === 'EPIPE') return;
+  captureElectronError(err, {
+    contexts: { fn: { name: 'process.stdout.on(error)' } },
+  });
+});
+process.stderr.on('error', (err: NodeJS.ErrnoException) => {
+  if (err.code === 'EPIPE') return;
+  captureElectronError(err, {
+    contexts: { fn: { name: 'process.stderr.on(error)' } },
+  });
+});
 
 function createWindowAndCaptureErrors() {
   app.whenReady().then(createMainWindow).catch(captureElectronError);
@@ -244,7 +362,7 @@ function getCrashCount() {
       return typeof data.count === 'number' ? data.count : 0;
     }
   } catch (error) {
-    console.warn('Failed to read crash count:', error);
+    log('Failed to read crash count:', 'electron', 'warn', error);
   }
   return 0;
 }
@@ -263,7 +381,7 @@ function incrementCrashCount() {
     writeJsonSync(getCrashCountFilePath(), { count });
     return count;
   } catch (error) {
-    console.warn('Failed to write crash count:', error);
+    log('Failed to write crash count:', 'electron', 'warn', error);
     return 0;
   }
 }
@@ -276,7 +394,7 @@ function isHwAccelDisabled() {
       return data.disabled === true;
     }
   } catch (error) {
-    console.warn('Failed to read hw accel setting:', error);
+    log('Failed to read hw accel setting:', 'electron', 'warn', error);
   }
   return false;
 }
@@ -284,9 +402,9 @@ function isHwAccelDisabled() {
 function resetCrashCount() {
   try {
     writeJsonSync(getCrashCountFilePath(), { count: 0 });
-    console.log('Crash count reset to 0');
+    log('Crash count reset to 0', 'electron', 'log');
   } catch (error) {
-    console.warn('Failed to reset crash count:', error);
+    log('Failed to reset crash count:', 'electron', 'warn', error);
   }
 }
 
@@ -296,12 +414,15 @@ function setHwAccelDisabled(disabled: boolean, temporary = false) {
     writeJsonSync(filePath, { disabled, temporary });
     if (disabled) {
       // Notify user that a restart is recommended
-      if (mainWindow && !mainWindow.isDestroyed()) {
-        mainWindow.webContents.send('gpu-crash-detected');
+      if (
+        mainWindowInfo.mainWindow &&
+        !mainWindowInfo.mainWindow.isDestroyed()
+      ) {
+        mainWindowInfo.mainWindow.webContents.send('gpu-crash-detected');
       }
     }
   } catch (error) {
-    console.warn('Failed to write hw accel setting:', error);
+    log('Failed to write hw accel setting:', 'electron', 'warn', error);
   }
 }
 
@@ -319,7 +440,7 @@ function wasHwAccelTemporarilyDisabled() {
       return data.disabled === true && data.temporary === true;
     }
   } catch (error) {
-    console.warn('Failed to read hw accel setting:', error);
+    log('Failed to read hw accel setting:', 'electron', 'warn', error);
   }
   return false;
 }

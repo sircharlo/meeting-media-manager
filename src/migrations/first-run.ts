@@ -1,7 +1,7 @@
 import type { OldAppConfig } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { uuid } from 'src/utils/general';
+import { log, uuid } from 'src/shared/vanilla';
 import {
   buildNewPrefsObject,
   getOldPrefsPaths,
@@ -11,7 +11,7 @@ import { useCongregationSettingsStore } from 'stores/congregation-settings';
 
 import type { MigrationFunction } from './types';
 
-const { fs, getAppDataPath, path } = window.electronApi;
+const { fs, getAppDataPath, path } = globalThis.electronApi;
 const { exists } = fs;
 const { join } = path;
 
@@ -26,9 +26,17 @@ export const firstRun: MigrationFunction = async () => {
       typeof congregationStore.congregations !== 'object' ||
       Array.isArray(congregationStore.congregations)
     ) {
-      console.warn(
-        '🔍 [migration] Invalid congregationStore.congregations structure in firstRun:',
-        congregationStore.congregations,
+      errorCatcher(
+        new Error(
+          'Invalid congregationStore.congregations structure in firstRun',
+        ),
+        {
+          contexts: {
+            fn: {
+              name: 'firstRun',
+            },
+          },
+        },
       );
       congregationStore.congregations = {};
     }
@@ -53,8 +61,10 @@ export const firstRun: MigrationFunction = async () => {
       }
 
       if (oldPrefsPaths.length === 0) {
-        console.warn(
+        log(
           '🔍 [migration] No old prefs paths found in:',
+          'migrations',
+          'warn',
           oldVersionPath,
         );
       }

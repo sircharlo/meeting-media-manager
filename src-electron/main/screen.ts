@@ -2,35 +2,70 @@ import type { Display } from 'src/types/electron';
 
 import { app, type BrowserWindow, screen } from 'electron';
 import { captureElectronError } from 'src-electron/main/utils';
-import { mainWindow } from 'src-electron/main/window/window-main';
+import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import {
-  mediaWindow,
-  moveMediaWindow,
+  mediaWindowInfo,
+  moveMediaWindowThrottled,
 } from 'src-electron/main/window/window-media';
+import { log } from 'src/shared/vanilla';
+
+let isScreenListenerInitialized = false;
+
+/**
+ * Handles screen changes by moving the media window if necessary
+ */
+const onDisplayChanged = () => {
+  try {
+    moveMediaWindowThrottled();
+  } catch (e) {
+    captureElectronError(e, {
+      contexts: { fn: { name: 'onDisplayChanged' } },
+    });
+  }
+};
 import {
   moveTimerWindow,
   timerWindow,
 } from 'src-electron/main/window/window-timer';
 
 export const initScreenListeners = () => {
-  app.on('ready', () => {
-    screen.removeAllListeners('display-added');
-    screen.removeAllListeners('display-removed');
-    screen.removeAllListeners('display-metrics-changed');
+  if (isScreenListenerInitialized) {
+    log(
+      '🔍 [initScreenListeners] Already initialized, skipping',
+      'electronScreen',
+      'log',
+    );
+    return;
+  }
 
-    screen.on('display-added', () => {
-      moveMediaWindow();
-      moveTimerWindow();
+  app
+    .whenReady()
+    .then(() => {
+      if (isScreenListenerInitialized) return;
+      isScreenListenerInitialized = true;
+
+      // Clean up any existing listeners just in case
+      screen.removeAllListeners('display-added');
+      screen.removeAllListeners('display-removed');
+      screen.removeAllListeners('display-metrics-changed');
+
+      // Add the listeners
+      screen.on('display-added', onDisplayChanged);
+      screen.on('display-removed', onDisplayChanged);
+      screen.on('display-metrics-changed', onDisplayChanged);
+
+      log(
+        '🔍 [initScreenListeners] Screen listeners initialized',
+        'electronScreen',
+        'log',
+      );
+    })
+    .catch((e) => {
+      isScreenListenerInitialized = false;
+      captureElectronError(e, {
+        contexts: { fn: { name: 'initScreenListeners.whenReady' } },
+      });
     });
-    screen.on('display-removed', () => {
-      moveMediaWindow();
-      moveTimerWindow();
-    });
-    screen.on('display-metrics-changed', () => {
-      moveMediaWindow();
-      moveTimerWindow();
-    });
-  });
 };
 
 export const getAllScreens = (): Display[] => {
@@ -38,42 +73,57 @@ export const getAllScreens = (): Display[] => {
     .getAllDisplays()
     .sort((a, b) => a.bounds.x + a.bounds.y - (b.bounds.x + b.bounds.y));
 
-  if (mainWindow) {
-    try {
-      const mainWindowScreen = displays.find(
-        (display) =>
-          mainWindow &&
-          display.id === screen.getDisplayMatching(mainWindow.getBounds()).id,
-      );
-      if (mainWindowScreen) {
-        mainWindowScreen.mainWindow = true;
-        try {
-          mainWindowScreen.mainWindowBounds = mainWindow.getBounds();
-        } catch (e) {
-          captureElectronError(e, {
-            contexts: {
-              fn: { name: 'getAllScreens', window: 'mainWindowBounds' },
-            },
-          });
-        }
+  try {
+    const mainWindowScreen = displays.find(
+      (display) =>
+        mainWindowInfo.mainWindow &&
+        display.id ===
+          screen.getDisplayMatching(mainWindowInfo.mainWindow.getBounds()).id,
+    );
+    if (mainWindowScreen) {
+      mainWindowScreen.mainWindow = true;
+      try {
+        mainWindowScreen.mainWindowBounds =
+          mainWindowInfo.mainWindow?.getBounds();
+      } catch (e) {
+        captureElectronError(e, {
+          contexts: {
+            fn: { name: 'getAllScreens', window: 'mainWindowBounds' },
+          },
+        });
       }
-    } catch (e) {
-      captureElectronError(e, {
-        contexts: { fn: { name: 'getAllScreens', window: 'mainWindow' } },
-      });
     }
+  } catch (e) {
+    captureElectronError(e, {
+      contexts: { fn: { name: 'getAllScreens', window: 'mainWindow' } },
+    });
   }
-  if (mediaWindow) {
+
+  try {
+    const mediaWindowScreen = displays.find(
+      (display) =>
+        mediaWindowInfo.mediaWindow &&
+        display.id ===
+          screen.getDisplayMatching(mediaWindowInfo.mediaWindow.getBounds()).id,
+    );
+    if (mediaWindowScreen) mediaWindowScreen.mediaWindow = true;
+  } catch (e) {
+    captureElectronError(e, {
+      contexts: { fn: { name: 'getAllScreens', window: 'mediaWindow' } },
+    });
+  }
+
+  if (timerWindow) {
     try {
-      const mediaWindowScreen = displays.find(
+      const timerWindowScreen = displays.find(
         (display) =>
-          mediaWindow &&
-          display.id === screen.getDisplayMatching(mediaWindow.getBounds()).id,
+          timerWindow &&
+          display.id === screen.getDisplayMatching(timerWindow.getBounds()).id,
       );
-      if (mediaWindowScreen) mediaWindowScreen.mediaWindow = true;
+      if (timerWindowScreen) timerWindowScreen.timerWindow = true;
     } catch (e) {
       captureElectronError(e, {
-        contexts: { fn: { name: 'getAllScreens', window: 'mediaWindow' } },
+        contexts: { fn: { name: 'getAllScreens', window: 'timerWindow' } },
       });
     }
   }

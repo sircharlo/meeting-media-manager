@@ -1,47 +1,48 @@
-pull_request_rules:
-  - name: Automatically merge Dependabot PRs (minor/patch only, including -dev and prereleases)
-    conditions:
-      - and:
-          - or:
-              - author = dependabot[bot]
-              - author = github-actions[bot]
-          - title ~= ^((chore|build)(\(deps(?:-dev)*\))*:) bump [^\s]+ from ([1-9][\d]*)\..+ to \4\.
-    actions:
-      update: {}
-      queue:
-        name: dependabot
+#pull_request_rules:
+#  - name: Automatically merge Dependabot PRs (minor/patch only, including -dev and prereleases)
+#    conditions:
+#      - author = dependabot[bot]
+#      - title ~= ^((chore|build)(\(deps(?:-dev)*\))*:) bump [^\s]+ from ([1-9][\d]*)\..+ to \4\.
+#    actions:
+#      update: {}
+#      queue:
+#        name: bots
 
-  - name: Automatically merge Crowdin PRs (only if all checks pass)
-    conditions:
-      - and:
-          - or:
-              - author = sircharlo
-              - author = github-actions[bot]
-          - title ~= (new translations|update translations progress)
-    actions:
-      update: {}
-      queue:
-        name: default
+#  - name: Automatically merge Crowdin PRs (only if all checks pass)
+#    conditions:
+#      - author = github-actions[bot]
+#      - title ~= (new translations|update translations progress)
+#    actions:
+#      update: {}
+#      queue:
+#        name: bots
 
 queue_rules:
-  # Queue for Dependabot updates (autoqueued)
-  - name: dependabot
+  - name: bots
     autoqueue: true
     merge_conditions:
+      - -draft
       - check-success = "build / lint"
       - check-success = "build / test"
       - check-success = "build / build (ubuntu-latest)"
       - check-success = "build / build (macos-latest)"
-      - check-success = "build / build (macos-15-intel)"
       - check-success = "build / build (windows-latest)"
+      - or:
+        - and: # translations
+          - or:
+            - author = github-actions[bot]
+            - author = sircharlo
+          - title ~= (new translations|update translations progress)
+        - and: # dependabot
+          - author = dependabot[bot]
+          - title ~= ^((chore|build)(\(deps(?:-dev)*\))*:) bump [^\s]+ from ([1-9][\d]*)\..+ to \4\.
 
-  # Default queue (for Crowdin PRs or others you might add)
-  - name: default
-    autoqueue: true
-    merge_conditions:
-      - check-success = "build / lint"
-      - check-success = "build / test"
-      - check-success = "build / build (ubuntu-latest)"
-      - check-success = "build / build (macos-latest)"
-      - check-success = "build / build (macos-15-intel)"
-      - check-success = "build / build (windows-latest)"
+
+ # - name: default
+ #   autoqueue: true
+ #   merge_conditions:
+ #     - check-success = "build / lint"
+ #     - check-success = "build / test"
+ #     - check-success = "build / build (ubuntu-latest)"
+ #     - check-success = "build / build (macos-latest)"
+ #     - check-success = "build / build (windows-latest)"

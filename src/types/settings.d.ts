@@ -123,9 +123,10 @@ export type SettingsGroups = Record<SettingsGroupKey, SettingsGroup>;
 
 export interface SettingsItem {
   actions?: SettingsItemAction[];
-  beta?: true;
+  beta?: boolean;
   depends?: (keyof SettingsValues)[] | keyof SettingsValues;
   group: SettingsGroupKey;
+  hidden?: boolean;
   icon?: string;
   list?: SettingsItemListKey;
   max?: number;
@@ -139,7 +140,11 @@ export interface SettingsItem {
   unless?: (keyof SettingsValues)[] | keyof SettingsValues;
 }
 
-export type SettingsItemAction = 'obsConnect' | 'setBackgroundMusicVolume';
+export type SettingsItemAction =
+  | 'obsConnect'
+  | 'openCongregationLookup'
+  | 'setBackgroundMusicVolume'
+  | 'syncMeetingSchedule';
 
 export type SettingsItemListKey =
   | 'appLanguages'
@@ -175,6 +180,7 @@ export type SettingsItemSubgroup =
   | 'zoomIntegration';
 
 export type SettingsItemType =
+  | 'button'
   | 'color'
   | 'date'
   | 'list'
@@ -192,6 +198,7 @@ export interface SettingsValues {
   beginPlaybackPaused: boolean;
   cacheFolder: null | string;
   congregationName: null | string;
+  congregationNameModified: boolean;
   convertFilesToMp4: boolean;
   coWeek: `${number}/${number}/${number}` | null;
   customEventLastSongShortcut: null | string;
@@ -201,6 +208,7 @@ export interface SettingsValues {
   darkMode: 'auto' | boolean;
   disableHardwareAcceleration: boolean;
   disableMediaFetching: boolean;
+  enableAutomaticMeetingScheduleUpdates: boolean;
   enableCacheAutoClear: boolean;
   enableCustomEvents: boolean;
   enableExtraCache: boolean;
@@ -212,6 +220,8 @@ export interface SettingsValues {
   enableMeetingAheadBehind: boolean;
   enableMeetingCountdown: boolean;
   enableMusicButton: boolean;
+  enablePinyinSongs: boolean;
+  enablePlaybackSpeedControl: boolean;
   enableSubtitles: boolean;
   enableTimerDisplay: boolean;
   excludeFootnotes: boolean;
@@ -253,10 +263,13 @@ export interface SettingsValues {
   obsQuickToggle: boolean;
   obsRememberPreviouslyUsedScene: boolean;
   obsSwitchSceneAfterMedia: boolean;
+  pinyinSongFolder: null | string;
   recordingEnable: boolean;
   recordingFolder: null | string;
   recordingStartShortcut: null | string;
   recordingStopShortcut: null | string;
+  relinkCongregationButton: boolean;
+  reSyncMeetingScheduleButton: boolean;
   shortcutMediaNext: null | string;
   shortcutMediaPauseResume: null | string;
   shortcutMediaPrevious: null | string;

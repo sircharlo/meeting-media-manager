@@ -29,10 +29,12 @@
               unelevated
               @click="
                 () => {
-                  console.log('🔍 [Full Screen Button] Clicked');
+                  log('🔍 [Full Screen Button] Clicked', 'display');
                   screenPreferences.preferWindowed = false;
-                  console.log(
+                  log(
                     '🔍 [Full Screen Button] Calling moveMediaWindow with:',
+                    'display',
+                    'log',
                     {
                       screen: screenPreferences.preferredScreenNumber,
                       fullscreen: true,
@@ -65,10 +67,12 @@
               unelevated
               @click="
                 () => {
-                  console.log('🔍 [Windowed Button] Clicked');
+                  log('🔍 [Windowed Button] Clicked', 'display');
                   screenPreferences.preferWindowed = true;
-                  console.log(
+                  log(
                     '🔍 [Windowed Button] Calling moveMediaWindow with:',
+                    'display',
+                    'log',
                     {
                       screen: screenPreferences.preferredScreenNumber,
                       fullscreen: false,
@@ -144,11 +148,18 @@
                   @click="
                     () => {
                       if (screen.mainWindow) return;
-                      console.log('🔍 [Screen Map] Clicked for index:', index);
+                      log(
+                        '🔍 [Screen Map] Clicked for index:',
+                        'display',
+                        'log',
+                        index,
+                      );
                       screenPreferences.preferredScreenNumber = index;
                       const isFullscreen = !screenPreferences.preferWindowed;
-                      console.log(
+                      log(
                         '🔍 [Screen Map] Calling moveMediaWindow with:',
+                        'display',
+                        'log',
                         { index, isFullscreen },
                       );
                       moveMediaWindow(index, isFullscreen);
@@ -263,7 +274,7 @@
             class="full-width"
             color="primary"
             unelevated
-            @click="showMediaWindow(false)"
+            @click="toggleMediaWindowVisibility(false)"
           >
             {{ t('hide-media-display') }}
           </q-btn>
@@ -272,7 +283,7 @@
             class="full-width"
             color="primary"
             unelevated
-            @click="showMediaWindow(true)"
+            @click="toggleMediaWindowVisibility(true)"
           >
             {{ t('show-media-display') }}
           </q-btn>
@@ -350,8 +361,12 @@ import { storeToRefs } from 'pinia';
 import { QMenu } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getMemorialBackground } from 'src/helpers/jw-media';
-import { decompressJwpub, showMediaWindow } from 'src/helpers/mediaPlayback';
+import {
+  toggleMediaWindowVisibility,
+  unzipJwpub,
+} from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
+import { log } from 'src/shared/vanilla';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import { getTempPath } from 'src/utils/fs';
 import { isImage, isJwpub } from 'src/utils/media';
@@ -393,7 +408,7 @@ const {
   openFileDialog,
   path,
   pathToFileURL,
-} = window.electronApi;
+} = globalThis.electronApi;
 const { basename, join } = path;
 
 const { copyFile } = fs;
@@ -475,8 +490,7 @@ const scaledMainWindowRect = (index: number) => {
 };
 
 // Selected when media window is on this screen and it's not the app's main window
-const isScreenSelected = (index: number, screen: Display) => {
-  void index; // index kept for potential future preference logic
+const isScreenSelected = (_index: number, screen: Display) => {
   return !!screen.mediaWindow && !screen.mainWindow;
 };
 
@@ -497,16 +511,14 @@ const chooseCustomBackground = async (reset?: boolean) => {
       try {
         const backgroundPicker = await openFileDialog(true, 'jwpub+image+pdf');
         if (backgroundPicker?.canceled) return;
-        if (!backgroundPicker?.filePaths.length) {
-          notifyInvalidBackgroundFile();
-        } else {
+        if (backgroundPicker?.filePaths.length) {
           const filepath = backgroundPicker.filePaths[0];
           if (filepath && isJwpub(filepath)) {
             jwpubImportFilePath.value = filepath;
-            const unzipDir = await decompressJwpub(filepath);
+            const unzipDir = await unzipJwpub(filepath);
             const db = await findDb(unzipDir);
             if (!db) throw new Error('No db file found: ' + filepath);
-            jwpubImages.value = window.electronApi
+            jwpubImages.value = globalThis.electronApi
               .executeQuery<
                 Partial<MultimediaItem>
               >(db, "SELECT FilePath FROM Multimedia WHERE CategoryType >= 0 AND CategoryType <> 9 AND FilePath <> '';")
@@ -532,13 +544,26 @@ const chooseCustomBackground = async (reset?: boolean) => {
               );
             }
           }
+        } else {
+          notifyInvalidBackgroundFile();
         }
       } catch (error) {
         if (
-          error instanceof Error &&
+          !(error instanceof Error) ||
           !error.message.includes('Invalid file type')
         ) {
-          errorCatcher(error);
+          errorCatcher(error, {
+            contexts: {
+              fn: {
+                args: {
+                  mediaWindowCustomBackground:
+                    mediaWindowCustomBackground.value,
+                  reset,
+                },
+                name: 'chooseCustomBackground',
+              },
+            },
+          });
         }
         notifyInvalidBackgroundFile();
       }
@@ -567,7 +592,19 @@ whenever(
 const cameras = ref<{ label: string; value: string }[]>([]);
 
 const getCameras = async () => {
+  // Only enumerate devices if it's a sign language congregation or a camera is already selected
+  // This avoids triggering the Video Capture service for the vast majority of users
+  if (!currentLangObject.value?.isSignLanguage && !displayCameraId.value) {
+    log(
+      '🎬 [getCameras] Skipping camera enumeration (not a sign language congregation and no camera selected)',
+      'display',
+      'log',
+    );
+    return;
+  }
+
   try {
+    log('🎬 [getCameras] Enumerating video input devices', 'display', 'log');
     cameras.value = (await navigator.mediaDevices.enumerateDevices())
       .filter((d) => d.kind === 'videoinput')
       .map((d) => ({ label: d.label, value: d.deviceId }));
@@ -629,11 +666,11 @@ const notifyCustomBackgroundRemoved = () => {
 };
 const setMediaBackground = (filepath: string) => {
   try {
-    if (!filepath) {
-      throw new Error('Problem with image file');
-    } else {
+    if (filepath) {
       mediaWindowCustomBackground.value = pathToFileURL(filepath);
       notifyCustomBackgroundSet();
+    } else {
+      throw new Error('Problem with image file');
     }
   } catch (error) {
     errorCatcher(error);
@@ -651,7 +688,7 @@ watchImmediate(
     currentCongregation.value,
   ],
   ([newMediaDisplayEnabled, newCongregation]) => {
-    showMediaWindow(!!newCongregation && !!newMediaDisplayEnabled);
+    toggleMediaWindowVisibility(!!newCongregation && !!newMediaDisplayEnabled);
   },
 );
 
@@ -667,6 +704,20 @@ const loadMemorialBackground = async (newMediaBackground?: string) => {
     selectedDate.value === currentSettings.value?.memorialDate
   ) {
     bg = await getMemorialBackground();
+    if (bg) {
+      createTemporaryNotification({
+        group: 'memorial-fetch-bg',
+        icon: 'mmm-check',
+        message: t('memorialFetchBgSuccess'),
+        type: 'positive',
+      });
+    } else {
+      createTemporaryNotification({
+        group: 'memorial-fetch-bg',
+        message: t('memorialFetchErrorNoBg'),
+        type: 'negative',
+      });
+    }
   }
   postCustomBackground(bg ?? '');
 };
@@ -678,9 +729,39 @@ watch(
   },
 );
 
-useEventListener(window, 'screen-trigger-update', fetchScreens, {
-  passive: true,
-});
+const stopListeningToScreens = ref<(() => void) | null>(null);
+
+watch(
+  () => open.value,
+  (isOpen) => {
+    if (isOpen) {
+      if (!stopListeningToScreens.value) {
+        log(
+          '🔍 [DialogDisplayPopup] Starting screen update listener',
+          'display',
+          'log',
+        );
+        stopListeningToScreens.value = useEventListener(
+          globalThis,
+          'screen-trigger-update',
+          fetchScreens,
+          {
+            passive: true,
+          },
+        );
+      }
+    } else if (stopListeningToScreens.value) {
+      log(
+        '🔍 [DialogDisplayPopup] Stopping screen update listener',
+        'display',
+        'log',
+      );
+      stopListeningToScreens.value();
+      stopListeningToScreens.value = null;
+    }
+  },
+  { immediate: true },
+);
 
 const { data: mediaWindowSize } = useBroadcastChannel<
   Record<string, number>,

@@ -1,29 +1,22 @@
 import type { JwLangCode } from 'src/types';
 
-// ! This type should include all languages that are configured in Crowdin.
+// ! This file will be updated by the update-langs script.
+
 export type LanguageValue =
-  | 'am'
   | 'cmnHans'
   | 'de'
-  | 'el'
   | 'en'
   | 'es'
   | 'et'
   | 'fi'
   | 'fr'
-  | 'gaa'
-  | 'ht'
   | 'hu'
   | 'it'
   | 'ko'
-  | 'mg'
   | 'nl'
   | 'pt'
   | 'ptPt'
-  | 'ro'
   | 'ru'
-  | 'rw'
-  | 'sk'
   | 'sl'
   | 'sv'
   | 'sw'
@@ -39,6 +32,7 @@ export const enabled: LanguageValue[] = [
   'en',
   'es',
   'et',
+  'fi',
   'fr',
   'hu',
   'it',
@@ -64,13 +58,6 @@ export const locales: {
   value: LanguageValue;
 }[] = [
   {
-    englishName: 'Amharic',
-    label: 'አማርኛ',
-    langcode: 'AM',
-    signLangCodes: ['ESL'],
-    value: 'am',
-  },
-  {
     englishName: 'Chinese Mandarin (Simplified)',
     label: '中文简体（普通话）',
     langcode: 'CHS',
@@ -83,13 +70,6 @@ export const locales: {
     langcode: 'X',
     signLangCodes: ['DGS', 'SGS', 'OGS'],
     value: 'de',
-  },
-  {
-    englishName: 'Greek',
-    label: 'Ελληνική',
-    langcode: 'G',
-    signLangCodes: ['GSL'],
-    value: 'el',
   },
   {
     englishName: 'English',
@@ -166,18 +146,6 @@ export const locales: {
     value: 'fr',
   },
   {
-    englishName: 'Ga',
-    label: 'Ga',
-    langcode: 'GA',
-    value: 'gaa',
-  },
-  {
-    englishName: 'Haitian Creole',
-    label: 'Kreyòl ayisyen',
-    langcode: 'CR',
-    value: 'ht',
-  },
-  {
     englishName: 'Hungarian',
     label: 'magyar',
     langcode: 'H',
@@ -199,25 +167,11 @@ export const locales: {
     value: 'ko',
   },
   {
-    englishName: 'Malagasy',
-    label: 'Malagasy',
-    langcode: 'MG',
-    signLangCodes: ['TTM'],
-    value: 'mg',
-  },
-  {
     englishName: 'Dutch',
     label: 'Nederlands',
     langcode: 'O',
     signLangCodes: ['NGT', 'SSU', 'VGT'],
     value: 'nl',
-  },
-  {
-    englishName: 'Portuguese (Portugal)',
-    label: 'Português (Portugal)',
-    langcode: 'TPO',
-    signLangCodes: ['LGP', 'LAS', 'SLM'],
-    value: 'ptPt',
   },
   {
     englishName: 'Portuguese (Brazil)',
@@ -227,11 +181,11 @@ export const locales: {
     value: 'pt',
   },
   {
-    englishName: 'Romanian',
-    label: 'Română',
-    langcode: 'M',
-    signLangCodes: ['LMG'],
-    value: 'ro',
+    englishName: 'Portuguese (Portugal)',
+    label: 'Português (Portugal)',
+    langcode: 'TPO',
+    signLangCodes: ['LGP', 'LAS', 'SLM'],
+    value: 'ptPt',
   },
   {
     englishName: 'Russian',
@@ -239,20 +193,6 @@ export const locales: {
     langcode: 'U',
     signLangCodes: ['RSL'],
     value: 'ru',
-  },
-  {
-    englishName: 'Kinyarwanda',
-    label: 'Ikinyarwanda',
-    langcode: 'YW',
-    signLangCodes: ['RWS'],
-    value: 'rw',
-  },
-  {
-    englishName: 'Slovak',
-    label: 'slovenčina',
-    langcode: 'V',
-    signLangCodes: ['VSL'],
-    value: 'sk',
   },
   {
     englishName: 'Slovenian',

@@ -19,7 +19,7 @@ export default defineBoot(({ app, router }) => {
           browserTracingIntegration({ router }),
         ],
         release: `${process.env.APP_NAME}@${process.env.version}`,
-        tracesSampleRate: 1.0,
+        tracesSampleRate: 1,
       });
     }
   } catch (error) {

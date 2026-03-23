@@ -4,6 +4,40 @@
 
 Para sa makita ang lahat ng mga update, tingnan ang aming CHANGELOG.md na file sa GitHub.
 
+## v26.3.0
+
+### ✨ Mga Bagong Feature
+
+- ✨ **Memorial Media**: Automatic Memorial media retrieval is now out of beta! The app will automatically download the Memorial Welcome Video and image to display during the Memorial, when available in the configured language.
+- ✨ **Playback Speed**: Added playback speed control with visual indicator, and manual reset. This feature is only visible if enabled in the advanced settings.
+- ✨ **Pinyin Songs**: Added a toggle for pinyin song substitution for meetings held in Chinese.
+
+## v26.2.0
+
+### ✨ Mga Bagong Feature
+
+- ✨ **Disk Space Check**: Added functionality to monitor and notify when disk space is low.
+
+## v26.1.5
+
+### ✨ Mga Bagong Feature
+
+- ✨ **Memorial Media**: Automatically fetch Memorial banner and intro video in supported languages when the Memorial date is selected.
+
+## v26.1.0
+
+### ✨ Mga Bagong Feature
+
+- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
+- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
+- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+
+## v25.12.2
+
+### ✨ Mga Bagong Feature
+
+- ✨ **Zoom/Pan buttons**: Added the ability to press and hold zoom and pan buttons for continuous adjustment.
+
 ## v25.12.0
 
 ### ✨ Mga Bagong Feature
@@ -57,7 +91,7 @@ Para sa makita ang lahat ng mga update, tingnan ang aming CHANGELOG.md na file s
 - ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
 - ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
 - ✨ **Media Crossfade**: Implemented crossfade transitions for media display, instead of the more abrupt fade-to-black transition that was present before.
-- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not.
+- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not
 - ✨ **macOS Click-Through on Inactive Windows**: Enabled mouse click passthrough on the main window for macOS, which should make it easier to control the app even when it's not focused.
 
 ## v25.9.0
@@ -83,12 +117,11 @@ Para sa makita ang lahat ng mga update, tingnan ang aming CHANGELOG.md na file s
 - ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
 - ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
 
-### 🛠️ Mga Pinahusay at Inayos
+## v25.7.0
 
-- 🛠️ **Enhanced Section Headers**: New three-dots menu system with color picker, move up/down controls, repeat options, and delete functionality.
-- ✨ **Inline Title Editing**: Edit media item titles directly in the interface without opening separate dialogs.
-- 🛠️ **Improved Navigation**: Better keyboard shortcuts with scroll-to-selected functionality and enhanced media navigation.
-- 🛠️ **Visual Enhancements**: Animation support during sorting operations and improved drag-and-drop visual feedback.
+### ✨ Mga Bagong Feature
+
+- No new features for this release!
 
 ## 25.6.0
 
@@ -97,47 +130,12 @@ Para sa makita ang lahat ng mga update, tingnan ang aming CHANGELOG.md na file s
 - ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
 - ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
 
-### 🛠️ Mga Pinahusay at Inayos
-
-- 🛠️ **Better mime type handling**: Improved support for MIME types for better media compatibility.
-- 🛠️ **Enhanced navigation drawer**: Improved mini state handling and added tooltip display for better user navigation.
-- 🛠️ **Linux compatibility**: Forced GTK 3 usage on Linux to prevent UI and launch issues.
-
 ## 25.5.0
 
 ### ✨ Mga Bagong Feature
 
 - 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
 - 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
-
-### 🛠️ Mga Pinahusay at Inayos
-
-- 🔍 **Restore Zoom with `Ctrl` + `Scroll`**: Re-enable immediate zooming with the control + scroll gesture for easier navigation.
-- 👤 **Hide Unused CO Media**: Hide rather than skip unused media for Circuit Overseer visits to maintain a cleaner presentation.
-- 🎵 **Improve Duplicate Song Indicator**: Enhance the visual cue for duplicate songs to make them easier to identify.
-
-## 25.4.3
-
-### 🛠️ Mga Pinahusay at Inayos
-
-- ➕ **Clean Up Media Mula sa v25.4.x**: Awtomatikong linisin ang mga maling nailagay na media mula v25.4.1 hanggang v25.4.2 upang matiyak na walang nawawalang media o nasa maling lugar sa media list.
-
-## 25.4.2
-
-### 🛠️ Mga Pinahusay at Inayos
-
-- ➕ **Pigilan ang Dobleng Media**: Iwasang magdagdag ng ilang mga media item nang maraming ulit sa media list.
-
-## 25.4.1
-
-### 🛠️ Mga Pinahusay at Inayos
-
-- 🎬 **Fix Custom Start/End Time Assignment**: Prevent custom start and end times from being incorrectly applied to the wrong video.
-- 📝 **Allow Mismatched Subtitles**: Enable use of subtitles even when they do not perfectly match the media file.
-- 🪟 **Disable Rounded Corners on Windows**: Remove rounded corners for the media window on Windows.
-- 🖼 **Include Non-Referenced Images in Media List**: Ensure all non-referenced images are added to the media list for completeness.
-- ➕ **Prevent Duplicate Media Sections**: Avoid creating multiple media sections for the same media item.
-- 📥 **Preserve Playlist Order on Import**: Maintain the original order of JWL playlists during the import process.
 
 ## 25.4.0
 
@@ -146,23 +144,11 @@ Para sa makita ang lahat ng mga update, tingnan ang aming CHANGELOG.md na file s
 - 🇵🇭 **Bagong Wika: Tagalog**: Idinagdag ang Tagalog, pinalawak ang paggamit ng app sa iba't ibang wika.
 - 🎞 **Tulong sa `.m4v` Video Format**: Ngayon ay mayroon nang playback para sa `.m4v` files upang palawakin ang media compatibility.
 
-### 🛠️ Mga Pinahusay at Inayos
-
-- 🎬 **Multiple Start/End Times sa Iisang Video**: Isang video na lamang sa media list na lilitaw nang higit sa isang beses na may iba-ibang start/end times.
-- 📤 **Isama ang Grouped Media sa Auto Export**: Awtomatikong i-export ang mga item sa grouped media kasama ng iba pa.
-- 📡 **Wastong Pagkuha ng `.m4v` Mula sa JW API**: Sinigurong ang mga `.m4v` file ay wastong nakuha mula sa JW API.
-
 ## 25.3.1
 
 ### ✨ Mga Bagong Feature
 
 - 🌏 **Bagong Wika: Korean**: Idinagdag ang Korean, pinalawak ang paggamit ng app sa iba't ibang wika.
-
-### 🛠️ Mga Pinahusay at Inayos
-
-- ⚡ **Pinahusay na Kakayahan at Paggamit ng CPU**: Pinahusay na kakayahan ng CPU upang magamit nang mabuti.
-- 🔄 **Pag-ayos sa Pag-synchronize at mga Crash Issues**: Paglutas may kinalaman sa mga problemang ito.
-- 📜 **Pagpapakita ng mga Release Notes sa mga Kongregasyon**: Sinisiguradong naka-display ang mga release notes sa mga kongregasyon.
 
 ## 25.3.0
 
@@ -173,10 +159,52 @@ Para sa makita ang lahat ng mga update, tingnan ang aming CHANGELOG.md na file s
 - 📅 **Awtomatikong Petsa ng Memoryal at Background**: Awtomatikong tukuyin at i-set ang petsa ng Memoryal at ihanda ang background image para rito.
 - 📜 **Ipakita ang Release Notes sa App**: Ipakita ang release notes sa mismong application upang makita ng mga gumagamit ang mga binago pagtapos ng update.
 
-### 🛠️ Mga Pinahusay at Inayos
+## 25.2.1
 
-- ⚡ \*\*Pag-optimize ng Smart Cache Clearing: Pinaganda ang awtomatikong clearing ng cache.
-- 📂 **Wastong Media para sa Circuit Overseer**: Tinitiyak na ang media para sa Circuit Overseer ay mailalagay sa tamang seksyon.
-- 📅 **Pag-alis ng Media para sa Pulong para sa Memoryal**: Pagpigil sa pagkuha ng karaniwang meeting media para sa Memoryal upang maiwasan ang error.
-- 📅 **Pagtago ng mga Meeting Section sa Memoryal**: Mas malinis na layout habang Memoryal.
-- 📖 **Inayos na Pag-download ng Sign Language Bible Video**: Tamang pag-download ng mga video sa bawat kabanata ng Bibliya sa wikang Sign Language mula sa JWL playlist.
+### ✨ Mga Bagong Feature
+
+- 🔄 **Allow OBS Reconnection Attempts**: Introduce the possibility to manually force OBS to reconnect when needed.
+- 🗑 **Auto Cleanup Old Export Date Folders**: Automatically remove outdated export date folders to keep storage organized.
+
+## 25.2.0
+
+### ✨ Mga Bagong Feature
+
+- 🌍 **Use System Locale by Default**: Automatically detect and use the system's locale for a more personalized experience.
+- 🏷 **Tag Support for Exported Media**: Add metadata tags to exported media files for better organization.
+- 🔄 **Automatic Beta to Stable Downgrade**: Allow automatic downgrades from beta versions to stable releases when necessary.
+- 🌐 **Extract Latest MEPS Language Indexes**: Fetch the most recent MEPS language indexes directly from the official website, ensuring up-to-date language support.
+
+## 25.1.0
+
+### ✨ Mga Bagong Feature
+
+- 📅 **Open Previous Dates**: Allow opening previous dates of the current week, which is useful when the meeting day is moved later in the week.
+- 🛑 **Error Banner for OBS Studio**: Add an error banner when OBS Studio is not connected on a meeting day, ensuring users are alerted.
+- 📚 **Group Media by Publication**: Group media from the same referred publication for a cleaner and more organized media overview.
+- 🎵 **Duplicate Song Warning**: Show a warning if songs are listed more than once in the media list for weekend meetings.
+- 🔄 **Future Schedule Planning**: Enable the planning of future meeting schedule changes, which is useful for yearly schedule changes or for the circuit overseer's visit to a neighboring congregation.
+
+## 24.11.0
+
+### ✨ Mga Bagong Feature
+
+- **feat**: Presenting the website is now supported on macOS 🚀
+- **feat**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
+- **feat**: Added support for setting the web address from which media should be downloaded 🚀
+- **feat**: Added OBS Studio instant scene picker and overhauled scene picker functionality in settings
+- **feat**: Expanded documentation website to support more languages
+
+## 24.10.10
+
+### ✨ Mga Bagong Feature
+
+- **new**: Added keyboard shortcuts to navigate to the next/previous media item
+- **new**: Added a right-click menu to media items to hide media items and rename them
+- **new**: Trimmed video times are now respected in imported JWL playlists
+
+## 24.10.9
+
+### ✨ Mga Bagong Feature
+
+- **feat**: Added an option to delete all extra media files for the currently selected day

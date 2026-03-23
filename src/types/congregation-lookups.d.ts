@@ -16,9 +16,25 @@ export interface GeoRecord {
   type: string;
 }
 
-interface CurrentSchedule {
-  midweek: Schedule;
-  weekend: Schedule;
+export interface NormalizedSchedule {
+  current: null | {
+    mwDay: `${number}`;
+    mwStartTime: `${number}:${number}`;
+    weDay: `${number}`;
+    weStartTime: `${number}:${number}`;
+  };
+  future: null | {
+    date: `${number}/${number}/${number}`;
+    mwDay: `${number}`;
+    mwStartTime: `${number}:${number}`;
+    weDay: `${number}`;
+    weStartTime: `${number}:${number}`;
+  };
+}
+
+interface DaySchedule {
+  time: `${number}:${number}`;
+  weekday: number;
 }
 
 interface GeoLocation {
@@ -48,12 +64,13 @@ interface Properties {
 }
 
 interface Schedule {
-  time: `${number}:${number}`;
-  weekday: number;
+  midweek: DaySchedule;
+  weekend: DaySchedule;
 }
 
 interface ScheduleDetails {
   changeStamp: null | string;
-  current: CurrentSchedule;
+  current: null | Schedule;
+  future: null | Schedule;
   futureDate: null | string;
 }

@@ -12,9 +12,14 @@ initializeElectronApi('RouteHelper');
 
 const router = useRouter();
 
-function searchParam(key: string) {
+function getParam(key: string) {
   try {
-    return new URLSearchParams(location.search).get(key);
+    return (
+      new URLSearchParams(location.search).get(key) ||
+      new URLSearchParams(
+        location.hash.substring(location.hash.indexOf('?')),
+      ).get(key)
+    );
   } catch (error) {
     errorCatcher(error);
     return '';
@@ -23,7 +28,7 @@ function searchParam(key: string) {
 
 onBeforeMount(() => {
   try {
-    const param = searchParam('page');
+    const param = getParam('page');
     if (param) {
       router.push({ path: `/${param}` });
     }

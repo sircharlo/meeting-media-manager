@@ -2,53 +2,41 @@
  * Centralized map of JW Icons Unicode strings
  * Keys are the identifiers used in the app, values are the Unicode escape sequences
  */
-export type jwIconsKeys =
-  | 'ayfm'
-  | 'ayfm-part'
-  | 'bible-reading'
-  | 'brochures-and-booklets'
-  | 'cbs'
-  | 'circuit-overseer'
-  | 'concluding-comments'
-  | 'g'
-  | 'gems'
-  | 'introduction'
-  | 'lac'
-  | 'lac-part'
-  | 'magazines'
-  | 'meeting-workbooks'
-  | 'programs'
-  | 'pt'
-  | 'tgw'
-  | 'tracts-and-invitations'
-  | 'tv-logo'
-  | 'w'
-  | 'wp'
-  | 'ws'
-  | 'wt';
+export const fallbackJwIconsGlyphMap: Record<string, string> = {
+  arena: '\ue601',
+  'awake-exclamation-mark': '\ue619',
+  'brochure-stack': '\ue62b',
+  gem: '\ue658',
+  'jw-square': '\ue666',
+  'magazine-stack': '\ue675',
+  'meeting-workbook-stack': '\ue679',
+  sheep: '\ue6a4',
+  speaker: '\ue6ab',
+  'tract-stack': '\ue6c4',
+  video: '\ue6ce',
+  watchtower: '\ue6d2',
+  'watchtower-square': '\ue6d3',
+  wheat: '\ue6d4',
+  'wine-bread': '\ue6d5',
+};
 
-export const jwIcons: Record<jwIconsKeys, string> = {
-  ayfm: '\ue6ec',
-  'ayfm-part': '\ue698',
-  'bible-reading': '\ue61f',
-  'brochures-and-booklets': '\ue62d',
-  cbs: '\ue6c3',
-  'circuit-overseer': '\ue6c2',
-  'concluding-comments': '\ue6c2',
-  g: '\ue61b',
-  gems: '\ue694',
-  introduction: '\ue6c2',
-  lac: '\ue6bb',
-  'lac-part': '\ue6d8',
-  magazines: '\ue67c',
-  'meeting-workbooks': '\ue680',
-  programs: '\ue601',
-  pt: '\ue6c2',
-  tgw: '\ue65c',
-  'tracts-and-invitations': '\ue6dc',
-  'tv-logo': '\ue66b',
-  w: '\ue6ea',
-  wp: '\ue6ea',
-  ws: '\ue6eb',
-  wt: '\ue6ea',
+export const keywordToJwIconMapping: Record<string, string | undefined> = {
+  ayfm: 'wheat',
+  'brochures-and-booklets': 'brochure-stack',
+  'circuit-overseer': 'speaker',
+  g: 'awake-exclamation-mark',
+  lac: 'sheep',
+  magazines: 'magazine-stack',
+  'meeting-workbooks': 'meeting-workbook-stack',
+  memorial: 'wine-bread',
+  programs: 'arena',
+  pt: 'speaker',
+  tgw: 'gem',
+  'tracts-and-invitations': 'tract-stack',
+  'tv-logo': 'jw-square',
+  w: 'watchtower',
+  'welcome-video': 'video',
+  wp: 'persons-doorstep',
+  ws: 'watchtower-square',
+  wt: 'watchtower',
 };

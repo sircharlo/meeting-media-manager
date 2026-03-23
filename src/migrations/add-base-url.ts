@@ -16,9 +16,17 @@ export const addBaseUrlToAllCongregations: MigrationFunction = async () => {
       typeof congregationStore.congregations !== 'object' ||
       Array.isArray(congregationStore.congregations)
     ) {
-      console.warn(
-        '🔍 [migration] Invalid congregationStore.congregations structure in addBaseUrlToAllCongregations:',
-        congregationStore.congregations,
+      errorCatcher(
+        new Error(
+          'Invalid congregationStore.congregations structure in addBaseUrlToAllCongregations',
+        ),
+        {
+          contexts: {
+            fn: {
+              name: 'addBaseUrlToAllCongregations',
+            },
+          },
+        },
       );
       congregationStore.congregations = {};
     }

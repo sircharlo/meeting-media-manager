@@ -137,7 +137,7 @@ describe('Settings Utilities', () => {
 
   describe('performActions', () => {
     it('should dispatch obsConnect event for obsConnect action', () => {
-      const dispatchEventSpy = vi.spyOn(window, 'dispatchEvent');
+      const dispatchEventSpy = vi.spyOn(globalThis, 'dispatchEvent');
       const actions: SettingsItemAction[] = ['obsConnect'];
 
       performActions(actions);
@@ -150,7 +150,7 @@ describe('Settings Utilities', () => {
     });
 
     it('should handle multiple actions', () => {
-      const dispatchEventSpy = vi.spyOn(window, 'dispatchEvent');
+      const dispatchEventSpy = vi.spyOn(globalThis, 'dispatchEvent');
       const actions: SettingsItemAction[] = ['obsConnect', 'obsConnect']; // Duplicate to test multiple calls
 
       performActions(actions);

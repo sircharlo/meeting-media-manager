@@ -9,9 +9,6 @@
       background-color: black;
     "
   >
-    <!-- <pre style="position: absolute; top: 0; left: 0; z-index: 1000">
-      jwIconsFontLoaded: {{ jwIconsFontLoaded }}
-    </pre> -->
     <q-resize-observer debounce="50" @resize="postMediaWindowSize" />
 
     <!-- Base yeartext layer - always visible with black background -->
@@ -21,12 +18,20 @@
       :class="{ 'blank-screen': isTransitioning }"
     >
       <!-- eslint-disable next-line vue/no-v-html -->
-      <div id="yeartext" class="q-pa-md center" v-html="yeartext" />
+      <div
+        id="yeartext"
+        class="center"
+        :style="yeartextFontStyle"
+        v-html="sanitize(yeartext || '')"
+      />
       <div
         v-if="!hideMediaLogo && jwIconsFontLoaded"
         id="yeartextLogoContainer"
+        class="jw-icon"
       >
-        <p id="yeartextLogo">{{ jwIcons['tv-logo'] }}</p>
+        <p id="yeartextLogo">
+          {{ getJwIconFromKeyword('tv-logo') }}
+        </p>
       </div>
     </div>
 
@@ -149,18 +154,34 @@ import {
   watchImmediate,
   whenever,
 } from '@vueuse/core';
+import DOMPurify from 'dompurify';
 import { useQuasar } from 'quasar';
-import { jwIcons } from 'src/constants/jw-icons';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { setElementFont } from 'src/helpers/fonts';
+import {
+  getJwIconFromKeyword,
+  loadYeartextFont,
+  setElementFont,
+} from 'src/helpers/fonts';
 import { createTemporaryNotification } from 'src/helpers/notifications';
+import { log } from 'src/shared/vanilla';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
-import { computed, onMounted, ref, type Ref, useTemplateRef, watch } from 'vue';
+import { useJwStore } from 'stores/jw';
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  type Ref,
+  useTemplateRef,
+  watch,
+} from 'vue';
 import { useI18n } from 'vue-i18n';
+
+const { sanitize } = DOMPurify;
 
 const { t } = useI18n();
 
-const { getScreenAccessStatus } = window.electronApi;
+const { getScreenAccessStatus, PLATFORM } = globalThis.electronApi;
 
 const $q = useQuasar();
 
@@ -180,6 +201,52 @@ $q.iconMapFn = (iconName) => {
   return {
     cls: iconName,
   };
+};
+
+/**
+ * Robustly cleans up a media element to prevent renderer crashes.
+ * @param element The HTMLAudioElement or HTMLVideoElement to clean up.
+ */
+const cleanupMediaElement = (element: HTMLMediaElement | null | undefined) => {
+  if (!element) return;
+
+  log(
+    '🎬 [cleanupMediaElement] Cleaning up media element',
+    'mediaPlayer',
+    'log',
+  );
+
+  try {
+    // Stop playback
+    element.pause();
+
+    // Clear sources to free up internal buffers/decoders
+    element.src = '';
+    element.removeAttribute('src');
+    element.srcObject = null;
+
+    // Remove all event listeners
+    element.oncanplay = null;
+    element.oncanplaythrough = null;
+    element.ontimeupdate = null;
+    element.onended = null;
+    element.onpause = null;
+    element.onerror = null;
+    element.onloadedmetadata = null;
+    element.onloadeddata = null;
+    element.onplaying = null;
+    element.onwaiting = null;
+    element.onstalled = null;
+    element.onseeking = null;
+    element.onseeked = null;
+
+    // Force a load to finalize clearing the previous source
+    element.load();
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: { fn: { name: 'cleanupMediaElement' } },
+    });
+  }
 };
 
 const isEnding = ref(false);
@@ -238,6 +305,22 @@ whenever(
   },
 );
 
+const { data: playbackRateData } = useBroadcastChannel<
+  number | undefined,
+  number | undefined
+>({
+  name: 'playback-rate',
+});
+
+whenever(
+  () => playbackRateData.value,
+  (newRate) => {
+    if (currentMediaElement.value && newRate) {
+      currentMediaElement.value.playbackRate = newRate;
+    }
+  },
+);
+
 const { data: mediaCustomDuration } = useBroadcastChannel<
   string | undefined,
   string | undefined
@@ -248,6 +331,25 @@ const { data: mediaCustomDuration } = useBroadcastChannel<
 const { data: mediaRepeat } = useBroadcastChannel<string, boolean>({
   name: 'repeat',
 });
+
+const { data: mediaRepeatNow } = useBroadcastChannel<number, number>({
+  name: 'media-repeat-now',
+});
+
+whenever(
+  () => mediaRepeatNow.value,
+  () => {
+    if (currentMediaElement.value) {
+      log(
+        '🎬 [mediaRepeatNow] Forcing replay of current item',
+        'mediaPlayer',
+        'log',
+      );
+      currentMediaElement.value.currentTime = customMin.value;
+      playMediaElement();
+    }
+  },
+);
 
 const { data: mediaPlayingUrl } = useBroadcastChannel<string, string>({
   name: 'media-url',
@@ -288,10 +390,13 @@ const skipZoomPanAnimation = ref(false);
 
 const applyZoomPanState = (zoomPanState: Record<string, number>) => {
   try {
-    // Try to find the active image element from either layer
-    const imageElem1 = document.getElementById('mediaImage1');
-    const imageElem2 = document.getElementById('mediaImage2');
-    const imageElem = imageElem1 || imageElem2;
+    // Try to find the active image element matching the current media URL
+    let imageElem: HTMLElement | null = null;
+    if (displayLayer1.value.url === mediaPlayingUrl.value) {
+      imageElem = document.getElementById('mediaImage1');
+    } else if (displayLayer2.value.url === mediaPlayingUrl.value) {
+      imageElem = document.getElementById('mediaImage2');
+    }
 
     if (!imageElem) return;
 
@@ -360,6 +465,22 @@ const customMax = computed(() => {
   return (JSON.parse(mediaCustomDuration.value || '{}') || {})?.max;
 });
 
+watch(
+  () => mediaCustomDuration.value,
+  (newVal, oldVal) => {
+    if (newVal !== oldVal && currentMediaElement.value) {
+      log(
+        '🎬 [mediaCustomDuration] Duration changed, seeking to:',
+        'mediaPlayer',
+        'log',
+        customMin.value,
+      );
+      isEnding.value = false;
+      currentMediaElement.value.currentTime = customMin.value;
+    }
+  },
+);
+
 const currentMediaElement: Ref<HTMLAudioElement | HTMLVideoElement | null> =
   computed(() => {
     return mediaElement1.value || mediaElement2.value || null;
@@ -386,8 +507,10 @@ const triggerPlay = (force = false) => {
     return;
   }
 
-  console.log(
+  log(
     `🎬 [triggerPlay] Attempting to play video: ${mediaPlayingUrl.value}, readyState: ${currentMediaElement.value.readyState}, paused: ${currentMediaElement.value.paused}`,
+    'mediaPlayer',
+    'log',
   );
 
   currentMediaElement.value.play().catch((error: Error) => {
@@ -402,8 +525,9 @@ const triggerPlay = (force = false) => {
     );
 
     if (!shouldIgnore) {
-      console.error('❌ [triggerPlay] Video play error:', error);
-      errorCatcher(error);
+      errorCatcher(error, {
+        contexts: { fn: { name: 'triggerPlay' } },
+      });
     }
   });
 };
@@ -413,8 +537,10 @@ const playMediaElement = (wasPaused = false, websiteStream = false) => {
     return;
   }
 
-  console.log(
+  log(
     '🎬 [playMediaElement] Setting up video playback',
+    'mediaPlayer',
+    'log',
     wasPaused,
     websiteStream,
     mediaAction.value,
@@ -425,7 +551,7 @@ const playMediaElement = (wasPaused = false, websiteStream = false) => {
   }
 
   currentMediaElement.value.oncanplaythrough = () => {
-    console.log('🎬 [playMediaElement] Video can play through');
+    log('🎬 [playMediaElement] Video can play through', 'mediaPlayer', 'log');
     triggerPlay(websiteStream);
   };
 
@@ -435,7 +561,11 @@ const playMediaElement = (wasPaused = false, websiteStream = false) => {
     const checkAndPlay = () => {
       const element = currentMediaElement.value;
       if (element && mediaAction.value === 'play' && element.paused) {
-        console.log('🎬 [playMediaElement] Fallback: triggering play');
+        log(
+          '🎬 [playMediaElement] Fallback: triggering play',
+          'mediaPlayer',
+          'log',
+        );
         triggerPlay();
       }
     };
@@ -448,23 +578,28 @@ const playMediaElement = (wasPaused = false, websiteStream = false) => {
 };
 
 const endOrLoop = () => {
-  console.log('🎬 [endOrLoop] Video ended, repeat:', mediaRepeat.value);
-  if (!mediaRepeat.value) {
-    console.log('🎬 [endOrLoop] Posting ended state');
-    postLastEndTimestamp(Date.now());
-    // Don't clear mediaCustomDuration immediately to avoid race condition
-    // It will be cleared when the media state is handled by the main window
-  } else {
-    console.log('🎬 [endOrLoop] Looping video');
+  log(
+    '🎬 [endOrLoop] Video ended, repeat:',
+    'mediaPlayer',
+    'log',
+    mediaRepeat.value,
+  );
+  if (mediaRepeat.value) {
+    log('🎬 [endOrLoop] Looping video', 'mediaPlayer', 'log');
     if (currentMediaElement.value) {
       currentMediaElement.value.currentTime = customMin.value;
       playMediaElement();
     }
+  } else {
+    log('🎬 [endOrLoop] Posting ended state', 'mediaPlayer', 'log');
+    postLastEndTimestamp(Date.now());
+    // Don't clear mediaCustomDuration immediately to avoid race condition
+    // It will be cleared when the media state is handled by the main window
   }
 };
 
 const handleVideoPause = () => {
-  console.log('⏸️ [handleVideoPause] Video paused');
+  log('⏸️ [handleVideoPause] Video paused', 'mediaPlayer', 'log');
   try {
     postCurrentTime(currentMediaElement.value?.currentTime || 0);
   } catch (e) {
@@ -473,8 +608,10 @@ const handleVideoPause = () => {
 };
 
 const handleVideoCanPlay = () => {
-  console.log(
+  log(
     '🔄 [handleVideoCanPlay] Video can play',
+    'mediaPlayer',
+    'log',
     mediaAction.value,
     currentMediaElement.value?.paused,
     currentMediaElement.value?.readyState,
@@ -490,7 +627,11 @@ const handleVideoCanPlay = () => {
     // Add a small delay to ensure the video is fully ready
     setTimeout(() => {
       if (mediaAction.value === 'play' && currentMediaElement.value?.paused) {
-        console.log('🎬 [handleVideoCanPlay] Triggering play after delay');
+        log(
+          '🎬 [handleVideoCanPlay] Triggering play after delay',
+          'mediaPlayer',
+          'log',
+        );
         triggerPlay();
       }
     }, 50);
@@ -501,8 +642,10 @@ const fadeOutDurationInSeconds = 0.3;
 const fadeOutDurationInMilliseconds = fadeOutDurationInSeconds * 1000;
 
 const playMedia = () => {
-  console.log(
+  log(
     '🔄 [playMedia] Playing media',
+    'mediaPlayer',
+    'log',
     mediaAction.value,
     currentMediaElement.value?.paused,
   );
@@ -558,6 +701,9 @@ const playMedia = () => {
     };
 
     currentMediaElement.value.currentTime = customMin.value;
+    if (playbackRateData.value) {
+      currentMediaElement.value.playbackRate = playbackRateData.value;
+    }
     playMediaElement();
   } catch (e) {
     errorCatcher(e);
@@ -568,7 +714,12 @@ const isTransitioning = ref(false);
 
 // Crossfade function to handle layer transitions
 const crossfadeToNewMedia = (newUrl: string) => {
-  console.log('🎬 [crossfadeToNewMedia] Starting crossfade to:', newUrl);
+  log(
+    '🎬 [crossfadeToNewMedia] Starting crossfade to:',
+    'mediaPlayer',
+    'log',
+    newUrl,
+  );
 
   // Determine which layer is currently live and which is not
   const currentLiveLayer = displayLayer1.value.isLive
@@ -591,6 +742,14 @@ const crossfadeToNewMedia = (newUrl: string) => {
 
     // After transition completes, clean up the old layer
     setTimeout(() => {
+      // Explicitly cleanup the media element before clearing the URL
+      // to prevent crashes when the element is removed from DOM while active
+      if (currentLiveLayer.value === displayLayer1.value) {
+        cleanupMediaElement(mediaElement1.value);
+      } else {
+        cleanupMediaElement(mediaElement2.value);
+      }
+
       currentLiveLayer.value.url = '';
       isTransitioning.value = false;
     }, fadeOutDurationInMilliseconds); // Match the CSS transition duration
@@ -599,7 +758,7 @@ const crossfadeToNewMedia = (newUrl: string) => {
 
 // Handle clearing media (fade out current layer)
 const clearCurrentMedia = () => {
-  console.log('🎬 [clearCurrentMedia] Clearing current media');
+  log('🎬 [clearCurrentMedia] Clearing current media', 'mediaPlayer', 'log');
 
   const currentLiveLayer = displayLayer1.value.isLive
     ? displayLayer1
@@ -609,7 +768,11 @@ const clearCurrentMedia = () => {
     // Skip zoom/pan animation when clearing media
     if (isImage(currentLiveLayer.value.url)) {
       skipZoomPanAnimation.value = true;
-      console.log('🎬 [clearCurrentMedia] Skipping zoom/pan animation');
+      log(
+        '🎬 [clearCurrentMedia] Skipping zoom/pan animation',
+        'mediaPlayer',
+        'log',
+      );
     }
 
     // Fade out the current layer
@@ -638,6 +801,13 @@ const clearCurrentMedia = () => {
 
     // After transition completes, clear the URL
     setTimeout(() => {
+      // Explicitly cleanup the media element before clearing the URL
+      if (currentLiveLayer.value === displayLayer1.value) {
+        cleanupMediaElement(mediaElement1.value);
+      } else {
+        cleanupMediaElement(mediaElement2.value);
+      }
+
       currentLiveLayer.value.url = '';
       if (
         currentMediaElement.value &&
@@ -655,7 +825,14 @@ const clearCurrentMedia = () => {
 watch(
   () => mediaPlayingUrl.value,
   (newUrl, oldUrl) => {
-    console.log('🔄 [mediaPlayingUrl] URL changed:', oldUrl, '->', newUrl);
+    log(
+      '🔄 [mediaPlayingUrl] URL changed:',
+      'mediaPlayer',
+      'log',
+      oldUrl,
+      '->',
+      newUrl,
+    );
     isEnding.value = false;
 
     if (oldUrl && newUrl && !isAudio(newUrl)) {
@@ -678,7 +855,11 @@ watch(
 
       // For videos, ensure the element is properly reset when URL changes
       if ((isVideo(newUrl) || isAudio(newUrl)) && newUrl !== oldUrl) {
-        console.log('🎬 [mediaPlayingUrl] Resetting video element for new URL');
+        log(
+          '🎬 [mediaPlayingUrl] Resetting video element for new URL',
+          'mediaPlayer',
+          'log',
+        );
         // Pause current playback
         currentMediaElement.value.pause();
         // Reset current time
@@ -718,109 +899,187 @@ const { post: postMediaPlayingAction } = useBroadcastChannel<string, string>({
   name: 'media-window-media-action',
 });
 
-const { data: yeartext } = useBroadcastChannel<string, string>({
+const { data: yeartext } = useBroadcastChannel<
+  null | string | undefined,
+  null | string | undefined
+>({
   name: 'yeartext',
 });
+
+// Receive current writing script and language code for yeartext font selection
+const { data: currentScript } = useBroadcastChannel<string, string>({
+  name: 'current-script',
+});
+const { data: currentLang } = useBroadcastChannel<string, string>({
+  name: 'current-lang',
+});
+
+const jwStore = useJwStore();
+const yeartextFontFamily = ref('');
+
+watch(
+  () =>
+    [
+      currentScript.value,
+      currentLang.value,
+      urlVariables.value?.mediator,
+    ] as const,
+  async ([script, lang]) => {
+    if (script && urlVariables.value?.mediator) {
+      // Sync urlVariables to jw store for CDN font URL resolution
+      if (urlVariables.value.base) {
+        jwStore.$patch({
+          urlVariables: {
+            base: urlVariables.value.base,
+            mediator: urlVariables.value.mediator,
+            pubMedia: jwStore.urlVariables?.pubMedia ?? '',
+          },
+        });
+      }
+      yeartextFontFamily.value = await loadYeartextFont(script, lang);
+    }
+  },
+);
+
+const yeartextFontStyle = computed(() =>
+  yeartextFontFamily.value
+    ? { fontFamily: yeartextFontFamily.value }
+    : undefined,
+);
 
 watchDeep(
   () => zoomPanState.value,
   (newZoomPanState) => {
-    console.log('🎬 [zoomPanState] New zoom/pan state:', newZoomPanState);
+    log(
+      '🎬 [zoomPanState] New zoom/pan state:',
+      'mediaPlayer',
+      'log',
+      newZoomPanState,
+    );
     applyZoomPanState(newZoomPanState);
   },
 );
+
+const ensureMediaElementReady = async (maxRetries = 50): Promise<boolean> => {
+  let timeouts = 0;
+  while (!currentMediaElement.value) {
+    await new Promise((resolve) => {
+      setTimeout(resolve, 100);
+    });
+    if (++timeouts > maxRetries) {
+      return false;
+    }
+  }
+  return true;
+};
+
+const notifyAccessDenied = (isCamera: boolean) => {
+  createTemporaryNotification({
+    caption: t(
+      isCamera
+        ? 'camera-access-required-explain'
+        : 'screen-access-required-explain',
+    ),
+    message: t(isCamera ? 'camera-access-required' : 'screen-access-required'),
+    noClose: true,
+    timeout: 10000,
+    type: 'negative',
+  });
+};
+
+const requestStream = async (isCamera: boolean, deviceId?: string) => {
+  const checkAccess = async () => {
+    const status = await getScreenAccessStatus();
+    return status === 'granted';
+  };
+
+  const getMedia = () => {
+    if (isCamera) {
+      return navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: { deviceId },
+      });
+    }
+    return navigator.mediaDevices.getDisplayMedia({
+      audio: false,
+      video: PLATFORM === 'linux' ? { cursor: 'never' } : true,
+    });
+  };
+
+  try {
+    if (!(await checkAccess())) {
+      try {
+        const temp = await getMedia();
+        temp.getTracks().forEach((track) => track.stop());
+      } catch (e) {
+        errorCatcher(e, {
+          contexts: {
+            fn: {
+              name: isCamera ? 'requestCameraAccess' : 'requestDisplayAccess',
+            },
+          },
+        });
+      }
+
+      if (!(await checkAccess())) {
+        notifyAccessDenied(isCamera);
+        return null;
+      }
+    }
+
+    return await getMedia();
+  } catch (e) {
+    errorCatcher(e, {
+      contexts: { fn: { name: isCamera ? 'streamCamera' : 'streamDisplay' } },
+    });
+    if (isCamera) notifyAccessDenied(isCamera);
+    return null;
+  }
+};
 
 watch(
   () => webStreamData.value,
   async (newWebStreamData) => {
     videoStreaming.value = newWebStreamData === 'mirroringWebsite';
-    if (newWebStreamData === 'mirroringWebsite') {
-      if (cameraStreamId.value) cameraStreamId.value = '';
-
-      // Activate a display layer for streaming
-      displayLayer1.value.isLive = true;
-      displayLayer1.value.url = ''; // No URL for streaming, just activate the layer
-
-      const screenAccessStatus = await getScreenAccessStatus();
-      if (!screenAccessStatus || screenAccessStatus !== 'granted') {
-        try {
-          await navigator.mediaDevices.getDisplayMedia({
-            audio: false,
-            video: true,
-          });
-        } catch (e) {
-          console.error(
-            '[MediaPlayerPage] First screen access request failed:',
-            e,
-          );
-          errorCatcher(e, {
-            contexts: { fn: { name: 'requestDisplayAccess' } },
-          });
+    if (newWebStreamData !== 'mirroringWebsite') {
+      if (newWebStreamData !== 'previewingWebsite') {
+        if (currentMediaElement.value) {
+          currentMediaElement.value.pause();
+          currentMediaElement.value.srcObject = null;
         }
-        const screenAccessStatusSecondTry = await getScreenAccessStatus();
-        if (
-          !screenAccessStatusSecondTry ||
-          screenAccessStatusSecondTry !== 'granted'
-        ) {
-          console.error(
-            '[MediaPlayerPage] Screen access not granted - cannot stream',
-          );
-          createTemporaryNotification({
-            caption: t('screen-access-required-explain'),
-            message: t('screen-access-required'),
-            noClose: true,
-            timeout: 10000,
-            type: 'negative',
-          });
-          videoStreaming.value = false;
-          return;
-        }
+        postMediaPlayingAction('');
+        displayLayer1.value.isLive = false;
+        displayLayer1.value.url = '';
       }
-      try {
-        const stream = await navigator.mediaDevices.getDisplayMedia({
-          audio: false,
-          video: true,
+      return;
+    }
+
+    if (cameraStreamId.value) cameraStreamId.value = '';
+
+    // Activate a display layer for streaming
+    displayLayer1.value.isLive = true;
+    displayLayer1.value.url = ''; // No URL for streaming, just activate the layer
+
+    const stream = await requestStream(false);
+    const ready = stream && (await ensureMediaElementReady(50));
+
+    if (!stream || !ready || !currentMediaElement.value) {
+      if (!ready && stream) {
+        errorCatcher(new Error('Timed out waiting for media element'), {
+          contexts: { fn: { name: 'streamDisplay' } },
         });
-        let timeouts = 0;
-        while (!currentMediaElement.value) {
-          await new Promise((resolve) => {
-            setTimeout(resolve, 100);
-          });
-          if (++timeouts > 50) {
-            console.error(
-              '[MediaPlayerPage] Timed out waiting for media element',
-            );
-            break;
-          }
-        }
-        if (!currentMediaElement.value || !stream) {
-          console.error(
-            '[MediaPlayerPage] No media element or stream available',
-          );
-          videoStreaming.value = false;
-          postMediaPlayingAction('');
-          currentMediaElement.value?.pause();
-          if (currentMediaElement.value?.srcObject) {
-            currentMediaElement.value.srcObject = null;
-          }
-          return;
-        }
-        currentMediaElement.value.srcObject = stream;
-        playMediaElement(false, true);
-      } catch (e) {
-        errorCatcher(e, { contexts: { fn: { name: 'streamDisplay' } } });
       }
-    } else if (newWebStreamData !== 'previewingWebsite') {
-      if (currentMediaElement.value) {
-        currentMediaElement.value.pause();
+      videoStreaming.value = false;
+      postMediaPlayingAction('');
+      currentMediaElement.value?.pause();
+      if (currentMediaElement.value?.srcObject) {
         currentMediaElement.value.srcObject = null;
       }
-      postMediaPlayingAction('');
-
-      // Deactivate display layer
-      displayLayer1.value.isLive = false;
-      displayLayer1.value.url = '';
+      return;
     }
+
+    currentMediaElement.value.srcObject = stream;
+    playMediaElement(false, true);
   },
 );
 
@@ -828,88 +1087,31 @@ watch(
   () => cameraStreamId.value,
   async (deviceId) => {
     videoStreaming.value = !!deviceId;
-    if (deviceId) {
-      const screenAccessStatus = await getScreenAccessStatus();
-      if (!screenAccessStatus || screenAccessStatus !== 'granted') {
-        try {
-          await navigator.mediaDevices.getUserMedia({
-            audio: false,
-            video: { deviceId },
-          });
-        } catch (e) {
-          errorCatcher(e, {
-            contexts: { fn: { name: 'requestCameraAccess' } },
-          });
-          if (cameraStreamId.value) cameraStreamId.value = '';
-          videoStreaming.value = false;
-          createTemporaryNotification({
-            caption: t('camera-access-required-explain'),
-            message: t('camera-access-required'),
-            noClose: true,
-            timeout: 10000,
-            type: 'negative',
-          });
-          return;
-        }
-        const screenAccessStatusSecondTry = await getScreenAccessStatus();
-        if (
-          !screenAccessStatusSecondTry ||
-          screenAccessStatusSecondTry !== 'granted'
-        ) {
-          createTemporaryNotification({
-            caption: t('screen-access-required-explain'),
-            message: t('screen-access-required'),
-            noClose: true,
-            timeout: 10000,
-            type: 'negative',
-          });
-          videoStreaming.value = false;
-          return;
-        }
-      }
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: false,
-          video: { deviceId },
-        });
-        let timeouts = 0;
-        while (!currentMediaElement.value) {
-          await new Promise((resolve) => {
-            setTimeout(resolve, 100);
-          });
-          if (++timeouts > 10) break;
-        }
-        if (!currentMediaElement.value || !stream) {
-          videoStreaming.value = false;
-          postMediaPlayingAction('');
-          currentMediaElement.value?.pause();
-          if (currentMediaElement.value?.srcObject) {
-            currentMediaElement.value.srcObject = null;
-          }
-          return;
-        }
-        currentMediaElement.value.srcObject = stream;
-        playMediaElement(false, true);
-      } catch (e) {
-        errorCatcher(e, { contexts: { fn: { name: 'streamCamera' } } });
-        if (cameraStreamId.value) cameraStreamId.value = '';
-        videoStreaming.value = false;
-        createTemporaryNotification({
-          caption: t('camera-access-required-explain'),
-          message: t('camera-access-required'),
-          noClose: true,
-          timeout: 10000,
-          type: 'negative',
-        });
-        return;
-      }
-    } else {
+    if (!deviceId) {
       if (currentMediaElement.value) {
         currentMediaElement.value.pause();
         currentMediaElement.value.srcObject = null;
       }
       postMediaPlayingAction('');
+      return;
     }
+
+    const stream = await requestStream(true, deviceId);
+    const ready = stream && (await ensureMediaElementReady(10));
+
+    if (!stream || !ready || !currentMediaElement.value) {
+      videoStreaming.value = false;
+      if (cameraStreamId.value) cameraStreamId.value = '';
+      postMediaPlayingAction('');
+      currentMediaElement.value?.pause();
+      if (currentMediaElement.value?.srcObject) {
+        currentMediaElement.value.srcObject = null;
+      }
+      return;
+    }
+
+    currentMediaElement.value.srcObject = stream;
+    playMediaElement(false, true);
   },
 );
 
@@ -919,23 +1121,23 @@ const { post: postGetCurrentState } = useBroadcastChannel<string, string>({
 });
 
 const fontsSet = ref(false);
-const clearTextFontLoaded = ref(false);
 const jwIconsFontLoaded = ref(false);
 
 const loadFonts = async () => {
   try {
     await setElementFont('Wt-ClearText-Bold');
-    clearTextFontLoaded.value = true;
-  } catch {
-    // Fallback to Noto or system font will be used
-    clearTextFontLoaded.value = true;
+  } catch (e) {
+    errorCatcher(e, {
+      contexts: { fn: { fontName: 'Wt-ClearText-Bold', name: 'loadFonts' } },
+    });
   }
 
   try {
-    await setElementFont('JW-Icons');
-    jwIconsFontLoaded.value = true;
-  } catch {
-    // No fallback for JW-Icons - logo won't show
+    jwIconsFontLoaded.value = await setElementFont('jw-icons-all');
+  } catch (e) {
+    errorCatcher(e, {
+      contexts: { fn: { fontName: 'jw-icons-all', name: 'loadFonts' } },
+    });
     jwIconsFontLoaded.value = false;
   }
 
@@ -951,26 +1153,45 @@ watchImmediate(
     yeartext.value,
   ],
   (oldValues, newValues) => {
-    const urlVariablesChanged =
-      oldValues?.[0] !== newValues?.[0] || oldValues?.[1] !== newValues?.[1];
-    const onlineChanged = oldValues?.[2] !== newValues?.[2];
-    const yeartextChanged = oldValues?.[3] !== newValues?.[3];
-    const newYeartextIsEmpty = !newValues?.[3] && oldValues?.[3];
+    const somethingChanged = {
+      onlineStatusChanged: oldValues?.[2] !== newValues?.[2],
+      urlVariablesChanged:
+        oldValues?.[0] !== newValues?.[0] || oldValues?.[1] !== newValues?.[1],
+      yeartextChanged: oldValues?.[3] !== newValues?.[3],
+      yeartextIsNowEmpty: !newValues?.[3] && !!oldValues?.[3],
+    };
     if (
-      urlVariablesChanged ||
-      onlineChanged ||
-      yeartextChanged ||
-      newYeartextIsEmpty
+      somethingChanged.yeartextIsNowEmpty ||
+      somethingChanged.onlineStatusChanged ||
+      somethingChanged.urlVariablesChanged ||
+      somethingChanged.yeartextChanged
     ) {
-      console.log('🔄 [MediaPlayerPage] Setting initial values');
-      postGetCurrentState(new Date().getTime().toString());
+      log(
+        '🔄 [MediaPlayerPage] Setting initial values',
+        'mediaPlayer',
+        'log',
+        somethingChanged,
+        oldValues,
+        newValues,
+      );
+      postGetCurrentState(Date.now().toString());
       loadFonts();
     }
   },
 );
 
 onMounted(() => {
-  postGetCurrentState(new Date().getTime().toString());
+  postGetCurrentState(Date.now().toString());
+});
+
+onBeforeUnmount(() => {
+  log(
+    '🎬 [MediaPlayerPage] onBeforeUnmount - cleaning up all media',
+    'mediaPlayer',
+    'log',
+  );
+  cleanupMediaElement(mediaElement1.value);
+  cleanupMediaElement(mediaElement2.value);
 });
 </script>
 

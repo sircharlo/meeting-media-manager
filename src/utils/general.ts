@@ -9,7 +9,7 @@ import { toRaw } from 'vue';
  * camelToKebabCase('camelCase') // 'camel-case'
  */
 export const camelToKebabCase = (str: string) =>
-  str.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+  str.replaceAll(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
 
 /**
  * Converts a kebab-case string to camelCase.
@@ -19,7 +19,7 @@ export const camelToKebabCase = (str: string) =>
  * kebabToCamelCase('kebab-case') // 'kebabCase'
  */
 export const kebabToCamelCase = (str: string) =>
-  str.replace(/-./g, (x) => x[1]?.toUpperCase() ?? '');
+  str.replaceAll(/-./g, (x) => x[1]?.toUpperCase() ?? '');
 
 /**
  * Converts a kebab-case or snake_case string to title case.
@@ -32,7 +32,7 @@ export const kebabToCamelCase = (str: string) =>
 export const toTitleCase = (str: string) =>
   str
     .replace(/^[-_]*(.)/, (_, c) => c.toUpperCase())
-    .replace(/[-_]+(.)/g, (_, c) => ' ' + c.toUpperCase());
+    .replaceAll(/[-_]+(.)/g, (_, c) => ' ' + c.toUpperCase());
 
 /**
  * Sleeps for a given amount of time.
@@ -69,7 +69,8 @@ export const isEmpty = (val: unknown) =>
  * @example
  * sanitizeId('Figure_: "2-persons!".') // 'Figure_:__2-persons__.'
  */
-export const sanitizeId = (id: string) => id.replace(/[^a-zA-Z0-9\-_:.]/g, '_');
+export const sanitizeId = (id: string) =>
+  id.replaceAll(/[^a-zA-Z0-9\-_:.]/g, '_');
 
 /**
  * Parses a version string into an object.
@@ -83,7 +84,7 @@ export const parseVersion = (version: string) => {
   const [versionPart, prerelease] = version.split('-');
   const [major, minor, patch] = versionPart
     ?.split('.')
-    .map((v) => parseInt(v)) ?? [0, 0, 0];
+    .map((v) => Number.parseInt(v)) ?? [0, 0, 0];
   const [prTag, prVersion] = prerelease?.split('.') ?? [];
 
   return {
@@ -91,7 +92,7 @@ export const parseVersion = (version: string) => {
     minor: minor ?? 0,
     patch: patch ?? 0,
     prerelease: prTag,
-    prereleaseVersion: parseInt(prVersion || '0'),
+    prereleaseVersion: Number.parseInt(prVersion || '0'),
   };
 };
 
@@ -184,20 +185,6 @@ export const sortByVersion = (a: string, b: string) => {
   return 0;
 };
 
-/**
- * Generates a UUID.
- * @returns The generated UUID.
- * @example
- * uuid() // '8e8679e3-02b1-410b-9399-2c1e5606a971'
- */
-export const uuid = () => {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    const r = (Math.random() * 16) | 0,
-      v = c == 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-};
-
 export const isUUID = (str: string) =>
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
 
@@ -261,7 +248,7 @@ export function toRawDeep<T>(observed: T): T {
   const val = toRaw(observed);
 
   if (Array.isArray(val)) {
-    return val.map(toRawDeep) as T;
+    return val.map((element) => toRawDeep(element)) as T;
   }
 
   if (val === null) return null as T;
@@ -277,50 +264,3 @@ export function toRawDeep<T>(observed: T): T {
 
   return val;
 }
-
-/**
- * Throttles a function to run at regular intervals AND at the end
- * @param func The function to throttle
- * @param delay The delay in milliseconds
- * @returns The throttled function with trailing execution
- */
-export const throttleWithTrailing = <A extends unknown[]>(
-  func: (...args: A) => void,
-  delay: number,
-) => {
-  let lastExecTime = 0;
-  let timeoutId: null | ReturnType<typeof setTimeout> = null;
-  let lastArgs: A | null = null;
-
-  return (...args: A) => {
-    const now = Date.now();
-    lastArgs = args;
-
-    // Execute immediately if enough time has passed
-    if (now - lastExecTime >= delay) {
-      lastExecTime = now;
-      func(...args);
-
-      // Clear any pending trailing execution
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-        timeoutId = null;
-      }
-    } else {
-      // Schedule trailing execution if not already scheduled
-      if (!timeoutId) {
-        timeoutId = setTimeout(
-          () => {
-            if (lastArgs) {
-              lastExecTime = Date.now();
-              func(...lastArgs);
-              timeoutId = null;
-              lastArgs = null;
-            }
-          },
-          delay - (now - lastExecTime),
-        );
-      }
-    }
-  };
-};

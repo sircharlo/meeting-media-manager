@@ -109,16 +109,7 @@ const handleDeleteCacheFiles = async (type: '' | 'all' | 'smart') => {
     emit('hide');
 
     const sizeStr = prettyBytes(bytesFreed || 0);
-    if (!itemsDeleted) {
-      createTemporaryNotification({
-        icon: 'mmm-info',
-        message:
-          mode === 'all'
-            ? t('no-cache-items-found-to-clear')
-            : t('no-unused-cache-items-found-to-clear'),
-        type: 'info',
-      });
-    } else {
+    if (itemsDeleted) {
       createTemporaryNotification({
         icon: 'mmm-shimmer',
         message: t('cleared-item-s-from-cache', {
@@ -127,6 +118,15 @@ const handleDeleteCacheFiles = async (type: '' | 'all' | 'smart') => {
         }),
         timeout: 5000,
         type: 'positive',
+      });
+    } else {
+      createTemporaryNotification({
+        icon: 'mmm-info',
+        message:
+          mode === 'all'
+            ? t('no-cache-items-found-to-clear')
+            : t('no-unused-cache-items-found-to-clear'),
+        type: 'info',
       });
     }
   } catch (error) {

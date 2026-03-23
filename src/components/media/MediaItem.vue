@@ -19,13 +19,13 @@
       <div class="col-shrink">
         <div
           class="q-pr-none rounded-borders overflow-hidden relative-position bg-black"
-          :style="{ opacity: isFileUrl(media.fileUrl) ? undefined : 0.64 }"
+          :style="{
+            opacity: !fileIsAvailable && !streamIsAvailable ? 0.64 : undefined,
+          }"
         >
           <template v-if="media.isImage">
             <VueZoomable
               v-if="media.isImage"
-              v-model:pan="mediaPan"
-              v-model:zoom="mediaZoom"
               :button-pan-step="15"
               :button-zoom-step="0.2"
               :dbl-click-zoom-step="0.35"
@@ -35,10 +35,21 @@
               :initial-zoom="1"
               :max-zoom="5"
               :min-zoom="1"
+              :pan="mediaPan"
               :pan-enabled="false"
               :selector="'#' + randomId"
               style="width: 150px; height: 84px"
               :wheel-zoom-step="0.1"
+              :zoom="mediaZoom"
+              :zoom-enabled="control || shift"
+              @pan="
+                mediaPan = $event.pan;
+                mediaZoom = $event.zoom;
+              "
+              @zoom="
+                mediaZoom = $event.zoom;
+                mediaPan = $event.pan;
+              "
             >
               <div
                 :id="randomId"
@@ -98,91 +109,109 @@
               name="fade"
             >
               <template
-                v-if="media.isImage && (hoveringMediaItem || mediaZoom > 1.01)"
+                v-if="media.isImage && mediaZoom > 1.01 && hoveringMediaItem"
               >
-                <div>
-                  <template v-if="mediaZoom > 1.01">
-                    <div class="absolute-top-right q-mr-xs q-mt-xs row">
-                      <div class="bg-semi-black row rounded-borders">
-                        <q-badge
-                          color="transparent"
-                          style="padding: 5px !important; cursor: pointer"
-                          @mousedown="startPan('up')"
-                          @mouseleave="stopPan"
-                          @mouseup="stopPan"
-                        >
-                          <q-icon color="white" name="mmm-up" />
-                        </q-badge>
-                        <q-separator class="bg-grey-8 q-my-xs" vertical />
-                        <q-badge
-                          color="transparent"
-                          style="padding: 5px !important; cursor: pointer"
-                          @mousedown="startPan('down')"
-                          @mouseleave="stopPan"
-                          @mouseup="stopPan"
-                        >
-                          <q-icon color="white" name="mmm-down" />
-                        </q-badge>
-                        <q-separator class="bg-grey-8 q-my-xs" vertical />
-                        <q-badge
-                          color="transparent"
-                          style="padding: 5px !important; cursor: pointer"
-                          @mousedown="startPan('left')"
-                          @mouseleave="stopPan"
-                          @mouseup="stopPan"
-                        >
-                          <q-icon color="white" name="mmm-left" />
-                        </q-badge>
-                        <q-separator class="bg-grey-8 q-my-xs" vertical />
-                        <q-badge
-                          color="transparent"
-                          style="padding: 5px !important; cursor: pointer"
-                          @mousedown="startPan('right')"
-                          @mouseleave="stopPan"
-                          @mouseup="stopPan"
-                        >
-                          <q-icon color="white" name="mmm-right" />
-                        </q-badge>
-                      </div>
-                    </div>
-                  </template>
-                  <div class="absolute-bottom-right q-mr-xs q-mb-xs row">
-                    <template v-if="mediaZoom > 1.01">
-                      <q-badge
-                        class="q-mr-xs"
-                        color="warning"
-                        style="padding: 5px !important; cursor: pointer"
-                        @click="zoomReset(true)"
-                      >
-                        <q-icon color="white" name="mmm-refresh" />
-                      </q-badge>
-                    </template>
-                    <div class="bg-semi-black row rounded-borders">
-                      <q-badge
-                        color="transparent"
-                        :disabled="!mediaZoom || mediaZoom < 1.01 || undefined"
-                        style="padding: 5px !important; cursor: pointer"
-                        @mousedown="startZoom('out')"
-                        @mouseleave="stopZoom"
-                        @mouseup="stopZoom"
-                      >
-                        <q-icon color="white" name="mmm-minus" />
-                      </q-badge>
-                      <q-separator class="bg-grey-8 q-my-xs" vertical />
-                      <q-badge
-                        color="transparent"
-                        :disabled="!mediaZoom || mediaZoom > 4.99 || undefined"
-                        style="padding: 5px !important; cursor: pointer"
-                        @mousedown="startZoom('in')"
-                        @mouseleave="stopZoom"
-                        @mouseup="stopZoom"
-                      >
-                        <q-icon color="white" name="mmm-plus" />
-                      </q-badge>
-                    </div>
+                <div class="absolute-top-right q-mr-xs q-mt-xs row">
+                  <div class="bg-semi-black row rounded-borders">
+                    <q-badge
+                      color="transparent"
+                      style="padding: 5px !important; cursor: pointer"
+                      @mousedown="startPan('up')"
+                      @mouseleave="stopPan"
+                      @mouseup="stopPan"
+                    >
+                      <q-icon color="white" name="mmm-up" />
+                    </q-badge>
+                    <q-separator class="bg-grey-8 q-my-xs" vertical />
+                    <q-badge
+                      color="transparent"
+                      style="padding: 5px !important; cursor: pointer"
+                      @mousedown="startPan('down')"
+                      @mouseleave="stopPan"
+                      @mouseup="stopPan"
+                    >
+                      <q-icon color="white" name="mmm-down" />
+                    </q-badge>
+                    <q-separator class="bg-grey-8 q-my-xs" vertical />
+                    <q-badge
+                      color="transparent"
+                      style="padding: 5px !important; cursor: pointer"
+                      @mousedown="startPan('left')"
+                      @mouseleave="stopPan"
+                      @mouseup="stopPan"
+                    >
+                      <q-icon color="white" name="mmm-left" />
+                    </q-badge>
+                    <q-separator class="bg-grey-8 q-my-xs" vertical />
+                    <q-badge
+                      color="transparent"
+                      style="padding: 5px !important; cursor: pointer"
+                      @mousedown="startPan('right')"
+                      @mouseleave="stopPan"
+                      @mouseup="stopPan"
+                    >
+                      <q-icon color="white" name="mmm-right" />
+                    </q-badge>
                   </div>
                 </div>
               </template>
+            </transition>
+            <transition
+              appear
+              enter-active-class="animated fadeIn"
+              leave-active-class="animated fadeOut"
+              mode="out-in"
+              name="fade"
+            >
+              <div
+                v-if="mediaZoom > 1.01"
+                class="absolute-bottom-left q-ml-xs q-mb-xs row"
+              >
+                <q-badge
+                  class="q-mr-xs"
+                  color="warning"
+                  style="padding: 5px !important; cursor: pointer"
+                  @click="zoomReset(true)"
+                >
+                  <q-icon color="white" name="mmm-refresh" />
+                </q-badge>
+              </div>
+            </transition>
+            <transition
+              appear
+              enter-active-class="animated fadeIn"
+              leave-active-class="animated fadeOut"
+              mode="out-in"
+              name="fade"
+            >
+              <div
+                v-if="hoveringMediaItem"
+                class="absolute-bottom-right q-mr-xs q-mb-xs row"
+              >
+                <div class="bg-semi-black row rounded-borders">
+                  <q-badge
+                    color="transparent"
+                    :disabled="!mediaZoom || mediaZoom < 1.01 || undefined"
+                    style="padding: 5px !important; cursor: pointer"
+                    @mousedown="startZoom('out')"
+                    @mouseleave="stopZoom"
+                    @mouseup="stopZoom"
+                  >
+                    <q-icon color="white" name="mmm-minus" />
+                  </q-badge>
+                  <q-separator class="bg-grey-8 q-my-xs" vertical />
+                  <q-badge
+                    color="transparent"
+                    :disabled="!mediaZoom || mediaZoom > 4.99 || undefined"
+                    style="padding: 5px !important; cursor: pointer"
+                    @mousedown="startZoom('in')"
+                    @mouseleave="stopZoom"
+                    @mouseup="stopZoom"
+                  >
+                    <q-icon color="white" name="mmm-plus" />
+                  </q-badge>
+                </div>
+              </div>
             </transition>
           </template>
 
@@ -328,7 +357,7 @@
             v-if="
               (media.source !== 'dynamic' &&
                 !currentSettings?.disableMediaFetching &&
-                isFileUrl(media.fileUrl)) ||
+                fileIsAvailable) ||
               media.tag?.type
             "
             :class="mediaTagClasses"
@@ -354,7 +383,7 @@
                     ? 'mmm-watched-media'
                     : media.source === 'additional' &&
                         !currentSettings?.disableMediaFetching &&
-                        isFileUrl(media.fileUrl)
+                        fileIsAvailable
                       ? 'mmm-add-media'
                       : media.tag?.type === 'paragraph'
                         ? media.tag.value !== FOOTNOTE_TARGET_PARAGRAPH
@@ -380,7 +409,7 @@
             :class="{
               'q-px-md': true,
               col: true,
-              'text-grey': !isFileUrl(media.fileUrl),
+              'text-grey': !fileIsAvailable && !streamIsAvailable,
             }"
           >
             <q-input
@@ -407,7 +436,10 @@
                 {{ displayMediaTitle }}
               </q-tooltip>
             </div>
-            <div v-if="!isFileUrl(media.fileUrl)" class="text-caption">
+            <div
+              v-if="!fileIsAvailable && !streamIsAvailable"
+              class="text-caption"
+            >
               {{ t('media-item-missing-explain') }}
             </div>
           </div>
@@ -444,6 +476,19 @@
                   {{ t('repeat') }}
                 </q-tooltip>
               </q-icon>
+              <q-btn
+                v-if="playbackRate !== 1"
+                color="negative"
+                icon="mmm-playback-speed"
+                outline
+                round
+                size="sm"
+                @click.stop="changePlaybackRate(0, true)"
+              >
+                <q-tooltip :delay="500">
+                  {{ t('playback-rate') }}
+                </q-tooltip>
+              </q-btn>
             </div>
           </div>
         </div>
@@ -520,138 +565,145 @@
           </div>
         </transition>
       </div>
-      <div
-        v-if="!isCurrentlyPlaying"
-        class="col-shrink"
-        style="align-content: center"
-      >
-        <template v-if="!media.markers || media.markers.length <= 1">
-          <div class="row items-center q-gutter-xs">
-            <!-- Duration dropdown for images in repeated sections -->
-            <q-select
-              v-if="media.isImage && isInRepeatedSection"
-              v-model="imageDuration"
-              dense
-              :display-value="
-                imageDuration < 60
-                  ? imageDuration + 's'
-                  : imageDuration / 60 + 'm'
-              "
-              :options="imageDurationOptions"
-              outlined
-              style="min-width: 80px"
-              @update:model-value="updateImageDuration"
-            >
-              <q-tooltip :delay="1000">
-                {{ t('image-duration-explain') }}
-              </q-tooltip>
-            </q-select>
+      <template v-if="shouldShowPlayButton">
+        <div
+          v-if="!isCurrentlyPlaying"
+          class="col-shrink"
+          style="align-content: center"
+        >
+          <template v-if="!media.markers || media.markers.length <= 1">
+            <div class="row items-center q-gutter-xs">
+              <!-- Duration dropdown for images in repeated sections -->
+              <q-select
+                v-if="media.isImage && isInRepeatedSection"
+                v-model="imageDuration"
+                dense
+                :display-value="
+                  imageDuration < 60
+                    ? imageDuration + 's'
+                    : imageDuration / 60 + 'm'
+                "
+                :options="imageDurationOptions"
+                outlined
+                style="min-width: 80px"
+                @update:model-value="updateImageDuration"
+              >
+                <q-tooltip :delay="1000">
+                  {{ t('image-duration-explain') }}
+                </q-tooltip>
+              </q-select>
 
+              <q-btn
+                ref="playButton"
+                :color="
+                  fileIsAvailable || streamIsAvailable ? 'primary' : 'grey'
+                "
+                :disable="
+                  (mediaPlaying.url !== '' &&
+                    (isVideo(mediaPlaying.url) || isAudio(mediaPlaying.url))) ||
+                  (!fileIsAvailable && !streamIsAvailable)
+                "
+                :icon="localFile ? 'mmm-play' : 'mmm-stream-play'"
+                rounded
+                :unelevated="!fileIsAvailable && !streamIsAvailable"
+                @click="setMediaPlaying(media)"
+              >
+                <q-tooltip
+                  v-if="!fileIsAvailable && streamIsAvailable"
+                  :delay="1000"
+                >
+                  {{ t('play-while-downloading') }}
+                </q-tooltip>
+              </q-btn>
+            </div>
+          </template>
+          <template v-else>
             <q-btn
               ref="playButton"
-              :color="isFileUrl(media.fileUrl) ? 'primary' : 'grey'"
+              color="primary"
               :disable="
-                (mediaPlaying.url !== '' &&
-                  (isVideo(mediaPlaying.url) || isAudio(mediaPlaying.url))) ||
-                !isFileUrl(media.fileUrl)
+                mediaPlaying.url !== '' &&
+                (isVideo(mediaPlaying.url) || isAudio(mediaPlaying.url))
               "
-              :icon="localFile ? 'mmm-play' : 'mmm-stream-play'"
+              icon="mmm-play-sign-language"
+              :outline="markersPanelOpen"
+              push
               rounded
-              :unelevated="!isFileUrl(media.fileUrl)"
-              @click="setMediaPlaying(media)"
+              @click="markersPanelOpen = !markersPanelOpen"
+            />
+          </template>
+        </div>
+        <template v-else>
+          <div class="col-shrink items-center justify-center flex">
+            <q-btn
+              v-if="
+                isImage(mediaPlaying.url) && obsConnectionState === 'connected'
+              "
+              :color="currentSceneType === 'media' ? 'negative' : 'primary'"
+              icon="mmm-picture-for-zoom-participants"
+              rounded
+              @click="
+                sendObsSceneEvent(
+                  currentSceneType === 'media' ? 'camera' : 'media',
+                )
+              "
             >
-              <q-tooltip v-if="!localFile" :delay="1000">
-                {{ t('play-while-downloading') }}
+              <q-tooltip :delay="1000">
+                {{
+                  t(
+                    currentSceneType === 'media'
+                      ? 'hide-image-for-zoom-participants'
+                      : 'show-image-for-zoom-participants',
+                  )
+                }}
               </q-tooltip>
+            </q-btn>
+            <q-btn
+              v-if="mediaPlaying.action === 'pause'"
+              ref="pauseResumeButton"
+              color="primary"
+              icon="mmm-play"
+              outline
+              rounded
+              @click="mediaPlaying.action = 'play'"
+            />
+            <q-btn
+              v-else-if="
+                localFile &&
+                media.duration &&
+                (mediaPlaying.action === 'play' || !mediaPlaying.action)
+              "
+              ref="pauseResumeButton"
+              color="negative"
+              icon="mmm-pause"
+              outline
+              rounded
+              @click="mediaPlaying.action = 'pause'"
+            />
+            <q-btn
+              v-if="mediaPlaying.action !== '' || mediaPlaying.action === ''"
+              ref="stopButton"
+              class="q-ml-sm"
+              color="negative"
+              :icon="
+                !localFile && mediaPlaying.currentPosition === 0
+                  ? undefined
+                  : 'mmm-stop'
+              "
+              rounded
+              @click="
+                media.isVideo || media.isAudio
+                  ? (mediaToStop = media.uniqueId)
+                  : stopMedia()
+              "
+            >
+              <q-spinner
+                v-if="!localFile && mediaPlaying.currentPosition === 0"
+                size="xs"
+              />
             </q-btn>
           </div>
         </template>
-        <template v-else>
-          <q-btn
-            ref="playButton"
-            color="primary"
-            :disable="
-              mediaPlaying.url !== '' &&
-              (isVideo(mediaPlaying.url) || isAudio(mediaPlaying.url))
-            "
-            icon="mmm-play-sign-language"
-            :outline="markersPanelOpen"
-            push
-            rounded
-            @click="markersPanelOpen = !markersPanelOpen"
-          />
-        </template>
-      </div>
-      <template v-else>
-        <div class="col-shrink items-center justify-center flex">
-          <q-btn
-            v-if="
-              isImage(mediaPlaying.url) && obsConnectionState === 'connected'
-            "
-            :color="currentSceneType === 'media' ? 'negative' : 'primary'"
-            icon="mmm-picture-for-zoom-participants"
-            rounded
-            @click="
-              sendObsSceneEvent(
-                currentSceneType === 'media' ? 'camera' : 'media',
-              )
-            "
-          >
-            <q-tooltip :delay="1000">
-              {{
-                t(
-                  currentSceneType === 'media'
-                    ? 'hide-image-for-zoom-participants'
-                    : 'show-image-for-zoom-participants',
-                )
-              }}
-            </q-tooltip>
-          </q-btn>
-          <q-btn
-            v-if="mediaPlaying.action === 'pause'"
-            ref="pauseResumeButton"
-            color="primary"
-            icon="mmm-play"
-            outline
-            rounded
-            @click="mediaPlaying.action = 'play'"
-          />
-          <q-btn
-            v-else-if="
-              localFile &&
-              media.duration &&
-              (mediaPlaying.action === 'play' || !mediaPlaying.action)
-            "
-            ref="pauseResumeButton"
-            color="negative"
-            icon="mmm-pause"
-            outline
-            rounded
-            @click="mediaPlaying.action = 'pause'"
-          />
-          <q-btn
-            v-if="mediaPlaying.action !== '' || mediaPlaying.action === ''"
-            ref="stopButton"
-            class="q-ml-sm"
-            color="negative"
-            :icon="
-              !localFile && mediaPlaying.currentPosition === 0
-                ? undefined
-                : 'mmm-stop'
-            "
-            rounded
-            @click="
-              media.isVideo || media.isAudio
-                ? (mediaToStop = media.uniqueId)
-                : stopMedia()
-            "
-          >
-            <q-spinner
-              v-if="!localFile && mediaPlaying.currentPosition === 0"
-              size="xs"
-            />
-          </q-btn>
-        </div>
       </template>
       <q-menu
         v-model="contextMenu"
@@ -777,6 +829,53 @@
                       : t('repeat-media-item-explain')
                   }}
                 </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              v-if="
+                currentSettings?.enablePlaybackSpeedControl &&
+                isCurrentlyPlaying &&
+                (media.isVideo || media.isAudio) &&
+                mediaPlaying.action
+              "
+              clickable
+            >
+              <q-item-section avatar>
+                <q-icon name="mmm-playback-speed" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('playback-speed') }}</q-item-label>
+              </q-item-section>
+              <q-item-section side>
+                <div class="row items-center no-wrap">
+                  <q-btn
+                    color="grey-7"
+                    dense
+                    :disable="playbackRate <= 0.5"
+                    flat
+                    icon="mmm-minus"
+                    round
+                    size="sm"
+                    @click.stop="changePlaybackRate(-0.5)"
+                  />
+                  <span
+                    class="text-caption text-weight-bold"
+                    style="min-width: 36px; text-align: center"
+                    @click.stop="changePlaybackRate(0, true)"
+                  >
+                    x{{ playbackRate.toFixed(1) }}
+                  </span>
+                  <q-btn
+                    color="grey-7"
+                    dense
+                    :disable="playbackRate >= 15"
+                    flat
+                    icon="mmm-plus"
+                    round
+                    size="sm"
+                    @click.stop="changePlaybackRate(0.5)"
+                  />
+                </div>
               </q-item-section>
             </q-item>
             <q-item
@@ -1001,6 +1100,7 @@ import {
   useBroadcastChannel,
   useElementHover,
   useEventListener,
+  useMagicKeys,
   useTimeoutPoll,
   watchImmediate,
   whenever,
@@ -1012,10 +1112,10 @@ import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { FOOTNOTE_TARGET_PARAGRAPH } from 'src/constants/jw';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getThumbnailUrl } from 'src/helpers/fs';
-import { showMediaWindow } from 'src/helpers/mediaPlayback';
+import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { triggerZoomScreenShare } from 'src/helpers/zoom';
+import { log, throttleWithTrailing, uuid } from 'src/shared/vanilla';
 import { isFileUrl } from 'src/utils/fs';
-import { throttleWithTrailing, uuid } from 'src/utils/general';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
 import { sendObsSceneEvent } from 'src/utils/obs';
 import { formatTime, timeToSeconds } from 'src/utils/time';
@@ -1025,6 +1125,8 @@ import { useObsStateStore } from 'stores/obs-state';
 import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import VueZoomable from 'vue-zoomable';
+
+const { control, shift } = useMagicKeys();
 
 const currentState = useCurrentStateStore();
 const {
@@ -1153,7 +1255,7 @@ const isEditingTitle = ref(false);
 const titleInput = ref<HTMLInputElement>();
 const mediaTitle = ref(props.media.title);
 
-const { fileUrlToPath, fs, path } = window.electronApi;
+const { fileUrlToPath, fs, path } = globalThis.electronApi;
 const { basename } = path;
 
 const { pathExists, pathExistsSync, statSync } = fs;
@@ -1324,14 +1426,13 @@ const setMediaPlaying = async (
           1000,
         min: marker.StartTimeTicks / 10000 / 1000,
       });
-    } else {
-      if (!skipCustomDurationUpdateOnce.value) {
-        updateMediaCustomDuration();
-      }
+    } else if (!skipCustomDurationUpdateOnce.value) {
+      updateMediaCustomDuration();
     }
   }
   skipCustomDurationUpdateOnce.value = false;
   localFile.value = fileIsLocal();
+
   mediaPlaying.value = {
     action:
       isImage(props.media.fileUrl) ||
@@ -1349,8 +1450,10 @@ const setMediaPlaying = async (
     zoom: mediaZoom.value,
   };
 
+  toggleMediaWindowVisibility(true);
+
   nextTick(() => {
-    window.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
+    globalThis.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
   });
 };
 
@@ -1470,7 +1573,7 @@ onClickOutside(markersPanel, () => {
 
 // Cancel selection on Escape
 useEventListener(
-  window,
+  globalThis,
   'keydown',
   (e: KeyboardEvent) => {
     if (
@@ -1553,8 +1656,6 @@ async function findThumbnailUrl() {
   await runThumbnailCheck();
 }
 
-if (props.media.duration && !props.media.thumbnailUrl) findThumbnailUrl();
-
 const showMediaDurationPopup = () => {
   try {
     mediaCustomDuration.value = props.media.customDuration || {
@@ -1592,11 +1693,28 @@ const saveMediaDuration = () => {
 
 const { post } = useBroadcastChannel<number, number>({ name: 'seek-to' });
 
+const playbackRate = ref(1);
+
+const { post: postPlaybackRate } = useBroadcastChannel<number, number>({
+  name: 'playback-rate',
+});
+
+const changePlaybackRate = (delta: number, reset = false) => {
+  if (reset) {
+    playbackRate.value = 1;
+    postPlaybackRate(playbackRate.value);
+    return;
+  }
+  const newRate = Math.round((playbackRate.value + delta) * 10) / 10;
+  playbackRate.value = Math.min(15, Math.max(0.5, newRate));
+  postPlaybackRate(playbackRate.value);
+};
+
 const seekTo = (newSeekTo: null | number) => {
   if (newSeekTo !== null) {
     post(newSeekTo);
     if (!mediaWindowVisible.value) {
-      showMediaWindow(true);
+      toggleMediaWindowVisibility(true);
     }
   }
 };
@@ -1622,13 +1740,14 @@ function stopMedia(forOtherMediaItem = false) {
   };
   mediaToStop.value = '';
   localFile.value = fileIsLocal();
+  playbackRate.value = 1;
+  postPlaybackRate(1);
 
   if (!forOtherMediaItem) {
     // Stop Zoom screen sharing when media is stopped (unless it's a media switch instead of a stop)
     triggerZoomScreenShare(false);
-    // zoomReset(true);
     nextTick(() => {
-      window.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));
+      globalThis.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));
     });
   }
 }
@@ -1639,6 +1758,13 @@ const isCurrentlyPlaying = computed(() => {
       mediaPlaying.value.url === props.media.streamUrl) &&
     mediaPlaying.value.uniqueId === props.media.uniqueId
   );
+});
+
+watch(isCurrentlyPlaying, (playing) => {
+  if (!playing && playbackRate.value !== 1) {
+    playbackRate.value = 1;
+    postPlaybackRate(1);
+  }
 });
 
 const mediaPan = ref<{ x: number; y: number }>({
@@ -1782,6 +1908,7 @@ const updateZoomPan = throttleWithTrailing(
 watch(
   () => [mediaZoom.value, mediaPan.value.x, mediaPan.value.y],
   (newValues) => {
+    if (!isCurrentlyPlaying.value) return;
     updateZoomPan(newValues as [number, number, number]);
   },
 );
@@ -1817,8 +1944,10 @@ const confirmDeleteSelectedMedia = () => {
   });
 };
 
-onMounted(() => {
+onMounted(async () => {
   initializeImageDuration();
+  if (props.media.duration && !props.media.thumbnailUrl)
+    await findThumbnailUrl();
 });
 
 const playButton = useTemplateRef<QBtn>('playButton');
@@ -1826,7 +1955,7 @@ const pauseResumeButton = useTemplateRef<QBtn>('pauseResumeButton');
 const stopButton = useTemplateRef<QBtn>('stopButton');
 
 useEventListener(
-  window,
+  globalThis,
   'shortcutMediaPauseResume',
   () => {
     if (pauseResumeButton.value) {
@@ -1840,7 +1969,7 @@ useEventListener(
   { passive: true },
 );
 useEventListener(
-  window,
+  globalThis,
   'shortcutMediaStop',
   () => {
     if (stopButton.value && currentlySpotlit.value) stopButton.value.click();
@@ -1848,7 +1977,7 @@ useEventListener(
   { passive: true },
 );
 
-window.addEventListener('scrollToSelectedMedia', () => {
+globalThis.addEventListener('scrollToSelectedMedia', () => {
   if (
     props.selected &&
     mediaItem.value?.$el &&
@@ -1859,6 +1988,10 @@ window.addEventListener('scrollToSelectedMedia', () => {
       block: 'center',
     });
   }
+});
+
+const shouldShowPlayButton = computed(() => {
+  return !!currentSettings.value?.enableMediaDisplayButton;
 });
 
 const currentSongIsDuplicated = computed(() => {
@@ -1885,6 +2018,14 @@ const currentSongIsDuplicated = computed(() => {
   return songNumbers.length > 1;
 });
 
+const fileIsAvailable = computed(() => {
+  return isFileUrl(props.media.fileUrl);
+});
+
+const streamIsAvailable = computed(() => {
+  return !!props.media.streamUrl;
+});
+
 const tagTooltipText = computed(() => {
   if (currentSongIsDuplicated.value) {
     return t('this-song-is-duplicated');
@@ -1897,7 +2038,7 @@ const tagTooltipText = computed(() => {
   if (
     props.media.source === 'additional' &&
     !currentSettings.value?.disableMediaFetching &&
-    isFileUrl(props.media.fileUrl)
+    fileIsAvailable.value
   ) {
     return t('extra-media-item-explain');
   }
@@ -1920,7 +2061,6 @@ const tagTooltipText = computed(() => {
 // };
 
 const updateImageDuration = (newDuration: { label: string; value: number }) => {
-  console.log(newDuration);
   imageDuration.value = newDuration.value;
   // Update the section's repeat interval
   if (props.media.originalSection) {
@@ -1944,8 +2084,10 @@ watch(
 
       const updateProgress = () => {
         if (!imageStartTime.value || !isCurrentlyPlaying.value) {
-          console.debug(
-            '[MediaItem.vue] Stopping updateProgress: imageStartTime or isCurrentlyPlaying falsy',
+          log(
+            'Stopping updateProgress: imageStartTime or isCurrentlyPlaying falsy',
+            'mediaPlayback',
+            'debug',
           );
           return;
         }
@@ -1958,7 +2100,7 @@ watch(
           requestAnimationFrame(updateProgress);
         } else {
           postLastEndTimestamp(Date.now());
-          console.debug('[MediaItem.vue] Image progress reached 100%');
+          log('Image progress reached 100%', 'mediaPlayback');
         }
       };
 
@@ -1991,7 +2133,8 @@ watch(
   { immediate: true },
 );
 
-const mediaElapsed = computed(
-  () => mediaPlaying.value.currentPosition || imageElapsed.value || 0,
-);
+const mediaElapsed = computed({
+  get: () => mediaPlaying.value.currentPosition || imageElapsed.value || 0,
+  set: (val) => seekTo(val),
+});
 </script>

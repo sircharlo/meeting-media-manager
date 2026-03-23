@@ -1,4 +1,5 @@
 import { listen, send } from 'src-electron/preload/ipc';
+import { capturePreloadError } from 'src-electron/preload/log';
 
 export const initCloseListeners = () => {
   const bcClose = new BroadcastChannel('closeAttempts');
@@ -6,7 +7,13 @@ export const initCloseListeners = () => {
     try {
       bcClose.postMessage({ attemptedClose: true });
     } catch (error) {
-      console.error('Error posting message to closeAttempts channel:', error);
+      capturePreloadError(error, {
+        contexts: {
+          fn: {
+            name: 'initCloseListeners attemptedClose',
+          },
+        },
+      });
     }
   });
 
@@ -14,7 +21,13 @@ export const initCloseListeners = () => {
     try {
       if (event.data.authorizedClose) send('authorizedClose');
     } catch (error) {
-      console.error('Error handling authorizedClose message:', error);
+      capturePreloadError(error, {
+        contexts: {
+          fn: {
+            name: 'initCloseListeners authorizedClose',
+          },
+        },
+      });
     }
   };
 };

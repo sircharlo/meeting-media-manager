@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* eslint-disable @typescript-eslint/no-require-imports */
-const { execSync } = require('child_process');
-const { existsSync } = require('fs');
+const { execSync } = require('node:child_process');
+const { existsSync } = require('node:fs');
 
 function main() {
   // Skip in CI environments or if no .git directory
@@ -13,13 +13,10 @@ function main() {
     console.log(
       'Skipping Husky installation (CI/production environment or no .git)',
     );
+  } else if (existsSync('.husky/install.mjs')) {
+    runCommand('node .husky/install.mjs', 'Husky install (custom script)');
   } else {
-    // Try to install Husky
-    if (existsSync('.husky/install.mjs')) {
-      runCommand('node .husky/install.mjs', 'Husky install (custom script)');
-    } else {
-      runCommand('npx husky install', 'Husky install (default)');
-    }
+    runCommand('npx husky install', 'Husky install (default)');
   }
 
   // Run other build commands

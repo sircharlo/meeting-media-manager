@@ -24,10 +24,12 @@ import {
   findMediaSection,
   getOrCreateMediaSection,
 } from 'src/helpers/media-sections';
+import { log } from 'src/shared/vanilla';
 import {
   fetchJwLanguages,
   fetchMemorials,
   fetchPubMediaLinks,
+  fetchRaw,
   fetchYeartext,
 } from 'src/utils/api';
 import {
@@ -54,10 +56,12 @@ export const shouldUpdateList = (
     if (!cacheList) return true; // No cache list, update
     if (!cacheList.updated) return true; // No update date, update
     try {
-      if (isNaN(new Date(cacheList.updated).getTime())) return true; // Invalid date, update
+      if (Number.isNaN(new Date(cacheList.updated).getTime())) return true; // Invalid date, update
     } catch (error) {
-      console.log(
+      log(
         'cacheList.updated is not a valid date',
+        'jw',
+        'log',
         cacheList.updated,
         error,
       );
@@ -68,42 +72,39 @@ export const shouldUpdateList = (
       getDateDiff(new Date(), cacheList.updated, 'months') > months
     ); // True if list is empty or old enough, false otherwise
   } catch (error) {
-    console.log('Error checking cache list', error);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          args: { cacheList, months },
+          name: 'shouldUpdateList',
+        },
+      },
+    });
     return true; // Error checking, update
   }
 };
 
 interface Store {
-  jwBibleAudioFiles: Partial<
-    Record<JwLangCode, CacheList<Partial<Publication>>>
-  >;
+  jwBibleFiles: Partial<Record<JwLangCode, CacheList<Partial<Publication>>>>;
+  jwIconsUrl: string;
   jwLanguages: CacheList<JwLanguage>;
   jwMepsLanguages: CacheList<JwMepsLanguage>;
   jwSongs: Partial<Record<JwLangCode, CacheList<MediaLink>>>;
   lookupPeriod: Partial<Record<string, DateInfo[]>>;
   memorials: Partial<Record<number, `${number}/${number}/${number}`>>;
   urlVariables: UrlVariables;
+  yeartextFontUrls: Partial<Record<FontName, string>>;
   yeartexts: Partial<Record<number, Partial<Record<JwLangCode, string>>>>;
-}
-
-export function addUniqueById<T extends { uniqueId: string }>(
-  targetArray: (T | undefined)[],
-  sourceArray: (T | undefined)[],
-): void {
-  sourceArray.forEach((item) => {
-    if (!targetArray.some((obj) => obj?.uniqueId === item?.uniqueId)) {
-      targetArray.push(item);
-    }
-  });
 }
 
 export function addUniqueByIdToTop<T extends { uniqueId: string }>(
   targetArray: (T | undefined)[],
   sourceArray: (T | undefined)[],
 ): void {
-  sourceArray.forEach((item) => {
+  // Add to the beginning of the array (reverse source to maintain original order)
+  [...sourceArray].reverse().forEach((item) => {
     if (!targetArray.some((obj) => obj?.uniqueId === item?.uniqueId)) {
-      targetArray.push(item);
+      targetArray.unshift(item);
     }
   });
 }
@@ -151,8 +152,10 @@ export function replaceMissingMediaByPubMediaId(
       );
 
       if (!targetSection?.items) {
-        console.warn(
+        log(
           `Target section ${targetSectionId} not found in mediaSections`,
+          'jw',
+          'warn',
         );
         return;
       }
@@ -182,7 +185,10 @@ export function replaceMissingMediaByPubMediaId(
         (obj) => obj?.pubMediaId === item?.pubMediaId,
       );
 
-      if (index !== -1) {
+      if (index === -1) {
+        // Add new item to the correct section if no match found
+        targetSection.items.push(item);
+      } else {
         const existing = targetSection.items[index];
         // Replace only if it's a placeholder (fileUrl is the same as pubMediaId) and has no children
         if (
@@ -191,9 +197,6 @@ export function replaceMissingMediaByPubMediaId(
         ) {
           targetSection.items[index] = item;
         }
-      } else {
-        // Add new item to the correct section if no match found
-        targetSection.items.push(item);
       }
     });
   }
@@ -212,6 +215,44 @@ export function replaceMissingMediaByPubMediaId(
   });
 }
 
+/**
+ * Extracts CSS URLs from HTML content
+ */
+function extractCssUrls(html: string, baseUrl: string): string[] {
+  const cssRegex = /href=["']([^"']+\.css)["']/g;
+  const cssUrls: string[] = [];
+  let match;
+  while ((match = cssRegex.exec(html)) !== null) {
+    let url = match[1];
+    if (!url) continue;
+    if (url.startsWith('/')) {
+      url = `https://wol.${baseUrl}${url}`;
+    }
+    cssUrls.push(url);
+  }
+  return cssUrls;
+}
+
+/**
+ * Finds the jw-icons font URL within CSS text
+ */
+function findIconUrlInCss(cssText: string, cssUrl: string): null | string {
+  const fontFaceBlocks = cssText.match(/@font-face\s*\{[^}]*\}/gi);
+  if (!fontFaceBlocks) return null;
+
+  for (const block of fontFaceBlocks) {
+    if (block.includes('jw-icons')) {
+      const fontMatch = new RegExp(
+        /url\(["']?([^"']+\.(woff2?|ttf|otf)[^"']*)["']?\)/i,
+      ).exec(block);
+      if (fontMatch?.[1]) {
+        return new URL(fontMatch[1], cssUrl).href;
+      }
+    }
+  }
+  return null;
+}
+
 export const useJwStore = defineStore('jw-store', {
   actions: {
     addToAdditionMediaMap(
@@ -226,9 +267,7 @@ export const useJwStore = defineStore('jw-store', {
         if (!mediaArray.length || !selectedDateObject) return;
 
         // Ensure lookupPeriod for current congregation exists
-        if (!this.lookupPeriod[currentCongregation]) {
-          this.lookupPeriod[currentCongregation] = [];
-        }
+        this.lookupPeriod[currentCongregation] ??= [];
 
         // Find or create the period object for the selected date
         let period = this.lookupPeriod[currentCongregation].find((d) =>
@@ -236,8 +275,10 @@ export const useJwStore = defineStore('jw-store', {
         );
 
         if (!period) {
-          console.log(
+          log(
             '🔄 [addToAdditionMediaMap] No period found, creating new one',
+            'jw',
+            'log',
           );
           period = {
             ...selectedDateObject,
@@ -263,8 +304,10 @@ export const useJwStore = defineStore('jw-store', {
           targetSection,
         );
 
-        console.log(
+        log(
           '🔄 [addToAdditionMediaMap] Target section:',
+          'jw',
+          'log',
           targetSection,
           targetSectionContainer,
         );
@@ -411,6 +454,47 @@ export const useJwStore = defineStore('jw-store', {
         });
       });
     },
+    async updateJwIconsUrl() {
+      try {
+        const wolUrl = `https://wol.${this.urlVariables.base}/en/wol/h/r1/lp-e`;
+        const response = await fetchRaw(wolUrl, undefined, true);
+        if (!response.ok) return;
+
+        const html = await response.text();
+        const cssUrls = extractCssUrls(html, this.urlVariables.base);
+
+        for (const cssUrl of cssUrls) {
+          try {
+            const cssResponse = await fetchRaw(cssUrl, undefined, true);
+            if (!cssResponse.ok) continue;
+            const cssText = await cssResponse.text();
+            const fontUrl = findIconUrlInCss(cssText, cssUrl);
+            if (fontUrl) {
+              this.jwIconsUrl = fontUrl;
+              return; // Found it, we can stop
+            }
+          } catch (e) {
+            errorCatcher(e, {
+              contexts: {
+                fn: {
+                  args: { cssUrl },
+                  name: 'updateJwIconsUrl - cssUrl',
+                },
+              },
+            });
+          }
+        }
+      } catch (e) {
+        errorCatcher(e, {
+          contexts: {
+            fn: {
+              args: {},
+              name: 'updateJwIconsUrl - main',
+            },
+          },
+        });
+      }
+    },
     async updateJwLanguages(online: boolean) {
       if (!online) return;
       try {
@@ -468,7 +552,7 @@ export const useJwStore = defineStore('jw-store', {
                 this.urlVariables.pubMedia,
                 online,
               );
-              if (!pubMediaLinks || !pubMediaLinks.files) {
+              if (!pubMediaLinks?.files) {
                 continue;
               }
 
@@ -509,12 +593,9 @@ export const useJwStore = defineStore('jw-store', {
     async updateMemorials(online: boolean) {
       if (!online) return;
       try {
-        let year = new Date().getFullYear();
-        const memorialDate = this.memorials[year];
-        if (memorialDate && isInPast(memorialDate)) {
-          year++;
-        }
-        if (!memorialDate) {
+        const currentYear = new Date().getFullYear();
+        const currentMemorialDate = this.memorials[currentYear];
+        if (!currentMemorialDate || isInPast(currentMemorialDate)) {
           const result = await fetchMemorials();
           if (result) this.memorials = result;
         }
@@ -559,9 +640,7 @@ export const useJwStore = defineStore('jw-store', {
           if (result.status === 'fulfilled') {
             const { wtlocale, yeartext } = result.value;
             if (yeartext) {
-              if (!this.yeartexts[year]) {
-                this.yeartexts[year] = {};
-              }
+              this.yeartexts[year] ??= {};
 
               this.yeartexts[year][wtlocale] = DOMPurify.sanitize(yeartext, {
                 ALLOWED_ATTR: ['class'],
@@ -572,6 +651,73 @@ export const useJwStore = defineStore('jw-store', {
         }
       } catch (error) {
         errorCatcher(error);
+      }
+    },
+    async updateYeartextFontUrls() {
+      try {
+        const wolUrl = `https://wol.${this.urlVariables.base}/en/wol/h/r1/lp-e`;
+        const response = await fetchRaw(wolUrl, undefined, true);
+        if (!response.ok) return;
+
+        const html = await response.text();
+        const cssUrls = extractCssUrls(html, this.urlVariables.base);
+
+        // WT/JW/Manna font names to search for in CSS @font-face declarations
+        const wtFontCssNames: Record<string, FontName> = {
+          WTClearTextGeorgian: 'WTClearTextGeorgian',
+          WTClearTextJapanese: 'WTClearTextJapanese',
+          WTMannaSansKaren: 'WTMannaSansKaren',
+          WTMannaSansMongolian: 'WTMannaSansMongolian',
+          WTMannaSansMyammar: 'WTMannaSansMyanmar', // CSS typo in JW.org
+          WTMannaSansMyanmar: 'WTMannaSansMyanmar',
+          WTMannaSansTibetan: 'WTMannaSansTibetan',
+          WTSetthaSpecial: 'WTSetthaSpecial',
+          WTTextNew: 'WTTextNew',
+          WTXBZSpecial: 'WTXBZSpecial',
+        };
+
+        for (const cssUrl of cssUrls) {
+          try {
+            const cssResponse = await fetchRaw(cssUrl, undefined, true);
+            if (!cssResponse.ok) continue;
+            const cssText = await cssResponse.text();
+
+            // Parse @font-face blocks for WT fonts
+            const fontFaceRegex =
+              /@font-face\s*\{[^}]*font-family:\s*['"]?(\w+)['"]?[^}]*\}/g;
+            let match;
+            while ((match = fontFaceRegex.exec(cssText)) !== null) {
+              const cssName = match[1];
+              if (!cssName) continue;
+
+              const fontName = wtFontCssNames[cssName];
+              if (!fontName) continue;
+
+              // Extract woff2 URL, falling back to woff
+              const block = match[0];
+              const woff2Match = new RegExp(
+                /url\(["']?(https?:\/\/[^"')]+\.woff2)["']?\)/,
+              ).exec(block);
+              const woffMatch = new RegExp(
+                /url\(["']?(https?:\/\/[^"')]+\.woff)["']?\)/,
+              ).exec(block);
+              const url = woff2Match?.[1] || woffMatch?.[1];
+              if (url) {
+                this.yeartextFontUrls[fontName] = url;
+              }
+            }
+          } catch (e) {
+            errorCatcher(e, {
+              contexts: {
+                fn: { args: { cssUrl }, name: 'updateYeartextFontUrls' },
+              },
+            });
+          }
+        }
+      } catch (e) {
+        errorCatcher(e, {
+          contexts: { fn: { name: 'updateYeartextFontUrls - main' } },
+        });
       }
     },
   },
@@ -592,16 +738,93 @@ export const useJwStore = defineStore('jw-store', {
         }
       };
 
+      const jsdelivr = (font: string, file: string) =>
+        `https://cdn.jsdelivr.net/fontsource/fonts/${font}@latest/${file}`;
+
       return {
-        'JW-Icons': getFontUrl(
-          'base',
-          '/assets/fonts/jw-icons-external-1970474.woff',
+        AbyssinicaSIL: jsdelivr('abyssinica-sil', 'latin-400-normal.woff2'),
+        'jw-icons-all':
+          state.jwIconsUrl ||
+          getFontUrl('base', '/assets/fonts/jw-icons-all-81d446b.woff'),
+        NotoNaskhArabic: jsdelivr(
+          'noto-naskh-arabic:vf',
+          'arabic-wght-normal.woff2',
+        ),
+        NotoNastaliqUrdu: jsdelivr(
+          'noto-nastaliq-urdu:vf',
+          'arabic-wght-normal.woff2',
+        ),
+        NotoSans: jsdelivr('noto-sans:vf', 'latin-wght-normal.woff2'),
+        NotoSansBengali: jsdelivr(
+          'noto-sans-bengali:vf',
+          'bengali-wght-normal.woff2',
+        ),
+        NotoSansGurmukhi: jsdelivr(
+          'noto-sans-gurmukhi:vf',
+          'gurmukhi-wght-normal.woff2',
+        ),
+        NotoSansMalayalam: jsdelivr(
+          'noto-sans-malayalam:vf',
+          'malayalam-wght-normal.woff2',
+        ),
+        NotoSansOriya: jsdelivr(
+          'noto-sans-oriya:vf',
+          'oriya-wght-normal.woff2',
+        ),
+        NotoSansSC: jsdelivr(
+          'noto-sans-sc',
+          'chinese-simplified-400-normal.woff',
+        ),
+        NotoSansTamil: jsdelivr(
+          'noto-sans-tamil:vf',
+          'tamil-wght-normal.woff2',
+        ),
+        NotoSansTC: jsdelivr(
+          'noto-sans-tc',
+          'chinese-traditional-400-normal.woff',
+        ),
+        NotoSansTelugu: jsdelivr(
+          'noto-sans-telugu:vf',
+          'telugu-wght-normal.woff2',
+        ),
+        NotoSerifArmenian: jsdelivr(
+          'noto-serif-armenian:vf',
+          'armenian-wght-normal.woff2',
+        ),
+        NotoSerifDevanagari: jsdelivr(
+          'noto-serif-devanagari:vf',
+          'devanagari-wght-normal.woff2',
+        ),
+        NotoSerifGujarati: jsdelivr(
+          'noto-serif-gujarati:vf',
+          'gujarati-wght-normal.woff2',
+        ),
+        NotoSerifHebrew: jsdelivr(
+          'noto-serif-hebrew:vf',
+          'hebrew-wght-normal.woff2',
+        ),
+        NotoSerifKannada: jsdelivr(
+          'noto-serif-kannada:vf',
+          'kannada-wght-normal.woff2',
+        ),
+        NotoSerifKhmer: jsdelivr(
+          'noto-serif-khmer:vf',
+          'khmer-wght-normal.woff2',
+        ),
+        NotoSerifSinhala: jsdelivr(
+          'noto-serif-sinhala:vf',
+          'sinhala-wght-normal.woff2',
+        ),
+        'Wt-BaeumMyungjo': getFontUrl(
+          'mediator',
+          '/fonts/wt-baeum-myungjo/1.000/Wt-BaeumMyungjo-Regular.woff',
         ),
         'Wt-ClearText-Bold': getFontUrl(
           'mediator',
           '/fonts/wt-clear-text/1.029/Wt-ClearText-Bold.woff2',
         ),
-      };
+        ...state.yeartextFontUrls,
+      } as Record<FontName, string>;
     },
   },
   persist: {
@@ -630,7 +853,8 @@ export const useJwStore = defineStore('jw-store', {
   },
   state: (): Store => {
     return {
-      jwBibleAudioFiles: {},
+      jwBibleFiles: {},
+      jwIconsUrl: '',
       jwLanguages: { list: [], updated: oldDate },
       jwMepsLanguages: { list: [], updated: oldDate },
       jwSongs: {},
@@ -641,6 +865,7 @@ export const useJwStore = defineStore('jw-store', {
         mediator: 'https://b.jw-cdn.org/apis/mediator',
         pubMedia: 'https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS',
       },
+      yeartextFontUrls: {} as Partial<Record<FontName, string>>,
       yeartexts: {},
     };
   },

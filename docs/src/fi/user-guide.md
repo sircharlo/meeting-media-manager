@@ -44,14 +44,6 @@ Kalenterinäkymä näyttää kokousaikataulusi ja saatavilla olevan median:
 - **Mediailmaisimet** – Kuvakkeet osoittavat, mitä mediatyyppejä on saatavilla
 - **Päivänavigointi** – Käytä nuolinäppäimiä siirtyäksesi kuukausien välillä
 
-<!-- ### Downloading Media {#downloading-media}
-
-::: info Note
-
-Download speed depends on your internet connection and the size of media files. Videos typically take longer to download than images.
-
-::: -->
-
 ### Median järjestäminen {#organizing-media}
 
 M³ järjestää median automaattisesti kokoustyypin ja osion mukaan:
@@ -207,7 +199,7 @@ Jos Original Audio ei toimi kunnolla kokoonpanossasi:
 2. **Valitse "Share computer sound"**
 3. **Huomio**: Tämä vaihtoehto on otettava käyttöön joka kerta, kun aloitat uuden Zoom-istunnon
 
-**Paras vaihtoehto**: Harkitse M³:n Zoom-integraation käyttöä OBS Studion sijaan, sillä se käyttää Zoomin omaa näytönjakoa, joka käsittelee äänen sujuvammin eikä vaadi monimutkaisia ääniasetuksia.
+**Paras vaihtoehto**: Harkitse M³:n Zoom-integraation käyttämistä OBS Studion sijaan, sillä se käyttää Zoomin omaa näytönjakoa, joka käsittelee äänen sujuvammin eikä vaadi monimutkaista ääniasettelua.
 
 #### Miksi ääniasetukset ovat tarpeellisia {#why-audio-config}
 
@@ -256,8 +248,8 @@ Lisää omat mediatiedostosi M³:een:
 
 Tuo raamatunjakeiden äänitallenteita:
 
-1. Napsauta "Audio Bible" -painiketta
-2. Valitse raamatun kirja ja luku
+1. Napsauta ääniraamattu-painiketta
+2. Valitse Raamatun kirja ja luku
 3. Valita tietyt jakeet tai jaealueet
 4. Lataa äänitiedostot
 5. Käytä niitä
@@ -277,7 +269,7 @@ Seuraa kansiota uusien mediatiedostojen varalta:
 
 Vie mediat automaattisesti järjestettyihin kansioihin:
 
-1. **Ota automaattivienti käyttöön** – Aktivoi median vienti asetuksissa
+1. **Ota automaattinen vienti käyttöön** - Ota median vienti käyttöön asetuksissa
 2. **Valitse vientikansio** – Valitse, minne viedyt tiedostot tallennetaan
 3. **Automaattinen järjestäminen** – Tiedostot järjestetään päivämäärän ja osion mukaan
 4. **Muotoiluasetukset** – Muunna tiedostot MP4-muotoon paremman yhteensopivuuden takaamiseksi
@@ -294,9 +286,9 @@ Jaa virallinen verkkosivusto ulkoisilla näytöillä:
 
 ### Verkkosivun ohjaimet {#website-controls}
 
-- **Navigointi** – Tavanomaiset selaimen siirtymäohjaimet
-- **Päivitä** – Lataa nykyinen sivu uudelleen
-- **Sulje** – Poistu verkkosivun esitystilasta
+- **Navigointi** - Selaimen vakiot navigointitoiminnot
+- **Päivitä** - Lataa nykyinen sivu uudelleen
+- **Sulje** - Poistu verkkosivun esitystilasta
 
 ## Edistyneet ominaisuudet {#user-guide-advanced-features}
 
@@ -309,7 +301,7 @@ Hallitse useita seurakuntia tai ryhmiä:
 3. **Erilliset asetukset** – Jokaisella profiililla on omat asetukset ja mediat
 4. **Jaetut resurssit** – Mediatiedostot jaetaan profiilien välillä aina kun mahdollista
 
-### Pikanäppäimet {#keyboard-shortcuts-guide}
+### Keyboard Shortcuts {#keyboard-shortcuts-guide}
 
 Määritä mukautettuja pikanäppäimiä tehokkaaseen käyttöön:
 
@@ -355,7 +347,7 @@ Määritä mukautettuja pikanäppäimiä tehokkaaseen käyttöön:
 - Kokeile varakieltä
 - Varmista käyttöliittymän kieliasetus
 
-### Apua ongelmatilanteissa {#getting-help}
+### Avun saaminen {#getting-help}
 
 Jos kohtaat ongelmia:
 

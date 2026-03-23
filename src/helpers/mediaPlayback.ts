@@ -1,38 +1,290 @@
 import type {
   JwPlaylistItem,
+  MediaItem,
   MultimediaItem,
   PlaylistTagItem,
+  PublicationFetcher,
 } from 'src/types';
 
 import { JPG_EXTENSIONS } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import {
-  dynamicMediaMapper,
-  processMissingMediaInfo,
-} from 'src/helpers/jw-media';
+import { log, uuid } from 'src/shared/vanilla';
 import { formatDate } from 'src/utils/date';
 import { getTempPath } from 'src/utils/fs';
 import { isJwpub } from 'src/utils/media';
-import { findDb } from 'src/utils/sqlite';
+import { findDb, getPublicationInfoFromDb } from 'src/utils/sqlite';
 import { useCurrentStateStore } from 'stores/current-state';
 
-const { decompress, executeQuery, fs, path, toggleMediaWindow } =
-  window.electronApi;
-const { pathExists, remove, rename } = fs;
+export type DynamicMediaMapperProvider = (
+  allMedia: MultimediaItem[],
+  lookupDate: Date,
+  source: 'additional' | 'dynamic' | 'playlist' | 'watched',
+) => Promise<MediaItem[]>;
+
+export interface ProcessMissingMediaInfoOptions {
+  allMedia: MultimediaItem[];
+  isDynamicMedia?: boolean;
+  keepMediaLabels?: boolean;
+  meetingDate?: null | string;
+}
+
+export type ProcessMissingMediaInfoProvider = (
+  options: ProcessMissingMediaInfoOptions,
+) => Promise<PublicationFetcher[] | undefined>;
+
+let dynamicMediaMapperProvider: DynamicMediaMapperProvider | null = null;
+let processMissingMediaInfoProvider: null | ProcessMissingMediaInfoProvider =
+  null;
+
+/**
+ * Registers media playback providers to avoid circular dependencies.
+ */
+export const registerMediaPlaybackProviders = (providers: {
+  dynamicMediaMapper: DynamicMediaMapperProvider;
+  processMissingMediaInfo: ProcessMissingMediaInfoProvider;
+}) => {
+  dynamicMediaMapperProvider = providers.dynamicMediaMapper;
+  processMissingMediaInfoProvider = providers.processMissingMediaInfo;
+};
+
+const dynamicMediaMapper: DynamicMediaMapperProvider = (
+  allMedia,
+  lookupDate,
+  source,
+) => {
+  if (!dynamicMediaMapperProvider) {
+    throw new Error('dynamicMediaMapperProvider not registered');
+  }
+  return dynamicMediaMapperProvider(allMedia, lookupDate, source);
+};
+
+const processMissingMediaInfo: ProcessMissingMediaInfoProvider = (options) => {
+  if (!processMissingMediaInfoProvider) {
+    throw new Error('processMissingMediaInfoProvider not registered');
+  }
+  return processMissingMediaInfoProvider(options);
+};
+
+const { executeQuery, fs, getZipEntries, path, toggleMediaWindow, unzip } =
+  globalThis.electronApi;
+const { ensureDir, pathExists, remove, rename, stat } = fs;
 const { basename, extname, join } = path;
 
-const jwpubDecompressor = async (jwpubPath: string, outputPath: string) => {
+/**
+ * Efficiently identifies a JWPUB file by peeking into its metadata
+ * without full extraction.
+ */
+export async function identifyJwpub(jwpubPath: string) {
+  const tempDir = await getTempPath();
+  if (!tempDir) return;
+
+  const extractionId = uuid();
+  const tempExplodePath = join(tempDir, `identify-${extractionId}`);
+
   try {
-    await decompress(jwpubPath, outputPath);
-    await decompress(join(outputPath, 'contents'), outputPath);
-    return outputPath;
+    // 1. Peek at JWPUB to find 'contents'
+    let jwpubEntries: Record<string, number>;
+    try {
+      jwpubEntries = await getZipEntries(jwpubPath);
+    } catch (error) {
+      log(
+        `[identifyJwpub] Error reading JWPUB entries for ${jwpubPath}:`,
+        'mediaPlayback',
+        'error',
+        error,
+      );
+      return;
+    }
+    if (!jwpubEntries['contents']) return;
+
+    // 2. Extract ONLY 'contents' to temp
+    await ensureDir(tempExplodePath);
+    await unzip(jwpubPath, tempExplodePath, { includes: ['contents'] });
+    const contentsPath = join(tempExplodePath, 'contents');
+
+    // 3. Peek at 'contents' to find the .db file
+    const contentsEntries = await getZipEntries(contentsPath);
+    const dbName = Object.keys(contentsEntries).find((n) => n.endsWith('.db'));
+    if (!dbName) return;
+
+    // 4. Extract ONLY the .db file to temp
+    await unzip(contentsPath, tempExplodePath, { includes: [dbName] });
+    const dbPath = join(tempExplodePath, dbName);
+
+    // 5. Get publication info
+    return getPublicationInfoFromDb(dbPath);
   } catch (error) {
-    errorCatcher(error);
-    return jwpubPath;
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          args: { jwpubPath },
+          name: 'identifyJwpub',
+        },
+      },
+    });
+    return undefined;
+  } finally {
+    // Cleanup
+    await remove(tempExplodePath).catch(() => undefined);
+  }
+}
+
+const ongoingUnzips = new Map<string, Promise<string | undefined>>();
+
+const extractContentsFromJwpub = async (
+  jwpubPath: string,
+  outputPath: string,
+) => {
+  const contentsPath = join(outputPath, 'contents');
+  let jwpubEntries: Record<string, number>;
+  try {
+    jwpubEntries = await getZipEntries(jwpubPath);
+  } catch (error) {
+    log(
+      `[jwpubExtractor] Error reading JWPUB entries for ${jwpubPath}:`,
+      'mediaPlayback',
+      'error',
+      error,
+    );
+    // If we can't read the entries to even start extraction, the file might be locked or damaged.
+    await remove(jwpubPath).catch(() => undefined);
+    throw error;
+  }
+  const expectedContentsSize = jwpubEntries['contents'];
+
+  // First, only extract 'contents' from the JWPUB zip if it doesn't exist or is the wrong size
+  const contentsStats = await stat(contentsPath).catch(() => undefined);
+
+  if (contentsStats?.size !== expectedContentsSize) {
+    if (contentsStats) {
+      log(
+        `[jwpubExtractor] contents size mismatch: path ${contentsPath}, expected ${expectedContentsSize}, got ${contentsStats.size}. Re-extracting contents from ${jwpubPath}.`,
+        'mediaPlayback',
+        'warn',
+      );
+    }
+    try {
+      await unzip(jwpubPath, outputPath, {
+        includes: ['contents'],
+      });
+    } catch (error) {
+      // If unzipping the JWPUB fails, it's likely corrupted.
+      // Remove it to force a re-download on next attempt.
+      await remove(jwpubPath).catch((removeError) =>
+        errorCatcher(removeError, {
+          contexts: {
+            fn: {
+              args: {
+                jwpubPath,
+                outputPath,
+              },
+              name: 'jwpubExtractor remove corrupt jwpub',
+            },
+          },
+        }),
+      );
+      throw error;
+    }
   }
 };
 
-export const decompressJwpub = async (
+const extractDbFromContents = async (outputPath: string, jwpubPath: string) => {
+  // Then, extract 'contents' into the output directory if needed
+  // We check if the database exists and has the correct size to determine if we need to unzip
+  const contentsPath = join(outputPath, 'contents');
+  const dbFile = await findDb(outputPath);
+  const contentsEntries = await getZipEntries(contentsPath);
+  let expectedDbSize = 0;
+  let expectedDbName = '';
+
+  for (const [name, size] of Object.entries(contentsEntries)) {
+    if (name.endsWith('.db')) {
+      expectedDbSize = size;
+      expectedDbName = name;
+      break;
+    }
+  }
+
+  const dbStats = dbFile
+    ? await stat(dbFile).catch(() => undefined)
+    : undefined;
+  if (dbStats?.size !== expectedDbSize) {
+    if (dbStats) {
+      log(
+        `[jwpubExtractor] DB size mismatch: path ${dbFile}, expected ${expectedDbSize} (${expectedDbName}), got ${dbStats.size}. Re-extracting the contents from ${contentsPath}.`,
+        'mediaPlayback',
+        'warn',
+      );
+    }
+    try {
+      await unzip(contentsPath, outputPath);
+      const dbFileAfterUnzip = await findDb(outputPath);
+      if (!dbFileAfterUnzip) throw new Error('DB still not found after unzip');
+    } catch (error) {
+      // If unzipping contents fails, it might be corrupted.
+      // Remove it so it can be re-extracted next time.
+      await remove(contentsPath).catch((removeError) =>
+        errorCatcher(removeError, {
+          contexts: {
+            fn: {
+              args: {
+                jwpubPath,
+                outputPath,
+              },
+              name: 'jwpubExtractor remove contents',
+            },
+          },
+        }),
+      );
+      // Also remove the source JWPUB as it's the progenitor of the corrupt contents
+      await remove(jwpubPath);
+      throw error;
+    }
+  }
+};
+
+const jwpubExtractor = async (jwpubPath: string, outputPath: string) => {
+  try {
+    await extractContentsFromJwpub(jwpubPath, outputPath);
+    await extractDbFromContents(outputPath, jwpubPath);
+
+    return outputPath;
+  } catch (error) {
+    // If anything fails, clean up the output directory to avoid partial extractions
+    try {
+      await remove(outputPath);
+    } catch (removeError) {
+      await errorCatcher(removeError, {
+        contexts: {
+          fn: {
+            args: {
+              jwpubPath,
+              outputPath,
+            },
+            name: 'jwpubExtractor cleanup output error',
+          },
+        },
+      });
+    }
+
+    await errorCatcher(error, {
+      contexts: {
+        fn: {
+          args: {
+            jwpubPath,
+            outputPath,
+          },
+          name: 'jwpubExtractor',
+        },
+      },
+    });
+
+    // We MUST throw the error so the caller knows extraction failed.
+    throw error;
+  }
+};
+
+export const unzipJwpub = async (
   jwpubPath: string,
   outputPath?: string,
   force = false,
@@ -44,24 +296,61 @@ export const decompressJwpub = async (
       outputPath = join(await getTempPath(), basename(jwpubPath));
     }
 
+    const cacheKey = `${jwpubPath}->${outputPath}`;
+
     // If force, clear the output directory before filling it
     if (force) {
       try {
         await remove(outputPath);
       } catch (e) {
-        errorCatcher(e);
+        await errorCatcher(e, {
+          contexts: {
+            fn: {
+              args: {
+                jwpubPath,
+                outputPath,
+              },
+              name: 'unzipJwpub remove',
+            },
+          },
+        });
       }
     }
-    if (!currentState.extractedFiles[outputPath] || force) {
-      currentState.extractedFiles[outputPath] = await jwpubDecompressor(
-        jwpubPath,
-        outputPath,
-      );
+
+    let unzipPromise = ongoingUnzips.get(cacheKey);
+
+    if (!unzipPromise || force) {
+      unzipPromise = (async () => {
+        if (!currentState.extractedFiles[outputPath] || force) {
+          // jwpubExtractor now throws on failure
+          currentState.extractedFiles[outputPath] = await jwpubExtractor(
+            jwpubPath,
+            outputPath,
+          );
+        }
+        return currentState.extractedFiles[outputPath];
+      })();
+      ongoingUnzips.set(cacheKey, unzipPromise);
     }
-    return currentState.extractedFiles[outputPath];
+
+    try {
+      return await unzipPromise;
+    } finally {
+      ongoingUnzips.delete(cacheKey);
+    }
   } catch (error) {
-    errorCatcher(error);
-    return jwpubPath;
+    await errorCatcher(error, {
+      contexts: {
+        fn: {
+          args: {
+            jwpubPath,
+            outputPath,
+          },
+          name: 'unzipJwpub',
+        },
+      },
+    });
+    throw error;
   }
 };
 
@@ -73,7 +362,7 @@ export const getMediaFromJwPlaylist = async (
   try {
     if (!jwPlaylistPath) return [];
     const outputPath = join(destPath, basename(jwPlaylistPath));
-    await decompress(jwPlaylistPath, outputPath);
+    await unzip(jwPlaylistPath, outputPath);
     const dbFile = await findDb(outputPath);
     if (!dbFile) return [];
     let playlistName = '';
@@ -86,7 +375,18 @@ export const getMediaFromJwPlaylist = async (
         playlistName = playlistNameQuery[0].Name + ' - ';
       }
     } catch (error) {
-      errorCatcher(error);
+      await errorCatcher(error, {
+        contexts: {
+          fn: {
+            args: {
+              destPath,
+              jwPlaylistPath,
+              selectedDateValue,
+            },
+            name: 'getMediaFromJwPlaylist playlistNameQuery',
+          },
+        },
+      });
     }
     const playlistItems = executeQuery<JwPlaylistItem>(
       dbFile,
@@ -144,7 +444,17 @@ export const getMediaFromJwPlaylist = async (
             );
             item.ThumbnailFilePath += '.jpg';
           } catch (error) {
-            errorCatcher(error);
+            await errorCatcher(error, {
+              contexts: {
+                fn: {
+                  args: {
+                    item,
+                    outputPath,
+                  },
+                  name: 'getMediaFromJwPlaylist rename thumbnail',
+                },
+              },
+            });
           }
         }
         const durationTicks =
@@ -161,7 +471,7 @@ export const getMediaFromJwPlaylist = async (
             ? item.StartTrimOffsetTicks / 10000 / 1000
             : null;
 
-        const VerseNumbers = window.electronApi
+        const VerseNumbers = globalThis.electronApi
           .executeQuery<{
             Label: string;
           }>(
@@ -171,10 +481,11 @@ export const getMediaFromJwPlaylist = async (
           FROM
             PlaylistItemMarker
           WHERE
-            PlaylistItemId = ${item.PlaylistItemId}`,
+            PlaylistItemId = ?`,
+            [item.PlaylistItemId],
           )
           .map((v) =>
-            parseInt(
+            Number.parseInt(
               Array.from(
                 v.Label.matchAll(/\w+ (?:\d+:)?(\d+)/g),
                 (m) => m[1],
@@ -213,11 +524,11 @@ export const getMediaFromJwPlaylist = async (
       }),
     );
 
-    await processMissingMediaInfo(
-      playlistMediaItems,
-      formatDate(selectedDateValue, 'YYYYMMDD'),
-      true,
-    );
+    await processMissingMediaInfo({
+      allMedia: playlistMediaItems,
+      keepMediaLabels: true,
+      meetingDate: formatDate(selectedDateValue, 'YYYYMMDD'),
+    });
     const mappedPlaylistMediaItems = await dynamicMediaMapper(
       playlistMediaItems.filter((m) => m.KeySymbol !== 'nwt'),
       selectedDateValue,
@@ -225,23 +536,45 @@ export const getMediaFromJwPlaylist = async (
     );
     return mappedPlaylistMediaItems;
   } catch (error) {
-    errorCatcher(error);
+    await errorCatcher(error, {
+      contexts: {
+        fn: {
+          args: {
+            destPath,
+            jwPlaylistPath,
+            selectedDateValue,
+          },
+          name: 'getMediaFromJwPlaylist',
+        },
+      },
+    });
     return [];
   }
 };
 
-export const showMediaWindow = (state?: boolean) => {
+export const toggleMediaWindowVisibility = (state?: boolean) => {
   try {
     const currentState = useCurrentStateStore();
-    if (typeof state === 'undefined') {
-      state = !currentState.mediaWindowVisible;
-    }
-    currentState.mediaWindowVisible = state;
+
+    // Use provided state, or toggle current state if not provided
+    const newState = state ?? !currentState.mediaWindowVisible;
+
+    currentState.mediaWindowVisible = newState;
+
     toggleMediaWindow(
-      state,
+      newState,
       currentState.currentSettings?.enableMediaWindowFadeTransitions,
     );
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          args: {
+            state,
+          },
+          name: 'toggleMediaWindowVisibility',
+        },
+      },
+    });
   }
 };

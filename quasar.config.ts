@@ -45,7 +45,7 @@ export default defineConfig((ctx) => {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['sentry', 'i18n', 'globals', 'notify-types'],
+    boot: ['fonts', 'sentry', 'i18n', 'globals', 'notify-types'],
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#build
     build: {
@@ -69,19 +69,11 @@ export default defineConfig((ctx) => {
         version,
       },
       extendViteConf(viteConf) {
-        viteConf.optimizeDeps = mergeConfig(viteConf.optimizeDeps ?? {}, {
-          esbuildOptions: {
-            define: {
-              global: 'window',
-            },
-          },
-        });
-
         if (ctx.prod && !ctx.debug && ENABLE_SOURCE_MAPS) {
           viteConf.build = mergeConfig(viteConf.build ?? {}, {
             sourcemap: true,
           });
-          if (!viteConf.plugins) viteConf.plugins = [];
+          viteConf.plugins ??= [];
           viteConf.plugins.push(
             sentryVitePlugin({
               authToken: SENTRY_AUTH_TOKEN,
@@ -152,13 +144,18 @@ export default defineConfig((ctx) => {
           hardenedRuntime: true,
           icon: getIconPath('icns'),
           minimumSystemVersion: '10.15',
-          target: { target: 'default' },
+          target: { 
+            target: 'default',
+            arch: [
+              "universal",
+            ],
+          },
+          x64ArchFiles: "**/@napi-rs/**",
         },
         nsis: {
+          deleteAppDataOnUninstall: true,
+          include: 'build/installer.nsh',
           oneClick: false,
-          // uninstallUrlHelp: `${repoURL}/blob/master/SUPPORT.md`,
-          // uninstallUrlReadme: `${repoURL}#readme`,
-          // uninstallUrlUpdateInfo: `${repoURL}/releases`,
         },
         portable: {
           // eslint-disable-next-line no-template-curly-in-string
@@ -180,7 +177,7 @@ export default defineConfig((ctx) => {
       extendElectronMainConf: (esbuildConf) => {
         if (ctx.prod && !ctx.debug && ENABLE_SOURCE_MAPS) {
           esbuildConf.sourcemap = true;
-          if (!esbuildConf.plugins) esbuildConf.plugins = [];
+          esbuildConf.plugins ??= [];
           esbuildConf.plugins.push(
             sentryEsbuildPlugin({
               authToken: SENTRY_AUTH_TOKEN,
@@ -195,7 +192,7 @@ export default defineConfig((ctx) => {
       extendElectronPreloadConf: (esbuildConf) => {
         if (ctx.prod && !ctx.debug && ENABLE_SOURCE_MAPS) {
           esbuildConf.sourcemap = true;
-          if (!esbuildConf.plugins) esbuildConf.plugins = [];
+          esbuildConf.plugins ??= [];
           esbuildConf.plugins.push(
             sentryEsbuildPlugin({
               authToken: SENTRY_AUTH_TOKEN,
@@ -215,9 +212,9 @@ export default defineConfig((ctx) => {
           '@sentry/core',
           '@sentry/electron',
           'better-sqlite3',
+          'check-disk-space',
           'chokidar',
           'countries-and-timezones',
-          'decompress',
           'electron-dl-manager',
           'electron-updater',
           'fluent-ffmpeg',
@@ -230,6 +227,7 @@ export default defineConfig((ctx) => {
           'pdfjs-dist',
           'robotjs',
           'upath',
+          'yauzl',
         ]);
 
         // Add hacky dependencies here

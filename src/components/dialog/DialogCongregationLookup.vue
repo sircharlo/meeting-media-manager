@@ -69,8 +69,15 @@
               </q-item-label>
             </q-item-section>
           </q-item>
-          <template v-for="congregation in results" :key="congregation.geoId">
-            <q-item clickable @click="selectCongregation(congregation)">
+          <template
+            v-for="congregation in results"
+            :key="congregation.properties.orgGuid"
+          >
+            <q-item
+              v-if="congregation.properties.schedule.current"
+              clickable
+              @click="selectCongregation(congregation)"
+            >
               <q-item-section>
                 <q-item-label>
                   {{ congregation.properties.orgName }}
@@ -130,7 +137,14 @@ import { whenever } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
+import { locales } from 'src/constants/locales';
+import {
+  applyScheduleToSettings,
+  fetchMeetingLocations,
+  normalizeSchedule,
+} from 'src/helpers/congregation-schedule';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { log } from 'src/shared/vanilla';
 import { fetchJson } from 'src/utils/api';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -171,29 +185,26 @@ const lookupCongregation = async () => {
     loading.value = true;
     results.value = [];
     if (congregationFilter.value?.length > 2) {
-      await fetchJson<{ geoLocationList: GeoRecord[] }>(
-        `https://apps.${urlVariables.value.base || 'jw.org'}/api/public/meeting-search/weekly-meetings`,
-        new URLSearchParams({
-          includeSuggestions: 'true',
-          keywords: congregationFilter.value,
-          latitude: '0',
-          longitude: '0',
-          searchLanguageCode: '',
-        }),
-        useCurrentStateStore().online,
-      ).then((response) => {
-        results.value = (response?.geoLocationList || []).map((location) => {
-          const languageIsAlreadyGood = !!jwLanguages.value?.list.find(
-            (l) => l.langcode === location.properties.languageCode,
+      const response = await fetchMeetingLocations(congregationFilter.value);
+      results.value = (response?.geoLocationList || []).map((location) => {
+        const languageIsAlreadyGood = !!jwLanguages.value?.list.find(
+          (l) => l.langcode === location.properties.languageCode,
+        );
+        if (!languageIsAlreadyGood) {
+          const match = congregationLookupLanguages.value.find(
+            (l) => l.languageCode === location.properties.languageCode,
           );
-          if (!languageIsAlreadyGood) {
+          if (match?.writtenLanguageCode.length) {
+            const appLocaleCodes = new Set(locales.map((l) => l.langcode));
             location.properties.languageCode =
-              congregationLookupLanguages.value.find(
-                (l) => l.languageCode === location.properties.languageCode,
-              )?.writtenLanguageCode[0] || location.properties.languageCode;
+              match.writtenLanguageCode.find((code) =>
+                appLocaleCodes.has(code),
+              ) ||
+              match.writtenLanguageCode[0] ||
+              location.properties.languageCode;
           }
-          return location;
-        });
+        }
+        return location;
       });
     } else {
       results.value = [];
@@ -207,23 +218,35 @@ const lookupCongregation = async () => {
 };
 
 const congregationLookupLanguages = ref<CongregationLanguage[]>([]);
-fetchJson<CongregationLanguage[]>(
-  `https://apps.${urlVariables.value.base || 'jw.org'}/api/public/meeting-search/languages`,
-  undefined,
-  useCurrentStateStore().online,
-)
-  .then((response) => {
-    congregationLookupLanguages.value = response || [];
-  })
-  .catch((error) => {
+
+const loadLanguages = async () => {
+  try {
+    congregationLookupLanguages.value =
+      (await fetchJson<CongregationLanguage[]>(
+        `https://apps.${urlVariables.value.base || 'jw.org'}/api/public/meeting-search/languages`,
+        undefined,
+        useCurrentStateStore().online,
+      )) || [];
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          name: 'DialogCongregationLookup.vue',
+          subroutine: 'loadLanguages',
+        },
+      },
+    });
     congregationLookupLanguages.value = [];
-    errorCatcher(error);
-  });
+  }
+};
+
+loadLanguages();
 
 const selectCongregation = (congregation: GeoRecord) => {
   try {
     if (!currentSettings.value) return;
 
+    currentState.lookupInProgress = true;
     const { properties } = congregation;
 
     // Language
@@ -236,31 +259,26 @@ const selectCongregation = (congregation: GeoRecord) => {
       currentSettings.value.langSubtitles = resolvedLangCode || null;
     }
 
-    // Midweek day & time
-    const { midweek, weekend } = properties.schedule.current;
-
-    if (Number.isInteger(midweek?.weekday)) {
-      currentSettings.value.mwDay = `${midweek.weekday - 1}`;
-    }
-    if (midweek?.time) {
-      currentSettings.value.mwStartTime = midweek.time;
-    }
-
-    // Weekend day & time
-    if (Number.isInteger(weekend?.weekday)) {
-      currentSettings.value.weDay = `${weekend.weekday - 1}`;
-    }
-    if (weekend?.time) {
-      currentSettings.value.weStartTime = weekend.time;
-    }
+    // Schedule
+    const normalized = normalizeSchedule(properties.schedule);
+    applyScheduleToSettings(currentSettings.value, normalized);
 
     // Congregation name
     if (properties.orgName) {
       currentSettings.value.congregationName = properties.orgName;
+      currentSettings.value.congregationNameModified = false;
     }
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          name: 'DialogCongregationLookup.vue',
+          subroutine: 'selectCongregation',
+        },
+      },
+    });
   }
+  currentState.lookupInProgress = false;
   dismissPopup();
 };
 
@@ -276,7 +294,12 @@ whenever(dialogValue, () => {
   results.value = [];
   lookupCongregation();
   setTimeout(() => {
-    console.log('🔍 Focusing input', congregationFilterInput.value);
+    log(
+      '🔍 Focusing input',
+      'congregationLookup',
+      'log',
+      congregationFilterInput.value,
+    );
     congregationFilterInput.value?.focus();
   }, 100);
 });

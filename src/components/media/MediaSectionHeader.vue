@@ -13,11 +13,11 @@
         isCustom && selectedDayMeetingType !== 'we'
           ? 'custom-bg-color'
           : 'text-white bg-' + mediaList.config?.uniqueId,
-        { 'jw-icon': mediaList.config?.jwIcon },
+        { 'jw-icon': mediaList.config?.jwIconKeyword },
       ]"
     >
-      <template v-if="mediaList.config?.jwIcon">
-        {{ mediaList.config?.jwIcon }}
+      <template v-if="mediaList.config?.jwIconKeyword">
+        {{ getJwIconFromKeyword(mediaList.config?.jwIconKeyword) }}
       </template>
       <template v-else>
         <q-icon name="mmm-additional-media" size="md" />
@@ -235,6 +235,8 @@ import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { useMediaSection } from 'src/composables/useMediaSection';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
+import { getJwIconFromKeyword } from 'src/helpers/fonts';
+import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, nextTick, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -291,7 +293,7 @@ const buttonLabel = computed(() => {
       : t('add-a-closing-song');
   }
 
-  return !props.isCustom ? t('add-extra-media') : undefined;
+  return props.isCustom ? undefined : t('add-extra-media');
 });
 
 const tooltipText = computed(() => {
@@ -308,7 +310,7 @@ const canCollapse = computed(() => !selectedDayMeetingType.value);
 
 // Methods
 const toggleCollapse = () => {
-  console.log('🔄 toggleCollapse called', {
+  log('🔄 toggleCollapse called', 'mediaSections', 'log', {
     currentCollapsed: props.collapsed,
     newCollapsed: !props.collapsed,
   });
@@ -330,8 +332,10 @@ const handleRename = (value: boolean) => {
 const handleAddClick = () => {
   if (props.isSongButton) {
     emit('add-song', props.mediaList.config?.uniqueId || '');
-    console.log(
+    log(
       '🔄 [handleAddClick] Adding song to section:',
+      'mediaSections',
+      'log',
       props.mediaList.config?.uniqueId,
     );
   } else {
@@ -364,13 +368,18 @@ const handleRepeatClick = () => {
 
 // Method to update section repeat state (can be called from parent)
 const updateSectionRepeatState = (newState: boolean) => {
-  console.log('🔄 [updateSectionRepeatState] Updating section repeat state:', {
-    isCurrentlyRepeating: props.mediaList.config?.uniqueId
-      ? isSectionRepeating(props.mediaList.config?.uniqueId)
-      : false,
-    newState,
-    sectionId: props.mediaList.config?.uniqueId,
-  });
+  log(
+    '🔄 [updateSectionRepeatState] Updating section repeat state:',
+    'mediaSections',
+    'log',
+    {
+      isCurrentlyRepeating: props.mediaList.config?.uniqueId
+        ? isSectionRepeating(props.mediaList.config?.uniqueId)
+        : false,
+      newState,
+      sectionId: props.mediaList.config?.uniqueId,
+    },
+  );
 
   updateSectionRepeat(newState);
   if (newState) {
@@ -381,14 +390,12 @@ const updateSectionRepeatState = (newState: boolean) => {
     ) {
       toggleSectionRepeat(props.mediaList.config?.uniqueId);
     }
-  } else {
+  } else if (
     // Stop repeating if currently repeating
-    if (
-      props.mediaList.config?.uniqueId &&
-      isSectionRepeating(props.mediaList.config?.uniqueId)
-    ) {
-      toggleSectionRepeat(props.mediaList.config?.uniqueId);
-    }
+    props.mediaList.config?.uniqueId &&
+    isSectionRepeating(props.mediaList.config?.uniqueId)
+  ) {
+    toggleSectionRepeat(props.mediaList.config?.uniqueId);
   }
 };
 

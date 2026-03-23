@@ -1,6 +1,6 @@
 <template>
   <q-dialog v-model="dialogValue" :persistent="false" transition-duration="200">
-    <q-card class="section-picker-card" flat square>
+    <q-card class="section-picker-card" flat>
       <q-card-section class="q-pa-sm">
         <div class="text-subtitle2 q-mb-sm">
           {{ t('choose-section-for-files') }}
@@ -16,7 +16,9 @@
               :class="`bg-${section.config?.uniqueId} full-width`"
               flat
               :icon="
-                section.config?.jwIcon ? undefined : 'mmm-additional-media'
+                section.config?.jwIconKeyword
+                  ? undefined
+                  : 'mmm-additional-media'
               "
               size="md"
               :style="`background-color: ${section.config?.bgColor}; color: ${
@@ -25,9 +27,12 @@
               @click="selectSection(section.config?.uniqueId || '')"
             >
               <template #default>
-                <span v-if="section.config?.jwIcon" class="jw-icon q-mr-sm">{{
-                  section.config.jwIcon
-                }}</span>
+                <span
+                  v-if="section.config?.jwIconKeyword"
+                  class="jw-icon q-mr-sm"
+                >
+                  {{ getJwIconFromKeyword(section.config.jwIconKeyword) }}
+                </span>
                 {{ getSectionLabel(section) }}
               </template>
             </q-btn>
@@ -44,6 +49,7 @@ import type { MediaSectionIdentifier, MediaSectionWithConfig } from 'src/types';
 import { storeToRefs } from 'pinia';
 import { getMeetingSections } from 'src/constants/media';
 import { isCoWeek, isMeetingDay, isWeMeetingDay } from 'src/helpers/date';
+import { getJwIconFromKeyword } from 'src/helpers/fonts';
 import { getTextColor } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed } from 'vue';
@@ -68,27 +74,6 @@ const dialogValue = computed({
   get: () => props.modelValue,
   set: (value) => emit('update:modelValue', value),
 });
-
-// // Auto-close after 5 seconds
-// const autoCloseTimer = ref<null | number>(null);
-
-// watch(
-//   () => dialogValue.value,
-//   (isOpen) => {
-//     if (isOpen) {
-//       // Start auto-close timer
-//       autoCloseTimer.value = window.setTimeout(() => {
-//         dialogValue.value = false;
-//       }, 5000);
-//     } else {
-//       // Clear timer when dialog closes
-//       if (autoCloseTimer.value) {
-//         clearTimeout(autoCloseTimer.value);
-//         autoCloseTimer.value = null;
-//       }
-//     }
-//   },
-// );
 
 const availableSections = computed(() => {
   const sections = Object.values(selectedDateObject.value?.mediaSections || {})
@@ -151,12 +136,6 @@ const getSectionLabel = (section: MediaSectionWithConfig) => {
 };
 
 const selectSection = (section: MediaSectionIdentifier) => {
-  // // Clear auto-close timer
-  // if (autoCloseTimer.value) {
-  //   clearTimeout(autoCloseTimer.value);
-  //   autoCloseTimer.value = null;
-  // }
-
   emit('section-selected', section);
   dialogValue.value = false;
 };
@@ -181,6 +160,7 @@ const selectSection = (section: MediaSectionIdentifier) => {
 .section-btn {
   flex: 1;
   min-width: 80px;
+  border-radius: 8px;
   transition: all 0.2s ease;
 
   &:hover {

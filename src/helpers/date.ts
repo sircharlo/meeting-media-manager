@@ -1,7 +1,9 @@
 import type { DateInfo, SettingsValues } from 'src/types';
 
+import { i18n } from 'boot/i18n';
 import { DAYS_IN_FUTURE } from 'src/constants/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { log } from 'src/shared/vanilla';
 import {
   addToDate,
   dateFromString,
@@ -13,6 +15,8 @@ import {
 } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
+
+import { createTemporaryNotification } from './notifications';
 
 const getWeekDay = (lookupDate: Date) => {
   try {
@@ -45,13 +49,18 @@ export function isCoWeek(
       typeof lookupDate === 'object' &&
       !(lookupDate instanceof Date)
     ) {
-      console.warn('🔍 [isCoWeek] Received non-Date object:', {
-        constructor: (
-          lookupDate as unknown as { constructor: { name: string } }
-        ).constructor?.name,
-        keys: Object.keys(lookupDate),
-        type: typeof lookupDate,
-        value: lookupDate,
+      errorCatcher(new Error('isCoWeek: Received non-Date object'), {
+        contexts: {
+          fn: {
+            constructor: (
+              lookupDate as unknown as { constructor: { name: string } }
+            ).constructor?.name,
+            keys: Object.keys(lookupDate),
+            name: 'isCoWeek',
+            type: typeof lookupDate,
+            value: lookupDate,
+          },
+        },
       });
     }
 
@@ -111,6 +120,29 @@ export const isReplacedByMemorial = (lookupDate?: Date) => {
       getSpecificWeekday(lookupDate, 0),
       getSpecificWeekday(memorialDate, 0),
     );
+  } catch (error) {
+    errorCatcher(error);
+    return false;
+  }
+};
+
+export const isMemorialDay = (lookupDate?: Date | string) => {
+  try {
+    const currentState = useCurrentStateStore();
+    if (
+      !lookupDate ||
+      currentState.currentSettings?.disableMediaFetching ||
+      !currentState.currentSettings?.memorialDate
+    ) {
+      return false;
+    }
+
+    lookupDate = dateFromString(lookupDate);
+    const memorialDate = dateFromString(
+      currentState.currentSettings.memorialDate,
+    );
+
+    return datesAreSame(lookupDate, memorialDate);
   } catch (error) {
     errorCatcher(error);
     return false;
@@ -198,84 +230,30 @@ export function updateLookupPeriod({
 
     if (!lookupPeriod || typeof lookupPeriod !== 'object') return;
 
-    // --- Handle "reset for all congregations" mode ---
     if (reset && allCongregations) {
-      const congregationIds = Object.keys(lookupPeriod).filter(
-        (id) => id && Array.isArray(lookupPeriod[id]),
-      );
-
-      console.log(
-        `🔄 [updateLookupPeriod] Resetting dynamic media for ${congregationIds.length} congregations`,
-      );
-
-      for (const congId of congregationIds) {
-        console.log(
-          `🔄 [updateLookupPeriod] Resetting dynamic media for congregation ${congId}`,
-        );
-        try {
-          const days = lookupPeriod[congId];
-          if (!Array.isArray(days)) {
-            console.log(
-              `🔄 [updateLookupPeriod] Invalid days for congregation ${congId}`,
-            );
-            continue;
-          }
-          console.log(
-            `🔄 [updateLookupPeriod] Found ${days.length} days for congregation ${congId}`,
-          );
-
-          for (const day of days) {
-            console.log(
-              `🔄 [updateLookupPeriod] Resetting dynamic media for day ${day.date}`,
-            );
-            resetDay(day);
-          }
-
-          lookupPeriod[congId] = days.filter(Boolean);
-        } catch (error) {
-          console.error(
-            `🔄 [updateLookupPeriod] Failed to reset dynamic media for congregation ${congId}:`,
-            error,
-          );
-          errorCatcher(error);
-        }
-      }
-
-      console.log(
-        '✅ [updateLookupPeriod] Dynamic media reset completed for all congregations',
-      );
-      return; // Exit early — no need for single-congregation flow
+      resetAllCongregations(lookupPeriod);
+      return;
     }
 
-    // --- Single-congregation logic ---
     const { currentCongregation, currentSettings } = useCurrentStateStore();
     if (!currentCongregation || !currentSettings) return;
 
     updateMeetingScheduleIfNeeded(currentSettings);
 
-    if (!lookupPeriod[currentCongregation]) {
-      lookupPeriod[currentCongregation] = [];
-    }
+    lookupPeriod[currentCongregation] ??= [];
 
-    const currentDate = new Date();
     extendLookupPeriod(
       currentCongregation,
-      currentDate,
+      new Date(),
       currentSettings,
       lookupPeriod,
     );
 
     if (reset) {
-      const days = onlyForWeekIncluding
-        ? getDaysForWeek(
-            lookupPeriod[currentCongregation],
-            onlyForWeekIncluding,
-          )
-        : lookupPeriod[currentCongregation];
-
-      if (!days.length) return;
-
-      days.forEach(resetDay);
+      resetSingleCongregation(
+        lookupPeriod[currentCongregation],
+        onlyForWeekIncluding,
+      );
     }
   } catch (error) {
     errorCatcher(error);
@@ -330,6 +308,45 @@ function getDaysForWeek(days: DateInfo[], dateStr: string) {
   });
 }
 
+function resetAllCongregations(
+  lookupPeriod: Partial<Record<string, (DateInfo | undefined)[]>>,
+) {
+  const congregationIds = Object.keys(lookupPeriod).filter(
+    (id) => id && Array.isArray(lookupPeriod[id]),
+  );
+
+  log(
+    `🔄 [updateLookupPeriod] Resetting dynamic media for ${congregationIds.length} congregations`,
+    'dateHelpers',
+    'log',
+  );
+
+  for (const congId of congregationIds) {
+    try {
+      const days = lookupPeriod[congId];
+      if (!Array.isArray(days)) continue;
+
+      days.forEach((day) => day && resetDay(day));
+      lookupPeriod[congId] = days.filter(Boolean);
+    } catch (error) {
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            congId,
+            name: 'resetAllCongregations',
+          },
+        },
+      });
+    }
+  }
+
+  log(
+    '✅ [updateLookupPeriod] Dynamic media reset completed for all congregations',
+    'dateHelpers',
+    'log',
+  );
+}
+
 function resetDay(day: DateInfo) {
   try {
     const totalBefore = countMedia(day);
@@ -343,9 +360,23 @@ function resetDay(day: DateInfo) {
     }
 
     const removed = totalBefore - countMedia(day);
-    if (removed > 0) console.log(`🗑️ Removed ${removed} dynamic items`);
+    if (removed > 0)
+      log(`🗑️ Removed ${removed} dynamic items`, 'dateHelpers', 'log');
   } catch (error) {
     errorCatcher(error);
+  }
+}
+
+function resetSingleCongregation(
+  days: DateInfo[],
+  onlyForWeekIncluding?: string,
+) {
+  const targetDays = onlyForWeekIncluding
+    ? getDaysForWeek(days, onlyForWeekIncluding)
+    : days;
+
+  if (targetDays.length) {
+    targetDays.forEach(resetDay);
   }
 }
 
@@ -370,6 +401,16 @@ function updateMeetingScheduleIfNeeded(settings: SettingsValues) {
       settings.meetingScheduleChangeWeStartTime ?? settings.weStartTime;
   }
 
+  // Notify user
+  createTemporaryNotification({
+    icon: 'mmm-info',
+    message: (i18n.global.t as (key: string) => string)(
+      'meeting-schedule-change-applied',
+    ),
+    timeout: 10000,
+    type: 'info',
+  });
+
   // Clear change fields
   Object.assign(settings, {
     meetingScheduleChangeDate: null,
@@ -379,6 +420,9 @@ function updateMeetingScheduleIfNeeded(settings: SettingsValues) {
     meetingScheduleChangeWeDay: null,
     meetingScheduleChangeWeStartTime: null,
   });
+
+  // Update lookup period
+  updateLookupPeriod({ reset: true });
 }
 
 export const remainingTimeBeforeMeetingStart = () => {

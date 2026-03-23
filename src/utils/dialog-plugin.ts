@@ -1,8 +1,8 @@
 // Import all dialog components
 import DialogAbout from 'components/dialog/DialogAbout.vue';
 import DialogAddDivider from 'components/dialog/DialogAddDivider.vue';
-import DialogAudioBible from 'components/dialog/DialogAudioBible.vue';
 import DialogBackgroundMusicPopup from 'components/dialog/DialogBackgroundMusicPopup.vue';
+import DialogBible from 'components/dialog/DialogBible.vue';
 import DialogCacheClear from 'components/dialog/DialogCacheClear.vue';
 import DialogCongregationLookup from 'components/dialog/DialogCongregationLookup.vue';
 import DialogCustomSectionEdit from 'components/dialog/DialogCustomSectionEdit.vue';
@@ -22,8 +22,8 @@ import { useDialogStateStore } from 'stores/dialog-state';
 const dialogComponents = {
   DialogAbout,
   DialogAddDivider,
-  DialogAudioBible,
   DialogBackgroundMusicPopup,
+  DialogBible,
   DialogCacheClear,
   DialogCongregationLookup,
   DialogCustomSectionEdit,
@@ -59,7 +59,7 @@ interface DialogOptions {
 
 export class DialogPlugin {
   private static instance: DialogPlugin;
-  private dialogStore = useDialogStateStore();
+  private readonly dialogStore = useDialogStateStore();
 
   static getInstance(): DialogPlugin {
     if (!DialogPlugin.instance) {
@@ -101,8 +101,7 @@ export class DialogPlugin {
    */
   open<T = unknown>(options: DialogOptions): Promise<T> {
     const { component, dialogOptions = {}, props = {} } = options;
-    const dialogId = `${component}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
+    const dialogId = `${component}_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
     // Register the dialog as open in our store
     this.dialogStore.openDialog(dialogId, component, props);
 

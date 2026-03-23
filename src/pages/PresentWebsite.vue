@@ -95,7 +95,7 @@ const websiteOptions = [
 
 useMeta({ title: t('titles.presentWebsite') });
 
-const { askForMediaAccess } = window.electronApi;
+const { askForMediaAccess } = globalThis.electronApi;
 
 onMounted(() => {
   askForMediaAccess();

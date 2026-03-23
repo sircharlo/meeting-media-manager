@@ -186,24 +186,34 @@ const skeletonSections = computed(() => {
   return map[selectedDayMeetingType.value || 'we'];
 });
 
-const primaryEmptyStateMessage = computed(() => {
-  if (!selectedDate.value) {
-    return t('noDateSelected');
-  }
-
+const emptyStateFlags = computed(() => {
   const fetchingEnabled = !currentSettings.value?.disableMediaFetching;
   const hasMeetingType = !!selectedDayMeetingType.value;
   const status = selectedDateObject.value?.status;
 
-  if (fetchingEnabled && hasMeetingType && status !== 'error') {
-    if (currentSettings.value?.meteredConnection) {
-      const selectedDateValue = selectedDateObject.value?.date;
-      if (
-        selectedDateValue &&
-        getDateDiff(selectedDateValue, new Date(), 'days') > 1
-      ) {
-        return t('this-meeting-is-far-in-the-future');
-      }
+  const isFetchable = fetchingEnabled && hasMeetingType && status !== 'error';
+
+  const isFarFutureOnMetered = (() => {
+    if (!currentSettings.value?.meteredConnection) return false;
+    const d = selectedDateObject.value?.date;
+    return d && getDateDiff(d, new Date(), 'days') > 1;
+  })();
+
+  return {
+    hasDate: !!selectedDate.value,
+    isFarFutureOnMetered,
+    isFetchable,
+  };
+});
+
+const primaryEmptyStateMessage = computed(() => {
+  const f = emptyStateFlags.value;
+
+  if (!f.hasDate) return t('noDateSelected');
+
+  if (f.isFetchable) {
+    if (f.isFarFutureOnMetered) {
+      return t('this-meeting-is-far-in-the-future');
     }
     return t('please-wait');
   }
@@ -212,23 +222,13 @@ const primaryEmptyStateMessage = computed(() => {
 });
 
 const secondaryEmptyStateMessage = computed(() => {
-  if (!selectedDate.value) {
-    return t('select-a-date-to-begin');
-  }
+  const f = emptyStateFlags.value;
 
-  const fetchingEnabled = !currentSettings.value?.disableMediaFetching;
-  const hasMeetingType = !!selectedDayMeetingType.value;
-  const status = selectedDateObject.value?.status;
+  if (!f.hasDate) return t('select-a-date-to-begin');
 
-  if (fetchingEnabled && hasMeetingType && status !== 'error') {
-    if (currentSettings.value?.meteredConnection) {
-      const selectedDateValue = selectedDateObject.value?.date;
-      if (
-        selectedDateValue &&
-        getDateDiff(selectedDateValue, new Date(), 'days') > 1
-      ) {
-        return t('not-yet-available-due-to-metered-connection');
-      }
+  if (f.isFetchable) {
+    if (f.isFarFutureOnMetered) {
+      return t('not-yet-available-due-to-metered-connection');
     }
     return t('currently-loading');
   }

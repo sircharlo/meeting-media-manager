@@ -44,14 +44,6 @@ V pogledu koledarja so prikazani urnik shodov in razpoložljiva multimedijska vs
 - **Indikatorji multimedijske vsebine** - ikone prikazujejo, katera vrsta multimedijske vsebine je na voljo.
 - **Navigacija po datumu** - za premikanje med meseci uporabi smerne tipke.
 
-<!-- ### Downloading Media {#downloading-media}
-
-::: info Note
-
-Download speed depends on your internet connection and the size of media files. Videos typically take longer to download than images.
-
-::: -->
-
 ### Organiziranje multimedijske vsebine {#organizing-media}
 
 M³ samodejno organizira multimedijsko vsebino glede na vrsto shoda in razdelek:
@@ -84,11 +76,11 @@ Multimedijski predvajalnik omogoča celovito upravljanje:
 
 - **Povečanje/premikanje slike** – za povečanje slike uporabi kolesce miške, za premikanje slike pa povleci z miško
 
-### Napredne možnosti predstavitve multimedijske vsebine {#advanced-presentation}
+### Napredne možnosti predvajanja multimedijske vsebine {#advanced-presentation}
 
-#### Časovni razpored po meri {#custom-timing}
+#### Povečevanje in premikanje {#custom-timing}
 
-Za multimedijsko vsebino nastavi začetni in končni čas po meri:
+Nastavi začetni in končni čas predvajanja multimedijske vsebine:
 
 <!-- 1. Right-click on a media item
 2. Select "Edit Timing" -->
@@ -102,7 +94,7 @@ Za multimedijsko vsebino nastavi začetni in končni čas po meri:
 Za slike in videoposnetke:
 
 - **Povečaj/Pomanjšaj** - Uporabi kolesce miške ali gumbe za povečavo na sličici
-- **Premikanje** - Klikni in povleci sličico, da jo premaknete
+- **Premikanje** - Klikni in povleci sličico, da jo premakneš
 - **Ponastavi povečavo** - Klikni, da se vrneš na prvotno povečavo
 
 #### Bližnjice na tipkovnici {#user-guide-keyboard-shortcuts}
@@ -133,7 +125,7 @@ Nastavi prilagojene bližnjice na tipkovnici za hiter dostop. Privzeto niso nast
 Glasba v ozadju se samodejno predvaja pred shodi in se ustavi ob pravem času:
 
 1. **Vklopi glasbo** – V nastavitvah vklopi glasbo v ozadju
-2. **Samodejni zagon** – Glasba se bo samodejno zagnala ob zagonu M³, če je to primerno
+2. **Samodejni zagon** – Glasba se bo samodejno zagnala ob zagonu M³
 3. **Ustavitev pred shodom** – Glasba se samodejno ustavi pred začetkom shoda
 4. **Ročni nadzor** – Uporabi gumb za glasbo v vrstici stanja za ročni zagon/ustavitev
 5. **Ponovni zagon** – Po shodu lahko glasbo znova zaženeš z enim klikom
@@ -143,46 +135,46 @@ Glasba v ozadju se samodejno predvaja pred shodi in se ustavi ob pravem času:
 M³ se lahko poveže z Zoomom za samodejno deljenje zaslona:
 
 1. **Vklopi povezavo** – V nastavitvah vklopi povezavo z Zoomom
-2. **Nastavi bližnjico** – Nastavi tipkovno bližnjico za deljenje zaslona, kot je določena v Zoomu. Poskrbi, da bo v Zoomu označena možnost »globalno« (angl. global).
+2. **Nastavi bližnjico** – Nastavi tipko za deljenje zaslona, kot je določena v Zoomu. Poskrbi, da bo v Zoomu označena možnost »global«.
 3. **Samodejni nadzor** – M³ bo samodejno vklapljal in izklapljal deljenje zaslona v Zoomu, ko bo to potrebno
 4. **Ročni nadzor** – Če je treba, lahko deljenje zaslona še vedno ročno upravljaš v Zoomu
 
-## OBS Studio Integration {#user-guide-obs-integration}
+## Združevanje z OBS Studiem {#user-guide-obs-integration}
 
-### Setting Up OBS Integration {#user-guide-obs-setup}
+### Nastavitev povezave z OBS {#user-guide-obs-setup}
 
-To use M³ with OBS Studio for hybrid meetings:
+Če želiš pri hibridnih shodih uporabljati M³ skupaj z OBS Studio:
 
-1. **Install OBS Studio** - Download and install OBS Studio
-2. **Enable WebSocket** - Install the WebSocket plugin in OBS
-3. **Configure M³** - Enter OBS port and password in M³ settings
-4. **Set Up Scenes** - Create scenes for camera, media, and other content
-5. **Test** - Verify playback works properly
+1. **Namesti OBS Studio** – Prenesi in namesti OBS Studio
+2. **Omogoči WebSocket** – Namesti vtičnik WebSocket v OBS
+3. **Nastavi M³** – V nastavitvah M³ vnesi vrata in geslo za dostop do OBS
+4. **Nastavi prizore** – Ustvari prizore za kamero, predvajanje multimedijske vsebine in drugo
+5. **Preizkusi** – Preveri, ali predvajanje deluje pravilno
 
-### OBS Scene Management {#obs-scene-management}
+### Upravljanje prizorov v OBS {#obs-scene-management}
 
-M³ automatically switches OBS scenes during presentations:
+M³ med predstavitvami samodejno preklaplja med prizori v programu OBS:
 
-- **Camera Scene** - Shows the lectern/camera view
-- **Media Scene** - Displays media content
-- **Image Scene** - Shows images (can be postponed if enabled)
-- **Automatic Switching** - Scenes change based on media type and settings
+- **Prizor kamere** – Prikaže pogled na govorniški pult
+- **Prizor multimedijske vsebine** – Prikaže multimedijsko vsebino
+- **Prikaz slike** – Prikaže slike ( lahko se odloži, če je ta možnost omogočena)
+- **Samodejno preklapljanje** – Prizori se spreminjajo glede na vrsto multimedijske vsebine in nastavitve
 
-### Advanced OBS Features {#advanced-obs}
+### Napredne funkcije OBS {#advanced-obs}
 
-#### Postpone Images {#user-guide-postpone-images}
+#### Odložitev prikazovanja slik {#user-guide-postpone-images}
 
-Enable this option to delay sharing images to OBS until manually triggered:
+Omogoči to možnost, če želiš, da se deljenje slik v OBS odloži, dokler ga ne sprožiš ročno:
 
-1. Enable "Postpone Images" in OBS settings
-2. Images will only be shared when you click the button to show them using OBS Studio. This is useful for showing images to in-person audience first.
+1. V nastavitvah programa OBS omogoči možnost »Postpone Images«
+2. Slike bodo deljene šele, ko klikneš na gumb za njihovo prikazovanje z uporabo programa OBS Studio. To je koristno, če želiš sle slike naprej pokazati tistim, ki so prisotni v živo.
 
-#### Scene Switching Behavior {#user-guide-scene-switching}
+#### Način preklapljanja med prizori {#user-guide-scene-switching}
 
-Configure how M³ handles scene changes:
+Nastavi, kako naj M³ spreminja scene:
 
-- **Switch After Media** - Automatically return to previous scene
-- **Remember Previous Scene** - Restore the scene that was active before media
+- **Preklop po predvajanju** – Samodejni povratek na prejšnjo sceno
+- **Zapomni si prejšnji prizor** – Obnovi prizor, ki je bil aktiven pred predvajanjem
 
 ### Audio Configuration for Hybrid Meetings {#audio-configuration}
 
@@ -211,9 +203,9 @@ If Original Audio doesn't work well in your setup:
 
 #### Why Audio Configuration is Necessary {#why-audio-config}
 
-M³ plays media with sound on your computer, but this audio is **not automatically transmitted** through the video stream to OBS Studio. This is the same behavior you would experience with any other media player.
+M³ predvaja multimedijsko vsebino z zvokom na vašem računalniku, vendar se ta zvok **ne prenaša samodejno** prek video prenosa v OBS Studio. To velja za vse predvajalnike multimedijskih datotek.
 
-**The audio issue is not related to M³** - it's a limitation of how OBS Studio video streaming works with Zoom. The video stream acts like a virtual camera without sound, just like a webcam, so you must explicitly configure Zoom to capture the computer's audio. This implies that your computer has two sound cards, and if this isn't the case, you probably won't be able to use the OBS Studio integration successfully.
+**Težava z zvokom ni povezana z M³** – gre za omejitev delovanja video prenosa OBS Studio z Zoom. Video tok deluje kot virtualna kamera brez zvoka, podobno kot spletna kamera, zato morate Zoom izrecno nastaviti tako, da zajema zvok računalnika. To kaže na to, da ima vaš računalnik dve zvočni kartici. Če jih nima, verjetno ne boste mogli uspešno uporabljati integracije z OBS Studio.
 
 **Alternative Solution**: Consider using the Zoom integration instead, as it uses Zoom's native screen and audio sharing, which handles audio more seamlessly.
 
@@ -221,17 +213,17 @@ M³ plays media with sound on your computer, but this audio is **not automatical
 
 **Common Problems:**
 
-- **No audio in Zoom**: Check if Original Audio is enabled and properly configured
-- **Poor audio quality**: Verify the three Original Audio checkboxes are set correctly
-- **Audio not working after Zoom restart**: Original Audio settings must be re-enabled for each new Zoom session
+- **V Zoomu ni zvoka**: Preveri, ali je originalni zvok omogočen in pravilno nastavljen
+- **Slaba kakovost zvoka**: Preveri, ali so tri potrditvena polja Original Audio (Izvirni zvok) pravilno nastavljena
+- **Zvok ne deluje po ponovnem zagonu Zooma**: Za vsako novo sejo Zooma je treba ponovno omogočiti prvotne nastavitve zvoka
 
-**Best Practices:**
+**Najboljše navade:**
 
-- Test audio configuration and sharing before meetings
-- Create a checklist for audio setup
-- Consider using "Share Computer Sound" as a backup option
-- **Consider using Zoom integration instead of OBS Studio** for simpler audio handling
-- Ensure all AV operators are familiar with these settings
+- Preizkusi konfiguracijo zvoka in deljenje vsebine pred shodom
+- Ustvari kontrolni seznam za nastavitev zvoka
+- Razmisli o uporabi možnosti "Share Computer Sound" kot rezervni možnosti
+- Za enostavnejše upravljanje zvoka **razmisli o združevanju z Zoomom namesto z OBS Studio**
+- Poskrbi, da bodo vsi, ki sodelujejo pri ozvočenju, seznanjeni s temi nastavitvami
 
 ## Media Import and Management {#media-import}
 
@@ -243,7 +235,7 @@ Add your own media files to M³:
 2. **Drag and Drop** - Drag files directly into M³
 3. **Folder Monitoring** - Set up a watched folder for automatic imports
 4. **JWPUB Files and Playlists** - Import publications and playlists
-5. **Public Talk Media (S-34 / S-34mp)** - Import public talk media using S‑34 or S‑34mp JWPUB files
+5. **Seznam multimedijskih vsebin za javne govore (S-34 / S-34mp)** - Uvozi Seznam multimedijskih vsebin za javne govore z datotekami JWPUB S‑34 ali S‑34mp
 
 ### Managing Imported Media {#managing-imported-media}
 
@@ -273,7 +265,7 @@ Monitor a folder for new media files:
 3. **Automatic Import** - New files are automatically added to M³
 4. **Organization** - Files are organized by date based on folder structure
 
-### Media Export {#user-guide-media-export}
+### Izvoz multimedijske vsebine {#user-guide-media-export}
 
 Automatically export media to organized folders:
 
@@ -298,7 +290,7 @@ Share the official website on external displays:
 - **Refresh** - Reload the current page
 - **Close** - Exit website presentation mode
 
-## Advanced Features {#user-guide-advanced-features}
+## Napredne funkcije {#user-guide-advanced-features}
 
 ### Multiple Congregations {#user-guide-multiple-congregations}
 

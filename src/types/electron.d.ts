@@ -1,8 +1,6 @@
-import type decompress from 'decompress';
 import type { default as FsExtra } from 'fs-extra';
 import type { IAudioMetadata, IOptions } from 'music-metadata';
 import type robot from 'robotjs';
-import type { ConversionOptions } from 'src-electron/preload/converters';
 import type {
   FileItem,
   JwSiteParams,
@@ -11,6 +9,22 @@ import type {
   VideoDuration,
 } from 'src/types/electron';
 import type Path from 'upath';
+
+export interface ConversionOptions {
+  /**
+   * the HEIC file buffer
+   */
+  buffer: ArrayBufferLike;
+  /**
+   * output format
+   */
+  format: 'JPEG' | 'PNG';
+  /**
+   * the JPEG compression quality, between 0 and 1
+   * @default 0.92
+   */
+  quality?: number;
+}
 
 export type DiscussionCategory =
   | 'general'
@@ -45,12 +59,8 @@ export interface ElectronApi {
   createVideoFromNonVideo: (
     originalFile: string,
     ffmpegPath: string,
+    outputDir?: string,
   ) => Promise<string>;
-  decompress: (
-    input: string,
-    output: string,
-    opts?: decompress.DecompressOptions,
-  ) => Promise<Decompress.File[]>;
   downloadFile: (
     url: string,
     saveDir: string,
@@ -60,6 +70,7 @@ export interface ElectronApi {
   executeQuery: <T extends object = QueryResponseItem>(
     dbPath: string,
     query: string,
+    params?: (null | number | string)[],
   ) => T[];
   /**
    * Converts a file URL to a file path.
@@ -76,10 +87,14 @@ export interface ElectronApi {
   fs: typeof FsExtra;
   getAllScreens: () => Promise<Display[]>;
   getAppDataPath: () => Promise<string>;
+  getBetaUpdatesPath: () => Promise<string>;
   getLocales: () => Promise<string[]>;
   getLocalPathFromFileObject: (fileObject: File | string | undefined) => string;
+  getLowDiskSpaceStatus: () => Promise<boolean>;
   getNrOfPdfPages: (pdfPath: string) => Promise<number>;
   getScreenAccessStatus: () => Promise<MediaAccessStatus>;
+  getSharedDataPath: () => Promise<null | string>;
+  getUpdatesDisabledPath: () => Promise<string>;
   getUserDataPath: () => Promise<string>;
   /**
    * Parses metadata from a media file.
@@ -89,8 +104,12 @@ export interface ElectronApi {
    * @returns A promise that resolves to the metadata of the media file.
    */
   getVideoDuration: (filePath: string) => Promise<VideoDuration>;
+  getZipEntries: (zipPath: string) => Promise<Record<string, number>>;
   inferExtension: (filename: string, filetype?: string) => Promise<string>;
+  isArchitectureMismatch: () => Promise<boolean>;
+  isDownloadComplete: (downloadId: string) => Promise<boolean | null>;
   isDownloadErrorExpected: () => Promise<boolean>;
+  isUsablePath: (path: string) => Promise<boolean>;
   moveMediaWindow: (
     targetScreenNumber?: number,
     windowedMode?: boolean,
@@ -143,6 +162,7 @@ export interface ElectronApi {
     }) => void,
   ) => void;
   onUpdateError: (callback: () => void) => void;
+  onVideoCaptureCrashDetected: (callback: () => void) => void;
   onWatchFolderUpdate: (
     callback: (args: {
       changedPath: string;
@@ -180,6 +200,7 @@ export interface ElectronApi {
    *   // => 'file:///home/user/document.pdf'
    */
   pathToFileURL: (path: string) => string;
+  PLATFORM: string;
   quitAndInstall: () => void;
   readdir: (
     path: string,
@@ -197,6 +218,11 @@ export interface ElectronApi {
   unregisterAllShortcuts: () => void;
   unregisterShortcut: (shortcut: string) => void;
   unwatchFolders: () => void;
+  unzip: (
+    input: string,
+    output: string,
+    opts?: UnzipOptions,
+  ) => Promise<UnzipResult[]>;
   watchFolder: (path: string) => void;
   zoomWebsiteWindow: (direction: 'in' | 'out') => void;
 }
@@ -204,19 +230,27 @@ export interface ElectronApi {
 // ipcMain.handle / ipcRenderer.invoke channels
 export type ElectronIpcInvokeKey =
   | 'createVideoFromNonVideo'
-  | 'decompress'
   | 'downloadFile'
   | 'getAllScreens'
   | 'getAppDataPath'
+  | 'getBetaUpdatesPath'
   | 'getLocales'
+  | 'getLowDiskSpaceStatus'
   | 'getScreenAccessStatus'
+  | 'getSharedDataPath'
+  | 'getUpdatesDisabledPath'
   | 'getUserDataPath'
+  | 'getZipEntries'
+  | 'isArchitectureMismatch'
+  | 'isDownloadComplete'
   | 'isDownloadErrorExpected'
+  | 'isUsablePath'
   | 'openFileDialog'
   | 'openFolder'
   | 'openFolderDialog'
   | 'registerShortcut'
-  | 'set-hardware-acceleration';
+  | 'set-hardware-acceleration'
+  | 'unzip';
 
 // BrowserWindow.webContents.send / ipcRenderer.on channels
 export type ElectronIpcListenKey =
@@ -236,6 +270,7 @@ export type ElectronIpcListenKey =
   | 'update-download-progress'
   | 'update-downloaded'
   | 'update-error'
+  | 'video-capture-crash-detected'
   | 'watchFolderUpdate'
   | 'websiteWindowClosed';
 
@@ -280,3 +315,11 @@ export type MediaAccessStatus =
   | 'unknown';
 
 export type NavigateWebsiteAction = 'back' | 'forward' | 'refresh';
+
+export interface UnzipOptions {
+  includes?: string[];
+}
+
+export interface UnzipResult {
+  path: string;
+}

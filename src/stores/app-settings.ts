@@ -33,7 +33,13 @@ export const useAppSettingsStore = defineStore('app-settings', {
     async runMigration(type: string) {
       const migrationFn = MIGRATION_REGISTRY[type];
       if (!migrationFn) {
-        console.warn(`🔍 [migration] Unknown migration type: ${type}`);
+        errorCatcher(new Error(`Unknown migration type: ${type}`), {
+          contexts: {
+            fn: {
+              name: 'runMigration',
+            },
+          },
+        });
         return false;
       }
 

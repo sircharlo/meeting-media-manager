@@ -8,7 +8,6 @@
         <div class="col">{{ t('publication-media') }}</div>
         <div class="col-shrink">
           <q-spinner v-if="loading" color="primary" />
-          <!-- <q-icon v-else color="accent-400" name="mmm-cloud-done" /> -->
         </div>
       </div>
       <div class="text-subtitle2 q-pb-sm q-px-md">
@@ -35,16 +34,7 @@
           :placeholder="t('search-placeholder')"
           @clear="clearSearch"
           @keyup="onSearchInput"
-        >
-          <!-- <template #append>
-            <q-btn
-              :disable="!searchQuery.trim() || loading"
-              flat
-              icon="search"
-              @click="performSearch"
-            />
-          </template> -->
-        </q-input>
+        />
       </div>
 
       <div class="q-px-md overflow-auto row" style="flex: 1 1 auto">
@@ -171,7 +161,7 @@
                 @click="selectCategory(category)"
               >
                 <q-item-section avatar class="jw-icon">
-                  <q-avatar>{{ jwIcons[category as jwIconsKeys] }}</q-avatar>
+                  <q-avatar>{{ getJwIconFromKeyword(category) }}</q-avatar>
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>{{ t(category) }}</q-item-label>
@@ -192,7 +182,7 @@
               >
                 <q-item-section avatar class="jw-icon">
                   <q-avatar>
-                    {{ jwIcons[choice.optionValue.toString() as jwIconsKeys] }}
+                    {{ getJwIconFromKeyword(choice.optionValue) }}
                   </q-avatar>
                 </q-item-section>
                 <q-item-section>
@@ -345,7 +335,7 @@
                     class="rounded-borders"
                     square
                   >
-                    <img :src="docPreviews[doc.DocumentId]" />
+                    <img :alt="doc.Title" :src="docPreviews[doc.DocumentId]" />
                   </q-avatar>
                 </q-item-section>
                 <q-item-section>
@@ -415,6 +405,16 @@
                       >
                         {{ video.title }}
                       </div>
+                      <div
+                        v-if="video.downloaded"
+                        class="absolute-top-right q-ma-xs bg-semi-black rounded-borders-sm"
+                      >
+                        <q-icon
+                          color="positive"
+                          name="mmm-cloud-done"
+                          size="24px"
+                        />
+                      </div>
                     </q-img>
                   </q-card-section>
                 </div>
@@ -459,20 +459,19 @@ import type {
   SearchResultItem,
   SearchResults,
 } from 'src/types';
-import type { MediaLink } from 'src/types/jw/publications';
+import type { MediaLink, Publication } from 'src/types/jw/publications';
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
-import { jwIcons, type jwIconsKeys } from 'src/constants/jw-icons';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { getJwIconFromKeyword } from 'src/helpers/fonts';
 import {
-  addJwpubDocumentMediaToFiles,
-  downloadAdditionalRemoteVideo,
   getDbFromJWPUB,
   getJwMediaInfo,
   getPubMediaLinks,
 } from 'src/helpers/jw-media';
+import { log } from 'src/shared/vanilla';
 import { fetchJson, fetchPubMediaLinks } from 'src/utils/api';
 import { getLocalDate } from 'src/utils/date';
 import { getPublicationDirectoryContents } from 'src/utils/fs';
@@ -497,6 +496,11 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+  import: [
+    data:
+      | { dbPath: string; doc: DocumentItem; type: 'jwpub' }
+      | { media: MediaLink; type: 'media' },
+  ];
   'update:modelValue': [value: boolean];
 }>();
 
@@ -509,10 +513,9 @@ const jwStore = useJwStore();
 const { urlVariables } = storeToRefs(jwStore);
 
 const currentState = useCurrentStateStore();
-const { currentLangObject, currentSettings, selectedDate } =
-  storeToRefs(currentState);
+const { currentLangObject, currentSettings } = storeToRefs(currentState);
 
-const { executeQuery, path, pathToFileURL } = window.electronApi;
+const { executeQuery, fs, path, pathToFileURL } = globalThis.electronApi;
 
 const { t } = useI18n();
 const { dateLocale } = useLocale();
@@ -727,6 +730,17 @@ const categoryItems = [
   'programs',
 ];
 
+const buildIssue = (year: number | string, month: number, pub: string) => {
+  const issueBase = `${year}${month.toString().padStart(2, '0')}`;
+  if (pub === 'w') {
+    return Number(year) <= 2015 ? `${issueBase}15` : `${issueBase}00`;
+  }
+  if (pub === 'wp') {
+    return Number(year) <= 2015 ? `${issueBase}01` : `${issueBase}00`;
+  }
+  return `${issueBase}00`;
+};
+
 async function buildMonthChoices() {
   try {
     loading.value = true;
@@ -735,13 +749,7 @@ async function buildMonthChoices() {
     const year = selection.year;
     const promises = Array.from({ length: 12 }, async (_, idx) => {
       const m = idx + 1;
-      const issueBase = `${year}${m.toString().padStart(2, '0')}`;
-      const issue =
-        Number(year) <= 2015 && pub === 'w'
-          ? `${issueBase}15`
-          : Number(year) <= 2015 && pub === 'wp'
-            ? `${issueBase}01`
-            : `${issueBase}00`;
+      const issue = buildIssue(year, m, pub);
       const pubFetcher: PublicationFetcher = {
         fileformat: 'JWPUB',
         issue,
@@ -817,24 +825,10 @@ function clearSearch() {
 }
 
 async function downloadMediaItem(media: MediaLink) {
-  try {
-    isProcessing.value = true;
-
-    // Use downloadAdditionalRemoteVideo to download the media
-    await downloadAdditionalRemoteVideo(
-      [media],
-      selectedDate.value,
-      media.trackImage.url,
-      false,
-      media.title || selection.brochureLabel,
-      props.section,
-    );
-  } catch (error) {
-    errorCatcher(error);
-  } finally {
-    isProcessing.value = false;
-    dialogValue.value = false;
-  }
+  // ✅ Always emit - parent handles section assignment
+  emit('import', { media, type: 'media' });
+  resetState();
+  dialogValue.value = false;
 }
 
 async function fetchJwtToken(): Promise<boolean> {
@@ -874,85 +868,219 @@ async function fetchJwtToken(): Promise<boolean> {
 }
 
 function goBack() {
-  if (step.value === 'article') {
-    documents.value = [];
-    docPreviews.value = {};
-    docHasMedia.value = new Set();
-    selection.dbPath = '';
-    if (searchQuery.value) {
-      step.value = 'search';
-    } else if (
-      selection.category === 'brochures-and-booklets' ||
-      selection.category === 'tracts-and-invitations' ||
-      selection.category === 'programs'
-    ) {
-      step.value = 'publicationListing';
-      selection.brochureLabel = '';
-    } else {
-      step.value = 'month';
-      selection.month = 0;
-    }
-    return;
-  } else if (step.value === 'search') {
-    searchQuery.value = '';
-    searchResults.value = [];
-    step.value = 'category';
-    return;
-  } else if (step.value === 'media') {
-    // Go back to search results
-    mediaItems.value = [];
-    step.value = 'search';
-    return;
-  } else if (step.value === 'month') {
-    documents.value = [];
-    docPreviews.value = {};
-    docHasMedia.value = new Set();
-    selection.dbPath = '';
-    selection.month = 0;
-    selection.year = '';
-    step.value = 'year';
-    return;
-  } else if (step.value === 'year') {
-    documents.value = [];
-    docPreviews.value = {};
-    docHasMedia.value = new Set();
-    selection.dbPath = '';
-    selection.year = '';
-    selection.publication = '';
-    selection.category = '';
+  switch (step.value) {
+    case 'article': {
+      resetDocuments();
 
-    selection.month = 0;
-    step.value =
-      selection.category === 'magazines' ? 'magazineType' : 'category';
-    return;
-  } else if (
-    step.value === 'magazineType' ||
-    step.value === 'publicationListing'
-  ) {
-    documents.value = [];
-    docPreviews.value = {};
-    docHasMedia.value = new Set();
-    selection.dbPath = '';
-    selection.publication = '';
-    selection.brochureLabel = '';
-    selection.year = '';
-    selection.month = 0;
-    selection.category = '';
-    step.value = 'category';
+      if (searchQuery.value) {
+        step.value = 'search';
+      } else if (
+        selection.category === 'brochures-and-booklets' ||
+        selection.category === 'tracts-and-invitations' ||
+        selection.category === 'programs'
+      ) {
+        step.value = 'publicationListing';
+        selection.brochureLabel = '';
+      } else {
+        step.value = 'month';
+        selection.month = 0;
+      }
+      break;
+    }
+
+    case 'magazineType':
+    // falls through
+
+    case 'publicationListing': {
+      resetDocuments();
+      selection.publication = '';
+      selection.brochureLabel = '';
+      selection.year = '';
+      selection.month = 0;
+      selection.category = '';
+      step.value = 'category';
+      break;
+    }
+
+    case 'media': {
+      mediaItems.value = [];
+      step.value = 'search';
+      break;
+    }
+
+    case 'month': {
+      resetDocuments();
+      selection.month = 0;
+      selection.year = '';
+      step.value = 'year';
+      break;
+    }
+
+    case 'search': {
+      searchQuery.value = '';
+      searchResults.value = [];
+      step.value = 'category';
+      break;
+    }
+    case 'year': {
+      resetDocuments();
+      selection.year = '';
+      selection.publication = '';
+      selection.month = 0;
+
+      const previousCategory = selection.category;
+      selection.category = '';
+
+      step.value =
+        previousCategory === 'magazines' ? 'magazineType' : 'category';
+      break;
+    }
   }
 }
 
-async function importDocument(doc: DocumentItem) {
-  try {
-    if (!selection.dbPath) return;
-    isProcessing.value = true;
-    await addJwpubDocumentMediaToFiles(selection.dbPath, doc, props.section);
-  } catch (e) {
-    errorCatcher(e);
-  } finally {
-    isProcessing.value = false;
-    dialogValue.value = false;
+async function handleJwpubResult(
+  publication: string,
+  issue: string,
+  lang: JwLangCode,
+): Promise<boolean> {
+  const dbPath = await getDbFromJWPUB({
+    fileformat: 'JWPUB',
+    issue,
+    langwritten: lang,
+    pub: publication,
+  });
+  if (!dbPath) return false;
+
+  selection.dbPath = dbPath;
+  const docs = executeQuery<DocumentItem>(
+    dbPath,
+    `SELECT DocumentId, Title FROM Document WHERE Type <> 1 ORDER BY DocumentId`,
+  );
+  documents.value = docs;
+  await buildDocumentHasMedia(dbPath);
+  await buildDocumentPreviews(dbPath);
+  step.value = 'article';
+  return true;
+}
+
+async function handleMediaResult(
+  pubMediaLinks: null | Publication,
+  publication: string,
+  issue: string,
+  lang: JwLangCode,
+  resultTitle: string,
+): Promise<boolean> {
+  // Find the best media format (prefer MP4, then others)
+  let mediaFiles: MediaLink[] = [];
+  const formatPriority: (keyof PublicationFiles)[] = ['MP4', 'M4V', 'MP3'];
+
+  for (const format of formatPriority) {
+    const mediaFileLookup = pubMediaLinks?.files?.[lang]?.[
+      format as keyof PublicationFiles
+    ] as MediaLink[] | undefined;
+    if (mediaFileLookup) {
+      for (const mediaFile of mediaFileLookup) {
+        if (pubMediaLinks?.pubImage?.url) {
+          mediaFile.trackImage.url = pubMediaLinks.pubImage.url;
+        } else {
+          const mediaFetcherCopy: PublicationFetcher = {
+            fileformat: format,
+            issue,
+            langwritten: lang,
+            pub: publication,
+            track: mediaFile.track,
+          };
+          const mediaInfo = await getJwMediaInfo(mediaFetcherCopy);
+          mediaFile.trackImage.url = mediaInfo.thumbnail;
+        }
+      }
+      mediaFiles = mediaFileLookup;
+      break;
+    }
   }
+
+  mediaFiles = findBestResolutions(mediaFiles, currentSettings.value?.maxRes);
+
+  const datedDir = await currentState.getDatedAdditionalMediaDirectory();
+
+  mediaItems.value = await Promise.all(
+    mediaFiles.map(async (mediaLink, index) => {
+      const url = mediaLink.file.url;
+      const filename = path.basename(url);
+      const downloaded = await fs.pathExists(path.join(datedDir, filename));
+      return {
+        ...mediaLink,
+        downloaded,
+        title: mediaLink.title || resultTitle || `Media ${index + 1}`,
+      };
+    }),
+  );
+  step.value = 'media';
+
+  if (mediaItems.value.length) {
+    return true;
+  }
+
+  // No media files available
+  log(
+    '❌ No media files available for:',
+    'publicationMedia',
+    'log',
+    publication,
+  );
+  return false;
+}
+
+async function importDocument(doc: DocumentItem) {
+  if (!selection.dbPath) return;
+
+  // ✅ Always emit - parent handles section assignment
+  emit('import', { dbPath: selection.dbPath, doc, type: 'jwpub' });
+  resetState();
+  dialogValue.value = false;
+}
+
+function normalizeIssue(publication: string, issue: string): string {
+  if (!['w', 'wp', 'ws'].includes(publication) || issue.length >= 8) {
+    return issue;
+  }
+
+  const year = Number.parseInt(issue.slice(0, 4) || '0');
+  if (year <= 2015) {
+    return ['w', 'ws'].includes(publication) ? `${issue}15` : `${issue}01`;
+  }
+
+  return `${issue}00`;
+}
+
+function normalizePublicationAndIssue(
+  jwOrgLink: string,
+): null | { issue: string; publication: string } {
+  const url = new URL(jwOrgLink);
+  let publication = url.searchParams.get('pub');
+  let issue = url.searchParams.get('issue') || '0';
+
+  if (!publication) return null;
+
+  // Strip digits from specific publication prefixes
+  if (/^(g|ws|wp|w)\d+/.test(publication)) {
+    publication = publication.replace(/\d+/, '');
+  }
+
+  // Special handling for Watchtower Public (wp)
+  if (
+    publication === 'w' &&
+    issue.length >= 8 &&
+    issue.startsWith('20') &&
+    issue.endsWith('01') &&
+    Number.parseInt(issue) >= 20080101
+  ) {
+    publication = 'wp';
+  }
+
+  issue = normalizeIssue(publication, issue);
+
+  return { issue, publication };
 }
 
 function onSearchInput() {
@@ -1051,11 +1179,24 @@ async function performSearch() {
     // Sort results by rank
     searchResults.value.sort((a, b) => a.insight.rank - b.insight.rank);
   } catch (error) {
-    console.error('Search error:', error);
-    // Handle search error - could show a notification
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          name: 'performSearch',
+          query: searchQuery.value,
+        },
+      },
+    });
   } finally {
     loading.value = false;
   }
+}
+
+function resetDocuments() {
+  documents.value = [];
+  docPreviews.value = {};
+  docHasMedia.value = new Set();
+  selection.dbPath = '';
 }
 
 function resetState() {
@@ -1212,13 +1353,7 @@ async function selectMonth(m: number) {
     // Download jwpub and open DB
     const lang = currentSettings.value?.lang || 'E';
     const pub = selection.publication;
-    const baseIssue = `${selection.year}${m.toString().padStart(2, '0')}`;
-    const issue =
-      Number(selection.year) <= 2015 && pub === 'w'
-        ? `${baseIssue}15`
-        : Number(selection.year) <= 2015 && pub === 'wp'
-          ? `${baseIssue}01`
-          : `${baseIssue}00`;
+    const issue = buildIssue(selection.year, m, pub);
 
     const db = await getDbFromJWPUB({
       fileformat: 'JWPUB',
@@ -1288,54 +1423,14 @@ async function selectSearchResult(result: SearchResultItem) {
       loading.value = false;
       return;
     }
-    const url = new URL(jwOrgLink);
-    let publication = url.searchParams.get('pub');
 
-    let issue = url.searchParams.get('issue');
-    if (!publication) {
+    const normalized = normalizePublicationAndIssue(jwOrgLink);
+    if (!normalized) {
       loading.value = false;
       return;
     }
 
-    // if pub format is g##, ws##, wp## or w##, strip the digits
-    if (
-      publication.startsWith('g') ||
-      publication.startsWith('ws') ||
-      publication.startsWith('wp') ||
-      publication.startsWith('w')
-    ) {
-      publication = publication.replace(/\d+/, '');
-    }
-
-    if (!issue) {
-      issue = '0';
-    }
-
-    // Special handling for wp
-    if (
-      publication === 'w' &&
-      issue &&
-      parseInt(issue.toString()) >= 20080101 &&
-      issue.toString().slice(-2) === '01'
-    ) {
-      publication = 'wp';
-    }
-
-    // Special issue handling for w, wp and ws
-    if (['w', 'wp', 'ws'].includes(publication)) {
-      if (issue?.length < 8) {
-        if (parseInt(issue?.slice(0, 4) || '0') <= 2015) {
-          if (['w', 'ws'].includes(publication)) {
-            issue = `${issue}15`;
-          } else {
-            issue = `${issue}01`;
-          }
-        } else {
-          issue = `${issue}00`;
-        }
-      }
-    }
-
+    const { issue, publication } = normalized;
     selection.publication = publication;
     selection.brochureLabel = result.title;
     const lang = (currentSettings.value?.lang || 'E') as JwLangCode;
@@ -1347,76 +1442,18 @@ async function selectSearchResult(result: SearchResultItem) {
     };
 
     const pubMediaLinks = await getPubMediaLinks(mediaFetcher);
-
     const jwpubFileArray = pubMediaLinks?.files?.[lang]?.JWPUB;
-    const jwpubFileIsPresent = jwpubFileArray?.length;
-    if (!jwpubFileIsPresent) {
-      // Find the best media format (prefer MP4, then others)
-      let mediaFiles: MediaLink[] = [];
-      const formatPriority: (keyof PublicationFiles)[] = ['MP4', 'M4V', 'MP3'];
 
-      for (const format of formatPriority) {
-        const mediaFileLookup = pubMediaLinks?.files?.[lang]?.[
-          format as keyof PublicationFiles
-        ] as MediaLink[] | undefined;
-        if (mediaFileLookup) {
-          for (const mediaFile of mediaFileLookup) {
-            if (pubMediaLinks?.pubImage?.url) {
-              mediaFile.trackImage.url = pubMediaLinks.pubImage.url;
-            } else {
-              const mediaFetcherCopy: PublicationFetcher = { ...mediaFetcher };
-              mediaFetcherCopy.fileformat = format;
-              mediaFetcherCopy.track = mediaFile.track;
-              const mediaInfo = await getJwMediaInfo(mediaFetcherCopy);
-              mediaFile.trackImage.url = mediaInfo.thumbnail;
-            }
-          }
-          mediaFiles = mediaFileLookup;
-          break;
-        }
-      }
-
-      mediaFiles = findBestResolutions(
-        mediaFiles,
-        currentSettings.value?.maxRes,
-      );
-
-      if (mediaFiles.length > 0) {
-        // Set media items and switch to media step
-        mediaItems.value = mediaFiles.map((mediaLink, index) => ({
-          ...mediaLink,
-          downloaded: false, // TODO: Check if already downloaded
-          title: mediaLink.title || result.title || `Media ${index + 1}`,
-        }));
-        step.value = 'media';
-        loading.value = false;
-        return;
-      } else {
-        // No media files available
-        console.log('❌ No media files available for:', publication);
-        loading.value = false;
-        return;
-      }
+    if (jwpubFileArray?.length) {
+      await handleJwpubResult(publication, issue, lang);
     } else {
-      const dbPath = await getDbFromJWPUB({
-        fileformat: 'JWPUB',
+      await handleMediaResult(
+        pubMediaLinks,
+        publication,
         issue,
-        langwritten: lang,
-        pub: selection.publication,
-      });
-      if (!dbPath) {
-        loading.value = false;
-        return;
-      }
-      selection.dbPath = dbPath;
-      const docs = executeQuery<DocumentItem>(
-        dbPath,
-        `SELECT DocumentId, Title FROM Document WHERE Type <> 1 ORDER BY DocumentId`,
+        lang,
+        result.title,
       );
-      documents.value = docs;
-      await buildDocumentHasMedia(dbPath);
-      await buildDocumentPreviews(dbPath);
-      step.value = 'article';
     }
   } catch (e) {
     errorCatcher(e);

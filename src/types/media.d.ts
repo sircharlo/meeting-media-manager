@@ -17,6 +17,21 @@ export interface CacheFile {
   size: number;
 }
 
+/**
+ * Standardized payload that all media import dialogs emit.
+ * Dialogs process all data and emit fully-formed MediaItems with final titles.
+ * Parent component (HeaderCalendar) only handles section assignment.
+ */
+export interface DialogImportPayload {
+  items: MediaItem[]; // Fully processed MediaItems with final titles
+  metadata?: {
+    // Optional metadata for special handling
+    customPrefix?: string;
+    includeNumbering?: boolean;
+    // Add other dialog-specific metadata as needed
+  };
+}
+
 export interface DownloadedFile {
   error?: boolean;
   new?: boolean;
@@ -42,6 +57,13 @@ export interface FileDownloader {
   notify?: boolean;
   size?: number;
   url: string;
+}
+
+export interface JwMediaInfo {
+  duration: number;
+  subtitles: string;
+  thumbnail: string;
+  title: string;
 }
 
 export interface MediaDivider {
@@ -86,7 +108,7 @@ export interface MediaItem {
 
 export interface MediaSection {
   bgColor?: string;
-  jwIcon?: string;
+  jwIconKeyword?: string;
   label?: string;
   repeat?: boolean; // Whether the section should repeat
   repeatInterval?: number; // Interval in seconds for images (default 10)
@@ -110,7 +132,7 @@ export interface SongItem {
 }
 export interface SortableMediaList {
   items: Ref<MediaItem[]>;
-  jwIcon?: string | undefined;
+  jwIconKeyword?: string | undefined;
   label: string;
   type: MediaSectionIdentifier;
 }

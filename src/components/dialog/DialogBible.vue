@@ -1,0 +1,474 @@
+<template>
+  <BaseDialog v-model="dialogValue" :dialog-id="dialogId">
+    <div
+      class="bg-secondary-contrast large-overlay q-px-none flex"
+      style="flex-flow: column"
+    >
+      <div class="row q-px-md q-pt-lg text-h6">
+        <div class="col">
+          {{
+            currentLangObject?.isSignLanguage
+              ? t('sign-language-bible')
+              : t('add-media-audio-bible')
+          }}
+        </div>
+        <div class="col-shrink">
+          <q-btn
+            color="primary"
+            flat
+            icon="mmm-cloud-done"
+            :loading="loading || !bibleMedia?.length"
+            round
+            @click="
+              loading = true;
+              fetchBibleMedia(true);
+            "
+          />
+        </div>
+      </div>
+      <div class="row q-px-md q-py-md">
+        {{
+          currentLangObject?.isSignLanguage
+            ? t('add-bible-verses-sign-language-explain')
+            : t('add-media-audio-bible-explain')
+        }}
+      </div>
+      <div
+        v-if="!loading && selectedBibleBook && bibleMediaComplete.length"
+        class="row q-px-md full-width"
+      >
+        <q-tabs
+          v-model="selectedBibleBook"
+          active-color="primary"
+          dense
+          indicator-color="primary"
+          narrow-indicator
+          outside-arrows
+          style="width: -webkit-fill-available; max-width: 100%"
+        >
+          <q-tab
+            v-for="book in bibleMediaComplete"
+            :key="book.booknum || 0"
+            :disable="!book.files"
+            :label="book.pubName"
+            :name="book.booknum || 0"
+          />
+        </q-tabs>
+      </div>
+      <div
+        class="q-pr-scroll overflow-auto col items-start q-pt-sm"
+        :class="{ 'content-center': loading }"
+      >
+        <div v-if="loading && !bibleMedia?.length">
+          <div
+            v-for="sectionIndex in 2"
+            :key="sectionIndex"
+            class="q-pb-md q-px-md"
+          >
+            <q-skeleton
+              class="q-my-sm"
+              height="20px"
+              type="text"
+              width="200px"
+            />
+            <div class="row q-col-gutter-xs">
+              <div
+                v-for="bookIndex in sectionIndex === 1 ? 39 : 27"
+                :key="bookIndex"
+                class="col-xs-4 col-sm-3 col-md-2 col-lg-1"
+              >
+                <q-skeleton class="full-width" height="36px" type="QBtn" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <template v-else>
+          <template v-if="selectedBibleBook && selectedBookChapters.length">
+            <div class="row q-px-md col">
+              <div class="col q-pr-scroll overflow-auto">
+                <div class="text-secondary text-uppercase q-my-sm">
+                  {{ t('chapter') }}
+                </div>
+                <div class="overflow-auto row q-col-gutter-xs">
+                  <div
+                    v-for="chapter in selectedBookChapters"
+                    :key="chapter"
+                    class="col col-grid"
+                  >
+                    <q-btn
+                      :key="chapter"
+                      class="rounded-borders-sm aspect-ratio-1 full-width"
+                      :class="{
+                        'bg-primary': selectedChapter === chapter,
+                        'text-white': selectedChapter === chapter,
+                        'bg-primary-light': selectedChapter !== chapter,
+                      }"
+                      :disable="loading || isProcessing"
+                      :label="chapter"
+                      unelevated
+                      @click="selectedChapter = chapter"
+                    />
+                  </div>
+                </div>
+              </div>
+              <q-separator class="q-mx-sm" vertical />
+              <div class="col q-px-md q-pb-md">
+                <div class="text-secondary text-uppercase q-my-sm">
+                  {{ t('verse-or-verses') }}
+                </div>
+                <div
+                  class="overflow-auto row q-col-gutter-xs"
+                  @mouseleave="hoveredVerse = null"
+                >
+                  <div
+                    v-for="verse in selectedChapterVerses"
+                    :key="verse"
+                    class="col col-grid"
+                  >
+                    <q-btn
+                      class="rounded-borders-sm aspect-ratio-1 full-width"
+                      :class="getVerseClass(verse)"
+                      :disable="loading || isProcessing"
+                      :label="verse"
+                      unelevated
+                      @click="toggleVerse(verse)"
+                      @mouseover="hoveredVerse = verse"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+          <template v-else-if="bibleMedia?.length">
+            <div
+              v-for="(sectionInfo, sectionIndex) in [
+                {
+                  title: 'hebrew-aramaic-scriptures',
+                  books: bibleMediaHebrew,
+                },
+                { title: 'greek-scriptures', books: bibleMediaGreek },
+              ]"
+              :key="sectionIndex"
+              class="row q-px-md q-pb-md"
+            >
+              <div class="text-secondary text-uppercase q-my-sm row">
+                {{ t(sectionInfo.title) }}
+              </div>
+              <div class="row q-col-gutter-xs">
+                <div
+                  v-for="(book, index) in sectionInfo.books"
+                  :key="index"
+                  class="col col-xs-4 col-sm-3 col-md-2 col-lg-1"
+                >
+                  <q-btn
+                    class="full-width"
+                    :class="{
+                      'dotted-borders': !book.files,
+                    }"
+                    :color="!book.files ? '' : 'accent-200'"
+                    :disable="!book.files || isProcessing"
+                    no-caps
+                    :text-color="!book.files ? 'accent-400' : 'black'"
+                    unelevated
+                    @click="selectedBibleBook = book.booknum || 0"
+                  >
+                    <div class="ellipsis">
+                      {{ book.pubName }}
+                    </div>
+                  </q-btn>
+                </div>
+              </div>
+            </div>
+          </template>
+        </template>
+      </div>
+      <div class="row q-px-md q-py-md row">
+        <div class="col text-right q-gutter-x-sm">
+          <q-btn
+            v-if="selectedBibleBook"
+            color="primary"
+            :disable="isProcessing"
+            flat
+            :label="t('back')"
+            @click="resetBibleBook(!selectedChapter)"
+          />
+          <q-btn
+            v-if="chosenVerses.length"
+            v-close-popup
+            color="primary"
+            :label="t('add') + totalChosenVerses"
+            :loading="isProcessing"
+            @click="addSelectedVerses()"
+          />
+          <q-btn
+            v-else
+            v-close-popup
+            color="negative"
+            :disable="isProcessing"
+            flat
+            :label="t('cancel')"
+            @click="resetBibleBook(true, true)"
+          />
+        </div>
+      </div>
+    </div>
+  </BaseDialog>
+</template>
+<script setup lang="ts">
+import type {
+  MediaLink,
+  MediaSectionIdentifier,
+  Publication,
+  PublicationFiles,
+} from 'src/types';
+
+import { whenever } from '@vueuse/core';
+import BaseDialog from 'components/dialog/BaseDialog.vue';
+import { storeToRefs } from 'pinia';
+import { errorCatcher } from 'src/helpers/error-catcher';
+import { getBibleMedia } from 'src/helpers/jw-media';
+import { useCurrentStateStore } from 'src/stores/current-state';
+import { decodeEntities } from 'src/utils/general';
+import { timeToSeconds } from 'src/utils/time';
+import { computed, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const currentState = useCurrentStateStore();
+const { currentLangObject } = storeToRefs(currentState);
+
+const { t } = useI18n();
+
+// Props
+const props = defineProps<{
+  dialogId: string;
+  modelValue: boolean;
+  section: MediaSectionIdentifier | undefined;
+}>();
+
+const emit = defineEmits<{
+  cancel: [];
+  import: [
+    data: {
+      customDuration: { max: number; min: number };
+      files: MediaLink[];
+      title: string;
+    },
+  ];
+  ok: [];
+  'update:modelValue': [value: boolean];
+}>();
+
+const dialogValue = computed({
+  get: () => props.modelValue,
+  set: (value: boolean) => emit('update:modelValue', value),
+});
+
+const selectedBibleBook = ref<number>(0);
+const selectedChapter = ref(0);
+const bibleMedia = ref<Partial<Publication>[] | undefined>([]);
+
+const bibleMediaHebrew = computed(() => {
+  return (
+    bibleMedia.value
+      ?.filter((item) => item?.booknum && item?.booknum < 40)
+      .map((item) => ({
+        ...item,
+        pubName: decodeEntities(item?.pubName as string),
+      })) || []
+  );
+});
+
+const bibleMediaGreek = computed(() => {
+  return (
+    bibleMedia.value
+      ?.filter((item) => item?.booknum && item?.booknum >= 40)
+      .map((item) => ({
+        ...item,
+        pubName: decodeEntities(item?.pubName as string),
+      })) || []
+  );
+});
+
+const bibleMediaComplete = computed(() => {
+  return bibleMediaHebrew.value.concat(bibleMediaGreek.value);
+});
+
+const selectedBookMedia = computed(() => {
+  if (!selectedBibleBook.value) return [];
+  const allFiles: PublicationFiles[] = Object.values(
+    bibleMedia.value?.find((item) => item?.booknum === selectedBibleBook.value)
+      ?.files || {},
+  );
+  const langFiles: PublicationFiles = allFiles[0] ?? {};
+  const mediaFiles: MediaLink[] = Object.values(langFiles || {})[0];
+  return mediaFiles || [];
+});
+
+const selectedChapterMedia = computed(() => {
+  return selectedBookMedia.value.filter(
+    (item) => item.track === selectedChapter.value && !!item.markers,
+  );
+});
+
+const selectedBookChapters = computed(() => {
+  const chapters = selectedBookMedia.value
+    // Map to the 'track' property (a number)
+    .map((item) => item.track || 0)
+    // Sort the chapters in ascending order
+    .sort((a, b) => a - b);
+
+  // Ensure only unique chapter numbers are returned
+  return [...new Set(chapters)];
+});
+
+const selectedChapterVerses = computed(() => {
+  const allVerses = selectedChapterMedia.value
+    // Map to the first 'markers' property (an array)
+    .map((item) => item.markers)
+    // Flatten the nested 'markers' array into a single list of marker objects
+    .flatMap((item) => item.markers)
+    // Extract the verseNumber from each marker
+    .map((item) => item.verseNumber)
+    // Filter out undefined, null, or zero/negative values
+    .filter((verse): verse is number => !!verse && verse > 0)
+    // Sort the verses in ascending order
+    .sort((a, b) => a - b);
+
+  // Ensure only unique verse numbers are returned
+  return [...new Set(allVerses)];
+});
+
+watch(
+  () => selectedBibleBook.value,
+  () => {
+    resetBibleBook();
+  },
+);
+
+watch(
+  () => selectedChapter.value,
+  () => {
+    chosenVerses.value = [];
+  },
+);
+
+const loading = ref<boolean>(false);
+const isProcessing = ref<boolean>(false);
+
+const chosenVerses = ref<number[]>([]);
+const hoveredVerse = ref<null | number>(null);
+const totalChosenVerses = computed(() => {
+  if (!chosenVerses.value.length) return '';
+  if (chosenVerses.value.length === 1) return ' (1)';
+  if (chosenVerses.value.length === 2) {
+    const [start, end] = chosenVerses.value;
+    if (!start || !end) return '';
+    return ' (' + (Math.abs(start - end) + 1) + ')';
+  }
+  return '';
+});
+
+const toggleVerse = (verse: number) => {
+  if (chosenVerses.value.length === 2) {
+    chosenVerses.value = [verse];
+  } else {
+    chosenVerses.value.push(verse);
+    chosenVerses.value.sort((a, b) => a - b);
+  }
+};
+
+const fetchBibleMedia = async (force = false) => {
+  try {
+    loading.value = true;
+    bibleMedia.value = await getBibleMedia(force);
+  } catch (error) {
+    errorCatcher(error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const addSelectedVerses = async () => {
+  try {
+    isProcessing.value = true;
+    if (!chosenVerses.value.length) return;
+    const startVerseNumber = chosenVerses.value[0];
+    const endVerseNumber = chosenVerses.value[1] || startVerseNumber;
+
+    const min = timeToSeconds(
+      selectedChapterMedia.value.map((item) =>
+        item.markers.markers.find(
+          (marker) => marker.verseNumber === startVerseNumber,
+        ),
+      )?.[0]?.startTime || '0',
+    );
+
+    const endVerse = selectedChapterMedia.value.map((item) =>
+      item.markers.markers.find(
+        (marker) => marker.verseNumber === endVerseNumber,
+      ),
+    )?.[0];
+    const max = endVerse
+      ? timeToSeconds(endVerse.startTime) + timeToSeconds(endVerse.duration)
+      : 0;
+
+    const title =
+      decodeEntities(bibleMedia.value?.[selectedBibleBook.value - 1]?.pubName) +
+      ' ' +
+      selectedChapter.value +
+      ':' +
+      chosenVerses.value
+        .filter((verse, index, self) => self.indexOf(verse) === index)
+        .join('-');
+
+    // ✅ Always emit - parent handles section assignment
+    emit('import', {
+      customDuration: { max, min },
+      files: selectedChapterMedia.value,
+      title,
+    });
+
+    resetBibleBook(true, true);
+    emit('ok');
+  } catch (error) {
+    errorCatcher(error);
+  } finally {
+    isProcessing.value = false;
+  }
+};
+
+const resetBibleBook = (closeBook = false, closeDialog = false) => {
+  if (closeDialog) emit('cancel');
+  if (closeBook) selectedBibleBook.value = 0;
+  selectedChapter.value = 0;
+  chosenVerses.value = [];
+  hoveredVerse.value = null;
+};
+
+const getVerseClass = (verse: number) => {
+  if (chosenVerses.value.includes(verse)) {
+    return 'bg-primary text-white';
+  } else if (
+    chosenVerses.value.length === 2 &&
+    verse > Math.min(...chosenVerses.value) &&
+    verse < Math.max(...chosenVerses.value)
+  ) {
+    return 'bg-primary-semi-transparent text-white';
+  } else if (
+    chosenVerses.value.length === 1 &&
+    chosenVerses.value?.[0] &&
+    verse > Math.min(chosenVerses.value[0], hoveredVerse.value || 0) &&
+    verse < Math.max(chosenVerses.value[0], hoveredVerse.value || 0)
+  ) {
+    return 'bg-primary-semi-transparent text-white';
+  } else {
+    return 'bg-primary-light';
+  }
+};
+
+// Watch for dialog opening to get JW videos and reset state
+whenever(dialogValue, () => {
+  resetBibleBook(true);
+  fetchBibleMedia();
+});
+</script>

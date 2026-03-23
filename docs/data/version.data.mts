@@ -4,8 +4,7 @@ import { fetchLatestRelease } from './../utils/api';
 
 export interface Data {
   linux: string;
-  macArm: string;
-  macIntel: string;
+  macUniversal: string;
   publishedAt: string;
   version: string;
   win32: string;
@@ -23,8 +22,7 @@ export default defineLoader({
       `https://github.com/sircharlo/meeting-media-manager/releases/download/${latestVersion}/meeting-media-manager-${latestVersion.slice(1)}-${arch}.${ext}`;
     return {
       linux: downloadUrl('x86_64', 'AppImage'),
-      macArm: downloadUrl('arm64', 'dmg'),
-      macIntel: downloadUrl('x64', 'dmg'),
+      macUniversal: downloadUrl('universal', 'dmg'),
       publishedAt,
       version: latestVersion,
       win32: downloadUrl('ia32', 'exe'),
