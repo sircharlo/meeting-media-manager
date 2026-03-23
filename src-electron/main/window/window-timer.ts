@@ -5,7 +5,7 @@ import { HD_RESOLUTION, PLATFORM } from 'src-electron/constants';
 import { getAllScreens, getWindowScreen } from 'src-electron/main/screen';
 import { getIconPath } from 'src-electron/main/utils';
 import { createWindow } from 'src-electron/main/window/window-base';
-import { log } from 'src/shared/vanilla';
+import { log, throttleWithTrailing } from 'src/shared/vanilla';
 
 export let timerWindow: BrowserWindow | null = null;
 
@@ -124,6 +124,11 @@ export function createTimerWindow() {
     timerWindow = null;
   });
 }
+
+export const moveTimerWindowThrottled = throttleWithTrailing(
+  () => moveTimerWindow(),
+  100,
+);
 
 export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
   log('🔍 [moveTimerWindow] START - Called with:', {
