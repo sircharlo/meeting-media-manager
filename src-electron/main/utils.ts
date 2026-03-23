@@ -14,7 +14,6 @@ import upath from 'upath';
 const { join, resolve } = upath;
 
 type CaptureCtx = Parameters<typeof captureException>[1];
-
 /**
  * Gets the current app version
  * @returns The app version
@@ -22,7 +21,6 @@ type CaptureCtx = Parameters<typeof captureException>[1];
 export function getAppVersion() {
   return IS_DEV ? version : app.getVersion();
 }
-
 /**
  * Returns the correct path for an icon based on the platform
  * @param icon The icon name

@@ -47,7 +47,7 @@ const getLocalFontPath = async (fontName: FontName) => {
   const fontsDir = await getFontsPath();
   const fontFileName = `${fontName}.woff2`;
   const fontPath = join(fontsDir, fontFileName);
-  let mustDownload = false;
+  let mustDownload: boolean;
   const fontUrls = useJwStore().fontUrls;
   try {
     if (await exists(fontPath)) {
