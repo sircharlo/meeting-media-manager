@@ -278,11 +278,6 @@ const useTimer = () => {
   };
 
   const calculateCountdownTarget = () => {
-    console.log('Calculating countdown target...', {
-      currentPart: currentPart.value,
-      selectedDate: selectedDateObject.value,
-      timerMode: timerMode.value,
-    });
     if (
       !selectedDateObject.value ||
       !isMeetingDay(selectedDateObject.value?.date) ||
@@ -450,20 +445,12 @@ const useTimer = () => {
   };
 
   const formattedTime = computed(() => {
-    let totalSeconds = 0;
-    let isOvertime = false;
-
-    if (timerMode.value === 'countup') {
-      totalSeconds = elapsedSeconds.value;
-    } else {
-      const remaining = countdownTarget.value - elapsedSeconds.value;
-      if (remaining < 0) {
-        isOvertime = true;
-        totalSeconds = Math.abs(remaining);
-      } else {
-        totalSeconds = remaining;
-      }
-    }
+    const remaining = countdownTarget.value - elapsedSeconds.value;
+    const isOvertime = timerMode.value === 'countdown' && remaining < 0;
+    const totalSeconds =
+      timerMode.value === 'countup'
+        ? elapsedSeconds.value
+        : Math.abs(remaining);
 
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
