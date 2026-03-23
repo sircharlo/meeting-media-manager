@@ -134,9 +134,6 @@
     "vue-tsc": "^3.1.5",
     "webpack-iconfont-plugin-nodejs": "^1.0.36"
   },
-  "resolutions": {
-    "got": "11.8.5"
-  },
   "browserslist": [
     "Electron >= 37"
   ],
