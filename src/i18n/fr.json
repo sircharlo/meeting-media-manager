@@ -330,7 +330,7 @@
   "meetingStopBufferSeconds-explain": "Ajustez le curseur pour définir le temps souhaité (en secondes) avant le début d'une réunion où la musique de fond devrait s'arrêter.",
   "memorial-talk": "Discours du Mémorial",
   "memorialDate": "Date du Mémorial",
-  "memorialDate-explain": "Si celle-ci est saisie, M³ tentera de télécharger automatiquement l'image de fond pour le Mémorial et de la préparer. L'image sera affichée à la place du texte d'année. Attention, il s'agit d'une fonctionnalité expérimentale qui peut ne pas fonctionner comme prévu.",
+  "memorialDate-explain": "Si cette date est saisie, M³ tentera de télécharger automatiquement la vidéo de bienvenue au Mémorial ainsi que l'image qui sera affichée pendant le Mémorial à la place du texte de l'année.",
   "memorialFetchBgSuccess": "L'image à afficher pendant le Mémorial a été configurée avec succès",
   "memorialFetchError": "Échec de la récupération des médias à afficher pendant le Mémorial",
   "memorialFetchErrorNoBg": "Échec de la récupération de l'image à afficher pendant le Mémorial. Veuillez vous assurer que l'image est téléchargée et préparée bien avant le Mémorial.",
