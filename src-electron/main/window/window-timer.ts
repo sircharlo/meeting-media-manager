@@ -47,6 +47,8 @@ export function createTimerWindow() {
   if (screens.length === 1 && screens[0]) {
     log(
       '🔍 [createTimerWindow] Only one screen available, checking if window needs repositioning',
+      'timer',
+      'log',
     );
 
     // Get current window bounds
@@ -66,7 +68,7 @@ export function createTimerWindow() {
       currentBounds.y + currentBounds.height <=
         screenBounds.y + screenBounds.height;
 
-    log('🔍 [createTimerWindow] Window position check:', {
+    log('🔍 [createTimerWindow] Window position check:', 'timer', 'log', {
       currentBounds,
       isSmallerThanScreen,
       isWithinScreenBounds,
@@ -77,6 +79,8 @@ export function createTimerWindow() {
     if (!isWithinScreenBounds || !isSmallerThanScreen) {
       log(
         '🔍 [createTimerWindow] Window needs repositioning, setting to windowed mode with HD resolution',
+        'timer',
+        'log',
       );
 
       // Set windowed bounds to HD resolution
@@ -106,7 +110,7 @@ export function createTimerWindow() {
         y,
       });
 
-      log('🔍 [createTimerWindow] Set windowed bounds:', {
+      log('🔍 [createTimerWindow] Set windowed bounds:', 'timer', 'log', {
         height: windowedHeight,
         scale,
         width: windowedWidth,
@@ -116,6 +120,8 @@ export function createTimerWindow() {
     } else {
       log(
         '🔍 [createTimerWindow] Window already properly positioned, keeping current bounds',
+        'timer',
+        'log',
       );
     }
   }
@@ -131,19 +137,28 @@ export const moveTimerWindowThrottled = throttleWithTrailing(
 );
 
 export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
-  log('🔍 [moveTimerWindow] START - Called with:', {
+  log('🔍 [moveTimerWindow] START - Called with:', 'timer', 'log', {
     displayNr,
     fullscreen,
   });
 
   try {
     if (!timerWindow || !timerWindow.isVisible()) {
-      log('🔍 [moveTimerWindow] Timer window not available or not visible');
+      log(
+        '🔍 [moveTimerWindow] Timer window not available or not visible',
+        'timer',
+        'log',
+      );
       return;
     }
 
     const screens = getAllScreens();
-    log('🔍 [moveTimerWindow] Available screens:', screens.length);
+    log(
+      '🔍 [moveTimerWindow] Available screens:',
+      'timer',
+      'log',
+      screens.length,
+    );
 
     // Get current window state
     const currentBounds = timerWindow.getBounds();
@@ -166,23 +181,38 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
         );
       });
       if (preferredIndex !== -1) {
-        log('🔍 [moveTimerWindow] Preferred display index:', preferredIndex);
+        log(
+          '🔍 [moveTimerWindow] Preferred display index:',
+          'timer',
+          'log',
+          preferredIndex,
+        );
       } else {
-        log('🔍 [moveTimerWindow] Preferred display index not found');
+        log(
+          '🔍 [moveTimerWindow] Preferred display index not found',
+          'timer',
+          'log',
+        );
       }
     } else {
-      log('🔍 [moveTimerWindow] No preferred display geometry found');
+      log(
+        '🔍 [moveTimerWindow] No preferred display geometry found',
+        'timer',
+        'log',
+      );
     }
 
     if (targetDisplayNr === undefined || targetFullscreen === undefined) {
       log(
         '🔍 [moveTimerWindow] No parameters provided - checking if timer window should move',
+        'timer',
+        'log',
       );
 
       // Check if timer window is fullscreen
       const isCurrentlyFullscreen = timerWindow.isFullScreen();
 
-      log('🔍 [moveTimerWindow] Current state:', {
+      log('🔍 [moveTimerWindow] Current state:', 'timer', 'log', {
         currentBounds,
         currentDisplayNr,
         currentScreen: screens[currentDisplayNr]?.bounds,
@@ -192,7 +222,7 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
       // If timer window is fullscreen, check if it needs to move
       const mainWindowScreen = screens.findIndex((s) => s.mainWindow);
 
-      log('🔍 [moveTimerWindow] Screen analysis:', {
+      log('🔍 [moveTimerWindow] Screen analysis:', 'timer', 'log', {
         currentDisplayNr,
         mainWindowScreen,
         screens: screens.map((s, i) => ({
@@ -211,17 +241,19 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
       ) {
         targetDisplayNr = preferredIndex;
         targetFullscreen = true;
-        log('🔍 [moveTimerWindow] Using preferred screen:', {
+        log('🔍 [moveTimerWindow] Using preferred screen:', 'timer', 'log', {
           preferredIndex,
         });
       } else {
-        log('🔍 [moveTimerWindow] Not using preferred screen');
+        log('🔍 [moveTimerWindow] Not using preferred screen', 'timer', 'log');
       }
 
       // Only move if timer window is on the same screen as main window
       if (currentDisplayNr === mainWindowScreen) {
         log(
           '🔍 [moveTimerWindow] Timer window is on main window screen, moving to alternative',
+          'timer',
+          'log',
         );
 
         // Find an alternative screen
@@ -234,6 +266,8 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
           targetFullscreen = true;
           log(
             '🔍 [moveTimerWindow] Moving fullscreen timer window to alternative screen:',
+            'timer',
+            'log',
             targetDisplayNr,
           );
         } else {
@@ -244,11 +278,15 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
             targetFullscreen = true;
             log(
               '🔍 [moveTimerWindow] Moving fullscreen timer window to any alternative screen:',
+              'timer',
+              'log',
               targetDisplayNr,
             );
           } else {
             log(
               '🔍 [moveTimerWindow] No alternative screens available, keeping current position',
+              'timer',
+              'log',
             );
             return;
           }
@@ -256,25 +294,31 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
       } else {
         log(
           '🔍 [moveTimerWindow] Timer window is already on different screen, checking if it should stay fullscreen',
+          'timer',
+          'log',
         );
 
         // If fullscreen but only one screen available, go windowed
         if (screens.length === 1) {
           log(
             '🔍 [moveTimerWindow] Only one screen available, setting fullscreen timer window to windowed',
+            'timer',
+            'log',
           );
           targetDisplayNr = 0; // Use the only available screen
           targetFullscreen = false;
         } else {
           log(
             '🔍 [moveTimerWindow] Multiple screens available, keeping current position',
+            'timer',
+            'log',
           );
           return;
         }
       }
     }
 
-    log('🔍 [moveTimerWindow] Target state:', {
+    log('🔍 [moveTimerWindow] Target state:', 'timer', 'log', {
       targetDisplayNr,
       targetFullscreen,
       targetScreen: screens[targetDisplayNr]?.bounds,
@@ -282,13 +326,18 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
 
     // Validate target display
     if (targetDisplayNr < 0 || targetDisplayNr >= screens.length) {
-      log('❌ [moveTimerWindow] Invalid display number:', targetDisplayNr);
+      log(
+        '❌ [moveTimerWindow] Invalid display number:',
+        'timer',
+        'error',
+        targetDisplayNr,
+      );
       return;
     }
 
     const targetScreen = screens[targetDisplayNr];
     if (!targetScreen) {
-      log('❌ [moveTimerWindow] Target screen not found');
+      log('❌ [moveTimerWindow] Target screen not found', 'timer', 'error');
       return;
     }
 
@@ -301,18 +350,29 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
     ) {
       log(
         '🔍 [moveTimerWindow] Preventing fullscreen on main window screen, switching to alternative',
+        'timer',
+        'log',
       );
       const alternativeScreen = screens.findIndex((s) => !s.mainWindow);
       if (alternativeScreen !== -1) {
         targetDisplayNr = alternativeScreen;
-        log('🔍 [moveTimerWindow] Switched to screen:', targetDisplayNr);
+        log(
+          '🔍 [moveTimerWindow] Switched to screen:',
+          'timer',
+          'log',
+          targetDisplayNr,
+        );
       } else {
         targetFullscreen = false;
-        log('🔍 [moveTimerWindow] No alternative screen, going windowed');
+        log(
+          '🔍 [moveTimerWindow] No alternative screen, going windowed',
+          'timer',
+          'log',
+        );
       }
     }
 
-    log('🔍 [moveTimerWindow] Final target:', {
+    log('🔍 [moveTimerWindow] Final target:', 'timer', 'log', {
       targetDisplayNr,
       targetFullscreen,
       targetScreen: targetScreen?.bounds,
@@ -321,9 +381,9 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
     // Apply the changes
     setTimerWindowPosition(targetDisplayNr, targetFullscreen);
 
-    log('🔍 [moveTimerWindow] END - Changes applied');
+    log('🔍 [moveTimerWindow] END - Changes applied', 'timer', 'log');
   } catch (e) {
-    log('❌ [moveTimerWindow] Error:', e);
+    log('❌ [moveTimerWindow] Error:', 'timer', 'error', e);
   }
 };
 
@@ -331,13 +391,18 @@ function loadTimerWindowPrefs(): null | Rectangle {
   try {
     const file = join(app.getPath('userData'), 'timer-window-prefs.json');
     if (!pathExistsSync(file)) {
-      log('🔍 [loadTimerWindowPrefs] File does not exist:', file);
+      log(
+        '🔍 [loadTimerWindowPrefs] File does not exist:',
+        'timer',
+        'log',
+        file,
+      );
       return null;
     }
-    log('🔍 [loadTimerWindowPrefs] Loading prefs from:', file);
+    log('🔍 [loadTimerWindowPrefs] Loading prefs from:', 'timer', 'log', file);
     return readJsonSync(file);
   } catch (e) {
-    log('❌ [loadTimerWindowPrefs] Error:', e);
+    log('❌ [loadTimerWindowPrefs] Error:', 'timer', 'error', e);
     return null;
   }
 }
@@ -345,56 +410,71 @@ function loadTimerWindowPrefs(): null | Rectangle {
 function saveTimerWindowPrefs(prefs: Rectangle) {
   try {
     const file = join(app.getPath('userData'), 'timer-window-prefs.json');
-    log('🔍 [saveTimerWindowPrefs] Saving prefs to:', file);
+    log('🔍 [saveTimerWindowPrefs] Saving prefs to:', 'timer', 'log', file);
     writeJsonSync(file, prefs);
   } catch (e) {
-    log('❌ [saveTimerWindowPrefs] Error:', e);
+    log('❌ [saveTimerWindowPrefs] Error:', 'timer', 'error', e);
   }
 }
 
 const setTimerWindowPosition = (displayNr?: number, fullscreen = false) => {
-  log('🔍 [setTimerWindowPosition] START - Called with:', {
+  log('🔍 [setTimerWindowPosition] START - Called with:', 'timer', 'log', {
     displayNr,
     fullscreen,
   });
 
   try {
     if (!timerWindow) {
-      log('❌ [setTimerWindowPosition] No timerWindow, returning');
+      log(
+        '❌ [setTimerWindowPosition] No timerWindow, returning',
+        'timer',
+        'error',
+      );
       return;
     }
 
     const screens = getAllScreens();
     const targetDisplay = screens[displayNr ?? 0];
     if (!targetDisplay) {
-      log('❌ [setTimerWindowPosition] Target display not found:', displayNr);
+      log(
+        '❌ [setTimerWindowPosition] Target display not found:',
+        'timer',
+        'error',
+        displayNr,
+      );
       return;
     }
 
     const targetScreenBounds = targetDisplay.bounds;
     log(
       '🔍 [setTimerWindowPosition] Target screen bounds:',
+      'timer',
+      'log',
       targetScreenBounds,
     );
 
     if (fullscreen) {
-      log('🔍 [setTimerWindowPosition] Going fullscreen');
+      log('🔍 [setTimerWindowPosition] Going fullscreen', 'timer', 'log');
       timerWindow.setBounds(targetScreenBounds);
       timerWindow.setFullScreen(true);
       try {
         saveTimerWindowPrefs(targetDisplay.bounds);
         log(
           '🔍 [setTimerWindowPosition] Saved preferred display geometry:',
+          'timer',
+          'log',
           targetDisplay.bounds,
         );
       } catch (e) {
         log(
           '❌ [setTimerWindowPosition] Error saving preferred display geometry:',
+          'timer',
+          'error',
           e,
         );
       }
     } else {
-      log('🔍 [setTimerWindowPosition] Going windowed');
+      log('🔍 [setTimerWindowPosition] Going windowed', 'timer', 'log');
 
       // Calculate windowed bounds - timer window should be smaller than media window
       const timerWidth = Math.min(
@@ -419,9 +499,14 @@ const setTimerWindowPosition = (displayNr?: number, fullscreen = false) => {
         y,
       };
 
-      log('🔍 [setTimerWindowPosition] Calculated windowed bounds:', {
-        bounds,
-      });
+      log(
+        '🔍 [setTimerWindowPosition] Calculated windowed bounds:',
+        'timer',
+        'log',
+        {
+          bounds,
+        },
+      );
 
       timerWindow.setFullScreen(false);
       timerWindow.setBounds(bounds);
@@ -432,12 +517,14 @@ const setTimerWindowPosition = (displayNr?: number, fullscreen = false) => {
     if (timerWindow.isVisible()) {
       log(
         '🔍 [setTimerWindowPosition] Refreshing visible timer window without stealing focus',
+        'timer',
+        'log',
       );
       timerWindow.showInactive();
     }
 
-    log('🔍 [setTimerWindowPosition] END - All changes queued');
+    log('🔍 [setTimerWindowPosition] END - All changes queued', 'timer', 'log');
   } catch (err) {
-    log('❌ [setTimerWindowPosition] Error:', err);
+    log('❌ [setTimerWindowPosition] Error:', 'timer', 'error', err);
   }
 };
