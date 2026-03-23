@@ -130,7 +130,7 @@
     "prettier": "^3.8.1",
     "rollup-plugin-visualizer": "^7.0.1",
     "typescript": "~5.9.3",
-    "vite": "^8.0.1",
+    "vite": "^8.0.2",
     "vitepress": "^2.0.0-alpha.17",
     "vitest": "^4.1.0",
     "vue-eslint-parser": "^10.4.0",
@@ -138,7 +138,7 @@
     "webpack-iconfont-plugin-nodejs": "^1.0.36"
   },
   "resolutions": {
-    "vite": "8.0.1",
+    "vite": "8.0.2",
     "serialize-javascript": "7.0.1"
   },
   "browserslist": [
