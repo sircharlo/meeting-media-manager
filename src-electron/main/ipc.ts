@@ -73,7 +73,7 @@ import {
 import {
   createTimerWindow,
   moveTimerWindow,
-  timerWindow,
+  timerWindowInfo,
 } from 'src-electron/main/window/window-timer';
 import {
   askForMediaAccess,
@@ -134,7 +134,7 @@ handleIpcSend('toggleTimerWindow', (_e, show: boolean) => {
   if (show) {
     createTimerWindow();
   } else {
-    timerWindow?.close();
+    timerWindowInfo.timerWindow?.close();
   }
 });
 

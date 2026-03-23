@@ -7,20 +7,25 @@ import { getIconPath } from 'src-electron/main/utils';
 import { createWindow } from 'src-electron/main/window/window-base';
 import { log, throttleWithTrailing } from 'src/shared/vanilla';
 
-export let timerWindow: BrowserWindow | null = null;
+export const timerWindowInfo = {
+  timerWindow: null as BrowserWindow | null,
+};
 
 /**
  * Creates the timer window
  */
 export function createTimerWindow() {
   // If the window is already open, just focus it
-  if (timerWindow && !timerWindow.isDestroyed()) {
-    timerWindow.showInactive();
+  if (
+    timerWindowInfo.timerWindow &&
+    !timerWindowInfo.timerWindow.isDestroyed()
+  ) {
+    timerWindowInfo.timerWindow.showInactive();
     return;
   }
 
   // Create the browser window
-  timerWindow = createWindow('timer', {
+  timerWindowInfo.timerWindow = createWindow('timer', {
     alwaysOnTop: false,
     backgroundColor: 'black',
     focusable: true,
@@ -36,8 +41,8 @@ export function createTimerWindow() {
     width: HD_RESOLUTION[0],
   });
 
-  timerWindow.once('ready-to-show', () => {
-    timerWindow?.showInactive();
+  timerWindowInfo.timerWindow.once('ready-to-show', () => {
+    timerWindowInfo.timerWindow?.showInactive();
   });
 
   // For timer, maybe no aspect ratio, or 16/9 as well? Let's keep for now.
@@ -52,7 +57,7 @@ export function createTimerWindow() {
     );
 
     // Get current window bounds
-    const currentBounds = timerWindow.getBounds();
+    const currentBounds = timerWindowInfo.timerWindow.getBounds();
     const screenBounds = screens[0].bounds;
 
     // Check if current window is already within screen bounds and smaller than screen
@@ -101,9 +106,9 @@ export function createTimerWindow() {
       const y =
         screenBounds.y + Math.floor((screenBounds.height - windowedHeight) / 2);
 
-      timerWindow.setFullScreen(false);
+      timerWindowInfo.timerWindow.setFullScreen(false);
 
-      timerWindow.setBounds({
+      timerWindowInfo.timerWindow.setBounds({
         height: windowedHeight,
         width: windowedWidth,
         x,
@@ -126,8 +131,8 @@ export function createTimerWindow() {
     }
   }
 
-  timerWindow.on('closed', () => {
-    timerWindow = null;
+  timerWindowInfo.timerWindow.on('closed', () => {
+    timerWindowInfo.timerWindow = null;
   });
 }
 
@@ -143,7 +148,10 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
   });
 
   try {
-    if (!timerWindow || !timerWindow.isVisible()) {
+    if (
+      !timerWindowInfo.timerWindow ||
+      !timerWindowInfo.timerWindow.isVisible()
+    ) {
       log(
         '🔍 [moveTimerWindow] Timer window not available or not visible',
         'timer',
@@ -161,8 +169,8 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
     );
 
     // Get current window state
-    const currentBounds = timerWindow.getBounds();
-    const currentDisplayNr = getWindowScreen(timerWindow);
+    const currentBounds = timerWindowInfo.timerWindow.getBounds();
+    const currentDisplayNr = getWindowScreen(timerWindowInfo.timerWindow);
 
     // Determine target display and mode
     let targetDisplayNr = displayNr;
@@ -210,7 +218,7 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
       );
 
       // Check if timer window is fullscreen
-      const isCurrentlyFullscreen = timerWindow.isFullScreen();
+      const isCurrentlyFullscreen = timerWindowInfo.timerWindow.isFullScreen();
 
       log('🔍 [moveTimerWindow] Current state:', 'timer', 'log', {
         currentBounds,
@@ -424,9 +432,9 @@ const setTimerWindowPosition = (displayNr?: number, fullscreen = false) => {
   });
 
   try {
-    if (!timerWindow) {
+    if (!timerWindowInfo.timerWindow) {
       log(
-        '❌ [setTimerWindowPosition] No timerWindow, returning',
+        '❌ [setTimerWindowPosition] No timerWindowInfo.timerWindow, returning',
         'timer',
         'error',
       );
@@ -455,8 +463,8 @@ const setTimerWindowPosition = (displayNr?: number, fullscreen = false) => {
 
     if (fullscreen) {
       log('🔍 [setTimerWindowPosition] Going fullscreen', 'timer', 'log');
-      timerWindow.setBounds(targetScreenBounds);
-      timerWindow.setFullScreen(true);
+      timerWindowInfo.timerWindow.setBounds(targetScreenBounds);
+      timerWindowInfo.timerWindow.setFullScreen(true);
       try {
         saveTimerWindowPrefs(targetDisplay.bounds);
         log(
@@ -508,19 +516,19 @@ const setTimerWindowPosition = (displayNr?: number, fullscreen = false) => {
         },
       );
 
-      timerWindow.setFullScreen(false);
-      timerWindow.setBounds(bounds);
+      timerWindowInfo.timerWindow.setFullScreen(false);
+      timerWindowInfo.timerWindow.setBounds(bounds);
       saveTimerWindowPrefs(targetDisplay.bounds);
     }
 
     // Bring timer window to front if it's visible
-    if (timerWindow.isVisible()) {
+    if (timerWindowInfo.timerWindow.isVisible()) {
       log(
         '🔍 [setTimerWindowPosition] Refreshing visible timer window without stealing focus',
         'timer',
         'log',
       );
-      timerWindow.showInactive();
+      timerWindowInfo.timerWindow.showInactive();
     }
 
     log('🔍 [setTimerWindowPosition] END - All changes queued', 'timer', 'log');

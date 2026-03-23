@@ -9,7 +9,7 @@ import {
 } from 'src-electron/main/window/window-media';
 import {
   moveTimerWindowThrottled,
-  timerWindow,
+  timerWindowInfo,
 } from 'src-electron/main/window/window-timer';
 import { log } from 'src/shared/vanilla';
 
@@ -114,12 +114,14 @@ export const getAllScreens = (): Display[] => {
     });
   }
 
-  if (timerWindow) {
+  if (timerWindowInfo.timerWindow) {
     try {
       const timerWindowScreen = displays.find(
         (display) =>
-          timerWindow &&
-          display.id === screen.getDisplayMatching(timerWindow.getBounds()).id,
+          timerWindowInfo.timerWindow &&
+          display.id ===
+            screen.getDisplayMatching(timerWindowInfo.timerWindow.getBounds())
+              .id,
       );
       if (timerWindowScreen) timerWindowScreen.timerWindow = true;
     } catch (e) {

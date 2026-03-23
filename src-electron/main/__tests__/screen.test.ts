@@ -40,7 +40,9 @@ vi.mock('src-electron/main/window/window-media', () => ({
 
 vi.mock('src-electron/main/window/window-timer', () => ({
   moveTimerWindowThrottled,
-  timerWindow: null,
+  timerWindowInfo: {
+    timerWindow: null,
+  },
 }));
 
 vi.mock('src/shared/vanilla', () => ({
