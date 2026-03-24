@@ -48,6 +48,11 @@ export interface TimerData {
   running: boolean;
   time: string;
   timerBackgroundColor?: string;
+  timerOvertimeAnimation?: boolean;
+  timerOvertimeBackgroundColor?: string;
+  timerOvertimeIndicator?: boolean;
+  timerOvertimeShowAmountOnly?: boolean;
+  timerOvertimeTextColor?: string;
   timerTextColor?: string;
   timerTextSize?: string;
   weDay?: null | string;

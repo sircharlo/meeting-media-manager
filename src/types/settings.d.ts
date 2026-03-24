@@ -278,6 +278,11 @@ export interface SettingsValues {
   shortcutMusic: null | string;
   suppressHardwareAccelerationReminder: boolean;
   timerBackgroundColor: string;
+  timerOvertimeAnimation: boolean;
+  timerOvertimeBackgroundColor: string;
+  timerOvertimeIndicator: boolean;
+  timerOvertimeShowAmountOnly: boolean;
+  timerOvertimeTextColor: string;
   timerShowOnActionIsland: boolean;
   timerTextColor: string;
   timerTextSize: string;

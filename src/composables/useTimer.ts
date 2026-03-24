@@ -394,6 +394,13 @@ const useTimer = () => {
         running: false,
         time: '',
         timerBackgroundColor: currentSettings.value?.timerBackgroundColor,
+        timerOvertimeAnimation: currentSettings.value?.timerOvertimeAnimation,
+        timerOvertimeBackgroundColor:
+          currentSettings.value?.timerOvertimeBackgroundColor,
+        timerOvertimeIndicator: currentSettings.value?.timerOvertimeIndicator,
+        timerOvertimeShowAmountOnly:
+          currentSettings.value?.timerOvertimeShowAmountOnly,
+        timerOvertimeTextColor: currentSettings.value?.timerOvertimeTextColor,
         timerTextColor: currentSettings.value?.timerTextColor,
         timerTextSize: currentSettings.value?.timerTextSize,
         weDay: currentSettings.value?.weDay,
@@ -560,6 +567,13 @@ const useTimer = () => {
       running: false,
       time: '',
       timerBackgroundColor: currentSettings.value?.timerBackgroundColor,
+      timerOvertimeAnimation: currentSettings.value?.timerOvertimeAnimation,
+      timerOvertimeBackgroundColor:
+        currentSettings.value?.timerOvertimeBackgroundColor,
+      timerOvertimeIndicator: currentSettings.value?.timerOvertimeIndicator,
+      timerOvertimeShowAmountOnly:
+        currentSettings.value?.timerOvertimeShowAmountOnly,
+      timerOvertimeTextColor: currentSettings.value?.timerOvertimeTextColor,
       timerTextColor: currentSettings.value?.timerTextColor,
       timerTextSize: currentSettings.value?.timerTextSize,
     });
@@ -583,12 +597,25 @@ const useTimer = () => {
   };
 
   const formattedTime = computed(() => {
-    const remaining = countdownTarget.value - elapsedSeconds.value;
-    const isOvertime = timerMode.value === 'countdown' && remaining < 0;
-    const totalSeconds =
-      timerMode.value === 'countup'
-        ? elapsedSeconds.value
-        : Math.abs(remaining);
+    const isCountup = timerMode.value === 'countup';
+    let isOvertime: boolean;
+    let totalSeconds: number;
+
+    if (isCountup) {
+      // 0 means no limit defined
+      const partMaxSeconds = (partDurations.value[currentPart.value] || 0) * 60;
+      isOvertime = partMaxSeconds > 0 && elapsedSeconds.value > partMaxSeconds;
+
+      if (isOvertime && currentSettings.value?.timerOvertimeShowAmountOnly) {
+        totalSeconds = elapsedSeconds.value - partMaxSeconds;
+      } else {
+        totalSeconds = elapsedSeconds.value;
+      }
+    } else {
+      const remaining = countdownTarget.value - elapsedSeconds.value;
+      isOvertime = remaining < 0;
+      totalSeconds = Math.abs(remaining);
+    }
 
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
@@ -655,6 +682,13 @@ const useTimer = () => {
       running: timerRunning.value,
       time: timerRunning.value ? formattedTime.value : '',
       timerBackgroundColor: currentSettings.value?.timerBackgroundColor,
+      timerOvertimeAnimation: currentSettings.value?.timerOvertimeAnimation,
+      timerOvertimeBackgroundColor:
+        currentSettings.value?.timerOvertimeBackgroundColor,
+      timerOvertimeIndicator: currentSettings.value?.timerOvertimeIndicator,
+      timerOvertimeShowAmountOnly:
+        currentSettings.value?.timerOvertimeShowAmountOnly,
+      timerOvertimeTextColor: currentSettings.value?.timerOvertimeTextColor,
       timerTextColor: currentSettings.value?.timerTextColor,
       timerTextSize: currentSettings.value?.timerTextSize,
       weDay: currentSettings.value?.weDay,

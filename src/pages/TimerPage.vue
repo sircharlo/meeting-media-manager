@@ -5,7 +5,13 @@
     :style="containerStyles"
   >
     <transition mode="out-in" name="scale">
-      <div :key="currentMode" :class="{ blink: paused }" :style="textStyles">
+      <div
+        :key="currentMode"
+        :class="{
+          blink: paused || (isOvertime && timerData?.timerOvertimeAnimation),
+        }"
+        :style="textStyles"
+      >
         {{ displayTime }}
       </div>
     </transition>
@@ -57,17 +63,31 @@ const { data: timerData } = useBroadcastChannel<TimerData, TimerData>({
 // Computed to determine current display mode
 const currentMode = computed(() => (timerData.value?.time ? 'timer' : 'clock'));
 
+// Check if timer is overtime
+const isOvertime = computed(() => {
+  return timerData.value?.running && displayTime.value.startsWith('-');
+});
+
 // Computed styles
-const containerStyles = computed(() => ({
-  alignContent: 'center',
-  alignItems: 'center',
-  backgroundColor: timerData.value?.timerBackgroundColor || '#000000',
-  color: timerData.value?.timerTextColor || '#ffffff',
-  display: 'flex',
-  height: '100vh',
-  justifyContent: 'center',
-  WebkitAppRegion: 'drag',
-}));
+const containerStyles = computed(() => {
+  const data = timerData.value;
+  const useOvertime = isOvertime.value && data?.timerOvertimeIndicator;
+
+  return {
+    alignContent: 'center',
+    alignItems: 'center',
+    backgroundColor: useOvertime
+      ? data?.timerOvertimeBackgroundColor || '#000000'
+      : data?.timerBackgroundColor || '#000000',
+    color: useOvertime
+      ? data?.timerOvertimeTextColor || '#ffffff'
+      : data?.timerTextColor || '#ffffff',
+    display: 'flex',
+    height: '100vh',
+    justifyContent: 'center',
+    WebkitAppRegion: 'drag',
+  };
+});
 
 const textStyles = computed(() => ({
   fontSize: timerData.value?.timerTextSize || '10vw',
@@ -188,18 +208,14 @@ resumeClock();
 
 // Listen for timer updates from the dialog (moved above)
 watch(timerData, (newData) => {
-  if (newData?.time) {
+  if (newData?.running) {
     displayTime.value = newData.time;
     paused.value = newData.paused;
-    if (paused.value) {
-      pauseClock();
-    } else {
-      resumeClock();
-    }
+    pauseClock(); // Stop the fallback local clock interval to prevent flashing
   } else {
     displayTime.value = currentTime.value;
     paused.value = false;
-    resumeClock(); // Ensure clock runs when no timer data
+    resumeClock(); // Ensure local clock runs when no timer is active
   }
 });
 </script>
