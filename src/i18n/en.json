@@ -341,7 +341,7 @@
   "meeting-schedule-change-applied": "A scheduled meeting time change has been applied.",
   "meeting-workbooks": "Meeting Workbooks",
   "meetingCountdownMinutes": "Meeting countdown minutes",
-  "meetingCountdownMinutes-explain": "Configure the number of minutes for which the countdown timer should be shown before the start of scheduled meetings.",
+  "meetingCountdownMinutes-explain": "Configure the number of minutes for which the countdown timer should be shown on the timer display before the start of scheduled meetings. Note that the countdown is never displayed on the main media display.",
   "meetingRecording": "Meeting recordings",
   "meetingScheduleChange": "Meeting schedule change",
   "meetingScheduleChangeDate": "Date of schedule change",
