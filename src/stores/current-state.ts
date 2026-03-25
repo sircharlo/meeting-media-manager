@@ -17,6 +17,7 @@ import { LONG_MEDIA_DURATION } from 'src/constants/jw';
 import { settingsDefinitions } from 'src/constants/settings';
 import { isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { log } from 'src/shared/vanilla';
 import { datesAreSame, formatDate } from 'src/utils/date';
 import {
   getAdditionalMediaPath,
@@ -282,7 +283,7 @@ export const useCurrentStateStore = defineStore('current-state', {
 
         const requirementsInstalled = await ensureZoomRequirements();
         if (!requirementsInstalled) {
-          console.error('[Zoom Helper] Failed to install requirements');
+          log('Failed to install requirements', 'zoom', 'error');
         }
 
         startZoomHelper();

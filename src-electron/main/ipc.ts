@@ -25,6 +25,7 @@ import electronUpdater from 'electron-updater';
 const { autoUpdater } = electronUpdater;
 import { pathExistsSync } from 'fs-extra/esm';
 import { arch, platform } from 'node:os';
+import { setTimeout as delay } from 'node:timers/promises';
 import { PLATFORM } from 'src-electron/constants';
 import { getLowDiskSpaceStatus } from 'src-electron/main/disk-space';
 import {
@@ -84,7 +85,7 @@ import {
   startZoomHelper,
   stopZoomHelper,
 } from 'src-electron/main/zoom-helper-manager';
-import { delay } from 'src/shared/vanilla';
+import { log } from 'src/shared/vanilla';
 import upath from 'upath';
 
 const { openExternal, openPath } = shell;
@@ -514,6 +515,7 @@ handleIpcInvoke(
       const data = (await res.json()) as {
         success: boolean;
       };
+      log('Clicked Zoom element', 'zoom', 'log', { data, handle, options });
       return data.success;
     } catch (error) {
       logToWindow(

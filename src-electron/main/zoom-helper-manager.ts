@@ -7,6 +7,7 @@ import {
 import { IS_DEV, PLATFORM } from 'src-electron/constants';
 import { logToWindow } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
+import { log } from 'src/shared/vanilla';
 import upath from 'upath';
 
 const { join, resolve } = upath;
@@ -51,7 +52,7 @@ export function startZoomHelper() {
 
   const helperPath = getHelperPath('uia_helper.py');
 
-  console.log(`[Zoom Helper] Starting ${helperPath}`);
+  log(`Starting Zoom Helper`, 'zoom', 'info', helperPath);
   pythonProcess = spawn(getPythonCommand(), [helperPath]);
 
   pythonProcess.stdout.on('data', (data: Buffer) => {
@@ -79,7 +80,7 @@ export function startZoomHelper() {
   });
 
   pythonProcess.on('close', (code: number) => {
-    console.log(`[Zoom Helper] Process exited with code ${code}`);
+    log(`Zoom Helper process exited`, 'zoom', 'warn', code);
     pythonProcess = null;
     logToWindow(
       mainWindowInfo.mainWindow,
@@ -102,7 +103,7 @@ export function startZoomHelper() {
 
 export function stopZoomHelper() {
   if (pythonProcess) {
-    console.log('[Zoom Helper] Stopping process');
+    log(`Stopping Zoom Helper`, 'zoom', 'info');
     pythonProcess.kill();
     pythonProcess = null;
   }

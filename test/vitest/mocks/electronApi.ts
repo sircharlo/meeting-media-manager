@@ -13,6 +13,7 @@ import {
   pathToFileURL,
   readDirectory,
 } from 'src-electron/preload/fs';
+import { log } from 'src/shared/vanilla';
 import upath from 'upath';
 
 const { join } = upath;
@@ -148,16 +149,16 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   onUpdateAvailable: function (callback) {
-    console.log('onUpdateAvailable called but not implemented');
+    log('onUpdateAvailable called but not implemented');
   },
   onUpdateDownloaded: function (callback) {
-    console.log('onUpdateDownloaded called but not implemented');
+    log('onUpdateDownloaded called but not implemented');
   },
   onUpdateDownloadProgress: function (callback) {
-    console.log('onUpdateDownloadProgress called but not implemented');
+    log('onUpdateDownloadProgress called but not implemented');
   },
   onUpdateError: function (callback) {
-    console.log('onUpdateError called but not implemented');
+    log('onUpdateError called but not implemented');
   },
   onVideoCaptureCrashDetected: function () {
     throw new Error('Function not implemented.');
@@ -166,7 +167,7 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   onWebsiteWindowClosed: function (callback) {
-    console.log('onWebsiteWindowClosed called but not implemented');
+    log('onWebsiteWindowClosed called but not implemented');
   },
   openDiscussion: function (category, title, params) {
     throw new Error('Function not implemented.');

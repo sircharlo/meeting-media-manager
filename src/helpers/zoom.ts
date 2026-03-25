@@ -4,7 +4,6 @@ import { i18n } from 'boot/i18n';
 import { Dialog } from 'quasar';
 import { MEDIA_WINDOW_TITLE, ZOOM_CONTROL_IDS } from 'src/constants/zoom';
 import { delay, log } from 'src/shared/vanilla';
-
 import { useCurrentStateStore } from 'stores/current-state';
 
 import { errorCatcher } from './error-catcher';
@@ -151,7 +150,7 @@ const clickIfTitleMatches = async (
  * Helper to join computer audio
  */
 const joinAudio = async (meetingHandle: number) => {
-  console.log(' [Zoom Automation] Joining computer audio');
+  log('Joining computer audio', 'zoom', 'log', { meetingHandle });
   const currentState = useCurrentStateStore();
 
   // 1. Click on btn_muteAudio (which doubles as join audio when not joined)
@@ -172,11 +171,13 @@ const joinAudio = async (meetingHandle: number) => {
       type: 'info',
     });
 
-    console.log(' [Zoom Automation] Already joined audio or title mismatch');
+    log('Already joined audio or title mismatch', 'zoom', 'log', {
+      meetingHandle,
+    });
     return;
   }
 
-  console.warn('Clicked on btn_muteAudio');
+  log('Clicked on btn_muteAudio', 'zoom', 'warn', { meetingHandle });
 
   // 2. Wait for join audio window to appear
   const joinAudioWnd = await waitForWindowByClassName('zJoinAudioWndClass');
@@ -221,9 +222,9 @@ const leaveAudio = async (meetingHandle: number) => {
       ZOOM_CONTROL_IDS.BTN_MUTE_AUDIO,
     );
     if (currentTitle === joinAudioTitle) {
-      console.log(
-        ' [Zoom Automation] Skipping leave audio: Not currently joined',
-      );
+      log('Skipping leave audio: Not currently joined', 'zoom', 'log', {
+        meetingHandle,
+      });
       return;
     }
   }
@@ -272,9 +273,9 @@ const participantsListIsOpen = async (meetingHandle: number) => {
 const openParticipantsList = async (meetingHandle: number) => {
   // check if participants list is already open
   const state = await participantsListIsOpen(meetingHandle);
-  console.warn(' [Zoom Automation] Participants list state:', state);
+  log('Participants list state:', 'zoom', 'warn', { meetingHandle, state });
   if (state) {
-    console.log(' [Zoom Automation] Participants list is already open');
+    log('Participants list is already open', 'zoom', 'log', { meetingHandle });
     return;
   }
   const clicked = await globalThis.electronApi.clickZoomElement(meetingHandle, {
@@ -286,9 +287,10 @@ const openParticipantsList = async (meetingHandle: number) => {
     const targetTitle =
       currentState.currentSettings?.zoomParticipantsButtonTitle;
     if (targetTitle) {
-      console.log(
-        ' [Zoom Automation] Participants button not found, checking More panel',
-      );
+      log('Participants button not found, checking More panel', 'zoom', 'log', {
+        meetingHandle,
+        targetTitle,
+      });
       await clickById(meetingHandle, ZOOM_CONTROL_IDS.BTN_MORE_PANEL_OPTIONS);
 
       const popupWnd = await waitForWindowByClassName(
@@ -302,9 +304,10 @@ const openParticipantsList = async (meetingHandle: number) => {
           },
         );
         if (!clickedTab) {
-          console.warn(
-            ' [Zoom Automation] Participants tab item not found in More panel',
-          );
+          log('Participants tab item not found in More panel', 'zoom', 'warn', {
+            meetingHandle,
+            targetTitle,
+          });
         }
       }
     }
@@ -362,15 +365,17 @@ const muteAllParticipants = async (
   );
 
   if (muteAllConfirmWnd?.handle) {
-    console.warn(
-      ' [Zoom Automation] Mute All confirmation dialog found',
+    log(
+      'Mute All confirmation dialog found',
+      'zoom',
+      'warn',
       muteAllConfirmWnd,
     );
     const state = await getZoomElementState(
       muteAllConfirmWnd.handle,
       ZOOM_CONTROL_IDS.CHK_ALLOW_PARTICIPANTS_TO_UNMUTE,
     );
-    console.log(' [Zoom Automation] Checkbox state:', state);
+    log('Checkbox state:', 'zoom', 'warn', { meetingHandle, state });
 
     const unmuteCurrentlyAllowed =
       state?.toggle_state === 1 || state?.legacy_state === 16;
@@ -378,20 +383,26 @@ const muteAllParticipants = async (
     const shouldAllowUnmute = !preventSelfUnmute;
 
     if (unmuteCurrentlyAllowed === shouldAllowUnmute) {
-      console.log(
-        `[Zoom Automation] "Allow participants to unmute" already ${
+      log(
+        `"Allow participants to unmute" already ${
           shouldAllowUnmute ? 'checked' : 'unchecked'
         }`,
+        'zoom',
+        'log',
+        { meetingHandle },
       );
     } else {
       await clickById(
         muteAllConfirmWnd.handle,
         ZOOM_CONTROL_IDS.CHK_ALLOW_PARTICIPANTS_TO_UNMUTE,
       );
-      console.log(
-        `[Zoom Automation] ${
+      log(
+        `${
           shouldAllowUnmute ? 'Checked' : 'Unchecked'
         } "Allow participants to unmute"`,
+        'zoom',
+        'log',
+        { meetingHandle },
       );
     }
 
@@ -408,7 +419,7 @@ const muteAllParticipants = async (
 
     // In this dialog, the "Yes" button has the controlID 'btn_rename'
     await clickById(muteAllConfirmWnd.handle, ZOOM_CONTROL_IDS.BTN_RENAME);
-    console.log(' [Zoom Automation] Confirmed Mute All');
+    log('Confirmed Mute All', 'zoom', 'log', { meetingHandle });
 
     createTemporaryNotification({
       group: 'zoom-participants',
@@ -470,11 +481,11 @@ export const automateZoomMeetingSettings = async () => {
     const mainZoomWindow = await getMainZoomWindow();
     const handle = mainZoomWindow?.handle;
     if (!handle) {
-      console.warn(' [Zoom Automation] No main Zoom window found');
+      log('No main Zoom window found', 'zoom', 'warn', { handle });
       return;
     }
 
-    console.log(' [Zoom Automation] Starting meeting settings sequence');
+    log('Starting meeting settings sequence', 'zoom', 'log', { handle });
 
     // 1. Join computer audio
     await joinAudio(handle);
@@ -485,7 +496,7 @@ export const automateZoomMeetingSettings = async () => {
     // 3. Mute everyone and prevent self-unmuting
     await muteAllParticipants(handle, true);
 
-    console.log(' [Zoom Automation] Meeting settings sequence completed');
+    log('Meeting settings sequence completed', 'zoom', 'log', { handle });
   } catch (error) {
     errorCatcher(error, {
       contexts: { fn: { name: 'automateZoomMeetingSettings' } },
@@ -500,15 +511,18 @@ const askAllToUnmute = async (handle: number) => {
   const menuItems = await waitForDialogChildren('WCN_ModelessWnd', handle);
 
   if (menuItems) {
-    console.warn(' [Zoom Automation] Menu items:', menuItems);
+    log('Menu items:', 'zoom', 'warn', { handle, menuItems });
 
     const enabledMenuItems = filterElementsByEnabledState(menuItems, true);
-    console.warn(' [Zoom Automation] Enabled menu items:', enabledMenuItems);
+    log('Enabled menu items:', 'zoom', 'warn', {
+      enabledMenuItems,
+      handle,
+    });
 
     if (enabledMenuItems?.[0]) {
       // Click on the first enabled menu item, which is "Ask all participants to unmute"
       await clickZoomElement(handle, enabledMenuItems[0]);
-      console.log(' [Zoom Automation] Asked all participants to unmute');
+      log('Asked all participants to unmute', 'zoom', 'log', { handle });
 
       createTemporaryNotification({
         group: 'zoom-participants',
@@ -539,11 +553,11 @@ export const automateZoomPostMeetingSettings = async () => {
     const mainZoomWindow = await getMainZoomWindow();
     const handle = mainZoomWindow?.handle;
     if (!handle) {
-      console.warn(' [Zoom Automation] No handle found for main Zoom window');
+      log('No handle found for main Zoom window', 'zoom', 'warn', { handle });
       return;
     }
 
-    console.log(' [Zoom Automation] Starting post-meeting settings sequence');
+    log('Starting post-meeting settings sequence', 'zoom', 'log', { handle });
 
     // 1. Leave computer audio
     await leaveAudio(handle);
@@ -557,7 +571,7 @@ export const automateZoomPostMeetingSettings = async () => {
     // 4. Ask all to unmute
     await askAllToUnmute(handle);
 
-    console.log(' [Zoom Automation] Post-meeting settings sequence completed');
+    log('Post-meeting settings sequence completed', 'zoom', 'log', { handle });
   } catch (error) {
     errorCatcher(error, {
       contexts: { fn: { name: 'automateZoomPostMeetingSettings' } },
@@ -654,11 +668,11 @@ export const startSharingMediaInZoom = async () => {
     const mainZoomWindow = await getMainZoomWindow();
     const handle = mainZoomWindow?.handle;
     if (!handle) {
-      console.warn(' [Zoom Automation] No main Zoom window found for sharing');
+      log('No main Zoom window found for sharing', 'zoom', 'warn', { handle });
       return;
     }
 
-    console.log(' [Zoom Automation] Starting media sharing sequence');
+    log('Starting media sharing sequence', 'zoom', 'log', { handle });
 
     createTemporaryNotification({
       group: 'zoom-sharing',
@@ -678,9 +692,10 @@ export const startSharingMediaInZoom = async () => {
       const currentState = useCurrentStateStore();
       const targetTitle = currentState.currentSettings?.zoomShareButtonTitle;
       if (targetTitle) {
-        console.log(
-          ' [Zoom Automation] Share button not found, checking More panel',
-        );
+        log('Share button not found, checking More panel', 'zoom', 'log', {
+          handle,
+          targetTitle,
+        });
         await clickById(handle, ZOOM_CONTROL_IDS.BTN_MORE_PANEL_OPTIONS);
 
         const popupWnd = await waitForWindowByClassName(
@@ -694,9 +709,10 @@ export const startSharingMediaInZoom = async () => {
             },
           );
           if (!clickedTab) {
-            console.warn(
-              ' [Zoom Automation] Share tab item not found in More panel',
-            );
+            log('Share tab item not found in More panel', 'zoom', 'warn', {
+              handle,
+              targetTitle,
+            });
             throw new Error('Could not find Share button in More panel');
           }
         }
@@ -724,9 +740,10 @@ export const startSharingMediaInZoom = async () => {
     }
 
     if (!clickedMedia) {
-      console.warn(
-        ' [Zoom Automation] Could not find media player window to share',
-      );
+      log('Could not find media player window to share', 'zoom', 'warn', {
+        handle,
+        shareWnd,
+      });
       createTemporaryNotification({
         group: 'zoom-sharing',
         icon: 'mmm-error',
@@ -784,7 +801,7 @@ export const startSharingMediaInZoom = async () => {
       type: 'info',
     });
 
-    console.log(' [Zoom Automation] Media sharing sequence completed');
+    log('Media sharing sequence completed', 'zoom', 'log', { handle });
   } catch (error) {
     createTemporaryNotification({
       group: 'zoom-sharing',
@@ -805,12 +822,14 @@ export const startSharingMediaInZoom = async () => {
  */
 export const stopSharingMediaInZoom = async () => {
   try {
-    console.log(' [Zoom Automation] Stopping media sharing sequence');
+    log('Stopping media sharing sequence', 'zoom', 'log');
 
     // Look for the float toolbar
     const floatToolbar = await findWindowByClassName('ZPFloatToolbarClass');
     if (!floatToolbar?.handle) {
-      console.warn(' [Zoom Automation] No ZPFloatToolbarClass window found');
+      log('No ZPFloatToolbarClass window found', 'zoom', 'warn', {
+        floatToolbar,
+      });
       return;
     }
 
@@ -829,7 +848,7 @@ export const stopSharingMediaInZoom = async () => {
         handle: stopShareBtn.handle,
         title: stopShareBtn.title,
       });
-      console.log(' [Zoom Automation] Stopped sharing');
+      log('Stopped sharing', 'zoom', 'log', { floatToolbar });
       createTemporaryNotification({
         group: 'zoom-sharing',
         icon: 'mmm-info',
@@ -839,7 +858,7 @@ export const stopSharingMediaInZoom = async () => {
         type: 'info',
       });
     } else {
-      console.warn(' [Zoom Automation] Could not find stop share button');
+      log('Could not find stop share button', 'zoom', 'warn', { floatToolbar });
       createTemporaryNotification({
         group: 'zoom-sharing',
         icon: 'mmm-error',

@@ -135,6 +135,7 @@ import {
   automateZoomMeetingSettings,
   automateZoomPostMeetingSettings,
 } from 'src/helpers/zoom';
+import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -164,7 +165,7 @@ const listMainZoomWindows = async () => {
   if (zoomWindows.value?.[0]) {
     selectedZoomWindow.value = zoomWindows.value[0];
   }
-  console.warn(zoomWindows.value);
+  log(zoomWindows.value, 'zoom', 'debug', zoomWindows.value);
 };
 
 const { t } = useI18n();
