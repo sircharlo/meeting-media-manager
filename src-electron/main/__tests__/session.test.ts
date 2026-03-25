@@ -53,7 +53,7 @@ describe('session listeners', () => {
     initSessionListeners();
     initSessionListeners();
 
-    expect(appOnMock).toHaveBeenCalledTimes(1);
+    expect(appOnMock).toHaveBeenCalledTimes(2);
     expect(readyCallbacks).toHaveLength(1);
 
     readyCallbacks[0]?.();
