@@ -736,8 +736,9 @@ const useTimer = () => {
         'lac-1',
         'lac-2',
         'lac-3',
-        isCoWeek(date) ? 'co-service-talk' : 'cbs',
-        'concluding-comments',
+        ...(isCoWeek(date)
+          ? (['concluding-comments', 'co-service-talk'] as MeetingPart[])
+          : (['cbs', 'concluding-comments'] as MeetingPart[])),
         'song-and-optional-prayer',
       ];
     } else {
