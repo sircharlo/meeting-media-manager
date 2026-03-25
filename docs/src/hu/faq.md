@@ -25,7 +25,7 @@ Az alkalmazás forráskódja mindenki számára elérhető, hogy megvizsgálja �
 Az M³ támogatja a Windows, macOS és Linux operációs rendszereket:
 
 - **Windows**: Windows 10 és újabb verziók (64 bites és 32 bites változatok elérhetők)
-- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
+- **macOS**: macOS 10.15 (Catalina) és újabb verziók (Univerzális kiadás)
 - **Linux**: A legtöbb modern Linux-disztribúció (AppImage formátum)
 
 ### :globe_with_meridians: Az M³ az én nyelvemen is működik? {#language-support}
@@ -292,7 +292,7 @@ Köszönjük, hogy támogatni szeretné a projektet! Azonban Máté 10:8 szellem
 Az M³ úgy lett kialakítva, hogy számos operációs rendszeren működjön:
 
 - **Windows**: Windows 10 és újabb verziók (64 bites és 32 bites változatok elérhetők)
-- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
+- **macOS**: macOS 10.15 (Catalina) és újabb verziók (Univerzális kiadás)
 - **Linux**: A legtöbb modern Linux-disztribúció (AppImage formátum)
 
 Az M³ hardverkövetelményei a következők:
