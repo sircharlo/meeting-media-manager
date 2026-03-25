@@ -1,6 +1,4 @@
 {
-  "adapt-cbs-duration-dynamically": "@:cbs duration",
-  "adapt-wt-duration-dynamically": "@:wt duration",
   "add": "Add",
   "add-a-closing-song": "Add a closing song",
   "add-a-song": "Add a song from our songbook to the meeting media list.",
@@ -625,7 +623,6 @@
   "time-must-be-between": "Time must be between {minTime} and {maxTime}",
   "timer": "Meeting timer",
   "timer-controls": "Timer controls",
-  "timer-mode": "Timer mode",
   "timerMode": "Default timer mode",
   "timerMode-explain": "Choose whether the timer should count up or count down by default.",
   "timerOvertimeAnimation": "Blink when overtime",

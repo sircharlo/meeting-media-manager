@@ -211,9 +211,6 @@
           "
         >
           <div class="row q-px-md q-py-sm">
-            {{ t('adapt-wt-duration-dynamically') }}
-          </div>
-          <div class="row q-px-md q-py-sm">
             {{ t('wt-custom-end-time') }}
           </div>
           <div class="row q-px-md q-pb-sm">
