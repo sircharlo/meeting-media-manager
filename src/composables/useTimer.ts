@@ -698,12 +698,7 @@ const useTimer = () => {
     safePostTimerData(timerData);
   };
 
-  // Calculate ahead/behind minutes
-  const calculateAheadBehindMinutes = (): null | number => {
-    if (!currentSettings.value?.enableMeetingAheadBehind) {
-      return null;
-    }
-
+  const sequence = computed(() => {
     const date = selectedDateObject.value?.date;
 
     let sequence: MeetingPart[];
@@ -749,10 +744,19 @@ const useTimer = () => {
       sequence = [];
     }
 
-    const currentPartIndex = sequence.indexOf(currentPart.value);
+    return sequence;
+  });
+
+  // Calculate ahead/behind minutes
+  const calculateAheadBehindMinutes = (): null | number => {
+    if (!currentSettings.value?.enableMeetingAheadBehind) {
+      return null;
+    }
+
+    const currentPartIndex = sequence.value.indexOf(currentPart.value);
     if (currentPartIndex === -1) return null;
 
-    const currentPartInfo = sequence[currentPartIndex];
+    const currentPartInfo = sequence.value[currentPartIndex];
     if (!currentPartInfo) return null;
 
     const actualStartTime = partTimings.value[currentPart.value]?.startTime;
@@ -806,56 +810,12 @@ const useTimer = () => {
     const meetingStart = meetingStartTime.value?.getTime();
     if (!meetingStart) return null;
 
-    let sequence: MeetingPart[];
-    if (isWeMeetingDay(date)) {
-      const isCo = isCoWeek(date);
-      sequence = isCo
-        ? [
-            'song-and-optional-prayer',
-            'public-talk',
-            'song-and-optional-prayer',
-            'abbreviated-wt',
-            'co-final-talk',
-            'song-and-optional-prayer',
-          ]
-        : [
-            'song-and-optional-prayer',
-            'public-talk',
-            'song-and-optional-prayer',
-            'wt',
-            'song-and-optional-prayer',
-          ];
-    } else if (isMwMeetingDay(date)) {
-      const isCo = isCoWeek(date);
-      sequence = [
-        'song-and-optional-prayer',
-        'introduction',
-        'treasures',
-        'gems',
-        'bible-reading',
-        'ayfm-1',
-        'ayfm-2',
-        'ayfm-3',
-        'ayfm-4',
-        'ayfm-5',
-        'song-and-optional-prayer',
-        'lac-1',
-        'lac-2',
-        'lac-3',
-        isCo ? 'co-service-talk' : 'cbs',
-        'concluding-comments',
-        'song-and-optional-prayer',
-      ];
-    } else {
-      return null;
-    }
-
-    const index = sequence.indexOf(part);
+    const index = sequence.value.indexOf(part);
     if (index === -1) return null;
 
     let offset = 0;
     for (let i = 0; i < index; i++) {
-      const prevPart = sequence[i];
+      const prevPart = sequence.value[i];
       if (!prevPart) continue;
       const dur = partDurations.value[prevPart] ?? 0;
       offset += dur;
