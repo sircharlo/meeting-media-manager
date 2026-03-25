@@ -111,7 +111,7 @@ export interface ElectronApi {
   getZipEntries: (zipPath: string) => Promise<Record<string, number>>;
   getZoomDialogChildren: (
     className: string,
-    parentHandle: number,
+    parentHandle?: number,
   ) => Promise<ZoomUIElement[]>;
   getZoomElementState: (
     handle: number,

@@ -71,7 +71,7 @@ export const captureZoomTabTitle = async (settingKey: keyof SettingsValues) => {
 
     const children = await getZoomDialogChildren(
       'ZGridMultiLevelPopupWndClass',
-      popupWnd.handle,
+      handle,
     );
 
     const tabItems = filterElementsByControlType(children, 'TabItem');
@@ -313,8 +313,13 @@ const openParticipantsList = async (meetingHandle: number) => {
     }
   }
   // Wait for panel to open by checking if the state changes
+  let attempts = 0;
   while (!(await participantsListIsOpen(meetingHandle))) {
     await delay(100);
+    attempts++;
+    if (attempts > 10) {
+      throw new Error(`Participants list not found`);
+    }
   }
 };
 
@@ -346,7 +351,7 @@ const waitForDialogChildren = async (
   while (children.length === 0) {
     await delay(100);
     attempts++;
-    if (attempts > 100) {
+    if (attempts > 10) {
       throw new Error(`Dialog children not found`);
     }
     children = await getZoomDialogChildren(dialogClassName, parentHandle);
@@ -833,15 +838,17 @@ export const stopSharingMediaInZoom = async () => {
       return;
     }
 
-    const children = await getZoomDialogChildren(
-      'ZPFloatToolbarClass',
-      floatToolbar.handle,
-    );
-    const buttons = filterElementsByControlType(children, 'Button');
-    const enabledButtons = filterElementsByEnabledState(buttons, true);
+    log('Float toolbar', 'zoom', 'log', { floatToolbar });
 
-    // The stop share button is always the last enabled button in this toolbar
-    const stopShareBtn = enabledButtons.at(-1);
+    const children = await getZoomDialogChildren('ZPFloatToolbarClass');
+    log('Children', 'zoom', 'log', { children });
+
+    const buttons = filterElementsByControlType(children, 'Button');
+    log('Buttons', 'zoom', 'log', { buttons });
+
+    // The stop share button is usually the last button in this toolbar
+    const stopShareBtn = buttons.at(-1);
+    log('Stop share button', 'zoom', 'log', { stopShareBtn });
 
     if (stopShareBtn) {
       await globalThis.electronApi.clickZoomElement(floatToolbar.handle, {

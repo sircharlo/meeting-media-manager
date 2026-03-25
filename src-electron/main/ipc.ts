@@ -408,21 +408,28 @@ handleIpcInvoke(
 
 async function fetchZoomDialogChildren(
   className: string,
-  parentHandle: number,
+  parentHandle?: number,
 ): Promise<ZoomUIElement[]> {
   try {
     const url = new URL('http://127.0.0.1:5000/dialog_children');
     url.searchParams.append('class_name', className);
-    url.searchParams.append('parent_handle', String(parentHandle));
+    if (parentHandle) {
+      url.searchParams.append('parent_handle', String(parentHandle));
+    }
 
-    const res = await fetch(url.toString());
+    const stringUrl = url.toString();
+    log('Zoom dialog children', 'zoom', 'log', stringUrl);
+
+    const res = await fetch(stringUrl);
     const data = (await res.json()) as {
       result: ZoomUIElement[];
       success: boolean;
     };
+    log('Zoom dialog children', 'zoom', 'log', data);
 
     return data.success ? data.result || [] : [];
   } catch (error) {
+    log('Zoom dialog children', 'zoom', 'error', error);
     logToWindow(
       mainWindowInfo.mainWindow,
       'Failed to fetch Zoom dialog children',
@@ -477,7 +484,7 @@ async function showControlsIfHidden(handle: number) {
 
 handleIpcInvoke(
   'getZoomDialogChildren',
-  async (_e, className: string, parentHandle: number) => {
+  async (_e, className: string, parentHandle?: number) => {
     return fetchZoomDialogChildren(className, parentHandle);
   },
 );

@@ -99,6 +99,7 @@ def list_windows():
                     "ZGridMultiLevelPopupWndClass",  # More panel popup
                     "zJoinAudioWndClass",  # Join audio dialog window
                     "ZPFloatToolbarClass",  # Floating share toolbar
+                    "ZPShareEntranceClass",  # Share screen window
                     "ZPMeetingWndClass",
                 ]
             if is_match:
@@ -146,8 +147,8 @@ def list_windows():
                     w.set_focus()
                     w.type_keys("%")  # Alt key
                     result = get_zoom_windows()
-                    if any(w["main_zoom_window"] for w in result):
-                        break
+                    # if any(w["main_zoom_window"] for w in result):
+                    #    break
                 except Exception:
                     continue
         return jsonify({"success": True, "result": result})
