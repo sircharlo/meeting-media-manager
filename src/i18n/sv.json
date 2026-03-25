@@ -330,7 +330,7 @@
   "meetingStopBufferSeconds-explain": "Justera reglaget för att ställa in önskad tid (i sekunder) innan ett möte börjar när bakgrundsmusiken ska sluta.",
   "memorial-talk": "Minneshögtidstalet",
   "memorialDate": "Datum för minneshögtiden",
-  "memorialDate-explain": "M³ kommer automatiskt att försöka ladda ner och förbereda bakgrundsbilden för minneshögtiden. Bilden visas istället för årstexten. Se upp för att detta är en experimentell funktion och kanske inte fungerar som förväntat.",
+  "memorialDate-explain": "Om detta väljs kommer M³ automatiskt att försöka ladda ner och förbereda välkomstvideon för minneshögtiden samt bilden som ska visas i stället för årstexten.",
   "memorialFetchBgSuccess": "Bilden har konfigurerats för att visas under minneshögtiden",
   "memorialFetchError": "Fel vid hämtning av media som ska visas under minneshögtiden",
   "memorialFetchErrorNoBg": "Fel vid hämtning av bilden som ska visas under minneshögtiden. Säkerställ att bilden är nedladdad och förberedd före minneshögtiden.",

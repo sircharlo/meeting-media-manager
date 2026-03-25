@@ -330,7 +330,7 @@
   "meetingStopBufferSeconds-explain": "Regola il cursore per impostare il tempo desiderato (in secondi) prima dell'inizio di una adunanza, di quando la musica di sottofondo deve interrompersi.",
   "memorial-talk": "Memorial talk",
   "memorialDate": "Data della Commemorazione",
-  "memorialDate-explain": "Se inserito, M³ proverà automaticamente a scaricare e preparare l'immagine di sfondo per la Commemorazione. L'immagine verrà visualizzata al posto della scrittura dell'anno. Attenzione che questa è una funzione sperimentale e potrebbe non funzionare come previsto.",
+  "memorialDate-explain": "Se inserito, M3 proverà automaticamente a scaricare e preparare l'immagine di sfondo per il Memoriale. L'immagine verrà visualizzata al posto del testo dell'anno. Attenzione che questa è una funzione sperimentale e potrebbe non funzionare come previsto.",
   "memorialFetchBgSuccess": "Configurata con successo l'immagine da visualizzare durante la Commemorazione",
   "memorialFetchError": "Errore nel recuperare i media da visualizzare durante la Commemorazione",
   "memorialFetchErrorNoBg": "Errore nel recuperare l'immagine da visualizzare durante la Commemorazione. Assicurati che l'immagine sia scaricata e preparata prima della Commemorazione.",

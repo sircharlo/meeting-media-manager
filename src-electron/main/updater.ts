@@ -15,6 +15,37 @@ import upath from 'upath';
 
 const { join } = upath;
 
+const isIgnoredUpdaterLog = (message?: string) => {
+  if (!message) return false;
+
+  return (
+    message.includes('Cannot rename temp file to final file') ||
+    isIgnoredUpdateError(message)
+  );
+};
+
+const logUpdaterMessage = (
+  level: 'debug' | 'error' | 'info' | 'warn',
+  message: unknown,
+) => {
+  const normalizedMessage =
+    typeof message === 'string'
+      ? message
+      : message instanceof Error
+        ? message.message
+        : '';
+
+  if (isIgnoredUpdaterLog(normalizedMessage)) return;
+  log(message, 'electronUpdater', level);
+};
+
+const updaterLogger = {
+  debug: (message: unknown) => logUpdaterMessage('debug', message),
+  error: (message: unknown) => logUpdaterMessage('error', message),
+  info: (message: unknown) => logUpdaterMessage('info', message),
+  warn: (message: unknown) => logUpdaterMessage('warn', message),
+};
+
 export const getUpdatesDisabledPath = async () =>
   join(await getAppDataPath(), 'Global Preferences', 'disable-updates');
 
@@ -30,6 +61,7 @@ export async function initUpdater() {
   autoUpdater.allowDowngrade = true;
   autoUpdater.autoDownload = !IS_TEST;
   autoUpdater.autoInstallOnAppQuit = !IS_TEST;
+  autoUpdater.logger = updaterLogger;
 
   autoUpdater.on('error', async (error, message) => {
     if (IS_TEST) return;

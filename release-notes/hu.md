@@ -8,9 +8,9 @@ A verziók közötti változások teljes listáját megtalálja a GitHubon talá
 
 ### ✨ Új funkciók
 
-- ✨ **Memorial Media**: Automatic Memorial media retrieval is now out of beta! The app will automatically download the Memorial Welcome Video and image to display during the Memorial, when available in the configured language.
-- ✨ **Playback Speed**: Added playback speed control with visual indicator, and manual reset. This feature is only visible if enabled in the advanced settings.
-- ✨ **Pinyin Songs**: Added a toggle for pinyin song substitution for meetings held in Chinese.
+- ✨ **Emlékünnepi Média**: Az Emlékünnepi Média automatikus letöltése kilépett a kísérleti fázisból! Az alkalmazás automatikusan letölti az Emlékünnepi Üdvözlő videót és a képet, amelyeket az Emlékünnepen kell megjeleníteni, ha a beállított nyelven elérhetők.
+- ✨ **Lejátszási sebesség**: Hozzáadtuk a lejátszási sebesség szabályozását vizuális jelzővel és kézi visszaállítási funkcióval. Ez a funkció csak akkor látható, ha a haladó beállításokban engedélyezve van.
+- ✨ **Pinyin-dalok**: Hozzáadtunk egy kapcsolót a pinyin-dalok beállításához a kínai nyelvű összejövetelek számára.
 
 ## v26.2.0
 
@@ -72,17 +72,17 @@ A verziók közötti változások teljes listáját megtalálja a GitHubon talá
 
 ### ✨ Új funkciók
 
-- ✨ **Setup Wizard – Zoom Step**: Added a Zoom integration step to the setup wizard for easier initial configuration.
-- ✨ **Screen Picker Enhancements**: Show an accurate visual representation of all screens, as well as the main window’s current size and location, in the display popup. This makes it easier to choose the correct screen on which the media window should be displayed.
-- ✨ **Media Window Preference**: The app will now remember the preferred screen on which the media window should be displayed, if specified by the user.
+- ✨ **Beállítási varázsló – Zoom lépés**: A beállítási varázslóba hozzáadtunk egy Zoom-integrációs lépést az egyszerűbb kezdeti konfigurálás érdekében.
+- ✨ **A képernyőválasztó fejlesztései**: A megjelenítő felugró ablakban pontos vizuális ábrázolást jelenít meg az összes képernyőről, valamint a főablak aktuális méretéről és elhelyezkedéséről. Így könnyebb kiválasztani azt a képernyőt, amelyen a médiaablakot meg kell jeleníteni.
+- ✨ **Médiaablak beállítás**: Az alkalmazás mostantól megjegyzi azt a képernyőt, amelyen a felhasználó a médiaablak megjelenítését preferálja.
 
 ## v25.10.0
 
 ### ✨ Új funkciók
 
-- ✨ **Begin Playback Paused**: Added a new setting to allow playback to begin paused, which can be useful for AV operators to prepare their setup (such as starting Zoom sharing) before the media starts playing in the media window.
-- ✨ **Update Notifications**: Users will now be notified of updates through an in-app banner, which will also allow the user to install updates immediately, instead of waiting for the next app restart.
-- ✨ **Custom Events**: Added optional events hooks that can trigger keyboard shortcuts when certain events are detected. This can be useful for AV operators to execute actions automatically outside of the app. For example, smart lights could be turned on and off before and after media plays in auditoriums where projectors are used; or a script can be called after a meeting's last song has been played to automate various actions in a Zoom meeting.
+- ✨ **Lejátszás szüneteltetett állapotban történő indítása**: Új beállítást vezettünk be, amely lehetővé teszi a lejátszás szüneteltetett állapotban történő indítását. Ez hasznos lehet az AV-operátoroknak, hogy elvégezhessék a szükséges beállításokat (például elindítsák a Zoom-megosztást) még mielőtt a média elindulna a médiaablakban.
+- ✨ **Frissítési értesítések**: A felhasználók ezentúl az alkalmazáson belüli sávon keresztül kapnak értesítést a frissítésekről, amelyen keresztül a felhasználó azonnal telepítheti a frissítéseket, anélkül, hogy meg kellene várnia az alkalmazás következő újraindítását.
+- ✨ **Egyéni események**: Hozzáadtunk opcionális akciókat, amelyek billentyűparancsokat indíthatnak el, ha bizonyos események történnek. Ez hasznos lehet az AV-operátorok számára, hogy az alkalmazáson kívül is automatikusan végrehajthassanak műveleteket. For example, smart lights could be turned on and off before and after media plays in auditoriums where projectors are used; or a script can be called after a meeting's last song has been played to automate various actions in a Zoom meeting.
 
 ## v25.9.1
 
