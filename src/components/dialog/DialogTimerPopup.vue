@@ -138,25 +138,7 @@
         <q-separator class="bg-accent-200 q-mb-md" />
       </template>
 
-      <!-- Meeting Detection and Mode Selection -->
-      <div class="card-section-title row q-px-md">
-        {{ t('timer-mode') }}
-      </div>
-      <div class="row q-px-md q-pb-sm">
-        <q-btn-toggle
-          v-model="timerMode"
-          class="full-width"
-          color="secondary"
-          :disable="timerRunning"
-          :options="[
-            { label: t('count-up'), value: 'countup' },
-            { label: t('count-down'), value: 'countdown' },
-          ]"
-          spread
-          toggle-color="primary"
-          unelevated
-        />
-      </div>
+      <q-separator class="bg-accent-200 q-mb-md" />
 
       <!-- Meeting Part Selection (only on meeting days) -->
       <template v-if="isMeetingDay(selectedDateObject?.date)">
@@ -333,74 +315,87 @@
         {{ t('meeting-part') }}
       </div>
       <div class="row q-px-md q-pb-sm">
-        <q-list bordered class="full-width">
-          <q-item
-            v-for="part in meetingPartsOptions"
+        <q-list class="full-width">
+          <template
+            v-for="(part, index) in meetingPartsOptions"
             :key="part.value"
-            :class="{ 'text-warning': part.warning }"
-            clickable
-            @click="openEditDialog(part)"
-            @contextmenu.prevent="openEditDialog(part)"
           >
-            <q-item-section avatar class="jw-icon text-h6">
-              {{ part.icon }}
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ part.label }}</q-item-label>
-              <q-item-label caption>
-                {{ getPartStatusText(part.value) }}
-              </q-item-label>
-            </q-item-section>
-            <q-item-section side>
-              <div class="row q-gutter-xs">
-                <q-btn
-                  v-if="
-                    (partTimings[part.value]?.startTime ||
-                      partTimings[part.value]?.endTime) &&
-                    !timerRunning
-                  "
-                  color="warning"
-                  dense
-                  icon="mmm-reset"
-                  round
-                  size="sm"
-                  @click="
-                    () => {
-                      partTimings[part.value] ??= {
-                        endTime: null,
-                        startTime: null,
-                      };
-                      partTimings[part.value]!.startTime = null;
-                      partTimings[part.value]!.endTime = null;
-                    }
-                  "
-                >
-                </q-btn>
-                <q-btn
-                  v-if="!timerRunning && !partTimings[part.value]?.startTime"
-                  color="positive"
-                  dense
-                  icon="mmm-play"
-                  round
-                  size="sm"
-                  @click="selectPart(part.value)"
-                >
-                  <q-tooltip>{{ t('start-timer') }}</q-tooltip>
-                </q-btn>
-                <q-btn
-                  v-if="currentPart === part.value && timerRunning"
-                  color="negative"
-                  dense
-                  icon="mmm-stop"
-                  round
-                  size="sm"
-                  @click="stopTimer()"
-                >
-                  <q-tooltip>{{ t('stop-timer') }}</q-tooltip>
-                </q-btn>
-              </div>
-            </q-item-section>
-          </q-item>
+            <q-item-label
+              v-if="
+                part.section &&
+                (index === 0 ||
+                  meetingPartsOptions[index - 1]?.section !== part.section)
+              "
+              class="q-pa-sm bg-accent-100 text-weight-bold text-uppercase text-caption"
+              header
+            >
+              {{ t(part.section) }}
+            </q-item-label>
+            <q-item
+              :class="{ 'text-warning': part.warning }"
+              clickable
+              @click="openEditDialog(part)"
+              @contextmenu.prevent="openEditDialog(part)"
+            >
+              <q-item-section avatar class="jw-icon text-h6">
+                {{ part.icon }}
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ part.label }}</q-item-label>
+                <q-item-label caption>
+                  {{ getPartStatusText(part.value) }}
+                </q-item-label>
+              </q-item-section>
+              <q-item-section side>
+                <div class="row q-gutter-xs">
+                  <q-btn
+                    v-if="
+                      (partTimings[part.value]?.startTime ||
+                        partTimings[part.value]?.endTime) &&
+                      !timerRunning
+                    "
+                    color="warning"
+                    dense
+                    icon="mmm-reset"
+                    outline
+                    size="sm"
+                    @click.stop="
+                      () => {
+                        partTimings[part.value] ??= {
+                          endTime: null,
+                          startTime: null,
+                        };
+                        partTimings[part.value]!.startTime = null;
+                        partTimings[part.value]!.endTime = null;
+                      }
+                    "
+                  >
+                  </q-btn>
+                  <q-btn
+                    v-if="!timerRunning && !partTimings[part.value]?.startTime"
+                    color="positive"
+                    dense
+                    icon="mmm-play"
+                    outline
+                    size="sm"
+                    @click.stop="selectPart(part.value)"
+                  >
+                    <q-tooltip>{{ t('start-timer') }}</q-tooltip>
+                  </q-btn>
+                  <q-btn
+                    v-if="currentPart === part.value && timerRunning"
+                    color="negative"
+                    dense
+                    icon="mmm-stop"
+                    size="sm"
+                    @click.stop="stopTimer()"
+                  >
+                    <q-tooltip>{{ t('stop-timer') }}</q-tooltip>
+                  </q-btn>
+                </div>
+              </q-item-section>
+            </q-item>
+          </template>
         </q-list>
       </div>
 

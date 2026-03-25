@@ -626,6 +626,8 @@
   "timer": "Meeting timer",
   "timer-controls": "Timer controls",
   "timer-mode": "Timer mode",
+  "timerMode": "Default timer mode",
+  "timerMode-explain": "Choose whether the timer should count up or count down by default.",
   "timerOvertimeAnimation": "Blink when overtime",
   "timerOvertimeAnimation-explain": "Make the timer gently blink when the participant is overtime.",
   "timerOvertimeBackgroundColor": "Overtime part background color",

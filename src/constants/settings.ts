@@ -492,6 +492,14 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'timer',
     type: 'slider',
   },
+  timerMode: {
+    depends: 'enableTimerDisplay',
+    group: 'integrations',
+    list: 'timerModes',
+    rules: ['notEmpty'],
+    subgroup: 'timer',
+    type: 'list',
+  },
 
   // Advanced
   enableKeyboardShortcuts: {
@@ -769,6 +777,7 @@ export const defaultSettings: SettingsValues = {
   shortcutMusic: null,
   suppressHardwareAccelerationReminder: false,
   timerBackgroundColor: '#000000',
+  timerMode: 'countup',
   timerOvertimeAnimation: true,
   timerOvertimeBackgroundColor: '#000000',
   timerOvertimeIndicator: false,

@@ -154,7 +154,8 @@ export type SettingsItemListKey =
   | 'jwLanguages'
   | 'obsAllScenes'
   | 'obsScenes'
-  | 'resolutions';
+  | 'resolutions'
+  | 'timerModes';
 
 export type SettingsItemOption = 'coTuesdays' | 'futureDate' | 'meetingTime';
 
@@ -278,6 +279,7 @@ export interface SettingsValues {
   shortcutMusic: null | string;
   suppressHardwareAccelerationReminder: boolean;
   timerBackgroundColor: string;
+  timerMode: 'countdown' | 'countup';
   timerOvertimeAnimation: boolean;
   timerOvertimeBackgroundColor: string;
   timerOvertimeIndicator: boolean;

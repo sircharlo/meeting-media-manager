@@ -1,5 +1,6 @@
 import type {
   CustomTimerPart,
+  MediaSectionIdentifier,
   MeetingPart,
   MeetingPartTimings,
   TimerData,
@@ -33,7 +34,9 @@ const useTimer = () => {
   const timerPausedTime = ref<null | number>(null);
   const elapsedSeconds = ref(0);
   const countdownTarget = ref<number>(0);
-  const timerMode = ref<'countdown' | 'countup'>('countup');
+  const timerMode = computed(
+    () => currentState.currentSettings?.timerMode ?? 'countup',
+  );
   const currentPart = ref<MeetingPart>('public-talk');
   const wtCustomEndTime = ref<string>('');
   const cbsCustomEndTime = ref('');
@@ -175,6 +178,7 @@ const useTimer = () => {
     {
       icon?: string;
       label: string;
+      section?: MediaSectionIdentifier;
       value: MeetingPart;
       warning?: boolean;
     }[]
@@ -184,17 +188,20 @@ const useTimer = () => {
       const options: {
         icon?: string;
         label: string;
+        section?: MediaSectionIdentifier;
         value: MeetingPart;
         warning?: boolean;
       }[] = [
         {
           icon: getJwIconFromKeyword('public-talk'),
           label: t('public-talk'),
+          section: 'pt',
           value: 'public-talk',
         },
         {
           icon: getJwIconFromKeyword('wt'),
           label: t('wt'),
+          section: 'wt',
           value: 'wt',
         },
       ];
@@ -203,6 +210,7 @@ const useTimer = () => {
         options.push({
           icon: getJwIconFromKeyword('co-final-talk'),
           label: t('co-final-talk'),
+          section: 'co',
           value: 'co-final-talk',
         });
       }
@@ -213,6 +221,7 @@ const useTimer = () => {
       const options: {
         icon?: string;
         label: string;
+        section?: MediaSectionIdentifier;
         value: MeetingPart;
         warning?: boolean;
       }[] = [
@@ -224,16 +233,19 @@ const useTimer = () => {
         {
           icon: getJwIconFromKeyword('treasures'),
           label: t('treasures-talk'),
+          section: 'tgw',
           value: 'treasures',
         },
         {
           icon: getJwIconFromKeyword('gems'),
           label: t('gems'),
+          section: 'tgw',
           value: 'gems',
         },
         {
           icon: getJwIconFromKeyword('bible-reading'),
           label: t('bible-reading'),
+          section: 'tgw',
           value: 'bible-reading',
         },
       ];
@@ -249,6 +261,7 @@ const useTimer = () => {
         options.push({
           icon: getJwIconFromKeyword('ayfm-part'),
           label: t('ayfm-part', { duration: dur, part: i }),
+          section: 'ayfm',
           value: `ayfm-${i}` as MeetingPart,
           warning,
         });
@@ -264,6 +277,7 @@ const useTimer = () => {
         options.push({
           icon: getJwIconFromKeyword('lac-part'),
           label: t('lac-part', { duration: dur, part: i }),
+          section: 'lac',
           value: `lac-${i}` as MeetingPart,
           warning,
         });
@@ -272,12 +286,14 @@ const useTimer = () => {
         options.push({
           icon: getJwIconFromKeyword('co-service-talk'),
           label: t('co-service-talk'),
+          section: 'co',
           value: 'co-service-talk',
         });
       } else {
         options.push({
           icon: getJwIconFromKeyword('cbs'),
           label: t('cbs'),
+          section: 'lac',
           value: 'cbs',
         });
       }
