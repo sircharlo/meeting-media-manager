@@ -623,6 +623,8 @@
   "time-must-be-between": "Time must be between {minTime} and {maxTime}",
   "timer": "Meeting timer",
   "timer-controls": "Timer controls",
+  "timerAutoOpen": "Auto-open timer window",
+  "timerAutoOpen-explain": "Automatically open the timer window on application launch or congregation change if enabled for the congregation.",
   "timerMode": "Default timer mode",
   "timerMode-explain": "Choose whether the timer should count up or count down by default.",
   "timerOvertimeAnimation": "Blink when overtime",

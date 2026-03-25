@@ -411,6 +411,12 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'timer',
     type: 'toggle',
   },
+  timerAutoOpen: {
+    depends: 'enableTimerDisplay',
+    group: 'integrations',
+    subgroup: 'timer',
+    type: 'toggle',
+  },
   timerBackgroundColor: {
     group: 'integrations',
     rules: ['notEmpty'],
@@ -776,6 +782,7 @@ export const defaultSettings: SettingsValues = {
   shortcutMediaWindow: null,
   shortcutMusic: null,
   suppressHardwareAccelerationReminder: false,
+  timerAutoOpen: false,
   timerBackgroundColor: '#000000',
   timerMode: 'countup',
   timerOvertimeAnimation: true,

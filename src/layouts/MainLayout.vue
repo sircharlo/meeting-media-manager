@@ -262,6 +262,8 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
 
     if (!newCongregation) {
       toggleMediaWindowVisibility(false);
+      globalThis.electronApi.toggleTimerWindow(false);
+      currentState.setTimerWindowVisible(false);
       navigateToCongregationSelector();
       return; // exit early — no need to run notifications
     }
@@ -290,6 +292,18 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
 
     if (queues.meetings[newCongregation]) {
       queues.meetings[newCongregation].start();
+    }
+
+    // Auto-open/close timer window
+    const timerEnabled = currentSettings.value?.enableTimerDisplay;
+    const timerAutoOpen = currentSettings.value?.timerAutoOpen;
+
+    if (!timerEnabled) {
+      globalThis.electronApi.toggleTimerWindow(false);
+      currentState.setTimerWindowVisible(false);
+    } else if (timerAutoOpen) {
+      globalThis.electronApi.toggleTimerWindow(true);
+      currentState.setTimerWindowVisible(true);
     }
 
     //
@@ -599,6 +613,22 @@ watch(
   () => currentSettings.value?.autoStartAtLogin,
   (newAutoStartAtLogin) => {
     setAutoStartAtLogin(!!newAutoStartAtLogin);
+  },
+);
+
+watch(
+  () => [
+    currentSettings.value?.enableTimerDisplay,
+    currentSettings.value?.timerAutoOpen,
+  ],
+  ([enabled, autoOpen]) => {
+    if (!enabled) {
+      globalThis.electronApi.toggleTimerWindow(false);
+      currentState.setTimerWindowVisible(false);
+    } else if (autoOpen) {
+      globalThis.electronApi.toggleTimerWindow(true);
+      currentState.setTimerWindowVisible(true);
+    }
   },
 );
 

@@ -278,6 +278,7 @@ export interface SettingsValues {
   shortcutMediaWindow: null | string;
   shortcutMusic: null | string;
   suppressHardwareAccelerationReminder: boolean;
+  timerAutoOpen: boolean;
   timerBackgroundColor: string;
   timerMode: 'countdown' | 'countup';
   timerOvertimeAnimation: boolean;
