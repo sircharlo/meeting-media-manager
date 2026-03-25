@@ -206,9 +206,6 @@
             </div>
             <template v-if="!isCoWeek(selectedDateObject?.date)">
               <div class="row q-px-md q-py-sm">
-                {{ t('adapt-cbs-duration-dynamically') }}
-              </div>
-              <div class="row q-px-md q-py-sm">
                 {{ t('cbs-custom-end-time') }}
               </div>
               <div class="row q-px-md q-pb-sm">
@@ -216,9 +213,9 @@
                   v-model="cbsCustomEndTime"
                   class="full-width"
                   :disable="timerRunning"
-                  filled
                   :label="t('end-time')"
                   mask="##:##"
+                  outlined
                   :rules="cbsEndTimeRules"
                 />
               </div>
@@ -341,6 +338,8 @@
             v-for="part in meetingPartsOptions"
             :key="part.value"
             :class="{ 'text-warning': part.warning }"
+            clickable
+            @click="openEditDialog(part)"
             @contextmenu.prevent="openEditDialog(part)"
           >
             <q-item-section avatar class="jw-icon text-h6">
