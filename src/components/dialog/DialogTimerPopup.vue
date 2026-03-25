@@ -545,7 +545,7 @@ import {
 } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { QMenu } from 'quasar';
-import 'jspdf-autotable'; // Import jspdf-autotable
+import 'jspdf-autotable';
 import useTimer from 'src/composables/useTimer';
 import {
   isCoWeek,
