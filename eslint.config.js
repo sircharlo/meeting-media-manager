@@ -44,6 +44,13 @@ export default defineConfigWithVueTs([
     },
   },
 
+  {
+    files: ['docs/**/*.ts'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
+
   // https://github.com/vuejs/eslint-config-typescript
   // https://typescript-eslint.io/users/configs#recommended-configurations
   vueTsConfigs.strict,
