@@ -93,7 +93,7 @@ onMounted(() => {
 
 ## macOS
 
-- **macOS (Universal) (.dmg)**: <a :href="downloads.macUniversal">Download</a>
+- **macOS (Univerzális) (.dmg)**: <a :href="downloads.macUniversal">Letöltés</a>
 
 ## Linux
 
