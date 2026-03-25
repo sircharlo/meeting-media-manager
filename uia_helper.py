@@ -1,11 +1,27 @@
 import json
 import traceback
+from time import monotonic
 
 from pywinauto import Application, Desktop, findwindows
 from flask import Flask, jsonify, request
 from waitress import serve
 
 app = Flask(__name__)
+ZOOM_WINDOW_CLASS_NAMES = {
+    "ConfMultiTabContentWndClass",
+    "WCN_ModelessWnd",
+    "zChangeNameWndClass",
+    "ZGridMultiLevelPopupWndClass",
+    "zJoinAudioWndClass",
+    "ZPFloatToolbarClass",
+    "ZPShareEntranceClass",
+    "ZPMeetingWndClass",
+}
+MAIN_WINDOW_CACHE_TTL_SECONDS = 2
+DESCENDANT_CACHE_TTL_SECONDS = 2
+
+_main_window_cache = {}
+_descendants_cache = {}
 
 
 def get_element_data(element):
@@ -37,6 +53,63 @@ def get_element_data(element):
     return data
 
 
+def _cache_key(win):
+    return f"{win.process_id()}:{win.handle}"
+
+
+def _extract_control_id_from_help(help_text):
+    if not help_text or not help_text.startswith("{"):
+        return None
+    try:
+        help_json = json.loads(help_text)
+        return help_json.get("controlID")
+    except Exception:
+        return None
+
+
+def _get_descendant_index(win, force_refresh=False):
+    cache_key = _cache_key(win)
+    now = monotonic()
+    cached = _descendants_cache.get(cache_key)
+    if (
+        not force_refresh
+        and cached
+        and now - cached["timestamp"] < DESCENDANT_CACHE_TTL_SECONDS
+    ):
+        return cached["value"]
+
+    descendants = []
+    by_control_id = {}
+    by_exact_text = {}
+    for d in win.descendants():
+        try:
+            text = d.window_text()
+        except Exception:
+            text = ""
+
+        control_id = None
+        try:
+            control_id = _extract_control_id_from_help(
+                d.legacy_properties().get("Help", "")
+            )
+        except Exception:
+            pass
+
+        descendants.append(d)
+        if control_id and control_id not in by_control_id:
+            by_control_id[control_id] = d
+        if text and text not in by_exact_text:
+            by_exact_text[text] = d
+
+    value = {
+        "descendants": descendants,
+        "by_control_id": by_control_id,
+        "by_exact_text": by_exact_text,
+    }
+    _descendants_cache[cache_key] = {"timestamp": now, "value": value}
+    return value
+
+
 def _find_element_by_handle(target_handle):
     try:
         return Desktop(backend="uia").window(handle=int(target_handle))
@@ -45,13 +118,19 @@ def _find_element_by_handle(target_handle):
 
 
 def _find_element_by_control_id(win, control_id):
-    for d in win.descendants():
-        if get_element_data(d).get("control_id") == control_id:
-            return d
-    return None
+    if not control_id:
+        return None
+    index = _get_descendant_index(win)
+    if control_id in index["by_control_id"]:
+        return index["by_control_id"][control_id]
+
+    index = _get_descendant_index(win, force_refresh=True)
+    return index["by_control_id"].get(control_id)
 
 
 def _find_element_by_text(win, button_text):
+    if not button_text:
+        return None
     try:
         btn = win.child_window(title_re=f".*{button_text}.*", control_type="Button")
         if btn.exists():
@@ -59,7 +138,11 @@ def _find_element_by_text(win, button_text):
     except Exception:
         pass
 
-    for d in win.descendants():
+    index = _get_descendant_index(win)
+    if button_text in index["by_exact_text"]:
+        return index["by_exact_text"][button_text]
+
+    for d in index["descendants"]:
         if d.window_text() == button_text:
             return d
     return None
@@ -92,26 +175,29 @@ def list_windows():
             if class_name_filter:
                 is_match = class_name == class_name_filter
             else:
-                is_match = class_name in [
-                    "ConfMultiTabContentWndClass",  # Zoom windows (can be several)
-                    "WCN_ModelessWnd",  # Menu window
-                    "zChangeNameWndClass",  # Mute all participants dialog window
-                    "ZGridMultiLevelPopupWndClass",  # More panel popup
-                    "zJoinAudioWndClass",  # Join audio dialog window
-                    "ZPFloatToolbarClass",  # Floating share toolbar
-                    "ZPShareEntranceClass",  # Share screen window
-                    "ZPMeetingWndClass",
-                ]
+                is_match = class_name in ZOOM_WINDOW_CLASS_NAMES
             if is_match:
                 is_main = False
                 if class_name == "ConfMultiTabContentWndClass":
                     try:
-                        # Create a WindowSpecification from the handle to use child_window
-                        # Main Zoom window has a descendant with class ZPControlPanelClass (can be several levels deep)
-                        win_spec = Desktop(backend="uia").window(handle=w.handle)
-                        is_main = win_spec.child_window(
-                            class_name="ZPControlPanelClass"
-                        ).exists()
+                        cache_key = _cache_key(w)
+                        now = monotonic()
+                        cached = _main_window_cache.get(cache_key)
+                        if (
+                            cached
+                            and now - cached["timestamp"] < MAIN_WINDOW_CACHE_TTL_SECONDS
+                        ):
+                            is_main = cached["value"]
+                        else:
+                            # Main Zoom window has descendant with class ZPControlPanelClass
+                            win_spec = Desktop(backend="uia").window(handle=w.handle)
+                            is_main = win_spec.child_window(
+                                class_name="ZPControlPanelClass"
+                            ).exists()
+                            _main_window_cache[cache_key] = {
+                                "timestamp": now,
+                                "value": is_main,
+                            }
                     except Exception:
                         pass
                 res.append(
@@ -165,20 +251,22 @@ def dialog_children():
         return jsonify({"success": False, "error": "class_name is required"}), 400
 
     try:
-        search_criteria = {
-            "class_name": class_name,
-            "backend": "uia",
-            "top_level_only": False,
-        }
         if parent_handle:
             parent_win = Desktop(backend="uia").window(handle=int(parent_handle))
-            search_criteria["parent"] = parent_win.element_info
-
-        elements = findwindows.find_elements(**search_criteria)
-        if not elements:
-            raise LookupError(f"No elements found for class '{class_name}'")
-
-        win = Desktop(backend="uia").window(handle=elements[0].handle)
+            descendants = parent_win.descendants()
+            scoped_matches = [d for d in descendants if d.class_name() == class_name]
+            if not scoped_matches:
+                raise LookupError(f"No elements found for class '{class_name}'")
+            win = Desktop(backend="uia").window(handle=scoped_matches[0].handle)
+        else:
+            elements = findwindows.find_elements(
+                class_name=class_name,
+                backend="uia",
+                top_level_only=False,
+            )
+            if not elements:
+                raise LookupError(f"No elements found for class '{class_name}'")
+            win = Desktop(backend="uia").window(handle=elements[0].handle)
     except Exception as e:
         error_msg = f"Dialog with class {class_name} not found relative to parent {parent_handle}: {str(e)}\n{traceback.format_exc()}"
         print(f"Error in dialog_children: {error_msg}")
@@ -186,7 +274,6 @@ def dialog_children():
 
     descendants = win.descendants()
     result = [get_element_data(d) for d in descendants if d.window_text()]
-    print(f"Found {len(result)} descendants for class {class_name}")
     return jsonify({"success": True, "result": result})
 
 
@@ -208,20 +295,9 @@ def get_element_title():
             )
 
         win = Desktop(backend="uia").window(handle=window_handle)
-
-        for d in win.descendants():
-            try:
-                try:
-                    legacy_properties = d.legacy_properties()
-                    print(legacy_properties)
-                    help_text = legacy_properties.get("Help", "")
-                except Exception:
-                    help_text = ""
-
-                if help_text and f'"{control_id}"' in help_text:
-                    return jsonify({"success": True, "title": d.window_text()})
-            except Exception:
-                continue
+        target = _find_element_by_control_id(win, control_id)
+        if target:
+            return jsonify({"success": True, "title": target.window_text()})
 
         return jsonify(
             {
@@ -253,16 +329,7 @@ def get_element_state():
             )
 
         win = Desktop(backend="uia").window(handle=window_handle)
-
-        target = None
-        for d in win.descendants():
-            try:
-                help_text = d.legacy_properties().get("Help", "")
-                if help_text and f'"{control_id}"' in help_text:
-                    target = d
-                    break
-            except Exception:
-                continue
+        target = _find_element_by_control_id(win, control_id)
 
         if not target:
             return jsonify(

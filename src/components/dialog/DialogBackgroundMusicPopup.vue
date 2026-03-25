@@ -112,6 +112,7 @@ import { remainingTimeBeforeMeetingStart } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadBackgroundMusic } from 'src/helpers/jw-media';
 import {
+  autoLaunchZoomMeetingIfNeeded,
   automateZoomMeetingSettings,
   automateZoomPostMeetingSettings,
 } from 'src/helpers/zoom';
@@ -287,6 +288,7 @@ whenever(
   () => musicPlaying.value,
   () => {
     musicState.value = 'music.playing';
+    autoLaunchZoomMeetingIfNeeded(timeUntilMeeting.value);
     automateZoomPostMeetingSettings();
   },
 );

@@ -286,6 +286,7 @@ export interface SettingsValues {
   zoomAudioUnmutedTitle: null | string;
   zoomAutoFocusMediaWindow: boolean;
   zoomEnable: boolean;
+  zoomMeetingManagerAutoLaunchMeeting: boolean;
   zoomMeetingManagerAutomateMediaSharing: boolean;
   zoomMeetingManagerAutomateMeetingAudioSettings: boolean;
   zoomMeetingManagerAutomatePostMeetingAudioSettings: boolean;

@@ -88,39 +88,35 @@
 
       <div class="row q-px-md q-pt-md q-gutter-x-sm">
         <q-btn
-          class="col"
-          color="positive"
+          class="col-12"
+          color="primary"
           dense
           no-caps
           outline
-          @click="startZoomHelper"
+          @click="restartZoomHelper"
         >
-          {{ t('start') }}
-        </q-btn>
-        <q-btn
-          class="col"
-          color="negative"
-          dense
-          no-caps
-          outline
-          @click="stopZoomHelper"
-        >
-          {{ t('stop') }}
+          {{ t('restart') }}
         </q-btn>
       </div>
 
       <div v-if="zoomHelperLogs.length" class="row q-px-md q-pt-md">
-        <div class="col-12 text-caption text-weight-medium q-mb-xs">
-          {{ t('logs') }}
-        </div>
-        <div
-          class="col-12 bg-dark text-white q-pa-sm rounded-borders scroll"
-          style="max-height: 200px; font-family: monospace; font-size: 10px"
+        <q-expansion-item
+          v-model="logsExpanded"
+          class="col-12 bg-grey-2 rounded-borders"
+          dense
+          dense-toggle
+          expand-separator
+          :label="t('logs')"
         >
-          <div v-for="(log, index) in zoomHelperLogs" :key="index">
-            {{ log }}
+          <div
+            class="bg-dark text-white q-pa-sm rounded-borders scroll"
+            style="max-height: 200px; font-family: monospace; font-size: 10px"
+          >
+            <div v-for="(logLine, index) in zoomHelperLogs" :key="index">
+              {{ logLine }}
+            </div>
           </div>
-        </div>
+        </q-expansion-item>
       </div>
     </div>
   </q-menu>
@@ -137,7 +133,7 @@ import {
 } from 'src/helpers/zoom';
 import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, ref, useTemplateRef, watch } from 'vue';
+import { computed, onUnmounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const zoomMeetingManagerPopupRef = useTemplateRef<QMenu>(
@@ -146,7 +142,7 @@ const zoomMeetingManagerPopupRef = useTemplateRef<QMenu>(
 
 const open = defineModel<boolean>({ required: true });
 
-const { launchZoomMeeting, listZoomWindows, startZoomHelper, stopZoomHelper } =
+const { launchZoomMeeting, listZoomWindows, restartZoomHelper } =
   globalThis.electronApi;
 
 const currentState = useCurrentStateStore();
@@ -158,6 +154,8 @@ const meetingId = computed(
 
 const zoomWindows = ref<ZoomUIElement[]>([]);
 const selectedZoomWindow = ref<null | ZoomUIElement>(null);
+const logsExpanded = ref(false);
+let mainWindowPollingInterval: null | ReturnType<typeof setInterval> = null;
 
 const listMainZoomWindows = async () => {
   selectedZoomWindow.value = null;
@@ -166,6 +164,22 @@ const listMainZoomWindows = async () => {
     selectedZoomWindow.value = zoomWindows.value[0];
   }
   log(zoomWindows.value, 'zoom', 'debug', zoomWindows.value);
+};
+
+const syncMainWindowSelection = async () => {
+  const windows = await listZoomWindows(true);
+  zoomWindows.value = windows;
+
+  const selectedHandle = selectedZoomWindow.value?.handle;
+  if (selectedHandle) {
+    const existingWindow = windows.find((w) => w.handle === selectedHandle);
+    if (existingWindow) {
+      selectedZoomWindow.value = existingWindow;
+      return;
+    }
+  }
+
+  selectedZoomWindow.value = windows[0] ?? null;
 };
 
 const { t } = useI18n();
@@ -181,4 +195,29 @@ watch(
     }, 10);
   },
 );
+
+watch(
+  () => open.value,
+  (isOpen) => {
+    if (mainWindowPollingInterval) {
+      clearInterval(mainWindowPollingInterval);
+      mainWindowPollingInterval = null;
+    }
+
+    if (!isOpen) return;
+
+    void syncMainWindowSelection();
+    mainWindowPollingInterval = setInterval(() => {
+      void syncMainWindowSelection();
+    }, 5000);
+  },
+  { immediate: true },
+);
+
+onUnmounted(() => {
+  if (mainWindowPollingInterval) {
+    clearInterval(mainWindowPollingInterval);
+    mainWindowPollingInterval = null;
+  }
+});
 </script>

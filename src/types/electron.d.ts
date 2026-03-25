@@ -233,6 +233,7 @@ export interface ElectronApi {
   ) => Promise<FileItem[]>;
   registerShortcut: (name: keyof SettingsValues, shortcut: string) => void;
   removeListeners: (channel: ElectronIpcListenKey) => void;
+  restartZoomHelper: () => void;
   robot: typeof robot;
   sendZoomWindowKeys: (handle: number, keys: string) => Promise<boolean>;
   setAutoStartAtLogin: (value: boolean) => void;
@@ -325,6 +326,7 @@ export type ElectronIpcSendKey =
   | 'openDiscussion'
   | 'openExternal'
   | 'quitAndInstall'
+  | 'restartZoomHelper'
   | 'setElectronUrlVariables'
   | 'startZoomHelper'
   | 'stopZoomHelper'

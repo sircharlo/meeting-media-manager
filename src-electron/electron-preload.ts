@@ -124,6 +124,7 @@ const electronApi: ElectronApi = {
   readdir: readDirectory,
   registerShortcut: (n, s) => invoke('registerShortcut', n, s),
   removeListeners: (c) => removeAllIpcListeners(c),
+  restartZoomHelper: () => send('restartZoomHelper'),
   robot,
   sendZoomWindowKeys: (h, k) => invoke('sendZoomWindowKeys', h, k),
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),

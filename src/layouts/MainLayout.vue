@@ -906,7 +906,12 @@ bcClose.onmessage = (event) => {
 const initListeners = () => {
   onLog(({ ctx, level, msg }) => {
     log(`[main] ${msg}`, ctx as unknown as LogPrefix, level, ctx);
-    if (msg.startsWith('[Zoom Helper]')) {
+    if (
+      msg.startsWith('[Pip]') ||
+      msg.startsWith('[Pip Error]') ||
+      msg.startsWith('[Zoom Helper]') ||
+      msg.startsWith('[Zoom Helper Error]')
+    ) {
       currentState.addZoomHelperLog(msg);
     }
   });
