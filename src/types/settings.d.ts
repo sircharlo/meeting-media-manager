@@ -292,8 +292,3 @@ export interface SettingsValues {
   zoomEnable: boolean;
   zoomScreenShareShortcut: null | string;
 }
-
-export interface TimerPreferences {
-  preferredScreenNumber: number | undefined;
-  preferWindowed: boolean | undefined;
-}

@@ -1,7 +1,4 @@
-import type {
-  ScreenPreferences,
-  TimerPreferences,
-} from 'src/types';
+import type { ScreenPreferences } from 'src/types';
 
 import { defineStore } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -11,7 +8,7 @@ interface Store {
   displayCameraId: null | string;
   migrations: string[];
   screenPreferences: ScreenPreferences;
-  timerPreferences: TimerPreferences;
+  timerPreferences: ScreenPreferences;
   yeartextPreviewDismissed: Record<number, boolean>;
 }
 
