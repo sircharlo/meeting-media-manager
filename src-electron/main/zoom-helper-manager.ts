@@ -47,13 +47,20 @@ export async function isPythonInstalled(): Promise<boolean> {
   });
 }
 
+export function restartZoomHelper() {
+  stopZoomHelper();
+  startZoomHelper();
+}
+
 export function startZoomHelper() {
   if (pythonProcess || PLATFORM !== 'win32') return;
 
   const helperPath = getHelperPath('uia_helper.py');
 
   log(`Starting Zoom Helper`, 'zoom', 'info', helperPath);
-  pythonProcess = spawn(getPythonCommand(), [helperPath]);
+  pythonProcess = spawn(getPythonCommand(), [helperPath], {
+    env: { ...process.env, PYTHONUNBUFFERED: '1' },
+  });
 
   pythonProcess.stdout.on('data', (data: Buffer) => {
     const msg = data.toString().trim();

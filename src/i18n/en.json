@@ -669,6 +669,8 @@
   "zoomMeetingManager": "Zoom Meeting Manager",
   "zoomMeetingManagerAutomateMediaSharing": "Automate media sharing",
   "zoomMeetingManagerAutomateMediaSharing-explain": "Automatically share the media window on Zoom when media is shared on TVs.",
+  "zoomMeetingManagerAutoLaunchMeeting": "Auto-launch Zoom meeting before meetings",
+  "zoomMeetingManagerAutoLaunchMeeting-explain": "When background music starts before a meeting, M³ will launch the configured Zoom meeting only if no main Zoom meeting window is found.",
   "zoomMeetingManagerAutomateMeetingAudioSettings": "Automate settings that should be applied during meetings",
   "zoomMeetingManagerAutomateMeetingAudioSettings-explain": "This will get triggered when background music is stopped, a few moments before a meeting starts. It will join computer audio, turn on host video, mute everyone, and disable unmuting microphones.",
   "zoomMeetingManagerAutomatePostMeetingAudioSettings": "Automate settings that should be applied before and after meetings",

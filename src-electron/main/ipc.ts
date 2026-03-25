@@ -82,6 +82,7 @@ import {
 import {
   ensureRequirementsInstalled,
   isPythonInstalled,
+  restartZoomHelper,
   startZoomHelper,
   stopZoomHelper,
 } from 'src-electron/main/zoom-helper-manager';
@@ -306,6 +307,7 @@ handleIpcInvoke('ensureZoomRequirements', async () =>
 );
 handleIpcSend('startZoomHelper', () => startZoomHelper());
 handleIpcSend('stopZoomHelper', () => stopZoomHelper());
+handleIpcSend('restartZoomHelper', () => restartZoomHelper());
 
 handleIpcInvoke(
   'isArchitectureMismatch',
@@ -391,6 +393,9 @@ const getZoomWindows = async (className?: string) => {
   }
 };
 
+const controlsVisibilityChecks = new Map<string, number>();
+const zoomWindowClassByHandle = new Map<number, string>();
+
 handleIpcInvoke(
   'listZoomWindows',
   async (_e, mainOnly = false, className?: string) => {
@@ -401,6 +406,10 @@ handleIpcInvoke(
     if (mainOnly) {
       result = windows.filter((w) => w.main_zoom_window);
     }
+
+    result.forEach((window) => {
+      zoomWindowClassByHandle.set(window.handle, window.class_name);
+    });
 
     return result;
   },
@@ -464,6 +473,23 @@ async function sendZoomWindowKeysInternal(handle: number, keys: string) {
 
 async function showControlsIfHidden(handle: number) {
   try {
+    const now = Date.now();
+    const checkKey = String(handle);
+    const lastCheckedAt = controlsVisibilityChecks.get(checkKey) ?? 0;
+    if (now - lastCheckedAt < 1500) {
+      return;
+    }
+    controlsVisibilityChecks.set(checkKey, now);
+
+    const className = zoomWindowClassByHandle.get(handle);
+    if (
+      className &&
+      className !== 'ConfMultiTabContentWndClass' &&
+      className !== 'ZPMeetingWndClass'
+    ) {
+      return;
+    }
+
     const result = await fetchZoomDialogChildren('ZPControlPanelClass', handle);
 
     if (!result.length) {

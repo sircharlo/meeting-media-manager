@@ -278,6 +278,13 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'zoomMeetingManager',
     type: 'text',
   },
+  zoomMeetingManagerAutoLaunchMeeting: {
+    depends: 'zoomMeetingManagerEnable',
+    group: 'integrations',
+    platforms: ['win32'],
+    subgroup: 'zoomMeetingManager',
+    type: 'toggle',
+  },
   zoomMeetingManagerAutomateMeetingAudioSettings: {
     depends: 'zoomMeetingManagerEnable',
     group: 'integrations',
@@ -770,6 +777,7 @@ export const defaultSettings: SettingsValues = {
   zoomAudioUnmutedTitle: null,
   zoomAutoFocusMediaWindow: false,
   zoomEnable: false,
+  zoomMeetingManagerAutoLaunchMeeting: false,
   zoomMeetingManagerAutomateMediaSharing: false,
   zoomMeetingManagerAutomateMeetingAudioSettings: false,
   zoomMeetingManagerAutomatePostMeetingAudioSettings: false,

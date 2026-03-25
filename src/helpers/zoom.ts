@@ -15,6 +15,7 @@ const {
   getZoomDialogChildren,
   getZoomElementState,
   getZoomElementTitle,
+  launchZoomMeeting,
   listZoomWindows,
 } = globalThis.electronApi;
 
@@ -582,6 +583,34 @@ export const automateZoomPostMeetingSettings = async () => {
       contexts: { fn: { name: 'automateZoomPostMeetingSettings' } },
     });
   }
+};
+
+export const autoLaunchZoomMeetingIfNeeded = async (
+  timeUntilMeetingSeconds?: number,
+) => {
+  const currentState = useCurrentStateStore();
+  const settings = currentState.currentSettings;
+  if (!settings?.zoomMeetingManagerEnable) return;
+  if (!settings.zoomMeetingManagerAutoLaunchMeeting) return;
+
+  const meetingId = settings.zoomMeetingManagerMeetingId?.trim();
+  if (!meetingId) return;
+
+  if (
+    typeof timeUntilMeetingSeconds === 'number' &&
+    timeUntilMeetingSeconds <= 0
+  ) {
+    return;
+  }
+
+  const mainZoomWindow = await getMainZoomWindow();
+  if (mainZoomWindow?.handle) return;
+
+  log('Auto-launching Zoom meeting before meeting start', 'zoom', 'info', {
+    meetingId,
+    timeUntilMeetingSeconds,
+  });
+  launchZoomMeeting(meetingId);
 };
 
 /**
