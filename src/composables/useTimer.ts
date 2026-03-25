@@ -883,8 +883,14 @@ const useTimer = () => {
       return (
         (endTime >= minTime && endTime <= maxTime) ||
         t('time-must-be-between', {
-          maxTime: maxTime.getHours() + ':' + maxTime.getMinutes(),
-          minTime: minTime.getHours() + ':' + minTime.getMinutes(),
+          maxTime:
+            maxTime.getHours().toString().padStart(2, '0') +
+            ':' +
+            maxTime.getMinutes().toString().padStart(2, '0'),
+          minTime:
+            minTime.getHours().toString().padStart(2, '0') +
+            ':' +
+            minTime.getMinutes().toString().padStart(2, '0'),
         })
       );
     },
