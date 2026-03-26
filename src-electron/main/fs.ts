@@ -1,10 +1,11 @@
 import type { FileDialogFilter, UnzipOptions, UnzipResult } from 'src/types';
 
+import { setTag } from '@sentry/electron/main';
 import { watch as filesystemWatch, type FSWatcher } from 'chokidar';
 import { app, dialog } from 'electron';
 import { ensureDir, type Stats } from 'fs-extra';
 import { createWriteStream } from 'node:fs';
-import { mkdir, rm, stat, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { pipeline } from 'node:stream/promises';
 import { setTimeout as delay } from 'node:timers/promises';
 import {
@@ -33,15 +34,27 @@ const THRESHOLD_RATIO = 100;
 const PATH_PROBE_SETTLE_DELAY_MS = 50;
 const PATH_PROBE_RETRY_DELAY_MS = 50;
 const PATH_PROBE_RETRY_COUNT = 4;
+const SHARED_PATH_BACKOFF_MS = 10 * 60 * 1000;
+const SHARED_PATH_HEALTH_FILENAME = 'shared-path-health.json';
+const SHARED_PATH_HEALTH_FOLDERS = [
+  'Additional Media',
+  'Fonts',
+  'Publications',
+];
 
 let defaultAppDataPath: null | string = null;
+let sharedPathBackoffUntil: null | number = null;
+let sharedPathBackoffLoaded = false;
+
+type PathMode = 'shared' | 'user';
+
+type PathProbeResult = 'backoff' | 'failed' | 'not-machine-wide' | 'passed';
 
 interface UnzipContext {
   input: string;
   opts?: UnzipOptions;
   output: string;
 }
-
 interface ZipfileState {
   checkIfComplete: () => Promise<void>;
   extractedFiles: UnzipResult[];
@@ -52,35 +65,165 @@ interface ZipfileState {
   zipfile: yauzl.ZipFile;
 }
 
+const getSharedPathHealthFile = () =>
+  join(app.getPath('userData'), SHARED_PATH_HEALTH_FILENAME);
+
+const setPathTelemetry = (
+  pathMode: PathMode,
+  pathProbeResult: PathProbeResult,
+) => {
+  setTag('path_mode', pathMode);
+  setTag('path_probe_result', pathProbeResult);
+  addElectronBreadcrumb({
+    category: 'filesystem',
+    data: { pathMode, pathProbeResult },
+    level: 'info',
+    message: '[getAppDataPath] storage selection',
+  });
+};
+
+const loadSharedPathBackoff = async () => {
+  if (sharedPathBackoffLoaded) return;
+  sharedPathBackoffLoaded = true;
+  try {
+    const healthPath = getSharedPathHealthFile();
+    const content = await readFile(healthPath, 'utf8')
+      .then((raw) => JSON.parse(raw) as { unhealthyUntil?: number })
+      .catch(() => null);
+    sharedPathBackoffUntil = content?.unhealthyUntil ?? null;
+  } catch {
+    sharedPathBackoffUntil = null;
+  }
+};
+
+const persistSharedPathBackoff = async (unhealthyUntil: null | number) => {
+  sharedPathBackoffUntil = unhealthyUntil;
+  try {
+    const healthPath = getSharedPathHealthFile();
+    if (!unhealthyUntil) {
+      await rm(healthPath, { force: true });
+      return;
+    }
+    await writeFile(
+      healthPath,
+      JSON.stringify({ unhealthyUntil }, null, 2),
+      'utf8',
+    );
+  } catch (error) {
+    captureElectronError(error, {
+      contexts: {
+        fn: {
+          name: 'persistSharedPathBackoff',
+          unhealthyUntil,
+        },
+      },
+    });
+  }
+};
+
+const isSharedPathBackoffActive = async () => {
+  await loadSharedPathBackoff();
+  return !!sharedPathBackoffUntil && Date.now() < sharedPathBackoffUntil;
+};
+
+const markSharedPathUnhealthy = async () => {
+  await persistSharedPathBackoff(Date.now() + SHARED_PATH_BACKOFF_MS);
+};
+
+const probeSharedSubfolders = async (sharedPath: string) => {
+  for (const folder of SHARED_PATH_HEALTH_FOLDERS) {
+    const dirPath = join(sharedPath, folder);
+    const testFile = join(dirPath, `.health-check-${uuid()}.tmp`);
+    await mkdir(dirPath, { recursive: true });
+    await writeFile(testFile, 'ok', 'utf8');
+    await rm(testFile, { force: true });
+  }
+};
+
 /**
  * Gets the app data path (shared or user data)
  * @returns The app data path
  */
 export async function getAppDataPath(): Promise<string> {
   if (defaultAppDataPath) {
-    return defaultAppDataPath;
+    if (await isUsablePath(defaultAppDataPath)) {
+      setPathTelemetry(
+        defaultAppDataPath === app.getPath('userData') ? 'user' : 'shared',
+        'passed',
+      );
+      return defaultAppDataPath;
+    }
+    log(
+      '📁 Cached app data path became unusable. Falling back.',
+      'electronFilesystem',
+      'warn',
+      defaultAppDataPath,
+    );
+    defaultAppDataPath = null;
   }
 
-  const usableSharedPath = await getSharedDataPath();
+  const userDataPath = app.getPath('userData');
+  const userDataUsable = await isUsablePath(userDataPath);
+  if (userDataUsable) {
+    if (await isSharedPathBackoffActive()) {
+      defaultAppDataPath = userDataPath;
+      setPathTelemetry('user', 'backoff');
+      return defaultAppDataPath;
+    }
 
-  if (usableSharedPath) {
+    const usableSharedPath = await getSharedDataPath();
+
+    if (usableSharedPath) {
+      try {
+        await probeSharedSubfolders(usableSharedPath);
+        await persistSharedPathBackoff(null);
+        log(
+          '📁 Using shared data path:',
+          'electronFilesystem',
+          'log',
+          usableSharedPath,
+        );
+        defaultAppDataPath = usableSharedPath;
+        setPathTelemetry('shared', 'passed');
+        return defaultAppDataPath;
+      } catch (error) {
+        captureElectronError(error, {
+          contexts: {
+            fn: {
+              name: 'getAppDataPath.probeSharedSubfolders',
+              sharedPath: usableSharedPath,
+            },
+          },
+          tags: {
+            path_mode: 'shared',
+            path_probe_result: 'failed',
+          },
+        });
+        await markSharedPathUnhealthy();
+        setPathTelemetry('user', 'failed');
+      }
+    } else {
+      setPathTelemetry('user', 'not-machine-wide');
+    }
+
+    defaultAppDataPath = userDataPath;
     log(
-      '📁 Using shared data path:',
+      '📁 Shared data path not available, fallback to user data path:',
       'electronFilesystem',
       'log',
-      usableSharedPath,
+      defaultAppDataPath,
     );
-    defaultAppDataPath = usableSharedPath;
     return defaultAppDataPath;
   }
 
-  defaultAppDataPath = app.getPath('userData');
   log(
-    '📁 Shared data path not available, fallback to user data path:',
+    '📁 User data path is not usable. Returning user data path as last resort:',
     'electronFilesystem',
-    'log',
-    defaultAppDataPath,
+    'warn',
+    userDataPath,
   );
+  setPathTelemetry('user', 'failed');
+  defaultAppDataPath = userDataPath;
   return defaultAppDataPath;
 }
 
