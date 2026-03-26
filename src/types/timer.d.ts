@@ -38,8 +38,6 @@ export interface MeetingPartTimings {
 // Timer data from main dialog
 export interface TimerData {
   aheadBehindMinutes?: null | number;
-  enableMeetingCountdown?: boolean;
-  meetingCountdownMinutes?: number;
   meetingStartTime?: string;
   mode: 'countdown' | 'countup';
   mwDay?: null | string;
@@ -48,6 +46,8 @@ export interface TimerData {
   running: boolean;
   time: string;
   timerBackgroundColor?: string;
+  timerEnableMeetingCountdown?: boolean;
+  timerMeetingCountdownMinutes?: number;
   timerOvertimeAnimation?: boolean;
   timerOvertimeBackgroundColor?: string;
   timerOvertimeIndicator?: boolean;

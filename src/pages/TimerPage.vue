@@ -129,7 +129,7 @@ const updateTime = () => {
 // Return countdown string or null if not active
 const getMeetingCountdown = (now: Date): null | string => {
   const data = timerData.value;
-  if (!data?.enableMeetingCountdown || !data.meetingCountdownMinutes)
+  if (!data?.timerEnableMeetingCountdown || !data.timerMeetingCountdownMinutes)
     return null;
 
   const today = normalizeDay(now.getDay());
@@ -153,16 +153,21 @@ const normalizeDay = (day: number) => (day === 0 ? 6 : day - 1);
 
 // Determine which meeting applies today
 const getTodayMeetingInfo = (today: number, data: TimerData) => {
-  const { meetingCountdownMinutes, mwDay, mwStartTime, weDay, weStartTime } =
-    data;
+  const {
+    mwDay,
+    mwStartTime,
+    timerMeetingCountdownMinutes,
+    weDay,
+    weStartTime,
+  } = data;
   if (Number.parseInt(mwDay ?? '-1') === today && mwStartTime)
     return {
-      countdownMinutes: meetingCountdownMinutes,
+      countdownMinutes: timerMeetingCountdownMinutes,
       startTime: mwStartTime,
     };
   if (Number.parseInt(weDay ?? '-1') === today && weStartTime)
     return {
-      countdownMinutes: meetingCountdownMinutes,
+      countdownMinutes: timerMeetingCountdownMinutes,
       startTime: weStartTime,
     };
   return null;

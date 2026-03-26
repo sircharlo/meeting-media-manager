@@ -401,8 +401,6 @@ const useTimer = () => {
       // Broadcast initial timer settings
       safePostTimerData({
         aheadBehindMinutes: calculateAheadBehindMinutes(),
-        enableMeetingCountdown: currentSettings.value?.enableMeetingCountdown,
-        meetingCountdownMinutes: currentSettings.value?.meetingCountdownMinutes,
         mode: 'countup',
         mwDay: currentSettings.value?.mwDay,
         mwStartTime: currentSettings.value?.mwStartTime,
@@ -410,6 +408,10 @@ const useTimer = () => {
         running: false,
         time: '',
         timerBackgroundColor: currentSettings.value?.timerBackgroundColor,
+        timerEnableMeetingCountdown:
+          currentSettings.value?.timerEnableMeetingCountdown,
+        timerMeetingCountdownMinutes:
+          currentSettings.value?.timerMeetingCountdownMinutes,
         timerOvertimeAnimation: currentSettings.value?.timerOvertimeAnimation,
         timerOvertimeBackgroundColor:
           currentSettings.value?.timerOvertimeBackgroundColor,
@@ -689,8 +691,6 @@ const useTimer = () => {
     // Send timer data to the timer window via broadcast channel
     const timerData = {
       aheadBehindMinutes: calculateAheadBehindMinutes(),
-      enableMeetingCountdown: currentSettings.value?.enableMeetingCountdown,
-      meetingCountdownMinutes: currentSettings.value?.meetingCountdownMinutes,
       mode: timerMode.value,
       mwDay: currentSettings.value?.mwDay,
       mwStartTime: currentSettings.value?.mwStartTime,
@@ -698,6 +698,10 @@ const useTimer = () => {
       running: timerRunning.value,
       time: timerRunning.value ? formattedTime.value : '',
       timerBackgroundColor: currentSettings.value?.timerBackgroundColor,
+      timerEnableMeetingCountdown:
+        currentSettings.value?.timerEnableMeetingCountdown,
+      timerMeetingCountdownMinutes:
+        currentSettings.value?.timerMeetingCountdownMinutes,
       timerOvertimeAnimation: currentSettings.value?.timerOvertimeAnimation,
       timerOvertimeBackgroundColor:
         currentSettings.value?.timerOvertimeBackgroundColor,
@@ -766,7 +770,7 @@ const useTimer = () => {
 
   // Calculate ahead/behind minutes
   const calculateAheadBehindMinutes = (): null | number => {
-    if (!currentSettings.value?.enableMeetingAheadBehind) {
+    if (!currentSettings.value?.timerEnableMeetingAheadBehind) {
       return null;
     }
 

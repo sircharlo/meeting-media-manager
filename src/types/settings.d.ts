@@ -218,8 +218,6 @@ export interface SettingsValues {
   enableMediaAutoExport: boolean;
   enableMediaDisplayButton: boolean;
   enableMediaWindowFadeTransitions: boolean;
-  enableMeetingAheadBehind: boolean;
-  enableMeetingCountdown: boolean;
   enableMusicButton: boolean;
   enablePinyinSongs: boolean;
   enablePlaybackSpeedControl: boolean;
@@ -239,7 +237,6 @@ export interface SettingsValues {
   localDateFormat: string;
   maxRes: MaxRes;
   mediaAutoExportFolder: string;
-  meetingCountdownMinutes: number;
   meetingScheduleChangeDate: `${number}/${number}/${number}` | null;
   meetingScheduleChangeMwDay: `${number}` | null;
   meetingScheduleChangeMwStartTime: `${number}:${number}` | null;
@@ -280,6 +277,9 @@ export interface SettingsValues {
   suppressHardwareAccelerationReminder: boolean;
   timerAutoOpen: boolean;
   timerBackgroundColor: string;
+  timerEnableMeetingAheadBehind: boolean;
+  timerEnableMeetingCountdown: boolean;
+  timerMeetingCountdownMinutes: number;
   timerMode: 'countdown' | 'countup';
   timerOvertimeAnimation: boolean;
   timerOvertimeBackgroundColor: string;
