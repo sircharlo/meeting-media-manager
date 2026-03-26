@@ -68,7 +68,10 @@
                 <q-item-section>
                   <q-item-label>
                     {{ t(settingId) }}
-                    <q-badge v-if="item.beta" align="top">beta</q-badge>
+                    <q-badge v-if="item.beta" align="top">
+                      <q-tooltip>{{ t('beta-tooltip') }}</q-tooltip>
+                      {{ t('beta') }}
+                    </q-badge>
                   </q-item-label>
                   <q-item-label caption :class="{ 'q-pb-sm': $q.screen.lt.sm }">
                     {{ t(settingId + '-explain') }}

@@ -54,6 +54,8 @@
   "baseUrl-explain": "Enter the address used to access the official website of Jehovah's Witnesses.",
   "beginPlaybackPaused": "Begin playback paused",
   "beginPlaybackPaused-explain": "When enabled, audio and video will start in a paused state, allowing you to prepare other operations (like Zoom screen sharing) before beginning playback.",
+  "beta": "Beta",
+  "beta-tooltip": "This feature is in beta testing and may not be stable. Please exercise caution if you decide to use this feature during meetings, and report any issues you encounter.",
   "beta-version-warning": "This is a beta version and should not be used at Kingdom Halls or for live meetings.",
   "bible-reading": "Bible Reading",
   "bottom": "Bottom",
