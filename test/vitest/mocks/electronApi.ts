@@ -118,6 +118,9 @@ export const electronApi: ElectronApi = {
   moveMediaWindow: function (targetScreenNumber, windowedMode) {
     throw new Error('Function not implemented.');
   },
+  moveTimerWindow: function (targetScreenNumber, windowedMode) {
+    throw new Error('Function not implemented.');
+  },
   navigateWebsiteWindow: function (action) {
     throw new Error('Function not implemented.');
   },
@@ -227,6 +230,9 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   toggleMediaWindow: function (show) {
+    throw new Error('Function not implemented.');
+  },
+  toggleTimerWindow: function (show) {
     throw new Error('Function not implemented.');
   },
   unregisterAllShortcuts: function () {

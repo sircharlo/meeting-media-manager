@@ -37,6 +37,7 @@ export type Display = Electron.Display & {
   mainWindow?: boolean;
   mainWindowBounds?: Electron.Rectangle;
   mediaWindow?: boolean;
+  timerWindow?: boolean;
 };
 
 export interface ElectronApi {
@@ -142,6 +143,10 @@ export interface ElectronApi {
     targetScreenNumber?: number,
     windowedMode?: boolean,
   ) => void;
+  moveTimerWindow: (
+    targetScreenNumber?: number,
+    windowedMode?: boolean,
+  ) => void;
   navigateWebsiteWindow: (action: NavigateWebsiteAction) => void;
   onDownloadCancelled: (callback: (args: { id: string }) => void) => void;
   onDownloadCompleted: (
@@ -243,6 +248,7 @@ export interface ElectronApi {
   stopZoomHelper: () => void;
   toggleAuthorizedClose: (authorized: boolean) => void;
   toggleMediaWindow: (show: boolean, enableFadeTransitions?: boolean) => void;
+  toggleTimerWindow: (show: boolean) => void;
   unregisterAllShortcuts: () => void;
   unregisterShortcut: (shortcut: string) => void;
   unwatchFolders: () => void;
@@ -322,6 +328,7 @@ export type ElectronIpcSendKey =
   | 'focusMediaWindow'
   | 'launchZoomMeeting'
   | 'moveMediaWindow'
+  | 'moveTimerWindow'
   | 'navigateWebsiteWindow'
   | 'openDiscussion'
   | 'openExternal'
@@ -332,6 +339,7 @@ export type ElectronIpcSendKey =
   | 'stopZoomHelper'
   | 'toggleMediaWindow'
   | 'toggleOpenAtLogin'
+  | 'toggleTimerWindow'
   | 'toggleWebsiteWindow'
   | 'unregisterAllShortcuts'
   | 'unregisterShortcut'

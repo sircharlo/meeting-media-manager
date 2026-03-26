@@ -74,6 +74,7 @@ interface Store {
   onlyShowInvalidSettings: boolean;
   pinyinActive: boolean;
   selectedDate: string;
+  timerWindowVisible: boolean;
   websiteSelection: JwSite;
   zoomHelperLogs: string[];
 }
@@ -290,6 +291,9 @@ export const useCurrentStateStore = defineStore('current-state', {
       } finally {
         zoomHelperSyncInProgress = false;
       }
+    },
+    setTimerWindowVisible(visible: boolean) {
+      this.timerWindowVisible = visible;
     },
   },
   getters: {
@@ -547,6 +551,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       onlyShowInvalidSettings: false,
       pinyinActive: false,
       selectedDate: formatDate(new Date(), 'YYYY/MM/DD'),
+      timerWindowVisible: false,
       websiteSelection: undefined,
       zoomHelperLogs: [],
     };

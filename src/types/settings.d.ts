@@ -112,12 +112,14 @@ export interface SettingsGroup {
   order?: number;
   platforms?: string[];
 }
+
 export type SettingsGroupKey =
   | 'advanced'
   | 'app'
   | 'congregationMeetings'
   | 'integrations'
   | 'mediaRetrievalPlayback';
+
 export type SettingsGroups = Record<SettingsGroupKey, SettingsGroup>;
 
 export interface SettingsItem {
@@ -158,10 +160,12 @@ export type SettingsItemListKey =
   | 'appLanguages'
   | 'darkModes'
   | 'days'
+  | 'fontSizes'
   | 'jwLanguages'
   | 'obsAllScenes'
   | 'obsScenes'
-  | 'resolutions';
+  | 'resolutions'
+  | 'timerModes';
 
 export type SettingsItemOption = 'coTuesdays' | 'futureDate' | 'meetingTime';
 
@@ -183,11 +187,13 @@ export type SettingsItemSubgroup =
   | 'setupWizard'
   | 'setupWizard.backgroundMusic'
   | 'subtitles'
+  | 'timer'
   | 'zoomIntegration'
   | 'zoomMeetingManager';
 
 export type SettingsItemType =
   | 'button'
+  | 'color'
   | 'date'
   | 'list'
   | 'path'
@@ -227,6 +233,7 @@ export interface SettingsValues {
   enablePinyinSongs: boolean;
   enablePlaybackSpeedControl: boolean;
   enableSubtitles: boolean;
+  enableTimerDisplay: boolean;
   excludeFootnotes: boolean;
   excludeTh: boolean;
   excludeWtParagraphVideos: boolean;
@@ -279,6 +286,20 @@ export interface SettingsValues {
   shortcutMediaWindow: null | string;
   shortcutMusic: null | string;
   suppressHardwareAccelerationReminder: boolean;
+  timerAutoOpen: boolean;
+  timerBackgroundColor: string;
+  timerEnableMeetingAheadBehind: boolean;
+  timerEnableMeetingCountdown: boolean;
+  timerMeetingCountdownMinutes: number;
+  timerMode: 'countdown' | 'countup';
+  timerOvertimeAnimation: boolean;
+  timerOvertimeBackgroundColor: string;
+  timerOvertimeIndicator: boolean;
+  timerOvertimeShowAmountOnly: boolean;
+  timerOvertimeTextColor: string;
+  timerShowOnActionIsland: boolean;
+  timerTextColor: string;
+  timerTextSize: string;
   weDay: `${number}` | null;
   weStartTime: `${number}:${number}` | null;
   zoomAudioMutedTitle: null | string;

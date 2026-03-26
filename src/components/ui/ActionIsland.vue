@@ -23,6 +23,8 @@
           :is-recording="isRecording"
           :recording-duration="formattedRecordingDuration"
         />
+        <TimerButton v-model="timerPopup" />
+        <q-separator class="bg-semi-white-24" vertical />
         <MediaDisplayButton v-model="displayPopup" />
         <ZoomMeetingManagerButton v-model="zoomMeetingManagerPopup" />
       </div>
@@ -37,6 +39,7 @@
       />
       <DialogDisplayPopup v-model="displayPopup" dialog-id="display-popup" />
       <DialogZoomMeetingManagerPopup v-model="zoomMeetingManagerPopup" />
+      <DialogTimerPopup v-model="timerPopup" dialog-id="timer-popup" />
     </q-chip>
   </div>
 </template>
@@ -49,6 +52,7 @@ import MusicButton from 'components/media/MusicButton.vue';
 import ObsStatus from 'components/media/ObsStatus.vue';
 import RecordingStatus from 'components/media/RecordingStatus.vue';
 import SubtitlesButton from 'components/media/SubtitlesButton.vue';
+import TimerButton from 'components/media/TimerButton.vue';
 import ZoomMeetingManagerButton from 'components/media/ZoomMeetingManagerButton.vue';
 import { formatTime } from 'src/utils/time';
 import { computed, ref } from 'vue';
@@ -58,6 +62,7 @@ import DialogDisplayPopup from '../dialog/DialogDisplayPopup.vue';
 import DialogDownloadsPopup from '../dialog/DialogDownloadsPopup.vue';
 import DialogObsPopup from '../dialog/DialogObsPopup.vue';
 import DialogRecordingPopup from '../dialog/DialogRecordingPopup.vue';
+import DialogTimerPopup from '../dialog/DialogTimerPopup.vue';
 import DialogZoomMeetingManagerPopup from '../dialog/DialogZoomMeetingManagerPopup.vue';
 
 // Popups
@@ -67,6 +72,7 @@ const obsPopup = ref(false);
 const recordingPopup = ref(false);
 const displayPopup = ref(false);
 const zoomMeetingManagerPopup = ref(false);
+const timerPopup = ref(false);
 
 // Recording variables
 const isRecording = ref(false);
@@ -79,7 +85,7 @@ const { pause: pauseTimer, resume: resumeTimer } = useIntervalFn(() => {
       (Date.now() - recordingStartTime.value) / 1000,
     );
   }
-}, 1000);
+}, 500);
 
 whenever(isRecording, (recording) => {
   if (recording) {
@@ -107,6 +113,7 @@ const popups = {
   musicPopup,
   obsPopup,
   recordingPopup,
+  timerPopup,
   zoomMeetingManagerPopup,
 } as const;
 

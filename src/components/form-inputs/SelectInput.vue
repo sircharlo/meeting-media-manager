@@ -103,6 +103,10 @@ const filteredDarkModes = ref([
   { description: t('light'), label: t('light'), value: false },
 ]);
 const filteredObsScenes = ref<JsonObject[]>([...scenes.value]);
+const filteredTimerModes = ref([
+  { label: t('count-up'), value: 'countup' },
+  { label: t('count-down'), value: 'countdown' },
+]);
 
 const customDisabled = computed(() => {
   return (
@@ -131,6 +135,10 @@ const filterFn = (
         { description: t('light'), label: t('light'), value: false },
       ];
       filteredObsScenes.value = scenes.value ?? [];
+      filteredTimerModes.value = [
+        { label: t('count-up'), value: 'countup' },
+        { label: t('count-down'), value: 'countdown' },
+      ];
     });
   };
 
@@ -170,6 +178,10 @@ const filterFn = (
           scenes.value?.filter((scene) =>
             scene.sceneName?.toString().toLowerCase().includes(needle),
           ) ?? [];
+        filteredTimerModes.value = [
+          { label: t('count-up'), value: 'countup' },
+          { label: t('count-down'), value: 'countdown' },
+        ].filter((mode) => mode.label.toLowerCase().includes(needle));
       });
     } else {
       noFilter();
@@ -216,6 +228,16 @@ const listOptions = computed(
               ? scene.sceneUuid.toString()
               : scene.sceneName?.toString() || 'Unknown scene',
         }));
+      } else if (props.list === 'fontSizes') {
+        return [
+          { label: t('small'), value: '5vw' },
+          { label: t('medium'), value: '7.5vw' },
+          { label: t('large'), value: '10vw' },
+          { label: t('extra-large'), value: '12.5vw' },
+          { label: t('huge'), value: '20vw' },
+        ];
+      } else if (props.list === 'timerModes') {
+        return filteredTimerModes.value;
       } else {
         throw new Error('List not found: ' + props.list);
       }

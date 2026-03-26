@@ -8,6 +8,7 @@ interface Store {
   displayCameraId: null | string;
   migrations: string[];
   screenPreferences: ScreenPreferences;
+  timerPreferences: ScreenPreferences;
   yeartextPreviewDismissed: Record<number, boolean>;
 }
 
@@ -58,6 +59,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
     displayCameraId: null,
     migrations: [],
     screenPreferences: { preferredScreenNumber: 0, preferWindowed: false },
+    timerPreferences: { preferredScreenNumber: 0, preferWindowed: true },
     yeartextPreviewDismissed: {},
   }),
 });

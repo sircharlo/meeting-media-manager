@@ -137,6 +137,7 @@ const logPrefixes = {
   shortcutInput: '🎹 Shortcut Input',
   sqlite: '🗄️ SQLite',
   stores: '🧠 Stores',
+  timer: '⏱️ Timer',
   watchedFolder: '📁 Watched Folder',
   weMedia: '🌅 Weekend Meeting Media',
   zoom: '🔎 Zoom',

@@ -1,0 +1,60 @@
+export type BuiltInMeetingPart =
+  | 'abbreviated-wt'
+  | 'ayfm-1'
+  | 'ayfm-2'
+  | 'ayfm-3'
+  | 'ayfm-4'
+  | 'ayfm-5'
+  | 'bible-reading'
+  | 'cbs'
+  | 'co-final-talk'
+  | 'co-service-talk'
+  | 'concluding-comments'
+  | 'gems'
+  | 'introduction'
+  | 'lac-1'
+  | 'lac-2'
+  | 'lac-3'
+  | 'public-talk'
+  | 'song-and-optional-prayer'
+  | 'treasures'
+  | 'wt';
+
+export type CustomMeetingPart = `custom-${string}`;
+
+export interface CustomTimerPart {
+  duration: number;
+  id: CustomMeetingPart;
+  label: string;
+}
+
+export type MeetingPart = BuiltInMeetingPart | CustomMeetingPart;
+
+export interface MeetingPartTimings {
+  endTime: null | number;
+  startTime: null | number;
+}
+
+// Timer data from main dialog
+export interface TimerData {
+  aheadBehindMinutes?: null | number;
+  meetingStartTime?: string;
+  mode: 'countdown' | 'countup';
+  mwDay?: null | string;
+  mwStartTime?: null | string;
+  paused: boolean;
+  running: boolean;
+  time: string;
+  timerBackgroundColor?: string;
+  timerEnableMeetingCountdown?: boolean;
+  timerMeetingCountdownMinutes?: number;
+  timerOvertimeAnimation?: boolean;
+  timerOvertimeBackgroundColor?: string;
+  timerOvertimeIndicator?: boolean;
+  timerOvertimeShowAmountOnly?: boolean;
+  timerOvertimeTextColor?: string;
+  timerTextColor?: string;
+  timerTextSize?: string;
+  weDay?: null | string;
+  weStartTime?: null | string;
+}
