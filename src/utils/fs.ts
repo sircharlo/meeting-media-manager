@@ -17,11 +17,16 @@ const {
   readdir,
 } = globalThis.electronApi;
 
-const isUsablePathPromises: Record<string, Promise<boolean>> = {};
+const isUsablePathPromises = new Map<string, Promise<boolean>>();
 const isUsablePath = (path: string) => {
-  if (path in isUsablePathPromises) return isUsablePathPromises[path];
-  isUsablePathPromises[path] = isUsablePathRaw(path);
-  return isUsablePathPromises[path];
+  if (isUsablePathPromises.has(path)) {
+    return isUsablePathPromises.get(path) as Promise<boolean>;
+  }
+  const promise = isUsablePathRaw(path).finally(() => {
+    isUsablePathPromises.delete(path);
+  });
+  isUsablePathPromises.set(path, promise);
+  return promise;
 };
 const {
   ensureDir,
@@ -54,9 +59,19 @@ export const getCachedUserDataPath = async (): Promise<string> => {
 
   // Fast path: already resolved
   if (defaultDataPath) {
-    if (!customPath || defaultDataPath === customPath) {
+    if (
+      (!customPath || defaultDataPath === customPath) &&
+      (await isUsablePath(defaultDataPath))
+    ) {
       return defaultDataPath;
     }
+    log(
+      '📁 Cached cache path became unusable. Resolving again.',
+      'filesystem',
+      'warn',
+      defaultDataPath,
+    );
+    defaultDataPath = null;
   }
 
   // Try custom path first

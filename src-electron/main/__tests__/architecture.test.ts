@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { join, relative } from 'upath';
 import { describe, expect, it } from 'vitest';
 
 const SRC_ELECTRON_DIR = join(process.cwd(), 'src-electron');
