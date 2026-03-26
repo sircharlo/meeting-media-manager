@@ -22,17 +22,28 @@ export const fallbackJwIconsGlyphMap: Record<string, string> = {
 
 export const keywordToJwIconMapping: Record<string, string | undefined> = {
   ayfm: 'wheat',
+  'ayfm-part': 'wheat',
+  'bible-reading': 'bible',
   'brochures-and-booklets': 'brochure-stack',
+  cbs: 'speaker-audience',
   'circuit-overseer': 'speaker',
+  'co-final-talk': 'speaker',
+  'co-service-talk': 'speaker',
+  'concluding-comments': 'speaker',
   g: 'awake-exclamation-mark',
+  gems: 'person-raised-hand',
+  introduction: 'speaker',
   lac: 'sheep',
+  'lac-part': 'sheep',
   magazines: 'magazine-stack',
   'meeting-workbooks': 'meeting-workbook-stack',
   memorial: 'wine-bread',
   programs: 'arena',
   pt: 'speaker',
+  'public-talk': 'speaker',
   tgw: 'gem',
   'tracts-and-invitations': 'tract-stack',
+  treasures: 'speaker-audience',
   'tv-logo': 'jw-square',
   w: 'watchtower',
   'welcome-video': 'video',
@@ -40,3 +51,5 @@ export const keywordToJwIconMapping: Record<string, string | undefined> = {
   ws: 'watchtower-square',
   wt: 'watchtower',
 };
+
+export type JwIconKeyword = keyof typeof keywordToJwIconMapping;

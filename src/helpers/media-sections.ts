@@ -1,3 +1,4 @@
+import type { JwIconKeyword } from 'src/constants/jw-icons';
 import type {
   DateInfo,
   MediaItem,
@@ -147,7 +148,7 @@ export const getRandomColor = () => {
   return `rgb(${r}, ${g}, ${b})`;
 };
 
-export const isStandardSection = (section: string) => {
+export const isStandardSection = (section: MediaSectionIdentifier) => {
   if (!section) return false;
   return standardSections.includes(section);
 };
@@ -160,16 +161,16 @@ function getMeetingSectionConfigs(
   }
 
   // Sections that have icons
-  const iconSections = [
+  const iconSections: JwIconKeyword[] = [
     'ayfm',
     'lac',
     'tgw',
     'wt',
     'pt',
     'circuit-overseer',
-  ] as const;
+  ];
 
-  if ((iconSections as readonly string[]).includes(section)) {
+  if (iconSections.includes(section)) {
     return {
       jwIconKeyword: section,
       uniqueId: section,
