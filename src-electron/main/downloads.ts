@@ -3,6 +3,7 @@ import type { ElectronDownloadManager as EDMType } from 'electron-dl-manager';
 import { getCountriesForTimezone } from 'countries-and-timezones';
 import { app } from 'electron';
 import { ensureDir } from 'fs-extra/esm';
+import { setTimeout as delay } from 'node:timers/promises';
 import { quitStatus } from 'src-electron/main/session';
 import {
   captureElectronError,
@@ -14,6 +15,17 @@ import { log } from 'src/shared/vanilla';
 import upath from 'upath';
 
 const { basename } = upath;
+
+const ENSURE_DIR_RETRYABLE_CODES = new Set([
+  'EACCES',
+  'EBUSY',
+  'ENOENT',
+  'EPERM',
+]);
+const ENSURE_DIR_RETRY_COUNT = 3;
+const ENSURE_DIR_RETRY_DELAY_MS = 75;
+
+const getErrorCode = (error: unknown) => (error as { code?: string })?.code;
 
 enum DownloadState {
   ACTIVE = 'ACTIVE',
@@ -58,6 +70,28 @@ interface OngoingDownload {
   lowPriority: boolean;
   state: DownloadState;
   uuid: string;
+}
+
+async function ensureDirWithRetry(dir: string) {
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt <= ENSURE_DIR_RETRY_COUNT; attempt += 1) {
+    try {
+      await ensureDir(dir);
+      return;
+    } catch (error) {
+      lastError = error;
+      const code = getErrorCode(error);
+      const shouldRetry =
+        process.platform === 'win32' &&
+        ENSURE_DIR_RETRYABLE_CODES.has(code ?? '') &&
+        attempt < ENSURE_DIR_RETRY_COUNT;
+      if (!shouldRetry) break;
+      await delay(ENSURE_DIR_RETRY_DELAY_MS);
+    }
+  }
+
+  throw lastError;
 }
 
 /**
@@ -301,7 +335,7 @@ export async function downloadFile(
   )
     return null;
   try {
-    await ensureDir(saveDir);
+    await ensureDirWithRetry(saveDir);
 
     if (!destFilename) destFilename = basename(url);
 
