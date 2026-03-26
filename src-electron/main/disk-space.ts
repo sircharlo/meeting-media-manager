@@ -1,4 +1,3 @@
-import checkDiskSpace from 'check-disk-space';
 import { app } from 'electron';
 import { statfs } from 'node:fs/promises';
 import { log } from 'src/shared/vanilla';
@@ -31,10 +30,19 @@ export async function getLowDiskSpaceStatus() {
       'log',
     );
     return false;
-  } catch {
-    // Fallback for environments where statfs may not be available/reliable.
+  } catch (error) {
+    const code = getErrorCode(error);
+    if (PERMISSION_ERRORS.has(code ?? '')) {
+      log(
+        'Skipping statfs() disk space check due to permissions; falling back to check-disk-space.',
+        'electronFilesystem',
+        'warn',
+        error,
+      );
+    }
   }
   try {
+    const checkDiskSpace = (await import('check-disk-space')).default;
     const diskSpace = await checkDiskSpace(userDataPath);
     const freeSpaceGB = bytesToGB(diskSpace.free);
     if (freeSpaceGB < 10) {
@@ -55,7 +63,7 @@ export async function getLowDiskSpaceStatus() {
     const code = getErrorCode(error);
     if (PERMISSION_ERRORS.has(code ?? '')) {
       log(
-        'Skipping disk space check due permissions.',
+        'Skipping disk space check due to permissions.',
         'electronFilesystem',
         'warn',
         error,
