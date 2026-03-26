@@ -1,6 +1,5 @@
 import type { FileDialogFilter, UnzipOptions, UnzipResult } from 'src/types';
 
-import { setTag } from '@sentry/electron/main';
 import { watch as filesystemWatch, type FSWatcher } from 'chokidar';
 import { app, dialog } from 'electron';
 import { ensureDir, type Stats } from 'fs-extra';
@@ -68,10 +67,11 @@ interface ZipfileState {
 const getSharedPathHealthFile = () =>
   join(app.getPath('userData'), SHARED_PATH_HEALTH_FILENAME);
 
-const setPathTelemetry = (
+const setPathTelemetry = async (
   pathMode: PathMode,
   pathProbeResult: PathProbeResult,
 ) => {
+  const { setTag } = await import('@sentry/electron/main');
   setTag('path_mode', pathMode);
   setTag('path_probe_result', pathProbeResult);
   addElectronBreadcrumb({
@@ -147,7 +147,7 @@ const probeSharedSubfolders = async (sharedPath: string) => {
 export async function getAppDataPath(): Promise<string> {
   if (defaultAppDataPath) {
     if (await isUsablePath(defaultAppDataPath)) {
-      setPathTelemetry(
+      await setPathTelemetry(
         defaultAppDataPath === app.getPath('userData') ? 'user' : 'shared',
         'passed',
       );
@@ -167,7 +167,7 @@ export async function getAppDataPath(): Promise<string> {
   if (userDataUsable) {
     if (await isSharedPathBackoffActive()) {
       defaultAppDataPath = userDataPath;
-      setPathTelemetry('user', 'backoff');
+      await setPathTelemetry('user', 'backoff');
       return defaultAppDataPath;
     }
 
@@ -184,7 +184,7 @@ export async function getAppDataPath(): Promise<string> {
           usableSharedPath,
         );
         defaultAppDataPath = usableSharedPath;
-        setPathTelemetry('shared', 'passed');
+        await setPathTelemetry('shared', 'passed');
         return defaultAppDataPath;
       } catch (error) {
         captureElectronError(error, {
@@ -200,10 +200,10 @@ export async function getAppDataPath(): Promise<string> {
           },
         });
         await markSharedPathUnhealthy();
-        setPathTelemetry('user', 'failed');
+        await setPathTelemetry('user', 'failed');
       }
     } else {
-      setPathTelemetry('user', 'not-machine-wide');
+      await setPathTelemetry('user', 'not-machine-wide');
     }
 
     defaultAppDataPath = userDataPath;
@@ -222,7 +222,7 @@ export async function getAppDataPath(): Promise<string> {
     'warn',
     userDataPath,
   );
-  setPathTelemetry('user', 'failed');
+  await setPathTelemetry('user', 'failed');
   defaultAppDataPath = userDataPath;
   return defaultAppDataPath;
 }
