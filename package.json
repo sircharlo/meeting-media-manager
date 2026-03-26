@@ -40,7 +40,7 @@
     "@numairawan/video-duration": "^1.0.0",
     "@opentelemetry/api-logs": "^0.213.0",
     "@quasar/extras": "^1.17.0",
-    "@sentry/core": "^10.44.0",
+    "@sentry/core": "^10.46.0",
     "@sentry/electron": "^7.10.0",
     "@sentry/vue": "^10.44.0",
     "@vueuse/core": "^14.2.1",
@@ -132,7 +132,7 @@
     "prettier": "^3.8.1",
     "rollup-plugin-visualizer": "^7.0.1",
     "typescript": "~5.9.3",
-    "vite": "^8.0.2",
+    "vite": "^8.0.3",
     "vitepress": "^2.0.0-alpha.17",
     "vitest": "^4.1.1",
     "vue-eslint-parser": "^10.4.0",
@@ -140,7 +140,7 @@
     "webpack-iconfont-plugin-nodejs": "^1.0.36"
   },
   "resolutions": {
-    "vite": "8.0.2",
+    "vite": "8.0.3",
     "serialize-javascript": "7.0.1"
   },
   "browserslist": [
