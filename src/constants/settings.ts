@@ -408,6 +408,7 @@ export const settingsDefinitions: SettingsItems = {
   // Timer
   enableTimerDisplay: {
     group: 'integrations',
+    beta: true,
     subgroup: 'timer',
     type: 'toggle',
   },
@@ -469,39 +470,39 @@ export const settingsDefinitions: SettingsItems = {
     type: 'list',
   },
   timerOvertimeIndicator: {
-    depends: 'enableTimerDisplay',
+    depends: ['enableTimerDisplay', 'timerMode'],
     group: 'integrations',
     subgroup: 'timer',
     type: 'toggle',
   },
   timerOvertimeBackgroundColor: {
-    depends: 'timerOvertimeIndicator',
+    depends: ['enableTimerDisplay', 'timerOvertimeIndicator'],
     rules: ['notEmpty'],
     group: 'integrations',
     subgroup: 'timer',
     type: 'color',
   },
   timerOvertimeTextColor: {
-    depends: 'timerOvertimeIndicator',
+    depends: ['enableTimerDisplay', 'timerOvertimeIndicator'],
     rules: ['notEmpty'],
     group: 'integrations',
     subgroup: 'timer',
     type: 'color',
   },
   timerOvertimeAnimation: {
-    depends: 'timerOvertimeIndicator',
+    depends: ['enableTimerDisplay', 'timerOvertimeIndicator'],
     group: 'integrations',
     subgroup: 'timer',
     type: 'toggle',
   },
   timerOvertimeShowAmountOnly: {
-    depends: 'timerOvertimeIndicator',
+    depends: ['enableTimerDisplay', 'timerOvertimeIndicator'],
     group: 'integrations',
     subgroup: 'timer',
     type: 'toggle',
   },
   timerEnableMeetingAheadBehind: {
-    depends: 'enableTimerDisplay',
+    depends: ['enableTimerDisplay'],
     group: 'integrations',
     subgroup: 'timer',
     type: 'toggle',
