@@ -11140,7 +11140,7 @@ __metadata:
     upath: "npm:^2.0.1"
     vite: "npm:^8.0.3"
     vitepress: "npm:^2.0.0-alpha.17"
-    vitest: "npm:^4.1.1"
+    vitest: "npm:^4.1.2"
     vue: "npm:^3.5.31"
     vue-eslint-parser: "npm:^10.4.0"
     vue-i18n: "npm:^11.3.0"
@@ -15926,7 +15926,11 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< feat/horloge
 "vitest@npm:^4.1.1":
+=======
+"vitest@npm:^4.1.2":
+>>>>>>> master
   version: 4.1.2
   resolution: "vitest@npm:4.1.2"
   dependencies:
