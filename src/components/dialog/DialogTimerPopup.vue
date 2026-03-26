@@ -557,8 +557,12 @@ const { t } = useI18n();
 const screenList = ref<Display[]>([]);
 
 const currentState = useCurrentStateStore();
-const { currentSettings, selectedDateObject, timerWindowVisible } =
-  storeToRefs(currentState);
+const {
+  currentCongregation,
+  currentSettings,
+  selectedDateObject,
+  timerWindowVisible,
+} = storeToRefs(currentState);
 
 const appSettingsStore = useAppSettingsStore();
 const { timerPreferences } = storeToRefs(appSettingsStore);
@@ -891,6 +895,7 @@ watchImmediate(
     currentSettings.value?.weDay,
     currentSettings.value?.mwStartTime,
     currentSettings.value?.weStartTime,
+    currentCongregation.value,
   ],
   () => {
     updateTimerWindow();
