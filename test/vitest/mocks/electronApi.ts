@@ -203,6 +203,7 @@ export const electronApi: ElectronApi = {
   removeListeners: function (channel) {
     throw new Error('Function not implemented.');
   },
+  restartZoomHelper: () => void 0,
   robot,
   sendZoomWindowKeys: function (keys) {
     throw new Error('Function not implemented.');

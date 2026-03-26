@@ -394,7 +394,7 @@ const getZoomWindows = async (className?: string) => {
 };
 
 const controlsVisibilityChecks = new Map<string, number>();
-const zoomWindowClassByHandle = new Map<number, string>();
+const zoomWindowClassByHandle = new Map<null | number, string>();
 
 handleIpcInvoke(
   'listZoomWindows',
