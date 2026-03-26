@@ -240,6 +240,9 @@ export const useCurrentStateStore = defineStore('current-state', {
 
       return this.getInvalidSettings(this.currentCongregation).length > 0;
     },
+    setTimerWindowVisible(visible: boolean) {
+      this.timerWindowVisible = visible;
+    },
     async syncZoomHelper() {
       if (PLATFORM !== 'win32' || zoomHelperSyncInProgress) return;
 
@@ -291,9 +294,6 @@ export const useCurrentStateStore = defineStore('current-state', {
       } finally {
         zoomHelperSyncInProgress = false;
       }
-    },
-    setTimerWindowVisible(visible: boolean) {
-      this.timerWindowVisible = visible;
     },
   },
   getters: {
