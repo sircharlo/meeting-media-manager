@@ -11130,7 +11130,7 @@ __metadata:
     prettier: "npm:^3.8.1"
     pretty-bytes: "npm:^7.1.0"
     process-nextick-args: "npm:^2.0.1"
-    quasar: "npm:^2.19.1"
+    quasar: "npm:^2.19.2"
     readable-stream: "npm:^4.7.0"
     require-in-the-middle: "npm:^8.0.1"
     rollup-plugin-visualizer: "npm:^7.0.1"
@@ -13209,10 +13209,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"quasar@npm:^2.19.1":
-  version: 2.19.1
-  resolution: "quasar@npm:2.19.1"
-  checksum: 10c0/acae33e03b191e2bd79fca7212c7eae4d8f6bfbe4c974620c740abc641a1714e9a6211118ef8cf3651c84a46ac1249520721e64839588b779bb14ab31895d472
+"quasar@npm:^2.19.2":
+  version: 2.19.2
+  resolution: "quasar@npm:2.19.2"
+  checksum: 10c0/9a948539232f17aac5b7e3a0a84cc835ec0899e2d5126846f5ff34d4118f6db7bfa39739065560312fe8aa9e4c06893e288a8f85bdcfa6a6ff28d66fab02f357
   languageName: node
   linkType: hard
 
