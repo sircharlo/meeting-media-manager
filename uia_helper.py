@@ -4,7 +4,7 @@ from time import monotonic
 
 from pywinauto import Application, Desktop, findwindows
 from flask import Flask, jsonify, request
-from waitress import serve
+from waitress import create_server
 
 app = Flask(__name__)
 ZOOM_WINDOW_CLASS_NAMES = {
@@ -419,4 +419,9 @@ def send_keys():
 
 
 if __name__ == "__main__":
-    serve(app, host="127.0.0.1", port=5000)
+    # Let waitress bind with port=0 so the OS picks and reserves a free port
+    # atomically for this process. This avoids the race in "pick a port first,
+    # close socket, then serve(port=...)" patterns.
+    server = create_server(app, host="127.0.0.1", port=0)
+    print(f"ZOOM_HELPER_PORT={server.effective_port}", flush=True)
+    server.run()

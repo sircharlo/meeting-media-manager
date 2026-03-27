@@ -86,6 +86,7 @@ import {
 } from 'src-electron/main/window/window-website';
 import {
   ensureRequirementsInstalled,
+  getZoomHelperBaseUrl,
   isPythonInstalled,
   restartZoomHelper,
   startZoomHelper,
@@ -386,9 +387,18 @@ handleIpcInvoke(
     unzipFile(input, output, opts),
 );
 
+function getZoomHelperUrl(pathname: string): URL {
+  const baseUrl = getZoomHelperBaseUrl();
+  if (!baseUrl) {
+    throw new Error('Zoom helper is not ready yet');
+  }
+
+  return new URL(pathname, `${baseUrl}/`);
+}
+
 const getZoomWindows = async (className?: string) => {
   try {
-    const url = new URL('http://127.0.0.1:5000/windows');
+    const url = getZoomHelperUrl('/windows');
     if (className) {
       url.searchParams.append('class_name', className);
     }
@@ -437,7 +447,7 @@ async function fetchZoomDialogChildren(
   parentHandle?: number,
 ): Promise<ZoomUIElement[]> {
   try {
-    const url = new URL('http://127.0.0.1:5000/dialog_children');
+    const url = getZoomHelperUrl('/dialog_children');
     url.searchParams.append('class_name', className);
     if (parentHandle) {
       url.searchParams.append('parent_handle', String(parentHandle));
@@ -468,7 +478,7 @@ async function fetchZoomDialogChildren(
 
 async function sendZoomWindowKeysInternal(handle: number, keys: string) {
   try {
-    const res = await fetch('http://127.0.0.1:5000/send_keys', {
+    const res = await fetch(getZoomHelperUrl('/send_keys').toString(), {
       body: JSON.stringify({ keys, window_handle: handle }),
       headers: { 'Content-Type': 'application/json' },
       method: 'POST',
@@ -552,7 +562,7 @@ handleIpcInvoke(
     try {
       await showControlsIfHidden(handle);
 
-      const res = await fetch('http://127.0.0.1:5000/click_button', {
+      const res = await fetch(getZoomHelperUrl('/click_button').toString(), {
         body: JSON.stringify({
           button: options.title,
           control_id: options.control_id,
@@ -584,7 +594,7 @@ handleIpcInvoke(
   async (_e, handle: number, controlId: string) => {
     try {
       await showControlsIfHidden(handle);
-      const url = new URL('http://127.0.0.1:5000/get_element_title');
+      const url = getZoomHelperUrl('/get_element_title');
       url.searchParams.append('window_handle', String(handle));
       url.searchParams.append('control_id', controlId);
 
@@ -611,7 +621,7 @@ handleIpcInvoke(
   async (_e, handle: number, controlId: string) => {
     try {
       await showControlsIfHidden(handle);
-      const url = new URL('http://127.0.0.1:5000/get_element_state');
+      const url = getZoomHelperUrl('/get_element_state');
       url.searchParams.append('window_handle', String(handle));
       url.searchParams.append('control_id', controlId);
 

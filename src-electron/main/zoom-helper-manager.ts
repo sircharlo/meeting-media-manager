@@ -13,6 +13,7 @@ import upath from 'upath';
 const { join, resolve } = upath;
 
 let pythonProcess: ChildProcessWithoutNullStreams | null = null;
+let zoomHelperPort: null | number = null;
 
 export async function ensureRequirementsInstalled(): Promise<boolean> {
   const requirementsPath = getHelperPath('requirements.txt');
@@ -39,6 +40,11 @@ export async function ensureRequirementsInstalled(): Promise<boolean> {
   });
 }
 
+export function getZoomHelperBaseUrl(): null | string {
+  if (!zoomHelperPort) return null;
+  return `http://127.0.0.1:${zoomHelperPort}`;
+}
+
 export async function isPythonInstalled(): Promise<boolean> {
   return new Promise((resolve) => {
     exec(getPythonCommand() + ' --version', (error) => {
@@ -55,6 +61,8 @@ export function restartZoomHelper() {
 export function startZoomHelper() {
   if (pythonProcess || PLATFORM !== 'win32') return;
 
+  zoomHelperPort = null;
+
   const helperPath = getHelperPath('uia_helper.py');
 
   log(`Starting Zoom Helper`, 'zoom', 'info', helperPath);
@@ -63,8 +71,18 @@ export function startZoomHelper() {
   });
 
   pythonProcess.stdout.on('data', (data: Buffer) => {
-    const msg = data.toString().trim();
-    if (msg) {
+    const messages = data
+      .toString()
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+
+    for (const msg of messages) {
+      const portMatch = msg.match(/^ZOOM_HELPER_PORT=(\d+)$/);
+      if (portMatch) {
+        zoomHelperPort = Number(portMatch[1]);
+      }
+
       logToWindow(
         mainWindowInfo.mainWindow,
         `[Zoom Helper] ${msg}`,
@@ -89,6 +107,7 @@ export function startZoomHelper() {
   pythonProcess.on('close', (code: number) => {
     log(`Zoom Helper process exited`, 'zoom', 'warn', code);
     pythonProcess = null;
+    zoomHelperPort = null;
     logToWindow(
       mainWindowInfo.mainWindow,
       `[Zoom Helper] Process exited with code ${code}`,
@@ -105,6 +124,7 @@ export function startZoomHelper() {
       'error',
     );
     pythonProcess = null;
+    zoomHelperPort = null;
   });
 }
 
@@ -114,6 +134,8 @@ export function stopZoomHelper() {
     pythonProcess.kill();
     pythonProcess = null;
   }
+
+  zoomHelperPort = null;
 }
 
 function getHelperPath(filename: string): string {
