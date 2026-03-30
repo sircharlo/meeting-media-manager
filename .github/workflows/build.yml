@@ -6,6 +6,10 @@ on:
       checkout-latest:
         description: 'Checkout the latest changes from the repository'
         type: boolean
+      publish-release:
+        description: 'Publish build artifacts to GitHub Releases via electron-builder'
+        type: boolean
+        default: false
     secrets:
       APPLE_APP_SPECIFIC_PASSWORD:
         required: true
@@ -51,7 +55,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
           cache: 'yarn'
       - name: Install X11 development libraries (Linux only)
         if: runner.os == 'Linux'
@@ -76,7 +80,7 @@ jobs:
   #     - name: Setup Node
   #       uses: actions/setup-node@v6
   #       with:
-  #         node-version: 22
+  #         node-version: 24
   #         cache: 'yarn'
 
   #     - name: Install dependencies
@@ -111,7 +115,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
           cache: 'yarn'
       - name: Install X11 development libraries (Linux only)
         if: runner.os == 'Linux'
@@ -142,7 +146,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
           cache: 'yarn'
       - name: Install X11 development libraries (Linux only)
         if: runner.os == 'Linux'
@@ -176,12 +180,12 @@ jobs:
       - name: Run security find-identity -v
         if: runner.os == 'macOS' && github.actor != 'dependabot[bot]'
         run: security find-identity -v
-      - name: Build and Publish Electron App
+      - name: Build Electron App
         id: build
         run: |
           yarn generate:icons
           yarn generate:logos
-          yarn build
+          yarn build -- --publish=${{ inputs.publish-release && 'always' || 'never' }}
         continue-on-error: ${{ runner.os == 'macOS' }}
         env:
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
@@ -195,7 +199,7 @@ jobs:
         if: runner.os == 'macOS' && steps.build.outcome == 'failure'
         run: |
           echo "::warning::macOS notarization failed — likely an expired agreement. Producing unsigned build."
-          yarn build
+          yarn build -- --publish=${{ inputs.publish-release && 'always' || 'never' }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
@@ -206,6 +210,7 @@ jobs:
           rm -f $RUNNER_TEMP/build_certificate.p12
           security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
       - name: Upload artifacts
+        if: ${{ !inputs.publish-release }}
         uses: actions/upload-artifact@v7
         with:
           name: M³ test build for ${{ matrix.os == 'macos-latest' && 'macOS' || matrix.os == 'windows-latest' && 'Windows' || 'Linux' }}

@@ -1,6 +1,6 @@
 {
   "name": "meeting-media-manager",
-  "version": "26.3.3-beta.5",
+  "version": "26.3.3-beta.6",
   "description": "A cross platform app to download and present media for congregation meetings of Jehovah’s Witnesses.",
   "keywords": [
     "M³",
@@ -68,7 +68,7 @@
     "music-metadata": "^11.12.3",
     "obs-websocket-js": "^5.0.8",
     "p-queue": "^9.1.0",
-    "pdfjs-dist": "^5.5.207",
+    "pdfjs-dist": "^5.6.205",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",
     "pretty-bytes": "^7.1.0",
@@ -117,7 +117,7 @@
     "@vue/eslint-config-typescript": "^14.7.0",
     "@vue/test-utils": "^2.4.6",
     "autoprefixer": "^10.4.27",
-    "electron": "41.0.4",
+    "electron": "41.1.0",
     "electron-builder": "26.8.1",
     "eslint": "^10.1.0",
     "eslint-plugin-perfectionist": "^5.7.0",
@@ -151,8 +151,8 @@
     "*.{js,ts,cjs,mjs,mts,vue}": "eslint --fix"
   },
   "engines": {
-    "node": "^22.19.0",
-    "yarn": "^4.7.0"
+    "node": "^24.14.0",
+    "yarn": "^4.13.0"
   },
   "os": [
     "darwin",
@@ -161,6 +161,6 @@
   ],
   "private": true,
   "type": "module",
-  "packageManager": "yarn@4.12.0",
+  "packageManager": "yarn@4.13.0",
   "productName": "Meeting Media Manager"
 }
