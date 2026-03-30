@@ -1047,6 +1047,49 @@ const checkMemorialDate = async () => {
     { jwIconKeyword: 'memorial', label: t('memorial-talk') },
   );
 
+  const memorialMediaWithStreamSource = [
+    ...(introSection?.items || []),
+    ...(memorialSection?.items || []),
+  ].filter((item) => !!item.streamUrl);
+
+  if (memorialMediaWithStreamSource.length) {
+    const datedAdditionalMediaDir =
+      await currentState.getDatedAdditionalMediaDirectory(selectedDate.value);
+
+    for (const mediaItem of memorialMediaWithStreamSource) {
+      if (!mediaItem.streamUrl) {
+        continue;
+      }
+
+      const existingPath =
+        mediaItem.fileUrl && isFileUrl(mediaItem.fileUrl)
+          ? fileUrlToPath(mediaItem.fileUrl)
+          : '';
+      if (existingPath && (await pathExists(existingPath))) {
+        continue;
+      }
+
+      if (!datedAdditionalMediaDir) continue;
+
+      const fallbackFilename = basename(mediaItem.streamUrl);
+      const targetFilename = basename(existingPath || fallbackFilename);
+
+      await downloadFileIfNeeded({
+        dir: datedAdditionalMediaDir,
+        filename: targetFilename,
+        lowPriority: false,
+        meetingDate: selectedDate.value,
+        size: mediaItem.filesize,
+        url: mediaItem.streamUrl,
+      });
+
+      const downloadedPath = join(datedAdditionalMediaDir, targetFilename);
+      if (await pathExists(downloadedPath)) {
+        mediaItem.fileUrl = pathToFileURL(downloadedPath);
+      }
+    }
+  }
+
   // Fetch the memorial media, including the background image and Welcome Video
   createTemporaryNotification({
     group: 'memorial-fetch',
