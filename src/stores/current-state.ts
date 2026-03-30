@@ -11,7 +11,6 @@ import type {
 } from 'src/types';
 
 import { defineStore } from 'pinia';
-import { Platform } from 'quasar';
 import { i18n } from 'src/boot/i18n';
 import { LONG_MEDIA_DURATION } from 'src/constants/jw';
 import { settingsDefinitions } from 'src/constants/settings';
@@ -26,6 +25,7 @@ import {
   registerCachePathProvider,
 } from 'src/utils/fs';
 import { isEmpty, isUUID } from 'src/utils/general';
+import { getCurrentPlatform } from 'src/utils/platform';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
@@ -84,9 +84,7 @@ const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
   SettingsItem,
 ][];
 
-let PLATFORM = 'darwin';
-if (Platform.is.win) PLATFORM = 'win32';
-else if (Platform.is.linux) PLATFORM = 'linux';
+const PLATFORM = getCurrentPlatform();
 
 let zoomHelperSyncInProgress = false;
 

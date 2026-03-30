@@ -119,10 +119,11 @@ import { whenever } from '@vueuse/core';
 import { useRouteParams } from '@vueuse/router';
 import BaseInput from 'components/form-inputs/BaseInput.vue';
 import { storeToRefs } from 'pinia';
-import { Platform, type QForm, useMeta, useQuasar } from 'quasar';
+import { type QForm, useMeta, useQuasar } from 'quasar';
 import DialogCongregationLookup from 'src/components/dialog/DialogCongregationLookup.vue';
 import { settingsDefinitions, settingsGroups } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { getCurrentPlatform } from 'src/utils/platform';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import {
@@ -171,9 +172,7 @@ const expansionState = ref<Partial<Record<SettingsGroupKey, boolean>>>({});
 const settingsFormDynamic = useTemplateRef<QForm>('settingsFormDynamic');
 const settingsValid = ref(true);
 
-let PLATFORM = 'darwin';
-if (Platform.is.win) PLATFORM = 'win32';
-else if (Platform.is.linux) PLATFORM = 'linux';
+const PLATFORM = getCurrentPlatform();
 
 const settingsGroupsEntries = Object.entries(settingsGroups).filter(
   ([, group]) => !group.platforms || group.platforms.includes(PLATFORM),
