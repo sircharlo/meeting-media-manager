@@ -51,7 +51,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
           cache: 'yarn'
       - name: Install X11 development libraries (Linux only)
         if: runner.os == 'Linux'
@@ -76,7 +76,7 @@ jobs:
   #     - name: Setup Node
   #       uses: actions/setup-node@v6
   #       with:
-  #         node-version: 22
+  #         node-version: 24
   #         cache: 'yarn'
 
   #     - name: Install dependencies
@@ -111,7 +111,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
           cache: 'yarn'
       - name: Install X11 development libraries (Linux only)
         if: runner.os == 'Linux'
@@ -142,7 +142,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
           cache: 'yarn'
       - name: Install X11 development libraries (Linux only)
         if: runner.os == 'Linux'
