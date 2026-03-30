@@ -199,6 +199,8 @@ describe('isUsablePath', () => {
 });
 
 describe('watchFolder', () => {
+  const webDavPath = String.raw`\\server@SSL@2078\DavWWWRoot\Media`;
+
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
@@ -222,10 +224,10 @@ describe('watchFolder', () => {
     mockWatcherRegistration();
     const { watchFolder } = await import('../fs');
 
-    await watchFolder('\\\\server@SSL@2078\\DavWWWRoot\\Media');
+    await watchFolder(webDavPath);
 
     expect(watchMock).toHaveBeenCalledWith(
-      '\\\\server@SSL@2078\\DavWWWRoot\\Media',
+      webDavPath,
       expect.objectContaining({
         interval: 1000,
         usePolling: true,
@@ -236,7 +238,7 @@ describe('watchFolder', () => {
   it('ignores known network watch/stat errors instead of reporting them to Sentry', async () => {
     const handlers = mockWatcherRegistration();
     const { watchFolder } = await import('../fs');
-    await watchFolder('\\\\server@SSL@2078\\DavWWWRoot\\Media');
+    await watchFolder(webDavPath);
 
     handlers.get('error')?.({ code: 'EISDIR', syscall: 'watch' });
     handlers.get('error')?.({ code: 'UNKNOWN', syscall: 'stat' });
