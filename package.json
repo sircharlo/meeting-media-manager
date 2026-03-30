@@ -151,8 +151,8 @@
     "*.{js,ts,cjs,mjs,mts,vue}": "eslint --fix"
   },
   "engines": {
-    "node": "^22.19.0",
-    "yarn": "^4.7.0"
+    "node": "^24.14.0",
+    "yarn": "^4.13.0"
   },
   "os": [
     "darwin",
@@ -161,6 +161,6 @@
   ],
   "private": true,
   "type": "module",
-  "packageManager": "yarn@4.12.0",
+  "packageManager": "yarn@4.13.0",
   "productName": "Meeting Media Manager"
 }
