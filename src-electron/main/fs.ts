@@ -788,6 +788,33 @@ export async function unzipFile(
 
 const watchers = new Set<FSWatcher>();
 const datePattern = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD
+const WATCH_POLL_INTERVAL_MS = 1000;
+
+const isNetworkFolderPath = (folderPath: string) => {
+  const normalizedPath = toUnix(folderPath).replaceAll('\\', '/');
+  return normalizedPath.startsWith('//');
+};
+
+const shouldIgnoreWatchFolderError = (
+  folderPath: string,
+  error: Error & { code?: string; syscall?: string },
+) => {
+  // Ignore harmless stat errors
+  if (
+    error.syscall === 'stat' &&
+    ['EINVAL', 'UNKNOWN'].includes(error.code ?? '')
+  ) {
+    return true;
+  }
+
+  // Ignore known flaky watch errors on network folders (WebDAV/UNC shares).
+  if (isNetworkFolderPath(folderPath)) {
+    if (error.code === 'UNKNOWN' && error.syscall === 'watch') return true;
+    if (error.code === 'EISDIR' && error.syscall === 'watch') return true;
+  }
+
+  return false;
+};
 
 export async function unwatchFolders() {
   for (const watcher of watchers) {
@@ -803,6 +830,8 @@ export async function unwatchFolders() {
 }
 
 export async function watchFolder(folderPath: string) {
+  const networkFolderPath = isNetworkFolderPath(folderPath);
+
   watchers.add(
     filesystemWatch(folderPath, {
       atomic: false,
@@ -824,6 +853,8 @@ export async function watchFolder(folderPath: string) {
         }
       },
       ignorePermissionErrors: true,
+      interval: networkFolderPath ? WATCH_POLL_INTERVAL_MS : undefined,
+      usePolling: networkFolderPath,
     })
       .on('error', (error: unknown) => {
         const context = {
@@ -832,10 +863,7 @@ export async function watchFolder(folderPath: string) {
 
         try {
           const e = error as Error & { code?: string; syscall?: string };
-          // Ignore harmless "stat" EINVAL errors
-          if (e.code === 'EINVAL' && e.syscall === 'stat') return;
-          // Ignore "UNKNOWN" watch errors (common with network drives)
-          if (e.code === 'UNKNOWN' && e.syscall === 'watch') return;
+          if (shouldIgnoreWatchFolderError(folderPath, e)) return;
           captureElectronError(error, context);
         } catch (err) {
           // Log the failure of the original try

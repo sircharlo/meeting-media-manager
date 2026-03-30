@@ -7,9 +7,10 @@ const delayMock = vi.fn(() => Promise.resolve());
 const captureElectronErrorMock = vi.fn();
 const addElectronBreadcrumbMock = vi.fn();
 const uuidMock = vi.fn(() => 'test-uuid');
+const watchMock = vi.fn();
 
 vi.mock('chokidar', () => ({
-  watch: vi.fn(),
+  watch: watchMock,
 }));
 
 vi.mock('electron', () => ({
@@ -191,6 +192,70 @@ describe('isUsablePath', () => {
             },
             name: 'isUsablePath.cleanupProbePath',
           },
+        },
+      }),
+    );
+  });
+});
+
+describe('watchFolder', () => {
+  beforeEach(() => {
+    vi.resetModules();
+    vi.clearAllMocks();
+  });
+
+  const mockWatcherRegistration = () => {
+    const handlers = new Map<string, (...args: unknown[]) => void>();
+    const watcherMock = {
+      close: vi.fn(),
+      closed: false,
+      on: vi.fn((event: string, cb: (...args: unknown[]) => void) => {
+        handlers.set(event, cb);
+        return watcherMock;
+      }),
+    };
+    watchMock.mockImplementation(() => watcherMock);
+    return handlers;
+  };
+
+  it('uses polling for network folders to avoid unstable fs.watch behavior', async () => {
+    mockWatcherRegistration();
+    const { watchFolder } = await import('../fs');
+
+    await watchFolder('\\\\server@SSL@2078\\DavWWWRoot\\Media');
+
+    expect(watchMock).toHaveBeenCalledWith(
+      '\\\\server@SSL@2078\\DavWWWRoot\\Media',
+      expect.objectContaining({
+        interval: 1000,
+        usePolling: true,
+      }),
+    );
+  });
+
+  it('ignores known network watch/stat errors instead of reporting them to Sentry', async () => {
+    const handlers = mockWatcherRegistration();
+    const { watchFolder } = await import('../fs');
+    await watchFolder('\\\\server@SSL@2078\\DavWWWRoot\\Media');
+
+    handlers.get('error')?.({ code: 'EISDIR', syscall: 'watch' });
+    handlers.get('error')?.({ code: 'UNKNOWN', syscall: 'stat' });
+
+    expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
+
+  it('still reports unexpected watch errors', async () => {
+    const handlers = mockWatcherRegistration();
+    const { watchFolder } = await import('../fs');
+    await watchFolder('/tmp/media');
+
+    handlers.get('error')?.({ code: 'EACCES', syscall: 'watch' });
+
+    expect(captureElectronErrorMock).toHaveBeenCalledWith(
+      expect.objectContaining({ code: 'EACCES', syscall: 'watch' }),
+      expect.objectContaining({
+        contexts: {
+          fn: { folderPath: '/tmp/media', name: 'watchFolder.error' },
         },
       }),
     );
