@@ -76,7 +76,7 @@ vi.mock('upath', () => ({
     dirname: vi.fn(),
     join: (...parts: string[]) => parts.join('/'),
     resolve: (value: string) => value,
-    toUnix: (value: string) => value,
+    toUnix: (value: string) => value.replaceAll('\\', '/'),
   },
 }));
 

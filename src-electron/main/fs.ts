@@ -790,10 +790,8 @@ const watchers = new Set<FSWatcher>();
 const datePattern = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD
 const WATCH_POLL_INTERVAL_MS = 1000;
 
-const isNetworkFolderPath = (folderPath: string) => {
-  const normalizedPath = toUnix(folderPath).replaceAll('\\', '/');
-  return normalizedPath.startsWith('//');
-};
+const isNetworkFolderPath = (folderPath: string) =>
+  toUnix(folderPath).startsWith('//');
 
 const shouldIgnoreWatchFolderError = (
   folderPath: string,
