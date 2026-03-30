@@ -185,7 +185,7 @@ jobs:
         run: |
           yarn generate:icons
           yarn generate:logos
-          yarn build --publish=${{ inputs.publish-release && 'always' || 'never' }}
+          yarn build -- --publish=${{ inputs.publish-release && 'always' || 'never' }}
         continue-on-error: ${{ runner.os == 'macOS' }}
         env:
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
@@ -199,7 +199,7 @@ jobs:
         if: runner.os == 'macOS' && steps.build.outcome == 'failure'
         run: |
           echo "::warning::macOS notarization failed — likely an expired agreement. Producing unsigned build."
-          yarn build --publish=${{ inputs.publish-release && 'always' || 'never' }}
+          yarn build -- --publish=${{ inputs.publish-release && 'always' || 'never' }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
