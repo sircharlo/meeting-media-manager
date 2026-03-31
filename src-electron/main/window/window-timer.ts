@@ -382,7 +382,6 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
     }
 
     // Prevent fullscreen on same monitor as main window
-    const mainWindowScreen = screens.findIndex((s) => s.mainWindow);
     if (
       targetFullscreen &&
       targetDisplayNr === mainWindowScreen &&
