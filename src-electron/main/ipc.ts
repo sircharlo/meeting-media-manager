@@ -118,6 +118,9 @@ handleIpcSend(
 
     if (show) {
       moveMediaWindow();
+      if (timerWindowInfo.timerWindow?.isVisible()) {
+        moveTimerWindow();
+      }
 
       return enableFadeTransitions ? fadeMediaWindow('in') : win.show();
     }
@@ -133,6 +136,7 @@ handleIpcSend('focusMediaWindow', () => {
 handleIpcSend('toggleTimerWindow', (_e, show: boolean) => {
   if (show) {
     createTimerWindow();
+    moveTimerWindow();
   } else {
     timerWindowInfo.timerWindow?.close();
   }
@@ -189,6 +193,9 @@ handleIpcSend('unregisterAllShortcuts', () => {
 
 handleIpcSend('moveMediaWindow', (_e, displayNr, fullscreen) => {
   moveMediaWindow(displayNr, fullscreen);
+  if (timerWindowInfo.timerWindow?.isVisible()) {
+    moveTimerWindow();
+  }
 });
 
 handleIpcSend('moveTimerWindow', (_e, displayNr, fullscreen) => {
