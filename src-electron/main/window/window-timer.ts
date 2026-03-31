@@ -172,6 +172,39 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
     // Determine target display and mode
     let targetDisplayNr = displayNr;
     let targetFullscreen = fullscreen;
+    const mainWindowScreen = screens.findIndex((s) => s.mainWindow);
+
+    // Timer fullscreen only makes practical sense with 3+ screens
+    if (targetFullscreen && screens.length <= 2) {
+      targetFullscreen = false;
+      log(
+        '🔍 [moveTimerWindow] Forcing windowed mode because there are two or fewer screens',
+        'timer',
+        'log',
+      );
+    }
+
+    // On 3+ screens, pick a non-main, non-media screen when going fullscreen
+    if (
+      targetFullscreen &&
+      screens.length >= 3 &&
+      (targetDisplayNr === undefined ||
+        screens[targetDisplayNr]?.mainWindow ||
+        screens[targetDisplayNr]?.mediaWindow)
+    ) {
+      const nonMainNonMediaScreen = screens.findIndex(
+        (screen) => !screen.mainWindow && !screen.mediaWindow,
+      );
+      if (nonMainNonMediaScreen !== -1) {
+        targetDisplayNr = nonMainNonMediaScreen;
+        log(
+          '🔍 [moveTimerWindow] Auto-selected non-main, non-media screen for fullscreen timer',
+          'timer',
+          'log',
+          targetDisplayNr,
+        );
+      }
+    }
 
     let preferredIndex = -1;
     const timerWindowPrefs = loadTimerWindowPrefs();
@@ -224,9 +257,6 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
         isCurrentlyFullscreen,
       });
 
-      // If timer window is fullscreen, check if it needs to move
-      const mainWindowScreen = screens.findIndex((s) => s.mainWindow);
-
       log('🔍 [moveTimerWindow] Screen analysis:', 'timer', 'log', {
         currentDisplayNr,
         mainWindowScreen,
@@ -242,7 +272,8 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
         isCurrentlyFullscreen &&
         screens.length >= 3 &&
         preferredIndex !== -1 &&
-        preferredIndex !== mainWindowScreen
+        preferredIndex !== mainWindowScreen &&
+        !screens[preferredIndex]?.mediaWindow
       ) {
         targetDisplayNr = preferredIndex;
         targetFullscreen = true;
@@ -250,7 +281,11 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
           preferredIndex,
         });
       } else {
-        log('🔍 [moveTimerWindow] Not using preferred screen', 'timer', 'log');
+        log(
+          '🔍 [moveTimerWindow] Not using preferred screen (must be 3+ displays and not main/media)',
+          'timer',
+          'log',
+        );
       }
 
       // Only move if timer window is on the same screen as main window
