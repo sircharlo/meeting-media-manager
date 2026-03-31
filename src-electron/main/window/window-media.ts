@@ -261,6 +261,24 @@ function isWindowEffectivelyFullscreen(
 }
 
 /**
+ * Ensures bounds passed to Electron are safe positive integers
+ */
+function normalizeWindowBounds(
+  bounds: Partial<Electron.Rectangle>,
+): Electron.Rectangle | null {
+  const x = Math.floor(bounds.x ?? 0);
+  const y = Math.floor(bounds.y ?? 0);
+  const width = Math.floor(bounds.width ?? 0);
+  const height = Math.floor(bounds.height ?? 0);
+
+  if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+  if (!Number.isFinite(width) || !Number.isFinite(height)) return null;
+  if (width <= 0 || height <= 0) return null;
+
+  return { height, width, x, y };
+}
+
+/**
  * Determines if the window should move to fullscreen on another display
  */
 function shouldMoveWindowedToFullscreen(
@@ -354,6 +372,7 @@ export const __testables = {
   getPreferredScreenFromPrefs,
   getTargetWhenOnMainScreen,
   isWindowEffectivelyFullscreen,
+  normalizeWindowBounds,
   shouldMoveWindowedToFullscreen,
   validateAndAdjustTarget,
 };
@@ -792,13 +811,25 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
         currentBounds.height !== bounds.height;
 
       if (boundsChanged) {
+        const normalizedBounds = normalizeWindowBounds(bounds);
+        if (!normalizedBounds) {
+          log(
+            '❌ [setWindowBounds] Invalid bounds, skipping setBounds:',
+            'electronWindow',
+            'log',
+            bounds,
+          );
+          isMovingWindow = false;
+          return false;
+        }
+
         log(
           '🔍 [setWindowBounds] Setting bounds:',
           'electronWindow',
           'log',
-          bounds,
+          normalizedBounds,
         );
-        mediaWindowInfo.mediaWindow.setBounds(bounds);
+        mediaWindowInfo.mediaWindow.setBounds(normalizedBounds);
       }
 
       // Focus media window
@@ -853,14 +884,13 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
     } else {
       // Calculate windowed bounds (HD_RESOLUTION)
       const newBounds = (() => {
-        const maxWidth = Math.min(
-          targetScreenBounds.width - 100,
-          HD_RESOLUTION[0],
-        );
-        const maxHeight = Math.min(
+        const safeAvailableWidth = Math.max(1, targetScreenBounds.width - 100);
+        const safeAvailableHeight = Math.max(
+          1,
           targetScreenBounds.height - 100,
-          HD_RESOLUTION[1],
         );
+        const maxWidth = Math.min(safeAvailableWidth, HD_RESOLUTION[0]);
+        const maxHeight = Math.min(safeAvailableHeight, HD_RESOLUTION[1]);
 
         // If the full size doesn't fit, scale down proportionally
         const scaleX = maxWidth / HD_RESOLUTION[0];

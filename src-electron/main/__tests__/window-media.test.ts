@@ -66,6 +66,40 @@ describe('window-media placement helpers', () => {
     ).toBe(false);
   });
 
+  it('rejects invalid bounds before passing them to Electron', async () => {
+    const { __testables } = await import('../window/window-media');
+
+    expect(
+      __testables.normalizeWindowBounds({
+        height: 0,
+        width: 1920,
+        x: 0,
+        y: 0,
+      }),
+    ).toBeNull();
+    expect(
+      __testables.normalizeWindowBounds({
+        height: 1080,
+        width: -1,
+        x: 0,
+        y: 0,
+      }),
+    ).toBeNull();
+    expect(
+      __testables.normalizeWindowBounds({
+        height: 1080.8,
+        width: 1920.2,
+        x: 10.9,
+        y: 20.4,
+      }),
+    ).toEqual({
+      height: 1080,
+      width: 1920,
+      x: 10,
+      y: 20,
+    });
+  });
+
   it('moves a windowed media window to another display when multiple screens exist', async () => {
     const { __testables } = await import('../window/window-media');
 
