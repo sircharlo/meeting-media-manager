@@ -11,6 +11,7 @@ import {
   createMediaWindow,
   moveMediaWindowThrottled,
 } from 'src-electron/main/window/window-media';
+import { moveTimerWindowThrottled } from 'src-electron/main/window/window-timer';
 
 export const mainWindowInfo = {
   mainWindow: null as BrowserWindow | null,
@@ -40,8 +41,11 @@ export function createMainWindow() {
     mainWindowInfo.mainWindow = createWindow('main');
 
     mainWindowInfo.mainWindow.on('move', moveMediaWindowThrottled);
+    mainWindowInfo.mainWindow.on('move', moveTimerWindowThrottled);
     if (PLATFORM !== 'darwin')
       mainWindowInfo.mainWindow.on('moved', moveMediaWindowThrottled); // On macOS, the 'moved' event is just an alias for 'move'
+    if (PLATFORM !== 'darwin')
+      mainWindowInfo.mainWindow.on('moved', moveTimerWindowThrottled); // Keep timer positioning in sync with main window movement
 
     mainWindowInfo.mainWindow.on('close', (e) => {
       if (

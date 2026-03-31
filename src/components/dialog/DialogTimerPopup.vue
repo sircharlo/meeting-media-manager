@@ -51,7 +51,7 @@
       </template>
 
       <template
-        v-if="!timerPreferences.preferWindowed && canUseFullscreenTimer"
+        v-if="!timerPreferences.preferWindowed && showFullscreenScreenPicker"
       >
         <q-separator class="bg-accent-200 q-mb-md" />
         <div class="card-section-title row q-px-md">
@@ -75,7 +75,7 @@
                   'border-dashed': screen.mainWindow,
                 }"
                 :color="!screen.mainWindow ? 'primary' : 'secondary'"
-                :disable="screen.mainWindow"
+                :disable="screen.mainWindow || screen.mediaWindow"
                 :outline="!isTimerScreenSelected(index, screen)"
                 :style="{
                   position: 'absolute',
@@ -100,14 +100,21 @@
                 unelevated
                 @click="
                   () => {
-                    if (screen.mainWindow) return;
+                    if (screen.mainWindow || screen.mediaWindow) return;
                     timerPreferences.preferredScreenNumber = index;
                     moveTimerWindow(index, !timerPreferences.preferWindowed);
                   }
                 "
               >
-                <q-tooltip v-if="screen.mainWindow" :delay="1000">
-                  {{ t('main-window-is-on-this-screen') }}
+                <q-tooltip
+                  v-if="screen.mainWindow || screen.mediaWindow"
+                  :delay="1000"
+                >
+                  {{
+                    screen.mainWindow
+                      ? t('main-window-is-on-this-screen')
+                      : t('media-display') + ' (' + t('projecting') + ')'
+                  }}
                 </q-tooltip>
                 <q-icon
                   v-if="screen.mainWindow"
@@ -818,7 +825,10 @@ const canUseFullscreenTimer = computed(
   () => (screenList.value?.length ?? 0) > 2,
 );
 const showWindowTypeControls = computed(
-  () => (screenList.value?.length ?? 0) > 1,
+  () => (screenList.value?.length ?? 0) > 2,
+);
+const showFullscreenScreenPicker = computed(
+  () => (screenList.value?.length ?? 0) > 3,
 );
 
 const getPreferredFullscreenTimerScreen = () => {
