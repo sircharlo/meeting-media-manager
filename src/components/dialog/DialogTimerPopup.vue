@@ -74,7 +74,11 @@
                 :class="{
                   'border-dashed': screen.mainWindow,
                 }"
-                :color="!screen.mainWindow ? 'primary' : 'secondary'"
+                :color="
+                  !screen.mainWindow && !screen.mediaWindow
+                    ? 'primary'
+                    : 'secondary'
+                "
                 :disable="screen.mainWindow || screen.mediaWindow"
                 :outline="!isTimerScreenSelected(index, screen)"
                 :style="{
@@ -129,12 +133,16 @@
                   size="xs"
                 />
                 <q-icon
-                  v-if="!screen.mainWindow"
+                  v-if="!screen.mainWindow && !screen.mediaWindow"
                   class="q-mr-sm"
                   name="mmm-timer"
                   size="xs"
                 />
-                {{ !screen.mainWindow ? t('display') + ' ' + (index + 1) : '' }}
+                {{
+                  !screen.mainWindow && !screen.mediaWindow
+                    ? t('display') + ' ' + (index + 1)
+                    : ''
+                }}
               </q-btn>
             </template>
           </div>
