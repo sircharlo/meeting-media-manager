@@ -4,6 +4,12 @@
 
 Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in unserer CHANGELOG.md Datei auf GitHub.
 
+## v26.4.0
+
+### ✨ Neue Funktionen
+
+- ✨ **Meeting Timer**: Ein neues Meeting Timer Feature wurde hinzugefügt. Sie ist optional und kann bei Bedarf in den erweiterten Einstellungen aktiviert werden. Der Timer kann verwendet werden, um dem Medienbetreiber zu ermöglichen, die Zeit für die Besprechungsteile zu verfolgen oder um die Zeit, die für den aktuellen Teil der Sitzung verbracht wird, auf einem dedizierten Bildschirm anzuzeigen, der nur für den Redner sichtbar ist.
+
 ## v26.3.0
 
 ### ✨ Neue Funktionen
