@@ -4,6 +4,12 @@
 
 Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bestand op GitHub.
 
+## v26,4.0
+
+### ✨ Nieuwe functies
+
+- ✨ **Meeting Timer**: Er is een nieuwe timer-functie voor vergadering toegevoegd. Het is optioneel en kan desgewenst worden ingeschakeld in de geavanceerde instellingen. De timer kan worden gebruikt om de media-operator te laten bijhouden van de tijd besteed aan vergaderonderdelen, of om de tijd besteed aan het huidige vergadergedeelte weer te geven op een specifiek scherm dat alleen zichtbaar is voor de spreker.
+
 ## v26,3.0
 
 ### ✨ Nieuwe functies
