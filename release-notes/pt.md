@@ -4,6 +4,12 @@
 
 Para obter a lista completa das mudanças entre versões, consulte nosso arquivo CHANGELOG.md no GitHub.
 
+## v26.4.0
+
+### ✨ Novos Recursos
+
+- ✨ **Timer da Reunião**: Foi adicionado um novo recurso de temporizador de reunião. É opcional e pode ser ativado nas configurações avançadas, se desejar. O temporizador pode ser usado para permitir que o operador de mídia mantenha o controle do tempo gasto nas partes de reunião, ou para exibir o tempo gasto na parte da reunião atual em uma tela dedicada visível somente para o palestrante.
+
 ## v26.3.0
 
 ### ✨ Novos Recursos
