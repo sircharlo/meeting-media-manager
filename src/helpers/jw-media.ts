@@ -1344,9 +1344,9 @@ export const getBibleMedia = async (
   }
 };
 
-export const getMemorialMedia = async (): Promise<
-  undefined | { bg: string; introVideos: MultimediaItem[] }
-> => {
+export const getMemorialMedia = async (
+  forceRefetch = false,
+): Promise<undefined | { bg: string; introVideos: MultimediaItem[] }> => {
   try {
     const currentStateStore = useCurrentStateStore();
     const year = new Date().getFullYear().toString().substring(2);
@@ -1358,6 +1358,11 @@ export const getMemorialMedia = async (): Promise<
     ].filter((l): l is JwLangCode => !!l);
 
     for (const langwritten of languages) {
+      if (forceRefetch) {
+        memorialMediaCache.delete(langwritten);
+        memorialMediaInFlight.delete(langwritten);
+      }
+
       if (memorialMediaCache.has(langwritten)) {
         return memorialMediaCache.get(langwritten);
       }
