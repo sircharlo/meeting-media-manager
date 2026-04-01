@@ -69,6 +69,7 @@ async function main() {
     fontTypes: ['woff2'],
     inputDir: inputDirPattern,
     name: fontName,
+    normalize: true,
     outputDir: outputDirPattern,
     prefix: 'mmm',
   });
