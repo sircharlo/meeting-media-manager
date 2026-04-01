@@ -4,6 +4,12 @@
 
 For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
 
+## v26.4.0
+
+### ✨ New Features
+
+- ✨ **Temporizador de Reunión**: Se ha añadido una nueva función de temporizador de la reunión. Es opcional y se puede activar en los ajustes avanzados, si así lo desea. El temporizador se puede utilizar para permitir al operador de medios llevar un seguimiento del tiempo dedicado a las partes de la reunión, o para mostrar el tiempo empleado en la parte actual de la reunión en una pantalla dedicada visible sólo para el orador.
+
 ## v26.3.0
 
 ### ✨ New Features

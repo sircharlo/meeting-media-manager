@@ -4,6 +4,12 @@
 
 För den fullständiga listan över ändringar mellan versioner, se vår CHANGELOG.md-fil på GitHub.
 
+## v26.4.0
+
+### ✨ Nya funktioner
+
+- ✨ **Mötestidare**: En ny mötestidfunktion har lagts till. Det är valfritt och kan aktiveras i avancerade inställningar, om så önskas. Timern kan användas för att medieoperatören ska kunna hålla reda på den tid som ägnas åt mötesdelar, eller för att visa den tid som spenderas på den aktuella mötesdelen på en dedikerad skärm som endast syns för högtalaren.
+
 ## v26.3.0
 
 ### ✨ Nya funktioner

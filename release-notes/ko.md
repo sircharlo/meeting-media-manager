@@ -4,6 +4,12 @@
 
 버전별 전체 변경 사항은, GitHub 의 CHANGELOG.md 파일을 확인해주세요.
 
+## v26.4.0
+
+### ✨ 새로운 기능
+
+- ✨ **Meeting Timer**: A new meeting timer feature has been added. It is optional and can be enabled in the advanced settings, if desired. The timer can be used to allow the media operator to keep track of the time spent on meeting parts, or to display the time spent on the current meeting part on a dedicated screen visible only to the speaker.
+
 ## v26.3.0
 
 ### ✨ 새로운 기능
