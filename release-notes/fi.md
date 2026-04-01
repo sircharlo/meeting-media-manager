@@ -8,7 +8,7 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 
 ### ✨ Mitä uutta
 
-- ✨ **Meeting Timer**: Uusi kokousajastin ominaisuus on lisätty. Se on valinnainen ja voidaan haluttaessa ottaa käyttöön lisäasetuksissa. Ajastinta voidaan käyttää siihen, että mediaoperaattori voi seurata osien kokoamiseen käytettyä aikaa, tai näyttää nykyiselle kokousosalle kuluvan ajan omalla näytöllä, joka on vain kaiuttimen nähtävissä.
+- ✨ Kokousajastin: Uusi kokousajastinominaisuus on lisätty. Valinnainen toiminto, voidaan ottaa käyttöön lisäasetuksissa. Ajastinta voidaan käyttää auttamaan mediaoperaattoria seuraamaan eri kokousosioihin käytettyä aikaa tai näyttämään kulunut aika nykyisessä kokousosiossa erillisellä näytöllä, joka on näkyvissä vain puhujalle.
 
 ## v26,3.0
 
