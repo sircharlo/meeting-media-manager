@@ -714,5 +714,7 @@
   "zoomEnable-explain": "Zoom wird nicht vollständig automatisiert. Eher es versucht, die Bildschirmfreigabe mit Zoom zu starten und zu stoppen, indem das Tastaturkürzel in Zooms Einstellung \"Start/Stopp-Bildschirmfreigabe\" aktiviert wird, wenn die Medien gestartet werden und nicht mehr in M3 abgespielt werden.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom-Bildschirmfreigabe-Tastenkürzel",
-  "zoomScreenShareShortcut-explain": "Geben Sie das Tastenkürzel ein, das in den Zoom-Einstellungen für \"Bildschirmfreigabe starten/stoppen\" konfiguriert ist. M³ sendet dieses Kürzel, wenn Medien gestartet werden (um die Bildschirmfreigabe zu starten) und wenn sie stoppen (um die Bildschirmfreigabe zu stoppen). Um diese Funktion nutzen zu können, müssen Sie die Einstellung \"Globales Tastenkürzel\" für dieses spezielle Kürzel in den Zoom-Einstellungen aktivieren."
+  "zoomScreenShareShortcut-explain": "Geben Sie das Tastenkürzel ein, das in den Zoom-Einstellungen für \"Bildschirmfreigabe starten/stoppen\" konfiguriert ist. M³ sendet dieses Kürzel, wenn Medien gestartet werden (um die Bildschirmfreigabe zu starten) und wenn sie stoppen (um die Bildschirmfreigabe zu stoppen). Um diese Funktion nutzen zu können, müssen Sie die Einstellung \"Globales Tastenkürzel\" für dieses spezielle Kürzel in den Zoom-Einstellungen aktivieren.",
+  "watch-folder-error-caption": "Bitte stellen Sie sicher, dass alle Begleit-Apps wie Dropbox laufen und dass der angegebene Pfad gültig ist und geschrieben werden kann",
+  "watch-folder-error-message": "Beim Beobachtungsordner ist ein Fehler aufgetreten. Dies kann mit einem Netzwerk oder einem Cloud-Ordner verknüpft sein."
 }
