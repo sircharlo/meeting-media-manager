@@ -714,5 +714,7 @@
   "zoomEnable-explain": "Це не дозволить автоматизувати масштаб повністю. Швидше, він спробує запустити і зупинити демонстрацію екрана масштабування, використовуючи комбінації клавіш для клавіатури в Zoom, яке буде встановлено при запуску і при запуску медіа-файлів і при цьому припиняється грати в M3.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom screen sharing shortcut",
-  "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings."
+  "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings.",
+  "watch-folder-error-caption": "Будь ласка, переконайтеся, що всі додатки компаній, такі як Dropbox, працюють і що шлях наданий дійсний і може бути написаний",
+  "watch-folder-error-message": "Сталася помилка при підключенні для годинника. Це може бути пов'язаний з ним мережева або хмарна папка."
 }

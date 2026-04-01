@@ -714,5 +714,7 @@
   "zoomEnable-explain": "这不会完全自动缩放。 而是相反的。 它将尝试使用缩放在Zoom设置的“开始/停止屏幕共享”设置中的键盘快捷键开始和停止缩放屏幕共享，每当媒体在 M3 中开始和停止播放。",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "共享Zoom屏幕快捷键",
-  "zoomScreenShareShortcut-explain": "输入Zoom的“开始/停止屏幕共享”设置中配置的键盘快捷方式。 当媒体开始播放时(启动屏幕共享)和停止时(停止屏幕共享)，M3将发送此快捷方式。 为了使用此功能，您需要在Zoom设置中启用\"全局快捷键\"设置。"
+  "zoomScreenShareShortcut-explain": "输入Zoom的“开始/停止屏幕共享”设置中配置的键盘快捷方式。 当媒体开始播放时(启动屏幕共享)和停止时(停止屏幕共享)，M3将发送此快捷方式。 为了使用此功能，您需要在Zoom设置中启用\"全局快捷键\"设置。",
+  "watch-folder-error-caption": "请确保所有配对的应用程序如Dropbox正在运行，所提供的路径是有效的，可以写入",
+  "watch-folder-error-message": "监视文件夹发生错误。这可能是一个网络或云文件夹。"
 }
