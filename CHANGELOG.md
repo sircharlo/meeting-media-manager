@@ -4,6 +4,12 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.4.2
+
+### 🐞 Bug Fixes
+
+- 🐞 **Memorial**: Prevented multiple Memorial fetch operations from happening in parallel; forced Memorial media refetch when appropriate.
+
 ## v26.4.1
 
 ### 🐞 Bug Fixes
