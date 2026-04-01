@@ -714,5 +714,7 @@
   "zoomEnable-explain": "This will not automate Zoom fully. Rather, it will attempt to start and stop Zoom screen sharing using the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting whenever media starts and stops playing in M³.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom screen sharing shortcut",
-  "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings."
+  "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings.",
+  "watch-folder-error-caption": "Please ensure that all companion apps such as Dropbox are running and that the path provided is valid and can be written",
+  "watch-folder-error-message": "An error occurred with the watch folder. This may be linked to it being a network or cloud folder."
 }

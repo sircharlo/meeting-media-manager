@@ -714,5 +714,7 @@
   "zoomEnable-explain": "Esto no automatizará completamente el Zoom. Más bien, intentará iniciar y detener el uso compartido de la pantalla de Zoom usando el acceso directo del teclado configurado en el ajuste de \"Inicio / detención compartición de pantalla\" de Zoom cada vez que se inicia el medio y deja de reproducirse en M3.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Atajo para compartir pantalla de Zoom",
-  "zoomScreenShareShortcut-explain": "Introduzca el acceso directo del teclado configurado en el ajuste de Zoom \"Iniciar/Detener compartir pantalla\". M3 enviará este acceso directo cuando la multimedia comience a reproducir (para iniciar el uso compartido de la pantalla) y cuando se detenga (para detener el uso compartido de la pantalla). Para poder utilizar esta función, necesita habilitar la opción \"Acceso directo global\" para ese acceso directo en particular en los ajustes de Zoom."
+  "zoomScreenShareShortcut-explain": "Introduzca el acceso directo del teclado configurado en el ajuste de Zoom \"Iniciar/Detener compartir pantalla\". M3 enviará este acceso directo cuando la multimedia comience a reproducir (para iniciar el uso compartido de la pantalla) y cuando se detenga (para detener el uso compartido de la pantalla). Para poder utilizar esta función, necesita habilitar la opción \"Acceso directo global\" para ese acceso directo en particular en los ajustes de Zoom.",
+  "watch-folder-error-caption": "Por favor, asegúrate de que todas las aplicaciones complementarias como Dropbox se están ejecutando y que la ruta proporcionada es válida y se puede escribir",
+  "watch-folder-error-message": "Ocurrió un error con la carpeta de reloj. Esto puede estar vinculado a que es una carpeta de red o en la nube."
 }
