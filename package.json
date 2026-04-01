@@ -140,7 +140,7 @@
     "webpack-iconfont-plugin-nodejs": "^1.0.36"
   },
   "resolutions": {
-    "vite": "8.0.3",
+    "vite": "8.0.3"
   },
   "browserslist": [
     "Electron >= 37"
