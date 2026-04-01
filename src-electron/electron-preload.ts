@@ -51,6 +51,7 @@ const getPathFromFileObject = (fo?: File | string) => {
 
 const electronApi: ElectronApi = {
   askForMediaAccess: () => send('askForMediaAccess'),
+  cancelAllDownloads: () => send('cancelAllDownloads'),
   checkForUpdates: () => send('checkForUpdates'),
   closeWebsiteWindow,
   convertHeic,

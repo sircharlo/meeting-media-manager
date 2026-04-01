@@ -30,6 +30,9 @@ export const electronApi: ElectronApi = {
   askForMediaAccess: function () {
     throw new Error('Function not implemented.');
   },
+  cancelAllDownloads: function () {
+    throw new Error('Function not implemented.');
+  },
   checkForUpdates: () => void 0,
   closeWebsiteWindow: function () {
     throw new Error('Function not implemented.');

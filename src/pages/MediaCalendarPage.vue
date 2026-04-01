@@ -846,6 +846,8 @@ watch(
 watch(
   () => selectedDateObject.value,
   async (newDateObject) => {
+    checkMemorialDate();
+
     if (!newDateObject?.date || !newDateObject?.mediaSections) return;
     const meetingDate = formatDate(newDateObject.date, 'YYYY-MM-DD');
     const foldersToTouch = new Set<string>();
@@ -1362,6 +1364,7 @@ const handlePinyinChange = async (newPinyinActive: boolean) => {
 
 onMounted(() => {
   goToNextDayWithMedia();
+  checkMemorialDate();
 
   // If no date with media is found, go to todays date
   if (!selectedDate.value) {
@@ -1491,7 +1494,6 @@ watchImmediate(
     lastExtendDirection.value = null;
 
     if (!newVal || !selectedDateObject.value?.mediaSections) return;
-    checkMemorialDate();
 
     if (isWeMeetingDay(selectedDateObject.value.date)) {
       getOrCreateMediaSection(selectedDateObject.value.mediaSections, 'pt', {

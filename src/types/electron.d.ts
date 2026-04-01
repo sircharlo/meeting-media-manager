@@ -42,6 +42,7 @@ export type Display = Electron.Display & {
 
 export interface ElectronApi {
   askForMediaAccess: () => void;
+  cancelAllDownloads: () => void;
   checkForUpdates: () => void;
   closeWebsiteWindow: () => void;
   convertHeic: (image: ConversionOptions) => Promise<ArrayBuffer>;
@@ -278,6 +279,7 @@ export type ElectronIpcListenKey =
 export type ElectronIpcSendKey =
   | 'askForMediaAccess'
   | 'authorizedClose'
+  | 'cancelAllDownloads'
   | 'checkForUpdates'
   | 'focusMediaWindow'
   | 'moveMediaWindow'

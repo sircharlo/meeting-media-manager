@@ -27,6 +27,7 @@ import { arch, platform } from 'node:os';
 import { PLATFORM } from 'src-electron/constants';
 import { getLowDiskSpaceStatus } from 'src-electron/main/disk-space';
 import {
+  cancelAllDownloads,
   downloadFile,
   isDownloadComplete,
   isDownloadErrorExpected,
@@ -143,6 +144,10 @@ handleIpcSend('toggleTimerWindow', (_e, show: boolean) => {
 });
 
 handleIpcSend('askForMediaAccess', askForMediaAccess);
+
+handleIpcSend('cancelAllDownloads', () => {
+  cancelAllDownloads();
+});
 
 handleIpcSend('checkForUpdates', () => triggerUpdateCheck());
 
