@@ -141,7 +141,7 @@ export const moveTimerWindowThrottled = throttleWithTrailing(
   100,
 );
 
-export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
+export const moveTimerWindow = (displayNr?: number, fullscreen?: boolean) => {
   log('🔍 [moveTimerWindow] START - Called with:', 'timer', 'log', {
     displayNr,
     fullscreen,
@@ -169,9 +169,47 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
     const currentBounds = timerWindowInfo.timerWindow.getBounds();
     const currentDisplayNr = getWindowScreen(timerWindowInfo.timerWindow);
 
-    // Determine target display and mode
+    // Determine target display and mode.
+    // NOTE:
+    // - fullscreen can be undefined when this function is called without an explicit mode.
+    // - that "undefined" state is intentionally handled later in the "auto-decide" branch.
     let targetDisplayNr = displayNr;
     let targetFullscreen = fullscreen;
+    const mainWindowScreen = screens.findIndex((s) => s.mainWindow);
+
+    // Timer fullscreen only makes practical sense with 3+ screens:
+    // with 1-2 screens, fullscreen would overlap main/media responsibilities.
+    if (targetFullscreen && screens.length <= 2) {
+      targetFullscreen = false;
+      log(
+        '🔍 [moveTimerWindow] Forcing windowed mode because there are two or fewer screens',
+        'timer',
+        'log',
+      );
+    }
+
+    // If fullscreen is explicitly requested and we have 3+ screens,
+    // immediately avoid main/media displays.
+    if (
+      targetFullscreen &&
+      screens.length >= 3 &&
+      (targetDisplayNr === undefined ||
+        screens[targetDisplayNr]?.mainWindow ||
+        screens[targetDisplayNr]?.mediaWindow)
+    ) {
+      const nonMainNonMediaScreen = screens.findIndex(
+        (screen) => !screen.mainWindow && !screen.mediaWindow,
+      );
+      if (nonMainNonMediaScreen !== -1) {
+        targetDisplayNr = nonMainNonMediaScreen;
+        log(
+          '🔍 [moveTimerWindow] Auto-selected non-main, non-media screen for fullscreen timer',
+          'timer',
+          'log',
+          targetDisplayNr,
+        );
+      }
+    }
 
     let preferredIndex = -1;
     const timerWindowPrefs = loadTimerWindowPrefs();
@@ -224,9 +262,6 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
         isCurrentlyFullscreen,
       });
 
-      // If timer window is fullscreen, check if it needs to move
-      const mainWindowScreen = screens.findIndex((s) => s.mainWindow);
-
       log('🔍 [moveTimerWindow] Screen analysis:', 'timer', 'log', {
         currentDisplayNr,
         mainWindowScreen,
@@ -237,12 +272,18 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
         })),
       });
 
-      // Prefer saved screen when applicable (fullscreen, 3+ displays, saved exists)
+      // Prefer saved screen ONLY when there are more than 3 displays.
+      //
+      // Why > 3 instead of >= 3?
+      // - With exactly 3 displays, there is typically only one valid fullscreen target
+      //   (non-main, non-media), so preference does not add useful choice.
+      // - With 4+ displays, preference meaningfully captures operator intent.
       if (
         isCurrentlyFullscreen &&
-        screens.length >= 3 &&
+        screens.length > 3 &&
         preferredIndex !== -1 &&
-        preferredIndex !== mainWindowScreen
+        preferredIndex !== mainWindowScreen &&
+        !screens[preferredIndex]?.mediaWindow
       ) {
         targetDisplayNr = preferredIndex;
         targetFullscreen = true;
@@ -250,7 +291,11 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
           preferredIndex,
         });
       } else {
-        log('🔍 [moveTimerWindow] Not using preferred screen', 'timer', 'log');
+        log(
+          '🔍 [moveTimerWindow] Not using preferred screen (must be >3 displays and not main/media)',
+          'timer',
+          'log',
+        );
       }
 
       // Only move if timer window is on the same screen as main window
@@ -347,7 +392,6 @@ export const moveTimerWindow = (displayNr?: number, fullscreen = false) => {
     }
 
     // Prevent fullscreen on same monitor as main window
-    const mainWindowScreen = screens.findIndex((s) => s.mainWindow);
     if (
       targetFullscreen &&
       targetDisplayNr === mainWindowScreen &&

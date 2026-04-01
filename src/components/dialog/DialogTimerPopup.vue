@@ -15,58 +15,43 @@
       </div>
 
       <!-- Window Type Selection -->
-      <div class="card-section-title row q-px-md">
-        {{ t('window-type') }}
-      </div>
-      <div class="row q-px-md q-pb-sm q-col-gutter-sm">
-        <div class="col-6">
-          <q-btn
-            class="full-width full-height"
-            color="primary"
-            :disable="screenList?.length < 2"
-            :outline="screenList?.length < 2 || timerPreferences.preferWindowed"
-            unelevated
-            @click="
-              () => {
-                timerPreferences.preferWindowed = false;
-                moveTimerWindow(timerPreferences.preferredScreenNumber, true);
-              }
-            "
-          >
-            <q-icon class="q-mr-sm" name="mmm-fullscreen" size="xs" />
-            {{ t('full-screen') }}
-          </q-btn>
+      <template v-if="showWindowTypeControls">
+        <div class="card-section-title row q-px-md">
+          {{ t('window-type') }}
         </div>
-        <div class="col-6">
-          <q-btn
-            class="full-width full-height"
-            color="primary"
-            :disable="screenList?.length < 2"
-            :outline="
-              !(screenList?.length < 2 || timerPreferences.preferWindowed)
-            "
-            :text-color="
-              screenList?.length < 2 || timerPreferences.preferWindowed
-                ? ''
-                : 'primary'
-            "
-            unelevated
-            @click="
-              () => {
-                timerPreferences.preferWindowed = true;
-                moveTimerWindow(timerPreferences.preferredScreenNumber, false);
-              }
-            "
-          >
-            <q-icon class="q-mr-sm" name="mmm-window" size="xs" />
-            {{ t('windowed') }}
-          </q-btn>
+        <div class="row q-px-md q-pb-sm q-col-gutter-sm">
+          <div class="col-6">
+            <q-btn
+              class="full-width full-height"
+              color="primary"
+              :disable="!canUseFullscreenTimer"
+              :outline="timerPreferences.preferWindowed"
+              unelevated
+              @click="setTimerFullscreenMode()"
+            >
+              <q-icon class="q-mr-sm" name="mmm-fullscreen" size="xs" />
+              {{ t('full-screen') }}
+            </q-btn>
+          </div>
+          <div class="col-6">
+            <q-btn
+              class="full-width full-height"
+              color="primary"
+              :outline="!timerPreferences.preferWindowed"
+              :text-color="timerPreferences.preferWindowed ? '' : 'primary'"
+              unelevated
+              @click="setTimerWindowedMode()"
+            >
+              <q-icon class="q-mr-sm" name="mmm-window" size="xs" />
+              {{ t('windowed') }}
+            </q-btn>
+          </div>
         </div>
-      </div>
-      <q-separator class="bg-accent-200 q-mb-md" />
+        <q-separator class="bg-accent-200 q-mb-md" />
+      </template>
 
       <template
-        v-if="!timerPreferences.preferWindowed && screenList?.length > 1"
+        v-if="!timerPreferences.preferWindowed && showFullscreenScreenPicker"
       >
         <q-separator class="bg-accent-200 q-mb-md" />
         <div class="card-section-title row q-px-md">
@@ -89,8 +74,12 @@
                 :class="{
                   'border-dashed': screen.mainWindow,
                 }"
-                :color="!screen.mainWindow ? 'primary' : 'secondary'"
-                :disable="screen.mainWindow"
+                :color="
+                  !screen.mainWindow && !screen.mediaWindow
+                    ? 'primary'
+                    : 'secondary'
+                "
+                :disable="screen.mainWindow || screen.mediaWindow"
                 :outline="!isTimerScreenSelected(index, screen)"
                 :style="{
                   position: 'absolute',
@@ -115,22 +104,45 @@
                 unelevated
                 @click="
                   () => {
-                    if (screen.mainWindow) return;
+                    if (screen.mainWindow || screen.mediaWindow) return;
                     timerPreferences.preferredScreenNumber = index;
                     moveTimerWindow(index, !timerPreferences.preferWindowed);
                   }
                 "
               >
-                <q-tooltip v-if="screen.mainWindow" :delay="1000">
-                  {{ t('main-window-is-on-this-screen') }}
+                <q-tooltip
+                  v-if="screen.mainWindow || screen.mediaWindow"
+                  :delay="1000"
+                >
+                  {{
+                    screen.mainWindow
+                      ? t('main-window-is-on-this-screen')
+                      : t('media-display') + ' (' + t('projecting') + ')'
+                  }}
                 </q-tooltip>
                 <q-icon
-                  v-if="!screen.mainWindow"
+                  v-if="screen.mainWindow"
+                  class="absolute-top-left q-ma-xs"
+                  name="mmm-logo"
+                  size="xs"
+                />
+                <q-icon
+                  v-if="screen.mediaWindow"
+                  class="absolute-top-right q-ma-xs"
+                  name="mmm-media-display-active"
+                  size="xs"
+                />
+                <q-icon
+                  v-if="!screen.mainWindow && !screen.mediaWindow"
                   class="q-mr-sm"
                   name="mmm-timer"
                   size="xs"
                 />
-                {{ !screen.mainWindow ? t('display') + ' ' + (index + 1) : '' }}
+                {{
+                  !screen.mainWindow && !screen.mediaWindow
+                    ? t('display') + ' ' + (index + 1)
+                    : ''
+                }}
               </q-btn>
             </template>
           </div>
@@ -817,6 +829,42 @@ const screenRects = computed(() => {
   });
 });
 
+const canUseFullscreenTimer = computed(
+  () => (screenList.value?.length ?? 0) > 2,
+);
+const showWindowTypeControls = computed(
+  () => (screenList.value?.length ?? 0) > 2,
+);
+const showFullscreenScreenPicker = computed(
+  () => (screenList.value?.length ?? 0) > 3,
+);
+
+const getPreferredFullscreenTimerScreen = () => {
+  const screens = screenList.value ?? [];
+  const preferredNonMainNonMedia = screens.findIndex(
+    (screen) => !screen.mainWindow && !screen.mediaWindow,
+  );
+  if (preferredNonMainNonMedia !== -1) return preferredNonMainNonMedia;
+
+  return screens.findIndex((screen) => !screen.mainWindow);
+};
+
+const setTimerFullscreenMode = () => {
+  if (!canUseFullscreenTimer.value) return;
+
+  const preferredScreenNumber = getPreferredFullscreenTimerScreen();
+  if (preferredScreenNumber < 0) return;
+
+  timerPreferences.value.preferredScreenNumber = preferredScreenNumber;
+  timerPreferences.value.preferWindowed = false;
+  moveTimerWindow(preferredScreenNumber, true);
+};
+
+const setTimerWindowedMode = () => {
+  timerPreferences.value.preferWindowed = true;
+  moveTimerWindow(timerPreferences.value.preferredScreenNumber, false);
+};
+
 // Selected when timer window is on this screen and it's not the app's main window
 const isTimerScreenSelected = (index: number, screen: Display) => {
   return (
@@ -841,6 +889,16 @@ watch(
       }
     }, 10);
   },
+);
+
+watch(
+  screenList,
+  (screens) => {
+    if ((screens?.length ?? 0) <= 2 && !timerPreferences.value.preferWindowed) {
+      setTimerWindowedMode();
+    }
+  },
+  { immediate: true },
 );
 
 const selectPart = (value: MeetingPart) => {

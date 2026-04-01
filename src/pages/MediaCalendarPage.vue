@@ -127,7 +127,12 @@ import { useLocale } from 'src/composables/useLocale';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { SORTER } from 'src/constants/general';
 import { getMeetingSections } from 'src/constants/media';
-import { isCoWeek, isMeetingDay, isWeMeetingDay } from 'src/helpers/date';
+import {
+  isCoWeek,
+  isMeetingDay,
+  isMemorialDay,
+  isWeMeetingDay,
+} from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addDayToExportQueue } from 'src/helpers/export-media';
 import {
@@ -882,7 +887,9 @@ const goToNextDayWithMedia = (ignoreTodaysDate = false) => {
             const hasMedia = (day.mediaSections ?? []).some(
               (section) => !!section.items?.length,
             );
-            return getMeetingType(day.date) || hasMedia;
+            return (
+              getMeetingType(day.date) || isMemorialDay(day.date) || hasMedia
+            );
           })
           .map((day) => day.date)
           .filter(Boolean)
@@ -1047,6 +1054,26 @@ const checkMemorialDate = async () => {
     { jwIconKeyword: 'memorial', label: t('memorial-talk') },
   );
 
+  const missingDynamicMedia = [
+    ...(introSection?.items || []),
+    ...(memorialSection?.items || []),
+  ].filter((item) => item.source === 'dynamic' && !isFileUrl(item.fileUrl));
+
+  let forceRefetch = false;
+  if (missingDynamicMedia.length > 0) {
+    if (introSection?.items) {
+      introSection.items = introSection.items.filter(
+        (item) => item.source !== 'dynamic' || isFileUrl(item.fileUrl),
+      );
+    }
+    if (memorialSection?.items) {
+      memorialSection.items = memorialSection.items.filter(
+        (item) => item.source !== 'dynamic' || isFileUrl(item.fileUrl),
+      );
+    }
+    forceRefetch = true;
+  }
+
   const memorialMediaWithStreamSource = [
     ...(introSection?.items || []),
     ...(memorialSection?.items || []),
@@ -1098,7 +1125,7 @@ const checkMemorialDate = async () => {
     type: 'ongoing',
   });
 
-  const memorialMedia = await getMemorialMedia();
+  const memorialMedia = await getMemorialMedia(forceRefetch);
   if (memorialMedia) {
     createTemporaryNotification({
       group: 'memorial-fetch',

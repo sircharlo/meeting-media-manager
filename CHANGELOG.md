@@ -4,6 +4,27 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.4.0
+
+### ✨ New Features
+
+- ✨ **Meeting Timer**: A new meeting timer feature has been added. It is optional and can be enabled in the advanced settings, if desired. The timer can be used to allow the media operator to keep track of the time spent on meeting parts, or to display the time spent on the current meeting part on a dedicated screen visible only to the speaker.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Memorial**: Ensured the Memorial date is properly selected when it is the next scheduled event, and improved recaching logic when media `fileUrl` is missing for expected Memorial media.
+- 🐞 **Watch Folder**: Hardened watch folder handling for WebDAV/UNC network paths.
+- 🐞 **Shared Path**: Added a shared-path health probe with silent backoff and hardened Windows path probe cleanup.
+- 🐞 **Media Bounds**: Used `Electron.Rectangle` for normalized window bounds.
+- 🐞 **Stability & Logic**: Silenced updater noise, deduplicated session hooks, moved `checkDiskSpace` import to when needed, and used `upath` for path handling instead of `node:path` when possible.
+
+### 🔧 Chores
+
+- 🔧 **Timer Display**: Preferred non-main/non-media display for the fullscreen timer and hid timer fullscreen controls on setups with two or fewer screens.
+- 🔧 **CI/CD & Node.js**: Made Electron publishing explicit in release workflows, and updated Node.js, Yarn, and target browser version requirements.
+- 🔧 **Dependencies**: Updated Electron and other project dependencies.
+- 🔧 **Testing & Linting**: Fixed `setTag` not cooperating with tests and disabled `no-console` rule for TypeScript files in docs.
+
 ## v26.3.2
 
 ### 🐞 Bug Fixes

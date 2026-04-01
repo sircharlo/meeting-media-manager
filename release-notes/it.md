@@ -4,6 +4,12 @@
 
 Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGELOG.md su GitHub.
 
+## v26.4.0
+
+### ✨ Nuove Funzionalità
+
+- ✨ **Timer di riunione**: È stata aggiunta una nuova funzione di timer di riunione. È facoltativo e può essere abilitato nelle impostazioni avanzate, se lo si desidera. Il timer può essere utilizzato per consentire all'operatore multimediale di tenere traccia del tempo dedicato alle parti di riunione, o per visualizzare il tempo trascorso sulla parte di riunione corrente su uno schermo dedicato visibile solo all'altoparlante.
+
 ## v26.3.0
 
 ### ✨ Nuove Funzionalità
