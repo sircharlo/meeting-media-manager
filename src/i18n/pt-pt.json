@@ -191,7 +191,7 @@
   "enableSubtitles": "Ativar legendas",
   "enableSubtitles-explain": "Ativar legendas por padrão para todos os vídeos.",
   "enableTimerDisplay": "Ativar o temporizador de reunião",
-  "enableTimerDisplay-explain": "Habilite esta opção para exibir um temporizador em uma janela separada para o tempo dos participantes. Isso só deve ser habilitado se aprovado pelo ancião local.",
+  "enableTimerDisplay-explain": "Ative esta opção para apresentar um temporizador numa janela separada para controlo do tempo dos participantes. Esta opção só deve ser ativada se aprovada pelos anciãos locais.",
   "end-time": "Hora de término (hh:mm)",
   "enter-a-key-combination": "Digite uma combinação de teclas",
   "enter-a-key-combination-now-using-your-keyboard": "Introduza agora uma combinação de teclas usando o seu teclado.",
