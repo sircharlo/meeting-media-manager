@@ -107,13 +107,18 @@ const { basename, changeExt, dirname, extname, join } = path;
 const isUsablePathCache = new Map<string, boolean>();
 const inFlight = new Map<string, Promise<boolean>>();
 
+const getMemorialMediaCacheKey = (
+  langwritten: JwLangCode,
+  memorialDate?: null | string,
+) => `${langwritten}:${memorialDate || 'none'}`;
+
 const memorialMediaCache = new Map<
-  JwLangCode,
+  string,
   { bg: string; introVideos: MultimediaItem[] }
 >();
 
 const memorialMediaInFlight = new Map<
-  JwLangCode,
+  string,
   Promise<undefined | { bg: string; introVideos: MultimediaItem[] }>
 >();
 
@@ -1349,6 +1354,7 @@ export const getMemorialMedia = async (
 ): Promise<undefined | { bg: string; introVideos: MultimediaItem[] }> => {
   try {
     const currentStateStore = useCurrentStateStore();
+    const memorialDate = currentStateStore.currentSettings?.memorialDate;
     const year = new Date().getFullYear().toString().substring(2);
     const languages = [
       ...new Set([
@@ -1358,17 +1364,19 @@ export const getMemorialMedia = async (
     ].filter((l): l is JwLangCode => !!l);
 
     for (const langwritten of languages) {
+      const cacheKey = getMemorialMediaCacheKey(langwritten, memorialDate);
+
       if (forceRefetch) {
-        memorialMediaCache.delete(langwritten);
-        memorialMediaInFlight.delete(langwritten);
+        memorialMediaCache.delete(cacheKey);
+        memorialMediaInFlight.delete(cacheKey);
       }
 
-      if (memorialMediaCache.has(langwritten)) {
-        return memorialMediaCache.get(langwritten);
+      if (memorialMediaCache.has(cacheKey)) {
+        return memorialMediaCache.get(cacheKey);
       }
 
-      if (memorialMediaInFlight.has(langwritten)) {
-        return memorialMediaInFlight.get(langwritten);
+      if (memorialMediaInFlight.has(cacheKey)) {
+        return memorialMediaInFlight.get(cacheKey);
       }
 
       const fetchPromise = (async () => {
@@ -1427,20 +1435,20 @@ export const getMemorialMedia = async (
             await processMissingMediaInfo({
               allMedia: results.introVideos,
               isDynamicMedia: true,
-              meetingDate: currentStateStore.currentSettings?.memorialDate,
+              meetingDate: memorialDate,
             });
           }
 
           if (results.bg || results.introVideos.length) {
-            memorialMediaCache.set(langwritten, results);
+            memorialMediaCache.set(cacheKey, results);
           }
           return results;
         } finally {
-          memorialMediaInFlight.delete(langwritten);
+          memorialMediaInFlight.delete(cacheKey);
         }
       })();
 
-      memorialMediaInFlight.set(langwritten, fetchPromise);
+      memorialMediaInFlight.set(cacheKey, fetchPromise);
       const result = await fetchPromise;
       if (result) return result;
     }
@@ -2758,10 +2766,14 @@ const downloadMissingMedia = async (
   isDynamicMedia = false,
 ) => {
   try {
+    const currentStateStore = useCurrentStateStore();
+    const isMemorialMeeting =
+      !!meetingDate &&
+      meetingDate === currentStateStore.currentSettings?.memorialDate;
     const pubDir = await getPublicationDirectory(publication);
     await updateLastUsedDate(
       pubDir,
-      meetingDate || useCurrentStateStore().selectedDate,
+      meetingDate || currentStateStore.selectedDate,
     );
     const responseObject = await getPubMediaLinks(publication, meetingDate);
     if (!responseObject?.files) {
@@ -2836,12 +2848,11 @@ const downloadMissingMedia = async (
 
     const downloadedFile = await downloadFileIfNeeded({
       dir: pubDir,
-      lowPriority: true,
+      lowPriority: !isMemorialMeeting,
       meetingDate,
       size: bestItem.filesize,
       url: bestItem.file.url,
     });
-    const currentStateStore = useCurrentStateStore();
     for (const itemUrl of [
       currentStateStore.currentSettings?.enableSubtitles
         ? jwMediaInfo.subtitles
@@ -2859,11 +2870,11 @@ const downloadMissingMedia = async (
         await downloadFileIfNeeded({
           dir: pubDir,
           filename: itemFilename,
-          // High Priority (false) if meeting is Today or Tomorrow (diff <= 1)
-          // Low Priority (true) if meeting is in the future (diff > 1)
-          lowPriority: meetingDate
-            ? getDateDiff(meetingDate, new Date(), 'days') > 1
-            : false,
+          lowPriority: isMemorialMeeting
+            ? false
+            : meetingDate
+              ? getDateDiff(meetingDate, new Date(), 'days') > 1
+              : false,
           meetingDate,
           url: itemUrl,
         });
@@ -3161,6 +3172,9 @@ const downloadJwpub = async (
 ): Promise<DownloadedFile> => {
   try {
     const currentStateStore = useCurrentStateStore();
+    const isMemorialMeeting =
+      !!meetingDate &&
+      meetingDate === currentStateStore.currentSettings?.memorialDate;
     publication.fileformat = 'JWPUB';
     const handleDownloadError = () => {
       const downloadId = getPubId(publication, true);
@@ -3198,11 +3212,11 @@ const downloadJwpub = async (
 
     return await downloadFileIfNeeded({
       dir,
-      // High Priority (false) if meeting is Today or Tomorrow (diff <= 1)
-      // Low Priority (true) if meeting is in the future (diff > 1)
-      lowPriority: meetingDate
-        ? getDateDiff(meetingDate, new Date(), 'days') > 1
-        : false,
+      lowPriority: isMemorialMeeting
+        ? false
+        : meetingDate
+          ? getDateDiff(meetingDate, new Date(), 'days') > 1
+          : false,
       meetingDate,
       size: mediaLinks[0]?.filesize,
       url: mediaLinks[0]?.file.url ?? '',
