@@ -4,6 +4,12 @@
 
 Pour la liste complète des changements entre les versions, consultez notre fichier CHANGELOG.md sur GitHub.
 
+## 4.0 v26.0
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **Minuterie de réunion**: Une nouvelle fonctionnalité de minuteur de réunion a été ajoutée. Il est optionnel et peut être activé dans les paramètres avancés, si désiré. Le minuteur peut être utilisé pour permettre à l'opérateur de garder une trace du temps passé sur les pièces de réunion, ou pour afficher le temps passé sur la partie en cours de la réunion sur un écran dédié visible uniquement par le haut-parleur.
+
 ## v26.3.0
 
 ### ✨ Nouvelles fonctionnalités
