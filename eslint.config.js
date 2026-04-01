@@ -45,7 +45,7 @@ export default defineConfigWithVueTs([
   },
 
   {
-    files: ['docs/**/*.ts'],
+    files: ['docs/**/*.ts', 'test/**/*.ts'],
     rules: {
       'no-console': 'off',
     },
