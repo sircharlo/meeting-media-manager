@@ -846,6 +846,8 @@ watch(
 watch(
   () => selectedDateObject.value,
   async (newDateObject) => {
+    checkMemorialDate();
+
     if (!newDateObject?.date || !newDateObject?.mediaSections) return;
     const meetingDate = formatDate(newDateObject.date, 'YYYY-MM-DD');
     const foldersToTouch = new Set<string>();
@@ -1362,6 +1364,7 @@ const handlePinyinChange = async (newPinyinActive: boolean) => {
 
 onMounted(() => {
   goToNextDayWithMedia();
+  checkMemorialDate();
 
   // If no date with media is found, go to todays date
   if (!selectedDate.value) {
@@ -1498,27 +1501,6 @@ watchImmediate(
         jwIconKeyword: 'pt',
         label: t('pt'),
       });
-    }
-  },
-);
-
-watch(
-  () => [
-    currentCongregation.value,
-    selectedDate.value,
-    currentSettings.value?.memorialDate,
-  ],
-  (
-    [newCongregation, newSelectedDate, newMemorialDate],
-    [oldCongregation, oldSelectedDate, oldMemorialDate],
-  ) => {
-    if (!newCongregation || !newSelectedDate) return;
-    if (
-      newCongregation !== oldCongregation ||
-      newSelectedDate !== oldSelectedDate ||
-      newMemorialDate !== oldMemorialDate
-    ) {
-      checkMemorialDate();
     }
   },
 );
