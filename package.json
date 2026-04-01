@@ -141,7 +141,6 @@
   },
   "resolutions": {
     "vite": "8.0.3",
-    "serialize-javascript": "7.0.1"
   },
   "browserslist": [
     "Electron >= 37"
