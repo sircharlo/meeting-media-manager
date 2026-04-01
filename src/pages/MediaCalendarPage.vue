@@ -1491,7 +1491,6 @@ watchImmediate(
     lastExtendDirection.value = null;
 
     if (!newVal || !selectedDateObject.value?.mediaSections) return;
-    checkMemorialDate();
 
     if (isWeMeetingDay(selectedDateObject.value.date)) {
       getOrCreateMediaSection(selectedDateObject.value.mediaSections, 'pt', {
@@ -1499,6 +1498,27 @@ watchImmediate(
         jwIconKeyword: 'pt',
         label: t('pt'),
       });
+    }
+  },
+);
+
+watch(
+  () => [
+    currentCongregation.value,
+    selectedDate.value,
+    currentSettings.value?.memorialDate,
+  ],
+  (
+    [newCongregation, newSelectedDate, newMemorialDate],
+    [oldCongregation, oldSelectedDate, oldMemorialDate],
+  ) => {
+    if (!newCongregation || !newSelectedDate) return;
+    if (
+      newCongregation !== oldCongregation ||
+      newSelectedDate !== oldSelectedDate ||
+      newMemorialDate !== oldMemorialDate
+    ) {
+      checkMemorialDate();
     }
   },
 );
