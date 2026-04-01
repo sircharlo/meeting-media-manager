@@ -790,8 +790,14 @@ const watchers = new Set<FSWatcher>();
 const datePattern = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD
 const WATCH_POLL_INTERVAL_MS = 1000;
 
-const isNetworkFolderPath = (folderPath: string) =>
-  toUnix(folderPath).startsWith('//');
+const isPossiblyNetworkFolderPath = (folderPath: string) => {
+  const unixPath = toUnix(folderPath);
+  if (unixPath.startsWith('//')) return true;
+  // On Windows, a non-C: drive letter may indicate a mapped network drive
+  if (process.platform === 'win32' && /^[a-bd-zA-BD-Z]:/.test(unixPath))
+    return true;
+  return false;
+};
 
 const shouldIgnoreWatchFolderError = (
   folderPath: string,
@@ -806,7 +812,7 @@ const shouldIgnoreWatchFolderError = (
   }
 
   // Ignore known flaky watch errors on network folders (WebDAV/UNC shares).
-  if (isNetworkFolderPath(folderPath)) {
+  if (isPossiblyNetworkFolderPath(folderPath)) {
     if (error.code === 'UNKNOWN' && error.syscall === 'watch') return true;
     if (error.code === 'EISDIR' && error.syscall === 'watch') return true;
   }
@@ -828,7 +834,7 @@ export async function unwatchFolders() {
 }
 
 export async function watchFolder(folderPath: string) {
-  const networkFolderPath = isNetworkFolderPath(folderPath);
+  const pathIsPossiblyNetwork = isPossiblyNetworkFolderPath(folderPath);
 
   watchers.add(
     filesystemWatch(folderPath, {
@@ -851,8 +857,8 @@ export async function watchFolder(folderPath: string) {
         }
       },
       ignorePermissionErrors: true,
-      interval: networkFolderPath ? WATCH_POLL_INTERVAL_MS : undefined,
-      usePolling: networkFolderPath,
+      interval: pathIsPossiblyNetwork ? WATCH_POLL_INTERVAL_MS : undefined,
+      usePolling: pathIsPossiblyNetwork,
     })
       .on('error', (error: unknown) => {
         const context = {
@@ -861,6 +867,12 @@ export async function watchFolder(folderPath: string) {
 
         try {
           const e = error as Error & { code?: string; syscall?: string };
+          
+          sendToWindow(mainWindowInfo.mainWindow, 'watchFolderError', {
+            folderPath,
+            isPossiblyNetwork: pathIsPossiblyNetwork,
+          });
+
           if (shouldIgnoreWatchFolderError(folderPath, e)) return;
           captureElectronError(error, context);
         } catch (err) {
