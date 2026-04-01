@@ -4,6 +4,20 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.4.1
+
+### 🐞 Bug Fixes
+
+- 🐞 **Downloads**: Cancel all active downloads when changing congregations and reset cancel state on new downloads.
+- 🐞 **Memorial**: Improved Memorial date watcher consistency.
+- 🐞 **Icons**: Normalized SVG icons for consistent rendering.
+- 🐞 **Download Queue**: Fixed paused-queue selection behavior.
+
+### 🔧 Chores
+
+- 🔧 **Icons**: Icon generation now uses Fantasticon.
+- 🔧 **Dependencies**: Updated Vite resolution, removed unused `serialize-javascript` resolution, and refreshed Yarn lockfile.
+
 ## v26.4.0
 
 ### ✨ New Features
