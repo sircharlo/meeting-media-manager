@@ -8,7 +8,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- ✨ **Meeting Timer**: A new meeting timer feature has been added. It is optional and can be enabled in the advanced settings, if desired. The timer can be used to allow the media operator to keep track of the time spent on meeting parts, or to display the time spent on the current meeting part on a dedicated screen visible only to the speaker.
+- ✨ **Merilnik časa za shode**: Dodana je bila nova funkcija za merjenje časa na shodih. Ta možnost je neobvezna in jo lahko vklopiš v naprednih nastavitvah, če to želiš. Merilnik časa se lahko uporabi, da upravljalec multimedijske vsebine spremlja čas, porabljen za posamezne dele shoda, ali da se čas, porabljen za trenutni del shoda, prikaže na posebnem zaslonu, ki je viden le govorniku.
 
 ## v26.3.0
 
