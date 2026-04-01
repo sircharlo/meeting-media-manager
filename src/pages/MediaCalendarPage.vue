@@ -843,6 +843,255 @@ watch(
   },
 );
 
+const { post: postCustomBackground } = useBroadcastChannel<string, string>({
+  name: 'custom-background',
+});
+
+let checkMemorialDateRunning = false;
+const checkMemorialDate = async () => {
+  if (checkMemorialDateRunning) return;
+  checkMemorialDateRunning = true;
+  try {
+    if (
+      !selectedDate.value ||
+      selectedDate.value !== currentSettings.value?.memorialDate ||
+      !selectedDateObject.value?.mediaSections
+    ) {
+      postCustomBackground(mediaWindowCustomBackground.value ?? '');
+      return;
+    }
+
+    const introSection = getOrCreateMediaSection(
+      selectedDateObject.value.mediaSections,
+      'welcome-video',
+      { jwIconKeyword: 'welcome-video', label: t('welcome-video') },
+    );
+
+    const memorialSection = getOrCreateMediaSection(
+      selectedDateObject.value.mediaSections,
+      'memorial-talk',
+      { jwIconKeyword: 'memorial', label: t('memorial-talk') },
+    );
+
+    // Remove items from introSection and memorialSection that are dynamic and have no fileUrl
+    const missingDynamicMedia = [
+      ...(introSection?.items || []),
+      ...(memorialSection?.items || []),
+    ].filter((item) => item.source === 'dynamic' && !isFileUrl(item.fileUrl));
+
+    let forceRefetch = false;
+    if (missingDynamicMedia.length > 0) {
+      if (introSection?.items) {
+        introSection.items = introSection.items.filter(
+          (item) => item.source !== 'dynamic' || isFileUrl(item.fileUrl),
+        );
+      }
+      if (memorialSection?.items) {
+        memorialSection.items = memorialSection.items.filter(
+          (item) => item.source !== 'dynamic' || isFileUrl(item.fileUrl),
+        );
+      }
+      forceRefetch = true;
+    }
+
+    // Force refetch if either the intro section or memorial section has no dynamic items
+    if (
+      !introSection?.items?.filter((item) => item.source === 'dynamic')
+        .length ||
+      !memorialSection?.items?.filter((item) => item.source === 'dynamic')
+        .length
+    ) {
+      forceRefetch = true;
+    }
+
+    const memorialMediaWithStreamSource = [
+      ...(introSection?.items || []),
+      ...(memorialSection?.items || []),
+    ].filter((item) => !!item.streamUrl);
+
+    if (memorialMediaWithStreamSource.length) {
+      const datedAdditionalMediaDir =
+        await currentState.getDatedAdditionalMediaDirectory(selectedDate.value);
+
+      for (const mediaItem of memorialMediaWithStreamSource) {
+        if (!mediaItem.streamUrl) {
+          continue;
+        }
+
+        const existingPath =
+          mediaItem.fileUrl && isFileUrl(mediaItem.fileUrl)
+            ? fileUrlToPath(mediaItem.fileUrl)
+            : '';
+        if (existingPath && (await pathExists(existingPath))) {
+          continue;
+        }
+
+        if (!datedAdditionalMediaDir) continue;
+
+        const fallbackFilename = basename(mediaItem.streamUrl);
+        const targetFilename = basename(existingPath || fallbackFilename);
+
+        await downloadFileIfNeeded({
+          dir: datedAdditionalMediaDir,
+          filename: targetFilename,
+          lowPriority: false,
+          meetingDate: selectedDate.value,
+          size: mediaItem.filesize,
+          url: mediaItem.streamUrl,
+        });
+
+        const downloadedPath = join(datedAdditionalMediaDir, targetFilename);
+        if (await pathExists(downloadedPath)) {
+          mediaItem.fileUrl = pathToFileURL(downloadedPath);
+        }
+      }
+    }
+
+    // Fetch the memorial media, including the background image and Welcome Video
+    createTemporaryNotification({
+      group: 'memorial-fetch',
+      icon: 'mmm-info',
+      message: t('attemptingToFetchMemorialBannerAndIntroVideo'),
+      type: 'ongoing',
+    });
+
+    const memorialMedia = await getMemorialMedia(forceRefetch);
+    if (memorialMedia) {
+      createTemporaryNotification({
+        group: 'memorial-fetch',
+        icon: 'mmm-check',
+        message: t('memorialFetchSuccess'),
+        type: 'positive',
+      });
+
+      // Set the image to be displayed during the memorial
+      if (memorialMedia.bg) {
+        postCustomBackground(memorialMedia.bg);
+        createTemporaryNotification({
+          group: 'memorial-fetch-bg',
+          icon: 'mmm-check',
+          message: t('memorialFetchBgSuccess'),
+          type: 'positive',
+        });
+      } else {
+        createTemporaryNotification({
+          group: 'memorial-fetch-bg',
+          message: t('memorialFetchErrorNoBg'),
+          type: 'negative',
+        });
+      }
+
+      // If intro section is empty, attempt to set the Memorial Welcome Video
+      if (
+        introSection &&
+        !introSection.items?.length &&
+        memorialMedia.introVideos?.length
+      ) {
+        const mappedVideos = await dynamicMediaMapper(
+          memorialMedia.introVideos,
+          dateFromString(selectedDate.value),
+          'dynamic',
+        );
+
+        // If the items array is undefined, create an empty array
+        introSection.items ??= [];
+
+        // Loop through all media items found and set repeat to true
+        mappedVideos.forEach((video) => {
+          video.repeat = true;
+        });
+        introSection.items.push(...mappedVideos);
+
+        createTemporaryNotification({
+          group: 'memorial-fetch-video',
+          icon: 'mmm-check',
+          message: t('memorialFetchVideoSuccess'),
+          type: 'positive',
+        });
+      }
+    } else {
+      createTemporaryNotification({
+        group: 'memorial-fetch',
+        message: t('memorialFetchError'),
+        type: 'negative',
+      });
+    }
+
+    // Add the usual songs for memorial
+    if (memorialSection && !memorialSection.items?.length) {
+      createTemporaryNotification({
+        group: 'memorial-fetch',
+        icon: 'mmm-info',
+        message: t('memorialFetchSongs'),
+        type: 'ongoing',
+      });
+
+      const songsToAdd = [18, 25]; // Songs to add, in reverse order
+      let succesfulSongs = 0;
+      for (const songTrack of songsToAdd) {
+        const songTrackItem: PublicationFetcher = {
+          fileformat: 'MP4',
+          langwritten: currentSettings.value?.lang || 'E',
+          pub: currentSongbook.value?.pub,
+          track: songTrack,
+        };
+        try {
+          const [songTrackFiles, { thumbnail, title }] = await Promise.all([
+            getPubMediaLinks(songTrackItem),
+            getJwMediaInfo(songTrackItem),
+          ]);
+
+          const files =
+            songTrackFiles?.files?.[currentSettings.value?.lang || 'E']?.[
+              'MP4'
+            ] || [];
+
+          if (files.length > 0) {
+            const downloadId = await downloadAdditionalRemoteVideo(
+              files,
+              selectedDate.value,
+              thumbnail,
+              songTrack,
+              title.replace(/^\d+\.\s*/, ''),
+              'memorial-talk',
+            );
+            let downloadCompleted: boolean | null = null;
+            if (downloadId) {
+              while (downloadCompleted !== true) {
+                downloadCompleted =
+                  await globalThis.electronApi?.isDownloadComplete(downloadId);
+                await new Promise((resolve) => {
+                  setTimeout(resolve, 300);
+                });
+              }
+            }
+          }
+          succesfulSongs++;
+        } catch (error) {
+          errorCatcher(error);
+        }
+      }
+      if (succesfulSongs === songsToAdd.length) {
+        createTemporaryNotification({
+          group: 'memorial-fetch',
+          icon: 'mmm-check',
+          message: t('memorialFetchSongsSuccess'),
+          type: 'positive',
+        });
+      } else {
+        createTemporaryNotification({
+          group: 'memorial-fetch',
+          icon: 'mmm-error',
+          message: t('memorialFetchSongsError'),
+          type: 'negative',
+        });
+      }
+    }
+  } finally {
+    checkMemorialDateRunning = false;
+  }
+};
+
 watch(
   () => selectedDateObject.value,
   async (newDateObject) => {
@@ -1034,233 +1283,6 @@ useEventListener<
   { passive: true },
 );
 
-const checkMemorialDate = async () => {
-  if (
-    !selectedDate.value ||
-    selectedDate.value !== currentSettings.value?.memorialDate ||
-    !selectedDateObject.value?.mediaSections
-  ) {
-    postCustomBackground(mediaWindowCustomBackground.value ?? '');
-    return;
-  }
-
-  const introSection = getOrCreateMediaSection(
-    selectedDateObject.value.mediaSections,
-    'welcome-video',
-    { jwIconKeyword: 'welcome-video', label: t('welcome-video') },
-  );
-
-  const memorialSection = getOrCreateMediaSection(
-    selectedDateObject.value.mediaSections,
-    'memorial-talk',
-    { jwIconKeyword: 'memorial', label: t('memorial-talk') },
-  );
-
-  const missingDynamicMedia = [
-    ...(introSection?.items || []),
-    ...(memorialSection?.items || []),
-  ].filter((item) => item.source === 'dynamic' && !isFileUrl(item.fileUrl));
-
-  let forceRefetch = false;
-  if (missingDynamicMedia.length > 0) {
-    if (introSection?.items) {
-      introSection.items = introSection.items.filter(
-        (item) => item.source !== 'dynamic' || isFileUrl(item.fileUrl),
-      );
-    }
-    if (memorialSection?.items) {
-      memorialSection.items = memorialSection.items.filter(
-        (item) => item.source !== 'dynamic' || isFileUrl(item.fileUrl),
-      );
-    }
-    forceRefetch = true;
-  }
-
-  const memorialMediaWithStreamSource = [
-    ...(introSection?.items || []),
-    ...(memorialSection?.items || []),
-  ].filter((item) => !!item.streamUrl);
-
-  if (memorialMediaWithStreamSource.length) {
-    const datedAdditionalMediaDir =
-      await currentState.getDatedAdditionalMediaDirectory(selectedDate.value);
-
-    for (const mediaItem of memorialMediaWithStreamSource) {
-      if (!mediaItem.streamUrl) {
-        continue;
-      }
-
-      const existingPath =
-        mediaItem.fileUrl && isFileUrl(mediaItem.fileUrl)
-          ? fileUrlToPath(mediaItem.fileUrl)
-          : '';
-      if (existingPath && (await pathExists(existingPath))) {
-        continue;
-      }
-
-      if (!datedAdditionalMediaDir) continue;
-
-      const fallbackFilename = basename(mediaItem.streamUrl);
-      const targetFilename = basename(existingPath || fallbackFilename);
-
-      await downloadFileIfNeeded({
-        dir: datedAdditionalMediaDir,
-        filename: targetFilename,
-        lowPriority: false,
-        meetingDate: selectedDate.value,
-        size: mediaItem.filesize,
-        url: mediaItem.streamUrl,
-      });
-
-      const downloadedPath = join(datedAdditionalMediaDir, targetFilename);
-      if (await pathExists(downloadedPath)) {
-        mediaItem.fileUrl = pathToFileURL(downloadedPath);
-      }
-    }
-  }
-
-  // Fetch the memorial media, including the background image and Welcome Video
-  createTemporaryNotification({
-    group: 'memorial-fetch',
-    icon: 'mmm-info',
-    message: t('attemptingToFetchMemorialBannerAndIntroVideo'),
-    type: 'ongoing',
-  });
-
-  const memorialMedia = await getMemorialMedia(forceRefetch);
-  if (memorialMedia) {
-    createTemporaryNotification({
-      group: 'memorial-fetch',
-      icon: 'mmm-check',
-      message: t('memorialFetchSuccess'),
-      type: 'positive',
-    });
-
-    // Set the image to be displayed during the memorial
-    if (memorialMedia.bg) {
-      postCustomBackground(memorialMedia.bg);
-      createTemporaryNotification({
-        group: 'memorial-fetch-bg',
-        icon: 'mmm-check',
-        message: t('memorialFetchBgSuccess'),
-        type: 'positive',
-      });
-    } else {
-      createTemporaryNotification({
-        group: 'memorial-fetch-bg',
-        message: t('memorialFetchErrorNoBg'),
-        type: 'negative',
-      });
-    }
-
-    // If intro section is empty, attempt to set the Memorial Welcome Video
-    if (
-      introSection &&
-      !introSection.items?.length &&
-      memorialMedia.introVideos?.length
-    ) {
-      const mappedVideos = await dynamicMediaMapper(
-        memorialMedia.introVideos,
-        dateFromString(selectedDate.value),
-        'dynamic',
-      );
-
-      // If the items array is undefined, create an empty array
-      introSection.items ??= [];
-
-      // Loop through all media items found and set repeat to true
-      mappedVideos.forEach((video) => {
-        video.repeat = true;
-      });
-      introSection.items.push(...mappedVideos);
-
-      createTemporaryNotification({
-        group: 'memorial-fetch-video',
-        icon: 'mmm-check',
-        message: t('memorialFetchVideoSuccess'),
-        type: 'positive',
-      });
-    }
-  } else {
-    createTemporaryNotification({
-      group: 'memorial-fetch',
-      message: t('memorialFetchError'),
-      type: 'negative',
-    });
-  }
-
-  // Add the usual songs for memorial
-  if (memorialSection && !memorialSection.items?.length) {
-    createTemporaryNotification({
-      group: 'memorial-fetch',
-      icon: 'mmm-info',
-      message: t('memorialFetchSongs'),
-      type: 'ongoing',
-    });
-
-    const songsToAdd = [18, 25]; // Songs to add, in reverse order
-    let succesfulSongs = 0;
-    for (const songTrack of songsToAdd) {
-      const songTrackItem: PublicationFetcher = {
-        fileformat: 'MP4',
-        langwritten: currentSettings.value?.lang || 'E',
-        pub: currentSongbook.value?.pub,
-        track: songTrack,
-      };
-      try {
-        const [songTrackFiles, { thumbnail, title }] = await Promise.all([
-          getPubMediaLinks(songTrackItem),
-          getJwMediaInfo(songTrackItem),
-        ]);
-
-        const files =
-          songTrackFiles?.files?.[currentSettings.value?.lang || 'E']?.[
-            'MP4'
-          ] || [];
-
-        if (files.length > 0) {
-          const downloadId = await downloadAdditionalRemoteVideo(
-            files,
-            selectedDate.value,
-            thumbnail,
-            songTrack,
-            title.replace(/^\d+\.\s*/, ''),
-            'memorial-talk',
-          );
-          let downloadCompleted: boolean | null = null;
-          if (downloadId) {
-            while (downloadCompleted !== true) {
-              downloadCompleted =
-                await globalThis.electronApi?.isDownloadComplete(downloadId);
-              await new Promise((resolve) => {
-                setTimeout(resolve, 300);
-              });
-            }
-          }
-        }
-        succesfulSongs++;
-      } catch (error) {
-        errorCatcher(error);
-      }
-    }
-    if (succesfulSongs === songsToAdd.length) {
-      createTemporaryNotification({
-        group: 'memorial-fetch',
-        icon: 'mmm-check',
-        message: t('memorialFetchSongsSuccess'),
-        type: 'positive',
-      });
-    } else {
-      createTemporaryNotification({
-        group: 'memorial-fetch',
-        icon: 'mmm-error',
-        message: t('memorialFetchSongsError'),
-        type: 'negative',
-      });
-    }
-  }
-};
-
 // Track pinyin setting across page navigations
 let lastPinyinState: boolean | undefined;
 
@@ -1445,10 +1467,6 @@ onMounted(() => {
       await handlePinyinChange(newVal);
     },
   );
-});
-
-const { post: postCustomBackground } = useBroadcastChannel<string, string>({
-  name: 'custom-background',
 });
 
 // Listen for requests to get current media window variables
