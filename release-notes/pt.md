@@ -22,65 +22,65 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 
 ### ✨ Novos Recursos
 
-- ✨ **Disk Space Check**: Added functionality to monitor and notify when disk space is low.
+- ✨ **Verificação de espaço em disco**: Adicionada funcionalidade para monitorar e notificar quando o espaço em disco estiver baixo.
 
 ## v26.1.5
 
 ### ✨ Novos Recursos
 
-- ✨ **Memorial Media**: Automatically fetch Memorial banner and intro video in supported languages when the Memorial date is selected.
+- ✨ **Mídias da Celebração**: Baixar automaticamente banner e vídeo de introdução da Celebração nos idiomas suportados quando a data da Celebração for selecionada.
 
 ## v26.1.0
 
 ### ✨ Novos Recursos
 
-- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
-- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
-- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+- ✨ **Sincronização automática da programação das reuniões**: Adicionada a capacidade de sincronizar automaticamente as datas e horários das reuniões com o site oficial. Este recurso é habilitado por padrão e pode ser acionado manualmente ou desabilitado nas configurações avançadas.
+- ✨ **Mudanças futuras na programação**: O aplicativo agora inclui mudanças futuras na programação ao criar uma congregação usando a pesquisa no site, se disponível.
+- ✨ **Cache compartilhado para instalações em toda a máquina**: Instalações em toda a máquina agora compartilham uma pasta de dados comum por padrão, otimizando o uso de armazenamento e largura de banda entre vários usuários no mesmo computador.
 
 ## v25.12.2
 
 ### ✨ Novos Recursos
 
-- ✨ **Zoom/Pan buttons**: Added the ability to press and hold zoom and pan buttons for continuous adjustment.
+- ✨ **Botões de Zoom/Pan**: Adicionada a capacidade de pressionar e segurar os botões de zoom e pan para ajuste contínuo.
 
 ## v25.12.0
 
 ### ✨ Novos Recursos
 
-- ✨ **Multi-Select Context Menu**: Added support for right-click menu actions when multiple media items are selected.
-- ✨ **Keyboard Shortcuts**: Added `Ctrl/Cmd+A` to select all media, `H` to hide selected media, and `Shift+Up/Down` for keyboard selection navigation.
-- ✨ **Watchtower Study Video Settings**: Added a setting to exclude extra Watchtower study videos.
-- ✨ **Collapsible Sections**: Added ability to collapse sections on non-meeting days for a cleaner view.
-- ✨ **JW Events Website**: Added the ability to present the JW Events website in addition to the main official website.
-- ✨ **Playlist Import Customization**: Allowed ability to customize the prefix that is added to media items when importing JW playlists.
-- ✨ **Website Mirroring Navigation**: Added a toggle to automatically navigate to the media list after website mirroring is stopped.
-- ✨ **OBS Recording Controls**: Added the ability to control OBS recordings.
-- ✨ **Yeartext Preview**: Added the ability to preview next year's yeartext as of December of every year.
-- ✨ **Update Notifications**: Added warning notifications if running a beta version or if updates are disabled, and improved update download progress display.
-- ✨ **Hardware Acceleration Settings**: Added an option to permanently disable hardware acceleration if needed.
+- ✨ **Menu de contexto de seleção múltipla**: Adicionado suporte para ações do menu do botão direito quando vários itens de mídia são selecionados.
+- ✨ **Atalhos de teclado**: Adicionados `Ctrl/Cmd+A` para selecionar todas as mídias, `H` para ocultar mídias selecionadas e `Shift+Seta para cima/baixo` para navegação de seleção por teclado.
+- ✨ **Configurações de vídeos do Estudo de A Sentinela**: Adicionada uma configuração para excluir vídeos extras do Estudo de A Sentinela.
+- ✨ **Seções recolhíveis**: Adicionada a capacidade de recolher seções em dias sem reunião para uma visualização mais limpa.
+- ✨ **Site de Eventos TJ**: Adicionada a capacidade de apresentar o site de Eventos TJ além do site oficial principal.
+- ✨ **Personalização de importação de lista de reprodução**: Permitida a capacidade de personalizar o prefixo que é adicionado aos itens de mídia ao importar listas de reprodução JW.
+- ✨ **Navegação de espelhamento de site**: Adicionado um alternador para navegar automaticamente para a lista de mídias após o espelhamento do site ser interrompido.
+- ✨ **Controles de gravação do OBS**: Adicionada a capacidade de controlar gravações do OBS.
+- ✨ **Visualização do texto do ano**: Adicionada a capacidade de visualizar o texto do ano seguinte a partir de dezembro de cada ano.
+- ✨ **Notificações de atualização**: Adicionadas notificações de aviso se estiver executando uma versão beta ou se as atualizações estiverem desabilitadas, e melhorado o display de progresso de download de atualização.
+- ✨ **Configurações de aceleração de hardware**: Adicionada uma opção para desabilitar permanentemente a aceleração de hardware se necessário.
 
 ## v25.11.0
 
 ### ✨ Novos Recursos
 
-- ✨ **JWPUB Media Selection**: Added a way to select individual media from JWPUB files.
-- ✨ **Auto-Focus Media Window**: Added an optional setting to automatically focus the media window after Zoom screen sharing.
-- ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
-- ✨ **Meeting Recording**: Added a new meeting recording feature, to control an external recording app.
-- ✨ **Site Search**: Added ability to search for media or publications on the site using smart search.
-- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from JW.org, such as magazine, books, programs and invitations.
-- ✨ **Sign Language Improvements**: Added confirmation before playing entire files for sign languages and support for selecting multiple clips, such as for when multiple paragraphs are to be read consecutively.
-- ✨ **Clip Navigation**: Added duration display to clip list items and improved clip navigation.
-- 🛠️ **Media Display**: Ensured media display becomes visible when playback starts, even if it was hidden before.
+- ✨ **Seleção de mídia JWPUB**: Adicionada uma maneira de selecionar mídias individuais de arquivos JWPUB.
+- ✨ **Foco automático da janela de mídia**: Adicionada uma configuração opcional para focar automaticamente a janela de mídia após o compartilhamento de tela do Zoom.
+- ✨ **Sobreposição de cursor para exibição em TV**: Aprimorada a sobreposição do cursor da janela do site para melhor visibilidade do cursor do mouse em exibições de TV.
+- ✨ **Gravação de reunião**: Adicionado um novo recurso de gravação de reunião, para controlar um aplicativo de gravação externo.
+- ✨ **Pesquisa no site**: Adicionada a capacidade de pesquisar mídias ou publicações no site usando pesquisa inteligente.
+- ✨ **Importação manual fácil de publicações**: Adicionada funcionalidade para importar facilmente publicações de JW.org, como revistas, livros, programas e convites.
+- ✨ **Melhorias em língua de sinais**: Adicionada confirmação antes de reproduzir arquivos inteiros para línguas de sinais e suporte para selecionar vários clipes, como para quando vários parágrafos devem ser lidos consecutivamente.
+- ✨ **Navegação de clipes**: Adicionada exibição de duração aos itens da lista de clipes e melhorada a navegação de clipes.
+- 🛠️ **Exibição de mídia**: Garantido que a exibição de mídia se torne visível quando a reprodução iniciar, mesmo que estivesse oculta antes.
 
 ## v25.10.1
 
 ### ✨ Novos Recursos
 
-- ✨ **Setup Wizard – Zoom Step**: Added a Zoom integration step to the setup wizard for easier initial configuration.
-- ✨ **Screen Picker Enhancements**: Show an accurate visual representation of all screens, as well as the main window’s current size and location, in the display popup. This makes it easier to choose the correct screen on which the media window should be displayed.
-- ✨ **Media Window Preference**: The app will now remember the preferred screen on which the media window should be displayed, if specified by the user.
+- ✨ **Assistente de configuração – Etapa do Zoom**: Adicionada uma etapa de integração com o Zoom ao assistente de configuração para configuração inicial mais fácil.
+- ✨ **Screen Picker Enhancements**: Show an accurate visual representation of all screens, as well as the main window’s current size and location, in the display popup. Isso facilita a escolha da tela correta na qual a janela de mídia deve ser exibida.
+- ✨ **Preferência de janela de mídia**: O aplicativo agora lembrará a tela preferida na qual a janela de mídia deve ser exibida, se especificado pelo usuário.
 
 ## v25.10.0
 

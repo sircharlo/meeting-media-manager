@@ -94,11 +94,11 @@ Mídias para as reuniões das Testemunhas de Jeová podem ser baixadas automatic
 
 O próprio M³ foi traduzido para vários idiomas por voluntários. Você pode configurar o idioma que gostaria de ser exibido na interface do M3, independente do idioma usado para downloads de mídia. Isso significa que você pode usar o M3 no seu idioma de preferência, enquanto baixa mídia em qualquer outro idioma suportado. Isso significa que você pode usar o M3 no seu idioma de preferência, enquanto baixa mídia em qualquer outro idioma suportado.
 
-For details about fallback languages and subtitles, see the [FAQ](faq#language-support).
+Para detalhes sobre idiomas alternativos e legendas, consulte as [Perguntas frequentes](faq#language-support).
 
 ## Requisitos de Sistema {#system-requirements}
 
-For supported operating systems and requirements, see the answers in the [FAQ](faq#technical-questions).
+Para sistemas operacionais suportados e requisitos, consulte as respostas nas [Perguntas frequentes](faq#technical-questions).
 
 **Experimente hoje o M³ e veja com os próprios olhos o que ele pode fazer! A exibição de mídias nas reuniões congregacionais nunca foi tão fácil.**
 
