@@ -8,7 +8,7 @@ A verziók közötti változások teljes listáját megtalálja a GitHubon talá
 
 ### ✨ Új funkciók
 
-- ✨ **Meeting Timer**: A new meeting timer feature has been added. It is optional and can be enabled in the advanced settings, if desired. The timer can be used to allow the media operator to keep track of the time spent on meeting parts, or to display the time spent on the current meeting part on a dedicated screen visible only to the speaker.
+- ✨ **Összejövetel-időzítő**: Új összejövetel-időzítő funkció került bevezetésre. Ez opcionális funkció, amelyet szükség esetén a haladó beállítások között lehet engedélyezni. Az időzítő segítségével a technikus nyomon követheti az egyes összejöveteli szakaszokra fordított időt, illetve a jelenlegi összejöveteli szakaszra fordított időt egy olyan külön képernyőn jelenítheti meg, amelyet csak az előadó láthat.
 
 ## v26.3.0
 
@@ -88,30 +88,30 @@ A verziók közötti változások teljes listáját megtalálja a GitHubon talá
 
 - ✨ **Lejátszás szüneteltetett állapotban történő indítása**: Új beállítást vezettünk be, amely lehetővé teszi a lejátszás szüneteltetett állapotban történő indítását. Ez hasznos lehet az AV-operátoroknak, hogy elvégezhessék a szükséges beállításokat (például elindítsák a Zoom-megosztást) még mielőtt a média elindulna a médiaablakban.
 - ✨ **Frissítési értesítések**: A felhasználók ezentúl az alkalmazáson belüli sávon keresztül kapnak értesítést a frissítésekről, amelyen keresztül a felhasználó azonnal telepítheti a frissítéseket, anélkül, hogy meg kellene várnia az alkalmazás következő újraindítását.
-- ✨ **Egyéni események**: Hozzáadtunk opcionális akciókat, amelyek billentyűparancsokat indíthatnak el, ha bizonyos események történnek. Ez hasznos lehet az AV-operátorok számára, hogy az alkalmazáson kívül is automatikusan végrehajthassanak műveleteket. For example, smart lights could be turned on and off before and after media plays in auditoriums where projectors are used; or a script can be called after a meeting's last song has been played to automate various actions in a Zoom meeting.
+- ✨ **Egyéni események**: Hozzáadtunk opcionális akciókat, amelyek billentyűparancsokat indíthatnak el, ha bizonyos események történnek. Ez hasznos lehet az AV-operátorok számára, hogy az alkalmazáson kívül is automatikusan végrehajthassanak műveleteket. Például a projektorral felszerelt előadótermekben az intelligens világítás be- és kikapcsolható a média lejátszása előtt és után; vagy egy Zoom-meetingen az összejövetel záró éneke után elindítható egy szkript, amely automatizálja a különböző műveleteket.
 
 ## v25.9.1
 
 ### ✨ Új funkciók
 
-- ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
-- ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
-- ✨ **Media Crossfade**: Implemented crossfade transitions for media display, instead of the more abrupt fade-to-black transition that was present before.
-- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not
-- ✨ **macOS Click-Through on Inactive Windows**: Enabled mouse click passthrough on the main window for macOS, which should make it easier to control the app even when it's not focused.
+- ✨ **A médiaablak „Mindig előtérben” és teljes képernyős viselkedése**: Javítottuk és továbbfejlesztettük a médiaablak „Mindig előtérben” viselkedését, amely most már a teljes képernyős állapotnak megfelelően dinamikusan alkalmazkodik.
+- ✨ **A dátum megjelenítési formátumának beállítása**: Hozzáadtunk egy felhasználói beállítást a dátum megjelenítési formátumának konfigurálásához.
+- ✨ **Média átmenetek**: A média megjelenítéséhez átmeneti effekteket vezettünk be a korábban alkalmazott, hirtelen fekete képernyőre váltás helyett.
+- ✨ **Zene automatikus leállítása**: Optimalizáltuk a háttérzene automatikus leállításának működését, így az mostantól függetlenül attól, hogy a zene automatikusan elindult-e vagy sem, ugyanúgy viselkedik
+- ✨ **Egérkattintás-átvitel inaktív ablakokban macOS esetén**: Engedélyeztük az egérkattintás-átvitelt a főablakban macOS rendszeren, ami megkönnyíti az alkalmazás vezérlését akkor is, ha az éppen nincs fókuszban.
 
 ## v25.9.0
 
 ### ✨ Új funkciók
 
-- ✨ **Download Popup Enhancements**: Added refresh button and download grouping by date in the download popup.
-- ✨ **Watched Media Order Memory**: Added section order memory for watched media items.
+- ✨ **A letöltési felugró ablak fejlesztései**: Hozzáadtunk egy frissítés gombot, valamint a letöltési felugró ablakban bevezettük a letöltések dátum szerinti csoportosítását.
+- ✨ **A megtekintett médiaelemek sorrendjének mentése**: Hozzáadottuk a megtekintett médiaelemek sorrendjének mentési funkcióját.
 
 ## v25.8.3
 
 ### ✨ Új funkciók
 
-- ✨ **Media Window Fade Transitions**: Added a new advanced setting to make the media window fade in and out, providing smoother visual transitions.
+- ✨ **A médiaablak elhalványuló átmenetei**: Új speciális beállítást vezettünk be, amely lehetővé teszi a médiaablak fokozatos megjelenését és eltűnését, így biztosítva a simább vizuális átmeneteket.
 - ✨ **Image Duration Control and Progress Tracking**: Added image duration control and progress tracking capabilities for repeated sections.
 
 ## v25.8.1
