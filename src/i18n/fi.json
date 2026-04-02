@@ -715,6 +715,6 @@
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom-näytönjaon pikanäppäin",
   "zoomScreenShareShortcut-explain": "Anna näppäimistön pikanäppäin, joka on määritetty Zoomissa toiminnolle ”Start/Stop Share”. Voit poistaa ’Global’-asetuksen kyseiseltä pikanäppäimeltä Zoomin asetuksissa.",
-  "watch-folder-error-caption": "Varmista, että kaikki kumppanisovellukset, kuten Dropbox ovat käynnissä ja että annettu polku on voimassa ja voidaan kirjoittaa",
-  "watch-folder-error-message": "Kellon kansiossa tapahtui virhe. Tämä voi olla linkitetty siihen, että se on verkko- tai pilvihakemisto."
+  "watch-folder-error-caption": "Varmista, että kaikki oheissovellukset, kuten Dropbox, ovat käynnissä ja että annettu polku on kelvollinen ja siihen voi kirjoittaa",
+  "watch-folder-error-message": "Valvontakansion kanssa tapahtui virhe. Tämä saattaa johtua siitä, että kyseessä on verkko- tai pilvikansio."
 }
