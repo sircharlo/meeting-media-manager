@@ -41,7 +41,6 @@ export class StatefulBrowserWindow {
   public win: BrowserWindow;
 
   private readonly fullStoreFileName: string;
-
   private readonly saveState = () => {
     try {
       ensureDirSync(dirname(this.fullStoreFileName));
@@ -55,7 +54,13 @@ export class StatefulBrowserWindow {
 
   private readonly updateState = () => {
     try {
-      const winBounds = this.win.getBounds();
+      const winBounds = this.win?.isDestroyed?.()
+        ? undefined
+        : this.win?.getBounds?.();
+
+      if (!winBounds) {
+        return;
+      }
 
       // Save the window bounds if the window is not minimized
       if (!this.win.isMinimized()) {
