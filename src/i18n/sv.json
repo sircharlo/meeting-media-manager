@@ -715,6 +715,6 @@
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom-genväg för skärmdelning",
   "zoomScreenShareShortcut-explain": "Ange kortkommandot som konfigurerats i inställningar för Zoom \"Starta/stoppa skärmdelning\". M³ skickar genvägen när media börjar spelas upp (för att starta skärmdelning) och när den slutar (för att stoppa skärmdelning). För att använda den här funktionen måste du aktivera inställningen \"Global genväg\" för just den genvägen i Zooms inställningar.",
-  "watch-folder-error-caption": "Se till att alla kompanjonappar som Dropbox körs och att den angivna sökvägen är giltig och kan skrivas",
-  "watch-folder-error-message": "Ett fel inträffade med klockmappen. Detta kan kopplas till att den är ett nätverk eller en molnmapp."
+  "watch-folder-error-caption": "Kontrollera att alla tillhörande appar, som Dropbox, är igång och att den angivna sökvägen är giltig och skrivbar",
+  "watch-folder-error-message": "Ett fel uppstod med bevakningsmappen. Detta kan bero på att den är en nätverks- eller molnmapp."
 }
