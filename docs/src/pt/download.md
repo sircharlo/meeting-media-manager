@@ -6,7 +6,7 @@ title: Downloads
 
 # Downloads
 
-Use the links below to download the latest version of Meeting Media Manager for your operating system. These links always point to the newest stable release.
+Use os links abaixo para baixar a versão mais recente do Meeting Media Manager para o seu sistema operacional. Esses links sempre apontam para a versão estável mais recente.
 
 <script setup lang="ts">
 import { data as downloads } from '../../data/version.data.mts'
@@ -75,9 +75,9 @@ onMounted(() => {
 })
 </script>
 
-## Latest release
+## Versão mais recente
 
-- **Version**: {{ downloads.version }} <span v-if="daysAgoText">({{ daysAgoText }})</span>
+- **Versão**: {{ downloads.version }} <span v-if="daysAgoText">({{ daysAgoText }})</span>
 
 <div v-if="recommended" style="margin: 1rem 0; padding: 1rem; border: 1px solid var(--vp-c-brand-1); border-radius: 8px; background: var(--vp-c-brand-soft);"><strong>{{ msg.recommendedFor }} {{ recommended.label }}</strong>
   <div style="margin-top: .5rem;"><a :href="recommended.href" style="display:inline-block; padding:.5rem 1rem; border-radius:6px; background: var(--vp-c-brand-1); color: white; text-decoration:none;">{{ msg.download }}</a>
@@ -87,14 +87,14 @@ onMounted(() => {
 
 ## Windows
 
-- **Windows 64-bit (.exe)**: <a :href="downloads.win64">Download</a>
-- **Windows 32-bit (.exe)**: <a :href="downloads.win32">Download</a>
-- **Windows Portable (.exe)**: <a :href="downloads.winPortable">Download</a>
+- **Windows 64-bit (.exe)**: <a :href="downloads.win64">Baixar</a>
+- **Windows 32-bit (.exe)**: <a :href="downloads.win32">Baixar</a>
+- **Windows Portable (.exe)**: <a :href="downloads.winPortable">Baixar</a>
 
 ## macOS
 
-- **macOS (Universal) (.dmg)**: <a :href="downloads.macUniversal">Download</a>
+- **macOS (Universal) (.dmg)**: <a :href="downloads.macUniversal">Baixar</a>
 
 ## Linux
 
-- **x86_64 (AppImage)**: <a :href="downloads.linux">Download</a>
+- **x86_64 (AppImage)**: <a :href="downloads.linux">Baixar</a>
