@@ -48,7 +48,7 @@
   "autoStartMusic": "Iniciar automaticamente a reprodução dos cânticos de fundo antes das reuniões",
   "autoStartMusic-explain": "Os cânticos de fundo serão reproduzidos automaticamente de acordo com os horários da reunião, alguns minutos ou horas antes do início, depois que o M³ for aberto.",
   "ayfm": "Faça Seu Melhor no Ministério",
-  "ayfm-part": "AYFM {part} ({duration} min.)",
+  "ayfm-part": "FSMM {part} ({duration} min.)",
   "back": "Voltar",
   "baseUrl": "Endereço do site",
   "baseUrl-explain": "Digite o endereço do site oficial das Testemunhas de Jeová.",
