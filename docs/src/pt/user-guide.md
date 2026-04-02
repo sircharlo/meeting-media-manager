@@ -4,9 +4,9 @@ Este guia completo do usuário irá ajudá-lo a dominar todos os recursos do M³
 
 ## Primeiros passos {#getting-started}
 
-### Download and Install {#download-and-install}
+### Baixar e instalar {#download-and-install}
 
-Get the latest version from the [Download page](download). It recommends the best build for your device and shows the latest version.
+Obtenha a versão mais recente na [página de Download](download). Ela recomenda a melhor versão para o seu dispositivo e mostra a versão mais recente.
 
 ### Primeira inicialização {#first-launch}
 
@@ -41,8 +41,8 @@ A interface M³ principal consiste em várias áreas principais:
 A visualização do calendário mostra sua programação de reunião e as mídias disponíveis:
 
 - **Dias da Reunião** - Dias em destaque quando as reuniões são programadas
-- **Media Indicators** - Icons show what types of media are available
-- **Date Navigation** - Use arrow keys to navigate between months
+- **Indicadores de mídia** - Ícones mostram quais tipos de mídia estão disponíveis
+- **Navegação de data** - Use as teclas de seta para navegar entre os meses
 
 ### Organizing Media {#organizing-media}
 
@@ -250,7 +250,7 @@ Import audio recordings of Bible verses:
 
 1. Click the "Audio Bible" button
 2. Select the Bible book and chapter
-3. Choose specific verses or verse ranges
+3. Escolher versículos específicos ou faixas de versículos
 4. Download the audio files
 5. Use them
 
