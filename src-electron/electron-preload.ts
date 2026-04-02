@@ -52,6 +52,7 @@ const getPathFromFileObject = (fo?: File | string) => {
 
 const electronApi: ElectronApi = {
   askForMediaAccess: () => send('askForMediaAccess'),
+  cancelAllDownloads: () => send('cancelAllDownloads'),
   checkForUpdates: () => send('checkForUpdates'),
   clickZoomElement: (h, o) => invoke('clickZoomElement', h, o),
   closeWebsiteWindow,
@@ -109,6 +110,7 @@ const electronApi: ElectronApi = {
   onUpdateError: (cb) => listen('update-error', cb),
   onVideoCaptureCrashDetected: (cb) =>
     listen('video-capture-crash-detected', cb),
+  onWatchFolderError: (cb) => listen('watchFolderError', cb),
   onWatchFolderUpdate: (cb) => listen('watchFolderUpdate', cb),
   onWebsiteWindowClosed: (cb) => listen('websiteWindowClosed', cb),
   openDiscussion: (c, t, p) => send('openDiscussion', c, t, p),

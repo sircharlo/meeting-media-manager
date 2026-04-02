@@ -180,6 +180,7 @@ const {
   onLog,
   onShortcut,
   onVideoCaptureCrashDetected,
+  onWatchFolderError,
   onWatchFolderUpdate,
   path,
   pathToFileURL,
@@ -904,6 +905,7 @@ cleanCache();
 cleanPersistedStores();
 
 const closeAttempts = ref(0);
+const watchFolderErrorShown = ref(false);
 
 const bcClose = new BroadcastChannel('closeAttempts');
 bcClose.onmessage = (event) => {
@@ -952,6 +954,19 @@ const initListeners = () => {
   onShortcut(({ shortcut }) => {
     if (!currentSettings.value?.enableKeyboardShortcuts) return;
     executeShortcut(shortcut as keyof SettingsValues);
+  });
+
+  onWatchFolderError(() => {
+    if (!watchFolderErrorShown.value) {
+      watchFolderErrorShown.value = true;
+      createTemporaryNotification({
+        caption: t('watch-folder-error-caption'),
+        icon: 'mmm-error',
+        message: t('watch-folder-error-message'),
+        timeout: 15000,
+        type: 'negative',
+      });
+    }
   });
 
   onWatchFolderUpdate(({ changedPath, day, event }) => {
@@ -1029,6 +1044,7 @@ const removeListenersLocal = () => {
   const listeners: ElectronIpcListenKey[] = [
     'log',
     'shortcut',
+    'watchFolderError',
     'watchFolderUpdate',
     'downloadStarted',
     'downloadCancelled',

@@ -226,6 +226,12 @@ export const useCurrentStateStore = defineStore('current-state', {
     setCongregation: async function (value: number | string) {
       if (!value) return false;
 
+      // Cancel all pending downloads from the previous congregation
+      if (globalThis?.electronApi) {
+        globalThis.electronApi.cancelAllDownloads();
+      }
+      this.downloadProgress = {};
+
       // Dismiss all active notifications when changing congregation
       const { dismissAllTemporaryNotifications } =
         await import('src/helpers/notifications');

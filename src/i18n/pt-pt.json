@@ -191,7 +191,7 @@
   "enableSubtitles": "Ativar legendas",
   "enableSubtitles-explain": "Ativar legendas por padrão para todos os vídeos.",
   "enableTimerDisplay": "Ativar o temporizador de reunião",
-  "enableTimerDisplay-explain": "Habilite esta opção para exibir um temporizador em uma janela separada para o tempo dos participantes. Isso só deve ser habilitado se aprovado pelo ancião local.",
+  "enableTimerDisplay-explain": "Ative esta opção para apresentar um temporizador numa janela separada para controlo do tempo dos participantes. Esta opção só deve ser ativada se aprovada pelos anciãos locais.",
   "end-time": "Hora de término (hh:mm)",
   "enter-a-key-combination": "Digite uma combinação de teclas",
   "enter-a-key-combination-now-using-your-keyboard": "Introduza agora uma combinação de teclas usando o seu teclado.",
@@ -714,5 +714,7 @@
   "zoomEnable-explain": "Isso não automatizará completamente o zoom. Em vez disso, tentará iniciar e parar o compartilhamento de tela com Zoom usando o atalho de teclado configurado nas configurações \"Iniciar/Parar compartilhamento de tela\" do Zoom sempre que a mídia iniciar e parar de reproduzir no M3.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Atalho para partilha de ecrã do Zoom",
-  "zoomScreenShareShortcut-explain": "Introduza o atalho de teclado configurado na definição “Iniciar/parar partilha de ecrã” do Zoom. O M³ enviará este atalho quando a reprodução de multimédia começar (para iniciar a partilha de ecrã) e quando terminar (para parar a partilha de ecrã). Para utilizar esta funcionalidade, é necessário ativar a opção “Atalho global” para esse atalho específico nas definições do Zoom."
+  "zoomScreenShareShortcut-explain": "Introduza o atalho de teclado configurado na definição “Iniciar/parar partilha de ecrã” do Zoom. O M³ enviará este atalho quando a reprodução de multimédia começar (para iniciar a partilha de ecrã) e quando terminar (para parar a partilha de ecrã). Para utilizar esta funcionalidade, é necessário ativar a opção “Atalho global” para esse atalho específico nas definições do Zoom.",
+  "watch-folder-error-caption": "Certifique-se de que todas as outras aplicações como o Dropbox estejam sendo executadas e que o caminho fornecido seja válido e possa ser escrito",
+  "watch-folder-error-message": "Ocorreu um erro com a pasta do relógio. Isto pode ser vinculado a uma rede ou pasta da nuvem."
 }

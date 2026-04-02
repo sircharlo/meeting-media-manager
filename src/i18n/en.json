@@ -765,5 +765,7 @@
   "zoomVideoOffTitle": "Zoom video button text (Video off)",
   "zoomVideoOffTitle-explain": "Ensure the video is TURNED OFF in Zoom, then click this button to capture its title.",
   "zoomVideoOnTitle": "Zoom video button text (Video on)",
-  "zoomVideoOnTitle-explain": "Ensure the video is TURNED ON in Zoom, then click this button to capture its title."
+  "zoomVideoOnTitle-explain": "Ensure the video is TURNED ON in Zoom, then click this button to capture its title.",
+  "watch-folder-error-caption": "Please ensure that all companion apps such as Dropbox are running and that the path provided is valid and can be written",
+  "watch-folder-error-message": "An error occurred with the watch folder. This may be linked to it being a network or cloud folder."
 }

@@ -48,12 +48,6 @@ interface DownloadQueueItem {
   url: string;
 }
 
-interface DownloadQueueItem {
-  destFilename: string;
-  saveDir: string;
-  url: string;
-}
-
 interface GeoInfo {
   countryCode: string;
 }
@@ -61,13 +55,7 @@ interface GeoInfo {
 interface OngoingDownload {
   item: DownloadQueueItem;
   lowPriority: boolean;
-  state: DownloadState;
-  uuid: string;
-}
-
-interface OngoingDownload {
-  item: DownloadQueueItem;
-  lowPriority: boolean;
+  pauseRequested?: boolean;
   state: DownloadState;
   uuid: string;
 }
@@ -101,7 +89,7 @@ function findLowPriorityPausedDownload(
   pausedDownloads: Map<string, OngoingDownload>,
 ): null | { download: OngoingDownload; key: string } {
   for (const [key, download] of pausedDownloads.entries()) {
-    if (download.uuid) {
+    if (download.lowPriority && download.uuid) {
       return { download, key };
     }
   }
@@ -335,6 +323,9 @@ export async function downloadFile(
   )
     return null;
   try {
+    // Allow queue processing again after a previous cancelAll cycle
+    cancelAll = false;
+
     await ensureDirWithRetry(saveDir);
 
     if (!destFilename) destFilename = basename(url);
@@ -443,11 +434,9 @@ function stopLowPriorityDownloads() {
     );
     if (!manager) return;
 
-    // Always mark as PAUSED so if the download ID comes in later, it catches it
-    download.state = DownloadState.PAUSED;
-
     if (download.uuid) {
       try {
+        download.state = DownloadState.PAUSED;
         manager.pauseDownload(download.uuid);
       } catch (error) {
         captureElectronError(error, {
@@ -460,6 +449,9 @@ function stopLowPriorityDownloads() {
           },
         });
       }
+    } else {
+      // UUID is not available yet; request pause once the manager returns it
+      download.pauseRequested = true;
     }
   });
 }
@@ -806,8 +798,10 @@ async function startDownload(
     if (current) {
       current.uuid = downloadId;
 
-      // If it was paused while initializing (race condition), pause it now
-      if (current.state === DownloadState.PAUSED) {
+      // If pause was requested while initializing (race condition), pause now
+      if (current.pauseRequested) {
+        current.pauseRequested = false;
+        current.state = DownloadState.PAUSED;
         manager.pauseDownload(downloadId);
       }
     }

@@ -31,6 +31,9 @@ export const electronApi: ElectronApi = {
   askForMediaAccess: function () {
     throw new Error('Function not implemented.');
   },
+  cancelAllDownloads: function () {
+    throw new Error('Function not implemented.');
+  },
   checkForUpdates: () => void 0,
   clickZoomElement: function (elementId) {
     throw new Error('Function not implemented.');
@@ -164,6 +167,9 @@ export const electronApi: ElectronApi = {
     log('onUpdateError called but not implemented');
   },
   onVideoCaptureCrashDetected: function () {
+    throw new Error('Function not implemented.');
+  },
+  onWatchFolderError: function () {
     throw new Error('Function not implemented.');
   },
   onWatchFolderUpdate: function (callback) {

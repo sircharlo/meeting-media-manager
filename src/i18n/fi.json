@@ -714,5 +714,7 @@
   "zoomEnable-explain": "Tämä ei automatisoi Zoomia täysin. Sen sijaan toiminto yrittää käynnistää ja pysäyttää Zoomin näytönjaon käyttämällä Zoomin Start/stop screen sharing -asetuksessa määritettyä pikanäppäintä aina, kun median toisto alkaa tai päättyy M³:ssa.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom-näytönjaon pikanäppäin",
-  "zoomScreenShareShortcut-explain": "Anna näppäimistön pikanäppäin, joka on määritetty Zoomissa toiminnolle ”Start/Stop Share”. Voit poistaa ’Global’-asetuksen kyseiseltä pikanäppäimeltä Zoomin asetuksissa."
+  "zoomScreenShareShortcut-explain": "Anna näppäimistön pikanäppäin, joka on määritetty Zoomissa toiminnolle ”Start/Stop Share”. Voit poistaa ’Global’-asetuksen kyseiseltä pikanäppäimeltä Zoomin asetuksissa.",
+  "watch-folder-error-caption": "Varmista, että kaikki oheissovellukset, kuten Dropbox, ovat käynnissä ja että annettu polku on kelvollinen ja siihen voi kirjoittaa",
+  "watch-folder-error-message": "Valvontakansion kanssa tapahtui virhe. Tämä saattaa johtua siitä, että kyseessä on verkko- tai pilvikansio."
 }
