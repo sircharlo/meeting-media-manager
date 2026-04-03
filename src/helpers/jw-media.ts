@@ -95,6 +95,7 @@ const {
   executeQuery,
   fileUrlToPath,
   fs,
+  getZipEntries,
   isUsablePath: isUsablePathRaw,
   path,
   pathToFileURL,
@@ -112,7 +113,7 @@ type InvalidJwpubRedownloadStatus = 'attempted' | 'failed' | 'recovered';
 
 const trackInvalidJwpubRedownload = async (
   status: InvalidJwpubRedownloadStatus,
-  data?: { path?: string; publication?: string },
+  data?: { path?: string; publication?: null | string },
 ) => {
   const { addBreadcrumb, setTag } = await import('@sentry/vue');
   setTag('invalid_jwpub_redownload_attempted', status);
@@ -1938,7 +1939,11 @@ export const watchedItemMapper: (
           watchedDayFolder,
           filename,
         );
-        log(`sectionInfo: ${sectionInfo}`, 'watchedFolder', 'info');
+        log(
+          `sectionInfo: ${JSON.stringify(sectionInfo)}`,
+          'watchedFolder',
+          'info',
+        );
         if (sectionInfo) {
           section = sectionInfo.section;
           order = sectionInfo.order;
@@ -2902,6 +2907,13 @@ const downloadMissingMedia = async (
         basename(bestItem.file.url),
         extname(itemUrl),
       );
+
+      let lowPriority = false;
+
+      if (!isMemorialMeeting && meetingDate) {
+        lowPriority = getDateDiff(meetingDate, new Date(), 'days') > 1;
+      }
+
       if (
         bestItem.file?.url &&
         (downloadedFile?.new || !(await exists(join(pubDir, itemFilename))))
@@ -2909,11 +2921,7 @@ const downloadMissingMedia = async (
         await downloadFileIfNeeded({
           dir: pubDir,
           filename: itemFilename,
-          lowPriority: isMemorialMeeting
-            ? false
-            : meetingDate
-              ? getDateDiff(meetingDate, new Date(), 'days') > 1
-              : false,
+          lowPriority,
           meetingDate,
           url: itemUrl,
         });
@@ -3252,13 +3260,15 @@ const downloadJwpub = async (
     const dir = await getPublicationDirectory(publication);
     await updateLastUsedDate(dir, meetingDate || new Date());
 
+    let lowPriority = false;
+
+    if (!isMemorialMeeting && meetingDate) {
+      lowPriority = getDateDiff(meetingDate, new Date(), 'days') > 1;
+    }
+
     const downloadOptions = {
       dir,
-      lowPriority: isMemorialMeeting
-        ? false
-        : meetingDate
-          ? getDateDiff(meetingDate, new Date(), 'days') > 1
-          : false,
+      lowPriority,
       meetingDate,
       size: mediaLinks[0]?.filesize,
       url: mediaLinks[0]?.file.url ?? '',
