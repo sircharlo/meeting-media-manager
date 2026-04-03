@@ -6,6 +6,7 @@ import { ensureDir } from 'fs-extra/esm';
 import { setTimeout as delay } from 'node:timers/promises';
 import { quitStatus } from 'src-electron/main/session';
 import {
+  addElectronBreadcrumb,
   captureElectronError,
   fetchJsonFromMainProcess,
 } from 'src-electron/main/utils';
@@ -219,6 +220,9 @@ const lowPriorityQueue: DownloadQueueItem[] = [];
 const ongoingDownloads = new Map<string, OngoingDownload>();
 const maxActiveDownloads = 3;
 let cancelAll = false;
+const QUEUE_BREADCRUMB_MIN_INTERVAL_MS = 5000;
+let lastQueueBreadcrumbAt = 0;
+let lastQueueSnapshot = '';
 
 let manager: EDMType | null = null;
 
@@ -255,6 +259,49 @@ const getActiveLowPriorityDownloads = () => {
 
 const getActiveDownloadCount = () => {
   return getActiveDownloads().size;
+};
+
+const getQueueSnapshot = () => {
+  const activeDownloads = getActiveDownloads();
+  const pausedDownloads = getPausedDownloads();
+  return {
+    active: activeDownloads.size,
+    lowPending: lowPriorityQueue.length,
+    normalPending: downloadQueue.length,
+    paused: pausedDownloads.size,
+  };
+};
+
+const addQueueBreadcrumb = (
+  reason: string,
+  opts?: { force?: boolean; includeTopItem?: boolean },
+) => {
+  const snapshot = getQueueSnapshot();
+  const snapshotKey = JSON.stringify(snapshot);
+  const now = Date.now();
+  const force = !!opts?.force;
+
+  if (
+    !force &&
+    (snapshotKey === lastQueueSnapshot ||
+      now - lastQueueBreadcrumbAt < QUEUE_BREADCRUMB_MIN_INTERVAL_MS)
+  ) {
+    return;
+  }
+
+  lastQueueSnapshot = snapshotKey;
+  lastQueueBreadcrumbAt = now;
+
+  addElectronBreadcrumb({
+    category: 'downloads.queue',
+    data: {
+      ...snapshot,
+      topLow: opts?.includeTopItem ? lowPriorityQueue[0]?.url : undefined,
+      topNormal: opts?.includeTopItem ? downloadQueue[0]?.url : undefined,
+    },
+    level: 'info',
+    message: reason,
+  });
 };
 
 const loadElectronDownloadManager: () => Promise<EDMType | null> = async () => {
@@ -347,6 +394,9 @@ export async function downloadFile(
         // Stop other low priority downloads to free up slots
         stopLowPriorityDownloads();
         processQueue();
+        addQueueBreadcrumb('priority-promoted-paused-download', {
+          force: true,
+        });
       }
 
       return key;
@@ -360,6 +410,7 @@ export async function downloadFile(
       stopLowPriorityDownloads();
       downloadQueue.push(fileToDownload);
     }
+    addQueueBreadcrumb('download-enqueued', { includeTopItem: true });
 
     log(
       'fileToDownload',
@@ -424,6 +475,7 @@ export async function isDownloadComplete(downloadId: string) {
  */
 function stopLowPriorityDownloads() {
   const activeLowPriority = getActiveLowPriorityDownloads();
+  let pausedAny = false;
   activeLowPriority.forEach((download, key) => {
     log(
       'Pausing download to free slot:',
@@ -438,6 +490,7 @@ function stopLowPriorityDownloads() {
       try {
         download.state = DownloadState.PAUSED;
         manager.pauseDownload(download.uuid);
+        pausedAny = true;
       } catch (error) {
         captureElectronError(error, {
           contexts: {
@@ -454,6 +507,11 @@ function stopLowPriorityDownloads() {
       download.pauseRequested = true;
     }
   });
+  if (pausedAny) {
+    addQueueBreadcrumb('low-priority-paused-for-high-priority', {
+      force: true,
+    });
+  }
 }
 
 // Cache for the download error check result
@@ -736,6 +794,7 @@ async function startDownload(
             id: key,
           });
           ongoingDownloads.delete(key);
+          addQueueBreadcrumb('download-cancelled', { force: true });
           processQueue();
         },
         onDownloadCompleted: async ({ item }) => {
@@ -745,6 +804,7 @@ async function startDownload(
             id: key,
           });
           ongoingDownloads.delete(key);
+          addQueueBreadcrumb('download-completed', { force: true });
           processQueue();
         },
         onDownloadProgress: async ({ item, percentCompleted }) => {
@@ -785,6 +845,7 @@ async function startDownload(
             });
           }
           ongoingDownloads.delete(key);
+          addQueueBreadcrumb('download-error', { force: true });
           processQueue();
         },
       },
