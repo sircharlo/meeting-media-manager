@@ -170,6 +170,28 @@ function hasHighPriorityActive(
   return Array.from(activeDownloads.values()).some((d) => !d.lowPriority);
 }
 
+function logPausedDownloadsContext(reason: string): void {
+  const pausedDownloads = getPausedDownloads();
+  if (pausedDownloads.size === 0) return;
+
+  const pausedDetails = Array.from(pausedDownloads.entries()).map(
+    ([key, download]) => ({
+      hasUuid: !!download.uuid,
+      key,
+      lowPriority: download.lowPriority,
+      pauseRequested: !!download.pauseRequested,
+      url: download.item.url,
+    }),
+  );
+
+  log(
+    `Paused downloads snapshot (${reason})`,
+    'electronDownloads',
+    'warn',
+    pausedDetails,
+  );
+}
+
 /**
  * Logs queue blocking reasons for debugging
  */
@@ -471,9 +493,72 @@ export async function isDownloadComplete(downloadId: string) {
 }
 
 /**
+ * Attempts to resume every paused download and kick queue processing.
+ */
+export async function resumeAllDownloads(reason = 'manual') {
+  const loadedManager = await loadElectronDownloadManager();
+  if (!loadedManager) return;
+
+  const pausedDownloads = getPausedDownloads();
+  if (pausedDownloads.size === 0) {
+    log(
+      `resumeAllDownloads called (${reason}) but there were no paused downloads`,
+      'electronDownloads',
+      'log',
+    );
+    processQueue();
+    return;
+  }
+
+  log(
+    `Resuming ${pausedDownloads.size} paused downloads (${reason})`,
+    'electronDownloads',
+    'warn',
+  );
+  logPausedDownloadsContext(`before resume-all (${reason})`);
+
+  pausedDownloads.forEach((download, key) => {
+    // If pause was requested before uuid assignment, clear the request.
+    if (download.pauseRequested) {
+      download.pauseRequested = false;
+    }
+
+    if (!download.uuid) {
+      log(
+        `Cannot resume paused download without uuid (${reason})`,
+        'electronDownloads',
+        'warn',
+        key,
+        download.item.url,
+      );
+      return;
+    }
+
+    try {
+      download.state = DownloadState.ACTIVE;
+      loadedManager.resumeDownload(download.uuid);
+    } catch (error) {
+      captureElectronError(error, {
+        contexts: {
+          fn: {
+            download,
+            key,
+            name: 'downloads.ts resumeAllDownloads',
+            reason,
+          },
+        },
+      });
+    }
+  });
+
+  addQueueBreadcrumb(`resume-all-${reason}`, { force: true });
+  processQueue();
+}
+
+/**
  * Stop low priority downloads (Pause them).
  */
-function stopLowPriorityDownloads() {
+function stopLowPriorityDownloads(reason = 'high-priority-enqueued') {
   const activeLowPriority = getActiveLowPriorityDownloads();
   let pausedAny = false;
   activeLowPriority.forEach((download, key) => {
@@ -508,6 +593,7 @@ function stopLowPriorityDownloads() {
     }
   });
   if (pausedAny) {
+    logPausedDownloadsContext(`stopLowPriorityDownloads (${reason})`);
     addQueueBreadcrumb('low-priority-paused-for-high-priority', {
       force: true,
     });
@@ -720,6 +806,15 @@ async function processQueue() {
 
   // Nothing to process
   if (nextItemType === null) {
+    if (activeCount === 0 && pausedDownloads.size > 0) {
+      log(
+        'Queue is stalled: no active downloads but paused downloads exist. Triggering auto-resume.',
+        'electronDownloads',
+        'warn',
+      );
+      logPausedDownloadsContext('auto-resume-stalled-queue');
+      await resumeAllDownloads('auto-stalled-queue');
+    }
     return;
   }
 
@@ -864,6 +959,14 @@ async function startDownload(
         current.pauseRequested = false;
         current.state = DownloadState.PAUSED;
         manager.pauseDownload(downloadId);
+        log(
+          'Applied deferred pause to initializing download',
+          'electronDownloads',
+          'warn',
+          key,
+          url,
+        );
+        processQueue();
       }
     }
   } catch (error) {

@@ -118,6 +118,7 @@ const electronApi: ElectronApi = {
   readdir: readDirectory,
   registerShortcut: (n, s) => invoke('registerShortcut', n, s),
   removeListeners: (c) => removeAllIpcListeners(c),
+  resumeAllDownloads: () => send('resumeAllDownloads'),
   robot,
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),
   setElectronUrlVariables: (v) => send('setElectronUrlVariables', v),
