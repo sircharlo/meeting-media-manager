@@ -1,3 +1,4 @@
+import { log } from 'src/shared/vanilla';
 import { vi } from 'vitest';
 
 import { initHttpHandlers } from './../mocks/http';
@@ -11,7 +12,7 @@ vi.mock('src-electron/main/utils', async (importOriginal) => {
         error instanceof Error &&
         error.message === 'Function not implemented.'
       ) {
-        console.error(error);
+        log(error);
       }
     }),
   };
@@ -26,7 +27,7 @@ vi.mock('src-electron/preload/log', async (importOriginal) => {
         error instanceof Error &&
         error.message === 'Function not implemented.'
       ) {
-        console.error(error);
+        log(error);
       }
     }),
   };

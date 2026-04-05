@@ -11,10 +11,12 @@ import type {
 } from 'src/types';
 
 import { defineStore } from 'pinia';
+import { i18n } from 'src/boot/i18n';
 import { LONG_MEDIA_DURATION } from 'src/constants/jw';
 import { settingsDefinitions } from 'src/constants/settings';
 import { isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { log } from 'src/shared/vanilla';
 import { datesAreSame, formatDate } from 'src/utils/date';
 import {
   getAdditionalMediaPath,
@@ -23,6 +25,7 @@ import {
   registerCachePathProvider,
 } from 'src/utils/fs';
 import { isEmpty, isUUID } from 'src/utils/general';
+import { getCurrentPlatform } from 'src/utils/platform';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
@@ -73,6 +76,7 @@ interface Store {
   selectedDate: string;
   timerWindowVisible: boolean;
   websiteSelection: JwSite;
+  zoomHelperLogs: string[];
 }
 
 const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
@@ -80,8 +84,18 @@ const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
   SettingsItem,
 ][];
 
+const PLATFORM = getCurrentPlatform();
+
+let zoomHelperSyncInProgress = false;
+
 export const useCurrentStateStore = defineStore('current-state', {
   actions: {
+    addZoomHelperLog(log: string) {
+      this.zoomHelperLogs.push(log);
+      if (this.zoomHelperLogs.length > 100) {
+        this.zoomHelperLogs.shift();
+      }
+    },
     areDependenciesSatisfied(
       settingsDefinition: SettingsItem,
       congregation: string,
@@ -225,10 +239,65 @@ export const useCurrentStateStore = defineStore('current-state', {
 
       this.currentCongregation = value.toString();
       await getCachedUserDataPath();
+
+      await this.syncZoomHelper();
+
       return this.getInvalidSettings(this.currentCongregation).length > 0;
     },
     setTimerWindowVisible(visible: boolean) {
       this.timerWindowVisible = visible;
+    },
+    async syncZoomHelper() {
+      if (PLATFORM !== 'win32' || zoomHelperSyncInProgress) return;
+
+      const enabled = this.currentSettings?.zoomMeetingManagerEnable;
+
+      const {
+        ensureZoomRequirements,
+        isZoomPythonInstalled,
+        startZoomHelper,
+        stopZoomHelper,
+      } = globalThis.electronApi;
+
+      if (!enabled) {
+        stopZoomHelper();
+        return;
+      }
+
+      zoomHelperSyncInProgress = true;
+      try {
+        const pythonInstalled = await isZoomPythonInstalled();
+        if (!pythonInstalled) {
+          const { createTemporaryNotification } =
+            await import('src/helpers/notifications');
+          createTemporaryNotification({
+            caption: (i18n.global.t as (key: string) => string)(
+              'zoom-meeting-manager-python-required-caption',
+            ),
+            message: (i18n.global.t as (key: string) => string)(
+              'zoom-meeting-manager-python-required-message',
+            ),
+            timeout: 0,
+            type: 'negative',
+          });
+
+          // Disable meeting manager
+          if (this.currentSettings) {
+            this.currentSettings.zoomMeetingManagerEnable = false;
+          }
+          stopZoomHelper();
+          return;
+        }
+
+        const requirementsInstalled = await ensureZoomRequirements();
+        if (!requirementsInstalled) {
+          log('Failed to install requirements', 'zoom', 'error');
+        }
+
+        startZoomHelper();
+      } finally {
+        zoomHelperSyncInProgress = false;
+      }
     },
   },
   getters: {
@@ -488,6 +557,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       selectedDate: formatDate(new Date(), 'YYYY/MM/DD'),
       timerWindowVisible: false,
       websiteSelection: undefined,
+      zoomHelperLogs: [],
     };
   },
 });

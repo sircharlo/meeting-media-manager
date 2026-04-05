@@ -10,6 +10,7 @@ import {
   sendToWindow,
 } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
+import { MEDIA_WINDOW_TITLE } from 'src/constants/zoom';
 import { log, throttleWithTrailing } from 'src/shared/vanilla';
 import upath from 'upath';
 
@@ -523,7 +524,7 @@ export function createMediaWindow() {
     opacity: 1,
     roundedCorners: PLATFORM === 'darwin',
     thickFrame: false,
-    title: 'Media Player - M³',
+    title: MEDIA_WINDOW_TITLE,
     width: HD_RESOLUTION[0],
   });
 

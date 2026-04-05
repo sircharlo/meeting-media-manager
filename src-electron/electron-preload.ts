@@ -33,6 +33,7 @@ import {
   openWebsiteWindow,
   zoomWebsiteWindow,
 } from 'src-electron/preload/website';
+import { launchZoomMeeting } from 'src-electron/preload/zoom';
 import path from 'upath';
 
 initCloseListeners();
@@ -53,12 +54,14 @@ const electronApi: ElectronApi = {
   askForMediaAccess: () => send('askForMediaAccess'),
   cancelAllDownloads: () => send('cancelAllDownloads'),
   checkForUpdates: () => send('checkForUpdates'),
+  clickZoomElement: (h, o) => invoke('clickZoomElement', h, o),
   closeWebsiteWindow,
   convertHeic,
   convertPdfToImages,
   createVideoFromNonVideo: (f, fP, oD) =>
     invoke('createVideoFromNonVideo', f, fP, oD),
   downloadFile: (u, sD, dF, lP) => invoke('downloadFile', u, sD, dF, lP),
+  ensureZoomRequirements: () => invoke('ensureZoomRequirements'),
   executeQuery,
   fileUrlToPath,
   focusMediaWindow: () => send('focusMediaWindow'),
@@ -76,12 +79,18 @@ const electronApi: ElectronApi = {
   getUserDataPath: () => invoke('getUserDataPath'),
   getVideoDuration,
   getZipEntries: (p) => invoke('getZipEntries', p),
+  getZoomDialogChildren: (c, p) => invoke('getZoomDialogChildren', c, p),
+  getZoomElementState: (h, c) => invoke('getZoomElementState', h, c),
+  getZoomElementTitle: (h, c) => invoke('getZoomElementTitle', h, c),
   inferExtension,
   isArchitectureMismatch: () => invoke('isArchitectureMismatch'),
   isDownloadComplete: (downloadId: string) =>
     invoke('isDownloadComplete', downloadId),
   isDownloadErrorExpected: () => invoke('isDownloadErrorExpected'),
   isUsablePath: (p) => invoke('isUsablePath', p),
+  isZoomPythonInstalled: () => invoke('isZoomPythonInstalled'),
+  launchZoomMeeting,
+  listZoomWindows: (m, c) => invoke('listZoomWindows', m, c),
   moveMediaWindow: (t, w) => send('moveMediaWindow', t, w),
   moveTimerWindow: (t, w) => send('moveTimerWindow', t, w),
   navigateWebsiteWindow,
@@ -118,10 +127,15 @@ const electronApi: ElectronApi = {
   readdir: readDirectory,
   registerShortcut: (n, s) => invoke('registerShortcut', n, s),
   removeListeners: (c) => removeAllIpcListeners(c),
+  restartZoomHelper: () => send('restartZoomHelper'),
   robot,
+  sendZoomWindowKeys: (h, k) => invoke('sendZoomWindowKeys', h, k),
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),
   setElectronUrlVariables: (v) => send('setElectronUrlVariables', v),
   setHardwareAcceleration: (v) => invoke('set-hardware-acceleration', v),
+  startZoomHelper: () => send('startZoomHelper'),
+  stopZoomHelper: () => send('stopZoomHelper'),
+  toggleAuthorizedClose: (v) => send('authorizedClose', v),
   toggleMediaWindow: (s, f) => send('toggleMediaWindow', s, f),
   toggleTimerWindow: (s) => send('toggleTimerWindow', s),
   unregisterAllShortcuts: () => send('unregisterAllShortcuts'),

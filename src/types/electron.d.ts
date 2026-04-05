@@ -44,6 +44,10 @@ export interface ElectronApi {
   askForMediaAccess: () => void;
   cancelAllDownloads: () => void;
   checkForUpdates: () => void;
+  clickZoomElement: (
+    handle: number,
+    options: Partial<ZoomUIElement>,
+  ) => Promise<boolean>;
   closeWebsiteWindow: () => void;
   convertHeic: (image: ConversionOptions) => Promise<ArrayBuffer>;
   convertPdfToImages: (
@@ -68,6 +72,14 @@ export interface ElectronApi {
     destFilename?: string,
     lowPriority?: boolean,
   ) => Promise<null | string>;
+  /**
+   * Parses metadata from a media file.
+   *
+   * @param filePath - The path to the media file to be parsed.
+   * @param options - Optional configuration for parsing the media file.
+   * @returns A promise that resolves to the metadata of the media file.
+   */
+  ensureZoomRequirements: () => Promise<boolean>;
   executeQuery: <T extends object = QueryResponseItem>(
     dbPath: string,
     query: string,
@@ -97,20 +109,37 @@ export interface ElectronApi {
   getSharedDataPath: () => Promise<null | string>;
   getUpdatesDisabledPath: () => Promise<string>;
   getUserDataPath: () => Promise<string>;
-  /**
-   * Parses metadata from a media file.
-   *
-   * @param filePath - The path to the media file to be parsed.
-   * @param options - Optional configuration for parsing the media file.
-   * @returns A promise that resolves to the metadata of the media file.
-   */
   getVideoDuration: (filePath: string) => Promise<VideoDuration>;
   getZipEntries: (zipPath: string) => Promise<Record<string, number>>;
+  getZoomDialogChildren: (
+    className: string,
+    parentHandle?: number,
+  ) => Promise<ZoomUIElement[]>;
+  getZoomElementState: (
+    handle: number,
+    controlId: string,
+  ) => Promise<null | {
+    legacy_state?: number;
+    toggle_state?: number;
+    value?: string;
+  }>;
+  getZoomElementTitle: (
+    handle: number,
+    controlId: string,
+  ) => Promise<null | string>;
   inferExtension: (filename: string, filetype?: string) => Promise<string>;
   isArchitectureMismatch: () => Promise<boolean>;
   isDownloadComplete: (downloadId: string) => Promise<boolean | null>;
   isDownloadErrorExpected: () => Promise<boolean>;
   isUsablePath: (path: string) => Promise<boolean>;
+  isZoomPythonInstalled: () => Promise<boolean>;
+  launchZoomMeeting: (meetingId: string) => void;
+  // listZoomMeetingControls: (handle?: number) => Promise<ZoomUIElement[]>;
+  // listZoomWindowChildren: (handle: number) => Promise<ZoomUIElement[]>;
+  listZoomWindows: (
+    mainOnly?: boolean,
+    className?: string,
+  ) => Promise<ZoomUIElement[]>;
   moveMediaWindow: (
     targetScreenNumber?: number,
     windowedMode?: boolean,
@@ -216,10 +245,15 @@ export interface ElectronApi {
   ) => Promise<FileItem[]>;
   registerShortcut: (name: keyof SettingsValues, shortcut: string) => void;
   removeListeners: (channel: ElectronIpcListenKey) => void;
+  restartZoomHelper: () => void;
   robot: typeof robot;
+  sendZoomWindowKeys: (handle: number, keys: string) => Promise<boolean>;
   setAutoStartAtLogin: (value: boolean) => void;
   setElectronUrlVariables: (variables: string) => void;
   setHardwareAcceleration: (disabled: boolean) => void;
+  startZoomHelper: () => void;
+  stopZoomHelper: () => void;
+  toggleAuthorizedClose: (authorized: boolean) => void;
   toggleMediaWindow: (show: boolean, enableFadeTransitions?: boolean) => void;
   toggleTimerWindow: (show: boolean) => void;
   unregisterAllShortcuts: () => void;
@@ -236,8 +270,10 @@ export interface ElectronApi {
 
 // ipcMain.handle / ipcRenderer.invoke channels
 export type ElectronIpcInvokeKey =
+  | 'clickZoomElement'
   | 'createVideoFromNonVideo'
   | 'downloadFile'
+  | 'ensureZoomRequirements'
   | 'getAllScreens'
   | 'getAppDataPath'
   | 'getBetaUpdatesPath'
@@ -248,15 +284,23 @@ export type ElectronIpcInvokeKey =
   | 'getUpdatesDisabledPath'
   | 'getUserDataPath'
   | 'getZipEntries'
+  | 'getZoomDialogChildren'
+  | 'getZoomElementState'
+  | 'getZoomElementTitle'
   | 'isArchitectureMismatch'
   | 'isDownloadComplete'
   | 'isDownloadErrorExpected'
   | 'isUsablePath'
+  | 'isZoomPythonInstalled'
+  | 'listZoomWindows'
   | 'openFileDialog'
   | 'openFolder'
   | 'openFolderDialog'
   | 'registerShortcut'
+  | 'sendZoomWindowKeys'
   | 'set-hardware-acceleration'
+  | 'startZoomHelper'
+  | 'stopZoomHelper'
   | 'unzip';
 
 // BrowserWindow.webContents.send / ipcRenderer.on channels
@@ -272,7 +316,9 @@ export type ElectronIpcListenKey =
   | 'log'
   | 'screenChange'
   | 'screenPrefsChange'
+  | 'setShouldQuit'
   | 'shortcut'
+  | 'syncMeetingSchedule'
   | 'update-available'
   | 'update-download-progress'
   | 'update-downloaded'
@@ -289,13 +335,17 @@ export type ElectronIpcSendKey =
   | 'cancelAllDownloads'
   | 'checkForUpdates'
   | 'focusMediaWindow'
+  | 'launchZoomMeeting'
   | 'moveMediaWindow'
   | 'moveTimerWindow'
   | 'navigateWebsiteWindow'
   | 'openDiscussion'
   | 'openExternal'
   | 'quitAndInstall'
+  | 'restartZoomHelper'
   | 'setElectronUrlVariables'
+  | 'startZoomHelper'
+  | 'stopZoomHelper'
   | 'toggleMediaWindow'
   | 'toggleOpenAtLogin'
   | 'toggleTimerWindow'
@@ -331,4 +381,16 @@ export interface UnzipOptions {
 
 export interface UnzipResult {
   path: string;
+}
+
+export interface ZoomUIElement {
+  class_name: string;
+  control_id?: string;
+  control_type: string;
+  handle: null | number;
+  help_text?: string;
+  is_enabled?: boolean;
+  main_zoom_window?: boolean;
+  pid: number;
+  title: string;
 }

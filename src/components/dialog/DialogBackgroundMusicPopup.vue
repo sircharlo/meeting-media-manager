@@ -111,6 +111,11 @@ import {
 import { remainingTimeBeforeMeetingStart } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadBackgroundMusic } from 'src/helpers/jw-media';
+import {
+  autoLaunchZoomMeetingIfNeeded,
+  automateZoomMeetingSettings,
+  automateZoomPostMeetingSettings,
+} from 'src/helpers/zoom';
 import { log } from 'src/shared/vanilla';
 import { formatTime } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -283,6 +288,8 @@ whenever(
   () => musicPlaying.value,
   () => {
     musicState.value = 'music.playing';
+    autoLaunchZoomMeetingIfNeeded(timeUntilMeeting.value);
+    automateZoomPostMeetingSettings();
   },
 );
 
@@ -434,6 +441,7 @@ function stopMusic(manualStop = false) {
     }
 
     musicState.value = 'music.stopping';
+    automateZoomMeetingSettings();
     fadeToVolumeLevel(0, 5);
   } catch (error) {
     errorCatcher(error);
