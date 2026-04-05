@@ -4,6 +4,12 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.4.4
+
+### 🐞 Bug Fixes
+
+- 🐞 **Navigation**: Skip refreshing past errored meetings.
+
 ## v26.4.3
 
 ### 🛠️ Improvements and Tweaks
