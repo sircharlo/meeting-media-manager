@@ -19,6 +19,7 @@
   "scripts": {
     "electron-rebuild": "./node_modules/.bin/electron-rebuild.cmd -f -m ./node_modules/better-sqlite3 && ./node_modules/.bin/electron-rebuild.cmd -f -m ./node_modules/@jitsi/robotjs",
     "generate:icons": "node ./build/svg2font.js",
+    "generate:jw-icons-fallbacks": "node ./scripts/update-jw-icons-fallbacks.mjs",
     "generate:logos": "icongenie generate -p ./build/profiles",
     "dev": "quasar dev -m electron",
     "build": "quasar build -m electron",
