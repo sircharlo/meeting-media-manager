@@ -1009,6 +1009,33 @@ const checkMemorialDate = async () => {
           type: 'positive',
         });
       }
+
+      // Add Memorial background image as backup media item after welcome video(s)
+      if (introSection && memorialMedia.bg) {
+        introSection.items ??= [];
+
+        const memorialBgFileUrl = isFileUrl(memorialMedia.bg)
+          ? memorialMedia.bg
+          : pathToFileURL(memorialMedia.bg);
+
+        const hasMemorialBgInWelcomeSection = introSection.items.some(
+          (item) =>
+            item.source === 'dynamic' &&
+            item.isImage &&
+            item.fileUrl === memorialBgFileUrl,
+        );
+
+        if (!hasMemorialBgInWelcomeSection) {
+          introSection.items.push({
+            fileUrl: memorialBgFileUrl,
+            isImage: true,
+            source: 'dynamic',
+            title: 'Memorial Background',
+            type: 'media',
+            uniqueId: uuid(),
+          });
+        }
+      }
     } else {
       createTemporaryNotification({
         group: 'memorial-fetch',
