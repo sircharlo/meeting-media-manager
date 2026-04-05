@@ -4,6 +4,25 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.4.3
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Watch Folders**: Added visual notifications when certain watch folder errors occur.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Navigation**: Fixed next-day navigation to include today when appropriate.
+- 🐞 **Memorial**: Handled Memorial-replaced meetings in midweek and weekend media fetchers.
+- 🐞 **Stability**: Guarded `updateState` when `BrowserWindow` is destroyed.
+- 🐞 **Watch Folders**: Detected possible network-folder related watch folder issues.
+
+### 🔧 Chores
+
+- 🔧 **Downloads**: Added download queue breadcrumbs and JWPUB re-download recovery.
+- 🔧 **CI & Testing**: Combined lint and unit tests into a single quality job, updated merge condition check, and fixed a missing mock.
+- 🔧 **Dependencies**: Updated Yarn lockfile and added resolutions for Happy DOM and XML DOM.
+
 ## v26.4.2
 
 ### 🐞 Bug Fixes
