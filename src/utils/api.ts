@@ -11,7 +11,7 @@ import type {
 
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { log } from 'src/shared/vanilla';
-import { isInPast } from 'src/utils/date';
+import { addToDate, dateFromString, isInPast } from 'src/utils/date';
 import { betaUpdatesDisabled } from 'src/utils/fs';
 
 const fetchCache = new Map<string, Response>();
@@ -236,8 +236,10 @@ export const fetchMemorials = async (): Promise<null | Record<
       try {
         if (!key || !value || /[a-zA-Z]/.test(value)) continue;
 
-        const valueIsInPast = isInPast(value);
-        if (valueIsInPast) continue;
+        const valueIsMoreThanOneMonthInPast = isInPast(
+          addToDate(dateFromString(value), { months: 1 }),
+        );
+        if (valueIsMoreThanOneMonthInPast) continue;
 
         const year = Number.parseInt(key);
         if (!year || Number.isNaN(year)) continue;

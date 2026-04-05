@@ -99,27 +99,30 @@ const shouldUseChangedMeetingSchedule = (lookupDate?: Date | string) => {
 export const isReplacedByMemorial = (lookupDate?: Date) => {
   try {
     const currentState = useCurrentStateStore();
-    if (
-      !lookupDate ||
-      currentState.currentSettings?.disableMediaFetching ||
-      !currentState.currentSettings?.memorialDate
-    ) {
+    const jwStore = useJwStore();
+    if (!lookupDate || currentState.currentSettings?.disableMediaFetching) {
       return false;
     }
 
     lookupDate = dateFromString(lookupDate);
-    const memorialDate = dateFromString(
-      currentState.currentSettings.memorialDate,
-    );
-
-    const memorialInWeekend = [0, 6].includes(memorialDate.getDay());
     const lookupDateInWeekend = [0, 6].includes(lookupDate.getDay());
-
-    if (memorialInWeekend !== lookupDateInWeekend) return false;
-    return datesAreSame(
-      getSpecificWeekday(lookupDate, 0),
-      getSpecificWeekday(memorialDate, 0),
+    const lookupWeekMonday = getSpecificWeekday(lookupDate, 0);
+    const memorialDates = [
+      ...Object.values(jwStore.memorials ?? {}),
+      currentState.currentSettings?.memorialDate,
+    ].filter((memorialDate): memorialDate is `${number}/${number}/${number}` =>
+      Boolean(memorialDate),
     );
+
+    return memorialDates.some((memorialDate) => {
+      const parsedMemorialDate = dateFromString(memorialDate);
+      const memorialInWeekend = [0, 6].includes(parsedMemorialDate.getDay());
+      if (memorialInWeekend !== lookupDateInWeekend) return false;
+      return datesAreSame(
+        lookupWeekMonday,
+        getSpecificWeekday(memorialDate, 0),
+      );
+    });
   } catch (error) {
     errorCatcher(error);
     return false;
