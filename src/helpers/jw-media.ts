@@ -56,6 +56,7 @@ import {
   formatDate,
   getDateDiff,
   getSpecificWeekday,
+  isInPast,
   subtractFromDate,
 } from 'src/utils/date';
 import {
@@ -766,15 +767,24 @@ export const fetchMedia = async () => {
               if (!day.mediaSections) day.mediaSections = [];
               createMeetingSections(day);
               replaceMissingMediaByPubMediaId(day, fetchResult.media);
-              day.status = fetchResult.error ? 'error' : 'complete';
+              if (fetchResult.error && isInPast(dayDate)) {
+                log(
+                  `⚠️ Silencing meeting media fetch error for past date ${formatDate(dayDate, 'YYYY/MM/DD')}`,
+                  'mediaFetching',
+                  'warn',
+                );
+                day.status = 'complete';
+              } else {
+                day.status = fetchResult.error ? 'error' : 'complete';
+              }
             } else {
               log('❌ Failed to fetch media', 'mediaFetching', 'error');
-              day.status = 'error';
+              day.status = isInPast(dayDate) ? 'complete' : 'error';
             }
           })
           .catch((error) => {
             log('❌ Error during media processing:', 'mediaFetching', 'error');
-            day.status = 'error';
+            day.status = isInPast(day.date) ? 'complete' : 'error';
             throw error;
           });
       } catch (error) {
