@@ -28,12 +28,13 @@ const logUpdaterMessage = (
   level: 'debug' | 'error' | 'info' | 'warn',
   message: unknown,
 ) => {
-  const normalizedMessage =
-    typeof message === 'string'
-      ? message
-      : message instanceof Error
-        ? message.message
-        : '';
+  let normalizedMessage = '';
+
+  if (typeof message === 'string') {
+    normalizedMessage = message;
+  } else if (message instanceof Error) {
+    normalizedMessage = message.message;
+  }
 
   if (isIgnoredUpdaterLog(normalizedMessage)) return;
   log(message, 'electronUpdater', level);

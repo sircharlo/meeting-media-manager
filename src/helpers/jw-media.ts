@@ -95,6 +95,7 @@ const {
   executeQuery,
   fileUrlToPath,
   fs,
+  getZipEntries,
   isUsablePath: isUsablePathRaw,
   path,
   pathToFileURL,
@@ -107,6 +108,26 @@ const { basename, changeExt, dirname, extname, join } = path;
 
 const isUsablePathCache = new Map<string, boolean>();
 const inFlight = new Map<string, Promise<boolean>>();
+
+type InvalidJwpubRedownloadStatus = 'attempted' | 'failed' | 'recovered';
+
+const trackInvalidJwpubRedownload = async (
+  status: InvalidJwpubRedownloadStatus,
+  data?: { path?: string; publication?: null | string },
+) => {
+  const { addBreadcrumb, setTag } = await import('@sentry/vue');
+  setTag('invalid_jwpub_redownload_attempted', status);
+  addBreadcrumb({
+    category: 'downloads.jwpub',
+    data: {
+      path: data?.path,
+      publication: data?.publication,
+      status,
+    },
+    level: status === 'failed' ? 'error' : 'warning',
+    message: 'invalid-jwpub-redownload-attempted',
+  });
+};
 
 const getMemorialMediaCacheKey = (
   langwritten: JwLangCode,
@@ -458,6 +479,13 @@ export const downloadFileIfNeeded = async ({
               path: destinationPath,
             });
           }, 200);
+        }
+        if (currentStateStore.downloadProgress[downloadId]?.error) {
+          clearInterval(interval);
+          resolve({
+            error: true,
+            path: destinationPath,
+          });
         }
       }, 500); // Check every 500ms
     });
@@ -1911,7 +1939,11 @@ export const watchedItemMapper: (
           watchedDayFolder,
           filename,
         );
-        log(`sectionInfo: ${sectionInfo}`, 'watchedFolder', 'info');
+        log(
+          `sectionInfo: ${JSON.stringify(sectionInfo)}`,
+          'watchedFolder',
+          'info',
+        );
         if (sectionInfo) {
           section = sectionInfo.section;
           order = sectionInfo.order;
@@ -2875,6 +2907,13 @@ const downloadMissingMedia = async (
         basename(bestItem.file.url),
         extname(itemUrl),
       );
+
+      let lowPriority = false;
+
+      if (!isMemorialMeeting && meetingDate) {
+        lowPriority = getDateDiff(meetingDate, new Date(), 'days') > 1;
+      }
+
       if (
         bestItem.file?.url &&
         (downloadedFile?.new || !(await exists(join(pubDir, itemFilename))))
@@ -2882,11 +2921,7 @@ const downloadMissingMedia = async (
         await downloadFileIfNeeded({
           dir: pubDir,
           filename: itemFilename,
-          lowPriority: isMemorialMeeting
-            ? false
-            : meetingDate
-              ? getDateDiff(meetingDate, new Date(), 'days') > 1
-              : false,
+          lowPriority,
           meetingDate,
           url: itemUrl,
         });
@@ -3225,17 +3260,62 @@ const downloadJwpub = async (
     const dir = await getPublicationDirectory(publication);
     await updateLastUsedDate(dir, meetingDate || new Date());
 
-    return await downloadFileIfNeeded({
+    let lowPriority = false;
+
+    if (!isMemorialMeeting && meetingDate) {
+      lowPriority = getDateDiff(meetingDate, new Date(), 'days') > 1;
+    }
+
+    const downloadOptions = {
       dir,
-      lowPriority: isMemorialMeeting
-        ? false
-        : meetingDate
-          ? getDateDiff(meetingDate, new Date(), 'days') > 1
-          : false,
+      lowPriority,
       meetingDate,
       size: mediaLinks[0]?.filesize,
       url: mediaLinks[0]?.file.url ?? '',
-    });
+    };
+
+    const isValidJwpubArchive = async (jwpubPath?: string) => {
+      if (!jwpubPath) return false;
+      try {
+        const entries = await getZipEntries(jwpubPath);
+        return !!entries['contents'];
+      } catch (error) {
+        log(
+          `[downloadJwpub] Corrupt JWPUB detected at ${jwpubPath}.`,
+          'mediaFetching',
+          'warn',
+          error,
+        );
+        return false;
+      }
+    };
+
+    const firstAttempt = await downloadFileIfNeeded(downloadOptions);
+    if (firstAttempt.error || !firstAttempt.path) return firstAttempt;
+    if (await isValidJwpubArchive(firstAttempt.path)) return firstAttempt;
+
+    // Self-heal once by deleting and re-downloading when the archive is invalid.
+    await trackInvalidJwpubRedownload('attempted', {
+      path: firstAttempt.path,
+      publication: publication.pub,
+    }).catch(() => undefined);
+    await remove(firstAttempt.path).catch(() => undefined);
+    const secondAttempt = await downloadFileIfNeeded(downloadOptions);
+    if (secondAttempt.error || !secondAttempt.path) return secondAttempt;
+    if (await isValidJwpubArchive(secondAttempt.path)) {
+      await trackInvalidJwpubRedownload('recovered', {
+        path: secondAttempt.path,
+        publication: publication.pub,
+      }).catch(() => undefined);
+      return secondAttempt;
+    }
+
+    await trackInvalidJwpubRedownload('failed', {
+      path: secondAttempt.path,
+      publication: publication.pub,
+    }).catch(() => undefined);
+    await remove(secondAttempt.path).catch(() => undefined);
+    return handleDownloadError();
   } catch (e) {
     errorCatcher(e);
     return {
