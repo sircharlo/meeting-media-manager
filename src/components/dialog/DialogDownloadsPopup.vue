@@ -122,6 +122,15 @@
         <q-btn
           color="secondary"
           flat
+          icon="mmm-pause"
+          :label="t('pause')"
+          @click="onPauseAllDownloads"
+        >
+          <q-tooltip>{{ t('pause') }}</q-tooltip>
+        </q-btn>
+        <q-btn
+          color="secondary"
+          flat
           icon="mmm-play"
           :label="t('resume')"
           @click="onResumeAllDownloads"
@@ -406,5 +415,9 @@ const onRefreshMeetingMedia = () => {
 
 const onResumeAllDownloads = () => {
   globalThis.electronApi.resumeAllDownloads();
+};
+
+const onPauseAllDownloads = () => {
+  globalThis.electronApi.pauseAllDownloads();
 };
 </script>

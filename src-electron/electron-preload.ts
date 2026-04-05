@@ -113,6 +113,7 @@ const electronApi: ElectronApi = {
   parseMediaFile,
   path,
   pathToFileURL,
+  pauseAllDownloads: () => send('pauseAllDownloads'),
   PLATFORM,
   quitAndInstall: () => send('quitAndInstall'),
   readdir: readDirectory,
