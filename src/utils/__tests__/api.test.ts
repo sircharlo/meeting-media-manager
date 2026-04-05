@@ -131,10 +131,12 @@ describe('fetchMemorials', () => {
     clearFetchCache();
   });
 
-  it('filters out past, malformed, and non-numeric memorial entries', async () => {
-    vi.spyOn(dateUtils, 'isInPast').mockImplementation(
-      (value) => value === '2024/03/24',
-    );
+  it('filters out memorials that are more than one month old, malformed, and non-numeric entries', async () => {
+    vi.spyOn(dateUtils, 'isInPast').mockImplementation((value) => {
+      const dateValue = new Date(value);
+      if (Number.isNaN(dateValue.getTime())) return false;
+      return dateValue.toISOString().startsWith('2024-04-24');
+    });
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(
         JSON.stringify({
