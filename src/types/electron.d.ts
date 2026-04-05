@@ -216,6 +216,7 @@ export interface ElectronApi {
   ) => Promise<FileItem[]>;
   registerShortcut: (name: keyof SettingsValues, shortcut: string) => void;
   removeListeners: (channel: ElectronIpcListenKey) => void;
+  resumeAllDownloads: () => void;
   robot: typeof robot;
   setAutoStartAtLogin: (value: boolean) => void;
   setElectronUrlVariables: (variables: string) => void;
@@ -295,6 +296,7 @@ export type ElectronIpcSendKey =
   | 'openDiscussion'
   | 'openExternal'
   | 'quitAndInstall'
+  | 'resumeAllDownloads'
   | 'setElectronUrlVariables'
   | 'toggleMediaWindow'
   | 'toggleOpenAtLogin'

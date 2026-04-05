@@ -258,6 +258,11 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
     // --- Part 1: congregation-switch logic ---
     //
     if (oldCongregation && queues.meetings[oldCongregation]) {
+      log(
+        `⏸️ Pausing meeting fetch queue for congregation switch: ${oldCongregation}`,
+        'mediaFetching',
+        'warn',
+      );
       queues.meetings[oldCongregation].pause();
     }
 
@@ -292,6 +297,11 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
     delayedCacheClear();
 
     if (queues.meetings[newCongregation]) {
+      log(
+        `▶️ Starting meeting fetch queue for congregation switch: ${newCongregation}`,
+        'mediaFetching',
+        'info',
+      );
       queues.meetings[newCongregation].start();
     }
 
@@ -412,6 +422,10 @@ watch(online, (isNowOnline) => {
     const meetingQueue = meetings[congregation];
 
     if (isNowOnline) {
+      log(
+        '🌐 Online: starting active congregation meeting queue',
+        'mediaFetching',
+      );
       meetingQueue?.start();
       jwStore.updateYeartext({
         isSignLanguage: currentLangObject.value?.isSignLanguage,
@@ -421,6 +435,10 @@ watch(online, (isNowOnline) => {
       });
       jwStore.updateJwLanguages(online.value);
     } else {
+      log(
+        '📴 Offline: pausing active congregation meeting queue',
+        'mediaFetching',
+      );
       meetingQueue?.pause();
     }
   } catch (error) {

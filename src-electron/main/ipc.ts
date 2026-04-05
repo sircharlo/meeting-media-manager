@@ -31,6 +31,7 @@ import {
   downloadFile,
   isDownloadComplete,
   isDownloadErrorExpected,
+  resumeAllDownloads,
 } from 'src-electron/main/downloads';
 import { createVideoFromNonVideo } from 'src-electron/main/ffmpeg';
 import {
@@ -147,6 +148,10 @@ handleIpcSend('askForMediaAccess', askForMediaAccess);
 
 handleIpcSend('cancelAllDownloads', () => {
   cancelAllDownloads();
+});
+
+handleIpcSend('resumeAllDownloads', () => {
+  resumeAllDownloads('renderer-manual');
 });
 
 handleIpcSend('checkForUpdates', () => triggerUpdateCheck());
