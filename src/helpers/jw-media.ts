@@ -28,7 +28,12 @@ import {
   MAX_SONGS,
 } from 'src/constants/jw';
 import mepslangs from 'src/constants/mepslangs';
-import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
+import {
+  isCoWeek,
+  isMwMeetingDay,
+  isReplacedByMemorial,
+  isWeMeetingDay,
+} from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { exportAllDays } from 'src/helpers/export-media';
 import {
@@ -2013,6 +2018,16 @@ export const getWeMedia = async (lookupDate: Date) => {
   try {
     const currentStateStore = useCurrentStateStore();
     lookupDate = dateFromString(lookupDate);
+
+    // The weekend meeting is replaced by the Memorial when the Memorial falls
+    // on a weekend day in the same week as this lookup date.
+    if (isReplacedByMemorial(lookupDate)) {
+      return {
+        error: false,
+        media: {} as Record<string, MediaItem[]>,
+      };
+    }
+
     const monday = getSpecificWeekday(lookupDate, 0);
 
     const getIssueWithFallback = async (
@@ -2417,6 +2432,16 @@ export const getMwMedia = async (lookupDate: Date) => {
   try {
     const currentStateStore = useCurrentStateStore();
     lookupDate = dateFromString(lookupDate);
+
+    // The midweek meeting is replaced by the Memorial when the Memorial falls
+    // on a weekday in the same week as this lookup date.
+    if (isReplacedByMemorial(lookupDate)) {
+      return {
+        error: false,
+        media: {} as Record<string, MediaItem[]>,
+      };
+    }
+
     // if not monday, get the previous monday
     const monday = getSpecificWeekday(lookupDate, 0);
     const issue = subtractFromDate(monday, {
