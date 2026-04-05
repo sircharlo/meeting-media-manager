@@ -176,6 +176,9 @@ export const electronApi: ElectronApi = {
   },
   path: upath,
   pathToFileURL,
+  pauseAllDownloads: function () {
+    throw new Error('Function not implemented.');
+  },
   PLATFORM: 'win32',
   quitAndInstall: function () {
     throw new Error('Function not implemented.');
@@ -185,6 +188,9 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   removeListeners: function (channel) {
+    throw new Error('Function not implemented.');
+  },
+  resumeAllDownloads: function () {
     throw new Error('Function not implemented.');
   },
   robot,

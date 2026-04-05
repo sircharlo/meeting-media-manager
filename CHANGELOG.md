@@ -4,6 +4,17 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.4.6
+
+### 🐞 Bug Fixes
+
+- 🐞 **Network**: Cleared cached requests when base URL changes.
+- 🐞 **Fonts**: Added migration to clear the Fonts folder to ensure the latest version of fonts as of April 2026.
+
+### 🔧 Chores
+
+- 🔧 **Downloads**: Moved `downloadBackgroundMusic` logic to prevent download queue issues.
+
 ## v26.4.5
 
 ### 🐞 Bug Fixes
