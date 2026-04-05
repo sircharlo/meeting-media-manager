@@ -4,6 +4,12 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.4.5
+
+### 🐞 Bug Fixes
+
+- 🐞 **Memorial**: Fixed memorial replacement and retention window to keep past Memorial in memory for 1 month.
+
 ## v26.4.4
 
 ### 🐞 Bug Fixes
