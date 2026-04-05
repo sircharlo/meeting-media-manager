@@ -10,6 +10,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { fetchRaw } from 'src/utils/api';
 import { getFontsPath } from 'src/utils/fs';
 import { useJwStore } from 'stores/jw';
+import { ref } from 'vue';
 
 const { fs, path } = globalThis.electronApi;
 const { ensureDir, exists, readFile, writeFile } = fs;
@@ -17,6 +18,7 @@ const { extname, join } = path;
 
 let jwIconsGlyphMapPromise: null | Promise<void> = null;
 let jwIconsGlyphMap: null | Record<string, string> = null;
+const jwIconsGlyphMapVersion = ref(0);
 
 // Yeartext font configuration per writing script
 interface YeartextFontConfig {
@@ -304,20 +306,25 @@ const buildJwIconsMap = async (fontPath: string) => {
         }
       }
       jwIconsGlyphMap = map;
+      jwIconsGlyphMapVersion.value++;
     } catch (error) {
       errorCatcher(error, {
         contexts: { fn: { fontPath, name: 'buildJwIconsMap' } },
       });
       jwIconsGlyphMap = fallbackJwIconsGlyphMap;
+      jwIconsGlyphMapVersion.value++;
     }
   })();
   return jwIconsGlyphMapPromise;
 };
 
 export const getJwIconFromKeyword = (keyword: number | string | undefined) => {
+  const glyphMapVersion = jwIconsGlyphMapVersion.value;
+  void glyphMapVersion;
   if (!keyword) return '';
   const icon = keywordToJwIconMapping[keyword.toString()];
   if (!icon) return '';
+  if (jwIconsGlyphMapPromise && !jwIconsGlyphMap) return '';
   return jwIconsGlyphMap?.[icon] || fallbackJwIconsGlyphMap[icon] || '';
 };
 
