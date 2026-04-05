@@ -27,7 +27,7 @@ import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
 
-const { fs, path } = globalThis.electronApi;
+const { cancelAllDownloads, fs, path } = globalThis.electronApi;
 const { ensureDir } = fs;
 const { join } = path;
 
@@ -213,9 +213,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       if (!value) return false;
 
       // Cancel all pending downloads from the previous congregation
-      if (globalThis?.electronApi) {
-        globalThis.electronApi.cancelAllDownloads();
-      }
+      cancelAllDownloads();
       this.downloadProgress = {};
 
       // Dismiss all active notifications when changing congregation

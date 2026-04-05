@@ -811,6 +811,7 @@ export const fetchMedia = async () => {
       }
     }
     await queue?.onIdle();
+    downloadBackgroundMusic();
     log('✅ All media processing completed', 'mediaFetching', 'info');
     queue?.clear();
     exportAllDays();

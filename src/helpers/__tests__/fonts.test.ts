@@ -4,7 +4,7 @@ import { registerCachePathProvider } from 'src/utils/fs';
 import { join } from 'upath';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { fs } = globalThis.electronApi;
+const { fs, getAppDataPath } = globalThis.electronApi;
 const { emptyDir, ensureDir, pathExists, readFile, remove, writeFile } = fs;
 
 vi.mock('src/helpers/error-catcher', () => ({
@@ -23,7 +23,7 @@ describe('getLocalFontPath', () => {
     vi.resetModules();
     setActivePinia(createPinia());
     registerCachePathProvider(() => undefined);
-    appDataPath = await globalThis.electronApi.getAppDataPath();
+    appDataPath = await getAppDataPath();
     await remove(appDataPath);
   });
 

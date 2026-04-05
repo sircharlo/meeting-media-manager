@@ -75,9 +75,7 @@ import { exportAllDays } from 'src/helpers/export-media';
 import { setElementFont } from 'src/helpers/fonts';
 import { watchExternalFolder } from 'src/helpers/fs';
 import {
-  downloadBackgroundMusic,
   downloadSongbookVideos,
-  fetchMedia,
   getJwMepsInfo,
   setUrlVariables,
   watchedItemMapper,
@@ -178,6 +176,7 @@ const {
   onDownloadProgress,
   onDownloadStarted,
   onGpuCrashDetected,
+  onHardwareAccelerationTemporaryDisabled,
   onLog,
   onShortcut,
   onVideoCaptureCrashDetected,
@@ -188,6 +187,8 @@ const {
   removeListeners,
   setAutoStartAtLogin,
   setElectronUrlVariables,
+  setHardwareAcceleration,
+  toggleTimerWindow,
 } = globalThis.electronApi;
 const { basename, dirname } = path;
 updateMemorials(online.value);
@@ -269,7 +270,7 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
 
     if (!newCongregation) {
       toggleMediaWindowVisibility(false);
-      globalThis.electronApi.toggleTimerWindow(false);
+      toggleTimerWindow(false);
       currentState.setTimerWindowVisible(false);
       navigateToCongregationSelector();
       return; // exit early — no need to run notifications
@@ -294,8 +295,6 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
     const scheduleChanged = !!(await syncMeetingSchedule());
 
     updateLookupPeriod({ reset: scheduleChanged });
-    await fetchMedia();
-    downloadBackgroundMusic();
     delayedCacheClear();
 
     if (queues.meetings[newCongregation]) {
@@ -312,10 +311,10 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
     const timerAutoOpen = currentSettings.value?.timerAutoOpen;
 
     if (!timerEnabled) {
-      globalThis.electronApi.toggleTimerWindow(false);
+      toggleTimerWindow(false);
       currentState.setTimerWindowVisible(false);
     } else if (timerAutoOpen) {
-      globalThis.electronApi.toggleTimerWindow(true);
+      toggleTimerWindow(true);
       currentState.setTimerWindowVisible(true);
     }
 
@@ -644,10 +643,10 @@ watch(
   ],
   ([enabled, autoOpen]) => {
     if (!enabled) {
-      globalThis.electronApi.toggleTimerWindow(false);
+      toggleTimerWindow(false);
       currentState.setTimerWindowVisible(false);
     } else if (autoOpen) {
-      globalThis.electronApi.toggleTimerWindow(true);
+      toggleTimerWindow(true);
       currentState.setTimerWindowVisible(true);
     }
   },
@@ -674,9 +673,7 @@ watchImmediate(
   () => currentSettings.value?.disableHardwareAcceleration,
   (newDisableHardwareAcceleration) => {
     if (newDisableHardwareAcceleration !== undefined) {
-      globalThis.electronApi.setHardwareAcceleration(
-        newDisableHardwareAcceleration,
-      );
+      setHardwareAcceleration(newDisableHardwareAcceleration);
       // Check if hardware acceleration is disabled via settings on startup
       if (
         newDisableHardwareAcceleration &&
@@ -1028,7 +1025,7 @@ const initListeners = () => {
     });
   });
 
-  globalThis.electronApi.onHardwareAccelerationTemporaryDisabled(() => {
+  onHardwareAccelerationTemporaryDisabled(() => {
     createTemporaryNotification({
       caption: t('gpu-crash-detected-explain'),
       icon: 'mmm-warning',

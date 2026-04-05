@@ -288,7 +288,6 @@
               :label="t('continue')"
               @click="
                 fetchMedia();
-                downloadBackgroundMusic();
                 step = 101;
               "
             />
@@ -651,11 +650,7 @@ import TimeInput from 'components/form-inputs/TimeInput.vue';
 import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import {
-  downloadBackgroundMusic,
-  downloadSongbookVideos,
-  fetchMedia,
-} from 'src/helpers/jw-media';
+import { downloadSongbookVideos, fetchMedia } from 'src/helpers/jw-media';
 import { localeOptions } from 'src/i18n';
 import { camelToKebabCase } from 'src/utils/general';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';

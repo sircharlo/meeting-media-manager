@@ -120,24 +120,6 @@
       <q-separator class="bg-accent-200" />
       <div class="q-px-md q-pt-md row q-gutter-sm justify-end">
         <q-btn
-          color="secondary"
-          flat
-          icon="mmm-pause"
-          :label="t('pause')"
-          @click="onPauseAllDownloads"
-        >
-          <q-tooltip>{{ t('pause') }}</q-tooltip>
-        </q-btn>
-        <q-btn
-          color="secondary"
-          flat
-          icon="mmm-play"
-          :label="t('resume')"
-          @click="onResumeAllDownloads"
-        >
-          <q-tooltip>{{ t('resume') }}</q-tooltip>
-        </q-btn>
-        <q-btn
           color="warning"
           :disable="refreshDisabled"
           icon="mmm-reset"
@@ -411,13 +393,5 @@ const onRefreshMeetingMedia = () => {
     // 2) Fetch media
     await fetchMedia();
   });
-};
-
-const onResumeAllDownloads = () => {
-  globalThis.electronApi.resumeAllDownloads();
-};
-
-const onPauseAllDownloads = () => {
-  globalThis.electronApi.pauseAllDownloads();
 };
 </script>
