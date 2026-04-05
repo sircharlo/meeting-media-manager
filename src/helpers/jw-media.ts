@@ -599,6 +599,19 @@ export const fetchMedia = async () => {
               return null;
             }
 
+            const isPastMeetingDay = isInPast(day.date);
+
+            // Past meeting errors should never block startup navigation or stay pending.
+            if (isPastMeetingDay && day.status && day.status !== 'complete') {
+              log(
+                `⏭️ Skipping refresh for past meeting with ${day.status} status: ${day.date.toISOString().split('T')[0]}`,
+                'mediaFetching',
+                'info',
+              );
+              day.status = 'complete';
+              return null;
+            }
+
             // Skip if metered connection is enabled and target date is after tomorrow
             if (
               currentStateStore.currentSettings?.meteredConnection &&
