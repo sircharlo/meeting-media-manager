@@ -3,6 +3,7 @@ import type { MigrationFunction } from './types';
 import { addBaseUrlToAllCongregations } from './add-base-url';
 import { autoEnrollMeetingSync } from './auto-enroll-meeting-sync';
 import { backfillLastUsed } from './backfill-last-used';
+import { emptyFontsFolder } from './empty-fonts-folder';
 import { firstRun } from './first-run';
 import { localStorageToPiniaPersist } from './local-storage-to-pinia';
 import { moveAdditionalMediaMaps } from './move-additional-media';
@@ -26,6 +27,7 @@ export const MIGRATION_REGISTRY: Record<string, MigrationFunction> = {
   '26.1.1 autoEnrollMeetingSync': autoEnrollMeetingSync,
   '26.1.6 refreshDynamicMedia': refreshDynamicMedia,
   '26.1.7 refreshDynamicMedia': refreshDynamicMedia,
+  '26.4.6 emptyFontsFolder': emptyFontsFolder,
   addBaseUrlToAllCongregations,
   firstRun,
   localStorageToPiniaPersist,
