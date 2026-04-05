@@ -22,7 +22,7 @@ queue_rules:
     autoqueue: true
     merge_conditions:
       - -draft
-      - check-success = "build / quality"
+      - check-success = "build / Lint and test"
       - check-success = "build / build (ubuntu-latest)"
       - check-success = "build / build (macos-latest)"
       - check-success = "build / build (windows-latest)"

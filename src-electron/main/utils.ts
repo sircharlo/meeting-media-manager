@@ -68,23 +68,28 @@ export async function getSharedDataPath(): Promise<null | string> {
   if (!isMachineWide) return null;
 
   log(`[getSharedDataPath] Platform is ${PLATFORM}`, 'electron', 'log');
-  const sharedPath =
-    PLATFORM === 'win32'
-      ? join(
-          process.env.ProgramData || String.raw`C:\ProgramData`,
-          PRODUCT_NAME || 'Meeting Media Manager',
-        )
-      : PLATFORM === 'darwin'
-        ? join(
-            '/Library/Application Support',
-            PRODUCT_NAME || 'Meeting Media Manager',
-          )
-        : join(
-            '/var/cache',
-            (PRODUCT_NAME || 'meeting-media-manager')
-              .toLowerCase()
-              .replaceAll(' ', '-'),
-          );
+
+  let sharedPath: string;
+
+  if (PLATFORM === 'win32') {
+    sharedPath = join(
+      process.env.ProgramData || String.raw`C:\ProgramData`,
+      PRODUCT_NAME || 'Meeting Media Manager',
+    );
+  } else if (PLATFORM === 'darwin') {
+    sharedPath = join(
+      '/Library/Application Support',
+      PRODUCT_NAME || 'Meeting Media Manager',
+    );
+  } else {
+    sharedPath = join(
+      '/var/cache',
+      (PRODUCT_NAME || 'meeting-media-manager')
+        .toLowerCase()
+        .replaceAll(' ', '-'),
+    );
+  }
+
   log(
     `[getSharedDataPath] Shared path is configured as ${sharedPath}`,
     'electron',

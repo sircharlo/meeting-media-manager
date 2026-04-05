@@ -55,7 +55,7 @@ describe('isIgnoredUpdateError', () => {
     ).toBe(true);
     expect(
       isIgnoredUpdateError(
-        "Error: ENOENT: no such file or directory, rename 'C:\\Users\\Test\\AppData\\Local\\meeting-media-manager-updater\\pending\\temp-meeting-media-manager-26.3.1-ia32.exe' -> 'C:\\Users\\Test\\AppData\\Local\\meeting-media-manager-updater\\pending\\meeting-media-manager-26.3.1-ia32.exe'",
+        String.raw`Error: ENOENT: no such file or directory, rename 'C:\Users\Test\AppData\Local\meeting-media-manager-updater\pending\temp-meeting-media-manager-26.3.1-ia32.exe' -> 'C:\Users\Test\AppData\Local\meeting-media-manager-updater\pending\meeting-media-manager-26.3.1-ia32.exe'`,
       ),
     ).toBe(true);
   });
