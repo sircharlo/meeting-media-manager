@@ -4,6 +4,16 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.4.7
+
+### 🐞 Bug Fixes
+
+- 🐞 **Icons**: Fixed jw-icons glyph fallback race condition.
+
+### 🔧 Chores
+
+- 🔧 **Icons**: Updated fallback jw-icons glyph map.
+
 ## v26.4.6
 
 ### 🐞 Bug Fixes
