@@ -145,7 +145,7 @@ export const dateFromString = (
 /**
  * Checks if a date is in the past.
  * @param lookupDate The date to check.
- * @param includeToday Whether to include today as a past date.
+ * @param includeToday Whether to include today as a past date. Default is false.
  * @returns Whether the date is in the past.
  */
 export const isInPast = (lookupDate: Date | string, includeToday = false) => {

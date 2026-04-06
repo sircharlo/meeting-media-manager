@@ -854,12 +854,15 @@ const checkMemorialDate = async () => {
   try {
     if (
       !selectedDate.value ||
+      isInPast(selectedDate.value) ||
       selectedDate.value !== currentSettings.value?.memorialDate ||
-      !selectedDateObject.value?.mediaSections
+      !selectedDateObject.value
     ) {
       postCustomBackground(mediaWindowCustomBackground.value ?? '');
       return;
     }
+
+    selectedDateObject.value.mediaSections ??= [];
 
     const introSection = getOrCreateMediaSection(
       selectedDateObject.value.mediaSections,
@@ -1388,7 +1391,7 @@ onMounted(() => {
   goToNextDayWithMedia();
   checkMemorialDate();
 
-  // If no date with media is found, go to todays date
+  // If no date with media is found, go to today's date
   if (!selectedDate.value) {
     selectedDate.value = formatDate(new Date(), 'YYYY/MM/DD');
   }
