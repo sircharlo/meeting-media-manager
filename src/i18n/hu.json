@@ -354,6 +354,7 @@
   "meetingScheduleChangeWeStartTime-explain": "Válassza ki a hétvégi összejövetel új kezdési időpontját. Hagyja üresen, ha az időpont nem változik.",
   "meetingStopBufferSeconds": "Az összejövetel előtt hány másodperccel álljon le a háttérzene?",
   "meetingStopBufferSeconds-explain": "A csúszka állításával add meg a kívánt időt (másodpercben), hogy mennyivel az összejövetel kezdete előtt álljon le a háttérzene.",
+  "memorial-background": "Image to be displayed during the Memorial",
   "memorial-talk": "Emlékünnepi előadás",
   "memorialDate": "Emlékünnep dátuma",
   "memorialDate-explain": "Ha megadod, az M³ automatikusan megpróbálja letölteni és előkészíteni a háttérképet az emlékünnephez. A kép az éviszöveg helyett jelenik majd meg. Vedd figyelembe, hogy ez egy kísérleti funkció, és előfordulhat, hogy nem a várt módon működik.",
@@ -676,6 +677,8 @@
   "video": "Videó",
   "videos:": "Videók:",
   "warning": "Figyelem",
+  "watch-folder-error-caption": "Kérjük, győződjön meg arról, hogy az összes kiegészítő alkalmazás (például a Dropbox) fut, valamint hogy a megadott elérési út érvényes és írási jogosultsággal rendelkezik",
+  "watch-folder-error-message": "Hiba történt a figyelt mappával kapcsolatban. Ez azzal függhet össze, hogy hálózati vagy felhőalapú mappáról van szó.",
   "watched-media-item-explain": "Ez a médiaelem egy figyelt mappából lett hozzáadva",
   "websiteSelection": "Weboldal kiválasztása",
   "weDay": "Hétvégi összejövetel napja",
@@ -714,7 +717,5 @@
   "zoomEnable-explain": "Ez nem fogja teljes mértékben automatizálni a Zoom működését. Inkább megpróbálja elindítani és leállítani a Zoom képernyőmegosztását a Zoom „Képernyőmegosztás indítása/leállítása” beállításában konfigurált billentyűparancs segítségével, valahányszor az M³-ban elindul vagy leáll a média lejátszása.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Billentyűparancs a Zoom képernyőmegosztáshoz",
-  "zoomScreenShareShortcut-explain": "Add meg a Zoom „Képernyőmegosztás indítása/leállítása” beállításában konfigurált billentyűparancsot. Az M³ elküldi ezt a parancsot, amikor a média lejátszása elindul (a képernyő megosztásának elindításához) és amikor leáll (a képernyő megosztásának leállításához). Ahhoz, hogy ezt a funkciót használni tudd, engedélyezned kell a „Globális parancs” (Global shortcut) beállítást az adott parancshoz a Zoom beállításaiban.",
-  "watch-folder-error-caption": "Kérjük, győződjön meg arról, hogy az összes kiegészítő alkalmazás (például a Dropbox) fut, valamint hogy a megadott elérési út érvényes és írási jogosultsággal rendelkezik",
-  "watch-folder-error-message": "Hiba történt a figyelt mappával kapcsolatban. Ez azzal függhet össze, hogy hálózati vagy felhőalapú mappáról van szó."
+  "zoomScreenShareShortcut-explain": "Add meg a Zoom „Képernyőmegosztás indítása/leállítása” beállításában konfigurált billentyűparancsot. Az M³ elküldi ezt a parancsot, amikor a média lejátszása elindul (a képernyő megosztásának elindításához) és amikor leáll (a képernyő megosztásának leállításához). Ahhoz, hogy ezt a funkciót használni tudd, engedélyezned kell a „Globális parancs” (Global shortcut) beállítást az adott parancshoz a Zoom beállításaiban."
 }
