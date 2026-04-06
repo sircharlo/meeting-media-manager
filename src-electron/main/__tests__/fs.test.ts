@@ -8,6 +8,7 @@ const captureElectronErrorMock = vi.fn();
 const addElectronBreadcrumbMock = vi.fn();
 const uuidMock = vi.fn(() => 'test-uuid');
 const watchMock = vi.fn();
+const sendToWindowMock = vi.fn();
 
 vi.mock('chokidar', () => ({
   watch: watchMock,
@@ -52,7 +53,7 @@ vi.mock('src-electron/main/utils', () => ({
 }));
 
 vi.mock('src-electron/main/window/window-base', () => ({
-  sendToWindow: vi.fn(),
+  sendToWindow: sendToWindowMock,
 }));
 
 vi.mock('src-electron/main/window/window-main', () => ({
@@ -114,6 +115,7 @@ describe('isUsablePath', () => {
     writeFileMock.mockResolvedValue(undefined);
     rmMock.mockResolvedValue(undefined);
     delayMock.mockResolvedValue(undefined);
+    sendToWindowMock.mockClear();
     setPlatform('linux');
   });
 
@@ -207,6 +209,41 @@ describe('isUsablePath', () => {
           },
         },
       }),
+    );
+  });
+
+  it('treats transient UNKNOWN mkdir failures on network paths as unusable without reporting', async () => {
+    setPlatform('win32');
+    const error = new Error('unknown error');
+    (error as Error & { code?: string }).code = 'UNKNOWN';
+    mkdirMock.mockRejectedValue(error);
+
+    const { isUsablePath } = await import('../fs');
+
+    await expect(isUsablePath(String.raw`\\192.168.4.38\Test`)).resolves.toBe(
+      false,
+    );
+    expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
+
+  it('notifies renderer on probe errors when one configured folder is likely network-based', async () => {
+    setPlatform('win32');
+    const error = new Error('unknown error');
+    (error as Error & { code?: string }).code = 'UNKNOWN';
+    mkdirMock.mockRejectedValue(error);
+
+    const { isUsablePath, setPathProbeNotificationPaths } =
+      await import('../fs');
+    setPathProbeNotificationPaths([
+      String.raw`\\192.168.4.38\Test`,
+      'C:/Users/test/cache',
+    ]);
+
+    await expect(isUsablePath('C:/Users/test/cache')).resolves.toBe(false);
+
+    expect(sendToWindowMock).toHaveBeenCalledWith(
+      undefined,
+      'pathProbeNetworkWarning',
     );
   });
 });

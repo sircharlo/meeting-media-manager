@@ -180,6 +180,7 @@ const {
   onGpuCrashDetected,
   onHardwareAccelerationTemporaryDisabled,
   onLog,
+  onPathProbeNetworkWarning,
   onShortcut,
   onVideoCaptureCrashDetected,
   onWatchFolderError,
@@ -189,6 +190,7 @@ const {
   setAutoStartAtLogin,
   setElectronUrlVariables,
   setHardwareAcceleration,
+  setPathProbeNotificationPaths,
   toggleTimerWindow,
 } = globalThis.electronApi;
 updateMemorials(online.value);
@@ -461,6 +463,21 @@ const navigateToCongregationSelector = () => {
 watch(currentSettings, (newSettings) => {
   if (!newSettings) navigateToCongregationSelector();
 });
+
+watchImmediate(
+  () => [
+    currentSettings.value?.cacheFolder,
+    currentSettings.value?.folderToWatch,
+    currentSettings.value?.mediaAutoExportFolder,
+  ],
+  ([cacheFolder, folderToWatch, mediaAutoExportFolder]) => {
+    setPathProbeNotificationPaths(
+      [cacheFolder, folderToWatch, mediaAutoExportFolder].filter(
+        (folderPath): folderPath is string => !!folderPath,
+      ),
+    );
+  },
+);
 
 watchImmediate(
   () => currentSettings.value?.darkMode,
@@ -910,6 +927,7 @@ cleanPersistedStores();
 
 const closeAttempts = ref(0);
 const watchFolderErrorShown = ref(false);
+const pathProbeNetworkWarningShown = ref(false);
 
 const bcClose = new BroadcastChannel('closeAttempts');
 bcClose.onmessage = (event) => {
@@ -955,6 +973,19 @@ const initListeners = () => {
   onWatchFolderError(() => {
     if (!watchFolderErrorShown.value) {
       watchFolderErrorShown.value = true;
+      createTemporaryNotification({
+        caption: t('watch-folder-error-caption'),
+        icon: 'mmm-error',
+        message: t('watch-folder-error-message'),
+        timeout: 15000,
+        type: 'negative',
+      });
+    }
+  });
+
+  onPathProbeNetworkWarning(() => {
+    if (!pathProbeNetworkWarningShown.value) {
+      pathProbeNetworkWarningShown.value = true;
       createTemporaryNotification({
         caption: t('watch-folder-error-caption'),
         icon: 'mmm-error',
@@ -1039,6 +1070,7 @@ const initListeners = () => {
 const removeListenersLocal = () => {
   const listeners: ElectronIpcListenKey[] = [
     'log',
+    'pathProbeNetworkWarning',
     'shortcut',
     'watchFolderError',
     'watchFolderUpdate',
