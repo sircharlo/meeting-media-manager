@@ -41,6 +41,7 @@ import {
   isUsablePath,
   openFileDialog,
   openFolderDialog,
+  setPathProbeNotificationPaths,
   unwatchFolders,
   unzipFile,
   watchFolder,
@@ -162,6 +163,10 @@ handleIpcSend('checkForUpdates', () => triggerUpdateCheck());
 
 handleIpcSend('setElectronUrlVariables', (_e, variables: string) => {
   setElectronUrlVariables(JSON.parse(variables));
+});
+
+handleIpcSend('setPathProbeNotificationPaths', (_e, paths: string[]) => {
+  setPathProbeNotificationPaths(paths);
 });
 
 handleIpcSend('authorizedClose', () => {

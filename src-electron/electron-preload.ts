@@ -109,6 +109,7 @@ const electronApi: ElectronApi = {
   onHardwareAccelerationTemporaryDisabled: (cb) =>
     listen('hardware-acceleration-temporary-disabled', cb),
   onLog: (cb) => listen('log', cb),
+  onPathProbeNetworkWarning: (cb) => listen('pathProbeNetworkWarning', cb),
   onShortcut: (cb) => listen('shortcut', cb),
   onUpdateAvailable: (cb) => listen('update-available', cb),
   onUpdateDownloaded: (cb) => listen('update-downloaded', cb),
@@ -140,6 +141,8 @@ const electronApi: ElectronApi = {
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),
   setElectronUrlVariables: (v) => send('setElectronUrlVariables', v),
   setHardwareAcceleration: (v) => invoke('set-hardware-acceleration', v),
+  setPathProbeNotificationPaths: (paths) =>
+    send('setPathProbeNotificationPaths', paths),
   toggleMediaWindow: (s, f) => send('toggleMediaWindow', s, f),
   toggleTimerWindow: (s) => send('toggleTimerWindow', s),
   unregisterAllShortcuts: () => send('unregisterAllShortcuts'),
