@@ -852,12 +852,20 @@ const checkMemorialDate = async () => {
   if (checkMemorialDateRunning) return;
   checkMemorialDateRunning = true;
   try {
-    if (
-      !selectedDate.value ||
-      selectedDate.value !== currentSettings.value?.memorialDate ||
-      !selectedDateObject.value?.mediaSections
-    ) {
+    const isMemorialDateSelected =
+      !!selectedDate.value &&
+      selectedDate.value === currentSettings.value?.memorialDate;
+
+    if (!selectedDate.value || !isMemorialDateSelected) {
       postCustomBackground(mediaWindowCustomBackground.value ?? '');
+      return;
+    }
+
+    // Keep existing Memorial background during transient calendar refreshes.
+    // selectedDateObject can briefly lose mediaSections while lookup data updates
+    // (e.g. connection blips/reconnects), and posting '' here would revert display
+    // back to yeartext even though Memorial mode is still active.
+    if (!selectedDateObject.value?.mediaSections) {
       return;
     }
 
