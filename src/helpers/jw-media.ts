@@ -102,20 +102,23 @@ import {
 import { createMeetingSections } from './media-sections';
 
 const {
+  basename,
+  changeExt,
+  dirname,
   downloadFile,
   executeQuery,
+  extname,
   fileUrlToPath,
   fs,
   getZipEntries,
   isUsablePath: isUsablePathRaw,
-  path,
+  join,
   pathToFileURL,
   readdir,
   setElectronUrlVariables,
   unzip,
 } = globalThis.electronApi;
 const { copy, exists, pathExists, remove, stat } = fs;
-const { basename, changeExt, dirname, extname, join } = path;
 
 const isUsablePathCache = new Map<string, boolean>();
 const inFlight = new Map<string, Promise<boolean>>();
@@ -283,9 +286,7 @@ export const addToAdditionMediaMapFromPath = async (
     const title =
       additionalInfo?.title ||
       metadata?.common.title ||
-      path
-        .basename(additionalFilePath)
-        .replace(extname(additionalFilePath), '');
+      basename(additionalFilePath).replace(extname(additionalFilePath), '');
 
     if (!uniqueId) {
       uniqueId = sanitizeId(
@@ -858,15 +859,12 @@ export const resolveFilePath = async (
 
     // If it doesn't exist, try to find it (handling missing extension)
     const dir = dirname(targetPath);
-    const name = path.basename(targetPath, extname(targetPath));
+    const name = basename(targetPath, extname(targetPath));
 
     if (await pathExists(dir)) {
       const files = await readdir(dir);
       const match = files.find((file) => {
-        const fileNameWithoutExt = path.basename(
-          file.name,
-          path.extname(file.name),
-        );
+        const fileNameWithoutExt = basename(file.name, extname(file.name));
         return fileNameWithoutExt === name;
       });
 
@@ -3206,9 +3204,9 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
     }
     for (const mediaLink of filteredMediaItemLinks) {
       if (
-        !path
-          ?.extname(mediaLink?.file?.url)
-          ?.includes(publication?.fileformat?.toLowerCase())
+        !extname(mediaLink?.file?.url)?.includes(
+          publication?.fileformat?.toLowerCase(),
+        )
       ) {
         // This file is not of the right format; API glitch!
         continue;

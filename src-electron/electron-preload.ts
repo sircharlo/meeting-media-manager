@@ -33,7 +33,16 @@ import {
   openWebsiteWindow,
   zoomWebsiteWindow,
 } from 'src-electron/preload/website';
-import path from 'upath';
+import {
+  basename,
+  changeExt,
+  dirname,
+  extname,
+  join,
+  normalize,
+  parse,
+  resolve,
+} from 'upath';
 
 initCloseListeners();
 initScreenListeners();
@@ -51,15 +60,19 @@ const getPathFromFileObject = (fo?: File | string) => {
 
 const electronApi: ElectronApi = {
   askForMediaAccess: () => send('askForMediaAccess'),
+  basename,
   cancelAllDownloads: () => send('cancelAllDownloads'),
+  changeExt,
   checkForUpdates: () => send('checkForUpdates'),
   closeWebsiteWindow,
   convertHeic,
   convertPdfToImages,
   createVideoFromNonVideo: (f, fP, oD) =>
     invoke('createVideoFromNonVideo', f, fP, oD),
+  dirname,
   downloadFile: (u, sD, dF, lP) => invoke('downloadFile', u, sD, dF, lP),
   executeQuery,
+  extname,
   fileUrlToPath,
   focusMediaWindow: () => send('focusMediaWindow'),
   fs,
@@ -82,9 +95,11 @@ const electronApi: ElectronApi = {
     invoke('isDownloadComplete', downloadId),
   isDownloadErrorExpected: () => invoke('isDownloadErrorExpected'),
   isUsablePath: (p) => invoke('isUsablePath', p),
+  join,
   moveMediaWindow: (t, w) => send('moveMediaWindow', t, w),
   moveTimerWindow: (t, w) => send('moveTimerWindow', t, w),
   navigateWebsiteWindow,
+  normalize,
   onDownloadCancelled: (cb) => listen('downloadCancelled', cb),
   onDownloadCompleted: (cb) => listen('downloadCompleted', cb),
   onDownloadError: (cb) => listen('downloadError', cb),
@@ -110,8 +125,8 @@ const electronApi: ElectronApi = {
   openFolder: (path) => invoke('openFolder', path),
   openFolderDialog: () => invoke('openFolderDialog'),
   openWebsiteWindow,
+  parse,
   parseMediaFile,
-  path,
   pathToFileURL,
   pauseAllDownloads: () => send('pauseAllDownloads'),
   PLATFORM,
@@ -119,6 +134,7 @@ const electronApi: ElectronApi = {
   readdir: readDirectory,
   registerShortcut: (n, s) => invoke('registerShortcut', n, s),
   removeListeners: (c) => removeAllIpcListeners(c),
+  resolve,
   resumeAllDownloads: () => send('resumeAllDownloads'),
   robot,
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),

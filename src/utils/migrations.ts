@@ -5,9 +5,8 @@ import { defaultSettings } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { kebabToCamelCase } from 'src/utils/general';
 
-const { fs, path, readdir } = globalThis.electronApi;
+const { basename, fs, join, readdir } = globalThis.electronApi;
 const { readJSON } = fs;
-const { basename, join } = path;
 
 export const getOldPrefsPaths = async (oldPath: string) => {
   try {

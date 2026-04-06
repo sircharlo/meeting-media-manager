@@ -13,7 +13,16 @@ import {
   pathToFileURL,
   readDirectory,
 } from 'src-electron/preload/fs';
-import { basename, dirname, extname, join, parse } from 'upath';
+import {
+  basename,
+  changeExt,
+  dirname,
+  extname,
+  join,
+  normalize,
+  parse,
+  resolve,
+} from 'upath';
 
 export const basePath = join(__dirname, '..', 'fs');
 const fakePath = async (path: string, create = true) => {
@@ -32,6 +41,7 @@ export const electronApi: ElectronApi = {
   cancelAllDownloads: function () {
     throw new Error('Function not implemented.');
   },
+  changeExt,
   checkForUpdates: () => void 0,
 
   closeWebsiteWindow: function () {
@@ -105,6 +115,7 @@ export const electronApi: ElectronApi = {
   navigateWebsiteWindow: function (action) {
     throw new Error('Function not implemented.');
   },
+  normalize,
   onDownloadCancelled: function (callback) {
     throw new Error('Function not implemented.');
   },
@@ -193,6 +204,7 @@ export const electronApi: ElectronApi = {
   removeListeners: function (channel) {
     throw new Error('Function not implemented.');
   },
+  resolve,
   resumeAllDownloads: function () {
     throw new Error('Function not implemented.');
   },

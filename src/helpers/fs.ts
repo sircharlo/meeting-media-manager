@@ -52,19 +52,22 @@ const getJwMediaInfo = (publication: PublicationFetcher) => {
 };
 
 const {
+  basename,
+  dirname,
   downloadFile,
+  extname,
   fileUrlToPath,
   fs,
+  join,
   parseMediaFile,
-  path,
   pathToFileURL,
   readdir,
+  resolve,
   unwatchFolders,
   unzip,
   watchFolder,
 } = globalThis.electronApi;
 const { exists, pathExists, stat, writeFile } = fs;
-const { basename, dirname, extname, join, resolve } = path;
 
 const getThumbnailFromMetadata = async (mediaPath: string) => {
   try {

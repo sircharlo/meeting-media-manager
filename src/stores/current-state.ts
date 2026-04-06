@@ -27,9 +27,8 @@ import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
 
-const { cancelAllDownloads, fs, path } = globalThis.electronApi;
+const { cancelAllDownloads, fs, join } = globalThis.electronApi;
 const { ensureDir } = fs;
-const { join } = path;
 
 export interface MediaPlayingState {
   action: MediaPlayingStateAction;

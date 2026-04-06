@@ -8,8 +8,7 @@ import type {
   VideoMarker,
 } from 'src/types';
 
-const { executeQuery, path } = globalThis.electronApi;
-const { join } = path;
+const { executeQuery, join } = globalThis.electronApi;
 
 import mepslangs from 'src/constants/mepslangs';
 import { errorCatcher } from 'src/helpers/error-catcher';

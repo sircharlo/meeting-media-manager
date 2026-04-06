@@ -18,10 +18,16 @@ import { isJwPlaylist, isVideo } from 'src/utils/media';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
-const { createVideoFromNonVideo, fileUrlToPath, fs, path, readdir } =
-  globalThis.electronApi;
+const {
+  basename,
+  createVideoFromNonVideo,
+  extname,
+  fileUrlToPath,
+  fs,
+  join,
+  readdir,
+} = globalThis.electronApi;
 const { copy, ensureDir, exists, remove, stat } = fs;
-const { basename, extname, join } = path;
 
 // Create a queue to limit the number of exports running at the same time
 let folderExportQueue: PQueue | undefined;

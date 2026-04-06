@@ -5,9 +5,7 @@ import { getPublicationDirectoryContents } from 'src/utils/fs';
 import { getMetadataFromMediaPath } from 'src/utils/media';
 import { formatTime } from 'src/utils/time';
 
-const { path, pathToFileURL } = globalThis.electronApi;
-const { basename } = path;
-
+const { basename, pathToFileURL } = globalThis.electronApi;
 interface NextSongResult {
   nextSongUrl: string;
   secsFromEnd: number;

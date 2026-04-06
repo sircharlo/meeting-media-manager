@@ -9,11 +9,10 @@ const {
   convertPdfToImages,
   fs,
   getNrOfPdfPages,
-  path,
+  parse,
   pathToFileURL,
 } = globalThis.electronApi;
 const { readFile, writeFile } = fs;
-const { parse } = path;
 
 const convertHeicToJpg = async (filepath: string) => {
   if (!isHeic(filepath)) return filepath;

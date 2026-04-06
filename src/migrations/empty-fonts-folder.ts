@@ -4,10 +4,9 @@ import type { MigrationFunction } from './types';
 
 export const emptyFontsFolder: MigrationFunction = async () => {
   try {
-    const { fs, getSharedDataPath, getUserDataPath, path } =
+    const { fs, getSharedDataPath, getUserDataPath, join } =
       globalThis.electronApi;
     const { emptyDir, exists } = fs;
-    const { join } = path;
 
     const userDataPath = await getUserDataPath();
     const sharedDataPath = await getSharedDataPath();

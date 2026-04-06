@@ -274,8 +274,7 @@ export const saveWatchedMediaSectionOrder = async (
 ): Promise<void> => {
   try {
     // Access electron API functions
-    const { fileUrlToPath, fs, path } = globalThis.electronApi;
-    const { join } = path;
+    const { basename, fileUrlToPath, fs, join } = globalThis.electronApi;
     const { exists, readFile, writeFile } = fs;
 
     const sectionOrderFilePath = join(datedFolderPath, '.section-order.json');
@@ -315,7 +314,7 @@ export const saveWatchedMediaSectionOrder = async (
       if (item.source === 'watched' && item.fileUrl) {
         const localPath = fileUrlToPath(item.fileUrl);
         if (localPath) {
-          const filename = path.basename(localPath);
+          const filename = basename(localPath);
           existingData[filename] = {
             order: index,
             section: sectionId,
@@ -359,8 +358,7 @@ export const getWatchedMediaSectionInfo = async (
 ): Promise<null | { order: number; section: MediaSectionIdentifier }> => {
   try {
     // Access electron API functions
-    const { fs, path } = globalThis.electronApi;
-    const { join } = path;
+    const { fs, join } = globalThis.electronApi;
     const { exists, readFile } = fs;
 
     const sectionOrderFilePath = join(datedFolderPath, '.section-order.json');
@@ -399,8 +397,7 @@ export const removeWatchedMediaSectionInfo = async (
 ): Promise<void> => {
   try {
     // Access electron API functions
-    const { fs, path } = globalThis.electronApi;
-    const { join } = path;
+    const { fs, join } = globalThis.electronApi;
     const { exists, readFile, writeFile } = fs;
 
     const sectionOrderFilePath = join(datedFolderPath, '.section-order.json');

@@ -25,9 +25,8 @@ import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
-const { fs, path, readdir } = globalThis.electronApi;
+const { fs, join, normalize, readdir } = globalThis.electronApi;
 const { exists, pathExists, remove } = fs;
-const { join, normalize } = path;
 
 /**
  * Builds a map of file sizes by path
@@ -67,11 +66,13 @@ function calculateBytesFreed(
   for (let i = 0; i < results.length; i++) {
     if (results[i]?.status !== 'fulfilled') continue;
 
-    const path = filepaths[i];
-    if (typeof path !== 'string') continue;
+    const firstPath = filepaths[i];
+    if (typeof firstPath !== 'string') continue;
 
     const size =
-      sizeSource instanceof Map ? sizeSource.get(path) : sizeSource[path];
+      sizeSource instanceof Map
+        ? sizeSource.get(firstPath)
+        : sizeSource[firstPath];
 
     bytesFreed += size || 0;
   }

@@ -12,9 +12,8 @@ import { getFontsPath } from 'src/utils/fs';
 import { useJwStore } from 'stores/jw';
 import { ref } from 'vue';
 
-const { fs, path } = globalThis.electronApi;
+const { extname, fs, join } = globalThis.electronApi;
 const { ensureDir, exists, readFile, writeFile } = fs;
-const { extname, join } = path;
 
 let jwIconsGlyphMapPromise: null | Promise<void> = null;
 let jwIconsGlyphMap: null | Record<string, string> = null;

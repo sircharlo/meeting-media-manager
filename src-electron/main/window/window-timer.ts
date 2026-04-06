@@ -1,14 +1,17 @@
 import { app, type BrowserWindow, type Rectangle } from 'electron';
 import { pathExistsSync, readJsonSync, writeJsonSync } from 'fs-extra/esm';
-import { join } from 'node:path';
 import { HD_RESOLUTION, PLATFORM } from 'src-electron/constants';
 import { getAllScreens, getWindowScreen } from 'src-electron/main/screen';
 import { getIconPath } from 'src-electron/main/utils';
 import { createWindow } from 'src-electron/main/window/window-base';
 import { log, throttleWithTrailing } from 'src/shared/vanilla';
 
-export const timerWindowInfo = {
-  timerWindow: null as BrowserWindow | null,
+const { join } = globalThis.electronApi;
+
+export const timerWindowInfo: {
+  timerWindow: BrowserWindow | null;
+} = {
+  timerWindow: null,
 };
 
 /**

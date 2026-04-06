@@ -1,9 +1,8 @@
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { formatDate } from 'src/utils/date';
 
-const { fs, path } = globalThis.electronApi;
+const { fs, join } = globalThis.electronApi;
 const { ensureFile, readFile, writeFile } = fs;
-const { join } = path;
 
 export const LAST_USED_FILENAME = '.last-used';
 

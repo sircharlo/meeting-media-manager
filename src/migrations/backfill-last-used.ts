@@ -13,8 +13,7 @@ import { useJwStore } from 'stores/jw';
 
 import type { MigrationFunction } from './types';
 
-const { fileUrlToPath, fs, path, readdir } = globalThis.electronApi;
-const { join } = path;
+const { fileUrlToPath, fs, join, readdir } = globalThis.electronApi;
 
 async function backfillFromLookupPeriods() {
   const jwStore = useJwStore();

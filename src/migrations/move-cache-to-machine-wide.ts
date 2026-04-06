@@ -92,10 +92,9 @@ function updateMediaItemPaths(
 
 export const moveCacheToMachineWide: MigrationFunction = async () => {
   try {
-    const { fs, getSharedDataPath, getUserDataPath, path } =
+    const { fs, getSharedDataPath, getUserDataPath, join } =
       globalThis.electronApi;
     const { exists, move } = fs;
-    const { join } = path;
 
     const sharedPath = await getSharedDataPath();
     if (!sharedPath) return true;

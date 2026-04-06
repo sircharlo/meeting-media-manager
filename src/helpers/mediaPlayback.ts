@@ -65,10 +65,17 @@ const processMissingMediaInfo: ProcessMissingMediaInfoProvider = (options) => {
   return processMissingMediaInfoProvider(options);
 };
 
-const { executeQuery, fs, getZipEntries, path, toggleMediaWindow, unzip } =
-  globalThis.electronApi;
+const {
+  basename,
+  executeQuery,
+  extname,
+  fs,
+  getZipEntries,
+  join,
+  toggleMediaWindow,
+  unzip,
+} = globalThis.electronApi;
 const { ensureDir, pathExists, remove, rename, stat } = fs;
-const { basename, extname, join } = path;
 
 /**
  * Efficiently identifies a JWPUB file by peeking into its metadata
