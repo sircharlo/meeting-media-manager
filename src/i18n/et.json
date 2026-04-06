@@ -354,6 +354,7 @@
   "meetingScheduleChangeWeStartTime-explain": "Vali uus aeg nädalavahetusel toimuva koosoleku jaoks. Jäta tühjaks, kui päev ei muutu.",
   "meetingStopBufferSeconds": "Kui palju sekundeid enne koosoleku algust peaks taustamuusika lõppema?",
   "meetingStopBufferSeconds-explain": "Reguleeri liugurit, et määrata soovitud aeg (sekundites) enne koosoleku algust, mil taustamuusika peaks peatuma.",
+  "memorial-background": "Image to be displayed during the Memorial",
   "memorial-talk": "Mälestusõhtu kõne",
   "memorialDate": "Mälestusõhtu kuupäev",
   "memorialDate-explain": "Kui see sisestatakse, üritab M³ automaatselt alla laadida ja valmistada mälestusõhtu taustapilti ette. Pilt kuvatakse aastateksti asemel. Pane tähele, et see on eksperimentaalne funktsioon ja ei pruugi toimida ootuspäraselt.",
@@ -676,6 +677,8 @@
   "video": "Video",
   "videos:": "Videod:",
   "warning": "Hoiatus",
+  "watch-folder-error-caption": "Please ensure that all companion apps such as Dropbox are running and that the path provided is valid and can be written",
+  "watch-folder-error-message": "An error occurred with the watch folder. This may be linked to it being a network or cloud folder.",
   "watched-media-item-explain": "See meediafail lisati jälgitavast kaustast",
   "websiteSelection": "Veebilehe valimine",
   "weDay": "Nädalavahetuse koosoleku päev",
@@ -714,7 +717,5 @@
   "zoomEnable-explain": "This will not automate Zoom fully. Rather, it will attempt to start and stop Zoom screen sharing using the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting whenever media starts and stops playing in M³.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoomi ekraanijagamise kiirklahv",
-  "zoomScreenShareShortcut-explain": "Sisestage klahvikombinatsioon, mis on konfigureeritud Zoom'i seadetes „Ekraani jagamise alustamine/lõpetamine”. M³ edastab selle klahvikombinatsiooni, kui meedia hakkab mängima (ekraani jagamise alustamiseks) ja kui see peatub (ekraani jagamise lõpetamiseks). Selle funktsiooni kasutamiseks peate Zoom'i seadetes aktiveerima selle konkreetse klahvikombinatsiooni jaoks seadistuse „Globaalne klahvikombinatsioon”.",
-  "watch-folder-error-caption": "Please ensure that all companion apps such as Dropbox are running and that the path provided is valid and can be written",
-  "watch-folder-error-message": "An error occurred with the watch folder. This may be linked to it being a network or cloud folder."
+  "zoomScreenShareShortcut-explain": "Sisestage klahvikombinatsioon, mis on konfigureeritud Zoom'i seadetes „Ekraani jagamise alustamine/lõpetamine”. M³ edastab selle klahvikombinatsiooni, kui meedia hakkab mängima (ekraani jagamise alustamiseks) ja kui see peatub (ekraani jagamise lõpetamiseks). Selle funktsiooni kasutamiseks peate Zoom'i seadetes aktiveerima selle konkreetse klahvikombinatsiooni jaoks seadistuse „Globaalne klahvikombinatsioon”."
 }

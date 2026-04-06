@@ -354,6 +354,7 @@
   "meetingScheduleChangeWeStartTime-explain": "Seleccione la nueva hora de inicio de la reunión del fin de semana. Déjelo en blanco si la hora no va a cambiar.",
   "meetingStopBufferSeconds": "¿Cuántos segundos antes de una reunión debería parar la música de fondo?",
   "meetingStopBufferSeconds-explain": "Ajuste el control deslizante para ajustar el tiempo deseado (en segundos) antes de que una reunión comience cuando la música de fondo debe detenerse.",
+  "memorial-background": "Imagen que se mostrará durante el Memorial",
   "memorial-talk": "Discurso de Conmemoración",
   "memorialDate": "Fecha de la Conmemoración",
   "memorialDate-explain": "Si se introduce, M³ intentará descargar y preparar automáticamente la imagen de fondo para la Conmemoración. La imagen se mostrará en lugar del texto del año. Tenga en cuenta que se trata de una función experimental y puede que no funcione como se espera.",
@@ -676,6 +677,8 @@
   "video": "Video",
   "videos:": "Videos:",
   "warning": "Advertencia",
+  "watch-folder-error-caption": "Por favor, asegúrate de que todas las aplicaciones complementarias como Dropbox se están ejecutando y que la ruta proporcionada es válida y se puede escribir",
+  "watch-folder-error-message": "Ocurrió un error con la carpeta de reloj. Esto puede estar vinculado a que es una carpeta de red o en la nube.",
   "watched-media-item-explain": "Este elemento multimedia ha sido añadido desde una carpeta monitoreada",
   "websiteSelection": "Selección del sitio web",
   "weDay": "Reunión de fin de semana",
@@ -714,7 +717,5 @@
   "zoomEnable-explain": "Esto no automatizará completamente el Zoom. Más bien, intentará iniciar y detener el uso compartido de la pantalla de Zoom usando el acceso directo del teclado configurado en el ajuste de \"Inicio / detención compartición de pantalla\" de Zoom cada vez que se inicia el medio y deja de reproducirse en M3.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Atajo para compartir pantalla de Zoom",
-  "zoomScreenShareShortcut-explain": "Introduzca el acceso directo del teclado configurado en el ajuste de Zoom \"Iniciar/Detener compartir pantalla\". M3 enviará este acceso directo cuando la multimedia comience a reproducir (para iniciar el uso compartido de la pantalla) y cuando se detenga (para detener el uso compartido de la pantalla). Para poder utilizar esta función, necesita habilitar la opción \"Acceso directo global\" para ese acceso directo en particular en los ajustes de Zoom.",
-  "watch-folder-error-caption": "Por favor, asegúrate de que todas las aplicaciones complementarias como Dropbox se están ejecutando y que la ruta proporcionada es válida y se puede escribir",
-  "watch-folder-error-message": "Ocurrió un error con la carpeta de reloj. Esto puede estar vinculado a que es una carpeta de red o en la nube."
+  "zoomScreenShareShortcut-explain": "Introduzca el acceso directo del teclado configurado en el ajuste de Zoom \"Iniciar/Detener compartir pantalla\". M3 enviará este acceso directo cuando la multimedia comience a reproducir (para iniciar el uso compartido de la pantalla) y cuando se detenga (para detener el uso compartido de la pantalla). Para poder utilizar esta función, necesita habilitar la opción \"Acceso directo global\" para ese acceso directo en particular en los ajustes de Zoom."
 }
