@@ -354,6 +354,7 @@
   "meetingScheduleChangeWeStartTime-explain": "Selecteer de nieuwe begintijd voor de weekendvergadering. Laat leeg als de tijd niet verandert.",
   "meetingStopBufferSeconds": "Hoeveel seconden voordat een vergadering begint moet de achtergrondmuziek stoppen?",
   "meetingStopBufferSeconds-explain": "Stel de schuifregelaar in om de gewenste tijd (in seconden) te bepalen waarop de achtergrondmuziek moet stoppen voordat de vergadering begint.",
+  "memorial-background": "De afbeelding die wordt weergegeven tijdens het Memorial",
   "memorial-talk": "Lezing voor het Avondmaal",
   "memorialDate": "Datum van het Avondmaal",
   "memorialDate-explain": "Indien ingevuld, zal M³ proberen om automatisch het achtergrondplaatje voor het Avondmaal te downloaden en voorbereiden. Het plaatje zal getoond worden in plaats van de jaartekst. Let op, dit is een experimentele functie en werkt misschien niet zoals verwacht.",
@@ -676,6 +677,8 @@
   "video": "Video",
   "videos:": "Video's:",
   "warning": "Waarschuwing",
+  "watch-folder-error-caption": "Zorg er alstublieft voor dat alle andere apps zoals Dropbox actief zijn en dat het pad geldig is en geschreven kan worden",
+  "watch-folder-error-message": "Er is een fout opgetreden bij het bekijken van de map. Dit kan verbonden zijn met een netwerk of cloud map.",
   "watched-media-item-explain": "Dit media-item is toegevoegd uit een gecontroleerde map",
   "websiteSelection": "Websiteselectie",
   "weDay": "Weekend vergaderdag",
@@ -714,7 +717,5 @@
   "zoomEnable-explain": "Dit zal Zoom niet volledig automatiseren. Veeleer, het zal proberen te starten en stoppen met het delen van het scherm in te zoomen met behulp van de sneltoets geconfigureerd in Zoom's \"Start/stop schermdeling\" instelling wanneer media start en stopt met afspelen in M3.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom-schermdelingsnelkoppeling",
-  "zoomScreenShareShortcut-explain": "Voer de sneltoets in die is ingesteld in Zoom onder \"Scherm delen starten/stoppen\". M³ zal deze sneltoets versturen wanneer media begint met afspelen (om scherm delen te starten) en wanneer het stopt (om scherm delen te stoppen). Om deze functie te gebruiken, moet je de optie \"Globale sneltoets\" inschakelen voor deze sneltoets in de Zoom-instellingen.",
-  "watch-folder-error-caption": "Zorg er alstublieft voor dat alle andere apps zoals Dropbox actief zijn en dat het pad geldig is en geschreven kan worden",
-  "watch-folder-error-message": "Er is een fout opgetreden bij het bekijken van de map. Dit kan verbonden zijn met een netwerk of cloud map."
+  "zoomScreenShareShortcut-explain": "Voer de sneltoets in die is ingesteld in Zoom onder \"Scherm delen starten/stoppen\". M³ zal deze sneltoets versturen wanneer media begint met afspelen (om scherm delen te starten) en wanneer het stopt (om scherm delen te stoppen). Om deze functie te gebruiken, moet je de optie \"Globale sneltoets\" inschakelen voor deze sneltoets in de Zoom-instellingen."
 }
