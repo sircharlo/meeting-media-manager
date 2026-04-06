@@ -70,15 +70,28 @@ vi.mock('src/shared/vanilla', () => ({
   uuid: uuidMock,
 }));
 
-vi.mock('upath', () => ({
-  default: {
-    basename: vi.fn(),
-    dirname: vi.fn(),
-    join: (...parts: string[]) => parts.join('/'),
-    resolve: (value: string) => value,
-    toUnix: (value: string) => value.replaceAll('\\', '/'),
-  },
-}));
+vi.mock('upath', () => {
+  const join = vi.fn((...parts: string[]) => parts.join('/'));
+  const resolve = vi.fn((value: string) => value);
+  const toUnix = vi.fn((value: string) => value.replaceAll('\\', '/'));
+  const basename = vi.fn();
+  const dirname = vi.fn();
+
+  return {
+    basename,
+    default: {
+      basename,
+      dirname,
+      join,
+      resolve,
+      toUnix,
+    },
+    dirname,
+    join,
+    resolve,
+    toUnix,
+  };
+});
 
 vi.mock('yauzl', () => ({
   default: {},

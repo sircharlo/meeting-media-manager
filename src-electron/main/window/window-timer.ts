@@ -5,8 +5,7 @@ import { getAllScreens, getWindowScreen } from 'src-electron/main/screen';
 import { getIconPath } from 'src-electron/main/utils';
 import { createWindow } from 'src-electron/main/window/window-base';
 import { log, throttleWithTrailing } from 'src/shared/vanilla';
-
-const { join } = globalThis.electronApi;
+import { join } from 'upath';
 
 export const timerWindowInfo: {
   timerWindow: BrowserWindow | null;
