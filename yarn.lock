@@ -10997,9 +10997,9 @@ __metadata:
   linkType: hard
 
 "lru-cache@npm:^11.0.0, lru-cache@npm:^11.1.0, lru-cache@npm:^11.2.1":
-  version: 11.3.0
-  resolution: "lru-cache@npm:11.3.0"
-  checksum: 10c0/f50d32064c07b17390e7bf89fa09fcf05c19018d8cb03359a04dad3e16e4213812958af32eb0e29a92239a1f13631b58c26c007367f99946defcf4e495c1c123
+  version: 11.3.1
+  resolution: "lru-cache@npm:11.3.1"
+  checksum: 10c0/4fb5cf792cf6fb40bee3f4a0a0903f74b7869bfeaf500a6194dffcd556d16819342f02a7d0bac13b55557ddf231970c58740ff2098ecffbf23c8a99569084acb
   languageName: node
   linkType: hard
 
@@ -11254,7 +11254,7 @@ __metadata:
     music-metadata: "npm:^11.12.3"
     obs-websocket-js: "npm:^5.0.8"
     oxc-minify: "npm:^0.123.0"
-    p-queue: "npm:^9.1.0"
+    p-queue: "npm:^9.1.1"
     pdfjs-dist: "npm:^5.6.205"
     pinia: "npm:^3.0.4"
     pinia-plugin-persistedstate: "npm:^4.7.1"
@@ -11276,11 +11276,11 @@ __metadata:
     vue: "npm:^3.5.32"
     vue-eslint-parser: "npm:^10.4.0"
     vue-i18n: "npm:^11.3.1"
-    vue-router: "npm:^5.0.3"
+    vue-router: "npm:^5.0.4"
     vue-tsc: "npm:^3.2.6"
     vue-zoomable: "npm:^1.2.8"
     wrappy: "npm:^1.0.2"
-    yauzl: "npm:^3.2.1"
+    yauzl: "npm:^3.3.0"
   languageName: unknown
   linkType: soft
 
@@ -12464,7 +12464,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-queue@npm:^9.1.0":
+"p-queue@npm:^9.1.1":
   version: 9.1.1
   resolution: "p-queue@npm:9.1.1"
   dependencies:
@@ -16213,7 +16213,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-router@npm:^5.0.3":
+"vue-router@npm:^5.0.4":
   version: 5.0.4
   resolution: "vue-router@npm:5.0.4"
   dependencies:
@@ -16729,7 +16729,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yauzl@npm:^3.2.1":
+"yauzl@npm:^3.3.0":
   version: 3.3.0
   resolution: "yauzl@npm:3.3.0"
   dependencies:

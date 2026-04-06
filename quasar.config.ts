@@ -144,13 +144,11 @@ export default defineConfig((ctx) => {
           hardenedRuntime: true,
           icon: getIconPath('icns'),
           minimumSystemVersion: '10.15',
-          target: { 
+          target: {
+            arch: ['universal'],
             target: 'default',
-            arch: [
-              "universal",
-            ],
           },
-          x64ArchFiles: "**/@napi-rs/**",
+          x64ArchFiles: '**/@napi-rs/**',
         },
         nsis: {
           deleteAppDataOnUninstall: true,
@@ -242,6 +240,7 @@ export default defineConfig((ctx) => {
         // Remove unneeded dependencies from production build
         Object.keys(pkg.dependencies).forEach((dep) => {
           if (!electronDeps.has(dep)) {
+            // eslint-disable-next-line no-console
             console.log(`Removing dependency: ${dep}`);
             // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
             delete pkg.dependencies[dep];
