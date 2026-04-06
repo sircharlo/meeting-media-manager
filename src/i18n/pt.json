@@ -354,6 +354,7 @@
   "meetingScheduleChangeWeStartTime-explain": "Selecione o novo horário de início para a reunião do fim de semana. Deixe em branco se o horário não mudar.",
   "meetingStopBufferSeconds": "Quantos segundos antes da reunião os cânticos de fundo devem parar?",
   "meetingStopBufferSeconds-explain": "Ajuste o controle deslizante para definir o tempo desejado (em segundos) em que a reprodução dos cânticos de fundo deve parar antes da reunião começar.",
+  "memorial-background": "Imagem a ser exibida durante o Memorial",
   "memorial-talk": "Discurso da Celebração",
   "memorialDate": "Data da Celebração",
   "memorialDate-explain": "Ao selecionar uma data, o M³ tentará baixar a imagem de fundo para a Celebração que será exibida no lugar do texto do ano. Este é um recurso experimental.",
@@ -676,6 +677,8 @@
   "video": "Vídeo",
   "videos:": "Vídeos:",
   "warning": "Aviso",
+  "watch-folder-error-caption": "Certifique-se de que todas as outras aplicações como o Dropbox estejam sendo executadas e que o caminho fornecido seja válido e possa ser escrito",
+  "watch-folder-error-message": "Ocorreu um erro com a pasta do relógio. Isto pode ser vinculado a uma rede ou pasta da nuvem.",
   "watched-media-item-explain": "Esta mídia foi adicionada a partir de uma pasta monitorada",
   "websiteSelection": "Seleção de site",
   "weDay": "Dia da reunião do fim de semana",
@@ -714,7 +717,5 @@
   "zoomEnable-explain": "Isso não automatizará completamente o zoom. Em vez disso, tentará iniciar e parar o compartilhamento de tela com Zoom usando o atalho de teclado configurado nas configurações \"Iniciar/Parar compartilhamento de tela\" do Zoom sempre que a mídia iniciar e parar de reproduzir no M3.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Atalho para compartilhamento de tela no Zoom",
-  "zoomScreenShareShortcut-explain": "Insira o atalho do Zoom para 'Iniciar/interromper compartilhamento de tela' (configurado nos Atalhos de teclado). O M³ usará esse comando quando a mídia começar (inicia o compartilhamento) e quando parar (encerra o compartilhamento). Para funcionar, ative a opção 'Atalho global' para esse comando nas configurações do Zoom.",
-  "watch-folder-error-caption": "Certifique-se de que todas as outras aplicações como o Dropbox estejam sendo executadas e que o caminho fornecido seja válido e possa ser escrito",
-  "watch-folder-error-message": "Ocorreu um erro com a pasta do relógio. Isto pode ser vinculado a uma rede ou pasta da nuvem."
+  "zoomScreenShareShortcut-explain": "Insira o atalho do Zoom para 'Iniciar/interromper compartilhamento de tela' (configurado nos Atalhos de teclado). O M³ usará esse comando quando a mídia começar (inicia o compartilhamento) e quando parar (encerra o compartilhamento). Para funcionar, ative a opção 'Atalho global' para esse comando nas configurações do Zoom."
 }
