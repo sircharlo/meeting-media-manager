@@ -148,6 +148,7 @@ export interface ElectronApi {
       msg: string;
     }) => void,
   ) => void;
+  onPathProbeNetworkWarning: (callback: () => void) => void;
   onShortcut: (
     callback: (args: { shortcut: keyof SettingsValues }) => void,
   ) => void;
@@ -222,6 +223,7 @@ export interface ElectronApi {
   setAutoStartAtLogin: (value: boolean) => void;
   setElectronUrlVariables: (variables: string) => void;
   setHardwareAcceleration: (disabled: boolean) => void;
+  setPathProbeNotificationPaths: (paths: string[]) => void;
   toggleMediaWindow: (show: boolean, enableFadeTransitions?: boolean) => void;
   toggleTimerWindow: (show: boolean) => void;
   unregisterAllShortcuts: () => void;
@@ -272,6 +274,7 @@ export type ElectronIpcListenKey =
   | 'gpu-crash-detected'
   | 'hardware-acceleration-temporary-disabled'
   | 'log'
+  | 'pathProbeNetworkWarning'
   | 'screenChange'
   | 'screenPrefsChange'
   | 'shortcut'
@@ -300,6 +303,7 @@ export type ElectronIpcSendKey =
   | 'quitAndInstall'
   | 'resumeAllDownloads'
   | 'setElectronUrlVariables'
+  | 'setPathProbeNotificationPaths'
   | 'toggleMediaWindow'
   | 'toggleOpenAtLogin'
   | 'toggleTimerWindow'

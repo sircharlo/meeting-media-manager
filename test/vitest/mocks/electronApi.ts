@@ -126,6 +126,9 @@ export const electronApi: ElectronApi = {
   onLog: function (callback) {
     throw new Error('Function not implemented.');
   },
+  onPathProbeNetworkWarning: function (callback) {
+    throw new Error('Function not implemented.');
+  },
   onShortcut: function (callback) {
     throw new Error('Function not implemented.');
   },
@@ -201,6 +204,9 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   setHardwareAcceleration: function (disabled) {
+    throw new Error('Function not implemented.');
+  },
+  setPathProbeNotificationPaths: function (paths) {
     throw new Error('Function not implemented.');
   },
   toggleMediaWindow: function (show) {

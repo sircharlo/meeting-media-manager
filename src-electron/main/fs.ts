@@ -35,15 +35,27 @@ const PATH_PROBE_RETRY_DELAY_MS = 50;
 const PATH_PROBE_RETRY_COUNT = 4;
 const SHARED_PATH_BACKOFF_MS = 10 * 60 * 1000;
 const SHARED_PATH_HEALTH_FILENAME = 'shared-path-health.json';
+const PATH_PROBE_NETWORK_WARNING_THROTTLE_MS = 30000;
 const SHARED_PATH_HEALTH_FOLDERS = [
   'Additional Media',
   'Fonts',
   'Publications',
 ];
 
+const isPossiblyNetworkFolderPath = (folderPath: string) => {
+  const unixPath = toUnix(folderPath);
+  if (unixPath.startsWith('//')) return true;
+  // On Windows, a non-C: drive letter may indicate a mapped network drive
+  if (process.platform === 'win32' && /^[a-bd-zA-BD-Z]:/.test(unixPath))
+    return true;
+  return false;
+};
+
 let defaultAppDataPath: null | string = null;
 let sharedPathBackoffUntil: null | number = null;
 let sharedPathBackoffLoaded = false;
+let lastPathProbeNetworkWarningAt = 0;
+const pathProbeNotificationPaths = new Set<string>();
 
 type PathMode = 'shared' | 'user';
 
@@ -309,6 +321,31 @@ const cleanupProbe = async (
   );
 };
 
+export const setPathProbeNotificationPaths = (paths: string[] = []) => {
+  pathProbeNotificationPaths.clear();
+  for (const path of paths) {
+    if (path) pathProbeNotificationPaths.add(path);
+  }
+};
+
+const hasPossibleNetworkPathInNotificationSettings = () => {
+  return [...pathProbeNotificationPaths].some((path) =>
+    isPossiblyNetworkFolderPath(path),
+  );
+};
+
+const notifyPathProbeNetworkWarning = () => {
+  const now = Date.now();
+  if (
+    now - lastPathProbeNetworkWarningAt <
+    PATH_PROBE_NETWORK_WARNING_THROTTLE_MS
+  ) {
+    return;
+  }
+  lastPathProbeNetworkWarningAt = now;
+  sendToWindow(mainWindowInfo.mainWindow, 'pathProbeNetworkWarning');
+};
+
 export function isUsablePath(basePath?: string): Promise<boolean> {
   if (!basePath) return Promise.resolve(false);
 
@@ -329,8 +366,18 @@ export function isUsablePath(basePath?: string): Promise<boolean> {
         return true;
       } catch (e) {
         const PERMISSION_ERRORS = new Set(['EACCES', 'EPERM']);
+        const NETWORK_PATH_TRANSIENT_ERRORS = new Set(['UNKNOWN']);
         const code = (e as { code?: string }).code;
-        if (!PERMISSION_ERRORS.has(code ?? '')) {
+        if (hasPossibleNetworkPathInNotificationSettings()) {
+          notifyPathProbeNetworkWarning();
+        }
+        if (
+          !PERMISSION_ERRORS.has(code ?? '') &&
+          !(
+            NETWORK_PATH_TRANSIENT_ERRORS.has(code ?? '') &&
+            isPossiblyNetworkFolderPath(basePath)
+          )
+        ) {
           captureElectronError(e, {
             contexts: {
               fn: {
@@ -790,15 +837,6 @@ const watchers = new Set<FSWatcher>();
 const datePattern = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD
 const WATCH_POLL_INTERVAL_MS = 1000;
 
-const isPossiblyNetworkFolderPath = (folderPath: string) => {
-  const unixPath = toUnix(folderPath);
-  if (unixPath.startsWith('//')) return true;
-  // On Windows, a non-C: drive letter may indicate a mapped network drive
-  if (process.platform === 'win32' && /^[a-bd-zA-BD-Z]:/.test(unixPath))
-    return true;
-  return false;
-};
-
 const shouldIgnoreWatchFolderError = (
   folderPath: string,
   error: Error & { code?: string; syscall?: string },
@@ -867,7 +905,7 @@ export async function watchFolder(folderPath: string) {
 
         try {
           const e = error as Error & { code?: string; syscall?: string };
-          
+
           sendToWindow(mainWindowInfo.mainWindow, 'watchFolderError', {
             folderPath,
             isPossiblyNetwork: pathIsPossiblyNetwork,
