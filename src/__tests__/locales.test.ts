@@ -56,7 +56,7 @@ describe('Locales', () => {
             !f.includes('__tests__') &&
             (f.endsWith('.ts') || f.endsWith('.vue')),
         )
-        .map((f) => readFile(resolve(__dirname, '..', f), 'utf-8')),
+        .map((f) => readFile(resolve(__dirname, '..', f as string), 'utf-8')),
     );
 
     const i18nFiles = await Promise.all(
