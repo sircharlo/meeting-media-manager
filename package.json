@@ -40,7 +40,7 @@
     "@jitsi/robotjs": "^0.6.21",
     "@numairawan/video-duration": "^1.0.0",
     "@opentelemetry/api-logs": "^0.214.0",
-    "@quasar/extras": "^1.17.0",
+    "@quasar/extras": "^1.18.0",
     "@sentry/core": "^10.47.0",
     "@sentry/electron": "^7.10.0",
     "@sentry/vue": "^10.46.0",
@@ -74,14 +74,14 @@
     "pinia-plugin-persistedstate": "^4.7.1",
     "pretty-bytes": "^7.1.0",
     "process-nextick-args": "^2.0.1",
-    "quasar": "^2.19.2",
+    "quasar": "^2.19.3",
     "readable-stream": "^4.7.0",
     "require-in-the-middle": "^8.0.1",
     "sanitize-filename": "^1.6.4",
     "type-fest": "^5.5.0",
     "upath": "^2.0.1",
     "vue": "^3.5.32",
-    "vue-i18n": "^11.3.0",
+    "vue-i18n": "^11.3.1",
     "vue-router": "^5.0.3",
     "vue-zoomable": "^1.2.8",
     "wrappy": "^1.0.2",
@@ -89,7 +89,7 @@
   },
   "devDependencies": {
     "@electron/rebuild": "^4.0.3",
-    "@eslint/compat": "^2.0.3",
+    "@eslint/compat": "^2.0.4",
     "@eslint/js": "^10.0.1",
     "@intlify/unplugin-vue-i18n": "^11.1.1",
     "@pinia/testing": "^1.0.3",
@@ -128,20 +128,20 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "lodash-es": "^4.18.1",
-    "msw": "^2.12.14",
+    "msw": "^2.13.0",
     "oxc-minify": "^0.123.0",
     "postcss": "^8.5.8",
     "prettier": "^3.8.1",
     "rollup-plugin-visualizer": "^7.0.1",
     "typescript": "~5.9.3",
-    "vite": "^8.0.3",
+    "vite": "^8.0.5",
     "vitepress": "^2.0.0-alpha.17",
     "vitest": "^4.1.2",
     "vue-eslint-parser": "^10.4.0",
     "vue-tsc": "^3.2.6"
   },
   "resolutions": {
-    "vite": "8.0.3"
+    "vite": "8.0.5"
   },
   "browserslist": [
     "Electron >= 37"
