@@ -354,6 +354,7 @@
   "meetingScheduleChangeWeStartTime-explain": "Wähle die neue Startzeit für die Zusammenkunft am Wochenende. Leer lassen, wenn sich die Uhrzeit nicht ändert.",
   "meetingStopBufferSeconds": "Wie viele Sekunden vor einer Zusammenkunft sollte die Hintergrundmusik stoppen?",
   "meetingStopBufferSeconds-explain": "Adjust the slider to set the desired time (in seconds) before a meeting starts when background music should stop.",
+  "memorial-background": "Bild für die Gedenkstätte",
   "memorial-talk": "Gedächtnismahlansprache",
   "memorialDate": "Datum des Gedächtnismahls",
   "memorialDate-explain": "Bei Eingabe wird M³ automatisch versuchen, das Hintergrundbild für das Gedächtnismahl herunterzuladen und vorzubereiten. Das Bild wird anstelle des Jahrestextes angezeigt. Achtung, da es sich um eine experimentelle Funktion handelt und möglicherweise nicht wie erwartet funktioniert.",
@@ -676,6 +677,8 @@
   "video": "Video",
   "videos:": "Videos:",
   "warning": "Warnung",
+  "watch-folder-error-caption": "Bitte stellen Sie sicher, dass alle Begleit-Apps wie Dropbox laufen und dass der angegebene Pfad gültig ist und geschrieben werden kann",
+  "watch-folder-error-message": "Beim Beobachtungsordner ist ein Fehler aufgetreten. Dies kann mit einem Netzwerk oder einem Cloud-Ordner verknüpft sein.",
   "watched-media-item-explain": "Dieses Medienobjekt wurde aus einem überwachten Ordner hinzugefügt",
   "websiteSelection": "Webseitenauswahl",
   "weDay": "Tag der Zusammenkunft am Wochenende",
@@ -714,7 +717,5 @@
   "zoomEnable-explain": "Zoom wird nicht vollständig automatisiert. Eher es versucht, die Bildschirmfreigabe mit Zoom zu starten und zu stoppen, indem das Tastaturkürzel in Zooms Einstellung \"Start/Stopp-Bildschirmfreigabe\" aktiviert wird, wenn die Medien gestartet werden und nicht mehr in M3 abgespielt werden.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom-Bildschirmfreigabe-Tastenkürzel",
-  "zoomScreenShareShortcut-explain": "Geben Sie das Tastenkürzel ein, das in den Zoom-Einstellungen für \"Bildschirmfreigabe starten/stoppen\" konfiguriert ist. M³ sendet dieses Kürzel, wenn Medien gestartet werden (um die Bildschirmfreigabe zu starten) und wenn sie stoppen (um die Bildschirmfreigabe zu stoppen). Um diese Funktion nutzen zu können, müssen Sie die Einstellung \"Globales Tastenkürzel\" für dieses spezielle Kürzel in den Zoom-Einstellungen aktivieren.",
-  "watch-folder-error-caption": "Bitte stellen Sie sicher, dass alle Begleit-Apps wie Dropbox laufen und dass der angegebene Pfad gültig ist und geschrieben werden kann",
-  "watch-folder-error-message": "Beim Beobachtungsordner ist ein Fehler aufgetreten. Dies kann mit einem Netzwerk oder einem Cloud-Ordner verknüpft sein."
+  "zoomScreenShareShortcut-explain": "Geben Sie das Tastenkürzel ein, das in den Zoom-Einstellungen für \"Bildschirmfreigabe starten/stoppen\" konfiguriert ist. M³ sendet dieses Kürzel, wenn Medien gestartet werden (um die Bildschirmfreigabe zu starten) und wenn sie stoppen (um die Bildschirmfreigabe zu stoppen). Um diese Funktion nutzen zu können, müssen Sie die Einstellung \"Globales Tastenkürzel\" für dieses spezielle Kürzel in den Zoom-Einstellungen aktivieren."
 }

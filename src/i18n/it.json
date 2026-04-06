@@ -354,6 +354,7 @@
   "meetingScheduleChangeWeStartTime-explain": "Seleziona il nuovo orario per l'adunanza del fine settimana. Lascia vuoto se l'orario non cambierà.",
   "meetingStopBufferSeconds": "Quanti secondi prima di una adunanza dovrebbe interrompere la musica di sottofondo?",
   "meetingStopBufferSeconds-explain": "Regola il cursore per impostare il tempo desiderato (in secondi) prima dell'inizio di una adunanza, di quando la musica di sottofondo deve interrompersi.",
+  "memorial-background": "Immagine da visualizzare durante la Commemorazione",
   "memorial-talk": "Memorial talk",
   "memorialDate": "Data della Commemorazione",
   "memorialDate-explain": "Se inserito, M³ proverà automaticamente a scaricare e preparare l'immagine di sfondo per la Commemorazione. L'immagine verrà visualizzata al posto della scrittura dell'anno. Attenzione che questa è una funzione sperimentale e potrebbe non funzionare come previsto.",
@@ -676,6 +677,8 @@
   "video": "Video",
   "videos:": "Video:",
   "warning": "Attenzione",
+  "watch-folder-error-caption": "Assicurati che tutte le app come Dropbox siano in esecuzione e che il percorso fornito sia valido e possa essere scritto",
+  "watch-folder-error-message": "Si è verificato un errore con la cartella monitorata. Ciò potrebbe essere che si tratta di una cartella di rete o su cloud.",
   "watched-media-item-explain": "Questo media è stato aggiunto da una cartella monitorata",
   "websiteSelection": "Website selection",
   "weDay": "Adunanza del fine settimana",
@@ -714,7 +717,5 @@
   "zoomEnable-explain": "Questo non automatizza completamente lo zoom. Piuttosto tenterà di avviare e interrompere la condivisione dello schermo dello zoom utilizzando la scorciatoia da tastiera configurata nell'impostazione \"Start/stop screen sharing\" di Zoom ogni volta che il media inizia e smette di riprodurre in M3.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Scorciatoia condivisione schermo di Zoom",
-  "zoomScreenShareShortcut-explain": "Inserisci la scorciatoia da tastiera configurata nell'impostazione \"Avvia/ferma condivisione schermo\" di Zoom. M³ invierà questa scorciatoia quando il media inizia a riprodurre (per iniziare la condivisione dello schermo) e quando si ferma (per interrompere la condivisione dello schermo). Per poter utilizzare questa funzione, è necessario abilitare l'impostazione \"Scorciatoie globali\" per quella particolare scorciatoia nelle impostazioni di Zoom.",
-  "watch-folder-error-caption": "Assicurati che tutte le app come Dropbox siano in esecuzione e che il percorso fornito sia valido e possa essere scritto",
-  "watch-folder-error-message": "Si è verificato un errore con la cartella monitorata. Ciò potrebbe essere che si tratta di una cartella di rete o su cloud."
+  "zoomScreenShareShortcut-explain": "Inserisci la scorciatoia da tastiera configurata nell'impostazione \"Avvia/ferma condivisione schermo\" di Zoom. M³ invierà questa scorciatoia quando il media inizia a riprodurre (per iniziare la condivisione dello schermo) e quando si ferma (per interrompere la condivisione dello schermo). Per poter utilizzare questa funzione, è necessario abilitare l'impostazione \"Scorciatoie globali\" per quella particolare scorciatoia nelle impostazioni di Zoom."
 }
