@@ -5,9 +5,7 @@ import { writeFile } from 'fs-extra';
 import { ensureDir } from 'fs-extra/esm';
 import { capturePreloadError } from 'src-electron/preload/log';
 import { FULL_HD } from 'src/constants/media';
-import upath from 'upath';
-
-const { basename, join } = upath;
+import { basename, join } from 'upath';
 
 export const convertHeic = async (image: ConversionOptions) => {
   try {

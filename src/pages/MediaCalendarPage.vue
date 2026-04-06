@@ -272,19 +272,20 @@ watch(
 );
 
 const {
+  basename,
   convertPdfToImages,
   executeQuery,
   fileUrlToPath,
   fs,
   getLocalPathFromFileObject,
   inferExtension,
-  path,
+  join,
+  parse,
   pathToFileURL,
   readdir,
   unzip,
 } = globalThis.electronApi;
 const { pathExists, remove, writeFile } = fs;
-const { basename, join } = path;
 
 const { post: postMediaAction } = useBroadcastChannel<string, string>({
   name: 'main-window-media-action',
@@ -1628,8 +1629,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
       if (isImage(filepath)) {
         await copyToDatedAdditionalMedia(filepath, sectionToAddTo.value, true);
       } else if (isVideo(filepath) || isAudio(filepath)) {
-        const detectedPubMediaInfo = path
-          .parse(filepath)
+        const detectedPubMediaInfo = parse(filepath)
           .name.split('_')
           .filter((item) => !/^r\d+P$/.test(item));
         const normalizeArray = (arr: (number | string)[]) =>

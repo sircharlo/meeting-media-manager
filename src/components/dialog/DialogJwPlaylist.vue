@@ -261,9 +261,9 @@ const includeNumbering = ref(true);
 const currentState = useCurrentStateStore();
 const { selectedDate, selectedDateObject } = storeToRefs(currentState);
 
-const { executeQuery, fs, path, unzip } = globalThis.electronApi;
+const { basename, executeQuery, extname, fs, join, unzip } =
+  globalThis.electronApi;
 const { pathExists, rename } = fs;
-const { basename, extname, join } = path;
 
 const loadPlaylistItems = async () => {
   loading.value = true;

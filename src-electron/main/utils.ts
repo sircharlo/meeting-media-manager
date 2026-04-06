@@ -12,9 +12,7 @@ import {
 import { isUsablePath } from 'src-electron/main/fs';
 import { urlVariables } from 'src-electron/main/session';
 import { log } from 'src/shared/vanilla';
-import upath from 'upath';
-
-const { join, resolve } = upath;
+import { join, resolve } from 'upath';
 
 type CaptureCtx = Parameters<typeof captureException>[1];
 /**

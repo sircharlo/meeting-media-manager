@@ -20,10 +20,8 @@ import {
   PDF_EXTENSIONS,
 } from 'src/constants/media';
 import { log, uuid } from 'src/shared/vanilla';
-import upath from 'upath';
+import { basename, dirname, join, resolve, toUnix } from 'upath';
 import yauzl from 'yauzl';
-
-const { basename, dirname, join, resolve, toUnix } = upath;
 
 const ongoingDecompressions = new Map<string, Promise<UnzipResult[]>>();
 
@@ -867,7 +865,7 @@ export async function watchFolder(folderPath: string) {
 
         try {
           const e = error as Error & { code?: string; syscall?: string };
-          
+
           sendToWindow(mainWindowInfo.mainWindow, 'watchFolderError', {
             folderPath,
             isPossiblyNetwork: pathIsPossiblyNetwork,

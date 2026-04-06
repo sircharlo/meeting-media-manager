@@ -85,10 +85,9 @@ import {
   websiteWindowInfo,
   zoomWebsiteWindow,
 } from 'src-electron/main/window/window-website';
-import upath from 'upath';
+import { join } from 'upath';
 
 const { openExternal, openPath } = shell;
-const { join } = upath;
 
 // IPC send/on
 
@@ -287,7 +286,7 @@ function handleIpcInvoke<T = unknown>(
 
 function isOS64Bit() {
   try {
-    if (platform() === 'win32') {
+    if (platform() === 'win32' && process.env.SystemRoot) {
       // Check for the existence of the SysWOW64 directory
       // PROGRAMFILES environment variable points to "C:\Program Files (x86)" for 32-bit apps on 64-bit systems
       // process.env.SystemRoot points to the Windows directory (e.g., C:\Windows)

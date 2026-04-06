@@ -1,7 +1,5 @@
 import { promises as fs } from 'node:fs';
-import upath from 'upath';
-
-const { join } = upath;
+import { join } from 'upath';
 
 const sourceDir = join('.', 'build', 'icons');
 const outputDir = join('.', 'src', 'css');

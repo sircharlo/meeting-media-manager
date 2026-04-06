@@ -1255,8 +1255,7 @@ const isEditingTitle = ref(false);
 const titleInput = ref<HTMLInputElement>();
 const mediaTitle = ref(props.media.title);
 
-const { fileUrlToPath, fs, path } = globalThis.electronApi;
-const { basename } = path;
+const { basename, fileUrlToPath, fs } = globalThis.electronApi;
 
 const { pathExists, pathExistsSync, statSync } = fs;
 

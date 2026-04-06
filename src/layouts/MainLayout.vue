@@ -169,6 +169,8 @@ const { updateJwLanguages, updateMemorials } = jwStore;
 const { lookupPeriod } = storeToRefs(jwStore);
 
 const {
+  basename,
+  dirname,
   isArchitectureMismatch,
   onDownloadCancelled,
   onDownloadCompleted,
@@ -182,7 +184,6 @@ const {
   onVideoCaptureCrashDetected,
   onWatchFolderError,
   onWatchFolderUpdate,
-  path,
   pathToFileURL,
   removeListeners,
   setAutoStartAtLogin,
@@ -190,7 +191,6 @@ const {
   setHardwareAcceleration,
   toggleTimerWindow,
 } = globalThis.electronApi;
-const { basename, dirname } = path;
 updateMemorials(online.value);
 updateJwLanguages(online.value);
 

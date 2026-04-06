@@ -9,9 +9,7 @@ import {
 import { ensureDirSync, readJsonSync, writeJsonSync } from 'fs-extra/esm';
 import { captureElectronError } from 'src-electron/main/utils';
 import { debounce, log } from 'src/shared/vanilla';
-import upath from 'upath';
-
-const { dirname, join } = upath;
+import { dirname, join } from 'upath';
 
 export interface WindowState {
   displayBounds?: Rectangle;

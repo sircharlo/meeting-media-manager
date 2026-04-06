@@ -13,9 +13,7 @@ import {
   pathToFileURL,
   readDirectory,
 } from 'src-electron/preload/fs';
-import upath from 'upath';
-
-const { join } = upath;
+import { basename, dirname, extname, join, parse } from 'upath';
 
 export const basePath = join(__dirname, '..', 'fs');
 const fakePath = async (path: string, create = true) => {
@@ -30,10 +28,12 @@ export const electronApi: ElectronApi = {
   askForMediaAccess: function () {
     throw new Error('Function not implemented.');
   },
+  basename,
   cancelAllDownloads: function () {
     throw new Error('Function not implemented.');
   },
   checkForUpdates: () => void 0,
+
   closeWebsiteWindow: function () {
     throw new Error('Function not implemented.');
   },
@@ -46,12 +46,14 @@ export const electronApi: ElectronApi = {
   createVideoFromNonVideo: function (originalFile, ffmpegPath) {
     throw new Error('Function not implemented.');
   },
+  dirname,
   downloadFile: function (url, saveDir, destFilename, lowPriority) {
     throw new Error('Function not implemented.');
   },
   executeQuery: function (dbPath, query) {
     throw new Error('Function not implemented.');
   },
+  extname,
   fileUrlToPath,
   focusMediaWindow: function () {
     throw new Error('Function not implemented.');
@@ -93,6 +95,7 @@ export const electronApi: ElectronApi = {
   isUsablePath: async function (path) {
     return true;
   },
+  join,
   moveMediaWindow: function (targetScreenNumber, windowedMode) {
     throw new Error('Function not implemented.');
   },
@@ -171,10 +174,10 @@ export const electronApi: ElectronApi = {
   openWebsiteWindow: function (lang) {
     throw new Error('Function not implemented.');
   },
+  parse,
   parseMediaFile: function (filePath, options) {
     throw new Error('Function not implemented.');
   },
-  path: upath,
   pathToFileURL,
   pauseAllDownloads: function () {
     throw new Error('Function not implemented.');

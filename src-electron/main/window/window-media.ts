@@ -11,9 +11,7 @@ import {
 } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import { log, throttleWithTrailing } from 'src/shared/vanilla';
-import upath from 'upath';
-
-const { join } = upath;
+import { join } from 'upath';
 
 export const mediaWindowInfo = {
   mediaWindow: null as BrowserWindow | null,

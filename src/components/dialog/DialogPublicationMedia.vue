@@ -515,7 +515,8 @@ const { urlVariables } = storeToRefs(jwStore);
 const currentState = useCurrentStateStore();
 const { currentLangObject, currentSettings } = storeToRefs(currentState);
 
-const { executeQuery, fs, path, pathToFileURL } = globalThis.electronApi;
+const { basename, dirname, executeQuery, fs, join, pathToFileURL } =
+  globalThis.electronApi;
 
 const { t } = useI18n();
 const { dateLocale } = useLocale();
@@ -650,7 +651,7 @@ async function buildDocumentPreviews(db: string) {
 
     if (!db || !documents.value?.length) return;
 
-    const baseDir = path.dirname(db);
+    const baseDir = dirname(db);
     const hasDocMM = tableExists(db, 'DocumentMultimedia');
 
     const getFirstLinkedImage = (docId: number) => {
@@ -700,7 +701,7 @@ async function buildDocumentPreviews(db: string) {
       if (!previewPath) continue;
 
       try {
-        const abs = path.join(baseDir, previewPath);
+        const abs = join(baseDir, previewPath);
         const url = pathToFileURL(abs)?.toString();
         if (url) docPreviews.value[docId] = url;
       } catch (err) {
@@ -1006,8 +1007,8 @@ async function handleMediaResult(
   mediaItems.value = await Promise.all(
     mediaFiles.map(async (mediaLink, index) => {
       const url = mediaLink.file.url;
-      const filename = path.basename(url);
-      const downloaded = await fs.pathExists(path.join(datedDir, filename));
+      const filename = basename(url);
+      const downloaded = await fs.pathExists(join(datedDir, filename));
       return {
         ...mediaLink,
         downloaded,

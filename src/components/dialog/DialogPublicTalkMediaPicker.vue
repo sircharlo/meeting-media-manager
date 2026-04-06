@@ -146,8 +146,8 @@ const s34Db = ref<string | undefined>();
 const s34Info = ref<null | PublicationInfo>(null);
 const isProcessing = ref<boolean>(false);
 
-const { executeQuery, fs, openFileDialog, path } = globalThis.electronApi;
-const { basename, extname, join } = path;
+const { basename, executeQuery, extname, fs, join, openFileDialog } =
+  globalThis.electronApi;
 
 const { ensureDir } = fs;
 

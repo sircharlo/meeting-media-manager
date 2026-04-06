@@ -13,9 +13,7 @@ import {
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import { log } from 'src/shared/vanilla';
-import upath from 'upath';
-
-const { basename } = upath;
+import { basename } from 'upath';
 
 const ENSURE_DIR_RETRYABLE_CODES = new Set([
   'EACCES',

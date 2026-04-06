@@ -2,9 +2,7 @@ import { pathExists } from 'fs-extra/esm';
 import { createHash } from 'node:crypto';
 import { stat } from 'node:fs/promises';
 import { FULL_HD } from 'src/constants/media';
-import upath from 'upath';
-
-const { basename, changeExt, extname, join } = upath;
+import { basename, changeExt, extname, join } from 'upath';
 
 const conversionQueue = new Map<string, Promise<string>>();
 

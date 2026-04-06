@@ -16,9 +16,7 @@ import { urlVariables } from 'src-electron/main/session';
 import { captureElectronError, getIconPath } from 'src-electron/main/utils';
 import { StatefulBrowserWindow } from 'src-electron/main/window/window-state';
 import { log } from 'src/shared/vanilla';
-import upath from 'upath';
-
-const { join, resolve } = upath;
+import { join, resolve } from 'upath';
 
 export function closeOtherWindows(source: BrowserWindow) {
   try {

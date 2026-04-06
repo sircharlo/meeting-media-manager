@@ -39,9 +39,7 @@ import {
   mainWindowInfo,
 } from 'src-electron/main/window/window-main';
 import { log } from 'src/shared/vanilla';
-import upath from 'upath';
-
-const { join, resolve } = upath;
+import { join, resolve } from 'upath';
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -207,7 +205,7 @@ if (gotTheLock) {
       'temp',
       join(portableExecutableDir, `${PRODUCT_NAME} - Temporary Files`),
     );
-  } else if (IS_TEST) {
+  } else if (IS_TEST && PRODUCT_NAME) {
     app.setPath('userData', join(app.getPath('appData'), PRODUCT_NAME));
   }
 

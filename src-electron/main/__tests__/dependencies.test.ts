@@ -1,11 +1,9 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { log } from 'src/shared/vanilla';
-import upath from 'upath';
+import { extname, join, resolve } from 'upath';
 import { describe, expect, it } from 'vitest';
 
 import { dependencies } from '../../../package.json';
-
-const { extname, join, resolve } = upath;
 
 const projectRoot = resolve(__dirname, '../../..');
 const srcElectronDir = resolve(projectRoot, 'src-electron');

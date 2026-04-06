@@ -215,8 +215,7 @@ function handleWatchedMediaPersistence(items: MediaItemType[]) {
     const watchedItem = watchedItems[0];
     if (!watchedItem) return;
 
-    const { fileUrlToPath, path } = globalThis.electronApi;
-    const { dirname } = path;
+    const { dirname, fileUrlToPath } = globalThis.electronApi;
 
     const firstWatchedItemPath = fileUrlToPath(watchedItem.fileUrl);
     if (!firstWatchedItemPath) return;

@@ -402,14 +402,14 @@ const props = defineProps<{
 const open = defineModel<boolean>({ default: false });
 
 const {
+  basename,
   fs,
   getAllScreens,
+  join,
   moveMediaWindow,
   openFileDialog,
-  path,
   pathToFileURL,
 } = globalThis.electronApi;
-const { basename, join } = path;
 
 const { copyFile } = fs;
 
@@ -516,6 +516,7 @@ const chooseCustomBackground = async (reset?: boolean) => {
           if (filepath && isJwpub(filepath)) {
             jwpubImportFilePath.value = filepath;
             const unzipDir = await unzipJwpub(filepath);
+            if (!unzipDir) throw new Error('Failed to unzip: ' + filepath);
             const db = await findDb(unzipDir);
             if (!db) throw new Error('No db file found: ' + filepath);
             jwpubImages.value = globalThis.electronApi
@@ -524,7 +525,7 @@ const chooseCustomBackground = async (reset?: boolean) => {
               >(db, "SELECT FilePath FROM Multimedia WHERE CategoryType >= 0 AND CategoryType <> 9 AND FilePath <> '';")
               .map((multimediaItem) => {
                 return {
-                  FilePath: join(unzipDir, multimediaItem.FilePath),
+                  FilePath: join(unzipDir, multimediaItem.FilePath || ''),
                 };
               });
             if (jwpubImages.value?.length === 0) {

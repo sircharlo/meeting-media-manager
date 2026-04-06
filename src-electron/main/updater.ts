@@ -11,9 +11,7 @@ import {
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import { log } from 'src/shared/vanilla';
-import upath from 'upath';
-
-const { join } = upath;
+import { join } from 'upath';
 
 const isIgnoredUpdaterLog = (message?: string) => {
   if (!message) return false;
