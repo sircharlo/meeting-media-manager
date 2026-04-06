@@ -354,6 +354,7 @@
   "meetingScheduleChangeWeStartTime-explain": "Izberi novo uro začetka shoda ob koncu tedna. Pusti prazno, če se ura ne bo spremenila.",
   "meetingStopBufferSeconds": "Koliko sekund pred začetkom shoda naj se glasba v ozadju ustavi?",
   "meetingStopBufferSeconds-explain": "Prilagodi drsnik, da nastaviš želeni čas (v sekundah) pred začetkom sestanka, ko naj se glasba v ozadju ustavi.",
+  "memorial-background": "Image to be displayed during the Memorial",
   "memorial-talk": "Govor za spominsko slovesnost",
   "memorialDate": "Datum spominske slovesnosti",
   "memorialDate-explain": "Če je datum vpisan, bo M³ samodejno poskusil prenesti in pripraviti sliko ozadja za spominsko slovesnost. Slika bo prikazana namesto letnega stavka. Upoštevaj, da je to poskusna funkcija in morda ne bo delovala, kot se pričakuje.",
@@ -676,6 +677,8 @@
   "video": "Videoposnetek",
   "videos:": "Videoposnetki:",
   "warning": "Opozorilo",
+  "watch-folder-error-caption": "Preverite, ali so vse spremljevalne aplikacije, kot je Dropbox, zagnane, ter ali je navedena pot veljavna in omogoča pisanje",
+  "watch-folder-error-message": "Pri mapi za spremljanje je prišlo do napake. To je morda povezano s tem, da se mapa nahaja na omrežju ali v oblaku.",
   "watched-media-item-explain": "Ta multimedijska datoteka je bila dodan iz spremljane mape",
   "websiteSelection": "Izbira spletnega mesta",
   "weDay": "Dan shoda ob koncu tedna",
@@ -714,7 +717,5 @@
   "zoomEnable-explain": "To ne bo povsem avtomatiziralo delovanja Zooma, ampak bo poskušalo zagnati in ustaviti deljenje zaslona v Zoomu s pomočjo bližnjice na tipkovnici, ki je v Zoomu nastavljena za »Start/stop screen sharing«, vsakič, ko se v M³ začne ali ustavi predvajanje multimedijske vsebine.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Bližnjica za deljenje zaslona v Zoomu",
-  "zoomScreenShareShortcut-explain": "Vnesi bližnjico na tipkovnici, ki je nastavljena v Zoomovi nastavitvi »Start/stop screen sharing«. M³ bo to bližnjico poslal, ko se bo začelo predvajanje multimedijske vsebine (za začetek deljenja zaslona) in ko se bo ustavilo (za ustavitev deljenja zaslona). Da bi lahko uporabljal to funkcijo, moraš v Zoomovih nastavitvah omogočiti nastavitev »Global shortcut« za to bližnjico.",
-  "watch-folder-error-caption": "Preverite, ali so vse spremljevalne aplikacije, kot je Dropbox, zagnane, ter ali je navedena pot veljavna in omogoča pisanje",
-  "watch-folder-error-message": "Pri mapi za spremljanje je prišlo do napake. To je morda povezano s tem, da se mapa nahaja na omrežju ali v oblaku."
+  "zoomScreenShareShortcut-explain": "Vnesi bližnjico na tipkovnici, ki je nastavljena v Zoomovi nastavitvi »Start/stop screen sharing«. M³ bo to bližnjico poslal, ko se bo začelo predvajanje multimedijske vsebine (za začetek deljenja zaslona) in ko se bo ustavilo (za ustavitev deljenja zaslona). Da bi lahko uporabljal to funkcijo, moraš v Zoomovih nastavitvah omogočiti nastavitev »Global shortcut« za to bližnjico."
 }

@@ -354,6 +354,7 @@
   "meetingScheduleChangeWeStartTime-explain": "변경되는 주말 집회 시간을 선택하십시오. 시간이 변경되지 않는다면 비워두십시오.",
   "meetingStopBufferSeconds": "집회 시작 몇 초 전에 배경 음악을 중지할까요?",
   "meetingStopBufferSeconds-explain": "집회 시작 전 배경 음악을 중지할 시간(초)을 슬라이더로 조정하세요.",
+  "memorial-background": "Image to be displayed during the Memorial",
   "memorial-talk": "기념식 연설",
   "memorialDate": "기념식 날짜",
   "memorialDate-explain": "이 값이 지정된 경우 M³는 기념식 일자에 자동으로 기념식 배경 화면을 다운로드하여 표시합니다. 기념식 배경 화면이 연표어 대신 표시됩니다. 이 기능은 실험적 기능이며 예상대로 동작하지 않을 수 있습니다.",
@@ -676,6 +677,8 @@
   "video": "동영상",
   "videos:": "동영상:",
   "warning": "경고",
+  "watch-folder-error-caption": "Please ensure that all companion apps such as Dropbox are running and that the path provided is valid and can be written",
+  "watch-folder-error-message": "An error occurred with the watch folder. This may be linked to it being a network or cloud folder.",
   "watched-media-item-explain": "이 미디어는 모니터링 폴더에서 추가되었습니다",
   "websiteSelection": "Website selection",
   "weDay": "주말 집회 요일",
@@ -714,7 +717,5 @@
   "zoomEnable-explain": "This will not automate Zoom fully. Rather, it will attempt to start and stop Zoom screen sharing using the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting whenever media starts and stops playing in M³.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom screen sharing shortcut",
-  "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings.",
-  "watch-folder-error-caption": "Please ensure that all companion apps such as Dropbox are running and that the path provided is valid and can be written",
-  "watch-folder-error-message": "An error occurred with the watch folder. This may be linked to it being a network or cloud folder."
+  "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings."
 }
