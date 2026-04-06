@@ -354,6 +354,7 @@
   "meetingScheduleChangeWeStartTime-explain": "Sélectionnez la nouvelle heure de début pour la réunion de fin de semaine. Laissez vide si l'heure ne changera pas.",
   "meetingStopBufferSeconds": "Combien de secondes avant le début d'une réunion la musique de fond devrait-elle s'arrêter ?",
   "meetingStopBufferSeconds-explain": "Ajustez le curseur pour définir le temps souhaité (en secondes) avant le début d'une réunion où la musique de fond devrait s'arrêter.",
+  "memorial-background": "Image à afficher pendant le Mémorial",
   "memorial-talk": "Discours du Mémorial",
   "memorialDate": "Date du Mémorial",
   "memorialDate-explain": "Si celle-ci est saisie, M³ tentera de télécharger automatiquement l'image de fond pour le Mémorial et de la préparer. L'image sera affichée à la place du texte d'année. Attention, il s'agit d'une fonctionnalité expérimentale qui peut ne pas fonctionner comme prévu.",
@@ -676,6 +677,8 @@
   "video": "Vidéo",
   "videos:": "Vidéos :",
   "warning": "Avertissement",
+  "watch-folder-error-caption": "Veuillez vous assurer que toutes les applications infonuagiques, telles que Dropbox, sont en cours d'exécution et que le chemin d'accès fourni est valide et accessible",
+  "watch-folder-error-message": "Une erreur est survenue dans le dossier surveillé. Cela peut être lié au fait que c'est un dossier réseau ou infonuagique.",
   "watched-media-item-explain": "Cet élément multimédia a été ajouté à partir d'un dossier surveillé",
   "websiteSelection": "Sélection du site web",
   "weDay": "Jour de réunion de fin de semaine",
@@ -714,7 +717,5 @@
   "zoomEnable-explain": "Cela n'automatisera pas entièrement Zoom. Cela permettra plutôt de lancer et d'arrêter le partage d'écran de Zoom à l'aide du raccourci clavier défini dans le paramètre « Démarrer/arrêter le partage d'écran » de Zoom, dès que la lecture d'un fichier multimédia démarre ou s'arrête dans M³.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Raccourci pour le partage d'écran de Zoom",
-  "zoomScreenShareShortcut-explain": "Entrez le raccourci clavier configuré dans le paramètre « Démarrer/arrêter le partage d'écran » de Zoom. M³ enverra ce raccourci lorsque les médias commencent à jouer (pour démarrer le partage d'écran) et lorsqu'ils s'arrêtent (pour arrêter le partage d'écran). Pour utiliser cette fonctionnalité, vous devez activer le paramètre « Raccourci global » pour ce raccourci particulier dans les paramètres de Zoom.",
-  "watch-folder-error-caption": "Veuillez vous assurer que toutes les applications infonuagiques, telles que Dropbox, sont en cours d'exécution et que le chemin d'accès fourni est valide et accessible",
-  "watch-folder-error-message": "Une erreur est survenue dans le dossier surveillé. Cela peut être lié au fait que c'est un dossier réseau ou infonuagique."
+  "zoomScreenShareShortcut-explain": "Entrez le raccourci clavier configuré dans le paramètre « Démarrer/arrêter le partage d'écran » de Zoom. M³ enverra ce raccourci lorsque les médias commencent à jouer (pour démarrer le partage d'écran) et lorsqu'ils s'arrêtent (pour arrêter le partage d'écran). Pour utiliser cette fonctionnalité, vous devez activer le paramètre « Raccourci global » pour ce raccourci particulier dans les paramètres de Zoom."
 }
