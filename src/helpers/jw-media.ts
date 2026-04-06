@@ -3280,16 +3280,58 @@ const downloadJwpub = async (
         currentStateStore.currentSettings?.memorialDate,
       );
     publication.fileformat = 'JWPUB';
-    const handleDownloadError = () => {
+    const isValidJwpubArchive = async (jwpubPath?: string) => {
+      if (!jwpubPath) return false;
+      try {
+        const entries = await getZipEntries(jwpubPath);
+        return !!entries['contents'];
+      } catch (error) {
+        log(
+          `[downloadJwpub] Corrupt JWPUB detected at ${jwpubPath}.`,
+          'mediaFetching',
+          'warn',
+          error,
+        );
+        return false;
+      }
+    };
+
+    const getExistingJwpub = async (dir: string): Promise<DownloadedFile> => {
+      try {
+        if (!(await pathExists(dir))) {
+          return { new: false, path: '' };
+        }
+
+        const files = await readdir(dir);
+        for (const file of files) {
+          const filename = file?.name || '';
+          if (!filename.toLowerCase().endsWith('.jwpub')) continue;
+
+          const jwpubPath = join(dir, filename);
+          if (await isValidJwpubArchive(jwpubPath)) {
+            return {
+              new: false,
+              path: jwpubPath,
+            };
+          }
+        }
+      } catch (error) {
+        errorCatcher(error);
+      }
+      return { new: false, path: '' };
+    };
+
+    const publicationDir = await getPublicationDirectory(publication);
+
+    const handleDownloadError = async () => {
       const downloadId = getPubId(publication, true);
       currentStateStore.downloadProgress[downloadId] = {
         error: true,
         filename: downloadId,
       };
-      return {
-        new: false,
-        path: '',
-      };
+      const cachedJwpub = await getExistingJwpub(publicationDir);
+      if (cachedJwpub.path) return cachedJwpub;
+      return { new: false, path: '' };
     };
     const publicationInfo = await getPubMediaLinks(publication, meetingDate);
     if (!publicationInfo?.files) {
@@ -3311,9 +3353,7 @@ const downloadJwpub = async (
       return handleDownloadError();
     }
 
-    const dir = await getPublicationDirectory(publication);
-    await updateLastUsedDate(dir, meetingDate || new Date());
-
+    await updateLastUsedDate(publicationDir, meetingDate || new Date());
     let lowPriority = false;
 
     if (!isMemorialMeeting && meetingDate) {
@@ -3321,27 +3361,11 @@ const downloadJwpub = async (
     }
 
     const downloadOptions = {
-      dir,
+      dir: publicationDir,
       lowPriority,
       meetingDate,
       size: mediaLinks[0]?.filesize,
       url: mediaLinks[0]?.file.url ?? '',
-    };
-
-    const isValidJwpubArchive = async (jwpubPath?: string) => {
-      if (!jwpubPath) return false;
-      try {
-        const entries = await getZipEntries(jwpubPath);
-        return !!entries['contents'];
-      } catch (error) {
-        log(
-          `[downloadJwpub] Corrupt JWPUB detected at ${jwpubPath}.`,
-          'mediaFetching',
-          'warn',
-          error,
-        );
-        return false;
-      }
     };
 
     const firstAttempt = await downloadFileIfNeeded(downloadOptions);

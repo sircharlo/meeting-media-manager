@@ -354,6 +354,7 @@
   "meetingScheduleChangeWeStartTime-explain": "Select the new start time for the weekend meeting. Leave blank if the time will not change.",
   "meetingStopBufferSeconds": "How many seconds before a meeting should background music stop?",
   "meetingStopBufferSeconds-explain": "Adjust the slider to set the desired time (in seconds) before a meeting starts when background music should stop.",
+  "memorial-background": "Image to be displayed during the Memorial",
   "memorial-talk": "Memorial talk",
   "memorialDate": "Date of the Memorial",
   "memorialDate-explain": "If entered, M³ will automatically try to download and prepare the background image for the Memorial. The image will be displayed instead of the yeartext. Beware that this is an experimental feature and may not work as expected.",
@@ -676,6 +677,8 @@
   "video": "Video",
   "videos:": "Videos:",
   "warning": "Warning",
+  "watch-folder-error-caption": "Please ensure that all companion apps such as Dropbox are running and that the path provided is valid and can be written",
+  "watch-folder-error-message": "An error occurred with the watch folder. This may be linked to it being a network or cloud folder.",
   "watched-media-item-explain": "This media item was added from a monitored folder",
   "websiteSelection": "Website selection",
   "weDay": "Weekend meeting day",
@@ -714,7 +717,5 @@
   "zoomEnable-explain": "This will not automate Zoom fully. Rather, it will attempt to start and stop Zoom screen sharing using the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting whenever media starts and stops playing in M³.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom screen sharing shortcut",
-  "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings.",
-  "watch-folder-error-caption": "Please ensure that all companion apps such as Dropbox are running and that the path provided is valid and can be written",
-  "watch-folder-error-message": "An error occurred with the watch folder. This may be linked to it being a network or cloud folder."
+  "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings."
 }

@@ -852,10 +852,14 @@ const checkMemorialDate = async () => {
   if (checkMemorialDateRunning) return;
   checkMemorialDateRunning = true;
   try {
+    const isMemorialDateSelected =
+      !!selectedDate.value &&
+      !isInPast(selectedDate.value) &&
+      selectedDate.value === currentSettings.value?.memorialDate;
+
     if (
       !selectedDate.value ||
-      isInPast(selectedDate.value) ||
-      selectedDate.value !== currentSettings.value?.memorialDate ||
+      !isMemorialDateSelected ||
       !selectedDateObject.value
     ) {
       postCustomBackground(mediaWindowCustomBackground.value ?? '');
@@ -1011,6 +1015,33 @@ const checkMemorialDate = async () => {
           message: t('memorialFetchVideoSuccess'),
           type: 'positive',
         });
+      }
+
+      // Add Memorial background image as backup media item after welcome video
+      if (introSection && memorialMedia.bg) {
+        introSection.items ??= [];
+
+        const memorialBgFileUrl = isFileUrl(memorialMedia.bg)
+          ? memorialMedia.bg
+          : pathToFileURL(memorialMedia.bg);
+
+        const hasMemorialBgInWelcomeSection = introSection.items.some(
+          (item) =>
+            item.source === 'dynamic' &&
+            item.isImage &&
+            item.fileUrl === memorialBgFileUrl,
+        );
+
+        if (!hasMemorialBgInWelcomeSection) {
+          introSection.items.push({
+            fileUrl: memorialBgFileUrl,
+            isImage: true,
+            source: 'dynamic',
+            title: t('memorial-background'),
+            type: 'media',
+            uniqueId: uuid(),
+          });
+        }
       }
     } else {
       createTemporaryNotification({
