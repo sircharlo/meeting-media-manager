@@ -3863,7 +3863,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/vue@npm:^10.46.0":
+"@sentry/vue@npm:^10.47.0":
   version: 10.47.0
   resolution: "@sentry/vue@npm:10.47.0"
   dependencies:
@@ -8225,7 +8225,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^10.1.0":
+"eslint@npm:^10.2.0":
   version: 10.2.0
   resolution: "eslint@npm:10.2.0"
   dependencies:
@@ -11199,7 +11199,7 @@ __metadata:
     "@sentry/electron": "npm:^7.10.0"
     "@sentry/esbuild-plugin": "npm:^5.1.1"
     "@sentry/vite-plugin": "npm:^5.1.1"
-    "@sentry/vue": "npm:^10.46.0"
+    "@sentry/vue": "npm:^10.47.0"
     "@types/better-sqlite3": "npm:^7.6.13"
     "@types/fluent-ffmpeg": "npm:^2.1.28"
     "@types/fontkit": "npm:^2.0.9"
@@ -11231,7 +11231,7 @@ __metadata:
     electron-builder: "npm:26.8.1"
     electron-dl-manager: "npm:^4.2.3"
     electron-updater: "npm:^6.8.3"
-    eslint: "npm:^10.1.0"
+    eslint: "npm:^10.2.0"
     eslint-plugin-perfectionist: "npm:^5.8.0"
     eslint-plugin-vue: "npm:^10.8.0"
     fantasticon: "npm:^4.1.0"
