@@ -987,9 +987,9 @@ const initListeners = () => {
     if (!pathProbeNetworkWarningShown.value) {
       pathProbeNetworkWarningShown.value = true;
       createTemporaryNotification({
-        caption: t('watch-folder-error-caption'),
+        caption: t('path-probe-network-warning-caption'),
         icon: 'mmm-error',
-        message: t('watch-folder-error-message'),
+        message: t('path-probe-network-warning-message'),
         timeout: 15000,
         type: 'negative',
       });
