@@ -354,6 +354,7 @@
   "meetingScheduleChangeWeStartTime-explain": "选择周末聚会的新时间，如果没有改变，请留空。",
   "meetingStopBufferSeconds": "聚会多少秒前要停止音乐？",
   "meetingStopBufferSeconds-explain": "调整滑块以设置在聚会开始多少秒前要停止音乐。",
+  "memorial-background": "纪念碑中显示的图像",
   "memorial-talk": "纪念讲演",
   "memorialDate": "纪念聚会的日期",
   "memorialDate-explain": "如果被输入，M3将自动尝试下载并准备该纪念聚会的背景图像。 图像将被显示而不是全年经文。请注意这是一个实验性功能，可能无法正常工作。",
@@ -676,6 +677,8 @@
   "video": "视频",
   "videos:": "视频：",
   "warning": "提示",
+  "watch-folder-error-caption": "请确保所有配对的应用程序如Dropbox正在运行，所提供的路径是有效的，可以写入",
+  "watch-folder-error-message": "监视文件夹发生错误。这可能是一个网络或云文件夹。",
   "watched-media-item-explain": "此媒体项已从监视文件夹中添加",
   "websiteSelection": "网站选择",
   "weDay": "周末聚会日",
@@ -714,7 +717,5 @@
   "zoomEnable-explain": "这不会完全自动缩放。 而是相反的。 它将尝试使用缩放在Zoom设置的“开始/停止屏幕共享”设置中的键盘快捷键开始和停止缩放屏幕共享，每当媒体在 M3 中开始和停止播放。",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "共享Zoom屏幕快捷键",
-  "zoomScreenShareShortcut-explain": "输入Zoom的“开始/停止屏幕共享”设置中配置的键盘快捷方式。 当媒体开始播放时(启动屏幕共享)和停止时(停止屏幕共享)，M3将发送此快捷方式。 为了使用此功能，您需要在Zoom设置中启用\"全局快捷键\"设置。",
-  "watch-folder-error-caption": "请确保所有配对的应用程序如Dropbox正在运行，所提供的路径是有效的，可以写入",
-  "watch-folder-error-message": "监视文件夹发生错误。这可能是一个网络或云文件夹。"
+  "zoomScreenShareShortcut-explain": "输入Zoom的“开始/停止屏幕共享”设置中配置的键盘快捷方式。 当媒体开始播放时(启动屏幕共享)和停止时(停止屏幕共享)，M3将发送此快捷方式。 为了使用此功能，您需要在Zoom设置中启用\"全局快捷键\"设置。"
 }
