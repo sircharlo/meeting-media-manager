@@ -354,7 +354,7 @@
   "meetingScheduleChangeWeStartTime-explain": "Valitse uusi alkamisaika viikonloppukokoukselle. Jätä tyhjäksi, jos aika ei muutu.",
   "meetingStopBufferSeconds": "Kuinka monta sekuntia ennen kokousta taustamusiikin tulee pysähtyä?",
   "meetingStopBufferSeconds-explain": "Säädä liukusäätimellä aika (sekunteina), kuinka kauan ennen kokouksen alkua taustamusiikki pysähtyy.",
-  "memorial-background": "Muistomerkin aikana näytettävä kuva",
+  "memorial-background": "Muistojuhlassa näytettävä kuva",
   "memorial-talk": "Muistojuhlan puhe",
   "memorialDate": "Muistonvieton päivämäärä",
   "memorialDate-explain": "Jos tämä on täytetty, M³ yrittää automaattisesti ladata ja valmistella taustakuvan muistonviettoa varten. Kuva näytetään vuositekstin sijasta. Huomaa, että tämä on kokeellinen ominaisuus, eikä se välttämättä toimi odotetulla tavalla.",
