@@ -8,15 +8,15 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 
 ### ✨ Uued funktsioonid
 
-- ✨ **Meeting Timer**: A new meeting timer feature has been added. It is optional and can be enabled in the advanced settings, if desired. The timer can be used to allow the media operator to keep track of the time spent on meeting parts, or to display the time spent on the current meeting part on a dedicated screen visible only to the speaker.
+- ✨ **Koosoleku ajamõõtja**: Lisatud on uus koosoleku taimeri funktsioon. See on vabatahtlik ja soovi korral saab selle lülitada sisse täpsemates seadetes. Taimerit saab kasutada selleks, et meediaoperaator saaks jälgida koosoleku osade kestust, või selleks, et kuvada praeguse koosoleku osa kestus spetsiaalsel ekraanil, mida näeb ainult kõnepidaja.
 
 ## v26.3.0
 
 ### ✨ Uued funktsioonid
 
-- ✨ **Memorial Media**: Automatic Memorial media retrieval is now out of beta! The app will automatically download the Memorial Welcome Video and image to display during the Memorial, when available in the configured language.
-- ✨ **Playback Speed**: Added playback speed control with visual indicator, and manual reset. This feature is only visible if enabled in the advanced settings.
-- ✨ **Pinyin Songs**: Added a toggle for pinyin song substitution for meetings held in Chinese.
+- ✨ **Mälestusõhtu Media**: Mälestusõhtu meedia automaatne allalaadimine on nüüd beetaversioonist väljas! Rakendus laadib automaatselt alla mälestusõhtu tervitusvideo ja pildi, mida näidatakse mälestusõhtu ajal, kui need on saadaval valitud keeles.
+- ✨ **Taasesituskiirus**: Lisati taasesituskiiruse reguleerimine koos visuaalse indikaatoriga ja käsitsi taastamise funktsiooniga. See funktsioon on nähtav ainult juhul, kui see on täpsemates seadetes sisse lülitatud.
+- ✨ **Pinyin-laulud**: Lisati lüliti, millega saab hiina keeles peetavatel koosolekutel laule pinyin-lauludega asendada.
 
 ## v26.2.0
 
