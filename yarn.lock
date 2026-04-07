@@ -2680,144 +2680,144 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@oxc-minify/binding-android-arm-eabi@npm:0.123.0":
-  version: 0.123.0
-  resolution: "@oxc-minify/binding-android-arm-eabi@npm:0.123.0"
+"@oxc-minify/binding-android-arm-eabi@npm:0.124.0":
+  version: 0.124.0
+  resolution: "@oxc-minify/binding-android-arm-eabi@npm:0.124.0"
   conditions: os=android & cpu=arm
   languageName: node
   linkType: hard
 
-"@oxc-minify/binding-android-arm64@npm:0.123.0":
-  version: 0.123.0
-  resolution: "@oxc-minify/binding-android-arm64@npm:0.123.0"
+"@oxc-minify/binding-android-arm64@npm:0.124.0":
+  version: 0.124.0
+  resolution: "@oxc-minify/binding-android-arm64@npm:0.124.0"
   conditions: os=android & cpu=arm64
   languageName: node
   linkType: hard
 
-"@oxc-minify/binding-darwin-arm64@npm:0.123.0":
-  version: 0.123.0
-  resolution: "@oxc-minify/binding-darwin-arm64@npm:0.123.0"
+"@oxc-minify/binding-darwin-arm64@npm:0.124.0":
+  version: 0.124.0
+  resolution: "@oxc-minify/binding-darwin-arm64@npm:0.124.0"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@oxc-minify/binding-darwin-x64@npm:0.123.0":
-  version: 0.123.0
-  resolution: "@oxc-minify/binding-darwin-x64@npm:0.123.0"
+"@oxc-minify/binding-darwin-x64@npm:0.124.0":
+  version: 0.124.0
+  resolution: "@oxc-minify/binding-darwin-x64@npm:0.124.0"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@oxc-minify/binding-freebsd-x64@npm:0.123.0":
-  version: 0.123.0
-  resolution: "@oxc-minify/binding-freebsd-x64@npm:0.123.0"
+"@oxc-minify/binding-freebsd-x64@npm:0.124.0":
+  version: 0.124.0
+  resolution: "@oxc-minify/binding-freebsd-x64@npm:0.124.0"
   conditions: os=freebsd & cpu=x64
   languageName: node
   linkType: hard
 
-"@oxc-minify/binding-linux-arm-gnueabihf@npm:0.123.0":
-  version: 0.123.0
-  resolution: "@oxc-minify/binding-linux-arm-gnueabihf@npm:0.123.0"
+"@oxc-minify/binding-linux-arm-gnueabihf@npm:0.124.0":
+  version: 0.124.0
+  resolution: "@oxc-minify/binding-linux-arm-gnueabihf@npm:0.124.0"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"@oxc-minify/binding-linux-arm-musleabihf@npm:0.123.0":
-  version: 0.123.0
-  resolution: "@oxc-minify/binding-linux-arm-musleabihf@npm:0.123.0"
+"@oxc-minify/binding-linux-arm-musleabihf@npm:0.124.0":
+  version: 0.124.0
+  resolution: "@oxc-minify/binding-linux-arm-musleabihf@npm:0.124.0"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"@oxc-minify/binding-linux-arm64-gnu@npm:0.123.0":
-  version: 0.123.0
-  resolution: "@oxc-minify/binding-linux-arm64-gnu@npm:0.123.0"
+"@oxc-minify/binding-linux-arm64-gnu@npm:0.124.0":
+  version: 0.124.0
+  resolution: "@oxc-minify/binding-linux-arm64-gnu@npm:0.124.0"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@oxc-minify/binding-linux-arm64-musl@npm:0.123.0":
-  version: 0.123.0
-  resolution: "@oxc-minify/binding-linux-arm64-musl@npm:0.123.0"
+"@oxc-minify/binding-linux-arm64-musl@npm:0.124.0":
+  version: 0.124.0
+  resolution: "@oxc-minify/binding-linux-arm64-musl@npm:0.124.0"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@oxc-minify/binding-linux-ppc64-gnu@npm:0.123.0":
-  version: 0.123.0
-  resolution: "@oxc-minify/binding-linux-ppc64-gnu@npm:0.123.0"
+"@oxc-minify/binding-linux-ppc64-gnu@npm:0.124.0":
+  version: 0.124.0
+  resolution: "@oxc-minify/binding-linux-ppc64-gnu@npm:0.124.0"
   conditions: os=linux & cpu=ppc64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@oxc-minify/binding-linux-riscv64-gnu@npm:0.123.0":
-  version: 0.123.0
-  resolution: "@oxc-minify/binding-linux-riscv64-gnu@npm:0.123.0"
+"@oxc-minify/binding-linux-riscv64-gnu@npm:0.124.0":
+  version: 0.124.0
+  resolution: "@oxc-minify/binding-linux-riscv64-gnu@npm:0.124.0"
   conditions: os=linux & cpu=riscv64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@oxc-minify/binding-linux-riscv64-musl@npm:0.123.0":
-  version: 0.123.0
-  resolution: "@oxc-minify/binding-linux-riscv64-musl@npm:0.123.0"
+"@oxc-minify/binding-linux-riscv64-musl@npm:0.124.0":
+  version: 0.124.0
+  resolution: "@oxc-minify/binding-linux-riscv64-musl@npm:0.124.0"
   conditions: os=linux & cpu=riscv64 & libc=musl
   languageName: node
   linkType: hard
 
-"@oxc-minify/binding-linux-s390x-gnu@npm:0.123.0":
-  version: 0.123.0
-  resolution: "@oxc-minify/binding-linux-s390x-gnu@npm:0.123.0"
+"@oxc-minify/binding-linux-s390x-gnu@npm:0.124.0":
+  version: 0.124.0
+  resolution: "@oxc-minify/binding-linux-s390x-gnu@npm:0.124.0"
   conditions: os=linux & cpu=s390x & libc=glibc
   languageName: node
   linkType: hard
 
-"@oxc-minify/binding-linux-x64-gnu@npm:0.123.0":
-  version: 0.123.0
-  resolution: "@oxc-minify/binding-linux-x64-gnu@npm:0.123.0"
+"@oxc-minify/binding-linux-x64-gnu@npm:0.124.0":
+  version: 0.124.0
+  resolution: "@oxc-minify/binding-linux-x64-gnu@npm:0.124.0"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@oxc-minify/binding-linux-x64-musl@npm:0.123.0":
-  version: 0.123.0
-  resolution: "@oxc-minify/binding-linux-x64-musl@npm:0.123.0"
+"@oxc-minify/binding-linux-x64-musl@npm:0.124.0":
+  version: 0.124.0
+  resolution: "@oxc-minify/binding-linux-x64-musl@npm:0.124.0"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@oxc-minify/binding-openharmony-arm64@npm:0.123.0":
-  version: 0.123.0
-  resolution: "@oxc-minify/binding-openharmony-arm64@npm:0.123.0"
+"@oxc-minify/binding-openharmony-arm64@npm:0.124.0":
+  version: 0.124.0
+  resolution: "@oxc-minify/binding-openharmony-arm64@npm:0.124.0"
   conditions: os=openharmony & cpu=arm64
   languageName: node
   linkType: hard
 
-"@oxc-minify/binding-wasm32-wasi@npm:0.123.0":
-  version: 0.123.0
-  resolution: "@oxc-minify/binding-wasm32-wasi@npm:0.123.0"
+"@oxc-minify/binding-wasm32-wasi@npm:0.124.0":
+  version: 0.124.0
+  resolution: "@oxc-minify/binding-wasm32-wasi@npm:0.124.0"
   dependencies:
     "@napi-rs/wasm-runtime": "npm:^1.1.2"
   conditions: cpu=wasm32
   languageName: node
   linkType: hard
 
-"@oxc-minify/binding-win32-arm64-msvc@npm:0.123.0":
-  version: 0.123.0
-  resolution: "@oxc-minify/binding-win32-arm64-msvc@npm:0.123.0"
+"@oxc-minify/binding-win32-arm64-msvc@npm:0.124.0":
+  version: 0.124.0
+  resolution: "@oxc-minify/binding-win32-arm64-msvc@npm:0.124.0"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@oxc-minify/binding-win32-ia32-msvc@npm:0.123.0":
-  version: 0.123.0
-  resolution: "@oxc-minify/binding-win32-ia32-msvc@npm:0.123.0"
+"@oxc-minify/binding-win32-ia32-msvc@npm:0.124.0":
+  version: 0.124.0
+  resolution: "@oxc-minify/binding-win32-ia32-msvc@npm:0.124.0"
   conditions: os=win32 & cpu=ia32
   languageName: node
   linkType: hard
 
-"@oxc-minify/binding-win32-x64-msvc@npm:0.123.0":
-  version: 0.123.0
-  resolution: "@oxc-minify/binding-win32-x64-msvc@npm:0.123.0"
+"@oxc-minify/binding-win32-x64-msvc@npm:0.124.0":
+  version: 0.124.0
+  resolution: "@oxc-minify/binding-win32-x64-msvc@npm:0.124.0"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -11253,7 +11253,7 @@ __metadata:
     msw: "npm:^2.13.0"
     music-metadata: "npm:^11.12.3"
     obs-websocket-js: "npm:^5.0.8"
-    oxc-minify: "npm:^0.123.0"
+    oxc-minify: "npm:^0.124.0"
     p-queue: "npm:^9.1.1"
     pdfjs-dist: "npm:^5.6.205"
     pinia: "npm:^3.0.4"
@@ -12284,30 +12284,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oxc-minify@npm:^0.123.0":
-  version: 0.123.0
-  resolution: "oxc-minify@npm:0.123.0"
+"oxc-minify@npm:^0.124.0":
+  version: 0.124.0
+  resolution: "oxc-minify@npm:0.124.0"
   dependencies:
-    "@oxc-minify/binding-android-arm-eabi": "npm:0.123.0"
-    "@oxc-minify/binding-android-arm64": "npm:0.123.0"
-    "@oxc-minify/binding-darwin-arm64": "npm:0.123.0"
-    "@oxc-minify/binding-darwin-x64": "npm:0.123.0"
-    "@oxc-minify/binding-freebsd-x64": "npm:0.123.0"
-    "@oxc-minify/binding-linux-arm-gnueabihf": "npm:0.123.0"
-    "@oxc-minify/binding-linux-arm-musleabihf": "npm:0.123.0"
-    "@oxc-minify/binding-linux-arm64-gnu": "npm:0.123.0"
-    "@oxc-minify/binding-linux-arm64-musl": "npm:0.123.0"
-    "@oxc-minify/binding-linux-ppc64-gnu": "npm:0.123.0"
-    "@oxc-minify/binding-linux-riscv64-gnu": "npm:0.123.0"
-    "@oxc-minify/binding-linux-riscv64-musl": "npm:0.123.0"
-    "@oxc-minify/binding-linux-s390x-gnu": "npm:0.123.0"
-    "@oxc-minify/binding-linux-x64-gnu": "npm:0.123.0"
-    "@oxc-minify/binding-linux-x64-musl": "npm:0.123.0"
-    "@oxc-minify/binding-openharmony-arm64": "npm:0.123.0"
-    "@oxc-minify/binding-wasm32-wasi": "npm:0.123.0"
-    "@oxc-minify/binding-win32-arm64-msvc": "npm:0.123.0"
-    "@oxc-minify/binding-win32-ia32-msvc": "npm:0.123.0"
-    "@oxc-minify/binding-win32-x64-msvc": "npm:0.123.0"
+    "@oxc-minify/binding-android-arm-eabi": "npm:0.124.0"
+    "@oxc-minify/binding-android-arm64": "npm:0.124.0"
+    "@oxc-minify/binding-darwin-arm64": "npm:0.124.0"
+    "@oxc-minify/binding-darwin-x64": "npm:0.124.0"
+    "@oxc-minify/binding-freebsd-x64": "npm:0.124.0"
+    "@oxc-minify/binding-linux-arm-gnueabihf": "npm:0.124.0"
+    "@oxc-minify/binding-linux-arm-musleabihf": "npm:0.124.0"
+    "@oxc-minify/binding-linux-arm64-gnu": "npm:0.124.0"
+    "@oxc-minify/binding-linux-arm64-musl": "npm:0.124.0"
+    "@oxc-minify/binding-linux-ppc64-gnu": "npm:0.124.0"
+    "@oxc-minify/binding-linux-riscv64-gnu": "npm:0.124.0"
+    "@oxc-minify/binding-linux-riscv64-musl": "npm:0.124.0"
+    "@oxc-minify/binding-linux-s390x-gnu": "npm:0.124.0"
+    "@oxc-minify/binding-linux-x64-gnu": "npm:0.124.0"
+    "@oxc-minify/binding-linux-x64-musl": "npm:0.124.0"
+    "@oxc-minify/binding-openharmony-arm64": "npm:0.124.0"
+    "@oxc-minify/binding-wasm32-wasi": "npm:0.124.0"
+    "@oxc-minify/binding-win32-arm64-msvc": "npm:0.124.0"
+    "@oxc-minify/binding-win32-ia32-msvc": "npm:0.124.0"
+    "@oxc-minify/binding-win32-x64-msvc": "npm:0.124.0"
   dependenciesMeta:
     "@oxc-minify/binding-android-arm-eabi":
       optional: true
@@ -12349,7 +12349,7 @@ __metadata:
       optional: true
     "@oxc-minify/binding-win32-x64-msvc":
       optional: true
-  checksum: 10c0/d93f83c2b80475d2198db63967b316c301cd8e1d8c25c40dd02d14b022b7d4a47309b380c6a1d49fe9b8798001f0769a8a9bf9002f1257a27ff90981f4bb154a
+  checksum: 10c0/c3e71759d5f84497ec8d6a2cc3e2f6fe8b022ca00aa5b3e7a7f6e62422a512abd5e403948ee2d21d60407c8cc25fcaba3325a11e0e222ea6a9620a832a25bd2f
   languageName: node
   linkType: hard
 
