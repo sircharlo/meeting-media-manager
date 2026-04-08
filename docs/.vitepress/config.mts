@@ -1,7 +1,7 @@
 import { exec } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
-import path from 'upath';
+import { join } from 'upath';
 import { defineConfig } from 'vitepress';
 
 const execPromise = promisify(exec);
@@ -177,7 +177,7 @@ export default defineConfig({
     try {
       const { stdout } = await execPromise(
         `git log --follow --format=%ad --date iso-strict ${fileURLToPath(
-          new URL(path.join('../src/', pageData.filePath), import.meta.url),
+          new URL(join('../src/', pageData.filePath), import.meta.url),
         )} | tail -1`,
       );
       createdDate = stdout.trim();
