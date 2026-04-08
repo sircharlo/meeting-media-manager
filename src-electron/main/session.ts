@@ -32,9 +32,25 @@ const getTrustedHostnames = () => {
 };
 
 const getCSP = (trustedHostnames: string[]) => {
-  const trustedOrigins = trustedHostnames
-    .map((d) => `https://*.${d}`)
-    .join(' ');
+  const sanitizedHostnames = trustedHostnames
+    .map((hostname) => hostname.trim().toLowerCase())
+    .filter((hostname) => /^[a-z0-9.-]+$/i.test(hostname));
+
+  const trustedOrigins = Array.from(
+    new Set(
+      sanitizedHostnames.flatMap((hostname) => {
+        const parentHostname = hostname.split('.').slice(1).join('.');
+
+        return [
+          `https://${hostname}`,
+          `https://*.${hostname}`,
+          ...(parentHostname.includes('.')
+            ? [`https://*.${parentHostname}`]
+            : []),
+        ];
+      }),
+    ),
+  ).join(' ');
 
   const csp: Record<string, string> = {
     'base-uri': "'none'",
