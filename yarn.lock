@@ -11237,7 +11237,7 @@ __metadata:
     type-fest: "npm:^5.5.0"
     typescript: "npm:~5.9.3"
     upath: "npm:^3.0.5"
-    vite: "npm:^8.0.6"
+    vite: "npm:^8.0.7"
     vitepress: "npm:^2.0.0-alpha.17"
     vitest: "npm:^4.1.3"
     vue: "npm:^3.5.32"
@@ -15964,9 +15964,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:8.0.6":
-  version: 8.0.6
-  resolution: "vite@npm:8.0.6"
+"vite@npm:8.0.7":
+  version: 8.0.7
+  resolution: "vite@npm:8.0.7"
   dependencies:
     fsevents: "npm:~2.3.3"
     lightningcss: "npm:^1.32.0"
@@ -16017,7 +16017,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/a92a9a065a84bb7babe85a3f09d7580171155b42c0663892861205e0c707a86eb567c09ac6649730479b675dd447c4ae051a79be57acfbe6b60b2df50a31807f
+  checksum: 10c0/88f8ec4e86275f32e88ae98df3bfda7e25f12e33e06b868b1abeee57740c9f043c9feaa3e5e993a903d6949e5cece358f7a527e6c19d9670d7401fded6d2f201
   languageName: node
   linkType: hard
 
