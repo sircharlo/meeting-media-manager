@@ -34,4 +34,6 @@ queue_rules:
           - title ~= (new translations|update translations progress)
         - and: # dependabot
           - author = dependabot[bot]
-          - title ~= ^((chore|build)(\(deps(?:-dev)*\))*:) bump [^\s]+ from ([1-9][\d]*)\..+ to \4\.
+          - or:
+            - title ~= ^((chore|build)(\(deps(?:-dev)*\))*:) bump [^\s]+ from ([1-9][\d]*)\..+ to \4\.
+            - title ~= ^((chore|build)(\(deps(-dev)?\))?:) bump the .+ group across .+ updates
