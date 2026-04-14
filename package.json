@@ -111,7 +111,7 @@
     "@types/node": "^25.6.0",
     "@types/pretty-bytes": "^5.2.0",
     "@types/yauzl": "^2.10.3",
-    "@typescript-eslint/utils": "^8.58.1",
+    "@typescript-eslint/utils": "^8.58.2",
     "@vitejs/plugin-vue": "^6.0.6",
     "@vitest/eslint-plugin": "^1.6.15",
     "@vue/eslint-config-prettier": "^10.2.0",
