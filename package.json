@@ -113,7 +113,7 @@
     "@types/yauzl": "^2.10.3",
     "@typescript-eslint/utils": "^8.58.2",
     "@vitejs/plugin-vue": "^6.0.6",
-    "@vitest/eslint-plugin": "^1.6.15",
+    "@vitest/eslint-plugin": "^1.6.16",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.7.0",
     "@vue/test-utils": "^2.4.6",
