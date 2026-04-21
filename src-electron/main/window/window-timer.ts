@@ -257,6 +257,18 @@ export const moveTimerWindow = (displayNr?: number, fullscreen?: boolean) => {
       // Check if timer window is fullscreen
       const isCurrentlyFullscreen = timerWindowInfo.timerWindow.isFullScreen();
 
+      // Keep user-defined windowed size/position when no explicit move request was made.
+      // This avoids unexpected resizing when unrelated actions (e.g. media playback)
+      // trigger a generic timer-window sync.
+      if (!isCurrentlyFullscreen) {
+        log(
+          '🔍 [moveTimerWindow] Timer window is windowed and no explicit target was provided; keeping current bounds',
+          'timer',
+          'log',
+        );
+        return;
+      }
+
       log('🔍 [moveTimerWindow] Current state:', 'timer', 'log', {
         currentBounds,
         currentDisplayNr,
