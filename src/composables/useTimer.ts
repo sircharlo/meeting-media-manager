@@ -443,7 +443,10 @@ const useTimer = () => {
           (isCo
             ? partDurations.value['abbreviated-wt']
             : partDurations.value.wt) * 60;
-        if (wtCustomEndTime.value) {
+        if (
+          wtCustomEndTime.value &&
+          wtCustomEndTime.value !== wtAdaptiveDefaultEndTime.value
+        ) {
           // Custom end time
           const configuredMeetingStartTime = currentSettings.value?.weStartTime;
           if (!configuredMeetingStartTime) return 0;
@@ -492,7 +495,10 @@ const useTimer = () => {
         return partDurations.value['co-service-talk'] * 60;
       } else if (currentPart.value === 'cbs') {
         const cbsMaxDuration = partDurations.value.cbs * 60;
-        if (cbsCustomEndTime.value) {
+        if (
+          cbsCustomEndTime.value &&
+          cbsCustomEndTime.value !== cbsAdaptiveDefaultEndTime.value
+        ) {
           // Custom end time
           const configuredMeetingStartTime = currentSettings.value?.mwStartTime;
           if (!configuredMeetingStartTime) return 0;
@@ -876,11 +882,12 @@ const useTimer = () => {
   });
 
   const wtAdaptiveDefaultEndTime = computed(() => {
-    const startTime = getPlannedStartTime('wt');
-    if (!startTime) return '';
     const date = selectedDateObject.value?.date;
     const isCo = date ? isCoWeek(date) : false;
-    const durationKey = isCo ? 'abbreviated-wt' : 'wt';
+    const wtPart = isCo ? 'abbreviated-wt' : 'wt';
+    const startTime = getPlannedStartTime(wtPart);
+    if (!startTime) return '';
+    const durationKey = wtPart;
     const duration = partDurations.value[durationKey] * 60 * 1000;
     const endTime = new Date(startTime + duration);
     return endTime.toTimeString().slice(0, 5); // hh:mm
