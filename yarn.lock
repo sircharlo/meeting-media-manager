@@ -1246,9 +1246,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@intlify/bundle-utils@npm:11.1.1":
-  version: 11.1.1
-  resolution: "@intlify/bundle-utils@npm:11.1.1"
+"@intlify/bundle-utils@npm:11.1.2":
+  version: 11.1.2
+  resolution: "@intlify/bundle-utils@npm:11.1.2"
   dependencies:
     "@intlify/message-compiler": "npm:^11.1.12"
     "@intlify/shared": "npm:^11.1.12"
@@ -1264,7 +1264,7 @@ __metadata:
       optional: true
     vue-i18n:
       optional: true
-  checksum: 10c0/5b54109e9ac615a3d14b86c4f6c0a8c5aece0d0927d1da164e75b82357c8e28ee1a6620bea05b2e473886e3d4a75de74806d48080936397809849b5ab435110f
+  checksum: 10c0/bd054ba5b6bdd1c68bb1add37025d05da2bfcc853be4a91cb5fc2a30ada773d7c653e63ff8ff5d54f22a926e26853d50131b8198057a4b9bba3f89aa52acd0c5
   languageName: node
   linkType: hard
 
@@ -1333,12 +1333,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@intlify/unplugin-vue-i18n@npm:^11.1.1":
-  version: 11.1.1
-  resolution: "@intlify/unplugin-vue-i18n@npm:11.1.1"
+"@intlify/unplugin-vue-i18n@npm:^11.1.2":
+  version: 11.1.2
+  resolution: "@intlify/unplugin-vue-i18n@npm:11.1.2"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.4.0"
-    "@intlify/bundle-utils": "npm:11.1.1"
+    "@intlify/bundle-utils": "npm:11.1.2"
     "@intlify/shared": "npm:^11.1.12"
     "@intlify/vue-i18n-extensions": "npm:^8.0.0"
     "@rollup/pluginutils": "npm:^5.1.0"
@@ -1352,14 +1352,17 @@ __metadata:
     vue: "npm:^3.5.21"
   peerDependencies:
     petite-vue-i18n: "*"
+    vite: ^6.0.0 || ^7.0.0 || ^8.0.0
     vue: ^3.2.25
     vue-i18n: "*"
   peerDependenciesMeta:
     petite-vue-i18n:
       optional: true
+    vite:
+      optional: true
     vue-i18n:
       optional: true
-  checksum: 10c0/c3092823cf8a3b08e610d815a5a6e952d98a8d6f16a3453500342517f2037e53ec31a6fbe0898b653cab9f7a21f235b3b4f89ff307dc88b192f9ab4e5672d8cf
+  checksum: 10c0/7c6d4faebaa3da04409687cf5479a4660b13ff409a9976635d2b0838c53f80cf3b6801d5a933230a6dad8ab7e6c35d9ca557e1f51a098c16dfa5bfb382afa69f
   languageName: node
   linkType: hard
 
@@ -11297,7 +11300,7 @@ __metadata:
     "@fontsource-variable/inter": "npm:^5.2.8"
     "@fontsource-variable/noto-serif": "npm:^5.2.9"
     "@formkit/drag-and-drop": "npm:^0.5.3"
-    "@intlify/unplugin-vue-i18n": "npm:^11.1.1"
+    "@intlify/unplugin-vue-i18n": "npm:^11.1.2"
     "@jitsi/robotjs": "npm:^0.6.22"
     "@numairawan/video-duration": "npm:^1.0.0"
     "@opentelemetry/api-logs": "npm:^0.215.0"
