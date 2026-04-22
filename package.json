@@ -80,7 +80,7 @@
     "sanitize-filename": "^1.6.4",
     "type-fest": "^5.6.0",
     "upath": "^3.0.7",
-    "vue": "^3.5.32",
+    "vue": "^3.5.33",
     "vue-i18n": "^11.3.2",
     "vue-router": "^5.0.4",
     "vue-zoomable": "^1.2.8",
