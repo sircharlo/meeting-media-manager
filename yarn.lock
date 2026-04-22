@@ -357,6 +357,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@electron/rebuild@npm:^4.0.4":
+  version: 4.0.4
+  resolution: "@electron/rebuild@npm:4.0.4"
+  dependencies:
+    "@malept/cross-spawn-promise": "npm:^2.0.0"
+    debug: "npm:^4.1.1"
+    node-abi: "npm:^4.2.0"
+    node-api-version: "npm:^0.2.1"
+    node-gyp: "npm:^12.2.0"
+    read-binary-file-arch: "npm:^1.0.6"
+  dependenciesMeta:
+    electron:
+      built: true
+  bin:
+    electron-rebuild: lib/cli.js
+  checksum: 10c0/f6ff567b0c6ec038c4805b2feaaf00826200a59d27cc271172940c9735aec97e734fddd0ca4f45e882350cf87694fe85219ba8181fc09ec643f4dedcf15f673d
+  languageName: node
+  linkType: hard
+
 "@electron/universal@npm:2.0.3":
   version: 2.0.3
   resolution: "@electron/universal@npm:2.0.3"
@@ -11294,7 +11313,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "meeting-media-manager@workspace:."
   dependencies:
-    "@electron/rebuild": "npm:^4.0.3"
+    "@electron/rebuild": "npm:^4.0.4"
     "@eslint/compat": "npm:^2.0.5"
     "@eslint/js": "npm:^10.0.1"
     "@fontsource-variable/inter": "npm:^5.2.8"
@@ -12073,6 +12092,26 @@ __metadata:
   bin:
     node-gyp: bin/node-gyp.js
   checksum: 10c0/31ff49586991b38287bb15c3d529dd689cfc32f992eed9e6997b9d712d5d21fe818a8b1bbfe3b76a7e33765c20210c5713212f4aa329306a615b87d8a786da3a
+  languageName: node
+  linkType: hard
+
+"node-gyp@npm:^12.2.0":
+  version: 12.3.0
+  resolution: "node-gyp@npm:12.3.0"
+  dependencies:
+    env-paths: "npm:^2.2.0"
+    exponential-backoff: "npm:^3.1.1"
+    graceful-fs: "npm:^4.2.6"
+    nopt: "npm:^9.0.0"
+    proc-log: "npm:^6.0.0"
+    semver: "npm:^7.3.5"
+    tar: "npm:^7.5.4"
+    tinyglobby: "npm:^0.2.12"
+    undici: "npm:^6.25.0"
+    which: "npm:^6.0.0"
+  bin:
+    node-gyp: bin/node-gyp.js
+  checksum: 10c0/9d9032b405cbe42f72a105259d9eb679376470c102df4a2dbaa51e07d59bf741dcffb85897087ea9d8318b9cabb824a8978af51508ae142f0239ae1e6a3c2329
   languageName: node
   linkType: hard
 
@@ -15748,6 +15787,13 @@ __metadata:
   version: 7.19.2
   resolution: "undici-types@npm:7.19.2"
   checksum: 10c0/7159f10546f9f6c47d36776bb1bbf8671e87c1e587a6fee84ae1f111ae8de4f914efa8ca0dfcd224f4f4a9dfc3f6028f627ccb5ddaccf82d7fd54671b89fac3e
+  languageName: node
+  linkType: hard
+
+"undici@npm:^6.25.0":
+  version: 6.25.0
+  resolution: "undici@npm:6.25.0"
+  checksum: 10c0/2597cc6689bdb02c210c557b1f85febbfda65becae6e6fc1061508e2f33734d25207f81cd8af56ada9956329eb3a7bd7431e87dcfeceba20ee87059b57dcf985
   languageName: node
   linkType: hard
 
