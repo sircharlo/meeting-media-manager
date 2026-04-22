@@ -19,7 +19,6 @@
 
 queue_rules:
   - name: bots
-    autoqueue: true
     merge_conditions:
       - -draft
       - check-success = "build / Lint and test"
@@ -27,13 +26,16 @@ queue_rules:
       - check-success = "build / build (macos-latest)"
       - check-success = "build / build (windows-latest)"
       - or:
-        - and: # translations
-          - or:
-            - author = github-actions[bot]
-            - author = sircharlo
-          - title ~= (new translations|update translations progress)
-        - and: # dependabot
-          - author = dependabot[bot]
-          - or:
-            - title ~= ^((chore|build)(\(deps(?:-dev)*\))*:) bump [^\s]+ from ([1-9][\d]*)\..+ to \4\.
-            - title ~= ^((chore|build)(\(deps(-dev)?\))?:) bump the .+ group across .+ updates
+          - and: # translations
+              - or:
+                  - author = github-actions[bot]
+                  - author = sircharlo
+              - title ~= (new translations|update translations progress)
+          - and: # dependabot
+              - author = dependabot[bot]
+              - or:
+                  - title ~= ^((chore|build)(\(deps(?:-dev)*\))*:) bump [^\s]+ from ([1-9][\d]*)\..+ 
+                    to \4\.
+                  - title ~= ^((chore|build)(\(deps(-dev)?\))?:) bump the .+ group across .+ updates
+merge_protections_settings:
+  auto_merge: true
