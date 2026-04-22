@@ -39,3 +39,4 @@ queue_rules:
                   - title ~= ^((chore|build)(\(deps(-dev)?\))?:) bump the .+ group across .+ updates
 merge_protections_settings:
   auto_merge: true
+  reporting_method: check-runs
