@@ -131,6 +131,60 @@ describe('window-media placement helpers', () => {
     expect(result).toEqual({ shouldMove: true, targetDisplayNr: 1 });
   });
 
+  it('keeps windowed media bounds when no explicit display/mode target is provided', async () => {
+    const { __testables } = await import('../window/window-media');
+
+    expect(
+      __testables.shouldKeepWindowedWithoutExplicitTarget(
+        undefined,
+        undefined,
+        false,
+        true,
+        false,
+      ),
+    ).toBe(true);
+
+    expect(
+      __testables.shouldKeepWindowedWithoutExplicitTarget(
+        1,
+        false,
+        false,
+        true,
+        false,
+      ),
+    ).toBe(false);
+
+    expect(
+      __testables.shouldKeepWindowedWithoutExplicitTarget(
+        undefined,
+        undefined,
+        true,
+        true,
+        false,
+      ),
+    ).toBe(false);
+
+    expect(
+      __testables.shouldKeepWindowedWithoutExplicitTarget(
+        undefined,
+        undefined,
+        false,
+        false,
+        false,
+      ),
+    ).toBe(false);
+
+    expect(
+      __testables.shouldKeepWindowedWithoutExplicitTarget(
+        undefined,
+        undefined,
+        false,
+        true,
+        true,
+      ),
+    ).toBe(false);
+  });
+
   it('keeps single-screen setups windowed instead of forcing fullscreen', async () => {
     const { __testables } = await import('../window/window-media');
 
