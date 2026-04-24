@@ -110,7 +110,7 @@ jobs:
         with:
           name: dist
           path: docs/.vitepress/dist
-      - uses: actions/upload-pages-artifact@v4
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: docs/.vitepress/dist
 
