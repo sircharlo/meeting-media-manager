@@ -113,7 +113,13 @@ export function createWindow(
       break;
     case 'website':
       if (websiteParams?.site) {
-        page = `https://www.${websiteParams.site}.org/?lang=${websiteParams?.langSymbol || ''}`;
+        const siteUrlBySelection = {
+          jwevent: 'https://www.jwevent.org/',
+          stream: 'https://stream.jw.org/',
+        } as const;
+
+        const selectedSiteUrl = siteUrlBySelection[websiteParams.site];
+        page = `${selectedSiteUrl}?lang=${websiteParams?.langSymbol || ''}`;
       } else {
         page = `https://www.${urlVariables?.base || 'jw.org'}/${websiteParams?.langSymbol || ''}`;
       }

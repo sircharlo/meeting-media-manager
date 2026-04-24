@@ -282,6 +282,7 @@
   "jw-playlist-import": "JW playlist import",
   "jw-playlist-import-explain": "This feature allows you to import a JW Library playlist file. The app will automatically copy selected media files from the playlist and add them to the media list. Videos will be downloaded in the language configured in the playlist if needed.",
   "jweventSite": "Jehovah's Witnesses Conventions",
+  "jwStreamSite": "JW Stream",
   "jwpub-file": "JWPUB file",
   "jwpub-file-explain": "Publikasyon mula sa opisyal na website ng mga Saksi ni Jehova",
   "jwpub-file-found": "Kailangang iproseso nang hiwalay ang mga JWPUB file.",

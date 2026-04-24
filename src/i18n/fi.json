@@ -282,6 +282,7 @@
   "jw-playlist-import": "JW- soittolistan tuonti",
   "jw-playlist-import-explain": "Tämän ominaisuuden avulla voit tuoda JW Library -soittolistatiedoston. Sovellus kopioi valitut mediatiedostot automaattisesti soittolistalta ja lisää ne mediatiedostoon. Videot ladataan soittolistassa määritetyllä kielellä, jos se on tarpeen.",
   "jweventSite": "Jehovan todistajien konventit",
+  "jwStreamSite": "JW Stream",
   "jwpub-file": "JWPUB tiedosto",
   "jwpub-file-explain": "Julkaisu ladattu Jehovan todistajien viralliselta verkkosivustolta",
   "jwpub-file-found": "JWPUB-tiedostot on käsiteltävä erikseen.",

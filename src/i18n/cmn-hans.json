@@ -282,6 +282,7 @@
   "jw-playlist-import": "JW 播放列表导入",
   "jw-playlist-import-explain": "此功能允许您导入一个 JW Library播放列表文件。 该应用将自动从播放列表中复制选定的媒体文件并将其添加到媒体列表中。 视频将在需要时以播放列表中配置的语言下载。",
   "jweventSite": "耶和华见证人大会",
+  "jwStreamSite": "JW Stream",
   "jwpub-file": "JWPUB 文件",
   "jwpub-file-explain": "从耶和华见证人的官方网站下载的出版物",
   "jwpub-file-found": "JWPUB 文件必须分开处理。",
