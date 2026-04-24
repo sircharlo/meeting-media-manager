@@ -282,7 +282,7 @@
   "jw-playlist-import": "Importar lista de reprodução JW",
   "jw-playlist-import-explain": "Esta funcionalidade permite importar uma lista de reprodução da JW Library. A aplicação copiará automaticamente os ficheiros de multimédia selecionados da playlist e adicioná-los-á à lista de multimédia. Os vídeos serão descarregados na língua configurada na lista de reprodução, se necessário.",
   "jweventSite": "Congressos das Testemunhas de Jeová",
-  "jwStreamSite": "JW Stream",
+  "jwStreamSite": "Fluxo JW",
   "jwpub-file": "Ficheiro JWPUB",
   "jwpub-file-explain": "Publicação descarregada do site oficial das Testemunhas de Jeová",
   "jwpub-file-found": "Os ficheiros JWPUB devem ser processados separadamente.",

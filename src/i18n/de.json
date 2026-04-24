@@ -282,7 +282,7 @@
   "jw-playlist-import": "JW-Playlist-Import",
   "jw-playlist-import-explain": "Diese Funktion ermöglicht den Import einer JW Library-Wiedergabelistendatei. Die App kopiert automatisch ausgewählte Mediendateien aus der Wiedergabeliste und fügt sie der Medienliste hinzu. Videos werden bei Bedarf in der in der Wiedergabeliste konfigurierten Sprache heruntergeladen.",
   "jweventSite": "Kongresse der Zeugen Jehovas",
-  "jwStreamSite": "JW Stream",
+  "jwStreamSite": "JW-Stream",
   "jwpub-file": "JWPUB-Datei",
   "jwpub-file-explain": "Publikation, die von der offiziellen Website der Zeugen Jehovas heruntergeladen wurde",
   "jwpub-file-found": "JWPUB-Dateien müssen separat verarbeitet werden.",

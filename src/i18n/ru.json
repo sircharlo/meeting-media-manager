@@ -282,7 +282,7 @@
   "jw-playlist-import": "Импорт JW плейлиста",
   "jw-playlist-import-explain": "Эта функция позволяет импортировать файл плейлиста JW Library. Приложение автоматически скопирует выбранные медиафайлы из плейлиста и добавит их в список медиа файлов. Видео будут загружены на языке, настроенном в плейлисте, если это необходимо.",
   "jweventSite": "Jehovah's Witnesses Conventions",
-  "jwStreamSite": "JW Stream",
+  "jwStreamSite": "JW поток",
   "jwpub-file": "JWPUB файл",
   "jwpub-file-explain": "Публикация, загруженная с официального сайта Свидетелей Иеговы",
   "jwpub-file-found": "Файлы JWPUB должны обрабатываться отдельно.",

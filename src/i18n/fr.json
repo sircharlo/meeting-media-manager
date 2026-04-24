@@ -282,7 +282,7 @@
   "jw-playlist-import": "Importation de liste de lecture JW",
   "jw-playlist-import-explain": "Cette fonctionnalité vous permet d'importer un fichier de liste de lecture JW Library. L'application copiera automatiquement les fichiers média sélectionnés de la liste de lecture et les ajoutera à la liste des médias. Les vidéos seront téléchargées dans la langue configurée dans la liste de lecture si nécessaire.",
   "jweventSite": "Assemblées internationales des Témoins de Jéhovah",
-  "jwStreamSite": "JW Stream",
+  "jwStreamSite": "Flux JW",
   "jwpub-file": "Fichier JWPUB",
   "jwpub-file-explain": "Publication téléchargée depuis le site officiel des Témoins de Jéhovah",
   "jwpub-file-found": "Les fichiers JWPUB doivent être traités séparément.",
