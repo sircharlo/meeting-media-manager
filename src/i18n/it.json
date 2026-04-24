@@ -282,6 +282,7 @@
   "jw-playlist-import": "Importazione JW Playlist",
   "jw-playlist-import-explain": "Questa funzione ti consente di importare un file di JW Library playlist. L'app copierà automaticamente i file multimediali selezionati dalla playlist e li aggiungerà all'elenco multimediale. I video saranno scaricati nella lingua configurata nella playlist se necessario.",
   "jweventSite": "Jehovah's Witnesses Conventions",
+  "jwStreamSite": "JW Stream",
   "jwpub-file": "File JWPUB",
   "jwpub-file-explain": "Pubblicazione scaricata dal sito ufficiale dei Testimoni di Geova",
   "jwpub-file-found": "I file JWPUB devono essere elaborati separatamente.",

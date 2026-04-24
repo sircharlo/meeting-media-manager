@@ -282,6 +282,7 @@
   "jw-playlist-import": "Importeren van JW Library-afspeellijst",
   "jw-playlist-import-explain": "Met deze functie kunt u een JW Library-afspeellijstbestand importeren. De app zal automatisch geselecteerde mediabestanden uit de afspeellijst kopiëren en toevoegen aan de medialijst. Video’s worden indien nodig gedownload in de taal die in de afspeellijst is ingesteld.",
   "jweventSite": "Congressen van Jehovah's Getuigen",
+  "jwStreamSite": "JW Stream",
   "jwpub-file": "JWPUB-bestand",
   "jwpub-file-explain": "Publicatie gedownload van de officiële website van Jehovah's Getuigen",
   "jwpub-file-found": "JWPUB-bestanden moeten apart worden verwerkt.",

@@ -46,6 +46,9 @@ export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
   websiteWindowInfo.websiteWindow?.center();
 
   websiteWindowInfo.websiteWindow?.webContents.on('did-finish-load', () => {
+    const isJwStream = websiteParams?.site === 'stream';
+    if (isJwStream) return;
+
     try {
       websiteWindowInfo.websiteWindow?.webContents.insertCSS(
         `
@@ -65,7 +68,8 @@ export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
           height: 100px;
           width: 100px;
           box-sizing: border-box;
-          transition: transform 0.2s ease-out, background-color 0.2s ease-out, border-color 0.2s ease-out;
+          opacity: 1;
+          transition: transform 0.2s ease-out, background-color 0.2s ease-out, border-color 0.2s ease-out, opacity 0.35s ease-out;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -73,6 +77,9 @@ export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
           font-weight: bold;
           color: white;
           text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .cursor-hidden {
+          opacity: 0;
         }
         .cursor-left {
           border-color: rgba(40, 167, 69, 0.8);
@@ -106,11 +113,21 @@ export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
         document.body.appendChild(cursor);
         
         let clickTimeout;
-        let lastClickTime = 0;
+        let inactivityTimeout;
+        const INACTIVITY_TIMEOUT = 3000;
+        
+        const showCursor = () => {
+          cursor.classList.remove('cursor-hidden');
+          clearTimeout(inactivityTimeout);
+          inactivityTimeout = setTimeout(() => {
+            cursor.classList.add('cursor-hidden');
+          }, INACTIVITY_TIMEOUT);
+        };
         
         const onMouseMove = (e) => {
           cursor.style.left = (e.clientX - 50) + 'px';
           cursor.style.top = (e.clientY - 50) + 'px';
+          showCursor();
         };
         
         const clearClick = () => {
@@ -121,6 +138,7 @@ export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
         
         const onMouseDown = (e) => {
           clearClick();
+          showCursor();
           cursor.classList.add('cursor-clicked');
           if (e.button === 0) {
             cursor.classList.add('cursor-left');
@@ -133,8 +151,9 @@ export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
           clickTimeout = setTimeout(clearClick, 500);
         };
         
-        const onDblClick = (e) => {
+        const onDblClick = () => {
           clearClick();
+          showCursor();
           cursor.classList.add('cursor-clicked', 'cursor-double');
           clickTimeout = setTimeout(clearClick, 1000);
         };
@@ -143,7 +162,8 @@ export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
         document.body.addEventListener('mousedown', onMouseDown, { passive: true });
         document.body.addEventListener('mouseup', onMouseUp, { passive: true });
         document.body.addEventListener('dblclick', onDblClick, { passive: true });
-        document.body.addEventListener('contextmenu', (e) => e.preventDefault());`,
+        document.body.addEventListener('contextmenu', (e) => e.preventDefault());
+        showCursor();`,
       );
     } catch (e) {
       captureElectronError(e, {
@@ -153,6 +173,18 @@ export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
   });
 
   websiteWindowInfo.websiteWindow?.webContents.setVisualZoomLevelLimits(1, 5);
+  websiteWindowInfo.websiteWindow?.webContents.on(
+    'enter-html-full-screen',
+    () => {
+      websiteWindowInfo.websiteWindow?.setFullScreen(true);
+    },
+  );
+  websiteWindowInfo.websiteWindow?.webContents.on(
+    'leave-html-full-screen',
+    () => {
+      websiteWindowInfo.websiteWindow?.setFullScreen(false);
+    },
+  );
   websiteWindowInfo.websiteWindow?.webContents.on(
     'zoom-changed',
     (_, direction) => {

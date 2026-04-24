@@ -282,6 +282,7 @@
   "jw-playlist-import": "Uvoz JW seznama predvajanja",
   "jw-playlist-import-explain": "Ta funkcija omogoča uvoz datoteke seznama predvajanja JW Library. Aplikacija bo samodejno kopirala izbrane datoteke iz seznama predvajanja in jih dodala na seznam multimedijske vsebine. Videoposnetki bodo po potrebi preneseni v jeziku, nastavljenem v seznamu predvajanja.",
   "jweventSite": "Zborovanja Jehovovih prič",
+  "jwStreamSite": "JW Stream",
   "jwpub-file": "Datoteka JWPUB",
   "jwpub-file-explain": "Publikacija prenesena z uradnega spletnega mesta Jehovovih prič",
   "jwpub-file-found": "Datoteke JWPUB je treba obdelati ločeno.",

@@ -282,6 +282,7 @@
   "jw-playlist-import": "JW Playlisti Import",
   "jw-playlist-import-explain": "See funktsioon võimaldab importida JW Library esitusloendi faili. Rakendus kopeerib automaatselt esitusloendist valitud meediafailid ja lisab need meedialoendisse. Videod laaditakse vajaduse korral alla esitusloendis konfigureeritud keeles.",
   "jweventSite": "Jehoova tunnistajate kokkutulekud",
+  "jwStreamSite": "JW Stream",
   "jwpub-file": "JWPUB fail",
   "jwpub-file-explain": "Väljaanded laaditud alla Jehoova tunnistajate veebisaidilt",
   "jwpub-file-found": "JWPUB failidega tuleb teistmoodi käituda.",
