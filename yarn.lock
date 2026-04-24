@@ -5305,13 +5305,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/test-utils@npm:^2.4.6":
-  version: 2.4.6
-  resolution: "@vue/test-utils@npm:2.4.6"
+"@vue/test-utils@npm:^2.4.8":
+  version: 2.4.8
+  resolution: "@vue/test-utils@npm:2.4.8"
   dependencies:
     js-beautify: "npm:^1.14.9"
-    vue-component-type-helpers: "npm:^2.0.0"
-  checksum: 10c0/37fa46cb6b98f90affb2faf5aa41422617bbd23ff35bc714d08035334e593ae31d18757d5ae688f778dd8b4c28de431601c0b9b7ca17fc1b55f1401a5577375e
+    vue-component-type-helpers: "npm:^3.0.0"
+  peerDependencies:
+    "@vue/compiler-dom": 3.x
+    "@vue/server-renderer": 3.x
+    vue: 3.x
+  peerDependenciesMeta:
+    "@vue/server-renderer":
+      optional: true
+  checksum: 10c0/3de2f5cf86763af2acf28f74cdc3d5f6c72b640b928e1ce0dbc9d7abad9f90816f0ed6d28a433ec17a525913fd5036588a616a572489106080754ae1d750dfc4
   languageName: node
   linkType: hard
 
@@ -11489,7 +11496,7 @@ __metadata:
     "@vitest/eslint-plugin": "npm:^1.6.16"
     "@vue/eslint-config-prettier": "npm:^10.2.0"
     "@vue/eslint-config-typescript": "npm:^14.7.0"
-    "@vue/test-utils": "npm:^2.4.6"
+    "@vue/test-utils": "npm:^2.4.8"
     "@vueuse/core": "npm:^14.2.1"
     "@vueuse/router": "npm:^14.2.1"
     autoprefixer: "npm:^10.5.0"
@@ -16460,10 +16467,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-component-type-helpers@npm:^2.0.0":
-  version: 2.2.12
-  resolution: "vue-component-type-helpers@npm:2.2.12"
-  checksum: 10c0/ce15a2cdec4a57262a292ac1565aa18da9be73f3dfbcf28758a8a541199944bfff1aefb75802d6de5d955a5529c9667f1b651c659d14815c075e8965ac05175d
+"vue-component-type-helpers@npm:^3.0.0":
+  version: 3.2.7
+  resolution: "vue-component-type-helpers@npm:3.2.7"
+  checksum: 10c0/598e14feee291484c68c9d5d3fcb9c5b0f2ea5cf528681ce30822af86ab521100015f8311efff5ec2c58afef2af826060a769e11113bd02392866a48d8d64bb5
   languageName: node
   linkType: hard
 
