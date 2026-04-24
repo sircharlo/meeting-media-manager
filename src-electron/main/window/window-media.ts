@@ -39,10 +39,6 @@ interface WindowBoundsInfo {
   screenBounds: Electron.Rectangle | undefined;
 }
 
-// =============================================================================
-// HELPER FUNCTIONS - Window State Detection
-// =============================================================================
-
 /**
  * Calculates target display info for automatic positioning
  */
@@ -110,19 +106,26 @@ function calculateAutoTarget(
   return null;
 }
 
+// =============================================================================
+// HELPER FUNCTIONS - Window State Detection
+// =============================================================================
+
 /**
  * Checks and notifies if screen configuration changed
  */
 function checkAndNotifyScreenChange(
   screens: ReturnType<typeof getAllScreens>,
   lastScreensConfig: { value: string },
-): void {
+): boolean {
   const screensConfig = JSON.stringify(screens.map((s) => s.bounds));
 
   if (screensConfig !== lastScreensConfig.value) {
     notifyMainWindowAboutScreenOrWindowChange();
     lastScreensConfig.value = screensConfig;
+    return true;
   }
+
+  return false;
 }
 
 /**
@@ -143,10 +146,6 @@ function findAlternativeScreen(
   return screens.findIndex((s) => !s.mainWindow);
 }
 
-// =============================================================================
-// HELPER FUNCTIONS - Screen Selection
-// =============================================================================
-
 /**
  * Determines the state properties for the media window
  */
@@ -166,6 +165,10 @@ function getMediaWindowState(
     shouldBeMaximizable,
   };
 }
+
+// =============================================================================
+// HELPER FUNCTIONS - Screen Selection
+// =============================================================================
 
 /**
  * Gets the preferred screen from saved preferences
@@ -276,6 +279,22 @@ function normalizeWindowBounds(
   return { height, width, x, y };
 }
 
+function shouldKeepWindowedWithoutExplicitTarget(
+  displayNr: number | undefined,
+  fullscreen: boolean | undefined,
+  isEffectivelyFullscreen: boolean,
+  initialPositioningComplete: boolean,
+  screenConfigChanged: boolean,
+): boolean {
+  const hasExplicitTarget = displayNr !== undefined && fullscreen !== undefined;
+  return (
+    !hasExplicitTarget &&
+    !isEffectivelyFullscreen &&
+    initialPositioningComplete &&
+    !screenConfigChanged
+  );
+}
+
 /**
  * Determines if the window should move to fullscreen on another display
  */
@@ -371,6 +390,7 @@ export const __testables = {
   getTargetWhenOnMainScreen,
   isWindowEffectivelyFullscreen,
   normalizeWindowBounds,
+  shouldKeepWindowedWithoutExplicitTarget,
   shouldMoveWindowedToFullscreen,
   validateAndAdjustTarget,
 };
@@ -398,7 +418,10 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
 
     const screens = getAllScreens();
     const lastScreensConfigRef = { value: lastScreensConfig };
-    checkAndNotifyScreenChange(screens, lastScreensConfigRef);
+    const screenConfigChanged = checkAndNotifyScreenChange(
+      screens,
+      lastScreensConfigRef,
+    );
     lastScreensConfig = lastScreensConfigRef.value;
 
     // Get current window state
@@ -435,8 +458,30 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
 
     // Determine target display and mode
     let targetInfo: null | TargetDisplayInfo = null;
+    const hasExplicitTarget =
+      displayNr !== undefined && fullscreen !== undefined;
 
-    if (displayNr !== undefined && fullscreen !== undefined) {
+    // Keep user-defined windowed size/position when no explicit move request was made.
+    // This prevents unrelated window sync events (e.g. starting a new media item)
+    // from forcing a manually windowed media window back to fullscreen.
+    if (
+      shouldKeepWindowedWithoutExplicitTarget(
+        displayNr,
+        fullscreen,
+        boundsInfo.isEffectivelyFullscreen,
+        hasInitialPositioningHappened,
+        screenConfigChanged,
+      )
+    ) {
+      log(
+        '🔍 [moveMediaWindow] Media window is windowed and no explicit target was provided; keeping current bounds',
+        'electronWindow',
+        'log',
+      );
+      return;
+    }
+
+    if (hasExplicitTarget) {
       // Explicit parameters provided
       targetInfo = { targetDisplayNr: displayNr, targetFullscreen: fullscreen };
     } else {
