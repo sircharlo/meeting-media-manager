@@ -21,10 +21,22 @@ queue_rules:
   - name: bots
     merge_conditions:
       - -draft
-      - check-success = "build / Lint and test"
-      - check-success = "build / build (ubuntu-latest)"
-      - check-success = "build / build (macos-latest)"
-      - check-success = "build / build (windows-latest)"
+      - or:
+          - check-success = "build / Lint and test"
+          - check-neutral = "build / Lint and test"
+          - check-skipped = "build / Lint and test"
+      - or:
+          - check-success = "build / build (ubuntu-latest)"
+          - check-neutral = "build / build (ubuntu-latest)"
+          - check-skipped = "build / build (ubuntu-latest)"
+      - or:
+          - check-success = "build / build (macos-latest)"
+          - check-neutral = "build / build (macos-latest)"
+          - check-skipped = "build / build (macos-latest)"
+      - or:
+          - check-success = "build / build (windows-latest)"
+          - check-neutral = "build / build (windows-latest)"
+          - check-skipped = "build / build (windows-latest)"
       - or:
           - and: # translations
               - or:
@@ -34,7 +46,7 @@ queue_rules:
           - and: # dependabot
               - author = dependabot[bot]
               - or:
-                  - title ~= ^((chore|build)(\(deps(?:-dev)*\))*:) bump [^\s]+ from ([1-9][\d]*)\..+ 
+                  - title ~= ^((chore|build)(\(deps(?:-dev)*\))*:) bump [^\s]+ from ([1-9][\d]*)\..+
                     to \4\.
                   - title ~= ^((chore|build)(\(deps(-dev)?\))?:) bump the .+ group across .+ updates
 merge_protections_settings:
