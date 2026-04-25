@@ -9,7 +9,13 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      lockfile_branch: ${{ steps.branch.outputs.name }}
+      has_changes: ${{ steps.commit.outputs.has_changes }}
     steps:
+      - id: branch
+        name: Set lockfile branch name
+        run: echo "name=chore/refresh-lockfile-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_OUTPUT"
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
@@ -27,14 +33,27 @@ jobs:
       - name: Install dependencies
         run: yarn install --no-immutable
 
-      - name: Commit and push new lockfile
+      - name: Commit and push lockfile branch
+        id: commit
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add yarn.lock
           if git diff --staged --quiet; then
             echo "No changes to yarn.lock, nothing to commit."
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m "chore: refresh yarn.lock [skip ci]"
-            git push origin master
+            git push origin "HEAD:${{ steps.branch.outputs.name }}"
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
           fi
+  merge-lockfile:
+    name: Merge lockfile update
+    needs: refresh-lockfile
+    if: needs.refresh-lockfile.outputs.has_changes == 'true'
+    uses: ./.github/workflows/pr-creator-and-waiter.yml
+    with:
+      head: ${{ needs.refresh-lockfile.outputs.lockfile_branch }}
+      title: 'chore: refresh yarn.lock'
+      body: 'Automated yarn.lock refresh.'
+    secrets: inherit

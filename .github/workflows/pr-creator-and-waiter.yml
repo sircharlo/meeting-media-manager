@@ -1,0 +1,92 @@
+name: Create PR, wait, and merge
+
+on:
+  workflow_call:
+    inputs:
+      base:
+        description: Base branch for the pull request
+        required: false
+        type: string
+        default: master
+      head:
+        description: Head branch for the pull request
+        required: true
+        type: string
+      title:
+        description: Pull request title
+        required: true
+        type: string
+      body:
+        description: Pull request body
+        required: false
+        type: string
+        default: Automated pull request
+      merge-method:
+        description: Merge method (merge, squash, rebase)
+        required: false
+        type: string
+        default: squash
+      delete-branch:
+        description: Delete branch after merge
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  create-wait-merge:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Create pull request
+        id: create-pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          BASE_BRANCH: ${{ inputs.base }}
+          HEAD_BRANCH: ${{ inputs.head }}
+          PR_TITLE: ${{ inputs.title }}
+          PR_BODY: ${{ inputs.body }}
+        run: |
+          set -e
+
+          pr_url=$(gh pr create \
+            --base "$BASE_BRANCH" \
+            --head "$HEAD_BRANCH" \
+            --title "$PR_TITLE" \
+            --body "$PR_BODY" \
+          )
+
+          echo "url=$pr_url" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for pull request checks
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PR_URL: ${{ steps.create-pr.outputs.url }}
+        run: gh pr checks "$PR_URL" --watch --interval 30
+
+      - name: Merge pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PR_URL: ${{ steps.create-pr.outputs.url }}
+          MERGE_METHOD: ${{ inputs.merge-method }}
+          DELETE_BRANCH: ${{ inputs.delete-branch }}
+        run: |
+          set -e
+
+          method_flag="--squash"
+          if [ "$MERGE_METHOD" = "merge" ]; then
+            method_flag="--merge"
+          elif [ "$MERGE_METHOD" = "rebase" ]; then
+            method_flag="--rebase"
+          fi
+
+          delete_flag=""
+          if [ "$DELETE_BRANCH" = "true" ]; then
+            delete_flag="--delete-branch"
+          fi
+
+          gh pr merge "$PR_URL" $method_flag $delete_flag
