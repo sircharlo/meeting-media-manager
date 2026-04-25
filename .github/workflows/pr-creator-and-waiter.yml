@@ -86,7 +86,19 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           PR_URL: ${{ steps.create-pr.outputs.url }}
-        run: gh pr checks "$PR_URL" --watch --interval 30
+        run: |
+          set +e
+          checks_output=$(gh pr checks "$PR_URL" --watch --interval 30 2>&1)
+          checks_status=$?
+          set -e
+
+          if [ "$checks_status" -ne 0 ] && echo "$checks_output" | grep -q "no checks reported"; then
+            echo "No checks were reported for this PR; continuing to merge."
+            exit 0
+          fi
+
+          echo "$checks_output"
+          exit "$checks_status"
 
       - name: Merge pull request
         env:
