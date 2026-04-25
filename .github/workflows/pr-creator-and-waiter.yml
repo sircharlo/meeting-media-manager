@@ -97,6 +97,20 @@ jobs:
             exit 0
           fi
 
+          if [ "$checks_status" -ne 0 ]; then
+            ignored_failure_pattern='^Queue: Embarked in merge queue[[:space:]]+fail([[:space:]]+|$)'
+            real_failures=$(echo "$checks_output" \
+              | awk -F '\t' '$2 == "fail" { print $0 }' \
+              | grep -Ev "$ignored_failure_pattern" \
+              || true)
+
+            if [ -z "$real_failures" ]; then
+              echo "Ignoring non-blocking check failure: Queue: Embarked in merge queue"
+              echo "$checks_output"
+              exit 0
+            fi
+          fi
+
           echo "$checks_output"
           exit "$checks_status"
 
