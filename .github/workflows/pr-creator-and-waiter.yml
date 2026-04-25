@@ -51,12 +51,33 @@ jobs:
         run: |
           set -e
 
-          pr_url=$(gh pr create \
+          set +e
+          create_output=$(gh pr create \
             --base "$BASE_BRANCH" \
             --head "$HEAD_BRANCH" \
             --title "$PR_TITLE" \
             --body "$PR_BODY" \
-          )
+            2>&1)
+          create_status=$?
+          set -e
+
+          if [ "$create_status" -eq 0 ]; then
+            pr_url="$create_output"
+          else
+            pr_url=$(gh pr list \
+              --state open \
+              --base "$BASE_BRANCH" \
+              --head "$HEAD_BRANCH" \
+              --json url \
+              --jq '.[0].url')
+
+            if [ -n "$pr_url" ]; then
+              echo "Found existing pull request for $HEAD_BRANCH -> $BASE_BRANCH: $pr_url"
+            else
+              echo "$create_output"
+              exit "$create_status"
+            fi
+          fi
 
           echo "url=$pr_url" >> "$GITHUB_OUTPUT"
 
