@@ -36,7 +36,13 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      newTag: ${{ steps.version-bump.outputs.newTag }}
+      bumpBranch: ${{ steps.bump-branch.outputs.name }}
     steps:
+      - id: bump-branch
+        name: Set bump branch name
+        run: echo "name=beta-bump-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_OUTPUT"
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
@@ -50,6 +56,7 @@ jobs:
           tag-prefix: 'v'
           skip-tag: 'true'
           bump-policy: 'last-commit'
+          target-branch: ${{ steps.bump-branch.outputs.name }}
           commit-message: 'chore: bump version to {{version}} [skip ci]'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -57,17 +64,28 @@ jobs:
         env:
           NEW_VERSION: ${{ steps.version-bump.outputs.newTag }}
         run: echo "new version $NEW_VERSION"
-    outputs:
-      newTag: ${{ steps.version-bump.outputs.newTag }}
+
+  merge-version-bump:
+    name: Merge version bump branch
+    needs: bump-version
+    uses: ./.github/workflows/pr-creator-and-waiter.yml
+    with:
+      head: ${{ needs.bump-version.outputs.bumpBranch }}
+      title: 'chore: bump version to ${{ needs.bump-version.outputs.newTag }}'
+      body: 'Automated beta version bump for ${{ needs.bump-version.outputs.newTag }}.'
+    secrets: inherit
 
   draft-release:
     name: Draft release
     runs-on: ubuntu-latest
-    needs: bump-version
+    needs: [bump-version, merge-version-bump]
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: master
+          fetch-depth: 0
       - name: Create draft release
         id: create_release
         uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
