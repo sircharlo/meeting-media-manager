@@ -10,7 +10,15 @@ jobs:
     if: github.repository == 'sircharlo/meeting-media-manager'
     permissions:
       contents: write
+    outputs:
+      new_version: ${{ steps.bump.outputs.new_version }}
+      draft_exists: ${{ steps.bump.outputs.draft_exists }}
+      bump_branch: ${{ steps.branch.outputs.name }}
+      has_changes: ${{ steps.commit.outputs.has_changes }}
     steps:
+      - id: branch
+        name: Set bump branch name
+        run: echo "name=chore/manual-release-bump-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_OUTPUT"
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
@@ -27,30 +35,45 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Commit and push changes
+      - name: Commit and push bump branch
         if: steps.bump.outputs.draft_exists != 'true'
+        id: commit
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add package.json
           if git diff --staged --quiet; then
             echo "Version is already correct, nothing to commit."
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m "chore: bump version to ${{ steps.bump.outputs.new_version }} [skip ci]"
-            git push origin master
+            git push origin "HEAD:${{ steps.branch.outputs.name }}"
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
           fi
-    outputs:
-      new_version: ${{ steps.bump.outputs.new_version }}
-      draft_exists: ${{ steps.bump.outputs.draft_exists }}
+
+  merge-version-bump:
+    name: Merge version bump
+    needs: bump-version
+    if: needs.bump-version.outputs.draft_exists != 'true' && needs.bump-version.outputs.has_changes == 'true'
+    uses: ./.github/workflows/pr-creator-and-waiter.yml
+    with:
+      head: ${{ needs.bump-version.outputs.bump_branch }}
+      title: 'chore: bump version to ${{ needs.bump-version.outputs.new_version }}'
+      body: 'Automated manual release version bump for v${{ needs.bump-version.outputs.new_version }}.'
+    secrets: inherit
 
   draft-release:
     name: Draft release
     runs-on: ubuntu-latest
-    needs: bump-version
+    needs: [bump-version, merge-version-bump]
+    if: always() && needs.bump-version.result == 'success' && (needs.merge-version-bump.result == 'success' || needs.merge-version-bump.result == 'skipped')
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: master
+          fetch-depth: 0
 
       - name: Clear existing draft release assets
         run: |
