@@ -47,6 +47,9 @@ jobs:
         uses: actions/checkout@v6
         with:
           persist-credentials: false
+      - name: Create local bump branch
+        run: |
+          git checkout -B "${{ steps.bump-branch.outputs.name }}"
       - name: Automated Version Bump
         id: version-bump
         uses: phips28/gh-action-bump-version@215e27a882516826c59df7f09da8c67d5f375cbd # v11.1.5
