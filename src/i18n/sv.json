@@ -282,7 +282,7 @@
   "jw-playlist-import": "Importera JW-spellista",
   "jw-playlist-import-explain": "Denna funktion låter dig importera en JW Library spellista fil. Appen kopierar automatiskt valda mediefiler från spellistan och lägger till dem i medielistan. Videor kommer att laddas ner på det språk som är konfigurerat i spellistan om det behövs.",
   "jweventSite": "Jehovas vittnens sammankomster",
-  "jwStreamSite": "JW ström",
+  "jwStreamSite": "JW stream",
   "jwpub-file": "JWPUB fil",
   "jwpub-file-explain": "Publikation nedladdad från Jehovas vittnens officiella websida",
   "jwpub-file-found": "JWPUB-filer måste behandlas separat.",
