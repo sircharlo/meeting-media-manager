@@ -8668,7 +8668,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eventemitter3@npm:^5.0.1":
+"eventemitter3@npm:^5.0.1, eventemitter3@npm:^5.0.4":
   version: 5.0.4
   resolution: "eventemitter3@npm:5.0.4"
   checksum: 10c0/575b8cac8d709e1473da46f8f15ef311b57ff7609445a7c71af5cd42598583eee6f098fa7a593e30f27e94b8865642baa0689e8fa97c016f742abdb3b1bf6d9a
@@ -11551,7 +11551,7 @@ __metadata:
     music-metadata: "npm:^11.12.3"
     obs-websocket-js: "npm:^5.0.8"
     oxc-minify: "npm:^0.127.0"
-    p-queue: "npm:^9.1.2"
+    p-queue: "npm:^9.2.0"
     pdfjs-dist: "npm:^5.6.205"
     pinia: "npm:^3.0.4"
     pinia-plugin-persistedstate: "npm:^4.7.1"
@@ -12774,13 +12774,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-queue@npm:^9.1.2":
-  version: 9.1.2
-  resolution: "p-queue@npm:9.1.2"
+"p-queue@npm:^9.2.0":
+  version: 9.2.0
+  resolution: "p-queue@npm:9.2.0"
   dependencies:
-    eventemitter3: "npm:^5.0.1"
+    eventemitter3: "npm:^5.0.4"
     p-timeout: "npm:^7.0.0"
-  checksum: 10c0/beaccf7ea6536ed5c5687bce92040db14516d8ae0fd69d1f82b44d7e1bfff33a5b03d0145cf580840a7182d487384e05ab6135a0a2c5ea44afaceceaef05535a
+  checksum: 10c0/817af11d7b76e9e7414cb5326d6a9224ef85996bb72315af3a17e87a5b7bc740eba3cbfa8f9a4c6e241acbaf0b7894cf5065a9e58c4947dddd7917fb70b2eebc
   languageName: node
   linkType: hard
 
