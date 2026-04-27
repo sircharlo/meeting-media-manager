@@ -173,10 +173,6 @@ function hasHighPriorityActive(
   return Array.from(activeDownloads.values()).some((d) => !d.lowPriority);
 }
 
-function isWindowAvailable(win: BrowserWindow | null): win is BrowserWindow {
-  return !!win && !win.isDestroyed() && !win.webContents.isDestroyed();
-}
-
 function logDownloadQueueDebugState(reason: string): void {
   const activeDownloads = getActiveDownloads();
   const pausedDownloads = getPausedDownloads();
@@ -887,7 +883,13 @@ async function processNormalPausedDownload(
  */
 async function processQueue() {
   const loadedManager = await loadElectronDownloadManager();
-  if (!mainWindowInfo.mainWindow || cancelAll || !loadedManager) return;
+  if (
+    !mainWindowInfo.mainWindow ||
+    mainWindowInfo.mainWindow.isDestroyed() ||
+    cancelAll ||
+    !loadedManager
+  )
+    return;
 
   const activeCount = getActiveDownloadCount();
 
@@ -985,9 +987,14 @@ async function startDownload(
 ) {
   const { destFilename, saveDir, url } = download;
   const key = url + saveDir;
-  const downloadWindow = mainWindowInfo.mainWindow;
 
-  if (!isWindowAvailable(downloadWindow) || !manager || cancelAll) return;
+  if (
+    !mainWindowInfo.mainWindow ||
+    !mainWindowInfo.mainWindow.isDestroyed() ||
+    !manager ||
+    cancelAll
+  )
+    return;
 
   ongoingDownloads.set(key, {
     item: download,
@@ -1002,7 +1009,7 @@ async function startDownload(
       callbacks: {
         onDownloadCancelled: async () => {
           log('Download cancelled:', 'electronDownloads', 'log', url);
-          sendToWindow(downloadWindow, 'downloadCancelled', {
+          sendToWindow(mainWindowInfo.mainWindow, 'downloadCancelled', {
             id: key,
           });
           ongoingDownloads.delete(key);
@@ -1011,7 +1018,7 @@ async function startDownload(
         },
         onDownloadCompleted: async ({ item }) => {
           log('Download completed:', 'electronDownloads', 'log', url);
-          sendToWindow(downloadWindow, 'downloadCompleted', {
+          sendToWindow(mainWindowInfo.mainWindow, 'downloadCompleted', {
             filePath: item.getSavePath(),
             id: key,
           });
@@ -1020,7 +1027,7 @@ async function startDownload(
           processQueue();
         },
         onDownloadProgress: async ({ item, percentCompleted }) => {
-          sendToWindow(downloadWindow, 'downloadProgress', {
+          sendToWindow(mainWindowInfo.mainWindow, 'downloadProgress', {
             bytesReceived: item.getReceivedBytes(),
             id: key,
             percentCompleted,
@@ -1028,7 +1035,7 @@ async function startDownload(
         },
         onDownloadStarted: async ({ item, resolvedFilename }) => {
           log('Download started:', 'electronDownloads', 'log', url);
-          sendToWindow(downloadWindow, 'downloadStarted', {
+          sendToWindow(mainWindowInfo.mainWindow, 'downloadStarted', {
             filename: resolvedFilename,
             id: key,
             totalBytes: item.getTotalBytes(),
@@ -1051,14 +1058,14 @@ async function startDownload(
                 params: {
                   destFilename,
                   directory: saveDir,
-                  window: downloadWindow?.id,
+                  window: mainWindowInfo.mainWindow?.id,
                 },
                 url,
               },
             },
           });
           if (downloadData) {
-            sendToWindow(downloadWindow, 'downloadError', {
+            sendToWindow(mainWindowInfo.mainWindow, 'downloadError', {
               id: key,
             });
           }
@@ -1107,7 +1114,7 @@ async function startDownload(
           params: {
             destFilename,
             directory: saveDir,
-            window: downloadWindow?.id,
+            window: mainWindowInfo.mainWindow?.id,
           },
           url,
         },
