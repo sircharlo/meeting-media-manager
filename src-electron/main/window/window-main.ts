@@ -1,7 +1,11 @@
 import { BrowserWindow } from 'electron';
 import { PLATFORM, PRODUCT_NAME } from 'src-electron/constants';
 import { cancelAllDownloads } from 'src-electron/main/downloads';
-import { setAppQuitting, setShouldQuit } from 'src-electron/main/session';
+import {
+  quitStatus,
+  setAppQuitting,
+  setShouldQuit,
+} from 'src-electron/main/session';
 import {
   closeOtherWindows,
   createWindow,
@@ -61,7 +65,9 @@ export function createMainWindow() {
     mainWindowInfo.mainWindow.on('close', (e) => {
       if (
         mainWindowInfo.mainWindow &&
-        (authorizedClose.authorized || closeAttempts > 2)
+        (authorizedClose.authorized ||
+          quitStatus.isAppQuitting ||
+          closeAttempts > 2)
       ) {
         cancelAllDownloads();
         closeOtherWindows(mainWindowInfo.mainWindow);
