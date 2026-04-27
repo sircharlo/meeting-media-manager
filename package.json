@@ -42,7 +42,7 @@
     "@opentelemetry/api-logs": "^0.215.0",
     "@quasar/extras": "^1.18.0",
     "@sentry/core": "^10.50.0",
-    "@sentry/electron": "^7.11.0",
+    "@sentry/electron": "^7.12.0",
     "@sentry/vue": "^10.49.0",
     "@vueuse/core": "^14.2.1",
     "@vueuse/router": "^14.2.1",
