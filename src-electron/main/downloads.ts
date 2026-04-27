@@ -25,6 +25,11 @@ const ENSURE_DIR_RETRY_COUNT = 3;
 const ENSURE_DIR_RETRY_DELAY_MS = 75;
 
 const getErrorCode = (error: unknown) => (error as { code?: string })?.code;
+const getErrorMessage = (error: unknown) =>
+  (error as { message?: string })?.message ?? '';
+
+const isDestroyedObjectError = (error: unknown) =>
+  getErrorMessage(error).includes('Object has been destroyed');
 
 enum DownloadState {
   ACTIVE = 'ACTIVE',
@@ -878,7 +883,13 @@ async function processNormalPausedDownload(
  */
 async function processQueue() {
   const loadedManager = await loadElectronDownloadManager();
-  if (!mainWindowInfo.mainWindow || cancelAll || !loadedManager) return;
+  if (
+    !mainWindowInfo.mainWindow ||
+    mainWindowInfo.mainWindow.isDestroyed() ||
+    cancelAll ||
+    !loadedManager
+  )
+    return;
 
   const activeCount = getActiveDownloadCount();
 
@@ -977,7 +988,13 @@ async function startDownload(
   const { destFilename, saveDir, url } = download;
   const key = url + saveDir;
 
-  if (!mainWindowInfo.mainWindow || !manager) return;
+  if (
+    !mainWindowInfo.mainWindow ||
+    !mainWindowInfo.mainWindow.isDestroyed() ||
+    !manager ||
+    cancelAll
+  )
+    return;
 
   ongoingDownloads.set(key, {
     item: download,
@@ -1025,6 +1042,12 @@ async function startDownload(
           });
         },
         onError: async (err, downloadData) => {
+          if (isDestroyedObjectError(err)) {
+            ongoingDownloads.delete(key);
+            addQueueBreadcrumb('download-window-destroyed', { force: true });
+            processQueue();
+            return;
+          }
           if (quitStatus.isAppQuitting) return;
           log('Download error:', 'electronDownloads', 'log', url);
           captureElectronError(err, {
@@ -1077,6 +1100,12 @@ async function startDownload(
       }
     }
   } catch (error) {
+    if (isDestroyedObjectError(error) || cancelAll) {
+      ongoingDownloads.delete(key);
+      addQueueBreadcrumb('download-window-destroyed', { force: true });
+      processQueue();
+      return;
+    }
     if (quitStatus.isAppQuitting) return;
     captureElectronError(error, {
       contexts: {
