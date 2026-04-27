@@ -1,7 +1,7 @@
 import type { ElectronDownloadManager as EDMType } from 'electron-dl-manager';
 
 import { getCountriesForTimezone } from 'countries-and-timezones';
-import { app } from 'electron';
+import { app, type BrowserWindow } from 'electron';
 import { ensureDir } from 'fs-extra/esm';
 import { setTimeout as delay } from 'node:timers/promises';
 import { quitStatus } from 'src-electron/main/session';
@@ -25,6 +25,11 @@ const ENSURE_DIR_RETRY_COUNT = 3;
 const ENSURE_DIR_RETRY_DELAY_MS = 75;
 
 const getErrorCode = (error: unknown) => (error as { code?: string })?.code;
+const getErrorMessage = (error: unknown) =>
+  (error as { message?: string })?.message ?? '';
+
+const isDestroyedObjectError = (error: unknown) =>
+  getErrorMessage(error).includes('Object has been destroyed');
 
 enum DownloadState {
   ACTIVE = 'ACTIVE',
@@ -166,6 +171,10 @@ function hasHighPriorityActive(
   activeDownloads: Map<string, OngoingDownload>,
 ): boolean {
   return Array.from(activeDownloads.values()).some((d) => !d.lowPriority);
+}
+
+function isWindowAvailable(win: BrowserWindow | null): win is BrowserWindow {
+  return !!win && !win.isDestroyed() && !win.webContents.isDestroyed();
 }
 
 function logDownloadQueueDebugState(reason: string): void {
@@ -976,8 +985,9 @@ async function startDownload(
 ) {
   const { destFilename, saveDir, url } = download;
   const key = url + saveDir;
+  const downloadWindow = mainWindowInfo.mainWindow;
 
-  if (!mainWindowInfo.mainWindow || !manager) return;
+  if (!isWindowAvailable(downloadWindow) || !manager || cancelAll) return;
 
   ongoingDownloads.set(key, {
     item: download,
@@ -992,7 +1002,7 @@ async function startDownload(
       callbacks: {
         onDownloadCancelled: async () => {
           log('Download cancelled:', 'electronDownloads', 'log', url);
-          sendToWindow(mainWindowInfo.mainWindow, 'downloadCancelled', {
+          sendToWindow(downloadWindow, 'downloadCancelled', {
             id: key,
           });
           ongoingDownloads.delete(key);
@@ -1001,7 +1011,7 @@ async function startDownload(
         },
         onDownloadCompleted: async ({ item }) => {
           log('Download completed:', 'electronDownloads', 'log', url);
-          sendToWindow(mainWindowInfo.mainWindow, 'downloadCompleted', {
+          sendToWindow(downloadWindow, 'downloadCompleted', {
             filePath: item.getSavePath(),
             id: key,
           });
@@ -1010,7 +1020,7 @@ async function startDownload(
           processQueue();
         },
         onDownloadProgress: async ({ item, percentCompleted }) => {
-          sendToWindow(mainWindowInfo.mainWindow, 'downloadProgress', {
+          sendToWindow(downloadWindow, 'downloadProgress', {
             bytesReceived: item.getReceivedBytes(),
             id: key,
             percentCompleted,
@@ -1018,13 +1028,19 @@ async function startDownload(
         },
         onDownloadStarted: async ({ item, resolvedFilename }) => {
           log('Download started:', 'electronDownloads', 'log', url);
-          sendToWindow(mainWindowInfo.mainWindow, 'downloadStarted', {
+          sendToWindow(downloadWindow, 'downloadStarted', {
             filename: resolvedFilename,
             id: key,
             totalBytes: item.getTotalBytes(),
           });
         },
         onError: async (err, downloadData) => {
+          if (isDestroyedObjectError(err)) {
+            ongoingDownloads.delete(key);
+            addQueueBreadcrumb('download-window-destroyed', { force: true });
+            processQueue();
+            return;
+          }
           if (quitStatus.isAppQuitting) return;
           log('Download error:', 'electronDownloads', 'log', url);
           captureElectronError(err, {
@@ -1035,14 +1051,14 @@ async function startDownload(
                 params: {
                   destFilename,
                   directory: saveDir,
-                  window: mainWindowInfo.mainWindow?.id,
+                  window: downloadWindow?.id,
                 },
                 url,
               },
             },
           });
           if (downloadData) {
-            sendToWindow(mainWindowInfo.mainWindow, 'downloadError', {
+            sendToWindow(downloadWindow, 'downloadError', {
               id: key,
             });
           }
@@ -1077,6 +1093,12 @@ async function startDownload(
       }
     }
   } catch (error) {
+    if (isDestroyedObjectError(error) || cancelAll) {
+      ongoingDownloads.delete(key);
+      addQueueBreadcrumb('download-window-destroyed', { force: true });
+      processQueue();
+      return;
+    }
     if (quitStatus.isAppQuitting) return;
     captureElectronError(error, {
       contexts: {
@@ -1085,7 +1107,7 @@ async function startDownload(
           params: {
             destFilename,
             directory: saveDir,
-            window: mainWindowInfo.mainWindow?.id,
+            window: downloadWindow?.id,
           },
           url,
         },

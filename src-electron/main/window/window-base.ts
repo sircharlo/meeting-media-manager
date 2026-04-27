@@ -168,5 +168,6 @@ export function sendToWindow(
   channel: ElectronIpcListenKey,
   ...args: unknown[]
 ) {
-  win?.webContents.send(channel, ...args);
+  if (!win || win.isDestroyed() || win.webContents.isDestroyed()) return;
+  win.webContents.send(channel, ...args);
 }
