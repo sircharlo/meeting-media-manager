@@ -1,7 +1,7 @@
 import type { ElectronDownloadManager as EDMType } from 'electron-dl-manager';
 
 import { getCountriesForTimezone } from 'countries-and-timezones';
-import { app, type BrowserWindow } from 'electron';
+import { app } from 'electron';
 import { ensureDir } from 'fs-extra/esm';
 import { setTimeout as delay } from 'node:timers/promises';
 import { quitStatus } from 'src-electron/main/session';
