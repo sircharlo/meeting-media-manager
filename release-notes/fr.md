@@ -4,6 +4,12 @@
 
 Pour la liste complète des changements entre les versions, consultez notre fichier CHANGELOG.md sur GitHub.
 
+## 4.8 v26.4
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **JW Stream**: Ajout du flux JW à la liste des sites web qui peuvent être miroités.
+
 ## v26.4.0
 
 ### ✨ Nouvelles fonctionnalités
