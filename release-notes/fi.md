@@ -4,6 +4,12 @@
 
 Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELOG.md tiedosto GitHubissa.
 
+## v26.4.8
+
+### ✨ Mitä uutta
+
+- ✨ **JW Stream**: Lisätty JW Stream luetteloon sivustoja, jotka voidaan peilata.
+
 ## v26.4.0
 
 ### ✨ Mitä uutta

@@ -4,6 +4,12 @@
 
 Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in unserer CHANGELOG.md Datei auf GitHub.
 
+## v26.4.8
+
+### ✨ Neue Funktionen
+
+- ✨ **JW Stream**: JW Stream zur Liste der Websites hinzugefügt, die gespiegelt werden können.
+
 ## v26.4.0
 
 ### ✨ Neue Funktionen
