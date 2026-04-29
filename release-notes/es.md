@@ -4,6 +4,12 @@
 
 For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
 
+## v26.4.8
+
+### ✨ New Features
+
+- ✨ **JW Stream**: Se agregó JW Stream a la lista de sitios web que pueden ser reproducidos.
+
 ## v26.4.0
 
 ### ✨ New Features
