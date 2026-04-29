@@ -4,6 +4,12 @@
 
 A verziók közötti változások teljes listáját megtalálja a GitHubon található CHANGELOG.md fájlban.
 
+## v26.4.8
+
+### ✨ Új funkciók
+
+- ✨ **JW Stream**: Added JW Stream to the list of websites that can be mirrored.
+
 ## v26.4.0
 
 ### ✨ Új funkciók
