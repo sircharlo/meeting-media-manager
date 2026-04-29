@@ -812,6 +812,23 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
 
     const targetScreenBounds = targetDisplay.bounds;
 
+    // Avoid redundant fullscreen transitions, especially on macOS where toggling
+    // can trigger repeated enter/leave loops when move requests are fired often.
+    const currentBounds = mediaWindowInfo.mediaWindow.getBounds();
+    const currentDisplay = screen.getDisplayMatching(currentBounds);
+    const currentDisplayMatchesTarget = currentDisplay.id === targetDisplay.id;
+    const currentIsFullscreen = mediaWindowInfo.mediaWindow.isFullScreen();
+
+    if (fullscreen && currentDisplayMatchesTarget && currentIsFullscreen) {
+      log(
+        '🔍 [setWindowPosition] Already fullscreen on target display, skipping',
+        'electronWindow',
+        'log',
+      );
+      isMovingWindow = false;
+      return;
+    }
+
     const setWindowBounds = (
       bounds: Partial<Electron.Rectangle>,
       fullScreen = false,
