@@ -4,6 +4,12 @@
 
 关于不同版本之间更改的完整清单，请参阅我们在 GitHub 上的 CHANGELOG.md文件。
 
+## v26.4.8
+
+### ✨ 新功能
+
+- :sparkles：**JW Stream**：添加JW Stream 到可以镜像的网站列表。
+
 ## v26.4.0
 
 ### ✨ 新功能
