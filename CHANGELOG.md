@@ -4,6 +4,33 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.4.8
+
+### ✨ New Features
+
+- ✨ **JW Stream**: Added JW Stream to the list of websites that can be mirrored. (#7214)
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Website Presentation**: Improved website video player and mouse cursor overlay behavior. (#7214)
+- 🛠️ **Watch Folders**: Added notifications for network folder issues, including missing paths and permission issues. (#7045)
+- 🛠️ **Memorial**: Fixed lookup logic to prevent a past Memorial date from being selected.
+- 🛠️ **Memorial**: Added Memorial banner as a fallback media item when possible.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Stability**: Guarded `sendToWindow` and download flows against destroyed `BrowserWindow` instances. (#7241)
+- 🐞 **Electron**: Allowed authorized main window close during application quit. (#7243)
+- 🐞 **Media**: Refined media window auto-target guard for launch and screen changes. (#7201)
+- 🐞 **Watchtower**: Fixed adaptive Watchtower end-time default for Circuit Overseer weeks. (#7175)
+- 🐞 **Timer**: Kept windowed timer size during media playback. (#7173)
+- 🐞 **Security**: Guarded CSP generation against malformed hostnames. (#7072)
+
+### 🔧 Chores
+
+- 🔧 **Dependencies**: Updated various project dependencies including `upath` and `eslint`.
+- 🔧 **Refactoring**: Standardized path module imports.
+
 ## v26.4.7
 
 ### 🐞 Bug Fixes
