@@ -4,6 +4,12 @@
 
 Kwa ajili ya orodha kamili ya mabadiliko baina ya toleo tofauti tofauti, ona CHANGELOG.md file kwenye GitHub.
 
+## v26.4.8
+
+### ✨ Vipengele Vipya
+
+- ✨ **JW Stream**: Added JW Stream to the list of websites that can be mirrored.
+
 ## v26.4.0
 
 ### ✨ Vipengele Vipya
