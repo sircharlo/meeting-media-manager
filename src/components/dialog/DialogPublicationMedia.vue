@@ -1104,7 +1104,7 @@ async function importPdfVersion() {
           if (trimmed.includes('-')) {
             const [a, b] = trimmed.split('-').map((n) => Number.parseInt(n));
             if (Number.isNaN(a) || Number.isNaN(b)) return [];
-            return Array.from({ length: b - a + 1 }, (_, i) => a + i);
+            return Array.from({ length: (b || 0) - (a || 0) + 1 }, (_, i) => (a || 0) + i);
           }
           const n = Number.parseInt(trimmed);
           return Number.isNaN(n) ? [] : [n];
