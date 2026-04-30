@@ -8,7 +8,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- ✨ **JW Stream**: Added JW Stream to the list of websites that can be mirrored.
+- ✨ **JW Stream**: JW Stream je bil dodan k seznamu spletnih strani, ki jih je mogoče zrcaliti.
 
 ## v26.4.0
 
