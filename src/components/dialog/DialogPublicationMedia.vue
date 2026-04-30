@@ -1077,7 +1077,7 @@ async function importPdfVersion() {
       },
       urlVariables.value.pubMedia,
       true,
-    );
+    ) as MediaLink;
     const pdfUrl = info?.files?.[lang]?.PDF?.[0]?.file?.url;
     if (!pdfUrl) return;
 
