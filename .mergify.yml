@@ -1,23 +1,33 @@
-#pull_request_rules:
-#  - name: Automatically merge Dependabot PRs (minor/patch only, including -dev and prereleases)
-#    conditions:
-#      - author = dependabot[bot]
-#      - title ~= ^((chore|build)(\(deps(?:-dev)*\))*:) bump [^\s]+ from ([1-9][\d]*)\..+ to \4\.
-#    actions:
-#      update: {}
-#      queue:
-#        name: bots
+pull_request_rules:
+  - name: Auto-merge translations (no CI required)
+    conditions:
+      - -draft
+      - or:
+          - author = github-actions[bot]
+          - author = sircharlo
+      - title ~= (new translations|update translations progress)
+      - -files ~= ^(?!.*\.(md|json)$)  # no files outside .md and .json
+    actions:
+      queue:
+        name: translations
 
-#  - name: Automatically merge Crowdin PRs (only if all checks pass)
-#    conditions:
-#      - author = github-actions[bot]
-#      - title ~= (new translations|update translations progress)
-#    actions:
-#      update: {}
-#      queue:
-#        name: bots
+  - name: Default queue (with CI)
+    conditions:
+      - -draft
+      - not: title ~= (new translations|update translations progress)
+      - or:
+          - author = dependabot[bot]
+          - author = github-actions[bot]
+    actions:
+      queue:
+        name: bots
 
 queue_rules:
+  - name: translations
+    merge_conditions:
+      - -draft
+      # 🚫 no build checks here
+
   - name: bots
     merge_conditions:
       - -draft
@@ -37,18 +47,12 @@ queue_rules:
           - check-success = "build / build (windows-latest)"
           - check-neutral = "build / build (windows-latest)"
           - check-skipped = "build / build (windows-latest)"
-      - or:
-          - and: # translations
-              - or:
-                  - author = github-actions[bot]
-                  - author = sircharlo
-              - title ~= (new translations|update translations progress)
-          - and: # dependabot
-              - author = dependabot[bot]
-              - or:
-                  - title ~= ^((chore|build)(\(deps(?:-dev)*\))*:) bump [^\s]+ from ([1-9][\d]*)\..+
-                    to \4\.
-                  - title ~= ^((chore|build)(\(deps(-dev)?\))?:) bump the .+ group across .+ updates
+      - and: # dependabot
+          - author = dependabot[bot]
+          - or:
+             - title ~= ^((chore|build)(\(deps(?:-dev)*\))*:) bump [^\s]+ from ([1-9][\d]*)\..+ to \4\.
+             - title ~= ^((chore|build)(\(deps(-dev)?\))?:) bump the .+ group across .+ updates
+
 merge_protections_settings:
   auto_merge: true
   reporting_method: check-runs
