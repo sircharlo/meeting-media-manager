@@ -39,9 +39,10 @@ queue_rules:
       - and:
           - author = dependabot[bot]
           - or:
-             - title ~= ^((chore|build)(\(deps(?:-dev)*\))*:) bump [^\s]+ from ([1-9][\d]*)\..+ to \4\.
-             - title ~= ^((chore|build)(\(deps(-dev)?\))?:) bump the .+ group across .+ updates
+              - title ~= ^((chore|build)(\(deps(?:-dev)*\))*:) bump [^\s]+ from ([1-9][\d]*)\..+ to 
+                \4\.
+              - title ~= ^((chore|build)(\(deps(-dev)?\))?:) bump the .+ group across .+ updates
 
 merge_protections_settings:
-  auto_merge: true
   reporting_method: check-runs
+  auto_merge_conditions: true
