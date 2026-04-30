@@ -210,126 +210,126 @@ Preveri naslednje nastavitve, povezane z OBS Studiem:
 3. **Vrata in geslo**: Preveri nastavitve vrat in gesla v OBS Studiu
 4. **Požarni zid**: Prepričaj se, da požarni zid ne blokira povezave
 
-### :speaker: Does Meeting Media Manager automatically send the media audio to Zoom when using OBS Studio? {#audio-to-zoom}
+### :speaker: Ali Meeting Media Manager samodejno pošlje zvok multimedijske vsebine v Zoom pri združevanju z OBS Studiem? {#audio-to-zoom}
 
-**No.** M³ does not automatically send media audio to Zoom or OBS Studio. The video stream works like a virtual camera with no sound, just like a webcam. To have the music/video sound available in Zoom automatically, you need to ensure that Zoom 'hears' the audio feed coming from the computer, and then you should enable the **Original Audio** setting in Zoom.
+**Ne.** M³ samodejno ne pošilja zvoka multimedijske vsebine v Zoom ali OBS Studio.  Videotok deluje kot navidezna kamera brez zvoka — podobno kot spletna kamera. Če želiš, da Zoom samodejno prejme zvok glasbe/videa, moraš poskrbeti, da Zoom »sliši« zvočni signal, ki prihaja iz računalnika, nato pa v Zoomu omogočiti nastavitev **Original Audio**.
 
-**Important Notes:**
+**Pomembna opozorila:**
 
-- You must enable Original Audio **every time** before starting a Zoom meeting
-- This setting is not related to M³ - you would face the same audio issue when using any other media player and not using Zoom's screen and audio sharing features
-- The Original Audio setting has three sub-options - typically the first two should be enabled and the third disabled for optimal audio quality
-- If you're still experiencing audio issues, you may need to use Zoom's "Share Computer Sound" option instead
-- Alternatively, look into using the Zoom integration instead, as it uses Zoom's native screen sharing.
+- Nastavitev Original Audio moraš omogočiti **pred vsakim začetkom** Zoom shoda.
+- Ta nastavitev ni povezana z M³ — enako težavo z zvokom bi imel pri kateremkoli drugem predvajalniku multimedijske vsebine, če ne bi uporabljal Zoomove funkcije za deljenje zaslona in zvoka.
+- Nastavitev Original Audio ima tri podmožnosti — običajno je za najboljšo kakovost zvoka priporočljivo, da sta prvi dve omogočeni, tretja pa onemogočena.
+- Če imaš še vedno težave z zvokom, bo morda treba uporabiti Zoomovo možnost »Share Computer Sound«.
+- Alternativno lahko razmisliš o uporabi Zoom združevanja, saj uporablja Zoomovo lastno deljenje zaslona in zato zvok deluje zanesljiveje.
 
-**Why is this necessary?**
-M³ plays media with sound on your computer, but this audio is not automatically transmitted through the video stream to Zoom when using OBS Studio. The Original Audio setting allows Zoom to capture the audio playing on your computer during screen sharing, if your computer is configured properly (for example: the computer has a second sound card that is used for media playback which Zoom listens to as a microphone.)
+**Zakaj je to potrebno?**
+M³ predvaja multimedijsko vsebino z zvokom na tvojem računalniku, vendar se ta zvok ne pošlje samodejno v Zoom prek videotokov, ko uporabljaš združevanje z OBS Studiem. Nastavitev Original Audio omogoča Zoomu, da med deljenjem zaslona zajame zvok, ki se predvaja na tvojem računalniku, če je računalnik pravilno konfiguriran (na primer: računalnik ima drugo zvočno kartico, ki se uporablja za predvajanje multimedijske vsebine, Zoom pa to zvočno kartico posluša kot mikrofon).
 
-### :snail: M³ is running slowly. How can I improve performance? {#performance-issues}
+### :snail: M³ deluje počasi. Kako lahko izboljšam zmogljivost? {#performance-issues}
 
-Try these performance optimizations:
+Poskusi naslednje optimizacije zmogljivosti:
 
-1. **Enable Extra Cache**: Turn on additional caching in settings
-2. **Close Other Apps**: Close unnecessary applications
-3. **Check Disk Space**: Ensure you have sufficient free disk space
-4. **Reduce Resolution**: Lower the maximum resolution setting
+1. **Omogoči dodatni predpomnilnik**: v nastavitvah vključi možnost za dodatno predpomnjenje
+2. **Zapri druge aplikacije**: zapri programe, ki jih trenutno ne potrebuješ
+3. **Preveri prostor na disku**: poskrbi, da imaš dovolj prostega prostora
+4. **Zmanjšaj ločljivost**: znižaj največjo nastavljeno ločljivost multimedijske vsebine
 
-### :speech_balloon: I'm having language issues. Kaj naj preverim? {#faq-language-issues}
+### :speech_balloon: Imam težave z jezikom. Kaj naj preverim? {#faq-language-issues}
 
-Verify these language settings:
+Preveri naslednje jezikovne nastavitve:
 
-1. **Interface Language**: Check your display language setting
-2. **Media Language**: Verify your media download language
-3. **Language Availability**: Ensure the media language is available on the official website of Jehovah's Witnesses
-4. **Fallback Language**: Try setting a fallback language
+1. **Jezik vmesnika**: preveri nastavitev jezika prikaza
+2. **Jezik multimedijske vsebine**: preveri, kateri jezik je nastavljen za prenos multimedijske vsebine
+3. **Razpoložljivost jezika**: preveri, ali je izbrani jezik multimedijske vsebine na voljo na uradnem spletnem mestu Jehovovih prič
+4. **Nadomestni jezik**: poskusi nastaviti nadomestni jezik
 
-## Support and Community {#support-community}
+## Podpora in skupnost {#support-community}
 
-### :radioactive: How do I report an issue? {#how-do-i-report-an-issue}
+### :radioactive: Kako prijavim težavo? {#how-do-i-report-an-issue}
 
-Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository. Include:
+[Težavo prijavi](https://github.com/sircharlo/meeting-media-manager/issues) na uradni spletni strani GitHub repository. Vključi:
 
-- Detailed description of the problem
-- Steps to reproduce the issue
-- Your operating system and M³ version
-- Any error messages, logs and screenshots
+- Podroben opis težave
+- Korake za ponovitev napake
+- Svoj operacijski sistem in različico M³
+- Vsa sporočila o napakah, dnevnike in posnetke zaslona
 
-### :new: How can I request a new feature or enhancement? {#how-can-i-request-a-new-feature-or-enhancement}
+### :new: Kako lahko predlagam novo funkcijo ali izboljšavo? {#how-can-i-request-a-new-feature-or-enhancement}
 
-Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository. Describe:
+Na uradni spletni strani GitHub repository [odpri razpravo](https://github.com/sircharlo/meeting-media-manager/discussions). Opiši:
 
-- The feature you'd like to see
-- How it would benefit users
-- Any specific requirements or preferences
+- Funkcijo, ki bi jo rad videl
+- Kako bi koristila uporabnikom
+- Katere posebne zahteve ali želje imaš
 
-### :handshake: How can I contribute some code? {#how-can-i-contribute-some-code}
+### :handshake: Kako lahko prispevam k razvoju kode? {#how-can-i-contribute-some-code}
 
-Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository. We welcome code contributions and Pull Requests!
+[Oglej si vodnik za prispevanje](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) na uradni spletni strani GitHub repository. Veseli smo prispevkov glede kode in »Pull Requestov«!
 
-### :globe_with_meridians: How can I help with translations? {#translations}
+### :globe_with_meridians: Kako lahko pomagam pri prevodih? {#translations}
 
-M³ uses Crowdin for translation management. You can contribute translations by:
+M³ uporablja Crowdin za prevajanje besedila. Pri tem lahko pomagaš tako, da:
 
-1. Visiting the [Crowdin project](https://crowdin.com/project/meeting-media-manager)
-2. Selecting your language
-3. Translating strings that need work
-4. Reviewing existing translations
+1. Obiščeš [projekt na Crowdin platformi](https://crowdin.com/project/meeting-media-manager)
+2. Izbereš svoj jezik
+3. Prevedeš nize, ki še niso prevedeni
+4. Preveriš obstoječe prevode
 
-### :x: Can I make a donation to the project? {#can-i-make-a-donation-to-the-project}
+### :x: Ali lahko doniram za ta projekt? {#can-i-make-a-donation-to-the-project}
 
-Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
+Hvala za tvojo pripravljenost, da podpreš projekt! Vendar pa v duhu tega, kar piše v Mateju 10:8, donacij **ne** sprejemamo in jih nikoli ne bomo. Ta aplikacija je nastala z ljubeznijo in nekaj prostega časa. Uživaj v uporabi! :tada:
 
-:::tip :book: Matthew 10:8
+:::tip :book: Matej 10:8
 
-"You received free, give free."
+»Zastonj ste prejeli, zastonj dajajte.«
 
 :::
 
-## Technical Questions {#technical-questions}
+## Tehnična vprašanja {#technical-questions}
 
-### :computer: What hardware and software requirements does M³ have? {#hardware-and-software-requirements}
+### :computer: Kakšne strojne in programske zahteve ima M³? {#hardware-and-software-requirements}
 
-M³ is designed to work on a wide range of operating systems:
+M³ je zasnovan tako, da deluje na širokem naboru operacijskih sistemov:
 
 - **Windows**: Windows 10 in novejši (na voljo 64-bitna in 32-bitna različica)
 - **macOS**: macOS 10.15 (Catalina) in novejše različice (univerzalna različica)
 - **Linux**: Večina sodobnih distribucij Linuxa (v formatu AppImage)
 
-M³ has the following hardware requirements:
+M³ ima naslednje strojne zahteve:
 
-- **Minimum**: 4GB RAM, 6GB free disk space
-- **Recommended**: 8GB RAM, 15GB free disk space for media caching
-- **Network**: Internet connection for media downloads
+- **Minimalno**: 4 GB RAM, 6 GB prostega prostora na disku
+- **Priporočeno**: 8 GB RAM, 15 GB prostega prostora na disku za medijski predpomnilnik
+- **Omrežje**: internetna povezava za prenos multimedijskih vsebin
 
-Depending on the features you use, M³ also requires the following additional software:
+Glede na funkcije, ki jih uporabljaš, M³ zahteva tudi naslednjo dodatno programsko opremo:
 
-- **Zoom**: Required only if using Zoom integration features
-- **OBS Studio**: Required only if using OBS integration features
+- **Zoom**: potrebno samo, če uporabljaš funkcije za integracijo z Zoomom
+- **OBS Studio**: potrebno samo, če uporabljaš funkcije za združevanje z OBS-om
 
-### :floppy_disk: How much disk space does M³ use? {#disk-space}
+### :floppy_disk: Koliko prostora na disku uporablja M³? {#disk-space}
 
-Disk space usage depends on:
+Poraba prostora na disku je odvisna od:
 
-- **Media Resolution**: Higher resolutions use more space
-- **Cached Content**: Media files are cached locally
-- **Extra Cache**: Additional caching can increase usage
-- **Exported Media**: Auto-export features use additional space
+- **Ločljivosti multimedijske vsebine**: višje ločljivosti porabijo več prostora
+- **Predpomnjenih multimedijskih datotek**: multimedijska vsebina se shranjuje lokalno
+- **Dodatnega predpomnilnika**: dodatno predpomnjenje lahko poveča porabo
+- **Izvožene multimedijske vsebine**: funkcije samodejnega izvoza porabijo dodatni prostor
 
-Typical usage ranges from 2-10GB depending on settings and usage.
+Običajna poraba se giblje med 2–10 GB, odvisno od nastavitev in načina uporabe.
 
-### :shield: Is M³ secure and private? {#security-privacy}
+### :shield: Ali je M³ varen in zaseben? {#security-privacy}
 
-Da! M³ is designed with security and privacy in mind:
+Da! M³ je zasnovan z mislijo na varnost in zasebnost:
 
-- **Local Storage**: All meeting data is stored locally on your computer
-- **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses
-- **Open Source**: The code is open for review and verification
-- **Bug Reports**: Limited data may be collected for bug reporting purposes
+- **Lokalna shramba**: vsi podatki o shodah so shranjeni lokalno na tvojem računalniku
+- **Neposredni prenosi**: multimedijska vsebina se prenaša neposredno z uradnega spletnega mesta Jehovovih prič
+- **Odprta koda**: izvorna koda je na voljo za pregled in preverjanje
+- **Poročila o napakah**: za namen poročanja o napakah se lahko zbere omejena količina podatkov
 
-### :arrows_clockwise: How often does M³ check for updates? {#update-frequency}
+### :arrows_clockwise: Kako pogosto M³ preverja posodobitve? {#update-frequency}
 
-M³ checks for updates:
+M³ preverja posodobitve na naslednje načine:
 
-- **Application Updates**: Automatically checks for new versions every time the app is opened
-- **Media Updates**: Automatically checks for new meeting media every time the app is opened
-- **Language Updates**: Dynamic detection of new languages as needed
+- **Posodobitve aplikacije**: ob vsakem zagonu samodejno preveri, ali je na voljo nova različica
+- **Posodobitve multimedijske vsebine**: ob vsakem zagonu samodejno preveri, ali so na voljo nove multimedijske vsebine za shode
+- **Jezikovne posodobitve**: po potrebi dinamično zazna nove jezike

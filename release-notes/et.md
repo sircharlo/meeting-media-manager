@@ -8,7 +8,7 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 
 ### ✨ Uued funktsioonid
 
-- ✨ **JW Stream**: Added JW Stream to the list of websites that can be mirrored.
+- ✨ JW Stream: Lisasime JW Streami peegeldatavate veebisaitide nimekirja.
 
 ## v26.4.0
 
