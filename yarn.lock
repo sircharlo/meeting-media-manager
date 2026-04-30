@@ -11438,7 +11438,7 @@ __metadata:
     mime: "npm:^4.1.0"
     mousetrap: "npm:^1.6.5"
     ms: "npm:^2.1.3"
-    msw: "npm:^2.14.0"
+    msw: "npm:^2.14.2"
     music-metadata: "npm:^11.12.3"
     obs-websocket-js: "npm:^5.0.8"
     oxc-minify: "npm:^0.128.0"
@@ -11884,9 +11884,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"msw@npm:^2.14.0":
-  version: 2.14.0
-  resolution: "msw@npm:2.14.0"
+"msw@npm:^2.14.2":
+  version: 2.14.2
+  resolution: "msw@npm:2.14.2"
   dependencies:
     "@inquirer/confirm": "npm:^6.0.11"
     "@mswjs/interceptors": "npm:^0.41.3"
@@ -11913,7 +11913,7 @@ __metadata:
       optional: true
   bin:
     msw: cli/index.js
-  checksum: 10c0/ac4b01b41e7b8714d38aee7a2115f2ab3855e8135430c1017c787f56442ca856ee00e3d96312a60118a81b4db392832807fe65aa793274b41e7536aa3acab98e
+  checksum: 10c0/85dcf819047167b925fcb55b19a38533697e2ea27f341f637a21d311482478ee568d87ccf4a65c388fb7e90c238976b6ae06db3271f53dbc99add2cbc6719b44
   languageName: node
   linkType: hard
 
