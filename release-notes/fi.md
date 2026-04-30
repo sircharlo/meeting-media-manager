@@ -8,7 +8,7 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 
 ### ✨ Mitä uutta
 
-- ✨ **JW Stream**: Lisätty JW Stream luetteloon sivustoja, jotka voidaan peilata.
+- ✨ JW Stream: Lisätty peilattavien verkkosivustojen luetteloon.
 
 ## v26.4.0
 
