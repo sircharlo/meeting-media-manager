@@ -478,6 +478,8 @@
   "playback-speed": "Playback speed",
   "playlist-items": "Playlist items",
   "please-use-image-or-jwpub": "Please select an image file or a JWPUB file that contains an image",
+  "import-pdf-version": "Import PDF version",
+  "pdf-page-selection-prompt": "This PDF has {totalPages} pages. Enter pages to import (for example: 1-3,5,7).",
   "please-wait": "Please wait",
   "position": "Position",
   "processing": "Processing:",
