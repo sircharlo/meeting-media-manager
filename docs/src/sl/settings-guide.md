@@ -38,15 +38,15 @@ Nastavite, kateri dan naj se v koledarju šteje za prvi dan v tednu.
 
 **Privzeto**: nedelja
 
-### Date Format {#date-format}
+### Oblika datuma {#date-format}
 
 <!-- **Setting**: `localDateFormat` -->
 
-Format used to display dates in the app.
+Oblika, ki jo aplikacija uporablja za prikaz datumov.
 
-**Example**: D MMMM YYYY
+**Primer**: D MMMM YYYY
 
-**Default**: D MMMM YYYY
+**Privzeto**: D MMMM YYYY
 
 ### Samodejni zagon ob prijavi {#auto-start-at-login}
 
@@ -175,11 +175,11 @@ Omogoči funkcijo prikazovanja multimedijske vsebine. To je potrebno za prikazov
 
 **Privzeto**: `false`
 
-#### Begin Playback Paused {#begin-playback-paused}
+#### Začni predvajanje v pavzi {#begin-playback-paused}
 
 <!-- **Setting**: `beginPlaybackPaused` -->
 
-Start videos in a paused state when playback begins.
+Videoposnetki se ob začetku predvajanja samodejno zaženejo v pavziranem stanju.
 
 **Privzeto**: `false`
 
@@ -341,47 +341,47 @@ Nastavite, kateri prizori OBS se uporabljajo za različne namene:
 
 :::
 
-### Custom Events {#custom-events}
+### Dogodki po meri {#custom-events}
 
-#### Enable Custom Events {#enable-custom-events}
+#### Omogoči dogodke po meri {#enable-custom-events}
 
 <!-- **Setting**: `enableCustomEvents` -->
 
-Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
+Omogoči bližnjice po meri, ki se sprožijo, ko je zaznan določen dogodek (npr. ko se multimedijska vsebina začne predvajati, pavzira ali ustavi).
 
 **Privzeto**: `false`
 
-#### Custom Event Shortcuts {#custom-event-shortcuts}
+#### Bližnjice za dogodke po meri {#custom-event-shortcuts}
 
-##### Play Media Shortcut {#custom-event-media-play-shortcut}
+##### Bližnjica ob predvajanju multimedijske vsebine {#custom-event-media-play-shortcut}
 
 <!-- **Setting**: `customEventMediaPlayShortcut` -->
 
-Shortcut that is triggered when media is played.
+Bližnjica, ki se sproži, ko se multimedijska vsebina začne predvajati.
 
 **Privzeto**: Prazno
 
-##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
+##### Bližnjica ob pavziranju multimedijske vsebovine {#custom-event-media-pause-shortcut}
 
 <!-- **Setting**: `customEventMediaPauseShortcut` -->
 
-Shortcut that is triggered when media is paused.
+Bližnjica, ki se sproži, ko se multimedijska vsebina pavzira.
 
 **Privzeto**: Prazno
 
-##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
+##### Bližnjica ob ustavitvi multimedijske vsebovine {#custom-event-media-stop-shortcut}
 
 <!-- **Setting**: `customEventMediaStopShortcut` -->
 
-Shortcut that is triggered when media is stopped.
+Bližnjica, ki se sproži, ko se multimedijska vsebina ustavi.
 
 **Privzeto**: Prazno
 
-##### Last Song Shortcut {#custom-event-last-song-shortcut}
+##### Bližnjica ob zadnji pesmi {#custom-event-last-song-shortcut}
 
 <!-- **Setting**: `customEventLastSongShortcut` -->
 
-Shortcut that is triggered when the last song is played during a meeting.
+Bližnjica, ki se sproži, ko je med shodom predvajana zadnja pesem.
 
 **Privzeto**: Prazno
 
@@ -410,11 +410,11 @@ Nastavite bližnjice za predvajanje multimedijske vsebine:
 
 ### Prikaz multimedijske vsebine {#media-display}
 
-#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+#### Omogoči prehode z zatemnitvijo {#enable-media-window-fade-transitions}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
-Enable fade-in/out transitions when showing or hiding the media window.
+Omogoči postopne prehode (fade-in/fade-out) pri prikazu ali skrivanju okna za multimedijsko vsebino.
 
 **Privzeto**: `true`
 
@@ -514,13 +514,13 @@ Te nastavitve spreminjajte le, če razumete njihove posledice.
 
 :::
 
-#### Base URL {#base-url}
+#### Osnovni URL {#base-url}
 
 <!-- **Setting**: `baseUrl` -->
 
-Base domain used to download publications and media.
+Osnovna domena, ki se uporablja za prenos publikacij in multimedijske vsebine.
 
-**Default**: `jw.org`
+**Privzeto**: `jw.org`
 
 #### Onemogoči pridobivanje vsebine {#disable-media-fetching}
 
