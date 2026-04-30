@@ -3,8 +3,8 @@
 layout: home
 
 hero:
-  name: 'M³ Documentation'
-  text: 'Complete guide to setting up and using Meeting Media Manager'
+  name: 'Dokumentacija M³'
+  text: 'Celovit vodič za nastavitev in uporabo aplikacije Meeting Media Manager'
   image: /logo.svg
   actions:
     - theme: brand
@@ -14,17 +14,17 @@ hero:
       text: O programu
       link: /about
     - theme: brand
-      text: User Guide
+      text: Uporabniški priročnik
       link: /user-guide
     - theme: brand
-      text: Settings Guide
+      text: Vodnik po nastavitvah
       link: /settings-guide
     - theme: brand
       text: Pogosto zastavljena vprašanja
       link: /faq
 features:
   - icon: 🚀
-    title: Automatic Media Management
+    title: Samodejno upravljanje multimedijske vsebine
     details: Automatically downloads and organizes pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
   - icon: 🎦
     title: Media Presentation
