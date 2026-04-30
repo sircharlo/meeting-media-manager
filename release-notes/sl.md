@@ -175,48 +175,48 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- 🔄 **Allow OBS Reconnection Attempts**: Introduce the possibility to manually force OBS to reconnect when needed.
-- 🗑 **Auto Cleanup Old Export Date Folders**: Automatically remove outdated export date folders to keep storage organized.
+- 🔄 **Dovoli poskuse ponovne povezave z OBS**: Omogoča ročno sprožitev ponovne povezave OBS, kadar je to potrebno.
+- 🗑 **Samodejno čiščenje starih izvoznih map po datumih**: Samodejno odstrani zastarele izvozne mape po datumih in tako ohranja urejen prostor za shranjevanje.
 
 ## 25.2.0
 
 ### ✨ Nove funkcije
 
-- 🌍 **Use System Locale by Default**: Automatically detect and use the system's locale for a more personalized experience.
-- 🏷 **Tag Support for Exported Media**: Add metadata tags to exported media files for better organization.
-- 🔄 **Automatic Beta to Stable Downgrade**: Allow automatic downgrades from beta versions to stable releases when necessary.
-- 🌐 **Extract Latest MEPS Language Indexes**: Fetch the most recent MEPS language indexes directly from the official website, ensuring up-to-date language support.
+- 🌍 **Privzeta uporaba sistemske jezikovne oznake (locale)**: M³ samodejno zazna in uporabi jezikovno okolje tvojega sistema za bolj prilagojeno izkušnjo.
+- 🏷 **Podpora oznakam za izvoženo multimedijsko vsebino**: Izvoženim datotekam se dodajo metapodatki za lažjo organizacijo.
+- 🔄 **Samodejni prehod iz beta različice na stabilno**: Omogoča samodejni prehod iz beta različic na stabilne izdaje, kadar je to potrebno.
+- 🌐 **Pridobivanje najnovejših MEPS jezikovnih indeksov**: M³ pridobi najnovejše MEPS jezikovne indekse neposredno z uradnega spletnega mesta, kar zagotavlja posodobljeno jezikovno podporo.
 
 ## 25.1.0
 
 ### ✨ Nove funkcije
 
-- 📅 **Open Previous Dates**: Allow opening previous dates of the current week, which is useful when the meeting day is moved later in the week.
-- 🛑 **Error Banner for OBS Studio**: Add an error banner when OBS Studio is not connected on a meeting day, ensuring users are alerted.
-- 📚 **Group Media by Publication**: Group media from the same referred publication for a cleaner and more organized media overview.
-- 🎵 **Duplicate Song Warning**: Show a warning if songs are listed more than once in the media list for weekend meetings.
-- 🔄 **Future Schedule Planning**: Enable the planning of future meeting schedule changes, which is useful for yearly schedule changes or for the circuit overseer's visit to a neighboring congregation.
+- 📅 **Odpri pretekle datume**: Omogoča odpiranje preteklih dni v tekočem tednu, kar je uporabno, kadar je shod izjemoma prestavljen na kasnejši dan v tednu.
+- 🛑 **Opozorilni trak za OBS Studio**: Prikaže opozorilni trak, kadar OBS Studio na dan shoda ni povezan, da uporabnik to takoj opazi.
+- 📚 **Združevanje multimedijske vsebine po publikaciji**: Združi multimedijsko vsebino iz iste navedene publikacije za bolj čist in organiziran pregled.
+- 🎵 **Opozorilo o podvojenih pesmih**: Prikaže opozorilo, če so pesmi za konec tedna v seznamu navedene več kot enkrat.
+- 🔄 **Načrtovanje prihodnjih sprememb urnika**: Omogoča načrtovanje prihodnjih sprememb urnika shodov, kar je uporabno pri letnih spremembah urnika ali ob obisku okrajnega nadzornika v sosednji občini.
 
 ## 24.11.0
 
 ### ✨ Nove funkcije
 
-- **feat**: Presenting the website is now supported on macOS 🚀
-- **feat**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
-- **feat**: Added support for setting the web address from which media should be downloaded 🚀
-- **feat**: Added OBS Studio instant scene picker and overhauled scene picker functionality in settings
-- **feat**: Expanded documentation website to support more languages
+- **feat**: Predvajanje spletnega mesta je zdaj podprto tudi v macOS 🚀
+- **feat**: Dodane so bližnjice na tipkovnici za ustavitev, premor in nadaljevanje predvajanja multimedijske vsebine 🚀
+- **feat**: Dodana podpora za nastavitev spletnega naslova, s katerega naj se prenaša multimedijska vsebina 🚀
+- **feat**: Dodan je takojšnji izbirnik prizorov za OBS Studio in prenovljena funkcionalnost izbirnika prizorov v nastavitvah
+- **feat**: Razširjeno spletno mesto z dokumentacijo, ki zdaj podpira več jezikov
 
 ## 24.10.10
 
 ### ✨ Nove funkcije
 
-- **new**: Added keyboard shortcuts to navigate to the next/previous media item
-- **new**: Added a right-click menu to media items to hide media items and rename them
-- **new**: Trimmed video times are now respected in imported JWL playlists
+- **novo**: Dodane bližnjice na tipkovnici za premikanje na naslednji oziroma prejšnji element multimedijske vsebine
+- **novo**: Dodan desni klik meni na elemente multimedijske vsebine za skrivanje elementov in preimenovanje
+- **novo**: Obrezani časi videov se zdaj pravilno upoštevajo pri uvoženih JWL seznamih predvajanja
 
 ## 24.10.9
 
 ### ✨ Nove funkcije
 
-- **feat**: Added an option to delete all extra media files for the currently selected day
+- **feat**: Dodana možnost za brisanje vseh dodatnih multimedijskih datotek za trenutno izbrani dan
