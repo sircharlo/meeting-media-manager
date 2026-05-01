@@ -494,76 +494,87 @@ const showCustomBackgroundPicker = computed(
   () => !!jwpubImportFilePath.value || jwpubImages.value.length > 0,
 );
 
+const processJwpubBackground = async (filepath: string) => {
+  jwpubImportFilePath.value = filepath;
+  const unzipDir = await unzipJwpub(filepath);
+  if (!unzipDir) throw new Error('Failed to unzip: ' + filepath);
+
+  const db = await findDb(unzipDir);
+  if (!db) throw new Error('No db file found: ' + filepath);
+
+  const query =
+    "SELECT FilePath FROM Multimedia WHERE CategoryType >= 0 AND CategoryType <> 9 AND FilePath <> '';";
+  const results = globalThis.electronApi.executeQuery<Partial<MultimediaItem>>(
+    db,
+    query,
+  );
+
+  jwpubImages.value = results.map((multimediaItem) => ({
+    FilePath: join(unzipDir, multimediaItem.FilePath || ''),
+  }));
+
+  if (jwpubImages.value.length === 0) {
+    notifyInvalidBackgroundFile();
+  }
+};
+
+const processFileBackground = async (filepath: string) => {
+  const tempDirectory = await getTempPath();
+  const tempFilepath = join(tempDirectory, basename(filepath));
+  await copyFile(filepath, tempFilepath);
+
+  const workingTempFilepath = await convertImageIfNeeded(tempFilepath);
+  if (isImage(workingTempFilepath)) {
+    setMediaBackground(workingTempFilepath);
+  } else {
+    throw new Error(
+      'Invalid file type: ' + workingTempFilepath.split('/').pop(),
+    );
+  }
+};
+
 const chooseCustomBackground = async (reset?: boolean) => {
+  if (reset) {
+    mediaWindowCustomBackground.value = '';
+    notifyCustomBackgroundRemoved();
+    return;
+  }
+
   try {
-    if (reset) {
-      mediaWindowCustomBackground.value = '';
-      notifyCustomBackgroundRemoved();
+    const backgroundPicker = await openFileDialog(true, 'jwpub+image+pdf');
+    if (!backgroundPicker || backgroundPicker.canceled) return;
+
+    if (!backgroundPicker.filePaths.length) {
+      notifyInvalidBackgroundFile();
       return;
+    }
+
+    const filepath = backgroundPicker.filePaths[0];
+    if (!filepath) return;
+
+    if (isJwpub(filepath)) {
+      await processJwpubBackground(filepath);
     } else {
-      try {
-        const backgroundPicker = await openFileDialog(true, 'jwpub+image+pdf');
-        if (backgroundPicker?.canceled) return;
-        if (backgroundPicker?.filePaths.length) {
-          const filepath = backgroundPicker.filePaths[0];
-          if (filepath && isJwpub(filepath)) {
-            jwpubImportFilePath.value = filepath;
-            const unzipDir = await unzipJwpub(filepath);
-            if (!unzipDir) throw new Error('Failed to unzip: ' + filepath);
-            const db = await findDb(unzipDir);
-            if (!db) throw new Error('No db file found: ' + filepath);
-            jwpubImages.value = globalThis.electronApi
-              .executeQuery<
-                Partial<MultimediaItem>
-              >(db, "SELECT FilePath FROM Multimedia WHERE CategoryType >= 0 AND CategoryType <> 9 AND FilePath <> '';")
-              .map((multimediaItem) => {
-                return {
-                  FilePath: join(unzipDir, multimediaItem.FilePath || ''),
-                };
-              });
-            if (jwpubImages.value?.length === 0) {
-              notifyInvalidBackgroundFile();
-            }
-          } else if (filepath) {
-            const tempDirectory = await getTempPath();
-            const tempFilepath = join(tempDirectory, basename(filepath));
-            await copyFile(filepath, tempFilepath);
-            const workingTempFilepath =
-              await convertImageIfNeeded(tempFilepath);
-            if (isImage(workingTempFilepath)) {
-              setMediaBackground(workingTempFilepath);
-            } else {
-              throw new Error(
-                'Invalid file type: ' + workingTempFilepath.split('/').pop(),
-              );
-            }
-          }
-        } else {
-          notifyInvalidBackgroundFile();
-        }
-      } catch (error) {
-        if (
-          !(error instanceof Error) ||
-          !error.message.includes('Invalid file type')
-        ) {
-          errorCatcher(error, {
-            contexts: {
-              fn: {
-                args: {
-                  mediaWindowCustomBackground:
-                    mediaWindowCustomBackground.value,
-                  reset,
-                },
-                name: 'chooseCustomBackground',
-              },
-            },
-          });
-        }
-        notifyInvalidBackgroundFile();
-      }
+      await processFileBackground(filepath);
     }
   } catch (error) {
-    errorCatcher(error);
+    if (
+      !(error instanceof Error) ||
+      !error.message.includes('Invalid file type')
+    ) {
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            args: {
+              mediaWindowCustomBackground: mediaWindowCustomBackground.value,
+              reset,
+            },
+            name: 'chooseCustomBackground',
+          },
+        },
+      });
+    }
+    notifyInvalidBackgroundFile();
   }
 };
 
