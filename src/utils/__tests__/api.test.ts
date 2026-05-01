@@ -1,4 +1,8 @@
-import { validAnnouncements } from 'app/test/vitest/mocks/github';
+import {
+  announcements,
+  releases,
+  validAnnouncements,
+} from 'app/test/vitest/mocks/github';
 import { jwLangs, jwYeartext } from 'app/test/vitest/mocks/jw';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -17,6 +21,15 @@ import {
 import * as dateUtils from '../date';
 
 describe('fetchJwLanguages', () => {
+  beforeEach(() => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify(jwLangs), { status: 200 }),
+    );
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
   it('should fetch the jw languages', async () => {
     const languages = await fetchJwLanguages('jw.org');
     expect(languages?.length).toBe(jwLangs.languages.length);
@@ -24,6 +37,16 @@ describe('fetchJwLanguages', () => {
 });
 
 describe('fetchYeartext', () => {
+  beforeEach(() => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify(jwYeartext), { status: 200 }),
+    );
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('should fetch the yeartext', async () => {
     const yeartext = await fetchYeartext('E', 'jw.org');
     expect(yeartext.wtlocale).toBe('E');
@@ -32,13 +55,34 @@ describe('fetchYeartext', () => {
 });
 
 describe('fetchAnnouncements', () => {
+  beforeEach(() => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify(announcements), { status: 200 }),
+    );
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('should fetch the announcements', async () => {
-    const announcements = await fetchAnnouncements();
-    expect(announcements.length).toBe(validAnnouncements.length);
+    const result = await fetchAnnouncements();
+    expect(result.length).toBe(validAnnouncements.length);
+    expect(result).toEqual(expect.arrayContaining(validAnnouncements));
   });
 });
 
 describe('fetchLatestVersion', () => {
+  beforeEach(() => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify(releases), { status: 200 }),
+    );
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('should fetch the latest version', async () => {
     const version = await fetchLatestVersion();
     expect(version).toBe('1.2.3');
@@ -54,6 +98,10 @@ describe('fetchRaw caching', () => {
   });
 
   it('should fetch from network when cache is false', async () => {
+    vi.spyOn(globalThis, 'fetch').mockImplementation(() =>
+      Promise.resolve(new Response(JSON.stringify(jwLangs), { status: 200 })),
+    );
+
     const fetchSpy = vi.spyOn(globalThis, 'fetch');
 
     const res1 = await fetchRaw(handledUrl, undefined, false);
@@ -65,7 +113,11 @@ describe('fetchRaw caching', () => {
   });
 
   it('should cache GET requests when cache is true', async () => {
-    const fetchSpy = vi.spyOn(globalThis, 'fetch');
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockImplementation(() =>
+        Promise.resolve(new Response(JSON.stringify(jwLangs), { status: 200 })),
+      );
 
     const res1 = await fetchRaw(handledUrl, { method: 'GET' }, true);
     const res2 = await fetchRaw(handledUrl, { method: 'GET' }, true);
@@ -114,6 +166,10 @@ describe('fetchRaw caching', () => {
   });
 
   it('should use headers in cache key', async () => {
+    vi.spyOn(globalThis, 'fetch').mockImplementation(() =>
+      Promise.resolve(new Response(JSON.stringify(jwLangs), { status: 200 })),
+    );
+
     const fetchSpy = vi.spyOn(globalThis, 'fetch');
 
     await fetchRaw(handledUrl, { headers: { 'X-Test': '1' } }, true);

@@ -50,9 +50,6 @@ export const electronApi: ElectronApi = {
   convertHeic: function (image) {
     throw new Error('Function not implemented.');
   },
-  convertPdfToImages: function (pdfPath, outputFolder) {
-    throw new Error('Function not implemented.');
-  },
   createVideoFromNonVideo: function (originalFile, ffmpegPath) {
     throw new Error('Function not implemented.');
   },
@@ -79,9 +76,6 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   getLowDiskSpaceStatus: function () {
-    throw new Error('Function not implemented.');
-  },
-  getNrOfPdfPages: function (pdfPath) {
     throw new Error('Function not implemented.');
   },
   getScreenAccessStatus: function () {

@@ -437,6 +437,14 @@
         </div>
         <div class="q-gutter-sm">
           <q-btn
+            v-if="step === 'article' && pdfImportAvailable"
+            color="primary"
+            :disable="isProcessing || loading"
+            flat
+            :label="t('import-pdf-version')"
+            @click="importPdfVersion"
+          />
+          <q-btn
             color="negative"
             :disable="isProcessing"
             flat
@@ -463,18 +471,25 @@ import type { MediaLink, Publication } from 'src/types/jw/publications';
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
+import { useQuasar } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getJwIconFromKeyword } from 'src/helpers/fonts';
 import {
+  downloadFileIfNeeded,
   getDbFromJWPUB,
   getJwMediaInfo,
   getPubMediaLinks,
 } from 'src/helpers/jw-media';
 import { log } from 'src/shared/vanilla';
 import { fetchJson, fetchPubMediaLinks } from 'src/utils/api';
+import { convertPdfToImages, getNrOfPdfPages } from 'src/utils/converters';
 import { getLocalDate } from 'src/utils/date';
-import { getPublicationDirectoryContents } from 'src/utils/fs';
+import {
+  getPublicationDirectory,
+  getPublicationDirectoryContents,
+  getTempPath,
+} from 'src/utils/fs';
 import { decodeEntities } from 'src/utils/general';
 import { findBestResolutions } from 'src/utils/jw';
 import { tableExists } from 'src/utils/sqlite';
@@ -508,6 +523,8 @@ const dialogValue = computed({
   get: () => props.modelValue,
   set: (value) => emit('update:modelValue', value),
 });
+
+const $q = useQuasar();
 
 const jwStore = useJwStore();
 const { urlVariables } = storeToRefs(jwStore);
@@ -569,6 +586,7 @@ const tokenExpiry = ref<null | number>(null);
 // Media items for search results (when no JWPUB available)
 const mediaItems = ref<MediaLink[]>([]);
 const hoveredRemoteVideo = ref('');
+const pdfImportAvailable = ref(false);
 
 watch(
   () => dialogValue.value,
@@ -1041,6 +1059,109 @@ async function importDocument(doc: DocumentItem) {
   dialogValue.value = false;
 }
 
+async function importPdfVersion() {
+  try {
+    if (!pdfImportAvailable.value || loading.value) return;
+    loading.value = true;
+    const lang = (currentSettings.value?.lang || 'E') as JwLangCode;
+    const issue = selection.month
+      ? buildIssue(selection.year, selection.month, selection.publication)
+      : '0';
+    const info = await fetchPubMediaLinks(
+      {
+        fileformat: 'PDF',
+        issue,
+        langwritten: lang,
+        pub: selection.publication,
+      },
+      urlVariables.value.pubMedia,
+      true,
+    );
+    const pdfMediaLink = info?.files?.[lang]?.PDF?.[0] as MediaLink | undefined;
+    const pdfUrl = pdfMediaLink?.file?.url;
+    if (!pdfUrl) return;
+
+    const pubFetcher: PublicationFetcher = {
+      fileformat: 'PDF',
+      issue,
+      langwritten: lang,
+      pub: selection.publication,
+    };
+    const publicationDir = await getPublicationDirectory(pubFetcher);
+    const downloadResult = await downloadFileIfNeeded({
+      dir: publicationDir,
+      lowPriority: false,
+      url: pdfUrl,
+    });
+    const pdfPath = downloadResult.path;
+    if (!pdfPath || downloadResult.error) return;
+
+    const tempDir = await getTempPath();
+
+    const totalPages = await getNrOfPdfPages(pdfPath);
+    let selectedPages = new Set(
+      Array.from({ length: totalPages }, (_, i) => i),
+    );
+    if (totalPages > 5) {
+      const selectionInput = await new Promise<null | string>((resolve) => {
+        $q.dialog({
+          cancel: true,
+          persistent: true,
+          prompt: {
+            model: `1-${totalPages}`,
+            type: 'text',
+          },
+          title: t('pdf-page-selection-prompt', { totalPages }),
+        })
+          .onOk((data: string) => resolve(data))
+          .onCancel(() => resolve(null));
+      });
+      if (!selectionInput) return;
+      const parsed = selectionInput
+        .split(',')
+        .flatMap((part) => {
+          const trimmed = part.trim();
+          if (trimmed.includes('-')) {
+            const [a, b] = trimmed.split('-').map((n) => Number.parseInt(n));
+            if (Number.isNaN(a) || Number.isNaN(b)) return [];
+            return Array.from(
+              { length: (b || 0) - (a || 0) + 1 },
+              (_, i) => (a || 0) + i,
+            );
+          }
+          const n = Number.parseInt(trimmed);
+          return Number.isNaN(n) ? [] : [n];
+        })
+        .filter((n) => n >= 1 && n <= totalPages)
+        .map((n) => n - 1);
+      if (!parsed.length) return;
+      selectedPages = new Set(parsed);
+    }
+    const convertedImages = await convertPdfToImages(
+      pdfPath,
+      tempDir,
+      selectedPages,
+    );
+    const filteredImages = convertedImages.filter((_, index) =>
+      selectedPages.has(index),
+    );
+    globalThis.dispatchEvent(
+      new CustomEvent<{
+        files: (File | string)[];
+        section: MediaSectionIdentifier | undefined;
+      }>('localFiles-browsed', {
+        detail: { files: filteredImages, section: props.section },
+      }),
+    );
+    resetState();
+    dialogValue.value = false;
+  } catch (error) {
+    errorCatcher(error);
+  } finally {
+    loading.value = false;
+  }
+}
+
 function normalizeIssue(publication: string, issue: string): string {
   if (!['w', 'wp', 'ws'].includes(publication) || issue.length >= 8) {
     return issue;
@@ -1193,6 +1314,31 @@ async function performSearch() {
   }
 }
 
+async function refreshPdfAvailability() {
+  try {
+    pdfImportAvailable.value = false;
+    if (step.value !== 'article' || !selection.publication) return;
+    const lang = (currentSettings.value?.lang || 'E') as JwLangCode;
+    const issue = selection.month
+      ? buildIssue(selection.year, selection.month, selection.publication)
+      : '0';
+    const info = await fetchPubMediaLinks(
+      {
+        fileformat: 'PDF',
+        issue,
+        langwritten: lang,
+        pub: selection.publication,
+      },
+      urlVariables.value.pubMedia,
+      true,
+    );
+    pdfImportAvailable.value = !!info?.files?.[lang]?.PDF?.length;
+  } catch (error) {
+    errorCatcher(error);
+    pdfImportAvailable.value = false;
+  }
+}
+
 function resetDocuments() {
   documents.value = [];
   docPreviews.value = {};
@@ -1218,6 +1364,7 @@ function resetState() {
   searchQuery.value = '';
   searchResults.value = [];
   mediaItems.value = [];
+  pdfImportAvailable.value = false;
   if (searchTimeout.value) {
     clearTimeout(searchTimeout.value);
     searchTimeout.value = null;
@@ -1376,6 +1523,7 @@ async function selectMonth(m: number) {
     await buildDocumentHasMedia(db);
     await buildDocumentPreviews(db);
     step.value = 'article';
+    await refreshPdfAvailability();
   } catch (e) {
     errorCatcher(e);
   } finally {
@@ -1409,6 +1557,7 @@ async function selectPublication(choice: FilterChoice) {
     await buildDocumentHasMedia(db);
     await buildDocumentPreviews(db);
     step.value = 'article';
+    await refreshPdfAvailability();
   } catch (e) {
     errorCatcher(e);
   } finally {
@@ -1447,6 +1596,7 @@ async function selectSearchResult(result: SearchResultItem) {
 
     if (jwpubFileArray?.length) {
       await handleJwpubResult(publication, issue, lang);
+      await refreshPdfAvailability();
     } else {
       await handleMediaResult(
         pubMediaLinks,

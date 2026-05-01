@@ -4,15 +4,66 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { getTempPath } from 'src/utils/fs';
 import { isHeic, isPdf, isSvg } from 'src/utils/media';
 
-const {
-  convertHeic,
-  convertPdfToImages,
-  fs,
-  getNrOfPdfPages,
-  parse,
-  pathToFileURL,
-} = globalThis.electronApi;
+const { convertHeic, fs, parse, pathToFileURL } = globalThis.electronApi;
 const { readFile, writeFile } = fs;
+
+import { PDFParse } from 'pdf-parse';
+
+PDFParse.setWorker(
+  'https://cdn.jsdelivr.net/npm/pdf-parse@latest/dist/pdf-parse/web/pdf.worker.mjs',
+);
+
+export const getNrOfPdfPages = async (pdfPath: string): Promise<number> => {
+  try {
+    const buffer = await readFile(pdfPath);
+    const parser = new PDFParse({ data: buffer });
+    const result = await parser.getInfo({ parsePageInfo: false });
+    await parser.destroy();
+    return result.total;
+  } catch (e) {
+    errorCatcher(e);
+    return 0;
+  }
+};
+
+export const convertPdfToImages = async (
+  pdfPath: string,
+  outputFolder: string,
+  pages?: Set<number>,
+): Promise<string[]> => {
+  const outputImages: string[] = [];
+  try {
+    const buffer = await readFile(pdfPath);
+    const parser = new PDFParse({ data: buffer });
+
+    const result = await parser.getScreenshot({
+      desiredWidth: FULL_HD.width * 2,
+      imageBuffer: false,
+    });
+
+    const parsedPath = parse(pdfPath);
+
+    for (let i = 0; i < result.pages.length; i++) {
+      if (pages && !pages.has(i)) continue;
+
+      const pageDataUrl = result.pages[i]?.dataUrl;
+      if (pageDataUrl) {
+        const outputPath = `${outputFolder}/${parsedPath.name}_${i + 1}.png`;
+        await writeFile(
+          outputPath,
+          Buffer.from(pageDataUrl.split(',')[1] ?? '', 'base64'),
+        );
+        outputImages.push(outputPath);
+      }
+    }
+
+    await parser.destroy();
+    return outputImages;
+  } catch (e) {
+    errorCatcher(e);
+    return outputImages;
+  }
+};
 
 const convertHeicToJpg = async (filepath: string) => {
   if (!isHeic(filepath)) return filepath;

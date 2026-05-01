@@ -57,10 +57,6 @@ export interface ElectronApi {
   checkForUpdates: () => void;
   closeWebsiteWindow: () => void;
   convertHeic: (image: ConversionOptions) => Promise<ArrayBuffer>;
-  convertPdfToImages: (
-    pdfPath: string,
-    outputFolder: string,
-  ) => Promise<string[]>;
   /**
    * Converts a non-video file into a video file.
    *
@@ -105,7 +101,6 @@ export interface ElectronApi {
   getLocales: () => Promise<string[]>;
   getLocalPathFromFileObject: (fileObject: File | string | undefined) => string;
   getLowDiskSpaceStatus: () => Promise<boolean>;
-  getNrOfPdfPages: (pdfPath: string) => Promise<number>;
   getScreenAccessStatus: () => Promise<MediaAccessStatus>;
   getSharedDataPath: () => Promise<null | string>;
   getUpdatesDisabledPath: () => Promise<string>;
