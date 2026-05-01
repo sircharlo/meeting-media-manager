@@ -87,13 +87,6 @@
             >
               <q-icon class="q-mr-sm" name="mmm-window" size="xs" />
               {{ t('windowed') }}
-              <q-tooltip
-                v-if="screenPreferences.preferWindowed && mediaWindowSize"
-                floating
-              >
-                {{ mediaWindowSize?.width }} x
-                {{ mediaWindowSize?.height }}
-              </q-tooltip>
             </q-btn>
           </div>
         </div>
@@ -763,13 +756,6 @@ watch(
   },
   { immediate: true },
 );
-
-const { data: mediaWindowSize } = useBroadcastChannel<
-  Record<string, number>,
-  Record<string, number>
->({
-  name: 'media-window-size',
-});
 
 // UI update handler
 watch(

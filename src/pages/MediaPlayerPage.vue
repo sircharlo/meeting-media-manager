@@ -9,8 +9,6 @@
       background-color: black;
     "
   >
-    <q-resize-observer debounce="50" @resize="postMediaWindowSize" />
-
     <!-- Base yeartext layer - always visible with black background -->
     <div
       v-if="fontsSet && !mediaPlayerCustomBackground"
@@ -870,10 +868,6 @@ watch(
     }
   },
 );
-
-const { post: postMediaWindowSize } = useBroadcastChannel({
-  name: 'media-window-size',
-});
 
 const { data: urlVariables } = useBroadcastChannel<
   {
