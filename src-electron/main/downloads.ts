@@ -990,7 +990,7 @@ async function startDownload(
 
   if (
     !mainWindowInfo.mainWindow ||
-    !mainWindowInfo.mainWindow.isDestroyed() ||
+    mainWindowInfo.mainWindow.isDestroyed() ||
     !manager ||
     cancelAll
   )
