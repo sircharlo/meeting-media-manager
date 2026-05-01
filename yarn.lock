@@ -3123,11 +3123,11 @@ __metadata:
   linkType: hard
 
 "@peculiar/utils@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "@peculiar/utils@npm:2.0.2"
+  version: 2.0.3
+  resolution: "@peculiar/utils@npm:2.0.3"
   dependencies:
     tslib: "npm:^2.8.1"
-  checksum: 10c0/95ffb5e3abbb687784700f52dbcf9048d1ba6cef8a63a40fd6fe262135c8e32eaa69cc940aa74cb263df3829ac0b2161e0c1762990fe8d1d6981c753c48326b4
+  checksum: 10c0/e111a51c83334d6ff3c96b993ed0d718210620f3ad176853a4bf229f1cf4cd14e9388075318351b188862d34d2192d80f206f6bea53aa1459df3ec638cbcdbd5
   languageName: node
   linkType: hard
 
@@ -5796,11 +5796,11 @@ __metadata:
   linkType: hard
 
 "baseline-browser-mapping@npm:^2.10.12":
-  version: 2.10.24
-  resolution: "baseline-browser-mapping@npm:2.10.24"
+  version: 2.10.25
+  resolution: "baseline-browser-mapping@npm:2.10.25"
   bin:
     baseline-browser-mapping: dist/cli.cjs
-  checksum: 10c0/ae41f20b7d594909eac68e54b876127a456c99e85f49ba928a79c97ea288007617ad6638ddd1e36db45bbacef7b95b0f436d347602b2e1be2047099fcbbd5f37
+  checksum: 10c0/3955a01d1ca9487b23805b89250465911c0aa7aa1bd7b6207ab64257c945ad50e37d2d6d33b559e47e20cf1d3b1930fc15115bfbc340e84fd33c238a01bdebb6
   languageName: node
   linkType: hard
 
@@ -7440,19 +7440,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^3.3.1":
-  version: 3.4.0
-  resolution: "dompurify@npm:3.4.0"
-  dependencies:
-    "@types/trusted-types": "npm:^2.0.7"
-  dependenciesMeta:
-    "@types/trusted-types":
-      optional: true
-  checksum: 10c0/5593ac44ee20b9aa521c2120884effc98927fb9128c548183c75e79e0a04357c62ee913a049a267c8f396cb8c9d520ecf72562826c5524c46d4fe03c12063638
-  languageName: node
-  linkType: hard
-
-"dompurify@npm:^3.4.2":
+"dompurify@npm:^3.3.1, dompurify@npm:^3.4.2":
   version: 3.4.2
   resolution: "dompurify@npm:3.4.2"
   dependencies:
@@ -11823,20 +11811,20 @@ __metadata:
   linkType: hard
 
 "node-abi@npm:^3.3.0":
-  version: 3.89.0
-  resolution: "node-abi@npm:3.89.0"
+  version: 3.90.0
+  resolution: "node-abi@npm:3.90.0"
   dependencies:
     semver: "npm:^7.3.5"
-  checksum: 10c0/73abbee70833fbf91c7a0bb52bef9f1ccde190b1597f0bf8f15226b3aef8a4ade78605488fbd0aa47ec4fefe20e748672ba045c9075c58a56416bde8d9097586
+  checksum: 10c0/b55a585b6d91e49f1f1f2860bab8d96fc3fba9424ed3c76223db992f1975bc6dac2572419871d3b3bd725a4e62728d377e7c550ab60a987bf2e244310d1372f1
   languageName: node
   linkType: hard
 
 "node-abi@npm:^4.2.0":
-  version: 4.28.0
-  resolution: "node-abi@npm:4.28.0"
+  version: 4.29.0
+  resolution: "node-abi@npm:4.29.0"
   dependencies:
     semver: "npm:^7.6.3"
-  checksum: 10c0/d734dc7d25247fdd7bba7f1f12ddadc23c6ada9c639cf2cd2b11a6e568591c82f609e41bf740077b838f2eb88ff4d9489eb111eef4e530c8dbdb41355e6f0343
+  checksum: 10c0/afdd6540714dc6612251401c361df6dd0cdb762458410156f3594ed50f73c8144d98e7207ab4fffd2985fb3229259556ae22e54c0bf349a6f40b0e1e1c95af9d
   languageName: node
   linkType: hard
 
@@ -13009,18 +12997,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.5.10, postcss@npm:^8.5.8":
-  version: 8.5.10
-  resolution: "postcss@npm:8.5.10"
-  dependencies:
-    nanoid: "npm:^3.3.11"
-    picocolors: "npm:^1.1.1"
-    source-map-js: "npm:^1.2.1"
-  checksum: 10c0/c592dffa0c4873b401f01955b265538d9942f425040df5e2b8f0ad34c83773a792ea0fa5859ccc99cfb5b955b4ebff118ab7056315388dc83b107b0fa8313576
-  languageName: node
-  linkType: hard
-
-"postcss@npm:^8.5.13":
+"postcss@npm:^8.5.10, postcss@npm:^8.5.13":
   version: 8.5.13
   resolution: "postcss@npm:8.5.13"
   dependencies:
