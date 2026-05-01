@@ -222,7 +222,6 @@ export default defineConfig((ctx) => {
           'is-online',
           'mime',
           'music-metadata',
-          'pdfjs-dist',
           'robotjs',
           'upath',
           'yauzl',

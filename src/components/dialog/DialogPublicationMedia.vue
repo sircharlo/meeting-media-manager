@@ -471,18 +471,25 @@ import type { MediaLink, Publication } from 'src/types/jw/publications';
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
+import { useQuasar } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getJwIconFromKeyword } from 'src/helpers/fonts';
 import {
+  downloadFileIfNeeded,
   getDbFromJWPUB,
   getJwMediaInfo,
   getPubMediaLinks,
 } from 'src/helpers/jw-media';
 import { log } from 'src/shared/vanilla';
 import { fetchJson, fetchPubMediaLinks } from 'src/utils/api';
+import { convertPdfToImages, getNrOfPdfPages } from 'src/utils/converters';
 import { getLocalDate } from 'src/utils/date';
-import { getPublicationDirectoryContents } from 'src/utils/fs';
+import {
+  getPublicationDirectory,
+  getPublicationDirectoryContents,
+  getTempPath,
+} from 'src/utils/fs';
 import { decodeEntities } from 'src/utils/general';
 import { findBestResolutions } from 'src/utils/jw';
 import { tableExists } from 'src/utils/sqlite';
@@ -517,24 +524,16 @@ const dialogValue = computed({
   set: (value) => emit('update:modelValue', value),
 });
 
+const $q = useQuasar();
+
 const jwStore = useJwStore();
 const { urlVariables } = storeToRefs(jwStore);
 
 const currentState = useCurrentStateStore();
 const { currentLangObject, currentSettings } = storeToRefs(currentState);
 
-const {
-  basename,
-  convertPdfToImages,
-  dirname,
-  downloadFile,
-  executeQuery,
-  fs,
-  getNrOfPdfPages,
-  getUserDataPath,
-  join,
-  pathToFileURL,
-} = globalThis.electronApi;
+const { basename, dirname, executeQuery, fs, join, pathToFileURL } =
+  globalThis.electronApi;
 
 const { t } = useI18n();
 const { dateLocale } = useLocale();
@@ -1078,25 +1077,45 @@ async function importPdfVersion() {
       urlVariables.value.pubMedia,
       true,
     );
-    const pdfMediaLink = (info?.files?.[lang]?.PDF?.[0]) as MediaLink | undefined;
+    const pdfMediaLink = info?.files?.[lang]?.PDF?.[0] as MediaLink | undefined;
     const pdfUrl = pdfMediaLink?.file?.url;
     if (!pdfUrl) return;
 
-    const userDataPath = await getUserDataPath();
-    const tempDir = join(userDataPath, 'tmp', 'publication-pdf-import');
-    await fs.ensureDir(tempDir);
-    const pdfPath = await downloadFile(pdfUrl, tempDir);
-    if (!pdfPath) return;
+    const pubFetcher: PublicationFetcher = {
+      fileformat: 'PDF',
+      issue,
+      langwritten: lang,
+      pub: selection.publication,
+    };
+    const publicationDir = await getPublicationDirectory(pubFetcher);
+    const downloadResult = await downloadFileIfNeeded({
+      dir: publicationDir,
+      lowPriority: false,
+      url: pdfUrl,
+    });
+    const pdfPath = downloadResult.path;
+    if (!pdfPath || downloadResult.error) return;
+
+    const tempDir = await getTempPath();
 
     const totalPages = await getNrOfPdfPages(pdfPath);
     let selectedPages = new Set(
       Array.from({ length: totalPages }, (_, i) => i),
     );
     if (totalPages > 5) {
-      const selectionInput = globalThis.prompt(
-        t('pdf-page-selection-prompt', { totalPages }),
-        `1-${totalPages}`,
-      );
+      const selectionInput = await new Promise<null | string>((resolve) => {
+        $q.dialog({
+          cancel: true,
+          persistent: true,
+          prompt: {
+            model: `1-${totalPages}`,
+            type: 'text',
+          },
+          title: t('pdf-page-selection-prompt', { totalPages }),
+        })
+          .onOk((data: string) => resolve(data))
+          .onCancel(() => resolve(null));
+      });
       if (!selectionInput) return;
       const parsed = selectionInput
         .split(',')
@@ -1105,7 +1124,10 @@ async function importPdfVersion() {
           if (trimmed.includes('-')) {
             const [a, b] = trimmed.split('-').map((n) => Number.parseInt(n));
             if (Number.isNaN(a) || Number.isNaN(b)) return [];
-            return Array.from({ length: (b || 0) - (a || 0) + 1 }, (_, i) => (a || 0) + i);
+            return Array.from(
+              { length: (b || 0) - (a || 0) + 1 },
+              (_, i) => (a || 0) + i,
+            );
           }
           const n = Number.parseInt(trimmed);
           return Number.isNaN(n) ? [] : [n];
@@ -1115,7 +1137,11 @@ async function importPdfVersion() {
       if (!parsed.length) return;
       selectedPages = new Set(parsed);
     }
-    const convertedImages = await convertPdfToImages(pdfPath, tempDir);
+    const convertedImages = await convertPdfToImages(
+      pdfPath,
+      tempDir,
+      selectedPages,
+    );
     const filteredImages = convertedImages.filter((_, index) =>
       selectedPages.has(index),
     );

@@ -163,7 +163,7 @@ import { createTemporaryNotification } from 'src/helpers/notifications';
 import { updateLastUsedDate } from 'src/helpers/usage';
 import { triggerZoomScreenShare } from 'src/helpers/zoom';
 import { log, uuid } from 'src/shared/vanilla';
-import { convertImageIfNeeded } from 'src/utils/converters';
+import { convertImageIfNeeded, convertPdfToImages } from 'src/utils/converters';
 import {
   dateFromString,
   formatDate,
@@ -273,7 +273,6 @@ watch(
 
 const {
   basename,
-  convertPdfToImages,
   executeQuery,
   fileUrlToPath,
   fs,

@@ -5,11 +5,7 @@ import { contextBridge, webUtils } from 'electron/renderer';
 import fs from 'fs-extra';
 import { PLATFORM } from 'src-electron/constants';
 import { initCloseListeners } from 'src-electron/preload/close';
-import {
-  convertHeic,
-  convertPdfToImages,
-  getNrOfPdfPages,
-} from 'src-electron/preload/converters';
+import { convertHeic } from 'src-electron/preload/converters';
 import {
   fileUrlToPath,
   getVideoDuration,
@@ -66,7 +62,6 @@ const electronApi: ElectronApi = {
   checkForUpdates: () => send('checkForUpdates'),
   closeWebsiteWindow,
   convertHeic,
-  convertPdfToImages,
   createVideoFromNonVideo: (f, fP, oD) =>
     invoke('createVideoFromNonVideo', f, fP, oD),
   dirname,
@@ -82,7 +77,6 @@ const electronApi: ElectronApi = {
   getLocales: () => invoke('getLocales'),
   getLocalPathFromFileObject: (fo) => getPathFromFileObject(fo),
   getLowDiskSpaceStatus: () => invoke('getLowDiskSpaceStatus'),
-  getNrOfPdfPages,
   getScreenAccessStatus: () => invoke('getScreenAccessStatus'),
   getSharedDataPath: () => invoke('getSharedDataPath'),
   getUpdatesDisabledPath: () => invoke('getUpdatesDisabledPath'),
