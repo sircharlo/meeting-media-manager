@@ -41,7 +41,7 @@ queue_rules:
           - or:
               - title ~= ^((chore|build)(\(deps(?:-dev)*\))*:) bump [^\s]+ from ([1-9][\d]*)\..+ to 
                 \4\.
-              - title ~= ^((chore|build)(\(deps(-dev)?\))?:) bump the .+ group across .+ updates
+              - title ~= ^((chore|build)(\(deps(-dev)?\))?:) bump the .+ group (across|with) .+ updates
 
 merge_protections_settings:
   reporting_method: check-runs
