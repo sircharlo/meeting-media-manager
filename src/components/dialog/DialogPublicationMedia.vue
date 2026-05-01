@@ -1142,15 +1142,12 @@ async function importPdfVersion() {
       tempDir,
       selectedPages,
     );
-    const filteredImages = convertedImages.filter((_, index) =>
-      selectedPages.has(index),
-    );
     globalThis.dispatchEvent(
       new CustomEvent<{
         files: (File | string)[];
         section: MediaSectionIdentifier | undefined;
       }>('localFiles-browsed', {
-        detail: { files: filteredImages, section: props.section },
+        detail: { files: convertedImages, section: props.section },
       }),
     );
     resetState();
