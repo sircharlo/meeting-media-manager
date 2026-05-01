@@ -1,34 +1,23 @@
-pull_request_rules:
-  - name: Auto-merge translations (no CI required)
-    conditions:
+queue_rules:
+  - name: translations
+    queue_conditions:
       - -draft
       - or:
           - author = github-actions[bot]
           - author = sircharlo
       - title ~= (new translations|update translations progress)
-      - -files ~= ^(?!.*\.(md|json)$)  # no files outside .md and .json
-    actions:
-      queue:
-        name: translations
-
-  - name: Default queue (with CI)
-    conditions:
+      - files ~= \.(md|json)$
+      - -files ~= ^(?!.*\.(md|json)$)
+    merge_conditions:
       - -draft
-      - not: title ~= (new translations|update translations progress)
+
+  - name: bots
+    queue_conditions:
+      - -draft
       - or:
           - author = dependabot[bot]
           - author = github-actions[bot]
-    actions:
-      queue:
-        name: bots
-
-queue_rules:
-  - name: translations
-    merge_conditions:
-      - -draft
-      # 🚫 no build checks here
-
-  - name: bots
+      - not: title ~= (new translations|update translations progress)
     merge_conditions:
       - -draft
       - or:
@@ -47,12 +36,13 @@ queue_rules:
           - check-success = "build / build (windows-latest)"
           - check-neutral = "build / build (windows-latest)"
           - check-skipped = "build / build (windows-latest)"
-      - and: # dependabot
+      - and:
           - author = dependabot[bot]
           - or:
-             - title ~= ^((chore|build)(\(deps(?:-dev)*\))*:) bump [^\s]+ from ([1-9][\d]*)\..+ to \4\.
-             - title ~= ^((chore|build)(\(deps(-dev)?\))?:) bump the .+ group across .+ updates
+              - title ~= ^((chore|build)(\(deps(?:-dev)*\))*:) bump [^\s]+ from ([1-9][\d]*)\..+ to 
+                \4\.
+              - title ~= ^((chore|build)(\(deps(-dev)?\))?:) bump the .+ group across .+ updates
 
 merge_protections_settings:
-  auto_merge: true
   reporting_method: check-runs
+  auto_merge_conditions: true

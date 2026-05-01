@@ -176,42 +176,42 @@ Nastavi, kako naj M³ spreminja scene:
 - **Preklop po predvajanju** – Samodejni povratek na prejšnjo sceno
 - **Zapomni si prejšnji prizor** – Obnovi prizor, ki je bil aktiven pred predvajanjem
 
-### Audio Configuration for Hybrid Meetings {#audio-configuration}
+### Nastavitev zvoka za hibridne shode {#audio-configuration}
 
-When using M³ with OBS Studio for hybrid meetings (in-person + Zoom), you need to configure audio settings to ensure meeting participants can hear the media:
+Ko uporabljaš M³ skupaj z OBS Studiem za hibridne shode (v živo v dvorani + Zoom), moraš pravilno nastaviti zvok, da udeleženci v Zoomu slišijo multimedijsko vsebino.
 
-#### Zoom Audio Settings {#zoom-audio-settings}
+#### Zoom nastavitve zvoka {#zoom-audio-settings}
 
-**Before every meeting, you must enable Original Audio in Zoom:**
+**Pred vsakim shodom moraš v Zoomu omogočiti Original Audio:**
 
-1. **Open Zoom** and go to Settings
-2. **Navigate to Audio** → **Advanced**
-3. **Enable "Show in-meeting option to 'Enable Original Sound'"**
-4. **Check "Disable echo cancellation"** (first checkbox)
-5. **Check "Disable noise suppression"** (second checkbox)
-6. **Uncheck "Disable high-fidelity music mode"** (third checkbox)
-7. **Before starting each meeting**, click the "Original Audio" button in the meeting controls
+1. **Odpri Zoom** in pojdi v Settings
+2. **Izberi Audio** → **Advanced**
+3. **Omogoči možnost »Show in-meeting option to ‘Enable Original Sound’«**
+4. **Označi »Disable echo cancellation«** (prva možnost)
+5. **Označi »Disable noise suppression«** (druga možnost)
+6. **Odznači »Disable high-fidelity music mode«** (tretja možnost)
+7. **Pred začetkom vsakega shoda** v Zoomu klikni gumb »Original Audio« v kontrolah shoda
 
-**Alternative: Share Computer Sound**
-If Original Audio doesn't work well in your setup:
+**Alternativa: »Share Computer Sound«**
+Če Original Audio v tvoji konfiguraciji ne deluje dobro:
 
-1. **Before playing media**, go to **Advanced** tab in Zoom screen sharing options
-2. **Check "Share computer sound"**
-3. **Note**: This option must be enabled every time you start a new Zoom session
+1. **Pred predvajanjem multimedijske vsebine** pojdi na zavihek **Advanced** v Zoomovih možnostih za deljenje zaslona.
+2. **Označi »Share computer sound«**
+3. **Opomba**: to možnost moraš omogočiti vsakič, ko začneš novo Zoom videokonferenco
 
-**Best Alternative**: Consider using M³'s Zoom integration instead of OBS Studio, as it uses Zoom's native screen sharing which handles audio more seamlessly and doesn't require complex audio configuration.
+**Najboljša alternativa**: Razmisli o uporabi Zoom združevanja v M³ namesto OBS Studia, saj uporablja Zoomovo lastno deljenje zaslona, ki veliko bolj zanesljivo obravnava zvok in ne zahteva zapletene zvočne konfiguracije.
 
-#### Why Audio Configuration is Necessary {#why-audio-config}
+#### Zakaj je nastavitev zvoka potrebna {#why-audio-config}
 
 M³ predvaja multimedijsko vsebino z zvokom na vašem računalniku, vendar se ta zvok **ne prenaša samodejno** prek video prenosa v OBS Studio. To velja za vse predvajalnike multimedijskih datotek.
 
 **Težava z zvokom ni povezana z M³** – gre za omejitev delovanja video prenosa OBS Studio z Zoom. Video tok deluje kot virtualna kamera brez zvoka, podobno kot spletna kamera, zato morate Zoom izrecno nastaviti tako, da zajema zvok računalnika. To kaže na to, da ima vaš računalnik dve zvočni kartici. Če jih nima, verjetno ne boste mogli uspešno uporabljati integracije z OBS Studio.
 
-**Alternative Solution**: Consider using the Zoom integration instead, as it uses Zoom's native screen and audio sharing, which handles audio more seamlessly.
+**Alternativna rešitev**: Razmisli o uporabi združevanja z Zoomom, saj uporablja Zoomovo lastno deljenje zaslona in zvoka, ki veliko bolj zanesljivo obravnava zvok in ne zahteva zapletenih nastavitev.
 
-#### Troubleshooting Audio Issues {#audio-troubleshooting}
+#### Odpravljanje težav z zvokom {#audio-troubleshooting}
 
-**Common Problems:**
+**Pogoste težave:**
 
 - **V Zoomu ni zvoka**: Preveri, ali je originalni zvok omogočen in pravilno nastavljen
 - **Slaba kakovost zvoka**: Preveri, ali so tri potrditvena polja Original Audio (Izvirni zvok) pravilno nastavljena
@@ -225,161 +225,161 @@ M³ predvaja multimedijsko vsebino z zvokom na vašem računalniku, vendar se ta
 - Za enostavnejše upravljanje zvoka **razmisli o združevanju z Zoomom namesto z OBS Studio**
 - Poskrbi, da bodo vsi, ki sodelujejo pri ozvočenju, seznanjeni s temi nastavitvami
 
-## Media Import and Management {#media-import}
+## Uvoz in upravljanje multimedijske vsebine {#media-import}
 
-### Importing Custom Media {#importing-custom-media}
+### Uvoz lastne multimedijske vsebine {#importing-custom-media}
 
-Add your own media files to M³:
+Dodaj svoje datoteke v M³:
 
-1. **File Import** - Use the import button to add videos, images, or audio files
-2. **Drag and Drop** - Drag files directly into M³
-3. **Folder Monitoring** - Set up a watched folder for automatic imports
-4. **JWPUB Files and Playlists** - Import publications and playlists
+1. **Uvoz datotek** - uporabi gumb za uvoz videov, slik ali zvočnih datotek
+2. **Povleci in spusti** - datoteke preprosto povleci v M³
+3. **Nadzor map** - nastavi nadzorovano mapo za samodejni uvoz
+4. **Datoteke JWPUB in seznami predvajanja** - uvozi publikacije in sezname predvajanja
 5. **Seznam multimedijskih vsebin za javne govore (S-34 / S-34mp)** - Uvozi Seznam multimedijskih vsebin za javne govore z datotekami JWPUB S‑34 ali S‑34mp
 
-### Managing Imported Media {#managing-imported-media}
+### Upravljanje uvožene multimedijske vsebine {#managing-imported-media}
 
-- **Organize by Date** - Assign imported media to specific dates
-- **Custom Sections** - Create custom sections for organization
-- **Edit Properties** - Modify titles, descriptions, and timing
-- **Remove Media** - Delete unwanted media items
+- **Organizacija po datumu** - dodeli uvoženo multimedijsko vsebino posameznim datumom
+- **Razdelki po meri** - ustvari razdelke po meri za boljšo organizacijo
+- **Urejanje lastnosti** - spremeni naslove, opise in časovne nastavitve
+- **Odstranjevanje multimedijske vsebine** - izbriši neželene multimedijske datoteke
 
-### Audio Bible Import {#audio-bible-import}
+### Uvoz zvočnih posnetkov Svetega pisma {#audio-bible-import}
 
-Import audio recordings of Bible verses:
+Uvozi zvočne posnetke svetopisemskih vrstic:
 
-1. Click the "Audio Bible" button
-2. Select the Bible book and chapter
+1. Klikni gumb »Zvočni posnetek Svetega pisma«
+2. Izberi svetopisemsko knjigo in poglavje
 3. izbiro posameznih vrstic ali razpone vrstic,
-4. Download the audio files
-5. Use them
+4. Prenesi zvočne datoteke
+5. Uporabi jih
 
-## Folder Monitoring and Export {#user-guide-folder-monitoring}
+## Nadzor map in izvoz {#user-guide-folder-monitoring}
 
-### Setting Up Folder Monitoring {#folder-monitoring-setup}
+### Nastavitev nadzora map {#folder-monitoring-setup}
 
-Monitor a folder for new media files:
+Nadzoruj mapo za nove datoteke multimedijske vsebine:
 
-1. **Enable Folder Watcher** - Turn on folder monitoring in settings
-2. **Select Folder** - Choose the folder to monitor
-3. **Automatic Import** - New files are automatically added to M³
-4. **Organization** - Files are organized by date based on folder structure
+1. **Omogoči nadzor map** - v nastavitvah vklopi možnost nadzora map
+2. **Izberi mapo** - določi mapo, ki jo želiš nadzorovati
+3. **Samodejni uvoz** - nove datoteke se samodejno dodajo v M³
+4. **Organizacija** - datoteke se organizirajo po datumu glede na strukturo mape
 
 ### Izvoz multimedijske vsebine {#user-guide-media-export}
 
-Automatically export media to organized folders:
+Samodejno izvozi multimedijsko vsebino v organizirane mape:
 
-1. **Enable Auto-Export** - Turn on media export in settings
-2. **Select Export Folder** - Choose where to save exported files
-3. **Automatic Organization** - Files are organized by date and section
-4. **Format Options** - Convert files to MP4 for better compatibility
+1. **Omogoči samodejni izvoz** - v nastavitvah vklopi možnost samodejnega izvoza
+2. **Izberi mapo za izvoz** - določi mapo, kamor želiš shranjevati izvožene datoteke
+3. **Samodejna organizacija** - datoteke se organizirajo po datumu in razdelku
+4. **Možnosti formata** - datoteke lahko pretvoriš v MP4 za boljšo združljivost
 
-## Website Presentation {#website-presentation}
+## Predvajanje spletnega mesta {#website-presentation}
 
-### Presenting the Official Website {#presenting-the-website}
+### Predvajanje uradnega spletnega mesta {#presenting-the-website}
 
-Share the official website on external displays:
+Deli uradno spletno mesto na zunanjih zaslonih:
 
-1. **Open Website Mode** - Click the website presentation button
-2. **External Display** - The website opens in a new window
-3. **Navigation** - Use the browser controls to navigate
+1. **Odpri način spletnega mesta** - klikni gumb za predvajanje spletnega mesta
+2. **Zunanji zaslon** - spletno mesto se odpre v novem oknu
+3. **Navigacija** - za premikanje po spletnem mestu uporabi kontrolnike v brskalniku
 
-### Website Controls {#website-controls}
+### Kontrolniki spletnega mesta {#website-controls}
 
-- **Navigation** - Standard browser navigation controls
-- **Refresh** - Reload the current page
-- **Close** - Exit website presentation mode
+- **Navigacija** - standardni kontrolniki v brskalniku za premikanje naprej/nazaj
+- **Osveži** - ponovno naloži trenutno stran
+- **Zapri** - zapri način predvajanja spletnega mesta
 
 ## Napredne funkcije {#user-guide-advanced-features}
 
-### Multiple Congregations {#user-guide-multiple-congregations}
+### Več občin {#user-guide-multiple-congregations}
 
-Manage multiple congregations or groups:
+Upravljaj več občin ali skupin:
 
-1. **Create Profiles** - Set up separate profiles for different congregations
-2. **Switch Profiles** - Use the congregation selector to switch between profiles
-3. **Separate Settings** - Each profile has its own settings and media
-4. **Shared Resources** - Media files are shared between profiles whenever possible
+1. **Ustvari profile** - nastavi ločene profile za različne občine
+2. **Preklapljanje med profili** -  uporabi izbirnik občine za preklop med profili
+3. **Ločene nastavitve** - vsak profil ima svoje nastavitve in svojo multimedijsko vsebino
+4. **Skupni viri** - multimedijske datoteke se med profili delijo, kadar je to mogoče
 
-### Keyboard Shortcuts {#keyboard-shortcuts-guide}
+### Bližnjice na tipkovnici {#keyboard-shortcuts-guide}
 
-Configure custom keyboard shortcuts for efficient operation:
+Nastavi lastne bližnjice na tipkovnici za učinkovitejše upravljanje:
 
-1. **Enable Shortcuts** - Turn on keyboard shortcuts in settings
-2. **Configure Shortcuts** - Set up shortcuts for common actions
-3. **Practice** - Learn your shortcuts for faster operation
-4. **Customize** - Adjust shortcuts to match your preferences
+1. **Omogoči bližnjice** - v nastavitvah vklopi uporabo bližnjic na tipkovnici
+2. **Nastavi bližnjice** - določi bližnjice za najpogostejša dejanja
+3. **Vaja** - nauči se uporabljati svoje bližnjice za hitrejše upravljanje
+4. **Prilagajanje** - prilagodi bližnjice svojim potrebam in navadam
 
-## Troubleshooting {#troubleshooting-guide}
+## Odpravljanje težav {#troubleshooting-guide}
 
-### Common Issues {#common-issues}
+### Pogoste težave {#common-issues}
 
-#### Media Not Downloading {#user-guide-media-not-downloading}
+#### Multimedijska vsebina se ne prenaša {#user-guide-media-not-downloading}
 
-- Check your meeting schedule settings
-- Verify internet connection
-- Check if media is available in your selected language
+- Preveri nastavitve urnika shodov
+- Preveri internetno povezavo
+- Preveri, ali je multimedijska vsebina na voljo v izbranem jeziku
 
-#### OBS Integration Not Working {#user-guide-obs-not-working}
+#### OBS združevanje ne deluje {#user-guide-obs-not-working}
 
-- Verify OBS WebSocket plugin is installed
-- Check port and password settings
-- Ensure OBS is running
+- Preveri, ali je nameščen vtičnik OBS WebSocket
+- Preveri nastavitve vrat (port) in gesla
+- Prepričaj se, da je OBS zagnan
 
-#### Audio Issues in Zoom/OBS {#audio-issues}
+#### Težave z zvokom v Zoomu/OBSu
 
-- **No audio in Zoom**: Enable Original Audio in Zoom settings and before each meeting
-- **Poor audio quality**: Check the three Original Audio checkboxes (first two enabled, third disabled)
-- **Audio not working after restart**: Original Audio must be re-enabled for each new Zoom session
-- **Alternative solution**: Use "Share Computer Sound" option in Zoom screen sharing
+- **Ni zvoka v Zoomu** - omogoči Original Audio v Zoom nastavitvah in pred vsakim shodom
+- **Slaba kakovost zvoka** - preveri tri možnosti pri Original Audio (prvi dve omogočeni, tretja onemogočena)
+- **Zvok po ponovnem zagonu ne deluje** - Original Audio moraš ponovno omogočiti pri vsaki novi Zoom seji
+- **Alternativna rešitev** - uporabi možnost »Share Computer Sound« v Zoomovem deljenju zaslona
 
-#### Performance Issues {#user-guide-performance-issues}
+#### Težave z zmogljivostjo {#user-guide-performance-issues}
 
-- Enable extra cache
-- Reduce maximum resolution
-- Clear old cached files
-- Check available disk space
+- Omogoči dodatni predpomnilnik
+- Zmanjšaj največjo ločljivost
+- Počisti stare predpomnjene datoteke
+- Preveri razpoložljiv prostor na disku
 
-#### Language Issues {#user-guide-language-issues}
+#### Težave z jezikom {#user-guide-language-issues}
 
-- Check media language setting
-- Ensure language is available on JW.org
-- Try a fallback language
-- Verify interface language setting
+- Preveri nastavitev jezika za multimedijsko vsebino
+- Preveri, ali je jezik na voljo na jw.org
+- Poskusi z nadomestnim jezikom
+- Preveri nastavitev jezika vmesnika
 
-### Getting Help {#getting-help}
+### Pomoč {#getting-help}
 
-If you encounter issues:
+Če naletiš na težave:
 
-1. **Check Documentation** - Review this guide and other available documentation
-2. **Search Issues** - Look for similar issues on GitHub
-3. **Report Problems** - Create a new issue with detailed information
+1. **Preveri dokumentacijo** - preglej ta vodič in drugo razpoložljivo dokumentacijo
+2. **Poišči obstoječe težave** - na GitHubu preveri, ali je kdo že prijavil podobno težavo
+3. **Prijavi težavo** - ustvari novo prijavo z natančnimi informacijami
 
-## Best Practices {#best-practices}
+## Najboljše prakse {#best-practices}
 
-### Before Meetings {#before-meetings}
+### Pred shodi {#before-meetings}
 
-1. **Check Downloads** - Ensure all media is downloaded
-2. **Test Equipment** - Verify displays and audio work
-3. **Prepare Media** - Review and organize media for the meeting; make sure no media files are missing
-4. **Configure Audio** - For hybrid meetings, enable Original Audio in Zoom or set up "Share Computer Sound"
+1. **Preveri prenose** - preveri, ali je prenesena vsa multimedijska vsebina
+2. **Preizkusi opremo** - preveri, ali zasloni in zvok delujejo
+3. **Pripravi multimedijsko vsebino** - preglej in uredi multimedijsko vsebino za shod; preveri, da nič ne manjka
+4. **Nastavi zvok** - pri hibridnih shodih omogoči Original Audio v Zoomu ali uporabi možnost »Share Computer Sound«
 
-### During Meetings {#during-meetings}
+### Med shodi {#during-meetings}
 
-1. **Stay Focused** - Use the clean and distraction-free interface
-2. **Use Shortcuts** - Master keyboard shortcuts for smooth operation
-3. **Monitor Audio** - Keep an eye on volume levels, if that's part of your responsibilities
-4. **Be Prepared** - Have the next media item ready
-5. **Verify Audio** - For hybrid meetings, ensure Zoom participants can hear the media
+1. **Ostani osredotočen** - uporabljaj pregleden vmesnik brez motečih elementov
+2. **Uporabljaj bližnjice** - obvladaj bližnjice na tipkovnici za tekoče upravljanje
+3. **Spremljaj zvok** - spremljaj glasnost, če je to del tvojih nalog
+4. **Bodi pripravljen** - imej naslednjo multimedijsko datoteko že pripravljeno
+5. **Preveri zvok** - pri hibridnih shodih preveri, ali Zoom udeleženci slišijo multimedijsko vsebino
 
-### After Meetings {#after-meetings}
+### Po shodih {#after-meetings}
 
-1. **Start Background Music** - Start the playback of background music
-2. **Plan Ahead** - Prepare for the next meeting by making sure everything is in place
-3. **Clean Up** - Close media player when you're ready to leave
+1. **Začni predvajanje glasbe v ozadju** - zaženi predvajanje glasbe v ozadju
+2. **Načrtuj vnaprej** - pripravi vse potrebno za naslednji shod
+3. **Pospravi** - zapri predvajalnik multimedijske vsebine, ko končaš
 
-### Regular Maintenance {#regular-maintenance}
+### Redno vzdrževanje {#regular-maintenance}
 
-1. **Update M³** - Keep the application updated
-2. **Clear Cache** - Periodically clear old cached files
-3. **Check Settings** - Review and update settings as needed
+1. **Posodabljaj M³** - redno posodabljaj aplikacijo
+2. **Čisti predpomnilnik** - občasno izbriši stare predpomnjene datoteke
+3. **Preverjaj nastavitve** - po potrebi posodobi nastavitve

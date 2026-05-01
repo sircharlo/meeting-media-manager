@@ -8,7 +8,7 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 
 ### ✨ Nya funktioner
 
-- ✨ **JW Stream**: Lade till JW Stream till listan över webbplatser som kan speglas.
+- ✨ JW Stream: Lades till i listan över webbplatser som kan speglas.
 
 ## v26.4.0
 
