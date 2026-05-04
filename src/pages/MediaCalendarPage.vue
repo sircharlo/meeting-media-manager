@@ -314,6 +314,7 @@ watch(
     if (newAction !== oldAction) postMediaAction(newAction);
 
     const isPlay = newAction === 'play';
+    const isPause = newAction === 'pause';
     const isSignLang = currentLangObject.value?.isSignLanguage;
 
     // Always show media window when playing
@@ -321,7 +322,7 @@ watch(
 
     // Handle sign language special cases
     if (isSignLang) {
-      if (isPlay) return toggleMediaWindowVisibility(true);
+      if (isPlay || isPause) return toggleMediaWindowVisibility(true);
 
       const cameraId = appSettingsStore.displayCameraId;
       return cameraId
