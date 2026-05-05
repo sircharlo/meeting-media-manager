@@ -751,11 +751,13 @@ watchImmediate(
 
 watchImmediate(
   () => [
+    currentCongregation.value,
     currentSettings.value?.folderToWatch,
     currentSettings.value?.enableFolderWatcher,
   ],
-  ([newFolderToWatch, newEnableFolderWatcher]) => {
-    watchExternalFolder(
+  async ([, newFolderToWatch, newEnableFolderWatcher]) => {
+    pendingEvents.length = 0;
+    await watchExternalFolder(
       newEnableFolderWatcher ? (newFolderToWatch as string) : undefined,
     );
   },
@@ -876,6 +878,17 @@ const updateWatchFolderRef = async ({
   event,
 }: Record<string, string>) => {
   try {
+    // Prevent self-feedback loops when auto-export writes into (or under)
+    // the watched folder. Those events could trigger expensive watched-item
+    // remapping on startup/playback and cause a temporary UI freeze.
+    if (changedPath && currentSettings.value?.mediaAutoExportFolder) {
+      const normalizedChangedPath = resolve(changedPath);
+      const normalizedExportFolder = resolve(
+        currentSettings.value.mediaAutoExportFolder,
+      );
+      if (normalizedChangedPath.startsWith(normalizedExportFolder)) return;
+    }
+
     day = day?.replaceAll('-', '/');
     if (!day) return;
 
@@ -912,12 +925,17 @@ const processWatchFolderEvents = debounce(async (pendingEvents) => {
   for (const evt of pendingEvents) {
     await updateWatchFolderRef(evt);
   }
+  pendingEventKeys.clear();
   pendingEvents.length = 0;
 }, 100);
 
 const pendingEvents: Record<string, string>[] = [];
+const pendingEventKeys = new Set<string>();
 
 const queueWatchFolderEvent = (event: Record<string, string>) => {
+  const eventKey = `${event.event}:${event.changedPath || ''}:${event.day || ''}`;
+  if (pendingEventKeys.has(eventKey)) return;
+  pendingEventKeys.add(eventKey);
   pendingEvents.push(event);
   processWatchFolderEvents(pendingEvents);
 };

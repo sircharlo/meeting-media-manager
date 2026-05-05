@@ -47,7 +47,7 @@ import {
   unzipJwpub,
 } from 'src/helpers/mediaPlayback';
 import { updateLastUsedDate } from 'src/helpers/usage';
-import { log } from 'src/shared/vanilla';
+import { log, sanitizeFilename } from 'src/shared/vanilla';
 import {
   clearFetchCache,
   fetchMediaItems,
@@ -429,8 +429,7 @@ export const downloadFileIfNeeded = async ({
     const dirIsUsable = await isUsablePath(dir);
     if (!dirIsUsable) throw new Error('Unusable path');
     if (!filename) filename = basename(url);
-    const { default: sanitize } = await import('sanitize-filename');
-    filename = sanitize(filename);
+    filename = sanitizeFilename(filename);
     destinationPath = join(dir, filename);
     const remoteSize: number =
       size ||

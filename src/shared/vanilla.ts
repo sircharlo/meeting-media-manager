@@ -173,3 +173,53 @@ export const log = (
     fallbackLogger(error, { details, message, prefix, type });
   }
 };
+
+const ILLEGAL_FILENAME_CHARS = /[/?<>\\:*|"]/g;
+const RESERVED_DOTS = /^\.+$/;
+const WINDOWS_RESERVED_FILENAME =
+  /^(con|prn|aux|nul|com[0-9]|lpt[0-9])(\..*)?$/i;
+const MAX_FILENAME_BYTES = 255;
+
+const replaceTrailingDotsAndSpaces = (value: string, replacement: string) => {
+  let end = value.length;
+  while (end > 0 && (value[end - 1] === '.' || value[end - 1] === ' ')) end--;
+  return end < value.length ? value.slice(0, end) + replacement : value;
+};
+
+const truncateUtf8Bytes = (value: string, maxBytes: number) => {
+  const encoder = new TextEncoder();
+  if (encoder.encode(value).length <= maxBytes) return value;
+
+  let result = '';
+  for (const char of value) {
+    const next = result + char;
+    if (encoder.encode(next).length > maxBytes) break;
+    result = next;
+  }
+  return result;
+};
+
+const sanitizeFilenameInternal = (input: string, replacement: string) => {
+  const withoutControlChars = Array.from(input, (char) => {
+    const code = char.charCodeAt(0);
+    return code <= 31 || (code >= 128 && code <= 159) ? replacement : char;
+  }).join('');
+
+  const sanitized = replaceTrailingDotsAndSpaces(
+    withoutControlChars
+      .replace(ILLEGAL_FILENAME_CHARS, replacement)
+      .replace(RESERVED_DOTS, replacement)
+      .replace(WINDOWS_RESERVED_FILENAME, replacement),
+    replacement,
+  );
+  return truncateUtf8Bytes(sanitized, MAX_FILENAME_BYTES);
+};
+
+export const sanitizeFilename = (input: string, replacement = ''): string => {
+  if (typeof input !== 'string') throw new Error('Input must be string');
+
+  const output = sanitizeFilenameInternal(input, replacement);
+  if (!replacement) return output;
+
+  return sanitizeFilenameInternal(output, '');
+};

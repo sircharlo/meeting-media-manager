@@ -330,8 +330,8 @@ export const watchExternalFolder = async (folder?: string) => {
         });
       }
     });
-    unwatchFolders();
-    if (folder) watchFolder(folder);
+    await unwatchFolders();
+    if (folder) await watchFolder(folder);
   } catch (error) {
     errorCatcher(error);
   }

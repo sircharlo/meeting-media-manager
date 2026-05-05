@@ -11,6 +11,7 @@ import { getMeetingSections } from 'src/constants/media';
 import { isCoWeek, isMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { setupFFmpeg } from 'src/helpers/fs';
+import { sanitizeFilename } from 'src/shared/vanilla';
 import { datesAreSame, formatDate, getSpecificWeekday } from 'src/utils/date';
 import { getTempPath, trimFilepathAsNeeded } from 'src/utils/fs';
 import { pad } from 'src/utils/general';
@@ -170,7 +171,6 @@ const processAllSections = async (
   destFolder: string,
 ): Promise<Set<string>> => {
   const expectedFiles = new Set<string>();
-  const { default: sanitize } = await import('sanitize-filename');
 
   const sortedSections = getSortedSections(day);
   let sectionIndex = 1;
@@ -184,7 +184,7 @@ const processAllSections = async (
     const sectionName = (i18n.global.t as (key: string) => string)(
       section.config.uniqueId,
     );
-    const sanitizedSectionName = sanitize(sectionName);
+    const sanitizedSectionName = sanitizeFilename(sectionName);
     const sectionPrefix = pad(sectionIndex++);
 
     await processSectionItems(
@@ -352,7 +352,6 @@ const buildDestinationPath = async ({
   sourceFilePath: string;
   totalItems: number;
 }): Promise<string> => {
-  const { default: sanitize } = await import('sanitize-filename');
   const currentStateStore = useCurrentStateStore();
 
   const shouldConvert =
@@ -364,7 +363,7 @@ const buildDestinationPath = async ({
   const mediaPrefix = pad(index + 1, totalItems > 99 ? 3 : 2);
 
   const mediaTitle = mediaItem.title
-    ? sanitize(mediaItem.title.replace(extname(sourceFilePath), ''))
+    ? sanitizeFilename(mediaItem.title.replace(extname(sourceFilePath), ''))
     : basename(sourceFilePath, extname(sourceFilePath));
 
   const songPrefix =
