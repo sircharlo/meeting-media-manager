@@ -534,7 +534,7 @@ const { post: postCameraStream } = useBroadcastChannel<
   name: 'camera-stream',
 });
 
-watch(displayCameraId, (newCameraId) => {
+watchImmediate(displayCameraId, (newCameraId) => {
   if (mediaIsPlaying.value) return;
   postCameraStream(newCameraId);
   if (!newCameraId) {

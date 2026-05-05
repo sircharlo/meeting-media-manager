@@ -11,7 +11,7 @@
   >
     <!-- Base yeartext layer - always visible with black background -->
     <div
-      v-if="fontsSet && !mediaPlayerCustomBackground"
+      v-if="fontsSet && !mediaPlayerCustomBackground && !cameraStreamId"
       class="base-layer"
       :class="{ 'blank-screen': isTransitioning }"
     >
@@ -35,7 +35,7 @@
 
     <!-- Custom background layer - always visible when set -->
     <div
-      v-if="mediaPlayerCustomBackground"
+      v-if="mediaPlayerCustomBackground && !cameraStreamId"
       class="base-layer"
       :class="{ 'blank-screen': isTransitioning }"
     >
@@ -44,6 +44,17 @@
         fit="contain"
         no-spinner
         :src="mediaPlayerCustomBackground"
+      />
+    </div>
+
+    <!-- Camera background layer -->
+    <div v-if="cameraStreamId" class="camera-layer">
+      <video
+        ref="cameraElement"
+        autoplay
+        class="fit-snugly"
+        muted
+        playsinline
       />
     </div>
 
@@ -266,6 +277,7 @@ const mediaElement1 = useTemplateRef<HTMLAudioElement | HTMLVideoElement>(
 const mediaElement2 = useTemplateRef<HTMLAudioElement | HTMLVideoElement>(
   'mediaElement2',
 );
+const cameraElement = useTemplateRef<HTMLVideoElement>('cameraElement');
 
 const videoStreaming = ref(false);
 
@@ -368,7 +380,6 @@ whenever(
       currentMediaElement.value?.pause();
     } else if (newMediaAction === 'play') {
       playMediaElement(oldMediaAction === 'pause');
-      if (cameraStreamId.value) cameraStreamId.value = '';
     }
   },
 );
@@ -954,9 +965,12 @@ watchDeep(
   },
 );
 
-const ensureMediaElementReady = async (maxRetries = 50): Promise<boolean> => {
+const ensureElementReady = async (
+  getter: () => HTMLMediaElement | null | undefined,
+  maxRetries = 50,
+): Promise<boolean> => {
   let timeouts = 0;
-  while (!currentMediaElement.value) {
+  while (!getter()) {
     await new Promise((resolve) => {
       setTimeout(resolve, 100);
     });
@@ -965,6 +979,10 @@ const ensureMediaElementReady = async (maxRetries = 50): Promise<boolean> => {
     }
   }
   return true;
+};
+
+const ensureMediaElementReady = async (maxRetries = 50): Promise<boolean> => {
+  return await ensureElementReady(() => currentMediaElement.value, maxRetries);
 };
 
 const notifyAccessDenied = (isCamera: boolean) => {
@@ -1077,35 +1095,78 @@ watch(
   },
 );
 
-watch(
+watchImmediate(
   () => cameraStreamId.value,
   async (deviceId) => {
-    videoStreaming.value = !!deviceId;
+    log(
+      `🎬 [cameraStreamId] Watcher triggered. DeviceId: ${deviceId}`,
+      'mediaPlayer',
+      'log',
+    );
     if (!deviceId) {
-      if (currentMediaElement.value) {
-        currentMediaElement.value.pause();
-        currentMediaElement.value.srcObject = null;
+      if (cameraElement.value) {
+        cameraElement.value.pause();
+        cameraElement.value.srcObject = null;
       }
-      postMediaPlayingAction('');
       return;
     }
+
+    // Wait for the camera element to be available in the DOM (v-if)
+    let retries = 0;
+    while (!cameraElement.value && retries < 60) {
+      await new Promise((resolve) => {
+        setTimeout(resolve, 50);
+      });
+      retries++;
+    }
+
+    log(
+      `🎬 [cameraStreamId] Element ready check. Element: ${!!cameraElement.value}, Retries: ${retries}`,
+      'mediaPlayer',
+      'log',
+    );
 
     const stream = await requestStream(true, deviceId);
-    const ready = stream && (await ensureMediaElementReady(10));
+    const ready =
+      !!stream && (await ensureElementReady(() => cameraElement.value, 40));
 
-    if (!stream || !ready || !currentMediaElement.value) {
-      videoStreaming.value = false;
-      if (cameraStreamId.value) cameraStreamId.value = '';
-      postMediaPlayingAction('');
-      currentMediaElement.value?.pause();
-      if (currentMediaElement.value?.srcObject) {
-        currentMediaElement.value.srcObject = null;
+    if (!stream || !ready || !cameraElement.value) {
+      log(
+        `🎬 [cameraStreamId] Failed to initialize. Stream: ${!!stream}, Ready: ${ready}, Element: ${!!cameraElement.value}`,
+        'mediaPlayer',
+        'warn',
+      );
+      cameraElement.value?.pause();
+      if (cameraElement.value?.srcObject) {
+        cameraElement.value.srcObject = null;
       }
       return;
     }
 
-    currentMediaElement.value.srcObject = stream;
-    playMediaElement(false, true);
+    log('🎬 [cameraStreamId] Setting stream to element', 'mediaPlayer', 'log');
+    cameraElement.value.srcObject = stream;
+    try {
+      await cameraElement.value.play();
+      log('🎬 [cameraStreamId] Camera stream started', 'mediaPlayer', 'log');
+    } catch (e) {
+      errorCatcher(e);
+    }
+  },
+);
+
+// Ensure display layers are not live if no media is playing on startup
+watchImmediate(
+  () => mediaPlayingUrl.value,
+  (url) => {
+    if (!url && !videoStreaming.value) {
+      log(
+        '🎬 [mediaPlayingUrl] No media playing, ensuring layers are not live',
+        'mediaPlayer',
+        'log',
+      );
+      displayLayer1.value.isLive = false;
+      displayLayer2.value.isLive = false;
+    }
   },
 );
 
@@ -1186,6 +1247,7 @@ onBeforeUnmount(() => {
   );
   cleanupMediaElement(mediaElement1.value);
   cleanupMediaElement(mediaElement2.value);
+  cleanupMediaElement(cameraElement.value);
 });
 </script>
 
@@ -1208,6 +1270,16 @@ onBeforeUnmount(() => {
   display: none;
 }
 
+.camera-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  z-index: 1.5;
+}
+
 .display-layer.is-audio {
   background-color: green;
   opacity: 0 !important;
@@ -1219,13 +1291,13 @@ onBeforeUnmount(() => {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: black;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
   z-index: 2;
 }
 
 .display-layer.is-live {
+  background-color: black;
   opacity: 1;
   z-index: 3;
 }
