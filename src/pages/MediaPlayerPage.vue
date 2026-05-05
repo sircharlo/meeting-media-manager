@@ -1086,9 +1086,15 @@ watch(
         currentMediaElement.value.pause();
         currentMediaElement.value.srcObject = null;
       }
+      displayLayer1.value.isLive = false;
+      displayLayer1.value.url = '';
       postMediaPlayingAction('');
       return;
     }
+
+    // Activate a display layer for camera streaming
+    displayLayer1.value.isLive = true;
+    displayLayer1.value.url = ''; // No URL for streaming, just activate the layer
 
     const stream = await requestStream(true, deviceId);
     const ready = stream && (await ensureMediaElementReady(10));
@@ -1096,6 +1102,8 @@ watch(
     if (!stream || !ready || !currentMediaElement.value) {
       videoStreaming.value = false;
       if (cameraStreamId.value) cameraStreamId.value = '';
+      displayLayer1.value.isLive = false;
+      displayLayer1.value.url = '';
       postMediaPlayingAction('');
       currentMediaElement.value?.pause();
       if (currentMediaElement.value?.srcObject) {
