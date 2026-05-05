@@ -187,6 +187,7 @@ const {
   onWatchFolderUpdate,
   pathToFileURL,
   removeListeners,
+  resolve,
   setAutoStartAtLogin,
   setElectronUrlVariables,
   setHardwareAcceleration,
