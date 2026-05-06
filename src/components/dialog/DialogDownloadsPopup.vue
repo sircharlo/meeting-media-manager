@@ -248,31 +248,6 @@ const initializeExpansionState = () => {
   expandedDates.value = newExpandedDates;
 };
 
-// Watch for changes in download progress and update expansion states
-watch(
-  () => Object.keys(downloadProgress.value || {}).length,
-  () => {
-    const newExpandedDates = new Set<string>();
-    Object.keys(groupedByDate.value).forEach((dateKey) => {
-      const status = getDateStatus(dateKey);
-      const wasExpanded = expandedDates.value.has(dateKey);
-
-      // Auto-open if loading or error, auto-close if all complete
-      const shouldExpand =
-        status === 'loading' ||
-        (status === 'error' &&
-          getDateDiff(dateFromString(dateKey), new Date(), 'days') <= 7) ||
-        (status === 'complete' && wasExpanded);
-
-      if (shouldExpand) {
-        newExpandedDates.add(dateKey);
-      }
-    });
-    expandedDates.value = newExpandedDates;
-  },
-  { deep: true },
-);
-
 // Handle expansion toggle with position update
 const handleExpansionToggle = (dateKey: string, expanded: boolean) => {
   if (expanded) {
@@ -288,25 +263,6 @@ const handleExpansionToggle = (dateKey: string, expanded: boolean) => {
     }
   }, 300); // Allow time for expansion animation
 };
-
-// Initialize expansion state on component mount
-watchImmediate(
-  () => groupedByDate.value,
-  () => {
-    initializeExpansionState();
-  },
-);
-
-watchImmediate(
-  () => filteredDownloads().length,
-  () => {
-    if (downloadPopup.value) {
-      setTimeout(() => {
-        if (downloadPopup.value) downloadPopup.value.updatePosition();
-      }, 10);
-    }
-  },
-);
 
 const hasStatus = (
   obj: DownloadProgressItems,
@@ -393,4 +349,48 @@ const onRefreshMeetingMedia = () => {
     await fetchMedia();
   });
 };
+
+// Watch for changes in download progress and update expansion states
+watch(
+  () => Object.keys(downloadProgress.value || {}).length,
+  () => {
+    const newExpandedDates = new Set<string>();
+    Object.keys(groupedByDate.value).forEach((dateKey) => {
+      const status = getDateStatus(dateKey);
+      const wasExpanded = expandedDates.value.has(dateKey);
+
+      // Auto-open if loading or error, auto-close if all complete
+      const shouldExpand =
+        status === 'loading' ||
+        (status === 'error' &&
+          getDateDiff(dateFromString(dateKey), new Date(), 'days') <= 7) ||
+        (status === 'complete' && wasExpanded);
+
+      if (shouldExpand) {
+        newExpandedDates.add(dateKey);
+      }
+    });
+    expandedDates.value = newExpandedDates;
+  },
+  { deep: true },
+);
+
+// Initialize expansion state on component mount
+watchImmediate(
+  () => groupedByDate.value,
+  () => {
+    initializeExpansionState();
+  },
+);
+
+watchImmediate(
+  () => filteredDownloads().length,
+  () => {
+    if (downloadPopup.value) {
+      setTimeout(() => {
+        if (downloadPopup.value) downloadPopup.value.updatePosition();
+      }, 10);
+    }
+  },
+);
 </script>

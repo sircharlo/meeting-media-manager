@@ -338,20 +338,6 @@ const selectedChapterVerses = computed(() => {
   return [...new Set(allVerses)];
 });
 
-watch(
-  () => selectedBibleBook.value,
-  () => {
-    resetBibleBook();
-  },
-);
-
-watch(
-  () => selectedChapter.value,
-  () => {
-    chosenVerses.value = [];
-  },
-);
-
 const loading = ref<boolean>(false);
 const isProcessing = ref<boolean>(false);
 
@@ -471,4 +457,18 @@ whenever(dialogValue, () => {
   resetBibleBook(true);
   fetchBibleMedia();
 });
+
+watch(
+  () => selectedBibleBook.value,
+  () => {
+    resetBibleBook();
+  },
+);
+
+watch(
+  () => selectedChapter.value,
+  () => {
+    chosenVerses.value = [];
+  },
+);
 </script>

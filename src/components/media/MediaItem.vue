@@ -1247,10 +1247,6 @@ const moreButton = useTemplateRef<QBtn>('moreButton');
 const contextMenu = ref(false);
 const menuTarget = ref<boolean | string | undefined>(true);
 
-watch(contextMenu, (val) => {
-  if (!val) menuTarget.value = true;
-});
-
 const isEditingTitle = ref(false);
 const titleInput = ref<HTMLInputElement>();
 const mediaTitle = ref(props.media.title);
@@ -1387,14 +1383,6 @@ const { pause } = useTimeoutPoll(() => {
   localFile.value = fileIsLocal();
 }, 1000);
 
-whenever(
-  () => localFile.value,
-  () => {
-    pause();
-  },
-  { immediate: true },
-);
-
 const markersPanelOpen = ref(false);
 const startSelectedMarker = ref<null | VideoMarker>(null);
 const endSelectedMarker = ref<null | VideoMarker>(null);
@@ -1525,6 +1513,24 @@ const getMarkerDuration = (marker: VideoMarker) => {
   }
 };
 
+const { post: postRepeat } = useBroadcastChannel<string, boolean>({
+  name: 'repeat',
+});
+
+// Listen for requests to get current media window variables
+const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
+  string,
+  string
+>({
+  name: 'get-current-media-window-variables',
+});
+
+const thumbnailFromMetadata = ref('');
+
+const imageLoadingError = () => {
+  findThumbnailUrl();
+};
+
 const onMarkerClick = (marker: VideoMarker) => {
   if (!startSelectedMarker.value) {
     startSelectedMarker.value = marker;
@@ -1586,42 +1592,6 @@ useEventListener(
   },
   { passive: true },
 );
-
-const { post: postRepeat } = useBroadcastChannel<string, boolean>({
-  name: 'repeat',
-});
-
-watchImmediate(
-  () => [repeat.value, mediaPlaying.value.uniqueId],
-  ([newMediaRepeat, newMediaPlayingUniqueId]) => {
-    if (newMediaPlayingUniqueId !== props.media.uniqueId) return;
-    postRepeat(!!newMediaRepeat);
-  },
-);
-
-// Listen for requests to get current media window variables
-const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
-  string,
-  string
->({
-  name: 'get-current-media-window-variables',
-});
-
-watchImmediate(
-  () => getCurrentMediaWindowVariables.value,
-  () => {
-    // Push current repeat state when requested (only if this media is currently playing)
-    if (mediaPlaying.value.uniqueId === props.media.uniqueId) {
-      postRepeat(!!repeat.value);
-    }
-  },
-);
-
-const thumbnailFromMetadata = ref('');
-
-const imageLoadingError = () => {
-  findThumbnailUrl();
-};
 
 async function findThumbnailUrl() {
   let fileRetryCount = 0;
@@ -1757,13 +1727,6 @@ const isCurrentlyPlaying = computed(() => {
       mediaPlaying.value.url === props.media.streamUrl) &&
     mediaPlaying.value.uniqueId === props.media.uniqueId
   );
-});
-
-watch(isCurrentlyPlaying, (playing) => {
-  if (!playing && playbackRate.value !== 1) {
-    playbackRate.value = 1;
-    postPlaybackRate(1);
-  }
 });
 
 const mediaPan = ref<{ x: number; y: number }>({
@@ -1902,14 +1865,6 @@ const updateZoomPan = throttleWithTrailing(
     mediaPlaying.value.pan = calculatedPan.value;
   },
   300,
-);
-
-watch(
-  () => [mediaZoom.value, mediaPan.value.x, mediaPan.value.y],
-  (newValues) => {
-    if (!isCurrentlyPlaying.value) return;
-    updateZoomPan(newValues as [number, number, number]);
-  },
 );
 
 const mediaImage = useTemplateRef<QImg>('mediaImage');
@@ -2072,6 +2027,25 @@ const { post: postLastEndTimestamp } = useBroadcastChannel<number, number>({
   name: 'last-end-timestamp',
 });
 
+const imageElapsed = ref(0);
+
+const mediaElapsed = computed({
+  get: () => mediaPlaying.value.currentPosition || imageElapsed.value || 0,
+  set: (val) => seekTo(val),
+});
+
+watch(
+  () => [mediaZoom.value, mediaPan.value.x, mediaPan.value.y],
+  (newValues) => {
+    if (!isCurrentlyPlaying.value) return;
+    updateZoomPan(newValues as [number, number, number]);
+  },
+);
+
+watch(contextMenu, (val) => {
+  if (!val) menuTarget.value = true;
+});
+
 // Watch for image playing in repeated sections to update progress
 watch(
   () => [isCurrentlyPlaying.value, isInRepeatedSection.value],
@@ -2113,8 +2087,6 @@ watch(
   { immediate: true },
 );
 
-const imageElapsed = ref(0);
-
 // Update elapsed time for images
 watch(
   () => [isCurrentlyPlaying.value, imageStartTime.value],
@@ -2132,8 +2104,36 @@ watch(
   { immediate: true },
 );
 
-const mediaElapsed = computed({
-  get: () => mediaPlaying.value.currentPosition || imageElapsed.value || 0,
-  set: (val) => seekTo(val),
+watchImmediate(
+  () => [repeat.value, mediaPlaying.value.uniqueId],
+  ([newMediaRepeat, newMediaPlayingUniqueId]) => {
+    if (newMediaPlayingUniqueId !== props.media.uniqueId) return;
+    postRepeat(!!newMediaRepeat);
+  },
+);
+
+watchImmediate(
+  () => getCurrentMediaWindowVariables.value,
+  () => {
+    // Push current repeat state when requested (only if this media is currently playing)
+    if (mediaPlaying.value.uniqueId === props.media.uniqueId) {
+      postRepeat(!!repeat.value);
+    }
+  },
+);
+
+watch(isCurrentlyPlaying, (playing) => {
+  if (!playing && playbackRate.value !== 1) {
+    playbackRate.value = 1;
+    postPlaybackRate(1);
+  }
 });
+
+whenever(
+  () => localFile.value,
+  () => {
+    pause();
+  },
+  { immediate: true },
+);
 </script>

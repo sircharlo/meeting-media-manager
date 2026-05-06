@@ -776,13 +776,6 @@ const fetchScreens = async () => {
   }
 };
 
-whenever(
-  () => open.value,
-  async () => {
-    fetchScreens();
-  },
-);
-
 useEventListener(globalThis, 'screen-trigger-update', fetchScreens, {
   passive: true,
 });
@@ -875,32 +868,6 @@ const isTimerScreenSelected = (index: number, screen: Display) => {
   );
 };
 
-// UI update handler
-watch(
-  () => [
-    timerRunning.value,
-    timerMode.value,
-    timerPreferences.value?.preferWindowed,
-  ],
-  () => {
-    setTimeout(() => {
-      if (timerPopup.value) {
-        timerPopup.value.updatePosition();
-      }
-    }, 10);
-  },
-);
-
-watch(
-  screenList,
-  (screens) => {
-    if ((screens?.length ?? 0) <= 2 && !timerPreferences.value.preferWindowed) {
-      setTimerWindowedMode();
-    }
-  },
-  { immediate: true },
-);
-
 const selectPart = (value: MeetingPart) => {
   selectingPart.value = true;
   currentPart.value = value;
@@ -928,6 +895,39 @@ const getPartStatusText = (part: MeetingPart) => {
 
   return `${t('duration-minutes')}: ${duration || 0}`;
 };
+
+whenever(
+  () => open.value,
+  async () => {
+    fetchScreens();
+  },
+);
+
+// UI update handler
+watch(
+  () => [
+    timerRunning.value,
+    timerMode.value,
+    timerPreferences.value?.preferWindowed,
+  ],
+  () => {
+    setTimeout(() => {
+      if (timerPopup.value) {
+        timerPopup.value.updatePosition();
+      }
+    }, 10);
+  },
+);
+
+watch(
+  screenList,
+  (screens) => {
+    if ((screens?.length ?? 0) <= 2 && !timerPreferences.value.preferWindowed) {
+      setTimerWindowedMode();
+    }
+  },
+  { immediate: true },
+);
 
 // Watch for timer mode changes
 watch(

@@ -165,23 +165,6 @@ const musicPlayingTitle = ref('');
 const songList = ref<SongItem[]>([]);
 const initialStartOffset = ref(0); // Stores the calculated start offset for first song
 
-// Watch for time changes
-watch(
-  () => [currentTime.value, selectedDateObject.value?.date],
-  (values, oldValues) => {
-    const [newTime, newSelectedDate] = values;
-    const [, oldSelectedDate] = oldValues || [];
-
-    if (newTime || newSelectedDate) {
-      timeUntilMeeting.value = remainingTimeBeforeMeetingStart();
-    }
-    if (oldSelectedDate !== newSelectedDate) {
-      musicAlreadyStoppedManually.value = false;
-    }
-  },
-  { immediate: true },
-);
-
 // Meeting day checks
 const isMeetingToday = computed(() => {
   return isSelectedDayToday.value && !!selectedDayMeetingType.value;
@@ -277,55 +260,6 @@ defineExpose({
   musicPlaying,
   musicState,
 });
-
-// Update music state when playing changes
-whenever(
-  () => musicPlaying.value,
-  () => {
-    musicState.value = 'music.playing';
-  },
-);
-
-// Main auto-start logic
-watchImmediate(
-  () => [shouldAutoStart.value, musicState.value],
-  ([shouldStart, state]) => {
-    if (
-      shouldStart &&
-      state !== 'music.starting' &&
-      state !== 'music.stopping' &&
-      state !== 'music.playing'
-    ) {
-      log('🎵 Auto-starting background music', 'backgroundMusic', 'info');
-      playMusic();
-    }
-  },
-);
-
-// Main auto-stop logic
-watch(shouldAutoStop, (shouldStop) => {
-  if (shouldStop && musicState.value !== 'music.stopping') {
-    log(
-      '⏹️ Auto-stopping background music before meeting',
-      'backgroundMusic',
-      'info',
-    );
-    stopMusic();
-  }
-});
-
-// Settings change handling
-watch(
-  () => [currentSettings.value?.enableMusicButton, currentCongregation.value],
-  ([musicEnabled, newCongregation], [, oldCongregation]) => {
-    if (
-      !musicEnabled ||
-      (newCongregation && oldCongregation !== newCongregation)
-    ) {
-      stopMusic();
-    }
-  },
-);
 
 const musicPopup = useTemplateRef<QMenu>('musicPopup');
 
@@ -561,29 +495,6 @@ musicPlayer.value?.addEventListener('error', (event) => {
   }
 });
 
-// Watch for source changes
-watch(
-  () => musicPlayerSource.value?.src,
-  (newSrc) => {
-    if (newSrc) {
-      musicPlayer.value?.load();
-      log(`🎵 Music player source set to ${newSrc}`, 'backgroundMusic', 'info');
-    }
-  },
-);
-
-// UI update handler
-watch(
-  () => [musicState.value, musicPlaying.value, songList.value.length],
-  () => {
-    setTimeout(() => {
-      if (musicPopup.value) {
-        musicPopup.value.updatePosition();
-      }
-    }, 10);
-  },
-);
-
 // Event listeners
 const toggleMusicListener = () => {
   try {
@@ -607,6 +518,95 @@ useEventListener(globalThis, 'toggleMusic', toggleMusicListener, {
 const { data: volumeData } = useBroadcastChannel<number, number>({
   name: 'volume-setter',
 });
+
+// Update music state when playing changes
+whenever(
+  () => musicPlaying.value,
+  () => {
+    musicState.value = 'music.playing';
+  },
+);
+
+// Watch for time changes
+watch(
+  () => [currentTime.value, selectedDateObject.value?.date],
+  (values, oldValues) => {
+    const [newTime, newSelectedDate] = values;
+    const [, oldSelectedDate] = oldValues || [];
+
+    if (newTime || newSelectedDate) {
+      timeUntilMeeting.value = remainingTimeBeforeMeetingStart();
+    }
+    if (oldSelectedDate !== newSelectedDate) {
+      musicAlreadyStoppedManually.value = false;
+    }
+  },
+  { immediate: true },
+);
+
+// Main auto-start logic
+watchImmediate(
+  () => [shouldAutoStart.value, musicState.value],
+  ([shouldStart, state]) => {
+    if (
+      shouldStart &&
+      state !== 'music.starting' &&
+      state !== 'music.stopping' &&
+      state !== 'music.playing'
+    ) {
+      log('🎵 Auto-starting background music', 'backgroundMusic', 'info');
+      playMusic();
+    }
+  },
+);
+
+// Main auto-stop logic
+watch(shouldAutoStop, (shouldStop) => {
+  if (shouldStop && musicState.value !== 'music.stopping') {
+    log(
+      '⏹️ Auto-stopping background music before meeting',
+      'backgroundMusic',
+      'info',
+    );
+    stopMusic();
+  }
+});
+
+// Settings change handling
+watch(
+  () => [currentSettings.value?.enableMusicButton, currentCongregation.value],
+  ([musicEnabled, newCongregation], [, oldCongregation]) => {
+    if (
+      !musicEnabled ||
+      (newCongregation && oldCongregation !== newCongregation)
+    ) {
+      stopMusic();
+    }
+  },
+);
+
+// Watch for source changes
+watch(
+  () => musicPlayerSource.value?.src,
+  (newSrc) => {
+    if (newSrc) {
+      musicPlayer.value?.load();
+      log(`🎵 Music player source set to ${newSrc}`, 'backgroundMusic', 'info');
+    }
+  },
+);
+
+// UI update handler
+watch(
+  () => [musicState.value, musicPlaying.value, songList.value.length],
+  () => {
+    setTimeout(() => {
+      if (musicPopup.value) {
+        musicPopup.value.updatePosition();
+      }
+    }, 10);
+  },
+);
 
 whenever(
   () => volumeData.value,

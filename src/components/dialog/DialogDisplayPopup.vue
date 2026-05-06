@@ -586,14 +586,6 @@ const fetchScreens = async () => {
   }
 };
 
-whenever(
-  () => open.value,
-  async () => {
-    fetchScreens();
-    getCameras();
-  },
-);
-
 const cameras = ref<{ label: string; value: string }[]>([]);
 
 const getCameras = async () => {
@@ -632,16 +624,6 @@ const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
 >({
   name: 'get-current-media-window-variables',
 });
-
-watchImmediate(
-  () => getCurrentMediaWindowVariables.value,
-  () => {
-    // Push current camera stream when requested
-    if (displayCameraId.value) {
-      postCameraStream(displayCameraId.value);
-    }
-  },
-);
 
 const notifyInvalidBackgroundFile = () => {
   createTemporaryNotification({
@@ -687,16 +669,6 @@ const setMediaBackground = (filepath: string) => {
   }
 };
 
-watchImmediate(
-  () => [
-    currentSettings.value?.enableMediaDisplayButton,
-    currentCongregation.value,
-  ],
-  ([newMediaDisplayEnabled, newCongregation]) => {
-    toggleMediaWindowVisibility(!!newCongregation && !!newMediaDisplayEnabled);
-  },
-);
-
 const { post: postCustomBackground } = useBroadcastChannel<string, string>({
   name: 'custom-background',
 });
@@ -727,14 +699,14 @@ const loadMemorialBackground = async (newMediaBackground?: string) => {
   postCustomBackground(bg ?? '');
 };
 
+const stopListeningToScreens = ref<(() => void) | null>(null);
+
 watch(
   () => mediaWindowCustomBackground.value,
   (newMediaBackground) => {
     loadMemorialBackground(newMediaBackground);
   },
 );
-
-const stopListeningToScreens = ref<(() => void) | null>(null);
 
 watch(
   () => open.value,
@@ -768,6 +740,14 @@ watch(
   { immediate: true },
 );
 
+whenever(
+  () => open.value,
+  async () => {
+    fetchScreens();
+    getCameras();
+  },
+);
+
 // UI update handler
 watch(
   () => [screenPreferences.value.preferWindowed, mediaWindowVisible.value],
@@ -777,6 +757,26 @@ watch(
         displayPopup.value.updatePosition();
       }
     }, 10);
+  },
+);
+
+watchImmediate(
+  () => getCurrentMediaWindowVariables.value,
+  () => {
+    // Push current camera stream when requested
+    if (displayCameraId.value) {
+      postCameraStream(displayCameraId.value);
+    }
+  },
+);
+
+watchImmediate(
+  () => [
+    currentSettings.value?.enableMediaDisplayButton,
+    currentCongregation.value,
+  ],
+  ([newMediaDisplayEnabled, newCongregation]) => {
+    toggleMediaWindowVisibility(!!newCongregation && !!newMediaDisplayEnabled);
   },
 );
 </script>

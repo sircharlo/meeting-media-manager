@@ -354,15 +354,6 @@ const groupedMediaItems = computed(() => {
   });
 });
 
-// Methods
-whenever(
-  () => props.modelValue,
-  async () => {
-    resetState();
-    await fetchBooks();
-  },
-);
-
 const resetState = () => {
   bibleBook.value = 0;
   bibleBookChapter.value = -1;
@@ -477,6 +468,15 @@ const addSelectedMediaItems = async () => {
   resetState();
   dialogValue.value = false;
 };
+
+// Methods
+whenever(
+  () => props.modelValue,
+  async () => {
+    resetState();
+    await fetchBooks();
+  },
+);
 </script>
 
 <style scoped>

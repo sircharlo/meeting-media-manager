@@ -208,15 +208,6 @@ const jwpubImportDocuments = ref<DocumentItem[]>([]);
 const { dateLocale, t } = useLocale();
 useMeta({ title: t('titles.meetingMedia') });
 
-watch(
-  () => [jwpubImportDb.value, jwpubImportDocuments.value],
-  async ([newJwpubImportDb, newJwpubImportDocuments]) => {
-    if (!!newJwpubImportDb || newJwpubImportDocuments?.length) {
-      showFileImport.value = true;
-    }
-  },
-);
-
 const route = useRoute();
 const router = useRouter();
 
@@ -259,18 +250,6 @@ const pendingFiles = ref<(File | string)[]>([]);
 // Banner visibility state for transitions
 const bannerColumnVisible = ref(false);
 
-// Reset progress tracking when file import dialog closes
-watch(
-  () => showFileImport.value,
-  (isOpen) => {
-    if (!isOpen) {
-      // Reset progress tracking when dialog closes
-      totalFiles.value = 0;
-      currentFile.value = 0;
-    }
-  },
-);
-
 const {
   basename,
   executeQuery,
@@ -299,49 +278,9 @@ const { post: postCameraStream } = useBroadcastChannel<
 
 const appSettingsStore = useAppSettingsStore();
 
-watch(
-  () => mediaPlaying.value.action,
-  (newAction, oldAction) => {
-    log(
-      'mediaPlaying.value.action:',
-      'mediaCalendar',
-      'log',
-      oldAction,
-      '->',
-      newAction,
-    );
-
-    if (newAction !== oldAction) postMediaAction(newAction);
-
-    const isPlay = newAction === 'play';
-    const isPause = newAction === 'pause';
-    const isSignLang = currentLangObject.value?.isSignLanguage;
-
-    // Always show media window when playing
-    if (isPlay) toggleMediaWindowVisibility(true);
-
-    // Handle sign language special cases
-    if (isSignLang) {
-      if (isPlay || isPause) return toggleMediaWindowVisibility(true);
-
-      const cameraId = appSettingsStore.displayCameraId;
-      return cameraId
-        ? postCameraStream(cameraId)
-        : toggleMediaWindowVisibility(false);
-    }
-  },
-);
-
 const { post: postSubtitlesUrl } = useBroadcastChannel<string, string>({
   name: 'subtitles-url',
 });
-
-watch(
-  () => mediaPlaying.value.subtitlesUrl,
-  (newSubtitlesUrl, oldSubtitlesUrl) => {
-    if (newSubtitlesUrl !== oldSubtitlesUrl) postSubtitlesUrl(newSubtitlesUrl);
-  },
-);
 
 const { post: postMediaUrl } = useBroadcastChannel<string, string>({
   name: 'media-url',
@@ -424,6 +363,83 @@ const pageBanners = computed(() => {
   return banners;
 });
 
+const { post: postZoomPan } = useBroadcastChannel<
+  Partial<Record<string, number>>,
+  Partial<Record<string, number>>
+>({ name: 'zoom-pan' });
+
+const { data: lastEndTimestamp } = useBroadcastChannel<
+  null | number,
+  null | number
+>({
+  name: 'last-end-timestamp',
+});
+
+const { data: currentTimeData } = useBroadcastChannel<number, number>({
+  name: 'current-time',
+});
+
+watch(
+  () => [jwpubImportDb.value, jwpubImportDocuments.value],
+  async ([newJwpubImportDb, newJwpubImportDocuments]) => {
+    if (!!newJwpubImportDb || newJwpubImportDocuments?.length) {
+      showFileImport.value = true;
+    }
+  },
+);
+
+// Reset progress tracking when file import dialog closes
+watch(
+  () => showFileImport.value,
+  (isOpen) => {
+    if (!isOpen) {
+      // Reset progress tracking when dialog closes
+      totalFiles.value = 0;
+      currentFile.value = 0;
+    }
+  },
+);
+
+watch(
+  () => mediaPlaying.value.action,
+  (newAction, oldAction) => {
+    log(
+      'mediaPlaying.value.action:',
+      'mediaCalendar',
+      'log',
+      oldAction,
+      '->',
+      newAction,
+    );
+
+    if (newAction !== oldAction) postMediaAction(newAction);
+
+    const isPlay = newAction === 'play';
+    const isPause = newAction === 'pause';
+    const isSignLang = currentLangObject.value?.isSignLanguage;
+
+    // Always show media window when playing
+    if (isPlay) toggleMediaWindowVisibility(true);
+
+    // Handle sign language special cases
+    if (isSignLang) {
+      if (isPlay || isPause) return toggleMediaWindowVisibility(true);
+
+      const cameraId = appSettingsStore.displayCameraId;
+      return cameraId
+        ? postCameraStream(cameraId)
+        : toggleMediaWindowVisibility(false);
+    }
+  },
+);
+
+watch(
+  () => mediaPlaying.value.subtitlesUrl,
+  (newSubtitlesUrl, oldSubtitlesUrl) => {
+    if (newSubtitlesUrl !== oldSubtitlesUrl) postSubtitlesUrl(newSubtitlesUrl);
+  },
+);
+
 watch(
   () => [mediaPlaying.value.url, customDuration.value],
   ([newUrl, newCustomDuration], [oldUrl, oldCustomDuration]) => {
@@ -446,11 +462,6 @@ watch(
     }
   },
 );
-
-const { post: postZoomPan } = useBroadcastChannel<
-  Partial<Record<string, number>>,
-  Partial<Record<string, number>>
->({ name: 'zoom-pan' });
 
 watch(
   () => [mediaPlaying.value.zoom, mediaPlaying.value.pan],
@@ -495,13 +506,6 @@ watch(
   },
   { deep: true },
 );
-
-const { data: lastEndTimestamp } = useBroadcastChannel<
-  null | number,
-  null | number
->({
-  name: 'last-end-timestamp',
-});
 
 watch(
   () => lastEndTimestamp.value,
@@ -557,10 +561,6 @@ watch(
     }
   },
 );
-
-const { data: currentTimeData } = useBroadcastChannel<number, number>({
-  name: 'current-time',
-});
 
 watch(
   () => currentTimeData.value,
@@ -1540,24 +1540,6 @@ watchImmediate(
 const selectedMediaItems = ref<string[]>([]); // Array of selected media item IDs
 const lastExtendDirection = ref<'down' | 'up' | null>(null); // Track the last extension direction
 
-watchImmediate(
-  () => selectedDate.value,
-  async (newVal) => {
-    selectedMediaItems.value = [];
-    lastExtendDirection.value = null;
-
-    if (!newVal || !selectedDateObject.value?.mediaSections) return;
-
-    if (isWeMeetingDay(selectedDateObject.value.date)) {
-      getOrCreateMediaSection(selectedDateObject.value.mediaSections, 'pt', {
-        ...defaultAdditionalSection.config,
-        jwIconKeyword: 'pt',
-        label: t('pt'),
-      });
-    }
-  },
-);
-
 const addToFiles = async (files: (File | string)[] | FileList) => {
   if (!files) return;
   totalFiles.value = files.length;
@@ -2288,13 +2270,6 @@ function isMediaSelectable(mediaItem: MediaItem) {
   return !mediaItem.extractCaption || mediaItem.parentUniqueId;
 }
 
-watch(
-  () => mediaPlaying.value.uniqueId,
-  (newMediaUniqueId) => {
-    if (newMediaUniqueId) selectedMediaItems.value = [newMediaUniqueId];
-  },
-);
-
 const updateMediaSectionBgColor = ({
   bgColor,
   uniqueId,
@@ -2702,6 +2677,31 @@ watch(
   () => {
     // Clear selected media items when date changes
     selectedMediaItems.value = [];
+  },
+);
+
+watch(
+  () => mediaPlaying.value.uniqueId,
+  (newMediaUniqueId) => {
+    if (newMediaUniqueId) selectedMediaItems.value = [newMediaUniqueId];
+  },
+);
+
+watchImmediate(
+  () => selectedDate.value,
+  async (newVal) => {
+    selectedMediaItems.value = [];
+    lastExtendDirection.value = null;
+
+    if (!newVal || !selectedDateObject.value?.mediaSections) return;
+
+    if (isWeMeetingDay(selectedDateObject.value.date)) {
+      getOrCreateMediaSection(selectedDateObject.value.mediaSections, 'pt', {
+        ...defaultAdditionalSection.config,
+        jwIconKeyword: 'pt',
+        label: t('pt'),
+      });
+    }
   },
 );
 </script>

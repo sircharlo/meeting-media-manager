@@ -195,5 +195,82 @@ export default defineConfigWithVueTs([
       ],
     },
   },
+  {
+    plugins: {
+      local: {
+        rules: {
+          'no-watch-before-const': {
+            create(context) {
+              let watcherSeen = false;
+
+              return {
+                Program(node) {
+                  watcherSeen = false;
+
+                  for (const stmt of node.body) {
+                    // Detect watch / watchEffect / watchImmediate
+                    if (
+                      stmt.type === 'ExpressionStatement' &&
+                      stmt.expression.type === 'CallExpression'
+                    ) {
+                      const callee = stmt.expression.callee;
+
+                      if (
+                        callee.type === 'Identifier' &&
+                        [
+                          'until',
+                          'watch',
+                          'watchArray',
+                          'watchAtMost',
+                          'watchDebounced',
+                          'watchDeep',
+                          'watchEffect',
+                          'watchIgnorable',
+                          'watchImmediate',
+                          'watchOnce',
+                          'watchPausable',
+                          'watchThrottled',
+                          'watchTriggerable',
+                          'watchWithFilter',
+                          'whenever',
+                        ].includes(callee.name)
+                      ) {
+                        watcherSeen = true;
+                      }
+                    }
+
+                    // Warn if const comes after a watcher
+                    if (
+                      watcherSeen &&
+                      stmt.type === 'VariableDeclaration' &&
+                      stmt.kind === 'const'
+                    ) {
+                      context.report({
+                        message:
+                          'Place watchers/whenever after all const declarations.',
+                        node: stmt,
+                      });
+                    }
+                  }
+                },
+              };
+            },
+            meta: {
+              docs: {
+                description:
+                  'disallow watchers/whenever before const declarations',
+              },
+              schema: [],
+              type: 'problem',
+            },
+          },
+        },
+      },
+    },
+
+    rules: {
+      'local/no-watch-before-const': 'warn',
+    },
+  },
   skipFormattingConfig,
 ]);

@@ -109,12 +109,6 @@ const currentBgColor = ref(props.divider.bgColor || 'var(--q-secondary)');
 
 const editTitleInput = ref<HTMLInputElement>();
 
-whenever(isEditing, () => {
-  nextTick(() => {
-    editTitleInput.value?.focus();
-  });
-});
-
 // Calculate luminance and determine text color (memoized)
 const calculateLuminance = (hexColor: string): number => {
   // Remove # if present and validate
@@ -187,6 +181,12 @@ const handleColorChange = (newColor: string) => {
 const deleteDivider = () => {
   emit('delete', props.divider.uniqueId);
 };
+
+whenever(isEditing, () => {
+  nextTick(() => {
+    editTitleInput.value?.focus();
+  });
+});
 </script>
 
 <style lang="scss" scoped>

@@ -306,30 +306,12 @@ const { data: seekToData } = useBroadcastChannel<
   name: 'seek-to',
 });
 
-whenever(
-  () => seekToData.value,
-  (newSeekTo) => {
-    if (currentMediaElement.value) {
-      currentMediaElement.value.currentTime = newSeekTo;
-    }
-  },
-);
-
 const { data: playbackRateData } = useBroadcastChannel<
   number | undefined,
   number | undefined
 >({
   name: 'playback-rate',
 });
-
-whenever(
-  () => playbackRateData.value,
-  (newRate) => {
-    if (currentMediaElement.value && newRate) {
-      currentMediaElement.value.playbackRate = newRate;
-    }
-  },
-);
 
 const { data: mediaCustomDuration } = useBroadcastChannel<
   string | undefined,
@@ -346,21 +328,6 @@ const { data: mediaRepeatNow } = useBroadcastChannel<number, number>({
   name: 'media-repeat-now',
 });
 
-whenever(
-  () => mediaRepeatNow.value,
-  () => {
-    if (currentMediaElement.value) {
-      log(
-        '🎬 [mediaRepeatNow] Forcing replay of current item',
-        'mediaPlayer',
-        'log',
-      );
-      currentMediaElement.value.currentTime = customMin.value;
-      playMediaElement();
-    }
-  },
-);
-
 const { data: mediaPlayingUrl } = useBroadcastChannel<string, string>({
   name: 'media-url',
 });
@@ -372,17 +339,6 @@ const { post: postCurrentTime } = useBroadcastChannel<number, number>({
 const { data: mediaAction } = useBroadcastChannel<string, string>({
   name: 'main-window-media-action',
 });
-
-whenever(
-  () => mediaAction.value,
-  (newMediaAction, oldMediaAction) => {
-    if (newMediaAction === 'pause') {
-      currentMediaElement.value?.pause();
-    } else if (newMediaAction === 'play') {
-      playMediaElement(oldMediaAction === 'pause');
-    }
-  },
-);
 
 const handleImageLoad = () => {
   // Image loaded - apply current zoom/pan state if available
@@ -473,22 +429,6 @@ const customMin = computed(() => {
 const customMax = computed(() => {
   return (JSON.parse(mediaCustomDuration.value || '{}') || {})?.max;
 });
-
-watch(
-  () => mediaCustomDuration.value,
-  (newVal, oldVal) => {
-    if (newVal !== oldVal && currentMediaElement.value) {
-      log(
-        '🎬 [mediaCustomDuration] Duration changed, seeking to:',
-        'mediaPlayer',
-        'log',
-        customMin.value,
-      );
-      isEnding.value = false;
-      currentMediaElement.value.currentTime = customMin.value;
-    }
-  },
-);
 
 const currentMediaElement: Ref<HTMLAudioElement | HTMLVideoElement | null> =
   computed(() => {
@@ -830,56 +770,6 @@ const clearCurrentMedia = () => {
   }
 };
 
-// Reset ending flag when new media starts
-watch(
-  () => mediaPlayingUrl.value,
-  (newUrl, oldUrl) => {
-    log(
-      '🔄 [mediaPlayingUrl] URL changed:',
-      'mediaPlayer',
-      'log',
-      oldUrl,
-      '->',
-      newUrl,
-    );
-    isEnding.value = false;
-
-    if (oldUrl && newUrl && !isAudio(newUrl)) {
-      isTransitioning.value = true;
-    }
-
-    // Handle crossfade logic
-    if (newUrl && newUrl !== oldUrl) {
-      // New media URL - start crossfade
-      crossfadeToNewMedia(newUrl);
-    } else if (!newUrl && oldUrl) {
-      // Media URL cleared - fade out current media
-      clearCurrentMedia();
-    }
-
-    // Clean up any existing event handlers when media URL changes
-    if (currentMediaElement.value) {
-      currentMediaElement.value.oncanplay = null;
-      currentMediaElement.value.oncanplaythrough = null;
-
-      // For videos, ensure the element is properly reset when URL changes
-      if ((isVideo(newUrl) || isAudio(newUrl)) && newUrl !== oldUrl) {
-        log(
-          '🎬 [mediaPlayingUrl] Resetting video element for new URL',
-          'mediaPlayer',
-          'log',
-        );
-        // Pause current playback
-        currentMediaElement.value.pause();
-        // Reset current time
-        currentMediaElement.value.currentTime = 0;
-        // Force reload of the video
-        currentMediaElement.value.load();
-      }
-    }
-  },
-);
-
 const { data: urlVariables } = useBroadcastChannel<
   {
     base: string | undefined;
@@ -922,47 +812,10 @@ const { data: currentLang } = useBroadcastChannel<string, string>({
 const jwStore = useJwStore();
 const yeartextFontFamily = ref('');
 
-watch(
-  () =>
-    [
-      currentScript.value,
-      currentLang.value,
-      urlVariables.value?.mediator,
-    ] as const,
-  async ([script, lang]) => {
-    if (script && urlVariables.value?.mediator) {
-      // Sync urlVariables to jw store for CDN font URL resolution
-      if (urlVariables.value.base) {
-        jwStore.$patch({
-          urlVariables: {
-            base: urlVariables.value.base,
-            mediator: urlVariables.value.mediator,
-            pubMedia: jwStore.urlVariables?.pubMedia ?? '',
-          },
-        });
-      }
-      yeartextFontFamily.value = await loadYeartextFont(script, lang);
-    }
-  },
-);
-
 const yeartextFontStyle = computed(() =>
   yeartextFontFamily.value
     ? { fontFamily: yeartextFontFamily.value }
     : undefined,
-);
-
-watchDeep(
-  () => zoomPanState.value,
-  (newZoomPanState) => {
-    log(
-      '🎬 [zoomPanState] New zoom/pan state:',
-      'mediaPlayer',
-      'log',
-      newZoomPanState,
-    );
-    applyZoomPanState(newZoomPanState);
-  },
 );
 
 const ensureElementReady = async (
@@ -1048,6 +901,182 @@ const requestStream = async (isCamera: boolean, deviceId?: string) => {
     return null;
   }
 };
+
+// Send request to main layout to get the current state, for when the media player window is first opened
+const { post: postGetCurrentState } = useBroadcastChannel<string, string>({
+  name: 'get-current-media-window-variables',
+});
+
+const fontsSet = ref(false);
+const jwIconsFontLoaded = ref(false);
+
+const loadFonts = async () => {
+  try {
+    await setElementFont('Wt-ClearText-Bold');
+  } catch (e) {
+    errorCatcher(e, {
+      contexts: { fn: { fontName: 'Wt-ClearText-Bold', name: 'loadFonts' } },
+    });
+  }
+
+  try {
+    jwIconsFontLoaded.value = await setElementFont('jw-icons-all');
+  } catch (e) {
+    errorCatcher(e, {
+      contexts: { fn: { fontName: 'jw-icons-all', name: 'loadFonts' } },
+    });
+    jwIconsFontLoaded.value = false;
+  }
+
+  fontsSet.value = true;
+};
+
+whenever(
+  () => seekToData.value,
+  (newSeekTo) => {
+    if (currentMediaElement.value) {
+      currentMediaElement.value.currentTime = newSeekTo;
+    }
+  },
+);
+
+whenever(
+  () => playbackRateData.value,
+  (newRate) => {
+    if (currentMediaElement.value && newRate) {
+      currentMediaElement.value.playbackRate = newRate;
+    }
+  },
+);
+
+whenever(
+  () => mediaRepeatNow.value,
+  () => {
+    if (currentMediaElement.value) {
+      log(
+        '🎬 [mediaRepeatNow] Forcing replay of current item',
+        'mediaPlayer',
+        'log',
+      );
+      currentMediaElement.value.currentTime = customMin.value;
+      playMediaElement();
+    }
+  },
+);
+
+whenever(
+  () => mediaAction.value,
+  (newMediaAction, oldMediaAction) => {
+    if (newMediaAction === 'pause') {
+      currentMediaElement.value?.pause();
+    } else if (newMediaAction === 'play') {
+      playMediaElement(oldMediaAction === 'pause');
+    }
+  },
+);
+
+watch(
+  () => mediaCustomDuration.value,
+  (newVal, oldVal) => {
+    if (newVal !== oldVal && currentMediaElement.value) {
+      log(
+        '🎬 [mediaCustomDuration] Duration changed, seeking to:',
+        'mediaPlayer',
+        'log',
+        customMin.value,
+      );
+      isEnding.value = false;
+      currentMediaElement.value.currentTime = customMin.value;
+    }
+  },
+);
+
+// Reset ending flag when new media starts
+watch(
+  () => mediaPlayingUrl.value,
+  (newUrl, oldUrl) => {
+    log(
+      '🔄 [mediaPlayingUrl] URL changed:',
+      'mediaPlayer',
+      'log',
+      oldUrl,
+      '->',
+      newUrl,
+    );
+    isEnding.value = false;
+
+    if (oldUrl && newUrl && !isAudio(newUrl)) {
+      isTransitioning.value = true;
+    }
+
+    // Handle crossfade logic
+    if (newUrl && newUrl !== oldUrl) {
+      // New media URL - start crossfade
+      crossfadeToNewMedia(newUrl);
+    } else if (!newUrl && oldUrl) {
+      // Media URL cleared - fade out current media
+      clearCurrentMedia();
+    }
+
+    // Clean up any existing event handlers when media URL changes
+    if (currentMediaElement.value) {
+      currentMediaElement.value.oncanplay = null;
+      currentMediaElement.value.oncanplaythrough = null;
+
+      // For videos, ensure the element is properly reset when URL changes
+      if ((isVideo(newUrl) || isAudio(newUrl)) && newUrl !== oldUrl) {
+        log(
+          '🎬 [mediaPlayingUrl] Resetting video element for new URL',
+          'mediaPlayer',
+          'log',
+        );
+        // Pause current playback
+        currentMediaElement.value.pause();
+        // Reset current time
+        currentMediaElement.value.currentTime = 0;
+        // Force reload of the video
+        currentMediaElement.value.load();
+      }
+    }
+  },
+);
+
+watch(
+  () =>
+    [
+      currentScript.value,
+      currentLang.value,
+      urlVariables.value?.mediator,
+    ] as const,
+  async ([script, lang]) => {
+    if (script && urlVariables.value?.mediator) {
+      // Sync urlVariables to jw store for CDN font URL resolution
+      if (urlVariables.value.base) {
+        jwStore.$patch({
+          urlVariables: {
+            base: urlVariables.value.base,
+            mediator: urlVariables.value.mediator,
+            pubMedia: jwStore.urlVariables?.pubMedia ?? '',
+          },
+        });
+      }
+      yeartextFontFamily.value = await loadYeartextFont(script, lang);
+    }
+  },
+);
+
+watchDeep(
+  () => zoomPanState.value,
+  (newZoomPanState) => {
+    log(
+      '🎬 [zoomPanState] New zoom/pan state:',
+      'mediaPlayer',
+      'log',
+      newZoomPanState,
+    );
+    applyZoomPanState(newZoomPanState);
+  },
+);
 
 watch(
   () => webStreamData.value,
@@ -1169,35 +1198,6 @@ watchImmediate(
     }
   },
 );
-
-// Send request to main layout to get the current state, for when the media player window is first opened
-const { post: postGetCurrentState } = useBroadcastChannel<string, string>({
-  name: 'get-current-media-window-variables',
-});
-
-const fontsSet = ref(false);
-const jwIconsFontLoaded = ref(false);
-
-const loadFonts = async () => {
-  try {
-    await setElementFont('Wt-ClearText-Bold');
-  } catch (e) {
-    errorCatcher(e, {
-      contexts: { fn: { fontName: 'Wt-ClearText-Bold', name: 'loadFonts' } },
-    });
-  }
-
-  try {
-    jwIconsFontLoaded.value = await setElementFont('jw-icons-all');
-  } catch (e) {
-    errorCatcher(e, {
-      contexts: { fn: { fontName: 'jw-icons-all', name: 'loadFonts' } },
-    });
-    jwIconsFontLoaded.value = false;
-  }
-
-  fontsSet.value = true;
-};
 
 // Listen for initial value updates from other components
 watchImmediate(

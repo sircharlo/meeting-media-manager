@@ -685,37 +685,6 @@ if (currentSettings.value) {
   currentSettings.value.autoStartMusic = true;
 }
 
-watch(
-  () => obsIntegrate.value,
-  (newObsIntegrate) => {
-    if (newObsIntegrate && obsUsed.value && currentSettings.value) {
-      currentSettings.value.obsEnable = true;
-    }
-  },
-);
-
-watch(
-  [
-    () => currentSettings.value?.lang,
-    () => currentSettings?.value?.langFallback,
-  ],
-  () =>
-    updateYeartext({
-      isSignLanguage: currentLangObject.value?.isSignLanguage,
-      lang: currentSettings.value?.lang,
-      langFallback: currentSettings.value?.langFallback,
-      online: online.value,
-    }),
-);
-
-watchImmediate(
-  () => regularProfile.value,
-  (newRegularProfile) => {
-    if (currentSettings.value)
-      currentSettings.value.disableMediaFetching = !newRegularProfile;
-  },
-);
-
 const loadSystemLocale = async () => {
   try {
     const systemLocales = await getLocales();
@@ -759,6 +728,12 @@ const goToPage = (path: string) => {
 
 const step = ref(1);
 
+const showCongregationLookup = ref(false);
+
+const openCongregationLookup = () => {
+  showCongregationLookup.value = true;
+};
+
 watch(step, () => {
   nextTick(() => {
     const activeTab = document.querySelector('.q-stepper__tab--active');
@@ -770,9 +745,34 @@ watch(step, () => {
   });
 });
 
-const showCongregationLookup = ref(false);
+watch(
+  () => obsIntegrate.value,
+  (newObsIntegrate) => {
+    if (newObsIntegrate && obsUsed.value && currentSettings.value) {
+      currentSettings.value.obsEnable = true;
+    }
+  },
+);
 
-const openCongregationLookup = () => {
-  showCongregationLookup.value = true;
-};
+watch(
+  [
+    () => currentSettings.value?.lang,
+    () => currentSettings?.value?.langFallback,
+  ],
+  () =>
+    updateYeartext({
+      isSignLanguage: currentLangObject.value?.isSignLanguage,
+      lang: currentSettings.value?.lang,
+      langFallback: currentSettings.value?.langFallback,
+      online: online.value,
+    }),
+);
+
+watchImmediate(
+  () => regularProfile.value,
+  (newRegularProfile) => {
+    if (currentSettings.value)
+      currentSettings.value.disableMediaFetching = !newRegularProfile;
+  },
+);
 </script>

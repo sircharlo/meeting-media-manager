@@ -69,16 +69,6 @@ const dividerTitle = ref('');
 const addToTop = ref(true);
 const dividerTitleInput = ref<HTMLElement>();
 
-// Focus the input when dialog opens
-whenever(dialogValue, () => {
-  if (dialogValue.value) {
-    setTimeout(() => {
-      log('🔍 Focusing input', 'dividers', 'log', dividerTitleInput.value);
-      dividerTitleInput.value?.focus();
-    }, 100);
-  }
-});
-
 const handleAdd = () => {
   const title = dividerTitle.value.trim();
   dividerTitle.value = '';
@@ -90,4 +80,14 @@ const handleCancel = () => {
   dividerTitle.value = '';
   dialogValue.value = false;
 };
+
+// Focus the input when dialog opens
+whenever(dialogValue, () => {
+  if (dialogValue.value) {
+    setTimeout(() => {
+      log('🔍 Focusing input', 'dividers', 'log', dividerTitleInput.value);
+      dividerTitleInput.value?.focus();
+    }, 100);
+  }
+});
 </script>

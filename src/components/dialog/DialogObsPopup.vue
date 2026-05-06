@@ -176,48 +176,6 @@ const openObsRecordingFolder = async () => {
   }
 };
 
-watchImmediate(
-  () => ({
-    enabled: currentSettings.value?.obsEnable,
-    recordingControls: currentSettings.value?.obsEnableRecordingControls,
-  }),
-  async ({ enabled, recordingControls }, _, onCleanup) => {
-    // If OBS not enabled or no websocket → stop everything
-    if (!enabled || !obsWebSocketInfo.obsWebSocket) return;
-
-    // If recording controls disabled → stop everything
-    if (!recordingControls) return;
-
-    // --- 1. Setup event listener ---
-    const handleRecordStateChanged = (data: { outputActive: boolean }) => {
-      log('RecordStateChanged', 'obs', 'log', data);
-      isRecording.value = data.outputActive;
-    };
-    obsWebSocketInfo.obsWebSocket.on(
-      'RecordStateChanged',
-      handleRecordStateChanged,
-    );
-
-    // Cleanup when settings change or component unmounts
-    onCleanup(() => {
-      obsWebSocketInfo.obsWebSocket?.off(
-        'RecordStateChanged',
-        handleRecordStateChanged,
-      );
-    });
-
-    // --- 2. Initial recording state ---
-    const status = await obsGetRecordingState();
-    if (status !== null) {
-      isRecording.value = status;
-    }
-
-    // --- 3. Recording directory ---
-    const folder = await obsGetRecordingDirectory();
-    obsRecordingFolder.value = folder;
-  },
-);
-
 const resolvedScene = computed(() => {
   if (!currentSettings.value) return currentScene.value;
   if (currentSettings.value.obsSwitchSceneAfterMedia) {
@@ -374,7 +332,50 @@ const sceneColumnClass = computed(() => {
 useEventListener(globalThis, 'obsConnectFromSettings', obsSettingsConnect, {
   passive: true,
 });
+
 useEventListener(globalThis, 'obsSceneEvent', setObsSceneListener, {
   passive: true,
 });
+
+watchImmediate(
+  () => ({
+    enabled: currentSettings.value?.obsEnable,
+    recordingControls: currentSettings.value?.obsEnableRecordingControls,
+  }),
+  async ({ enabled, recordingControls }, _, onCleanup) => {
+    // If OBS not enabled or no websocket → stop everything
+    if (!enabled || !obsWebSocketInfo.obsWebSocket) return;
+
+    // If recording controls disabled → stop everything
+    if (!recordingControls) return;
+
+    // --- 1. Setup event listener ---
+    const handleRecordStateChanged = (data: { outputActive: boolean }) => {
+      log('RecordStateChanged', 'obs', 'log', data);
+      isRecording.value = data.outputActive;
+    };
+    obsWebSocketInfo.obsWebSocket.on(
+      'RecordStateChanged',
+      handleRecordStateChanged,
+    );
+
+    // Cleanup when settings change or component unmounts
+    onCleanup(() => {
+      obsWebSocketInfo.obsWebSocket?.off(
+        'RecordStateChanged',
+        handleRecordStateChanged,
+      );
+    });
+
+    // --- 2. Initial recording state ---
+    const status = await obsGetRecordingState();
+    if (status !== null) {
+      isRecording.value = status;
+    }
+
+    // --- 3. Recording directory ---
+    const folder = await obsGetRecordingDirectory();
+    obsRecordingFolder.value = folder;
+  },
+);
 </script>

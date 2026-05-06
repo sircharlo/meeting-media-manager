@@ -31,13 +31,6 @@ const { post } = useBroadcastChannel<boolean, boolean>({
   name: 'subtitles-visible',
 });
 
-watch(
-  () => subtitlesVisible.value,
-  (newSubtitlesVisible, oldSubtitlesVisible) => {
-    if (newSubtitlesVisible !== oldSubtitlesVisible) post(newSubtitlesVisible);
-  },
-);
-
 // Listen for requests to get current media window variables
 const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
   string,
@@ -45,6 +38,13 @@ const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
 >({
   name: 'get-current-media-window-variables',
 });
+
+watch(
+  () => subtitlesVisible.value,
+  (newSubtitlesVisible, oldSubtitlesVisible) => {
+    if (newSubtitlesVisible !== oldSubtitlesVisible) post(newSubtitlesVisible);
+  },
+);
 
 watchImmediate(
   () => getCurrentMediaWindowVariables.value,
