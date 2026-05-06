@@ -350,8 +350,8 @@ const buildDocumentMultimediaQuery = (
   ) {
     where += ` AND ${mmTable}.BeginParagraphOrdinal >= ? AND ${mmTable}.EndParagraphOrdinal <= ?`;
     params.push(
-      source.BeginParagraphOrdinal as number,
-      source.EndParagraphOrdinal as number,
+      source.BeginParagraphOrdinal || 0,
+      source.EndParagraphOrdinal || 0,
     );
   }
 
