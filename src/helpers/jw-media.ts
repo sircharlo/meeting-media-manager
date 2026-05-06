@@ -2762,6 +2762,7 @@ export async function processMissingMediaInfo({
                 publicationFetcher,
                 meetingDate || currentStateStore.selectedDate,
                 isDynamicMedia,
+                true,
               );
               media.FilePath = FilePath ?? media.FilePath;
               media.Label = keepMediaLabels
@@ -2788,6 +2789,14 @@ export async function processMissingMediaInfo({
         }
       }
       if (!mediaWasDownloaded) {
+        for (const triedPublicationFetcher of triedPublicationFetchers) {
+          const downloadId = getPubId(triedPublicationFetcher, true);
+          currentStateStore.downloadProgress[downloadId] = {
+            error: true,
+            filename: downloadId,
+            meetingDate,
+          };
+        }
         errors.push(...triedPublicationFetchers);
       }
     }
@@ -2800,6 +2809,7 @@ export async function processMissingMediaInfo({
 export const getPubMediaLinks = async (
   publication: PublicationFetcher,
   meetingDate?: string,
+  suppressDownloadError = false,
 ) => {
   const jwStore = useJwStore();
   const { urlVariables } = jwStore;
@@ -2823,7 +2833,7 @@ export const getPubMediaLinks = async (
       currentStateStore.online,
     );
 
-    if (!response) {
+    if (!response && !suppressDownloadError) {
       const downloadId = getPubId(publication, true);
       currentStateStore.downloadProgress[downloadId] = {
         error: true,
@@ -2885,6 +2895,7 @@ const downloadMissingMedia = async (
   publication: PublicationFetcher,
   meetingDate?: string,
   isDynamicMedia = false,
+  suppressDownloadError = false,
 ) => {
   try {
     const currentStateStore = useCurrentStateStore();
@@ -2899,7 +2910,11 @@ const downloadMissingMedia = async (
       pubDir,
       meetingDate || currentStateStore.selectedDate,
     );
-    const responseObject = await getPubMediaLinks(publication, meetingDate);
+    const responseObject = await getPubMediaLinks(
+      publication,
+      meetingDate,
+      suppressDownloadError,
+    );
     if (!responseObject?.files) {
       if (!(await pathExists(pubDir))) return { FilePath: '' };
       const files: string[] = [];

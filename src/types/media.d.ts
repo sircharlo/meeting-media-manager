@@ -43,7 +43,7 @@ export interface DownloadProgressItem {
   error?: boolean;
   filename: string;
   loaded?: number;
-  meetingDate?: string;
+  meetingDate?: null | string;
   total?: number;
 }
 
