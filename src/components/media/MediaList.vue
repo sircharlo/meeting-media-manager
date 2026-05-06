@@ -269,24 +269,6 @@ function updateStoreMediaOrder(items: MediaItemType[]) {
   }
 }
 
-// Efficient watcher to ensure changes are persisted to the store
-// Only triggers when the actual array content changes, not on every re-render
-watch(
-  () => [sortableItems.value?.map((item) => item.uniqueId), isDragging.value],
-  ([, isDragging]) => {
-    if (isDragging) return; // Avoid updating while dragging
-    if (!sectionData.value || !sortableItems.value || !selectedDateObject.value)
-      return;
-
-    // Save section order information for watched media items
-    handleWatchedMediaPersistence(sortableItems.value);
-
-    // Update the section data to match the sorted order
-    updateStoreMediaOrder(sortableItems.value);
-  },
-  { flush: 'post' },
-);
-
 // Listen for sort order reset events
 useEventListener(globalThis, 'reset-sort-order', () => {
   // Reset the sortable items to the original order from mediaList.items
@@ -354,6 +336,24 @@ defineExpose({
   isDragging,
   sectionHeaderRef,
 });
+
+// Efficient watcher to ensure changes are persisted to the store
+// Only triggers when the actual array content changes, not on every re-render
+watch(
+  () => [sortableItems.value?.map((item) => item.uniqueId), isDragging.value],
+  ([, isDragging]) => {
+    if (isDragging) return; // Avoid updating while dragging
+    if (!sectionData.value || !sortableItems.value || !selectedDateObject.value)
+      return;
+
+    // Save section order information for watched media items
+    handleWatchedMediaPersistence(sortableItems.value);
+
+    // Update the section data to match the sorted order
+    updateStoreMediaOrder(sortableItems.value);
+  },
+  { flush: 'post' },
+);
 </script>
 
 <style lang="scss" scoped>

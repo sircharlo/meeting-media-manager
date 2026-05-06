@@ -288,6 +288,9 @@ const settingParam = useRouteParams<keyof SettingsValues | undefined>(
   'setting',
 );
 
+const invalidSettings = computed(() => getInvalidSettings());
+const invalidSettingsLength = computed(() => invalidSettings.value?.length > 0);
+
 // Lifecycle hooks
 onMounted(() => {
   updateJwLanguages(online.value);
@@ -327,7 +330,4 @@ watch(
       online: online.value,
     }),
 );
-
-const invalidSettings = computed(() => getInvalidSettings());
-const invalidSettingsLength = computed(() => invalidSettings.value?.length > 0);
 </script>

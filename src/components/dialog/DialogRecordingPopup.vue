@@ -79,18 +79,6 @@ const { t } = useI18n();
 
 const recordingPopup = useTemplateRef<QMenu>('recordingPopup');
 
-// Update popup position when recording state changes
-watch(
-  () => props.isRecording,
-  () => {
-    setTimeout(() => {
-      if (recordingPopup.value) {
-        recordingPopup.value.updatePosition();
-      }
-    }, 10);
-  },
-);
-
 const toggleRecording = () => {
   if (!currentSettings.value) return;
 
@@ -117,4 +105,16 @@ const openRecordingFolder = () => {
   if (!currentSettings.value?.recordingFolder) return;
   openFolder(currentSettings.value.recordingFolder);
 };
+
+// Update popup position when recording state changes
+watch(
+  () => props.isRecording,
+  () => {
+    setTimeout(() => {
+      if (recordingPopup.value) {
+        recordingPopup.value.updatePosition();
+      }
+    }, 10);
+  },
+);
 </script>

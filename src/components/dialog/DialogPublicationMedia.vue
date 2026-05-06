@@ -588,15 +588,6 @@ const mediaItems = ref<MediaLink[]>([]);
 const hoveredRemoteVideo = ref('');
 const pdfImportAvailable = ref(false);
 
-watch(
-  () => dialogValue.value,
-  async (isOpen) => {
-    if (isOpen) {
-      resetState();
-    }
-  },
-);
-
 const breadcrumbs = computed(() => {
   const items: string[] = [];
   if (
@@ -1616,4 +1607,13 @@ async function selectYear(choice: FilterChoice) {
   // Build months and probe availability
   await buildMonthChoices();
 }
+
+watch(
+  () => dialogValue.value,
+  async (isOpen) => {
+    if (isOpen) {
+      resetState();
+    }
+  },
+);
 </script>

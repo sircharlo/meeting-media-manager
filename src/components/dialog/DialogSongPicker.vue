@@ -162,16 +162,6 @@ const resetDialogState = () => {
   isProcessing.value = false;
 };
 
-// Watch for dialog closing to reset state
-watch(
-  () => dialogValue.value,
-  (isOpen) => {
-    if (!isOpen) {
-      // Reset state when dialog closes
-      resetDialogState();
-    }
-  },
-);
 const filteredSongs = computed((): MediaLink[] => {
   if (filter.value) {
     const searchTerms = filter.value.toLowerCase().split(/\s+/).filter(Boolean);
@@ -253,5 +243,16 @@ watchOnce(
     startSongUpdate();
   },
   { immediate: true },
+);
+
+// Watch for dialog closing to reset state
+watch(
+  () => dialogValue.value,
+  (isOpen) => {
+    if (!isOpen) {
+      // Reset state when dialog closes
+      resetDialogState();
+    }
+  },
 );
 </script>

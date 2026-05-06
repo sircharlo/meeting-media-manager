@@ -379,470 +379,9 @@ const { data: currentTimeData } = useBroadcastChannel<number, number>({
   name: 'current-time',
 });
 
-watch(
-  () => [jwpubImportDb.value, jwpubImportDocuments.value],
-  async ([newJwpubImportDb, newJwpubImportDocuments]) => {
-    if (!!newJwpubImportDb || newJwpubImportDocuments?.length) {
-      showFileImport.value = true;
-    }
-  },
-);
-
-// Reset progress tracking when file import dialog closes
-watch(
-  () => showFileImport.value,
-  (isOpen) => {
-    if (!isOpen) {
-      // Reset progress tracking when dialog closes
-      totalFiles.value = 0;
-      currentFile.value = 0;
-    }
-  },
-);
-
-watch(
-  () => mediaPlaying.value.action,
-  (newAction, oldAction) => {
-    log(
-      'mediaPlaying.value.action:',
-      'mediaCalendar',
-      'log',
-      oldAction,
-      '->',
-      newAction,
-    );
-
-    if (newAction !== oldAction) postMediaAction(newAction);
-
-    const isPlay = newAction === 'play';
-    const isPause = newAction === 'pause';
-    const isSignLang = currentLangObject.value?.isSignLanguage;
-
-    // Always show media window when playing
-    if (isPlay) toggleMediaWindowVisibility(true);
-
-    // Handle sign language special cases
-    if (isSignLang) {
-      if (isPlay || isPause) return toggleMediaWindowVisibility(true);
-
-      const cameraId = appSettingsStore.displayCameraId;
-      return cameraId
-        ? postCameraStream(cameraId)
-        : toggleMediaWindowVisibility(false);
-    }
-  },
-);
-
-watch(
-  () => mediaPlaying.value.subtitlesUrl,
-  (newSubtitlesUrl, oldSubtitlesUrl) => {
-    if (newSubtitlesUrl !== oldSubtitlesUrl) postSubtitlesUrl(newSubtitlesUrl);
-  },
-);
-
-watch(
-  () => [mediaPlaying.value.url, customDuration.value],
-  ([newUrl, newCustomDuration], [oldUrl, oldCustomDuration]) => {
-    log(
-      '🔄 [watch] mediaPlaying.value.url',
-      'mediaCalendar',
-      'log',
-      newUrl,
-      oldUrl,
-    );
-
-    if (newUrl !== oldUrl) {
-      postMediaUrl(newUrl as string);
-    }
-
-    if (
-      JSON.stringify(newCustomDuration) !== JSON.stringify(oldCustomDuration)
-    ) {
-      postCustomDuration(JSON.stringify(newCustomDuration));
-    }
-  },
-);
-
-watch(
-  () => [mediaPlaying.value.zoom, mediaPlaying.value.pan],
-  (newValues, oldValues) => {
-    try {
-      const [newZoom, newPan] = newValues as [
-        number,
-        Partial<{ x: number; y: number }>,
-      ];
-      const [oldZoom, oldPan] = oldValues as [
-        number,
-        Partial<{ x: number; y: number }>,
-      ];
-      // Only pass the serializable zoomPan state (scale, x, y)
-      const serializableZoomPan =
-        newZoom && newPan
-          ? {
-              scale: newZoom,
-              x: newPan.x,
-              y: newPan.y,
-            }
-          : undefined;
-
-      const serializableOldZoomPan =
-        oldZoom && oldPan
-          ? {
-              scale: oldZoom,
-              x: oldPan.x,
-              y: oldPan.y,
-            }
-          : undefined;
-
-      if (
-        JSON.stringify(serializableZoomPan) !==
-        JSON.stringify(serializableOldZoomPan)
-      ) {
-        postZoomPan(serializableZoomPan ?? {});
-      }
-    } catch (error) {
-      errorCatcher(error);
-    }
-  },
-  { deep: true },
-);
-
-watch(
-  () => lastEndTimestamp.value,
-  (newLastEndTimestamp) => {
-    log(
-      '🔄 [onMediaEnded] Media state data:',
-      'mediaCalendar',
-      'log',
-      newLastEndTimestamp,
-    );
-    if (newLastEndTimestamp) {
-      // Handle section repeat logic first
-      const repeatHandled = handleMediaEnded();
-      log(
-        '🔄 [onMediaEnded] Repeat handled:',
-        'mediaCalendar',
-        'log',
-        repeatHandled,
-      );
-      if (repeatHandled) return;
-
-      triggerZoomScreenShare(false);
-
-      mediaPlaying.value = {
-        action: '',
-        currentPosition: 0,
-        pan: {
-          x: 0,
-          y: 0,
-        },
-        seekTo: 0,
-        subtitlesUrl: '',
-        uniqueId: '',
-        url: '',
-        zoom: 1,
-      };
-
-      // Clear custom duration when media ends
-      postCustomDuration(undefined);
-
-      nextTick(() => {
-        globalThis.dispatchEvent(
-          new CustomEvent<{ scrollToSelectedMedia: boolean }>(
-            'shortcutMediaNext',
-            {
-              detail: {
-                scrollToSelectedMedia: false,
-              },
-            },
-          ),
-        );
-      });
-    }
-  },
-);
-
-watch(
-  () => currentTimeData.value,
-  (newCurrentTime) => {
-    nextTick(() => {
-      mediaPlaying.value.currentPosition = newCurrentTime;
-    });
-  },
-);
-
-let mediaSceneTimeout: NodeJS.Timeout | null = null;
 const changeDelay = 600; // 600ms delay: "--animate-duration" = 300ms, "slow" = "--animate-duration" * 2
-
-watch(
-  () => [mediaIsPlaying.value, mediaPaused.value, mediaPlaying.value.url],
-  (
-    [newMediaPlaying, newMediaPaused, newMediaPlayingUrl],
-    [, , oldMediaPlayingUrl],
-  ) => {
-    log(
-      '🔄 [MediaCalendarPage] Media state watcher triggered:',
-      'mediaCalendar',
-      'log',
-      {
-        enableCustomEvents: currentSettings.value?.enableCustomEvents,
-        newMediaPaused,
-        newMediaPlaying,
-        newMediaPlayingUrl,
-        oldMediaPlayingUrl,
-      },
-    );
-
-    // Custom integration events
-    if (currentSettings.value?.enableCustomEvents) {
-      log('🔄 [CustomEvents] Custom events enabled', 'mediaCalendar', 'log');
-
-      if (newMediaPlaying && !oldMediaPlayingUrl) {
-        // Media started playing (from nothing to something)
-        if (currentSettings.value?.customEventMediaPlayShortcut) {
-          log(
-            '🔄 [CustomEvents] Sending media play event shortcut:',
-            'mediaCalendar',
-            'log',
-            currentSettings.value?.customEventMediaPlayShortcut,
-          );
-          sendKeyboardShortcut(
-            currentSettings.value?.customEventMediaPlayShortcut,
-            'CustomEvents',
-          );
-        }
-      } else if (newMediaPaused && newMediaPlayingUrl) {
-        // Media paused
-        if (currentSettings.value?.customEventMediaPauseShortcut) {
-          log(
-            '🔄 [CustomEvents] Sending media pause event shortcut:',
-            'mediaCalendar',
-            'log',
-            currentSettings.value?.customEventMediaPauseShortcut,
-          );
-          sendKeyboardShortcut(
-            currentSettings.value?.customEventMediaPauseShortcut,
-            'CustomEvents',
-          );
-        }
-      } else if (!newMediaPlaying && oldMediaPlayingUrl) {
-        // Media stopped (from something to nothing)
-        if (currentSettings.value?.customEventMediaStopShortcut) {
-          log(
-            '🔄 [CustomEvents] Sending media stop event shortcut:',
-            'mediaCalendar',
-            'log',
-            currentSettings.value?.customEventMediaStopShortcut,
-          );
-          sendKeyboardShortcut(
-            currentSettings.value?.customEventMediaStopShortcut,
-            'CustomEvents',
-          );
-        }
-
-        if (currentSettings.value?.customEventLastSongShortcut) {
-          // Since the shortcut is set, check if this was the last song in the meeting
-          if (selectedDateObject.value && selectedDayMeetingType.value) {
-            // This is a meeting day and something was playing before
-            log(
-              '🔄 [CustomEvents Verbose] Checking if the last played media item was the last song in the meeting',
-              'mediaCalendar',
-              'log',
-            );
-
-            // Check if the stopped media was a song and if it's the last one
-            const allSongs: MediaItem[] = [];
-            if (selectedDateObject.value.mediaSections) {
-              Object.values(selectedDateObject.value.mediaSections).forEach(
-                (section) => {
-                  if (section.items) {
-                    section.items.forEach((item) => {
-                      if (item.tag?.type === 'song' && !item.hidden) {
-                        allSongs.push(item);
-                      }
-                    });
-                  }
-                },
-              );
-            }
-
-            log(
-              '🔄 [CustomEvents Verbose] Total songs found in meeting:',
-              'mediaCalendar',
-              'log',
-              allSongs.length,
-            );
-
-            // Check if the stopped media was the last song
-            const lastSongUrl =
-              allSongs[allSongs.length - 1]?.fileUrl ||
-              allSongs[allSongs.length - 1]?.streamUrl;
-            const stoppedWasLastSong =
-              allSongs.length > 0 && lastSongUrl === oldMediaPlayingUrl;
-
-            log(
-              '🔄 [CustomEvents Verbose] Last song detection variables:',
-              'mediaCalendar',
-              'log',
-              {
-                lastSongUrl,
-                oldMediaPlayingUrl,
-                stoppedWasLastSong,
-              },
-            );
-
-            if (stoppedWasLastSong) {
-              log(
-                '🔄 [CustomEvents] Sending last song played event shortcut:',
-                'mediaCalendar',
-                'log',
-              );
-              sendKeyboardShortcut(
-                currentSettings.value?.customEventLastSongShortcut,
-                'CustomEvents',
-              );
-            }
-          }
-        }
-      }
-    }
-
-    if (mediaSceneTimeout) {
-      clearTimeout(mediaSceneTimeout);
-      mediaSceneTimeout = null;
-    }
-
-    const getTargetScene = () => {
-      if (newMediaPaused) {
-        return 'camera';
-      } else if (newMediaPlaying) {
-        return 'media';
-      } else {
-        return 'camera';
-      }
-    };
-
-    if (currentSettings.value?.obsEnable) {
-      if (
-        currentSettings.value?.obsPostponeImages &&
-        newMediaPlaying &&
-        !newMediaPaused &&
-        typeof newMediaPlayingUrl === 'string' &&
-        isImage(newMediaPlayingUrl)
-      ) {
-        log(
-          '🔄 [MediaCalendarPage] OBS image postponement active, skipping scene change',
-          'mediaCalendar',
-          'log',
-        );
-        return;
-      }
-
-      const targetScene = getTargetScene();
-      const wasPlayingBefore = !!oldMediaPlayingUrl;
-
-      log(
-        '🔄 [MediaCalendarPage] OBS scene decision:',
-        'mediaCalendar',
-        'log',
-        {
-          newMediaPaused,
-          newMediaPlaying,
-          oldMediaPlayingUrl,
-          targetScene,
-          wasPlayingBefore,
-        },
-      );
-
-      if (targetScene === 'media') {
-        if (wasPlayingBefore) {
-          // If something was playing before, we change the scene immediately
-          log(
-            '🔄 [MediaCalendarPage] Switching to media scene immediately',
-            'mediaCalendar',
-            'log',
-          );
-          sendObsSceneEvent('media');
-        } else {
-          // If nothing was already playing, we wait a bit before changing the scene to prevent seeing the fade effect in OBS
-          log(
-            '🔄 [MediaCalendarPage] Waiting for scene change delay',
-            'mediaCalendar',
-            'log',
-          );
-          mediaSceneTimeout = setTimeout(() => {
-            log(
-              '🔄 [MediaCalendarPage] Executing delayed media scene change',
-              'mediaCalendar',
-              'log',
-            );
-            sendObsSceneEvent('media');
-            mediaSceneTimeout = null;
-          }, changeDelay);
-        }
-      } else {
-        log(
-          '🔄 [MediaCalendarPage] Switching to camera scene',
-          'mediaCalendar',
-          'log',
-        );
-        sendObsSceneEvent('camera');
-      }
-    }
-  },
-);
-
+let mediaSceneTimeout: NodeJS.Timeout | null = null;
 const seenErrors = new Set<string>();
-watch(
-  () =>
-    lookupPeriod.value[currentCongregation.value]
-      ?.filter((d) => d.status === 'error')
-      .map((d) => formatDate(d.date, 'YYYY/MM/DD')),
-  (errorVals) => {
-    errorVals?.forEach((errorVal) => {
-      const daysUntilError = getDateDiff(errorVal, new Date(), 'days');
-      if (
-        seenErrors.has(currentCongregation.value + errorVal) ||
-        daysUntilError > 7
-      )
-        return;
-      createTemporaryNotification({
-        caption: getLocalDate(
-          errorVal,
-          dateLocale.value,
-          currentSettings.value?.localDateFormat,
-        ),
-        group: 'meetingMediaDownloadError',
-        icon: 'mmm-error',
-        message: t('errorDownloadingMeetingMedia'),
-        timeout: 15000,
-        type: 'negative',
-      });
-      seenErrors.add(currentCongregation.value + errorVal);
-    });
-  },
-);
-
-watch(
-  () =>
-    missingMedia.value
-      .map((m) => m.fileUrl)
-      .filter((f) => typeof f === 'string'),
-  (missingFileUrls) => {
-    missingFileUrls?.forEach((missingFileUrl) => {
-      if (seenErrors.has(currentCongregation.value + missingFileUrl)) return;
-      createTemporaryNotification({
-        caption: t('some-media-items-are-missing-explain'),
-        group: 'missingMeetingMedia',
-        icon: 'mmm-file-missing',
-        message: t('some-media-items-are-missing'),
-        timeout: 15000,
-        type: 'warning',
-      });
-      seenErrors.add(currentCongregation.value + missingFileUrl);
-    });
-  },
-);
 
 const { post: postCustomBackground } = useBroadcastChannel<string, string>({
   name: 'custom-background',
@@ -1127,39 +666,6 @@ const checkMemorialDate = async () => {
   }
 };
 
-watch(
-  () => selectedDateObject.value,
-  async (newDateObject) => {
-    checkMemorialDate();
-
-    if (!newDateObject?.date || !newDateObject?.mediaSections) return;
-    const meetingDate = formatDate(newDateObject.date, 'YYYY-MM-DD');
-    const foldersToTouch = new Set<string>();
-
-    const collectFolders = (items: MediaItem[] | undefined) => {
-      items?.forEach((item) => {
-        if (item.fileUrl && isFileUrl(item.fileUrl)) {
-          const filePath = fileUrlToPath(item.fileUrl);
-          const folder = getParentDirectory(filePath);
-          if (folder) foldersToTouch.add(folder);
-        }
-        if (item.children) {
-          collectFolders(item.children);
-        }
-      });
-    };
-
-    Object.values(newDateObject.mediaSections).forEach((section) => {
-      collectFolders(section.items);
-    });
-
-    for (const folder of foldersToTouch) {
-      await updateLastUsedDate(folder, meetingDate);
-    }
-  },
-  { immediate: true },
-);
-
 const goToNextDayWithMedia = (ignoreTodaysDate = false) => {
   try {
     if (
@@ -1418,123 +924,6 @@ const handlePinyinChange = async (newPinyinActive: boolean) => {
     }
   }
 };
-
-onMounted(() => {
-  goToNextDayWithMedia();
-  checkMemorialDate();
-
-  // If no date with media is found, go to today's date
-  if (!selectedDate.value) {
-    selectedDate.value = formatDate(new Date(), 'YYYY/MM/DD');
-  }
-
-  // Restore pinyin state from persisted media (handles migration from non-persisted state)
-  if (
-    currentSettings.value?.enablePinyinSongs &&
-    currentSettings.value?.pinyinSongFolder &&
-    !currentState.pinyinActive
-  ) {
-    const days = lookupPeriod.value?.[currentCongregation.value] ?? [];
-    const hasPinyinMedia = days.some((day) =>
-      day.mediaSections?.some((section) =>
-        section.items?.some(
-          (item) =>
-            item.source === 'dynamic' &&
-            item.fileUrl?.includes('sjjm_s-Pi_CHS'),
-        ),
-      ),
-    );
-    if (hasPinyinMedia) {
-      currentState.pinyinActive = true;
-    }
-  }
-
-  // Detect pinyin state change (settings disabled or toggled while page was unmounted)
-  let pinyinChanged = false;
-  if (!currentSettings.value?.enablePinyinSongs && currentState.pinyinActive) {
-    currentState.pinyinActive = false;
-    pinyinChanged = true;
-  } else if (
-    lastPinyinState !== undefined &&
-    lastPinyinState !== currentState.pinyinActive
-  ) {
-    pinyinChanged = true;
-  }
-  lastPinyinState = currentState.pinyinActive;
-
-  sendObsSceneEvent('camera');
-  if (urlVariables.value.base && urlVariables.value.mediator) {
-    if (pinyinChanged) {
-      // Full pinyin change handling (includes fetchMedia + additional song re-add)
-      handlePinyinChange(currentState.pinyinActive);
-    } else {
-      fetchMedia();
-    }
-  } else {
-    router.push('/settings');
-  }
-  checkCoDate();
-
-  watch(
-    () => urlVariables.value.mediator,
-    () => {
-      fetchMedia();
-    },
-  );
-
-  // Force pinyinActive off when master setting is disabled
-  watch(
-    () => currentSettings.value?.enablePinyinSongs,
-    (newVal) => {
-      if (!newVal) {
-        currentState.pinyinActive = false;
-      }
-    },
-  );
-
-  // Re-fetch media when pinyin active state changes (header toggle or setting change)
-  watch(
-    () => currentState.pinyinActive,
-    async (newVal, oldVal) => {
-      if (oldVal === undefined) return;
-      if (newVal === oldVal) return;
-      lastPinyinState = newVal;
-      await handlePinyinChange(newVal);
-    },
-  );
-});
-
-// Listen for requests to get current media window variables
-const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
-  string,
-  string
->({
-  name: 'get-current-media-window-variables',
-});
-
-watchImmediate(
-  () => getCurrentMediaWindowVariables.value,
-  () => {
-    // Push current values when requested
-    postMediaAction(mediaPlaying.value.action);
-    postSubtitlesUrl(mediaPlaying.value.subtitlesUrl);
-
-    // Only pass the serializable zoom and pan state
-    const serializableZoomPan =
-      mediaPlaying.value.zoom && mediaPlaying.value.pan
-        ? {
-            scale: mediaPlaying.value.zoom,
-            x: mediaPlaying.value.pan.x,
-            y: mediaPlaying.value.pan.y,
-          }
-        : undefined;
-    postZoomPan(serializableZoomPan ?? {});
-
-    postMediaUrl(mediaPlaying.value.url);
-    postCustomDuration(JSON.stringify(customDuration.value));
-    postCustomBackground(mediaWindowCustomBackground.value);
-  },
-);
 
 // Selected media items state
 const selectedMediaItems = ref<string[]>([]); // Array of selected media item IDs
@@ -2010,41 +1399,6 @@ const sortedMediaFileUrls = computed(() =>
     .filter((fileUrl, index, self) => self.indexOf(fileUrl) === index),
 );
 
-watch(
-  () => sortedMediaFileUrls.value,
-  (newSortedMediaFileUrls, oldSortedMediaFileUrls) => {
-    if (
-      selectedDateObject.value?.date &&
-      !arraysAreIdentical(newSortedMediaFileUrls, oldSortedMediaFileUrls)
-    ) {
-      try {
-        addDayToExportQueue(selectedDateObject.value.date);
-      } catch (e) {
-        errorCatcher(e);
-      }
-    }
-  },
-);
-
-const filesDownloaded = computed(() =>
-  Object.values(downloadProgress.value)
-    .filter((p) => p.complete)
-    .map((p) => p.filename),
-);
-
-watch(
-  () => filesDownloaded.value,
-  () => {
-    if (selectedDateObject.value?.date) {
-      try {
-        addDayToExportQueue(selectedDateObject.value.date);
-      } catch (e) {
-        errorCatcher(e);
-      }
-    }
-  },
-);
-
 useEventListener(
   globalThis,
   'shortcutMediaNext',
@@ -2270,6 +1624,12 @@ function isMediaSelectable(mediaItem: MediaItem) {
   return !mediaItem.extractCaption || mediaItem.parentUniqueId;
 }
 
+const filesDownloaded = computed(() =>
+  Object.values(downloadProgress.value)
+    .filter((p) => p.complete)
+    .map((p) => p.filename),
+);
+
 const updateMediaSectionBgColor = ({
   bgColor,
   uniqueId,
@@ -2340,22 +1700,6 @@ const shouldShowBannerColumn = computed(
     someItemsHiddenForSelectedDate.value ||
     duplicateSongsForWeMeeting.value ||
     showEmptyState.value,
-);
-
-// Watch for banner column changes and manage visibility for transitions
-watch(
-  shouldShowBannerColumn,
-  (shouldShow) => {
-    if (shouldShow) {
-      bannerColumnVisible.value = true;
-    } else {
-      // Delay hiding to allow transition to complete
-      setTimeout(() => {
-        bannerColumnVisible.value = false;
-      }, 300); // Match transition duration
-    }
-  },
-  { immediate: true },
 );
 
 const mediaLists = computed(() => {
@@ -2672,6 +2016,22 @@ function extendSelection(direction: 'down' | 'up') {
   });
 }
 
+// Watch for banner column changes and manage visibility for transitions
+watch(
+  shouldShowBannerColumn,
+  (shouldShow) => {
+    if (shouldShow) {
+      bannerColumnVisible.value = true;
+    } else {
+      // Delay hiding to allow transition to complete
+      setTimeout(() => {
+        bannerColumnVisible.value = false;
+      }, 300); // Match transition duration
+    }
+  },
+  { immediate: true },
+);
+
 watch(
   () => [countItemsHiddenForSelectedDate.value, countItemsForSelectedDate],
   () => {
@@ -2701,6 +2061,646 @@ watchImmediate(
         jwIconKeyword: 'pt',
         label: t('pt'),
       });
+    }
+  },
+);
+
+watch(
+  () => [jwpubImportDb.value, jwpubImportDocuments.value],
+  async ([newJwpubImportDb, newJwpubImportDocuments]) => {
+    if (!!newJwpubImportDb || newJwpubImportDocuments?.length) {
+      showFileImport.value = true;
+    }
+  },
+);
+
+// Reset progress tracking when file import dialog closes
+watch(
+  () => showFileImport.value,
+  (isOpen) => {
+    if (!isOpen) {
+      // Reset progress tracking when dialog closes
+      totalFiles.value = 0;
+      currentFile.value = 0;
+    }
+  },
+);
+
+watch(
+  () => mediaPlaying.value.action,
+  (newAction, oldAction) => {
+    log(
+      'mediaPlaying.value.action:',
+      'mediaCalendar',
+      'log',
+      oldAction,
+      '->',
+      newAction,
+    );
+
+    if (newAction !== oldAction) postMediaAction(newAction);
+
+    const isPlay = newAction === 'play';
+    const isPause = newAction === 'pause';
+    const isSignLang = currentLangObject.value?.isSignLanguage;
+
+    // Always show media window when playing
+    if (isPlay) toggleMediaWindowVisibility(true);
+
+    // Handle sign language special cases
+    if (isSignLang) {
+      if (isPlay || isPause) return toggleMediaWindowVisibility(true);
+
+      const cameraId = appSettingsStore.displayCameraId;
+      return cameraId
+        ? postCameraStream(cameraId)
+        : toggleMediaWindowVisibility(false);
+    }
+  },
+);
+
+watch(
+  () => mediaPlaying.value.subtitlesUrl,
+  (newSubtitlesUrl, oldSubtitlesUrl) => {
+    if (newSubtitlesUrl !== oldSubtitlesUrl) postSubtitlesUrl(newSubtitlesUrl);
+  },
+);
+
+watch(
+  () => [mediaPlaying.value.url, customDuration.value],
+  ([newUrl, newCustomDuration], [oldUrl, oldCustomDuration]) => {
+    log(
+      '🔄 [watch] mediaPlaying.value.url',
+      'mediaCalendar',
+      'log',
+      newUrl,
+      oldUrl,
+    );
+
+    if (newUrl !== oldUrl) {
+      postMediaUrl(newUrl as string);
+    }
+
+    if (
+      JSON.stringify(newCustomDuration) !== JSON.stringify(oldCustomDuration)
+    ) {
+      postCustomDuration(JSON.stringify(newCustomDuration));
+    }
+  },
+);
+
+watch(
+  () => [mediaPlaying.value.zoom, mediaPlaying.value.pan],
+  (newValues, oldValues) => {
+    try {
+      const [newZoom, newPan] = newValues as [
+        number,
+        Partial<{ x: number; y: number }>,
+      ];
+      const [oldZoom, oldPan] = oldValues as [
+        number,
+        Partial<{ x: number; y: number }>,
+      ];
+      // Only pass the serializable zoomPan state (scale, x, y)
+      const serializableZoomPan =
+        newZoom && newPan
+          ? {
+              scale: newZoom,
+              x: newPan.x,
+              y: newPan.y,
+            }
+          : undefined;
+
+      const serializableOldZoomPan =
+        oldZoom && oldPan
+          ? {
+              scale: oldZoom,
+              x: oldPan.x,
+              y: oldPan.y,
+            }
+          : undefined;
+
+      if (
+        JSON.stringify(serializableZoomPan) !==
+        JSON.stringify(serializableOldZoomPan)
+      ) {
+        postZoomPan(serializableZoomPan ?? {});
+      }
+    } catch (error) {
+      errorCatcher(error);
+    }
+  },
+  { deep: true },
+);
+
+watch(
+  () => lastEndTimestamp.value,
+  (newLastEndTimestamp) => {
+    log(
+      '🔄 [onMediaEnded] Media state data:',
+      'mediaCalendar',
+      'log',
+      newLastEndTimestamp,
+    );
+    if (newLastEndTimestamp) {
+      // Handle section repeat logic first
+      const repeatHandled = handleMediaEnded();
+      log(
+        '🔄 [onMediaEnded] Repeat handled:',
+        'mediaCalendar',
+        'log',
+        repeatHandled,
+      );
+      if (repeatHandled) return;
+
+      triggerZoomScreenShare(false);
+
+      mediaPlaying.value = {
+        action: '',
+        currentPosition: 0,
+        pan: {
+          x: 0,
+          y: 0,
+        },
+        seekTo: 0,
+        subtitlesUrl: '',
+        uniqueId: '',
+        url: '',
+        zoom: 1,
+      };
+
+      // Clear custom duration when media ends
+      postCustomDuration(undefined);
+
+      nextTick(() => {
+        globalThis.dispatchEvent(
+          new CustomEvent<{ scrollToSelectedMedia: boolean }>(
+            'shortcutMediaNext',
+            {
+              detail: {
+                scrollToSelectedMedia: false,
+              },
+            },
+          ),
+        );
+      });
+    }
+  },
+);
+
+watch(
+  () => currentTimeData.value,
+  (newCurrentTime) => {
+    nextTick(() => {
+      mediaPlaying.value.currentPosition = newCurrentTime;
+    });
+  },
+);
+
+watch(
+  () => [mediaIsPlaying.value, mediaPaused.value, mediaPlaying.value.url],
+  (
+    [newMediaPlaying, newMediaPaused, newMediaPlayingUrl],
+    [, , oldMediaPlayingUrl],
+  ) => {
+    log(
+      '🔄 [MediaCalendarPage] Media state watcher triggered:',
+      'mediaCalendar',
+      'log',
+      {
+        enableCustomEvents: currentSettings.value?.enableCustomEvents,
+        newMediaPaused,
+        newMediaPlaying,
+        newMediaPlayingUrl,
+        oldMediaPlayingUrl,
+      },
+    );
+
+    // Custom integration events
+    if (currentSettings.value?.enableCustomEvents) {
+      log('🔄 [CustomEvents] Custom events enabled', 'mediaCalendar', 'log');
+
+      if (newMediaPlaying && !oldMediaPlayingUrl) {
+        // Media started playing (from nothing to something)
+        if (currentSettings.value?.customEventMediaPlayShortcut) {
+          log(
+            '🔄 [CustomEvents] Sending media play event shortcut:',
+            'mediaCalendar',
+            'log',
+            currentSettings.value?.customEventMediaPlayShortcut,
+          );
+          sendKeyboardShortcut(
+            currentSettings.value?.customEventMediaPlayShortcut,
+            'CustomEvents',
+          );
+        }
+      } else if (newMediaPaused && newMediaPlayingUrl) {
+        // Media paused
+        if (currentSettings.value?.customEventMediaPauseShortcut) {
+          log(
+            '🔄 [CustomEvents] Sending media pause event shortcut:',
+            'mediaCalendar',
+            'log',
+            currentSettings.value?.customEventMediaPauseShortcut,
+          );
+          sendKeyboardShortcut(
+            currentSettings.value?.customEventMediaPauseShortcut,
+            'CustomEvents',
+          );
+        }
+      } else if (!newMediaPlaying && oldMediaPlayingUrl) {
+        // Media stopped (from something to nothing)
+        if (currentSettings.value?.customEventMediaStopShortcut) {
+          log(
+            '🔄 [CustomEvents] Sending media stop event shortcut:',
+            'mediaCalendar',
+            'log',
+            currentSettings.value?.customEventMediaStopShortcut,
+          );
+          sendKeyboardShortcut(
+            currentSettings.value?.customEventMediaStopShortcut,
+            'CustomEvents',
+          );
+        }
+
+        if (currentSettings.value?.customEventLastSongShortcut) {
+          // Since the shortcut is set, check if this was the last song in the meeting
+          if (selectedDateObject.value && selectedDayMeetingType.value) {
+            // This is a meeting day and something was playing before
+            log(
+              '🔄 [CustomEvents Verbose] Checking if the last played media item was the last song in the meeting',
+              'mediaCalendar',
+              'log',
+            );
+
+            // Check if the stopped media was a song and if it's the last one
+            const allSongs: MediaItem[] = [];
+            if (selectedDateObject.value.mediaSections) {
+              Object.values(selectedDateObject.value.mediaSections).forEach(
+                (section) => {
+                  if (section.items) {
+                    section.items.forEach((item) => {
+                      if (item.tag?.type === 'song' && !item.hidden) {
+                        allSongs.push(item);
+                      }
+                    });
+                  }
+                },
+              );
+            }
+
+            log(
+              '🔄 [CustomEvents Verbose] Total songs found in meeting:',
+              'mediaCalendar',
+              'log',
+              allSongs.length,
+            );
+
+            // Check if the stopped media was the last song
+            const lastSongUrl =
+              allSongs[allSongs.length - 1]?.fileUrl ||
+              allSongs[allSongs.length - 1]?.streamUrl;
+            const stoppedWasLastSong =
+              allSongs.length > 0 && lastSongUrl === oldMediaPlayingUrl;
+
+            log(
+              '🔄 [CustomEvents Verbose] Last song detection variables:',
+              'mediaCalendar',
+              'log',
+              {
+                lastSongUrl,
+                oldMediaPlayingUrl,
+                stoppedWasLastSong,
+              },
+            );
+
+            if (stoppedWasLastSong) {
+              log(
+                '🔄 [CustomEvents] Sending last song played event shortcut:',
+                'mediaCalendar',
+                'log',
+              );
+              sendKeyboardShortcut(
+                currentSettings.value?.customEventLastSongShortcut,
+                'CustomEvents',
+              );
+            }
+          }
+        }
+      }
+    }
+
+    if (mediaSceneTimeout) {
+      clearTimeout(mediaSceneTimeout);
+      mediaSceneTimeout = null;
+    }
+
+    const getTargetScene = () => {
+      if (newMediaPaused) {
+        return 'camera';
+      } else if (newMediaPlaying) {
+        return 'media';
+      } else {
+        return 'camera';
+      }
+    };
+
+    if (currentSettings.value?.obsEnable) {
+      if (
+        currentSettings.value?.obsPostponeImages &&
+        newMediaPlaying &&
+        !newMediaPaused &&
+        typeof newMediaPlayingUrl === 'string' &&
+        isImage(newMediaPlayingUrl)
+      ) {
+        log(
+          '🔄 [MediaCalendarPage] OBS image postponement active, skipping scene change',
+          'mediaCalendar',
+          'log',
+        );
+        return;
+      }
+
+      const targetScene = getTargetScene();
+      const wasPlayingBefore = !!oldMediaPlayingUrl;
+
+      log(
+        '🔄 [MediaCalendarPage] OBS scene decision:',
+        'mediaCalendar',
+        'log',
+        {
+          newMediaPaused,
+          newMediaPlaying,
+          oldMediaPlayingUrl,
+          targetScene,
+          wasPlayingBefore,
+        },
+      );
+
+      if (targetScene === 'media') {
+        if (wasPlayingBefore) {
+          // If something was playing before, we change the scene immediately
+          log(
+            '🔄 [MediaCalendarPage] Switching to media scene immediately',
+            'mediaCalendar',
+            'log',
+          );
+          sendObsSceneEvent('media');
+        } else {
+          // If nothing was already playing, we wait a bit before changing the scene to prevent seeing the fade effect in OBS
+          log(
+            '🔄 [MediaCalendarPage] Waiting for scene change delay',
+            'mediaCalendar',
+            'log',
+          );
+          mediaSceneTimeout = setTimeout(() => {
+            log(
+              '🔄 [MediaCalendarPage] Executing delayed media scene change',
+              'mediaCalendar',
+              'log',
+            );
+            sendObsSceneEvent('media');
+            mediaSceneTimeout = null;
+          }, changeDelay);
+        }
+      } else {
+        log(
+          '🔄 [MediaCalendarPage] Switching to camera scene',
+          'mediaCalendar',
+          'log',
+        );
+        sendObsSceneEvent('camera');
+      }
+    }
+  },
+);
+
+watch(
+  () =>
+    lookupPeriod.value[currentCongregation.value]
+      ?.filter((d) => d.status === 'error')
+      .map((d) => formatDate(d.date, 'YYYY/MM/DD')),
+  (errorVals) => {
+    errorVals?.forEach((errorVal) => {
+      const daysUntilError = getDateDiff(errorVal, new Date(), 'days');
+      if (
+        seenErrors.has(currentCongregation.value + errorVal) ||
+        daysUntilError > 7
+      )
+        return;
+      createTemporaryNotification({
+        caption: getLocalDate(
+          errorVal,
+          dateLocale.value,
+          currentSettings.value?.localDateFormat,
+        ),
+        group: 'meetingMediaDownloadError',
+        icon: 'mmm-error',
+        message: t('errorDownloadingMeetingMedia'),
+        timeout: 15000,
+        type: 'negative',
+      });
+      seenErrors.add(currentCongregation.value + errorVal);
+    });
+  },
+);
+
+watch(
+  () =>
+    missingMedia.value
+      .map((m) => m.fileUrl)
+      .filter((f) => typeof f === 'string'),
+  (missingFileUrls) => {
+    missingFileUrls?.forEach((missingFileUrl) => {
+      if (seenErrors.has(currentCongregation.value + missingFileUrl)) return;
+      createTemporaryNotification({
+        caption: t('some-media-items-are-missing-explain'),
+        group: 'missingMeetingMedia',
+        icon: 'mmm-file-missing',
+        message: t('some-media-items-are-missing'),
+        timeout: 15000,
+        type: 'warning',
+      });
+      seenErrors.add(currentCongregation.value + missingFileUrl);
+    });
+  },
+);
+
+watch(
+  () => selectedDateObject.value,
+  async (newDateObject) => {
+    checkMemorialDate();
+
+    if (!newDateObject?.date || !newDateObject?.mediaSections) return;
+    const meetingDate = formatDate(newDateObject.date, 'YYYY-MM-DD');
+    const foldersToTouch = new Set<string>();
+
+    const collectFolders = (items: MediaItem[] | undefined) => {
+      items?.forEach((item) => {
+        if (item.fileUrl && isFileUrl(item.fileUrl)) {
+          const filePath = fileUrlToPath(item.fileUrl);
+          const folder = getParentDirectory(filePath);
+          if (folder) foldersToTouch.add(folder);
+        }
+        if (item.children) {
+          collectFolders(item.children);
+        }
+      });
+    };
+
+    Object.values(newDateObject.mediaSections).forEach((section) => {
+      collectFolders(section.items);
+    });
+
+    for (const folder of foldersToTouch) {
+      await updateLastUsedDate(folder, meetingDate);
+    }
+  },
+  { immediate: true },
+);
+
+// Listen for requests to get current media window variables
+const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
+  string,
+  string
+>({
+  name: 'get-current-media-window-variables',
+});
+
+onMounted(() => {
+  goToNextDayWithMedia();
+  checkMemorialDate();
+
+  // If no date with media is found, go to today's date
+  if (!selectedDate.value) {
+    selectedDate.value = formatDate(new Date(), 'YYYY/MM/DD');
+  }
+
+  // Restore pinyin state from persisted media (handles migration from non-persisted state)
+  if (
+    currentSettings.value?.enablePinyinSongs &&
+    currentSettings.value?.pinyinSongFolder &&
+    !currentState.pinyinActive
+  ) {
+    const days = lookupPeriod.value?.[currentCongregation.value] ?? [];
+    const hasPinyinMedia = days.some((day) =>
+      day.mediaSections?.some((section) =>
+        section.items?.some(
+          (item) =>
+            item.source === 'dynamic' &&
+            item.fileUrl?.includes('sjjm_s-Pi_CHS'),
+        ),
+      ),
+    );
+    if (hasPinyinMedia) {
+      currentState.pinyinActive = true;
+    }
+  }
+
+  // Detect pinyin state change (settings disabled or toggled while page was unmounted)
+  let pinyinChanged = false;
+  if (!currentSettings.value?.enablePinyinSongs && currentState.pinyinActive) {
+    currentState.pinyinActive = false;
+    pinyinChanged = true;
+  } else if (
+    lastPinyinState !== undefined &&
+    lastPinyinState !== currentState.pinyinActive
+  ) {
+    pinyinChanged = true;
+  }
+  lastPinyinState = currentState.pinyinActive;
+
+  sendObsSceneEvent('camera');
+  if (urlVariables.value.base && urlVariables.value.mediator) {
+    if (pinyinChanged) {
+      // Full pinyin change handling (includes fetchMedia + additional song re-add)
+      handlePinyinChange(currentState.pinyinActive);
+    } else {
+      fetchMedia();
+    }
+  } else {
+    router.push('/settings');
+  }
+  checkCoDate();
+
+  watch(
+    () => urlVariables.value.mediator,
+    () => {
+      fetchMedia();
+    },
+  );
+
+  // Force pinyinActive off when master setting is disabled
+  watch(
+    () => currentSettings.value?.enablePinyinSongs,
+    (newVal) => {
+      if (!newVal) {
+        currentState.pinyinActive = false;
+      }
+    },
+  );
+
+  // Re-fetch media when pinyin active state changes (header toggle or setting change)
+  watch(
+    () => currentState.pinyinActive,
+    async (newVal, oldVal) => {
+      if (oldVal === undefined) return;
+      if (newVal === oldVal) return;
+      lastPinyinState = newVal;
+      await handlePinyinChange(newVal);
+    },
+  );
+});
+
+watchImmediate(
+  () => getCurrentMediaWindowVariables.value,
+  () => {
+    // Push current values when requested
+    postMediaAction(mediaPlaying.value.action);
+    postSubtitlesUrl(mediaPlaying.value.subtitlesUrl);
+
+    // Only pass the serializable zoom and pan state
+    const serializableZoomPan =
+      mediaPlaying.value.zoom && mediaPlaying.value.pan
+        ? {
+            scale: mediaPlaying.value.zoom,
+            x: mediaPlaying.value.pan.x,
+            y: mediaPlaying.value.pan.y,
+          }
+        : undefined;
+    postZoomPan(serializableZoomPan ?? {});
+
+    postMediaUrl(mediaPlaying.value.url);
+    postCustomDuration(JSON.stringify(customDuration.value));
+    postCustomBackground(mediaWindowCustomBackground.value);
+  },
+);
+
+watch(
+  () => sortedMediaFileUrls.value,
+  (newSortedMediaFileUrls, oldSortedMediaFileUrls) => {
+    if (
+      selectedDateObject.value?.date &&
+      !arraysAreIdentical(newSortedMediaFileUrls, oldSortedMediaFileUrls)
+    ) {
+      try {
+        addDayToExportQueue(selectedDateObject.value.date);
+      } catch (e) {
+        errorCatcher(e);
+      }
+    }
+  },
+);
+
+watch(
+  () => filesDownloaded.value,
+  () => {
+    if (selectedDateObject.value?.date) {
+      try {
+        addDayToExportQueue(selectedDateObject.value.date);
+      } catch (e) {
+        errorCatcher(e);
+      }
     }
   },
 );

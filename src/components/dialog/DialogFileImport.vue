@@ -200,35 +200,6 @@ const percentValue = computed(() => {
     : 0;
 });
 
-// Watch for dialog closing to reset loading states and data
-watch(
-  () => dialogValue.value,
-  (isOpen) => {
-    if (!isOpen) {
-      // Reset loading states and data when dialog closes
-      jwpubLoading.value = false;
-      // Don't clear jwpubDb here as it might be needed by the media picker
-      jwpubDocuments.value = [];
-    }
-  },
-);
-
-// Watch for processing completion to auto-close dialog
-watch(
-  () => props.totalFiles || (!!jwpubDb.value && jwpubLoading.value),
-  (isProcessing, wasProcessing) => {
-    // Only close if we were processing and now we're not
-    if (wasProcessing && !isProcessing && dialogValue.value) {
-      log(
-        '🎯 File processing complete, auto-closing dialog',
-        'fileImport',
-        'log',
-      );
-      dialogValue.value = false;
-    }
-  },
-);
-
 // Listen for JW Playlist mode activation
 useEventListener(
   globalThis,
@@ -342,4 +313,33 @@ const handleCancel = () => {
   dialogValue.value = false;
   emit('cancel');
 };
+
+// Watch for dialog closing to reset loading states and data
+watch(
+  () => dialogValue.value,
+  (isOpen) => {
+    if (!isOpen) {
+      // Reset loading states and data when dialog closes
+      jwpubLoading.value = false;
+      // Don't clear jwpubDb here as it might be needed by the media picker
+      jwpubDocuments.value = [];
+    }
+  },
+);
+
+// Watch for processing completion to auto-close dialog
+watch(
+  () => props.totalFiles || (!!jwpubDb.value && jwpubLoading.value),
+  (isProcessing, wasProcessing) => {
+    // Only close if we were processing and now we're not
+    if (wasProcessing && !isProcessing && dialogValue.value) {
+      log(
+        '🎯 File processing complete, auto-closing dialog',
+        'fileImport',
+        'log',
+      );
+      dialogValue.value = false;
+    }
+  },
+);
 </script>
