@@ -2016,6 +2016,14 @@ function extendSelection(direction: 'down' | 'up') {
   });
 }
 
+// Listen for requests to get current media window variables
+const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
+  string,
+  string
+>({
+  name: 'get-current-media-window-variables',
+});
+
 // Watch for banner column changes and manage visibility for transitions
 watch(
   shouldShowBannerColumn,
@@ -2558,14 +2566,6 @@ watch(
   },
   { immediate: true },
 );
-
-// Listen for requests to get current media window variables
-const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
-  string,
-  string
->({
-  name: 'get-current-media-window-variables',
-});
 
 onMounted(() => {
   goToNextDayWithMedia();
