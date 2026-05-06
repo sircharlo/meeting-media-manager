@@ -316,12 +316,12 @@ export const fetchPubMediaLinks = async (
 ): Promise<null | Publication> => {
   try {
     const videoExtensions: (keyof PublicationFiles)[] = ['MP4', 'M4V'];
-    const shouldUsePub = publication.pub && publication.pub !== 'nwtsty';
+    const docid = publication.docid?.toString() || '';
+    const shouldUseDocId = !!docid;
+    const shouldUsePub = !!publication.pub && !shouldUseDocId;
 
     const pubToUse = shouldUsePub ? publication.pub || '' : '';
-    const docidToUse = shouldUsePub
-      ? ''
-      : (publication.docid?.toString() ?? '');
+    const docidToUse = shouldUseDocId ? docid : '';
     const params = {
       alllangs: '0',
       ...(publication.booknum
