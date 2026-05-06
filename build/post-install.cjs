@@ -3,7 +3,7 @@
 const { execSync } = require('node:child_process');
 const { existsSync } = require('node:fs');
 
-function main() {
+const main = () => {
   // Skip in CI environments or if no .git directory
   if (
     process.env.CI ||
@@ -25,9 +25,9 @@ function main() {
   runCommand('yarn electron-rebuild', 'Electron rebuild');
 
   console.log('✓ Post-install completed successfully');
-}
+};
 
-function runCommand(command, description) {
+const runCommand = (command, description) => {
   try {
     console.log(`Running: ${description}`);
     execSync(command, { cwd: process.cwd(), stdio: 'inherit' });
@@ -36,6 +36,6 @@ function runCommand(command, description) {
     console.warn(`⚠ ${description} failed:`, error.message);
     // Don't throw - continue with other commands
   }
-}
+};
 
 main();

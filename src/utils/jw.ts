@@ -62,10 +62,10 @@ const getMediaResolution = (m: MediaItemsMediatorFile | MediaLink) => {
  * @param maxRes The maximum resolution to choose
  * @returns The best resolution media item
  */
-export function findBestResolution(
+export const findBestResolution = (
   mediaLinks: MediaItemsMediatorFile[] | MediaLink[] | undefined,
   maxRes: string | undefined,
-) {
+) => {
   try {
     if (!mediaLinks?.length) return null;
     if (mediaLinks.length === 1) return mediaLinks[0];
@@ -97,7 +97,7 @@ export function findBestResolution(
     errorCatcher(e);
     return mediaLinks?.length ? mediaLinks.at(-1) : null;
   }
-}
+};
 
 /**
  * Find the best resolutions for a media item list
@@ -105,10 +105,10 @@ export function findBestResolution(
  * @param maxRes The maximum resolution to choose
  * @returns Array of best resolution media items for each track, sorted by track number
  */
-export function findBestResolutions(
+export const findBestResolutions = (
   mediaLinks: MediaLink[] | undefined,
   maxRes: string | undefined,
-): MediaLink[] {
+): MediaLink[] => {
   try {
     if (!mediaLinks?.length) return [];
 
@@ -145,16 +145,16 @@ export function findBestResolutions(
     errorCatcher(e);
     return mediaLinks || [];
   }
-}
+};
 
 /**
  * Check if the item is a MediaLink
  * @param item The item to check
  * @returns Whether the item is a MediaLink
  */
-export function isMediaLink(
+export const isMediaLink = (
   item?: MediaItemsMediatorFile | MediaLink | null,
-): item is MediaLink {
+): item is MediaLink => {
   if (!item) return false;
   return !('progressiveDownloadURL' in item);
-}
+};

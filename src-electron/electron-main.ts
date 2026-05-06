@@ -55,7 +55,7 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 initSentry({
-  beforeSend(event) {
+  beforeSend: (event) => {
     try {
       if (quitStatus.isAppQuitting) {
         return null;
@@ -97,7 +97,7 @@ initSentry({
 
 const gotTheLock = app.requestSingleInstanceLock();
 
-function createApplicationMenu() {
+const createApplicationMenu = () => {
   const appMenu: MenuItem | MenuItemConstructorOptions = { role: 'appMenu' };
   const template: (MenuItem | MenuItemConstructorOptions)[] = [
     ...(PLATFORM === 'darwin' ? [appMenu] : []),
@@ -148,7 +148,81 @@ function createApplicationMenu() {
   ];
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
-}
+};
+
+const getCrashCountFilePath = () =>
+  join(app.getPath('userData'), 'crash-count.json');
+
+const getHwAccelFilePath = () =>
+  join(app.getPath('userData'), 'hw-accel-disabled.json');
+
+const isHwAccelDisabled = () => {
+  try {
+    const filePath = getHwAccelFilePath();
+    if (pathExistsSync(filePath)) {
+      const data = readJsonSync(filePath);
+      return data.disabled === true;
+    }
+  } catch (error) {
+    log('Failed to read hw accel setting:', 'electron', 'warn', error);
+  }
+  return false;
+};
+
+const resetCrashCount = () => {
+  try {
+    writeJsonSync(getCrashCountFilePath(), { count: 0 });
+    log('Crash count reset to 0', 'electron', 'log');
+  } catch (error) {
+    log('Failed to reset crash count:', 'electron', 'warn', error);
+  }
+};
+
+const setHwAccelDisabled = (disabled: boolean, temporary = false) => {
+  try {
+    const filePath = getHwAccelFilePath();
+    writeJsonSync(filePath, { disabled, temporary });
+    if (disabled) {
+      // Notify user that a restart is recommended
+      if (
+        mainWindowInfo.mainWindow &&
+        !mainWindowInfo.mainWindow.isDestroyed()
+      ) {
+        mainWindowInfo.mainWindow.webContents.send('gpu-crash-detected');
+      }
+    }
+  } catch (error) {
+    log('Failed to write hw accel setting:', 'electron', 'warn', error);
+  }
+};
+
+const incrementCrashCount = () => {
+  try {
+    const count = getCrashCount() + 1;
+    writeJsonSync(getCrashCountFilePath(), { count });
+    return count;
+  } catch (error) {
+    log('Failed to write crash count:', 'electron', 'warn', error);
+    return 0;
+  }
+};
+
+const createWindowAndCaptureErrors = () => {
+  app.whenReady().then(createMainWindow).catch(captureElectronError);
+};
+
+const getCrashCount = () => {
+  try {
+    const filePath = getCrashCountFilePath();
+    if (pathExistsSync(filePath)) {
+      const data = readJsonSync(filePath);
+      return typeof data.count === 'number' ? data.count : 0;
+    }
+  } catch (error) {
+    log('Failed to read crash count:', 'electron', 'warn', error);
+  }
+  return 0;
+};
 
 if (gotTheLock) {
   // Check for crash loop on startup
@@ -217,10 +291,10 @@ if (gotTheLock) {
 
   let videoCaptureCrashCount = 0;
 
-  function handleProcessCrash(
+  const handleProcessCrash = (
     type: string,
     details: Electron.Details | Electron.RenderProcessGoneDetails,
-  ) {
+  ) => {
     const isFatalRendererCrash =
       type === 'Renderer' &&
       'reason' in details &&
@@ -284,7 +358,7 @@ if (gotTheLock) {
         }
       }
     }
-  }
+  };
 
   // Listen for child process crashes, especially GPU
   app.on('child-process-gone', (_, details) => {
@@ -348,89 +422,13 @@ process.stderr.on('error', (err: NodeJS.ErrnoException) => {
   });
 });
 
-function createWindowAndCaptureErrors() {
-  app.whenReady().then(createMainWindow).catch(captureElectronError);
-}
-
-function getCrashCount() {
-  try {
-    const filePath = getCrashCountFilePath();
-    if (pathExistsSync(filePath)) {
-      const data = readJsonSync(filePath);
-      return typeof data.count === 'number' ? data.count : 0;
-    }
-  } catch (error) {
-    log('Failed to read crash count:', 'electron', 'warn', error);
-  }
-  return 0;
-}
-
-function getCrashCountFilePath() {
-  return join(app.getPath('userData'), 'crash-count.json');
-}
-
-function getHwAccelFilePath() {
-  return join(app.getPath('userData'), 'hw-accel-disabled.json');
-}
-
-function incrementCrashCount() {
-  try {
-    const count = getCrashCount() + 1;
-    writeJsonSync(getCrashCountFilePath(), { count });
-    return count;
-  } catch (error) {
-    log('Failed to write crash count:', 'electron', 'warn', error);
-    return 0;
-  }
-}
-
-function isHwAccelDisabled() {
-  try {
-    const filePath = getHwAccelFilePath();
-    if (pathExistsSync(filePath)) {
-      const data = readJsonSync(filePath);
-      return data.disabled === true;
-    }
-  } catch (error) {
-    log('Failed to read hw accel setting:', 'electron', 'warn', error);
-  }
-  return false;
-}
-
-function resetCrashCount() {
-  try {
-    writeJsonSync(getCrashCountFilePath(), { count: 0 });
-    log('Crash count reset to 0', 'electron', 'log');
-  } catch (error) {
-    log('Failed to reset crash count:', 'electron', 'warn', error);
-  }
-}
-
-function setHwAccelDisabled(disabled: boolean, temporary = false) {
-  try {
-    const filePath = getHwAccelFilePath();
-    writeJsonSync(filePath, { disabled, temporary });
-    if (disabled) {
-      // Notify user that a restart is recommended
-      if (
-        mainWindowInfo.mainWindow &&
-        !mainWindowInfo.mainWindow.isDestroyed()
-      ) {
-        mainWindowInfo.mainWindow.webContents.send('gpu-crash-detected');
-      }
-    }
-  } catch (error) {
-    log('Failed to write hw accel setting:', 'electron', 'warn', error);
-  }
-}
-
 // IPC handler to update hardware acceleration setting from renderer
 ipcMain.handle('set-hardware-acceleration', (_, disabled: boolean) => {
   setHwAccelDisabled(disabled, false);
 });
 
 // Check if hardware acceleration was temporarily disabled due to a crash
-function wasHwAccelTemporarilyDisabled() {
+const wasHwAccelTemporarilyDisabled = () => {
   try {
     const filePath = getHwAccelFilePath();
     if (pathExistsSync(filePath)) {
@@ -441,7 +439,7 @@ function wasHwAccelTemporarilyDisabled() {
     log('Failed to read hw accel setting:', 'electron', 'warn', error);
   }
   return false;
-}
+};
 
 if (wasHwAccelTemporarilyDisabled()) {
   setHwAccelDisabled(false);

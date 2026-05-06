@@ -205,7 +205,7 @@ const { dragDropContainer, isDragging, sortableItems } = useMediaDragAndDrop(
  * Handles saving the order of watched media items to the filesystem.
  * This is only applicable when some items in the section are from the 'watched' source.
  */
-function handleWatchedMediaPersistence(items: MediaItemType[]) {
+const handleWatchedMediaPersistence = (items: MediaItemType[]) => {
   if (!items.some((item) => item.source === 'watched')) return;
 
   try {
@@ -249,12 +249,12 @@ function handleWatchedMediaPersistence(items: MediaItemType[]) {
       },
     });
   }
-}
+};
 
 /**
  * Updates the section data in the Pinia store to match the sorted order.
  */
-function updateStoreMediaOrder(items: MediaItemType[]) {
+const updateStoreMediaOrder = (items: MediaItemType[]) => {
   if (!selectedDateObject.value || !props.mediaList.config) return;
 
   const sectionIndex = selectedDateObject.value.mediaSections.findIndex(
@@ -267,7 +267,7 @@ function updateStoreMediaOrder(items: MediaItemType[]) {
   ) {
     selectedDateObject.value.mediaSections[sectionIndex].items = items;
   }
-}
+};
 
 // Efficient watcher to ensure changes are persisted to the store
 // Only triggers when the actual array content changes, not on every re-render

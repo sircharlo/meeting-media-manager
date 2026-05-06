@@ -59,30 +59,28 @@ export const fetchRaw = async (
 
   return response;
 };
-function buildUrl(url: string, params?: URLSearchParams) {
+const buildUrl = (url: string, params?: URLSearchParams) => {
   if (!params?.toString()) return url;
   return `${url}?${params.toString()}`;
-}
+};
 
-function isIgnored400ForPub(params?: URLSearchParams) {
+const isIgnored400ForPub = (params?: URLSearchParams) => {
   const pub = params?.get('pub');
   if (!pub) return false;
   return ['S', 'CO'].some((p) => pub.startsWith(`${p}-`));
-}
+};
 
-function isIgnoredStatus(status: number) {
-  return [403, 404, 429, 502].includes(status);
-}
+const isIgnoredStatus = (status: number) =>
+  [403, 404, 429, 502].includes(status);
 
-function isOkResponse(response: Response) {
-  return response.ok || response.status === 304;
-}
+const isOkResponse = (response: Response) =>
+  response.ok || response.status === 304;
 
-function reportFetchJsonCatchError(
+const reportFetchJsonCatchError = (
   e: unknown,
   url: string,
   params?: URLSearchParams,
-) {
+) => {
   errorCatcher(e, {
     contexts: {
       fn: {
@@ -94,13 +92,13 @@ function reportFetchJsonCatchError(
       },
     },
   });
-}
+};
 
-function reportFetchJsonMainError(
+const reportFetchJsonMainError = (
   response: Response,
   url: string,
   params?: URLSearchParams,
-) {
+) => {
   errorCatcher(new Error('Failed to fetch json!'), {
     contexts: {
       fn: {
@@ -115,18 +113,18 @@ function reportFetchJsonMainError(
       },
     },
   });
-}
+};
 
-async function shouldReportCaughtError(online: boolean) {
+const shouldReportCaughtError = async (online: boolean) => {
   if (!online) return false;
   return !(await globalThis.electronApi?.isDownloadErrorExpected());
-}
+};
 
-function shouldReportStatus(response: Response, params?: URLSearchParams) {
+const shouldReportStatus = (response: Response, params?: URLSearchParams) => {
   if (isIgnoredStatus(response.status)) return false;
   if (response.status === 400 && isIgnored400ForPub(params)) return false;
   return true;
-}
+};
 
 // ----------------------
 

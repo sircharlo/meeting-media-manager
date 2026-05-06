@@ -16,7 +16,7 @@ declare const data: Data;
 export { data };
 
 export default defineLoader({
-  async load(): Promise<Data> {
+  load: async (): Promise<Data> => {
     const { publishedAt, tag: latestVersion } = await fetchLatestRelease();
     const downloadUrl = (arch: string, ext: string) =>
       `https://github.com/sircharlo/meeting-media-manager/releases/download/${latestVersion}/meeting-media-manager-${latestVersion.slice(1)}-${arch}.${ext}`;

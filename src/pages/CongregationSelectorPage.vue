@@ -156,10 +156,10 @@ const deletePending = computed(() => {
 const dialogId = 'congregation-delete-dialog';
 const hoveredCongregation = ref<number | string>('');
 
-async function chooseCongregation(
+const chooseCongregation = async (
   congregation: number | string,
   initialLoad?: boolean,
-) {
+) => {
   try {
     const invalidSettingsConfigured = await setCongregation(congregation);
     if (congregation) {
@@ -199,15 +199,15 @@ async function chooseCongregation(
     errorCatcher(error);
     router.push('/');
   }
-}
+};
 
 const isHomePage = computed(() => {
   return route?.path === '/initial-congregation-selector';
 });
 
-function createNewCongregation() {
+const createNewCongregation = () => {
   chooseCongregation(createCongregation(), true);
-}
+};
 
 useEventListener(globalThis, 'createNewCongregation', createNewCongregation, {
   passive: true,

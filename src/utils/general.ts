@@ -244,7 +244,7 @@ export const decodeEntities = (input?: string) => {
  * @param observed The observed object to convert.
  * @returns The raw object.
  */
-export function toRawDeep<T>(observed: T): T {
+export const toRawDeep = <T>(observed: T): T => {
   const val = toRaw(observed);
 
   if (Array.isArray(val)) {
@@ -263,4 +263,4 @@ export function toRawDeep<T>(observed: T): T {
   }
 
   return val;
-}
+};

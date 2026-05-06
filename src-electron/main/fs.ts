@@ -154,7 +154,7 @@ const probeSharedSubfolders = async (sharedPath: string) => {
  * Gets the app data path (shared or user data)
  * @returns The app data path
  */
-export async function getAppDataPath(): Promise<string> {
+export const getAppDataPath = async (): Promise<string> => {
   if (defaultAppDataPath) {
     if (await isUsablePath(defaultAppDataPath)) {
       await setPathTelemetry(
@@ -235,7 +235,7 @@ export async function getAppDataPath(): Promise<string> {
   await setPathTelemetry('user', 'failed');
   defaultAppDataPath = userDataPath;
   return defaultAppDataPath;
-}
+};
 
 const isUsablePathPromises = new Map<string, Promise<boolean>>();
 
@@ -344,7 +344,7 @@ const notifyPathProbeNetworkWarning = () => {
   sendToWindow(mainWindowInfo.mainWindow, 'pathProbeNetworkWarning');
 };
 
-export function isUsablePath(basePath?: string): Promise<boolean> {
+export const isUsablePath = (basePath?: string): Promise<boolean> => {
   if (!basePath) return Promise.resolve(false);
 
   if (!isUsablePathPromises.has(basePath)) {
@@ -397,12 +397,12 @@ export function isUsablePath(basePath?: string): Promise<boolean> {
   }
 
   return isUsablePathPromises.get(basePath) || Promise.resolve(false);
-}
+};
 
-export async function openFileDialog(
+export const openFileDialog = async (
   single: boolean,
   filter: FileDialogFilter,
-) {
+) => {
   if (!mainWindowInfo.mainWindow) return;
 
   const filters: Electron.FileFilter[] = [];
@@ -437,14 +437,14 @@ export async function openFileDialog(
     filters,
     properties: single ? ['openFile'] : ['openFile', 'multiSelections'],
   });
-}
+};
 
-export async function openFolderDialog() {
+export const openFolderDialog = async () => {
   if (!mainWindowInfo.mainWindow) return;
   return dialog.showOpenDialog(mainWindowInfo.mainWindow, {
     properties: ['openDirectory'],
   });
-}
+};
 
 /**
  * Creates a directory with retry logic
@@ -738,10 +738,10 @@ const decompress = async (
 /**
  * Lists entries in a zip file with their uncompressed sizes
  */
-export async function getZipEntries(
+export const getZipEntries = async (
   zipPath: string,
-): Promise<Record<string, number>> {
-  return new Promise((resolve, reject) => {
+): Promise<Record<string, number>> =>
+  new Promise((resolve, reject) => {
     const entries: Record<string, number> = {};
 
     yauzl.open(zipPath, { lazyEntries: true }, (err, zipfile) => {
@@ -807,18 +807,17 @@ export async function getZipEntries(
       });
     });
   });
-}
 
 /**
  * Decompresses a file using yauzl for memory efficiency
  * Properly waits for all write streams to finish and flush to disk
  * before resolving the promise.
  */
-export async function unzipFile(
+export const unzipFile = async (
   input: string,
   output: string,
   opts?: UnzipOptions,
-): Promise<UnzipResult[]> {
+): Promise<UnzipResult[]> => {
   const cacheKey = `${input}->${output}`;
   const existing = ongoingDecompressions.get(cacheKey);
   if (existing) return existing;
@@ -829,7 +828,7 @@ export async function unzipFile(
 
   ongoingDecompressions.set(cacheKey, decompressionPromise);
   return decompressionPromise;
-}
+};
 
 const watchers = new Set<FSWatcher>();
 const datePattern = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD
@@ -856,7 +855,7 @@ const shouldIgnoreWatchFolderError = (
   return false;
 };
 
-export async function unwatchFolders() {
+export const unwatchFolders = async () => {
   for (const watcher of watchers) {
     try {
       if (!watcher?.closed) await watcher?.close();
@@ -867,9 +866,9 @@ export async function unwatchFolders() {
       });
     }
   }
-}
+};
 
-export async function watchFolder(folderPath: string) {
+export const watchFolder = async (folderPath: string) => {
   const pathIsPossiblyNetwork = isPossiblyNetworkFolderPath(folderPath);
 
   watchers.add(
@@ -944,4 +943,4 @@ export async function watchFolder(folderPath: string) {
         }
       }),
   );
-}
+};

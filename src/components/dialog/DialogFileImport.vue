@@ -304,9 +304,9 @@ const dropHandler = (event: DragEvent, eventType: string) => {
   }
 };
 
-function onDrop() {
+const onDrop = () => {
   authorizedDrop.value = true;
-}
+};
 
 const { isOverDropZone } = useDropZone(dropArea, {
   onDrop,

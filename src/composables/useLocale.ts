@@ -4,7 +4,7 @@ import { localeOptions } from 'src/i18n';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-export function useLocale() {
+export const useLocale = () => {
   const i18n = useI18n();
   const { t } = i18n;
 
@@ -33,4 +33,4 @@ export function useLocale() {
   };
 
   return { dateLocale, getDateLocale, localeObject, t };
-}
+};

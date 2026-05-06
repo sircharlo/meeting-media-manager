@@ -58,10 +58,10 @@ export const CO_WEEK_ADDITIONAL_SECTION: MediaSectionIdentifier =
   'circuit-overseer';
 
 // Helper function to get sections for a meeting type
-export function getMeetingSections(
+export const getMeetingSections = (
   meeting: 'mw' | 'we' | null,
   isCoWeek = false,
-): MediaSectionIdentifier[] {
+): MediaSectionIdentifier[] => {
   if (!meeting) return [];
 
   const baseSections =
@@ -72,4 +72,4 @@ export function getMeetingSections(
   }
 
   return baseSections;
-}
+};

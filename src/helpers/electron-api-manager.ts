@@ -50,7 +50,7 @@ class ElectronApiManager {
   }
 }
 
-export async function initializeElectronApi(pageName: string) {
+export const initializeElectronApi = async (pageName: string) => {
   try {
     const apiManager = new ElectronApiManager(pageName);
     log(`[${pageName}] About to wait for Electron API...`, 'electron', 'debug');
@@ -67,4 +67,4 @@ export async function initializeElectronApi(pageName: string) {
       },
     });
   }
-}
+};

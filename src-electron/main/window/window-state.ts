@@ -170,9 +170,9 @@ export class StatefulBrowserWindow {
   };
 }
 
-function ensureWindowVisibleOnSomeDisplay(
+const ensureWindowVisibleOnSomeDisplay = (
   state: WindowState,
-): null | WindowState {
+): null | WindowState => {
   try {
     if (
       state?.x === undefined ||
@@ -226,9 +226,9 @@ function ensureWindowVisibleOnSomeDisplay(
     });
     return null;
   }
-}
+};
 
-function getMaxBounds(bounds: WindowState, boundsToCheck: Rectangle) {
+const getMaxBounds = (bounds: WindowState, boundsToCheck: Rectangle) => {
   if (!bounds.x) bounds.x = 0;
   if (!bounds.y) bounds.y = 0;
 
@@ -252,26 +252,23 @@ function getMaxBounds(bounds: WindowState, boundsToCheck: Rectangle) {
     x,
     y,
   };
-}
+};
 
-function hasBounds(state: WindowState) {
-  return (
-    state &&
-    Number.isInteger(state.x) &&
-    Number.isInteger(state.y) &&
-    Number.isInteger(state.width) &&
-    state.width > 0 &&
-    Number.isInteger(state.height) &&
-    state.height > 0
-  );
-}
+const hasBounds = (state: WindowState) =>
+  state &&
+  Number.isInteger(state.x) &&
+  Number.isInteger(state.y) &&
+  Number.isInteger(state.width) &&
+  state.width > 0 &&
+  Number.isInteger(state.height) &&
+  state.height > 0;
 
-function refineOptionsAndState(
+const refineOptionsAndState = (
   options: BrowserWindowConstructorOptions & ExtraOptions,
 ): BrowserWindowConstructorOptions & {
   isFullScreen?: boolean;
   isMaximized?: boolean;
-} {
+} => {
   const {
     configFileName = 'window-state.json',
     configFilePath = app.getPath('userData'),
@@ -297,9 +294,9 @@ function refineOptionsAndState(
     x,
     y,
   };
-}
+};
 
-function validateState(state: null | WindowState) {
+const validateState = (state: null | WindowState) => {
   const isValid =
     state && (hasBounds(state) || state.isMaximized || state.isFullScreen);
   if (!isValid) return null;
@@ -328,4 +325,4 @@ function validateState(state: null | WindowState) {
   }
 
   return state;
-}
+};

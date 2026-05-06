@@ -28,14 +28,9 @@ const ffmpegChain = {
 };
 
 vi.mock('fluent-ffmpeg', () => ({
-  default: Object.assign(
-    function ffmpeg() {
-      return ffmpegChain;
-    },
-    {
-      setFfmpegPath: vi.fn(),
-    },
-  ),
+  default: Object.assign(() => ffmpegChain, {
+    setFfmpegPath: vi.fn(),
+  }),
 }));
 
 vi.mock('image-size/fromFile', () => ({

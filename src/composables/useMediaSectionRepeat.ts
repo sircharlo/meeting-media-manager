@@ -22,7 +22,7 @@ import { ref, watch } from 'vue';
  *
  * The repeat state is synchronized across all windows using broadcast channels.
  */
-export function useMediaSectionRepeat() {
+export const useMediaSectionRepeat = () => {
   const currentState = useCurrentStateStore();
   const { mediaPlaying, selectedDateObject } = storeToRefs(currentState);
 
@@ -392,4 +392,4 @@ export function useMediaSectionRepeat() {
     toggleSectionRepeat,
     updateSectionRepeatInterval,
   };
-}
+};

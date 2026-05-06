@@ -114,11 +114,11 @@ const popups = {
 // Define a type for the keys of the `popups` object
 type PopupKey = keyof typeof popups;
 
-function setActivePopup(activePopup: PopupKey) {
+const setActivePopup = (activePopup: PopupKey) => {
   Object.keys(popups).forEach((key) => {
     popups[key as PopupKey].value = key === activePopup;
   });
-}
+};
 
 // Watch each popup and update the others when any one is set to true
 Object.keys(popups).forEach((popup) => {

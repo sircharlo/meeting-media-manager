@@ -33,7 +33,7 @@ const cssBanner = `@font-face {
 
 const toUnicode = (codepoint) => `\\${codepoint.toString(16)}`;
 
-async function main() {
+const main = async () => {
   // HACK: Patch fantasticon behavior until PR 611 is merged
   // This fixes the 'No SVGs found' error on Windows.
   if (process.platform === 'win32') {
@@ -83,7 +83,7 @@ async function main() {
 
   const metadataPath = join(outputDir, `${fontName}.json`);
   await fs.rm(metadataPath, { force: true });
-}
+};
 
 main().catch((error) => {
   console.error(error);

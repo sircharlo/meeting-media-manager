@@ -153,9 +153,9 @@ export const isStandardSection = (section: MediaSectionIdentifier) => {
   return standardSections.includes(section);
 };
 
-function getMeetingSectionConfigs(
+const getMeetingSectionConfigs = (
   section?: MediaSectionIdentifier,
-): MediaSection {
+): MediaSection => {
   if (!section) {
     return { bgColor: getRandomColor(), uniqueId: '' };
   }
@@ -182,7 +182,7 @@ function getMeetingSectionConfigs(
     bgColor: getRandomColor(),
     uniqueId: section,
   };
-}
+};
 
 export const createMeetingSections = (day: DateInfo) => {
   const currentState = useCurrentStateStore();

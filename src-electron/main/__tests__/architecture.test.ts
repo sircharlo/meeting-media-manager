@@ -6,7 +6,7 @@ const SRC_ELECTRON_DIR = join(process.cwd(), 'src-electron');
 const ALLOWED_SRC_SUBDIRS = ['types', 'constants'];
 const ALLOWED_FILES = ['vanilla'];
 
-function getAllFiles(dir: string, fileList: string[] = []): string[] {
+const getAllFiles = (dir: string, fileList: string[] = []): string[] => {
   const files = readdirSync(dir);
   files.forEach((file) => {
     const filePath = join(dir, file);
@@ -19,7 +19,7 @@ function getAllFiles(dir: string, fileList: string[] = []): string[] {
     }
   });
   return fileList;
-}
+};
 
 describe('Architecture: Electron Main Process Imports', () => {
   const files = getAllFiles(SRC_ELECTRON_DIR);

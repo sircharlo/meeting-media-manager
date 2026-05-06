@@ -6,19 +6,19 @@ import { useJwStore } from 'stores/jw';
 
 import type { MigrationFunction } from './types';
 
-function hasCustomCacheFolder(): boolean {
+const hasCustomCacheFolder = (): boolean => {
   const congStore = useCongregationSettingsStore();
   return Object.values(congStore.congregations).some((s) => !!s?.cacheFolder);
-}
+};
 
-async function moveStandardFolders(
+const moveStandardFolders = async (
   folders: string[],
   userDataPath: string,
   sharedPath: string,
   exists: (p: string) => Promise<boolean>,
   move: (a: string, b: string) => Promise<void>,
   join: (...p: string[]) => string,
-) {
+) => {
   for (const folder of folders) {
     const src = join(userDataPath, folder);
     const dest = join(sharedPath, folder);
@@ -31,19 +31,19 @@ async function moveStandardFolders(
 
     await move(src, dest);
   }
-}
+};
 
-function replaceIfStartsWith(
+const replaceIfStartsWith = (
   url: string | undefined,
   from: string,
   to: string,
-) {
+) => {
   if (!url) return url;
   if (!url.startsWith(from)) return url;
   return url.replace(from, to);
-}
+};
 
-function updateLookupPeriodPaths(userDataPath: string, sharedPath: string) {
+const updateLookupPeriodPaths = (userDataPath: string, sharedPath: string) => {
   const jwStore = useJwStore();
   if (!jwStore.lookupPeriod) return;
 
@@ -62,13 +62,13 @@ function updateLookupPeriodPaths(userDataPath: string, sharedPath: string) {
       }
     }
   }
-}
+};
 
-function updateMediaItemPaths(
+const updateMediaItemPaths = (
   item: MediaItem,
   userDataPath: string,
   sharedPath: string,
-) {
+) => {
   if (item.source === 'additional') {
     item.fileUrl = replaceIfStartsWith(item.fileUrl, userDataPath, sharedPath);
     item.thumbnailUrl = replaceIfStartsWith(
@@ -88,7 +88,7 @@ function updateMediaItemPaths(
   for (const child of item.children) {
     updateMediaItemPaths(child, userDataPath, sharedPath);
   }
-}
+};
 
 export const moveCacheToMachineWide: MigrationFunction = async () => {
   try {

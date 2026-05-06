@@ -97,27 +97,27 @@ interface Store {
   yeartexts: Partial<Record<number, Partial<Record<JwLangCode, string>>>>;
 }
 
-export function addUniqueByIdToTop<T extends { uniqueId: string }>(
+export const addUniqueByIdToTop = <T extends { uniqueId: string }>(
   targetArray: (T | undefined)[],
   sourceArray: (T | undefined)[],
-): void {
+): void => {
   // Add to the beginning of the array (reverse source to maintain original order)
   [...sourceArray].reverse().forEach((item) => {
     if (!targetArray.some((obj) => obj?.uniqueId === item?.uniqueId)) {
       targetArray.unshift(item);
     }
   });
-}
+};
 
-export function deduplicateById<T extends { uniqueId: string }>(
+export const deduplicateById = <T extends { uniqueId: string }>(
   array: T[],
-): void {
+): void => {
   for (let i = array.length - 1; i >= 0; i--) {
     if (array.findIndex((obj) => obj?.uniqueId === array[i]?.uniqueId) !== i) {
       array.splice(i, 1);
     }
   }
-}
+};
 
 /**
  * Replaces existing media items across all sections in the target day with matching items
@@ -127,10 +127,10 @@ export function deduplicateById<T extends { uniqueId: string }>(
  * @param targetDay The day object containing mediaSections to search and modify
  * @param newMediaItems Record of section identifiers to arrays of new media items
  */
-export function replaceMissingMediaByPubMediaId(
+export const replaceMissingMediaByPubMediaId = (
   targetDay: DateInfo,
   newMediaItems: Record<string, MediaItem[]> | undefined,
-): void {
+): void => {
   // Iterate through all new media items from all sections
   if (!newMediaItems) return;
   for (const sectionId in newMediaItems) {
@@ -213,12 +213,12 @@ export function replaceMissingMediaByPubMediaId(
       });
     }
   });
-}
+};
 
 /**
  * Extracts CSS URLs from HTML content
  */
-function extractCssUrls(html: string, baseUrl: string): string[] {
+const extractCssUrls = (html: string, baseUrl: string): string[] => {
   const cssRegex = /href=["']([^"']+\.css)["']/g;
   const cssUrls: string[] = [];
   let match;
@@ -231,12 +231,12 @@ function extractCssUrls(html: string, baseUrl: string): string[] {
     cssUrls.push(url);
   }
   return cssUrls;
-}
+};
 
 /**
  * Finds the jw-icons font URL within CSS text
  */
-function findIconUrlInCss(cssText: string, cssUrl: string): null | string {
+const findIconUrlInCss = (cssText: string, cssUrl: string): null | string => {
   const fontFaceBlocks = cssText.match(/@font-face\s*\{[^}]*\}/gi);
   if (!fontFaceBlocks) return null;
 
@@ -251,7 +251,7 @@ function findIconUrlInCss(cssText: string, cssUrl: string): null | string {
     }
   }
   return null;
-}
+};
 
 export const useJwStore = defineStore('jw-store', {
   actions: {
@@ -326,10 +326,10 @@ export const useJwStore = defineStore('jw-store', {
         errorCatcher(e);
       }
     },
-    clearAdditionalMediaForSelectedDate(
+    clearAdditionalMediaForSelectedDate: (
       currentCongregation: string,
       selectedDateObject: DateInfo | null,
-    ) {
+    ) => {
       if (!currentCongregation || !selectedDateObject?.mediaSections) return;
 
       // Clear all sections except the standard meeting sections
@@ -343,11 +343,11 @@ export const useJwStore = defineStore('jw-store', {
         }
       });
     },
-    deleteMediaItems(
+    deleteMediaItems: (
       uniqueIds: string[],
       currentCongregation: string,
       selectedDateObject: DateInfo | null,
-    ) {
+    ) => {
       try {
         if (
           !uniqueIds.length ||
@@ -366,11 +366,11 @@ export const useJwStore = defineStore('jw-store', {
         errorCatcher(e);
       }
     },
-    hideMediaItems(
+    hideMediaItems: (
       uniqueIds: string[],
       currentCongregation: string,
       selectedDateObject: DateInfo | null,
-    ) {
+    ) => {
       try {
         if (
           !uniqueIds.length ||
@@ -398,11 +398,11 @@ export const useJwStore = defineStore('jw-store', {
         errorCatcher(e);
       }
     },
-    removeFromAdditionMediaMap(
+    removeFromAdditionMediaMap: (
       uniqueId: string,
       currentCongregation: string,
       selectedDateObject: DateInfo | null,
-    ) {
+    ) => {
       try {
         if (
           !uniqueId ||

@@ -3,7 +3,7 @@ import type { Store, StoreDefinition } from 'pinia';
 import type { Mock } from 'vitest';
 import type { UnwrapRef } from 'vue';
 
-export function mockedStore<TStoreDef extends () => unknown>(
+export const mockedStore = <TStoreDef extends () => unknown>(
   useStore: TStoreDef,
 ): TStoreDef extends StoreDefinition<
   infer Id,
@@ -24,6 +24,4 @@ export function mockedStore<TStoreDef extends () => unknown>(
           : Actions[K];
       }
     >
-  : ReturnType<TStoreDef> {
-  return useStore() as any;
-}
+  : ReturnType<TStoreDef> => useStore() as any;

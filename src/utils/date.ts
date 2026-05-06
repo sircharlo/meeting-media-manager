@@ -263,49 +263,36 @@ const defaultDateLocale: Required<DateLocale> = {
 
 const formatter = {
   // Day of month: 1, 2, ..., 31
-  D(date: Date) {
-    return date.getDate();
-  },
+  D: (date: Date) => date.getDate(),
 
   // Day of month: 01, 02, ..., 31
-  DD(date: Date) {
-    return pad(date.getDate());
-  },
+  DD: (date: Date) => pad(date.getDate()),
 
   // Day of week: Su, Mo, ...
-  dd(date: Date, dateLocale: Required<DateLocale>) {
-    return dateLocale.days[date.getDay()]?.slice(0, 2);
-  },
+  dd: (date: Date, dateLocale: Required<DateLocale>) =>
+    dateLocale.days[date.getDay()]?.slice(0, 2),
 
   // Day of week: Sun, Mon, ...
-  ddd(date: Date, dateLocale: Required<DateLocale>) {
-    return dateLocale.daysShort[date.getDay()];
-  },
+  ddd: (date: Date, dateLocale: Required<DateLocale>) =>
+    dateLocale.daysShort[date.getDay()],
 
   // Day of week: Sunday, Monday, ...
-  dddd(date: Date, dateLocale: Required<DateLocale>) {
-    return dateLocale.days[date.getDay()];
-  },
+  dddd: (date: Date, dateLocale: Required<DateLocale>) =>
+    dateLocale.days[date.getDay()],
 
   // Month: 1, 2, ..., 12
-  M(date: Date) {
-    return date.getMonth() + 1;
-  },
+  M: (date: Date) => date.getMonth() + 1,
 
   // Month: 01, 02, ..., 12
-  MM(date: Date) {
-    return pad(date.getMonth() + 1);
-  },
+  MM: (date: Date) => pad(date.getMonth() + 1),
 
   // Month Short Name: Jan, Feb, ...
-  MMM(date: Date, dateLocale: Required<DateLocale>) {
-    return dateLocale.monthsShort?.[date.getMonth()];
-  },
+  MMM: (date: Date, dateLocale: Required<DateLocale>) =>
+    dateLocale.monthsShort?.[date.getMonth()],
 
   // Month Name: January, February, ...
-  MMMM(date: Date, dateLocale: Required<DateLocale>) {
-    return dateLocale.months?.[date.getMonth()];
-  },
+  MMMM: (date: Date, dateLocale: Required<DateLocale>) =>
+    dateLocale.months?.[date.getMonth()],
 
   // Year: 00, 01, ..., 99
   YY(date: Date, dateLocale: Required<DateLocale>, forcedYear?: number) {
@@ -315,23 +302,20 @@ const formatter = {
   },
 
   // Year: 1900, 1901, ..., 2099
-  YYYY(date: Date, _dateLocale: Required<DateLocale>, forcedYear?: number) {
-    // workaround for < 1900 with new Date()
-    return forcedYear !== void 0 && forcedYear !== null
+  YYYY: (date: Date, _dateLocale: Required<DateLocale>, forcedYear?: number) =>
+    forcedYear !== void 0 && forcedYear !== null
       ? forcedYear
-      : date.getFullYear();
-  },
+      : date.getFullYear(),
 };
 
-export function addToDate(date: Date | string, mod: DateOptions) {
-  return getChange(dateFromString(date), mod, 1);
-}
+export const addToDate = (date: Date | string, mod: DateOptions) =>
+  getChange(dateFromString(date), mod, 1);
 
-export function formatDate(
+export const formatDate = (
   val: PotentialDate | undefined,
   mask?: string,
   dateLocale?: Required<DateLocale>,
-): string {
+): string => {
   if ((val !== 0 && !val) || val === Infinity || val === -Infinity) {
     return '';
   }
@@ -362,7 +346,7 @@ export function formatDate(
 
     return replacement;
   });
-}
+};
 
 /**
  * Calculates the difference between two dates (`date` - `subtract`).
@@ -375,11 +359,11 @@ export function formatDate(
  * @param subtract The date to subtract involved in the operation.
  * @param unit The unit of measurement (default: 'days').
  */
-export function getDateDiff(
+export const getDateDiff = (
   date: PotentialDate,
   subtract: PotentialDate,
   unit: `${DateUnitOptions}s` | DateUnitOptions = 'days',
-): number {
+): number => {
   const sub = new Date(subtract),
     t = new Date(date);
 
@@ -427,34 +411,37 @@ export function getDateDiff(
         MILLISECONDS_IN_DAY,
       );
   }
-}
+};
 
-export function getMaxDate(
+export const getMaxDate = (
   date: PotentialDate,
   ...args: PotentialDate[]
-): Date {
+): Date => {
   let t = new Date(date);
   Array.prototype.slice.call(args, 1).forEach((d) => {
     // @ts-expect-error: Date is not Number
     t = Math.max(t, new Date(d));
   });
   return t;
-}
+};
 
-export function getMinDate(date: PotentialDate, ...args: PotentialDate[]) {
+export const getMinDate = (date: PotentialDate, ...args: PotentialDate[]) => {
   let t = new Date(date);
   Array.prototype.slice.call(args, 1).forEach((d) => {
     // @ts-expect-error: Date is not Number
     t = Math.min(t, new Date(d));
   });
   return t;
-}
+};
 
-export function subtractFromDate(date: PotentialDate, mod: DateOptions) {
-  return getChange(date, mod, -1);
-}
+export const subtractFromDate = (date: PotentialDate, mod: DateOptions) =>
+  getChange(date, mod, -1);
 
-function applyYearMonthDayChange(date: Date, mod: DateOptions, sign: number) {
+const applyYearMonthDayChange = (
+  date: Date,
+  mod: DateOptions,
+  sign: number,
+) => {
   let month = date.getMonth(),
     year = date.getFullYear();
 
@@ -483,13 +470,12 @@ function applyYearMonthDayChange(date: Date, mod: DateOptions, sign: number) {
   }
 
   return date;
-}
+};
 
-function daysInMonth(date: Date) {
-  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-}
+const daysInMonth = (date: Date) =>
+  new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 
-function getChange(date: PotentialDate, rawMod: DateOptions, sign: number) {
+const getChange = (date: PotentialDate, rawMod: DateOptions, sign: number) => {
   const d = new Date(date),
     mod = normalizeMod(rawMod),
     t =
@@ -504,22 +490,18 @@ function getChange(date: PotentialDate, rawMod: DateOptions, sign: number) {
   }
 
   return t;
-}
+};
 
-function getDateLocale(paramDateLocale?: Required<DateLocale>) {
-  return paramDateLocale ?? defaultDateLocale;
-}
+const getDateLocale = (paramDateLocale?: Required<DateLocale>) =>
+  paramDateLocale ?? defaultDateLocale;
 
-function getDiff(t: Date, sub: Date, interval: number) {
-  return (
-    (t.getTime() -
-      t.getTimezoneOffset() * MILLISECONDS_IN_MINUTE -
-      (sub.getTime() - sub.getTimezoneOffset() * MILLISECONDS_IN_MINUTE)) /
-    interval
-  );
-}
+const getDiff = (t: Date, sub: Date, interval: number) =>
+  (t.getTime() -
+    t.getTimezoneOffset() * MILLISECONDS_IN_MINUTE -
+    (sub.getTime() - sub.getTimezoneOffset() * MILLISECONDS_IN_MINUTE)) /
+  interval;
 
-function normalizeMod(mod: DateOptions) {
+const normalizeMod = (mod: DateOptions) => {
   const acc = { ...mod };
 
   if (mod.years !== void 0) {
@@ -562,9 +544,9 @@ function normalizeMod(mod: DateOptions) {
   }
 
   return acc;
-}
+};
 
-function startOfDate(date: PotentialDate, unit: DateUnitOptions) {
+const startOfDate = (date: PotentialDate, unit: DateUnitOptions) => {
   const prefix = 'set';
   const t = new Date(date);
 
@@ -590,4 +572,4 @@ function startOfDate(date: PotentialDate, unit: DateUnitOptions) {
       t[`${prefix}Milliseconds`](0);
   }
   return t;
-}
+};

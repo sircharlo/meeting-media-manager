@@ -18,7 +18,7 @@ import { StatefulBrowserWindow } from 'src-electron/main/window/window-state';
 import { log } from 'src/shared/vanilla';
 import { join, resolve } from 'upath';
 
-export function closeOtherWindows(source: BrowserWindow) {
+export const closeOtherWindows = (source: BrowserWindow) => {
   try {
     const windows = BrowserWindow.getAllWindows();
     for (const win of windows) {
@@ -29,7 +29,7 @@ export function closeOtherWindows(source: BrowserWindow) {
       contexts: { fn: { name: 'closeOtherWindows' } },
     });
   }
-}
+};
 
 /**
  * Creates a new browser window
@@ -39,11 +39,11 @@ export function closeOtherWindows(source: BrowserWindow) {
  * @param defaultWidth The default width of the window
  * @returns The created window
  */
-export function createWindow(
+export const createWindow = (
   name: 'main' | 'media' | 'timer' | 'website' = 'main',
   options?: BrowserWindowConstructorOptions,
   websiteParams?: JwSiteParams,
-) {
+) => {
   const defaultSize = { height: 600, width: 1000 };
 
   // Create the browser window
@@ -152,22 +152,22 @@ export function createWindow(
   }
 
   return win;
-}
+};
 
-export function logToWindow(
+export const logToWindow = (
   win: BrowserWindow | null,
   msg: string,
   ctx: boolean | number | Record<string, unknown> | string = {},
   level: 'debug' | 'error' | 'info' | 'warn' = 'info',
-) {
+) => {
   if (level === 'debug' && !process.env.DEBUGGING) return;
   sendToWindow(win, 'log', { ctx, level, msg });
-}
-export function sendToWindow(
+};
+export const sendToWindow = (
   win: BrowserWindow | null,
   channel: ElectronIpcListenKey,
   ...args: unknown[]
-) {
+) => {
   if (!win || win.isDestroyed() || win.webContents.isDestroyed()) return;
   win.webContents.send(channel, ...args);
-}
+};

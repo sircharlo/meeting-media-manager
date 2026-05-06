@@ -45,10 +45,10 @@ const getDbFromJWPUB = async (
   return getDbFromJWPUBProvider(publication, meetingDate);
 };
 
-export async function addFullFilePathToMultimediaItem(
+export const addFullFilePathToMultimediaItem = async (
   multimediaItem: MultimediaItem,
   publication: PublicationFetcher,
-): Promise<MultimediaItem> {
+): Promise<MultimediaItem> => {
   try {
     const paths = [
       'FilePath',
@@ -68,7 +68,7 @@ export async function addFullFilePathToMultimediaItem(
     errorCatcher(error);
     return multimediaItem;
   }
-}
+};
 
 export const findDb = async (publicationDirectory: string | undefined) => {
   return findFile(publicationDirectory, '.db');

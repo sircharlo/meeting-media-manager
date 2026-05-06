@@ -1623,7 +1623,7 @@ const imageLoadingError = () => {
   findThumbnailUrl();
 };
 
-async function findThumbnailUrl() {
+const findThumbnailUrl = async () => {
   let fileRetryCount = 0;
   let thumbnailRetryCount = 0;
 
@@ -1653,7 +1653,7 @@ async function findThumbnailUrl() {
 
   // Run immediately
   await runThumbnailCheck();
-}
+};
 
 const showMediaDurationPopup = () => {
   try {
@@ -1726,7 +1726,7 @@ const zoomReset = (forced = false) => {
   }
 };
 
-function stopMedia(forOtherMediaItem = false) {
+const stopMedia = (forOtherMediaItem = false) => {
   mediaPlaying.value = {
     action: '',
     currentPosition: 0,
@@ -1749,7 +1749,7 @@ function stopMedia(forOtherMediaItem = false) {
       globalThis.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));
     });
   }
-}
+};
 
 const isCurrentlyPlaying = computed(() => {
   return (
@@ -1915,7 +1915,7 @@ watch(
 const mediaImage = useTemplateRef<QImg>('mediaImage');
 const randomId = ref('mediaImage-' + uuid());
 
-function deleteMedia() {
+const deleteMedia = () => {
   if (!mediaToDelete.value) return;
   removeFromAdditionMediaMap(
     mediaToDelete.value,
@@ -1923,7 +1923,7 @@ function deleteMedia() {
     selectedDateObject.value,
   );
   mediaToDelete.value = '';
-}
+};
 
 const confirmDeleteSelectedMedia = () => {
   $q.dialog({

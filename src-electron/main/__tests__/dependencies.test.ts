@@ -9,10 +9,10 @@ const projectRoot = resolve(__dirname, '../../..');
 const srcElectronDir = resolve(projectRoot, 'src-electron');
 const quasarConfigPath = resolve(projectRoot, 'quasar.config.ts');
 
-function getAllFiles(
+const getAllFiles = (
   dir: string,
   extensions: string[] = ['.ts', '.js'],
-): string[] {
+): string[] => {
   let results: string[] = [];
   const list = readdirSync(dir);
   for (const file of list) {
@@ -30,9 +30,9 @@ function getAllFiles(
   // Dedupe using a Set
   results = [...new Set(results)];
   return results;
-}
+};
 
-function getElectronDepsFromConfig() {
+const getElectronDepsFromConfig = () => {
   const configContent = readFileSync(quasarConfigPath, 'utf-8');
   const match = new RegExp(
     /const electronDeps = new Set\(\[([\s\S]*?)\]\);/,
@@ -47,9 +47,9 @@ function getElectronDepsFromConfig() {
     .filter((line) => line.startsWith("'") || line.startsWith('"'))
     .map((line) => line.replaceAll(/['",]/g, ''));
   return new Set(deps);
-}
+};
 
-function getImportsFromFile(filePath: string): string[] {
+const getImportsFromFile = (filePath: string): string[] => {
   const content = readFileSync(filePath, 'utf-8');
   const imports: string[] = [];
 
@@ -72,11 +72,9 @@ function getImportsFromFile(filePath: string): string[] {
   }
 
   return imports;
-}
+};
 
-function getProductionDependencies() {
-  return Object.keys(dependencies);
-}
+const getProductionDependencies = () => Object.keys(dependencies);
 
 describe('Electron Dependencies', () => {
   it('should list all used dependencies in electronDeps in quasar.config.ts', () => {

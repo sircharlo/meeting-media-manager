@@ -42,7 +42,7 @@ const syncTimerWindowPosition = () => {
 /**
  * Creates the main window
  */
-export function createMainWindow() {
+export const createMainWindow = () => {
   // Reset app quitting state
   setAppQuitting(false);
 
@@ -90,9 +90,9 @@ export function createMainWindow() {
   } finally {
     isCreatingMainWindow = false;
   }
-}
+};
 
-export function focusMainWindow() {
+export const focusMainWindow = () => {
   const mainWindow = getExistingMainWindow();
 
   if (!mainWindow) return false;
@@ -102,7 +102,7 @@ export function focusMainWindow() {
   mainWindow.focus();
 
   return true;
-}
+};
 
 const getExistingMainWindow = () => {
   if (mainWindowInfo.mainWindow && !mainWindowInfo.mainWindow.isDestroyed()) {
@@ -124,6 +124,6 @@ const getExistingMainWindow = () => {
  * Toggles the authorizedClose state
  * @param authorized Whether the window is authorized to close
  */
-export function toggleAuthorizedClose(authorized: boolean) {
+export const toggleAuthorizedClose = (authorized: boolean) => {
   authorizedClose.authorized = authorized;
-}
+};

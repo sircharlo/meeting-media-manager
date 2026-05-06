@@ -6,7 +6,7 @@ import { computed } from 'vue';
  * Composable for accessing dialog state from anywhere in the app
  * Provides reactive access to dialog state information
  */
-export function useDialogState() {
+export const useDialogState = () => {
   const dialogStore = useDialogStateStore();
 
   // Use storeToRefs to maintain reactivity
@@ -45,4 +45,4 @@ export function useDialogState() {
 
     openDialogs: openDialogList,
   };
-}
+};

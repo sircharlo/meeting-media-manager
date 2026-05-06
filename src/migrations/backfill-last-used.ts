@@ -15,7 +15,7 @@ import type { MigrationFunction } from './types';
 
 const { fileUrlToPath, fs, join, readdir } = globalThis.electronApi;
 
-async function backfillFromLookupPeriods() {
+const backfillFromLookupPeriods = async () => {
   const jwStore = useJwStore();
   const lookupPeriods = jwStore.lookupPeriod;
   if (!lookupPeriods) return;
@@ -32,14 +32,14 @@ async function backfillFromLookupPeriods() {
       }
     }
   }
-}
+};
 
-function collectMediaItems(day: DateInfo): MediaItem[] {
+const collectMediaItems = (day: DateInfo): MediaItem[] => {
   if (!day?.mediaSections) return [];
   return Object.values(day.mediaSections).flatMap((sec) => sec.items || []);
-}
+};
 
-async function updateAllSubdirsWithDate(basePath: string, date: string) {
+const updateAllSubdirsWithDate = async (basePath: string, date: string) => {
   if (!(await fs.exists(basePath))) return;
 
   const items = await readdir(basePath, false, false);
@@ -48,9 +48,9 @@ async function updateAllSubdirsWithDate(basePath: string, date: string) {
   for (const dir of dirs) {
     await updateLastUsedDate(join(basePath, dir.name), date);
   }
-}
+};
 
-async function updateFromMediaItem(item: MediaItem, date: string) {
+const updateFromMediaItem = async (item: MediaItem, date: string) => {
   if (!item.fileUrl || !isFileUrl(item.fileUrl)) return;
 
   const filePath = fileUrlToPath(item.fileUrl);
@@ -58,9 +58,12 @@ async function updateFromMediaItem(item: MediaItem, date: string) {
   if (!folderPath) return;
 
   await updateLastUsedDate(folderPath, date);
-}
+};
 
-async function updateTwoLevelSubdirsWithDate(basePath: string, date: string) {
+const updateTwoLevelSubdirsWithDate = async (
+  basePath: string,
+  date: string,
+) => {
   if (!(await fs.exists(basePath))) return;
 
   const level1 = await readdir(basePath, false, false);
@@ -70,7 +73,7 @@ async function updateTwoLevelSubdirsWithDate(basePath: string, date: string) {
     const level1Path = join(basePath, dir1.name);
     await updateAllSubdirsWithDate(level1Path, date);
   }
-}
+};
 
 export const backfillLastUsed: MigrationFunction = async () => {
   try {

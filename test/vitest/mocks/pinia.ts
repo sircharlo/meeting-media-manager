@@ -3,7 +3,7 @@ import { config } from '@vue/test-utils';
 import { cloneDeep } from 'lodash-es';
 import { afterAll, beforeAll, vi } from 'vitest';
 
-export function installPinia(options?: TestingOptions) {
+export const installPinia = (options?: TestingOptions) => {
   const globalConfigBackup = cloneDeep(config.global);
 
   beforeAll(() => {
@@ -15,4 +15,4 @@ export function installPinia(options?: TestingOptions) {
   afterAll(() => {
     config.global = globalConfigBackup;
   });
-}
+};
