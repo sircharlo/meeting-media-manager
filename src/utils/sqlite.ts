@@ -184,7 +184,26 @@ export const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
           ),
         );
     }
-    return multimediaMepsLangs;
+
+    const filterSjjm = (items: typeof multimediaMepsLangs) => {
+      // Build a set of sjj keys (IssueTagNumber + Track)
+      const sjjSet = new Set(
+        items
+          .filter((i) => i.KeySymbol === 'sjj')
+          .map((i) => `${i.IssueTagNumber}-${i.Track}`),
+      );
+
+      return items.filter((item) => {
+        if (item.KeySymbol !== 'sjjm') return true;
+
+        const key = `${item.IssueTagNumber}-${item.Track}`;
+
+        // If equivalent sjj exists → remove sjjm
+        return !sjjSet.has(key);
+      });
+    };
+
+    return filterSjjm(multimediaMepsLangs);
   } catch (error) {
     errorCatcher(error);
     return [];

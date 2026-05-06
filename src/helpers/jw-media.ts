@@ -2360,10 +2360,18 @@ export const getWeMedia = async (lookupDate: Date) => {
     }
 
     const mergedSongs: MultimediaItem[] = songs
-      .map((song, index) => ({
-        ...song,
-        ...(songLangs[index] ? { AlternativeLanguage: songLangs[index] } : {}),
-      }))
+      .map((song, index) => {
+        if (!songLangs[index]) return song;
+        const AlternativeLanguage = Object.values(mepslangs).indexOf(
+          songLangs[index],
+        );
+        return {
+          ...song,
+          ...(AlternativeLanguage === -1
+            ? {}
+            : { AlternativeLanguage: AlternativeLanguage }),
+        };
+      })
       .sort((a, b) => (a.MultimediaId || 0) - (b.MultimediaId || 0));
 
     const allMedia = finalMedia;
@@ -2410,12 +2418,7 @@ export const getWeMedia = async (lookupDate: Date) => {
           item.IssueTagNumber === media.IssueTagNumber,
       );
       if (multimediaMepsLangItem?.MepsLanguageIndex !== undefined) {
-        const mepsLang = getJwLangCode(
-          multimediaMepsLangItem.MepsLanguageIndex,
-        );
-        if (mepsLang) {
-          media.AlternativeLanguage = mepsLang;
-        }
+        media.AlternativeLanguage = multimediaMepsLangItem.MepsLanguageIndex;
       }
       const videoMarkers = getMediaVideoMarkers(
         { db, docId },
@@ -2427,6 +2430,7 @@ export const getWeMedia = async (lookupDate: Date) => {
       allMedia,
       isDynamicMedia: true,
       meetingDate: formatDate(lookupDate, 'YYYYMMDD'),
+      multimediaMepsLangs,
     });
     const mediaForDay = await dynamicMediaMapper(
       allMedia,
@@ -2559,10 +2563,7 @@ export const getMwMedia = async (lookupDate: Date) => {
           item.IssueTagNumber === media.IssueTagNumber,
       );
       if (multimediaMepsLangItem?.MepsLanguageIndex !== undefined) {
-        const mepsLang = getJwLangCode(
-          multimediaMepsLangItem.MepsLanguageIndex,
-        );
-        if (mepsLang) media.AlternativeLanguage = mepsLang;
+        media.AlternativeLanguage = multimediaMepsLangItem.MepsLanguageIndex;
       }
     }
     const errors =
@@ -2570,6 +2571,7 @@ export const getMwMedia = async (lookupDate: Date) => {
         allMedia,
         isDynamicMedia: true,
         meetingDate: formatDate(lookupDate, 'YYYYMMDD'),
+        multimediaMepsLangs,
       })) || [];
     const mediaForDay = await dynamicMediaMapper(
       allMedia,
@@ -2600,11 +2602,18 @@ export async function processMissingMediaInfo({
   isDynamicMedia = false,
   keepMediaLabels = false,
   meetingDate,
+  multimediaMepsLangs,
 }: {
   allMedia: MultimediaItem[];
   isDynamicMedia?: boolean;
   keepMediaLabels?: boolean;
   meetingDate?: null | string;
+  multimediaMepsLangs?: {
+    IssueTagNumber: number;
+    KeySymbol: null | string;
+    MepsLanguageIndex: number;
+    Track: null | number;
+  }[];
 }) {
   try {
     const currentStateStore = useCurrentStateStore();
@@ -2643,6 +2652,10 @@ export async function processMissingMediaInfo({
         !!result && !result.exists,
     );
 
+    const sjjMultimediaMepsLangIndexes = multimediaMepsLangs
+      ?.filter((item) => item.KeySymbol === 'sjj')
+      .map((item) => item.MepsLanguageIndex);
+
     for (const { media } of mediaToProcess) {
       /* eslint-disable perfectionist/sort-sets */
       // Languages to try, in order:
@@ -2650,8 +2663,17 @@ export async function processMissingMediaInfo({
         ...new Set([
           currentStateStore.currentSettings?.lang, // The language configured in the settings
           media.MepsLanguageIndex !== undefined &&
+            (!currentStateStore.currentLangObject?.isSignLanguage ||
+              sjjMultimediaMepsLangIndexes?.includes(
+                media.MepsLanguageIndex,
+              )) &&
             mepslangs[media.MepsLanguageIndex], // The language defined in the media item
-          media.AlternativeLanguage, // The alternative language defined in the media item
+          media.AlternativeLanguage !== undefined &&
+            (!currentStateStore.currentLangObject?.isSignLanguage ||
+              !sjjMultimediaMepsLangIndexes?.includes(
+                media.AlternativeLanguage,
+              )) &&
+            mepslangs[media.AlternativeLanguage], // The alternative language defined in the media item
           currentStateStore.currentSettings?.langFallback, // The language fallback configured in the settings
         ]),
       ];

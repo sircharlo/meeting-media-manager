@@ -54,7 +54,7 @@ export interface MultimediaExtractRefItem {
 }
 
 export interface MultimediaItem {
-  AlternativeLanguage?: JwLangCode;
+  AlternativeLanguage?: number;
   BeginParagraphOrdinal: number;
   BeginPosition?: number;
   BibleBookId?: number;
