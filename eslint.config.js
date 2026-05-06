@@ -8,6 +8,7 @@ import {
   vueTsConfigs,
 } from '@vue/eslint-config-typescript';
 import perfectionist from 'eslint-plugin-perfectionist';
+import preferArrowFunctions from 'eslint-plugin-prefer-arrow-functions';
 import pluginVue from 'eslint-plugin-vue';
 import globals from 'globals';
 import { fileURLToPath } from 'node:url';
@@ -25,6 +26,7 @@ export default defineConfigWithVueTs([
 
   ...pluginQuasar.configs.recommended(),
   js.configs.recommended,
+  preferArrowFunctions.configs.all,
 
   // https://eslint.vuejs.org
   ...pluginVue.configs['flat/recommended'],
