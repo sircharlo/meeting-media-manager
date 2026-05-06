@@ -2670,14 +2670,18 @@ export async function processMissingMediaInfo({
             mepslangs[media.MepsLanguageIndex], // The language defined in the media item
           media.AlternativeLanguage !== undefined &&
             (!currentStateStore.currentLangObject?.isSignLanguage ||
-              !sjjMultimediaMepsLangIndexes?.includes(
+              sjjMultimediaMepsLangIndexes?.includes(
                 media.AlternativeLanguage,
               )) &&
             mepslangs[media.AlternativeLanguage], // The alternative language defined in the media item
           currentStateStore.currentSettings?.langFallback, // The language fallback configured in the settings
         ]),
-      ];
+      ].filter(Boolean);
       /* eslint-enable perfectionist/sort-sets */
+
+      let mediaWasDownloaded = false;
+      const triedPublicationFetchers: PublicationFetcher[] = [];
+
       for (const langwritten of langsWritten) {
         if (!langwritten || !(media.KeySymbol || media.MepsDocumentId)) {
           continue;
@@ -2692,6 +2696,7 @@ export async function processMissingMediaInfo({
           ...(typeof media.Track === 'number' &&
             media.Track > 0 && { track: media.Track }),
         };
+        triedPublicationFetchers.push(publicationFetcher);
 
         if (media.KeySymbol === 'nwt') {
           const pubs = await getBibleMedia(false, langwritten);
@@ -2741,9 +2746,9 @@ export async function processMissingMediaInfo({
           );
 
           if (!uniqueId) {
-            errors.push(publicationFetcher);
             continue;
           }
+          mediaWasDownloaded = true;
         } else {
           try {
             if (!media.FilePath || !(await pathExists(media.FilePath))) {
@@ -2767,9 +2772,9 @@ export async function processMissingMediaInfo({
               media.ThumbnailUrl = StreamThumbnailUrl ?? media.ThumbnailUrl;
             }
             if (!media.FilePath && !media.StreamUrl) {
-              errors.push(publicationFetcher);
               continue;
             }
+            mediaWasDownloaded = true;
             if (!media.Label) {
               media.Label =
                 media.Label ||
@@ -2778,10 +2783,12 @@ export async function processMissingMediaInfo({
                 '';
             }
           } catch (e) {
-            errors.push(publicationFetcher);
             errorCatcher(e);
           }
         }
+      }
+      if (!mediaWasDownloaded) {
+        errors.push(...triedPublicationFetchers);
       }
     }
     return errors;
