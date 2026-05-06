@@ -12,7 +12,7 @@ initializeElectronApi('RouteHelper');
 
 const router = useRouter();
 
-const getParam = (key: string) => {
+function getParam(key: string) {
   try {
     return (
       new URLSearchParams(location.search).get(key) ||
@@ -24,7 +24,7 @@ const getParam = (key: string) => {
     errorCatcher(error);
     return '';
   }
-};
+}
 
 onBeforeMount(() => {
   try {

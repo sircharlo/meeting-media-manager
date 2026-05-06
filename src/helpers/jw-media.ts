@@ -2595,7 +2595,7 @@ export const getMwMedia = async (lookupDate: Date) => {
   }
 };
 
-export const processMissingMediaInfo = async ({
+export async function processMissingMediaInfo({
   allMedia,
   isDynamicMedia = false,
   keepMediaLabels = false,
@@ -2605,7 +2605,7 @@ export const processMissingMediaInfo = async ({
   isDynamicMedia?: boolean;
   keepMediaLabels?: boolean;
   meetingDate?: null | string;
-}) => {
+}) {
   try {
     const currentStateStore = useCurrentStateStore();
     const errors = [];
@@ -2766,7 +2766,7 @@ export const processMissingMediaInfo = async ({
   } catch (e) {
     errorCatcher(e);
   }
-};
+}
 
 export const getPubMediaLinks = async (
   publication: PublicationFetcher,
@@ -3083,11 +3083,11 @@ export const downloadAdditionalRemoteVideo = async (
   }
 };
 
-export const getBestImageUrl = (
+export function getBestImageUrl(
   images: ImageTypeSizes,
   minSize?: keyof ImageSizes,
   square = false,
-) => {
+) {
   try {
     const preferredOrder: (keyof ImageTypeSizes)[] = [
       'wss',
@@ -3123,7 +3123,7 @@ export const getBestImageUrl = (
     errorCatcher(e);
     return '';
   }
-};
+}
 
 export const getJwMediaInfo = async (publication: PublicationFetcher) => {
   const jwStore = useJwStore();

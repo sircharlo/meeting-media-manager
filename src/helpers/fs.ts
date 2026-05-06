@@ -373,7 +373,7 @@ export const setupFFmpeg = async (): Promise<string> => {
 };
 
 // Download FFmpeg
-const downloadFfmpeg = async (url: string, dir: string): Promise<void> => {
+async function downloadFfmpeg(url: string, dir: string): Promise<void> {
   // FFmpeg is a large file, so we don't want to download it as a high priority
   const downloadId = await downloadFile(url, dir, undefined, true);
 
@@ -391,10 +391,10 @@ const downloadFfmpeg = async (url: string, dir: string): Promise<void> => {
       }
     }, 500);
   });
-};
+}
 
 // Fetch the latest FFmpeg release
-const fetchLatestRelease = async (): Promise<Release> => {
+async function fetchLatestRelease(): Promise<Release> {
   const ffmpegReleases = await fetchJson<Release>(
     'https://api.github.com/repos/vot/ffbinaries-prebuilt/releases/latest',
   );
@@ -405,17 +405,17 @@ const fetchLatestRelease = async (): Promise<Release> => {
     throw new Error('Could not determine FFmpeg version.');
   }
   return ffmpegReleases;
-};
+}
 
 // Get the FFmpeg directory path
-const getFFmpegDirectory = async (): Promise<string> => {
+async function getFFmpegDirectory(): Promise<string> {
   const dataPath = await getCachedUserDataPath();
   const ffmpegDir = join(dataPath, 'ffmpeg');
   return ffmpegDir;
-};
+}
 
 // Get a valid FFmpeg version for the target platform
-const getValidVersion = (releases: Release, target: string): Asset => {
+function getValidVersion(releases: Release, target: string): Asset {
   const versions = releases.assets.filter(
     (a) => a.name.includes(`${target}-64`) && a.name.includes('ffmpeg'),
   );
@@ -423,13 +423,13 @@ const getValidVersion = (releases: Release, target: string): Asset => {
     throw new Error(`Could not find valid FFmpeg versions for ${target}`);
   }
   return versions[0];
-};
+}
 
 // Unzip FFmpeg and find executable
-const unzipAndFindFFmpeg = async (
+async function unzipAndFindFFmpeg(
   zipPath: string,
   dir: string,
-): Promise<string> => {
+): Promise<string> {
   const ffmpegPaths = await unzip(zipPath, dir);
   if (!ffmpegPaths?.length) {
     throw new Error('Could not unzip FFmpeg.');
@@ -439,14 +439,14 @@ const unzipAndFindFFmpeg = async (
     throw new Error('Could not find FFmpeg.');
   }
   return join(dir, ffmpegFile.path);
-};
+}
 
 // Validate if an existing file is usable
-const validateExistingFile = async (
+async function validateExistingFile(
   zipPath: string,
   size: number,
   dir: string,
-): Promise<boolean> => {
+): Promise<boolean> {
   if (await pathExists(zipPath)) {
     const zipStat = await stat(zipPath);
     if (zipStat.size === size) {
@@ -462,4 +462,4 @@ const validateExistingFile = async (
     }
   }
   return false;
-};
+}

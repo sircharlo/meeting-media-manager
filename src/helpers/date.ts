@@ -37,9 +37,9 @@ const getWeekDay = (lookupDate: Date) => {
   }
 };
 
-export const isCoWeek = (
+export function isCoWeek(
   lookupDate?: Date | string | { getTime: () => number },
-) => {
+) {
   try {
     if (!lookupDate) return false;
 
@@ -78,7 +78,7 @@ export const isCoWeek = (
     errorCatcher(error);
     return false;
   }
-};
+}
 
 const shouldUseChangedMeetingSchedule = (lookupDate?: Date | string) => {
   if (!lookupDate) return false;
@@ -219,7 +219,7 @@ export const isMeetingDay = (lookupDate?: Date) => {
   }
 };
 
-export const updateLookupPeriod = ({
+export function updateLookupPeriod({
   allCongregations,
   onlyForWeekIncluding,
   reset,
@@ -227,7 +227,7 @@ export const updateLookupPeriod = ({
   allCongregations?: boolean;
   onlyForWeekIncluding?: string;
   reset?: boolean;
-} = {}) => {
+} = {}) {
   try {
     const { lookupPeriod } = useJwStore();
 
@@ -261,17 +261,20 @@ export const updateLookupPeriod = ({
   } catch (error) {
     errorCatcher(error);
   }
-};
+}
 
-const countMedia = (day: DateInfo) =>
-  day.mediaSections?.reduce((sum, s) => sum + (s.items?.length || 0), 0) || 0;
+function countMedia(day: DateInfo) {
+  return (
+    day.mediaSections?.reduce((sum, s) => sum + (s.items?.length || 0), 0) || 0
+  );
+}
 
-const extendLookupPeriod = (
+function extendLookupPeriod(
   congregation: string,
   currentDate: Date,
   settings: SettingsValues,
   lookupPeriod: Partial<Record<string, DateInfo[]>>,
-) => {
+) {
   if (!lookupPeriod?.[congregation]) return;
   const { getMeetingType } = useCurrentStateStore();
   const DAYS_AHEAD =
@@ -298,19 +301,19 @@ const extendLookupPeriod = (
   ].filter(
     (d) => getDateDiff(d.date, getSpecificWeekday(currentDate, 0), 'days') >= 0,
   );
-};
+}
 
-const getDaysForWeek = (days: DateInfo[], dateStr: string) => {
+function getDaysForWeek(days: DateInfo[], dateStr: string) {
   const monday = getSpecificWeekday(dateFromString(dateStr), 0);
   return days.filter((d) => {
     const weekMonday = getSpecificWeekday(d.date, 0);
     return datesAreSame(monday, weekMonday) || datesAreSame(monday, d.date);
   });
-};
+}
 
-const resetAllCongregations = (
+function resetAllCongregations(
   lookupPeriod: Partial<Record<string, (DateInfo | undefined)[]>>,
-) => {
+) {
   const congregationIds = Object.keys(lookupPeriod).filter(
     (id) => id && Array.isArray(lookupPeriod[id]),
   );
@@ -345,9 +348,9 @@ const resetAllCongregations = (
     'dateHelpers',
     'log',
   );
-};
+}
 
-const resetDay = (day: DateInfo) => {
+function resetDay(day: DateInfo) {
   try {
     const totalBefore = countMedia(day);
     day.status = null;
@@ -365,12 +368,12 @@ const resetDay = (day: DateInfo) => {
   } catch (error) {
     errorCatcher(error);
   }
-};
+}
 
-const resetSingleCongregation = (
+function resetSingleCongregation(
   days: DateInfo[],
   onlyForWeekIncluding?: string,
-) => {
+) {
   const targetDays = onlyForWeekIncluding
     ? getDaysForWeek(days, onlyForWeekIncluding)
     : days;
@@ -378,9 +381,9 @@ const resetSingleCongregation = (
   if (targetDays.length) {
     targetDays.forEach(resetDay);
   }
-};
+}
 
-const updateMeetingScheduleIfNeeded = (settings: SettingsValues) => {
+function updateMeetingScheduleIfNeeded(settings: SettingsValues) {
   const { meetingScheduleChangeDate: changeDate } = settings;
   if (!changeDate) return;
 
@@ -423,7 +426,7 @@ const updateMeetingScheduleIfNeeded = (settings: SettingsValues) => {
 
   // Update lookup period
   updateLookupPeriod({ reset: true });
-};
+}
 
 export const remainingTimeBeforeMeetingStart = () => {
   try {

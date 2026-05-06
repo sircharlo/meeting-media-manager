@@ -19,15 +19,15 @@ type CaptureCtx = Parameters<typeof captureException>[1];
  * Gets the current app version
  * @returns The app version
  */
-export const getAppVersion = () => (IS_DEV ? version : app.getVersion());
+export function getAppVersion() {
+  return IS_DEV ? version : app.getVersion();
+}
 /**
  * Returns the correct path for an icon based on the platform
  * @param icon The icon name
  * @returns The icon path
  */
-export const getIconPath = (
-  icon: 'beta' | 'icon' | 'media-player' | 'timer',
-) => {
+export function getIconPath(icon: 'beta' | 'icon' | 'media-player' | 'timer') {
   const extByPlatform: Record<string, string> = {
     darwin: 'icns',
     win32: 'ico',
@@ -44,7 +44,7 @@ export const getIconPath = (
       `${icon}.${ext}`,
     ),
   );
-};
+}
 
 let isMachineWideAlreadyLogged = false;
 
@@ -52,7 +52,7 @@ let isMachineWideAlreadyLogged = false;
  * Gets the shared data path for machine-wide installations
  * @returns The shared data path or null if not available/writable
  */
-export const getSharedDataPath = async (): Promise<null | string> => {
+export async function getSharedDataPath(): Promise<null | string> {
   const isMachineWide = isMachineWideInstallation();
 
   if (!isMachineWideAlreadyLogged) {
@@ -101,14 +101,14 @@ export const getSharedDataPath = async (): Promise<null | string> => {
 
   log(`[getSharedDataPath] Shared path is not usable`, 'electron', 'log');
   return null;
-};
+}
 
 /**
  * Checks if a given url is a JW domain
  * @param url The url to check
  * @returns Whether the url is a JW domain
  */
-export const isJwDomain = (url: string): boolean => {
+export function isJwDomain(url: string): boolean {
   try {
     const parsedUrl = new URL(url);
     if (parsedUrl.protocol !== 'https:') return false;
@@ -120,13 +120,13 @@ export const isJwDomain = (url: string): boolean => {
   } catch {
     return false;
   }
-};
+}
 
 /**
  * Checks if the current installation is machine-wide
  * @returns Whether the installation is machine-wide
  */
-export const isMachineWideInstallation = (): boolean => {
+export function isMachineWideInstallation(): boolean {
   const exe = app.getPath('exe');
   if (PLATFORM === 'win32') {
     return (
@@ -139,14 +139,14 @@ export const isMachineWideInstallation = (): boolean => {
   } else {
     return exe.startsWith('/usr') || exe.startsWith('/opt');
   }
-};
+}
 
 /**
  * Checks if a given url is the same as the current app url
  * @param url The url to check
  * @returns Whether the url is the same as the current app url
  */
-export const isSelf = (url?: string): boolean => {
+export function isSelf(url?: string): boolean {
   try {
     if (!url) return false;
     const parsedUrl = new URL(url);
@@ -163,14 +163,14 @@ export const isSelf = (url?: string): boolean => {
   } catch {
     return false;
   }
-};
+}
 
 /**
  * Check if a given url is a trusted domain
  * @param url The url to check
  * @returns Whether the url is a trusted domain
  */
-export const isTrustedDomain = (url?: string): boolean => {
+export function isTrustedDomain(url?: string): boolean {
   if (!url) return false;
   try {
     const parsedUrl = new URL(url);
@@ -187,7 +187,7 @@ export const isTrustedDomain = (url?: string): boolean => {
   } catch {
     return false;
   }
-};
+}
 
 /**
  * Checks if a given url is a valid url
@@ -209,10 +209,10 @@ export const isValidUrl = (url: string): boolean => {
  * @param message An optional additional message
  * @returns Whether the error should be ignored
  */
-export const isIgnoredUpdateError = (
+export function isIgnoredUpdateError(
   error: Error | string,
   message?: string,
-): boolean => {
+): boolean {
   const ignoreErrors = [
     'EAI_AGAIN',
     'ECONNREFUSED',
@@ -256,7 +256,7 @@ export const isIgnoredUpdateError = (
         (typeof errorCode === 'string' && errorCode.includes(ignoreStr)),
     );
   });
-};
+}
 
 /**
  * Handles exceptions during fetchJsonFromMainProcess
@@ -265,12 +265,12 @@ export const isIgnoredUpdateError = (
  * @param params The url parameters
  * @param options The fetch options
  */
-const handleFetchException = async (
+async function handleFetchException(
   e: unknown,
   url: string,
   params: undefined | URLSearchParams,
   options: { silent?: boolean },
-) => {
+) {
   if (options.silent || isNetworkError(e)) return;
 
   const { default: isOnline } = await import('is-online');
@@ -289,14 +289,14 @@ const handleFetchException = async (
       },
     });
   }
-};
+}
 
 /**
  * Checks if an error is a network-related error that should not be reported to Sentry
  * @param error The error to check
  * @returns Whether the error is a network error
  */
-const isNetworkError = (error: unknown): boolean => {
+function isNetworkError(error: unknown): boolean {
   try {
     if (!(error instanceof Error)) return false;
 
@@ -328,7 +328,7 @@ const isNetworkError = (error: unknown): boolean => {
     captureElectronError(e);
     return false;
   }
-};
+}
 
 /**
  * Fetches a json response from a given url
@@ -341,8 +341,9 @@ const isNetworkError = (error: unknown): boolean => {
  * @param response The response to check
  * @returns Whether the response is ok or 304
  */
-const isResponseSuccessful = (response: Response): boolean =>
-  response.ok || response.status === 304;
+function isResponseSuccessful(response: Response): boolean {
+  return response.ok || response.status === 304;
+}
 
 /**
  * Checks if a fetch error should be reported to Sentry
@@ -351,11 +352,11 @@ const isResponseSuccessful = (response: Response): boolean =>
  * @param options The fetch options
  * @returns Whether the error should be reported
  */
-const shouldReportStatusError = (
+function shouldReportStatusError(
   response: Response,
   params: undefined | URLSearchParams,
   options: { silent?: boolean },
-): boolean => {
+): boolean {
   if (options.silent) return false;
   if ([403, 404, 429, 502].includes(response.status)) return false;
 
@@ -365,7 +366,7 @@ const shouldReportStatusError = (
   if (response.status === 400 && isPubRequest) return false;
 
   return true;
-};
+}
 
 /**
  * Fetches a json response from a given url
@@ -425,14 +426,14 @@ export const fetchJsonFromMainProcess = async <T>(
  * @param error The error to log
  * @param context The context to log with the error
  */
-export const captureElectronError = (error: unknown, context?: CaptureCtx) => {
+export function captureElectronError(error: unknown, context?: CaptureCtx) {
   if (IS_DEV) {
     log(error, 'electron', 'error');
     log('context', 'electron', 'warn', context);
   } else {
     captureException(error, context);
   }
-};
+}
 
 /**
  * Internal object to allow spying on exported functions called within this module
@@ -462,9 +463,9 @@ export const throttle = <T>(func: (...args: T[]) => void, delay: number) => {
  * Adds a breadcrumb to Sentry
  * @param breadcrumb The breadcrumb to add
  */
-export const addElectronBreadcrumb = (
+export function addElectronBreadcrumb(
   breadcrumb: Parameters<typeof addBreadcrumb>[0],
-) => {
+) {
   if (IS_DEV) {
     log(
       `[Breadcrumb] ${breadcrumb.category}: ${breadcrumb.message}`,
@@ -475,4 +476,4 @@ export const addElectronBreadcrumb = (
   } else {
     addBreadcrumb(breadcrumb);
   }
-};
+}

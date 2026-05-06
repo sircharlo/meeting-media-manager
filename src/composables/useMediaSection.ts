@@ -9,7 +9,7 @@ import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed, ref, watch } from 'vue';
 
-export const useMediaSection = (mediaList: MediaSectionWithConfig) => {
+export function useMediaSection(mediaList: MediaSectionWithConfig) {
   const currentStateStore = useCurrentStateStore();
   const selectedDateObject = computed(
     () => currentStateStore.selectedDateObject,
@@ -428,4 +428,4 @@ export const useMediaSection = (mediaList: MediaSectionWithConfig) => {
     updateSectionRepeat,
     visibleItems,
   };
-};
+}

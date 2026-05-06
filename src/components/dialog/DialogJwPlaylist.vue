@@ -447,12 +447,12 @@ const formatDuration = (item: JwPlaylistItem) => {
   return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 };
 
-const getItemLabel = (i: number, item: JwPlaylistItem) => {
+function getItemLabel(i: number, item: JwPlaylistItem) {
   const { prefix, rest } = getItemLabelParts(i, item);
   return prefix + rest;
-};
+}
 
-const getItemLabelParts = (i: number, item: JwPlaylistItem) => {
+function getItemLabelParts(i: number, item: JwPlaylistItem) {
   let prefix = '';
   const rest = item.Label;
 
@@ -465,9 +465,9 @@ const getItemLabelParts = (i: number, item: JwPlaylistItem) => {
   }
 
   return { prefix, rest };
-};
+}
 
-const getTrimmedTimes = (item: JwPlaylistItem) => {
+function getTrimmedTimes(item: JwPlaylistItem) {
   const durationTicks = item.BaseDurationTicks ?? item.DurationTicks ?? 0;
 
   const StartTime =
@@ -481,9 +481,9 @@ const getTrimmedTimes = (item: JwPlaylistItem) => {
       : null;
 
   return { durationTicks, EndTime, StartTime };
-};
+}
 
-const processNonVideoItem = async (
+async function processNonVideoItem(
   item: JwPlaylistItem & {
     ResolvedPreviewPath?: string;
     ThumbnailFilePath: string;
@@ -493,7 +493,7 @@ const processNonVideoItem = async (
   outputPath: string,
   StartTime: null | number,
   EndTime: null | number,
-) => {
+) {
   const filePath = item.IndependentMediaFilePath
     ? join(outputPath, item.IndependentMediaFilePath)
     : '';
@@ -546,9 +546,9 @@ const processNonVideoItem = async (
     multimediaItem,
     type: 'nonVideo',
   };
-};
+}
 
-const processSingleItem = async (
+async function processSingleItem(
   item: JwPlaylistItem & {
     ResolvedPreviewPath?: string;
     ThumbnailFilePath: string;
@@ -556,7 +556,7 @@ const processSingleItem = async (
   },
   index: number,
   outputPath: string,
-) => {
+) {
   const { durationTicks, EndTime, StartTime } = getTrimmedTimes(item);
   const itemLabel = getItemLabel(index, item);
   const isVideo = !item.OriginalFilename;
@@ -581,8 +581,8 @@ const processSingleItem = async (
     EndTime,
   );
   return { item, itemLabel, mappedItems: result.mapped, order: index };
-};
-const processVideoItem = async (
+}
+async function processVideoItem(
   item: JwPlaylistItem,
   itemLabel: string,
   outputPath: string,
@@ -590,7 +590,7 @@ const processVideoItem = async (
   EndTime: null | number,
   durationTicks: number,
   sectionToUse?: MediaSectionIdentifier,
-) => {
+) {
   const lang = getJwLangCode(item.MepsLanguage) || 'E';
 
   const pubDownload = await getPubMediaLinks({
@@ -624,7 +624,7 @@ const processVideoItem = async (
   );
 
   return { type: 'video' };
-};
+}
 
 const addSelectedItems = async () => {
   try {

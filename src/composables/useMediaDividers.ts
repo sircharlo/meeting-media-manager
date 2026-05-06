@@ -10,7 +10,7 @@ import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed } from 'vue';
 
-export const useMediaDividers = (sectionId?: MediaSectionIdentifier) => {
+export function useMediaDividers(sectionId?: MediaSectionIdentifier) {
   const currentState = useCurrentStateStore();
   const { selectedDateObject } = storeToRefs(currentState);
 
@@ -204,4 +204,4 @@ export const useMediaDividers = (sectionId?: MediaSectionIdentifier) => {
     updateDividerColors,
     updateDividerTitle,
   };
-};
+}

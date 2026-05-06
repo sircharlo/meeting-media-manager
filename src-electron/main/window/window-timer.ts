@@ -16,7 +16,7 @@ export const timerWindowInfo: {
 /**
  * Creates the timer window
  */
-export const createTimerWindow = () => {
+export function createTimerWindow() {
   // If the window is already open, just focus it
   if (
     timerWindowInfo.timerWindow &&
@@ -136,7 +136,7 @@ export const createTimerWindow = () => {
   timerWindowInfo.timerWindow.on('closed', () => {
     timerWindowInfo.timerWindow = null;
   });
-};
+}
 
 export const moveTimerWindowThrottled = throttleWithTrailing(
   () => moveTimerWindow(),
@@ -450,7 +450,7 @@ export const moveTimerWindow = (displayNr?: number, fullscreen?: boolean) => {
   }
 };
 
-const loadTimerWindowPrefs = (): null | Rectangle => {
+function loadTimerWindowPrefs(): null | Rectangle {
   try {
     const file = join(app.getPath('userData'), 'timer-window-prefs.json');
     if (!pathExistsSync(file)) {
@@ -468,9 +468,9 @@ const loadTimerWindowPrefs = (): null | Rectangle => {
     log('❌ [loadTimerWindowPrefs] Error:', 'timer', 'error', e);
     return null;
   }
-};
+}
 
-const saveTimerWindowPrefs = (prefs: Rectangle) => {
+function saveTimerWindowPrefs(prefs: Rectangle) {
   try {
     const file = join(app.getPath('userData'), 'timer-window-prefs.json');
     log('🔍 [saveTimerWindowPrefs] Saving prefs to:', 'timer', 'log', file);
@@ -478,7 +478,7 @@ const saveTimerWindowPrefs = (prefs: Rectangle) => {
   } catch (e) {
     log('❌ [saveTimerWindowPrefs] Error:', 'timer', 'error', e);
   }
-};
+}
 
 const setTimerWindowPosition = (displayNr?: number, fullscreen = false) => {
   log('🔍 [setTimerWindowPosition] START - Called with:', 'timer', 'log', {

@@ -332,7 +332,7 @@ const musicPopup = useTemplateRef<QMenu>('musicPopup');
 /**
  * Initializes and plays background music
  */
-const playMusic = async () => {
+async function playMusic() {
   try {
     if (
       !currentSettings.value?.enableMusicButton ||
@@ -420,12 +420,12 @@ const playMusic = async () => {
     musicState.value = 'music.error';
     errorCatcher(error);
   }
-};
+}
 
 /**
  * Stops background music with fadeout
  */
-const stopMusic = (manualStop = false) => {
+function stopMusic(manualStop = false) {
   try {
     log('⏹️ Stopping background music', 'backgroundMusic', 'info');
     if (!musicPlayer.value || musicPlayer.value.paused) {
@@ -443,7 +443,7 @@ const stopMusic = (manualStop = false) => {
       musicAlreadyStoppedManually.value = true;
     }
   }
-};
+}
 
 /**
  * Handles when a song ends - plays next song
@@ -490,7 +490,7 @@ const fadeToVolumeLevel = (targetVolume: number, fadeSeconds: number) => {
     const volumeChange = targetVolume - initialVolume;
     const startTime = performance.now();
 
-    const updateVolume = (currentTime: number) => {
+    function updateVolume(currentTime: number) {
       try {
         if (!musicPlayer.value) return;
 
@@ -513,7 +513,7 @@ const fadeToVolumeLevel = (targetVolume: number, fadeSeconds: number) => {
           musicPlayer.value.volume = targetVolume;
         }
       }
-    };
+    }
 
     requestAnimationFrame(updateVolume);
   } catch (error) {

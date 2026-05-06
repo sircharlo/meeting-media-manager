@@ -21,7 +21,7 @@ const DOCS_SRC_DIR = resolve(__dirname, '../src');
  *   - en: /{linkPage}
  *   - others: /{locale}/{linkPage}
  */
-const fixLink = (locale, link) => {
+function fixLink(locale, link) {
   const trimmed = (link || '').trim();
   if (trimmed.startsWith('https://')) return trimmed;
 
@@ -31,9 +31,9 @@ const fixLink = (locale, link) => {
 
   const prefix = locale === 'en' ? '' : `/${locale}`;
   return `${prefix}/${slug}`;
-};
+}
 
-const main = async () => {
+async function main() {
   try {
     if (!(await pathExists(DOCS_SRC_DIR))) {
       console.error(`Docs src directory not found at: ${DOCS_SRC_DIR}`);
@@ -80,6 +80,6 @@ const main = async () => {
     console.error(error);
     process.exit(1);
   }
-};
+}
 
 await main();

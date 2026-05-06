@@ -92,11 +92,11 @@ const { openExternal, openPath } = shell;
 
 // IPC send/on
 
-const handleIpcSend = (
+function handleIpcSend(
   channel: ElectronIpcSendKey,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   listener: (event: IpcMainEvent, ...args: any[]) => void,
-) => {
+) {
   ipcMain.on(channel, (e, ...args) => {
     if (isSelf(e.senderFrame?.url)) {
       logToWindow(mainWindowInfo.mainWindow, 'on', { args, channel }, 'debug');
@@ -111,7 +111,7 @@ const handleIpcSend = (
     }
     listener(e, ...args);
   });
-};
+}
 
 handleIpcSend(
   'toggleMediaWindow',
@@ -260,14 +260,14 @@ handleIpcSend('watchFolder', (_e, folderPath: string) =>
 
 // IPC invoke/handle
 
-const handleIpcInvoke = <T = unknown>(
+function handleIpcInvoke<T = unknown>(
   channel: ElectronIpcInvokeKey,
   listener: (
     event: IpcMainInvokeEvent,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ...args: any[]
   ) => Promise<T>,
-) => {
+) {
   ipcMain.handle(channel, (e, ...args) => {
     if (isSelf(e.senderFrame?.url)) {
       logToWindow(
@@ -287,9 +287,9 @@ const handleIpcInvoke = <T = unknown>(
     }
     return listener(e, ...args);
   });
-};
+}
 
-const isOS64Bit = () => {
+function isOS64Bit() {
   try {
     if (platform() === 'win32' && process.env.SystemRoot) {
       // Check for the existence of the SysWOW64 directory
@@ -317,7 +317,7 @@ const isOS64Bit = () => {
     });
     return false;
   }
-};
+}
 
 handleIpcInvoke('getAppDataPath', async () => getAppDataPath());
 handleIpcInvoke('getBetaUpdatesPath', async () => getBetaUpdatesPath());

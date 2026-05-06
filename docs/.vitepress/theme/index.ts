@@ -8,7 +8,7 @@ import './style.css';
 
 export default {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  enhanceApp: ({ app, router, siteData }) => {
+  enhanceApp({ app, router, siteData }) {
     // ...
   },
   extends: DefaultTheme,

@@ -138,7 +138,7 @@ export default defineConfig({
     config: (md) => {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const fence = md.renderer.rules.fence!;
-      md.renderer.rules.fence = (tokens, idx, options, env, self) => {
+      md.renderer.rules.fence = function (tokens, idx, options, env, self) {
         const { localeIndex = 'root' } = env;
         const locale: LanguageValue =
           localeIndex === 'root'
@@ -164,7 +164,7 @@ export default defineConfig({
     search: mapSearch(),
     socialLinks: [{ ariaLabel: 'GitHub', icon: 'github', link: GH_REPO_URL }],
   },
-  transformPageData: async (pageData) => {
+  async transformPageData(pageData) {
     const canonicalUrl = `${CANONICAL_URL}${pageData.relativePath}`
       .replace(/index\.md$/, '')
       .replace(/\.md$/, '');

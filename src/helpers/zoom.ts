@@ -36,7 +36,7 @@ export const triggerZoomScreenShare = (startSharing: boolean) => {
       if (zoomAutoFocusMediaWindow) {
         // Helper function to focus the media window with error handling
         const { focusMediaWindow } = globalThis.electronApi;
-        const triggerFocusMediaWindow = (context = '') => {
+        function triggerFocusMediaWindow(context = '') {
           try {
             focusMediaWindow();
             log(
@@ -54,7 +54,7 @@ export const triggerZoomScreenShare = (startSharing: boolean) => {
               },
             });
           }
-        };
+        }
 
         // Focus immediately to counter potential focus steal
         triggerFocusMediaWindow(' (immediate)');

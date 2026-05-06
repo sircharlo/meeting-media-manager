@@ -16,7 +16,7 @@ import {
  * with the Router instance.
  */
 
-export default defineRouter(() => {
+export default defineRouter(function () {
   let createHistory = createWebHashHistory;
   if (process.env.SERVER) {
     createHistory = createMemoryHistory;

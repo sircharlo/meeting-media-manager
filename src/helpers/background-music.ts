@@ -23,11 +23,11 @@ interface SongQueueOptions {
  * Calculates the optimal song queue to fill time until meeting starts
  * This ensures the last song ends precisely when fadeout begins
  */
-export const calculateOptimalSongQueue = (
+export function calculateOptimalSongQueue(
   songLibrary: SongItem[],
   meetingSongs: SongItem[],
   timeBeforeMeetingStart: number,
-): { queue: SongItem[]; startOffsetSeconds: number } => {
+): { queue: SongItem[]; startOffsetSeconds: number } {
   try {
     if (timeBeforeMeetingStart <= 0 || !songLibrary.length) {
       return { queue: [], startOffsetSeconds: 0 };
@@ -64,14 +64,14 @@ export const calculateOptimalSongQueue = (
     errorCatcher(error);
     return { queue: [], startOffsetSeconds: 0 };
   }
-};
+}
 
 /**
  * Enriches song items with metadata (duration, title)
  */
-export const enrichSongsWithMetadata = async (
+export async function enrichSongsWithMetadata(
   songs: SongItem[],
-): Promise<SongItem[]> => {
+): Promise<SongItem[]> {
   const enrichedSongs = [...songs];
 
   for (const song of enrichedSongs) {
@@ -87,15 +87,15 @@ export const enrichSongsWithMetadata = async (
   }
 
   return enrichedSongs;
-};
+}
 
 /**
  * Extracts meeting day songs from the selected day's media
  */
-export const extractMeetingDaySongs = (
+export function extractMeetingDaySongs(
   songLibrary: SongItem[],
   selectedDayMedia: { fileUrl?: string }[],
-): SongItem[] => {
+): SongItem[] {
   try {
     const regex = /(_r\d{3,4}P)?\.\w+$/;
     const { fileUrlToPath } = globalThis.electronApi;
@@ -121,14 +121,12 @@ export const extractMeetingDaySongs = (
     errorCatcher(error);
     return [];
   }
-};
+}
 
 /**
  * Fetches and shuffles the song library
  */
-export const fetchSongLibrary = async (
-  lang: JwLangCode,
-): Promise<SongItem[]> => {
+export async function fetchSongLibrary(lang: JwLangCode): Promise<SongItem[]> {
   try {
     const maxAttempts = 10;
     const minSongsRequired = 10;
@@ -156,21 +154,22 @@ export const fetchSongLibrary = async (
     errorCatcher(error);
     return [];
   }
-};
+}
 
 /**
  * Formats remaining time for display
  */
-export const formatRemainingTime = (seconds: number): string =>
-  formatTime(Math.max(0, seconds));
+export function formatRemainingTime(seconds: number): string {
+  return formatTime(Math.max(0, seconds));
+}
 
 /**
  * Gets the next song from the queue
  */
-export const getNextSongFromQueue = async (
+export async function getNextSongFromQueue(
   songQueue: SongItem[],
   currentSongTitle: (title: string) => void,
-): Promise<NextSongResult> => {
+): Promise<NextSongResult> {
   try {
     if (!songQueue.length) {
       return { nextSongUrl: '', secsFromEnd: 0 };
@@ -202,15 +201,15 @@ export const getNextSongFromQueue = async (
     errorCatcher(error);
     return { nextSongUrl: '', secsFromEnd: 0 };
   }
-};
+}
 
 /**
  * Prepares the complete song queue for a meeting day
  */
-export const prepareMeetingDaySongQueue = async (
+export async function prepareMeetingDaySongQueue(
   songLibrary: SongItem[],
   options: SongQueueOptions,
-): Promise<{ queue: SongItem[]; startOffsetSeconds: number }> => {
+): Promise<{ queue: SongItem[]; startOffsetSeconds: number }> {
   try {
     const { selectedDayMedia, timeBeforeMeetingStart } = options;
 
@@ -229,4 +228,4 @@ export const prepareMeetingDaySongQueue = async (
     errorCatcher(error);
     return { queue: [], startOffsetSeconds: 0 };
   }
-};
+}

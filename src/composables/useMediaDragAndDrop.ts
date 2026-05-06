@@ -4,7 +4,7 @@ import { animations, state } from '@formkit/drag-and-drop';
 import { useDragAndDrop } from '@formkit/drag-and-drop/vue';
 import { ref } from 'vue';
 
-export const useMediaDragAndDrop = (items: MediaItem[]) => {
+export function useMediaDragAndDrop(items: MediaItem[]) {
   const isDragging = ref(false);
 
   // Use the drag and drop composable with shared group for cross-section dragging
@@ -30,4 +30,4 @@ export const useMediaDragAndDrop = (items: MediaItem[]) => {
     isDragging,
     sortableItems: reactiveItems,
   };
-};
+}

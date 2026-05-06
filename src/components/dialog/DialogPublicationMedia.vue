@@ -633,7 +633,7 @@ const breadcrumbs = computed(() => {
   return items;
 });
 
-const buildDocumentHasMedia = async (db: string) => {
+async function buildDocumentHasMedia(db: string) {
   try {
     const hasDocMM = !!executeQuery<{ name: string }>(
       db,
@@ -661,9 +661,9 @@ const buildDocumentHasMedia = async (db: string) => {
     errorCatcher(e);
     docHasMedia.value = new Set();
   }
-};
+}
 
-const buildDocumentPreviews = async (db: string) => {
+async function buildDocumentPreviews(db: string) {
   try {
     docPreviews.value = {};
 
@@ -729,7 +729,7 @@ const buildDocumentPreviews = async (db: string) => {
   } catch (err) {
     errorCatcher(err);
   }
-};
+}
 
 // Search endpoints configuration
 const searchEndpoints = ref([
@@ -760,7 +760,7 @@ const buildIssue = (year: number | string, month: number, pub: string) => {
   return `${issueBase}00`;
 };
 
-const buildMonthChoices = async () => {
+async function buildMonthChoices() {
   try {
     loading.value = true;
     const lang = (currentSettings.value?.lang || 'E') as JwLangCode;
@@ -801,13 +801,11 @@ const buildMonthChoices = async () => {
   } finally {
     loading.value = false;
   }
-};
+}
 
-const buildPublicationItemsWithStatus = async (
+async function buildPublicationItemsWithStatus(
   raw: FilterChoice[],
-): Promise<
-  (FilterChoice & { available?: boolean; downloaded?: boolean })[]
-> => {
+): Promise<(FilterChoice & { available?: boolean; downloaded?: boolean })[]> {
   const lang = (currentSettings.value?.lang || 'E') as JwLangCode;
   return Promise.all(
     raw.map(async (c) => {
@@ -831,28 +829,28 @@ const buildPublicationItemsWithStatus = async (
       return { ...c, available, downloaded };
     }),
   );
-};
+}
 
-const cancelDialog = () => {
+function cancelDialog() {
   resetState();
   dialogValue.value = false;
-};
+}
 
-const clearSearch = () => {
+function clearSearch() {
   searchQuery.value = '';
   searchResults.value = [];
   loading.value = false;
   step.value = 'category';
-};
+}
 
-const downloadMediaItem = async (media: MediaLink) => {
+async function downloadMediaItem(media: MediaLink) {
   // ✅ Always emit - parent handles section assignment
   emit('import', { media, type: 'media' });
   resetState();
   dialogValue.value = false;
-};
+}
 
-const fetchJwtToken = async (): Promise<boolean> => {
+async function fetchJwtToken(): Promise<boolean> {
   try {
     // Check if we have a valid token that hasn't expired
     if (jwtToken.value && tokenExpiry.value && Date.now() < tokenExpiry.value) {
@@ -886,9 +884,9 @@ const fetchJwtToken = async (): Promise<boolean> => {
     errorCatcher(error);
     return false;
   }
-};
+}
 
-const goBack = () => {
+function goBack() {
   switch (step.value) {
     case 'article': {
       resetDocuments();
@@ -957,13 +955,13 @@ const goBack = () => {
       break;
     }
   }
-};
+}
 
-const handleJwpubResult = async (
+async function handleJwpubResult(
   publication: string,
   issue: string,
   lang: JwLangCode,
-): Promise<boolean> => {
+): Promise<boolean> {
   const dbPath = await getDbFromJWPUB({
     fileformat: 'JWPUB',
     issue,
@@ -982,15 +980,15 @@ const handleJwpubResult = async (
   await buildDocumentPreviews(dbPath);
   step.value = 'article';
   return true;
-};
+}
 
-const handleMediaResult = async (
+async function handleMediaResult(
   pubMediaLinks: null | Publication,
   publication: string,
   issue: string,
   lang: JwLangCode,
   resultTitle: string,
-): Promise<boolean> => {
+): Promise<boolean> {
   // Find the best media format (prefer MP4, then others)
   let mediaFiles: MediaLink[] = [];
   const formatPriority: (keyof PublicationFiles)[] = ['MP4', 'M4V', 'MP3'];
@@ -1050,18 +1048,18 @@ const handleMediaResult = async (
     publication,
   );
   return false;
-};
+}
 
-const importDocument = async (doc: DocumentItem) => {
+async function importDocument(doc: DocumentItem) {
   if (!selection.dbPath) return;
 
   // ✅ Always emit - parent handles section assignment
   emit('import', { dbPath: selection.dbPath, doc, type: 'jwpub' });
   resetState();
   dialogValue.value = false;
-};
+}
 
-const importPdfVersion = async () => {
+async function importPdfVersion() {
   try {
     if (!pdfImportAvailable.value || loading.value) return;
     loading.value = true;
@@ -1159,9 +1157,9 @@ const importPdfVersion = async () => {
   } finally {
     loading.value = false;
   }
-};
+}
 
-const normalizeIssue = (publication: string, issue: string): string => {
+function normalizeIssue(publication: string, issue: string): string {
   if (!['w', 'wp', 'ws'].includes(publication) || issue.length >= 8) {
     return issue;
   }
@@ -1172,11 +1170,11 @@ const normalizeIssue = (publication: string, issue: string): string => {
   }
 
   return `${issue}00`;
-};
+}
 
-const normalizePublicationAndIssue = (
+function normalizePublicationAndIssue(
   jwOrgLink: string,
-): null | { issue: string; publication: string } => {
+): null | { issue: string; publication: string } {
   const url = new URL(jwOrgLink);
   let publication = url.searchParams.get('pub');
   let issue = url.searchParams.get('issue') || '0';
@@ -1202,9 +1200,9 @@ const normalizePublicationAndIssue = (
   issue = normalizeIssue(publication, issue);
 
   return { issue, publication };
-};
+}
 
-const onSearchInput = () => {
+function onSearchInput() {
   // Debounce search input
   if (searchTimeout.value) {
     clearTimeout(searchTimeout.value);
@@ -1219,12 +1217,12 @@ const onSearchInput = () => {
   searchTimeout.value = setTimeout(() => {
     performSearch();
   }, 500);
-};
+}
 
-const performAuthenticatedSearch = async (
+async function performAuthenticatedSearch(
   url: string,
   params: URLSearchParams,
-): Promise<SearchResults> => {
+): Promise<SearchResults> {
   // Ensure we have a valid token
   const hasValidToken = await fetchJwtToken();
   if (!hasValidToken || !jwtToken.value) {
@@ -1268,9 +1266,9 @@ const performAuthenticatedSearch = async (
   }
 
   return await response.json();
-};
+}
 
-const performSearch = async () => {
+async function performSearch() {
   if (!searchQuery.value.trim() || loading.value) return;
 
   loading.value = true;
@@ -1311,9 +1309,9 @@ const performSearch = async () => {
   } finally {
     loading.value = false;
   }
-};
+}
 
-const refreshPdfAvailability = async () => {
+async function refreshPdfAvailability() {
   try {
     pdfImportAvailable.value = false;
     if (step.value !== 'article' || !selection.publication) return;
@@ -1336,16 +1334,16 @@ const refreshPdfAvailability = async () => {
     errorCatcher(error);
     pdfImportAvailable.value = false;
   }
-};
+}
 
-const resetDocuments = () => {
+function resetDocuments() {
   documents.value = [];
   docPreviews.value = {};
   docHasMedia.value = new Set();
   selection.dbPath = '';
-};
+}
 
-const resetState = () => {
+function resetState() {
   step.value = 'category';
   loading.value = false;
   selection.category = '';
@@ -1371,9 +1369,9 @@ const resetState = () => {
   // Clear JWT token on reset
   jwtToken.value = null;
   tokenExpiry.value = null;
-};
+}
 
-const selectCategory = async (key: string) => {
+async function selectCategory(key: string) {
   try {
     selection.category = key;
     if (key === 'magazines') {
@@ -1466,9 +1464,9 @@ const selectCategory = async (key: string) => {
   } finally {
     loading.value = false;
   }
-};
+}
 
-const selectMagazine = async (choice: FilterChoice) => {
+async function selectMagazine(choice: FilterChoice) {
   try {
     selection.publication = String(choice.optionValue);
     step.value = 'year';
@@ -1491,9 +1489,9 @@ const selectMagazine = async (choice: FilterChoice) => {
   } finally {
     loading.value = false;
   }
-};
+}
 
-const selectMonth = async (m: number) => {
+async function selectMonth(m: number) {
   try {
     selection.month = m;
     loading.value = true;
@@ -1528,9 +1526,9 @@ const selectMonth = async (m: number) => {
   } finally {
     loading.value = false;
   }
-};
+}
 
-const selectPublication = async (choice: FilterChoice) => {
+async function selectPublication(choice: FilterChoice) {
   try {
     loading.value = true;
     selection.publication = String(choice.optionValue);
@@ -1562,9 +1560,9 @@ const selectPublication = async (choice: FilterChoice) => {
   } finally {
     loading.value = false;
   }
-};
+}
 
-const selectSearchResult = async (result: SearchResultItem) => {
+async function selectSearchResult(result: SearchResultItem) {
   try {
     loading.value = true;
     const jwOrgLink = result.links['jw.org'];
@@ -1610,12 +1608,12 @@ const selectSearchResult = async (result: SearchResultItem) => {
   } finally {
     loading.value = false;
   }
-};
+}
 
-const selectYear = async (choice: FilterChoice) => {
+async function selectYear(choice: FilterChoice) {
   selection.year = String(choice.optionValue);
   step.value = 'month';
   // Build months and probe availability
   await buildMonthChoices();
-};
+}
 </script>

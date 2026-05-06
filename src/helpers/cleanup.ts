@@ -31,20 +31,18 @@ const { exists, pathExists, remove } = fs;
 /**
  * Builds a map of file sizes by path
  */
-const buildFileSizeMap = (cacheFiles: CacheFile[]): Map<string, number> => {
+function buildFileSizeMap(cacheFiles: CacheFile[]): Map<string, number> {
   const sizeByPath = new Map<string, number>();
   for (const file of cacheFiles) {
     sizeByPath.set(file.path, file.size || 0);
   }
   return sizeByPath;
-};
+}
 
 /**
  * Creates a set of normalized parent directories from file URLs
  */
-const buildReferencedParentDirectories = (
-  fileUrls: Set<string>,
-): Set<string> => {
+function buildReferencedParentDirectories(fileUrls: Set<string>): Set<string> {
   const parentDirectories = new Set<string>();
 
   fileUrls.forEach((fileUrl) => {
@@ -53,16 +51,16 @@ const buildReferencedParentDirectories = (
   });
 
   return parentDirectories;
-};
+}
 
 /**
  * Calculates bytes freed from deletion results
  */
-const calculateBytesFreed = (
+function calculateBytesFreed(
   results: PromiseSettledResult<void>[],
   filepaths: string[],
   sizeSource: Map<string, number> | Record<string, number>,
-): number => {
+): number {
   let bytesFreed = 0;
 
   for (let i = 0; i < results.length; i++) {
@@ -80,12 +78,12 @@ const calculateBytesFreed = (
   }
 
   return bytesFreed;
-};
+}
 
 /**
  * Collects all file URLs referenced in media items
  */
-const collectReferencedFileUrls = (media: MediaItem): Set<string> => {
+function collectReferencedFileUrls(media: MediaItem): Set<string> {
   const urls = new Set<string>();
   const urlKeys = [
     'fileUrl',
@@ -111,25 +109,27 @@ const collectReferencedFileUrls = (media: MediaItem): Set<string> => {
   }
 
   return urls;
-};
+}
 
 /**
  * Counts successful deletions from results
  */
-const countSuccessfulDeletions = (
+function countSuccessfulDeletions(
   results: PromiseSettledResult<void>[],
-): number => results.filter((r) => r.status === 'fulfilled').length;
+): number {
+  return results.filter((r) => r.status === 'fulfilled').length;
+}
 
 /**
  * Checks if a directory should be considered unused
  */
-const isDirectoryUnused = (
+function isDirectoryUnused(
   filePath: string,
   parentPath: string,
   usedParentDirectories: Record<string, number>,
   frequentlyUsedDirectories: Set<string>,
   untouchableDirectories: Set<string>,
-): boolean => {
+): boolean {
   const normalizedPath = normalizePath(parentPath);
 
   // Check if in used directories
@@ -167,21 +167,22 @@ const isDirectoryUnused = (
   });
 
   return true;
-};
+}
 
 /**
  * Checks if a file is referenced by checking parent directories
  */
-const isFileReferenced = (
+function isFileReferenced(
   normalizedParentPath: string,
   referencedParentDirectories: Set<string>,
-): boolean =>
-  Array.from(referencedParentDirectories).includes(normalizedParentPath);
+): boolean {
+  return Array.from(referencedParentDirectories).includes(normalizedParentPath);
+}
 
 /**
  * Checks if a file should be protected from deletion
  */
-const isProtectedFile = (fileName: string, parentFolder: string): boolean => {
+function isProtectedFile(fileName: string, parentFolder: string): boolean {
   // Never delete .last-used files directly
   if (fileName === LAST_USED_FILENAME) {
     return true;
@@ -190,34 +191,35 @@ const isProtectedFile = (fileName: string, parentFolder: string): boolean => {
   // Protect files inside S-34mp_* or S-34_* folders
   const isProtectedS34Folder = /^S-34(?:mp_|_)/.test(parentFolder);
   return isProtectedS34Folder;
-};
+}
 
 /**
  * Normalizes a path for cross-platform, case-insensitive comparison
  */
-const normalizePath = (path: string): string =>
-  normalize(path)
+function normalizePath(path: string): string {
+  return normalize(path)
     .replaceAll(/[\\/]+/g, '\\')
     .toLowerCase();
+}
 
 /**
  * Checks if a path is inside or contains another path (bidirectional)
  */
-const pathsOverlap = (path1: string, path2: string): boolean => {
+function pathsOverlap(path1: string, path2: string): boolean {
   const normalized1 = normalizePath(path1);
   const normalized2 = normalizePath(path2);
   return (
     normalized1.startsWith(normalized2) || normalized2.startsWith(normalized1)
   );
-};
+}
 
 /**
  * Processes a single cache directory and returns its files
  */
-const processCacheDirectory = async (
+async function processCacheDirectory(
   cacheDir: string,
   referencedParentDirectories: Set<string>,
-): Promise<CacheFile[]> => {
+): Promise<CacheFile[]> {
   const files: CacheFile[] = [];
 
   try {
@@ -258,18 +260,19 @@ const processCacheDirectory = async (
   }
 
   return files;
-};
+}
 
 /**
  * Calculates the sum of values in a record
  */
-const sumRecordValues = (record: Record<string, number>): number =>
-  Object.values(record).reduce((sum, value) => sum + value, 0);
+function sumRecordValues(record: Record<string, number>): number {
+  return Object.values(record).reduce((sum, value) => sum + value, 0);
+}
 
 /**
  * Checks if a file was used recently based on last-used date
  */
-const wasFileUsedRecently = async (parentPath: string): Promise<boolean> => {
+async function wasFileUsedRecently(parentPath: string): Promise<boolean> {
   try {
     // Check current directory and parent directory (for subfolders)
     const lastUsedDateStr =
@@ -286,7 +289,7 @@ const wasFileUsedRecently = async (parentPath: string): Promise<boolean> => {
     errorCatcher(error);
     return false;
   }
-};
+}
 
 const cleanCongregationRecord = (
   record: Partial<Record<string, unknown>> | undefined,

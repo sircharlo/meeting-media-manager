@@ -81,7 +81,7 @@ const { ensureDir, pathExists, remove, rename, stat } = fs;
  * Efficiently identifies a JWPUB file by peeking into its metadata
  * without full extraction.
  */
-export const identifyJwpub = async (jwpubPath: string) => {
+export async function identifyJwpub(jwpubPath: string) {
   const tempDir = await getTempPath();
   if (!tempDir) return;
 
@@ -134,7 +134,7 @@ export const identifyJwpub = async (jwpubPath: string) => {
     // Cleanup
     await remove(tempExplodePath).catch(() => undefined);
   }
-};
+}
 
 const ongoingUnzips = new Map<string, Promise<string | undefined>>();
 

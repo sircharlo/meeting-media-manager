@@ -11,7 +11,7 @@ const getFreeBytesFromStatfs = async (path: string): Promise<number> => {
   return Number(info.bavail * info.bsize);
 };
 
-export const getLowDiskSpaceStatus = async () => {
+export async function getLowDiskSpaceStatus() {
   const userDataPath = app.getPath('userData');
   try {
     const freeBytes = await getFreeBytesFromStatfs(userDataPath);
@@ -74,4 +74,4 @@ export const getLowDiskSpaceStatus = async () => {
     log('Failed to check disk space:', 'electronFilesystem', 'error', error);
     return false;
   }
-};
+}

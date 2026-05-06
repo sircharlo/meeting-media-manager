@@ -97,7 +97,7 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
     img.src = pathToFileURL(filepath);
 
     return new Promise((resolve, reject) => {
-      img.onload = async () => {
+      img.onload = async function () {
         const canvasH = canvas.height,
           canvasW = canvas.width;
         const imgH = img.naturalHeight || canvasH,
@@ -130,7 +130,7 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
         }
       };
 
-      img.onerror = (event) => {
+      img.onerror = function (event) {
         const rejectionError = new Error(`Failed to load SVG: ${filepath}`);
         canvas.remove();
         errorCatcher(rejectionError, {

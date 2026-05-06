@@ -81,10 +81,10 @@ const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
 
 export const useCurrentStateStore = defineStore('current-state', {
   actions: {
-    areDependenciesSatisfied: (
+    areDependenciesSatisfied(
       settingsDefinition: SettingsItem,
       congregation: string,
-    ): boolean => {
+    ): boolean {
       const congregationSettingsStore = useCongregationSettingsStore();
       if (!settingsDefinition.depends) return true;
 
@@ -175,11 +175,11 @@ export const useCurrentStateStore = defineStore('current-state', {
       if (!congregation) return false;
       return this.getInvalidSettings(congregation).length > 0;
     },
-    isSettingInvalid: (
+    isSettingInvalid(
       settingsDefinitionId: keyof SettingsItems,
       settingsDefinition: SettingsItem,
       congregation: string,
-    ): boolean => {
+    ): boolean {
       const { urlVariables } = useJwStore();
       const congregationSettingsStore = useCongregationSettingsStore();
 
@@ -304,7 +304,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       return count;
     },
 
-    currentLangObject: (): JwLanguage | undefined => {
+    currentLangObject(): JwLanguage | undefined {
       const jwStore = useJwStore();
       return jwStore.jwLanguages.list.find(
         (l) => l.langcode === this.currentSettings?.lang,

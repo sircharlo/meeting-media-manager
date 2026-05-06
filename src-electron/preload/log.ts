@@ -8,7 +8,7 @@ type CaptureCtx = Parameters<typeof captureException>[1];
  * @param error The error to log
  * @param context The context to log with the error
  */
-export const capturePreloadError = (error: unknown, context?: CaptureCtx) => {
+export function capturePreloadError(error: unknown, context?: CaptureCtx) {
   if (error instanceof Error && error.cause) {
     capturePreloadError(error.cause, context);
   }
@@ -19,4 +19,4 @@ export const capturePreloadError = (error: unknown, context?: CaptureCtx) => {
   } else {
     captureException(error, context);
   }
-};
+}

@@ -53,7 +53,7 @@ export const getBetaUpdatesPath = async () =>
 
 const isPortable = () => !!process.env.PORTABLE_EXECUTABLE_DIR;
 
-export const initUpdater = async () => {
+export async function initUpdater() {
   if (await pathExists(await getUpdatesDisabledPath())) return; // Skip updater if updates are disabled by user
   if (isPortable()) return; // Skip updater for portable version
 
@@ -99,7 +99,7 @@ export const initUpdater = async () => {
   });
 
   triggerUpdateCheck();
-};
+}
 
 export const triggerUpdateCheck = async (attempt = 1) => {
   if (await pathExists(await getUpdatesDisabledPath())) {

@@ -34,210 +34,212 @@ const fakePath = async (path: string, create = true) => {
 };
 
 export const electronApi: ElectronApi = {
-  askForMediaAccess: () => {
+  askForMediaAccess: function () {
     throw new Error('Function not implemented.');
   },
   basename,
-  cancelAllDownloads: () => {
+  cancelAllDownloads: function () {
     throw new Error('Function not implemented.');
   },
   changeExt,
   checkForUpdates: () => void 0,
 
-  closeWebsiteWindow: () => {
+  closeWebsiteWindow: function () {
     throw new Error('Function not implemented.');
   },
-  convertHeic: (image) => {
+  convertHeic: function (image) {
     throw new Error('Function not implemented.');
   },
-  createVideoFromNonVideo: (originalFile, ffmpegPath) => {
+  createVideoFromNonVideo: function (originalFile, ffmpegPath) {
     throw new Error('Function not implemented.');
   },
   dirname,
-  downloadFile: (url, saveDir, destFilename, lowPriority) => {
+  downloadFile: function (url, saveDir, destFilename, lowPriority) {
     throw new Error('Function not implemented.');
   },
-  executeQuery: (dbPath, query) => {
+  executeQuery: function (dbPath, query) {
     throw new Error('Function not implemented.');
   },
   extname,
   fileUrlToPath,
-  focusMediaWindow: () => {
+  focusMediaWindow: function () {
     throw new Error('Function not implemented.');
   },
   fs,
-  getAllScreens: () => {
+  getAllScreens: function () {
     throw new Error('Function not implemented.');
   },
   getAppDataPath: async () => fakePath('app'),
   getBetaUpdatesPath: async () => fakePath('app/beta-updates', false),
   getLocales: async () => [],
-  getLocalPathFromFileObject: (fileObject) => {
+  getLocalPathFromFileObject: function (fileObject) {
     throw new Error('Function not implemented.');
   },
-  getLowDiskSpaceStatus: () => {
+  getLowDiskSpaceStatus: function () {
     throw new Error('Function not implemented.');
   },
-  getScreenAccessStatus: () => {
+  getScreenAccessStatus: function () {
     throw new Error('Function not implemented.');
   },
   getSharedDataPath: async () => fakePath('/app/shared'),
   getUpdatesDisabledPath: async () => fakePath('app/updates-disabled', false),
   getUserDataPath: async () => fakePath('app/meeting-media-manager'),
-  getVideoDuration: (filePath) => {
+  getVideoDuration: function (filePath) {
     throw new Error('Function not implemented.');
   },
-  getZipEntries: () => {
+  getZipEntries: function () {
     throw new Error('Function not implemented.');
   },
-  inferExtension: async (filename, filetype) => {
+  inferExtension: async function (filename, filetype) {
     throw new Error('Function not implemented.');
   },
   isArchitectureMismatch: async () => false,
   isDownloadComplete: async () => null,
   isDownloadErrorExpected: async () => false,
-  isUsablePath: async (path) => true,
+  isUsablePath: async function (path) {
+    return true;
+  },
   join,
-  moveMediaWindow: (targetScreenNumber, windowedMode) => {
+  moveMediaWindow: function (targetScreenNumber, windowedMode) {
     throw new Error('Function not implemented.');
   },
-  moveTimerWindow: (targetScreenNumber, windowedMode) => {
+  moveTimerWindow: function (targetScreenNumber, windowedMode) {
     throw new Error('Function not implemented.');
   },
-  navigateWebsiteWindow: (action) => {
+  navigateWebsiteWindow: function (action) {
     throw new Error('Function not implemented.');
   },
   normalize,
-  onDownloadCancelled: (callback) => {
+  onDownloadCancelled: function (callback) {
     throw new Error('Function not implemented.');
   },
-  onDownloadCompleted: (callback) => {
+  onDownloadCompleted: function (callback) {
     throw new Error('Function not implemented.');
   },
-  onDownloadError: (callback) => {
+  onDownloadError: function (callback) {
     throw new Error('Function not implemented.');
   },
-  onDownloadProgress: (callback) => {
+  onDownloadProgress: function (callback) {
     throw new Error('Function not implemented.');
   },
-  onDownloadStarted: (callback) => {
+  onDownloadStarted: function (callback) {
     throw new Error('Function not implemented.');
   },
-  onGpuCrashDetected: (callback) => {
+  onGpuCrashDetected: function (callback) {
     throw new Error('Function not implemented.');
   },
-  onHardwareAccelerationTemporaryDisabled: (callback) => {
+  onHardwareAccelerationTemporaryDisabled: function (callback) {
     throw new Error('Function not implemented.');
   },
-  onLog: (callback) => {
+  onLog: function (callback) {
     throw new Error('Function not implemented.');
   },
-  onPathProbeNetworkWarning: (callback) => {
+  onPathProbeNetworkWarning: function (callback) {
     throw new Error('Function not implemented.');
   },
-  onShortcut: (callback) => {
+  onShortcut: function (callback) {
     throw new Error('Function not implemented.');
   },
-  onUpdateAvailable: (callback) => {
+  onUpdateAvailable: function (callback) {
     console.log('onUpdateAvailable called but not implemented');
   },
-  onUpdateDownloaded: (callback) => {
+  onUpdateDownloaded: function (callback) {
     console.log('onUpdateDownloaded called but not implemented');
   },
-  onUpdateDownloadProgress: (callback) => {
+  onUpdateDownloadProgress: function (callback) {
     console.log('onUpdateDownloadProgress called but not implemented');
   },
-  onUpdateError: (callback) => {
+  onUpdateError: function (callback) {
     console.log('onUpdateError called but not implemented');
   },
-  onVideoCaptureCrashDetected: () => {
+  onVideoCaptureCrashDetected: function () {
     throw new Error('Function not implemented.');
   },
-  onWatchFolderError: () => {
+  onWatchFolderError: function () {
     throw new Error('Function not implemented.');
   },
-  onWatchFolderUpdate: (callback) => {
+  onWatchFolderUpdate: function (callback) {
     throw new Error('Function not implemented.');
   },
-  onWebsiteWindowClosed: (callback) => {
+  onWebsiteWindowClosed: function (callback) {
     console.log('onWebsiteWindowClosed called but not implemented');
   },
-  openDiscussion: (category, title, params) => {
+  openDiscussion: function (category, title, params) {
     throw new Error('Function not implemented.');
   },
-  openExternal: (website) => {
+  openExternal: function (website) {
     throw new Error('Function not implemented.');
   },
-  openFileDialog: (single, filter) => {
+  openFileDialog: function (single, filter) {
     throw new Error('Function not implemented.');
   },
-  openFolder: (path) => {
+  openFolder: function (path) {
     throw new Error('Function not implemented.');
   },
-  openFolderDialog: () => {
+  openFolderDialog: function () {
     throw new Error('Function not implemented.');
   },
-  openWebsiteWindow: (lang) => {
+  openWebsiteWindow: function (lang) {
     throw new Error('Function not implemented.');
   },
   parse,
-  parseMediaFile: (filePath, options) => {
+  parseMediaFile: function (filePath, options) {
     throw new Error('Function not implemented.');
   },
   pathToFileURL,
-  pauseAllDownloads: () => {
+  pauseAllDownloads: function () {
     throw new Error('Function not implemented.');
   },
   PLATFORM: 'win32',
-  quitAndInstall: () => {
+  quitAndInstall: function () {
     throw new Error('Function not implemented.');
   },
   readdir: readDirectory,
-  registerShortcut: (name, shortcut) => {
+  registerShortcut: function (name, shortcut) {
     throw new Error('Function not implemented.');
   },
-  removeListeners: (channel) => {
+  removeListeners: function (channel) {
     throw new Error('Function not implemented.');
   },
   resolve,
-  resumeAllDownloads: () => {
+  resumeAllDownloads: function () {
     throw new Error('Function not implemented.');
   },
   robot,
-  setAutoStartAtLogin: (value) => {
+  setAutoStartAtLogin: function (value) {
     throw new Error('Function not implemented.');
   },
-  setElectronUrlVariables: (variables) => {
+  setElectronUrlVariables: function (variables) {
     throw new Error('Function not implemented.');
   },
-  setHardwareAcceleration: (disabled) => {
+  setHardwareAcceleration: function (disabled) {
     throw new Error('Function not implemented.');
   },
-  setPathProbeNotificationPaths: (paths) => {
+  setPathProbeNotificationPaths: function (paths) {
     throw new Error('Function not implemented.');
   },
-  toggleMediaWindow: (show) => {
+  toggleMediaWindow: function (show) {
     throw new Error('Function not implemented.');
   },
-  toggleTimerWindow: (show) => {
+  toggleTimerWindow: function (show) {
     throw new Error('Function not implemented.');
   },
-  unregisterAllShortcuts: () => {
+  unregisterAllShortcuts: function () {
     throw new Error('Function not implemented.');
   },
-  unregisterShortcut: (shortcut) => {
+  unregisterShortcut: function (shortcut) {
     throw new Error('Function not implemented.');
   },
-  unwatchFolders: () => {
+  unwatchFolders: function () {
     throw new Error('Function not implemented.');
   },
-  unzip: (input, output, opts) => {
+  unzip: function (input, output, opts) {
     throw new Error('Function not implemented.');
   },
-  watchFolder: (path) => {
+  watchFolder: function (path) {
     throw new Error('Function not implemented.');
   },
-  zoomWebsiteWindow: (direction) => {
+  zoomWebsiteWindow: function (direction) {
     throw new Error('Function not implemented.');
   },
 };

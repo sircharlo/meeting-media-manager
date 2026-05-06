@@ -17,7 +17,7 @@ export const websiteWindowInfo = {
 /**
  * Creates the website window
  */
-export const createWebsiteWindow = async (websiteParams?: JwSiteParams) => {
+export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
   // If the window is already open, just focus it
   if (
     websiteWindowInfo.websiteWindow &&
@@ -234,7 +234,7 @@ export const createWebsiteWindow = async (websiteParams?: JwSiteParams) => {
   websiteWindowInfo.websiteWindow?.on('closed', () => {
     websiteWindowInfo.websiteWindow = null;
   });
-};
+}
 
 /**
  * Asks for media access for the camera and microphone

@@ -764,7 +764,7 @@ watchImmediate(
   },
 );
 
-const handleUnlinkCleanup = async (changedPath: string) => {
+async function handleUnlinkCleanup(changedPath: string) {
   try {
     const filename = basename(changedPath);
     const watchedDayFolder = dirname(changedPath);
@@ -783,18 +783,18 @@ const handleUnlinkCleanup = async (changedPath: string) => {
       },
     });
   }
-};
+}
 
-const removeWatchedItems = (
+function removeWatchedItems(
   sections: MediaSectionWithConfig[],
   predicate: (item: MediaItem) => boolean,
-) => {
+) {
   for (const section of sections) {
     if (!section.items) continue;
     // reassign instead of splicing to reduce reactive churn
     section.items = section.items.filter((item) => !predicate(item));
   }
-};
+}
 
 const getTargetSectionId = (
   originalSection?: string,
@@ -807,11 +807,11 @@ const getTargetSectionId = (
   return 'imported-media';
 };
 
-const handleAddWatchFolderEvent = async (
+async function handleAddWatchFolderEvent(
   dayObj: DateInfo,
   day: string,
   changedPath?: string,
-) => {
+) {
   if (!changedPath) return;
 
   const watchedItems = (await watchedItemMapper(day, changedPath)) || [];
@@ -845,12 +845,12 @@ const handleAddWatchFolderEvent = async (
 
   // Sort sections once after adding
   sortMediaItems(dayObj.mediaSections);
-};
+}
 
-const handleUnlinkWatchFolderEvent = async (
+async function handleUnlinkWatchFolderEvent(
   dayObj: DateInfo,
   changedPath?: string,
-) => {
+) {
   if (!changedPath) return;
   const targetUrl = pathToFileURL(changedPath).toString();
   removeWatchedItems(
@@ -858,9 +858,9 @@ const handleUnlinkWatchFolderEvent = async (
     (item) => item?.source === 'watched' && item?.fileUrl === targetUrl,
   );
   await handleUnlinkCleanup(changedPath);
-};
+}
 
-const sortMediaItems = (sections: MediaSectionWithConfig[]) => {
+function sortMediaItems(sections: MediaSectionWithConfig[]) {
   for (const section of sections) {
     if (!section.items) continue;
     section.items.sort((a, b) => {
@@ -871,7 +871,7 @@ const sortMediaItems = (sections: MediaSectionWithConfig[]) => {
       return aOrder - bOrder || SORTER.compare(a.title, b.title);
     });
   }
-};
+}
 
 const updateWatchFolderRef = async ({
   changedPath,

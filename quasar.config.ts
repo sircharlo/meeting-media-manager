@@ -68,7 +68,7 @@ export default defineConfig((ctx) => {
         repository: repoURL,
         version,
       },
-      extendViteConf: (viteConf) => {
+      extendViteConf(viteConf) {
         if (ctx.prod && !ctx.debug && ENABLE_SOURCE_MAPS) {
           viteConf.build = mergeConfig(viteConf.build ?? {}, {
             sourcemap: true,
@@ -202,7 +202,7 @@ export default defineConfig((ctx) => {
           );
         }
       },
-      extendPackageJson: (pkg) => {
+      extendPackageJson(pkg) {
         // All dependencies required by the main and preload scripts need to be listed here
         const electronDeps = new Set([
           '@jitsi/robotjs',

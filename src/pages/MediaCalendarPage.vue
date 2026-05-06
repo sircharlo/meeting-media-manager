@@ -2250,10 +2250,7 @@ Mousetrap.bind('h', () => {
   }
 });
 
-const findNextSelectableMedia = (
-  mediaList: MediaItem[],
-  startIndex: number,
-) => {
+function findNextSelectableMedia(mediaList: MediaItem[], startIndex: number) {
   // Search from next item onwards
   for (let i = startIndex + 1; i < mediaList.length; i++) {
     const mediaItem = mediaList[i];
@@ -2264,12 +2261,12 @@ const findNextSelectableMedia = (
 
   // If no selectable item found, wrap to beginning
   return mediaList[0]?.uniqueId || null;
-};
+}
 
-const findPreviousSelectableMedia = (
+function findPreviousSelectableMedia(
   mediaList: MediaItem[],
   startIndex: number,
-) => {
+) {
   // Search from previous item backwards
   for (let i = startIndex - 1; i >= 0; i--) {
     const mediaItem = mediaList[i];
@@ -2280,16 +2277,16 @@ const findPreviousSelectableMedia = (
 
   // If no selectable item found, wrap to end
   return mediaList[mediaList.length - 1]?.uniqueId || null;
-};
+}
 
-const isMediaSelectable = (mediaItem: MediaItem) => {
+function isMediaSelectable(mediaItem: MediaItem) {
   if (!mediaItem) return false;
 
   // Media is selectable if:
   // 1. It doesn't have an extract caption, OR
   // 2. It has a parent unique ID (indicating it's part of a group)
   return !mediaItem.extractCaption || mediaItem.parentUniqueId;
-};
+}
 
 watch(
   () => mediaPlaying.value.uniqueId,
@@ -2494,7 +2491,7 @@ const handleMediaItemClick = (payload: {
 };
 
 // Function to extend selection using Shift+Up/Shift+Down
-const extendSelection = (direction: 'down' | 'up') => {
+function extendSelection(direction: 'down' | 'up') {
   log('extendSelection triggered', 'mediaCalendar', 'trace');
 
   log('🔄 [extendSelection] Starting function', 'mediaCalendar', 'log', {
@@ -2698,7 +2695,7 @@ const extendSelection = (direction: 'down' | 'up') => {
     selectedItems: selectedMediaItems.value,
     selectedItemsCount: selectedMediaItems.value.length,
   });
-};
+}
 
 watch(
   () => [countItemsHiddenForSelectedDate.value, countItemsForSelectedDate],
