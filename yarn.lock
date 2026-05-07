@@ -9166,6 +9166,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fs-extra@npm:^11.3.5":
+  version: 11.3.5
+  resolution: "fs-extra@npm:11.3.5"
+  dependencies:
+    graceful-fs: "npm:^4.2.0"
+    jsonfile: "npm:^6.0.1"
+    universalify: "npm:^2.0.0"
+  checksum: 10c0/33e80bad6b5d17308faa197e5ede99ecba4b6f6cb4aa4645d52745476c75afc57665bdf39ec75b2ebb38b97b7110f634a8dcc0a546e248eb4de059275cf5ac90
+  languageName: node
+  linkType: hard
+
 "fs-extra@npm:^8.1.0":
   version: 8.1.0
   resolution: "fs-extra@npm:8.1.0"
@@ -11306,7 +11317,7 @@ __metadata:
     fantasticon: "npm:^4.1.0"
     fluent-ffmpeg: "npm:^2.1.3"
     fontkit: "npm:^2.0.4"
-    fs-extra: "npm:^11.3.4"
+    fs-extra: "npm:^11.3.5"
     globals: "npm:^17.6.0"
     heic-convert: "npm:^2.1.0"
     husky: "npm:^9.1.7"
