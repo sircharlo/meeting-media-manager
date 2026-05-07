@@ -195,7 +195,7 @@ const navigateToDate = (dateKey?: string) => {
   selectedDate.value = dateKey;
 };
 
-const errorTooltipText = (item: { meetingDate?: string }) => {
+const errorTooltipText = (item: { meetingDate?: null | string }) => {
   try {
     const dateKey = item.meetingDate;
     if (!dateKey)
