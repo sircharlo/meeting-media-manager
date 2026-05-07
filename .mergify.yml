@@ -10,6 +10,7 @@ queue_rules:
       - -files ~= ^(?!.*\.(md|json)$)
     merge_conditions:
       - -draft
+    batch_size: 10
   - name: bots
     queue_conditions:
       - -draft
@@ -42,6 +43,7 @@ queue_rules:
                 ([1-9][\d]*)\..+ to \4\.
               - title ~= ^((chore|build)(\(deps(-dev)?\))?:) bump the .+ group
                 (across|with) .+ updates
+    batch_size: 10
 merge_protections_settings:
   reporting_method: check-runs
   auto_merge_conditions: true
