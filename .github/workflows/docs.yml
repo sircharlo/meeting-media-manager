@@ -31,7 +31,7 @@ jobs:
           node-version: 24
           cache: 'yarn'
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --immutable --mode=skip-build
       - name: Prepare Quasar
         run: yarn quasar prepare
       - name: Lint files
@@ -54,7 +54,7 @@ jobs:
   #         node-version: 24
   #         cache: 'yarn'
 
-  #     - run: yarn install
+  #     - run: yarn install --immutable --mode=skip-build
   #     - run: yarn docs:fix-links
 
   #     - name: Commit and push fixes
@@ -80,7 +80,7 @@ jobs:
         with:
           node-version: 24
           cache: 'yarn'
-      - run: yarn install
+      - run: yarn install --immutable --mode=skip-build
       - run: |
           yarn quasar prepare
           yarn docs:test
@@ -101,7 +101,7 @@ jobs:
           node-version: 24
           cache: 'yarn'
       - uses: actions/configure-pages@v6
-      - run: yarn install
+      - run: yarn install --immutable --mode=skip-build
       - run: yarn quasar prepare
       - run: |
           yarn generate:logos
