@@ -2668,32 +2668,56 @@ export async function processMissingMediaInfo({
     );
 
     for (const { media } of mediaToProcess) {
-      /* eslint-disable perfectionist/sort-sets */
-      // Languages to try, in order:
-      const langsWritten = [
-        ...new Set([
-          currentStateStore.currentSettings?.lang, // The language configured in the settings
-          media.MepsLanguageIndex !== undefined &&
-            (!currentStateStore.currentLangObject?.isSignLanguage ||
-              mepsLanguagesByMediaItem?.some(
-                (i) =>
-                  i.KeySymbol === media.KeySymbol &&
-                  i.MepsLanguageIndex === media.MepsLanguageIndex,
-              )) &&
-            getJwLangCode(media.MepsLanguageIndex), // The language defined in the media item
-          media.MepsLanguageAlternativeIndex !== undefined &&
-            media.MepsLanguageAlternativeIndex !== media.MepsLanguageIndex &&
-            (!currentStateStore.currentLangObject?.isSignLanguage ||
-              mepsLanguagesByMediaItem?.some(
-                (i) =>
-                  i.KeySymbol === media.KeySymbol &&
-                  i.MepsLanguageIndex === media.MepsLanguageAlternativeIndex,
-              )) &&
-            getJwLangCode(media.MepsLanguageAlternativeIndex), // The alternative language defined in the media item
-          currentStateStore.currentSettings?.langFallback, // The language fallback configured in the settings
-        ]),
-      ].filter(Boolean);
-      /* eslint-enable perfectionist/sort-sets */
+      const isSignLanguage =
+        !!currentStateStore.currentLangObject?.isSignLanguage;
+      const effectiveMediaKeySymbol =
+        media.KeySymbol === 'sjjm' && isSignLanguage
+          ? currentStateStore.currentSongbook?.pub || media.KeySymbol
+          : media.KeySymbol;
+
+      const mediaHasMepsLanguage = (mepsLanguageIndex?: number) => {
+        if (mepsLanguageIndex === undefined) return false;
+        if (!isSignLanguage) return true;
+
+        return !!mepsLanguagesByMediaItem?.some(
+          (i) =>
+            i.KeySymbol === effectiveMediaKeySymbol &&
+            i.MepsLanguageIndex === mepsLanguageIndex,
+        );
+      };
+
+      const mediaMepsLanguage =
+        mediaHasMepsLanguage(media.MepsLanguageIndex) &&
+        getJwLangCode(media.MepsLanguageIndex);
+      const mediaAltMepsLanguage =
+        media.MepsLanguageAlternativeIndex !== media.MepsLanguageIndex &&
+        mediaHasMepsLanguage(media.MepsLanguageAlternativeIndex) &&
+        getJwLangCode(media.MepsLanguageAlternativeIndex);
+
+      const languageCandidates = [
+        currentStateStore.currentSettings?.lang,
+        mediaMepsLanguage,
+        mediaAltMepsLanguage,
+        currentStateStore.currentSettings?.langFallback,
+      ];
+
+      const langsWritten = [...new Set(languageCandidates)].filter(Boolean);
+
+      log(
+        '[processMissingMediaInfo] Language resolution',
+        'mediaProcessing',
+        'debug',
+        {
+          effectiveMediaKeySymbol,
+          fallbackLang: currentStateStore.currentSettings?.langFallback,
+          isSignLanguage,
+          keySymbol: media.KeySymbol,
+          langsWritten,
+          mepsLanguageAlternativeIndex: media.MepsLanguageAlternativeIndex,
+          mepsLanguageIndex: media.MepsLanguageIndex,
+          track: media.Track,
+        },
+      );
 
       let mediaWasDownloaded = false;
       const triedPublicationFetchers: PublicationFetcher[] = [];
@@ -2713,6 +2737,13 @@ export async function processMissingMediaInfo({
             media.Track > 0 && { track: media.Track }),
         };
         triedPublicationFetchers.push(publicationFetcher);
+
+        log(
+          '[processMissingMediaInfo] Trying media download',
+          'mediaProcessing',
+          'info',
+          { publicationFetcher },
+        );
 
         if (media.KeySymbol === 'nwt') {
           const pubs = await getBibleMedia(false, langwritten);
