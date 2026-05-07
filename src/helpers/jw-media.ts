@@ -199,6 +199,15 @@ export const getJwLangCode = (mepsId?: number): JwLangCode | null => {
   return mepslangs[mepsId] || null;
 };
 
+const getJwLangId = (symbol?: JwLangCode): number | undefined => {
+  if (symbol === undefined) return undefined;
+  const jwStore = useJwStore();
+  const match = jwStore.jwMepsLanguages.list.find((l) => l.Symbol === symbol);
+  if (match) return match.LanguageId;
+  const entry = Object.entries(mepslangs).find(([, value]) => value === symbol);
+  return entry ? Number.parseInt(entry[0], 10) : undefined;
+};
+
 export const copyToDatedAdditionalMedia = async (
   filepathToCopy: string,
   section: MediaSectionIdentifier | undefined,
@@ -2362,14 +2371,10 @@ export const getWeMedia = async (lookupDate: Date) => {
     const mergedSongs: MultimediaItem[] = songs
       .map((song, index) => {
         if (!songLangs[index]) return song;
-        const AlternativeLanguage = Object.values(mepslangs).indexOf(
-          songLangs[index],
-        );
+        const langId = getJwLangId(songLangs[index]);
         return {
           ...song,
-          ...(AlternativeLanguage === -1
-            ? {}
-            : { AlternativeLanguage: AlternativeLanguage }),
+          ...(langId === undefined ? {} : { AlternativeLanguage: langId }),
         };
       })
       .sort((a, b) => (a.MultimediaId || 0) - (b.MultimediaId || 0));
@@ -2667,13 +2672,13 @@ export async function processMissingMediaInfo({
               sjjMultimediaMepsLangIndexes?.includes(
                 media.MepsLanguageIndex,
               )) &&
-            mepslangs[media.MepsLanguageIndex], // The language defined in the media item
+            getJwLangCode(media.MepsLanguageIndex), // The language defined in the media item
           media.AlternativeLanguage !== undefined &&
             (!currentStateStore.currentLangObject?.isSignLanguage ||
               sjjMultimediaMepsLangIndexes?.includes(
                 media.AlternativeLanguage,
               )) &&
-            mepslangs[media.AlternativeLanguage], // The alternative language defined in the media item
+            getJwLangCode(media.AlternativeLanguage), // The alternative language defined in the media item
           currentStateStore.currentSettings?.langFallback, // The language fallback configured in the settings
         ]),
       ].filter(Boolean);
@@ -2872,7 +2877,7 @@ export const getJwMepsInfo = async () => {
     await unzip(msix, dir);
     const mepsunit = await findFile(join(dir, 'Data'), '.db');
     if (!mepsunit) return;
-    const mepsLangs = globalThis.electronApi
+    const dynamicMepsLangs = globalThis.electronApi
       .executeQuery<JwMepsLanguage>(
         mepsunit,
         'SELECT LanguageId, PrimaryIetfCode, Symbol FROM Language',
@@ -2881,9 +2886,9 @@ export const getJwMepsInfo = async () => {
         ...l,
         PrimaryIetfCode: l.PrimaryIetfCode.toLowerCase() as JwLangSymbol,
       }));
-    if (mepsLangs.length < jwStore.jwMepsLanguages.list.length) return;
+    if (dynamicMepsLangs.length < jwStore.jwMepsLanguages.list.length) return;
     jwStore.jwMepsLanguages = {
-      list: mepsLangs,
+      list: dynamicMepsLangs,
       updated: new Date(),
     };
   } catch (e) {

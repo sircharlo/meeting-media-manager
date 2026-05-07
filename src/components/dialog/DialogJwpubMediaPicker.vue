@@ -94,7 +94,7 @@
                           item.IssueTagNumber,
                           item.MepsDocumentId,
                           (item.MepsLanguageIndex !== undefined &&
-                            mepslangs[item.MepsLanguageIndex]) ||
+                            getJwLangCode(item.MepsLanguageIndex)) ||
                             '',
                           item.Track,
                         ]
@@ -169,10 +169,10 @@ import type {
 } from 'src/types';
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
-import mepslangsImport from 'src/constants/mepslangs';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   addJwpubDocumentMediaToFiles,
+  getJwLangCode,
   resolveMultimediaPreviewPath,
 } from 'src/helpers/jw-media';
 import { log } from 'src/shared/vanilla';
@@ -185,9 +185,6 @@ import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
-
-// Explicitly declare mepslangs for template use
-const mepslangs = mepslangsImport;
 
 const { pathToFileURL } = globalThis.electronApi;
 const props = defineProps<{

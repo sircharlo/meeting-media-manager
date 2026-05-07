@@ -10,8 +10,8 @@ import type {
 
 const { executeQuery, join } = globalThis.electronApi;
 
-import mepslangs from 'src/constants/mepslangs';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { getJwLangCode } from 'src/helpers/jw-media';
 import { log } from 'src/shared/vanilla';
 import { findFile, getPublicationDirectory } from 'src/utils/fs';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -125,7 +125,7 @@ export const getPublicationInfoFromDb = (db: string): PublicationFetcher => {
 
     const publication: PublicationFetcher = {
       issue: pubQuery.IssueTagNumber,
-      langwritten: mepslangs[pubQuery.MepsLanguageIndex] ?? '',
+      langwritten: getJwLangCode(pubQuery.MepsLanguageIndex) ?? '',
       pub: pubQuery.UndatedSymbol,
     };
 
