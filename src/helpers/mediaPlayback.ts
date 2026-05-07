@@ -65,6 +65,8 @@ const processMissingMediaInfo: ProcessMissingMediaInfoProvider = (options) => {
   return processMissingMediaInfoProvider(options);
 };
 
+const VERSE_NUMBER_PATTERN = /\b\w+\s+(\d+:\d+|\d+)\b/g;
+
 const {
   basename,
   executeQuery,
@@ -494,7 +496,7 @@ export const getMediaFromJwPlaylist = async (
           .map((v) =>
             Number.parseInt(
               Array.from(
-                v.Label.matchAll(/\w+ ((?:\d+:)?\d+)/g),
+                v.Label.matchAll(VERSE_NUMBER_PATTERN),
                 (m) => m[1],
               )[0] ?? '0',
             ),
