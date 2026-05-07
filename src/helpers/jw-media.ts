@@ -2694,27 +2694,19 @@ export async function processMissingMediaInfo({
         mediaHasMepsLanguage(media.MepsLanguageAlternativeIndex) &&
         getJwLangCode(media.MepsLanguageAlternativeIndex);
 
-      // For sign languages, prefer configured fallback over spoken/media-defined defaults.
-      const languageCandidates = isSignLanguage
-        ? [
-            currentStateStore.currentSettings?.lang,
-            currentStateStore.currentSettings?.langFallback,
-            mediaMepsLanguage,
-            mediaAltMepsLanguage,
-          ]
-        : [
-            currentStateStore.currentSettings?.lang,
-            mediaMepsLanguage,
-            mediaAltMepsLanguage,
-            currentStateStore.currentSettings?.langFallback,
-          ];
+      const languageCandidates = [
+        currentStateStore.currentSettings?.lang,
+        mediaMepsLanguage,
+        mediaAltMepsLanguage,
+        currentStateStore.currentSettings?.langFallback,
+      ];
 
       const langsWritten = [...new Set(languageCandidates)].filter(Boolean);
 
       log(
         '[processMissingMediaInfo] Language resolution',
         'mediaProcessing',
-        'info',
+        'debug',
         {
           effectiveMediaKeySymbol,
           fallbackLang: currentStateStore.currentSettings?.langFallback,
