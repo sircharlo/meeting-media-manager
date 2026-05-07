@@ -48,7 +48,7 @@ def extract_new_features():
           # Capture the New Features section
             features = feature_match.group(1).strip()
             # Remove PR links like (#7214)
-            features = re.sub(r'\s*\(#\d+\)', '', features)
+            features = re.sub(r'\s*\(#\d+\)', '', features, flags=re.ASCII)
             # Append the version header and the extracted features to the output
             output.append(f"\n{version_header}\n\n{features}\n")
 

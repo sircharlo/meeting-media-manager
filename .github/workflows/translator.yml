@@ -21,8 +21,8 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: sircharlo/github-translate-action@v1.0.4
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v6.0.0
+      - uses: sircharlo/github-translate-action@9dc6f0f43e17f15f22bd3a6180d3f79dd84d173d # v1.0.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
