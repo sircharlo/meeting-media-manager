@@ -10,7 +10,6 @@ queue_rules:
       - -files ~= ^(?!.*\.(md|json)$)
     merge_conditions:
       - -draft
-
   - name: bots
     queue_conditions:
       - -draft
@@ -39,10 +38,14 @@ queue_rules:
       - and:
           - author = dependabot[bot]
           - or:
-              - title ~= ^((chore|build)(\(deps(?:-dev)*\))*:) bump [^\s]+ from ([1-9][\d]*)\..+ to 
-                \4\.
-              - title ~= ^((chore|build)(\(deps(-dev)?\))?:) bump the .+ group (across|with) .+ updates
-
+              - title ~= ^((chore|build)(\(deps(?:-dev)*\))*:) bump [^\s]+ from
+                ([1-9][\d]*)\..+ to \4\.
+              - title ~= ^((chore|build)(\(deps(-dev)?\))?:) bump the .+ group
+                (across|with) .+ updates
 merge_protections_settings:
   reporting_method: check-runs
   auto_merge_conditions: true
+merge_queue:
+  max_parallel_checks: 10
+  skip_intermediate_results: true
+  status_comments: outcomes
