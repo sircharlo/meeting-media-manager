@@ -2422,7 +2422,10 @@ export const getWeMedia = async (lookupDate: Date) => {
           item.Track === media.Track &&
           item.IssueTagNumber === media.IssueTagNumber,
       );
-      if (multimediaMepsLangItem?.MepsLanguageIndex !== undefined) {
+      if (
+        multimediaMepsLangItem?.MepsLanguageIndex !== undefined &&
+        multimediaMepsLangItem?.MepsLanguageIndex !== media.MepsLanguageIndex
+      ) {
         media.AlternativeLanguage = multimediaMepsLangItem.MepsLanguageIndex;
       }
       const videoMarkers = getMediaVideoMarkers(
@@ -2567,7 +2570,10 @@ export const getMwMedia = async (lookupDate: Date) => {
           item.Track === media.Track &&
           item.IssueTagNumber === media.IssueTagNumber,
       );
-      if (multimediaMepsLangItem?.MepsLanguageIndex !== undefined) {
+      if (
+        multimediaMepsLangItem?.MepsLanguageIndex !== undefined &&
+        multimediaMepsLangItem?.MepsLanguageIndex !== media.MepsLanguageIndex
+      ) {
         media.AlternativeLanguage = multimediaMepsLangItem.MepsLanguageIndex;
       }
     }
@@ -2657,10 +2663,6 @@ export async function processMissingMediaInfo({
         !!result && !result.exists,
     );
 
-    const sjjMultimediaMepsLangIndexes = multimediaMepsLangs
-      ?.filter((item) => item.KeySymbol === 'sjj')
-      .map((item) => item.MepsLanguageIndex);
-
     for (const { media } of mediaToProcess) {
       /* eslint-disable perfectionist/sort-sets */
       // Languages to try, in order:
@@ -2669,14 +2671,19 @@ export async function processMissingMediaInfo({
           currentStateStore.currentSettings?.lang, // The language configured in the settings
           media.MepsLanguageIndex !== undefined &&
             (!currentStateStore.currentLangObject?.isSignLanguage ||
-              sjjMultimediaMepsLangIndexes?.includes(
-                media.MepsLanguageIndex,
+              multimediaMepsLangs?.some(
+                (i) =>
+                  i.KeySymbol === media.KeySymbol &&
+                  i.MepsLanguageIndex === media.MepsLanguageIndex,
               )) &&
             getJwLangCode(media.MepsLanguageIndex), // The language defined in the media item
           media.AlternativeLanguage !== undefined &&
+            media.AlternativeLanguage !== media.MepsLanguageIndex &&
             (!currentStateStore.currentLangObject?.isSignLanguage ||
-              sjjMultimediaMepsLangIndexes?.includes(
-                media.AlternativeLanguage,
+              multimediaMepsLangs?.some(
+                (i) =>
+                  i.KeySymbol === media.KeySymbol &&
+                  i.MepsLanguageIndex === media.AlternativeLanguage,
               )) &&
             getJwLangCode(media.AlternativeLanguage), // The alternative language defined in the media item
           currentStateStore.currentSettings?.langFallback, // The language fallback configured in the settings
