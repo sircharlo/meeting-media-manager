@@ -632,8 +632,7 @@ const addSelectedItems = async () => {
 
     const selectedPlaylistItems = selectedItems.value
       .map((i) => playlistItems.value[i])
-      .filter((item): item is NonNullable<typeof item> => !!item)
-      .reverse();
+      .filter((item): item is NonNullable<typeof item> => !!item);
 
     const outputPath = join(
       await getTempPath(),
@@ -642,24 +641,22 @@ const addSelectedItems = async () => {
 
     isProcessing.value = true;
 
-    // 🔥 Process all items *in parallel*
-    const results = await Promise.all(
-      selectedPlaylistItems
-        .filter((item) => !!item)
-        .map((item, idx) => processSingleItem(item, idx, outputPath)),
-    );
-
-    // 🔥 Build MediaItems from results (preserves order)
-    const processedMediaItems = results
-      .sort((a, b) => a.order - b.order)
-      .flatMap((result) => result?.mappedItems || []);
+    // Process items in playlist order so remote-video placeholders and
+    // mapped local items keep deterministic insertion order.
+    const processedMediaItems: DialogImportPayload['items'] = [];
+    for (const [idx, item] of selectedPlaylistItems.entries()) {
+      const result = await processSingleItem(item, idx, outputPath);
+      if (result?.mappedItems?.length) {
+        processedMediaItems.push(...result.mappedItems);
+      }
+    }
 
     // ✅ Always emit processed items - parent handles section assignment
     emit('import', { items: processedMediaItems });
 
     emit('ok');
     log(
-      '✅ All items processed (parallel) and applied (ordered).',
+      '✅ All items processed (sequential) and applied (ordered).',
       'jwPlaylist',
       'info',
     );
