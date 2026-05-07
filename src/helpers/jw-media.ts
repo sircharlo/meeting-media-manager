@@ -2338,9 +2338,8 @@ export const getWeMedia = async (lookupDate: Date) => {
       songs = [];
     }
 
-    let songLangs: ('' | JwLangCode)[] = [];
-    try {
-      songLangs = globalThis.electronApi
+    const songMultimediaExtractItems: MultimediaExtractItem[] =
+      globalThis.electronApi
         .executeQuery<MultimediaExtractItem>(
           db,
           `SELECT Extract.ExtractId, Extract.Link, DocumentExtract.BeginParagraphOrdinal
@@ -2351,27 +2350,30 @@ export const getWeMedia = async (lookupDate: Date) => {
            ORDER BY Extract.ExtractId
            LIMIT 2`,
         )
-        .sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal)
-        .map((item) => {
-          const match = new RegExp(/\/(.*)\//).exec(item.Link);
-          const langOverride = match
-            ? (match[1]?.split(':')[0] as JwLangCode)
-            : '';
-          return langOverride === currentStateStore.currentSettings?.lang
-            ? ''
-            : langOverride;
-        });
+        .sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal);
+
+    let songMepsLanguageCodes: ('' | JwLangCode)[] = [];
+    try {
+      songMepsLanguageCodes = songMultimediaExtractItems.map((item) => {
+        const match = new RegExp(/\/(.*)\//).exec(item.Link);
+        const langOverride = match
+          ? (match[1]?.split(':')[0] as JwLangCode)
+          : '';
+        return langOverride === currentStateStore.currentSettings?.lang
+          ? ''
+          : langOverride;
+      });
     } catch (e: unknown) {
       errorCatcher(e);
-      songLangs = songs.map(
+      songMepsLanguageCodes = songs.map(
         () => currentStateStore.currentSettings?.lang || 'E',
       );
     }
 
     const mergedSongs: MultimediaItem[] = songs
       .map((song, index) => {
-        if (!songLangs[index]) return song;
-        const langId = getJwLangId(songLangs[index]);
+        if (!songMepsLanguageCodes[index]) return song;
+        const langId = getJwLangId(songMepsLanguageCodes[index]);
         return {
           ...song,
           ...(langId === undefined
@@ -2666,32 +2668,56 @@ export async function processMissingMediaInfo({
     );
 
     for (const { media } of mediaToProcess) {
-      /* eslint-disable perfectionist/sort-sets */
-      // Languages to try, in order:
-      const langsWritten = [
-        ...new Set([
-          currentStateStore.currentSettings?.lang, // The language configured in the settings
-          media.MepsLanguageIndex !== undefined &&
-            (!currentStateStore.currentLangObject?.isSignLanguage ||
-              mepsLanguagesByMediaItem?.some(
-                (i) =>
-                  i.KeySymbol === media.KeySymbol &&
-                  i.MepsLanguageIndex === media.MepsLanguageIndex,
-              )) &&
-            getJwLangCode(media.MepsLanguageIndex), // The language defined in the media item
-          media.MepsLanguageAlternativeIndex !== undefined &&
-            media.MepsLanguageAlternativeIndex !== media.MepsLanguageIndex &&
-            (!currentStateStore.currentLangObject?.isSignLanguage ||
-              mepsLanguagesByMediaItem?.some(
-                (i) =>
-                  i.KeySymbol === media.KeySymbol &&
-                  i.MepsLanguageIndex === media.MepsLanguageAlternativeIndex,
-              )) &&
-            getJwLangCode(media.MepsLanguageAlternativeIndex), // The alternative language defined in the media item
-          currentStateStore.currentSettings?.langFallback, // The language fallback configured in the settings
-        ]),
-      ].filter(Boolean);
-      /* eslint-enable perfectionist/sort-sets */
+      const isSignLanguage =
+        !!currentStateStore.currentLangObject?.isSignLanguage;
+      const effectiveMediaKeySymbol =
+        media.KeySymbol === 'sjjm' && isSignLanguage
+          ? currentStateStore.currentSongbook?.pub || media.KeySymbol
+          : media.KeySymbol;
+
+      const mediaHasMepsLanguage = (mepsLanguageIndex?: number) => {
+        if (mepsLanguageIndex === undefined) return false;
+        if (!isSignLanguage) return true;
+
+        return !!mepsLanguagesByMediaItem?.some(
+          (i) =>
+            i.KeySymbol === effectiveMediaKeySymbol &&
+            i.MepsLanguageIndex === mepsLanguageIndex,
+        );
+      };
+
+      const mediaMepsLanguage =
+        mediaHasMepsLanguage(media.MepsLanguageIndex) &&
+        getJwLangCode(media.MepsLanguageIndex);
+      const mediaAltMepsLanguage =
+        media.MepsLanguageAlternativeIndex !== media.MepsLanguageIndex &&
+        mediaHasMepsLanguage(media.MepsLanguageAlternativeIndex) &&
+        getJwLangCode(media.MepsLanguageAlternativeIndex);
+
+      const languageCandidates = [
+        currentStateStore.currentSettings?.lang,
+        mediaMepsLanguage,
+        mediaAltMepsLanguage,
+        currentStateStore.currentSettings?.langFallback,
+      ];
+
+      const langsWritten = [...new Set(languageCandidates)].filter(Boolean);
+
+      log(
+        '[processMissingMediaInfo] Language resolution',
+        'mediaProcessing',
+        'debug',
+        {
+          effectiveMediaKeySymbol,
+          fallbackLang: currentStateStore.currentSettings?.langFallback,
+          isSignLanguage,
+          keySymbol: media.KeySymbol,
+          langsWritten,
+          mepsLanguageAlternativeIndex: media.MepsLanguageAlternativeIndex,
+          mepsLanguageIndex: media.MepsLanguageIndex,
+          track: media.Track,
+        },
+      );
 
       let mediaWasDownloaded = false;
       const triedPublicationFetchers: PublicationFetcher[] = [];
@@ -2711,6 +2737,13 @@ export async function processMissingMediaInfo({
             media.Track > 0 && { track: media.Track }),
         };
         triedPublicationFetchers.push(publicationFetcher);
+
+        log(
+          '[processMissingMediaInfo] Trying media download',
+          'mediaProcessing',
+          'info',
+          { publicationFetcher },
+        );
 
         if (media.KeySymbol === 'nwt') {
           const pubs = await getBibleMedia(false, langwritten);
@@ -3568,4 +3601,5 @@ registerMediaPlaybackProviders({
 
 registerSqliteProviders({
   getDbFromJWPUB,
+  getJwLangCode,
 });
