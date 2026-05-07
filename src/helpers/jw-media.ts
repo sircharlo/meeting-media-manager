@@ -199,6 +199,15 @@ export const getJwLangCode = (mepsId?: number): JwLangCode | null => {
   return mepslangs[mepsId] || null;
 };
 
+const getMepsLanguageIndex = (langCode?: '' | JwLangCode) => {
+  if (!langCode) return undefined;
+  const matchingEntry = Object.entries(mepslangs).find(
+    ([, code]) => code === langCode,
+  );
+  if (!matchingEntry) return undefined;
+  return Number(matchingEntry[0]);
+};
+
 export const copyToDatedAdditionalMedia = async (
   filepathToCopy: string,
   section: MediaSectionIdentifier | undefined,
@@ -2362,12 +2371,10 @@ export const getWeMedia = async (lookupDate: Date) => {
     const mergedSongs: MultimediaItem[] = songs
       .map((song, index) => {
         if (!songLangs[index]) return song;
-        const AlternativeLanguage = Object.values(mepslangs).indexOf(
-          songLangs[index],
-        );
+        const AlternativeLanguage = getMepsLanguageIndex(songLangs[index]);
         return {
           ...song,
-          ...(AlternativeLanguage === -1
+          ...(AlternativeLanguage === undefined
             ? {}
             : { AlternativeLanguage: AlternativeLanguage }),
         };
