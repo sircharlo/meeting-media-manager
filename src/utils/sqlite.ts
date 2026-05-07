@@ -11,7 +11,6 @@ import type {
 const { executeQuery, join } = globalThis.electronApi;
 
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { getJwLangCode } from 'src/helpers/jw-media';
 import { log } from 'src/shared/vanilla';
 import { findFile, getPublicationDirectory } from 'src/utils/fs';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -22,6 +21,8 @@ let getDbFromJWPUBProvider:
       meetingDate?: string,
     ) => Promise<null | string>)
   | null = null;
+let getJwLangCodeProvider: ((mepsId?: number) => JwLangCode | null) | null =
+  null;
 
 /**
  * Registers providers for sqlite utilities to avoid circular dependencies.
@@ -31,8 +32,10 @@ export const registerSqliteProviders = (providers: {
     publication: PublicationFetcher,
     meetingDate?: string,
   ) => Promise<null | string>;
+  getJwLangCode: (mepsId?: number) => JwLangCode | null;
 }) => {
   getDbFromJWPUBProvider = providers.getDbFromJWPUB;
+  getJwLangCodeProvider = providers.getJwLangCode;
 };
 
 const getDbFromJWPUB = async (
@@ -43,6 +46,13 @@ const getDbFromJWPUB = async (
     throw new Error('getDbFromJWPUBProvider not registered');
   }
   return getDbFromJWPUBProvider(publication, meetingDate);
+};
+
+const getJwLangCode = (mepsId?: number) => {
+  if (!getJwLangCodeProvider) {
+    throw new Error('getJwLangCodeProvider not registered');
+  }
+  return getJwLangCodeProvider(mepsId);
 };
 
 export async function addFullFilePathToMultimediaItem(
