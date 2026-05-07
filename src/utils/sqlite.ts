@@ -136,10 +136,10 @@ export const getPublicationInfoFromDb = (db: string): PublicationFetcher => {
   }
 };
 
-export const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
+export const getMepsLanguagesByMediaItem = (source: MultimediaItemsFetcher) => {
   try {
     if (!source.db) return [];
-    const multimediaMepsLangs: {
+    const mepsLanguagesByMediaItem: {
       IssueTagNumber: number;
       KeySymbol: null | string;
       MepsLanguageIndex: number;
@@ -155,7 +155,9 @@ export const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
         if (!thisTableExists) continue;
       } catch (error) {
         errorCatcher(error, {
-          contexts: { fn: { name: 'getMultimediaMepsLangs', source, table } },
+          contexts: {
+            fn: { name: 'getMepsLanguagesByMediaItem', source, table },
+          },
         });
         continue;
       }
@@ -172,7 +174,7 @@ export const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
       );
 
       if (columnKSExists && columnMLIExists)
-        multimediaMepsLangs.push(
+        mepsLanguagesByMediaItem.push(
           ...executeQuery<{
             IssueTagNumber: number;
             KeySymbol: null | string;
@@ -185,7 +187,7 @@ export const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
         );
     }
 
-    const filterSjjm = (items: typeof multimediaMepsLangs) => {
+    const filterSjjm = (items: typeof mepsLanguagesByMediaItem) => {
       // Build a set of sjj keys (IssueTagNumber + Track)
       const sjjSet = new Set(
         items
@@ -203,7 +205,7 @@ export const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
       });
     };
 
-    return filterSjjm(multimediaMepsLangs);
+    return filterSjjm(mepsLanguagesByMediaItem);
   } catch (error) {
     errorCatcher(error);
     return [];

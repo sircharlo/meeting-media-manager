@@ -86,7 +86,7 @@ import {
   getDocumentExtractItems,
   getDocumentMultimediaItems,
   getMediaVideoMarkers,
-  getMultimediaMepsLangs,
+  getMepsLanguagesByMediaItem,
   getPublicationInfoFromDb,
   registerSqliteProviders,
   tableExists,
@@ -2374,7 +2374,9 @@ export const getWeMedia = async (lookupDate: Date) => {
         const langId = getJwLangId(songLangs[index]);
         return {
           ...song,
-          ...(langId === undefined ? {} : { AlternativeLanguage: langId }),
+          ...(langId === undefined
+            ? {}
+            : { MepsLanguageAlternativeIndex: langId }),
         };
       })
       .sort((a, b) => (a.MultimediaId || 0) - (b.MultimediaId || 0));
@@ -2410,23 +2412,23 @@ export const getWeMedia = async (lookupDate: Date) => {
       }
     }
 
-    const multimediaMepsLangs = getMultimediaMepsLangs({ db, docId });
+    const mepsLanguagesByMediaItem = getMepsLanguagesByMediaItem({ db, docId });
     for (const media of allMedia) {
       const mediaKeySymbol =
         media.KeySymbol === 'sjjm'
           ? currentStateStore.currentSongbook?.pub
           : media.KeySymbol;
-      const multimediaMepsLangItem = multimediaMepsLangs.find(
+      const mepsLanguage = mepsLanguagesByMediaItem.find(
         (item) =>
           item.KeySymbol === mediaKeySymbol &&
           item.Track === media.Track &&
           item.IssueTagNumber === media.IssueTagNumber,
       );
       if (
-        multimediaMepsLangItem?.MepsLanguageIndex !== undefined &&
-        multimediaMepsLangItem?.MepsLanguageIndex !== media.MepsLanguageIndex
+        mepsLanguage?.MepsLanguageIndex !== undefined &&
+        mepsLanguage?.MepsLanguageIndex !== media.MepsLanguageIndex
       ) {
-        media.AlternativeLanguage = multimediaMepsLangItem.MepsLanguageIndex;
+        media.MepsLanguageAlternativeIndex = mepsLanguage.MepsLanguageIndex;
       }
       const videoMarkers = getMediaVideoMarkers(
         { db, docId },
@@ -2438,7 +2440,7 @@ export const getWeMedia = async (lookupDate: Date) => {
       allMedia,
       isDynamicMedia: true,
       meetingDate: formatDate(lookupDate, 'YYYYMMDD'),
-      multimediaMepsLangs,
+      mepsLanguagesByMediaItem,
     });
     const mediaForDay = await dynamicMediaMapper(
       allMedia,
@@ -2558,23 +2560,23 @@ export const getMwMedia = async (lookupDate: Date) => {
       .concat(extracts)
       .sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal);
 
-    const multimediaMepsLangs = getMultimediaMepsLangs({ db, docId });
+    const mepsLanguagesByMediaItem = getMepsLanguagesByMediaItem({ db, docId });
     for (const media of allMedia) {
       const mediaKeySymbol =
         media.KeySymbol === 'sjjm'
           ? currentStateStore.currentSongbook?.pub
           : media.KeySymbol;
-      const multimediaMepsLangItem = multimediaMepsLangs.find(
+      const mepsLanguage = mepsLanguagesByMediaItem.find(
         (item) =>
           item.KeySymbol === mediaKeySymbol &&
           item.Track === media.Track &&
           item.IssueTagNumber === media.IssueTagNumber,
       );
       if (
-        multimediaMepsLangItem?.MepsLanguageIndex !== undefined &&
-        multimediaMepsLangItem?.MepsLanguageIndex !== media.MepsLanguageIndex
+        mepsLanguage?.MepsLanguageIndex !== undefined &&
+        mepsLanguage?.MepsLanguageIndex !== media.MepsLanguageIndex
       ) {
-        media.AlternativeLanguage = multimediaMepsLangItem.MepsLanguageIndex;
+        media.MepsLanguageAlternativeIndex = mepsLanguage.MepsLanguageIndex;
       }
     }
     const errors =
@@ -2582,7 +2584,7 @@ export const getMwMedia = async (lookupDate: Date) => {
         allMedia,
         isDynamicMedia: true,
         meetingDate: formatDate(lookupDate, 'YYYYMMDD'),
-        multimediaMepsLangs,
+        mepsLanguagesByMediaItem,
       })) || [];
     const mediaForDay = await dynamicMediaMapper(
       allMedia,
@@ -2613,13 +2615,13 @@ export async function processMissingMediaInfo({
   isDynamicMedia = false,
   keepMediaLabels = false,
   meetingDate,
-  multimediaMepsLangs,
+  mepsLanguagesByMediaItem,
 }: {
   allMedia: MultimediaItem[];
   isDynamicMedia?: boolean;
   keepMediaLabels?: boolean;
   meetingDate?: null | string;
-  multimediaMepsLangs?: {
+  mepsLanguagesByMediaItem?: {
     IssueTagNumber: number;
     KeySymbol: null | string;
     MepsLanguageIndex: number;
@@ -2671,21 +2673,21 @@ export async function processMissingMediaInfo({
           currentStateStore.currentSettings?.lang, // The language configured in the settings
           media.MepsLanguageIndex !== undefined &&
             (!currentStateStore.currentLangObject?.isSignLanguage ||
-              multimediaMepsLangs?.some(
+              mepsLanguagesByMediaItem?.some(
                 (i) =>
                   i.KeySymbol === media.KeySymbol &&
                   i.MepsLanguageIndex === media.MepsLanguageIndex,
               )) &&
             getJwLangCode(media.MepsLanguageIndex), // The language defined in the media item
-          media.AlternativeLanguage !== undefined &&
-            media.AlternativeLanguage !== media.MepsLanguageIndex &&
+          media.MepsLanguageAlternativeIndex !== undefined &&
+            media.MepsLanguageAlternativeIndex !== media.MepsLanguageIndex &&
             (!currentStateStore.currentLangObject?.isSignLanguage ||
-              multimediaMepsLangs?.some(
+              mepsLanguagesByMediaItem?.some(
                 (i) =>
                   i.KeySymbol === media.KeySymbol &&
-                  i.MepsLanguageIndex === media.AlternativeLanguage,
+                  i.MepsLanguageIndex === media.MepsLanguageAlternativeIndex,
               )) &&
-            getJwLangCode(media.AlternativeLanguage), // The alternative language defined in the media item
+            getJwLangCode(media.MepsLanguageAlternativeIndex), // The alternative language defined in the media item
           currentStateStore.currentSettings?.langFallback, // The language fallback configured in the settings
         ]),
       ].filter(Boolean);

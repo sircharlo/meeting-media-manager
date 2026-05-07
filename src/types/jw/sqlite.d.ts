@@ -54,7 +54,6 @@ export interface MultimediaExtractRefItem {
 }
 
 export interface MultimediaItem {
-  AlternativeLanguage?: number;
   BeginParagraphOrdinal: number;
   BeginPosition?: number;
   BibleBookId?: number;
@@ -92,6 +91,7 @@ export interface MultimediaItem {
   LocalPath?: string;
   MajorType: number;
   MepsDocumentId?: null | number;
+  MepsLanguageAlternativeIndex?: number;
   MepsLanguageIndex?: number;
   MimeType: string;
   MinorType?: number;
