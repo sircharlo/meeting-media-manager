@@ -3601,4 +3601,5 @@ registerMediaPlaybackProviders({
 
 registerSqliteProviders({
   getDbFromJWPUB,
+  getJwLangCode,
 });
