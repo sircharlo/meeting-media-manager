@@ -2338,9 +2338,8 @@ export const getWeMedia = async (lookupDate: Date) => {
       songs = [];
     }
 
-    let songLangs: ('' | JwLangCode)[] = [];
-    try {
-      songLangs = globalThis.electronApi
+    const songMultimediaExtractItems: MultimediaExtractItem[] =
+      globalThis.electronApi
         .executeQuery<MultimediaExtractItem>(
           db,
           `SELECT Extract.ExtractId, Extract.Link, DocumentExtract.BeginParagraphOrdinal
@@ -2351,27 +2350,30 @@ export const getWeMedia = async (lookupDate: Date) => {
            ORDER BY Extract.ExtractId
            LIMIT 2`,
         )
-        .sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal)
-        .map((item) => {
-          const match = new RegExp(/\/(.*)\//).exec(item.Link);
-          const langOverride = match
-            ? (match[1]?.split(':')[0] as JwLangCode)
-            : '';
-          return langOverride === currentStateStore.currentSettings?.lang
-            ? ''
-            : langOverride;
-        });
+        .sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal);
+
+    let songMepsLanguageCodes: ('' | JwLangCode)[] = [];
+    try {
+      songMepsLanguageCodes = songMultimediaExtractItems.map((item) => {
+        const match = new RegExp(/\/(.*)\//).exec(item.Link);
+        const langOverride = match
+          ? (match[1]?.split(':')[0] as JwLangCode)
+          : '';
+        return langOverride === currentStateStore.currentSettings?.lang
+          ? ''
+          : langOverride;
+      });
     } catch (e: unknown) {
       errorCatcher(e);
-      songLangs = songs.map(
+      songMepsLanguageCodes = songs.map(
         () => currentStateStore.currentSettings?.lang || 'E',
       );
     }
 
     const mergedSongs: MultimediaItem[] = songs
       .map((song, index) => {
-        if (!songLangs[index]) return song;
-        const langId = getJwLangId(songLangs[index]);
+        if (!songMepsLanguageCodes[index]) return song;
+        const langId = getJwLangId(songMepsLanguageCodes[index]);
         return {
           ...song,
           ...(langId === undefined
