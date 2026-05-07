@@ -7761,9 +7761,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-updater@npm:^6.8.3":
-  version: 6.8.4
-  resolution: "electron-updater@npm:6.8.4"
+"electron-updater@npm:^6.8.5":
+  version: 6.8.5
+  resolution: "electron-updater@npm:6.8.5"
   dependencies:
     builder-util-runtime: "npm:9.6.0"
     fs-extra: "npm:^10.1.0"
@@ -7773,7 +7773,7 @@ __metadata:
     lodash.isequal: "npm:^4.5.0"
     semver: "npm:~7.7.3"
     tiny-typed-emitter: "npm:^2.1.0"
-  checksum: 10c0/e6fa6731f3a6f3e6952db02b3bc70c56579bff89ac54ba06c449bf9465e3032f8b808abae8adafac961cab48a123242767c52e52dcc51c829c8d8ef07faf3d98
+  checksum: 10c0/e493a5a1d9666b5c7e7a39ff127e95f5d6ad0fc3864c7fdadef6f5ae99110ad976cdd17092b8b09f2c7aeca7d461b0cecc563f5b8cfa66db1f014dc094ff2b04
   languageName: node
   linkType: hard
 
@@ -11299,7 +11299,7 @@ __metadata:
     electron: "npm:41.2.2"
     electron-builder: "npm:26.8.1"
     electron-dl-manager: "npm:^4.2.3"
-    electron-updater: "npm:^6.8.3"
+    electron-updater: "npm:^6.8.5"
     eslint: "npm:^10.3.0"
     eslint-plugin-perfectionist: "npm:^5.9.0"
     eslint-plugin-vue: "npm:^10.9.1"
