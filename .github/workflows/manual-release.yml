@@ -60,8 +60,7 @@ jobs:
       head: ${{ needs.bump-version.outputs.bump_branch }}
       title: 'chore: bump version to ${{ needs.bump-version.outputs.new_version }}'
       body: 'Automated manual release version bump for v${{ needs.bump-version.outputs.new_version }}.'
-    secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    secrets: inherit
 
   draft-release:
     name: Draft release
