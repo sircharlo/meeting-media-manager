@@ -26,7 +26,7 @@
         <template v-else>
           <q-list class="full-width" dense>
             <q-expansion-item
-              v-for="(group, dateKey) in groupedByDate"
+              v-for="[dateKey, group] in groupedByDateEntries"
               :key="dateKey"
               :caption="getStatusCaption(dateKey)"
               dense-toggle
@@ -186,6 +186,21 @@ const groupedByDate = computed(() => {
     {} as Record<string, typeof items>,
   );
 });
+const groupedByDateEntries = computed(() =>
+  Object.entries(groupedByDate.value).sort(([a], [b]) => {
+    if (!a && !b) return 0;
+    if (!a) return -1;
+    if (!b) return 1;
+    return dateFromString(a).getTime() - dateFromString(b).getTime();
+  }),
+);
+const groupedByDateWatchSignal = computed(() =>
+  groupedByDateEntries.value.map(([dateKey, group]) => ({
+    dateKey,
+    ids: group.map((item) => item.filename).sort(),
+    status: getDateStatus(dateKey),
+  })),
+);
 
 const navigateToDate = (dateKey?: string) => {
   if (!dateKey) return;
@@ -233,23 +248,32 @@ const shouldAutoOpen = (dateKey: string) => {
 };
 
 const downloadPopup = useTemplateRef<QMenu>('downloadPopup');
+const AUTO_COLLAPSE_COOLDOWN_MS = 4000;
 
 // Track expansion state for each date group
 const expandedDates = ref<Set<string>>(new Set());
+const manuallyToggledDates = ref<Set<string>>(new Set());
+const completedSince = ref<Record<string, number>>({});
 
 // Initialize expansion state based on current download status
 const initializeExpansionState = () => {
   const newExpandedDates = new Set<string>();
+  const newCompletedSince: Record<string, number> = {};
   Object.keys(groupedByDate.value).forEach((dateKey) => {
+    if (getDateStatus(dateKey) === 'complete') {
+      newCompletedSince[dateKey] = Date.now();
+    }
     if (shouldAutoOpen(dateKey)) {
       newExpandedDates.add(dateKey);
     }
   });
+  completedSince.value = newCompletedSince;
   expandedDates.value = newExpandedDates;
 };
 
 // Handle expansion toggle with position update
 const handleExpansionToggle = (dateKey: string, expanded: boolean) => {
+  manuallyToggledDates.value.add(dateKey);
   if (expanded) {
     expandedDates.value.add(dateKey);
   } else {
@@ -351,29 +375,42 @@ const onRefreshMeetingMedia = () => {
 };
 
 // Watch for changes in download progress and update expansion states
-watch(
-  () => Object.keys(downloadProgress.value || {}).length,
-  () => {
-    const newExpandedDates = new Set<string>();
-    Object.keys(groupedByDate.value).forEach((dateKey) => {
-      const status = getDateStatus(dateKey);
-      const wasExpanded = expandedDates.value.has(dateKey);
+watch(groupedByDateWatchSignal, () => {
+  const now = Date.now();
+  const newCompletedSince: Record<string, number> = {};
+  const newExpandedDates = new Set<string>();
+  Object.keys(groupedByDate.value).forEach((dateKey) => {
+    const status = getDateStatus(dateKey);
+    const wasExpanded = expandedDates.value.has(dateKey);
+    const isManual = manuallyToggledDates.value.has(dateKey);
 
-      // Auto-open if loading or error, auto-close if all complete
-      const shouldExpand =
-        status === 'loading' ||
-        (status === 'error' &&
-          getDateDiff(dateFromString(dateKey), new Date(), 'days') <= 7) ||
-        (status === 'complete' && wasExpanded);
+    if (status === 'complete') {
+      newCompletedSince[dateKey] = completedSince.value[dateKey] || now;
+    }
 
-      if (shouldExpand) {
-        newExpandedDates.add(dateKey);
-      }
-    });
-    expandedDates.value = newExpandedDates;
-  },
-  { deep: true },
-);
+    if (isManual) {
+      if (wasExpanded) newExpandedDates.add(dateKey);
+      return;
+    }
+
+    const isRecentCompletion =
+      status === 'complete' &&
+      now - (newCompletedSince[dateKey] || now) < AUTO_COLLAPSE_COOLDOWN_MS;
+
+    // Auto-open if loading or error, auto-close if all complete
+    const shouldExpand =
+      status === 'loading' ||
+      (status === 'error' &&
+        getDateDiff(dateFromString(dateKey), new Date(), 'days') <= 7) ||
+      (status === 'complete' && wasExpanded && isRecentCompletion);
+
+    if (shouldExpand) {
+      newExpandedDates.add(dateKey);
+    }
+  });
+  completedSince.value = newCompletedSince;
+  expandedDates.value = newExpandedDates;
+});
 
 // Initialize expansion state on component mount
 watchImmediate(
@@ -382,6 +419,13 @@ watchImmediate(
     initializeExpansionState();
   },
 );
+
+watch(open, (isOpen) => {
+  if (isOpen) {
+    manuallyToggledDates.value = new Set();
+    initializeExpansionState();
+  }
+});
 
 watchImmediate(
   () => filteredDownloads().length,
