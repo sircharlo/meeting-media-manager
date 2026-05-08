@@ -632,8 +632,7 @@ const addSelectedItems = async () => {
 
     const selectedPlaylistItems = selectedItems.value
       .map((i) => playlistItems.value[i])
-      .filter((item): item is NonNullable<typeof item> => !!item)
-      .reverse();
+      .filter((item): item is NonNullable<typeof item> => !!item);
 
     const outputPath = join(
       await getTempPath(),
@@ -642,24 +641,39 @@ const addSelectedItems = async () => {
 
     isProcessing.value = true;
 
-    // 🔥 Process all items *in parallel*
-    const results = await Promise.all(
-      selectedPlaylistItems
-        .filter((item) => !!item)
-        .map((item, idx) => processSingleItem(item, idx, outputPath)),
-    );
+    // Process items in playlist order so remote-video placeholders and
+    // mapped local items keep deterministic insertion order.
+    const processedMediaItems: DialogImportPayload['items'] = [];
+    const deferredVideoItems: {
+      idx: number;
+      item: (typeof selectedPlaylistItems)[number];
+    }[] = [];
 
-    // 🔥 Build MediaItems from results (preserves order)
-    const processedMediaItems = results
-      .sort((a, b) => a.order - b.order)
-      .flatMap((result) => result?.mappedItems || []);
+    for (const [idx, item] of selectedPlaylistItems.entries()) {
+      const isVideo = !item.OriginalFilename;
+      if (isVideo) {
+        deferredVideoItems.push({ idx, item });
+        continue;
+      }
+
+      const result = await processSingleItem(item, idx, outputPath);
+      if (result?.mappedItems?.length) {
+        processedMediaItems.push(...result.mappedItems);
+      }
+    }
+
+    // add placeholders in reverse processing order so top-inserted items keep
+    // the same visible order as the original playlist (1,2,3...)
+    for (const { idx, item } of [...deferredVideoItems].reverse()) {
+      await processSingleItem(item, idx, outputPath);
+    }
 
     // ✅ Always emit processed items - parent handles section assignment
     emit('import', { items: processedMediaItems });
 
     emit('ok');
     log(
-      '✅ All items processed (parallel) and applied (ordered).',
+      '✅ All items processed (sequential) and applied (ordered).',
       'jwPlaylist',
       'info',
     );
