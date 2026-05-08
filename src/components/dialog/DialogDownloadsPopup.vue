@@ -11,71 +11,55 @@
   >
     <div class="action-popup flex q-py-md" style="flex-flow: column">
       <div class="card-title row q-px-md q-mb-none items-center">
-        <div class="col">
-          {{ t('media-sync') }}
-        </div>
+        <div class="col">{{ t('media-sync') }}</div>
       </div>
+
       <div class="col overflow-auto q-col-gutter-y-sm">
-        <template v-if="Object.values(downloadProgress).length === 0">
-          <div class="row flex-center q-px-md q-mb-sm row">
+        <template v-if="groupedByDateEntries.length === 0">
+          <div class="row flex-center q-px-md q-mb-sm">
             <div class="col ellipsis text-weight-medium text-dark-grey">
               {{ t('noDownloadsInProgress') }}
             </div>
           </div>
         </template>
+
         <template v-else>
           <q-list class="full-width" dense>
             <q-expansion-item
               v-for="[dateKey, group] in groupedByDateEntries"
               :key="dateKey"
-              :caption="getStatusCaption(dateKey)"
               dense-toggle
               expand-separator
-              :icon="getStatusIcon(dateKey)"
-              :icon-color="getStatusColor(dateKey)"
-              :label="
-                getLocalDate(
-                  dateKey,
-                  dateLocale,
-                  currentSettings?.localDateFormat,
-                ) ||
-                dateKey ||
-                t('unknown-date')
-              "
               :model-value="expandedDates.has(dateKey)"
-              @update:model-value="
-                (expanded) => handleExpansionToggle(dateKey, expanded)
-              "
+              @update:model-value="(v) => handleExpansionToggle(dateKey, v)"
             >
               <template #header>
                 <div class="row items-center full-width">
+                  <q-icon
+                    class="q-mr-sm"
+                    :color="statusColor(dateKey)"
+                    :name="statusIcon(dateKey)"
+                    size="sm"
+                  />
                   <div class="col">
                     <q-item-section>
-                      <q-item-label>{{
-                        getLocalDate(
-                          dateKey,
-                          dateLocale,
-                          currentSettings?.localDateFormat,
-                        ) ||
-                        dateKey ||
-                        t('unknown-date')
-                      }}</q-item-label>
+                      <q-item-label>
+                        {{ localDate(dateKey) || t('unknown-date') }}
+                      </q-item-label>
                       <q-item-label caption>{{
-                        getStatusCaption(dateKey)
+                        statusCaption(dateKey, group)
                       }}</q-item-label>
                     </q-item-section>
                   </div>
-                  <div class="col-shrink">
-                    <q-btn
-                      class="q-mr-sm"
-                      color="primary"
-                      flat
-                      icon="mmm-arrow-outward"
-                      round
-                      size="xs"
-                      @click.stop="navigateToDate(dateKey)"
-                    />
-                  </div>
+                  <q-btn
+                    class="q-mr-sm"
+                    color="primary"
+                    flat
+                    icon="mmm-arrow-outward"
+                    round
+                    size="xs"
+                    @click.stop="navigateToDate(dateKey)"
+                  />
                 </div>
               </template>
 
@@ -83,7 +67,7 @@
                 <q-item v-for="(item, id) in group" :key="id" dense>
                   <q-item-section>
                     <q-item-label class="text-weight-medium text-dark-grey">
-                      {{ getBasename(item.filename) }}
+                      {{ basename(item.filename) }}
                     </q-item-label>
                   </q-item-section>
                   <q-item-section side>
@@ -93,9 +77,7 @@
                       name="mmm-error"
                       size="sm"
                     >
-                      <q-tooltip>
-                        {{ errorTooltipText(item) }}
-                      </q-tooltip>
+                      <q-tooltip>{{ errorTooltip(item) }}</q-tooltip>
                     </q-icon>
                     <q-icon
                       v-else-if="item.complete"
@@ -104,11 +86,11 @@
                       size="sm"
                     />
                     <q-circular-progress
-                      v-else-if="showProgress(item)"
+                      v-else-if="item.loaded && item.total"
                       color="primary"
                       size="sm"
                       :thickness="0.3"
-                      :value="progressValue(item)"
+                      :value="(item.loaded / item.total) * 100"
                     />
                   </q-item-section>
                 </q-item>
@@ -117,6 +99,7 @@
           </q-list>
         </template>
       </div>
+
       <q-separator class="bg-accent-200" />
       <div class="q-px-md q-pt-md row q-gutter-sm justify-end">
         <q-btn
@@ -127,9 +110,9 @@
           :loading="fetchOrDownloadsAreRunning"
           @click="onRefreshMeetingMedia"
         >
-          <q-tooltip v-if="!fetchOrDownloadsAreRunning">{{
-            t('refresh-all-meeting-media')
-          }}</q-tooltip>
+          <q-tooltip v-if="!fetchOrDownloadsAreRunning">
+            {{ t('refresh-all-meeting-media') }}
+          </q-tooltip>
         </q-btn>
       </div>
     </div>
@@ -137,9 +120,6 @@
 </template>
 
 <script setup lang="ts">
-import type { DownloadProgressItems } from 'src/types';
-
-import { watchImmediate } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { type QMenu, useQuasar } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
@@ -151,10 +131,12 @@ import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+// ─── Setup ───────────────────────────────────────────────────────────────────
+
 const { t } = useI18n();
 const $q = useQuasar();
-
 const { basename } = globalThis.electronApi;
+const { dateLocale } = useLocale();
 
 const open = defineModel<boolean>({ default: false });
 
@@ -162,30 +144,30 @@ const currentState = useCurrentStateStore();
 const { currentSettings, downloadProgress, mediaIsPlaying, selectedDate } =
   storeToRefs(currentState);
 
-const getBasename = (filename: string) => {
-  if (!filename) return '';
-  return basename(filename);
-};
+// ─── Types ───────────────────────────────────────────────────────────────────
 
-const filteredDownloads = () =>
-  Object.entries(downloadProgress.value || {})
-    .sort((a, b) => SORTER.compare(a[1].filename, b[1].filename))
-    .map(([, item]) => item);
+type DateStatus = 'complete' | 'error' | 'loading' | 'none';
+// 'auto' means expansion is driven by status; manual overrides it.
+type ExpansionMode = 'auto' | 'manual-closed' | 'manual-open';
 
-const { dateLocale } = useLocale();
+// ─── Grouped data ─────────────────────────────────────────────────────────────
+
+const filteredDownloads = computed(() =>
+  Object.values(downloadProgress.value ?? {}).sort((a, b) =>
+    SORTER.compare(a.filename, b.filename),
+  ),
+);
 
 const groupedByDate = computed(() => {
-  const items = filteredDownloads();
-  return items.reduce(
-    (acc, item) => {
-      const key = item.meetingDate || '';
-      if (!acc[key]) acc[key] = [] as typeof items;
-      acc[key].push(item);
-      return acc;
-    },
-    {} as Record<string, typeof items>,
-  );
+  const map: Record<string, typeof filteredDownloads.value> = {};
+  for (const item of filteredDownloads.value) {
+    const key = item.meetingDate ?? '';
+    map[key] ??= [];
+    map[key].push(item);
+  }
+  return map;
 });
+
 const groupedByDateEntries = computed(() =>
   Object.entries(groupedByDate.value).sort(([a], [b]) => {
     if (!a && !b) return 0;
@@ -194,171 +176,135 @@ const groupedByDateEntries = computed(() =>
     return dateFromString(a).getTime() - dateFromString(b).getTime();
   }),
 );
-const groupedByDateWatchSignal = computed(() =>
-  groupedByDateEntries.value.map(([dateKey, group]) => ({
-    dateKey,
-    ids: group.map((item) => item.filename).sort(),
-    status: getDateStatus(dateKey),
-  })),
+
+// ─── Status helpers ───────────────────────────────────────────────────────────
+
+function computeStatus(dateKey: string): DateStatus {
+  const group = groupedByDate.value[dateKey];
+  if (!group?.length) return 'none';
+  if (group.some((i) => i.error)) return 'error';
+  if (group.some((i) => !i.complete && !i.error)) return 'loading';
+  if (group.every((i) => i.complete)) return 'complete';
+  return 'none';
+}
+
+// Memoised per render cycle — avoids re-computing for every helper call.
+const dateStatuses = computed(() =>
+  Object.fromEntries(
+    Object.keys(groupedByDate.value).map((k) => [k, computeStatus(k)]),
+  ),
 );
 
-const navigateToDate = (dateKey?: string) => {
-  if (!dateKey) return;
-  if (!dateKey.includes('/')) {
-    dateKey = dateKey.replace(/(\d{4})(\d{2})(\d{2})/, '$1/$2/$3');
-  }
-  selectedDate.value = dateKey;
-};
+const getStatus = (dateKey: string): DateStatus =>
+  dateStatuses.value[dateKey] ?? 'none';
 
-const errorTooltipText = (item: { meetingDate?: null | string }) => {
-  try {
-    const dateKey = item.meetingDate;
-    if (!dateKey)
-      return `${t('errorDownloadingMeetingMedia')}. ${t('tryConfiguringFallbackLanguage')}.`;
-    const daysUntil = getDateDiff(dateKey, new Date(), 'days');
-    if (daysUntil > 7) {
-      return `${t('errorDownloadingMeetingMedia')}. This media may become available later.`;
-    }
-    return `${t('errorDownloadingMeetingMedia')}. ${t('tryConfiguringFallbackLanguage')}.`;
-  } catch {
-    return `${t('errorDownloadingMeetingMedia')}. ${t('tryConfiguringFallbackLanguage')}.`;
-  }
-};
+function isRecentError(dateKey: string) {
+  return getDateDiff(dateFromString(dateKey), new Date(), 'days') <= 7;
+}
 
-const getDateStatus = (dateKey: string) => {
-  const group = groupedByDate.value[dateKey];
-  if (!group || group.length === 0) return 'none';
+function shouldAutoExpand(dateKey: string) {
+  const s = getStatus(dateKey);
+  return s === 'loading' || (s === 'error' && isRecentError(dateKey));
+}
 
-  const hasError = group.some((item) => item.error);
-  const hasLoading = group.some((item) => !item.complete && !item.error);
-  const allComplete = group.every((item) => item.complete);
+// ─── Template helpers ─────────────────────────────────────────────────────────
 
-  if (hasError) return 'error';
-  if (hasLoading) return 'loading';
-  if (allComplete) return 'complete';
-  return 'none';
-};
+const localDate = (dateKey: string) =>
+  getLocalDate(
+    dateKey,
+    dateLocale.value,
+    currentSettings.value?.localDateFormat,
+  );
 
-const shouldAutoOpen = (dateKey: string) => {
-  const status = getDateStatus(dateKey);
-  if (status === 'error') {
-    return getDateDiff(dateFromString(dateKey), new Date(), 'days') < 7;
-  }
-  return status === 'loading';
-};
+const statusIcon = (dateKey: string): string =>
+  ({
+    complete: 'mmm-cloud-done',
+    error: 'mmm-error',
+    loading: 'mmm-download',
+    none: 'mmm-calendar',
+  })[getStatus(dateKey)];
+
+const statusColor = (dateKey: string): string =>
+  ({
+    complete: 'positive',
+    error: 'negative',
+    loading: 'primary',
+    none: 'secondary',
+  })[getStatus(dateKey)];
+
+function statusCaption(dateKey: string, group: typeof filteredDownloads.value) {
+  const total = group.length;
+  const complete = group.filter((i) => i.complete).length;
+  const error = group.filter((i) => i.error).length;
+  const loading = total - complete - error;
+  if (loading > 0) return t('loading');
+  if (error > 0) return `${t('failed')} (${error})`;
+  if (complete === total) return t('completed');
+  return `${total} ${t('items')}`;
+}
+
+const FALLBACK_SUFFIX = `${t('errorDownloadingMeetingMedia')}. ${t('tryConfiguringFallbackLanguage')}.`;
+
+function errorTooltip(item: { meetingDate?: null | string }) {
+  const dateKey = item.meetingDate;
+  if (!dateKey) return FALLBACK_SUFFIX;
+  return getDateDiff(dateKey, new Date(), 'days') > 7
+    ? `${t('errorDownloadingMeetingMedia')}. This media may become available later.`
+    : FALLBACK_SUFFIX;
+}
+
+// ─── Expansion state ──────────────────────────────────────────────────────────
+
+const AUTO_COLLAPSE_MS = 4000;
+
+// Single source of truth for expansion. 'auto' defers to shouldAutoExpand().
+const expansionModes = ref<Record<string, ExpansionMode>>({});
+// Timestamp of when a date first reached 'complete' status.
+const completedAt = ref<Record<string, number>>({});
+
+const expandedDates = computed(() => {
+  const now = Date.now();
+  return new Set(
+    Object.keys(groupedByDate.value).filter((k) => {
+      const mode = expansionModes.value[k] ?? 'auto';
+      if (mode === 'manual-open') return true;
+      if (mode === 'manual-closed') return false;
+      // auto: expand while loading/erroring; keep open briefly after completion
+      if (shouldAutoExpand(k)) return true;
+      const t0 = completedAt.value[k];
+      return t0 !== undefined && now - t0 < AUTO_COLLAPSE_MS;
+    }),
+  );
+});
 
 const downloadPopup = useTemplateRef<QMenu>('downloadPopup');
-const AUTO_COLLAPSE_COOLDOWN_MS = 4000;
 
-// Track expansion state for each date group
-const expandedDates = ref<Set<string>>(new Set());
-const manuallyToggledDates = ref<Set<string>>(new Set());
-const completedSince = ref<Record<string, number>>({});
+function handleExpansionToggle(dateKey: string, expanded: boolean) {
+  expansionModes.value[dateKey] = expanded ? 'manual-open' : 'manual-closed';
+  // Let the expansion animation finish before repositioning.
+  setTimeout(() => downloadPopup.value?.updatePosition(), 300);
+}
 
-// Initialize expansion state based on current download status
-const initializeExpansionState = () => {
-  const newExpandedDates = new Set<string>();
-  const newCompletedSince: Record<string, number> = {};
-  Object.keys(groupedByDate.value).forEach((dateKey) => {
-    if (getDateStatus(dateKey) === 'complete') {
-      newCompletedSince[dateKey] = Date.now();
-    }
-    if (shouldAutoOpen(dateKey)) {
-      newExpandedDates.add(dateKey);
-    }
-  });
-  completedSince.value = newCompletedSince;
-  expandedDates.value = newExpandedDates;
-};
+// ─── Actions ──────────────────────────────────────────────────────────────────
 
-// Handle expansion toggle with position update
-const handleExpansionToggle = (dateKey: string, expanded: boolean) => {
-  manuallyToggledDates.value.add(dateKey);
-  if (expanded) {
-    expandedDates.value.add(dateKey);
-  } else {
-    expandedDates.value.delete(dateKey);
-  }
-
-  // Update popup position after animation completes
-  setTimeout(() => {
-    if (downloadPopup.value) {
-      downloadPopup.value.updatePosition();
-    }
-  }, 300); // Allow time for expansion animation
-};
-
-const hasStatus = (
-  obj: DownloadProgressItems,
-  status: 'complete' | 'error' | 'loaded',
-) => Object.values(obj).some((item) => item[status]);
-
-const progressValue = (item: { loaded?: number; total?: number }) =>
-  item.loaded && item.total ? (item.loaded / item.total) * 100 : 0;
-
-const showProgress = (item: { loaded?: number; total?: number }) =>
-  item.loaded && item.total;
-
-const getStatusIcon = (dateKey: string) => {
-  const status = getDateStatus(dateKey);
-  switch (status) {
-    case 'complete':
-      return 'mmm-cloud-done';
-    case 'error':
-      return 'mmm-error';
-    case 'loading':
-      return 'mmm-download';
-    default:
-      return 'mmm-calendar';
-  }
-};
-
-const getStatusColor = (dateKey: string) => {
-  const status = getDateStatus(dateKey);
-  switch (status) {
-    case 'complete':
-      return 'positive';
-    case 'error':
-      return 'negative';
-    case 'loading':
-      return 'primary';
-    default:
-      return 'secondary';
-  }
-};
-
-const getStatusCaption = (dateKey: string) => {
-  const group = groupedByDate.value[dateKey];
-  if (!group) return '';
-
-  const total = group.length;
-  const complete = group.filter((item) => item.complete).length;
-  const error = group.filter((item) => item.error).length;
-  const loading = total - complete - error;
-
-  if (loading > 0) return `${t('loading')}`;
-  if (error > 0) return `${t('failed')} (${error})`;
-  if (complete === total) return `${t('completed')}`;
-  return `${total} ${t('items')}`;
-};
-
-const fetchIsRunning = computed(() => {
-  return currentState.fetchingMeetingsCount > 0;
-});
-
-const hasActiveDownloads = computed(() =>
-  hasStatus(downloadProgress.value, 'loaded'),
+const fetchOrDownloadsAreRunning = computed(
+  () =>
+    currentState.fetchingMeetingsCount > 0 ||
+    Object.values(downloadProgress.value).some((i) => i.loaded),
 );
 
-const fetchOrDownloadsAreRunning = computed(() => {
-  return fetchIsRunning.value || hasActiveDownloads.value;
-});
+const refreshDisabled = computed(
+  () => fetchOrDownloadsAreRunning.value || mediaIsPlaying.value,
+);
 
-const refreshDisabled = computed(() => {
-  return fetchOrDownloadsAreRunning.value || mediaIsPlaying.value;
-});
+function navigateToDate(dateKey?: string) {
+  if (!dateKey) return;
+  selectedDate.value = dateKey.includes('/')
+    ? dateKey
+    : dateKey.replace(/(\d{4})(\d{2})(\d{2})/, '$1/$2/$3');
+}
 
-const onRefreshMeetingMedia = () => {
+function onRefreshMeetingMedia() {
   if (refreshDisabled.value) return;
   $q.dialog({
     cancel: { label: t('cancel') },
@@ -367,74 +313,43 @@ const onRefreshMeetingMedia = () => {
     persistent: true,
     title: t('refresh-all-meeting-media'),
   }).onOk(async () => {
-    // 1) Reset lookup period for current congregation
     updateLookupPeriod({ reset: true });
-    // 2) Fetch media
     await fetchMedia();
   });
-};
+}
 
-// Watch for changes in download progress and update expansion states
-watch(groupedByDateWatchSignal, () => {
-  const now = Date.now();
-  const newCompletedSince: Record<string, number> = {};
-  const newExpandedDates = new Set<string>();
-  Object.keys(groupedByDate.value).forEach((dateKey) => {
-    const status = getDateStatus(dateKey);
-    const wasExpanded = expandedDates.value.has(dateKey);
-    const isManual = manuallyToggledDates.value.has(dateKey);
-
-    if (status === 'complete') {
-      newCompletedSince[dateKey] = completedSince.value[dateKey] || now;
+// React to status changes: track completion timestamps, schedule auto-collapse.
+watch(
+  dateStatuses,
+  (statuses) => {
+    const now = Date.now();
+    for (const [dateKey, status] of Object.entries(statuses)) {
+      if (status === 'complete' && completedAt.value[dateKey] === undefined) {
+        completedAt.value[dateKey] = now;
+        // Force reactivity update after cooldown so expanded computed re-runs.
+        setTimeout(() => {
+          // Only clear if still in auto mode so manual overrides are preserved.
+          if ((expansionModes.value[dateKey] ?? 'auto') === 'auto') {
+            // Trigger recompute by nudging the ref.
+            completedAt.value = { ...completedAt.value };
+          }
+        }, AUTO_COLLAPSE_MS + 50);
+      }
     }
-
-    if (isManual) {
-      if (wasExpanded) newExpandedDates.add(dateKey);
-      return;
-    }
-
-    const isRecentCompletion =
-      status === 'complete' &&
-      now - (newCompletedSince[dateKey] || now) < AUTO_COLLAPSE_COOLDOWN_MS;
-
-    // Auto-open if loading or error, auto-close if all complete
-    const shouldExpand =
-      status === 'loading' ||
-      (status === 'error' &&
-        getDateDiff(dateFromString(dateKey), new Date(), 'days') <= 7) ||
-      (status === 'complete' && wasExpanded && isRecentCompletion);
-
-    if (shouldExpand) {
-      newExpandedDates.add(dateKey);
-    }
-  });
-  completedSince.value = newCompletedSince;
-  expandedDates.value = newExpandedDates;
-});
-
-// Initialize expansion state on component mount
-watchImmediate(
-  () => groupedByDate.value,
-  () => {
-    initializeExpansionState();
   },
+  { deep: false },
 );
 
+// Reset manual overrides and completion timestamps when menu reopens.
 watch(open, (isOpen) => {
-  if (isOpen) {
-    manuallyToggledDates.value = new Set();
-    initializeExpansionState();
-  }
+  if (!isOpen) return;
+  expansionModes.value = {};
+  completedAt.value = {};
 });
 
-watchImmediate(
-  () => filteredDownloads().length,
-  () => {
-    if (downloadPopup.value) {
-      setTimeout(() => {
-        if (downloadPopup.value) downloadPopup.value.updatePosition();
-      }, 10);
-    }
-  },
+// Keep popup position in sync as the item list grows/shrinks.
+watch(
+  () => filteredDownloads.value.length,
+  () => setTimeout(() => downloadPopup.value?.updatePosition(), 10),
 );
 </script>
