@@ -54,5 +54,4 @@ jobs:
       head: ${{ needs.update-notes.outputs.notes_branch }}
       title: 'chore: auto-update release-notes/en.md from CHANGELOG.md'
       body: 'Automated release notes update from CHANGELOG.md.'
-    secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    secrets: inherit
