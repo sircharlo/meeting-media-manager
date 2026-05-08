@@ -56,5 +56,4 @@ jobs:
       head: ${{ needs.refresh-lockfile.outputs.lockfile_branch }}
       title: 'chore: refresh yarn.lock'
       body: 'Automated yarn.lock refresh.'
-    secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    secrets: inherit
