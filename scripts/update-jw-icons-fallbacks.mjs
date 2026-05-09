@@ -26,7 +26,7 @@ const getFontPathFromArgs = async () => {
 };
 
 const glyphToUnicodeEscape = (codePoint) =>
-  `\\u${codePoint.toString(16).padStart(4, '0')}`;
+  String.raw`\u${codePoint.toString(16).padStart(4, '0')}`;
 
 const extractFallbackEntries = (content) => {
   const match = content.match(
@@ -52,7 +52,7 @@ const extractFallbackEntries = (content) => {
     if (!entryMatch) {
       throw new Error(`Unsupported fallback map line: ${line}`);
     }
-    const key = entryMatch[1].replace(/^'|'$/g, '');
+    const key = entryMatch[1].replaceAll(/^'|'$/g, '');
     return { existingCodePoint: entryMatch[2], key, rawKey: entryMatch[1] };
   });
 };
@@ -91,7 +91,7 @@ const updateFallbackMap = async () => {
       const codePoint = glyphMap[key];
       if (!codePoint) {
         missingGlyphs.push(key);
-        return `  ${rawKey}: '\\u${existingCodePoint.toLowerCase()}',`;
+        return String.raw`  ${rawKey}: '\u${existingCodePoint.toLowerCase()}',`;
       }
       return `  ${rawKey}: '${glyphToUnicodeEscape(codePoint)}',`;
     },

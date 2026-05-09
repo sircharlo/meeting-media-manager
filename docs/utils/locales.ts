@@ -70,9 +70,7 @@ export const mapLocales = (): LocaleConfig<DefaultTheme.Config> => {
     .filter((l) => enabled.includes(l.value))
     .forEach((locale) => {
       const lang = camelToKebabCase(locale.value);
-      const msg = withDefaults(
-        messages[locale.value] as Partial<MessageSchema> | undefined,
-      );
+      const msg = withDefaults(messages[locale.value]);
       locales[lang] = mapLocale(lang, locale.label, msg);
     });
 
@@ -113,9 +111,7 @@ export const mapSearch = (): {
     .filter((l) => enabled.includes(l.value))
     .forEach((locale) => {
       const lang = camelToKebabCase(locale.value);
-      const msg = withDefaults(
-        messages[locale.value] as Partial<MessageSchema> | undefined,
-      );
+      const msg = withDefaults(messages[locale.value]);
       locales[lang] = { translations: mapSearchTranslations(msg) };
     });
 
