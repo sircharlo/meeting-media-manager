@@ -389,13 +389,13 @@ const getPublicationDirectories = async (
   const languagesToUse = new Set<JwLangCode>(languages);
 
   if (includeEnglish) {
-    languagesToUse.add('E' as JwLangCode);
+    languagesToUse.add('E');
   }
 
   for (const langwritten of languagesToUse) {
     // Special handling for "any" issue: protect all issue-tagged folders
     if (issue === 'any') {
-      const baseId = getPubId({ langwritten, pub } as PublicationFetcher);
+      const baseId = getPubId({ langwritten, pub });
       const pubsRootDefault = await getPublicationsPath();
       directories.push(join(pubsRootDefault, baseId));
     } else {

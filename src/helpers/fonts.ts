@@ -318,8 +318,6 @@ const buildJwIconsMap = async (fontPath: string) => {
 };
 
 export const getJwIconFromKeyword = (keyword: number | string | undefined) => {
-  const glyphMapVersion = jwIconsGlyphMapVersion.value;
-  void glyphMapVersion;
   if (!keyword) return '';
   const icon = keywordToJwIconMapping[keyword.toString()];
   if (!icon) return '';

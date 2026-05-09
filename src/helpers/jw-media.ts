@@ -1404,7 +1404,7 @@ export const getBibleMedia = async (
       const bibleBookLocalNames = executeQuery<{
         ChapterNumber: number;
         Title: string;
-      }>((nwtStyDb || nwtDb) as string, bibleBooksSimpleQuery);
+      }>(nwtStyDb || nwtDb || '', bibleBooksSimpleQuery);
       for (const booknum of backupNameNeeded) {
         const pubName = bibleBookLocalNames.find(
           (item) => item.ChapterNumber === booknum,

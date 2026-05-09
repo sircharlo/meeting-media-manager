@@ -865,7 +865,7 @@ export const useJwStore = defineStore('jw-store', {
         mediator: 'https://b.jw-cdn.org/apis/mediator',
         pubMedia: 'https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS',
       },
-      yeartextFontUrls: {} as Partial<Record<FontName, string>>,
+      yeartextFontUrls: {},
       yeartexts: {},
     };
   },

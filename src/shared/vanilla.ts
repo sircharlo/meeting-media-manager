@@ -176,8 +176,7 @@ export const log = (
 
 const ILLEGAL_FILENAME_CHARS = /[/?<>\\:*|"]/g;
 const RESERVED_DOTS = /^\.+$/;
-const WINDOWS_RESERVED_FILENAME =
-  /^(con|prn|aux|nul|com[0-9]|lpt[0-9])(\..*)?$/i;
+const WINDOWS_RESERVED_FILENAME = /^(con|prn|aux|nul|com\d|lpt\d)(\..*)?$/i;
 const MAX_FILENAME_BYTES = 255;
 
 const replaceTrailingDotsAndSpaces = (value: string, replacement: string) => {
@@ -201,15 +200,16 @@ const truncateUtf8Bytes = (value: string, maxBytes: number) => {
 
 const sanitizeFilenameInternal = (input: string, replacement: string) => {
   const withoutControlChars = Array.from(input, (char) => {
-    const code = char.charCodeAt(0);
+    const code = char.codePointAt(0);
+    if (!code) return replacement;
     return code <= 31 || (code >= 128 && code <= 159) ? replacement : char;
   }).join('');
 
   const sanitized = replaceTrailingDotsAndSpaces(
     withoutControlChars
-      .replace(ILLEGAL_FILENAME_CHARS, replacement)
-      .replace(RESERVED_DOTS, replacement)
-      .replace(WINDOWS_RESERVED_FILENAME, replacement),
+      .replaceAll(ILLEGAL_FILENAME_CHARS, replacement)
+      .replaceAll(RESERVED_DOTS, replacement)
+      .replaceAll(WINDOWS_RESERVED_FILENAME, replacement),
     replacement,
   );
   return truncateUtf8Bytes(sanitized, MAX_FILENAME_BYTES);
