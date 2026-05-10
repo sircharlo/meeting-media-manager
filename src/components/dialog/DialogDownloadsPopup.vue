@@ -76,24 +76,18 @@
                         :color="
                           itemErrorSeverity(item) === 'error'
                             ? 'negative'
-                            : 'warning'
+                            : 'info'
                         "
                         :name="
                           itemErrorSeverity(item) === 'error'
                             ? 'mmm-error'
-                            : 'mmm-warning'
+                            : 'mmm-info'
                         "
-                        size="sm"
+                        :size="
+                          itemErrorSeverity(item) === 'error' ? 'sm' : 'xs'
+                        "
                       >
                         <q-tooltip>{{ errorTooltip(item) }}</q-tooltip>
-                      </q-icon>
-                      <q-icon
-                        class="q-ml-xs"
-                        color="info"
-                        name="mmm-info"
-                        size="xs"
-                      >
-                        <q-tooltip>{{ missingMediaTooltip(item) }}</q-tooltip>
                       </q-icon>
                     </div>
                     <q-icon
@@ -163,7 +157,7 @@ const { currentSettings, downloadProgress, mediaIsPlaying, selectedDate } =
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type DateStatus = 'complete' | 'error' | 'loading' | 'none';
+type DateStatus = 'complete' | 'error' | 'loading' | 'none' | 'warning';
 // 'auto' means expansion is driven by status; manual overrides it.
 type ExpansionMode = 'auto' | 'manual-closed' | 'manual-open';
 
@@ -199,7 +193,9 @@ const groupedByDateEntries = computed(() =>
 function computeStatus(dateKey: string): DateStatus {
   const group = groupedByDate.value[dateKey];
   if (!group?.length) return 'none';
-  if (group.some((i) => i.error)) return 'error';
+  if (group.some((i) => i.error)) {
+    return isWithin7Days(dateKey) ? 'error' : 'warning';
+  }
   if (group.some((i) => !i.complete && !i.error)) return 'loading';
   if (group.every((i) => i.complete)) return 'complete';
   return 'none';
@@ -212,16 +208,13 @@ const dateStatuses = computed(() =>
   ),
 );
 
-const getStatus = (dateKey: string): DateStatus =>
-  dateStatuses.value[dateKey] ?? 'none';
-
-function isRecentError(dateKey: string) {
-  return getDateDiff(dateFromString(dateKey), new Date(), 'days') <= 7;
-}
+const getStatus = (dateKey: string): DateStatus => {
+  return dateStatuses.value[dateKey] ?? 'none';
+};
 
 function shouldAutoExpand(dateKey: string) {
   const s = getStatus(dateKey);
-  return s === 'loading' || (s === 'error' && isRecentError(dateKey));
+  return s === 'loading' || s === 'error';
 }
 
 // ─── Template helpers ─────────────────────────────────────────────────────────
@@ -239,6 +232,7 @@ const statusIcon = (dateKey: string): string =>
     error: 'mmm-error',
     loading: 'mmm-download',
     none: 'mmm-calendar',
+    warning: 'mmm-warning',
   })[getStatus(dateKey)];
 
 const statusColor = (dateKey: string): string =>
@@ -247,6 +241,7 @@ const statusColor = (dateKey: string): string =>
     error: 'negative',
     loading: 'primary',
     none: 'secondary',
+    warning: 'warning',
   })[getStatus(dateKey)];
 
 function statusCaption(dateKey: string, group: typeof filteredDownloads.value) {
@@ -260,30 +255,29 @@ function statusCaption(dateKey: string, group: typeof filteredDownloads.value) {
   return `${total} ${t('items')}`;
 }
 
-const FALLBACK_SUFFIX = `${t('errorDownloadingMeetingMedia')}. ${t('tryConfiguringFallbackLanguage')}.`;
+const WARNING_SHOULD_BECOME_AVAILABLE = `${t('errorDownloadingMeetingMedia')}. ${t('willProbablyBeAvailableLater')}.`;
+const ERROR_SHOULD_BE_AVAILABLE = `${t('errorDownloadingMeetingMedia')}. ${t('thisShouldBeInvestigatedToEnsureThatAllRequiredMeetingMediaIsPresent')}.`;
 
 function errorTooltip(item: { meetingDate?: null | string }) {
   const dateKey = item.meetingDate;
-  if (!dateKey) return FALLBACK_SUFFIX;
-  return getDateDiff(dateKey, new Date(), 'days') > 7
-    ? `${t('errorDownloadingMeetingMedia')}. This media may become available later.`
-    : FALLBACK_SUFFIX;
+  if (!dateKey) return ERROR_SHOULD_BE_AVAILABLE;
+  return isWithin7Days(dateKey)
+    ? ERROR_SHOULD_BE_AVAILABLE
+    : WARNING_SHOULD_BECOME_AVAILABLE;
 }
 
 function isWithin7Days(dateKey?: null | string) {
   if (!dateKey) return true;
-  const daysUntilMeeting = getDateDiff(dateKey, new Date(), 'days');
+  const daysUntilMeeting = getDateDiff(
+    dateFromString(dateKey),
+    new Date(),
+    'days',
+  );
   return daysUntilMeeting >= 0 && daysUntilMeeting <= 7;
 }
 
 function itemErrorSeverity(item: { meetingDate?: null | string }) {
   return isWithin7Days(item.meetingDate) ? 'error' : 'warning';
-}
-
-function missingMediaTooltip(item: { meetingDate?: null | string }) {
-  return isWithin7Days(item.meetingDate)
-    ? 'This media is currently missing and should be investigated so all required meeting media is present.'
-    : 'This media is currently missing, but it is likely to become available before the meeting date.';
 }
 
 // ─── Expansion state ──────────────────────────────────────────────────────────
