@@ -4,6 +4,12 @@
 
 For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
 
+## v26.5.0
+
+### ✨ New Features
+
+- ✨ **Importación PDF**: Se agregó un nuevo flujo de importación de PDF al diálogo de Publication Media, permitiendo que la versión PDF de una publicación se importe automáticamente como imágenes individuales cuando se desee.
+
 ## v26.4.8
 
 ### ✨ New Features
