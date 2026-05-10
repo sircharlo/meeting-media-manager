@@ -4,6 +4,36 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.5.0
+
+### ✨ New Features
+
+- ✨ **PDF Import**: Added a new PDF import flow to the Publication Media dialog, allowing the PDF version of a publication to be automatically imported as individual images when desired. (#7286)
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Downloads Popup**: Improved the downloads popup with better grouping, manual expansion toggles, and an auto-collapse cooldown. (#7416)
+- 🛠️ **Downloads**: Refined download status logic and updated warnings for missing media to be based on severity.
+- 🛠️ **Optimization**: Replaced external `sanitize-filename` dependency with an internal helper and optimized folder watching and export logic.
+- 🛠️ **Media Window**: Improved multi-display positioning and state management logic for the media window.
+
+### 🐞 Bug Fixes
+
+- 🐞 **JW Playlists**: Fixed media ordering issues in JW playlists. (#7415)
+- 🐞 **Sign Language Songs**: Fixed song fallback language resolution and logic for sign-language congregations. (#7393)
+- 🐞 **Sign Language Videos**: Ensured sign-language videos stay paused as expected, without prematurely switching to the camera background. (#7334)
+- 🐞 **Sign Language Camera Background**: Fixed camera background visibility in edge cases and when media is stopped. (#7346)
+- 🐞 **Localization**: Improved alternative language logic for all publications. (#7364)
+- 🐞 **Media Fetching**: Properly prioritized `docid` over `pub` in publication media requests.
+- 🐞 **Calendar**: Fixed error reporting in the calendar to only show errors when all language attempts fail.
+- 🐞 **Security**: Implemented safer regex patterns to prevent potential ReDoS issues. (#7409)
+
+### 🔧 Chores
+
+- 🔧 **Code Quality**: Addressed various SonarQube security and code quality warnings. (#7408)
+- 🔧 **Code Style**: Added and enforced a warning for watchers declared at the end of files, to prevent using constants before they are declared, especially in the final compiled code.
+- 🔧 **Refactoring**: Simplified custom background selection logic and removed unneeded resize observers.
+
 ## v26.4.8
 
 ### ✨ New Features

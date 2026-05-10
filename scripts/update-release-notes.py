@@ -51,7 +51,11 @@ def extract_new_features():
             features = feature_match.group(1).strip()
             # Remove PR links like (#7214) using a linear regex and trim leftover whitespace.
             features = PR_LINK_PATTERN.sub('', features)
+            # Trim each line individually to remove leading/trailing whitespace
+            features = "\n".join(line.strip() for line in features.splitlines())
+            # Replace multiple spaces with a single space and trim leading/trailing spaces
             features = re.sub(r'[ \t]{2,}', ' ', features, flags=re.ASCII)
+            features = features.strip()
             # Append the version header and the extracted features to the output
             output.append(f"\n{version_header}\n\n{features}\n")
 
