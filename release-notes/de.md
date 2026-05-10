@@ -4,6 +4,12 @@
 
 Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in unserer CHANGELOG.md Datei auf GitHub.
 
+## v26.5.0
+
+### ✨ Neue Funktionen
+
+- ✨ **PDF-Import**: Neuer PDF-Import-Fluss zum Dialog Veröffentlichungsmedien hinzugefügt, damit die PDF-Version einer Publikation automatisch als individuelle Bilder importiert werden kann, wenn gewünscht.
+
 ## v26.4.8
 
 ### ✨ Neue Funktionen

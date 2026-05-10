@@ -4,6 +4,12 @@
 
 Para obter a lista completa das mudanças entre versões, consulte nosso arquivo CHANGELOG.md no GitHub.
 
+## v26.5.0
+
+### ✨ Novos Recursos
+
+- ✨ **Importação de PDF**: Adicionado um novo fluxo de importação de PDF à caixa de diálogo Publicação de Mídia, permitir que a versão em PDF de uma publicação seja importada automaticamente como imagens individuais quando desejado.
+
 ## v26.4.8
 
 ### ✨ Novos Recursos
