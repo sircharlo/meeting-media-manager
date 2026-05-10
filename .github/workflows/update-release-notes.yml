@@ -19,7 +19,7 @@ jobs:
       - id: branch
         name: Set notes branch name
         run: echo "name=chore/update-release-notes-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_OUTPUT"
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
