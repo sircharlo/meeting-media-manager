@@ -17,7 +17,7 @@ jobs:
         name: Set lockfile branch name
         run: echo "name=chore/refresh-lockfile-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_OUTPUT"
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
