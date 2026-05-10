@@ -38,6 +38,7 @@ import type { DownloadProgressItem } from 'src/types';
 import isOnline from 'is-online';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { getDateDiff } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -64,18 +65,27 @@ onMounted(() => {
   updateOnline();
 });
 
+function isErrorInCurrentWindow(item: DownloadProgressItem) {
+  if (!item.meetingDate) return true;
+  const daysUntilMeeting = getDateDiff(item.meetingDate, new Date(), 'days');
+  return daysUntilMeeting >= 0 && daysUntilMeeting <= 7;
+}
+
 const someHaveError = computed(() => {
   return Object.values(downloadProgress.value).some(
-    (item: DownloadProgressItem) => item.error,
+    (item: DownloadProgressItem) => item.error && isErrorInCurrentWindow(item),
   );
 });
 
 const someAreLoading = computed(() => {
-  return Object.values(downloadProgress.value).some(
-    (item: DownloadProgressItem) =>
-      !item.complete &&
-      !item.error &&
-      (!item.loaded || !item.total || item.loaded < item.total),
+  return (
+    currentState.fetchingMeetingsCount > 0 ||
+    Object.values(downloadProgress.value).some(
+      (item: DownloadProgressItem) =>
+        !item.complete &&
+        !item.error &&
+        (!item.loaded || !item.total || item.loaded < item.total),
+    )
   );
 });
 </script>
