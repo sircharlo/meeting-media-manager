@@ -71,14 +71,31 @@
                     </q-item-label>
                   </q-item-section>
                   <q-item-section side>
-                    <q-icon
-                      v-if="item.error"
-                      color="negative"
-                      name="mmm-error"
-                      size="sm"
-                    >
-                      <q-tooltip>{{ errorTooltip(item) }}</q-tooltip>
-                    </q-icon>
+                    <div v-if="item.error" class="row items-center no-wrap">
+                      <q-icon
+                        :color="
+                          itemErrorSeverity(item) === 'error'
+                            ? 'negative'
+                            : 'warning'
+                        "
+                        :name="
+                          itemErrorSeverity(item) === 'error'
+                            ? 'mmm-error'
+                            : 'mmm-warning'
+                        "
+                        size="sm"
+                      >
+                        <q-tooltip>{{ errorTooltip(item) }}</q-tooltip>
+                      </q-icon>
+                      <q-icon
+                        class="q-ml-xs"
+                        color="info"
+                        name="mmm-info"
+                        size="xs"
+                      >
+                        <q-tooltip>{{ missingMediaTooltip(item) }}</q-tooltip>
+                      </q-icon>
+                    </div>
                     <q-icon
                       v-else-if="item.complete"
                       color="positive"
@@ -251,6 +268,22 @@ function errorTooltip(item: { meetingDate?: null | string }) {
   return getDateDiff(dateKey, new Date(), 'days') > 7
     ? `${t('errorDownloadingMeetingMedia')}. This media may become available later.`
     : FALLBACK_SUFFIX;
+}
+
+function isWithin7Days(dateKey?: null | string) {
+  if (!dateKey) return true;
+  const daysUntilMeeting = getDateDiff(dateKey, new Date(), 'days');
+  return daysUntilMeeting >= 0 && daysUntilMeeting <= 7;
+}
+
+function itemErrorSeverity(item: { meetingDate?: null | string }) {
+  return isWithin7Days(item.meetingDate) ? 'error' : 'warning';
+}
+
+function missingMediaTooltip(item: { meetingDate?: null | string }) {
+  return isWithin7Days(item.meetingDate)
+    ? 'This media is currently missing and should be investigated so all required meeting media is present.'
+    : 'This media is currently missing, but it is likely to become available before the meeting date.';
 }
 
 // ─── Expansion state ──────────────────────────────────────────────────────────
