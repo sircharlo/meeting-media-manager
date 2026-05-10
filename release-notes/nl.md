@@ -4,6 +4,12 @@
 
 Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bestand op GitHub.
 
+## v26.5.0
+
+### ✨ Nieuwe functies
+
+- ✨ **PDF Importeren**: Een nieuwe PDF import stroom toegevoegd aan het dialoogvenster voor de publicatie media, staat toe dat de PDF-versie van een publicatie automatisch wordt geïmporteerd als individuele afbeeldingen indien gewenst.
+
 ## v26.4.8
 
 ### ✨ Nieuwe functies
