@@ -56,4 +56,5 @@ jobs:
       head: ${{ needs.refresh-lockfile.outputs.lockfile_branch }}
       title: 'chore: refresh yarn.lock'
       body: 'Automated yarn.lock refresh.'
+      admin: true
     secrets: inherit

@@ -60,6 +60,7 @@ jobs:
       head: ${{ needs.bump-version.outputs.bump_branch }}
       title: 'chore: bump version to ${{ needs.bump-version.outputs.new_version }}'
       body: 'Automated manual release version bump for v${{ needs.bump-version.outputs.new_version }}.'
+      admin: true
     secrets: inherit
 
   draft-release:

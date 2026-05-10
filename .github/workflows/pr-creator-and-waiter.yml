@@ -31,6 +31,16 @@ on:
         required: false
         type: boolean
         default: true
+      admin:
+        description: Use administrator privileges to merge
+        required: false
+        type: boolean
+        default: false
+      auto:
+        description: Enable auto-merge
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   create-wait-merge:
@@ -121,6 +131,8 @@ jobs:
           PR_URL: ${{ steps.create-pr.outputs.url }}
           MERGE_METHOD: ${{ inputs.merge-method }}
           DELETE_BRANCH: ${{ inputs.delete-branch }}
+          USE_ADMIN: ${{ inputs.admin }}
+          USE_AUTO: ${{ inputs.auto }}
         run: |
           set -e
 
@@ -136,4 +148,14 @@ jobs:
             delete_flag="--delete-branch"
           fi
 
-          gh pr merge "$PR_URL" $method_flag $delete_flag
+          admin_flag=""
+          if [ "$USE_ADMIN" = "true" ]; then
+            admin_flag="--admin"
+          fi
+
+          auto_flag=""
+          if [ "$USE_AUTO" = "true" ]; then
+            auto_flag="--auto"
+          fi
+
+          gh pr merge "$PR_URL" $method_flag $delete_flag $admin_flag $auto_flag

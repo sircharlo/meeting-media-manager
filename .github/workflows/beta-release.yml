@@ -76,6 +76,7 @@ jobs:
       head: ${{ needs.bump-version.outputs.bumpBranch }}
       title: 'chore: bump version to ${{ needs.bump-version.outputs.newTag }}'
       body: 'Automated beta version bump for ${{ needs.bump-version.outputs.newTag }}.'
+      admin: true
     secrets: inherit
 
   draft-release:
