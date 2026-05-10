@@ -98,7 +98,7 @@ jobs:
           PR_URL: ${{ steps.create-pr.outputs.url }}
         run: |
           set +e
-          
+
           echo "Waiting for checks to appear..."
           for i in {1..12}; do
             checks_output=$(gh pr checks "$PR_URL" 2>&1)
@@ -184,6 +184,6 @@ jobs:
             echo "Merge failed, potentially due to transient repository rules or checks. Retrying in 20s... ($i/10)"
             sleep 20
           done
-          
+
           echo "Merge failed after multiple attempts."
           exit 1
