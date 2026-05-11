@@ -20,7 +20,7 @@ jobs:
         name: Set bump branch name
         run: echo "name=chore/manual-release-bump-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_OUTPUT"
       - name: Checkout repository
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -71,7 +71,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           ref: master
           fetch-depth: 0
