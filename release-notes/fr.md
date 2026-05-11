@@ -4,11 +4,11 @@
 
 Pour la liste complète des changements entre les versions, consultez notre fichier CHANGELOG.md sur GitHub.
 
-## 5.0 v26.0
+## v26.5.0
 
 ### ✨ Nouvelles fonctionnalités
 
-- ✨ **Import PDF**: Ajout d'un nouveau flux d'importation PDF dans la boîte de dialogue des médias de publication, permettant à la version PDF d'une publication d'être automatiquement importée en tant qu'image individuelle lorsque désiré.
+- ✨ **Importation de PDF** : Ajout d'un nouveau flux d'importation PDF dans la boîte de dialogue des médias de publication, permettant à la version PDF d'une publication d'être automatiquement importée en tant qu'images individuelles, lorsque désiré.
 
 ## v26.4.8
 
