@@ -91,7 +91,7 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 ### ✨ Novos Recursos
 
 - ✨ **Assistente de configuração – Etapa do Zoom**: Adicionada uma etapa de integração com o Zoom ao assistente de configuração para configuração inicial mais fácil.
-- ✨ **Screen Picker Enhancements**: Show an accurate visual representation of all screens, as well as the main window’s current size and location, in the display popup. Isso facilita a escolha da tela correta na qual a janela de mídia deve ser exibida.
+- ✨ **Seletor de tela**: Mostrar uma representação visual precisa de todas as telas, bem como o tamanho e a localização atual da janela principal no popup. Isso facilita a escolha da tela correta na qual a janela de mídia deve ser exibida.
 - ✨ **Preferência de janela de mídia**: O aplicativo agora lembrará a tela preferida na qual a janela de mídia deve ser exibida, se especificado pelo usuário.
 
 ## v25.10.0
