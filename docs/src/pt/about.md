@@ -2,9 +2,9 @@
 
 ![M³ banner](./../assets/m3-banner.png)
 
-## O que é esse aplicativo? {#what-is-this-app}
+## Qual a finalidade deste aplicativo? {#what-is-this-app}
 
-**Meeting Media Manager**, ou **M³** para abreviar, é um aplicativo completo e multiplataforma para Windows, macOS e Linux que baixa, organiza e apresenta fotos e vídeos para as reuniões congregacionais das Testemunhas de Jeová. Suporta qualquer idioma disponível no site oficial das Testemunhas de Jeová e oferece ferramentas poderosas para gerenciar mídias durante reuniões híbridas e presenciais.
+**Meeting Media Manager**, ou **M³** para abreviar, é um aplicativo completo e multiplataforma para Windows, macOS e Linux que baixa, organiza e apresenta fotos e vídeos para as reuniões congregacionais das Testemunhas de Jeová. Suporta vários idiomas disponíveis no site oficial das Testemunhas de Jeová e oferece ferramentas poderosas para gerenciar mídias durante reuniões híbridas e presenciais.
 
 O M³ oferece suporte para gerenciar mídias de reuniões normais e personalizadas, múltiplas congregações e/ou grupos usando a mesma conta do computador, além de recursos avançados de apresentação que tornam fácil o compartilhamento de.
 
