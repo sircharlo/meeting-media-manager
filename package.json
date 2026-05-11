@@ -125,7 +125,7 @@
     "fantasticon": "^4.1.0",
     "globals": "^17.6.0",
     "husky": "^9.1.7",
-    "lint-staged": "^17.0.3",
+    "lint-staged": "^17.0.4",
     "lodash-es": "^4.18.1",
     "msw": "^2.14.5",
     "oxc-minify": "^0.129.0",
