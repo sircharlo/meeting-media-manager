@@ -25,13 +25,19 @@ describe('Locales', () => {
       .map((f) => f.replace('.json', ''))
       .sort((a, b) => a.localeCompare(b));
 
-    const inactiveLocaleFiles = allLocaleFiles.filter(
+    const enabledLocaleFiles = allLocaleFiles.filter((f) =>
+      messages.includes(f),
+    );
+
+    const inactiveLocaleFiles = enabledLocaleFiles.filter(
       (f) => !localesKebab.includes(f),
     );
 
     expect(inactiveLocaleFiles).toHaveLength(0);
 
-    const localeFiles = allLocaleFiles.filter((f) => localesKebab.includes(f));
+    const localeFiles = enabledLocaleFiles.filter((f) =>
+      localesKebab.includes(f),
+    );
 
     expect(localesKebab).toEqual(localeFiles);
   });

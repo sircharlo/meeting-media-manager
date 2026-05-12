@@ -157,12 +157,11 @@ def update_index(
         print(f"⚠️   {label} not found at {path}, skipping.")
         return
     content = path.read_text(encoding="utf-8")
-    inactive_too = "docs" in path.parts
-    block   = build_import_block(stats, inactive_too=inactive_too)
+    block   = build_import_block(stats, inactive_too=False)
     updated = replace_locale_import_block(content, block)
     
     active_keys = sorted(k for k, (_, p) in stats.items() if p >= PERCENTAGE_THRESHOLD)
-    keys_str = ",\n  ".join(sorted(stats.keys()))
+    keys_str = ",\n  ".join(active_keys)
     active_keys_str = ",\n  ".join(active_keys)
     
     # Also update the export object if this is an index file
