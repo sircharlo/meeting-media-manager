@@ -31,7 +31,7 @@ PERCENTAGE_THRESHOLD = 40
 
 # Matches locale JSON import lines (active or commented-out)
 LOCALE_IMPORT_LINE = re.compile(
-    r"^\s*(?://\s*)?import\s+\w+\s+from\s+'\.\/[\w-]+\.json';"
+    r"^\s*(?://\s*)?import\s+\w+\s+from\s+'\.\/[\w-]+\.json'(?:\s+with\s*\{[^}]*\})?;"
 )
 # Matches the % annotation comments this script generates
 PCT_COMMENT_LINE = re.compile(
@@ -114,7 +114,7 @@ def build_import_block(stats: dict[str, tuple[str, float]], inactive_too: bool =
     for key in sorted_keys:
         stem, pct = stats[key]
         comment   = f"// {pct}% translated as of {TODAY}"
-        lines.append(f"{comment}\n{"// " if pct < PERCENTAGE_THRESHOLD and not inactive_too else ""}import {key} from './{stem}.json';")
+        lines.append(f"{comment}\n{"// " if pct < PERCENTAGE_THRESHOLD and not inactive_too else ""}import {key} from './{stem}.json' with {{ type: 'json' }};")
 
     return "\n\n".join(lines)
 
@@ -135,7 +135,7 @@ def replace_locale_import_block(content: str, new_block: str) -> str:
                 first_idx = i
             last_idx = i
 
-    if first_idx is None:
+    if first_idx is None or last_idx is None:
         raise ValueError(
             "No locale import lines found in file.\n"
             "Expected lines like:  import fr from './fr.json';"
@@ -157,12 +157,11 @@ def update_index(
         print(f"⚠️   {label} not found at {path}, skipping.")
         return
     content = path.read_text(encoding="utf-8")
-    inactive_too = "docs" in path.parts
-    block   = build_import_block(stats, inactive_too=inactive_too)
+    block   = build_import_block(stats, inactive_too=False)
     updated = replace_locale_import_block(content, block)
     
     active_keys = sorted(k for k, (_, p) in stats.items() if p >= PERCENTAGE_THRESHOLD)
-    keys_str = ",\n  ".join(sorted(stats.keys()))
+    keys_str = ",\n  ".join(active_keys)
     active_keys_str = ",\n  ".join(active_keys)
     
     # Also update the export object if this is an index file
