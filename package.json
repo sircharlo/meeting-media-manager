@@ -1,6 +1,6 @@
 {
   "name": "meeting-media-manager",
-  "version": "26.5.1-beta.0",
+  "version": "26.5.1-beta.1",
   "description": "A cross platform app to download and present media for congregation meetings of Jehovah’s Witnesses.",
   "keywords": [
     "M³",
@@ -160,6 +160,6 @@
   ],
   "private": true,
   "type": "module",
-  "packageManager": "yarn@4.13.0",
+  "packageManager": "yarn@4.14.1",
   "productName": "Meeting Media Manager"
 }
