@@ -5,6 +5,7 @@ import {
   BrowserWindow,
   type BrowserWindowConstructorOptions,
 } from 'electron';
+import { pathExistsSync, readJsonSync } from 'fs-extra/esm';
 import { fileURLToPath } from 'node:url';
 import {
   IS_BETA,
@@ -14,7 +15,10 @@ import {
 } from 'src-electron/constants';
 import { urlVariables } from 'src-electron/main/session';
 import { captureElectronError, getIconPath } from 'src-electron/main/utils';
-import { StatefulBrowserWindow } from 'src-electron/main/window/window-state';
+import {
+  StatefulBrowserWindow,
+  type WindowState,
+} from 'src-electron/main/window/window-state';
 import { log } from 'src/shared/vanilla';
 import { join, resolve } from 'upath';
 
@@ -154,6 +158,32 @@ export function createWindow(
   return win;
 }
 
+export function loadWindowPrefs(
+  windowName: 'main' | 'media' | 'timer',
+): null | WindowState {
+  try {
+    const mediaWindowStateFile = join(
+      app.getPath('userData'),
+      `${windowName}-window-state.json`,
+    );
+    if (!pathExistsSync(mediaWindowStateFile)) {
+      log(
+        '[loadWindowPrefs - ' + windowName + '] File does not exist:',
+        'electronWindow',
+        'log',
+        mediaWindowStateFile,
+      );
+      return null;
+    }
+    return readJsonSync(mediaWindowStateFile, { throws: false });
+  } catch (e) {
+    captureElectronError(e, {
+      contexts: { fn: { name: 'loadWindowPrefs - ' + windowName } },
+    });
+    return null;
+  }
+}
+
 export function logToWindow(
   win: BrowserWindow | null,
   msg: string,
@@ -163,6 +193,7 @@ export function logToWindow(
   if (level === 'debug' && !process.env.DEBUGGING) return;
   sendToWindow(win, 'log', { ctx, level, msg });
 }
+
 export function sendToWindow(
   win: BrowserWindow | null,
   channel: ElectronIpcListenKey,
