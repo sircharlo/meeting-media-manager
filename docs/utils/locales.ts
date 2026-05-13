@@ -3,15 +3,43 @@ import type {
   LocaleConfig,
   LocaleSpecificConfig,
 } from 'vitepress';
-import type { LocalSearchTranslations } from 'vitepress/types/local-search';
 
-import messages, { enabled, localeOptions } from './../locales';
-import enBase from './../locales/en.json';
-import { fetchLatestVersion } from './api';
-import { AUTHOR, GH_ISSUES, GH_REPO_URL } from './constants';
-import { camelToKebabCase } from './general';
+import enBase from './../locales/en.json' with { type: 'json' };
+import messages, { enabled, localeOptions } from './../locales/index.ts';
+import { fetchLatestVersion } from './api.ts';
+import { AUTHOR, GH_ISSUES, GH_REPO_URL } from './constants.ts';
+import { camelToKebabCase } from './general.ts';
 
 export type MessageSchema = typeof enBase;
+
+interface ButtonTranslations {
+  buttonAriaLabel?: string;
+  buttonText?: string;
+}
+
+interface FooterTranslations {
+  closeKeyAriaLabel?: string;
+  closeText?: string;
+  navigateDownKeyAriaLabel?: string;
+  navigateText?: string;
+  navigateUpKeyAriaLabel?: string;
+  selectKeyAriaLabel?: string;
+  selectText?: string;
+}
+
+//Re-created LocalSearchTranslations from ../../node_modules/vitepress/types/local-search.d.ts
+interface LocalSearchTranslations {
+  button?: ButtonTranslations;
+  modal?: ModalTranslations;
+}
+
+interface ModalTranslations {
+  backButtonTitle?: string;
+  displayDetails?: string;
+  footer?: FooterTranslations;
+  noResultsText?: string;
+  resetButtonTitle?: string;
+}
 
 const withDefaults = (
   msg: Partial<MessageSchema> | undefined,

@@ -43,7 +43,7 @@ import uk from './uk.json' with { type: 'json' };
 // 0.7% translated as of 2026-05-12
 // import bzs from './bzs.json' with { type: 'json' };
 
-const messages: Record<LanguageValue, Partial<typeof en>> = {
+const messages: Partial<Record<LanguageValue, Partial<typeof en>>> = {
   de,
   en,
   es,

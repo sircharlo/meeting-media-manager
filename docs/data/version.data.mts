@@ -1,6 +1,6 @@
 import { defineLoader } from 'vitepress';
 
-import { fetchLatestRelease } from './../utils/api';
+import { fetchLatestRelease } from './../utils/api.ts';
 
 export interface Data {
   linux: string;

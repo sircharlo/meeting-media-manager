@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { camelToKebabCase, kebabToCamelCase } from '../general';
+import { camelToKebabCase, kebabToCamelCase } from '../general.ts';
 
 describe('camelToKebabCase', () => {
   it('should convert camelCase to kebab-case', () => {

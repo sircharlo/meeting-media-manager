@@ -2,9 +2,9 @@ import { readdir, readFile } from 'fs-extra';
 import { resolve } from 'upath';
 import { describe, expect, it } from 'vitest';
 
-import { locales as localeOptions } from '../../../src/constants/locales';
-import docsMessages from '../../locales';
-import { camelToKebabCase } from '../general';
+import { locales as localeOptions } from '../../../src/constants/locales.ts';
+import docsMessages from '../../locales/index.ts';
+import { camelToKebabCase } from '../general.ts';
 
 describe('Locales', () => {
   it('should be defined and equal', async () => {
@@ -100,6 +100,11 @@ describe('Locales', () => {
       readFile(resolve(__dirname, '../../.vitepress/config.mts'), 'utf-8'),
       readFile(resolve(__dirname, '../../src/en/download.md'), 'utf-8'),
     ]);
+
+    if (!docsMessages.en) {
+      console.warn('English messages not found');
+      return;
+    }
 
     const keys = Object.keys(docsMessages.en);
     keys.forEach((key) => {

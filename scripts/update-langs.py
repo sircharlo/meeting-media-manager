@@ -169,7 +169,7 @@ def update_index(
         new_export = f"export default {{\n  {active_keys_str},\n}};"
         updated = re.sub(r"export\s+default\s*\{[\s\S]*?\};", new_export, updated)
     elif label == "docs/locales/index.ts":
-        new_export = f"const messages: Record<LanguageValue, Partial<typeof en>> = {{\n  {keys_str},\n}};"
+        new_export = f"const messages: Partial<Record<LanguageValue, Partial<typeof en>>> = {{\n  {keys_str},\n}};"
         updated = re.sub(r"const\s+messages:\s*Record<LanguageValue,\s*Partial<typeof\s*en>>\s*=\s*\{[\s\S]*?\};", new_export, updated)
         
     path.write_text(updated, encoding="utf-8")
