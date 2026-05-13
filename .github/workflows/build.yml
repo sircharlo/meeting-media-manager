@@ -71,38 +71,7 @@ jobs:
         run: yarn lint
       - name: Run tests
         run: yarn test:unit
-  # fix-links:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Check out Git repository
-  #       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-  #       with:
-  #         token: ${{ secrets.GITHUB_TOKEN }}
-  #         ref: ${{ github.head_ref || github.ref_name }}
 
-  #     - name: Setup Node
-  #       uses: actions/setup-node@v6
-  #       with:
-  #         node-version: 24
-  #         cache: 'yarn'
-
-  #     - name: Install dependencies
-  #       run: yarn install
-
-  #     - name: Fix documentation links
-  #       run: yarn docs:fix-links
-
-  #     - name: Commit and push fixes
-  #       run: |
-  #         git config --local user.email "action@github.com"
-  #         git config --local user.name "GitHub Action"
-  #         git add docs/src/
-  #         if git diff --staged --quiet; then
-  #           echo "No link fixes needed"
-  #         else
-  #           git commit -m "fix: automatically fix documentation links [skip ci]"
-  #           git push origin HEAD:${{ github.head_ref || github.ref_name }}
-  #         fi
   build:
     runs-on: ${{ matrix.os }}
     needs: [quality]
