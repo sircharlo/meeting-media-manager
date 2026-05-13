@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const getDisplayMatching = vi.fn();
 const mockReadJsonSync = vi.fn();
 const mockPathExistsSync = vi.fn();
+const mockLoadWindowPrefs = vi.fn();
 
 vi.mock('electron', () => ({
   app: {
@@ -21,6 +22,7 @@ vi.mock('fs-extra/esm', () => ({
 vi.mock('src-electron/constants', () => ({
   HD_RESOLUTION: [1920, 1080],
   PLATFORM: 'linux',
+  WINDOW_MOVE_THROTTLE_MS: 100,
 }));
 
 vi.mock('src-electron/main/screen', () => ({
@@ -35,6 +37,7 @@ vi.mock('src-electron/main/utils', () => ({
 
 vi.mock('src-electron/main/window/window-base', () => ({
   createWindow: vi.fn(),
+  loadWindowPrefs: mockLoadWindowPrefs,
   sendToWindow: vi.fn(),
 }));
 
@@ -226,8 +229,7 @@ describe('window-media placement helpers', () => {
   });
 
   it('uses saved window preferences to choose the preferred screen when available', async () => {
-    mockPathExistsSync.mockReturnValue(true);
-    mockReadJsonSync.mockReturnValue({
+    mockLoadWindowPrefs.mockReturnValue({
       height: 1080,
       width: 1920,
       x: 1920,
