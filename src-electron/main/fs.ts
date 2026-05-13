@@ -164,7 +164,7 @@ export async function getAppDataPath(): Promise<string> {
       return defaultAppDataPath;
     }
     log(
-      '📁 Cached app data path became unusable. Falling back.',
+      'Cached app data path became unusable. Falling back.',
       'electronFilesystem',
       'warn',
       defaultAppDataPath,
@@ -188,7 +188,7 @@ export async function getAppDataPath(): Promise<string> {
         await probeSharedSubfolders(usableSharedPath);
         await persistSharedPathBackoff(null);
         log(
-          '📁 Using shared data path:',
+          'Using shared data path:',
           'electronFilesystem',
           'log',
           usableSharedPath,
@@ -218,7 +218,7 @@ export async function getAppDataPath(): Promise<string> {
 
     defaultAppDataPath = userDataPath;
     log(
-      '📁 Shared data path not available, fallback to user data path:',
+      'Shared data path not available, fallback to user data path:',
       'electronFilesystem',
       'log',
       defaultAppDataPath,
@@ -227,7 +227,7 @@ export async function getAppDataPath(): Promise<string> {
   }
 
   log(
-    '📁 User data path is not usable. Returning user data path as last resort:',
+    'User data path is not usable. Returning user data path as last resort:',
     'electronFilesystem',
     'warn',
     userDataPath,

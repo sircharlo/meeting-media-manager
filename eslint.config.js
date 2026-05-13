@@ -1,4 +1,4 @@
-import { includeIgnoreFile } from '@eslint/compat';
+import { includeIgnoreFile } from '@eslint/config-helpers';
 import js from '@eslint/js';
 import pluginQuasar from '@quasar/app-vite/eslint';
 import vitest from '@vitest/eslint-plugin';
@@ -155,6 +155,25 @@ export default defineConfigWithVueTs([
                 'Renderer process should not import from "src-electron/"',
             },
           ],
+        },
+      ],
+    },
+  },
+
+  {
+    files: ['src-electron/**/*.ts'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          message:
+            'Emojis are not allowed in log() calls in the Electron main or preload processes.',
+          selector: String.raw`CallExpression[callee.name="log"] > Literal[value=/\p{Extended_Pictographic}/u]`,
+        },
+        {
+          message:
+            'Emojis are not allowed in log() calls in the Electron main or preload processes.',
+          selector: String.raw`CallExpression[callee.name="log"] > TemplateLiteral > TemplateElement[value.raw=/\p{Extended_Pictographic}/u]`,
         },
       ],
     },
