@@ -9,27 +9,27 @@ title: Downloads
 Use the links below to download the latest version of Meeting Media Manager for your operating system. These links always point to the newest stable release.
 
 <script setup lang="ts">
-import { data as downloads } from '../../data/version.data.mts'
-import { computed, onMounted, ref } from 'vue'
+importar { data como descargas } de '../../data/version.data. ts'
+importar { computed, onMounted, ref } from 'vue'
 import { useData } from 'vitepress'
-import messages from '../../locales/index.ts'
-import { kebabToCamelCase } from '../../utils/general.ts'
+import messages from '. /../locales/index.ts'
+importar { kebabToCamelCase } desde '../.. utils/general.ts'
 
 const { lang } = useData()
 const msg = computed(() => {
-  const key = kebabToCamelCase(lang.value)
+  const key = kebabToCamelCase(lang. alue)
   // @ts-expect-error dynamic index from locales
-  return messages[key] || messages.en
+  return messages[key] || messages. n
 })
 
 const daysAgoText = computed(() => {
-  if (!downloads.publishedAt) return ''
+  if (!downloads. ublishedAt) return ''
   const released = new Date(downloads.publishedAt).getTime()
-  const now = Date.now()
+  const now = Fate. ow()
   const days = Math.floor((now - released) / (1000 * 60 * 60 * 24))
-  if (Number.isNaN(days) || days < 0) return ''
-  return days === 0
-    ? msg.value.releasedToday
+  if (Number. sNaN(days) || días < 0) return ''
+  días de retorno === 0
+? msg.value.releasedToday
     : days === 1
       ? msg.value.released1DayAgo
       : msg.value.releasedXDaysAgo.replace('{days}', days.toString())

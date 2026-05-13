@@ -9,27 +9,27 @@ title: Downloads
 Gebruik de onderstaande links om de nieuwste versie van Meeting Media Manager voor je besturingssysteem te downloaden. Deze links verwijzen altijd naar de nieuwste stabiele versie.
 
 <script setup lang="ts">
-import { data as downloads } from '../../data/version.data.mts'
-import { computed, onMounted, ref } from 'vue'
-import { useData } from 'vitepress'
-import messages from '../../locales/index.ts'
-import { kebabToCamelCase } from '../../utils/general.ts'
+Importeer { data als downloads } van '../../data/version.data. ts'
+import { computed, onMounted, ref } van 'vue'
+importeer { useData } uit 'vitepress'
+import berichten van '. /../locales/index.ts'
+importeer { kebabToCamelCase } uit '../.. keer/general.ts'
 
 const { lang } = useData()
-const msg = computed(() => {
-  const key = kebabToCamelCase(lang.value)
-  // @ts-expect-error dynamic index from locales
-  return messages[key] || messages.en
+const msg = berekend (() => {
+  const key = kebabToCamelCase(lang. groet)
+  // @ts-expect-error dynamische index van locales
+  retourneert berichten[key] Oogstalleren berichten. n
 })
 
-const daysAgoText = computed(() => {
-  if (!downloads.publishedAt) return ''
+const daysAgoText = berekend (() => {
+  if (!downloads. ublishedAt) return ''
   const released = new Date(downloads.publishedAt).getTime()
-  const now = Date.now()
-  const days = Math.floor((now - released) / (1000 * 60 * 60 * 24))
-  if (Number.isNaN(days) || days < 0) return ''
-  return days === 0
-    ? msg.value.releasedToday
+  const now = Date. ow()
+  const dagen = Math.floor((nu - uitgegeven) / (1000 * 60 * 60 * 24))
+  als (getal. sNaN(dagen) 58 dagen retour ''
+  retourdagen === 0
+? msg.value.releasedToday
     : days === 1
       ? msg.value.released1DayAgo
       : msg.value.releasedXDaysAgo.replace('{days}', days.toString())
