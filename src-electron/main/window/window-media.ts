@@ -1,17 +1,18 @@
-import type { WindowState } from 'src-electron/main/window/window-state';
-
-import { app, type BrowserWindow, screen } from 'electron';
-import { pathExistsSync, readJsonSync } from 'fs-extra/esm';
-import { HD_RESOLUTION, PLATFORM } from 'src-electron/constants';
+import { type BrowserWindow, screen } from 'electron';
+import {
+  HD_RESOLUTION,
+  PLATFORM,
+  WINDOW_MOVE_THROTTLE_MS,
+} from 'src-electron/constants';
 import { getAllScreens, getWindowScreen } from 'src-electron/main/screen';
 import { captureElectronError, getIconPath } from 'src-electron/main/utils';
 import {
   createWindow,
+  loadWindowPrefs,
   sendToWindow,
 } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import { log, throttleWithTrailing } from 'src/shared/vanilla';
-import { join } from 'upath';
 
 export const mediaWindowInfo = {
   mediaWindow: null as BrowserWindow | null,
@@ -57,6 +58,12 @@ function calculateAutoTarget(
     preferredIndex !== -1 &&
     preferredIndex !== mainWindowScreen
   ) {
+    log(
+      '[calculateAutoTarget] Using preferred screen strategy',
+      'electronWindow',
+      'debug',
+      { preferredIndex },
+    );
     return {
       targetDisplayNr: preferredIndex,
       targetFullscreen: true,
@@ -71,6 +78,12 @@ function calculateAutoTarget(
     screens,
   );
   if (windowedCheck.shouldMove && windowedCheck.targetDisplayNr !== undefined) {
+    log(
+      '[calculateAutoTarget] Using windowed->fullscreen strategy',
+      'electronWindow',
+      'debug',
+      { targetDisplayNr: windowedCheck.targetDisplayNr },
+    );
     return {
       targetDisplayNr: windowedCheck.targetDisplayNr,
       targetFullscreen: true,
@@ -86,6 +99,12 @@ function calculateAutoTarget(
   );
 
   if (mainScreenTarget) {
+    log(
+      '[calculateAutoTarget] Using main-screen-escape strategy',
+      'electronWindow',
+      'debug',
+      { mainScreenTarget },
+    );
     return mainScreenTarget;
   }
 
@@ -97,12 +116,18 @@ function calculateAutoTarget(
 
   // Handle single screen with fullscreen window
   if (screens.length === 1 && isFullscreenOrMaximized) {
+    log(
+      '[calculateAutoTarget] Single screen + fullscreen: going windowed',
+      'electronWindow',
+      'debug',
+    );
     return {
       targetDisplayNr: 0,
       targetFullscreen: false,
     };
   }
 
+  log('[calculateAutoTarget] No target determined', 'electronWindow', 'debug');
   return null;
 }
 
@@ -155,9 +180,13 @@ function getMediaWindowState(
   screens: ReturnType<typeof getAllScreens>,
 ): MediaWindowState {
   const shouldBeMaximizable = screens.length > 1;
-  const alwaysOnTop =
-    PLATFORM !== 'darwin' &&
-    !!(boundsInfo.isEffectivelyFullscreen || isCurrentlyFullscreen);
+  // NOTE: alwaysOnTop is intentionally kept platform-agnostic here.
+  // On macOS, alwaysOnTop with 'screen-saver' level can interfere with
+  // the native fullscreen animation if issues arise, this is a candidate
+  // to gate behind PLATFORM !== 'darwin'.
+  const alwaysOnTop = !!(
+    boundsInfo.isEffectivelyFullscreen || isCurrentlyFullscreen
+  );
 
   return {
     alwaysOnTop,
@@ -178,7 +207,7 @@ function getPreferredScreenFromPrefs(
 ): number {
   if (screens.length <= 1) return -1;
 
-  const mediaWindowPrefs = loadMediaWindowPrefs();
+  const mediaWindowPrefs = loadWindowPrefs('media');
   if (!mediaWindowPrefs) return -1;
 
   const preferredScreen = screen.getDisplayMatching({
@@ -371,8 +400,19 @@ function validateAndAdjustTarget(
   ) {
     const alternativeScreen = screens.findIndex((s) => !s.mainWindow);
     if (alternativeScreen === -1) {
+      log(
+        '[validateAndAdjustTarget] No alternative screen found, going windowed on main screen',
+        'electronWindow',
+        'debug',
+      );
       return { ...target, targetFullscreen: false };
     }
+    log(
+      '[validateAndAdjustTarget] Redirected away from main window screen',
+      'electronWindow',
+      'debug',
+      { from: target.targetDisplayNr, to: alternativeScreen },
+    );
     return {
       targetDisplayNr: alternativeScreen,
       targetFullscreen: true,
@@ -409,7 +449,7 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
     // Early exit validation
     if (!mediaWindowInfo.mediaWindow || !mainWindowInfo.mainWindow) {
       log(
-        '❌ [moveMediaWindow] No mediaWindow or mainWindow, returning',
+        '[moveMediaWindow] No mediaWindow or mainWindow, returning',
         'electronWindow',
         'log',
       );
@@ -451,7 +491,13 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
       return; // Already positioned on single screen
     }
 
-    log('🔍 [moveMediaWindow] Called', 'electronWindow', 'log');
+    log('[moveMediaWindow] Called', 'electronWindow', 'log', {
+      displayNr,
+      fullscreen,
+      isEffectivelyFullscreen: boundsInfo.isEffectivelyFullscreen,
+      isMovingWindow,
+      screenCount: screens.length,
+    });
 
     lastAlwaysOnTop = lastStateRef.alwaysOnTop;
     lastMaximizable = lastStateRef.maximizable;
@@ -474,7 +520,7 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
       )
     ) {
       log(
-        '🔍 [moveMediaWindow] Media window is windowed and no explicit target was provided; keeping current bounds',
+        '[moveMediaWindow] Media window is windowed and no explicit target was provided; keeping current bounds',
         'electronWindow',
         'log',
       );
@@ -496,7 +542,7 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
     // Exit if no target determined
     if (!targetInfo) {
       log(
-        '🔍 [moveMediaWindow] No target determined, keeping current position',
+        '[moveMediaWindow] No target determined, keeping current position',
         'electronWindow',
         'log',
       );
@@ -509,7 +555,7 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
       targetInfo.targetDisplayNr >= screens.length
     ) {
       log(
-        '❌ [moveMediaWindow] Invalid display number:',
+        '[moveMediaWindow] Invalid display number:',
         'electronWindow',
         'log',
         targetInfo.targetDisplayNr,
@@ -519,6 +565,11 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
 
     // Validate and adjust target to prevent conflicts
     targetInfo = validateAndAdjustTarget(targetInfo, screens);
+
+    log('[moveMediaWindow] Resolved target', 'electronWindow', 'debug', {
+      targetDisplayNr: targetInfo.targetDisplayNr,
+      targetFullscreen: targetInfo.targetFullscreen,
+    });
 
     // Apply the changes
     setWindowPosition(targetInfo.targetDisplayNr, targetInfo.targetFullscreen);
@@ -533,11 +584,11 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
 
 export const moveMediaWindowThrottled = throttleWithTrailing(
   () => moveMediaWindow(),
-  100,
+  WINDOW_MOVE_THROTTLE_MS,
 );
 
 // =============================================================================
-// EXISTING FUNCTIONS (unchanged)
+// WINDOW CREATION & ANIMATION
 // =============================================================================
 
 /**
@@ -573,11 +624,27 @@ export function createMediaWindow() {
   // Force aspect ratio
   mediaWindowInfo.mediaWindow.setAspectRatio(16 / 9);
 
+  mediaWindowInfo.mediaWindow.on('enter-full-screen', () => {
+    log('[mediaWindow event] enter-full-screen', 'electronWindow', 'debug', {
+      bounds: mediaWindowInfo.mediaWindow?.getBounds(),
+      isMovingWindow,
+      platform: PLATFORM,
+    });
+  });
+
+  mediaWindowInfo.mediaWindow.on('leave-full-screen', () => {
+    log('[mediaWindow event] leave-full-screen', 'electronWindow', 'debug', {
+      bounds: mediaWindowInfo.mediaWindow?.getBounds(),
+      isMovingWindow,
+      platform: PLATFORM,
+    });
+  });
+
   // Check if only one screen is available and set to windowed mode with HD resolution
   const screens = getAllScreens();
   if (screens.length === 1 && screens[0]) {
     log(
-      '🔍 [createMediaWindow] Only one screen available, checking if window needs repositioning',
+      '[createMediaWindow] Only one screen available, checking if window needs repositioning',
       'electronWindow',
       'log',
     );
@@ -602,7 +669,7 @@ export function createMediaWindow() {
     // Only reposition if window is not already properly positioned
     if (!isWithinScreenBounds || !isSmallerThanScreen) {
       log(
-        '🔍 [createMediaWindow] Window needs repositioning, setting to windowed mode with HD resolution',
+        '[createMediaWindow] Window needs repositioning, setting to windowed mode with HD resolution',
         'electronWindow',
         'log',
       );
@@ -633,35 +700,48 @@ export function createMediaWindow() {
           !mediaWindowInfo.mediaWindow ||
           mediaWindowInfo.mediaWindow.isDestroyed()
         ) {
+          isMovingWindow = false;
           return;
         }
 
-        // Apply the windowed bounds
+        log(
+          '[createMediaWindow] Applying windowed bounds',
+          'electronWindow',
+          'debug',
+          { height: windowedHeight, width: windowedWidth, x, y },
+        );
+
         mediaWindowInfo.mediaWindow.setBounds({
           height: windowedHeight,
           width: windowedWidth,
           x,
           y,
         });
+        isMovingWindow = false;
       };
 
-      // Check if the window is currently in fullscreen mode and on macOS
-      if (PLATFORM === 'darwin' && mediaWindowInfo.mediaWindow.isFullScreen()) {
-        // On macOS, setFullScreen(false) is async — wait for leave-full-screen
-        // before applying bounds, otherwise setBounds races the animation.
+      isMovingWindow = true;
+
+      // On all platforms, if fullscreen, wait for leave-full-screen before
+      // applying bounds fullscreen exit is async on macOS and the event
+      // is emitted on all platforms, so this is safe everywhere.
+      if (mediaWindowInfo.mediaWindow.isFullScreen()) {
+        log(
+          '[createMediaWindow] Window is fullscreen, waiting for leave-full-screen before repositioning',
+          'electronWindow',
+          'debug',
+        );
         mediaWindowInfo.mediaWindow.once(
           'leave-full-screen',
           applyWindowedBounds,
         );
         mediaWindowInfo.mediaWindow.setFullScreen(false);
       } else {
-        // On Windows (sync) or if not fullscreen, safe to call directly.
-        mediaWindowInfo.mediaWindow.setFullScreen(false);
         applyWindowedBounds();
       }
     } else {
       log(
-        '🔍 [createMediaWindow] Window already properly positioned, keeping current bounds',
+        '[createMediaWindow] Window already properly positioned, keeping current bounds',
         'electronWindow',
         'log',
       );
@@ -669,7 +749,6 @@ export function createMediaWindow() {
   }
 
   mediaWindowInfo.mediaWindow.on('closed', () => {
-    isMacFullscreenTransitioning = false;
     isMovingWindow = false;
     mediaWindowInfo.mediaWindow = null;
   });
@@ -764,7 +843,7 @@ export function fadeMediaWindow(direction: 'in' | 'out', duration = 300): void {
         win.setOpacity(targetOpacity);
         if (direction === 'out') win.hide();
       }
-    }, duration + 100);
+    }, duration + WINDOW_MOVE_THROTTLE_MS);
   } catch {
     if (win && !win.isDestroyed()) {
       win.setOpacity(targetOpacity);
@@ -777,71 +856,69 @@ const notifyMainWindowAboutScreenOrWindowChange = throttleWithTrailing(() => {
   sendToWindow(mainWindowInfo.mainWindow, 'screenChange');
 }, 250);
 
-function loadMediaWindowPrefs(): null | WindowState {
-  try {
-    const mediaWindowStateFile = join(
-      app.getPath('userData'),
-      'media-window-state.json',
-    );
-    if (!pathExistsSync(mediaWindowStateFile)) {
-      log(
-        '🔍 [loadMediaWindowPrefs] File does not exist:',
-        'electronWindow',
-        'log',
-        mediaWindowStateFile,
-      );
-      return null;
-    }
-    return readJsonSync(mediaWindowStateFile, { throws: false });
-  } catch (e) {
-    captureElectronError(e, {
-      contexts: { fn: { name: 'loadMediaWindowPrefs' } },
-    });
-    return null;
-  }
-}
+// =============================================================================
+// WINDOW POSITIONING
+// =============================================================================
 
+/**
+ * Whether a window move/fullscreen transition is currently in progress.
+ *
+ * LOCKING RULES — this flag must be treated like a mutex:
+ *   - Set to `true` as the very first thing inside `setWindowPosition`, before
+ *     any async work begins.
+ *   - Released (`false`) ONLY inside a terminal callback:
+ *       • `enter-full-screen` handler  (fullscreen target)
+ *       • after `setBounds` returns    (windowed target, via leaveFullscreen callback
+ *         or directly when already windowed)
+ *       • any error / early-exit path
+ *   - NEVER released mid-transition to "hand off" to a callback — that created
+ *     the race condition where a second `moveMediaWindow` call could start while
+ *     a macOS fullscreen animation was still running.
+ */
 let isMovingWindow = false;
-let isMacFullscreenTransitioning = false;
 
 const setWindowPosition = (displayNr?: number, fullscreen = true) => {
-  // If we're already handling a macOS fullscreen transition, wait for it to finish
-  if (PLATFORM === 'darwin' && isMacFullscreenTransitioning) {
-    log(
-      '🔍 [setWindowPosition] Waiting for macOS fullscreen transition to complete',
-      'electronWindow',
-      'log',
-    );
-    return;
-  }
+  log('[setWindowPosition] Requested', 'electronWindow', 'debug', {
+    displayNr,
+    fullscreen,
+    isMovingWindow,
+    platform: PLATFORM,
+  });
 
-  // If we're already moving the window, wait for it to finish
+  // Guard: if a transition is already in flight, drop this request.
+  // moveMediaWindowThrottled will re-fire once the throttle window passes,
+  // and by then isMovingWindow will have been cleared by the terminal callback.
   if (isMovingWindow) {
     log(
-      '🔍 [setWindowPosition] Already moving window, skipping',
+      '[setWindowPosition] Already moving window, skipping',
       'electronWindow',
       'log',
     );
     return;
   }
 
+  // Acquire the lock immediately, before any async work.
+  isMovingWindow = true;
+
   try {
-    if (!mediaWindowInfo.mediaWindow) {
+    if (
+      !mediaWindowInfo.mediaWindow ||
+      mediaWindowInfo.mediaWindow.isDestroyed()
+    ) {
       log(
-        '❌ [setWindowPosition] No mediaWindow, returning',
+        '[setWindowPosition] No mediaWindow, returning',
         'electronWindow',
         'log',
       );
       isMovingWindow = false;
       return;
     }
-    isMovingWindow = true;
 
     const screens = getAllScreens();
     const targetDisplay = screens[displayNr ?? 0];
     if (!targetDisplay) {
       log(
-        '❌ [setWindowPosition] Target display not found:',
+        '[setWindowPosition] Target display not found:',
         'electronWindow',
         'log',
         displayNr,
@@ -852,135 +929,170 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
 
     const targetScreenBounds = targetDisplay.bounds;
 
-    /**
-     * Applies final bounds (and fullscreen state) after any fullscreen exit
-     * has already been handled by handleMacFullScreenTransition.
-     *
-     * For fullscreen target:
-     *   - On Windows: exit fullscreen if needed (sync), move bounds, enter fullscreen
-     *   - On macOS: move bounds, wait a tick for screen registration, enter fullscreen
-     *
-     * For windowed target:
-     *   - handleMacFullScreenTransition already exited fullscreen on macOS and waited
-     *     for leave-full-screen, so we just set bounds here on both platforms.
-     *   - On Windows, if still fullscreen (shouldn't happen via handleMacFullScreenTransition
-     *     but defensive), exit first then set bounds.
-     */
-    const setWindowBounds = (
-      bounds: Partial<Electron.Rectangle>,
-      fullScreen = false,
-    ) => {
-      if (!mediaWindowInfo.mediaWindow) {
+    // -------------------------------------------------------------------------
+    // applyFullscreen
+    //
+    // Moves the window to the target screen's bounds then enters fullscreen.
+    // Must only be called when the window is already in a windowed state
+    // (i.e. after leaveFullscreen has settled, or if it was never fullscreen).
+    //
+    // On all platforms, fullscreen entry is treated as async: we wait for
+    // enter-full-screen before releasing isMovingWindow, so any subsequent
+    // moveMediaWindow call that arrives while the animation runs is dropped
+    // by the guard above and will retry on the next throttle tick.
+    // -------------------------------------------------------------------------
+    const applyFullscreen = () => {
+      if (
+        !mediaWindowInfo.mediaWindow ||
+        mediaWindowInfo.mediaWindow.isDestroyed()
+      ) {
         log(
-          '❌ [setWindowBounds] No mediaWindow, returning',
+          '[applyFullscreen] Window gone before fullscreen could be applied',
           'electronWindow',
-          'log',
+          'debug',
         );
         isMovingWindow = false;
-        return false;
+        return;
       }
 
-      if (fullScreen) {
-        // On Windows, explicitly exit fullscreen before moving to avoid
-        // undefined behavior when calling setBounds on a fullscreen window.
-        // Not needed on macOS — handleMacFullScreenTransition already exited.
-        if (
-          PLATFORM !== 'darwin' &&
-          mediaWindowInfo.mediaWindow.isFullScreen()
-        ) {
-          mediaWindowInfo.mediaWindow.setFullScreen(false);
-        }
-
-        // Always move to target screen first, then enter fullscreen.
-        // This ensures fullscreen is applied on the correct display.
-        const normalizedBounds = normalizeWindowBounds(bounds);
-        if (normalizedBounds) {
-          mediaWindowInfo.mediaWindow.setBounds(normalizedBounds);
-        }
-
-        if (PLATFORM === 'darwin') {
-          setTimeout(() => {
-            if (
-              !mediaWindowInfo.mediaWindow ||
-              mediaWindowInfo.mediaWindow.isDestroyed()
-            ) {
-              isMovingWindow = false;
-              return;
-            }
-            isMacFullscreenTransitioning = true;
-            mediaWindowInfo.mediaWindow.once('enter-full-screen', () => {
-              isMacFullscreenTransitioning = false;
-              isMovingWindow = false;
-              focusMediaWindow();
-            });
-            mediaWindowInfo.mediaWindow.setFullScreen(true);
-          }, 100);
-          return true;
-        }
-
-        // Windows: all sync, set fullscreen and focus
-        mediaWindowInfo.mediaWindow.setFullScreen(true);
-        focusMediaWindow();
-        isMovingWindow = false;
-        return true;
-      }
-
-      // Windowed target.
-      // On macOS, handleMacFullScreenTransition already exited fullscreen and
-      // waited for leave-full-screen, so the window is already windowed here.
-      // On Windows, defensively exit fullscreen if somehow still in it.
-      if (PLATFORM !== 'darwin' && mediaWindowInfo.mediaWindow.isFullScreen()) {
-        mediaWindowInfo.mediaWindow.setFullScreen(false);
-      }
-
-      const currentBounds = mediaWindowInfo.mediaWindow.getBounds();
-      const boundsChanged =
-        currentBounds.x !== bounds.x ||
-        currentBounds.y !== bounds.y ||
-        currentBounds.width !== bounds.width ||
-        currentBounds.height !== bounds.height;
-
-      if (boundsChanged) {
-        const normalizedBounds = normalizeWindowBounds(bounds);
-        if (!normalizedBounds) {
-          log(
-            '❌ [setWindowBounds] Invalid bounds, skipping setBounds:',
-            'electronWindow',
-            'log',
-            bounds,
-          );
-          isMovingWindow = false;
-          return false;
-        }
+      const normalizedBounds = normalizeWindowBounds(targetScreenBounds);
+      if (normalizedBounds) {
         log(
-          '🔍 [setWindowBounds] Setting bounds:',
+          '[applyFullscreen] Moving to target screen bounds before entering fullscreen',
           'electronWindow',
-          'log',
+          'debug',
           normalizedBounds,
         );
         mediaWindowInfo.mediaWindow.setBounds(normalizedBounds);
       }
 
-      focusMediaWindow();
-      isMovingWindow = false;
-      return true;
+      // Wait for the fullscreen animation to complete on ALL platforms.
+      // On Windows the event fires synchronously (effectively), on macOS it is
+      // genuinely async — using the event means we're safe on both.
+      mediaWindowInfo.mediaWindow.once('enter-full-screen', () => {
+        log(
+          '[applyFullscreen] enter-full-screen received — transition complete',
+          'electronWindow',
+          'debug',
+          { bounds: mediaWindowInfo.mediaWindow?.getBounds() },
+        );
+        isMovingWindow = false;
+        focusMediaWindow();
+      });
+
+      log(
+        '[applyFullscreen] Calling setFullScreen(true)',
+        'electronWindow',
+        'debug',
+      );
+      mediaWindowInfo.mediaWindow.setFullScreen(true);
     };
 
-    /**
-     * On macOS, setFullScreen() is asynchronous. If the window is currently
-     * fullscreen, we must wait for leave-full-screen before repositioning,
-     * otherwise the bounds call races the animation.
-     *
-     * On Windows, fullscreen transitions are synchronous so we call the
-     * callback directly without waiting for any event.
-     */
-    const handleMacFullScreenTransition = (callback: () => void) => {
-      if (!mediaWindowInfo.mediaWindow) {
+    // -------------------------------------------------------------------------
+    // applyWindowed
+    //
+    // Applies a calculated windowed rect to the target screen.
+    // Must only be called when the window is already in a windowed state
+    // (i.e. after leaveFullscreen has settled, or if it was never fullscreen).
+    // -------------------------------------------------------------------------
+    const applyWindowed = () => {
+      if (
+        !mediaWindowInfo.mediaWindow ||
+        mediaWindowInfo.mediaWindow.isDestroyed()
+      ) {
         log(
-          '❌ [handleMacFullScreenTransition] No mediaWindow, returning',
+          '[applyWindowed] Window gone before windowed bounds could be applied',
+          'electronWindow',
+          'debug',
+        );
+        isMovingWindow = false;
+        return;
+      }
+
+      const safeWindowSizeBuffer = 100;
+      const safeAvailableWidth = Math.max(
+        1,
+        targetScreenBounds.width - safeWindowSizeBuffer,
+      );
+      const safeAvailableHeight = Math.max(
+        1,
+        targetScreenBounds.height - safeWindowSizeBuffer,
+      );
+      const maxWidth = Math.min(safeAvailableWidth, HD_RESOLUTION[0]);
+      const maxHeight = Math.min(safeAvailableHeight, HD_RESOLUTION[1]);
+
+      const scaleX = maxWidth / HD_RESOLUTION[0];
+      const scaleY = maxHeight / HD_RESOLUTION[1];
+      const scale = Math.min(scaleX, scaleY, 1);
+
+      const width = Math.floor(HD_RESOLUTION[0] * scale);
+      const height = Math.floor(HD_RESOLUTION[1] * scale);
+      const newBounds = {
+        height,
+        width,
+        x:
+          targetScreenBounds.x +
+          Math.floor((targetScreenBounds.width - width) / 2),
+        y:
+          targetScreenBounds.y +
+          Math.floor((targetScreenBounds.height - height) / 2),
+      };
+
+      const normalizedBounds = normalizeWindowBounds(newBounds);
+      if (!normalizedBounds) {
+        log(
+          '[applyWindowed] Invalid bounds, skipping setBounds',
           'electronWindow',
           'log',
+          newBounds,
         );
+        isMovingWindow = false;
+        return;
+      }
+
+      const currentBounds = mediaWindowInfo.mediaWindow.getBounds();
+      const boundsChanged =
+        currentBounds.x !== normalizedBounds.x ||
+        currentBounds.y !== normalizedBounds.y ||
+        currentBounds.width !== normalizedBounds.width ||
+        currentBounds.height !== normalizedBounds.height;
+
+      if (boundsChanged) {
+        log(
+          '[applyWindowed] Applying windowed bounds',
+          'electronWindow',
+          'debug',
+          normalizedBounds,
+        );
+        mediaWindowInfo.mediaWindow.setBounds(normalizedBounds);
+      } else {
+        log(
+          '[applyWindowed] Bounds unchanged, skipping setBounds',
+          'electronWindow',
+          'debug',
+        );
+      }
+
+      focusMediaWindow();
+      isMovingWindow = false;
+    };
+
+    // -------------------------------------------------------------------------
+    // leaveFullscreen
+    //
+    // Exits fullscreen (if currently fullscreen) then calls `callback` once the
+    // window has fully left fullscreen. On all platforms we use the
+    // leave-full-screen event so we never apply bounds mid-animation.
+    //
+    // If the window is already windowed, `callback` is invoked synchronously.
+    // -------------------------------------------------------------------------
+    const leaveFullscreen = (callback: () => void) => {
+      if (
+        !mediaWindowInfo.mediaWindow ||
+        mediaWindowInfo.mediaWindow.isDestroyed()
+      ) {
+        log('[leaveFullscreen] No mediaWindow', 'electronWindow', 'debug');
+        isMovingWindow = false;
         return;
       }
 
@@ -991,87 +1103,73 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
           screens[getWindowScreen(mediaWindowInfo.mediaWindow)]?.bounds,
         );
 
-      if (PLATFORM === 'darwin' && currentlyFullscreen) {
+      if (currentlyFullscreen) {
         log(
-          '🔍 [handleMacFullScreenTransition] macOS fullscreen transition needed',
+          '[leaveFullscreen] Window is fullscreen — waiting for leave-full-screen before proceeding',
           'electronWindow',
-          'log',
+          'debug',
+          {
+            isEffectivelyFullscreen: isWindowEffectivelyFullscreen(
+              mediaWindowInfo.mediaWindow.getBounds(),
+              screens[getWindowScreen(mediaWindowInfo.mediaWindow)]?.bounds,
+            ),
+            isFullScreen: mediaWindowInfo.mediaWindow.isFullScreen(),
+          },
         );
-        isMacFullscreenTransitioning = true;
-        isMovingWindow = false; // release lock so callback can re-acquire
 
+        // NOTE: isMovingWindow stays true through this async gap.
+        // Any concurrent moveMediaWindow call will be dropped by the guard.
         mediaWindowInfo.mediaWindow.once('leave-full-screen', () => {
-          isMacFullscreenTransitioning = false;
-
           if (
             !mediaWindowInfo.mediaWindow ||
             mediaWindowInfo.mediaWindow.isDestroyed()
           ) {
             log(
-              '🔍 [handleMacFullScreenTransition] Window destroyed during transition, skipping',
+              '[leaveFullscreen] Window destroyed during leave-full-screen transition',
               'electronWindow',
-              'log',
+              'debug',
             );
+            isMovingWindow = false;
             return;
           }
 
           log(
-            '🔍 [handleMacFullScreenTransition] Left fullscreen, executing callback',
+            '[leaveFullscreen] leave-full-screen received — proceeding with callback',
             'electronWindow',
-            'log',
+            'debug',
+            { bounds: mediaWindowInfo.mediaWindow.getBounds() },
           );
           callback();
         });
 
+        log(
+          '[leaveFullscreen] Calling setFullScreen(false)',
+          'electronWindow',
+          'debug',
+        );
         mediaWindowInfo.mediaWindow.setFullScreen(false);
       } else {
+        log(
+          '[leaveFullscreen] Window already windowed — invoking callback directly',
+          'electronWindow',
+          'debug',
+        );
         callback();
       }
     };
 
+    // -------------------------------------------------------------------------
+    // Dispatch: route to the right transition path
+    // -------------------------------------------------------------------------
     if (fullscreen) {
-      handleMacFullScreenTransition(() => {
-        setWindowBounds(targetScreenBounds, true);
-      });
+      // Must exit any existing fullscreen before moving to a (potentially
+      // different) screen and re-entering fullscreen.
+      leaveFullscreen(applyFullscreen);
     } else {
-      const newBounds = (() => {
-        const safeAvailableWidth = Math.max(1, targetScreenBounds.width - 100);
-        const safeAvailableHeight = Math.max(
-          1,
-          targetScreenBounds.height - 100,
-        );
-        const maxWidth = Math.min(safeAvailableWidth, HD_RESOLUTION[0]);
-        const maxHeight = Math.min(safeAvailableHeight, HD_RESOLUTION[1]);
-
-        const scaleX = maxWidth / HD_RESOLUTION[0];
-        const scaleY = maxHeight / HD_RESOLUTION[1];
-        const scale = Math.min(scaleX, scaleY, 1);
-
-        const width = Math.floor(HD_RESOLUTION[0] * scale);
-        const height = Math.floor(HD_RESOLUTION[1] * scale);
-
-        return {
-          height,
-          width,
-          x:
-            targetScreenBounds.x +
-            Math.floor((targetScreenBounds.width - width) / 2),
-          y:
-            targetScreenBounds.y +
-            Math.floor((targetScreenBounds.height - height) / 2),
-        };
-      })();
-
-      // handleMacFullScreenTransition is still needed for the windowed path:
-      // if the window is currently fullscreen on macOS, we must wait for
-      // leave-full-screen before setBounds will take effect.
-      handleMacFullScreenTransition(() => {
-        setWindowBounds(newBounds, false);
-      });
+      leaveFullscreen(applyWindowed);
     }
   } catch (err) {
     isMovingWindow = false;
-    isMacFullscreenTransitioning = false;
     captureElectronError(err, {
       contexts: { fn: { name: 'setWindowPosition' } },
     });
@@ -1088,7 +1186,7 @@ export function focusMediaWindow() {
       mediaWindowInfo.mediaWindow.isDestroyed()
     ) {
       log(
-        '🔍 [focusMediaWindow] Media window not available for focusing',
+        '[focusMediaWindow] Media window not available for focusing',
         'electronWindow',
         'log',
       );
@@ -1098,7 +1196,7 @@ export function focusMediaWindow() {
     const screens = getAllScreens();
     if (screens.length === 1) {
       log(
-        '🔍 [focusMediaWindow] Single screen, showing inactive to prevent focus steal',
+        '[focusMediaWindow] Single screen, showing inactive to prevent focus steal',
         'electronWindow',
         'log',
       );
@@ -1106,7 +1204,7 @@ export function focusMediaWindow() {
       return;
     }
 
-    log('🔍 [focusMediaWindow] Focusing media window', 'electronWindow', 'log');
+    log('[focusMediaWindow] Focusing media window', 'electronWindow', 'log');
     mediaWindowInfo.mediaWindow.show();
     mediaWindowInfo.mediaWindow.focus();
   } catch (err) {
