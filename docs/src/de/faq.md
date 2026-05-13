@@ -73,7 +73,7 @@ Ja! M³ ermöglicht Ihnen:
 - Medien für anstehende Zusammenkünfte automatisch herunterzuladen
 - Benutzerdefinierte Medien für jedes Datum zu importieren
 
-### {#faq-media-export} :file_folder: Was ist der automatische Medienexport? {#faq-media-export} :file_folder: Was ist der automatische Medienexport?
+### {#faq-media-export} :file_folder: Was ist der automatische Medienexport? {#import-media}
 
 Sie können benutzerdefinierte Medien auf verschiedene Arten importieren:
 
@@ -170,7 +170,7 @@ Die Ordnerüberwachung ermöglicht Ihnen:
 1. Einen Ordner auszuwählen, der auf neue Dateien überwacht werden soll
 2. Neue Mediendateien automatisch zu importieren, die mit Cloud-Speichern wie Dropbox oder OneDrive synchronisiert werden
 
-### :open_file_folder: Wie importiere ich meine eigenen Mediendateien? {#import-media}
+### :open_file_folder: Wie importiere ich meine eigenen Mediendateien? {#faq-media-export}
 
 Der automatische Medienexport führt automatisch folgendes aus:
 
