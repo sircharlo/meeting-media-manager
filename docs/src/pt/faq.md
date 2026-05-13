@@ -73,7 +73,7 @@ Sim! O M³ permite que você:
 - Baixe mídias para as próximas reuniões automaticamente
 - Importe mídias personalizadas para qualquer data
 
-### :file_folder: What is media auto-export? {#faq-media-export} :file_folder: What is media auto-export?
+### :file_folder: What is media auto-export? {#import-media}
 
 Você pode importar mídias personalizadas de várias maneiras:
 
@@ -170,7 +170,7 @@ O monitoramento de pasta permite que você:
 1. Selecione uma pasta para monitorar novos arquivos
 2. Importe automaticamente novos arquivos de mídia que são sincronizados com armazenamento em nuvem como Dropbox ou OneDrive
 
-### :open_file_folder: How do I import my own media files? {#import-media}
+### :open_file_folder: How do I import my own media files? {#faq-media-export}
 
 A exportação automática de mídias automaticamente:
 
