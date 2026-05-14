@@ -1,5 +1,18 @@
 import type { JwLangCode } from './jw/lang';
 
+export interface CongRecord {
+  $type?: string;
+  assemblies: unknown[];
+  congregationGroupMeetings: unknown[];
+  congregationMeetings: CongregationMeeting[];
+  conventions: unknown[];
+  distanceFromRequestLocationInMeters?: number;
+  id: string;
+  latitude: number;
+  longitude: number;
+  memorials: unknown[];
+}
+
 export interface CongregationLanguage {
   isSignLanguage: boolean;
   languageCode: JwLangCode;
@@ -8,12 +21,38 @@ export interface CongregationLanguage {
   writtenLanguageCode: JwLangCode[];
 }
 
-export interface GeoRecord {
-  geoId: string;
-  isPrimary: boolean;
-  location: GeoLocation;
-  properties: Properties;
-  type: string;
+export interface CongregationMeeting {
+  $type?: string;
+  address: string;
+  groupMeetings: unknown[];
+  id: string;
+  isPrivateHome: boolean;
+  languageGuid: string;
+  midweekMeetingDay: number;
+  midweekMeetingTime: `${number}:${number}:${number}`;
+  name: string;
+  phoneNumber: string;
+  weekendMeetingDay: number;
+  weekendMeetingTime: `${number}:${number}:${number}`;
+}
+
+export interface CongregationSearchResult {
+  congregationGuid: string;
+  formattedName: string;
+  name: string;
+}
+
+export interface MeetingLanguage {
+  $type?: string;
+  code: JwLangCode;
+  languageGuid: string;
+  name: string;
+}
+
+export interface MeetingSearchResponse {
+  $type?: string;
+  hasResultsOutsideViewport: boolean;
+  items: CongRecord[];
 }
 
 export interface NormalizedSchedule {
@@ -35,11 +74,6 @@ export interface NormalizedSchedule {
 interface DaySchedule {
   time: `${number}:${number}`;
   weekday: number;
-}
-
-interface GeoLocation {
-  latitude: number;
-  longitude: number;
 }
 
 interface PhoneDetails {

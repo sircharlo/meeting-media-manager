@@ -71,49 +71,15 @@
           </q-item>
           <template
             v-for="congregation in results"
-            :key="congregation.properties.orgGuid"
+            :key="congregation.congregationGuid"
           >
-            <q-item
-              v-if="congregation.properties.schedule.current"
-              clickable
-              @click="selectCongregation(congregation)"
-            >
+            <q-item clickable @click="selectCongregation(congregation)">
               <q-item-section>
                 <q-item-label>
-                  {{ congregation.properties.orgName }}
+                  {{ congregation.name }}
                 </q-item-label>
                 <q-item-label caption>
-                  {{
-                    dateLocale.days[
-                      congregation.properties.schedule.current.midweek
-                        .weekday === 7
-                        ? 0
-                        : congregation.properties.schedule.current.midweek
-                            .weekday
-                    ]
-                  }}
-                  {{ congregation.properties.schedule.current.midweek.time }}
-                  |
-                  {{
-                    dateLocale.days[
-                      congregation.properties.schedule.current.weekend
-                        .weekday === 7
-                        ? 0
-                        : congregation.properties.schedule.current.weekend
-                            .weekday
-                    ]
-                  }}
-                  {{ congregation.properties.schedule.current.weekend.time }}
-                </q-item-label>
-              </q-item-section>
-              <q-item-section side top>
-                <q-item-label caption>
-                  {{
-                    jwLanguages.list?.find(
-                      (l) =>
-                        l.langcode === congregation?.properties?.languageCode,
-                    )?.vernacularName
-                  }}
+                  {{ congregation.formattedName }}
                 </q-item-label>
               </q-item-section>
             </q-item>
@@ -131,21 +97,18 @@
   </BaseDialog>
 </template>
 <script setup lang="ts">
-import type { CongregationLanguage, GeoRecord } from 'src/types';
-
 import { whenever } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
-import { useLocale } from 'src/composables/useLocale';
-import { locales } from 'src/constants/locales';
 import {
   applyScheduleToSettings,
+  fetchCongregationSuggestions,
   fetchMeetingLocations,
+  getMeetingLanguageMap,
   normalizeSchedule,
 } from 'src/helpers/congregation-schedule';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { log } from 'src/shared/vanilla';
-import { fetchJson } from 'src/utils/api';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { computed, ref } from 'vue';
@@ -154,12 +117,10 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
 const jwStore = useJwStore();
-const { jwLanguages, urlVariables } = storeToRefs(jwStore);
+const { jwLanguages } = storeToRefs(jwStore);
 
 const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);
-
-const { dateLocale } = useLocale();
 
 const props = defineProps<{
   dialogId: string;
@@ -178,94 +139,92 @@ const dialogValue = computed({
 const congregationFilter = ref('');
 const congregationFilterInput = ref();
 const loading = ref(false);
-const results = ref<GeoRecord[]>([]);
+interface CongregationSuggestion {
+  congregationGuid: string;
+  formattedName: string;
+  name: string;
+}
+
+const results = ref<CongregationSuggestion[]>([]);
+const lookupDebounce = ref<null | ReturnType<typeof setTimeout>>(null);
 
 const lookupCongregation = async () => {
-  try {
-    loading.value = true;
-    results.value = [];
-    if (congregationFilter.value?.length > 2) {
-      const response = await fetchMeetingLocations(congregationFilter.value);
-      results.value = (response?.geoLocationList || []).map((location) => {
-        const languageIsAlreadyGood = !!jwLanguages.value?.list.find(
-          (l) => l.langcode === location.properties.languageCode,
-        );
-        if (!languageIsAlreadyGood) {
-          const match = congregationLookupLanguages.value.find(
-            (l) => l.languageCode === location.properties.languageCode,
-          );
-          if (match?.writtenLanguageCode.length) {
-            const appLocaleCodes = new Set(locales.map((l) => l.langcode));
-            location.properties.languageCode =
-              match.writtenLanguageCode.find((code) =>
-                appLocaleCodes.has(code),
-              ) ||
-              match.writtenLanguageCode[0] ||
-              location.properties.languageCode;
-          }
-        }
-        return location;
-      });
-    } else {
+  if (lookupDebounce.value) clearTimeout(lookupDebounce.value);
+  lookupDebounce.value = setTimeout(async () => {
+    try {
+      loading.value = true;
       results.value = [];
+      if (congregationFilter.value?.length > 2) {
+        results.value = await fetchCongregationSuggestions(
+          congregationFilter.value,
+        );
+      } else {
+        results.value = [];
+      }
+    } catch (error) {
+      errorCatcher(error);
+      results.value = [];
+    } finally {
+      loading.value = false;
     }
-  } catch (error) {
-    errorCatcher(error);
-    results.value = [];
-  } finally {
-    loading.value = false;
-  }
+  }, 500);
 };
 
-const congregationLookupLanguages = ref<CongregationLanguage[]>([]);
-
-const loadLanguages = async () => {
-  try {
-    congregationLookupLanguages.value =
-      (await fetchJson<CongregationLanguage[]>(
-        `https://apps.${urlVariables.value.base || 'jw.org'}/api/public/meeting-search/languages`,
-        undefined,
-        useCurrentStateStore().online,
-      )) || [];
-  } catch (error) {
-    errorCatcher(error, {
-      contexts: {
-        fn: {
-          name: 'DialogCongregationLookup.vue',
-          subroutine: 'loadLanguages',
-        },
-      },
-    });
-    congregationLookupLanguages.value = [];
-  }
-};
-
-loadLanguages();
-
-const selectCongregation = (congregation: GeoRecord) => {
+const selectCongregation = async (congregation: CongregationSuggestion) => {
   try {
     if (!currentSettings.value) return;
 
     currentState.lookupInProgress = true;
-    const { properties } = congregation;
+    const response = await fetchMeetingLocations(congregation.congregationGuid);
+    const selectedLocation = response?.items?.find((location) =>
+      location.congregationMeetings.some(
+        (meeting) => meeting.name === congregation.name,
+      ),
+    );
+    if (!selectedLocation) return;
+    const selectedMeeting = selectedLocation.congregationMeetings.find(
+      (meeting) => meeting.name === congregation.name,
+    );
+    if (!selectedMeeting) return;
 
     // Language
-    if (properties.languageCode) {
+    if (selectedMeeting.languageGuid) {
+      const languageMap = await getMeetingLanguageMap();
+      const mappedLanguageCode =
+        languageMap.get(selectedMeeting.languageGuid) || '';
       const resolvedLangCode =
-        jwLanguages.value?.list.find(
-          (l) => l.langcode === properties.languageCode,
-        )?.langcode || '';
+        jwLanguages.value?.list.find((l) => l.langcode === mappedLanguageCode)
+          ?.langcode || '';
       currentSettings.value.lang = resolvedLangCode || 'E';
       currentSettings.value.langSubtitles = resolvedLangCode || null;
     }
 
     // Schedule
-    const normalized = normalizeSchedule(properties.schedule);
+    const normalized = normalizeSchedule({
+      changeStamp: null,
+      current: {
+        midweek: {
+          time: selectedMeeting.midweekMeetingTime.slice(
+            0,
+            5,
+          ) as `${number}:${number}`,
+          weekday: selectedMeeting.midweekMeetingDay + 1,
+        },
+        weekend: {
+          time: selectedMeeting.weekendMeetingTime.slice(
+            0,
+            5,
+          ) as `${number}:${number}`,
+          weekday: selectedMeeting.weekendMeetingDay + 1,
+        },
+      },
+      future: null,
+      futureDate: null,
+    });
     applyScheduleToSettings(currentSettings.value, normalized);
 
-    // Congregation name
-    if (properties.orgName) {
-      currentSettings.value.congregationName = properties.orgName;
+    if (congregation.name) {
+      currentSettings.value.congregationName = congregation.name;
       currentSettings.value.congregationNameModified = false;
     }
   } catch (error) {
