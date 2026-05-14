@@ -40,6 +40,14 @@ interface WindowBoundsInfo {
   screenBounds: Electron.Rectangle | undefined;
 }
 
+const isFullscreenOrMaximized = (boundsInfo, mediaWindow) => {
+  if (!(boundsInfo || mediaWindow)) return false;
+  
+  return boundsInfo.isEffectivelyFullscreen ||
+  mediaWindow.isFullScreen() ||
+  mediaWindow.isMaximized();
+}
+
 /**
  * Calculates target display info for automatic positioning
  */
@@ -123,13 +131,9 @@ function calculateAutoTarget(
   }
 
   // 4. Single Screen Formatting
-  const isFullscreenOrMaximized =
-    boundsInfo.isEffectivelyFullscreen ||
-    mediaWindow.isFullScreen() ||
-    mediaWindow.isMaximized();
 
   // Handle single screen with fullscreen window
-  if (screens.length === 1 && isFullscreenOrMaximized) {
+  if (screens.length === 1 && isFullscreenOrMaximized(boundsInfo, mediaWindow)) {
     log(
       '[calculateAutoTarget] Single screen + fullscreen: going windowed',
       'electronWindow',
@@ -250,13 +254,20 @@ function getTargetWhenOnMainScreen(
   const alternativeScreen = findAlternativeScreen(screens, currentDisplayNr);
 
   if (alternativeScreen === -1) {
-    // Handle single screen scenario
     if (screens.length === 1) {
       return {
         targetDisplayNr: 0,
         targetFullscreen: false,
       };
     }
+    return null;
+  }
+
+  // Idempotency: already on the alternative screen (not on main) → nothing to do
+  // Note: currentDisplayNr === mainWindowScreen is guaranteed here, so if
+  // alternativeScreen !== mainWindowScreen this check is always false —
+  // but it makes the intent explicit and guards against future refactors.
+  if (currentDisplayNr === alternativeScreen) {
     return null;
   }
 
@@ -346,12 +357,7 @@ function shouldMoveWindowedToFullscreen(
   mediaWindow: BrowserWindow,
   screens: ReturnType<typeof getAllScreens>,
 ): { shouldMove: boolean; targetDisplayNr?: number } {
-  const isFullscreenOrMaximized =
-    mediaWindow.isFullScreen() ||
-    mediaWindow.isMaximized() ||
-    boundsInfo.isEffectivelyFullscreen;
-
-  if (isFullscreenOrMaximized) {
+  if (isFullscreenOrMaximized(boundsInfo, mediaWindow)) {
     return { shouldMove: false };
   }
 
@@ -365,6 +371,14 @@ function shouldMoveWindowedToFullscreen(
   );
 
   if (alternativeScreen === -1) {
+    return { shouldMove: false };
+  }
+
+  // Idempotency: already fullscreen on the alternative screen → nothing to do
+  if (
+    boundsInfo.currentDisplayNr === alternativeScreen &&
+    (boundsInfo.isEffectivelyFullscreen || mediaWindow.isFullScreen())
+  ) {
     return { shouldMove: false };
   }
 
