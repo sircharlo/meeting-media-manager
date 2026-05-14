@@ -1,5 +1,8 @@
 import { storeToRefs } from 'pinia';
-import { fetchMeetingLocations } from 'src/helpers/congregation-schedule';
+import {
+  fetchCongregationSuggestions,
+  fetchMeetingLocations,
+} from 'src/helpers/congregation-schedule';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'src/stores/current-state';
@@ -71,13 +74,23 @@ export const autoEnrollMeetingSync: MigrationFunction = async () => {
         continue;
       }
 
-      const response = await fetchMeetingLocations(
+      const suggestions = await fetchCongregationSuggestions(
         congregationSettings.congregationName,
       );
+      const exactSuggestion = suggestions.find(
+        (suggestion) =>
+          suggestion.name.toLowerCase() ===
+          congregationSettings.congregationName.toLowerCase(),
+      );
+      if (!exactSuggestion) continue;
+      const response = await fetchMeetingLocations(
+        exactSuggestion.congregationGuid,
+      );
 
-      const exactMatch = response?.geoLocationList?.find(
-        (loc) =>
-          loc.properties.orgName === congregationSettings.congregationName,
+      const exactMatch = response?.items?.some((item) =>
+        item.congregationMeetings.some(
+          (meeting) => meeting.name === congregationSettings.congregationName,
+        ),
       );
 
       if (exactMatch) {
