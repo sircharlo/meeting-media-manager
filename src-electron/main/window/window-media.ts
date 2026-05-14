@@ -40,6 +40,21 @@ interface WindowBoundsInfo {
   screenBounds: Electron.Rectangle | undefined;
 }
 
+const isFullscreenOrMaximized = (
+  boundsInfo: WindowBoundsInfo,
+  mediaWindow: BrowserWindow,
+) => {
+  // If there's no bounds info or media window, return false
+  if (!(boundsInfo || mediaWindow)) return false;
+
+  // Return true if the media window is fullscreen or maximized
+  return (
+    boundsInfo.isEffectivelyFullscreen ||
+    mediaWindow.isFullScreen() ||
+    mediaWindow.isMaximized()
+  );
+};
+
 /**
  * Calculates target display info for automatic positioning
  */
@@ -58,6 +73,20 @@ function calculateAutoTarget(
     preferredIndex !== -1 &&
     preferredIndex !== mainWindowScreen
   ) {
+    // Idempotency: already fullscreen on preferred screen → nothing to do
+    if (
+      boundsInfo.currentDisplayNr === preferredIndex &&
+      (boundsInfo.isEffectivelyFullscreen || mediaWindow.isFullScreen())
+    ) {
+      log(
+        '[calculateAutoTarget] Already fullscreen on preferred screen, skipping',
+        'electronWindow',
+        'debug',
+        { preferredIndex },
+      );
+      return null;
+    }
+
     log(
       '[calculateAutoTarget] Using preferred screen strategy',
       'electronWindow',
@@ -109,13 +138,12 @@ function calculateAutoTarget(
   }
 
   // 4. Single Screen Formatting
-  const isFullscreenOrMaximized =
-    boundsInfo.isEffectivelyFullscreen ||
-    mediaWindow.isFullScreen() ||
-    mediaWindow.isMaximized();
 
   // Handle single screen with fullscreen window
-  if (screens.length === 1 && isFullscreenOrMaximized) {
+  if (
+    screens.length === 1 &&
+    isFullscreenOrMaximized(boundsInfo, mediaWindow)
+  ) {
     log(
       '[calculateAutoTarget] Single screen + fullscreen: going windowed',
       'electronWindow',
@@ -236,13 +264,20 @@ function getTargetWhenOnMainScreen(
   const alternativeScreen = findAlternativeScreen(screens, currentDisplayNr);
 
   if (alternativeScreen === -1) {
-    // Handle single screen scenario
     if (screens.length === 1) {
       return {
         targetDisplayNr: 0,
         targetFullscreen: false,
       };
     }
+    return null;
+  }
+
+  // Idempotency: already on the alternative screen (not on main) → nothing to do
+  // Note: currentDisplayNr === mainWindowScreen is guaranteed here, so if
+  // alternativeScreen !== mainWindowScreen this check is always false —
+  // but it makes the intent explicit and guards against future refactors.
+  if (currentDisplayNr === alternativeScreen) {
     return null;
   }
 
@@ -332,28 +367,36 @@ function shouldMoveWindowedToFullscreen(
   mediaWindow: BrowserWindow,
   screens: ReturnType<typeof getAllScreens>,
 ): { shouldMove: boolean; targetDisplayNr?: number } {
-  const isFullscreenOrMaximized =
-    mediaWindow.isFullScreen() ||
-    mediaWindow.isMaximized() ||
-    boundsInfo.isEffectivelyFullscreen;
-
-  if (isFullscreenOrMaximized) {
+  // If the media window is already fullscreen or maximized, don't move it
+  if (isFullscreenOrMaximized(boundsInfo, mediaWindow)) {
     return { shouldMove: false };
   }
 
+  // If there's only one screen, don't move the media window
   if (screens.length <= 1) {
     return { shouldMove: false };
   }
 
+  // Find an alternative screen that doesn't contain the main window
   const alternativeScreen = findAlternativeScreen(
     screens,
     boundsInfo.currentDisplayNr,
   );
 
+  // If there's no alternative screen, don't move the media window
   if (alternativeScreen === -1) {
     return { shouldMove: false };
   }
 
+  // Idempotency: if the media window is already fullscreen on the alternative screen, don't move it
+  if (
+    boundsInfo.currentDisplayNr === alternativeScreen &&
+    (boundsInfo.isEffectivelyFullscreen || mediaWindow.isFullScreen())
+  ) {
+    return { shouldMove: false };
+  }
+
+  // Move the media window to fullscreen on the alternative screen
   return { shouldMove: true, targetDisplayNr: alternativeScreen };
 }
 
