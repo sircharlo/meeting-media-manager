@@ -74,13 +74,12 @@ export const autoEnrollMeetingSync: MigrationFunction = async () => {
         continue;
       }
 
-      const suggestions = await fetchCongregationSuggestions(
-        congregationSettings.congregationName,
-      );
+      const congregationName = congregationSettings.congregationName;
+
+      const suggestions = await fetchCongregationSuggestions(congregationName);
       const exactSuggestion = suggestions.find(
         (suggestion) =>
-          suggestion.name.toLowerCase() ===
-          congregationSettings.congregationName.toLowerCase(),
+          suggestion.name.toLowerCase() === congregationName.toLowerCase(),
       );
       if (!exactSuggestion) continue;
       const response = await fetchMeetingLocations(
@@ -89,7 +88,7 @@ export const autoEnrollMeetingSync: MigrationFunction = async () => {
 
       const exactMatch = response?.items?.some((item) =>
         item.congregationMeetings.some(
-          (meeting) => meeting.name === congregationSettings.congregationName,
+          (meeting) => meeting.name === congregationName,
         ),
       );
 
