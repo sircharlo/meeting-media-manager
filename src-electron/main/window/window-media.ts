@@ -58,6 +58,20 @@ function calculateAutoTarget(
     preferredIndex !== -1 &&
     preferredIndex !== mainWindowScreen
   ) {
+    // Idempotency: already fullscreen on preferred screen → nothing to do
+    if (
+      boundsInfo.currentDisplayNr === preferredIndex &&
+      (boundsInfo.isEffectivelyFullscreen || mediaWindow.isFullScreen())
+    ) {
+      log(
+        '[calculateAutoTarget] Already fullscreen on preferred screen, skipping',
+        'electronWindow',
+        'debug',
+        { preferredIndex },
+      );
+      return null;
+    }
+
     log(
       '[calculateAutoTarget] Using preferred screen strategy',
       'electronWindow',
