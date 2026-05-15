@@ -3528,7 +3528,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rolldown/pluginutils@npm:^1.0.0":
+"@rolldown/pluginutils@npm:^1.0.0, @rolldown/pluginutils@npm:^1.0.1":
   version: 1.0.1
   resolution: "@rolldown/pluginutils@npm:1.0.1"
   checksum: 10c0/99d9b06d90196823e4d8c841f258db7a16e5dbba5824a2962b05d907b79f1ba929d56f22dd744fd530936e568c865ee56a719dc31e57e13bc0a8eb4764a8d8dd
@@ -4880,7 +4880,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-vue@npm:^6.0.4, @vitejs/plugin-vue@npm:^6.0.5, @vitejs/plugin-vue@npm:^6.0.6":
+"@vitejs/plugin-vue@npm:^6.0.4, @vitejs/plugin-vue@npm:^6.0.5":
   version: 6.0.6
   resolution: "@vitejs/plugin-vue@npm:6.0.6"
   dependencies:
@@ -4889,6 +4889,18 @@ __metadata:
     vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
     vue: ^3.2.25
   checksum: 10c0/54471383e1d7aa91b791456871d480f4cd385a2b30e3d389f2d08d7ac847e6f01919b55e127d331b4a32f366bfd75e81012dfbedac66504cde78426cd9b9bb63
+  languageName: node
+  linkType: hard
+
+"@vitejs/plugin-vue@npm:^6.0.7":
+  version: 6.0.7
+  resolution: "@vitejs/plugin-vue@npm:6.0.7"
+  dependencies:
+    "@rolldown/pluginutils": "npm:^1.0.1"
+  peerDependencies:
+    vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
+    vue: ^3.2.25
+  checksum: 10c0/16e7673ded56ce2b3ebb2a71e7e22208328da6f0f4fdd1b87e1b3622690471dbccdad82dc4cccb7330da2c783a1204a37edc1f9155567bd852be6e76c76a4b52
   languageName: node
   linkType: hard
 
@@ -11482,7 +11494,7 @@ __metadata:
     "@types/pretty-bytes": "npm:^5.2.0"
     "@types/yauzl": "npm:^2.10.3"
     "@typescript-eslint/utils": "npm:^8.59.3"
-    "@vitejs/plugin-vue": "npm:^6.0.6"
+    "@vitejs/plugin-vue": "npm:^6.0.7"
     "@vitest/eslint-plugin": "npm:^1.6.17"
     "@vue/eslint-config-prettier": "npm:^10.2.0"
     "@vue/eslint-config-typescript": "npm:^14.7.0"
