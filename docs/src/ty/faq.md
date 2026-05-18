@@ -1,60 +1,60 @@
-# Frequently Asked Questions {#frequently-asked-questions}
+# Te mau uira’a e uihia pinepine nei {#frequently-asked-questions}
 
-## General Questions {#general-questions}
+## Te mau uira’a mā’iti-noa-hia {#general-questions}
 
-### :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content? {#external-dependencies}
+### :earth_americas: Te tura’i nei ānei teie fa’anahora’a i ni’a i te tahi atu mau tahua natirara, te mau rāve’a nō rāpae mai, ’oia ho’i te mau "ta’ata ha’apa’o" nō te tātari mai i te mau piri’i parau, te mau media nō te mau putuputura’a, e te tahi atu mau parau e vai nei? {#external-dependencies}
 
-**No.** The app behaves similarly to JW Library. It downloads publications, media and other content directly from the official website of Jehovah's Witnesses and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
+’Aita. E ha’ariro teie fa’anahora’a tōna huru mai tō te JW Library. Te tātari parau nei ’ōna i te mau piri’i parau, te mau media e te tahi atu mau parau e vai nei mai ni’a mai rō i te tahua natirara mana a te Ite nō Iehova e tāna ho’i pū tātari-ra’a parau. E fa’ata’a ’ōmoti noa te fa’anahora’a i te mea e tītauhia ia tātarihia, e i te taime ho’i e ’ere ai te parau i tātari-ā-na-hia i te mea ’āpī nō te tātari-fa’ahou-ra’a.
 
 :::info Nota
 
-The source code for this app is available for all to examine and verify what goes on under the hood.
+Te vai noa nei te nure parau tumu a teie fa’anahora’a nō te hi’opō’ara’a a te ta’ata ato’a, nō te hi’o māite ho’i i te mau ’ohipa e ravehia nei i roto.
 
 :::
 
-### :thinking: Does this app infringe the Terms of Use of the official website of Jehovah's Witnesses? {#terms-of-use}
+### :thinking: Te ofati nei ānei teie fa’anahora’a i te mau Parau No te Fariira’a i te Faaohiparaa o te tahua natirara mana a te Ite nō Iehova? {#terms-of-use}
 
-**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content) of the official website of Jehovah's Witnesses explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
+’Aita. Te hōro’a pāpū mai nei te [Parau No te Fariira’a i te Faaohiparaa](https://www.jw.org/finder?docid=1011511&prefer=content) o te tahua natirara mana a te Ite nō Iehova i te fa’amanara’a nō te huru fa’a’ohipara’a tā tātou e rave nei. Teie te ha’apotora’a parau tano mai roto mai i taua mau parau fariira’a ra (ha’apāpūra’a tu’uhia):
 
-> You may not:
+> ’Eiaha ’oe e:
 >
-> Create for distribution purposes, any software applications, tools, or techniques that are specifically made to collect, copy, download, extract, harvest, or scrape data, HTML, images, or text from this site. (This does **not** prohibit the distribution of free, non-commercial applications designed to download electronic files such as EPUB, PDF, MP3, and MP4 files from public areas of this site.)
+> Hāmani nō te tūha’a ra’a, i te tahi atu mau fa’anahora’a rorouira, te mau mauha’a, ’aore rā te mau rāve’a ’ohipa i hāmanihia nō te ha’aputu, te tātari, te tā’atira’a, te huti mai, ’aore rā te pāhi’u mai i te mau parau, te HTML, te mau tōna’o parau, ’aore rā te mau pāpa’ira’a parau mai ni’a mai i teie tahua natirara. (’Aita teie e ’ōpani nei i te tūha’a ra’a i te mau fa’anahora’a tōna’o hāmani-noa-hia, tei ’ere i te ’ohipa ho’ora’a parau, i hāmanihia nō te tātari mai i te mau piri’i parau uira mai te EPUB, PDF, MP3, e te MP4 mai ni’a mai i te mau vāhi matara nō te hō’ē ta’ata ato’a o teie tahua natirara.)
 
-### :question: What operating systems does M³ support? {#operating-systems}
+### :question: E aha te mau fa’anahora’a tōna’o (OS) e tauturūhia nei e M³? {#operating-systems}
 
-M³ supports Windows, macOS, and Linux:
+Te tauturu nei M³ i te Windows, macOS, e te Linux:
 
-- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
-- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
-- **Linux**: Most modern Linux distributions (AppImage format)
+- Windows: Windows 10 e te mau nure i muri mai (e vai nei te huru parau 64-bit e te 32-bit)
+- macOS: macOS 10.15 (Catalina) e te mau nure i muri mai (fa’anahora’a tura’i-’āmui-hia)
+- Linux: Te rahira’a o te mau nure Linux ’āpī (huru fa’anahora’a AppImage)
 
-### :globe_with_meridians: Does M³ work in my language? {#language-support}
+### :globe_with_meridians: Te ’ohipa nei ānei o M³ nō tō’u iho reo? {#language-support}
 
-**Yes!** M³ provides comprehensive multi-language support:
+’Ēiaha! E pū’oira’a parau nō te rave rau reo tō roto i te M³:
 
-- **Media**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
-- **App Interface**: Use M³'s interface in many different languages
-- **Independent Settings**: You can use the interface in one language while downloading media in another
-- **Fallback languages**: Configure fallback languages for when media isn't available in the primary language
-- **Subtitle support**: Download and display subtitles in various languages
+- Te mau ha’apararura’a: E tātari i te mau ha’apararura’a nā roto i te hō’ē o te mau rau hānere reo e vai nei i ni’a i te tahua natirara mana a te Ite nō Iehova
+- Huru fā’ari’ira’a o te fa’anahora’a: E fa’a’ohipa i te huru fā’ari’ira’a o M³ nā roto i te mau reo ta’a ’ē e rave rahi
+- Mau fa’anahora’a ta’a ’ē: E nehenehe tā ’oe e fa’a’ohipa i te huru fā’ari’ira’a nā roto i te hō’ē reo, ’a tātari ai i te mau ha’apararura’a nā roto i te tahi atu reo ta’a ’ē
+- Mau reo mono: E fa’anaho i te mau reo mono nō te taime ’aore te ha’apararura’a e vai nei nā roto i te reo mātāmua
+- Tauturu nō te mau pāpa’ira’a i raro: E tātari e e fa’a’ite i te mau pāpa’ira’a i raro nā roto i te mau reo ta’a ’ē e rave rahi
 
-## Installation and Setup {#installation-setup}
+## Te fa’atā’atira’a e te fa’anaho ra’a {#installation-setup}
 
-### :computer: How do I download and install M³? {#installation}
+### :computer: E aha te rāve’a nō te tātari e nō te fa’atā’ati iā M³? {#installation}
 
-Download the appropriate version from the [Download page](download) and follow the steps in the [User Guide](user-guide).
+E tātari i te nure tano mai ni’a mai i te [’Ate’a tātari](download) e e pe’e i te mau ta’ahira’a i roto i te [Arata’i nō te fa’a’ohipa](user-guide).
 
-### :gear: How do I set up M³ for the first time? {#first-time-setup}
+### :gear: E aha te rāve’a nō te fa’anaho iā M³ nō te taime mātāmua? {#first-time-setup}
 
-M³ includes a setup wizard that guides you through the essential configuration:
+Te vai nei i roto iā M³ hō’ē fa’anaho arata’i nō te tauturu iā ’oe i roto i te mau fa’anahora’a tumu:
 
-1. Choose your interface language
-2. Select profile type (Regular or Other)
-3. Configure congregation information
-4. Set up meeting schedule
-5. Configure optional features like OBS integration
+1. E mā’iti i te reo nō tō ’oe huru fā’ari’ira’a
+2. E mā’iti i te huru hi’ora’a (Māu’a ’aore rā Tahi atu)
+3. E fa’anaho i te mau ha’amāramaramara’a nō te amuira’a
+4. ’A fa’anaho i te tāpura ’ohipa o te putuputura’a
+5. ’A fa’anaho i te mau rāve’a e mātā’itihia, mai te tū’atira’a OBS
 
-## Media Management {#faq-media-management}
+## Te fa’aterera’a media {#faq-media-management}
 
 ### :desktop_computer: How does M³ download media? {#media-download}
 
@@ -130,23 +130,23 @@ To integrate with Zoom:
 
 1. Enable Zoom integration in M³ settings
 2. Configure the screen sharing shortcut that is set up in Zoom. Ensure that shortcut is "global" in Zoom's settings.
-3. M³ will automatically start and stop Zoom screen sharing during media presentations
+3. E ha’amata e e fa’aea noa te fa’anahora’a M³ i te tufa ra’a vauvau ’āparau Zoom i te taime o te mau ha’apararura’a
 
-## OBS Studio Integration {#faq-obs-integration}
+## Te fa’atā’atira’a iā OBS Studio {#faq-obs-integration}
 
-### :video_camera: How do I set up the OBS Studio integration? {#faq-obs-setup}
+### :video_camera: E aha te rāve’a nō te fa’anaho i te fa’atā’atira’a iā OBS Studio? {#faq-obs-setup}
 
-To integrate with OBS Studio:
+Nō te fa’atā’ati iā OBS Studio:
 
-1. Install OBS Studio and the WebSocket plugin
-2. Enable OBS integration in M³ settings
-3. Enter the OBS port and password
-4. Configure scenes for camera, media, and images
-5. Test playback
+1. E fa’atā’ati iā OBS Studio e i te parau fa’auera’a WebSocket
+2. E fa’atupura i te fa’atā’atira’a OBS i roto i te mau fa’anaho ra’a a M³
+3. E pāpa’i i te tōfiri e te fā’ati nō OBS
+4. E fa’anaho i te mau ’āfata nō te pata tāmau, te ha’apararura’a, e te mau hi’ora’a
+5. E tōmiti i te fa’ata’ira’a
 
-### :arrows_counterclockwise: How does automatic scene switching work? {#faq-scene-switching}
+### :arrows_counterclockwise: E aha te rāve’a ’ohipa o te tauira’a ’āfata noa? {#faq-scene-switching}
 
-M³ automatically switches OBS scenes based on:
+E taui noa te fa’anahora’a M³ i te mau ’āfata OBS ia au i te:
 
 - Media type (video, image, etc.)
 - Your scene configuration
@@ -291,9 +291,9 @@ Thank you for your interest in supporting the project! However, in the spirit of
 
 M³ is designed to work on a wide range of operating systems:
 
-- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
-- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
-- **Linux**: Most modern Linux distributions (AppImage format)
+- Windows: Windows 10 e te mau nure i muri mai (e vai nei te huru parau 64-bit e te 32-bit)
+- macOS: macOS 10.15 (Catalina) e te mau nure i muri mai (fa’anahora’a tura’i-’āmui-hia)
+- Linux: Te rahira’a o te mau nure Linux ’āpī (huru fa’anahora’a AppImage)
 
 M³ has the following hardware requirements:
 
