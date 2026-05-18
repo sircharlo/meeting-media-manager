@@ -16,90 +16,90 @@ I mātua pi’ihia na teie fa’anahora’a iā JWMMF (JW Meeting Media Fetcher)
 
 ## Nō te aha e mā’iti ai iā M³? {#why-choose-m3}
 
-’O M³ te rāve’a hira nō te fa’atere i te mau media nō te rurura’a, ’o te hōro’a mai i te hō’ē ’ohipara’a mania, pāpū, ’e te ’ā’ano i te mau huru rāve’a ato’a i ni’a i te mau tahua rorouira ato’a. It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation.
+’O M³ te rāve’a hira nō te fa’atere i te mau media nō te rurura’a, ’o te hōro’a mai i te hō’ē ’ohipara’a mania, pāpū, ’e te ’ā’ano i te mau huru rāve’a ato’a i ni’a i te mau tahua rorouira ato’a. ’Ua hāhamanihia te reira nō te mau hina’aro ta’a ’ē o te mau rurura’a a te amuira’a, ’e e hōro’a mai i te mau mea ato’a e tītauhia nō te hō’ē fa’a’itera’a media manuia.
 
-### Key benefits {#key-benefits}
+### Mau fana’ora’a pu’e {#key-benefits}
 
-- **Effortless media presentation**: Presenting media at its finest — just open M³ and everything works. No complex setup or extra steps required.
+- Fa’a’itera’a media ’ōhie roa: Te fa’a’itera’a media maita’i roa a’e — ’a hāha’i noa iā M³ ’e e tano te mau mea ato’a. ’Aore e fa’anahora’a ta’arepurepu ’aore rā e ta’ahira’a hau e tītauhia.
 
-- **Multi-congregation support**: Manage settings for multiple congregations or groups easily within a single application.
+- Tōturu nō te tahi mau amuira’a: ’A fa’atere ’ōhie i te mau tātara’a nō e rave rahi amuira’a ’e/’aore rā te mau pupu i roto i te hō’ē noa fa’anahora’a.
 
-- **Advanced features**: Easily add extra media, import custom content, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- Mau fa’anahora’a hōhonu: ’A ’āmui ’ōhie i te tahi atu mau media, ’a fa’atōro’a i te mau parau ta’a ’ē, ’e ’a ’ōpere i’oa-noa i te mau mea e tupu ra i te Piha a te Basileia i te feia i ni’a iā Zoom.
 
-- **Optimized cross-platform performance**: Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
+- ’Ohipara’a mania i ni’a i te mau tahua ato’a: ’A fana’o i te hō’ē ’ohipara’a mania ’e te vitiviti i ni’a iā Windows, macOS, ’e Linux, i ni’a ato’a i te mau rorouira tahito ’aore rā te mau rorouira rāve’a iti.
 
-- **Reliable and stable**: Built to perform when you need it most. Encounter a bug? Report it, and it will be addressed promptly.
+- Pāpū ’e te tōtōā-’ore: ’Ua hāhamanihia nō te tere maita’i i te taime e hina’aro-roa-hia ai. ’Ua fārerei i te hō’ē paruparu pororamu? ’A fa’a’ite mai, ’e e roromi-vitiviti-hia te reira.
 
-- **Advanced presentation tools**: Advanced media controls, zoom/pan capabilities, custom timing, and seamless Zoom and OBS Studio integration.
+- Mau rāve’a fa’a’itera’a hōhonu: Mau fa’aterera’a media hōhonu, rāve’a fa’arahi/fa’ahu’e, fa’aa’ano i te taime, ’e te tū’atira’a mania o Zoom ’e o OBS Studio.
 
-## What can M³ do? {#what-can-m3-do}
+## E aha te mau rāve’a a M³? {#what-can-m3-do}
 
-M³ is a comprehensive media management solution that allows you to easily and automatically download, synchronize, share, and present all meeting media. Here's what makes M³ powerful:
+’O M³ te hō’ē rāve’a ’ā’ano nō te fa’atere i te media, ’o te tauturu iā ’oe nō te tō, nō te tū’ati, nō te ’ōpere, ’e nō te fa’a’ite ’ōhie ’e te i’oa-noa i te mau media ato’a nō te putuputura'a. Teie te mea e fa’apūai ra iā M³:
 
-### Core Media Management {#core-media-management}
+### Te rāve’a matamua nō te fa’atere i te media {#core-media-management}
 
-- **Automatic media downloads**: Automatically fetches and downloads all media needed for upcoming meetings
-- **Multi-language support**: Download media in any of hundreds of available languages
-- **Smart caching**: Intelligent caching system that keeps media organized and up-to-date
-- **Media organization**: Automatically organizes media by date and meeting section
+- Tōra’a media i’oa-noa: E tīti’a ’e e tō i’oa-noa te reira i te mau media ato’a e hina’arohia nō te mau putuputura’a e haere mai ra
+- Tōturu nō te tahi mau reo: ’A tō i te media i roto i te hō’ē o te mau rau reo e vai ra
+- Ha’aputura’a pa’ari: Fa’anahora’a ha’aputura’a māramarama ’o te fa’anaho ’e ’o te fa’ahou i te media
+- Fa’anahora’a media: E fa’anaho i’oa-noa te reira i te media i te mahana ’e te tuha’a o te putuputura’a
 
-### Media Presentation Features {#about-presentation-features}
+### Mau rāve’a fa’a’itera’a media {#about-presentation-features}
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode includes:
+Nō te mau putuputura’a ’āmui ’aore rā i te vāhi rurura’a, te vai ra i roto i te rāve’a fa’a’itera’a media:
 
-- **Advanced media controls**: Media thumbnails with zoom and pan capabilities
-- **Custom timing**: Set custom start and end times for media playback
-- **Playback controls**: Easy-to-use pause/play/stop buttons with keyboard shortcuts
-- **Multi-monitor support**: Automatic external monitor detection and management
-- **Clean presentation**: Distraction-free media presentation interface
+- Mau fa’aterera’a media hōhonu: Mau ho’ho’a media ri’i ’e te rāve’a fa’arahi ’e te fa’ahu’e
+- Fa’aa’ano i te taime: ’A fa’anaho i te taime ha’amatara’a ’e te taime fa’ahope’ara’a ta’a ’ē nō te fa’ata’ira’a media
+- Mau fa’aterera’a fa’ata’ira’a: Mau pitopito fa’ahoromāha/fa’ata’i/fa’ahope ’ōhie ma te mau rāve’a ’ōpau o te pitopitora’a parau
+- Tōturu nō te tahi mau pāpau uira: ’Ite-i’oa-noa-ra’a ’e te fa’aterera’a o te pāpau uira nō rati
+- Fa’a’itera’a ma’atua: Fa’anahora’a fa’a’itera’a media mā nō te pāruru i te fāfārea
 
-### Background Music {#about-background-music}
+### Pehe fāfārea {#about-background-music}
 
-- **Intelligent playback**: Background music that automatically stops before meetings start
-- **One-click restart**: Resume background music with a single click after meetings
-- **Volume control**: Adjustable background music volume with fade-out capabilities
+- Fa’ata’ira’a māramarama: E fa’ahope i’oa-noa te pehe fāfārea hou te ha’amatara’a o te mau putuputura’a
+- Ha’amata-fa’ahou-ra’a ma te tōna’a hō’ē: ’A fa’ata’i fa’ahou i te pehe fāfārea ma te tōna’a hō’ē noa i muri i te mau putuputura’a
+- Fa’anahora’a tōna: E nehenehe e fa’atano i te tōna o te pehe fāfārea ma te rāve’a fa’amāru-mārie-ra’a
 
-### Zoom Integration {#about-zoom-integration}
+### Tū’atira’a ’e o Zoom {#about-zoom-integration}
 
-- **Automatic screen sharing**: Start and stop Zoom screen sharing automatically when you play or stop media
+- Tuha’ara’a pāpau uira i’oa-noa: E ha’amata ’e e fa’ahope i’oa-noa te tuha’ara’a pāpau uira a Zoom i te taime e fa’ata’i ’aore rā e fa’ahope ai ’oe i te media
 
-### OBS Studio Integration {#about-obs-integration}
+### Tū’atira’a ’e o OBS Studio {#about-obs-integration}
 
-- **Automatic scene switching**: Seamless integration with OBS Studio for hybrid meetings
-- **Scene management**: Automatic switching between camera, media, and other scenes
+- Tauira’a vāhi i’oa-noa: Tū’atira’a hō’ē-noa ’e o OBS Studio nō te mau putuputura’a ’āmui
+- Fa’aterera’a vāhi: Tauira’a i’oa-noa i rōpū i te tāmata, te media, ’e te tahi atu mau vāhi
 
-### Media Import and Management {#about-media-import}
+### Te tōra’a mai ’e te fa’aterera’a media {#about-media-import}
 
-- **JWPUB files**: Import and manage JWPUB files with ease
-- **JWLPLAYLIST files**: Support for JW Library playlist files
-- **Custom media**: Import custom videos, pictures, audio files, and PDF files
-- **Audio Bible**: Import Study Bible media and audio recordings of the New World Translation
-- **Public talks**: Always have public talk media overview ready to use with the S-34 importer
+- Mau putu’ite JWPUB: ’A tō mai ’e ’a fa’atere i te mau putu’ite JWPUB ma te ’ōhie
+- Mau putu’ite JWLPLAYLIST: Tōturu nō te mau putu’ite rāpahu pehe a te JW Library
+- Media i’oti: ’A tō mai i te mau tōta’ira’a pata, te mau hōho’a, te mau putu’ite fa’aro’o, ’e te mau putu’ite PDF i’oti
+- Bibiliia Fa’aro’o: ’A tō mai i te mau media o te Bibiliia ha’api’ira’a ’e te mau haruharura’a reo o te Hurira’a o te Ao Api
+- Mau orara’a parau i te ta’ata: ’A vaiiho noa i te hi’o-fa’ahou-ra’a media o te mau orara’a parau i te ta’ata ia ineine nō te fa’ahana’a ’e te tō mai S-34
 
-### Advanced Features {#about-advanced-features}
+### Mau rāve’a hōhonu {#about-advanced-features}
 
-- **Folder monitoring**: Automatically sync media from watched folders (Dropbox, OneDrive, etc.)
-- **Media export**: Automatically export media to folders, organized by date
-- **Website presentation**: Present the official website on external monitors
-- **Keyboard shortcuts**: Customizable keyboard shortcuts for many functions
-- **Multiple profiles**: Manage different congregations or groups with separate profiles
+- Arata’ira’a rāfao: E tū’ati i’oa-noa i te media nō roto mai i te mau rāfao e mātāitaihia (Dropbox, OneDrive, ’e te tahi atu)
+- Hāpono-fa’aho’i-ra’a media: E hāpono-fa’aho’i i’oa-noa i te media i roto i te mau rāfao, fa’anahohia mā te tai’o mahana
+- Te fa’a’itera’a pae natirara: Fa’a’ite i te pae natirara mana i ni’a i te mau piha hi’o nō rāpae
+- Mau rāve’a ’atuna’o: E nehenehe e fa’anaho i te mau rāve’a ’atuna’o nō te tahi atu mau ’ohipa
+- E rave rau parau fa’ata’a: ’A fa’atere i te mau amuira’a ’aore rā te mau pupu ta’a ’ē mā te mau parau fa’ata’a ta’a ’ē
 
-## Does M³ work in my language? {#does-m3-work-in-my-language}
+## E tano ānei te M³ i roto i tō’u reo? {#does-m3-work-in-my-language}
 
-**Yes!** M³ provides comprehensive multi-language support:
+’Ēiaha! E pū’oira’a parau nō te rave rau reo tō roto i te M³:
 
-Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of languages available on the official website of Jehovah's Witnesses. The list of available languages is dynamically updated; all you need to do is select which one you need during setup.
+E nehenehe e tātari i’oa-noa i te mau media nō te mau putuputura’a a te mau Ite nō Iehova i roto i te mau rau reo e vai nei i ni’a i te pae natirara mana a te mau Ite nō Iehova. Te tāmāhanahia nei te tāpura o te mau reo e vai nei; e mā’iti noa ’oe i te reo e hina’arohia i te taime nō te fa’anahora’a.
 
-### Interface Languages {#interface-languages}
+### Te mau reo nō te tū’atira’a {#interface-languages}
 
-M³ itself has been translated into many languages by volunteers. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. This means you can use M³ in your preferred language while downloading media in any other supported language.
+​Ua huri-fa’ahou-hia te M³ iho i roto i te rave rau reo e te mau rima tauturu. E nehenehe tā ’oe e fa’anaho i te reo e fa’a’itehia i ni’a i te tū’atira’a a te M³, ta’a ’ē noa atu i te reo e fa’a’ohipahia nō te tātari-ra’a media. Te aura’a rā, e nehenehe tā ’oe e fa’a’ohipa i te M³ mā tō ’oe reo tātarihiahia, i te taime ho’i e tātarihia ai te mau media mā te tahi atu reo e pāturuhia nei.
 
-For details about fallback languages and subtitles, see the [FAQ](faq#language-support).
+Nō te tahi atu mau ha’amāramaramara’a nō hi’a i te mau reo mono ’ē e te mau parau fa’ata’a i raro, ’a hi’o i te [FAQ](faq#language-support).
 
-## System Requirements {#system-requirements}
+## Te mau tītau’ara’a nō te fa’anahora’a {#system-requirements}
 
-For supported operating systems and requirements, see the answers in the [FAQ](faq#technical-questions).
+​Nō te mau fa’anahora’a fa’ahorora’a e te mau tītau’ara’a e pāturuhia nei, ’a hi’o i te mau pāhonora’a i roto i te [FAQ](faq#technical-questions).
 
-**Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
+’A tāmata na i te M³ i teie mahana nō te hōro’a mai i tō ’oe iho mana’o i ni’a i tāna e nehenehe e rave! ’Aita e mea ’ōhie a’e nō te fa’a’ite i te mau media i te mau putuputura’a a te amuira’a
 
 ![M³ preview](./../assets/m3-preview.png)
