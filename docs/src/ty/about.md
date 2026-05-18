@@ -1,10 +1,10 @@
-# About Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
+# Nō ni’a iā Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
 
 ![M³ banner](./../assets/m3-banner.png)
 
-## What is this app? {#what-is-this-app}
+## E aha teie fa’anahora’a? {#what-is-this-app}
 
-**Meeting Media Manager**, or **M³** for short, is a comprehensive cross-platform application for Windows, macOS and Linux that automatically downloads, organizes, and presents pictures and videos for congregation meetings of Jehovah's Witnesses. It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
+Te Meeting Media Manager, a rā i pi’ihia M³ nō te ha’apoto, hō’ē ia fa’anahora’a rorouira ’ā’ano nō te Windows, macOS ’e Linux, ’o te tātari noa i te tōtarara’a, te fa’anahora’a, ’e te fa’a’itera’a i te mau hōho’a ’e te mau tōtafifi nō te mau rurura’a a te amuira’a a te Ite o Iehova. It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
 
 M³ features support for managing regular and custom meeting media, multiple congregations and/or groups using the same computer account, and advanced presentation capabilities that make media sharing effortless.
 
