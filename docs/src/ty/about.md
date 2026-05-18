@@ -4,19 +4,19 @@
 
 ## E aha teie fa’anahora’a? {#what-is-this-app}
 
-Te Meeting Media Manager, a rā i pi’ihia M³ nō te ha’apoto, hō’ē ia fa’anahora’a rorouira ’ā’ano nō te Windows, macOS ’e Linux, ’o te tātari noa i te tōtarara’a, te fa’anahora’a, ’e te fa’a’itera’a i te mau hōho’a ’e te mau tōtafifi nō te mau rurura’a a te amuira’a a te Ite o Iehova. It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
+Te Meeting Media Manager, a rā i pi’ihia M³ nō te ha’apoto, hō’ē ia fa’anahora’a rorouira ’ā’ano nō te Windows, macOS ’e Linux, ’o te tātari noa i te tōtarara’a, te fa’anahora’a, ’e te fa’a’itera’a i te mau hōho’a ’e te mau tōtafifi nō te mau rurura’a a te amuira’a a te Ite o Iehova. E tōturihia te mau reo ato’a e vai ra i ni’a i te tahua natirara mana a te Ite o Iehova, ’e e hōro’a mai te reira i te mau rāve’a pūai nō te fa’anaho i te mau media nō te mau rurura’a vārua (mixte) ’e te mau rurura’a ta’ata-roa-hia.
 
-M³ features support for managing regular and custom meeting media, multiple congregations and/or groups using the same computer account, and advanced presentation capabilities that make media sharing effortless.
+Te vai ra i roto iā M³ te tōturu nō te fa’atere i te mau media mātauhia ’e te mau media ta’a ’ē nō te rurura’a, te rave-ato’a-ra’a i te tahi mau amuira’a ’e/’aore rā te mau pupu i ni’a i te hō’ē ā tōfati rorouira, ’e te mau rāve’a fa’a’itera’a hōhonu ’o te fa’ariro i te ’ōpere-media ’ei mea ’ōhie roa.
 
-:::info Note
+:::info Nota
 
-This app used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed to Meeting Media Manager in May 2022.
+I mātua pi’ihia na teie fa’anahora’a iā JWMMF (JW Meeting Media Fetcher), nō te tauihia rā tōna i’oa ’ei Meeting Media Manager i te ’āva’e mē nō te matahiti 2022.
 
 :::
 
-## Why choose M³? {#why-choose-m3}
+## Nō te aha e mā’iti ai iā M³? {#why-choose-m3}
 
-M³ is the ultimate tool for managing meeting media, offering a seamless, reliable, and feature-rich experience across platforms. It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation.
+’O M³ te rāve’a hira nō te fa’atere i te mau media nō te rurura’a, ’o te hōro’a mai i te hō’ē ’ohipara’a mania, pāpū, ’e te ’ā’ano i te mau huru rāve’a ato’a i ni’a i te mau tahua rorouira ato’a. It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation.
 
 ### Key benefits {#key-benefits}
 

@@ -723,5 +723,5 @@
   "zoomEnable-explain": "’Eita teie e fa’anaho roa iā Zoom. E tātari rā te reira i te ha’amata ’e te fa’aea i te ’ōpere-’api a Zoom mā te rāve’a rorouira (raccourcis) i fa’anahohia i roto i te tātara’a \"Commencer/Arrêter le partage d'écran\" a Zoom ’ia ha’amata ’e ’ia fa’aea te ha’utira’a media i roto iā M³.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Rāve’a rorouira nō te ’ōpere-’api Zoom",
-  "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings."
+  "zoomScreenShareShortcut-explain": "’A pata i te rāve’a rorouira (raccourcis) i fa’anahohia i roto i te tātara’a \"Commencer/Arrêter le partage d'écran\" a Zoom. E hāpono M³ i teie shortcut ’ia ha’amata te ha’utira’a media (nō te ha’amata i te ’ōpere-’api) ’e ’ia fa’aea te reira (nō te fa’aea i te ’ōpere-’api). Nō te fa’a’ohipa i teie fa’anahora’a, e tītauhia ’ia ha’amāhana ’oe i te tātara’a \"Raccourcis Général\" nō taua raccourcis ta’a ’ē ra i roto i te mau tātara’a a Zoom."
 }
