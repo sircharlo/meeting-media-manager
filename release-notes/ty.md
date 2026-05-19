@@ -201,28 +201,28 @@ No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera 
 - 🛑 **Error Banner for OBS Studio**: Add an error banner when OBS Studio is not connected on a meeting day, ensuring users are alerted.
 - 📚 Tufa’a mēdia ’ia au i te nene’ira’a: Ua tufa-’a’ano-hia te mau mēdia nō te hō’ē noa nene’ira’a i fa’ahitihia, nō te hō’ē hi’ora’a maita’i a’e e te au maita’i.
 - 🎵 Fa’aarara’a nō te mau hīmene i tāpiri-fa’ahou-hia: Ua tu’uhia mai te hō’ē fa’aarara’a mai te peu ē, ua tāpirihia te hō’ē hīmene e rave rahi taime i roto i te tapura mēdia nō te mau putuputura’a o te hope’a hepetoma.
-- 🔄 **Future Schedule Planning**: Enable the planning of future meeting schedule changes, which is useful for yearly schedule changes or for the circuit overseer's visit to a neighboring congregation.
+- 🔄 Fa’anahora’a nō te mau putuputura’a i mua nei: Ua tu’uhia mai te rāve’a nō te fa’anaho i te mau tauira’a o te porotarāma putuputura’a i mua nei, e mea faufa’a roa nō te mau tauira’a o te matahiti, ’aore rā nō te haere-māta’ita’i-ra’a a te tia’i ha’aere i te hō’ē amuira’a tapiri.
 
 ## 24.11.0
 
 ### ✨ Te mau rave’a ‘āpī
 
-- **feat**: Presenting the website is now supported on macOS 🚀
-- **feat**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
-- **feat**: Added support for setting the web address from which media should be downloaded 🚀
-- **feat**: Added OBS Studio instant scene picker and overhauled scene picker functionality in settings
-- **feat**: Expanded documentation website to support more languages
+- 🚀 Fa’a’itera’a: Ua fariihia i teie nei te fa’a’itera’a i te tahua iteneta i ni’a i te matini macOS.
+- 🚀 Mau tāvirira’a papatāpuni: Ua tu’uhia mai te mau tāvirira’a papatāpuni nō te fa’a’ore, te fa’ata’a, e te fa’ahiti-fa’ahou-ra’a i te harura’a mēdia.
+- Mā’itira’a i te vāhi uta-mai-ra’a mēdia: Ua tu’uhia mai te rāve’a nō te fa’ata’a i te vāhi iteneta e uta-mai-hia ai te mau mēdia 🚀
+- 🚀 Mā’itira’a ta’o-rā’i no te OBS Studio: Ua tu’uhia mai te rāve’a mā’itira’a ta’o-rā’i vitiviti no te OBS Studio, e ua fa’a’āpī-roa-hia te fa’anahora’a o te mā’itira’a ta’o-rā’i i roto i te mau fa’anahora’a
+- 🚀 Ha’a’amura’a i te tahua iteneta nō te mau ha’amāramaramara’a: Ua fa’a’ā’ano-hia te tahua iteneta nō te mau ha’amāramaramara’a ’ia farii i te tahi atu mau reo
 
 ## 24.10.10
 
 ### ✨ Te mau rave’a ‘āpī
 
-- **new**: Added keyboard shortcuts to navigate to the next/previous media item
-- **new**: Added a right-click menu to media items to hide media items and rename them
-- **new**: Trimmed video times are now respected in imported JWL playlists
+- ✨ Mau tāvirira’a papatāpuni nō te tere i roto i te mau mēdia: Ua tu’uhia mai te mau tāvirira’a papatāpuni nō te haere i te mēdia i muri mai ’aore rā i te mēdia i mua nei
+- ✨ Tāpura i te pae’au atau: Ua tu’uhia mai te hō’ē tāpura i te pae’au atau i ni’a i te mau mēdia, nō te huna i te mau mēdia ’aore rā nō te taui i tō rātou i’oa
+- ✨ Fa’a’ohipa-’aunoa-ra’a i te mau tau ’i’iri video: Ua fa’a’ohipahia i teie nei te mau tau ’i’iri (trimmed times) o te mau video i roto i te mau tapura (playlists) JWL i uta-mai-hia mai
 
 ## 24.10.9
 
 ### ✨ Te mau rave’a ‘āpī
 
-- **feat**: Added an option to delete all extra media files for the currently selected day
+- 🚀 Mā’itira’a nō te ’iriti i te mau mēdia hau: Ua tu’uhia mai te hō’ē rāve’a nō te ’iriti i te mau mēdia hau ato’a nō te mahana i mā’itihia i teie nei
