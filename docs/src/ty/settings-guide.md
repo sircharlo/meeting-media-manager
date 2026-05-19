@@ -1,76 +1,76 @@
-# Settings Guide {#settings-guide}
+# Arata’i nō te mau fa’anahora’a {#settings-guide}
 
-This comprehensive guide explains all the settings available in M³, organized by category. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
+E fa’ata’a teie arata’i a’ano i te mau fa’anahora’a ato’a i roto i te M³, ma te tufa-’a’ano-hia ’ia au i te mau tuha’a. E tauturu te māramarama-maita’i-ra’a i teie mau fa’anahora’a ia ’oe i te fa’anaho maita’i i te M³ ’ia au i te mau hina’aro o tō ’oe amuira’a.
 
-## Application Configuration {#application-configuration}
+## Fa’anahora’a o te Mave {#application-configuration}
 
-### Display Language {#display-language}
+### Reo fa’a’ite {#display-language}
 
 <!-- **Setting**: `localAppLang` -->
 
-Choose the language for M³'s interface. This is independent of the language used for media downloads.
+Mā’iti i te reo nō te tāpura o te M³. E ’ere teie i te mea ti’aturi i ni’a i te reo e fa’a’ohipahia nō te uta-mai i te mau mēdia.
 
-**Options**: All available interface languages (English, Spanish, French, etc.)
+Mau mā’itira’a (Options): Te mau reo ato’a e vai nei nō te tāpura (Perētānia, Paniora, Farāni, e te tahi atu mau reo)
 
-**Default**: English
+Fa’anahora’a tumu: Reo Perētānia
 
-### Dark Mode {#dark-mode}
+### Mode Pōuri {#dark-mode}
 
 <!-- **Setting**: `darkMode` -->
 
-Control the appearance theme of M³.
+E fa’atere i te huru o te M³.
 
-**Options**:
+Mau mā’itira’a:
 
-- Automatically switch based on system preference
-- Always use dark mode
-- Always use light mode
+- Fa’a’ohipa-’aunoa-ra’a ’ia au i te fa’anahora’a o te rorouira
+- Fa’a’ohipa i te huru pōuri i te mau taime ato’a
+- Fa’a’ohipa i te huru māramarama i te mau taime ato’a
 
-**Default**: Auto
+Fa’anahora’a tumu: ’Aunoa
 
-### First Day of Week {#first-day-of-week}
+### Mahana mātāmua o te hepetoma {#first-day-of-week}
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the calendar view.
+Fa’anaho i te mahana mātāmua o te hepetoma i ni’a i te tapura mahana.
 
-**Options**: Sunday through Saturday
+Mau mā’itira’a: Tapati e tae atu i te Mahana mā’a
 
-**Default**: Sunday
+Fa’anahora’a tumu: Tapati
 
-### Date Format {#date-format}
+### Hurura’a o te mahana {#date-format}
 
 <!-- **Setting**: `localDateFormat` -->
 
-Format used to display dates in the app.
+Te huru fa’a’ite i te mau mahana i ni’a i te M³.
 
-**Example**: D MMMM YYYY
+Hi’ora’a: M AAAA MMMM
 
-**Default**: D MMMM YYYY
+Fa'anahora'a tumu: M AAAA MMMM
 
-### Auto-Start at Login {#auto-start-at-login}
+### Fa’a’ohipa-’aunoa-ra’a i te taime e tomo ai {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
 
-Automatically start M³ when the computer boots up.
+Fa’a’ohipa-’aunoa-hia te M³ i te taime ’ia tū te rorouira.
 
-**Default**: `false`
+Fa'anahora'a tumu: `Hape`
 
-## Congregation Meetings {#congregation-meetings}
+## Putuputura’a a te ’amuira’a {#congregation-meetings}
 
-### Congregation Name {#congregation-name}
+### I’oa o te ’amuira’a {#congregation-name}
 
 <!-- **Setting**: `congregationName` -->
 
-The name of your congregation. This is used for organization and display purposes.
+Te i’oa o tō ’oe ’amuira’a. E fa’a’ohipahia teie nō te fa’anahora’a e te fa’a’itera’a.
 
-**Default**: Empty (must be set during setup)
+Fa’anahora’a tumu: ’Aita e mea (e tano ’ia fa’ata’ahia i te taime o te fa’anahora’a)
 
-### Meeting Language {#meeting-language}
+### Reo o te putuputura’a {#meeting-language}
 
 <!-- **Setting**: `lang` -->
 
-The primary language for media downloads. This should match the language used in your congregation's meetings.
+Te reo tumu nō te tairi-mana’o-ra’a i te mau rorouira. E tano teie ia tu’ati i te reo e fa’a’ohipahia i roto i te mau putuputura’a a tō ’oe ’amuira’a.
 
 **Options**: All available languages from the official website of Jehovah's Witnesses
 
@@ -92,7 +92,7 @@ A secondary language to use when media isn't available in the primary language.
 
 The day of the week when your midweek meeting is held.
 
-**Options**: Sunday through Saturday
+Mau mā’itira’a: Tapati e tae atu i te Mahana mā’a
 
 **Default**: None (must be set during setup)
 
@@ -112,7 +112,7 @@ The start time of your midweek meeting.
 
 The day of the week when your weekend meeting is held.
 
-**Options**: Sunday through Saturday
+Mau mā’itira’a: Tapati e tae atu i te Mahana mā’a
 
 **Default**: None (must be set during setup)
 
@@ -165,7 +165,7 @@ These settings allow you to configure temporary changes to your meeting schedule
 
 Enable this if you're on a limited data connection to reduce bandwidth usage.
 
-**Default**: `false`
+Fa'anahora'a tumu: `Hape`
 
 ### Media Display {#media-display-button}
 
@@ -173,7 +173,7 @@ Enable this if you're on a limited data connection to reduce bandwidth usage.
 
 Enable the media display functionality. This is required to present media on a second monitor.
 
-**Default**: `false`
+Fa'anahora'a tumu: `Hape`
 
 #### Begin Playback Paused {#begin-playback-paused}
 
@@ -181,7 +181,7 @@ Enable the media display functionality. This is required to present media on a s
 
 Start videos in a paused state when playback begins.
 
-**Default**: `false`
+Fa'anahora'a tumu: `Hape`
 
 ### Background Music {#settings-guide-background-music}
 
@@ -219,71 +219,71 @@ Volume level for background music (1-100%).
 
 **Default**: 100%
 
-### Cache Management {#cache-management}
+### Fa’anahora’a o te tairura’a {#cache-management}
 
-#### Enable Extra Cache {#enable-extra-cache}
+#### Fa’ati’a i te tairura’a hau {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Enable additional caching for better performance.
+Fa’ati’a i te tairura’a hau nō te fa’anahora’a maita’i a’e.
 
-**Default**: `false`
+Fa'anahora'a tumu: `Hape`
 
-#### Cache Folder {#cache-folder}
+#### Putu’a tairura’a {#cache-folder}
 
 <!-- **Setting**: `cacheFolder` -->
 
-Custom location for storing cached media files.
+Vāhi fa’ata’ahia nō te tairura’a i te mau rorouira ha’amāramaramara’a.
 
-**Default**: System default location
+Fa’anahora’a tumu: Vāhi i fa’ata’ahia e te rorouira
 
-#### Enable Cache Auto-Clear {#enable-cache-auto-clear}
+#### Fa’ati’a i te ha’amāua-’ōtohe-ra’a o te tairura’a {#enable-cache-auto-clear}
 
 <!-- **Setting**: `enableCacheAutoClear` -->
 
-Automatically clear old cached files to save disk space.
+Ha’amāua-’ōtohe-ra’a i te mau tairura’a tahito nō te fa’aherehere i te vāhi i ni’a i te pāhani rorouira.
 
 **Default**: `true`
 
-### Folder Monitoring {#settings-guide-folder-monitoring}
+### Te hi’opo’ara’a i te putu’a {#settings-guide-folder-monitoring}
 
-#### Enable Folder Watcher {#enable-folder-watcher}
+#### Fa’ati’a i te hi’opo’a-’ōtohe-ra’a putu’a {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Monitor a folder for new media files and automatically add them to M³.
+Hi’opo’a i te hō’ē putu’a nō te ’imi i te mau rorouira ’āpī e te tāpiri-’ōtohe-ra’a i te reira i roto i te M³.
 
-**Default**: `false`
+Fa'anahora'a tumu: `Hape`
 
-#### Folder to Watch {#folder-to-watch}
+#### Putu’a nō te hi’opo’a {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-The folder path to monitor for new media files.
+Te arata’i o te putu’a nō te hi’opo’a i te mau rorouira ’āpī.
 
-**Default**: Empty
+Fa’anahora’a tumu: ’Aita
 
-## Integrations {#integrations}
+## Te mau tāpirira’a {#integrations}
 
-### Zoom Integration {#settings-guide-zoom-integration}
+### Tāpirira’a Zoom {#settings-guide-zoom-integration}
 
-#### Enable Zoom {#enable-zoom}
+#### Fa’ati’a i te Zoom {#enable-zoom}
 
 <!-- **Setting**: `zoomEnable` -->
 
-Enable Zoom meeting integration features.
+Fa’ati’a i te mau rāve’a tāpirira’a o te putuputura’a Zoom.
 
-**Default**: `false`
+Fa'anahora'a tumu: `Hape`
 
-#### Screen Share Shortcut {#screen-share-shortcut}
+#### Pāotira’a nō te fa’a’ite i te vairaa o te rorouira {#screen-share-shortcut}
 
 <!-- **Setting**: `zoomScreenShareShortcut` -->
 
-Keyboard shortcut to trigger Zoom screen sharing.
+Pāotira’a nō ni’a i te tāhitohito nō te fa’a’ite i te vairaa o te rorouira Zoom.
 
 **Default**: None
 
-### OBS Studio Integration {#settings-guide-obs-integration}
+### Tāpirira’a OBS Studio {#settings-guide-obs-integration}
 
 #### Enable OBS {#enable-obs}
 
@@ -291,7 +291,7 @@ Keyboard shortcut to trigger Zoom screen sharing.
 
 Enable OBS Studio integration for automatic scene switching.
 
-**Default**: `false`
+Fa'anahora'a tumu: `Hape`
 
 :::warning Important Note
 
@@ -349,7 +349,7 @@ Configure which OBS scenes to use for different purposes:
 
 Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
 
-**Default**: `false`
+Fa'anahora'a tumu: `Hape`
 
 #### Custom Event Shortcuts {#custom-event-shortcuts}
 
@@ -395,7 +395,7 @@ Shortcut that is triggered when the last song is played during a meeting.
 
 Enable customizable keyboard shortcuts for media control.
 
-**Default**: `false`
+Fa'anahora'a tumu: `Hape`
 
 #### Media Control Shortcuts {#media-control-shortcuts}
 
@@ -424,7 +424,7 @@ Enable fade-in/out transitions when showing or hiding the media window.
 
 Hide the logo in the media window.
 
-**Default**: `false`
+Fa'anahora'a tumu: `Hape`
 
 #### Maximum Resolution {#maximum-resolution}
 
@@ -450,7 +450,7 @@ Include media from the printed publications in media downloads.
 
 Exclude footnote images from media downloads when possible.
 
-**Default**: `false`
+Fa'anahora'a tumu: `Hape`
 
 #### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
 
@@ -468,7 +468,7 @@ Exclude media from the Teaching (th) brochure from media downloads.
 
 Enable subtitle support for media playback.
 
-**Default**: `false`
+Fa'anahora'a tumu: `Hape`
 
 #### Subtitle Language {#subtitle-language}
 
@@ -488,7 +488,7 @@ Language for subtitles (can be different from media language).
 
 Automatically export media files to a specified folder.
 
-**Default**: `false`
+Fa'anahora'a tumu: `Hape`
 
 #### Media Export Folder {#media-export-folder}
 
@@ -496,7 +496,7 @@ Automatically export media files to a specified folder.
 
 Folder path where media files will be automatically exported.
 
-**Default**: Empty
+Fa’anahora’a tumu: ’Aita
 
 #### Convert Files to MP4 {#convert-files-to-mp4}
 
@@ -504,7 +504,7 @@ Folder path where media files will be automatically exported.
 
 Convert exported media files to MP4 format for better compatibility.
 
-**Default**: `false`
+Fa'anahora'a tumu: `Hape`
 
 ### Danger Zone {#danger-zone}
 
@@ -528,7 +528,7 @@ Base domain used to download publications and media.
 
 Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
 
-**Default**: `false`
+Fa'anahora'a tumu: `Hape`
 
 ## Tips for Optimal Configuration {#configuration-tips}
 
