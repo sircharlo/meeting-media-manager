@@ -56,80 +56,80 @@ Te vai nei i roto iā M³ hō’ē fa’anaho arata’i nō te tauturu iā ’oe
 
 ## Te fa’aterera’a media {#faq-media-management}
 
-### :desktop_computer: How does M³ download media? {#media-download}
+### :desktop_computer: E aha te rāve’a a M³ nō te tōviri i te mau ha’apararura’a? {#media-download}
 
-M³ automatically downloads media for upcoming meetings by:
+E tōviri noa te fa’anahora’a M³ i te mau ha’apararura’a nō te mau putuputura’a i mua nei ia au i te:
 
-1. Checking your meeting schedule
-2. Determining what media is needed
-3. Downloading from the official website of Jehovah's Witnesses in your selected language
-4. Organizing media by date and meeting type
-5. Caching files for offline use
+1. Te hi’opo’ara’a i tā ’oe tōpāra’a taime nō te mau putuputura’a
+2. Te fa’ata’ara’a i te mau ha’apararura’a e hina’arohia
+3. Te tōvirira’a mai i te tahua natiraho mana a te mau Ite o Iehova na roto i te reo i mā’itihia e ’oe
+4. Te fa’anahora’a i te mau ha’apararura’a ia au i te taio ’āru’i e te huru o te putuputura’a
+5. Te ha’aputura’a i te mau rorou nō te fa’a’ohipara’a i rāpae i te natiraho
 
-### :calendar: Can I download media for specific dates? {#specific-dates}
+### :calendar: E nehenehe ānei iā’u e tōviri i te mau ha’apararura’a nō te tahi mau taio ’āru’i ta’a ’ē? {#specific-dates}
 
-Yes! M³ allows you to:
+'E! E fa’ati’a te fa’anahora’a M³ iā ’oe ia:
 
-- Download media for upcoming meetings automatically
-- Import custom media for any date
+- E tōviri noa i te mau ha’apararura’a nō te mau putuputura’a i mua nei
+- E fa’ahu’e mai i te mau ha’apararura’a i mā’itihia nō te mau taio ’āru’i ato’a
 
-### :open_file_folder: How do I import my own media files? {#import-media}
+### :open_file_folder: E aha te rāve’a nō te fa’ahu’e mai i tā’u iho mau rorou ha’apararura’a? {#import-media}
 
-You can import custom media in several ways:
+E nehenehe tā ’oe e fa’ahu’e mai i te mau ha’apararura’a i mā’itihia nā roto i te tahi atu mau rāve’a:
 
-- **File Import**: Use the import button to add videos, images, or audio files
-- **Drag and Drop**: Drag files directly into M³
-- **Folder Monitoring**: Set up a watched folder for automatic imports
-- **JWPUB Files and Playlists**: Import publications and playlists
+- Fa’ahu’era’a rorou: A pata i ni’a i te tōpata fa’ahu’e nō te tāmau mai i te mau tōfamamāte, te mau tōfata’a, ’aore rā te mau rorou fa’aro’o
+- ’Ūto’ira’a e tōmura’a: A ’ūtoi i te mau rorou na roto tonu i te fa’anahora’a M³
+- Ara’ira’a pu’era’a rorou: A fa’anaho i te hō’ē pu’era’a rorou ara’ihia nō te mau fa’ahu’era’a noa
+- Mau rorou JWPUB e te mau ‘āfata hīmene: A fa’ahu’e mai i te mau puta e te mau ‘āfata hīmene
 
-### :speaker: Can I import audio Bible recordings? {#audio-bible}
+### :speaker: E nehenehe ānei iā’u e fa’ahu’e mai i te mau haruharura’a pātere reo o te Bibilia? {#audio-bible}
 
-Yes! M³ includes an Audio Bible feature that allows you to:
+'E! Te vai ra i roto i te fa’anahora’a M³ te hō’ē fa’au’era’a pātere reo o te Bibilia, ’o te fa’ati’a iā ’oe ia:
 
-1. Select Bible books and chapters
-2. Choose specific verses or verse ranges
-3. Download audio recordings
-4. Use them at the meetings
+1. E mā’iti i te mau puta e te mau upo’o parau o te Bibilia
+2. E mā’iti i te mau ’īrava ta’a ’ē ’aore rā te mau ’īrava tātā’ira’a
+3. E tōviri i te mau haruharura’a pātere reo
+4. E fa’a’ohipa ia rātou i te mau putuputura’a
 
-## Presentation Features {#faq-presentation-features}
+## Mau rāve’a nō te fa’ahororā’ira’a {#faq-presentation-features}
 
-### :tv: How do I present media during meetings? {#present-media}
+### :tv: E nāfea vau e fa’ahororā’i ai i te mau tōfamamāte ’aore rā rorou fa’aro’o i te mau putuputura’a? {#present-media}
 
-To present media:
+Nō te fa’ahororā’i i te mau rorou (ata, hīmene, pata):
 
-1. Select the date
-2. Click the play button on the media item you want to present or use keyboard shortcuts
-3. Use the media player controls to pause, navigate, or stop playback
-4. Use zoom/pan features for images
-5. Set custom timing if needed
+1. E mā’iti i te taio mahana
+2. E pata i ni’a i te pitopito fa’ata’i o te rorou tā ’oe e hina’aro ra e fa’ahororā’i, ’aore rā e fa’a’ohipa i te mau rāve’a ’atata o te pitopito tāpau
+3. E fa’a’ohipa i te mau pitopito fa’atere o te tōfamamāte nō te fa’anamu, nō te fa’ahoro, ’aore rā nō te fa’atupura’a i te fa’ata’ira’a
+4. E fa’a’ohipa i te mau rāve’a fa’arahi/fa’anu’u nō te mau pata
+5. E fa’anaho i te taime ta’a ’ē ’ia hina’arohia
 
-### :keyboard: What keyboard shortcuts are available? {#faq-keyboard-shortcuts}
+### :keyboard: E aha te mau rāve’a ’atata o te pitopito tāpau e vai ra? {#faq-keyboard-shortcuts}
 
-M³ supports customizable keyboard shortcuts for:
+E fāri’i o M³ i te mau rāve’a ’atata o te pitopito tāpau e nehenehe e fa’ahuru ’ē nō:
 
-- Opening/closing media window
-- Previous/next media navigation
-- Play/pause/stop controls
-- Background music toggle
+- Te ha’amā’atara’a/te pōpānira’a i te ha’amāramaramara’a rorou
+- Te fa’ahorora’a i ni’a i te rorou nā mua atu/tāpe’e mai
+- Te mau pitopito fa’ata’i/fa’anamu/fa’atupura’a
+- Pitopito fa’ahu’u nō te hīmene aratō
 
 <!-- - Fullscreen mode -->
 
-### :notes: How does background music work? {#faq-background-music}
+### :notes: E nāfea te hīmene aratō e ’ohipa ai? {#faq-background-music}
 
-Background music features include:
+Teie te mau rāve’a nō te hīmene aratō:
 
-- Automatic playback when M³ starts, before the meeting begins
-- Automatic stop before meetings begin
-- One-click restart after meetings
-- Independent volume control
-- Configurable stop buffer time
+- Te fa’ata’ira’a ’āu’a’ā i te ha’amatara’a o M³, nā mua a’e te putuputura’a e ha’amata ai
+- Te fa’atupura’a ’āu’a’ā nā mua a’e te mau putuputura’a e ha’amata ai
+- Te fa’ahorofa’ahou-pata-tahi i muri a’e i te mau putuputura’a
+- Te fa’atere-ano’i-’ō’oā o te pūai reo
+- Te taime fa’ata’ara’a-tāpū-muri e nehenehe e fa’ahuru ’ē
 
-### :video_camera: How do I set up the Zoom integration? {#zoom-setup}
+### :video_camera: E nāfea vau e fa’anaho ai i te tū’atira’a ia Zoom? {#zoom-setup}
 
-To integrate with Zoom:
+Nō te tū’ati ia Zoom:
 
-1. Enable Zoom integration in M³ settings
-2. Configure the screen sharing shortcut that is set up in Zoom. Ensure that shortcut is "global" in Zoom's settings.
+1. A fa’atupu i te tū’atira’a ia Zoom i roto i te mau fa’anahora’a a M³
+2. A fa’anaho i te pitopito rorou nō te tū’oha’a vauvau parau i ha’amauhia i roto ia Zoom. A hi’opo’a māite ē ’ua fa’atā’atiahia taua pitopito rorou ra i ni’a i te fāito "global" i roto i te mau fa’anahora’a a Zoom.
 3. E ha’amata e e fa’aea noa te fa’anahora’a M³ i te tufa ra’a vauvau ’āparau Zoom i te taime o te mau ha’apararura’a
 
 ## Te fa’atā’atira’a iā OBS Studio {#faq-obs-integration}
@@ -148,53 +148,53 @@ Nō te fa’atā’ati iā OBS Studio:
 
 E taui noa te fa’anahora’a M³ i te mau ’āfata OBS ia au i te:
 
-- Media type (video, image, etc.)
-- Your scene configuration
-- Settings like "Postpone Images"
-- Whether to return to previous scene after media
+- Huru pāpāho (teata, hōho’a, tōpāto)
+- Tō ’oe fa’anahora’a tiri
+- Te mau fa’anahora’a mai te "Fa’atōrorea i te mau hōho’a"
+- Ē ho’i ā rānei i ni’a i te tiri nā mua atu i muri a’e i te pāpāho
 
-### :pause_button: What is the "Postpone Images" feature? {#faq-postpone-images}
+### :pause_button: E aha te huru fa’anahora’a "Fa’atōrorea i te mau hōho’a"? {#faq-postpone-images}
 
-This feature delays sharing images to OBS until you manually trigger them. This is useful for:
+Tē fa’atōrorea nei teie fa’anahora’a i te tū’oha’ara’a hōho’a i ni’a ia OBS ē tae noa atu ’ia fa’atupu rima ’oe i te reira. E mea faufa’a teie nō:
 
-- Showing images to in-person audience first
-- Having more control over timing
-- Avoiding premature scene changes
+- Te fa’ahōho’ara’a nā mua i te mau hōho’a i mua i te feiā e fāri’i-tinana-hia ra
+- Te fā’fa’ahiahia o te rāve’a nō te fa’atere pāpū i te taime
+- Te ’ape’ara’a i te tauira’a tiri vitiviti roa
 
-## Advanced Features {#faq-advanced-features}
+## Mau tātara’a hōhonu {#faq-advanced-features}
 
-### :cloud: How does folder monitoring work? {#faq-folder-monitoring}
+### :cloud: E aha te huru fa’atereha’avara’a o te hi’opo’ara’a puta? {#faq-folder-monitoring}
 
-Folder monitoring allows you to:
+Tē fa’ati’a nei te hi’opo’ara’a puta ia ’oe ’ia:
 
-1. Select a folder to watch for new files
-2. Automatically import new media files that are synced with cloud storage like Dropbox or OneDrive
+1. A mā’iti i te hō’ē puta nō te hi’opo’a i te mau puta ’āpī
+2. Tefa’atōro’a-ti’amā-ra’a i te mau puta pāpāho ’āpī tei tū’atihia i ni’a i te pu’era’a rorouira ata mai ia Dropbox ’aore rā OneDrive
 
-### :file_folder: What is media auto-export? {#faq-media-export}
+### :file_folder: E aha te huru nō te fa’atahe-ti’amā-ra’a pāpāho? {#faq-media-export}
 
-Media auto-export automatically:
+Tē rave ti’amā nei te fa’atahe-pāpāho i te:
 
-1. Exports media files to a specified folder
-2. Organizes files by date and section
-3. Converts files to MP4 format (optional)
-4. Maintains an organized backup of meeting media files
+1. Te fa’atahera’a i te mau puta pāpāho i roto i te hō’ē puta i ’oti
+2. Te fa’anahora’a i te mau puta nā mui’a i te taio maha ’e te tātara’a
+3. Te fa’ariro-’ē-ra’a i te mau puta ’ei huru MP4 (mā’itira’a)
+4. Te ha’apa’ora’a i te hō’ē tū’ati-pāpāho nō te mau puta pāpāho o te putuputura’a tei fa’anahohia
 
-### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
+### :family: E nehenehe ānei tā’u e fa’atere i te tahi atu ā mau amuira’a? {#faq-multiple-congregations}
 
-Yes! M³ supports multiple profiles for:
+'E! Tē fa’ati’a nei M³ i te mau parau fa’ata’a rau nō:
 
-- Different congregations
-- Special events
-- Different groups
-- Separate settings and media for each
+- Te mau amuira’a ta’a ’ē
+- Te mau tūru’a ta’a ’ē
+- Te mau pupu ta’a ’ē
+- Te mau fa’anahora’a ’e te mau pāpāho ta’a ’ē nō rātou tairuru
 
-## Troubleshooting {#faq-troubleshooting}
+## Te tātara-parau-fifi-ra’a {#faq-troubleshooting}
 
-### :warning: Media isn't downloading. What should I check? {#faq-media-not-downloading}
+### ​:warning: ’Aita te pāpāho e tōro’a mai nei. E aha te mea tā’u e hi’opo’a? {#faq-media-not-downloading}
 
-Check these common issues:
+’A hi’opo’a i teie mau fifi pinepine:
 
-1. **Meeting Schedule**: Verify your meeting days and times are correct
+1. 'Afa'atoratera'a o te putuputura'a: 'A hi'opo'a e mea ti'a te mau mahana 'e te mau hora o tā 'outou putuputura'a
 2. **Language Settings**: Ensure your media language is set correctly
 3. **Internet Connection**: Check your internet connection
 4. **Language Availability**: Verify media is available in your selected language
@@ -219,8 +219,8 @@ Check these OBS-related issues:
 - You must enable Original Audio **every time** before starting a Zoom meeting
 - This setting is not related to M³ - you would face the same audio issue when using any other media player and not using Zoom's screen and audio sharing features
 - The Original Audio setting has three sub-options - typically the first two should be enabled and the third disabled for optimal audio quality
-- If you're still experiencing audio issues, you may need to use Zoom's "Share Computer Sound" option instead
-- Alternatively, look into using the Zoom integration instead, as it uses Zoom's native screen sharing.
+- Mai te peu tē vai noa rā te fifi nō te parau ha’apararera’a reo, e tītauhia paha ’ia fa’a’ohipa ’oe i te mā’itira’a "Partager son ordinateur" a Zoom
+- E rāve’a ’ē atu, a hi’o paha nō te fa’a’ohipa i te tū’atira’a ia Zoom, nō te mea tē fa’a’ohipa ra te reira i te tū’oha’a vauvau parau tumu a Zoom.
 
 **Why is this necessary?**
 M³ plays media with sound on your computer, but this audio is not automatically transmitted through the video stream to Zoom when using OBS Studio. The Original Audio setting allows Zoom to capture the audio playing on your computer during screen sharing, if your computer is configured properly (for example: the computer has a second sound card that is used for media playback which Zoom listens to as a microphone.)
@@ -234,7 +234,7 @@ Try these performance optimizations:
 3. **Check Disk Space**: Ensure you have sufficient free disk space
 4. **Reduce Resolution**: Lower the maximum resolution setting
 
-### :speech_balloon: I'm having language issues. What should I check? {#faq-language-issues}
+### :speech_balloon: I'm having language issues. E aha te mea tā’u e hi’opo’a? {#faq-language-issues}
 
 Verify these language settings:
 
@@ -319,7 +319,7 @@ Typical usage ranges from 2-10GB depending on settings and usage.
 
 ### :shield: Is M³ secure and private? {#security-privacy}
 
-Yes! M³ is designed with security and privacy in mind:
+'E! M³ is designed with security and privacy in mind:
 
 - **Local Storage**: All meeting data is stored locally on your computer
 - **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses
