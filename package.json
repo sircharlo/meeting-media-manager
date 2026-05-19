@@ -62,7 +62,7 @@
     "image-size": "^2.0.2",
     "is-online": "^12.0.2",
     "jspdf": "^4.2.1",
-    "jspdf-autotable": "^5.0.7",
+    "jspdf-autotable": "^5.0.8",
     "mime": "^4.1.0",
     "mousetrap": "^1.6.5",
     "ms": "^2.1.3",

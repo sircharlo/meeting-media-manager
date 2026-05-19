@@ -10913,12 +10913,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jspdf-autotable@npm:^5.0.7":
-  version: 5.0.7
-  resolution: "jspdf-autotable@npm:5.0.7"
+"jspdf-autotable@npm:^5.0.8":
+  version: 5.0.8
+  resolution: "jspdf-autotable@npm:5.0.8"
   peerDependencies:
     jspdf: ^2 || ^3 || ^4
-  checksum: 10c0/5f6f29cdcd4652f130e3f70759e6361d0376d56ed9b96e55a37aaf09afc83244eb904027d27d9c8d2a5f8630dacbbc3f63312b802a65827a2637afb11afef26a
+  checksum: 10c0/c5e695d6d31692b9d2c11d284948ad508fc3e616d0b555119451dfd307176bdd80c880459cef6fee9e7db5140272b6fa281ee0ffaeeffddca6bf2497b577b40e
   languageName: node
   linkType: hard
 
@@ -11534,7 +11534,7 @@ __metadata:
     image-size: "npm:^2.0.2"
     is-online: "npm:^12.0.2"
     jspdf: "npm:^4.2.1"
-    jspdf-autotable: "npm:^5.0.7"
+    jspdf-autotable: "npm:^5.0.8"
     lint-staged: "npm:^17.0.5"
     lodash-es: "npm:^4.18.1"
     mime: "npm:^4.1.0"
