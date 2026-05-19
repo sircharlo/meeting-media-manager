@@ -18,7 +18,7 @@ When you first launch M³, you'll be guided through a setup wizard that will con
 4. **Set up meeting schedule** - Configure your midweek and weekend meeting times
 5. **Optional features** - Configure OBS integration, background music, and other advanced features
 
-:::tip Tip
+:::tip A’o
 
 Take your time during setup - but you can always change these settings later in the Settings menu.
 
