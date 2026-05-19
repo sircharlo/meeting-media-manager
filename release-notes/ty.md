@@ -26,58 +26,58 @@ No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera 
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ✨ **Memorial Media**: Automatic Memorial media retrieval is now out of beta! The app will automatically download the Memorial Welcome Video and image to display during the Memorial, when available in the configured language.
-- ✨ **Playback Speed**: Added playback speed control with visual indicator, and manual reset. This feature is only visible if enabled in the advanced settings.
-- ✨ **Pinyin Songs**: Added a toggle for pinyin song substitution for meetings held in Chinese.
+- ✨ Mēdia nō te Oro’a ha’amana’ora’a: Ua hope te tauto’ora’a ’aore rā te ’imi-māramara’a i te mēdia nō te Oro’a ha’amana’ora’a, ’ua oti maita’i te reira i teie nei! E tu’u-’aunoa-hia te Video e te hōho’a nō te Pārahira’a i te Oro’a ha’amana’ora’a e te tauira’a, ’ia vai ineine ana’e te reira i roto i te reo i fa’anahohia.
+- ✨ Vitiviti-ra’a o te ha’afarora’a: Ua tu’uhia mai te fa’aterera’a vitiviti nō te ha’afarora’a (playback speed) e te hōho’a fa’a’ite, e te nūmera nō te fa’aho’i fa’ahou i te mau niu i te omuara’a. E ’ite-noa-hia teie rāve’a mai te mea e fa’ati’ahia i roto i te mau fa’anahora’a hōhonu.
+- ✨ Mau hīmene Pinyin: Ua tu’uhia mai te hō’ē fa’a’ohipara’a (toggle) nō te mono i te mau hīmene reo Pinyin nō te mau putuputura’a i te reo Tinito.
 
 ## v26.2.0
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ✨ **Disk Space Check**: Added functionality to monitor and notify when disk space is low.
+- ✨ Hi’opo’ara’a i te vāhi ha’aputu-parau (Disk Space): Ua tu’uhia mai te rāve’a nō te hi’o e nō te fa’aara i te taime e iti mai ai te vāhi ha’aputu-parau.
 
 ## v26.1.5
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ✨ **Memorial Media**: Automatically fetch Memorial banner and intro video in supported languages when the Memorial date is selected.
+- ✨ Mēdia nō te Oro’a ha’amana’ora’a: E ’imi-’aunoa-hia te pānū (banner) e te video omuara’a o te Oro’a ha’amana’ora’a i roto i te mau reo i fāri’ihia, i te taime e mā’itihia ai te rā nō te Oro’a ha’amana’ora’a.
 
 ## v26.1.0
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
-- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
-- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+- ✨ Tu’atira’a ’aunoa o te rātapu putuputura’a: Ua tu’uhia mai te rāve’a ’ia tu’ati-’aunoa-hia te mau mahana e te hora o te mau putuputura’a i ni’a i te tahua iteneta fa’atere. E fa’ati’ahia teie rāve’a e te porotarāma i te omuara’a, e e nehenehe e fa’a’ohipa-’aunoa-hia ’aore rā e fa’a’orehia i roto i te mau fa’anahora’a hōhonu.
+- ✨ Te mau tauira’a nō ananahi i te rātapu: I teie nei, ’ia hāmani ana’e ’oe i te hō’ē amuira’a nā roto i te ’imi-ra’a i ni’a i te tahua iteneta, e tu’uhia ato’a mai te mau tauira’a nō ananahi i te rātapu, mai te mea ē, e vai ineine te reira.
+- ✨ Vāhi ha’aputu-parau pae tahi nō te mau fa’anahora’a i ni’a i te matini ta’ato’a: I teienei, e fa’a’ohipa-’apī-hia te hō’ē pu’e parau hō’ē i te mau fa’anahora’a i ni’a i te matini ta’ato’a, nō te fa’a’ōhie i te ha’aputu-parau e te fa’a’ohipara’a i te terera’a parau (bandwidth) nō te mau ta’ata ato’a e fa’a’ohipa ra i te hō’ē noa matini.
 
 ## v25.12.2
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ✨ **Zoom/Pan buttons**: Added the ability to press and hold zoom and pan buttons for continuous adjustment.
+- ✨ Mau pātene fa’arahira’a/fa’ahaere-haere (Zoom/Pan): Ua tu’uhia mai te rāve’a ’ia tape’a noa i te pātene fa’arahi e te pātene fa’ahaere nō te fa’atano maita’i i te reira ma te ’ore e fa’ata’a i te rima.
 
 ## v25.12.0
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ✨ **Multi-Select Context Menu**: Added support for right-click menu actions when multiple media items are selected.
-- ✨ **Keyboard Shortcuts**: Added `Ctrl/Cmd+A` to select all media, `H` to hide selected media, and `Shift+Up/Down` for keyboard selection navigation.
-- ✨ **Watchtower Study Video Settings**: Added a setting to exclude extra Watchtower study videos.
-- ✨ **Collapsible Sections**: Added ability to collapse sections on non-meeting days for a cleaner view.
-- ✨ **JW Events Website**: Added the ability to present the JW Events website in addition to the main official website.
-- ✨ **Playlist Import Customization**: Allowed ability to customize the prefix that is added to media items when importing JW playlists.
-- ✨ **Website Mirroring Navigation**: Added a toggle to automatically navigate to the media list after website mirroring is stopped.
-- ✨ **OBS Recording Controls**: Added the ability to control OBS recordings.
-- ✨ **Yeartext Preview**: Added the ability to preview next year's yeartext as of December of every year.
-- ✨ **Update Notifications**: Added warning notifications if running a beta version or if updates are disabled, and improved update download progress display.
-- ✨ **Hardware Acceleration Settings**: Added an option to permanently disable hardware acceleration if needed.
+- ✨ Tapura maitira’a nō te mau mēdia e rave rahi: Ua tu’uhia mai te rāve’a ’ia fa’a’ohipa i te tapura maitira’a (context menu) nā roto i te pātene ’aui o te iore (right-click) i te taime e mā’itihia ai e rave rahi mēdia.
+- ✨ Mau pātene taputô (Keyboard Shortcuts): Ua tu’uhia mai `Ctrl/Cmd+A` nō te mā’iti i te mau mēdia ato’a, `H` nō te tapo’i i te mau mēdia i mā’itihia, e `Shift+Up/Down` nō te haere i ni’a e i raro i roto i te tapura mā’itira’a.
+- ✨ Mau fa’anahora’a nō te video nō te Ha’api’ira’a i te Pare Tia’ira’a: Ua tu’uhia mai te hō’ē fa’anahora’a nō te fa’a’ore i te mau video ’ē atu nō te Ha’api’ira’a i te Pare Tia’ira’a.
+- ✨ Mau tuha’a fa’a’ati-’a’ano (Collapsible Sections): Ua tu’uhia mai te rāve’a ’ia fa’a’ati-’a’ano i te mau tuha’a i te mau mahana e’ita e putuputura’a, nō te fa’a’ite maita’i i te mau mea ato’a.
+- ✨ Tahua iteneta JW Events: Ua tu’uhia mai te rāve’a ’ia fa’a’ite i te tahua iteneta JW Events ’ei tu’uhira’a i ni’a i te tahua iteneta fa’atere matamua.
+- ✨ Fa’atanora’a nō te ’iriti-mai-ra’a i te tapura hīmene (Playlist Import): Ua tu’uhia mai te rāve’a ’ia fa’atano i te tapa’o (prefix) o te mau mēdia i te taime e ’iriti-mai-hia ai te mau tapura hīmene JW.
+- ✨ Ha’erea i ni’a i te tahua iteneta (Website Mirroring Navigation): Ua tu’uhia mai te hō’ē fa’a’ohipara’a (toggle) ’ia haere-’aunoa-hia i ni’a i te tapura mēdia i muri a’e i te fa’aoperera’a i te fa’atauturura’a tahua iteneta.
+- ✨ Mau fa’atere no te haru-ta’o-rā’i (OBS Recording Controls): Ua tu’uhia mai te rāve’a nō te fa’atere i te mau harura’a (recordings) a te porotarāma OBS.
+- ✨ Hi’opo’ara’a nō te irava o te matahiti: Ua tu’uhia mai te rāve’a ’ia hi’o-ātea-hia te irava o te matahiti i muri nei, i te ava’e Titema o te mau matahiti ato’a.
+- ✨ Fa’aarara’a nō te mau ’ohipa i fa’a’apīhia: Ua tu’uhia mai te mau fa’aarara’a ’ia fa’a’ohipa-’ore-hia te mau fa’a’apīra’a (updates) ’aore rā ’ia fa’a’ohipahia te hō’ē nūmera beta, e ua fa’a’ite-maita’i-hia te terera’a o te fa’a’utaira’a parau.
+- ✨ Mau fa’anahora’a nō te fa’ahohoro-matini: Ua tu’uhia mai te hō’ē rāve’a nō te fa’a’ore-pau-roa i te fa’ahohoro-matini, mai te mea ē, e hina’arohia.
 
 ## v25.11.0
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ✨ **JWPUB Media Selection**: Added a way to select individual media from JWPUB files.
-- ✨ **Auto-Focus Media Window**: Added an optional setting to automatically focus the media window after Zoom screen sharing.
+- ✨ Mā’itira’a mēdia JWPUB: Ua tu’uhia mai te hō’ē rāve’a nō te mā’iti i te mau mēdia taitahi mai roto mai i te mau pu’e parau JWPUB.
+- ✨ Fa’a’ite-’a’ano-’aunoa-ra’a i te tapura mēdia: Ua tu’uhia mai te hō’ē fa’anahora’a e nehenehe e mā’itihia, nō te fa’a’ite-’a’ano-’aunoa i te tapura mēdia i muri a’e i te fa’a’itera’a i te te’ata i ni’a i te Zoom.
 - ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
 - ✨ **Meeting Recording**: Added a new meeting recording feature, to control an external recording app.
 - ✨ **Site Search**: Added ability to search for media or publications on the site using smart search.
@@ -199,8 +199,8 @@ No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera 
 
 - 📅 **Open Previous Dates**: Allow opening previous dates of the current week, which is useful when the meeting day is moved later in the week.
 - 🛑 **Error Banner for OBS Studio**: Add an error banner when OBS Studio is not connected on a meeting day, ensuring users are alerted.
-- 📚 **Group Media by Publication**: Group media from the same referred publication for a cleaner and more organized media overview.
-- 🎵 **Duplicate Song Warning**: Show a warning if songs are listed more than once in the media list for weekend meetings.
+- 📚 Tufa’a mēdia ’ia au i te nene’ira’a: Ua tufa-’a’ano-hia te mau mēdia nō te hō’ē noa nene’ira’a i fa’ahitihia, nō te hō’ē hi’ora’a maita’i a’e e te au maita’i.
+- 🎵 Fa’aarara’a nō te mau hīmene i tāpiri-fa’ahou-hia: Ua tu’uhia mai te hō’ē fa’aarara’a mai te peu ē, ua tāpirihia te hō’ē hīmene e rave rahi taime i roto i te tapura mēdia nō te mau putuputura’a o te hope’a hepetoma.
 - 🔄 **Future Schedule Planning**: Enable the planning of future meeting schedule changes, which is useful for yearly schedule changes or for the circuit overseer's visit to a neighboring congregation.
 
 ## 24.11.0
