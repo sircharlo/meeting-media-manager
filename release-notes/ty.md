@@ -1,8 +1,8 @@
 <!-- markdownlint-disable no-duplicate-heading -->
 
-# What's New
+# Te mau mea ‘āpī
 
-For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
+No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera parau, a hi’o i ta māua pu’e parau CHANGELOG.md i ni’a i GitHub.
 
 ## v26.5.0
 
