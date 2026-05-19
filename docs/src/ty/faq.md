@@ -195,72 +195,72 @@ Tē rave ti’amā nei te fa’atahe-pāpāho i te:
 ’A hi’opo’a i teie mau fifi pinepine:
 
 1. 'Afa'atoratera'a o te putuputura'a: 'A hi'opo'a e mea ti'a te mau mahana 'e te mau hora o tā 'outou putuputura'a
-2. **Language Settings**: Ensure your media language is set correctly
-3. **Internet Connection**: Check your internet connection
-4. **Language Availability**: Verify media is available in your selected language
+2. Te mau fa’anahora’a reo: ’A ha’apāpū e mea tano te reo o tā ’outou pāpāho
+3. Tū’atira’a rorouira: ’A hi’opo’a i tā ’outou tū’atira’a rorouira
+4. Fā’ira’a o te reo: ’A hi’opo’a ē tē vai ra ānei te pāpāho i roto i te reo i mā’itihia e ’outou
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: The OBS integration isn't working. What should I verify? {#faq-obs-not-working}
+### :video_camera: ’Aita te tū’atira’a OBS e ’ohipa nei. E aha te mea tā’u e ha’apāpū? {#faq-obs-not-working}
 
-Check these OBS-related issues:
+’A hi’opo’a i teie mau fifi nō ni’a i te OBS:
 
-1. **OBS Installation**: Ensure OBS Studio is installed and running
-2. **WebSocket Plugin**: Verify the WebSocket plugin is installed
-3. **Port and Password**: Check your OBS port and password settings
-4. **Firewall**: Ensure the firewall isn't blocking the connection
+1. Te fa’ataura’a OBS: ’A ha’apāpū ē tē vai ra te OBS Studio ’e tē ’ohipa nei te reira
+2. Te tū’atira’a WebSocket: ’A ha’apāpū ē tē vai ra te tū’atira’a WebSocket
+3. Te uputa ’e te ta’o fā’ito: ’A hi’opo’a i te mau fa’anahora’a nō te uputa ’e te ta’o fā’ito o tā ’outou OBS
+4. Pāpa’i pāruru: ’A ha’apāpū ’aita te pāpa’i pāruru e ’ōpani nei i te tū’atira’a
 
-### :speaker: Does Meeting Media Manager automatically send the media audio to Zoom when using OBS Studio? {#audio-to-zoom}
+### :speaker: E hā’ono ’āu’a noa ānei te Meeting Media Manager i te haruru pehe o te pāpāho i ni’a ia Zoom ’ia fāna’o-ana-hia te OBS Studio? {#audio-to-zoom}
 
-**No.** M³ does not automatically send media audio to Zoom or OBS Studio. The video stream works like a virtual camera with no sound, just like a webcam. To have the music/video sound available in Zoom automatically, you need to ensure that Zoom 'hears' the audio feed coming from the computer, and then you should enable the **Original Audio** setting in Zoom.
+’Aita. ’Aita te M³ e hā’ono ’āu’a noa nei i te haruru pehe o te pāpāho i ni’a ia Zoom ’e i ni’a ato’a ia OBS Studio. E ’ohipa te rorouira hā’onora’a tātā’ura’a hōho’a mai te hō’ē ’āfata hōho’a rorouira ’aita tōna e haruru pehe, mai te hō’ē ’āfata rorouira ato’a. Nō te hā’ono ’āu’a noa i te haruru pehe/hōho’a i ni’a ia Zoom, e ti’a iā ’outou ia ha’apāpū ē tē ’ohipa nei te fa’aro’ora’a a Zoom i te haruru pehe e haere mai nei nā roto mai i te rorouira, ’e i muri iho e ti’a iā ’outou ia tāmau i te fa’anahora’a Original Audio i ni’a ia Zoom.
 
-**Important Notes:**
+Te mau parau faufa’a:
 
-- You must enable Original Audio **every time** before starting a Zoom meeting
-- This setting is not related to M³ - you would face the same audio issue when using any other media player and not using Zoom's screen and audio sharing features
-- The Original Audio setting has three sub-options - typically the first two should be enabled and the third disabled for optimal audio quality
+- E ti’a iā ’outou ia tāmau i te Original Audio i te mau taime ato’a hou ’a ha’amata ai i te hō’ē putuputura’a Zoom
+- ’Aita teie fa’anahora’a e tū’ati nei i te M³ - e tupu ato’a teie fifi haruru pehe ’ia fāna’o ’outou i te tahi atu tātā’ura’a pāpāho ’e ’ia ’ore ’outou e fāna’o i te mau fa’anahora’a ’ōperea hōho’a ’e te haruru pehe a Zoom
+- E toru faufa’a ri’i o tō te fa’anahora’a Original Audio - i te rāve’a mātauhia, e ti’a ia tāmau i nā mea mātāmua e rua ’e ia tāmoti i te toru o te mea nō te hō’ē haruru pehe maita’i roa a’e
 - Mai te peu tē vai noa rā te fifi nō te parau ha’apararera’a reo, e tītauhia paha ’ia fa’a’ohipa ’oe i te mā’itira’a "Partager son ordinateur" a Zoom
 - E rāve’a ’ē atu, a hi’o paha nō te fa’a’ohipa i te tū’atira’a ia Zoom, nō te mea tē fa’a’ohipa ra te reira i te tū’oha’a vauvau parau tumu a Zoom.
 
-**Why is this necessary?**
-M³ plays media with sound on your computer, but this audio is not automatically transmitted through the video stream to Zoom when using OBS Studio. The Original Audio setting allows Zoom to capture the audio playing on your computer during screen sharing, if your computer is configured properly (for example: the computer has a second sound card that is used for media playback which Zoom listens to as a microphone.)
+Nō te aha e mea faufa’a ai teie rāve’a?
+’E fa’ata’i te M³ i te pāpāho mā te haruru pehe i ni’a i tā ’outou rorouira, terā rā ’aita teie haruru pehe e hā’ono ’āu’a noa nei nā roto i te rorouira hā’onora’a tātā’ura’a hōho’a i ni’a ia Zoom ’ia fāna’o-ana-hia te OBS Studio. E fa’ati’a te fa’anahora’a Original Audio ia Zoom ia haru i te haruru pehe e tātā’ihia nei i ni’a i tā ’outou rorouira ’ia ’ōperea-ana-hia te hōho’a, mai te peu ē tē naho maita’i nei tā ’outou rorouira (perēra i te hi’ora’a: tē vai ra te hō’ē piti o te mātini haruru pehe i ni’a i te rorouira nō te tātā’i i te pāpāho, tā Zoom e fa’aro’o nei mai te hō’ē rorouira haru reo.)
 
-### :snail: M³ is running slowly. How can I improve performance? {#performance-issues}
+### :snail: Tē māmā nei te terera’a a te M³. E aha te rāve’a nō te ha’amaita’i i te terera’a o te mātini? {#performance-issues}
 
-Try these performance optimizations:
+’A tāmata i teie mau rāve’a nō te ha’amaita’i i te terera’a:
 
-1. **Enable Extra Cache**: Turn on additional caching in settings
-2. **Close Other Apps**: Close unnecessary applications
-3. **Check Disk Space**: Ensure you have sufficient free disk space
-4. **Reduce Resolution**: Lower the maximum resolution setting
+1. Ha’amana i te Ha’aputura’a Pāpāho Hau: ’A tāmau i te fa’anahora’a ha’aputura’a parau pāpāho hau i roto i te mau fa’anahora’a
+2. ’A piri i te tahi atu mau rorouira ’ohipa: ’A piri i te mau rorouira ’ohipa faufa’a ’ore
+3. Hi’opo’a i te vāhi vata o te ha’aputura’a parau: ’A ha’apāpū ē tē vai ra te vāhi vata nahu i ni’a i tā ’outou rorouira
+4. Fa’ahā’ha’i i te hōho’a: ’A fa’aha’ama’i i te fa’anahora’a teitei roa a’e o te hōho’a
 
-### :speech_balloon: I'm having language issues. E aha te mea tā’u e hi’opo’a? {#faq-language-issues}
+### :speech_balloon: E tupu nei te fifi nō te reo. E aha te mea tā’u e hi’opo’a? {#faq-language-issues}
 
-Verify these language settings:
+’A hi’opo’a i teie mau fa’anahora’a nō te reo:
 
-1. **Interface Language**: Check your display language setting
-2. **Media Language**: Verify your media download language
-3. **Language Availability**: Ensure the media language is available on the official website of Jehovah's Witnesses
-4. **Fallback Language**: Try setting a fallback language
+1. Reo o te Ha’ahua mātāmua: ’A hi’opo’a i te fa’anahora’a o tō ’outou reo fa’a’itera’a
+2. Reo o te Pāpāho: ’A hi’opo’a i te reo nō tā ’outou tōtōra’a pāpāho
+3. Te vai-roa-ra’a o te Reo: ’A ha’apāpū ē tē vai ra te reo o te pāpāho i ni’a i te tahua natirara mana a te Ite o Iehova
+4. Reo mono: ’A tāmata i te mā’iti i te hō’ē reo mono
 
-## Support and Community {#support-community}
+## Tauturu e Feti’ara’a {#support-community}
 
-### :radioactive: How do I report an issue? {#how-do-i-report-an-issue}
+### :radioactive: E aha te rāve’a nō te fa’a’ite i te hō’ē fifi? {#how-do-i-report-an-issue}
 
-Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository. Include:
+’A [fa’a’ite i te hō’ē fifi](https://github.com/sircharlo/meeting-media-manager/issues) i ni’a i te pu’era’a parau mana o GitHub. ’A fa’a’ō mai:
 
-- Detailed description of the problem
-- Steps to reproduce the issue
-- Your operating system and M³ version
-- Any error messages, logs and screenshots
+- Tātarara’a hu’ahu’a o te fifi
+- Te mau ta’ahira’a nō te fa’atupu fa’ahou i te fifi
+- Tō ’outou rorouira fa’aherehere e te tātara’a M³
+- Te mau poroi hape, te mau parau haruharu e te mau pata-hōho’a nō te tāpura
 
-### :new: How can I request a new feature or enhancement? {#how-can-i-request-a-new-feature-or-enhancement}
+### :new: E aha te rāve’a nō te ani i te hō’ē tātara’a ’āpī ’aore rā i te hō’ē ha’amaita’ira’a? {#how-can-i-request-a-new-feature-or-enhancement}
 
-Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository. Describe:
+’A [ha’amata i te hō’ē paraparau-fa’ahou-ra’a](https://github.com/sircharlo/meeting-media-manager/discussions) i ni’a i te pu’era’a parau mana o GitHub. ’A tātara mai:
 
-- The feature you'd like to see
-- How it would benefit users
-- Any specific requirements or preferences
+- Te tātara’a ’āpī tā ’outou e hia’ai nei e ’ite
+- Te rāve’a e maita’i ai te feiā fa’a’ohipa
+- Te mau tītaura’a ta’a ’ē ’aore rā te mau mea e hia’ai-ra’ahi-hia
 
 ### :handshake: How can I contribute some code? {#how-can-i-contribute-some-code}
 
