@@ -3,18 +3,18 @@
 layout: home
 
 hero:
-  name: 'M³ Documentation'
-  text: 'Complete guide to setting up and using Meeting Media Manager'
+  name: 'Puta Arata’i nō te M³'
+  text: 'Puta arata’i tā’ato’a nō te fa’anahora’a e te fa’a’ohipara’a i te "Meeting Media Manager"'
   image: /logo.svg
   actions:
     - theme: brand
-      text: Download
+      text: Tāvira
       link: /download
     - theme: brand
-      text: About
+      text: Nō ni’a
       link: /about
     - theme: brand
-      text: User Guide
+      text: Puta Arata’i nō te Fa’a’ohipa
       link: /user-guide
     - theme: brand
       text: Arata’ira’a nō te mau nīnamu-ra’a
