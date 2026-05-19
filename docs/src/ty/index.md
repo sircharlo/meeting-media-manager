@@ -17,34 +17,34 @@ hero:
       text: User Guide
       link: /user-guide
     - theme: brand
-      text: Settings Guide
+      text: Arata’ira’a nō te mau nīnamu-ra’a
       link: /settings-guide
     - theme: brand
-      text: FAQ
+      text: Te mau uira’a e uihia pinepine nei
       link: /faq
 features:
   - icon: 🚀
-    title: Automatic Media Management
-    details: Automatically downloads and organizes pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
+    title: Fa’anahora’a ’āfaro o te mau rāve’a ha’apararera’a
+    details: E tōtāpa’o e e fa’anahofene ’āfaro ’oia i te mau pata-hōho’a e te mau tōta’ira’a parau nō te mau putuputura’a a te amuira’a nā roto i te mau reo ato’a e vai ra i ni’a i te tahua rorouira mana a te Ite nō Iehova.
   - icon: 🎦
-    title: Media Presentation
-    details: Present media with ease during hybrid or in-person meetings with advanced controls, zoom/pan capabilities, and custom timing options.
+    title: Te fa’’ari’ira’a rāve’a ha’apararera’a
+    details: ’A fa’ari’i i te mau rāve’a ha’apararera’a ma te ’atata ’ore i roto i te mau putuputura’a ’āpiti ’aore rā ti’a-mata-roa-hia, māoti te mau rāve’a tātara hōhonu, te fā’atere-ra’ahi/ha’afātata-hōho’a e te mau mā’itira’a nō te taime i fa’ahorohoro-fa’ahou-hia.
   - icon: 🎵
-    title: Background Music System
-    details: Intelligent background music that automatically stops before meetings start and can be restarted with one click after meetings.
+    title: Fa’anahora’a fa’ata’ira’a pehe tu’ati
+    details: Hō’ē pehe tu’ati pa’ari e fa’aea ’āfaro rā i mu’a a’e i te ha’amatara’a o te mau putuputura’a, e e nehenehe e fa’ata’i-fa’ahou-hia ma te hō’ē noa tōpiti-ra’a i muri a’e i te mau putuputura’a.
   - icon: 🖥️
-    title: Multi-Monitor Support
-    details: Automatically detects and manages external monitors for seamless media presentations and website sharing.
+    title: Turuturura’a nō te mau ’āfata-hōho’a rau
+    details: E ’ite e e fa’atere ’āfaro ’oia i te mau ’āfata-hōho’a nō rāwaho nō te hō’ē fa’ari’ira’a rāve’a ha’apararera’a ma te tū’ati maita’i e nō te tū’ahara’a i te tahua rorouira.
   - icon: 🌐
-    title: Multi-Language Support
-    details: Download meeting media in hundreds of languages and use M³'s interface in any of the many available languages.
+    title: Turuturura’a nō te mau reo rau
+    details: ’A tōtāpa’o i te mau rāve’a ha’apararera’a nō te mau putuputura’a nā roto i te mau rau reo e rau, e ’a fa’a’ohipa i te tātara’a hōho’a a M³ nā roto i te hō’ē o te mau reo e rave rahi e vai ra.
   - icon: 🧩
-    title: Integrations
-    details: Seamlessly integrates with Zoom or OBS Studio for enhanced media management and playback during meetings.
+    title: Te mau tū’atira’a fa’anahora’a
+    details: E tū’ati maita’i ’oia e o Zoom ’aore rā o OBS Studio nō te hō’ē fa’atere-ra’ahi maita’i a’e o te mau rāve’a ha’apararera’a e nō te fa’ata’ira’a i roto i te mau putuputura’a.
   - icon: 📁
-    title: Folder Monitoring
-    details: Automatically sync media from watched folders (like Dropbox or OneDrive) and export media to folders.
+    title: Arata’i-ha’apa’o-ra’a pū’ohu
+    details: E tū’ati ’āfaro ’oia i te mau rāve’a ha’apararera’a mai roto mai i te mau pū’ohu i ha’apa’ohia (mai ia Dropbox ’aore rā OneDrive) e e fa’atō rā i te mau rāve’a ha’apararera’a i roto i te mau pū’ohu.
   - icon: 🎯
-    title: Advanced Features
-    details: Import custom media, JWPUB files, playlists, audio Bible recordings, and manage multiple congregations.
+    title: Mau rāve’a tātara hōhonu
+    details: ’A fā’atō mai i te mau rāve’a ha’apararera’a i mā’itihia, te mau tōta’ira’a parau JWPUB, te mau tāpura pehe, te mau pehe haruharu o te Bibilia, e ’a fa’atere e rave rahi amuira’a.
 ---
