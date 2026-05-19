@@ -262,74 +262,74 @@ Nō te aha e mea faufa’a ai teie rāve’a?
 - Te rāve’a e maita’i ai te feiā fa’a’ohipa
 - Te mau tītaura’a ta’a ’ē ’aore rā te mau mea e hia’ai-ra’ahi-hia
 
-### :handshake: How can I contribute some code? {#how-can-i-contribute-some-code}
+### :handshake: ​’Eha’a rāve’a nō’u nō te hō’o mai i te tahi nira’a parau? {#how-can-i-contribute-some-code}
 
-Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository. We welcome code contributions and Pull Requests!
+’A [hi’o na i te arata’ira’a tauturu](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) i ni’a i te vāhi ha’aputura’a mana a GitHub. Te fāri’i maita’i nei mātou i te mau hō’ora’a mai i te nira’a parau e te mau Pull Requests!
 
-### :globe_with_meridians: How can I help with translations? {#translations}
+### :globe_with_meridians: ’Eha’a rāve’a nō’u nō te tauturu i te mau hurira’a parau? {#translations}
 
-M³ uses Crowdin for translation management. You can contribute translations by:
+Te fa’a’ohipa nei o M³ ia Crowdin nō te fa’atere i te mau hurira’a parau. E nehenehe ’oe e tauturu i te mau hurira’a parau nā roto i te:
 
-1. Visiting the [Crowdin project](https://crowdin.com/project/meeting-media-manager)
-2. Selecting your language
-3. Translating strings that need work
-4. Reviewing existing translations
+1. Te haere-ra’a i ni’a i te ['ohipa Crowdin](https://crowdin.com/project/meeting-media-manager)
+2. Te mā’itira’a i tō ’oe reo
+3. Te hurira’a i te mau parau e hina’aro i te ha’amaita’ira’a
+4. Te hi’opo’ara’a i te mau hurira’a parau e vai nei
 
-### :x: Can I make a donation to the project? {#can-i-make-a-donation-to-the-project}
+### :x: E nehenehe ānei ia’u ’ia pūpū i te hō’ē ō nō te ’ohipa? {#can-i-make-a-donation-to-the-project}
 
-Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
+Māuruuru i tō ’oe hina’aro ’ia turu i te ’ohipa nei! Inaha rā, ma te ’ā’au ’ia au i te Mataio 10:8, ’aita e fāri’i-hia nei te mau ō e ’aita roa e fāri’i-hia te reira i te ho’ē a’e taime. Ua hāmanihia teie tauihaa roro uira ma te here e ma te tahi taime tāhō’ē. ’A fārere maita’i! :tada:
 
-:::tip :book: Matthew 10:8
+:::tip :book: Mataio 10:8
 
-"You received free, give free."
+“Ua fāri’i ’outou ma te ō, ’a hōro’a ma te ō.”
 
 :::
 
-## Technical Questions {#technical-questions}
+## Te mau uira’a nō ni’a i te pae ite roro uira {#technical-questions}
 
-### :computer: What hardware and software requirements does M³ have? {#hardware-and-software-requirements}
+### :computer: E aha te mau titaura’a nō ni’a i te matini e te anairaa porotarama nō M³? {#hardware-and-software-requirements}
 
-M³ is designed to work on a wide range of operating systems:
+Ua hāmanihia te M³ nō te ohipa i ni’a i te mau huru anairaa porotarama e rave rahi:
 
 - Windows: Windows 10 e te mau nure i muri mai (e vai nei te huru parau 64-bit e te 32-bit)
 - macOS: macOS 10.15 (Catalina) e te mau nure i muri mai (fa’anahora’a tura’i-’āmui-hia)
 - Linux: Te rahira’a o te mau nure Linux ’āpī (huru fa’anahora’a AppImage)
 
-M³ has the following hardware requirements:
+Teie te mau titaura’a nō ni’a i te matini nō M³:
 
-- **Minimum**: 4GB RAM, 6GB free disk space
-- **Recommended**: 8GB RAM, 15GB free disk space for media caching
-- **Network**: Internet connection for media downloads
+- Tei raro roa a’e: 4GB RAM, 6GB te vāhi tā’ati ’ore i te matini ta’i’i
+- Tei tauto’ohia: 8GB RAM, 15GB te vāhi tā’ati ’ore i te matini ta’i’i nō te ha’aputu-maitai-ra’a i te mau nota-ata
+- Te reni natirara: E titauhia te fārereira’a i te natirara nō te tāviri i te mau nota-ata
 
-Depending on the features you use, M³ also requires the following additional software:
+Ia au i te mau tuhaa e fa’a’ohipa-’oe, e titau ato’a te M³ i te tahi atu mau anairaa porotarama tei raro a’e:
 
-- **Zoom**: Required only if using Zoom integration features
-- **OBS Studio**: Required only if using OBS integration features
+- Zoom: E titau-noa-hia mai te mea e fa’a’ohipa-’oe i te mau tuhaa tōtōā nō te Zoom
+- OBS Studio: E titau-noa-hia mai te mea e fa’a’ohipa-’oe i te mau tuhaa tōtōā nō te OBS
 
-### :floppy_disk: How much disk space does M³ use? {#disk-space}
+### :floppy_disk: Ehia rahiraa vāhi i ni’a i te matini ta’i’i te fa’a’ohipahia e te M³? {#disk-space}
 
-Disk space usage depends on:
+Te rahiraa vāhi tei fa’a’ohipahia i ni’a i te matini ta’i’i, tei ni’a ïa i te:
 
-- **Media Resolution**: Higher resolutions use more space
-- **Cached Content**: Media files are cached locally
-- **Extra Cache**: Additional caching can increase usage
-- **Exported Media**: Auto-export features use additional space
+- Te maita’i o te nota-ata: E rahi a’e te vāhi e fa’a’ohipahia e te mau nota-ata maita’i roa
+- Te mau nota-ata i ha’aputu-maitai-hia: E ha’aputu-maitai-hia te mau reni nota-ata i ni’a i te matini
+- Ha’aputu-maitai-ra’a hau: E nehenehe te ha’aputu-maitai-ra’a hau e fa’arahi i te vāhi i fa’a’ohipahia
+- Te mau nota-ata i fa’ata’ahia: E fa’a’ohipa te mau tuhaa fa’ata’a-haere-noa i te vāhi hau
 
-Typical usage ranges from 2-10GB depending on settings and usage.
+Te fa’a’ohipara’a matauhia e vai noa ïa i rotopū i te 2 e te 10GB, ia au i te mau fa’anahora’a e te huru o te fa’a’ohipara’a.
 
-### :shield: Is M³ secure and private? {#security-privacy}
+### :shield: E paruru-maitai-hia anei te M³ e e fa’aturahia anei te parau nō te ta’ata iho? {#security-privacy}
 
-'E! M³ is designed with security and privacy in mind:
+'E! Ua fa’anahohia te M³ ma te mana’o i te paruru-maitai-ra’a e te fa’aturara’a i te parau nō te ta’ata iho:
 
-- **Local Storage**: All meeting data is stored locally on your computer
-- **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses
-- **Open Source**: The code is open for review and verification
-- **Bug Reports**: Limited data may be collected for bug reporting purposes
+- Ha’aputu-ra’a i ni’a i te matini: Te mau ha’amāramaramara’a ato’a nō te putuputura’a, e ha’aputu-maitai-hia ïa i ni’a i tō ’oe roro uira
+- Tāvira-tītaura’a: E tāvirihia te mau nota-ata na roto roa mai i te reni natirara mana o te mau Ite no Iehova
+- Puna Matara: E matara te reni porotarama nō te hi’opo’ara’a e te ha’apāpūra’a
+- Te mau parau nō te hapa: E nehenehe te tahi mau ha’amāramaramara’a iti e ha’aputu-maitai-hia nō te fa’a’ite-ra’a i te mau hapa
 
-### :arrows_clockwise: How often does M³ check for updates? {#update-frequency}
+### :arrows_clockwise: Ehia te taime i te M³ a hi’opo’a ai i te mau ha’amaita’ira’a? {#update-frequency}
 
-M³ checks for updates:
+E hi’opo’a te M³ i te mau ha’amaita’ira’a:
 
-- **Application Updates**: Automatically checks for new versions every time the app is opened
-- **Media Updates**: Automatically checks for new meeting media every time the app is opened
-- **Language Updates**: Dynamic detection of new languages as needed
+- Ha’amaita’ira’a o te fa’anahora’a: E hi’opo’a-haere-noa-hia te mau putu’a apī i te mau taime ato’a e matara ai te reni porotarama
+- Ha’amaita’ira’a o te nota-ata: E hi’opo’a-haere-noa-hia te mau nota-ata apī nō te putuputura’a i te mau taime ato’a e matara ai te reni porotarama
+- Ha’amaita’ira’a o te reo: E hi’opo’a-haere-noa-hia te mau reo apī ia au i te hina’aro
