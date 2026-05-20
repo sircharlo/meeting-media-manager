@@ -1,12 +1,12 @@
-# User Guide {#user-guide}
+# Arata’i nō te ta’ata fa’a’ohipa {#user-guide}
 
-This comprehensive user guide will help you master all the features of M³, from basic setup to advanced media presentation techniques.
+E tauturu teie arata’i aupuru ia ’oe ’ia hōro’a i te mau rāve’a ato’a o te M³, mai te fa’anahora’a tumu e tae roa atu i te mau rave’a pa’ari nō te fa’ahōho’a-ra’a i te rorouira.
 
-## Getting Started {#getting-started}
+## Te ha’amatara’a {#getting-started}
 
-### Download and Install {#download-and-install}
+### Te tu’u-haere-ra’a e te ha’amau-ra’a {#download-and-install}
 
-Get the latest version from the [Download page](download). It recommends the best build for your device and shows the latest version.
+’A ti’i i te nūmera nō te fa’ahotura’a apī roa a’e i ni’a i te [’Api tu’u-haere-ra’a](download). E fa’aitoito te reira i te nūmera nō te fa’ahotura’a maita’i roa a’e nō tō ’oe matini e e fa’a’ite te reira i te nūmera nō te fa’ahotura’a apī roa a’e.
 
 ### First Launch {#first-launch}
 
