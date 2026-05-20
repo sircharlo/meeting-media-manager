@@ -209,15 +209,15 @@ Ehia tetoni hou te ha’amatara’a o te putuputura’a e fa’ata’i ai i te p
 
 Te faito: 0-300 tetoni
 
-**Default**: 60 seconds
+Fa’anahora’a tumu: 60 tetoni
 
-#### Music Volume {#music-volume}
+#### Te puai o te pehe {#music-volume}
 
 <!-- **Setting**: `musicVolume` -->
 
-Volume level for background music (1-100%).
+Te faito o te puai nō te pehe ha’amata (1-100%).
 
-**Default**: 100%
+Fa'anahora'a tumu: 100%
 
 ### Fa’anahora’a o te tairura’a {#cache-management}
 
@@ -406,63 +406,63 @@ Fa’anaho i te mau rāve’a ha’apotora’a nō te fa’ata’i-fa’ahou-ra�
 - Rorouira i muri nei: ’A haere i te parau rorouira i muri nei
 - Fa’afa’aea/Fa’ata’i-fa’ahou: ’A fa’afa’aea aore rā ’a fa’ata’i-fa’ahou i te fa’ata’i-ra’a rorouira
 - Fa’a’ore i te Rorouira: ’A fa’a’ore i te fa’ata’i-ra’a rorouira
-- **Music Toggle**: Toggle background music
+- Fa’afariu i te pehe: Fa’afariu i te pehe ha’amata
 
-### Media Display {#media-display}
+### Fa’a’ite’itera’a i te mau rāve’a ha’amāramaramara’a {#media-display}
 
-#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+#### ’Ia ’ohie te fa’aho’ora’a i te mau taui’ura’a o te matapihi rāve’a ha’amāramaramara’a. {#enable-media-window-fade-transitions}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
-Enable fade-in/out transitions when showing or hiding the media window.
+’Ia ’ohie te fa’aho’ora’a i te mau taui’ura’a (fa’a’ite aore rā fa’atapuni) o te matapihi rāve’a ha’amāramaramara’a.
 
 Fa’anahora’a tumu: `’oia`
 
-#### Hide Media Logo {#hide-media-logo}
+#### Fa’atapuni i te tapao rāve’a ha’amāramaramara’a {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
-Hide the logo in the media window.
+Fa’atapuni i te tapao i roto i te matapihi rāve’a ha’amāramaramara’a.
 
 Fa'anahora'a tumu: `Hape`
 
-#### Maximum Resolution {#maximum-resolution}
+#### Te faito teitei roa a’e nō te hoho’a {#maximum-resolution}
 
 <!-- **Setting**: `maxRes` -->
 
-Maximum resolution for downloaded media files.
+Te faito teitei roa a’e nō te hoho’a nō te mau rāve’a ha’amāramaramara’a i ’ohihia.
 
-**Options**: 240p, 360p, 480p, 720p
+Mau mā’itira’a: 240p, 360p, 480p, 720p
 
-**Default**: 720p
+Fa'anahora'a tumu: 720p
 
-#### Include Printed Media {#include-printed-media}
+#### ’Ia amui-ato’a-hia te mau rāve’a ha’amāramaramara’a i nīnihia. {#include-printed-media}
 
 <!-- **Setting**: `includePrinted` -->
 
-Include media from the printed publications in media downloads.
+’Ia amui-ato’a-hia te mau rāve’a ha’amāramaramara’a nō roto mai i te mau buka i nīnihia i roto i te mau rāve’a ha’amāramaramara’a i ’ohihia.
 
 Fa’anahora’a tumu: `’oia`
 
-#### Exclude Footnotes {#exclude-footnotes}
+#### Fa’ata’a i te mau nota i raro i te ’api {#exclude-footnotes}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
-Exclude footnote images from media downloads when possible.
+Fa’ata’a i te mau hoho’a o te mau nota i raro i te ’api i roto i te mau rāve’a ha’amāramaramara’a i ’ohihia, mai te mea e nehenehe.
 
 Fa'anahora'a tumu: `Hape`
 
-#### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
+#### Fa’ata’a i te mau rāve’a ha’amāramaramara’a nō roto mai i te buka ra ’Ia fana’o i te orara’a oaoa e a muri noa atu! {#exclude-theocratic-ministry-school}
 
 <!-- **Setting**: `excludeTh` -->
 
-Exclude media from the Teaching (th) brochure from media downloads.
+Fa’ata’a i te mau rāve’a ha’amāramaramara’a nō roto mai i te buka ra ’Ia fana’o i te orara’a oaoa e a muri noa atu! (th) i roto i te mau rāve’a ha’amāramaramara’a i ’ohihia.
 
 Fa’anahora’a tumu: `’oia`
 
-### Subtitles {#subtitles}
+### Mau parau i ni’a i te hoho’a {#subtitles}
 
-#### Enable Subtitles {#enable-subtitles}
+#### ’Ia fa’a’ohipa i te mau parau i ni’a i te hoho’a {#enable-subtitles}
 
 <!-- **Setting**: `enableSubtitles` -->
 
