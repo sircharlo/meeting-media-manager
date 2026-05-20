@@ -78,29 +78,29 @@ No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera 
 
 - ✨ Mā’itira’a mēdia JWPUB: Ua tu’uhia mai te hō’ē rāve’a nō te mā’iti i te mau mēdia taitahi mai roto mai i te mau pu’e parau JWPUB.
 - ✨ Fa’a’ite-’a’ano-’aunoa-ra’a i te tapura mēdia: Ua tu’uhia mai te hō’ē fa’anahora’a e nehenehe e mā’itihia, nō te fa’a’ite-’a’ano-’aunoa i te tapura mēdia i muri a’e i te fa’a’itera’a i te te’ata i ni’a i te Zoom.
-- ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
-- ✨ **Meeting Recording**: Added a new meeting recording feature, to control an external recording app.
-- ✨ **Site Search**: Added ability to search for media or publications on the site using smart search.
-- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from JW.org, such as magazine, books, programs and invitations.
-- ✨ **Sign Language Improvements**: Added confirmation before playing entire files for sign languages and support for selecting multiple clips, such as for when multiple paragraphs are to be read consecutively.
-- ✨ **Clip Navigation**: Added duration display to clip list items and improved clip navigation.
-- 🛠️ **Media Display**: Ensured media display becomes visible when playback starts, even if it was hidden before.
+- ✨ Tāpo’i rorouira nō te fa’a’ite’itera’a i ni’a i te matini teata: Tāpo’i rorouira fa’a’āmuhia nō te ha’amaita’i i te ’itera’a i te niuniu tō’o i ni’a i te mau fa’a’ite’itera’a teata.
+- ✨ Pāhonora’a i te putuputura’a: Ua fa’a’āpīhia te hō’ē rāve’a pāhonora’a ’āpī nō te putuputura’a, nō te ha’avī i te hō’ē tauihaa pāhonora’a i rāpae.
+- ✨ ’Imi-’āura’a i ni’a i te reni: Ua tāpiri-’āpī-hia te rāve’a nō te ’imi i te mau rorouira aore rā te mau nene’ira’a i ni’a i te reni nā roto i te ’imi-’āura’a pa’ari.
+- ✨ Tāpiri-’ōhie-ra’a i te mau nene’ira’a: Ua tāpiri-’āpī-hia te rāve’a nō te tāpiri-’ōhie i te mau nene’ira’a nō roto mai i te JW.org, mai te mau vea, te mau buka, te mau porotarama e te mau titau-manihini-ra’a.
+- ✨ Te mau ha’amaita’ira’a nō te reo tapa’o: Ua tāpiri-’āpī-hia te hō’ē fa’a’itera’a ha’apāpū-ra’a hou te ha’amatara’a i te ta’o-’ā’oa-ra’a o te mau rorouira reo tapa’o, e te rāve’a nō te mā’iti i te mau tuha’a rorouira e rave rahi, mai te peu e e tai’o-’ā’oa-hia te mau paratarapha e rave rahi.
+- ✨ Te terera’a o te mau tuha’a rorouira: Ua tāpiri-’āpī-hia te faito taime i ni’a i te tāpura o te mau tuha’a rorouira e ua ha’amaitai-hia te terera’a o te mau tuha’a rorouira.
+- 🛠️ Fa’a’itera’a rorouira: Ua ha’apāpū-hia e e ’itehia te fa’a’itera’a rorouira ia ha’amata te ta’o-’ā’oa-ra’a, noa atu e ua hunahia te reira na mua a’e.
 
 ## v25.10.1
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ✨ **Setup Wizard – Zoom Step**: Added a Zoom integration step to the setup wizard for easier initial configuration.
-- ✨ **Screen Picker Enhancements**: Show an accurate visual representation of all screens, as well as the main window’s current size and location, in the display popup. This makes it easier to choose the correct screen on which the media window should be displayed.
-- ✨ **Media Window Preference**: The app will now remember the preferred screen on which the media window should be displayed, if specified by the user.
+- ✨ Arata’i nō te fa’anahora’a – Ta’ahira’a Zoom: Ua tāpiri-’āpī-hia te hō’ē ta’ahira’a tāpirira’a Zoom i roto i te arata’i nō te fa’anahora’a, nō te fa’a’ōhie i te fa’anahora’a matamua.
+- ✨ Te mau ha’amaita’ira’a nō te mā’itira’a i te rorouira: E fa’a’ite i te hō’ē hoho’a tano o te mau rorouira ato’a, e te rahi e te vairaa i teie nei o te matapihi matamua, i roto i te ha’ama’ama’ara’a fa’a’ite’itera’a. E fa’a’ōhie te reira i te mā’itira’a i te rorouira tano i ni’a iho e fa’a’itehia ’i te matapihi rorouira.
+- ✨ Mā’itira’a nō te matapihi rorouira: E ha’amana’o te tauihaa i te rorouira o te mā’itihia nō te fa’a’ite i te matapihi rorouira, mai te peu e ua fa’ata’ahia e te ta’ata fa’a’ohipa.
 
 ## v25.10.0
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ✨ **Begin Playback Paused**: Added a new setting to allow playback to begin paused, which can be useful for AV operators to prepare their setup (such as starting Zoom sharing) before the media starts playing in the media window.
-- ✨ **Update Notifications**: Users will now be notified of updates through an in-app banner, which will also allow the user to install updates immediately, instead of waiting for the next app restart.
-- ✨ **Custom Events**: Added optional events hooks that can trigger keyboard shortcuts when certain events are detected. This can be useful for AV operators to execute actions automatically outside of the app. For example, smart lights could be turned on and off before and after media plays in auditoriums where projectors are used; or a script can be called after a meeting's last song has been played to automate various actions in a Zoom meeting.
+- ✨ Ha’amatara’a i te ta’o-’ā’oa-ra’a ma te fa’afa’aea: Ua tāpiri-’āpī-hia te hō’ē fa’anahora’a ’āpī nō te tu’u i te ta’o-’ā’oa-ra’a i ni’a i te fa’afa’aea i te ha’amatara’a, e mea faufa’a te reira nō te mau fa’atere AV nō te fa’aineine i tā rātou fa’anahora’a (mai te ha’amatara’a i te fa’a’itera’a Zoom) hou te ta’o-’ā’oa-ra’a o te rorouira i ni’a i te matapihi rorouira.
+- ✨ Te mau fa’a’itera’a nō te fa’a’āpī-ra’a: E fa’a’itehia te mau fa’a’āpī-ra’a i te ta’ata fa’a’ohipa nā roto i te hō’ē parau fa’a’ite i roto i te tauihaa, e nehenehe ai te ta’ata fa’a’ohipa e tāpī i te mau fa’a’āpī-ra’a i te reira iho hora, ma te ore e tīa’i i te ha’amatara’a i te tauihaa i te taime i muri iho.
+- ✨ Te mau ’ohipa i mā’itihia: Ua tāpiri-’āpī-hia te mau hōro’a ’ohipa nō te fa’atupu i te mau tāpura ’īritira’a i ni’a i te tāpū-parau i te taime e ’itehia ai te tahi mau ’ohipa. E mea faufa’a te reira nō te mau fa’atere AV nō te fa’atupu i te mau ’ohipa ma te ha’apa’o-’ore-hia i rāpae i te tauihaa. Ei hi’ora’a, e nehenehe te mau mori ’ārama e tu’uhia e e tāmatara’ahia hou e i muri iho i te ta’o-’ā’oa-ra’a o te mau rorouira i roto i te mau piha fa’a’itera’a tei reira te mau rorouira i te fa’a’ohipahia; aore rā, e nehenehe te hō’ē fa’auera’a e pi’ihia i muri iho i te hīmene hope’a o te hō’ē putuputura’a nō te fa’atupu i te mau ’ohipa ta’a ’ē atu i roto i te hō’ē putuputura’a Zoom.
 
 ## v25.9.1
 
@@ -123,82 +123,82 @@ No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera 
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ✨ **Media Window Fade Transitions**: Added a new advanced setting to make the media window fade in and out, providing smoother visual transitions.
-- ✨ **Image Duration Control and Progress Tracking**: Added image duration control and progress tracking capabilities for repeated sections.
+- ✨ Te fa’a’ara’a o te matapihi rorouira: Ua tāpiri-’āpī-hia te hō’ē fa’anahora’a teitei ’āpī nō te fa’a’ana’ana e te fa’apouri i te matapihi rorouira, nō te fa’atupu i te mau tauira’a mata he’e-māite-a’e.
+- ✨ Te mana o te faito taime o te mau hoho’a e te pe’e-ra’a i te terera’a: Ua tāpiri-’āpī-hia te rāve’a nō te fa’atere i te faito taime o te mau hoho’a e te rāve’a nō te pe’e i te terera’a nō te mau tuha’a tei fa’ahiti-fa’ahiti-hia.
 
 ## v25.8.1
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ✨ **Custom Media Sections**: Complete system for creating, editing, and managing custom media sections with color customization and drag-and-drop reordering.
-- ✨ **Media Dividers**: Add titled dividers within media lists for better organization with top/bottom positioning options.
-- ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
-- ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
+- ✨ Te mau tuha’a rorouira i mā’itihia: Te hō’ē rāve’a pāpū nō te hamani, te fa’a’āpī, e te fa’atere i te mau tuha’a rorouira i mā’itihia ma te fa’a’ohipa i te mau fa’a’ana’ana-ra’a tae’e e te fa’anahora’a fa’ahou nā roto i te haru-e-tu’u.
+- ✨ Te mau tuha’a fa’ataa rorouira: E tāpiri i te mau tuha’a fa’ataa tei tapa’ohia i roto i te mau tāpura rorouira nō te fa’anahora’a maita’i a’e, ma te mau mā’itira’a nō te tu’ura’a i ni’a/i raro.
+- ✨ Fa’anahora’a fa’ahiti-fa’ahiti-ra’a tuha’a: E fa’atia i te ta’o-’ā’oa-ra’a tamau i roto i te mau tuha’a ta’a ’ē nō te mau hōro’a rorouira he’e-māite-a’e.
+- ✨ Tāpirira’a Zoom: Te fa’anaho-’āpī-ra’a i te ha’amatara’a e te fa’afa’aea-ra’a i te fa’a’itera’a rorouira ma te au i te ta’o-’ā’oa-ra’a rorouira.
 
 ## v25.7.0
 
 ### ✨ Te mau rave’a ‘āpī
 
-- No new features for this release!
+- ’Aita e mau ōhipa ’āpī nō teie fa’a’āpī-ra’a!
 
 ## 25.6.0
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
-- ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
+- ✨ Fa’anahora’a nō te hōro’a rorouira tei faitohia: Ua tāpiri-’āpī-hia te hō’ē fa’anahora’a ’āpī nō te fa’aiti i te fa’a’ohipara’a i te tere o te rorouira i ni’a i te mau rāve’a tei faitohia.
+- ✨ Fa’anahora’a maita’i a’e nō te rorouira e ta’o-’ā’oa-hia ra: Turu maita’i a’e nō te rorouira e ta’o-’ā’oa-hia ra, e fa’aiti i te mau fifi e tupu mai i te taime e maoro ai te terera’a.
 
 ## 25.5.0
 
 ### ✨ Te mau rave’a ‘āpī
 
-- 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
-- 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
+- 🖼️ Mā’itira’a nō te fa’ataere i te OBS nō te mau hoho’a: E tāpiri i te hō’ē fa’anahora’a OBS Studio nō te fa’ataere i te mau tauira’a tōpata i te taime e fa’a’itehia ai te mau hoho’a, nō te fa’aau maita’i i te mau tauira’a.
+- 🔊 Turu nō te huru rorouira ’iri `.m4a`: E tāpiri i te au-maita’i-ra’a nō te mau rorouira ’iri `.m4a` nō te fa’a’ā’ano i te mau huru rorouira e nehenehe e fa’a’ohipahia.
 
 ## 25.4.0
 
 ### ✨ Te mau rave’a ‘āpī
 
-- 🇵🇭 **New Language: Tagalog**: Added support for Tagalog, expanding the app's multilingual capabilities.
-- 🎞 **Support for `.m4v` Video Format**: Now supports playback of `.m4v` files to improve media compatibility.
+- 🇵🇭 ’Ē’a parau ’āpī: Tagalog: Ua tāpiri-’āpī-hia te turu nō te parau Tagalog, nō te fa’a’ā’ano i te mau rāve’a reo rau o te tauihaa.
+- 🎞 Turu nō te huru rorouira ata `.m4v`: E nehenehe i teie nei e ta’o-’ā’oa i te mau rorouira ata `.m4v` nō te fa’aau maita’i a’e i te mau huru rorouira.
 
 ## 25.3.1
 
 ### ✨ Te mau rave’a ‘āpī
 
-- 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
+- 🌏 ’Ē’a parau ’āpī: Te reo Korea: E tāpiri i te turu nō te reo Korea, nō te fa’a’ā’ano i te ’ōperera’a i te mau ta’ata ato’a.
 
 ## 25.3.0
 
 ### ✨ Te mau rave’a ‘āpī
 
-- 🎵 **Play Background Music with Videos**: Allow background music to continue playing while videos are being viewed.
-- 🎥 **Camera Feed for Sign Language Media**: Add the ability to display a camera feed on the media window specifically for sign language users.
-- 📅 **Automatic Memorial Date & Background**: Automatically detect and set the Memorial date and prepare the Memorial background image.
-- 📜 **Show Release Notes In-App**: Display release notes directly in the application so users can easily review changes after an update.
+- 🎵 Fa’ata’i i te upā muri mai ’e te mau ata: E fa’atia i te upā muri mai ’ia tamau noa i te ha’ata’i-ra’a ’a mata’ita’i-hia ai te mau ata.
+- 🎥 Fa’a’itera’a nō te hōho’a nūmera nō te mau rorouira reo-rima: E tāpiri i te rāve’a nō te fa’a’ite i te hōho’a nūmera i ni’a i te matapihi rorouira, nō te mau ta’ata e fa’a’ohipa ra i te reo-rima.
+- 📅 Ta’io mahana & Hōho’a muri mai nō te Oro’a Ha’amana’ora’a: E ’ite e e fa’anaho hō’ē taime i te ta’io mahana nō te Oro’a Ha’amana’ora’a ’e te hōho’a muri mai e au nō te reira.
+- 📜 Fa’a’ite i te mau parau nō te fa’a’āpī-ra’a i roto i te tauihaa: E fa’a’ite roa i te mau parau nō te fa’a’āpī-ra’a i roto i te tauihaa ’ia nehenehe i te mau ta’ata e hi’o maita’i i te mau tauira’a i muri a’e i te hō’ē fa’a’āpī-ra’a.
 
 ## 25.2.1
 
 ### ✨ Te mau rave’a ‘āpī
 
-- 🔄 **Allow OBS Reconnection Attempts**: Introduce the possibility to manually force OBS to reconnect when needed.
-- 🗑 **Auto Cleanup Old Export Date Folders**: Automatically remove outdated export date folders to keep storage organized.
+- 🔄 Fa’ati’a i te mau tauto’ora’a nō te fa’a’āpī-fa’ahou-ra’a i te OBS: E fa’a’ōhie i te rāve’a nō te fa’a’ite-tivihia i te OBS ’ia fa’a’āpī-fa’ahou i te ta’o-’ā’oa-ra’a i te taime e hina’arohia.
+- 🗑 Fa’a’ā’ano-’o’oti-ra’a nō te mau pu’e parau nō te mau mahana hōro’a nō tahito: E tātā’ī ’o’oti ’ōhie i te mau pu’e parau nō te mau mahana hōro’a tei ma’iri te tau nō te fa’a’ati i te vāhi ha’aputu-ra’a ’ia tano maita’i.
 
 ## 25.2.0
 
 ### ✨ Te mau rave’a ‘āpī
 
-- 🌍 **Use System Locale by Default**: Automatically detect and use the system's locale for a more personalized experience.
-- 🏷 **Tag Support for Exported Media**: Add metadata tags to exported media files for better organization.
-- 🔄 **Automatic Beta to Stable Downgrade**: Allow automatic downgrades from beta versions to stable releases when necessary.
-- 🌐 **Extract Latest MEPS Language Indexes**: Fetch the most recent MEPS language indexes directly from the official website, ensuring up-to-date language support.
+- 🌍 Fa’a’ohipa i te huru reo o te rorouira mai te hō’ē mā’itira’a tumu: ’Ite ’ōhie i te huru reo o te rorouira ’e fa’a’ohipa i te reira nō te hō’ē fa’a’ohipara’a i tō ’oe iho hina’aro.
+- 🏷 Turu nō te mau tapa’o-’ohipa nō te mau rorouira i hōro’ahia: E tāpiri i te mau tapa’o ha’amāramaramara’a i ni’a i te mau rorouira i hōro’ahia nō te fa’anahora’a maita’i a’e.
+- 🔄 Fa’aho’i-’ōhie-ra’a i te tuha’a maita’i mai te Beta: E fa’atia i te fa’aho’i-’ōhie-ra’a mai te mau tuha’a beta i te mau tuha’a maita’i i te taime e hina’arohia.
+- ​🌐 Huti mai i te mau tapa’o reo MEPS i te taime hope’a: Huti mai i te mau tapa’o reo MEPS i te taime hope’a i ni’a i te pae itenati mana, nō te ha’apāpū ē te vai nei te turu reo i te taime tano.
 
 ## 25.1.0
 
 ### ✨ Te mau rave’a ‘āpī
 
-- 📅 **Open Previous Dates**: Allow opening previous dates of the current week, which is useful when the meeting day is moved later in the week.
-- 🛑 **Error Banner for OBS Studio**: Add an error banner when OBS Studio is not connected on a meeting day, ensuring users are alerted.
+- 📅 Iriti i te mau ta’io mahana i ma’iri: E fa’ati’a i te iritira’a i te mau ta’io mahana i ma’iri i roto i te hepetoma i teie nei, e mea faufa’a roa te reira mai te mea ē ’ua fa’ataeahia te mahana o te putuputura’a i te hō’ē mahana hope’a o te hepetoma.
+- 🛑 Fa’a’itera’a hape nō te OBS Studio: E tāpiri i te hō’ē parau fa’a’ite hape i te mahana putuputura’a mai te mea ’aita te OBS Studio i tūhonohia, nō te ha’apāpū ē ’ua fa’aara-maita’i-hia te mau ta’ata.
 - 📚 Tufa’a mēdia ’ia au i te nene’ira’a: Ua tufa-’a’ano-hia te mau mēdia nō te hō’ē noa nene’ira’a i fa’ahitihia, nō te hō’ē hi’ora’a maita’i a’e e te au maita’i.
 - 🎵 Fa’aarara’a nō te mau hīmene i tāpiri-fa’ahou-hia: Ua tu’uhia mai te hō’ē fa’aarara’a mai te peu ē, ua tāpirihia te hō’ē hīmene e rave rahi taime i roto i te tapura mēdia nō te mau putuputura’a o te hope’a hepetoma.
 - 🔄 Fa’anahora’a nō te mau putuputura’a i mua nei: Ua tu’uhia mai te rāve’a nō te fa’anaho i te mau tauira’a o te porotarāma putuputura’a i mua nei, e mea faufa’a roa nō te mau tauira’a o te matahiti, ’aore rā nō te haere-māta’ita’i-ra’a a te tia’i ha’aere i te hō’ē amuira’a tapiri.
