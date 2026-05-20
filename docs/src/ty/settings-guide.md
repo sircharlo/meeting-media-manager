@@ -369,43 +369,43 @@ Rāve’a ha’apotora’a tei fa’a’ohipa-hia i te taime e fa’afa’aea-hi
 
 **Default**: None
 
-##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
+##### Rāve’a ha’apotora’a nō te fa’a’ore i te rorouira {#custom-event-media-stop-shortcut}
 
 <!-- **Setting**: `customEventMediaStopShortcut` -->
 
-Shortcut that is triggered when media is stopped.
+Rāve’a ha’apotora’a tei fa’a’ohipa-hia i te taime e fa’a’ore-hia ’i te rorouira.
 
 **Default**: None
 
-##### Last Song Shortcut {#custom-event-last-song-shortcut}
+##### Rāve’a ha’apotora’a nō te hīmene hope’a {#custom-event-last-song-shortcut}
 
 <!-- **Setting**: `customEventLastSongShortcut` -->
 
-Shortcut that is triggered when the last song is played during a meeting.
+Rāve’a ha’apotora’a tei fa’a’ohipa-hia i te taime e fa’ata’i-hia ’i te hīmene hope’a i roto i te hō’ē putuputura’a.
 
 **Default**: None
 
-## Advanced Settings {#advanced-settings}
+## Te mau fa’anahora’a ta’a ’ē {#advanced-settings}
 
-### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
+### Te mau rāve’a ha’apotora’a i ni’a i te tāhitō pereo {#settings-guide-keyboard-shortcuts}
 
-#### Enable Keyboard Shortcuts {#enable-keyboard-shortcuts}
+#### Fa’ati’a i te mau rāve’a ha’apotora’a i ni’a i te tāhitō pereo {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
-Enable customizable keyboard shortcuts for media control.
+Fa’ati’a i te mau rāve’a ha’apotora’a i ni’a i te tāhitō pereo nō te fa’aterera’a i te rorouira.
 
 Fa'anahora'a tumu: `Hape`
 
-#### Media Control Shortcuts {#media-control-shortcuts}
+#### Te mau rāve’a ha’apotora’a nō te fa’aterera’a i te rorouira {#media-control-shortcuts}
 
-Configure shortcuts for media playback:
+Fa’anaho i te mau rāve’a ha’apotora’a nō te fa’ata’i-fa’ahou-ra’a i te rorouira:
 
-- **Media Window**: Open/close media window
-- **Previous Media**: Go to previous media item
-- **Next Media**: Go to next media item
-- **Pause/Resume**: Pause or resume media playback
-- **Stop Media**: Stop media playback
+- Matapihi Rorouira: ’A iriti/’a tāpani i te matapihi rorouira
+- Rorouira na mua atu: ’A haere i te parau rorouira na mua atu
+- Rorouira i muri nei: ’A haere i te parau rorouira i muri nei
+- Fa’afa’aea/Fa’ata’i-fa’ahou: ’A fa’afa’aea aore rā ’a fa’ata’i-fa’ahou i te fa’ata’i-ra’a rorouira
+- Fa’a’ore i te Rorouira: ’A fa’a’ore i te fa’ata’i-ra’a rorouira
 - **Music Toggle**: Toggle background music
 
 ### Media Display {#media-display}
@@ -549,15 +549,15 @@ Fa'anahora'a tumu: `Hape`
 ### Performance Optimization {#performance-optimization}
 
 1. Enable extra cache for better performance
-2. Use appropriate maximum resolution for your needs
-3. Configure cache auto-clear to manage disk space
-4. Consider metered connection setting if on limited bandwidth
+2. ’A fa’a’ohipa i te nūmera nō te fa’ahotura’a teitei roa a’e i au i tō ’oe mau hina’aro
+3. Fa’anaho i te fa’a’ore-’ōhie-ra’a i te tahi’o nō te ha’amaita’i i te vāhi teimaha i ni’a i te matini
+4. ’A hi’o i te fa’anahora’a nō te hō’ē ta’amura’a ta’ohia mai te mea e iti te terera’a o te ’uterete
 
-### Troubleshooting {#settings-guide-troubleshooting}
+### Te fa’a’orara’a i te fifi {#settings-guide-troubleshooting}
 
-- If media isn't downloading, check your meeting schedule settings
-- If OBS integration isn't working, verify port and password settings
-- If performance is slow, try enabling extra cache or reducing resolution
-- If you're having language issues, check both interface and media language settings
-- If Zoom participants can't hear media audio, configure Zoom's Original Audio settings or use "Share Computer Sound"
-- **Tip**: Consider using Zoom integration instead of OBS Studio for simpler audio handling
+- Mai te mea ’aita te rorouira e tu’u-haere-hia ra, ’a hi’o i te mau fa’anahora’a nō te porotarama o tā ’oe mau putuputura’a
+- Mai te mea ’aita te fa’a’ohipara’a i te OBS e rave ra, ’a pāruru i te mau fa’anahora’a nō te ’ūpā e te parau huna
+- Mai te mea e māri’i te terera’a, ’a tamata i te ha’amana i te tahi’o hau aore rā ’a fa’aiti i te nūmera nō te fa’ahotura’a
+- Mai te mea e fifi tō ’oe i te reo, ’a hi’o i te mau fa’anahora’a reo nō te matapihi fa’a’ohipa e nō te rorouira
+- Mai te mea ’aita te feiā i roto i te Zoom e fa’aro’o ra i te rorouira, ’a fa’anaho i te mau fa’anahora’a « Original Audio » nō Zoom aore rā ’a fa’a’ohipa i te « Share Computer Sound »
+- Mana’o tauturu: ’A feruri i te fa’a’ohipa i te Zoom noa i te vāhi o te OBS Studio nō te fa’atere-’ōhie-ra’a i te ta’o
