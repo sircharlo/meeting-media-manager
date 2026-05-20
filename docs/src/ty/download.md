@@ -89,12 +89,12 @@ onMounted(() => {
 
 - **Windows 64-bit (.exe)**: <a :href="downloads.win64">Tu’u-haere</a>
 - **Windows 32-bit (.exe)**: <a :href="downloads.win32">Tu’u-haere</a>
-- **Windows Portable (.exe)**: <a :href="downloads.winPortable">Download</a>
+- **Windows Portable (.exe)**: <a :href="downloads.winPortable">Tu'u-haere</a>
 
 ## macOS
 
-- **macOS (Universal) (.dmg)**: <a :href="downloads.macUniversal">Download</a>
+- **macOS (Universal) (.dmg)**: <a :href="downloads.macUniversal">Tu’u-haere</a>
 
 ## Linux
 
-- **x86_64 (AppImage)**: <a :href="downloads.linux">Download</a>
+- **x86_64 (AppImage)**: <a :href="downloads.linux">Tu'u-haere</a>
