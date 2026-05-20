@@ -285,87 +285,87 @@ Pāotira’a nō ni’a i te tāhitohito nō te fa’a’ite i te vairaa o te ro
 
 ### Tāpirira’a OBS Studio {#settings-guide-obs-integration}
 
-#### Enable OBS {#enable-obs}
+#### Fa’a’ohipa i te OBS {#enable-obs}
 
 <!-- **Setting**: `obsEnable` -->
 
-Enable OBS Studio integration for automatic scene switching.
+Fa’a’ohipa i te tūhonora’a nō te OBS Studio nō te fa’afariura’a ’ōhie i te mau tōpata.
 
 Fa'anahora'a tumu: `Hape`
 
-:::warning Important Note
+:::warning Parau Fa’aarara’a faufa’a
 
-**Audio Configuration Required**: The OBS Studio integration only handles screen sharing. Audio from M³ media is **not automatically transmitted** to Zoom participants when using OBS Studio. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+Parau fa’aarara’a faufa’a: E titauhia te fa’anahora’a o te upā: E fa’atere noa te tūhonora’a o te OBS Studio i te fa’a’itera’a o te matapihi. Parau fa’aarara’a faufa’a: ’Aita te upā nō te rorouira M³ i hōro’a-’ōhie-hia i te mau ta’ata e apiti mai i te Zoom i te taime e fa’a’ohipa-hia ai te OBS Studio. E titauhia ia ’oe ’ia fa’anaho i te mau fa’anahora’a "Reo tumu" o te Zoom aore rā ’ia fa’a’ohipa i te "Hōro’a i te upā o te rorouira" nō te ha’apāpū ē ’ia fa’aro’o maita’i te mau ta’ata i te rorouira. A hi’o i te [Arata’i nō te ta’ata fa’a’ohipa](/user-guide#audio-configuration) nō te mau fa’anahora’a ha’amāramaramara’a nō ni’a i te fa’anahora’a o te upā.
 
-**Note**: The Zoom integration uses Zoom's native screen sharing which handles audio more seamlessly than OBS Studio integration.
+Parau fa’aarara’a: E fa’a’ohipa te tūhonora’a Zoom i te rāve’a fa’a’ite-’ōhie-ra’a i te hōho’a nō te Zoom, o tei fa’atere maita’i a’e i te upā i te tūhonora’a a te OBS Studio.
 
 :::
 
-#### OBS Port {#obs-port}
+#### Pōto’i nō te OBS {#obs-port}
 
 <!-- **Setting**: `obsPort` -->
 
-The port number for connecting to OBS Studio WebSocket.
+Te numera pōto’i nō te tūhonora’a i te OBS Studio WebSocket.
 
 **Default**: None
 
-#### OBS Password {#obs-password}
+#### Parau huna nō te OBS {#obs-password}
 
 <!-- **Setting**: `obsPassword` -->
 
-The password for OBS Studio WebSocket connection.
+Te parau huna nō te tūhonora’a OBS Studio WebSocket.
 
 **Default**: None
 
-#### OBS Scenes {#obs-scenes}
+#### Te mau tōpata OBS {#obs-scenes}
 
-Configure which OBS scenes to use for different purposes:
+Fa’anaho i te mau tōpata OBS e fa’a’ohipahia nō te mau hina’aro ta’a ’ē:
 
-- **Camera Scene**: Scene showing the camera/lectern
-- **Media Scene**: Scene for displaying media
-- **Image Scene**: Scene for displaying images (for example, a PIP scene showing both media and the speaker)
+- Tōpata hōho’a nūmera: Tōpata e fa’a’ite ra i te hōho’a nūmera/tei ni’a i te tēpē-parau
+- Tōpata rorouira: Tōpata nō te fa’a’itera’a i te mau rorouira
+- Tōpata hoho’a: Tōpata nō te fa’a’itera’a i te mau hoho’a (ei hi’ora’a, hō’ē tōpata PIP e fa’a’ite ra i te rorouira ’e te ta’ata e parau ra)
 
-#### OBS Advanced Options {#obs-advanced-options}
+#### Te mau mā’itira’a nō te OBS {#obs-advanced-options}
 
-- **Postpone Images**: Delay sharing images to OBS until manually triggered
-- **Quick Toggle**: Enable quick on/off toggle for OBS integration
-- **Switch Scene After Media**: Automatically return to previous scene after media
-- **Remember Previous Scene**: Remember and restore the previous scene
-- **Hide Icons**: Hide OBS-related icons in the interface
+- Fa’ataere i te mau hoho’a: E fa’ataere i te hōro’a-ra’a i te mau hoho’a i te OBS ē tae roa i te taime e fa’a’ohipa-hia ’i e te rima
+- Tāpere-’ōhie: E fa’ati’a i te tū’era’a/tī’era’a ’ōhie nō te tūhonora’a OBS
+- Taui i te tōpata i muri a’e i te rorouira: Fa’aho’i-’ōhie-ra’a i te tōpata na mua atu i te hope’a o te rorouira
+- Ha’amana’o i te tōpata na mua atu: Ha’amana’o ’e fa’aho’i mai i te tōpata i fa’a’ohipa-hia na mua atu
+- Huna i te mau hoho’a-tapa’o: Huna i te mau hoho’a-tapa’o nō te OBS i roto i te matapihi fa’a’ohipa
 
-:::warning Important Note
+:::warning Parau Fa’aarara’a faufa’a
 
-**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+E titauhia te fa’anahora’a o te upā: E fa’atere noa te tūhonora’a o te OBS Studio i te tauira’a i te mau tōpata ’e te hōho’a. Te upā nō te rorouira M³: ’Aita i hōro’a-’ōhie-hia i te Zoom aore rā te OBS. Te hōro’a-ra’a hōho’a: E ’ohipa mai te hō’ē mātini hōho’a nūmera tei ’ore i te upā, mai te hō’ē webcam. E titauhia ia ’oe ’ia fa’anaho i te mau fa’anahora’a "Reo tumu" o te Zoom aore rā ’ia fa’a’ohipa i te "Hōro’a i te upā o te rorouira" nō te ha’apāpū ē ’ia fa’aro’o maita’i te mau ta’ata i te rorouira. A hi’o i te [Arata’i nō te ta’ata fa’a’ohipa](/user-guide#audio-configuration) nō te mau fa’anahora’a ha’amāramaramara’a nō ni’a i te fa’anahora’a o te upā.
 
-**Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
+Mā’itira’a ê: ’A fa’a’ohipa i te tūhonora’a Zoom, no te mea e fa’a’ohipa te reira i te rāve’a fa’a’ite-’ōhie-ra’a i te hōho’a nō te Zoom, o tei fa’atere maita’i a’e i te upā.
 
 :::
 
-### Custom Events {#custom-events}
+### Te mau Oro’a ta’a ’ē {#custom-events}
 
-#### Enable Custom Events {#enable-custom-events}
+#### Fa’ati’a i te mau Oro’a ta’a ’ē {#enable-custom-events}
 
 <!-- **Setting**: `enableCustomEvents` -->
 
-Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
+Fa’ati’a i te mau rāve’a ha’apotora’a ta’a ’ē tei fa’a’ohipa-hia i te taime e ’ite-hia ’i hō’ē oro’a ta’a ’ē
 
 Fa'anahora'a tumu: `Hape`
 
-#### Custom Event Shortcuts {#custom-event-shortcuts}
+#### Te mau rāve’a ha’apotora’a nō te mau Oro’a ta’a ’ē {#custom-event-shortcuts}
 
-##### Play Media Shortcut {#custom-event-media-play-shortcut}
+##### Rāve’a ha’apotora’a nō te fa’ata’i i te rorouira {#custom-event-media-play-shortcut}
 
 <!-- **Setting**: `customEventMediaPlayShortcut` -->
 
-Shortcut that is triggered when media is played.
+Rāve’a ha’apotora’a tei fa’a’ohipa-hia i te taime e fa’ata’i-hia ’i te rorouira.
 
 **Default**: None
 
-##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
+##### Rāve’a ha’apotora’a nō te fa’afa’aea i te rorouira {#custom-event-media-pause-shortcut}
 
 <!-- **Setting**: `customEventMediaPauseShortcut` -->
 
-Shortcut that is triggered when media is paused.
+Rāve’a ha’apotora’a tei fa’a’ohipa-hia i te taime e fa’afa’aea-hia ’i te rorouira.
 
 **Default**: None
 
