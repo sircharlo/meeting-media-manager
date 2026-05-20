@@ -8,90 +8,90 @@ E tauturu teie arata’i aupuru ia ’oe ’ia hōro’a i te mau rāve’a ato�
 
 ’A ti’i i te nūmera nō te fa’ahotura’a apī roa a’e i ni’a i te [’Api tu’u-haere-ra’a](download). E fa’aitoito te reira i te nūmera nō te fa’ahotura’a maita’i roa a’e nō tō ’oe matini e e fa’a’ite te reira i te nūmera nō te fa’ahotura’a apī roa a’e.
 
-### First Launch {#first-launch}
+### Te ha’amatara’a mātāmua {#first-launch}
 
-When you first launch M³, you'll be guided through a setup wizard that will configure the essential settings for your congregation:
+Ia fa’a’ohipa mātāmua ’oe i te M³, e arata’ihia ’oe na roto i te hō’ē « Arata’i fa’anahora’a » o te fa’anaho i te mau fa’anahora’a faufa’a rahi nō tō ’oe amuira’a:
 
-1. **Choose your interface language** - This determines what language M³'s menus and buttons will be displayed in
-2. **Select profile type** - Choose "Regular" for normal congregation use or "Other" for special events
-3. **Configure congregation information** - Enter your congregation details or use the automatic lookup feature
-4. **Set up meeting schedule** - Configure your midweek and weekend meeting times
-5. **Optional features** - Configure OBS integration, background music, and other advanced features
+1. ’A mā’iti i te reo nō te matapihi fa’a’ohipa - E fa’aoti teie i te reo e fa’a’itehia ai te mau tave’o e te mau rāve’a o te M³
+2. ’A mā’iti i te huru o te tuatua — ’A mā’iti i te « Matauhia » nō te fa’a’ohipara’a matauhia i roto i te amuira’a aore rā « Te tahi atu » nō te mau putuputura’a ta’a ’ē
+3. ’A fa’anaho i te mau parau nō te amuira’a - ’A fa’a’omo i te mau ha’amāramaramara’a nō tō ’oe amuira’a aore rā ’a fa’a’ohipa i te rāve’a ’imi-’ōhie-ra’a ta’ahi-’ōhie-ra’a
+4. ’A fa’anaho i te mau hora nō te putuputura’a - ’A fa’anaho i tō ’oe mau hora nō te putuputura’a i te mahana i rotopū i te hepetoma e i te hope’a hepetoma
+5. Te mau rāve’a hau - ’A fa’anaho i te ta’amura’a OBS, te upēna, e te tahi atu mau rāve’a pa’ari
 
 :::tip A’o
 
-Take your time during setup - but you can always change these settings later in the Settings menu.
+’A rave i te taime nō te fa’anahora’a — e nehenehe rā ’oe e taui i teie mau fa’anahora’a i te taime ato’a i muri nei i roto i te matapihi Mau fa’anahora’a.
 
 :::
 
-### Main Interface Overview {#main-interface}
+### Te hi’ora’a parau nō te matapihi fa’a’ohipa {#main-interface}
 
-The main M³ interface consists of several key areas:
+Te vāhi matapihi mātāmua o te M³ e rave rahi ïa tu’u vāhi faufa’a rahi:
 
-- **Navigation Drawer** - Access different sections and settings
-- **Calendar View** - Browse media by date
-- **Media List** - View and manage media for selected dates
-- **Toolbar** - Quick access to common functions
-- **Status Bar** - Shows download progress, and background music and OBS Studio connection status
+- Pū’ohu ha’erera’a - ’A tomo i te mau tu’u vāhi e te mau fa’anahora’a ta’a ’ē
+- Te hi’ora’a tarena - ’A mā’imi i te mau rāve’a rorouira ma te fa’a’ohipa i te rā’i
+- Te tāpura rorouira — ’A hi’o e ’a fa’atere i te mau rorouira nō te mau rā’i i mā’itihia
+- Pa’e mauhaa — ’A tomo ’ōhie i te mau rāve’a matauhia
+- Te pa’e ’itera’a — ’A fa’a’ite i te haere-maita’i-ra’a o te mau ’utahira’a, e te huru o te ta’amura’a i te upēna e te OBS Studio
 
-## Media Management {#user-guide-media-management}
+## Te fa’aterera’a i te mau rorouira {#user-guide-media-management}
 
-### Understanding the Calendar View {#calendar-view}
+### Te maramarama-ra’a i te hi’ora’a tarena {#calendar-view}
 
-The calendar view shows your meeting schedule and available media:
+’A fa’a’ite te hi’ora’a tarena i tō ’oe porotarama nō te mau putuputura’a e te mau rorouira e vai nei:
 
-- **Meeting Days** - Highlighted days show when meetings are scheduled
-- **Media Indicators** - Icons show what types of media are available
-- **Date Navigation** - Use arrow keys to navigate between months
+- Te mau mahana putuputura’a — ’A fa’a’ite te mau mahana i tātarahia i te mau mahana i fa’anahohia ai te mau putuputura’a
+- Te mau tai’o rorouira — ’A fa’a’ite te mau hoho’a i te huru o te mau rorouira e vai nei
+- Te fa’aterera’a i te mau rā’i — ’A fa’a’ohipa i te mau taviri te’a nō te haere mai te tahi ’āva’e i te tahi atu
 
-### Organizing Media {#organizing-media}
+### Te fa’anahora’a i te mau rorouira {#organizing-media}
 
-M³ automatically organizes media by meeting type and section:
+’A fa’anahohono’a ’ōhie te M³ i te mau rorouira ia au i te huru o te putuputura’a e te tu’u vāhi:
 
-- **Meeting Sections** - Media is grouped by meeting parts (Public Talk, Treasures from God's Word, etc.)
-- **Custom Sections** - You can create custom sections for additional media if no meeting is scheduled on that particular day
+- Te mau tu’u vāhi o te putuputura’a — ’A pū’ohu-pū-hia te mau rorouira ia au i te mau tu’u vāhi o te putuputura’a (A’ora’a no te Ta’ata Teie, Te mau tao’a faufa’a no roto mai i te Parau a te Atua, e te tahi atu)
+- Te mau tu’u vāhi ta’a ’ē — ’E nehenehe tā ’oe e hāmani i te mau tu’u vāhi ta’a ’ē nō te mau rorouira tāpiri, mai te peu ’aore e putuputura’a i taua mahana ra
 
-## Media Presentation {#media-presentation}
+## Te fa’a’itera’a i te mau rorouira {#media-presentation}
 
-### Opening the Media Player {#opening-media-player}
+### Te ’īritira’a i te ta’o’o rorouira {#opening-media-player}
 
-To present media during a meeting:
+Nō te fa’a’ite i te mau rorouira i te roara’a o te hō’ē putuputura’a:
 
-1. Select the date and media item you want to present
-2. Click the play button or use the keyboard shortcut
-3. The media will start playing on the media display
-4. Use the controls to play, pause, or navigate through media
+1. ’A mā’iti i te mahana e te rorouira tā ’oe e hina’aro e fa’a’ite
+2. ’A pata i ni’a i te taviri ha’amata ’aore rā ’a fa’a’ohipa i te taviri poto o te roro uira
+3. E ha’amata te rorouira i te hō’ē i ni’a i te tāviri fa’a’itera’a
+4. ’A fa’a’ohipa i te mau taviri fa’atere nō te ha’amata, te fa’ataime, ’aore rā nō te haere i ni’a i te rorouira
 
-### Media Player Controls {#media-player-controls}
+### Te mau taviri fa’atere nō te rorouira {#media-player-controls}
 
-The media player provides comprehensive controls:
+E hōro’a te ta’o’o rorouira i te mau taviri fa’atere ato’a:
 
-- **Play/Pause** - Start or pause media playback
-- **Stop** - Stop playback
+- ’A ha’amata / ’A fa’ataime — ’A ha’amata ’aore rā ’a fa’ataime i te ha’aporora’a rorouira
+- ’A fa’a’ore — ’A fa’a’ore i te ha’aporora’a
 
 <!-- - **Previous/Next** - Navigate between media items
 - **Volume** - Adjust playback volume -->
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **Zoom/Pan** - Use mouse wheel to zoom, drag to pan (for images)
+- Fa’a’ahi / Fa’a’ati — ’A fa’a’ohipa i te huira o te ’iri nō te fa’a’ahi, ’a tu’u nō te fa’a’ati (nō te mau hoho’a)
 
-### Advanced Presentation Features {#advanced-presentation}
+### Te mau huru fa’a’itera’a pa’ari {#advanced-presentation}
 
-#### Custom Timing {#custom-timing}
+#### Te mau taime fa’ata’a-’ē-hia {#custom-timing}
 
-Set custom start and end times for media:
+’A ha’amau i te taime ha’amatara’a e te taime fa’a’otira’a nō te rorouira:
 
 <!-- 1. Right-click on a media item
 2. Select "Edit Timing" -->
 
-1. Click on the duration of a video on the top left of its thumbnail
-2. Set start and end times
-3. Save your changes
+1. ’A pata i ni’a i te maoro o te hō’ē video i ni’a i te pa’e aui i ni’a i tōna hoho’a ri’i
+2. ’A ha’amau i te taime ha’amatara’a e te taime fa’a’otira’a
+3. ’A ha’aputu i te mau taui-ra’a
 
-#### Zoom and Pan {#zoom-pan}
+#### Fa’a’ahi e te Fa’a’ati {#zoom-pan}
 
-For images and videos:
+Nō te mau hoho’a e te mau video:
 
 - **Zoom In/Out** - Use mouse wheel or zoom controls on the thumbnail
 - **Pan** - Click and drag the thumbnail to move the image around
