@@ -90,124 +90,124 @@ Fa’anahora’a tumu: ’Aita
 
 <!-- **Setting**: `mwDay` -->
 
-Te mahana o te hepetoma i reira tō ’oe putuputura’a i te mahana i rotopū i te hepetoma e tupu ai.
+Te mahana o te hepetoma i reira tō ’oe putuputura’a i te hepetoma e tupu ai.
 
 Mau mā’itira’a: Tapati e tae atu i te Mahana mā’a
 
-**Default**: None (must be set during setup)
+Fa’anahora’a tumu: ’Aita (e ti’a ’ia ha’amauhia i te taime nō te fa’anahora’a)
 
 ### Hora nō te putuputura’a i te hepetoma {#midweek-meeting-time}
 
 <!-- **Setting**: `mwStartTime` -->
 
-The start time of your midweek meeting.
+Te hora ha’amatara’a nō tō ’oe putuputura’a i te hepetoma.
 
-**Format**: HH:MM (24-hour format)
+Fa’anahora’a: HH:MM (Te hora i ni’a i te 24 hora)
 
-**Default**: None (must be set during setup)
+Fa’anahora’a tumu: ’Aita (e ti’a ’ia ha’amauhia i te taime nō te fa’anahora’a)
 
-### Weekend Meeting Day {#weekend-meeting-day}
+### Mahana nō te Putuputura’a i te hope’a hepetoma {#weekend-meeting-day}
 
 <!-- **Setting**: `weDay` -->
 
-The day of the week when your weekend meeting is held.
+Te mahana o te hepetoma i reira tō ’oe putuputura’a i te hope’a hepetoma e tupu ai.
 
 Mau mā’itira’a: Tapati e tae atu i te Mahana mā’a
 
-**Default**: None (must be set during setup)
+Fa’anahora’a tumu: ’Aita (e ti’a ’ia ha’amauhia i te taime nō te fa’anahora’a)
 
-### Weekend Meeting Time {#weekend-meeting-time}
+### Hora nō te Putuputura’a i te hope’a hepetoma {#weekend-meeting-time}
 
 <!-- **Setting**: `weStartTime` -->
 
-The start time of your weekend meeting.
+Te hora ha’amatara’a nō tō ’oe putuputura’a i te hope’a hepetoma.
 
-**Format**: HH:MM (24-hour format)
+Fa’anahora’a: HH:MM (Te hora i ni’a i te 24 hora)
 
-**Default**: None (must be set during setup)
+Fa’anahora’a tumu: ’Aita (e ti’a ’ia ha’amauhia i te taime nō te fa’anahora’a)
 
-### Circuit Overseer Week {#circuit-overseer-week}
+### Hepetoma nō te Tia’i Ha’a’ati {#circuit-overseer-week}
 
 <!-- **Setting**: `coWeek` -->
 
-The week of the next circuit overseer's visit.
+Te hepetoma nō te haerera’a mai i muri iho o te tia’i ha’a’ati.
 
-**Format**: MM/DD/YYYY
+Fa’anahora’a: AA/MM/MMMM
 
 Fa’anahora’a tumu: ’Aita
 
-### Memorial Date {#memorial-date}
+### Mahana nō te Oro’a Ha’amana’ora’a {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 
-The date of the next Memorial celebration.
+Te mahana nō te Oro’a Ha’amana’ora’a i muri iho.
 
-**Format**: MM/DD/YYYY
+Fa’anahora’a: AA/MM/MMMM
 
-**Default**: Automatically retrieved periodically
+Fa’anahora’a tumu: ’Ohi-’otometi-hia i te mau taime ato’a
 
-### Meeting Schedule Changes {#meeting-schedule-changes}
+### Te mau taui’ura’a i te porotarama o te mau putuputura’a {#meeting-schedule-changes}
 
-These settings allow you to configure temporary changes to your meeting schedule:
+E nehenehe ta ’oe e fa’atano i te mau taui’ura’a poto i te porotarama o te mau putuputura’a nā roto i teie mau fa’anahora’a:
 
-- **Change Date**: When the change takes effect
-- **One-time Change**: Whether this is a permanent or temporary change
-- **New Midweek Day**: New day for midweek meeting
-- **New Midweek Time**: New time for midweek meeting
-- **New Weekend Day**: New day for weekend meeting
-- **New Weekend Time**: New time for weekend meeting
+- Mahana o te taui’ura’a: Afea te taui’ura’a e tupu ai
+- Taui’ura’a ho’ē taime: Tei te huru ē, e taui’ura’a mure ’ore anei aore rā e taui’ura’a poto
+- Mahana nō te putuputura’a i te ropura’a hepetoma: Te mahana ’āpī nō te putuputura’a i te ropura’a hepetoma
+- Hora nō te putuputura’a i te ropura’a hepetoma: Te hora ’āpī nō te putuputura’a i te ropura’a hepetoma
+- Mahana nō te putuputura’a i te hope’a hepetoma: Te mahana ’āpī nō te putuputura’a i te hope’a hepetoma
+- Hora nō te putuputura’a i te hope’a hepetoma: Te hora ’āpī nō te putuputura’a i te hope’a hepetoma
 
-## Media Retrieval and Playback {#media-retrieval-and-playback}
+## ’Ohi-ra’a e te fa’atō’ora’a i te mau rāve’a ha’amāramaramara’a {#media-retrieval-and-playback}
 
-### Metered Connection {#metered-connection}
+### Tapura-’ohipa-raa {#metered-connection}
 
 <!-- **Setting**: `meteredConnection` -->
 
-Enable this if you're on a limited data connection to reduce bandwidth usage.
+’Ia ’ohie te fa’a’ohipara’a i te mau rāve’a ha’amāramaramara’a, ’a tu’u i teie fa’anahora’a mai te mea e fa’a’ohipa ra ’oe i te hō’ē tapura-’ohipa-raa nō te fa’aiti i te rahira’a o te mau ha’amāramaramara’a e haere mai i roto.
 
 Fa'anahora'a tumu: `Hape`
 
-### Media Display {#media-display-button}
+### Fa’a’ite’itera’a i te mau rāve’a ha’amāramaramara’a {#media-display-button}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
-Enable the media display functionality. This is required to present media on a second monitor.
+’Ia ’ohie te fa’a’ite’itera’a i te mau rāve’a ha’amāramaramara’a. E titauhia teie nō te fa’a’ite i te mau rāve’a ha’amāramaramara’a i ni’a i te piti o te matini fa’a’ite.
 
 Fa'anahora'a tumu: `Hape`
 
-#### Begin Playback Paused {#begin-playback-paused}
+#### Fa’atō’o i te rāve’a ha’amāramaramara’a ma te fa’ata’a {#begin-playback-paused}
 
 <!-- **Setting**: `beginPlaybackPaused` -->
 
-Start videos in a paused state when playback begins.
+’A fa’atō’o i te mau video ma te fa’ata’a, i te taime e ha’amata ai te fa’atō’ora’a.
 
 Fa'anahora'a tumu: `Hape`
 
-### Background Music {#settings-guide-background-music}
+### Pehe ha’amata {#settings-guide-background-music}
 
-#### Enable Music {#enable-music-button}
+#### ’Ia ’ohie te pehe {#enable-music-button}
 
 <!-- **Setting**: `enableMusicButton` -->
 
-Enable background music functionality.
+’Ia ’ohie te fa’a’ohipara’a i te pehe ha’amata.
 
-**Default**: `true`
+Fa’anahora’a tumu: `’oia`
 
-#### Auto-Start Music {#auto-start-music}
+#### Fa’atō’o-’otometi-hia i te pehe {#auto-start-music}
 
 <!-- **Setting**: `autoStartMusic` -->
 
-Automatically start background music when M³ launches if appropriate.
+’A fa’atō’o-’otometi i te pehe ha’amata i te taime e matara ai te M³, mai te mea e au te reira.
 
-**Default**: `true`
+Fa’anahora’a tumu: `’oia`
 
-#### Meeting Stop Buffer {#meeting-stop-buffer}
+#### Taime fa’ata’a nō te hope’a o te putuputura’a {#meeting-stop-buffer}
 
 <!-- **Setting**: `meetingStopBufferSeconds` -->
 
-How many seconds before meeting start time to stop background music.
+Ehia tetoni hou te ha’amatara’a o te putuputura’a e fa’ata’i ai i te pehe ha’amata.
 
-**Range**: 0-300 seconds
+Te faito: 0-300 tetoni
 
 **Default**: 60 seconds
 
@@ -243,7 +243,7 @@ Fa’anahora’a tumu: Vāhi i fa’ata’ahia e te rorouira
 
 Ha’amāua-’ōtohe-ra’a i te mau tairura’a tahito nō te fa’aherehere i te vāhi i ni’a i te pāhani rorouira.
 
-**Default**: `true`
+Fa’anahora’a tumu: `’oia`
 
 ### Te hi’opo’ara’a i te putu’a {#settings-guide-folder-monitoring}
 
@@ -416,7 +416,7 @@ Fa’anaho i te mau rāve’a ha’apotora’a nō te fa’ata’i-fa’ahou-ra�
 
 Enable fade-in/out transitions when showing or hiding the media window.
 
-**Default**: `true`
+Fa’anahora’a tumu: `’oia`
 
 #### Hide Media Logo {#hide-media-logo}
 
@@ -442,7 +442,7 @@ Maximum resolution for downloaded media files.
 
 Include media from the printed publications in media downloads.
 
-**Default**: `true`
+Fa’anahora’a tumu: `’oia`
 
 #### Exclude Footnotes {#exclude-footnotes}
 
@@ -458,7 +458,7 @@ Fa'anahora'a tumu: `Hape`
 
 Exclude media from the Teaching (th) brochure from media downloads.
 
-**Default**: `true`
+Fa’anahora’a tumu: `’oia`
 
 ### Subtitles {#subtitles}
 
