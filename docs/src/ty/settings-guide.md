@@ -72,31 +72,31 @@ Fa’anahora’a tumu: ’Aita e mea (e tano ’ia fa’ata’ahia i te taime o 
 
 Te reo tumu nō te tairi-mana’o-ra’a i te mau rorouira. E tano teie ia tu’ati i te reo e fa’a’ohipahia i roto i te mau putuputura’a a tō ’oe ’amuira’a.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+Te mau mā’itira’a: Te mau reo ato’a i te pae o te reo i ni’a i te ’api reva tōmite o te mau ’Ite nō Iehova
 
-**Default**: English (E)
+Fa’anahora’a tumu: Reo Peretānia (E)
 
-### Fallback Language {#fallback-language}
+### Reo nō te fa’aho’i-ra’a {#fallback-language}
 
 <!-- **Setting**: `langFallback` -->
 
-A secondary language to use when media isn't available in the primary language.
+Hō’ē reo piti nō te fa’a’ohipa i te taime ’aita te rorouira i te reo tumu.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+Te mau mā’itira’a: Te mau reo ato’a i te pae o te reo i ni’a i te ’api reva tōmite o te mau ’Ite nō Iehova
 
-**Default**: None
+Fa’anahora’a tumu: ’Aita
 
-### Midweek Meeting Day {#midweek-meeting-day}
+### Mahana nō te Putuputura’a i te Mahana i rotopū i te hepetoma {#midweek-meeting-day}
 
 <!-- **Setting**: `mwDay` -->
 
-The day of the week when your midweek meeting is held.
+Te mahana o te hepetoma i reira tō ’oe putuputura’a i te mahana i rotopū i te hepetoma e tupu ai.
 
 Mau mā’itira’a: Tapati e tae atu i te Mahana mā’a
 
 **Default**: None (must be set during setup)
 
-### Midweek Meeting Time {#midweek-meeting-time}
+### Hora nō te putuputura’a i te hepetoma {#midweek-meeting-time}
 
 <!-- **Setting**: `mwStartTime` -->
 
@@ -134,7 +134,7 @@ The week of the next circuit overseer's visit.
 
 **Format**: MM/DD/YYYY
 
-**Default**: None
+Fa’anahora’a tumu: ’Aita
 
 ### Memorial Date {#memorial-date}
 
@@ -281,7 +281,7 @@ Fa'anahora'a tumu: `Hape`
 
 Pāotira’a nō ni’a i te tāhitohito nō te fa’a’ite i te vairaa o te rorouira Zoom.
 
-**Default**: None
+Fa’anahora’a tumu: ’Aita
 
 ### Tāpirira’a OBS Studio {#settings-guide-obs-integration}
 
@@ -307,7 +307,7 @@ Parau fa’aarara’a: E fa’a’ohipa te tūhonora’a Zoom i te rāve’a fa�
 
 Te numera pōto’i nō te tūhonora’a i te OBS Studio WebSocket.
 
-**Default**: None
+Fa’anahora’a tumu: ’Aita
 
 #### Parau huna nō te OBS {#obs-password}
 
@@ -315,7 +315,7 @@ Te numera pōto’i nō te tūhonora’a i te OBS Studio WebSocket.
 
 Te parau huna nō te tūhonora’a OBS Studio WebSocket.
 
-**Default**: None
+Fa’anahora’a tumu: ’Aita
 
 #### Te mau tōpata OBS {#obs-scenes}
 
@@ -359,7 +359,7 @@ Fa'anahora'a tumu: `Hape`
 
 Rāve’a ha’apotora’a tei fa’a’ohipa-hia i te taime e fa’ata’i-hia ’i te rorouira.
 
-**Default**: None
+Fa’anahora’a tumu: ’Aita
 
 ##### Rāve’a ha’apotora’a nō te fa’afa’aea i te rorouira {#custom-event-media-pause-shortcut}
 
@@ -367,7 +367,7 @@ Rāve’a ha’apotora’a tei fa’a’ohipa-hia i te taime e fa’ata’i-hia 
 
 Rāve’a ha’apotora’a tei fa’a’ohipa-hia i te taime e fa’afa’aea-hia ’i te rorouira.
 
-**Default**: None
+Fa’anahora’a tumu: ’Aita
 
 ##### Rāve’a ha’apotora’a nō te fa’a’ore i te rorouira {#custom-event-media-stop-shortcut}
 
@@ -375,7 +375,7 @@ Rāve’a ha’apotora’a tei fa’a’ohipa-hia i te taime e fa’afa’aea-hi
 
 Rāve’a ha’apotora’a tei fa’a’ohipa-hia i te taime e fa’a’ore-hia ’i te rorouira.
 
-**Default**: None
+Fa’anahora’a tumu: ’Aita
 
 ##### Rāve’a ha’apotora’a nō te hīmene hope’a {#custom-event-last-song-shortcut}
 
@@ -383,7 +383,7 @@ Rāve’a ha’apotora’a tei fa’a’ohipa-hia i te taime e fa’a’ore-hia 
 
 Rāve’a ha’apotora’a tei fa’a’ohipa-hia i te taime e fa’ata’i-hia ’i te hīmene hope’a i roto i te hō’ē putuputura’a.
 
-**Default**: None
+Fa’anahora’a tumu: ’Aita
 
 ## Te mau fa’anahora’a ta’a ’ē {#advanced-settings}
 
@@ -476,9 +476,9 @@ Fa'anahora'a tumu: `Hape`
 
 Language for subtitles (can be different from media language).
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+Te mau mā’itira’a: Te mau reo ato’a i te pae o te reo i ni’a i te ’api reva tōmite o te mau ’Ite nō Iehova
 
-**Default**: None
+Fa’anahora’a tumu: ’Aita
 
 ### Media Export {#settings-guide-media-export}
 
