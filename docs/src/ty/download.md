@@ -1,12 +1,12 @@
 ---
-title: Downloads
+title: Te mau tu’u-haere-ra’a
 ---
 
 <!-- markdownlint-disable MD025 MD033 -->
 
-# Downloads
+# Te mau tu’u-haere-ra’a
 
-Use the links below to download the latest version of Meeting Media Manager for your operating system. These links always point to the newest stable release.
+’A fa’a’ohipa i te mau ta’amura’a i raro nei nō te tu’u-haere i te nūmera nō te fa’ahotura’a apī roa a’e o te Meeting Media Manager nō tō ’oe fa’anahora’a matini. Te mau ta’amura’a nei, e fa’a’ite pāpū te reira i te nūmera nō te fa’ahotura’a maita’i roa a’e i hamanahia.
 
 <script setup lang="ts">
 import { data as downloads } from '../../data/version.data.mts'
@@ -75,20 +75,20 @@ onMounted(() => {
 })
 </script>
 
-## Latest release
+## Nūmera nō te fa’ahotura’a apī roa a’e
 
 - **Version**: {{ downloads.version }} <span v-if="daysAgoText">({{ daysAgoText }})</span>
 
 <div v-if="recommended" style="margin: 1rem 0; padding: 1rem; border: 1px solid var(--vp-c-brand-1); border-radius: 8px; background: var(--vp-c-brand-soft);"><strong>{{ msg.recommendedFor }} {{ recommended.label }}</strong>
   <div style="margin-top: .5rem;"><a :href="recommended.href" style="display:inline-block; padding:.5rem 1rem; border-radius:6px; background: var(--vp-c-brand-1); color: white; text-decoration:none;">{{ msg.download }}</a>
   </div>
-  <div style="margin-top:.5rem; font-size: .9em; opacity:.8;">If this doesn’t match your system, pick from the options below.</div>
+  <div style="margin-top:.5rem; font-size: .9em; opacity:.8;">Mai te mea ’aita teie e tano i tō ’oe matini, ’a mā’iti mai i te mau mā’itira’a i raro nei.</div>
 </div>
 
 ## Windows
 
-- **Windows 64-bit (.exe)**: <a :href="downloads.win64">Download</a>
-- **Windows 32-bit (.exe)**: <a :href="downloads.win32">Download</a>
+- **Windows 64-bit (.exe)**: <a :href="downloads.win64">Tu’u-haere</a>
+- **Windows 32-bit (.exe)**: <a :href="downloads.win32">Tu’u-haere</a>
 - **Windows Portable (.exe)**: <a :href="downloads.winPortable">Download</a>
 
 ## macOS
