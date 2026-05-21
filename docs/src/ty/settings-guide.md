@@ -514,41 +514,41 @@ Fa'anahora'a tumu: `Hape`
 
 :::
 
-#### Base URL {#base-url}
+#### Vāhi ha’amatara’a o te upe’a rāve’a {#base-url}
 
 <!-- **Setting**: `baseUrl` -->
 
-Base domain used to download publications and media.
+Te vāhi ha’amatara’a o te upe’a rāve’a tei fa’a’ohipahia nō te ’ohi i te mau parau nīnihia e te mau rāve’a ha’amāramaramara’a.
 
-**Default**: `jw.org`
+Fa'anahora'a tumu: `jw.org`
 
-#### Disable Media Fetching {#disable-media-fetching}
+#### ’Ia fa’ata’a i te ’ohira’a i te mau rāve’a ha’amāramaramara’a. {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
-Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
+’Ia fa’ata’a-ta’i-ro’a-hia te ’ohira’a-’otometi-ra’a i te mau rāve’a ha’amāramaramara’a. ’Ia fa’a’ohipa noa i teie nō te mau fa’anahora’a ta’a-ē i fa’ata’ahia nō te mau oroa ha’amana’ora’a aore rā te tahi atu mau fa’anahora’a tano.
 
 Fa'anahora'a tumu: `Hape`
 
-## Tips for Optimal Configuration {#configuration-tips}
+## Te mau mana’o nō te hō’ē fa’anahora’a maita’i a’e {#configuration-tips}
 
-### For New Users {#new-users}
+### Nō te feiā ’āpī e fa’a’ohipa ra {#new-users}
 
-1. Start with the setup wizard to configure basic settings
-2. Enable "Media Display Button" to access presentation features
-3. Configure your meeting schedule accurately
-4. Set up OBS integration if you use hybrid meetings
+1. ’Ia ha’amata i te rāve’a fa’anahora’a mātāmua nō te fa’atano i te mau fa’anahora’a tumu
+2. ’Ia ha’amaita’i i te « Pātene fa’a’itera’a i te mau rāve’a ha’amāramaramara’a » nō te tomo i te rāve’a fa’a’itera’a
+3. ’Ia fa’atano maita’i i tō ’oe tāpura putuputura’a
+4. ’Ia fa’anahohia te fa’a’ohipara’a o te OBS mai te mea e fa’a’ohipa ’oe i te mau putuputura’a hō’ēra’a (hybrid)
 
-### For Advanced Users {#advanced-users}
+### Nō te feiā ’aravihi i te fa’a’ohipa {#advanced-users}
 
-1. Use folder monitoring to sync media from cloud storage
-2. Enable media auto-export for backup purposes
-3. Configure keyboard shortcuts for efficient operation
-4. Configure Zoom integration for automatic screen sharing
+1. ’Ia fa’a’ohipa i te mata’ita’ira’a i te mau pu’e parau nō te tu’ati i te mau rāve’a ha’amāramaramara’a mai roto mai i te ro’i parau
+2. ’Ia fa’ati’a i te tu’ura’a-’otometi-ra’a i te mau rāve’a ha’amāramaramara’a nō te mau ho’o-parau-ra’a
+3. ’Ia fa’atano i te mau tāpura rāve’a poto nō te tāpapa-matini nō te hō’ē fa’a’ohipara’a ’oi’oi
+4. ’Ia fa’atano i te fa’a’ohipara’a i te Zoom nō te tu’ura’a-’otometi-ra’a i te fa’a’itera’a i te ’ata-matini
 
-### Performance Optimization {#performance-optimization}
+### Te fa’a’au maita’i-ra’a i te puai o te mātini {#performance-optimization}
 
-1. Enable extra cache for better performance
+1. ’Ia fa’ati’a i te pu’e-parau-tāpuni (cache) hau nō te hō’ē fa’a’ohipara’a maita’i a’e
 2. ’A fa’a’ohipa i te nūmera nō te fa’ahotura’a teitei roa a’e i au i tō ’oe mau hina’aro
 3. Fa’anaho i te fa’a’ore-’ōhie-ra’a i te tahi’o nō te ha’amaita’i i te vāhi teimaha i ni’a i te matini
 4. ’A hi’o i te fa’anahora’a nō te hō’ē ta’amura’a ta’ohia mai te mea e iti te terera’a o te ’uterete
