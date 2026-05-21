@@ -466,51 +466,51 @@ Fa’anahora’a tumu: `’oia`
 
 <!-- **Setting**: `enableSubtitles` -->
 
-Enable subtitle support for media playback.
+’Ia fa’a’ohipa i te mau parau i ni’a i te hoho’a nō te fa’atō’ora’a i te mau rāve’a ha’amāramaramara’a.
 
 Fa'anahora'a tumu: `Hape`
 
-#### Subtitle Language {#subtitle-language}
+#### Te reo nō te mau parau i ni’a i te hoho’a {#subtitle-language}
 
 <!-- **Setting**: `langSubtitles` -->
 
-Language for subtitles (can be different from media language).
+Te reo nō te mau parau i ni’a i te hoho’a (e nehenehe e ta’a-ē-hia mai te reo o te rāve’a ha’amāramaramara’a).
 
 Te mau mā’itira’a: Te mau reo ato’a i te pae o te reo i ni’a i te ’api reva tōmite o te mau ’Ite nō Iehova
 
 Fa’anahora’a tumu: ’Aita
 
-### Media Export {#settings-guide-media-export}
+### Fa’ahotura’a i te mau rāve’a ha’amāramaramara’a {#settings-guide-media-export}
 
-#### Enable Media Auto-Export {#enable-media-auto-export}
+#### 'Ia fa’a’ohipa i te fa’ahotura’a-’otometi-hia i te mau rāve’a ha’amāramaramara’a. {#enable-media-auto-export}
 
 <!-- **Setting**: `enableMediaAutoExport` -->
 
-Automatically export media files to a specified folder.
+’Ia fa’ahotu-’otometi-hia te mau rāve’a ha’amāramaramara’a i roto i te hō’ē puhapā tei fa’ata’ahia.
 
 Fa'anahora'a tumu: `Hape`
 
-#### Media Export Folder {#media-export-folder}
+#### Puhapā nō te fa’ahotura’a i te mau rāve’a ha’amāramaramara’a {#media-export-folder}
 
 <!-- **Setting**: `mediaAutoExportFolder` -->
 
-Folder path where media files will be automatically exported.
+Te vāhi o te puhapā e fa’ahotu-’otometi-hia ai te mau rāve’a ha’amāramaramara’a.
 
 Fa’anahora’a tumu: ’Aita
 
-#### Convert Files to MP4 {#convert-files-to-mp4}
+#### ’Ia fa’ahuru-ē-hia te mau rāve’a ha’amāramaramara’a i roto i te huru MP4 {#convert-files-to-mp4}
 
-**Setting**: `convertFilesToMp4`
+Fa’ahuru-ē-ra’a i te mau rāve’a ha’amāramaramara’a i roto i te huru MP4
 
-Convert exported media files to MP4 format for better compatibility.
+’Ia fa’ahuru-ē-hia te mau rāve’a ha’amāramaramara’a i fa’ahotuhia i roto i te huru MP4 nō te hō’ē fa’a’ohipara’a maita’i a’e.
 
 Fa'anahora'a tumu: `Hape`
 
-### Danger Zone {#danger-zone}
+### Vāhi ’ati {#danger-zone}
 
 :::warning Fa’aarara’a
 
-These settings should only be changed if you understand their implications.
+’E nehenehe noa teie mau fa’anahora’a e tauihia mai te mea e māramarama maita’i ’oe i te mau fa’ahope’ara’a.
 
 :::
 
