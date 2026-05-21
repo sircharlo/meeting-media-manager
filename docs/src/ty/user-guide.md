@@ -93,51 +93,51 @@ E hōro’a te ta’o’o rorouira i te mau taviri fa’atere ato’a:
 
 Nō te mau hoho’a e te mau video:
 
-- **Zoom In/Out** - Use mouse wheel or zoom controls on the thumbnail
-- **Pan** - Click and drag the thumbnail to move the image around
-- **Reset Zoom** - Click to return to original zoom
+- Fa’arahi/Fa’aiti - ’Ia fa’a’ohipa i te huira o te ’imo’i aore rā te mau rāve’a fa’arahi/fa’aiti i ni’a i te hōho’a iti
+- Fa’anu’u - ’Ia tu’i i te hōho’a iti e ’ia tu’i-turi ’ei fa’anu’u i te hōho’a
+- Fa’aho’i i te rahira’a tumu - ’Ia tu’i i te reira nō te fa’aho’i i te rahira’a hōho’a i tō na huru mātāmua
 
-#### Keyboard Shortcuts {#user-guide-keyboard-shortcuts}
+#### Mau rāve’a poto nō te tāpapa-matini {#user-guide-keyboard-shortcuts}
 
-Configure custom keyboard shortcuts for quick access. Note that no keyboard shortcuts are set by default.
+’Ia fa’atano i te mau rāve’a poto nō te tāpapa-matini nō te hō’ē noa ’itera’a ’oi’oi. ’Ia ha’apa’o maita’i ’aita hō’ē a’e rāve’a poto nō te tāpapa-matini i fa’atahahia i te ha’amatara’a.
 
-**Built-in Media Controls** (when main window is focused and showing the media list):
+Mau rāve’a fa’atere nō te mau rāve’a ha’amāramaramara’a (media) i roto i te matini (ia ti’a te matapihi matamua i ni’a i te tāpura media):
 
-- **Tab/Shift+Tab** - Navigate between media items
-- **Up/Down Arrow** - Navigate between media items
-- **Space** - Play/Pause media
-- **Escape** - Stop media
+- Tab/Shift+Tab - Nō te fa’ahoro i rotopū i te mau rāve’a ha’amāramaramara’a
+- Up/Down Arrow (Te mau tāpiri i ni’a/i raro) - Nō te fa’ahoro i rotopū i te mau rāve’a ha’amāramaramara’a
+- Space - Nō te ha’amata/ha’amau i te mau rāve’a ha’amāramaramara’a
+- Escape - Nō te tape’a i te mau rāve’a ha’amāramaramara’a
 
-**Customizable Shortcuts** (when enabled in settings):
+Mau rāve’a poto nehenehe e fa’aau (ia fa’ati’ahia i roto i te mau fa’atanora’a):
 
-- **Media Window** - Open/close media window
-- **Previous/Next Media** - Navigate between media items
-- **Pause/Resume** - Control media playback
-- **Stop Media** - Stop media playback
-- **Music Toggle** - Control background music
+- Matapihi Media - Nō te matara/tapiri i te matapihi nō te mau rāve’a ha’amāramaramara’a
+- Media i mua/i muri nei - Nō te fa’ahoro i rotopū i te mau rāve’a ha’amāramaramara’a
+- Ha’amau/Fa’a’ohipa fa’ahou - Nō te fa’atere i te ha’ataera’a o te mau rāve’a ha’amāramaramara’a
+- Tape’a i te Media - Nō te tape’a i te ha’ataera’a o te mau rāve’a ha’amāramaramara’a
+- Tāpiri’a hīmene - Nō te fa’atere i te hīmene i muri i te hōho’a
 
-**Note (\*):** Global shortcut - available even when the app is not focused
+Ha’amana’ora’a (\*): Rāve’a poto nō te ta’āto’ara’a - ’ia ti’a ia fa’a’ohipa noa atu ’aita te tauihaa nō te fa’a’ohipara’a (app) i roto i te matapihi matamua
 
-## Background Music {#user-guide-background-music}
+## Hīmene i muri i te hōho’a {#user-guide-background-music}
 
-### Setting Up Background Music {#background-music-setup}
+### Te fa’aau nei i te hīmene i muri i te hōho’a {#background-music-setup}
 
-Background music automatically plays before meetings and stops at the appropriate time:
+E ha’amata ’ō’oti noa te hīmene i muri i te hōho’a hou te mau putuputura’a e e tape’a i te taime tano:
 
-1. **Enable Music** - Turn on background music in settings
-2. **Auto-Start** - Music will start automatically when M³ launches, if appropriate
-3. **Meeting Stop** - Music stops automatically before meeting start time
-4. **Manual Control** - Use the music button in the status bar to start/stop manually
-5. **Restart** - Resume music after meetings with one click
+1. Ha’amā’iti i te hīmene - Nō te tu’u i te hīmene i muri i te hōho’a i roto i te mau fa’atanora’a
+2. Auto-Start (Ha’amatara’a ’ō’oti) - E ha’amata noa te hīmene ’ia tatara ’oe i te M³, mai te mea e tano
+3. Tape’a i te putuputura’a - E tape’a noa te hīmene hou te hora ha’amatara’a o te putuputura’a
+4. Fa’aterera’a rima - Nō te fa’a’ohipa i te tāpū hīmene i roto i te pae mana nō te ha’amata/tape’a ma te rima
+5. Ha’amata fa’ahou - Nō te fa’a’ohipa fa’ahou i te hīmene i muri iho i te mau putuputura’a na roto i te hō’ē noa pa’o
 
-## Zoom Integration {#user-guide-zoom-integration}
+## Tahutuhura’a nō Zoom {#user-guide-zoom-integration}
 
-M³ can integrate with Zoom for automatic screen sharing:
+E nehenehe te M³ e tahutuhura i roto ia Zoom nō te fa’a’ite noa i te hōho’a o te matapihi:
 
-1. **Enable Integration** - Turn on Zoom integration in settings
-2. **Configure Shortcut** - Set up the screen sharing keyboard shortcut that is configured in Zoom. Make sure that the "global" checkbox is checked in Zoom.
-3. **Automatic Control** - M³ will automatically toggle screen sharing in Zoom as needed
-4. **Manual Override** - You can still manually control screen sharing using Zoom if needed
+1. Ha’amā’iti i te tahutuhura’a - Nō te tu’u i te tahutuhura’a nō Zoom i roto i te mau fa’atanora’a
+2. Fa’anahora’a i te tāviri - Nō te fa’ata’a i te tāviri nō te fa’a’ite i te hōho’a o te matapihi, ia au i tei fa’anahohia i roto ia Zoom. E ha’apāpū ē, ’ua mā’itihia te tāviri "global" i roto i te mau fa’anahora’a o Zoom.
+3. Fa’aterera’a ’ō’oti - E fa’atano noa te M³ i te fa’a’itera’a i te hōho’a o te matapihi i roto ia Zoom mai te au i te hina’aro
+4. Fa’aterera’a ma te rima - E nehenehe ā ’oe e fa’atere i te fa’a’itera’a i te hōho’a o te matapihi ma te rima i roto ia Zoom mai te mea e hina’arohia
 
 ## OBS Studio Integration {#user-guide-obs-integration}
 
