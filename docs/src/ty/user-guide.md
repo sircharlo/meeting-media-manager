@@ -139,81 +139,81 @@ E nehenehe te M³ e tahutuhura i roto ia Zoom nō te fa’a’ite noa i te hōho
 3. Fa’aterera’a ’ō’oti - E fa’atano noa te M³ i te fa’a’itera’a i te hōho’a o te matapihi i roto ia Zoom mai te au i te hina’aro
 4. Fa’aterera’a ma te rima - E nehenehe ā ’oe e fa’atere i te fa’a’itera’a i te hōho’a o te matapihi ma te rima i roto ia Zoom mai te mea e hina’arohia
 
-## OBS Studio Integration {#user-guide-obs-integration}
+## Tahutuhura’a nō OBS Studio {#user-guide-obs-integration}
 
-### Setting Up OBS Integration {#user-guide-obs-setup}
+### Fa’anahora’a i te tahutuhura’a nō OBS Studio {#user-guide-obs-setup}
 
-To use M³ with OBS Studio for hybrid meetings:
+Nō te fa’a’ohipa i te M³ ’e te OBS Studio nō te mau putuputura’a hō’ēraa:
 
-1. **Install OBS Studio** - Download and install OBS Studio
-2. **Enable WebSocket** - Install the WebSocket plugin in OBS
-3. **Configure M³** - Enter OBS port and password in M³ settings
-4. **Set Up Scenes** - Create scenes for camera, media, and other content
-5. **Test** - Verify playback works properly
+1. Tāutura’a i te OBS Studio - Tāvaha ’e tāutu i te OBS Studio
+2. Ha’amā’iti i te WebSocket - Tāutu i te parapa’o WebSocket i roto i te OB
+3. Fa’anahora’a i te M³ - Fa’a’o i te vāhi tāhura ’e te parau mato’a nō te OBS i roto i te mau fa’atanora’a nō te M³
+4. Fa’anahora’a i te mau teata - Hāmani i te mau teata nō te hōho’a matini, te mau ha’amāramaramara’a, ’e te tahi atu mau parau hōho’a
+5. ’Itepata - E ha’apāpū ē, ’ua maita’i te ha’amā’itira’a i te mau hōho’a
 
-### OBS Scene Management {#obs-scene-management}
+### Fa’aterera’a i te mau teata nō te OBS {#obs-scene-management}
 
-M³ automatically switches OBS scenes during presentations:
+E taui noa te M³ i te mau teata nō te OBS i te roara’a o te mau fa’a’itera’a:
 
-- **Camera Scene** - Shows the lectern/camera view
-- **Media Scene** - Displays media content
-- **Image Scene** - Shows images (can be postponed if enabled)
-- **Automatic Switching** - Scenes change based on media type and settings
+- Teata nō te hōho’a matini - E fa’a’ite i te hi’ora’a nō te vāhi paraparau/hōho’a matini
+- Teata nō te mau ha’amāramaramara’a - E fa’a’ite i te mau parau hōho’a o te mau ha’amāramaramara’a
+- Teata nō te mau hōho’a - E fa’a’ite i te mau hōho’a (e nehenehe e fa’ata’ahia te taime mai te mea ’ua ha’amā’itihia)
+- Tauira’a aunoa - E taui te mau teata i ni’a i te huru o te mau ha’amāramaramara’a ’e te mau fa’atanora’a
 
-### Advanced OBS Features {#advanced-obs}
+### Te mau rave’a pa’ari nō te OBS {#advanced-obs}
 
-#### Postpone Images {#user-guide-postpone-images}
+#### Fa’ata’ara’a i te mau hōho’a {#user-guide-postpone-images}
 
-Enable this option to delay sharing images to OBS until manually triggered:
+Ha’amā’iti i teie maitira’a nō te fa’ata’a i te tu’ura’a atu i te mau hōho’a i ni’a i te OBS ’ia tae i te taime e fa’a’ohipahia ai e ’outou iho:
 
-1. Enable "Postpone Images" in OBS settings
-2. Images will only be shared when you click the button to show them using OBS Studio. This is useful for showing images to in-person audience first.
+1. Ha’amā’iti i te "Fa’ata’ara’a i te mau hōho’a" i roto i te mau fa’atanora’a nō te OBS
+2. E tu’u-noa-hia te mau hōho’a ’ia pa’i ’outou i te pitopito nō te fa’a’ite i te reira nā roto i te OBS Studio. E mea faufa’a teie nō te fa’a’ite mātāmua i te mau hōho’a i te feiā e fa’aro’o tūtū atu i mua.
 
-#### Scene Switching Behavior {#user-guide-scene-switching}
+#### Te huru o te tauira’a i te mau teata {#user-guide-scene-switching}
 
-Configure how M³ handles scene changes:
+Fa’atano i te huru o te ha’apa’ora’a a te M³ i te mau tauira’a teata:
 
-- **Switch After Media** - Automatically return to previous scene
-- **Remember Previous Scene** - Restore the scene that was active before media
+- Taui i muri i te mau ha’amāramaramara’a - E ho’i fa’ahou i te teata mātāmua nā roto i te rave’a aunoa
+- Ha’amana’o i te teata mātāmua - E fa’aho’i fa’ahou i te teata o tei hotu i mua noa i te fa’a’ohipara’a i te mau ha’amāramaramara’a
 
-### Audio Configuration for Hybrid Meetings {#audio-configuration}
+### Fa’atanora’a i te ta’o nō te mau putuputura’a i roto i te rōpū {#audio-configuration}
 
-When using M³ with OBS Studio for hybrid meetings (in-person + Zoom), you need to configure audio settings to ensure meeting participants can hear the media:
+’Ia fa’a’ohipa ana’e ’outou i te M³ ’e te OBS Studio nō te mau putuputura’a i roto i te rōpū (i mua i te mata o te ta’ata + Zoom), e titauhia ia ’outou ’ia fa’atano i te mau fa’atanora’a nō te ta’o (audio) ’ia nehenehe te feiā e rave ana’e i te putuputura’a e fa’aro’o i te mau ha’amāramaramara’a:
 
-#### Zoom Audio Settings {#zoom-audio-settings}
+#### Te mau fa’atanora’a nō te ta’o (audio) i ni’a i te Zoom {#zoom-audio-settings}
 
-**Before every meeting, you must enable Original Audio in Zoom:**
+I mua i te mau putuputura’a ato’a, e titauhia ia ’outou ’ia ha’amā’iti i te "Ta’o tumu" i roto i te Zoom:
 
-1. **Open Zoom** and go to Settings
-2. **Navigate to Audio** → **Advanced**
-3. **Enable "Show in-meeting option to 'Enable Original Sound'"**
-4. **Check "Disable echo cancellation"** (first checkbox)
-5. **Check "Disable noise suppression"** (second checkbox)
-6. **Uncheck "Disable high-fidelity music mode"** (third checkbox)
-7. **Before starting each meeting**, click the "Original Audio" button in the meeting controls
+1. ’A matara i te Zoom, ’e ’a haere i roto i te mau fa’atanora’a (Paramètres)
+2. ’A haere i te Tuhaa nō te Ta’o (Audio) → Te mau rave’a pa’ari (Avancé)
+3. ’A ha’amā’iti i te "Fa’a’ite i te maitira’a i roto i te putuputura’a ’ia 'Ha’amā’iti i te Ta’o Tumu'" (Enable "Show in-meeting option to 'Enable Original Sound'")
+4. ’A tāpa’o i te "Ha’amā’iti i te fa’aore-ra’a-reo" (Désactiver l'annulation de l'écho) (i te tāpa’o mātāmua)
+5. ’A tāpa’o i te "Ha’amā’iti i te fa’aore-ra’a-parau-’ore" (Désactiver suppression nuisance sonore) (i te piti o te tāpa’o)
+6. ’A tatarahia te tāpa’o i ni’a i te "Ha’amā’iti i te huru upu’upu’u teitei" (Désactiver la haude fidélité du mode musical) (i te toru o te tāpa’o)
+7. I mua i te ha’amatara’a i te mau putuputura’a ato’a, ’a pata i te taviri "Ta’o Tumu" (Original Audio) i roto i te mau fa’atere-ra’a nō te putuputura’a
 
-**Alternative: Share Computer Sound**
-If Original Audio doesn't work well in your setup:
+Maitira’a atu: Fa’a’ite i te ta’o nō te rōpū pata (Partage de son de l'ordinateur)
+Mai te mea ē, ’aita te "Ta’o Tumu" (Original Audio) i te rave’a maita’i i ni’a i tā ’outou rōpū pata:
 
-1. **Before playing media**, go to **Advanced** tab in Zoom screen sharing options
-2. **Check "Share computer sound"**
-3. **Note**: This option must be enabled every time you start a new Zoom session
+1. I mua i te fa’a’ohipara’a i te mau ha’amāramaramara’a (media), ’a haere i roto i te tuha’a Te mau rave’a pa’ari (Avancé) i roto i te mau maitira’a nō te fa’a’ite-ra’a-teata (partage d'écran) i ni’a i te Zoom.
+2. ’A tāpa’o i te "Fa’a’ite i te ta’o nō te rōpū pata
+3. Fa’a’ite-ra’a: E titauhia ia ’outou ’ia ha’amā’iti i teie maitira’a i te mau taime ato’a e ha’amata ai ’outou i te hō’ē tau’a-parau-ra’a (Zoom session) ’āpī
 
-**Best Alternative**: Consider using M³'s Zoom integration instead of OBS Studio, as it uses Zoom's native screen sharing which handles audio more seamlessly and doesn't require complex audio configuration.
+Maitira’a maita’i a’e: ’A feruri i te fa’a’ohipara’a i te tuitui-ra’a (integration) o te M³ i roto i te Zoom na ni’a a’e i te fa’a’ohipara’a i te OBS Studio, nō te mea e fa’a’ohipa te reira i te fa’a’ite-ra’a-teata (partage d'écran) tupu-roa o te Zoom o tē fa’atere maita’i a’e i te ta’o (audio) ’e e ’ere i te mea titauhia ia rave i te mau fa’atanora’a ta’o ’u’ana.
 
-#### Why Audio Configuration is Necessary {#why-audio-config}
+#### Nō te aha e titauhia ai te fa’atanora’a i te ta’o {#why-audio-config}
 
-M³ plays media with sound on your computer, but this audio is **not automatically transmitted** through the video stream to OBS Studio. This is the same behavior you would experience with any other media player.
+E ha’uti te M³ i te mau ha’amāramaramara’a (media) nā roto i te ta’o i ni’a i tā ’outou rōpū pata, ’eiaha rā teie ta’o e fa’aho’o-iho-i-te-tupu-hia nā roto i te mā’iri-video (video stream) i te OBS Studio. Teie te hō’ē ā huru tupura’a ta ’oe e fāri’i i te mau rōpū ha’uti ha’amāramaramara’a (lecteurs média) ato’a.
 
-**The audio issue is not related to M³** - it's a limitation of how OBS Studio video streaming works with Zoom. The video stream acts like a virtual camera without sound, just like a webcam, so you must explicitly configure Zoom to capture the computer's audio. This implies that your computer has two sound cards, and if this isn't the case, you probably won't be able to use the OBS Studio integration successfully.
+E ’ere te pe’ape’a nō ni’a i te ta’o i te mea e tupu mai i te M³ - e mea tōtōā te reira i te huru o te fa’a’ohipa-ra’a-a-te-OBS Studio i te mā’iri-video (video streaming) e te Zoom. E riro te mā’iri-video (video stream) mai te hō’ē matini-teata nō ni’a i te rōpū (caméra virtuelle) ma te ’ore e ’amo i te ta’o, mai te hō’ē matini-teata nō te rōpū (webcam) te huru, nō reira, e mea titauhia ia ’outou ’ia fa’anaho maita’i i te Zoom nō te haru i te ta’o o te rōpū pata. Te fa’a’ite ra te reira ē, e piti tā ’outou rōpū ta’o (sound cards) i ni’a i tā ’outou rōpū pata, ’e mai te mea ’aita, e riro paha ē ’aita e ti’a ia ’outou ’ia fa’a’ohipa maita’i i te tuitui-ra’a (integration) o te OBS Studio.
 
-**Alternative Solution**: Consider using the Zoom integration instead, as it uses Zoom's native screen and audio sharing, which handles audio more seamlessly.
+Maitira’a atu: ’A feruri i te fa’a’ohipara’a i te tuitui-ra’a (integration) o te Zoom, nō te mea e fa’a’ohipa te reira i te fa’a’ite-ra’a-teata (partage d'écran) ’e te tufa-ra’a ta’o (partage audio) tupu-roa o te Zoom, o tē fa’atere maita’i a’e i te ta’o.
 
-#### Troubleshooting Audio Issues {#audio-troubleshooting}
+#### Te fa’atītī’aifaro-ra’a i te mau fifi o te ta’o {#audio-troubleshooting}
 
-**Common Problems:**
+Te mau fifi matauhia:
 
-- **No audio in Zoom**: Check if Original Audio is enabled and properly configured
+- ’Aita e ta’o i roto i te Zoom: ’A hi’o ē, ’ua ha’amā’itihia ’e ’ua fa’anahohia maita’i te "Original Audio"
 - **Poor audio quality**: Verify the three Original Audio checkboxes are set correctly
 - **Audio not working after Zoom restart**: Original Audio settings must be re-enabled for each new Zoom session
 
@@ -290,11 +290,11 @@ Share the official website on external displays:
 - **Refresh** - Reload the current page
 - **Close** - Exit website presentation mode
 
-## Advanced Features {#user-guide-advanced-features}
+## Te mau āravihi fa’a’ohipa {#user-guide-advanced-features}
 
-### Multiple Congregations {#user-guide-multiple-congregations}
+### Te mau ’āmuira’a e rave rahi {#user-guide-multiple-congregations}
 
-Manage multiple congregations or groups:
+Te fa’aterera’a i te mau ’āmuira’a ’aore rā te mau pŭpŭ e rave rahi:
 
 1. **Create Profiles** - Set up separate profiles for different congregations
 2. **Switch Profiles** - Use the congregation selector to switch between profiles
