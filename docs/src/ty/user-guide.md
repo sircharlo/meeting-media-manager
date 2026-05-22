@@ -269,26 +269,26 @@ Te tapea-mai-ra’a i te mau rīti’o o te mau tuha’a Bibilia:
 
 Te fa’anahora’a i te mau rāve’a ha’amāramaramara’a i roto i te mau pu’e parau fa’anahohia:
 
-1. **Enable Auto-Export** - Turn on media export in settings
-2. **Select Export Folder** - Choose where to save exported files
-3. **Automatic Organization** - Files are organized by date and section
-4. **Format Options** - Convert files to MP4 for better compatibility
+1. Te ha’amara’a i te fa’anahora’a i te mau rāve’a ha’amāramaramara’a - ’A ha’amara i te fa’anahora’a i te mau rāve’a ha’amāramaramara’a i roto i te mau fa’anahora’a
+2. Te mā’itira’a i te pu’e parau nō te fa’anahora’a - ’A mā’iti i te vāhi e vaiiho ai i te mau rīti’o i fa’anahohia
+3. Te fa’anahora’a ’a’ano - E fa’anahohia te mau rīti’o ia au i te mahana ’e te tuha’a
+4. Te mau mā’itira’a nō te hōho’a - ’A taui i te mau rīti’o ’ei MP4 nō te au maita’i a’e
 
-## Website Presentation {#website-presentation}
+## Te fa’a’itera’a i te ’Itenēreta {#website-presentation}
 
-### Presenting the Official Website {#presenting-the-website}
+### Te fa’a’itera’a i te ’Itenēreta ’Ohipa {#presenting-the-website}
 
-Share the official website on external displays:
+Te tu’ura’a i te ’Itenēreta ’Ohipa i ni’a i te mau matāmata-rāve’a i rapae’au:
 
-1. **Open Website Mode** - Click the website presentation button
-2. **External Display** - The website opens in a new window
-3. **Navigation** - Use the browser controls to navigate
+1. Te ha’amara’a i te huru ’Itenēreta - ’A pa’i i te pitopito nō te fa’a’itera’a i te ’Itenēreta
+2. Te matāmata-rāve’a i rapae’au - E matara te ’Itenēreta i roto i te hō’ē ha’amāramarama ’āpī
+3. Te terera’a - ’A fa’a’ohipa i te mau rāve’a fa’atere nō te terera’a i roto i te ’Itenēreta
 
-### Website Controls {#website-controls}
+### Te mau rāve’a fa’atere nō te ’Itenēreta {#website-controls}
 
-- **Navigation** - Standard browser navigation controls
-- **Refresh** - Reload the current page
-- **Close** - Exit website presentation mode
+- Te terera’a - Te mau rāve’a fa’atere matauhia nō te roro-’Itenēreta
+- Te fa’ahou-ra’a - ’A fa’atahe fa’ahou i te api e vai nei
+- Te tapira’a - ’A ha’aputu i te huru fa’a’itera’a ’Itenēreta
 
 ## Te mau āravihi fa’a’ohipa {#user-guide-advanced-features}
 
@@ -296,56 +296,56 @@ Share the official website on external displays:
 
 Te fa’aterera’a i te mau ’āmuira’a ’aore rā te mau pŭpŭ e rave rahi:
 
-1. **Create Profiles** - Set up separate profiles for different congregations
-2. **Switch Profiles** - Use the congregation selector to switch between profiles
-3. **Separate Settings** - Each profile has its own settings and media
-4. **Shared Resources** - Media files are shared between profiles whenever possible
+1. Te hāmanira’a i te mau ’itera’a - ’A ha’amau i te mau ’itera’a ta’a ’ē nō te mau ’āmuira’a ta’a ’ē
+2. Te tauira’a i te mau ’itera’a - ’A fa’a’ohipa i te mā’itira’a ’āmuira’a nō te taui i rotopū i te mau ’itera’a
+3. Te mau fa’anahora’a ta’a ’ē - E tōna iho mau fa’anahora’a ’e te mau mātēria i te hō’ē atu ’e te hō’ē atu ’itera’a
+4. Te mau mātēria fa’a’ohipa-’āmui-hia - E fa’a’ohipa-’āmui-hia te mau rīti’o mātēria i rotopū i te mau ’itera’a i te mau taime ato’a e nehenehe ai
 
-### Keyboard Shortcuts {#keyboard-shortcuts-guide}
+### Te mau rāve’a pāpa’i-’āpee {#keyboard-shortcuts-guide}
 
-Configure custom keyboard shortcuts for efficient operation:
+Te fa’anahora’a i te mau rāve’a pāpa’i-’āpee ta’a ’ē nō te ’ohipa vitiviti:
 
-1. **Enable Shortcuts** - Turn on keyboard shortcuts in settings
-2. **Configure Shortcuts** - Set up shortcuts for common actions
-3. **Practice** - Learn your shortcuts for faster operation
-4. **Customize** - Adjust shortcuts to match your preferences
+1. Te ha’amāura’a i te mau rāve’a pāpa’i-’āpee - ’A tu’u i te mau rāve’a pāpa’i-’āpee i roto i te mau fa’anahora’a
+2. Te fa’anahora’a i te mau rāve’a pāpa’i-’āpee - ’A ha’amau i te mau rāve’a pāpa’i-’āpee nō te mau ’ohipa matauhia
+3. Te fa’a’ohipara’a - ’A ha’api’i i tā ’oe mau rāve’a pāpa’i-’āpee nō te ’ohipa vitiviti a’e
+4. Te fa’atano-ra’a - ’A fa’atano i te mau rāve’a pāpa’i-’āpee ia au i tā ’oe i hina’aro
 
-## Troubleshooting {#troubleshooting-guide}
+## Te mā’imira’a i te mau fifi {#troubleshooting-guide}
 
-### Common Issues {#common-issues}
+### Te mau fifi matauhia {#common-issues}
 
-#### Media Not Downloading {#user-guide-media-not-downloading}
+#### Te mātēria tei ’ore i tarai-hia {#user-guide-media-not-downloading}
 
-- Check your meeting schedule settings
-- Verify internet connection
-- Check if media is available in your selected language
+- ’A hi’o i tā ’oe mau fa’anahora’a nō te mau putuputura'a
+- ’A ha’apāpū i te ta’amura’a natirara
+- ’A hi’o mai te mea e vai noa ra te mātēria i roto i te reo tā ’oe i mā’iti
 
-#### OBS Integration Not Working {#user-guide-obs-not-working}
+#### ’Aita te ta’amura’a OBS i te ’ohipa {#user-guide-obs-not-working}
 
-- Verify OBS WebSocket plugin is installed
-- Check port and password settings
-- Ensure OBS is running
+- ’A ha’apāpū ē, ’ua tāutuhia te plugin OBS WebSocket
+- ’A hi’o i te mau fa’anahora’a nō te port e te parau huna
+- ’A ha’apāpū ē, ’ua rave te OBS
 
-#### Audio Issues in Zoom/OBS {#audio-issues}
+#### Te mau fifi nō te ta’ira’a i roto i te Zoom/OBS {#audio-issues}
 
-- **No audio in Zoom**: Enable Original Audio in Zoom settings and before each meeting
-- **Poor audio quality**: Check the three Original Audio checkboxes (first two enabled, third disabled)
-- **Audio not working after restart**: Original Audio must be re-enabled for each new Zoom session
-- **Alternative solution**: Use "Share Computer Sound" option in Zoom screen sharing
+- ’Aita e ta’i i roto i te Zoom: ’A fa’a’ohipa i te Original Audio (Ta’i tumu) i roto i te mau fa’anahora’a nō te Zoom e nā mua atu i te mau putuputura'a ato’a
+- Te ta’i maita’i ’ore: ’A hi’o i te toru o te ’api-hōho’a nō te Original Audio (e piti na mua ’a tu’uhia, te toru ’a fa’aore)
+- Te ta’i tei ’ore i te ’ohipa i muri a’e i te fa’ahoura’a: ’A fa’a’ohipa fa’ahou i te Original Audio (Ta’i tumu) nō te mau putuputura'a Zoom ’āpī ato’a
+- Te ta’i tei ’ore i te ’ohipa i muri a’e i te fa’ahoura’a: ’A fa’a’ohipa fa’ahou i te Original Audio (Ta’i tumu) nō te mau putuputura'a Zoom ’āpī ato’a
 
-#### Performance Issues {#user-guide-performance-issues}
+#### Te mau fifi nō te fa’aotira’a {#user-guide-performance-issues}
 
-- Enable extra cache
-- Reduce maximum resolution
-- Clear old cached files
-- Check available disk space
+- ’A fa’ati’a i te cache ta’a ’ē
+- ’A fa’aiti i te faito teitei o te hōho’a
+- ’A tāmā i te mau cache tahito
+- ’A hi’o i te vāhi tei toe i roto i te disk
 
-#### Language Issues {#user-guide-language-issues}
+#### Te mau fifi nō te reo {#user-guide-language-issues}
 
-- Check media language setting
-- Ensure language is available on JW.org
-- Try a fallback language
-- Verify interface language setting
+- ’A hi’o i te fa’anahora’a reo nō te mau ripene
+- ’A ha’apāpū ē, te vai ra te reo i roto i te pae nō te JW.org
+- ’A tamata i te tahi atu reo
+- ’A hi’o i te fa’anahora’a reo nō te interface
 
 ### Getting Help {#getting-help}
 
