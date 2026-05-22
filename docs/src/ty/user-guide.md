@@ -214,60 +214,60 @@ Maitira’a atu: ’A feruri i te fa’a’ohipara’a i te tuitui-ra’a (integ
 Te mau fifi matauhia:
 
 - ’Aita e ta’o i roto i te Zoom: ’A hi’o ē, ’ua ha’amā’itihia ’e ’ua fa’anahohia maita’i te "Original Audio"
-- **Poor audio quality**: Verify the three Original Audio checkboxes are set correctly
-- **Audio not working after Zoom restart**: Original Audio settings must be re-enabled for each new Zoom session
+- Te mau fa’aro’o-ra’a ta’o ’ino: ’A hi’o ē, e toru ’āvae-tāpa’o nō te "Original Audio" i te fa’anahora’a tano
+- ’Aita te ta’o e fa’a’ohipa ra i muri a’e i te fa’a’amura’a-fa’ahou-ra’a i te Zoom: E mea ti’a ’ia ha’amā’iti-fa’ahou-hia te mau fa’anahora’a "Original Audio" nō te mau ’ārerera’a (sessions) Zoom ato’a tei ha’amata-fa’ahou-hia
 
-**Best Practices:**
+Te mau raveraa maita’i a’e:
 
-- Test audio configuration and sharing before meetings
-- Create a checklist for audio setup
-- Consider using "Share Computer Sound" as a backup option
-- **Consider using Zoom integration instead of OBS Studio** for simpler audio handling
-- Ensure all AV operators are familiar with these settings
+- ’A hāmani i te hō’ē hi’opo’ara’a nō te fa’anahora’a ta’o ’e te tuha’a-ra’a na mua a’e i te mau putuputu-ra’a
+- ’A hāmani i te hō’ē tāpura hi’opo’ara’a nō te fa’anahora’a ta’o
+- ’A mana’o e fa’a’ohipa i te "Partager son" ’ei rāve’a tauturu
+- ’A mana’o e fa’a’ohipa i te tu’ura’a i roto i te Zoom (Zoom integration) na ni’a a’e i te OBS Studio nō te fa’a’ohipa-’ōhie-ra’a i te ta’o
+- ’A ha’apāpū ē, ’ua matau maita’i te mau fa’atere AV ato’a i teie mau fa’anahora’a
 
-## Media Import and Management {#media-import}
+## Te ha’amaita’ira’a ’e te fa’aterera’a i te mau rāve’a ha’amāramaramara’a {#media-import}
 
-### Importing Custom Media {#importing-custom-media}
+### Te tapera’a mai i te mau rāve’a ha’amāramaramara’a i hāmanihia {#importing-custom-media}
 
-Add your own media files to M³:
+’A tāmā’iti i tā ’oe iho mau rāve’a ha’amāramaramara’a i roto i te M³:
 
-1. **File Import** - Use the import button to add videos, images, or audio files
-2. **Drag and Drop** - Drag files directly into M³
-3. **Folder Monitoring** - Set up a watched folder for automatic imports
-4. **JWPUB Files and Playlists** - Import publications and playlists
-5. **Public Talk Media (S-34 / S-34mp)** - Import public talk media using S‑34 or S‑34mp JWPUB files
+1. Te tapera’a mai i te mau parau - ’A fa’a’ohipa i te tāpa’o "import" nō te tāmā’iti i te mau video, te mau hoho’a, ’aore rā te mau parau ta’o
+2. Te tu’u-tāmata-ra’a - ’A tu’u hō’ē noa i te mau parau na ni’a i te M³
+3. Te hi’opo’ara’a i te mau fātura - ’A ha’amau i te hō’ē fātura hi’opo’ahia nō te tāpe’a-’ōhie-ra’a i te mau parau
+4. Te mau parau JWPUB ’e te mau tāpura pehe - ’A tapea mai i te mau parau nene’i ’e te mau tāpura pehe
+5. Te mau rāve’a ha’amāramaramara’a nō te ’ōrerora’a parau (S-34 / S-34mp) - ’A tapea mai i te mau rāve’a nō te ’ōrerora’a parau nā roto i te mau parau JWPUB S-34 ’aore rā S-34mp
 
-### Managing Imported Media {#managing-imported-media}
+### Te fa’aterera’a i te mau rāve’a ha’amāramaramara’a i tapeahia mai {#managing-imported-media}
 
-- **Organize by Date** - Assign imported media to specific dates
-- **Custom Sections** - Create custom sections for organization
-- **Edit Properties** - Modify titles, descriptions, and timing
-- **Remove Media** - Delete unwanted media items
+- Te fa’anahora’a i te mahana - ’A tu’u i te mau rāve’a ha’amāramaramara’a i tapeahia mai i ni’a i te mau mahana i fa’ata’ahia
+- Te mau tuha’a i fa’ata’ahia - ’A hāmani i te mau tuha’a i fa’ata’ahia nō te fa’anahora’a
+- Te fa’a-taui-ra’a i te mau huru - ’A taui i te mau i’oa parau, te mau fa’ata’ara’a, ’e te taime
+- Te tātā’ira’a i te mau rāve’a ha’amāramaramara’a - ’A tātā’i i te mau rāve’a ha’amāramaramara’a ’aita e hina’arohia
 
-### Audio Bible Import {#audio-bible-import}
+### Te tapea-mai-ra’a i te Bibilia na roto i te reo {#audio-bible-import}
 
-Import audio recordings of Bible verses:
+Te tapea-mai-ra’a i te mau rīti’o o te mau tuha’a Bibilia:
 
-1. Click the "Audio Bible" button
-2. Select the Bible book and chapter
+1. ’A pa’i i ni’a i te tu’ura’a "Bible Audio"
+2. ’A mā’iti i te buka Bibilia ’e te pene
 3. E mā’iti i te mau ’īrava ta’a ’ē ’aore rā te mau ’īrava tātā’ira’a
-4. Download the audio files
-5. Use them
+4. ’A huti mai i te mau rīti’o oro’a
+5. ’A fa’a’ohipa i te reira
 
-## Folder Monitoring and Export {#user-guide-folder-monitoring}
+## Te hi’opo’a-ra’a i te pu’e parau ’e te fa’anahora’a i te reira {#user-guide-folder-monitoring}
 
-### Setting Up Folder Monitoring {#folder-monitoring-setup}
+### Te ha’amau-ra’a i te hi’opo’a-ra’a i te pu’e parau {#folder-monitoring-setup}
 
-Monitor a folder for new media files:
+’A hi’opo’a i te hō’ē pu’e parau nō te mau rīti’o peu ’āpī:
 
-1. **Enable Folder Watcher** - Turn on folder monitoring in settings
-2. **Select Folder** - Choose the folder to monitor
-3. **Automatic Import** - New files are automatically added to M³
-4. **Organization** - Files are organized by date based on folder structure
+1. Te ha’amara’a i te hi’opo’a-ra’a i te pu’e parau - ’A ha’amara i te hi’opo’a-ra’a i te pu’e parau i roto i te mau fa’anahora’a
+2. Te mā’itira’a i te pu’e parau - ’A mā’iti i te pu’e parau ’ia hi’opo’ahia
+3. Te tapea-mai-ra’a ’a’ano - E tu’uhia te mau rīti’o ’āpī i roto i te M³ ma te hō’ē noa ta’i-ta’i-ra’a
+4. Te fa’anahora’a - E fa’anahohia te mau rīti’o ia au i te mahana, ia au i te huru o te pu’e parau
 
-### Media Export {#user-guide-media-export}
+### Te fa’anahora’a i te mau rāve’a ha’amāramaramara’a {#user-guide-media-export}
 
-Automatically export media to organized folders:
+Te fa’anahora’a i te mau rāve’a ha’amāramaramara’a i roto i te mau pu’e parau fa’anahohia:
 
 1. **Enable Auto-Export** - Turn on media export in settings
 2. **Select Export Folder** - Choose where to save exported files
