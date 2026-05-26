@@ -41,7 +41,7 @@
     "@numairawan/video-duration": "^1.0.0",
     "@opentelemetry/api-logs": "^0.218.0",
     "@quasar/extras": "^1.18.0",
-    "@sentry/core": "^10.53.1",
+    "@sentry/core": "^10.54.0",
     "@sentry/electron": "^7.13.0",
     "@sentry/vue": "^10.49.0",
     "@vueuse/core": "^14.2.1",
