@@ -3570,7 +3570,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/icongenie@npm:^5.0.0":
+"@quasar/icongenie@npm:5.0.0":
   version: 5.0.0
   resolution: "@quasar/icongenie@npm:5.0.0"
   dependencies:
@@ -3595,6 +3595,34 @@ __metadata:
   bin:
     icongenie: ./bin/icongenie.js
   checksum: 10c0/b24de243dc8c5d1bee431b373d20153585567c7478262ed8b3aaf2026d6e9c614cfdb344fcf514c76a15cd7f570019355fdc1e08cc1fa78094fc85b52bd2f103
+  languageName: node
+  linkType: hard
+
+"@quasar/icongenie@patch:@quasar/icongenie@npm%3A5.0.0#~/.yarn/patches/@quasar-icongenie-npm-5.0.0-c2ce1cf885.patch":
+  version: 5.0.0
+  resolution: "@quasar/icongenie@patch:@quasar/icongenie@npm%3A5.0.0#~/.yarn/patches/@quasar-icongenie-npm-5.0.0-c2ce1cf885.patch::version=5.0.0&hash=af89a4"
+  dependencies:
+    "@quasar/art": "npm:^1.0.0"
+    ci-info: "npm:^4.4.0"
+    cross-spawn: "npm:^7.0.6"
+    elementtree: "npm:^0.1.7"
+    fs-extra: "npm:^11.2.0"
+    imagemin: "npm:^9.0.1"
+    imagemin-pngquant: "npm:^10.0.0"
+    is-png: "npm:^3.0.1"
+    joi: "npm:^18.2.1"
+    kolorist: "npm:^1.8.0"
+    png2icons: "npm:^2.0.1"
+    potrace: "npm:^2.1.5"
+    read-chunk: "npm:^5.0.0"
+    sharp: "npm:^0.34.5"
+    svgo: "npm:^4.0.1"
+    tinyglobby: "npm:^0.2.10"
+    untildify: "npm:^6.0.0"
+    update-notifier: "npm:^7.0.0"
+  bin:
+    icongenie: ./bin/icongenie.js
+  checksum: 10c0/1050b403d5152d1ed1a69feaed6df6f4bd321896123e99d1da509f15199dbce028ee6c95b2b773bfaa59f11e2f4f037bd54256984fef9e445d4785130d303ac3
   languageName: node
   linkType: hard
 
@@ -11921,7 +11949,7 @@ __metadata:
     "@pinia/testing": "npm:^1.0.3"
     "@quasar/app-vite": "npm:^2.6.1"
     "@quasar/extras": "npm:^1.18.0"
-    "@quasar/icongenie": "npm:^5.0.0"
+    "@quasar/icongenie": "patch:@quasar/icongenie@npm%3A5.0.0#~/.yarn/patches/@quasar-icongenie-npm-5.0.0-c2ce1cf885.patch"
     "@quasar/quasar-app-extension-testing-unit-vitest": "npm:1.2.3"
     "@quasar/vite-plugin": "npm:^1.12.0"
     "@rollup/plugin-inject": "npm:^5.0.5"
