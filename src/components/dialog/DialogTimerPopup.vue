@@ -9,7 +9,9 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <div class="action-popup action-popup--scroll-layout q-py-md">
+    <div
+      class="action-popup action-popup--scroll-layout action-popup--expanded q-py-md"
+    >
       <div class="card-title row q-px-md q-mb-none">
         {{ t('timer') }}
       </div>
