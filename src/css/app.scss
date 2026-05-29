@@ -559,6 +559,27 @@ a {
   max-height: 600px;
 }
 
+.action-popup--scroll-layout {
+  display: flex;
+  flex-flow: column;
+  overflow: hidden;
+}
+
+.action-popup--expanded {
+  max-height: min(600px, max(250px, 50vh));
+}
+
+.action-popup__scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.action-popup__footer {
+  flex: 0 0 auto;
+}
+
 .media-tag {
   min-width: 80px;
   border-radius: 6px;

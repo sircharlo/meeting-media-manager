@@ -9,474 +9,481 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <div class="flex action-popup q-py-md" style="flex-flow: column">
+    <div class="action-popup action-popup--scroll-layout q-py-md">
       <div class="card-title row q-px-md q-mb-none">
         {{ t('timer') }}
       </div>
 
-      <!-- Window Type Selection -->
-      <template v-if="showWindowTypeControls">
-        <div class="card-section-title row q-px-md">
-          {{ t('window-type') }}
-        </div>
-        <div class="row q-px-md q-pb-sm q-col-gutter-sm">
-          <div class="col-6">
-            <q-btn
-              class="full-width full-height"
-              color="primary"
-              :disable="!canUseFullscreenTimer"
-              :outline="timerPreferences.preferWindowed"
-              unelevated
-              @click="setTimerFullscreenMode()"
-            >
-              <q-icon class="q-mr-sm" name="mmm-fullscreen" size="xs" />
-              {{ t('full-screen') }}
-            </q-btn>
+      <div class="action-popup__scroll">
+        <!-- Window Type Selection -->
+        <template v-if="showWindowTypeControls">
+          <div class="card-section-title row q-px-md">
+            {{ t('window-type') }}
           </div>
-          <div class="col-6">
-            <q-btn
-              class="full-width full-height"
-              color="primary"
-              :outline="!timerPreferences.preferWindowed"
-              :text-color="timerPreferences.preferWindowed ? '' : 'primary'"
-              unelevated
-              @click="setTimerWindowedMode()"
-            >
-              <q-icon class="q-mr-sm" name="mmm-window" size="xs" />
-              {{ t('windowed') }}
-            </q-btn>
-          </div>
-        </div>
-        <q-separator class="bg-accent-200 q-mb-md" />
-      </template>
-
-      <template
-        v-if="!timerPreferences.preferWindowed && showFullscreenScreenPicker"
-      >
-        <q-separator class="bg-accent-200 q-mb-md" />
-        <div class="card-section-title row q-px-md">
-          {{ t('display') }}
-        </div>
-        <div class="q-px-md q-pb-sm">
-          <div
-            class="display-map"
-            :style="{
-              position: 'relative',
-              width: '100%',
-              aspectRatio: virtualBounds.width + ' / ' + virtualBounds.height,
-              overflow: 'hidden',
-              '--screen-gap': '1%',
-            }"
-          >
-            <template v-for="(screen, index) in screenList" :key="screen.id">
+          <div class="row q-px-md q-pb-sm q-col-gutter-sm">
+            <div class="col-6">
               <q-btn
-                class="screen-rect column items-center justify-center"
-                :class="{
-                  'border-dashed': screen.mainWindow,
-                }"
-                :color="
-                  !screen.mainWindow && !screen.mediaWindow
-                    ? 'primary'
-                    : 'secondary'
-                "
-                :disable="screen.mainWindow || screen.mediaWindow"
-                :outline="!isTimerScreenSelected(index, screen)"
-                :style="{
-                  position: 'absolute',
-                  left:
-                    'calc(' +
-                    (screenRects[index]?.left ?? 0) +
-                    '% + var(--screen-gap))',
-                  top:
-                    'calc(' +
-                    (screenRects[index]?.top ?? 0) +
-                    '% + var(--screen-gap))',
-                  width:
-                    'calc(' +
-                    (screenRects[index]?.width ?? 0) +
-                    '% - (var(--screen-gap) * 2))',
-                  height:
-                    'calc(' +
-                    (screenRects[index]?.height ?? 0) +
-                    '% - (var(--screen-gap) * 2))',
-                  borderRadius: '6px',
-                }"
+                class="full-width full-height"
+                color="primary"
+                :disable="!canUseFullscreenTimer"
+                :outline="timerPreferences.preferWindowed"
                 unelevated
-                @click="
-                  () => {
-                    if (screen.mainWindow || screen.mediaWindow) return;
-                    timerPreferences.preferredScreenNumber = index;
-                    moveTimerWindow(index, !timerPreferences.preferWindowed);
-                  }
-                "
+                @click="setTimerFullscreenMode()"
               >
-                <q-tooltip
-                  v-if="screen.mainWindow || screen.mediaWindow"
-                  :delay="1000"
-                >
-                  {{
-                    screen.mainWindow
-                      ? t('main-window-is-on-this-screen')
-                      : t('media-display') + ' (' + t('projecting') + ')'
-                  }}
-                </q-tooltip>
-                <q-icon
-                  v-if="screen.mainWindow"
-                  class="absolute-top-left q-ma-xs"
-                  name="mmm-logo"
-                  size="xs"
-                />
-                <q-icon
-                  v-if="screen.mediaWindow"
-                  class="absolute-top-right q-ma-xs"
-                  name="mmm-media-display-active"
-                  size="xs"
-                />
-                <q-icon
-                  v-if="!screen.mainWindow && !screen.mediaWindow"
-                  class="q-mr-sm"
-                  name="mmm-timer"
-                  size="xs"
-                />
-                {{
-                  !screen.mainWindow && !screen.mediaWindow
-                    ? t('display') + ' ' + (index + 1)
-                    : ''
-                }}
+                <q-icon class="q-mr-sm" name="mmm-fullscreen" size="xs" />
+                {{ t('full-screen') }}
               </q-btn>
-            </template>
+            </div>
+            <div class="col-6">
+              <q-btn
+                class="full-width full-height"
+                color="primary"
+                :outline="!timerPreferences.preferWindowed"
+                :text-color="timerPreferences.preferWindowed ? '' : 'primary'"
+                unelevated
+                @click="setTimerWindowedMode()"
+              >
+                <q-icon class="q-mr-sm" name="mmm-window" size="xs" />
+                {{ t('windowed') }}
+              </q-btn>
+            </div>
           </div>
-        </div>
+          <q-separator class="bg-accent-200 q-mb-md" />
+        </template>
+
+        <template
+          v-if="!timerPreferences.preferWindowed && showFullscreenScreenPicker"
+        >
+          <q-separator class="bg-accent-200 q-mb-md" />
+          <div class="card-section-title row q-px-md">
+            {{ t('display') }}
+          </div>
+          <div class="q-px-md q-pb-sm">
+            <div
+              class="display-map"
+              :style="{
+                position: 'relative',
+                width: '100%',
+                aspectRatio: virtualBounds.width + ' / ' + virtualBounds.height,
+                overflow: 'hidden',
+                '--screen-gap': '1%',
+              }"
+            >
+              <template v-for="(screen, index) in screenList" :key="screen.id">
+                <q-btn
+                  class="screen-rect column items-center justify-center"
+                  :class="{
+                    'border-dashed': screen.mainWindow,
+                  }"
+                  :color="
+                    !screen.mainWindow && !screen.mediaWindow
+                      ? 'primary'
+                      : 'secondary'
+                  "
+                  :disable="screen.mainWindow || screen.mediaWindow"
+                  :outline="!isTimerScreenSelected(index, screen)"
+                  :style="{
+                    position: 'absolute',
+                    left:
+                      'calc(' +
+                      (screenRects[index]?.left ?? 0) +
+                      '% + var(--screen-gap))',
+                    top:
+                      'calc(' +
+                      (screenRects[index]?.top ?? 0) +
+                      '% + var(--screen-gap))',
+                    width:
+                      'calc(' +
+                      (screenRects[index]?.width ?? 0) +
+                      '% - (var(--screen-gap) * 2))',
+                    height:
+                      'calc(' +
+                      (screenRects[index]?.height ?? 0) +
+                      '% - (var(--screen-gap) * 2))',
+                    borderRadius: '6px',
+                  }"
+                  unelevated
+                  @click="
+                    () => {
+                      if (screen.mainWindow || screen.mediaWindow) return;
+                      timerPreferences.preferredScreenNumber = index;
+                      moveTimerWindow(index, !timerPreferences.preferWindowed);
+                    }
+                  "
+                >
+                  <q-tooltip
+                    v-if="screen.mainWindow || screen.mediaWindow"
+                    :delay="1000"
+                  >
+                    {{
+                      screen.mainWindow
+                        ? t('main-window-is-on-this-screen')
+                        : t('media-display') + ' (' + t('projecting') + ')'
+                    }}
+                  </q-tooltip>
+                  <q-icon
+                    v-if="screen.mainWindow"
+                    class="absolute-top-left q-ma-xs"
+                    name="mmm-logo"
+                    size="xs"
+                  />
+                  <q-icon
+                    v-if="screen.mediaWindow"
+                    class="absolute-top-right q-ma-xs"
+                    name="mmm-media-display-active"
+                    size="xs"
+                  />
+                  <q-icon
+                    v-if="!screen.mainWindow && !screen.mediaWindow"
+                    class="q-mr-sm"
+                    name="mmm-timer"
+                    size="xs"
+                  />
+                  {{
+                    !screen.mainWindow && !screen.mediaWindow
+                      ? t('display') + ' ' + (index + 1)
+                      : ''
+                  }}
+                </q-btn>
+              </template>
+            </div>
+          </div>
+          <q-separator class="bg-accent-200 q-mb-md" />
+        </template>
+
         <q-separator class="bg-accent-200 q-mb-md" />
-      </template>
 
-      <q-separator class="bg-accent-200 q-mb-md" />
-
-      <!-- Meeting Part Selection (only on meeting days) -->
-      <template v-if="isMeetingDay(selectedDateObject?.date)">
-        <template v-if="isMwMeetingDay(selectedDateObject?.date)">
-          <template v-if="timerMode === 'countdown'">
-            <q-separator class="bg-accent-200 q-mb-md" />
-            <div class="card-section-title row q-px-md">
-              {{ t('ayfm') }}
-            </div>
-            <div class="row q-px-md q-py-sm">
-              {{ t('number-of-ayfm-parts') }}
-            </div>
-            <div class="row q-px-md q-pb-sm">
-              <q-btn-toggle
-                v-model="ayfmPartsCount"
-                class="full-width"
-                :disable="timerRunning"
-                :options="[
-                  { label: '1', value: 1 },
-                  { label: '2', value: 2 },
-                  { label: '3', value: 3 },
-                  { label: '4', value: 4 },
-                  { label: '5', value: 5 },
-                ]"
-                spread
-              />
-            </div>
-            <q-separator class="bg-accent-200 q-mb-md" />
-            <div class="card-section-title row q-px-md">
-              {{ t('lac') }}
-            </div>
-            <div class="row q-px-md q-py-sm">
-              {{ t('number-of-lac-parts') }}
-            </div>
-            <div class="row q-px-md q-pb-sm">
-              <q-btn-toggle
-                v-model="lacPartsCount"
-                class="full-width"
-                :disable="timerRunning"
-                :options="[
-                  { label: '1', value: 1 },
-                  { label: '2', value: 2 },
-                  { label: '3', value: 3 },
-                ]"
-                spread
-              />
-            </div>
-            <template v-if="!isCoWeek(selectedDateObject?.date)">
+        <!-- Meeting Part Selection (only on meeting days) -->
+        <template v-if="isMeetingDay(selectedDateObject?.date)">
+          <template v-if="isMwMeetingDay(selectedDateObject?.date)">
+            <template v-if="timerMode === 'countdown'">
+              <q-separator class="bg-accent-200 q-mb-md" />
+              <div class="card-section-title row q-px-md">
+                {{ t('ayfm') }}
+              </div>
               <div class="row q-px-md q-py-sm">
-                {{ t('cbs-custom-end-time') }}
+                {{ t('number-of-ayfm-parts') }}
               </div>
               <div class="row q-px-md q-pb-sm">
-                <q-input
-                  v-model="cbsCustomEndTime"
+                <q-btn-toggle
+                  v-model="ayfmPartsCount"
                   class="full-width"
                   :disable="timerRunning"
-                  :label="t('end-time')"
-                  mask="##:##"
-                  outlined
-                  :rules="cbsEndTimeRules"
+                  :options="[
+                    { label: '1', value: 1 },
+                    { label: '2', value: 2 },
+                    { label: '3', value: 3 },
+                    { label: '4', value: 4 },
+                    { label: '5', value: 5 },
+                  ]"
+                  spread
                 />
+              </div>
+              <q-separator class="bg-accent-200 q-mb-md" />
+              <div class="card-section-title row q-px-md">
+                {{ t('lac') }}
+              </div>
+              <div class="row q-px-md q-py-sm">
+                {{ t('number-of-lac-parts') }}
+              </div>
+              <div class="row q-px-md q-pb-sm">
+                <q-btn-toggle
+                  v-model="lacPartsCount"
+                  class="full-width"
+                  :disable="timerRunning"
+                  :options="[
+                    { label: '1', value: 1 },
+                    { label: '2', value: 2 },
+                    { label: '3', value: 3 },
+                  ]"
+                  spread
+                />
+              </div>
+              <template v-if="!isCoWeek(selectedDateObject?.date)">
+                <div class="row q-px-md q-py-sm">
+                  {{ t('cbs-custom-end-time') }}
+                </div>
+                <div class="row q-px-md q-pb-sm">
+                  <q-input
+                    v-model="cbsCustomEndTime"
+                    class="full-width"
+                    :disable="timerRunning"
+                    :label="t('end-time')"
+                    mask="##:##"
+                    outlined
+                    :rules="cbsEndTimeRules"
+                  />
+                </div>
+              </template>
+            </template>
+          </template>
+          <template
+            v-else-if="
+              timerMode === 'countdown' &&
+              isWeMeetingDay(selectedDateObject?.date)
+            "
+          >
+            <div class="row q-px-md q-py-sm">
+              {{ t('wt-custom-end-time') }}
+            </div>
+            <div class="row q-px-md q-pb-sm">
+              <q-input
+                v-model="wtCustomEndTime"
+                class="full-width"
+                :disable="timerRunning"
+                filled
+                :label="t('end-time')"
+                mask="##:##"
+                :rules="wtEndTimeRules"
+              />
+            </div>
+          </template>
+        </template>
+        <template v-else>
+          <q-separator class="bg-accent-200 q-mb-md" />
+          <div class="card-section-title row q-px-md">
+            {{ t('custom-timer-parts') }}
+          </div>
+          <div class="column q-px-md q-pb-sm q-gutter-sm">
+            <div
+              v-for="(part, index) in customTimerParts"
+              :key="part.id"
+              class="row items-center q-col-gutter-sm"
+            >
+              <div class="col">
+                <q-input
+                  v-model="part.label"
+                  dense
+                  :disable="timerRunning"
+                  filled
+                  :label="t('meeting-part')"
+                />
+              </div>
+              <div class="col-4">
+                <q-input
+                  v-model.number="part.duration"
+                  dense
+                  :disable="timerRunning"
+                  filled
+                  :label="t('duration-minutes')"
+                  min="1"
+                  type="number"
+                />
+              </div>
+              <div class="col-auto">
+                <div class="row q-gutter-xs">
+                  <q-btn
+                    dense
+                    :disable="timerRunning || index === 0"
+                    flat
+                    icon="mmm-up"
+                    round
+                    @click="moveCustomTimerPart(index, index - 1)"
+                  >
+                    <q-tooltip>{{ t('move-up') }}</q-tooltip>
+                  </q-btn>
+                  <q-btn
+                    dense
+                    :disable="
+                      timerRunning || index === customTimerParts.length - 1
+                    "
+                    flat
+                    icon="mmm-down"
+                    round
+                    @click="moveCustomTimerPart(index, index + 1)"
+                  >
+                    <q-tooltip>{{ t('move-down') }}</q-tooltip>
+                  </q-btn>
+                  <q-btn
+                    color="negative"
+                    dense
+                    :disable="timerRunning || customTimerParts.length <= 1"
+                    flat
+                    icon="mmm-delete"
+                    round
+                    @click="removeCustomTimerPart(part.id)"
+                  >
+                    <q-tooltip>{{ t('delete') }}</q-tooltip>
+                  </q-btn>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <q-btn
+                color="primary"
+                :disable="timerRunning"
+                flat
+                icon="mmm-plus"
+                :label="t('add')"
+                @click="addCustomTimerPart"
+              />
+            </div>
+          </div>
+        </template>
+        <q-separator class="bg-accent-200 q-mb-md" />
+        <div class="card-section-title row q-px-md">
+          {{ t('meeting-part') }}
+        </div>
+        <div class="row q-px-md q-pb-sm">
+          <q-list class="full-width">
+            <template
+              v-for="(part, index) in meetingPartsOptions"
+              :key="part.value"
+            >
+              <q-item-label
+                v-if="
+                  part.section &&
+                  (index === 0 ||
+                    meetingPartsOptions[index - 1]?.section !== part.section)
+                "
+                class="q-pa-sm bg-accent-100 text-weight-bold text-uppercase text-caption"
+                header
+              >
+                {{ t(part.section) }}
+              </q-item-label>
+              <q-item
+                :class="{ 'text-warning': part.warning }"
+                clickable
+                @click="openEditDialog(part)"
+                @contextmenu.prevent="openEditDialog(part)"
+              >
+                <q-item-section avatar class="jw-icon text-h6">
+                  {{ part.icon }}
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{ part.label }}</q-item-label>
+                  <q-item-label caption>
+                    {{ getPartStatusText(part.value) }}
+                  </q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <div class="row q-gutter-xs">
+                    <q-btn
+                      v-if="
+                        (partTimings[part.value]?.startTime ||
+                          partTimings[part.value]?.endTime) &&
+                        !timerRunning
+                      "
+                      color="warning"
+                      dense
+                      icon="mmm-reset"
+                      outline
+                      size="sm"
+                      @click.stop="
+                        () => {
+                          partTimings[part.value] ??= {
+                            endTime: null,
+                            startTime: null,
+                          };
+                          partTimings[part.value]!.startTime = null;
+                          partTimings[part.value]!.endTime = null;
+                        }
+                      "
+                    >
+                    </q-btn>
+                    <q-btn
+                      v-if="
+                        !timerRunning && !partTimings[part.value]?.startTime
+                      "
+                      color="positive"
+                      dense
+                      icon="mmm-play"
+                      outline
+                      size="sm"
+                      @click.stop="selectPart(part.value)"
+                    >
+                      <q-tooltip>{{ t('start-timer') }}</q-tooltip>
+                    </q-btn>
+                    <q-btn
+                      v-if="currentPart === part.value && timerRunning"
+                      color="negative"
+                      dense
+                      icon="mmm-stop"
+                      size="sm"
+                      @click.stop="stopTimer()"
+                    >
+                      <q-tooltip>{{ t('stop-timer') }}</q-tooltip>
+                    </q-btn>
+                  </div>
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-list>
+        </div>
+
+        <!-- Timer Controls -->
+        <q-separator class="bg-accent-200 q-mb-md" />
+        <div class="card-section-title row q-px-md">
+          {{ t('timer-controls') }}
+        </div>
+
+        <div class="q-px-md q-pt-md">
+          <template v-if="!isMeetingDay(selectedDateObject?.date)">
+            <template v-if="!timerRunning">
+              <q-btn
+                class="full-width q-mb-sm"
+                color="primary"
+                unelevated
+                @click="startTimer()"
+              >
+                <q-icon class="q-mr-sm" name="play_arrow" />
+                {{ t('start') }}
+              </q-btn>
+            </template>
+            <template v-else>
+              <div class="row q-gutter-sm q-mb-sm">
+                <q-btn
+                  class="col"
+                  :color="timerPaused ? 'positive' : 'warning'"
+                  unelevated
+                  @click="timerPaused ? resumeTimer() : pauseTimer()"
+                >
+                  <q-icon
+                    class="q-mr-sm"
+                    :name="timerPaused ? 'play_arrow' : 'pause'"
+                  />
+                  {{ timerPaused ? t('resume') : t('pause') }}
+                </q-btn>
+                <q-btn
+                  class="col"
+                  color="negative"
+                  unelevated
+                  @click="stopTimer()"
+                >
+                  <q-icon class="q-mr-sm" name="stop" />
+                  {{ t('stop') }}
+                </q-btn>
               </div>
             </template>
           </template>
-        </template>
-        <template
-          v-else-if="
-            timerMode === 'countdown' &&
-            isWeMeetingDay(selectedDateObject?.date)
-          "
-        >
-          <div class="row q-px-md q-py-sm">
-            {{ t('wt-custom-end-time') }}
-          </div>
-          <div class="row q-px-md q-pb-sm">
-            <q-input
-              v-model="wtCustomEndTime"
-              class="full-width"
-              :disable="timerRunning"
-              filled
-              :label="t('end-time')"
-              mask="##:##"
-              :rules="wtEndTimeRules"
-            />
-          </div>
-        </template>
-      </template>
-      <template v-else>
-        <q-separator class="bg-accent-200 q-mb-md" />
-        <div class="card-section-title row q-px-md">
-          {{ t('custom-timer-parts') }}
-        </div>
-        <div class="column q-px-md q-pb-sm q-gutter-sm">
-          <div
-            v-for="(part, index) in customTimerParts"
-            :key="part.id"
-            class="row items-center q-col-gutter-sm"
+          <q-btn
+            class="full-width q-mb-sm"
+            color="info"
+            unelevated
+            @click="exportPdfReport"
           >
-            <div class="col">
-              <q-input
-                v-model="part.label"
-                dense
-                :disable="timerRunning"
-                filled
-                :label="t('meeting-part')"
-              />
-            </div>
-            <div class="col-4">
-              <q-input
-                v-model.number="part.duration"
-                dense
-                :disable="timerRunning"
-                filled
-                :label="t('duration-minutes')"
-                min="1"
-                type="number"
-              />
-            </div>
-            <div class="col-auto">
-              <div class="row q-gutter-xs">
-                <q-btn
-                  dense
-                  :disable="timerRunning || index === 0"
-                  flat
-                  icon="mmm-up"
-                  round
-                  @click="moveCustomTimerPart(index, index - 1)"
-                >
-                  <q-tooltip>{{ t('move-up') }}</q-tooltip>
-                </q-btn>
-                <q-btn
-                  dense
-                  :disable="
-                    timerRunning || index === customTimerParts.length - 1
-                  "
-                  flat
-                  icon="mmm-down"
-                  round
-                  @click="moveCustomTimerPart(index, index + 1)"
-                >
-                  <q-tooltip>{{ t('move-down') }}</q-tooltip>
-                </q-btn>
-                <q-btn
-                  color="negative"
-                  dense
-                  :disable="timerRunning || customTimerParts.length <= 1"
-                  flat
-                  icon="mmm-delete"
-                  round
-                  @click="removeCustomTimerPart(part.id)"
-                >
-                  <q-tooltip>{{ t('delete') }}</q-tooltip>
-                </q-btn>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <q-btn
-              color="primary"
-              :disable="timerRunning"
-              flat
-              icon="mmm-plus"
-              :label="t('add')"
-              @click="addCustomTimerPart"
-            />
-          </div>
-        </div>
-      </template>
-      <q-separator class="bg-accent-200 q-mb-md" />
-      <div class="card-section-title row q-px-md">
-        {{ t('meeting-part') }}
-      </div>
-      <div class="row q-px-md q-pb-sm">
-        <q-list class="full-width">
-          <template
-            v-for="(part, index) in meetingPartsOptions"
-            :key="part.value"
-          >
-            <q-item-label
-              v-if="
-                part.section &&
-                (index === 0 ||
-                  meetingPartsOptions[index - 1]?.section !== part.section)
-              "
-              class="q-pa-sm bg-accent-100 text-weight-bold text-uppercase text-caption"
-              header
-            >
-              {{ t(part.section) }}
-            </q-item-label>
-            <q-item
-              :class="{ 'text-warning': part.warning }"
-              clickable
-              @click="openEditDialog(part)"
-              @contextmenu.prevent="openEditDialog(part)"
-            >
-              <q-item-section avatar class="jw-icon text-h6">
-                {{ part.icon }}
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ part.label }}</q-item-label>
-                <q-item-label caption>
-                  {{ getPartStatusText(part.value) }}
-                </q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <div class="row q-gutter-xs">
-                  <q-btn
-                    v-if="
-                      (partTimings[part.value]?.startTime ||
-                        partTimings[part.value]?.endTime) &&
-                      !timerRunning
-                    "
-                    color="warning"
-                    dense
-                    icon="mmm-reset"
-                    outline
-                    size="sm"
-                    @click.stop="
-                      () => {
-                        partTimings[part.value] ??= {
-                          endTime: null,
-                          startTime: null,
-                        };
-                        partTimings[part.value]!.startTime = null;
-                        partTimings[part.value]!.endTime = null;
-                      }
-                    "
-                  >
-                  </q-btn>
-                  <q-btn
-                    v-if="!timerRunning && !partTimings[part.value]?.startTime"
-                    color="positive"
-                    dense
-                    icon="mmm-play"
-                    outline
-                    size="sm"
-                    @click.stop="selectPart(part.value)"
-                  >
-                    <q-tooltip>{{ t('start-timer') }}</q-tooltip>
-                  </q-btn>
-                  <q-btn
-                    v-if="currentPart === part.value && timerRunning"
-                    color="negative"
-                    dense
-                    icon="mmm-stop"
-                    size="sm"
-                    @click.stop="stopTimer()"
-                  >
-                    <q-tooltip>{{ t('stop-timer') }}</q-tooltip>
-                  </q-btn>
-                </div>
-              </q-item-section>
-            </q-item>
-          </template>
-        </q-list>
-      </div>
+            <q-icon class="q-mr-sm" name="picture_as_pdf" />
+            {{ t('export-pdf-report') }}
+          </q-btn>
 
-      <!-- Timer Controls -->
-      <q-separator class="bg-accent-200 q-mb-md" />
-      <div class="card-section-title row q-px-md">
-        {{ t('timer-controls') }}
-      </div>
-
-      <div class="q-px-md q-pt-md">
-        <template v-if="!isMeetingDay(selectedDateObject?.date)">
-          <template v-if="!timerRunning">
-            <q-btn
-              class="full-width q-mb-sm"
-              color="primary"
-              unelevated
-              @click="startTimer()"
+          <!-- Timer Display -->
+          <div v-if="timerRunning" class="text-center q-py-md">
+            <div
+              class="text-h4 text-weight-bold"
+              :class="{ blink: timerPaused }"
             >
-              <q-icon class="q-mr-sm" name="play_arrow" />
-              {{ t('start') }}
-            </q-btn>
-          </template>
-          <template v-else>
-            <div class="row q-gutter-sm q-mb-sm">
-              <q-btn
-                class="col"
-                :color="timerPaused ? 'positive' : 'warning'"
-                unelevated
-                @click="timerPaused ? resumeTimer() : pauseTimer()"
-              >
-                <q-icon
-                  class="q-mr-sm"
-                  :name="timerPaused ? 'play_arrow' : 'pause'"
-                />
-                {{ timerPaused ? t('resume') : t('pause') }}
-              </q-btn>
-              <q-btn
-                class="col"
-                color="negative"
-                unelevated
-                @click="stopTimer()"
-              >
-                <q-icon class="q-mr-sm" name="stop" />
-                {{ t('stop') }}
-              </q-btn>
+              {{ formattedTime }}
             </div>
-          </template>
-        </template>
-        <q-btn
-          class="full-width q-mb-sm"
-          color="info"
-          unelevated
-          @click="exportPdfReport"
-        >
-          <q-icon class="q-mr-sm" name="picture_as_pdf" />
-          {{ t('export-pdf-report') }}
-        </q-btn>
-
-        <!-- Timer Display -->
-        <div v-if="timerRunning" class="text-center q-py-md">
-          <div class="text-h4 text-weight-bold" :class="{ blink: timerPaused }">
-            {{ formattedTime }}
-          </div>
-          <div class="text-caption text-grey-6">
-            {{ timerMode === 'countup' ? t('elapsed') : t('remaining') }}
+            <div class="text-caption text-grey-6">
+              {{ timerMode === 'countup' ? t('elapsed') : t('remaining') }}
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Show/Hide Section -->
       <q-separator class="bg-accent-200" />
-      <div class="q-px-md q-pt-md row">
+      <div class="action-popup__footer q-px-md q-pt-md row">
         <div class="col">
           <div class="row text-subtitle1 text-weight-medium">
             {{ timerWindowVisible ? t('projecting') : t('inactive') }}
