@@ -563,10 +563,7 @@ a {
   display: flex;
   flex-flow: column;
   overflow: hidden;
-}
-
-.action-popup--expanded {
-  max-height: min(600px, max(250px, 50vh));
+  max-height: min(600px, max(250px, 64vh));
 }
 
 .action-popup__scroll {

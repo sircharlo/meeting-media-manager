@@ -8,9 +8,7 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <div
-      class="action-popup action-popup--scroll-layout action-popup--expanded q-py-md"
-    >
+    <div class="action-popup action-popup--scroll-layout q-py-md">
       <div class="card-title col-shrink full-width q-px-md q-mb-none">
         {{ t('scene-selection') }}
       </div>

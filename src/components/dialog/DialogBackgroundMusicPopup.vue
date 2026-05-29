@@ -9,13 +9,7 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <div
-      class="action-popup action-popup--scroll-layout background-music-popup q-py-md"
-      :class="{
-        'action-popup--expanded':
-          musicPlaying && musicState !== 'music.stopping',
-      }"
-    >
+    <div class="action-popup action-popup--scroll-layout q-py-md">
       <div class="card-title row q-px-md q-mb-none">
         {{ t('setupWizard.backgroundMusic') }}
       </div>
@@ -35,7 +29,7 @@
         <p class="row card-section-title text-dark-grey q-px-md q-pt-sm">
           {{ t('upcoming-songs') }}
         </p>
-        <div class="action-popup__scroll background-music-popup__song-list">
+        <div class="action-popup__scroll">
           <template v-for="(song, i) in songList" :key="i">
             <div class="row q-my-sm q-pl-md q-pr-scroll">
               <div class="col text-weight-medium">
@@ -49,9 +43,7 @@
         </div>
         <q-separator class="bg-accent-200" />
       </template>
-      <div
-        class="action-popup__footer background-music-popup__footer row q-px-md q-pt-md"
-      >
+      <div class="action-popup__footer row q-px-md q-pt-md">
         <div class="col">
           <div class="row text-subtitle1 text-weight-medium">
             {{ displayStatusText }}
