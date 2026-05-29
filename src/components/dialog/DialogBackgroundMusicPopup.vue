@@ -623,7 +623,7 @@ whenever(
 }
 
 .background-music-popup--playing {
-  height: min(600px, 75vh);
+  height: max(250px, 50vh);
 }
 
 .background-music-popup__song-list {
