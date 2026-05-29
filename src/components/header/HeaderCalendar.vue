@@ -444,7 +444,7 @@ import { isCoWeek, isMemorialDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   addJwpubDocumentMediaToFiles,
-  addToAdditionMediaMapFromPath,
+  createMediaItemFromPath,
   downloadAdditionalRemoteVideo,
   getJwMediaInfo,
   getPubMediaLinks,
@@ -467,8 +467,11 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 const jwStore = useJwStore();
 const dialogId = 'media-delete-all-dialog';
-const { clearAdditionalMediaForSelectedDate, showHiddenMediaForSelectedDate } =
-  jwStore;
+const {
+  addToAdditionMediaMap,
+  clearAdditionalMediaForSelectedDate,
+  showHiddenMediaForSelectedDate,
+} = jwStore;
 const { lookupPeriod } = storeToRefs(jwStore);
 
 const { dateLocale } = useLocale();
@@ -1071,17 +1074,16 @@ const processPendingImport = async (targetSection: MediaSectionIdentifier) => {
           targetSection,
         );
         break;
-      case 'study-bible':
+      case 'study-bible': {
+        const mediaItemsToAdd: MediaItem[] = [];
         // Process MultimediaItems: images need conversion, videos need download
         for (const mediaItem of importItem.data.items) {
           if (mediaItem.MimeType.includes('image')) {
             const filePath = await convertImageIfNeeded(mediaItem.FilePath);
-            await addToAdditionMediaMapFromPath(
-              filePath,
-              targetSection,
-              undefined,
-              { title: mediaItem.Label },
-            );
+            const item = await createMediaItemFromPath(filePath, undefined, {
+              title: mediaItem.Label,
+            });
+            if (item) mediaItemsToAdd.push(item);
           } else {
             // Study Bible video
             const lang = currentSettings.value?.lang || 'E';
@@ -1096,17 +1098,32 @@ const processPendingImport = async (targetSection: MediaSectionIdentifier) => {
             };
             const mediaItemFiles = await getPubMediaLinks(mediaLookup);
             const { thumbnail, title } = await getJwMediaInfo(mediaLookup);
-            await downloadAdditionalRemoteVideo(
+            const item = await downloadAdditionalRemoteVideo(
               mediaItemFiles?.files?.[lang]?.MP4 || [],
               selectedDate.value,
               thumbnail,
               false,
               title.replace(/^\d+\.\s*/, ''),
               targetSection,
+              undefined,
+              true, // onlyCreateItem
             );
+            if (item && typeof item !== 'string') {
+              mediaItemsToAdd.push(item);
+            }
           }
         }
+        if (mediaItemsToAdd.length) {
+          addToAdditionMediaMap(
+            mediaItemsToAdd,
+            targetSection,
+            currentCongregation.value,
+            selectedDateObject.value,
+            isCoWeek(selectedDateObject.value?.date),
+          );
+        }
         break;
+      }
     }
   } catch (error) {
     errorCatcher(error);

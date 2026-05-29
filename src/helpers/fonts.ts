@@ -407,7 +407,7 @@ const resolveFontRequest = async (
   let resolvedUrl = originalUrl;
   let response = await fetchFont(resolvedUrl);
 
-  if (!response.ok && fontName === 'jw-icons-all') {
+  if (!response?.ok && fontName === 'jw-icons-all') {
     await store.updateJwIconsUrl();
     const fallbackUrl = store.fontUrls[fontName];
     if (fallbackUrl && fallbackUrl !== originalUrl) {
@@ -416,9 +416,9 @@ const resolveFontRequest = async (
     }
   }
 
-  if (!response.ok) {
+  if (!response?.ok) {
     throw new Error(
-      `Failed to download font: ${response.statusText || response.status}`,
+      `Failed to download font: ${response?.statusText || response?.status}`,
     );
   }
 

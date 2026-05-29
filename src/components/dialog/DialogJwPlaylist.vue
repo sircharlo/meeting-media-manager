@@ -194,6 +194,7 @@
 import type {
   DialogImportPayload,
   JwPlaylistItem,
+  MediaItem,
   MediaSectionIdentifier,
   MultimediaItem,
   PlaylistTagItem,
@@ -562,7 +563,7 @@ async function processSingleItem(
   const isVideo = !item.OriginalFilename;
 
   if (isVideo) {
-    await processVideoItem(
+    const videoResult = await processVideoItem(
       item,
       itemLabel,
       outputPath,
@@ -570,7 +571,14 @@ async function processSingleItem(
       EndTime,
       durationTicks,
     );
-    return { mappedItems: [], order: index }; // no addition map for video
+    return {
+      item,
+      itemLabel,
+      mappedItems: videoResult.mediaItem
+        ? [videoResult.mediaItem as MediaItem]
+        : [],
+      order: index,
+    };
   }
 
   const result = await processNonVideoItem(
@@ -613,7 +621,7 @@ async function processVideoItem(
         }
       : undefined;
 
-  await downloadAdditionalRemoteVideo(
+  const mediaItem = await downloadAdditionalRemoteVideo(
     videoLinks,
     selectedDate.value,
     item.ThumbnailFilePath || undefined,
@@ -621,9 +629,10 @@ async function processVideoItem(
     itemLabel,
     sectionToUse || props.section,
     customDuration,
+    true, // onlyCreateItem
   );
 
-  return { type: 'video' };
+  return { mediaItem, type: 'video' };
 }
 
 const addSelectedItems = async () => {
@@ -641,31 +650,14 @@ const addSelectedItems = async () => {
 
     isProcessing.value = true;
 
-    // Process items in playlist order so remote-video placeholders and
-    // mapped local items keep deterministic insertion order.
+    // Process all items in playlist order, keeping them all in one array
     const processedMediaItems: DialogImportPayload['items'] = [];
-    const deferredVideoItems: {
-      idx: number;
-      item: (typeof selectedPlaylistItems)[number];
-    }[] = [];
 
     for (const [idx, item] of selectedPlaylistItems.entries()) {
-      const isVideo = !item.OriginalFilename;
-      if (isVideo) {
-        deferredVideoItems.push({ idx, item });
-        continue;
-      }
-
       const result = await processSingleItem(item, idx, outputPath);
       if (result?.mappedItems?.length) {
         processedMediaItems.push(...result.mappedItems);
       }
-    }
-
-    // add placeholders in reverse processing order so top-inserted items keep
-    // the same visible order as the original playlist (1,2,3...)
-    for (const { idx, item } of [...deferredVideoItems].reverse()) {
-      await processSingleItem(item, idx, outputPath);
     }
 
     // ✅ Always emit processed items - parent handles section assignment

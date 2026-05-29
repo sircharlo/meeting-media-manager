@@ -136,8 +136,8 @@ import {
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addDayToExportQueue } from 'src/helpers/export-media';
 import {
-  addToAdditionMediaMapFromPath,
   copyToDatedAdditionalMedia,
+  createMediaItemFromPath,
   downloadAdditionalRemoteVideo,
   downloadFileIfNeeded,
   dynamicMediaMapper,
@@ -621,14 +621,14 @@ const checkMemorialDate = async () => {
             ] || [];
 
           if (files.length > 0) {
-            const downloadId = await downloadAdditionalRemoteVideo(
+            const downloadId = (await downloadAdditionalRemoteVideo(
               files,
               selectedDate.value,
               thumbnail,
               songTrack,
               title.replace(/^\d+\.\s*/, ''),
               'memorial-talk',
-            );
+            )) as string | undefined;
             let downloadCompleted: boolean | null = null;
             if (downloadId) {
               while (downloadCompleted !== true) {
@@ -877,8 +877,11 @@ const handlePinyinChange = async (newPinyinActive: boolean) => {
   await fetchMedia();
 
   // Step 4: Re-add saved songs with current pinyin setting
+  const songsBySection: Record<string, MediaItem[]> = {};
+
   for (const song of savedSongs) {
     const trackNum = song.songTrack.padStart(3, '0');
+    const sec = song.section || 'imported-media';
 
     if (newPinyinActive && pinyinFolder) {
       // Pinyin mode: use local pinyin file
@@ -887,16 +890,15 @@ const handlePinyinChange = async (newPinyinActive: boolean) => {
         `sjjm_s-Pi_CHS_${trackNum}_r720P.mp4`,
       );
       if (await pathExists(pinyinPath)) {
-        await addToAdditionMediaMapFromPath(
-          pinyinPath,
-          song.section as MediaSectionIdentifier,
-          undefined,
-          {
-            song: song.songTrack,
-            title: song.title,
-            url: song.streamUrl,
-          },
-        );
+        const item = await createMediaItemFromPath(pinyinPath, undefined, {
+          song: song.songTrack,
+          title: song.title,
+          url: song.streamUrl,
+        });
+        if (item) {
+          songsBySection[sec] ??= [];
+          songsBySection[sec].push(item);
+        }
       }
     } else if (song.streamUrl) {
       // Normal mode: use cached file or download
@@ -909,19 +911,29 @@ const handlePinyinChange = async (newPinyinActive: boolean) => {
         });
       }
       if (await pathExists(normalPath)) {
-        await addToAdditionMediaMapFromPath(
-          normalPath,
-          song.section as MediaSectionIdentifier,
-          undefined,
-          {
-            song: song.songTrack,
-            thumbnailUrl: song.thumbnailUrl,
-            title: song.title,
-            url: song.streamUrl,
-          },
-        );
+        const item = await createMediaItemFromPath(normalPath, undefined, {
+          song: song.songTrack,
+          thumbnailUrl: song.thumbnailUrl,
+          title: song.title,
+          url: song.streamUrl,
+        });
+        if (item) {
+          songsBySection[sec] ??= [];
+          songsBySection[sec].push(item);
+        }
       }
     }
+  }
+
+  for (const sec in songsBySection) {
+    if (!songsBySection[sec]) continue;
+    jwStore.addToAdditionMediaMap(
+      songsBySection[sec],
+      sec as MediaSectionIdentifier,
+      currentCongregation.value,
+      selectedDateObject.value,
+      isCoWeek(selectedDateObject.value?.date),
+    );
   }
 };
 
@@ -969,7 +981,11 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
       });
     }
   }
-  for (const file of files) {
+  const mediaItemsToAdd: MediaItem[] = [];
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    if (!file) continue;
     let filepath = getLocalPathFromFileObject(file);
     try {
       if (!filepath) continue;
@@ -998,7 +1014,15 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
       }
       filepath = await convertImageIfNeeded(filepath);
       if (isImage(filepath)) {
-        await copyToDatedAdditionalMedia(filepath, sectionToAddTo.value, true);
+        const destPath = await copyToDatedAdditionalMedia(
+          filepath,
+          sectionToAddTo.value,
+          false,
+        );
+        if (destPath) {
+          const item = await createMediaItemFromPath(destPath);
+          if (item) mediaItemsToAdd.push(item);
+        }
       } else if (isVideo(filepath) || isAudio(filepath)) {
         const detectedPubMediaInfo = parse(filepath)
           .name.split('_')
@@ -1019,7 +1043,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         const destPath = await copyToDatedAdditionalMedia(
           filepath,
           sectionToAddTo.value,
-          !matchingMissingItem,
+          false,
         );
         if (matchingMissingItem) {
           const metadata = await getMetadataFromMediaPath(destPath);
@@ -1029,13 +1053,17 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
             metadata.common.title || basename(destPath);
           matchingMissingItem.isVideo = isVideo(filepath);
           matchingMissingItem.isAudio = isAudio(filepath);
+        } else if (destPath) {
+          const item = await createMediaItemFromPath(destPath);
+          if (item) mediaItemsToAdd.push(item);
         }
       } else if (isPdf(filepath)) {
         const convertedImages = await convertPdfToImages(
           filepath,
           await getTempPath(),
         );
-        files.push(...convertedImages);
+        files.splice(i + 1, 0, ...convertedImages);
+        totalFiles.value = files.length;
       } else if (isJwpub(filepath)) {
         log(
           '🎯 [addToFiles] Processing JWPUB file:',
@@ -1202,9 +1230,11 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         log('🎯 Removed unzip directory', 'mediaCalendar', 'log');
         await unzip(filepath, unzipDirectory);
         log('🎯 Unzipped archive', 'mediaCalendar', 'log');
-        const files = await readdir(unzipDirectory);
-        log('🎯 Reading unzip directory', 'mediaCalendar', 'log', files);
-        const filePaths = files.map((file) => join(unzipDirectory, file.name));
+        const filesList = await readdir(unzipDirectory);
+        log('🎯 Reading unzip directory', 'mediaCalendar', 'log', filesList);
+        const filePaths = filesList.map((file) =>
+          join(unzipDirectory, file.name),
+        );
         log('🎯 Mapping files', 'mediaCalendar', 'log', filePaths);
         await addToFiles(filePaths);
         log('🎯 Added files', 'mediaCalendar', 'log');
@@ -1236,6 +1266,18 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
     }
     currentFile.value++;
   }
+
+  if (mediaItemsToAdd.length) {
+    const targetSection = sectionToAddTo.value || 'imported-media';
+    jwStore.addToAdditionMediaMap(
+      mediaItemsToAdd,
+      targetSection,
+      currentCongregation.value,
+      selectedDateObject.value,
+      isCoWeek(selectedDateObject.value?.date),
+    );
+  }
+
   if (showFileImport.value) {
     showFileImport.value = false;
   }
