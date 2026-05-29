@@ -9,13 +9,7 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <div
-      class="action-popup background-music-popup q-py-md flex"
-      :class="{
-        'background-music-popup--playing':
-          musicPlaying && musicState !== 'music.stopping',
-      }"
-    >
+    <div class="action-popup action-popup--scroll-layout q-py-md">
       <div class="card-title row q-px-md q-mb-none">
         {{ t('setupWizard.backgroundMusic') }}
       </div>
@@ -35,7 +29,7 @@
         <p class="row card-section-title text-dark-grey q-px-md q-pt-sm">
           {{ t('upcoming-songs') }}
         </p>
-        <div class="background-music-popup__song-list overflow-auto col">
+        <div class="action-popup__scroll">
           <template v-for="(song, i) in songList" :key="i">
             <div class="row q-my-sm q-pl-md q-pr-scroll">
               <div class="col text-weight-medium">
@@ -49,7 +43,7 @@
         </div>
         <q-separator class="bg-accent-200" />
       </template>
-      <div class="background-music-popup__footer row q-px-md q-pt-md">
+      <div class="action-popup__footer row q-px-md q-pt-md">
         <div class="col">
           <div class="row text-subtitle1 text-weight-medium">
             {{ displayStatusText }}
@@ -615,24 +609,3 @@ whenever(
   },
 );
 </script>
-
-<style scoped lang="scss">
-.background-music-popup {
-  flex-flow: column;
-  overflow: hidden;
-}
-
-.background-music-popup--playing {
-  height: max(250px, 50vh);
-}
-
-.background-music-popup__song-list {
-  flex: 1 1 auto;
-  min-height: 0;
-  overscroll-behavior: contain;
-}
-
-.background-music-popup__footer {
-  flex: 0 0 auto;
-}
-</style>

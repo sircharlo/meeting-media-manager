@@ -9,12 +9,12 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <div class="action-popup flex q-py-md" style="flex-flow: column">
+    <div class="action-popup action-popup--scroll-layout q-py-md">
       <div class="card-title row q-px-md q-mb-none items-center">
         <div class="col">{{ t('media-sync') }}</div>
       </div>
 
-      <div class="col overflow-auto q-col-gutter-y-sm">
+      <div class="action-popup__scroll q-col-gutter-y-sm">
         <template v-if="groupedByDateEntries.length === 0">
           <div class="row flex-center q-px-md q-mb-sm">
             <div class="col ellipsis text-weight-medium text-dark-grey">
@@ -112,7 +112,9 @@
       </div>
 
       <q-separator class="bg-accent-200" />
-      <div class="q-px-md q-pt-md row q-gutter-sm justify-end">
+      <div
+        class="action-popup__footer q-px-md q-pt-md row q-gutter-sm justify-end"
+      >
         <q-btn
           color="warning"
           :disable="refreshDisabled"

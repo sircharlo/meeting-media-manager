@@ -8,55 +8,12 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <div
-      :class="{
-        column: true,
-        'action-popup': true,
-        'fit-snugly': sceneList.length > 28, // hacky for now
-        'q-py-md': true,
-      }"
-    >
+    <div class="action-popup action-popup--scroll-layout q-py-md">
       <div class="card-title col-shrink full-width q-px-md q-mb-none">
         {{ t('scene-selection') }}
       </div>
-      <template v-if="currentSettings?.obsEnableRecordingControls">
-        <q-separator
-          v-if="sceneList.length > 0"
-          class="bg-accent-200 q-mx-md q-mb-sm"
-        />
-        <div class="q-px-md">
-          <div class="row q-col-gutter-xs">
-            <div class="col-12 q-mb-sm">
-              <q-btn
-                class="full-width"
-                :color="isRecording ? 'negative' : 'primary'"
-                :icon="isRecording ? 'mmm-stop' : 'mmm-record'"
-                :label="
-                  isRecording ? t('stop-recording') : t('start-recording')
-                "
-                unelevated
-                @click="toggleObsRecording"
-              />
-            </div>
-            <div class="col-12 q-mb-sm">
-              <q-btn
-                v-if="obsRecordingFolder"
-                class="full-width"
-                color="secondary"
-                icon="mmm-folder-open"
-                :label="t('open-recording-folder')"
-                unelevated
-                @click="openObsRecordingFolder"
-              />
-            </div>
-          </div>
-        </div>
-        <q-separator
-          v-if="sceneList.length > 0"
-          class="bg-accent-200 q-mx-md q-mb-sm"
-        />
-      </template>
-      <div class="overflow-auto col full-width q-px-md">
+
+      <div class="action-popup__scroll full-width q-px-md">
         <div class="row q-col-gutter-xs">
           <template v-for="scene in sceneList.concat([])" :key="scene">
             <div :class="sceneColumnClass">
@@ -88,6 +45,34 @@
           </template>
         </div>
       </div>
+
+      <template v-if="currentSettings?.obsEnableRecordingControls">
+        <q-separator class="bg-accent-200 q-mt-sm" />
+        <div
+          class="action-popup__footer full-width q-px-md q-pt-md row q-col-gutter-xs"
+        >
+          <div class="col-12 q-mb-sm">
+            <q-btn
+              class="full-width"
+              :color="isRecording ? 'negative' : 'primary'"
+              :icon="isRecording ? 'mmm-stop' : 'mmm-record'"
+              :label="isRecording ? t('stop-recording') : t('start-recording')"
+              unelevated
+              @click="toggleObsRecording"
+            />
+          </div>
+          <div v-if="obsRecordingFolder" class="col-12">
+            <q-btn
+              class="full-width"
+              color="secondary"
+              icon="mmm-folder-open"
+              :label="t('open-recording-folder')"
+              unelevated
+              @click="openObsRecordingFolder"
+            />
+          </div>
+        </div>
+      </template>
     </div>
   </q-menu>
 </template>
