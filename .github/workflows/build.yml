@@ -54,10 +54,16 @@ jobs:
         if: ${{ inputs.checkout-latest == false }}
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - name: Setup Node
-        uses: actions/setup-node@v6
+        if: ${{ !inputs.publish-release }}
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
           node-version: 24
           cache: 'yarn'
+      - name: Setup Node without cache for release publishing
+        if: ${{ inputs.publish-release }}
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
+        with:
+          node-version: 24
       - name: Install X11 development libraries (Linux only)
         if: runner.os == 'Linux'
         run: |
@@ -88,10 +94,16 @@ jobs:
         if: ${{ inputs.checkout-latest == false }}
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - name: Setup Node
-        uses: actions/setup-node@v6
+        if: ${{ !inputs.publish-release }}
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
           node-version: 24
           cache: 'yarn'
+      - name: Setup Node without cache for release publishing
+        if: ${{ inputs.publish-release }}
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
+        with:
+          node-version: 24
       - name: Install X11 development libraries (Linux only)
         if: runner.os == 'Linux'
         run: |
@@ -155,7 +167,7 @@ jobs:
           security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
       - name: Upload artifacts
         if: ${{ !inputs.publish-release }}
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: M³ test build for ${{ matrix.os == 'macos-latest' && 'macOS' || matrix.os == 'windows-latest' && 'Windows' || 'Linux' }}
           path: |
