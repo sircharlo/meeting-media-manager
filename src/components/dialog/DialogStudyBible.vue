@@ -412,7 +412,7 @@ const fetchBibleBookMedia = async () => {
     await fetchChapterMediaAvailability(bibleBook.value);
     allBibleMedia.value = [];
   } else {
-    await fetchMedia();
+    await fetchStudyBibleMedia();
   }
 };
 
@@ -426,7 +426,7 @@ const selectChapter = (chapter: number) => {
   fetchBibleBookMedia();
 };
 
-const fetchMedia = async () => {
+const fetchStudyBibleMedia = async () => {
   try {
     loadingMedia.value = true;
     const result = await getStudyBibleMedia(

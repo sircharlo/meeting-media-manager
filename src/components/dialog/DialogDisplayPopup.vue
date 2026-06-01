@@ -169,18 +169,14 @@
                     </q-tooltip>
                     <div
                       v-if="screen.mainWindow && scaledMainWindowRect(index)"
+                      class="main-window-rect"
                       :style="{
                         position: 'absolute',
                         left: scaledMainWindowRect(index)?.left + '%',
                         top: scaledMainWindowRect(index)?.top + '%',
                         width: scaledMainWindowRect(index)?.width + '%',
                         height: scaledMainWindowRect(index)?.height + '%',
-                        border: '2px dashed var(--q-primary)',
-                        borderRadius: '4px',
                         pointerEvents: 'none',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
                       }"
                     >
                       <q-icon
@@ -787,6 +783,27 @@ watchImmediate(
 );
 </script>
 <style scoped>
+.screen-rect {
+  transition:
+    left 180ms ease,
+    top 180ms ease,
+    width 180ms ease,
+    height 180ms ease;
+}
+
+.main-window-rect {
+  align-items: center;
+  border: 2px dashed var(--q-primary);
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  transition:
+    left 180ms ease,
+    top 180ms ease,
+    width 180ms ease,
+    height 180ms ease;
+}
+
 .border-dashed::before {
   border-style: dashed;
 }

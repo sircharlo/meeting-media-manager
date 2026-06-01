@@ -15,6 +15,7 @@ import { fetchJson } from 'src/utils/api';
 import { isInPast } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
 
+import { updateLookupPeriod } from './date';
 import { errorCatcher } from './error-catcher';
 
 let meetingLanguagesPromise: null | Promise<Map<string, string>> = null;
@@ -233,7 +234,14 @@ export const syncMeetingSchedule = async (force = false) => {
         });
       }
 
-      return currentChanged || futureChanged;
+      const scheduleChanged = currentChanged || futureChanged;
+      if (scheduleChanged) {
+        updateLookupPeriod({ reset: true });
+        const { fetchMedia } = await import('./jw-media');
+        await fetchMedia();
+      }
+
+      return scheduleChanged;
     }
   } catch (error) {
     errorCatcher(error, {
