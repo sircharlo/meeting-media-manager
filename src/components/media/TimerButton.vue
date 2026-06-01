@@ -17,7 +17,9 @@
     @click="timerPopup = !timerPopup"
   >
     <template v-if="currentSettings?.timerShowOnActionIsland && timerDisplay">
-      {{ timerDisplay }}
+      <span class="timer-button__display">
+        {{ timerDisplay }}
+      </span>
     </template>
     <template v-else>
       <q-icon :name="timerWindowVisible ? 'mmm-alarm' : 'mmm-alarm-off'" />
@@ -62,3 +64,13 @@ watch(data, (newData) => {
   }
 });
 </script>
+
+<style scoped>
+.timer-button__display {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+  min-width: 6ch;
+  text-align: center;
+  white-space: nowrap;
+}
+</style>

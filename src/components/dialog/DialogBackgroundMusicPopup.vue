@@ -21,7 +21,7 @@
           <div class="col text-weight-medium">
             {{ musicPlayingTitle }}
           </div>
-          <div class="row text-grey">
+          <div class="action-popup__duration row text-grey">
             {{ currentSongRemainingTime }}
           </div>
         </div>
@@ -35,7 +35,7 @@
               <div class="col text-weight-medium">
                 {{ song.title }}
               </div>
-              <div class="row text-grey">
+              <div class="action-popup__duration row text-grey">
                 {{ formatTime(song.duration ?? 0) }}
               </div>
             </div>
@@ -45,7 +45,9 @@
       </template>
       <div class="action-popup__footer row q-px-md q-pt-md">
         <div class="col">
-          <div class="row text-subtitle1 text-weight-medium">
+          <div
+            class="action-popup__duration row text-subtitle1 text-weight-medium"
+          >
             {{ displayStatusText }}
           </div>
           <div
@@ -609,3 +611,12 @@ whenever(
   },
 );
 </script>
+
+<style scoped>
+.action-popup__duration {
+  font-variant-numeric: tabular-nums;
+  min-width: 6ch;
+  text-align: center;
+  white-space: nowrap;
+}
+</style>

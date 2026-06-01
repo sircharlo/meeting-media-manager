@@ -20,7 +20,7 @@
             {{ t('recording-duration') }}
           </p>
           <div class="row q-px-md q-pt-xs q-pb-sm">
-            <div class="col text-weight-medium">
+            <div class="recording-popup__duration col text-weight-medium">
               {{ props.recordingDuration }}
             </div>
           </div>
@@ -122,3 +122,11 @@ watch(
   },
 );
 </script>
+
+<style scoped>
+.recording-popup__duration {
+  font-variant-numeric: tabular-nums;
+  min-width: 6ch;
+  white-space: nowrap;
+}
+</style>

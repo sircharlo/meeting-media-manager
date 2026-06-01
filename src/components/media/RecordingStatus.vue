@@ -26,7 +26,7 @@
     @click="onClick"
   >
     <q-icon name="mmm-record" />
-    <div v-if="props.isRecording" class="q-ml-sm">
+    <div v-if="props.isRecording" class="recording-status__duration q-ml-sm">
       {{ props.recordingDuration }}
     </div>
 
@@ -56,3 +56,12 @@ const onClick = () => {
   recordingPopup.value = !recordingPopup.value;
 };
 </script>
+
+<style scoped>
+.recording-status__duration {
+  font-variant-numeric: tabular-nums;
+  min-width: 6ch;
+  text-align: center;
+  white-space: nowrap;
+}
+</style>

@@ -490,7 +490,7 @@
           <!-- Timer Display -->
           <div v-if="timerRunning" class="text-center q-py-md">
             <div
-              class="text-h4 text-weight-bold"
+              class="timer-popup__display text-h4 text-weight-bold"
               :class="{ blink: timerPaused }"
             >
               {{ formattedTime }}
@@ -1045,6 +1045,12 @@ watch(timerWindowVisible, (visible) => {
 
 .border-dashed::before {
   border-style: dashed;
+}
+
+.timer-popup__display {
+  font-variant-numeric: tabular-nums;
+  min-width: 6ch;
+  white-space: nowrap;
 }
 
 @keyframes gentle-blink {
