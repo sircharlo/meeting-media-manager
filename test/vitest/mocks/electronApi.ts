@@ -206,6 +206,9 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   robot,
+  saveFileDialog: function (defaultPath, filter) {
+    throw new Error('Function not implemented.');
+  },
   setAutoStartAtLogin: function (value) {
     throw new Error('Function not implemented.');
   },

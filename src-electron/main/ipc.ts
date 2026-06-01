@@ -41,6 +41,7 @@ import {
   isUsablePath,
   openFileDialog,
   openFolderDialog,
+  saveFileDialog,
   setPathProbeNotificationPaths,
   unwatchFolders,
   unzipFile,
@@ -379,6 +380,12 @@ handleIpcInvoke(
 );
 
 handleIpcInvoke('openFolderDialog', async () => openFolderDialog());
+
+handleIpcInvoke(
+  'saveFileDialog',
+  async (_e, defaultPath: string, filter?: FileDialogFilter) =>
+    saveFileDialog(defaultPath, filter),
+);
 
 handleIpcInvoke('openFolder', async (_e, path: string) => openPath(path));
 

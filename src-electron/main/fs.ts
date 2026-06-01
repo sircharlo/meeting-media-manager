@@ -433,6 +433,10 @@ export async function openFileDialog(
     filters.push({ extensions: IMG_EXTENSIONS, name: 'Images' });
   }
 
+  if (filter?.includes('json')) {
+    filters.push({ extensions: ['json'], name: 'JSON' });
+  }
+
   return dialog.showOpenDialog(mainWindowInfo.mainWindow, {
     filters,
     properties: single ? ['openFile'] : ['openFile', 'multiSelections'],
@@ -443,6 +447,28 @@ export async function openFolderDialog() {
   if (!mainWindowInfo.mainWindow) return;
   return dialog.showOpenDialog(mainWindowInfo.mainWindow, {
     properties: ['openDirectory'],
+  });
+}
+
+export async function saveFileDialog(
+  defaultPath: string,
+  filter?: FileDialogFilter,
+) {
+  if (!mainWindowInfo.mainWindow) return;
+
+  const filters: Electron.FileFilter[] = [];
+
+  if (filter?.includes('json')) {
+    filters.push({ extensions: ['json'], name: 'JSON' });
+  }
+
+  if (!filters.length) {
+    filters.push({ extensions: ['*'], name: 'All files' });
+  }
+
+  return dialog.showSaveDialog(mainWindowInfo.mainWindow, {
+    defaultPath,
+    filters,
   });
 }
 

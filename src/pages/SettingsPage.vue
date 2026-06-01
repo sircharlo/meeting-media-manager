@@ -27,6 +27,48 @@
           :label="t(name)"
         >
           <div>
+            <q-separator
+              v-if="groupId === 'advanced'"
+              class="bg-accent-200"
+              spaced
+            />
+            <q-item
+              v-if="groupId === 'advanced'"
+              class="q-mt-sm rounded-borders"
+              :inset-level="1"
+              :style="$q.screen.lt.sm ? 'flex-direction: column' : ''"
+            >
+              <q-item-section>
+                <q-item-label>{{
+                  t('profile-settings-transfer')
+                }}</q-item-label>
+                <q-item-label caption :class="{ 'q-pb-sm': $q.screen.lt.sm }">
+                  {{ t('profile-settings-transfer-explain') }}
+                </q-item-label>
+              </q-item-section>
+              <q-item-section
+                side
+                :style="
+                  ($q.screen.lt.sm ? 'padding-left: 0' : '') +
+                  ';align-items: end'
+                "
+              >
+                <div class="q-gutter-sm row justify-end">
+                  <q-btn
+                    color="primary"
+                    :label="t('export-profile-settings')"
+                    outline
+                    @click="exportCurrentProfileSettings"
+                  />
+                  <q-btn
+                    color="primary"
+                    :label="t('import-profile-settings')"
+                    outline
+                    @click="importCurrentProfileSettings"
+                  />
+                </div>
+              </q-item-section>
+            </q-item>
             <template
               v-for="([settingId, item], index) in filteredSettingsByGroup[
                 groupId
@@ -122,6 +164,11 @@ import { type QForm, useMeta, useQuasar } from 'quasar';
 import DialogCongregationLookup from 'src/components/dialog/DialogCongregationLookup.vue';
 import { settingsDefinitions, settingsGroups } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { createTemporaryNotification } from 'src/helpers/notifications';
+import {
+  exportProfileSettingsToFile,
+  importProfileSettingsFromFile,
+} from 'src/utils/profile-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import {
@@ -207,6 +254,49 @@ const isFirstInSubgroup = (index: number, groupId: string) => {
   const groupSettings = filteredSettingsByGroup.value[groupId] || [];
   const prevItem = groupSettings[index - 1]?.[1];
   return prevItem && prevItem.subgroup !== groupSettings[index]?.[1].subgroup;
+};
+
+const exportCurrentProfileSettings = async () => {
+  try {
+    if (!currentSettings.value) return;
+
+    const exported = await exportProfileSettingsToFile(currentSettings.value);
+
+    if (exported) {
+      createTemporaryNotification({
+        message: t('profile-settings-exported'),
+        type: 'positive',
+      });
+    }
+  } catch (error) {
+    errorCatcher(error);
+    createTemporaryNotification({
+      message: t('profile-settings-export-failed'),
+      type: 'negative',
+    });
+  }
+};
+
+const importCurrentProfileSettings = async () => {
+  try {
+    if (!currentSettings.value) return;
+
+    const importedSettings = await importProfileSettingsFromFile();
+    if (!importedSettings) return;
+
+    Object.assign(currentSettings.value, importedSettings);
+    validateSettingsLocal();
+    createTemporaryNotification({
+      message: t('profile-settings-imported'),
+      type: 'positive',
+    });
+  } catch (error) {
+    errorCatcher(error);
+    createTemporaryNotification({
+      message: t('profile-settings-import-failed'),
+      type: 'negative',
+    });
+  }
 };
 
 // Validation function

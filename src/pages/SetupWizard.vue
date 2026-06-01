@@ -27,6 +27,12 @@
             />
             <q-btn
               color="primary"
+              :label="t('import-profile-settings')"
+              outline
+              @click="importProfileSettingsForWizard"
+            />
+            <q-btn
+              color="primary"
               :disable="!currentSettings.localAppLang"
               :label="t('continue')"
               @click="step++"
@@ -651,8 +657,10 @@ import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadSongbookVideos, fetchMedia } from 'src/helpers/jw-media';
+import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
 import { camelToKebabCase } from 'src/utils/general';
+import { importProfileSettingsFromFile } from 'src/utils/profile-settings';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -684,6 +692,32 @@ const { getLocales } = globalThis.electronApi;
 if (currentSettings.value) {
   currentSettings.value.autoStartMusic = true;
 }
+
+const importProfileSettingsForWizard = async () => {
+  try {
+    if (!currentSettings.value) return;
+
+    const importedSettings = await importProfileSettingsFromFile();
+    if (!importedSettings) return;
+
+    Object.assign(currentSettings.value, importedSettings);
+    regularProfile.value = !importedSettings.disableMediaFetching;
+    obsUsed.value = importedSettings.obsEnable;
+    obsIntegrate.value = importedSettings.obsEnable;
+    step.value = 300;
+
+    createTemporaryNotification({
+      message: t('profile-settings-imported'),
+      type: 'positive',
+    });
+  } catch (error) {
+    errorCatcher(error);
+    createTemporaryNotification({
+      message: t('profile-settings-import-failed'),
+      type: 'negative',
+    });
+  }
+};
 
 const loadSystemLocale = async () => {
   try {

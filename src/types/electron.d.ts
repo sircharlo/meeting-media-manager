@@ -231,6 +231,10 @@ export interface ElectronApi {
   resolve: typeof resolve;
   resumeAllDownloads: () => void;
   robot: typeof robot;
+  saveFileDialog: (
+    defaultPath: string,
+    filter?: FileDialogFilter,
+  ) => Promise<Electron.SaveDialogReturnValue | undefined>;
   setAutoStartAtLogin: (value: boolean) => void;
   setElectronUrlVariables: (variables: string) => void;
   setHardwareAcceleration: (disabled: boolean) => void;
@@ -271,6 +275,7 @@ export type ElectronIpcInvokeKey =
   | 'openFolder'
   | 'openFolderDialog'
   | 'registerShortcut'
+  | 'saveFileDialog'
   | 'set-hardware-acceleration'
   | 'unzip';
 
@@ -331,6 +336,7 @@ export type ExternalWebsite = 'docs' | 'latestRelease' | 'repo';
 export type FileDialogFilter =
   | 'image'
   | 'image+pdf'
+  | 'json'
   | 'jwpub'
   | 'jwpub+image'
   | 'jwpub+image+pdf';
