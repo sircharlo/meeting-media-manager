@@ -44,6 +44,28 @@
           class="analog-countdown"
           :style="analogCountdownStyles"
         >
+          <svg
+            aria-hidden="true"
+            class="analog-countdown__ring"
+            focusable="false"
+            viewBox="0 0 100 100"
+          >
+            <circle
+              class="analog-countdown__track"
+              cx="50"
+              cy="50"
+              fill="none"
+              r="44"
+            />
+            <circle
+              class="analog-countdown__progress"
+              cx="50"
+              cy="50"
+              fill="none"
+              pathLength="100"
+              r="44"
+            />
+          </svg>
           <div class="analog-countdown__inner">
             {{ displayTime }}
           </div>
@@ -275,15 +297,18 @@ const countdownRingColor = computed(() => {
 });
 
 const analogCountdownStyles = computed<CSSProperties>(() => {
-  const progressDegrees = countdownProgress.value * 360;
+  const progressPercent = countdownProgress.value * 100;
   const textColor =
     isOvertime.value && timerData.value?.timerOvertimeIndicator
       ? timerData.value?.timerOvertimeTextColor || '#ff0000'
       : timerData.value?.timerTextColor || '#ffffff';
 
   return {
-    '--countdown-progress': `${progressDegrees}deg`,
+    '--countdown-progress': `${progressPercent} 100`,
     '--countdown-progress-color': countdownRingColor.value,
+    '--countdown-progress-linecap':
+      countdownProgress.value >= 1 ? 'butt' : 'round',
+    '--countdown-progress-opacity': countdownProgress.value > 0 ? '1' : '0',
     '--countdown-text-color': textColor,
   };
 });
@@ -523,15 +548,40 @@ watch(timerData, (newData) => {
 .analog-countdown {
   align-items: center;
   aspect-ratio: 1;
-  background: conic-gradient(
-    var(--countdown-progress-color) var(--countdown-progress),
-    rgba(255, 255, 255, 0.16) 0
-  );
   border-radius: 50%;
   display: flex;
   height: min(62vh, 62vw);
   justify-content: center;
-  transition: background 700ms ease;
+  position: relative;
+}
+
+.analog-countdown__ring {
+  height: 100%;
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  transform: rotate(-90deg);
+  width: 100%;
+}
+
+.analog-countdown__track,
+.analog-countdown__progress {
+  stroke-width: 12;
+}
+
+.analog-countdown__track {
+  stroke: rgba(255, 255, 255, 0.16);
+}
+
+.analog-countdown__progress {
+  opacity: var(--countdown-progress-opacity);
+  stroke: var(--countdown-progress-color);
+  stroke-dasharray: var(--countdown-progress);
+  stroke-linecap: var(--countdown-progress-linecap);
+  transition:
+    opacity 200ms ease,
+    stroke 700ms ease,
+    stroke-dasharray 200ms linear;
 }
 
 .analog-countdown__inner {
@@ -547,6 +597,7 @@ watch(timerData, (newData) => {
   justify-content: center;
   transition: color 700ms ease;
   width: 76%;
+  z-index: 1;
 }
 
 .scale-enter-active,
