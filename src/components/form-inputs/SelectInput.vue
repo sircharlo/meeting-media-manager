@@ -107,6 +107,15 @@ const filteredTimerModes = ref([
   { label: t('count-up'), value: 'countup' },
   { label: t('count-down'), value: 'countdown' },
 ]);
+const filteredTimerDisplayFormats = ref([
+  { label: t('digital'), value: 'digital' },
+  { label: t('analog'), value: 'analog' },
+  { label: t('analog-digital'), value: 'analog-digital' },
+]);
+const filteredTimerHourFormats = ref([
+  { label: t('24-hour'), value: '24h' },
+  { label: t('12-hour'), value: '12h' },
+]);
 
 const customDisabled = computed(() => {
   return (
@@ -138,6 +147,15 @@ const filterFn = (
       filteredTimerModes.value = [
         { label: t('count-up'), value: 'countup' },
         { label: t('count-down'), value: 'countdown' },
+      ];
+      filteredTimerDisplayFormats.value = [
+        { label: t('digital'), value: 'digital' },
+        { label: t('analog'), value: 'analog' },
+        { label: t('analog-digital'), value: 'analog-digital' },
+      ];
+      filteredTimerHourFormats.value = [
+        { label: t('24-hour'), value: '24h' },
+        { label: t('12-hour'), value: '12h' },
       ];
     });
   };
@@ -181,6 +199,17 @@ const filterFn = (
         filteredTimerModes.value = [
           { label: t('count-up'), value: 'countup' },
           { label: t('count-down'), value: 'countdown' },
+        ].filter((mode) => mode.label.toLowerCase().includes(needle));
+
+        filteredTimerDisplayFormats.value = [
+          { label: t('digital'), value: 'digital' },
+          { label: t('analog'), value: 'analog' },
+          { label: t('analog-digital'), value: 'analog-digital' },
+        ].filter((mode) => mode.label.toLowerCase().includes(needle));
+
+        filteredTimerHourFormats.value = [
+          { label: t('24-hour'), value: '24h' },
+          { label: t('12-hour'), value: '12h' },
         ].filter((mode) => mode.label.toLowerCase().includes(needle));
       });
     } else {
@@ -238,6 +267,10 @@ const listOptions = computed(
         ];
       } else if (props.list === 'timerModes') {
         return filteredTimerModes.value;
+      } else if (props.list === 'timerDisplayFormats') {
+        return filteredTimerDisplayFormats.value;
+      } else if (props.list === 'timerHourFormats') {
+        return filteredTimerHourFormats.value;
       } else {
         throw new Error('List not found: ' + props.list);
       }

@@ -46,7 +46,12 @@ export interface TimerData {
   running: boolean;
   time: string;
   timerBackgroundColor?: string;
+  timerCountdownDisplay?: 'analog' | 'analog-digital' | 'digital';
+  timerCountdownTargetSeconds?: number;
+  timerCountdownWarningIndicator?: boolean;
+  timerElapsedSeconds?: number;
   timerEnableMeetingCountdown?: boolean;
+  timerHourFormat?: '12h' | '24h';
   timerMeetingCountdownMinutes?: number;
   timerOvertimeAnimation?: boolean;
   timerOvertimeBackgroundColor?: string;
@@ -55,6 +60,7 @@ export interface TimerData {
   timerOvertimeTextColor?: string;
   timerTextColor?: string;
   timerTextSize?: string;
+  timerTimeOfDayDisplay?: 'analog' | 'analog-digital' | 'digital';
   weDay?: null | string;
   weStartTime?: null | string;
 }

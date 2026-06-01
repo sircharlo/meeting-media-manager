@@ -67,7 +67,7 @@ const useTimer = () => {
       return timestamp
         ? new Date(timestamp).toLocaleTimeString([], {
             hour: '2-digit',
-            hour12: false,
+            hour12: currentSettings.value?.timerHourFormat === '12h',
             minute: '2-digit',
             second: seconds ? '2-digit' : undefined,
           })
@@ -408,8 +408,14 @@ const useTimer = () => {
         running: false,
         time: '',
         timerBackgroundColor: currentSettings.value?.timerBackgroundColor,
+        timerCountdownDisplay: currentSettings.value?.timerCountdownDisplay,
+        timerCountdownTargetSeconds: countdownTarget.value,
+        timerCountdownWarningIndicator:
+          currentSettings.value?.timerCountdownWarningIndicator,
+        timerElapsedSeconds: elapsedSeconds.value,
         timerEnableMeetingCountdown:
           currentSettings.value?.timerEnableMeetingCountdown,
+        timerHourFormat: currentSettings.value?.timerHourFormat,
         timerMeetingCountdownMinutes:
           currentSettings.value?.timerMeetingCountdownMinutes,
         timerOvertimeAnimation: currentSettings.value?.timerOvertimeAnimation,
@@ -421,6 +427,7 @@ const useTimer = () => {
         timerOvertimeTextColor: currentSettings.value?.timerOvertimeTextColor,
         timerTextColor: currentSettings.value?.timerTextColor,
         timerTextSize: currentSettings.value?.timerTextSize,
+        timerTimeOfDayDisplay: currentSettings.value?.timerTimeOfDayDisplay,
         weDay: currentSettings.value?.weDay,
         weStartTime: currentSettings.value?.weStartTime,
       });
@@ -571,6 +578,13 @@ const useTimer = () => {
     updateTimerWindow();
   };
 
+  const refreshCountdownTarget = () => {
+    if (timerMode.value !== 'countdown') return;
+
+    countdownTarget.value = calculateCountdownTarget();
+    updateTimerWindow();
+  };
+
   const resumeTimer = () => {
     const pauseDuration = Date.now() - (timerPausedTime.value || 0);
     if (timerStartTime.value !== null) {
@@ -591,6 +605,12 @@ const useTimer = () => {
       running: false,
       time: '',
       timerBackgroundColor: currentSettings.value?.timerBackgroundColor,
+      timerCountdownDisplay: currentSettings.value?.timerCountdownDisplay,
+      timerCountdownTargetSeconds: countdownTarget.value,
+      timerCountdownWarningIndicator:
+        currentSettings.value?.timerCountdownWarningIndicator,
+      timerElapsedSeconds: elapsedSeconds.value,
+      timerHourFormat: currentSettings.value?.timerHourFormat,
       timerOvertimeAnimation: currentSettings.value?.timerOvertimeAnimation,
       timerOvertimeBackgroundColor:
         currentSettings.value?.timerOvertimeBackgroundColor,
@@ -600,6 +620,7 @@ const useTimer = () => {
       timerOvertimeTextColor: currentSettings.value?.timerOvertimeTextColor,
       timerTextColor: currentSettings.value?.timerTextColor,
       timerTextSize: currentSettings.value?.timerTextSize,
+      timerTimeOfDayDisplay: currentSettings.value?.timerTimeOfDayDisplay,
     });
     timerRunning.value = false;
     timerPaused.value = false;
@@ -704,8 +725,14 @@ const useTimer = () => {
       running: timerRunning.value,
       time: timerRunning.value ? formattedTime.value : '',
       timerBackgroundColor: currentSettings.value?.timerBackgroundColor,
+      timerCountdownDisplay: currentSettings.value?.timerCountdownDisplay,
+      timerCountdownTargetSeconds: countdownTarget.value,
+      timerCountdownWarningIndicator:
+        currentSettings.value?.timerCountdownWarningIndicator,
+      timerElapsedSeconds: elapsedSeconds.value,
       timerEnableMeetingCountdown:
         currentSettings.value?.timerEnableMeetingCountdown,
+      timerHourFormat: currentSettings.value?.timerHourFormat,
       timerMeetingCountdownMinutes:
         currentSettings.value?.timerMeetingCountdownMinutes,
       timerOvertimeAnimation: currentSettings.value?.timerOvertimeAnimation,
@@ -717,6 +744,7 @@ const useTimer = () => {
       timerOvertimeTextColor: currentSettings.value?.timerOvertimeTextColor,
       timerTextColor: currentSettings.value?.timerTextColor,
       timerTextSize: currentSettings.value?.timerTextSize,
+      timerTimeOfDayDisplay: currentSettings.value?.timerTimeOfDayDisplay,
       weDay: currentSettings.value?.weDay,
       weStartTime: currentSettings.value?.weStartTime,
     };
@@ -988,6 +1016,7 @@ const useTimer = () => {
     partDurations,
     partTimings, // Expose partTimings
     pauseTimer,
+    refreshCountdownTarget,
     removeCustomTimerPart,
     resumeTimer,
     startTimer,

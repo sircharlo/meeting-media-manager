@@ -359,6 +359,27 @@
                 <q-item-section side>
                   <div class="row q-gutter-xs">
                     <q-btn
+                      color="primary"
+                      dense
+                      :disable="(partDurations[part.value] || 0) <= 1"
+                      icon="mmm-minus"
+                      outline
+                      size="sm"
+                      @click.stop="adjustPartDuration(part.value, -1)"
+                    >
+                      <q-tooltip>{{ t('decrease-duration') }}</q-tooltip>
+                    </q-btn>
+                    <q-btn
+                      color="primary"
+                      dense
+                      icon="mmm-plus"
+                      outline
+                      size="sm"
+                      @click.stop="adjustPartDuration(part.value, 1)"
+                    >
+                      <q-tooltip>{{ t('increase-duration') }}</q-tooltip>
+                    </q-btn>
+                    <q-btn
                       v-if="
                         (partTimings[part.value]?.startTime ||
                           partTimings[part.value]?.endTime) &&
@@ -545,6 +566,7 @@
 </template>
 
 <script setup lang="ts">
+import type { CellInput } from 'jspdf-autotable';
 import type { Display, MeetingPart } from 'src/types';
 
 import {
@@ -555,7 +577,6 @@ import {
 } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { QMenu } from 'quasar';
-import 'jspdf-autotable';
 import useTimer from 'src/composables/useTimer';
 import {
   isCoWeek,
@@ -565,6 +586,7 @@ import {
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useAppSettingsStore } from 'src/stores/app-settings';
+import { getTimerReportStatus } from 'src/utils/timer-report';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -610,6 +632,7 @@ const {
   partDurations,
   partTimings,
   pauseTimer,
+  refreshCountdownTarget,
   removeCustomTimerPart,
   resumeTimer,
   startTimer,
@@ -673,14 +696,8 @@ const openEditDialog = (part: { label: string; value: MeetingPart }) => {
   editDialogOpen.value = true;
 };
 
-// Save edits
-const saveEdit = () => {
-  if (!editPart.value) return;
-
-  const editedPartValue = editPart.value.value;
-  const newDuration = editDuration.value;
-
-  // Update the edited part's duration
+const setPartDuration = (editedPartValue: MeetingPart, duration: number) => {
+  const newDuration = Math.max(1, Math.round(Number(duration) || 1));
   partDurations.value[editedPartValue] = newDuration;
 
   if (editedPartValue.startsWith('ayfm-')) {
@@ -701,12 +718,34 @@ const saveEdit = () => {
     }
   }
 
+  refreshCountdownTarget();
+};
+
+const adjustPartDuration = (part: MeetingPart, delta: number) => {
+  setPartDuration(part, (partDurations.value[part] || 1) + delta);
+};
+
+// Save edits
+const saveEdit = () => {
+  if (!editPart.value) return;
+
+  setPartDuration(editPart.value.value, editDuration.value);
   editDialogOpen.value = false;
 };
 
 // Cancel edit
 const cancelEdit = () => {
   editDialogOpen.value = false;
+};
+
+const getReportStatusText = (
+  status: ReturnType<typeof getTimerReportStatus>,
+) => {
+  if (status.kind === 'missing') return '';
+  if (status.kind === 'on-time') return t('on-time');
+
+  const label = status.kind === 'overtime' ? t('overtime') : t('undertime');
+  return `${label} ${status.amountMinutes} min.`;
 };
 
 // PDF Report Generation
@@ -728,8 +767,9 @@ const exportPdfReport = async () => {
     `${t('start-time')} (hh:mm:ss)`,
     'End (hh:mm:ss)',
     'Duration (mm:ss)',
+    t('status'),
   ];
-  const tableRows: (number | string)[][] = [];
+  const tableRows: CellInput[][] = [];
 
   for (const partOption of meetingPartsOptions.value) {
     const partValue = partOption.value;
@@ -739,12 +779,22 @@ const exportPdfReport = async () => {
     const formattedStartTime = getTimeString(timings?.startTime ?? null, true);
     const formattedEndTime = getTimeString(timings?.endTime ?? null, true);
     const formattedDuration = getDuration(timings ?? null, duration);
+    const status = getTimerReportStatus(timings, duration);
+    const statusText = getReportStatusText(status);
+    const statusCell: CellInput = {
+      content: statusText,
+      styles: {
+        fontStyle: status.kind === 'missing' ? undefined : 'bold',
+        textColor: status.kind === 'overtime' ? [255, 0, 0] : [0, 0, 0],
+      },
+    };
 
     tableRows.push([
       partOption.label,
       formattedStartTime,
       formattedEndTime,
       formattedDuration,
+      statusCell,
     ]);
   }
 
@@ -752,9 +802,10 @@ const exportPdfReport = async () => {
     body: tableRows,
     columnStyles: {
       0: { cellWidth: 60 },
-      1: { cellWidth: 40 },
-      2: { cellWidth: 40 },
+      1: { cellWidth: 34 },
+      2: { cellWidth: 34 },
       3: { cellWidth: 30 },
+      4: { cellWidth: 36 },
     },
     head: [tableColumn],
     headStyles: { fillColor: '#42A5F5' }, // Quasar primary color
@@ -951,8 +1002,12 @@ watch(
 watchImmediate(
   () => [
     currentSettings.value?.timerBackgroundColor,
+    currentSettings.value?.timerCountdownDisplay,
+    currentSettings.value?.timerCountdownWarningIndicator,
+    currentSettings.value?.timerHourFormat,
     currentSettings.value?.timerTextColor,
     currentSettings.value?.timerTextSize,
+    currentSettings.value?.timerTimeOfDayDisplay,
     currentSettings.value?.timerEnableMeetingAheadBehind,
     currentSettings.value?.timerEnableMeetingCountdown,
     currentSettings.value?.timerMeetingCountdownMinutes,

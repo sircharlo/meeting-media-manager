@@ -155,6 +155,8 @@ export type SettingsItemListKey =
   | 'obsAllScenes'
   | 'obsScenes'
   | 'resolutions'
+  | 'timerDisplayFormats'
+  | 'timerHourFormats'
   | 'timerModes';
 
 export type SettingsItemOption = 'coTuesdays' | 'futureDate' | 'meetingTime';
@@ -277,8 +279,11 @@ export interface SettingsValues {
   suppressHardwareAccelerationReminder: boolean;
   timerAutoOpen: boolean;
   timerBackgroundColor: string;
+  timerCountdownDisplay: 'analog' | 'analog-digital' | 'digital';
+  timerCountdownWarningIndicator: boolean;
   timerEnableMeetingAheadBehind: boolean;
   timerEnableMeetingCountdown: boolean;
+  timerHourFormat: '12h' | '24h';
   timerMeetingCountdownMinutes: number;
   timerMode: 'countdown' | 'countup';
   timerOvertimeAnimation: boolean;
@@ -289,6 +294,7 @@ export interface SettingsValues {
   timerShowOnActionIsland: boolean;
   timerTextColor: string;
   timerTextSize: string;
+  timerTimeOfDayDisplay: 'analog' | 'analog-digital' | 'digital';
   weDay: `${number}` | null;
   weStartTime: `${number}:${number}` | null;
   zoomAutoFocusMediaWindow: boolean;
