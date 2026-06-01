@@ -280,7 +280,6 @@ const loadPlaylistItems = async () => {
       await unzip(props.jwPlaylistPath, outputPath);
     } catch (err) {
       createTemporaryNotification({
-        icon: 'mmm-error',
         message: t('error-reading-playlist-file'),
         type: 'negative',
       });
@@ -290,7 +289,6 @@ const loadPlaylistItems = async () => {
     const dbFile = await findDb(outputPath);
     if (!dbFile) {
       createTemporaryNotification({
-        icon: 'mmm-error',
         message: t('error-reading-playlist-file'),
         type: 'negative',
       });

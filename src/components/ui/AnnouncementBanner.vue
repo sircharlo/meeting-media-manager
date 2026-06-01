@@ -226,7 +226,6 @@ onMounted(() => {
     onUpdateError(() => {
       createTemporaryNotification({
         caption: t('update-failed'),
-        icon: 'mmm-error',
         message: t('update-error-read-only-volume'),
         timeout: 10000,
         type: 'negative',

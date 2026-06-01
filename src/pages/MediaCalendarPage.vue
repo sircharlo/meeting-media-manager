@@ -507,7 +507,6 @@ const checkMemorialDate = async () => {
     if (memorialMedia) {
       createTemporaryNotification({
         group: 'memorial-fetch',
-        icon: 'mmm-check',
         message: t('memorialFetchSuccess'),
         type: 'positive',
       });
@@ -517,7 +516,6 @@ const checkMemorialDate = async () => {
         postCustomBackground(memorialMedia.bg);
         createTemporaryNotification({
           group: 'memorial-fetch-bg',
-          icon: 'mmm-check',
           message: t('memorialFetchBgSuccess'),
           type: 'positive',
         });
@@ -552,7 +550,6 @@ const checkMemorialDate = async () => {
 
         createTemporaryNotification({
           group: 'memorial-fetch-video',
-          icon: 'mmm-check',
           message: t('memorialFetchVideoSuccess'),
           type: 'positive',
         });
@@ -649,14 +646,12 @@ const checkMemorialDate = async () => {
       if (succesfulSongs === songsToAdd.length) {
         createTemporaryNotification({
           group: 'memorial-fetch',
-          icon: 'mmm-check',
           message: t('memorialFetchSongsSuccess'),
           type: 'positive',
         });
       } else {
         createTemporaryNotification({
           group: 'memorial-fetch',
-          icon: 'mmm-error',
           message: t('memorialFetchSongsError'),
           type: 'negative',
         });
@@ -1252,7 +1247,6 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
     } catch (error) {
       createTemporaryNotification({
         caption: filepath ? basename(filepath) : filepath,
-        icon: 'mmm-error',
         message: t('fileProcessError'),
         type: 'negative',
       });
@@ -2547,7 +2541,6 @@ watch(
           currentSettings.value?.localDateFormat,
         ),
         group: 'meetingMediaDownloadError',
-        icon: 'mmm-error',
         message: t('errorDownloadingMeetingMedia'),
         timeout: 15000,
         type: 'negative',

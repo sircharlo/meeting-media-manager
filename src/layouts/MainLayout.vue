@@ -477,7 +477,6 @@ bcClose.onmessage = (event) => {
     ) {
       createTemporaryNotification({
         caption: t('clicking-the-close-button-again-will-close-app'),
-        icon: 'mmm-error',
         message: t('make-sure-that-m-is-in-not-use-before-quitting'),
         noClose: true,
         timeout: 10000,
@@ -508,7 +507,6 @@ const initListeners = () => {
       watchFolderErrorShown.value = true;
       createTemporaryNotification({
         caption: t('watch-folder-error-caption'),
-        icon: 'mmm-error',
         message: t('watch-folder-error-message'),
         timeout: 15000,
         type: 'negative',
@@ -521,7 +519,6 @@ const initListeners = () => {
       pathProbeNetworkWarningShown.value = true;
       createTemporaryNotification({
         caption: t('path-probe-network-warning-caption'),
-        icon: 'mmm-error',
         message: t('path-probe-network-warning-message'),
         timeout: 15000,
         type: 'negative',
@@ -572,7 +569,6 @@ const initListeners = () => {
   onGpuCrashDetected(() => {
     createTemporaryNotification({
       caption: t('gpu-crash-detected-restarting'),
-      icon: 'mmm-error',
       message: t('gpu-crash-detected'),
       timeout: 10000,
       type: 'negative',
@@ -582,7 +578,6 @@ const initListeners = () => {
   onVideoCaptureCrashDetected(() => {
     createTemporaryNotification({
       caption: t('camera-access-required-explain'),
-      icon: 'mmm-error',
       message: t('camera-access-required'),
       timeout: 10000,
       type: 'negative',
@@ -592,7 +587,6 @@ const initListeners = () => {
   onHardwareAccelerationTemporaryDisabled(() => {
     createTemporaryNotification({
       caption: t('gpu-crash-detected-explain'),
-      icon: 'mmm-warning',
       message: t('gpu-crash-detected'),
       timeout: 10000,
       type: 'warning',
@@ -732,7 +726,6 @@ const checkYeartextPreview = async () => {
 
                 // Show success notification
                 createTemporaryNotification({
-                  icon: 'mmm-check',
                   message: t('yeartext-preview-success', { year: nextYear }),
                   timeout: 5000,
                   type: 'positive',
@@ -744,7 +737,6 @@ const checkYeartextPreview = async () => {
                   const currentYeartext = currentState.yeartext || '';
                   postYeartext(currentYeartext);
                   createTemporaryNotification({
-                    icon: 'mmm-check',
                     message: t('yeartext-cleared', {
                       currentYear: currentYear,
                     }),
@@ -1035,14 +1027,12 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
     // Priority: beta warning first
     if (isBetaVersion) {
       createTemporaryNotification({
-        icon: 'mmm-warning',
         message: t('beta-version-warning'),
         timeout: 30000,
         type: 'warning',
       });
     } else if (areUpdatesDisabled) {
       createTemporaryNotification({
-        icon: 'mmm-info',
         message: t('updates-disabled-warning'),
         timeout: 10000,
         type: 'info',
@@ -1051,7 +1041,6 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
     if (hasArchitectureMismatch) {
       createTemporaryNotification({
         caption: t('architecture-mismatch-explain'),
-        icon: 'mmm-info',
         message: t('architecture-mismatch'),
         timeout: 30000,
         type: 'info',
@@ -1101,7 +1090,6 @@ watch(
       // Automatic sync is now disabled for this congregation
       createTemporaryNotification({
         caption: t('automatic-sync-disabled-explain'),
-        icon: 'mmm-warning',
         message: t('automatic-sync-disabled'),
         timeout: 10000,
         type: 'warning',
@@ -1109,7 +1097,6 @@ watch(
     } else if (!newCongregationNameModified && oldCongregationNameModified) {
       // Automatic sync is now enabled for this congregation
       createTemporaryNotification({
-        icon: 'mmm-check',
         message: t('automatic-sync-enabled'),
         timeout: 10000,
         type: 'positive',
@@ -1391,7 +1378,6 @@ watchImmediate(
             },
           ],
           caption: t('hardwareAccelerationDisabledExplain'),
-          icon: 'mmm-info',
           message: t('hardwareAccelerationDisabled'),
           timeout: 10000,
           type: 'info',
