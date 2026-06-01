@@ -4,7 +4,7 @@
     padding
     :style="containerStyles"
   >
-    <transition mode="out-in" name="scale">
+    <transition :name="displayTransitionName">
       <div
         :key="displayKey"
         class="timer-display"
@@ -65,6 +65,7 @@
               pathLength="100"
               r="44"
             />
+            <circle class="analog-countdown__dot" cx="94" cy="50" r="6" />
           </svg>
           <div class="analog-countdown__inner">
             {{ displayTime }}
@@ -152,6 +153,12 @@ const currentDisplayFormat = computed(() => {
 
 const displayKey = computed(
   () => `${currentMode.value}-${currentDisplayFormat.value}`,
+);
+
+const displayTransitionName = computed(() =>
+  currentMode.value === 'clock'
+    ? 'q-transition--jump-right'
+    : 'q-transition--jump-left',
 );
 
 const isCombinedDisplay = computed(
@@ -297,6 +304,7 @@ const countdownRingColor = computed(() => {
 });
 
 const analogCountdownStyles = computed<CSSProperties>(() => {
+  const isFull = countdownProgress.value >= 1;
   const progressPercent = countdownProgress.value * 100;
   const textColor =
     isOvertime.value && timerData.value?.timerOvertimeIndicator
@@ -304,11 +312,9 @@ const analogCountdownStyles = computed<CSSProperties>(() => {
       : timerData.value?.timerTextColor || '#ffffff';
 
   return {
-    '--countdown-progress': `${progressPercent} 100`,
+    '--countdown-progress': isFull ? '100 0' : `${progressPercent} 100`,
     '--countdown-progress-color': countdownRingColor.value,
-    '--countdown-progress-linecap':
-      countdownProgress.value >= 1 ? 'butt' : 'round',
-    '--countdown-progress-opacity': countdownProgress.value > 0 ? '1' : '0',
+    '--countdown-progress-linecap': isFull ? 'butt' : 'round',
     '--countdown-text-color': textColor,
   };
 });
@@ -574,14 +580,17 @@ watch(timerData, (newData) => {
 }
 
 .analog-countdown__progress {
-  opacity: var(--countdown-progress-opacity);
   stroke: var(--countdown-progress-color);
   stroke-dasharray: var(--countdown-progress);
   stroke-linecap: var(--countdown-progress-linecap);
   transition:
-    opacity 200ms ease,
     stroke 700ms ease,
     stroke-dasharray 200ms linear;
+}
+
+.analog-countdown__dot {
+  fill: var(--countdown-progress-color);
+  transition: fill 700ms ease;
 }
 
 .analog-countdown__inner {
@@ -598,21 +607,6 @@ watch(timerData, (newData) => {
   transition: color 700ms ease;
   width: 76%;
   z-index: 1;
-}
-
-.scale-enter-active,
-.scale-leave-active {
-  transition: all 0.5s ease;
-}
-
-.scale-enter-from {
-  opacity: 0;
-  transform: scale(0.8);
-}
-
-.scale-leave-to {
-  opacity: 0;
-  transform: scale(1.2);
 }
 
 @keyframes gentle-blink {
