@@ -1113,6 +1113,7 @@ import { FOOTNOTE_TARGET_PARAGRAPH } from 'src/constants/jw';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getThumbnailUrl } from 'src/helpers/fs';
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
+import { triggerMediaWindowAutoHide } from 'src/helpers/mediaWindowAutoHide';
 import { triggerZoomScreenShare } from 'src/helpers/zoom';
 import { log, throttleWithTrailing, uuid } from 'src/shared/vanilla';
 import { isFileUrl } from 'src/utils/fs';
@@ -1397,7 +1398,8 @@ const setMediaPlaying = async (
   marker?: VideoMarker,
 ) => {
   if (!mediaPlaying.value.url) {
-    // Start Zoom screen sharing when media starts playing and no media was playing before
+    // Start one-shot workflows when media starts playing and no media was playing before
+    triggerMediaWindowAutoHide(true);
     triggerZoomScreenShare(true);
   } else if (isImage(mediaPlaying.value.url)) {
     stopMedia(true);
@@ -1713,7 +1715,8 @@ function stopMedia(forOtherMediaItem = false) {
   postPlaybackRate(1);
 
   if (!forOtherMediaItem) {
-    // Stop Zoom screen sharing when media is stopped (unless it's a media switch instead of a stop)
+    // Stop one-shot workflows when media is stopped (unless it's a media switch instead of a stop)
+    triggerMediaWindowAutoHide(false);
     triggerZoomScreenShare(false);
     nextTick(() => {
       globalThis.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));

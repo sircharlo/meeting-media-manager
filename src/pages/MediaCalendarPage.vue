@@ -159,6 +159,7 @@ import {
   toggleMediaWindowVisibility,
   unzipJwpub,
 } from 'src/helpers/mediaPlayback';
+import { triggerMediaWindowAutoHide } from 'src/helpers/mediaWindowAutoHide';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { updateLastUsedDate } from 'src/helpers/usage';
 import { triggerZoomScreenShare } from 'src/helpers/zoom';
@@ -2263,6 +2264,7 @@ watch(
       );
       if (repeatHandled) return;
 
+      triggerMediaWindowAutoHide(false);
       triggerZoomScreenShare(false);
 
       mediaPlaying.value = {
