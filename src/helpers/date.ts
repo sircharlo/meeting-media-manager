@@ -406,7 +406,6 @@ function updateMeetingScheduleIfNeeded(settings: SettingsValues) {
 
   // Notify user
   createTemporaryNotification({
-    icon: 'mmm-info',
     message: (i18n.global.t as (key: string) => string)(
       'meeting-schedule-change-applied',
     ),

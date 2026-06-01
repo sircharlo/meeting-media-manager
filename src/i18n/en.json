@@ -725,5 +725,13 @@
   "zoomEnable-explain": "This will not automate Zoom fully. Rather, it will attempt to start and stop Zoom screen sharing using the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting whenever media starts and stops playing in M³.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom screen sharing shortcut",
-  "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings."
+  "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings.",
+  "export-profile-settings": "Export profile",
+  "import-profile-settings": "Import profile",
+  "profile-settings-export-failed": "Profile settings could not be exported.",
+  "profile-settings-exported": "Profile settings exported.",
+  "profile-settings-import-failed": "Profile settings could not be imported. Choose a valid profile settings JSON file.",
+  "profile-settings-imported": "Profile settings imported.",
+  "profile-settings-transfer": "Profile settings import and export",
+  "profile-settings-transfer-explain": "Export this profile's settings to a JSON file, or import settings from a previously exported profile settings file. Importing replaces the current profile's settings."
 }

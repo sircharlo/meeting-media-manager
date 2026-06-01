@@ -132,6 +132,7 @@ const electronApi: ElectronApi = {
   resolve,
   resumeAllDownloads: () => send('resumeAllDownloads'),
   robot,
+  saveFileDialog: (d, f) => invoke('saveFileDialog', d, f),
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),
   setElectronUrlVariables: (v) => send('setElectronUrlVariables', v),
   setHardwareAcceleration: (v) => invoke('set-hardware-acceleration', v),

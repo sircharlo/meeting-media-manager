@@ -629,7 +629,6 @@ const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
 
 const notifyInvalidBackgroundFile = () => {
   createTemporaryNotification({
-    icon: 'mmm-error',
     message: t('please-use-image-or-jwpub'),
     type: 'negative',
   });
@@ -640,7 +639,6 @@ const notifyInvalidBackgroundFile = () => {
 const notifyCustomBackgroundSet = () => {
   createTemporaryNotification({
     caption: t('custom-background-will-not-persist'),
-    icon: 'mmm-check',
     message: t('custom-background-set'),
     type: 'positive',
   });
@@ -686,7 +684,6 @@ const loadMemorialBackground = async (newMediaBackground?: string) => {
     if (bg) {
       createTemporaryNotification({
         group: 'memorial-fetch-bg',
-        icon: 'mmm-check',
         message: t('memorialFetchBgSuccess'),
         type: 'positive',
       });

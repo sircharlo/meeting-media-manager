@@ -3,7 +3,7 @@
     <q-list v-if="Object.keys(congregations).length">
       <!-- @vue-ignore-->
       <div
-        v-for="(prefs, id) in congregations"
+        v-for="{ id, prefs } in sortedCongregations"
         :key="id"
         v-ripple
         :class="
@@ -22,34 +22,34 @@
                 (currentCongregation === id ? 'text-primary' : '')
               "
             >
-              {{ congregations[id]?.congregationName || t('noName') }}
+              {{ prefs.congregationName || t('noName') }}
             </div>
             <div class="row text-caption text-secondary">
-              <template v-if="congregations[id]?.disableMediaFetching">
+              <template v-if="prefs.disableMediaFetching">
                 {{ t('no-regular-meetings') }}
               </template>
               <template
                 v-else-if="
-                  Number.parseInt(congregations[id]?.mwDay ?? '') >= 0 &&
-                  Number.parseInt(congregations[id]?.weDay ?? '') >= 0
+                  Number.parseInt(prefs.mwDay ?? '') >= 0 &&
+                  Number.parseInt(prefs.weDay ?? '') >= 0
                 "
               >
                 {{
-                  getDateLocale(congregations[id]?.localAppLang).days[
-                    Number.parseInt(congregations[id]?.mwDay ?? '') === 6
+                  getDateLocale(prefs.localAppLang).days[
+                    Number.parseInt(prefs.mwDay ?? '') === 6
                       ? 0
-                      : Number.parseInt(congregations[id]?.mwDay ?? '') + 1
+                      : Number.parseInt(prefs.mwDay ?? '') + 1
                   ]
                 }}
-                {{ congregations[id]?.mwStartTime }} |
+                {{ prefs.mwStartTime }} |
                 {{
-                  getDateLocale(congregations[id]?.localAppLang).days[
-                    Number.parseInt(congregations[id]?.weDay ?? '') === 6
+                  getDateLocale(prefs.localAppLang).days[
+                    Number.parseInt(prefs.weDay ?? '') === 6
                       ? 0
-                      : Number.parseInt(congregations[id]?.weDay ?? '') + 1
+                      : Number.parseInt(prefs.weDay ?? '') + 1
                   ]
                 }}
-                {{ congregations[id]?.weStartTime }}
+                {{ prefs.weStartTime }}
               </template>
               <template v-else-if="invalidSettings(id)">
                 {{ t('incomplete-configuration') }}
@@ -116,6 +116,8 @@
 </template>
 
 <script setup lang="ts">
+import type { SettingsValues } from 'src/types';
+
 import { useEventListener } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
@@ -156,6 +158,20 @@ const deletePending = computed(() => {
 const dialogId = 'congregation-delete-dialog';
 const hoveredCongregation = ref<number | string>('');
 
+const sortedCongregations = computed(() =>
+  Object.entries(congregations.value)
+    .flatMap(([id, prefs]): { id: string; prefs: SettingsValues }[] =>
+      prefs ? [{ id, prefs }] : [],
+    )
+    .sort((a, b) =>
+      (a.prefs.congregationName || t('noName')).localeCompare(
+        b.prefs.congregationName || t('noName'),
+        undefined,
+        { sensitivity: 'base' },
+      ),
+    ),
+);
+
 async function chooseCongregation(
   congregation: number | string,
   initialLoad?: boolean,
@@ -170,7 +186,6 @@ async function chooseCongregation(
             if (isLowDiskSpace) {
               createTemporaryNotification({
                 caption: t('low-disk-space-warning'),
-                icon: 'mmm-warning',
                 message: t('disk-space-is-running-low'),
                 timeout: 10000,
                 type: 'warning',
@@ -234,7 +249,6 @@ onMounted(async () => {
   if (executedMigrations.includes('firstRun')) {
     createTemporaryNotification({
       caption: t('successfully-migrated-from-the-previous-version'),
-      icon: 'mmm-info',
       message: t('welcome-to-mmm'),
       timeout: 15000,
       type: 'positive',
