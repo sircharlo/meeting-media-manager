@@ -16,11 +16,42 @@ const settingsKeys = Object.keys(defaultSettings) as (keyof SettingsValues)[];
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
-const sanitizeFilename = (value: null | string | undefined) =>
-  (value || 'profile')
-    .replace(/[^a-z0-9-_]+/gi, '-')
-    .replace(/^-+|-+$/g, '')
-    .toLowerCase() || 'profile';
+const isProfileFilenameCharacter = (character: string) => {
+  const codePoint = character.codePointAt(0);
+  return (
+    character === '-' ||
+    character === '_' ||
+    (codePoint !== undefined && codePoint >= 48 && codePoint <= 57) ||
+    (codePoint !== undefined && codePoint >= 97 && codePoint <= 122)
+  );
+};
+
+const sanitizeFilename = (value: null | string | undefined) => {
+  const input = value || 'profile';
+  const sanitizedCharacters: string[] = [];
+  let pendingSeparator = false;
+
+  for (const inputCharacter of input) {
+    const character = inputCharacter.toLowerCase();
+
+    if (isProfileFilenameCharacter(character)) {
+      if (character === '-' && sanitizedCharacters.length === 0) continue;
+      if (pendingSeparator && sanitizedCharacters.length > 0) {
+        sanitizedCharacters.push('-');
+      }
+      sanitizedCharacters.push(character);
+      pendingSeparator = false;
+      continue;
+    }
+
+    pendingSeparator = sanitizedCharacters.length > 0;
+  }
+
+  let end = sanitizedCharacters.length;
+  while (end > 0 && sanitizedCharacters[end - 1] === '-') end--;
+
+  return sanitizedCharacters.slice(0, end).join('') || 'profile';
+};
 
 export const normalizeProfileSettings = (value: unknown): SettingsValues => {
   const candidate =
