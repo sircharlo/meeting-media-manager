@@ -328,6 +328,8 @@
   "media-only": "Multimedia",
   "media-playback": "Reproducción de multimedia",
   "media-sync": "Sincronización multimedia",
+  "media-window-auto-hidden-caption": "Puede mostrar la ventana multimedia manualmente desde el menú Mostrar o haciendo clic en el botón de esta notificación.",
+  "media-window-auto-hidden-message": "Ventana de medios ocultada automáticamente",
   "mediaAutoExportFolder": "Carpeta de autoexportación",
   "mediaAutoExportFolder-explain": "Carpeta para las exportaciones automáticas de multimedia.",
   "mediaExport": "Exportación multimedia",
@@ -723,5 +725,13 @@
   "zoomEnable-explain": "Esto no automatizará completamente el Zoom. Más bien, intentará iniciar y detener el uso compartido de la pantalla de Zoom usando el acceso directo del teclado configurado en el ajuste de \"Inicio / detención compartición de pantalla\" de Zoom cada vez que se inicia el medio y deja de reproducirse en M3.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Atajo para compartir pantalla de Zoom",
-  "zoomScreenShareShortcut-explain": "Introduzca el acceso directo del teclado configurado en el ajuste de Zoom \"Iniciar/Detener compartir pantalla\". M3 enviará este acceso directo cuando la multimedia comience a reproducir (para iniciar el uso compartido de la pantalla) y cuando se detenga (para detener el uso compartido de la pantalla). Para poder utilizar esta función, necesita habilitar la opción \"Acceso directo global\" para ese acceso directo en particular en los ajustes de Zoom."
+  "zoomScreenShareShortcut-explain": "Introduzca el acceso directo del teclado configurado en el ajuste de Zoom \"Iniciar/Detener compartir pantalla\". M3 enviará este acceso directo cuando la multimedia comience a reproducir (para iniciar el uso compartido de la pantalla) y cuando se detenga (para detener el uso compartido de la pantalla). Para poder utilizar esta función, necesita habilitar la opción \"Acceso directo global\" para ese acceso directo en particular en los ajustes de Zoom.",
+  "export-profile-settings": "Exportar perfil",
+  "import-profile-settings": "Importar perfil",
+  "profile-settings-export-failed": "No se pudo exportar la configuración del perfil.",
+  "profile-settings-exported": "Ajustes de perfil exportados.",
+  "profile-settings-import-failed": "La configuración del perfil no se pudo importar. Elija un archivo JSON de configuración de perfil válido.",
+  "profile-settings-imported": "Ajustes de perfil importados.",
+  "profile-settings-transfer": "Importar y exportar ajustes del perfil",
+  "profile-settings-transfer-explain": "Exportar la configuración de este perfil a un archivo JSON o importar la configuración de un archivo de configuración de perfil previamente exportado. La importación reemplaza la configuración del perfil actual."
 }

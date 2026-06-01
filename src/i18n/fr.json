@@ -328,6 +328,8 @@
   "media-only": "Médias uniquement",
   "media-playback": "Lecture multimédia",
   "media-sync": "Synchronisation des médias",
+  "media-window-auto-hidden-caption": "Vous pouvez afficher la fenêtre média manuellement à partir du menu Affichage ou en cliquant sur le bouton dans cette notification.",
+  "media-window-auto-hidden-message": "Fenêtre média masquée automatiquement",
   "mediaAutoExportFolder": "Dossier pour l'exportation automatique",
   "mediaAutoExportFolder-explain": "Choisissez un dossier pour l'exportation automatique des médias.",
   "mediaExport": "Exportation des médias",
@@ -723,5 +725,13 @@
   "zoomEnable-explain": "Cela n'automatisera pas entièrement Zoom. Cela permettra plutôt de lancer et d'arrêter le partage d'écran de Zoom à l'aide du raccourci clavier défini dans le paramètre « Démarrer/arrêter le partage d'écran » de Zoom, dès que la lecture d'un fichier multimédia démarre ou s'arrête dans M³.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Raccourci pour le partage d'écran de Zoom",
-  "zoomScreenShareShortcut-explain": "Entrez le raccourci clavier configuré dans le paramètre « Démarrer/arrêter le partage d'écran » de Zoom. M³ enverra ce raccourci lorsque les médias commencent à jouer (pour démarrer le partage d'écran) et lorsqu'ils s'arrêtent (pour arrêter le partage d'écran). Pour utiliser cette fonctionnalité, vous devez activer le paramètre « Raccourci global » pour ce raccourci particulier dans les paramètres de Zoom."
+  "zoomScreenShareShortcut-explain": "Entrez le raccourci clavier configuré dans le paramètre « Démarrer/arrêter le partage d'écran » de Zoom. M³ enverra ce raccourci lorsque les médias commencent à jouer (pour démarrer le partage d'écran) et lorsqu'ils s'arrêtent (pour arrêter le partage d'écran). Pour utiliser cette fonctionnalité, vous devez activer le paramètre « Raccourci global » pour ce raccourci particulier dans les paramètres de Zoom.",
+  "export-profile-settings": "Exporter le profil",
+  "import-profile-settings": "Profil d'import",
+  "profile-settings-export-failed": "Les paramètres du profil n'ont pas pu être exportés.",
+  "profile-settings-exported": "Paramètres de profil exportés.",
+  "profile-settings-import-failed": "Les paramètres de profil n'ont pas pu être importés. Choisissez un fichier JSON de paramètres de profil valide.",
+  "profile-settings-imported": "Paramètres de profil importés.",
+  "profile-settings-transfer": "Import et exportation des paramètres du profil",
+  "profile-settings-transfer-explain": "Exporter les paramètres de ce profil vers un fichier JSON, ou importer des paramètres depuis un fichier de paramètres de profil précédemment exporté. L'importation remplace les paramètres du profil actuel."
 }

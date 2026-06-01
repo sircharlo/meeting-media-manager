@@ -328,6 +328,8 @@
   "media-only": "Samo multimedijska vsebina",
   "media-playback": "Predvajanje multimedijske vsebine",
   "media-sync": "Sinhronizacija multimedijske vsebine",
+  "media-window-auto-hidden-caption": "You can show the media window manually from the Display menu or by clicking the button in this notification.",
+  "media-window-auto-hidden-message": "Media window automatically hidden",
   "mediaAutoExportFolder": "Mapa za samodejni izvoz",
   "mediaAutoExportFolder-explain": "Mapa za samodejni izvoz multimedijske vsebine.",
   "mediaExport": "Izvoz multimedijske vsebine",
@@ -723,5 +725,13 @@
   "zoomEnable-explain": "To ne bo povsem avtomatiziralo delovanja Zooma, ampak bo poskušalo zagnati in ustaviti deljenje zaslona v Zoomu s pomočjo bližnjice na tipkovnici, ki je v Zoomu nastavljena za »Start/stop screen sharing«, vsakič, ko se v M³ začne ali ustavi predvajanje multimedijske vsebine.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Bližnjica za deljenje zaslona v Zoomu",
-  "zoomScreenShareShortcut-explain": "Vnesi bližnjico na tipkovnici, ki je nastavljena v Zoomovi nastavitvi »Start/stop screen sharing«. M³ bo to bližnjico poslal, ko se bo začelo predvajanje multimedijske vsebine (za začetek deljenja zaslona) in ko se bo ustavilo (za ustavitev deljenja zaslona). Da bi lahko uporabljal to funkcijo, moraš v Zoomovih nastavitvah omogočiti nastavitev »Global shortcut« za to bližnjico."
+  "zoomScreenShareShortcut-explain": "Vnesi bližnjico na tipkovnici, ki je nastavljena v Zoomovi nastavitvi »Start/stop screen sharing«. M³ bo to bližnjico poslal, ko se bo začelo predvajanje multimedijske vsebine (za začetek deljenja zaslona) in ko se bo ustavilo (za ustavitev deljenja zaslona). Da bi lahko uporabljal to funkcijo, moraš v Zoomovih nastavitvah omogočiti nastavitev »Global shortcut« za to bližnjico.",
+  "export-profile-settings": "Export profile",
+  "import-profile-settings": "Import profile",
+  "profile-settings-export-failed": "Profile settings could not be exported.",
+  "profile-settings-exported": "Profile settings exported.",
+  "profile-settings-import-failed": "Profile settings could not be imported. Choose a valid profile settings JSON file.",
+  "profile-settings-imported": "Profile settings imported.",
+  "profile-settings-transfer": "Profile settings import and export",
+  "profile-settings-transfer-explain": "Export this profile's settings to a JSON file, or import settings from a previously exported profile settings file. Importing replaces the current profile's settings."
 }
