@@ -328,6 +328,8 @@
   "media-only": "Nur Medien",
   "media-playback": "Medienwiedergabe",
   "media-sync": "Medien-Synchronisierung",
+  "media-window-auto-hidden-caption": "Sie können das Medienfenster manuell aus dem Display-Menü oder durch Klicken auf die Schaltfläche in dieser Benachrichtigung anzeigen.",
+  "media-window-auto-hidden-message": "Medienfenster automatisch ausblenden",
   "mediaAutoExportFolder": "Auto-Export Ordner",
   "mediaAutoExportFolder-explain": "Ordner für automatische Medienexporte.",
   "mediaExport": "Medienexport",
@@ -723,5 +725,13 @@
   "zoomEnable-explain": "Zoom wird nicht vollständig automatisiert. Eher es versucht, die Bildschirmfreigabe mit Zoom zu starten und zu stoppen, indem das Tastaturkürzel in Zooms Einstellung \"Start/Stopp-Bildschirmfreigabe\" aktiviert wird, wenn die Medien gestartet werden und nicht mehr in M3 abgespielt werden.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom-Bildschirmfreigabe-Tastenkürzel",
-  "zoomScreenShareShortcut-explain": "Geben Sie das Tastenkürzel ein, das in den Zoom-Einstellungen für \"Bildschirmfreigabe starten/stoppen\" konfiguriert ist. M³ sendet dieses Kürzel, wenn Medien gestartet werden (um die Bildschirmfreigabe zu starten) und wenn sie stoppen (um die Bildschirmfreigabe zu stoppen). Um diese Funktion nutzen zu können, müssen Sie die Einstellung \"Globales Tastenkürzel\" für dieses spezielle Kürzel in den Zoom-Einstellungen aktivieren."
+  "zoomScreenShareShortcut-explain": "Geben Sie das Tastenkürzel ein, das in den Zoom-Einstellungen für \"Bildschirmfreigabe starten/stoppen\" konfiguriert ist. M³ sendet dieses Kürzel, wenn Medien gestartet werden (um die Bildschirmfreigabe zu starten) und wenn sie stoppen (um die Bildschirmfreigabe zu stoppen). Um diese Funktion nutzen zu können, müssen Sie die Einstellung \"Globales Tastenkürzel\" für dieses spezielle Kürzel in den Zoom-Einstellungen aktivieren.",
+  "export-profile-settings": "Exportprofil",
+  "import-profile-settings": "Profil importieren",
+  "profile-settings-export-failed": "Profileinstellungen konnten nicht exportiert werden.",
+  "profile-settings-exported": "Profileinstellungen exportiert.",
+  "profile-settings-import-failed": "Profileinstellungen konnten nicht importiert werden. Wählen Sie eine gültige JSON-Datei für Profileinstellungen.",
+  "profile-settings-imported": "Profileinstellungen importiert.",
+  "profile-settings-transfer": "Profileinstellungen importieren und exportieren",
+  "profile-settings-transfer-explain": "Exportieren Sie die Einstellungen dieses Profils in eine JSON-Datei oder importieren Sie die Einstellungen aus einer zuvor exportierten Profil-Einstellungen. Der Import ersetzt die aktuellen Profileinstellungen."
 }

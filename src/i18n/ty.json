@@ -328,6 +328,8 @@
   "media-only": "Media ana’e",
   "media-playback": "Fa’atā’ira’a media",
   "media-sync": "Fa’afana’ira’a media",
+  "media-window-auto-hidden-caption": "You can show the media window manually from the Display menu or by clicking the button in this notification.",
+  "media-window-auto-hidden-message": "Media window automatically hidden",
   "mediaAutoExportFolder": "Pu’era’a parau hā’utu ’āfaro",
   "mediaAutoExportFolder-explain": "Pu’era’a parau nō te hā’utu ’āfaro i te mau media.",
   "mediaExport": "Hā’utu ra’a media",
@@ -723,5 +725,13 @@
   "zoomEnable-explain": "’Eita teie e fa’anaho roa iā Zoom. E tātari rā te reira i te ha’amata ’e te fa’aea i te ’ōpere-’api a Zoom mā te rāve’a rorouira (raccourcis) i fa’anahohia i roto i te tātara’a \"Commencer/Arrêter le partage d'écran\" a Zoom ’ia ha’amata ’e ’ia fa’aea te ha’utira’a media i roto iā M³.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Rāve’a rorouira nō te ’ōpere-’api Zoom",
-  "zoomScreenShareShortcut-explain": "’A pata i te rāve’a rorouira (raccourcis) i fa’anahohia i roto i te tātara’a \"Commencer/Arrêter le partage d'écran\" a Zoom. E hāpono M³ i teie shortcut ’ia ha’amata te ha’utira’a media (nō te ha’amata i te ’ōpere-’api) ’e ’ia fa’aea te reira (nō te fa’aea i te ’ōpere-’api). Nō te fa’a’ohipa i teie fa’anahora’a, e tītauhia ’ia ha’amāhana ’oe i te tātara’a \"Raccourcis Général\" nō taua raccourcis ta’a ’ē ra i roto i te mau tātara’a a Zoom."
+  "zoomScreenShareShortcut-explain": "’A pata i te rāve’a rorouira (raccourcis) i fa’anahohia i roto i te tātara’a \"Commencer/Arrêter le partage d'écran\" a Zoom. E hāpono M³ i teie shortcut ’ia ha’amata te ha’utira’a media (nō te ha’amata i te ’ōpere-’api) ’e ’ia fa’aea te reira (nō te fa’aea i te ’ōpere-’api). Nō te fa’a’ohipa i teie fa’anahora’a, e tītauhia ’ia ha’amāhana ’oe i te tātara’a \"Raccourcis Général\" nō taua raccourcis ta’a ’ē ra i roto i te mau tātara’a a Zoom.",
+  "export-profile-settings": "Export profile",
+  "import-profile-settings": "Import profile",
+  "profile-settings-export-failed": "Profile settings could not be exported.",
+  "profile-settings-exported": "Profile settings exported.",
+  "profile-settings-import-failed": "Profile settings could not be imported. Choose a valid profile settings JSON file.",
+  "profile-settings-imported": "Profile settings imported.",
+  "profile-settings-transfer": "Profile settings import and export",
+  "profile-settings-transfer-explain": "Export this profile's settings to a JSON file, or import settings from a previously exported profile settings file. Importing replaces the current profile's settings."
 }
