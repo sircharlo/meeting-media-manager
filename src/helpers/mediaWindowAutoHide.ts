@@ -1,3 +1,4 @@
+import { i18n } from 'boot/i18n';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -15,12 +16,16 @@ const showAutoHiddenNotification = () => {
         handler: () => {
           toggleMediaWindowVisibility(true);
         },
-        label: 'Show media window',
+        label: (i18n.global.t as (key: string) => string)('show-media-display'),
       },
     ],
-    caption:
-      'You can show the media window manually from the Display menu or by clicking the “Show media window” button.',
-    message: 'Media window automatically hidden',
+    caption: (i18n.global.t as (key: string) => string)(
+      'media-window-auto-hidden-caption',
+    ),
+    group: 'mediaWindowAutoHide',
+    message: (i18n.global.t as (key: string) => string)(
+      'media-window-auto-hidden-message',
+    ),
     timeout: 10000,
     type: 'info',
   });
