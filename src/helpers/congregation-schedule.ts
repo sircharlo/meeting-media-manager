@@ -15,24 +15,23 @@ import { fetchJson } from 'src/utils/api';
 import { isInPast } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
 
+import { updateLookupPeriod } from './date';
 import { errorCatcher } from './error-catcher';
 
 let meetingLanguagesPromise: null | Promise<Map<string, string>> = null;
 
 export const getMeetingLanguageMap = async () => {
-  if (!meetingLanguagesPromise) {
-    meetingLanguagesPromise = (async () => {
-      const languages =
-        (await fetchJson<MeetingLanguage[]>(
-          'https://hub.jw.org/meetings/api/languages',
-          undefined,
-          useCurrentStateStore().online,
-        )) || [];
-      return new Map(
-        languages.map((language) => [language.languageGuid, language.code]),
-      );
-    })();
-  }
+  meetingLanguagesPromise ??= (async () => {
+    const languages =
+      (await fetchJson<MeetingLanguage[]>(
+        'https://hub.jw.org/meetings/api/languages',
+        undefined,
+        useCurrentStateStore().online,
+      )) || [];
+    return new Map(
+      languages.map((language) => [language.languageGuid, language.code]),
+    );
+  })();
   return meetingLanguagesPromise;
 };
 
@@ -188,14 +187,20 @@ export const syncMeetingSchedule = async (force = false) => {
               0,
               5,
             ) as `${number}:${number}`,
-            weekday: selectedMeeting.midweekMeetingDay + 1,
+            weekday:
+              selectedMeeting.midweekMeetingDay === 0
+                ? 7
+                : selectedMeeting.midweekMeetingDay,
           },
           weekend: {
             time: selectedMeeting.weekendMeetingTime.slice(
               0,
               5,
             ) as `${number}:${number}`,
-            weekday: selectedMeeting.weekendMeetingDay + 1,
+            weekday:
+              selectedMeeting.weekendMeetingDay === 0
+                ? 7
+                : selectedMeeting.weekendMeetingDay,
           },
         },
         future: null,
@@ -229,7 +234,14 @@ export const syncMeetingSchedule = async (force = false) => {
         });
       }
 
-      return currentChanged || futureChanged;
+      const scheduleChanged = currentChanged || futureChanged;
+      if (scheduleChanged) {
+        updateLookupPeriod({ reset: true });
+        const { fetchMedia } = await import('./jw-media');
+        await fetchMedia();
+      }
+
+      return scheduleChanged;
     }
   } catch (error) {
     errorCatcher(error, {

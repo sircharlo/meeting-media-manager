@@ -998,7 +998,7 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
 
     const scheduleChanged = !!(await syncMeetingSchedule());
 
-    updateLookupPeriod({ reset: scheduleChanged });
+    if (!scheduleChanged) updateLookupPeriod();
     delayedCacheClear();
 
     if (queues.meetings[newCongregation]) {

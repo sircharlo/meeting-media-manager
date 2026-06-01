@@ -207,7 +207,6 @@ const getJwLangId = (symbol?: JwLangCode): number | undefined => {
   const entry = Object.entries(mepslangs).find(([, value]) => value === symbol);
   return entry ? Number.parseInt(entry[0], 10) : undefined;
 };
-
 export const copyToDatedAdditionalMedia = async (
   filepathToCopy: string,
   section: MediaSectionIdentifier | undefined,
@@ -266,9 +265,8 @@ export const copyToDatedAdditionalMedia = async (
   }
 };
 
-export const addToAdditionMediaMapFromPath = async (
+export const createMediaItemFromPath = async (
   additionalFilePath: string,
-  section: MediaSectionIdentifier = 'imported-media',
   uniqueId?: string,
   additionalInfo?: {
     duration?: number;
@@ -279,11 +277,10 @@ export const addToAdditionMediaMapFromPath = async (
     url?: string;
   },
   customDuration?: { max: number; min: number },
-) => {
+): Promise<MediaItem | undefined> => {
   try {
-    if (!additionalFilePath) return;
+    if (!additionalFilePath) return undefined;
     const currentStateStore = useCurrentStateStore();
-    const jwStore = useJwStore();
     const video = isVideo(additionalFilePath);
     const audio = isAudio(additionalFilePath);
     const metadata =
@@ -304,45 +301,85 @@ export const addToAdditionMediaMapFromPath = async (
           pathToFileURL(additionalFilePath),
       );
     }
+
+    return {
+      customDuration:
+        customDuration?.min === 0 && customDuration?.max === 0
+          ? undefined
+          : customDuration,
+      duration,
+      filesize: additionalInfo?.filesize,
+      fileUrl: pathToFileURL(additionalFilePath),
+      isAudio: audio,
+      isImage: isImage(additionalFilePath),
+      isVideo: video,
+      sortOrderOriginal: -1,
+      source: 'additional',
+      streamUrl: additionalInfo?.url,
+      tag: {
+        type: additionalInfo?.song ? 'song' : undefined,
+        value: additionalInfo?.song ?? undefined,
+      },
+      thumbnailUrl:
+        additionalInfo?.thumbnailUrl ??
+        (await getThumbnailUrl(additionalFilePath, true)),
+      title,
+      type: 'media',
+      uniqueId,
+    };
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          additionalFilePath,
+          additionalInfo,
+          name: 'createMediaItemFromPath',
+          uniqueId,
+        },
+      },
+    });
+    return undefined;
+  }
+};
+
+export const addToAdditionMediaMapFromPath = async (
+  additionalFilePath: string,
+  section: MediaSectionIdentifier = 'imported-media',
+  uniqueId?: string,
+  additionalInfo?: {
+    duration?: number;
+    filesize?: number;
+    song?: string;
+    thumbnailUrl?: string;
+    title?: string;
+    url?: string;
+  },
+  customDuration?: { max: number; min: number },
+) => {
+  try {
+    const item = await createMediaItemFromPath(
+      additionalFilePath,
+      uniqueId,
+      additionalInfo,
+      customDuration,
+    );
+    if (!item) return undefined;
+
+    const currentStateStore = useCurrentStateStore();
+    const jwStore = useJwStore();
     log(
       `🔄 [addToAdditionMediaMapFromPath] Adding media to section: ${section}`,
       'mediaProcessing',
       'info',
     );
     jwStore.addToAdditionMediaMap(
-      [
-        {
-          customDuration:
-            customDuration?.min === 0 && customDuration?.max === 0
-              ? undefined
-              : customDuration,
-          duration,
-          filesize: additionalInfo?.filesize,
-          fileUrl: pathToFileURL(additionalFilePath),
-          isAudio: audio,
-          isImage: isImage(additionalFilePath),
-          isVideo: video,
-          sortOrderOriginal: -1,
-          source: 'additional',
-          streamUrl: additionalInfo?.url,
-          tag: {
-            type: additionalInfo?.song ? 'song' : undefined,
-            value: additionalInfo?.song ?? undefined,
-          },
-          thumbnailUrl:
-            additionalInfo?.thumbnailUrl ??
-            (await getThumbnailUrl(additionalFilePath, true)),
-          title,
-          type: 'media',
-          uniqueId,
-        },
-      ],
+      [item],
       section,
       currentStateStore.currentCongregation,
       currentStateStore.selectedDateObject,
       isCoWeek(currentStateStore.selectedDateObject?.date),
     );
-    return uniqueId;
+    return item.uniqueId;
   } catch (error) {
     errorCatcher(error, {
       contexts: {
@@ -3090,7 +3127,8 @@ export const downloadAdditionalRemoteVideo = async (
   title?: string,
   section?: MediaSectionIdentifier,
   customDuration?: { max: number; min: number },
-): Promise<string | undefined> => {
+  onlyCreateItem = false,
+): Promise<MediaItem | string | undefined> => {
   try {
     const currentStateStore = useCurrentStateStore();
     const currentSettings = currentStateStore.currentSettings;
@@ -3124,6 +3162,13 @@ export const downloadAdditionalRemoteVideo = async (
         `sjjm_s-Pi_CHS_${trackNum}_r720P.mp4`,
       );
       if (await pathExists(pinyinPath)) {
+        if (onlyCreateItem) {
+          return createMediaItemFromPath(pinyinPath, undefined, {
+            song: song.toString(),
+            title,
+            url: bestItemUrl,
+          });
+        }
         return addToAdditionMediaMapFromPath(pinyinPath, section, undefined, {
           song: song.toString(),
           title,
@@ -3142,8 +3187,37 @@ export const downloadAdditionalRemoteVideo = async (
       meetingDate || currentStateStore.selectedDate,
     );
 
+    const mediaFilePath = join(datedAdditionalMediaDir, basename(bestItemUrl));
+
+    if (onlyCreateItem) {
+      const mediaItem = await createMediaItemFromPath(
+        mediaFilePath,
+        undefined,
+        {
+          duration: bestItem.duration,
+          filesize: bestItem.filesize,
+          song: song ? song.toString() : undefined,
+          thumbnailUrl,
+          title,
+          url: bestItemUrl,
+        },
+        customDuration,
+      );
+
+      downloadFileIfNeeded({
+        dir: datedAdditionalMediaDir,
+        // Additional media added by user should be a high priority download
+        lowPriority: false,
+        meetingDate,
+        size: bestItem.filesize,
+        url: bestItemUrl,
+      });
+
+      return mediaItem;
+    }
+
     await addToAdditionMediaMapFromPath(
-      join(datedAdditionalMediaDir, basename(bestItemUrl)),
+      mediaFilePath,
       section,
       undefined,
       {
