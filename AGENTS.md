@@ -92,6 +92,19 @@ When adding or changing an Electron API:
 - Use existing `mmm-*` icons from the generated icon font when possible. If icon
   assets change, regenerate with `yarn generate:icons`.
 
+## SonarQube-Friendly Code
+
+- Keep TypeScript and Vue logic straightforward enough for SonarQube rules.
+- Avoid nested ternary expressions. Prefer an independent statement, early
+  return, helper function, or `if`/`else` block when more than one conditional
+  branch is needed.
+- Avoid compressing unrelated logic into a single expression when separate
+  named variables would make intent clearer.
+- Prefer explicit control flow for user-facing labels, status text, validation,
+  error handling, and other logic that may grow over time.
+- When changing existing code that already trips a SonarQube rule, clean up the
+  local pattern instead of copying it into new code.
+
 ## Testing
 
 - Renderer tests live under `src/**/__tests__` or `src/**/*.test.ts` and run in
