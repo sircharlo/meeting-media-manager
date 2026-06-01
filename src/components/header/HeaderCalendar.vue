@@ -247,6 +247,7 @@
             v-if="additionalMediaForSelectedDayExists"
             v-close-popup
             clickable
+            :disable="mediaIsPlaying"
             @click="mediaDeleteAllPending = true"
           >
             <q-item-section avatar>
