@@ -7,32 +7,45 @@ on:
 
 jobs:
   get-commit:
-    name: Get commit message
+    name: Get release-worthy commits
     runs-on: ubuntu-latest
     if: github.repository == 'sircharlo/meeting-media-manager'
+    permissions:
+      contents: read
     outputs:
-      msg: ${{ steps.set-msg.outputs.msg }}
+      base_ref: ${{ steps.base.outputs.base_ref }}
+      has_commits: ${{ steps.release_commits.outputs.has_commits }}
+      messages: ${{ steps.release_commits.outputs.messages }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           fetch-depth: 0
           persist-credentials: false
-      - id: set-msg
-        name: Set commit message variable
+      - id: base
+        name: Find previous release boundary
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          commitMessages=$(git log "$(git describe --tags --abbrev=0)..HEAD" --pretty=format:"%s" --no-merges | grep -Ei '^(feat|fix|chore|perf|docs):|^(fix(es|ed)?|add(s|ed)?|update(s|d)?|remov(e|es|ed)|refactor(s|ed)?|improve(s|d)?|revert(s|ed)?)\b')
-          echo "Raw commit messages:"
-          echo "$commitMessages"
-          commitMessages="${commitMessages//'%'/'%25'}"
-          commitMessages="${commitMessages//$'\n'/'%0A'}"
-          commitMessages="${commitMessages//$'\r'/'%0D'}"
-          echo "msg=${commitMessages}" >> $GITHUB_OUTPUT
+          base_ref=$(
+            gh release list --limit 100 --exclude-drafts --json tagName,isPrerelease,createdAt \
+              --jq '[.[] | select((.isPrerelease == false) or (.tagName | test("-beta\\.")))] | sort_by(.createdAt) | reverse | .[0].tagName // ""'
+          )
+
+          if [ -z "$base_ref" ]; then
+            base_ref=$(git rev-list --max-parents=0 HEAD)
+          fi
+
+          echo "Using $base_ref as the previous release boundary."
+          echo "base_ref=$base_ref" >> "$GITHUB_OUTPUT"
+      - id: release_commits
+        name: Find release-worthy commit messages
+        run: python scripts/release-commits.py --base-ref "${{ steps.base.outputs.base_ref }}" --github-output "$GITHUB_OUTPUT"
 
   bump-version:
     name: Bump version
     needs: get-commit
-    if: ${{ needs.get-commit.outputs.msg != '' && needs.get-commit.outputs.msg != null }}
+    if: ${{ needs.get-commit.outputs.has_commits == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -82,7 +95,7 @@ jobs:
   draft-release:
     name: Draft release
     runs-on: ubuntu-latest
-    needs: [bump-version, merge-version-bump]
+    needs: [get-commit, bump-version, merge-version-bump]
     permissions:
       contents: write
     steps:
@@ -90,6 +103,12 @@ jobs:
         with:
           ref: master
           fetch-depth: 0
+      - name: Generate release notes
+        run: |
+          python scripts/release-commits.py \
+            --base-ref "${{ needs.get-commit.outputs.base_ref }}" \
+            --version "${{ needs.bump-version.outputs.newTag }}" \
+            --notes-file release-notes.md
       - name: Create draft release
         id: create_release
         uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
@@ -99,7 +118,7 @@ jobs:
           commit: 'master'
           draft: true
           prerelease: true
-          generateReleaseNotes: true
+          bodyFile: release-notes.md
     outputs:
       id: ${{ steps.create_release.outputs.id }}
 
