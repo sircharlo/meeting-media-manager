@@ -11,7 +11,10 @@ describe('profile settings utilities', () => {
   it('sanitizes the exported filename without regex backtracking risks', async () => {
     const saveFileDialog = vi
       .spyOn(globalThis.electronApi, 'saveFileDialog')
-      .mockResolvedValue({ canceled: true });
+      .mockResolvedValue({
+        canceled: true,
+        filePath: '',
+      });
 
     await expect(exportProfileSettingsToFile(exportSettings)).resolves.toBe(
       false,
@@ -26,7 +29,10 @@ describe('profile settings utilities', () => {
   it('ignores untrusted leading and trailing separators in linear time', async () => {
     const saveFileDialog = vi
       .spyOn(globalThis.electronApi, 'saveFileDialog')
-      .mockResolvedValue({ canceled: true });
+      .mockResolvedValue({
+        canceled: true,
+        filePath: '',
+      });
 
     await expect(
       exportProfileSettingsToFile({
