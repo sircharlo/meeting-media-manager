@@ -328,6 +328,8 @@
   "media-only": "Ainult meedia",
   "media-playback": "Meedia taasesitus",
   "media-sync": "Meediafailide sünkroniseerimine",
+  "media-window-auto-hidden-caption": "You can show the media window manually from the Display menu or by clicking the button in this notification.",
+  "media-window-auto-hidden-message": "Media window automatically hidden",
   "mediaAutoExportFolder": "Automaatse ekspordi kaust",
   "mediaAutoExportFolder-explain": "Kaust automaatse meediaekspordi jaoks.",
   "mediaExport": "Meedia eksportimine",
@@ -723,5 +725,13 @@
   "zoomEnable-explain": "See ei automatiseeri Zoomit täielikult. Pigem püüab see käivitada ja peatada Zoomis ekraani jagamine, kasutades selleks Zoomis seadistuses „Ekraani jagamise käivitamine/peatamine“ määratud klahvikombinatsiooni, kui M³-s hakkab meedia mängima või lõpetab mängimise.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoomi ekraanijagamise kiirklahv",
-  "zoomScreenShareShortcut-explain": "Sisestage klahvikombinatsioon, mis on konfigureeritud Zoom'i seadetes „Ekraani jagamise alustamine/lõpetamine”. M³ edastab selle klahvikombinatsiooni, kui meedia hakkab mängima (ekraani jagamise alustamiseks) ja kui see peatub (ekraani jagamise lõpetamiseks). Selle funktsiooni kasutamiseks peate Zoom'i seadetes aktiveerima selle konkreetse klahvikombinatsiooni jaoks seadistuse „Globaalne klahvikombinatsioon”."
+  "zoomScreenShareShortcut-explain": "Sisestage klahvikombinatsioon, mis on konfigureeritud Zoom'i seadetes „Ekraani jagamise alustamine/lõpetamine”. M³ edastab selle klahvikombinatsiooni, kui meedia hakkab mängima (ekraani jagamise alustamiseks) ja kui see peatub (ekraani jagamise lõpetamiseks). Selle funktsiooni kasutamiseks peate Zoom'i seadetes aktiveerima selle konkreetse klahvikombinatsiooni jaoks seadistuse „Globaalne klahvikombinatsioon”.",
+  "export-profile-settings": "Export profile",
+  "import-profile-settings": "Import profile",
+  "profile-settings-export-failed": "Profile settings could not be exported.",
+  "profile-settings-exported": "Profile settings exported.",
+  "profile-settings-import-failed": "Profile settings could not be imported. Choose a valid profile settings JSON file.",
+  "profile-settings-imported": "Profile settings imported.",
+  "profile-settings-transfer": "Profile settings import and export",
+  "profile-settings-transfer-explain": "Export this profile's settings to a JSON file, or import settings from a previously exported profile settings file. Importing replaces the current profile's settings."
 }
