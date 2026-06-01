@@ -328,6 +328,8 @@
   "media-only": "Лише медіа",
   "media-playback": "Відтворення медіа",
   "media-sync": "Синхронізація медіа",
+  "media-window-auto-hidden-caption": "Ви можете показати медіа вікно вручну, натиснувши кнопку в цьому повідомленні.",
+  "media-window-auto-hidden-message": "Вікно медіа автоматично приховано",
   "mediaAutoExportFolder": "Папка для автоекспорту",
   "mediaAutoExportFolder-explain": "Папка для автоматичного експорту медіа.",
   "mediaExport": "Media export",
@@ -723,5 +725,13 @@
   "zoomEnable-explain": "Це не дозволить автоматизувати масштаб повністю. Швидше, він спробує запустити і зупинити демонстрацію екрана масштабування, використовуючи комбінації клавіш для клавіатури в Zoom, яке буде встановлено при запуску і при запуску медіа-файлів і при цьому припиняється грати в M3.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom screen sharing shortcut",
-  "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings."
+  "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings.",
+  "export-profile-settings": "Профіль експорту",
+  "import-profile-settings": "Профіль імпорту",
+  "profile-settings-export-failed": "Налаштування профілю не можуть бути експортовані.",
+  "profile-settings-exported": "Налаштування профілю експортовані.",
+  "profile-settings-import-failed": "Налаштування профілю не можуть бути імпортовані. Виберіть коректні налаштування профілю JSON.",
+  "profile-settings-imported": "Налаштування профілю імпортовано.",
+  "profile-settings-transfer": "Імпорт та експорт налаштувань профілю",
+  "profile-settings-transfer-explain": "Експортувати налаштування цього профілю в JSON файл або імпортувати налаштування з раніше експортованого файлу профілю. Імпорт діагонального розміру розміру поточного профілю."
 }

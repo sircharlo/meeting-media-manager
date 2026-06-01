@@ -328,6 +328,8 @@
   "media-only": "Alleen media",
   "media-playback": "Media afspelen",
   "media-sync": "Media synchronisatie",
+  "media-window-auto-hidden-caption": "Je kunt het media-venster handmatig in het weergave menu weergeven of door te klikken op de knop in deze melding.",
+  "media-window-auto-hidden-message": "Mediavenster automatisch verborgen",
   "mediaAutoExportFolder": "Exporteer map",
   "mediaAutoExportFolder-explain": "Map voor automatische media export.",
   "mediaExport": "Media-export",
@@ -723,5 +725,13 @@
   "zoomEnable-explain": "Dit zal Zoom niet volledig automatiseren. Veeleer, het zal proberen te starten en stoppen met het delen van het scherm in te zoomen met behulp van de sneltoets geconfigureerd in Zoom's \"Start/stop schermdeling\" instelling wanneer media start en stopt met afspelen in M3.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom-schermdelingsnelkoppeling",
-  "zoomScreenShareShortcut-explain": "Voer de sneltoets in die is ingesteld in Zoom onder \"Scherm delen starten/stoppen\". M³ zal deze sneltoets versturen wanneer media begint met afspelen (om scherm delen te starten) en wanneer het stopt (om scherm delen te stoppen). Om deze functie te gebruiken, moet je de optie \"Globale sneltoets\" inschakelen voor deze sneltoets in de Zoom-instellingen."
+  "zoomScreenShareShortcut-explain": "Voer de sneltoets in die is ingesteld in Zoom onder \"Scherm delen starten/stoppen\". M³ zal deze sneltoets versturen wanneer media begint met afspelen (om scherm delen te starten) en wanneer het stopt (om scherm delen te stoppen). Om deze functie te gebruiken, moet je de optie \"Globale sneltoets\" inschakelen voor deze sneltoets in de Zoom-instellingen.",
+  "export-profile-settings": "Profiel exporteren",
+  "import-profile-settings": "Profiel importeren",
+  "profile-settings-export-failed": "Profielinstellingen konden niet worden geëxporteerd.",
+  "profile-settings-exported": "Profielinstellingen geëxporteerd.",
+  "profile-settings-import-failed": "Profielinstellingen konden niet worden geïmporteerd. Kies een geldig JSON-bestand.",
+  "profile-settings-imported": "Profielinstellingen geïmporteerd.",
+  "profile-settings-transfer": "Profielinstellingen importeren en exporteren",
+  "profile-settings-transfer-explain": "Exporteer de instellingen van dit profiel naar een JSON-bestand, of importeer instellingen uit een eerder geëxporteerd profielbestand. Importeren vervangt de huidige profielinstellingen."
 }
