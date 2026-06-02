@@ -228,7 +228,77 @@ describe('isUsablePath', () => {
     await expect(isUsablePath(String.raw`\\192.168.4.38\Test`)).resolves.toBe(
       false,
     );
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: 'filesystem',
+        data: expect.objectContaining({
+          code: 'UNKNOWN',
+          likelyNetworkPath: true,
+          resolvedBase: String.raw`\\192.168.4.38\Test`,
+          testDir: String.raw`\\192.168.4.38\Test/.cache-test-test-uuid`,
+        }),
+        level: 'warning',
+        message: '[isUsablePath] Probe failed',
+      }),
+    );
     expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
+
+  it('treats ENOENT on likely network paths as unusable without reporting', async () => {
+    setPlatform('win32');
+    const error = new Error(
+      String.raw`ENOENT: no such file or directory, mkdir '\?'`,
+    );
+    (error as Error & { code?: string }).code = 'ENOENT';
+    mkdirMock.mockRejectedValue(error);
+
+    const { isUsablePath } = await import('../fs');
+
+    await expect(isUsablePath('G:/My Drive/Meeting Media')).resolves.toBe(
+      false,
+    );
+
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: 'filesystem',
+        data: expect.objectContaining({
+          basePath: 'G:/My Drive/Meeting Media',
+          code: 'ENOENT',
+          likelyNetworkPath: true,
+          resolvedBase: 'G:/My Drive/Meeting Media',
+          testDir: 'G:/My Drive/Meeting Media/.cache-test-test-uuid',
+        }),
+        level: 'warning',
+      }),
+    );
+    expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
+
+  it('does not attempt a probe when a Windows path resolves to the extended-path marker', async () => {
+    setPlatform('win32');
+
+    const { isUsablePath } = await import('../fs');
+
+    await expect(isUsablePath(String.raw`\?`)).resolves.toBe(false);
+
+    expect(mkdirMock).not.toHaveBeenCalled();
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: 'filesystem',
+        data: expect.objectContaining({
+          basePath: String.raw`\?`,
+          resolvedBase: String.raw`\?`,
+          testDir: String.raw`\?/.cache-test-test-uuid`,
+        }),
+        level: 'error',
+      }),
+    );
+    expect(captureElectronErrorMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Invalid Windows path resolved for filesystem probe',
+      }),
+      expect.anything(),
+    );
   });
 
   it('notifies renderer on probe errors when one configured folder is likely network-based', async () => {
