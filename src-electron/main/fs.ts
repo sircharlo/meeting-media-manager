@@ -767,19 +767,66 @@ const decompress = async (
 export async function getZipEntries(
   zipPath: string,
 ): Promise<Record<string, number>> {
+  let fileSize = 0;
+
+  try {
+    const stats = await stat(zipPath);
+    fileSize = stats.size;
+  } catch (error) {
+    const errorCode = (error as { code?: string }).code;
+
+    addElectronBreadcrumb({
+      category: 'zip',
+      data: { errorCode, zipPath },
+      level: errorCode === 'ENOENT' ? 'info' : 'error',
+      message: 'Zip file unavailable before listing entries',
+    });
+
+    if (errorCode !== 'ENOENT') {
+      captureElectronError(error, {
+        contexts: {
+          fn: {
+            args: { zipPath },
+            name: 'getZipEntries stat',
+          },
+        },
+      });
+    }
+
+    throw error;
+  }
+
+  addElectronBreadcrumb({
+    category: 'zip',
+    data: { fileSize, zipPath },
+    message: 'Reading zip entries',
+  });
+
   return new Promise((resolve, reject) => {
     const entries: Record<string, number> = {};
 
     yauzl.open(zipPath, { lazyEntries: true }, (err, zipfile) => {
       if (err) {
-        captureElectronError(err, {
-          contexts: {
-            fn: {
-              args: { zipPath },
-              name: 'getZipEntries yauzl.open',
-            },
-          },
+        const errorCode = (err as { code?: string }).code;
+
+        addElectronBreadcrumb({
+          category: 'zip',
+          data: { errorCode, fileSize, zipPath },
+          level: errorCode === 'ENOENT' ? 'info' : 'error',
+          message: 'Error opening zip entries',
         });
+
+        if (errorCode !== 'ENOENT') {
+          captureElectronError(err, {
+            contexts: {
+              fn: {
+                args: { fileSize, zipPath },
+                name: 'getZipEntries yauzl.open',
+              },
+            },
+          });
+        }
+
         return reject(err);
       }
       if (!zipfile) return reject(new Error('Zipfile not found'));
@@ -817,14 +864,30 @@ export async function getZipEntries(
       });
 
       zipfile.on('end', () => {
+        addElectronBreadcrumb({
+          category: 'zip',
+          data: {
+            entryCount: fileCount,
+            fileSize,
+            totalUncompressedSize,
+            zipPath,
+          },
+          message: 'Finished reading zip entries',
+        });
         resolve(entries);
       });
 
       zipfile.on('error', (err) => {
+        addElectronBreadcrumb({
+          category: 'zip',
+          data: { fileSize, zipPath },
+          level: 'error',
+          message: 'Zip entry stream error',
+        });
         captureElectronError(err, {
           contexts: {
             fn: {
-              args: { zipPath },
+              args: { fileSize, zipPath },
               name: 'getZipEntries zipfile error',
             },
           },

@@ -2,6 +2,7 @@ import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mkdirMock = vi.fn();
 const rmMock = vi.fn();
+const statMock = vi.fn();
 const writeFileMock = vi.fn();
 const delayMock = vi.fn(() => Promise.resolve());
 const captureElectronErrorMock = vi.fn();
@@ -9,6 +10,7 @@ const addElectronBreadcrumbMock = vi.fn();
 const uuidMock = vi.fn(() => 'test-uuid');
 const watchMock = vi.fn();
 const sendToWindowMock = vi.fn();
+const yauzlOpenMock = vi.fn();
 
 vi.mock('chokidar', () => ({
   watch: watchMock,
@@ -34,7 +36,7 @@ vi.mock('node:fs', () => ({
 vi.mock('node:fs/promises', () => ({
   mkdir: mkdirMock,
   rm: rmMock,
-  stat: vi.fn(),
+  stat: statMock,
   writeFile: writeFileMock,
 }));
 
@@ -95,7 +97,9 @@ vi.mock('upath', () => {
 });
 
 vi.mock('yauzl', () => ({
-  default: {},
+  default: {
+    open: yauzlOpenMock,
+  },
 }));
 
 const originalPlatform = Object.getOwnPropertyDescriptor(process, 'platform');
@@ -114,6 +118,7 @@ describe('isUsablePath', () => {
     mkdirMock.mockResolvedValue(undefined);
     writeFileMock.mockResolvedValue(undefined);
     rmMock.mockResolvedValue(undefined);
+    statMock.mockResolvedValue({ size: 1024 });
     delayMock.mockResolvedValue(undefined);
     sendToWindowMock.mockClear();
     setPlatform('linux');
@@ -245,6 +250,98 @@ describe('isUsablePath', () => {
       undefined,
       'pathProbeNetworkWarning',
     );
+  });
+});
+
+describe('getZipEntries', () => {
+  beforeEach(() => {
+    vi.resetModules();
+    vi.clearAllMocks();
+    statMock.mockResolvedValue({ size: 1024 });
+  });
+
+  it('does not report missing zip files as Electron errors', async () => {
+    const error = new Error('missing zip');
+    (error as Error & { code?: string }).code = 'ENOENT';
+    statMock.mockRejectedValue(error);
+
+    const { getZipEntries } = await import('../fs');
+
+    await expect(getZipEntries('/tmp/missing.jwpub')).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
+
+    expect(yauzlOpenMock).not.toHaveBeenCalled();
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: 'zip',
+        data: expect.objectContaining({
+          errorCode: 'ENOENT',
+          zipPath: '/tmp/missing.jwpub',
+        }),
+        level: 'info',
+        message: 'Zip file unavailable before listing entries',
+      }),
+    );
+    expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
+
+  it('reports unexpected stat errors before opening zip files', async () => {
+    const error = new Error('permission denied');
+    (error as Error & { code?: string }).code = 'EACCES';
+    statMock.mockRejectedValue(error);
+
+    const { getZipEntries } = await import('../fs');
+
+    await expect(getZipEntries('/tmp/locked.jwpub')).rejects.toMatchObject({
+      code: 'EACCES',
+    });
+
+    expect(yauzlOpenMock).not.toHaveBeenCalled();
+    expect(captureElectronErrorMock).toHaveBeenCalledWith(
+      error,
+      expect.objectContaining({
+        contexts: {
+          fn: {
+            args: { zipPath: '/tmp/locked.jwpub' },
+            name: 'getZipEntries stat',
+          },
+        },
+      }),
+    );
+  });
+
+  it('adds diagnostics but does not report zip files deleted after stat', async () => {
+    const error = new Error('missing after stat');
+    (error as Error & { code?: string }).code = 'ENOENT';
+    yauzlOpenMock.mockImplementation((_path, _options, callback) => {
+      callback(error);
+    });
+
+    const { getZipEntries } = await import('../fs');
+
+    await expect(getZipEntries('/tmp/raced.jwpub')).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
+
+    expect(yauzlOpenMock).toHaveBeenCalledWith(
+      '/tmp/raced.jwpub',
+      { lazyEntries: true },
+      expect.any(Function),
+    );
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: 'zip',
+        data: expect.objectContaining({
+          errorCode: 'ENOENT',
+          fileSize: 1024,
+          zipPath: '/tmp/raced.jwpub',
+        }),
+        level: 'info',
+        message: 'Error opening zip entries',
+      }),
+    );
+    expect(captureElectronErrorMock).not.toHaveBeenCalled();
   });
 });
 
