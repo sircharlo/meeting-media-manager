@@ -167,7 +167,7 @@ To možnost vklopite, če imate omejeno podatkovno povezavo, da zmanjšate porab
 
 **Privzeto**: `false`
 
-### Prikaz multimedijske vsebine {#media-display-button}
+### Multimedijski zaslon {#media-display-button}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
@@ -408,7 +408,7 @@ Nastavite bližnjice za predvajanje multimedijske vsebine:
 - **Ustavi predvajanje**: Ustavi predvajanje multimedijske vsebine
 - **Vklop/izklop glasbe**: Vklopi/izklopi glasbo v ozadju
 
-### Prikaz multimedijske vsebine {#media-display}
+### Multimedijski zaslon {#media-display}
 
 #### Omogoči prehode z zatemnitvijo {#enable-media-window-fade-transitions}
 
