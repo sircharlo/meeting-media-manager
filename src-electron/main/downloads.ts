@@ -2,7 +2,7 @@ import type { ElectronDownloadManager as EDMType } from 'electron-dl-manager';
 
 import { getCountriesForTimezone } from 'countries-and-timezones';
 import { app } from 'electron';
-import { ensureDir } from 'fs-extra/esm';
+import { mkdir, stat } from 'node:fs/promises';
 import { setTimeout as delay } from 'node:timers/promises';
 import { quitStatus } from 'src-electron/main/session';
 import {
@@ -13,7 +13,7 @@ import {
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import { log } from 'src/shared/vanilla';
-import { basename } from 'upath';
+import { basename, dirname } from 'upath';
 
 const ENSURE_DIR_RETRYABLE_CODES = new Set([
   'EACCES',
@@ -23,6 +23,22 @@ const ENSURE_DIR_RETRYABLE_CODES = new Set([
 ]);
 const ENSURE_DIR_RETRY_COUNT = 3;
 const ENSURE_DIR_RETRY_DELAY_MS = 75;
+
+interface EnsureDirAttemptDiagnostics {
+  attempt: number;
+  code?: string;
+  dir: string;
+  message: string;
+  parentCode?: string;
+  parentExists?: boolean;
+  parentIsDirectory?: boolean;
+  parentMessage?: string;
+  parentPath: string;
+}
+
+interface ErrorWithDirectoryDiagnostics {
+  downloadDirDiagnostics?: EnsureDirAttemptDiagnostics[];
+}
 
 const getErrorCode = (error: unknown) => (error as { code?: string })?.code;
 const getErrorMessage = (error: unknown) =>
@@ -64,15 +80,84 @@ interface OngoingDownload {
   uuid: string;
 }
 
-async function ensureDirWithRetry(dir: string) {
+const getDirectoryFailureDiagnostics = async (
+  dir: string,
+  attempt: number,
+  error: unknown,
+): Promise<EnsureDirAttemptDiagnostics> => {
+  const parentPath = dirname(dir);
+  const diagnostics: EnsureDirAttemptDiagnostics = {
+    attempt,
+    code: getErrorCode(error),
+    dir,
+    message: getErrorMessage(error),
+    parentPath,
+  };
+
+  try {
+    const parentStats = await stat(parentPath);
+    diagnostics.parentExists = true;
+    diagnostics.parentIsDirectory = parentStats.isDirectory();
+  } catch (parentError) {
+    diagnostics.parentCode = getErrorCode(parentError);
+    diagnostics.parentExists = false;
+    diagnostics.parentIsDirectory = false;
+    diagnostics.parentMessage = getErrorMessage(parentError);
+  }
+
+  return diagnostics;
+};
+
+const attachDirectoryDiagnostics = (
+  error: unknown,
+  diagnostics: EnsureDirAttemptDiagnostics[],
+) => {
+  if (typeof error !== 'object' || error === null) return;
+
+  (error as ErrorWithDirectoryDiagnostics).downloadDirDiagnostics = diagnostics;
+};
+
+export async function ensureDirWithRetry(dir: string) {
   let lastError: unknown;
+  const diagnostics: EnsureDirAttemptDiagnostics[] = [];
 
   for (let attempt = 0; attempt <= ENSURE_DIR_RETRY_COUNT; attempt += 1) {
     try {
-      await ensureDir(dir);
+      await mkdir(dir, { recursive: true });
+      const dirStats = await stat(dir);
+      if (!dirStats.isDirectory()) {
+        const error = new Error(
+          `Download destination is not a directory: ${dir}`,
+        );
+        (error as NodeJS.ErrnoException).code = 'ENOTDIR';
+        throw error;
+      }
+
+      if (attempt > 0) {
+        addElectronBreadcrumb({
+          category: 'downloads.filesystem',
+          data: { attempt, dir },
+          level: 'info',
+          message: 'download-directory-created-after-retry',
+        });
+      }
       return;
     } catch (error) {
       lastError = error;
+      const attemptDiagnostics = await getDirectoryFailureDiagnostics(
+        dir,
+        attempt,
+        error,
+      );
+      diagnostics.push(attemptDiagnostics);
+
+      addElectronBreadcrumb({
+        category: 'downloads.filesystem',
+        data: attemptDiagnostics,
+        level: 'warning',
+        message: 'download-directory-create-failed',
+      });
+
       const code = getErrorCode(error);
       const shouldRetry =
         process.platform === 'win32' &&
@@ -83,6 +168,7 @@ async function ensureDirWithRetry(dir: string) {
     }
   }
 
+  attachDirectoryDiagnostics(lastError, diagnostics);
   throw lastError;
 }
 
@@ -497,6 +583,8 @@ export async function downloadFile(
         fn: {
           destFilename,
           directory: saveDir,
+          directoryDiagnostics: (error as ErrorWithDirectoryDiagnostics)
+            .downloadDirDiagnostics,
           lowPriority,
           name: 'downloads.ts downloadFile',
           url,

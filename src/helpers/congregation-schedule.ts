@@ -214,9 +214,7 @@ export const syncMeetingSchedule = async (force = false) => {
 
       if (currentChanged) {
         createTemporaryNotification({
-          message: (i18n.global.t as (key: string) => string)(
-            'meeting-current-schedule-updated',
-          ),
+          message: i18n.global.t('meeting-current-schedule-updated'),
           timeout: 10000,
           type: 'info',
         });
@@ -224,9 +222,7 @@ export const syncMeetingSchedule = async (force = false) => {
 
       if (futureChanged) {
         createTemporaryNotification({
-          message: (i18n.global.t as (key: string) => string)(
-            'meeting-future-schedule-updated',
-          ),
+          message: i18n.global.t('meeting-future-schedule-updated'),
           timeout: 10000,
           type: 'info',
         });

@@ -355,11 +355,8 @@ import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { QMenu } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { getMemorialBackground } from 'src/helpers/jw-media';
-import {
-  toggleMediaWindowVisibility,
-  unzipJwpub,
-} from 'src/helpers/mediaPlayback';
+import { getMemorialBackground, unzipJwpub } from 'src/helpers/jw-media';
+import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { log } from 'src/shared/vanilla';
 import { convertImageIfNeeded } from 'src/utils/converters';

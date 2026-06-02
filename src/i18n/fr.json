@@ -69,6 +69,8 @@
   "cacheFolder": "Emplacement du cache",
   "cacheFolder-explain": "Sélectionnez un dossier pour stocker les fichiers de cache, tels que les publications et les médias. Si ce champ est laissé vide, l'application le configurera automatiquement pour vous.",
   "cacheFolder-wizard": "Vous n'êtes pas sûr ? Passez cette étape. Nous choisirons un emplacement par défaut qui convient à la plupart des gens.",
+  "cloud-file-unavailable-caption": "Si ce fichier est stocké dans iCloud Drive, Dropbox, OneDrive ou Google Drive, rendez le disponible hors ligne et réessayez.",
+  "cloud-file-unavailable-message": "Ce fichier n'a pas encore pu être lu. Il peut encore être en cours de téléchargement depuis le stockage cloud.",
   "calculating": "Calcul en cours...",
   "camera-access-required": "La caméra est indisponible ou les autorisations sont manquantes",
   "camera-access-required-explain": "Veuillez essayer une caméra différente ou redémarrer l'application lorsque les autorisations ont été accordées dans les paramètres système.",

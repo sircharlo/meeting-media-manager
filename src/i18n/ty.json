@@ -69,6 +69,8 @@
   "cacheFolder": "Vāhi noho o te putu’era’a tāmau",
   "cacheFolder-explain": "’A mā’iti i te hō’ē fā’ari parau nō te ha’apahu i te mau parau tāmau, mai te mau pātara’a parau ’e te mau parau mātā’ia. ’Ia vaoho-noa-hia te reira ma te pāpa’i-’ore-hia, e fa’anaho noa te application i teie tuha’a nā ’oe.",
   "cacheFolder-wizard": "Tautau ’outou? ’A ha’atī’ahia teie tuha’a. E mā’iti mātou i te hō’ē vāhi mātauhia e tano nō te nu’ura’a o te ta’ata.",
+  "cloud-file-unavailable-caption": "If this file is stored in iCloud Drive, Dropbox, OneDrive, or Google Drive, make it available offline and try again.",
+  "cloud-file-unavailable-message": "This file could not be read yet. It may still be downloading from cloud storage.",
   "calculating": "Te nanehia ra...",
   "camera-access-required": "’Aita e fā’arihia ra te tura’i tātā’ira’a ’aore rā tē ma’iri ra te mau fa’ati’ara’a",
   "camera-access-required-explain": "’A tāmata i te hō’ē tura’i ’ē, ’aore rā ’a fa’atere fa’ahou i te porotarama ’ia oti te mau fa’ati’ara’a tura’i i te hōro’ahia i roto i te mau Fa’anahora’a Application.",
