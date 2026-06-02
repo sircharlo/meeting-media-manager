@@ -672,10 +672,7 @@ const extractContentsFromJwpub = async (
     }
     throw error;
   }
-  const hasContentsEntry = Object.prototype.hasOwnProperty.call(
-    jwpubEntries,
-    'contents',
-  );
+  const hasContentsEntry = Object.hasOwn(jwpubEntries, 'contents');
   const expectedContentsSize = jwpubEntries['contents'];
 
   if (!hasContentsEntry) {

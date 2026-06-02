@@ -26,12 +26,13 @@ const isProfileFilenameCharacter = (character: string) => {
   );
 };
 
-const sanitizeFilename = (value: null | string | undefined) => {
-  const input = value || 'profile';
+const sanitizeFilename = (value: null | string | undefined = 'profile') => {
+  if (!value) return 'profile';
+
   const sanitizedCharacters: string[] = [];
   let pendingSeparator = false;
 
-  for (const inputCharacter of input) {
+  for (const inputCharacter of value) {
     const character = inputCharacter.toLowerCase();
 
     if (isProfileFilenameCharacter(character)) {
