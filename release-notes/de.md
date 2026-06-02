@@ -4,6 +4,14 @@
 
 Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in unserer CHANGELOG.md Datei auf GitHub.
 
+## v26.6.0
+
+### ✨ Neue Funktionen
+
+- ✨ **Timer**: Analog-Anzeigemodi und Timing-Reportstatus hinzugefügt.
+- ✨ **Profiles**: Import und Export der Profileinstellungen in den erweiterten Einstellungen und dem Setup-Assistenten hinzugefügt.
+- ✨ **Medienfenster**: Unterstützung für das automatische Verstecken des Medienfensters nach der Wiedergabe, als es ursprünglich versteckt wurde. Dies ist praktisch, wenn beispielsweise ein Fernsprecher Bilder anzeigen möchte.
+
 ## v26.5.0
 
 ### ✨ Neue Funktionen

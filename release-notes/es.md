@@ -4,6 +4,14 @@
 
 For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
 
+## v26.6
+
+### ✨ New Features
+
+- ✨ **Temporizador**: Se añadieron modos de visualización analógica y estado del informe de temporización.
+- ✨ **Perfiles**: Añadida la configuración del perfil de importación y exportación en Configuración avanzada y el Asistente de configuración.
+- ✨ **Ventana de medios**: Se añadió soporte para ocultar automáticamente la ventana de medios después de la reproducción cuando se ocultó inicialmente. Esto es práctico cuando un altavoz remoto quiere mostrar imágenes, por ejemplo.
+
 ## v26.5.0
 
 ### ✨ New Features

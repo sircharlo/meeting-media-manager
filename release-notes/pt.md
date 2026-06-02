@@ -4,6 +4,14 @@
 
 Para obter a lista completa das mudanças entre versões, consulte nosso arquivo CHANGELOG.md no GitHub.
 
+## v26.6.0
+
+### ✨ Novos Recursos
+
+- ✨ **Timer**: Adicionado modo de exibição analógica e status do relatório de tempo.
+- ✨ **Perfis**: Configurações de perfil adicionadas e exportação em Configurações Avançadas e no assistente de instalação.
+- ✨ **Janela de Mídia**: Adicionado suporte para esconder automaticamente a janela de mídia após a reprodução quando ela foi inicialmente ocultada. Isto é prático quando um alto-falante remoto quer exibir imagens, por exemplo.
+
 ## v26.5.0
 
 ### ✨ Novos Recursos

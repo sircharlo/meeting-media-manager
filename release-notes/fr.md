@@ -4,6 +4,14 @@
 
 Pour la liste complète des changements entre les versions, consultez notre fichier CHANGELOG.md sur GitHub.
 
+## 6.0 v26.6
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **Timer**: Ajout de modes d'affichage analogique et de l'état du rapport de timing.
+- ✨ **Profils**: Ajout des paramètres de profil à l'importation et à l'exportation dans les paramètres avancés et l'assistant d'installation.
+- ✨ **Media Window**: Ajout du support pour masquer automatiquement la fenêtre du média après la lecture lorsqu'il a été masqué initialement. Ceci est pratique quand un haut-parleur distant veut afficher des images, par exemple.
+
 ## v26.5.0
 
 ### ✨ Nouvelles fonctionnalités
