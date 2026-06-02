@@ -31,6 +31,7 @@ const THRESHOLD_RATIO = 100;
 const PATH_PROBE_SETTLE_DELAY_MS = 50;
 const PATH_PROBE_RETRY_DELAY_MS = 50;
 const PATH_PROBE_RETRY_COUNT = 4;
+const ZIP_ENTRY_DIAGNOSTIC_LIMIT = 50;
 const SHARED_PATH_BACKOFF_MS = 10 * 60 * 1000;
 const SHARED_PATH_HEALTH_FILENAME = 'shared-path-health.json';
 const PATH_PROBE_NETWORK_WARNING_THROTTLE_MS = 30000;
@@ -692,7 +693,7 @@ const decompress = async (
 
   addElectronBreadcrumb({
     category: 'unzip',
-    data: { fileSize, input, output },
+    data: { fileSize, includes: opts?.includes, input, output },
     message: 'Starting unzip',
   });
 
@@ -707,7 +708,13 @@ const decompress = async (
       if (zipfileEnded && pendingOperations.length === 0) {
         addElectronBreadcrumb({
           category: 'unzip',
-          data: { extractedFilesCount: extractedFiles.length },
+          data: {
+            extractedFilesCount: extractedFiles.length,
+            extractedFilesSample: extractedFiles
+              .map((file) => file.path)
+              .slice(0, ZIP_ENTRY_DIAGNOSTIC_LIMIT),
+            includes: opts?.includes,
+          },
           message: 'Unzip complete',
         });
 
@@ -721,7 +728,7 @@ const decompress = async (
       if (err) {
         addElectronBreadcrumb({
           category: 'unzip',
-          data: { fileSize, input, output },
+          data: { fileSize, includes: opts?.includes, input, output },
           message: 'Error opening zipfile',
         });
         return reject(new Error(String(err)));
@@ -833,6 +840,7 @@ export async function getZipEntries(
 
       let fileCount = 0;
       let totalUncompressedSize = 0;
+      const entryNamesSample: string[] = [];
 
       zipfile.readEntry();
       zipfile.on('entry', (entry: yauzl.Entry) => {
@@ -860,6 +868,9 @@ export async function getZipEntries(
         }
 
         entries[entry.fileName] = entry.uncompressedSize;
+        if (entryNamesSample.length < ZIP_ENTRY_DIAGNOSTIC_LIMIT) {
+          entryNamesSample.push(entry.fileName);
+        }
         zipfile.readEntry();
       });
 
@@ -867,7 +878,9 @@ export async function getZipEntries(
         addElectronBreadcrumb({
           category: 'zip',
           data: {
+            contentsSize: entries.contents,
             entryCount: fileCount,
+            entryNamesSample,
             fileSize,
             totalUncompressedSize,
             zipPath,

@@ -77,7 +77,139 @@ const {
   toggleMediaWindow,
   unzip,
 } = globalThis.electronApi;
-const { ensureDir, pathExists, remove, rename, stat } = fs;
+const { ensureDir, pathExists, readdir, remove, rename, stat } = fs;
+
+const ZIP_ENTRY_DIAGNOSTIC_LIMIT = 50;
+
+interface DirectoryDiagnostic {
+  entryCount?: number;
+  errorCode?: string;
+  sampleEntries?: string[];
+}
+
+interface PathDiagnostic {
+  errorCode?: string;
+  exists: boolean;
+  size?: number;
+}
+
+interface ZipEntriesDiagnostic {
+  contentsSize?: number;
+  entryCount: number;
+  sampleEntries: string[];
+  totalUncompressedSize: number;
+}
+
+const getErrorCode = (error: unknown) => {
+  if (typeof error !== 'object' || error === null || !('code' in error)) {
+    return undefined;
+  }
+
+  const code = (error as { code?: unknown }).code;
+  return typeof code === 'string' ? code : undefined;
+};
+
+const getPathDiagnostic = async (path: string): Promise<PathDiagnostic> => {
+  try {
+    const pathStats = await stat(path);
+    return { exists: true, size: pathStats.size };
+  } catch (error) {
+    return { errorCode: getErrorCode(error), exists: false };
+  }
+};
+
+const summarizeZipEntries = (
+  entries: Record<string, number>,
+): ZipEntriesDiagnostic => {
+  let totalUncompressedSize = 0;
+  for (const size of Object.values(entries)) {
+    totalUncompressedSize += size;
+  }
+
+  return {
+    contentsSize: entries['contents'],
+    entryCount: Object.keys(entries).length,
+    sampleEntries: Object.keys(entries).slice(0, ZIP_ENTRY_DIAGNOSTIC_LIMIT),
+    totalUncompressedSize,
+  };
+};
+
+const getDirectoryDiagnostic = async (
+  directoryPath: string,
+): Promise<DirectoryDiagnostic> => {
+  try {
+    const entries = await readdir(directoryPath);
+    return {
+      entryCount: entries.length,
+      sampleEntries: entries.slice(0, ZIP_ENTRY_DIAGNOSTIC_LIMIT),
+    };
+  } catch (error) {
+    return { errorCode: getErrorCode(error) };
+  }
+};
+
+const collectContentsExtractionDiagnostics = async (
+  contentsPath: string,
+  jwpubPath: string,
+  outputPath: string,
+) => {
+  const diagnostics: {
+    contentsFile: PathDiagnostic;
+    outputDirectory: DirectoryDiagnostic;
+    parentJwpubEntries?: ZipEntriesDiagnostic;
+    parentJwpubEntriesErrorCode?: string;
+    parentJwpubFile: PathDiagnostic;
+  } = {
+    contentsFile: await getPathDiagnostic(contentsPath),
+    outputDirectory: await getDirectoryDiagnostic(outputPath),
+    parentJwpubFile: await getPathDiagnostic(jwpubPath),
+  };
+
+  try {
+    diagnostics.parentJwpubEntries = summarizeZipEntries(
+      await getZipEntries(jwpubPath),
+    );
+  } catch (error) {
+    diagnostics.parentJwpubEntriesErrorCode = getErrorCode(error);
+  }
+
+  return diagnostics;
+};
+
+const reportContentsExtractionError = async (
+  error: unknown,
+  contentsPath: string,
+  jwpubPath: string,
+  outputPath: string,
+  name: string,
+) => {
+  const diagnostics = await collectContentsExtractionDiagnostics(
+    contentsPath,
+    jwpubPath,
+    outputPath,
+  );
+
+  log(
+    `[jwpubExtractor] Unable to read extracted contents zip at ${contentsPath}.`,
+    'mediaPlayback',
+    'error',
+    diagnostics,
+  );
+
+  await errorCatcher(error, {
+    contexts: {
+      fn: {
+        args: {
+          contentsPath,
+          jwpubPath,
+          outputPath,
+        },
+        name,
+      },
+      jwpubContentsDiagnostics: diagnostics,
+    },
+  });
+};
 
 /**
  * Efficiently identifies a JWPUB file by peeking into its metadata
@@ -159,7 +291,23 @@ const extractContentsFromJwpub = async (
     await remove(jwpubPath).catch(() => undefined);
     throw error;
   }
+  const hasContentsEntry = Object.prototype.hasOwnProperty.call(
+    jwpubEntries,
+    'contents',
+  );
   const expectedContentsSize = jwpubEntries['contents'];
+
+  if (!hasContentsEntry) {
+    const error = new Error('JWPUB does not contain contents entry');
+    await reportContentsExtractionError(
+      error,
+      contentsPath,
+      jwpubPath,
+      outputPath,
+      'jwpubExtractor missing contents entry',
+    );
+    throw error;
+  }
 
   // First, only extract 'contents' from the JWPUB zip if it doesn't exist or is the wrong size
   const contentsStats = await stat(contentsPath).catch(() => undefined);
@@ -202,7 +350,21 @@ const extractDbFromContents = async (outputPath: string, jwpubPath: string) => {
   // We check if the database exists and has the correct size to determine if we need to unzip
   const contentsPath = join(outputPath, 'contents');
   const dbFile = await findDb(outputPath);
-  const contentsEntries = await getZipEntries(contentsPath);
+  let contentsEntries: Record<string, number>;
+
+  try {
+    contentsEntries = await getZipEntries(contentsPath);
+  } catch (error) {
+    await reportContentsExtractionError(
+      error,
+      contentsPath,
+      jwpubPath,
+      outputPath,
+      'jwpubExtractor read contents entries',
+    );
+    throw error;
+  }
+
   let expectedDbSize = 0;
   let expectedDbName = '';
 
