@@ -239,6 +239,22 @@ export async function getAppDataPath(): Promise<string> {
 
 const isUsablePathPromises = new Map<string, Promise<boolean>>();
 
+const NETWORK_PATH_TRANSIENT_ERRORS = new Set(['ENOENT', 'UNKNOWN']);
+
+const getProbePathContext = (basePath: string) => {
+  const resolvedBase = resolve(basePath);
+  const testDir = join(resolvedBase, '.cache-test-' + uuid());
+  const testFile = join(testDir, 'test.txt');
+  return { resolvedBase, testDir, testFile };
+};
+
+const isInvalidWindowsResolvedPath = (resolvedBase: string) => {
+  if (process.platform !== 'win32') return false;
+
+  const unixResolvedBase = toUnix(resolvedBase);
+  return unixResolvedBase === '/?' || unixResolvedBase === '//?';
+};
+
 const WINDOWS_RETRYABLE_PROBE_CODES = new Set(['EBUSY', 'EPERM']);
 
 const getErrorCode = (error: unknown) => (error as { code?: string })?.code;
@@ -349,13 +365,16 @@ export function isUsablePath(basePath?: string): Promise<boolean> {
 
   if (!isUsablePathPromises.has(basePath)) {
     const promise = (async () => {
+      const { resolvedBase, testDir, testFile } = getProbePathContext(basePath);
+      const likelyNetworkPath = isPossiblyNetworkFolderPath(basePath);
+
       try {
-        const resolvedBase = resolve(basePath);
-        const testDir = join(resolvedBase, '.cache-test-' + uuid());
+        if (isInvalidWindowsResolvedPath(resolvedBase)) {
+          throw new Error('Invalid Windows path resolved for filesystem probe');
+        }
 
         await mkdir(testDir, { recursive: true });
 
-        const testFile = join(testDir, 'test.txt');
         await writeFile(testFile, 'ok');
         await delay(PATH_PROBE_SETTLE_DELAY_MS);
 
@@ -364,22 +383,32 @@ export function isUsablePath(basePath?: string): Promise<boolean> {
         return true;
       } catch (e) {
         const PERMISSION_ERRORS = new Set(['EACCES', 'EPERM']);
-        const NETWORK_PATH_TRANSIENT_ERRORS = new Set(['UNKNOWN']);
-        const code = (e as { code?: string }).code;
+        const code = getErrorCode(e);
+        const transientNetworkError =
+          NETWORK_PATH_TRANSIENT_ERRORS.has(code ?? '') && likelyNetworkPath;
         if (hasPossibleNetworkPathInNotificationSettings()) {
           notifyPathProbeNetworkWarning();
         }
-        if (
-          !PERMISSION_ERRORS.has(code ?? '') &&
-          !(
-            NETWORK_PATH_TRANSIENT_ERRORS.has(code ?? '') &&
-            isPossiblyNetworkFolderPath(basePath)
-          )
-        ) {
+        addElectronBreadcrumb({
+          category: 'filesystem',
+          data: {
+            basePath,
+            code,
+            configuredPathCount: pathProbeNotificationPaths.size,
+            hasConfiguredNetworkPath:
+              hasPossibleNetworkPathInNotificationSettings(),
+            likelyNetworkPath,
+            resolvedBase,
+            testDir,
+          },
+          level: transientNetworkError ? 'warning' : 'error',
+          message: '[isUsablePath] Probe failed',
+        });
+        if (!PERMISSION_ERRORS.has(code ?? '') && !transientNetworkError) {
           captureElectronError(e, {
             contexts: {
               fn: {
-                args: { basePath },
+                args: { basePath, likelyNetworkPath, resolvedBase, testDir },
                 name: 'isUsablePath',
               },
             },
