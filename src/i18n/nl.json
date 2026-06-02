@@ -69,6 +69,8 @@
   "cacheFolder": "Cache locatie",
   "cacheFolder-explain": "Selecteer een map voor het opslaan van cachebestanden, zoals publicaties en media. Indien niets is ingevuld zal de app dit automatisch instellen.",
   "cacheFolder-wizard": "Niet zeker? Sla deze stap over. We kiezen een standaardlocatie die voor de meeste gebruikers werkt.",
+  "cloud-file-unavailable-caption": "Als dit bestand is opgeslagen in iCloud Drive, Dropbox, OneDrive of Google Drive, maak het offline beschikbaar en probeer het opnieuw.",
+  "cloud-file-unavailable-message": "Dit bestand kan nog niet worden gelezen. Het kan nog steeds worden gedownload van de cloud opslag.",
   "calculating": "Bezig met berekenen",
   "camera-access-required": "Camera is niet beschikbaar of de machtigingen ontbreken",
   "camera-access-required-explain": "Probeer een andere camera of herstart de app wanneer cameratoestemmingen zijn verleend in Systeeminstellingen.",
