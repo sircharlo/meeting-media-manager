@@ -4,6 +4,14 @@
 
 Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bestand op GitHub.
 
+## v26.6.0
+
+### ✨ Nieuwe functies
+
+- ✨ **Timer**: analoge weergave modus en status van timing rapport toegevoegd.
+- ✨ **Profielen**: Profielinstellingen importeren en exporteren in de Geavanceerde instellingen en de Setup Wizard.
+- ✨ **Media Window**: Ondersteuning toegevoegd voor het automatisch verbergen van het media-venster na het afspelen toen het oorspronkelijk verborgen was. Dat is praktisch wanneer een externe spreker bijvoorbeeld afbeeldingen wil laten zien.
+
 ## v26.5.0
 
 ### ✨ Nieuwe functies
