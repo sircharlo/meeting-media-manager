@@ -34,6 +34,18 @@ const PATH_PROBE_RETRY_COUNT = 4;
 const SHARED_PATH_BACKOFF_MS = 10 * 60 * 1000;
 const SHARED_PATH_HEALTH_FILENAME = 'shared-path-health.json';
 const PATH_PROBE_NETWORK_WARNING_THROTTLE_MS = 30000;
+const ZIP_OPEN_RETRY_COUNT = 3;
+const ZIP_OPEN_RETRY_DELAY_MS = 1000;
+const ZIP_RETRYABLE_ERROR_CODES = new Set([
+  'EAGAIN',
+  'EBUSY',
+  'ECONNRESET',
+  'EINTR',
+  'ENETDOWN',
+  'ENETRESET',
+  'ENETUNREACH',
+  'ETIMEDOUT',
+]);
 const SHARED_PATH_HEALTH_FOLDERS = [
   'Additional Media',
   'Fonts',
@@ -41,13 +53,37 @@ const SHARED_PATH_HEALTH_FOLDERS = [
 ];
 
 const isPossiblyNetworkFolderPath = (folderPath: string) => {
-  const unixPath = toUnix(folderPath);
+  const unixPath = toUnix(folderPath || '');
   if (unixPath.startsWith('//')) return true;
   // On Windows, a non-C: drive letter may indicate a mapped network drive
   if (process.platform === 'win32' && /^[a-bd-zA-BD-Z]:/.test(unixPath))
     return true;
   return false;
 };
+
+const getCloudStorageProvider = (filePath: string) => {
+  const normalizedPath = toUnix(filePath).toLowerCase();
+
+  if (normalizedPath.includes('/library/mobile documents/')) return 'iCloud';
+  if (normalizedPath.includes('/icloud drive/')) return 'iCloud';
+  if (normalizedPath.includes('/dropbox/')) return 'Dropbox';
+  if (normalizedPath.includes('/onedrive')) return 'OneDrive';
+  if (normalizedPath.includes('/google drive/')) return 'Google Drive';
+
+  return undefined;
+};
+
+const isRetryableZipError = (error: unknown) => {
+  const errorCode = getErrorCode(error);
+  if (errorCode && ZIP_RETRYABLE_ERROR_CODES.has(errorCode)) return true;
+
+  const message = error instanceof Error ? error.message : String(error);
+  return /connection timed out|resource busy|temporarily unavailable/i.test(
+    message,
+  );
+};
+
+const getZipRetryDelay = (attempt: number) => ZIP_OPEN_RETRY_DELAY_MS * attempt;
 
 let defaultAppDataPath: null | string = null;
 let sharedPathBackoffUntil: null | number = null;
@@ -761,64 +797,112 @@ const decompress = async (
   });
 };
 
-/**
- * Lists entries in a zip file with their uncompressed sizes
- */
-export async function getZipEntries(
-  zipPath: string,
-): Promise<Record<string, number>> {
-  let fileSize = 0;
+const getZipDiagnostics = (zipPath: string, fileSize: number) => {
+  const cloudProvider = getCloudStorageProvider(zipPath);
 
-  try {
-    const stats = await stat(zipPath);
-    fileSize = stats.size;
-  } catch (error) {
-    const errorCode = (error as { code?: string }).code;
+  return {
+    cloudProvider,
+    fileSize,
+    isCloudStoragePath: !!cloudProvider,
+    isPossiblyNetworkPath: isPossiblyNetworkFolderPath(dirname(zipPath)),
+    zipPath,
+  };
+};
 
-    addElectronBreadcrumb({
-      category: 'zip',
-      data: { errorCode, zipPath },
-      level: errorCode === 'ENOENT' ? 'info' : 'error',
-      message: 'Zip file unavailable before listing entries',
-    });
+const shouldRetryZipRead = (error: unknown, attempt: number) =>
+  attempt < ZIP_OPEN_RETRY_COUNT && isRetryableZipError(error);
 
-    if (errorCode !== 'ENOENT') {
-      captureElectronError(error, {
-        contexts: {
-          fn: {
-            args: { zipPath },
-            name: 'getZipEntries stat',
-          },
+const getZipFileStats = async (zipPath: string) => {
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt <= ZIP_OPEN_RETRY_COUNT; attempt++) {
+    try {
+      return await stat(zipPath);
+    } catch (error) {
+      lastError = error;
+      const errorCode = getErrorCode(error);
+      const shouldRetry = shouldRetryZipRead(error, attempt);
+
+      addElectronBreadcrumb({
+        category: 'zip',
+        data: {
+          ...getZipDiagnostics(zipPath, 0),
+          attempt: attempt + 1,
+          errorCode,
+          maxAttempts: ZIP_OPEN_RETRY_COUNT + 1,
+          retrying: shouldRetry,
         },
+        level: errorCode === 'ENOENT' ? 'info' : 'error',
+        message: 'Zip file unavailable before listing entries',
       });
-    }
 
-    throw error;
+      if (!shouldRetry) {
+        if (errorCode !== 'ENOENT') {
+          captureElectronError(error, {
+            contexts: {
+              cloud_resource: {
+                ...getZipDiagnostics(zipPath, 0),
+                retryAttempts: attempt,
+              },
+              fn: {
+                args: { zipPath },
+                name: 'getZipEntries stat',
+              },
+            },
+          });
+        }
+
+        throw error;
+      }
+
+      await delay(getZipRetryDelay(attempt + 1));
+    }
   }
 
-  addElectronBreadcrumb({
-    category: 'zip',
-    data: { fileSize, zipPath },
-    message: 'Reading zip entries',
-  });
+  throw lastError;
+};
 
-  return new Promise((resolve, reject) => {
-    const entries: Record<string, number> = {};
+const openZipFileForEntries = async (
+  zipPath: string,
+  fileSize: number,
+): Promise<yauzl.ZipFile> => {
+  let lastError: unknown;
 
-    yauzl.open(zipPath, { lazyEntries: true }, (err, zipfile) => {
-      if (err) {
-        const errorCode = (err as { code?: string }).code;
-
-        addElectronBreadcrumb({
-          category: 'zip',
-          data: { errorCode, fileSize, zipPath },
-          level: errorCode === 'ENOENT' ? 'info' : 'error',
-          message: 'Error opening zip entries',
+  for (let attempt = 0; attempt <= ZIP_OPEN_RETRY_COUNT; attempt++) {
+    try {
+      return await new Promise<yauzl.ZipFile>((resolve, reject) => {
+        yauzl.open(zipPath, { lazyEntries: true }, (err, zipfile) => {
+          if (err) return reject(err);
+          if (!zipfile) return reject(new Error('Zipfile not found'));
+          return resolve(zipfile);
         });
+      });
+    } catch (error) {
+      lastError = error;
+      const errorCode = getErrorCode(error);
+      const shouldRetry = shouldRetryZipRead(error, attempt);
 
+      addElectronBreadcrumb({
+        category: 'zip',
+        data: {
+          ...getZipDiagnostics(zipPath, fileSize),
+          attempt: attempt + 1,
+          errorCode,
+          maxAttempts: ZIP_OPEN_RETRY_COUNT + 1,
+          retrying: shouldRetry,
+        },
+        level: errorCode === 'ENOENT' ? 'info' : 'error',
+        message: 'Error opening zip entries',
+      });
+
+      if (!shouldRetry) {
         if (errorCode !== 'ENOENT') {
-          captureElectronError(err, {
+          captureElectronError(error, {
             contexts: {
+              cloud_resource: {
+                ...getZipDiagnostics(zipPath, fileSize),
+                retryAttempts: attempt,
+              },
               fn: {
                 args: { fileSize, zipPath },
                 name: 'getZipEntries yauzl.open',
@@ -827,74 +911,110 @@ export async function getZipEntries(
           });
         }
 
-        return reject(err);
+        throw error;
       }
-      if (!zipfile) return reject(new Error('Zipfile not found'));
 
-      let fileCount = 0;
-      let totalUncompressedSize = 0;
+      await delay(getZipRetryDelay(attempt + 1));
+    }
+  }
 
-      zipfile.readEntry();
-      zipfile.on('entry', (entry: yauzl.Entry) => {
-        fileCount++;
-        if (fileCount > MAX_FILES) {
+  throw lastError;
+};
+
+/**
+ * Lists entries in a zip file with their uncompressed sizes
+ */
+export async function getZipEntries(
+  zipPath: string,
+): Promise<Record<string, number>> {
+  const stats = await getZipFileStats(zipPath);
+  const fileSize = stats.size;
+
+  addElectronBreadcrumb({
+    category: 'zip',
+    data: getZipDiagnostics(zipPath, fileSize),
+    message: 'Reading zip entries',
+  });
+
+  return new Promise((resolve, reject) => {
+    const entries: Record<string, number> = {};
+
+    openZipFileForEntries(zipPath, fileSize)
+      .then((zipfile) => {
+        let fileCount = 0;
+        let totalUncompressedSize = 0;
+        let rejected = false;
+
+        const rejectOnce = (error: Error) => {
+          if (rejected) return;
+          rejected = true;
           zipfile.close();
-          return reject(new Error('Reached max. number of files (failsafe)'));
-        }
+          reject(error);
+        };
 
-        totalUncompressedSize += entry.uncompressedSize;
-        if (totalUncompressedSize > MAX_SIZE) {
-          zipfile.close();
-          return reject(new Error('Reached max. size (failsafe)'));
-        }
-
-        if (entry.compressedSize > 0) {
-          const compressionRatio =
-            entry.uncompressedSize / entry.compressedSize;
-          if (compressionRatio > THRESHOLD_RATIO) {
-            zipfile.close();
-            return reject(
-              new Error('Reached max. compression ratio (failsafe)'),
-            );
-          }
-        }
-
-        entries[entry.fileName] = entry.uncompressedSize;
         zipfile.readEntry();
-      });
+        zipfile.on('entry', (entry: yauzl.Entry) => {
+          fileCount++;
+          if (fileCount > MAX_FILES) {
+            rejectOnce(new Error('Reached max. number of files (failsafe)'));
+            return;
+          }
 
-      zipfile.on('end', () => {
-        addElectronBreadcrumb({
-          category: 'zip',
-          data: {
-            entryCount: fileCount,
-            fileSize,
-            totalUncompressedSize,
-            zipPath,
-          },
-          message: 'Finished reading zip entries',
-        });
-        resolve(entries);
-      });
+          totalUncompressedSize += entry.uncompressedSize;
+          if (totalUncompressedSize > MAX_SIZE) {
+            rejectOnce(new Error('Reached max. size (failsafe)'));
+            return;
+          }
 
-      zipfile.on('error', (err) => {
-        addElectronBreadcrumb({
-          category: 'zip',
-          data: { fileSize, zipPath },
-          level: 'error',
-          message: 'Zip entry stream error',
+          if (entry.compressedSize > 0) {
+            const compressionRatio =
+              entry.uncompressedSize / entry.compressedSize;
+            if (compressionRatio > THRESHOLD_RATIO) {
+              rejectOnce(
+                new Error('Reached max. compression ratio (failsafe)'),
+              );
+              return;
+            }
+          }
+
+          entries[entry.fileName] = entry.uncompressedSize;
+          zipfile.readEntry();
         });
-        captureElectronError(err, {
-          contexts: {
-            fn: {
-              args: { fileSize, zipPath },
-              name: 'getZipEntries zipfile error',
+
+        zipfile.on('end', () => {
+          if (rejected) return;
+          addElectronBreadcrumb({
+            category: 'zip',
+            data: {
+              ...getZipDiagnostics(zipPath, fileSize),
+              entryCount: fileCount,
+              totalUncompressedSize,
             },
-          },
+            message: 'Finished reading zip entries',
+          });
+          resolve(entries);
         });
-        reject(err);
-      });
-    });
+
+        zipfile.on('error', (err) => {
+          addElectronBreadcrumb({
+            category: 'zip',
+            data: getZipDiagnostics(zipPath, fileSize),
+            level: 'error',
+            message: 'Zip entry stream error',
+          });
+          captureElectronError(err, {
+            contexts: {
+              cloud_resource: getZipDiagnostics(zipPath, fileSize),
+              fn: {
+                args: { fileSize, zipPath },
+                name: 'getZipEntries zipfile error',
+              },
+            },
+          });
+          reject(err);
+        });
+      })
+      .catch(reject);
   });
 }
 

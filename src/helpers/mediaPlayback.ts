@@ -6,8 +6,10 @@ import type {
   PublicationFetcher,
 } from 'src/types';
 
+import { i18n } from 'boot/i18n';
 import { JPG_EXTENSIONS } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { createTemporaryNotification } from 'src/helpers/notifications';
 import { log, uuid } from 'src/shared/vanilla';
 import { formatDate } from 'src/utils/date';
 import { getTempPath } from 'src/utils/fs';
@@ -79,6 +81,52 @@ const {
 } = globalThis.electronApi;
 const { ensureDir, pathExists, remove, rename, stat } = fs;
 
+const JWPUB_CLOUD_ERROR_CODES = new Set([
+  'EAGAIN',
+  'EBUSY',
+  'ECONNRESET',
+  'EINTR',
+  'ENETDOWN',
+  'ENETRESET',
+  'ENETUNREACH',
+  'ETIMEDOUT',
+]);
+
+const isCloudStoragePath = (path: string) => {
+  const normalizedPath = path.replaceAll('\\', '/').toLowerCase();
+  return (
+    normalizedPath.includes('/library/mobile documents/') ||
+    normalizedPath.includes('/icloud drive/') ||
+    normalizedPath.includes('/dropbox/') ||
+    normalizedPath.includes('/onedrive') ||
+    normalizedPath.includes('/google drive/')
+  );
+};
+
+const isCloudStorageReadError = (error: unknown) => {
+  const errorCode = (error as { code?: string })?.code;
+  if (errorCode && JWPUB_CLOUD_ERROR_CODES.has(errorCode)) return true;
+
+  const message = error instanceof Error ? error.message : String(error);
+  return /connection timed out|resource busy|temporarily unavailable/i.test(
+    message,
+  );
+};
+
+const warnCloudJwpubUnavailable = (jwpubPath: string, error: unknown) => {
+  if (!isCloudStoragePath(jwpubPath) || !isCloudStorageReadError(error)) return;
+
+  const t = i18n.global.t as (key: string) => string;
+
+  createTemporaryNotification({
+    caption: t('cloud-file-unavailable-caption'),
+    group: 'cloudJwpubUnavailable',
+    message: t('cloud-file-unavailable-message'),
+    timeout: 15000,
+    type: 'warning',
+  });
+};
+
 /**
  * Efficiently identifies a JWPUB file by peeking into its metadata
  * without full extraction.
@@ -102,6 +150,7 @@ export async function identifyJwpub(jwpubPath: string) {
         'error',
         error,
       );
+      warnCloudJwpubUnavailable(jwpubPath, error);
       return;
     }
     if (!jwpubEntries['contents']) return;
@@ -155,8 +204,12 @@ const extractContentsFromJwpub = async (
       'error',
       error,
     );
-    // If we can't read the entries to even start extraction, the file might be locked or damaged.
-    await remove(jwpubPath).catch(() => undefined);
+    warnCloudJwpubUnavailable(jwpubPath, error);
+    // If we can't read the entries to even start extraction, the file might be locked, damaged, or still downloading from cloud storage.
+    // Cloud-managed placeholders should not be deleted because the provider may hydrate them after this attempt.
+    if (!isCloudStorageReadError(error)) {
+      await remove(jwpubPath).catch(() => undefined);
+    }
     throw error;
   }
   const expectedContentsSize = jwpubEntries['contents'];
@@ -177,8 +230,11 @@ const extractContentsFromJwpub = async (
         includes: ['contents'],
       });
     } catch (error) {
+      warnCloudJwpubUnavailable(jwpubPath, error);
       // If unzipping the JWPUB fails, it's likely corrupted.
-      // Remove it to force a re-download on next attempt.
+      // Remove it to force a re-download on next attempt unless cloud storage may still be hydrating the file.
+      if (isCloudStorageReadError(error)) throw error;
+
       await remove(jwpubPath).catch((removeError) =>
         errorCatcher(removeError, {
           contexts: {
