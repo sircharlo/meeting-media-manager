@@ -137,7 +137,7 @@
     "vitepress": "^2.0.0-alpha.17",
     "vitest": "^4.1.7",
     "vue-eslint-parser": "^10.4.0",
-    "vue-tsc": "^3.3.2"
+    "vue-tsc": "^3.3.3"
   },
   "resolutions": {
     "vite": "8.0.16"
