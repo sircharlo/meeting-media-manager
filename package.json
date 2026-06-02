@@ -84,7 +84,7 @@
     "vue-router": "^5.1.0",
     "vue-zoomable": "^1.2.8",
     "wrappy": "^1.0.2",
-    "yauzl": "^3.3.1"
+    "yauzl": "^3.3.2"
   },
   "devDependencies": {
     "@electron/rebuild": "^4.0.4",

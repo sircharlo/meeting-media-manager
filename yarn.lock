@@ -12037,7 +12037,7 @@ __metadata:
     vue-tsc: "npm:^3.3.2"
     vue-zoomable: "npm:^1.2.8"
     wrappy: "npm:^1.0.2"
-    yauzl: "npm:^3.3.1"
+    yauzl: "npm:^3.3.2"
   languageName: unknown
   linkType: soft
 
@@ -17545,13 +17545,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yauzl@npm:^3.3.1":
-  version: 3.3.1
-  resolution: "yauzl@npm:3.3.1"
+"yauzl@npm:^3.3.2":
+  version: 3.3.2
+  resolution: "yauzl@npm:3.3.2"
   dependencies:
-    buffer-crc32: "npm:~0.2.3"
     pend: "npm:~1.2.0"
-  checksum: 10c0/e396b070abb0c528cd4df3b86907142f72e09d5bc1edac262cebbff5b045e3091528a5e54e10a9a7209b031ba94bdcb1ad1ec6d85eecd69ad428bcb4a5c914ae
+  checksum: 10c0/92e93b5162ad27a1b3088742fd613c90158553f9ce957ef40bad117c13b25476ea2992a825a7b45eed23924a355991253e60cdeb9b7dea63771de83710dd856f
   languageName: node
   linkType: hard
 
