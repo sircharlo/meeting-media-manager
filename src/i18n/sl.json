@@ -69,6 +69,8 @@
   "cacheFolder": "Mapa predpomnilnika",
   "cacheFolder-explain": "Izberi mapo za shranjevanje datotek predpomnilnika, kot so publikacije in multimedijske datoteke. Če mape ne boš izbral, jo bo aplikacija samodejno ustvarila namesto tebe.",
   "cacheFolder-wizard": "Nisi prepričan? Preskoči ta korak. Izbrali bomo privzeto lokacijo, ki ustreza večini uporabnikov.",
+  "cloud-file-unavailable-caption": "If this file is stored in iCloud Drive, Dropbox, OneDrive, or Google Drive, make it available offline and try again.",
+  "cloud-file-unavailable-message": "This file could not be read yet. It may still be downloading from cloud storage.",
   "calculating": "Preračunavam ...",
   "camera-access-required": "Kamera ni na voljo ali pa manjkajo dovoljenja",
   "camera-access-required-explain": "Poskusi z drugo kamero ali znova zaženi aplikacijo, ko bodo dovoljenja za kamero odobrena v sistemskih nastavitvah.",
