@@ -69,6 +69,8 @@
   "cacheFolder": "Cache-Speicherort",
   "cacheFolder-explain": "Wählen Sie einen Ordner aus, um Cache-Dateien wie Publikationen und Medien zu speichern. Wenn leer gelassen, wird die App dies automatisch für Sie konfigurieren.",
   "cacheFolder-wizard": "Unsicher? Überspringe diesen Schritt. Wir wählen einen Standardort, der für die meisten Benutzer funktioniert.",
+  "cloud-file-unavailable-caption": "Wenn diese Datei in iCloud Drive, Dropbox, OneDrive oder Google Drive gespeichert ist, stellen Sie sie offline zur Verfügung und versuchen Sie es erneut.",
+  "cloud-file-unavailable-message": "Diese Datei konnte noch nicht gelesen werden. Sie wird möglicherweise noch vom Cloud-Speicher heruntergeladen.",
   "calculating": "Berechnung...",
   "camera-access-required": "Kamera ist nicht verfügbar oder Berechtigungen fehlen",
   "camera-access-required-explain": "Bitte versuchen Sie eine andere Kamera oder starten Sie die App neu, wenn die Kamera-Berechtigungen in den Systemeinstellungen gewährt wurden.",
