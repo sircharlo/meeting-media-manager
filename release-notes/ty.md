@@ -8,9 +8,9 @@ No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera 
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ✨ **Timer**: Added analog display modes and timing report status.
-- ✨ **Profiles**: Added profile settings import and export in Advanced settings and the Setup Wizard.
-- ✨ **Media Window**: Added support for automatically hiding the media window after playback when it was initially hidden. This is practical when a remote speaker wants to display images, for example.
+- ✨ Tai’ora’a: Ua tāpiti-hia mai te mau huru fa’a’itera’a analog ’e te huru nō te parau-tāpura nō te taime.
+- ✨ Mau profil: Ua tāpiti-hia mai te fa’a’ô-ra’a ’e te fa’a’ite-ra’a i te mau fa’anahora’a nō te profil i roto i te Mau fa’anahora’a rahi ’e i roto i te Rave’a tauturu nō te fa’anahora’a.
+- ✨ Ha’amāramarama nō te mau ripene: Ua tāpiti-hia te turu nō te huna-’aunoa-ra’a i te ha’amāramarama nō te mau ripene i muri iho i te ha’uti-ra’a, mai te mea ē, ua hunahia na ’oia i te ha’amatara’a. E mea faufa’a roa teie nō te hō’ē taata parau i te atea o te hina’aro e fa’a’ite i te mau hoho’a, ei hi’ora’a.
 
 ## v26.5.0
 
