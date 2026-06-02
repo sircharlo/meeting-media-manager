@@ -81,9 +81,9 @@ describe('downloads.ensureDirWithRetry', () => {
       ensureDirWithRetry('/tmp/Publications/w_X_20260400'),
     ).rejects.toThrow('missing parent');
 
-    expect(error.downloadDirDiagnostics).toEqual([
-      {
-        attempt: 0,
+    expect(error.downloadDirDiagnostics).toEqual(
+      Array.from({ length: 4 }, (_, attempt) => ({
+        attempt,
         code: 'ENOENT',
         dir: '/tmp/Publications/w_X_20260400',
         message: 'missing parent',
@@ -92,13 +92,14 @@ describe('downloads.ensureDirWithRetry', () => {
         parentIsDirectory: false,
         parentMessage: 'parent missing',
         parentPath: '/tmp/Publications',
-      },
-    ]);
+      })),
+    );
     expect(mocks.addElectronBreadcrumb).toHaveBeenCalledWith({
       category: 'downloads.filesystem',
       data: error.downloadDirDiagnostics?.[0],
       level: 'warning',
       message: 'download-directory-create-failed',
     });
+    expect(mocks.addElectronBreadcrumb).toHaveBeenCalledTimes(4);
   });
 });

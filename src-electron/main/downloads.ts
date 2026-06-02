@@ -160,7 +160,6 @@ export async function ensureDirWithRetry(dir: string) {
 
       const code = getErrorCode(error);
       const shouldRetry =
-        process.platform === 'win32' &&
         ENSURE_DIR_RETRYABLE_CODES.has(code ?? '') &&
         attempt < ENSURE_DIR_RETRY_COUNT;
       if (!shouldRetry) break;

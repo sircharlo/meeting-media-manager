@@ -414,6 +414,51 @@ describe('getZipEntries', () => {
     expect(captureElectronErrorMock).not.toHaveBeenCalled();
   });
 
+  it('adds entry samples and contents size to zip entry diagnostics', async () => {
+    const { EventEmitter } = await import('node:events');
+    const entries = [
+      { compressedSize: 50, fileName: 'contents', uncompressedSize: 100 },
+      { compressedSize: 25, fileName: 'manifest.json', uncompressedSize: 75 },
+    ];
+    const zipfile = Object.assign(new EventEmitter(), {
+      close: vi.fn(),
+      readEntry: vi.fn(() => {
+        queueMicrotask(() => {
+          const entry = entries.shift();
+          if (entry) {
+            zipfile.emit('entry', entry);
+          } else {
+            zipfile.emit('end');
+          }
+        });
+      }),
+    });
+    yauzlOpenMock.mockImplementation((_path, _options, callback) => {
+      callback(null, zipfile);
+    });
+
+    const { getZipEntries } = await import('../fs');
+
+    await expect(getZipEntries('/tmp/parent.jwpub')).resolves.toEqual({
+      contents: 100,
+      'manifest.json': 75,
+    });
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: 'zip',
+        data: expect.objectContaining({
+          contentsSize: 100,
+          entryCount: 2,
+          entryNamesSample: ['contents', 'manifest.json'],
+          fileSize: 1024,
+          totalUncompressedSize: 175,
+          zipPath: '/tmp/parent.jwpub',
+        }),
+        message: 'Finished reading zip entries',
+      }),
+    );
+  });
+
   it('retries timed out cloud zip reads before reporting an error', async () => {
     const timeoutError = new Error('ETIMEDOUT: connection timed out, read');
     (timeoutError as Error & { code?: string }).code = 'ETIMEDOUT';
