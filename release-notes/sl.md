@@ -8,9 +8,9 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- ✨ **Timer**: Added analog display modes and timing report status.
-- ✨ **Profiles**: Added profile settings import and export in Advanced settings and the Setup Wizard.
-- ✨ **Media Window**: Added support for automatically hiding the media window after playback when it was initially hidden. This is practical when a remote speaker wants to display images, for example.
+- ✨ **Časovnik**: Dodani analogni načini prikaza in stanje poročila o časovniku.
+- ✨ **Profili**: Dodana možnost uvoza in izvoza nastavitev profila v Naprednih nastavitvah in v Čarovniku za nastavitev.
+- ✨ **Multimedijsko okno**: Dodana podpora za samodejno skrivanje multimedijskega okna po končanem predvajanju, če je bilo okno ob začetku skrito. Na primer, to je praktično, ko želi oddaljeni govornik prikazati slike.
 
 ## v26.5.0
 
@@ -92,7 +92,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 - ✨ **Enostaven ročni uvoz publikacij**: Dodana funkcionalnost za enostaven uvoz publikacij z jw.org, kot so revije, knjige, programi in vabila.
 - ✨ **Izboljšave za znakovni jezik**: Dodano potrjevanje pred predvajanjem celotnih datotek v znakovnem jeziku in podpora za izbiro več posnetkov, na primer kadar je treba zapored prebrati več odstavkov.
 - ✨ **Navigacija med posnetki**: Dodan prikaz trajanja pri elementih seznama posnetkov in izboljšana navigacija.
-- 🛠️ **Prikaz multimedijske vsebine**: Poskrbljeno, da se prikaz multimedijske vsebine ob začetku predvajanja prikaže, tudi če je bil prej skrit.
+- 🛠️ **Multimedijski zaslon**: Poskrbljeno, da se multimedijski zaslon ob začetku predvajanja prikaže, tudi če je bil prej skrit.
 
 ## v25.10.1
 
