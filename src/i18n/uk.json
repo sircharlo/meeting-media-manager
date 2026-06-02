@@ -69,6 +69,8 @@
   "cacheFolder": "Розташування кешу",
   "cacheFolder-explain": "Виберіть папку для збереження кешованих файлів, таких як публікації та медіа. Якщо залишити поле порожнім, додаток налаштує це автоматично.",
   "cacheFolder-wizard": "Not sure? Skip this step. We'll choose a default location that works for most people.",
+  "cloud-file-unavailable-caption": "Якщо цей файл збережено в iCloud Drive, Dropbox, OneDrive, або Google Drive, зробіть його доступним в автономному режимі та спробуйте ще раз.",
+  "cloud-file-unavailable-message": "Цей файл ще не може бути прочитаний. Це може бути завантажене з хмарного сховища.",
   "calculating": "Calculating...",
   "camera-access-required": "Камера недоступна або відсутні дозволи",
   "camera-access-required-explain": "Спробуйте іншу камеру або перезапустіть застосунок після надання дозволів на камеру в Системних налаштуваннях.",

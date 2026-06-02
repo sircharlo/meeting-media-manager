@@ -69,6 +69,8 @@
   "cacheFolder": "Vahemälu asukoht",
   "cacheFolder-explain": "Vali kaust vahemälufailide, näiteks väljaannete ja meedia salvestamiseks. Kui jätad selle tühjaks, konfigureerib rakendus selle sinu jaoks automaatselt.",
   "cacheFolder-wizard": "Ei ole kindel? Jäta see samm vahele. Valime vaikimisi asukoha, mis sobib enamikule inimestele.",
+  "cloud-file-unavailable-caption": "If this file is stored in iCloud Drive, Dropbox, OneDrive, or Google Drive, make it available offline and try again.",
+  "cloud-file-unavailable-message": "This file could not be read yet. It may still be downloading from cloud storage.",
   "calculating": "Töötamine...",
   "camera-access-required": "Kaamera ei ole saadaval või õigused puuduvad",
   "camera-access-required-explain": "Palun proovi teist kaamerat või käivita rakendus uuesti, kui kaameraõigused on antud süsteemi seadetes.",
