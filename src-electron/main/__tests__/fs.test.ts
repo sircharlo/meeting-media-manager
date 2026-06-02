@@ -371,12 +371,12 @@ describe('getZipEntries', () => {
     expect(captureElectronErrorMock).toHaveBeenCalledWith(
       error,
       expect.objectContaining({
-        contexts: {
+        contexts: expect.objectContaining({
           fn: {
             args: { zipPath: '/tmp/locked.jwpub' },
             name: 'getZipEntries stat',
           },
-        },
+        }),
       }),
     );
   });
@@ -408,6 +408,54 @@ describe('getZipEntries', () => {
           zipPath: '/tmp/raced.jwpub',
         }),
         level: 'info',
+        message: 'Error opening zip entries',
+      }),
+    );
+    expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
+
+  it('retries timed out cloud zip reads before reporting an error', async () => {
+    const timeoutError = new Error('ETIMEDOUT: connection timed out, read');
+    (timeoutError as Error & { code?: string }).code = 'ETIMEDOUT';
+    const zipfileHandlers = new Map<string, () => void>();
+    const zipfileMock = {
+      close: vi.fn(),
+      on: vi.fn((event: string, callback: () => void) => {
+        zipfileHandlers.set(event, callback);
+        return zipfileMock;
+      }),
+      readEntry: vi.fn(() => {
+        queueMicrotask(() => zipfileHandlers.get('end')?.());
+      }),
+    };
+
+    yauzlOpenMock
+      .mockImplementationOnce((_path, _options, callback) => {
+        callback(timeoutError);
+      })
+      .mockImplementationOnce((_path, _options, callback) => {
+        callback(undefined, zipfileMock);
+      });
+
+    const { getZipEntries } = await import('../fs');
+
+    await expect(
+      getZipEntries(
+        '/Users/test/Library/Mobile Documents/com~apple~CloudDocs/Downloads/S-34_GA.jwpub',
+      ),
+    ).resolves.toEqual({});
+
+    expect(yauzlOpenMock).toHaveBeenCalledTimes(2);
+    expect(delayMock).toHaveBeenCalledWith(1000);
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: 'zip',
+        data: expect.objectContaining({
+          cloudProvider: 'iCloud',
+          errorCode: 'ETIMEDOUT',
+          isCloudStoragePath: true,
+          retrying: true,
+        }),
         message: 'Error opening zip entries',
       }),
     );

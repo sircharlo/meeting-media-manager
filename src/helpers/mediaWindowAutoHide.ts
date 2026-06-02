@@ -16,16 +16,12 @@ const showAutoHiddenNotification = () => {
         handler: () => {
           toggleMediaWindowVisibility(true);
         },
-        label: (i18n.global.t as (key: string) => string)('show-media-display'),
+        label: i18n.global.t('show-media-display'),
       },
     ],
-    caption: (i18n.global.t as (key: string) => string)(
-      'media-window-auto-hidden-caption',
-    ),
+    caption: i18n.global.t('media-window-auto-hidden-caption'),
     group: 'mediaWindowAutoHide',
-    message: (i18n.global.t as (key: string) => string)(
-      'media-window-auto-hidden-message',
-    ),
+    message: i18n.global.t('media-window-auto-hidden-message'),
     timeout: 10000,
     type: 'info',
   });
