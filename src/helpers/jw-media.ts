@@ -447,7 +447,7 @@ const getMediaFromJwPlaylist = async (
 const warnCloudJwpubUnavailable = (jwpubPath: string, error: unknown) => {
   if (!isCloudStoragePath(jwpubPath) || !isCloudStorageReadError(error)) return;
 
-  const t = i18n.global.t as (key: string) => string;
+  const t = i18n.global.t;
 
   createTemporaryNotification({
     caption: t('cloud-file-unavailable-caption'),

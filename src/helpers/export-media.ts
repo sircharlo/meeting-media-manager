@@ -181,9 +181,7 @@ const processAllSections = async (
     const visibleItems = getVisibleItems(section);
     if (!visibleItems.length) continue;
 
-    const sectionName = (i18n.global.t as (key: string) => string)(
-      section.config.uniqueId,
-    );
+    const sectionName = i18n.global.t(section.config.uniqueId);
     const sanitizedSectionName = sanitizeFilename(sectionName);
     const sectionPrefix = pad(sectionIndex++);
 
@@ -368,7 +366,7 @@ const buildDestinationPath = async ({
 
   const songPrefix =
     mediaItem.tag?.type === 'song' && mediaItem.tag?.value
-      ? `${(i18n.global.t as (key: string) => string)('song')} ${mediaItem.tag.value} - `
+      ? `${i18n.global.t('song')} ${mediaItem.tag.value} - `
       : '';
 
   const destFileName = `${sectionPrefix} ${sanitizedSectionName} - ${mediaPrefix} ${songPrefix}${mediaTitle}${effectiveExt}`;
