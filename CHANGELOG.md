@@ -4,6 +4,35 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.6.0
+
+### ✨ New Features
+
+- ✨ **Timer**: Added analog display modes and timing report status. (#7699)
+- ✨ **Profiles**: Added profile settings import and export in Advanced settings and the Setup Wizard. (#7687)
+- ✨ **Media Window**: Added support for automatically hiding the media window after playback when it was initially hidden. This is practical when a remote speaker wants to display images, for example. (#7685)
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Schedule Sync**: Media and meeting days are now refreshed more reliably after schedule sync, and disabled deleting extra media during playback. (#7686)
+- 🛠️ **Display Popup**: Animated the main window position when shown in the display popup. (#7686)
+- 🛠️ **Meetings API**: Updated congregation lookup behavior, with debounced suggestions and language mapping. (#7517)
+- 🛠️ **Timer**: Stabilized action island time displays and smoothed countdown ring rendering. (#7699)
+
+### 🐞 Bug Fixes
+
+- 🐞 **Media Sorting**: Ensured manually added PDF pages, playlist items, and dropped files are sorted correctly.
+- 🐞 **Background Music**: Kept the stop music button visible, even on small window sizes. (#7680)
+- 🐞 **Action Popup**: Unified popup layout behavior and added scroll behvior. (#7682)
+- 🐞 **Fullscreen**: Improved fullscreen transition handling and auto-target calculations across platforms. (#7518)
+- 🐞 **Localization**: Ignored under-threshold locales in generated indexes. (#7486)
+- 🐞 **Security**: Hardened profile filename sanitization. (#7688)
+
+### 🔧 Chores
+
+- 🔧 **CI**: Hardened GitHub Actions workflows. (#7689)
+- 🔧 **Code Quality**: Streamlined documentation workflow, TypeScript configuration, and Electron log readability.
+
 ## v26.5.0
 
 ### ✨ New Features
