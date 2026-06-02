@@ -145,6 +145,8 @@ import {
   getJwMediaInfo,
   getMemorialMedia,
   getPubMediaLinks,
+  identifyJwpub,
+  unzipJwpub,
 } from 'src/helpers/jw-media';
 import { sendKeyboardShortcut } from 'src/helpers/keyboard-shortcuts';
 import { executeLocalShortcut } from 'src/helpers/keyboardShortcuts';
@@ -154,11 +156,7 @@ import {
   findMediaSection,
   getOrCreateMediaSection,
 } from 'src/helpers/media-sections';
-import {
-  identifyJwpub,
-  toggleMediaWindowVisibility,
-  unzipJwpub,
-} from 'src/helpers/mediaPlayback';
+import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { triggerMediaWindowAutoHide } from 'src/helpers/mediaWindowAutoHide';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { updateLastUsedDate } from 'src/helpers/usage';
