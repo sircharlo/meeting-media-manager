@@ -128,7 +128,7 @@
     "lint-staged": "^17.0.7",
     "lodash-es": "^4.18.1",
     "msw": "^2.14.6",
-    "oxc-minify": "^0.133.0",
+    "oxc-minify": "^0.134.0",
     "postcss": "^8.5.15",
     "prettier": "^3.8.3",
     "rollup-plugin-visualizer": "^7.0.1",
@@ -136,7 +136,7 @@
     "vite": "^8.0.16",
     "vitepress": "^2.0.0-alpha.17",
     "vitest": "^4.1.8",
-    "vue-eslint-parser": "^10.4.0",
+    "vue-eslint-parser": "^10.4.1",
     "vue-tsc": "^3.3.3"
   },
   "resolutions": {
