@@ -8,9 +8,9 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 ### ✨ Nouvelles fonctionnalités
 
-- ✨ **Timer**: Ajout de modes d'affichage analogique et de l'état du rapport de timing.
-- ✨ **Profils**: Ajout des paramètres de profil à l'importation et à l'exportation dans les paramètres avancés et l'assistant d'installation.
-- ✨ **Media Window**: Ajout du support pour masquer automatiquement la fenêtre du média après la lecture lorsqu'il a été masqué initialement. Ceci est pratique quand un haut-parleur distant veut afficher des images, par exemple.
+- ✨ **Minuterie** : ajout de modes d'affichage analogiques et d'un rapport de minuterie.
+- ✨ **Profils** : Ajout de la fonction d'importation et d'exportation des paramètres de profil dans les paramètres avancés et dans l'assistant de configuration.
+- ✨ **Fenêtre multimédia** : Ajout de la prise en charge du masquage automatique de la fenêtre multimédia après la lecture lorsqu'elle était initialement masquée. Cela s'avère pratique lorsqu'un orateur distant souhaite, par exemple, afficher des images.
 
 ## v26.5.0
 
