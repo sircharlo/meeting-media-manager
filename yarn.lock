@@ -3484,9 +3484,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/app-vite@npm:^2.6.1":
-  version: 2.6.1
-  resolution: "@quasar/app-vite@npm:2.6.1"
+"@quasar/app-vite@npm:^2.6.2":
+  version: 2.6.2
+  resolution: "@quasar/app-vite@npm:2.6.2"
   dependencies:
     "@quasar/render-ssr-error": "npm:1.0.4"
     "@quasar/ssl-certificate": "npm:2.0.0"
@@ -3552,7 +3552,7 @@ __metadata:
       optional: true
   bin:
     quasar: bin/quasar.js
-  checksum: 10c0/18bb2863a8f290f8838aafd41d2e4d8d66ea6d0ac4019d39daa94bde8ed08b869a9823088de64f686e41450b0d71604dc00a4c53062e94384a6911e24c44249b
+  checksum: 10c0/44899d183f71e4a90f08d698f74120e82910d47ad01c9a0115cc2ec9d245988895253ea60906dad927776a0109bb80755b2b098156bc0bcbdbf10c7ad61a9601
   languageName: node
   linkType: hard
 
@@ -11947,7 +11947,7 @@ __metadata:
     "@numairawan/video-duration": "npm:^1.0.0"
     "@opentelemetry/api-logs": "npm:^0.218.0"
     "@pinia/testing": "npm:^1.0.3"
-    "@quasar/app-vite": "npm:^2.6.1"
+    "@quasar/app-vite": "npm:^2.6.2"
     "@quasar/extras": "npm:^2.0.0"
     "@quasar/icongenie": "patch:@quasar/icongenie@npm%3A5.0.0#~/.yarn/patches/@quasar-icongenie-npm-5.0.0-c2ce1cf885.patch"
     "@quasar/quasar-app-extension-testing-unit-vitest": "npm:1.2.3"
