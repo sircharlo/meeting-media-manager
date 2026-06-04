@@ -4,6 +4,20 @@
 
 A verziók közötti változások teljes listáját megtalálja a GitHubon található CHANGELOG.md fájlban.
 
+## v26.6.0
+
+### ✨ Új funkciók
+
+- ✨ **Timer**: Added analog display modes and timing report status.
+- ✨ **Profiles**: Added profile settings import and export in Advanced settings and the Setup Wizard.
+- ✨ **Media Window**: Added support for automatically hiding the media window after playback when it was initially hidden. This is practical when a remote speaker wants to display images, for example.
+
+## v26.5.0
+
+### ✨ Új funkciók
+
+- ✨ **PDF Import**: Added a new PDF import flow to the Publication Media dialog, allowing the PDF version of a publication to be automatically imported as individual images when desired.
+
 ## v26.4.8
 
 ### ✨ Új funkciók
