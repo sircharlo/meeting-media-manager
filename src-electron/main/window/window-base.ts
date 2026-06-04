@@ -5,7 +5,7 @@ import {
   BrowserWindow,
   type BrowserWindowConstructorOptions,
 } from 'electron';
-import { pathExistsSync, readJsonSync } from 'fs-extra/esm';
+import { pathExists, readJson } from 'fs-extra/esm';
 import { fileURLToPath } from 'node:url';
 import {
   IS_BETA,
@@ -158,16 +158,16 @@ export function createWindow(
   return win;
 }
 
-export function loadWindowPrefs(
+export async function loadWindowPrefs(
   windowName: 'main' | 'media' | 'timer',
-): null | WindowState {
+): Promise<null | WindowState> {
   const mediaWindowStateFile = join(
     app.getPath('userData'),
     `${windowName}-window-state.json`,
   );
 
   try {
-    if (!pathExistsSync(mediaWindowStateFile)) {
+    if (!(await pathExists(mediaWindowStateFile))) {
       log(
         '[loadWindowPrefs - ' + windowName + '] File does not exist:',
         'electronWindow',
@@ -176,7 +176,7 @@ export function loadWindowPrefs(
       );
       return null;
     }
-    return readJsonSync(mediaWindowStateFile, { throws: false });
+    return await readJson(mediaWindowStateFile, { throws: false });
   } catch (e) {
     captureElectronError(e, {
       contexts: {

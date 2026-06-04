@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { readdir, readFile, stat } from 'node:fs/promises';
 import { log } from 'src/shared/vanilla';
 import { extname, join, resolve } from 'upath';
 import { describe, expect, it } from 'vitest';
@@ -9,17 +9,17 @@ const projectRoot = resolve(__dirname, '../../..');
 const srcElectronDir = resolve(projectRoot, 'src-electron');
 const quasarConfigPath = resolve(projectRoot, 'quasar.config.ts');
 
-function getAllFiles(
+async function getAllFiles(
   dir: string,
   extensions: string[] = ['.ts', '.js'],
-): string[] {
+): Promise<string[]> {
   let results: string[] = [];
-  const list = readdirSync(dir);
+  const list = await readdir(dir);
   for (const file of list) {
     const filePath = join(dir, file);
-    const stat = statSync(filePath);
-    if (stat?.isDirectory()) {
-      results = results.concat(getAllFiles(filePath, extensions));
+    const fileStat = await stat(filePath);
+    if (fileStat?.isDirectory()) {
+      results = results.concat(await getAllFiles(filePath, extensions));
     } else {
       if (filePath.includes('__tests__')) continue;
       if (extensions.includes(extname(file))) {
@@ -32,8 +32,8 @@ function getAllFiles(
   return results;
 }
 
-function getElectronDepsFromConfig() {
-  const configContent = readFileSync(quasarConfigPath, 'utf-8');
+async function getElectronDepsFromConfig() {
+  const configContent = await readFile(quasarConfigPath, 'utf-8');
   const match = new RegExp(
     /const electronDeps = new Set\(\[([\s\S]*?)\]\);/,
   ).exec(configContent);
@@ -49,8 +49,8 @@ function getElectronDepsFromConfig() {
   return new Set(deps);
 }
 
-function getImportsFromFile(filePath: string): string[] {
-  const content = readFileSync(filePath, 'utf-8');
+async function getImportsFromFile(filePath: string): Promise<string[]> {
+  const content = await readFile(filePath, 'utf-8');
   const imports: string[] = [];
 
   // Match import ... from '...'
@@ -79,17 +79,17 @@ function getProductionDependencies() {
 }
 
 describe('Electron Dependencies', () => {
-  it('should list all used dependencies in electronDeps in quasar.config.ts', () => {
+  it('should list all used dependencies in electronDeps in quasar.config.ts', async () => {
     const prodDeps = getProductionDependencies();
-    const whitelistedDeps = getElectronDepsFromConfig();
-    const files = getAllFiles(srcElectronDir);
+    const whitelistedDeps = await getElectronDepsFromConfig();
+    const files = await getAllFiles(srcElectronDir);
 
     const usedDeps = new Set<string>();
 
     const transitiveDeps = new Set<string>();
 
-    files.forEach((file) => {
-      const imports = getImportsFromFile(file);
+    for (const file of files) {
+      const imports = await getImportsFromFile(file);
       for (const imp of imports) {
         // Skip dependencies that are internal import, not external packages
         if (imp.startsWith('app/')) continue;
@@ -116,7 +116,7 @@ describe('Electron Dependencies', () => {
           transitiveDeps.add(imp);
         }
       }
-    });
+    }
 
     const missingDeps: string[] = [];
     usedDeps.forEach((dep) => {

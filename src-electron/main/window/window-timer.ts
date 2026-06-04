@@ -150,7 +150,10 @@ export const moveTimerWindowThrottled = throttleWithTrailing(
   WINDOW_MOVE_THROTTLE_MS,
 );
 
-export const moveTimerWindow = (displayNr?: number, fullscreen?: boolean) => {
+export const moveTimerWindow = async (
+  displayNr?: number,
+  fullscreen?: boolean,
+) => {
   log('[moveTimerWindow] START - Called with:', 'timer', 'log', {
     displayNr,
     fullscreen,
@@ -216,7 +219,7 @@ export const moveTimerWindow = (displayNr?: number, fullscreen?: boolean) => {
     }
 
     let preferredIndex = -1;
-    const timerWindowPrefs = loadWindowPrefs('timer');
+    const timerWindowPrefs = await loadWindowPrefs('timer');
     if (timerWindowPrefs) {
       preferredIndex = screens.findIndex((s) => {
         const b = s.bounds;

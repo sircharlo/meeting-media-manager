@@ -1,41 +1,71 @@
 #!/usr/bin/env node
 /* eslint-disable @typescript-eslint/no-require-imports */
-const { execSync } = require('node:child_process');
-const { existsSync } = require('node:fs');
+const { spawn } = require('node:child_process');
+const { access } = require('node:fs/promises');
 
-function main() {
+async function main() {
   // Skip in CI environments or if no .git directory
   if (
     process.env.CI ||
     process.env.NODE_ENV === 'production' ||
-    !existsSync('.git')
+    !(await pathExists('.git'))
   ) {
     console.log(
       'Skipping Husky installation (CI/production environment or no .git)',
     );
-  } else if (existsSync('.husky/install.mjs')) {
-    runCommand('node .husky/install.mjs', 'Husky install (custom script)');
+  } else if (await pathExists('.husky/install.mjs')) {
+    await runCommand(
+      'node',
+      ['.husky/install.mjs'],
+      'Husky install (custom script)',
+    );
   } else {
-    runCommand('npx husky install', 'Husky install (default)');
+    await runCommand('npx', ['husky', 'install'], 'Husky install (default)');
   }
 
   // Run other build commands
-  runCommand('yarn quasar prepare', 'Quasar preparation');
-  runCommand('yarn generate:icons', 'Icon generation');
-  runCommand('yarn electron-rebuild', 'Electron rebuild');
+  await runCommand('yarn', ['quasar', 'prepare'], 'Quasar preparation');
+  await runCommand('yarn', ['generate:icons'], 'Icon generation');
+  await runCommand('yarn', ['electron-rebuild'], 'Electron rebuild');
 
   console.log('✓ Post-install completed successfully');
 }
 
-function runCommand(command, description) {
+async function pathExists(path) {
   try {
-    console.log(`Running: ${description}`);
-    execSync(command, { cwd: process.cwd(), stdio: 'inherit' });
-    console.log(`✓ ${description} completed`);
-  } catch (error) {
-    console.warn(`⚠ ${description} failed:`, error.message);
-    // Don't throw - continue with other commands
+    await access(path);
+    return true;
+  } catch {
+    return false;
   }
 }
 
-main();
+function runCommand(command, args, description) {
+  return new Promise((resolve) => {
+    console.log(`Running: ${description}`);
+    const child = spawn(command, args, {
+      cwd: process.cwd(),
+      shell: true,
+      stdio: 'inherit',
+    });
+
+    child.on('error', (error) => {
+      console.warn(`⚠ ${description} failed:`, error.message);
+      resolve();
+    });
+
+    child.on('close', (code) => {
+      if (code === 0) {
+        console.log(`✓ ${description} completed`);
+      } else {
+        console.warn(`⚠ ${description} failed with exit code ${code}`);
+      }
+      resolve();
+    });
+  });
+}
+
+main().catch((error) => {
+  console.error('Post-install failed:', error);
+  process.exitCode = 1;
+});

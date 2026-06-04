@@ -10,7 +10,14 @@ import {
   screen,
   shell,
 } from 'electron';
-import { pathExistsSync, readJsonSync, writeJsonSync } from 'fs-extra/esm';
+import {
+  pathExists,
+  pathExistsSync,
+  readJson,
+  readJsonSync,
+  writeJson,
+  writeJsonSync,
+} from 'fs-extra/esm';
 import {
   APP_ID,
   IS_TEST,
@@ -123,7 +130,7 @@ async function captureGpuCrash(
   details: Electron.Details | Electron.RenderProcessGoneDetails,
 ) {
   const snapshot = getGpuDiagnosticSnapshot(`${type} process gone`, details);
-  writeGpuDiagnosticSnapshot(snapshot);
+  await writeGpuDiagnosticSnapshot(snapshot);
 
   const basicGpuInfo = await getBasicGpuInfo();
 
@@ -326,12 +333,12 @@ function isTruthyEnvironmentValue(value: string | undefined) {
   return value === '1' || value?.toLowerCase() === 'true';
 }
 
-function readGpuDiagnosticSnapshots() {
+async function readGpuDiagnosticSnapshots() {
   try {
     const filePath = getGpuDiagnosticsFilePath();
-    if (!pathExistsSync(filePath)) return [];
+    if (!(await pathExists(filePath))) return [];
 
-    const data = readJsonSync(filePath);
+    const data = await readJson(filePath);
     return Array.isArray(data) ? data : [];
   } catch (error) {
     log('Failed to read GPU diagnostics:', 'electron', 'warn', error);
@@ -339,13 +346,15 @@ function readGpuDiagnosticSnapshots() {
   }
 }
 
-function writeGpuDiagnosticSnapshot(
+async function writeGpuDiagnosticSnapshot(
   snapshot: ReturnType<typeof getGpuDiagnosticSnapshot>,
 ) {
   try {
     const filePath = getGpuDiagnosticsFilePath();
-    const existing = readGpuDiagnosticSnapshots();
-    writeJsonSync(filePath, [...existing.slice(-19), snapshot], { spaces: 2 });
+    const existing = await readGpuDiagnosticSnapshots();
+    await writeJson(filePath, [...existing.slice(-19), snapshot], {
+      spaces: 2,
+    });
   } catch (error) {
     log('Failed to write GPU diagnostics:', 'electron', 'warn', error);
   }
@@ -374,7 +383,7 @@ if (gotTheLock) {
 
   // If we survive for 10 seconds, reset the crash count
   setTimeout(() => {
-    resetCrashCount();
+    void resetCrashCount();
   }, 10000);
 
   // Check if hardware acceleration should be disabled
@@ -485,7 +494,9 @@ if (gotTheLock) {
   });
 
   app.on('gpu-info-update', () => {
-    writeGpuDiagnosticSnapshot(getGpuDiagnosticSnapshot('gpu-info-update'));
+    void writeGpuDiagnosticSnapshot(
+      getGpuDiagnosticSnapshot('gpu-info-update'),
+    );
   });
 
   // Listen for renderer crashes
@@ -598,9 +609,9 @@ function isHwAccelDisabled() {
   return false;
 }
 
-function resetCrashCount() {
+async function resetCrashCount() {
   try {
-    writeJsonSync(getCrashCountFilePath(), { count: 0 });
+    await writeJson(getCrashCountFilePath(), { count: 0 });
     log('Crash count reset to 0', 'electron', 'log');
   } catch (error) {
     log('Failed to reset crash count:', 'electron', 'warn', error);

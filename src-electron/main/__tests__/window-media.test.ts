@@ -1,8 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const getDisplayMatching = vi.fn();
-const mockReadJsonSync = vi.fn();
-const mockPathExistsSync = vi.fn();
 const mockLoadWindowPrefs = vi.fn();
 
 vi.mock('electron', () => ({
@@ -12,11 +10,6 @@ vi.mock('electron', () => ({
   screen: {
     getDisplayMatching,
   },
-}));
-
-vi.mock('fs-extra/esm', () => ({
-  pathExistsSync: mockPathExistsSync,
-  readJsonSync: mockReadJsonSync,
 }));
 
 vi.mock('src-electron/constants', () => ({
@@ -48,7 +41,6 @@ vi.mock('src-electron/main/window/window-main', () => ({
 describe('window-media placement helpers', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockPathExistsSync.mockReturnValue(false);
     getDisplayMatching.mockReturnValue({ id: 2 });
   });
 
@@ -237,7 +229,7 @@ describe('window-media placement helpers', () => {
   });
 
   it('uses saved window preferences to choose the preferred screen when available', async () => {
-    mockLoadWindowPrefs.mockReturnValue({
+    mockLoadWindowPrefs.mockResolvedValue({
       height: 1080,
       width: 1920,
       x: 1920,
@@ -246,7 +238,7 @@ describe('window-media placement helpers', () => {
 
     const { __testables } = await import('../window/window-media');
 
-    const result = __testables.getPreferredScreenFromPrefs([
+    const result = await __testables.getPreferredScreenFromPrefs([
       {
         bounds: { height: 1080, width: 1920, x: 0, y: 0 },
         id: 1,

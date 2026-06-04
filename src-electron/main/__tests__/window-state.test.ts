@@ -3,10 +3,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const appGetPath = vi.fn();
 const browserWindowHandlers = new Map<string, () => void>();
 const captureElectronError = vi.fn();
-const ensureDirSync = vi.fn();
+const ensureDir = vi.fn();
 const getDisplayMatching = vi.fn();
 const readJsonSync = vi.fn();
-const writeJsonSync = vi.fn();
+const writeJson = vi.fn();
 
 class MockBrowserWindow {
   getBounds = vi.fn(() => ({ height: 600, width: 1000, x: 0, y: 0 }));
@@ -34,9 +34,9 @@ vi.mock('electron', () => ({
 }));
 
 vi.mock('fs-extra/esm', () => ({
-  ensureDirSync,
+  ensureDir,
   readJsonSync,
-  writeJsonSync,
+  writeJson,
 }));
 
 vi.mock('src-electron/main/utils', () => ({
@@ -64,9 +64,8 @@ describe('StatefulBrowserWindow', () => {
     const error = Object.assign(new Error('EPERM: operation not permitted'), {
       code: 'EPERM',
     });
-    writeJsonSync.mockImplementation(() => {
-      throw error;
-    });
+    writeJson.mockRejectedValue(error);
+    ensureDir.mockResolvedValue(undefined);
 
     const { StatefulBrowserWindow } =
       await import('src-electron/main/window/window-state');
@@ -77,18 +76,20 @@ describe('StatefulBrowserWindow', () => {
     });
 
     browserWindowHandlers.get('closed')?.();
+    await vi.waitFor(() => {
+      expect(captureElectronError).toHaveBeenCalledWith(error, {
+        contexts: {
+          fn: {
+            name: 'StatefulBrowserWindow.saveState',
+            path: 'C:/Users/Test/AppData/Roaming/M3/main-window-state.json',
+          },
+        },
+      });
+    });
 
     expect(statefulWindow.win.removeListener).toHaveBeenCalledWith(
       'closed',
       expect.any(Function),
     );
-    expect(captureElectronError).toHaveBeenCalledWith(error, {
-      contexts: {
-        fn: {
-          name: 'StatefulBrowserWindow.saveState',
-          path: 'C:/Users/Test/AppData/Roaming/M3/main-window-state.json',
-        },
-      },
-    });
   });
 });

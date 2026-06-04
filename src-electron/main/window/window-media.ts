@@ -59,13 +59,13 @@ const isFullscreenOrMaximized = (
 /**
  * Calculates target display info for automatic positioning
  */
-function calculateAutoTarget(
+async function calculateAutoTarget(
   boundsInfo: WindowBoundsInfo,
   mediaWindow: BrowserWindow,
   screens: ReturnType<typeof getAllScreens>,
-): null | TargetDisplayInfo {
+): Promise<null | TargetDisplayInfo> {
   const mainWindowScreen = screens.findIndex((s) => s.mainWindow);
-  const preferredIndex = getPreferredScreenFromPrefs(screens);
+  const preferredIndex = await getPreferredScreenFromPrefs(screens);
 
   // 1. Preferred Screen Strategy
   // Use preferred screen if applicable (and we have >= 3 screens)
@@ -231,12 +231,12 @@ function getMediaWindowState(
 /**
  * Gets the preferred screen from saved preferences
  */
-function getPreferredScreenFromPrefs(
+async function getPreferredScreenFromPrefs(
   screens: ReturnType<typeof getAllScreens>,
-): number {
+): Promise<number> {
   if (screens.length <= 1) return -1;
 
-  const mediaWindowPrefs = loadWindowPrefs('media');
+  const mediaWindowPrefs = await loadWindowPrefs('media');
   if (!mediaWindowPrefs) return -1;
 
   const preferredScreen = screen.getDisplayMatching({
@@ -470,7 +470,10 @@ let lastMaximizable: boolean | undefined;
 let lastScreensConfig = '';
 let hasInitialPositioningHappened = false;
 
-export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
+export const moveMediaWindow = async (
+  displayNr?: number,
+  fullscreen?: boolean,
+) => {
   try {
     // Early exit validation
     if (!mediaWindowInfo.mediaWindow || !mainWindowInfo.mainWindow) {
@@ -558,7 +561,7 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
       targetInfo = { targetDisplayNr: displayNr, targetFullscreen: fullscreen };
     } else {
       // Calculate automatic target
-      targetInfo = calculateAutoTarget(
+      targetInfo = await calculateAutoTarget(
         boundsInfo,
         mediaWindowInfo.mediaWindow,
         screens,

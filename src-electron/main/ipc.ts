@@ -20,7 +20,7 @@ import {
   shell,
   systemPreferences,
 } from 'electron';
-import { pathExistsSync } from 'fs-extra/esm';
+import { pathExists } from 'fs-extra/esm';
 import { arch, platform } from 'node:os';
 import { PLATFORM } from 'src-electron/constants';
 import { getLowDiskSpaceStatus } from 'src-electron/main/disk-space';
@@ -120,9 +120,9 @@ handleIpcSend(
     if (!win) return;
 
     if (show) {
-      moveMediaWindow();
+      await moveMediaWindow();
       if (timerWindowInfo.timerWindow?.isVisible()) {
-        moveTimerWindow();
+        await moveTimerWindow();
       }
 
       return enableFadeTransitions ? fadeMediaWindow('in') : win.show();
@@ -136,10 +136,10 @@ handleIpcSend('focusMediaWindow', () => {
   focusMediaWindow();
 });
 
-handleIpcSend('toggleTimerWindow', (_e, show: boolean) => {
+handleIpcSend('toggleTimerWindow', async (_e, show: boolean) => {
   if (show) {
     createTimerWindow();
-    moveTimerWindow();
+    await moveTimerWindow();
   } else {
     timerWindowInfo.timerWindow?.close();
   }
@@ -210,15 +210,15 @@ handleIpcSend('unregisterAllShortcuts', () => {
   unregisterAllShortcuts();
 });
 
-handleIpcSend('moveMediaWindow', (_e, displayNr, fullscreen) => {
-  moveMediaWindow(displayNr, fullscreen);
+handleIpcSend('moveMediaWindow', async (_e, displayNr, fullscreen) => {
+  await moveMediaWindow(displayNr, fullscreen);
   if (timerWindowInfo.timerWindow?.isVisible()) {
-    moveTimerWindow();
+    await moveTimerWindow();
   }
 });
 
-handleIpcSend('moveTimerWindow', (_e, displayNr, fullscreen) => {
-  moveTimerWindow(displayNr, fullscreen);
+handleIpcSend('moveTimerWindow', async (_e, displayNr, fullscreen) => {
+  await moveTimerWindow(displayNr, fullscreen);
 });
 
 handleIpcSend('openExternal', (_e, website: ExternalWebsite) => {
@@ -289,14 +289,14 @@ function handleIpcInvoke<T = unknown>(
   });
 }
 
-function isOS64Bit() {
+async function isOS64Bit() {
   try {
     if (platform() === 'win32' && process.env.SystemRoot) {
       // Check for the existence of the SysWOW64 directory
       // PROGRAMFILES environment variable points to "C:\Program Files (x86)" for 32-bit apps on 64-bit systems
       // process.env.SystemRoot points to the Windows directory (e.g., C:\Windows)
       const sysWOW64Path = join(process.env.SystemRoot, 'SysWOW64');
-      return pathExistsSync(sysWOW64Path);
+      return await pathExists(sysWOW64Path);
     } else {
       // For macOS and Linux, the os.arch() is usually reliable for the OS's capability
       // (e.g., 'x64' or 'arm64')
@@ -330,7 +330,7 @@ handleIpcInvoke('isUsablePath', async (_e, p: string) => isUsablePath(p));
 
 handleIpcInvoke(
   'isArchitectureMismatch',
-  async () => process.arch === 'ia32' && isOS64Bit(),
+  async () => process.arch === 'ia32' && (await isOS64Bit()),
 );
 
 handleIpcInvoke(
