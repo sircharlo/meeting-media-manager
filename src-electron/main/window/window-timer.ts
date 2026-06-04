@@ -11,6 +11,7 @@ import {
   createWindow,
   loadWindowPrefs,
 } from 'src-electron/main/window/window-base';
+import { normalizeWindowBounds } from 'src-electron/main/window/window-bounds';
 import { log, throttleWithTrailing } from 'src/shared/vanilla';
 
 export const timerWindowInfo: {
@@ -489,7 +490,18 @@ const setTimerWindowPosition = (displayNr?: number, fullscreen = false) => {
 
     if (fullscreen) {
       log('[setTimerWindowPosition] Going fullscreen', 'timer', 'log');
-      timerWindowInfo.timerWindow.setBounds(targetScreenBounds);
+      const normalizedBounds = normalizeWindowBounds(targetScreenBounds);
+      if (!normalizedBounds) {
+        log(
+          '[setTimerWindowPosition] Unsafe target screen bounds, skipping fullscreen transition',
+          'timer',
+          'warn',
+          targetScreenBounds,
+        );
+        return;
+      }
+
+      timerWindowInfo.timerWindow.setBounds(normalizedBounds);
       timerWindowInfo.timerWindow.setFullScreen(true);
     } else {
       log('[setTimerWindowPosition] Going windowed', 'timer', 'log');
@@ -526,8 +538,19 @@ const setTimerWindowPosition = (displayNr?: number, fullscreen = false) => {
         },
       );
 
+      const normalizedBounds = normalizeWindowBounds(bounds);
+      if (!normalizedBounds) {
+        log(
+          '[setTimerWindowPosition] Unsafe windowed bounds, skipping setBounds',
+          'timer',
+          'warn',
+          bounds,
+        );
+        return;
+      }
+
       timerWindowInfo.timerWindow.setFullScreen(false);
-      timerWindowInfo.timerWindow.setBounds(bounds);
+      timerWindowInfo.timerWindow.setBounds(normalizedBounds);
     }
 
     // Bring timer window to front if it's visible

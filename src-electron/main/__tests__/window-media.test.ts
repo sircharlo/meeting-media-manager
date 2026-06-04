@@ -90,6 +90,14 @@ describe('window-media placement helpers', () => {
     ).toBeNull();
     expect(
       __testables.normalizeWindowBounds({
+        height: 50_000,
+        width: 50_000,
+        x: 0,
+        y: 0,
+      }),
+    ).toBeNull();
+    expect(
+      __testables.normalizeWindowBounds({
         height: 1080.8,
         width: 1920.2,
         x: 10.9,

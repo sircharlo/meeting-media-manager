@@ -11,6 +11,7 @@ import {
   loadWindowPrefs,
   sendToWindow,
 } from 'src-electron/main/window/window-base';
+import { normalizeWindowBounds } from 'src-electron/main/window/window-bounds';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import { log, throttleWithTrailing } from 'src/shared/vanilla';
 
@@ -323,24 +324,6 @@ function isWindowEffectivelyFullscreen(
     windowBounds.width >= screenBounds.width - 10 &&
     windowBounds.height >= screenBounds.height - 10
   );
-}
-
-/**
- * Ensures bounds passed to Electron are safe positive integers
- */
-function normalizeWindowBounds(
-  bounds: Partial<Electron.Rectangle>,
-): Electron.Rectangle | null {
-  const x = Math.floor(bounds.x ?? 0);
-  const y = Math.floor(bounds.y ?? 0);
-  const width = Math.floor(bounds.width ?? 0);
-  const height = Math.floor(bounds.height ?? 0);
-
-  if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
-  if (!Number.isFinite(width) || !Number.isFinite(height)) return null;
-  if (width <= 0 || height <= 0) return null;
-
-  return { height, width, x, y };
 }
 
 function shouldKeepWindowedWithoutExplicitTarget(
@@ -999,15 +982,24 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
       }
 
       const normalizedBounds = normalizeWindowBounds(targetScreenBounds);
-      if (normalizedBounds) {
+      if (!normalizedBounds) {
         log(
-          '[applyFullscreen] Moving to target screen bounds before entering fullscreen',
+          '[applyFullscreen] Unsafe target screen bounds, skipping fullscreen transition',
           'electronWindow',
-          'debug',
-          normalizedBounds,
+          'warn',
+          targetScreenBounds,
         );
-        mediaWindowInfo.mediaWindow.setBounds(normalizedBounds);
+        isMovingWindow = false;
+        return;
       }
+
+      log(
+        '[applyFullscreen] Moving to target screen bounds before entering fullscreen',
+        'electronWindow',
+        'debug',
+        normalizedBounds,
+      );
+      mediaWindowInfo.mediaWindow.setBounds(normalizedBounds);
 
       // Wait for the fullscreen animation to complete on ALL platforms.
       // On Windows the event fires synchronously (effectively), on macOS it is
