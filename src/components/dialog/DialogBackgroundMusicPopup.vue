@@ -64,7 +64,7 @@
             color="primary"
             :disable="mediaIsPlaying || musicState === 'music.starting'"
             unelevated
-            @click="playMusic()"
+            @click="playMusic('manual-button')"
           >
             {{ t('play-music') }}
           </q-btn>
@@ -160,6 +160,12 @@ const musicState = ref<
 const musicPlayingTitle = ref('');
 const songList = ref<SongItem[]>([]);
 const initialStartOffset = ref(0); // Stores the calculated start offset for first song
+const musicStartId = ref(0);
+const musicStartTiming = ref<null | {
+  id: number;
+  reason: string;
+  startedAt: number;
+}>(null);
 
 // Meeting day checks
 const isMeetingToday = computed(() => {
@@ -259,39 +265,117 @@ defineExpose({
 
 const musicPopup = useTemplateRef<QMenu>('musicPopup');
 
+const getDebugTimestamp = () => new Date().toISOString();
+
+const getElapsedMilliseconds = (startedAt: number) => {
+  return Math.round(performance.now() - startedAt);
+};
+
+const logMusicStartTiming = (
+  message: string,
+  type: 'debug' | 'info' | 'warn' = 'debug',
+  details?: Record<string, unknown>,
+) => {
+  const timing = musicStartTiming.value;
+  const elapsed = timing
+    ? ` +${getElapsedMilliseconds(timing.startedAt)}ms`
+    : '';
+  const startId = timing ? ` #${timing.id}` : '';
+  const reason = timing ? ` ${timing.reason}` : '';
+
+  log(
+    `[${getDebugTimestamp()}]${elapsed}${startId}${reason} ${message}`,
+    'backgroundMusic',
+    type,
+    details,
+  );
+};
+
+const logMusicStartStep = (
+  message: string,
+  stepStartedAt: number,
+  details?: Record<string, unknown>,
+) => {
+  logMusicStartTiming(
+    `${message} (step ${getElapsedMilliseconds(stepStartedAt)}ms)`,
+    'debug',
+    details,
+  );
+};
+
 /**
  * Initializes and plays background music
  */
-async function playMusic() {
+async function playMusic(reason = 'manual') {
+  musicStartTiming.value = {
+    id: musicStartId.value + 1,
+    reason,
+    startedAt: performance.now(),
+  };
+  musicStartId.value = musicStartTiming.value.id;
+
   try {
+    logMusicStartTiming('start requested', 'debug', {
+      enableMusicButton: currentSettings.value?.enableMusicButton,
+      hasMusicPlayer: !!musicPlayer.value,
+      musicPlaying: musicPlaying.value,
+    });
+
     if (
       !currentSettings.value?.enableMusicButton ||
       musicPlaying.value ||
       !musicPlayer.value
     ) {
-      log('⏭️ Music playback conditions not met', 'backgroundMusic', 'info');
+      logMusicStartTiming('playback conditions not met', 'debug', {
+        enableMusicButton: currentSettings.value?.enableMusicButton,
+        hasMusicPlayer: !!musicPlayer.value,
+        musicPlaying: musicPlaying.value,
+      });
       return;
     }
 
     log('🎵 Starting background music', 'backgroundMusic', 'info');
     musicState.value = 'music.starting';
+    logMusicStartTiming('state set to music.starting');
+
+    const downloadStepStartedAt = performance.now();
     downloadBackgroundMusic();
+    logMusicStartStep(
+      'download background music check dispatched',
+      downloadStepStartedAt,
+    );
+
     songList.value = [];
     musicPlayer.value.appendChild(musicPlayerSource.value);
     volume.value = 0;
+    logMusicStartTiming('audio source attached and volume set to 0');
 
     // Fetch and prepare song library
+    const fetchLibraryStartedAt = performance.now();
     const rawSongLibrary = await fetchSongLibrary(
       currentSettings.value?.lang || 'E',
     );
+    logMusicStartStep('song library fetched', fetchLibraryStartedAt, {
+      songs: rawSongLibrary.length,
+    });
+
+    const enrichMetadataStartedAt = performance.now();
     const enrichedSongs = await enrichSongsWithMetadata(rawSongLibrary);
+    logMusicStartStep('song metadata enriched', enrichMetadataStartedAt, {
+      songs: enrichedSongs.length,
+    });
 
     // Prepare queue based on meeting day or not
     const timeBeforeMeetingStart =
       timeUntilMeeting.value - MEETING_STOP_BUFFER_SECONDS.value;
+    logMusicStartTiming('queue preparation started', 'debug', {
+      isMeetingToday: isMeetingToday.value,
+      timeBeforeMeetingStart,
+    });
 
     if (isMeetingToday.value && timeBeforeMeetingStart > 0) {
       // Meeting day: optimize queue to end precisely at fadeout time
+      const meetingQueueStartedAt = performance.now();
       const selectedDayMedia = Object.values(
         selectedDateObject.value?.mediaSections ?? {},
       ).flatMap((section) => section.items || []);
@@ -307,26 +391,46 @@ async function playMusic() {
 
       songList.value = queue;
       initialStartOffset.value = startOffsetSeconds;
+      logMusicStartStep(
+        'meeting day song queue prepared',
+        meetingQueueStartedAt,
+        {
+          queueLength: queue.length,
+          selectedDayMedia: selectedDayMedia.length,
+          startOffsetSeconds,
+        },
+      );
     } else {
       // Not a meeting day: just shuffle and play
       songList.value = enrichedSongs;
       initialStartOffset.value = 0;
+      logMusicStartTiming('non-meeting song queue prepared', 'debug', {
+        queueLength: songList.value.length,
+      });
     }
 
     // Get and play the first song
+    const nextSongStartedAt = performance.now();
     const { nextSongUrl } = await getNextSongFromQueue(
       songList.value,
       (title) => {
         musicPlayingTitle.value = title;
       },
     );
+    logMusicStartStep('next song selected', nextSongStartedAt, {
+      hasNextSongUrl: !!nextSongUrl,
+      title: musicPlayingTitle.value,
+    });
 
     if (!nextSongUrl) throw new Error('No next song found');
 
     musicPlayerSource.value.src = nextSongUrl;
     log(`🎵 Playing music from ${nextSongUrl}`, 'backgroundMusic', 'info');
 
+    const loadStartedAt = performance.now();
+    logMusicStartTiming('audio load requested');
     musicPlayer.value?.load();
+    logMusicStartStep('audio load call returned', loadStartedAt);
 
     // Apply start offset if we calculated one (for meeting day timing)
     const startTime = initialStartOffset.value;
@@ -337,17 +441,26 @@ async function playMusic() {
         'info',
       );
     }
+    const seekStartedAt = performance.now();
     currentTime.value = startTime;
+    logMusicStartStep('initial currentTime applied', seekStartedAt, {
+      startTime,
+    });
 
-    musicPlayer.value?.play();
+    const playStartedAt = performance.now();
+    logMusicStartTiming('audio play requested');
+    await musicPlayer.value?.play();
+    logMusicStartStep('audio play promise resolved', playStartedAt);
     log(`🎵 Music started at ${startTime} seconds`, 'backgroundMusic', 'info');
 
     // Fade in volume
     const targetVolume = (currentSettings.value?.musicVolume ?? 100) / 100;
     log(`🔊 Fading to volume level ${targetVolume}`, 'backgroundMusic', 'info');
+    logMusicStartTiming('fade in starting', 'debug', { targetVolume });
     fadeToVolumeLevel(targetVolume, 1);
   } catch (error) {
     musicState.value = 'music.error';
+    logMusicStartTiming('start failed', 'warn');
     errorCatcher(error);
   }
 }
@@ -397,6 +510,15 @@ const handleMusicEnded = async () => {
   if (!nextSongUrl) return;
 
   musicPlayerSource.value.src = nextSongUrl;
+  log(
+    '🎵 Advancing to next background music track',
+    'backgroundMusic',
+    'debug',
+    {
+      nextSongUrl,
+      title: musicPlayingTitle.value,
+    },
+  );
   musicPlayer.value?.load();
   musicPlayer.value?.play();
 };
@@ -436,6 +558,10 @@ const fadeToVolumeLevel = (targetVolume: number, fadeSeconds: number) => {
         } else if (musicPlayer.value.volume === 0) {
           musicPlayer.value.pause();
           musicState.value = '';
+        } else {
+          logMusicStartTiming('fade completed', 'debug', {
+            targetVolume,
+          });
         }
       } catch (error) {
         errorCatcher(error);
@@ -469,8 +595,30 @@ const setBackgroundMusicVolume = (desiredVolume: number) => {
   }
 };
 
+const logAudioEventTiming = (event: Event) => {
+  if (!(event.target instanceof HTMLAudioElement)) return;
+
+  logMusicStartTiming(`audio event: ${event.type}`, 'debug', {
+    currentSrc: event.target.currentSrc,
+    currentTime: event.target.currentTime,
+    duration: event.target.duration,
+    networkState: event.target.networkState,
+    paused: event.target.paused,
+    readyState: event.target.readyState,
+    volume: event.target.volume,
+  });
+};
+
+useEventListener(
+  musicPlayer,
+  ['loadstart', 'loadedmetadata', 'loadeddata', 'canplay', 'playing'],
+  logAudioEventTiming,
+  { passive: true },
+);
+
 // Music player error handling
-musicPlayer.value?.addEventListener('error', (event) => {
+useEventListener(musicPlayer, 'error', (event) => {
+  logAudioEventTiming(event);
   if (event.target instanceof HTMLAudioElement) {
     musicState.value = 'music.error';
     if (event.target.error?.message) {
@@ -500,7 +648,7 @@ const toggleMusicListener = () => {
       stopMusic();
     } else {
       log('👆 Music started manually', 'backgroundMusic', 'info');
-      playMusic();
+      playMusic('manual-shortcut');
     }
   } catch (error) {
     errorCatcher(error);
@@ -551,7 +699,7 @@ watchImmediate(
       state !== 'music.playing'
     ) {
       log('🎵 Auto-starting background music', 'backgroundMusic', 'info');
-      playMusic();
+      playMusic('auto');
     }
   },
 );

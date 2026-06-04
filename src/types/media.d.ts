@@ -127,8 +127,11 @@ export type MediaSectionIdentifier =
 
 export interface SongItem {
   duration?: number; // or the correct type for duration
+  filesize?: number;
   path: string;
+  remoteUrl?: string;
   title?: string;
+  track?: number;
 }
 export interface SortableMediaList {
   items: Ref<MediaItem[]>;

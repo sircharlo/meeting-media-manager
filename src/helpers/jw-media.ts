@@ -19,6 +19,7 @@ import type {
   Publication,
   PublicationFetcher,
   PublicationFiles,
+  SongItem,
 } from 'src/types';
 
 import { queues } from 'boot/globals';
@@ -122,6 +123,119 @@ const {
   unzip,
 } = globalThis.electronApi;
 const { copy, ensureDir, exists, pathExists, remove, rename, stat } = fs;
+
+const backgroundMusicLibraryCache = new Map<string, Promise<SongItem[]>>();
+const publicationMediaLinksCache = new Map<string, Promise<MediaLink[]>>();
+
+const getBackgroundMusicLibraryCacheKey = (publication: PublicationFetcher) =>
+  [
+    publication.langwritten,
+    publication.pub,
+    publication.fileformat,
+    publication.maxTrack,
+    useCurrentStateStore().currentSettings?.maxRes,
+  ].join(':');
+
+const getBestPublicationMediaLinks = (
+  mediaLinks: MediaLink[],
+  publication: PublicationFetcher,
+) => {
+  const currentStateStore = useCurrentStateStore();
+  const filteredMediaItemLinks: MediaLink[] = [];
+
+  for (const mediaItemLink of mediaLinks) {
+    const currentTrack = mediaItemLink.track;
+    if (!filteredMediaItemLinks.some((m) => m.track === currentTrack)) {
+      const bestItem = findBestResolution(
+        mediaLinks.filter((m) => m.track === currentTrack),
+        currentStateStore.currentSettings?.maxRes,
+      );
+      if (isMediaLink(bestItem)) filteredMediaItemLinks.push(bestItem);
+    }
+  }
+
+  return filteredMediaItemLinks.filter((mediaLink) =>
+    extname(mediaLink?.file?.url)?.includes(
+      publication?.fileformat?.toLowerCase() ?? '',
+    ),
+  );
+};
+
+const getPublicationMediaLinks = async (
+  publication: PublicationFetcher,
+): Promise<MediaLink[]> => {
+  const cacheKey = getBackgroundMusicLibraryCacheKey(publication);
+
+  if (!publicationMediaLinksCache.has(cacheKey)) {
+    publicationMediaLinksCache.set(
+      cacheKey,
+      (async () => {
+        const publicationInfo = await getPubMediaLinks(publication);
+        if (!publication.fileformat || !publicationInfo?.files) return [];
+
+        const mediaLinks = (
+          publication.langwritten
+            ? publicationInfo.files[publication.langwritten]?.[
+                publication.fileformat
+              ] || []
+            : []
+        )
+          .filter((element) => isMediaLink(element))
+          .filter(
+            (mediaLink) =>
+              !publication.maxTrack || mediaLink.track < publication.maxTrack,
+          );
+
+        const bestLinks = getBestPublicationMediaLinks(mediaLinks, publication);
+        if (!bestLinks.length) {
+          publicationMediaLinksCache.delete(cacheKey);
+        }
+
+        return bestLinks;
+      })().catch((error: unknown) => {
+        publicationMediaLinksCache.delete(cacheKey);
+        throw error;
+      }),
+    );
+  }
+
+  return publicationMediaLinksCache.get(cacheKey) ?? [];
+};
+
+const getExpectedDownloadPath = async (
+  dir: string,
+  url: string,
+): Promise<string> => join(dir, sanitizeFilename(basename(url)));
+
+const getValidLocalSongPath = async (song: SongItem): Promise<string> => {
+  try {
+    if (!song.path || !(await exists(song.path))) return '';
+
+    if (!song.filesize) return song.path;
+
+    const statistics = await stat(song.path);
+    if (statistics.size === song.filesize) return song.path;
+
+    log(
+      `[${new Date().toISOString()}] Background music local file size mismatch`,
+      'backgroundMusic',
+      'debug',
+      {
+        expectedSize: song.filesize,
+        localSize: statistics.size,
+        path: song.path,
+        title: song.title,
+        track: song.track,
+      },
+    );
+    return '';
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: { fn: { name: 'getValidLocalSongPath', song } },
+    });
+    return '';
+  }
+};
 
 const isUsablePathCache = new Map<string, boolean>();
 const inFlight = new Map<string, Promise<boolean>>();
@@ -4018,9 +4132,9 @@ export const getJwMediaInfo = async (publication: PublicationFetcher) => {
 const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
   try {
     const currentStateStore = useCurrentStateStore();
-    const publicationInfo = await getPubMediaLinks(publication);
     if (!publication.fileformat) return;
-    if (!publicationInfo?.files) {
+    const filteredMediaItemLinks = await getPublicationMediaLinks(publication);
+    if (!filteredMediaItemLinks.length) {
       const downloadId = getPubId(publication, true);
       currentStateStore.downloadProgress[downloadId] = {
         error: true,
@@ -4028,41 +4142,10 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
       };
       return;
     }
-    const mediaLinks = (
-      publication.langwritten
-        ? publicationInfo.files[publication.langwritten]?.[
-            publication.fileformat
-          ] || []
-        : []
-    )
-      .filter((element) => isMediaLink(element))
-      .filter(
-        (mediaLink) =>
-          !publication.maxTrack || mediaLink.track < publication.maxTrack,
-      );
 
     const dir = await getPublicationDirectory(publication);
     await updateLastUsedDate(dir, new Date());
-    const filteredMediaItemLinks: MediaLink[] = [];
-    for (const mediaItemLink of mediaLinks) {
-      const currentTrack = mediaItemLink.track;
-      if (!filteredMediaItemLinks.some((m) => m.track === currentTrack)) {
-        const bestItem = findBestResolution(
-          mediaLinks.filter((m) => m.track === currentTrack),
-          currentStateStore.currentSettings?.maxRes,
-        );
-        if (isMediaLink(bestItem)) filteredMediaItemLinks.push(bestItem);
-      }
-    }
     for (const mediaLink of filteredMediaItemLinks) {
-      if (
-        !extname(mediaLink?.file?.url)?.includes(
-          publication?.fileformat?.toLowerCase(),
-        )
-      ) {
-        // This file is not of the right format; API glitch!
-        continue;
-      }
       downloadFileIfNeeded({
         dir,
         // Background music should not be a high priority download
@@ -4076,6 +4159,108 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
   }
 };
 
+export const fetchBackgroundMusicSongLibrary = async (
+  lang: JwLangCode,
+): Promise<SongItem[]> => {
+  const currentStateStore = useCurrentStateStore();
+  const publication: PublicationFetcher = {
+    fileformat: currentStateStore.currentSongbook?.fileformat,
+    langwritten: lang || 'E',
+    maxTrack: MAX_SONGS,
+    pub: currentStateStore.currentSongbook?.pub || 'sjjm',
+  };
+  const cacheKey = getBackgroundMusicLibraryCacheKey(publication);
+
+  if (!backgroundMusicLibraryCache.has(cacheKey)) {
+    backgroundMusicLibraryCache.set(
+      cacheKey,
+      (async () => {
+        const startedAt = performance.now();
+        const mediaLinks = await getPublicationMediaLinks(publication);
+        const dir = await getPublicationDirectory(publication);
+        await updateLastUsedDate(dir, new Date());
+
+        const songs = await Promise.all(
+          mediaLinks.map(async (mediaLink) => ({
+            duration: mediaLink.duration,
+            filesize: mediaLink.filesize,
+            path: await getExpectedDownloadPath(dir, mediaLink.file.url),
+            remoteUrl: mediaLink.file.url,
+            title: mediaLink.title,
+            track: mediaLink.track,
+          })),
+        );
+
+        log(
+          `[${new Date().toISOString()}] +${Math.round(
+            performance.now() - startedAt,
+          )}ms Background music API song library fetched`,
+          'backgroundMusic',
+          'debug',
+          {
+            cacheKey,
+            songs: songs.length,
+          },
+        );
+
+        if (!songs.length) {
+          backgroundMusicLibraryCache.delete(cacheKey);
+        }
+
+        return songs;
+      })().catch((error: unknown) => {
+        backgroundMusicLibraryCache.delete(cacheKey);
+        throw error;
+      }),
+    );
+  }
+
+  return backgroundMusicLibraryCache.get(cacheKey) ?? [];
+};
+
+export const resolveBackgroundMusicPlaybackUrl = async (
+  song: SongItem,
+): Promise<string> => {
+  const localPath = await getValidLocalSongPath(song);
+  if (localPath) {
+    log(
+      `[${new Date().toISOString()}] Background music using local file`,
+      'backgroundMusic',
+      'debug',
+      {
+        path: localPath,
+        title: song.title,
+        track: song.track,
+      },
+    );
+    return pathToFileURL(localPath);
+  }
+
+  if (song.remoteUrl) {
+    const dir = dirname(song.path);
+    downloadFileIfNeeded({
+      dir,
+      lowPriority: true,
+      size: song.filesize,
+      url: song.remoteUrl,
+    });
+    log(
+      `[${new Date().toISOString()}] Background music streaming remote file while caching`,
+      'backgroundMusic',
+      'debug',
+      {
+        path: song.path,
+        remoteUrl: song.remoteUrl,
+        title: song.title,
+        track: song.track,
+      },
+    );
+    return song.remoteUrl;
+  }
+
+  return song.path ? pathToFileURL(song.path) : '';
+};
+
 export const downloadBackgroundMusic = () => {
   try {
     const currentStateStore = useCurrentStateStore();
@@ -4083,8 +4268,30 @@ export const downloadBackgroundMusic = () => {
       !currentStateStore.currentSongbook ||
       !currentStateStore.currentSettings?.lang ||
       !currentStateStore.currentSettings?.enableMusicButton
-    )
+    ) {
+      log(
+        `[${new Date().toISOString()}] Background music download skipped`,
+        'backgroundMusic',
+        'debug',
+        {
+          enableMusicButton:
+            currentStateStore.currentSettings?.enableMusicButton,
+          hasCurrentSongbook: !!currentStateStore.currentSongbook,
+          lang: currentStateStore.currentSettings?.lang,
+        },
+      );
       return;
+    }
+    log(
+      `[${new Date().toISOString()}] Background music download requested`,
+      'backgroundMusic',
+      'debug',
+      {
+        fileformat: currentStateStore.currentSongbook?.fileformat,
+        lang: currentStateStore.currentSettings?.lang,
+        pub: currentStateStore.currentSongbook?.pub,
+      },
+    );
     downloadPubMediaFiles({
       fileformat: currentStateStore.currentSongbook?.fileformat,
       langwritten: currentStateStore.currentSettings?.lang,
