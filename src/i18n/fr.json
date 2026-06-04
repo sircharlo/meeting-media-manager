@@ -55,7 +55,7 @@
   "ayfm-part": "@:ayfm {part} ({duration} min.)",
   "back": "Retour",
   "background-music-still-playing": "La musique de fond est toujours en cours de lecture.",
-  "background-music-still-playing-explain": "Si vous souhaitez arrêter la musique de fond, cliquez sur le bouton de cette notification.",
+  "background-music-still-playing-explain": "Si vous souhaitez arrêter la musique de fond, cliquez sur le bouton dans cette notification.",
   "baseUrl": "Adresse du site Web",
   "baseUrl-explain": "Entrez l'adresse utilisée pour accéder au site officiel des Témoins de Jéhovah.",
   "beginPlaybackPaused": "Démarrer la lecture en pause",
