@@ -262,4 +262,27 @@ describe('fetchJsonFromMainProcess', () => {
     await fetchJsonFromMainProcess(mockUrl, undefined, { silent: true });
     expect(spy).not.toHaveBeenCalled();
   });
+
+  it('should not report wrapped DNS fetch failures', async () => {
+    const spy = vi.spyOn(utils, 'captureElectronError');
+    const cause = Object.assign(new Error('getaddrinfo ENOTFOUND ipinfo.io'), {
+      code: 'ENOTFOUND',
+    });
+    const error = new TypeError('fetch failed', { cause });
+    vi.mocked(fetch).mockRejectedValue(error);
+
+    await fetchJsonFromMainProcess(mockUrl);
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('should not report direct DNS errors', async () => {
+    const spy = vi.spyOn(utils, 'captureElectronError');
+    const error = Object.assign(new Error('getaddrinfo ENOTFOUND ipinfo.io'), {
+      code: 'ENOTFOUND',
+    });
+    vi.mocked(fetch).mockRejectedValue(error);
+
+    await fetchJsonFromMainProcess(mockUrl);
+    expect(spy).not.toHaveBeenCalled();
+  });
 });

@@ -47,6 +47,7 @@ import {
 } from 'src/helpers/fs';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { updateLastUsedDate } from 'src/helpers/usage';
+import { NETWORK_ERROR_CODES } from 'src/shared/network-errors';
 import { log, sanitizeFilename, uuid } from 'src/shared/vanilla';
 import {
   clearFetchCache,
@@ -215,17 +216,6 @@ const getJwLangId = (symbol?: JwLangCode): number | undefined => {
 const ongoingUnzips = new Map<string, Promise<string | undefined>>();
 const ZIP_ENTRY_DIAGNOSTIC_LIMIT = 50;
 
-const JWPUB_CLOUD_ERROR_CODES = new Set([
-  'EAGAIN',
-  'EBUSY',
-  'ECONNRESET',
-  'EINTR',
-  'ENETDOWN',
-  'ENETRESET',
-  'ENETUNREACH',
-  'ETIMEDOUT',
-]);
-
 const isCloudStoragePath = (path: string) => {
   const normalizedPath = path.replaceAll('\\', '/').toLowerCase();
   return (
@@ -239,7 +229,7 @@ const isCloudStoragePath = (path: string) => {
 
 const isCloudStorageReadError = (error: unknown) => {
   const errorCode = (error as { code?: string })?.code;
-  if (errorCode && JWPUB_CLOUD_ERROR_CODES.has(errorCode)) return true;
+  if (errorCode && NETWORK_ERROR_CODES.has(errorCode)) return true;
 
   const message = error instanceof Error ? error.message : String(error);
   return /connection timed out|resource busy|temporarily unavailable/i.test(

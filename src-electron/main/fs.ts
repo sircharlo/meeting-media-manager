@@ -25,6 +25,7 @@ import {
   isPossiblyNetworkFolderPath,
   shouldIgnoreWatchFolderError,
 } from 'src/shared/filesystem-errors';
+import { NETWORK_ERROR_CODES } from 'src/shared/network-errors';
 import { log, uuid } from 'src/shared/vanilla';
 import { basename, dirname, join, resolve, toUnix } from 'upath';
 import yauzl from 'yauzl';
@@ -43,16 +44,6 @@ const SHARED_PATH_HEALTH_FILENAME = 'shared-path-health.json';
 const PATH_PROBE_NETWORK_WARNING_THROTTLE_MS = 30000;
 const ZIP_OPEN_RETRY_COUNT = 3;
 const ZIP_OPEN_RETRY_DELAY_MS = 1000;
-const ZIP_RETRYABLE_ERROR_CODES = new Set([
-  'EAGAIN',
-  'EBUSY',
-  'ECONNRESET',
-  'EINTR',
-  'ENETDOWN',
-  'ENETRESET',
-  'ENETUNREACH',
-  'ETIMEDOUT',
-]);
 const SHARED_PATH_HEALTH_FOLDERS = [
   'Additional Media',
   'Fonts',
@@ -73,7 +64,7 @@ const getCloudStorageProvider = (filePath: string) => {
 
 const isRetryableZipError = (error: unknown) => {
   const errorCode = getErrorCode(error);
-  if (errorCode && ZIP_RETRYABLE_ERROR_CODES.has(errorCode)) return true;
+  if (errorCode && NETWORK_ERROR_CODES.has(errorCode)) return true;
 
   const message = error instanceof Error ? error.message : String(error);
   return /connection timed out|resource busy|temporarily unavailable/i.test(

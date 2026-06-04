@@ -10,6 +10,7 @@ import type {
 } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { isFetchNetworkError } from 'src/shared/network-errors';
 import { log } from 'src/shared/vanilla';
 import { addToDate, dateFromString, isInPast } from 'src/utils/date';
 import { betaUpdatesDisabled } from 'src/utils/fs';
@@ -196,7 +197,8 @@ function reportFetchJsonMainError(
   });
 }
 
-async function shouldReportCaughtError(online: boolean) {
+async function shouldReportCaughtError(error: unknown, online: boolean) {
+  if (isFetchNetworkError(error)) return false;
   if (!online) return false;
   return !(await globalThis.electronApi?.isDownloadErrorExpected());
 }
@@ -228,7 +230,7 @@ export const fetchJson = async <T>(
       reportFetchJsonMainError(response, url, params);
     }
   } catch (e) {
-    if (await shouldReportCaughtError(online)) {
+    if (await shouldReportCaughtError(e, online)) {
       reportFetchJsonCatchError(e, url, params);
     }
   }

@@ -9,9 +9,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 installPinia();
 
+vi.mock('src/helpers/error-catcher', () => ({
+  errorCatcher: vi.fn(),
+}));
+
+import { errorCatcher } from 'src/helpers/error-catcher';
+
 import {
   clearFetchCache,
   fetchAnnouncements,
+  fetchJson,
   fetchJwLanguages,
   fetchLatestVersion,
   fetchMemorials,
@@ -206,6 +213,44 @@ describe('fetchRaw caching', () => {
     await fetchRaw(handledUrl, { headers: { 'X-Test': '2' } }, true);
 
     expect(fetchSpy).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('fetchJson network errors', () => {
+  const handledUrl = 'https://ipinfo.io/';
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    clearFetchCache();
+  });
+
+  it('should not report wrapped DNS fetch failures', async () => {
+    const cause = Object.assign(new Error('getaddrinfo ENOTFOUND ipinfo.io'), {
+      code: 'ENOTFOUND',
+    });
+    const error = new TypeError('fetch failed', { cause });
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(error);
+
+    const result = await fetchJson(handledUrl);
+
+    expect(result).toBeNull();
+    expect(errorCatcher).not.toHaveBeenCalled();
+  });
+
+  it('should not report direct DNS errors', async () => {
+    const error = Object.assign(new Error('getaddrinfo ENOTFOUND ipinfo.io'), {
+      code: 'ENOTFOUND',
+    });
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(error);
+
+    const result = await fetchJson(handledUrl);
+
+    expect(result).toBeNull();
+    expect(errorCatcher).not.toHaveBeenCalled();
   });
 });
 

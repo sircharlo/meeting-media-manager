@@ -11,6 +11,10 @@ import {
 } from 'src-electron/constants';
 import { isUsablePath } from 'src-electron/main/fs';
 import { urlVariables } from 'src-electron/main/session';
+import {
+  isFetchNetworkError,
+  NETWORK_ERROR_CODES,
+} from 'src/shared/network-errors';
 import { log } from 'src/shared/vanilla';
 import { join, resolve } from 'upath';
 
@@ -34,6 +38,28 @@ const UPDATER_FULL_DOWNLOAD_FALLBACK_MESSAGE =
   'Cannot download differentially, fallback to full download';
 const UPDATER_FULL_DOWNLOAD_FALLBACK_IGNORE_MS = 5 * 60 * 1000;
 const UPDATER_PARTIAL_DOWNLOAD_NETWORK_ERRORS = ['ERR_NETWORK_IO_SUSPENDED'];
+const UPDATE_IGNORE_ERRORS: (string | string[])[] = [
+  ...NETWORK_ERROR_CODES,
+  'ENOSPC',
+  'EPIPE',
+  'ERR_CONNECTION_CLOSED',
+  'ERR_CONNECTION_RESET',
+  'ERR_CONNECTION_TIMED_OUT',
+  'ERR_NETWORK_CHANGED',
+  'SELF_SIGNED_CERT_IN_CHAIN',
+  'YAMLException',
+  'releases feed',
+  ['404', 'HttpError'],
+  ['502', 'HttpError'],
+  ['503', 'HttpError'],
+  ['504', 'Gateway'],
+  ['504', 'HttpError'],
+  ['60006', 'OSStatus'],
+  ['ENOENT', 'rename'],
+  ['ENOENT', 'unlink'],
+  ['EPERM', 'rename'],
+  ['read-only', 'volume'],
+];
 
 let updaterFullDownloadFallbackAt = 0;
 /**
@@ -247,37 +273,11 @@ export function isIgnoredUpdateError(
   error: Error | string,
   message?: string,
 ): boolean {
-  const ignoreErrors = [
-    'EAI_AGAIN',
-    'ECONNREFUSED',
-    'ECONNRESET',
-    'ENOSPC',
-    'ENOTFOUND',
-    'EPIPE',
-    'ERR_CONNECTION_CLOSED',
-    'ERR_CONNECTION_RESET',
-    'ERR_CONNECTION_TIMED_OUT',
-    'ERR_NETWORK_CHANGED',
-    'SELF_SIGNED_CERT_IN_CHAIN',
-    'YAMLException',
-    'releases feed',
-    ['404', 'HttpError'],
-    ['502', 'HttpError'],
-    ['503', 'HttpError'],
-    ['504', 'Gateway'],
-    ['504', 'HttpError'],
-    ['60006', 'OSStatus'],
-    ['ENOENT', 'rename'],
-    ['ENOENT', 'unlink'],
-    ['EPERM', 'rename'],
-    ['read-only', 'volume'],
-  ];
-
   const errorMsg = typeof error === 'string' ? error : error?.message;
   const errorCode = (error as { code?: string })?.code;
   const errorName = (error as Error)?.name;
 
-  return ignoreErrors.some((ignoreError) => {
+  return UPDATE_IGNORE_ERRORS.some((ignoreError) => {
     const ignoreErrorArray = Array.isArray(ignoreError)
       ? ignoreError
       : [ignoreError];
@@ -374,7 +374,7 @@ async function handleFetchException(
   params: undefined | URLSearchParams,
   options: { silent?: boolean },
 ) {
-  if (options.silent || isNetworkError(e)) return;
+  if (options.silent || isFetchNetworkError(e)) return;
 
   const { default: isOnline } = await import('is-online');
   const online = await isOnline();
@@ -391,45 +391,6 @@ async function handleFetchException(
         },
       },
     });
-  }
-}
-
-/**
- * Checks if an error is a network-related error that should not be reported to Sentry
- * @param error The error to check
- * @returns Whether the error is a network error
- */
-function isNetworkError(error: unknown): boolean {
-  try {
-    if (!(error instanceof Error)) return false;
-
-    if (error.name === 'AbortError' || error.name === 'ConnectTimeoutError') {
-      return true;
-    }
-
-    if (!error.message.includes('fetch failed')) return false;
-
-    const cause = error.cause as Record<string, unknown> | undefined;
-    if (!cause) return false;
-
-    const networkCodes = [
-      'ENOTFOUND',
-      'ETIMEDOUT',
-      'ECONNREFUSED',
-      'ECONNRESET',
-      'EAI_AGAIN',
-      'UND_ERR_CONNECT_TIMEOUT',
-    ];
-
-    const isNetworkCode =
-      typeof cause.code === 'string' && networkCodes.includes(cause.code);
-    const isTimeout =
-      cause.name === 'ConnectTimeoutError' || cause.name === 'TimeoutError';
-
-    return isNetworkCode || isTimeout;
-  } catch (e) {
-    captureElectronError(e);
-    return false;
   }
 }
 
