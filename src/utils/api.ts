@@ -14,7 +14,82 @@ import { log } from 'src/shared/vanilla';
 import { addToDate, dateFromString, isInPast } from 'src/utils/date';
 import { betaUpdatesDisabled } from 'src/utils/fs';
 
-const fetchCache = new Map<string, Response>();
+const MAX_CACHED_RESPONSE_BYTES = 1024 * 1024;
+
+interface CachedFetchResponse {
+  body: ArrayBuffer | null;
+  headers: [string, string][];
+  status: number;
+  statusText: string;
+}
+
+const fetchCache = new Map<string, CachedFetchResponse>();
+
+function buildCachedResponse(cached: CachedFetchResponse) {
+  const body = cached.body ? cached.body.slice(0) : null;
+  return new Response(body, {
+    headers: cached.headers,
+    status: cached.status,
+    statusText: cached.statusText,
+  });
+}
+
+function buildCachedResponseFromResponse(
+  response: Response,
+  body: ArrayBuffer,
+) {
+  return new Response(body, {
+    headers: response.headers,
+    status: response.status,
+    statusText: response.statusText,
+  });
+}
+
+async function createCachedResponse(response: Response) {
+  if (!response.body) {
+    const cached = {
+      body: null,
+      headers: Array.from(response.headers.entries()),
+      status: response.status,
+      statusText: response.statusText,
+    };
+
+    return {
+      cached,
+      response: buildCachedResponse(cached),
+    };
+  }
+
+  const contentLengthHeader = response.headers.get('content-length');
+  const contentLength = contentLengthHeader ? Number(contentLengthHeader) : 0;
+
+  if (
+    Number.isFinite(contentLength) &&
+    contentLength > MAX_CACHED_RESPONSE_BYTES
+  ) {
+    return { cached: null, response };
+  }
+
+  const body = await response.arrayBuffer();
+  if (body.byteLength > MAX_CACHED_RESPONSE_BYTES) {
+    return {
+      cached: null,
+      response: buildCachedResponseFromResponse(response, body),
+    };
+  }
+
+  const cached = {
+    body,
+    headers: Array.from(response.headers.entries()),
+    status: response.status,
+    statusText: response.statusText,
+  };
+
+  return {
+    cached,
+    response: buildCachedResponse(cached),
+  };
+}
 
 /**
  * Clears the fetch cache.
@@ -44,7 +119,7 @@ export const fetchRaw = async (
       if (!process.env.VITEST) {
         log('fetchRaw (cached)', 'api', 'debug', { cache, init, url });
       }
-      return cachedResponse.clone();
+      return buildCachedResponse(cachedResponse);
     }
   }
 
@@ -54,7 +129,11 @@ export const fetchRaw = async (
   const response = await fetch(url, init);
 
   if (isCacheable && response.ok) {
-    fetchCache.set(cacheKey, response.clone());
+    const cachedResponse = await createCachedResponse(response);
+    if (cachedResponse.cached) {
+      fetchCache.set(cacheKey, cachedResponse.cached);
+    }
+    return cachedResponse.response;
   }
 
   return response;

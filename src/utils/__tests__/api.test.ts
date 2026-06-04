@@ -143,6 +143,20 @@ describe('fetchRaw caching', () => {
     expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 
+  it('should cache HEAD requests with large content lengths', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(null, {
+        headers: { 'content-length': `${100 * 1024 * 1024}` },
+        status: 200,
+      }),
+    );
+
+    await fetchRaw(handledUrl, { method: 'HEAD' }, true);
+    await fetchRaw(handledUrl, { method: 'HEAD' }, true);
+
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+
   it('should not cache POST requests even if cache is true', async () => {
     const fetchSpy = vi
       .spyOn(globalThis, 'fetch')
@@ -161,6 +175,22 @@ describe('fetchRaw caching', () => {
 
     await fetchRaw('https://example.com/fail', undefined, true);
     await fetchRaw('https://example.com/fail', undefined, true);
+
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('should not cache responses that are too large', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(() =>
+      Promise.resolve(
+        new Response('large response', {
+          headers: { 'content-length': `${1024 * 1024 + 1}` },
+          status: 200,
+        }),
+      ),
+    );
+
+    await fetchRaw(handledUrl, undefined, true);
+    await fetchRaw(handledUrl, undefined, true);
 
     expect(fetchSpy).toHaveBeenCalledTimes(2);
   });

@@ -7,6 +7,8 @@ import { getAppDataPath } from 'src-electron/main/fs';
 import {
   captureElectronError,
   isIgnoredUpdateError,
+  isUpdaterFullDownloadFallbackError,
+  markUpdaterFullDownloadFallback,
 } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
@@ -34,6 +36,8 @@ const logUpdaterMessage = (
     normalizedMessage = message.message;
   }
 
+  markUpdaterFullDownloadFallback(message);
+
   if (isIgnoredUpdaterLog(normalizedMessage)) return;
   log(message, 'electronUpdater', level);
 };
@@ -44,6 +48,9 @@ const updaterLogger = {
   info: (message: unknown) => logUpdaterMessage('info', message),
   warn: (message: unknown) => logUpdaterMessage('warn', message),
 };
+
+let updateDownloaded = false;
+let updateInstallStarted = false;
 
 export const getUpdatesDisabledPath = async () =>
   join(await getAppDataPath(), 'Global Preferences', 'disable-updates');
@@ -74,7 +81,10 @@ export async function initUpdater() {
       sendToWindow(mainWindowInfo.mainWindow, 'update-error');
     }
 
-    if (!isIgnoredUpdateError(error, message)) {
+    if (
+      !isIgnoredUpdateError(error, message) &&
+      !isUpdaterFullDownloadFallbackError(error)
+    ) {
       captureElectronError(error, {
         contexts: {
           fn: { errorMessage: error.message, message, name: 'initUpdater' },
@@ -85,6 +95,8 @@ export async function initUpdater() {
 
   autoUpdater.on('update-available', (info) => {
     log('Update available:', 'electronUpdater', 'log', info);
+    updateDownloaded = false;
+    updateInstallStarted = false;
     sendToWindow(mainWindowInfo.mainWindow, 'update-available');
   });
 
@@ -95,6 +107,7 @@ export async function initUpdater() {
 
   autoUpdater.on('update-downloaded', (info) => {
     log('Update downloaded:', 'electronUpdater', 'log', info);
+    updateDownloaded = true;
     sendToWindow(mainWindowInfo.mainWindow, 'update-downloaded');
   });
 
@@ -126,3 +139,34 @@ export const triggerUpdateCheck = async (attempt = 1) => {
     }
   }
 };
+
+export function quitAndInstallUpdate() {
+  if (!updateDownloaded) {
+    log(
+      'Ignoring quitAndInstall because no downloaded update is ready.',
+      'electronUpdater',
+      'warn',
+    );
+    return;
+  }
+
+  if (updateInstallStarted) {
+    log(
+      'Ignoring duplicate quitAndInstall request.',
+      'electronUpdater',
+      'warn',
+    );
+    return;
+  }
+
+  updateInstallStarted = true;
+
+  try {
+    autoUpdater.quitAndInstall(false, true);
+  } catch (error) {
+    updateInstallStarted = false;
+    captureElectronError(error, {
+      contexts: { fn: { name: 'quitAndInstallUpdate' } },
+    });
+  }
+}

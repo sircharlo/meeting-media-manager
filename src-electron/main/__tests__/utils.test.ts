@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('electron', () => ({
   app: {
@@ -26,6 +26,8 @@ vi.mock('app/package.json', () => ({
 import {
   fetchJsonFromMainProcess,
   isIgnoredUpdateError,
+  isUpdaterFullDownloadFallbackError,
+  markUpdaterFullDownloadFallback,
   utils,
 } from '../utils';
 
@@ -78,6 +80,55 @@ describe('isIgnoredUpdateError', () => {
     );
     error.name = 'YAMLException';
     expect(isIgnoredUpdateError(error)).toBe(true);
+  });
+});
+
+describe('isUpdaterFullDownloadFallbackError', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('should ignore network IO suspended while updater falls back to full download', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-06-04T12:00:00.000Z'));
+
+    markUpdaterFullDownloadFallback(
+      'Cannot download differentially, fallback to full download: Error: net::ERR_NETWORK_IO_SUSPENDED',
+    );
+
+    expect(
+      isUpdaterFullDownloadFallbackError(
+        new Error('net::ERR_NETWORK_IO_SUSPENDED'),
+      ),
+    ).toBe(true);
+  });
+
+  it('should not ignore unrelated errors during updater full download fallback', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-06-04T12:00:00.000Z'));
+
+    markUpdaterFullDownloadFallback(
+      'Cannot download differentially, fallback to full download: Error: net::ERR_NETWORK_IO_SUSPENDED',
+    );
+
+    expect(
+      isUpdaterFullDownloadFallbackError(new Error('Fatal exception')),
+    ).toBe(false);
+  });
+
+  it('should stop ignoring partial download errors after the fallback window', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-06-04T12:00:00.000Z'));
+
+    markUpdaterFullDownloadFallback(
+      'Cannot download differentially, fallback to full download: Error: net::ERR_NETWORK_IO_SUSPENDED',
+    );
+
+    vi.setSystemTime(new Date('2026-06-04T12:06:00.000Z'));
+
+    expect(
+      isUpdaterFullDownloadFallbackError('net::ERR_NETWORK_IO_SUSPENDED'),
+    ).toBe(false);
   });
 });
 

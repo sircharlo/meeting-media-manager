@@ -20,8 +20,6 @@ import {
   shell,
   systemPreferences,
 } from 'electron';
-import electronUpdater from 'electron-updater';
-const { autoUpdater } = electronUpdater;
 import { pathExistsSync } from 'fs-extra/esm';
 import { arch, platform } from 'node:os';
 import { PLATFORM } from 'src-electron/constants';
@@ -57,6 +55,7 @@ import {
 import {
   getBetaUpdatesPath,
   getUpdatesDisabledPath,
+  quitAndInstallUpdate,
   triggerUpdateCheck,
 } from 'src-electron/main/updater';
 import {
@@ -400,5 +399,5 @@ handleIpcInvoke('getZipEntries', async (_e, zipPath: string) =>
 );
 
 handleIpcSend('quitAndInstall', () => {
-  autoUpdater.quitAndInstall(false, true);
+  quitAndInstallUpdate();
 });

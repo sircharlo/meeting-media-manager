@@ -29,6 +29,7 @@ import { initUpdater } from 'src-electron/main/updater';
 import {
   captureElectronError,
   isIgnoredUpdateError,
+  isUpdaterFullDownloadFallbackError,
 } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import 'src-electron/main/ipc';
@@ -93,7 +94,9 @@ initSentry({
       const error = event.exception?.values?.[0];
       if (
         error?.value &&
-        (isIgnoredUpdateError(error.value) || error.value.includes('EPIPE'))
+        (isIgnoredUpdateError(error.value) ||
+          isUpdaterFullDownloadFallbackError(error.value) ||
+          error.value.includes('EPIPE'))
       ) {
         return null;
       }

@@ -15,6 +15,12 @@ import { log } from 'src/shared/vanilla';
 import { join, resolve } from 'upath';
 
 type CaptureCtx = Parameters<typeof captureException>[1];
+const UPDATER_FULL_DOWNLOAD_FALLBACK_MESSAGE =
+  'Cannot download differentially, fallback to full download';
+const UPDATER_FULL_DOWNLOAD_FALLBACK_IGNORE_MS = 5 * 60 * 1000;
+const UPDATER_PARTIAL_DOWNLOAD_NETWORK_ERRORS = ['ERR_NETWORK_IO_SUSPENDED'];
+
+let updaterFullDownloadFallbackAt = 0;
 /**
  * Gets the current app version
  * @returns The app version
@@ -256,6 +262,59 @@ export function isIgnoredUpdateError(
         (typeof errorCode === 'string' && errorCode.includes(ignoreStr)),
     );
   });
+}
+
+/**
+ * Checks whether an updater partial-download error can be ignored because
+ * electron-updater is already falling back to a full download.
+ * @param error The error to check
+ * @returns Whether the error should be ignored
+ */
+export function isUpdaterFullDownloadFallbackError(error: unknown) {
+  if (
+    !updaterFullDownloadFallbackAt ||
+    Date.now() - updaterFullDownloadFallbackAt >
+      UPDATER_FULL_DOWNLOAD_FALLBACK_IGNORE_MS
+  ) {
+    return false;
+  }
+
+  const { code, message, name } = getErrorDetails(error);
+
+  return UPDATER_PARTIAL_DOWNLOAD_NETWORK_ERRORS.some(
+    (errorText) =>
+      code?.includes(errorText) ||
+      message?.includes(errorText) ||
+      name?.includes(errorText),
+  );
+}
+
+/**
+ * Records that electron-updater is falling back to a full download after a
+ * partial/differential download failed.
+ * @param message The updater log message to inspect
+ */
+export function markUpdaterFullDownloadFallback(message: unknown) {
+  const { message: errorMessage } = getErrorDetails(message);
+  if (!errorMessage?.includes(UPDATER_FULL_DOWNLOAD_FALLBACK_MESSAGE)) return;
+
+  updaterFullDownloadFallbackAt = Date.now();
+}
+
+function getErrorDetails(error: unknown) {
+  if (typeof error === 'string') {
+    return {
+      code: undefined,
+      message: error,
+      name: undefined,
+    };
+  }
+
+  return {
+    code: (error as { code?: string })?.code,
+    message: error instanceof Error ? error.message : undefined,
+    name: (error as Error)?.name,
+  };
 }
 
 /**
