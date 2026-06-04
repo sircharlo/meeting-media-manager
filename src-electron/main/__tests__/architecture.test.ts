@@ -3,8 +3,7 @@ import { join, relative } from 'upath';
 import { describe, expect, it } from 'vitest';
 
 const SRC_ELECTRON_DIR = join(process.cwd(), 'src-electron');
-const ALLOWED_SRC_SUBDIRS = ['types', 'constants'];
-const ALLOWED_FILES = ['vanilla'];
+const ALLOWED_SRC_SUBDIRS = ['types', 'constants', 'shared'];
 
 function getAllFiles(dir: string, fileList: string[] = []): string[] {
   const files = readdirSync(dir);
@@ -47,14 +46,6 @@ describe('Architecture: Electron Main Process Imports', () => {
         continue;
       }
 
-      const isAllowedFile = ALLOWED_FILES.some((allowedFile) =>
-        importPath.includes(allowedFile),
-      );
-
-      if (isAllowedFile) {
-        continue;
-      }
-
       if (!ALLOWED_SRC_SUBDIRS.includes(subDir)) {
         const line = content.substring(0, match.index).split('\n').length;
 
@@ -62,12 +53,10 @@ describe('Architecture: Electron Main Process Imports', () => {
           ', ',
         );
 
-        const allowedFiles = ALLOWED_FILES.join(', ');
-
         const message =
           `Forbidden import found in ${relativePath}:${line}\n` +
           `Import: "src/${importPath}"\n` +
-          `Only imports from ${allowedDirs} or ${allowedFiles} are allowed in src-electron.`;
+          `Only imports from ${allowedDirs} are allowed in src-electron.`;
 
         forbiddenImports.push(message);
       }
