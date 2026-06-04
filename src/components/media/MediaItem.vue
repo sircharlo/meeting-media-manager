@@ -1256,7 +1256,7 @@ const mediaTitle = ref(props.media.title);
 
 const { basename, fileUrlToPath, fs } = globalThis.electronApi;
 
-const { pathExists, pathExistsSync, statSync } = fs;
+const { pathExists, stat } = fs;
 const PATH_ACCESS_WARNING_THROTTLE_MS = 30000;
 
 let lastPathAccessWarningAt = 0;
@@ -1385,12 +1385,12 @@ const notifyPathAccessWarning = () => {
   });
 };
 
-const fileIsLocal = () => {
+const fileIsLocal = async () => {
   const filePath = fileUrlToPath(props.media.fileUrl);
   try {
-    const fileExists = pathExistsSync(filePath);
+    const fileExists = await pathExists(filePath);
     const remoteSizeKnown = props.media.filesize !== undefined;
-    const localSize = fileExists ? statSync(filePath).size : 0;
+    const localSize = fileExists ? (await stat(filePath)).size : 0;
 
     if (!fileExists) return false;
     if (!remoteSizeKnown) return true;
@@ -1413,11 +1413,18 @@ const fileIsLocal = () => {
   }
 };
 
-const localFile = ref(fileIsLocal());
+const localFile = ref(false);
+let localFileCheckId = 0;
 
-const { pause } = useTimeoutPoll(() => {
-  localFile.value = fileIsLocal();
-}, 1000);
+const updateLocalFile = async () => {
+  const checkId = ++localFileCheckId;
+  const isLocal = await fileIsLocal();
+  if (checkId === localFileCheckId) {
+    localFile.value = isLocal;
+  }
+};
+
+const { pause } = useTimeoutPoll(updateLocalFile, 1000);
 
 const markersPanelOpen = ref(false);
 const startSelectedMarker = ref<null | VideoMarker>(null);
@@ -1455,7 +1462,7 @@ const setMediaPlaying = async (
     }
   }
   skipCustomDurationUpdateOnce.value = false;
-  localFile.value = fileIsLocal();
+  await updateLocalFile();
 
   mediaPlaying.value = {
     action:
@@ -1745,7 +1752,7 @@ function stopMedia(forOtherMediaItem = false) {
     zoom: 1,
   };
   mediaToStop.value = '';
-  localFile.value = fileIsLocal();
+  void updateLocalFile();
   playbackRate.value = 1;
   postPlaybackRate(1);
 
@@ -1937,6 +1944,7 @@ const confirmDeleteSelectedMedia = () => {
 };
 
 onMounted(async () => {
+  void updateLocalFile();
   initializeImageDuration();
   if (props.media.duration && !props.media.thumbnailUrl)
     await findThumbnailUrl();
