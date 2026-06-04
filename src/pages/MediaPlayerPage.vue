@@ -263,11 +263,13 @@ const isEnding = ref(false);
 // Display layer state management
 const displayLayer1 = ref({
   isLive: false,
+  token: 0,
   url: '',
 });
 
 const displayLayer2 = ref({
   isLive: false,
+  token: 0,
   url: '',
 });
 
@@ -430,8 +432,67 @@ const customMax = computed(() => {
   return (JSON.parse(mediaCustomDuration.value || '{}') || {})?.max;
 });
 
+type DisplayLayerRef = typeof displayLayer1;
+
+const getLayerElement = (
+  layer: DisplayLayerRef,
+): HTMLAudioElement | HTMLVideoElement | null => {
+  return layer.value === displayLayer1.value
+    ? mediaElement1.value
+    : mediaElement2.value;
+};
+
+const getLayerForUrl = (url: string | undefined): DisplayLayerRef | null => {
+  if (!url) return null;
+  if (displayLayer1.value.url === url) return displayLayer1;
+  if (displayLayer2.value.url === url) return displayLayer2;
+  return null;
+};
+
+const getLiveLayer = (): DisplayLayerRef | null => {
+  if (displayLayer1.value.isLive) return displayLayer1;
+  if (displayLayer2.value.isLive) return displayLayer2;
+  return null;
+};
+
+const getOtherLayer = (layer: DisplayLayerRef): DisplayLayerRef => {
+  return layer.value === displayLayer1.value ? displayLayer2 : displayLayer1;
+};
+
+const getNextLayer = (newUrl: string): DisplayLayerRef => {
+  const existingLayer = getLayerForUrl(newUrl);
+  if (existingLayer) return existingLayer;
+
+  const liveLayer = getLiveLayer();
+  if (liveLayer) return getOtherLayer(liveLayer);
+
+  if (!displayLayer1.value.url) return displayLayer1;
+  if (!displayLayer2.value.url) return displayLayer2;
+
+  return displayLayer1;
+};
+
+const cleanupLayerIfCurrent = (
+  layer: DisplayLayerRef,
+  token: number,
+  url: string,
+) => {
+  if (layer.value.token !== token || layer.value.url !== url) {
+    return;
+  }
+
+  cleanupMediaElement(getLayerElement(layer));
+  layer.value.url = '';
+};
+
 const currentMediaElement: Ref<HTMLAudioElement | HTMLVideoElement | null> =
   computed(() => {
+    const layer = getLayerForUrl(mediaPlayingUrl.value);
+    if (layer) return getLayerElement(layer);
+
+    const liveLayer = getLiveLayer();
+    if (liveLayer) return getLayerElement(liveLayer);
+
     return mediaElement1.value || mediaElement2.value || null;
   });
 
@@ -661,7 +722,6 @@ const playMedia = () => {
 
 const isTransitioning = ref(false);
 
-// Crossfade function to handle layer transitions
 const crossfadeToNewMedia = (newUrl: string) => {
   log(
     '🎬 [crossfadeToNewMedia] Starting crossfade to:',
@@ -670,13 +730,18 @@ const crossfadeToNewMedia = (newUrl: string) => {
     newUrl,
   );
 
-  // Determine which layer is currently live and which is not
-  const currentLiveLayer = displayLayer1.value.isLive
-    ? displayLayer1
-    : displayLayer2;
-  const nextLayer = displayLayer1.value.isLive ? displayLayer2 : displayLayer1;
+  const currentLiveLayer = getLiveLayer();
+  const nextLayer = getNextLayer(newUrl);
+  const nextLayerWasReused =
+    nextLayer.value.url && nextLayer.value.url !== newUrl;
 
-  // Set the new URL on the non-live layer
+  // Each assignment invalidates pending fade-out cleanup for this layer. Without
+  // this, an image fade-out can later clean up a video that reused the same DOM
+  // layer before the timeout fired.
+  nextLayer.value.token++;
+  if (nextLayerWasReused) {
+    cleanupMediaElement(getLayerElement(nextLayer));
+  }
   nextLayer.value.url = newUrl;
 
   // Skip zoom/pan animation when transitioning to new media
@@ -686,20 +751,28 @@ const crossfadeToNewMedia = (newUrl: string) => {
 
   // Fade in the new layer
   setTimeout(() => {
+    if (nextLayer.value.url !== newUrl) {
+      return;
+    }
+
     nextLayer.value.isLive = true;
-    currentLiveLayer.value.isLive = false;
+    if (currentLiveLayer && currentLiveLayer.value !== nextLayer.value) {
+      currentLiveLayer.value.isLive = false;
+    }
 
-    // After transition completes, clean up the old layer
+    if (!currentLiveLayer || currentLiveLayer.value === nextLayer.value) {
+      isTransitioning.value = false;
+      return;
+    }
+
+    const oldUrl = currentLiveLayer.value.url;
+    const oldToken = ++currentLiveLayer.value.token;
+
+    // After transition completes, clean up only the layer/url that faded out.
     setTimeout(() => {
-      // Explicitly cleanup the media element before clearing the URL
-      // to prevent crashes when the element is removed from DOM while active
-      if (currentLiveLayer.value === displayLayer1.value) {
-        cleanupMediaElement(mediaElement1.value);
-      } else {
-        cleanupMediaElement(mediaElement2.value);
+      if (oldUrl) {
+        cleanupLayerIfCurrent(currentLiveLayer, oldToken, oldUrl);
       }
-
-      currentLiveLayer.value.url = '';
       isTransitioning.value = false;
     }, fadeOutDurationInMilliseconds); // Match the CSS transition duration
   }, 50); // Small delay to ensure the new media starts loading
@@ -709,13 +782,14 @@ const crossfadeToNewMedia = (newUrl: string) => {
 const clearCurrentMedia = () => {
   log('🎬 [clearCurrentMedia] Clearing current media', 'mediaPlayer', 'log');
 
-  const currentLiveLayer = displayLayer1.value.isLive
-    ? displayLayer1
-    : displayLayer2;
+  const currentLiveLayer = getLiveLayer();
 
-  if (currentLiveLayer.value.url) {
+  if (currentLiveLayer?.value.url) {
+    const clearingUrl = currentLiveLayer.value.url;
+    const clearingToken = ++currentLiveLayer.value.token;
+
     // Skip zoom/pan animation when clearing media
-    if (isImage(currentLiveLayer.value.url)) {
+    if (isImage(clearingUrl)) {
       skipZoomPanAnimation.value = true;
       log(
         '🎬 [clearCurrentMedia] Skipping zoom/pan animation',
@@ -730,8 +804,7 @@ const clearCurrentMedia = () => {
     // If the current media element is a video, fade out the volume over the next 300ms
     if (
       currentMediaElement.value &&
-      (isVideo(currentLiveLayer.value.url) ||
-        isAudio(currentLiveLayer.value.url))
+      (isVideo(clearingUrl) || isAudio(clearingUrl))
     ) {
       const videoElement = currentMediaElement.value as HTMLVideoElement;
       const initialVolume = videoElement.volume;
@@ -750,18 +823,11 @@ const clearCurrentMedia = () => {
 
     // After transition completes, clear the URL
     setTimeout(() => {
-      // Explicitly cleanup the media element before clearing the URL
-      if (currentLiveLayer.value === displayLayer1.value) {
-        cleanupMediaElement(mediaElement1.value);
-      } else {
-        cleanupMediaElement(mediaElement2.value);
-      }
+      cleanupLayerIfCurrent(currentLiveLayer, clearingToken, clearingUrl);
 
-      currentLiveLayer.value.url = '';
       if (
         currentMediaElement.value &&
-        (isVideo(currentLiveLayer.value.url) ||
-          isAudio(currentLiveLayer.value.url))
+        (isVideo(clearingUrl) || isAudio(clearingUrl))
       ) {
         const videoElement = currentMediaElement.value as HTMLVideoElement;
         videoElement.volume = 1;
@@ -1080,10 +1146,17 @@ watchDeep(
 
 watch(
   () => webStreamData.value,
-  async (newWebStreamData) => {
+  async (newWebStreamData, oldWebStreamData) => {
     videoStreaming.value = newWebStreamData === 'mirroringWebsite';
     if (newWebStreamData !== 'mirroringWebsite') {
       if (newWebStreamData !== 'previewingWebsite') {
+        if (
+          oldWebStreamData !== 'mirroringWebsite' &&
+          oldWebStreamData !== 'previewingWebsite'
+        ) {
+          return;
+        }
+
         if (currentMediaElement.value) {
           currentMediaElement.value.pause();
           currentMediaElement.value.srcObject = null;

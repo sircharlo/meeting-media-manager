@@ -1443,8 +1443,6 @@ const setMediaPlaying = async (
     // Start one-shot workflows when media starts playing and no media was playing before
     triggerMediaWindowAutoHide(true);
     triggerZoomScreenShare(true);
-  } else if (isImage(mediaPlaying.value.url)) {
-    stopMedia(true);
   }
   if (signLanguage) {
     if (marker) {
