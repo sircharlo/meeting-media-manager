@@ -4617,10 +4617,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/heic-convert@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "@types/heic-convert@npm:2.1.0"
-  checksum: 10c0/9026ba11605c9b5fac4288bce3cecbb26291e4d5ef9b4fc049a28848bbbd22e58e456ca2fb32d3ae35f01d425b17c43c5b2c528493fb6ee2fe5cff72b691abbb
+"@types/heic-convert@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "@types/heic-convert@npm:2.1.1"
+  checksum: 10c0/7d937ae85e034e30254fa241d3c6bf5136f2a4a9e813556e2ddad67ba07d85a9796c5fc0b18db09b3767314a8635ee73185ed6f8548a8d1417ec42b66b135d29
   languageName: node
   linkType: hard
 
@@ -11962,7 +11962,7 @@ __metadata:
     "@types/fluent-ffmpeg": "npm:^2.1.28"
     "@types/fontkit": "npm:^2.0.9"
     "@types/fs-extra": "npm:^11.0.4"
-    "@types/heic-convert": "npm:^2.1.0"
+    "@types/heic-convert": "npm:^2.1.1"
     "@types/lodash-es": "npm:^4.17.12"
     "@types/mousetrap": "npm:^1.6.15"
     "@types/ms": "npm:^2"
