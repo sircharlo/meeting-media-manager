@@ -19,24 +19,6 @@ updates:
     commit-message:
       prefix: 'chore'
       include: 'scope'
-    ignore:
-      - dependency-name: '@types/node'
-        update-types: ['version-update:semver-major']
-      - dependency-name: '@sentry/vue'
-        update-types:
-          [
-            'version-update:semver-major',
-            'version-update:semver-minor',
-            'version-update:semver-patch',
-          ]
-      - dependency-name: 'typescript'
-        update-types:
-          ['version-update:semver-major', 'version-update:semver-minor']
-      - dependency-name: 'electron-builder'
-        update-types: ['version-update:semver-patch']
-      - dependency-name: 'electron'
-        update-types:
-          ['version-update:semver-major', 'version-update:semver-minor']
     groups:
       vueuse:
         applies-to: version-updates

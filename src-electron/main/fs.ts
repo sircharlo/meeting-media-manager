@@ -19,6 +19,12 @@ import {
   JWPUB_EXTENSIONS,
   PDF_EXTENSIONS,
 } from 'src/constants/media';
+import {
+  getFilesystemErrorCode,
+  isExpectedNetworkPathAccessError,
+  isPossiblyNetworkFolderPath,
+  shouldIgnoreWatchFolderError,
+} from 'src/shared/filesystem-errors';
 import { log, uuid } from 'src/shared/vanilla';
 import { basename, dirname, join, resolve, toUnix } from 'upath';
 import yauzl from 'yauzl';
@@ -52,15 +58,6 @@ const SHARED_PATH_HEALTH_FOLDERS = [
   'Fonts',
   'Publications',
 ];
-
-const isPossiblyNetworkFolderPath = (folderPath: string) => {
-  const unixPath = toUnix(folderPath || '');
-  if (unixPath.startsWith('//')) return true;
-  // On Windows, a non-C: drive letter may indicate a mapped network drive
-  if (process.platform === 'win32' && /^[a-bd-zA-BD-Z]:/.test(unixPath))
-    return true;
-  return false;
-};
 
 const getCloudStorageProvider = (filePath: string) => {
   const normalizedPath = toUnix(filePath).toLowerCase();
@@ -276,8 +273,6 @@ export async function getAppDataPath(): Promise<string> {
 
 const isUsablePathPromises = new Map<string, Promise<boolean>>();
 
-const NETWORK_PATH_TRANSIENT_ERRORS = new Set(['ENOENT', 'UNKNOWN']);
-
 const getProbePathContext = (basePath: string) => {
   const resolvedBase = resolve(basePath);
   const testDir = join(resolvedBase, '.cache-test-' + uuid());
@@ -294,7 +289,7 @@ const isInvalidWindowsResolvedPath = (resolvedBase: string) => {
 
 const WINDOWS_RETRYABLE_PROBE_CODES = new Set(['EBUSY', 'EPERM']);
 
-const getErrorCode = (error: unknown) => (error as { code?: string })?.code;
+const getErrorCode = getFilesystemErrorCode;
 
 const isRetryableProbeCleanupError = (error: unknown) =>
   process.platform === 'win32' &&
@@ -421,8 +416,10 @@ export function isUsablePath(basePath?: string): Promise<boolean> {
       } catch (e) {
         const PERMISSION_ERRORS = new Set(['EACCES', 'EPERM']);
         const code = getErrorCode(e);
-        const transientNetworkError =
-          NETWORK_PATH_TRANSIENT_ERRORS.has(code ?? '') && likelyNetworkPath;
+        const transientNetworkError = isExpectedNetworkPathAccessError(
+          e,
+          basePath,
+        );
         if (hasPossibleNetworkPathInNotificationSettings()) {
           notifyPathProbeNetworkWarning();
         }
@@ -1085,27 +1082,6 @@ export async function unzipFile(
 const watchers = new Set<FSWatcher>();
 const datePattern = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD
 const WATCH_POLL_INTERVAL_MS = 1000;
-
-const shouldIgnoreWatchFolderError = (
-  folderPath: string,
-  error: Error & { code?: string; syscall?: string },
-) => {
-  // Ignore harmless stat errors
-  if (
-    error.syscall === 'stat' &&
-    ['EINVAL', 'UNKNOWN'].includes(error.code ?? '')
-  ) {
-    return true;
-  }
-
-  // Ignore known flaky watch errors on network folders (WebDAV/UNC shares).
-  if (isPossiblyNetworkFolderPath(folderPath)) {
-    if (error.code === 'UNKNOWN' && error.syscall === 'watch') return true;
-    if (error.code === 'EISDIR' && error.syscall === 'watch') return true;
-  }
-
-  return false;
-};
 
 export async function unwatchFolders() {
   for (const watcher of watchers) {

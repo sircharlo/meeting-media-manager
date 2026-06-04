@@ -1114,7 +1114,9 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { getThumbnailUrl } from 'src/helpers/fs';
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { triggerMediaWindowAutoHide } from 'src/helpers/mediaWindowAutoHide';
+import { createTemporaryNotification } from 'src/helpers/notifications';
 import { triggerZoomScreenShare } from 'src/helpers/zoom';
+import { isExpectedNetworkPathAccessError } from 'src/shared/filesystem-errors';
 import { log, throttleWithTrailing, uuid } from 'src/shared/vanilla';
 import { isFileUrl } from 'src/utils/fs';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
@@ -1255,6 +1257,9 @@ const mediaTitle = ref(props.media.title);
 const { basename, fileUrlToPath, fs } = globalThis.electronApi;
 
 const { pathExists, pathExistsSync, statSync } = fs;
+const PATH_ACCESS_WARNING_THROTTLE_MS = 30000;
+
+let lastPathAccessWarningAt = 0;
 
 const displayMediaTitle = computed(() => {
   // When editing, use the local mediaTitle to avoid reactivity delays
@@ -1366,16 +1371,46 @@ const getBasename = (fileUrl: string) => {
   return basename(fileUrl);
 };
 
+const notifyPathAccessWarning = () => {
+  const now = Date.now();
+  if (now - lastPathAccessWarningAt < PATH_ACCESS_WARNING_THROTTLE_MS) return;
+
+  lastPathAccessWarningAt = now;
+  createTemporaryNotification({
+    caption: t('path-probe-network-warning-caption'),
+    group: 'pathProbeNetworkWarning',
+    message: t('path-probe-network-warning-message'),
+    timeout: 15000,
+    type: 'negative',
+  });
+};
+
 const fileIsLocal = () => {
   const filePath = fileUrlToPath(props.media.fileUrl);
-  const fileExists = pathExistsSync(filePath);
-  const remoteSizeKnown = props.media.filesize !== undefined;
-  const localSize = fileExists ? statSync(filePath).size : 0;
+  try {
+    const fileExists = pathExistsSync(filePath);
+    const remoteSizeKnown = props.media.filesize !== undefined;
+    const localSize = fileExists ? statSync(filePath).size : 0;
 
-  if (!fileExists) return false;
-  if (!remoteSizeKnown) return true;
-  if (localSize !== props.media.filesize) return false;
-  return true;
+    if (!fileExists) return false;
+    if (!remoteSizeKnown) return true;
+    if (localSize !== props.media.filesize) return false;
+    return true;
+  } catch (error) {
+    if (isExpectedNetworkPathAccessError(error, filePath)) {
+      notifyPathAccessWarning();
+    } else {
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            args: { filePath },
+            name: 'MediaItem.fileIsLocal',
+          },
+        },
+      });
+    }
+    return false;
+  }
 };
 
 const localFile = ref(fileIsLocal());
