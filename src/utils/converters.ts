@@ -70,7 +70,7 @@ const convertHeicToJpg = async (filepath: string) => {
   try {
     const buffer = await readFile(filepath);
     const output = await convertHeic({
-      buffer: buffer as unknown as ArrayBufferLike,
+      buffer,
       format: 'JPEG',
     });
     const existingPath = parse(filepath);

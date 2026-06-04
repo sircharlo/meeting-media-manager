@@ -23,7 +23,7 @@ export interface ConversionOptions {
   /**
    * the HEIC file buffer
    */
-  buffer: ArrayBufferLike;
+  buffer: Uint8Array;
   /**
    * output format
    */
