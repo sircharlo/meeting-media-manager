@@ -9,10 +9,12 @@ export type LanguageValue =
   | 'es'
   | 'et'
   | 'fr'
+  | 'hu'
   | 'nl'
   | 'pt'
   | 'ru'
   | 'sl'
+  | 'ty'
   | 'uk';
 
 // As a sort of rule, let's only enable a language once it's reached a threshold of 50% translated in Crowdin.
@@ -24,10 +26,12 @@ export const enabled: LanguageValue[] = [
   'es',
   'et',
   'fr',
+  'hu',
   'nl',
   'pt',
   'ru',
   'sl',
+  'ty',
   'uk',
 ];
 
@@ -115,6 +119,12 @@ export const locales: {
     value: 'fr',
   },
   {
+    englishName: 'Hungarian',
+    label: 'magyar',
+    langcode: 'H',
+    value: 'hu',
+  },
+  {
     englishName: 'Dutch',
     label: 'Nederlands',
     langcode: 'O',
@@ -141,6 +151,12 @@ export const locales: {
     langcode: 'SV',
     signLangCodes: ['SZJ'],
     value: 'sl',
+  },
+  {
+    englishName: 'Tahitian',
+    label: 'Tahiti',
+    langcode: 'TH',
+    value: 'ty',
   },
   {
     englishName: 'Ukrainian',
