@@ -10,7 +10,7 @@ import { useRouter } from 'vue-router';
 
 initializeElectronApi('RouteHelper');
 
-const router = useRouter();
+const router = useRouter() as ReturnType<typeof useRouter> | undefined;
 
 function getParam(key: string) {
   try {
@@ -30,7 +30,12 @@ onBeforeMount(() => {
   try {
     const param = getParam('page');
     if (param) {
-      router.push({ path: `/${param}` });
+      const path = `/${param}`;
+      if (router) {
+        router.push({ path });
+      } else {
+        location.hash = path;
+      }
     }
   } catch (error) {
     errorCatcher(error);
