@@ -71,13 +71,17 @@ describe('StatefulBrowserWindow', () => {
     const { StatefulBrowserWindow } =
       await import('src-electron/main/window/window-state');
 
-    new StatefulBrowserWindow({
+    const statefulWindow = new StatefulBrowserWindow({
       configFileName: 'main-window-state.json',
       configFilePath: 'C:/Users/Test/AppData/Roaming/M3',
     });
 
     browserWindowHandlers.get('closed')?.();
 
+    expect(statefulWindow.win.removeListener).toHaveBeenCalledWith(
+      'closed',
+      expect.any(Function),
+    );
     expect(captureElectronError).toHaveBeenCalledWith(error, {
       contexts: {
         fn: {
