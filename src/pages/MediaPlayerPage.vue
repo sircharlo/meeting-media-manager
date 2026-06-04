@@ -165,6 +165,7 @@ import {
 } from '@vueuse/core';
 import DOMPurify from 'dompurify';
 import { useQuasar } from 'quasar';
+import { MEDIA_STOP_FADE_DURATION_SECONDS } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   getJwIconFromKeyword,
@@ -648,7 +649,7 @@ const handleVideoCanPlay = () => {
   }
 };
 
-const fadeOutDurationInSeconds = 0.3;
+const fadeOutDurationInSeconds = MEDIA_STOP_FADE_DURATION_SECONDS;
 const fadeOutDurationInMilliseconds = fadeOutDurationInSeconds * 1000;
 
 const playMedia = () => {

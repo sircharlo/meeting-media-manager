@@ -1,6 +1,7 @@
 import type { MediaSectionIdentifier } from 'src/types';
 
 export const FULL_HD = { height: 1080, width: 1920 };
+export const MEDIA_STOP_FADE_DURATION_SECONDS = 0.3;
 
 export const JPG_EXTENSIONS = ['jpg', 'jpeg', 'jfif', 'pjpeg', 'pjp'];
 

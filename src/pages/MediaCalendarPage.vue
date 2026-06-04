@@ -126,7 +126,10 @@ import { useMeta, useQuasar } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { SORTER } from 'src/constants/general';
-import { getMeetingSections } from 'src/constants/media';
+import {
+  getMeetingSections,
+  MEDIA_STOP_FADE_DURATION_SECONDS,
+} from 'src/constants/media';
 import {
   isCoWeek,
   isMeetingDay,
@@ -207,6 +210,22 @@ const jwpubImportDocuments = ref<DocumentItem[]>([]);
 const { dateLocale, t } = useLocale();
 useMeta({ title: t('titles.meetingMedia') });
 
+interface BackgroundMusicAction {
+  action: 'stop';
+  fadeSeconds?: number;
+  requestedAt: number;
+}
+
+interface BackgroundMusicState {
+  playing: boolean;
+  state:
+    | ''
+    | 'music.error'
+    | 'music.playing'
+    | 'music.starting'
+    | 'music.stopping';
+}
+
 const route = useRoute();
 const router = useRouter();
 
@@ -266,6 +285,18 @@ const { pathExists, remove, writeFile } = fs;
 
 const { post: postMediaAction } = useBroadcastChannel<string, string>({
   name: 'main-window-media-action',
+});
+const { post: postBackgroundMusicAction } = useBroadcastChannel<
+  BackgroundMusicAction,
+  BackgroundMusicAction
+>({
+  name: 'background-music-action',
+});
+const { data: backgroundMusicState } = useBroadcastChannel<
+  BackgroundMusicState,
+  BackgroundMusicState
+>({
+  name: 'background-music-state',
 });
 
 const { post: postCameraStream } = useBroadcastChannel<
@@ -2301,6 +2332,34 @@ watch(
   },
 );
 
+function notifyBackgroundMusicStillPlaying() {
+  createTemporaryNotification({
+    actions: [
+      {
+        color: 'dark',
+        handler: () => {
+          postBackgroundMusicAction({
+            action: 'stop',
+            fadeSeconds: MEDIA_STOP_FADE_DURATION_SECONDS,
+            requestedAt: Date.now(),
+          });
+        },
+        label: t('stop-music'),
+      },
+      {
+        color: 'dark',
+        icon: 'close',
+        round: true,
+      },
+    ],
+    caption: t('background-music-still-playing-explain'),
+    group: 'background-music-still-playing',
+    message: t('background-music-still-playing'),
+    timeout: 15000,
+    type: 'warning',
+  });
+}
+
 watch(
   () => [mediaIsPlaying.value, mediaPaused.value, mediaPlaying.value.url],
   (
@@ -2319,6 +2378,18 @@ watch(
         oldMediaPlayingUrl,
       },
     );
+
+    if (
+      newMediaPlaying &&
+      !newMediaPaused &&
+      typeof newMediaPlayingUrl === 'string' &&
+      newMediaPlayingUrl !== oldMediaPlayingUrl &&
+      (isAudio(newMediaPlayingUrl) || isVideo(newMediaPlayingUrl)) &&
+      backgroundMusicState.value?.playing &&
+      backgroundMusicState.value.state !== 'music.stopping'
+    ) {
+      notifyBackgroundMusicStillPlaying();
+    }
 
     // Custom integration events
     if (currentSettings.value?.enableCustomEvents) {

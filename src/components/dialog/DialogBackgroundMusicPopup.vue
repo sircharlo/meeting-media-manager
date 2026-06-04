@@ -97,6 +97,7 @@ import {
   whenever,
 } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
+import { MEDIA_STOP_FADE_DURATION_SECONDS } from 'src/constants/media';
 import {
   enrichSongsWithMetadata,
   fetchSongLibrary,
@@ -116,6 +117,24 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
 const open = defineModel<boolean>({ default: false });
+
+interface BackgroundMusicAction {
+  action: 'stop';
+  fadeSeconds?: number;
+  requestedAt: number;
+}
+
+interface BackgroundMusicState {
+  playing: boolean;
+  state: MusicState;
+}
+
+type MusicState =
+  | ''
+  | 'music.error'
+  | 'music.playing'
+  | 'music.starting'
+  | 'music.stopping';
 
 const currentState = useCurrentStateStore();
 const {
@@ -153,9 +172,7 @@ const timeUntilMeeting = ref(remainingTimeBeforeMeetingStart());
 const musicAlreadyStoppedManually = ref(false);
 
 // Music state management
-const musicState = ref<
-  '' | 'music.error' | 'music.playing' | 'music.starting' | 'music.stopping'
->('');
+const musicState = ref<MusicState>('');
 
 const musicPlayingTitle = ref('');
 const songList = ref<SongItem[]>([]);
@@ -468,7 +485,7 @@ async function playMusic(reason = 'manual') {
 /**
  * Stops background music with fadeout
  */
-function stopMusic(manualStop = false) {
+function stopMusic(manualStop = false, fadeSeconds = 5) {
   try {
     log('⏹️ Stopping background music', 'backgroundMusic', 'info');
     if (!musicPlayer.value || musicPlayer.value.paused) {
@@ -477,7 +494,7 @@ function stopMusic(manualStop = false) {
     }
 
     musicState.value = 'music.stopping';
-    fadeToVolumeLevel(0, 5);
+    fadeToVolumeLevel(0, fadeSeconds);
   } catch (error) {
     errorCatcher(error);
   } finally {
@@ -662,12 +679,44 @@ useEventListener(globalThis, 'toggleMusic', toggleMusicListener, {
 const { data: volumeData } = useBroadcastChannel<number, number>({
   name: 'volume-setter',
 });
+const { data: backgroundMusicAction } = useBroadcastChannel<
+  BackgroundMusicAction,
+  BackgroundMusicAction
+>({
+  name: 'background-music-action',
+});
+const { post: postBackgroundMusicState } = useBroadcastChannel<
+  BackgroundMusicState,
+  BackgroundMusicState
+>({
+  name: 'background-music-state',
+});
 
 // Update music state when playing changes
 whenever(
   () => musicPlaying.value,
   () => {
     musicState.value = 'music.playing';
+  },
+);
+
+watchImmediate(
+  () => [musicPlaying.value, musicState.value] as const,
+  ([playing, state]) => {
+    postBackgroundMusicState({ playing, state });
+  },
+);
+
+watch(
+  () => backgroundMusicAction.value?.requestedAt,
+  () => {
+    if (backgroundMusicAction.value?.action === 'stop') {
+      stopMusic(
+        true,
+        backgroundMusicAction.value.fadeSeconds ??
+          MEDIA_STOP_FADE_DURATION_SECONDS,
+      );
+    }
   },
 );
 
