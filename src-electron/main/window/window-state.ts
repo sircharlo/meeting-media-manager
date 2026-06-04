@@ -45,7 +45,12 @@ export class StatefulBrowserWindow {
       writeJsonSync(this.fullStoreFileName, this.state, { spaces: 2 });
     } catch (e) {
       captureElectronError(e, {
-        contexts: { fn: { name: 'StatefulBrowserWindow.saveState' } },
+        contexts: {
+          fn: {
+            name: 'StatefulBrowserWindow.saveState',
+            path: this.fullStoreFileName,
+          },
+        },
       });
     }
   };

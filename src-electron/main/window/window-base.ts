@@ -161,11 +161,12 @@ export function createWindow(
 export function loadWindowPrefs(
   windowName: 'main' | 'media' | 'timer',
 ): null | WindowState {
+  const mediaWindowStateFile = join(
+    app.getPath('userData'),
+    `${windowName}-window-state.json`,
+  );
+
   try {
-    const mediaWindowStateFile = join(
-      app.getPath('userData'),
-      `${windowName}-window-state.json`,
-    );
     if (!pathExistsSync(mediaWindowStateFile)) {
       log(
         '[loadWindowPrefs - ' + windowName + '] File does not exist:',
@@ -178,7 +179,12 @@ export function loadWindowPrefs(
     return readJsonSync(mediaWindowStateFile, { throws: false });
   } catch (e) {
     captureElectronError(e, {
-      contexts: { fn: { name: 'loadWindowPrefs - ' + windowName } },
+      contexts: {
+        fn: {
+          name: 'loadWindowPrefs - ' + windowName,
+          path: mediaWindowStateFile,
+        },
+      },
     });
     return null;
   }

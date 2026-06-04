@@ -1,7 +1,7 @@
 import type { ElectronDownloadManager as EDMType } from 'electron-dl-manager';
 
 import { getCountriesForTimezone } from 'countries-and-timezones';
-import { app } from 'electron';
+import { app, type BrowserWindow } from 'electron';
 import { mkdir, stat } from 'node:fs/promises';
 import { setTimeout as delay } from 'node:timers/promises';
 import { quitStatus } from 'src-electron/main/session';
@@ -46,6 +46,21 @@ const getErrorMessage = (error: unknown) =>
 
 const isDestroyedObjectError = (error: unknown) =>
   getErrorMessage(error).includes('Object has been destroyed');
+
+const getDownloadWindow = (): BrowserWindow | null => {
+  const { mainWindow } = mainWindowInfo;
+
+  if (!mainWindow || mainWindow.isDestroyed()) return null;
+
+  try {
+    if (mainWindow.webContents.isDestroyed()) return null;
+  } catch (error) {
+    if (isDestroyedObjectError(error)) return null;
+    throw error;
+  }
+
+  return mainWindow;
+};
 
 enum DownloadState {
   ACTIVE = 'ACTIVE',
@@ -456,8 +471,7 @@ const addQueueBreadcrumb = (
 };
 
 const loadElectronDownloadManager: () => Promise<EDMType | null> = async () => {
-  if (!mainWindowInfo.mainWindow || mainWindowInfo.mainWindow.isDestroyed())
-    return null; // window is closed
+  if (!getDownloadWindow()) return null; // window is closed
 
   if (manager) return manager; // already initialized
 
@@ -513,13 +527,7 @@ export async function downloadFile(
   destFilename?: string,
   lowPriority = false,
 ) {
-  if (
-    !mainWindowInfo.mainWindow ||
-    mainWindowInfo.mainWindow.isDestroyed() ||
-    !url ||
-    !saveDir
-  )
-    return null;
+  if (!getDownloadWindow() || !url || !saveDir) return null;
   try {
     // Allow queue processing again after a previous cancelAll cycle
     cancelAll = false;
@@ -970,13 +978,7 @@ async function processNormalPausedDownload(
  */
 async function processQueue() {
   const loadedManager = await loadElectronDownloadManager();
-  if (
-    !mainWindowInfo.mainWindow ||
-    mainWindowInfo.mainWindow.isDestroyed() ||
-    cancelAll ||
-    !loadedManager
-  )
-    return;
+  if (!getDownloadWindow() || cancelAll || !loadedManager) return;
 
   const activeCount = getActiveDownloadCount();
 
@@ -1074,14 +1076,9 @@ async function startDownload(
 ) {
   const { destFilename, saveDir, url } = download;
   const key = url + saveDir;
+  const downloadWindow = getDownloadWindow();
 
-  if (
-    !mainWindowInfo.mainWindow ||
-    mainWindowInfo.mainWindow.isDestroyed() ||
-    !manager ||
-    cancelAll
-  )
-    return;
+  if (!downloadWindow || !manager || cancelAll) return;
 
   ongoingDownloads.set(key, {
     item: download,
@@ -1096,7 +1093,7 @@ async function startDownload(
       callbacks: {
         onDownloadCancelled: async () => {
           log('Download cancelled:', 'electronDownloads', 'log', url);
-          sendToWindow(mainWindowInfo.mainWindow, 'downloadCancelled', {
+          sendToWindow(downloadWindow, 'downloadCancelled', {
             id: key,
           });
           ongoingDownloads.delete(key);
@@ -1105,7 +1102,7 @@ async function startDownload(
         },
         onDownloadCompleted: async ({ item }) => {
           log('Download completed:', 'electronDownloads', 'log', url);
-          sendToWindow(mainWindowInfo.mainWindow, 'downloadCompleted', {
+          sendToWindow(downloadWindow, 'downloadCompleted', {
             filePath: item.getSavePath(),
             id: key,
           });
@@ -1114,7 +1111,7 @@ async function startDownload(
           processQueue();
         },
         onDownloadProgress: async ({ item, percentCompleted }) => {
-          sendToWindow(mainWindowInfo.mainWindow, 'downloadProgress', {
+          sendToWindow(downloadWindow, 'downloadProgress', {
             bytesReceived: item.getReceivedBytes(),
             id: key,
             percentCompleted,
@@ -1122,7 +1119,7 @@ async function startDownload(
         },
         onDownloadStarted: async ({ item, resolvedFilename }) => {
           log('Download started:', 'electronDownloads', 'log', url);
-          sendToWindow(mainWindowInfo.mainWindow, 'downloadStarted', {
+          sendToWindow(downloadWindow, 'downloadStarted', {
             filename: resolvedFilename,
             id: key,
             totalBytes: item.getTotalBytes(),
@@ -1152,7 +1149,7 @@ async function startDownload(
             },
           });
           if (downloadData) {
-            sendToWindow(mainWindowInfo.mainWindow, 'downloadError', {
+            sendToWindow(downloadWindow, 'downloadError', {
               id: key,
             });
           }
@@ -1164,7 +1161,7 @@ async function startDownload(
       directory: saveDir,
       saveAsFilename: destFilename,
       url,
-      window: mainWindowInfo.mainWindow,
+      window: downloadWindow,
     });
 
     const current = ongoingDownloads.get(key);

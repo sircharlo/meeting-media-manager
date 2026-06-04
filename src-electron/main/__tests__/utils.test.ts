@@ -25,6 +25,7 @@ vi.mock('app/package.json', () => ({
 
 import {
   fetchJsonFromMainProcess,
+  isIgnoredNativeCrashEvent,
   isIgnoredUpdateError,
   isUpdaterFullDownloadFallbackError,
   markUpdaterFullDownloadFallback,
@@ -80,6 +81,59 @@ describe('isIgnoredUpdateError', () => {
     );
     error.name = 'YAMLException';
     expect(isIgnoredUpdateError(error)).toBe(true);
+  });
+});
+
+describe('isIgnoredNativeCrashEvent', () => {
+  it('ignores Node worker delayed-task native aborts', () => {
+    expect(
+      isIgnoredNativeCrashEvent({
+        exception: {
+          values: [
+            {
+              stacktrace: {
+                frames: [
+                  { function: 'wil::details::DebugBreak' },
+                  { function: 'uv_fatal_error' },
+                  { function: 'uv_async_send' },
+                  {
+                    function:
+                      'node::WorkerThreadsTaskRunner::DelayedTaskScheduler::PostDelayedTask',
+                  },
+                  {
+                    function:
+                      'v8::internal::MemoryPool::PostDelayedReleaseTask',
+                  },
+                ],
+              },
+              type: 'EXCEPTION_BREAKPOINT / 0x76982622',
+              value: 'Fatal Error: EXCEPTION_BREAKPOINT / 0x76982622',
+            },
+          ],
+        },
+      }),
+    ).toBe(true);
+  });
+
+  it('does not ignore unrelated native breakpoints', () => {
+    expect(
+      isIgnoredNativeCrashEvent({
+        exception: {
+          values: [
+            {
+              stacktrace: {
+                frames: [
+                  { function: 'wil::details::DebugBreak' },
+                  { function: 'uv_fatal_error' },
+                ],
+              },
+              type: 'EXCEPTION_BREAKPOINT / 0x76982622',
+              value: 'Fatal Error: EXCEPTION_BREAKPOINT / 0x76982622',
+            },
+          ],
+        },
+      }),
+    ).toBe(false);
   });
 });
 

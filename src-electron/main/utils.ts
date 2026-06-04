@@ -15,6 +15,21 @@ import { log } from 'src/shared/vanilla';
 import { join, resolve } from 'upath';
 
 type CaptureCtx = Parameters<typeof captureException>[1];
+interface NativeCrashEvent {
+  exception?: {
+    values?: NativeCrashException[];
+  };
+}
+interface NativeCrashException {
+  stacktrace?: {
+    frames?: NativeCrashFrame[];
+  };
+  type?: string;
+  value?: string;
+}
+interface NativeCrashFrame {
+  function?: string;
+}
 const UPDATER_FULL_DOWNLOAD_FALLBACK_MESSAGE =
   'Cannot download differentially, fallback to full download';
 const UPDATER_FULL_DOWNLOAD_FALLBACK_IGNORE_MS = 5 * 60 * 1000;
@@ -210,6 +225,19 @@ export const isValidUrl = (url: string): boolean => {
 };
 
 /**
+ * Checks if a native crash report is a known Node/V8 worker delayed-task abort
+ * emitted by Electron during process teardown.
+ * @param event The Sentry event to check
+ * @returns Whether the event should be ignored
+ */
+export function isIgnoredNativeCrashEvent(event: NativeCrashEvent): boolean {
+  const exceptions = event.exception?.values;
+  if (!exceptions) return false;
+
+  return exceptions.some(isNodeWorkerDelayedTaskAbort);
+}
+
+/**
  * Checks if an update error should be ignored (not reported to Sentry)
  * @param error The error to check
  * @param message An optional additional message
@@ -301,6 +329,22 @@ export function markUpdaterFullDownloadFallback(message: unknown) {
   updaterFullDownloadFallbackAt = Date.now();
 }
 
+/**
+ * Checks whether any native stack frame function contains the expected text.
+ * Minidump frame names can include namespaces, class names, or symbol prefixes,
+ * so substring matching keeps the signature resilient without broadening it too
+ * far.
+ * @param frames The native stack frames from the minidump exception
+ * @param expectedFunction The function name fragment to find
+ * @returns Whether any frame function contains the expected fragment
+ */
+function frameFunctionIncludes(
+  frames: NativeCrashFrame[],
+  expectedFunction: string,
+) {
+  return frames.some((frame) => frame.function?.includes(expectedFunction));
+}
+
 function getErrorDetails(error: unknown) {
   if (typeof error === 'string') {
     return {
@@ -387,6 +431,41 @@ function isNetworkError(error: unknown): boolean {
     captureElectronError(e);
     return false;
   }
+}
+
+/**
+ * Checks for a known Electron/Node native abort where V8's memory-pool cleanup
+ * reposts a delayed worker-thread task through libuv while the async handle is
+ * closing. The signature is intentionally strict so unrelated breakpoint
+ * minidumps still reach Sentry.
+ * @param exception The native crash exception from the Sentry minidump event
+ * @returns Whether the exception matches the Node worker delayed-task abort
+ */
+function isNodeWorkerDelayedTaskAbort(exception: NativeCrashException) {
+  if (!exception.type?.includes('EXCEPTION_BREAKPOINT')) return false;
+  if (!exception.value?.includes('Fatal Error')) return false;
+
+  const frames = exception.stacktrace?.frames;
+  if (!frames) return false;
+
+  const hasNativeAbort =
+    frameFunctionIncludes(frames, 'wil::details::DebugBreak') &&
+    frameFunctionIncludes(frames, 'uv_fatal_error');
+  const hasAsyncSend = frameFunctionIncludes(frames, 'uv_async_send');
+  const hasDelayedTaskScheduler = frameFunctionIncludes(
+    frames,
+    'WorkerThreadsTaskRunner::DelayedTaskScheduler::PostDelayedTask',
+  );
+  const hasMemoryPoolReleaseTask = frameFunctionIncludes(
+    frames,
+    'MemoryPool::PostDelayedReleaseTask',
+  );
+
+  return (
+    hasNativeAbort &&
+    hasAsyncSend &&
+    (hasDelayedTaskScheduler || hasMemoryPoolReleaseTask)
+  );
 }
 
 /**

@@ -28,6 +28,7 @@ import {
 import { initUpdater } from 'src-electron/main/updater';
 import {
   captureElectronError,
+  isIgnoredNativeCrashEvent,
   isIgnoredUpdateError,
   isUpdaterFullDownloadFallbackError,
 } from 'src-electron/main/utils';
@@ -60,6 +61,10 @@ initSentry({
   beforeSend(event) {
     try {
       if (quitStatus.isAppQuitting) {
+        return null;
+      }
+
+      if (isIgnoredNativeCrashEvent(event)) {
         return null;
       }
 
