@@ -50,6 +50,7 @@ Voor **hybride** of **fysieke** gemeentevergaderingen bevat de geïntegreerde me
 - **Geavanceerde mediabediening**: Media-miniaturen met zoom- en pan-mogelijkheden
 - **Aangepaste timing**: Stel aangepaste start- en eindtijden in voor het afspelen van media
 - **Afspeelbediening**: Gebruiksvriendelijke pauze-/afspelen-/stopknoppen met sneltoetsen
+- **Live preview en snelheid controle**: Bekijk het publiek scherm en pas eventueel de afspeelsnelheid van audio of video aan
 - **Ondersteuning voor meerdere monitoren**: Automatische detectie en beheer van externe monitoren
 - **Schone presentatie**: Afleidingsvrije mediapresentatie-interface
 
@@ -67,13 +68,14 @@ Voor **hybride** of **fysieke** gemeentevergaderingen bevat de geïntegreerde me
 
 - **Automatisch schakelen van scènes**: Naadloze integratie met OBS Studio voor hybride vergaderingen
 - **Scènebeheer**: Automatisch schakelen tussen camera-, media- en andere scènes
+- **Opname besturingselementen**: Start en stop OBS opnames van M3 wanneer ingeschakeld
 
 ### Media-import en -beheer {#about-media-import}
 
 - **JWPUB-bestanden**: Importeer en beheer JWPUB-bestanden eenvoudig
 - **JWLPLAYLIST-bestanden**: Ondersteuning voor JW Library-afspeellijstbestanden
 - **Aangepaste media**: Importeer eigen video's, afbeeldingen, audiobestanden en PDF-bestanden
-- **Audiobijbel**: Importeer Studiebijbelmedia en geluidsopnamen van de Nieuwe-Wereldvertaling
+- **Bijbel media**: Importeer Studie Bijbel media, onderteken taal en audio opnames van de Nieuwe Wereld Vertaling
 - **Openbare lezingen**: Altijd de media voor openbare lezingen klaar voor gebruik met de S-34-importfunctie
 
 ### Geavanceerde functies {#about-advanced-features}
@@ -81,8 +83,10 @@ Voor **hybride** of **fysieke** gemeentevergaderingen bevat de geïntegreerde me
 - **Mapbewaking**: Synchroniseer automatisch media uit bewaakte mappen (Dropbox, OneDrive, enz.)
 - **Media-export**: Exporteer automatisch media naar mappen, georganiseerd op datum
 - **Websitepresentatie**: Presenteer de officiële website op externe monitoren
+- **Vergadering timer**: Optionele timer voor timing vergadering onderdelen
+- **Meeting recording helpers**: Bestuur OBS opname of een externe opnametoepassing
 - **Sneltoetsen**: Aanpasbare sneltoetsen voor veel functies
-- **Meerdere profielen**: Beheer verschillende gemeenten of groepen met aparte profielen
+- **Meerdere profielen**: Beheer verschillende congregaties of groepen met afzonderlijke profielen, waaronder profielinstellingen importeren en exporteren
 
 ## Werkt M³ in mijn eigen taal? {#does-m3-work-in-my-language}
 
