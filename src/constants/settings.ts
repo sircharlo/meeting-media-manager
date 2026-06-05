@@ -195,6 +195,11 @@ export const settingsDefinitions: SettingsItems = {
     group: 'mediaRetrievalPlayback',
     type: 'toggle',
   },
+  enableMediaPreview: {
+    depends: 'enableMediaDisplayButton',
+    group: 'mediaRetrievalPlayback',
+    type: 'toggle',
+  },
   beginPlaybackPaused: {
     depends: 'enableMediaDisplayButton',
     group: 'mediaRetrievalPlayback',
@@ -752,6 +757,7 @@ export const defaultSettings: SettingsValues = {
   enableKeyboardShortcuts: false,
   enableMediaAutoExport: false,
   enableMediaDisplayButton: false,
+  enableMediaPreview: true,
   enableMediaWindowFadeTransitions: true,
   enableMusicButton: true,
   enablePinyinSongs: false,

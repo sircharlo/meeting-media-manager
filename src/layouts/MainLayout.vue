@@ -12,13 +12,15 @@
       <router-view />
     </q-page-container>
 
+    <MediaPreview />
+
     <!-- Footer -->
     <q-footer
       v-if="
         currentSettings?.enableMediaDisplayButton ||
         currentSettings?.enableMusicButton
       "
-      class="q-pb-sm"
+      class="q-pb-sm action-island-container"
       :style="
         'left: calc(50% + ' + (miniState ? '28' : '150') + 'px) !important'
       "
@@ -49,6 +51,7 @@ import {
 } from '@vueuse/core';
 import { queues } from 'boot/globals';
 import HeaderBase from 'components/header/HeaderBase.vue';
+import MediaPreview from 'components/media/MediaPreview.vue';
 import ActionIsland from 'components/ui/ActionIsland.vue';
 import AnnouncementBanner from 'components/ui/AnnouncementBanner.vue';
 import NavDrawer from 'components/ui/NavDrawer.vue';
