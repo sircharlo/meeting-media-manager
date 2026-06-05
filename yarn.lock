@@ -5787,9 +5787,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/test-utils@npm:^2.4.10":
-  version: 2.4.10
-  resolution: "@vue/test-utils@npm:2.4.10"
+"@vue/test-utils@npm:^2.4.11":
+  version: 2.4.11
+  resolution: "@vue/test-utils@npm:2.4.11"
   dependencies:
     js-beautify: "npm:^1.14.9"
     vue-component-type-helpers: "npm:^3.0.0"
@@ -5800,7 +5800,7 @@ __metadata:
   peerDependenciesMeta:
     "@vue/server-renderer":
       optional: true
-  checksum: 10c0/5dee1a15a4908d1ad82d9940307223214d9fa93e2cdffdc294b72880f73db3e1938bd2f290b096a22b8b8d84db481d4aea7989fcb4c9e5e63ea16896c9a4f4fd
+  checksum: 10c0/7e964df1b011de5e0c782f61300ce22d43ccdca5c58dfe07303d700cd1a8e423480b3144076f2a83c241326d25ab383a9e3d3fe51509c7adc3fa276dd465c78b
   languageName: node
   linkType: hard
 
@@ -6788,13 +6788,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"builder-util-runtime@npm:9.6.3":
-  version: 9.6.3
-  resolution: "builder-util-runtime@npm:9.6.3"
+"builder-util-runtime@npm:9.7.0":
+  version: 9.7.0
+  resolution: "builder-util-runtime@npm:9.7.0"
   dependencies:
     debug: "npm:^4.3.4"
     sax: "npm:^1.2.4"
-  checksum: 10c0/e6f7d0ee5ca0a9a1715f0b81355776f44eb2180637b5148abf07fd4ef22911b3ce2db61ec144b1aad2523e8d76daf60437f6ca1c488e5ae404b741d68d48fae8
+  checksum: 10c0/4dac3788ce3776d268fd0cbfabe2d5168b8197fba90beda7fd2f729bfa51e689ffe0bf98b9162a1cac7f1191eb5bbcc6ca81bcbc5070df7a469fd7af511a1f31
   languageName: node
   linkType: hard
 
@@ -8342,11 +8342,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-updater@npm:^6.8.8":
-  version: 6.8.8
-  resolution: "electron-updater@npm:6.8.8"
+"electron-updater@npm:^6.8.9":
+  version: 6.8.9
+  resolution: "electron-updater@npm:6.8.9"
   dependencies:
-    builder-util-runtime: "npm:9.6.3"
+    builder-util-runtime: "npm:9.7.0"
     fs-extra: "npm:^10.1.0"
     js-yaml: "npm:^4.1.0"
     lazy-val: "npm:^1.0.5"
@@ -8354,7 +8354,7 @@ __metadata:
     lodash.isequal: "npm:^4.5.0"
     semver: "npm:~7.7.3"
     tiny-typed-emitter: "npm:^2.1.0"
-  checksum: 10c0/759767445dd61cb95c84e9adee913bd98a5501813affbd39f19376641aa6ac3087ec4d65d4e48a4359a6d78799856a2a1e2bff12cddd720630ff082051173589
+  checksum: 10c0/a95d8ffcadc52fe289b0e44721ad78cab6bf2a4d5951f1242e0dbdf2a065e42ca64d48ee5040bd55d6320b8491ec90ae3f23eb7e343540b92e004799eb001aab
   languageName: node
   linkType: hard
 
@@ -11967,7 +11967,7 @@ __metadata:
     "@vitest/eslint-plugin": "npm:^1.6.19"
     "@vue/eslint-config-prettier": "npm:^10.2.0"
     "@vue/eslint-config-typescript": "npm:^14.8.0"
-    "@vue/test-utils": "npm:^2.4.10"
+    "@vue/test-utils": "npm:^2.4.11"
     "@vueuse/core": "npm:^14.3.0"
     "@vueuse/router": "npm:^14.3.0"
     autoprefixer: "npm:^10.5.0"
@@ -11981,7 +11981,7 @@ __metadata:
     electron: "npm:^41.0.0"
     electron-builder: "npm:26.8.1"
     electron-dl-manager: "npm:^4.2.3"
-    electron-updater: "npm:^6.8.8"
+    electron-updater: "npm:^6.8.9"
     eslint: "npm:^10.4.1"
     eslint-plugin-perfectionist: "npm:^5.9.0"
     eslint-plugin-vue: "npm:^10.9.2"
