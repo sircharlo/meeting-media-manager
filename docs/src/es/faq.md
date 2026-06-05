@@ -81,6 +81,8 @@ You can import custom media in several ways:
 - **Drag and Drop**: Drag files directly into M³
 - **Folder Monitoring**: Set up a watched folder for automatic imports
 - **JWPUB Files and Playlists**: Import publications and playlists
+- **Medios públicos de comunicación**: Importar archivos JWPUB S-34 o S-34mp para medios de comunicación públicos
+- **Herramientas bíblicas y de estudio**: Añadir grabaciones bíblicas en audio, medios bíblicos de estudio o medios bíblicos de firma
 
 ### :speaker: Can I import audio Bible recordings? {#audio-bible}
 
@@ -124,6 +126,12 @@ Background music features include:
 - Independent volume control
 - Configurable stop buffer time
 
+### :stopwatch: ¿Incluye M3 un temporizador de reuniones? {#faq-meeting-timer}
+
+Yes. Cuando está activado, M3 puede mostrar una ventana de temporizador separada para la temporización del participante. Puede contar hacia arriba o hacia abajo, mostrar la hora actual, mostrar una cuenta regresiva de la prereunión, y opcionalmente indicar las horas extraordinarias o si la reunión está por delante o por detrás del horario.
+
+El temporizador es una función beta y sólo debería ser activado si se aprueba localmente.
+
 ### :video_camera: How do I set up the Zoom integration? {#zoom-setup}
 
 To integrate with Zoom:
@@ -161,6 +169,13 @@ This feature delays sharing images to OBS until you manually trigger them. This 
 - Having more control over timing
 - Avoiding premature scene changes
 
+### :record_button: ¿Pueden las reuniones sin precedentes de M3? {#faq-recordings}
+
+M3 no incluye una grabadora integrada, pero puede ayudar a controlar la grabación de dos maneras:
+
+- Si utiliza OBS Studio, habilite los controles de grabación OBS e inicie o detenga la grabación OBS desde la ventana emergente OBS
+- Si utiliza otra aplicación de grabación, configure los atajos de teclado para que M3 pueda enviar los comandos de inicio y detener desde la ventana emergente de grabaciones de reuniones
+
 ## Advanced Features {#faq-advanced-features}
 
 ### :cloud: How does folder monitoring work? {#faq-folder-monitoring}
@@ -187,6 +202,8 @@ Yes! M³ supports multiple profiles for:
 - Special events
 - Different groups
 - Separate settings and media for each
+
+Los perfiles también pueden ser exportados a un archivo JSON e importados en otro equipo o en otro perfil. La importación reemplaza la configuración del perfil actual.
 
 ## Troubleshooting {#faq-troubleshooting}
 
