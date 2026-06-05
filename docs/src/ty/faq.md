@@ -81,8 +81,8 @@ E nehenehe tā ’oe e fa’ahu’e mai i te mau ha’apararura’a i mā’itih
 - ’Ūto’ira’a e tōmura’a: A ’ūtoi i te mau rorou na roto tonu i te fa’anahora’a M³
 - Ara’ira’a pu’era’a rorou: A fa’anaho i te hō’ē pu’era’a rorou ara’ihia nō te mau fa’ahu’era’a noa
 - Mau rorou JWPUB e te mau ‘āfata hīmene: A fa’ahu’e mai i te mau puta e te mau ‘āfata hīmene
-- **Public Talk Media**: Import S-34 or S-34mp JWPUB files for public talk media
-- **Bible and Study Bible Tools**: Add audio Bible recordings, Study Bible media, or sign-language Bible media
+- Te mau ve’a nō te Orerora’a parau i mua i te ta’ata rahi: A tāvaha i te mau pu’e parau JWPUB S-34 aore rā S-34mp nō te mau ve’a o te orerora’a parau
+- Te mau mauihaa nō te Bibilia e te Bibilia ha’api’ira’a: A tu’u atu i te mau haruharu-reo o te Bibilia, te mau ve’a Bibilia ha’api’ira’a, aore rā te mau ve’a Bibilia reo o te rima
 
 ### :speaker: E nehenehe ānei iā’u e fa’ahu’e mai i te mau haruharura’a pātere reo o te Bibilia? {#audio-bible}
 
@@ -126,11 +126,11 @@ Teie te mau rāve’a nō te hīmene aratō:
 - Te fa’atere-ano’i-’ō’oā o te pūai reo
 - Te taime fa’ata’ara’a-tāpū-muri e nehenehe e fa’ahuru ’ē
 
-### :stopwatch: Does M³ include a meeting timer? {#faq-meeting-timer}
+### :stopwatch: Te vai ra anei te ho’ē taime putuputura’a i roto i te M³? {#faq-meeting-timer}
 
-Yes. When enabled, M³ can show a separate timer window for participant timing. It can count up or down, show the current time, show a pre-meeting countdown, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+E. Ia ha’amā-hia, e nehenehe te M³ e fa’a’ite i te ho’ē ha’amaramarama taime taa ’ē nō te faito i te taime o te feiā e paraparau ra. E nehenehe te reira e taio i ni’a aore rā i raro, e fa’a’ite i te hora mau, e fa’a’ite i te taime fa’ataime nō te putuputura’a, e mai te peu e hina’aro ’oe, e fa’a’ite i te taime hau aore rā mai te peu e te mua ra te putuputura’a aore rā te muri ra i ni’a i te porotarama.
 
-The timer is a beta feature and should only be enabled if approved locally.
+E hoho’a-taata beta teie ha’amaramarama taime, eiaha e fa’a’ohipa i te reira ma te ’ore e fāriihia e te mau ti’a o te amuira’a.
 
 ### :video_camera: E nāfea vau e fa’anaho ai i te tū’atira’a ia Zoom? {#zoom-setup}
 
@@ -169,12 +169,12 @@ Tē fa’atōrorea nei teie fa’anahora’a i te tū’oha’ara’a hōho’a 
 - Te fā’fa’ahiahia o te rāve’a nō te fa’atere pāpū i te taime
 - Te ’ape’ara’a i te tauira’a tiri vitiviti roa
 
-### :record_button: Can M³ record meetings? {#faq-recordings}
+### :record_button: E nehenehe anei te M³ e haruharu i te putuputura’a? {#faq-recordings}
 
-M³ does not include a built-in recorder, but it can help control recording in two ways:
+Aita te M³ e fa’a’ohipa ra i te ho’ē matini haruharu-reo o roto, tera rā, e nehenehe te reira e tauturu i te fa’atere-ra’a i te haruharu-reo nā roto e piti huru:
 
-- If you use OBS Studio, enable OBS recording controls and start or stop OBS recording from the OBS popup
-- If you use another recording app, configure keyboard shortcuts so M³ can send the start and stop commands from the meeting recordings popup
+- Mai te peu e te fa’a’ohipa ra ’oe i te OBS Studio, a ha’amā i te mau fa’atere-ra’a haruharu-reo OBS e a ha’amata aore rā a fa’aea i te haruharu-reo OBS mai roto mai i te ha’amaramarama OBS
+- Mai te peu e te fa’a’ohipa ra ’oe i te tahi atu fa’anahora’a haruharu-reo, a fa’anahohia te mau taputō pereo’o i ni’a i te tāpaparu’ira’a ia nehenehe te M³ e tono i te mau fa’auera’a ha’amatara’a e fa’aea-ra’a mai roto mai i te ha’amaramarama haruharu-reo o te putuputura’a
 
 ## Mau tātara’a hōhonu {#faq-advanced-features}
 
@@ -203,7 +203,7 @@ Tē rave ti’amā nei te fa’atahe-pāpāho i te:
 - Te mau pupu ta’a ’ē
 - Te mau fa’anahora’a ’e te mau pāpāho ta’a ’ē nō rātou tairuru
 
-Profiles can also be exported to a JSON file and imported on another computer or into another profile. Importing replaces the current profile's settings.
+E nehenehe ato’a te mau hoho’a-taata e fa’ahaponohia i roto i te ho’ē pu’e parau JSON e e tāvahahia i ni’a i te tahi atu roro uira aore rā i roto i te tahi atu hoho’a-taata. E mono te tāvaha-ra’a i te mau fa’anahora’a o te hoho’a-taata o tei fa’a’ohipa-hia i teie taime.
 
 ## Te tātara-parau-fifi-ra’a {#faq-troubleshooting}
 

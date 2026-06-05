@@ -128,26 +128,26 @@ Configurez des raccourcis clavier personnalisés pour un accès rapide. Notez qu
 
 **Note (\*):** Raccourci global - disponible même lorsque l'application n'est pas focalisée
 
-## Display Tools {#display-tools}
+## Outils d'affichage {#display-tools}
 
-### Media Display Window {#media-display-window}
+### Fenêtre d'affichage des médias {#media-display-window}
 
-The media display window is the audience-facing window. It can be placed on an external screen or used in a windowed setup depending on your equipment.
+La fenêtre d'affichage des médias est la fenêtre orientée vers le public. Il peut être placé sur un écran externe ou utilisé dans une configuration fenêtrée selon votre équipement.
 
-Use the display popup to:
+Utiliser la popup d'affichage pour :
 
-- Show or hide the media display
-- Choose the display or window type
-- Select a temporary custom background instead of the yeartext
-- Use an available camera as the background. This is mostly used in sign-language congregations.
+- Afficher/Masquer l'affichage des médias
+- Choisissez le type d'affichage ou de fenêtre
+- Sélectionnez un arrière-plan temporaire personnalisé au lieu du texte de l'année
+- Utiliser une caméra disponible en tant qu'arrière-plan. Ceci est principalement utilisé dans les congrégations de langue des signes.
 
-Please note that custom backgrounds are temporary and are not saved after M³ quits.
+Veuillez noter que les arrière-plans personnalisés sont temporaires et ne sont pas sauvegardés après avoir quitté M3.
 
-### Meeting Timer {#user-guide-meeting-timer}
+### Horaire de réunion {#user-guide-meeting-timer}
 
-When the meeting timer is enabled, M³ can show a separate timer window for timing participant parts. The timer can count up or down, show the current time, show a meeting countdown before scheduled meetings, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+Lorsque le minuteur de la réunion est activé, M3 peut afficher une fenêtre de minuterie séparée pour les parties des participants. La minuterie peut compter vers le haut ou vers le bas, afficher l'heure actuelle, afficher un compte à rebours de la réunion avant les réunions planifiées, et indiquez éventuellement des heures supplémentaires ou si la réunion est en avance ou en retard.
 
-The timer is a beta feature and should only be used when approved locally.
+La minuterie est une fonctionnalité bêta et ne doit être utilisée que si elle est approuvée localement.
 
 ## Musique de fond {#user-guide-background-music}
 
@@ -190,7 +190,7 @@ M³ change automatiquement les scènes OBS pendant les présentations :
 - **Scène média** - Affiche le contenu multimédia
 - **Scène image** - Affiche les images (peut être reportée si activée)
 - **Changement automatique** - Les scènes changent selon le type de média et les paramètres
-- **Recording Controls** - If enabled, M³ can start and stop OBS recording from the OBS popup
+- **Contrôles d'enregistrement** - Si activé, M3 peut démarrer et arrêter l'enregistrement d'OBS depuis la popup d'OBS
 
 ### Fonctionnalités OBS avancées {#advanced-obs}
 
@@ -268,8 +268,8 @@ Ajoutez vos propres fichiers multimédias à M³ :
 3. **Surveillance de dossiers** - Configurez un dossier surveillé pour les imports automatiques
 4. **Fichiers JWPUB et listes de lecture** - Importez des publications et des listes de lecture
 5. **Médias pour discours publics (S-34 / S-34mp)** - Importez des médias pour discours publics à l'aide de fichiers JWPUB S‑34 ou S‑34mp
-6. **Videos from the official website** - Search for videos and add them to the selected date
-7. **Study Bible and sign-language Bible media** - Add images, videos, maps, historical references, or sign-language Bible videos for selected passages
+6. **Vidéos du site officiel** - Recherchez des vidéos et ajoutez-les à la date sélectionnée
+7. **Bible d'étude et médias bibliques de langue des signes** - Ajouter des images, des vidéos, des cartes, des références historiques ou des vidéos bibliques de langue des signes pour certains passages
 
 ### Import et gestion des médias {#managing-imported-media}
 
@@ -288,9 +288,9 @@ Importez des enregistrements audio de versets bibliques :
 4. Téléchargez les fichiers audio
 5. Utilisez-les
 
-### Profile Settings Import and Export {#profile-settings-import-export}
+### Import et exportation des paramètres du profil {#profile-settings-import-export}
 
-Each profile's settings can be exported to a JSON file from Settings. Importing a profile settings file replaces the current profile's settings, which is useful when moving a setup to another computer or restoring a known configuration.
+Les paramètres de chaque profil peuvent être exportés vers un fichier JSON à partir des paramètres. L'importation d'un fichier de paramètres de profil remplace les paramètres du profil actuel, ce qui est utile lors du déplacement d'une configuration vers un autre ordinateur ou de la restauration d'une configuration connue.
 
 ## Surveillance des dossiers et exportation {#user-guide-folder-monitoring}
 
@@ -324,21 +324,21 @@ Partagez le site officiel sur des écrans externes :
 
 ### Contrôles du site web {#website-controls}
 
-- **Open Website** - Open a separate website window
-- **Start Mirroring** - Show the website window in the media display for the audience
-- **Stop Mirroring** - Stop showing the website and return to the yeartext or media display background
+- **Ouvrir le site Web** - Ouvrir une fenêtre de site web séparée
+- **Commencer à faire un miroir** - Afficher la fenêtre du site dans l'affichage des médias pour le public
+- **Arrêter de faire un miroir** - Arrêter d'afficher le site web et revenir au fond d'affichage du texte de l'année ou du média
 - **Navigation** - Contrôles de navigation standard du navigateur
 - **Actualiser** - Recharger la page actuelle
 - **Fermer** - Quitter le mode de présentation du site web
-- **Auto Return** - Optionally return to the media list automatically after stopping website mirroring
+- **Retour automatique** - Vous pouvez éventuellement revenir à la liste des médias automatiquement après l'arrêt du miroir du site web
 
 ## Enregistrements de réunion {#meeting-recordings}
 
-M³ can help control meeting recording, but it does not include a built-in recorder.
+M3 peut aider à contrôler l'enregistrement de réunion, mais il ne comprend pas un enregistreur intégré.
 
-- **OBS Recording** - If OBS recording controls are enabled, use the OBS popup to start and stop OBS recording
-- **External Recording App** - Configure keyboard shortcuts for a separate recording app, then use the meeting recordings popup to send those shortcuts
-- **Recording Folder** - Configure a recording folder to show a quick button that opens the folder where recordings are saved
+- **Enregistrement OBS** - Si les contrôles d'enregistrement d'OBS sont activés, utilisez la popup d'OBS pour démarrer et arrêter l'enregistrement d'OBS
+- **Application d'enregistrement externe** - Configurer les raccourcis clavier pour une application d'enregistrement séparée, puis utiliser la popup des enregistrements de la réunion pour envoyer ces raccourcis
+- **Dossier d'enregistrement** - Configurer un dossier d'enregistrement pour afficher un bouton rapide qui ouvre le dossier où les enregistrements sont enregistrés
 
 ## Fonctionnalités avancées {#user-guide-advanced-features}
 
@@ -389,7 +389,7 @@ Configurez des raccourcis clavier personnalisés pour une utilisation efficace :
 - Réduisez la résolution maximale
 - Effacez les anciens fichiers mis en cache
 - Vérifiez l'espace disque disponible
-- If the app shows graphical glitches or crashes, try disabling hardware acceleration and restart M³
+- Si l'application affiche des bugs ou des plantages graphiques, essayez de désactiver l'accélération matérielle et de redémarrer M3
 
 #### Problèmes de langue {#user-guide-language-issues}
 
