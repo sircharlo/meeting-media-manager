@@ -268,8 +268,8 @@ Te mau raveraa maita’i a’e:
 3. Te hi’opo’ara’a i te mau fātura - ’A ha’amau i te hō’ē fātura hi’opo’ahia nō te tāpe’a-’ōhie-ra’a i te mau parau
 4. Te mau parau JWPUB ’e te mau tāpura pehe - ’A tapea mai i te mau parau nene’i ’e te mau tāpura pehe
 5. Te mau rāve’a ha’amāramaramara’a nō te ’ōrerora’a parau (S-34 / S-34mp) - ’A tapea mai i te mau rāve’a nō te ’ōrerora’a parau nā roto i te mau parau JWPUB S-34 ’aore rā S-34mp
-6. **Videos from the official website** - Search for videos and add them to the selected date
-7. **Study Bible and sign-language Bible media** - Add images, videos, maps, historical references, or sign-language Bible videos for selected passages
+6. Te mau Video mai te reni matamua - A imi i te mau video e a tu’u atu i ni’a i te mahana i mā’itihia
+7. Te Bibilia Ha’api’ira’a e te mau video Bibilia reo turi - A tu’u atu i te mau hōho’a, te mau video, te mau mahere, te mau ha’amāramaramara’a nō te parau nō tahito, aore rā te mau video Bibilia reo turi nō te mau tu’u parau i mā’itihia
 
 ### Te fa’aterera’a i te mau rāve’a ha’amāramaramara’a i tapeahia mai {#managing-imported-media}
 
@@ -288,9 +288,9 @@ Te tapea-mai-ra’a i te mau rīti’o o te mau tuha’a Bibilia:
 4. ’A huti mai i te mau rīti’o oro’a
 5. ’A fa’a’ohipa i te reira
 
-### Profile Settings Import and Export {#profile-settings-import-export}
+### Te Fa’anahora’a nō te ’Imi-ra’a e te Tono-ra’a i te mau Parau nō te ’Ite-mata {#profile-settings-import-export}
 
-Each profile's settings can be exported to a JSON file from Settings. Importing a profile settings file replaces the current profile's settings, which is useful when moving a setup to another computer or restoring a known configuration.
+E nehenehe te mau fa’anahora’a o te mau ’ite-mata tāta’itahi e tono-hia atu i roto i te ho’ē pu’e parau JSON mai roto mai i te Fa’anahora’a. Te ’imi-ra’a mai i te ho’ē pu’e parau nō te mau fa’anahora’a, e mono ïa i te mau fa’anahora’a o te ’ite-mata e fa’a’ohipa-hia ra i teie taime, e mea faufa’a roa râ teie nō te fa’atere-ra’a i te ho’ē fa’anahora’a i ni’a i te tahi atu roro uira aore rā nō te fa’aho’i-ra’a i te ho’ē fa’anahora’a i te huru maita’i i matauhia.
 
 ## Te hi’opo’a-ra’a i te pu’e parau ’e te fa’anahora’a i te reira {#user-guide-folder-monitoring}
 
@@ -324,21 +324,21 @@ Te tu’ura’a i te ’Itenēreta ’Ohipa i ni’a i te mau matāmata-rāve’
 
 ### Te mau rāve’a fa’atere nō te ’Itenēreta {#website-controls}
 
-- **Open Website** - Open a separate website window
-- **Start Mirroring** - Show the website window in the media display for the audience
-- **Stop Mirroring** - Stop showing the website and return to the yeartext or media display background
+- Iriti i te reni matamua - Iriti i te ho’ē ha’amaramarama reni matamua ta’a ’ē
+- Ha’amata i te Fa’aata-ra’a - Fa’a’ite i te ha’amaramarama o te reni matamua i roto i te fa’a’itera’a matini nō te feiā mata’ita’i
+- Ha’amata’i i te Fa’aata-ra’a - Fa’a’ore i te fa’a’itera’a i te reni matamua e fa’aho’i atu i te mata’i-nūmera nō te matahiti aore rā i te tahua o te fa’a’itera’a matini
 - Te terera’a - Te mau rāve’a fa’atere matauhia nō te roro-’Itenēreta
 - Te fa’ahou-ra’a - ’A fa’atahe fa’ahou i te api e vai nei
 - Te tapira’a - ’A ha’aputu i te huru fa’a’itera’a ’Itenēreta
-- **Auto Return** - Optionally return to the media list automatically after stopping website mirroring
+- Ha’amata’i Uira - Mai te peu e hina’aro, a fa’aho’i atu i te tāpura matini i muri a’e i te fa’a’orera’a i te fa’aata-ra’a o te reni matamua
 
-## Meeting Recordings {#meeting-recordings}
+## Te mau Haruharu-reo nō te Putuputura’a {#meeting-recordings}
 
-M³ can help control meeting recording, but it does not include a built-in recorder.
+E nehenehe te M³ e tauturu i te fa’atere i te haruharu-reo o te putuputura’a, e aita rā e haruharu-reo i roto i te reira.
 
-- **OBS Recording** - If OBS recording controls are enabled, use the OBS popup to start and stop OBS recording
-- **External Recording App** - Configure keyboard shortcuts for a separate recording app, then use the meeting recordings popup to send those shortcuts
-- **Recording Folder** - Configure a recording folder to show a quick button that opens the folder where recordings are saved
+- Haruharu-reo OBS - Mai te peu e ua fa’ati’ahia te mau fa’aterera’a haruharu-reo OBS, a fa’a’ohipa i te popo’i OBS nō te ha’amata e nō te fa’ata’a i te haruharu-reo OBS
+- Te Taui-ra’a Haruharu-reo Atu-a’e - A fa’anahohia te mau tāpa’o pāpere pātō-pātē nō te ho’ē taui-ra’a haruharu-reo ta’a ’ē, i reira a fa’a’ohipa ai i te popo’i nō te mau haruharu-reo putuputura’a nō te tono i taua mau tāpa’o pāpere pātō-pātē ra
+- Pātura Haruharu-reo - A fa’anaho i te ho’ē pātura haruharu-reo nō te fa’a’ite i te ho’ē piti’o vave o te iriti i te pātura i reira te haruharu-reo e vaiiho-hia ’i
 
 ## Te mau āravihi fa’a’ohipa {#user-guide-advanced-features}
 
@@ -389,7 +389,7 @@ Te fa’anahora’a i te mau rāve’a pāpa’i-’āpee ta’a ’ē nō te �
 - ’A fa’aiti i te faito teitei o te hōho’a
 - ’A tāmā i te mau cache tahito
 - ’A hi’o i te vāhi tei toe i roto i te disk
-- If the app shows graphical glitches or crashes, try disabling hardware acceleration and restart M³
+- Mai te peu e e ’ite-hia te mau hapa hōho’a aore rā e topa te porotarama, a tamata i te fa’a’ore i te fa’a’ohipa-ra’a i te mau matini ha’avitiviti e a ha’amata fa’ahou i te M³
 
 #### Te mau fifi nō te reo {#user-guide-language-issues}
 

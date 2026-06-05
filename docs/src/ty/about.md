@@ -50,7 +50,7 @@ Nō te mau putuputura’a ’āmui ’aore rā i te vāhi rurura’a, te vai ra 
 - Mau fa’aterera’a media hōhonu: Mau ho’ho’a media ri’i ’e te rāve’a fa’arahi ’e te fa’ahu’e
 - Fa’aa’ano i te taime: ’A fa’anaho i te taime ha’amatara’a ’e te taime fa’ahope’ara’a ta’a ’ē nō te fa’ata’ira’a media
 - Mau fa’aterera’a fa’ata’ira’a: Mau pitopito fa’ahoromāha/fa’ata’i/fa’ahope ’ōhie ma te mau rāve’a ’ōpau o te pitopitora’a parau
-- **Live preview and speed control**: Preview the audience display and optionally adjust audio or video playback speed
+- Hi’opo’a-mua-ra’a ora e te fa’atere-re’a: A hi’opo’a-mua i te fa’a’ite-ra’a i te feiā mata’ita’i, e mai te peu e hina’aro ’oe, a fa’atere i te vitiviti o te fa’aro’o aore rā o te video
 - Tōturu nō te tahi mau pāpau uira: ’Ite-i’oa-noa-ra’a ’e te fa’aterera’a o te pāpau uira nō rati
 - Fa’a’itera’a ma’atua: Fa’anahora’a fa’a’itera’a media mā nō te pāruru i te fāfārea
 
@@ -68,14 +68,14 @@ Nō te mau putuputura’a ’āmui ’aore rā i te vāhi rurura’a, te vai ra 
 
 - Tauira’a vāhi i’oa-noa: Tū’atira’a hō’ē-noa ’e o OBS Studio nō te mau putuputura’a ’āmui
 - Fa’aterera’a vāhi: Tauira’a i’oa-noa i rōpū i te tāmata, te media, ’e te tahi atu mau vāhi
-- **Recording controls**: Start and stop OBS recordings from M³ when enabled
+- Te mau fa’atere-ra’a haruharu-reo: A ha’amata e a fa’aea i te mau haruharu-reo OBS mai roto mai i te M³ ia ha’amā-hia
 
 ### Te tōra’a mai ’e te fa’aterera’a media {#about-media-import}
 
 - Mau putu’ite JWPUB: ’A tō mai ’e ’a fa’atere i te mau putu’ite JWPUB ma te ’ōhie
 - Mau putu’ite JWLPLAYLIST: Tōturu nō te mau putu’ite rāpahu pehe a te JW Library
 - Media i’oti: ’A tō mai i te mau tōta’ira’a pata, te mau hōho’a, te mau putu’ite fa’aro’o, ’e te mau putu’ite PDF i’oti
-- **Bible media**: Import Study Bible media, sign-language Bible media, and audio recordings of the New World Translation
+- Te mau ve’a Bibilia: A tāvaha i te mau ve’a Bibilia ha’api’ira’a, te mau ve’a Bibilia reo o te rima, e te mau haruharu-reo o te Huriraa o te ao apī
 - Mau orara’a parau i te ta’ata: ’A vaiiho noa i te hi’o-fa’ahou-ra’a media o te mau orara’a parau i te ta’ata ia ineine nō te fa’ahana’a ’e te tō mai S-34
 
 ### Mau rāve’a hōhonu {#about-advanced-features}
@@ -83,10 +83,10 @@ Nō te mau putuputura’a ’āmui ’aore rā i te vāhi rurura’a, te vai ra 
 - Arata’ira’a rāfao: E tū’ati i’oa-noa i te media nō roto mai i te mau rāfao e mātāitaihia (Dropbox, OneDrive, ’e te tahi atu)
 - Hāpono-fa’aho’i-ra’a media: E hāpono-fa’aho’i i’oa-noa i te media i roto i te mau rāfao, fa’anahohia mā te tai’o mahana
 - Te fa’a’itera’a pae natirara: Fa’a’ite i te pae natirara mana i ni’a i te mau piha hi’o nō rāpae
-- **Meeting timer**: Optional timer window for timing meeting parts
-- **Meeting recording helpers**: Control OBS recording or an external recording application
+- Te taime o te putuputura’a: Tei mā’itihia te ha’amaramarama taime no te faito i te mau tuha’a o te putuputura’a
+- Te mau tauturu nō te haruharu-reo i te putuputura’a: A fa’atere i te haruharu-reo OBS aore rā i te tahi atu fa’anahora’a haruharu-reo i rapae
 - Mau rāve’a ’atuna’o: E nehenehe e fa’anaho i te mau rāve’a ’atuna’o nō te tahi atu mau ’ohipa
-- **Multiple profiles**: Manage different congregations or groups with separate profiles, including profile settings import and export
+- Te mau hoho’a-taata rau: A fa’atere i te mau amuira’a aore rā te mau pǔpǔ taa ’ē ma te mau hoho’a-taata taa ’ē, ia amui ato’a te tāvaha-ra’a e te fa’ahapono-ra’a i te mau fa’anahora’a o te hoho’a-taata
 
 ## E tano ānei te M³ i roto i tō’u reo? {#does-m3-work-in-my-language}
 
