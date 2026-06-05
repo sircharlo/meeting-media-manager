@@ -157,6 +157,20 @@ Met deze instellingen kun je tijdelijke wijzigingen in je vergaderschema configu
 - **Nieuwe weekenddag**: Nieuwe dag voor de weekendvergadering
 - **Nieuwe weekend-tijd**: Nieuwe tijd voor de weekendvergadering
 
+### Automatische updates voor vergadering planning {#automatic-meeting-schedule-updates}
+
+<!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
+
+Wanneer ingeschakeld, controleert M3 periodiek de officiële website van Jehovah's getuigen voor vergaderdag en tijdwijzigingen en actualiseert het huidige profiel automatisch.
+
+Dit werkt alleen voor profielen die zijn toegevoegd met congregation lookup en waarvan de congregation naam niet handmatig is gewijzigd. Als synchronisatie is uitgeschakeld omdat de congregation naam is veranderd, gebruik dan **Schedule synchronisatie inschakelen** om het profiel opnieuw te koppelen.
+
+#### Ververs vergaderrooster {#refresh-meeting-schedule}
+
+<!-- **Setting**: `reSyncMeetingScheduleButton` -->
+
+Synchroniseer handmatig het huidige en toekomstige vergaderschema met de informatie van de officiële website.
+
 ## Media ophalen en afspelen {#media-retrieval-and-playback}
 
 ### Metered Connection {#metered-connection}
@@ -174,6 +188,14 @@ Schakel dit in als je een beperkte dataverbinding gebruikt om bandbreedte te bes
 Schakel de functie voor mediaweergave in. Dit is nodig om media op een tweede scherm te presenteren.
 
 **Standaard**: `false`
+
+#### Media-voorbeeld inschakelen {#enable-media-preview}
+
+<!-- **Setting**: `enableMediaPreview` -->
+
+Toon een live voorbeeld van het media-venster wanneer een afbeelding of video wordt weergegeven.
+
+**Standaard**: `true`
 
 #### Begin Playback Paused {#begin-playback-paused}
 
@@ -332,6 +354,7 @@ Configureer welke OBS-scènes voor verschillende doeleinden worden gebruikt:
 - **Scène wisselen na media**: Keer na media automatisch terug naar de vorige scène
 - **Vorige scène onthouden**: De vorige scène onthouden en herstellen
 - **Pictogrammen verbergen**: Verberg OBS-gerelateerde pictogrammen in de interface
+- **Opnamebedieningen**: Toon bedieningselementen die starten en OBS-opname van M3 stoppen
 
 :::warning Belangrijke opmerking
 
@@ -385,6 +408,58 @@ Sneltoets die wordt geactiveerd wanneer het laatste lied van de vergadering word
 
 **Standaard**: Geen
 
+### Afspraak Opnames {#meeting-opname}
+
+#### Inschakelen Externe Opname App Integratie {#enable-external-opname-app-integration}
+
+<!-- **Setting**: `recordingEnable` -->
+
+Laat M3 een aparte opname applicatie met sneltoetsen bedienen. Dit neemt niet op in M3; het stuurt de geconfigureerde snelkoppelingen wanneer u op **Opname starten** of **Opname stoppen** drukt in de meetingopnames.
+
+Deze optie is verborgen als OBS opnameopties ingeschakeld zijn. Als je OBS Studio gebruikt, gebruik dan in plaats daarvan de OBS opnamebesturing in de OBS integratie.
+
+**Standaard**: `false`
+
+#### Opname Snelkoppelingen en map {#opname-shortcuts-and-folder}
+
+<!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
+
+Configureer de sneltoets die begint met opnemen, de optionele sneltoets die de opname stopt, en de map waarin de externe app opnames opslaat. Als geen stop-snelkoppeling is opgegeven, M3 gebruikt de startsnelheid. Wanneer een map is geconfigureerd, toont M3 een knop om deze te openen.
+
+### Meeting Timer {#meeting-timer}
+
+#### Schakel Meeting Timer in {#enable-meeting-timer}
+
+<!-- **Setting**: `enableTimerDisplay` -->
+
+Schakel een apart timer-venster in voor de timing van de meetonderdelen. Dit is een beta-functie en moet alleen worden ingeschakeld als deze lokaal wordt goedgekeurd.
+
+**Standaard**: `false`
+
+#### Timer Venster Gedrag {#timer-window-behavior}
+
+<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
+
+Stel in of het timer venster automatisch wordt geopend, of deelnemers standaard tot boven of beneden tellen, of de klok 12-uur of 24-uurs tijd gebruikt en of de huidige timer waarde getoond wordt op de timerknop van het eiland.
+
+#### Timer weergaveformaten {#timer-display-formats}
+
+<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
+
+Kies analoge of digitale weergaveformaten voor het tijdstip van de dag en afteltijd. De waarschuwingsindicator voor het aftellen kan de analoge aftellen naar een waarschuwingskleur verschuiven in de laatste minuut.
+
+#### Afteling en planningsstatus {#meeting-countdown-and-schedule-status}
+
+<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
+
+Laat een aftellen zien voor geplande vergaderingen en optioneel laat zien of de vergadering voor of achter op schema ligt. Het aftellen van de vergadering verschijnt alleen op het timer-display, niet op het media-scherm.
+
+#### Timer Uiterlijk en Overtijd {#timer-verschijning-en-overtijd}
+
+<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
+
+Pas de grootte en kleuren van de tekst aan en configureer overuren indicatoren zoals alternatieve kleuren, knipperen, en alleen het aantal overuren laten zien in de count-up.
+
 ## Geavanceerde instellingen {#advanced-settings}
 
 ### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
@@ -418,6 +493,14 @@ Schakel fade-in/out-overgangen in bij het tonen of verbergen van het mediavenste
 
 **Standaard**: `true`
 
+#### Schakel Playback Speed Control in {#enable-playback-speed-control}
+
+<!-- **Setting**: `enablePlaybackSpeedControl` -->
+
+Toestaan dat audio en video afgespeeld worden vanuit het contextmenu van het medium.
+
+**Standaard**: `false`
+
 #### Medialogo verbergen {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
@@ -432,7 +515,7 @@ Verberg het logo in het mediavenster.
 
 Maximale resolutie voor gedownloade mediabestanden.
 
-**Opties**: 240p, 360p, 480p, 720p
+**Opties**: 240p, 360p, 480p, 720p, 1080p
 
 **Standaard**: 720p
 
@@ -449,6 +532,14 @@ Media uit gedrukte publicaties opnemen in mediadownloads.
 <!-- **Setting**: `excludeFootnotes` -->
 
 Indien mogelijk afbeeldingen van voetnoten uitsluiten van mediadownloads.
+
+**Standaard**: `false`
+
+#### Extra Uitkijktoren Studie Video's {#exclusief extra-uitkijktoren-studievideo's}
+
+<!-- **Setting**: `excludeWtParagraphVideos` -->
+
+Uitsluiten van extra video's waarnaar verwezen wordt in de Uitkijktoren studies paragrafen.
 
 **Standaard**: `false`
 
@@ -506,6 +597,10 @@ Exporteer mediabestanden naar het MP4-formaat voor betere compatibiliteit.
 
 **Standaard**: `false`
 
+### Profielinstellingen overdracht {#profile-settings-transfer}
+
+Exporteer de huidige profielinstellingen naar een JSON-bestand of importeer een eerder geëxporteerd profielinstellingenbestand. Importeren vervangt de instellingen van het huidige profiel.
+
 ### Danger Zone {#danger-zone}
 
 :::warning Waarschuwing
@@ -521,6 +616,22 @@ Wijzig deze instellingen alleen als je de gevolgen ervan begrijpt.
 Basisdomein dat wordt gebruikt om publicaties en media te downloaden.
 
 **Standaard**: `jw.org`
+
+#### Hardware Acceleratie {#disable-hardware-acceleration} uitschakelen
+
+<!-- **Setting**: `disableHardwareAcceleration` -->
+
+Schakel hardware acceleratie uit na het herstarten van M3. Dit kan helpen met grafische storingen of crashes op sommige systemen, maar is anders niet aanbevolen.
+
+**Standaard**: `false`
+
+#### Onderdruk Hardware Versnelling Herinnering {#suppress-hardware-acceleration-reminder}
+
+<!-- **Setting**: `suppressHardwareAccelerationReminder` -->
+
+Verberg de herinnering om de hardware-versnelling opnieuw in te schakelen nadat deze handmatig is uitgeschakeld.
+
+**Standaard**: `false`
 
 #### Media ophalen uitschakelen {#disable-media-fetching}
 
