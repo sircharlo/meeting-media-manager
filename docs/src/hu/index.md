@@ -9,19 +9,19 @@ hero:
   actions:
     - theme: brand
       text: Letöltés
-      link: /hu/download
+      link: /download
     - theme: brand
       text: A honlapról
-      link: /hu/about
+      link: /about
     - theme: brand
       text: Felhasználói útmutató
-      link: /hu/user-guide
+      link: /user-guide
     - theme: brand
       text: Beállítási útmutató
-      link: /hu/settings-guide
+      link: /settings-guide
     - theme: brand
       text: GYIK
-      link: /hu/faq
+      link: /faq
 features:
   - icon: 🚀
     title: Automatikus médiakezelés
@@ -46,5 +46,8 @@ features:
     details: Automatikusan szinkronizálja a megtekintett mappákból (például Dropbox vagy OneDrive) származó médiát, és mappákba exportálja.
   - icon: 🎯
     title: Haladó funkciók
-    details: Importáljon egyéni médiafájlokat, JWPUB fájlokat, lejátszási listákat, audio Biblia-felvételeket, és kezeljen több gyülekezetet.
+    details: Import custom media, JWPUB files, playlists, audio Bible recordings, Study Bible media, public talk media, and manage multiple congregations.
+  - icon: ⏱️
+    title: Meeting Timer and Recording Controls
+    details: Use an optional timer display for participant timing and control OBS or external recording apps from M³.
 ---

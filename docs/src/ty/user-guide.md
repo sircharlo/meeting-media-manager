@@ -50,6 +50,14 @@ Te vāhi matapihi mātāmua o te M³ e rave rahi ïa tu’u vāhi faufa’a rahi
 
 - Te mau tu’u vāhi o te putuputura’a — ’A pū’ohu-pū-hia te mau rorouira ia au i te mau tu’u vāhi o te putuputura’a (A’ora’a no te Ta’ata Teie, Te mau tao’a faufa’a no roto mai i te Parau a te Atua, e te tahi atu)
 - Te mau tu’u vāhi ta’a ’ē — ’E nehenehe tā ’oe e hāmani i te mau tu’u vāhi ta’a ’ē nō te mau rorouira tāpiri, mai te peu ’aore e putuputura’a i taua mahana ra
+- **Manual Sorting** - Drag media items into the order you need, or reset the order when needed
+- **Repeated Playback** - Loop a single media item or repeat every item in a section until playback is stopped manually
+
+### Hidden and Missing Media {#hidden-and-missing-media}
+
+Media can be hidden from the meeting list without deleting the automatically downloaded files. If media is hidden by mistake, use **Show hidden media** for the selected day.
+
+If M³ reports missing media, first check whether the item is expected to become available closer to the meeting date. You can also add the missing item manually with the **Add media** menu or by dragging it into the media list.
 
 ## Te fa’a’itera’a i te mau rorouira {#media-presentation}
 
@@ -75,6 +83,8 @@ E hōro’a te ta’o’o rorouira i te mau taviri fa’atere ato’a:
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
 - Fa’a’ahi / Fa’a’ati — ’A fa’a’ohipa i te huira o te ’iri nō te fa’a’ahi, ’a tu’u nō te fa’a’ati (nō te mau hoho’a)
+- **Live Preview** - When enabled, show a preview of the audience media window in the main app
+- **Playback Speed** - When enabled in settings, adjust audio and video speed from the media item context menu
 
 ### Te mau huru fa’a’itera’a pa’ari {#advanced-presentation}
 
@@ -118,6 +128,27 @@ Mau rāve’a poto nehenehe e fa’aau (ia fa’ati’ahia i roto i te mau fa’
 
 Ha’amana’ora’a (\*): Rāve’a poto nō te ta’āto’ara’a - ’ia ti’a ia fa’a’ohipa noa atu ’aita te tauihaa nō te fa’a’ohipara’a (app) i roto i te matapihi matamua
 
+## Display Tools {#display-tools}
+
+### Media Display Window {#media-display-window}
+
+The media display window is the audience-facing window. It can be placed on an external screen or used in a windowed setup depending on your equipment.
+
+Use the display popup to:
+
+- Show or hide the media display
+- Choose the display or window type
+- Select a temporary custom background instead of the yeartext
+- Use an available camera as the background. This is mostly used in sign-language congregations.
+
+Please note that custom backgrounds are temporary and are not saved after M³ quits.
+
+### Meeting Timer {#user-guide-meeting-timer}
+
+When the meeting timer is enabled, M³ can show a separate timer window for timing participant parts. The timer can count up or down, show the current time, show a meeting countdown before scheduled meetings, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+
+The timer is a beta feature and should only be used when approved locally.
+
 ## Hīmene i muri i te hōho’a {#user-guide-background-music}
 
 ### Te fa’aau nei i te hīmene i muri i te hōho’a {#background-music-setup}
@@ -159,6 +190,7 @@ E taui noa te M³ i te mau teata nō te OBS i te roara’a o te mau fa’a’ite
 - Teata nō te mau ha’amāramaramara’a - E fa’a’ite i te mau parau hōho’a o te mau ha’amāramaramara’a
 - Teata nō te mau hōho’a - E fa’a’ite i te mau hōho’a (e nehenehe e fa’ata’ahia te taime mai te mea ’ua ha’amā’itihia)
 - Tauira’a aunoa - E taui te mau teata i ni’a i te huru o te mau ha’amāramaramara’a ’e te mau fa’atanora’a
+- **Recording Controls** - If enabled, M³ can start and stop OBS recording from the OBS popup
 
 ### Te mau rave’a pa’ari nō te OBS {#advanced-obs}
 
@@ -236,6 +268,8 @@ Te mau raveraa maita’i a’e:
 3. Te hi’opo’ara’a i te mau fātura - ’A ha’amau i te hō’ē fātura hi’opo’ahia nō te tāpe’a-’ōhie-ra’a i te mau parau
 4. Te mau parau JWPUB ’e te mau tāpura pehe - ’A tapea mai i te mau parau nene’i ’e te mau tāpura pehe
 5. Te mau rāve’a ha’amāramaramara’a nō te ’ōrerora’a parau (S-34 / S-34mp) - ’A tapea mai i te mau rāve’a nō te ’ōrerora’a parau nā roto i te mau parau JWPUB S-34 ’aore rā S-34mp
+6. **Videos from the official website** - Search for videos and add them to the selected date
+7. **Study Bible and sign-language Bible media** - Add images, videos, maps, historical references, or sign-language Bible videos for selected passages
 
 ### Te fa’aterera’a i te mau rāve’a ha’amāramaramara’a i tapeahia mai {#managing-imported-media}
 
@@ -253,6 +287,10 @@ Te tapea-mai-ra’a i te mau rīti’o o te mau tuha’a Bibilia:
 3. E mā’iti i te mau ’īrava ta’a ’ē ’aore rā te mau ’īrava tātā’ira’a
 4. ’A huti mai i te mau rīti’o oro’a
 5. ’A fa’a’ohipa i te reira
+
+### Profile Settings Import and Export {#profile-settings-import-export}
+
+Each profile's settings can be exported to a JSON file from Settings. Importing a profile settings file replaces the current profile's settings, which is useful when moving a setup to another computer or restoring a known configuration.
 
 ## Te hi’opo’a-ra’a i te pu’e parau ’e te fa’anahora’a i te reira {#user-guide-folder-monitoring}
 
@@ -286,9 +324,21 @@ Te tu’ura’a i te ’Itenēreta ’Ohipa i ni’a i te mau matāmata-rāve’
 
 ### Te mau rāve’a fa’atere nō te ’Itenēreta {#website-controls}
 
+- **Open Website** - Open a separate website window
+- **Start Mirroring** - Show the website window in the media display for the audience
+- **Stop Mirroring** - Stop showing the website and return to the yeartext or media display background
 - Te terera’a - Te mau rāve’a fa’atere matauhia nō te roro-’Itenēreta
 - Te fa’ahou-ra’a - ’A fa’atahe fa’ahou i te api e vai nei
 - Te tapira’a - ’A ha’aputu i te huru fa’a’itera’a ’Itenēreta
+- **Auto Return** - Optionally return to the media list automatically after stopping website mirroring
+
+## Meeting Recordings {#meeting-recordings}
+
+M³ can help control meeting recording, but it does not include a built-in recorder.
+
+- **OBS Recording** - If OBS recording controls are enabled, use the OBS popup to start and stop OBS recording
+- **External Recording App** - Configure keyboard shortcuts for a separate recording app, then use the meeting recordings popup to send those shortcuts
+- **Recording Folder** - Configure a recording folder to show a quick button that opens the folder where recordings are saved
 
 ## Te mau āravihi fa’a’ohipa {#user-guide-advanced-features}
 
@@ -339,6 +389,7 @@ Te fa’anahora’a i te mau rāve’a pāpa’i-’āpee ta’a ’ē nō te �
 - ’A fa’aiti i te faito teitei o te hōho’a
 - ’A tāmā i te mau cache tahito
 - ’A hi’o i te vāhi tei toe i roto i te disk
+- If the app shows graphical glitches or crashes, try disabling hardware acceleration and restart M³
 
 #### Te mau fifi nō te reo {#user-guide-language-issues}
 

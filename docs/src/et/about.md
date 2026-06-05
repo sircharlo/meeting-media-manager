@@ -50,6 +50,7 @@ M³, terviklik meediahalduslahendus, võimaldab teil lihtsalt ja automaatselt al
 - **Täiustatud meediajuhtimisfunktsioonid**: meedia pisipildid koos suumimis- ja nihutamisvõimalustega
 - **Kohandatud ajastus**: seadke meedia taasesituse algus- ja lõppkellaajad
 - **Esitusfunktsioonid**: lihtsalt kasutatavad pausi-/esitus-/peatamisnupud koos kiirklahvidega
+- **Live preview and speed control**: Preview the audience display and optionally adjust audio or video playback speed
 - **Mitme monitori tugi**: välise monitori automaatne tuvastamine ja haldamine
 - **Selge esitus**: häiringuideta meediaesituse liides
 
@@ -67,13 +68,14 @@ M³, terviklik meediahalduslahendus, võimaldab teil lihtsalt ja automaatselt al
 
 - **Automaatne stseenide vahetamine**: sujuv koostöö OBS Studio programmiga hübriidkoosolekute jaoks
 - **Stseenide haldamine**: automaatne ümberlülitamine kaamera, meedia ja muude stseenide vahel
+- **Recording controls**: Start and stop OBS recordings from M³ when enabled
 
 ### Media Import ja haldamine {#about-media-import}
 
 - **JWPUB-failid**: JWPUB-failide lihtne importimine ja haldamine
 - **JWLPLAYLIST-failid**: JW Library esitusloendi failide tugi
 - **Kohandatud meedia**: impordi videod, pildid, helifailid ja PDF-failid
-- **Audio Piibel**: Impordi õppepiibli meedia ja Uue maailma tõlke helisalvestised
+- **Bible media**: Import Study Bible media, sign-language Bible media, and audio recordings of the New World Translation
 - **Avalikud kõned**: hoidke alati valmis avaliku kõnede meedia esitusloend, mida saab kasutada koos S-34 importijaga
 
 ### Lisasätted {#about-advanced-features}
@@ -81,8 +83,10 @@ M³, terviklik meediahalduslahendus, võimaldab teil lihtsalt ja automaatselt al
 - **Kausta jälgimine**: sünkroniseerib automaatselt meediafailid jälgitavatest kaustadest (Dropbox, OneDrive jne)
 - **Meedia eksport**: ekspordi meedia automaatselt kaustadesse, korraldatuna kuupäeva järgi
 - **Veebisaidi esitlus**: Esita ametlikku veebisaiti välistel monitoridel
+- **Meeting timer**: Optional timer window for timing meeting parts
+- **Meeting recording helpers**: Control OBS recording or an external recording application
 - **Klaviatuuri kiirklahvid**: paljude funktsioonide jaoks kohandatavad klaviatuuri kiirklahvid
-- **Mitmed profiilid**: halda erinevaid kogudusi või rühmi eraldi profiilidega
+- **Multiple profiles**: Manage different congregations or groups with separate profiles, including profile settings import and export
 
 ## Kas M³ töötab minu keeles? {#does-m3-work-in-my-language}
 

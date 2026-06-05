@@ -50,6 +50,14 @@ M³ automatically organizes media by meeting type and section:
 
 - **Meeting Sections** - Media is grouped by meeting parts (Public Talk, Treasures from God's Word, etc.)
 - **Custom Sections** - You can create custom sections for additional media if no meeting is scheduled on that particular day
+- **Classificação manual** - Arraste os itens de mídia para a ordem que você precisa, ou redefina a ordem quando necessário
+- **Reprodução repetida** - Repita um único item de mídia ou repita cada item em uma seção até que a reprodução seja parada manualmente
+
+### Mídia oculta e ausente {#hidden-and-missing-media}
+
+A mídia pode ser ocultada da lista de reuniões sem excluir os arquivos baixados automaticamente. Se a mídia estiver oculta por engano, use **Mostrar mídias ocultas** para o dia selecionado.
+
+Se o M3 relatar mídia em falta, primeiro verifique se é esperado que o item fique disponível mais perto da data da reunião. Você também pode adicionar o item que falta manualmente usando o menu **Adicionar mídia** ou arrastando-o para a lista de mídia.
 
 ## Media Presentation {#media-presentation}
 
@@ -75,6 +83,8 @@ The media player provides comprehensive controls:
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
 - **Zoom/Pan** - Use mouse wheel to zoom, drag to pan (for images)
+- **Visualização ao vivo** - Quando ativado, mostra uma visualização da janela de mídia do público no aplicativo principal
+- **Velocidade de reprodução** - Quando ativado nas configurações, ajuste a velocidade de áudio e vídeo do menu do item de mídia
 
 ### Advanced Presentation Features {#advanced-presentation}
 
@@ -118,6 +128,27 @@ Configure custom keyboard shortcuts for quick access. Note that no keyboard shor
 
 **Note (\*):** Global shortcut - available even when the app is not focused
 
+## Exibir Ferramentas {#display-tools}
+
+### Janela de Exibição de Mídia {#media-display-window}
+
+A janela de exibição de mídia é a janela voltada para o público. Ele pode ser colocado em um ecrã externo ou usado em uma configuração de janela dependendo do seu equipamento.
+
+Use o popup de exibição para:
+
+- Exibir ou ocultar a exibição de mídia
+- Escolha o tipo de exibição ou janela
+- Selecionar um fundo personalizado temporário ao invés do anotext
+- Use uma câmera disponível como plano de fundo. Isso é usado principalmente em congregações com linguagem de sinal.
+
+Por favor, note que fundos personalizados são temporários e não são salvos após M3 sair.
+
+### Tempo da reunião {#user-guide-meeting-timer}
+
+Quando o temporizador da reunião estiver ativado, o M3 pode mostrar uma janela separada de temporizador para as partes dos participantes. O temporizador pode contar para cima ou para baixo, mostrar a hora atual, mostrar a contagem regressiva de reunião antes das reuniões agendadas, e, opcionalmente, indique horas extraordinárias ou se a reunião está à frente ou atrasada.
+
+O temporizador é um recurso beta e só deve ser usado quando aprovado localmente.
+
 ## Música de Fundo {#user-guide-background-music}
 
 ### Setting Up Background Music {#background-music-setup}
@@ -159,6 +190,7 @@ M³ automatically switches OBS scenes during presentations:
 - **Media Scene** - Displays media content
 - **Image Scene** - Shows images (can be postponed if enabled)
 - **Automatic Switching** - Scenes change based on media type and settings
+- **Controles de Gravação** - Se ativado, M3 pode iniciar e parar a gravação do OBS do OBS
 
 ### Advanced OBS Features {#advanced-obs}
 
@@ -236,6 +268,8 @@ Add your own media files to M³:
 3. **Folder Monitoring** - Set up a watched folder for automatic imports
 4. **JWPUB Files and Playlists** - Import publications and playlists
 5. **Mídia de Conversa Pública (S-34 / S-34mp)** - Importe a mídia de palestra pública usando arquivos S├34 ou S├34mp JWPUB
+6. **Vídeos do site oficial** - Procure por vídeos e adicione-os à data selecionada
+7. **Bíblia de Estudo e mídia da linguagem de sinal** - Adicionar imagens, vídeos, mapas, referências históricas ou vídeos da Bíblia de linguagem de sinais para passagens selecionadas
 
 ### Managing Imported Media {#managing-imported-media}
 
@@ -253,6 +287,10 @@ Import audio recordings of Bible verses:
 3. Escolher versículos específicos ou faixas de versículos
 4. Download the audio files
 5. Use them
+
+### Importar Configurações de Perfil e Exportar {#profile-settings-import-export}
+
+As configurações de cada perfil podem ser exportadas para um arquivo JSON nas configurações. Importar um arquivo de configurações de perfil substitui as configurações do perfil atual, o que é útil ao mover uma configuração para outro computador ou restaurar uma configuração conhecida.
 
 ## Folder Monitoring and Export {#user-guide-folder-monitoring}
 
@@ -286,9 +324,21 @@ Share the official website on external displays:
 
 ### Website Controls {#website-controls}
 
+- **Abrir Site** - Abrir uma janela separada do site
+- **Iniciar espelhamento** - Mostrar a janela do site no display de mídia para o público
+- **Parar espelhamento** - Parar de mostrar o site e retornar para o texto anual ou para o fundo de exibição de mídia
 - **Navigation** - Standard browser navigation controls
 - **Refresh** - Reload the current page
 - **Close** - Exit website presentation mode
+- **Retorno Automático** - Opcionalmente retornar para a lista de mídia automaticamente após parar espelhamento do site
+
+## Gravações das Reuniões {#gravações de reuniões}
+
+O M3 pode ajudar a controlar a gravação da reunião, mas não inclui um gravador embutido.
+
+- **Gravação do OBS** - Se os controles de gravação do OBS estiverem ativados, use a janela do OBS para começar e parar a gravação do OBS
+- **App de Gravação Externa** - Configure atalhos de teclado para um aplicativo de gravação separado, e então use a janela de gravações de reunião para enviar esses atalhos
+- **Pasta de gravação** - Configure uma pasta de gravação para mostrar um botão rápido que abre a pasta onde as gravações são salvas
 
 ## Recursos Avançados {#user-guide-advanced-features}
 
@@ -339,6 +389,7 @@ Configure custom keyboard shortcuts for efficient operation:
 - Reduce maximum resolution
 - Clear old cached files
 - Check available disk space
+- Se o aplicativo mostrar falhas gráficas ou falhas, tente desativar a aceleração de hardware e reiniciar o M3
 
 #### Language Issues {#user-guide-language-issues}
 

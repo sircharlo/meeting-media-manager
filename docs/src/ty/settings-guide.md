@@ -157,6 +157,20 @@ E nehenehe ta ’oe e fa’atano i te mau taui’ura’a poto i te porotarama o 
 - Mahana nō te putuputura’a i te hope’a hepetoma: Te mahana ’āpī nō te putuputura’a i te hope’a hepetoma
 - Hora nō te putuputura’a i te hope’a hepetoma: Te hora ’āpī nō te putuputura’a i te hope’a hepetoma
 
+### Automatic Meeting Schedule Updates {#automatic-meeting-schedule-updates}
+
+<!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
+
+When enabled, M³ periodically checks the official website of Jehovah's Witnesses for meeting day and time changes and updates the current profile automatically.
+
+This only works for profiles that were added with congregation lookup and whose congregation name has not been manually changed. If synchronization was disabled because the congregation name changed, use **Enable schedule sync** to link the profile again.
+
+#### Refresh Meeting Schedule {#refresh-meeting-schedule}
+
+<!-- **Setting**: `reSyncMeetingScheduleButton` -->
+
+Manually synchronize the current and future meeting schedule with the information from the official website.
+
 ## ’Ohi-ra’a e te fa’atō’ora’a i te mau rāve’a ha’amāramaramara’a {#media-retrieval-and-playback}
 
 ### Tapura-’ohipa-raa {#metered-connection}
@@ -174,6 +188,14 @@ Fa'anahora'a tumu: `Hape`
 ’Ia ’ohie te fa’a’ite’itera’a i te mau rāve’a ha’amāramaramara’a. E titauhia teie nō te fa’a’ite i te mau rāve’a ha’amāramaramara’a i ni’a i te piti o te matini fa’a’ite.
 
 Fa'anahora'a tumu: `Hape`
+
+#### Enable Media Preview {#enable-media-preview}
+
+<!-- **Setting**: `enableMediaPreview` -->
+
+Show a live preview of the media window while an image or video is being displayed.
+
+Fa’anahora’a tumu: `’oia`
 
 #### Fa’atō’o i te rāve’a ha’amāramaramara’a ma te fa’ata’a {#begin-playback-paused}
 
@@ -332,6 +354,7 @@ Fa’anaho i te mau tōpata OBS e fa’a’ohipahia nō te mau hina’aro ta’a
 - Taui i te tōpata i muri a’e i te rorouira: Fa’aho’i-’ōhie-ra’a i te tōpata na mua atu i te hope’a o te rorouira
 - Ha’amana’o i te tōpata na mua atu: Ha’amana’o ’e fa’aho’i mai i te tōpata i fa’a’ohipa-hia na mua atu
 - Huna i te mau hoho’a-tapa’o: Huna i te mau hoho’a-tapa’o nō te OBS i roto i te matapihi fa’a’ohipa
+- **Recording Controls**: Show controls that start and stop OBS recording from M³
 
 :::warning Parau Fa’aarara’a faufa’a
 
@@ -385,6 +408,58 @@ Rāve’a ha’apotora’a tei fa’a’ohipa-hia i te taime e fa’ata’i-hia 
 
 Fa’anahora’a tumu: ’Aita
 
+### Meeting Recordings {#meeting-recordings}
+
+#### Enable External Recording App Integration {#enable-external-recording-app-integration}
+
+<!-- **Setting**: `recordingEnable` -->
+
+Let M³ control a separate recording application with keyboard shortcuts. This does not record inside M³; it sends the configured shortcuts when you press **Start Recording** or **Stop Recording** in the meeting recordings popup.
+
+This option is hidden when OBS recording controls are enabled. If you use OBS Studio, use the OBS recording controls in the OBS integration instead.
+
+Fa'anahora'a tumu: `Hape`
+
+#### Recording Shortcuts and Folder {#recording-shortcuts-and-folder}
+
+<!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
+
+Configure the keyboard shortcut that starts recording, the optional shortcut that stops recording, and the folder where the external app saves recordings. If no stop shortcut is provided, M³ reuses the start shortcut. When a folder is configured, M³ shows a button to open it.
+
+### Meeting Timer {#meeting-timer}
+
+#### Enable Meeting Timer {#enable-meeting-timer}
+
+<!-- **Setting**: `enableTimerDisplay` -->
+
+Enable a separate timer window for timing meeting parts. This is a beta feature and should only be enabled if approved locally.
+
+Fa'anahora'a tumu: `Hape`
+
+#### Timer Window Behavior {#timer-window-behavior}
+
+<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
+
+Configure whether the timer window opens automatically, whether participant timers count up or down by default, whether the clock uses 12-hour or 24-hour time, and whether the current timer value is shown on the action island timer button.
+
+#### Timer Display Formats {#timer-display-formats}
+
+<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
+
+Choose analog or digital display formats for the time of day and countdown timers. The countdown warning indicator can shift the analog countdown ring toward a warning color during the final minute.
+
+#### Meeting Countdown and Schedule Status {#meeting-countdown-and-schedule-status}
+
+<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
+
+Show a countdown before scheduled meetings and optionally display whether the meeting is ahead of or behind schedule. The meeting countdown appears only on the timer display, not on the main media display.
+
+#### Timer Appearance and Overtime {#timer-appearance-and-overtime}
+
+<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
+
+Customize the timer text size and colors, and configure overtime indicators such as alternate colors, blinking, and showing only the elapsed overtime amount in count-up mode.
+
 ## Te mau fa’anahora’a ta’a ’ē {#advanced-settings}
 
 ### Te mau rāve’a ha’apotora’a i ni’a i te tāhitō pereo {#settings-guide-keyboard-shortcuts}
@@ -418,6 +493,14 @@ Fa’anaho i te mau rāve’a ha’apotora’a nō te fa’ata’i-fa’ahou-ra�
 
 Fa’anahora’a tumu: `’oia`
 
+#### Enable Playback Speed Control {#enable-playback-speed-control}
+
+<!-- **Setting**: `enablePlaybackSpeedControl` -->
+
+Allow audio and video playback speed to be adjusted from the media item's context menu.
+
+Fa'anahora'a tumu: `Hape`
+
 #### Fa’atapuni i te tapao rāve’a ha’amāramaramara’a {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
@@ -432,7 +515,7 @@ Fa'anahora'a tumu: `Hape`
 
 Te faito teitei roa a’e nō te hoho’a nō te mau rāve’a ha’amāramaramara’a i ’ohihia.
 
-Mau mā’itira’a: 240p, 360p, 480p, 720p
+**Options**: 240p, 360p, 480p, 720p, 1080p
 
 Fa'anahora'a tumu: 720p
 
@@ -449,6 +532,14 @@ Fa’anahora’a tumu: `’oia`
 <!-- **Setting**: `excludeFootnotes` -->
 
 Fa’ata’a i te mau hoho’a o te mau nota i raro i te ’api i roto i te mau rāve’a ha’amāramaramara’a i ’ohihia, mai te mea e nehenehe.
+
+Fa'anahora'a tumu: `Hape`
+
+#### Exclude Additional Watchtower Study Videos {#exclude-additional-watchtower-study-videos}
+
+<!-- **Setting**: `excludeWtParagraphVideos` -->
+
+Exclude additional videos that are referenced in Watchtower Study paragraphs.
 
 Fa'anahora'a tumu: `Hape`
 
@@ -506,6 +597,10 @@ Fa’ahuru-ē-ra’a i te mau rāve’a ha’amāramaramara’a i roto i te huru
 
 Fa'anahora'a tumu: `Hape`
 
+### Profile Settings Transfer {#profile-settings-transfer}
+
+Export the current profile's settings to a JSON file or import a previously exported profile settings file. Importing replaces the current profile's settings.
+
 ### Vāhi ’ati {#danger-zone}
 
 :::warning Fa’aarara’a
@@ -521,6 +616,22 @@ Fa'anahora'a tumu: `Hape`
 Te vāhi ha’amatara’a o te upe’a rāve’a tei fa’a’ohipahia nō te ’ohi i te mau parau nīnihia e te mau rāve’a ha’amāramaramara’a.
 
 Fa'anahora'a tumu: `jw.org`
+
+#### Disable Hardware Acceleration {#disable-hardware-acceleration}
+
+<!-- **Setting**: `disableHardwareAcceleration` -->
+
+Disable hardware acceleration after restarting M³. This may help with graphical glitches or crashes on some systems, but is not otherwise recommended.
+
+Fa'anahora'a tumu: `Hape`
+
+#### Suppress Hardware Acceleration Reminder {#suppress-hardware-acceleration-reminder}
+
+<!-- **Setting**: `suppressHardwareAccelerationReminder` -->
+
+Hide the reminder to re-enable hardware acceleration after it has been manually disabled.
+
+Fa'anahora'a tumu: `Hape`
 
 #### ’Ia fa’ata’a i te ’ohira’a i te mau rāve’a ha’amāramaramara’a. {#disable-media-fetching}
 

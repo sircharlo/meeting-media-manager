@@ -46,5 +46,8 @@ features:
     details: Automatically sync media from watched folders (like Dropbox or OneDrive) and export media to folders.
   - icon: 🎯
     title: Advanced Features
-    details: Import custom media, JWPUB files, playlists, audio Bible recordings, and manage multiple congregations.
+    details: Імпорт файлів користувальницьких медіа, JWPUB, списків відтворення звукових біблійних записів, вивчення Біблії, мультимедійних засобів масової інформації та керування кількома зборами.
+  - icon: ⏱️
+    title: Таймер зустрічі і історія контролів
+    details: Використовуйте відображення необов'язкового таймера для учасників таймерів і керування OBS чи зовнішніми програмами запису з M3.
 ---

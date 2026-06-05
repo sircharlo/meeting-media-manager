@@ -50,6 +50,7 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 - **Advanced media controls**: Media thumbnails with zoom and pan capabilities
 - **Custom timing**: Set custom start and end times for media playback
 - **Playback controls**: Easy-to-use pause/play/stop buttons with keyboard shortcuts
+- **Попередній перегляд і швидкісний контроль**: Попередній перегляд аудиторії і опціонально регулюйте аудіо або швидкість відтворення відео
 - **Multi-monitor support**: Automatic external monitor detection and management
 - **Clean presentation**: Distraction-free media presentation interface
 
@@ -67,13 +68,14 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 
 - **Automatic scene switching**: Seamless integration with OBS Studio for hybrid meetings
 - **Scene management**: Automatic switching between camera, media, and other scenes
+- **Керування записами**: Розпочати і зупинити OBS записів, з M3, коли ввімкнено
 
 ### Media Import and Management {#about-media-import}
 
 - **JWPUB files**: Import and manage JWPUB files with ease
 - **JWLPLAYLIST files**: Support for JW Library playlist files
 - **Custom media**: Import custom videos, pictures, audio files, and PDF files
-- **Audio Bible**: Import Study Bible media and audio recordings of the New World Translation
+- **Біблійні медіа**: Імпортувати вивчення біблійних засобів масової інформації, медіа для знакової мови та аудіозаписи нового Світового перекладу
 - **Public talks**: Always have public talk media overview ready to use with the S-34 importer
 
 ### Advanced Features {#about-advanced-features}
@@ -81,8 +83,10 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 - **Folder monitoring**: Automatically sync media from watched folders (Dropbox, OneDrive, etc.)
 - **Media export**: Automatically export media to folders, organized by date
 - **Website presentation**: Present the official website on external monitors
+- **Час зустрічі**: Необов'язкове вікно таймера для частинок зустрічей
+- \*\*Довідник для запису зустрічей \*\*: Контролювати запис OBS або застосунок для зовнішнього запису
 - **Keyboard shortcuts**: Customizable keyboard shortcuts for many functions
-- **Multiple profiles**: Manage different congregations or groups with separate profiles
+- **Кілька профілів**: Керуйте різними зборами або групами з окремими профілями, включаючи імпорт параметрів профілю та експорт
 
 ## Чи працює M³ моєю мовою? {#does-m3-work-in-my-language}
 

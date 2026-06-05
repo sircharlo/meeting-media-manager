@@ -157,6 +157,20 @@ Te nastavitve vam omogočajo nastavitev začasnih sprememb urnika shodov:
 - **Nov dan ob koncu tedna**: Nov dan za shod ob koncu tedna
 - **Nov čas ob koncu tedna**: Nov čas za shod ob koncu tedna
 
+### Automatic Meeting Schedule Updates {#automatic-meeting-schedule-updates}
+
+<!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
+
+When enabled, M³ periodically checks the official website of Jehovah's Witnesses for meeting day and time changes and updates the current profile automatically.
+
+This only works for profiles that were added with congregation lookup and whose congregation name has not been manually changed. If synchronization was disabled because the congregation name changed, use **Enable schedule sync** to link the profile again.
+
+#### Refresh Meeting Schedule {#refresh-meeting-schedule}
+
+<!-- **Setting**: `reSyncMeetingScheduleButton` -->
+
+Manually synchronize the current and future meeting schedule with the information from the official website.
+
 ## Pridobivanje in predvajanje multimedijske vsebine {#media-retrieval-and-playback}
 
 ### Merjena povezava {#metered-connection}
@@ -174,6 +188,14 @@ To možnost vklopite, če imate omejeno podatkovno povezavo, da zmanjšate porab
 Omogoči funkcijo prikazovanja multimedijske vsebine. To je potrebno za prikazovanje multimedijske vsebine na drugem zaslonu.
 
 **Privzeto**: `false`
+
+#### Enable Media Preview {#enable-media-preview}
+
+<!-- **Setting**: `enableMediaPreview` -->
+
+Show a live preview of the media window while an image or video is being displayed.
+
+**Privzeto**: `true`
 
 #### Začni predvajanje v pavzi {#begin-playback-paused}
 
@@ -332,6 +354,7 @@ Nastavite, kateri prizori OBS se uporabljajo za različne namene:
 - **Preklopi prizor po predvajanju multimedijske vsebine**: Samodejno se vrne na prejšnji prizor po predvajanju multimedijske vsebine
 - **Zapomni si prejšnji prizor**: Shrani in obnovi prejšnji prizor
 - **Skrij ikone**: V uporabniškem vmesniku skrije ikone, povezane z OBS
+- **Recording Controls**: Show controls that start and stop OBS recording from M³
 
 :::warning Pomembno obvestilo
 
@@ -385,6 +408,58 @@ Bližnjica, ki se sproži, ko je med shodom predvajana zadnja pesem.
 
 **Privzeto**: Prazno
 
+### Meeting Recordings {#meeting-recordings}
+
+#### Enable External Recording App Integration {#enable-external-recording-app-integration}
+
+<!-- **Setting**: `recordingEnable` -->
+
+Let M³ control a separate recording application with keyboard shortcuts. This does not record inside M³; it sends the configured shortcuts when you press **Start Recording** or **Stop Recording** in the meeting recordings popup.
+
+This option is hidden when OBS recording controls are enabled. If you use OBS Studio, use the OBS recording controls in the OBS integration instead.
+
+**Privzeto**: `false`
+
+#### Recording Shortcuts and Folder {#recording-shortcuts-and-folder}
+
+<!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
+
+Configure the keyboard shortcut that starts recording, the optional shortcut that stops recording, and the folder where the external app saves recordings. If no stop shortcut is provided, M³ reuses the start shortcut. When a folder is configured, M³ shows a button to open it.
+
+### Meeting Timer {#meeting-timer}
+
+#### Enable Meeting Timer {#enable-meeting-timer}
+
+<!-- **Setting**: `enableTimerDisplay` -->
+
+Enable a separate timer window for timing meeting parts. This is a beta feature and should only be enabled if approved locally.
+
+**Privzeto**: `false`
+
+#### Timer Window Behavior {#timer-window-behavior}
+
+<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
+
+Configure whether the timer window opens automatically, whether participant timers count up or down by default, whether the clock uses 12-hour or 24-hour time, and whether the current timer value is shown on the action island timer button.
+
+#### Timer Display Formats {#timer-display-formats}
+
+<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
+
+Choose analog or digital display formats for the time of day and countdown timers. The countdown warning indicator can shift the analog countdown ring toward a warning color during the final minute.
+
+#### Meeting Countdown and Schedule Status {#meeting-countdown-and-schedule-status}
+
+<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
+
+Show a countdown before scheduled meetings and optionally display whether the meeting is ahead of or behind schedule. The meeting countdown appears only on the timer display, not on the main media display.
+
+#### Timer Appearance and Overtime {#timer-appearance-and-overtime}
+
+<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
+
+Customize the timer text size and colors, and configure overtime indicators such as alternate colors, blinking, and showing only the elapsed overtime amount in count-up mode.
+
 ## Napredne nastavitve {#advanced-settings}
 
 ### Bližnjice na tipkovnici {#settings-guide-keyboard-shortcuts}
@@ -418,6 +493,14 @@ Omogoči postopne prehode (fade-in/fade-out) pri prikazu ali skrivanju okna za m
 
 **Privzeto**: `true`
 
+#### Enable Playback Speed Control {#enable-playback-speed-control}
+
+<!-- **Setting**: `enablePlaybackSpeedControl` -->
+
+Allow audio and video playback speed to be adjusted from the media item's context menu.
+
+**Privzeto**: `false`
+
 #### Skrij logotip multimedijske vsebine {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
@@ -432,7 +515,7 @@ Skrij logotip v oknu z multimedijsko vsebino.
 
 Največja ločljivost za preneseno multimedijsko vsebino.
 
-**Možnosti**: 240p, 360p, 480p, 720p
+**Options**: 240p, 360p, 480p, 720p, 1080p
 
 **Privzeto**: 720p
 
@@ -449,6 +532,14 @@ Vključi multimedijsko vsebino iz tiskanih publikacij v prenose.
 <!-- **Setting**: `excludeFootnotes` -->
 
 Iz prenosov izključi slike v podčrtnih opombah, kadar je to mogoče.
+
+**Privzeto**: `false`
+
+#### Exclude Additional Watchtower Study Videos {#exclude-additional-watchtower-study-videos}
+
+<!-- **Setting**: `excludeWtParagraphVideos` -->
+
+Exclude additional videos that are referenced in Watchtower Study paragraphs.
 
 **Privzeto**: `false`
 
@@ -506,6 +597,10 @@ Pretvori izvoženo multimedijsko vsebino v format MP4 za boljšo združljivost.
 
 **Privzeto**: `false`
 
+### Profile Settings Transfer {#profile-settings-transfer}
+
+Export the current profile's settings to a JSON file or import a previously exported profile settings file. Importing replaces the current profile's settings.
+
 ### Nevarno območje {#danger-zone}
 
 :::warning Opozorilo
@@ -521,6 +616,22 @@ Te nastavitve spreminjajte le, če razumete njihove posledice.
 Osnovna domena, ki se uporablja za prenos publikacij in multimedijske vsebine.
 
 **Privzeto**: `jw.org`
+
+#### Disable Hardware Acceleration {#disable-hardware-acceleration}
+
+<!-- **Setting**: `disableHardwareAcceleration` -->
+
+Disable hardware acceleration after restarting M³. This may help with graphical glitches or crashes on some systems, but is not otherwise recommended.
+
+**Privzeto**: `false`
+
+#### Suppress Hardware Acceleration Reminder {#suppress-hardware-acceleration-reminder}
+
+<!-- **Setting**: `suppressHardwareAccelerationReminder` -->
+
+Hide the reminder to re-enable hardware acceleration after it has been manually disabled.
+
+**Privzeto**: `false`
 
 #### Onemogoči pridobivanje vsebine {#disable-media-fetching}
 

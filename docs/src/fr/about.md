@@ -50,6 +50,7 @@ Pour les réunions de l'assemblée locale **hybrides** ou **en personne**, le mo
 - **Contrôles de médias avancés** : Miniatures de médias avec capacités de zoom et de pan
 - **Timing personnalisé** : Définissez des temps de début et de fin personnalisés pour la lecture des médias
 - **Contrôles de lecture** : Boutons pause/lecture/arrêt faciles à utiliser avec raccourcis clavier
+- **Aperçu en direct et contrôle de vitesse**: Aperçu de l'affichage du public et éventuellement ajuster la vitesse de lecture audio ou vidéo
 - **Support multi-écrans** : Détection et gestion automatiques des écrans externes
 - **Présentation épurée** : Interface de présentation de médias sans distraction
 
@@ -67,13 +68,14 @@ Pour les réunions de l'assemblée locale **hybrides** ou **en personne**, le mo
 
 - **Changement de scène automatique** : Intégration fluide avec OBS Studio pour les réunions hybrides
 - **Gestion des scènes** : Changement automatique entre caméra, médias et autres scènes
+- **Contrôles d'enregistrement** : Démarrez et arrêtez les enregistrements OBS de M3 lorsque cette option est activée
 
 ### Import et gestion des médias {#about-media-import}
 
 - **Fichiers JWPUB** : Importez et gérez facilement les fichiers JWPUB
 - **Fichiers JWLPLAYLIST** : Support pour les fichiers de liste de lecture JW Library
 - **Médias personnalisés** : Importez des vidéos, images, fichiers audio et PDF personnalisés
-- **Bible audio** : Importez les médias de la Bible d'étude et les enregistrements audio de la Traduction du monde nouveau
+- **Médias bibliques**: Importer des médias bibliques d'étude, des médias bibliques de langue des signes et des enregistrements audio de la traduction du Nouveau Monde
 - **Causeries publiques** : Ayez toujours un aperçu des médias de causerie publique prêt à utiliser avec l'importateur S-34
 
 ### Fonctionnalités avancées {#about-advanced-features}
@@ -81,8 +83,10 @@ Pour les réunions de l'assemblée locale **hybrides** ou **en personne**, le mo
 - **Surveillance de dossiers** : Synchronisez automatiquement les médias depuis des dossiers surveillés (Dropbox, OneDrive, etc.)
 - **Exportation de médias** : Exportez automatiquement les médias vers des dossiers, organisés par date
 - **Présentation de sites web** : Présentez le site officiel sur des écrans externes
+- **Chronomètre de la réunion**: Fenêtre de minuteur facultative pour les parties de la réunion
+- **Aide à l'enregistrement de réunions**: Contrôlez l'enregistrement d'OBS ou une application d'enregistrement externe
 - **Raccourcis clavier** : Raccourcis clavier personnalisables pour de nombreuses fonctions
-- **Profils multiples** : Gérez différentes assemblées locales ou groupes avec des profils séparés
+- **Profils multiples** : Gérer les différentes congrégations ou groupes avec des profils séparés, y compris l'importation et l'exportation des paramètres de profil
 
 ## Est-ce que M³ fonctionne dans ma langue ? {#does-m3-work-in-my-language}
 

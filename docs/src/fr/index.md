@@ -46,5 +46,8 @@ features:
     details: Synchronise automatiquement les médias depuis des dossiers surveillés (comme Dropbox ou OneDrive) et exporte les médias vers des dossiers.
   - icon: 🎯
     title: Fonctionnalités avancées
-    details: Importez des médias personnalisés, des fichiers JWPUB, des listes de lecture, des enregistrements audio de la Bible et gérez plusieurs assemblées locales.
+    details: Importez des médias personnalisés, des fichiers JWPUB, des listes de lecture, des enregistrements audio bibliques, des médias de Bible d'étude, des médias de discours publics et gérez de multiples congrégations.
+  - icon: ⏱️
+    title: Minuterie de la réunion et contrôle d'enregistrement
+    details: Utiliser un affichage de minuterie optionnel pour le chronométrage et le contrôle des applications OBS ou d’enregistrement externe à partir de M3.
 ---

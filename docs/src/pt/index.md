@@ -46,5 +46,8 @@ features:
     details: Sincroniza automaticamente mídias de pastas monitoradas (como Dropbox ou OneDrive) e exporta mídias para pastas.
   - icon: 🎯
     title: Recursos Avançados
-    details: Importe mídias personalizadas, arquivos JWPUB, playlists, gravações da Bíblia em áudio e gerencie múltiplas congregações.
+    details: Importe mídias personalizadas, arquivos JWPUB, listas de reprodução de gravações de Bíblia de áudio, mídia de Bíblia de Estudo, mídia de palestra pública e gerenciar múltiplas congregações.
+  - icon: ⏱️
+    title: Tempo de reunião e controles de gravação
+    details: Use uma exibição opcional do temporizador de participantes e controle o OBS ou aplicativos de gravação externos do M3.
 ---

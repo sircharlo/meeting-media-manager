@@ -81,6 +81,8 @@ Prilagojeno multimedijsko vsebino lahko uvoziš na več načinov:
 - **Povleci in spusti**: Povleci datoteke neposredno v M³
 - **Nadzorovanje mape**: Nastavi nadzorovano mapo za samodejni uvoz
 - **Datoteke JWPUB in seznami predvajanja**: Uvozi publikacije in sezname predvajanja
+- **Public Talk Media**: Import S-34 or S-34mp JWPUB files for public talk media
+- **Bible and Study Bible Tools**: Add audio Bible recordings, Study Bible media, or sign-language Bible media
 
 ### :speaker: Ali lahko uvozim zvočne posnetke Svetega pisma? {#audio-bible}
 
@@ -124,6 +126,12 @@ Funkcije glasbe v ozadju vključujejo:
 - neodvisen nadzor glasnosti,
 - nastavljiv časovni zamik za zaustavitev.
 
+### :stopwatch: Does M³ include a meeting timer? {#faq-meeting-timer}
+
+Da. When enabled, M³ can show a separate timer window for participant timing. It can count up or down, show the current time, show a pre-meeting countdown, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+
+The timer is a beta feature and should only be enabled if approved locally.
+
 ### :video_camera: Kako nastavim združevanje z Zoomom? {#zoom-setup}
 
 Za združevanje z Zoomom:
@@ -161,6 +169,13 @@ Ta funkcija odloži deljenje slik z OBS Studiem, dokler jih ročno ne sprožiš.
 - Večji nadzor nad časom prikaza
 - Izogibanje prezgodnjim spremembam prizorov
 
+### :record_button: Can M³ record meetings? {#faq-recordings}
+
+M³ does not include a built-in recorder, but it can help control recording in two ways:
+
+- If you use OBS Studio, enable OBS recording controls and start or stop OBS recording from the OBS popup
+- If you use another recording app, configure keyboard shortcuts so M³ can send the start and stop commands from the meeting recordings popup
+
 ## Napredne funkcije {#faq-advanced-features}
 
 ### :cloud: Kako deluje spremljanje map? {#faq-folder-monitoring}
@@ -187,6 +202,8 @@ Da! M³ podpira več profilov za:
 - posebne dogodke,
 - različne skupine,
 - ločene nastavitve in medije za vsako od teh.
+
+Profiles can also be exported to a JSON file and imported on another computer or into another profile. Importing replaces the current profile's settings.
 
 ## Odpravljanje težav {#faq-troubleshooting}
 

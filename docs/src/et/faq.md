@@ -81,6 +81,8 @@ Sa saad importida kohandatud meediat mitmel viisil:
 - **Lohistamine ja kleepimine**: Lohistage failid otse M³-e
 - **Kausta jälgimine**: seadista jälgitav kaust automaatseks importimiseks
 - **JWPUB-failid ja esitusloendid**: importige väljaanded ja esitusloendid
+- **Public Talk Media**: Import S-34 or S-34mp JWPUB files for public talk media
+- **Bible and Study Bible Tools**: Add audio Bible recordings, Study Bible media, or sign-language Bible media
 
 ### :speaker: Kas ma saan importida audiopiibli osi? {#audio-bible}
 
@@ -124,6 +126,12 @@ Taustamuusika funktsioon hõlmab:
 - Eraldi helitugevusregulaator
 - Konfigureeritav peatuspuhvri aeg
 
+### :stopwatch: Does M³ include a meeting timer? {#faq-meeting-timer}
+
+Jah. When enabled, M³ can show a separate timer window for participant timing. It can count up or down, show the current time, show a pre-meeting countdown, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+
+The timer is a beta feature and should only be enabled if approved locally.
+
 ### :video_camera: Kuidas seadistada Zoom-iga koostöö? {#zoom-setup}
 
 Zoom-iga koostöö:
@@ -161,6 +169,13 @@ See funktsioon lükkab piltide jagamise OBS Studio-iga edasi, kuni sa need käsi
 - On vaja suuremat kontrolli ajastuse üle
 - Enneaegsete stseenivahetuste vältimiseks
 
+### :record_button: Can M³ record meetings? {#faq-recordings}
+
+M³ does not include a built-in recorder, but it can help control recording in two ways:
+
+- If you use OBS Studio, enable OBS recording controls and start or stop OBS recording from the OBS popup
+- If you use another recording app, configure keyboard shortcuts so M³ can send the start and stop commands from the meeting recordings popup
+
 ## Lisasätted {#faq-advanced-features}
 
 ### :cloud: Kuidas töötab kausta jälgimine? {#faq-folder-monitoring}
@@ -187,6 +202,8 @@ Jah! M³-s saab kasutada erinevaid profiile:
 - Eriüritusteks
 - Erinevate keelegruppide jaoks
 - Et kasutada iga kasutaja jaoks vajaminevaid sätteid ja meediat
+
+Profiles can also be exported to a JSON file and imported on another computer or into another profile. Importing replaces the current profile's settings.
 
 ## Probleemide lahendamine {#faq-troubleshooting}
 

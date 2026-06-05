@@ -46,5 +46,8 @@ features:
     details: Automatisch media synchroniseren vanuit bewaakte mappen (zoals Dropbox of OneDrive) en media exporteren naar mappen.
   - icon: 🎯
     title: Geavanceerde functies
-    details: Importeer aangepaste media, JWPUB-bestanden, afspeellijsten en audiobijbelopnamen, en beheer meerdere gemeenteprofielen.
+    details: Importeer aangepaste media, JWPUB bestanden, afspeellijsten, audio Bijbel opnames, Study Bijbel media, publieke gespreksmedia en beheer meerdere congregaties.
+  - icon: ⏱️
+    title: Meeting Timer en Opname-Controls
+    details: Gebruik een optionele timer voor de timing van de deelnemer en bedien OBS of externe opname apps van M3.
 ---

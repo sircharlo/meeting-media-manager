@@ -50,6 +50,14 @@ M³ organisiert Medien automatisch nach Zusammenkunftstyp und Abschnitt:
 
 - **Zusammenkunftsabschnitte** - Medien werden nach Zusammenkunftsteilen gruppiert (öffentlicher Vortrag, Schätze aus Gottes Wort usw.)
 - **Benutzerdefinierte Abschnitte** - Sie können benutzerdefinierte Abschnitte für zusätzliche Medien erstellen, wenn an diesem bestimmten Tag keine Zusammenkunft geplant ist
+- **Manuelle Sortierung** - Ziehe Medienelemente in die Ordnung, die du benötigst, oder setze die Bestellung bei Bedarf zurück
+- **Wiedergabe wiederholen** - Schleife ein einzelnes Medienelement oder wiederhole jedes Element in einem Abschnitt bis die Wiedergabe manuell gestoppt wird
+
+### Versteckte und vermisste Medien {#hidden-and-mising-media}
+
+Medien können aus der Besprechungsliste ausgeblendet werden, ohne die automatisch heruntergeladenen Dateien zu löschen. Wenn Medien versehentlich ausgeblendet werden, verwenden Sie **Zeige versteckte Media** für den ausgewählten Tag.
+
+Wenn M3 fehlende Medien meldet, prüfen Sie zuerst, ob der Artikel näher am Datum des Treffens verfügbar sein soll. Sie können das fehlende Element auch manuell über das Menü **Medien hinzufügen** oder per Drag & Drop in die Medienliste hinzufügen.
 
 ## Medienpräsentation {#media-presentation}
 
@@ -75,6 +83,8 @@ Der Medienplayer bietet umfassende Steuerelemente:
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
 - **Zoom/Schwenken** - Mausrad zum Zoomen, Ziehen zum Schwenken (für Bilder)
+- **Live-Vorschau** - Wenn aktiviert, zeige eine Vorschau des Publikums-Medienfensters in der Hauptanwendung
+- **Wiedergabegeschwindigkeit** - Wenn in den Einstellungen aktiviert, passen Sie die Audio- und Videogeschwindigkeit aus dem Kontextmenü des Medienelements an
 
 ### Erweiterte Präsentationsfunktionen {#advanced-presentation}
 
@@ -118,6 +128,27 @@ Konfigurieren Sie benutzerdefinierte Tastenkürzel für schnellen Zugriff. Beach
 
 **Hinweis (\*):** Globales Kürzel - verfügbar, auch wenn die App nicht fokussiert ist
 
+## Werkzeuge {#display-tools} anzeigen
+
+### Medienanzeige {#media-display-window}
+
+Das Medienfenster ist das Publikumsfenster. Es kann auf einem externen Bildschirm platziert werden oder in einer Fenstereinrichtung verwendet werden, je nach Ausrüstung.
+
+Verwende das Anzeigepopup zu:
+
+- Anzeigen oder Verbergen der Medienanzeige
+- Wählen Sie die Anzeige oder den Fenstertyp
+- Wählen Sie einen temporären benutzerdefinierten Hintergrund anstelle des Jahrestextes
+- Verwende eine verfügbare Kamera als Hintergrund. Dies wird vor allem in der Zeichensprache verwendet.
+
+Bitte beachten Sie, dass benutzerdefinierte Hintergründe temporär sind und nicht nach M3-Beenden gespeichert werden.
+
+### Meeting Timer {#user-guide-meeting-timer}
+
+Wenn der Meeting-Timer aktiviert ist, kann M3 ein separates Timer-Fenster für das Timing der Teilnehmerteile anzeigen. Der Timer kann nach oben oder unten zählen, die aktuelle Zeit anzeigen, einen Meeting-Countdown vor geplanten Meetings anzeigen und wahlweise Überstunden angeben, oder ob das Treffen vor oder hinter dem Zeitplan liegt.
+
+Der Timer ist eine Beta-Funktion und sollte nur verwendet werden, wenn er lokal genehmigt wird.
+
 ## Hintergrundmusik {#user-guide-background-music}
 
 ### Einrichten der Hintergrundmusik {#background-music-setup}
@@ -159,6 +190,7 @@ M³ wechselt während Präsentationen automatisch OBS-Szenen:
 - **Medien-Szene** - Zeigt Medieninhalte an
 - **Bilder-Szene** - Zeigt Bilder an (kann verschoben werden, wenn aktiviert)
 - **Automatisches Umschalten** - Szenen ändern sich basierend auf Medientyp und Einstellungen
+- **Aufnahmekontrolle** - Wenn aktiviert, kann M3 die OBS-Aufnahme im OBS-Popup starten und stoppen
 
 ### Erweiterte OBS-Funktionen {#advanced-obs}
 
@@ -236,6 +268,8 @@ Fügen Sie Ihre eigenen Mediendateien zu M³ hinzu:
 3. **Ordnerüberwachung** - Richten Sie einen überwachten Ordner für automatische Importe ein
 4. **JWPUB-Dateien und Wiedergabelisten** - Importieren Sie Publikationen und Wiedergabelisten
 5. **Medien für öffentliche Vorträge (S-34 / S-34mp)** - Importieren Sie Medien für öffentliche Vorträge mithilfe von S‑34 oder S‑34mp JWPUB-Dateien
+6. **Videos von der offiziellen Website** - Suche nach Videos und füge sie zum ausgewählten Datum hinzu
+7. **Studiere Bibel und signatursprachige Bibelmedien** - Füge Bilder, Videos, Karten, historische Referenzen oder Bibelvideos für ausgewählte Passagen hinzu
 
 ### Verwalten importierter Medien {#managing-imported-media}
 
@@ -253,6 +287,10 @@ Importieren Sie Audioaufnahmen von Bibelversen:
 3. Bestimmte Verse oder Versbereiche auswählen können
 4. Laden Sie die Audiodateien herunter
 5. Verwenden Sie sie
+
+### Profileinstellungen importieren und exportieren {#Profil-Einstellungen-Import-Export}
+
+Die Einstellungen jedes Profils können in den Einstellungen in eine JSON-Datei exportiert werden. Das Importieren einer Profil-Einstellungsdatei ersetzt die aktuellen Einstellungen des Profils. Dies ist nützlich, wenn ein Setup auf einen anderen Computer verschoben wird oder eine bekannte Konfiguration wiederhergestellt wird.
 
 ## Ordnerüberwachung und Export {#user-guide-folder-monitoring}
 
@@ -286,9 +324,21 @@ Teilen Sie die offizielle Website auf externen Displays:
 
 ### Website-Steuerelemente {#website-controls}
 
+- **Webseite öffnen** - Öffne ein separates Webseitenfenster
+- **Starte Mirroring** - Zeige das Webseitenfenster in der Medienanzeige für das Publikum
+- **Stoppe das Mirroring** - Stoppe das Anzeigen der Webseite und kehre zum Hintergrund der Jahres- oder Medienanzeige zurück
 - **Navigation** - Standard-Browser-Navigationssteuerelemente
 - **Aktualisieren** - Laden Sie die aktuelle Seite neu
 - **Schließen** - Verlassen Sie den Website-Präsentationsmodus
+- **Automatisch zurückgeben** - Nach dem Stoppen der Spiegelung der Webseite automatisch zur Medienliste zurückkehren
+
+## Besprechungsaufnahmen {#Besprechungsaufnahmen}
+
+M3 kann dabei helfen, Besprechungsaufnahmen zu steuern, enthält aber keinen eingebauten Recorder.
+
+- **OBS Aufzeichnung** - Wenn OBS Aufzeichnungssteuerelemente aktiviert sind, verwenden Sie das OBS Popup um die OBS Aufnahme zu starten und zu stoppen
+- **Externe Aufzeichnungs-App** - Tastaturkürzel für eine separate Aufzeichnungs-App konfigurieren und dann das Popup für Besprechungen verwenden, um diese Verknüpfungen zu senden
+- **Aufnahmeordner** - Konfiguriere einen Aufnahmeordner um einen Schnellknopf anzuzeigen, der den Ordner öffnet, in dem Aufnahmen gespeichert werden
 
 ## Erweiterte Funktionen {#user-guide-advanced-features}
 
@@ -339,6 +389,7 @@ Konfigurieren Sie benutzerdefinierte Tastenkürzel für einen effizienten Betrie
 - Maximale Auflösung reduzieren
 - Alte zwischengespeicherte Dateien löschen
 - Verfügbaren Speicherplatz prüfen
+- Wenn die App grafische Fehler zeigt oder abstürzt, versuchen Sie die Hardwarebeschleunigung zu deaktivieren und M3 neu zu starten
 
 #### Sprachprobleme {#user-guide-language-issues}
 
