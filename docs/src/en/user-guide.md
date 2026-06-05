@@ -50,6 +50,14 @@ M³ automatically organizes media by meeting type and section:
 
 - **Meeting Sections** - Media is grouped by meeting parts (Public Talk, Treasures from God's Word, etc.)
 - **Custom Sections** - You can create custom sections for additional media if no meeting is scheduled on that particular day
+- **Manual Sorting** - Drag media items into the order you need, or reset the order when needed
+- **Repeated Playback** - Loop a single media item or repeat every item in a section until playback is stopped manually
+
+### Hidden and Missing Media {#hidden-and-missing-media}
+
+Media can be hidden from the meeting list without deleting the automatically downloaded files. If media is hidden by mistake, use **Show hidden media** for the selected day.
+
+If M³ reports missing media, first check whether the item is expected to become available closer to the meeting date. You can also add the missing item manually with the **Add media** menu or by dragging it into the media list.
 
 ## Media Presentation {#media-presentation}
 
@@ -72,6 +80,8 @@ The media player provides comprehensive controls:
 - **Volume** - Adjust playback volume -->
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 - **Zoom/Pan** - Use mouse wheel to zoom, drag to pan (for images)
+- **Live Preview** - When enabled, show a preview of the audience media window in the main app
+- **Playback Speed** - When enabled in settings, adjust audio and video speed from the media item context menu
 
 ### Advanced Presentation Features {#advanced-presentation}
 
@@ -114,6 +124,27 @@ Configure custom keyboard shortcuts for quick access. Note that no keyboard shor
 
 **Note (*):** Global shortcut - available even when the app is not focused
 
+## Display Tools {#display-tools}
+
+### Media Display Window {#media-display-window}
+
+The media display window is the audience-facing window. It can be placed on an external screen or used in a windowed setup depending on your equipment.
+
+Use the display popup to:
+
+- Show or hide the media display
+- Choose the display or window type
+- Select a temporary custom background instead of the yeartext
+- Use an available camera as the background. This is mostly used in sign-language congregations.
+
+Please note that custom backgrounds are temporary and are not saved after M³ quits.
+
+### Meeting Timer {#user-guide-meeting-timer}
+
+When the meeting timer is enabled, M³ can show a separate timer window for timing participant parts. The timer can count up or down, show the current time, show a meeting countdown before scheduled meetings, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+
+The timer is a beta feature and should only be used when approved locally.
+
 ## Background Music {#user-guide-background-music}
 
 ### Setting Up Background Music {#background-music-setup}
@@ -155,6 +186,7 @@ M³ automatically switches OBS scenes during presentations:
 - **Media Scene** - Displays media content
 - **Image Scene** - Shows images (can be postponed if enabled)
 - **Automatic Switching** - Scenes change based on media type and settings
+- **Recording Controls** - If enabled, M³ can start and stop OBS recording from the OBS popup
 
 ### Advanced OBS Features {#advanced-obs}
 
@@ -232,6 +264,8 @@ Add your own media files to M³:
 3. **Folder Monitoring** - Set up a watched folder for automatic imports
 4. **JWPUB Files and Playlists** - Import publications and playlists
 5. **Public Talk Media (S-34 / S-34mp)** - Import public talk media using S‑34 or S‑34mp JWPUB files
+6. **Videos from the official website** - Search for videos and add them to the selected date
+7. **Study Bible and sign-language Bible media** - Add images, videos, maps, historical references, or sign-language Bible videos for selected passages
 
 ### Managing Imported Media {#managing-imported-media}
 
@@ -249,6 +283,10 @@ Import audio recordings of Bible verses:
 3. Choose specific verses or verse ranges
 4. Download the audio files
 5. Use them
+
+### Profile Settings Import and Export {#profile-settings-import-export}
+
+Each profile's settings can be exported to a JSON file from Settings. Importing a profile settings file replaces the current profile's settings, which is useful when moving a setup to another computer or restoring a known configuration.
 
 ## Folder Monitoring and Export {#user-guide-folder-monitoring}
 
@@ -282,9 +320,21 @@ Share the official website on external displays:
 
 ### Website Controls {#website-controls}
 
+- **Open Website** - Open a separate website window
+- **Start Mirroring** - Show the website window in the media display for the audience
+- **Stop Mirroring** - Stop showing the website and return to the yeartext or media display background
 - **Navigation** - Standard browser navigation controls
 - **Refresh** - Reload the current page
 - **Close** - Exit website presentation mode
+- **Auto Return** - Optionally return to the media list automatically after stopping website mirroring
+
+## Meeting Recordings {#meeting-recordings}
+
+M³ can help control meeting recording, but it does not include a built-in recorder.
+
+- **OBS Recording** - If OBS recording controls are enabled, use the OBS popup to start and stop OBS recording
+- **External Recording App** - Configure keyboard shortcuts for a separate recording app, then use the meeting recordings popup to send those shortcuts
+- **Recording Folder** - Configure a recording folder to show a quick button that opens the folder where recordings are saved
 
 ## Advanced Features {#user-guide-advanced-features}
 
@@ -335,6 +385,7 @@ Configure custom keyboard shortcuts for efficient operation:
 - Reduce maximum resolution
 - Clear old cached files
 - Check available disk space
+- If the app shows graphical glitches or crashes, try disabling hardware acceleration and restart M³
 
 #### Language Issues {#user-guide-language-issues}
 
