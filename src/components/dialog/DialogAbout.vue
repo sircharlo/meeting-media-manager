@@ -43,7 +43,7 @@
           v-model="spotlitFeature"
           animated
           autoplay
-          class="bg-accent-100 rounded-borders"
+          class="bg-accent-100 full-width rounded-borders"
           infinite
           padding
           style="height: 200px"

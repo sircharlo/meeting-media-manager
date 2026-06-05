@@ -13,6 +13,53 @@
   @extend .one-hundred-vw;
 }
 
+.app-main-scroll {
+  height: calc(100vh - 56px);
+  margin-top: 56px;
+  overflow-x: hidden !important;
+  overflow-y: auto;
+  padding-top: 0 !important;
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-clip: content-box;
+    border: 3px solid transparent;
+    border-radius: 999px;
+  }
+}
+
+body.body--light .app-main-scroll {
+  scrollbar-color: rgba($primary, 0.45) transparent;
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba($primary, 0.35);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: rgba($primary, 0.65);
+  }
+}
+
+body.body--dark .app-main-scroll {
+  scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.25);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+}
+
 #yeartext {
   font-family: 'Wt-ClearText-Bold', 'Noto Serif Variable', serif;
   align-content: center;
@@ -92,7 +139,6 @@ span.etitle {
 
 body.body--light {
   background: $primary-bg;
-  scrollbar-color: $scrollbar-thumb-inactive $scrollbar-track-inactive;
 
   .bg-primary-light {
     background-color: $primary-bg;
@@ -165,15 +211,10 @@ body.body--light {
   .bg-secondary-contrast {
     background-color: $secondary-contrast;
   }
-
-  &:hover {
-    scrollbar-color: $scrollbar-thumb-active $scrollbar-track-active;
-  }
 }
 
 body.body--dark {
   background: $primary-bg-dark;
-  scrollbar-color: $scrollbar-thumb-dark-inactive $scrollbar-track-dark-inactive;
 
   .bg-primary-light {
     background-color: $primary-bg-dark;
@@ -253,10 +294,6 @@ body.body--dark {
 
   & .q-item.selected-to-drag {
     background-color: $accent-300-dark;
-  }
-
-  &:hover {
-    scrollbar-color: $scrollbar-thumb-dark-active $scrollbar-track-dark-active;
   }
 
   .media-children {
