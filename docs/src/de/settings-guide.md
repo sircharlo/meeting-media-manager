@@ -157,6 +157,20 @@ Diese Einstellungen ermöglichen es Ihnen, vorübergehende Änderungen an Ihrem 
 - **Neuer Tag (Wochenende)**: Neuer Tag für die Zusammenkunft am Wochenende
 - **Neue Zeit (Wochenende)**: Neue Zeit für die Zusammenkunft am Wochenende
 
+### Automatische Terminplan-Updates {#automatic-meeting-schedule-updates}
+
+<!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
+
+Wenn aktiviert, prüft M3 regelmäßig die offizielle Website der Zeugen Jehovas auf Tag- und Uhrzeitänderungen und aktualisiert das aktuelle Profil automatisch.
+
+Dies funktioniert nur für Profile, die mit der Gemeindesuche hinzugefügt wurden und deren Kongregation Name nicht manuell geändert wurde. Wenn die Synchronisierung deaktiviert wurde, weil der Name der Kongregation geändert wurde, verwenden Sie **Zeitplan synchronisieren** um das Profil erneut zu verknüpfen.
+
+#### Meeting-Zeitplan aktualisieren {#Refresh-Meeting-Zeitplan}
+
+<!-- **Setting**: `reSyncMeetingScheduleButton` -->
+
+Synchronisieren Sie den aktuellen und zukünftigen Terminplan manuell mit den Informationen der offiziellen Website.
+
 ## Medienabruf und -wiedergabe {#media-retrieval-and-playback}
 
 ### Getaktete Verbindung {#metered-connection}
@@ -174,6 +188,14 @@ Aktivieren Sie dies, wenn Sie eine begrenzte Datenverbindung haben, um die Bandb
 Aktivieren Sie die Medienanzeigefunktionalität. Dies ist erforderlich, um Medien auf einem zweiten Monitor zu präsentieren.
 
 **Standard**: `false`
+
+#### Medienvorschau aktivieren {#enable-media-preview}
+
+<!-- **Setting**: `enableMediaPreview` -->
+
+Zeigt eine Live-Vorschau des Medienfensters an, während ein Bild oder Video angezeigt wird.
+
+**Standard**: `true`
 
 #### Wiedergabe pausiert beginnen {#begin-playback-paused}
 
@@ -332,6 +354,7 @@ Konfigurieren Sie, welche OBS-Szenen für verschiedene Zwecke verwendet werden s
 - **Szene nach Medien wechseln**: Kehren Sie nach Medien automatisch zur vorherigen Szene zurück
 - **Vorherige Szene merken**: Merken Sie sich die vorherige Szene und stellen Sie sie wieder her
 - **Symbole ausblenden**: Blenden Sie OBS-bezogene Symbole in der Benutzeroberfläche aus
+- **Aufnahmesteuerung**: Steuerelemente anzeigen, die die OBS-Aufnahme von M3 starten und stoppen
 
 :::warning Wichtiger Hinweis
 
@@ -385,6 +408,58 @@ Kürzel, das ausgelöst wird, wenn das letzte Lied während einer Zusammenkunft 
 
 **Standard**: Keine
 
+### Besprechungsaufnahmen {#Besprechungsaufnahmen}
+
+#### Aktiviere externe Aufnahme-App Integration {#enable-external-recording-app-integration}
+
+<!-- **Setting**: `recordingEnable` -->
+
+Lassen Sie M3 eine separate Aufzeichnungsanwendung mit Tastaturkürzel steuern. Dies speichert nicht innerhalb von M3; es sendet die konfigurierten Verknüpfungen, wenn Sie die **Aufnahme starten** oder **Stop Recording** im Popup für Besprechungen drücken.
+
+Diese Option wird ausgeblendet, wenn OBS Aufnahme-Steuerelemente aktiviert sind. Wenn Sie OBS Studio verwenden, verwenden Sie stattdessen die OBS-Aufnahme-Steuerelemente in der OBS-Integration.
+
+**Standard**: `false`
+
+#### Aufnahme von Verknüpfungen und Ordner {#Aufnahme-Verknüpfungen und Ordner}
+
+<!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
+
+Konfigurieren Sie das Tastaturkürzel, das die Aufnahme beginnt, die optionale Verknüpfung, die die Aufnahme stoppt, und den Ordner, in dem die externe App Aufnahmen speichert. Wenn kein Stopp-Verknüpfung angegeben wird, verwendet M3 den Startabschnitt. Wenn ein Ordner konfiguriert ist, zeigt M3 einen Knopf, um ihn zu öffnen.
+
+### Meeting-Timer {#Meeting-Timer}
+
+#### Meeting Timer {#Enable-Meeting Timer} aktivieren
+
+<!-- **Setting**: `enableTimerDisplay` -->
+
+Aktivieren Sie ein separates Timer-Fenster für das Timing von Meetingteilen. Dies ist eine Beta-Funktion und sollte nur aktiviert werden, wenn sie lokal genehmigt wird.
+
+**Standard**: `false`
+
+#### Timer-Fenster Verhalten {#Timer-Window-Verhalten}
+
+<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
+
+Legen Sie fest, ob sich das Timer-Fenster automatisch öffnet, ob die Teilnehmer-Timer standardmäßig hochgezählt oder nicht angezeigt werden ob die Uhr 12 Stunden oder 24 Stunden dauert, und ob der aktuelle Timerwert auf dem Actionsinsel-Timer angezeigt wird.
+
+#### Timer-Anzeigeformate {#timer-display-format}
+
+<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
+
+Wählen Sie analoge oder digitale Anzeigeformate für Tageszeit und Countdown-Timer. Der Countdown-Warnindikator kann den analogen Countdownring in der letzten Minute auf eine Warnfarbe umstellen.
+
+#### Meeting-Countdown und Zeitplan Status {#Meeting-Countdown-and-schedule-status}
+
+<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
+
+Zeige einen Countdown vor geplanten Meetings und wahlweise anzeigen, ob das Meeting vor oder hinter dem Zeitplan liegt. Der Meeting-Countdown erscheint nur auf der Timer-Anzeige und nicht auf der Hauptmedien-Anzeige.
+
+#### Timer Aussehen und Überstunden {#Timer-Aussehen und Überstunden}
+
+<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
+
+Passen Sie Größe und Farbe des Timers an und konfigurieren Sie Überstundenindikatoren wie alternative Farben, blinken und nur die vergangene Überstundenmenge im Zählmodus anzeigen.
+
 ## Erweiterte Einstellungen {#advanced-settings}
 
 ### Tastenkürzel {#settings-guide-keyboard-shortcuts}
@@ -418,6 +493,14 @@ Aktivieren Sie Ein-/Ausblendübergänge beim Anzeigen oder Ausblenden des Medien
 
 **Standard**: `true`
 
+#### Playback Speed Control {#enable-playback-speed control} aktivieren
+
+<!-- **Setting**: `enablePlaybackSpeedControl` -->
+
+Ermöglicht die Anpassung der Audio- und Video-Wiedergabegeschwindigkeit aus dem Kontextmenü des Medien-Elements.
+
+**Standard**: `false`
+
 #### Medienlogo ausblenden {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
@@ -432,7 +515,7 @@ Blenden Sie das Logo im Medienfenster aus.
 
 Maximale Auflösung für heruntergeladene Mediendateien.
 
-**Optionen**: 240p, 360p, 480p, 720p
+**Optionen**: 240p, 360p, 480p, 720p, 1080p
 
 **Standard**: 720p
 
@@ -449,6 +532,14 @@ Schließen Sie Medien aus den gedruckten Publikationen in Medien-Downloads ein.
 <!-- **Setting**: `excludeFootnotes` -->
 
 Schließen Sie Fußnotenbilder nach Möglichkeit aus Medien-Downloads aus.
+
+**Standard**: `false`
+
+#### Exklusive Videos für zusätzliche Wachturmstudien {#exclude-additional-watchtower-studien-videos}
+
+<!-- **Setting**: `excludeWtParagraphVideos` -->
+
+Ausgenommen sind zusätzliche Videos, auf die in den Absätzen von Watchtower Study verwiesen wird.
 
 **Standard**: `false`
 
@@ -506,6 +597,10 @@ Konvertieren Sie exportierte Mediendateien in das MP4-Format für eine bessere K
 
 **Standard**: `false`
 
+### Profileinstellungen Übertragung {#Profil-Einstellungen-Transfer}
+
+Exportieren Sie die Einstellungen des aktuellen Profils in eine JSON-Datei oder importieren Sie eine zuvor exportierte Profil-Einstellungsdatei. Das Importieren ersetzt die Einstellungen des aktuellen Profils.
+
 ### Gefahrenzone {#danger-zone}
 
 :::warning Warnung
@@ -521,6 +616,22 @@ Diese Einstellungen sollten nur geändert werden, wenn Sie ihre Auswirkungen ver
 Basisdomäne, die zum Herunterladen von Publikationen und Medien verwendet wird.
 
 **Standard**: `jw.org`
+
+#### Deaktiviere Hardwarebeschleunigung {#disable-hardware-acceleration}
+
+<!-- **Setting**: `disableHardwareAcceleration` -->
+
+Deaktivieren Sie die Hardwarebeschleunigung nach dem Neustart von M3. Dies kann bei grafischen Fehlern oder Abstürzen auf einigen Systemen helfen, wird aber nicht anderweitig empfohlen.
+
+**Standard**: `false`
+
+#### Hardware-Beschleunigungs-Erinnerung unterdrücken {#unterdrücken-Hardware-Beschleunigungs-Erinnerung}
+
+<!-- **Setting**: `suppressHardwareAccelerationReminder` -->
+
+Erinnerung ausblenden, um die Hardwarebeschleunigung wieder zu aktivieren, nachdem sie manuell deaktiviert wurde.
+
+**Standard**: `false`
 
 #### Medienabruf deaktivieren {#disable-media-fetching}
 
