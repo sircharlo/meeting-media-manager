@@ -50,6 +50,14 @@ Az M³ automatikusan rendezi a médiát az összejövetel típusa és részei sz
 
 - **Összejövetel szakaszok** – A média az összejövetel részei szerint van csoportosítva (Nyilvános Előadás, Szellemi Kicsek, stb.)
 - **Egyéni szakaszok** – Ha az adott napon nincs tervezett összejövetel, egyéni szakaszokat hozhat létre további médiaelemek számára
+- **Manual Sorting** - Drag media items into the order you need, or reset the order when needed
+- **Repeated Playback** - Loop a single media item or repeat every item in a section until playback is stopped manually
+
+### Hidden and Missing Media {#hidden-and-missing-media}
+
+Media can be hidden from the meeting list without deleting the automatically downloaded files. If media is hidden by mistake, use **Show hidden media** for the selected day.
+
+If M³ reports missing media, first check whether the item is expected to become available closer to the meeting date. You can also add the missing item manually with the **Add media** menu or by dragging it into the media list.
 
 ## Médiaprezentáció {#media-presentation}
 
@@ -75,6 +83,8 @@ A médialejátszó többféle vezérlést biztosít:
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
 - Kattintson a videó időtartamára a miniatűr bal felső sarkában
+- **Live Preview** - When enabled, show a preview of the audience media window in the main app
+- **Playback Speed** - When enabled in settings, adjust audio and video speed from the media item context menu
 
 ### Haladó Prezentációs Funkciók {#advanced-presentation}
 
@@ -118,6 +128,27 @@ A háttérzene automatikusan elindul az összejövetel előtt és a megfelelő i
 
 **_Megjegyzés (_):** Globális gyorsbillentyű – akkor is elérhető, ha az alkalmazás nincs fókuszban
 
+## Display Tools {#display-tools}
+
+### Media Display Window {#media-display-window}
+
+The media display window is the audience-facing window. It can be placed on an external screen or used in a windowed setup depending on your equipment.
+
+Use the display popup to:
+
+- Show or hide the media display
+- Choose the display or window type
+- Select a temporary custom background instead of the yeartext
+- Use an available camera as the background. This is mostly used in sign-language congregations.
+
+Please note that custom backgrounds are temporary and are not saved after M³ quits.
+
+### Meeting Timer {#user-guide-meeting-timer}
+
+When the meeting timer is enabled, M³ can show a separate timer window for timing participant parts. The timer can count up or down, show the current time, show a meeting countdown before scheduled meetings, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+
+The timer is a beta feature and should only be used when approved locally.
+
 ## Háttérzene {#user-guide-background-music}
 
 ### Háttérzene beállítása {#background-music-setup}
@@ -159,6 +190,7 @@ Engedélyezze ezt az opciót, ha késleltetni szeretné a képek OBS-hez való t
 - **Médiajelenet** - A média tartalom megjelenítése
 - **Képjelenet** - Képek megjelenítése (késleltethető, ha engedélyezve van)
 - **Automatikus váltás** – A jelenetek a médiatípus és a beállítások alapján cserélődnek
+- **Recording Controls** - If enabled, M³ can start and stop OBS recording from the OBS popup
 
 ### Haladó OBS funkciók {#advanced-obs}
 
@@ -237,6 +269,8 @@ Figyelje a mappát az új médiafájlokért:
 3. Kiválasszon konkrét verseket vagy szakaszokat
 4. **Szervezés** - A fájlok dátum szerint vannak rendezve, a mappaszerkezet alapján
 5. Használja őket
+6. **Videos from the official website** - Search for videos and add them to the selected date
+7. **Study Bible and sign-language Bible media** - Add images, videos, maps, historical references, or sign-language Bible videos for selected passages
 
 ### Importált média kezelése {#managing-imported-media}
 
@@ -254,6 +288,10 @@ Figyelje a mappát az új médiafájlokért:
 3. Kiválasszon konkrét verseket vagy szakaszokat
 4. **Szervezés** - A fájlok dátum szerint vannak rendezve, a mappaszerkezet alapján
 5. Használja őket
+
+### Profile Settings Import and Export {#profile-settings-import-export}
+
+Each profile's settings can be exported to a JSON file from Settings. Importing a profile settings file replaces the current profile's settings, which is useful when moving a setup to another computer or restoring a known configuration.
 
 ## Mappafigyelés és exportálás {#user-guide-folder-monitoring}
 
@@ -287,9 +325,21 @@ Ossza meg a hivatalos weboldalt külső kijelzőkön:
 
 ### Webhelyvezérlők {#website-controls}
 
+- **Open Website** - Open a separate website window
+- **Start Mirroring** - Show the website window in the media display for the audience
+- **Stop Mirroring** - Stop showing the website and return to the yeartext or media display background
 - **Profilok létrehozása** - Külön profilok beállítása a különböző gyülekezetek számára
 - **Profilok váltása** - A gyülekezetválasztóval válthat a profilok között
 - **Külön beállítások** – Minden profilnak saját beállításai és médiatartalmai vannak
+- **Auto Return** - Optionally return to the media list automatically after stopping website mirroring
+
+## Meeting Recordings {#meeting-recordings}
+
+M³ can help control meeting recording, but it does not include a built-in recorder.
+
+- **OBS Recording** - If OBS recording controls are enabled, use the OBS popup to start and stop OBS recording
+- **External Recording App** - Configure keyboard shortcuts for a separate recording app, then use the meeting recordings popup to send those shortcuts
+- **Recording Folder** - Configure a recording folder to show a quick button that opens the folder where recordings are saved
 
 ## Haladó funkciók {#user-guide-advanced-features}
 
@@ -340,6 +390,7 @@ Konfiguráljon egyéni billentyűparancsokat a hatékony működés érdekében:
 - **Keressen problémákat** - Keressen hasonló problémákat a GitHubon
 - **Problémák jelentése** - Hozzon létre egy új problémát (New Issue) részletes leírással
 - Ellenőrizze a rendelkezésre álló lemezterületet
+- If the app shows graphical glitches or crashes, try disabling hardware acceleration and restart M³
 
 #### Nyelvi problémák {#user-guide-language-issues}
 
