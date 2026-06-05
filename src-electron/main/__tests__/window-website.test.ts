@@ -42,11 +42,11 @@ describe('window-website cursor indicator', () => {
       insertCSS: vi.fn(async () => {
         calls.push('insertCSS');
       }),
-    };
+    } as never;
 
     const { injectCursorIndicator } = await import('../window/window-website');
 
-    await injectCursorIndicator(webContents as never);
+    await injectCursorIndicator(webContents);
 
     expect(calls).toEqual(['insertCSS', 'executeJavaScript']);
     expect(captureElectronError).not.toHaveBeenCalled();
@@ -59,13 +59,10 @@ describe('window-website cursor indicator', () => {
         throw error;
       }),
       insertCSS: vi.fn(async () => undefined),
-    };
+    } as never;
 
     const { injectCursorIndicator } = await import('../window/window-website');
-
-    await expect(injectCursorIndicator(webContents as never)).resolves.toBe(
-      undefined,
-    );
+    await expect(injectCursorIndicator(webContents)).resolves.toBe(undefined);
     expect(captureElectronError).toHaveBeenCalledWith(error, {
       contexts: { fn: { name: 'injectCursorIndicator' } },
     });
