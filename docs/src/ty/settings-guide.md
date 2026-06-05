@@ -157,19 +157,19 @@ E nehenehe ta ’oe e fa’atano i te mau taui’ura’a poto i te porotarama o 
 - Mahana nō te putuputura’a i te hope’a hepetoma: Te mahana ’āpī nō te putuputura’a i te hope’a hepetoma
 - Hora nō te putuputura’a i te hope’a hepetoma: Te hora ’āpī nō te putuputura’a i te hope’a hepetoma
 
-### Automatic Meeting Schedule Updates {#automatic-meeting-schedule-updates}
+### Te mau fa’aapī-ra’a taime nō te putuputura’a ma te ’ore e tauturu-hia {#automatic-meeting-schedule-updates}
 
 <!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
 
-When enabled, M³ periodically checks the official website of Jehovah's Witnesses for meeting day and time changes and updates the current profile automatically.
+Ia ha’amā-hia, e hi’o-tamau-hia e te M³ te tahua iteneti a te mau Ite nō Iehova nō te mau tauira’a i te mahana e te hora o te putuputura’a, e e fa’aapī-hia te hoho’a-taata o tei fa’a’ohipa-hia i teie taime ma te ’ore e tauturu-hia.
 
-This only works for profiles that were added with congregation lookup and whose congregation name has not been manually changed. If synchronization was disabled because the congregation name changed, use **Enable schedule sync** to link the profile again.
+E ohipa noa teie nō te mau hoho’a-taata i tāpirihia nā roto i te imi-ra’a i te amuira’a, e ’aita te i’oa o te amuira’a i tauihia e te rima. Mai te peu e ua fa’aore-hia te fa’aaura’a nō te mea e ua taui te i’oa o te amuira’a, a fa’a’ohipa i te Enable schedule sync nō te tu’ati fa’ahou i te hoho’a-taata.
 
-#### Refresh Meeting Schedule {#refresh-meeting-schedule}
+#### Fa’aapī i te Tāpura Taime nō te Putuputura’a {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
-Manually synchronize the current and future meeting schedule with the information from the official website.
+A fa’aaura’a ma te rima i te tāpura taime nō te putuputura’a i teie taime e i te mau taime e tupu mai, ma te fa’a’ohipa i te mau ha’amāramaramara’a nō roto mai i te tahua iteneti mana.
 
 ## ’Ohi-ra’a e te fa’atō’ora’a i te mau rāve’a ha’amāramaramara’a {#media-retrieval-and-playback}
 
@@ -189,11 +189,11 @@ Fa'anahora'a tumu: `Hape`
 
 Fa'anahora'a tumu: `Hape`
 
-#### Enable Media Preview {#enable-media-preview}
+#### A ha’amā i te hi’o-mata-ra’a i te mau ve’a {#enable-media-preview}
 
 <!-- **Setting**: `enableMediaPreview` -->
 
-Show a live preview of the media window while an image or video is being displayed.
+A fa’a’ite i te hi’o-mata-ra’a ora o te ha’amaramarama ve’a i te taime a fa’a’ite-hia ai te ho’ē hoho’a aore rā te ho’ē video.
 
 Fa’anahora’a tumu: `’oia`
 
@@ -354,7 +354,7 @@ Fa’anaho i te mau tōpata OBS e fa’a’ohipahia nō te mau hina’aro ta’a
 - Taui i te tōpata i muri a’e i te rorouira: Fa’aho’i-’ōhie-ra’a i te tōpata na mua atu i te hope’a o te rorouira
 - Ha’amana’o i te tōpata na mua atu: Ha’amana’o ’e fa’aho’i mai i te tōpata i fa’a’ohipa-hia na mua atu
 - Huna i te mau hoho’a-tapa’o: Huna i te mau hoho’a-tapa’o nō te OBS i roto i te matapihi fa’a’ohipa
-- **Recording Controls**: Show controls that start and stop OBS recording from M³
+- Te mau Fa’atere-ra’a Haruharu-reo: A fa’a’ite i te mau fa’atere-ra’a o te ha’amata e o te fa’ata’a i te haruharu-reo OBS mai roto mai i te M³
 
 :::warning Parau Fa’aarara’a faufa’a
 
@@ -408,25 +408,25 @@ Rāve’a ha’apotora’a tei fa’a’ohipa-hia i te taime e fa’ata’i-hia 
 
 Fa’anahora’a tumu: ’Aita
 
-### Meeting Recordings {#meeting-recordings}
+### Te mau Haruharu-reo nō te Putuputura’a {#meeting-recordings}
 
-#### Enable External Recording App Integration {#enable-external-recording-app-integration}
+#### A ha’amā i te tu’atira’a e te fa’anahora’a haruharu-reo nō rāpae {#enable-external-recording-app-integration}
 
 <!-- **Setting**: `recordingEnable` -->
 
-Let M³ control a separate recording application with keyboard shortcuts. This does not record inside M³; it sends the configured shortcuts when you press **Start Recording** or **Stop Recording** in the meeting recordings popup.
+A fa’ati’a i te M³ ia fa’atere i te ho’ē fa’anahora’a haruharu-reo ta’a ’ē ma te fa’a’ohipa i te mau tāpa’o pāpere pātō-pātē. ’Aita teie e haruharu-reo i roto i te M³; e tono atu teie i te mau tāpa’o pāpere pātō-pātē i fa’anahohia i te taime a pātō ai ’oe i ni’a i te Ha’amata i te haruharu aore rā Fa’ata’a i te haruharu i roto i te ha’amaramarama nō te mau haruharu-reo putuputura’a.
 
-This option is hidden when OBS recording controls are enabled. If you use OBS Studio, use the OBS recording controls in the OBS integration instead.
+E tapuni-hia teie mā’itira’a i te taime a fa’a’ohipa-hia ai te mau fa’atere-ra’a haruharu-reo OBS. Mai te peu e te fa’a’ohipa ra ’oe i te OBS Studio, a fa’a’ohipa atu i te mau fa’atere-ra’a haruharu-reo OBS i roto i te tu’atira’a OBS.
 
 Fa'anahora'a tumu: `Hape`
 
-#### Recording Shortcuts and Folder {#recording-shortcuts-and-folder}
+#### Te mau Tāpa’o Pāpere Pātō-pātē nō te Haruharu-reo e te Pātura {#recording-shortcuts-and-folder}
 
 <!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
 
-Configure the keyboard shortcut that starts recording, the optional shortcut that stops recording, and the folder where the external app saves recordings. If no stop shortcut is provided, M³ reuses the start shortcut. When a folder is configured, M³ shows a button to open it.
+A fa’anahora’a i te tāpa’o pāpere pātō-pātē no te ha’amata i te haruharu, te tāpa’o pāpere pātō-pātē nō te fa’ata’a i te haruharu, e te pātura i reira te fa’anahora’a nō rāpae e vaiiho ai i te mau haruharu-reo. Mai te peu e aita e tāpa’o pāpere pātō-pātē nō te fa’ata’a i te haruharu i fa’anahohia, e fa’a’ohipa fa’ahou te M³ i te tāpa’o pāpere pātō-pātē nō te ha’amata. I te taime a fa’anahohia ai te ho’ē pātura, e fa’a’ite te M³ i te ho’ē piti’o nō te iriti i te reira.
 
-### Meeting Timer {#meeting-timer}
+### Taime nō te Putuputura’a {#meeting-timer}
 
 #### Enable Meeting Timer {#enable-meeting-timer}
 
@@ -599,7 +599,7 @@ Fa'anahora'a tumu: `Hape`
 
 ### Profile Settings Transfer {#profile-settings-transfer}
 
-Export the current profile's settings to a JSON file or import a previously exported profile settings file. Importing replaces the current profile's settings.
+Export the current profile's settings to a JSON file or import a previously exported profile settings file. E mono te tāvaha-ra’a i te mau fa’anahora’a o te hoho’a-taata o tei fa’a’ohipa-hia i teie taime.
 
 ### Vāhi ’ati {#danger-zone}
 
