@@ -81,6 +81,8 @@ Vous pouvez importer des médias personnalisés de plusieurs façons :
 - **Glisser-déposer** : Faites glisser les fichiers directement dans M³
 - **Surveillance de dossiers** : Configurez un dossier surveillé pour les imports automatiques
 - **Fichiers JWPUB et listes de lecture** : Importez des publications et des listes de lecture
+- **Public Talk Media**: Importer des fichiers JWPUB S-34 ou S-34mp pour les médias de conversation publique
+- **Outils bibliques et bibliques d'étude**: Ajouter des enregistrements audio, des médias bibliques d'étude, ou des médias bibliques de langue des signes
 
 ### :speaker: Puis-je importer des enregistrements audio de la Bible ? {#audio-bible}
 
@@ -124,6 +126,12 @@ Les fonctionnalités de musique de fond incluent :
 - Contrôle de volume indépendant
 - Temps de pause configurable
 
+### :stopwatch: Does M³ include a meeting timer? {#faq-meeting-timer}
+
+Oui. Lorsque cette option est activée, M3 peut afficher une fenêtre de minuterie séparée pour le timing des participants. Il peut compter vers le haut ou vers le bas, afficher l'heure actuelle, afficher un compte à rebours pré-réunion et indiquez éventuellement des heures supplémentaires ou si la réunion est en avance ou en retard.
+
+La minuterie est une fonctionnalité bêta et ne devrait être activée que si elle est approuvée localement.
+
 ### :video_camera: Comment configurer l'intégration Zoom ? {#zoom-setup}
 
 Pour intégrer avec Zoom :
@@ -161,6 +169,13 @@ Cette fonction retarde le partage des images vers OBS Studio jusqu'à ce que vou
 - Avoir plus de contrôle sur le timing
 - Éviter les changements de scène précoces
 
+### :record_button: Can M³ record meetings? {#faq-recordings}
+
+M3 n'inclut pas un enregistreur intégré, mais il peut aider à contrôler l'enregistrement de deux façons :
+
+- Si vous utilisez OBS Studio, activez les contrôles d'enregistrement d'OBS et démarrez ou arrêtez l'enregistrement d'OBS depuis la popup d'OBS
+- Si vous utilisez une autre application d’enregistrement, configurez les raccourcis clavier pour que M3 puisse envoyer les commandes de démarrage et d’arrêt de la fenêtre pop-up des enregistrements de la réunion
+
 ## Fonctionnalités avancées {#faq-advanced-features}
 
 ### :cloud: Comment fonctionne la surveillance de dossiers ? {#faq-folder-monitoring}
@@ -187,6 +202,8 @@ Oui ! M³ prend en charge plusieurs profils pour :
 - Événements spéciaux
 - Différents groupes
 - Paramètres et médias séparés pour chaque
+
+Les profils peuvent également être exportés vers un fichier JSON et importés sur un autre ordinateur ou dans un autre profil. L'importation remplace les paramètres du profil actuel.
 
 ## Résolution des problèmes {#faq-troubleshooting}
 
