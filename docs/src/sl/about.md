@@ -50,6 +50,7 @@ Za **hibridne** občinske shode ali za shode **v živo** aplikacija omogoča:
 - **Napredno upravljanje multimedijske vsebine**: Predogledi multimedijske vsebine z možnostjo približevanja in premikanja slike
 - **Prilagajanje časa**: Nastavi začetni in končni čas predvajanja multimedijske vsebine
 - **Nadzor predvajanja**: Enostavni gumbi za pavzo/predvajanje/ustavitev ter bližnjice na tipkovnici
+- **Live preview and speed control**: Preview the audience display and optionally adjust audio or video playback speed
 - **Podpora za več zaslonov**: Samodejno zaznavanje in upravljanje zunanjih zaslonov
 - **Čista predstavitev**: Enostaven vmesnik za predstavitev multimedijske vsebine
 
@@ -67,13 +68,14 @@ Za **hibridne** občinske shode ali za shode **v živo** aplikacija omogoča:
 
 - **Samodejno preklapljanje prizorov**: Brezhibno združevanje z OBS Studiem za hibridne shode
 - **Upravljanje prizorov**: Samodejno preklapljanje med kamero, multimedijsko vsebino in drugimi prizori
+- **Recording controls**: Start and stop OBS recordings from M³ when enabled
 
 ### Uvoz in upravljanje multimedijske vsebine {#about-media-import}
 
 - **Datoteke JWPUB**: Enostavno uvažanje in upravljanje datotek JWPUB
 - **Datoteke JWLPLAYLIST**: Podpora za seznam predvajanja iz aplikacije JW Library
 - **Prilagojena multimedijska vsebina**: Uvozi svoje videoposnetke, slike, zvočne datoteke in PDF dokumente
-- **Zvočna Biblija**: Uvozi multimedijsko vsebino iz Study Bible in zvočne posnetke iz Prevoda novi svet
+- **Bible media**: Import Study Bible media, sign-language Bible media, and audio recordings of the New World Translation
 - **Javni govori**: Predogled multimedijske vsebine za javne govore imej vedno pripravljen za uporabo z uvoznikom S-34
 
 ### Napredne možnosti {#about-advanced-features}
@@ -81,8 +83,10 @@ Za **hibridne** občinske shode ali za shode **v živo** aplikacija omogoča:
 - **Spremljanje map**: Samodejno sinhroniziraj multimedijsko vsebino iz spremljanih map (Dropbox, OneDrive itd.)
 - **Izvoz multimedijske vsebine**: Multimedijsko vsebino samodejno izvozi v mape, razporejene po datumu
 - **Predstavitev spletnega mesta**: Prikaži uradno spletno mesto na zunanjih zaslonih
+- **Meeting timer**: Optional timer window for timing meeting parts
+- **Meeting recording helpers**: Control OBS recording or an external recording application
 - **Bližnjice na tipkovnici**: Prilagodi bližnjice za različne funkcije po svojih željah
-- **Več profilov**: Upravljaj različne občine ali skupine z ločenimi profili
+- **Multiple profiles**: Manage different congregations or groups with separate profiles, including profile settings import and export
 
 ## Ali M³ deluje v mojem jeziku? {#does-m3-work-in-my-language}
 

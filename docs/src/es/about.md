@@ -50,6 +50,7 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 - **Advanced media controls**: Media thumbnails with zoom and pan capabilities
 - **Custom timing**: Set custom start and end times for media playback
 - **Playback controls**: Easy-to-use pause/play/stop buttons with keyboard shortcuts
+- **Vista previa en vivo y control de velocidad**: Vista previa de la pantalla del público y opcionalmente ajustar la velocidad de reproducción de audio o vídeo
 - **Multi-monitor support**: Automatic external monitor detection and management
 - **Clean presentation**: Distraction-free media presentation interface
 
@@ -67,13 +68,14 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 
 - **Automatic scene switching**: Seamless integration with OBS Studio for hybrid meetings
 - **Scene management**: Automatic switching between camera, media, and other scenes
+- **Control de grabación**: Iniciar y detener grabaciones de OBS desde M3 cuando esté habilitado
 
 ### Media Import and Management {#about-media-import}
 
 - **JWPUB files**: Import and manage JWPUB files with ease
 - **JWLPLAYLIST files**: Support for JW Library playlist files
 - **Custom media**: Import custom videos, pictures, audio files, and PDF files
-- **Audio Bible**: Import Study Bible media and audio recordings of the New World Translation
+- **Medios bíblicos**: Importar medios bíblicos de estudio, medios bíblicos, y grabaciones de audio de la traducción del nuevo mundo
 - **Public talks**: Always have public talk media overview ready to use with the S-34 importer
 
 ### Advanced Features {#about-advanced-features}
@@ -81,8 +83,10 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 - **Folder monitoring**: Automatically sync media from watched folders (Dropbox, OneDrive, etc.)
 - **Media export**: Automatically export media to folders, organized by date
 - **Website presentation**: Present the official website on external monitors
+- **Temporizador de la Reunión**: Ventana de temporizador opcional para las partes de la reunión
+- **Ayuda de grabación de reuniones**: Controla la grabación OBS o una aplicación de grabación externa
 - **Keyboard shortcuts**: Customizable keyboard shortcuts for many functions
-- **Multiple profiles**: Manage different congregations or groups with separate profiles
+- **Múltiples perfiles**: Gestiona diferentes congestiones o grupos con perfiles separados, incluyendo la configuración del perfil de importación y exportación
 
 ## ¿M³ funciona en mi idioma? {#does-m3-work-in-my-language}
 

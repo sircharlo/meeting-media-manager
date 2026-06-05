@@ -157,6 +157,20 @@ Estas configurações permitem que você configure mudanças temporárias na sua
 - **Nova Dia do Fim de Semana**: Novo dia para a reunião do fim de semana
 - \*\*Novo Horário do Fim de Semana \*\*: novo horário da reunião do fim de semana
 
+### Agendar Atualizações Automáticas de reuniões {#atualizações de agendamento de reuniões automáticas}
+
+<!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
+
+Quando ativado, o M3 verifica periodicamente o site oficial das Testemunhas de Jeová para as mudanças no dia de reunião e no horário e atualiza o perfil atual automaticamente.
+
+Isso só funciona para perfis que foram adicionados com pesquisa de congregação e cujo nome de congregação não foi alterado manualmente. Se a sincronização foi desativada porque o nome da congregação mudou, use **Ativar sincronização programada** para vincular o perfil novamente.
+
+#### Atualizar agenda de reuniões {#refresh-meeting-schedule}
+
+<!-- **Setting**: `reSyncMeetingScheduleButton` -->
+
+Sincronizar manualmente a agenda atual e a futura reunião com as informações do site oficial.
+
 ## Recuperação de mídia e reprodução {#media-retrieval-and-playback}
 
 ### Conexão limitada {#metered-connection}
@@ -174,6 +188,14 @@ Ative isto se você estiver em uma conexão de dados limitada para reduzir o uso
 Habilita a funcionalidade de exibição de mídia. Habilita a funcionalidade de exibição de mídia. Isto é necessário para apresentar mídia num segundo monitor.
 
 **Padrão**: `false`
+
+#### Ativar visualização de mídia {#enable-media-preview}
+
+<!-- **Setting**: `enableMediaPreview` -->
+
+Mostra uma prévia ao vivo da janela de mídia enquanto uma imagem ou vídeo está sendo exibido.
+
+**Padrão**: `true`
 
 #### Começar reprodução pausada {#begin-playback-paused}
 
@@ -332,6 +354,7 @@ Configurar quais cenas OBS usar para diferentes fins:
 - **Mudar a cena após a mídia**: retornar automaticamente para a cena anterior após a mídia
 - **Lembra da cena anterior**: lembre-se e restaure a cena anterior
 - **Ocultar Ícones**: Esconder ícones relacionados ao OBS na interface
+- **Controles de Gravação**: Mostrar controles que iniciam e interrompem a gravação do OBS do M3
 
 :::warning Nota importante:
 
@@ -385,6 +408,58 @@ Atalho que é acionado quando o último cântico é reproduzido durante uma reun
 
 **Padrão**: Nenhum
 
+### Gravações das Reuniões {#gravações de reuniões}
+
+#### Ativar Integração de App de Gravação Externa {#enable-external-recording-app-integration}
+
+<!-- **Setting**: `recordingEnable` -->
+
+Permite o M3 controlar um aplicativo de gravação separado com atalhos de teclado. Isto não grava dentro do M3; envia os atalhos configurados quando você pressiona **Iniciar Gravação** ou **Parar Gravação** nas gravações em popup.
+
+Esta opção fica oculta quando os controles de gravação do OBS estão habilitados. Se você usar o OBS Studio, use os controles de gravação do OBS na integração do OBS.
+
+**Padrão**: `false`
+
+#### Gravação de Atalhos e Pasta {#graving-shortcuts-and-folder}
+
+<!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
+
+Configure o atalho de teclado que começa a gravar, o atalho opcional que para de gravação e a pasta onde o aplicativo externo salva as gravações. Se nenhum atalho para parar for fornecido, o M3 reutiliza o atalho de início. Quando uma pasta estiver configurada, o M3 mostra um botão para abri-la.
+
+### Tempo da reunião {#meeting-timer}
+
+#### Habilitar tempo de reunião {#enable-meeting-timer}
+
+<!-- **Setting**: `enableTimerDisplay` -->
+
+Ativar uma janela separada de temporizador de partes da reunião. Este é um recurso beta e só deve ser ativado se aprovado localmente.
+
+**Padrão**: `false`
+
+#### Comportamento da janela do temporizador {#timer-window-behavior}
+
+<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
+
+Configure se a janela de temporizador abre automaticamente, se os temporizadores de participantes contam para cima ou para baixo por padrão se o relógio usa 12 horas ou 24 horas por dia, e se o valor atual do temporizador é mostrado no botão de temporizador da ação.
+
+#### Formatos de exibição do temporizador {#timer-display-formats}
+
+<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
+
+Escolha formatos de exibição analógica ou digital para a hora do dia e a contagem regressiva. O indicador de aviso de contagem regressiva pode deslocar a contagem regressiva analógica para uma cor de aviso durante o minuto final.
+
+#### Contagem regressiva e agendar o status {#meeting-countdown-and-schedule-status}
+
+<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
+
+Mostrar uma contagem regressiva antes das reuniões agendadas e, opcionalmente, exibir se a reunião está antes ou atrasada. A contagem regressiva de reuniões aparece apenas na exibição do temporizador, não na exibição principal de mídia.
+
+#### Aparência do temporizador e hora extra {#timer-appearance-and-overtime}
+
+<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
+
+Personalizar o tamanho e as cores do texto do temporizador e configurar indicadores de horas extras como cores alternativas, piscando, e mostrando apenas a quantidade decorrida de tempo extra no modo de contagem (contagem).
+
 ## Configurações Avançadas {#advanced-settings}
 
 ### Atalhos de teclado {#settings-guide-keyboard-shortcuts}
@@ -418,6 +493,14 @@ Habilitar transições de fade in/out ao mostrar ou ocultar a janela de mídia.
 
 **Padrão**: `true`
 
+#### Ativar o Playback Speed Control {#enable-playback-speed-control}
+
+<!-- **Setting**: `enablePlaybackSpeedControl` -->
+
+Permitir que a velocidade de reprodução de áudio e vídeo seja ajustada no menu de contexto do item de mídia.
+
+**Padrão**: `false`
+
 #### Ocultar miniatura de mídia {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
@@ -432,7 +515,7 @@ Ocultar a miniatura na janela de mídia.
 
 Resolução máxima para arquivos de mídia baixados.
 
-**Opções**: 240p, 360p, 480p, 720p
+**Opções**: 240p, 360p, 480p, 720p, 1080p
 
 **Padrão**: 720p
 
@@ -449,6 +532,14 @@ Incluir mídia nas publicações impressas nos downloads de mídia.
 <!-- **Setting**: `excludeFootnotes` -->
 
 Excluir imagens de rodapé dos downloads de mídia quando possível.
+
+**Padrão**: `false`
+
+#### Excluir vídeos adicionais da torre de vigia {#exclude-adicional-watchtorre-estudo-vídeos}
+
+<!-- **Setting**: `excludeWtParagraphVideos` -->
+
+Exclua vídeos adicionais referenciados nos parágrafos do Estudo da Torre de Vigia.
 
 **Padrão**: `false`
 
@@ -506,6 +597,10 @@ Converta arquivos de mídia exportados para o formato MP4 para uma melhor compat
 
 **Padrão**: `false`
 
+### Transferir Configurações de Perfil {#profile-settings-transfer}
+
+Exporte as configurações do perfil atual para um arquivo JSON ou importe um arquivo de configurações de perfil previamente exportado. A importação substitui as configurações do perfil atual.
+
 ### Zona de perigo {#danger-zone}
 
 :::warning Aviso
@@ -521,6 +616,22 @@ Estas configurações só devem ser alteradas se você entender suas implicaçõ
 Domínio base usado para baixar publicações e mídias.
 
 **Padrão**: `jw.org`
+
+#### Desativar a aceleração de hardware {#desativar-aceleração-hardware}
+
+<!-- **Setting**: `disableHardwareAcceleration` -->
+
+Desativar aceleração de hardware após reiniciar o M3. Isso pode ajudar com falhas gráficas ou travamentos em alguns sistemas, mas, caso contrário, não é recomendado.
+
+**Padrão**: `false`
+
+#### Lembrete da aceleração de hardware {#suppress-hardware-acceleration-reminder}
+
+<!-- **Setting**: `suppressHardwareAccelerationReminder` -->
+
+Ocultar o lembrete para reativar a aceleração de hardware após ele ter sido desativado manualmente.
+
+**Padrão**: `false`
 
 #### Desativar busca de mídia {#disable-media-fetching}
 

@@ -157,6 +157,20 @@ Ces paramètres vous permettent de configurer des changements temporaires à vot
 - **Nouveau jour de fin de semaine** : Nouveau jour pour la réunion de fin de semaine
 - **Nouvelle heure de fin de semaine** : Nouvelle heure pour la réunion de fin de semaine
 
+### Mises à jour automatiques du calendrier des réunions {#mises à jour automatiques du calendrier des réunions}
+
+<!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
+
+Lorsque cette option est activée, M3 vérifie périodiquement le site Web officiel des témoins de Jéhovah pour qu'il change la journée et l'heure de la réunion et mette à jour automatiquement le profil actuel.
+
+Cela ne fonctionne que pour les profils qui ont été ajoutés avec la recherche de congrégation et dont le nom de la congrégation n'a pas été modifié manuellement. Si la synchronisation a été désactivée parce que le nom de la congrégation a changé, utilisez **Activer la synchronisation du programme** pour lier à nouveau le profil.
+
+#### Rafraîchir l'horaire de la réunion {#rafraichissement-horaire}
+
+<!-- **Setting**: `reSyncMeetingScheduleButton` -->
+
+Synchroniser manuellement le calendrier actuel et futur des réunions avec les informations du site Web officiel.
+
 ## Récupération et lecture des médias {#media-retrieval-and-playback}
 
 ### Connexion limitée {#metered-connection}
@@ -174,6 +188,14 @@ Activez ceci si vous êtes sur une connexion de données limitée pour réduire 
 Activez la fonctionnalité d'affichage des médias. Ceci est requis pour présenter les médias sur un deuxième écran.
 
 **Par défaut** : `faux`
+
+#### Activer l'aperçu des médias {#enable-media-preview}
+
+<!-- **Setting**: `enableMediaPreview` -->
+
+Afficher un aperçu en direct de la fenêtre des médias pendant l'affichage d'une image ou d'une vidéo.
+
+**Par défaut** : `vrai`
 
 #### Démarrer la lecture en pause {#begin-playback-paused}
 
@@ -332,6 +354,7 @@ Configurez quelles scènes OBS utiliser pour différents usages :
 - **Changer de scène après les médias** : Retourner automatiquement à la scène précédente après les médias
 - **Se souvenir de la scène précédente** : Se souvenir et restaurer la scène précédente
 - **Masquer les icônes** : Masquer les icônes liées à OBS dans l'interface
+- **Contrôles d'enregistrement** : Afficher les contrôles qui démarrent et arrêtent l'enregistrement d'OBS depuis M3
 
 :::warning Note importante
 
@@ -385,6 +408,58 @@ Raccourci qui est déclenché lorsque la lecture du dernier cantique se termine 
 
 **Par défaut** : Aucune
 
+### Enregistrements de réunion {#meeting-recordings}
+
+#### Activer l'intégration de l'application d'enregistrement externe {#enable-external-recording-app-integration}
+
+<!-- **Setting**: `recordingEnable` -->
+
+Laissez M3 contrôler une application d'enregistrement séparée avec des raccourcis clavier. Ceci n'enregistre pas à l'intérieur de M3; il envoie les raccourcis configurés lorsque vous appuyez sur **Démarrer l'enregistrement** ou **Arrêter l'enregistrement** dans la fenêtre pop-up des enregistrements de la réunion.
+
+Cette option est masquée lorsque les contrôles d'enregistrement d'OBS sont activés. Si vous utilisez OBS Studio, utilisez plutôt les contrôles d'enregistrement d'OBS dans l'intégration d'OBS.
+
+**Par défaut** : `faux`
+
+#### Raccourcis d'enregistrement et dossier {#recording-shortcuts-and-folder}
+
+<!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
+
+Configurer le raccourci clavier qui démarre l'enregistrement, le raccourci optionnel qui arrête l'enregistrement, et le dossier où l'application externe enregistre les enregistrements. Si aucun raccourci d'arrêt n'est fourni, M3 réutilise le raccourci de démarrage. Lorsqu'un dossier est configuré, M3 affiche un bouton pour l'ouvrir.
+
+### Horaire de la réunion {#temps-de-réunion}
+
+#### Activer le minuteur de la réunion {#enable-meeting-timer}
+
+<!-- **Setting**: `enableTimerDisplay` -->
+
+Activer une fenêtre de minuterie séparée pour les parties de la réunion chronométrée. Il s'agit d'une fonctionnalité bêta qui ne devrait être activée que si elle est approuvée localement.
+
+**Par défaut** : `faux`
+
+#### Comportement de la fenêtre de minuterie {#timer-window-behavior}
+
+<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
+
+Configurer si la fenêtre de minuterie s'ouvre automatiquement, si le nombre de minuteurs du participant est élevé ou bas par défaut, si l'horloge utilise 12 heures ou 24 heures, et si la valeur actuelle du minuteur est affichée sur le bouton de minuterie de l'île d'action.
+
+#### Formats d'affichage du minuteur {#timer-display-formats}
+
+<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
+
+Choisissez des formats d’affichage analogique ou numérique pour l’heure de la journée et des minuteurs à rebours. L'indicateur de compte à rebours peut déplacer l'anneau du compte à rebours analogique vers une couleur d'avertissement pendant la dernière minute.
+
+#### Compte à rebours des réunions et statut de la planification {#meeting-countdown-and-schedule-status}
+
+<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
+
+Afficher un compte à rebours avant les réunions planifiées et éventuellement afficher si la réunion est en avance ou en arrière. Le compte à rebours de la réunion apparaît uniquement sur l'affichage du minuteur, pas sur l'affichage principal des médias.
+
+#### Apparence du chronomètre et des heures supplémentaires {#timer-appearance-and-overtime}
+
+<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
+
+Personnalisez la taille du texte du minuteur et les couleurs, et configurez les indicateurs de temps supplémentaire tels que les couleurs alternatives, clignotant et ne montrant que le montant des heures supplémentaires écoulées en mode comptage.
+
 ## Paramètres avancés {#advanced-settings}
 
 ### Raccourcis clavier {#settings-guide-keyboard-shortcuts}
@@ -418,6 +493,14 @@ Lorsque activé, la fenêtre des médias se cachera et apparaîtra en douceur au
 
 **Par défaut** : `vrai`
 
+#### Activer le contrôle de vitesse de lecture {#enable-playback-speed-control}
+
+<!-- **Setting**: `enablePlaybackSpeedControl` -->
+
+Permettre de régler la vitesse de lecture audio et vidéo à partir du menu contextuel de l'élément média.
+
+**Par défaut** : `faux`
+
 #### Masquer le logo des médias {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
@@ -432,7 +515,7 @@ Masquer le logo dans la fenêtre multimédia.
 
 Résolution maximale pour les fichiers multimédias téléchargés.
 
-**Options** : 240p, 360p, 480p, 720p
+**Options** : 240p, 360p, 480p, 720p, 1080p
 
 **Par défaut** : 720p
 
@@ -449,6 +532,14 @@ Inclure les médias des publications imprimées dans les téléchargements de m�
 <!-- **Setting**: `excludeFootnotes` -->
 
 Exclure les images de notes de bas de page des téléchargements de médias quand c'est possible.
+
+**Par défaut** : `faux`
+
+#### Exclure les vidéos d'étude de tour de garde supplémentaires {#exclude-additional-watchtower-study-videos}
+
+<!-- **Setting**: `excludeWtParagraphVideos` -->
+
+Exclure les vidéos supplémentaires qui sont référencées dans les paragraphes de l'étude de la tour de garde.
 
 **Par défaut** : `faux`
 
@@ -506,6 +597,10 @@ Convertir les fichiers multimédias exportés au format MP4 pour une meilleure c
 
 **Par défaut** : `faux`
 
+### Transfert des paramètres du profil {#profile-settings-transfer}
+
+Exporter les paramètres du profil actuel vers un fichier JSON ou importer un fichier de paramètres de profil précédemment exporté. L'importation remplace les paramètres du profil actuel.
+
 ### Zone de danger {#danger-zone}
 
 :::warning Avertissement
@@ -521,6 +616,22 @@ Ces paramètres ne doivent être modifiés que si vous comprenez leurs implicati
 Entrez l'adresse utilisée pour accéder au site officiel des Témoins de Jéhovah.
 
 **Par défaut** : `jw.org`
+
+#### Désactiver l'accélération matérielle {#désactive l'accélération matérielle}
+
+<!-- **Setting**: `disableHardwareAcceleration` -->
+
+Désactiver l'accélération matérielle après le redémarrage de M3. Cela peut aider avec des bugs graphiques ou des plantages sur certains systèmes, mais n'est pas recommandé autrement.
+
+**Par défaut** : `faux`
+
+#### Supprimer le rappel d'accélération matérielle {#suppress-hardware-acceleration-reminder}
+
+<!-- **Setting**: `suppressHardwareAccelerationReminder` -->
+
+Masquer le rappel pour réactiver l'accélération matérielle après qu'elle ait été désactivée manuellement.
+
+**Par défaut** : `faux`
 
 #### Désactiver le téléchargement des médias {#disable-media-fetching}
 

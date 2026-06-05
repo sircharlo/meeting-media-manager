@@ -50,6 +50,14 @@ M³ samodejno organizira multimedijsko vsebino glede na vrsto shoda in razdelek:
 
 - **Deli shodov** - multimedijska vsebina je razvrščena po delih shoda (javni govor, Zakladi iz Božje Besede itd.).
 - **Deli po meri** - ustvarite lahko dele po meri za dodatne multimedijsko vsebino, če na določen dan ni načrtovan noben shod.
+- **Manual Sorting** - Drag media items into the order you need, or reset the order when needed
+- **Repeated Playback** - Loop a single media item or repeat every item in a section until playback is stopped manually
+
+### Hidden and Missing Media {#hidden-and-missing-media}
+
+Media can be hidden from the meeting list without deleting the automatically downloaded files. If media is hidden by mistake, use **Show hidden media** for the selected day.
+
+If M³ reports missing media, first check whether the item is expected to become available closer to the meeting date. You can also add the missing item manually with the **Add media** menu or by dragging it into the media list.
 
 ## Predvajanje multimedijske vsebine {#media-presentation}
 
@@ -75,6 +83,8 @@ Multimedijski predvajalnik omogoča celovito upravljanje:
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
 - **Povečanje/premikanje slike** – za povečanje slike uporabi kolesce miške, za premikanje slike pa povleci z miško
+- **Live Preview** - When enabled, show a preview of the audience media window in the main app
+- **Playback Speed** - When enabled in settings, adjust audio and video speed from the media item context menu
 
 ### Napredne možnosti predvajanja multimedijske vsebine {#advanced-presentation}
 
@@ -118,6 +128,27 @@ Nastavi prilagojene bližnjice na tipkovnici za hiter dostop. Privzeto niso nast
 
 **Opomba (\*):** Globalna bližnjica – na voljo tudi, ko aplikacija ni v ospredju.
 
+## Display Tools {#display-tools}
+
+### Media Display Window {#media-display-window}
+
+The media display window is the audience-facing window. It can be placed on an external screen or used in a windowed setup depending on your equipment.
+
+Use the display popup to:
+
+- Show or hide the media display
+- Choose the display or window type
+- Select a temporary custom background instead of the yeartext
+- Use an available camera as the background. This is mostly used in sign-language congregations.
+
+Please note that custom backgrounds are temporary and are not saved after M³ quits.
+
+### Meeting Timer {#user-guide-meeting-timer}
+
+When the meeting timer is enabled, M³ can show a separate timer window for timing participant parts. The timer can count up or down, show the current time, show a meeting countdown before scheduled meetings, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+
+The timer is a beta feature and should only be used when approved locally.
+
 ## Glasba v ozadju {#user-guide-background-music}
 
 ### Nastavitev glasbe v ozadju {#background-music-setup}
@@ -159,6 +190,7 @@ M³ med predstavitvami samodejno preklaplja med prizori v programu OBS:
 - **Prizor multimedijske vsebine** – Prikaže multimedijsko vsebino
 - **Prikaz slike** – Prikaže slike ( lahko se odloži, če je ta možnost omogočena)
 - **Samodejno preklapljanje** – Prizori se spreminjajo glede na vrsto multimedijske vsebine in nastavitve
+- **Recording Controls** - If enabled, M³ can start and stop OBS recording from the OBS popup
 
 ### Napredne funkcije OBS {#advanced-obs}
 
@@ -236,6 +268,8 @@ Dodaj svoje datoteke v M³:
 3. **Nadzor map** - nastavi nadzorovano mapo za samodejni uvoz
 4. **Datoteke JWPUB in seznami predvajanja** - uvozi publikacije in sezname predvajanja
 5. **Seznam multimedijskih vsebin za javne govore (S-34 / S-34mp)** - Uvozi Seznam multimedijskih vsebin za javne govore z datotekami JWPUB S‑34 ali S‑34mp
+6. **Videos from the official website** - Search for videos and add them to the selected date
+7. **Study Bible and sign-language Bible media** - Add images, videos, maps, historical references, or sign-language Bible videos for selected passages
 
 ### Upravljanje uvožene multimedijske vsebine {#managing-imported-media}
 
@@ -253,6 +287,10 @@ Uvozi zvočne posnetke svetopisemskih vrstic:
 3. izbiro posameznih vrstic ali razpone vrstic,
 4. Prenesi zvočne datoteke
 5. Uporabi jih
+
+### Profile Settings Import and Export {#profile-settings-import-export}
+
+Each profile's settings can be exported to a JSON file from Settings. Importing a profile settings file replaces the current profile's settings, which is useful when moving a setup to another computer or restoring a known configuration.
 
 ## Nadzor map in izvoz {#user-guide-folder-monitoring}
 
@@ -286,9 +324,21 @@ Deli uradno spletno mesto na zunanjih zaslonih:
 
 ### Kontrolniki spletnega mesta {#website-controls}
 
+- **Open Website** - Open a separate website window
+- **Start Mirroring** - Show the website window in the media display for the audience
+- **Stop Mirroring** - Stop showing the website and return to the yeartext or media display background
 - **Navigacija** - standardni kontrolniki v brskalniku za premikanje naprej/nazaj
 - **Osveži** - ponovno naloži trenutno stran
 - **Zapri** - zapri način predvajanja spletnega mesta
+- **Auto Return** - Optionally return to the media list automatically after stopping website mirroring
+
+## Meeting Recordings {#meeting-recordings}
+
+M³ can help control meeting recording, but it does not include a built-in recorder.
+
+- **OBS Recording** - If OBS recording controls are enabled, use the OBS popup to start and stop OBS recording
+- **External Recording App** - Configure keyboard shortcuts for a separate recording app, then use the meeting recordings popup to send those shortcuts
+- **Recording Folder** - Configure a recording folder to show a quick button that opens the folder where recordings are saved
 
 ## Napredne funkcije {#user-guide-advanced-features}
 
@@ -339,6 +389,7 @@ Nastavi lastne bližnjice na tipkovnici za učinkovitejše upravljanje:
 - Zmanjšaj največjo ločljivost
 - Počisti stare predpomnjene datoteke
 - Preveri razpoložljiv prostor na disku
+- If the app shows graphical glitches or crashes, try disabling hardware acceleration and restart M³
 
 #### Težave z jezikom {#user-guide-language-issues}
 

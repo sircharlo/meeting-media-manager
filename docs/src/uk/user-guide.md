@@ -50,6 +50,14 @@ M³ automatically organizes media by meeting type and section:
 
 - **Meeting Sections** - Media is grouped by meeting parts (Public Talk, Treasures from God's Word, etc.)
 - **Custom Sections** - You can create custom sections for additional media if no meeting is scheduled on that particular day
+- **Впорядкування вручну** - Перетягніть медіа елементи до необхідного для замовлення або виконайте скидання порядку
+- **Повторити Відтворення** - Повторювати кожен елемент у розділі до тих пір, поки відтворення не зупиниться вручну
+
+### Приховані та відсутні медіа {#hidden-and-missing-media}
+
+Медіа може бути приховано зі списку зустрічей, не видаляючи автоматично завантажені файли. Якщо медіа приховані помилкою, використовуйте **Показати приховані медіа** для вибраного дня.
+
+Якщо M3 повідомляє про відсутні медіа, спочатку перевірте, чи очікувався товар стане доступним до дати зустрічі. Ви також можете додати відсутній елемент вручну меню **Додати медіа** або перетягуючи його в медіа список.
 
 ## Media Presentation {#media-presentation}
 
@@ -75,6 +83,8 @@ The media player provides comprehensive controls:
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
 - **Zoom/Pan** - Use mouse wheel to zoom, drag to pan (for images)
+- **Живий перегляд** - При включенні, показати попередній перегляд медіа вікна аудиторії в головному додатку
+- **Відтворення швидкість** - Коли увімкнено в налаштуваннях, відрегулюйте швидкість аудіо та відео з контекстного меню медіа
 
 ### Advanced Presentation Features {#advanced-presentation}
 
@@ -118,6 +128,27 @@ For images and videos:
 
 **Note (\*):** Global shortcut - available even when the app is not focused
 
+## Дисплей Інструменти {#display-tools}
+
+### Вікно Media Display {#media-display-window}
+
+Вікно дисплею медіа - це вікно аудиторії, перед тим як вікно. Він може розміщуватися на зовнішньому екрані або використовуватися в налаштуваннях вікна в залежності від вашого обладнання.
+
+Використовувати спливаюче вікно на:
+
+- Показати або приховати медіа дисплей
+- Виберіть тип відображення або вікна
+- Виберіть тимчасове користувацьке тло замість року
+- Використовувати доступну камеру в якості фону. Це здебільшого використовується в мовних зборах.
+
+Будь ласка, зверніть увагу, що користувацькі тло тимчасові і і не зберігаються після M3 квот.
+
+### Таймер зустрічі {#user-guide-meeting-timer}
+
+Коли увімкнуто таймер зустрічі, M3 може показати окреме вікно таймера для частки учасників. Таймер може розраховувати або знижити, показати поточний час, покажіть зворотний відлік зустрічі до запланованих зустрічей, і необов’язково вказують на постійні чи попереду зустрічі або за графіком.
+
+Таймер - це бета-функція і повинен використовуватися лише коли він затверджений локально.
+
 ## Background Music {#user-guide-background-music}
 
 ### Setting Up Background Music {#background-music-setup}
@@ -159,6 +190,7 @@ M³ automatically switches OBS scenes during presentations:
 - **Media Scene** - Displays media content
 - **Image Scene** - Shows images (can be postponed if enabled)
 - **Automatic Switching** - Scenes change based on media type and settings
+- **Керування записом** - Якщо увімкнено, M3 зможе розпочати і зупинити OBS запис з OBS виринаючого вікна
 
 ### Advanced OBS Features {#advanced-obs}
 
@@ -236,6 +268,8 @@ Add your own media files to M³:
 3. **Folder Monitoring** - Set up a watched folder for automatic imports
 4. **JWPUB Files and Playlists** - Import publications and playlists
 5. **Публічні Talk Media (S-34 / S-34mp)** - Імпорт публічних розмов медіа з використанням S-34 або S-34mp JWPUB файлів
+6. **Відео з офіційного сайту** - Шукати відео та додати їх до обраної дати
+7. **Вивчайте Біблію та біблійні засоби масової інформації** - Додавання зображень, відео, карт, історичні посилання або відео про мову підпису Біблії для обраних уривок
 
 ### Managing Imported Media {#managing-imported-media}
 
@@ -253,6 +287,10 @@ Import audio recordings of Bible verses:
 3. Choose specific verses or verse ranges
 4. Download the audio files
 5. Use them
+
+### Налаштування профілю імпортуються та експортують {#profile-settings-import-export}
+
+Налаштування кожного профілю можуть бути експортовані у файл JSON в Налаштуваннях. Імпорт файлу налаштувань профілю замінює налаштування поточного профілю, що може бути корисним при переміщенні інсталяції на інший комп'ютер або відновленні відомої конфігурації.
 
 ## Folder Monitoring and Export {#user-guide-folder-monitoring}
 
@@ -286,9 +324,21 @@ Share the official website on external displays:
 
 ### Website Controls {#website-controls}
 
+- **Відкрити сайт** - Відкрити окреме вікно сайту
+- **Відображення дзеркала** - Показати вікно веб-сайту в медіа вікні публічного інтерфейсу
+- **Зупинити дзеркалювання** - Зупинити відображення сайту і повернення до фону при відображенні відео або мультимедіа
 - **Navigation** - Standard browser navigation controls
 - **Refresh** - Reload the current page
 - **Close** - Exit website presentation mode
+- **Автоповернення** - При бажанні повернення до медіа-списку автоматично після зупинки віддзеркалення сайтів
+
+## Записи зустрічей {#зустрічі}
+
+M3 може допомогти контролювати запис зібрань, але не включає вбудовані записи.
+
+- **OBS запис** - Якщо OBS керування записами увімкнуто, використовуйте спливаюче вікно OBS для запуску і зупинення OBS запису
+- **Зовнішня програма записування** - Налаштувати гарячі клавіші для окремого запису, а потім використовувати спливаючі вікна записів зустрічей, щоб відправити ці ярлики
+- **Тека з записами** - Налаштувати папку запису, щоб показати швидку кнопку, яка відкриває папку, де зберігаються записи
 
 ## Advanced Features {#user-guide-advanced-features}
 
@@ -339,6 +389,7 @@ Configure custom keyboard shortcuts for efficient operation:
 - Reduce maximum resolution
 - Clear old cached files
 - Check available disk space
+- Якщо програма показує графічні збії або аварійні збої, спробуйте вимкнути апаратне прискорення та перезапустити M3
 
 #### Language Issues {#user-guide-language-issues}
 

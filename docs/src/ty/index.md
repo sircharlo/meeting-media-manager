@@ -46,5 +46,8 @@ features:
     details: E tū’ati ’āfaro ’oia i te mau rāve’a ha’apararera’a mai roto mai i te mau pū’ohu i ha’apa’ohia (mai ia Dropbox ’aore rā OneDrive) e e fa’atō rā i te mau rāve’a ha’apararera’a i roto i te mau pū’ohu.
   - icon: 🎯
     title: Mau rāve’a tātara hōhonu
-    details: ’A fā’atō mai i te mau rāve’a ha’apararera’a i mā’itihia, te mau tōta’ira’a parau JWPUB, te mau tāpura pehe, te mau pehe haruharu o te Bibilia, e ’a fa’atere e rave rahi amuira’a.
+    details: Import custom media, JWPUB files, playlists, audio Bible recordings, Study Bible media, public talk media, and manage multiple congregations.
+  - icon: ⏱️
+    title: Meeting Timer and Recording Controls
+    details: Use an optional timer display for participant timing and control OBS or external recording apps from M³.
 ---

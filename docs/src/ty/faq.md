@@ -81,6 +81,8 @@ E nehenehe tā ’oe e fa’ahu’e mai i te mau ha’apararura’a i mā’itih
 - ’Ūto’ira’a e tōmura’a: A ’ūtoi i te mau rorou na roto tonu i te fa’anahora’a M³
 - Ara’ira’a pu’era’a rorou: A fa’anaho i te hō’ē pu’era’a rorou ara’ihia nō te mau fa’ahu’era’a noa
 - Mau rorou JWPUB e te mau ‘āfata hīmene: A fa’ahu’e mai i te mau puta e te mau ‘āfata hīmene
+- **Public Talk Media**: Import S-34 or S-34mp JWPUB files for public talk media
+- **Bible and Study Bible Tools**: Add audio Bible recordings, Study Bible media, or sign-language Bible media
 
 ### :speaker: E nehenehe ānei iā’u e fa’ahu’e mai i te mau haruharura’a pātere reo o te Bibilia? {#audio-bible}
 
@@ -124,6 +126,12 @@ Teie te mau rāve’a nō te hīmene aratō:
 - Te fa’atere-ano’i-’ō’oā o te pūai reo
 - Te taime fa’ata’ara’a-tāpū-muri e nehenehe e fa’ahuru ’ē
 
+### :stopwatch: Does M³ include a meeting timer? {#faq-meeting-timer}
+
+Yes. When enabled, M³ can show a separate timer window for participant timing. It can count up or down, show the current time, show a pre-meeting countdown, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+
+The timer is a beta feature and should only be enabled if approved locally.
+
 ### :video_camera: E nāfea vau e fa’anaho ai i te tū’atira’a ia Zoom? {#zoom-setup}
 
 Nō te tū’ati ia Zoom:
@@ -161,6 +169,13 @@ Tē fa’atōrorea nei teie fa’anahora’a i te tū’oha’ara’a hōho’a 
 - Te fā’fa’ahiahia o te rāve’a nō te fa’atere pāpū i te taime
 - Te ’ape’ara’a i te tauira’a tiri vitiviti roa
 
+### :record_button: Can M³ record meetings? {#faq-recordings}
+
+M³ does not include a built-in recorder, but it can help control recording in two ways:
+
+- If you use OBS Studio, enable OBS recording controls and start or stop OBS recording from the OBS popup
+- If you use another recording app, configure keyboard shortcuts so M³ can send the start and stop commands from the meeting recordings popup
+
 ## Mau tātara’a hōhonu {#faq-advanced-features}
 
 ### :cloud: E aha te huru fa’atereha’avara’a o te hi’opo’ara’a puta? {#faq-folder-monitoring}
@@ -187,6 +202,8 @@ Tē rave ti’amā nei te fa’atahe-pāpāho i te:
 - Te mau tūru’a ta’a ’ē
 - Te mau pupu ta’a ’ē
 - Te mau fa’anahora’a ’e te mau pāpāho ta’a ’ē nō rātou tairuru
+
+Profiles can also be exported to a JSON file and imported on another computer or into another profile. Importing replaces the current profile's settings.
 
 ## Te tātara-parau-fifi-ra’a {#faq-troubleshooting}
 

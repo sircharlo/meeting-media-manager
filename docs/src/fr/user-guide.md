@@ -50,6 +50,14 @@ M³ organise automatiquement les médias par type de réunion et section :
 
 - **Sections de réunion** - Les médias sont regroupés par parties de réunion (discours public, joyaux, etc.)
 - **Sections personnalisées** - Vous pouvez créer des sections personnalisées pour des médias supplémentaires si aucune réunion n'est programmée ce jour-là
+- **Tri manuel** - Faites glisser les éléments du média dans l'ordre dont vous avez besoin, ou réinitialisez la commande si nécessaire
+- **Lecture répétée** - Boucler un seul élément média ou répéter chaque élément d'une section jusqu'à ce que la lecture soit arrêtée manuellement
+
+### Média caché et manquant {#hidden-and-missing-media}
+
+Les médias peuvent être cachés de la liste des réunions sans supprimer les fichiers téléchargés automatiquement. Si le média est caché par erreur, utilisez **Afficher les médias cachés** pour le jour sélectionné.
+
+Si M3 signale des médias manquants, vérifiez d'abord si l'article devrait être disponible plus près de la date de la réunion. Vous pouvez également ajouter l'élément manquant manuellement avec le menu **Ajouter des médias** ou en le faisant glisser dans la liste des médias.
 
 ## Présentation des médias {#media-presentation}
 
@@ -75,6 +83,8 @@ Le lecteur multimédia fournit des contrôles complets :
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
 - **Zoom/Pan** - Utilisez la molette de la souris pour zoomer, faites glisser pour faire un panoramique (pour les images)
+- **Prévisualisation en direct** - Lorsque cette option est activée, afficher un aperçu de la fenêtre du média dans l'application principale
+- **Vitesse de lecture** - Lorsque activé dans les paramètres, ajuster la vitesse audio et vidéo à partir du menu contextuel de l'élément multimédia
 
 ### Fonctionnalités de présentation avancées {#advanced-presentation}
 
@@ -118,6 +128,27 @@ Configurez des raccourcis clavier personnalisés pour un accès rapide. Notez qu
 
 **Note (\*):** Raccourci global - disponible même lorsque l'application n'est pas focalisée
 
+## Display Tools {#display-tools}
+
+### Media Display Window {#media-display-window}
+
+The media display window is the audience-facing window. It can be placed on an external screen or used in a windowed setup depending on your equipment.
+
+Use the display popup to:
+
+- Show or hide the media display
+- Choose the display or window type
+- Select a temporary custom background instead of the yeartext
+- Use an available camera as the background. This is mostly used in sign-language congregations.
+
+Please note that custom backgrounds are temporary and are not saved after M³ quits.
+
+### Meeting Timer {#user-guide-meeting-timer}
+
+When the meeting timer is enabled, M³ can show a separate timer window for timing participant parts. The timer can count up or down, show the current time, show a meeting countdown before scheduled meetings, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+
+The timer is a beta feature and should only be used when approved locally.
+
 ## Musique de fond {#user-guide-background-music}
 
 ### Configuration de la musique de fond {#background-music-setup}
@@ -159,6 +190,7 @@ M³ change automatiquement les scènes OBS pendant les présentations :
 - **Scène média** - Affiche le contenu multimédia
 - **Scène image** - Affiche les images (peut être reportée si activée)
 - **Changement automatique** - Les scènes changent selon le type de média et les paramètres
+- **Recording Controls** - If enabled, M³ can start and stop OBS recording from the OBS popup
 
 ### Fonctionnalités OBS avancées {#advanced-obs}
 
@@ -236,6 +268,8 @@ Ajoutez vos propres fichiers multimédias à M³ :
 3. **Surveillance de dossiers** - Configurez un dossier surveillé pour les imports automatiques
 4. **Fichiers JWPUB et listes de lecture** - Importez des publications et des listes de lecture
 5. **Médias pour discours publics (S-34 / S-34mp)** - Importez des médias pour discours publics à l'aide de fichiers JWPUB S‑34 ou S‑34mp
+6. **Videos from the official website** - Search for videos and add them to the selected date
+7. **Study Bible and sign-language Bible media** - Add images, videos, maps, historical references, or sign-language Bible videos for selected passages
 
 ### Import et gestion des médias {#managing-imported-media}
 
@@ -253,6 +287,10 @@ Importez des enregistrements audio de versets bibliques :
 3. Choisir des versets spécifiques ou des plages de versets
 4. Téléchargez les fichiers audio
 5. Utilisez-les
+
+### Profile Settings Import and Export {#profile-settings-import-export}
+
+Each profile's settings can be exported to a JSON file from Settings. Importing a profile settings file replaces the current profile's settings, which is useful when moving a setup to another computer or restoring a known configuration.
 
 ## Surveillance des dossiers et exportation {#user-guide-folder-monitoring}
 
@@ -286,9 +324,21 @@ Partagez le site officiel sur des écrans externes :
 
 ### Contrôles du site web {#website-controls}
 
+- **Open Website** - Open a separate website window
+- **Start Mirroring** - Show the website window in the media display for the audience
+- **Stop Mirroring** - Stop showing the website and return to the yeartext or media display background
 - **Navigation** - Contrôles de navigation standard du navigateur
 - **Actualiser** - Recharger la page actuelle
 - **Fermer** - Quitter le mode de présentation du site web
+- **Auto Return** - Optionally return to the media list automatically after stopping website mirroring
+
+## Enregistrements de réunion {#meeting-recordings}
+
+M³ can help control meeting recording, but it does not include a built-in recorder.
+
+- **OBS Recording** - If OBS recording controls are enabled, use the OBS popup to start and stop OBS recording
+- **External Recording App** - Configure keyboard shortcuts for a separate recording app, then use the meeting recordings popup to send those shortcuts
+- **Recording Folder** - Configure a recording folder to show a quick button that opens the folder where recordings are saved
 
 ## Fonctionnalités avancées {#user-guide-advanced-features}
 
@@ -339,6 +389,7 @@ Configurez des raccourcis clavier personnalisés pour une utilisation efficace :
 - Réduisez la résolution maximale
 - Effacez les anciens fichiers mis en cache
 - Vérifiez l'espace disque disponible
+- If the app shows graphical glitches or crashes, try disabling hardware acceleration and restart M³
 
 #### Problèmes de langue {#user-guide-language-issues}
 
