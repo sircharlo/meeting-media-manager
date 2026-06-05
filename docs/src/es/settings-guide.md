@@ -157,6 +157,20 @@ These settings allow you to configure temporary changes to your meeting schedule
 - **New Weekend Day**: New day for weekend meeting
 - **New Weekend Time**: New time for weekend meeting
 
+### Actualizaciones del Horario de Reuniones Automáticas {#actualizaciones de reuniones automáticas-programadas}
+
+<!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
+
+Cuando está habilitado, M3 periódicamente comprueba el sitio web oficial de los Testigos de Jehová para los cambios de día y hora de la reunión y actualiza el perfil actual automáticamente.
+
+Esto sólo funciona para perfiles que fueron añadidos con la búsqueda de congestión y cuyo nombre de congestión no ha sido cambiado manualmente. Si la sincronización fue deshabilitada porque el nombre de la congestión cambió, utilice **Activar schedule sync** para vincular el perfil de nuevo.
+
+#### Actualizar el horario de reunión {#refresh-meeting-schedule}
+
+<!-- **Setting**: `reSyncMeetingScheduleButton` -->
+
+Sincronizar manualmente el calendario de reuniones actual y futuro con la información del sitio web oficial.
+
 ## Media Retrieval and Playback {#media-retrieval-and-playback}
 
 ### Metered Connection {#metered-connection}
@@ -174,6 +188,14 @@ Enable this if you're on a limited data connection to reduce bandwidth usage.
 Enable the media display functionality. This is required to present media on a second monitor.
 
 **Default**: `false`
+
+#### Habilitar vista previa multimedia {#enable-media-preview}
+
+<!-- **Setting**: `enableMediaPreview` -->
+
+Mostrar una vista previa en vivo de la ventana de medios mientras se muestra una imagen o vídeo.
+
+**Default**: `true`
 
 #### Begin Playback Paused {#begin-playback-paused}
 
@@ -332,6 +354,7 @@ Configure which OBS scenes to use for different purposes:
 - **Switch Scene After Media**: Automatically return to previous scene after media
 - **Remember Previous Scene**: Remember and restore the previous scene
 - **Hide Icons**: Hide OBS-related icons in the interface
+- **Control de grabación**: Muestra los controles que comienzan y detienen la grabación de OBS desde M3
 
 :::warning Important Note
 
@@ -385,6 +408,58 @@ Shortcut that is triggered when the last song is played during a meeting.
 
 **Default**: None
 
+### Grabaciones de reunión {#grabaciones de reuniones}
+
+#### Habilitar integración de la aplicación de grabación externa {#enable-external-recording-app-integration}
+
+<!-- **Setting**: `recordingEnable` -->
+
+Permite a M3 controlar una aplicación de grabación separada con atajos de teclado. Esto no graba dentro de M3; envía los accesos directos configurados cuando pulsa **Iniciar grabación** o **Detener grabación** en la ventana emergente de grabaciones de reuniones.
+
+Esta opción se oculta cuando los controles de grabación OBS están habilitados. Si utiliza OBS Studio, utilice en su lugar los controles de grabación OBS en la integración OBS.
+
+**Default**: `false`
+
+#### Grabando accesos directos y carpeta {#grabación-accesos directos y carpeta}
+
+<!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
+
+Configure el acceso directo del teclado que comienza a grabar, el acceso directo opcional que detiene la grabación y la carpeta donde la aplicación externa guarda grabaciones. Si no se proporciona un atajo de parada, M3 reutiliza el atajo de inicio. Cuando una carpeta está configurada, M3 muestra un botón para abrirla.
+
+### Temporizador de reunión {#temporizador-reunión}
+
+#### Activar temporizador de reunión {#enable-meeting-timer}
+
+<!-- **Setting**: `enableTimerDisplay` -->
+
+Habilita una ventana de temporizador separada para las partes de la reunión. Esta es una característica beta y solo debería ser habilitada si se aprueba localmente.
+
+**Default**: `false`
+
+#### Comportamiento de ventana de temporizador {#timer-window-behavior}
+
+<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
+
+Configurar si la ventana del temporizador se abre automáticamente, si los temporizadores de los participantes cuentan hacia arriba o hacia abajo por defecto, si el reloj utiliza 12 horas o 24 horas, y si el valor actual del temporizador se muestra en el botón de acción del temporizador de la isla.
+
+#### Formatos de visualización de temporizadores {#formatos-display-temporizadores}
+
+<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
+
+Elija formatos de pantalla analógica o digital para la hora del día y los temporizadores de cuenta regresiva. El indicador de advertencia de cuenta regresiva puede desplazar el anillo de cuenta regresiva hacia un color de advertencia durante el minuto final.
+
+#### Cuenta regresiva de reuniones y estado del horario {#reunión-cuenta regresiva y estado de programación}
+
+<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
+
+Mostrar una cuenta regresiva antes de las reuniones programadas y opcionalmente mostrar si la reunión está por delante o por detrás de lo programado. La cuenta regresiva de la reunión aparece sólo en la pantalla del temporizador, no en la pantalla principal de los medios.
+
+#### Temporizador Apariencia y Tiempo Extras: {#apariencia temporizador-y-overtime}
+
+<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
+
+Personalizar el tamaño del texto del temporizador y los colores, y configurar indicadores extras como colores alternativos, parpadeando, y mostrando sólo la cantidad de horas extras en el modo contador.
+
 ## Advanced Settings {#advanced-settings}
 
 ### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
@@ -418,6 +493,14 @@ Enable fade-in/out transitions when showing or hiding the media window.
 
 **Default**: `true`
 
+#### Habilitar control de velocidad de reproducción {#enable-playback-speed-control}
+
+<!-- **Setting**: `enablePlaybackSpeedControl` -->
+
+Permite ajustar la velocidad de reproducción de audio y vídeo desde el menú contextual del elemento multimedia.
+
+**Default**: `false`
+
 #### Hide Media Logo {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
@@ -432,7 +515,7 @@ Hide the logo in the media window.
 
 Maximum resolution for downloaded media files.
 
-**Options**: 240p, 360p, 480p, 720p
+**Opciones**: 240p, 360p, 480p, 720p, 1080p
 
 **Default**: 720p
 
@@ -449,6 +532,14 @@ Include media from the printed publications in media downloads.
 <!-- **Setting**: `excludeFootnotes` -->
 
 Exclude footnote images from media downloads when possible.
+
+**Default**: `false`
+
+#### Excluir videos adicionales de la torre de vigilancia {#excluyendo-adicional-estudio-videos}
+
+<!-- **Setting**: `excludeWtParagraphVideos` -->
+
+Excluir vídeos adicionales a los que se hace referencia en los párrafos de Watchtower Study.
 
 **Default**: `false`
 
@@ -506,6 +597,10 @@ Convert exported media files to MP4 format for better compatibility.
 
 **Default**: `false`
 
+### Transferir ajustes del perfil {#profile-settings-transfer}
+
+Exportar la configuración del perfil actual a un archivo JSON o importar un archivo de configuración de perfil previamente exportado. La importación reemplaza la configuración del perfil actual.
+
 ### Danger Zone {#danger-zone}
 
 :::warning Advertencia
@@ -521,6 +616,22 @@ These settings should only be changed if you understand their implications.
 Base domain used to download publications and media.
 
 **Default**: `jw.org`
+
+#### Desactivar aceleración de hardware {#disable-hardware-acceleration}
+
+<!-- **Setting**: `disableHardwareAcceleration` -->
+
+Desactivar la aceleración de hardware después de reiniciar M3. Esto puede ayudar con errores gráficos o bloqueos en algunos sistemas, pero no es recomendable.
+
+**Default**: `false`
+
+#### Suprimir Recordatorio de Aceleración de hardware {#suppress-hardware-acceleration-reminder}
+
+<!-- **Setting**: `suppressHardwareAccelerationReminder` -->
+
+Ocultar el recordatorio para volver a habilitar la aceleración de hardware después de que se ha desactivado manualmente.
+
+**Default**: `false`
 
 #### Disable Media Fetching {#disable-media-fetching}
 
