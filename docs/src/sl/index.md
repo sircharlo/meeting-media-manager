@@ -46,8 +46,8 @@ features:
     details: Samodejno sinhronizira multimedijsko vsebino iz nadzorovanih map (na primer Dropbox ali OneDrive) ter omogoča izvoz multimedijske vsebine v izbrane mape.
   - icon: 🎯
     title: Napredne funkcije
-    details: Import custom media, JWPUB files, playlists, audio Bible recordings, Study Bible media, public talk media, and manage multiple congregations.
+    details: Uvoz lastne multimedijske vsebine, JWPUB datotek, seznamov predvajanja, zvočnih posnetkov Svetega pisma, multimedijske vsebine iz Study Bible, multimedijske vsebine javnih govorov in upravljanje več občin.
   - icon: ⏱️
-    title: Meeting Timer and Recording Controls
-    details: Use an optional timer display for participant timing and control OBS or external recording apps from M³.
+    title: Časovnik shodov in nadzor snemanja
+    details: Uporabi izbirni prikaz časovnika za merjenje časa udeležencev in upravljaj OBS ali zunanje aplikacije za snemanje neposredno iz M³.
 ---

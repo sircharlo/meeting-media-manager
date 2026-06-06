@@ -446,19 +446,19 @@ A fa’anaho i te huru o te ha’amāramarama tāime: ia ’īrava ’ōpani-’
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
-Choose analog or digital display formats for the time of day and countdown timers. The countdown warning indicator can shift the analog countdown ring toward a warning color during the final minute.
+A mā’iti i te huru fa’a’itera’a, ’aiguille’ aore rā ’digital’, nō te hora o te mahana e nō te mau tāime tāta’u ha’amau. E nehenehe te tā’u ha’amau fa’aara e fa’ahuri i te rōpī ’analog’ o te tā’u i ni’a i te ho’e hoho’a fa’aara i te roara’a o te minuti hope’a.
 
-#### Meeting Countdown and Schedule Status {#meeting-countdown-and-schedule-status}
+#### Tāime tāta’u o te putuputura’a e te huru o te porotarama {#meeting-countdown-and-schedule-status}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
-Show a countdown before scheduled meetings and optionally display whether the meeting is ahead of or behind schedule. The meeting countdown appears only on the timer display, not on the main media display.
+A fa’a’ite i te tāime tāta’u hou te mau putuputura’a i fa’anahohia, e a fa’a’ite atu (mai te mea e hina’aro-hia) e te ’ōhie ra anei aore rā te tāere ra anei te porotarama. E fa’a’ite-noa-hia te tāime tāta’u o te putuputura’a i ni’a i te ha’amāramarama tāime, eiaha râ i ni’a i te ha’amāramarama fa’a’itera’a matamua.
 
-#### Timer Appearance and Overtime {#timer-appearance-and-overtime}
+#### Te huru o te tāime e te tāime hau {#timer-appearance-and-overtime}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
-Customize the timer text size and colors, and configure overtime indicators such as alternate colors, blinking, and showing only the elapsed overtime amount in count-up mode.
+A fa’anaho i te rahi e te mau fa’a’ine’ine o te tāreta tāime, e a fa’anaho i te mau fa’aara tāime hau mai te mau fa’a’ine’ine ta’a ’ē, te ’ana’anatae, e te fa’a’itera’a i te tāime hau i ravehia noa i roto i te huru tāta’u i ni’a.
 
 ## Te mau fa’anahora’a ta’a ’ē {#advanced-settings}
 
@@ -493,11 +493,11 @@ Fa’anaho i te mau rāve’a ha’apotora’a nō te fa’ata’i-fa’ahou-ra�
 
 Fa’anahora’a tumu: `’oia`
 
-#### Enable Playback Speed Control {#enable-playback-speed-control}
+#### Ha’amatinata i te fa’anahora’a vitiviti o te rāve’a ha’ata’i {#enable-playback-speed-control}
 
 <!-- **Setting**: `enablePlaybackSpeedControl` -->
 
-Allow audio and video playback speed to be adjusted from the media item's context menu.
+E nehenehe e fa’aau i te vitiviti o te rāve’a ha’ata’i, na roto i te tāpura ’ohipa o te rāve’a ha’ata’i.
 
 Fa'anahora'a tumu: `Hape`
 
@@ -515,7 +515,7 @@ Fa'anahora'a tumu: `Hape`
 
 Te faito teitei roa a’e nō te hoho’a nō te mau rāve’a ha’amāramaramara’a i ’ohihia.
 
-**Options**: 240p, 360p, 480p, 720p, 1080p
+Te mau mā’itira’a: 240p, 360p, 480p, 720p, 1080p
 
 Fa'anahora'a tumu: 720p
 
@@ -535,11 +535,11 @@ Fa’ata’a i te mau hoho’a o te mau nota i raro i te ’api i roto i te mau 
 
 Fa'anahora'a tumu: `Hape`
 
-#### Exclude Additional Watchtower Study Videos {#exclude-additional-watchtower-study-videos}
+#### Fa’ata’a ’ē i te mau video ha’api’ira’a nō te Pare Tia’ira’a hau {#exclude-additional-watchtower-study-videos}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 
-Exclude additional videos that are referenced in Watchtower Study paragraphs.
+Fa’ata’a ’ē i te mau video hau i fa’ahitihia i roto i te mau paratarapha o te ha’api’ira’a o te Pare Tia’ira’a.
 
 Fa'anahora'a tumu: `Hape`
 
@@ -597,9 +597,9 @@ Fa’ahuru-ē-ra’a i te mau rāve’a ha’amāramaramara’a i roto i te huru
 
 Fa'anahora'a tumu: `Hape`
 
-### Profile Settings Transfer {#profile-settings-transfer}
+### Te huru o te fa’ahaere-ra’a-hia o te mau fa’anahora’a o te hōho’a ta’ata {#profile-settings-transfer}
 
-Export the current profile's settings to a JSON file or import a previously exported profile settings file. E mono te tāvaha-ra’a i te mau fa’anahora’a o te hoho’a-taata o tei fa’a’ohipa-hia i teie taime.
+A hōro’a i te mau fa’anahora’a o te hōho’a ta’ata i teie nei i roto i te ho’e reni JSON, aore rā a tu’u mai i te ho’e reni fa’anahora’a i fa’ahaere-’ē-hia na. E mono te tāvaha-ra’a i te mau fa’anahora’a o te hoho’a-taata o tei fa’a’ohipa-hia i teie taime.
 
 ### Vāhi ’ati {#danger-zone}
 
@@ -617,19 +617,19 @@ Te vāhi ha’amatara’a o te upe’a rāve’a tei fa’a’ohipahia nō te �
 
 Fa'anahora'a tumu: `jw.org`
 
-#### Disable Hardware Acceleration {#disable-hardware-acceleration}
+#### Fa’aore i te fa’anahora’a fa’a’ohie i te ’ohipa o te mātini {#disable-hardware-acceleration}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
-Disable hardware acceleration after restarting M³. This may help with graphical glitches or crashes on some systems, but is not otherwise recommended.
+A fa’aore i te fa’anahora’a fa’a’ohie i te ’ohipa o te mātini i muri iho i te ha’amata-fa’ahou-ra’a i te M³. E nehenehe teie e tauturu i te fa’aore i te mau hape o te hōho’a aore rā te mātini, ’aita rā i tū’utu’uhia i te tahi atu mau taime.
 
 Fa'anahora'a tumu: `Hape`
 
-#### Suppress Hardware Acceleration Reminder {#suppress-hardware-acceleration-reminder}
+#### Fa’aore i te fa’aara nō ni’a i te fa’anahora’a fa’a’ohie i te ’ohipa o te mātini {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
-Hide the reminder to re-enable hardware acceleration after it has been manually disabled.
+A huna i te fa’aara nō te ha’amata-fa’ahou-ra’a i te fa’anahora’a fa’a’ohie i te ’ohipa o te mātini, i muri iho i tōna fa’aore-ra’a-hia e ’oe.
 
 Fa'anahora'a tumu: `Hape`
 

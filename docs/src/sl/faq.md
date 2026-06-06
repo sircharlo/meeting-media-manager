@@ -81,8 +81,8 @@ Prilagojeno multimedijsko vsebino lahko uvoziš na več načinov:
 - **Povleci in spusti**: Povleci datoteke neposredno v M³
 - **Nadzorovanje mape**: Nastavi nadzorovano mapo za samodejni uvoz
 - **Datoteke JWPUB in seznami predvajanja**: Uvozi publikacije in sezname predvajanja
-- **Public Talk Media**: Import S-34 or S-34mp JWPUB files for public talk media
-- **Bible and Study Bible Tools**: Add audio Bible recordings, Study Bible media, or sign-language Bible media
+- **Multimedijska vsebina za javni govor**: Uvozi JWPUB datoteke S-34 ali S-34mp za multimedijsko vsebino javnega govora
+- **Orodja za Sveto pismo in Study Bible**: Dodaj zvočne posnetke Svetega pisma, multimedijsko vsebino iz Study Bible ali multimedijsko vsebino v znakovnem jeziku
 
 ### :speaker: Ali lahko uvozim zvočne posnetke Svetega pisma? {#audio-bible}
 
@@ -126,11 +126,11 @@ Funkcije glasbe v ozadju vključujejo:
 - neodvisen nadzor glasnosti,
 - nastavljiv časovni zamik za zaustavitev.
 
-### :stopwatch: Does M³ include a meeting timer? {#faq-meeting-timer}
+### :stopwatch: Ali M³ vključuje časovnik za shode? {#faq-meeting-timer}
 
-Da. When enabled, M³ can show a separate timer window for participant timing. It can count up or down, show the current time, show a pre-meeting countdown, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+Da. Ko je ta funkcija omogočena, lahko M³ prikaže ločeno okno časovnika za merjenje časa udeležencev. Časovnik lahko šteje navzgor ali navzdol, prikazuje lahko trenutni čas, odšteva do začetka shoda in po želji označi prekoračitev časa in to, ali program shoda prehiteva ali zaostaja.
 
-The timer is a beta feature and should only be enabled if approved locally.
+Časovnik je funkcija v beta fazi in jo je treba omogočiti samo, če je lokalno odobrena.
 
 ### :video_camera: Kako nastavim združevanje z Zoomom? {#zoom-setup}
 
@@ -169,12 +169,12 @@ Ta funkcija odloži deljenje slik z OBS Studiem, dokler jih ročno ne sprožiš.
 - Večji nadzor nad časom prikaza
 - Izogibanje prezgodnjim spremembam prizorov
 
-### :record_button: Can M³ record meetings? {#faq-recordings}
+### :record_button: Ali lahko M³ snema shode? {#faq-recordings}
 
-M³ does not include a built-in recorder, but it can help control recording in two ways:
+M³ nima vgrajenega snemalnika, lahko pa pomaga pri nadzoru snemanja na dva načina:
 
-- If you use OBS Studio, enable OBS recording controls and start or stop OBS recording from the OBS popup
-- If you use another recording app, configure keyboard shortcuts so M³ can send the start and stop commands from the meeting recordings popup
+- Če uporabljaš OBS Studio, omogoči OBS nadzor snemanja in začni ali ustavi OBS snemanje iz pojavnega okna OBS
+- Če uporabljaš drugo aplikacijo za snemanje, nastavi tipkovne bližnjice, da lahko M³ iz pojavnega okna za snemanje shoda pošlje ukaza za začetek in ustavitev snemanja
 
 ## Napredne funkcije {#faq-advanced-features}
 
@@ -203,7 +203,7 @@ Da! M³ podpira več profilov za:
 - različne skupine,
 - ločene nastavitve in medije za vsako od teh.
 
-Profiles can also be exported to a JSON file and imported on another computer or into another profile. Importing replaces the current profile's settings.
+Profile lahko izvoziš tudi v datoteko JSON in ga uvoziš na drug računalnik ali v drug profil. Uvoz zamenja trenutne nastavitve profila.
 
 ## Odpravljanje težav {#faq-troubleshooting}
 
