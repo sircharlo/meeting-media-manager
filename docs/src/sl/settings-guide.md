@@ -157,19 +157,19 @@ Te nastavitve vam omogočajo nastavitev začasnih sprememb urnika shodov:
 - **Nov dan ob koncu tedna**: Nov dan za shod ob koncu tedna
 - **Nov čas ob koncu tedna**: Nov čas za shod ob koncu tedna
 
-### Automatic Meeting Schedule Updates {#automatic-meeting-schedule-updates}
+### Samodejne posodobitve urnika shodov {#automatic-meeting-schedule-updates}
 
 <!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
 
-When enabled, M³ periodically checks the official website of Jehovah's Witnesses for meeting day and time changes and updates the current profile automatically.
+Ko je ta funkcija omogočena, M³ občasno preveri uradno spletno mesto Jehovovih prič, če je prišlo do kake spremembe dneva in ure shodov, ter samodejno posodobi trenutni profil.
 
-This only works for profiles that were added with congregation lookup and whose congregation name has not been manually changed. If synchronization was disabled because the congregation name changed, use **Enable schedule sync** to link the profile again.
+To deluje samo za profile, ki so bili dodani z iskanjem občine in katerih imena občin niso bila ročno spremenjena. Če je bila sinhronizacija onemogočena, ker je bilo ime občine spremenjeno, uporabi možnost **Omogoči sinhronizacijo urnika**, da profil znova povežeš.
 
-#### Refresh Meeting Schedule {#refresh-meeting-schedule}
+#### Osveži urnik shodov {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
-Manually synchronize the current and future meeting schedule with the information from the official website.
+Ročno sinhroniziraj trenutni in prihodnji urnik shodov s podatki z uradnega spletnega mesta.
 
 ## Pridobivanje in predvajanje multimedijske vsebine {#media-retrieval-and-playback}
 
