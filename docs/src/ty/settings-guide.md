@@ -428,21 +428,21 @@ A fa’anahora’a i te tāpa’o pāpere pātō-pātē no te ha’amata i te ha
 
 ### Taime nō te Putuputura’a {#meeting-timer}
 
-#### Enable Meeting Timer {#enable-meeting-timer}
+#### Ha’amatinata i te tāime o te putuputura’a {#enable-meeting-timer}
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
-Enable a separate timer window for timing meeting parts. This is a beta feature and should only be enabled if approved locally.
+Ha’amatinata i te ho’e ha’amāramarama tāime ta’a ’ē nō te faito i te mau tuha’a o te putuputura’a. E tuha’a ’ohipa ’āpī teie (beta) e e nehenehe noa e ha’amatinata i te reira mai te mea ua fa’atia-hia-na e te mau tia o te amuira’a.
 
 Fa'anahora'a tumu: `Hape`
 
-#### Timer Window Behavior {#timer-window-behavior}
+#### Te huru o te ha’amāramarama tāime {#timer-window-behavior}
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
-Configure whether the timer window opens automatically, whether participant timers count up or down by default, whether the clock uses 12-hour or 24-hour time, and whether the current timer value is shown on the action island timer button.
+A fa’anaho i te huru o te ha’amāramarama tāime: ia ’īrava ’ōpani-’ore-hia anei te reira, ia faito i ni’a a’e aore rā i raro te tāime o te mau ta’ata ’orero, ia fa’a’ohipa i te hora 12 aore rā 24, e ia fa’a’ite-hia anei te tāime i ni’a i te tuha’a fa’a’itera’a o te tāime.
 
-#### Timer Display Formats {#timer-display-formats}
+#### Te mau huru fa’a’itera’a o te tāime {#timer-display-formats}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
