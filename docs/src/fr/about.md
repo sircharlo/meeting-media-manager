@@ -83,10 +83,10 @@ Pour les réunions de l'assemblée locale **hybrides** ou **en personne**, le mo
 - **Surveillance de dossiers** : Synchronisez automatiquement les médias depuis des dossiers surveillés (Dropbox, OneDrive, etc.)
 - **Exportation de médias** : Exportez automatiquement les médias vers des dossiers, organisés par date
 - **Présentation de sites web** : Présentez le site officiel sur des écrans externes
-- **Chronomètre de la réunion**: Fenêtre de minuteur facultative pour les parties de la réunion
+- **Minuteur de réunion**: Fenêtre de minuteur facultative pour les parties de la réunion
 - **Aide à l'enregistrement de réunions**: Contrôlez l'enregistrement d'OBS ou une application d'enregistrement externe
 - **Raccourcis clavier** : Raccourcis clavier personnalisables pour de nombreuses fonctions
-- **Profils multiples** : Gérer les différentes congrégations ou groupes avec des profils séparés, y compris l'importation et l'exportation des paramètres de profil
+- **Profils multiples** : Gérer les différentes assemblées locales ou groupes avec des profils séparés, y compris l'importation et l'exportation des paramètres de profil
 
 ## Est-ce que M³ fonctionne dans ma langue ? {#does-m3-work-in-my-language}
 
