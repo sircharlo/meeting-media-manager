@@ -169,12 +169,12 @@ Cette fonction retarde le partage des images vers OBS Studio jusqu'à ce que vou
 - Avoir plus de contrôle sur le timing
 - Éviter les changements de scène précoces
 
-### :record_button: Can M³ record meetings? {#faq-recordings}
+### :record_button: M³ peut-il enregistrer les réunions ? {#faq-recordings}
 
-M3 n'inclut pas un enregistreur intégré, mais il peut aider à contrôler l'enregistrement de deux façons :
+M³ n'inclut pas des fonctionnalités d'enregistrements intégrés, mais il peut aider à contrôler l'enregistrement de deux façons :
 
-- Si vous utilisez OBS Studio, activez les contrôles d'enregistrement d'OBS et démarrez ou arrêtez l'enregistrement d'OBS depuis la popup d'OBS
-- Si vous utilisez une autre application d’enregistrement, configurez les raccourcis clavier pour que M3 puisse envoyer les commandes de démarrage et d’arrêt de la fenêtre pop-up des enregistrements de la réunion
+- Si vous utilisez OBS Studio, activez les contrôles d'enregistrement d'OBS Studio pour pouvoir démarrer ou arrêter l'enregistrement d'OBS Studio depuis le popup d'OBS Studio
+- Si vous utilisez une autre application d’enregistrement, configurez les raccourcis clavier de celle-ci pour que M³ puisse envoyer les commandes clavier de démarrage et d’arrêt depuis le pop-up d'enregistrement de la réunion
 
 ## Fonctionnalités avancées {#faq-advanced-features}
 
