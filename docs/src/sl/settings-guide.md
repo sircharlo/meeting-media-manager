@@ -599,7 +599,7 @@ Pretvori izvoženo multimedijsko vsebino v format MP4 za boljšo združljivost.
 
 ### Profile Settings Transfer {#profile-settings-transfer}
 
-Export the current profile's settings to a JSON file or import a previously exported profile settings file. Importing replaces the current profile's settings.
+Export the current profile's settings to a JSON file or import a previously exported profile settings file. Uvoz zamenja trenutne nastavitve profila.
 
 ### Nevarno območje {#danger-zone}
 

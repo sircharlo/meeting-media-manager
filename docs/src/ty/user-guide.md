@@ -50,14 +50,14 @@ Te vāhi matapihi mātāmua o te M³ e rave rahi ïa tu’u vāhi faufa’a rahi
 
 - Te mau tu’u vāhi o te putuputura’a — ’A pū’ohu-pū-hia te mau rorouira ia au i te mau tu’u vāhi o te putuputura’a (A’ora’a no te Ta’ata Teie, Te mau tao’a faufa’a no roto mai i te Parau a te Atua, e te tahi atu)
 - Te mau tu’u vāhi ta’a ’ē — ’E nehenehe tā ’oe e hāmani i te mau tu’u vāhi ta’a ’ē nō te mau rorouira tāpiri, mai te peu ’aore e putuputura’a i taua mahana ra
-- **Manual Sorting** - Drag media items into the order you need, or reset the order when needed
-- **Repeated Playback** - Loop a single media item or repeat every item in a section until playback is stopped manually
+- Fa’anahora’a na roto i te rima - A huti i te mau rāve’a ha’ata’i i roto i te rēni ’oe e hina’aro, ’aore rā a fa’aho’i fa’ahou i te rēni i te tahi atu taime
+- Fa’ata’i-fa’ahou-ra’a - A fa’ata’i i te ho’e ana’e rāve’a ha’ata’i ma te fa’a’ohipa i te huru loop, ’aore rā a fa’ata’i fa’ahou i te mau mea ato’a i roto i te hō’ē tuha’a e tae roa atu i te taime e fa’aore-ā-hia ai e ’oe
 
-### Hidden and Missing Media {#hidden-and-missing-media}
+### Te mau rāve’a ha’ata’i hunahia ’e tei mo’ehia {#hidden-and-missing-media}
 
-Media can be hidden from the meeting list without deleting the automatically downloaded files. If media is hidden by mistake, use **Show hidden media** for the selected day.
+E nehenehe te mau rāve’a ha’ata’i e hunahia i roto i te tāpura putuputura’a, ma te ’ore e ha’amou i te mau rēni i uta-’o’e-hia mai. Mai te mea e huna-hape-hia te mau rāve’a ha’ata’i, a fa’a’ohipa i te Fa’aite i te mau rāve’a ha’ata’i hunahia nō te mahana i mā’itihia.
 
-If M³ reports missing media, first check whether the item is expected to become available closer to the meeting date. You can also add the missing item manually with the **Add media** menu or by dragging it into the media list.
+Mai te mea e fa’aite te M³ i te mau rāve’a ha’ata’i i mo’e, a hi’o na i te mātāmua e mea tītauhia ānei te reira rāve’a ha’ata’i ia matara mai i te rā o te putuputura’a. E nehenehe ato’a ia ’oe ia tu’u mai i te rāve’a ha’ata’i i mo’e na roto i te rima, ma te fa’a’ohipa i te tāpura Tāpiti i te rāve’a ha’ata’i aore rā ma te huti mai i te reira i roto i te tāpura rāve’a ha’ata’i.
 
 ## Te fa’a’itera’a i te mau rorouira {#media-presentation}
 
@@ -83,8 +83,8 @@ E hōro’a te ta’o’o rorouira i te mau taviri fa’atere ato’a:
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
 - Fa’a’ahi / Fa’a’ati — ’A fa’a’ohipa i te huira o te ’iri nō te fa’a’ahi, ’a tu’u nō te fa’a’ati (nō te mau hoho’a)
-- **Live Preview** - When enabled, show a preview of the audience media window in the main app
-- **Playback Speed** - When enabled in settings, adjust audio and video speed from the media item context menu
+- Fa’a’ite-ātea i te ha’amata-ra’a - Ia fa’a’ohipahia, a fa’a’ite i te hō’ē fa’a’ite-ātea o te ha’amāramarama o te rāve’a ha’ata’i nō te feiā mata’ita’i i roto i te tauihaa matamua
+- Tere o te fa’ata’i-ra’a - Ia fa’a’ohipahia i roto i te mau fa’anahora’a, a fa’atano i te tere o te haruharu ’e te hōho’a mai roto mai i te tāpura fa’anahora’a o te rāve’a ha’ata’i
 
 ### Te mau huru fa’a’itera’a pa’ari {#advanced-presentation}
 
@@ -128,26 +128,26 @@ Mau rāve’a poto nehenehe e fa’aau (ia fa’ati’ahia i roto i te mau fa’
 
 Ha’amana’ora’a (\*): Rāve’a poto nō te ta’āto’ara’a - ’ia ti’a ia fa’a’ohipa noa atu ’aita te tauihaa nō te fa’a’ohipara’a (app) i roto i te matapihi matamua
 
-## Display Tools {#display-tools}
+## Mau rāve’a fa’a’ite-ātea {#display-tools}
 
-### Media Display Window {#media-display-window}
+### Ha’amāramarama fa’a’ite-ātea rāve’a ha’ata’i {#media-display-window}
 
-The media display window is the audience-facing window. It can be placed on an external screen or used in a windowed setup depending on your equipment.
+O te ha’amāramarama fa’a’ite-ātea rāve’a ha’ata’i, te ha’amāramarama ïa e fa’a’itehia i te feiā mata’ita’i. E nehenehe te reira e tu’uhia i ni’a i te hō’ē itenata rāpae, ’aore rā e fa’a’ohipahia i roto i te hō’ē fa’anahora’a ha’amāramarama, ia au i tā ’oe tauihaa.
 
-Use the display popup to:
+A fa’a’ohipa i te ha’amāramarama nīna nō te:
 
-- Show or hide the media display
-- Choose the display or window type
-- Select a temporary custom background instead of the yeartext
-- Use an available camera as the background. This is mostly used in sign-language congregations.
+- Fa’a’ite ’aore rā e huna i te fa’a’ite-ātea rāve’a ha’ata’i
+- Mā’iti i te huru fa’a’ite-ātea ’aore rā te huru ha’amāramarama
+- Mā’iti i te hō’ē tapo’i muri taupoto noa, na ni’a a’e i te parau matahiti
+- A fa’a’ohipa i te hō’ē matini haruharu hōho’a ’ia vai te reira ei tapo’i muri. E fa’a’ohipahia te reira i roto i te mau amuira’a reo rima.
 
-Please note that custom backgrounds are temporary and are not saved after M³ quits.
+A ha’amana’o e, e taupoto noa te mau tapo’i muri i fa’anahohia, ’e e ’ore te reira e tape’ahia ia tāpirihia te M³.
 
-### Meeting Timer {#user-guide-meeting-timer}
+### Hora nō te amuira’a {#user-guide-meeting-timer}
 
-When the meeting timer is enabled, M³ can show a separate timer window for timing participant parts. The timer can count up or down, show the current time, show a meeting countdown before scheduled meetings, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+Ia fa’a’ohipahia te hora nō te amuira’a, e nehenehe te M³ e fa’a’ite i te hō’ē ha’amāramarama hora ta’a’ē nō te faito i te taime o te mau tuha’a a te feiā e paraparau ra. E nehenehe te hora e tai’o i ni’a ’aore rā i raro, e fa’a’ite i te hora mau, e fa’a’ite i te tatau-hora i mua i te mau amuira’a i fa’anahohia, ’e e fa’a’ite ’oia i te taime hau, ’aore rā e fa’a’ite mai te mea e te tere ra te amuira’a i mua ’aore rā i muri i te hora.
 
-The timer is a beta feature and should only be used when approved locally.
+E tuha’a fa’anahora’a fa’a’ite-ātea ā teie, ’e ’ia fa’a’ohipahia nōa ’ia fa’atia-hia mai e te mau ti’a nō te vāhi.
 
 ## Hīmene i muri i te hōho’a {#user-guide-background-music}
 
@@ -190,7 +190,7 @@ E taui noa te M³ i te mau teata nō te OBS i te roara’a o te mau fa’a’ite
 - Teata nō te mau ha’amāramaramara’a - E fa’a’ite i te mau parau hōho’a o te mau ha’amāramaramara’a
 - Teata nō te mau hōho’a - E fa’a’ite i te mau hōho’a (e nehenehe e fa’ata’ahia te taime mai te mea ’ua ha’amā’itihia)
 - Tauira’a aunoa - E taui te mau teata i ni’a i te huru o te mau ha’amāramaramara’a ’e te mau fa’atanora’a
-- **Recording Controls** - If enabled, M³ can start and stop OBS recording from the OBS popup
+- Mau Tātarara’a Haruharu - Ia fa’a’ohipahia, e nehenehe te M³ e ha’amata ’e e fa’aoti i te haruharura’a OBS mai te ha’amāramarama nīna OBS mai
 
 ### Te mau rave’a pa’ari nō te OBS {#advanced-obs}
 
