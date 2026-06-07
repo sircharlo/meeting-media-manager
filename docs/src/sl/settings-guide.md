@@ -189,11 +189,11 @@ Omogoči funkcijo prikazovanja multimedijske vsebine. To je potrebno za prikazov
 
 **Privzeto**: `false`
 
-#### Enable Media Preview {#enable-media-preview}
+#### Omogoči predogled multimedijske vsebine {#enable-media-preview}
 
 <!-- **Setting**: `enableMediaPreview` -->
 
-Show a live preview of the media window while an image or video is being displayed.
+Prikaži predogled multimedijskega okna v živo, ko je prikazana slika ali video.
 
 **Privzeto**: `true`
 
@@ -354,7 +354,7 @@ Nastavite, kateri prizori OBS se uporabljajo za različne namene:
 - **Preklopi prizor po predvajanju multimedijske vsebine**: Samodejno se vrne na prejšnji prizor po predvajanju multimedijske vsebine
 - **Zapomni si prejšnji prizor**: Shrani in obnovi prejšnji prizor
 - **Skrij ikone**: V uporabniškem vmesniku skrije ikone, povezane z OBS
-- **Recording Controls**: Show controls that start and stop OBS recording from M³
+- **Nadzor snemanja**: Prikaži kontrolnike za začetek in ustavitev OBS snemanja iz M³
 
 :::warning Pomembno obvestilo
 
@@ -408,51 +408,51 @@ Bližnjica, ki se sproži, ko je med shodom predvajana zadnja pesem.
 
 **Privzeto**: Prazno
 
-### Meeting Recordings {#meeting-recordings}
+### Posnetki shodov {#meeting-recordings}
 
-#### Enable External Recording App Integration {#enable-external-recording-app-integration}
+#### Omogoči združevanje z zunanjo aplikacijo za snemanje {#enable-external-recording-app-integration}
 
 <!-- **Setting**: `recordingEnable` -->
 
-Let M³ control a separate recording application with keyboard shortcuts. This does not record inside M³; it sends the configured shortcuts when you press **Start Recording** or **Stop Recording** in the meeting recordings popup.
+Dovoli, da M³ upravlja ločeno aplikacijo za snemanje s pomočjo tipkovnih bližnjic. To ne snema znotraj M³. Ko v pojavnem oknu za snemanje shoda pritisneš na **Začni snemanje** ali **Ustavi snemanje**, M³ pošlje nastavljene bližnjice.
 
-This option is hidden when OBS recording controls are enabled. If you use OBS Studio, use the OBS recording controls in the OBS integration instead.
+Ta možnost je skrita, kadar je omogočen OBS nadzor snemanja. Če uporabljaš OBS Studio, uporabi OBS nadzor snemanja v OBS združevanju.
 
 **Privzeto**: `false`
 
-#### Recording Shortcuts and Folder {#recording-shortcuts-and-folder}
+#### Bližnjice za snemanje in mapa {#recording-shortcuts-and-folder}
 
 <!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
 
-Configure the keyboard shortcut that starts recording, the optional shortcut that stops recording, and the folder where the external app saves recordings. If no stop shortcut is provided, M³ reuses the start shortcut. When a folder is configured, M³ shows a button to open it.
+Nastavi tipkovno bližnjico za začetek snemanja, izbirno bližnjico za ustavitev snemanja ter mapo, v katero zunanja aplikacija shranjuje posnetke. Če bližnjica za ustavitev ni določena, M³ ponovno uporabi bližnjico za začetek snemanja. Ko je mapa nastavljena, M³ prikaže gumb za njen odprtje.
 
-### Meeting Timer {#meeting-timer}
+### Časovnik shodov {#meeting-timer}
 
-#### Enable Meeting Timer {#enable-meeting-timer}
+#### Omogoči časovnik shodov {#enable-meeting-timer}
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
-Enable a separate timer window for timing meeting parts. This is a beta feature and should only be enabled if approved locally.
+Omogoči ločeno okno časovnika za merjenje posameznih delov shoda. To je funkcija v beta fazi in jo je treba omogočiti samo, če je lokalno odobrena.
 
 **Privzeto**: `false`
 
-#### Timer Window Behavior {#timer-window-behavior}
+#### Obnašanje okna časovnika {#timer-window-behavior}
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
-Configure whether the timer window opens automatically, whether participant timers count up or down by default, whether the clock uses 12-hour or 24-hour time, and whether the current timer value is shown on the action island timer button.
+Nastavi, ali se okno časovnika odpre samodejno, ali časovniki za udeležence privzeto štejejo navzgor ali navzdol, ali ura uporablja 12‑urni ali 24‑urni format ter ali je trenutna vrednost časovnika prikazana na gumbu časovnika v orodni vrstici.
 
-#### Timer Display Formats {#timer-display-formats}
+#### Prikazi časovnika {#timer-display-formats}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
-Choose analog or digital display formats for the time of day and countdown timers. The countdown warning indicator can shift the analog countdown ring toward a warning color during the final minute.
+Izberi analogni ali digitalni prikaz za prikaz trenutnega časa in odštevalne časovnike. Opozorilni indikator odštevanja lahko med zadnjo minuto postopoma obarva analogni odštevalni krog v opozorilno barvo.
 
-#### Meeting Countdown and Schedule Status {#meeting-countdown-and-schedule-status}
+#### Odštevalnik do shoda in stanje urnika {#meeting-countdown-and-schedule-status}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
-Show a countdown before scheduled meetings and optionally display whether the meeting is ahead of or behind schedule. The meeting countdown appears only on the timer display, not on the main media display.
+Prikaži odštevalnik pred načrtovanimi shodi in po želji prikazuj, ali program shoda prehiteva ali zaostaja. The meeting countdown appears only on the timer display, not on the main media display.
 
 #### Timer Appearance and Overtime {#timer-appearance-and-overtime}
 
