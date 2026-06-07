@@ -50,14 +50,14 @@ M³ samodejno organizira multimedijsko vsebino glede na vrsto shoda in razdelek:
 
 - **Deli shodov** - multimedijska vsebina je razvrščena po delih shoda (javni govor, Zakladi iz Božje Besede itd.).
 - **Deli po meri** - ustvarite lahko dele po meri za dodatne multimedijsko vsebino, če na določen dan ni načrtovan noben shod.
-- **Manual Sorting** - Drag media items into the order you need, or reset the order when needed
-- **Repeated Playback** - Loop a single media item or repeat every item in a section until playback is stopped manually
+- **Ročno razvrščanje** – Povleci multimedijske elemente v želeni vrstni red ali po potrebi ponastavi vrstni red
+- **Ponavljajoče predvajanje** – Ponavljaj posamezen multimedijski element v zanki ali ponavljaj vse elemente v razdelku, dokler predvajanje ni ročno ustavljeno
 
-### Hidden and Missing Media {#hidden-and-missing-media}
+### Skriti in manjkajoči multimedijski elementi {#hidden-and-missing-media}
 
-Media can be hidden from the meeting list without deleting the automatically downloaded files. If media is hidden by mistake, use **Show hidden media** for the selected day.
+Multimedijski elementi so lahko skriti s seznama shoda, ne da bi se izbrisale samodejno prenesene datoteke. Če so bili elementi pomotoma skriti, uporabi možnost **Prikaži skrito multimedijsko vsebino** za izbrani dan.
 
-If M³ reports missing media, first check whether the item is expected to become available closer to the meeting date. You can also add the missing item manually with the **Add media** menu or by dragging it into the media list.
+Če M³ poroča o manjkajočih multimedijskih elementih, najprej preveri, ali naj bi element postal na voljo, ko se bo približal datum shoda. Manjkajoči element lahko dodaš tudi ročno z menijem **Dodaj multimedijo** ali tako, da ga povlečeš v seznam multimedijskih elementov.
 
 ## Predvajanje multimedijske vsebine {#media-presentation}
 
@@ -83,8 +83,8 @@ Multimedijski predvajalnik omogoča celovito upravljanje:
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
 - **Povečanje/premikanje slike** – za povečanje slike uporabi kolesce miške, za premikanje slike pa povleci z miško
-- **Live Preview** - When enabled, show a preview of the audience media window in the main app
-- **Playback Speed** - When enabled in settings, adjust audio and video speed from the media item context menu
+- **Predogled v živo** – Ko je to omogočeno, se v glavnem oknu aplikacije prikaže predogled občinskega multimedijskega okna
+- **Hitrost predvajanja** – Ko je v nastavitvah to omogočeno, lahko iz kontekstnega menija multimedijskega elementa prilagodiš hitrost predvajanja zvoka in videa
 
 ### Napredne možnosti predvajanja multimedijske vsebine {#advanced-presentation}
 
@@ -128,20 +128,20 @@ Nastavi prilagojene bližnjice na tipkovnici za hiter dostop. Privzeto niso nast
 
 **Opomba (\*):** Globalna bližnjica – na voljo tudi, ko aplikacija ni v ospredju.
 
-## Display Tools {#display-tools}
+## Orodja za prikaz {#display-tools}
 
-### Media Display Window {#media-display-window}
+### Okno za prikaz multimedijske vsebine {#media-display-window}
 
-The media display window is the audience-facing window. It can be placed on an external screen or used in a windowed setup depending on your equipment.
+Okno za prikaz multimedijske vsebine je okno, namenjeno občinstvu. Lahko ga postaviš na zunanji zaslon ali pa ga uporabljaš v okenskem načinu, odvisno od tvoje opreme.
 
-Use the display popup to:
+Uporabi pojavno okno za prikaz, da:
 
-- Show or hide the media display
-- Choose the display or window type
-- Select a temporary custom background instead of the yeartext
-- Use an available camera as the background. This is mostly used in sign-language congregations.
+- prikažeš ali skriješ multimedijski zaslon
+- izbereš zaslon ali vrsto okna
+- izbereš začasno poljubno ozadje namesto letnega stavka
+- uporabiš razpoložljivo kamero kot ozadje.  To se večinoma uporablja v občinah v znakovnem jeziku.
 
-Please note that custom backgrounds are temporary and are not saved after M³ quits.
+Upoštevaj, da so poljubna ozadja začasna in se po izhodu iz M³ ne shranijo.
 
 ### Meeting Timer {#user-guide-meeting-timer}
 
