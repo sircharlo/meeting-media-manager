@@ -332,7 +332,7 @@ Deli uradno spletno mesto na zunanjih zaslonih:
 - **Zapri** - zapri način predvajanja spletnega mesta
 - **Auto Return** - Optionally return to the media list automatically after stopping website mirroring
 
-## Meeting Recordings {#meeting-recordings}
+## Posnetki shodov {#meeting-recordings}
 
 M³ can help control meeting recording, but it does not include a built-in recorder.
 
