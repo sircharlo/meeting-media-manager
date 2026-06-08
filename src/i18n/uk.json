@@ -301,6 +301,8 @@
   "jwpub-file": "JWPUB файл",
   "jwpub-file-explain": "Публікація завантажена з офіційного сайту Свідки Єгови",
   "jwpub-file-found": "Файли JWPUB повинні оброблятися окремо.",
+  "jwpub-file-unavailable-caption": "Якщо цей файл на хмарному сховищі, то мережевий диск або доступний для видалення медіа. Зробіть його доступним в автономному режимі та спробуйте ще раз.",
+  "jwpub-file-unavailable-message": "Не вдалося прочитати вибраний файл JWPUB.",
   "jwpubNoMultimedia": "The JWPUB file does not contain any media",
   "jwStreamSite": "JW потік",
   "keyboardShortcuts": "Комбінації клавіш",

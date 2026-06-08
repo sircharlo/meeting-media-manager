@@ -301,6 +301,8 @@
   "jwpub-file": "JWPUB-bestand",
   "jwpub-file-explain": "Publicatie gedownload van de officiële website van Jehovah's Getuigen",
   "jwpub-file-found": "JWPUB-bestanden moeten apart worden verwerkt.",
+  "jwpub-file-unavailable-caption": "Als dit bestand zich in cloud opslaat, maakt een netwerk schijf of verwijderbare media het offline beschikbaar en probeer het opnieuw.",
+  "jwpub-file-unavailable-message": "Het geselecteerde JWPUB bestand kon niet worden gelezen.",
   "jwpubNoMultimedia": "Het JWPUB-bestand bevat geen media",
   "jwStreamSite": "JW Stream",
   "keyboardShortcuts": "Toetsenbordsnelkoppelingen",
