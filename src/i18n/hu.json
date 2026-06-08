@@ -301,6 +301,8 @@
   "jwpub-file": "JWPUB fájl",
   "jwpub-file-explain": "Jehova Tanúi hivatalos honlapjáról letöltött kiadvány",
   "jwpub-file-found": "A JWPUB fájlokat egyenként kell feldolgozni.",
+  "jwpub-file-unavailable-caption": "If this file is on cloud storage, a network drive, or removable media, make it available offline and try again.",
+  "jwpub-file-unavailable-message": "The selected JWPUB file could not be read.",
   "jwpubNoMultimedia": "A JWPUB fájl nem tartalmaz semmilyen médiát",
   "jwStreamSite": "JW Stream",
   "keyboardShortcuts": "Billentyűparancsok",
