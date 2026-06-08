@@ -1623,6 +1623,9 @@ export const fetchMedia = async () => {
             );
 
             const hasMissingMediaFile = missingMediaCheckResults.includes(true);
+            if (hasMissingMediaFile) {
+              day.status = null;
+            }
 
             // Condition 3: Duplicate `uniqueId`s in mediaSections
             const uniqueIds = allMedia.map((m) => m.uniqueId);
