@@ -4896,12 +4896,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/yauzl@npm:^2.10.3, @types/yauzl@npm:^2.9.1":
+"@types/yauzl@npm:^2.9.1":
   version: 2.10.3
   resolution: "@types/yauzl@npm:2.10.3"
   dependencies:
     "@types/node": "npm:*"
   checksum: 10c0/f1b7c1b99fef9f2fe7f1985ef7426d0cebe48cd031f1780fcdc7451eec7e31ac97028f16f50121a59bcf53086a1fc8c856fd5b7d3e00970e43d92ae27d6b43dc
+  languageName: node
+  linkType: hard
+
+"@types/yauzl@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "@types/yauzl@npm:3.3.0"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/febd1de0c178b429bc3399545a7d1343221964839a393ef46d02118f06eb747b3c7c04ed5f121c62311ba87372d2c5f460a2796193121382234c996e9d16b16c
   languageName: node
   linkType: hard
 
@@ -11520,7 +11529,7 @@ __metadata:
     "@types/ms": "npm:^2"
     "@types/node": "npm:^25.9.2"
     "@types/pretty-bytes": "npm:^5.2.0"
-    "@types/yauzl": "npm:^2.10.3"
+    "@types/yauzl": "npm:^3.3.0"
     "@typescript-eslint/utils": "npm:^8.60.1"
     "@vitejs/plugin-vue": "npm:^6.0.7"
     "@vitest/eslint-plugin": "npm:^1.6.19"
@@ -11589,7 +11598,7 @@ __metadata:
     vue-tsc: "npm:>=3.3.5 || 3.3.3"
     vue-zoomable: "npm:^1.2.8"
     wrappy: "npm:^1.0.2"
-    yauzl: "npm:^3.3.2"
+    yauzl: "npm:^3.4.0"
   languageName: unknown
   linkType: soft
 
@@ -17036,7 +17045,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yauzl@npm:^3.3.2":
+"yauzl@npm:^3.4.0":
   version: 3.4.0
   resolution: "yauzl@npm:3.4.0"
   dependencies:
