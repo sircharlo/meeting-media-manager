@@ -33,7 +33,30 @@ import {
 import { NETWORK_ERROR_CODES } from 'src/shared/network-errors';
 import { log, uuid } from 'src/shared/vanilla';
 import { basename, dirname, join, resolve, toUnix } from 'upath';
-import yauzl from 'yauzl';
+import {
+  type Entry,
+  fromBufferPromise,
+  openPromise,
+  type Options,
+  type ZipFile,
+  type ZipFileOptions,
+} from 'yauzl';
+
+declare module 'yauzl' {
+  interface ZipFile {
+    eachEntry: () => AsyncIterable<Entry>;
+    openReadStreamPromise: (
+      entry: Entry,
+      options?: ZipFileOptions,
+    ) => Promise<NodeJS.ReadableStream>;
+  }
+
+  function fromBufferPromise(
+    buffer: Buffer,
+    options?: Options,
+  ): Promise<ZipFile>;
+  function openPromise(path: string, options?: Options): Promise<ZipFile>;
+}
 
 const ongoingDecompressions = new Map<string, Promise<UnzipResult[]>>();
 
@@ -87,6 +110,31 @@ const isIncompleteZipReadError = (message: string) =>
     message,
   );
 
+const isZipGuardError = (error: unknown) => {
+  const message = error instanceof Error ? error.message : String(error);
+  return /^Reached max\. (compression ratio|entry size|number of files|size) \(failsafe\)$/.test(
+    message,
+  );
+};
+
+const capturedZipErrors = new WeakSet<object>();
+
+const captureZipErrorOnce = (
+  error: unknown,
+  fn: { args?: Record<string, unknown>; name: string },
+) => {
+  if (isZipGuardError(error)) return;
+  if (typeof error === 'object' && error !== null) {
+    if (capturedZipErrors.has(error)) return;
+    capturedZipErrors.add(error);
+  }
+  captureElectronError(error, {
+    contexts: {
+      fn,
+    },
+  });
+};
+
 const getZipRetryDelay = (attempt: number) => ZIP_OPEN_RETRY_DELAY_MS * attempt;
 
 let defaultAppDataPath: null | string = null;
@@ -105,13 +153,9 @@ interface UnzipContext {
   output: string;
 }
 interface ZipfileState {
-  checkIfComplete: () => Promise<void>;
   extractedFiles: UnzipResult[];
   fileCount: number;
-  pendingOperations: Promise<void>[];
-  reject: (reason?: unknown) => void;
   totalUncompressedSize: number;
-  zipfile: yauzl.ZipFile;
 }
 
 interface ZipGuardState {
@@ -119,10 +163,8 @@ interface ZipGuardState {
   totalUncompressedSize: number;
 }
 
-type ZipSource = Buffer | string;
-
 const getZipEntryGuardError = (
-  entry: yauzl.Entry,
+  entry: Entry,
   state: ZipGuardState,
   limits: {
     maxEntrySize?: number;
@@ -593,12 +635,10 @@ export async function saveFileDialog(
 const createDirectory = async (
   fullPath: string,
   context: UnzipContext,
-  state: ZipfileState,
 ): Promise<void> => {
   const attemptCreateDir = async (attempt = 1): Promise<void> => {
     try {
       await ensureDir(fullPath);
-      state.zipfile.readEntry();
     } catch (e) {
       if (attempt < 3) {
         log(
@@ -624,8 +664,7 @@ const createDirectory = async (
           },
         },
       });
-      state.zipfile.close();
-      state.reject(e);
+      throw e;
     }
   };
 
@@ -636,7 +675,7 @@ const createDirectory = async (
  * Processes a file entry with retry logic
  */
 const processFileEntry = async (
-  entry: yauzl.Entry,
+  entry: Entry,
   readStream: NodeJS.ReadableStream,
   fullPath: string,
   context: UnzipContext,
@@ -665,7 +704,6 @@ const processFileEntry = async (
 
       await pipeline(readStream, writeStream);
       state.extractedFiles.push({ path: entry.fileName });
-      state.zipfile.readEntry();
     } catch (e) {
       if (
         attempt < 3 &&
@@ -696,8 +734,7 @@ const processFileEntry = async (
           },
         },
       });
-      state.zipfile.close();
-      state.reject(new Error(String(e)));
+      throw e;
     }
   };
 
@@ -708,9 +745,10 @@ const processFileEntry = async (
  * Handles a zip entry
  */
 const handleZipEntry = async (
-  entry: yauzl.Entry,
+  entry: Entry,
   context: UnzipContext,
   state: ZipfileState,
+  zipfile: ZipFile,
 ): Promise<void> => {
   const fullPath = join(context.output, entry.fileName);
 
@@ -719,61 +757,39 @@ const handleZipEntry = async (
     context.opts?.includes?.length &&
     !context.opts.includes.includes(entry.fileName)
   ) {
-    state.zipfile.readEntry();
     return;
   }
 
   const guardError = getZipEntryGuardError(entry, state);
   if (guardError) {
-    state.zipfile.close();
-    return state.reject(guardError);
+    throw guardError;
   }
 
   if (entry.fileName.endsWith('/')) {
     // Directory
-    await createDirectory(fullPath, context, state);
+    await createDirectory(fullPath, context);
   } else {
     // File
-    state.zipfile.openReadStream(entry, async (err, readStream) => {
-      if (err) {
-        captureElectronError(err, {
-          contexts: {
-            fn: {
-              args: {
-                entry: entry.fileName,
-                input: context.input,
-                output: context.output,
-              },
-              name: 'unzipFile openReadStream',
+    let readStream: NodeJS.ReadableStream;
+    try {
+      readStream = await zipfile.openReadStreamPromise(entry);
+    } catch (error) {
+      captureElectronError(error, {
+        contexts: {
+          fn: {
+            args: {
+              entry: entry.fileName,
+              input: context.input,
+              output: context.output,
             },
+            name: 'unzipFile openReadStream',
           },
-        });
-        state.zipfile.close();
-        return state.reject(new Error(String(err)));
-      }
-      if (!readStream) {
-        state.zipfile.close();
-        return state.reject(new Error('Read stream not found'));
-      }
-
-      const operationPromise = processFileEntry(
-        entry,
-        readStream,
-        fullPath,
-        context,
-        state,
-      );
-
-      state.pendingOperations.push(operationPromise);
-
-      operationPromise.finally(() => {
-        const index = state.pendingOperations.indexOf(operationPromise);
-        if (index > -1) {
-          state.pendingOperations.splice(index, 1);
-        }
-        state.checkIfComplete();
+        },
       });
-    });
+      throw error;
+    }
+
+    await processFileEntry(entry, readStream, fullPath, context, state);
   }
 };
 
@@ -795,100 +811,82 @@ const decompress = async (
   });
 
   const context: UnzipContext = { input, opts, output };
+  const extractedFiles: UnzipResult[] = [];
+  const state: ZipfileState = {
+    extractedFiles,
+    fileCount: 0,
+    totalUncompressedSize: 0,
+  };
+  const zipfile = await openZipFileForUnzip(input, output, fileSize, opts);
 
-  return new Promise<UnzipResult[]>((resolve, reject) => {
-    const extractedFiles: UnzipResult[] = [];
-    const pendingOperations: Promise<void>[] = [];
-    let zipfileEnded = false;
+  try {
+    for await (const entry of zipfile.eachEntry()) {
+      await handleZipEntry(entry, context, state, zipfile);
+    }
+  } catch (error) {
+    zipfile.close();
+    captureElectronError(error, {
+      contexts: {
+        fn: { args: { input, output }, name: 'unzipFile zipfile error' },
+      },
+    });
+    throw error;
+  }
 
-    const checkIfComplete = async () => {
-      if (zipfileEnded && pendingOperations.length === 0) {
-        addElectronBreadcrumb({
-          category: 'unzip',
-          data: {
-            extractedFilesCount: extractedFiles.length,
-            extractedFilesSample: extractedFiles
-              .map((file) => file.path)
-              .slice(0, ZIP_ENTRY_DIAGNOSTIC_LIMIT),
-            includes: opts?.includes,
-          },
-          message: 'Unzip complete',
-        });
-
-        setTimeout(() => {
-          resolve(extractedFiles);
-        }, 50);
-      }
-    };
-
-    const openZip = (attempt: number) => {
-      yauzl.open(input, { lazyEntries: true }, (err, zipfile) => {
-        if (err) {
-          const errorCode = getErrorCode(err);
-          const shouldRetry = shouldRetryZipRead(err, attempt);
-          addElectronBreadcrumb({
-            category: 'unzip',
-            data: {
-              attempt: attempt + 1,
-              errorCode,
-              fileSize,
-              includes: opts?.includes,
-              input,
-              maxAttempts: ZIP_OPEN_RETRY_COUNT + 1,
-              output,
-              retrying: shouldRetry,
-            },
-            level: errorCode === 'ENOENT' ? 'info' : 'error',
-            message: 'Error opening zipfile',
-          });
-
-          if (shouldRetry) {
-            delay(getZipRetryDelay(attempt + 1))
-              .then(() => openZip(attempt + 1))
-              .catch(reject);
-            return;
-          }
-
-          reject(new Error(String(err)));
-          return;
-        }
-
-        if (!zipfile) return reject(new Error('Zipfile not found'));
-
-        const state: ZipfileState = {
-          checkIfComplete,
-          extractedFiles,
-          fileCount: 0,
-          pendingOperations,
-          reject,
-          totalUncompressedSize: 0,
-          zipfile,
-        };
-
-        zipfile.readEntry();
-
-        zipfile.on('entry', async (entry: yauzl.Entry) => {
-          await handleZipEntry(entry, context, state);
-        });
-
-        zipfile.on('end', () => {
-          zipfileEnded = true;
-          checkIfComplete();
-        });
-
-        zipfile.on('error', (err) => {
-          captureElectronError(err, {
-            contexts: {
-              fn: { args: { input, output }, name: 'unzipFile zipfile error' },
-            },
-          });
-          reject(new Error(String(err)));
-        });
-      });
-    };
-
-    openZip(0);
+  addElectronBreadcrumb({
+    category: 'unzip',
+    data: {
+      extractedFilesCount: extractedFiles.length,
+      extractedFilesSample: extractedFiles
+        .map((file) => file.path)
+        .slice(0, ZIP_ENTRY_DIAGNOSTIC_LIMIT),
+      includes: opts?.includes,
+    },
+    message: 'Unzip complete',
   });
+
+  return extractedFiles;
+};
+
+const openZipFileForUnzip = async (
+  input: string,
+  output: string,
+  fileSize: number,
+  opts?: UnzipOptions,
+): Promise<ZipFile> => {
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt <= ZIP_OPEN_RETRY_COUNT; attempt++) {
+    try {
+      return await openPromise(input);
+    } catch (error) {
+      lastError = error;
+      const errorCode = getErrorCode(error);
+      const shouldRetry = shouldRetryZipRead(error, attempt);
+
+      addElectronBreadcrumb({
+        category: 'unzip',
+        data: {
+          attempt: attempt + 1,
+          errorCode,
+          fileSize,
+          includes: opts?.includes,
+          input,
+          maxAttempts: ZIP_OPEN_RETRY_COUNT + 1,
+          output,
+          retrying: shouldRetry,
+        },
+        level: errorCode === 'ENOENT' ? 'info' : 'error',
+        message: 'Error opening zipfile',
+      });
+
+      if (!shouldRetry) throw error;
+
+      await delay(getZipRetryDelay(attempt + 1));
+    }
+  }
+
+  throw lastError;
 };
 
 const getZipDiagnostics = (zipPath: string, fileSize: number) => {
@@ -959,18 +957,12 @@ const getZipFileStats = async (zipPath: string) => {
 const openZipFileForEntries = async (
   zipPath: string,
   fileSize: number,
-): Promise<yauzl.ZipFile> => {
+): Promise<ZipFile> => {
   let lastError: unknown;
 
   for (let attempt = 0; attempt <= ZIP_OPEN_RETRY_COUNT; attempt++) {
     try {
-      return await new Promise<yauzl.ZipFile>((resolve, reject) => {
-        yauzl.open(zipPath, { lazyEntries: true }, (err, zipfile) => {
-          if (err) return reject(err);
-          if (!zipfile) return reject(new Error('Zipfile not found'));
-          return resolve(zipfile);
-        });
-      });
+      return await openPromise(zipPath);
     } catch (error) {
       lastError = error;
       const errorCode = getErrorCode(error);
@@ -1000,7 +992,7 @@ const openZipFileForEntries = async (
               },
               fn: {
                 args: { fileSize, zipPath },
-                name: 'getZipEntries yauzl.open',
+                name: 'getZipEntries openPromise',
               },
             },
           });
@@ -1016,22 +1008,8 @@ const openZipFileForEntries = async (
   throw lastError;
 };
 
-const openZipBuffer = async (buffer: Buffer): Promise<yauzl.ZipFile> =>
-  await new Promise<yauzl.ZipFile>((resolve, reject) => {
-    yauzl.fromBuffer(buffer, { lazyEntries: true }, (err, zipfile) => {
-      if (err) return reject(err);
-      if (!zipfile) return reject(new Error('Zipfile not found'));
-      return resolve(zipfile);
-    });
-  });
-
-const openZipSource = async (
-  source: ZipSource,
-  fileSize: number,
-): Promise<yauzl.ZipFile> => {
-  if (Buffer.isBuffer(source)) return await openZipBuffer(source);
-  return await openZipFileForEntries(source, fileSize);
-};
+const openZipBuffer = async (buffer: Buffer): Promise<ZipFile> =>
+  await fromBufferPromise(buffer);
 
 const readStreamIntoBuffer = async (
   readStream: NodeJS.ReadableStream,
@@ -1061,96 +1039,60 @@ const readStreamIntoBuffer = async (
   });
 
 const readZipEntriesIntoMemory = async (
-  source: ZipSource,
+  zipPath: string,
   includes: string[],
   options: Pick<ExtractNestedZipEntryOptions, 'maxTotalSize'> &
     Required<Pick<ExtractNestedZipEntryOptions, 'maxEntrySize'>>,
 ) => {
-  const fileSize = Buffer.isBuffer(source)
-    ? source.length
-    : (await stat(source)).size;
-  const zipfile = await openZipSource(source, fileSize);
+  const { size: fileSize } = await stat(zipPath);
+  const zipfile = await openZipFileForEntries(zipPath, fileSize);
+  const entries: { data: Buffer; path: string }[] = [];
+  const guardState: ZipGuardState = {
+    fileCount: 0,
+    totalUncompressedSize: 0,
+  };
 
-  return await new Promise<{ data: Buffer; path: string }[]>(
-    (resolve, reject) => {
-      const entries: { data: Buffer; path: string }[] = [];
-      const guardState: ZipGuardState = {
-        fileCount: 0,
-        totalUncompressedSize: 0,
-      };
-      let settled = false;
-
-      const rejectOnce = (error: Error) => {
-        if (settled) return;
-        settled = true;
-        zipfile.close();
-        reject(error);
-      };
-
-      const resolveOnce = () => {
-        if (settled) return;
-        settled = true;
-        zipfile.close();
-        resolve(entries);
-      };
-
-      zipfile.readEntry();
-      zipfile.on('entry', (entry: yauzl.Entry) => {
+  try {
+    for await (const entry of zipfile.eachEntry()) {
+      try {
         const guardError = getZipEntryGuardError(entry, guardState, {
           maxEntrySize: options.maxEntrySize,
           maxTotalSize: options.maxTotalSize ?? MAX_IN_MEMORY_ZIP_TOTAL_SIZE,
         });
-        if (guardError) {
-          rejectOnce(guardError);
-          return;
-        }
+        if (guardError) throw guardError;
 
         if (
           entry.fileName.endsWith('/') ||
           !includes.includes(entry.fileName)
         ) {
-          zipfile.readEntry();
-          return;
+          continue;
         }
 
-        zipfile.openReadStream(entry, async (err, readStream) => {
-          if (err) {
-            rejectOnce(new Error(String(err)));
-            return;
-          }
-          if (!readStream) {
-            rejectOnce(new Error('Read stream not found'));
-            return;
-          }
-
-          try {
-            entries.push({
-              data: await readStreamIntoBuffer(
-                readStream,
-                options.maxEntrySize,
-              ),
-              path: entry.fileName,
-            });
-            if (entries.length === includes.length) {
-              resolveOnce();
-              return;
-            }
-            zipfile.readEntry();
-          } catch (error) {
-            rejectOnce(
-              error instanceof Error ? error : new Error(String(error)),
-            );
-          }
+        const readStream = await zipfile.openReadStreamPromise(entry);
+        entries.push({
+          data: await readStreamIntoBuffer(readStream, options.maxEntrySize),
+          path: entry.fileName,
         });
-      });
+        if (entries.length === includes.length) break;
+      } catch (error) {
+        captureZipErrorOnce(error, {
+          args: { entry: entry.fileName, includes, zipPath },
+          name: 'readZipEntriesIntoMemory entry',
+        });
+        throw error;
+      }
+    }
+  } catch (error) {
+    captureZipErrorOnce(error, {
+      args: { includes, zipPath },
+      name: 'readZipEntriesIntoMemory',
+    });
+    throw error;
+  } finally {
+    zipfile.close();
+  }
 
-      zipfile.on('end', () => {
-        resolveOnce();
-      });
-
-      zipfile.on('error', rejectOnce);
-    },
-  );
+  return entries;
 };
 
 export async function extractNestedZipEntry(
@@ -1171,77 +1113,68 @@ export async function extractNestedZipEntry(
   }
 
   const innerZipfile = await openZipBuffer(outerEntry.data);
+  const guardState: ZipGuardState = {
+    fileCount: 0,
+    totalUncompressedSize: 0,
+  };
+  const matchesRequestedEntry = (entry: Entry) => {
+    if (opts.innerEntryName) return entry.fileName === opts.innerEntryName;
+    if (opts.innerEntryNameSuffix) {
+      return entry.fileName.endsWith(opts.innerEntryNameSuffix);
+    }
+    return false;
+  };
 
-  return await new Promise<UnzipResult>((resolve, reject) => {
-    const guardState: ZipGuardState = {
-      fileCount: 0,
-      totalUncompressedSize: 0,
-    };
-    let settled = false;
+  try {
+    for await (const entry of innerZipfile.eachEntry()) {
+      try {
+        const guardError = getZipEntryGuardError(entry, guardState, {
+          maxEntrySize,
+          maxTotalSize,
+        });
+        if (guardError) throw guardError;
 
-    const rejectOnce = (error: Error) => {
-      if (settled) return;
-      settled = true;
-      innerZipfile.close();
-      reject(error);
-    };
-
-    const matchesRequestedEntry = (entry: yauzl.Entry) => {
-      if (opts.innerEntryName) return entry.fileName === opts.innerEntryName;
-      if (opts.innerEntryNameSuffix) {
-        return entry.fileName.endsWith(opts.innerEntryNameSuffix);
-      }
-      return false;
-    };
-
-    innerZipfile.readEntry();
-    innerZipfile.on('entry', (entry: yauzl.Entry) => {
-      const guardError = getZipEntryGuardError(entry, guardState, {
-        maxEntrySize,
-        maxTotalSize,
-      });
-      if (guardError) {
-        rejectOnce(guardError);
-        return;
-      }
-
-      if (entry.fileName.endsWith('/') || !matchesRequestedEntry(entry)) {
-        innerZipfile.readEntry();
-        return;
-      }
-
-      innerZipfile.openReadStream(entry, async (err, readStream) => {
-        if (err) {
-          rejectOnce(new Error(String(err)));
-          return;
-        }
-        if (!readStream) {
-          rejectOnce(new Error('Read stream not found'));
-          return;
+        if (entry.fileName.endsWith('/') || !matchesRequestedEntry(entry)) {
+          continue;
         }
 
-        try {
-          const entryBuffer = await readStreamIntoBuffer(
-            readStream,
-            maxEntrySize,
-          );
-          const fullPath = join(output, entry.fileName);
-          await ensureDir(dirname(fullPath));
-          await writeFile(fullPath, entryBuffer);
-          settled = true;
-          innerZipfile.close();
-          resolve({ path: fullPath });
-        } catch (error) {
-          rejectOnce(error instanceof Error ? error : new Error(String(error)));
-        }
-      });
+        const readStream = await innerZipfile.openReadStreamPromise(entry);
+        const fullPath = join(output, entry.fileName);
+        await ensureDir(dirname(fullPath));
+        await pipeline(readStream, createWriteStream(fullPath));
+        return { path: fullPath };
+      } catch (error) {
+        captureZipErrorOnce(error, {
+          args: {
+            entry: entry.fileName,
+            innerEntryName: opts.innerEntryName,
+            innerEntryNameSuffix: opts.innerEntryNameSuffix,
+            input,
+            outerEntryName,
+            output,
+          },
+          name: 'extractNestedZipEntry entry',
+        });
+        throw error;
+      }
+    }
+
+    throw new Error('Nested zip entry not found');
+  } catch (error) {
+    captureZipErrorOnce(error, {
+      args: {
+        innerEntryName: opts.innerEntryName,
+        innerEntryNameSuffix: opts.innerEntryNameSuffix,
+        input,
+        outerEntryName,
+        output,
+      },
+      name: 'extractNestedZipEntry',
     });
-
-    innerZipfile.on('end', () => {
-      rejectOnce(new Error('Nested zip entry not found'));
-    });
-    innerZipfile.on('error', rejectOnce);
-  });
+    throw error;
+  } finally {
+    innerZipfile.close();
+  }
 }
 
 /**
@@ -1259,78 +1192,58 @@ export async function getZipEntries(
     message: 'Reading zip entries',
   });
 
-  return new Promise((resolve, reject) => {
-    const entries: Record<string, number> = {};
+  const entries: Record<string, number> = {};
+  const entryNamesSample: string[] = [];
+  const guardState: ZipGuardState = {
+    fileCount: 0,
+    totalUncompressedSize: 0,
+  };
+  const zipfile = await openZipFileForEntries(zipPath, fileSize);
 
-    openZipFileForEntries(zipPath, fileSize)
-      .then((zipfile) => {
-        let fileCount = 0;
-        let totalUncompressedSize = 0;
-        const entryNamesSample: string[] = [];
-        let rejected = false;
+  try {
+    for await (const entry of zipfile.eachEntry()) {
+      const guardError = getZipEntryGuardError(entry, guardState);
+      if (guardError) throw guardError;
 
-        const rejectOnce = (error: Error) => {
-          if (rejected) return;
-          rejected = true;
-          zipfile.close();
-          reject(error);
-        };
+      entries[entry.fileName] = entry.uncompressedSize;
+      if (entryNamesSample.length < ZIP_ENTRY_DIAGNOSTIC_LIMIT) {
+        entryNamesSample.push(entry.fileName);
+      }
+    }
+  } catch (error) {
+    addElectronBreadcrumb({
+      category: 'zip',
+      data: getZipDiagnostics(zipPath, fileSize),
+      level: 'error',
+      message: 'Zip entry stream error',
+    });
+    captureElectronError(error, {
+      contexts: {
+        cloud_resource: getZipDiagnostics(zipPath, fileSize),
+        fn: {
+          args: { fileSize, zipPath },
+          name: 'getZipEntries zipfile error',
+        },
+      },
+    });
+    throw error;
+  } finally {
+    zipfile.close();
+  }
 
-        zipfile.readEntry();
-        zipfile.on('entry', (entry: yauzl.Entry) => {
-          const guardState = { fileCount, totalUncompressedSize };
-          const guardError = getZipEntryGuardError(entry, guardState);
-          fileCount = guardState.fileCount;
-          totalUncompressedSize = guardState.totalUncompressedSize;
-          if (guardError) {
-            rejectOnce(guardError);
-            return;
-          }
-
-          entries[entry.fileName] = entry.uncompressedSize;
-          if (entryNamesSample.length < ZIP_ENTRY_DIAGNOSTIC_LIMIT) {
-            entryNamesSample.push(entry.fileName);
-          }
-          zipfile.readEntry();
-        });
-
-        zipfile.on('end', () => {
-          if (rejected) return;
-          addElectronBreadcrumb({
-            category: 'zip',
-            data: {
-              ...getZipDiagnostics(zipPath, fileSize),
-              contentsSize: entries.contents,
-              entryCount: fileCount,
-              entryNamesSample,
-              totalUncompressedSize,
-            },
-            message: 'Finished reading zip entries',
-          });
-          resolve(entries);
-        });
-
-        zipfile.on('error', (err) => {
-          addElectronBreadcrumb({
-            category: 'zip',
-            data: getZipDiagnostics(zipPath, fileSize),
-            level: 'error',
-            message: 'Zip entry stream error',
-          });
-          captureElectronError(err, {
-            contexts: {
-              cloud_resource: getZipDiagnostics(zipPath, fileSize),
-              fn: {
-                args: { fileSize, zipPath },
-                name: 'getZipEntries zipfile error',
-              },
-            },
-          });
-          reject(err);
-        });
-      })
-      .catch(reject);
+  addElectronBreadcrumb({
+    category: 'zip',
+    data: {
+      ...getZipDiagnostics(zipPath, fileSize),
+      contentsSize: entries.contents,
+      entryCount: guardState.fileCount,
+      entryNamesSample,
+      totalUncompressedSize: guardState.totalUncompressedSize,
+    },
+    message: 'Finished reading zip entries',
   });
+
+  return entries;
 }
 
 /**

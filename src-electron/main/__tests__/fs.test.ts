@@ -11,6 +11,7 @@ const uuidMock = vi.fn(() => 'test-uuid');
 const watchMock = vi.fn();
 const sendToWindowMock = vi.fn();
 const yauzlOpenMock = vi.fn();
+const yauzlFromBufferPromiseMock = vi.fn();
 
 vi.mock('chokidar', () => ({
   watch: watchMock,
@@ -98,8 +99,11 @@ vi.mock('upath', () => {
 
 vi.mock('yauzl', () => ({
   default: {
-    open: yauzlOpenMock,
+    fromBufferPromise: yauzlFromBufferPromiseMock,
+    openPromise: yauzlOpenMock,
   },
+  fromBufferPromise: yauzlFromBufferPromiseMock,
+  openPromise: yauzlOpenMock,
 }));
 
 const originalPlatform = Object.getOwnPropertyDescriptor(process, 'platform');
@@ -384,9 +388,7 @@ describe('getZipEntries', () => {
   it('adds diagnostics but does not report zip files deleted after stat', async () => {
     const error = new Error('missing after stat');
     (error as Error & { code?: string }).code = 'ENOENT';
-    yauzlOpenMock.mockImplementation((_path, _options, callback) => {
-      callback(error);
-    });
+    yauzlOpenMock.mockRejectedValue(error);
 
     const { getZipEntries } = await import('../fs');
 
@@ -394,11 +396,7 @@ describe('getZipEntries', () => {
       code: 'ENOENT',
     });
 
-    expect(yauzlOpenMock).toHaveBeenCalledWith(
-      '/tmp/raced.jwpub',
-      { lazyEntries: true },
-      expect.any(Function),
-    );
+    expect(yauzlOpenMock).toHaveBeenCalledWith('/tmp/raced.jwpub');
     expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
       expect.objectContaining({
         category: 'zip',
@@ -415,27 +413,17 @@ describe('getZipEntries', () => {
   });
 
   it('adds entry samples and contents size to zip entry diagnostics', async () => {
-    const { EventEmitter } = await import('node:events');
     const entries = [
       { compressedSize: 50, fileName: 'contents', uncompressedSize: 100 },
       { compressedSize: 25, fileName: 'manifest.json', uncompressedSize: 75 },
     ];
-    const zipfile = Object.assign(new EventEmitter(), {
+    const zipfile = {
       close: vi.fn(),
-      readEntry: vi.fn(() => {
-        queueMicrotask(() => {
-          const entry = entries.shift();
-          if (entry) {
-            zipfile.emit('entry', entry);
-          } else {
-            zipfile.emit('end');
-          }
-        });
-      }),
-    });
-    yauzlOpenMock.mockImplementation((_path, _options, callback) => {
-      callback(null, zipfile);
-    });
+      eachEntry: async function* () {
+        yield* entries;
+      },
+    };
+    yauzlOpenMock.mockResolvedValue(zipfile);
 
     const { getZipEntries } = await import('../fs');
 
@@ -462,25 +450,16 @@ describe('getZipEntries', () => {
   it('retries timed out cloud zip reads before reporting an error', async () => {
     const timeoutError = new Error('ETIMEDOUT: connection timed out, read');
     (timeoutError as Error & { code?: string }).code = 'ETIMEDOUT';
-    const zipfileHandlers = new Map<string, () => void>();
     const zipfileMock = {
       close: vi.fn(),
-      on: vi.fn((event: string, callback: () => void) => {
-        zipfileHandlers.set(event, callback);
-        return zipfileMock;
-      }),
-      readEntry: vi.fn(() => {
-        queueMicrotask(() => zipfileHandlers.get('end')?.());
-      }),
+      eachEntry: async function* () {
+        yield* [];
+      },
     };
 
     yauzlOpenMock
-      .mockImplementationOnce((_path, _options, callback) => {
-        callback(timeoutError);
-      })
-      .mockImplementationOnce((_path, _options, callback) => {
-        callback(undefined, zipfileMock);
-      });
+      .mockRejectedValueOnce(timeoutError)
+      .mockResolvedValueOnce(zipfileMock);
 
     const { getZipEntries } = await import('../fs');
 
@@ -511,25 +490,16 @@ describe('getZipEntries', () => {
     const truncatedError = new Error(
       'End of central directory record signature not found. Either not a zip file, or file is truncated.',
     );
-    const zipfileHandlers = new Map<string, () => void>();
     const zipfileMock = {
       close: vi.fn(),
-      on: vi.fn((event: string, callback: () => void) => {
-        zipfileHandlers.set(event, callback);
-        return zipfileMock;
-      }),
-      readEntry: vi.fn(() => {
-        queueMicrotask(() => zipfileHandlers.get('end')?.());
-      }),
+      eachEntry: async function* () {
+        yield* [];
+      },
     };
 
     yauzlOpenMock
-      .mockImplementationOnce((_path, _options, callback) => {
-        callback(truncatedError);
-      })
-      .mockImplementationOnce((_path, _options, callback) => {
-        callback(undefined, zipfileMock);
-      });
+      .mockRejectedValueOnce(truncatedError)
+      .mockResolvedValueOnce(zipfileMock);
 
     const { getZipEntries } = await import('../fs');
 
@@ -552,31 +522,16 @@ describe('getZipEntries', () => {
   });
 
   it('retries zip files that disappear before opening during unzip', async () => {
-    const { EventEmitter } = await import('node:events');
     const error = new Error('missing during unzip');
     (error as Error & { code?: string }).code = 'ENOENT';
-    const zipfile = Object.assign(new EventEmitter(), {
+    const zipfile = {
       close: vi.fn(),
-      on: vi.fn(function (
-        this: typeof zipfile,
-        event: string,
-        callback: (...args: unknown[]) => void,
-      ) {
-        EventEmitter.prototype.on.call(this, event, callback);
-        return this;
-      }),
-      readEntry: vi.fn(() => {
-        queueMicrotask(() => zipfile.emit('end'));
-      }),
-    });
+      eachEntry: async function* () {
+        yield* [];
+      },
+    };
 
-    yauzlOpenMock
-      .mockImplementationOnce((_path, _options, callback) => {
-        callback(error);
-      })
-      .mockImplementationOnce((_path, _options, callback) => {
-        callback(undefined, zipfile);
-      });
+    yauzlOpenMock.mockRejectedValueOnce(error).mockResolvedValueOnce(zipfile);
 
     const { unzipFile } = await import('../fs');
 
