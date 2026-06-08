@@ -305,6 +305,17 @@ const handleJwpubImport = (jwpubImportDocument: DocumentItem) => {
   dialogValue.value = false;
 };
 
+const importSingleJwpubDocument = () => {
+  if (!dialogValue.value) return;
+  if (!jwpubDb.value || jwpubLoading.value) return;
+  if (jwpubDocuments.value.length !== 1) return;
+
+  const document = jwpubDocuments.value[0];
+  if (!document) return;
+
+  handleJwpubImport(document);
+};
+
 const handleCancel = () => {
   // Reset loading states and JW PUB data
   jwpubLoading.value = false;
@@ -325,6 +336,17 @@ watch(
       jwpubDocuments.value = [];
     }
   },
+);
+
+// Watch for a single JWPUB document and skip the document picker.
+watch(
+  () => [
+    dialogValue.value,
+    jwpubDb.value,
+    jwpubLoading.value,
+    jwpubDocuments.value,
+  ],
+  importSingleJwpubDocument,
 );
 
 // Watch for processing completion to auto-close dialog
