@@ -52,6 +52,44 @@ const updaterLogger = {
 let updateDownloaded = false;
 let updateInstallStarted = false;
 
+interface UpdateDownloadProgressInfo {
+  bytesPerSecond?: number;
+  delta?: number;
+  percent?: number;
+  total?: number;
+  transferred?: number;
+}
+
+const formatUpdateDownloadProgress = (info: UpdateDownloadProgressInfo) => {
+  const details: string[] = [];
+
+  if (typeof info.percent === 'number' && Number.isFinite(info.percent)) {
+    details.push(`${info.percent.toFixed(2)}%`);
+  }
+
+  if (
+    typeof info.transferred === 'number' &&
+    typeof info.total === 'number' &&
+    Number.isFinite(info.transferred) &&
+    Number.isFinite(info.total)
+  ) {
+    details.push(`${info.transferred}/${info.total} bytes`);
+  }
+
+  if (
+    typeof info.bytesPerSecond === 'number' &&
+    Number.isFinite(info.bytesPerSecond)
+  ) {
+    details.push(`${info.bytesPerSecond} B/s`);
+  }
+
+  if (typeof info.delta === 'number' && Number.isFinite(info.delta)) {
+    details.push(`delta ${info.delta} bytes`);
+  }
+
+  return details.length ? details.join(', ') : 'unknown progress';
+};
+
 export const getUpdatesDisabledPath = async () =>
   join(await getAppDataPath(), 'Global Preferences', 'disable-updates');
 
@@ -101,7 +139,11 @@ export async function initUpdater() {
   });
 
   autoUpdater.on('download-progress', (info) => {
-    log('Update download progress:', 'electronUpdater', 'log', info);
+    log(
+      `Update download progress: ${formatUpdateDownloadProgress(info)}`,
+      'electronUpdater',
+      'log',
+    );
     sendToWindow(mainWindowInfo.mainWindow, 'update-download-progress', info);
   });
 

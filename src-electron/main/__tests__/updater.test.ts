@@ -98,4 +98,38 @@ describe('updater install flow', () => {
 
     expect(quitAndInstallMock).toHaveBeenCalledTimes(2);
   });
+
+  it('logs update download progress as readable text', async () => {
+    const { sendToWindow } =
+      await import('src-electron/main/window/window-base');
+    const { log } = await import('src/shared/vanilla');
+    const { initUpdater } = await import('../updater');
+    const progress = {
+      bytesPerSecond: 224980,
+      delta: 260723,
+      percent: 13.749029536464944,
+      total: 126027404,
+      transferred: 17327545,
+    };
+
+    await initUpdater();
+    handlers.get('download-progress')?.(progress);
+
+    expect(log).toHaveBeenCalledWith(
+      'Update download progress: 13.75%, 17327545/126027404 bytes, 224980 B/s, delta 260723 bytes',
+      'electronUpdater',
+      'log',
+    );
+    expect(log).not.toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
+      progress,
+    );
+    expect(sendToWindow).toHaveBeenCalledWith(
+      null,
+      'update-download-progress',
+      progress,
+    );
+  });
 });
