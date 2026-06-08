@@ -143,11 +143,11 @@ Uporabi pojavno okno za prikaz, da:
 
 Upoštevaj, da so poljubna ozadja začasna in se po izhodu iz M³ ne shranijo.
 
-### Meeting Timer {#user-guide-meeting-timer}
+### Časovnik shoda {#user-guide-meeting-timer}
 
-When the meeting timer is enabled, M³ can show a separate timer window for timing participant parts. The timer can count up or down, show the current time, show a meeting countdown before scheduled meetings, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+Ko je časovnik shoda omogočen, lahko M³ prikaže ločeno okno časovnika za merjenje časa posameznih delov. Časovnik lahko šteje navzgor ali navzdol, prikazuje trenutni čas, prikaže odštevalnik do začetka načrtovanega shoda in po želji označi prekoračitev časa ali to, ali program shoda poteka zaostaja ali prehiteva.
 
-The timer is a beta feature and should only be used when approved locally.
+Časovnik je funkcija v beta fazi in se sme uporabljati samo, če je lokalno odobrena.
 
 ## Glasba v ozadju {#user-guide-background-music}
 
@@ -190,7 +190,7 @@ M³ med predstavitvami samodejno preklaplja med prizori v programu OBS:
 - **Prizor multimedijske vsebine** – Prikaže multimedijsko vsebino
 - **Prikaz slike** – Prikaže slike ( lahko se odloži, če je ta možnost omogočena)
 - **Samodejno preklapljanje** – Prizori se spreminjajo glede na vrsto multimedijske vsebine in nastavitve
-- **Recording Controls** - If enabled, M³ can start and stop OBS recording from the OBS popup
+- **Nadzor snemanja** – Če je ta funkcija omogočena, lahko M³ iz pojavnega okna OBS začne in ustavi OBS snemanje
 
 ### Napredne funkcije OBS {#advanced-obs}
 
@@ -268,8 +268,8 @@ Dodaj svoje datoteke v M³:
 3. **Nadzor map** - nastavi nadzorovano mapo za samodejni uvoz
 4. **Datoteke JWPUB in seznami predvajanja** - uvozi publikacije in sezname predvajanja
 5. **Seznam multimedijskih vsebin za javne govore (S-34 / S-34mp)** - Uvozi Seznam multimedijskih vsebin za javne govore z datotekami JWPUB S‑34 ali S‑34mp
-6. **Videos from the official website** - Search for videos and add them to the selected date
-7. **Study Bible and sign-language Bible media** - Add images, videos, maps, historical references, or sign-language Bible videos for selected passages
+6. **Videoposnetkii z uradnega spletnega mesta** – Poišči videoposnetke in jih dodaj k izbranemu datumu
+7. **Study Bible in multimedijski elementi v znakovnem jeziku** – Dodaj slike, videoposnetke, zemljevide, zgodovinske reference ali videoposnetke Svetega pisma v znakovnem jeziku za izbrane odlomke
 
 ### Upravljanje uvožene multimedijske vsebine {#managing-imported-media}
 
@@ -288,9 +288,9 @@ Uvozi zvočne posnetke svetopisemskih vrstic:
 4. Prenesi zvočne datoteke
 5. Uporabi jih
 
-### Profile Settings Import and Export {#profile-settings-import-export}
+### Uvoz in izvoz nastavitev profila {#profile-settings-import-export}
 
-Each profile's settings can be exported to a JSON file from Settings. Importing a profile settings file replaces the current profile's settings, which is useful when moving a setup to another computer or restoring a known configuration.
+Nastavitve posameznega profila lahko iz nastavitev izvoziš v datoteko JSON. Uvoz datoteke z nastavitvami profila zamenja trenutne nastavitve profila, kar je uporabno pri prenosu konfiguracije na drug računalnik ali pri obnovitvi znane, preverjene konfiguracije.
 
 ## Nadzor map in izvoz {#user-guide-folder-monitoring}
 
@@ -324,21 +324,21 @@ Deli uradno spletno mesto na zunanjih zaslonih:
 
 ### Kontrolniki spletnega mesta {#website-controls}
 
-- **Open Website** - Open a separate website window
-- **Start Mirroring** - Show the website window in the media display for the audience
-- **Stop Mirroring** - Stop showing the website and return to the yeartext or media display background
+- **Odpri spletno mesto** – Odpri ločeno okno spletnega mesta
+- **Začni zrcaljenje** – Prikaži okno spletnega mesta na multimedijskem zaslonu za občinstvo
+- **Ustavi zrcaljenje** – Prenehaj prikazovati spletno mesto in se vrni na letni stavek ali ozadje multimedijskega zaslona
 - **Navigacija** - standardni kontrolniki v brskalniku za premikanje naprej/nazaj
 - **Osveži** - ponovno naloži trenutno stran
 - **Zapri** - zapri način predvajanja spletnega mesta
-- **Auto Return** - Optionally return to the media list automatically after stopping website mirroring
+- **Samodejna vrnitev** – Po ustavitvi zrcaljenja spletnega mesta se aplikacija samodejno vrne na seznam multimedijske vsebine
 
 ## Posnetki shodov {#meeting-recordings}
 
-M³ can help control meeting recording, but it does not include a built-in recorder.
+M³ lahko pomaga pri nadzoru snemanja shoda, vendar ne vsebuje vgrajenega snemalnika.
 
-- **OBS Recording** - If OBS recording controls are enabled, use the OBS popup to start and stop OBS recording
-- **External Recording App** - Configure keyboard shortcuts for a separate recording app, then use the meeting recordings popup to send those shortcuts
-- **Recording Folder** - Configure a recording folder to show a quick button that opens the folder where recordings are saved
+- **OBS snemanje** – Če je omogočen nadzor snemanja prek OBS, uporabi pojavno okno OBS za začetek in ustavitev OBS snemanja
+- **Zunanji snemalni program** – Nastavi tipkovne bližnjice za ločen snemalni program, nato uporabi pojavno okno snemanja shoda, da pošlješ te bližnjice
+- **Mapa za posnetke** – Nastavi mapo za snemanje, da se prikaže hiter gumb, ki odpre mapo, kjer so shranjeni posnetki
 
 ## Napredne funkcije {#user-guide-advanced-features}
 
@@ -376,7 +376,7 @@ Nastavi lastne bližnjice na tipkovnici za učinkovitejše upravljanje:
 - Preveri nastavitve vrat (port) in gesla
 - Prepričaj se, da je OBS zagnan
 
-#### Težave z zvokom v Zoomu/OBSu {#audio-issues}
+#### Težave z zvokom v Zoomu/OBSu
 
 - **Ni zvoka v Zoomu** - omogoči Original Audio v Zoom nastavitvah in pred vsakim shodom
 - **Slaba kakovost zvoka** - preveri tri možnosti pri Original Audio (prvi dve omogočeni, tretja onemogočena)
@@ -389,7 +389,7 @@ Nastavi lastne bližnjice na tipkovnici za učinkovitejše upravljanje:
 - Zmanjšaj največjo ločljivost
 - Počisti stare predpomnjene datoteke
 - Preveri razpoložljiv prostor na disku
-- If the app shows graphical glitches or crashes, try disabling hardware acceleration and restart M³
+- Če aplikacija prikazuje grafične napake ali se sesuva, poskusi onemogočiti strojno pospeševanje in znova zaženi M³
 
 #### Težave z jezikom {#user-guide-language-issues}
 

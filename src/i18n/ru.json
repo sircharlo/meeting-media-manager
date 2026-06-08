@@ -301,6 +301,8 @@
   "jwpub-file": "JWPUB файл",
   "jwpub-file-explain": "Публикация, загруженная с официального сайта Свидетелей Иеговы",
   "jwpub-file-found": "Файлы JWPUB должны обрабатываться отдельно.",
+  "jwpub-file-unavailable-caption": "Если этот файл находится на облачном хранилище, сетевой диск или съемный носитель, сделайте его доступным в автономном режиме и повторите попытку.",
+  "jwpub-file-unavailable-message": "Выбранный JWPUB файл не может быть прочитан.",
   "jwpubNoMultimedia": "JWPUB файл не содержит медиа",
   "jwStreamSite": "JW поток",
   "keyboardShortcuts": "Горячие клавиши",

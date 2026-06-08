@@ -301,6 +301,8 @@
   "jwpub-file": "Putu’ite JWPUB",
   "jwpub-file-explain": "Buka i roromi-uira-hia mai te reni rorouira mana a te 'Ite nō Iehova mai",
   "jwpub-file-found": "E ti’a i te mau putu’ite JWPUB ia ravehia nā roto i te rāve’a ta’a ’ē.",
+  "jwpub-file-unavailable-caption": "If this file is on cloud storage, a network drive, or removable media, make it available offline and try again.",
+  "jwpub-file-unavailable-message": "The selected JWPUB file could not be read.",
   "jwpubNoMultimedia": "’A’ore e media i roto i teie putu’ite JWPUB",
   "jwStreamSite": "JW Stream",
   "keyboardShortcuts": "Mau rāve’a ’oi’oi o te pitopito pāpa’i",
