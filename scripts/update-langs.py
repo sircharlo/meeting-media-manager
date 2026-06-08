@@ -25,9 +25,11 @@ SCRIPT_DIR   = Path(__file__).parent
 REPO_ROOT    = SCRIPT_DIR.parent
 SRC_I18N     = REPO_ROOT / "src" / "i18n"
 DOCS_LOCALES = REPO_ROOT / "docs" / "locales"
+DOCS_SRC     = REPO_ROOT / "docs" / "src"
 SRC_CONSTANTS_LOCALES = REPO_ROOT / "src" / "constants" / "locales.ts"
 TODAY        = date.today().strftime("%Y-%m-%d")
 PERCENTAGE_THRESHOLD = 40
+IGNORED_DOCS_SRC_DIRS = {"assets", "public"}
 
 # Matches locale JSON import lines (active or commented-out)
 LOCALE_IMPORT_LINE = re.compile(
@@ -70,6 +72,93 @@ def translation_pct(en: dict, lang: dict) -> float:
         if lang.get(k, v) != v
     )
     return round(translated / len(en) * 100, 1)
+
+
+# ── Orphan locale cleanup ─────────────────────────────────────────────────────
+
+def find_orphan_language_files(configured_stems: set[str]) -> list[Path]:
+    """
+    Find locale files that are no longer backed by an app i18n JSON file.
+    Active and inactive languages both come from src/i18n/*.json; anything in
+    docs/locales or docs/src outside that set is orphaned.
+    """
+    orphan_files: list[Path] = []
+
+    if DOCS_LOCALES.exists():
+        for locale_file in sorted(DOCS_LOCALES.glob("*.json")):
+            if locale_file.stem not in configured_stems:
+                orphan_files.append(locale_file)
+
+    if DOCS_SRC.exists():
+        for locale_dir in sorted(DOCS_SRC.iterdir()):
+            if (
+                not locale_dir.is_dir()
+                or locale_dir.name in IGNORED_DOCS_SRC_DIRS
+                or locale_dir.name in configured_stems
+            ):
+                continue
+
+            orphan_files.extend(
+                sorted(path for path in locale_dir.rglob("*") if path.is_file())
+            )
+
+    return sorted(orphan_files)
+
+
+def relative_path(path: Path) -> str:
+    return path.relative_to(REPO_ROOT).as_posix()
+
+
+def prompt_delete_orphans(orphan_files: list[Path]) -> bool:
+    print("\n── Orphan language files ───────────────────────────────────")
+    print(
+        "These files belong to languages that are no longer active or inactive "
+        "in src/i18n:"
+    )
+    for path in orphan_files:
+        print(f"  {relative_path(path)}")
+
+    try:
+        answer = input("\nDelete these unused files? [y/N] ").strip().lower()
+    except EOFError:
+        return False
+
+    return answer in {"y", "yes"}
+
+
+def remove_empty_parent_dirs(paths: list[Path]) -> None:
+    candidate_dirs = sorted(
+        {path.parent for path in paths},
+        key=lambda path: len(path.parts),
+        reverse=True,
+    )
+
+    for directory in candidate_dirs:
+        while directory in {DOCS_LOCALES, DOCS_SRC} or directory.is_relative_to(DOCS_SRC):
+            if directory in {DOCS_LOCALES, DOCS_SRC} or not directory.exists():
+                break
+            try:
+                directory.rmdir()
+                print(f"  🗑️   Removed empty directory {relative_path(directory)}")
+            except OSError:
+                break
+            directory = directory.parent
+
+
+def handle_orphan_language_files(configured_stems: set[str]) -> None:
+    orphan_files = find_orphan_language_files(configured_stems)
+    if not orphan_files:
+        return
+
+    if not prompt_delete_orphans(orphan_files):
+        print("  Kept orphan language files.")
+        return
+
+    for path in orphan_files:
+        path.unlink(missing_ok=True)
+        print(f"  🗑️   Deleted {relative_path(path)}")
+
+    remove_empty_parent_dirs(orphan_files)
 
 
 # ── Build translation stats ───────────────────────────────────────────────────
@@ -348,6 +437,8 @@ def main() -> None:
         return
 
     stats = build_translation_stats(SRC_I18N)
+    configured_stems = {stem for stem, _ in stats.values()}
+    handle_orphan_language_files(configured_stems)
 
     # Summary table
     print("\n── Translation completeness (sorted by %) ──────────────────")
