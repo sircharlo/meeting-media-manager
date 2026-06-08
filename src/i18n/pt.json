@@ -301,6 +301,8 @@
   "jwpub-file": "Arquivo JWPUB",
   "jwpub-file-explain": "Publicação baixada no site oficial das Testemunhas de Jeová",
   "jwpub-file-found": "Os arquivos JWPUB devem ser processados separadamente.",
+  "jwpub-file-unavailable-caption": "Se este arquivo estiver na nuvem, uma unidade de rede ou mídia remova-o, disponibilize-o offline e tente novamente.",
+  "jwpub-file-unavailable-message": "O arquivo JWPUB selecionado não pôde ser lido.",
   "jwpubNoMultimedia": "O arquivo JWPUB não contém nenhuma mídia",
   "jwStreamSite": "Fluxo JW",
   "keyboardShortcuts": "Teclas de atalho",
