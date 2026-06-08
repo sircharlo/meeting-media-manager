@@ -84,3 +84,4 @@ stats.html
 # Local electron-builder dev files
 .yalc
 yalc.lock
+__pycache__/

@@ -109,6 +109,10 @@ def relative_path(path: Path) -> str:
     return path.relative_to(REPO_ROOT).as_posix()
 
 
+def is_docs_src_child(path: Path) -> bool:
+    return path != DOCS_SRC and path.is_relative_to(DOCS_SRC)
+
+
 def prompt_delete_orphans(orphan_files: list[Path]) -> bool:
     print("\n── Orphan language files ───────────────────────────────────")
     print(
@@ -134,8 +138,8 @@ def remove_empty_parent_dirs(paths: list[Path]) -> None:
     )
 
     for directory in candidate_dirs:
-        while directory in {DOCS_LOCALES, DOCS_SRC} or directory.is_relative_to(DOCS_SRC):
-            if directory in {DOCS_LOCALES, DOCS_SRC} or not directory.exists():
+        while is_docs_src_child(directory):
+            if not directory.exists():
                 break
             try:
                 directory.rmdir()
