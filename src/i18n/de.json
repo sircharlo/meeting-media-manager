@@ -301,6 +301,8 @@
   "jwpub-file": "JWPUB-Datei",
   "jwpub-file-explain": "Publikation, die von der offiziellen Website der Zeugen Jehovas heruntergeladen wurde",
   "jwpub-file-found": "JWPUB-Dateien müssen separat verarbeitet werden.",
+  "jwpub-file-unavailable-caption": "Wenn sich diese Datei auf dem Cloud-Speicher, einem Netzwerklaufwerk oder Wechselmedien befindet, stellen Sie sie offline zur Verfügung und versuchen Sie es erneut.",
+  "jwpub-file-unavailable-message": "Die ausgewählte JWPUB-Datei konnte nicht gelesen werden.",
   "jwpubNoMultimedia": "Diese JWPUB-Datei enthält keine Medien",
   "jwStreamSite": "JW-Stream",
   "keyboardShortcuts": "Tastenkürzel",
