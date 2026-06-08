@@ -157,7 +157,7 @@ Ces paramètres vous permettent de configurer des changements temporaires à vot
 - **Nouveau jour de fin de semaine** : Nouveau jour pour la réunion de fin de semaine
 - **Nouvelle heure de fin de semaine** : Nouvelle heure pour la réunion de fin de semaine
 
-### Mises à jour automatiques du calendrier des réunions {#mises à jour automatiques du calendrier des réunions} {#automatic-meeting-schedule-updates}
+### Mises à jour automatiques du calendrier des réunions {#mises à jour automatiques du calendrier des réunions}
 
 <!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
 
@@ -165,7 +165,7 @@ Lorsque cette option est activée, M3 vérifie périodiquement le site Web offic
 
 Cela ne fonctionne que pour les profils qui ont été ajoutés avec la recherche de congrégation et dont le nom de la congrégation n'a pas été modifié manuellement. Si la synchronisation a été désactivée parce que le nom de la congrégation a changé, utilisez **Activer la synchronisation du programme** pour lier à nouveau le profil.
 
-#### Rafraîchir l'horaire de la réunion {#refresh-meeting-schedule}
+#### Rafraîchir l'horaire de la réunion {#rafraichissement-horaire}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
@@ -426,7 +426,7 @@ Cette option est masquée lorsque les contrôles d'enregistrement d'OBS sont act
 
 Configurer le raccourci clavier qui démarre l'enregistrement, le raccourci optionnel qui arrête l'enregistrement, et le dossier où l'application externe enregistre les enregistrements. Si aucun raccourci d'arrêt n'est fourni, M3 réutilise le raccourci de démarrage. Lorsqu'un dossier est configuré, M3 affiche un bouton pour l'ouvrir.
 
-### Horaire de la réunion {#meeting-timer}
+### Horaire de la réunion {#temps-de-réunion}
 
 #### Activer le minuteur de la réunion {#enable-meeting-timer}
 
@@ -446,19 +446,19 @@ Configurer si la fenêtre de minuterie s'ouvre automatiquement, si le nombre de 
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
-Choisissez des formats d’affichage analogique ou numérique pour l’heure de la journée et des minuteurs à rebours. L'indicateur de compte à rebours peut déplacer l'anneau du compte à rebours analogique vers une couleur d'avertissement pendant la dernière minute.
+Choisissez des formats d’affichage analogique ou numérique pour l’heure et les minuteurs à rebours. L'indicateur d'alerte du compte à rebours peut faire passer l'anneau de compte à rebours analogique à une couleur d'alerte pendant la dernière minute.
 
 #### Compte à rebours des réunions et statut de la planification {#meeting-countdown-and-schedule-status}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
-Afficher un compte à rebours avant les réunions planifiées et éventuellement afficher si la réunion est en avance ou en arrière. Le compte à rebours de la réunion apparaît uniquement sur l'affichage du minuteur, pas sur l'affichage principal des médias.
+Afficher un compte à rebours avant les réunions planifiées et éventuellement afficher si la réunion est en avance ou en arrière. Le minuteur de la réunion apparaît uniquement sur l'affichage du minuteur, et non sur la fenêtre d'affichage des médias.
 
-#### Apparence du chronomètre et des heures supplémentaires {#timer-appearance-and-overtime}
+#### Apparence du minuteur et du surtemps {#timer-appearance-and-overtime}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
-Personnalisez la taille du texte du minuteur et les couleurs, et configurez les indicateurs de temps supplémentaire tels que les couleurs alternatives, clignotant et ne montrant que le montant des heures supplémentaires écoulées en mode comptage.
+Personnalisez la taille et les couleurs du texte du chronomètre, et configurez les indicateurs de surtemps tels que les couleurs alternées, le clignotement et la possibilité d'afficher le surtemps écoulé uniquement en mode de comptage ascendant.
 
 ## Paramètres avancés {#advanced-settings}
 
@@ -535,11 +535,11 @@ Exclure les images de notes de bas de page des téléchargements de médias quan
 
 **Par défaut** : `faux`
 
-#### Exclure les vidéos d'étude de tour de garde supplémentaires {#exclude-additional-watchtower-study-videos}
+#### Exclure les vidéos supplémentaires de La Tour de Garde {#exclude-additional-watchtower-study-videos}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 
-Exclure les vidéos supplémentaires qui sont référencées dans les paragraphes de l'étude de la tour de garde.
+Exclure les vidéos supplémentaires mentionnées dans les paragraphes de l'étude de La Tour de Garde.
 
 **Par défaut** : `faux`
 
@@ -599,7 +599,7 @@ Convertir les fichiers multimédias exportés au format MP4 pour une meilleure c
 
 ### Transfert des paramètres du profil {#profile-settings-transfer}
 
-Exporter les paramètres du profil actuel vers un fichier JSON ou importer un fichier de paramètres de profil précédemment exporté. L'importation remplace les paramètres du profil actuel.
+Exporter les paramètres du profil actuel vers un fichier JSON, ou importer un fichier de paramètres de profil précédemment exporté. L'importation remplace les paramètres du profil actuel.
 
 ### Zone de danger {#danger-zone}
 
@@ -617,19 +617,19 @@ Entrez l'adresse utilisée pour accéder au site officiel des Témoins de Jéhov
 
 **Par défaut** : `jw.org`
 
-#### Désactiver l'accélération matérielle {#désactive l'accélération matérielle} {#disable-hardware-acceleration}
+#### Désactiver l'accélération matérielle {#disable-hardware-acceleration}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
-Désactiver l'accélération matérielle après le redémarrage de M3. Cela peut aider avec des bugs graphiques ou des plantages sur certains systèmes, mais n'est pas recommandé autrement.
+Désactiver l'accélération matérielle au redémarrage de M³. Cela peut aider avec des bugs graphiques ou des plantages sur certains systèmes, mais n'est pas recommandé autrement.
 
 **Par défaut** : `faux`
 
-#### Supprimer le rappel d'accélération matérielle {#suppress-hardware-acceleration-reminder}
+#### Masquer le rappel concernant l'accélération matérielle {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
-Masquer le rappel pour réactiver l'accélération matérielle après qu'elle ait été désactivée manuellement.
+Masquer le rappel invitant à réactiver l'accélération matérielle après sa désactivation manuelle.
 
 **Par défaut** : `faux`
 
