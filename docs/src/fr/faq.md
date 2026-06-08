@@ -81,8 +81,8 @@ Vous pouvez importer des médias personnalisés de plusieurs façons :
 - **Glisser-déposer** : Faites glisser les fichiers directement dans M³
 - **Surveillance de dossiers** : Configurez un dossier surveillé pour les imports automatiques
 - **Fichiers JWPUB et listes de lecture** : Importez des publications et des listes de lecture
-- **Public Talk Media**: Importer des fichiers JWPUB S-34 ou S-34mp pour les médias de conversation publique
-- **Outils bibliques et bibliques d'étude**: Ajouter des enregistrements audio, des médias bibliques d'étude, ou des médias bibliques de langue des signes
+- **Fichiers multimédias pour les discours publics** : Importer des fichiers JWPUB au format S-34 ou S-34mp pour les discours publics
+- **Outils pour la Bible et la Bible d'étude** : Ajoutez des enregistrements audio de la Bible, des ressources multimédias depuis la Bible d'étude ou des ressources multimédias de la Bible en langue des signes
 
 ### :speaker: Puis-je importer des enregistrements audio de la Bible ? {#audio-bible}
 
@@ -126,11 +126,11 @@ Les fonctionnalités de musique de fond incluent :
 - Contrôle de volume indépendant
 - Temps de pause configurable
 
-### :stopwatch: Does M³ include a meeting timer? {#faq-meeting-timer}
+### :stopwatch: M³ dispose-t-il d'un minuteur de réunion ? {#faq-meeting-timer}
 
-Oui. Lorsque cette option est activée, M3 peut afficher une fenêtre de minuterie séparée pour le timing des participants. Il peut compter vers le haut ou vers le bas, afficher l'heure actuelle, afficher un compte à rebours pré-réunion et indiquez éventuellement des heures supplémentaires ou si la réunion est en avance ou en retard.
+Oui. Lorsqu'elle est activée, M³ peut afficher une fenêtre de chronométrage distincte pour chronométrer les participants. Le compteur peut compter de manière ascendante ou descendante, afficher l'heure actuelle, indiquer le temps restant avant le début de la réunion et, si nécessaire, signaler les dépassements de temps ou indiquer si la réunion est en avance ou en retard sur l'horaire prévu.
 
-La minuterie est une fonctionnalité bêta et ne devrait être activée que si elle est approuvée localement.
+Le minuteur est une fonctionnalité en version bêta et ne doit être activé qu'après avoir été approuvé localement.
 
 ### :video_camera: Comment configurer l'intégration Zoom ? {#zoom-setup}
 
