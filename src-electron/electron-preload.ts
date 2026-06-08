@@ -68,6 +68,8 @@ const electronApi: ElectronApi = {
   downloadFile: (u, sD, dF, lP) => invoke('downloadFile', u, sD, dF, lP),
   executeQuery,
   extname,
+  extractNestedZipEntry: (i, e, o, op) =>
+    invoke('extractNestedZipEntry', i, e, o, op),
   fileUrlToPath,
   focusMediaWindow: () => send('focusMediaWindow'),
   fs,

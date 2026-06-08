@@ -1,4 +1,9 @@
-import type { FileDialogFilter, UnzipOptions, UnzipResult } from 'src/types';
+import type {
+  ExtractNestedZipEntryOptions,
+  FileDialogFilter,
+  UnzipOptions,
+  UnzipResult,
+} from 'src/types';
 
 import { watch as filesystemWatch, type FSWatcher } from 'chokidar';
 import { app, dialog } from 'electron';
@@ -35,6 +40,8 @@ const ongoingDecompressions = new Map<string, Promise<UnzipResult[]>>();
 const MAX_FILES = 10000;
 const MAX_SIZE = 2000000000; // 2 GB
 const THRESHOLD_RATIO = 100;
+const MAX_IN_MEMORY_ZIP_ENTRY_SIZE = 150000000; // 150 MB
+const MAX_IN_MEMORY_ZIP_TOTAL_SIZE = 250000000; // 250 MB
 const PATH_PROBE_SETTLE_DELAY_MS = 50;
 const PATH_PROBE_RETRY_DELAY_MS = 50;
 const PATH_PROBE_RETRY_COUNT = 4;
@@ -106,6 +113,52 @@ interface ZipfileState {
   totalUncompressedSize: number;
   zipfile: yauzl.ZipFile;
 }
+
+interface ZipGuardState {
+  fileCount: number;
+  totalUncompressedSize: number;
+}
+
+type ZipSource = Buffer | string;
+
+const getZipEntryGuardError = (
+  entry: yauzl.Entry,
+  state: ZipGuardState,
+  limits: {
+    maxEntrySize?: number;
+    maxFiles?: number;
+    maxTotalSize?: number;
+  } = {},
+) => {
+  const maxFiles = limits.maxFiles ?? MAX_FILES;
+  const maxTotalSize = limits.maxTotalSize ?? MAX_SIZE;
+
+  state.fileCount++;
+  if (state.fileCount > maxFiles) {
+    return new Error('Reached max. number of files (failsafe)');
+  }
+
+  if (
+    limits.maxEntrySize !== undefined &&
+    entry.uncompressedSize > limits.maxEntrySize
+  ) {
+    return new Error('Reached max. entry size (failsafe)');
+  }
+
+  state.totalUncompressedSize += entry.uncompressedSize;
+  if (state.totalUncompressedSize > maxTotalSize) {
+    return new Error('Reached max. size (failsafe)');
+  }
+
+  if (entry.compressedSize > 0) {
+    const compressionRatio = entry.uncompressedSize / entry.compressedSize;
+    if (compressionRatio > THRESHOLD_RATIO) {
+      return new Error('Reached max. compression ratio (failsafe)');
+    }
+  }
+
+  return undefined;
+};
 
 const getSharedPathHealthFile = () =>
   join(app.getPath('userData'), SHARED_PATH_HEALTH_FILENAME);
@@ -670,27 +723,10 @@ const handleZipEntry = async (
     return;
   }
 
-  // Failsafe checks
-  state.fileCount++;
-  if (state.fileCount > MAX_FILES) {
+  const guardError = getZipEntryGuardError(entry, state);
+  if (guardError) {
     state.zipfile.close();
-    return state.reject(new Error('Reached max. number of files (failsafe)'));
-  }
-
-  state.totalUncompressedSize += entry.uncompressedSize;
-  if (state.totalUncompressedSize > MAX_SIZE) {
-    state.zipfile.close();
-    return state.reject(new Error('Reached max. size (failsafe)'));
-  }
-
-  if (entry.compressedSize > 0) {
-    const compressionRatio = entry.uncompressedSize / entry.compressedSize;
-    if (compressionRatio > THRESHOLD_RATIO) {
-      state.zipfile.close();
-      return state.reject(
-        new Error('Reached max. compression ratio (failsafe)'),
-      );
-    }
+    return state.reject(guardError);
   }
 
   if (entry.fileName.endsWith('/')) {
@@ -980,6 +1016,234 @@ const openZipFileForEntries = async (
   throw lastError;
 };
 
+const openZipBuffer = async (buffer: Buffer): Promise<yauzl.ZipFile> =>
+  await new Promise<yauzl.ZipFile>((resolve, reject) => {
+    yauzl.fromBuffer(buffer, { lazyEntries: true }, (err, zipfile) => {
+      if (err) return reject(err);
+      if (!zipfile) return reject(new Error('Zipfile not found'));
+      return resolve(zipfile);
+    });
+  });
+
+const openZipSource = async (
+  source: ZipSource,
+  fileSize: number,
+): Promise<yauzl.ZipFile> => {
+  if (Buffer.isBuffer(source)) return await openZipBuffer(source);
+  return await openZipFileForEntries(source, fileSize);
+};
+
+const readStreamIntoBuffer = async (
+  readStream: NodeJS.ReadableStream,
+  maxEntrySize: number,
+) =>
+  await new Promise<Buffer>((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    let totalSize = 0;
+
+    readStream.on('data', (chunk: Buffer | string) => {
+      const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+      totalSize += buffer.length;
+      if (totalSize > maxEntrySize) {
+        (
+          readStream as NodeJS.ReadableStream & {
+            destroy: (error: Error) => void;
+          }
+        ).destroy(new Error('Reached max. entry size (failsafe)'));
+        return;
+      }
+      chunks.push(buffer);
+    });
+    readStream.on('end', () => {
+      resolve(Buffer.concat(chunks, totalSize));
+    });
+    readStream.on('error', reject);
+  });
+
+const readZipEntriesIntoMemory = async (
+  source: ZipSource,
+  includes: string[],
+  options: Pick<ExtractNestedZipEntryOptions, 'maxTotalSize'> &
+    Required<Pick<ExtractNestedZipEntryOptions, 'maxEntrySize'>>,
+) => {
+  const fileSize = Buffer.isBuffer(source)
+    ? source.length
+    : (await stat(source)).size;
+  const zipfile = await openZipSource(source, fileSize);
+
+  return await new Promise<{ data: Buffer; path: string }[]>(
+    (resolve, reject) => {
+      const entries: { data: Buffer; path: string }[] = [];
+      const guardState: ZipGuardState = {
+        fileCount: 0,
+        totalUncompressedSize: 0,
+      };
+      let settled = false;
+
+      const rejectOnce = (error: Error) => {
+        if (settled) return;
+        settled = true;
+        zipfile.close();
+        reject(error);
+      };
+
+      const resolveOnce = () => {
+        if (settled) return;
+        settled = true;
+        zipfile.close();
+        resolve(entries);
+      };
+
+      zipfile.readEntry();
+      zipfile.on('entry', (entry: yauzl.Entry) => {
+        const guardError = getZipEntryGuardError(entry, guardState, {
+          maxEntrySize: options.maxEntrySize,
+          maxTotalSize: options.maxTotalSize ?? MAX_IN_MEMORY_ZIP_TOTAL_SIZE,
+        });
+        if (guardError) {
+          rejectOnce(guardError);
+          return;
+        }
+
+        if (
+          entry.fileName.endsWith('/') ||
+          !includes.includes(entry.fileName)
+        ) {
+          zipfile.readEntry();
+          return;
+        }
+
+        zipfile.openReadStream(entry, async (err, readStream) => {
+          if (err) {
+            rejectOnce(new Error(String(err)));
+            return;
+          }
+          if (!readStream) {
+            rejectOnce(new Error('Read stream not found'));
+            return;
+          }
+
+          try {
+            entries.push({
+              data: await readStreamIntoBuffer(
+                readStream,
+                options.maxEntrySize,
+              ),
+              path: entry.fileName,
+            });
+            if (entries.length === includes.length) {
+              resolveOnce();
+              return;
+            }
+            zipfile.readEntry();
+          } catch (error) {
+            rejectOnce(
+              error instanceof Error ? error : new Error(String(error)),
+            );
+          }
+        });
+      });
+
+      zipfile.on('end', () => {
+        resolveOnce();
+      });
+
+      zipfile.on('error', rejectOnce);
+    },
+  );
+};
+
+export async function extractNestedZipEntry(
+  input: string,
+  outerEntryName: string,
+  output: string,
+  opts: ExtractNestedZipEntryOptions,
+): Promise<UnzipResult> {
+  const maxEntrySize = opts.maxEntrySize ?? MAX_IN_MEMORY_ZIP_ENTRY_SIZE;
+  const maxTotalSize = opts.maxTotalSize ?? MAX_IN_MEMORY_ZIP_TOTAL_SIZE;
+  const [outerEntry] = await readZipEntriesIntoMemory(input, [outerEntryName], {
+    maxEntrySize,
+    maxTotalSize,
+  });
+
+  if (!outerEntry) {
+    throw new Error(`Zip entry not found: ${outerEntryName}`);
+  }
+
+  const innerZipfile = await openZipBuffer(outerEntry.data);
+
+  return await new Promise<UnzipResult>((resolve, reject) => {
+    const guardState: ZipGuardState = {
+      fileCount: 0,
+      totalUncompressedSize: 0,
+    };
+    let settled = false;
+
+    const rejectOnce = (error: Error) => {
+      if (settled) return;
+      settled = true;
+      innerZipfile.close();
+      reject(error);
+    };
+
+    const matchesRequestedEntry = (entry: yauzl.Entry) => {
+      if (opts.innerEntryName) return entry.fileName === opts.innerEntryName;
+      if (opts.innerEntryNameSuffix) {
+        return entry.fileName.endsWith(opts.innerEntryNameSuffix);
+      }
+      return false;
+    };
+
+    innerZipfile.readEntry();
+    innerZipfile.on('entry', (entry: yauzl.Entry) => {
+      const guardError = getZipEntryGuardError(entry, guardState, {
+        maxEntrySize,
+        maxTotalSize,
+      });
+      if (guardError) {
+        rejectOnce(guardError);
+        return;
+      }
+
+      if (entry.fileName.endsWith('/') || !matchesRequestedEntry(entry)) {
+        innerZipfile.readEntry();
+        return;
+      }
+
+      innerZipfile.openReadStream(entry, async (err, readStream) => {
+        if (err) {
+          rejectOnce(new Error(String(err)));
+          return;
+        }
+        if (!readStream) {
+          rejectOnce(new Error('Read stream not found'));
+          return;
+        }
+
+        try {
+          const entryBuffer = await readStreamIntoBuffer(
+            readStream,
+            maxEntrySize,
+          );
+          const fullPath = join(output, entry.fileName);
+          await ensureDir(dirname(fullPath));
+          await writeFile(fullPath, entryBuffer);
+          settled = true;
+          innerZipfile.close();
+          resolve({ path: fullPath });
+        } catch (error) {
+          rejectOnce(error instanceof Error ? error : new Error(String(error)));
+        }
+      });
+    });
+
+    innerZipfile.on('end', () => {
+      rejectOnce(new Error('Nested zip entry not found'));
+    });
+    innerZipfile.on('error', rejectOnce);
+  });
+}
+
 /**
  * Lists entries in a zip file with their uncompressed sizes
  */
@@ -1014,27 +1278,13 @@ export async function getZipEntries(
 
         zipfile.readEntry();
         zipfile.on('entry', (entry: yauzl.Entry) => {
-          fileCount++;
-          if (fileCount > MAX_FILES) {
-            rejectOnce(new Error('Reached max. number of files (failsafe)'));
+          const guardState = { fileCount, totalUncompressedSize };
+          const guardError = getZipEntryGuardError(entry, guardState);
+          fileCount = guardState.fileCount;
+          totalUncompressedSize = guardState.totalUncompressedSize;
+          if (guardError) {
+            rejectOnce(guardError);
             return;
-          }
-
-          totalUncompressedSize += entry.uncompressedSize;
-          if (totalUncompressedSize > MAX_SIZE) {
-            rejectOnce(new Error('Reached max. size (failsafe)'));
-            return;
-          }
-
-          if (entry.compressedSize > 0) {
-            const compressionRatio =
-              entry.uncompressedSize / entry.compressedSize;
-            if (compressionRatio > THRESHOLD_RATIO) {
-              rejectOnce(
-                new Error('Reached max. compression ratio (failsafe)'),
-              );
-              return;
-            }
           }
 
           entries[entry.fileName] = entry.uncompressedSize;

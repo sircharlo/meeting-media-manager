@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const errorCatcherMock = vi.fn();
 const createTemporaryNotificationMock = vi.fn();
 const logMock = vi.fn();
+const extractNestedZipEntryMock = vi.fn();
 const getZipEntriesMock = vi.fn();
 const unzipMock = vi.fn();
 const statMock = vi.fn();
@@ -172,6 +173,7 @@ describe('unzipJwpub diagnostics', () => {
     currentStateStore.currentSettings = {};
     currentStateStore.extractedFiles = {};
 
+    extractNestedZipEntryMock.mockResolvedValue({ path: '/tmp/db.db' });
     getZipEntriesMock.mockResolvedValue({});
     unzipMock.mockResolvedValue([]);
     statMock.mockRejectedValue(
@@ -187,6 +189,7 @@ describe('unzipJwpub diagnostics', () => {
       downloadFile: vi.fn(),
       executeQuery: vi.fn(),
       extname: vi.fn(() => '.jpg'),
+      extractNestedZipEntry: extractNestedZipEntryMock,
       fileUrlToPath: vi.fn(),
       fs: {
         copy: copyMock,

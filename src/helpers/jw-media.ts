@@ -113,6 +113,7 @@ const {
   downloadFile,
   executeQuery,
   extname,
+  extractNestedZipEntry,
   fileUrlToPath,
   fs,
   getZipEntries,
@@ -330,6 +331,7 @@ const getJwLangId = (symbol?: JwLangCode): number | undefined => {
 
 const ongoingUnzips = new Map<string, Promise<string | undefined>>();
 const ZIP_ENTRY_DIAGNOSTIC_LIMIT = 50;
+const MAX_IDENTIFY_IN_MEMORY_CONTENTS_SIZE = 150000000; // 150 MB
 
 const isCloudStoragePath = (path: string) => {
   const normalizedPath = path.replaceAll('\\', '/').toLowerCase();
@@ -736,6 +738,47 @@ const warnCloudJwpubUnavailable = (jwpubPath: string, error: unknown) => {
   });
 };
 
+const isInMemoryZipGuardError = (error: unknown) => {
+  const message = error instanceof Error ? error.message : String(error);
+  return /Reached max\. (entry )?size \(failsafe\)/.test(message);
+};
+
+const extractIdentificationDb = async (
+  jwpubPath: string,
+  tempExplodePath: string,
+  contentsSize: number,
+) => {
+  if (contentsSize <= MAX_IDENTIFY_IN_MEMORY_CONTENTS_SIZE) {
+    try {
+      const { path } = await extractNestedZipEntry(
+        jwpubPath,
+        'contents',
+        tempExplodePath,
+        { innerEntryNameSuffix: '.db' },
+      );
+      return path;
+    } catch (error) {
+      if (!isInMemoryZipGuardError(error)) throw error;
+      log(
+        `[identifyJwpub] In-memory contents read exceeded limits for ${jwpubPath}. Falling back to disk extraction.`,
+        'mediaPlayback',
+        'warn',
+        error,
+      );
+    }
+  }
+
+  await ensureDir(tempExplodePath);
+  await unzip(jwpubPath, tempExplodePath, { includes: ['contents'] });
+  const contentsPath = join(tempExplodePath, 'contents');
+  const contentsEntries = await getZipEntries(contentsPath);
+  const dbName = Object.keys(contentsEntries).find((n) => n.endsWith('.db'));
+  if (!dbName) return;
+
+  await unzip(contentsPath, tempExplodePath, { includes: [dbName] });
+  return join(tempExplodePath, dbName);
+};
+
 /**
  * Efficiently identifies a JWPUB file by peeking into its metadata
  * without full extraction.
@@ -764,21 +807,16 @@ export async function identifyJwpub(jwpubPath: string) {
     }
     if (!jwpubEntries['contents']) return;
 
-    // 2. Extract ONLY 'contents' to temp
-    await ensureDir(tempExplodePath);
-    await unzip(jwpubPath, tempExplodePath, { includes: ['contents'] });
-    const contentsPath = join(tempExplodePath, 'contents');
+    // 2. For small publications, read 'contents' in memory and write only the inner .db file to temp.
+    // Huge publications fall back to streamed disk extraction to avoid RAM spikes.
+    const dbPath = await extractIdentificationDb(
+      jwpubPath,
+      tempExplodePath,
+      jwpubEntries.contents,
+    );
+    if (!dbPath) return;
 
-    // 3. Peek at 'contents' to find the .db file
-    const contentsEntries = await getZipEntries(contentsPath);
-    const dbName = Object.keys(contentsEntries).find((n) => n.endsWith('.db'));
-    if (!dbName) return;
-
-    // 4. Extract ONLY the .db file to temp
-    await unzip(contentsPath, tempExplodePath, { includes: [dbName] });
-    const dbPath = join(tempExplodePath, dbName);
-
-    // 5. Get publication info
+    // 3. Get publication info
     return getPublicationInfoFromDb(dbPath);
   } catch (error) {
     errorCatcher(error, {

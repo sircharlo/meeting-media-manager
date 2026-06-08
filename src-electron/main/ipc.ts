@@ -3,6 +3,7 @@ import type {
   ElectronIpcInvokeKey,
   ElectronIpcSendKey,
   ExternalWebsite,
+  ExtractNestedZipEntryOptions,
   FileDialogFilter,
   JwSiteParams,
   MediaAccessStatus,
@@ -34,6 +35,7 @@ import {
 } from 'src-electron/main/downloads';
 import { createVideoFromNonVideo } from 'src-electron/main/ffmpeg';
 import {
+  extractNestedZipEntry,
   getAppDataPath,
   getZipEntries,
   isUsablePath,
@@ -396,6 +398,17 @@ handleIpcInvoke(
 
 handleIpcInvoke('getZipEntries', async (_e, zipPath: string) =>
   getZipEntries(zipPath),
+);
+
+handleIpcInvoke(
+  'extractNestedZipEntry',
+  async (
+    _e,
+    input: string,
+    outerEntryName: string,
+    output: string,
+    opts: ExtractNestedZipEntryOptions,
+  ) => extractNestedZipEntry(input, outerEntryName, output, opts),
 );
 
 handleIpcSend('quitAndInstall', () => {

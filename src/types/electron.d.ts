@@ -82,6 +82,12 @@ export interface ElectronApi {
     params?: (null | number | string)[],
   ) => T[];
   extname: typeof extname;
+  extractNestedZipEntry: (
+    input: string,
+    outerEntryName: string,
+    output: string,
+    opts: ExtractNestedZipEntryOptions,
+  ) => Promise<UnzipResult>;
   /**
    * Converts a file URL to a file path.
    *
@@ -257,6 +263,7 @@ export interface ElectronApi {
 export type ElectronIpcInvokeKey =
   | 'createVideoFromNonVideo'
   | 'downloadFile'
+  | 'extractNestedZipEntry'
   | 'getAllScreens'
   | 'getAppDataPath'
   | 'getBetaUpdatesPath'
@@ -332,6 +339,13 @@ export type ElectronIpcSendKey =
   | 'zoomWebsiteWindow';
 
 export type ExternalWebsite = 'docs' | 'latestRelease' | 'repo';
+
+export interface ExtractNestedZipEntryOptions {
+  innerEntryName?: string;
+  innerEntryNameSuffix?: string;
+  maxEntrySize?: number;
+  maxTotalSize?: number;
+}
 
 export type FileDialogFilter =
   | 'image'
