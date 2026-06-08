@@ -65,6 +65,7 @@ const getCloudStorageProvider = (filePath: string) => {
 const isRetryableZipError = (error: unknown) => {
   const errorCode = getErrorCode(error);
   if (errorCode && NETWORK_ERROR_CODES.has(errorCode)) return true;
+  if (errorCode === 'ENOENT') return true;
 
   const message = error instanceof Error ? error.message : String(error);
   if (isIncompleteZipReadError(message)) return true;
@@ -787,11 +788,13 @@ const decompress = async (
     const openZip = (attempt: number) => {
       yauzl.open(input, { lazyEntries: true }, (err, zipfile) => {
         if (err) {
+          const errorCode = getErrorCode(err);
           const shouldRetry = shouldRetryZipRead(err, attempt);
           addElectronBreadcrumb({
             category: 'unzip',
             data: {
               attempt: attempt + 1,
+              errorCode,
               fileSize,
               includes: opts?.includes,
               input,
@@ -799,6 +802,7 @@ const decompress = async (
               output,
               retrying: shouldRetry,
             },
+            level: errorCode === 'ENOENT' ? 'info' : 'error',
             message: 'Error opening zipfile',
           });
 

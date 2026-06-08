@@ -1,15 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const errorCatcherMock = vi.fn();
+const createTemporaryNotificationMock = vi.fn();
 const logMock = vi.fn();
 const getZipEntriesMock = vi.fn();
 const unzipMock = vi.fn();
 const statMock = vi.fn();
 const removeMock = vi.fn();
+const copyMock = vi.fn();
 const readdirMock = vi.fn();
 const pathExistsMock = vi.fn();
 const joinMock = vi.fn((...parts: string[]) => parts.join('/'));
-const basenameMock = vi.fn((value: string) => value.split('/').pop() ?? value);
+const basenameMock = vi.fn(
+  (value: string) => value.split(/[\\/]/).pop() ?? value,
+);
 const getTempPathMock = vi.fn(async () => '/tmp');
 const currentStateStore = {
   currentSettings: {},
@@ -66,7 +70,7 @@ vi.mock('src/helpers/fs', () => ({
 }));
 
 vi.mock('src/helpers/notifications', () => ({
-  createTemporaryNotification: vi.fn(),
+  createTemporaryNotification: createTemporaryNotificationMock,
 }));
 
 vi.mock('src/helpers/usage', () => ({
@@ -185,7 +189,7 @@ describe('unzipJwpub diagnostics', () => {
       extname: vi.fn(() => '.jpg'),
       fileUrlToPath: vi.fn(),
       fs: {
-        copy: vi.fn(),
+        copy: copyMock,
         ensureDir: vi.fn(),
         exists: vi.fn(),
         pathExists: pathExistsMock,
@@ -254,5 +258,58 @@ describe('unzipJwpub diagnostics', () => {
         }),
       }),
     );
+  });
+
+  it('stages user-provided jwpub files into app temp before reading', async () => {
+    const { stageUserJwpubForRead } = await import('../jw-media');
+
+    await expect(
+      stageUserJwpubForRead(String.raw`D:\English\S-418mp-26_E_002.jwpub`),
+    ).resolves.toBe('/tmp/jwpub-import-uuid/S-418mp-26_E_002.jwpub');
+
+    expect(copyMock).toHaveBeenCalledWith(
+      String.raw`D:\English\S-418mp-26_E_002.jwpub`,
+      '/tmp/jwpub-import-uuid/S-418mp-26_E_002.jwpub',
+    );
+  });
+
+  it('warns without reporting when a user-provided jwpub cannot be staged', async () => {
+    const error = Object.assign(new Error('missing source'), {
+      code: 'ENOENT',
+    });
+    copyMock.mockRejectedValue(error);
+    const { stageUserJwpubForRead } = await import('../jw-media');
+
+    await expect(
+      stageUserJwpubForRead(String.raw`D:\English\S-418mp-26_E_002.jwpub`),
+    ).resolves.toBeUndefined();
+
+    expect(createTemporaryNotificationMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        group: 'jwpubFileUnavailable',
+        type: 'warning',
+      }),
+    );
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+  });
+
+  it('warns without reporting when a staged jwpub becomes unavailable while extracting', async () => {
+    const error = Object.assign(new Error('missing during extraction'), {
+      code: 'ENOENT',
+    });
+    getZipEntriesMock.mockRejectedValue(error);
+    const { unzipJwpub } = await import('../jw-media');
+
+    await expect(
+      unzipJwpub('/tmp/jwpub-import-uuid/S-418mp-26_E_002.jwpub', '/tmp/out'),
+    ).rejects.toMatchObject({ code: 'ENOENT' });
+
+    expect(createTemporaryNotificationMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        group: 'jwpubFileUnavailable',
+        type: 'warning',
+      }),
+    );
+    expect(errorCatcherMock).not.toHaveBeenCalled();
   });
 });

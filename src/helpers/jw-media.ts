@@ -48,6 +48,7 @@ import {
 } from 'src/helpers/fs';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { updateLastUsedDate } from 'src/helpers/usage';
+import { isPossiblyNetworkFolderPath } from 'src/shared/filesystem-errors';
 import { NETWORK_ERROR_CODES } from 'src/shared/network-errors';
 import { log, sanitizeFilename, uuid } from 'src/shared/vanilla';
 import {
@@ -386,6 +387,48 @@ const getPathDiagnostic = async (path: string): Promise<PathDiagnostic> => {
   } catch (error) {
     return { errorCode: getErrorCode(error), exists: false };
   }
+};
+
+const isJwpubFileUnavailableError = (error: unknown, jwpubPath: string) => {
+  const errorCode = getErrorCode(error);
+  if (errorCode === 'ENOENT') return true;
+  if (isCloudStorageReadError(error)) return true;
+  return (
+    isPossiblyNetworkFolderPath(dirname(jwpubPath)) &&
+    ['EINVAL', 'UNKNOWN'].includes(errorCode ?? '')
+  );
+};
+
+const warnJwpubUnavailable = (jwpubPath: string, error: unknown) => {
+  if (!isJwpubFileUnavailableError(error, jwpubPath)) return false;
+
+  const t = i18n.global.t;
+
+  createTemporaryNotification({
+    caption: t('jwpub-file-unavailable-caption'),
+    group: 'jwpubFileUnavailable',
+    message: t('jwpub-file-unavailable-message'),
+    timeout: 15000,
+    type: 'warning',
+  });
+
+  return true;
+};
+
+export const stageUserJwpubForRead = async (jwpubPath: string) => {
+  const tempDir = await getTempPath();
+  const stagingDir = join(tempDir, `jwpub-import-${uuid()}`);
+  const stagedPath = join(stagingDir, basename(jwpubPath));
+
+  await ensureDir(stagingDir);
+  try {
+    await copy(jwpubPath, stagedPath);
+  } catch (error) {
+    if (warnJwpubUnavailable(jwpubPath, error)) return undefined;
+    throw error;
+  }
+
+  return stagedPath;
 };
 
 const summarizeZipEntries = (
@@ -922,17 +965,26 @@ const jwpubExtractor = async (jwpubPath: string, outputPath: string) => {
       });
     }
 
-    await errorCatcher(error, {
-      contexts: {
-        fn: {
-          args: {
-            jwpubPath,
-            outputPath,
+    if (warnJwpubUnavailable(jwpubPath, error)) {
+      log(
+        `[jwpubExtractor] JWPUB unavailable while extracting ${jwpubPath}.`,
+        'mediaPlayback',
+        'warn',
+        error,
+      );
+    } else {
+      await errorCatcher(error, {
+        contexts: {
+          fn: {
+            args: {
+              jwpubPath,
+              outputPath,
+            },
+            name: 'jwpubExtractor',
           },
-          name: 'jwpubExtractor',
         },
-      },
-    });
+      });
+    }
 
     // We MUST throw the error so the caller knows extraction failed.
     throw error;
@@ -994,17 +1046,19 @@ export const unzipJwpub = async (
       ongoingUnzips.delete(cacheKey);
     }
   } catch (error) {
-    await errorCatcher(error, {
-      contexts: {
-        fn: {
-          args: {
-            jwpubPath,
-            outputPath,
+    if (!warnJwpubUnavailable(jwpubPath, error)) {
+      await errorCatcher(error, {
+        contexts: {
+          fn: {
+            args: {
+              jwpubPath,
+              outputPath,
+            },
+            name: 'unzipJwpub',
           },
-          name: 'unzipJwpub',
         },
-      },
-    });
+      });
+    }
     throw error;
   }
 };

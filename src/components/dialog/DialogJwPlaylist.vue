@@ -205,6 +205,7 @@ import { storeToRefs } from 'pinia';
 import { JPG_EXTENSIONS } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
+  copyToDatedAdditionalMedia,
   downloadAdditionalRemoteVideo,
   dynamicMediaMapper,
   getJwLangCode,
@@ -262,7 +263,7 @@ const includeNumbering = ref(true);
 const currentState = useCurrentStateStore();
 const { selectedDate, selectedDateObject } = storeToRefs(currentState);
 
-const { basename, executeQuery, extname, fs, join, unzip } =
+const { basename, executeQuery, extname, fs, join, pathToFileURL, unzip } =
   globalThis.electronApi;
 const { pathExists, rename } = fs;
 
@@ -446,6 +447,11 @@ const formatDuration = (item: JwPlaylistItem) => {
   return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 };
 
+async function copyPlaylistAssetToAdditionalMedia(filepath?: string) {
+  if (!filepath || !(await pathExists(filepath))) return '';
+  return copyToDatedAdditionalMedia(filepath, props.section, false);
+}
+
 function getItemLabel(i: number, item: JwPlaylistItem) {
   const { prefix, rest } = getItemLabelParts(i, item);
   return prefix + rest;
@@ -493,9 +499,13 @@ async function processNonVideoItem(
   StartTime: null | number,
   EndTime: null | number,
 ) {
-  const filePath = item.IndependentMediaFilePath
+  const extractedFilePath = item.IndependentMediaFilePath
     ? join(outputPath, item.IndependentMediaFilePath)
     : '';
+  const filePath = await copyPlaylistAssetToAdditionalMedia(extractedFilePath);
+  const thumbnailPath = await copyPlaylistAssetToAdditionalMedia(
+    item.ThumbnailFilePath,
+  );
 
   const multimediaItem: MultimediaItem = {
     BeginParagraphOrdinal: 0,
@@ -516,7 +526,7 @@ async function processNonVideoItem(
     Repeat: item.EndAction === 3,
     StartTime: StartTime ?? undefined,
     TargetParagraphNumberLabel: 0,
-    ThumbnailFilePath: item.ThumbnailFilePath || '',
+    ThumbnailFilePath: thumbnailPath || '',
     Track: item.Track,
     VerseNumbers: item.VerseNumbers,
   };
@@ -618,11 +628,14 @@ async function processVideoItem(
           min: StartTime ?? 0,
         }
       : undefined;
+  const thumbnailPath = await copyPlaylistAssetToAdditionalMedia(
+    item.ThumbnailFilePath,
+  );
 
   const mediaItem = await downloadAdditionalRemoteVideo(
     videoLinks,
     selectedDate.value,
-    item.ThumbnailFilePath || undefined,
+    thumbnailPath ? pathToFileURL(thumbnailPath) : undefined,
     false,
     itemLabel,
     sectionToUse || props.section,

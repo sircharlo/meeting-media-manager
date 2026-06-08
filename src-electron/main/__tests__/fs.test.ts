@@ -550,6 +550,56 @@ describe('getZipEntries', () => {
     );
     expect(captureElectronErrorMock).not.toHaveBeenCalled();
   });
+
+  it('retries zip files that disappear before opening during unzip', async () => {
+    const { EventEmitter } = await import('node:events');
+    const error = new Error('missing during unzip');
+    (error as Error & { code?: string }).code = 'ENOENT';
+    const zipfile = Object.assign(new EventEmitter(), {
+      close: vi.fn(),
+      on: vi.fn(function (
+        this: typeof zipfile,
+        event: string,
+        callback: (...args: unknown[]) => void,
+      ) {
+        EventEmitter.prototype.on.call(this, event, callback);
+        return this;
+      }),
+      readEntry: vi.fn(() => {
+        queueMicrotask(() => zipfile.emit('end'));
+      }),
+    });
+
+    yauzlOpenMock
+      .mockImplementationOnce((_path, _options, callback) => {
+        callback(error);
+      })
+      .mockImplementationOnce((_path, _options, callback) => {
+        callback(undefined, zipfile);
+      });
+
+    const { unzipFile } = await import('../fs');
+
+    await expect(unzipFile('/tmp/raced.jwpub', '/tmp/out')).resolves.toEqual(
+      [],
+    );
+
+    expect(yauzlOpenMock).toHaveBeenCalledTimes(2);
+    expect(delayMock).toHaveBeenCalledWith(1000);
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: 'unzip',
+        data: expect.objectContaining({
+          errorCode: 'ENOENT',
+          input: '/tmp/raced.jwpub',
+          retrying: true,
+        }),
+        level: 'info',
+        message: 'Error opening zipfile',
+      }),
+    );
+    expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
 });
 
 describe('watchFolder', () => {

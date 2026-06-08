@@ -799,3 +799,33 @@ export const cleanCache = async () => {
     return false;
   }
 };
+
+let startupTempPathCleaned = false;
+
+export const cleanTempPathOnStartup = async () => {
+  if (startupTempPathCleaned) return;
+  startupTempPathCleaned = true;
+
+  try {
+    const tempPath = await getTempPath();
+    if (!(await pathExists(tempPath))) return;
+
+    const tempItems = await readdir(tempPath);
+    await Promise.allSettled(
+      tempItems.map((item) => remove(join(tempPath, item.name))),
+    );
+
+    log('[Temp] Cleared startup temp files', 'cleanup', 'log', {
+      itemsDeleted: tempItems.length,
+      tempPath,
+    });
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          name: 'cleanTempPathOnStartup',
+        },
+      },
+    });
+  }
+};

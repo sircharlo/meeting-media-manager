@@ -98,7 +98,7 @@ import type {
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { unzipJwpub } from 'src/helpers/jw-media';
+import { stageUserJwpubForRead, unzipJwpub } from 'src/helpers/jw-media';
 import { getPublicationsPath } from 'src/utils/fs';
 import { findDb } from 'src/utils/sqlite';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -175,7 +175,9 @@ const browse = async () => {
   if (s34Dir.value && s34File.value) {
     try {
       await ensureDir(s34Dir.value);
-      await unzipJwpub(s34File.value, s34Dir.value, true);
+      const stagedS34File = await stageUserJwpubForRead(s34File.value);
+      if (!stagedS34File) return;
+      await unzipJwpub(stagedS34File, s34Dir.value, true);
       populatePublicTalks();
     } catch (error) {
       errorCatcher(error, {

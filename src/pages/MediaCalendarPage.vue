@@ -149,6 +149,7 @@ import {
   getMemorialMedia,
   getPubMediaLinks,
   identifyJwpub,
+  stageUserJwpubForRead,
   unzipJwpub,
 } from 'src/helpers/jw-media';
 import { sendKeyboardShortcut } from 'src/helpers/keyboard-shortcuts';
@@ -281,7 +282,7 @@ const {
   readdir,
   unzip,
 } = globalThis.electronApi;
-const { pathExists, remove, writeFile } = fs;
+const { copy, pathExists, remove, writeFile } = fs;
 
 const { post: postMediaAction } = useBroadcastChannel<string, string>({
   name: 'main-window-media-action',
@@ -1097,7 +1098,9 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
           filepath,
         );
         try {
-          const publication = await identifyJwpub(filepath);
+          const stagedJwpubPath = await stageUserJwpubForRead(filepath);
+          if (!stagedJwpubPath) return;
+          const publication = await identifyJwpub(stagedJwpubPath);
           log(
             '🎯 [addToFiles] Publication identified:',
             'mediaCalendar',
@@ -1160,7 +1163,10 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
             'mediaCalendar',
             'log',
           );
-          const unzipDir = await unzipJwpub(filepath, publicationDirectory);
+          const unzipDir = await unzipJwpub(
+            stagedJwpubPath,
+            publicationDirectory,
+          );
           log('🎯 [addToFiles] Unzip dir:', 'mediaCalendar', 'log', unzipDir);
 
           const db = await findDb(unzipDir);
@@ -1234,6 +1240,12 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         // Reset progress tracking since we're switching to JW playlist dialog
         totalFiles.value = 0;
         currentFile.value = 0;
+        const playlistStagingDir = join(
+          await getTempPath(),
+          `jwplaylist-import-${uuid()}`,
+        );
+        const stagedPlaylistPath = join(playlistStagingDir, basename(filepath));
+        await copy(filepath, stagedPlaylistPath);
 
         globalThis.dispatchEvent(
           new CustomEvent<{
@@ -1241,7 +1253,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
             section: MediaSectionIdentifier | undefined;
           }>('openJwPlaylistDialog', {
             detail: {
-              jwPlaylistPath: filepath,
+              jwPlaylistPath: stagedPlaylistPath,
               section: sectionToAddTo.value,
             },
           }),

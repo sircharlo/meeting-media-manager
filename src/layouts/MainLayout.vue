@@ -61,6 +61,7 @@ import { SORTER } from 'src/constants/general';
 import {
   cleanCache,
   cleanPersistedStores,
+  cleanTempPathOnStartup,
   deleteCacheFiles,
 } from 'src/helpers/cleanup';
 import { syncMeetingSchedule } from 'src/helpers/congregation-schedule';
@@ -822,6 +823,7 @@ const { post: postHideMediaLogo } = useBroadcastChannel<
 }); // Send hideMediaLogo to the media player page using useBroadcastChannel
 
 onMounted(() => {
+  void cleanTempPathOnStartup();
   congregationSettings.updateCongregationsWithMissingSettings();
   if (!currentSettings.value) navigateToCongregationSelector();
   initListeners();

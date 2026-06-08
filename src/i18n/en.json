@@ -301,6 +301,8 @@
   "jwpub-file": "JWPUB file",
   "jwpub-file-explain": "Publication downloaded from the official website of Jehovah's Witnesses",
   "jwpub-file-found": "JWPUB files must be processed separately.",
+  "jwpub-file-unavailable-caption": "If this file is on cloud storage, a network drive, or removable media, make it available offline and try again.",
+  "jwpub-file-unavailable-message": "The selected JWPUB file could not be read.",
   "jwpubNoMultimedia": "The JWPUB file does not contain any media",
   "jwStreamSite": "JW Stream",
   "keyboardShortcuts": "Keyboard shortcuts",

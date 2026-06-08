@@ -302,7 +302,7 @@
           <q-item
             class="row items-center full-width"
             clickable
-            @click="setMediaBackground(jwpubImage.FilePath)"
+            @click="setManagedMediaBackground(jwpubImage.FilePath)"
           >
             <div class="row q-mr-md">
               <q-img
@@ -355,7 +355,12 @@ import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { QMenu } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { getMemorialBackground, unzipJwpub } from 'src/helpers/jw-media';
+import {
+  copyToDatedAdditionalMedia,
+  getMemorialBackground,
+  stageUserJwpubForRead,
+  unzipJwpub,
+} from 'src/helpers/jw-media';
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { log } from 'src/shared/vanilla';
@@ -495,7 +500,9 @@ const showCustomBackgroundPicker = computed(
 
 const processJwpubBackground = async (filepath: string) => {
   jwpubImportFilePath.value = filepath;
-  const unzipDir = await unzipJwpub(filepath);
+  const stagedFilepath = await stageUserJwpubForRead(filepath);
+  if (!stagedFilepath) return;
+  const unzipDir = await unzipJwpub(stagedFilepath);
   if (!unzipDir) throw new Error('Failed to unzip: ' + filepath);
 
   const db = await findDb(unzipDir);
@@ -524,11 +531,37 @@ const processFileBackground = async (filepath: string) => {
 
   const workingTempFilepath = await convertImageIfNeeded(tempFilepath);
   if (isImage(workingTempFilepath)) {
-    setMediaBackground(workingTempFilepath);
+    const managedFilepath = await copyToDatedAdditionalMedia(
+      workingTempFilepath,
+      undefined,
+      false,
+    );
+    if (managedFilepath) {
+      setMediaBackground(managedFilepath);
+    } else {
+      throw new Error('Problem with image file');
+    }
   } else {
     throw new Error(
       'Invalid file type: ' + workingTempFilepath.split('/').pop(),
     );
+  }
+};
+
+const setManagedMediaBackground = async (filepath: string) => {
+  try {
+    const managedFilepath = await copyToDatedAdditionalMedia(
+      filepath,
+      undefined,
+      false,
+    );
+    if (!managedFilepath) throw new Error('Problem with image file');
+    setMediaBackground(managedFilepath);
+  } catch (error) {
+    errorCatcher(error);
+    notifyInvalidBackgroundFile();
+    jwpubImages.value = [];
+    jwpubImportFilePath.value = '';
   }
 };
 
