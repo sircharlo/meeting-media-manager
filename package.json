@@ -84,7 +84,7 @@
     "vue-router": "^5.1.0",
     "vue-zoomable": "^1.2.8",
     "wrappy": "^1.0.2",
-    "yauzl": "^3.3.2"
+    "yauzl": "^3.4.0"
   },
   "devDependencies": {
     "@electron/rebuild": "^4.0.4",
@@ -109,7 +109,7 @@
     "@types/ms": "^2",
     "@types/node": "^25.9.1",
     "@types/pretty-bytes": "^5.2.0",
-    "@types/yauzl": "^2.10.3",
+    "@types/yauzl": "^3.3.0",
     "@typescript-eslint/utils": "^8.60.1",
     "@vitejs/plugin-vue": "^6.0.7",
     "@vitest/eslint-plugin": "^1.6.19",
