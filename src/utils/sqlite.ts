@@ -1,4 +1,5 @@
 import type {
+  FileDownloader,
   JwLangCode,
   MultimediaExtractItem,
   MultimediaItem,
@@ -19,6 +20,7 @@ let getDbFromJWPUBProvider:
   | ((
       publication: PublicationFetcher,
       meetingDate?: string,
+      progressCategory?: FileDownloader['progressCategory'],
     ) => Promise<null | string>)
   | null = null;
 let getJwLangCodeProvider: ((mepsId?: number) => JwLangCode | null) | null =
@@ -31,6 +33,7 @@ export const registerSqliteProviders = (providers: {
   getDbFromJWPUB: (
     publication: PublicationFetcher,
     meetingDate?: string,
+    progressCategory?: FileDownloader['progressCategory'],
   ) => Promise<null | string>;
   getJwLangCode: (mepsId?: number) => JwLangCode | null;
 }) => {
@@ -41,11 +44,12 @@ export const registerSqliteProviders = (providers: {
 const getDbFromJWPUB = async (
   publication: PublicationFetcher,
   meetingDate?: string,
+  progressCategory?: FileDownloader['progressCategory'],
 ) => {
   if (!getDbFromJWPUBProvider) {
     throw new Error('getDbFromJWPUBProvider not registered');
   }
-  return getDbFromJWPUBProvider(publication, meetingDate);
+  return getDbFromJWPUBProvider(publication, meetingDate, progressCategory);
 };
 
 const getJwLangCode = (mepsId?: number) => {

@@ -34,6 +34,11 @@
       <div class="row q-px-md q-py-md">
         {{ t('add-media-study-bible-explain') }}
       </div>
+      <DialogDownloadProgress
+        :label="t('loading')"
+        :loading="loadingBooks || loadingMedia"
+        progress-category="study-bible"
+      />
 
       <!-- Content -->
       <div class="q-px-md q-py-md col overflow-auto">
@@ -250,6 +255,7 @@ import type { MediaSectionIdentifier, MultimediaItem } from 'src/types';
 
 import { whenever } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import DialogDownloadProgress from 'components/dialog/DialogDownloadProgress.vue';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getStudyBibleBooks, getStudyBibleMedia } from 'src/helpers/jw-media';
 import { computed, ref } from 'vue';

@@ -540,6 +540,7 @@ const initListeners = () => {
       filename: args.filename,
       loaded: existing?.loaded,
       meetingDate: existing?.meetingDate || '',
+      progressCategory: existing?.progressCategory,
       total: args.totalBytes,
     };
   });

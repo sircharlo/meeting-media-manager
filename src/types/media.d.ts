@@ -44,6 +44,7 @@ export interface DownloadProgressItem {
   filename: string;
   loaded?: number;
   meetingDate?: null | string;
+  progressCategory?: 'publication-media' | 'study-bible';
   total?: number;
 }
 
@@ -55,6 +56,7 @@ export interface FileDownloader {
   lowPriority?: boolean;
   meetingDate?: string;
   notify?: boolean;
+  progressCategory?: DownloadProgressItem['progressCategory'];
   size?: number;
   url: string;
 }

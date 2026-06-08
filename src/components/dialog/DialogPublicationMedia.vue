@@ -36,6 +36,11 @@
           @keyup="onSearchInput"
         />
       </div>
+      <DialogDownloadProgress
+        :label="t('loading')"
+        :loading="loading"
+        progress-category="publication-media"
+      />
 
       <div class="q-px-md overflow-auto row" style="flex: 1 1 auto">
         <div class="col-12">
@@ -470,6 +475,7 @@ import type {
 import type { MediaLink, Publication } from 'src/types/jw/publications';
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import DialogDownloadProgress from 'components/dialog/DialogDownloadProgress.vue';
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
@@ -953,12 +959,16 @@ async function handleJwpubResult(
   issue: string,
   lang: JwLangCode,
 ): Promise<boolean> {
-  const dbPath = await getDbFromJWPUB({
-    fileformat: 'JWPUB',
-    issue,
-    langwritten: lang,
-    pub: publication,
-  });
+  const dbPath = await getDbFromJWPUB(
+    {
+      fileformat: 'JWPUB',
+      issue,
+      langwritten: lang,
+      pub: publication,
+    },
+    undefined,
+    'publication-media',
+  );
   if (!dbPath) return false;
 
   selection.dbPath = dbPath;
@@ -1082,6 +1092,7 @@ async function importPdfVersion() {
     const downloadResult = await downloadFileIfNeeded({
       dir: publicationDir,
       lowPriority: false,
+      progressCategory: 'publication-media',
       url: pdfUrl,
     });
     const pdfPath = downloadResult.path;
@@ -1491,12 +1502,16 @@ async function selectMonth(m: number) {
     const pub = selection.publication;
     const issue = buildIssue(selection.year, m, pub);
 
-    const db = await getDbFromJWPUB({
-      fileformat: 'JWPUB',
-      issue,
-      langwritten: lang,
-      pub,
-    });
+    const db = await getDbFromJWPUB(
+      {
+        fileformat: 'JWPUB',
+        issue,
+        langwritten: lang,
+        pub,
+      },
+      undefined,
+      'publication-media',
+    );
     if (!db) {
       loading.value = false;
       return;
@@ -1526,12 +1541,16 @@ async function selectPublication(choice: FilterChoice) {
     selection.brochureLabel = decodeEntities(choice.optionName);
     // Download jwpub and open DB
     const lang = (currentSettings.value?.lang || 'E') as JwLangCode;
-    const db = await getDbFromJWPUB({
-      fileformat: 'JWPUB',
-      issue: 0,
-      langwritten: lang,
-      pub: selection.publication,
-    });
+    const db = await getDbFromJWPUB(
+      {
+        fileformat: 'JWPUB',
+        issue: 0,
+        langwritten: lang,
+        pub: selection.publication,
+      },
+      undefined,
+      'publication-media',
+    );
     if (!db) {
       loading.value = false;
       return;

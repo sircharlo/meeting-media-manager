@@ -1052,6 +1052,9 @@ const processPendingImport = async (targetSection: MediaSectionIdentifier) => {
             false,
             importItem.data.media.title,
             targetSection,
+            undefined,
+            false,
+            'publication-media',
           );
         }
         break;
@@ -1108,6 +1111,7 @@ const processPendingImport = async (targetSection: MediaSectionIdentifier) => {
               targetSection,
               undefined,
               true, // onlyCreateItem
+              'study-bible',
             );
             if (item && typeof item !== 'string') {
               mediaItemsToAdd.push(item);

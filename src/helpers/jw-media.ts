@@ -1352,6 +1352,7 @@ export const downloadFileIfNeeded = async ({
   filename,
   lowPriority,
   meetingDate,
+  progressCategory,
   size,
   url,
 }: FileDownloader): Promise<DownloadedFile> => {
@@ -1398,6 +1399,9 @@ export const downloadFileIfNeeded = async ({
         filename,
         meetingDate:
           (seed as { meetingDate?: string })?.meetingDate || meetingDate,
+        progressCategory:
+          (seed as { progressCategory?: FileDownloader['progressCategory'] })
+            ?.progressCategory || progressCategory,
       } as never;
     }
 
@@ -1774,9 +1778,14 @@ export const fetchMedia = async () => {
 export const getDbFromJWPUB = async (
   publication: PublicationFetcher,
   meetingDate?: string,
+  progressCategory?: FileDownloader['progressCategory'],
 ) => {
   try {
-    const jwpub = await downloadJwpub(publication, meetingDate);
+    const jwpub = await downloadJwpub(
+      publication,
+      meetingDate,
+      progressCategory,
+    );
     if (jwpub.error) return null;
     const publicationDirectory = await getPublicationDirectory(publication);
     if (jwpub.new || !(await findDb(publicationDirectory))) {
@@ -1855,7 +1864,11 @@ const getStudyBible = async () => {
       pub: 'nwtsty',
     };
     const currentStateStore = useCurrentStateStore();
-    const nwtStyDb_E_Promise = getDbFromJWPUB(nwtStyPublication_E);
+    const nwtStyDb_E_Promise = getDbFromJWPUB(
+      nwtStyPublication_E,
+      undefined,
+      'study-bible',
+    );
 
     const languages = [
       ...new Set([
@@ -1880,7 +1893,11 @@ const getStudyBible = async () => {
         langwritten,
         pub: 'nwtsty',
       };
-      nwtStyDb = await getDbFromJWPUB(nwtStyPublication);
+      nwtStyDb = await getDbFromJWPUB(
+        nwtStyPublication,
+        undefined,
+        'study-bible',
+      );
       if (nwtStyDb) break;
     }
 
@@ -1900,7 +1917,7 @@ const getStudyBible = async () => {
         langwritten,
         pub: 'nwt',
       };
-      nwtDb = await getDbFromJWPUB(nwtPublication);
+      nwtDb = await getDbFromJWPUB(nwtPublication, undefined, 'study-bible');
       if (nwtDb) break;
     }
 
@@ -4032,6 +4049,7 @@ export const downloadAdditionalRemoteVideo = async (
   section?: MediaSectionIdentifier,
   customDuration?: { max: number; min: number },
   onlyCreateItem = false,
+  progressCategory?: FileDownloader['progressCategory'],
 ): Promise<MediaItem | string | undefined> => {
   try {
     const currentStateStore = useCurrentStateStore();
@@ -4113,6 +4131,7 @@ export const downloadAdditionalRemoteVideo = async (
         // Additional media added by user should be a high priority download
         lowPriority: false,
         meetingDate,
+        progressCategory,
         size: bestItem.filesize,
         url: bestItemUrl,
       });
@@ -4140,6 +4159,7 @@ export const downloadAdditionalRemoteVideo = async (
       // Additional media added by user should be a high priority download
       lowPriority: false,
       meetingDate,
+      progressCategory,
       size: bestItem.filesize,
       url: bestItemUrl,
     });
@@ -4429,6 +4449,7 @@ export const downloadSongbookVideos = () => {
 const downloadJwpub = async (
   publication: PublicationFetcher,
   meetingDate?: string,
+  progressCategory?: FileDownloader['progressCategory'],
 ): Promise<DownloadedFile> => {
   try {
     const currentStateStore = useCurrentStateStore();
@@ -4487,6 +4508,7 @@ const downloadJwpub = async (
       currentStateStore.downloadProgress[downloadId] = {
         error: true,
         filename: downloadId,
+        progressCategory,
       };
       const cachedJwpub = await getExistingJwpub(publicationDir);
       if (cachedJwpub.path) return cachedJwpub;
@@ -4523,6 +4545,7 @@ const downloadJwpub = async (
       dir: publicationDir,
       lowPriority,
       meetingDate,
+      progressCategory,
       size: mediaLinks[0]?.filesize,
       url: mediaLinks[0]?.file.url ?? '',
     };

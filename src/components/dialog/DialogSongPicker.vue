@@ -23,6 +23,7 @@
       <div class="row q-px-md q-pt-md">
         {{ t('add-a-song') }}
       </div>
+      <DialogDownloadProgress :label="t('loading')" :loading="loading" />
       <div class="row q-px-md q-py-md">
         <q-input
           v-model="filter"
@@ -105,6 +106,7 @@ import type {
 
 import { watchOnce } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import DialogDownloadProgress from 'components/dialog/DialogDownloadProgress.vue';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getJwMediaInfo, getPubMediaLinks } from 'src/helpers/jw-media';
