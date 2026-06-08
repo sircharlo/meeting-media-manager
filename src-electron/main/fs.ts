@@ -67,10 +67,17 @@ const isRetryableZipError = (error: unknown) => {
   if (errorCode && NETWORK_ERROR_CODES.has(errorCode)) return true;
 
   const message = error instanceof Error ? error.message : String(error);
+  if (isIncompleteZipReadError(message)) return true;
+
   return /connection timed out|resource busy|temporarily unavailable/i.test(
     message,
   );
 };
+
+const isIncompleteZipReadError = (message: string) =>
+  /End of central directory record signature not found|not a zip file|file is truncated|unexpected EOF|file is corrupted/i.test(
+    message,
+  );
 
 const getZipRetryDelay = (attempt: number) => ZIP_OPEN_RETRY_DELAY_MS * attempt;
 
@@ -777,47 +784,70 @@ const decompress = async (
       }
     };
 
-    yauzl.open(input, { lazyEntries: true }, (err, zipfile) => {
-      if (err) {
-        addElectronBreadcrumb({
-          category: 'unzip',
-          data: { fileSize, includes: opts?.includes, input, output },
-          message: 'Error opening zipfile',
+    const openZip = (attempt: number) => {
+      yauzl.open(input, { lazyEntries: true }, (err, zipfile) => {
+        if (err) {
+          const shouldRetry = shouldRetryZipRead(err, attempt);
+          addElectronBreadcrumb({
+            category: 'unzip',
+            data: {
+              attempt: attempt + 1,
+              fileSize,
+              includes: opts?.includes,
+              input,
+              maxAttempts: ZIP_OPEN_RETRY_COUNT + 1,
+              output,
+              retrying: shouldRetry,
+            },
+            message: 'Error opening zipfile',
+          });
+
+          if (shouldRetry) {
+            delay(getZipRetryDelay(attempt + 1))
+              .then(() => openZip(attempt + 1))
+              .catch(reject);
+            return;
+          }
+
+          reject(new Error(String(err)));
+          return;
+        }
+
+        if (!zipfile) return reject(new Error('Zipfile not found'));
+
+        const state: ZipfileState = {
+          checkIfComplete,
+          extractedFiles,
+          fileCount: 0,
+          pendingOperations,
+          reject,
+          totalUncompressedSize: 0,
+          zipfile,
+        };
+
+        zipfile.readEntry();
+
+        zipfile.on('entry', async (entry: yauzl.Entry) => {
+          await handleZipEntry(entry, context, state);
         });
-        return reject(new Error(String(err)));
-      }
-      if (!zipfile) return reject(new Error('Zipfile not found'));
 
-      const state: ZipfileState = {
-        checkIfComplete,
-        extractedFiles,
-        fileCount: 0,
-        pendingOperations,
-        reject,
-        totalUncompressedSize: 0,
-        zipfile,
-      };
-
-      zipfile.readEntry();
-
-      zipfile.on('entry', async (entry: yauzl.Entry) => {
-        await handleZipEntry(entry, context, state);
-      });
-
-      zipfile.on('end', () => {
-        zipfileEnded = true;
-        checkIfComplete();
-      });
-
-      zipfile.on('error', (err) => {
-        captureElectronError(err, {
-          contexts: {
-            fn: { args: { input, output }, name: 'unzipFile zipfile error' },
-          },
+        zipfile.on('end', () => {
+          zipfileEnded = true;
+          checkIfComplete();
         });
-        reject(new Error(String(err)));
+
+        zipfile.on('error', (err) => {
+          captureElectronError(err, {
+            contexts: {
+              fn: { args: { input, output }, name: 'unzipFile zipfile error' },
+            },
+          });
+          reject(new Error(String(err)));
+        });
       });
-    });
+    };
+
+    openZip(0);
   });
 };
 
@@ -920,7 +950,8 @@ const openZipFileForEntries = async (
       });
 
       if (!shouldRetry) {
-        if (errorCode !== 'ENOENT') {
+        const message = error instanceof Error ? error.message : String(error);
+        if (errorCode !== 'ENOENT' && !isIncompleteZipReadError(message)) {
           captureElectronError(error, {
             contexts: {
               cloud_resource: {

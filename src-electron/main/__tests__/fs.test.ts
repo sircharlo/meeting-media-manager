@@ -506,6 +506,50 @@ describe('getZipEntries', () => {
     );
     expect(captureElectronErrorMock).not.toHaveBeenCalled();
   });
+
+  it('retries truncated zip reads before reporting an error', async () => {
+    const truncatedError = new Error(
+      'End of central directory record signature not found. Either not a zip file, or file is truncated.',
+    );
+    const zipfileHandlers = new Map<string, () => void>();
+    const zipfileMock = {
+      close: vi.fn(),
+      on: vi.fn((event: string, callback: () => void) => {
+        zipfileHandlers.set(event, callback);
+        return zipfileMock;
+      }),
+      readEntry: vi.fn(() => {
+        queueMicrotask(() => zipfileHandlers.get('end')?.());
+      }),
+    };
+
+    yauzlOpenMock
+      .mockImplementationOnce((_path, _options, callback) => {
+        callback(truncatedError);
+      })
+      .mockImplementationOnce((_path, _options, callback) => {
+        callback(undefined, zipfileMock);
+      });
+
+    const { getZipEntries } = await import('../fs');
+
+    await expect(getZipEntries('/tmp/raced.jwpub')).resolves.toEqual({});
+
+    expect(yauzlOpenMock).toHaveBeenCalledTimes(2);
+    expect(delayMock).toHaveBeenCalledWith(1000);
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: 'zip',
+        data: expect.objectContaining({
+          errorCode: undefined,
+          retrying: true,
+          zipPath: '/tmp/raced.jwpub',
+        }),
+        message: 'Error opening zip entries',
+      }),
+    );
+    expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
 });
 
 describe('watchFolder', () => {

@@ -1321,23 +1321,30 @@ export const downloadFileIfNeeded = async ({
         }
         if (currentStateStore.downloadProgress[downloadId]?.complete) {
           clearInterval(interval);
-          // Small delay to ensure disk flush
-          setTimeout(async () => {
-            if (await exists(destinationPath)) {
-              const statistics = await stat(destinationPath);
-              if (statistics.size > 0) {
-                resolve({
-                  new: true,
-                  path: destinationPath,
-                });
-                return;
+          void (async () => {
+            const maxAttempts = 10;
+            for (let attempt = 0; attempt < maxAttempts; attempt++) {
+              if (await exists(destinationPath)) {
+                const statistics = await stat(destinationPath);
+                const hasExpectedSize =
+                  remoteSize <= 0 || statistics.size === remoteSize;
+                if (statistics.size > 0 && hasExpectedSize) {
+                  resolve({
+                    new: true,
+                    path: destinationPath,
+                  });
+                  return;
+                }
               }
+              await new Promise((settle) => {
+                setTimeout(settle, 200);
+              });
             }
             resolve({
               error: true,
               path: destinationPath,
             });
-          }, 200);
+          })();
         }
         if (currentStateStore.downloadProgress[downloadId]?.error) {
           clearInterval(interval);
