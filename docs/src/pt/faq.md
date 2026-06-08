@@ -169,7 +169,7 @@ Este recurso adia o compartilhamento de imagens para o OBS até que você as aci
 - Ter mais controle sobre o tempo
 - Evitar mudanças prematuras de cena
 
-### :record_button: Pode gravar M3 reuniões? {#gravações-faq}
+### :record_button: Pode gravar M3 reuniões? {#faq-recordings}
 
 M3 não inclui um gravador embutido, mas pode ajudar a controlar a gravação de duas maneiras:
 

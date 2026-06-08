@@ -157,7 +157,7 @@ These settings allow you to configure temporary changes to your meeting schedule
 - **New Weekend Day**: New day for weekend meeting
 - **New Weekend Time**: New time for weekend meeting
 
-### Actualizaciones del Horario de Reuniones Automáticas {#actualizaciones de reuniones automáticas-programadas}
+### Actualizaciones del Horario de Reuniones Automáticas {#actualizaciones de reuniones automáticas-programadas} {#automatic-meeting-schedule-updates}
 
 <!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
 
@@ -408,7 +408,7 @@ Shortcut that is triggered when the last song is played during a meeting.
 
 **Default**: None
 
-### Grabaciones de reunión {#grabaciones de reuniones}
+### Grabaciones de reunión {#grabaciones de reuniones} {#meeting-recordings}
 
 #### Habilitar integración de la aplicación de grabación externa {#enable-external-recording-app-integration}
 
@@ -420,13 +420,13 @@ Esta opción se oculta cuando los controles de grabación OBS están habilitados
 
 **Default**: `false`
 
-#### Grabando accesos directos y carpeta {#grabación-accesos directos y carpeta}
+#### Grabando accesos directos y carpeta {#grabación-accesos directos y carpeta} {#recording-shortcuts-and-folder}
 
 <!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
 
 Configure el acceso directo del teclado que comienza a grabar, el acceso directo opcional que detiene la grabación y la carpeta donde la aplicación externa guarda grabaciones. Si no se proporciona un atajo de parada, M3 reutiliza el atajo de inicio. Cuando una carpeta está configurada, M3 muestra un botón para abrirla.
 
-### Temporizador de reunión {#temporizador-reunión}
+### Temporizador de reunión {#meeting-timer}
 
 #### Activar temporizador de reunión {#enable-meeting-timer}
 
@@ -442,19 +442,19 @@ Habilita una ventana de temporizador separada para las partes de la reunión. Es
 
 Configurar si la ventana del temporizador se abre automáticamente, si los temporizadores de los participantes cuentan hacia arriba o hacia abajo por defecto, si el reloj utiliza 12 horas o 24 horas, y si el valor actual del temporizador se muestra en el botón de acción del temporizador de la isla.
 
-#### Formatos de visualización de temporizadores {#formatos-display-temporizadores}
+#### Formatos de visualización de temporizadores {#timer-display-formats}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
 Elija formatos de pantalla analógica o digital para la hora del día y los temporizadores de cuenta regresiva. El indicador de advertencia de cuenta regresiva puede desplazar el anillo de cuenta regresiva hacia un color de advertencia durante el minuto final.
 
-#### Cuenta regresiva de reuniones y estado del horario {#reunión-cuenta regresiva y estado de programación}
+#### Cuenta regresiva de reuniones y estado del horario {#reunión-cuenta regresiva y estado de programación} {#meeting-countdown-and-schedule-status}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
 Mostrar una cuenta regresiva antes de las reuniones programadas y opcionalmente mostrar si la reunión está por delante o por detrás de lo programado. La cuenta regresiva de la reunión aparece sólo en la pantalla del temporizador, no en la pantalla principal de los medios.
 
-#### Temporizador Apariencia y Tiempo Extras: {#apariencia temporizador-y-overtime}
+#### Temporizador Apariencia y Tiempo Extras: {#apariencia temporizador-y-overtime} {#timer-appearance-and-overtime}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
@@ -535,7 +535,7 @@ Exclude footnote images from media downloads when possible.
 
 **Default**: `false`
 
-#### Excluir videos adicionales de la torre de vigilancia {#excluyendo-adicional-estudio-videos}
+#### Excluir videos adicionales de la torre de vigilancia {#exclude-additional-watchtower-study-videos}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 

@@ -18,7 +18,7 @@ This app used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed t
 
 Ang M³ ay ang pinakamahusay na gamit para sa pag-manage ng media sa mga pulong, na nag-aalok ng tuloy-tuloy, maaasahan, at maraming feature sa iba’t ibang platform. It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation.
 
-### Mga susing pakinabang
+### Mga susing pakinabang {#key-benefits}
 
 - **Napakadaling pagpapakita ng media**: Ang pinakamahusay na paraan ng pagpapakita ng media — buksan lang ang M³ at gagana na ang lahat. Walang komplikadong setup o karagdagang mga paraan.
 

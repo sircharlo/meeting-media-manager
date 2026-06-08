@@ -157,7 +157,7 @@ Ces paramètres vous permettent de configurer des changements temporaires à vot
 - **Nouveau jour de fin de semaine** : Nouveau jour pour la réunion de fin de semaine
 - **Nouvelle heure de fin de semaine** : Nouvelle heure pour la réunion de fin de semaine
 
-### Mises à jour automatiques du calendrier des réunions {#mises à jour automatiques du calendrier des réunions}
+### Mises à jour automatiques du calendrier des réunions {#mises à jour automatiques du calendrier des réunions} {#automatic-meeting-schedule-updates}
 
 <!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
 
@@ -165,7 +165,7 @@ Lorsque cette option est activée, M3 vérifie périodiquement le site Web offic
 
 Cela ne fonctionne que pour les profils qui ont été ajoutés avec la recherche de congrégation et dont le nom de la congrégation n'a pas été modifié manuellement. Si la synchronisation a été désactivée parce que le nom de la congrégation a changé, utilisez **Activer la synchronisation du programme** pour lier à nouveau le profil.
 
-#### Rafraîchir l'horaire de la réunion {#rafraichissement-horaire}
+#### Rafraîchir l'horaire de la réunion {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
@@ -426,7 +426,7 @@ Cette option est masquée lorsque les contrôles d'enregistrement d'OBS sont act
 
 Configurer le raccourci clavier qui démarre l'enregistrement, le raccourci optionnel qui arrête l'enregistrement, et le dossier où l'application externe enregistre les enregistrements. Si aucun raccourci d'arrêt n'est fourni, M3 réutilise le raccourci de démarrage. Lorsqu'un dossier est configuré, M3 affiche un bouton pour l'ouvrir.
 
-### Horaire de la réunion {#temps-de-réunion}
+### Horaire de la réunion {#meeting-timer}
 
 #### Activer le minuteur de la réunion {#enable-meeting-timer}
 
@@ -617,7 +617,7 @@ Entrez l'adresse utilisée pour accéder au site officiel des Témoins de Jéhov
 
 **Par défaut** : `jw.org`
 
-#### Désactiver l'accélération matérielle {#désactive l'accélération matérielle}
+#### Désactiver l'accélération matérielle {#désactive l'accélération matérielle} {#disable-hardware-acceleration}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 

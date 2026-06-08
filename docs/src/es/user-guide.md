@@ -332,7 +332,7 @@ Share the official website on external displays:
 - **Close** - Exit website presentation mode
 - **Auto retorno** - Opcionalmente volver a la lista de medios automáticamente después de detener la reproducción del sitio web
 
-## Grabaciones de reunión {#grabaciones de reuniones}
+## Grabaciones de reunión {#grabaciones de reuniones} {#meeting-recordings}
 
 M3 puede ayudar a controlar la grabación de reuniones, pero no incluye una grabadora integrada.
 

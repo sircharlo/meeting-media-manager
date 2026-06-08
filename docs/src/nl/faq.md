@@ -169,7 +169,7 @@ Deze functie stelt het delen van afbeeldingen naar OBS uit totdat je ze handmati
 - Meer controle hebben over de timing
 - Het vermijden van voortijdige scène-wisselingen
 
-### :record_button: Kan M3 bijeenkomsten opnemen? {#faq-opnames
+### :record_button: Kan M3 bijeenkomsten opnemen? {#faq-opnames {#faq-recordings}
 
 M3 bevat geen ingebouwde recorder, maar het kan helpen om opname op twee manieren te controleren:
 

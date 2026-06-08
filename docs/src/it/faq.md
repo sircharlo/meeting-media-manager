@@ -73,7 +73,7 @@ Sì! M³ allows you to:
 - Download media for upcoming meetings automatically
 - Import custom media for any date
 
-### :file_folder: What is media auto-export? {#faq-media-export} :file_folder: What is media auto-export?
+### :file_folder: What is media auto-export? {#faq-media-export} :file_folder: What is media auto-export? {#import-media}
 
 You can import custom media in several ways:
 
@@ -170,7 +170,7 @@ Folder monitoring allows you to:
 1. Select a folder to watch for new files
 2. Automatically import new media files that are synced with cloud storage like Dropbox or OneDrive
 
-### :open_file_folder: How do I import my own media files? {#import-media}
+### :open_file_folder: How do I import my own media files? {#faq-media-export}
 
 Media auto-export automatically:
 

@@ -1,10 +1,10 @@
-# 设置指南
+# 设置指南 {#settings-guide}
 
 本综合指南按类别解释了所有可用设置。 了解这些设置将有助于配置M3来完全满足您会众的需要。
 
-## 应用程序配置
+## 应用程序配置 {#application-configuration}
 
-### 显示语言
+### 显示语言 {#display-language}
 
 <!-- **Setting**: `localAppLang` -->
 
@@ -14,7 +14,7 @@
 
 **默认**：英语 (English)
 
-### 暗色模式
+### 暗色模式 {#dark-mode}
 
 <!-- **Setting**: `darkMode` -->
 
@@ -28,7 +28,7 @@
 
 **默认**：自动
 
-### 一周的第一天
+### 一周的第一天 {#first-day-of-week}
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
@@ -38,7 +38,7 @@
 
 **默认**：星期日
 
-### 日期格式
+### 日期格式 {#date-format}
 
 <!-- **Setting**: `localDateFormat` -->
 
@@ -48,7 +48,7 @@
 
 **默认**：D MMMM YYYY
 
-### 登录时自动启动
+### 登录时自动启动 {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
 
@@ -66,7 +66,7 @@
 
 **默认**：空（必须在设置期间设置）
 
-### 聚会语言
+### 聚会语言 {#meeting-language}
 
 <!-- **Setting**: `lang` -->
 
@@ -106,7 +106,7 @@
 
 **Default**: 无（需在设置向导中设定）
 
-### 周末聚会（星期几）{#weekend-meeting-day}
+### 周末聚会（星期几） {#weekend-meeting-day}
 
 <!-- **Setting**: `weDay` -->
 
@@ -116,7 +116,7 @@
 
 **默认**：无（需在设置向导中设置）
 
-### 周末聚会开始时间
+### 周末聚会开始时间 {#weekend-meeting-time}
 
 <!-- **Setting**: `weStartTime` -->
 
@@ -136,7 +136,7 @@
 
 **默认**：无
 
-### 纪念晚餐日期
+### 纪念晚餐日期 {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 
@@ -146,7 +146,7 @@
 
 **默认**：定期自动获取
 
-### 聚会议程变更
+### 聚会议程变更 {#meeting-schedule-changes}
 
 这些设置允许您配置聚会日程的临时更改：
 
@@ -157,9 +157,9 @@
 - **新的周末聚会日**：新的周末聚会日期
 - **新的周末聚会时间**：新的周末聚会时间
 
-## 媒体检索与播放
+## 媒体检索与播放 {#automatic-meeting-schedule-updates}
 
-### 计量连接
+### 计量连接 {#refresh-meeting-schedule}
 
 <!-- **Setting**: `meteredConnection` -->
 
@@ -167,7 +167,7 @@
 
 **Default**: `false`
 
-### 启用媒体显示功能。这是在第二个显示器上演示媒体所必需的。
+### 启用媒体显示功能。这是在第二个显示器上演示媒体所必需的。 {#media-retrieval-and-playback}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
@@ -175,7 +175,7 @@ Enable the media display functionality. This is required to present media on a s
 
 **Default**: `false`
 
-#### 开始播放时暂停
+#### 开始播放时暂停 {#metered-connection}
 
 <!-- **Setting**: `beginPlaybackPaused` -->
 
@@ -183,9 +183,9 @@ Enable the media display functionality. This is required to present media on a s
 
 **Default**: `false`
 
-### 背景音乐
+### 背景音乐 {#media-display-button}
 
-#### 启用音乐
+#### 启用音乐 {#enable-media-preview}
 
 <!-- **Setting**: `enableMusicButton` -->
 
@@ -193,7 +193,7 @@ Enable background music functionality.
 
 **默认**：`true`
 
-#### 自动启动音乐
+#### 自动启动音乐 {#begin-playback-paused}
 
 <!-- **Setting**: `autoStartMusic` -->
 
@@ -201,7 +201,7 @@ Enable background music functionality.
 
 **默认**：`true`
 
-#### 聚会停止缓冲
+#### 聚会停止缓冲 {#settings-guide-background-music}
 
 <!-- **Setting**: `meetingStopBufferSeconds` -->
 
@@ -211,7 +211,7 @@ Enable background music functionality.
 
 **默认**：100%
 
-#### 音乐音量
+#### 音乐音量 {#enable-music-button}
 
 <!-- **Setting**: `musicVolume` -->
 
@@ -219,9 +219,9 @@ Enable background music functionality.
 
 **默认**：`false`
 
-### 缓存管理
+### 缓存管理 {#auto-start-music}
 
-#### 启用额外缓存
+#### 启用额外缓存 {#meeting-stop-buffer}
 
 <!-- **Setting**: `enableExtraCache` -->
 
@@ -229,7 +229,7 @@ Enable background music functionality.
 
 **Default**: `false`
 
-#### 缓存文件夹
+#### 缓存文件夹 {#music-volume}
 
 <!-- **Setting**: `cacheFolder` -->
 
@@ -237,7 +237,7 @@ Enable background music functionality.
 
 **默认**：`true`
 
-#### 启用缓存自动清除
+#### 启用缓存自动清除 {#cache-management}
 
 <!-- **Setting**: `enableCacheAutoClear` -->
 
@@ -245,9 +245,9 @@ Enable background music functionality.
 
 **默认**：`true`
 
-### 监控文件夹
+### 监控文件夹 {#enable-extra-cache}
 
-#### 启用文件夹监控
+#### 启用文件夹监控 {#cache-folder}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
@@ -263,11 +263,11 @@ Enable background music functionality.
 
 **默认**：空
 
-## 集成
+## 集成 {#integrations}
 
-### Zoom 集成
+### Zoom 集成 {#settings-guide-zoom-integration}
 
-#### 启用 Zoom
+#### 启用 Zoom {#enable-zoom}
 
 <!-- **Setting**: `zoomEnable` -->
 
@@ -275,7 +275,7 @@ Enable Zoom meeting integration features.
 
 **Default**: `false`
 
-#### Screen Share Shortcut
+#### Screen Share Shortcut {#screen-share-shortcut}
 
 <!-- **Setting**: `zoomScreenShareShortcut` -->
 
@@ -283,9 +283,9 @@ Enable Zoom meeting integration features.
 
 **默认**：无
 
-### OBS Studio 集成
+### OBS Studio 集成 {#settings-guide-obs-integration}
 
-#### 启用 OBS
+#### 启用 OBS {#enable-obs}
 
 <!-- **Setting**: `obsEnable` -->
 
@@ -301,7 +301,7 @@ Enable Zoom meeting integration features.
 
 :::
 
-#### OBS 端口
+#### OBS 端口 {#obs-port}
 
 <!-- **Setting**: `obsPort` -->
 
@@ -309,7 +309,7 @@ OBS Studio WebSocket 连接密码。
 
 **默认**：无
 
-#### OBS 密码
+#### OBS 密码 {#obs-password}
 
 <!-- **Setting**: `obsPassword` -->
 
@@ -317,7 +317,7 @@ OBS Studio WebSocket 连接密码。
 
 **默认**：无
 
-#### OBS 场景
+#### OBS 场景 {#obs-scenes}
 
 配置不同用途的 OBS 场景：
 
@@ -325,7 +325,7 @@ OBS Studio WebSocket 连接密码。
 - **媒体场景**：显示媒体的场景
 - **图像场景**：显示图像的场景（例如显示媒体和发言人的画中画场景）
 
-#### OBS 高级选项
+#### OBS 高级选项 {#obs-advanced-options}
 
 - **延迟图像 (Postpone Images)**：延迟将图像共享到 OBS，直到手动触发
 - **快速切换**：在界面中启用 OBS 集成的快速开启/关闭切换
@@ -341,9 +341,9 @@ OBS Studio WebSocket 连接密码。
 
 :::
 
-### 自定义事件快捷键
+### 自定义事件快捷键 {#custom-events}
 
-#### 启用自定义事件
+#### 启用自定义事件 {#enable-custom-events}
 
 <!-- **Setting**: `enableCustomEvents` -->
 
@@ -351,9 +351,9 @@ OBS Studio WebSocket 连接密码。
 
 **Default**: `false`
 
-#### 自定义事件
+#### 自定义事件 {#custom-event-shortcuts}
 
-##### Play Media Shortcut
+##### Play Media Shortcut {#custom-event-media-play-shortcut}
 
 <!-- **Setting**: `customEventMediaPlayShortcut` -->
 
@@ -361,7 +361,7 @@ OBS Studio WebSocket 连接密码。
 
 **默认**：无
 
-##### Pause Media Shortcut
+##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
 
 <!-- **Setting**: `customEventMediaPauseShortcut` -->
 
@@ -369,7 +369,7 @@ OBS Studio WebSocket 连接密码。
 
 **默认**：无
 
-##### Stop Media Shortcut
+##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
 
 <!-- **Setting**: `customEventMediaStopShortcut` -->
 
@@ -377,7 +377,7 @@ OBS Studio WebSocket 连接密码。
 
 **默认**：无
 
-##### Last Song Shortcut
+##### Last Song Shortcut {#custom-event-last-song-shortcut}
 
 <!-- **Setting**: `customEventLastSongShortcut` -->
 
@@ -385,11 +385,11 @@ OBS Studio WebSocket 连接密码。
 
 **默认**：无
 
-## 高级设置
+## 高级设置 {#meeting-recordings}
 
-### 键盘快捷键
+### 键盘快捷键 {#enable-external-recording-app-integration}
 
-#### 启用键盘快捷键
+#### 启用键盘快捷键 {#recording-shortcuts-and-folder}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
@@ -397,7 +397,7 @@ OBS Studio WebSocket 连接密码。
 
 **Default**: `false`
 
-#### Media Control Shortcuts
+#### Media Control Shortcuts {#meeting-timer}
 
 配置媒体播放快捷键：
 
@@ -408,9 +408,9 @@ OBS Studio WebSocket 连接密码。
 - **停止播放**：停止播放媒体
 - **背景音乐开关**：切换背景音乐状态
 
-### 媒体显示
+### 媒体显示 {#enable-meeting-timer}
 
-#### 启用媒体窗口淡入淡出过渡
+#### 启用媒体窗口淡入淡出过渡 {#timer-window-behavior}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
@@ -418,7 +418,7 @@ OBS Studio WebSocket 连接密码。
 
 **默认**：`true`
 
-#### Hide Media Logo
+#### Hide Media Logo {#timer-display-formats}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
@@ -426,7 +426,7 @@ OBS Studio WebSocket 连接密码。
 
 **Default**: `false`
 
-#### Maximum Resolution
+#### Maximum Resolution {#meeting-countdown-and-schedule-status}
 
 <!-- **Setting**: `maxRes` -->
 
@@ -436,7 +436,7 @@ OBS Studio WebSocket 连接密码。
 
 **默认**：720p
 
-#### Include Printed Media
+#### Include Printed Media {#timer-appearance-and-overtime}
 
 <!-- **Setting**: `includePrinted` -->
 
@@ -444,7 +444,7 @@ OBS Studio WebSocket 连接密码。
 
 **默认**：`true`
 
-#### Exclude Footnotes
+#### Exclude Footnotes {#advanced-settings}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
@@ -452,7 +452,7 @@ OBS Studio WebSocket 连接密码。
 
 **Default**: `false`
 
-#### Exclude media from the Teaching brochure
+#### Exclude media from the Teaching brochure {#settings-guide-keyboard-shortcuts}
 
 <!-- **Setting**: `excludeTh` -->
 
@@ -460,9 +460,9 @@ OBS Studio WebSocket 连接密码。
 
 **默认**：`true`
 
-### 字幕语言
+### 字幕语言 {#enable-keyboard-shortcuts}
 
-#### 启用字幕
+#### 启用字幕 {#media-control-shortcuts}
 
 <!-- **Setting**: `enableSubtitles` -->
 
@@ -470,7 +470,7 @@ OBS Studio WebSocket 连接密码。
 
 **Default**: `false`
 
-#### 字幕
+#### 字幕 {#media-display}
 
 <!-- **Setting**: `langSubtitles` -->
 
@@ -480,9 +480,9 @@ Language for s字幕语言（可以与媒体语言不同）。
 
 **默认**：无
 
-### 媒体导出文件夹
+### 媒体导出文件夹 {#enable-media-window-fade-transitions}
 
-#### 启用媒体自动导出
+#### 启用媒体自动导出 {#enable-playback-speed-control}
 
 <!-- **Setting**: `enableMediaAutoExport` -->
 
@@ -490,7 +490,7 @@ Language for s字幕语言（可以与媒体语言不同）。
 
 **Default**: `false`
 
-#### 媒体导出
+#### 媒体导出 {#hide-media-logo}
 
 <!-- **Setting**: `mediaAutoExportFolder` -->
 
@@ -506,7 +506,7 @@ Language for s字幕语言（可以与媒体语言不同）。
 
 **Default**: `false`
 
-### 危险区域
+### 危险区域 {#profile-settings-transfer}
 
 :::warning 小贴士
 
@@ -514,7 +514,7 @@ Language for s字幕语言（可以与媒体语言不同）。
 
 :::
 
-#### Base URL
+#### Base URL {#danger-zone}
 
 <!-- **Setting**: `baseUrl` -->
 
@@ -522,7 +522,7 @@ Language for s字幕语言（可以与媒体语言不同）。
 
 **默认**：`jw.org`
 
-#### Disable Media Fetching
+#### Disable Media Fetching {#base-url}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
@@ -530,7 +530,7 @@ Language for s字幕语言（可以与媒体语言不同）。
 
 **Default**: `false`
 
-## 最佳配置提示
+## 最佳配置提示 {#disable-hardware-acceleration}
 
 ### 新手提示 {#new-users}
 
@@ -546,7 +546,7 @@ Language for s字幕语言（可以与媒体语言不同）。
 3. 配置键盘快捷键以提高操作效率
 4. 配置 Zoom 集成以实现自动屏幕共享
 
-### 性能优化
+### 性能优化 {#performance-optimization}
 
 1. 启用额外缓存以获得更好的性能
 2. 根据您的需求选择合适的最高分辨率

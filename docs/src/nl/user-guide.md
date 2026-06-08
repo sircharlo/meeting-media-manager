@@ -86,7 +86,7 @@ De mediaspeler biedt uitgebreide bedieningselementen:
 - **Live-voorbeeld** - Wanneer ingeschakeld, toon een voorbeeld van het publiek medialevenster in de hoofdapp
 - **Afspelsnelheid** - Indien ingeschakeld in instellingen, pas audio en video snelheid aan vanuit het contextmenu van het media-item
 
-### Probeer een reservetaal
+### Probeer een reservetaal {#advanced-presentation}
 
 #### Aangepaste timing {#custom-timing}
 
@@ -332,7 +332,7 @@ Deel de officiële website op externe schermen:
 - **Sluiten** - Sluit de website-presentatiemodus af
 - **Auto Retourn** - Optioneel automatisch terugkeren naar de medialijst na het stoppen van website spiegeling
 
-## Afspraak Opnames {#meeting-opname}
+## Afspraak Opnames {#meeting-recordings}
 
 M3 kan helpen om het controleren van het opnemen van vergaderingen, maar bevat geen ingebouwde recorder.
 

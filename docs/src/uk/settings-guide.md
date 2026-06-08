@@ -157,7 +157,7 @@ These settings allow you to configure temporary changes to your meeting schedule
 - **New Weekend Day**: New day for weekend meeting
 - **New Weekend Time**: New time for weekend meeting
 
-### Автоматичні оновлення Зустрічей {#автоматичні-оновлення}
+### Автоматичні оновлення Зустрічей {#automatic-meeting-schedule-updates}
 
 <!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
 
@@ -408,7 +408,7 @@ Shortcut that is triggered when the last song is played during a meeting.
 
 **Default**: None
 
-### Записи зустрічей {#зустрічі}
+### Записи зустрічей {#meeting-recordings}
 
 #### Увімкнути інтеграцію з зовнішніми записами {#enable-external-recording-app-integration}
 
@@ -454,7 +454,7 @@ Shortcut that is triggered when the last song is played during a meeting.
 
 Показати зворотний відлік до запланованих зустрічей і навмисно позначати чи нараду випереджав за розкладом. Зворотний відлік зустрічі з'являється лише на дисплеї таймера, а не на головному медіадисплеї.
 
-#### Вигляд таймера і протягом наступного часу {#таймер-зовнішній і оверчас}
+#### Вигляд таймера і протягом наступного часу {#таймер-зовнішній і оверчас} {#timer-appearance-and-overtime}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
@@ -535,7 +535,7 @@ Exclude footnote images from media downloads when possible.
 
 **Default**: `false`
 
-#### Виключати додаткові навчальні відео для спостереження спостереження {#exclude-addal-watchtower-videos}
+#### Виключати додаткові навчальні відео для спостереження спостереження {#exclude-additional-watchtower-study-videos}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 

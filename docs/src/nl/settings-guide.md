@@ -408,9 +408,9 @@ Sneltoets die wordt geactiveerd wanneer het laatste lied van de vergadering word
 
 **Standaard**: Geen
 
-### Afspraak Opnames {#meeting-opname}
+### Afspraak Opnames {#meeting-recordings}
 
-#### Inschakelen Externe Opname App Integratie {#enable-external-opname-app-integration}
+#### Inschakelen Externe Opname App Integratie {#enable-external-recording-app-integration}
 
 <!-- **Setting**: `recordingEnable` -->
 
@@ -420,7 +420,7 @@ Deze optie is verborgen als OBS opnameopties ingeschakeld zijn. Als je OBS Studi
 
 **Standaard**: `false`
 
-#### Opname Snelkoppelingen en map {#opname-shortcuts-and-folder}
+#### Opname Snelkoppelingen en map {#recording-shortcuts-and-folder}
 
 <!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
 
@@ -454,7 +454,7 @@ Kies analoge of digitale weergaveformaten voor het tijdstip van de dag en aftelt
 
 Laat een aftellen zien voor geplande vergaderingen en optioneel laat zien of de vergadering voor of achter op schema ligt. Het aftellen van de vergadering verschijnt alleen op het timer-display, niet op het media-scherm.
 
-#### Timer Uiterlijk en Overtijd {#timer-verschijning-en-overtijd}
+#### Timer Uiterlijk en Overtijd {#timer-appearance-and-overtime}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
@@ -535,7 +535,7 @@ Indien mogelijk afbeeldingen van voetnoten uitsluiten van mediadownloads.
 
 **Standaard**: `false`
 
-#### Extra Uitkijktoren Studie Video's {#exclusief extra-uitkijktoren-studievideo's}
+#### Extra Uitkijktoren Studie Video's {#exclusief extra-uitkijktoren-studievideo's} {#exclude-additional-watchtower-study-videos}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 
@@ -617,7 +617,7 @@ Basisdomein dat wordt gebruikt om publicaties en media te downloaden.
 
 **Standaard**: `jw.org`
 
-#### Hardware Acceleratie {#disable-hardware-acceleration} uitschakelen
+#### Hardware Acceleratie {#disable-hardware-acceleration} uitschakelen {#disable-hardware-acceleration}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 

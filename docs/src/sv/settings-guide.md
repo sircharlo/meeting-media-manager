@@ -96,7 +96,7 @@ Veckodagen då veckomötet äger rum.
 
 **Standard**: Inget (måste ställas in under installationen)
 
-### Klockslag för veckomötet
+### Klockslag för veckomötet {#midweek-meeting-time}
 
 <!-- **Setting**: `mwStartTime` -->
 
@@ -116,7 +116,7 @@ Veckodagen då helgmötet äger rum.
 
 **Standard**: Inget (måste ställas in under installationen)
 
-### Klockslag för helgmötet
+### Klockslag för helgmötet {#weekend-meeting-time}
 
 <!-- **Setting**: `weStartTime` -->
 

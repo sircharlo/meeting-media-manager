@@ -53,7 +53,7 @@ M³ organisiert Medien automatisch nach Zusammenkunftstyp und Abschnitt:
 - **Manuelle Sortierung** - Ziehe Medienelemente in die Ordnung, die du benötigst, oder setze die Bestellung bei Bedarf zurück
 - **Wiedergabe wiederholen** - Schleife ein einzelnes Medienelement oder wiederhole jedes Element in einem Abschnitt bis die Wiedergabe manuell gestoppt wird
 
-### Versteckte und vermisste Medien {#hidden-and-mising-media}
+### Versteckte und vermisste Medien {#hidden-and-missing-media}
 
 Medien können aus der Besprechungsliste ausgeblendet werden, ohne die automatisch heruntergeladenen Dateien zu löschen. Wenn Medien versehentlich ausgeblendet werden, verwenden Sie **Zeige versteckte Media** für den ausgewählten Tag.
 
@@ -128,7 +128,7 @@ Konfigurieren Sie benutzerdefinierte Tastenkürzel für schnellen Zugriff. Beach
 
 **Hinweis (\*):** Globales Kürzel - verfügbar, auch wenn die App nicht fokussiert ist
 
-## Werkzeuge {#display-tools} anzeigen
+## Werkzeuge {#display-tools} anzeigen {#display-tools}
 
 ### Medienanzeige {#media-display-window}
 
@@ -288,7 +288,7 @@ Importieren Sie Audioaufnahmen von Bibelversen:
 4. Laden Sie die Audiodateien herunter
 5. Verwenden Sie sie
 
-### Profileinstellungen importieren und exportieren {#Profil-Einstellungen-Import-Export}
+### Profileinstellungen importieren und exportieren {#profile-settings-import-export}
 
 Die Einstellungen jedes Profils können in den Einstellungen in eine JSON-Datei exportiert werden. Das Importieren einer Profil-Einstellungsdatei ersetzt die aktuellen Einstellungen des Profils. Dies ist nützlich, wenn ein Setup auf einen anderen Computer verschoben wird oder eine bekannte Konfiguration wiederhergestellt wird.
 
@@ -332,7 +332,7 @@ Teilen Sie die offizielle Website auf externen Displays:
 - **Schließen** - Verlassen Sie den Website-Präsentationsmodus
 - **Automatisch zurückgeben** - Nach dem Stoppen der Spiegelung der Webseite automatisch zur Medienliste zurückkehren
 
-## Besprechungsaufnahmen {#Besprechungsaufnahmen}
+## Besprechungsaufnahmen {#meeting-recordings}
 
 M3 kann dabei helfen, Besprechungsaufnahmen zu steuern, enthält aber keinen eingebauten Recorder.
 

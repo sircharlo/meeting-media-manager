@@ -165,7 +165,7 @@ Wenn aktiviert, prüft M3 regelmäßig die offizielle Website der Zeugen Jehovas
 
 Dies funktioniert nur für Profile, die mit der Gemeindesuche hinzugefügt wurden und deren Kongregation Name nicht manuell geändert wurde. Wenn die Synchronisierung deaktiviert wurde, weil der Name der Kongregation geändert wurde, verwenden Sie **Zeitplan synchronisieren** um das Profil erneut zu verknüpfen.
 
-#### Meeting-Zeitplan aktualisieren {#Refresh-Meeting-Zeitplan}
+#### Meeting-Zeitplan aktualisieren {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
@@ -408,7 +408,7 @@ Kürzel, das ausgelöst wird, wenn das letzte Lied während einer Zusammenkunft 
 
 **Standard**: Keine
 
-### Besprechungsaufnahmen {#Besprechungsaufnahmen}
+### Besprechungsaufnahmen {#meeting-recordings}
 
 #### Aktiviere externe Aufnahme-App Integration {#enable-external-recording-app-integration}
 
@@ -420,15 +420,15 @@ Diese Option wird ausgeblendet, wenn OBS Aufnahme-Steuerelemente aktiviert sind.
 
 **Standard**: `false`
 
-#### Aufnahme von Verknüpfungen und Ordner {#Aufnahme-Verknüpfungen und Ordner}
+#### Aufnahme von Verknüpfungen und Ordner {#Aufnahme-Verknüpfungen und Ordner} {#recording-shortcuts-and-folder}
 
 <!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
 
 Konfigurieren Sie das Tastaturkürzel, das die Aufnahme beginnt, die optionale Verknüpfung, die die Aufnahme stoppt, und den Ordner, in dem die externe App Aufnahmen speichert. Wenn kein Stopp-Verknüpfung angegeben wird, verwendet M3 den Startabschnitt. Wenn ein Ordner konfiguriert ist, zeigt M3 einen Knopf, um ihn zu öffnen.
 
-### Meeting-Timer {#Meeting-Timer}
+### Meeting-Timer {#meeting-timer}
 
-#### Meeting Timer {#Enable-Meeting Timer} aktivieren
+#### Meeting Timer {#Enable-Meeting Timer} aktivieren {#enable-meeting-timer}
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
@@ -436,25 +436,25 @@ Aktivieren Sie ein separates Timer-Fenster für das Timing von Meetingteilen. Di
 
 **Standard**: `false`
 
-#### Timer-Fenster Verhalten {#Timer-Window-Verhalten}
+#### Timer-Fenster Verhalten {#timer-window-behavior}
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
 Legen Sie fest, ob sich das Timer-Fenster automatisch öffnet, ob die Teilnehmer-Timer standardmäßig hochgezählt oder nicht angezeigt werden ob die Uhr 12 Stunden oder 24 Stunden dauert, und ob der aktuelle Timerwert auf dem Actionsinsel-Timer angezeigt wird.
 
-#### Timer-Anzeigeformate {#timer-display-format}
+#### Timer-Anzeigeformate {#timer-display-formats}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
 Wählen Sie analoge oder digitale Anzeigeformate für Tageszeit und Countdown-Timer. Der Countdown-Warnindikator kann den analogen Countdownring in der letzten Minute auf eine Warnfarbe umstellen.
 
-#### Meeting-Countdown und Zeitplan Status {#Meeting-Countdown-and-schedule-status}
+#### Meeting-Countdown und Zeitplan Status {#meeting-countdown-and-schedule-status}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
 Zeige einen Countdown vor geplanten Meetings und wahlweise anzeigen, ob das Meeting vor oder hinter dem Zeitplan liegt. Der Meeting-Countdown erscheint nur auf der Timer-Anzeige und nicht auf der Hauptmedien-Anzeige.
 
-#### Timer Aussehen und Überstunden {#Timer-Aussehen und Überstunden}
+#### Timer Aussehen und Überstunden {#Timer-Aussehen und Überstunden} {#timer-appearance-and-overtime}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
@@ -493,7 +493,7 @@ Aktivieren Sie Ein-/Ausblendübergänge beim Anzeigen oder Ausblenden des Medien
 
 **Standard**: `true`
 
-#### Playback Speed Control {#enable-playback-speed control} aktivieren
+#### Playback Speed Control {#enable-playback-speed control} aktivieren {#enable-playback-speed-control}
 
 <!-- **Setting**: `enablePlaybackSpeedControl` -->
 
@@ -535,7 +535,7 @@ Schließen Sie Fußnotenbilder nach Möglichkeit aus Medien-Downloads aus.
 
 **Standard**: `false`
 
-#### Exklusive Videos für zusätzliche Wachturmstudien {#exclude-additional-watchtower-studien-videos}
+#### Exklusive Videos für zusätzliche Wachturmstudien {#exclude-additional-watchtower-study-videos}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 
@@ -597,7 +597,7 @@ Konvertieren Sie exportierte Mediendateien in das MP4-Format für eine bessere K
 
 **Standard**: `false`
 
-### Profileinstellungen Übertragung {#Profil-Einstellungen-Transfer}
+### Profileinstellungen Übertragung {#profile-settings-transfer}
 
 Exportieren Sie die Einstellungen des aktuellen Profils in eine JSON-Datei oder importieren Sie eine zuvor exportierte Profil-Einstellungsdatei. Das Importieren ersetzt die Einstellungen des aktuellen Profils.
 
@@ -625,7 +625,7 @@ Deaktivieren Sie die Hardwarebeschleunigung nach dem Neustart von M3. Dies kann 
 
 **Standard**: `false`
 
-#### Hardware-Beschleunigungs-Erinnerung unterdrücken {#unterdrücken-Hardware-Beschleunigungs-Erinnerung}
+#### Hardware-Beschleunigungs-Erinnerung unterdrücken {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 

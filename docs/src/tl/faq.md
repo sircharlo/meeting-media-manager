@@ -1,4 +1,4 @@
-# Karaniwang Mga Tanong{#frequently-asked-questions}
+# Karaniwang Mga Tanong {#frequently-asked-questions}
 
 ## General Questions {#general-questions}
 

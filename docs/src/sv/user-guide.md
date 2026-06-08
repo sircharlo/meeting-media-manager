@@ -76,7 +76,7 @@ Mediaspelaren erbjuder omfattande inställningsmöjligheter:
 
 - Zooma/Panorera – Zooma med mushjulet, dra för att panorera (gäller bilder)
 
-### Avancerade visningsfunktioner{#advanced-presentation}
+### Avancerade visningsfunktioner {#advanced-presentation}
 
 #### Anpassad tidsinställning {#custom-timing}
 

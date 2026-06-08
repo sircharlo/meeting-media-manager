@@ -126,7 +126,7 @@ Die Hintergrundmusikfunktionen umfassen:
 - Unabhängige Lautstärkeregelung
 - Konfigurierbare Stopp-Pufferzeit
 
-### :stopwatch: Enthält M3 einen Meetingtimer? {#faq-Meeting-Timer}
+### :stopwatch: Enthält M3 einen Meetingtimer? {#faq-meeting-timer}
 
 Yes. Wenn aktiviert, kann M3 ein separates Timer-Fenster für Teilnehmer-Timer anzeigen. Es kann nach oben oder unten zählen, die aktuelle Zeit anzeigen, einen Countdown vor dem Meeting anzeigen und wahlweise Überstunden angeben, oder ob das Treffen vor oder hinter dem Zeitplan liegt.
 
@@ -169,7 +169,7 @@ Diese Funktion verzögert das Teilen von Bildern mit OBS, bis Sie sie manuell au
 - Mehr Kontrolle über das Timing
 - Vermeidung vorzeitiger Szenenwechsel
 
-### :record_button: Kann M3 Meetings aufnehmen? {#faq-Aufnahmen}
+### :record_button: Kann M3 Meetings aufnehmen? {#faq-recordings}
 
 M3 enthält keinen eingebauten Rekorder aber es kann dabei helfen, die Aufnahme auf zwei Arten zu steuern:
 

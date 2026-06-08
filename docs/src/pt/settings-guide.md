@@ -146,7 +146,7 @@ A data da próxima Celebração (recurso beta).
 
 **Padrão**: obtida automaticamente periodicamente
 
-### Mudanças na Programação das Reuniões
+### Mudanças na Programação das Reuniões {#meeting-schedule-changes}
 
 Estas configurações permitem que você configure mudanças temporárias na sua programação de reuniões:
 
@@ -157,7 +157,7 @@ Estas configurações permitem que você configure mudanças temporárias na sua
 - **Nova Dia do Fim de Semana**: Novo dia para a reunião do fim de semana
 - \*\*Novo Horário do Fim de Semana \*\*: novo horário da reunião do fim de semana
 
-### Agendar Atualizações Automáticas de reuniões {#atualizações de agendamento de reuniões automáticas}
+### Agendar Atualizações Automáticas de reuniões {#atualizações de agendamento de reuniões automáticas} {#automatic-meeting-schedule-updates}
 
 <!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
 
@@ -408,7 +408,7 @@ Atalho que é acionado quando o último cântico é reproduzido durante uma reun
 
 **Padrão**: Nenhum
 
-### Gravações das Reuniões {#gravações de reuniões}
+### Gravações das Reuniões {#gravações de reuniões} {#meeting-recordings}
 
 #### Ativar Integração de App de Gravação Externa {#enable-external-recording-app-integration}
 
@@ -420,7 +420,7 @@ Esta opção fica oculta quando os controles de gravação do OBS estão habilit
 
 **Padrão**: `false`
 
-#### Gravação de Atalhos e Pasta {#graving-shortcuts-and-folder}
+#### Gravação de Atalhos e Pasta {#recording-shortcuts-and-folder}
 
 <!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
 
@@ -535,7 +535,7 @@ Excluir imagens de rodapé dos downloads de mídia quando possível.
 
 **Padrão**: `false`
 
-#### Excluir vídeos adicionais da torre de vigia {#exclude-adicional-watchtorre-estudo-vídeos}
+#### Excluir vídeos adicionais da torre de vigia {#exclude-additional-watchtower-study-videos}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 
@@ -617,7 +617,7 @@ Domínio base usado para baixar publicações e mídias.
 
 **Padrão**: `jw.org`
 
-#### Desativar a aceleração de hardware {#desativar-aceleração-hardware}
+#### Desativar a aceleração de hardware {#disable-hardware-acceleration}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
