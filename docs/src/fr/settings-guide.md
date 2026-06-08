@@ -165,7 +165,7 @@ Lorsque cette option est activée, M3 vérifie périodiquement le site Web offic
 
 Cela ne fonctionne que pour les profils qui ont été ajoutés avec la recherche de congrégation et dont le nom de la congrégation n'a pas été modifié manuellement. Si la synchronisation a été désactivée parce que le nom de la congrégation a changé, utilisez **Activer la synchronisation du programme** pour lier à nouveau le profil.
 
-#### Rafraîchir l'horaire de la réunion {#rafraichissement-horaire}
+#### Rafraîchir l'horaire de la réunion {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
@@ -408,13 +408,13 @@ Raccourci qui est déclenché lorsque la lecture du dernier cantique se termine 
 
 **Par défaut** : Aucune
 
-### Enregistrements de réunion {#meeting-recordings}
+### Enregistrement des réunions {#meeting-recordings}
 
-#### Activer l'intégration de l'application d'enregistrement externe {#enable-external-recording-app-integration}
+#### Activer l'intégration d'application d'enregistrement externe {#enable-external-recording-app-integration}
 
 <!-- **Setting**: `recordingEnable` -->
 
-Laissez M3 contrôler une application d'enregistrement séparée avec des raccourcis clavier. Ceci n'enregistre pas à l'intérieur de M3; il envoie les raccourcis configurés lorsque vous appuyez sur **Démarrer l'enregistrement** ou **Arrêter l'enregistrement** dans la fenêtre pop-up des enregistrements de la réunion.
+Permettre à M³ de contrôler une application d'enregistrement séparée à l'aide de raccourcis clavier. Ceci n'enregistre pas à l'intérieur de M3; il envoie les raccourcis configurés lorsque vous appuyez sur **Démarrer l'enregistrement** ou **Arrêter l'enregistrement** dans la fenêtre pop-up des enregistrements de la réunion.
 
 Cette option est masquée lorsque les contrôles d'enregistrement d'OBS sont activés. Si vous utilisez OBS Studio, utilisez plutôt les contrôles d'enregistrement d'OBS dans l'intégration d'OBS.
 
@@ -424,15 +424,15 @@ Cette option est masquée lorsque les contrôles d'enregistrement d'OBS sont act
 
 <!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
 
-Configurer le raccourci clavier qui démarre l'enregistrement, le raccourci optionnel qui arrête l'enregistrement, et le dossier où l'application externe enregistre les enregistrements. Si aucun raccourci d'arrêt n'est fourni, M3 réutilise le raccourci de démarrage. Lorsqu'un dossier est configuré, M3 affiche un bouton pour l'ouvrir.
+Configurer le raccourci clavier qui démarre l'enregistrement, le raccourci optionnel qui arrête l'enregistrement, et le dossier où l'application externe enregistre les enregistrements. Si aucun raccourci d'arrêt n'est fourni, M3 réutilise le raccourci de démarrage. Lorsqu'un dossier est configuré, M³ affichera un bouton pour l'ouvrir.
 
 ### Horaire de la réunion {#temps-de-réunion}
 
-#### Activer le minuteur de la réunion {#enable-meeting-timer}
+#### Activer le minuteur de réunion {#enable-meeting-timer}
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
-Activer une fenêtre de minuterie séparée pour les parties de la réunion chronométrée. Il s'agit d'une fonctionnalité bêta qui ne devrait être activée que si elle est approuvée localement.
+Activer une fenêtre de minuterie séparée pour chronométrer les parties d'une réunion. Il s'agit d'une fonctionnalité bêta qui ne devrait être activée que si elle est approuvée localement.
 
 **Par défaut** : `faux`
 
@@ -440,7 +440,7 @@ Activer une fenêtre de minuterie séparée pour les parties de la réunion chro
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
-Configurer si la fenêtre de minuterie s'ouvre automatiquement, si le nombre de minuteurs du participant est élevé ou bas par défaut, si l'horloge utilise 12 heures ou 24 heures, et si la valeur actuelle du minuteur est affichée sur le bouton de minuterie de l'île d'action.
+Configurer si la fenêtre de minuterie s'ouvre automatiquement, si le minuteur compte en montant ou bien à rebours, si l'horloge utilise 12 heures ou 24 heures, et si la valeur actuelle du minuteur devrait être affichée sur le bouton de minuterie dans l'île d'action.
 
 #### Formats d'affichage du minuteur {#timer-display-formats}
 
