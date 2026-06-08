@@ -301,6 +301,8 @@
   "jwpub-file": "JWPUB fail",
   "jwpub-file-explain": "Väljaanded laaditud alla Jehoova tunnistajate veebisaidilt",
   "jwpub-file-found": "JWPUB failidega tuleb teistmoodi käituda.",
+  "jwpub-file-unavailable-caption": "If this file is on cloud storage, a network drive, or removable media, make it available offline and try again.",
+  "jwpub-file-unavailable-message": "The selected JWPUB file could not be read.",
   "jwpubNoMultimedia": "JWPUB fail ei sisalda ühtegi meediafaili",
   "jwStreamSite": "JW Stream",
   "keyboardShortcuts": "Kiirklahvid",

@@ -301,6 +301,8 @@
   "jwpub-file": "Archivo JWPUB",
   "jwpub-file-explain": "Publicación descargada del sitio oficial de los Testigos de Jehová",
   "jwpub-file-found": "Los archivos JWPUB deben procesarse por separado.",
+  "jwpub-file-unavailable-caption": "Si este archivo está en la nube, una unidad de red o un medio extraíble, háganlo disponible sin conexión y vuelva a intentarlo.",
+  "jwpub-file-unavailable-message": "No se ha podido leer el archivo JWPUB seleccionado.",
   "jwpubNoMultimedia": "El archivo JWPUB no contiene ningún contenido multimedia",
   "jwStreamSite": "JW Stream",
   "keyboardShortcuts": "Atajos de teclado",
