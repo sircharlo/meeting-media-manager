@@ -9,19 +9,19 @@ hero:
   actions:
     - theme: brand
       text: Télécharger
-      link: /fr/download
+      link: /download
     - theme: brand
       text: À propos
-      link: /fr/about
+      link: /about
     - theme: brand
       text: Guide de l'utilisateur
-      link: /fr/user-guide
+      link: /user-guide
     - theme: brand
       text: Guide des paramètres
-      link: /fr/settings-guide
+      link: /settings-guide
     - theme: brand
       text: Foire aux questions
-      link: /fr/faq
+      link: /faq
 features:
   - icon: 🚀
     title: Gestion automatique des médias
@@ -46,8 +46,8 @@ features:
     details: Synchronise automatiquement les médias depuis des dossiers surveillés (comme Dropbox ou OneDrive) et exporte les médias vers des dossiers.
   - icon: 🎯
     title: Fonctionnalités avancées
-    details: Importez des médias personnalisés, des fichiers JWPUB, des listes de lecture, des enregistrements audio bibliques, des médias de Bible d'étude, des médias de discours publics et gérez de multiples congrégations.
+    details: Importez des médias personnalisés, des fichiers JWPUB, des listes de lecture, des enregistrements audio de la Bible, des médias depuis la Bible d'étude, des médias de discours publics, et faites la gestion de multiples profils d'assemblées locales.
   - icon: ⏱️
     title: Minuterie de la réunion et contrôle d'enregistrement
-    details: Utiliser un affichage de minuterie optionnel pour le chronométrage et le contrôle des applications OBS ou d’enregistrement externe à partir de M3.
+    details: Utilisez un affichage de minuterie optionnel pour chronométrer les participants, et contrôlez OBS Studio ou d'autres applications d'enregistrement externes depuis M³.
 ---
