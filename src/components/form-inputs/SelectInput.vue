@@ -98,9 +98,9 @@ const filteredDays = ref(
   })),
 );
 const filteredDarkModes = ref([
-  { description: t('automatic'), label: t('automatic'), value: 'auto' },
-  { description: t('dark'), label: t('dark'), value: true },
-  { description: t('light'), label: t('light'), value: false },
+  { label: t('automatic'), value: 'auto' },
+  { label: t('dark'), value: true },
+  { label: t('light'), value: false },
 ]);
 const filteredObsScenes = ref<JsonObject[]>([...scenes.value]);
 const filteredTimerModes = ref([
@@ -139,9 +139,9 @@ const filterFn = (
         value: String(i),
       }));
       filteredDarkModes.value = [
-        { description: t('automatic'), label: t('automatic'), value: 'auto' },
-        { description: t('dark'), label: t('dark'), value: true },
-        { description: t('light'), label: t('light'), value: false },
+        { label: t('automatic'), value: 'auto' },
+        { label: t('dark'), value: true },
+        { label: t('light'), value: false },
       ];
       filteredObsScenes.value = scenes.value ?? [];
       filteredTimerModes.value = [
@@ -187,9 +187,9 @@ const filterFn = (
         })).filter((d) => d.label.toLowerCase().includes(needle));
 
         filteredDarkModes.value = [
-          { description: t('automatic'), label: t('automatic'), value: 'auto' },
-          { description: t('dark'), label: t('dark'), value: true },
-          { description: t('light'), label: t('light'), value: false },
+          { label: t('automatic'), value: 'auto' },
+          { label: t('dark'), value: true },
+          { label: t('light'), value: false },
         ].filter((mode) => mode.label.toLowerCase().includes(needle));
 
         filteredObsScenes.value =
