@@ -584,6 +584,7 @@
   "set-custom-background": "Vali kohandatud taustapilt",
   "set-custom-durations": "Salvesta kohandatud alguse ja lõpu ajad",
   "settings": "Seaded",
+  "settings-filter-empty": "No settings match the search query.",
   "setup-wizard": "Esialgne seadistamine",
   "setupWizard.backgroundMusic": "Taustamuusika",
   "setupWizard.intro": "M³ on rakendus, mis muudab meedia esitamine koguduse koosolekutel lihtsaks ja stressivabaks. Seadistame mõned asjad ja siis hakkame pihta.",
