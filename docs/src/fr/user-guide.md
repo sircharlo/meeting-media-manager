@@ -332,7 +332,7 @@ Partagez le site officiel sur des écrans externes :
 - **Fermer** - Quitter le mode de présentation du site web
 - **Retour automatique** - Vous pouvez éventuellement revenir à la liste des médias automatiquement après l'arrêt du miroir du site web
 
-## Enregistrements de réunion {#meeting-recordings}
+## Enregistrement des réunions {#meeting-recordings}
 
 M3 peut aider à contrôler l'enregistrement de réunion, mais il ne comprend pas un enregistreur intégré.
 

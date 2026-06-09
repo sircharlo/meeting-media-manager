@@ -157,19 +157,19 @@ Need seaded võimaldavad seadistada ajutisi muudatusi koosolekute ajakavas:
 - **Uus nädalavahetuse koosoleku päev**: uus päev nädalavahetuse koosolekuks
 - **Uus nädalavahetuse koosoleku aeg**: uus aeg nädalavahetuse koosolekuks
 
-### Automatic Meeting Schedule Updates {#automatic-meeting-schedule-updates}
+### Koosolekute ajakava automaatsed uuendused {#automatic-meeting-schedule-updates}
 
 <!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
 
-When enabled, M³ periodically checks the official website of Jehovah's Witnesses for meeting day and time changes and updates the current profile automatically.
+Kui see funktsioon on sisse lülitatud, kontrollib M³ regulaarselt Jehoova tunnistajate ametlikku veebisaiti koosolekute kuupäevade ja kellaaegade muudatuste suhtes ning uuendab profiili automaatselt.
 
-This only works for profiles that were added with congregation lookup and whose congregation name has not been manually changed. If synchronization was disabled because the congregation name changed, use **Enable schedule sync** to link the profile again.
+See toimib ainult nende profiilide puhul, mis on lisatud koguduse otsingu abil ja mille koguduse nime ei ole käsitsi muudetud. Kui sünkroniseerimine lülitati välja koguduse nime muutumise tõttu, kasuta valikut **Luba ajakava sünkroniseerimine**, et profiil uuesti ühendada.
 
-#### Refresh Meeting Schedule {#refresh-meeting-schedule}
+#### Värskenda koosolekute ajakava {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
-Manually synchronize the current and future meeting schedule with the information from the official website.
+Sünkroniseeri praegune ja tulevane koosolekute ajakava käsitsi ametliku veebisaidi andmetega.
 
 ## Meediafailide allalaadimine ja esitamine {#media-retrieval-and-playback}
 
@@ -189,11 +189,11 @@ Luba meedia esitamise funktsioon. See on vajalik, kui soovid esitada meediafaile
 
 **Vaikimisi**: `väljas`
 
-#### Enable Media Preview {#enable-media-preview}
+#### Luba meedia eelvaade {#enable-media-preview}
 
 <!-- **Setting**: `enableMediaPreview` -->
 
-Show a live preview of the media window while an image or video is being displayed.
+Näita meediaakna reaalajas eelvaadet pildi või video kuvamise ajal.
 
 **Vaikimisi**: `lubatud`
 
@@ -354,7 +354,7 @@ Määra, milliseid OBS-stseene kasutada erinevateks eesmärkideks:
 - **Vaheta stseeni pärast meediat**: naase automaatselt eelmisele stseenile pärast meediat
 - **Eelmise stseeni meeldejätmine**: Eelmise stseeni meeldejätmine ja taastamine
 - **Peida ikoonid**: Peida OBS-iga seotud ikoonid kasutajaliidesest
-- **Recording Controls**: Show controls that start and stop OBS recording from M³
+- **Salvestuse juhtnupud**: Näita juhtnuppe, millega saab M³-st OBS-i salvestust alustada ja lõpetada
 
 :::warning Oluline märkus
 
@@ -408,57 +408,57 @@ Klahvide otsetee, mis käivitub, kui koosoleku ajal mängitakse viimane laul.
 
 **Vaikimisi**: Tühi
 
-### Meeting Recordings {#meeting-recordings}
+### Koosolekute salvestused {#meeting-recordings}
 
-#### Enable External Recording App Integration {#enable-external-recording-app-integration}
+#### Luba välise salvestusrakenduse integreerimine {#enable-external-recording-app-integration}
 
 <!-- **Setting**: `recordingEnable` -->
 
-Let M³ control a separate recording application with keyboard shortcuts. This does not record inside M³; it sends the configured shortcuts when you press **Start Recording** or **Stop Recording** in the meeting recordings popup.
+Luba M³ juhtida klahvikombinatsioonide abil eraldi salvestusrakendust. See ei salvestata M³-s; see saadab seadistatud kiirklahvid, kui vajutad koosoleku salvestuste hüpikaknas nuppu **Salvestamise alustamine** või **Salvestamise lõpetamine**.
 
-This option is hidden when OBS recording controls are enabled. If you use OBS Studio, use the OBS recording controls in the OBS integration instead.
+See valik on peidetud, kui OBS-i salvestusfunktsioonid on sisse lülitatud. Kui kasutad OBS Studiot, kasuta selle asemel OBS-i integratsiooni salvestusfunktsioone.
 
 **Vaikimisi**: `väljas`
 
-#### Recording Shortcuts and Folder {#recording-shortcuts-and-folder}
+#### Salvestamise kiirklahvid ja kaust {#recording-shortcuts-and-folder}
 
 <!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
 
-Configure the keyboard shortcut that starts recording, the optional shortcut that stops recording, and the folder where the external app saves recordings. If no stop shortcut is provided, M³ reuses the start shortcut. When a folder is configured, M³ shows a button to open it.
+Määra salvestamise alustamiseks vajalik klahvikombinatsioon, salvestamise lõpetamiseks vajalik valikuline klahvikombinatsioon ning kaust, kuhu välisrakendus salvestused salvestab. Kui peatamise kiirklahvi pole määratud, kasutab M³ uuesti käivitamise kiirklahvi. Kui kaust on seadistatud, kuvab M³ selle avamiseks nuppu.
 
-### Meeting Timer {#meeting-timer}
+### Koosoleku taimer {#meeting-timer}
 
-#### Enable Meeting Timer {#enable-meeting-timer}
+#### Luba koosoleku taimer {#enable-meeting-timer}
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
-Enable a separate timer window for timing meeting parts. This is a beta feature and should only be enabled if approved locally.
+Luba eraldi taimeri akna kasutamine koosoleku osade ajastamiseks. Taimer on beetafunktsioon ja seda tuleks lubada ainult heakskiidu korral.
 
 **Vaikimisi**: `väljas`
 
-#### Timer Window Behavior {#timer-window-behavior}
+#### Taimeriakna käitumine {#timer-window-behavior}
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
-Configure whether the timer window opens automatically, whether participant timers count up or down by default, whether the clock uses 12-hour or 24-hour time, and whether the current timer value is shown on the action island timer button.
+Määrake, kas ajastuse aken avatakse automaatselt, kas osalejate taimerid loevad vaikimisi üles või alla, kas kell kasutab 12- või 24-tunnist ajavormingut ning kas ajastuse hetkeväärtus kuvatakse tegevusala ajastuse nupul.
 
-#### Timer Display Formats {#timer-display-formats}
+#### Taimeri kuvamisvormingud {#timer-display-formats}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
-Choose analog or digital display formats for the time of day and countdown timers. The countdown warning indicator can shift the analog countdown ring toward a warning color during the final minute.
+Vali kellaaja ja tagasilugemistimeri jaoks analoog- või digitaalne kuvamisviis. Tagasilugemise hoiatusnäidik võib viimasel minutil muuta analoogse tagasilugemise ringi hoiatusvärviks.
 
-#### Meeting Countdown and Schedule Status {#meeting-countdown-and-schedule-status}
+#### Koosoleku taimer ja ajakava staatus {#meeting-countdown-and-schedule-status}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
-Show a countdown before scheduled meetings and optionally display whether the meeting is ahead of or behind schedule. The meeting countdown appears only on the timer display, not on the main media display.
+Näita enne planeeritud koosolekuid tagasiarvestust ja vajaduse korral ka seda, kas koosolek on graafikust ees või maha jäänud. Koosoleku alguseni jäänud aeg kuvatakse ainult taimeriekraanil, mitte peamisel meediaekraanil.
 
-#### Timer Appearance and Overtime {#timer-appearance-and-overtime}
+#### Taimeri välimus ja üle aja minek {#timer-appearance-and-overtime}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
-Customize the timer text size and colors, and configure overtime indicators such as alternate colors, blinking, and showing only the elapsed overtime amount in count-up mode.
+Saate kohandada taimeri teksti suurust ja värve ning seadistada üle aja näitajaid, nagu näiteks vahelduvad värvid, vilkumine ja ainult möödunud üle aja kuvamine loendamisrežiimis.
 
 ## Lisasätted {#advanced-settings}
 
@@ -493,11 +493,11 @@ Luba üleminekuga varjamine või näitamine meediaaknas.
 
 **Vaikimisi**: `lubatud`
 
-#### Enable Playback Speed Control {#enable-playback-speed-control}
+#### Luba taasesituse kiiruse reguleerimine {#enable-playback-speed-control}
 
 <!-- **Setting**: `enablePlaybackSpeedControl` -->
 
-Allow audio and video playback speed to be adjusted from the media item's context menu.
+Võimaldab heli- ja videomaterjali taasesituskiiruse reguleerimist meediaelemendi kontekstimenüüst.
 
 **Vaikimisi**: `väljas`
 
@@ -515,7 +515,7 @@ Peida logo meediaaknas.
 
 Allalaaditud meediafailide maksimaalne resolutsioon.
 
-**Options**: 240p, 360p, 480p, 720p, 1080p
+**Valikud**: 240p, 360p, 480p, 720p, 1080p
 
 **Vaikimisi**: 720p
 
@@ -535,11 +535,11 @@ Võimaluse korral jäta allmärkuste pildid meedia allalaadimistest välja.
 
 **Vaikimisi**: `väljas`
 
-#### Exclude Additional Watchtower Study Videos {#exclude-additional-watchtower-study-videos}
+#### Jäta välja täiendavad Vahitorni õppevideod {#exclude-additional-watchtower-study-videos}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 
-Exclude additional videos that are referenced in Watchtower Study paragraphs.
+Ära lisa videoid, millele viidatakse Vahitorni uurimise lõikudes.
 
 **Vaikimisi**: `väljas`
 
@@ -597,9 +597,9 @@ Salvesta eksporditud meediafailid MP4-vormingusse, et saavutada parem ühilduvus
 
 **Vaikimisi**: `väljas`
 
-### Profile Settings Transfer {#profile-settings-transfer}
+### Profiili seaded – ülekandmine {#profile-settings-transfer}
 
-Export the current profile's settings to a JSON file or import a previously exported profile settings file. Importing replaces the current profile's settings.
+Ekspordi praeguse profiili seaded JSON-failina või impordi varem eksporditud profiili seadefail. Importimine asendab praeguse profiili seaded.
 
 ### Ohutsoon {#danger-zone}
 
@@ -617,19 +617,19 @@ Põhidomeen, mida kasutatakse väljaannete ja meedia allalaadimiseks.
 
 **Vaikimisi**: `jw.org`
 
-#### Disable Hardware Acceleration {#disable-hardware-acceleration}
+#### Lülita riistvarakiirendus välja {#disable-hardware-acceleration}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
-Disable hardware acceleration after restarting M³. This may help with graphical glitches or crashes on some systems, but is not otherwise recommended.
+Lülita riistvarakiirendus pärast M³ taaskäivitamist välja. See võib aidata graafiliste tõrgete või süsteemi kokkujooksmise puhul mõnel süsteemil, kuid muul juhul ei ole seda soovitatav teha.
 
 **Vaikimisi**: `väljas`
 
-#### Suppress Hardware Acceleration Reminder {#suppress-hardware-acceleration-reminder}
+#### Riistvarakiirenduse meeldetuletuse väljalülitamine {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
-Hide the reminder to re-enable hardware acceleration after it has been manually disabled.
+Peida meeldetuletus riistvarakiirenduse taaskäivitamise kohta pärast selle käsitsi väljalülitamist.
 
 **Vaikimisi**: `väljas`
 

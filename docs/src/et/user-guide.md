@@ -331,7 +331,7 @@ Ametliku veebisaidi näitamine välistel ekraanidel:
 - \*\*Sulge \*\* - Välju veebiesitluse režiimist
 - **Auto Return** - Optionally return to the media list automatically after stopping website mirroring
 
-## Meeting Recordings {#meeting-recordings}
+## Koosolekute salvestused {#meeting-recordings}
 
 M³ can help control meeting recording, but it does not include a built-in recorder.
 
