@@ -584,6 +584,7 @@
   "set-custom-background": "Stel aangepaste achtergrond in",
   "set-custom-durations": "Aangepaste start- en eindtijden instellen",
   "settings": "Instellingen",
+  "settings-filter-empty": "Geen instellingen gevonden die overeenkomen met de zoekopdracht.",
   "setup-wizard": "Eerste opzet",
   "setupWizard.backgroundMusic": "Achtergrondmuziek",
   "setupWizard.intro": "Met M³ wordt het afspelen van media op gemeentevergaderingen eenvoudig en zorgeloos. Laten we een paar dingen instellen, en daarna ben je klaar om aan de slag te gaan.",

@@ -584,6 +584,7 @@
   "set-custom-background": "Izberi ozadje po meri",
   "set-custom-durations": "Nastavi začetni in končni čas po meri",
   "settings": "Nastavitve",
+  "settings-filter-empty": "No settings match the search query.",
   "setup-wizard": "Začetna nastavitev",
   "setupWizard.backgroundMusic": "Glasba v ozadju",
   "setupWizard.intro": "Aplikacija M³ omogoča, da je predvajanje multimedijske vsebine na občinskih shodih preprosto in brez stresa. Najprej je treba nastaviti nekaj stvari, potem pa lahko začneš z uporabo.",

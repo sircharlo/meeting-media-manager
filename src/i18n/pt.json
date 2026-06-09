@@ -584,6 +584,7 @@
   "set-custom-background": "Selecionar",
   "set-custom-durations": "Definir horários de início e término personalizados",
   "settings": "Configurações",
+  "settings-filter-empty": "Nenhuma configuração corresponde à consulta de pesquisa.",
   "setup-wizard": "Configuração inicial",
   "setupWizard.backgroundMusic": "Cânticos de fundo",
   "setupWizard.intro": "O M³ torna a reprodução de mídias nas reuniões da congregação fácil e sem complicações. Vamos configurar algumas coisas e então você estará pronto para começar.",
