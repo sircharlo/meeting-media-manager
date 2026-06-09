@@ -584,6 +584,7 @@
   "set-custom-background": "Seleccione un fondo personalizado",
   "set-custom-durations": "Establecer hora de inicio/final personalizada",
   "settings": "Ajustes",
+  "settings-filter-empty": "No hay ajustes que coincidan con la consulta de búsqueda.",
   "setup-wizard": "Configuración inicial",
   "setupWizard.backgroundMusic": "Música de fondo",
   "setupWizard.intro": "M³ es una aplicación diseñada para facilitar la reproducción de contenido multimedia en las reuniones de la congregación de manera sencilla y sin estrés. Configuremos algunas cosas, y luego estaremos listos para comenzar.",
