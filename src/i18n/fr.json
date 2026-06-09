@@ -584,6 +584,7 @@
   "set-custom-background": "Choisir un arrière-plan",
   "set-custom-durations": "Enregistrer les temps de début et de fin",
   "settings": "Réglages",
+  "settings-filter-empty": "Aucun paramètre ne correspond à la requête de recherche.",
   "setup-wizard": "Assistant de configuration",
   "setupWizard.backgroundMusic": "Musique de fond",
   "setupWizard.intro": "M³ facilite la lecture de fichiers multimédias lors des réunions de l'assemblée locale, sans aucun stress. Configurons quelques paramètres, et vous serez prêt à commencer.",
