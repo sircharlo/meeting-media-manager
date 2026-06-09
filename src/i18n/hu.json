@@ -584,6 +584,7 @@
   "set-custom-background": "Egyéni háttér kiválasztása",
   "set-custom-durations": "Egyéni kezdési és befejezési időpontok beállítása",
   "settings": "Beállítások",
+  "settings-filter-empty": "No settings match the search query.",
   "setup-wizard": "Kezdeti konfiguráció",
   "setupWizard.backgroundMusic": "Háttérzene",
   "setupWizard.intro": "Az M³ segítségével a gyülekezeti összejöveteleken könnyedén és stresszmentesen lehet médiát lejátszani. Konfiguráljunk néhány dolgot, és utána már indulhatunk is.",
