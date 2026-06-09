@@ -5367,9 +5367,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/language-core@npm:3.3.3":
-  version: 3.3.3
-  resolution: "@vue/language-core@npm:3.3.3"
+"@vue/language-core@npm:3.3.4":
+  version: 3.3.4
+  resolution: "@vue/language-core@npm:3.3.4"
   dependencies:
     "@volar/language-core": "npm:2.4.28"
     "@vue/compiler-dom": "npm:^3.5.0"
@@ -5378,7 +5378,7 @@ __metadata:
     muggle-string: "npm:^0.4.1"
     path-browserify: "npm:^1.0.1"
     picomatch: "npm:^4.0.4"
-  checksum: 10c0/9d05638757c5babcc07fc526621a737737f790a39b93056f1e4e1f647fd4fe38bae41162e7077905bab71c02d81133a3ab55acac0878ae051c45f1ae4c7d832a
+  checksum: 10c0/b1bd329db0ce95d21a51aea3964bfb5d601ebe0e8c6d70dc67131f750478c668968919aa6bd10a7d7346c89593e10eef6a395f6d4d98d0befa5dbd083d165a88
   languageName: node
   linkType: hard
 
@@ -11595,7 +11595,7 @@ __metadata:
     vue-eslint-parser: "npm:^10.4.1"
     vue-i18n: "npm:^11.4.5"
     vue-router: "npm:^5.1.0"
-    vue-tsc: "npm:>=3.3.5 || 3.3.3"
+    vue-tsc: "npm:>=3.3.4"
     vue-zoomable: "npm:^1.2.8"
     wrappy: "npm:^1.0.2"
     yauzl: "npm:^3.4.0"
@@ -16555,17 +16555,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-tsc@npm:>=3.3.5 || 3.3.3":
-  version: 3.3.3
-  resolution: "vue-tsc@npm:3.3.3"
+"vue-tsc@npm:>=3.3.4":
+  version: 3.3.4
+  resolution: "vue-tsc@npm:3.3.4"
   dependencies:
     "@volar/typescript": "npm:2.4.28"
-    "@vue/language-core": "npm:3.3.3"
+    "@vue/language-core": "npm:3.3.4"
   peerDependencies:
     typescript: ">=5.0.0"
   bin:
     vue-tsc: bin/vue-tsc.js
-  checksum: 10c0/576d606f82557b54aeaac30e4ef7f799f1fcec31dd667c60908dc3df68cbf479f1eb549bf0e479b8dce26e4ace4f47d511f7be6a10b188bf6ca852b306b91581
+  checksum: 10c0/58d0f1b2994d88285740d7edcace7904cabe26ad162b114d56adfaf432c234ccacd4c49dfecd51fb8c928a8e4cbd6ca7719eb2b6fac6be92885e09c02e5ae65b
   languageName: node
   linkType: hard
 
