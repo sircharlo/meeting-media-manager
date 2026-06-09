@@ -81,8 +81,8 @@ Sa saad importida kohandatud meediat mitmel viisil:
 - **Lohistamine ja kleepimine**: Lohistage failid otse M³-e
 - **Kausta jälgimine**: seadista jälgitav kaust automaatseks importimiseks
 - **JWPUB-failid ja esitusloendid**: importige väljaanded ja esitusloendid
-- **Public Talk Media**: Import S-34 or S-34mp JWPUB files for public talk media
-- **Bible and Study Bible Tools**: Add audio Bible recordings, Study Bible media, or sign-language Bible media
+- **Avaliku kõne meedia**: S-34 või S-34mp JWPUB-failide importimine avaliku kõne meedia jaoks
+- **Piibel ja piiblitööriistad**: Lisa piibli helisalvestusi, õppepiibli meediafailid või viipekeele piiblimaterjale
 
 ### :speaker: Kas ma saan importida audiopiibli osi? {#audio-bible}
 
@@ -126,11 +126,11 @@ Taustamuusika funktsioon hõlmab:
 - Eraldi helitugevusregulaator
 - Konfigureeritav peatuspuhvri aeg
 
-### :stopwatch: Does M³ include a meeting timer? {#faq-meeting-timer}
+### :stopwatch: Kas M³-s on koosolekute taimer? {#faq-meeting-timer}
 
-Jah. When enabled, M³ can show a separate timer window for participant timing. It can count up or down, show the current time, show a pre-meeting countdown, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+Jah. Kui see funktsioon on sisse lülitatud, võib M³ kuvada osalejate aja mõõtmiseks eraldi taimeri akna. See suudab aega üles- või allapoole loendada, näidata praegust kellaaega, kuvada koosoleku alguseni jäänud aega ning vajaduse korral näidata, kas koosolek kestab üle aja või on ajakavast ees.
 
-The timer is a beta feature and should only be enabled if approved locally.
+Taimer on beetafunktsioon ja seda tuleks lubada ainult heakskiidu korral.
 
 ### :video_camera: Kuidas seadistada Zoom-iga koostöö? {#zoom-setup}
 
@@ -169,12 +169,12 @@ See funktsioon lükkab piltide jagamise OBS Studio-iga edasi, kuni sa need käsi
 - On vaja suuremat kontrolli ajastuse üle
 - Enneaegsete stseenivahetuste vältimiseks
 
-### :record_button: Can M³ record meetings? {#faq-recordings}
+### :record_button: Kas M³ suudab koosolekuid salvestada? {#faq-recordings}
 
-M³ does not include a built-in recorder, but it can help control recording in two ways:
+M³-l pole sisseehitatud salvestusseadet, kuid see aitab salvestamist juhtida kahel viisil:
 
-- If you use OBS Studio, enable OBS recording controls and start or stop OBS recording from the OBS popup
-- If you use another recording app, configure keyboard shortcuts so M³ can send the start and stop commands from the meeting recordings popup
+- Kui kasutate OBS Studiot, lülitage sisse OBS-i salvestusfunktsioonid ja alustage või lõpetage OBS-i salvestamine OBS-i hüpikaknas
+- Kui kasutate mõnda muud salvestusrakendust, seadistage klahvikombinatsioonid nii, et M³ saaks saata koosolekute salvestuste hüpikaknas käsklusi salvestamise alustamiseks ja lõpetamiseks
 
 ## Lisasätted {#faq-advanced-features}
 
@@ -203,7 +203,7 @@ Jah! M³-s saab kasutada erinevaid profiile:
 - Erinevate keelegruppide jaoks
 - Et kasutada iga kasutaja jaoks vajaminevaid sätteid ja meediat
 
-Profiles can also be exported to a JSON file and imported on another computer or into another profile. Importing replaces the current profile's settings.
+Profiile saab eksportida ka JSON-failina ning importida teise arvutisse või teise profiili. Importimine asendab praeguse profiili seaded.
 
 ## Probleemide lahendamine {#faq-troubleshooting}
 
