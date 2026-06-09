@@ -122,6 +122,7 @@ const logPrefixes = {
   mediaList: '🧾 Media List',
   mediaPlayback: '▶️ Media Playback',
   mediaPlayer: '🎬 Media Player',
+  mediaPreview: '🎬 Media Preview',
   mediaProcessing: '🔄 Media Processing',
   mediaSectionRepeat: '🔁 Media Section Repeat',
   mediaSections: '🗂️ Media Sections',

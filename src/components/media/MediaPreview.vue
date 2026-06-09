@@ -77,9 +77,10 @@
 </template>
 
 <script setup lang="ts">
-import { useDebounceFn, useEventListener, useIntervalFn } from '@vueuse/core';
+import { useDebounceFn, useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { log } from 'src/shared/vanilla';
 import { isImage, isVideo } from 'src/utils/media';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, nextTick, ref, useTemplateRef, watch } from 'vue';
@@ -156,23 +157,51 @@ const reportPreviewError = (error: unknown, name: string) => {
 
 const syncVideoElement = async (element: HTMLVideoElement | null) => {
   try {
-    if (!element || !isVideo(currentUrl.value)) return;
-
-    const currentPosition = mediaPlaying.value.currentPosition || 0;
-    if (Math.abs(element.currentTime - currentPosition) > 0.1) {
-      element.currentTime = currentPosition;
-    }
-
-    element.muted = true;
-
-    if (mediaAction.value === 'play') {
-      await element.play().catch((error: unknown) => {
-        reportPreviewError(error, 'MediaPreview.syncVideoElement.play');
-      });
+    if (!element) {
+      log('No video element for video preview', 'mediaPreview');
       return;
     }
 
-    element.pause();
+    if (!isVideo(currentUrl.value)) {
+      log('Video not available for video preview', 'mediaPreview');
+      return;
+    }
+
+    if (mediaAction.value !== 'play') {
+      log('Pausing video preview', 'mediaPreview');
+      element.pause();
+      return;
+    }
+
+    if (!element.muted) {
+      log('Muting video preview', 'mediaPreview');
+      element.muted = true;
+    }
+
+    const playbackRate = mediaPlaying.value.playbackRate || 1;
+    if (element.playbackRate !== playbackRate) {
+      log('Syncing video preview playback speed', 'mediaPreview');
+      element.playbackRate = playbackRate;
+    }
+
+    if (element.paused) {
+      log('Playing video preview', 'mediaPreview');
+      await element.play().catch((error: unknown) => {
+        reportPreviewError(error, 'MediaPreview.syncVideoElement.play');
+      });
+    }
+
+    const expectedPosition = mediaPlaying.value.currentPosition || 0;
+    const currentDrift = Math.abs(element.currentTime - expectedPosition);
+    const acceptableDrift = 0.2 * playbackRate;
+    const excessiveDrift = currentDrift - acceptableDrift;
+    if (excessiveDrift > 0) {
+      log(
+        `Syncing video preview (exceeded acceptable drift by ${excessiveDrift.toFixed(2)}s)`,
+        'mediaPreview',
+      );
+      element.currentTime = expectedPosition;
+    }
   } catch (error) {
     reportPreviewError(error, 'MediaPreview.syncVideoElement');
   }
@@ -556,21 +585,12 @@ const progressStyle = computed(() => {
   };
 });
 
-const { pause: pauseResync, resume: resumeResync } = useIntervalFn(
-  syncVideos,
-  1000,
-  { immediate: false },
-);
-
 watch(
   () => showPreview.value,
   (visible) => {
     closeModalWhenHidden();
     if (visible) {
-      resumeResync();
       syncVideos();
-    } else {
-      pauseResync();
     }
   },
   { immediate: true },

@@ -34,6 +34,7 @@ export interface MediaPlayingState {
   action: MediaPlayingStateAction;
   currentPosition: number;
   pan: Partial<{ x: number; y: number }>;
+  playbackRate: number;
   seekTo: number;
   subtitlesUrl: string;
   uniqueId: string;
@@ -470,6 +471,7 @@ export const useCurrentStateStore = defineStore('current-state', {
         action: '',
         currentPosition: 0,
         pan: { x: 0, y: 0 },
+        playbackRate: 1,
         seekTo: 0,
         subtitlesUrl: '',
         uniqueId: '',

@@ -1470,6 +1470,7 @@ const setMediaPlaying = async (
         : 'pause',
     currentPosition: 0,
     pan: calculatedPan.value,
+    playbackRate: playbackRate.value,
     seekTo: 0,
     subtitlesUrl: media.subtitlesUrl ?? '',
     uniqueId: media.uniqueId,
@@ -1710,15 +1711,19 @@ const { post: postPlaybackRate } = useBroadcastChannel<number, number>({
   name: 'playback-rate',
 });
 
+const updatePlaybackRate = (newPlaybackRate: number) => {
+  playbackRate.value = newPlaybackRate;
+  mediaPlaying.value.playbackRate = newPlaybackRate;
+  postPlaybackRate(newPlaybackRate);
+};
+
 const changePlaybackRate = (delta: number, reset = false) => {
   if (reset) {
-    playbackRate.value = 1;
-    postPlaybackRate(playbackRate.value);
+    updatePlaybackRate(1);
     return;
   }
   const newRate = Math.round((playbackRate.value + delta) * 10) / 10;
-  playbackRate.value = Math.min(15, Math.max(0.5, newRate));
-  postPlaybackRate(playbackRate.value);
+  updatePlaybackRate(Math.min(15, Math.max(0.5, newRate)));
 };
 
 const seekTo = (newSeekTo: null | number) => {
@@ -1743,6 +1748,7 @@ function stopMedia(forOtherMediaItem = false) {
     action: '',
     currentPosition: 0,
     pan: { x: 0, y: 0 },
+    playbackRate: 1,
     seekTo: 0,
     subtitlesUrl: '',
     uniqueId: '',
@@ -1751,8 +1757,7 @@ function stopMedia(forOtherMediaItem = false) {
   };
   mediaToStop.value = '';
   void updateLocalFile();
-  playbackRate.value = 1;
-  postPlaybackRate(1);
+  updatePlaybackRate(1);
 
   if (!forOtherMediaItem) {
     // Stop one-shot workflows when media is stopped (unless it's a media switch instead of a stop)
@@ -2168,8 +2173,7 @@ watchImmediate(
 
 watch(isCurrentlyPlaying, (playing) => {
   if (!playing && playbackRate.value !== 1) {
-    playbackRate.value = 1;
-    postPlaybackRate(1);
+    updatePlaybackRate(1);
   }
 });
 
