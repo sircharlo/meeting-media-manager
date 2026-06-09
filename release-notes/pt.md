@@ -4,6 +4,15 @@
 
 Para obter a lista completa das mudanças entre versões, consulte nosso arquivo CHANGELOG.md no GitHub.
 
+## v26.6.1
+
+### ✨ Novos Recursos
+
+- ✨ **Visualização de Mídia**: Adicionado uma sobreposição de visualização de mídia ao vivo que pode ser ligado ou desligado nas configurações ou pelo pop-up de exibição.
+- ✨ **Mídia de pesquisa**: Adicionada uma caixa de pesquisa rápida na lista de mídia que permite a você encontrar rapidamente a mídia por título. Para usá-lo, basta usar o atalho de teclado padrão para pesquisar (Ctrl+F ou Cmd+F).
+- ✨ **Configurações de filtro**: Adicionado uma caixa de filtro na página de configurações que permite encontrar as configurações por palavra-chave ou categoria. Para usá-lo, basta clicar no botão Pesquisar no canto superior direito da página de configurações, ou use o atalho de teclado padrão para pesquisa (Ctrl+F ou Cmd+F).
+- ✨ **Aviso de sobreposição de música de fundo**: Adicionado uma notificação de aviso quando a mídia é iniciada enquanto a música de fundo está tocando. Os usuários podem optar por parar a música de fundo da notificação.
+
 ## v26.6.0
 
 ### ✨ Novos Recursos

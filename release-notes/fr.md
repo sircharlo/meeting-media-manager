@@ -4,6 +4,15 @@
 
 Pour la liste complète des changements entre les versions, consultez notre fichier CHANGELOG.md sur GitHub.
 
+## 6.1 v26.6
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **Aperçu média**: Ajout d'une surcouche d'aperçu en direct qui peut être activée ou désactivée à partir des paramètres ou de la fenêtre d'affichage.
+- ✨ **Recherche média**: Ajout d'une boîte de recherche rapide dans la liste des médias qui vous permet de trouver rapidement les médias par titre. Pour l'utiliser, utilisez simplement le raccourci clavier standard pour rechercher (Ctrl+F ou Cmd+F).
+- ✨ **Paramètres de filtre**: Ajout d'une boîte de filtre à la page des paramètres qui vous permet de trouver des paramètres par mot-clé ou catégorie. Pour l'utiliser, il suffit de cliquer sur le bouton de recherche en haut à droite de la page des paramètres, ou utilisez le raccourci clavier standard pour rechercher (Ctrl+F ou Cmd+F).
+- ✨ **Avertissement de chevauchement de musique d'arrière-plan**: Ajout d'une notification d'avertissement lorsque le média est démarré pendant la lecture de la musique en arrière-plan. Les utilisateurs peuvent choisir d'arrêter la musique de fond de la notification.
+
 ## 6.0 v26.6
 
 ### ✨ Nouvelles fonctionnalités

@@ -4,6 +4,15 @@
 
 For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
 
+## v26 6.1
+
+### ✨ New Features
+
+- ✨ **Vista previa de medios**: Se añadió una vista previa de medios en vivo que se puede activar o desactivar desde la configuración o desde la ventana emergente.
+- ✨ **Medios de búsqueda**: Se ha añadido un cuadro de búsqueda rápido en la lista de medios que te permite encontrar rápidamente medios por título. Para usarlo, simplemente utilice el atajo de teclado estándar para buscar (Ctrl+F o Cmd+F).
+- ✨ **Ajustes de filtros**: Se ha añadido un cuadro de filtro a la página de configuración que te permite encontrar los ajustes por palabra clave o categoría. Para usarlo, simplemente haga clic en el botón Buscar en la esquina superior derecha de la página de configuración, o utilice el atajo de teclado estándar para la búsqueda (Ctrl+F o Cmd+F).
+- ✨ \*\*Aviso de fondo de música en overlap \*\*: Se agregó una notificación de advertencia cuando se inicia el medio mientras se reproduce música de fondo. Los usuarios pueden elegir detener la música de fondo de la notificación.
+
 ## v26.6
 
 ### ✨ New Features

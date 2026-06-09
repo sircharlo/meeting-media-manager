@@ -4,6 +4,15 @@
 
 Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bestand op GitHub.
 
+## v26.6.1
+
+### ✨ Nieuwe functies
+
+- ✨ **Media Preview**: Voegt een live media preview overlay toe die in- of uitgeschakeld kan worden via de instellingen of de weergave popup.
+- ✨ **Zoek media**: Een snelle zoekfunctie toegevoegd in de medialijst waarmee je snel media kunt vinden op titel. Om het te gebruiken, gebruik de standaard sneltoets voor zoeken (Ctrl+F of Cmd+F).
+- ✨ **Filter instellingen**: Voegt een filter toe aan de instellingen pagina waarmee u instellingen kunt vinden op trefwoord of categorie. Om het te gebruiken, klik je op de zoek knop in de rechterbovenhoek van de instellingen pagina of gebruik de standaard sneltoets voor zoeken (Ctrl+F of Cmd+F).
+- ✨ **Achtergrond Muziek Overlap Waarschuwing**: Voeg een waarschuwing toe wanneer media wordt gestart terwijl achtergrond muziek wordt afgespeeld. Gebruikers kunnen ervoor kiezen om achtergrondmuziek uit de melding te stoppen.
+
 ## v26.6.0
 
 ### ✨ Nieuwe functies
