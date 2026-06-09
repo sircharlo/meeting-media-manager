@@ -584,6 +584,7 @@
   "set-custom-background": "Eigenen Hintergrund auswählen",
   "set-custom-durations": "Set custom start and end times",
   "settings": "Einstellungen",
+  "settings-filter-empty": "Keine Einstellungen stimmen mit der Suchabfrage überein.",
   "setup-wizard": "Erstkonfiguration",
   "setupWizard.backgroundMusic": "Hintergrundmusik",
   "setupWizard.intro": "M³ macht das Abspielen von Medien bei Zusammenkünften einfach und stressfrei. Lassen Sie uns ein paar Dinge konfigurieren, und dann sind Sie bereit.",
