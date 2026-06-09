@@ -46,8 +46,8 @@ features:
     details: Sünkroniseeri automaatselt meedia jälgitavatest kaustadest (nagu Dropbox või OneDrive) ja eksportige meedia kaustadesse.
   - icon: 🎯
     title: Lisafunktsioonid
-    details: Import custom media, JWPUB files, playlists, audio Bible recordings, Study Bible media, public talk media, and manage multiple congregations.
+    details: Impordi kohandatud meediafailid, JWPUB-failid, esitusloendid, Piibli helisalvestised, õppepiibli meediafailid, avalike kõnede meediafailid ning halda mitut kogudust.
   - icon: ⏱️
-    title: Meeting Timer and Recording Controls
-    details: Use an optional timer display for participant timing and control OBS or external recording apps from M³.
+    title: Koosoleku taimer ja salvestusfunktsioonid
+    details: Kasutage valikulist taimeri ekraani osalejate aja mõõtmiseks ning juhtige OBS-i või M³ väliseid salvestusrakendusi.
 ---
