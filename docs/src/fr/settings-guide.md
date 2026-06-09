@@ -157,19 +157,19 @@ Ces paramètres vous permettent de configurer des changements temporaires à vot
 - **Nouveau jour de fin de semaine** : Nouveau jour pour la réunion de fin de semaine
 - **Nouvelle heure de fin de semaine** : Nouvelle heure pour la réunion de fin de semaine
 
-### Mises à jour automatiques du calendrier des réunions {#mises à jour automatiques du calendrier des réunions}
+### Mises à jour automatiques de l'horaire des réunions {#automatic-meeting-schedule-updates}
 
 <!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
 
-Lorsque cette option est activée, M3 vérifie périodiquement le site Web officiel des témoins de Jéhovah pour qu'il change la journée et l'heure de la réunion et mette à jour automatiquement le profil actuel.
+Lorsque cette fonction est activée, M³ consulte régulièrement le site officiel des Témoins de Jéhovah pour vérifier s'il y a eu des changements concernant les jours et les horaires des réunions, et met automatiquement à jour le profil actuel.
 
-Cela ne fonctionne que pour les profils qui ont été ajoutés avec la recherche de congrégation et dont le nom de la congrégation n'a pas été modifié manuellement. Si la synchronisation a été désactivée parce que le nom de la congrégation a changé, utilisez **Activer la synchronisation du programme** pour lier à nouveau le profil.
+Cela ne fonctionne que pour les profils qui ont été ajoutés via la recherche d'assemblées locales et dont le nom de l'assemblée locale n'a pas été modifié manuellement. Si la synchronisation a été désactivée en raison d'un changement de nom de l'assemblée locale, utilisez l'option **Activer la synchronisation des horaires** pour reconnecter le profil.
 
 #### Rafraîchir l'horaire de la réunion {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
-Synchroniser manuellement le calendrier actuel et futur des réunions avec les informations du site Web officiel.
+Synchronisez manuellement l'horaire actuel des réunions et celui à venir avec les informations disponibles sur le site officiel.
 
 ## Récupération et lecture des médias {#media-retrieval-and-playback}
 
@@ -354,7 +354,7 @@ Configurez quelles scènes OBS utiliser pour différents usages :
 - **Changer de scène après les médias** : Retourner automatiquement à la scène précédente après les médias
 - **Se souvenir de la scène précédente** : Se souvenir et restaurer la scène précédente
 - **Masquer les icônes** : Masquer les icônes liées à OBS dans l'interface
-- **Contrôles d'enregistrement** : Afficher les contrôles qui démarrent et arrêtent l'enregistrement d'OBS depuis M3
+- **Commandes d'enregistrement** : Affiche les commandes permettant de démarrer et d'arrêter l'enregistrement dans OBS Studio depuis M³
 
 :::warning Note importante
 
@@ -414,19 +414,19 @@ Raccourci qui est déclenché lorsque la lecture du dernier cantique se termine 
 
 <!-- **Setting**: `recordingEnable` -->
 
-Permettre à M³ de contrôler une application d'enregistrement séparée à l'aide de raccourcis clavier. Ceci n'enregistre pas à l'intérieur de M3; il envoie les raccourcis configurés lorsque vous appuyez sur **Démarrer l'enregistrement** ou **Arrêter l'enregistrement** dans la fenêtre pop-up des enregistrements de la réunion.
+Permettre à M³ de contrôler une application d'enregistrement séparée à l'aide de raccourcis clavier. Cette fonction n'enregistre pas directement dans M³ ; elle transmet plutôt les raccourcis configurés lorsque vous cliquez sur **Démarrer l'enregistrement** ou **Arrêter l'enregistrement** dans la fenêtre contextuelle des enregistrements de réunion, vers l'application d'enregistrement.
 
-Cette option est masquée lorsque les contrôles d'enregistrement d'OBS sont activés. Si vous utilisez OBS Studio, utilisez plutôt les contrôles d'enregistrement d'OBS dans l'intégration d'OBS.
+Cette option est masquée lorsque le contrôle des enregistrements pour OBS Studio est activé. Si vous utilisez OBS Studio, utilisez plutôt les contrôles d'enregistrement d'OBS Studio dans l'intégration d'OBS Studio.
 
 **Par défaut** : `faux`
 
-#### Raccourcis d'enregistrement et dossier {#recording-shortcuts-and-folder}
+#### Raccourcis et dossier pour les enregistrements {#recording-shortcuts-and-folder}
 
 <!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
 
-Configurer le raccourci clavier qui démarre l'enregistrement, le raccourci optionnel qui arrête l'enregistrement, et le dossier où l'application externe enregistre les enregistrements. Si aucun raccourci d'arrêt n'est fourni, M3 réutilise le raccourci de démarrage. Lorsqu'un dossier est configuré, M³ affichera un bouton pour l'ouvrir.
+Configurez le raccourci clavier qui lance l'enregistrement, un raccourci facultatif qui interrompt l'enregistrement, ainsi que le dossier dans lequel l'application externe enregistre les fichiers. Si aucun raccourci d'arrêt n'est défini, M³ réutilisera le raccourci de démarrage. Lorsqu'un dossier est configuré, M³ affichera un bouton pour l'ouvrir.
 
-### Horaire de la réunion {#temps-de-réunion}
+### Minuteur de réunion {#meeting-timer}
 
 #### Activer le minuteur de réunion {#enable-meeting-timer}
 
@@ -448,11 +448,11 @@ Configurer si la fenêtre de minuterie s'ouvre automatiquement, si le minuteur c
 
 Choisissez des formats d’affichage analogique ou numérique pour l’heure et les minuteurs à rebours. L'indicateur d'alerte du compte à rebours peut faire passer l'anneau de compte à rebours analogique à une couleur d'alerte pendant la dernière minute.
 
-#### Compte à rebours des réunions et statut de la planification {#meeting-countdown-and-schedule-status}
+#### Compte à rebours et horaire des réunions {#meeting-countdown-and-schedule-status}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
-Afficher un compte à rebours avant les réunions planifiées et éventuellement afficher si la réunion est en avance ou en arrière. Le minuteur de la réunion apparaît uniquement sur l'affichage du minuteur, et non sur la fenêtre d'affichage des médias.
+Afficher un compte à rebours avant les réunions et, si désiré, indiquer si la réunion est en avance ou en retard par rapport à l'horaire prévu. Le minuteur de la réunion apparaît uniquement sur l'affichage du minuteur, et non sur la fenêtre d'affichage des médias.
 
 #### Apparence du minuteur et du surtemps {#timer-appearance-and-overtime}
 
