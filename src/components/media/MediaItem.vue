@@ -5,6 +5,8 @@
     :class="{
       'items-center': true,
       'justify-center': true,
+      'media-filter-filename-match': filenameOnlyMatchesMediaFilter,
+      'media-filter-match-target': matchesMediaFilter,
       'q-px-sm': child,
       'sortable-selected': props.selected,
     }"
@@ -431,7 +433,8 @@
               "
               @dblclick="handleTitleEdit(true)"
             >
-              {{ displayMediaTitle }}
+              <!-- eslint-disable-next-line vue/no-v-html -->
+              <span v-html="highlightedDisplayMediaTitle"></span>
               <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
                 {{ displayMediaTitle }}
               </q-tooltip>
@@ -1227,6 +1230,7 @@ const imageStartTime = ref<null | number>(null);
 const props = defineProps<{
   child?: boolean;
   media: MediaItem;
+  mediaFilterTerms?: string[];
   selected?: boolean;
   selectedMediaItems?: string[];
 }>();
@@ -1271,6 +1275,74 @@ const displayMediaTitle = computed(() => {
     (props.media.fileUrl && basename(props.media.fileUrl)) ||
     props.media.extractCaption ||
     ''
+  );
+});
+
+const hasMediaFilterTerms = computed(
+  () => (props.mediaFilterTerms?.length ?? 0) > 0,
+);
+
+const displayMediaFilename = computed(() => {
+  const filename = (props.media as MediaItem & { filename?: string }).filename;
+  if (filename) return filename;
+  if (!props.media.fileUrl) return '';
+  return basename(props.media.fileUrl);
+});
+
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+}
+
+function textMatchesMediaFilter(value: string): boolean {
+  const terms = props.mediaFilterTerms ?? [];
+  if (!terms.length) return false;
+
+  const searchableText = value.toLocaleLowerCase();
+  return terms.every((term) => searchableText.includes(term));
+}
+
+const titleMatchesMediaFilter = computed(() =>
+  textMatchesMediaFilter(displayMediaTitle.value),
+);
+
+const filenameMatchesMediaFilter = computed(() =>
+  textMatchesMediaFilter(displayMediaFilename.value),
+);
+
+const matchesMediaFilter = computed(
+  () =>
+    hasMediaFilterTerms.value &&
+    (titleMatchesMediaFilter.value || filenameMatchesMediaFilter.value),
+);
+
+const filenameOnlyMatchesMediaFilter = computed(
+  () => filenameMatchesMediaFilter.value && !titleMatchesMediaFilter.value,
+);
+
+const highlightedDisplayMediaTitle = computed(() => {
+  const title = displayMediaTitle.value;
+  const terms = props.mediaFilterTerms ?? [];
+  if (!terms.length) return escapeHtml(title);
+
+  const uniqueTerms = [...new Set(terms)]
+    .filter(Boolean)
+    .sort((a, b) => b.length - a.length);
+  if (!uniqueTerms.length) return escapeHtml(title);
+
+  const termPattern = uniqueTerms.map(escapeRegExp).join('|');
+  const matcher = new RegExp(`(${termPattern})`, 'gi');
+  return escapeHtml(title).replace(
+    matcher,
+    '<span class="media-filter__highlight">$1</span>',
   );
 });
 
@@ -2185,3 +2257,35 @@ whenever(
   { immediate: true },
 );
 </script>
+
+<style lang="scss" scoped>
+.media-filter-filename-match {
+  background: rgba(255, 235, 112, 0.2);
+}
+
+.media-filter-current-match {
+  animation: media-filter-bounce 360ms ease;
+}
+
+:deep(.media-filter__highlight) {
+  background: #ffeb70;
+  border-radius: 3px;
+  color: inherit;
+  display: inline-block;
+  padding: 0 0.08em;
+}
+
+@keyframes media-filter-bounce {
+  0% {
+    transform: scale(1);
+  }
+
+  45% {
+    transform: scale(1.025);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+</style>

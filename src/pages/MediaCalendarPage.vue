@@ -1,4 +1,76 @@
 <template>
+  <q-dialog
+    v-model="mediaFilterVisible"
+    class="media-filter-dialog"
+    position="top"
+    seamless
+    style="z-index: 1500 !important"
+  >
+    <q-card class="media-filter-overlay">
+      <q-card-section class="q-pa-sm row items-center no-wrap q-gutter-sm">
+        <q-input
+          ref="mediaFilterInput"
+          v-model="mediaFilter"
+          autofocus
+          bg-color="accent-100"
+          color="primary"
+          dense
+          :label="t('search')"
+          outlined
+          spellcheck="false"
+          @blur="closeEmptyMediaFilter"
+          @keydown.enter.prevent="goToNextMediaFilterMatch"
+          @keydown.escape="closeMediaFilter"
+        >
+          <template #prepend>
+            <q-icon name="mmm-search" />
+          </template>
+        </q-input>
+        <div
+          v-if="hasMediaFilterTerms"
+          class="media-filter-overlay__count text-caption text-accent-400"
+        >
+          {{ mediaFilterMatchLabel }}
+        </div>
+        <q-btn
+          color="primary"
+          dense
+          :disable="!mediaFilterMatchCount"
+          flat
+          icon="keyboard_arrow_up"
+          round
+          @click="goToPreviousMediaFilterMatch"
+        >
+          <q-tooltip v-if="mediaFilterMatchCount">{{
+            t('previous-search-match')
+          }}</q-tooltip>
+        </q-btn>
+        <q-btn
+          color="primary"
+          dense
+          :disable="!mediaFilterMatchCount"
+          flat
+          icon="keyboard_arrow_down"
+          round
+          @click="goToNextMediaFilterMatch"
+        >
+          <q-tooltip v-if="mediaFilterMatchCount">{{
+            t('next-search-match')
+          }}</q-tooltip>
+        </q-btn>
+        <q-btn
+          color="primary"
+          dense
+          flat
+          icon="close"
+          round
+          @click="closeMediaFilter"
+        >
+          <q-tooltip>{{ t('close') }}</q-tooltip>
+        </q-btn>
+      </q-card-section>
+    </q-card>
+  </q-dialog>
   <q-page
     padding
     @dragenter="dropActive"
@@ -47,6 +119,7 @@
       >
         <MediaList
           :ref="(el) => (mediaListRefs[mediaList.sectionId] = el)"
+          :media-filter-terms="mediaFilterTerms"
           :media-list="mediaList"
           :open-import-menu="openImportMenu"
           :selected-media-items="selectedMediaItems"
@@ -122,7 +195,7 @@ import MediaList from 'components/media/MediaList.vue';
 import DOMPurify from 'dompurify';
 import Mousetrap from 'mousetrap';
 import { storeToRefs } from 'pinia';
-import { useMeta, useQuasar } from 'quasar';
+import { type QInput, useMeta, useQuasar } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { SORTER } from 'src/constants/general';
@@ -198,7 +271,15 @@ import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
-import { computed, nextTick, onMounted, ref, type Ref, watch } from 'vue';
+import {
+  computed,
+  nextTick,
+  onMounted,
+  ref,
+  type Ref,
+  useTemplateRef,
+  watch,
+} from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const { sanitize } = DOMPurify;
@@ -210,6 +291,139 @@ const jwpubImportDocuments = ref<DocumentItem[]>([]);
 
 const { dateLocale, t } = useLocale();
 useMeta({ title: t('titles.meetingMedia') });
+
+const mediaFilter = ref<null | string | undefined>('');
+const mediaFilterInput = useTemplateRef<QInput>('mediaFilterInput');
+const mediaFilterMatchCount = ref(0);
+const mediaFilterMatchIndex = ref(-1);
+const mediaFilterVisible = ref(false);
+
+const getMediaFilterValue = (): string => mediaFilter.value?.trim() ?? '';
+
+const mediaFilterTerms = computed(() =>
+  getMediaFilterValue().toLocaleLowerCase().split(/\s+/).filter(Boolean),
+);
+
+const hasMediaFilterTerms = computed(() => mediaFilterTerms.value.length > 0);
+
+const mediaFilterMatchLabel = computed(() => {
+  if (!hasMediaFilterTerms.value) return '';
+  if (!mediaFilterMatchCount.value) return t('no-search-results');
+  return `${mediaFilterMatchIndex.value + 1} / ${mediaFilterMatchCount.value}`;
+});
+
+const getMediaFilterMatches = (): HTMLElement[] =>
+  Array.from(
+    document.querySelectorAll<HTMLElement>('.media-filter-match-target'),
+  ).filter((element) => element.offsetParent !== null);
+
+const scrollToMediaFilterMatch = (index: number) => {
+  try {
+    const matches = getMediaFilterMatches();
+    const match = matches[index];
+    if (!match) return;
+
+    matches.forEach((element) =>
+      element.classList.remove('media-filter-current-match'),
+    );
+    match.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    match.classList.remove('media-filter-current-match');
+    match.classList.add('media-filter-current-match');
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          args: {
+            index,
+          },
+          name: 'scrollToMediaFilterMatch',
+        },
+      },
+    });
+  }
+};
+
+const updateMediaFilterMatches = async (scrollToMatch = false) => {
+  try {
+    await nextTick();
+    const matches = getMediaFilterMatches();
+    mediaFilterMatchCount.value = matches.length;
+
+    if (!matches.length) {
+      mediaFilterMatchIndex.value = -1;
+      return;
+    }
+
+    if (mediaFilterMatchIndex.value < 0) {
+      mediaFilterMatchIndex.value = 0;
+    }
+    if (mediaFilterMatchIndex.value >= matches.length) {
+      mediaFilterMatchIndex.value = matches.length - 1;
+    }
+
+    if (scrollToMatch) {
+      scrollToMediaFilterMatch(mediaFilterMatchIndex.value);
+    }
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          args: {
+            scrollToMatch,
+          },
+          name: 'updateMediaFilterMatches',
+        },
+      },
+    });
+  }
+};
+
+const openMediaFilter = () => {
+  mediaFilterVisible.value = true;
+  nextTick(() => {
+    mediaFilterInput.value?.focus();
+    mediaFilterInput.value?.select();
+    void updateMediaFilterMatches();
+  });
+};
+
+const closeMediaFilter = () => {
+  mediaFilter.value = undefined;
+  mediaFilterVisible.value = false;
+  mediaFilterMatchCount.value = 0;
+  mediaFilterMatchIndex.value = -1;
+};
+
+const closeEmptyMediaFilter = () => {
+  setTimeout(() => {
+    if (getMediaFilterValue()) return;
+    mediaFilterVisible.value = false;
+  });
+};
+
+const goToNextMediaFilterMatch = () => {
+  if (!mediaFilterMatchCount.value) return;
+  mediaFilterMatchIndex.value =
+    (mediaFilterMatchIndex.value + 1) % mediaFilterMatchCount.value;
+  scrollToMediaFilterMatch(mediaFilterMatchIndex.value);
+};
+
+const goToPreviousMediaFilterMatch = () => {
+  if (!mediaFilterMatchCount.value) return;
+  mediaFilterMatchIndex.value =
+    (mediaFilterMatchIndex.value - 1 + mediaFilterMatchCount.value) %
+    mediaFilterMatchCount.value;
+  scrollToMediaFilterMatch(mediaFilterMatchIndex.value);
+};
+
+useEventListener(globalThis, 'keydown', (event: KeyboardEvent) => {
+  if (event.key.toLowerCase() !== 'f' || (!event.ctrlKey && !event.metaKey)) {
+    return;
+  }
+
+  event.preventDefault();
+  openMediaFilter();
+});
 
 interface BackgroundMusicAction {
   action: 'stop';
@@ -2823,4 +3037,53 @@ watch(
     }
   },
 );
+
+watch(
+  mediaFilterTerms,
+  () => {
+    mediaFilterMatchIndex.value = 0;
+    void updateMediaFilterMatches(true);
+  },
+  { flush: 'post' },
+);
 </script>
+
+<style scoped>
+.media-filter-overlay {
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+  margin-top: 57px;
+  max-width: calc(100vw - 32px);
+  width: fit-content;
+}
+
+body.body--dark .media-filter-overlay {
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-top: 0;
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.62),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.media-filter-overlay :deep(.q-field) {
+  width: clamp(120px, calc(100vw - 208px), 320px);
+}
+
+.media-filter-overlay__count {
+  min-width: 56px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+body.body--dark
+  .media-filter-overlay
+  :deep(.q-field--outlined .q-field__control::before) {
+  border-color: rgba(255, 255, 255, 0.34);
+}
+
+body.body--dark
+  .media-filter-overlay
+  :deep(.q-field--outlined .q-field__control:hover::before) {
+  border-color: rgba(255, 255, 255, 0.52);
+}
+</style>

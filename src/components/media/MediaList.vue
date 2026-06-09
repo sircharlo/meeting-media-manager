@@ -38,7 +38,7 @@
     />
     <!-- Media Items -->
     <div
-      v-show="!isCollapsed"
+      v-show="!isCollapsed || hasMediaFilterTerms"
       ref="dragDropContainer"
       class="sortable-media"
       :class="{ 'drop-here': isDragging }"
@@ -71,6 +71,7 @@
           v-else-if="element.children"
           :element="element"
           :expanded="expandedGroups[element.uniqueId] ?? false"
+          :media-filter-terms="mediaFilterTerms"
           :selected="selectedMediaItems?.includes(element.uniqueId)"
           :selected-media-items="selectedMediaItems"
           @item-clicked="
@@ -92,6 +93,7 @@
           v-else
           v-model:repeat="element.repeat"
           :media="element"
+          :media-filter-terms="mediaFilterTerms"
           :selected="selectedMediaItems?.includes(element.uniqueId)"
           :selected-media-items="selectedMediaItems"
           @click="
@@ -149,6 +151,7 @@ import MediaSectionHeader from './MediaSectionHeader.vue';
 import SectionEmptyState from './SectionEmptyState.vue';
 
 const props = defineProps<{
+  mediaFilterTerms?: string[];
   mediaList: MediaSectionWithConfig;
   openImportMenu: (section: string) => void;
   selectedMediaItems?: string[];
@@ -281,6 +284,10 @@ const sectionStyles = computed(() => ({
   '--bg-color': props.mediaList.config?.bgColor || 'rgb(148, 94, 181)',
   '--text-color': getTextColor(props.mediaList),
 }));
+
+const hasMediaFilterTerms = computed(
+  () => (props.mediaFilterTerms?.length ?? 0) > 0,
+);
 
 // Methods
 const handleRename = (value: boolean) => {
