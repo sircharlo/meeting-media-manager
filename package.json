@@ -43,7 +43,7 @@
     "@quasar/extras": "^2.0.0",
     "@sentry/core": "^10.56.0",
     "@sentry/electron": "^7.13.0",
-    "@sentry/vue": "^10.56.0",
+    "@sentry/vue": "^10.57.0",
     "@vueuse/core": "^14.3.0",
     "@vueuse/router": "^14.3.0",
     "better-sqlite3": "^12.10.0",
