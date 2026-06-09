@@ -132,8 +132,11 @@
           <div class="col-12 q-mb-sm">
             <q-btn
               class="full-width"
+              :class="{
+                'study-bible-chapter-unavailable': !chapterHasMedia(0),
+              }"
               color="accent-200"
-              :disable="!chaptersWithMedia.has(0) || isProcessing"
+              :disable="!chapterHasMedia(0) || isProcessing"
               :label="t('introduction')"
               text-color="black"
               unelevated
@@ -148,8 +151,11 @@
           >
             <q-btn
               class="full-width aspect-ratio-1"
+              :class="{
+                'study-bible-chapter-unavailable': !chapterHasMedia(chapter),
+              }"
               color="accent-200"
-              :disable="!chaptersWithMedia.has(chapter) || isProcessing"
+              :disable="!chapterHasMedia(chapter) || isProcessing"
               :label="chapter"
               text-color="black"
               unelevated
@@ -432,6 +438,9 @@ const selectChapter = (chapter: number) => {
   fetchBibleBookMedia();
 };
 
+const chapterHasMedia = (chapter: number) =>
+  chaptersWithMedia.value.has(chapter);
+
 const fetchStudyBibleMedia = async () => {
   try {
     loadingMedia.value = true;
@@ -492,5 +501,18 @@ whenever(
 
 body.body--dark .study-bible-item :deep(img) {
   background-color: #2a2a2a;
+}
+
+.study-bible-chapter-unavailable {
+  background-color: #e0e0e0 !important;
+  /* border: 1px solid #c2c2c2; */
+  color: #757575 !important;
+  opacity: 1 !important;
+}
+
+body.body--dark .study-bible-chapter-unavailable {
+  background-color: #343434 !important;
+  /* border-color: #4a4a4a; */
+  color: #9e9e9e !important;
 }
 </style>

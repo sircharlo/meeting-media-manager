@@ -1856,91 +1856,200 @@ export const resolveMultimediaPreviewPath = async (
   }
 };
 
+interface StudyBibleMediaResult {
+  bibleBookDocumentsEndAtId: null | number;
+  bibleBookDocumentsStartAtId: null | number;
+  mediaItems: MultimediaItem[];
+}
+
+interface StudyBibleResult {
+  nwtDb: null | string;
+  nwtStyDb: null | string;
+  nwtStyDb_E: null | string;
+  nwtStyPublication: null | PublicationFetcher;
+  nwtStyPublication_E: PublicationFetcher;
+}
+
+const studyBibleNwtStyPublication_E: PublicationFetcher = {
+  fileformat: 'JWPUB',
+  langwritten: 'E',
+  pub: 'nwtsty',
+};
+
+const studyBibleCache = new Map<string, Promise<StudyBibleResult>>();
+const studyBibleBooksCache = new Map<
+  string,
+  Promise<Record<number, MultimediaItem>>
+>();
+const studyBibleCategoriesCache = new Map<
+  string,
+  Promise<{ Title: string }[]>
+>();
+const studyBibleMediaCache = new Map<string, Promise<StudyBibleMediaResult>>();
+
+const getEmptyStudyBibleResult = (): StudyBibleResult => ({
+  nwtDb: null,
+  nwtStyDb: null,
+  nwtStyDb_E: null,
+  nwtStyPublication: null,
+  nwtStyPublication_E: studyBibleNwtStyPublication_E,
+});
+
+const getStudyBibleCacheKey = (
+  cacheFolder: null | string | undefined,
+  languages: JwLangCode[],
+) => [cacheFolder || 'default', languages.join(':') || 'none'].join(':');
+
+const getStudyBibleLanguages = () => {
+  const currentStateStore = useCurrentStateStore();
+  return [
+    ...new Set([
+      currentStateStore.currentSettings?.lang,
+      currentStateStore.currentSettings?.langFallback,
+    ]),
+  ].filter((l): l is JwLangCode => !!l);
+};
+
+const getCurrentStudyBibleCacheKey = () => {
+  const currentStateStore = useCurrentStateStore();
+  return getStudyBibleCacheKey(
+    currentStateStore.currentSettings?.cacheFolder,
+    getStudyBibleLanguages(),
+  );
+};
+
+const getStudyBibleMediaCacheKey = (
+  bookNumber?: number,
+  chapterNumber?: number,
+) =>
+  [
+    getCurrentStudyBibleCacheKey(),
+    bookNumber ?? 'all-books',
+    chapterNumber ?? 'all-chapters',
+  ].join(':');
+
 const getStudyBible = async () => {
-  try {
-    const nwtStyPublication_E: PublicationFetcher = {
-      fileformat: 'JWPUB',
-      langwritten: 'E',
-      pub: 'nwtsty',
-    };
-    const currentStateStore = useCurrentStateStore();
-    const nwtStyDb_E_Promise = getDbFromJWPUB(
-      nwtStyPublication_E,
-      undefined,
-      'study-bible',
+  const languages = getStudyBibleLanguages();
+  const cacheKey = getStudyBibleCacheKey(
+    useCurrentStateStore().currentSettings?.cacheFolder,
+    languages,
+  );
+
+  if (!studyBibleCache.has(cacheKey)) {
+    studyBibleCache.set(
+      cacheKey,
+      (async (): Promise<StudyBibleResult> => {
+        const nwtStyDb_E_Promise = getDbFromJWPUB(
+          studyBibleNwtStyPublication_E,
+          undefined,
+          'study-bible',
+        );
+
+        const nwtStyPromise = (async () => {
+          let nwtStyDb: null | string = null;
+          let nwtStyPublication: null | PublicationFetcher = null;
+
+          for (const langwritten of languages) {
+            if (langwritten === 'E') {
+              nwtStyDb = await nwtStyDb_E_Promise;
+              nwtStyPublication = studyBibleNwtStyPublication_E;
+              break;
+            }
+
+            nwtStyPublication = {
+              fileformat: 'JWPUB',
+              langwritten,
+              pub: 'nwtsty',
+            };
+            nwtStyDb = await getDbFromJWPUB(
+              nwtStyPublication,
+              undefined,
+              'study-bible',
+            );
+            if (nwtStyDb) break;
+          }
+
+          const nwtStyDb_E = await nwtStyDb_E_Promise;
+
+          if (!nwtStyDb) {
+            nwtStyPublication = studyBibleNwtStyPublication_E;
+            nwtStyDb = nwtStyDb_E;
+          }
+
+          return {
+            nwtStyDb,
+            nwtStyDb_E,
+            nwtStyPublication,
+            nwtStyPublication_E: studyBibleNwtStyPublication_E,
+          };
+        })();
+
+        // Fallback to NWT if NWTSTY is missing (for book names)
+        const nwtPromise = (async () => {
+          for (const langwritten of languages) {
+            const nwtPublication: PublicationFetcher = {
+              fileformat: 'JWPUB',
+              langwritten,
+              pub: 'nwt',
+            };
+            const nwtDb = await getDbFromJWPUB(
+              nwtPublication,
+              undefined,
+              'study-bible',
+            );
+            if (nwtDb) return nwtDb;
+          }
+
+          return null;
+        })();
+
+        const [nwtStyResult, nwtDb] = await Promise.all([
+          nwtStyPromise,
+          nwtPromise,
+        ]);
+
+        const result = {
+          nwtDb,
+          ...nwtStyResult,
+        };
+
+        if (!result.nwtDb && !result.nwtStyDb && !result.nwtStyDb_E) {
+          studyBibleCache.delete(cacheKey);
+        }
+
+        return result;
+      })().catch((error: unknown) => {
+        studyBibleCache.delete(cacheKey);
+        errorCatcher(error);
+        return getEmptyStudyBibleResult();
+      }),
     );
-
-    const languages = [
-      ...new Set([
-        currentStateStore.currentSettings?.lang,
-        currentStateStore.currentSettings?.langFallback,
-      ]),
-    ].filter((l): l is JwLangCode => !!l);
-
-    let nwtStyDb: null | string = null;
-    let nwtStyPublication: null | PublicationFetcher = null;
-    let nwtDb: null | string = null;
-
-    for (const langwritten of languages) {
-      if (!langwritten) continue;
-      if (langwritten === 'E') {
-        nwtStyDb = await nwtStyDb_E_Promise;
-        nwtStyPublication = nwtStyPublication_E;
-        break;
-      }
-      nwtStyPublication = {
-        fileformat: 'JWPUB',
-        langwritten,
-        pub: 'nwtsty',
-      };
-      nwtStyDb = await getDbFromJWPUB(
-        nwtStyPublication,
-        undefined,
-        'study-bible',
-      );
-      if (nwtStyDb) break;
-    }
-
-    const nwtStyDb_E = await nwtStyDb_E_Promise;
-
-    if (!nwtStyDb) {
-      nwtStyPublication = nwtStyPublication_E;
-      nwtStyDb = nwtStyDb_E;
-    }
-
-    // Fallback to NWT if NWTSTY is missing (for book names)
-    let nwtPublication: null | PublicationFetcher = null;
-    for (const langwritten of languages) {
-      if (!langwritten) continue;
-      nwtPublication = {
-        fileformat: 'JWPUB',
-        langwritten,
-        pub: 'nwt',
-      };
-      nwtDb = await getDbFromJWPUB(nwtPublication, undefined, 'study-bible');
-      if (nwtDb) break;
-    }
-
-    return {
-      nwtDb,
-      nwtStyDb,
-      nwtStyDb_E,
-      nwtStyPublication,
-      nwtStyPublication_E,
-    };
-  } catch (error) {
-    errorCatcher(error);
-    return {
-      nwtDb: null,
-      nwtStyDb: null,
-      nwtStyDb_E: null,
-      nwtStyPublication: null,
-      nwtStyPublication_E: null,
-    };
   }
+
+  return studyBibleCache.get(cacheKey) ?? getEmptyStudyBibleResult();
 };
 
 export const getStudyBibleBooks: () => Promise<
+  Record<number, MultimediaItem>
+> = async () => {
+  const cacheKey = getCurrentStudyBibleCacheKey();
+  if (!studyBibleBooksCache.has(cacheKey)) {
+    studyBibleBooksCache.set(
+      cacheKey,
+      getStudyBibleBooksUncached().then((result) => {
+        if (!Object.keys(result).length) {
+          studyBibleBooksCache.delete(cacheKey);
+        }
+
+        return result;
+      }),
+    );
+  }
+
+  return studyBibleBooksCache.get(cacheKey) ?? {};
+};
+
+const getStudyBibleBooksUncached: () => Promise<
   Record<number, MultimediaItem>
 > = async () => {
   try {
@@ -2087,6 +2196,24 @@ export const getStudyBibleBooks: () => Promise<
 };
 
 export const getStudyBibleCategories = async () => {
+  const cacheKey = getCurrentStudyBibleCacheKey();
+  if (!studyBibleCategoriesCache.has(cacheKey)) {
+    studyBibleCategoriesCache.set(
+      cacheKey,
+      getStudyBibleCategoriesUncached().then((result) => {
+        if (!result.length) {
+          studyBibleCategoriesCache.delete(cacheKey);
+        }
+
+        return result;
+      }),
+    );
+  }
+
+  return studyBibleCategoriesCache.get(cacheKey) ?? [];
+};
+
+const getStudyBibleCategoriesUncached = async () => {
   try {
     const { nwtStyDb, nwtStyPublication } = await getStudyBible();
     if (!nwtStyDb || !nwtStyPublication) return [];
@@ -2115,6 +2242,37 @@ export const getStudyBibleMedia = async (
   bookNumber?: number,
   chapterNumber?: number,
 ) => {
+  const cacheKey = getStudyBibleMediaCacheKey(bookNumber, chapterNumber);
+  if (!studyBibleMediaCache.has(cacheKey)) {
+    studyBibleMediaCache.set(
+      cacheKey,
+      getStudyBibleMediaUncached(bookNumber, chapterNumber).then((result) => {
+        if (
+          result.bibleBookDocumentsEndAtId === null &&
+          result.bibleBookDocumentsStartAtId === null
+        ) {
+          studyBibleMediaCache.delete(cacheKey);
+        }
+
+        return result;
+      }),
+    );
+  }
+
+  return (
+    studyBibleMediaCache.get(cacheKey) ??
+    Promise.resolve({
+      bibleBookDocumentsEndAtId: null,
+      bibleBookDocumentsStartAtId: null,
+      mediaItems: [],
+    })
+  );
+};
+
+const getStudyBibleMediaUncached = async (
+  bookNumber?: number,
+  chapterNumber?: number,
+): Promise<StudyBibleMediaResult> => {
   try {
     const { nwtStyDb, nwtStyDb_E, nwtStyPublication, nwtStyPublication_E } =
       await getStudyBible();
