@@ -8,10 +8,10 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- ✨ **Media Preview**: Added a live media preview overlay that can be toggled on or off from the settings or from the display popup.
-- ✨ **Search media**: Added a quick search box in the media list that allows you to quickly find media by title. To use it, simply use the standard keyboard shortcut for search (Ctrl+F or Cmd+F).
-- ✨ **Filter settings**: Added a filter box to the settings page that allows you to find settings by keyword or category. To use it, simply click on the Search button in the top right corner of the settings page, or use the standard keyboard shortcut for search (Ctrl+F or Cmd+F).
-- ✨ **Background Music Overlap Warning**: Added a warning notification when media is started while background music is playing. Users can choose to stop the background music from the notification.
+- ✨ **Predogled multimedijske vsebine**: Dodan je prekrivni sloj za predogled multimedijske vsebine v živo, ki ga lahko vklopiš ali izklopiš v nastavitvah ali iz pojavnega okna zaslona.
+- ✨ **Iskanje multimedijske vsebine**: V seznam multimedijske vsebine je dodano hitro iskalno polje, ki omogoča hitro iskanje multimedijske vsebine po naslovu. Če želiš začeti iskati, preprosto uporabi standardno tipkovno bližnjico za iskanje (Ctrl+F ali Cmd+F).
+- ✨ **Filtriranje nastavitev**: Na strani z nastavitvami je dodano filtrirno polje, ki omogoča iskanje nastavitev po ključni besedi ali kategoriji. Za uporabo klikni gumb »Iskanje« v zgornjem desnem kotu strani z nastavitvami ali uporabi standardno tipkovno bližnjico za iskanje (Ctrl+F ali Cmd+F).
+- ✨ **Opozorilo o prekrivanju s predvajano glasbo**: Dodano je opozorilo, ki se prikaže, ko se med predvajanjem glasbe v ozadju zažene multimedijska vsebina. Uporabnik lahko v obvestilu izbere možnost zaustavitve glasbe v ozadju.
 
 ## v26.6.0
 
