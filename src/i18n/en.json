@@ -235,7 +235,7 @@
   "firstDayOfWeek": "First day of the week",
   "firstDayOfWeek-explain": "Select which day of the week should be displayed first in a calendar week.",
   "folderToWatch": "Folder to monitor",
-  "folderToWatch-explain": "The folder that will be monitored for new media files. This folder must contain subfolders named by date (format: YYYY-MM-DD). Files in folders that don't follow this convention will be ignored.",
+  "folderToWatch-explain": "The folder that will be monitored for new media files. M³ automatically creates dated subfolders for meeting days with media (format: YYYY-MM-DD), and you can add other dated folders for non-meeting days. Files in folders that don't follow this convention will be ignored.",
   "folderWatcher": "Folder monitoring",
   "footnote": "Footnote",
   "forward": "Forward",

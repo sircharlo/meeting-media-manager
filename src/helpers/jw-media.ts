@@ -129,6 +129,53 @@ const { copy, ensureDir, exists, pathExists, remove, rename, stat } = fs;
 const backgroundMusicLibraryCache = new Map<string, Promise<SongItem[]>>();
 const publicationMediaLinksCache = new Map<string, Promise<MediaLink[]>>();
 
+const mediaItemIsDynamic = (item?: MediaItem): boolean => {
+  if (!item) return false;
+  if (item.source === 'dynamic') return true;
+  return item.children?.some(mediaItemIsDynamic) ?? false;
+};
+
+export const ensureWatchedMeetingDayFolders = async () => {
+  try {
+    const currentStateStore = useCurrentStateStore();
+    const { currentCongregation, currentSettings } = currentStateStore;
+    const watchFolder = currentSettings?.folderToWatch;
+    if (
+      !currentCongregation ||
+      !currentSettings?.enableFolderWatcher ||
+      !watchFolder
+    ) {
+      return;
+    }
+
+    const jwStore = useJwStore();
+    const days = jwStore.lookupPeriod[currentCongregation] ?? [];
+    const meetingDayFolders = days
+      .filter((day) => {
+        if (!day.date || !currentStateStore.getMeetingType(day.date)) {
+          return false;
+        }
+
+        return Object.values(day.mediaSections ?? {}).some((section) =>
+          section.items?.some(mediaItemIsDynamic),
+        );
+      })
+      .map((day) => formatDate(day.date, 'YYYY-MM-DD'));
+
+    for (const folderName of new Set(meetingDayFolders)) {
+      await ensureDir(join(watchFolder, folderName));
+    }
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          name: 'ensureWatchedMeetingDayFolders',
+        },
+      },
+    });
+  }
+};
+
 const getBackgroundMusicLibraryCacheKey = (publication: PublicationFetcher) =>
   [
     publication.langwritten,
@@ -1765,6 +1812,7 @@ export const fetchMedia = async () => {
       }
     }
     await queue?.onIdle();
+    await ensureWatchedMeetingDayFolders();
     downloadBackgroundMusic();
     log('✅ All media processing completed', 'mediaFetching', 'info');
     queue?.clear();

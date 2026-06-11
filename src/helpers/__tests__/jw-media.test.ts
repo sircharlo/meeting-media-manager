@@ -15,10 +15,19 @@ const joinMock = vi.fn((...parts: string[]) => parts.join('/'));
 const basenameMock = vi.fn(
   (value: string) => value.split(/[\\/]/).pop() ?? value,
 );
+const ensureDirMock = vi.fn();
+const formatDateMock = vi.fn();
 const getTempPathMock = vi.fn(async () => '/tmp');
 const currentStateStore = {
+  currentCongregation: '',
   currentSettings: {},
   extractedFiles: {} as Record<string, string | undefined>,
+  getMeetingType: vi.fn(),
+};
+const jwStore = {
+  jwMepsLanguages: { list: [] },
+  lookupPeriod: {},
+  urlVariables: {},
 };
 
 vi.mock('boot/globals', () => ({
@@ -98,7 +107,7 @@ vi.mock('src/utils/converters', () => ({
 vi.mock('src/utils/date', () => ({
   dateFromString: vi.fn(),
   datesAreSame: vi.fn(),
-  formatDate: vi.fn(),
+  formatDate: formatDateMock,
   getDateDiff: vi.fn(),
   getSpecificWeekday: vi.fn(),
   isInPast: vi.fn(),
@@ -156,22 +165,22 @@ vi.mock('stores/current-state', () => ({
 vi.mock('stores/jw', () => ({
   replaceMissingMediaByPubMediaId: vi.fn(),
   shouldUpdateList: vi.fn(),
-  useJwStore: () => ({
-    jwMepsLanguages: { list: [] },
-    urlVariables: {},
-  }),
+  useJwStore: () => jwStore,
 }));
 
 vi.mock('../media-sections', () => ({
   createMeetingSections: vi.fn(),
 }));
 
-describe('unzipJwpub diagnostics', () => {
+describe('jw-media helpers', () => {
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
+    currentStateStore.currentCongregation = '';
     currentStateStore.currentSettings = {};
     currentStateStore.extractedFiles = {};
+    currentStateStore.getMeetingType.mockReturnValue(null);
+    jwStore.lookupPeriod = {};
 
     extractNestedZipEntryMock.mockResolvedValue({ path: '/tmp/db.db' });
     getZipEntriesMock.mockResolvedValue({});
@@ -193,7 +202,7 @@ describe('unzipJwpub diagnostics', () => {
       fileUrlToPath: vi.fn(),
       fs: {
         copy: copyMock,
-        ensureDir: vi.fn(),
+        ensureDir: ensureDirMock,
         exists: vi.fn(),
         pathExists: pathExistsMock,
         readdir: readdirMock,
@@ -314,5 +323,75 @@ describe('unzipJwpub diagnostics', () => {
       }),
     );
     expect(errorCatcherMock).not.toHaveBeenCalled();
+  });
+
+  it('creates watched folders for meeting days with dynamic media', async () => {
+    const meetingDate = new Date('2026-06-14T12:00:00.000Z');
+    const childDynamicDate = new Date('2026-06-21T12:00:00.000Z');
+    const noDynamicDate = new Date('2026-06-28T12:00:00.000Z');
+    const nonMeetingDate = new Date('2026-07-05T12:00:00.000Z');
+    currentStateStore.currentCongregation = 'abc';
+    currentStateStore.currentSettings = {
+      enableFolderWatcher: true,
+      folderToWatch: '/watch',
+    };
+    currentStateStore.getMeetingType.mockImplementation((date: Date) => {
+      return date === nonMeetingDate ? null : 'we';
+    });
+    formatDateMock.mockImplementation((date: Date) => {
+      if (date === meetingDate) return '2026-06-14';
+      if (date === childDynamicDate) return '2026-06-21';
+      if (date === noDynamicDate) return '2026-06-28';
+      return '2026-07-05';
+    });
+    jwStore.lookupPeriod = {
+      abc: [
+        {
+          date: meetingDate,
+          mediaSections: [
+            {
+              items: [{ source: 'dynamic' }],
+            },
+          ],
+        },
+        {
+          date: childDynamicDate,
+          mediaSections: [
+            {
+              items: [
+                {
+                  children: [{ source: 'dynamic' }],
+                  source: 'additional',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          date: noDynamicDate,
+          mediaSections: [
+            {
+              items: [{ source: 'additional' }],
+            },
+          ],
+        },
+        {
+          date: nonMeetingDate,
+          mediaSections: [
+            {
+              items: [{ source: 'dynamic' }],
+            },
+          ],
+        },
+      ],
+    };
+
+    const { ensureWatchedMeetingDayFolders } = await import('../jw-media');
+
+    await ensureWatchedMeetingDayFolders();
+
+    expect(ensureDirMock).toHaveBeenCalledTimes(2);
+    expect(ensureDirMock).toHaveBeenCalledWith('/watch/2026-06-14');
+    expect(ensureDirMock).toHaveBeenCalledWith('/watch/2026-06-21');
   });
 });
