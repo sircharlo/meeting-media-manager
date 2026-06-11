@@ -12,8 +12,11 @@ import upath from 'upath';
 
 const { join, resolve } = upath;
 
+const ZOOM_HELPER_READY_TIMEOUT_MS = 10_000;
+
 let pythonProcess: ChildProcessWithoutNullStreams | null = null;
 let zoomHelperPort: null | number = null;
+let zoomHelperReadyWaiters: ((ready: boolean) => void)[] = [];
 
 export async function ensureRequirementsInstalled(): Promise<boolean> {
   const requirementsPath = getHelperPath('requirements.txt');
@@ -53,22 +56,34 @@ export async function isPythonInstalled(): Promise<boolean> {
   });
 }
 
-export function restartZoomHelper() {
+export async function restartZoomHelper(): Promise<boolean> {
   stopZoomHelper();
-  startZoomHelper();
+  return startZoomHelper();
 }
 
-export function startZoomHelper() {
-  if (pythonProcess || PLATFORM !== 'win32') return;
+export async function startZoomHelper(): Promise<boolean> {
+  if (PLATFORM !== 'win32') return false;
+  if (pythonProcess) return waitForZoomHelperReady();
 
   zoomHelperPort = null;
 
   const helperPath = getHelperPath('uia_helper.py');
 
   log(`Starting Zoom Helper`, 'zoom', 'info', helperPath);
-  pythonProcess = spawn(getPythonCommand(), [helperPath], {
-    env: { ...process.env, PYTHONUNBUFFERED: '1' },
-  });
+  try {
+    pythonProcess = spawn(getPythonCommand(), [helperPath], {
+      env: { ...process.env, PYTHONUNBUFFERED: '1' },
+    });
+  } catch (error) {
+    logToWindow(
+      mainWindowInfo.mainWindow,
+      `[Zoom Helper] Failed to start: ${String(error)}`,
+      {},
+      'error',
+    );
+    resolveZoomHelperReady(false);
+    return false;
+  }
 
   pythonProcess.stdout.on('data', (data: Buffer) => {
     const messages = data
@@ -81,6 +96,7 @@ export function startZoomHelper() {
       const portMatch = msg.match(/^ZOOM_HELPER_PORT=(\d+)$/);
       if (portMatch) {
         zoomHelperPort = Number(portMatch[1]);
+        resolveZoomHelperReady(true);
       }
 
       logToWindow(
@@ -108,6 +124,7 @@ export function startZoomHelper() {
     log(`Zoom Helper process exited`, 'zoom', 'warn', code);
     pythonProcess = null;
     zoomHelperPort = null;
+    resolveZoomHelperReady(false);
     logToWindow(
       mainWindowInfo.mainWindow,
       `[Zoom Helper] Process exited with code ${code}`,
@@ -125,7 +142,10 @@ export function startZoomHelper() {
     );
     pythonProcess = null;
     zoomHelperPort = null;
+    resolveZoomHelperReady(false);
   });
+
+  return waitForZoomHelperReady();
 }
 
 export function stopZoomHelper() {
@@ -136,6 +156,7 @@ export function stopZoomHelper() {
   }
 
   zoomHelperPort = null;
+  resolveZoomHelperReady(false);
 }
 
 function getHelperPath(filename: string): string {
@@ -148,4 +169,31 @@ function getHelperPath(filename: string): string {
 
 function getPythonCommand(): string {
   return PLATFORM === 'win32' ? 'python' : 'python3';
+}
+
+function resolveZoomHelperReady(ready: boolean) {
+  const waiters = zoomHelperReadyWaiters;
+  zoomHelperReadyWaiters = [];
+  waiters.forEach((resolve) => resolve(ready));
+}
+
+function waitForZoomHelperReady(): Promise<boolean> {
+  if (zoomHelperPort) return Promise.resolve(true);
+  if (!pythonProcess) return Promise.resolve(false);
+
+  return new Promise((resolve) => {
+    const timeout = setTimeout(() => {
+      zoomHelperReadyWaiters = zoomHelperReadyWaiters.filter(
+        (waiter) => waiter !== resolveOnce,
+      );
+      resolve(false);
+    }, ZOOM_HELPER_READY_TIMEOUT_MS);
+
+    const resolveOnce = (ready: boolean) => {
+      clearTimeout(timeout);
+      resolve(ready);
+    };
+
+    zoomHelperReadyWaiters.push(resolveOnce);
+  });
 }

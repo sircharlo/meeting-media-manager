@@ -351,9 +351,9 @@ handleIpcInvoke('isZoomPythonInstalled', async () => isPythonInstalled());
 handleIpcInvoke('ensureZoomRequirements', async () =>
   ensureRequirementsInstalled(),
 );
-handleIpcSend('startZoomHelper', () => startZoomHelper());
+handleIpcInvoke('startZoomHelper', async () => startZoomHelper());
 handleIpcSend('stopZoomHelper', () => stopZoomHelper());
-handleIpcSend('restartZoomHelper', () => restartZoomHelper());
+handleIpcInvoke('restartZoomHelper', async () => restartZoomHelper());
 
 handleIpcInvoke(
   'isArchitectureMismatch',

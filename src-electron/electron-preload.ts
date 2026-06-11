@@ -145,7 +145,7 @@ const electronApi: ElectronApi = {
   relaunchApp: () => send('relaunchApp'),
   removeListeners: (c) => removeAllIpcListeners(c),
   resolve,
-  restartZoomHelper: () => send('restartZoomHelper'),
+  restartZoomHelper: () => invoke('restartZoomHelper'),
   resumeAllDownloads: () => send('resumeAllDownloads'),
   robot,
   saveFileDialog: (d, f) => invoke('saveFileDialog', d, f),
@@ -156,7 +156,7 @@ const electronApi: ElectronApi = {
   setPathProbeNotificationPaths: (paths) =>
     send('setPathProbeNotificationPaths', paths),
   showFileOnWindows,
-  startZoomHelper: () => send('startZoomHelper'),
+  startZoomHelper: () => invoke('startZoomHelper'),
   stopZoomHelper: () => send('stopZoomHelper'),
   toggleAuthorizedClose: (v) => send('authorizedClose', v),
   toggleMediaWindow: (s, f) => send('toggleMediaWindow', s, f),

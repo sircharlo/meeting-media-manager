@@ -551,7 +551,7 @@ export const automateZoomPostMeetingSettings = async () => {
     const currentState = useCurrentStateStore();
     if (
       !currentState.currentSettings
-        ?.zoomMeetingManagerAutomateMeetingAudioSettings
+        ?.zoomMeetingManagerAutomatePostMeetingAudioSettings
     ) {
       return;
     }
@@ -703,19 +703,10 @@ export const startSharingMediaInZoom = async () => {
     const handle = mainZoomWindow?.handle;
     if (!handle) {
       log('No main Zoom window found for sharing', 'zoom', 'warn', { handle });
-      return;
+      return false;
     }
 
     log('Starting media sharing sequence', 'zoom', 'log', { handle });
-
-    createTemporaryNotification({
-      group: 'zoom-sharing',
-      icon: 'mmm-info',
-      message: (i18n.global.t as (key: string) => string)(
-        'zoom-sharing-started',
-      ),
-      type: 'info',
-    });
 
     // 1. Click Start Share
     const shareClicked = await globalThis.electronApi.clickZoomElement(handle, {
@@ -759,7 +750,7 @@ export const startSharingMediaInZoom = async () => {
 
     // 2. Wait for share entrance window
     const shareWnd = await waitForWindowByClassName('ZPShareEntranceClass');
-    if (!shareWnd?.handle) return;
+    if (!shareWnd?.handle) return false;
 
     // 3. Find and click Media Player window in the list
     // It might take a moment to populate, so retry a few times
@@ -786,7 +777,7 @@ export const startSharingMediaInZoom = async () => {
         ),
         type: 'negative',
       });
-      return;
+      return false;
     }
 
     // 4. Ensure Share Sound is checked
@@ -836,6 +827,7 @@ export const startSharingMediaInZoom = async () => {
     });
 
     log('Media sharing sequence completed', 'zoom', 'log', { handle });
+    return true;
   } catch (error) {
     createTemporaryNotification({
       group: 'zoom-sharing',
@@ -848,6 +840,7 @@ export const startSharingMediaInZoom = async () => {
     errorCatcher(error, {
       contexts: { fn: { name: 'startSharingMediaInZoom' } },
     });
+    return false;
   }
 };
 
@@ -864,7 +857,7 @@ export const stopSharingMediaInZoom = async () => {
       log('No ZPFloatToolbarClass window found', 'zoom', 'warn', {
         floatToolbar,
       });
-      return;
+      return false;
     }
 
     log('Float toolbar', 'zoom', 'log', { floatToolbar });
@@ -872,11 +865,15 @@ export const stopSharingMediaInZoom = async () => {
     const children = await getZoomDialogChildren('ZPFloatToolbarClass');
     log('Children', 'zoom', 'log', { children });
 
-    const buttons = filterElementsByControlType(children, 'Button');
+    const buttons = filterElementsByEnabledState(
+      filterElementsByControlType(children, 'Button'),
+      true,
+    );
     log('Buttons', 'zoom', 'log', { buttons });
 
-    // The stop share button is usually the last button in this toolbar
-    const stopShareBtn = buttons.at(-1);
+    const stopShareBtn =
+      buttons.find((button) => /stop\s+shar(e|ing)/i.test(button.title)) ??
+      buttons.at(-1);
     log('Stop share button', 'zoom', 'log', { stopShareBtn });
 
     if (stopShareBtn) {
@@ -893,6 +890,7 @@ export const stopSharingMediaInZoom = async () => {
         ),
         type: 'info',
       });
+      return true;
     } else {
       log('Could not find stop share button', 'zoom', 'warn', { floatToolbar });
       createTemporaryNotification({
@@ -903,6 +901,7 @@ export const stopSharingMediaInZoom = async () => {
         ),
         type: 'negative',
       });
+      return false;
     }
   } catch (error) {
     createTemporaryNotification({
@@ -916,5 +915,6 @@ export const stopSharingMediaInZoom = async () => {
     errorCatcher(error, {
       contexts: { fn: { name: 'stopSharingMediaInZoom' } },
     });
+    return false;
   }
 };

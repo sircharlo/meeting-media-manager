@@ -53,14 +53,9 @@
         </div>
       </div>
 
-      <div
-        v-if="
-          selectedZoomWindow &&
-          currentSettings?.zoomMeetingManagerAutomateMeetingAudioSettings
-        "
-        class="row q-px-md q-pt-sm q-gutter-x-sm"
-      >
+      <div v-if="selectedZoomWindow" class="row q-px-md q-pt-sm q-gutter-x-sm">
         <q-btn
+          v-if="currentSettings?.zoomMeetingManagerAutomateMeetingAudioSettings"
           class="col"
           color="primary"
           no-caps
@@ -73,6 +68,9 @@
           }}</q-tooltip>
         </q-btn>
         <q-btn
+          v-if="
+            currentSettings?.zoomMeetingManagerAutomatePostMeetingAudioSettings
+          "
           class="col"
           color="primary"
           no-caps

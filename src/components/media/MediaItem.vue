@@ -1515,15 +1515,15 @@ const setMediaPlaying = async (
   signLanguage = false,
   marker?: VideoMarker,
 ) => {
+  const shouldStartZoomManagerSharing =
+    !mediaPlaying.value.url &&
+    currentSettings.value?.zoomMeetingManagerEnable &&
+    currentSettings.value?.zoomMeetingManagerAutomateMediaSharing;
+
   if (!mediaPlaying.value.url) {
     // Start one-shot workflows when media starts playing and no media was playing before
     triggerMediaWindowAutoHide(true);
-    if (
-      currentSettings.value?.zoomMeetingManagerEnable &&
-      currentSettings.value?.zoomMeetingManagerAutomateMediaSharing
-    ) {
-      startSharingMediaInZoom();
-    } else {
+    if (!shouldStartZoomManagerSharing) {
       triggerZoomScreenShare(true);
     }
   } else if (isImage(mediaPlaying.value.url)) {
@@ -1570,6 +1570,16 @@ const setMediaPlaying = async (
   nextTick(() => {
     globalThis.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
   });
+
+  if (shouldStartZoomManagerSharing) {
+    const sharingStarted = await startSharingMediaInZoom();
+    if (!sharingStarted) {
+      log('Zoom media sharing did not start', 'zoom', 'warn', {
+        mediaTitle: media.title,
+        uniqueId: media.uniqueId,
+      });
+    }
+  }
 };
 
 const getMarkerTimes = (m: VideoMarker) => {

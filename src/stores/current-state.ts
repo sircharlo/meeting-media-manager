@@ -264,10 +264,10 @@ export const useCurrentStateStore = defineStore('current-state', {
 
       zoomHelperSyncInProgress = true;
       try {
+        const { createTemporaryNotification } =
+          await import('src/helpers/notifications');
         const pythonInstalled = await isZoomPythonInstalled();
         if (!pythonInstalled) {
-          const { createTemporaryNotification } =
-            await import('src/helpers/notifications');
           createTemporaryNotification({
             caption: (i18n.global.t as (key: string) => string)(
               'zoom-meeting-manager-python-required-caption',
@@ -290,9 +290,31 @@ export const useCurrentStateStore = defineStore('current-state', {
         const requirementsInstalled = await ensureZoomRequirements();
         if (!requirementsInstalled) {
           log('Failed to install requirements', 'zoom', 'error');
+          createTemporaryNotification({
+            caption: (i18n.global.t as (key: string) => string)('failed'),
+            message: (i18n.global.t as (key: string) => string)(
+              'zoomMeetingManager',
+            ),
+            timeout: 0,
+            type: 'negative',
+          });
+          stopZoomHelper();
+          return;
         }
 
-        startZoomHelper();
+        const helperStarted = await startZoomHelper();
+        if (!helperStarted) {
+          log('Failed to start Zoom helper', 'zoom', 'error');
+          createTemporaryNotification({
+            caption: (i18n.global.t as (key: string) => string)('failed'),
+            message: (i18n.global.t as (key: string) => string)(
+              'zoomMeetingManager',
+            ),
+            timeout: 0,
+            type: 'negative',
+          });
+          stopZoomHelper();
+        }
       } finally {
         zoomHelperSyncInProgress = false;
       }

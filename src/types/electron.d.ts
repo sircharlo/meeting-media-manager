@@ -264,7 +264,7 @@ export interface ElectronApi {
   relaunchApp: () => void;
   removeListeners: (channel: ElectronIpcListenKey) => void;
   resolve: typeof resolve;
-  restartZoomHelper: () => void;
+  restartZoomHelper: () => Promise<boolean>;
   resumeAllDownloads: () => void;
   robot: typeof robot;
   saveFileDialog: (
@@ -277,7 +277,7 @@ export interface ElectronApi {
   setHardwareAcceleration: (disabled: boolean) => void;
   setPathProbeNotificationPaths: (paths: string[]) => void;
   showFileOnWindows: (filePath: string) => Promise<void>;
-  startZoomHelper: () => void;
+  startZoomHelper: () => Promise<boolean>;
   stopZoomHelper: () => void;
   toggleAuthorizedClose: (authorized: boolean) => void;
   toggleMediaWindow: (show: boolean, enableFadeTransitions?: boolean) => void;
@@ -324,9 +324,11 @@ export type ElectronIpcInvokeKey =
   | 'openFolder'
   | 'openFolderDialog'
   | 'registerShortcut'
+  | 'restartZoomHelper'
   | 'saveFileDialog'
   | 'sendZoomWindowKeys'
   | 'set-hardware-acceleration'
+  | 'startZoomHelper'
   | 'unzip';
 
 // BrowserWindow.webContents.send / ipcRenderer.on channels
@@ -371,11 +373,9 @@ export type ElectronIpcSendKey =
   | 'pauseAllDownloads'
   | 'quitAndInstall'
   | 'relaunchApp'
-  | 'restartZoomHelper'
   | 'resumeAllDownloads'
   | 'setElectronUrlVariables'
   | 'setPathProbeNotificationPaths'
-  | 'startZoomHelper'
   | 'stopZoomHelper'
   | 'toggleMediaWindow'
   | 'toggleOpenAtLogin'

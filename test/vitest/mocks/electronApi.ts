@@ -233,7 +233,7 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   resolve,
-  restartZoomHelper: () => void 0,
+  restartZoomHelper: async () => true,
   resumeAllDownloads: function () {
     throw new Error('Function not implemented.');
   },
@@ -257,9 +257,7 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   showFileOnWindows: async () => undefined,
-  startZoomHelper: function () {
-    throw new Error('Function not implemented.');
-  },
+  startZoomHelper: async () => true,
   stopZoomHelper: function () {
     throw new Error('Function not implemented.');
   },
