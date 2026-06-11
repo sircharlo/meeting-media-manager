@@ -14,6 +14,7 @@ import {
   parseMediaFile,
   pathToFileURL,
   readDirectory,
+  showFileOnWindows,
 } from 'src-electron/preload/fs';
 import {
   invoke,
@@ -143,6 +144,7 @@ const electronApi: ElectronApi = {
   setHardwareAcceleration: (v) => invoke('set-hardware-acceleration', v),
   setPathProbeNotificationPaths: (paths) =>
     send('setPathProbeNotificationPaths', paths),
+  showFileOnWindows,
   toggleMediaWindow: (s, f) => send('toggleMediaWindow', s, f),
   toggleTimerWindow: (s) => send('toggleTimerWindow', s),
   unregisterAllShortcuts: () => send('unregisterAllShortcuts'),

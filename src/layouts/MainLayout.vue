@@ -298,12 +298,6 @@ async function handleAddWatchFolderEvent(
   const watchedItems = (await watchedItemMapper(day, changedPath)) || [];
 
   for (const watchedItem of watchedItems) {
-    // Skip if already exists
-    const exists = dayObj.mediaSections.some((s) =>
-      s.items?.some((i) => i.uniqueId === watchedItem.uniqueId),
-    );
-    if (exists) continue;
-
     const weMeeting = isWeMeetingDay(dayObj.date);
     const mwMeeting = isMwMeetingDay(dayObj.date);
 
@@ -314,14 +308,46 @@ async function handleAddWatchFolderEvent(
     );
 
     dayObj.mediaSections ??= [];
+    let existingItem: MediaItem | undefined;
+    let existingSection: MediaSectionWithConfig | undefined;
+    let existingItemIndex = -1;
+
+    for (const section of dayObj.mediaSections) {
+      const itemIndex =
+        section.items?.findIndex((i) => i.uniqueId === watchedItem.uniqueId) ??
+        -1;
+      if (itemIndex === -1) continue;
+
+      existingItem = section.items?.[itemIndex];
+      existingSection = section;
+      existingItemIndex = itemIndex;
+      break;
+    }
+
+    const itemWithSavedPlacement = {
+      ...(existingItem ?? watchedItem),
+      originalSection: watchedItem.originalSection,
+      sortOrderOriginal: watchedItem.sortOrderOriginal,
+    };
+
     const targetSection = getOrCreateMediaSection(
       dayObj.mediaSections,
       targetSectionId,
     );
     targetSection.items ??= [];
 
-    // Add, then we’ll sort once after all inserts
-    targetSection.items.push(watchedItem);
+    if (!existingItem || !existingSection) {
+      targetSection.items.push(itemWithSavedPlacement);
+      continue;
+    }
+
+    if (existingSection.config.uniqueId === targetSection.config.uniqueId) {
+      targetSection.items[existingItemIndex] = itemWithSavedPlacement;
+      continue;
+    }
+
+    existingSection.items?.splice(existingItemIndex, 1);
+    targetSection.items.push(itemWithSavedPlacement);
   }
 
   // Sort sections once after adding

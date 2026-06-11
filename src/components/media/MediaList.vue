@@ -235,6 +235,18 @@ function handleWatchedMediaPersistence() {
 /**
  * Updates the section data in the Pinia store to match the sorted order.
  */
+let watchedMediaPersistenceQueued = false;
+
+function queueWatchedMediaPersistence() {
+  if (watchedMediaPersistenceQueued) return;
+
+  watchedMediaPersistenceQueued = true;
+  nextTick(() => {
+    watchedMediaPersistenceQueued = false;
+    handleWatchedMediaPersistence();
+  });
+}
+
 function updateStoreMediaOrder(items: MediaItemType[]) {
   if (!selectedDateObject.value || !props.mediaList.config) return;
 
@@ -325,9 +337,12 @@ defineExpose({
 // Efficient watcher to ensure changes are persisted to the store
 // Only triggers when the actual array content changes, not on every re-render
 watch(
-  () => [sortableItems.value?.map((item) => item.uniqueId), isDragging.value],
-  ([, isDragging]) => {
-    if (isDragging) return; // Avoid updating while dragging
+  () => [
+    sortableItems.value?.map((item) => item.uniqueId).join('|'),
+    isDragging.value,
+  ],
+  ([, isCurrentlyDragging]) => {
+    if (isCurrentlyDragging) return; // Avoid updating while dragging
     if (!sectionData.value || !sortableItems.value || !selectedDateObject.value)
       return;
 
@@ -335,7 +350,7 @@ watch(
     updateStoreMediaOrder(sortableItems.value);
 
     // Save section order information for watched media items
-    handleWatchedMediaPersistence();
+    queueWatchedMediaPersistence();
   },
   { flush: 'post' },
 );

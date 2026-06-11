@@ -4,32 +4,44 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const files = new Map<string, string>();
 const writes = new Map<string, string>();
+const existsMock = vi.fn();
 const hideFileOnWindowsMock = vi.fn();
+const readJsonMock = vi.fn();
+const showFileOnWindowsMock = vi.fn();
+const writeFileMock = vi.fn();
 
 const toPath = (fileUrl: string) => fileUrl.replace('file://', '');
 
 describe('watched media layout persistence', () => {
   beforeEach(() => {
     vi.resetModules();
+    vi.clearAllMocks();
     files.clear();
     writes.clear();
+    existsMock.mockImplementation(async (path: string) => files.has(path));
     hideFileOnWindowsMock.mockResolvedValue(undefined);
+    readJsonMock.mockImplementation(async (path: string) =>
+      JSON.parse(files.get(path) ?? '{}'),
+    );
+    showFileOnWindowsMock.mockResolvedValue(undefined);
+    writeFileMock.mockImplementation(async (path: string, content: string) => {
+      files.set(path, content);
+      writes.set(path, content);
+    });
 
     vi.stubGlobal('electronApi', {
       basename: (value: string) => value.split('/').pop() ?? value,
       dirname: (value: string) => value.split('/').slice(0, -1).join('/'),
       fileUrlToPath: toPath,
       fs: {
-        exists: vi.fn(async (path: string) => files.has(path)),
-        readFile: vi.fn(async (path: string) => files.get(path) ?? ''),
-        writeFile: vi.fn(async (path: string, content: string) => {
-          files.set(path, content);
-          writes.set(path, content);
-        }),
+        exists: existsMock,
+        readJSON: readJsonMock,
+        writeFile: writeFileMock,
       },
       hideFileOnWindows: hideFileOnWindowsMock,
       join: (...parts: string[]) => parts.join('/'),
       PLATFORM: 'linux',
+      showFileOnWindows: showFileOnWindowsMock,
     });
   });
 
@@ -95,10 +107,27 @@ describe('watched media layout persistence', () => {
       'local-image.jpg': { order: 29, section: 'lac' },
       'local-video.mp4': { order: 15, section: 'tgw' },
     });
-    expect(hideFileOnWindowsMock).not.toHaveBeenCalled();
+    expect(showFileOnWindowsMock).toHaveBeenCalledWith(
+      '/watched/2026-06-11/.section-order.json',
+    );
+    expect(hideFileOnWindowsMock).toHaveBeenCalledWith(
+      '/watched/2026-06-11/.section-order.json',
+    );
+    expect(showFileOnWindowsMock.mock.invocationCallOrder[0]).toBeLessThan(
+      writeFileMock.mock.invocationCallOrder[0] ?? 0,
+    );
+    expect(writeFileMock.mock.invocationCallOrder[0]).toBeLessThan(
+      hideFileOnWindowsMock.mock.invocationCallOrder[0] ?? 0,
+    );
   });
 
-  it('hides the section order file on Windows after saving watched media order', async () => {
+  it('shows and hides the section order file around reads and writes', async () => {
+    files.set(
+      '/watched/2026-06-11/.section-order.json',
+      JSON.stringify({
+        'existing.png': { order: 2, section: 'pt' },
+      }),
+    );
     vi.stubGlobal('electronApi', {
       ...globalThis.electronApi,
       PLATFORM: 'win32',
@@ -123,8 +152,52 @@ describe('watched media layout persistence', () => {
 
     await saveWatchedMediaLayout(mediaSections);
 
-    expect(hideFileOnWindowsMock).toHaveBeenCalledWith(
+    const sectionOrderFilePath = '/watched/2026-06-11/.section-order.json';
+    expect(showFileOnWindowsMock).toHaveBeenCalledTimes(2);
+    expect(hideFileOnWindowsMock).toHaveBeenCalledTimes(2);
+    expect(showFileOnWindowsMock).toHaveBeenNthCalledWith(
+      1,
+      sectionOrderFilePath,
+    );
+    expect(hideFileOnWindowsMock).toHaveBeenNthCalledWith(
+      1,
+      sectionOrderFilePath,
+    );
+    expect(showFileOnWindowsMock).toHaveBeenNthCalledWith(
+      2,
+      sectionOrderFilePath,
+    );
+    expect(hideFileOnWindowsMock).toHaveBeenNthCalledWith(
+      2,
+      sectionOrderFilePath,
+    );
+    expect(readJsonMock).toHaveBeenCalledWith(sectionOrderFilePath);
+    expect(writeFileMock).toHaveBeenCalledWith(
       '/watched/2026-06-11/.section-order.json',
+      JSON.stringify(
+        {
+          'existing.png': { order: 2, section: 'pt' },
+          'local-video.mp4': { order: 0, section: 'tgw' },
+        },
+        null,
+        2,
+      ),
+      'utf-8',
+    );
+    expect(showFileOnWindowsMock.mock.invocationCallOrder[0]).toBeLessThan(
+      readJsonMock.mock.invocationCallOrder[0] ?? 0,
+    );
+    expect(readJsonMock.mock.invocationCallOrder[0]).toBeLessThan(
+      hideFileOnWindowsMock.mock.invocationCallOrder[0] ?? 0,
+    );
+    expect(hideFileOnWindowsMock.mock.invocationCallOrder[0]).toBeLessThan(
+      showFileOnWindowsMock.mock.invocationCallOrder[1] ?? 0,
+    );
+    expect(showFileOnWindowsMock.mock.invocationCallOrder[1]).toBeLessThan(
+      writeFileMock.mock.invocationCallOrder[0] ?? 0,
+    );
+    expect(writeFileMock.mock.invocationCallOrder[0]).toBeLessThan(
+      hideFileOnWindowsMock.mock.invocationCallOrder[1] ?? 0,
     );
   });
 });

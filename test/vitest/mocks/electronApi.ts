@@ -228,6 +228,7 @@ export const electronApi: ElectronApi = {
   setPathProbeNotificationPaths: function (paths) {
     throw new Error('Function not implemented.');
   },
+  showFileOnWindows: async () => undefined,
   toggleMediaWindow: function (show) {
     throw new Error('Function not implemented.');
   },

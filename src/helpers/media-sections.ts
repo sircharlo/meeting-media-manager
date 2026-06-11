@@ -323,26 +323,40 @@ const getWatchedOrder = (items: MediaItem[], itemIndex: number) => {
 const readWatchedMediaSectionOrder = async (
   sectionOrderFilePath: string,
 ): Promise<WatchedMediaSectionOrder> => {
-  const { fs } = globalThis.electronApi;
-  const { exists, readFile } = fs;
+  try {
+    const { fs, hideFileOnWindows, showFileOnWindows } = globalThis.electronApi;
+    const { exists, readJSON } = fs;
 
-  if (!(await exists(sectionOrderFilePath))) return {};
+    if (!(await exists(sectionOrderFilePath))) return {};
 
-  const fileContent = await readFile(sectionOrderFilePath, 'utf-8');
-  return JSON.parse(fileContent);
+    await showFileOnWindows(sectionOrderFilePath);
+    const result = await readJSON(sectionOrderFilePath);
+    await hideFileOnWindows(sectionOrderFilePath);
+
+    return result;
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          name: 'readWatchedMediaSectionOrder',
+          sectionOrderFilePath,
+        },
+      },
+    });
+    return {};
+  }
 };
 
 const writeWatchedMediaSectionOrder = async (
   sectionOrderFilePath: string,
   data: WatchedMediaSectionOrder,
 ) => {
-  const { fs, hideFileOnWindows, PLATFORM } = globalThis.electronApi;
+  const { fs, hideFileOnWindows, showFileOnWindows } = globalThis.electronApi;
   const { writeFile } = fs;
 
+  await showFileOnWindows(sectionOrderFilePath);
   await writeFile(sectionOrderFilePath, JSON.stringify(data, null, 2), 'utf-8');
-  if (PLATFORM === 'win32') {
-    await hideFileOnWindows(sectionOrderFilePath);
-  }
+  await hideFileOnWindows(sectionOrderFilePath);
 };
 
 export const saveWatchedMediaLayout = async (
@@ -431,8 +445,9 @@ export const removeWatchedMediaSectionInfo = async (
 ): Promise<void> => {
   try {
     // Access electron API functions
-    const { fs, join } = globalThis.electronApi;
-    const { exists, readFile, writeFile } = fs;
+    const { fs, hideFileOnWindows, join, showFileOnWindows } =
+      globalThis.electronApi;
+    const { exists, readJSON, writeFile } = fs;
 
     const sectionOrderFilePath = join(datedFolderPath, '.section-order.json');
 
@@ -440,23 +455,22 @@ export const removeWatchedMediaSectionInfo = async (
       return;
     }
 
-    const fileContent = await readFile(sectionOrderFilePath, 'utf-8');
     const sectionOrderData: Record<
       string,
       { order: number; section: MediaSectionIdentifier }
-    > = JSON.parse(fileContent);
+    > = await readJSON(sectionOrderFilePath);
 
     if (sectionOrderData[filename]) {
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete sectionOrderData[filename];
+
+      await showFileOnWindows(sectionOrderFilePath);
       await writeFile(
         sectionOrderFilePath,
         JSON.stringify(sectionOrderData, null, 2),
         'utf-8',
       );
-      if (globalThis.electronApi.PLATFORM === 'win32') {
-        await globalThis.electronApi.hideFileOnWindows(sectionOrderFilePath);
-      }
+      await hideFileOnWindows(sectionOrderFilePath);
       log(`✅ Removed section info for ${filename}`, 'mediaSections', 'log');
     }
   } catch (error) {

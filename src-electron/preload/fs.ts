@@ -66,6 +66,27 @@ export const hideFileOnWindows = async (filePath: string) => {
   }
 };
 
+export const showFileOnWindows = async (filePath: string) => {
+  if (PLATFORM !== 'win32' || !filePath) return;
+
+  try {
+    const { execFile } = await import('node:child_process');
+    const { promisify } = await import('node:util');
+    const execFileAsync = promisify(execFile);
+
+    await execFileAsync('attrib', ['-h', filePath]);
+  } catch (error) {
+    capturePreloadError(error, {
+      contexts: {
+        fn: {
+          name: 'showFileOnWindows',
+          path: filePath,
+        },
+      },
+    });
+  }
+};
+
 /**
  * Infers the extension of a file based on its type.
  * @param filename The name of the file.
