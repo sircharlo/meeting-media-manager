@@ -269,7 +269,7 @@ Ajoutez vos propres fichiers multimédias à M³ :
 4. **Fichiers JWPUB et listes de lecture** - Importez des publications et des listes de lecture
 5. **Médias pour discours publics (S-34 / S-34mp)** - Importez des médias pour discours publics à l'aide de fichiers JWPUB S‑34 ou S‑34mp
 6. **Vidéos du site officiel** - Recherchez des vidéos et ajoutez-les aux médias pour la date sélectionnée
-7. **Bible d'étude et médias bibliques de langue des signes** - Ajouter des images, des vidéos, des cartes, des références historiques ou des vidéos bibliques de langue des signes pour certains passages
+7. **Médias de la Bible d'étude et de la Bible en langue des signes** - Ajoutez des images, des vidéos, des cartes, des références historiques ou les vidéos de la Bible en langue des signes pour les versets sélectionnés
 
 ### Import et gestion des médias {#managing-imported-media}
 
@@ -324,20 +324,20 @@ Partagez le site officiel sur des écrans externes :
 
 ### Contrôles du site web {#website-controls}
 
-- **Ouvrir le site Web** - Ouvrir une fenêtre de site web séparée
-- **Commencer à faire un miroir** - Afficher la fenêtre du site dans l'affichage des médias pour le public
-- **Arrêter de faire un miroir** - Arrêter d'afficher le site web et revenir au fond d'affichage du texte de l'année ou du média
+- **Ouvrir le site Web** - Ouvrir une nouvelle fenêtre pour le site Web
+- **Lancer la mise en miroir** - Afficher la fenêtre du site web sur l'écran des médias pour l'auditoire
+- **Arrêter la mise en miroir** - Cesser d'afficher le site web et revenir à l'affichage du texte annuel ou de l'arrière-plan multimédia
 - **Navigation** - Contrôles de navigation standard du navigateur
 - **Actualiser** - Recharger la page actuelle
 - **Fermer** - Quitter le mode de présentation du site web
-- **Retour automatique** - Vous pouvez éventuellement revenir à la liste des médias automatiquement après l'arrêt du miroir du site web
+- **Retour automatique** - Retour automatique à la liste des médias après l'arrêt de la diffusion du site web (en option)
 
 ## Enregistrement des réunions {#meeting-recordings}
 
 M³ permet de gérer l'enregistrement des réunions, mais ne dispose pas d'un enregistreur intégré.
 
-- **Enregistrement OBS** - Si les contrôles d'enregistrement d'OBS sont activés, utilisez la popup d'OBS pour démarrer et arrêter l'enregistrement d'OBS
-- **Application d'enregistrement externe** - Configurer les raccourcis clavier pour une application d'enregistrement séparée, puis utiliser la popup des enregistrements de la réunion pour envoyer ces raccourcis
+- **Enregistrement OBS Studio** - Si les commandes d'enregistrement OBS Studio sont activées, utilisez la fenêtre contextuelle OBS Studio pour démarrer et arrêter l'enregistrement dans OBS Studio
+- **Application d'enregistrement externe** - Configurez des raccourcis clavier pour une application d'enregistrement distincte, puis utilisez la fenêtre contextuelle des enregistrements de réunion pour envoyer ces raccourcis
 - **Dossier d'enregistrement** - Configurer un dossier d'enregistrement, ce qui affichera un bouton rapide permettant d'ouvrir le dossier dans lequel les enregistrements sont sauvegardés
 
 ## Fonctionnalités avancées {#user-guide-advanced-features}
