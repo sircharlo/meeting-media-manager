@@ -73,7 +73,7 @@ Ja! Met M³ kun je:
 - Automatisch media downloaden voor aankomende vergaderingen
 - Eigen media importeren voor elke gewenste datum
 
-### :file_folder: Wat is de automatische media-export? {#import-media}
+### :open_file_folder: Hoe importeer ik mijn eigen mediabestanden? {#import-media}
 
 Je kunt op verschillende manieren eigen media importeren:
 
@@ -185,7 +185,7 @@ Mapbewaking stelt je in staat om:
 1. Een map te selecteren om te controleren op nieuwe bestanden
 2. Automatisch nieuwe mediabestanden te importeren die worden gesynchroniseerd met cloudopslag zoals Dropbox of OneDrive
 
-### :open_file_folder: Hoe importeer ik mijn eigen mediabestanden? {#faq-media-export}
+### :file_folder: Wat is de automatische media-export? {#faq-media-export}
 
 De automatische media-export doet het volgende:
 
