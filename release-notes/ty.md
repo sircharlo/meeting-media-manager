@@ -4,6 +4,15 @@
 
 No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera parau, a hi’o i ta māua pu’e parau CHANGELOG.md i ni’a i GitHub.
 
+## v26.6.1
+
+### ✨ Te mau rave’a ‘āpī
+
+- ✨ Hi‘opo‘araa hoho‘a e te video: Ua amuihia mai te hoê tapo‘i hi‘opo‘araa hoho‘a e te video te nehenehe e huri i nia aore ra i raro mai te mau faanahoraa aore ra mai te haamaramarama faaite.
+- ✨ Imi i te mau taihaa: Ua amuihia mai te hoê vahi imiraa vitiviti i roto i te tapura taihaa, o te faatia ia oe ia imi vitiviti i te mau taihaa na roto i te upoo parau. No te faaohipa i te reira, a taomi noa i te tapura parau no te imi (Ctrl+F aore ra Cmd+F).
+- ✨ Imi i te mau faanahoraa: Ua amuihia mai te hoê vahi tatarahia i roto i te api o te mau faanahoraa, o te faatia ia oe ia itea mai te mau faanahoraa na roto i te tahi parau matua aore ra te hoê tuhaa. No te faaohipa i te reira, a tutui noa i nia i te tapura parau no te imi i te pae atau i nia roa o te api o te mau faanahoraa, aore ra a taomi i te tapura parau no te imi (Ctrl+F aore ra Cmd+F).
+- ✨ Faaararaa no te ririraa o te upaupa: Ua amuihia mai te hoê faaararaa ia haamata ana‘e te hoê taihaa i te taime a hauti noa ra te upaupa i muri. E nehenehe te mau faaohipa e maiti i te tapea i te upaupa i muri mai te faaararaa.
+
 ## v26.6.0
 
 ### ✨ Te mau rave’a ‘āpī
