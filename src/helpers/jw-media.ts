@@ -3146,7 +3146,7 @@ export const watchedItemMapper: (
         isImage: image,
         isVideo: video,
         originalSection: section,
-        sortOrderOriginal: order ?? 'watched',
+        sortOrderOriginal: order ?? Number.MAX_SAFE_INTEGER,
         source: 'watched',
         thumbnailUrl,
         title,

@@ -14,6 +14,11 @@ import { useCurrentStateStore } from 'src/stores/current-state';
 
 import { errorCatcher } from './error-catcher';
 
+type WatchedMediaSectionOrder = Record<
+  string,
+  { order: number; section: MediaSectionIdentifier }
+>;
+
 export const defaultAdditionalSection = {
   config: {
     bgColor: 'rgb(148, 94, 181)',
@@ -263,86 +268,122 @@ export const getTextColor = (section?: MediaSectionWithConfig) => {
   return lum > 0.3 ? '#000000' : '#ffffff';
 };
 
-/**
- * Save section order information for watched media items to a file
- * This replaces the file renaming approach to avoid issues with drag and drop positioning
- */
-export const saveWatchedMediaSectionOrder = async (
-  datedFolderPath: string,
-  sectionId: MediaSectionIdentifier,
-  mediaItems: MediaItem[],
+const getNumericSortOrder = (item?: MediaItem) => {
+  return typeof item?.sortOrderOriginal === 'number'
+    ? item.sortOrderOriginal
+    : undefined;
+};
+
+const getWatchedOrder = (items: MediaItem[], itemIndex: number) => {
+  const itemsBeforeCurrent = items.slice(0, itemIndex);
+  const previousAnchorIndex = itemsBeforeCurrent.findLastIndex(
+    (item) =>
+      item.source !== 'watched' && getNumericSortOrder(item) !== undefined,
+  );
+  const nextAnchorOffset = items
+    .slice(itemIndex + 1)
+    .findIndex(
+      (item) =>
+        item.source !== 'watched' && getNumericSortOrder(item) !== undefined,
+    );
+  const nextAnchorIndex =
+    nextAnchorOffset >= 0 ? itemIndex + 1 + nextAnchorOffset : -1;
+  const previousAnchor =
+    previousAnchorIndex >= 0 ? items[previousAnchorIndex] : undefined;
+  const nextAnchor = nextAnchorIndex >= 0 ? items[nextAnchorIndex] : undefined;
+  const previousOrder = getNumericSortOrder(previousAnchor);
+  const nextOrder = getNumericSortOrder(nextAnchor);
+  const runStart = previousAnchorIndex + 1;
+  const runEnd = nextAnchorIndex >= 0 ? nextAnchorIndex : items.length;
+  const runItems = items.slice(runStart, runEnd);
+  const currentRunOffset = itemIndex - runStart + 1;
+  const watchedItemsBeforeCurrent = runItems
+    .slice(0, currentRunOffset)
+    .filter((item) => item.source === 'watched').length;
+  const watchedItemCount = runItems.filter(
+    (item) => item.source === 'watched',
+  ).length;
+
+  if (previousOrder !== undefined && nextOrder !== undefined) {
+    const step = (nextOrder - previousOrder) / (watchedItemCount + 1);
+    return previousOrder + step * watchedItemsBeforeCurrent;
+  }
+
+  if (previousOrder !== undefined) {
+    return previousOrder + watchedItemsBeforeCurrent;
+  }
+
+  if (nextOrder !== undefined) {
+    return nextOrder - (watchedItemCount - watchedItemsBeforeCurrent + 1);
+  }
+
+  return itemIndex;
+};
+
+const readWatchedMediaSectionOrder = async (
+  sectionOrderFilePath: string,
+): Promise<WatchedMediaSectionOrder> => {
+  const { fs } = globalThis.electronApi;
+  const { exists, readFile } = fs;
+
+  if (!(await exists(sectionOrderFilePath))) return {};
+
+  const fileContent = await readFile(sectionOrderFilePath, 'utf-8');
+  return JSON.parse(fileContent);
+};
+
+const writeWatchedMediaSectionOrder = async (
+  sectionOrderFilePath: string,
+  data: WatchedMediaSectionOrder,
+) => {
+  const { fs } = globalThis.electronApi;
+  const { writeFile } = fs;
+
+  await writeFile(sectionOrderFilePath, JSON.stringify(data, null, 2), 'utf-8');
+};
+
+export const saveWatchedMediaLayout = async (
+  mediaSections: MediaSectionWithConfig[],
 ): Promise<void> => {
   try {
-    // Access electron API functions
-    const { basename, fileUrlToPath, fs, join } = globalThis.electronApi;
-    const { exists, readFile, writeFile } = fs;
+    const { basename, dirname, fileUrlToPath, join } = globalThis.electronApi;
+    const dataByFolder: Record<string, WatchedMediaSectionOrder> = {};
 
-    const sectionOrderFilePath = join(datedFolderPath, '.section-order.json');
+    mediaSections.forEach((section) => {
+      const items = section.items ?? [];
+      items.forEach((item, index) => {
+        if (item.source !== 'watched' || !item.fileUrl) return;
 
-    // Read existing section order data if it exists
-    let existingData: Record<
-      string,
-      { order: number; section: MediaSectionIdentifier }
-    > = {};
-    try {
-      if (await exists(sectionOrderFilePath)) {
-        const fileContent = await readFile(sectionOrderFilePath, 'utf-8');
-        existingData = JSON.parse(fileContent);
-      }
-    } catch (error) {
-      errorCatcher(error, {
-        contexts: {
-          fn: {
-            datedFolderPath,
-            name: 'saveWatchedMediaSectionOrder',
-            sectionId,
-          },
-        },
-      });
-    }
-
-    // Update section order data for watched items
-    mediaItems.forEach((item, index) => {
-      log(
-        '🔍 [saveWatchedMediaSectionOrder] Overwriting sortOrderOriginal',
-        'mediaSections',
-        'log',
-        item,
-        index,
-      );
-      item.sortOrderOriginal = index;
-      if (item.source === 'watched' && item.fileUrl) {
         const localPath = fileUrlToPath(item.fileUrl);
-        if (localPath) {
-          const filename = basename(localPath);
-          existingData[filename] = {
-            order: index,
-            section: sectionId,
-          };
-        }
-      }
+        if (!localPath) return;
+
+        const datedFolderPath = dirname(localPath);
+        if (!datedFolderPath) return;
+
+        const filename = basename(localPath);
+        dataByFolder[datedFolderPath] ??= {};
+        dataByFolder[datedFolderPath][filename] = {
+          order: getWatchedOrder(items, index),
+          section: section.config.uniqueId,
+        };
+      });
     });
 
-    // Write updated data back to file
-    await writeFile(
-      sectionOrderFilePath,
-      JSON.stringify(existingData, null, 2),
-      'utf-8',
-    );
+    for (const [datedFolderPath, layoutData] of Object.entries(dataByFolder)) {
+      const sectionOrderFilePath = join(datedFolderPath, '.section-order.json');
+      const existingData =
+        await readWatchedMediaSectionOrder(sectionOrderFilePath);
 
-    log(
-      `✅ Saved section order for ${sectionId} to ${sectionOrderFilePath}`,
-      'mediaSections',
-      'log',
-    );
+      await writeWatchedMediaSectionOrder(sectionOrderFilePath, {
+        ...existingData,
+        ...layoutData,
+      });
+    }
   } catch (error) {
-    // Fail gracefully - if we can't save the order file, it's not a big deal
     errorCatcher(error, {
       contexts: {
         fn: {
-          datedFolderPath,
-          name: 'saveWatchedMediaSectionOrder',
-          sectionId,
+          name: 'saveWatchedMediaLayout',
         },
       },
     });
@@ -357,21 +398,11 @@ export const getWatchedMediaSectionInfo = async (
   filename: string,
 ): Promise<null | { order: number; section: MediaSectionIdentifier }> => {
   try {
-    // Access electron API functions
-    const { fs, join } = globalThis.electronApi;
-    const { exists, readFile } = fs;
+    const { join } = globalThis.electronApi;
 
     const sectionOrderFilePath = join(datedFolderPath, '.section-order.json');
-
-    if (!(await exists(sectionOrderFilePath))) {
-      return null;
-    }
-
-    const fileContent = await readFile(sectionOrderFilePath, 'utf-8');
-    const sectionOrderData: Record<
-      string,
-      { order: number; section: MediaSectionIdentifier }
-    > = JSON.parse(fileContent);
+    const sectionOrderData =
+      await readWatchedMediaSectionOrder(sectionOrderFilePath);
 
     return sectionOrderData[filename] || null;
   } catch (error) {

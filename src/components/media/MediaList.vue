@@ -139,7 +139,7 @@ import { useMediaDragAndDrop } from 'src/composables/useMediaDragAndDrop';
 import { useMediaSection } from 'src/composables/useMediaSection';
 import {
   getTextColor,
-  saveWatchedMediaSectionOrder,
+  saveWatchedMediaLayout,
 } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, nextTick, ref, watch } from 'vue';
@@ -208,37 +208,15 @@ const { dragDropContainer, isDragging, sortableItems } = useMediaDragAndDrop(
  * Handles saving the order of watched media items to the filesystem.
  * This is only applicable when some items in the section are from the 'watched' source.
  */
-function handleWatchedMediaPersistence(items: MediaItemType[]) {
-  if (!items.some((item) => item.source === 'watched')) return;
-
+function handleWatchedMediaPersistence() {
   try {
-    const watchedItems = items.filter(
-      (item) => item.source === 'watched' && item.fileUrl,
+    if (!selectedDateObject.value?.mediaSections) return;
+    const hasWatchedMedia = selectedDateObject.value.mediaSections.some(
+      (section) => section.items?.some((item) => item.source === 'watched'),
     );
-    const watchedItem = watchedItems[0];
-    if (!watchedItem) return;
+    if (!hasWatchedMedia) return;
 
-    const { dirname, fileUrlToPath } = globalThis.electronApi;
-
-    const firstWatchedItemPath = fileUrlToPath(watchedItem.fileUrl);
-    if (!firstWatchedItemPath) return;
-
-    const watchedDayFolder = dirname(firstWatchedItemPath);
-    if (!watchedDayFolder) return;
-
-    log(
-      '🔍 [updateMediaListItems] Saving section order for watched media items:',
-      'mediaList',
-      'log',
-      watchedDayFolder,
-      props.mediaList.config?.uniqueId,
-      watchedItems,
-    );
-    saveWatchedMediaSectionOrder(
-      watchedDayFolder,
-      props.mediaList.config?.uniqueId,
-      watchedItems,
-    );
+    saveWatchedMediaLayout(selectedDateObject.value.mediaSections);
   } catch (error) {
     // Fail gracefully - if we can't save the order file, it's not a big deal
     errorCatcher(error, {
@@ -247,7 +225,7 @@ function handleWatchedMediaPersistence(items: MediaItemType[]) {
           mediaList: props.mediaList,
           name: 'updateMediaListItems',
           selectedDateObject: selectedDateObject.value,
-          sortableItems: items,
+          sortableItems: sortableItems.value,
         },
       },
     });
@@ -353,11 +331,11 @@ watch(
     if (!sectionData.value || !sortableItems.value || !selectedDateObject.value)
       return;
 
-    // Save section order information for watched media items
-    handleWatchedMediaPersistence(sortableItems.value);
-
     // Update the section data to match the sorted order
     updateStoreMediaOrder(sortableItems.value);
+
+    // Save section order information for watched media items
+    handleWatchedMediaPersistence();
   },
   { flush: 'post' },
 );
