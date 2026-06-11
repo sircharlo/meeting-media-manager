@@ -23,6 +23,7 @@
       <div class="row q-px-md q-pt-md">
         {{ t('add-a-song') }}
       </div>
+      <DialogDownloadProgress :label="t('loading')" :loading="loading" />
       <div class="row q-px-md q-py-md">
         <q-input
           v-model="filter"
@@ -105,6 +106,7 @@ import type {
 
 import { watchOnce } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import DialogDownloadProgress from 'components/dialog/DialogDownloadProgress.vue';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getJwMediaInfo, getPubMediaLinks } from 'src/helpers/jw-media';
@@ -162,16 +164,6 @@ const resetDialogState = () => {
   isProcessing.value = false;
 };
 
-// Watch for dialog closing to reset state
-watch(
-  () => dialogValue.value,
-  (isOpen) => {
-    if (!isOpen) {
-      // Reset state when dialog closes
-      resetDialogState();
-    }
-  },
-);
 const filteredSongs = computed((): MediaLink[] => {
   if (filter.value) {
     const searchTerms = filter.value.toLowerCase().split(/\s+/).filter(Boolean);
@@ -253,5 +245,16 @@ watchOnce(
     startSongUpdate();
   },
   { immediate: true },
+);
+
+// Watch for dialog closing to reset state
+watch(
+  () => dialogValue.value,
+  (isOpen) => {
+    if (!isOpen) {
+      // Reset state when dialog closes
+      resetDialogState();
+    }
+  },
 );
 </script>

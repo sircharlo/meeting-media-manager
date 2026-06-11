@@ -32,7 +32,7 @@ const onDisplayChanged = () => {
 export const initScreenListeners = () => {
   if (isScreenListenerInitialized) {
     log(
-      '🔍 [initScreenListeners] Already initialized, skipping',
+      '[initScreenListeners] Already initialized, skipping',
       'electronScreen',
       'log',
     );
@@ -56,7 +56,7 @@ export const initScreenListeners = () => {
       screen.on('display-metrics-changed', onDisplayChanged);
 
       log(
-        '🔍 [initScreenListeners] Screen listeners initialized',
+        '[initScreenListeners] Screen listeners initialized',
         'electronScreen',
         'log',
       );

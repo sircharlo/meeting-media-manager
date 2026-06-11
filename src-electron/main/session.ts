@@ -33,9 +33,25 @@ const getTrustedHostnames = () => {
 };
 
 const getCSP = (trustedHostnames: string[]) => {
-  const trustedOrigins = trustedHostnames
-    .map((d) => `https://*.${d}`)
-    .join(' ');
+  const sanitizedHostnames = trustedHostnames
+    .map((hostname) => hostname.trim().toLowerCase())
+    .filter((hostname) => /^[a-z0-9.-]+$/i.test(hostname));
+
+  const trustedOrigins = Array.from(
+    new Set(
+      sanitizedHostnames.flatMap((hostname) => {
+        const parentHostname = hostname.split('.').slice(1).join('.');
+
+        return [
+          `https://${hostname}`,
+          `https://*.${hostname}`,
+          ...(parentHostname.includes('.')
+            ? [`https://*.${parentHostname}`]
+            : []),
+        ];
+      }),
+    ),
+  ).join(' ');
 
   const csp: Record<string, string> = {
     'base-uri': "'none'",
@@ -47,9 +63,10 @@ const getCSP = (trustedHostnames: string[]) => {
     'media-src': `'self' ${trustedOrigins} file: data:`,
     'object-src': "'none'",
     'report-uri': `https://o1401005.ingest.us.sentry.io/api/4507449197920256/security/?sentry_key=40b7d92d692d42814570d217655198db&sentry_environment=${process.env.NODE_ENV}&sentry_release=${getAppVersion()}`,
-    'script-src': "'self' 'unsafe-inline' 'unsafe-eval'",
+    'script-src':
+      "'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net",
     'style-src': "'self' https://fonts.googleapis.com 'unsafe-inline'",
-    'worker-src': "'self' file: blob:",
+    'worker-src': "'self' file: blob: https://cdn.jsdelivr.net",
   };
 
   return Object.entries(csp)

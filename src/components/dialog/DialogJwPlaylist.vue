@@ -194,6 +194,7 @@
 import type {
   DialogImportPayload,
   JwPlaylistItem,
+  MediaItem,
   MediaSectionIdentifier,
   MultimediaItem,
   PlaylistTagItem,
@@ -204,6 +205,7 @@ import { storeToRefs } from 'pinia';
 import { JPG_EXTENSIONS } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
+  copyToDatedAdditionalMedia,
   downloadAdditionalRemoteVideo,
   dynamicMediaMapper,
   getJwLangCode,
@@ -261,9 +263,9 @@ const includeNumbering = ref(true);
 const currentState = useCurrentStateStore();
 const { selectedDate, selectedDateObject } = storeToRefs(currentState);
 
-const { executeQuery, fs, path, unzip } = globalThis.electronApi;
+const { basename, executeQuery, extname, fs, join, pathToFileURL, unzip } =
+  globalThis.electronApi;
 const { pathExists, rename } = fs;
-const { basename, extname, join } = path;
 
 const loadPlaylistItems = async () => {
   loading.value = true;
@@ -279,7 +281,6 @@ const loadPlaylistItems = async () => {
       await unzip(props.jwPlaylistPath, outputPath);
     } catch (err) {
       createTemporaryNotification({
-        icon: 'mmm-error',
         message: t('error-reading-playlist-file'),
         type: 'negative',
       });
@@ -289,7 +290,6 @@ const loadPlaylistItems = async () => {
     const dbFile = await findDb(outputPath);
     if (!dbFile) {
       createTemporaryNotification({
-        icon: 'mmm-error',
         message: t('error-reading-playlist-file'),
         type: 'negative',
       });
@@ -447,6 +447,11 @@ const formatDuration = (item: JwPlaylistItem) => {
   return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 };
 
+async function copyPlaylistAssetToAdditionalMedia(filepath?: string) {
+  if (!filepath || !(await pathExists(filepath))) return '';
+  return copyToDatedAdditionalMedia(filepath, props.section, false);
+}
+
 function getItemLabel(i: number, item: JwPlaylistItem) {
   const { prefix, rest } = getItemLabelParts(i, item);
   return prefix + rest;
@@ -494,9 +499,13 @@ async function processNonVideoItem(
   StartTime: null | number,
   EndTime: null | number,
 ) {
-  const filePath = item.IndependentMediaFilePath
+  const extractedFilePath = item.IndependentMediaFilePath
     ? join(outputPath, item.IndependentMediaFilePath)
     : '';
+  const filePath = await copyPlaylistAssetToAdditionalMedia(extractedFilePath);
+  const thumbnailPath = await copyPlaylistAssetToAdditionalMedia(
+    item.ThumbnailFilePath,
+  );
 
   const multimediaItem: MultimediaItem = {
     BeginParagraphOrdinal: 0,
@@ -517,7 +526,7 @@ async function processNonVideoItem(
     Repeat: item.EndAction === 3,
     StartTime: StartTime ?? undefined,
     TargetParagraphNumberLabel: 0,
-    ThumbnailFilePath: item.ThumbnailFilePath || '',
+    ThumbnailFilePath: thumbnailPath || '',
     Track: item.Track,
     VerseNumbers: item.VerseNumbers,
   };
@@ -562,7 +571,7 @@ async function processSingleItem(
   const isVideo = !item.OriginalFilename;
 
   if (isVideo) {
-    await processVideoItem(
+    const videoResult = await processVideoItem(
       item,
       itemLabel,
       outputPath,
@@ -570,7 +579,14 @@ async function processSingleItem(
       EndTime,
       durationTicks,
     );
-    return { mappedItems: [], order: index }; // no addition map for video
+    return {
+      item,
+      itemLabel,
+      mappedItems: videoResult.mediaItem
+        ? [videoResult.mediaItem as MediaItem]
+        : [],
+      order: index,
+    };
   }
 
   const result = await processNonVideoItem(
@@ -612,18 +628,22 @@ async function processVideoItem(
           min: StartTime ?? 0,
         }
       : undefined;
+  const thumbnailPath = await copyPlaylistAssetToAdditionalMedia(
+    item.ThumbnailFilePath,
+  );
 
-  await downloadAdditionalRemoteVideo(
+  const mediaItem = await downloadAdditionalRemoteVideo(
     videoLinks,
     selectedDate.value,
-    item.ThumbnailFilePath || undefined,
+    thumbnailPath ? pathToFileURL(thumbnailPath) : undefined,
     false,
     itemLabel,
     sectionToUse || props.section,
     customDuration,
+    true, // onlyCreateItem
   );
 
-  return { type: 'video' };
+  return { mediaItem, type: 'video' };
 }
 
 const addSelectedItems = async () => {
@@ -632,8 +652,7 @@ const addSelectedItems = async () => {
 
     const selectedPlaylistItems = selectedItems.value
       .map((i) => playlistItems.value[i])
-      .filter((item): item is NonNullable<typeof item> => !!item)
-      .reverse();
+      .filter((item): item is NonNullable<typeof item> => !!item);
 
     const outputPath = join(
       await getTempPath(),
@@ -642,24 +661,22 @@ const addSelectedItems = async () => {
 
     isProcessing.value = true;
 
-    // 🔥 Process all items *in parallel*
-    const results = await Promise.all(
-      selectedPlaylistItems
-        .filter((item) => !!item)
-        .map((item, idx) => processSingleItem(item, idx, outputPath)),
-    );
+    // Process all items in playlist order, keeping them all in one array
+    const processedMediaItems: DialogImportPayload['items'] = [];
 
-    // 🔥 Build MediaItems from results (preserves order)
-    const processedMediaItems = results
-      .sort((a, b) => a.order - b.order)
-      .flatMap((result) => result?.mappedItems || []);
+    for (const [idx, item] of selectedPlaylistItems.entries()) {
+      const result = await processSingleItem(item, idx, outputPath);
+      if (result?.mappedItems?.length) {
+        processedMediaItems.push(...result.mappedItems);
+      }
+    }
 
     // ✅ Always emit processed items - parent handles section assignment
     emit('import', { items: processedMediaItems });
 
     emit('ok');
     log(
-      '✅ All items processed (parallel) and applied (ordered).',
+      '✅ All items processed (sequential) and applied (ordered).',
       'jwPlaylist',
       'info',
     );

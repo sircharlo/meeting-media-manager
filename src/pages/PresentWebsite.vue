@@ -91,6 +91,7 @@ const websiteIsVisible = computed(() => {
 const websiteOptions = [
   { label: t('mainOfficialWebsite'), value: undefined },
   { label: t('jweventSite'), value: 'jwevent' },
+  { label: t('jwStreamSite'), value: 'stream' },
 ];
 
 useMeta({ title: t('titles.presentWebsite') });

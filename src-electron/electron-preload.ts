@@ -5,18 +5,16 @@ import { contextBridge, webUtils } from 'electron/renderer';
 import fs from 'fs-extra';
 import { PLATFORM } from 'src-electron/constants';
 import { initCloseListeners } from 'src-electron/preload/close';
-import {
-  convertHeic,
-  convertPdfToImages,
-  getNrOfPdfPages,
-} from 'src-electron/preload/converters';
+import { convertHeic } from 'src-electron/preload/converters';
 import {
   fileUrlToPath,
   getVideoDuration,
+  hideFileOnWindows,
   inferExtension,
   parseMediaFile,
   pathToFileURL,
   readDirectory,
+  showFileOnWindows,
 } from 'src-electron/preload/fs';
 import {
   invoke,
@@ -34,7 +32,16 @@ import {
   zoomWebsiteWindow,
 } from 'src-electron/preload/website';
 import { launchZoomMeeting } from 'src-electron/preload/zoom';
-import path from 'upath';
+import {
+  basename,
+  changeExt,
+  dirname,
+  extname,
+  join,
+  normalize,
+  parse,
+  resolve,
+} from 'upath';
 
 initCloseListeners();
 initScreenListeners();
@@ -52,17 +59,22 @@ const getPathFromFileObject = (fo?: File | string) => {
 
 const electronApi: ElectronApi = {
   askForMediaAccess: () => send('askForMediaAccess'),
+  basename,
   cancelAllDownloads: () => send('cancelAllDownloads'),
+  changeExt,
   checkForUpdates: () => send('checkForUpdates'),
   clickZoomElement: (h, o) => invoke('clickZoomElement', h, o),
   closeWebsiteWindow,
   convertHeic,
-  convertPdfToImages,
   createVideoFromNonVideo: (f, fP, oD) =>
     invoke('createVideoFromNonVideo', f, fP, oD),
+  dirname,
   downloadFile: (u, sD, dF, lP) => invoke('downloadFile', u, sD, dF, lP),
   ensureZoomRequirements: () => invoke('ensureZoomRequirements'),
   executeQuery,
+  extname,
+  extractNestedZipEntry: (i, e, o, op) =>
+    invoke('extractNestedZipEntry', i, e, o, op),
   fileUrlToPath,
   focusMediaWindow: () => send('focusMediaWindow'),
   fs,
@@ -72,7 +84,6 @@ const electronApi: ElectronApi = {
   getLocales: () => invoke('getLocales'),
   getLocalPathFromFileObject: (fo) => getPathFromFileObject(fo),
   getLowDiskSpaceStatus: () => invoke('getLowDiskSpaceStatus'),
-  getNrOfPdfPages,
   getScreenAccessStatus: () => invoke('getScreenAccessStatus'),
   getSharedDataPath: () => invoke('getSharedDataPath'),
   getUpdatesDisabledPath: () => invoke('getUpdatesDisabledPath'),
@@ -82,6 +93,7 @@ const electronApi: ElectronApi = {
   getZoomDialogChildren: (c, p) => invoke('getZoomDialogChildren', c, p),
   getZoomElementState: (h, c) => invoke('getZoomElementState', h, c),
   getZoomElementTitle: (h, c) => invoke('getZoomElementTitle', h, c),
+  hideFileOnWindows,
   inferExtension,
   isArchitectureMismatch: () => invoke('isArchitectureMismatch'),
   isDownloadComplete: (downloadId: string) =>
@@ -89,11 +101,13 @@ const electronApi: ElectronApi = {
   isDownloadErrorExpected: () => invoke('isDownloadErrorExpected'),
   isUsablePath: (p) => invoke('isUsablePath', p),
   isZoomPythonInstalled: () => invoke('isZoomPythonInstalled'),
+  join,
   launchZoomMeeting,
   listZoomWindows: (m, c) => invoke('listZoomWindows', m, c),
   moveMediaWindow: (t, w) => send('moveMediaWindow', t, w),
   moveTimerWindow: (t, w) => send('moveTimerWindow', t, w),
   navigateWebsiteWindow,
+  normalize,
   onDownloadCancelled: (cb) => listen('downloadCancelled', cb),
   onDownloadCompleted: (cb) => listen('downloadCompleted', cb),
   onDownloadError: (cb) => listen('downloadError', cb),
@@ -103,6 +117,7 @@ const electronApi: ElectronApi = {
   onHardwareAccelerationTemporaryDisabled: (cb) =>
     listen('hardware-acceleration-temporary-disabled', cb),
   onLog: (cb) => listen('log', cb),
+  onPathProbeNetworkWarning: (cb) => listen('pathProbeNetworkWarning', cb),
   onShortcut: (cb) => listen('shortcut', cb),
   onUpdateAvailable: (cb) => listen('update-available', cb),
   onUpdateDownloaded: (cb) => listen('update-downloaded', cb),
@@ -119,20 +134,28 @@ const electronApi: ElectronApi = {
   openFolder: (path) => invoke('openFolder', path),
   openFolderDialog: () => invoke('openFolderDialog'),
   openWebsiteWindow,
+  parse,
   parseMediaFile,
-  path,
   pathToFileURL,
+  pauseAllDownloads: () => send('pauseAllDownloads'),
   PLATFORM,
   quitAndInstall: () => send('quitAndInstall'),
   readdir: readDirectory,
   registerShortcut: (n, s) => invoke('registerShortcut', n, s),
+  relaunchApp: () => send('relaunchApp'),
   removeListeners: (c) => removeAllIpcListeners(c),
+  resolve,
   restartZoomHelper: () => send('restartZoomHelper'),
+  resumeAllDownloads: () => send('resumeAllDownloads'),
   robot,
+  saveFileDialog: (d, f) => invoke('saveFileDialog', d, f),
   sendZoomWindowKeys: (h, k) => invoke('sendZoomWindowKeys', h, k),
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),
   setElectronUrlVariables: (v) => send('setElectronUrlVariables', v),
   setHardwareAcceleration: (v) => invoke('set-hardware-acceleration', v),
+  setPathProbeNotificationPaths: (paths) =>
+    send('setPathProbeNotificationPaths', paths),
+  showFileOnWindows,
   startZoomHelper: () => send('startZoomHelper'),
   stopZoomHelper: () => send('stopZoomHelper'),
   toggleAuthorizedClose: (v) => send('authorizedClose', v),

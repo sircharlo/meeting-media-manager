@@ -11,12 +11,57 @@ import {
 } from 'src-electron/constants';
 import { isUsablePath } from 'src-electron/main/fs';
 import { urlVariables } from 'src-electron/main/session';
+import {
+  isFetchNetworkError,
+  NETWORK_ERROR_CODES,
+} from 'src/shared/network-errors';
 import { log } from 'src/shared/vanilla';
-import upath from 'upath';
-
-const { join, resolve } = upath;
+import { join, resolve } from 'upath';
 
 type CaptureCtx = Parameters<typeof captureException>[1];
+interface NativeCrashEvent {
+  exception?: {
+    values?: NativeCrashException[];
+  };
+}
+interface NativeCrashException {
+  stacktrace?: {
+    frames?: NativeCrashFrame[];
+  };
+  type?: string;
+  value?: string;
+}
+interface NativeCrashFrame {
+  function?: string;
+}
+const UPDATER_FULL_DOWNLOAD_FALLBACK_MESSAGE =
+  'Cannot download differentially, fallback to full download';
+const UPDATER_FULL_DOWNLOAD_FALLBACK_IGNORE_MS = 5 * 60 * 1000;
+const UPDATER_PARTIAL_DOWNLOAD_NETWORK_ERRORS = ['ERR_NETWORK_IO_SUSPENDED'];
+const UPDATE_IGNORE_ERRORS: (string | string[])[] = [
+  ...NETWORK_ERROR_CODES,
+  'ENOSPC',
+  'EPIPE',
+  'ERR_CONNECTION_CLOSED',
+  'ERR_CONNECTION_RESET',
+  'ERR_CONNECTION_TIMED_OUT',
+  'ERR_NETWORK_CHANGED',
+  'SELF_SIGNED_CERT_IN_CHAIN',
+  'YAMLException',
+  'releases feed',
+  ['404', 'HttpError'],
+  ['502', 'HttpError'],
+  ['503', 'HttpError'],
+  ['504', 'Gateway'],
+  ['504', 'HttpError'],
+  ['60006', 'OSStatus'],
+  ['ENOENT', 'rename'],
+  ['ENOENT', 'unlink'],
+  ['EPERM', 'rename'],
+  ['read-only', 'volume'],
+];
+
+let updaterFullDownloadFallbackAt = 0;
 /**
  * Gets the current app version
  * @returns The app version
@@ -206,6 +251,19 @@ export const isValidUrl = (url: string): boolean => {
 };
 
 /**
+ * Checks if a native crash report is a known Node/V8 worker delayed-task abort
+ * emitted by Electron during process teardown.
+ * @param event The Sentry event to check
+ * @returns Whether the event should be ignored
+ */
+export function isIgnoredNativeCrashEvent(event: NativeCrashEvent): boolean {
+  const exceptions = event.exception?.values;
+  if (!exceptions) return false;
+
+  return exceptions.some(isNodeWorkerDelayedTaskAbort);
+}
+
+/**
  * Checks if an update error should be ignored (not reported to Sentry)
  * @param error The error to check
  * @param message An optional additional message
@@ -215,37 +273,11 @@ export function isIgnoredUpdateError(
   error: Error | string,
   message?: string,
 ): boolean {
-  const ignoreErrors = [
-    'EAI_AGAIN',
-    'ECONNREFUSED',
-    'ECONNRESET',
-    'ENOSPC',
-    'ENOTFOUND',
-    'EPIPE',
-    'ERR_CONNECTION_CLOSED',
-    'ERR_CONNECTION_RESET',
-    'ERR_CONNECTION_TIMED_OUT',
-    'ERR_NETWORK_CHANGED',
-    'SELF_SIGNED_CERT_IN_CHAIN',
-    'YAMLException',
-    'releases feed',
-    ['404', 'HttpError'],
-    ['502', 'HttpError'],
-    ['503', 'HttpError'],
-    ['504', 'Gateway'],
-    ['504', 'HttpError'],
-    ['60006', 'OSStatus'],
-    ['ENOENT', 'rename'],
-    ['ENOENT', 'unlink'],
-    ['EPERM', 'rename'],
-    ['read-only', 'volume'],
-  ];
-
   const errorMsg = typeof error === 'string' ? error : error?.message;
   const errorCode = (error as { code?: string })?.code;
   const errorName = (error as Error)?.name;
 
-  return ignoreErrors.some((ignoreError) => {
+  return UPDATE_IGNORE_ERRORS.some((ignoreError) => {
     const ignoreErrorArray = Array.isArray(ignoreError)
       ? ignoreError
       : [ignoreError];
@@ -261,6 +293,75 @@ export function isIgnoredUpdateError(
 }
 
 /**
+ * Checks whether an updater partial-download error can be ignored because
+ * electron-updater is already falling back to a full download.
+ * @param error The error to check
+ * @returns Whether the error should be ignored
+ */
+export function isUpdaterFullDownloadFallbackError(error: unknown) {
+  if (
+    !updaterFullDownloadFallbackAt ||
+    Date.now() - updaterFullDownloadFallbackAt >
+      UPDATER_FULL_DOWNLOAD_FALLBACK_IGNORE_MS
+  ) {
+    return false;
+  }
+
+  const { code, message, name } = getErrorDetails(error);
+
+  return UPDATER_PARTIAL_DOWNLOAD_NETWORK_ERRORS.some(
+    (errorText) =>
+      code?.includes(errorText) ||
+      message?.includes(errorText) ||
+      name?.includes(errorText),
+  );
+}
+
+/**
+ * Records that electron-updater is falling back to a full download after a
+ * partial/differential download failed.
+ * @param message The updater log message to inspect
+ */
+export function markUpdaterFullDownloadFallback(message: unknown) {
+  const { message: errorMessage } = getErrorDetails(message);
+  if (!errorMessage?.includes(UPDATER_FULL_DOWNLOAD_FALLBACK_MESSAGE)) return;
+
+  updaterFullDownloadFallbackAt = Date.now();
+}
+
+/**
+ * Checks whether any native stack frame function contains the expected text.
+ * Minidump frame names can include namespaces, class names, or symbol prefixes,
+ * so substring matching keeps the signature resilient without broadening it too
+ * far.
+ * @param frames The native stack frames from the minidump exception
+ * @param expectedFunction The function name fragment to find
+ * @returns Whether any frame function contains the expected fragment
+ */
+function frameFunctionIncludes(
+  frames: NativeCrashFrame[],
+  expectedFunction: string,
+) {
+  return frames.some((frame) => frame.function?.includes(expectedFunction));
+}
+
+function getErrorDetails(error: unknown) {
+  if (typeof error === 'string') {
+    return {
+      code: undefined,
+      message: error,
+      name: undefined,
+    };
+  }
+
+  return {
+    code: (error as { code?: string })?.code,
+    message: error instanceof Error ? error.message : undefined,
+    name: (error as Error)?.name,
+  };
+}
+
+/**
  * Handles exceptions during fetchJsonFromMainProcess
  * @param e The exception
  * @param url The url that was being fetched
@@ -273,7 +374,7 @@ async function handleFetchException(
   params: undefined | URLSearchParams,
   options: { silent?: boolean },
 ) {
-  if (options.silent || isNetworkError(e)) return;
+  if (options.silent || isFetchNetworkError(e)) return;
 
   const { default: isOnline } = await import('is-online');
   const online = await isOnline();
@@ -294,42 +395,38 @@ async function handleFetchException(
 }
 
 /**
- * Checks if an error is a network-related error that should not be reported to Sentry
- * @param error The error to check
- * @returns Whether the error is a network error
+ * Checks for a known Electron/Node native abort where V8's memory-pool cleanup
+ * reposts a delayed worker-thread task through libuv while the async handle is
+ * closing. The signature is intentionally strict so unrelated breakpoint
+ * minidumps still reach Sentry.
+ * @param exception The native crash exception from the Sentry minidump event
+ * @returns Whether the exception matches the Node worker delayed-task abort
  */
-function isNetworkError(error: unknown): boolean {
-  try {
-    if (!(error instanceof Error)) return false;
+function isNodeWorkerDelayedTaskAbort(exception: NativeCrashException) {
+  if (!exception.type?.includes('EXCEPTION_BREAKPOINT')) return false;
+  if (!exception.value?.includes('Fatal Error')) return false;
 
-    if (error.name === 'AbortError' || error.name === 'ConnectTimeoutError') {
-      return true;
-    }
+  const frames = exception.stacktrace?.frames;
+  if (!frames) return false;
 
-    if (!error.message.includes('fetch failed')) return false;
+  const hasNativeAbort =
+    frameFunctionIncludes(frames, 'wil::details::DebugBreak') &&
+    frameFunctionIncludes(frames, 'uv_fatal_error');
+  const hasAsyncSend = frameFunctionIncludes(frames, 'uv_async_send');
+  const hasDelayedTaskScheduler = frameFunctionIncludes(
+    frames,
+    'WorkerThreadsTaskRunner::DelayedTaskScheduler::PostDelayedTask',
+  );
+  const hasMemoryPoolReleaseTask = frameFunctionIncludes(
+    frames,
+    'MemoryPool::PostDelayedReleaseTask',
+  );
 
-    const cause = error.cause as Record<string, unknown> | undefined;
-    if (!cause) return false;
-
-    const networkCodes = [
-      'ENOTFOUND',
-      'ETIMEDOUT',
-      'ECONNREFUSED',
-      'ECONNRESET',
-      'EAI_AGAIN',
-      'UND_ERR_CONNECT_TIMEOUT',
-    ];
-
-    const isNetworkCode =
-      typeof cause.code === 'string' && networkCodes.includes(cause.code);
-    const isTimeout =
-      cause.name === 'ConnectTimeoutError' || cause.name === 'TimeoutError';
-
-    return isNetworkCode || isTimeout;
-  } catch (e) {
-    captureElectronError(e);
-    return false;
-  }
+  return (
+    hasNativeAbort &&
+    hasAsyncSend &&
+    (hasDelayedTaskScheduler || hasMemoryPoolReleaseTask)
+  );
 }
 
 /**

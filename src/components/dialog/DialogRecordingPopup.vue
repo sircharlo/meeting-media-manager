@@ -9,43 +9,47 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <div class="column action-popup q-py-md">
+    <div class="action-popup action-popup--scroll-layout q-py-md">
       <div class="card-title col-shrink full-width q-px-md q-mb-none">
         {{ t('meetingRecording') }}
       </div>
-      <template v-if="props.isRecording">
-        <p class="card-section-title text-dark-grey row q-px-md">
-          {{ t('recording-duration') }}
-        </p>
-        <div class="row q-px-md q-pt-xs q-pb-sm">
-          <div class="col text-weight-medium">
-            {{ props.recordingDuration }}
+
+      <div class="action-popup__scroll full-width">
+        <template v-if="props.isRecording">
+          <p class="card-section-title text-dark-grey row q-px-md">
+            {{ t('recording-duration') }}
+          </p>
+          <div class="row q-px-md q-pt-xs q-pb-sm">
+            <div class="recording-popup__duration col text-weight-medium">
+              {{ props.recordingDuration }}
+            </div>
           </div>
+        </template>
+      </div>
+
+      <q-separator class="bg-accent-200" />
+      <div
+        class="action-popup__footer full-width q-px-md q-pt-md row q-col-gutter-xs"
+      >
+        <div v-if="currentSettings?.recordingFolder" class="col-12 q-mb-sm">
+          <q-btn
+            class="full-width"
+            color="secondary"
+            icon="mmm-folder-open"
+            :label="t('open-recording-folder')"
+            unelevated
+            @click="openRecordingFolder"
+          />
         </div>
-      </template>
-      <div class="overflow-auto col full-width q-px-md">
-        <div class="row q-col-gutter-xs">
-          <div class="col-12 q-mb-sm">
-            <q-btn
-              v-if="currentSettings?.recordingFolder"
-              class="full-width"
-              color="secondary"
-              icon="mmm-folder-open"
-              :label="t('open-recording-folder')"
-              unelevated
-              @click="openRecordingFolder"
-            />
-          </div>
-          <div class="col-12">
-            <q-btn
-              class="full-width"
-              :color="isRecording ? 'negative' : 'primary'"
-              :icon="isRecording ? 'mmm-stop' : 'mmm-record'"
-              :label="isRecording ? t('stop-recording') : t('start-recording')"
-              unelevated
-              @click="toggleRecording"
-            />
-          </div>
+        <div class="col-12">
+          <q-btn
+            class="full-width"
+            :color="isRecording ? 'negative' : 'primary'"
+            :icon="isRecording ? 'mmm-stop' : 'mmm-record'"
+            :label="isRecording ? t('stop-recording') : t('start-recording')"
+            unelevated
+            @click="toggleRecording"
+          />
         </div>
       </div>
     </div>
@@ -79,18 +83,6 @@ const { t } = useI18n();
 
 const recordingPopup = useTemplateRef<QMenu>('recordingPopup');
 
-// Update popup position when recording state changes
-watch(
-  () => props.isRecording,
-  () => {
-    setTimeout(() => {
-      if (recordingPopup.value) {
-        recordingPopup.value.updatePosition();
-      }
-    }, 10);
-  },
-);
-
 const toggleRecording = () => {
   if (!currentSettings.value) return;
 
@@ -117,4 +109,24 @@ const openRecordingFolder = () => {
   if (!currentSettings.value?.recordingFolder) return;
   openFolder(currentSettings.value.recordingFolder);
 };
+
+// Update popup position when recording state changes
+watch(
+  () => props.isRecording,
+  () => {
+    setTimeout(() => {
+      if (recordingPopup.value) {
+        recordingPopup.value.updatePosition();
+      }
+    }, 10);
+  },
+);
 </script>
+
+<style scoped>
+.recording-popup__duration {
+  font-variant-numeric: tabular-nums;
+  min-width: 6ch;
+  white-space: nowrap;
+}
+</style>

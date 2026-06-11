@@ -1,9 +1,8 @@
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { formatDate } from 'src/utils/date';
 
-const { fs, path } = globalThis.electronApi;
+const { fs, join } = globalThis.electronApi;
 const { ensureFile, readFile, writeFile } = fs;
-const { join } = path;
 
 export const LAST_USED_FILENAME = '.last-used';
 
@@ -14,11 +13,14 @@ export const updateLastUsedDate = async (
   try {
     if (!folderPath) return;
 
+    const { hideFileOnWindows, showFileOnWindows } = globalThis.electronApi;
+
     const dateStr =
       typeof date === 'string' ? date : formatDate(date, 'YYYY-MM-DD');
     const filePath = join(folderPath, LAST_USED_FILENAME);
 
     await ensureFile(filePath);
+    await showFileOnWindows(filePath);
 
     let existingDateStr = '';
     try {
@@ -32,6 +34,7 @@ export const updateLastUsedDate = async (
     if (!existingDateStr || dateStr > existingDateStr) {
       await writeFile(filePath, dateStr, 'utf-8');
     }
+    await hideFileOnWindows(filePath);
   } catch (error) {
     errorCatcher(error);
   }

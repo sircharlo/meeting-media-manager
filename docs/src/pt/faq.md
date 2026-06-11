@@ -73,7 +73,7 @@ Sim! O M³ permite que você:
 - Baixe mídias para as próximas reuniões automaticamente
 - Importe mídias personalizadas para qualquer data
 
-### :file_folder: What is media auto-export? {#faq-media-export} :file_folder: What is media auto-export?
+### :file_folder: What is media auto-export? {#import-media}
 
 Você pode importar mídias personalizadas de várias maneiras:
 
@@ -81,6 +81,8 @@ Você pode importar mídias personalizadas de várias maneiras:
 - **Arrastar e soltar**: Arraste os arquivos diretamente para o M³
 - **Monitoramento de pasta**: Configure uma pasta monitorada para importações automáticas
 - **Arquivos e listas de reprodução JWPUB**: Importe publicações e listas de reprodução
+- **Mídia de Conversa Pública**: importar arquivos S-34 ou S-34mp JWPUB para mídia de palestra pública
+- **Ferramentas de Bíblia e Bíblia de Estudo**: Adiciona gravações de Bíblia de Áudio, mídia de Bíblia de Estudo ou mídia de Bíblia de Idioma de Sinalização
 
 ### :speaker: Posso importar gravações de áudio da Bíblia? {#audio-bible}
 
@@ -124,6 +126,12 @@ Os recursos de música de fundo incluem:
 - Controle de volume independente
 - Tempo de parada configurável
 
+### :stopwatch: A M3 inclui um temporizador de reunião? {#faq-meeting-timer}
+
+Sim. Quando ativado, o M3 pode mostrar uma janela separada de tempo para o tempo dos participantes. Ele pode contar para cima ou para baixo, mostrar o tempo atual, mostrar uma contagem regressiva, e, opcionalmente, indique horas extraordinárias ou se a reunião está à frente ou atrasada.
+
+O temporizador é um recurso beta e só deve ser habilitado se aprovado localmente.
+
 ### :video_camera: Como faço para configurar a integração com o Zoom? {#zoom-setup}
 
 Para integrar com o Zoom:
@@ -161,6 +169,13 @@ Este recurso adia o compartilhamento de imagens para o OBS até que você as aci
 - Ter mais controle sobre o tempo
 - Evitar mudanças prematuras de cena
 
+### :record_button: Pode gravar M3 reuniões? {#gravações-faq}
+
+M3 não inclui um gravador embutido, mas pode ajudar a controlar a gravação de duas maneiras:
+
+- Se você usar o OBS Studio, ative os controles de gravação do OBS e inicie ou interrompa a gravação do OBS do OBS
+- Se você usar outro aplicativo de gravação, configure atalhos de teclado para que M3 possa enviar comandos de início e parado a partir do pop-up de gravações de reunião
+
 ## Recursos avançados {#faq-advanced-features}
 
 ### :cloud: Como funciona o monitoramento de pasta? {#faq-folder-monitoring}
@@ -170,7 +185,7 @@ O monitoramento de pasta permite que você:
 1. Selecione uma pasta para monitorar novos arquivos
 2. Importe automaticamente novos arquivos de mídia que são sincronizados com armazenamento em nuvem como Dropbox ou OneDrive
 
-### :open_file_folder: How do I import my own media files? {#import-media}
+### :open_file_folder: How do I import my own media files? {#faq-media-export}
 
 A exportação automática de mídias automaticamente:
 
@@ -187,6 +202,8 @@ Sim! O M³ suporta múltiplos perfis para:
 - Eventos especiais
 - Grupos diferentes
 - Configurações e mídias separadas para cada
+
+Perfis também podem ser exportados para um arquivo JSON e importados em outro computador ou em outro perfil. A importação substitui as configurações do perfil atual.
 
 ## Solução de problemas {#faq-troubleshooting}
 

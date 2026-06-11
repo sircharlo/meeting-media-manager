@@ -25,13 +25,19 @@ describe('Locales', () => {
       .map((f) => f.replace('.json', ''))
       .sort((a, b) => a.localeCompare(b));
 
-    const inactiveLocaleFiles = allLocaleFiles.filter(
+    const enabledLocaleFiles = allLocaleFiles.filter((f) =>
+      messages.includes(f),
+    );
+
+    const inactiveLocaleFiles = enabledLocaleFiles.filter(
       (f) => !localesKebab.includes(f),
     );
 
     expect(inactiveLocaleFiles).toHaveLength(0);
 
-    const localeFiles = allLocaleFiles.filter((f) => localesKebab.includes(f));
+    const localeFiles = enabledLocaleFiles.filter((f) =>
+      localesKebab.includes(f),
+    );
 
     expect(localesKebab).toEqual(localeFiles);
   });
@@ -56,7 +62,7 @@ describe('Locales', () => {
             !f.includes('__tests__') &&
             (f.endsWith('.ts') || f.endsWith('.vue')),
         )
-        .map((f) => readFile(resolve(__dirname, '..', f), 'utf-8')),
+        .map((f) => readFile(resolve(__dirname, '..', f as string), 'utf-8')),
     );
 
     const i18nFiles = await Promise.all(

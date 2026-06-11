@@ -46,5 +46,8 @@ features:
     details: Automatikusan szinkronizálja a megtekintett mappákból (például Dropbox vagy OneDrive) származó médiát, és mappákba exportálja.
   - icon: 🎯
     title: Haladó funkciók
-    details: Importáljon egyéni médiafájlokat, JWPUB fájlokat, lejátszási listákat, audio Biblia-felvételeket, és kezeljen több gyülekezetet.
+    details: Import custom media, JWPUB files, playlists, audio Bible recordings, Study Bible media, public talk media, and manage multiple congregations.
+  - icon: ⏱️
+    title: Meeting Timer and Recording Controls
+    details: Use an optional timer display for participant timing and control OBS or external recording apps from M³.
 ---

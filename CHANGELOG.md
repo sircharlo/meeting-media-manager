@@ -4,6 +4,180 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.6.1
+
+### ✨ New Features
+
+- ✨ **Media Preview**: Added a live media preview overlay that can be toggled on or off from the settings or from the display popup.
+- ✨ **Search media**: Added a quick search box in the media list that allows you to quickly find media by title. To use it, simply use the standard keyboard shortcut for search (Ctrl+F or Cmd+F).
+- ✨ **Filter settings**: Added a filter box to the settings page that allows you to find settings by keyword or category. To use it, simply click on the Search button in the top right corner of the settings page, or use the standard keyboard shortcut for search (Ctrl+F or Cmd+F).
+- ✨ **Background Music Overlap Warning**: Added a warning notification when media is started while background music is playing. Users can choose to stop the background music from the notification.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Study Bible**: Improved fetching, caching, and performance.
+- 🛠️ **Downloads**: Improved download progress bar display in dialogs.
+- 🛠️ **JWPUB Import**: Automatically skip the document picker when a JWPUB contains only one document.
+- 🛠️ **Background Music**: Sped up and hardened background music startup process.
+- 🛠️ **Performance**: Reduced synchronous calls across the app and avoided blocking media file checks. (#7790)
+- 🛠️ **Diagnostics**: Added or improved diagnostics for JWPUB extraction, download directory creation, cloud-backed JWPUB reads, path probes, and GPU crashes. (#7718, #7719, #7720, #7721, #7722)
+- 🛠️ **Languages**: Re-enabled Hungarian and Tahitian.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Media Loading**: Showed loading state while refetching missing dynamic media, when possible.
+- 🐞 **JWPUB Media**: Fixed inconsistent media labels and captions, hardened zip readiness checks, and ignored missing JWPUB zip telemetry. (#7717)
+- 🐞 **Playback**: Fixed sometimes inconsistent crossfade and autoplay behavior.
+- 🐞 **Temporary Media**: Prevented temporary-staged media from being persisted and cleaned temporary media paths on startup.
+- 🐞 **Updater**: Improved updater progress logging, guarded duplicate updater installs, and suppressed fallback download noise.
+- 🐞 **Electron**: Handled website cursor injection failures, destroyed-window download guards, unsafe compositor bounds, delayed Node worker native aborts, and WebDAV path stat errors more gracefully.
+- 🐞 **Networking**: Deduplicated network error classification and avoided cloning cached fetch response streams.
+
+### 🔧 Chores
+
+- 🔧 **Dependencies**: Updated Electron, TypeScript, and zip-handling dependencies.
+- 🔧 **Code Quality**: Modernized unzip handling, improved memory behavior, cleaned up language tooling, and resolved minor SonarQube issues.
+- 🔧 **Documentation**: Updated docs and the Markdown docs fixer script.
+- 🔧 **Testing**: Improved Electron window state test coverage.
+
+## v26.6.0
+
+### ✨ New Features
+
+- ✨ **Timer**: Added analog display modes and timing report status. (#7699)
+- ✨ **Profiles**: Added profile settings import and export in Advanced settings and the Setup Wizard. (#7687)
+- ✨ **Media Window**: Added support for automatically hiding the media window after playback when it was initially hidden. This is practical when a remote speaker wants to display images, for example. (#7685)
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Schedule Sync**: Media and meeting days are now refreshed more reliably after schedule sync, and disabled deleting extra media during playback. (#7686)
+- 🛠️ **Display Popup**: Animated the main window position when shown in the display popup. (#7686)
+- 🛠️ **Meetings API**: Updated congregation lookup behavior, with debounced suggestions and language mapping. (#7517)
+- 🛠️ **Timer**: Stabilized action island time displays and smoothed countdown ring rendering. (#7699)
+
+### 🐞 Bug Fixes
+
+- 🐞 **Media Sorting**: Ensured manually added PDF pages, playlist items, and dropped files are sorted correctly.
+- 🐞 **Background Music**: Kept the stop music button visible, even on small window sizes. (#7680)
+- 🐞 **Action Popup**: Unified popup layout behavior and added scroll behvior. (#7682)
+- 🐞 **Fullscreen**: Improved fullscreen transition handling and auto-target calculations across platforms. (#7518)
+- 🐞 **Localization**: Ignored under-threshold locales in generated indexes. (#7486)
+- 🐞 **Security**: Hardened profile filename sanitization. (#7688)
+
+### 🔧 Chores
+
+- 🔧 **CI**: Hardened GitHub Actions workflows. (#7689)
+- 🔧 **Code Quality**: Streamlined documentation workflow, TypeScript configuration, and Electron log readability.
+
+## v26.5.0
+
+### ✨ New Features
+
+- ✨ **PDF Import**: Added a new PDF import flow to the Publication Media dialog, allowing the PDF version of a publication to be automatically imported as individual images when desired. (#7286)
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Downloads Popup**: Improved the downloads popup with better grouping, manual expansion toggles, and an auto-collapse cooldown. (#7416)
+- 🛠️ **Downloads**: Refined download status logic and updated warnings for missing media to be based on severity.
+- 🛠️ **Optimization**: Replaced external `sanitize-filename` dependency with an internal helper and optimized folder watching and export logic.
+- 🛠️ **Media Window**: Improved multi-display positioning and state management logic for the media window.
+
+### 🐞 Bug Fixes
+
+- 🐞 **JW Playlists**: Fixed media ordering issues in JW playlists. (#7415)
+- 🐞 **Sign Language Songs**: Fixed song fallback language resolution and logic for sign-language congregations. (#7393)
+- 🐞 **Sign Language Videos**: Ensured sign-language videos stay paused as expected, without prematurely switching to the camera background. (#7334)
+- 🐞 **Sign Language Camera Background**: Fixed camera background visibility in edge cases and when media is stopped. (#7346)
+- 🐞 **Localization**: Improved alternative language logic for all publications. (#7364)
+- 🐞 **Media Fetching**: Properly prioritized `docid` over `pub` in publication media requests.
+- 🐞 **Calendar**: Fixed error reporting in the calendar to only show errors when all language attempts fail.
+- 🐞 **Security**: Implemented safer regex patterns to prevent potential ReDoS issues. (#7409)
+
+### 🔧 Chores
+
+- 🔧 **Code Quality**: Addressed various SonarQube security and code quality warnings. (#7408)
+- 🔧 **Code Style**: Added and enforced a warning for watchers declared at the end of files, to prevent using constants before they are declared, especially in the final compiled code.
+- 🔧 **Refactoring**: Simplified custom background selection logic and removed unneeded resize observers.
+
+## v26.4.8
+
+### ✨ New Features
+
+- ✨ **JW Stream**: Added JW Stream to the list of websites that can be mirrored. (#7214)
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Website Presentation**: Improved website video player and mouse cursor overlay behavior. (#7214)
+- 🛠️ **Watch Folders**: Added notifications for network folder issues, including missing paths and permission issues. (#7045)
+- 🛠️ **Memorial**: Fixed lookup logic to prevent a past Memorial date from being selected.
+- 🛠️ **Memorial**: Added Memorial banner as a fallback media item when possible.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Stability**: Guarded `sendToWindow` and download flows against destroyed `BrowserWindow` instances. (#7241)
+- 🐞 **Electron**: Allowed authorized main window close during application quit. (#7243)
+- 🐞 **Media**: Refined media window auto-target guard for launch and screen changes. (#7201)
+- 🐞 **Watchtower**: Fixed adaptive Watchtower end-time default for Circuit Overseer weeks. (#7175)
+- 🐞 **Timer**: Kept windowed timer size during media playback. (#7173)
+- 🐞 **Security**: Guarded CSP generation against malformed hostnames. (#7072)
+
+### 🔧 Chores
+
+- 🔧 **Dependencies**: Updated various project dependencies including `upath` and `eslint`.
+- 🔧 **Refactoring**: Standardized path module imports.
+
+## v26.4.7
+
+### 🐞 Bug Fixes
+
+- 🐞 **Icons**: Fixed jw-icons glyph fallback race condition.
+
+### 🔧 Chores
+
+- 🔧 **Icons**: Updated fallback jw-icons glyph map.
+
+## v26.4.6
+
+### 🐞 Bug Fixes
+
+- 🐞 **Network**: Cleared cached requests when base URL changes.
+- 🐞 **Fonts**: Added migration to clear the Fonts folder to ensure the latest version of fonts as of April 2026.
+
+### 🔧 Chores
+
+- 🔧 **Downloads**: Moved `downloadBackgroundMusic` logic to prevent download queue issues.
+
+## v26.4.5
+
+### 🐞 Bug Fixes
+
+- 🐞 **Memorial**: Fixed memorial replacement and retention window to keep past Memorial in memory for 1 month.
+
+## v26.4.4
+
+### 🐞 Bug Fixes
+
+- 🐞 **Navigation**: Skip refreshing past errored meetings.
+
+## v26.4.3
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Watch Folders**: Added visual notifications when certain watch folder errors occur.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Navigation**: Fixed next-day navigation to include today when appropriate.
+- 🐞 **Memorial**: Handled Memorial-replaced meetings in midweek and weekend media fetchers.
+- 🐞 **Stability**: Guarded `updateState` when `BrowserWindow` is destroyed.
+- 🐞 **Watch Folders**: Detected possible network-folder related watch folder issues.
+
+### 🔧 Chores
+
+- 🔧 **Downloads**: Added download queue breadcrumbs and JWPUB re-download recovery.
+- 🔧 **CI & Testing**: Combined lint and unit tests into a single quality job, updated merge condition check, and fixed a missing mock.
+- 🔧 **Dependencies**: Updated Yarn lockfile and added resolutions for Happy DOM and XML DOM.
+
 ## v26.4.2
 
 ### 🐞 Bug Fixes

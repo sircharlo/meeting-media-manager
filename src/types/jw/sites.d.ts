@@ -1,4 +1,4 @@
-export type JwSite = 'jwevent' | undefined;
+export type JwSite = 'jwevent' | 'stream' | undefined;
 
 export interface JwSiteParams {
   langCode: string | undefined;

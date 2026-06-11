@@ -6,12 +6,10 @@ import {
   type Rectangle,
   screen,
 } from 'electron';
-import { ensureDirSync, readJsonSync, writeJsonSync } from 'fs-extra/esm';
+import { ensureDir, readJsonSync, writeJson } from 'fs-extra/esm';
 import { captureElectronError } from 'src-electron/main/utils';
 import { debounce, log } from 'src/shared/vanilla';
-import upath from 'upath';
-
-const { dirname, join } = upath;
+import { dirname, join } from 'upath';
 
 export interface WindowState {
   displayBounds?: Rectangle;
@@ -41,13 +39,18 @@ export class StatefulBrowserWindow {
   public win: BrowserWindow;
 
   private readonly fullStoreFileName: string;
-  private readonly saveState = () => {
+  private readonly saveState = async () => {
     try {
-      ensureDirSync(dirname(this.fullStoreFileName));
-      writeJsonSync(this.fullStoreFileName, this.state, { spaces: 2 });
+      await ensureDir(dirname(this.fullStoreFileName));
+      await writeJson(this.fullStoreFileName, this.state, { spaces: 2 });
     } catch (e) {
       captureElectronError(e, {
-        contexts: { fn: { name: 'StatefulBrowserWindow.saveState' } },
+        contexts: {
+          fn: {
+            name: 'StatefulBrowserWindow.saveState',
+            path: this.fullStoreFileName,
+          },
+        },
       });
     }
   };
@@ -91,7 +94,7 @@ export class StatefulBrowserWindow {
   // Save state after a period of 500ms of no changes
   private readonly saveStateDebounced = debounce(() => {
     this.updateState();
-    this.saveState();
+    void this.saveState();
   }, 500);
 
   private readonly state: WindowState;
@@ -143,7 +146,7 @@ export class StatefulBrowserWindow {
   // Unregister listeners and save state
   private readonly closedHandler = () => {
     this.unmanage();
-    this.saveState();
+    void this.saveState();
   };
 
   private readonly closeHandler = () => {

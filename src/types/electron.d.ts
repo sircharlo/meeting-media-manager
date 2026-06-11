@@ -8,13 +8,22 @@ import type {
   SettingsValues,
   VideoDuration,
 } from 'src/types/electron';
-import type Path from 'upath';
+import type {
+  basename,
+  changeExt,
+  dirname,
+  extname,
+  join,
+  normalize,
+  parse,
+  resolve,
+} from 'upath';
 
 export interface ConversionOptions {
   /**
    * the HEIC file buffer
    */
-  buffer: ArrayBufferLike;
+  buffer: Uint8Array;
   /**
    * output format
    */
@@ -42,7 +51,9 @@ export type Display = Electron.Display & {
 
 export interface ElectronApi {
   askForMediaAccess: () => void;
+  basename: typeof basename;
   cancelAllDownloads: () => void;
+  changeExt: typeof changeExt;
   checkForUpdates: () => void;
   clickZoomElement: (
     handle: number,
@@ -50,10 +61,6 @@ export interface ElectronApi {
   ) => Promise<boolean>;
   closeWebsiteWindow: () => void;
   convertHeic: (image: ConversionOptions) => Promise<ArrayBuffer>;
-  convertPdfToImages: (
-    pdfPath: string,
-    outputFolder: string,
-  ) => Promise<string[]>;
   /**
    * Converts a non-video file into a video file.
    *
@@ -66,6 +73,7 @@ export interface ElectronApi {
     ffmpegPath: string,
     outputDir?: string,
   ) => Promise<string>;
+  dirname: typeof dirname;
   downloadFile: (
     url: string,
     saveDir: string,
@@ -85,6 +93,13 @@ export interface ElectronApi {
     query: string,
     params?: (null | number | string)[],
   ) => T[];
+  extname: typeof extname;
+  extractNestedZipEntry: (
+    input: string,
+    outerEntryName: string,
+    output: string,
+    opts: ExtractNestedZipEntryOptions,
+  ) => Promise<UnzipResult>;
   /**
    * Converts a file URL to a file path.
    *
@@ -104,7 +119,6 @@ export interface ElectronApi {
   getLocales: () => Promise<string[]>;
   getLocalPathFromFileObject: (fileObject: File | string | undefined) => string;
   getLowDiskSpaceStatus: () => Promise<boolean>;
-  getNrOfPdfPages: (pdfPath: string) => Promise<number>;
   getScreenAccessStatus: () => Promise<MediaAccessStatus>;
   getSharedDataPath: () => Promise<null | string>;
   getUpdatesDisabledPath: () => Promise<string>;
@@ -127,15 +141,15 @@ export interface ElectronApi {
     handle: number,
     controlId: string,
   ) => Promise<null | string>;
+  hideFileOnWindows: (filePath: string) => Promise<void>;
   inferExtension: (filename: string, filetype?: string) => Promise<string>;
   isArchitectureMismatch: () => Promise<boolean>;
   isDownloadComplete: (downloadId: string) => Promise<boolean | null>;
   isDownloadErrorExpected: () => Promise<boolean>;
   isUsablePath: (path: string) => Promise<boolean>;
   isZoomPythonInstalled: () => Promise<boolean>;
+  join: typeof join;
   launchZoomMeeting: (meetingId: string) => void;
-  // listZoomMeetingControls: (handle?: number) => Promise<ZoomUIElement[]>;
-  // listZoomWindowChildren: (handle: number) => Promise<ZoomUIElement[]>;
   listZoomWindows: (
     mainOnly?: boolean,
     className?: string,
@@ -149,6 +163,7 @@ export interface ElectronApi {
     windowedMode?: boolean,
   ) => void;
   navigateWebsiteWindow: (action: NavigateWebsiteAction) => void;
+  normalize: typeof normalize;
   onDownloadCancelled: (callback: (args: { id: string }) => void) => void;
   onDownloadCompleted: (
     callback: (args: { filePath: string; id: string }) => void,
@@ -177,6 +192,7 @@ export interface ElectronApi {
       msg: string;
     }) => void,
   ) => void;
+  onPathProbeNetworkWarning: (callback: () => void) => void;
   onShortcut: (
     callback: (args: { shortcut: keyof SettingsValues }) => void,
   ) => void;
@@ -220,11 +236,11 @@ export interface ElectronApi {
   openFolder: (path: string) => Promise<string>;
   openFolderDialog: () => Promise<Electron.OpenDialogReturnValue | undefined>;
   openWebsiteWindow: (websiteParams?: JwSiteParams) => void;
+  parse: typeof parse;
   parseMediaFile: (
     filePath: string,
     options?: IOptions,
   ) => Promise<IAudioMetadata>;
-  path: typeof Path;
   /**
    * Converts a file path to a file url.
    *
@@ -236,6 +252,7 @@ export interface ElectronApi {
    *   // => 'file:///home/user/document.pdf'
    */
   pathToFileURL: (path: string) => string;
+  pauseAllDownloads: () => void;
   PLATFORM: string;
   quitAndInstall: () => void;
   readdir: (
@@ -244,13 +261,22 @@ export interface ElectronApi {
     recursive?: boolean,
   ) => Promise<FileItem[]>;
   registerShortcut: (name: keyof SettingsValues, shortcut: string) => void;
+  relaunchApp: () => void;
   removeListeners: (channel: ElectronIpcListenKey) => void;
+  resolve: typeof resolve;
   restartZoomHelper: () => void;
+  resumeAllDownloads: () => void;
   robot: typeof robot;
+  saveFileDialog: (
+    defaultPath: string,
+    filter?: FileDialogFilter,
+  ) => Promise<Electron.SaveDialogReturnValue | undefined>;
   sendZoomWindowKeys: (handle: number, keys: string) => Promise<boolean>;
   setAutoStartAtLogin: (value: boolean) => void;
   setElectronUrlVariables: (variables: string) => void;
   setHardwareAcceleration: (disabled: boolean) => void;
+  setPathProbeNotificationPaths: (paths: string[]) => void;
+  showFileOnWindows: (filePath: string) => Promise<void>;
   startZoomHelper: () => void;
   stopZoomHelper: () => void;
   toggleAuthorizedClose: (authorized: boolean) => void;
@@ -274,6 +300,7 @@ export type ElectronIpcInvokeKey =
   | 'createVideoFromNonVideo'
   | 'downloadFile'
   | 'ensureZoomRequirements'
+  | 'extractNestedZipEntry'
   | 'getAllScreens'
   | 'getAppDataPath'
   | 'getBetaUpdatesPath'
@@ -297,10 +324,9 @@ export type ElectronIpcInvokeKey =
   | 'openFolder'
   | 'openFolderDialog'
   | 'registerShortcut'
+  | 'saveFileDialog'
   | 'sendZoomWindowKeys'
   | 'set-hardware-acceleration'
-  | 'startZoomHelper'
-  | 'stopZoomHelper'
   | 'unzip';
 
 // BrowserWindow.webContents.send / ipcRenderer.on channels
@@ -314,6 +340,7 @@ export type ElectronIpcListenKey =
   | 'gpu-crash-detected'
   | 'hardware-acceleration-temporary-disabled'
   | 'log'
+  | 'pathProbeNetworkWarning'
   | 'screenChange'
   | 'screenPrefsChange'
   | 'setShouldQuit'
@@ -341,9 +368,13 @@ export type ElectronIpcSendKey =
   | 'navigateWebsiteWindow'
   | 'openDiscussion'
   | 'openExternal'
+  | 'pauseAllDownloads'
   | 'quitAndInstall'
+  | 'relaunchApp'
   | 'restartZoomHelper'
+  | 'resumeAllDownloads'
   | 'setElectronUrlVariables'
+  | 'setPathProbeNotificationPaths'
   | 'startZoomHelper'
   | 'stopZoomHelper'
   | 'toggleMediaWindow'
@@ -359,9 +390,17 @@ export type ElectronIpcSendKey =
 
 export type ExternalWebsite = 'docs' | 'latestRelease' | 'repo';
 
+export interface ExtractNestedZipEntryOptions {
+  innerEntryName?: string;
+  innerEntryNameSuffix?: string;
+  maxEntrySize?: number;
+  maxTotalSize?: number;
+}
+
 export type FileDialogFilter =
   | 'image'
   | 'image+pdf'
+  | 'json'
   | 'jwpub'
   | 'jwpub+image'
   | 'jwpub+image+pdf';

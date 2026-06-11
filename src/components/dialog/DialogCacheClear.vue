@@ -121,7 +121,6 @@ const handleDeleteCacheFiles = async (type: '' | 'all' | 'smart') => {
       });
     } else {
       createTemporaryNotification({
-        icon: 'mmm-info',
         message:
           mode === 'all'
             ? t('no-cache-items-found-to-clear')

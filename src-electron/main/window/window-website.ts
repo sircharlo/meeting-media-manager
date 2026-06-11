@@ -1,6 +1,11 @@
 import type { JwSiteParams, NavigateWebsiteAction } from 'src/types';
 
-import { type BrowserWindow, systemPreferences, type Video } from 'electron';
+import {
+  type BrowserWindow,
+  systemPreferences,
+  type Video,
+  type WebContents,
+} from 'electron';
 import { HD_RESOLUTION, PLATFORM } from 'src-electron/constants';
 import { captureElectronError } from 'src-electron/main/utils';
 import {
@@ -46,113 +51,27 @@ export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
   websiteWindowInfo.websiteWindow?.center();
 
   websiteWindowInfo.websiteWindow?.webContents.on('did-finish-load', () => {
-    try {
-      websiteWindowInfo.websiteWindow?.webContents.insertCSS(
-        `
-        html, body {
-          cursor: none !important;
-        }
+    const isJwStream = websiteParams?.site === 'stream';
+    if (isJwStream) return;
 
-        .cursor {
-          position: fixed;
-          border-radius: 50%;
-          pointer-events: none;
-          left: -100px;
-          top: 50%;
-          background-color: transparent;
-          z-index: 10000;
-          border: 10px solid rgba(0, 123, 255, 0.8);
-          height: 100px;
-          width: 100px;
-          box-sizing: border-box;
-          transition: transform 0.2s ease-out, background-color 0.2s ease-out, border-color 0.2s ease-out;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 24px;
-          font-weight: bold;
-          color: white;
-          text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-        .cursor-left {
-          border-color: rgba(40, 167, 69, 0.8);
-          background-color: rgba(40, 167, 69, 0.3);
-        }
-        .cursor-right {
-          border-color: rgba(255, 165, 0, 0.8);
-          background-color: rgba(255, 165, 0, 0.3);
-        }
-        .cursor-double {
-          border-color: rgba(128, 0, 128, 0.8);
-          background-color: rgba(128, 0, 128, 0.3);
-        }
-        .cursor-clicked {
-          transform: scale(1.2);
-        }
-        .cursor-pulse {
-          animation: pulse 1s infinite;
-        }
-        @keyframes pulse {
-          0% { transform: scale(1); }
-          50% { transform: scale(1.05); }
-          100% { transform: scale(1); }
-        }`,
-      );
-
-      websiteWindowInfo.websiteWindow?.webContents.executeJavaScript(
-        `
-        const cursor = document.createElement('div');
-        cursor.className = 'cursor cursor-pulse';
-        document.body.appendChild(cursor);
-        
-        let clickTimeout;
-        let lastClickTime = 0;
-        
-        const onMouseMove = (e) => {
-          cursor.style.left = (e.clientX - 50) + 'px';
-          cursor.style.top = (e.clientY - 50) + 'px';
-        };
-        
-        const clearClick = () => {
-          cursor.classList.remove('cursor-left', 'cursor-right', 'cursor-double', 'cursor-clicked');
-          cursor.innerHTML = '';
-          clearTimeout(clickTimeout);
-        };
-        
-        const onMouseDown = (e) => {
-          clearClick();
-          cursor.classList.add('cursor-clicked');
-          if (e.button === 0) {
-            cursor.classList.add('cursor-left');
-          } else if (e.button === 2) {
-            cursor.classList.add('cursor-right');
-          }
-        };
-        
-        const onMouseUp = () => {
-          clickTimeout = setTimeout(clearClick, 500);
-        };
-        
-        const onDblClick = (e) => {
-          clearClick();
-          cursor.classList.add('cursor-clicked', 'cursor-double');
-          clickTimeout = setTimeout(clearClick, 1000);
-        };
-        
-        document.body.addEventListener('mousemove', onMouseMove, { passive: true });
-        document.body.addEventListener('mousedown', onMouseDown, { passive: true });
-        document.body.addEventListener('mouseup', onMouseUp, { passive: true });
-        document.body.addEventListener('dblclick', onDblClick, { passive: true });
-        document.body.addEventListener('contextmenu', (e) => e.preventDefault());`,
-      );
-    } catch (e) {
-      captureElectronError(e, {
-        contexts: { fn: { name: 'createWebsiteWindow cursor indicator' } },
-      });
-    }
+    const webContents = websiteWindowInfo.websiteWindow?.webContents;
+    if (!webContents) return;
+    void injectCursorIndicator(webContents);
   });
 
   websiteWindowInfo.websiteWindow?.webContents.setVisualZoomLevelLimits(1, 5);
+  websiteWindowInfo.websiteWindow?.webContents.on(
+    'enter-html-full-screen',
+    () => {
+      websiteWindowInfo.websiteWindow?.setFullScreen(true);
+    },
+  );
+  websiteWindowInfo.websiteWindow?.webContents.on(
+    'leave-html-full-screen',
+    () => {
+      websiteWindowInfo.websiteWindow?.setFullScreen(false);
+    },
+  );
   websiteWindowInfo.websiteWindow?.webContents.on(
     'zoom-changed',
     (_, direction) => {
@@ -203,6 +122,131 @@ export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
     websiteWindowInfo.websiteWindow = null;
   });
 }
+
+const cursorIndicatorCss = `
+        html, body {
+          cursor: none !important;
+        }
+
+        .cursor {
+          position: fixed;
+          border-radius: 50%;
+          pointer-events: none;
+          left: -100px;
+          top: 50%;
+          background-color: transparent;
+          z-index: 10000;
+          border: 10px solid rgba(0, 123, 255, 0.8);
+          height: 100px;
+          width: 100px;
+          box-sizing: border-box;
+          opacity: 1;
+          transition: transform 0.2s ease-out, background-color 0.2s ease-out, border-color 0.2s ease-out, opacity 0.35s ease-out;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 24px;
+          font-weight: bold;
+          color: white;
+          text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .cursor-hidden {
+          opacity: 0;
+        }
+        .cursor-left {
+          border-color: rgba(40, 167, 69, 0.8);
+          background-color: rgba(40, 167, 69, 0.3);
+        }
+        .cursor-right {
+          border-color: rgba(255, 165, 0, 0.8);
+          background-color: rgba(255, 165, 0, 0.3);
+        }
+        .cursor-double {
+          border-color: rgba(128, 0, 128, 0.8);
+          background-color: rgba(128, 0, 128, 0.3);
+        }
+        .cursor-clicked {
+          transform: scale(1.2);
+        }
+        .cursor-pulse {
+          animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+          100% { transform: scale(1); }
+        }`;
+
+const cursorIndicatorScript = `
+        if (!document.querySelector('.cursor')) {
+        const cursor = document.createElement('div');
+        cursor.className = 'cursor cursor-pulse';
+        document.body.appendChild(cursor);
+        
+        let clickTimeout;
+        let inactivityTimeout;
+        const INACTIVITY_TIMEOUT = 3000;
+        
+        const showCursor = () => {
+          cursor.classList.remove('cursor-hidden');
+          clearTimeout(inactivityTimeout);
+          inactivityTimeout = setTimeout(() => {
+            cursor.classList.add('cursor-hidden');
+          }, INACTIVITY_TIMEOUT);
+        };
+        
+        const onMouseMove = (e) => {
+          cursor.style.left = (e.clientX - 50) + 'px';
+          cursor.style.top = (e.clientY - 50) + 'px';
+          showCursor();
+        };
+        
+        const clearClick = () => {
+          cursor.classList.remove('cursor-left', 'cursor-right', 'cursor-double', 'cursor-clicked');
+          cursor.innerHTML = '';
+          clearTimeout(clickTimeout);
+        };
+        
+        const onMouseDown = (e) => {
+          clearClick();
+          showCursor();
+          cursor.classList.add('cursor-clicked');
+          if (e.button === 0) {
+            cursor.classList.add('cursor-left');
+          } else if (e.button === 2) {
+            cursor.classList.add('cursor-right');
+          }
+        };
+        
+        const onMouseUp = () => {
+          clickTimeout = setTimeout(clearClick, 500);
+        };
+        
+        const onDblClick = () => {
+          clearClick();
+          showCursor();
+          cursor.classList.add('cursor-clicked', 'cursor-double');
+          clickTimeout = setTimeout(clearClick, 1000);
+        };
+        
+        document.body.addEventListener('mousemove', onMouseMove, { passive: true });
+        document.body.addEventListener('mousedown', onMouseDown, { passive: true });
+        document.body.addEventListener('mouseup', onMouseUp, { passive: true });
+        document.body.addEventListener('dblclick', onDblClick, { passive: true });
+        document.body.addEventListener('contextmenu', (e) => e.preventDefault());
+        showCursor();
+        }`;
+
+export const injectCursorIndicator = async (webContents: WebContents) => {
+  try {
+    await webContents.insertCSS(cursorIndicatorCss);
+    await webContents.executeJavaScript(cursorIndicatorScript);
+  } catch (e) {
+    captureElectronError(e, {
+      contexts: { fn: { name: 'injectCursorIndicator' } },
+    });
+  }
+};
 
 /**
  * Asks for media access for the camera and microphone

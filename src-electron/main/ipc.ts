@@ -3,6 +3,7 @@ import type {
   ElectronIpcInvokeKey,
   ElectronIpcSendKey,
   ExternalWebsite,
+  ExtractNestedZipEntryOptions,
   FileDialogFilter,
   JwSiteParams,
   MediaAccessStatus,
@@ -21,9 +22,7 @@ import {
   shell,
   systemPreferences,
 } from 'electron';
-import electronUpdater from 'electron-updater';
-const { autoUpdater } = electronUpdater;
-import { pathExistsSync } from 'fs-extra/esm';
+import { pathExists } from 'fs-extra/esm';
 import { arch, platform } from 'node:os';
 import { setTimeout as delay } from 'node:timers/promises';
 import { PLATFORM } from 'src-electron/constants';
@@ -33,14 +32,19 @@ import {
   downloadFile,
   isDownloadComplete,
   isDownloadErrorExpected,
+  pauseAllDownloads,
+  resumeAllDownloads,
 } from 'src-electron/main/downloads';
 import { createVideoFromNonVideo } from 'src-electron/main/ffmpeg';
 import {
+  extractNestedZipEntry,
   getAppDataPath,
   getZipEntries,
   isUsablePath,
   openFileDialog,
   openFolderDialog,
+  saveFileDialog,
+  setPathProbeNotificationPaths,
   unwatchFolders,
   unzipFile,
   watchFolder,
@@ -55,6 +59,7 @@ import {
 import {
   getBetaUpdatesPath,
   getUpdatesDisabledPath,
+  quitAndInstallUpdate,
   triggerUpdateCheck,
 } from 'src-electron/main/updater';
 import {
@@ -94,10 +99,9 @@ import {
   stopZoomHelper,
 } from 'src-electron/main/zoom-helper-manager';
 import { log } from 'src/shared/vanilla';
-import upath from 'upath';
+import { join } from 'upath';
 
 const { openExternal, openPath } = shell;
-const { join } = upath;
 
 // IPC send/on
 
@@ -129,9 +133,9 @@ handleIpcSend(
     if (!win) return;
 
     if (show) {
-      moveMediaWindow();
+      await moveMediaWindow();
       if (timerWindowInfo.timerWindow?.isVisible()) {
-        moveTimerWindow();
+        await moveTimerWindow();
       }
 
       return enableFadeTransitions ? fadeMediaWindow('in') : win.show();
@@ -145,10 +149,10 @@ handleIpcSend('focusMediaWindow', () => {
   focusMediaWindow();
 });
 
-handleIpcSend('toggleTimerWindow', (_e, show: boolean) => {
+handleIpcSend('toggleTimerWindow', async (_e, show: boolean) => {
   if (show) {
     createTimerWindow();
-    moveTimerWindow();
+    await moveTimerWindow();
   } else {
     timerWindowInfo.timerWindow?.close();
   }
@@ -160,10 +164,22 @@ handleIpcSend('cancelAllDownloads', () => {
   cancelAllDownloads();
 });
 
+handleIpcSend('resumeAllDownloads', () => {
+  resumeAllDownloads('renderer-manual');
+});
+
+handleIpcSend('pauseAllDownloads', () => {
+  pauseAllDownloads('renderer-manual');
+});
+
 handleIpcSend('checkForUpdates', () => triggerUpdateCheck());
 
 handleIpcSend('setElectronUrlVariables', (_e, variables: string) => {
   setElectronUrlVariables(JSON.parse(variables));
+});
+
+handleIpcSend('setPathProbeNotificationPaths', (_e, paths: string[]) => {
+  setPathProbeNotificationPaths(paths);
 });
 
 handleIpcSend('authorizedClose', () => {
@@ -214,15 +230,15 @@ handleIpcSend('unregisterAllShortcuts', () => {
   unregisterAllShortcuts();
 });
 
-handleIpcSend('moveMediaWindow', (_e, displayNr, fullscreen) => {
-  moveMediaWindow(displayNr, fullscreen);
+handleIpcSend('moveMediaWindow', async (_e, displayNr, fullscreen) => {
+  await moveMediaWindow(displayNr, fullscreen);
   if (timerWindowInfo.timerWindow?.isVisible()) {
-    moveTimerWindow();
+    await moveTimerWindow();
   }
 });
 
-handleIpcSend('moveTimerWindow', (_e, displayNr, fullscreen) => {
-  moveTimerWindow(displayNr, fullscreen);
+handleIpcSend('moveTimerWindow', async (_e, displayNr, fullscreen) => {
+  await moveTimerWindow(displayNr, fullscreen);
 });
 
 handleIpcSend('openExternal', (_e, website: ExternalWebsite) => {
@@ -293,14 +309,14 @@ function handleIpcInvoke<T = unknown>(
   });
 }
 
-function isOS64Bit() {
+async function isOS64Bit() {
   try {
-    if (platform() === 'win32') {
+    if (platform() === 'win32' && process.env.SystemRoot) {
       // Check for the existence of the SysWOW64 directory
       // PROGRAMFILES environment variable points to "C:\Program Files (x86)" for 32-bit apps on 64-bit systems
       // process.env.SystemRoot points to the Windows directory (e.g., C:\Windows)
       const sysWOW64Path = join(process.env.SystemRoot, 'SysWOW64');
-      return pathExistsSync(sysWOW64Path);
+      return await pathExists(sysWOW64Path);
     } else {
       // For macOS and Linux, the os.arch() is usually reliable for the OS's capability
       // (e.g., 'x64' or 'arm64')
@@ -341,7 +357,7 @@ handleIpcSend('restartZoomHelper', () => restartZoomHelper());
 
 handleIpcInvoke(
   'isArchitectureMismatch',
-  async () => process.arch === 'ia32' && isOS64Bit(),
+  async () => process.arch === 'ia32' && (await isOS64Bit()),
 );
 
 handleIpcInvoke(
@@ -390,6 +406,12 @@ handleIpcInvoke(
 );
 
 handleIpcInvoke('openFolderDialog', async () => openFolderDialog());
+
+handleIpcInvoke(
+  'saveFileDialog',
+  async (_e, defaultPath: string, filter?: FileDialogFilter) =>
+    saveFileDialog(defaultPath, filter),
+);
 
 handleIpcInvoke('openFolder', async (_e, path: string) => openPath(path));
 
@@ -558,8 +580,25 @@ handleIpcInvoke('getZipEntries', async (_e, zipPath: string) =>
   getZipEntries(zipPath),
 );
 
+handleIpcInvoke(
+  'extractNestedZipEntry',
+  async (
+    _e,
+    input: string,
+    outerEntryName: string,
+    output: string,
+    opts: ExtractNestedZipEntryOptions,
+  ) => extractNestedZipEntry(input, outerEntryName, output, opts),
+);
+
 handleIpcSend('quitAndInstall', () => {
-  autoUpdater.quitAndInstall(false, true);
+  quitAndInstallUpdate();
+});
+
+handleIpcSend('relaunchApp', () => {
+  toggleAuthorizedClose(true);
+  app.relaunch();
+  app.quit();
 });
 
 handleIpcInvoke(

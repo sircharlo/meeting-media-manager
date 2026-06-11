@@ -25,9 +25,8 @@ import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
-const { fs, path, readdir } = globalThis.electronApi;
+const { fs, join, normalize, readdir } = globalThis.electronApi;
 const { exists, pathExists, remove } = fs;
-const { join, normalize } = path;
 
 /**
  * Builds a map of file sizes by path
@@ -67,11 +66,13 @@ function calculateBytesFreed(
   for (let i = 0; i < results.length; i++) {
     if (results[i]?.status !== 'fulfilled') continue;
 
-    const path = filepaths[i];
-    if (typeof path !== 'string') continue;
+    const firstPath = filepaths[i];
+    if (typeof firstPath !== 'string') continue;
 
     const size =
-      sizeSource instanceof Map ? sizeSource.get(path) : sizeSource[path];
+      sizeSource instanceof Map
+        ? sizeSource.get(firstPath)
+        : sizeSource[firstPath];
 
     bytesFreed += size || 0;
   }
@@ -388,13 +389,13 @@ const getPublicationDirectories = async (
   const languagesToUse = new Set<JwLangCode>(languages);
 
   if (includeEnglish) {
-    languagesToUse.add('E' as JwLangCode);
+    languagesToUse.add('E');
   }
 
   for (const langwritten of languagesToUse) {
     // Special handling for "any" issue: protect all issue-tagged folders
     if (issue === 'any') {
-      const baseId = getPubId({ langwritten, pub } as PublicationFetcher);
+      const baseId = getPubId({ langwritten, pub });
       const pubsRootDefault = await getPublicationsPath();
       directories.push(join(pubsRootDefault, baseId));
     } else {
@@ -796,5 +797,35 @@ export const cleanCache = async () => {
       },
     });
     return false;
+  }
+};
+
+let startupTempPathCleaned = false;
+
+export const cleanTempPathOnStartup = async () => {
+  if (startupTempPathCleaned) return;
+  startupTempPathCleaned = true;
+
+  try {
+    const tempPath = await getTempPath();
+    if (!(await pathExists(tempPath))) return;
+
+    const tempItems = await readdir(tempPath);
+    await Promise.allSettled(
+      tempItems.map((item) => remove(join(tempPath, item.name))),
+    );
+
+    log('[Temp] Cleared startup temp files', 'cleanup', 'log', {
+      itemsDeleted: tempItems.length,
+      tempPath,
+    });
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          name: 'cleanTempPathOnStartup',
+        },
+      },
+    });
   }
 };

@@ -43,7 +43,8 @@ export interface DownloadProgressItem {
   error?: boolean;
   filename: string;
   loaded?: number;
-  meetingDate?: string;
+  meetingDate?: null | string;
+  progressCategory?: 'publication-media' | 'study-bible';
   total?: number;
 }
 
@@ -55,6 +56,7 @@ export interface FileDownloader {
   lowPriority?: boolean;
   meetingDate?: string;
   notify?: boolean;
+  progressCategory?: DownloadProgressItem['progressCategory'];
   size?: number;
   url: string;
 }
@@ -127,8 +129,11 @@ export type MediaSectionIdentifier =
 
 export interface SongItem {
   duration?: number; // or the correct type for duration
+  filesize?: number;
   path: string;
+  remoteUrl?: string;
   title?: string;
+  track?: number;
 }
 export interface SortableMediaList {
   items: Ref<MediaItem[]>;

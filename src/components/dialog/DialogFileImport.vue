@@ -200,35 +200,6 @@ const percentValue = computed(() => {
     : 0;
 });
 
-// Watch for dialog closing to reset loading states and data
-watch(
-  () => dialogValue.value,
-  (isOpen) => {
-    if (!isOpen) {
-      // Reset loading states and data when dialog closes
-      jwpubLoading.value = false;
-      // Don't clear jwpubDb here as it might be needed by the media picker
-      jwpubDocuments.value = [];
-    }
-  },
-);
-
-// Watch for processing completion to auto-close dialog
-watch(
-  () => props.totalFiles || (!!jwpubDb.value && jwpubLoading.value),
-  (isProcessing, wasProcessing) => {
-    // Only close if we were processing and now we're not
-    if (wasProcessing && !isProcessing && dialogValue.value) {
-      log(
-        '🎯 File processing complete, auto-closing dialog',
-        'fileImport',
-        'log',
-      );
-      dialogValue.value = false;
-    }
-  },
-);
-
 // Listen for JW Playlist mode activation
 useEventListener(
   globalThis,
@@ -334,6 +305,17 @@ const handleJwpubImport = (jwpubImportDocument: DocumentItem) => {
   dialogValue.value = false;
 };
 
+const importSingleJwpubDocument = () => {
+  if (!dialogValue.value) return;
+  if (!jwpubDb.value || jwpubLoading.value) return;
+  if (jwpubDocuments.value.length !== 1) return;
+
+  const document = jwpubDocuments.value[0];
+  if (!document) return;
+
+  handleJwpubImport(document);
+};
+
 const handleCancel = () => {
   // Reset loading states and JW PUB data
   jwpubLoading.value = false;
@@ -342,4 +324,44 @@ const handleCancel = () => {
   dialogValue.value = false;
   emit('cancel');
 };
+
+// Watch for dialog closing to reset loading states and data
+watch(
+  () => dialogValue.value,
+  (isOpen) => {
+    if (!isOpen) {
+      // Reset loading states and data when dialog closes
+      jwpubLoading.value = false;
+      // Don't clear jwpubDb here as it might be needed by the media picker
+      jwpubDocuments.value = [];
+    }
+  },
+);
+
+// Watch for a single JWPUB document and skip the document picker.
+watch(
+  () => [
+    dialogValue.value,
+    jwpubDb.value,
+    jwpubLoading.value,
+    jwpubDocuments.value,
+  ],
+  importSingleJwpubDocument,
+);
+
+// Watch for processing completion to auto-close dialog
+watch(
+  () => props.totalFiles || (!!jwpubDb.value && jwpubLoading.value),
+  (isProcessing, wasProcessing) => {
+    // Only close if we were processing and now we're not
+    if (wasProcessing && !isProcessing && dialogValue.value) {
+      log(
+        '🎯 File processing complete, auto-closing dialog',
+        'fileImport',
+        'log',
+      );
+      dialogValue.value = false;
+    }
+  },
+);
 </script>

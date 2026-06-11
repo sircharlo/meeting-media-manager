@@ -97,7 +97,7 @@
             "
             class="row items-center justify-center q-mt-lg q-gutter-md"
           >
-            <q-btn color="primary" outline @click="goToNextDayWithMedia(true)">
+            <q-btn color="primary" outline @click="goToNextDayWithMedia()">
               <q-icon class="q-mr-sm" name="mmm-go-to-date" size="xs" />
               {{ t('next-day-with-media') }}
             </q-btn>
@@ -134,15 +134,6 @@ defineProps<{
 const showFileImportDialog = ref(false);
 const jwpubImportDb = ref('');
 const jwpubImportDocuments = ref<DocumentItem[]>([]);
-
-watch(
-  () => [jwpubImportDb.value, jwpubImportDocuments.value],
-  ([newJwpubImportDb, newJwpubImportDocuments]) => {
-    if (!!newJwpubImportDb || newJwpubImportDocuments?.length) {
-      showFileImportDialog.value = true;
-    }
-  },
-);
 
 const currentState = useCurrentStateStore();
 const { selectedDayMeetingType } = storeToRefs(currentState);
@@ -237,4 +228,13 @@ const secondaryEmptyStateMessage = computed(() => {
     'use-the-import-button-to-add-media-for-this-date-or-select-another-date-to-view-the-corresponding-meeting-media',
   );
 });
+
+watch(
+  () => [jwpubImportDb.value, jwpubImportDocuments.value],
+  ([newJwpubImportDb, newJwpubImportDocuments]) => {
+    if (!!newJwpubImportDb || newJwpubImportDocuments?.length) {
+      showFileImportDialog.value = true;
+    }
+  },
+);
 </script>

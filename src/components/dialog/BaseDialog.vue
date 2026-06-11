@@ -61,19 +61,6 @@ const isOpen = computed({
   },
 });
 
-// Watch for changes in the dialog state and update the store
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    if (newValue) {
-      dialogStore.openDialog(props.dialogId, 'BaseDialog');
-    } else {
-      dialogStore.closeDialog(props.dialogId);
-    }
-  },
-  { immediate: true },
-);
-
 // Clean up when component is unmounted
 const handleBeforeShow = () => {
   emit('before-show');
@@ -91,4 +78,17 @@ const handleHide = () => {
   dialogStore.closeDialog(props.dialogId);
   emit('hide');
 };
+
+// Watch for changes in the dialog state and update the store
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (newValue) {
+      dialogStore.openDialog(props.dialogId, 'BaseDialog');
+    } else {
+      dialogStore.closeDialog(props.dialogId);
+    }
+  },
+  { immediate: true },
+);
 </script>

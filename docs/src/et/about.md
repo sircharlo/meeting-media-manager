@@ -50,6 +50,7 @@ M³, terviklik meediahalduslahendus, võimaldab teil lihtsalt ja automaatselt al
 - **Täiustatud meediajuhtimisfunktsioonid**: meedia pisipildid koos suumimis- ja nihutamisvõimalustega
 - **Kohandatud ajastus**: seadke meedia taasesituse algus- ja lõppkellaajad
 - **Esitusfunktsioonid**: lihtsalt kasutatavad pausi-/esitus-/peatamisnupud koos kiirklahvidega
+- **Reaalajas eelvaade ja kiiruse reguleerimine**: vaata eelvaadet ekraanil kuvatavast pildist ning reguleeri soovi korral heli või video taasesituskiirust
 - **Mitme monitori tugi**: välise monitori automaatne tuvastamine ja haldamine
 - **Selge esitus**: häiringuideta meediaesituse liides
 
@@ -67,13 +68,14 @@ M³, terviklik meediahalduslahendus, võimaldab teil lihtsalt ja automaatselt al
 
 - **Automaatne stseenide vahetamine**: sujuv koostöö OBS Studio programmiga hübriidkoosolekute jaoks
 - **Stseenide haldamine**: automaatne ümberlülitamine kaamera, meedia ja muude stseenide vahel
+- **Salvestamise juhtimisfunktsioonid**: OBS-salvestuste käivitamine ja peatamine M³-st, kui see funktsioon on sisse lülitatud
 
 ### Media Import ja haldamine {#about-media-import}
 
 - **JWPUB-failid**: JWPUB-failide lihtne importimine ja haldamine
 - **JWLPLAYLIST-failid**: JW Library esitusloendi failide tugi
 - **Kohandatud meedia**: impordi videod, pildid, helifailid ja PDF-failid
-- **Audio Piibel**: Impordi õppepiibli meedia ja Uue maailma tõlke helisalvestised
+- **Piibli materjalid**: Õppepiibli materjalid, viipekeelne piiblimaterjal ja „Uue Maailma Tõlke“ helisalvestised
 - **Avalikud kõned**: hoidke alati valmis avaliku kõnede meedia esitusloend, mida saab kasutada koos S-34 importijaga
 
 ### Lisasätted {#about-advanced-features}
@@ -81,8 +83,10 @@ M³, terviklik meediahalduslahendus, võimaldab teil lihtsalt ja automaatselt al
 - **Kausta jälgimine**: sünkroniseerib automaatselt meediafailid jälgitavatest kaustadest (Dropbox, OneDrive jne)
 - **Meedia eksport**: ekspordi meedia automaatselt kaustadesse, korraldatuna kuupäeva järgi
 - **Veebisaidi esitlus**: Esita ametlikku veebisaiti välistel monitoridel
+- **Koosoleku taimer**: valikuline taimeri aken koosoleku osade kestuse mõõtmiseks
+- **Salvestamise abimehed**: OBS-i või välise salvestusrakenduse juhtimine
 - **Klaviatuuri kiirklahvid**: paljude funktsioonide jaoks kohandatavad klaviatuuri kiirklahvid
-- **Mitmed profiilid**: halda erinevaid kogudusi või rühmi eraldi profiilidega
+- **Mitmed profiilid**: halda erinevaid kogudusi või gruppe eraldi profiilide abil, sealhulgas profiili seadete import ja eksport
 
 ## Kas M³ töötab minu keeles? {#does-m3-work-in-my-language}
 

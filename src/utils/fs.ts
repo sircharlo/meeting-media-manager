@@ -6,14 +6,17 @@ import { log } from 'src/shared/vanilla';
 import { getPubId } from 'src/utils/jw';
 
 const {
+  basename,
   checkForUpdates,
+  dirname,
+  extname,
   fileUrlToPath,
   fs,
   getAppDataPath,
   getBetaUpdatesPath,
   getUpdatesDisabledPath,
   isUsablePath: isUsablePathRaw,
-  path,
+  join,
   readdir,
 } = globalThis.electronApi;
 
@@ -37,7 +40,6 @@ const {
   remove,
   writeFile,
 } = fs;
-const { dirname, extname, join } = path;
 
 let defaultDataPath: null | string = null;
 
@@ -285,7 +287,7 @@ export const trimFilepathAsNeeded = (filepath: string, maxBytes = 230) => {
   while (size > maxBytes) {
     const uniqueId = '_' + Math.random().toString(16).slice(2, 6);
 
-    const baseName = path.basename(filepath, ext);
+    const baseName = basename(filepath, ext);
 
     const bytesOver = size - maxBytes + Buffer.byteLength(uniqueId, 'utf8');
 

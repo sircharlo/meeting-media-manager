@@ -10,11 +10,87 @@ import type {
 } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { isFetchNetworkError } from 'src/shared/network-errors';
 import { log } from 'src/shared/vanilla';
-import { isInPast } from 'src/utils/date';
+import { addToDate, dateFromString, isInPast } from 'src/utils/date';
 import { betaUpdatesDisabled } from 'src/utils/fs';
 
-const fetchCache = new Map<string, Response>();
+const MAX_CACHED_RESPONSE_BYTES = 1024 * 1024;
+
+interface CachedFetchResponse {
+  body: ArrayBuffer | null;
+  headers: [string, string][];
+  status: number;
+  statusText: string;
+}
+
+const fetchCache = new Map<string, CachedFetchResponse>();
+
+function buildCachedResponse(cached: CachedFetchResponse) {
+  const body = cached.body ? cached.body.slice(0) : null;
+  return new Response(body, {
+    headers: cached.headers,
+    status: cached.status,
+    statusText: cached.statusText,
+  });
+}
+
+function buildCachedResponseFromResponse(
+  response: Response,
+  body: ArrayBuffer,
+) {
+  return new Response(body, {
+    headers: response.headers,
+    status: response.status,
+    statusText: response.statusText,
+  });
+}
+
+async function createCachedResponse(response: Response) {
+  if (!response.body) {
+    const cached = {
+      body: null,
+      headers: Array.from(response.headers.entries()),
+      status: response.status,
+      statusText: response.statusText,
+    };
+
+    return {
+      cached,
+      response: buildCachedResponse(cached),
+    };
+  }
+
+  const contentLengthHeader = response.headers.get('content-length');
+  const contentLength = contentLengthHeader ? Number(contentLengthHeader) : 0;
+
+  if (
+    Number.isFinite(contentLength) &&
+    contentLength > MAX_CACHED_RESPONSE_BYTES
+  ) {
+    return { cached: null, response };
+  }
+
+  const body = await response.arrayBuffer();
+  if (body.byteLength > MAX_CACHED_RESPONSE_BYTES) {
+    return {
+      cached: null,
+      response: buildCachedResponseFromResponse(response, body),
+    };
+  }
+
+  const cached = {
+    body,
+    headers: Array.from(response.headers.entries()),
+    status: response.status,
+    statusText: response.statusText,
+  };
+
+  return {
+    cached,
+    response: buildCachedResponse(cached),
+  };
+}
 
 /**
  * Clears the fetch cache.
@@ -44,7 +120,7 @@ export const fetchRaw = async (
       if (!process.env.VITEST) {
         log('fetchRaw (cached)', 'api', 'debug', { cache, init, url });
       }
-      return cachedResponse.clone();
+      return buildCachedResponse(cachedResponse);
     }
   }
 
@@ -54,7 +130,11 @@ export const fetchRaw = async (
   const response = await fetch(url, init);
 
   if (isCacheable && response.ok) {
-    fetchCache.set(cacheKey, response.clone());
+    const cachedResponse = await createCachedResponse(response);
+    if (cachedResponse.cached) {
+      fetchCache.set(cacheKey, cachedResponse.cached);
+    }
+    return cachedResponse.response;
   }
 
   return response;
@@ -117,7 +197,8 @@ function reportFetchJsonMainError(
   });
 }
 
-async function shouldReportCaughtError(online: boolean) {
+async function shouldReportCaughtError(error: unknown, online: boolean) {
+  if (isFetchNetworkError(error)) return false;
   if (!online) return false;
   return !(await globalThis.electronApi?.isDownloadErrorExpected());
 }
@@ -149,7 +230,7 @@ export const fetchJson = async <T>(
       reportFetchJsonMainError(response, url, params);
     }
   } catch (e) {
-    if (await shouldReportCaughtError(online)) {
+    if (await shouldReportCaughtError(e, online)) {
       reportFetchJsonCatchError(e, url, params);
     }
   }
@@ -236,8 +317,10 @@ export const fetchMemorials = async (): Promise<null | Record<
       try {
         if (!key || !value || /[a-zA-Z]/.test(value)) continue;
 
-        const valueIsInPast = isInPast(value);
-        if (valueIsInPast) continue;
+        const valueIsMoreThanOneMonthInPast = isInPast(
+          addToDate(dateFromString(value), { months: 1 }),
+        );
+        if (valueIsMoreThanOneMonthInPast) continue;
 
         const year = Number.parseInt(key);
         if (!year || Number.isNaN(year)) continue;
@@ -314,12 +397,12 @@ export const fetchPubMediaLinks = async (
 ): Promise<null | Publication> => {
   try {
     const videoExtensions: (keyof PublicationFiles)[] = ['MP4', 'M4V'];
-    const shouldUsePub = publication.pub && publication.pub !== 'nwtsty';
+    const docid = publication.docid?.toString() || '';
+    const shouldUseDocId = !!docid;
+    const shouldUsePub = !!publication.pub && !shouldUseDocId;
 
     const pubToUse = shouldUsePub ? publication.pub || '' : '';
-    const docidToUse = shouldUsePub
-      ? ''
-      : (publication.docid?.toString() ?? '');
+    const docidToUse = shouldUseDocId ? docid : '';
     const params = {
       alllangs: '0',
       ...(publication.booknum

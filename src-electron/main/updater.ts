@@ -7,13 +7,13 @@ import { getAppDataPath } from 'src-electron/main/fs';
 import {
   captureElectronError,
   isIgnoredUpdateError,
+  isUpdaterFullDownloadFallbackError,
+  markUpdaterFullDownloadFallback,
 } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import { log } from 'src/shared/vanilla';
-import upath from 'upath';
-
-const { join } = upath;
+import { join } from 'upath';
 
 const isIgnoredUpdaterLog = (message?: string) => {
   if (!message) return false;
@@ -36,6 +36,8 @@ const logUpdaterMessage = (
     normalizedMessage = message.message;
   }
 
+  markUpdaterFullDownloadFallback(message);
+
   if (isIgnoredUpdaterLog(normalizedMessage)) return;
   log(message, 'electronUpdater', level);
 };
@@ -45,6 +47,47 @@ const updaterLogger = {
   error: (message: unknown) => logUpdaterMessage('error', message),
   info: (message: unknown) => logUpdaterMessage('info', message),
   warn: (message: unknown) => logUpdaterMessage('warn', message),
+};
+
+let updateDownloaded = false;
+let updateInstallStarted = false;
+
+interface UpdateDownloadProgressInfo {
+  bytesPerSecond?: number;
+  delta?: number;
+  percent?: number;
+  total?: number;
+  transferred?: number;
+}
+
+const formatUpdateDownloadProgress = (info: UpdateDownloadProgressInfo) => {
+  const details: string[] = [];
+
+  if (typeof info.percent === 'number' && Number.isFinite(info.percent)) {
+    details.push(`${info.percent.toFixed(2)}%`);
+  }
+
+  if (
+    typeof info.transferred === 'number' &&
+    typeof info.total === 'number' &&
+    Number.isFinite(info.transferred) &&
+    Number.isFinite(info.total)
+  ) {
+    details.push(`${info.transferred}/${info.total} bytes`);
+  }
+
+  if (
+    typeof info.bytesPerSecond === 'number' &&
+    Number.isFinite(info.bytesPerSecond)
+  ) {
+    details.push(`${info.bytesPerSecond} B/s`);
+  }
+
+  if (typeof info.delta === 'number' && Number.isFinite(info.delta)) {
+    details.push(`delta ${info.delta} bytes`);
+  }
+
+  return details.length ? details.join(', ') : 'unknown progress';
 };
 
 export const getUpdatesDisabledPath = async () =>
@@ -76,7 +119,10 @@ export async function initUpdater() {
       sendToWindow(mainWindowInfo.mainWindow, 'update-error');
     }
 
-    if (!isIgnoredUpdateError(error, message)) {
+    if (
+      !isIgnoredUpdateError(error, message) &&
+      !isUpdaterFullDownloadFallbackError(error)
+    ) {
       captureElectronError(error, {
         contexts: {
           fn: { errorMessage: error.message, message, name: 'initUpdater' },
@@ -87,16 +133,23 @@ export async function initUpdater() {
 
   autoUpdater.on('update-available', (info) => {
     log('Update available:', 'electronUpdater', 'log', info);
+    updateDownloaded = false;
+    updateInstallStarted = false;
     sendToWindow(mainWindowInfo.mainWindow, 'update-available');
   });
 
   autoUpdater.on('download-progress', (info) => {
-    log('Update download progress:', 'electronUpdater', 'log', info);
+    log(
+      `Update download progress: ${formatUpdateDownloadProgress(info)}`,
+      'electronUpdater',
+      'log',
+    );
     sendToWindow(mainWindowInfo.mainWindow, 'update-download-progress', info);
   });
 
   autoUpdater.on('update-downloaded', (info) => {
     log('Update downloaded:', 'electronUpdater', 'log', info);
+    updateDownloaded = true;
     sendToWindow(mainWindowInfo.mainWindow, 'update-downloaded');
   });
 
@@ -128,3 +181,34 @@ export const triggerUpdateCheck = async (attempt = 1) => {
     }
   }
 };
+
+export function quitAndInstallUpdate() {
+  if (!updateDownloaded) {
+    log(
+      'Ignoring quitAndInstall because no downloaded update is ready.',
+      'electronUpdater',
+      'warn',
+    );
+    return;
+  }
+
+  if (updateInstallStarted) {
+    log(
+      'Ignoring duplicate quitAndInstall request.',
+      'electronUpdater',
+      'warn',
+    );
+    return;
+  }
+
+  updateInstallStarted = true;
+
+  try {
+    autoUpdater.quitAndInstall(false, true);
+  } catch (error) {
+    updateInstallStarted = false;
+    captureElectronError(error, {
+      contexts: { fn: { name: 'quitAndInstallUpdate' } },
+    });
+  }
+}

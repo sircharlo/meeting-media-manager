@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('electron', () => ({
   app: {
@@ -25,7 +25,10 @@ vi.mock('app/package.json', () => ({
 
 import {
   fetchJsonFromMainProcess,
+  isIgnoredNativeCrashEvent,
   isIgnoredUpdateError,
+  isUpdaterFullDownloadFallbackError,
+  markUpdaterFullDownloadFallback,
   utils,
 } from '../utils';
 
@@ -78,6 +81,108 @@ describe('isIgnoredUpdateError', () => {
     );
     error.name = 'YAMLException';
     expect(isIgnoredUpdateError(error)).toBe(true);
+  });
+});
+
+describe('isIgnoredNativeCrashEvent', () => {
+  it('ignores Node worker delayed-task native aborts', () => {
+    expect(
+      isIgnoredNativeCrashEvent({
+        exception: {
+          values: [
+            {
+              stacktrace: {
+                frames: [
+                  { function: 'wil::details::DebugBreak' },
+                  { function: 'uv_fatal_error' },
+                  { function: 'uv_async_send' },
+                  {
+                    function:
+                      'node::WorkerThreadsTaskRunner::DelayedTaskScheduler::PostDelayedTask',
+                  },
+                  {
+                    function:
+                      'v8::internal::MemoryPool::PostDelayedReleaseTask',
+                  },
+                ],
+              },
+              type: 'EXCEPTION_BREAKPOINT / 0x76982622',
+              value: 'Fatal Error: EXCEPTION_BREAKPOINT / 0x76982622',
+            },
+          ],
+        },
+      }),
+    ).toBe(true);
+  });
+
+  it('does not ignore unrelated native breakpoints', () => {
+    expect(
+      isIgnoredNativeCrashEvent({
+        exception: {
+          values: [
+            {
+              stacktrace: {
+                frames: [
+                  { function: 'wil::details::DebugBreak' },
+                  { function: 'uv_fatal_error' },
+                ],
+              },
+              type: 'EXCEPTION_BREAKPOINT / 0x76982622',
+              value: 'Fatal Error: EXCEPTION_BREAKPOINT / 0x76982622',
+            },
+          ],
+        },
+      }),
+    ).toBe(false);
+  });
+});
+
+describe('isUpdaterFullDownloadFallbackError', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('should ignore network IO suspended while updater falls back to full download', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-06-04T12:00:00.000Z'));
+
+    markUpdaterFullDownloadFallback(
+      'Cannot download differentially, fallback to full download: Error: net::ERR_NETWORK_IO_SUSPENDED',
+    );
+
+    expect(
+      isUpdaterFullDownloadFallbackError(
+        new Error('net::ERR_NETWORK_IO_SUSPENDED'),
+      ),
+    ).toBe(true);
+  });
+
+  it('should not ignore unrelated errors during updater full download fallback', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-06-04T12:00:00.000Z'));
+
+    markUpdaterFullDownloadFallback(
+      'Cannot download differentially, fallback to full download: Error: net::ERR_NETWORK_IO_SUSPENDED',
+    );
+
+    expect(
+      isUpdaterFullDownloadFallbackError(new Error('Fatal exception')),
+    ).toBe(false);
+  });
+
+  it('should stop ignoring partial download errors after the fallback window', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-06-04T12:00:00.000Z'));
+
+    markUpdaterFullDownloadFallback(
+      'Cannot download differentially, fallback to full download: Error: net::ERR_NETWORK_IO_SUSPENDED',
+    );
+
+    vi.setSystemTime(new Date('2026-06-04T12:06:00.000Z'));
+
+    expect(
+      isUpdaterFullDownloadFallbackError('net::ERR_NETWORK_IO_SUSPENDED'),
+    ).toBe(false);
   });
 });
 
@@ -155,6 +260,29 @@ describe('fetchJsonFromMainProcess', () => {
     } as Response);
 
     await fetchJsonFromMainProcess(mockUrl, undefined, { silent: true });
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('should not report wrapped DNS fetch failures', async () => {
+    const spy = vi.spyOn(utils, 'captureElectronError');
+    const cause = Object.assign(new Error('getaddrinfo ENOTFOUND ipinfo.io'), {
+      code: 'ENOTFOUND',
+    });
+    const error = new TypeError('fetch failed', { cause });
+    vi.mocked(fetch).mockRejectedValue(error);
+
+    await fetchJsonFromMainProcess(mockUrl);
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('should not report direct DNS errors', async () => {
+    const spy = vi.spyOn(utils, 'captureElectronError');
+    const error = Object.assign(new Error('getaddrinfo ENOTFOUND ipinfo.io'), {
+      code: 'ENOTFOUND',
+    });
+    vi.mocked(fetch).mockRejectedValue(error);
+
+    await fetchJsonFromMainProcess(mockUrl);
     expect(spy).not.toHaveBeenCalled();
   });
 });

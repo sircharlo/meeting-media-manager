@@ -4,6 +4,35 @@
 
 Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bestand op GitHub.
 
+## v26.6.1
+
+### ✨ Nieuwe functies
+
+- ✨ **Media Preview**: Voegt een live media preview overlay toe die in- of uitgeschakeld kan worden via de instellingen of de weergave popup.
+- ✨ **Zoek media**: Een snelle zoekfunctie toegevoegd in de medialijst waarmee je snel media kunt vinden op titel. Om het te gebruiken, gebruik de standaard sneltoets voor zoeken (Ctrl+F of Cmd+F).
+- ✨ **Filter instellingen**: Voegt een filter toe aan de instellingen pagina waarmee u instellingen kunt vinden op trefwoord of categorie. Om het te gebruiken, klik je op de zoek knop in de rechterbovenhoek van de instellingen pagina of gebruik de standaard sneltoets voor zoeken (Ctrl+F of Cmd+F).
+- ✨ **Achtergrond Muziek Overlap Waarschuwing**: Voeg een waarschuwing toe wanneer media wordt gestart terwijl achtergrond muziek wordt afgespeeld. Gebruikers kunnen ervoor kiezen om achtergrondmuziek uit de melding te stoppen.
+
+## v26.6.0
+
+### ✨ Nieuwe functies
+
+- ✨ **Timer**: analoge weergave modus en status van timing rapport toegevoegd.
+- ✨ **Profielen**: Profielinstellingen importeren en exporteren in de Geavanceerde instellingen en de Setup Wizard.
+- ✨ **Media Window**: Ondersteuning toegevoegd voor het automatisch verbergen van het media-venster na het afspelen toen het oorspronkelijk verborgen was. Dat is praktisch wanneer een externe spreker bijvoorbeeld afbeeldingen wil laten zien.
+
+## v26.5.0
+
+### ✨ Nieuwe functies
+
+- ✨ **PDF Importeren**: Een nieuwe PDF import stroom toegevoegd aan het dialoogvenster voor de publicatie media, staat toe dat de PDF-versie van een publicatie automatisch wordt geïmporteerd als individuele afbeeldingen indien gewenst.
+
+## v26.4.8
+
+### ✨ Nieuwe functies
+
+- ✨ **JW Stream**: voegde JW Stream toe aan de lijst van websites die gespiegeld kunnen worden.
+
 ## v26,4.0
 
 ### ✨ Nieuwe functies

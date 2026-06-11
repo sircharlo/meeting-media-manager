@@ -1,4 +1,5 @@
 import type {
+  FileDownloader,
   JwLangCode,
   MultimediaExtractItem,
   MultimediaItem,
@@ -8,10 +9,8 @@ import type {
   VideoMarker,
 } from 'src/types';
 
-const { executeQuery, path } = globalThis.electronApi;
-const { join } = path;
+const { executeQuery, join } = globalThis.electronApi;
 
-import mepslangs from 'src/constants/mepslangs';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { log } from 'src/shared/vanilla';
 import { findFile, getPublicationDirectory } from 'src/utils/fs';
@@ -21,8 +20,11 @@ let getDbFromJWPUBProvider:
   | ((
       publication: PublicationFetcher,
       meetingDate?: string,
+      progressCategory?: FileDownloader['progressCategory'],
     ) => Promise<null | string>)
   | null = null;
+let getJwLangCodeProvider: ((mepsId?: number) => JwLangCode | null) | null =
+  null;
 
 /**
  * Registers providers for sqlite utilities to avoid circular dependencies.
@@ -31,19 +33,30 @@ export const registerSqliteProviders = (providers: {
   getDbFromJWPUB: (
     publication: PublicationFetcher,
     meetingDate?: string,
+    progressCategory?: FileDownloader['progressCategory'],
   ) => Promise<null | string>;
+  getJwLangCode: (mepsId?: number) => JwLangCode | null;
 }) => {
   getDbFromJWPUBProvider = providers.getDbFromJWPUB;
+  getJwLangCodeProvider = providers.getJwLangCode;
 };
 
 const getDbFromJWPUB = async (
   publication: PublicationFetcher,
   meetingDate?: string,
+  progressCategory?: FileDownloader['progressCategory'],
 ) => {
   if (!getDbFromJWPUBProvider) {
     throw new Error('getDbFromJWPUBProvider not registered');
   }
-  return getDbFromJWPUBProvider(publication, meetingDate);
+  return getDbFromJWPUBProvider(publication, meetingDate, progressCategory);
+};
+
+const getJwLangCode = (mepsId?: number) => {
+  if (!getJwLangCodeProvider) {
+    throw new Error('getJwLangCodeProvider not registered');
+  }
+  return getJwLangCodeProvider(mepsId);
 };
 
 export async function addFullFilePathToMultimediaItem(
@@ -126,7 +139,7 @@ export const getPublicationInfoFromDb = (db: string): PublicationFetcher => {
 
     const publication: PublicationFetcher = {
       issue: pubQuery.IssueTagNumber,
-      langwritten: mepslangs[pubQuery.MepsLanguageIndex] ?? '',
+      langwritten: getJwLangCode(pubQuery.MepsLanguageIndex) ?? '',
       pub: pubQuery.UndatedSymbol,
     };
 
@@ -137,10 +150,10 @@ export const getPublicationInfoFromDb = (db: string): PublicationFetcher => {
   }
 };
 
-export const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
+export const getMepsLanguagesByMediaItem = (source: MultimediaItemsFetcher) => {
   try {
     if (!source.db) return [];
-    const multimediaMepsLangs: {
+    const mepsLanguagesByMediaItem: {
       IssueTagNumber: number;
       KeySymbol: null | string;
       MepsLanguageIndex: number;
@@ -156,7 +169,9 @@ export const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
         if (!thisTableExists) continue;
       } catch (error) {
         errorCatcher(error, {
-          contexts: { fn: { name: 'getMultimediaMepsLangs', source, table } },
+          contexts: {
+            fn: { name: 'getMepsLanguagesByMediaItem', source, table },
+          },
         });
         continue;
       }
@@ -173,7 +188,7 @@ export const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
       );
 
       if (columnKSExists && columnMLIExists)
-        multimediaMepsLangs.push(
+        mepsLanguagesByMediaItem.push(
           ...executeQuery<{
             IssueTagNumber: number;
             KeySymbol: null | string;
@@ -185,7 +200,26 @@ export const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
           ),
         );
     }
-    return multimediaMepsLangs;
+
+    const filterSjjm = (items: typeof mepsLanguagesByMediaItem) => {
+      // Build a set of sjj keys (IssueTagNumber + Track)
+      const sjjSet = new Set(
+        items
+          .filter((i) => i.KeySymbol === 'sjj')
+          .map((i) => `${i.IssueTagNumber}-${i.Track}`),
+      );
+
+      return items.filter((item) => {
+        if (item.KeySymbol !== 'sjjm') return true;
+
+        const key = `${item.IssueTagNumber}-${item.Track}`;
+
+        // If equivalent sjj exists → remove sjjm
+        return !sjjSet.has(key);
+      });
+    };
+
+    return filterSjjm(mepsLanguagesByMediaItem);
   } catch (error) {
     errorCatcher(error);
     return [];
@@ -351,8 +385,8 @@ const buildDocumentMultimediaQuery = (
   ) {
     where += ` AND ${mmTable}.BeginParagraphOrdinal >= ? AND ${mmTable}.EndParagraphOrdinal <= ?`;
     params.push(
-      source.BeginParagraphOrdinal as number,
-      source.EndParagraphOrdinal as number,
+      source.BeginParagraphOrdinal || 0,
+      source.EndParagraphOrdinal || 0,
     );
   }
 

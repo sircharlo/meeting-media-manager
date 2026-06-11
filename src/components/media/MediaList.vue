@@ -38,7 +38,7 @@
     />
     <!-- Media Items -->
     <div
-      v-show="!isCollapsed"
+      v-show="!isCollapsed || hasMediaFilterTerms"
       ref="dragDropContainer"
       class="sortable-media"
       :class="{ 'drop-here': isDragging }"
@@ -71,6 +71,7 @@
           v-else-if="element.children"
           :element="element"
           :expanded="expandedGroups[element.uniqueId] ?? false"
+          :media-filter-terms="mediaFilterTerms"
           :selected="selectedMediaItems?.includes(element.uniqueId)"
           :selected-media-items="selectedMediaItems"
           @item-clicked="
@@ -92,6 +93,7 @@
           v-else
           v-model:repeat="element.repeat"
           :media="element"
+          :media-filter-terms="mediaFilterTerms"
           :selected="selectedMediaItems?.includes(element.uniqueId)"
           :selected-media-items="selectedMediaItems"
           @click="
@@ -137,7 +139,7 @@ import { useMediaDragAndDrop } from 'src/composables/useMediaDragAndDrop';
 import { useMediaSection } from 'src/composables/useMediaSection';
 import {
   getTextColor,
-  saveWatchedMediaSectionOrder,
+  saveWatchedMediaLayout,
 } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, nextTick, ref, watch } from 'vue';
@@ -149,6 +151,7 @@ import MediaSectionHeader from './MediaSectionHeader.vue';
 import SectionEmptyState from './SectionEmptyState.vue';
 
 const props = defineProps<{
+  mediaFilterTerms?: string[];
   mediaList: MediaSectionWithConfig;
   openImportMenu: (section: string) => void;
   selectedMediaItems?: string[];
@@ -205,38 +208,15 @@ const { dragDropContainer, isDragging, sortableItems } = useMediaDragAndDrop(
  * Handles saving the order of watched media items to the filesystem.
  * This is only applicable when some items in the section are from the 'watched' source.
  */
-function handleWatchedMediaPersistence(items: MediaItemType[]) {
-  if (!items.some((item) => item.source === 'watched')) return;
-
+function handleWatchedMediaPersistence() {
   try {
-    const watchedItems = items.filter(
-      (item) => item.source === 'watched' && item.fileUrl,
+    if (!selectedDateObject.value?.mediaSections) return;
+    const hasWatchedMedia = selectedDateObject.value.mediaSections.some(
+      (section) => section.items?.some((item) => item.source === 'watched'),
     );
-    const watchedItem = watchedItems[0];
-    if (!watchedItem) return;
+    if (!hasWatchedMedia) return;
 
-    const { fileUrlToPath, path } = globalThis.electronApi;
-    const { dirname } = path;
-
-    const firstWatchedItemPath = fileUrlToPath(watchedItem.fileUrl);
-    if (!firstWatchedItemPath) return;
-
-    const watchedDayFolder = dirname(firstWatchedItemPath);
-    if (!watchedDayFolder) return;
-
-    log(
-      '🔍 [updateMediaListItems] Saving section order for watched media items:',
-      'mediaList',
-      'log',
-      watchedDayFolder,
-      props.mediaList.config?.uniqueId,
-      watchedItems,
-    );
-    saveWatchedMediaSectionOrder(
-      watchedDayFolder,
-      props.mediaList.config?.uniqueId,
-      watchedItems,
-    );
+    saveWatchedMediaLayout(selectedDateObject.value.mediaSections);
   } catch (error) {
     // Fail gracefully - if we can't save the order file, it's not a big deal
     errorCatcher(error, {
@@ -245,7 +225,7 @@ function handleWatchedMediaPersistence(items: MediaItemType[]) {
           mediaList: props.mediaList,
           name: 'updateMediaListItems',
           selectedDateObject: selectedDateObject.value,
-          sortableItems: items,
+          sortableItems: sortableItems.value,
         },
       },
     });
@@ -255,6 +235,18 @@ function handleWatchedMediaPersistence(items: MediaItemType[]) {
 /**
  * Updates the section data in the Pinia store to match the sorted order.
  */
+let watchedMediaPersistenceQueued = false;
+
+function queueWatchedMediaPersistence() {
+  if (watchedMediaPersistenceQueued) return;
+
+  watchedMediaPersistenceQueued = true;
+  nextTick(() => {
+    watchedMediaPersistenceQueued = false;
+    handleWatchedMediaPersistence();
+  });
+}
+
 function updateStoreMediaOrder(items: MediaItemType[]) {
   if (!selectedDateObject.value || !props.mediaList.config) return;
 
@@ -270,24 +262,6 @@ function updateStoreMediaOrder(items: MediaItemType[]) {
   }
 }
 
-// Efficient watcher to ensure changes are persisted to the store
-// Only triggers when the actual array content changes, not on every re-render
-watch(
-  () => [sortableItems.value?.map((item) => item.uniqueId), isDragging.value],
-  ([, isDragging]) => {
-    if (isDragging) return; // Avoid updating while dragging
-    if (!sectionData.value || !sortableItems.value || !selectedDateObject.value)
-      return;
-
-    // Save section order information for watched media items
-    handleWatchedMediaPersistence(sortableItems.value);
-
-    // Update the section data to match the sorted order
-    updateStoreMediaOrder(sortableItems.value);
-  },
-  { flush: 'post' },
-);
-
 // Listen for sort order reset events
 useEventListener(globalThis, 'reset-sort-order', () => {
   // Reset the sortable items to the original order from mediaList.items
@@ -300,6 +274,10 @@ const sectionStyles = computed(() => ({
   '--bg-color': props.mediaList.config?.bgColor || 'rgb(148, 94, 181)',
   '--text-color': getTextColor(props.mediaList),
 }));
+
+const hasMediaFilterTerms = computed(
+  () => (props.mediaFilterTerms?.length ?? 0) > 0,
+);
 
 // Methods
 const handleRename = (value: boolean) => {
@@ -355,6 +333,27 @@ defineExpose({
   isDragging,
   sectionHeaderRef,
 });
+
+// Efficient watcher to ensure changes are persisted to the store
+// Only triggers when the actual array content changes, not on every re-render
+watch(
+  () => [
+    sortableItems.value?.map((item) => item.uniqueId).join('|'),
+    isDragging.value,
+  ],
+  ([, isCurrentlyDragging]) => {
+    if (isCurrentlyDragging) return; // Avoid updating while dragging
+    if (!sectionData.value || !sortableItems.value || !selectedDateObject.value)
+      return;
+
+    // Update the section data to match the sorted order
+    updateStoreMediaOrder(sortableItems.value);
+
+    // Save section order information for watched media items
+    queueWatchedMediaPersistence();
+  },
+  { flush: 'post' },
+);
 </script>
 
 <style lang="scss" scoped>

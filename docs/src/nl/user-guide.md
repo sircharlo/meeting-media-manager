@@ -50,6 +50,14 @@ M³ organiseert media automatisch per vergadertype en sectie:
 
 - **Vergadersecties** — Media is gegroepeerd per vergaderonderdeel (Openbare toespraak, Schatten uit Gods Woord, enz.)
 - **Aangepaste secties** — Je kunt aangepaste secties maken voor extra media als er op die specifieke dag geen vergadering gepland is
+- **Handmatig sorteren** - Sleep mediaitems naar de gewenste volgorde, of zet de volgorde opnieuw in indien nodig
+- **Herhaal Afspelen** - Herhaal een enkel media-item of herhaal elk item in een sectie totdat het afspelen handmatig is gestopt
+
+### Verborgen en ontbrekende media {#hidden-and-missing-media}
+
+Media kan verborgen worden van de vergaderlijst zonder de automatisch gedownloade bestanden te verwijderen. Als media per ongeluk verborgen is, gebruik dan **Toon verborgen media** voor de geselecteerde dag.
+
+Als M3 ontbrekende media meldt, controleer dan eerst of het artikel naar verwachting dichter bij de vergaderdatum beschikbaar zal zijn. Je kunt ook het ontbrekende item handmatig toevoegen met het **Media toevoegen** menu of door het naar de medialijst te slepen.
 
 ## Media Presentation {#media-presentation}
 
@@ -75,6 +83,8 @@ De mediaspeler biedt uitgebreide bedieningselementen:
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
 - **Zoomen/Verschuiven** - Gebruik het muiswiel om te zoomen, sleep om te verschuiven (voor afbeeldingen)
+- **Live-voorbeeld** - Wanneer ingeschakeld, toon een voorbeeld van het publiek medialevenster in de hoofdapp
+- **Afspelsnelheid** - Indien ingeschakeld in instellingen, pas audio en video snelheid aan vanuit het contextmenu van het media-item
 
 ### Probeer een reservetaal
 
@@ -118,6 +128,27 @@ Configureer aangepaste sneltoetsen voor snelle toegang. Merk op dat er standaard
 
 **Opmerking (\*):** Globale sneltoets - beschikbaar zelfs als de app niet gefocust is
 
+## Toon Gereedschappen {#display-tools}
+
+### Media Display Venster {#media-display-window}
+
+Het media-weergavevenster is het auditie-gerichte venster. Het kan worden geplaatst op een extern scherm of gebruikt in een raam instelling, afhankelijk van je uitrusting.
+
+Gebruik de weergave popup om:
+
+- Toon of verberg de mediaweergave
+- Kies het weergave- of venstertype
+- Selecteer een tijdelijke aangepaste achtergrond in plaats van het jaar
+- Gebruik een beschikbare camera als achtergrond. Dit wordt meestal gebruikt in sign-language congregations.
+
+Houd er rekening mee dat aangepaste achtergronden tijdelijk zijn en niet worden opgeslagen na M3 quites.
+
+### Meeting Timer {#user-guide-meeting-timer}
+
+Wanneer de vergadertimer is ingeschakeld, kan M3 een apart timer venster tonen voor timing deelnemers delen. De timer kan optellen of omlaag, de huidige tijd tonen, een aftellen van de vergadering tonen voor geplande vergaderingen, en optioneel geef je overuren aan of de vergadering voor of achter op schema ligt.
+
+De timer is een bèta-functie en moet alleen worden gebruikt wanneer deze lokaal wordt goedgekeurd.
+
 ## Achtergrondmuziek {#user-guide-background-music}
 
 ### Achtergrondmuziek instellen {#background-music-setup}
@@ -159,6 +190,7 @@ M³ schakelt automatisch tussen OBS-scènes tijdens presentaties:
 - **Mediascène** - Toont media-inhoud
 - **Afbeeldingsscène** - Toont afbeeldingen (kan worden uitgesteld indien ingeschakeld)
 - **Automatisch schakelen** - Scènes veranderen op basis van mediatype en instellingen
+- **Opnames** - Indien ingeschakeld, kan M3 OBS opname starten en stoppen vanuit de OBS popup
 
 ### Advanced OBS Features {#advanced-obs}
 
@@ -236,6 +268,8 @@ Voeg je eigen mediabestanden toe aan M³:
 3. **Mapbewaking** - Stel een gecontroleerde map in voor automatische imports
 4. **JWPUB-bestanden en afspeellijsten** - Importeer publicaties en afspeellijsten
 5. **Media voor openbare lezingen (S-34 / S-34mp)** - Importeer media voor openbare lezingen met behulp van S-34 of S-34mp JWPUB-bestanden
+6. **Video's van de officiële website** - Zoek naar video's en voeg ze toe aan de geselecteerde datum
+7. **Studie Bijbel en Bijbel voor borden en Bijbel media** - Voeg afbeeldingen, video's, kaarten, historische referenties of ondertekentaal bijbel toe voor geselecteerde passages
 
 ### Geïmporteerde media beheren {#managing-imported-media}
 
@@ -253,6 +287,10 @@ Importeer audio-opnames van Bijbelverzen:
 3. Specifieke verzen of versreeksen kunt kiezen
 4. Download de audiobestanden
 5. Gebruik ze
+
+### Profielinstellingen importeren en exporteren {#profile-settings-import-export}
+
+De instellingen van elk profiel kunnen worden geëxporteerd naar een JSON-bestand vanuit instellingen. Importeren van een profielinstellingenbestand vervangt de instellingen van het huidige profiel, wat handig is bij het verplaatsen van de instellingen naar een andere computer of bij het herstellen van een bekende configuratie.
 
 ## Mapbewaking en export {#user-guide-folder-monitoring}
 
@@ -286,9 +324,21 @@ Deel de officiële website op externe schermen:
 
 ### Website-bedieningselementen {#website-controls}
 
+- **Open Website** - Open een apart website venster
+- **Start Mirroring** - Toon het website venster in de media display voor het publiek
+- **Stop Mirroring** - Stop met het tonen van de website en keer terug naar de jaartekst of de achtergrond van de media
 - **Navigatie** - Standaardbrowsernavigatieknoppen
 - **Vernieuwen** - Laad de huidige pagina opnieuw
 - **Sluiten** - Sluit de website-presentatiemodus af
+- **Auto Retourn** - Optioneel automatisch terugkeren naar de medialijst na het stoppen van website spiegeling
+
+## Afspraak Opnames {#meeting-recordings}
+
+M3 kan helpen om het controleren van het opnemen van vergaderingen, maar bevat geen ingebouwde recorder.
+
+- **OBS Opname** - Als OBS opname bediening is ingeschakeld, gebruik dan de OBS popup om OBS opname te starten en te stoppen
+- **Externe opname App** - Configureer toetsenbord snelkoppelingen voor een aparte opname app, gebruik daarna de meetingopnames popup om deze snelkoppelingen te verzenden
+- **Opnamemap** - Configureer een opnamemap om een snelle knop weer te geven die de map opent waar opnamen worden opgeslagen
 
 ## Geavanceerde functies {#user-guide-advanced-features}
 
@@ -339,6 +389,7 @@ Configureer aangepaste sneltoetsen voor een efficiënte werking:
 - Verlaag de maximale resolutie
 - Wis oude gecachete bestanden
 - Controleer de beschikbare schijfruimte
+- Als de app grafische storingen laat zien of crasht, probeer dan de hardware-versnelling uit te schakelen en herstart M3
 
 #### Taalproblemen {#user-guide-language-issues}
 

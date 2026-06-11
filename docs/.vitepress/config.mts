@@ -1,17 +1,17 @@
 import { exec } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
-import path from 'upath';
+import { join } from 'upath';
 import { defineConfig } from 'vitepress';
 
 const execPromise = promisify(exec);
 
-import type { LanguageValue } from '../../src/constants/locales';
+import type { LanguageValue } from '../../src/constants/locales.ts';
 
-import messages, { enabled, localeOptions } from './../locales';
-import { CANONICAL_URL, GH_REPO, GH_REPO_URL } from './../utils/constants';
-import { camelToKebabCase, kebabToCamelCase } from './../utils/general';
-import { mapLocales, mapSearch } from './../utils/locales';
+import messages, { enabled, localeOptions } from './../locales/index.ts';
+import { CANONICAL_URL, GH_REPO, GH_REPO_URL } from './../utils/constants.ts';
+import { camelToKebabCase, kebabToCamelCase } from './../utils/general.ts';
+import { mapLocales, mapSearch } from './../utils/locales.ts';
 
 const base = `/${GH_REPO}/`;
 const srcExclude = localeOptions
@@ -146,7 +146,7 @@ export default defineConfig({
             : (kebabToCamelCase(localeIndex) as LanguageValue);
         const codeCopyButtonTitle = (() =>
           messages[locale]?.codeCopyButtonTitle ||
-          messages.en.codeCopyButtonTitle)();
+          messages?.en?.codeCopyButtonTitle)();
         return fence(tokens, idx, options, env, self).replace(
           '<button title="Copy Code" class="copy"></button>',
           `<button title="${codeCopyButtonTitle}" class="copy"></button>`,
@@ -177,7 +177,7 @@ export default defineConfig({
     try {
       const { stdout } = await execPromise(
         `git log --follow --format=%ad --date iso-strict ${fileURLToPath(
-          new URL(path.join('../src/', pageData.filePath), import.meta.url),
+          new URL(join('../src/', pageData.filePath), import.meta.url),
         )} | tail -1`,
       );
       createdDate = stdout.trim();
@@ -193,7 +193,8 @@ export default defineConfig({
 
     if (pageData.frontmatter.layout === 'home') {
       title =
-        (isEnglish ? messages.en.title : messages[messageLocale].title) || '';
+        (isEnglish ? messages?.en?.title : messages[messageLocale]?.title) ||
+        '';
 
       const locale = isEnglish ? 'en' : pageLang;
       const prefix = isEnglish ? '' : `/${locale}`;
@@ -221,21 +222,21 @@ export default defineConfig({
       [
         'meta',
         {
-          content: messages[isEnglish ? 'en' : messageLocale].title,
+          content: messages[isEnglish ? 'en' : messageLocale]?.title,
           name: 'application-name',
         },
       ],
       [
         'meta',
         {
-          content: messages[isEnglish ? 'en' : messageLocale].title,
+          content: messages[isEnglish ? 'en' : messageLocale]?.title,
           name: 'apple-mobile-web-app-title',
         },
       ],
       [
         'meta',
         {
-          content: messages[isEnglish ? 'en' : messageLocale].title,
+          content: messages[isEnglish ? 'en' : messageLocale]?.title,
           property: 'og:site_name',
         },
       ],

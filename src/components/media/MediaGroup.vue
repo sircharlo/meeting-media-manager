@@ -61,6 +61,7 @@
             v-model:repeat="childElement.repeat"
             child
             :media="childElement"
+            :media-filter-terms="mediaFilterTerms"
             :selected="selectedMediaItems?.includes(childElement.uniqueId)"
             :selected-media-items="selectedMediaItems"
             @click="
@@ -106,6 +107,7 @@ const { mediaPlaying } = storeToRefs(currentState);
 const props = defineProps<{
   element: MediaItemType;
   expanded: boolean;
+  mediaFilterTerms?: string[];
   selected?: boolean;
   selectedMediaItems?: string[];
 }>();
@@ -130,8 +132,15 @@ const emit = defineEmits<{
 const $q = useQuasar();
 const { t } = useI18n();
 
+const hasMediaFilterTerms = computed(
+  () => (props.mediaFilterTerms?.length ?? 0) > 0,
+);
+
 const isExpanded = computed({
-  get: () => props.expanded,
-  set: (value) => emit('update:expanded', value),
+  get: () => (hasMediaFilterTerms.value ? true : props.expanded),
+  set: (value) => {
+    if (hasMediaFilterTerms.value) return;
+    emit('update:expanded', value);
+  },
 });
 </script>

@@ -1,8 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const getDisplayMatching = vi.fn();
-const mockReadJsonSync = vi.fn();
-const mockPathExistsSync = vi.fn();
+const mockLoadWindowPrefs = vi.fn();
 
 vi.mock('electron', () => ({
   app: {
@@ -13,14 +12,10 @@ vi.mock('electron', () => ({
   },
 }));
 
-vi.mock('fs-extra/esm', () => ({
-  pathExistsSync: mockPathExistsSync,
-  readJsonSync: mockReadJsonSync,
-}));
-
 vi.mock('src-electron/constants', () => ({
   HD_RESOLUTION: [1920, 1080],
   PLATFORM: 'linux',
+  WINDOW_MOVE_THROTTLE_MS: 100,
 }));
 
 vi.mock('src-electron/main/screen', () => ({
@@ -35,6 +30,7 @@ vi.mock('src-electron/main/utils', () => ({
 
 vi.mock('src-electron/main/window/window-base', () => ({
   createWindow: vi.fn(),
+  loadWindowPrefs: mockLoadWindowPrefs,
   sendToWindow: vi.fn(),
 }));
 
@@ -45,7 +41,6 @@ vi.mock('src-electron/main/window/window-main', () => ({
 describe('window-media placement helpers', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockPathExistsSync.mockReturnValue(false);
     getDisplayMatching.mockReturnValue({ id: 2 });
   });
 
@@ -81,6 +76,14 @@ describe('window-media placement helpers', () => {
       __testables.normalizeWindowBounds({
         height: 1080,
         width: -1,
+        x: 0,
+        y: 0,
+      }),
+    ).toBeNull();
+    expect(
+      __testables.normalizeWindowBounds({
+        height: 50_000,
+        width: 50_000,
         x: 0,
         y: 0,
       }),
@@ -131,6 +134,60 @@ describe('window-media placement helpers', () => {
     expect(result).toEqual({ shouldMove: true, targetDisplayNr: 1 });
   });
 
+  it('keeps windowed media bounds when no explicit display/mode target is provided', async () => {
+    const { __testables } = await import('../window/window-media');
+
+    expect(
+      __testables.shouldKeepWindowedWithoutExplicitTarget(
+        undefined,
+        undefined,
+        false,
+        true,
+        false,
+      ),
+    ).toBe(true);
+
+    expect(
+      __testables.shouldKeepWindowedWithoutExplicitTarget(
+        1,
+        false,
+        false,
+        true,
+        false,
+      ),
+    ).toBe(false);
+
+    expect(
+      __testables.shouldKeepWindowedWithoutExplicitTarget(
+        undefined,
+        undefined,
+        true,
+        true,
+        false,
+      ),
+    ).toBe(false);
+
+    expect(
+      __testables.shouldKeepWindowedWithoutExplicitTarget(
+        undefined,
+        undefined,
+        false,
+        false,
+        false,
+      ),
+    ).toBe(false);
+
+    expect(
+      __testables.shouldKeepWindowedWithoutExplicitTarget(
+        undefined,
+        undefined,
+        false,
+        true,
+        true,
+      ),
+    ).toBe(false);
+  });
+
   it('keeps single-screen setups windowed instead of forcing fullscreen', async () => {
     const { __testables } = await import('../window/window-media');
 
@@ -172,8 +229,7 @@ describe('window-media placement helpers', () => {
   });
 
   it('uses saved window preferences to choose the preferred screen when available', async () => {
-    mockPathExistsSync.mockReturnValue(true);
-    mockReadJsonSync.mockReturnValue({
+    mockLoadWindowPrefs.mockResolvedValue({
       height: 1080,
       width: 1920,
       x: 1920,
@@ -182,7 +238,7 @@ describe('window-media placement helpers', () => {
 
     const { __testables } = await import('../window/window-media');
 
-    const result = __testables.getPreferredScreenFromPrefs([
+    const result = await __testables.getPreferredScreenFromPrefs([
       {
         bounds: { height: 1080, width: 1920, x: 0, y: 0 },
         id: 1,

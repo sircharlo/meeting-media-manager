@@ -38,15 +38,15 @@ Nastavite, kateri dan naj se v koledarju šteje za prvi dan v tednu.
 
 **Privzeto**: nedelja
 
-### Date Format {#date-format}
+### Oblika datuma {#date-format}
 
 <!-- **Setting**: `localDateFormat` -->
 
-Format used to display dates in the app.
+Oblika, ki jo aplikacija uporablja za prikaz datumov.
 
-**Example**: D MMMM YYYY
+**Primer**: D MMMM YYYY
 
-**Default**: D MMMM YYYY
+**Privzeto**: D MMMM YYYY
 
 ### Samodejni zagon ob prijavi {#auto-start-at-login}
 
@@ -157,6 +157,20 @@ Te nastavitve vam omogočajo nastavitev začasnih sprememb urnika shodov:
 - **Nov dan ob koncu tedna**: Nov dan za shod ob koncu tedna
 - **Nov čas ob koncu tedna**: Nov čas za shod ob koncu tedna
 
+### Samodejne posodobitve urnika shodov {#automatic-meeting-schedule-updates}
+
+<!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
+
+Ko je ta funkcija omogočena, M³ občasno preveri uradno spletno mesto Jehovovih prič, če je prišlo do kake spremembe dneva in ure shodov, ter samodejno posodobi trenutni profil.
+
+To deluje samo za profile, ki so bili dodani z iskanjem občine in katerih imena občin niso bila ročno spremenjena. Če je bila sinhronizacija onemogočena, ker je bilo ime občine spremenjeno, uporabi možnost **Omogoči sinhronizacijo urnika**, da profil znova povežeš.
+
+#### Osveži urnik shodov {#refresh-meeting-schedule}
+
+<!-- **Setting**: `reSyncMeetingScheduleButton` -->
+
+Ročno sinhroniziraj trenutni in prihodnji urnik shodov s podatki z uradnega spletnega mesta.
+
 ## Pridobivanje in predvajanje multimedijske vsebine {#media-retrieval-and-playback}
 
 ### Merjena povezava {#metered-connection}
@@ -167,7 +181,7 @@ To možnost vklopite, če imate omejeno podatkovno povezavo, da zmanjšate porab
 
 **Privzeto**: `false`
 
-### Prikaz multimedijske vsebine {#media-display-button}
+### Multimedijski zaslon {#media-display-button}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
@@ -175,11 +189,19 @@ Omogoči funkcijo prikazovanja multimedijske vsebine. To je potrebno za prikazov
 
 **Privzeto**: `false`
 
-#### Begin Playback Paused {#begin-playback-paused}
+#### Omogoči predogled multimedijske vsebine {#enable-media-preview}
+
+<!-- **Setting**: `enableMediaPreview` -->
+
+Prikaži predogled multimedijskega okna v živo, ko je prikazana slika ali video.
+
+**Privzeto**: `true`
+
+#### Začni predvajanje v pavzi {#begin-playback-paused}
 
 <!-- **Setting**: `beginPlaybackPaused` -->
 
-Start videos in a paused state when playback begins.
+Videoposnetki se ob začetku predvajanja samodejno zaženejo v pavziranem stanju.
 
 **Privzeto**: `false`
 
@@ -332,6 +354,7 @@ Nastavite, kateri prizori OBS se uporabljajo za različne namene:
 - **Preklopi prizor po predvajanju multimedijske vsebine**: Samodejno se vrne na prejšnji prizor po predvajanju multimedijske vsebine
 - **Zapomni si prejšnji prizor**: Shrani in obnovi prejšnji prizor
 - **Skrij ikone**: V uporabniškem vmesniku skrije ikone, povezane z OBS
+- **Nadzor snemanja**: Prikaži kontrolnike za začetek in ustavitev OBS snemanja iz M³
 
 :::warning Pomembno obvestilo
 
@@ -341,49 +364,101 @@ Nastavite, kateri prizori OBS se uporabljajo za različne namene:
 
 :::
 
-### Custom Events {#custom-events}
+### Dogodki po meri {#custom-events}
 
-#### Enable Custom Events {#enable-custom-events}
+#### Omogoči dogodke po meri {#enable-custom-events}
 
 <!-- **Setting**: `enableCustomEvents` -->
 
-Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
+Omogoči bližnjice po meri, ki se sprožijo, ko je zaznan določen dogodek (npr. ko se multimedijska vsebina začne predvajati, pavzira ali ustavi).
 
 **Privzeto**: `false`
 
-#### Custom Event Shortcuts {#custom-event-shortcuts}
+#### Bližnjice za dogodke po meri {#custom-event-shortcuts}
 
-##### Play Media Shortcut {#custom-event-media-play-shortcut}
+##### Bližnjica ob predvajanju multimedijske vsebine {#custom-event-media-play-shortcut}
 
 <!-- **Setting**: `customEventMediaPlayShortcut` -->
 
-Shortcut that is triggered when media is played.
+Bližnjica, ki se sproži, ko se multimedijska vsebina začne predvajati.
 
 **Privzeto**: Prazno
 
-##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
+##### Bližnjica ob pavziranju multimedijske vsebovine {#custom-event-media-pause-shortcut}
 
 <!-- **Setting**: `customEventMediaPauseShortcut` -->
 
-Shortcut that is triggered when media is paused.
+Bližnjica, ki se sproži, ko se multimedijska vsebina pavzira.
 
 **Privzeto**: Prazno
 
-##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
+##### Bližnjica ob ustavitvi multimedijske vsebovine {#custom-event-media-stop-shortcut}
 
 <!-- **Setting**: `customEventMediaStopShortcut` -->
 
-Shortcut that is triggered when media is stopped.
+Bližnjica, ki se sproži, ko se multimedijska vsebina ustavi.
 
 **Privzeto**: Prazno
 
-##### Last Song Shortcut {#custom-event-last-song-shortcut}
+##### Bližnjica ob zadnji pesmi {#custom-event-last-song-shortcut}
 
 <!-- **Setting**: `customEventLastSongShortcut` -->
 
-Shortcut that is triggered when the last song is played during a meeting.
+Bližnjica, ki se sproži, ko je med shodom predvajana zadnja pesem.
 
 **Privzeto**: Prazno
+
+### Posnetki shodov {#meeting-recordings}
+
+#### Omogoči združevanje z zunanjo aplikacijo za snemanje {#enable-external-recording-app-integration}
+
+<!-- **Setting**: `recordingEnable` -->
+
+Dovoli, da M³ upravlja ločeno aplikacijo za snemanje s pomočjo tipkovnih bližnjic. To ne snema znotraj M³. Ko v pojavnem oknu za snemanje shoda pritisneš na **Začni snemanje** ali **Ustavi snemanje**, M³ pošlje nastavljene bližnjice.
+
+Ta možnost je skrita, kadar je omogočen OBS nadzor snemanja. Če uporabljaš OBS Studio, uporabi OBS nadzor snemanja v OBS združevanju.
+
+**Privzeto**: `false`
+
+#### Bližnjice za snemanje in mapa {#recording-shortcuts-and-folder}
+
+<!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
+
+Nastavi tipkovno bližnjico za začetek snemanja, izbirno bližnjico za ustavitev snemanja ter mapo, v katero zunanja aplikacija shranjuje posnetke. Če bližnjica za ustavitev ni določena, M³ ponovno uporabi bližnjico za začetek snemanja. Ko je mapa nastavljena, M³ prikaže gumb za njen odprtje.
+
+### Časovnik shodov {#meeting-timer}
+
+#### Omogoči časovnik shodov {#enable-meeting-timer}
+
+<!-- **Setting**: `enableTimerDisplay` -->
+
+Omogoči ločeno okno časovnika za merjenje posameznih delov shoda. To je funkcija v beta fazi in jo je treba omogočiti samo, če je lokalno odobrena.
+
+**Privzeto**: `false`
+
+#### Obnašanje okna časovnika {#timer-window-behavior}
+
+<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
+
+Nastavi, ali se okno časovnika odpre samodejno, ali časovniki za udeležence privzeto štejejo navzgor ali navzdol, ali ura uporablja 12‑urni ali 24‑urni format ter ali je trenutna vrednost časovnika prikazana na gumbu časovnika v orodni vrstici.
+
+#### Prikazi časovnika {#timer-display-formats}
+
+<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
+
+Izberi analogni ali digitalni prikaz za prikaz trenutnega časa in odštevalne časovnike. Opozorilni indikator odštevanja lahko med zadnjo minuto postopoma obarva analogni odštevalni krog v opozorilno barvo.
+
+#### Odštevalnik do shoda in stanje urnika {#meeting-countdown-and-schedule-status}
+
+<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
+
+Prikaži odštevalnik pred načrtovanimi shodi in po želji prikazuj, ali program shoda prehiteva ali zaostaja. Odštevalnik shoda je prikazan samo na prikazu časovnika, ne pa na glavnem multimedijskem zaslonu.
+
+#### Videz časovnika in prekoračitev časa {#timer-appearance-and-overtime}
+
+<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
+
+Prilagodi velikost besedila časovnika in barve ter nastavi indikatorje prekoračitve časa, kot so alternativne barve, utripanje ali prikaz samo prekoračenega časa v načinu štetja navzgor.
 
 ## Napredne nastavitve {#advanced-settings}
 
@@ -408,15 +483,23 @@ Nastavite bližnjice za predvajanje multimedijske vsebine:
 - **Ustavi predvajanje**: Ustavi predvajanje multimedijske vsebine
 - **Vklop/izklop glasbe**: Vklopi/izklopi glasbo v ozadju
 
-### Prikaz multimedijske vsebine {#media-display}
+### Multimedijski zaslon {#media-display}
 
-#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+#### Omogoči prehode z zatemnitvijo {#enable-media-window-fade-transitions}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
-Enable fade-in/out transitions when showing or hiding the media window.
+Omogoči postopne prehode (fade-in/fade-out) pri prikazu ali skrivanju okna za multimedijsko vsebino.
 
 **Privzeto**: `true`
+
+#### Omogoči nadzor hitrosti predvajanja {#enable-playback-speed-control}
+
+<!-- **Setting**: `enablePlaybackSpeedControl` -->
+
+Dovoli prilagajanje hitrosti predvajanja zvoka in videa iz kontekstnega menija multimedijskega elementa.
+
+**Privzeto**: `false`
 
 #### Skrij logotip multimedijske vsebine {#hide-media-logo}
 
@@ -432,7 +515,7 @@ Skrij logotip v oknu z multimedijsko vsebino.
 
 Največja ločljivost za preneseno multimedijsko vsebino.
 
-**Možnosti**: 240p, 360p, 480p, 720p
+**Možnosti**: 240p, 360p, 480p, 720p, 1080p
 
 **Privzeto**: 720p
 
@@ -449,6 +532,14 @@ Vključi multimedijsko vsebino iz tiskanih publikacij v prenose.
 <!-- **Setting**: `excludeFootnotes` -->
 
 Iz prenosov izključi slike v podčrtnih opombah, kadar je to mogoče.
+
+**Privzeto**: `false`
+
+#### Izključi dodatne videe za Preučevanje Stražnega stolpa {#exclude-additional-watchtower-study-videos}
+
+<!-- **Setting**: `excludeWtParagraphVideos` -->
+
+Izključi dodatne videe, ki so omenjeni v odstavkih za Preučevanje Stražnega stolpa.
 
 **Privzeto**: `false`
 
@@ -506,6 +597,10 @@ Pretvori izvoženo multimedijsko vsebino v format MP4 za boljšo združljivost.
 
 **Privzeto**: `false`
 
+### Prenos nastavitev profila {#profile-settings-transfer}
+
+Izvozi nastavitve trenutnega profila v datoteko JSON ali uvozi predhodno izvoženo datoteko z nastavitvami profila. Uvoz zamenja trenutne nastavitve profila.
+
 ### Nevarno območje {#danger-zone}
 
 :::warning Opozorilo
@@ -514,13 +609,29 @@ Te nastavitve spreminjajte le, če razumete njihove posledice.
 
 :::
 
-#### Base URL {#base-url}
+#### Osnovni URL {#base-url}
 
 <!-- **Setting**: `baseUrl` -->
 
-Base domain used to download publications and media.
+Osnovna domena, ki se uporablja za prenos publikacij in multimedijske vsebine.
 
-**Default**: `jw.org`
+**Privzeto**: `jw.org`
+
+#### Onemogoči strojno pospeševanje {#disable-hardware-acceleration}
+
+<!-- **Setting**: `disableHardwareAcceleration` -->
+
+Onemogoči strojno pospeševanje po ponovnem zagonu M³. To lahko pomaga pri grafičnih napakah ali sesutjih na nekaterih sistemih, sicer pa ni priporočeno.
+
+**Privzeto**: `false`
+
+#### Skrij opomnik za strojno pospeševanje {#suppress-hardware-acceleration-reminder}
+
+<!-- **Setting**: `suppressHardwareAccelerationReminder` -->
+
+Skrij opomnik za ponovno omogočanje strojnega pospeševanja, potem ko je bilo ročno onemogočeno.
+
+**Privzeto**: `false`
 
 #### Onemogoči pridobivanje vsebine {#disable-media-fetching}
 

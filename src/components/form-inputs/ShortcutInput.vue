@@ -103,21 +103,6 @@ const localValue = ref(props.modelValue);
 
 const { unregisterShortcut } = globalThis.electronApi;
 
-watch(localValue, (newValue, oldValue) => {
-  if (!newValue || !getCurrentShortcuts().includes(newValue)) {
-    emit('update:modelValue', newValue);
-    if (oldValue) unregisterShortcut(oldValue);
-    if (newValue) registerCustomShortcut(props.shortcutName, newValue);
-  }
-});
-
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    localValue.value = newValue;
-  },
-);
-
 const handleKeyPress = (event: KeyboardEvent) => {
   log('🎹 Key pressed:', 'shortcutInput', 'log', event.code, event.key, {
     altKey: event.altKey,
@@ -190,5 +175,21 @@ const stopListening = () => {
   );
   globalThis.removeEventListener('keydown', handleKeyPress);
 };
+
 const shortcutPicker = ref(false);
+
+watch(localValue, (newValue, oldValue) => {
+  if (!newValue || !getCurrentShortcuts().includes(newValue)) {
+    emit('update:modelValue', newValue);
+    if (oldValue) unregisterShortcut(oldValue);
+    if (newValue) registerCustomShortcut(props.shortcutName, newValue);
+  }
+});
+
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    localValue.value = newValue;
+  },
+);
 </script>

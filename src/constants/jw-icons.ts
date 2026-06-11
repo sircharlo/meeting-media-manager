@@ -3,21 +3,21 @@
  * Keys are the identifiers used in the app, values are the Unicode escape sequences
  */
 export const fallbackJwIconsGlyphMap: Record<string, string> = {
-  arena: '\ue601',
-  'awake-exclamation-mark': '\ue619',
-  'brochure-stack': '\ue62b',
-  gem: '\ue658',
-  'jw-square': '\ue666',
-  'magazine-stack': '\ue675',
-  'meeting-workbook-stack': '\ue679',
-  sheep: '\ue6a4',
-  speaker: '\ue6ab',
-  'tract-stack': '\ue6c4',
-  video: '\ue6ce',
-  watchtower: '\ue6d2',
-  'watchtower-square': '\ue6d3',
-  wheat: '\ue6d4',
-  'wine-bread': '\ue6d5',
+  arena: '\ue60a',
+  'awake-exclamation-mark': '\ue646',
+  'brochure-stack': '\ue675',
+  gem: '\ue720',
+  'jw-square': '\ue74a',
+  'magazine-stack': '\ue770',
+  'meeting-workbook-stack': '\ue780',
+  sheep: '\ue800',
+  speaker: '\ue810',
+  'tract-stack': '\ue86c',
+  video: '\ue884',
+  watchtower: '\ue890',
+  'watchtower-square': '\ue892',
+  wheat: '\ue898',
+  'wine-bread': '\ue89a',
 };
 
 export const keywordToJwIconMapping: Record<string, string | undefined> = {

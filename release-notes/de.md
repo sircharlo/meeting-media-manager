@@ -4,6 +4,35 @@
 
 Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in unserer CHANGELOG.md Datei auf GitHub.
 
+## v26.6.1
+
+### ✨ Neue Funktionen
+
+- ✨ **Medienvorschau**: Ein Live-Medienvorschau-Overlay hinzugefügt, das über die Einstellungen oder über das Anzeigefenster ein- oder ausgeschaltet werden kann.
+- ✨ **Medien suchen**: In der Medien-Liste wurde ein Schnellsuchfeld hinzugefügt, mit dem Sie schnell Medien nach Titel finden können. Verwenden Sie dazu einfach das Standard-Tastaturkürzel für die Suche (Strg+F oder Cmd+F).
+- ✨ **Filtereinstellungen**: Ein Filterkasten wurde zur Einstellungsseite hinzugefügt, mit der Sie die Einstellungen nach Stichwort oder Kategorie finden können. Um es zu verwenden, klicken Sie einfach auf den Such-Button in der oberen rechten Ecke der Einstellungsseite oder verwenden Sie das Standard-Tastaturkürzel für die Suche (Strg+F oder Cmd+F).
+- ✨ **Hintergrundmusik Überlappung Warnung**: Warnmeldung beim Starten von Medien hinzugefügt, während Hintergrundmusik abgespielt wird. Benutzer können wählen, ob die Hintergrundmusik von der Benachrichtigung abgewiesen werden soll.
+
+## v26.6.0
+
+### ✨ Neue Funktionen
+
+- ✨ **Timer**: Analog-Anzeigemodi und Timing-Reportstatus hinzugefügt.
+- ✨ **Profiles**: Import und Export der Profileinstellungen in den erweiterten Einstellungen und dem Setup-Assistenten hinzugefügt.
+- ✨ **Medienfenster**: Unterstützung für das automatische Verstecken des Medienfensters nach der Wiedergabe, als es ursprünglich versteckt wurde. Dies ist praktisch, wenn beispielsweise ein Fernsprecher Bilder anzeigen möchte.
+
+## v26.5.0
+
+### ✨ Neue Funktionen
+
+- ✨ **PDF-Import**: Neuer PDF-Import-Fluss zum Dialog Veröffentlichungsmedien hinzugefügt, damit die PDF-Version einer Publikation automatisch als individuelle Bilder importiert werden kann, wenn gewünscht.
+
+## v26.4.8
+
+### ✨ Neue Funktionen
+
+- ✨ **JW Stream**: JW Stream zur Liste der Websites hinzugefügt, die gespiegelt werden können.
+
 ## v26.4.0
 
 ### ✨ Neue Funktionen

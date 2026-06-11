@@ -70,7 +70,7 @@
                   <q-item-section avatar>
                     <q-img
                       v-if="item.ResolvedPreviewPath"
-                      :alt="item.Label"
+                      :alt="getMediaAlt(item)"
                       class="thumbnail"
                       fit="cover"
                       height="48px"
@@ -85,22 +85,9 @@
                     />
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label>{{ item.Label }}</q-item-label>
-                    <q-item-label caption>
-                      {{
-                        item.FilePath ||
-                        [
-                          item.KeySymbol,
-                          item.IssueTagNumber,
-                          item.MepsDocumentId,
-                          (item.MepsLanguageIndex !== undefined &&
-                            mepslangs[item.MepsLanguageIndex]) ||
-                            '',
-                          item.Track,
-                        ]
-                          .filter((x) => !!x)
-                          .join('_')
-                      }}
+                    <q-item-label>{{ getMediaLabel(item) }}</q-item-label>
+                    <q-item-label v-if="getMediaCaption(item)" caption>
+                      {{ getMediaCaption(item) }}
                     </q-item-label>
                   </q-item-section>
                 </q-item>
@@ -169,10 +156,10 @@ import type {
 } from 'src/types';
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
-import mepslangsImport from 'src/constants/mepslangs';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   addJwpubDocumentMediaToFiles,
+  getJwLangCode,
   resolveMultimediaPreviewPath,
 } from 'src/helpers/jw-media';
 import { log } from 'src/shared/vanilla';
@@ -186,10 +173,7 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-// Explicitly declare mepslangs for template use
-const mepslangs = mepslangsImport;
-
-const { pathToFileURL } = globalThis.electronApi;
+const { basename, pathToFileURL } = globalThis.electronApi;
 const props = defineProps<{
   dbPath: string;
   dialogId: string;
@@ -279,6 +263,56 @@ const getMediaIcon = (item: MultimediaItem) => {
   if (item.MimeType?.startsWith('video/')) return 'mmm-movie';
   if (item.MimeType?.startsWith('audio/')) return 'mmm-audio';
   return 'mmm-local-media';
+};
+
+const isImageItem = (item: MultimediaItem) =>
+  item.MimeType?.startsWith('image/');
+
+const getCleanText = (value: null | string | undefined) => value?.trim() || '';
+
+const getFileBasename = (item: MultimediaItem) =>
+  item.FilePath ? basename(item.FilePath) : '';
+
+const getMediaIdentifier = (item: MultimediaItem) =>
+  [
+    item.KeySymbol,
+    item.IssueTagNumber,
+    item.MepsDocumentId,
+    (item.MepsLanguageIndex !== undefined &&
+      getJwLangCode(item.MepsLanguageIndex)) ||
+      '',
+    item.Track,
+  ]
+    .filter((x) => !!x)
+    .join('_');
+
+const getMediaTitle = (item: MultimediaItem) => {
+  const title = getCleanText(item.Title);
+  if (title && title !== getCleanText(props.document?.Title)) return title;
+
+  return '';
+};
+
+const getMediaLabel = (item: MultimediaItem) =>
+  getMediaTitle(item) ||
+  getMediaIdentifier(item) ||
+  getFileBasename(item) ||
+  getCleanText(item.Label) ||
+  item.MultimediaId.toString();
+
+const getMediaCaption = (item: MultimediaItem) => {
+  const label = getMediaLabel(item);
+  const captionCandidates = isImageItem(item)
+    ? [getMediaIdentifier(item), getFileBasename(item)]
+    : [getFileBasename(item), getMediaIdentifier(item)];
+
+  return (
+    captionCandidates.find((caption) => caption && caption !== label) || ''
+  );
+};
+
+const getMediaAlt = (item: MultimediaItem) => {
+  return getMediaLabel(item);
 };
 
 const addSelectedItems = async () => {

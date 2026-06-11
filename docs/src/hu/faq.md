@@ -81,6 +81,8 @@ Az egyéni médiát többféle módon importálhatja:
 - **Fogd és vidd**: Húzza a fájlokat közvetlenül az M³-ba
 - **Mappafigyelés**: Állítson be egy figyelt mappát az automatikus importáláshoz
 - **JWPUB fájlok és lejátszási listák**: Kiadványok és lejátszási listák importálása
+- **Public Talk Media**: Import S-34 or S-34mp JWPUB files for public talk media
+- **Bible and Study Bible Tools**: Add audio Bible recordings, Study Bible media, or sign-language Bible media
 
 ### :speaker: Importálhatok hangfelvételeket a Bibliából? {#audio-bible}
 
@@ -124,6 +126,12 @@ A háttérzene funkciók a következők:
 - Független hangerő-szabályozás
 - Konfigurálható stop puffer idő
 
+### :stopwatch: Does M³ include a meeting timer? {#faq-meeting-timer}
+
+Igen. When enabled, M³ can show a separate timer window for participant timing. It can count up or down, show the current time, show a pre-meeting countdown, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+
+The timer is a beta feature and should only be enabled if approved locally.
+
 ### :video_camera: Hogyan állíthatom be a Zoom integrációt? {#zoom-setup}
 
 A Zoom integrációhoz:
@@ -161,6 +169,13 @@ Ez a funkció késlelteti a képek továbbítását az OBS programba, amíg azok
 - Az időzítés jobb kontrollja
 - A korai jelenetváltások elkerülése
 
+### :record_button: Can M³ record meetings? {#faq-recordings}
+
+M³ does not include a built-in recorder, but it can help control recording in two ways:
+
+- If you use OBS Studio, enable OBS recording controls and start or stop OBS recording from the OBS popup
+- If you use another recording app, configure keyboard shortcuts so M³ can send the start and stop commands from the meeting recordings popup
+
 ## Fejlett funkciók {#faq-advanced-features}
 
 ### :cloud: Hogyan működik a mappák figyelése? {#faq-folder-monitoring}
@@ -187,6 +202,8 @@ Igen! Az M³ több profilt támogat a következők számára:
 - Különleges események
 - Különböző csoportok
 - Külön beállítások és média mindegyikhez
+
+Profiles can also be exported to a JSON file and imported on another computer or into another profile. Importing replaces the current profile's settings.
 
 ## Hibaelhárítás {#faq-troubleshooting}
 

@@ -27,6 +27,12 @@
             />
             <q-btn
               color="primary"
+              :label="t('import-profile-settings')"
+              outline
+              @click="importProfileSettingsForWizard"
+            />
+            <q-btn
+              color="primary"
               :disable="!currentSettings.localAppLang"
               :label="t('continue')"
               @click="step++"
@@ -288,7 +294,6 @@
               :label="t('continue')"
               @click="
                 fetchMedia();
-                downloadBackgroundMusic();
                 step = 101;
               "
             />
@@ -651,13 +656,11 @@ import TimeInput from 'components/form-inputs/TimeInput.vue';
 import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import {
-  downloadBackgroundMusic,
-  downloadSongbookVideos,
-  fetchMedia,
-} from 'src/helpers/jw-media';
+import { downloadSongbookVideos, fetchMedia } from 'src/helpers/jw-media';
+import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
 import { camelToKebabCase } from 'src/utils/general';
+import { importProfileSettingsFromFile } from 'src/utils/profile-settings';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -690,36 +693,31 @@ if (currentSettings.value) {
   currentSettings.value.autoStartMusic = true;
 }
 
-watch(
-  () => obsIntegrate.value,
-  (newObsIntegrate) => {
-    if (newObsIntegrate && obsUsed.value && currentSettings.value) {
-      currentSettings.value.obsEnable = true;
-    }
-  },
-);
+const importProfileSettingsForWizard = async () => {
+  try {
+    if (!currentSettings.value) return;
 
-watch(
-  [
-    () => currentSettings.value?.lang,
-    () => currentSettings?.value?.langFallback,
-  ],
-  () =>
-    updateYeartext({
-      isSignLanguage: currentLangObject.value?.isSignLanguage,
-      lang: currentSettings.value?.lang,
-      langFallback: currentSettings.value?.langFallback,
-      online: online.value,
-    }),
-);
+    const importedSettings = await importProfileSettingsFromFile();
+    if (!importedSettings) return;
 
-watchImmediate(
-  () => regularProfile.value,
-  (newRegularProfile) => {
-    if (currentSettings.value)
-      currentSettings.value.disableMediaFetching = !newRegularProfile;
-  },
-);
+    Object.assign(currentSettings.value, importedSettings);
+    regularProfile.value = !importedSettings.disableMediaFetching;
+    obsUsed.value = importedSettings.obsEnable;
+    obsIntegrate.value = importedSettings.obsEnable;
+    step.value = 300;
+
+    createTemporaryNotification({
+      message: t('profile-settings-imported'),
+      type: 'positive',
+    });
+  } catch (error) {
+    errorCatcher(error);
+    createTemporaryNotification({
+      message: t('profile-settings-import-failed'),
+      type: 'negative',
+    });
+  }
+};
 
 const loadSystemLocale = async () => {
   try {
@@ -764,6 +762,12 @@ const goToPage = (path: string) => {
 
 const step = ref(1);
 
+const showCongregationLookup = ref(false);
+
+const openCongregationLookup = () => {
+  showCongregationLookup.value = true;
+};
+
 watch(step, () => {
   nextTick(() => {
     const activeTab = document.querySelector('.q-stepper__tab--active');
@@ -775,9 +779,34 @@ watch(step, () => {
   });
 });
 
-const showCongregationLookup = ref(false);
+watch(
+  () => obsIntegrate.value,
+  (newObsIntegrate) => {
+    if (newObsIntegrate && obsUsed.value && currentSettings.value) {
+      currentSettings.value.obsEnable = true;
+    }
+  },
+);
 
-const openCongregationLookup = () => {
-  showCongregationLookup.value = true;
-};
+watch(
+  [
+    () => currentSettings.value?.lang,
+    () => currentSettings?.value?.langFallback,
+  ],
+  () =>
+    updateYeartext({
+      isSignLanguage: currentLangObject.value?.isSignLanguage,
+      lang: currentSettings.value?.lang,
+      langFallback: currentSettings.value?.langFallback,
+      online: online.value,
+    }),
+);
+
+watchImmediate(
+  () => regularProfile.value,
+  (newRegularProfile) => {
+    if (currentSettings.value)
+      currentSettings.value.disableMediaFetching = !newRegularProfile;
+  },
+);
 </script>

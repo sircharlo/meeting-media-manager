@@ -98,14 +98,23 @@ const filteredDays = ref(
   })),
 );
 const filteredDarkModes = ref([
-  { description: t('automatic'), label: t('automatic'), value: 'auto' },
-  { description: t('dark'), label: t('dark'), value: true },
-  { description: t('light'), label: t('light'), value: false },
+  { label: t('automatic'), value: 'auto' },
+  { label: t('dark'), value: true },
+  { label: t('light'), value: false },
 ]);
 const filteredObsScenes = ref<JsonObject[]>([...scenes.value]);
 const filteredTimerModes = ref([
   { label: t('count-up'), value: 'countup' },
   { label: t('count-down'), value: 'countdown' },
+]);
+const filteredTimerDisplayFormats = ref([
+  { label: t('digital'), value: 'digital' },
+  { label: t('analog'), value: 'analog' },
+  { label: t('analog-digital'), value: 'analog-digital' },
+]);
+const filteredTimerHourFormats = ref([
+  { label: t('24-hour'), value: '24h' },
+  { label: t('12-hour'), value: '12h' },
 ]);
 
 const customDisabled = computed(() => {
@@ -130,14 +139,23 @@ const filterFn = (
         value: String(i),
       }));
       filteredDarkModes.value = [
-        { description: t('automatic'), label: t('automatic'), value: 'auto' },
-        { description: t('dark'), label: t('dark'), value: true },
-        { description: t('light'), label: t('light'), value: false },
+        { label: t('automatic'), value: 'auto' },
+        { label: t('dark'), value: true },
+        { label: t('light'), value: false },
       ];
       filteredObsScenes.value = scenes.value ?? [];
       filteredTimerModes.value = [
         { label: t('count-up'), value: 'countup' },
         { label: t('count-down'), value: 'countdown' },
+      ];
+      filteredTimerDisplayFormats.value = [
+        { label: t('digital'), value: 'digital' },
+        { label: t('analog'), value: 'analog' },
+        { label: t('analog-digital'), value: 'analog-digital' },
+      ];
+      filteredTimerHourFormats.value = [
+        { label: t('24-hour'), value: '24h' },
+        { label: t('12-hour'), value: '12h' },
       ];
     });
   };
@@ -169,9 +187,9 @@ const filterFn = (
         })).filter((d) => d.label.toLowerCase().includes(needle));
 
         filteredDarkModes.value = [
-          { description: t('automatic'), label: t('automatic'), value: 'auto' },
-          { description: t('dark'), label: t('dark'), value: true },
-          { description: t('light'), label: t('light'), value: false },
+          { label: t('automatic'), value: 'auto' },
+          { label: t('dark'), value: true },
+          { label: t('light'), value: false },
         ].filter((mode) => mode.label.toLowerCase().includes(needle));
 
         filteredObsScenes.value =
@@ -181,6 +199,17 @@ const filterFn = (
         filteredTimerModes.value = [
           { label: t('count-up'), value: 'countup' },
           { label: t('count-down'), value: 'countdown' },
+        ].filter((mode) => mode.label.toLowerCase().includes(needle));
+
+        filteredTimerDisplayFormats.value = [
+          { label: t('digital'), value: 'digital' },
+          { label: t('analog'), value: 'analog' },
+          { label: t('analog-digital'), value: 'analog-digital' },
+        ].filter((mode) => mode.label.toLowerCase().includes(needle));
+
+        filteredTimerHourFormats.value = [
+          { label: t('24-hour'), value: '24h' },
+          { label: t('12-hour'), value: '12h' },
         ].filter((mode) => mode.label.toLowerCase().includes(needle));
       });
     } else {
@@ -238,6 +267,10 @@ const listOptions = computed(
         ];
       } else if (props.list === 'timerModes') {
         return filteredTimerModes.value;
+      } else if (props.list === 'timerDisplayFormats') {
+        return filteredTimerDisplayFormats.value;
+      } else if (props.list === 'timerHourFormats') {
+        return filteredTimerHourFormats.value;
       } else {
         throw new Error('List not found: ' + props.list);
       }

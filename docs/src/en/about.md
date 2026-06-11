@@ -50,6 +50,7 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 - **Advanced media controls**: Media thumbnails with zoom and pan capabilities
 - **Custom timing**: Set custom start and end times for media playback
 - **Playback controls**: Easy-to-use pause/play/stop buttons with keyboard shortcuts
+- **Live preview and speed control**: Preview the audience display and optionally adjust audio or video playback speed
 - **Multi-monitor support**: Automatic external monitor detection and management
 - **Clean presentation**: Distraction-free media presentation interface
 
@@ -67,13 +68,14 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 
 - **Automatic scene switching**: Seamless integration with OBS Studio for hybrid meetings
 - **Scene management**: Automatic switching between camera, media, and other scenes
+- **Recording controls**: Start and stop OBS recordings from M³ when enabled
 
 ### Media Import and Management {#about-media-import}
 
 - **JWPUB files**: Import and manage JWPUB files with ease
 - **JWLPLAYLIST files**: Support for JW Library playlist files
 - **Custom media**: Import custom videos, pictures, audio files, and PDF files
-- **Audio Bible**: Import Study Bible media and audio recordings of the New World Translation
+- **Bible media**: Import Study Bible media, sign-language Bible media, and audio recordings of the New World Translation
 - **Public talks**: Always have public talk media overview ready to use with the S-34 importer
 
 ### Advanced Features {#about-advanced-features}
@@ -81,8 +83,10 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 - **Folder monitoring**: Automatically sync media from watched folders (Dropbox, OneDrive, etc.)
 - **Media export**: Automatically export media to folders, organized by date
 - **Website presentation**: Present the official website on external monitors
+- **Meeting timer**: Optional timer window for timing meeting parts
+- **Meeting recording helpers**: Control OBS recording or an external recording application
 - **Keyboard shortcuts**: Customizable keyboard shortcuts for many functions
-- **Multiple profiles**: Manage different congregations or groups with separate profiles
+- **Multiple profiles**: Manage different congregations or groups with separate profiles, including profile settings import and export
 
 ## Does M³ work in my language? {#does-m3-work-in-my-language}
 

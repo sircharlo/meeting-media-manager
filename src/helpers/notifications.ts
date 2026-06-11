@@ -57,6 +57,17 @@ export const createTemporaryNotification = (
       throw new Error(`Unknown notify type: "${type}"`);
     }
 
+    const typeIcons: Record<string, string> = {
+      info: 'mmm-info',
+      negative: 'mmm-error',
+      ongoing: 'mmm-loading',
+      positive: 'mmm-check',
+      primary: 'mmm-info',
+      warning: 'mmm-warning',
+    };
+
+    const resolvedIcon = icon ?? (type ? typeIcons[type] : undefined);
+
     const dismiss = Notify.create({
       group: false,
       message,
@@ -64,7 +75,7 @@ export const createTemporaryNotification = (
       timeout,
       ...(caption && { caption }),
       ...(type && { type }),
-      ...(icon && { icon }),
+      ...(resolvedIcon && { icon: resolvedIcon }),
       ...(group && { group }),
       ...(!noClose && {
         actions: actions ?? [

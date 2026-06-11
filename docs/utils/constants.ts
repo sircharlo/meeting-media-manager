@@ -1,4 +1,4 @@
-import pkg from './../../package.json';
+import pkg from './../../package.json' with { type: 'json' };
 
 export const AUTHOR = pkg.author;
 export const CANONICAL_URL = pkg.homepage;

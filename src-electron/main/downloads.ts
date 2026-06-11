@@ -1,8 +1,8 @@
 import type { ElectronDownloadManager as EDMType } from 'electron-dl-manager';
 
 import { getCountriesForTimezone } from 'countries-and-timezones';
-import { app } from 'electron';
-import { ensureDir } from 'fs-extra/esm';
+import { app, type BrowserWindow } from 'electron';
+import { mkdir, stat } from 'node:fs/promises';
 import { setTimeout as delay } from 'node:timers/promises';
 import { quitStatus } from 'src-electron/main/session';
 import {
@@ -13,9 +13,7 @@ import {
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import { log } from 'src/shared/vanilla';
-import upath from 'upath';
-
-const { basename } = upath;
+import { basename, dirname } from 'upath';
 
 const ENSURE_DIR_RETRYABLE_CODES = new Set([
   'EACCES',
@@ -26,7 +24,43 @@ const ENSURE_DIR_RETRYABLE_CODES = new Set([
 const ENSURE_DIR_RETRY_COUNT = 3;
 const ENSURE_DIR_RETRY_DELAY_MS = 75;
 
+interface EnsureDirAttemptDiagnostics {
+  attempt: number;
+  code?: string;
+  dir: string;
+  message: string;
+  parentCode?: string;
+  parentExists?: boolean;
+  parentIsDirectory?: boolean;
+  parentMessage?: string;
+  parentPath: string;
+}
+
+interface ErrorWithDirectoryDiagnostics {
+  downloadDirDiagnostics?: EnsureDirAttemptDiagnostics[];
+}
+
 const getErrorCode = (error: unknown) => (error as { code?: string })?.code;
+const getErrorMessage = (error: unknown) =>
+  (error as { message?: string })?.message ?? '';
+
+const isDestroyedObjectError = (error: unknown) =>
+  getErrorMessage(error).includes('Object has been destroyed');
+
+const getDownloadWindow = (): BrowserWindow | null => {
+  const { mainWindow } = mainWindowInfo;
+
+  if (!mainWindow || mainWindow.isDestroyed()) return null;
+
+  try {
+    if (mainWindow.webContents.isDestroyed()) return null;
+  } catch (error) {
+    if (isDestroyedObjectError(error)) return null;
+    throw error;
+  }
+
+  return mainWindow;
+};
 
 enum DownloadState {
   ACTIVE = 'ACTIVE',
@@ -61,18 +95,86 @@ interface OngoingDownload {
   uuid: string;
 }
 
-async function ensureDirWithRetry(dir: string) {
+const getDirectoryFailureDiagnostics = async (
+  dir: string,
+  attempt: number,
+  error: unknown,
+): Promise<EnsureDirAttemptDiagnostics> => {
+  const parentPath = dirname(dir);
+  const diagnostics: EnsureDirAttemptDiagnostics = {
+    attempt,
+    code: getErrorCode(error),
+    dir,
+    message: getErrorMessage(error),
+    parentPath,
+  };
+
+  try {
+    const parentStats = await stat(parentPath);
+    diagnostics.parentExists = true;
+    diagnostics.parentIsDirectory = parentStats.isDirectory();
+  } catch (parentError) {
+    diagnostics.parentCode = getErrorCode(parentError);
+    diagnostics.parentExists = false;
+    diagnostics.parentIsDirectory = false;
+    diagnostics.parentMessage = getErrorMessage(parentError);
+  }
+
+  return diagnostics;
+};
+
+const attachDirectoryDiagnostics = (
+  error: unknown,
+  diagnostics: EnsureDirAttemptDiagnostics[],
+) => {
+  if (typeof error !== 'object' || error === null) return;
+
+  (error as ErrorWithDirectoryDiagnostics).downloadDirDiagnostics = diagnostics;
+};
+
+export async function ensureDirWithRetry(dir: string) {
   let lastError: unknown;
+  const diagnostics: EnsureDirAttemptDiagnostics[] = [];
 
   for (let attempt = 0; attempt <= ENSURE_DIR_RETRY_COUNT; attempt += 1) {
     try {
-      await ensureDir(dir);
+      await mkdir(dir, { recursive: true });
+      const dirStats = await stat(dir);
+      if (!dirStats.isDirectory()) {
+        const error = new Error(
+          `Download destination is not a directory: ${dir}`,
+        );
+        (error as NodeJS.ErrnoException).code = 'ENOTDIR';
+        throw error;
+      }
+
+      if (attempt > 0) {
+        addElectronBreadcrumb({
+          category: 'downloads.filesystem',
+          data: { attempt, dir },
+          level: 'info',
+          message: 'download-directory-created-after-retry',
+        });
+      }
       return;
     } catch (error) {
       lastError = error;
+      const attemptDiagnostics = await getDirectoryFailureDiagnostics(
+        dir,
+        attempt,
+        error,
+      );
+      diagnostics.push(attemptDiagnostics);
+
+      addElectronBreadcrumb({
+        category: 'downloads.filesystem',
+        data: attemptDiagnostics,
+        level: 'warning',
+        message: 'download-directory-create-failed',
+      });
+
       const code = getErrorCode(error);
       const shouldRetry =
-        process.platform === 'win32' &&
         ENSURE_DIR_RETRYABLE_CODES.has(code ?? '') &&
         attempt < ENSURE_DIR_RETRY_COUNT;
       if (!shouldRetry) break;
@@ -80,6 +182,7 @@ async function ensureDirWithRetry(dir: string) {
     }
   }
 
+  attachDirectoryDiagnostics(lastError, diagnostics);
   throw lastError;
 }
 
@@ -168,6 +271,69 @@ function hasHighPriorityActive(
   activeDownloads: Map<string, OngoingDownload>,
 ): boolean {
   return Array.from(activeDownloads.values()).some((d) => !d.lowPriority);
+}
+
+function logDownloadQueueDebugState(reason: string): void {
+  const activeDownloads = getActiveDownloads();
+  const pausedDownloads = getPausedDownloads();
+  const activeDetails = Array.from(activeDownloads.entries()).map(
+    ([key, download]) => ({
+      hasUuid: !!download.uuid,
+      key,
+      lowPriority: download.lowPriority,
+      pauseRequested: !!download.pauseRequested,
+      state: download.state,
+      url: download.item.url,
+    }),
+  );
+  const pausedDetails = Array.from(pausedDownloads.entries()).map(
+    ([key, download]) => ({
+      hasUuid: !!download.uuid,
+      key,
+      lowPriority: download.lowPriority,
+      pauseRequested: !!download.pauseRequested,
+      state: download.state,
+      url: download.item.url,
+    }),
+  );
+
+  log(
+    `Download queue debug snapshot (${reason})`,
+    'electronDownloads',
+    'warn',
+    {
+      activeCount: activeDownloads.size,
+      activeDownloads: activeDetails,
+      lowPriorityQueueLength: lowPriorityQueue.length,
+      lowPriorityQueueTop: lowPriorityQueue[0]?.url,
+      normalQueueLength: downloadQueue.length,
+      normalQueueTop: downloadQueue[0]?.url,
+      pausedCount: pausedDownloads.size,
+      pausedDownloads: pausedDetails,
+    },
+  );
+}
+
+function logPausedDownloadsContext(reason: string): void {
+  const pausedDownloads = getPausedDownloads();
+  if (pausedDownloads.size === 0) return;
+
+  const pausedDetails = Array.from(pausedDownloads.entries()).map(
+    ([key, download]) => ({
+      hasUuid: !!download.uuid,
+      key,
+      lowPriority: download.lowPriority,
+      pauseRequested: !!download.pauseRequested,
+      url: download.item.url,
+    }),
+  );
+
+  log(
+    `Paused downloads snapshot (${reason})`,
+    'electronDownloads',
+    'warn',
+    pausedDetails,
+  );
 }
 
 /**
@@ -305,8 +471,7 @@ const addQueueBreadcrumb = (
 };
 
 const loadElectronDownloadManager: () => Promise<EDMType | null> = async () => {
-  if (!mainWindowInfo.mainWindow || mainWindowInfo.mainWindow.isDestroyed())
-    return null; // window is closed
+  if (!getDownloadWindow()) return null; // window is closed
 
   if (manager) return manager; // already initialized
 
@@ -362,13 +527,7 @@ export async function downloadFile(
   destFilename?: string,
   lowPriority = false,
 ) {
-  if (
-    !mainWindowInfo.mainWindow ||
-    mainWindowInfo.mainWindow.isDestroyed() ||
-    !url ||
-    !saveDir
-  )
-    return null;
+  if (!getDownloadWindow() || !url || !saveDir) return null;
   try {
     // Allow queue processing again after a previous cancelAll cycle
     cancelAll = false;
@@ -431,6 +590,8 @@ export async function downloadFile(
         fn: {
           destFilename,
           directory: saveDir,
+          directoryDiagnostics: (error as ErrorWithDirectoryDiagnostics)
+            .downloadDirDiagnostics,
           lowPriority,
           name: 'downloads.ts downloadFile',
           url,
@@ -471,9 +632,138 @@ export async function isDownloadComplete(downloadId: string) {
 }
 
 /**
+ * Pause all active downloads.
+ */
+export async function pauseAllDownloads(reason = 'manual') {
+  const loadedManager = await loadElectronDownloadManager();
+  if (!loadedManager) return;
+
+  const activeDownloads = getActiveDownloads();
+  if (activeDownloads.size === 0) {
+    log(
+      `pauseAllDownloads called (${reason}) but there were no active downloads`,
+      'electronDownloads',
+      'log',
+    );
+    return;
+  }
+
+  log(
+    `Pausing ${activeDownloads.size} active downloads (${reason})`,
+    'electronDownloads',
+    'warn',
+  );
+  logDownloadQueueDebugState(`before pause-all (${reason})`);
+
+  activeDownloads.forEach((download, key) => {
+    if (!download.uuid) {
+      download.pauseRequested = true;
+      download.state = DownloadState.PAUSED;
+      log(
+        `Pause requested before uuid assignment (${reason})`,
+        'electronDownloads',
+        'warn',
+        key,
+        download.item.url,
+      );
+      return;
+    }
+
+    try {
+      download.state = DownloadState.PAUSED;
+      loadedManager.pauseDownload(download.uuid);
+      log(
+        `Paused download (${reason})`,
+        'electronDownloads',
+        'warn',
+        key,
+        download.item.url,
+      );
+    } catch (error) {
+      captureElectronError(error, {
+        contexts: {
+          fn: {
+            download,
+            key,
+            name: 'downloads.ts pauseAllDownloads',
+            reason,
+          },
+        },
+      });
+    }
+  });
+
+  logDownloadQueueDebugState(`after pause-all (${reason})`);
+  addQueueBreadcrumb(`pause-all-${reason}`, { force: true });
+}
+
+/**
+ * Attempts to resume every paused download and kick queue processing.
+ */
+export async function resumeAllDownloads(reason = 'manual') {
+  const loadedManager = await loadElectronDownloadManager();
+  if (!loadedManager) return;
+
+  const pausedDownloads = getPausedDownloads();
+  if (pausedDownloads.size === 0) {
+    log(
+      `resumeAllDownloads called (${reason}) but there were no paused downloads`,
+      'electronDownloads',
+      'log',
+    );
+    processQueue();
+    return;
+  }
+
+  log(
+    `Resuming ${pausedDownloads.size} paused downloads (${reason})`,
+    'electronDownloads',
+    'warn',
+  );
+  logPausedDownloadsContext(`before resume-all (${reason})`);
+
+  pausedDownloads.forEach((download, key) => {
+    // If pause was requested before uuid assignment, clear the request.
+    if (download.pauseRequested) {
+      download.pauseRequested = false;
+    }
+
+    if (!download.uuid) {
+      log(
+        `Cannot resume paused download without uuid (${reason})`,
+        'electronDownloads',
+        'warn',
+        key,
+        download.item.url,
+      );
+      return;
+    }
+
+    try {
+      download.state = DownloadState.ACTIVE;
+      loadedManager.resumeDownload(download.uuid);
+    } catch (error) {
+      captureElectronError(error, {
+        contexts: {
+          fn: {
+            download,
+            key,
+            name: 'downloads.ts resumeAllDownloads',
+            reason,
+          },
+        },
+      });
+    }
+  });
+
+  addQueueBreadcrumb(`resume-all-${reason}`, { force: true });
+  processQueue();
+}
+
+/**
  * Stop low priority downloads (Pause them).
  */
-function stopLowPriorityDownloads() {
+function stopLowPriorityDownloads(reason = 'high-priority-enqueued') {
   const activeLowPriority = getActiveLowPriorityDownloads();
   let pausedAny = false;
   activeLowPriority.forEach((download, key) => {
@@ -508,6 +798,8 @@ function stopLowPriorityDownloads() {
     }
   });
   if (pausedAny) {
+    logPausedDownloadsContext(`stopLowPriorityDownloads (${reason})`);
+    logDownloadQueueDebugState(`stopLowPriorityDownloads (${reason})`);
     addQueueBreadcrumb('low-priority-paused-for-high-priority', {
       force: true,
     });
@@ -686,7 +978,7 @@ async function processNormalPausedDownload(
  */
 async function processQueue() {
   const loadedManager = await loadElectronDownloadManager();
-  if (!mainWindowInfo.mainWindow || cancelAll || !loadedManager) return;
+  if (!getDownloadWindow() || cancelAll || !loadedManager) return;
 
   const activeCount = getActiveDownloadCount();
 
@@ -720,6 +1012,16 @@ async function processQueue() {
 
   // Nothing to process
   if (nextItemType === null) {
+    if (activeCount === 0 && pausedDownloads.size > 0) {
+      log(
+        'Queue is stalled: no active downloads but paused downloads exist. Triggering auto-resume.',
+        'electronDownloads',
+        'warn',
+      );
+      logPausedDownloadsContext('auto-resume-stalled-queue');
+      logDownloadQueueDebugState('auto-resume-stalled-queue');
+      await resumeAllDownloads('auto-stalled-queue');
+    }
     return;
   }
 
@@ -774,8 +1076,9 @@ async function startDownload(
 ) {
   const { destFilename, saveDir, url } = download;
   const key = url + saveDir;
+  const downloadWindow = getDownloadWindow();
 
-  if (!mainWindowInfo.mainWindow || !manager) return;
+  if (!downloadWindow || !manager || cancelAll) return;
 
   ongoingDownloads.set(key, {
     item: download,
@@ -790,7 +1093,7 @@ async function startDownload(
       callbacks: {
         onDownloadCancelled: async () => {
           log('Download cancelled:', 'electronDownloads', 'log', url);
-          sendToWindow(mainWindowInfo.mainWindow, 'downloadCancelled', {
+          sendToWindow(downloadWindow, 'downloadCancelled', {
             id: key,
           });
           ongoingDownloads.delete(key);
@@ -799,7 +1102,7 @@ async function startDownload(
         },
         onDownloadCompleted: async ({ item }) => {
           log('Download completed:', 'electronDownloads', 'log', url);
-          sendToWindow(mainWindowInfo.mainWindow, 'downloadCompleted', {
+          sendToWindow(downloadWindow, 'downloadCompleted', {
             filePath: item.getSavePath(),
             id: key,
           });
@@ -808,7 +1111,7 @@ async function startDownload(
           processQueue();
         },
         onDownloadProgress: async ({ item, percentCompleted }) => {
-          sendToWindow(mainWindowInfo.mainWindow, 'downloadProgress', {
+          sendToWindow(downloadWindow, 'downloadProgress', {
             bytesReceived: item.getReceivedBytes(),
             id: key,
             percentCompleted,
@@ -816,13 +1119,19 @@ async function startDownload(
         },
         onDownloadStarted: async ({ item, resolvedFilename }) => {
           log('Download started:', 'electronDownloads', 'log', url);
-          sendToWindow(mainWindowInfo.mainWindow, 'downloadStarted', {
+          sendToWindow(downloadWindow, 'downloadStarted', {
             filename: resolvedFilename,
             id: key,
             totalBytes: item.getTotalBytes(),
           });
         },
         onError: async (err, downloadData) => {
+          if (isDestroyedObjectError(err)) {
+            ongoingDownloads.delete(key);
+            addQueueBreadcrumb('download-window-destroyed', { force: true });
+            processQueue();
+            return;
+          }
           if (quitStatus.isAppQuitting) return;
           log('Download error:', 'electronDownloads', 'log', url);
           captureElectronError(err, {
@@ -840,7 +1149,7 @@ async function startDownload(
             },
           });
           if (downloadData) {
-            sendToWindow(mainWindowInfo.mainWindow, 'downloadError', {
+            sendToWindow(downloadWindow, 'downloadError', {
               id: key,
             });
           }
@@ -852,7 +1161,7 @@ async function startDownload(
       directory: saveDir,
       saveAsFilename: destFilename,
       url,
-      window: mainWindowInfo.mainWindow,
+      window: downloadWindow,
     });
 
     const current = ongoingDownloads.get(key);
@@ -864,9 +1173,23 @@ async function startDownload(
         current.pauseRequested = false;
         current.state = DownloadState.PAUSED;
         manager.pauseDownload(downloadId);
+        log(
+          'Applied deferred pause to initializing download',
+          'electronDownloads',
+          'warn',
+          key,
+          url,
+        );
+        processQueue();
       }
     }
   } catch (error) {
+    if (isDestroyedObjectError(error) || cancelAll) {
+      ongoingDownloads.delete(key);
+      addQueueBreadcrumb('download-window-destroyed', { force: true });
+      processQueue();
+      return;
+    }
     if (quitStatus.isAppQuitting) return;
     captureElectronError(error, {
       contexts: {

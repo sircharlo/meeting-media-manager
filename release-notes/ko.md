@@ -4,6 +4,12 @@
 
 버전별 전체 변경 사항은, GitHub 의 CHANGELOG.md 파일을 확인해주세요.
 
+## v26.4.8
+
+### ✨ 새로운 기능
+
+- ✨ **JW Stream**: Added JW Stream to the list of websites that can be mirrored.
+
 ## v26.4.0
 
 ### ✨ 새로운 기능

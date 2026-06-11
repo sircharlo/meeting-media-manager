@@ -1,50 +1,37 @@
-import type { JwLangCode } from 'src/types';
+import type { JwLangCode } from 'src/types/jw/lang.d.ts';
 
 // ! This file will be updated by the update-langs script.
 
 export type LanguageValue =
-  | 'cmnHans'
+  | 'bzs'
   | 'de'
   | 'en'
   | 'es'
   | 'et'
-  | 'fi'
   | 'fr'
   | 'hu'
-  | 'it'
-  | 'ko'
   | 'nl'
   | 'pt'
-  | 'ptPt'
   | 'ru'
   | 'sl'
-  | 'sv'
-  | 'sw'
-  | 'tl'
+  | 'ty'
   | 'uk';
 
 // As a sort of rule, let's only enable a language once it's reached a threshold of 50% translated in Crowdin.
 // Modify this file along with src/i18n/index.ts to enable a language both on the docs website and in the app.
 
 export const enabled: LanguageValue[] = [
-  'cmnHans',
   'de',
   'en',
   'es',
   'et',
-  'fi',
   'fr',
   'hu',
-  'it',
-  'ko',
   'nl',
   'pt',
-  'ptPt',
   'ru',
   'sl',
-  'sv',
-  'sw',
-  'tl',
+  'ty',
   'uk',
 ];
 
@@ -57,13 +44,6 @@ export const locales: {
   signLangCodes?: JwLangCode[];
   value: LanguageValue;
 }[] = [
-  {
-    englishName: 'Chinese Mandarin (Simplified)',
-    label: '中文简体（普通话）',
-    langcode: 'CHS',
-    signLangCodes: ['CSL'],
-    value: 'cmnHans',
-  },
   {
     englishName: 'German',
     label: 'Deutsch',
@@ -132,13 +112,6 @@ export const locales: {
     value: 'et',
   },
   {
-    englishName: 'Finnish',
-    label: 'suomi',
-    langcode: 'FI',
-    signLangCodes: ['FID'],
-    value: 'fi',
-  },
-  {
     englishName: 'French',
     label: 'Français',
     langcode: 'F',
@@ -149,22 +122,7 @@ export const locales: {
     englishName: 'Hungarian',
     label: 'magyar',
     langcode: 'H',
-    signLangCodes: ['HDF'],
     value: 'hu',
-  },
-  {
-    englishName: 'Italian',
-    label: 'Italiano',
-    langcode: 'I',
-    signLangCodes: ['ISL'],
-    value: 'it',
-  },
-  {
-    englishName: 'Korean',
-    label: '한국어',
-    langcode: 'KO',
-    signLangCodes: ['KSL'],
-    value: 'ko',
   },
   {
     englishName: 'Dutch',
@@ -181,13 +139,6 @@ export const locales: {
     value: 'pt',
   },
   {
-    englishName: 'Portuguese (Portugal)',
-    label: 'Português (Portugal)',
-    langcode: 'TPO',
-    signLangCodes: ['LGP', 'LAS', 'SLM'],
-    value: 'ptPt',
-  },
-  {
     englishName: 'Russian',
     label: 'русский',
     langcode: 'U',
@@ -202,24 +153,10 @@ export const locales: {
     value: 'sl',
   },
   {
-    englishName: 'Swedish',
-    label: 'Svenska',
-    langcode: 'Z',
-    signLangCodes: ['SSL'],
-    value: 'sv',
-  },
-  {
-    englishName: 'Swahili',
-    label: 'Kiswahili',
-    langcode: 'SW',
-    signLangCodes: ['TZL'],
-    value: 'sw',
-  },
-  {
-    englishName: 'Tagalog',
-    label: 'Tagalog',
-    langcode: 'TG',
-    value: 'tl',
+    englishName: 'Tahitian',
+    label: 'Tahiti',
+    langcode: 'TH',
+    value: 'ty',
   },
   {
     englishName: 'Ukrainian',

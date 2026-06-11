@@ -127,6 +127,7 @@ const logPrefixes = {
   mediaList: '🧾 Media List',
   mediaPlayback: '▶️ Media Playback',
   mediaPlayer: '🎬 Media Player',
+  mediaPreview: '🎬 Media Preview',
   mediaProcessing: '🔄 Media Processing',
   mediaSectionRepeat: '🔁 Media Section Repeat',
   mediaSections: '🗂️ Media Sections',
@@ -177,4 +178,55 @@ export const log = (
     const fallbackLogger = getConsoleMethod('error');
     fallbackLogger(error, { details, message, prefix, type });
   }
+};
+
+const illegalFilenameChars = () => /[/?<>\\:*|"]/g;
+const reservedDots = () => /^\.+$/g;
+const windowsReservedFilename = () =>
+  /^(con|prn|aux|nul|com\d|lpt\d)(\..*)?$/gi;
+const MAX_FILENAME_BYTES = 255;
+
+const replaceTrailingDotsAndSpaces = (value: string, replacement: string) => {
+  let end = value.length;
+  while (end > 0 && (value[end - 1] === '.' || value[end - 1] === ' ')) end--;
+  return end < value.length ? value.slice(0, end) + replacement : value;
+};
+
+const truncateUtf8Bytes = (value: string, maxBytes: number) => {
+  const encoder = new TextEncoder();
+  if (encoder.encode(value).length <= maxBytes) return value;
+
+  let result = '';
+  for (const char of value) {
+    const next = result + char;
+    if (encoder.encode(next).length > maxBytes) break;
+    result = next;
+  }
+  return result;
+};
+
+const sanitizeFilenameInternal = (input: string, replacement: string) => {
+  const withoutControlChars = Array.from(input, (char) => {
+    const code = char.codePointAt(0);
+    if (!code) return replacement;
+    return code <= 31 || (code >= 128 && code <= 159) ? replacement : char;
+  }).join('');
+
+  const sanitized = replaceTrailingDotsAndSpaces(
+    withoutControlChars
+      .replaceAll(illegalFilenameChars(), replacement)
+      .replaceAll(reservedDots(), replacement)
+      .replaceAll(windowsReservedFilename(), replacement),
+    replacement,
+  );
+  return truncateUtf8Bytes(sanitized, MAX_FILENAME_BYTES);
+};
+
+export const sanitizeFilename = (input: string, replacement = ''): string => {
+  if (typeof input !== 'string') throw new Error('Input must be string');
+
+  const output = sanitizeFilenameInternal(input, replacement);
+  if (!replacement) return output;
+
+  return sanitizeFilenameInternal(output, '');
 };

@@ -23,7 +23,10 @@
     @click="musicPopup = !musicPopup"
   >
     <q-icon name="mmm-music-note" />
-    <div v-if="musicPlaying || musicState === 'music.starting'" class="q-ml-sm">
+    <div
+      v-if="musicPlaying || musicState === 'music.starting'"
+      class="music-button__status q-ml-sm"
+    >
       {{ musicButtonStatusText }}
     </div>
 
@@ -55,3 +58,12 @@ defineProps<{
 
 const musicPopup = defineModel<boolean>({ required: true });
 </script>
+
+<style scoped>
+.music-button__status {
+  font-variant-numeric: tabular-nums;
+  min-width: 6ch;
+  text-align: center;
+  white-space: nowrap;
+}
+</style>

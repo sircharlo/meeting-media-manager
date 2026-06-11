@@ -46,5 +46,8 @@ features:
     details: Sünkroniseeri automaatselt meedia jälgitavatest kaustadest (nagu Dropbox või OneDrive) ja eksportige meedia kaustadesse.
   - icon: 🎯
     title: Lisafunktsioonid
-    details: Impordi lisameediat, JWPUB-faile, esitusloendeid, Piibli helisalvestusi ja halda mitut kogudust.
+    details: Impordi kohandatud meediafailid, JWPUB-failid, esitusloendid, Piibli helisalvestised, õppepiibli meediafailid, avalike kõnede meediafailid ning halda mitut kogudust.
+  - icon: ⏱️
+    title: Koosoleku taimer ja salvestusfunktsioonid
+    details: Kasutage valikulist taimeri ekraani osalejate aja mõõtmiseks ning juhtige OBS-i või M³ väliseid salvestusrakendusi.
 ---

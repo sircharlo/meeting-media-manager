@@ -2,90 +2,65 @@
 import {
   enabled as baseEnabled,
   type LanguageValue,
-} from '../../src/constants/locales';
+} from '../../src/constants/locales.ts';
 
-export { locales as localeOptions } from '../../src/constants/locales';
+export { locales as localeOptions } from '../../src/constants/locales.ts';
 
 export const enabled: LanguageValue[] = baseEnabled.filter((l) => l !== 'en');
 
 // ! This file will be updated by the update-langs script.
 
-// 100.0% translated as of 2026-03-08
-import en from './en.json';
+// 100.0% translated as of 2026-06-08
+import en from './en.json' with { type: 'json' };
 
-// 99.7% translated as of 2026-03-08
-import cmnHans from './cmn-hans.json';
+// 99.2% translated as of 2026-06-08
+import fr from './fr.json' with { type: 'json' };
 
-// 99.2% translated as of 2026-03-08
-import fi from './fi.json';
+// 99.1% translated as of 2026-06-08
+import sl from './sl.json' with { type: 'json' };
 
-// 99.2% translated as of 2026-03-08
-import fr from './fr.json';
+// 98.7% translated as of 2026-06-08
+import pt from './pt.json' with { type: 'json' };
 
-// 99.2% translated as of 2026-03-08
-import sl from './sl.json';
+// 98.7% translated as of 2026-06-08
+import ty from './ty.json' with { type: 'json' };
 
-// 99.1% translated as of 2026-03-08
-import ptPt from './pt-pt.json';
+// 97.8% translated as of 2026-06-08
+import es from './es.json' with { type: 'json' };
 
-// 98.4% translated as of 2026-03-08
-import sv from './sv.json';
+// 97.2% translated as of 2026-06-08
+import ru from './ru.json' with { type: 'json' };
 
-// 98.1% translated as of 2026-03-08
-import es from './es.json';
+// 97.1% translated as of 2026-06-08
+import nl from './nl.json' with { type: 'json' };
 
-// 97.9% translated as of 2026-03-08
-import de from './de.json';
+// 97.0% translated as of 2026-06-08
+import de from './de.json' with { type: 'json' };
 
-// 97.6% translated as of 2026-03-08
-import nl from './nl.json';
+// 94.1% translated as of 2026-06-08
+import et from './et.json' with { type: 'json' };
 
-// 97.3% translated as of 2026-03-08
-import hu from './hu.json';
+// 93.8% translated as of 2026-06-08
+import hu from './hu.json' with { type: 'json' };
 
-// 97.0% translated as of 2026-03-08
-import et from './et.json';
+// 64.1% translated as of 2026-06-08
+import uk from './uk.json' with { type: 'json' };
 
-// 96.8% translated as of 2026-03-08
-import ru from './ru.json';
+// 0.7% translated as of 2026-06-08
+// import bzs from './bzs.json' with { type: 'json' };
 
-// 86.9% translated as of 2026-03-08
-import it from './it.json';
-
-// 79.6% translated as of 2026-03-08
-import ko from './ko.json';
-
-// 74.1% translated as of 2026-03-08
-import pt from './pt.json';
-
-// 57.0% translated as of 2026-03-08
-import uk from './uk.json';
-
-// 49.8% translated as of 2026-03-08
-import sw from './sw.json';
-
-// 46.4% translated as of 2026-03-08
-import tl from './tl.json';
-
-const messages: Record<LanguageValue, Partial<typeof en>> = {
-  cmnHans,
+const messages: Partial<Record<LanguageValue, Partial<typeof en>>> = {
   de,
   en,
   es,
   et,
-  fi,
   fr,
   hu,
-  it,
-  ko,
   nl,
   pt,
-  ptPt,
   ru,
   sl,
-  sv,
-  sw,
-  tl,
+  ty,
   uk,
 };
 

@@ -87,18 +87,6 @@ const { pause: pauseTimer, resume: resumeTimer } = useIntervalFn(() => {
   }
 }, 500);
 
-whenever(isRecording, (recording) => {
-  if (recording) {
-    recordingStartTime.value = Date.now();
-    recordingDurationSeconds.value = 0;
-    resumeTimer();
-  } else {
-    recordingStartTime.value = null;
-    recordingDurationSeconds.value = 0;
-    pauseTimer();
-  }
-});
-
 const formattedRecordingDuration = computed(() =>
   isRecording.value ? formatTime(recordingDurationSeconds.value) : '',
 );
@@ -125,6 +113,18 @@ function setActivePopup(activePopup: PopupKey) {
     popups[key as PopupKey].value = key === activePopup;
   });
 }
+
+whenever(isRecording, (recording) => {
+  if (recording) {
+    recordingStartTime.value = Date.now();
+    recordingDurationSeconds.value = 0;
+    resumeTimer();
+  } else {
+    recordingStartTime.value = null;
+    recordingDurationSeconds.value = 0;
+    pauseTimer();
+  }
+});
 
 // Watch each popup and update the others when any one is set to true
 Object.keys(popups).forEach((popup) => {

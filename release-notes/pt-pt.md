@@ -4,6 +4,12 @@
 
 Para a lista completa de alterações entre versões, consulte o ficheiro CHANGELOG.md no GitHub.
 
+## v26.4.8
+
+### ✨ Novas Funcionalidades
+
+- ✨ **JW Stream**: Adicionado JW Stream à lista de sites que podem ser espelhados.
+
 ## v26.4.0
 
 ### ✨ Novas Funcionalidades

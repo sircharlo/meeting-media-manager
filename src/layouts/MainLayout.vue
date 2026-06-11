@@ -7,13 +7,12 @@
     <NavDrawer v-model="miniState" />
 
     <!-- Main content -->
-    <q-page-container
-      class="main-bg fit-snugly overflow-auto"
-      style="overflow-x: hidden !important"
-    >
+    <q-page-container class="app-main-scroll main-bg">
       <AnnouncementBanner />
       <router-view />
     </q-page-container>
+
+    <MediaPreview />
 
     <!-- Footer -->
     <q-footer
@@ -21,7 +20,7 @@
         currentSettings?.enableMediaDisplayButton ||
         currentSettings?.enableMusicButton
       "
-      class="q-pb-sm"
+      class="q-pb-sm action-island-container"
       :style="
         'left: calc(50% + ' + (miniState ? '28' : '150') + 'px) !important'
       "
@@ -52,6 +51,7 @@ import {
 } from '@vueuse/core';
 import { queues } from 'boot/globals';
 import HeaderBase from 'components/header/HeaderBase.vue';
+import MediaPreview from 'components/media/MediaPreview.vue';
 import ActionIsland from 'components/ui/ActionIsland.vue';
 import AnnouncementBanner from 'components/ui/AnnouncementBanner.vue';
 import NavDrawer from 'components/ui/NavDrawer.vue';
@@ -61,6 +61,7 @@ import { SORTER } from 'src/constants/general';
 import {
   cleanCache,
   cleanPersistedStores,
+  cleanTempPathOnStartup,
   deleteCacheFiles,
 } from 'src/helpers/cleanup';
 import { syncMeetingSchedule } from 'src/helpers/congregation-schedule';
@@ -75,7 +76,6 @@ import { exportAllDays } from 'src/helpers/export-media';
 import { setElementFont } from 'src/helpers/fonts';
 import { watchExternalFolder } from 'src/helpers/fs';
 import {
-  downloadBackgroundMusic,
   downloadSongbookVideos,
   getJwMepsInfo,
   setUrlVariables,
@@ -170,6 +170,8 @@ const { updateJwLanguages, updateMemorials } = jwStore;
 const { lookupPeriod } = storeToRefs(jwStore);
 
 const {
+  basename,
+  dirname,
   isArchitectureMismatch,
   onDownloadCancelled,
   onDownloadCompleted,
@@ -177,18 +179,23 @@ const {
   onDownloadProgress,
   onDownloadStarted,
   onGpuCrashDetected,
+  onHardwareAccelerationTemporaryDisabled,
   onLog,
+  onPathProbeNetworkWarning,
   onShortcut,
   onVideoCaptureCrashDetected,
   onWatchFolderError,
   onWatchFolderUpdate,
-  path,
   pathToFileURL,
+  relaunchApp,
   removeListeners,
+  resolve,
   setAutoStartAtLogin,
   setElectronUrlVariables,
+  setHardwareAcceleration,
+  setPathProbeNotificationPaths,
+  toggleTimerWindow,
 } = globalThis.electronApi;
-const { basename, dirname } = path;
 updateMemorials(online.value);
 updateJwLanguages(online.value);
 
@@ -252,18 +259,761 @@ const delayedCacheClear = () => {
   setTimeout(checkAndClear, 30000);
 };
 
+const navigateToCongregationSelector = () => {
+  try {
+    if (!route.fullPath.includes('/congregation-selector')) {
+      router.push({ path: '/congregation-selector' });
+      selectedDate.value = '';
+    }
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
+const { post: postCameraStream } = useBroadcastChannel<
+  null | string,
+  null | string
+>({
+  name: 'camera-stream',
+});
+
+const getTargetSectionId = (
+  originalSection?: string,
+  weMeeting?: boolean,
+  mwMeeting?: boolean,
+) => {
+  if (originalSection) return originalSection;
+  if (weMeeting) return 'pt';
+  if (mwMeeting) return 'lac';
+  return 'imported-media';
+};
+
+async function handleAddWatchFolderEvent(
+  dayObj: DateInfo,
+  day: string,
+  changedPath?: string,
+) {
+  if (!changedPath) return;
+
+  const watchedItems = (await watchedItemMapper(day, changedPath)) || [];
+
+  for (const watchedItem of watchedItems) {
+    const weMeeting = isWeMeetingDay(dayObj.date);
+    const mwMeeting = isMwMeetingDay(dayObj.date);
+
+    const targetSectionId = getTargetSectionId(
+      watchedItem.originalSection,
+      weMeeting,
+      mwMeeting,
+    );
+
+    dayObj.mediaSections ??= [];
+    let existingItem: MediaItem | undefined;
+    let existingSection: MediaSectionWithConfig | undefined;
+    let existingItemIndex = -1;
+
+    for (const section of dayObj.mediaSections) {
+      const itemIndex =
+        section.items?.findIndex((i) => i.uniqueId === watchedItem.uniqueId) ??
+        -1;
+      if (itemIndex === -1) continue;
+
+      existingItem = section.items?.[itemIndex];
+      existingSection = section;
+      existingItemIndex = itemIndex;
+      break;
+    }
+
+    const itemWithSavedPlacement = {
+      ...(existingItem ?? watchedItem),
+      originalSection: watchedItem.originalSection,
+      sortOrderOriginal: watchedItem.sortOrderOriginal,
+    };
+
+    const targetSection = getOrCreateMediaSection(
+      dayObj.mediaSections,
+      targetSectionId,
+    );
+    targetSection.items ??= [];
+
+    if (!existingItem || !existingSection) {
+      targetSection.items.push(itemWithSavedPlacement);
+      continue;
+    }
+
+    if (existingSection.config.uniqueId === targetSection.config.uniqueId) {
+      targetSection.items[existingItemIndex] = itemWithSavedPlacement;
+      continue;
+    }
+
+    existingSection.items?.splice(existingItemIndex, 1);
+    targetSection.items.push(itemWithSavedPlacement);
+  }
+
+  // Sort sections once after adding
+  sortMediaItems(dayObj.mediaSections);
+}
+
+async function handleUnlinkCleanup(changedPath: string) {
+  try {
+    const filename = basename(changedPath);
+    const watchedDayFolder = dirname(changedPath);
+    if (watchedDayFolder) {
+      const { removeWatchedMediaSectionInfo } =
+        await import('src/helpers/media-sections');
+      await removeWatchedMediaSectionInfo(watchedDayFolder, filename);
+    }
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          changedPath,
+          name: 'handleUnlinkCleanup',
+        },
+      },
+    });
+  }
+}
+
+async function handleUnlinkWatchFolderEvent(
+  dayObj: DateInfo,
+  changedPath?: string,
+) {
+  if (!changedPath) return;
+  const targetUrl = pathToFileURL(changedPath).toString();
+  removeWatchedItems(
+    dayObj.mediaSections,
+    (item) => item?.source === 'watched' && item?.fileUrl === targetUrl,
+  );
+  await handleUnlinkCleanup(changedPath);
+}
+
+function removeWatchedItems(
+  sections: MediaSectionWithConfig[],
+  predicate: (item: MediaItem) => boolean,
+) {
+  for (const section of sections) {
+    if (!section.items) continue;
+    // reassign instead of splicing to reduce reactive churn
+    section.items = section.items.filter((item) => !predicate(item));
+  }
+}
+
+function sortMediaItems(sections: MediaSectionWithConfig[]) {
+  for (const section of sections) {
+    if (!section.items) continue;
+    section.items.sort((a, b) => {
+      const aOrder =
+        typeof a.sortOrderOriginal === 'number' ? a.sortOrderOriginal : 0;
+      const bOrder =
+        typeof b.sortOrderOriginal === 'number' ? b.sortOrderOriginal : 0;
+      return aOrder - bOrder || SORTER.compare(a.title, b.title);
+    });
+  }
+}
+
+const updateWatchFolderRef = async ({
+  changedPath,
+  day,
+  event,
+}: Record<string, string>) => {
+  try {
+    // Prevent self-feedback loops when auto-export writes into (or under)
+    // the watched folder. Those events could trigger expensive watched-item
+    // remapping on startup/playback and cause a temporary UI freeze.
+    if (changedPath && currentSettings.value?.mediaAutoExportFolder) {
+      const normalizedChangedPath = resolve(changedPath);
+      const normalizedExportFolder = resolve(
+        currentSettings.value.mediaAutoExportFolder,
+      );
+      if (normalizedChangedPath.startsWith(normalizedExportFolder)) return;
+    }
+
+    day = day?.replaceAll('-', '/');
+    if (!day) return;
+
+    const dayObj = lookupPeriod.value[currentCongregation.value]?.find(
+      (d) => formatDate(d.date, 'YYYY/MM/DD') === day,
+    );
+    if (!dayObj) return;
+
+    switch (event) {
+      case 'add':
+        await handleAddWatchFolderEvent(dayObj, day, changedPath);
+        break;
+
+      case 'addDir':
+      /* falls through */
+
+      case 'unlinkDir':
+        removeWatchedItems(
+          dayObj.mediaSections,
+          (item) => item?.source === 'watched',
+        );
+        break;
+
+      case 'unlink':
+        await handleUnlinkWatchFolderEvent(dayObj, changedPath);
+        break;
+    }
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
+const processWatchFolderEvents = debounce(
+  async (pendingEvents: Record<string, string>[]) => {
+    for (const evt of pendingEvents) {
+      await updateWatchFolderRef(evt);
+    }
+    pendingEventKeys.clear();
+    pendingEvents.length = 0;
+  },
+  100,
+);
+
+const pendingEvents: Record<string, string>[] = [];
+const pendingEventKeys = new Set<string>();
+
+const queueWatchFolderEvent = (event: Record<string, string>) => {
+  const eventKey = `${event.event}:${event.changedPath || ''}:${event.day || ''}`;
+  if (pendingEventKeys.has(eventKey)) return;
+  pendingEventKeys.add(eventKey);
+  pendingEvents.push(event);
+  processWatchFolderEvents(pendingEvents);
+};
+
+cleanCache();
+cleanPersistedStores();
+
+const closeAttempts = ref(0);
+const watchFolderErrorShown = ref(false);
+const pathProbeNetworkWarningShown = ref(false);
+
+const bcClose = new BroadcastChannel('closeAttempts');
+bcClose.onmessage = (event) => {
+  if (event?.data?.attemptedClose) {
+    const meetingDay =
+      isSelectedDayToday.value && !!selectedDayMeetingType.value;
+    if (
+      (mediaIsPlaying.value ||
+        (currentCongregation.value && // a congregation is selected
+          !currentSettings.value?.disableMediaFetching && // media fetching is enabled
+          meetingDay && // today is a meeting day
+          remainingTimeBeforeMeetingStart() < 90)) && // meeting is starting in less than 90 seconds
+      closeAttempts.value === 0
+    ) {
+      createTemporaryNotification({
+        caption: t('clicking-the-close-button-again-will-close-app'),
+        message: t('make-sure-that-m-is-in-not-use-before-quitting'),
+        noClose: true,
+        timeout: 10000,
+        type: 'negative',
+      });
+      closeAttempts.value += 1;
+      setTimeout(() => {
+        closeAttempts.value = 0;
+      }, 10000);
+    } else {
+      bcClose.postMessage({ authorizedClose: true });
+    }
+  }
+};
+
+const initListeners = () => {
+  onLog(({ ctx, level, msg }) => {
+    log(`[main] ${msg}`, ctx as unknown as LogPrefix, level, ctx);
+    if (
+      msg.startsWith('[Pip]') ||
+      msg.startsWith('[Pip Error]') ||
+      msg.startsWith('[Zoom Helper]') ||
+      msg.startsWith('[Zoom Helper Error]')
+    ) {
+      currentState.addZoomHelperLog(msg);
+    }
+  });
+
+  onShortcut(({ shortcut }) => {
+    if (!currentSettings.value?.enableKeyboardShortcuts) return;
+    executeShortcut(shortcut as keyof SettingsValues);
+  });
+
+  onWatchFolderError(() => {
+    if (!watchFolderErrorShown.value) {
+      watchFolderErrorShown.value = true;
+      createTemporaryNotification({
+        caption: t('watch-folder-error-caption'),
+        message: t('watch-folder-error-message'),
+        timeout: 15000,
+        type: 'negative',
+      });
+    }
+  });
+
+  onPathProbeNetworkWarning(() => {
+    if (!pathProbeNetworkWarningShown.value) {
+      pathProbeNetworkWarningShown.value = true;
+      createTemporaryNotification({
+        caption: t('path-probe-network-warning-caption'),
+        message: t('path-probe-network-warning-message'),
+        timeout: 15000,
+        type: 'negative',
+      });
+    }
+  });
+
+  onWatchFolderUpdate(({ changedPath, day, event }) => {
+    queueWatchFolderEvent({ changedPath, day, event });
+  });
+
+  onDownloadStarted((args) => {
+    const existing = downloadProgress.value[args.id];
+    downloadProgress.value[args.id] = {
+      ...existing,
+      complete: existing?.complete,
+      error: existing?.error,
+      filename: args.filename,
+      loaded: existing?.loaded,
+      meetingDate: existing?.meetingDate || '',
+      progressCategory: existing?.progressCategory,
+      total: args.totalBytes,
+    };
+  });
+
+  onDownloadCancelled((args) => {
+    const existing = downloadProgress.value[args.id];
+    if (existing) existing.error = true;
+  });
+
+  onDownloadCompleted((args) => {
+    const existing = downloadProgress.value[args.id];
+    if (existing) {
+      existing.complete = true;
+      delete existing.loaded;
+    }
+  });
+
+  onDownloadError((args) => {
+    const existing = downloadProgress.value[args.id];
+    if (existing) existing.error = true;
+  });
+
+  onDownloadProgress((args) => {
+    const existing = downloadProgress.value[args.id];
+    if (existing) existing.loaded = args.bytesReceived;
+  });
+
+  onGpuCrashDetected(() => {
+    createTemporaryNotification({
+      actions: [
+        {
+          color: 'white',
+          handler: () => {
+            relaunchApp();
+          },
+          label: t('restart-app'),
+        },
+      ],
+      caption: t('gpu-crash-detected-restarting'),
+      message: t('gpu-crash-detected'),
+      timeout: 0,
+      type: 'negative',
+    });
+  });
+
+  onVideoCaptureCrashDetected(() => {
+    createTemporaryNotification({
+      caption: t('camera-access-required-explain'),
+      message: t('camera-access-required'),
+      timeout: 10000,
+      type: 'negative',
+    });
+  });
+
+  onHardwareAccelerationTemporaryDisabled(() => {
+    createTemporaryNotification({
+      caption: t('gpu-crash-detected-explain'),
+      message: t('gpu-crash-detected'),
+      timeout: 10000,
+      type: 'warning',
+    });
+  });
+};
+
+const removeListenersLocal = () => {
+  const listeners: ElectronIpcListenKey[] = [
+    'log',
+    'pathProbeNetworkWarning',
+    'shortcut',
+    'watchFolderError',
+    'watchFolderUpdate',
+    'downloadStarted',
+    'downloadCancelled',
+    'downloadCompleted',
+    'downloadError',
+    'downloadProgress',
+    'gpu-crash-detected',
+    'video-capture-crash-detected',
+  ];
+
+  listeners.forEach((listener) => {
+    try {
+      removeListeners(listener);
+    } catch (error) {
+      errorCatcher(error);
+    }
+  });
+};
+
+const previousState = ref<{
+  base: string | undefined;
+  mediator: string | undefined;
+  wasOnline: boolean;
+}>({
+  base: undefined,
+  mediator: undefined,
+  wasOnline: false,
+});
+
+// Broadcast the three values to the media player page using useBroadcastChannel
+const { post: postUrlVariables } = useBroadcastChannel<
+  { base: string | undefined; mediator: string | undefined },
+  { base: string | undefined; mediator: string | undefined }
+>({
+  name: 'url-variables',
+});
+const { post: postOnline } = useBroadcastChannel<boolean, boolean>({
+  name: 'online',
+});
+
+// Function to check if we should show the yeartext preview notification
+const checkYeartextPreview = async () => {
+  try {
+    // Only run if congregation is selected
+    if (!currentCongregation.value) return;
+
+    if (!currentSettings.value) return;
+
+    // Only run if media display is enabled
+    if (!currentSettings.value?.enableMediaDisplayButton) return;
+
+    const now = new Date();
+    const month = now.getMonth() + 1; // getMonth is 0-based
+
+    // Only run if we're in December
+    if (month !== 12) return;
+
+    // Get current and next year
+    const currentYear = now.getFullYear();
+    const nextYear = currentYear + 1;
+
+    // Check if yeartext is available (current year)
+    const { yeartexts } = jwStore;
+    if (!yeartexts[currentYear]) return;
+
+    const appSettingsStore = appSettings;
+
+    // Check if already dismissed for next year
+    if (appSettingsStore.yeartextPreviewDismissed[nextYear]) return;
+
+    // Check if online
+    if (!online.value) return;
+
+    // Check if base URL available
+    if (!jwStore.urlVariables?.base) return;
+
+    // Get the current language
+    const lang = currentSettings.value.lang;
+
+    // Check if language is configured
+    if (!lang) return;
+
+    log(
+      '🔍 [checkYeartextPreview] Showing the yeartext preview notification',
+      'mainLayout',
+      'log',
+    );
+
+    // Show notification
+    createTemporaryNotification({
+      actions: [
+        {
+          color: 'primary',
+          handler: () => {
+            // Session dismissal handled by not showing again until app restart
+          },
+          label: t('later'),
+        },
+        {
+          color: 'negative',
+          handler: () => {
+            appSettingsStore.yeartextPreviewDismissed[nextYear] = true;
+          },
+          label: t('no'),
+        },
+        {
+          color: 'positive',
+          handler: async () => {
+            let success = false;
+            try {
+              // Fetch next year's yeartext
+              const result = await fetchYeartext(
+                lang,
+                jwStore.urlVariables.base,
+                nextYear,
+              );
+              if (result.yeartext) {
+                success = true;
+                // Pause the yeartext watcher to prevent immediate override
+                yeartextWatcherPaused.value = true;
+
+                // Post the next year yeartext temporarily
+                postYeartext(result.yeartext);
+
+                // Show success notification
+                createTemporaryNotification({
+                  message: t('yeartext-preview-success', { year: nextYear }),
+                  timeout: 5000,
+                  type: 'positive',
+                });
+
+                // Auto-dismiss after 10 seconds
+                setTimeout(() => {
+                  // Restore the current yeartext
+                  const currentYeartext = currentState.yeartext || '';
+                  postYeartext(currentYeartext);
+                  createTemporaryNotification({
+                    message: t('yeartext-cleared', {
+                      currentYear: currentYear,
+                    }),
+                    timeout: 5000,
+                    type: 'positive',
+                  });
+                  // Save to prevent asking every time
+                  appSettingsStore.yeartextPreviewDismissed[nextYear] = true;
+                  // Resume the watcher after a brief delay to allow the current yeartext to be posted
+                  setTimeout(() => {
+                    yeartextWatcherPaused.value = false;
+                  }, 100);
+                }, 10000);
+              } else {
+                createTemporaryNotification({
+                  message: t('yeartext-preview-failed'),
+                  type: 'negative',
+                });
+              }
+            } catch (error) {
+              errorCatcher(error);
+              createTemporaryNotification({
+                message: t('yeartext-preview-failed'),
+                type: 'negative',
+              });
+            } finally {
+              // Only resume if we didn't succeed (if we succeeded, the timeout will handle it)
+              if (!success) {
+                yeartextWatcherPaused.value = false;
+              }
+            }
+          },
+          label: t('yes'),
+        },
+      ],
+      message: t('yeartext-preview-next-year', { year: nextYear }),
+      timeout: 0, // Don't auto-dismiss
+    });
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
+// Send current writing script to the media player page for yeartext font selection
+const { post: postCurrentScript } = useBroadcastChannel<string, string>({
+  name: 'current-script',
+});
+
+// Send current language code for language-specific font overrides
+const { post: postCurrentLang } = useBroadcastChannel<string, string>({
+  name: 'current-lang',
+});
+
+// Send yeartext to the media player page using useBroadcastChannel
+const { post: postYeartext } = useBroadcastChannel<
+  null | string | undefined,
+  null | string | undefined
+>({
+  name: 'yeartext',
+});
+
+// Receive media playing action from the media player page using useBroadcastChannel
+const { data: mediaPlayingAction } = useBroadcastChannel<
+  MediaPlayingStateAction,
+  MediaPlayingStateAction
+>({
+  name: 'media-window-media-action',
+});
+
+// Listen for requests to get current media window variables
+const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
+  string,
+  string
+>({
+  name: 'get-current-media-window-variables',
+});
+
+const { post: postHideMediaLogo } = useBroadcastChannel<
+  boolean | undefined,
+  boolean | undefined
+>({
+  name: 'hide-media-logo',
+}); // Send hideMediaLogo to the media player page using useBroadcastChannel
+
+onMounted(() => {
+  void cleanTempPathOnStartup();
+  congregationSettings.updateCongregationsWithMissingSettings();
+  if (!currentSettings.value) navigateToCongregationSelector();
+  initListeners();
+});
+
+onBeforeUnmount(() => {
+  removeListenersLocal();
+});
+
+watchImmediate(
+  (): [string | undefined, string | undefined, boolean] => [
+    jwStore.urlVariables?.base,
+    jwStore.urlVariables?.mediator,
+    online.value,
+  ],
+  ([base, mediator, online]: [
+    string | undefined,
+    string | undefined,
+    boolean,
+  ]) => {
+    const prev = previousState.value;
+
+    postUrlVariables({ base, mediator });
+    postOnline(online);
+
+    // Only get fonts and MEPS info if:
+    // 1. Coming online for the first time (!prev.wasOnline && online)
+    // 2. URL variables changed while online
+    const shouldRun =
+      (!prev.wasOnline && online) ||
+      (online && (prev.base !== base || prev.mediator !== mediator));
+
+    if (shouldRun) {
+      getJwMepsInfo();
+      setElementFont('jw-icons-all');
+    }
+
+    // Update previous state
+    previousState.value = { base, mediator, wasOnline: online };
+  },
+);
+
+watchImmediate(
+  () => currentSettings.value?.hideMediaLogo,
+  (newHideMediaLogo) => {
+    postHideMediaLogo(newHideMediaLogo);
+  },
+);
+
+watchImmediate(
+  () => currentState.currentLangObject?.script,
+  (script) => {
+    if (script) postCurrentScript(script);
+  },
+);
+
+watchImmediate(
+  () => currentSettings.value?.lang,
+  (lang) => {
+    if (lang) postCurrentLang(lang);
+  },
+);
+
+watchImmediate(
+  () => [
+    currentCongregation.value,
+    currentSettings.value?.folderToWatch,
+    currentSettings.value?.enableFolderWatcher,
+  ],
+  async ([, newFolderToWatch, newEnableFolderWatcher]) => {
+    pendingEvents.length = 0;
+    await watchExternalFolder(
+      newEnableFolderWatcher ? (newFolderToWatch as string) : undefined,
+    );
+  },
+);
+
+// Watch for congregation selection and trigger yeartext preview check
+watch(
+  [currentCongregation, yeartext, online],
+  ([newCongregation, newYeartext, newOnline]) => {
+    if (newCongregation && newYeartext && newOnline) {
+      // Small delay to ensure all data is ready
+      setTimeout(() => {
+        checkYeartextPreview();
+      }, 1000);
+    }
+  },
+);
+
+watchImmediate(
+  () => yeartext.value,
+  (newYeartext) => {
+    if (!yeartextWatcherPaused.value) {
+      postYeartext(newYeartext);
+    }
+  },
+);
+
+watchImmediate(
+  () => mediaPlayingAction.value,
+  (newMediaPlayingAction) => {
+    log(
+      '🔄 [onMounted] mediaPlayingAction changed:',
+      'mainLayout',
+      'log',
+      newMediaPlayingAction,
+    );
+    mediaPlaying.value.action = newMediaPlayingAction;
+  },
+);
+
+watchImmediate(
+  () => getCurrentMediaWindowVariables.value,
+  () => {
+    // Push current values when requested
+    postUrlVariables({
+      base: jwStore.urlVariables?.base,
+      mediator: jwStore.urlVariables?.mediator,
+    });
+    postOnline(online.value);
+    postHideMediaLogo(currentSettings.value?.hideMediaLogo);
+    if (!yeartextWatcherPaused.value) {
+      postYeartext(yeartext.value);
+    }
+  },
+);
+
 watch(currentCongregation, async (newCongregation, oldCongregation) => {
   try {
     //
     // --- Part 1: congregation-switch logic ---
     //
     if (oldCongregation && queues.meetings[oldCongregation]) {
+      log(
+        `⏸️ Pausing meeting fetch queue for congregation switch: ${oldCongregation}`,
+        'mediaFetching',
+        'warn',
+      );
       queues.meetings[oldCongregation].pause();
     }
 
     if (!newCongregation) {
       toggleMediaWindowVisibility(false);
-      globalThis.electronApi.toggleTimerWindow(false);
+      toggleTimerWindow(false);
       currentState.setTimerWindowVisible(false);
       navigateToCongregationSelector();
       return; // exit early — no need to run notifications
@@ -287,11 +1037,15 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
 
     const scheduleChanged = !!(await syncMeetingSchedule());
 
-    updateLookupPeriod({ reset: scheduleChanged });
-    downloadBackgroundMusic();
+    if (!scheduleChanged) updateLookupPeriod();
     delayedCacheClear();
 
     if (queues.meetings[newCongregation]) {
+      log(
+        `▶️ Starting meeting fetch queue for congregation switch: ${newCongregation}`,
+        'mediaFetching',
+        'info',
+      );
       queues.meetings[newCongregation].start();
     }
 
@@ -300,10 +1054,10 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
     const timerAutoOpen = currentSettings.value?.timerAutoOpen;
 
     if (!timerEnabled) {
-      globalThis.electronApi.toggleTimerWindow(false);
+      toggleTimerWindow(false);
       currentState.setTimerWindowVisible(false);
     } else if (timerAutoOpen) {
-      globalThis.electronApi.toggleTimerWindow(true);
+      toggleTimerWindow(true);
       currentState.setTimerWindowVisible(true);
     }
 
@@ -320,14 +1074,12 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
     // Priority: beta warning first
     if (isBetaVersion) {
       createTemporaryNotification({
-        icon: 'mmm-warning',
         message: t('beta-version-warning'),
         timeout: 30000,
         type: 'warning',
       });
     } else if (areUpdatesDisabled) {
       createTemporaryNotification({
-        icon: 'mmm-info',
         message: t('updates-disabled-warning'),
         timeout: 10000,
         type: 'info',
@@ -336,7 +1088,6 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
     if (hasArchitectureMismatch) {
       createTemporaryNotification({
         caption: t('architecture-mismatch-explain'),
-        icon: 'mmm-info',
         message: t('architecture-mismatch'),
         timeout: 30000,
         type: 'info',
@@ -386,7 +1137,6 @@ watch(
       // Automatic sync is now disabled for this congregation
       createTemporaryNotification({
         caption: t('automatic-sync-disabled-explain'),
-        icon: 'mmm-warning',
         message: t('automatic-sync-disabled'),
         timeout: 10000,
         type: 'warning',
@@ -394,7 +1144,6 @@ watch(
     } else if (!newCongregationNameModified && oldCongregationNameModified) {
       // Automatic sync is now enabled for this congregation
       createTemporaryNotification({
-        icon: 'mmm-check',
         message: t('automatic-sync-enabled'),
         timeout: 10000,
         type: 'positive',
@@ -412,6 +1161,10 @@ watch(online, (isNowOnline) => {
     const meetingQueue = meetings[congregation];
 
     if (isNowOnline) {
+      log(
+        '🌐 Online: starting active congregation meeting queue',
+        'mediaFetching',
+      );
       meetingQueue?.start();
       jwStore.updateYeartext({
         isSignLanguage: currentLangObject.value?.isSignLanguage,
@@ -421,6 +1174,10 @@ watch(online, (isNowOnline) => {
       });
       jwStore.updateJwLanguages(online.value);
     } else {
+      log(
+        '📴 Offline: pausing active congregation meeting queue',
+        'mediaFetching',
+      );
       meetingQueue?.pause();
     }
   } catch (error) {
@@ -428,20 +1185,24 @@ watch(online, (isNowOnline) => {
   }
 });
 
-const navigateToCongregationSelector = () => {
-  try {
-    if (!route.fullPath.includes('/congregation-selector')) {
-      router.push({ path: '/congregation-selector' });
-      selectedDate.value = '';
-    }
-  } catch (error) {
-    errorCatcher(error);
-  }
-};
-
 watch(currentSettings, (newSettings) => {
   if (!newSettings) navigateToCongregationSelector();
 });
+
+watchImmediate(
+  () => [
+    currentSettings.value?.cacheFolder,
+    currentSettings.value?.folderToWatch,
+    currentSettings.value?.mediaAutoExportFolder,
+  ],
+  ([cacheFolder, folderToWatch, mediaAutoExportFolder]) => {
+    setPathProbeNotificationPaths(
+      [cacheFolder, folderToWatch, mediaAutoExportFolder].filter(
+        (folderPath): folderPath is string => !!folderPath,
+      ),
+    );
+  },
+);
 
 watchImmediate(
   () => currentSettings.value?.darkMode,
@@ -491,14 +1252,7 @@ watchDebounced(
   { debounce: 500 },
 );
 
-const { post: postCameraStream } = useBroadcastChannel<
-  null | string,
-  null | string
->({
-  name: 'camera-stream',
-});
-
-watch(displayCameraId, (newCameraId) => {
+watchImmediate(displayCameraId, (newCameraId) => {
   if (mediaIsPlaying.value) return;
   postCameraStream(newCameraId);
   if (!newCameraId) {
@@ -634,13 +1388,10 @@ watch(
   ],
   ([enabled, autoOpen]) => {
     if (!enabled) {
-      globalThis.electronApi.toggleTimerWindow(false);
+      toggleTimerWindow(false);
       currentState.setTimerWindowVisible(false);
-      return;
-    }
-
-    if (autoOpen) {
-      globalThis.electronApi.toggleTimerWindow(true);
+    } else if (autoOpen) {
+      toggleTimerWindow(true);
       currentState.setTimerWindowVisible(true);
     }
   },
@@ -667,9 +1418,7 @@ watchImmediate(
   () => currentSettings.value?.disableHardwareAcceleration,
   (newDisableHardwareAcceleration) => {
     if (newDisableHardwareAcceleration !== undefined) {
-      globalThis.electronApi.setHardwareAcceleration(
-        newDisableHardwareAcceleration,
-      );
+      setHardwareAcceleration(newDisableHardwareAcceleration);
       // Check if hardware acceleration is disabled via settings on startup
       if (
         newDisableHardwareAcceleration &&
@@ -686,7 +1435,6 @@ watchImmediate(
             },
           ],
           caption: t('hardwareAccelerationDisabledExplain'),
-          icon: 'mmm-info',
           message: t('hardwareAccelerationDisabled'),
           timeout: 10000,
           type: 'info',
@@ -724,662 +1472,6 @@ watchImmediate(
     } else if (shouldUnregister) {
       // Only call unregisterAllCustomShortcuts directly if we’re NOT going to register
       unregisterAllCustomShortcuts();
-    }
-  },
-);
-
-watchImmediate(
-  () => [
-    currentSettings.value?.folderToWatch,
-    currentSettings.value?.enableFolderWatcher,
-  ],
-  ([newFolderToWatch, newEnableFolderWatcher]) => {
-    watchExternalFolder(
-      newEnableFolderWatcher ? (newFolderToWatch as string) : undefined,
-    );
-  },
-);
-
-async function handleUnlinkCleanup(changedPath: string) {
-  try {
-    const filename = basename(changedPath);
-    const watchedDayFolder = dirname(changedPath);
-    if (watchedDayFolder) {
-      const { removeWatchedMediaSectionInfo } =
-        await import('src/helpers/media-sections');
-      await removeWatchedMediaSectionInfo(watchedDayFolder, filename);
-    }
-  } catch (error) {
-    errorCatcher(error, {
-      contexts: {
-        fn: {
-          changedPath,
-          name: 'handleUnlinkCleanup',
-        },
-      },
-    });
-  }
-}
-
-function removeWatchedItems(
-  sections: MediaSectionWithConfig[],
-  predicate: (item: MediaItem) => boolean,
-) {
-  for (const section of sections) {
-    if (!section.items) continue;
-    // reassign instead of splicing to reduce reactive churn
-    section.items = section.items.filter((item) => !predicate(item));
-  }
-}
-
-const getTargetSectionId = (
-  originalSection?: string,
-  weMeeting?: boolean,
-  mwMeeting?: boolean,
-) => {
-  if (originalSection) return originalSection;
-  if (weMeeting) return 'pt';
-  if (mwMeeting) return 'lac';
-  return 'imported-media';
-};
-
-async function handleAddWatchFolderEvent(
-  dayObj: DateInfo,
-  day: string,
-  changedPath?: string,
-) {
-  if (!changedPath) return;
-
-  const watchedItems = (await watchedItemMapper(day, changedPath)) || [];
-
-  for (const watchedItem of watchedItems) {
-    // Skip if already exists
-    const exists = dayObj.mediaSections.some((s) =>
-      s.items?.some((i) => i.uniqueId === watchedItem.uniqueId),
-    );
-    if (exists) continue;
-
-    const weMeeting = isWeMeetingDay(dayObj.date);
-    const mwMeeting = isMwMeetingDay(dayObj.date);
-
-    const targetSectionId = getTargetSectionId(
-      watchedItem.originalSection,
-      weMeeting,
-      mwMeeting,
-    );
-
-    dayObj.mediaSections ??= [];
-    const targetSection = getOrCreateMediaSection(
-      dayObj.mediaSections,
-      targetSectionId,
-    );
-    targetSection.items ??= [];
-
-    // Add, then we’ll sort once after all inserts
-    targetSection.items.push(watchedItem);
-  }
-
-  // Sort sections once after adding
-  sortMediaItems(dayObj.mediaSections);
-}
-
-async function handleUnlinkWatchFolderEvent(
-  dayObj: DateInfo,
-  changedPath?: string,
-) {
-  if (!changedPath) return;
-  const targetUrl = pathToFileURL(changedPath).toString();
-  removeWatchedItems(
-    dayObj.mediaSections,
-    (item) => item?.source === 'watched' && item?.fileUrl === targetUrl,
-  );
-  await handleUnlinkCleanup(changedPath);
-}
-
-function sortMediaItems(sections: MediaSectionWithConfig[]) {
-  for (const section of sections) {
-    if (!section.items) continue;
-    section.items.sort((a, b) => {
-      const aOrder =
-        typeof a.sortOrderOriginal === 'number' ? a.sortOrderOriginal : 0;
-      const bOrder =
-        typeof b.sortOrderOriginal === 'number' ? b.sortOrderOriginal : 0;
-      return aOrder - bOrder || SORTER.compare(a.title, b.title);
-    });
-  }
-}
-
-const updateWatchFolderRef = async ({
-  changedPath,
-  day,
-  event,
-}: Record<string, string>) => {
-  try {
-    day = day?.replaceAll('-', '/');
-    if (!day) return;
-
-    const dayObj = lookupPeriod.value[currentCongregation.value]?.find(
-      (d) => formatDate(d.date, 'YYYY/MM/DD') === day,
-    );
-    if (!dayObj) return;
-
-    switch (event) {
-      case 'add':
-        await handleAddWatchFolderEvent(dayObj, day, changedPath);
-        break;
-
-      case 'addDir':
-      /* falls through */
-
-      case 'unlinkDir':
-        removeWatchedItems(
-          dayObj.mediaSections,
-          (item) => item?.source === 'watched',
-        );
-        break;
-
-      case 'unlink':
-        await handleUnlinkWatchFolderEvent(dayObj, changedPath);
-        break;
-    }
-  } catch (error) {
-    errorCatcher(error);
-  }
-};
-
-const processWatchFolderEvents = debounce(async (pendingEvents) => {
-  for (const evt of pendingEvents) {
-    await updateWatchFolderRef(evt);
-  }
-  pendingEvents.length = 0;
-}, 100);
-
-const pendingEvents: Record<string, string>[] = [];
-
-const queueWatchFolderEvent = (event: Record<string, string>) => {
-  pendingEvents.push(event);
-  processWatchFolderEvents(pendingEvents);
-};
-
-cleanCache();
-cleanPersistedStores();
-
-const closeAttempts = ref(0);
-const watchFolderErrorShown = ref(false);
-
-const bcClose = new BroadcastChannel('closeAttempts');
-bcClose.onmessage = (event) => {
-  if (event?.data?.attemptedClose) {
-    const meetingDay =
-      isSelectedDayToday.value && !!selectedDayMeetingType.value;
-    if (
-      (mediaIsPlaying.value ||
-        (currentCongregation.value && // a congregation is selected
-          !currentSettings.value?.disableMediaFetching && // media fetching is enabled
-          meetingDay && // today is a meeting day
-          remainingTimeBeforeMeetingStart() < 90)) && // meeting is starting in less than 90 seconds
-      closeAttempts.value === 0
-    ) {
-      createTemporaryNotification({
-        caption: t('clicking-the-close-button-again-will-close-app'),
-        icon: 'mmm-error',
-        message: t('make-sure-that-m-is-in-not-use-before-quitting'),
-        noClose: true,
-        timeout: 10000,
-        type: 'negative',
-      });
-      closeAttempts.value += 1;
-      setTimeout(() => {
-        closeAttempts.value = 0;
-      }, 10000);
-    } else {
-      bcClose.postMessage({ authorizedClose: true });
-    }
-  }
-};
-
-const initListeners = () => {
-  onLog(({ ctx, level, msg }) => {
-    log(`[main] ${msg}`, ctx as unknown as LogPrefix, level, ctx);
-    if (
-      msg.startsWith('[Pip]') ||
-      msg.startsWith('[Pip Error]') ||
-      msg.startsWith('[Zoom Helper]') ||
-      msg.startsWith('[Zoom Helper Error]')
-    ) {
-      currentState.addZoomHelperLog(msg);
-    }
-  });
-
-  onShortcut(({ shortcut }) => {
-    if (!currentSettings.value?.enableKeyboardShortcuts) return;
-    executeShortcut(shortcut as keyof SettingsValues);
-  });
-
-  onWatchFolderError(() => {
-    if (!watchFolderErrorShown.value) {
-      watchFolderErrorShown.value = true;
-      createTemporaryNotification({
-        caption: t('watch-folder-error-caption'),
-        icon: 'mmm-error',
-        message: t('watch-folder-error-message'),
-        timeout: 15000,
-        type: 'negative',
-      });
-    }
-  });
-
-  onWatchFolderUpdate(({ changedPath, day, event }) => {
-    queueWatchFolderEvent({ changedPath, day, event });
-  });
-
-  onDownloadStarted((args) => {
-    const existing = downloadProgress.value[args.id];
-    downloadProgress.value[args.id] = {
-      ...existing,
-      complete: existing?.complete,
-      error: existing?.error,
-      filename: args.filename,
-      loaded: existing?.loaded,
-      meetingDate: existing?.meetingDate || '',
-      total: args.totalBytes,
-    };
-  });
-
-  onDownloadCancelled((args) => {
-    const existing = downloadProgress.value[args.id];
-    if (existing) existing.error = true;
-  });
-
-  onDownloadCompleted((args) => {
-    const existing = downloadProgress.value[args.id];
-    if (existing) {
-      existing.complete = true;
-      delete existing.loaded;
-    }
-  });
-
-  onDownloadError((args) => {
-    const existing = downloadProgress.value[args.id];
-    if (existing) existing.error = true;
-  });
-
-  onDownloadProgress((args) => {
-    const existing = downloadProgress.value[args.id];
-    if (existing) existing.loaded = args.bytesReceived;
-  });
-
-  onGpuCrashDetected(() => {
-    createTemporaryNotification({
-      caption: t('gpu-crash-detected-restarting'),
-      icon: 'mmm-error',
-      message: t('gpu-crash-detected'),
-      timeout: 10000,
-      type: 'negative',
-    });
-  });
-
-  onVideoCaptureCrashDetected(() => {
-    createTemporaryNotification({
-      caption: t('camera-access-required-explain'),
-      icon: 'mmm-error',
-      message: t('camera-access-required'),
-      timeout: 10000,
-      type: 'negative',
-    });
-  });
-
-  globalThis.electronApi.onHardwareAccelerationTemporaryDisabled(() => {
-    createTemporaryNotification({
-      caption: t('gpu-crash-detected-explain'),
-      icon: 'mmm-warning',
-      message: t('gpu-crash-detected'),
-      timeout: 10000,
-      type: 'warning',
-    });
-  });
-};
-
-const removeListenersLocal = () => {
-  const listeners: ElectronIpcListenKey[] = [
-    'log',
-    'shortcut',
-    'watchFolderError',
-    'watchFolderUpdate',
-    'downloadStarted',
-    'downloadCancelled',
-    'downloadCompleted',
-    'downloadError',
-    'downloadProgress',
-    'gpu-crash-detected',
-    'video-capture-crash-detected',
-  ];
-
-  listeners.forEach((listener) => {
-    try {
-      removeListeners(listener);
-    } catch (error) {
-      errorCatcher(error);
-    }
-  });
-};
-
-onMounted(() => {
-  congregationSettings.updateCongregationsWithMissingSettings();
-  if (!currentSettings.value) navigateToCongregationSelector();
-  initListeners();
-});
-
-onBeforeUnmount(() => {
-  removeListenersLocal();
-});
-
-const previousState = ref<{
-  base: string | undefined;
-  mediator: string | undefined;
-  wasOnline: boolean;
-}>({
-  base: undefined,
-  mediator: undefined,
-  wasOnline: false,
-});
-
-// Broadcast the three values to the media player page using useBroadcastChannel
-const { post: postUrlVariables } = useBroadcastChannel<
-  { base: string | undefined; mediator: string | undefined },
-  { base: string | undefined; mediator: string | undefined }
->({
-  name: 'url-variables',
-});
-const { post: postOnline } = useBroadcastChannel<boolean, boolean>({
-  name: 'online',
-});
-
-watchImmediate(
-  (): [string | undefined, string | undefined, boolean] => [
-    jwStore.urlVariables?.base,
-    jwStore.urlVariables?.mediator,
-    online.value,
-  ],
-  ([base, mediator, online]: [
-    string | undefined,
-    string | undefined,
-    boolean,
-  ]) => {
-    const prev = previousState.value;
-
-    postUrlVariables({ base, mediator });
-    postOnline(online);
-
-    // Only get fonts and MEPS info if:
-    // 1. Coming online for the first time (!prev.wasOnline && online)
-    // 2. URL variables changed while online
-    const shouldRun =
-      (!prev.wasOnline && online) ||
-      (online && (prev.base !== base || prev.mediator !== mediator));
-
-    if (shouldRun) {
-      getJwMepsInfo();
-      setElementFont('jw-icons-all');
-    }
-
-    // Update previous state
-    previousState.value = { base, mediator, wasOnline: online };
-  },
-);
-
-// Send hideMediaLogo to the media player page using useBroadcastChannel
-const { post: postHideMediaLogo } = useBroadcastChannel<
-  boolean | undefined,
-  boolean | undefined
->({
-  name: 'hide-media-logo',
-});
-
-watchImmediate(
-  () => currentSettings.value?.hideMediaLogo,
-  (newHideMediaLogo) => {
-    postHideMediaLogo(newHideMediaLogo);
-  },
-);
-
-// Send current writing script to the media player page for yeartext font selection
-const { post: postCurrentScript } = useBroadcastChannel<string, string>({
-  name: 'current-script',
-});
-
-watchImmediate(
-  () => currentState.currentLangObject?.script,
-  (script) => {
-    if (script) postCurrentScript(script);
-  },
-);
-
-// Send current language code for language-specific font overrides
-const { post: postCurrentLang } = useBroadcastChannel<string, string>({
-  name: 'current-lang',
-});
-
-watchImmediate(
-  () => currentSettings.value?.lang,
-  (lang) => {
-    if (lang) postCurrentLang(lang);
-  },
-);
-
-// Send yeartext to the media player page using useBroadcastChannel
-const { post: postYeartext } = useBroadcastChannel<
-  null | string | undefined,
-  null | string | undefined
->({
-  name: 'yeartext',
-});
-
-// Function to check if we should show the yeartext preview notification
-const checkYeartextPreview = async () => {
-  try {
-    // Only run if congregation is selected
-    if (!currentCongregation.value) return;
-
-    if (!currentSettings.value) return;
-
-    // Only run if media display is enabled
-    if (!currentSettings.value?.enableMediaDisplayButton) return;
-
-    const now = new Date();
-    const month = now.getMonth() + 1; // getMonth is 0-based
-
-    // Only run if we're in December
-    if (month !== 12) return;
-
-    // Get current and next year
-    const currentYear = now.getFullYear();
-    const nextYear = currentYear + 1;
-
-    // Check if yeartext is available (current year)
-    const { yeartexts } = jwStore;
-    if (!yeartexts[currentYear]) return;
-
-    const appSettingsStore = appSettings;
-
-    // Check if already dismissed for next year
-    if (appSettingsStore.yeartextPreviewDismissed[nextYear]) return;
-
-    // Check if online
-    if (!online.value) return;
-
-    // Check if base URL available
-    if (!jwStore.urlVariables?.base) return;
-
-    // Get the current language
-    const lang = currentSettings.value.lang;
-
-    // Check if language is configured
-    if (!lang) return;
-
-    log(
-      '🔍 [checkYeartextPreview] Showing the yeartext preview notification',
-      'mainLayout',
-      'log',
-    );
-
-    // Show notification
-    createTemporaryNotification({
-      actions: [
-        {
-          color: 'primary',
-          handler: () => {
-            // Session dismissal handled by not showing again until app restart
-          },
-          label: t('later'),
-        },
-        {
-          color: 'negative',
-          handler: () => {
-            appSettingsStore.yeartextPreviewDismissed[nextYear] = true;
-          },
-          label: t('no'),
-        },
-        {
-          color: 'positive',
-          handler: async () => {
-            let success = false;
-            try {
-              // Fetch next year's yeartext
-              const result = await fetchYeartext(
-                lang,
-                jwStore.urlVariables.base,
-                nextYear,
-              );
-              if (result.yeartext) {
-                success = true;
-                // Pause the yeartext watcher to prevent immediate override
-                yeartextWatcherPaused.value = true;
-
-                // Post the next year yeartext temporarily
-                postYeartext(result.yeartext);
-
-                // Show success notification
-                createTemporaryNotification({
-                  icon: 'mmm-check',
-                  message: t('yeartext-preview-success', { year: nextYear }),
-                  timeout: 5000,
-                  type: 'positive',
-                });
-
-                // Auto-dismiss after 10 seconds
-                setTimeout(() => {
-                  // Restore the current yeartext
-                  const currentYeartext = currentState.yeartext || '';
-                  postYeartext(currentYeartext);
-                  createTemporaryNotification({
-                    icon: 'mmm-check',
-                    message: t('yeartext-cleared', {
-                      currentYear: currentYear,
-                    }),
-                    timeout: 5000,
-                    type: 'positive',
-                  });
-                  // Save to prevent asking every time
-                  appSettingsStore.yeartextPreviewDismissed[nextYear] = true;
-                  // Resume the watcher after a brief delay to allow the current yeartext to be posted
-                  setTimeout(() => {
-                    yeartextWatcherPaused.value = false;
-                  }, 100);
-                }, 10000);
-              } else {
-                createTemporaryNotification({
-                  message: t('yeartext-preview-failed'),
-                  type: 'negative',
-                });
-              }
-            } catch (error) {
-              errorCatcher(error);
-              createTemporaryNotification({
-                message: t('yeartext-preview-failed'),
-                type: 'negative',
-              });
-            } finally {
-              // Only resume if we didn't succeed (if we succeeded, the timeout will handle it)
-              if (!success) {
-                yeartextWatcherPaused.value = false;
-              }
-            }
-          },
-          label: t('yes'),
-        },
-      ],
-      message: t('yeartext-preview-next-year', { year: nextYear }),
-      timeout: 0, // Don't auto-dismiss
-    });
-  } catch (error) {
-    errorCatcher(error);
-  }
-};
-
-// Watch for congregation selection and trigger yeartext preview check
-watch(
-  [currentCongregation, yeartext, online],
-  ([newCongregation, newYeartext, newOnline]) => {
-    if (newCongregation && newYeartext && newOnline) {
-      // Small delay to ensure all data is ready
-      setTimeout(() => {
-        checkYeartextPreview();
-      }, 1000);
-    }
-  },
-);
-
-watchImmediate(
-  () => yeartext.value,
-  (newYeartext) => {
-    if (!yeartextWatcherPaused.value) {
-      postYeartext(newYeartext);
-    }
-  },
-);
-
-// Receive media playing action from the media player page using useBroadcastChannel
-const { data: mediaPlayingAction } = useBroadcastChannel<
-  MediaPlayingStateAction,
-  MediaPlayingStateAction
->({
-  name: 'media-window-media-action',
-});
-
-watchImmediate(
-  () => mediaPlayingAction.value,
-  (newMediaPlayingAction) => {
-    log(
-      '🔄 [onMounted] mediaPlayingAction changed:',
-      'mainLayout',
-      'log',
-      newMediaPlayingAction,
-    );
-    mediaPlaying.value.action = newMediaPlayingAction;
-  },
-);
-
-// Listen for requests to get current media window variables
-const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
-  string,
-  string
->({
-  name: 'get-current-media-window-variables',
-});
-
-watchImmediate(
-  () => getCurrentMediaWindowVariables.value,
-  () => {
-    // Push current values when requested
-    postUrlVariables({
-      base: jwStore.urlVariables?.base,
-      mediator: jwStore.urlVariables?.mediator,
-    });
-    postOnline(online.value);
-    postHideMediaLogo(currentSettings.value?.hideMediaLogo);
-    if (!yeartextWatcherPaused.value) {
-      postYeartext(yeartext.value);
     }
   },
 );

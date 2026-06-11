@@ -5,7 +5,7 @@
     dense
     :error="customError"
     hide-bottom-space
-    :label="label || ''"
+    :label="label || undefined"
     outlined
     :rules="colorRules"
     spellcheck="false"

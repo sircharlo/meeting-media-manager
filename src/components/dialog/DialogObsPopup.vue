@@ -8,55 +8,12 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <div
-      :class="{
-        column: true,
-        'action-popup': true,
-        'fit-snugly': sceneList.length > 28, // hacky for now
-        'q-py-md': true,
-      }"
-    >
+    <div class="action-popup action-popup--scroll-layout q-py-md">
       <div class="card-title col-shrink full-width q-px-md q-mb-none">
         {{ t('scene-selection') }}
       </div>
-      <template v-if="currentSettings?.obsEnableRecordingControls">
-        <q-separator
-          v-if="sceneList.length > 0"
-          class="bg-accent-200 q-mx-md q-mb-sm"
-        />
-        <div class="q-px-md">
-          <div class="row q-col-gutter-xs">
-            <div class="col-12 q-mb-sm">
-              <q-btn
-                class="full-width"
-                :color="isRecording ? 'negative' : 'primary'"
-                :icon="isRecording ? 'mmm-stop' : 'mmm-record'"
-                :label="
-                  isRecording ? t('stop-recording') : t('start-recording')
-                "
-                unelevated
-                @click="toggleObsRecording"
-              />
-            </div>
-            <div class="col-12 q-mb-sm">
-              <q-btn
-                v-if="obsRecordingFolder"
-                class="full-width"
-                color="secondary"
-                icon="mmm-folder-open"
-                :label="t('open-recording-folder')"
-                unelevated
-                @click="openObsRecordingFolder"
-              />
-            </div>
-          </div>
-        </div>
-        <q-separator
-          v-if="sceneList.length > 0"
-          class="bg-accent-200 q-mx-md q-mb-sm"
-        />
-      </template>
-      <div class="overflow-auto col full-width q-px-md">
+
+      <div class="action-popup__scroll full-width q-px-md">
         <div class="row q-col-gutter-xs">
           <template v-for="scene in sceneList.concat([])" :key="scene">
             <div :class="sceneColumnClass">
@@ -88,6 +45,34 @@
           </template>
         </div>
       </div>
+
+      <template v-if="currentSettings?.obsEnableRecordingControls">
+        <q-separator class="bg-accent-200 q-mt-sm" />
+        <div
+          class="action-popup__footer full-width q-px-md q-pt-md row q-col-gutter-xs"
+        >
+          <div class="col-12 q-mb-sm">
+            <q-btn
+              class="full-width"
+              :color="isRecording ? 'negative' : 'primary'"
+              :icon="isRecording ? 'mmm-stop' : 'mmm-record'"
+              :label="isRecording ? t('stop-recording') : t('start-recording')"
+              unelevated
+              @click="toggleObsRecording"
+            />
+          </div>
+          <div v-if="obsRecordingFolder" class="col-12">
+            <q-btn
+              class="full-width"
+              color="secondary"
+              icon="mmm-folder-open"
+              :label="t('open-recording-folder')"
+              unelevated
+              @click="openObsRecordingFolder"
+            />
+          </div>
+        </div>
+      </template>
     </div>
   </q-menu>
 </template>
@@ -175,48 +160,6 @@ const openObsRecordingFolder = async () => {
     openFolder(obsRecordingFolder.value);
   }
 };
-
-watchImmediate(
-  () => ({
-    enabled: currentSettings.value?.obsEnable,
-    recordingControls: currentSettings.value?.obsEnableRecordingControls,
-  }),
-  async ({ enabled, recordingControls }, _, onCleanup) => {
-    // If OBS not enabled or no websocket → stop everything
-    if (!enabled || !obsWebSocketInfo.obsWebSocket) return;
-
-    // If recording controls disabled → stop everything
-    if (!recordingControls) return;
-
-    // --- 1. Setup event listener ---
-    const handleRecordStateChanged = (data: { outputActive: boolean }) => {
-      log('RecordStateChanged', 'obs', 'log', data);
-      isRecording.value = data.outputActive;
-    };
-    obsWebSocketInfo.obsWebSocket.on(
-      'RecordStateChanged',
-      handleRecordStateChanged,
-    );
-
-    // Cleanup when settings change or component unmounts
-    onCleanup(() => {
-      obsWebSocketInfo.obsWebSocket?.off(
-        'RecordStateChanged',
-        handleRecordStateChanged,
-      );
-    });
-
-    // --- 2. Initial recording state ---
-    const status = await obsGetRecordingState();
-    if (status !== null) {
-      isRecording.value = status;
-    }
-
-    // --- 3. Recording directory ---
-    const folder = await obsGetRecordingDirectory();
-    obsRecordingFolder.value = folder;
-  },
-);
 
 const resolvedScene = computed(() => {
   if (!currentSettings.value) return currentScene.value;
@@ -374,7 +317,50 @@ const sceneColumnClass = computed(() => {
 useEventListener(globalThis, 'obsConnectFromSettings', obsSettingsConnect, {
   passive: true,
 });
+
 useEventListener(globalThis, 'obsSceneEvent', setObsSceneListener, {
   passive: true,
 });
+
+watchImmediate(
+  () => ({
+    enabled: currentSettings.value?.obsEnable,
+    recordingControls: currentSettings.value?.obsEnableRecordingControls,
+  }),
+  async ({ enabled, recordingControls }, _, onCleanup) => {
+    // If OBS not enabled or no websocket → stop everything
+    if (!enabled || !obsWebSocketInfo.obsWebSocket) return;
+
+    // If recording controls disabled → stop everything
+    if (!recordingControls) return;
+
+    // --- 1. Setup event listener ---
+    const handleRecordStateChanged = (data: { outputActive: boolean }) => {
+      log('RecordStateChanged', 'obs', 'log', data);
+      isRecording.value = data.outputActive;
+    };
+    obsWebSocketInfo.obsWebSocket.on(
+      'RecordStateChanged',
+      handleRecordStateChanged,
+    );
+
+    // Cleanup when settings change or component unmounts
+    onCleanup(() => {
+      obsWebSocketInfo.obsWebSocket?.off(
+        'RecordStateChanged',
+        handleRecordStateChanged,
+      );
+    });
+
+    // --- 2. Initial recording state ---
+    const status = await obsGetRecordingState();
+    if (status !== null) {
+      isRecording.value = status;
+    }
+
+    // --- 3. Recording directory ---
+    const folder = await obsGetRecordingDirectory();
+    obsRecordingFolder.value = folder;
+  },
+);
 </script>

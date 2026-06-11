@@ -43,7 +43,7 @@
           v-model="spotlitFeature"
           animated
           autoplay
-          class="bg-accent-100 rounded-borders"
+          class="bg-accent-100 full-width rounded-borders"
           infinite
           padding
           style="height: 200px"
@@ -265,17 +265,7 @@ const checkLastVersion = async (congId: string) => {
   }
 };
 
-whenever(dialogValue, () => {
-  getUpdatesEnabled();
-  getBetaUpdatesEnabled();
-  spotlitFeature.value = 1;
-});
-
 const { currentCongregation } = storeToRefs(useCurrentStateStore());
-
-watch(currentCongregation, (val) => {
-  if (val) checkLastVersion(val);
-});
 
 const releaseNotes = ref('');
 const releaseNotesExpansionItem = ref(false);
@@ -313,6 +303,16 @@ const loadReleaseNotes = async () => {
   releaseNotes.value = result ?? '';
   parseReleaseNotes();
 };
+
+whenever(dialogValue, () => {
+  getUpdatesEnabled();
+  getBetaUpdatesEnabled();
+  spotlitFeature.value = 1;
+});
+
+watch(currentCongregation, (val) => {
+  if (val) checkLastVersion(val);
+});
 
 watchImmediate(locale, () => {
   loadReleaseNotes();

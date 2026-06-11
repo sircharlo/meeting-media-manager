@@ -34,6 +34,11 @@
       <div class="row q-px-md q-py-md">
         {{ t('add-media-study-bible-explain') }}
       </div>
+      <DialogDownloadProgress
+        :label="t('loading')"
+        :loading="loadingBooks || loadingMedia"
+        progress-category="study-bible"
+      />
 
       <!-- Content -->
       <div class="q-px-md q-py-md col overflow-auto">
@@ -127,8 +132,11 @@
           <div class="col-12 q-mb-sm">
             <q-btn
               class="full-width"
+              :class="{
+                'study-bible-chapter-unavailable': !chapterHasMedia(0),
+              }"
               color="accent-200"
-              :disable="!chaptersWithMedia.has(0) || isProcessing"
+              :disable="!chapterHasMedia(0) || isProcessing"
               :label="t('introduction')"
               text-color="black"
               unelevated
@@ -143,8 +151,11 @@
           >
             <q-btn
               class="full-width aspect-ratio-1"
+              :class="{
+                'study-bible-chapter-unavailable': !chapterHasMedia(chapter),
+              }"
               color="accent-200"
-              :disable="!chaptersWithMedia.has(chapter) || isProcessing"
+              :disable="!chapterHasMedia(chapter) || isProcessing"
               :label="chapter"
               text-color="black"
               unelevated
@@ -250,6 +261,7 @@ import type { MediaSectionIdentifier, MultimediaItem } from 'src/types';
 
 import { whenever } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import DialogDownloadProgress from 'components/dialog/DialogDownloadProgress.vue';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getStudyBibleBooks, getStudyBibleMedia } from 'src/helpers/jw-media';
 import { computed, ref } from 'vue';
@@ -354,15 +366,6 @@ const groupedMediaItems = computed(() => {
   });
 });
 
-// Methods
-whenever(
-  () => props.modelValue,
-  async () => {
-    resetState();
-    await fetchBooks();
-  },
-);
-
 const resetState = () => {
   bibleBook.value = 0;
   bibleBookChapter.value = -1;
@@ -421,7 +424,7 @@ const fetchBibleBookMedia = async () => {
     await fetchChapterMediaAvailability(bibleBook.value);
     allBibleMedia.value = [];
   } else {
-    await fetchMedia();
+    await fetchStudyBibleMedia();
   }
 };
 
@@ -435,7 +438,10 @@ const selectChapter = (chapter: number) => {
   fetchBibleBookMedia();
 };
 
-const fetchMedia = async () => {
+const chapterHasMedia = (chapter: number) =>
+  chaptersWithMedia.value.has(chapter);
+
+const fetchStudyBibleMedia = async () => {
   try {
     loadingMedia.value = true;
     const result = await getStudyBibleMedia(
@@ -477,6 +483,15 @@ const addSelectedMediaItems = async () => {
   resetState();
   dialogValue.value = false;
 };
+
+// Methods
+whenever(
+  () => props.modelValue,
+  async () => {
+    resetState();
+    await fetchBooks();
+  },
+);
 </script>
 
 <style scoped>
@@ -486,5 +501,18 @@ const addSelectedMediaItems = async () => {
 
 body.body--dark .study-bible-item :deep(img) {
   background-color: #2a2a2a;
+}
+
+.study-bible-chapter-unavailable {
+  background-color: #e0e0e0 !important;
+  /* border: 1px solid #c2c2c2; */
+  color: #757575 !important;
+  opacity: 1 !important;
+}
+
+body.body--dark .study-bible-chapter-unavailable {
+  background-color: #343434 !important;
+  /* border-color: #4a4a4a; */
+  color: #9e9e9e !important;
 }
 </style>

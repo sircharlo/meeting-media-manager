@@ -5,6 +5,8 @@
     :class="{
       'items-center': true,
       'justify-center': true,
+      'media-filter-filename-match': filenameOnlyMatchesMediaFilter,
+      'media-filter-match-target': matchesMediaFilter,
       'q-px-sm': child,
       'sortable-selected': props.selected,
     }"
@@ -431,7 +433,8 @@
               "
               @dblclick="handleTitleEdit(true)"
             >
-              {{ displayMediaTitle }}
+              <!-- eslint-disable-next-line vue/no-v-html -->
+              <span v-html="highlightedDisplayMediaTitle"></span>
               <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
                 {{ displayMediaTitle }}
               </q-tooltip>
@@ -1113,11 +1116,14 @@ import { FOOTNOTE_TARGET_PARAGRAPH } from 'src/constants/jw';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getThumbnailUrl } from 'src/helpers/fs';
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
+import { triggerMediaWindowAutoHide } from 'src/helpers/mediaWindowAutoHide';
+import { createTemporaryNotification } from 'src/helpers/notifications';
 import {
   startSharingMediaInZoom,
   stopSharingMediaInZoom,
   triggerZoomScreenShare,
 } from 'src/helpers/zoom';
+import { isExpectedNetworkPathAccessError } from 'src/shared/filesystem-errors';
 import { log, throttleWithTrailing, uuid } from 'src/shared/vanilla';
 import { isFileUrl } from 'src/utils/fs';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
@@ -1228,6 +1234,7 @@ const imageStartTime = ref<null | number>(null);
 const props = defineProps<{
   child?: boolean;
   media: MediaItem;
+  mediaFilterTerms?: string[];
   selected?: boolean;
   selectedMediaItems?: string[];
 }>();
@@ -1251,18 +1258,16 @@ const moreButton = useTemplateRef<QBtn>('moreButton');
 const contextMenu = ref(false);
 const menuTarget = ref<boolean | string | undefined>(true);
 
-watch(contextMenu, (val) => {
-  if (!val) menuTarget.value = true;
-});
-
 const isEditingTitle = ref(false);
 const titleInput = ref<HTMLInputElement>();
 const mediaTitle = ref(props.media.title);
 
-const { fileUrlToPath, fs, path } = globalThis.electronApi;
-const { basename } = path;
+const { basename, fileUrlToPath, fs } = globalThis.electronApi;
 
-const { pathExists, pathExistsSync, statSync } = fs;
+const { pathExists, stat } = fs;
+const PATH_ACCESS_WARNING_THROTTLE_MS = 30000;
+
+let lastPathAccessWarningAt = 0;
 
 const displayMediaTitle = computed(() => {
   // When editing, use the local mediaTitle to avoid reactivity delays
@@ -1274,6 +1279,74 @@ const displayMediaTitle = computed(() => {
     (props.media.fileUrl && basename(props.media.fileUrl)) ||
     props.media.extractCaption ||
     ''
+  );
+});
+
+const hasMediaFilterTerms = computed(
+  () => (props.mediaFilterTerms?.length ?? 0) > 0,
+);
+
+const displayMediaFilename = computed(() => {
+  const filename = (props.media as MediaItem & { filename?: string }).filename;
+  if (filename) return filename;
+  if (!props.media.fileUrl) return '';
+  return basename(props.media.fileUrl);
+});
+
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+}
+
+function textMatchesMediaFilter(value: string): boolean {
+  const terms = props.mediaFilterTerms ?? [];
+  if (!terms.length) return false;
+
+  const searchableText = value.toLocaleLowerCase();
+  return terms.every((term) => searchableText.includes(term));
+}
+
+const titleMatchesMediaFilter = computed(() =>
+  textMatchesMediaFilter(displayMediaTitle.value),
+);
+
+const filenameMatchesMediaFilter = computed(() =>
+  textMatchesMediaFilter(displayMediaFilename.value),
+);
+
+const matchesMediaFilter = computed(
+  () =>
+    hasMediaFilterTerms.value &&
+    (titleMatchesMediaFilter.value || filenameMatchesMediaFilter.value),
+);
+
+const filenameOnlyMatchesMediaFilter = computed(
+  () => filenameMatchesMediaFilter.value && !titleMatchesMediaFilter.value,
+);
+
+const highlightedDisplayMediaTitle = computed(() => {
+  const title = displayMediaTitle.value;
+  const terms = props.mediaFilterTerms ?? [];
+  if (!terms.length) return escapeHtml(title);
+
+  const uniqueTerms = [...new Set(terms)]
+    .filter(Boolean)
+    .sort((a, b) => b.length - a.length);
+  if (!uniqueTerms.length) return escapeHtml(title);
+
+  const termPattern = uniqueTerms.map(escapeRegExp).join('|');
+  const matcher = new RegExp(`(${termPattern})`, 'gi');
+  return escapeHtml(title).replace(
+    matcher,
+    '<span class="media-filter__highlight">$1</span>',
   );
 });
 
@@ -1374,31 +1447,60 @@ const getBasename = (fileUrl: string) => {
   return basename(fileUrl);
 };
 
-const fileIsLocal = () => {
-  const filePath = fileUrlToPath(props.media.fileUrl);
-  const fileExists = pathExistsSync(filePath);
-  const remoteSizeKnown = props.media.filesize !== undefined;
-  const localSize = fileExists ? statSync(filePath).size : 0;
+const notifyPathAccessWarning = () => {
+  const now = Date.now();
+  if (now - lastPathAccessWarningAt < PATH_ACCESS_WARNING_THROTTLE_MS) return;
 
-  if (!fileExists) return false;
-  if (!remoteSizeKnown) return true;
-  if (localSize !== props.media.filesize) return false;
-  return true;
+  lastPathAccessWarningAt = now;
+  createTemporaryNotification({
+    caption: t('path-probe-network-warning-caption'),
+    group: 'pathProbeNetworkWarning',
+    message: t('path-probe-network-warning-message'),
+    timeout: 15000,
+    type: 'negative',
+  });
 };
 
-const localFile = ref(fileIsLocal());
+const fileIsLocal = async () => {
+  const filePath = fileUrlToPath(props.media.fileUrl);
+  try {
+    const fileExists = await pathExists(filePath);
+    const remoteSizeKnown = props.media.filesize !== undefined;
+    const localSize = fileExists ? (await stat(filePath)).size : 0;
 
-const { pause } = useTimeoutPoll(() => {
-  localFile.value = fileIsLocal();
-}, 1000);
+    if (!fileExists) return false;
+    if (!remoteSizeKnown) return true;
+    if (localSize !== props.media.filesize) return false;
+    return true;
+  } catch (error) {
+    if (isExpectedNetworkPathAccessError(error, filePath)) {
+      notifyPathAccessWarning();
+    } else {
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            args: { filePath },
+            name: 'MediaItem.fileIsLocal',
+          },
+        },
+      });
+    }
+    return false;
+  }
+};
 
-whenever(
-  () => localFile.value,
-  () => {
-    pause();
-  },
-  { immediate: true },
-);
+const localFile = ref(false);
+let localFileCheckId = 0;
+
+const updateLocalFile = async () => {
+  const checkId = ++localFileCheckId;
+  const isLocal = await fileIsLocal();
+  if (checkId === localFileCheckId) {
+    localFile.value = isLocal;
+  }
+};
+
+const { pause } = useTimeoutPoll(updateLocalFile, 1000);
 
 const markersPanelOpen = ref(false);
 const startSelectedMarker = ref<null | VideoMarker>(null);
@@ -1414,7 +1516,8 @@ const setMediaPlaying = async (
   marker?: VideoMarker,
 ) => {
   if (!mediaPlaying.value.url) {
-    // Start Zoom screen sharing when media starts playing and no media was playing before
+    // Start one-shot workflows when media starts playing and no media was playing before
+    triggerMediaWindowAutoHide(true);
     if (
       currentSettings.value?.zoomMeetingManagerEnable &&
       currentSettings.value?.zoomMeetingManagerAutomateMediaSharing
@@ -1442,7 +1545,7 @@ const setMediaPlaying = async (
     }
   }
   skipCustomDurationUpdateOnce.value = false;
-  localFile.value = fileIsLocal();
+  await updateLocalFile();
 
   mediaPlaying.value = {
     action:
@@ -1452,6 +1555,7 @@ const setMediaPlaying = async (
         : 'pause',
     currentPosition: 0,
     pan: calculatedPan.value,
+    playbackRate: playbackRate.value,
     seekTo: 0,
     subtitlesUrl: media.subtitlesUrl ?? '',
     uniqueId: media.uniqueId,
@@ -1537,6 +1641,24 @@ const getMarkerDuration = (marker: VideoMarker) => {
   }
 };
 
+const { post: postRepeat } = useBroadcastChannel<string, boolean>({
+  name: 'repeat',
+});
+
+// Listen for requests to get current media window variables
+const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
+  string,
+  string
+>({
+  name: 'get-current-media-window-variables',
+});
+
+const thumbnailFromMetadata = ref('');
+
+const imageLoadingError = () => {
+  findThumbnailUrl();
+};
+
 const onMarkerClick = (marker: VideoMarker) => {
   if (!startSelectedMarker.value) {
     startSelectedMarker.value = marker;
@@ -1598,42 +1720,6 @@ useEventListener(
   },
   { passive: true },
 );
-
-const { post: postRepeat } = useBroadcastChannel<string, boolean>({
-  name: 'repeat',
-});
-
-watchImmediate(
-  () => [repeat.value, mediaPlaying.value.uniqueId],
-  ([newMediaRepeat, newMediaPlayingUniqueId]) => {
-    if (newMediaPlayingUniqueId !== props.media.uniqueId) return;
-    postRepeat(!!newMediaRepeat);
-  },
-);
-
-// Listen for requests to get current media window variables
-const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
-  string,
-  string
->({
-  name: 'get-current-media-window-variables',
-});
-
-watchImmediate(
-  () => getCurrentMediaWindowVariables.value,
-  () => {
-    // Push current repeat state when requested (only if this media is currently playing)
-    if (mediaPlaying.value.uniqueId === props.media.uniqueId) {
-      postRepeat(!!repeat.value);
-    }
-  },
-);
-
-const thumbnailFromMetadata = ref('');
-
-const imageLoadingError = () => {
-  findThumbnailUrl();
-};
 
 async function findThumbnailUrl() {
   let fileRetryCount = 0;
@@ -1710,15 +1796,19 @@ const { post: postPlaybackRate } = useBroadcastChannel<number, number>({
   name: 'playback-rate',
 });
 
+const updatePlaybackRate = (newPlaybackRate: number) => {
+  playbackRate.value = newPlaybackRate;
+  mediaPlaying.value.playbackRate = newPlaybackRate;
+  postPlaybackRate(newPlaybackRate);
+};
+
 const changePlaybackRate = (delta: number, reset = false) => {
   if (reset) {
-    playbackRate.value = 1;
-    postPlaybackRate(playbackRate.value);
+    updatePlaybackRate(1);
     return;
   }
   const newRate = Math.round((playbackRate.value + delta) * 10) / 10;
-  playbackRate.value = Math.min(15, Math.max(0.5, newRate));
-  postPlaybackRate(playbackRate.value);
+  updatePlaybackRate(Math.min(15, Math.max(0.5, newRate)));
 };
 
 const seekTo = (newSeekTo: null | number) => {
@@ -1743,6 +1833,7 @@ function stopMedia(forOtherMediaItem = false) {
     action: '',
     currentPosition: 0,
     pan: { x: 0, y: 0 },
+    playbackRate: 1,
     seekTo: 0,
     subtitlesUrl: '',
     uniqueId: '',
@@ -1750,12 +1841,12 @@ function stopMedia(forOtherMediaItem = false) {
     zoom: 1,
   };
   mediaToStop.value = '';
-  localFile.value = fileIsLocal();
-  playbackRate.value = 1;
-  postPlaybackRate(1);
+  void updateLocalFile();
+  updatePlaybackRate(1);
 
   if (!forOtherMediaItem) {
-    // Stop Zoom screen sharing when media is stopped (unless it's a media switch instead of a stop)
+    // Stop one-shot workflows when media is stopped (unless it's a media switch instead of a stop)
+    triggerMediaWindowAutoHide(false);
     if (
       currentSettings.value?.zoomMeetingManagerEnable &&
       currentSettings.value?.zoomMeetingManagerAutomateMediaSharing
@@ -1776,13 +1867,6 @@ const isCurrentlyPlaying = computed(() => {
       mediaPlaying.value.url === props.media.streamUrl) &&
     mediaPlaying.value.uniqueId === props.media.uniqueId
   );
-});
-
-watch(isCurrentlyPlaying, (playing) => {
-  if (!playing && playbackRate.value !== 1) {
-    playbackRate.value = 1;
-    postPlaybackRate(1);
-  }
 });
 
 const mediaPan = ref<{ x: number; y: number }>({
@@ -1923,14 +2007,6 @@ const updateZoomPan = throttleWithTrailing(
   300,
 );
 
-watch(
-  () => [mediaZoom.value, mediaPan.value.x, mediaPan.value.y],
-  (newValues) => {
-    if (!isCurrentlyPlaying.value) return;
-    updateZoomPan(newValues as [number, number, number]);
-  },
-);
-
 const mediaImage = useTemplateRef<QImg>('mediaImage');
 const randomId = ref('mediaImage-' + uuid());
 
@@ -1963,6 +2039,7 @@ const confirmDeleteSelectedMedia = () => {
 };
 
 onMounted(async () => {
+  void updateLocalFile();
   initializeImageDuration();
   if (props.media.duration && !props.media.thumbnailUrl)
     await findThumbnailUrl();
@@ -2091,6 +2168,25 @@ const { post: postLastEndTimestamp } = useBroadcastChannel<number, number>({
   name: 'last-end-timestamp',
 });
 
+const imageElapsed = ref(0);
+
+const mediaElapsed = computed({
+  get: () => mediaPlaying.value.currentPosition || imageElapsed.value || 0,
+  set: (val) => seekTo(val),
+});
+
+watch(
+  () => [mediaZoom.value, mediaPan.value.x, mediaPan.value.y],
+  (newValues) => {
+    if (!isCurrentlyPlaying.value) return;
+    updateZoomPan(newValues as [number, number, number]);
+  },
+);
+
+watch(contextMenu, (val) => {
+  if (!val) menuTarget.value = true;
+});
+
 // Watch for image playing in repeated sections to update progress
 watch(
   () => [isCurrentlyPlaying.value, isInRepeatedSection.value],
@@ -2132,8 +2228,6 @@ watch(
   { immediate: true },
 );
 
-const imageElapsed = ref(0);
-
 // Update elapsed time for images
 watch(
   () => [isCurrentlyPlaying.value, imageStartTime.value],
@@ -2151,8 +2245,67 @@ watch(
   { immediate: true },
 );
 
-const mediaElapsed = computed({
-  get: () => mediaPlaying.value.currentPosition || imageElapsed.value || 0,
-  set: (val) => seekTo(val),
+watchImmediate(
+  () => [repeat.value, mediaPlaying.value.uniqueId],
+  ([newMediaRepeat, newMediaPlayingUniqueId]) => {
+    if (newMediaPlayingUniqueId !== props.media.uniqueId) return;
+    postRepeat(!!newMediaRepeat);
+  },
+);
+
+watchImmediate(
+  () => getCurrentMediaWindowVariables.value,
+  () => {
+    // Push current repeat state when requested (only if this media is currently playing)
+    if (mediaPlaying.value.uniqueId === props.media.uniqueId) {
+      postRepeat(!!repeat.value);
+    }
+  },
+);
+
+watch(isCurrentlyPlaying, (playing) => {
+  if (!playing && playbackRate.value !== 1) {
+    updatePlaybackRate(1);
+  }
 });
+
+whenever(
+  () => localFile.value,
+  () => {
+    pause();
+  },
+  { immediate: true },
+);
 </script>
+
+<style lang="scss" scoped>
+.media-filter-filename-match {
+  background: rgba(255, 235, 112, 0.2);
+}
+
+.media-filter-current-match {
+  animation: media-filter-bounce 360ms ease;
+}
+
+:deep(.media-filter__highlight) {
+  background: #ffeb70;
+  border-radius: 3px;
+  color: inherit;
+  display: inline-block;
+  padding: 0 0.08em;
+}
+
+@keyframes media-filter-bounce {
+  0% {
+    transform: scale(1);
+  }
+
+  45% {
+    transform: scale(1.025);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+</style>

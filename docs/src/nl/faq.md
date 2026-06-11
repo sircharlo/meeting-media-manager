@@ -73,7 +73,7 @@ Ja! Met M³ kun je:
 - Automatisch media downloaden voor aankomende vergaderingen
 - Eigen media importeren voor elke gewenste datum
 
-### :file_folder: Wat is de automatische media-export? :file_folder: Wat is de automatische media-export?
+### :open_file_folder: Hoe importeer ik mijn eigen mediabestanden? {#import-media}
 
 Je kunt op verschillende manieren eigen media importeren:
 
@@ -81,6 +81,8 @@ Je kunt op verschillende manieren eigen media importeren:
 - **Slepen en neerzetten**: Sleep bestanden rechtstreeks in M³
 - **Mapbewaking**: Stel een bewaakte map in voor automatische import
 - **JWPUB-bestanden en afspeellijsten**: Importeer publicaties en afspeellijsten vanuit JW Library
+- **Public Talk Media**: Importeer S-34 of S-34mp JWPUB bestanden voor publieke talk media
+- **Bijbel en Study Bijbel Gereedschappen**: Voeg audioBijbel opnames, Studie Bijbel media toe of ondertekentaal Bijbel media
 
 ### :speaker: Kan ik audio-opnames van de Bijbel importeren? {#audio-bible}
 
@@ -124,6 +126,12 @@ Functies voor achtergrondmuziek zijn onder andere:
 - Onafhankelijke volumeregeling
 - Configureerbare buffer-tijd voor het stoppen
 
+### :stopwatch: Bevat M3 een meetingtimer? {#faq-meeting-timer}
+
+Yes. Wanneer ingeschakeld, kan M3 een apart timer venster voor de timing van de deelnemer tonen. Het kan optellen of omlaag, de huidige tijd laten zien, een aftellen van de vergaderingen, tonen en optioneel geef je overuren aan of de vergadering voor of achter op schema ligt.
+
+De timer is een bèta-functie en zou alleen moeten worden ingeschakeld als deze lokaal wordt goedgekeurd.
+
 ### :video_camera: Hoe stel ik de Zoom-integratie in? {#zoom-setup}
 
 Om te integreren met Zoom:
@@ -161,6 +169,13 @@ Deze functie stelt het delen van afbeeldingen naar OBS uit totdat je ze handmati
 - Meer controle hebben over de timing
 - Het vermijden van voortijdige scène-wisselingen
 
+### :record_button: Kan M3 bijeenkomsten opnemen? {#faq-opnames
+
+M3 bevat geen ingebouwde recorder, maar het kan helpen om opname op twee manieren te controleren:
+
+- Als u OBS Studio gebruikt, schakel dan OBS opnamebesturing in en start of stop OBS opname van de OBS pop-up
+- Als je een andere opname app gebruikt, configureer sneltoetsen zodat M3 start en stop commando's van de vergadering opnames popup kan sturen
+
 ## Advanced Features {#faq-advanced-features}
 
 ### :cloud: Hoe werkt mapbewaking? {#faq-folder-monitoring}
@@ -170,7 +185,7 @@ Mapbewaking stelt je in staat om:
 1. Een map te selecteren om te controleren op nieuwe bestanden
 2. Automatisch nieuwe mediabestanden te importeren die worden gesynchroniseerd met cloudopslag zoals Dropbox of OneDrive
 
-### :open_file_folder: Hoe importeer ik mijn eigen mediabestanden? {#import-media}
+### :file_folder: Wat is de automatische media-export? {#faq-media-export}
 
 De automatische media-export doet het volgende:
 
@@ -187,6 +202,8 @@ Ja! M³ ondersteunt meerdere profielen voor:
 - Speciale evenementen
 - Verschillende groepen
 - Aparte instellingen en media voor elk profiel
+
+Profielen kunnen ook worden geëxporteerd naar een JSON-bestand en worden geïmporteerd op een andere computer of in een ander profiel. Importeren vervangt de instellingen van het huidige profiel.
 
 ## Troubleshooting {#faq-troubleshooting}
 

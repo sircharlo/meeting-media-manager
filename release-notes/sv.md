@@ -4,6 +4,12 @@
 
 För den fullständiga listan över ändringar mellan versioner, se vår CHANGELOG.md-fil på GitHub.
 
+## v26.4.8
+
+### ✨ Nya funktioner
+
+- ✨ JW Stream: Lades till i listan över webbplatser som kan speglas.
+
 ## v26.4.0
 
 ### ✨ Nya funktioner

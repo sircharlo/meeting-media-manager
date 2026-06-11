@@ -1,13 +1,24 @@
-import { validAnnouncements } from 'app/test/vitest/mocks/github';
+import {
+  announcements,
+  releases,
+  validAnnouncements,
+} from 'app/test/vitest/mocks/github';
 import { jwLangs, jwYeartext } from 'app/test/vitest/mocks/jw';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 installPinia();
 
+vi.mock('src/helpers/error-catcher', () => ({
+  errorCatcher: vi.fn(),
+}));
+
+import { errorCatcher } from 'src/helpers/error-catcher';
+
 import {
   clearFetchCache,
   fetchAnnouncements,
+  fetchJson,
   fetchJwLanguages,
   fetchLatestVersion,
   fetchMemorials,
@@ -17,6 +28,15 @@ import {
 import * as dateUtils from '../date';
 
 describe('fetchJwLanguages', () => {
+  beforeEach(() => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify(jwLangs), { status: 200 }),
+    );
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
   it('should fetch the jw languages', async () => {
     const languages = await fetchJwLanguages('jw.org');
     expect(languages?.length).toBe(jwLangs.languages.length);
@@ -24,6 +44,16 @@ describe('fetchJwLanguages', () => {
 });
 
 describe('fetchYeartext', () => {
+  beforeEach(() => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify(jwYeartext), { status: 200 }),
+    );
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('should fetch the yeartext', async () => {
     const yeartext = await fetchYeartext('E', 'jw.org');
     expect(yeartext.wtlocale).toBe('E');
@@ -32,13 +62,34 @@ describe('fetchYeartext', () => {
 });
 
 describe('fetchAnnouncements', () => {
+  beforeEach(() => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify(announcements), { status: 200 }),
+    );
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('should fetch the announcements', async () => {
-    const announcements = await fetchAnnouncements();
-    expect(announcements.length).toBe(validAnnouncements.length);
+    const result = await fetchAnnouncements();
+    expect(result.length).toBe(validAnnouncements.length);
+    expect(result).toEqual(expect.arrayContaining(validAnnouncements));
   });
 });
 
 describe('fetchLatestVersion', () => {
+  beforeEach(() => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify(releases), { status: 200 }),
+    );
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('should fetch the latest version', async () => {
     const version = await fetchLatestVersion();
     expect(version).toBe('1.2.3');
@@ -54,6 +105,10 @@ describe('fetchRaw caching', () => {
   });
 
   it('should fetch from network when cache is false', async () => {
+    vi.spyOn(globalThis, 'fetch').mockImplementation(() =>
+      Promise.resolve(new Response(JSON.stringify(jwLangs), { status: 200 })),
+    );
+
     const fetchSpy = vi.spyOn(globalThis, 'fetch');
 
     const res1 = await fetchRaw(handledUrl, undefined, false);
@@ -65,7 +120,11 @@ describe('fetchRaw caching', () => {
   });
 
   it('should cache GET requests when cache is true', async () => {
-    const fetchSpy = vi.spyOn(globalThis, 'fetch');
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockImplementation(() =>
+        Promise.resolve(new Response(JSON.stringify(jwLangs), { status: 200 })),
+      );
 
     const res1 = await fetchRaw(handledUrl, { method: 'GET' }, true);
     const res2 = await fetchRaw(handledUrl, { method: 'GET' }, true);
@@ -84,6 +143,20 @@ describe('fetchRaw caching', () => {
     const fetchSpy = vi
       .spyOn(globalThis, 'fetch')
       .mockResolvedValue(new Response(null, { status: 200 }));
+
+    await fetchRaw(handledUrl, { method: 'HEAD' }, true);
+    await fetchRaw(handledUrl, { method: 'HEAD' }, true);
+
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should cache HEAD requests with large content lengths', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(null, {
+        headers: { 'content-length': `${100 * 1024 * 1024}` },
+        status: 200,
+      }),
+    );
 
     await fetchRaw(handledUrl, { method: 'HEAD' }, true);
     await fetchRaw(handledUrl, { method: 'HEAD' }, true);
@@ -113,13 +186,71 @@ describe('fetchRaw caching', () => {
     expect(fetchSpy).toHaveBeenCalledTimes(2);
   });
 
+  it('should not cache responses that are too large', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(() =>
+      Promise.resolve(
+        new Response('large response', {
+          headers: { 'content-length': `${1024 * 1024 + 1}` },
+          status: 200,
+        }),
+      ),
+    );
+
+    await fetchRaw(handledUrl, undefined, true);
+    await fetchRaw(handledUrl, undefined, true);
+
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+  });
+
   it('should use headers in cache key', async () => {
+    vi.spyOn(globalThis, 'fetch').mockImplementation(() =>
+      Promise.resolve(new Response(JSON.stringify(jwLangs), { status: 200 })),
+    );
+
     const fetchSpy = vi.spyOn(globalThis, 'fetch');
 
     await fetchRaw(handledUrl, { headers: { 'X-Test': '1' } }, true);
     await fetchRaw(handledUrl, { headers: { 'X-Test': '2' } }, true);
 
     expect(fetchSpy).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('fetchJson network errors', () => {
+  const handledUrl = 'https://ipinfo.io/';
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    clearFetchCache();
+  });
+
+  it('should not report wrapped DNS fetch failures', async () => {
+    const cause = Object.assign(new Error('getaddrinfo ENOTFOUND ipinfo.io'), {
+      code: 'ENOTFOUND',
+    });
+    const error = new TypeError('fetch failed', { cause });
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(error);
+
+    const result = await fetchJson(handledUrl);
+
+    expect(result).toBeNull();
+    expect(errorCatcher).not.toHaveBeenCalled();
+  });
+
+  it('should not report direct DNS errors', async () => {
+    const error = Object.assign(new Error('getaddrinfo ENOTFOUND ipinfo.io'), {
+      code: 'ENOTFOUND',
+    });
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(error);
+
+    const result = await fetchJson(handledUrl);
+
+    expect(result).toBeNull();
+    expect(errorCatcher).not.toHaveBeenCalled();
   });
 });
 
@@ -131,10 +262,12 @@ describe('fetchMemorials', () => {
     clearFetchCache();
   });
 
-  it('filters out past, malformed, and non-numeric memorial entries', async () => {
-    vi.spyOn(dateUtils, 'isInPast').mockImplementation(
-      (value) => value === '2024/03/24',
-    );
+  it('filters out memorials that are more than one month old, malformed, and non-numeric entries', async () => {
+    vi.spyOn(dateUtils, 'isInPast').mockImplementation((value) => {
+      const dateValue = new Date(value);
+      if (Number.isNaN(dateValue.getTime())) return false;
+      return dateValue.toISOString().startsWith('2024-04-24');
+    });
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(
         JSON.stringify({

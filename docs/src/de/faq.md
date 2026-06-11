@@ -73,7 +73,7 @@ Ja! M³ ermöglicht Ihnen:
 - Medien für anstehende Zusammenkünfte automatisch herunterzuladen
 - Benutzerdefinierte Medien für jedes Datum zu importieren
 
-### {#faq-media-export} :file_folder: Was ist der automatische Medienexport? {#faq-media-export} :file_folder: Was ist der automatische Medienexport?
+### {#faq-media-export} :file_folder: Was ist der automatische Medienexport? {#import-media}
 
 Sie können benutzerdefinierte Medien auf verschiedene Arten importieren:
 
@@ -81,6 +81,8 @@ Sie können benutzerdefinierte Medien auf verschiedene Arten importieren:
 - **Drag & Drop**: Ziehen Sie Dateien direkt in M³
 - **Ordnerüberwachung**: Richten Sie einen überwachten Ordner für automatische Importe ein
 - **JWPUB-Dateien und Wiedergabelisten**: Importieren Sie Publikationen und Wiedergabelisten
+- **Public Talk Media**: Importiere S-34 oder S-34mp JWPUB Dateien für öffentliche Talk-Medien
+- **Bibel- und Lernbiblen-Tools**: Füge Audio-Bibelaufnahmen, Studiobibel Medien oder signatursprachige Bibelmedien hinzu
 
 ### :speaker: Kann ich Audio-Bibelaufnahmen importieren? {#audio-bible}
 
@@ -124,6 +126,12 @@ Die Hintergrundmusikfunktionen umfassen:
 - Unabhängige Lautstärkeregelung
 - Konfigurierbare Stopp-Pufferzeit
 
+### :stopwatch: Enthält M3 einen Meetingtimer? {#faq-Meeting-Timer}
+
+Yes. Wenn aktiviert, kann M3 ein separates Timer-Fenster für Teilnehmer-Timer anzeigen. Es kann nach oben oder unten zählen, die aktuelle Zeit anzeigen, einen Countdown vor dem Meeting anzeigen und wahlweise Überstunden angeben, oder ob das Treffen vor oder hinter dem Zeitplan liegt.
+
+Der Timer ist eine Beta-Funktion und sollte nur aktiviert werden, wenn er lokal genehmigt wird.
+
 ### :video_camera: Wie richte ich die Zoom-Integration ein? {#zoom-setup}
 
 So integrieren Sie Zoom:
@@ -161,6 +169,13 @@ Diese Funktion verzögert das Teilen von Bildern mit OBS, bis Sie sie manuell au
 - Mehr Kontrolle über das Timing
 - Vermeidung vorzeitiger Szenenwechsel
 
+### :record_button: Kann M3 Meetings aufnehmen? {#faq-Aufnahmen}
+
+M3 enthält keinen eingebauten Rekorder aber es kann dabei helfen, die Aufnahme auf zwei Arten zu steuern:
+
+- Wenn Sie OBS Studio verwenden, aktivieren Sie die OBS Aufnahme-Steuerelemente und starten oder stoppen Sie die OBS Aufnahme im OBS Popup
+- Wenn Sie eine andere Aufzeichnungs-App verwenden, konfigurieren Sie Tastaturkürzele, damit M3 den Start senden und Befehle aus dem Popup für Besprechungen stoppen kann
+
 ## Erweiterte Funktionen {#faq-advanced-features}
 
 ### :cloud: Wie funktioniert die Ordnerüberwachung? {#faq-folder-monitoring}
@@ -170,7 +185,7 @@ Die Ordnerüberwachung ermöglicht Ihnen:
 1. Einen Ordner auszuwählen, der auf neue Dateien überwacht werden soll
 2. Neue Mediendateien automatisch zu importieren, die mit Cloud-Speichern wie Dropbox oder OneDrive synchronisiert werden
 
-### :open_file_folder: Wie importiere ich meine eigenen Mediendateien? {#import-media}
+### :open_file_folder: Wie importiere ich meine eigenen Mediendateien? {#faq-media-export}
 
 Der automatische Medienexport führt automatisch folgendes aus:
 
@@ -187,6 +202,8 @@ Ja! M³ unterstützt mehrere Profile für:
 - Sonderveranstaltungen
 - Verschiedene Gruppen
 - Separate Einstellungen und Medien für jede
+
+Profile können auch in eine JSON-Datei exportiert und auf einem anderen Computer oder in ein anderes Profil importiert werden. Das Importieren ersetzt die Einstellungen des aktuellen Profils.
 
 ## Fehlerbehebung {#faq-troubleshooting}
 

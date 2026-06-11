@@ -1,4 +1,9 @@
-import type { FileDialogFilter, UnzipOptions, UnzipResult } from 'src/types';
+import type {
+  ExtractNestedZipEntryOptions,
+  FileDialogFilter,
+  UnzipOptions,
+  UnzipResult,
+} from 'src/types';
 
 import { watch as filesystemWatch, type FSWatcher } from 'chokidar';
 import { app, dialog } from 'electron';
@@ -19,31 +24,124 @@ import {
   JWPUB_EXTENSIONS,
   PDF_EXTENSIONS,
 } from 'src/constants/media';
+import {
+  getFilesystemErrorCode,
+  isExpectedNetworkPathAccessError,
+  isPossiblyNetworkFolderPath,
+  shouldIgnoreWatchFolderError,
+} from 'src/shared/filesystem-errors';
+import { NETWORK_ERROR_CODES } from 'src/shared/network-errors';
 import { log, uuid } from 'src/shared/vanilla';
-import upath from 'upath';
-import yauzl from 'yauzl';
+import { basename, dirname, join, resolve, toUnix } from 'upath';
+import {
+  type Entry,
+  fromBufferPromise,
+  openPromise,
+  type Options,
+  type ZipFile,
+  type ZipFileOptions,
+} from 'yauzl';
 
-const { basename, dirname, join, resolve, toUnix } = upath;
+declare module 'yauzl' {
+  interface ZipFile {
+    eachEntry: () => AsyncIterable<Entry>;
+    openReadStreamPromise: (
+      entry: Entry,
+      options?: ZipFileOptions,
+    ) => Promise<NodeJS.ReadableStream>;
+  }
+
+  function fromBufferPromise(
+    buffer: Buffer,
+    options?: Options,
+  ): Promise<ZipFile>;
+  function openPromise(path: string, options?: Options): Promise<ZipFile>;
+}
 
 const ongoingDecompressions = new Map<string, Promise<UnzipResult[]>>();
 
 const MAX_FILES = 10000;
 const MAX_SIZE = 2000000000; // 2 GB
 const THRESHOLD_RATIO = 100;
+const MAX_IN_MEMORY_ZIP_ENTRY_SIZE = 150000000; // 150 MB
+const MAX_IN_MEMORY_ZIP_TOTAL_SIZE = 250000000; // 250 MB
 const PATH_PROBE_SETTLE_DELAY_MS = 50;
 const PATH_PROBE_RETRY_DELAY_MS = 50;
 const PATH_PROBE_RETRY_COUNT = 4;
+const ZIP_ENTRY_DIAGNOSTIC_LIMIT = 50;
 const SHARED_PATH_BACKOFF_MS = 10 * 60 * 1000;
 const SHARED_PATH_HEALTH_FILENAME = 'shared-path-health.json';
+const PATH_PROBE_NETWORK_WARNING_THROTTLE_MS = 30000;
+const ZIP_OPEN_RETRY_COUNT = 3;
+const ZIP_OPEN_RETRY_DELAY_MS = 1000;
 const SHARED_PATH_HEALTH_FOLDERS = [
   'Additional Media',
   'Fonts',
   'Publications',
 ];
 
+const getCloudStorageProvider = (filePath: string) => {
+  const normalizedPath = toUnix(filePath).toLowerCase();
+
+  if (normalizedPath.includes('/library/mobile documents/')) return 'iCloud';
+  if (normalizedPath.includes('/icloud drive/')) return 'iCloud';
+  if (normalizedPath.includes('/dropbox/')) return 'Dropbox';
+  if (normalizedPath.includes('/onedrive')) return 'OneDrive';
+  if (normalizedPath.includes('/google drive/')) return 'Google Drive';
+
+  return undefined;
+};
+
+const isRetryableZipError = (error: unknown) => {
+  const errorCode = getErrorCode(error);
+  if (errorCode && NETWORK_ERROR_CODES.has(errorCode)) return true;
+  if (errorCode === 'ENOENT') return true;
+
+  const message = error instanceof Error ? error.message : String(error);
+  if (isIncompleteZipReadError(message)) return true;
+
+  return /connection timed out|resource busy|temporarily unavailable/i.test(
+    message,
+  );
+};
+
+const isIncompleteZipReadError = (message: string) =>
+  /End of central directory record signature not found|not a zip file|file is truncated|unexpected EOF|file is corrupted/i.test(
+    message,
+  );
+
+const isZipGuardError = (error: unknown) => {
+  const message = error instanceof Error ? error.message : String(error);
+  return /^Reached max\. (compression ratio|entry size|number of files|size) \(failsafe\)$/.test(
+    message,
+  );
+};
+
+const capturedZipErrors = new WeakSet<object>();
+
+const captureZipErrorOnce = (
+  error: unknown,
+  fn: { args?: Record<string, unknown>; name: string },
+) => {
+  if (isZipGuardError(error)) return;
+  if (typeof error === 'object' && error !== null) {
+    if (capturedZipErrors.has(error)) return;
+    capturedZipErrors.add(error);
+  }
+  captureElectronError(error, {
+    contexts: {
+      fn,
+    },
+  });
+};
+
+const getZipRetryDelay = (attempt: number) => ZIP_OPEN_RETRY_DELAY_MS * attempt;
+
 let defaultAppDataPath: null | string = null;
 let sharedPathBackoffUntil: null | number = null;
 let sharedPathBackoffLoaded = false;
+let lastPathProbeNetworkWarningAt = 0;
+const pathProbeNotificationPaths = new Set<string>();
 
 type PathMode = 'shared' | 'user';
 
@@ -55,14 +153,54 @@ interface UnzipContext {
   output: string;
 }
 interface ZipfileState {
-  checkIfComplete: () => Promise<void>;
   extractedFiles: UnzipResult[];
   fileCount: number;
-  pendingOperations: Promise<void>[];
-  reject: (reason?: unknown) => void;
   totalUncompressedSize: number;
-  zipfile: yauzl.ZipFile;
 }
+
+interface ZipGuardState {
+  fileCount: number;
+  totalUncompressedSize: number;
+}
+
+const getZipEntryGuardError = (
+  entry: Entry,
+  state: ZipGuardState,
+  limits: {
+    maxEntrySize?: number;
+    maxFiles?: number;
+    maxTotalSize?: number;
+  } = {},
+) => {
+  const maxFiles = limits.maxFiles ?? MAX_FILES;
+  const maxTotalSize = limits.maxTotalSize ?? MAX_SIZE;
+
+  state.fileCount++;
+  if (state.fileCount > maxFiles) {
+    return new Error('Reached max. number of files (failsafe)');
+  }
+
+  if (
+    limits.maxEntrySize !== undefined &&
+    entry.uncompressedSize > limits.maxEntrySize
+  ) {
+    return new Error('Reached max. entry size (failsafe)');
+  }
+
+  state.totalUncompressedSize += entry.uncompressedSize;
+  if (state.totalUncompressedSize > maxTotalSize) {
+    return new Error('Reached max. size (failsafe)');
+  }
+
+  if (entry.compressedSize > 0) {
+    const compressionRatio = entry.uncompressedSize / entry.compressedSize;
+    if (compressionRatio > THRESHOLD_RATIO) {
+      return new Error('Reached max. compression ratio (failsafe)');
+    }
+  }
+
+  return undefined;
+};
 
 const getSharedPathHealthFile = () =>
   join(app.getPath('userData'), SHARED_PATH_HEALTH_FILENAME);
@@ -154,7 +292,7 @@ export async function getAppDataPath(): Promise<string> {
       return defaultAppDataPath;
     }
     log(
-      '📁 Cached app data path became unusable. Falling back.',
+      'Cached app data path became unusable. Falling back.',
       'electronFilesystem',
       'warn',
       defaultAppDataPath,
@@ -178,7 +316,7 @@ export async function getAppDataPath(): Promise<string> {
         await probeSharedSubfolders(usableSharedPath);
         await persistSharedPathBackoff(null);
         log(
-          '📁 Using shared data path:',
+          'Using shared data path:',
           'electronFilesystem',
           'log',
           usableSharedPath,
@@ -208,7 +346,7 @@ export async function getAppDataPath(): Promise<string> {
 
     defaultAppDataPath = userDataPath;
     log(
-      '📁 Shared data path not available, fallback to user data path:',
+      'Shared data path not available, fallback to user data path:',
       'electronFilesystem',
       'log',
       defaultAppDataPath,
@@ -217,7 +355,7 @@ export async function getAppDataPath(): Promise<string> {
   }
 
   log(
-    '📁 User data path is not usable. Returning user data path as last resort:',
+    'User data path is not usable. Returning user data path as last resort:',
     'electronFilesystem',
     'warn',
     userDataPath,
@@ -229,9 +367,23 @@ export async function getAppDataPath(): Promise<string> {
 
 const isUsablePathPromises = new Map<string, Promise<boolean>>();
 
+const getProbePathContext = (basePath: string) => {
+  const resolvedBase = resolve(basePath);
+  const testDir = join(resolvedBase, '.cache-test-' + uuid());
+  const testFile = join(testDir, 'test.txt');
+  return { resolvedBase, testDir, testFile };
+};
+
+const isInvalidWindowsResolvedPath = (resolvedBase: string) => {
+  if (process.platform !== 'win32') return false;
+
+  const unixResolvedBase = toUnix(resolvedBase);
+  return unixResolvedBase === '/?' || unixResolvedBase === '//?';
+};
+
 const WINDOWS_RETRYABLE_PROBE_CODES = new Set(['EBUSY', 'EPERM']);
 
-const getErrorCode = (error: unknown) => (error as { code?: string })?.code;
+const getErrorCode = getFilesystemErrorCode;
 
 const isRetryableProbeCleanupError = (error: unknown) =>
   process.platform === 'win32' &&
@@ -309,18 +461,46 @@ const cleanupProbe = async (
   );
 };
 
+export const setPathProbeNotificationPaths = (paths: string[] = []) => {
+  pathProbeNotificationPaths.clear();
+  for (const path of paths) {
+    if (path) pathProbeNotificationPaths.add(path);
+  }
+};
+
+const hasPossibleNetworkPathInNotificationSettings = () => {
+  return [...pathProbeNotificationPaths].some((path) =>
+    isPossiblyNetworkFolderPath(path),
+  );
+};
+
+const notifyPathProbeNetworkWarning = () => {
+  const now = Date.now();
+  if (
+    now - lastPathProbeNetworkWarningAt <
+    PATH_PROBE_NETWORK_WARNING_THROTTLE_MS
+  ) {
+    return;
+  }
+  lastPathProbeNetworkWarningAt = now;
+  sendToWindow(mainWindowInfo.mainWindow, 'pathProbeNetworkWarning');
+};
+
 export function isUsablePath(basePath?: string): Promise<boolean> {
   if (!basePath) return Promise.resolve(false);
 
   if (!isUsablePathPromises.has(basePath)) {
     const promise = (async () => {
+      const { resolvedBase, testDir, testFile } = getProbePathContext(basePath);
+      const likelyNetworkPath = isPossiblyNetworkFolderPath(basePath);
+
       try {
-        const resolvedBase = resolve(basePath);
-        const testDir = join(resolvedBase, '.cache-test-' + uuid());
+        if (isInvalidWindowsResolvedPath(resolvedBase)) {
+          throw new Error('Invalid Windows path resolved for filesystem probe');
+        }
 
         await mkdir(testDir, { recursive: true });
 
-        const testFile = join(testDir, 'test.txt');
         await writeFile(testFile, 'ok');
         await delay(PATH_PROBE_SETTLE_DELAY_MS);
 
@@ -329,12 +509,34 @@ export function isUsablePath(basePath?: string): Promise<boolean> {
         return true;
       } catch (e) {
         const PERMISSION_ERRORS = new Set(['EACCES', 'EPERM']);
-        const code = (e as { code?: string }).code;
-        if (!PERMISSION_ERRORS.has(code ?? '')) {
+        const code = getErrorCode(e);
+        const transientNetworkError = isExpectedNetworkPathAccessError(
+          e,
+          basePath,
+        );
+        if (hasPossibleNetworkPathInNotificationSettings()) {
+          notifyPathProbeNetworkWarning();
+        }
+        addElectronBreadcrumb({
+          category: 'filesystem',
+          data: {
+            basePath,
+            code,
+            configuredPathCount: pathProbeNotificationPaths.size,
+            hasConfiguredNetworkPath:
+              hasPossibleNetworkPathInNotificationSettings(),
+            likelyNetworkPath,
+            resolvedBase,
+            testDir,
+          },
+          level: transientNetworkError ? 'warning' : 'error',
+          message: '[isUsablePath] Probe failed',
+        });
+        if (!PERMISSION_ERRORS.has(code ?? '') && !transientNetworkError) {
           captureElectronError(e, {
             contexts: {
               fn: {
-                args: { basePath },
+                args: { basePath, likelyNetworkPath, resolvedBase, testDir },
                 name: 'isUsablePath',
               },
             },
@@ -388,6 +590,10 @@ export async function openFileDialog(
     filters.push({ extensions: IMG_EXTENSIONS, name: 'Images' });
   }
 
+  if (filter?.includes('json')) {
+    filters.push({ extensions: ['json'], name: 'JSON' });
+  }
+
   return dialog.showOpenDialog(mainWindowInfo.mainWindow, {
     filters,
     properties: single ? ['openFile'] : ['openFile', 'multiSelections'],
@@ -401,18 +607,38 @@ export async function openFolderDialog() {
   });
 }
 
+export async function saveFileDialog(
+  defaultPath: string,
+  filter?: FileDialogFilter,
+) {
+  if (!mainWindowInfo.mainWindow) return;
+
+  const filters: Electron.FileFilter[] = [];
+
+  if (filter?.includes('json')) {
+    filters.push({ extensions: ['json'], name: 'JSON' });
+  }
+
+  if (!filters.length) {
+    filters.push({ extensions: ['*'], name: 'All files' });
+  }
+
+  return dialog.showSaveDialog(mainWindowInfo.mainWindow, {
+    defaultPath,
+    filters,
+  });
+}
+
 /**
  * Creates a directory with retry logic
  */
 const createDirectory = async (
   fullPath: string,
   context: UnzipContext,
-  state: ZipfileState,
 ): Promise<void> => {
   const attemptCreateDir = async (attempt = 1): Promise<void> => {
     try {
       await ensureDir(fullPath);
-      state.zipfile.readEntry();
     } catch (e) {
       if (attempt < 3) {
         log(
@@ -438,8 +664,7 @@ const createDirectory = async (
           },
         },
       });
-      state.zipfile.close();
-      state.reject(e);
+      throw e;
     }
   };
 
@@ -450,7 +675,7 @@ const createDirectory = async (
  * Processes a file entry with retry logic
  */
 const processFileEntry = async (
-  entry: yauzl.Entry,
+  entry: Entry,
   readStream: NodeJS.ReadableStream,
   fullPath: string,
   context: UnzipContext,
@@ -479,7 +704,6 @@ const processFileEntry = async (
 
       await pipeline(readStream, writeStream);
       state.extractedFiles.push({ path: entry.fileName });
-      state.zipfile.readEntry();
     } catch (e) {
       if (
         attempt < 3 &&
@@ -510,8 +734,7 @@ const processFileEntry = async (
           },
         },
       });
-      state.zipfile.close();
-      state.reject(new Error(String(e)));
+      throw e;
     }
   };
 
@@ -522,9 +745,10 @@ const processFileEntry = async (
  * Handles a zip entry
  */
 const handleZipEntry = async (
-  entry: yauzl.Entry,
+  entry: Entry,
   context: UnzipContext,
   state: ZipfileState,
+  zipfile: ZipFile,
 ): Promise<void> => {
   const fullPath = join(context.output, entry.fileName);
 
@@ -533,78 +757,39 @@ const handleZipEntry = async (
     context.opts?.includes?.length &&
     !context.opts.includes.includes(entry.fileName)
   ) {
-    state.zipfile.readEntry();
     return;
   }
 
-  // Failsafe checks
-  state.fileCount++;
-  if (state.fileCount > MAX_FILES) {
-    state.zipfile.close();
-    return state.reject(new Error('Reached max. number of files (failsafe)'));
-  }
-
-  state.totalUncompressedSize += entry.uncompressedSize;
-  if (state.totalUncompressedSize > MAX_SIZE) {
-    state.zipfile.close();
-    return state.reject(new Error('Reached max. size (failsafe)'));
-  }
-
-  if (entry.compressedSize > 0) {
-    const compressionRatio = entry.uncompressedSize / entry.compressedSize;
-    if (compressionRatio > THRESHOLD_RATIO) {
-      state.zipfile.close();
-      return state.reject(
-        new Error('Reached max. compression ratio (failsafe)'),
-      );
-    }
+  const guardError = getZipEntryGuardError(entry, state);
+  if (guardError) {
+    throw guardError;
   }
 
   if (entry.fileName.endsWith('/')) {
     // Directory
-    await createDirectory(fullPath, context, state);
+    await createDirectory(fullPath, context);
   } else {
     // File
-    state.zipfile.openReadStream(entry, async (err, readStream) => {
-      if (err) {
-        captureElectronError(err, {
-          contexts: {
-            fn: {
-              args: {
-                entry: entry.fileName,
-                input: context.input,
-                output: context.output,
-              },
-              name: 'unzipFile openReadStream',
+    let readStream: NodeJS.ReadableStream;
+    try {
+      readStream = await zipfile.openReadStreamPromise(entry);
+    } catch (error) {
+      captureElectronError(error, {
+        contexts: {
+          fn: {
+            args: {
+              entry: entry.fileName,
+              input: context.input,
+              output: context.output,
             },
+            name: 'unzipFile openReadStream',
           },
-        });
-        state.zipfile.close();
-        return state.reject(new Error(String(err)));
-      }
-      if (!readStream) {
-        state.zipfile.close();
-        return state.reject(new Error('Read stream not found'));
-      }
-
-      const operationPromise = processFileEntry(
-        entry,
-        readStream,
-        fullPath,
-        context,
-        state,
-      );
-
-      state.pendingOperations.push(operationPromise);
-
-      operationPromise.finally(() => {
-        const index = state.pendingOperations.indexOf(operationPromise);
-        if (index > -1) {
-          state.pendingOperations.splice(index, 1);
-        }
-        state.checkIfComplete();
+        },
       });
-    });
+      throw error;
+    }
+
+    await processFileEntry(entry, readStream, fullPath, context, state);
   }
 };
 
@@ -621,74 +806,376 @@ const decompress = async (
 
   addElectronBreadcrumb({
     category: 'unzip',
-    data: { fileSize, input, output },
+    data: { fileSize, includes: opts?.includes, input, output },
     message: 'Starting unzip',
   });
 
   const context: UnzipContext = { input, opts, output };
+  const extractedFiles: UnzipResult[] = [];
+  const state: ZipfileState = {
+    extractedFiles,
+    fileCount: 0,
+    totalUncompressedSize: 0,
+  };
+  const zipfile = await openZipFileForUnzip(input, output, fileSize, opts);
 
-  return new Promise<UnzipResult[]>((resolve, reject) => {
-    const extractedFiles: UnzipResult[] = [];
-    const pendingOperations: Promise<void>[] = [];
-    let zipfileEnded = false;
-
-    const checkIfComplete = async () => {
-      if (zipfileEnded && pendingOperations.length === 0) {
-        addElectronBreadcrumb({
-          category: 'unzip',
-          data: { extractedFilesCount: extractedFiles.length },
-          message: 'Unzip complete',
-        });
-
-        setTimeout(() => {
-          resolve(extractedFiles);
-        }, 50);
-      }
-    };
-
-    yauzl.open(input, { lazyEntries: true }, (err, zipfile) => {
-      if (err) {
-        addElectronBreadcrumb({
-          category: 'unzip',
-          data: { fileSize, input, output },
-          message: 'Error opening zipfile',
-        });
-        return reject(new Error(String(err)));
-      }
-      if (!zipfile) return reject(new Error('Zipfile not found'));
-
-      const state: ZipfileState = {
-        checkIfComplete,
-        extractedFiles,
-        fileCount: 0,
-        pendingOperations,
-        reject,
-        totalUncompressedSize: 0,
-        zipfile,
-      };
-
-      zipfile.readEntry();
-
-      zipfile.on('entry', async (entry: yauzl.Entry) => {
-        await handleZipEntry(entry, context, state);
-      });
-
-      zipfile.on('end', () => {
-        zipfileEnded = true;
-        checkIfComplete();
-      });
-
-      zipfile.on('error', (err) => {
-        captureElectronError(err, {
-          contexts: {
-            fn: { args: { input, output }, name: 'unzipFile zipfile error' },
-          },
-        });
-        reject(new Error(String(err)));
-      });
+  try {
+    for await (const entry of zipfile.eachEntry()) {
+      await handleZipEntry(entry, context, state, zipfile);
+    }
+  } catch (error) {
+    zipfile.close();
+    captureElectronError(error, {
+      contexts: {
+        fn: { args: { input, output }, name: 'unzipFile zipfile error' },
+      },
     });
+    throw error;
+  }
+
+  addElectronBreadcrumb({
+    category: 'unzip',
+    data: {
+      extractedFilesCount: extractedFiles.length,
+      extractedFilesSample: extractedFiles
+        .map((file) => file.path)
+        .slice(0, ZIP_ENTRY_DIAGNOSTIC_LIMIT),
+      includes: opts?.includes,
+    },
+    message: 'Unzip complete',
   });
+
+  return extractedFiles;
 };
+
+const openZipFileForUnzip = async (
+  input: string,
+  output: string,
+  fileSize: number,
+  opts?: UnzipOptions,
+): Promise<ZipFile> => {
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt <= ZIP_OPEN_RETRY_COUNT; attempt++) {
+    try {
+      return await openPromise(input);
+    } catch (error) {
+      lastError = error;
+      const errorCode = getErrorCode(error);
+      const shouldRetry = shouldRetryZipRead(error, attempt);
+
+      addElectronBreadcrumb({
+        category: 'unzip',
+        data: {
+          attempt: attempt + 1,
+          errorCode,
+          fileSize,
+          includes: opts?.includes,
+          input,
+          maxAttempts: ZIP_OPEN_RETRY_COUNT + 1,
+          output,
+          retrying: shouldRetry,
+        },
+        level: errorCode === 'ENOENT' ? 'info' : 'error',
+        message: 'Error opening zipfile',
+      });
+
+      if (!shouldRetry) throw error;
+
+      await delay(getZipRetryDelay(attempt + 1));
+    }
+  }
+
+  throw lastError;
+};
+
+const getZipDiagnostics = (zipPath: string, fileSize: number) => {
+  const cloudProvider = getCloudStorageProvider(zipPath);
+
+  return {
+    cloudProvider,
+    fileSize,
+    isCloudStoragePath: !!cloudProvider,
+    isPossiblyNetworkPath: isPossiblyNetworkFolderPath(dirname(zipPath)),
+    zipPath,
+  };
+};
+
+const shouldRetryZipRead = (error: unknown, attempt: number) =>
+  attempt < ZIP_OPEN_RETRY_COUNT && isRetryableZipError(error);
+
+const getZipFileStats = async (zipPath: string) => {
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt <= ZIP_OPEN_RETRY_COUNT; attempt++) {
+    try {
+      return await stat(zipPath);
+    } catch (error) {
+      lastError = error;
+      const errorCode = getErrorCode(error);
+      const shouldRetry = shouldRetryZipRead(error, attempt);
+
+      addElectronBreadcrumb({
+        category: 'zip',
+        data: {
+          ...getZipDiagnostics(zipPath, 0),
+          attempt: attempt + 1,
+          errorCode,
+          maxAttempts: ZIP_OPEN_RETRY_COUNT + 1,
+          retrying: shouldRetry,
+        },
+        level: errorCode === 'ENOENT' ? 'info' : 'error',
+        message: 'Zip file unavailable before listing entries',
+      });
+
+      if (!shouldRetry) {
+        if (errorCode !== 'ENOENT') {
+          captureElectronError(error, {
+            contexts: {
+              cloud_resource: {
+                ...getZipDiagnostics(zipPath, 0),
+                retryAttempts: attempt,
+              },
+              fn: {
+                args: { zipPath },
+                name: 'getZipEntries stat',
+              },
+            },
+          });
+        }
+
+        throw error;
+      }
+
+      await delay(getZipRetryDelay(attempt + 1));
+    }
+  }
+
+  throw lastError;
+};
+
+const openZipFileForEntries = async (
+  zipPath: string,
+  fileSize: number,
+): Promise<ZipFile> => {
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt <= ZIP_OPEN_RETRY_COUNT; attempt++) {
+    try {
+      return await openPromise(zipPath);
+    } catch (error) {
+      lastError = error;
+      const errorCode = getErrorCode(error);
+      const shouldRetry = shouldRetryZipRead(error, attempt);
+
+      addElectronBreadcrumb({
+        category: 'zip',
+        data: {
+          ...getZipDiagnostics(zipPath, fileSize),
+          attempt: attempt + 1,
+          errorCode,
+          maxAttempts: ZIP_OPEN_RETRY_COUNT + 1,
+          retrying: shouldRetry,
+        },
+        level: errorCode === 'ENOENT' ? 'info' : 'error',
+        message: 'Error opening zip entries',
+      });
+
+      if (!shouldRetry) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (errorCode !== 'ENOENT' && !isIncompleteZipReadError(message)) {
+          captureElectronError(error, {
+            contexts: {
+              cloud_resource: {
+                ...getZipDiagnostics(zipPath, fileSize),
+                retryAttempts: attempt,
+              },
+              fn: {
+                args: { fileSize, zipPath },
+                name: 'getZipEntries openPromise',
+              },
+            },
+          });
+        }
+
+        throw error;
+      }
+
+      await delay(getZipRetryDelay(attempt + 1));
+    }
+  }
+
+  throw lastError;
+};
+
+const openZipBuffer = async (buffer: Buffer): Promise<ZipFile> =>
+  await fromBufferPromise(buffer);
+
+const readStreamIntoBuffer = async (
+  readStream: NodeJS.ReadableStream,
+  maxEntrySize: number,
+) =>
+  await new Promise<Buffer>((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    let totalSize = 0;
+
+    readStream.on('data', (chunk: Buffer | string) => {
+      const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+      totalSize += buffer.length;
+      if (totalSize > maxEntrySize) {
+        (
+          readStream as NodeJS.ReadableStream & {
+            destroy: (error: Error) => void;
+          }
+        ).destroy(new Error('Reached max. entry size (failsafe)'));
+        return;
+      }
+      chunks.push(buffer);
+    });
+    readStream.on('end', () => {
+      resolve(Buffer.concat(chunks, totalSize));
+    });
+    readStream.on('error', reject);
+  });
+
+const readZipEntriesIntoMemory = async (
+  zipPath: string,
+  includes: string[],
+  options: Pick<ExtractNestedZipEntryOptions, 'maxTotalSize'> &
+    Required<Pick<ExtractNestedZipEntryOptions, 'maxEntrySize'>>,
+) => {
+  const { size: fileSize } = await stat(zipPath);
+  const zipfile = await openZipFileForEntries(zipPath, fileSize);
+  const entries: { data: Buffer; path: string }[] = [];
+  const guardState: ZipGuardState = {
+    fileCount: 0,
+    totalUncompressedSize: 0,
+  };
+
+  try {
+    for await (const entry of zipfile.eachEntry()) {
+      try {
+        const guardError = getZipEntryGuardError(entry, guardState, {
+          maxEntrySize: options.maxEntrySize,
+          maxTotalSize: options.maxTotalSize ?? MAX_IN_MEMORY_ZIP_TOTAL_SIZE,
+        });
+        if (guardError) throw guardError;
+
+        if (
+          entry.fileName.endsWith('/') ||
+          !includes.includes(entry.fileName)
+        ) {
+          continue;
+        }
+
+        const readStream = await zipfile.openReadStreamPromise(entry);
+        entries.push({
+          data: await readStreamIntoBuffer(readStream, options.maxEntrySize),
+          path: entry.fileName,
+        });
+        if (entries.length === includes.length) break;
+      } catch (error) {
+        captureZipErrorOnce(error, {
+          args: { entry: entry.fileName, includes, zipPath },
+          name: 'readZipEntriesIntoMemory entry',
+        });
+        throw error;
+      }
+    }
+  } catch (error) {
+    captureZipErrorOnce(error, {
+      args: { includes, zipPath },
+      name: 'readZipEntriesIntoMemory',
+    });
+    throw error;
+  } finally {
+    zipfile.close();
+  }
+
+  return entries;
+};
+
+export async function extractNestedZipEntry(
+  input: string,
+  outerEntryName: string,
+  output: string,
+  opts: ExtractNestedZipEntryOptions,
+): Promise<UnzipResult> {
+  const maxEntrySize = opts.maxEntrySize ?? MAX_IN_MEMORY_ZIP_ENTRY_SIZE;
+  const maxTotalSize = opts.maxTotalSize ?? MAX_IN_MEMORY_ZIP_TOTAL_SIZE;
+  const [outerEntry] = await readZipEntriesIntoMemory(input, [outerEntryName], {
+    maxEntrySize,
+    maxTotalSize,
+  });
+
+  if (!outerEntry) {
+    throw new Error(`Zip entry not found: ${outerEntryName}`);
+  }
+
+  const innerZipfile = await openZipBuffer(outerEntry.data);
+  const guardState: ZipGuardState = {
+    fileCount: 0,
+    totalUncompressedSize: 0,
+  };
+  const matchesRequestedEntry = (entry: Entry) => {
+    if (opts.innerEntryName) return entry.fileName === opts.innerEntryName;
+    if (opts.innerEntryNameSuffix) {
+      return entry.fileName.endsWith(opts.innerEntryNameSuffix);
+    }
+    return false;
+  };
+
+  try {
+    for await (const entry of innerZipfile.eachEntry()) {
+      try {
+        const guardError = getZipEntryGuardError(entry, guardState, {
+          maxEntrySize,
+          maxTotalSize,
+        });
+        if (guardError) throw guardError;
+
+        if (entry.fileName.endsWith('/') || !matchesRequestedEntry(entry)) {
+          continue;
+        }
+
+        const readStream = await innerZipfile.openReadStreamPromise(entry);
+        const fullPath = join(output, entry.fileName);
+        await ensureDir(dirname(fullPath));
+        await pipeline(readStream, createWriteStream(fullPath));
+        return { path: fullPath };
+      } catch (error) {
+        captureZipErrorOnce(error, {
+          args: {
+            entry: entry.fileName,
+            innerEntryName: opts.innerEntryName,
+            innerEntryNameSuffix: opts.innerEntryNameSuffix,
+            input,
+            outerEntryName,
+            output,
+          },
+          name: 'extractNestedZipEntry entry',
+        });
+        throw error;
+      }
+    }
+
+    throw new Error('Nested zip entry not found');
+  } catch (error) {
+    captureZipErrorOnce(error, {
+      args: {
+        innerEntryName: opts.innerEntryName,
+        innerEntryNameSuffix: opts.innerEntryNameSuffix,
+        input,
+        outerEntryName,
+        output,
+      },
+      name: 'extractNestedZipEntry',
+    });
+    throw error;
+  } finally {
+    innerZipfile.close();
+  }
+}
 
 /**
  * Lists entries in a zip file with their uncompressed sizes
@@ -696,72 +1183,67 @@ const decompress = async (
 export async function getZipEntries(
   zipPath: string,
 ): Promise<Record<string, number>> {
-  return new Promise((resolve, reject) => {
-    const entries: Record<string, number> = {};
+  const stats = await getZipFileStats(zipPath);
+  const fileSize = stats.size;
 
-    yauzl.open(zipPath, { lazyEntries: true }, (err, zipfile) => {
-      if (err) {
-        captureElectronError(err, {
-          contexts: {
-            fn: {
-              args: { zipPath },
-              name: 'getZipEntries yauzl.open',
-            },
-          },
-        });
-        return reject(err);
-      }
-      if (!zipfile) return reject(new Error('Zipfile not found'));
-
-      let fileCount = 0;
-      let totalUncompressedSize = 0;
-
-      zipfile.readEntry();
-      zipfile.on('entry', (entry: yauzl.Entry) => {
-        fileCount++;
-        if (fileCount > MAX_FILES) {
-          zipfile.close();
-          return reject(new Error('Reached max. number of files (failsafe)'));
-        }
-
-        totalUncompressedSize += entry.uncompressedSize;
-        if (totalUncompressedSize > MAX_SIZE) {
-          zipfile.close();
-          return reject(new Error('Reached max. size (failsafe)'));
-        }
-
-        if (entry.compressedSize > 0) {
-          const compressionRatio =
-            entry.uncompressedSize / entry.compressedSize;
-          if (compressionRatio > THRESHOLD_RATIO) {
-            zipfile.close();
-            return reject(
-              new Error('Reached max. compression ratio (failsafe)'),
-            );
-          }
-        }
-
-        entries[entry.fileName] = entry.uncompressedSize;
-        zipfile.readEntry();
-      });
-
-      zipfile.on('end', () => {
-        resolve(entries);
-      });
-
-      zipfile.on('error', (err) => {
-        captureElectronError(err, {
-          contexts: {
-            fn: {
-              args: { zipPath },
-              name: 'getZipEntries zipfile error',
-            },
-          },
-        });
-        reject(err);
-      });
-    });
+  addElectronBreadcrumb({
+    category: 'zip',
+    data: getZipDiagnostics(zipPath, fileSize),
+    message: 'Reading zip entries',
   });
+
+  const entries: Record<string, number> = {};
+  const entryNamesSample: string[] = [];
+  const guardState: ZipGuardState = {
+    fileCount: 0,
+    totalUncompressedSize: 0,
+  };
+  const zipfile = await openZipFileForEntries(zipPath, fileSize);
+
+  try {
+    for await (const entry of zipfile.eachEntry()) {
+      const guardError = getZipEntryGuardError(entry, guardState);
+      if (guardError) throw guardError;
+
+      entries[entry.fileName] = entry.uncompressedSize;
+      if (entryNamesSample.length < ZIP_ENTRY_DIAGNOSTIC_LIMIT) {
+        entryNamesSample.push(entry.fileName);
+      }
+    }
+  } catch (error) {
+    addElectronBreadcrumb({
+      category: 'zip',
+      data: getZipDiagnostics(zipPath, fileSize),
+      level: 'error',
+      message: 'Zip entry stream error',
+    });
+    captureElectronError(error, {
+      contexts: {
+        cloud_resource: getZipDiagnostics(zipPath, fileSize),
+        fn: {
+          args: { fileSize, zipPath },
+          name: 'getZipEntries zipfile error',
+        },
+      },
+    });
+    throw error;
+  } finally {
+    zipfile.close();
+  }
+
+  addElectronBreadcrumb({
+    category: 'zip',
+    data: {
+      ...getZipDiagnostics(zipPath, fileSize),
+      contentsSize: entries.contents,
+      entryCount: guardState.fileCount,
+      entryNamesSample,
+      totalUncompressedSize: guardState.totalUncompressedSize,
+    },
+    message: 'Finished reading zip entries',
+  });
+
+  return entries;
 }
 
 /**
@@ -789,36 +1271,6 @@ export async function unzipFile(
 const watchers = new Set<FSWatcher>();
 const datePattern = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD
 const WATCH_POLL_INTERVAL_MS = 1000;
-
-const isPossiblyNetworkFolderPath = (folderPath: string) => {
-  const unixPath = toUnix(folderPath);
-  if (unixPath.startsWith('//')) return true;
-  // On Windows, a non-C: drive letter may indicate a mapped network drive
-  if (process.platform === 'win32' && /^[a-bd-zA-BD-Z]:/.test(unixPath))
-    return true;
-  return false;
-};
-
-const shouldIgnoreWatchFolderError = (
-  folderPath: string,
-  error: Error & { code?: string; syscall?: string },
-) => {
-  // Ignore harmless stat errors
-  if (
-    error.syscall === 'stat' &&
-    ['EINVAL', 'UNKNOWN'].includes(error.code ?? '')
-  ) {
-    return true;
-  }
-
-  // Ignore known flaky watch errors on network folders (WebDAV/UNC shares).
-  if (isPossiblyNetworkFolderPath(folderPath)) {
-    if (error.code === 'UNKNOWN' && error.syscall === 'watch') return true;
-    if (error.code === 'EISDIR' && error.syscall === 'watch') return true;
-  }
-
-  return false;
-};
 
 export async function unwatchFolders() {
   for (const watcher of watchers) {
@@ -867,7 +1319,7 @@ export async function watchFolder(folderPath: string) {
 
         try {
           const e = error as Error & { code?: string; syscall?: string };
-          
+
           sendToWindow(mainWindowInfo.mainWindow, 'watchFolderError', {
             folderPath,
             isPossiblyNetwork: pathIsPossiblyNetwork,

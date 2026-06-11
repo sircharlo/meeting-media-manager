@@ -4,19 +4,48 @@
 
 Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGELOG.md GitHubis.
 
+## v26.6.1
+
+### ✨ Uued funktsioonid
+
+- ✨ **Media Preview**: Added a live media preview overlay that can be toggled on or off from the settings or from the display popup.
+- ✨ **Search media**: Added a quick search box in the media list that allows you to quickly find media by title. To use it, simply use the standard keyboard shortcut for search (Ctrl+F or Cmd+F).
+- ✨ **Filter settings**: Added a filter box to the settings page that allows you to find settings by keyword or category. To use it, simply click on the Search button in the top right corner of the settings page, or use the standard keyboard shortcut for search (Ctrl+F or Cmd+F).
+- ✨ **Background Music Overlap Warning**: Added a warning notification when media is started while background music is playing. Users can choose to stop the background music from the notification.
+
+## v26.6.0
+
+### ✨ Uued funktsioonid
+
+- ✨ **Timer**: Added analog display modes and timing report status.
+- ✨ **Profiles**: Added profile settings import and export in Advanced settings and the Setup Wizard.
+- ✨ **Media Window**: Added support for automatically hiding the media window after playback when it was initially hidden. This is practical when a remote speaker wants to display images, for example.
+
+## v26.5.0
+
+### ✨ Uued funktsioonid
+
+- ✨ **PDF-failide import**: Dialoogiaknasse „Väljaande meedia” on lisatud uus PDF-failide importimise protsess, mis võimaldab soovi korral importida väljaande PDF-versiooni automaatselt eraldi piltidena.
+
+## v26.4.8
+
+### ✨ Uued funktsioonid
+
+- ✨ JW Stream: Lisasime JW Streami peegeldatavate veebisaitide nimekirja.
+
 ## v26.4.0
 
 ### ✨ Uued funktsioonid
 
-- ✨ **Meeting Timer**: A new meeting timer feature has been added. It is optional and can be enabled in the advanced settings, if desired. The timer can be used to allow the media operator to keep track of the time spent on meeting parts, or to display the time spent on the current meeting part on a dedicated screen visible only to the speaker.
+- ✨ **Koosoleku ajamõõtja**: Lisatud on uus koosoleku taimeri funktsioon. See on vabatahtlik ja soovi korral saab selle lülitada sisse täpsemates seadetes. Taimerit saab kasutada selleks, et meediaoperaator saaks jälgida koosoleku osade kestust, või selleks, et kuvada praeguse koosoleku osa kestus spetsiaalsel ekraanil, mida näeb ainult kõnepidaja.
 
 ## v26.3.0
 
 ### ✨ Uued funktsioonid
 
-- ✨ **Memorial Media**: Automatic Memorial media retrieval is now out of beta! The app will automatically download the Memorial Welcome Video and image to display during the Memorial, when available in the configured language.
-- ✨ **Playback Speed**: Added playback speed control with visual indicator, and manual reset. This feature is only visible if enabled in the advanced settings.
-- ✨ **Pinyin Songs**: Added a toggle for pinyin song substitution for meetings held in Chinese.
+- ✨ **Mälestusõhtu Media**: Mälestusõhtu meedia automaatne allalaadimine on nüüd beetaversioonist väljas! Rakendus laadib automaatselt alla mälestusõhtu tervitusvideo ja pildi, mida näidatakse mälestusõhtu ajal, kui need on saadaval valitud keeles.
+- ✨ **Taasesituskiirus**: Lisati taasesituskiiruse reguleerimine koos visuaalse indikaatoriga ja käsitsi taastamise funktsiooniga. See funktsioon on nähtav ainult juhul, kui see on täpsemates seadetes sisse lülitatud.
+- ✨ **Pinyin-laulud**: Lisati lüliti, millega saab hiina keeles peetavatel koosolekutel laule pinyin-lauludega asendada.
 
 ## v26.2.0
 
@@ -127,7 +156,7 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 
 ### ✨ Uued funktsioonid
 
-- No new features for this release!
+- Uusi funktsioone ei ole selles uuenduses!
 
 ## 25.6.0
 

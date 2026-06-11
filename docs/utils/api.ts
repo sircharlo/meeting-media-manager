@@ -1,7 +1,7 @@
-import type { Release } from './../../src/types';
+import type { Release } from './../../src/types/github.d.ts';
 
-import pkg from './../../package.json';
-import { GH_AUTHOR, GH_REPO } from './constants';
+import pkg from './../../package.json' with { type: 'json' };
+import { GH_AUTHOR, GH_REPO } from './constants.ts';
 
 const fallbackVersion = 'v' + pkg.version;
 

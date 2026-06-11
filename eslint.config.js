@@ -1,4 +1,4 @@
-import { includeIgnoreFile } from '@eslint/compat';
+import { includeIgnoreFile } from '@eslint/config-helpers';
 import js from '@eslint/js';
 import pluginQuasar from '@quasar/app-vite/eslint';
 import vitest from '@vitest/eslint-plugin';
@@ -10,17 +10,17 @@ import {
 import perfectionist from 'eslint-plugin-perfectionist';
 import pluginVue from 'eslint-plugin-vue';
 import globals from 'globals';
-import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'upath';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const gitignorePath = path.resolve(__dirname, '.gitignore');
+const __dirname = dirname(__filename);
+const gitignorePath = resolve(__dirname, '.gitignore');
 
 export default defineConfigWithVueTs([
   includeIgnoreFile(gitignorePath),
   {
-    ignores: ['docs/src/**/*', '!docs/src/en/**/*', 'LICENSE.md'],
+    ignores: ['docs/.vitepress/dist/**/*', 'LICENSE.md'],
   },
 
   ...pluginQuasar.configs.recommended(),
@@ -161,6 +161,25 @@ export default defineConfigWithVueTs([
   },
 
   {
+    files: ['src-electron/**/*.ts'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          message:
+            'Emojis are not allowed in log() calls in the Electron main or preload processes.',
+          selector: String.raw`CallExpression[callee.name="log"] > Literal[value=/\p{Extended_Pictographic}/u]`,
+        },
+        {
+          message:
+            'Emojis are not allowed in log() calls in the Electron main or preload processes.',
+          selector: String.raw`CallExpression[callee.name="log"] > TemplateLiteral > TemplateElement[value.raw=/\p{Extended_Pictographic}/u]`,
+        },
+      ],
+    },
+  },
+
+  {
     files: ['src-electron/main/**/*.ts'],
     rules: {
       'no-restricted-imports': [
@@ -193,6 +212,83 @@ export default defineConfigWithVueTs([
           ],
         },
       ],
+    },
+  },
+  {
+    plugins: {
+      local: {
+        rules: {
+          'no-watch-before-const': {
+            create(context) {
+              let watcherSeen = false;
+
+              return {
+                Program(node) {
+                  watcherSeen = false;
+
+                  for (const stmt of node.body) {
+                    // Detect watch / watchEffect / watchImmediate
+                    if (
+                      stmt.type === 'ExpressionStatement' &&
+                      stmt.expression.type === 'CallExpression'
+                    ) {
+                      const callee = stmt.expression.callee;
+
+                      if (
+                        callee.type === 'Identifier' &&
+                        [
+                          'until',
+                          'watch',
+                          'watchArray',
+                          'watchAtMost',
+                          'watchDebounced',
+                          'watchDeep',
+                          'watchEffect',
+                          'watchIgnorable',
+                          'watchImmediate',
+                          'watchOnce',
+                          'watchPausable',
+                          'watchThrottled',
+                          'watchTriggerable',
+                          'watchWithFilter',
+                          'whenever',
+                        ].includes(callee.name)
+                      ) {
+                        watcherSeen = true;
+                      }
+                    }
+
+                    // Warn if const comes after a watcher
+                    if (
+                      watcherSeen &&
+                      stmt.type === 'VariableDeclaration' &&
+                      stmt.kind === 'const'
+                    ) {
+                      context.report({
+                        message:
+                          'Place watchers/whenever after all const declarations.',
+                        node: stmt,
+                      });
+                    }
+                  }
+                },
+              };
+            },
+            meta: {
+              docs: {
+                description:
+                  'disallow watchers/whenever before const declarations',
+              },
+              schema: [],
+              type: 'problem',
+            },
+          },
+        },
+      },
+    },
+
+    rules: {
+      'local/no-watch-before-const': 'warn',
     },
   },
   skipFormattingConfig,

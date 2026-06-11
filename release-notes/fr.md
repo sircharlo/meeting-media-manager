@@ -4,6 +4,35 @@
 
 Pour la liste complète des changements entre les versions, consultez notre fichier CHANGELOG.md sur GitHub.
 
+## v26.6.1
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **Aperçu multimédia** : Ajout d'un aperçu multimédia en direct sous forme de superposition, que l'on peut activer ou désactiver depuis les paramètres ou via la fenêtre contextuelle d'affichage.
+- ✨ **Recherche de fichiers multimédias** : Ajout d'un champ de recherche rapide dans la liste des fichiers multimédias qui vous permet de trouver rapidement des médias par leur titre. Pour l'utiliser, utilisez simplement le raccourci clavier standard pour rechercher (Ctrl+F ou Cmd+F).
+- ✨ **Filtrage des paramètres** : Ajout d'une zone de recherche sur la page des paramètres qui vous permet de trouver des paramètres par mot-clé ou par catégorie. Pour l'utiliser, il suffit de cliquer sur le bouton de recherche en haut à droite de la page des paramètres, ou bien utilisez le raccourci clavier standard pour rechercher (Ctrl+F ou Cmd+F).
+- ✨ **Avertissement concernant le chevauchement de la musique de fond** : Ajout d'une notification d'avertissement lorsqu'un fichier multimédia est lancé alors que la musique de fond est en cours de lecture. Les utilisateurs peuvent choisir d'arrêter la musique de fond depuis la notification.
+
+## 6.0 v26.6
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **Minuterie** : ajout de modes d'affichage analogiques et d'un rapport de minuterie.
+- ✨ **Profils** : Ajout de la fonction d'importation et d'exportation des paramètres de profil dans les paramètres avancés et dans l'assistant de configuration.
+- ✨ **Fenêtre multimédia** : Ajout de la prise en charge du masquage automatique de la fenêtre multimédia après la lecture lorsqu'elle était initialement masquée. Cela s'avère pratique lorsqu'un orateur distant souhaite, par exemple, afficher des images.
+
+## v26.5.0
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **Importation de PDF** : Ajout d'un nouveau flux d'importation PDF dans la boîte de dialogue des médias de publication, permettant à la version PDF d'une publication d'être automatiquement importée en tant qu'images individuelles, lorsque désiré.
+
+## v26.4.8
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **JW Stream** : Ajout de JW Stream à la liste des sites web qui peuvent être reproduits dans la fenêtre des médias.
+
 ## v26.4.0
 
 ### ✨ Nouvelles fonctionnalités

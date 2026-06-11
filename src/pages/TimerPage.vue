@@ -4,15 +4,81 @@
     padding
     :style="containerStyles"
   >
-    <transition mode="out-in" name="scale">
+    <transition :name="displayTransitionName">
       <div
-        :key="currentMode"
+        :key="displayKey"
+        class="timer-display"
         :class="{
           blink: paused || (isOvertime && timerData?.timerOvertimeAnimation),
+          'timer-display--combined': isCombinedDisplay,
         }"
-        :style="textStyles"
       >
-        {{ displayTime }}
+        <div
+          v-if="showAnalogClock"
+          class="analog-clock"
+          :style="analogClockStyles"
+        >
+          <div
+            v-for="tick in clockTicks"
+            :key="tick"
+            class="analog-clock__tick"
+            :style="{ transform: `rotate(${tick * 30}deg)` }"
+          />
+          <div
+            class="analog-clock__hand analog-clock__hand--hour"
+            :style="{ transform: `rotate(${clockHands.hour}deg)` }"
+          />
+          <div
+            class="analog-clock__hand analog-clock__hand--minute"
+            :style="{ transform: `rotate(${clockHands.minute}deg)` }"
+          />
+          <div
+            class="analog-clock__hand analog-clock__hand--second"
+            :style="{ transform: `rotate(${clockHands.second}deg)` }"
+          />
+          <div class="analog-clock__center" />
+        </div>
+
+        <div
+          v-if="showAnalogCountdown"
+          class="analog-countdown"
+          :style="analogCountdownStyles"
+        >
+          <svg
+            aria-hidden="true"
+            class="analog-countdown__ring"
+            focusable="false"
+            viewBox="0 0 100 100"
+          >
+            <circle
+              class="analog-countdown__track"
+              cx="50"
+              cy="50"
+              fill="none"
+              r="44"
+            />
+            <circle
+              class="analog-countdown__progress"
+              cx="50"
+              cy="50"
+              fill="none"
+              pathLength="100"
+              r="44"
+            />
+            <circle class="analog-countdown__dot" cx="94" cy="50" r="6" />
+          </svg>
+          <div class="analog-countdown__inner">
+            {{ displayTime }}
+          </div>
+        </div>
+
+        <div
+          v-if="showDigitalDisplay"
+          class="digital-display"
+          :style="digitalTextStyles"
+        >
+          {{ digitalDisplayTime }}
+        </div>
       </div>
     </transition>
 
@@ -38,7 +104,11 @@ const { t } = useI18n();
 
 const displayTime = ref<string>('');
 const paused = ref<boolean>(false);
+const currentDate = ref(new Date());
 const currentTime = ref<string>('');
+const meetingCountdownRemainingSeconds = ref<null | number>(null);
+const meetingCountdownTargetSeconds = ref<null | number>(null);
+const clockTicks = Array.from({ length: 12 }, (_, index) => index);
 const aheadBehindText = computed(() => {
   const minutes = timerData.value?.aheadBehindMinutes;
   if (minutes === null || minutes === undefined) return '';
@@ -60,8 +130,62 @@ const { data: timerData } = useBroadcastChannel<TimerData, TimerData>({
   name: 'timer-display-data',
 });
 
-// Computed to determine current display mode
-const currentMode = computed(() => (timerData.value?.time ? 'timer' : 'clock'));
+const currentMode = computed(() => {
+  if (timerData.value?.running) return 'timer';
+  if (meetingCountdownRemainingSeconds.value !== null) return 'countdown';
+  return 'clock';
+});
+
+const currentDisplayFormat = computed(() => {
+  if (currentMode.value === 'clock') {
+    return timerData.value?.timerTimeOfDayDisplay ?? 'digital';
+  }
+
+  if (
+    timerData.value?.mode === 'countdown' ||
+    currentMode.value === 'countdown'
+  ) {
+    return timerData.value?.timerCountdownDisplay ?? 'digital';
+  }
+
+  return 'digital';
+});
+
+const displayKey = computed(
+  () => `${currentMode.value}-${currentDisplayFormat.value}`,
+);
+
+const displayTransitionName = computed(() =>
+  currentMode.value === 'clock'
+    ? 'q-transition--jump-right'
+    : 'q-transition--jump-left',
+);
+
+const isCombinedDisplay = computed(
+  () => currentDisplayFormat.value === 'analog-digital',
+);
+
+const showAnalogClock = computed(
+  () =>
+    currentMode.value === 'clock' &&
+    ['analog', 'analog-digital'].includes(currentDisplayFormat.value),
+);
+
+const showAnalogCountdown = computed(
+  () =>
+    currentMode.value !== 'clock' &&
+    ['analog', 'analog-digital'].includes(currentDisplayFormat.value),
+);
+
+const showDigitalDisplay = computed(
+  () =>
+    currentDisplayFormat.value === 'digital' ||
+    currentDisplayFormat.value === 'analog-digital',
+);
+
+const digitalDisplayTime = computed(() => {
+  return currentMode.value === 'clock' ? currentTime.value : displayTime.value;
+});
 
 // Check if timer is overtime
 const isOvertime = computed(() => {
@@ -85,15 +209,115 @@ const containerStyles = computed(() => {
     display: 'flex',
     height: '100vh',
     justifyContent: 'center',
+    transition: 'background-color 700ms ease, color 700ms ease',
     WebkitAppRegion: 'drag',
   };
 });
 
-const textStyles = computed(() => ({
-  fontSize: timerData.value?.timerTextSize || '10vw',
+const timerTextSize = computed(() => timerData.value?.timerTextSize || '10vw');
+
+const fittedDigitalFontSize = computed(() => {
+  const characterCount = Math.max(digitalDisplayTime.value.length, 1);
+  const characterWidthRatio = 0.62;
+  const maxFontSize = `calc(94vw / ${characterCount * characterWidthRatio})`;
+
+  return `min(${timerTextSize.value}, ${maxFontSize})`;
+});
+
+const digitalTextStyles = computed(() => ({
+  fontSize: isCombinedDisplay.value
+    ? `min(${fittedDigitalFontSize.value}, 14vh)`
+    : fittedDigitalFontSize.value,
   fontVariantNumeric: 'tabular-nums',
   fontWeight: 'bold',
+  lineHeight: 1,
+  whiteSpace: 'nowrap',
 }));
+
+const clockHands = computed(() => {
+  const date = currentDate.value;
+  const seconds = date.getSeconds();
+  const minutes = date.getMinutes() + seconds / 60;
+  const hours = (date.getHours() % 12) + minutes / 60;
+
+  return {
+    hour: hours * 30,
+    minute: minutes * 6,
+    second: seconds * 6,
+  };
+});
+
+const analogClockStyles = computed<CSSProperties>(() => ({
+  '--clock-color': timerData.value?.timerTextColor || '#ffffff',
+}));
+
+const countdownProgress = computed(() => {
+  if (isOvertime.value) return 1;
+
+  const totalSeconds =
+    timerData.value?.timerCountdownTargetSeconds ||
+    meetingCountdownTargetSeconds.value ||
+    0;
+  const remainingSeconds =
+    currentMode.value === 'timer'
+      ? Math.max(0, totalSeconds - (timerData.value?.timerElapsedSeconds ?? 0))
+      : (meetingCountdownRemainingSeconds.value ?? 0);
+
+  if (totalSeconds <= 0) return 0;
+
+  return Math.max(0, Math.min(1, remainingSeconds / totalSeconds));
+});
+
+const countdownRemainingSeconds = computed(() => {
+  const totalSeconds =
+    timerData.value?.timerCountdownTargetSeconds ||
+    meetingCountdownTargetSeconds.value ||
+    0;
+
+  if (currentMode.value === 'timer') {
+    return totalSeconds - (timerData.value?.timerElapsedSeconds ?? 0);
+  }
+
+  return meetingCountdownRemainingSeconds.value ?? totalSeconds;
+});
+
+const countdownRingColor = computed(() => {
+  if (isOvertime.value) {
+    return timerData.value?.timerOvertimeTextColor || '#ff0000';
+  }
+
+  if (!timerData.value?.timerCountdownWarningIndicator) {
+    return '#35c759';
+  }
+
+  const warningProgress = Math.max(
+    0,
+    Math.min(1, (60 - countdownRemainingSeconds.value) / 60),
+  );
+
+  const startColor = { b: 89, g: 199, r: 53 };
+  const endColor = { b: 10, g: 149, r: 255 };
+  const channel = (start: number, end: number) =>
+    Math.round(start + (end - start) * warningProgress);
+
+  return `rgb(${channel(startColor.r, endColor.r)}, ${channel(startColor.g, endColor.g)}, ${channel(startColor.b, endColor.b)})`;
+});
+
+const analogCountdownStyles = computed<CSSProperties>(() => {
+  const isFull = countdownProgress.value >= 1;
+  const progressPercent = countdownProgress.value * 100;
+  const textColor =
+    isOvertime.value && timerData.value?.timerOvertimeIndicator
+      ? timerData.value?.timerOvertimeTextColor || '#ff0000'
+      : timerData.value?.timerTextColor || '#ffffff';
+
+  return {
+    '--countdown-progress': isFull ? '100 0' : `${progressPercent} 100`,
+    '--countdown-progress-color': countdownRingColor.value,
+    '--countdown-progress-linecap': isFull ? 'butt' : 'round',
+    '--countdown-text-color': textColor,
+  };
+});
 
 const overlayStyles = computed<CSSProperties>(() => ({
   backgroundColor: 'rgba(0, 0, 0, 0.7)',
@@ -108,11 +332,11 @@ const overlayStyles = computed<CSSProperties>(() => ({
   top: '20px',
 }));
 
-// Format time (HH:mm:ss, 24h)
+// Format time (HH:mm:ss, 24h by default)
 const formatTime = (date: Date) =>
   date.toLocaleTimeString('en-US', {
     hour: '2-digit',
-    hour12: false,
+    hour12: timerData.value?.timerHourFormat === '12h',
     minute: '2-digit',
     second: '2-digit',
   });
@@ -120,14 +344,29 @@ const formatTime = (date: Date) =>
 // Update current time every second
 const updateTime = () => {
   const now = new Date();
+  currentDate.value = now;
   currentTime.value = formatTime(now);
 
   const countdown = getMeetingCountdown(now);
-  displayTime.value = countdown ?? currentTime.value;
+  if (countdown) {
+    displayTime.value = countdown.display;
+    meetingCountdownRemainingSeconds.value = countdown.remainingSeconds;
+    meetingCountdownTargetSeconds.value = countdown.targetSeconds;
+  } else {
+    displayTime.value = currentTime.value;
+    meetingCountdownRemainingSeconds.value = null;
+    meetingCountdownTargetSeconds.value = null;
+  }
 };
 
 // Return countdown string or null if not active
-const getMeetingCountdown = (now: Date): null | string => {
+const getMeetingCountdown = (
+  now: Date,
+): null | {
+  display: string;
+  remainingSeconds: number;
+  targetSeconds: number;
+} => {
   const data = timerData.value;
   if (!data?.timerEnableMeetingCountdown || !data.timerMeetingCountdownMinutes)
     return null;
@@ -145,7 +384,16 @@ const getMeetingCountdown = (now: Date): null | string => {
 
   if (minutesUntil <= 0 || minutesUntil > countdownMinutes) return null;
 
-  return formatCountdown(meetingTime, now);
+  const remainingSeconds = Math.max(
+    0,
+    Math.floor((meetingTime.getTime() - now.getTime()) / 1000),
+  );
+
+  return {
+    display: formatCountdown(remainingSeconds),
+    remainingSeconds,
+    targetSeconds: countdownMinutes * 60,
+  };
 };
 
 // Convert Sunday-based (0–6) day to Monday-based (0–6)
@@ -183,9 +431,7 @@ const parseTime = (timeStr: string, base: Date) => {
 };
 
 // Format countdown as MM:SS
-const formatCountdown = (meetingTime: Date, now: Date) => {
-  const diff = Math.max(0, meetingTime.getTime() - now.getTime());
-  const totalSeconds = Math.floor(diff / 1000);
+const formatCountdown = (totalSeconds: number) => {
   const m = Math.floor(totalSeconds / 60)
     .toString()
     .padStart(2, '0');
@@ -216,10 +462,12 @@ watch(timerData, (newData) => {
   if (newData?.running) {
     displayTime.value = newData.time;
     paused.value = newData.paused;
+    meetingCountdownRemainingSeconds.value = null;
+    meetingCountdownTargetSeconds.value = null;
     pauseClock(); // Stop the fallback local clock interval to prevent flashing
   } else {
-    displayTime.value = currentTime.value;
     paused.value = false;
+    updateTime();
     resumeClock(); // Ensure local clock runs when no timer is active
   }
 });
@@ -234,19 +482,131 @@ watch(timerData, (newData) => {
   z-index: 10;
 }
 
-.scale-enter-active,
-.scale-leave-active {
-  transition: all 0.5s ease;
+.timer-display {
+  align-items: center;
+  display: flex;
+  gap: clamp(24px, 5vw, 80px);
+  justify-content: center;
 }
 
-.scale-enter-from {
-  opacity: 0;
-  transform: scale(0.8);
+.timer-display--combined {
+  flex-wrap: wrap;
 }
 
-.scale-leave-to {
-  opacity: 0;
-  transform: scale(1.2);
+.digital-display {
+  max-width: 96vw;
+  text-align: center;
+}
+
+.analog-clock {
+  aspect-ratio: 1;
+  border: clamp(6px, 0.8vw, 14px) solid var(--clock-color);
+  border-radius: 50%;
+  height: min(62vh, 62vw);
+  position: relative;
+}
+
+.analog-clock__center {
+  background: var(--clock-color);
+  border-radius: 50%;
+  height: 4%;
+  left: 48%;
+  position: absolute;
+  top: 48%;
+  width: 4%;
+}
+
+.analog-clock__hand {
+  background: var(--clock-color);
+  border-radius: 999px;
+  bottom: 50%;
+  left: 49%;
+  position: absolute;
+  transform-origin: 50% 100%;
+  width: 2%;
+}
+
+.analog-clock__hand--hour {
+  height: 26%;
+}
+
+.analog-clock__hand--minute {
+  height: 36%;
+}
+
+.analog-clock__hand--second {
+  background: #ff453a;
+  height: 42%;
+  width: 1%;
+}
+
+.analog-clock__tick {
+  background: var(--clock-color);
+  height: 8%;
+  left: 49%;
+  opacity: 0.8;
+  position: absolute;
+  top: 3%;
+  transform-origin: 50% 590%;
+  width: 2%;
+}
+
+.analog-countdown {
+  align-items: center;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  display: flex;
+  height: min(62vh, 62vw);
+  justify-content: center;
+  position: relative;
+}
+
+.analog-countdown__ring {
+  height: 100%;
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  transform: rotate(-90deg);
+  width: 100%;
+}
+
+.analog-countdown__track,
+.analog-countdown__progress {
+  stroke-width: 12;
+}
+
+.analog-countdown__track {
+  stroke: rgba(255, 255, 255, 0.16);
+}
+
+.analog-countdown__progress {
+  stroke: var(--countdown-progress-color);
+  stroke-dasharray: var(--countdown-progress);
+  stroke-linecap: var(--countdown-progress-linecap);
+  transition:
+    stroke 700ms ease,
+    stroke-dasharray 200ms linear;
+}
+
+.analog-countdown__dot {
+  fill: var(--countdown-progress-color);
+  transition: fill 700ms ease;
+}
+
+.analog-countdown__inner {
+  align-items: center;
+  background: rgba(0, 0, 0, 0.72);
+  border-radius: 50%;
+  color: var(--countdown-text-color);
+  display: flex;
+  font-size: clamp(2rem, 8vw, 8rem);
+  font-variant-numeric: tabular-nums;
+  font-weight: bold;
+  height: 76%;
+  justify-content: center;
+  transition: color 700ms ease;
+  width: 76%;
+  z-index: 1;
 }
 
 @keyframes gentle-blink {

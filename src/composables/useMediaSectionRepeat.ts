@@ -223,6 +223,7 @@ export function useMediaSectionRepeat() {
         x: 0,
         y: 0,
       },
+      playbackRate: 1,
       seekTo: 0,
       subtitlesUrl: nextItem.subtitlesUrl || '',
       uniqueId: nextItem.uniqueId,

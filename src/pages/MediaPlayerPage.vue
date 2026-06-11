@@ -9,11 +9,9 @@
       background-color: black;
     "
   >
-    <q-resize-observer debounce="50" @resize="postMediaWindowSize" />
-
     <!-- Base yeartext layer - always visible with black background -->
     <div
-      v-if="fontsSet && !mediaPlayerCustomBackground"
+      v-if="fontsSet && !mediaPlayerCustomBackground && !cameraStreamId"
       class="base-layer"
       :class="{ 'blank-screen': isTransitioning }"
     >
@@ -37,7 +35,7 @@
 
     <!-- Custom background layer - always visible when set -->
     <div
-      v-if="mediaPlayerCustomBackground"
+      v-if="mediaPlayerCustomBackground && !cameraStreamId"
       class="base-layer"
       :class="{ 'blank-screen': isTransitioning }"
     >
@@ -46,6 +44,17 @@
         fit="contain"
         no-spinner
         :src="mediaPlayerCustomBackground"
+      />
+    </div>
+
+    <!-- Camera background layer -->
+    <div v-if="cameraStreamId" class="camera-layer">
+      <video
+        ref="cameraElement"
+        autoplay
+        class="fit-snugly"
+        muted
+        playsinline
       />
     </div>
 
@@ -156,6 +165,7 @@ import {
 } from '@vueuse/core';
 import DOMPurify from 'dompurify';
 import { useQuasar } from 'quasar';
+import { MEDIA_STOP_FADE_DURATION_SECONDS } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   getJwIconFromKeyword,
@@ -254,11 +264,13 @@ const isEnding = ref(false);
 // Display layer state management
 const displayLayer1 = ref({
   isLive: false,
+  token: 0,
   url: '',
 });
 
 const displayLayer2 = ref({
   isLive: false,
+  token: 0,
   url: '',
 });
 
@@ -268,6 +280,7 @@ const mediaElement1 = useTemplateRef<HTMLAudioElement | HTMLVideoElement>(
 const mediaElement2 = useTemplateRef<HTMLAudioElement | HTMLVideoElement>(
   'mediaElement2',
 );
+const cameraElement = useTemplateRef<HTMLVideoElement>('cameraElement');
 
 const videoStreaming = ref(false);
 
@@ -296,30 +309,12 @@ const { data: seekToData } = useBroadcastChannel<
   name: 'seek-to',
 });
 
-whenever(
-  () => seekToData.value,
-  (newSeekTo) => {
-    if (currentMediaElement.value) {
-      currentMediaElement.value.currentTime = newSeekTo;
-    }
-  },
-);
-
 const { data: playbackRateData } = useBroadcastChannel<
   number | undefined,
   number | undefined
 >({
   name: 'playback-rate',
 });
-
-whenever(
-  () => playbackRateData.value,
-  (newRate) => {
-    if (currentMediaElement.value && newRate) {
-      currentMediaElement.value.playbackRate = newRate;
-    }
-  },
-);
 
 const { data: mediaCustomDuration } = useBroadcastChannel<
   string | undefined,
@@ -336,21 +331,6 @@ const { data: mediaRepeatNow } = useBroadcastChannel<number, number>({
   name: 'media-repeat-now',
 });
 
-whenever(
-  () => mediaRepeatNow.value,
-  () => {
-    if (currentMediaElement.value) {
-      log(
-        '🎬 [mediaRepeatNow] Forcing replay of current item',
-        'mediaPlayer',
-        'log',
-      );
-      currentMediaElement.value.currentTime = customMin.value;
-      playMediaElement();
-    }
-  },
-);
-
 const { data: mediaPlayingUrl } = useBroadcastChannel<string, string>({
   name: 'media-url',
 });
@@ -362,18 +342,6 @@ const { post: postCurrentTime } = useBroadcastChannel<number, number>({
 const { data: mediaAction } = useBroadcastChannel<string, string>({
   name: 'main-window-media-action',
 });
-
-whenever(
-  () => mediaAction.value,
-  (newMediaAction, oldMediaAction) => {
-    if (newMediaAction === 'pause') {
-      currentMediaElement.value?.pause();
-    } else if (newMediaAction === 'play') {
-      playMediaElement(oldMediaAction === 'pause');
-      if (cameraStreamId.value) cameraStreamId.value = '';
-    }
-  },
-);
 
 const handleImageLoad = () => {
   // Image loaded - apply current zoom/pan state if available
@@ -465,24 +433,67 @@ const customMax = computed(() => {
   return (JSON.parse(mediaCustomDuration.value || '{}') || {})?.max;
 });
 
-watch(
-  () => mediaCustomDuration.value,
-  (newVal, oldVal) => {
-    if (newVal !== oldVal && currentMediaElement.value) {
-      log(
-        '🎬 [mediaCustomDuration] Duration changed, seeking to:',
-        'mediaPlayer',
-        'log',
-        customMin.value,
-      );
-      isEnding.value = false;
-      currentMediaElement.value.currentTime = customMin.value;
-    }
-  },
-);
+type DisplayLayerRef = typeof displayLayer1;
+
+const getLayerElement = (
+  layer: DisplayLayerRef,
+): HTMLAudioElement | HTMLVideoElement | null => {
+  return layer.value === displayLayer1.value
+    ? mediaElement1.value
+    : mediaElement2.value;
+};
+
+const getLayerForUrl = (url: string | undefined): DisplayLayerRef | null => {
+  if (!url) return null;
+  if (displayLayer1.value.url === url) return displayLayer1;
+  if (displayLayer2.value.url === url) return displayLayer2;
+  return null;
+};
+
+const getLiveLayer = (): DisplayLayerRef | null => {
+  if (displayLayer1.value.isLive) return displayLayer1;
+  if (displayLayer2.value.isLive) return displayLayer2;
+  return null;
+};
+
+const getOtherLayer = (layer: DisplayLayerRef): DisplayLayerRef => {
+  return layer.value === displayLayer1.value ? displayLayer2 : displayLayer1;
+};
+
+const getNextLayer = (newUrl: string): DisplayLayerRef => {
+  const existingLayer = getLayerForUrl(newUrl);
+  if (existingLayer) return existingLayer;
+
+  const liveLayer = getLiveLayer();
+  if (liveLayer) return getOtherLayer(liveLayer);
+
+  if (!displayLayer1.value.url) return displayLayer1;
+  if (!displayLayer2.value.url) return displayLayer2;
+
+  return displayLayer1;
+};
+
+const cleanupLayerIfCurrent = (
+  layer: DisplayLayerRef,
+  token: number,
+  url: string,
+) => {
+  if (layer.value.token !== token || layer.value.url !== url) {
+    return;
+  }
+
+  cleanupMediaElement(getLayerElement(layer));
+  layer.value.url = '';
+};
 
 const currentMediaElement: Ref<HTMLAudioElement | HTMLVideoElement | null> =
   computed(() => {
+    const layer = getLayerForUrl(mediaPlayingUrl.value);
+    if (layer) return getLayerElement(layer);
+
+    const liveLayer = getLiveLayer();
+    if (liveLayer) return getLayerElement(liveLayer);
+
     return mediaElement1.value || mediaElement2.value || null;
   });
 
@@ -638,7 +649,7 @@ const handleVideoCanPlay = () => {
   }
 };
 
-const fadeOutDurationInSeconds = 0.3;
+const fadeOutDurationInSeconds = MEDIA_STOP_FADE_DURATION_SECONDS;
 const fadeOutDurationInMilliseconds = fadeOutDurationInSeconds * 1000;
 
 const playMedia = () => {
@@ -712,7 +723,6 @@ const playMedia = () => {
 
 const isTransitioning = ref(false);
 
-// Crossfade function to handle layer transitions
 const crossfadeToNewMedia = (newUrl: string) => {
   log(
     '🎬 [crossfadeToNewMedia] Starting crossfade to:',
@@ -721,13 +731,18 @@ const crossfadeToNewMedia = (newUrl: string) => {
     newUrl,
   );
 
-  // Determine which layer is currently live and which is not
-  const currentLiveLayer = displayLayer1.value.isLive
-    ? displayLayer1
-    : displayLayer2;
-  const nextLayer = displayLayer1.value.isLive ? displayLayer2 : displayLayer1;
+  const currentLiveLayer = getLiveLayer();
+  const nextLayer = getNextLayer(newUrl);
+  const nextLayerWasReused =
+    nextLayer.value.url && nextLayer.value.url !== newUrl;
 
-  // Set the new URL on the non-live layer
+  // Each assignment invalidates pending fade-out cleanup for this layer. Without
+  // this, an image fade-out can later clean up a video that reused the same DOM
+  // layer before the timeout fired.
+  nextLayer.value.token++;
+  if (nextLayerWasReused) {
+    cleanupMediaElement(getLayerElement(nextLayer));
+  }
   nextLayer.value.url = newUrl;
 
   // Skip zoom/pan animation when transitioning to new media
@@ -737,20 +752,28 @@ const crossfadeToNewMedia = (newUrl: string) => {
 
   // Fade in the new layer
   setTimeout(() => {
+    if (nextLayer.value.url !== newUrl) {
+      return;
+    }
+
     nextLayer.value.isLive = true;
-    currentLiveLayer.value.isLive = false;
+    if (currentLiveLayer && currentLiveLayer.value !== nextLayer.value) {
+      currentLiveLayer.value.isLive = false;
+    }
 
-    // After transition completes, clean up the old layer
+    if (!currentLiveLayer || currentLiveLayer.value === nextLayer.value) {
+      isTransitioning.value = false;
+      return;
+    }
+
+    const oldUrl = currentLiveLayer.value.url;
+    const oldToken = ++currentLiveLayer.value.token;
+
+    // After transition completes, clean up only the layer/url that faded out.
     setTimeout(() => {
-      // Explicitly cleanup the media element before clearing the URL
-      // to prevent crashes when the element is removed from DOM while active
-      if (currentLiveLayer.value === displayLayer1.value) {
-        cleanupMediaElement(mediaElement1.value);
-      } else {
-        cleanupMediaElement(mediaElement2.value);
+      if (oldUrl) {
+        cleanupLayerIfCurrent(currentLiveLayer, oldToken, oldUrl);
       }
-
-      currentLiveLayer.value.url = '';
       isTransitioning.value = false;
     }, fadeOutDurationInMilliseconds); // Match the CSS transition duration
   }, 50); // Small delay to ensure the new media starts loading
@@ -760,13 +783,14 @@ const crossfadeToNewMedia = (newUrl: string) => {
 const clearCurrentMedia = () => {
   log('🎬 [clearCurrentMedia] Clearing current media', 'mediaPlayer', 'log');
 
-  const currentLiveLayer = displayLayer1.value.isLive
-    ? displayLayer1
-    : displayLayer2;
+  const currentLiveLayer = getLiveLayer();
 
-  if (currentLiveLayer.value.url) {
+  if (currentLiveLayer?.value.url) {
+    const clearingUrl = currentLiveLayer.value.url;
+    const clearingToken = ++currentLiveLayer.value.token;
+
     // Skip zoom/pan animation when clearing media
-    if (isImage(currentLiveLayer.value.url)) {
+    if (isImage(clearingUrl)) {
       skipZoomPanAnimation.value = true;
       log(
         '🎬 [clearCurrentMedia] Skipping zoom/pan animation',
@@ -781,8 +805,7 @@ const clearCurrentMedia = () => {
     // If the current media element is a video, fade out the volume over the next 300ms
     if (
       currentMediaElement.value &&
-      (isVideo(currentLiveLayer.value.url) ||
-        isAudio(currentLiveLayer.value.url))
+      (isVideo(clearingUrl) || isAudio(clearingUrl))
     ) {
       const videoElement = currentMediaElement.value as HTMLVideoElement;
       const initialVolume = videoElement.volume;
@@ -801,18 +824,11 @@ const clearCurrentMedia = () => {
 
     // After transition completes, clear the URL
     setTimeout(() => {
-      // Explicitly cleanup the media element before clearing the URL
-      if (currentLiveLayer.value === displayLayer1.value) {
-        cleanupMediaElement(mediaElement1.value);
-      } else {
-        cleanupMediaElement(mediaElement2.value);
-      }
+      cleanupLayerIfCurrent(currentLiveLayer, clearingToken, clearingUrl);
 
-      currentLiveLayer.value.url = '';
       if (
         currentMediaElement.value &&
-        (isVideo(currentLiveLayer.value.url) ||
-          isAudio(currentLiveLayer.value.url))
+        (isVideo(clearingUrl) || isAudio(clearingUrl))
       ) {
         const videoElement = currentMediaElement.value as HTMLVideoElement;
         videoElement.volume = 1;
@@ -820,60 +836,6 @@ const clearCurrentMedia = () => {
     }, fadeOutDurationInMilliseconds); // Match the CSS transition duration
   }
 };
-
-// Reset ending flag when new media starts
-watch(
-  () => mediaPlayingUrl.value,
-  (newUrl, oldUrl) => {
-    log(
-      '🔄 [mediaPlayingUrl] URL changed:',
-      'mediaPlayer',
-      'log',
-      oldUrl,
-      '->',
-      newUrl,
-    );
-    isEnding.value = false;
-
-    if (oldUrl && newUrl && !isAudio(newUrl)) {
-      isTransitioning.value = true;
-    }
-
-    // Handle crossfade logic
-    if (newUrl && newUrl !== oldUrl) {
-      // New media URL - start crossfade
-      crossfadeToNewMedia(newUrl);
-    } else if (!newUrl && oldUrl) {
-      // Media URL cleared - fade out current media
-      clearCurrentMedia();
-    }
-
-    // Clean up any existing event handlers when media URL changes
-    if (currentMediaElement.value) {
-      currentMediaElement.value.oncanplay = null;
-      currentMediaElement.value.oncanplaythrough = null;
-
-      // For videos, ensure the element is properly reset when URL changes
-      if ((isVideo(newUrl) || isAudio(newUrl)) && newUrl !== oldUrl) {
-        log(
-          '🎬 [mediaPlayingUrl] Resetting video element for new URL',
-          'mediaPlayer',
-          'log',
-        );
-        // Pause current playback
-        currentMediaElement.value.pause();
-        // Reset current time
-        currentMediaElement.value.currentTime = 0;
-        // Force reload of the video
-        currentMediaElement.value.load();
-      }
-    }
-  },
-);
-
-const { post: postMediaWindowSize } = useBroadcastChannel({
-  name: 'media-window-size',
-});
 
 const { data: urlVariables } = useBroadcastChannel<
   {
@@ -917,52 +879,18 @@ const { data: currentLang } = useBroadcastChannel<string, string>({
 const jwStore = useJwStore();
 const yeartextFontFamily = ref('');
 
-watch(
-  () =>
-    [
-      currentScript.value,
-      currentLang.value,
-      urlVariables.value?.mediator,
-    ] as const,
-  async ([script, lang]) => {
-    if (script && urlVariables.value?.mediator) {
-      // Sync urlVariables to jw store for CDN font URL resolution
-      if (urlVariables.value.base) {
-        jwStore.$patch({
-          urlVariables: {
-            base: urlVariables.value.base,
-            mediator: urlVariables.value.mediator,
-            pubMedia: jwStore.urlVariables?.pubMedia ?? '',
-          },
-        });
-      }
-      yeartextFontFamily.value = await loadYeartextFont(script, lang);
-    }
-  },
-);
-
 const yeartextFontStyle = computed(() =>
   yeartextFontFamily.value
     ? { fontFamily: yeartextFontFamily.value }
     : undefined,
 );
 
-watchDeep(
-  () => zoomPanState.value,
-  (newZoomPanState) => {
-    log(
-      '🎬 [zoomPanState] New zoom/pan state:',
-      'mediaPlayer',
-      'log',
-      newZoomPanState,
-    );
-    applyZoomPanState(newZoomPanState);
-  },
-);
-
-const ensureMediaElementReady = async (maxRetries = 50): Promise<boolean> => {
+const ensureElementReady = async (
+  getter: () => HTMLMediaElement | null | undefined,
+  maxRetries = 50,
+): Promise<boolean> => {
   let timeouts = 0;
-  while (!currentMediaElement.value) {
+  while (!getter()) {
     await new Promise((resolve) => {
       setTimeout(resolve, 100);
     });
@@ -971,6 +899,10 @@ const ensureMediaElementReady = async (maxRetries = 50): Promise<boolean> => {
     }
   }
   return true;
+};
+
+const ensureMediaElementReady = async (maxRetries = 50): Promise<boolean> => {
+  return await ensureElementReady(() => currentMediaElement.value, maxRetries);
 };
 
 const notifyAccessDenied = (isCamera: boolean) => {
@@ -1037,12 +969,195 @@ const requestStream = async (isCamera: boolean, deviceId?: string) => {
   }
 };
 
+// Send request to main layout to get the current state, for when the media player window is first opened
+const { post: postGetCurrentState } = useBroadcastChannel<string, string>({
+  name: 'get-current-media-window-variables',
+});
+
+const fontsSet = ref(false);
+const jwIconsFontLoaded = ref(false);
+
+const loadFonts = async () => {
+  try {
+    await setElementFont('Wt-ClearText-Bold');
+  } catch (e) {
+    errorCatcher(e, {
+      contexts: { fn: { fontName: 'Wt-ClearText-Bold', name: 'loadFonts' } },
+    });
+  }
+
+  try {
+    jwIconsFontLoaded.value = await setElementFont('jw-icons-all');
+  } catch (e) {
+    errorCatcher(e, {
+      contexts: { fn: { fontName: 'jw-icons-all', name: 'loadFonts' } },
+    });
+    jwIconsFontLoaded.value = false;
+  }
+
+  fontsSet.value = true;
+};
+
+whenever(
+  () => seekToData.value,
+  (newSeekTo) => {
+    if (currentMediaElement.value) {
+      currentMediaElement.value.currentTime = newSeekTo;
+    }
+  },
+);
+
+whenever(
+  () => playbackRateData.value,
+  (newRate) => {
+    if (currentMediaElement.value && newRate) {
+      currentMediaElement.value.playbackRate = newRate;
+    }
+  },
+);
+
+whenever(
+  () => mediaRepeatNow.value,
+  () => {
+    if (currentMediaElement.value) {
+      log(
+        '🎬 [mediaRepeatNow] Forcing replay of current item',
+        'mediaPlayer',
+        'log',
+      );
+      currentMediaElement.value.currentTime = customMin.value;
+      playMediaElement();
+    }
+  },
+);
+
+whenever(
+  () => mediaAction.value,
+  (newMediaAction, oldMediaAction) => {
+    if (newMediaAction === 'pause') {
+      currentMediaElement.value?.pause();
+    } else if (newMediaAction === 'play') {
+      playMediaElement(oldMediaAction === 'pause');
+    }
+  },
+);
+
+watch(
+  () => mediaCustomDuration.value,
+  (newVal, oldVal) => {
+    if (newVal !== oldVal && currentMediaElement.value) {
+      log(
+        '🎬 [mediaCustomDuration] Duration changed, seeking to:',
+        'mediaPlayer',
+        'log',
+        customMin.value,
+      );
+      isEnding.value = false;
+      currentMediaElement.value.currentTime = customMin.value;
+    }
+  },
+);
+
+// Reset ending flag when new media starts
+watch(
+  () => mediaPlayingUrl.value,
+  (newUrl, oldUrl) => {
+    log(
+      '🔄 [mediaPlayingUrl] URL changed:',
+      'mediaPlayer',
+      'log',
+      oldUrl,
+      '->',
+      newUrl,
+    );
+    isEnding.value = false;
+
+    if (oldUrl && newUrl && !isAudio(newUrl)) {
+      isTransitioning.value = true;
+    }
+
+    // Handle crossfade logic
+    if (newUrl && newUrl !== oldUrl) {
+      // New media URL - start crossfade
+      crossfadeToNewMedia(newUrl);
+    } else if (!newUrl && oldUrl) {
+      // Media URL cleared - fade out current media
+      clearCurrentMedia();
+    }
+
+    // Clean up any existing event handlers when media URL changes
+    if (currentMediaElement.value) {
+      currentMediaElement.value.oncanplay = null;
+      currentMediaElement.value.oncanplaythrough = null;
+
+      // For videos, ensure the element is properly reset when URL changes
+      if ((isVideo(newUrl) || isAudio(newUrl)) && newUrl !== oldUrl) {
+        log(
+          '🎬 [mediaPlayingUrl] Resetting video element for new URL',
+          'mediaPlayer',
+          'log',
+        );
+        // Pause current playback
+        currentMediaElement.value.pause();
+        // Reset current time
+        currentMediaElement.value.currentTime = 0;
+        // Force reload of the video
+        currentMediaElement.value.load();
+      }
+    }
+  },
+);
+
+watch(
+  () =>
+    [
+      currentScript.value,
+      currentLang.value,
+      urlVariables.value?.mediator,
+    ] as const,
+  async ([script, lang]) => {
+    if (script && urlVariables.value?.mediator) {
+      // Sync urlVariables to jw store for CDN font URL resolution
+      if (urlVariables.value.base) {
+        jwStore.$patch({
+          urlVariables: {
+            base: urlVariables.value.base,
+            mediator: urlVariables.value.mediator,
+            pubMedia: jwStore.urlVariables?.pubMedia ?? '',
+          },
+        });
+      }
+      yeartextFontFamily.value = await loadYeartextFont(script, lang);
+    }
+  },
+);
+
+watchDeep(
+  () => zoomPanState.value,
+  (newZoomPanState) => {
+    log(
+      '🎬 [zoomPanState] New zoom/pan state:',
+      'mediaPlayer',
+      'log',
+      newZoomPanState,
+    );
+    applyZoomPanState(newZoomPanState);
+  },
+);
+
 watch(
   () => webStreamData.value,
-  async (newWebStreamData) => {
+  async (newWebStreamData, oldWebStreamData) => {
     videoStreaming.value = newWebStreamData === 'mirroringWebsite';
     if (newWebStreamData !== 'mirroringWebsite') {
       if (newWebStreamData !== 'previewingWebsite') {
+        if (
+          oldWebStreamData !== 'mirroringWebsite' &&
+          oldWebStreamData !== 'previewingWebsite'
+        ) {
+          return;
+        }
+
         if (currentMediaElement.value) {
           currentMediaElement.value.pause();
           currentMediaElement.value.srcObject = null;
@@ -1083,66 +1198,80 @@ watch(
   },
 );
 
-watch(
+watchImmediate(
   () => cameraStreamId.value,
   async (deviceId) => {
-    videoStreaming.value = !!deviceId;
+    log(
+      `🎬 [cameraStreamId] Watcher triggered. DeviceId: ${deviceId}`,
+      'mediaPlayer',
+      'log',
+    );
     if (!deviceId) {
-      if (currentMediaElement.value) {
-        currentMediaElement.value.pause();
-        currentMediaElement.value.srcObject = null;
+      if (cameraElement.value) {
+        cameraElement.value.pause();
+        cameraElement.value.srcObject = null;
       }
-      postMediaPlayingAction('');
       return;
     }
+
+    // Wait for the camera element to be available in the DOM (v-if)
+    let retries = 0;
+    while (!cameraElement.value && retries < 60) {
+      await new Promise((resolve) => {
+        setTimeout(resolve, 50);
+      });
+      retries++;
+    }
+
+    log(
+      `🎬 [cameraStreamId] Element ready check. Element: ${!!cameraElement.value}, Retries: ${retries}`,
+      'mediaPlayer',
+      'log',
+    );
 
     const stream = await requestStream(true, deviceId);
-    const ready = stream && (await ensureMediaElementReady(10));
+    const ready =
+      !!stream && (await ensureElementReady(() => cameraElement.value, 40));
 
-    if (!stream || !ready || !currentMediaElement.value) {
-      videoStreaming.value = false;
-      if (cameraStreamId.value) cameraStreamId.value = '';
-      postMediaPlayingAction('');
-      currentMediaElement.value?.pause();
-      if (currentMediaElement.value?.srcObject) {
-        currentMediaElement.value.srcObject = null;
+    if (!stream || !ready || !cameraElement.value) {
+      log(
+        `🎬 [cameraStreamId] Failed to initialize. Stream: ${!!stream}, Ready: ${ready}, Element: ${!!cameraElement.value}`,
+        'mediaPlayer',
+        'warn',
+      );
+      cameraElement.value?.pause();
+      if (cameraElement.value?.srcObject) {
+        cameraElement.value.srcObject = null;
       }
       return;
     }
 
-    currentMediaElement.value.srcObject = stream;
-    playMediaElement(false, true);
+    log('🎬 [cameraStreamId] Setting stream to element', 'mediaPlayer', 'log');
+    cameraElement.value.srcObject = stream;
+    try {
+      await cameraElement.value.play();
+      log('🎬 [cameraStreamId] Camera stream started', 'mediaPlayer', 'log');
+    } catch (e) {
+      errorCatcher(e);
+    }
   },
 );
 
-// Send request to main layout to get the current state, for when the media player window is first opened
-const { post: postGetCurrentState } = useBroadcastChannel<string, string>({
-  name: 'get-current-media-window-variables',
-});
-
-const fontsSet = ref(false);
-const jwIconsFontLoaded = ref(false);
-
-const loadFonts = async () => {
-  try {
-    await setElementFont('Wt-ClearText-Bold');
-  } catch (e) {
-    errorCatcher(e, {
-      contexts: { fn: { fontName: 'Wt-ClearText-Bold', name: 'loadFonts' } },
-    });
-  }
-
-  try {
-    jwIconsFontLoaded.value = await setElementFont('jw-icons-all');
-  } catch (e) {
-    errorCatcher(e, {
-      contexts: { fn: { fontName: 'jw-icons-all', name: 'loadFonts' } },
-    });
-    jwIconsFontLoaded.value = false;
-  }
-
-  fontsSet.value = true;
-};
+// Ensure display layers are not live if no media is playing on startup
+watchImmediate(
+  () => mediaPlayingUrl.value,
+  (url) => {
+    if (!url && !videoStreaming.value) {
+      log(
+        '🎬 [mediaPlayingUrl] No media playing, ensuring layers are not live',
+        'mediaPlayer',
+        'log',
+      );
+      displayLayer1.value.isLive = false;
+      displayLayer2.value.isLive = false;
+    }
+  },
+);
 
 // Listen for initial value updates from other components
 watchImmediate(
@@ -1192,6 +1321,7 @@ onBeforeUnmount(() => {
   );
   cleanupMediaElement(mediaElement1.value);
   cleanupMediaElement(mediaElement2.value);
+  cleanupMediaElement(cameraElement.value);
 });
 </script>
 
@@ -1214,6 +1344,16 @@ onBeforeUnmount(() => {
   display: none;
 }
 
+.camera-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  z-index: 1.5;
+}
+
 .display-layer.is-audio {
   background-color: green;
   opacity: 0 !important;
@@ -1225,13 +1365,13 @@ onBeforeUnmount(() => {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: black;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
   z-index: 2;
 }
 
 .display-layer.is-live {
+  background-color: black;
   opacity: 1;
   z-index: 3;
 }

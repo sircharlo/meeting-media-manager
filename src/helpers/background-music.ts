@@ -1,13 +1,14 @@
 import type { JwLangCode, SongItem } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { getPublicationDirectoryContents } from 'src/utils/fs';
-import { getMetadataFromMediaPath } from 'src/utils/media';
+import {
+  fetchBackgroundMusicSongLibrary,
+  resolveBackgroundMusicPlaybackUrl,
+} from 'src/helpers/jw-media';
+import { log } from 'src/shared/vanilla';
 import { formatTime } from 'src/utils/time';
 
-const { path, pathToFileURL } = globalThis.electronApi;
-const { basename } = path;
-
+const { basename } = globalThis.electronApi;
 interface NextSongResult {
   nextSongUrl: string;
   secsFromEnd: number;
@@ -21,6 +22,30 @@ interface SongQueueOptions {
   timeBeforeMeetingStart: number;
 }
 
+const getDebugTimestamp = () => new Date().toISOString();
+
+const getElapsedMilliseconds = (startedAt: number) => {
+  return Math.round(performance.now() - startedAt);
+};
+
+const logBackgroundMusicTiming = (
+  message: string,
+  startedAt?: number,
+  details?: Record<string, unknown>,
+) => {
+  const elapsed =
+    typeof startedAt === 'number'
+      ? ` +${getElapsedMilliseconds(startedAt)}ms`
+      : '';
+
+  log(
+    `[${getDebugTimestamp()}]${elapsed} ${message}`,
+    'backgroundMusic',
+    'debug',
+    details,
+  );
+};
+
 /**
  * Calculates the optimal song queue to fill time until meeting starts
  * This ensures the last song ends precisely when fadeout begins
@@ -30,8 +55,23 @@ export function calculateOptimalSongQueue(
   meetingSongs: SongItem[],
   timeBeforeMeetingStart: number,
 ): { queue: SongItem[]; startOffsetSeconds: number } {
+  const startedAt = performance.now();
   try {
+    logBackgroundMusicTiming(
+      'calculate optimal song queue started',
+      undefined,
+      {
+        meetingSongs: meetingSongs.length,
+        songs: songLibrary.length,
+        timeBeforeMeetingStart,
+      },
+    );
+
     if (timeBeforeMeetingStart <= 0 || !songLibrary.length) {
+      logBackgroundMusicTiming(
+        'calculate optimal song queue skipped',
+        startedAt,
+      );
       return { queue: [], startOffsetSeconds: 0 };
     }
 
@@ -61,6 +101,16 @@ export function calculateOptimalSongQueue(
       totalDuration - timeBeforeMeetingStart,
     );
 
+    logBackgroundMusicTiming(
+      'calculate optimal song queue finished',
+      startedAt,
+      {
+        queueLength: queue.length,
+        startOffsetSeconds,
+        totalDuration,
+      },
+    );
+
     return { queue, startOffsetSeconds };
   } catch (error) {
     errorCatcher(error);
@@ -74,19 +124,31 @@ export function calculateOptimalSongQueue(
 export async function enrichSongsWithMetadata(
   songs: SongItem[],
 ): Promise<SongItem[]> {
+  const startedAt = performance.now();
+  logBackgroundMusicTiming('normalize API song metadata started', undefined, {
+    songs: songs.length,
+  });
+
   const enrichedSongs = [...songs];
 
-  for (const song of enrichedSongs) {
-    try {
-      const metadata = await getMetadataFromMediaPath(song.path);
-      song.duration = metadata?.format?.duration ?? 0;
-      song.title = metadata?.common.title ?? basename(song.path);
-    } catch (error) {
-      errorCatcher(error);
-      song.duration = 0;
-      song.title = basename(song.path);
-    }
+  for (const [index, song] of enrichedSongs.entries()) {
+    const songStartedAt = performance.now();
+    song.duration = song.duration ?? 0;
+    song.title = song.title || basename(song.path);
+    logBackgroundMusicTiming('API song metadata normalized', songStartedAt, {
+      duration: song.duration,
+      index: index + 1,
+      path: song.path,
+      remoteUrl: song.remoteUrl,
+      songs: enrichedSongs.length,
+      title: song.title,
+      track: song.track,
+    });
   }
+
+  logBackgroundMusicTiming('normalize API song metadata finished', startedAt, {
+    songs: enrichedSongs.length,
+  });
 
   return enrichedSongs;
 }
@@ -98,7 +160,13 @@ export function extractMeetingDaySongs(
   songLibrary: SongItem[],
   selectedDayMedia: { fileUrl?: string }[],
 ): SongItem[] {
+  const startedAt = performance.now();
   try {
+    logBackgroundMusicTiming('extract meeting day songs started', undefined, {
+      selectedDayMedia: selectedDayMedia.length,
+      songs: songLibrary.length,
+    });
+
     const regex = /(_r\d{3,4}P)?\.\w+$/;
     const { fileUrlToPath } = globalThis.electronApi;
 
@@ -118,6 +186,10 @@ export function extractMeetingDaySongs(
       })
       .filter((song): song is SongItem => !!song);
 
+    logBackgroundMusicTiming('extract meeting day songs finished', startedAt, {
+      meetingSongs: meetingSongs.length,
+    });
+
     return meetingSongs;
   } catch (error) {
     errorCatcher(error);
@@ -129,27 +201,19 @@ export function extractMeetingDaySongs(
  * Fetches and shuffles the song library
  */
 export async function fetchSongLibrary(lang: JwLangCode): Promise<SongItem[]> {
+  const startedAt = performance.now();
   try {
-    const maxAttempts = 10;
-    const minSongsRequired = 10;
-    let attempts = 0;
-    let songs: SongItem[] = [];
+    logBackgroundMusicTiming('fetch API song library started', undefined, {
+      lang,
+    });
 
-    while (songs.length < minSongsRequired && attempts < maxAttempts) {
-      songs = (
-        await getPublicationDirectoryContents(
-          { langwritten: lang || 'E', pub: 'sjjm' },
-          'mp3',
-        )
-      ).sort(() => Math.random() - 0.5);
+    const songs = (await fetchBackgroundMusicSongLibrary(lang)).sort(
+      () => Math.random() - 0.5,
+    );
 
-      if (songs.length >= minSongsRequired) break;
-
-      attempts++;
-      await new Promise((resolve) => {
-        setTimeout(resolve, 5000);
-      });
-    }
+    logBackgroundMusicTiming('fetch API song library finished', startedAt, {
+      songs: songs.length,
+    });
 
     return songs;
   } catch (error) {
@@ -172,8 +236,14 @@ export async function getNextSongFromQueue(
   songQueue: SongItem[],
   currentSongTitle: (title: string) => void,
 ): Promise<NextSongResult> {
+  const startedAt = performance.now();
   try {
+    logBackgroundMusicTiming('get next song from queue started', undefined, {
+      queueLength: songQueue.length,
+    });
+
     if (!songQueue.length) {
+      logBackgroundMusicTiming('get next song from queue skipped', startedAt);
       return { nextSongUrl: '', secsFromEnd: 0 };
     }
 
@@ -185,20 +255,32 @@ export async function getNextSongFromQueue(
     // Add song back to end of queue for continuous play
     songQueue.push(nextSong);
 
-    // Update the playing title
-    try {
-      const { parseMediaFile } = globalThis.electronApi;
-      const metadata = await parseMediaFile(nextSong.path);
-      currentSongTitle(metadata.common.title ?? basename(nextSong.path));
-    } catch (error) {
-      errorCatcher(error);
-      currentSongTitle(basename(nextSong.path) ?? '');
-    }
+    currentSongTitle(nextSong.title || basename(nextSong.path));
+    const playbackUrlStartedAt = performance.now();
+    const nextSongUrl = await resolveBackgroundMusicPlaybackUrl(nextSong);
+    logBackgroundMusicTiming(
+      'next song playback URL resolved',
+      playbackUrlStartedAt,
+      {
+        path: nextSong.path,
+        remoteUrl: nextSong.remoteUrl,
+        title: nextSong.title,
+        track: nextSong.track,
+        usingRemoteUrl: nextSongUrl === nextSong.remoteUrl,
+      },
+    );
 
-    return {
-      nextSongUrl: pathToFileURL(nextSong.path),
+    const result = {
+      nextSongUrl,
       secsFromEnd: 0, // This will be set by the queue calculation logic
     };
+
+    logBackgroundMusicTiming('get next song from queue finished', startedAt, {
+      nextSongUrl: result.nextSongUrl,
+      queueLength: songQueue.length,
+    });
+
+    return result;
   } catch (error) {
     errorCatcher(error);
     return { nextSongUrl: '', secsFromEnd: 0 };
@@ -212,7 +294,18 @@ export async function prepareMeetingDaySongQueue(
   songLibrary: SongItem[],
   options: SongQueueOptions,
 ): Promise<{ queue: SongItem[]; startOffsetSeconds: number }> {
+  const startedAt = performance.now();
   try {
+    logBackgroundMusicTiming(
+      'prepare meeting day song queue started',
+      undefined,
+      {
+        selectedDayMedia: options.selectedDayMedia?.length ?? 0,
+        songs: songLibrary.length,
+        timeBeforeMeetingStart: options.timeBeforeMeetingStart,
+      },
+    );
+
     const { selectedDayMedia, timeBeforeMeetingStart } = options;
 
     // Extract meeting day songs from the media
@@ -221,11 +314,22 @@ export async function prepareMeetingDaySongQueue(
       : [];
 
     // Calculate optimal queue with proper timing
-    return calculateOptimalSongQueue(
+    const result = calculateOptimalSongQueue(
       songLibrary,
       meetingSongs,
       timeBeforeMeetingStart,
     );
+
+    logBackgroundMusicTiming(
+      'prepare meeting day song queue finished',
+      startedAt,
+      {
+        queueLength: result.queue.length,
+        startOffsetSeconds: result.startOffsetSeconds,
+      },
+    );
+
+    return result;
   } catch (error) {
     errorCatcher(error);
     return { queue: [], startOffsetSeconds: 0 };

@@ -11,7 +11,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Close stale issues and pull requests
-        uses: actions/stale@v10
+        uses: actions/stale@eb5cf3af3ac0a1aa4c9c45633dd1ae542a27a899
         with:
           days-before-stale: 30
           days-before-close: 7
@@ -45,7 +45,7 @@ jobs:
       discussions: write
     steps:
       - name: Close stale Ideas discussions
-        uses: steffen-karlsson/stalesweeper@v1.1.1
+        uses: steffen-karlsson/stalesweeper@cbed739a89b490f703d8466fb59b37ddc0915889 # v1.1.1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           message: 'This discussion has automatically been closed due to inactivity. If this is still relevant, please open a new discussion.'
@@ -59,7 +59,7 @@ jobs:
       discussions: write
     steps:
       - name: Close stale Translations discussions
-        uses: steffen-karlsson/stalesweeper@v1.1.1
+        uses: steffen-karlsson/stalesweeper@cbed739a89b490f703d8466fb59b37ddc0915889 # v1.1.1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           message: 'This discussion has automatically been closed due to inactivity. If this is still relevant, please open a new discussion.'

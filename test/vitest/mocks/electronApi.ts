@@ -14,9 +14,16 @@ import {
   readDirectory,
 } from 'src-electron/preload/fs';
 import { log } from 'src/shared/vanilla';
-import upath from 'upath';
-
-const { join } = upath;
+import {
+  basename,
+  changeExt,
+  dirname,
+  extname,
+  join,
+  normalize,
+  parse,
+  resolve,
+} from 'upath';
 
 export const basePath = join(__dirname, '..', 'fs');
 const fakePath = async (path: string, create = true) => {
@@ -31,9 +38,11 @@ export const electronApi: ElectronApi = {
   askForMediaAccess: function () {
     throw new Error('Function not implemented.');
   },
+  basename,
   cancelAllDownloads: function () {
     throw new Error('Function not implemented.');
   },
+  changeExt,
   checkForUpdates: () => void 0,
   clickZoomElement: function (elementId) {
     throw new Error('Function not implemented.');
@@ -44,12 +53,10 @@ export const electronApi: ElectronApi = {
   convertHeic: function (image) {
     throw new Error('Function not implemented.');
   },
-  convertPdfToImages: function (pdfPath, outputFolder) {
-    throw new Error('Function not implemented.');
-  },
   createVideoFromNonVideo: function (originalFile, ffmpegPath) {
     throw new Error('Function not implemented.');
   },
+  dirname,
   downloadFile: function (url, saveDir, destFilename, lowPriority) {
     throw new Error('Function not implemented.');
   },
@@ -57,6 +64,10 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   executeQuery: function (dbPath, query) {
+    throw new Error('Function not implemented.');
+  },
+  extname,
+  extractNestedZipEntry: function () {
     throw new Error('Function not implemented.');
   },
   fileUrlToPath,
@@ -74,9 +85,6 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   getLowDiskSpaceStatus: function () {
-    throw new Error('Function not implemented.');
-  },
-  getNrOfPdfPages: function (pdfPath) {
     throw new Error('Function not implemented.');
   },
   getScreenAccessStatus: function () {
@@ -100,6 +108,7 @@ export const electronApi: ElectronApi = {
   getZoomElementTitle: function () {
     throw new Error('Function not implemented.');
   },
+  hideFileOnWindows: async () => undefined,
   inferExtension: async function (filename, filetype) {
     throw new Error('Function not implemented.');
   },
@@ -112,6 +121,7 @@ export const electronApi: ElectronApi = {
   isZoomPythonInstalled: function () {
     throw new Error('Function not implemented.');
   },
+  join,
   launchZoomMeeting: function (meetingId) {
     throw new Error('Function not implemented.');
   },
@@ -127,6 +137,7 @@ export const electronApi: ElectronApi = {
   navigateWebsiteWindow: function (action) {
     throw new Error('Function not implemented.');
   },
+  normalize,
   onDownloadCancelled: function (callback) {
     throw new Error('Function not implemented.');
   },
@@ -149,6 +160,9 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   onLog: function (callback) {
+    throw new Error('Function not implemented.');
+  },
+  onPathProbeNetworkWarning: function (callback) {
     throw new Error('Function not implemented.');
   },
   onShortcut: function (callback) {
@@ -196,11 +210,14 @@ export const electronApi: ElectronApi = {
   openWebsiteWindow: function (lang) {
     throw new Error('Function not implemented.');
   },
+  parse,
   parseMediaFile: function (filePath, options) {
     throw new Error('Function not implemented.');
   },
-  path: upath,
   pathToFileURL,
+  pauseAllDownloads: function () {
+    throw new Error('Function not implemented.');
+  },
   PLATFORM: 'win32',
   quitAndInstall: function () {
     throw new Error('Function not implemented.');
@@ -209,12 +226,22 @@ export const electronApi: ElectronApi = {
   registerShortcut: function (name, shortcut) {
     throw new Error('Function not implemented.');
   },
+  relaunchApp: function () {
+    throw new Error('Function not implemented.');
+  },
   removeListeners: function (channel) {
     throw new Error('Function not implemented.');
   },
+  resolve,
   restartZoomHelper: () => void 0,
+  resumeAllDownloads: function () {
+    throw new Error('Function not implemented.');
+  },
   robot,
-  sendZoomWindowKeys: function (keys) {
+  saveFileDialog: function (defaultPath, filter) {
+    throw new Error('Function not implemented.');
+  },
+  sendZoomWindowKeys: function (handle, keys) {
     throw new Error('Function not implemented.');
   },
   setAutoStartAtLogin: function (value) {
@@ -226,6 +253,10 @@ export const electronApi: ElectronApi = {
   setHardwareAcceleration: function (disabled) {
     throw new Error('Function not implemented.');
   },
+  setPathProbeNotificationPaths: function (paths) {
+    throw new Error('Function not implemented.');
+  },
+  showFileOnWindows: async () => undefined,
   startZoomHelper: function () {
     throw new Error('Function not implemented.');
   },

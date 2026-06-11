@@ -18,12 +18,11 @@ const {
   fileUrlToPath,
   fs,
   getVideoDuration,
+  parse,
   parseMediaFile,
-  path,
   pathToFileURL,
 } = globalThis.electronApi;
 const { exists } = fs;
-const { parse } = path;
 
 /**
  * Checks if a file is of a certain type.

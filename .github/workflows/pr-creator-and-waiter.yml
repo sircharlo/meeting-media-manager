@@ -1,0 +1,189 @@
+name: Create PR, wait, and merge
+
+on:
+  workflow_call:
+    inputs:
+      base:
+        description: Base branch for the pull request
+        required: false
+        type: string
+        default: master
+      head:
+        description: Head branch for the pull request
+        required: true
+        type: string
+      title:
+        description: Pull request title
+        required: true
+        type: string
+      body:
+        description: Pull request body
+        required: false
+        type: string
+        default: Automated pull request
+      merge-method:
+        description: Merge method (merge, squash, rebase)
+        required: false
+        type: string
+        default: squash
+      delete-branch:
+        description: Delete branch after merge
+        required: false
+        type: boolean
+        default: true
+      admin:
+        description: Use administrator privileges to merge
+        required: false
+        type: boolean
+        default: false
+      auto:
+        description: Enable auto-merge
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  create-wait-merge:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Create pull request
+        id: create-pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          BASE_BRANCH: ${{ inputs.base }}
+          HEAD_BRANCH: ${{ inputs.head }}
+          PR_TITLE: ${{ inputs.title }}
+          PR_BODY: ${{ inputs.body }}
+        run: |
+          set -e
+
+          set +e
+          create_output=$(gh pr create \
+            --base "$BASE_BRANCH" \
+            --head "$HEAD_BRANCH" \
+            --title "$PR_TITLE" \
+            --body "$PR_BODY" \
+            2>&1)
+          create_status=$?
+          set -e
+
+          if [ "$create_status" -eq 0 ]; then
+            pr_url="$create_output"
+          else
+            pr_url=$(gh pr list \
+              --state open \
+              --base "$BASE_BRANCH" \
+              --head "$HEAD_BRANCH" \
+              --json url \
+              --jq '.[0].url')
+
+            if [ -n "$pr_url" ]; then
+              echo "Found existing pull request for $HEAD_BRANCH -> $BASE_BRANCH: $pr_url"
+            else
+              echo "$create_output"
+              exit "$create_status"
+            fi
+          fi
+
+          echo "url=$pr_url" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for pull request checks
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PR_URL: ${{ steps.create-pr.outputs.url }}
+        run: |
+          set +e
+
+          echo "Waiting for checks to appear..."
+          for i in {1..12}; do
+            checks_output=$(gh pr checks "$PR_URL" 2>&1)
+            if echo "$checks_output" | grep -q "no checks reported"; then
+              echo "No checks reported yet, waiting 10s... ($i/12)"
+              sleep 10
+            else
+              echo "Checks found!"
+              break
+            fi
+          done
+
+          echo "Watching checks..."
+          gh pr checks "$PR_URL" --watch --interval 30
+          checks_status=$?
+          set -e
+
+          if [ "$checks_status" -ne 0 ] && gh pr checks "$PR_URL" 2>&1 | grep -q "no checks reported"; then
+            echo "No checks were reported for this PR; continuing to merge."
+            exit 0
+          fi
+
+          if [ "$checks_status" -ne 0 ]; then
+            ignored_failure_pattern='^Queue: Embarked in merge queue[[:space:]]+fail([[:space:]]+|$)'
+            real_failures=$(echo "$checks_output" \
+              | awk -F '\t' '$2 == "fail" { print $0 }' \
+              | grep -Ev "$ignored_failure_pattern" \
+              || true)
+
+            if [ -z "$real_failures" ]; then
+              echo "Ignoring non-blocking check failure: Queue: Embarked in merge queue"
+              echo "$checks_output"
+              exit 0
+            fi
+          fi
+
+          echo "$checks_output"
+          exit "$checks_status"
+
+      - name: Merge pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PR_URL: ${{ steps.create-pr.outputs.url }}
+          MERGE_METHOD: ${{ inputs.merge-method }}
+          DELETE_BRANCH: ${{ inputs.delete-branch }}
+          USE_ADMIN: ${{ inputs.admin }}
+          USE_AUTO: ${{ inputs.auto }}
+        run: |
+          set -e
+
+          method_flag="--squash"
+          if [ "$MERGE_METHOD" = "merge" ]; then
+            method_flag="--merge"
+          elif [ "$MERGE_METHOD" = "rebase" ]; then
+            method_flag="--rebase"
+          fi
+
+          delete_flag=""
+          if [ "$DELETE_BRANCH" = "true" ]; then
+            delete_flag="--delete-branch"
+          fi
+
+          admin_flag=""
+          if [ "$USE_ADMIN" = "true" ]; then
+            admin_flag="--admin"
+          fi
+
+          auto_flag=""
+          if [ "$USE_AUTO" = "true" ]; then
+            auto_flag="--auto"
+          fi
+
+          echo "Attempting to merge..."
+          set +e
+          for i in {1..10}; do
+            gh pr merge "$PR_URL" $method_flag $delete_flag $admin_flag $auto_flag
+            if [ $? -eq 0 ]; then
+              echo "Merge successful!"
+              exit 0
+            fi
+            
+            echo "Merge failed, potentially due to transient repository rules or checks. Retrying in 20s... ($i/10)"
+            sleep 20
+          done
+
+          echo "Merge failed after multiple attempts."
+          exit 1

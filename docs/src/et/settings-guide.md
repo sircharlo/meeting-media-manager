@@ -157,6 +157,20 @@ Need seaded võimaldavad seadistada ajutisi muudatusi koosolekute ajakavas:
 - **Uus nädalavahetuse koosoleku päev**: uus päev nädalavahetuse koosolekuks
 - **Uus nädalavahetuse koosoleku aeg**: uus aeg nädalavahetuse koosolekuks
 
+### Koosolekute ajakava automaatsed uuendused {#automatic-meeting-schedule-updates}
+
+<!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
+
+Kui see funktsioon on sisse lülitatud, kontrollib M³ regulaarselt Jehoova tunnistajate ametlikku veebisaiti koosolekute kuupäevade ja kellaaegade muudatuste suhtes ning uuendab profiili automaatselt.
+
+See toimib ainult nende profiilide puhul, mis on lisatud koguduse otsingu abil ja mille koguduse nime ei ole käsitsi muudetud. Kui sünkroniseerimine lülitati välja koguduse nime muutumise tõttu, kasuta valikut **Luba ajakava sünkroniseerimine**, et profiil uuesti ühendada.
+
+#### Värskenda koosolekute ajakava {#refresh-meeting-schedule}
+
+<!-- **Setting**: `reSyncMeetingScheduleButton` -->
+
+Sünkroniseeri praegune ja tulevane koosolekute ajakava käsitsi ametliku veebisaidi andmetega.
+
 ## Meediafailide allalaadimine ja esitamine {#media-retrieval-and-playback}
 
 ### Mõõdetav ühendus {#metered-connection}
@@ -174,6 +188,14 @@ Luba see, kui kasutad piiratud andmesidet, et vähendada andmekasutust.
 Luba meedia esitamise funktsioon. See on vajalik, kui soovid esitada meediafaile teisel monitoril.
 
 **Vaikimisi**: `väljas`
+
+#### Luba meedia eelvaade {#enable-media-preview}
+
+<!-- **Setting**: `enableMediaPreview` -->
+
+Näita meediaakna reaalajas eelvaadet pildi või video kuvamise ajal.
+
+**Vaikimisi**: `lubatud`
 
 #### Alusta taasesitust - peatatud {#begin-playback-paused}
 
@@ -332,6 +354,7 @@ Määra, milliseid OBS-stseene kasutada erinevateks eesmärkideks:
 - **Vaheta stseeni pärast meediat**: naase automaatselt eelmisele stseenile pärast meediat
 - **Eelmise stseeni meeldejätmine**: Eelmise stseeni meeldejätmine ja taastamine
 - **Peida ikoonid**: Peida OBS-iga seotud ikoonid kasutajaliidesest
+- **Salvestuse juhtnupud**: Näita juhtnuppe, millega saab M³-st OBS-i salvestust alustada ja lõpetada
 
 :::warning Oluline märkus
 
@@ -385,6 +408,58 @@ Klahvide otsetee, mis käivitub, kui koosoleku ajal mängitakse viimane laul.
 
 **Vaikimisi**: Tühi
 
+### Koosolekute salvestused {#meeting-recordings}
+
+#### Luba välise salvestusrakenduse integreerimine {#enable-external-recording-app-integration}
+
+<!-- **Setting**: `recordingEnable` -->
+
+Luba M³ juhtida klahvikombinatsioonide abil eraldi salvestusrakendust. See ei salvestata M³-s; see saadab seadistatud kiirklahvid, kui vajutad koosoleku salvestuste hüpikaknas nuppu **Salvestamise alustamine** või **Salvestamise lõpetamine**.
+
+See valik on peidetud, kui OBS-i salvestusfunktsioonid on sisse lülitatud. Kui kasutad OBS Studiot, kasuta selle asemel OBS-i integratsiooni salvestusfunktsioone.
+
+**Vaikimisi**: `väljas`
+
+#### Salvestamise kiirklahvid ja kaust {#recording-shortcuts-and-folder}
+
+<!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
+
+Määra salvestamise alustamiseks vajalik klahvikombinatsioon, salvestamise lõpetamiseks vajalik valikuline klahvikombinatsioon ning kaust, kuhu välisrakendus salvestused salvestab. Kui peatamise kiirklahvi pole määratud, kasutab M³ uuesti käivitamise kiirklahvi. Kui kaust on seadistatud, kuvab M³ selle avamiseks nuppu.
+
+### Koosoleku taimer {#meeting-timer}
+
+#### Luba koosoleku taimer {#enable-meeting-timer}
+
+<!-- **Setting**: `enableTimerDisplay` -->
+
+Luba eraldi taimeri akna kasutamine koosoleku osade ajastamiseks. Taimer on beetafunktsioon ja seda tuleks lubada ainult heakskiidu korral.
+
+**Vaikimisi**: `väljas`
+
+#### Taimeriakna käitumine {#timer-window-behavior}
+
+<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
+
+Määrake, kas ajastuse aken avatakse automaatselt, kas osalejate taimerid loevad vaikimisi üles või alla, kas kell kasutab 12- või 24-tunnist ajavormingut ning kas ajastuse hetkeväärtus kuvatakse tegevusala ajastuse nupul.
+
+#### Taimeri kuvamisvormingud {#timer-display-formats}
+
+<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
+
+Vali kellaaja ja tagasilugemistimeri jaoks analoog- või digitaalne kuvamisviis. Tagasilugemise hoiatusnäidik võib viimasel minutil muuta analoogse tagasilugemise ringi hoiatusvärviks.
+
+#### Koosoleku taimer ja ajakava staatus {#meeting-countdown-and-schedule-status}
+
+<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
+
+Näita enne planeeritud koosolekuid tagasiarvestust ja vajaduse korral ka seda, kas koosolek on graafikust ees või maha jäänud. Koosoleku alguseni jäänud aeg kuvatakse ainult taimeriekraanil, mitte peamisel meediaekraanil.
+
+#### Taimeri välimus ja üle aja minek {#timer-appearance-and-overtime}
+
+<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
+
+Saate kohandada taimeri teksti suurust ja värve ning seadistada üle aja näitajaid, nagu näiteks vahelduvad värvid, vilkumine ja ainult möödunud üle aja kuvamine loendamisrežiimis.
+
 ## Lisasätted {#advanced-settings}
 
 ### Kiirklahvid {#settings-guide-keyboard-shortcuts}
@@ -418,6 +493,14 @@ Luba üleminekuga varjamine või näitamine meediaaknas.
 
 **Vaikimisi**: `lubatud`
 
+#### Luba taasesituse kiiruse reguleerimine {#enable-playback-speed-control}
+
+<!-- **Setting**: `enablePlaybackSpeedControl` -->
+
+Võimaldab heli- ja videomaterjali taasesituskiiruse reguleerimist meediaelemendi kontekstimenüüst.
+
+**Vaikimisi**: `väljas`
+
 #### Peida meedia logo {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
@@ -432,7 +515,7 @@ Peida logo meediaaknas.
 
 Allalaaditud meediafailide maksimaalne resolutsioon.
 
-**Valikud**: 240p, 360p, 480p, 720p
+**Valikud**: 240p, 360p, 480p, 720p, 1080p
 
 **Vaikimisi**: 720p
 
@@ -449,6 +532,14 @@ Kaasa trükitud väljaannete meedia allalaadimiste hulka.
 <!-- **Setting**: `excludeFootnotes` -->
 
 Võimaluse korral jäta allmärkuste pildid meedia allalaadimistest välja.
+
+**Vaikimisi**: `väljas`
+
+#### Jäta välja täiendavad Vahitorni õppevideod {#exclude-additional-watchtower-study-videos}
+
+<!-- **Setting**: `excludeWtParagraphVideos` -->
+
+Ära lisa videoid, millele viidatakse Vahitorni uurimise lõikudes.
 
 **Vaikimisi**: `väljas`
 
@@ -506,6 +597,10 @@ Salvesta eksporditud meediafailid MP4-vormingusse, et saavutada parem ühilduvus
 
 **Vaikimisi**: `väljas`
 
+### Profiili seaded – ülekandmine {#profile-settings-transfer}
+
+Ekspordi praeguse profiili seaded JSON-failina või impordi varem eksporditud profiili seadefail. Importimine asendab praeguse profiili seaded.
+
 ### Ohutsoon {#danger-zone}
 
 :::warning Hoiatus
@@ -521,6 +616,22 @@ Neid seadeid tuleks muuta ainult juhul, kui mõistad nende mõju.
 Põhidomeen, mida kasutatakse väljaannete ja meedia allalaadimiseks.
 
 **Vaikimisi**: `jw.org`
+
+#### Lülita riistvarakiirendus välja {#disable-hardware-acceleration}
+
+<!-- **Setting**: `disableHardwareAcceleration` -->
+
+Lülita riistvarakiirendus pärast M³ taaskäivitamist välja. See võib aidata graafiliste tõrgete või süsteemi kokkujooksmise puhul mõnel süsteemil, kuid muul juhul ei ole seda soovitatav teha.
+
+**Vaikimisi**: `väljas`
+
+#### Riistvarakiirenduse meeldetuletuse väljalülitamine {#suppress-hardware-acceleration-reminder}
+
+<!-- **Setting**: `suppressHardwareAccelerationReminder` -->
+
+Peida meeldetuletus riistvarakiirenduse taaskäivitamise kohta pärast selle käsitsi väljalülitamist.
+
+**Vaikimisi**: `väljas`
 
 #### Meedia allalaadimise keelamine {#disable-media-fetching}
 

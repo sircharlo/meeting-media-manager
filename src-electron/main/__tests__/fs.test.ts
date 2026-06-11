@@ -2,12 +2,16 @@ import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mkdirMock = vi.fn();
 const rmMock = vi.fn();
+const statMock = vi.fn();
 const writeFileMock = vi.fn();
 const delayMock = vi.fn(() => Promise.resolve());
 const captureElectronErrorMock = vi.fn();
 const addElectronBreadcrumbMock = vi.fn();
 const uuidMock = vi.fn(() => 'test-uuid');
 const watchMock = vi.fn();
+const sendToWindowMock = vi.fn();
+const yauzlOpenMock = vi.fn();
+const yauzlFromBufferPromiseMock = vi.fn();
 
 vi.mock('chokidar', () => ({
   watch: watchMock,
@@ -33,7 +37,7 @@ vi.mock('node:fs', () => ({
 vi.mock('node:fs/promises', () => ({
   mkdir: mkdirMock,
   rm: rmMock,
-  stat: vi.fn(),
+  stat: statMock,
   writeFile: writeFileMock,
 }));
 
@@ -52,7 +56,7 @@ vi.mock('src-electron/main/utils', () => ({
 }));
 
 vi.mock('src-electron/main/window/window-base', () => ({
-  sendToWindow: vi.fn(),
+  sendToWindow: sendToWindowMock,
 }));
 
 vi.mock('src-electron/main/window/window-main', () => ({
@@ -70,18 +74,36 @@ vi.mock('src/shared/vanilla', () => ({
   uuid: uuidMock,
 }));
 
-vi.mock('upath', () => ({
-  default: {
-    basename: vi.fn(),
-    dirname: vi.fn(),
-    join: (...parts: string[]) => parts.join('/'),
-    resolve: (value: string) => value,
-    toUnix: (value: string) => value.replaceAll('\\', '/'),
-  },
-}));
+vi.mock('upath', () => {
+  const join = vi.fn((...parts: string[]) => parts.join('/'));
+  const resolve = vi.fn((value: string) => value);
+  const toUnix = vi.fn((value: string) => value.replaceAll('\\', '/'));
+  const basename = vi.fn();
+  const dirname = vi.fn();
+
+  return {
+    basename,
+    default: {
+      basename,
+      dirname,
+      join,
+      resolve,
+      toUnix,
+    },
+    dirname,
+    join,
+    resolve,
+    toUnix,
+  };
+});
 
 vi.mock('yauzl', () => ({
-  default: {},
+  default: {
+    fromBufferPromise: yauzlFromBufferPromiseMock,
+    openPromise: yauzlOpenMock,
+  },
+  fromBufferPromise: yauzlFromBufferPromiseMock,
+  openPromise: yauzlOpenMock,
 }));
 
 const originalPlatform = Object.getOwnPropertyDescriptor(process, 'platform');
@@ -100,7 +122,9 @@ describe('isUsablePath', () => {
     mkdirMock.mockResolvedValue(undefined);
     writeFileMock.mockResolvedValue(undefined);
     rmMock.mockResolvedValue(undefined);
+    statMock.mockResolvedValue({ size: 1024 });
     delayMock.mockResolvedValue(undefined);
+    sendToWindowMock.mockClear();
     setPlatform('linux');
   });
 
@@ -195,6 +219,341 @@ describe('isUsablePath', () => {
         },
       }),
     );
+  });
+
+  it('treats transient UNKNOWN mkdir failures on network paths as unusable without reporting', async () => {
+    setPlatform('win32');
+    const error = new Error('unknown error');
+    (error as Error & { code?: string }).code = 'UNKNOWN';
+    mkdirMock.mockRejectedValue(error);
+
+    const { isUsablePath } = await import('../fs');
+
+    await expect(isUsablePath(String.raw`\\192.168.4.38\Test`)).resolves.toBe(
+      false,
+    );
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: 'filesystem',
+        data: expect.objectContaining({
+          code: 'UNKNOWN',
+          likelyNetworkPath: true,
+          resolvedBase: String.raw`\\192.168.4.38\Test`,
+          testDir: String.raw`\\192.168.4.38\Test/.cache-test-test-uuid`,
+        }),
+        level: 'warning',
+        message: '[isUsablePath] Probe failed',
+      }),
+    );
+    expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
+
+  it('treats ENOENT on likely network paths as unusable without reporting', async () => {
+    setPlatform('win32');
+    const error = new Error(
+      String.raw`ENOENT: no such file or directory, mkdir '\?'`,
+    );
+    (error as Error & { code?: string }).code = 'ENOENT';
+    mkdirMock.mockRejectedValue(error);
+
+    const { isUsablePath } = await import('../fs');
+
+    await expect(isUsablePath('G:/My Drive/Meeting Media')).resolves.toBe(
+      false,
+    );
+
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: 'filesystem',
+        data: expect.objectContaining({
+          basePath: 'G:/My Drive/Meeting Media',
+          code: 'ENOENT',
+          likelyNetworkPath: true,
+          resolvedBase: 'G:/My Drive/Meeting Media',
+          testDir: 'G:/My Drive/Meeting Media/.cache-test-test-uuid',
+        }),
+        level: 'warning',
+      }),
+    );
+    expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
+
+  it('does not attempt a probe when a Windows path resolves to the extended-path marker', async () => {
+    setPlatform('win32');
+
+    const { isUsablePath } = await import('../fs');
+
+    await expect(isUsablePath(String.raw`\?`)).resolves.toBe(false);
+
+    expect(mkdirMock).not.toHaveBeenCalled();
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: 'filesystem',
+        data: expect.objectContaining({
+          basePath: String.raw`\?`,
+          resolvedBase: String.raw`\?`,
+          testDir: String.raw`\?/.cache-test-test-uuid`,
+        }),
+        level: 'error',
+      }),
+    );
+    expect(captureElectronErrorMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Invalid Windows path resolved for filesystem probe',
+      }),
+      expect.anything(),
+    );
+  });
+
+  it('notifies renderer on probe errors when one configured folder is likely network-based', async () => {
+    setPlatform('win32');
+    const error = new Error('unknown error');
+    (error as Error & { code?: string }).code = 'UNKNOWN';
+    mkdirMock.mockRejectedValue(error);
+
+    const { isUsablePath, setPathProbeNotificationPaths } =
+      await import('../fs');
+    setPathProbeNotificationPaths([
+      String.raw`\\192.168.4.38\Test`,
+      'C:/Users/test/cache',
+    ]);
+
+    await expect(isUsablePath('C:/Users/test/cache')).resolves.toBe(false);
+
+    expect(sendToWindowMock).toHaveBeenCalledWith(
+      undefined,
+      'pathProbeNetworkWarning',
+    );
+  });
+});
+
+describe('getZipEntries', () => {
+  beforeEach(() => {
+    vi.resetModules();
+    vi.clearAllMocks();
+    statMock.mockResolvedValue({ size: 1024 });
+  });
+
+  it('does not report missing zip files as Electron errors', async () => {
+    const error = new Error('missing zip');
+    (error as Error & { code?: string }).code = 'ENOENT';
+    statMock.mockRejectedValue(error);
+
+    const { getZipEntries } = await import('../fs');
+
+    await expect(getZipEntries('/tmp/missing.jwpub')).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
+
+    expect(yauzlOpenMock).not.toHaveBeenCalled();
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: 'zip',
+        data: expect.objectContaining({
+          errorCode: 'ENOENT',
+          zipPath: '/tmp/missing.jwpub',
+        }),
+        level: 'info',
+        message: 'Zip file unavailable before listing entries',
+      }),
+    );
+    expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
+
+  it('reports unexpected stat errors before opening zip files', async () => {
+    const error = new Error('permission denied');
+    (error as Error & { code?: string }).code = 'EACCES';
+    statMock.mockRejectedValue(error);
+
+    const { getZipEntries } = await import('../fs');
+
+    await expect(getZipEntries('/tmp/locked.jwpub')).rejects.toMatchObject({
+      code: 'EACCES',
+    });
+
+    expect(yauzlOpenMock).not.toHaveBeenCalled();
+    expect(captureElectronErrorMock).toHaveBeenCalledWith(
+      error,
+      expect.objectContaining({
+        contexts: expect.objectContaining({
+          fn: {
+            args: { zipPath: '/tmp/locked.jwpub' },
+            name: 'getZipEntries stat',
+          },
+        }),
+      }),
+    );
+  });
+
+  it('adds diagnostics but does not report zip files deleted after stat', async () => {
+    const error = new Error('missing after stat');
+    (error as Error & { code?: string }).code = 'ENOENT';
+    yauzlOpenMock.mockRejectedValue(error);
+
+    const { getZipEntries } = await import('../fs');
+
+    await expect(getZipEntries('/tmp/raced.jwpub')).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
+
+    expect(yauzlOpenMock).toHaveBeenCalledWith('/tmp/raced.jwpub');
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: 'zip',
+        data: expect.objectContaining({
+          errorCode: 'ENOENT',
+          fileSize: 1024,
+          zipPath: '/tmp/raced.jwpub',
+        }),
+        level: 'info',
+        message: 'Error opening zip entries',
+      }),
+    );
+    expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
+
+  it('adds entry samples and contents size to zip entry diagnostics', async () => {
+    const entries = [
+      { compressedSize: 50, fileName: 'contents', uncompressedSize: 100 },
+      { compressedSize: 25, fileName: 'manifest.json', uncompressedSize: 75 },
+    ];
+    const zipfile = {
+      close: vi.fn(),
+      eachEntry: async function* () {
+        yield* entries;
+      },
+    };
+    yauzlOpenMock.mockResolvedValue(zipfile);
+
+    const { getZipEntries } = await import('../fs');
+
+    await expect(getZipEntries('/tmp/parent.jwpub')).resolves.toEqual({
+      contents: 100,
+      'manifest.json': 75,
+    });
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: 'zip',
+        data: expect.objectContaining({
+          contentsSize: 100,
+          entryCount: 2,
+          entryNamesSample: ['contents', 'manifest.json'],
+          fileSize: 1024,
+          totalUncompressedSize: 175,
+          zipPath: '/tmp/parent.jwpub',
+        }),
+        message: 'Finished reading zip entries',
+      }),
+    );
+  });
+
+  it('retries timed out cloud zip reads before reporting an error', async () => {
+    const timeoutError = new Error('ETIMEDOUT: connection timed out, read');
+    (timeoutError as Error & { code?: string }).code = 'ETIMEDOUT';
+    const zipfileMock = {
+      close: vi.fn(),
+      eachEntry: async function* () {
+        yield* [];
+      },
+    };
+
+    yauzlOpenMock
+      .mockRejectedValueOnce(timeoutError)
+      .mockResolvedValueOnce(zipfileMock);
+
+    const { getZipEntries } = await import('../fs');
+
+    await expect(
+      getZipEntries(
+        '/Users/test/Library/Mobile Documents/com~apple~CloudDocs/Downloads/S-34_GA.jwpub',
+      ),
+    ).resolves.toEqual({});
+
+    expect(yauzlOpenMock).toHaveBeenCalledTimes(2);
+    expect(delayMock).toHaveBeenCalledWith(1000);
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: 'zip',
+        data: expect.objectContaining({
+          cloudProvider: 'iCloud',
+          errorCode: 'ETIMEDOUT',
+          isCloudStoragePath: true,
+          retrying: true,
+        }),
+        message: 'Error opening zip entries',
+      }),
+    );
+    expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
+
+  it('retries truncated zip reads before reporting an error', async () => {
+    const truncatedError = new Error(
+      'End of central directory record signature not found. Either not a zip file, or file is truncated.',
+    );
+    const zipfileMock = {
+      close: vi.fn(),
+      eachEntry: async function* () {
+        yield* [];
+      },
+    };
+
+    yauzlOpenMock
+      .mockRejectedValueOnce(truncatedError)
+      .mockResolvedValueOnce(zipfileMock);
+
+    const { getZipEntries } = await import('../fs');
+
+    await expect(getZipEntries('/tmp/raced.jwpub')).resolves.toEqual({});
+
+    expect(yauzlOpenMock).toHaveBeenCalledTimes(2);
+    expect(delayMock).toHaveBeenCalledWith(1000);
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: 'zip',
+        data: expect.objectContaining({
+          errorCode: undefined,
+          retrying: true,
+          zipPath: '/tmp/raced.jwpub',
+        }),
+        message: 'Error opening zip entries',
+      }),
+    );
+    expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
+
+  it('retries zip files that disappear before opening during unzip', async () => {
+    const error = new Error('missing during unzip');
+    (error as Error & { code?: string }).code = 'ENOENT';
+    const zipfile = {
+      close: vi.fn(),
+      eachEntry: async function* () {
+        yield* [];
+      },
+    };
+
+    yauzlOpenMock.mockRejectedValueOnce(error).mockResolvedValueOnce(zipfile);
+
+    const { unzipFile } = await import('../fs');
+
+    await expect(unzipFile('/tmp/raced.jwpub', '/tmp/out')).resolves.toEqual(
+      [],
+    );
+
+    expect(yauzlOpenMock).toHaveBeenCalledTimes(2);
+    expect(delayMock).toHaveBeenCalledWith(1000);
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: 'unzip',
+        data: expect.objectContaining({
+          errorCode: 'ENOENT',
+          input: '/tmp/raced.jwpub',
+          retrying: true,
+        }),
+        level: 'info',
+        message: 'Error opening zipfile',
+      }),
+    );
+    expect(captureElectronErrorMock).not.toHaveBeenCalled();
   });
 });
 

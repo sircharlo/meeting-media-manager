@@ -10,13 +10,14 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { fetchRaw } from 'src/utils/api';
 import { getFontsPath } from 'src/utils/fs';
 import { useJwStore } from 'stores/jw';
+import { ref } from 'vue';
 
-const { fs, path } = globalThis.electronApi;
+const { extname, fs, join } = globalThis.electronApi;
 const { ensureDir, exists, readFile, writeFile } = fs;
-const { extname, join } = path;
 
 let jwIconsGlyphMapPromise: null | Promise<void> = null;
 let jwIconsGlyphMap: null | Record<string, string> = null;
+const jwIconsGlyphMapVersion = ref(0);
 
 // Yeartext font configuration per writing script
 interface YeartextFontConfig {
@@ -304,11 +305,13 @@ const buildJwIconsMap = async (fontPath: string) => {
         }
       }
       jwIconsGlyphMap = map;
+      jwIconsGlyphMapVersion.value++;
     } catch (error) {
       errorCatcher(error, {
         contexts: { fn: { fontPath, name: 'buildJwIconsMap' } },
       });
       jwIconsGlyphMap = fallbackJwIconsGlyphMap;
+      jwIconsGlyphMapVersion.value++;
     }
   })();
   return jwIconsGlyphMapPromise;
@@ -318,6 +321,7 @@ export const getJwIconFromKeyword = (keyword: number | string | undefined) => {
   if (!keyword) return '';
   const icon = keywordToJwIconMapping[keyword.toString()];
   if (!icon) return '';
+  if (jwIconsGlyphMapPromise && !jwIconsGlyphMap) return '';
   return jwIconsGlyphMap?.[icon] || fallbackJwIconsGlyphMap[icon] || '';
 };
 
@@ -403,7 +407,7 @@ const resolveFontRequest = async (
   let resolvedUrl = originalUrl;
   let response = await fetchFont(resolvedUrl);
 
-  if (!response.ok && fontName === 'jw-icons-all') {
+  if (!response?.ok && fontName === 'jw-icons-all') {
     await store.updateJwIconsUrl();
     const fallbackUrl = store.fontUrls[fontName];
     if (fallbackUrl && fallbackUrl !== originalUrl) {
@@ -412,9 +416,9 @@ const resolveFontRequest = async (
     }
   }
 
-  if (!response.ok) {
+  if (!response?.ok) {
     throw new Error(
-      `Failed to download font: ${response.statusText || response.status}`,
+      `Failed to download font: ${response?.statusText || response?.status}`,
     );
   }
 

@@ -50,6 +50,14 @@ M³ organise automatiquement les médias par type de réunion et section :
 
 - **Sections de réunion** - Les médias sont regroupés par parties de réunion (discours public, joyaux, etc.)
 - **Sections personnalisées** - Vous pouvez créer des sections personnalisées pour des médias supplémentaires si aucune réunion n'est programmée ce jour-là
+- **Tri manuel** - Faites glisser les éléments multimédias pour les classer dans l'ordre souhaité, et réinitialisez l'ordre si nécessaire
+- **Lecture en boucle** - Lire un élément multimédia en boucle ou répéter tous les éléments d'une section jusqu'à ce que la lecture soit arrêtée manuellement
+
+### Médias cachés et manquants {#hidden-and-missing-media}
+
+Il est possible de masquer les fichiers multimédias dans la liste sans supprimer les fichiers téléchargés automatiquement. Si des fichiers multimédias ont été masqués par erreur, utilisez l'option **Afficher les fichiers multimédias masqués** pour le jour sélectionné.
+
+Si M³ signale des médias manquants, vérifiez d'abord si le contenu devrait devenir disponible à l'approche de la date de la réunion. Vous pouvez également ajouter manuellement l'élément manquant via le menu **Ajouter un média** ou en le faisant glisser dans la liste des médias.
 
 ## Présentation des médias {#media-presentation}
 
@@ -75,6 +83,8 @@ Le lecteur multimédia fournit des contrôles complets :
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
 - **Zoom/Pan** - Utilisez la molette de la souris pour zoomer, faites glisser pour faire un panoramique (pour les images)
+- **Aperçu en direct** - Lorsque cette option est activée, affiche un aperçu de la fenêtre multimédia que l'auditoire voit dans la fenêtre principale
+- **Vitesse de lecture** - Lorsque cette option est activée dans les paramètres, vous pouvez régler la vitesse de lecture audio et vidéo à partir du menu contextuel d'un élément multimédia
 
 ### Fonctionnalités de présentation avancées {#advanced-presentation}
 
@@ -118,6 +128,27 @@ Configurez des raccourcis clavier personnalisés pour un accès rapide. Notez qu
 
 **Note (\*):** Raccourci global - disponible même lorsque l'application n'est pas focalisée
 
+## Outils d'affichage {#display-tools}
+
+### Fenêtre d'affichage des médias {#media-display-window}
+
+La fenêtre d'affichage des médias est celle qui est visible pour l'auditoire. Elle peut être affichée sur un écran externe ou utilisée en mode fenêtré, selon votre configuration matérielle.
+
+Utiliser le popup d'affichage pour :
+
+- Afficher ou masquer la fenêtre des médias
+- Choisir le type de fenêtre
+- Sélectionner un arrière-plan temporaire personnalisé au lieu du texte de l'année
+- Utiliser le flux d'une caméra comme arrière-plan. Ceci est principalement utilisé dans les assemblées locales qui tiennent leurs réunions en langue des signes.
+
+Veuillez noter que les arrière-plans personnalisés sont temporaires et ne sont pas enregistrés à la fermeture de M³.
+
+### Minuteur de réunion {#user-guide-meeting-timer}
+
+Lorsque le minuteur de réunion est activé, M³ peut afficher une fenêtre de minuteur séparée pour chronométrer les interventions des participants. Le minuteur peut compter à la hausse ou à la baisse, afficher l'heure actuelle, indiquer le temps restant avant le début d'une réunion prévue et, si nécessaire, signaler les dépassements de temps ou indiquer si la réunion est en avance ou en retard par rapport à l'horaire prévu.
+
+La minuterie est une fonctionnalité bêta et ne doit être utilisée que si elle est approuvée localement.
+
 ## Musique de fond {#user-guide-background-music}
 
 ### Configuration de la musique de fond {#background-music-setup}
@@ -159,6 +190,7 @@ M³ change automatiquement les scènes OBS pendant les présentations :
 - **Scène média** - Affiche le contenu multimédia
 - **Scène image** - Affiche les images (peut être reportée si activée)
 - **Changement automatique** - Les scènes changent selon le type de média et les paramètres
+- **Commandes d'enregistrement** - Si cette option est activée, M³ peut démarrer et arrêter l'enregistrement dans OBS Studio à partir du popup OBS Studio
 
 ### Fonctionnalités OBS avancées {#advanced-obs}
 
@@ -236,6 +268,8 @@ Ajoutez vos propres fichiers multimédias à M³ :
 3. **Surveillance de dossiers** - Configurez un dossier surveillé pour les imports automatiques
 4. **Fichiers JWPUB et listes de lecture** - Importez des publications et des listes de lecture
 5. **Médias pour discours publics (S-34 / S-34mp)** - Importez des médias pour discours publics à l'aide de fichiers JWPUB S‑34 ou S‑34mp
+6. **Vidéos du site officiel** - Recherchez des vidéos et ajoutez-les aux médias pour la date sélectionnée
+7. **Bible d'étude et médias bibliques de langue des signes** - Ajouter des images, des vidéos, des cartes, des références historiques ou des vidéos bibliques de langue des signes pour certains passages
 
 ### Import et gestion des médias {#managing-imported-media}
 
@@ -253,6 +287,10 @@ Importez des enregistrements audio de versets bibliques :
 3. Choisir des versets spécifiques ou des plages de versets
 4. Téléchargez les fichiers audio
 5. Utilisez-les
+
+### Import et exportation des paramètres de profil {#profile-settings-import-export}
+
+Les paramètres de chaque profil peuvent être exportés vers un fichier JSON à partir des paramètres. L'importation d'un fichier de paramètres de profil remplace les paramètres du profil actuel, ce qui est utile pour transférer une configuration vers un autre ordinateur ou pour restaurer une configuration connue.
 
 ## Surveillance des dossiers et exportation {#user-guide-folder-monitoring}
 
@@ -286,9 +324,21 @@ Partagez le site officiel sur des écrans externes :
 
 ### Contrôles du site web {#website-controls}
 
+- **Ouvrir le site Web** - Ouvrir une fenêtre de site web séparée
+- **Commencer à faire un miroir** - Afficher la fenêtre du site dans l'affichage des médias pour le public
+- **Arrêter de faire un miroir** - Arrêter d'afficher le site web et revenir au fond d'affichage du texte de l'année ou du média
 - **Navigation** - Contrôles de navigation standard du navigateur
 - **Actualiser** - Recharger la page actuelle
 - **Fermer** - Quitter le mode de présentation du site web
+- **Retour automatique** - Vous pouvez éventuellement revenir à la liste des médias automatiquement après l'arrêt du miroir du site web
+
+## Enregistrement des réunions {#meeting-recordings}
+
+M³ permet de gérer l'enregistrement des réunions, mais ne dispose pas d'un enregistreur intégré.
+
+- **Enregistrement OBS** - Si les contrôles d'enregistrement d'OBS sont activés, utilisez la popup d'OBS pour démarrer et arrêter l'enregistrement d'OBS
+- **Application d'enregistrement externe** - Configurer les raccourcis clavier pour une application d'enregistrement séparée, puis utiliser la popup des enregistrements de la réunion pour envoyer ces raccourcis
+- **Dossier d'enregistrement** - Configurer un dossier d'enregistrement, ce qui affichera un bouton rapide permettant d'ouvrir le dossier dans lequel les enregistrements sont sauvegardés
 
 ## Fonctionnalités avancées {#user-guide-advanced-features}
 
@@ -339,6 +389,7 @@ Configurez des raccourcis clavier personnalisés pour une utilisation efficace :
 - Réduisez la résolution maximale
 - Effacez les anciens fichiers mis en cache
 - Vérifiez l'espace disque disponible
+- Si l'application présente des anomalies graphiques ou plante, essayez de désactiver l'accélération matérielle et redémarrez M³
 
 #### Problèmes de langue {#user-guide-language-issues}
 

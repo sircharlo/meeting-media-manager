@@ -81,6 +81,8 @@ Sa saad importida kohandatud meediat mitmel viisil:
 - **Lohistamine ja kleepimine**: Lohistage failid otse M³-e
 - **Kausta jälgimine**: seadista jälgitav kaust automaatseks importimiseks
 - **JWPUB-failid ja esitusloendid**: importige väljaanded ja esitusloendid
+- **Avaliku kõne meedia**: S-34 või S-34mp JWPUB-failide importimine avaliku kõne meedia jaoks
+- **Piibel ja piiblitööriistad**: Lisa piibli helisalvestusi, õppepiibli meediafailid või viipekeele piiblimaterjale
 
 ### :speaker: Kas ma saan importida audiopiibli osi? {#audio-bible}
 
@@ -124,6 +126,12 @@ Taustamuusika funktsioon hõlmab:
 - Eraldi helitugevusregulaator
 - Konfigureeritav peatuspuhvri aeg
 
+### :stopwatch: Kas M³-s on koosolekute taimer? {#faq-meeting-timer}
+
+Jah. Kui see funktsioon on sisse lülitatud, võib M³ kuvada osalejate aja mõõtmiseks eraldi taimeri akna. See suudab aega üles- või allapoole loendada, näidata praegust kellaaega, kuvada koosoleku alguseni jäänud aega ning vajaduse korral näidata, kas koosolek kestab üle aja või on ajakavast ees.
+
+Taimer on beetafunktsioon ja seda tuleks lubada ainult heakskiidu korral.
+
 ### :video_camera: Kuidas seadistada Zoom-iga koostöö? {#zoom-setup}
 
 Zoom-iga koostöö:
@@ -161,6 +169,13 @@ See funktsioon lükkab piltide jagamise OBS Studio-iga edasi, kuni sa need käsi
 - On vaja suuremat kontrolli ajastuse üle
 - Enneaegsete stseenivahetuste vältimiseks
 
+### :record_button: Kas M³ suudab koosolekuid salvestada? {#faq-recordings}
+
+M³-l pole sisseehitatud salvestusseadet, kuid see aitab salvestamist juhtida kahel viisil:
+
+- Kui kasutate OBS Studiot, lülitage sisse OBS-i salvestusfunktsioonid ja alustage või lõpetage OBS-i salvestamine OBS-i hüpikaknas
+- Kui kasutate mõnda muud salvestusrakendust, seadistage klahvikombinatsioonid nii, et M³ saaks saata koosolekute salvestuste hüpikaknas käsklusi salvestamise alustamiseks ja lõpetamiseks
+
 ## Lisasätted {#faq-advanced-features}
 
 ### :cloud: Kuidas töötab kausta jälgimine? {#faq-folder-monitoring}
@@ -187,6 +202,8 @@ Jah! M³-s saab kasutada erinevaid profiile:
 - Eriüritusteks
 - Erinevate keelegruppide jaoks
 - Et kasutada iga kasutaja jaoks vajaminevaid sätteid ja meediat
+
+Profiile saab eksportida ka JSON-failina ning importida teise arvutisse või teise profiili. Importimine asendab praeguse profiili seaded.
 
 ## Probleemide lahendamine {#faq-troubleshooting}
 

@@ -25,13 +25,15 @@ SCRIPT_DIR   = Path(__file__).parent
 REPO_ROOT    = SCRIPT_DIR.parent
 SRC_I18N     = REPO_ROOT / "src" / "i18n"
 DOCS_LOCALES = REPO_ROOT / "docs" / "locales"
+DOCS_SRC     = REPO_ROOT / "docs" / "src"
 SRC_CONSTANTS_LOCALES = REPO_ROOT / "src" / "constants" / "locales.ts"
 TODAY        = date.today().strftime("%Y-%m-%d")
 PERCENTAGE_THRESHOLD = 40
+IGNORED_DOCS_SRC_DIRS = {"assets", "public"}
 
 # Matches locale JSON import lines (active or commented-out)
 LOCALE_IMPORT_LINE = re.compile(
-    r"^\s*(?://\s*)?import\s+\w+\s+from\s+'\.\/[\w-]+\.json';"
+    r"^\s*(?://\s*)?import\s+\w+\s+from\s+'\.\/[\w-]+\.json'(?:\s+with\s*\{[^}]*\})?;"
 )
 # Matches the % annotation comments this script generates
 PCT_COMMENT_LINE = re.compile(
@@ -70,6 +72,97 @@ def translation_pct(en: dict, lang: dict) -> float:
         if lang.get(k, v) != v
     )
     return round(translated / len(en) * 100, 1)
+
+
+# ── Orphan locale cleanup ─────────────────────────────────────────────────────
+
+def find_orphan_language_files(configured_stems: set[str]) -> list[Path]:
+    """
+    Find locale files that are no longer backed by an app i18n JSON file.
+    Active and inactive languages both come from src/i18n/*.json; anything in
+    docs/locales or docs/src outside that set is orphaned.
+    """
+    orphan_files: list[Path] = []
+
+    if DOCS_LOCALES.exists():
+        for locale_file in sorted(DOCS_LOCALES.glob("*.json")):
+            if locale_file.stem not in configured_stems:
+                orphan_files.append(locale_file)
+
+    if DOCS_SRC.exists():
+        for locale_dir in sorted(DOCS_SRC.iterdir()):
+            if (
+                not locale_dir.is_dir()
+                or locale_dir.name in IGNORED_DOCS_SRC_DIRS
+                or locale_dir.name in configured_stems
+            ):
+                continue
+
+            orphan_files.extend(
+                sorted(path for path in locale_dir.rglob("*") if path.is_file())
+            )
+
+    return sorted(orphan_files)
+
+
+def relative_path(path: Path) -> str:
+    return path.relative_to(REPO_ROOT).as_posix()
+
+
+def is_docs_src_child(path: Path) -> bool:
+    return path != DOCS_SRC and path.is_relative_to(DOCS_SRC)
+
+
+def prompt_delete_orphans(orphan_files: list[Path]) -> bool:
+    print("\n── Orphan language files ───────────────────────────────────")
+    print(
+        "These files belong to languages that are no longer active or inactive "
+        "in src/i18n:"
+    )
+    for path in orphan_files:
+        print(f"  {relative_path(path)}")
+
+    try:
+        answer = input("\nDelete these unused files? [y/N] ").strip().lower()
+    except EOFError:
+        return False
+
+    return answer in {"y", "yes"}
+
+
+def remove_empty_parent_dirs(paths: list[Path]) -> None:
+    candidate_dirs = sorted(
+        {path.parent for path in paths},
+        key=lambda path: len(path.parts),
+        reverse=True,
+    )
+
+    for directory in candidate_dirs:
+        while is_docs_src_child(directory):
+            if not directory.exists():
+                break
+            try:
+                directory.rmdir()
+                print(f"  🗑️   Removed empty directory {relative_path(directory)}")
+            except OSError:
+                break
+            directory = directory.parent
+
+
+def handle_orphan_language_files(configured_stems: set[str]) -> None:
+    orphan_files = find_orphan_language_files(configured_stems)
+    if not orphan_files:
+        return
+
+    if not prompt_delete_orphans(orphan_files):
+        print("  Kept orphan language files.")
+        return
+
+    for path in orphan_files:
+        path.unlink(missing_ok=True)
+        print(f"  🗑️   Deleted {relative_path(path)}")
+
+    remove_empty_parent_dirs(orphan_files)
 
 
 # ── Build translation stats ───────────────────────────────────────────────────
@@ -114,7 +207,7 @@ def build_import_block(stats: dict[str, tuple[str, float]], inactive_too: bool =
     for key in sorted_keys:
         stem, pct = stats[key]
         comment   = f"// {pct}% translated as of {TODAY}"
-        lines.append(f"{comment}\n{"// " if pct < PERCENTAGE_THRESHOLD and not inactive_too else ""}import {key} from './{stem}.json';")
+        lines.append(f"{comment}\n{"// " if pct < PERCENTAGE_THRESHOLD and not inactive_too else ""}import {key} from './{stem}.json' with {{ type: 'json' }};")
 
     return "\n\n".join(lines)
 
@@ -135,7 +228,7 @@ def replace_locale_import_block(content: str, new_block: str) -> str:
                 first_idx = i
             last_idx = i
 
-    if first_idx is None:
+    if first_idx is None or last_idx is None:
         raise ValueError(
             "No locale import lines found in file.\n"
             "Expected lines like:  import fr from './fr.json';"
@@ -157,12 +250,11 @@ def update_index(
         print(f"⚠️   {label} not found at {path}, skipping.")
         return
     content = path.read_text(encoding="utf-8")
-    inactive_too = "docs" in path.parts
-    block   = build_import_block(stats, inactive_too=inactive_too)
+    block   = build_import_block(stats, inactive_too=False)
     updated = replace_locale_import_block(content, block)
     
     active_keys = sorted(k for k, (_, p) in stats.items() if p >= PERCENTAGE_THRESHOLD)
-    keys_str = ",\n  ".join(sorted(stats.keys()))
+    keys_str = ",\n  ".join(active_keys)
     active_keys_str = ",\n  ".join(active_keys)
     
     # Also update the export object if this is an index file
@@ -170,7 +262,7 @@ def update_index(
         new_export = f"export default {{\n  {active_keys_str},\n}};"
         updated = re.sub(r"export\s+default\s*\{[\s\S]*?\};", new_export, updated)
     elif label == "docs/locales/index.ts":
-        new_export = f"const messages: Record<LanguageValue, Partial<typeof en>> = {{\n  {keys_str},\n}};"
+        new_export = f"const messages: Partial<Record<LanguageValue, Partial<typeof en>>> = {{\n  {keys_str},\n}};"
         updated = re.sub(r"const\s+messages:\s*Record<LanguageValue,\s*Partial<typeof\s*en>>\s*=\s*\{[\s\S]*?\};", new_export, updated)
         
     path.write_text(updated, encoding="utf-8")
@@ -349,6 +441,8 @@ def main() -> None:
         return
 
     stats = build_translation_stats(SRC_I18N)
+    configured_stems = {stem for stem, _ in stats.values()}
+    handle_orphan_language_files(configured_stems)
 
     # Summary table
     print("\n── Translation completeness (sorted by %) ──────────────────")

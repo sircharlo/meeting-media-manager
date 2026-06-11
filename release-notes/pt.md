@@ -4,6 +4,35 @@
 
 Para obter a lista completa das mudanças entre versões, consulte nosso arquivo CHANGELOG.md no GitHub.
 
+## v26.6.1
+
+### ✨ Novos Recursos
+
+- ✨ **Visualização de Mídia**: Adicionado uma sobreposição de visualização de mídia ao vivo que pode ser ligado ou desligado nas configurações ou pelo pop-up de exibição.
+- ✨ **Mídia de pesquisa**: Adicionada uma caixa de pesquisa rápida na lista de mídia que permite a você encontrar rapidamente a mídia por título. Para usá-lo, basta usar o atalho de teclado padrão para pesquisar (Ctrl+F ou Cmd+F).
+- ✨ **Configurações de filtro**: Adicionado uma caixa de filtro na página de configurações que permite encontrar as configurações por palavra-chave ou categoria. Para usá-lo, basta clicar no botão Pesquisar no canto superior direito da página de configurações, ou use o atalho de teclado padrão para pesquisa (Ctrl+F ou Cmd+F).
+- ✨ **Aviso de sobreposição de música de fundo**: Adicionado uma notificação de aviso quando a mídia é iniciada enquanto a música de fundo está tocando. Os usuários podem optar por parar a música de fundo da notificação.
+
+## v26.6.0
+
+### ✨ Novos Recursos
+
+- ✨ **Timer**: Adicionado modo de exibição analógica e status do relatório de tempo.
+- ✨ **Perfis**: Configurações de perfil adicionadas e exportação em Configurações Avançadas e no assistente de instalação.
+- ✨ **Janela de Mídia**: Adicionado suporte para esconder automaticamente a janela de mídia após a reprodução quando ela foi inicialmente ocultada. Isto é prático quando um alto-falante remoto quer exibir imagens, por exemplo.
+
+## v26.5.0
+
+### ✨ Novos Recursos
+
+- ✨ **Importação de PDF**: Adicionado um novo fluxo de importação de PDF à caixa de diálogo Publicação de Mídia, permitir que a versão em PDF de uma publicação seja importada automaticamente como imagens individuais quando desejado.
+
+## v26.4.8
+
+### ✨ Novos Recursos
+
+- ✨ **JW Stream**: Adicionado JW Stream à lista de sites que podem ser espelhados.
+
 ## v26.4.0
 
 ### ✨ Novos Recursos
@@ -79,7 +108,7 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 ### ✨ Novos Recursos
 
 - ✨ **Assistente de configuração – Etapa do Zoom**: Adicionada uma etapa de integração com o Zoom ao assistente de configuração para configuração inicial mais fácil.
-- ✨ **Screen Picker Enhancements**: Show an accurate visual representation of all screens, as well as the main window’s current size and location, in the display popup. Isso facilita a escolha da tela correta na qual a janela de mídia deve ser exibida.
+- ✨ **Seletor de tela**: Mostrar uma representação visual precisa de todas as telas, bem como o tamanho e a localização atual da janela principal no popup. Isso facilita a escolha da tela correta na qual a janela de mídia deve ser exibida.
 - ✨ **Preferência de janela de mídia**: O aplicativo agora lembrará a tela preferida na qual a janela de mídia deve ser exibida, se especificado pelo usuário.
 
 ## v25.10.0

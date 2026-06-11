@@ -81,6 +81,8 @@ Vous pouvez importer des médias personnalisés de plusieurs façons :
 - **Glisser-déposer** : Faites glisser les fichiers directement dans M³
 - **Surveillance de dossiers** : Configurez un dossier surveillé pour les imports automatiques
 - **Fichiers JWPUB et listes de lecture** : Importez des publications et des listes de lecture
+- **Fichiers multimédias pour les discours publics** : Importer des fichiers JWPUB au format S-34 ou S-34mp pour les discours publics
+- **Outils pour la Bible et la Bible d'étude** : Ajoutez des enregistrements audio de la Bible, des ressources multimédias depuis la Bible d'étude ou des ressources multimédias de la Bible en langue des signes
 
 ### :speaker: Puis-je importer des enregistrements audio de la Bible ? {#audio-bible}
 
@@ -124,6 +126,12 @@ Les fonctionnalités de musique de fond incluent :
 - Contrôle de volume indépendant
 - Temps de pause configurable
 
+### :stopwatch: M³ dispose-t-il d'un minuteur de réunion ? {#faq-meeting-timer}
+
+Oui. Lorsqu'elle est activée, M³ peut afficher une fenêtre de chronométrage distincte pour chronométrer les participants. Le compteur peut compter de manière ascendante ou descendante, afficher l'heure actuelle, indiquer le temps restant avant le début de la réunion et, si nécessaire, signaler les dépassements de temps ou indiquer si la réunion est en avance ou en retard sur l'horaire prévu.
+
+Le minuteur est une fonctionnalité en version bêta et ne doit être activé qu'après avoir été approuvé localement.
+
 ### :video_camera: Comment configurer l'intégration Zoom ? {#zoom-setup}
 
 Pour intégrer avec Zoom :
@@ -161,6 +169,13 @@ Cette fonction retarde le partage des images vers OBS Studio jusqu'à ce que vou
 - Avoir plus de contrôle sur le timing
 - Éviter les changements de scène précoces
 
+### :record_button: M³ peut-il enregistrer les réunions ? {#faq-recordings}
+
+M³ n'inclut pas des fonctionnalités d'enregistrements intégrés, mais il peut aider à contrôler l'enregistrement de deux façons :
+
+- Si vous utilisez OBS Studio, activez les contrôles d'enregistrement d'OBS Studio pour pouvoir démarrer ou arrêter l'enregistrement d'OBS Studio depuis le popup d'OBS Studio
+- Si vous utilisez une autre application d’enregistrement, configurez les raccourcis clavier de celle-ci pour que M³ puisse envoyer les commandes clavier de démarrage et d’arrêt depuis le pop-up d'enregistrement de la réunion
+
 ## Fonctionnalités avancées {#faq-advanced-features}
 
 ### :cloud: Comment fonctionne la surveillance de dossiers ? {#faq-folder-monitoring}
@@ -187,6 +202,8 @@ Oui ! M³ prend en charge plusieurs profils pour :
 - Événements spéciaux
 - Différents groupes
 - Paramètres et médias séparés pour chaque
+
+Les profils peuvent également être exportés vers un fichier JSON et importés sur un autre ordinateur ou dans un autre profil. L'importation remplace les paramètres du profil actuel.
 
 ## Résolution des problèmes {#faq-troubleshooting}
 

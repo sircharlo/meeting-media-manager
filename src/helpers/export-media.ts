@@ -11,6 +11,7 @@ import { getMeetingSections } from 'src/constants/media';
 import { isCoWeek, isMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { setupFFmpeg } from 'src/helpers/fs';
+import { sanitizeFilename } from 'src/shared/vanilla';
 import { datesAreSame, formatDate, getSpecificWeekday } from 'src/utils/date';
 import { getTempPath, trimFilepathAsNeeded } from 'src/utils/fs';
 import { pad } from 'src/utils/general';
@@ -18,10 +19,16 @@ import { isJwPlaylist, isVideo } from 'src/utils/media';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
-const { createVideoFromNonVideo, fileUrlToPath, fs, path, readdir } =
-  globalThis.electronApi;
+const {
+  basename,
+  createVideoFromNonVideo,
+  extname,
+  fileUrlToPath,
+  fs,
+  join,
+  readdir,
+} = globalThis.electronApi;
 const { copy, ensureDir, exists, remove, stat } = fs;
-const { basename, extname, join } = path;
 
 // Create a queue to limit the number of exports running at the same time
 let folderExportQueue: PQueue | undefined;
@@ -164,7 +171,6 @@ const processAllSections = async (
   destFolder: string,
 ): Promise<Set<string>> => {
   const expectedFiles = new Set<string>();
-  const { default: sanitize } = await import('sanitize-filename');
 
   const sortedSections = getSortedSections(day);
   let sectionIndex = 1;
@@ -175,10 +181,8 @@ const processAllSections = async (
     const visibleItems = getVisibleItems(section);
     if (!visibleItems.length) continue;
 
-    const sectionName = (i18n.global.t as (key: string) => string)(
-      section.config.uniqueId,
-    );
-    const sanitizedSectionName = sanitize(sectionName);
+    const sectionName = i18n.global.t(section.config.uniqueId);
+    const sanitizedSectionName = sanitizeFilename(sectionName);
     const sectionPrefix = pad(sectionIndex++);
 
     await processSectionItems(
@@ -346,7 +350,6 @@ const buildDestinationPath = async ({
   sourceFilePath: string;
   totalItems: number;
 }): Promise<string> => {
-  const { default: sanitize } = await import('sanitize-filename');
   const currentStateStore = useCurrentStateStore();
 
   const shouldConvert =
@@ -358,12 +361,12 @@ const buildDestinationPath = async ({
   const mediaPrefix = pad(index + 1, totalItems > 99 ? 3 : 2);
 
   const mediaTitle = mediaItem.title
-    ? sanitize(mediaItem.title.replace(extname(sourceFilePath), ''))
+    ? sanitizeFilename(mediaItem.title.replace(extname(sourceFilePath), ''))
     : basename(sourceFilePath, extname(sourceFilePath));
 
   const songPrefix =
     mediaItem.tag?.type === 'song' && mediaItem.tag?.value
-      ? `${(i18n.global.t as (key: string) => string)('song')} ${mediaItem.tag.value} - `
+      ? `${i18n.global.t('song')} ${mediaItem.tag.value} - `
       : '';
 
   const destFileName = `${sectionPrefix} ${sanitizedSectionName} - ${mediaPrefix} ${songPrefix}${mediaTitle}${effectiveExt}`;

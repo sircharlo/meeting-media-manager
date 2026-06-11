@@ -9,251 +9,264 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <div class="flex action-popup q-py-md" style="flex-flow: column">
+    <div class="action-popup action-popup--scroll-layout q-py-md">
       <div class="card-title row q-px-md q-mb-none">
         {{ t('media-display-settings') }}
       </div>
-      <template v-if="screenList?.length > 1">
-        <div class="card-section-title row q-px-md">
-          {{ t('window-type') }}
-        </div>
-        <div class="row q-px-md q-pb-sm q-col-gutter-sm">
-          <div class="col-6">
-            <q-btn
-              class="full-width full-height"
-              color="primary"
-              :disable="screenList?.length < 2"
-              :outline="
-                screenList?.length < 2 || screenPreferences.preferWindowed
-              "
-              unelevated
-              @click="
-                () => {
-                  log('🔍 [Full Screen Button] Clicked', 'display');
-                  screenPreferences.preferWindowed = false;
-                  log(
-                    '🔍 [Full Screen Button] Calling moveMediaWindow with:',
-                    'display',
-                    'log',
-                    {
-                      screen: screenPreferences.preferredScreenNumber,
-                      fullscreen: true,
-                    },
-                  );
-                  moveMediaWindow(
-                    screenPreferences.preferredScreenNumber,
-                    true,
-                  );
-                }
-              "
-            >
-              <q-icon class="q-mr-sm" name="mmm-fullscreen" size="xs" />
-              {{ t('full-screen') }}
-            </q-btn>
-          </div>
-          <div class="col-6">
-            <q-btn
-              class="full-width full-height"
-              color="primary"
-              :disable="screenList?.length < 2"
-              :outline="
-                !(screenList?.length < 2 || screenPreferences.preferWindowed)
-              "
-              :text-color="
-                screenList?.length < 2 || screenPreferences.preferWindowed
-                  ? ''
-                  : 'primary'
-              "
-              unelevated
-              @click="
-                () => {
-                  log('🔍 [Windowed Button] Clicked', 'display');
-                  screenPreferences.preferWindowed = true;
-                  log(
-                    '🔍 [Windowed Button] Calling moveMediaWindow with:',
-                    'display',
-                    'log',
-                    {
-                      screen: screenPreferences.preferredScreenNumber,
-                      fullscreen: false,
-                    },
-                  );
-                  moveMediaWindow(
-                    screenPreferences.preferredScreenNumber,
-                    false,
-                  );
-                }
-              "
-            >
-              <q-icon class="q-mr-sm" name="mmm-window" size="xs" />
-              {{ t('windowed') }}
-              <q-tooltip
-                v-if="screenPreferences.preferWindowed && mediaWindowSize"
-                floating
-              >
-                {{ mediaWindowSize?.width }} x
-                {{ mediaWindowSize?.height }}
-              </q-tooltip>
-            </q-btn>
-          </div>
-        </div>
-        <q-separator class="bg-accent-200 q-mb-md" />
-        <template
-          v-if="!screenPreferences.preferWindowed && screenList?.length > 2"
-        >
+      <div class="action-popup__scroll">
+        <template v-if="screenList?.length > 1">
           <div class="card-section-title row q-px-md">
-            {{ t('display') }}
+            {{ t('window-type') }}
           </div>
-          <div class="q-px-md q-pb-sm">
-            <div
-              class="display-map"
-              :style="{
-                position: 'relative',
-                width: '100%',
-                aspectRatio: virtualBounds.width + ' / ' + virtualBounds.height,
-                overflow: 'hidden',
-                '--screen-gap': '1%',
-              }"
-            >
-              <template v-for="(screen, index) in screenList" :key="screen.id">
-                <q-btn
-                  class="screen-rect column items-center justify-center"
-                  :class="{
-                    'border-dashed': screen.mainWindow,
-                  }"
-                  :color="!screen.mainWindow ? 'primary' : 'secondary'"
-                  :disable="screen.mainWindow"
-                  :outline="!isScreenSelected(index, screen)"
-                  :style="{
-                    position: 'absolute',
-                    left:
-                      'calc(' +
-                      (screenRects[index]?.left ?? 0) +
-                      '% + var(--screen-gap))',
-                    top:
-                      'calc(' +
-                      (screenRects[index]?.top ?? 0) +
-                      '% + var(--screen-gap))',
-                    width:
-                      'calc(' +
-                      (screenRects[index]?.width ?? 0) +
-                      '% - (var(--screen-gap) * 2))',
-                    height:
-                      'calc(' +
-                      (screenRects[index]?.height ?? 0) +
-                      '% - (var(--screen-gap) * 2))',
-                    borderRadius: '6px',
-                  }"
-                  unelevated
-                  @click="
-                    () => {
-                      if (screen.mainWindow) return;
-                      log(
-                        '🔍 [Screen Map] Clicked for index:',
-                        'display',
-                        'log',
-                        index,
-                      );
-                      screenPreferences.preferredScreenNumber = index;
-                      const isFullscreen = !screenPreferences.preferWindowed;
-                      log(
-                        '🔍 [Screen Map] Calling moveMediaWindow with:',
-                        'display',
-                        'log',
-                        { index, isFullscreen },
-                      );
-                      moveMediaWindow(index, isFullscreen);
-                    }
-                  "
-                >
-                  <q-tooltip v-if="screen.mainWindow" :delay="1000">
-                    {{ t('main-window-is-on-this-screen') }}
-                  </q-tooltip>
-                  <div
-                    v-if="screen.mainWindow && scaledMainWindowRect(index)"
-                    :style="{
-                      position: 'absolute',
-                      left: scaledMainWindowRect(index)?.left + '%',
-                      top: scaledMainWindowRect(index)?.top + '%',
-                      width: scaledMainWindowRect(index)?.width + '%',
-                      height: scaledMainWindowRect(index)?.height + '%',
-                      border: '2px dashed var(--q-primary)',
-                      borderRadius: '4px',
-                      pointerEvents: 'none',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }"
-                  >
-                    <q-icon
-                      name="mmm-logo"
-                      size="sm"
-                      style="pointer-events: none; color: var(--q-primary)"
-                    />
-                  </div>
-                  <q-icon
-                    v-if="!screen.mainWindow"
-                    class="q-mr-sm"
-                    name="mmm-media-display-active"
-                    size="xs"
-                  />
-                  {{
-                    !screen.mainWindow ? t('display') + ' ' + (index + 1) : ''
-                  }}
-                </q-btn>
-              </template>
+          <div class="row q-px-md q-pb-sm q-col-gutter-sm">
+            <div class="col-6">
+              <q-btn
+                class="full-width full-height"
+                color="primary"
+                :disable="screenList?.length < 2"
+                :outline="
+                  screenList?.length < 2 || screenPreferences.preferWindowed
+                "
+                unelevated
+                @click="
+                  () => {
+                    log('🔍 [Full Screen Button] Clicked', 'display');
+                    screenPreferences.preferWindowed = false;
+                    log(
+                      '🔍 [Full Screen Button] Calling moveMediaWindow with:',
+                      'display',
+                      'log',
+                      {
+                        screen: screenPreferences.preferredScreenNumber,
+                        fullscreen: true,
+                      },
+                    );
+                    moveMediaWindow(
+                      screenPreferences.preferredScreenNumber,
+                      true,
+                    );
+                  }
+                "
+              >
+                <q-icon class="q-mr-sm" name="mmm-fullscreen" size="xs" />
+                {{ t('full-screen') }}
+              </q-btn>
+            </div>
+            <div class="col-6">
+              <q-btn
+                class="full-width full-height"
+                color="primary"
+                :disable="screenList?.length < 2"
+                :outline="
+                  !(screenList?.length < 2 || screenPreferences.preferWindowed)
+                "
+                :text-color="
+                  screenList?.length < 2 || screenPreferences.preferWindowed
+                    ? ''
+                    : 'primary'
+                "
+                unelevated
+                @click="
+                  () => {
+                    log('🔍 [Windowed Button] Clicked', 'display');
+                    screenPreferences.preferWindowed = true;
+                    log(
+                      '🔍 [Windowed Button] Calling moveMediaWindow with:',
+                      'display',
+                      'log',
+                      {
+                        screen: screenPreferences.preferredScreenNumber,
+                        fullscreen: false,
+                      },
+                    );
+                    moveMediaWindow(
+                      screenPreferences.preferredScreenNumber,
+                      false,
+                    );
+                  }
+                "
+              >
+                <q-icon class="q-mr-sm" name="mmm-window" size="xs" />
+                {{ t('windowed') }}
+              </q-btn>
             </div>
           </div>
           <q-separator class="bg-accent-200 q-mb-md" />
+          <template
+            v-if="!screenPreferences.preferWindowed && screenList?.length > 2"
+          >
+            <div class="card-section-title row q-px-md">
+              {{ t('display') }}
+            </div>
+            <div class="q-px-md q-pb-sm">
+              <div
+                class="display-map"
+                :style="{
+                  position: 'relative',
+                  width: '100%',
+                  aspectRatio:
+                    virtualBounds.width + ' / ' + virtualBounds.height,
+                  overflow: 'hidden',
+                  '--screen-gap': '1%',
+                }"
+              >
+                <template
+                  v-for="(screen, index) in screenList"
+                  :key="screen.id"
+                >
+                  <q-btn
+                    class="screen-rect column items-center justify-center"
+                    :class="{
+                      'border-dashed': screen.mainWindow,
+                    }"
+                    :color="!screen.mainWindow ? 'primary' : 'secondary'"
+                    :disable="screen.mainWindow"
+                    :outline="!isScreenSelected(index, screen)"
+                    :style="{
+                      position: 'absolute',
+                      left:
+                        'calc(' +
+                        (screenRects[index]?.left ?? 0) +
+                        '% + var(--screen-gap))',
+                      top:
+                        'calc(' +
+                        (screenRects[index]?.top ?? 0) +
+                        '% + var(--screen-gap))',
+                      width:
+                        'calc(' +
+                        (screenRects[index]?.width ?? 0) +
+                        '% - (var(--screen-gap) * 2))',
+                      height:
+                        'calc(' +
+                        (screenRects[index]?.height ?? 0) +
+                        '% - (var(--screen-gap) * 2))',
+                      borderRadius: '6px',
+                    }"
+                    unelevated
+                    @click="
+                      () => {
+                        if (screen.mainWindow) return;
+                        log(
+                          '🔍 [Screen Map] Clicked for index:',
+                          'display',
+                          'log',
+                          index,
+                        );
+                        screenPreferences.preferredScreenNumber = index;
+                        const isFullscreen = !screenPreferences.preferWindowed;
+                        log(
+                          '🔍 [Screen Map] Calling moveMediaWindow with:',
+                          'display',
+                          'log',
+                          { index, isFullscreen },
+                        );
+                        moveMediaWindow(index, isFullscreen);
+                      }
+                    "
+                  >
+                    <q-tooltip v-if="screen.mainWindow" :delay="1000">
+                      {{ t('main-window-is-on-this-screen') }}
+                    </q-tooltip>
+                    <div
+                      v-if="screen.mainWindow && scaledMainWindowRect(index)"
+                      class="main-window-rect"
+                      :style="{
+                        position: 'absolute',
+                        left: scaledMainWindowRect(index)?.left + '%',
+                        top: scaledMainWindowRect(index)?.top + '%',
+                        width: scaledMainWindowRect(index)?.width + '%',
+                        height: scaledMainWindowRect(index)?.height + '%',
+                        pointerEvents: 'none',
+                      }"
+                    >
+                      <q-icon
+                        name="mmm-logo"
+                        size="sm"
+                        style="pointer-events: none; color: var(--q-primary)"
+                      />
+                    </div>
+                    <q-icon
+                      v-if="!screen.mainWindow"
+                      class="q-mr-sm"
+                      name="mmm-media-display-active"
+                      size="xs"
+                    />
+                    {{
+                      !screen.mainWindow ? t('display') + ' ' + (index + 1) : ''
+                    }}
+                  </q-btn>
+                </template>
+              </div>
+            </div>
+            <q-separator class="bg-accent-200 q-mb-md" />
+          </template>
         </template>
-      </template>
-      <div class="card-section-title row q-px-md q-pb-sm">
-        {{ t('custom-background') }}
-      </div>
-      <div class="row q-px-md q-pb-sm">
-        <q-btn
-          class="full-width"
-          color="primary"
-          :outline="!mediaWindowCustomBackground"
-          unelevated
-          @click="chooseCustomBackground(!!mediaWindowCustomBackground)"
-        >
-          <q-icon
-            class="q-mr-sm"
-            :name="
-              mediaWindowCustomBackground
-                ? 'mmm-background-remove'
-                : 'mmm-background'
-            "
-            size="xs"
-          />
-          {{
-            mediaWindowCustomBackground
-              ? t('reset-custom-background')
-              : t('set-custom-background')
-          }}
-        </q-btn>
-      </div>
-      <template v-if="currentLangObject?.isSignLanguage && cameras.length">
-        <q-separator class="bg-accent-200 q-mb-md" />
+        <template v-if="currentSettings">
+          <div class="row items-center no-wrap q-px-md q-pb-sm">
+            <div class="col q-pr-md">
+              <div class="text-subtitle2">
+                {{ t('enableMediaPreview') }}
+              </div>
+              <div class="text-body2 text-dark-grey">
+                {{ t('enableMediaPreview-explain') }}
+              </div>
+            </div>
+            <q-toggle
+              v-model="currentSettings.enableMediaPreview"
+              checked-icon="mmm-check"
+              color="primary"
+            />
+          </div>
+          <q-separator class="bg-accent-200 q-mb-md" />
+        </template>
         <div class="card-section-title row q-px-md q-pb-sm">
-          {{ t('camera-as-background') }}
+          {{ t('custom-background') }}
         </div>
         <div class="row q-px-md q-pb-sm">
-          <q-select
-            v-model="displayCameraId"
-            clearable
-            emit-value
-            :label="t('select-camera')"
-            map-options
-            :options="cameras"
-            outlined
-            style="width: 100%"
-          />
+          <q-btn
+            class="full-width"
+            color="primary"
+            :outline="!mediaWindowCustomBackground"
+            unelevated
+            @click="chooseCustomBackground(!!mediaWindowCustomBackground)"
+          >
+            <q-icon
+              class="q-mr-sm"
+              :name="
+                mediaWindowCustomBackground
+                  ? 'mmm-background-remove'
+                  : 'mmm-background'
+              "
+              size="xs"
+            />
+            {{
+              mediaWindowCustomBackground
+                ? t('reset-custom-background')
+                : t('set-custom-background')
+            }}
+          </q-btn>
         </div>
-      </template>
+        <template v-if="currentLangObject?.isSignLanguage && cameras.length">
+          <q-separator class="bg-accent-200 q-mb-md" />
+          <div class="card-section-title row q-px-md q-pb-sm">
+            {{ t('camera-as-background') }}
+          </div>
+          <div class="row q-px-md q-pb-sm">
+            <q-select
+              v-model="displayCameraId"
+              clearable
+              emit-value
+              :label="t('select-camera')"
+              map-options
+              :options="cameras"
+              outlined
+              style="width: 100%"
+            />
+          </div>
+        </template>
+      </div>
       <q-separator class="bg-accent-200" />
-      <div class="q-px-md q-pt-md row">
+      <div class="action-popup__footer q-px-md q-pt-md row">
         <div class="col">
           <div class="row text-subtitle1 text-weight-medium">
             {{ mediaWindowVisible ? t('projecting') : t('inactive') }}
@@ -307,7 +320,7 @@
           <q-item
             class="row items-center full-width"
             clickable
-            @click="setMediaBackground(jwpubImage.FilePath)"
+            @click="setManagedMediaBackground(jwpubImage.FilePath)"
           >
             <div class="row q-mr-md">
               <q-img
@@ -360,11 +373,13 @@ import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { QMenu } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { getMemorialBackground } from 'src/helpers/jw-media';
 import {
-  toggleMediaWindowVisibility,
+  copyToDatedAdditionalMedia,
+  getMemorialBackground,
+  stageUserJwpubForRead,
   unzipJwpub,
-} from 'src/helpers/mediaPlayback';
+} from 'src/helpers/jw-media';
+import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { log } from 'src/shared/vanilla';
 import { convertImageIfNeeded } from 'src/utils/converters';
@@ -402,14 +417,14 @@ const props = defineProps<{
 const open = defineModel<boolean>({ default: false });
 
 const {
+  basename,
   fs,
   getAllScreens,
+  join,
   moveMediaWindow,
   openFileDialog,
-  path,
   pathToFileURL,
 } = globalThis.electronApi;
-const { basename, join } = path;
 
 const { copyFile } = fs;
 
@@ -501,75 +516,115 @@ const showCustomBackgroundPicker = computed(
   () => !!jwpubImportFilePath.value || jwpubImages.value.length > 0,
 );
 
-const chooseCustomBackground = async (reset?: boolean) => {
-  try {
-    if (reset) {
-      mediaWindowCustomBackground.value = '';
-      notifyCustomBackgroundRemoved();
-      return;
+const processJwpubBackground = async (filepath: string) => {
+  jwpubImportFilePath.value = filepath;
+  const stagedFilepath = await stageUserJwpubForRead(filepath);
+  if (!stagedFilepath) return;
+  const unzipDir = await unzipJwpub(stagedFilepath);
+  if (!unzipDir) throw new Error('Failed to unzip: ' + filepath);
+
+  const db = await findDb(unzipDir);
+  if (!db) throw new Error('No db file found: ' + filepath);
+
+  const query =
+    "SELECT FilePath FROM Multimedia WHERE CategoryType >= 0 AND CategoryType <> 9 AND FilePath <> '';";
+  const results = globalThis.electronApi.executeQuery<Partial<MultimediaItem>>(
+    db,
+    query,
+  );
+
+  jwpubImages.value = results.map((multimediaItem) => ({
+    FilePath: join(unzipDir, multimediaItem.FilePath || ''),
+  }));
+
+  if (jwpubImages.value.length === 0) {
+    notifyInvalidBackgroundFile();
+  }
+};
+
+const processFileBackground = async (filepath: string) => {
+  const tempDirectory = await getTempPath();
+  const tempFilepath = join(tempDirectory, basename(filepath));
+  await copyFile(filepath, tempFilepath);
+
+  const workingTempFilepath = await convertImageIfNeeded(tempFilepath);
+  if (isImage(workingTempFilepath)) {
+    const managedFilepath = await copyToDatedAdditionalMedia(
+      workingTempFilepath,
+      undefined,
+      false,
+    );
+    if (managedFilepath) {
+      setMediaBackground(managedFilepath);
     } else {
-      try {
-        const backgroundPicker = await openFileDialog(true, 'jwpub+image+pdf');
-        if (backgroundPicker?.canceled) return;
-        if (backgroundPicker?.filePaths.length) {
-          const filepath = backgroundPicker.filePaths[0];
-          if (filepath && isJwpub(filepath)) {
-            jwpubImportFilePath.value = filepath;
-            const unzipDir = await unzipJwpub(filepath);
-            const db = await findDb(unzipDir);
-            if (!db) throw new Error('No db file found: ' + filepath);
-            jwpubImages.value = globalThis.electronApi
-              .executeQuery<
-                Partial<MultimediaItem>
-              >(db, "SELECT FilePath FROM Multimedia WHERE CategoryType >= 0 AND CategoryType <> 9 AND FilePath <> '';")
-              .map((multimediaItem) => {
-                return {
-                  FilePath: join(unzipDir, multimediaItem.FilePath),
-                };
-              });
-            if (jwpubImages.value?.length === 0) {
-              notifyInvalidBackgroundFile();
-            }
-          } else if (filepath) {
-            const tempDirectory = await getTempPath();
-            const tempFilepath = join(tempDirectory, basename(filepath));
-            await copyFile(filepath, tempFilepath);
-            const workingTempFilepath =
-              await convertImageIfNeeded(tempFilepath);
-            if (isImage(workingTempFilepath)) {
-              setMediaBackground(workingTempFilepath);
-            } else {
-              throw new Error(
-                'Invalid file type: ' + workingTempFilepath.split('/').pop(),
-              );
-            }
-          }
-        } else {
-          notifyInvalidBackgroundFile();
-        }
-      } catch (error) {
-        if (
-          !(error instanceof Error) ||
-          !error.message.includes('Invalid file type')
-        ) {
-          errorCatcher(error, {
-            contexts: {
-              fn: {
-                args: {
-                  mediaWindowCustomBackground:
-                    mediaWindowCustomBackground.value,
-                  reset,
-                },
-                name: 'chooseCustomBackground',
-              },
-            },
-          });
-        }
-        notifyInvalidBackgroundFile();
-      }
+      throw new Error('Problem with image file');
     }
+  } else {
+    throw new Error(
+      'Invalid file type: ' + workingTempFilepath.split('/').pop(),
+    );
+  }
+};
+
+const setManagedMediaBackground = async (filepath: string) => {
+  try {
+    const managedFilepath = await copyToDatedAdditionalMedia(
+      filepath,
+      undefined,
+      false,
+    );
+    if (!managedFilepath) throw new Error('Problem with image file');
+    setMediaBackground(managedFilepath);
   } catch (error) {
     errorCatcher(error);
+    notifyInvalidBackgroundFile();
+    jwpubImages.value = [];
+    jwpubImportFilePath.value = '';
+  }
+};
+
+const chooseCustomBackground = async (reset?: boolean) => {
+  if (reset) {
+    mediaWindowCustomBackground.value = '';
+    notifyCustomBackgroundRemoved();
+    return;
+  }
+
+  try {
+    const backgroundPicker = await openFileDialog(true, 'jwpub+image+pdf');
+    if (!backgroundPicker || backgroundPicker.canceled) return;
+
+    if (!backgroundPicker.filePaths.length) {
+      notifyInvalidBackgroundFile();
+      return;
+    }
+
+    const filepath = backgroundPicker.filePaths[0];
+    if (!filepath) return;
+
+    if (isJwpub(filepath)) {
+      await processJwpubBackground(filepath);
+    } else {
+      await processFileBackground(filepath);
+    }
+  } catch (error) {
+    if (
+      !(error instanceof Error) ||
+      !error.message.includes('Invalid file type')
+    ) {
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            args: {
+              mediaWindowCustomBackground: mediaWindowCustomBackground.value,
+              reset,
+            },
+            name: 'chooseCustomBackground',
+          },
+        },
+      });
+    }
+    notifyInvalidBackgroundFile();
   }
 };
 
@@ -580,14 +635,6 @@ const fetchScreens = async () => {
     errorCatcher(error);
   }
 };
-
-whenever(
-  () => open.value,
-  async () => {
-    fetchScreens();
-    getCameras();
-  },
-);
 
 const cameras = ref<{ label: string; value: string }[]>([]);
 
@@ -628,19 +675,8 @@ const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
   name: 'get-current-media-window-variables',
 });
 
-watchImmediate(
-  () => getCurrentMediaWindowVariables.value,
-  () => {
-    // Push current camera stream when requested
-    if (displayCameraId.value) {
-      postCameraStream(displayCameraId.value);
-    }
-  },
-);
-
 const notifyInvalidBackgroundFile = () => {
   createTemporaryNotification({
-    icon: 'mmm-error',
     message: t('please-use-image-or-jwpub'),
     type: 'negative',
   });
@@ -651,7 +687,6 @@ const notifyInvalidBackgroundFile = () => {
 const notifyCustomBackgroundSet = () => {
   createTemporaryNotification({
     caption: t('custom-background-will-not-persist'),
-    icon: 'mmm-check',
     message: t('custom-background-set'),
     type: 'positive',
   });
@@ -682,16 +717,6 @@ const setMediaBackground = (filepath: string) => {
   }
 };
 
-watchImmediate(
-  () => [
-    currentSettings.value?.enableMediaDisplayButton,
-    currentCongregation.value,
-  ],
-  ([newMediaDisplayEnabled, newCongregation]) => {
-    toggleMediaWindowVisibility(!!newCongregation && !!newMediaDisplayEnabled);
-  },
-);
-
 const { post: postCustomBackground } = useBroadcastChannel<string, string>({
   name: 'custom-background',
 });
@@ -707,7 +732,6 @@ const loadMemorialBackground = async (newMediaBackground?: string) => {
     if (bg) {
       createTemporaryNotification({
         group: 'memorial-fetch-bg',
-        icon: 'mmm-check',
         message: t('memorialFetchBgSuccess'),
         type: 'positive',
       });
@@ -722,14 +746,14 @@ const loadMemorialBackground = async (newMediaBackground?: string) => {
   postCustomBackground(bg ?? '');
 };
 
+const stopListeningToScreens = ref<(() => void) | null>(null);
+
 watch(
   () => mediaWindowCustomBackground.value,
   (newMediaBackground) => {
     loadMemorialBackground(newMediaBackground);
   },
 );
-
-const stopListeningToScreens = ref<(() => void) | null>(null);
 
 watch(
   () => open.value,
@@ -763,12 +787,13 @@ watch(
   { immediate: true },
 );
 
-const { data: mediaWindowSize } = useBroadcastChannel<
-  Record<string, number>,
-  Record<string, number>
->({
-  name: 'media-window-size',
-});
+whenever(
+  () => open.value,
+  async () => {
+    fetchScreens();
+    getCameras();
+  },
+);
 
 // UI update handler
 watch(
@@ -781,8 +806,49 @@ watch(
     }, 10);
   },
 );
+
+watchImmediate(
+  () => getCurrentMediaWindowVariables.value,
+  () => {
+    // Push current camera stream when requested
+    if (displayCameraId.value) {
+      postCameraStream(displayCameraId.value);
+    }
+  },
+);
+
+watchImmediate(
+  () => [
+    currentSettings.value?.enableMediaDisplayButton,
+    currentCongregation.value,
+  ],
+  ([newMediaDisplayEnabled, newCongregation]) => {
+    toggleMediaWindowVisibility(!!newCongregation && !!newMediaDisplayEnabled);
+  },
+);
 </script>
 <style scoped>
+.screen-rect {
+  transition:
+    left 180ms ease,
+    top 180ms ease,
+    width 180ms ease,
+    height 180ms ease;
+}
+
+.main-window-rect {
+  align-items: center;
+  border: 2px dashed var(--q-primary);
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  transition:
+    left 180ms ease,
+    top 180ms ease,
+    width 180ms ease,
+    height 180ms ease;
+}
+
 .border-dashed::before {
   border-style: dashed;
 }

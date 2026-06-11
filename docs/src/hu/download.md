@@ -12,8 +12,8 @@ Az alábbi linkek segítségével töltse le az operációs rendszeréhez legmeg
 import { data as downloads } from '../../data/version.data.mts'
 import { computed, onMounted, ref } from 'vue'
 import { useData } from 'vitepress'
-import messages from '../../locales'
-import { kebabToCamelCase } from '../../utils/general'
+import messages from '../../locales/index.ts'
+import { kebabToCamelCase } from '../../utils/general.ts'
 
 const { lang } = useData()
 const msg = computed(() => {

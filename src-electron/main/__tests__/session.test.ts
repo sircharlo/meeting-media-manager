@@ -105,4 +105,81 @@ describe('session listeners', () => {
       },
     });
   });
+
+  it('includes custom base domain origins in CSP when URL variables are updated', async () => {
+    const { initSessionListeners, setElectronUrlVariables } =
+      await import('../session');
+    const utilsModule = await import('src-electron/main/utils');
+
+    vi.mocked(utilsModule.isSelf).mockReturnValue(true);
+
+    setElectronUrlVariables({
+      base: 'custom-domain.test',
+      mediator: 'https://media-api.custom-domain.test/apis/mediator',
+      pubMedia:
+        'https://media-api.custom-domain.test/apis/pub-media/GETPUBMEDIALINKS',
+    });
+
+    initSessionListeners();
+    readyCallbacks[0]?.();
+
+    const handler = onHeadersReceivedMock.mock.calls[0]?.[0] as (
+      details: { responseHeaders?: Record<string, string[]>; url: string },
+      callback: (result: {
+        responseHeaders?: Record<string, string[]>;
+      }) => void,
+    ) => void;
+
+    const callback = vi.fn();
+    handler(
+      {
+        responseHeaders: {},
+        url: 'file:///index.html',
+      },
+      callback,
+    );
+
+    const csp =
+      callback.mock.calls[0]?.[0]?.responseHeaders?.[
+        'Content-Security-Policy'
+      ]?.[0];
+
+    expect(csp).toContain('https://*.custom-domain.test');
+  });
+
+  it('ignores badly formed hostnames when building CSP origins', async () => {
+    const { initSessionListeners } = await import('../session');
+    const constantsModule = await import('src-electron/constants');
+    const utilsModule = await import('src-electron/main/utils');
+
+    vi.mocked(utilsModule.isSelf).mockReturnValue(true);
+    constantsModule.TRUSTED_DOMAINS.push('badly formed hostname');
+
+    initSessionListeners();
+    readyCallbacks[0]?.();
+
+    const handler = onHeadersReceivedMock.mock.calls[0]?.[0] as (
+      details: { responseHeaders?: Record<string, string[]>; url: string },
+      callback: (result: {
+        responseHeaders?: Record<string, string[]>;
+      }) => void,
+    ) => void;
+
+    const callback = vi.fn();
+    expect(() =>
+      handler(
+        {
+          responseHeaders: {},
+          url: 'file:///index.html',
+        },
+        callback,
+      ),
+    ).not.toThrow();
+
+    const csp =
+      callback.mock.calls[0]?.[0]?.responseHeaders?.[
+        'Content-Security-Policy'
+      ]?.[0];
+    expect(csp).not.toContain('badly formed hostname');
+  });
 });

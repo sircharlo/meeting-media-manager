@@ -8,6 +8,7 @@ const createMediaWindow = vi.fn();
 const cancelAllDownloads = vi.fn();
 const setAppQuitting = vi.fn();
 const setShouldQuit = vi.fn();
+const quitStatus = { isAppQuitting: false, shouldQuit: false };
 
 vi.mock('electron', () => ({
   BrowserWindow: {
@@ -25,6 +26,7 @@ vi.mock('src-electron/main/downloads', () => ({
 }));
 
 vi.mock('src-electron/main/session', () => ({
+  quitStatus,
   setAppQuitting,
   setShouldQuit,
 }));
@@ -44,6 +46,8 @@ describe('window-main', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     getAllWindows.mockReturnValue([]);
+    quitStatus.isAppQuitting = false;
+    quitStatus.shouldQuit = false;
   });
 
   it('reuses an existing main window discovered from BrowserWindow.getAllWindows', async () => {
@@ -91,5 +95,65 @@ describe('window-main', () => {
     expect(minimizedWindow.restore).toHaveBeenCalledOnce();
     expect(minimizedWindow.show).toHaveBeenCalledOnce();
     expect(minimizedWindow.focus).toHaveBeenCalledOnce();
+  });
+
+  it('allows main window to close immediately when app is quitting', async () => {
+    const handlers = new Map<
+      string,
+      (event?: { preventDefault: () => void }) => void
+    >();
+    const createdWindow = {
+      on: vi.fn((eventName: string, handler: () => void) => {
+        handlers.set(eventName, handler);
+      }),
+    };
+    createWindow.mockReturnValue(createdWindow);
+
+    const { createMainWindow, mainWindowInfo } =
+      await import('../window/window-main');
+
+    mainWindowInfo.mainWindow = null;
+    createMainWindow();
+
+    const closeHandler = handlers.get('close');
+    expect(closeHandler).toBeTypeOf('function');
+
+    const preventDefault = vi.fn();
+    quitStatus.isAppQuitting = true;
+    closeHandler?.({ preventDefault });
+
+    expect(preventDefault).not.toHaveBeenCalled();
+    expect(cancelAllDownloads).toHaveBeenCalledOnce();
+    expect(closeOtherWindows).toHaveBeenCalledWith(createdWindow);
+  });
+
+  it('prevents accidental close when app is not quitting and close is unauthorized', async () => {
+    const handlers = new Map<
+      string,
+      (event?: { preventDefault: () => void }) => void
+    >();
+    const createdWindow = {
+      on: vi.fn((eventName: string, handler: () => void) => {
+        handlers.set(eventName, handler);
+      }),
+    };
+    createWindow.mockReturnValue(createdWindow);
+
+    const { createMainWindow, mainWindowInfo } =
+      await import('../window/window-main');
+
+    mainWindowInfo.mainWindow = null;
+    createMainWindow();
+
+    const closeHandler = handlers.get('close');
+    expect(closeHandler).toBeTypeOf('function');
+
+    const preventDefault = vi.fn();
+    closeHandler?.({ preventDefault });
+
+    expect(preventDefault).toHaveBeenCalledOnce();
+    expect(setShouldQuit).toHaveBeenCalledWith(false);
+    expect(sendToWindow).toHaveBeenCalledWith(createdWindow, 'attemptedClose');
+    expect(cancelAllDownloads).not.toHaveBeenCalled();
   });
 });

@@ -2,9 +2,9 @@
 
 ![M³ banner](./../assets/m3-banner.png)
 
-## O que é esse aplicativo? {#what-is-this-app}
+## Qual a finalidade deste aplicativo? {#what-is-this-app}
 
-**Meeting Media Manager**, ou **M³** para abreviar, é um aplicativo completo e multiplataforma para Windows, macOS e Linux que baixa, organiza e apresenta fotos e vídeos para as reuniões congregacionais das Testemunhas de Jeová. Suporta qualquer idioma disponível no site oficial das Testemunhas de Jeová e oferece ferramentas poderosas para gerenciar mídias durante reuniões híbridas e presenciais.
+**Meeting Media Manager**, ou **M³** para abreviar, é um aplicativo completo e multiplataforma para Windows, macOS e Linux que baixa, organiza e apresenta fotos e vídeos para as reuniões congregacionais das Testemunhas de Jeová. Suporta vários idiomas disponíveis no site oficial das Testemunhas de Jeová e oferece ferramentas poderosas para gerenciar mídias durante reuniões híbridas e presenciais.
 
 O M³ oferece suporte para gerenciar mídias de reuniões normais e personalizadas, múltiplas congregações e/ou grupos usando a mesma conta do computador, além de recursos avançados de apresentação que tornam fácil o compartilhamento de.
 
@@ -50,6 +50,7 @@ Para reuniões congregacionais **híbridas** ou **presenciais**, o modo integrad
 - **Controles avançados de mídia**: Miniaturas de mídia com recursos de zoom e movimentação
 - **Temporização personalizada**: Defina pontos de início e fim específicos para a reprodução da mídia
 - **Controles de reprodução**: Botões de reproduzir/pausar/parar fáceis de usar, com atalhos de teclado
+- **Pré-visualização ao vivo e controle de velocidade**: visualize o visor de público e ajuste opcionalmente a velocidade de reprodução de áudio ou vídeo
 - **Suporte a múltiplos monitores**: Detecção e gerenciamento automático de monitores externos
 - **Apresentação limpa**: Interface de apresentação de mídia sem distrações
 
@@ -67,13 +68,14 @@ Para reuniões congregacionais **híbridas** ou **presenciais**, o modo integrad
 
 - **Troca automática de cenas**: integração sem interrupções com o OBS Studio para reuniões híbridas
 - **Gerenciamento de cenas**: Troca automática entre câmera, mídia e outras cenas
+- **Controles de gravação**: Iniciar e parar gravações do OBS do M3 quando ativado
 
 ### Importação e Gerenciamento de Mídias {#about-media-import}
 
 - **Arquivos JWPUB**: Importe e gerencie arquivos JWPUB facilmente
 - **Arquivos JWLPLAYLIST**: Suporte para arquivos de playlist do JW Library
 - **Mídia personalizada**: Importar vídeos personalizados, imagens, arquivos de áudio e PDF.
-- **Áudio da Bíblia**: importar mídia da Bíblia de Estudo e gravações de áudio da Tradução do Novo Mundo
+- **Mídia da Bíblia**: Importar mídia da Bíblia de Estudo, mídia da Bíblia de linguagem de sinal e gravações de áudio da Tradução do Novo Mundo
 - **Discursos públicos**: tenha sempre uma visão geral da mídia de discursos públicos pronta para uso com o importador do S-34
 
 ### Recursos Avançados {#about-advanced-features}
@@ -81,8 +83,10 @@ Para reuniões congregacionais **híbridas** ou **presenciais**, o modo integrad
 - **Monitoramento de pastas**: sincronizar automaticamente as mídias das pastas selecionadas(Dropbox, OneDrive, etc.)
 - **Exportação de mídia**: Exportar mídias automaticamente para pastas, organizadas por data
 - **Apresentação do site**: Apresente o site oficial em monitores externos
+- **Temporizador de reunião**: Janela opcional de temporizador das partes da reunião
+- **Reunião de assistentes de gravação**: Controle OBS gravação ou um aplicativo de gravação externo
 - **Atalhos de teclado**: Atalhos de teclado personalizáveis para muitas funções
-- **Vários perfis**: gerenciar congregações diferentes ou grupos com perfis separados
+- **Vários perfis**: gerenciar diferentes congregações ou grupos com perfis separados, incluindo a importação e exportação de configurações de perfil
 
 ## O M³ está disponível no meu idioma? {#does-m3-work-in-my-language}
 

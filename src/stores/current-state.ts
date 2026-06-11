@@ -30,14 +30,14 @@ import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
 
-const { fs, path } = globalThis.electronApi;
+const { cancelAllDownloads, fs, join } = globalThis.electronApi;
 const { ensureDir } = fs;
-const { join } = path;
 
 export interface MediaPlayingState {
   action: MediaPlayingStateAction;
   currentPosition: number;
   pan: Partial<{ x: number; y: number }>;
+  playbackRate: number;
   seekTo: number;
   subtitlesUrl: string;
   uniqueId: string;
@@ -227,9 +227,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       if (!value) return false;
 
       // Cancel all pending downloads from the previous congregation
-      if (globalThis?.electronApi) {
-        globalThis.electronApi.cancelAllDownloads();
-      }
+      cancelAllDownloads();
       this.downloadProgress = {};
 
       // Dismiss all active notifications when changing congregation
@@ -542,6 +540,7 @@ export const useCurrentStateStore = defineStore('current-state', {
         action: '',
         currentPosition: 0,
         pan: { x: 0, y: 0 },
+        playbackRate: 1,
         seekTo: 0,
         subtitlesUrl: '',
         uniqueId: '',

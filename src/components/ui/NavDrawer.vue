@@ -147,11 +147,6 @@ const isHovered = useElementHover(drawerElement, {
   delayLeave: 200,
 });
 
-watch(isHovered, (hovered) => {
-  if (!$q.screen.lt.md) return;
-  miniState.value = !hovered;
-});
-
 const currentState = useCurrentStateStore();
 const { invalidSettings } = currentState;
 const { currentSettings, mediaIsPlaying } = storeToRefs(currentState);
@@ -168,13 +163,6 @@ const navActiveClass = computed(
     ' text-primary blue-bar',
 );
 
-whenever(
-  () => $q.screen.lt.md,
-  () => {
-    miniState.value = true;
-  },
-);
-
 const { t } = useI18n();
 
 const stopPlayingMediaFirst = () => {
@@ -187,4 +175,16 @@ const stopPlayingMediaFirst = () => {
     });
   }
 };
+
+watch(isHovered, (hovered) => {
+  if (!$q.screen.lt.md) return;
+  miniState.value = !hovered;
+});
+
+whenever(
+  () => $q.screen.lt.md,
+  () => {
+    miniState.value = true;
+  },
+);
 </script>

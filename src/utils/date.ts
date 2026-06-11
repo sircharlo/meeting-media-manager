@@ -145,7 +145,7 @@ export const dateFromString = (
 /**
  * Checks if a date is in the past.
  * @param lookupDate The date to check.
- * @param includeToday Whether to include today as a past date.
+ * @param includeToday Whether to include today as a past date. Default is false.
  * @returns Whether the date is in the past.
  */
 export const isInPast = (lookupDate: Date | string, includeToday = false) => {
@@ -250,7 +250,7 @@ const MILLISECONDS_IN_DAY = 86400000;
 const MILLISECONDS_IN_HOUR = 3600000;
 const MILLISECONDS_IN_MINUTE = 60000;
 const defaultMask = 'YYYY-MM-DD';
-const token = /\[((?:[^\]\\]|\\]|\\)*)\]|d{1,4}|M{1,4}|D{1,4}|YY(?:YY)?/g;
+const token = /\[([^[\]\\]*(?:\\.[^[\]\\]*)*)\]|d{1,4}|M{1,4}|D{1,4}|Y{2,4}/g;
 const defaultDateLocale: Required<DateLocale> = {
   days: 'Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday'.split('_'),
   daysShort: 'Sun_Mon_Tue_Wed_Thu_Fri_Sat'.split('_'),
