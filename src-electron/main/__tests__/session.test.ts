@@ -29,6 +29,7 @@ vi.mock('electron', () => ({
 
 vi.mock('src-electron/constants', () => ({
   TRUSTED_DOMAINS: [],
+  WINDOW_MOVE_THROTTLE_MS: 100,
 }));
 
 vi.mock('src-electron/main/utils', () => ({
