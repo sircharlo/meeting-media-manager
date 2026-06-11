@@ -187,6 +187,7 @@ const {
   onWatchFolderError,
   onWatchFolderUpdate,
   pathToFileURL,
+  relaunchApp,
   removeListeners,
   resolve,
   setAutoStartAtLogin,
@@ -570,9 +571,18 @@ const initListeners = () => {
 
   onGpuCrashDetected(() => {
     createTemporaryNotification({
+      actions: [
+        {
+          color: 'white',
+          handler: () => {
+            relaunchApp();
+          },
+          label: t('restart-app'),
+        },
+      ],
       caption: t('gpu-crash-detected-restarting'),
       message: t('gpu-crash-detected'),
-      timeout: 10000,
+      timeout: 0,
       type: 'negative',
     });
   });

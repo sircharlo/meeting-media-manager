@@ -233,6 +233,7 @@ export interface ElectronApi {
     recursive?: boolean,
   ) => Promise<FileItem[]>;
   registerShortcut: (name: keyof SettingsValues, shortcut: string) => void;
+  relaunchApp: () => void;
   removeListeners: (channel: ElectronIpcListenKey) => void;
   resolve: typeof resolve;
   resumeAllDownloads: () => void;
@@ -324,6 +325,7 @@ export type ElectronIpcSendKey =
   | 'openExternal'
   | 'pauseAllDownloads'
   | 'quitAndInstall'
+  | 'relaunchApp'
   | 'resumeAllDownloads'
   | 'setElectronUrlVariables'
   | 'setPathProbeNotificationPaths'

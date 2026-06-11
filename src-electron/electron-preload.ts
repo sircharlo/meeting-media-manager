@@ -130,6 +130,7 @@ const electronApi: ElectronApi = {
   quitAndInstall: () => send('quitAndInstall'),
   readdir: readDirectory,
   registerShortcut: (n, s) => invoke('registerShortcut', n, s),
+  relaunchApp: () => send('relaunchApp'),
   removeListeners: (c) => removeAllIpcListeners(c),
   resolve,
   resumeAllDownloads: () => send('resumeAllDownloads'),

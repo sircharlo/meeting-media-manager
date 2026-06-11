@@ -201,6 +201,9 @@ export const electronApi: ElectronApi = {
   registerShortcut: function (name, shortcut) {
     throw new Error('Function not implemented.');
   },
+  relaunchApp: function () {
+    throw new Error('Function not implemented.');
+  },
   removeListeners: function (channel) {
     throw new Error('Function not implemented.');
   },
