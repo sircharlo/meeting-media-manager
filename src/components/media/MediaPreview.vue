@@ -155,8 +155,24 @@ const reportPreviewError = (error: unknown, name: string) => {
   });
 };
 
-const syncVideoElement = async (element: HTMLVideoElement | null) => {
+const syncVideoTime = (element: HTMLVideoElement, acceptableDrift: number) => {
+  const expectedPosition = mediaPlaying.value.currentPosition || 0;
+  const currentDrift = Math.abs(element.currentTime - expectedPosition);
+  const excessiveDrift = currentDrift - acceptableDrift;
+  if (excessiveDrift > 0) {
+    log(
+      `Syncing video preview (exceeded acceptable drift by ${excessiveDrift.toFixed(2)}s)`,
+      'mediaPreview',
+    );
+    element.currentTime = expectedPosition;
+  }
+};
+
+const syncVideos = async () => {
   try {
+    await nextTick();
+
+    const element = previewVideo.value;
     if (!element) {
       log('No video element for video preview', 'mediaPreview');
       return;
@@ -170,6 +186,7 @@ const syncVideoElement = async (element: HTMLVideoElement | null) => {
     if (mediaAction.value !== 'play') {
       log('Pausing video preview', 'mediaPreview');
       element.pause();
+      syncVideoTime(element, 0);
       return;
     }
 
@@ -191,26 +208,8 @@ const syncVideoElement = async (element: HTMLVideoElement | null) => {
       });
     }
 
-    const expectedPosition = mediaPlaying.value.currentPosition || 0;
-    const currentDrift = Math.abs(element.currentTime - expectedPosition);
     const acceptableDrift = 0.2 * playbackRate;
-    const excessiveDrift = currentDrift - acceptableDrift;
-    if (excessiveDrift > 0) {
-      log(
-        `Syncing video preview (exceeded acceptable drift by ${excessiveDrift.toFixed(2)}s)`,
-        'mediaPreview',
-      );
-      element.currentTime = expectedPosition;
-    }
-  } catch (error) {
-    reportPreviewError(error, 'MediaPreview.syncVideoElement');
-  }
-};
-
-const syncVideos = async () => {
-  try {
-    await nextTick();
-    await syncVideoElement(previewVideo.value);
+    syncVideoTime(element, acceptableDrift);
   } catch (error) {
     reportPreviewError(error, 'MediaPreview.syncVideos');
   }
