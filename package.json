@@ -79,7 +79,7 @@
     "require-in-the-middle": "^8.0.1",
     "type-fest": "^5.7.0",
     "upath": "^3.0.7",
-    "vue": "^3.5.35",
+    "vue": "^3.5.38",
     "vue-i18n": "^11.4.5",
     "vue-router": "^5.1.0",
     "vue-zoomable": "^1.2.8",
