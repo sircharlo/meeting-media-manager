@@ -13,11 +13,15 @@ export const updateLastUsedDate = async (
   try {
     if (!folderPath) return;
 
+    const { hideFileOnWindows, PLATFORM } = globalThis.electronApi;
     const dateStr =
       typeof date === 'string' ? date : formatDate(date, 'YYYY-MM-DD');
     const filePath = join(folderPath, LAST_USED_FILENAME);
 
     await ensureFile(filePath);
+    if (PLATFORM === 'win32') {
+      await hideFileOnWindows(filePath);
+    }
 
     let existingDateStr = '';
     try {

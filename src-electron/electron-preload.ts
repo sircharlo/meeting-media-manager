@@ -9,6 +9,7 @@ import { convertHeic } from 'src-electron/preload/converters';
 import {
   fileUrlToPath,
   getVideoDuration,
+  hideFileOnWindows,
   inferExtension,
   parseMediaFile,
   pathToFileURL,
@@ -85,6 +86,7 @@ const electronApi: ElectronApi = {
   getUserDataPath: () => invoke('getUserDataPath'),
   getVideoDuration,
   getZipEntries: (p) => invoke('getZipEntries', p),
+  hideFileOnWindows,
   inferExtension,
   isArchitectureMismatch: () => invoke('isArchitectureMismatch'),
   isDownloadComplete: (downloadId: string) =>

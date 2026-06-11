@@ -5,6 +5,7 @@ import type { FileItem, VideoDuration } from 'src/types';
 
 import { type Dirent, exists, readdir, stat } from 'fs-extra';
 import url from 'node:url';
+import { PLATFORM } from 'src-electron/constants';
 import { capturePreloadError } from 'src-electron/preload/log';
 import { join, normalize } from 'upath';
 
@@ -42,6 +43,27 @@ export const fileUrlToPath = (fileurl?: string) => {
   if (!fileurl) return '';
   if (!isFileUrl(fileurl)) return fileurl;
   return normalize(url.fileURLToPath(fileurl));
+};
+
+export const hideFileOnWindows = async (filePath: string) => {
+  if (PLATFORM !== 'win32' || !filePath) return;
+
+  try {
+    const { execFile } = await import('node:child_process');
+    const { promisify } = await import('node:util');
+    const execFileAsync = promisify(execFile);
+
+    await execFileAsync('attrib', ['+h', filePath]);
+  } catch (error) {
+    capturePreloadError(error, {
+      contexts: {
+        fn: {
+          name: 'hideFileOnWindows',
+          path: filePath,
+        },
+      },
+    });
+  }
 };
 
 /**

@@ -120,6 +120,7 @@ export interface ElectronApi {
    */
   getVideoDuration: (filePath: string) => Promise<VideoDuration>;
   getZipEntries: (zipPath: string) => Promise<Record<string, number>>;
+  hideFileOnWindows: (filePath: string) => Promise<void>;
   inferExtension: (filename: string, filetype?: string) => Promise<string>;
   isArchitectureMismatch: () => Promise<boolean>;
   isDownloadComplete: (downloadId: string) => Promise<boolean | null>;

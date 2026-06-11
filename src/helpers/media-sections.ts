@@ -336,10 +336,13 @@ const writeWatchedMediaSectionOrder = async (
   sectionOrderFilePath: string,
   data: WatchedMediaSectionOrder,
 ) => {
-  const { fs } = globalThis.electronApi;
+  const { fs, hideFileOnWindows, PLATFORM } = globalThis.electronApi;
   const { writeFile } = fs;
 
   await writeFile(sectionOrderFilePath, JSON.stringify(data, null, 2), 'utf-8');
+  if (PLATFORM === 'win32') {
+    await hideFileOnWindows(sectionOrderFilePath);
+  }
 };
 
 export const saveWatchedMediaLayout = async (
@@ -451,6 +454,9 @@ export const removeWatchedMediaSectionInfo = async (
         JSON.stringify(sectionOrderData, null, 2),
         'utf-8',
       );
+      if (globalThis.electronApi.PLATFORM === 'win32') {
+        await globalThis.electronApi.hideFileOnWindows(sectionOrderFilePath);
+      }
       log(`✅ Removed section info for ${filename}`, 'mediaSections', 'log');
     }
   } catch (error) {

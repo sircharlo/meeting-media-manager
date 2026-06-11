@@ -93,6 +93,7 @@ export const electronApi: ElectronApi = {
   getZipEntries: function () {
     throw new Error('Function not implemented.');
   },
+  hideFileOnWindows: async () => undefined,
   inferExtension: async function (filename, filetype) {
     throw new Error('Function not implemented.');
   },
