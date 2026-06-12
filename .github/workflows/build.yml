@@ -101,7 +101,7 @@ jobs:
             arch: ia32
             install-node-architecture: x64
             node-architecture: x86
-            node-version: 24
+            node-version: 22 # Last version of Node that supports ia32
             os: windows-latest
           - artifact: robotjs-win32-x64
             arch: x64
