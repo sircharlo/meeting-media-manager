@@ -213,7 +213,6 @@ export default defineConfig((ctx) => {
           '@numairawan/video-duration',
           '@sentry/core',
           '@sentry/electron',
-          'better-sqlite3',
           'check-disk-space',
           'chokidar',
           'countries-and-timezones',
