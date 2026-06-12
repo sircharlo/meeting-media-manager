@@ -1,8 +1,8 @@
 import type { ElectronApi } from 'src/types/electron';
 
-import robot from '@jitsi/robotjs';
 import { contextBridge, webUtils } from 'electron/renderer';
 import fs from 'fs-extra';
+import robot from 'robotjs';
 import { PLATFORM } from 'src-electron/constants';
 import { initCloseListeners } from 'src-electron/preload/close';
 import { convertHeic } from 'src-electron/preload/converters';
