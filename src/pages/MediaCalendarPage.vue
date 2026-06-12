@@ -109,13 +109,7 @@
     <template v-if="!showEmptyState">
       <template
         v-for="mediaList in mediaLists"
-        :key="
-          selectedDateObject?.date +
-          '-' +
-          mediaList.config?.uniqueId +
-          '-' +
-          mediaList.items?.length
-        "
+        :key="selectedDateObject?.date + '-' + mediaList.config?.uniqueId"
       >
         <MediaList
           :ref="(el) => (mediaListRefs[mediaList.sectionId] = el)"

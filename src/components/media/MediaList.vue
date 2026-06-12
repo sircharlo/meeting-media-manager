@@ -52,7 +52,11 @@
           :some-items-are-hidden="someItemsAreHidden"
         />
       </template>
-      <template v-for="element in sortableItems" :key="element.uniqueId">
+      <div
+        v-for="element in sortableItems"
+        :key="element.uniqueId"
+        class="sortable-media__item"
+      >
         <!-- Render dividers -->
         <MediaDivider
           v-if="element.type === 'divider'"
@@ -115,7 +119,7 @@
             })
           "
         />
-      </template>
+      </div>
     </div>
 
     <!-- Add Divider Dialog -->
@@ -199,7 +203,6 @@ import { log } from 'src/shared/vanilla';
 const { addDivider, deleteDivider, updateDividerColors, updateDividerTitle } =
   useMediaDividers(props.mediaList.config?.uniqueId);
 
-// Use the drag and drop composable - pass the reactive sectionData items directly
 const { dragDropContainer, isDragging, sortableItems } = useMediaDragAndDrop(
   sectionData.value?.items || [],
 );
@@ -334,22 +337,18 @@ defineExpose({
   sectionHeaderRef,
 });
 
-// Efficient watcher to ensure changes are persisted to the store
-// Only triggers when the actual array content changes, not on every re-render
+// Keep FormKit's draft order local while dragging, then persist the final order.
 watch(
   () => [
     sortableItems.value?.map((item) => item.uniqueId).join('|'),
     isDragging.value,
   ],
   ([, isCurrentlyDragging]) => {
-    if (isCurrentlyDragging) return; // Avoid updating while dragging
+    if (isCurrentlyDragging) return;
     if (!sectionData.value || !sortableItems.value || !selectedDateObject.value)
       return;
 
-    // Update the section data to match the sorted order
     updateStoreMediaOrder(sortableItems.value);
-
-    // Save section order information for watched media items
     queueWatchedMediaPersistence();
   },
   { flush: 'post' },
@@ -376,6 +375,10 @@ watch(
 
 .sortable-media {
   transition: background-color 0.2s ease;
+}
+
+.sortable-media__item {
+  width: 100%;
 }
 
 [data-dragging='true'] {
