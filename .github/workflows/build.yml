@@ -119,9 +119,6 @@ jobs:
           node-version: 24
       - name: Install dependencies
         run: yarn install
-        env:
-          npm_config_arch: ${{ matrix.arch }}
-          npm_config_target_arch: ${{ matrix.arch }}
       - name: Rebuild robotjs for Electron
         run: yarn exec electron-rebuild -f -m ./node_modules/robotjs --arch=${{ matrix.arch }}
         env:
