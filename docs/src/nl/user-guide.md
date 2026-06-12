@@ -86,7 +86,7 @@ De mediaspeler biedt uitgebreide bedieningselementen:
 - **Live-voorbeeld** - Wanneer ingeschakeld, toon een voorbeeld van het publiek medialevenster in de hoofdapp
 - **Afspelsnelheid** - Indien ingeschakeld in instellingen, pas audio en video snelheid aan vanuit het contextmenu van het media-item
 
-### Probeer een reservetaal {#advanced-presentation}
+### Probeer een reservetaal
 
 #### Aangepaste timing {#custom-timing}
 

@@ -93,6 +93,7 @@ export const electronApi: ElectronApi = {
   getZipEntries: function () {
     throw new Error('Function not implemented.');
   },
+  hideFileOnWindows: async () => undefined,
   inferExtension: async function (filename, filetype) {
     throw new Error('Function not implemented.');
   },
@@ -201,6 +202,9 @@ export const electronApi: ElectronApi = {
   registerShortcut: function (name, shortcut) {
     throw new Error('Function not implemented.');
   },
+  relaunchApp: function () {
+    throw new Error('Function not implemented.');
+  },
   removeListeners: function (channel) {
     throw new Error('Function not implemented.');
   },
@@ -224,6 +228,7 @@ export const electronApi: ElectronApi = {
   setPathProbeNotificationPaths: function (paths) {
     throw new Error('Function not implemented.');
   },
+  showFileOnWindows: async () => undefined,
   toggleMediaWindow: function (show) {
     throw new Error('Function not implemented.');
   },

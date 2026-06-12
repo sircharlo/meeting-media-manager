@@ -4,6 +4,42 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.6.1
+
+### ✨ New Features
+
+- ✨ **Media Preview**: Added a live media preview overlay that can be toggled on or off from the settings or from the display popup.
+- ✨ **Search media**: Added a quick search box in the media list that allows you to quickly find media by title. To use it, simply use the standard keyboard shortcut for search (Ctrl+F or Cmd+F).
+- ✨ **Filter settings**: Added a filter box to the settings page that allows you to find settings by keyword or category. To use it, simply click on the Search button in the top right corner of the settings page, or use the standard keyboard shortcut for search (Ctrl+F or Cmd+F).
+- ✨ **Background Music Overlap Warning**: Added a warning notification when media is started while background music is playing. Users can choose to stop the background music from the notification.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Study Bible**: Improved fetching, caching, and performance.
+- 🛠️ **Downloads**: Improved download progress bar display in dialogs.
+- 🛠️ **JWPUB Import**: Automatically skip the document picker when a JWPUB contains only one document.
+- 🛠️ **Background Music**: Sped up and hardened background music startup process.
+- 🛠️ **Performance**: Reduced synchronous calls across the app and avoided blocking media file checks. (#7790)
+- 🛠️ **Diagnostics**: Added or improved diagnostics for JWPUB extraction, download directory creation, cloud-backed JWPUB reads, path probes, and GPU crashes. (#7718, #7719, #7720, #7721, #7722)
+- 🛠️ **Languages**: Re-enabled Hungarian and Tahitian.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Media Loading**: Showed loading state while refetching missing dynamic media, when possible.
+- 🐞 **JWPUB Media**: Fixed inconsistent media labels and captions, hardened zip readiness checks, and ignored missing JWPUB zip telemetry. (#7717)
+- 🐞 **Playback**: Fixed sometimes inconsistent crossfade and autoplay behavior.
+- 🐞 **Temporary Media**: Prevented temporary-staged media from being persisted and cleaned temporary media paths on startup.
+- 🐞 **Updater**: Improved updater progress logging, guarded duplicate updater installs, and suppressed fallback download noise.
+- 🐞 **Electron**: Handled website cursor injection failures, destroyed-window download guards, unsafe compositor bounds, delayed Node worker native aborts, and WebDAV path stat errors more gracefully.
+- 🐞 **Networking**: Deduplicated network error classification and avoided cloning cached fetch response streams.
+
+### 🔧 Chores
+
+- 🔧 **Dependencies**: Updated Electron, TypeScript, and zip-handling dependencies.
+- 🔧 **Code Quality**: Modernized unzip handling, improved memory behavior, cleaned up language tooling, and resolved minor SonarQube issues.
+- 🔧 **Documentation**: Updated docs and the Markdown docs fixer script.
+- 🔧 **Testing**: Improved Electron window state test coverage.
+
 ## v26.6.0
 
 ### ✨ New Features

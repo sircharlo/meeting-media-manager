@@ -4,6 +4,15 @@
 
 Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.md na GitHubu.
 
+## v26.6.1
+
+### ✨ Nove funkcije
+
+- ✨ **Predogled multimedijske vsebine**: Dodan je prekrivni sloj za predogled multimedijske vsebine v živo, ki ga lahko vklopiš ali izklopiš v nastavitvah ali iz pojavnega okna zaslona.
+- ✨ **Iskanje multimedijske vsebine**: V seznam multimedijske vsebine je dodano hitro iskalno polje, ki omogoča hitro iskanje multimedijske vsebine po naslovu. Če želiš začeti iskati, preprosto uporabi standardno tipkovno bližnjico za iskanje (Ctrl+F ali Cmd+F).
+- ✨ **Filtriranje nastavitev**: Na strani z nastavitvami je dodano filtrirno polje, ki omogoča iskanje nastavitev po ključni besedi ali kategoriji. Za uporabo klikni gumb »Iskanje« v zgornjem desnem kotu strani z nastavitvami ali uporabi standardno tipkovno bližnjico za iskanje (Ctrl+F ali Cmd+F).
+- ✨ **Opozorilo o prekrivanju s predvajano glasbo**: Dodano je opozorilo, ki se prikaže, ko se med predvajanjem glasbe v ozadju zažene multimedijska vsebina. Uporabnik lahko v obvestilu izbere možnost zaustavitve glasbe v ozadju.
+
 ## v26.6.0
 
 ### ✨ Nove funkcije

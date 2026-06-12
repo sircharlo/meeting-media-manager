@@ -1,6 +1,6 @@
 import type { QueryResponseItem } from 'src/types';
 
-import BetterSqlite3 from 'better-sqlite3';
+import { DatabaseSync } from 'node:sqlite';
 import { capturePreloadError } from 'src-electron/preload/log';
 import { log } from 'src/shared/vanilla';
 
@@ -22,13 +22,14 @@ export const executeQuery = <T extends object = QueryResponseItem>(
     return cachedResult;
   }
 
+  let db: DatabaseSync | undefined;
+
   try {
-    const db = new BetterSqlite3(dbPath, {
-      fileMustExist: true,
-      readonly: true,
+    db = new DatabaseSync(dbPath, {
+      readOnly: true,
     });
 
-    const result = db.prepare<unknown[], T>(query).all(...params);
+    const result = db.prepare(query).all(...params) as T[];
 
     // Remove unused and heavy Content property only if it exists in any row
     for (const item of result) {
@@ -42,8 +43,6 @@ export const executeQuery = <T extends object = QueryResponseItem>(
       query,
     });
 
-    db.close(); // Explicitly close DB to free file handles
-
     queryCache.set(cacheKey, result);
     return result;
   } catch (e) {
@@ -51,5 +50,7 @@ export const executeQuery = <T extends object = QueryResponseItem>(
       contexts: { fn: { name: 'executeQuery', path: dbPath, query } },
     });
     return [];
+  } finally {
+    db?.close();
   }
 };

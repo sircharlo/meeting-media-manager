@@ -120,6 +120,7 @@ export interface ElectronApi {
    */
   getVideoDuration: (filePath: string) => Promise<VideoDuration>;
   getZipEntries: (zipPath: string) => Promise<Record<string, number>>;
+  hideFileOnWindows: (filePath: string) => Promise<void>;
   inferExtension: (filename: string, filetype?: string) => Promise<string>;
   isArchitectureMismatch: () => Promise<boolean>;
   isDownloadComplete: (downloadId: string) => Promise<boolean | null>;
@@ -233,6 +234,7 @@ export interface ElectronApi {
     recursive?: boolean,
   ) => Promise<FileItem[]>;
   registerShortcut: (name: keyof SettingsValues, shortcut: string) => void;
+  relaunchApp: () => void;
   removeListeners: (channel: ElectronIpcListenKey) => void;
   resolve: typeof resolve;
   resumeAllDownloads: () => void;
@@ -245,6 +247,7 @@ export interface ElectronApi {
   setElectronUrlVariables: (variables: string) => void;
   setHardwareAcceleration: (disabled: boolean) => void;
   setPathProbeNotificationPaths: (paths: string[]) => void;
+  showFileOnWindows: (filePath: string) => Promise<void>;
   toggleMediaWindow: (show: boolean, enableFadeTransitions?: boolean) => void;
   toggleTimerWindow: (show: boolean) => void;
   unregisterAllShortcuts: () => void;
@@ -324,6 +327,7 @@ export type ElectronIpcSendKey =
   | 'openExternal'
   | 'pauseAllDownloads'
   | 'quitAndInstall'
+  | 'relaunchApp'
   | 'resumeAllDownloads'
   | 'setElectronUrlVariables'
   | 'setPathProbeNotificationPaths'

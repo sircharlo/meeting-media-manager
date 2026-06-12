@@ -414,3 +414,9 @@ handleIpcInvoke(
 handleIpcSend('quitAndInstall', () => {
   quitAndInstallUpdate();
 });
+
+handleIpcSend('relaunchApp', () => {
+  toggleAuthorizedClose(true);
+  app.relaunch();
+  app.quit();
+});

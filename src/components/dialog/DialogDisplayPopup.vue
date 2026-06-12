@@ -201,6 +201,24 @@
             <q-separator class="bg-accent-200 q-mb-md" />
           </template>
         </template>
+        <template v-if="currentSettings">
+          <div class="row items-center no-wrap q-px-md q-pb-sm">
+            <div class="col q-pr-md">
+              <div class="text-subtitle2">
+                {{ t('enableMediaPreview') }}
+              </div>
+              <div class="text-body2 text-dark-grey">
+                {{ t('enableMediaPreview-explain') }}
+              </div>
+            </div>
+            <q-toggle
+              v-model="currentSettings.enableMediaPreview"
+              checked-icon="mmm-check"
+              color="primary"
+            />
+          </div>
+          <q-separator class="bg-accent-200 q-mb-md" />
+        </template>
         <div class="card-section-title row q-px-md q-pb-sm">
           {{ t('custom-background') }}
         </div>

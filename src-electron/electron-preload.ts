@@ -9,10 +9,12 @@ import { convertHeic } from 'src-electron/preload/converters';
 import {
   fileUrlToPath,
   getVideoDuration,
+  hideFileOnWindows,
   inferExtension,
   parseMediaFile,
   pathToFileURL,
   readDirectory,
+  showFileOnWindows,
 } from 'src-electron/preload/fs';
 import {
   invoke,
@@ -85,6 +87,7 @@ const electronApi: ElectronApi = {
   getUserDataPath: () => invoke('getUserDataPath'),
   getVideoDuration,
   getZipEntries: (p) => invoke('getZipEntries', p),
+  hideFileOnWindows,
   inferExtension,
   isArchitectureMismatch: () => invoke('isArchitectureMismatch'),
   isDownloadComplete: (downloadId: string) =>
@@ -130,6 +133,7 @@ const electronApi: ElectronApi = {
   quitAndInstall: () => send('quitAndInstall'),
   readdir: readDirectory,
   registerShortcut: (n, s) => invoke('registerShortcut', n, s),
+  relaunchApp: () => send('relaunchApp'),
   removeListeners: (c) => removeAllIpcListeners(c),
   resolve,
   resumeAllDownloads: () => send('resumeAllDownloads'),
@@ -140,6 +144,7 @@ const electronApi: ElectronApi = {
   setHardwareAcceleration: (v) => invoke('set-hardware-acceleration', v),
   setPathProbeNotificationPaths: (paths) =>
     send('setPathProbeNotificationPaths', paths),
+  showFileOnWindows,
   toggleMediaWindow: (s, f) => send('toggleMediaWindow', s, f),
   toggleTimerWindow: (s) => send('toggleTimerWindow', s),
   unregisterAllShortcuts: () => send('unregisterAllShortcuts'),
