@@ -199,6 +199,8 @@ jobs:
             "$artifact_root/robotjs-darwin-x64/robotjs.node" \
             "$artifact_root/robotjs-darwin-arm64/robotjs.node" \
             -output "$prepared/robotjs-darwin-universal.node"
+          cp "$artifact_root/robotjs-darwin-x64/robotjs.node" "$prepared/robotjs-darwin-x64.node"
+          cp "$artifact_root/robotjs-darwin-arm64/robotjs.node" "$prepared/robotjs-darwin-arm64.node"
       - name: Prepare robotjs native artifacts (Windows only)
         if: runner.os == 'Windows'
         shell: pwsh
@@ -208,9 +210,6 @@ jobs:
           New-Item -ItemType Directory -Force $prepared | Out-Null
           Copy-Item (Join-Path $artifactRoot 'robotjs-win32-x64\robotjs.node') (Join-Path $prepared 'robotjs-win32-x64.node')
           Copy-Item (Join-Path $artifactRoot 'robotjs-win32-ia32\robotjs.node') (Join-Path $prepared 'robotjs-win32-ia32.node')
-      - name: Prepare robotjs native artifacts (Linux only)
-        if: runner.os == 'Linux'
-        run: mkdir -p "$RUNNER_TEMP/robotjs-native/prepared"
       - name: Install Apple certificate
         if: runner.os == 'macOS' && github.actor != 'dependabot[bot]'
         env:
