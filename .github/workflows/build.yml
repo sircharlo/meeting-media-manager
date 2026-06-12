@@ -87,15 +87,23 @@ jobs:
         include:
           - artifact: robotjs-darwin-arm64
             arch: arm64
+            node-architecture: arm64
+            node-version: 24
             os: macos-latest
           - artifact: robotjs-darwin-x64
             arch: x64
+            node-architecture: x64
+            node-version: 24
             os: macos-15-intel
           - artifact: robotjs-win32-ia32
             arch: ia32
+            node-architecture: x86
+            node-version: 20
             os: windows-latest
           - artifact: robotjs-win32-x64
             arch: x64
+            node-architecture: x64
+            node-version: 24
             os: windows-latest
     steps:
       - name: Check out master branch
@@ -110,13 +118,15 @@ jobs:
         if: ${{ !inputs.publish-release }}
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
+          architecture: ${{ matrix.node-architecture }}
           cache: 'yarn'
-          node-version: 24
+          node-version: ${{ matrix.node-version }}
       - name: Setup Node without cache for release publishing
         if: ${{ inputs.publish-release }}
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
-          node-version: 24
+          architecture: ${{ matrix.node-architecture }}
+          node-version: ${{ matrix.node-version }}
       - name: Install dependencies
         run: yarn install
       - name: Rebuild robotjs for Electron
