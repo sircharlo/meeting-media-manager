@@ -22,6 +22,7 @@ async function getAllFiles(
       results = results.concat(await getAllFiles(filePath, extensions));
     } else {
       if (filePath.includes('__tests__')) continue;
+      if (/\.(spec|test)\.[jt]s$/.test(filePath)) continue;
       if (extensions.includes(extname(file))) {
         results.push(filePath);
       }
