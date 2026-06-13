@@ -908,10 +908,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@formkit/drag-and-drop@npm:^0.5.3":
-  version: 0.5.3
-  resolution: "@formkit/drag-and-drop@npm:0.5.3"
-  checksum: 10c0/a54595921b7c122f6c1a00a9f6806a2bf06cc7e05f00b12ff880209fe592527be103513ae04482a52b3cf4241de7b4a04f8f06a39246774b3089dc2787112bce
+"@formkit/drag-and-drop@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "@formkit/drag-and-drop@npm:0.6.0"
+  peerDependencies:
+    "@marko/runtime-tags": ">=6.0.166"
+  peerDependenciesMeta:
+    "@marko/runtime-tags":
+      optional: true
+  checksum: 10c0/9ec82a0fed32c9f78da57a7f63310ff9a02556f2aea11879e8e689095594c12205740747296a4fbadd4f31ddb9a07b5823b9de662b54f5bdf46b2e4fa6a4ac52
   languageName: node
   linkType: hard
 
@@ -11642,7 +11647,7 @@ __metadata:
     "@eslint/js": "npm:^10.0.1"
     "@fontsource-variable/inter": "npm:^5.2.8"
     "@fontsource-variable/noto-serif": "npm:^5.2.9"
-    "@formkit/drag-and-drop": "npm:^0.5.3"
+    "@formkit/drag-and-drop": "npm:^0.6.0"
     "@intlify/unplugin-vue-i18n": "npm:^11.2.3"
     "@jitsi/robotjs": "npm:^0.6.22"
     "@numairawan/video-duration": "npm:^1.0.0"
