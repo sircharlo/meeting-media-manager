@@ -54,6 +54,68 @@ describe('MediaItem component resilience - edge cases', () => {
     expect(caption.exists()).toBe(true);
   });
 
+  it('uses the music note fallback for audio without thumbnail artwork', () => {
+    const wrapper = mount(MediaItem, {
+      props: {
+        media: {
+          duration: 120,
+          fileUrl: 'file:///C:/media/song.mp3',
+          isAudio: true,
+          title: 'No Artwork',
+          type: 'media',
+          uniqueId: 'audio-no-artwork-1',
+        },
+        repeat: false,
+      },
+    });
+
+    expect(wrapper.find('.media-audio-thumbnail-fallback').exists()).toBe(true);
+    expect(
+      wrapper.find('.media-audio-thumbnail-fallback .q-icon').exists(),
+    ).toBe(true);
+  });
+
+  it('uses thumbnail artwork for audio when available', () => {
+    const wrapper = mount(MediaItem, {
+      props: {
+        media: {
+          duration: 120,
+          fileUrl: 'file:///C:/media/song.mp3',
+          isAudio: true,
+          thumbnailUrl: 'file:///C:/media/song.jpg',
+          title: 'With Artwork',
+          type: 'media',
+          uniqueId: 'audio-with-artwork-1',
+        },
+        repeat: false,
+      },
+    });
+
+    expect(wrapper.find('.media-audio-thumbnail-fallback').exists()).toBe(
+      false,
+    );
+    expect(wrapper.findComponent({ name: 'QImg' }).exists()).toBe(true);
+  });
+
+  it('ignores timestamp-only audio thumbnail values', () => {
+    const wrapper = mount(MediaItem, {
+      props: {
+        media: {
+          duration: 120,
+          fileUrl: 'file:///C:/media/song.mp3',
+          isAudio: true,
+          thumbnailUrl: '?timestamp=1781369385826',
+          title: 'Timestamp Only Artwork',
+          type: 'media',
+          uniqueId: 'audio-timestamp-only-artwork-1',
+        },
+        repeat: false,
+      },
+    });
+
+    expect(wrapper.find('.media-audio-thumbnail-fallback').exists()).toBe(true);
+  });
+
   it('trims/ellipsizes long filenames without layout overflow', () => {
     const longTitle = Array.from(
       { length: 50 },

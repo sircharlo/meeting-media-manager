@@ -68,10 +68,7 @@
                   ref="mediaImage"
                   fit="contain"
                   :ratio="16 / 9"
-                  :src="
-                    thumbnailFromMetadata ||
-                    (media.isImage ? media.fileUrl : media.thumbnailUrl)
-                  "
+                  :src="mediaThumbnailUrl"
                   width="150px"
                   @error="imageLoadingError"
                 >
@@ -217,21 +214,22 @@
             </transition>
           </template>
 
-          <q-img
-            v-else
-            ref="mediaImage"
-            fit="contain"
-            :ratio="16 / 9"
-            :src="
-              thumbnailFromMetadata ||
-              (media.isImage ? media.fileUrl : media.thumbnailUrl)
-            "
-            width="150px"
-            @error="imageLoadingError"
-          >
+          <div v-else class="media-thumbnail-container relative-position">
+            <q-img
+              v-if="!showAudioThumbnailFallback"
+              ref="mediaImage"
+              fit="contain"
+              :ratio="16 / 9"
+              :src="mediaThumbnailUrl"
+              width="150px"
+              @error="imageLoadingError"
+            />
+            <div v-else class="media-audio-thumbnail-fallback">
+              <q-icon color="white" name="mmm-music-note" size="2.5rem" />
+            </div>
             <q-badge
               v-if="media.duration"
-              class="q-mt-sm q-ml-sm cursor-pointer rounded-borders-sm bg-semi-black"
+              class="absolute-top-left q-mt-sm q-ml-sm cursor-pointer rounded-borders-sm bg-semi-black"
               style="padding: 5px !important"
               @click="showMediaDurationPopup()"
             >
@@ -350,7 +348,7 @@
                 </q-card-actions>
               </q-card>
             </BaseDialog>
-          </q-img>
+          </div>
         </div>
       </div>
       <div class="col">
@@ -1257,6 +1255,8 @@ const menuTarget = ref<boolean | string | undefined>(true);
 const isEditingTitle = ref(false);
 const titleInput = ref<HTMLInputElement>();
 const mediaTitle = ref(props.media.title);
+const discoveredThumbnailUrl = ref('');
+const failedThumbnailUrl = ref('');
 
 const { basename, fileUrlToPath, fs } = globalThis.electronApi;
 
@@ -1287,6 +1287,30 @@ const displayMediaFilename = computed(() => {
   if (filename) return filename;
   if (!props.media.fileUrl) return '';
   return basename(props.media.fileUrl);
+});
+
+const getDisplayableThumbnailUrl = (thumbnailUrl?: string) => {
+  if (!thumbnailUrl) return '';
+  if (thumbnailUrl.startsWith('?')) return '';
+  if (thumbnailUrl === failedThumbnailUrl.value) return '';
+  return thumbnailUrl;
+};
+
+const mediaThumbnailUrl = computed(() => {
+  const discoveredUrl = getDisplayableThumbnailUrl(
+    discoveredThumbnailUrl.value,
+  );
+  if (discoveredUrl) return discoveredUrl;
+  if (props.media.isImage) return props.media.fileUrl ?? '';
+  return getDisplayableThumbnailUrl(props.media.thumbnailUrl);
+});
+
+const mediaIsAudio = computed(() => {
+  return !!props.media.isAudio || isAudio(props.media.fileUrl ?? '');
+});
+
+const showAudioThumbnailFallback = computed(() => {
+  return mediaIsAudio.value && !mediaThumbnailUrl.value;
 });
 
 function escapeHtml(value: string): string {
@@ -1640,10 +1664,9 @@ const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
   name: 'get-current-media-window-variables',
 });
 
-const thumbnailFromMetadata = ref('');
-
 const imageLoadingError = () => {
-  findThumbnailUrl();
+  failedThumbnailUrl.value = mediaThumbnailUrl.value;
+  void findThumbnailUrl();
 };
 
 const onMarkerClick = (marker: VideoMarker) => {
@@ -1725,11 +1748,14 @@ async function findThumbnailUrl() {
     }
 
     if (fileExists) {
-      const thumbnailUrl = await getThumbnailUrl(props.media.fileUrl);
-      if (!thumbnailFromMetadata.value) {
-        thumbnailFromMetadata.value = thumbnailUrl;
+      const thumbnailUrl = getDisplayableThumbnailUrl(
+        await getThumbnailUrl(props.media.fileUrl),
+      );
+      if (!discoveredThumbnailUrl.value) {
+        discoveredThumbnailUrl.value = thumbnailUrl;
       }
-      if (!thumbnailFromMetadata.value && thumbnailRetryCount < 5) {
+      const retryLimit = mediaIsAudio.value ? 0 : 5;
+      if (!discoveredThumbnailUrl.value && thumbnailRetryCount < retryLimit) {
         thumbnailRetryCount++;
         setTimeout(runThumbnailCheck, 2000); // Retry after 2 seconds
       }
@@ -2021,7 +2047,7 @@ const confirmDeleteSelectedMedia = () => {
 onMounted(async () => {
   void updateLocalFile();
   initializeImageDuration();
-  if (props.media.duration && !props.media.thumbnailUrl)
+  if (props.media.duration && !mediaThumbnailUrl.value)
     await findThumbnailUrl();
 });
 
@@ -2265,6 +2291,18 @@ whenever(
 
 .media-filter-current-match {
   animation: media-filter-bounce 360ms ease;
+}
+
+.media-thumbnail-container,
+.media-audio-thumbnail-fallback {
+  aspect-ratio: 16 / 9;
+  width: 150px;
+}
+
+.media-audio-thumbnail-fallback {
+  align-items: center;
+  display: flex;
+  justify-content: center;
 }
 
 :deep(.media-filter__highlight) {
