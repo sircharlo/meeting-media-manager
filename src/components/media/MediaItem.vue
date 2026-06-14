@@ -472,9 +472,24 @@
                   }
                 "
               />
-              <q-icon v-if="repeat" color="warning" name="mmm-repeat" size="sm">
+              <q-icon
+                v-if="repeat || isSlideshowLooping"
+                color="warning"
+                name="mmm-repeat"
+                size="sm"
+              >
                 <q-tooltip :delay="500">
-                  {{ t('repeat') }}
+                  {{ repeatTooltip }}
+                </q-tooltip>
+              </q-icon>
+              <q-icon
+                v-if="isSlideshowMasterVideo"
+                color="negative"
+                name="mmm-volume-off"
+                size="sm"
+              >
+                <q-tooltip :delay="500">
+                  {{ t('muted-slideshow-video') }}
                 </q-tooltip>
               </q-icon>
               <q-btn
@@ -604,16 +619,13 @@
                     (isVideo(mediaPlaying.url) || isAudio(mediaPlaying.url))) ||
                   (!fileIsAvailable && !streamIsAvailable)
                 "
-                :icon="localFile ? 'mmm-play' : 'mmm-stream-play'"
+                :icon="playButtonIcon"
                 rounded
                 :unelevated="!fileIsAvailable && !streamIsAvailable"
                 @click="setMediaPlaying(media)"
               >
-                <q-tooltip
-                  v-if="!fileIsAvailable && streamIsAvailable"
-                  :delay="1000"
-                >
-                  {{ t('play-while-downloading') }}
+                <q-tooltip v-if="playButtonTooltip" :delay="1000">
+                  {{ playButtonTooltip }}
                 </q-tooltip>
               </q-btn>
             </div>
@@ -720,6 +732,23 @@
                 selectedMediaItems?.length || 0
               }})
             </q-item-label>
+            <q-item
+              v-if="slideshowVideoPair"
+              v-close-popup
+              clickable
+              :disable="!!mediaPlaying.url"
+              @click="playSlideshowVideo()"
+            >
+              <q-item-section avatar>
+                <q-icon name="mmm-play" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('play-video-with-audio') }}</q-item-label>
+                <q-item-label caption>
+                  {{ t('play-video-with-audio-explain') }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
             <q-item
               v-if="canDeleteSelected"
               v-close-popup
@@ -1152,6 +1181,69 @@ const multipleMediaItemsSelected = computed(() => {
   return (props.selectedMediaItems?.length || 0) >= 2;
 });
 
+const selectedMediaForDay = computed(() => {
+  if (!props.selectedMediaItems || !selectedDateObject.value) return [];
+
+  const mediaItemsForDay = Object.values(
+    selectedDateObject.value.mediaSections,
+  ).flatMap((sectionMedia) =>
+    (sectionMedia.items ?? []).flatMap((item) => [
+      item,
+      ...(item.children ?? []),
+    ]),
+  );
+
+  return props.selectedMediaItems
+    .map((selectedId) =>
+      mediaItemsForDay.find((item) => item.uniqueId === selectedId),
+    )
+    .filter((item): item is MediaItem => !!item);
+});
+
+const canProvideSlideshowAudio = (media: MediaItem) => {
+  const url = media.fileUrl ?? media.streamUrl ?? '';
+  return !!media.isAudio || !!media.isVideo || isAudio(url) || isVideo(url);
+};
+
+const canProvideSlideshowVideo = (media: MediaItem) => {
+  const url = media.fileUrl ?? media.streamUrl ?? '';
+  return !!media.isVideo || isVideo(url);
+};
+
+const slideshowVideoPair = computed(() => {
+  if (selectedMediaForDay.value.length !== 2) return null;
+
+  const [firstMedia, secondMedia] = selectedMediaForDay.value;
+  if (!firstMedia || !secondMedia) return null;
+
+  const bothCanProvideAudio =
+    canProvideSlideshowAudio(firstMedia) &&
+    canProvideSlideshowAudio(secondMedia);
+  const selectedVideoItems = selectedMediaForDay.value.filter(
+    canProvideSlideshowVideo,
+  );
+
+  if (!bothCanProvideAudio || !selectedVideoItems.length) return null;
+
+  if (canProvideSlideshowVideo(props.media)) {
+    const audioMedia = selectedMediaForDay.value.find(
+      (item) => item.uniqueId !== props.media.uniqueId,
+    );
+    if (!audioMedia) return null;
+    return { audioMedia, videoMedia: props.media };
+  }
+
+  if (selectedVideoItems.length !== 1) return null;
+
+  const [videoMedia] = selectedVideoItems;
+  const audioMedia = selectedMediaForDay.value.find(
+    (item) => item.uniqueId !== videoMedia?.uniqueId,
+  );
+  if (!audioMedia || !videoMedia) return null;
+
+  return { audioMedia, videoMedia };
+});
+
 const deletableSelectedMediaItems = computed(() => {
   if (!props.selectedMediaItems || !selectedDateObject.value) return [];
   const mediaItemsForDay = Object.values(
@@ -1512,6 +1604,14 @@ const fileIsLocal = async () => {
 const localFile = ref(false);
 let localFileCheckId = 0;
 
+const getPlaybackUrl = (media: MediaItem) => {
+  if (media.uniqueId === props.media.uniqueId && localFile.value) {
+    return media.fileUrl ?? '';
+  }
+
+  return media.streamUrl ?? media.fileUrl ?? '';
+};
+
 const updateLocalFile = async () => {
   const checkId = ++localFileCheckId;
   const isLocal = await fileIsLocal();
@@ -1568,12 +1668,44 @@ const setMediaPlaying = async (
     pan: calculatedPan.value,
     playbackRate: playbackRate.value,
     seekTo: 0,
+    shouldLoop: false,
+    slideshowAudioUrl: '',
     subtitlesUrl: media.subtitlesUrl ?? '',
     uniqueId: media.uniqueId,
-    url: localFile.value
-      ? (media.fileUrl ?? '')
-      : (media.streamUrl ?? media.fileUrl ?? ''),
+    url: getPlaybackUrl(media),
     zoom: mediaZoom.value,
+  };
+
+  toggleMediaWindowVisibility(true);
+
+  nextTick(() => {
+    globalThis.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
+  });
+};
+
+const playSlideshowVideo = async () => {
+  const pair = slideshowVideoPair.value;
+  if (!pair) return;
+
+  if (!mediaPlaying.value.url) {
+    triggerMediaWindowAutoHide(true);
+    triggerZoomScreenShare(true);
+  }
+
+  await updateLocalFile();
+
+  mediaPlaying.value = {
+    action: 'play',
+    currentPosition: 0,
+    pan: { x: 0, y: 0 },
+    playbackRate: 1,
+    seekTo: 0,
+    shouldLoop: true,
+    slideshowAudioUrl: getPlaybackUrl(pair.audioMedia),
+    subtitlesUrl: pair.videoMedia.subtitlesUrl ?? '',
+    uniqueId: pair.videoMedia.uniqueId,
+    url: getPlaybackUrl(pair.videoMedia),
+    zoom: 1,
   };
 
   toggleMediaWindowVisibility(true);
@@ -1848,6 +1980,8 @@ function stopMedia(forOtherMediaItem = false) {
     pan: { x: 0, y: 0 },
     playbackRate: 1,
     seekTo: 0,
+    shouldLoop: false,
+    slideshowAudioUrl: '',
     subtitlesUrl: '',
     uniqueId: '',
     url: '',
@@ -1873,6 +2007,48 @@ const isCurrentlyPlaying = computed(() => {
       mediaPlaying.value.url === props.media.streamUrl) &&
     mediaPlaying.value.uniqueId === props.media.uniqueId
   );
+});
+
+const mediaPlaybackUrls = computed(() => {
+  return [props.media.fileUrl, props.media.streamUrl].filter(
+    (url): url is string => !!url,
+  );
+});
+
+const isSlideshowMasterVideo = computed(() => {
+  return (
+    !!mediaPlaying.value.slideshowAudioUrl &&
+    mediaPlaying.value.uniqueId === props.media.uniqueId
+  );
+});
+
+const isSlideshowLinkedAudio = computed(() => {
+  return (
+    !!mediaPlaying.value.slideshowAudioUrl &&
+    mediaPlaying.value.uniqueId !== props.media.uniqueId &&
+    mediaPlaybackUrls.value.includes(mediaPlaying.value.slideshowAudioUrl)
+  );
+});
+
+const isSlideshowLooping = computed(() => {
+  return isSlideshowMasterVideo.value || isSlideshowLinkedAudio.value;
+});
+
+const repeatTooltip = computed(() => {
+  return isSlideshowLooping.value ? t('slideshow-audio-loop') : t('repeat');
+});
+
+const playButtonIcon = computed(() => {
+  if (isSlideshowLinkedAudio.value) return 'mmm-link';
+  return localFile.value ? 'mmm-play' : 'mmm-stream-play';
+});
+
+const playButtonTooltip = computed(() => {
+  if (isSlideshowLinkedAudio.value) return t('linked-slideshow-audio');
+  if (!fileIsAvailable.value && streamIsAvailable.value) {
+    return t('play-while-downloading');
+  }
+  return '';
 });
 
 const mediaPan = ref<{ x: number; y: number }>({
@@ -2255,7 +2431,7 @@ watchImmediate(
   () => [repeat.value, mediaPlaying.value.uniqueId],
   ([newMediaRepeat, newMediaPlayingUniqueId]) => {
     if (newMediaPlayingUniqueId !== props.media.uniqueId) return;
-    postRepeat(!!newMediaRepeat);
+    postRepeat(!!newMediaRepeat || mediaPlaying.value.shouldLoop);
   },
 );
 
@@ -2264,7 +2440,7 @@ watchImmediate(
   () => {
     // Push current repeat state when requested (only if this media is currently playing)
     if (mediaPlaying.value.uniqueId === props.media.uniqueId) {
-      postRepeat(!!repeat.value);
+      postRepeat(!!repeat.value || mediaPlaying.value.shouldLoop);
     }
   },
 );

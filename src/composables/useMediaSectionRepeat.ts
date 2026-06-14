@@ -225,6 +225,8 @@ export function useMediaSectionRepeat() {
       },
       playbackRate: 1,
       seekTo: 0,
+      shouldLoop: false,
+      slideshowAudioUrl: '',
       subtitlesUrl: nextItem.subtitlesUrl || '',
       uniqueId: nextItem.uniqueId,
       url: nextUrl,

@@ -83,6 +83,7 @@
         ref="mediaElement1"
         class="fit-snugly"
         disableRemotePlayback
+        :muted="isSlideshowDisplayVideo(displayLayer1.url)"
         preload="metadata"
         :src="displayLayer1.url"
         @canplay="handleVideoCanPlay()"
@@ -130,6 +131,7 @@
         ref="mediaElement2"
         class="fit-snugly"
         disableRemotePlayback
+        :muted="isSlideshowDisplayVideo(displayLayer2.url)"
         preload="metadata"
         :src="displayLayer2.url"
         @canplay="handleVideoCanPlay()"
@@ -153,6 +155,15 @@
         <source :src="displayLayer2.url" />
       </audio>
     </div>
+
+    <audio
+      v-if="slideshowAudioUrl"
+      ref="slideshowAudioElement"
+      loop
+      :src="slideshowAudioUrl"
+      style="display: none"
+      @loadedmetadata="playSlideshowAudio()"
+    />
   </q-page-container>
 </template>
 
@@ -281,6 +292,9 @@ const mediaElement2 = useTemplateRef<HTMLAudioElement | HTMLVideoElement>(
   'mediaElement2',
 );
 const cameraElement = useTemplateRef<HTMLVideoElement>('cameraElement');
+const slideshowAudioElement = useTemplateRef<HTMLAudioElement>(
+  'slideshowAudioElement',
+);
 
 const videoStreaming = ref(false);
 
@@ -333,6 +347,10 @@ const { data: mediaRepeatNow } = useBroadcastChannel<number, number>({
 
 const { data: mediaPlayingUrl } = useBroadcastChannel<string, string>({
   name: 'media-url',
+});
+
+const { data: slideshowAudioUrl } = useBroadcastChannel<string, string>({
+  name: 'slideshow-audio-url',
 });
 
 const { post: postCurrentTime } = useBroadcastChannel<number, number>({
@@ -473,6 +491,15 @@ const getNextLayer = (newUrl: string): DisplayLayerRef => {
   return displayLayer1;
 };
 
+const isSlideshowDisplayVideo = (url: string) => {
+  return (
+    !!slideshowAudioUrl.value &&
+    !!slideshowVideoUrl.value &&
+    url === mediaPlayingUrl.value &&
+    url === slideshowVideoUrl.value
+  );
+};
+
 const cleanupLayerIfCurrent = (
   layer: DisplayLayerRef,
   token: number,
@@ -484,6 +511,30 @@ const cleanupLayerIfCurrent = (
 
   cleanupMediaElement(getLayerElement(layer));
   layer.value.url = '';
+};
+
+const triggerSlideshowAudioPlay = () => {
+  if (!slideshowAudioElement.value || mediaAction.value !== 'play') {
+    return;
+  }
+
+  slideshowAudioElement.value.play().catch((error: Error) => {
+    const ignoredErrors = [
+      'removed from the document',
+      'new load request',
+      'interrupted by a call to pause',
+    ];
+
+    const shouldIgnore = ignoredErrors.some((msg) =>
+      error.message.includes(msg),
+    );
+
+    if (!shouldIgnore) {
+      errorCatcher(error, {
+        contexts: { fn: { name: 'triggerSlideshowAudioPlay' } },
+      });
+    }
+  });
 };
 
 const currentMediaElement: Ref<HTMLAudioElement | HTMLVideoElement | null> =
@@ -559,11 +610,13 @@ const playMediaElement = (wasPaused = false, websiteStream = false) => {
 
   if (wasPaused || websiteStream) {
     triggerPlay(websiteStream);
+    triggerSlideshowAudioPlay();
   }
 
   currentMediaElement.value.oncanplaythrough = () => {
     log('🎬 [playMediaElement] Video can play through', 'mediaPlayer', 'log');
     triggerPlay(websiteStream);
+    triggerSlideshowAudioPlay();
   };
 
   // For videos, add an additional check to ensure playback starts
@@ -588,6 +641,17 @@ const playMediaElement = (wasPaused = false, websiteStream = false) => {
   }
 };
 
+const playSlideshowAudio = () => {
+  if (!slideshowAudioElement.value) {
+    return;
+  }
+
+  slideshowAudioElement.value.currentTime = 0;
+  triggerSlideshowAudioPlay();
+};
+
+const slideshowVideoUrl = ref('');
+
 const endOrLoop = () => {
   log(
     '🎬 [endOrLoop] Video ended, repeat:',
@@ -600,6 +664,7 @@ const endOrLoop = () => {
     if (currentMediaElement.value) {
       currentMediaElement.value.currentTime = customMin.value;
       playMediaElement();
+      triggerSlideshowAudioPlay();
     }
   } else {
     log('🎬 [endOrLoop] Posting ended state', 'mediaPlayer', 'log');
@@ -715,7 +780,11 @@ const playMedia = () => {
     if (playbackRateData.value) {
       currentMediaElement.value.playbackRate = playbackRateData.value;
     }
+    if (slideshowAudioElement.value) {
+      slideshowAudioElement.value.currentTime = 0;
+    }
     playMediaElement();
+    triggerSlideshowAudioPlay();
   } catch (e) {
     errorCatcher(e);
   }
@@ -1036,9 +1105,41 @@ whenever(
   (newMediaAction, oldMediaAction) => {
     if (newMediaAction === 'pause') {
       currentMediaElement.value?.pause();
+      slideshowAudioElement.value?.pause();
     } else if (newMediaAction === 'play') {
       playMediaElement(oldMediaAction === 'pause');
+      triggerSlideshowAudioPlay();
     }
+  },
+);
+
+watch(
+  () => slideshowAudioUrl.value,
+  (newUrl, oldUrl) => {
+    if (newUrl === oldUrl) return;
+
+    if (!newUrl) {
+      slideshowVideoUrl.value = '';
+      slideshowAudioElement.value?.pause();
+      return;
+    }
+
+    slideshowVideoUrl.value = isVideo(mediaPlayingUrl.value)
+      ? mediaPlayingUrl.value
+      : '';
+
+    setTimeout(() => {
+      if (!slideshowVideoUrl.value && isVideo(mediaPlayingUrl.value)) {
+        slideshowVideoUrl.value = mediaPlayingUrl.value;
+      }
+
+      if (
+        slideshowAudioUrl.value === newUrl &&
+        mediaPlayingUrl.value === slideshowVideoUrl.value
+      ) {
+        playSlideshowAudio();
+      }
+    }, 50);
   },
 );
 
@@ -1071,6 +1172,14 @@ watch(
       newUrl,
     );
     isEnding.value = false;
+
+    if (
+      slideshowAudioUrl.value &&
+      (!newUrl || newUrl !== slideshowVideoUrl.value)
+    ) {
+      slideshowAudioElement.value?.pause();
+      slideshowVideoUrl.value = '';
+    }
 
     if (oldUrl && newUrl && !isAudio(newUrl)) {
       isTransitioning.value = true;

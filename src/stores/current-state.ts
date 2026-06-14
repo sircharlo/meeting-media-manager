@@ -36,6 +36,8 @@ export interface MediaPlayingState {
   pan: Partial<{ x: number; y: number }>;
   playbackRate: number;
   seekTo: number;
+  shouldLoop: boolean;
+  slideshowAudioUrl: string;
   subtitlesUrl: string;
   uniqueId: string;
   url: string;
@@ -473,6 +475,8 @@ export const useCurrentStateStore = defineStore('current-state', {
         pan: { x: 0, y: 0 },
         playbackRate: 1,
         seekTo: 0,
+        shouldLoop: false,
+        slideshowAudioUrl: '',
         subtitlesUrl: '',
         uniqueId: '',
         url: '',

@@ -268,7 +268,10 @@ import {
 import { sendObsSceneEvent } from 'src/utils/obs';
 import { findDb, tableExists } from 'src/utils/sqlite';
 import { useAppSettingsStore } from 'stores/app-settings';
-import { useCurrentStateStore } from 'stores/current-state';
+import {
+  type MediaPlayingState,
+  useCurrentStateStore,
+} from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
 import {
@@ -529,6 +532,10 @@ const { post: postSubtitlesUrl } = useBroadcastChannel<string, string>({
 
 const { post: postMediaUrl } = useBroadcastChannel<string, string>({
   name: 'media-url',
+});
+
+const { post: postSlideshowAudioUrl } = useBroadcastChannel<string, string>({
+  name: 'slideshow-audio-url',
 });
 
 const { post: postCustomDuration } = useBroadcastChannel<
@@ -2053,6 +2060,29 @@ const mediaLists = computed(() => {
     }));
 });
 
+const atRest: MediaPlayingState = {
+  action: '',
+  currentPosition: 0,
+  pan: {
+    x: 0,
+    y: 0,
+  },
+  playbackRate: 1,
+  seekTo: 0,
+  shouldLoop: false,
+  slideshowAudioUrl: '',
+  subtitlesUrl: '',
+  uniqueId: '',
+  url: '',
+  zoom: 1,
+};
+
+function stopSlideshowPlayback() {
+  if (!mediaPlaying.value.slideshowAudioUrl) return;
+
+  mediaPlaying.value = atRest;
+}
+
 const anchorId = ref<null | string>(null);
 
 // Handle item click events from MediaList components
@@ -2350,6 +2380,7 @@ watch(
 watchImmediate(
   () => selectedDate.value,
   async (newVal) => {
+    stopSlideshowPlayback();
     selectedMediaItems.value = [];
     lastExtendDirection.value = null;
 
@@ -2362,6 +2393,13 @@ watchImmediate(
         label: t('pt'),
       });
     }
+  },
+);
+
+watch(
+  () => currentCongregation.value,
+  () => {
+    stopSlideshowPlayback();
   },
 );
 
@@ -2427,8 +2465,15 @@ watch(
 );
 
 watch(
-  () => [mediaPlaying.value.url, customDuration.value],
-  ([newUrl, newCustomDuration], [oldUrl, oldCustomDuration]) => {
+  () => [
+    mediaPlaying.value.url,
+    mediaPlaying.value.slideshowAudioUrl,
+    customDuration.value,
+  ],
+  (
+    [newUrl, newSlideshowAudioUrl, newCustomDuration],
+    [oldUrl, oldSlideshowAudioUrl, oldCustomDuration],
+  ) => {
     log(
       '🔄 [watch] mediaPlaying.value.url',
       'mediaCalendar',
@@ -2439,6 +2484,10 @@ watch(
 
     if (newUrl !== oldUrl) {
       postMediaUrl(newUrl as string);
+    }
+
+    if (newSlideshowAudioUrl !== oldSlideshowAudioUrl) {
+      postSlideshowAudioUrl(newSlideshowAudioUrl as string);
     }
 
     if (
@@ -2516,20 +2565,7 @@ watch(
       triggerMediaWindowAutoHide(false);
       triggerZoomScreenShare(false);
 
-      mediaPlaying.value = {
-        action: '',
-        currentPosition: 0,
-        pan: {
-          x: 0,
-          y: 0,
-        },
-        playbackRate: 1,
-        seekTo: 0,
-        subtitlesUrl: '',
-        uniqueId: '',
-        url: '',
-        zoom: 1,
-      };
+      mediaPlaying.value = atRest;
 
       // Clear custom duration when media ends
       postCustomDuration(undefined);
@@ -3004,6 +3040,7 @@ watchImmediate(
     postZoomPan(serializableZoomPan ?? {});
 
     postMediaUrl(mediaPlaying.value.url);
+    postSlideshowAudioUrl(mediaPlaying.value.slideshowAudioUrl);
     postCustomDuration(JSON.stringify(customDuration.value));
     postCustomBackground(mediaWindowCustomBackground.value);
   },
