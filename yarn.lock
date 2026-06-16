@@ -4907,12 +4907,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/yauzl@npm:^3.3.0":
-  version: 3.3.0
-  resolution: "@types/yauzl@npm:3.3.0"
+"@types/yauzl@npm:^3.4.0":
+  version: 3.4.0
+  resolution: "@types/yauzl@npm:3.4.0"
   dependencies:
     "@types/node": "npm:*"
-  checksum: 10c0/febd1de0c178b429bc3399545a7d1343221964839a393ef46d02118f06eb747b3c7c04ed5f121c62311ba87372d2c5f460a2796193121382234c996e9d16b16c
+  checksum: 10c0/9992cf7bf129466016baa4e99e05ad524afe2ff6e5d84e7408f2a7123bc4af3b4bfb639237308574b80e7e435571b6e1af6113910d166e8ea8b80da422ba8ecb
   languageName: node
   linkType: hard
 
@@ -11673,7 +11673,7 @@ __metadata:
     "@types/ms": "npm:^2"
     "@types/node": "npm:^25.9.3"
     "@types/pretty-bytes": "npm:^5.2.0"
-    "@types/yauzl": "npm:^3.3.0"
+    "@types/yauzl": "npm:^3.4.0"
     "@typescript-eslint/utils": "npm:^8.61.1"
     "@vitejs/plugin-vue": "npm:^6.0.7"
     "@vitest/eslint-plugin": "npm:^1.6.20"
