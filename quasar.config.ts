@@ -1,9 +1,14 @@
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file
 
+import type { BeforePackContext } from 'app-builder-lib';
+
 import { defineConfig } from '@quasar/app-vite/wrappers';
 import { sentryEsbuildPlugin } from '@sentry/esbuild-plugin';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
+import { Arch } from 'builder-util';
+import { access, copyFile, mkdir } from 'node:fs/promises';
+import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { mergeConfig } from 'vite'; // use mergeConfig helper to avoid overwriting the default config
@@ -34,6 +39,41 @@ const getIconPath = (iconType: 'icns' | 'ico' | 'png' | 'splash') => {
     return `build/logos/splash-portable.bmp`;
   }
   return `icons/${IS_BETA ? 'beta' : 'icon'}.${iconType}`;
+};
+
+const copyRobotjsNativeArtifact = async (context: BeforePackContext) => {
+  const artifactsDir = process.env.ROBOTJS_NATIVE_ARTIFACTS_DIR;
+
+  if (!artifactsDir) {
+    return;
+  }
+
+  const platform = context.electronPlatformName;
+  const arch = Arch[context.arch];
+
+  if (platform === 'linux') {
+    return;
+  }
+
+  const artifact =
+    platform === 'darwin' && arch === 'universal'
+      ? 'robotjs-darwin-universal.node'
+      : `robotjs-${platform}-${arch}.node`;
+  const source = path.join(artifactsDir, artifact);
+
+  await access(source);
+
+  const target = path.join(
+    context.packager.info.appDir,
+    'node_modules',
+    'robotjs',
+    'build',
+    'Release',
+    'robotjs.node',
+  );
+
+  await mkdir(path.dirname(target), { recursive: true });
+  await copyFile(source, target);
 };
 
 export default defineConfig((ctx) => {
@@ -123,6 +163,7 @@ export default defineConfig((ctx) => {
         appId: APP_ID,
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: APP_NAME + '-${version}-${arch}.${ext}',
+        beforePack: copyRobotjsNativeArtifact,
         generateUpdatesFilesForAllChannels: true,
         linux: {
           category: 'Utility',
@@ -205,7 +246,6 @@ export default defineConfig((ctx) => {
       extendPackageJson(pkg) {
         // All dependencies required by the main and preload scripts need to be listed here
         const electronDeps = new Set([
-          '@jitsi/robotjs',
           '@numairawan/video-duration',
           '@sentry/core',
           '@sentry/electron',

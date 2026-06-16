@@ -78,9 +78,82 @@ jobs:
       - name: Run tests
         run: yarn test:unit
 
+  robotjs-native:
+    name: Build robotjs native (${{ matrix.artifact }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - artifact: robotjs-darwin-arm64
+            arch: arm64
+            install-node-architecture: arm64
+            node-architecture: arm64
+            node-version: 24
+            os: macos-latest
+          - artifact: robotjs-darwin-x64
+            arch: x64
+            install-node-architecture: x64
+            node-architecture: x64
+            node-version: 24
+            os: macos-15-intel
+          - artifact: robotjs-win32-ia32
+            arch: ia32
+            install-node-architecture: x64
+            node-architecture: x86
+            node-version: 22 # Last version of Node that supports ia32
+            os: windows-latest
+          - artifact: robotjs-win32-x64
+            arch: x64
+            install-node-architecture: x64
+            node-architecture: x64
+            node-version: 24
+            os: windows-latest
+    steps:
+      - name: Check out master branch
+        if: ${{ inputs.checkout-latest == true }}
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+        with:
+          ref: master
+      - name: Check out Git repository
+        if: ${{ inputs.checkout-latest == false }}
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      - name: Setup Node
+        if: ${{ !inputs.publish-release }}
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
+        with:
+          architecture: ${{ matrix.install-node-architecture }}
+          cache: 'yarn'
+          node-version: ${{ matrix.node-version }}
+      - name: Setup Node without cache for release publishing
+        if: ${{ inputs.publish-release }}
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
+        with:
+          architecture: ${{ matrix.install-node-architecture }}
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: yarn install
+      - name: Setup target Node architecture
+        if: ${{ matrix.install-node-architecture != matrix.node-architecture }}
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
+        with:
+          architecture: ${{ matrix.node-architecture }}
+          node-version: ${{ matrix.node-version }}
+      - name: Rebuild robotjs for Electron
+        run: yarn exec electron-rebuild -f -m ./node_modules/robotjs --arch=${{ matrix.arch }}
+        env:
+          npm_config_arch: ${{ matrix.arch }}
+          npm_config_target_arch: ${{ matrix.arch }}
+      - name: Upload robotjs native artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          if-no-files-found: error
+          name: ${{ matrix.artifact }}
+          path: node_modules/robotjs/build/Release/robotjs.node
+
   build:
     runs-on: ${{ matrix.os }}
-    needs: [quality]
+    needs: [quality, robotjs-native]
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
@@ -111,6 +184,32 @@ jobs:
           sudo apt-get install -y libx11-dev libxtst-dev libxinerama-dev libx11-xcb-dev libxkbcommon-x11-dev libxss-dev libpng-dev libpng++-dev
       - name: Install dependencies
         run: yarn install
+      - name: Download robotjs native artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          path: ${{ runner.temp }}/robotjs-native
+          pattern: robotjs-*
+      - name: Prepare robotjs native artifacts (macOS only)
+        if: runner.os == 'macOS'
+        run: |
+          artifact_root="$RUNNER_TEMP/robotjs-native"
+          prepared="$artifact_root/prepared"
+          mkdir -p "$prepared"
+          lipo -create \
+            "$artifact_root/robotjs-darwin-x64/robotjs.node" \
+            "$artifact_root/robotjs-darwin-arm64/robotjs.node" \
+            -output "$prepared/robotjs-darwin-universal.node"
+          cp "$artifact_root/robotjs-darwin-x64/robotjs.node" "$prepared/robotjs-darwin-x64.node"
+          cp "$artifact_root/robotjs-darwin-arm64/robotjs.node" "$prepared/robotjs-darwin-arm64.node"
+      - name: Prepare robotjs native artifacts (Windows only)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $artifactRoot = Join-Path $env:RUNNER_TEMP 'robotjs-native'
+          $prepared = Join-Path $artifactRoot 'prepared'
+          New-Item -ItemType Directory -Force $prepared | Out-Null
+          Copy-Item (Join-Path $artifactRoot 'robotjs-win32-x64\robotjs.node') (Join-Path $prepared 'robotjs-win32-x64.node')
+          Copy-Item (Join-Path $artifactRoot 'robotjs-win32-ia32\robotjs.node') (Join-Path $prepared 'robotjs-win32-ia32.node')
       - name: Install Apple certificate
         if: runner.os == 'macOS' && github.actor != 'dependabot[bot]'
         env:
@@ -148,6 +247,7 @@ jobs:
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           GITHUB_TOKEN: ${{ github.token }}
+          ROBOTJS_NATIVE_ARTIFACTS_DIR: ${{ runner.temp }}/robotjs-native/prepared
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           TEST_VERSION: ${{ secrets.TEST_VERSION }}
 
@@ -158,6 +258,7 @@ jobs:
           yarn build -- --publish=${{ inputs.publish-release && 'always' || 'never' }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          ROBOTJS_NATIVE_ARTIFACTS_DIR: ${{ runner.temp }}/robotjs-native/prepared
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           TEST_VERSION: ${{ secrets.TEST_VERSION }}
       - name: Clean up keychain and provisioning profile

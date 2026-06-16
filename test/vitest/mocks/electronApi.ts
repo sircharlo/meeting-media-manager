@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
+import type robotjs from 'robotjs';
 import type { ElectronApi } from 'src/types';
 
 const robot = {
   getMousePos: () => ({ x: 0, y: 0 }),
   mouseClick: () => undefined,
   moveMouse: () => undefined,
-};
+} as unknown as typeof robotjs;
 import fs, { ensureDir } from 'fs-extra';
 import {
   fileUrlToPath,
