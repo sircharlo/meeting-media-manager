@@ -69,6 +69,12 @@ const {
 } = globalThis.electronApi;
 const { exists, pathExists, stat, writeFile } = fs;
 
+const withCacheBust = (url: string, forceRefresh?: boolean) => {
+  if (!url || !forceRefresh) return url;
+  const separator = url.includes('?') ? '&' : '?';
+  return `${url}${separator}timestamp=${Date.now()}`;
+};
+
 const getThumbnailFromMetadata = async (mediaPath: string) => {
   try {
     mediaPath = fileUrlToPath(mediaPath);
@@ -234,7 +240,9 @@ export const getThumbnailUrl = async (
     let thumbnailUrl = '';
     if (isImage(filepath)) {
       thumbnailUrl = pathToFileURL(filepath);
-    } else if (isVideo(filepath) || isAudio(filepath)) {
+    } else if (isAudio(filepath)) {
+      thumbnailUrl = await getThumbnailFromMetadata(filepath);
+    } else if (isVideo(filepath)) {
       const thumbnailPath = filepath.split('.')[0] + '.jpg';
       if (await exists(thumbnailPath)) {
         thumbnailUrl = pathToFileURL(thumbnailPath);
@@ -242,7 +250,7 @@ export const getThumbnailUrl = async (
         thumbnailUrl = await getThumbnailFromVideoPath(filepath, thumbnailPath);
       }
     }
-    return thumbnailUrl + (forceRefresh ? '?timestamp=' + Date.now() : '');
+    return withCacheBust(thumbnailUrl, forceRefresh);
   } catch (error) {
     if (error instanceof Event) return '';
     errorCatcher(error, {

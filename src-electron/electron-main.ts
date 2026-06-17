@@ -369,13 +369,10 @@ if (gotTheLock) {
 
   if (crashCount >= 3) {
     if (!isHwAccelDisabled()) {
-      captureElectronError(
-        new Error(
-          'Detected crash loop (3+ crashes). Disabling hardware acceleration.',
-        ),
-        {
-          contexts: { fn: { name: 'initCrashListeners' } },
-        },
+      log(
+        'Detected crash loop (3+ crashes). Disabling hardware acceleration.',
+        'electron',
+        'warn',
       );
       setHwAccelDisabled(true, true);
     }
