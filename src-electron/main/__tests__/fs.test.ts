@@ -7,6 +7,8 @@ const writeFileMock = vi.fn();
 const delayMock = vi.fn(() => Promise.resolve());
 const captureElectronErrorMock = vi.fn();
 const addElectronBreadcrumbMock = vi.fn();
+const getSharedDataPathMock = vi.fn();
+const setTagMock = vi.fn();
 const uuidMock = vi.fn(() => 'test-uuid');
 const watchMock = vi.fn();
 const sendToWindowMock = vi.fn();
@@ -52,7 +54,11 @@ vi.mock('node:timers/promises', () => ({
 vi.mock('src-electron/main/utils', () => ({
   addElectronBreadcrumb: addElectronBreadcrumbMock,
   captureElectronError: captureElectronErrorMock,
-  getSharedDataPath: vi.fn(),
+  getSharedDataPath: getSharedDataPathMock,
+}));
+
+vi.mock('@sentry/electron/main', () => ({
+  setTag: setTagMock,
 }));
 
 vi.mock('src-electron/main/window/window-base', () => ({
@@ -324,6 +330,62 @@ describe('isUsablePath', () => {
       undefined,
       'pathProbeNetworkWarning',
     );
+  });
+});
+
+describe('getAppDataPath', () => {
+  beforeEach(async () => {
+    vi.resetModules();
+    vi.clearAllMocks();
+    const { app } = await import('electron');
+    vi.mocked(app.getPath).mockReturnValue('/user-data');
+    mkdirMock.mockResolvedValue(undefined);
+    writeFileMock.mockResolvedValue(undefined);
+    rmMock.mockResolvedValue(undefined);
+    getSharedDataPathMock.mockResolvedValue('/shared-data');
+    setPlatform('linux');
+  });
+
+  afterAll(() => {
+    if (originalPlatform) {
+      Object.defineProperty(process, 'platform', originalPlatform);
+    }
+  });
+
+  it('falls back when shared subfolders cannot create nested download directories', async () => {
+    const error = new Error('nested directory unavailable');
+    (error as Error & { code?: string }).code = 'ENOENT';
+    mkdirMock.mockImplementation(async (target: string) => {
+      if (target === '/shared-data/Publications/.health-check-test-uuid') {
+        throw error;
+      }
+    });
+
+    const { getAppDataPath } = await import('../fs');
+
+    await expect(getAppDataPath()).resolves.toBe('/user-data');
+
+    expect(mkdirMock).toHaveBeenCalledWith(
+      '/shared-data/Publications/.health-check-test-uuid',
+      { recursive: true },
+    );
+    expect(captureElectronErrorMock).toHaveBeenCalledWith(
+      error,
+      expect.objectContaining({
+        contexts: {
+          fn: {
+            name: 'getAppDataPath.probeSharedSubfolders',
+            sharedPath: '/shared-data',
+          },
+        },
+        tags: {
+          path_mode: 'shared',
+          path_probe_result: 'failed',
+        },
+      }),
+    );
+    expect(setTagMock).toHaveBeenCalledWith('path_mode', 'user');
+    expect(setTagMock).toHaveBeenCalledWith('path_probe_result', 'failed');
   });
 });
 

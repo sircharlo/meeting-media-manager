@@ -253,10 +253,11 @@ const markSharedPathUnhealthy = async () => {
 const probeSharedSubfolders = async (sharedPath: string) => {
   for (const folder of SHARED_PATH_HEALTH_FOLDERS) {
     const dirPath = join(sharedPath, folder);
-    const testFile = join(dirPath, `.health-check-${uuid()}.tmp`);
-    await mkdir(dirPath, { recursive: true });
+    const testDir = join(dirPath, `.health-check-${uuid()}`);
+    const testFile = join(testDir, 'test.txt');
+    await mkdir(testDir, { recursive: true });
     await writeFile(testFile, 'ok', 'utf8');
-    await rm(testFile, { force: true });
+    await rm(testDir, { force: true, recursive: true });
   }
 };
 
