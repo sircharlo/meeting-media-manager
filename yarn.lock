@@ -5124,7 +5124,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/utils@npm:8.60.1, @typescript-eslint/utils@npm:^8.58.0, @typescript-eslint/utils@npm:^8.58.2, @typescript-eslint/utils@npm:^8.60.0":
+"@typescript-eslint/utils@npm:8.60.1, @typescript-eslint/utils@npm:^8.58.0, @typescript-eslint/utils@npm:^8.60.0":
   version: 8.60.1
   resolution: "@typescript-eslint/utils@npm:8.60.1"
   dependencies:
@@ -8619,15 +8619,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-perfectionist@npm:^5.9.0":
-  version: 5.9.0
-  resolution: "eslint-plugin-perfectionist@npm:5.9.0"
+"eslint-plugin-perfectionist@npm:^5.9.1":
+  version: 5.9.1
+  resolution: "eslint-plugin-perfectionist@npm:5.9.1"
   dependencies:
-    "@typescript-eslint/utils": "npm:^8.58.2"
+    "@typescript-eslint/utils": "npm:^8.61.0"
     natural-orderby: "npm:^5.0.0"
   peerDependencies:
     eslint: ^8.45.0 || ^9.0.0 || ^10.0.0
-  checksum: 10c0/661d4c2b889b87303af17c6249d4ba4536d8c83340faca16e51779e6b54125346ded5af0a8cb6cac9ab0fdd3e5c127ef7ebd0271eedbc680e2dbfdbc68b8b880
+  checksum: 10c0/adc47531cd249ee96e626589c160eab597183a9e4ba5841fb4b55d205f3a0438badd2564b0311684e22f355294b7addb27d99f29c2cdb9ddd4892ed1dae0dc91
   languageName: node
   linkType: hard
 
@@ -11734,7 +11734,7 @@ __metadata:
     electron-dl-manager: "npm:^4.2.3"
     electron-updater: "npm:^6.8.9"
     eslint: "npm:^10.5.0"
-    eslint-plugin-perfectionist: "npm:^5.9.0"
+    eslint-plugin-perfectionist: "npm:^5.9.1"
     eslint-plugin-vue: "npm:^10.9.2"
     fantasticon: "npm:^4.1.0"
     fluent-ffmpeg: "npm:^2.1.3"
