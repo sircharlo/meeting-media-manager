@@ -37,26 +37,8 @@ import {
   type Entry,
   fromBufferPromise,
   openPromise,
-  type Options,
   type ZipFile,
-  type ZipFileOptions,
 } from 'yauzl';
-
-declare module 'yauzl' {
-  interface ZipFile {
-    eachEntry: () => AsyncIterable<Entry>;
-    openReadStreamPromise: (
-      entry: Entry,
-      options?: ZipFileOptions,
-    ) => Promise<NodeJS.ReadableStream>;
-  }
-
-  function fromBufferPromise(
-    buffer: Buffer,
-    options?: Options,
-  ): Promise<ZipFile>;
-  function openPromise(path: string, options?: Options): Promise<ZipFile>;
-}
 
 const ongoingDecompressions = new Map<string, Promise<UnzipResult[]>>();
 
