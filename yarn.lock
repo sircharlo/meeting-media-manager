@@ -1510,9 +1510,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@intlify/bundle-utils@npm:11.2.3":
-  version: 11.2.3
-  resolution: "@intlify/bundle-utils@npm:11.2.3"
+"@intlify/bundle-utils@npm:11.2.4":
+  version: 11.2.4
+  resolution: "@intlify/bundle-utils@npm:11.2.4"
   dependencies:
     "@intlify/message-compiler": "npm:~11.4.2"
     "@intlify/shared": "npm:~11.4.2"
@@ -1528,7 +1528,7 @@ __metadata:
       optional: true
     vue-i18n:
       optional: true
-  checksum: 10c0/1533847126ce2c1993af6db1b3364d823890ba7cc25d9661caac63eb705aae3ec6a77c5c1562afd18a32986ca79fc34154cf46dfae5904a3b736c04211a56dff
+  checksum: 10c0/8e1b728b1b2c454e405dd60016874333f9a92c354e5f9af49af4ba678c03e398ff12930ca5ea6fcf2c2f4725baf88a9dbaba2f8b56788a8d131cfff3e2a18d6c
   languageName: node
   linkType: hard
 
@@ -1597,12 +1597,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@intlify/unplugin-vue-i18n@npm:^11.2.3":
-  version: 11.2.3
-  resolution: "@intlify/unplugin-vue-i18n@npm:11.2.3"
+"@intlify/unplugin-vue-i18n@npm:^11.2.4":
+  version: 11.2.4
+  resolution: "@intlify/unplugin-vue-i18n@npm:11.2.4"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.4.0"
-    "@intlify/bundle-utils": "npm:11.2.3"
+    "@intlify/bundle-utils": "npm:11.2.4"
     "@intlify/shared": "npm:~11.4.2"
     "@intlify/vue-i18n-extensions": "npm:^8.0.0"
     "@rollup/pluginutils": "npm:^5.1.0"
@@ -1626,7 +1626,7 @@ __metadata:
       optional: true
     vue-i18n:
       optional: true
-  checksum: 10c0/eb25280b286eb6ef3168dc367382fee921c49561ac6c99f1f74b0a9edfdd123e1e9c6e282a098056aafec52d0f3f2f24f4f3d6257104c212c83f3a7b2a7274a6
+  checksum: 10c0/250b70c7e76599988023a7838db1021c9cc1f41c689edd506ec27e630266eb7e280c7929f21b5f3b66fbdc68ed3ac88902abfdd495d7d26717cba8bcdc5cbac9
   languageName: node
   linkType: hard
 
@@ -11471,7 +11471,7 @@ __metadata:
     "@fontsource-variable/inter": "npm:^5.2.8"
     "@fontsource-variable/noto-serif": "npm:^5.2.9"
     "@formkit/drag-and-drop": "npm:^0.6.1"
-    "@intlify/unplugin-vue-i18n": "npm:^11.2.3"
+    "@intlify/unplugin-vue-i18n": "npm:^11.2.4"
     "@jitsi/robotjs": "npm:^0.6.22"
     "@numairawan/video-duration": "npm:^1.0.0"
     "@opentelemetry/api-logs": "npm:^0.219.0"
