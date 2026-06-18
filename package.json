@@ -89,7 +89,7 @@
     "@electron/rebuild": "^4.0.4",
     "@eslint/config-helpers": "^0.6.0",
     "@eslint/js": "^10.0.1",
-    "@intlify/unplugin-vue-i18n": "^11.2.3",
+    "@intlify/unplugin-vue-i18n": "^11.2.4",
     "@pinia/testing": "^1.0.3",
     "@quasar/app-vite": "^2.6.2",
     "@quasar/icongenie": "patch:@quasar/icongenie@npm%3A5.0.0#~/.yarn/patches/@quasar-icongenie-npm-5.0.0-c2ce1cf885.patch",
