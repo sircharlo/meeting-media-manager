@@ -37,11 +37,11 @@ WORKFLOW_ONLY_PATHS = (
     ".github/",
 )
 GITHUB_OUTPUT_ENV = "GITHUB_OUTPUT"
-REF_PATTERN = re.compile(r"^(?:HEAD|[A-Za-z0-9][A-Za-z0-9._/@-]*)$", flags=re.ASCII)
+REF_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._/@-]*$", flags=re.ASCII)
 REV_RANGE_PATTERN = re.compile(
-    r"^(?P<base>HEAD|[A-Za-z0-9][A-Za-z0-9._/@-]*)"
+    r"^(?P<base>[A-Za-z0-9][A-Za-z0-9._/@-]*)"
     r"\.\."
-    r"(?P<head>HEAD|[A-Za-z0-9][A-Za-z0-9._/@-]*)$",
+    r"(?P<head>[A-Za-z0-9][A-Za-z0-9._/@-]*)$",
     flags=re.ASCII,
 )
 
@@ -217,11 +217,12 @@ def get_release_commits(base_ref: str, head_ref: str) -> list[tuple[str, str]]:
 
 
 def write_notes(
-    notes_path: Path,
+    notes_path_input: str,
     version: str,
     base_ref: str,
     commits: list[tuple[str, str]],
 ) -> None:
+    notes_path = validate_workspace_output_path(notes_path_input, "notes file path")
     title = f"Release {version}" if version else "Release notes"
     lines = [f"# {title}", "", f"Changes since `{base_ref}`:", ""]
 
@@ -233,7 +234,8 @@ def write_notes(
     notes_path.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
 
 
-def append_github_output(path: Path, values: dict[str, str]) -> None:
+def append_github_output(path_input: str, values: dict[str, str]) -> None:
+    path = validate_github_output_path(path_input)
     with path.open("a", encoding="utf-8") as output:
         for key, value in values.items():
             if "\n" in value:
@@ -263,16 +265,11 @@ def main() -> None:
         messages = "\n".join(subject for _, subject in commits)
 
         if args.notes_file:
-            notes_path = validate_workspace_output_path(
-                args.notes_file,
-                "notes file path",
-            )
-            write_notes(notes_path, args.version, args.base_ref, commits)
+            write_notes(args.notes_file, args.version, args.base_ref, commits)
 
         if args.github_output:
-            github_output_path = validate_github_output_path(args.github_output)
             append_github_output(
-                github_output_path,
+                args.github_output,
                 {
                     "has_commits": "true" if commits else "false",
                     "messages": messages,
