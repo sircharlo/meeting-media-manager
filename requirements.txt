@@ -1,0 +1,4 @@
+flask
+pywinauto
+requests
+waitress

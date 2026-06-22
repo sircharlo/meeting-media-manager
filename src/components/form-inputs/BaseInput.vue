@@ -3,6 +3,7 @@
     v-if="item.type === 'toggle'"
     v-model="model"
     :actions="item.actions"
+    :disable="disable"
     :setting-id="settingId"
     v-bind="$attrs"
   />
@@ -17,8 +18,9 @@
     v-else-if="item.type === 'text'"
     v-model="model"
     :actions="item.actions"
-    :rules="item.rules"
     v-bind="$attrs"
+    :disable="disable"
+    :rules="item.rules"
     :setting-id="settingId"
   />
   <FolderInput
@@ -30,9 +32,10 @@
     v-else-if="item.type === 'slider'"
     v-model="model"
     :actions="item.actions"
+    v-bind="$attrs"
+    :disable="disable"
     :max="item.max"
     :min="item.min"
-    v-bind="$attrs"
     :step="item.step"
   />
   <DateInput
@@ -52,9 +55,10 @@
   <SelectInput
     v-else-if="item.type === 'list'"
     v-model="model"
+    v-bind="$attrs"
+    :disable="disable"
     :list="item.list"
     :rules="item.rules"
-    v-bind="$attrs"
     :setting-id="settingId"
     use-input
   />
@@ -62,13 +66,15 @@
     v-else-if="item.type === 'shortcut'"
     v-model="model"
     :dialog-id="`shortcut-input-${settingId}`"
+    :disable="disable"
     :shortcut-name="settingId"
     v-bind="$attrs"
   />
   <q-btn
     v-else-if="item.type === 'button'"
     color="primary"
-    :label="t('update')"
+    :disable="disable"
+    :label="model || t('click-to-set')"
     outline
     @click="performActions(item.actions)"
   />
@@ -92,6 +98,7 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
 defineProps<{
+  disable?: boolean;
   item: SettingsItem;
   settingId: keyof SettingsValues;
 }>();

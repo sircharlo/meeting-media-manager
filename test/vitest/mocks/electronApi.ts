@@ -13,6 +13,7 @@ import {
   pathToFileURL,
   readDirectory,
 } from 'src-electron/preload/fs';
+import { log } from 'src/shared/vanilla';
 import {
   basename,
   changeExt,
@@ -43,7 +44,9 @@ export const electronApi: ElectronApi = {
   },
   changeExt,
   checkForUpdates: () => void 0,
-
+  clickZoomElement: function (elementId) {
+    throw new Error('Function not implemented.');
+  },
   closeWebsiteWindow: function () {
     throw new Error('Function not implemented.');
   },
@@ -55,6 +58,9 @@ export const electronApi: ElectronApi = {
   },
   dirname,
   downloadFile: function (url, saveDir, destFilename, lowPriority) {
+    throw new Error('Function not implemented.');
+  },
+  ensureZoomRequirements: function () {
     throw new Error('Function not implemented.');
   },
   executeQuery: function (dbPath, query) {
@@ -93,6 +99,15 @@ export const electronApi: ElectronApi = {
   getZipEntries: function () {
     throw new Error('Function not implemented.');
   },
+  getZoomDialogChildren: function () {
+    throw new Error('Function not implemented.');
+  },
+  getZoomElementState: function (handle, controlId) {
+    throw new Error('Function not implemented.');
+  },
+  getZoomElementTitle: function () {
+    throw new Error('Function not implemented.');
+  },
   hideFileOnWindows: async () => undefined,
   inferExtension: async function (filename, filetype) {
     throw new Error('Function not implemented.');
@@ -103,7 +118,16 @@ export const electronApi: ElectronApi = {
   isUsablePath: async function (path) {
     return true;
   },
+  isZoomPythonInstalled: function () {
+    throw new Error('Function not implemented.');
+  },
   join,
+  launchZoomMeeting: function (meetingId) {
+    throw new Error('Function not implemented.');
+  },
+  listZoomWindows: async function (mainOnly = false, className?: string) {
+    return [];
+  },
   moveMediaWindow: function (targetScreenNumber, windowedMode) {
     throw new Error('Function not implemented.');
   },
@@ -145,16 +169,16 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   onUpdateAvailable: function (callback) {
-    console.log('onUpdateAvailable called but not implemented');
+    log('onUpdateAvailable called but not implemented');
   },
   onUpdateDownloaded: function (callback) {
-    console.log('onUpdateDownloaded called but not implemented');
+    log('onUpdateDownloaded called but not implemented');
   },
   onUpdateDownloadProgress: function (callback) {
-    console.log('onUpdateDownloadProgress called but not implemented');
+    log('onUpdateDownloadProgress called but not implemented');
   },
   onUpdateError: function (callback) {
-    console.log('onUpdateError called but not implemented');
+    log('onUpdateError called but not implemented');
   },
   onVideoCaptureCrashDetected: function () {
     throw new Error('Function not implemented.');
@@ -166,7 +190,7 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   onWebsiteWindowClosed: function (callback) {
-    console.log('onWebsiteWindowClosed called but not implemented');
+    log('onWebsiteWindowClosed called but not implemented');
   },
   openDiscussion: function (category, title, params) {
     throw new Error('Function not implemented.');
@@ -209,11 +233,15 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   resolve,
+  restartZoomHelper: async () => true,
   resumeAllDownloads: function () {
     throw new Error('Function not implemented.');
   },
   robot,
   saveFileDialog: function (defaultPath, filter) {
+    throw new Error('Function not implemented.');
+  },
+  sendZoomWindowKeys: function (handle, keys) {
     throw new Error('Function not implemented.');
   },
   setAutoStartAtLogin: function (value) {
@@ -229,6 +257,13 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   showFileOnWindows: async () => undefined,
+  startZoomHelper: async () => true,
+  stopZoomHelper: function () {
+    throw new Error('Function not implemented.');
+  },
+  toggleAuthorizedClose: function () {
+    throw new Error('Function not implemented.');
+  },
   toggleMediaWindow: function (show) {
     throw new Error('Function not implemented.');
   },

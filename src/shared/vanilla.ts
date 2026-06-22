@@ -86,6 +86,11 @@ export const debounce = <T extends unknown[]>(
   };
 };
 
+export const delay = (ms: number) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
 const logPrefixes = {
   api: '🌐 API',
   backgroundMusic: '🎵 Background Music',

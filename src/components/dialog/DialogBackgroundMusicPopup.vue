@@ -108,6 +108,11 @@ import {
 import { remainingTimeBeforeMeetingStart } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadBackgroundMusic } from 'src/helpers/jw-media';
+import {
+  autoLaunchZoomMeetingIfNeeded,
+  automateZoomMeetingSettings,
+  automateZoomPostMeetingSettings,
+} from 'src/helpers/zoom';
 import { log } from 'src/shared/vanilla';
 import { formatTime } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -485,7 +490,11 @@ async function playMusic(reason = 'manual') {
 /**
  * Stops background music with fadeout
  */
-function stopMusic(manualStop = false, fadeSeconds = 5) {
+function stopMusic(
+  manualStop = false,
+  fadeSeconds = 5,
+  automateMeetingSettings = false,
+) {
   try {
     log('⏹️ Stopping background music', 'backgroundMusic', 'info');
     if (!musicPlayer.value || musicPlayer.value.paused) {
@@ -494,6 +503,9 @@ function stopMusic(manualStop = false, fadeSeconds = 5) {
     }
 
     musicState.value = 'music.stopping';
+    if (automateMeetingSettings) {
+      automateZoomMeetingSettings();
+    }
     fadeToVolumeLevel(0, fadeSeconds);
   } catch (error) {
     errorCatcher(error);
@@ -697,6 +709,8 @@ whenever(
   () => musicPlaying.value,
   () => {
     musicState.value = 'music.playing';
+    autoLaunchZoomMeetingIfNeeded(timeUntilMeeting.value);
+    automateZoomPostMeetingSettings();
   },
 );
 
@@ -761,7 +775,7 @@ watch(shouldAutoStop, (shouldStop) => {
       'backgroundMusic',
       'info',
     );
-    stopMusic();
+    stopMusic(false, 5, true);
   }
 });
 

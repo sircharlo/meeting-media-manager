@@ -123,6 +123,10 @@ export default defineConfig((ctx) => {
         appId: APP_ID,
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: APP_NAME + '-${version}-${arch}.${ext}',
+        extraResources: [
+          { from: 'uia_helper.py', to: '.' },
+          { from: 'requirements.txt', to: '.' },
+        ],
         generateUpdatesFilesForAllChannels: true,
         linux: {
           category: 'Utility',

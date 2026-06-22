@@ -1145,7 +1145,11 @@ import { getThumbnailUrl } from 'src/helpers/fs';
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { triggerMediaWindowAutoHide } from 'src/helpers/mediaWindowAutoHide';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { triggerZoomScreenShare } from 'src/helpers/zoom';
+import {
+  startSharingMediaInZoom,
+  stopSharingMediaInZoom,
+  triggerZoomScreenShare,
+} from 'src/helpers/zoom';
 import { isExpectedNetworkPathAccessError } from 'src/shared/filesystem-errors';
 import { log, throttleWithTrailing, uuid } from 'src/shared/vanilla';
 import { isFileUrl } from 'src/utils/fs';
@@ -1635,10 +1639,19 @@ const setMediaPlaying = async (
   signLanguage = false,
   marker?: VideoMarker,
 ) => {
+  const shouldStartZoomManagerSharing =
+    !mediaPlaying.value.url &&
+    currentSettings.value?.zoomMeetingManagerEnable &&
+    currentSettings.value?.zoomMeetingManagerAutomateMediaSharing;
+
   if (!mediaPlaying.value.url) {
     // Start one-shot workflows when media starts playing and no media was playing before
     triggerMediaWindowAutoHide(true);
-    triggerZoomScreenShare(true);
+    if (!shouldStartZoomManagerSharing) {
+      triggerZoomScreenShare(true);
+    }
+  } else if (isImage(mediaPlaying.value.url)) {
+    stopMedia(true);
   }
   if (signLanguage) {
     if (marker) {
@@ -1681,6 +1694,16 @@ const setMediaPlaying = async (
   nextTick(() => {
     globalThis.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
   });
+
+  if (shouldStartZoomManagerSharing) {
+    const sharingStarted = await startSharingMediaInZoom();
+    if (!sharingStarted) {
+      log('Zoom media sharing did not start', 'zoom', 'warn', {
+        mediaTitle: media.title,
+        uniqueId: media.uniqueId,
+      });
+    }
+  }
 };
 
 const playSlideshowVideo = async () => {
@@ -1994,7 +2017,14 @@ function stopMedia(forOtherMediaItem = false) {
   if (!forOtherMediaItem) {
     // Stop one-shot workflows when media is stopped (unless it's a media switch instead of a stop)
     triggerMediaWindowAutoHide(false);
-    triggerZoomScreenShare(false);
+    if (
+      currentSettings.value?.zoomMeetingManagerEnable &&
+      currentSettings.value?.zoomMeetingManagerAutomateMediaSharing
+    ) {
+      stopSharingMediaInZoom();
+    } else {
+      triggerZoomScreenShare(false);
+    }
     nextTick(() => {
       globalThis.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));
     });

@@ -110,6 +110,7 @@ export interface SettingsGroup {
   icon: string;
   name: keyof MessageSchema;
   order?: number;
+  platforms?: string[];
 }
 
 export type SettingsGroupKey =
@@ -125,6 +126,7 @@ export interface SettingsItem {
   actions?: SettingsItemAction[];
   beta?: boolean;
   depends?: (keyof SettingsValues)[] | keyof SettingsValues;
+  disableWhen?: (keyof SettingsValues)[] | keyof SettingsValues;
   group: SettingsGroupKey;
   hidden?: boolean;
   icon?: string;
@@ -133,6 +135,7 @@ export interface SettingsItem {
   min?: number;
   options?: SettingsItemOption[];
   order?: number;
+  platforms?: string[];
   rules?: SettingsItemRule[];
   step?: number;
   subgroup?: SettingsItemSubgroup;
@@ -144,7 +147,14 @@ export type SettingsItemAction =
   | 'obsConnect'
   | 'openCongregationLookup'
   | 'setBackgroundMusicVolume'
-  | 'syncMeetingSchedule';
+  | 'syncMeetingSchedule'
+  | 'zoomCaptureAudioMutedTitle'
+  | 'zoomCaptureAudioNotJoinedTitle'
+  | 'zoomCaptureAudioUnmutedTitle'
+  | 'zoomCaptureParticipantsButtonTitle'
+  | 'zoomCaptureShareButtonTitle'
+  | 'zoomCaptureVideoOffTitle'
+  | 'zoomCaptureVideoOnTitle';
 
 export type SettingsItemListKey =
   | 'appLanguages'
@@ -180,7 +190,8 @@ export type SettingsItemSubgroup =
   | 'setupWizard.backgroundMusic'
   | 'subtitles'
   | 'timer'
-  | 'zoomIntegration';
+  | 'zoomIntegration'
+  | 'zoomMeetingManager';
 
 export type SettingsItemType =
   | 'button'
@@ -298,7 +309,20 @@ export interface SettingsValues {
   timerTimeOfDayDisplay: 'analog' | 'analog-digital' | 'digital';
   weDay: `${number}` | null;
   weStartTime: `${number}:${number}` | null;
+  zoomAudioMutedTitle: null | string;
+  zoomAudioNotJoinedTitle: null | string;
+  zoomAudioUnmutedTitle: null | string;
   zoomAutoFocusMediaWindow: boolean;
   zoomEnable: boolean;
+  zoomMeetingManagerAutoLaunchMeeting: boolean;
+  zoomMeetingManagerAutomateMediaSharing: boolean;
+  zoomMeetingManagerAutomateMeetingAudioSettings: boolean;
+  zoomMeetingManagerAutomatePostMeetingAudioSettings: boolean;
+  zoomMeetingManagerEnable: boolean;
+  zoomMeetingManagerMeetingId: null | string;
+  zoomParticipantsButtonTitle: null | string;
   zoomScreenShareShortcut: null | string;
+  zoomShareButtonTitle: null | string;
+  zoomVideoOffTitle: null | string;
+  zoomVideoOnTitle: null | string;
 }
