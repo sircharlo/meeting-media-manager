@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
 import { create } from 'fontkit';
-import { readFile, writeFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { readFile, realpath, writeFile } from 'node:fs/promises';
+import { extname, isAbsolute, join, resolve, sep } from 'node:path';
 import { stdin, stdout } from 'node:process';
 import { createInterface } from 'node:readline/promises';
 
 const constantsFilePath = resolve('src/constants/jw-icons.ts');
 
-const getFontPathFromArgs = async () => {
+const getFontPathInput = async () => {
   const fromArgs = process.argv[2];
-  if (fromArgs) return resolve(fromArgs);
+  if (fromArgs) return fromArgs;
 
   const rl = createInterface({ input: stdin, output: stdout });
   const answer = await rl.question(
@@ -22,7 +22,32 @@ const getFontPathFromArgs = async () => {
     throw new Error('No font file path provided.');
   }
 
-  return resolve(answer.trim());
+  return answer;
+};
+
+const ensureTrailingSeparator = (directoryPath) =>
+  directoryPath.endsWith(sep) ? directoryPath : `${directoryPath}${sep}`;
+
+const getCanonicalFontPath = async () => {
+  const fontPathInput = (await getFontPathInput()).trim();
+  if (isAbsolute(fontPathInput)) {
+    throw new Error(
+      'Font file path must be relative to the current working directory.',
+    );
+  }
+
+  const extension = extname(fontPathInput).toLowerCase();
+  if (!['.woff', '.woff2'].includes(extension)) {
+    throw new Error('Font file path must point to a .woff or .woff2 file.');
+  }
+
+  const baseDirectory = ensureTrailingSeparator(await realpath(process.cwd()));
+  const fontPath = await realpath(join(baseDirectory, fontPathInput));
+  if (!fontPath.startsWith(baseDirectory)) {
+    throw new Error('Font file path must stay within the current directory.');
+  }
+
+  return fontPath;
 };
 
 const glyphToUnicodeEscape = (codePoint) =>
@@ -80,7 +105,7 @@ const buildGlyphCodePointMap = async (fontPath) => {
 };
 
 const updateFallbackMap = async () => {
-  const fontPath = await getFontPathFromArgs();
+  const fontPath = await getCanonicalFontPath();
   const constantsContent = await readFile(constantsFilePath, 'utf8');
   const fallbackEntries = extractFallbackEntries(constantsContent);
   const glyphMap = await buildGlyphCodePointMap(fontPath);

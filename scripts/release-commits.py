@@ -4,10 +4,12 @@
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import subprocess
 from pathlib import Path
 
+COMMIT_PATTERN = re.compile(r"^[0-9a-f]{40}$", flags=re.ASCII)
 CONVENTIONAL_PATTERN = re.compile(
     r"^(?P<type>feat|fix|perf|refactor|revert|chore|deps|depsdev|deps-dev|build)"
     r"(?:\([^)]*\))?!?:\s*(?P<description>.+)",
@@ -34,11 +36,128 @@ DOC_ONLY_FILES = {
 WORKFLOW_ONLY_PATHS = (
     ".github/",
 )
+GITHUB_OUTPUT_ENV = "GITHUB_OUTPUT"
+REF_PATTERN = re.compile(r"^(?:HEAD|[A-Za-z0-9][A-Za-z0-9._/@-]*)$", flags=re.ASCII)
+REV_RANGE_PATTERN = re.compile(
+    r"^(?P<base>HEAD|[A-Za-z0-9][A-Za-z0-9._/@-]*)"
+    r"\.\."
+    r"(?P<head>HEAD|[A-Za-z0-9][A-Za-z0-9._/@-]*)$",
+    flags=re.ASCII,
+)
+
+
+def validate_git_ref(ref: str, label: str) -> str:
+    if not REF_PATTERN.fullmatch(ref):
+        raise ValueError(f"Invalid {label}.")
+
+    blocked_sequences = ("..", "//", "@{")
+    if any(sequence in ref for sequence in blocked_sequences):
+        raise ValueError(f"Invalid {label}.")
+
+    if ref.endswith((".", "/", ".lock")):
+        raise ValueError(f"Invalid {label}.")
+
+    return ref
+
+
+def validate_commit_hash(commit: str) -> str:
+    if not COMMIT_PATTERN.fullmatch(commit):
+        raise ValueError(f"Unexpected commit hash from git rev-list: {commit}")
+
+    return commit
+
+
+def validate_git_rev_range(rev_range: str) -> str:
+    match = REV_RANGE_PATTERN.fullmatch(rev_range)
+    if not match:
+        raise ValueError("Invalid revision range.")
+
+    validate_git_ref(match["base"], "base ref")
+    validate_git_ref(match["head"], "head ref")
+    return rev_range
+
+
+def validate_git_args(args: list[str]) -> list[str]:
+    match args:
+        case ["diff-tree", "--no-commit-id", "--name-only", "-r", commit]:
+            return [
+                "diff-tree",
+                "--no-commit-id",
+                "--name-only",
+                "-r",
+                validate_commit_hash(commit),
+            ]
+        case ["show", "-s", "--format=%s", commit]:
+            return ["show", "-s", "--format=%s", validate_commit_hash(commit)]
+        case ["rev-list", "--reverse", "--no-merges", rev_range]:
+            return [
+                "rev-list",
+                "--reverse",
+                "--no-merges",
+                validate_git_rev_range(rev_range),
+            ]
+        case _:
+            raise ValueError("Unsupported git command.")
+
+
+def resolve_existing_or_parent(path: Path) -> Path:
+    if path.exists():
+        return path.resolve(strict=True)
+
+    parent = path.parent.resolve(strict=True)
+    return parent / path.name
+
+
+def is_relative_to(path: Path, directory: Path) -> bool:
+    try:
+        path.relative_to(directory)
+    except ValueError:
+        return False
+
+    return True
+
+
+def validate_workspace_output_path(path_input: str, label: str) -> Path:
+    if not path_input.strip():
+        raise ValueError(f"Invalid {label}.")
+
+    workspace = Path.cwd().resolve(strict=True)
+    path = Path(path_input.strip())
+    if path.is_absolute():
+        raise ValueError(f"Invalid {label}.")
+
+    output_path = resolve_existing_or_parent(workspace / path)
+    if not is_relative_to(output_path, workspace):
+        raise ValueError(f"Invalid {label}.")
+
+    return output_path
+
+
+def validate_github_output_path(path_input: str) -> Path:
+    stripped_path = path_input.strip()
+    if not stripped_path:
+        raise ValueError("Invalid GitHub output path.")
+
+    raw_path = Path(stripped_path)
+    if raw_path.is_absolute():
+        output_path = resolve_existing_or_parent(raw_path)
+        github_output = os.environ.get(GITHUB_OUTPUT_ENV)
+        if not github_output:
+            raise ValueError("Invalid GitHub output path.")
+
+        github_output_path = resolve_existing_or_parent(Path(github_output))
+        if output_path == github_output_path:
+            return output_path
+
+        raise ValueError("Invalid GitHub output path.")
+
+    return validate_workspace_output_path(stripped_path, "GitHub output path")
 
 
 def run_git(args: list[str]) -> str:
+    safe_args = validate_git_args(args)
     return subprocess.run(
-        ["git", *args],
+        ["git", *safe_args],
         capture_output=True,
         check=True,
         text=True,
@@ -82,9 +201,11 @@ def get_commit_subject(commit: str) -> str:
 
 
 def get_release_commits(base_ref: str, head_ref: str) -> list[tuple[str, str]]:
+    base_ref = validate_git_ref(base_ref, "base ref")
+    head_ref = validate_git_ref(head_ref, "head ref")
     rev_range = f"{base_ref}..{head_ref}"
     output = run_git(["rev-list", "--reverse", "--no-merges", rev_range])
-    commits = [line for line in output.splitlines() if line]
+    commits = [validate_commit_hash(line) for line in output.splitlines() if line]
     release_commits: list[tuple[str, str]] = []
 
     for commit in commits:
@@ -137,20 +258,28 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    commits = get_release_commits(args.base_ref, args.head_ref)
-    messages = "\n".join(subject for _, subject in commits)
+    try:
+        commits = get_release_commits(args.base_ref, args.head_ref)
+        messages = "\n".join(subject for _, subject in commits)
 
-    if args.notes_file:
-        write_notes(Path(args.notes_file), args.version, args.base_ref, commits)
+        if args.notes_file:
+            notes_path = validate_workspace_output_path(
+                args.notes_file,
+                "notes file path",
+            )
+            write_notes(notes_path, args.version, args.base_ref, commits)
 
-    if args.github_output:
-        append_github_output(
-            Path(args.github_output),
-            {
-                "has_commits": "true" if commits else "false",
-                "messages": messages,
-            },
-        )
+        if args.github_output:
+            github_output_path = validate_github_output_path(args.github_output)
+            append_github_output(
+                github_output_path,
+                {
+                    "has_commits": "true" if commits else "false",
+                    "messages": messages,
+                },
+            )
+    except ValueError as error:
+        raise SystemExit(f"error: {error}") from error
 
     if messages:
         print(messages)
