@@ -7,7 +7,6 @@ import argparse
 import os
 import re
 import subprocess
-from pathlib import Path
 
 COMMIT_PATTERN = re.compile(r"^[0-9a-f]{40}$", flags=re.ASCII)
 CONVENTIONAL_PATTERN = re.compile(
@@ -100,56 +99,35 @@ def validate_git_args(args: list[str]) -> list[str]:
             raise ValueError("Unsupported git command.")
 
 
-def resolve_existing_or_parent(path: Path) -> Path:
-    if path.exists():
-        return path.resolve(strict=True)
-
-    parent = path.parent.resolve(strict=True)
-    return parent / path.name
-
-
-def is_relative_to(path: Path, directory: Path) -> bool:
-    try:
-        path.relative_to(directory)
-    except ValueError:
-        return False
-
-    return True
-
-
-def validate_workspace_output_path(path_input: str, label: str) -> Path:
+def validate_workspace_output_path(path_input: str, label: str) -> str:
     if not path_input.strip():
         raise ValueError(f"Invalid {label}.")
 
-    workspace = Path.cwd().resolve(strict=True)
-    path = Path(path_input.strip())
-    if path.is_absolute():
-        raise ValueError(f"Invalid {label}.")
-
-    output_path = resolve_existing_or_parent(workspace / path)
-    if not is_relative_to(output_path, workspace):
+    base_directory = os.path.realpath(os.getcwd()) + os.sep
+    output_path = os.path.realpath(os.path.join(base_directory, path_input.strip()))
+    if not output_path.startswith(base_directory):
         raise ValueError(f"Invalid {label}.")
 
     return output_path
 
+invalid_github_path_string = "Invalid GitHub output path"
 
-def validate_github_output_path(path_input: str) -> Path:
+def validate_github_output_path(path_input: str) -> str:
     stripped_path = path_input.strip()
     if not stripped_path:
-        raise ValueError("Invalid GitHub output path.")
+        raise ValueError(invalid_github_path_string)
 
-    raw_path = Path(stripped_path)
-    if raw_path.is_absolute():
-        output_path = resolve_existing_or_parent(raw_path)
+    if os.path.isabs(stripped_path):
+        output_path = os.path.realpath(stripped_path)
         github_output = os.environ.get(GITHUB_OUTPUT_ENV)
         if not github_output:
-            raise ValueError("Invalid GitHub output path.")
+            raise ValueError(invalid_github_path_string)
 
-        github_output_path = resolve_existing_or_parent(Path(github_output))
+        github_output_path = os.path.realpath(github_output)
         if output_path == github_output_path:
             return output_path
 
-        raise ValueError("Invalid GitHub output path.")
+        raise ValueError(invalid_github_path_string)
 
     return validate_workspace_output_path(stripped_path, "GitHub output path")
 
@@ -231,12 +209,13 @@ def write_notes(
     else:
         lines.append("No release-worthy commits found.")
 
-    notes_path.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+    with open(notes_path, "w", encoding="utf-8", newline="\n") as notes_file:
+        notes_file.write("\n".join(lines) + "\n")
 
 
 def append_github_output(path_input: str, values: dict[str, str]) -> None:
     path = validate_github_output_path(path_input)
-    with path.open("a", encoding="utf-8") as output:
+    with open(path, "a", encoding="utf-8") as output:
         for key, value in values.items():
             if "\n" in value:
                 output.write(
