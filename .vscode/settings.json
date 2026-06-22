@@ -196,6 +196,7 @@
   "prettier.configPath": ".prettierrc",
 
   "notebook.formatOnSave.enabled": true,
+  "npm.packageManager": "yarn",
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },

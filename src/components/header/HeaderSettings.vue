@@ -5,7 +5,7 @@
     :cache-analysis="cacheAnalysis"
     :dialog-id="'header-settings-cache-clear'"
   />
-  <q-btn color="white-transparent" unelevated @click="openSettingsFilter">
+  <q-btn color="white-transparent" unelevated @click="toggleSettingsFilter">
     <q-icon name="mmm-search" size="xs" />
     <q-tooltip :delay="1000">
       {{ t('search') }}
@@ -109,7 +109,7 @@ const cacheClearConfirmPopup = ref(false);
 const cacheClearType = ref<'' | 'all' | 'smart'>('');
 const cacheAnalysis = ref<CacheAnalysis | null>(null);
 
-const openSettingsFilter = () => {
+const toggleSettingsFilter = () => {
   globalThis.dispatchEvent(new CustomEvent('toggleSettingsFilter'));
 };
 

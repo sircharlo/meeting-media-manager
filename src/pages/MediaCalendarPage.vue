@@ -5,6 +5,7 @@
     position="top"
     seamless
     style="z-index: 1500 !important"
+    @show="focusMediaFilter"
   >
     <q-card class="media-filter-overlay">
       <q-card-section class="q-pa-sm row items-center no-wrap q-gutter-sm">
@@ -18,7 +19,6 @@
           :label="t('search')"
           outlined
           spellcheck="false"
-          @blur="closeEmptyMediaFilter"
           @keydown.enter.prevent="goToNextMediaFilterMatch"
           @keydown.escape="closeMediaFilter"
         >
@@ -381,11 +381,15 @@ const updateMediaFilterMatches = async (scrollToMatch = false) => {
   }
 };
 
+const focusMediaFilter = () => {
+  mediaFilterInput.value?.focus();
+  mediaFilterInput.value?.select();
+};
+
 const openMediaFilter = () => {
   mediaFilterVisible.value = true;
-  nextTick(() => {
-    mediaFilterInput.value?.focus();
-    mediaFilterInput.value?.select();
+  void nextTick(() => {
+    focusMediaFilter();
     void updateMediaFilterMatches();
   });
 };
@@ -395,13 +399,6 @@ const closeMediaFilter = () => {
   mediaFilterVisible.value = false;
   mediaFilterMatchCount.value = 0;
   mediaFilterMatchIndex.value = -1;
-};
-
-const closeEmptyMediaFilter = () => {
-  setTimeout(() => {
-    if (getMediaFilterValue()) return;
-    mediaFilterVisible.value = false;
-  });
 };
 
 const goToNextMediaFilterMatch = () => {
@@ -420,7 +417,11 @@ const goToPreviousMediaFilterMatch = () => {
 };
 
 useEventListener(globalThis, 'keydown', (event: KeyboardEvent) => {
-  if (event.key.toLowerCase() !== 'f' || (!event.ctrlKey && !event.metaKey)) {
+  if (
+    event.repeat ||
+    event.key.toLowerCase() !== 'f' ||
+    (!event.ctrlKey && !event.metaKey)
+  ) {
     return;
   }
 

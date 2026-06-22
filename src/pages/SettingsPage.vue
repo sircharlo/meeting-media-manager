@@ -5,6 +5,7 @@
     position="top"
     seamless
     style="z-index: 1500 !important"
+    @show="focusSettingsFilter"
   >
     <q-card class="settings-filter-overlay">
       <q-card-section class="q-pa-sm row items-center no-wrap q-gutter-sm">
@@ -18,7 +19,6 @@
           :label="t('search')"
           outlined
           spellcheck="false"
-          @blur="closeEmptySettingsFilter"
           @keydown.escape="closeSettingsFilter"
         >
           <template #prepend>
@@ -270,12 +270,14 @@ const openCongregationLookup = () => {
   showCongregationLookup.value = true;
 };
 
+const focusSettingsFilter = () => {
+  settingsFilterInput.value?.focus();
+  settingsFilterInput.value?.select();
+};
+
 const openSettingsFilter = () => {
   settingsFilterVisible.value = true;
-  nextTick(() => {
-    settingsFilterInput.value?.focus();
-    settingsFilterInput.value?.select();
-  });
+  void nextTick(focusSettingsFilter);
 };
 
 const closeSettingsFilter = () => {
@@ -300,14 +302,6 @@ const toggleSettingsFilter = () => {
   openSettingsFilter();
 };
 
-const closeEmptySettingsFilter = () => {
-  setTimeout(() => {
-    if (getSettingsFilterValue()) return;
-    settingsFilterVisible.value = false;
-    settingsFilterClosedAt = Date.now();
-  });
-};
-
 onMounted(() => {
   globalThis.addEventListener('openCongregationLookup', openCongregationLookup);
 });
@@ -320,7 +314,11 @@ onBeforeUnmount(() => {
 });
 
 useEventListener(globalThis, 'keydown', (event: KeyboardEvent) => {
-  if (event.key.toLowerCase() !== 'f' || (!event.ctrlKey && !event.metaKey)) {
+  if (
+    event.repeat ||
+    event.key.toLowerCase() !== 'f' ||
+    (!event.ctrlKey && !event.metaKey)
+  ) {
     return;
   }
 
@@ -328,7 +326,6 @@ useEventListener(globalThis, 'keydown', (event: KeyboardEvent) => {
   openSettingsFilter();
 });
 
-useEventListener(globalThis, 'openSettingsFilter', openSettingsFilter);
 useEventListener(globalThis, 'toggleSettingsFilter', toggleSettingsFilter);
 
 // Store initializations
