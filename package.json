@@ -131,14 +131,14 @@
     "prettier": "^3.8.4",
     "rollup-plugin-visualizer": "^7.0.1",
     "typescript": "6.0.3",
-    "vite": "^8.0.16",
+    "vite": "^8.1.0",
     "vitepress": "^2.0.0-alpha.17",
     "vitest": "^4.1.9",
     "vue-eslint-parser": "^10.4.1",
     "vue-tsc": ">=3.3.5 || 3.3.3"
   },
   "resolutions": {
-    "vite": "8.0.16"
+    "vite": "8.1.0"
   },
   "browserslist": [
     "Electron >= 37"
