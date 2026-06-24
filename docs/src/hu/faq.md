@@ -81,8 +81,8 @@ Az egyéni médiát többféle módon importálhatja:
 - **Fogd és vidd**: Húzza a fájlokat közvetlenül az M³-ba
 - **Mappafigyelés**: Állítson be egy figyelt mappát az automatikus importáláshoz
 - **JWPUB fájlok és lejátszási listák**: Kiadványok és lejátszási listák importálása
-- **Public Talk Media**: Import S-34 or S-34mp JWPUB files for public talk media
-- **Bible and Study Bible Tools**: Add audio Bible recordings, Study Bible media, or sign-language Bible media
+- **Nyilvános előadásokhoz szükséges média**: S-34 vagy S-34mp JWPUB fájlok importálása a nyilvános előadásokhoz szükséges média számára
+- **A Biblia és a Tanulmányozási Biblia Segédeszközei**: Hozzáadhat Biblia-hangfelvételeket, a Tanulmányozási Biblia médiaelemeit, vagy jelnyelvű Biblia médiát
 
 ### :speaker: Importálhatok hangfelvételeket a Bibliából? {#audio-bible}
 
@@ -126,11 +126,11 @@ A háttérzene funkciók a következők:
 - Független hangerő-szabályozás
 - Konfigurálható stop puffer idő
 
-### :stopwatch: Does M³ include a meeting timer? {#faq-meeting-timer}
+### :stopwatch: Van az M³-ban időmérő? {#faq-meeting-timer}
 
-Igen. When enabled, M³ can show a separate timer window for participant timing. It can count up or down, show the current time, show a pre-meeting countdown, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+Igen. Ha engedélyezve van, az M³ külön időmérő ablakot jeleníthet meg a résztvevők időméréséhez. Fel- vagy visszaszámolhat, megjelenítheti az aktuális időt, az összejövetel előtti visszaszámlálást, és opcionálisan jelezheti az időtúllépést, illetve azt, hogy az összejövetel milyen ütemben halad a tervhez képest.
 
-The timer is a beta feature and should only be enabled if approved locally.
+Az időzítő egy bétafunkció, ezért csak akkor szabad engedélyezni, ha azt helyi szinten jóváhagyták.
 
 ### :video_camera: Hogyan állíthatom be a Zoom integrációt? {#zoom-setup}
 
@@ -169,12 +169,12 @@ Ez a funkció késlelteti a képek továbbítását az OBS programba, amíg azok
 - Az időzítés jobb kontrollja
 - A korai jelenetváltások elkerülése
 
-### :record_button: Can M³ record meetings? {#faq-recordings}
+### :record_button: Képes az M³ felvenni az összejöveteleket? {#faq-recordings}
 
-M³ does not include a built-in recorder, but it can help control recording in two ways:
+Az M³ nem rendelkezik beépített felvevővel, de kétféle módon tudja segíteni a felvétel vezérlését:
 
-- If you use OBS Studio, enable OBS recording controls and start or stop OBS recording from the OBS popup
-- If you use another recording app, configure keyboard shortcuts so M³ can send the start and stop commands from the meeting recordings popup
+- Ha az OBS Studio programot használja, engedélyezze az OBS felvételi vezérlőelemeit, és az OBS felugró ablakából indítsa el vagy állítsa le az OBS felvételt
+- Ha másik felvételi alkalmazást használ, állítsa be a billentyűparancsokat úgy, hogy az M³ az összejövetel-felvételek párbeszédablakából küldhesse el a kezdés és leállítás parancsokat
 
 ## Fejlett funkciók {#faq-advanced-features}
 
@@ -203,7 +203,7 @@ Igen! Az M³ több profilt támogat a következők számára:
 - Különböző csoportok
 - Külön beállítások és média mindegyikhez
 
-Profiles can also be exported to a JSON file and imported on another computer or into another profile. Importing replaces the current profile's settings.
+A profilokat JSON-fájlba is exportálhatjuk, majd egy másik számítógépre vagy egy másik profilba importálhatjuk. Az importálás felülírja az aktuális profil beállításait.
 
 ## Hibaelhárítás {#faq-troubleshooting}
 
