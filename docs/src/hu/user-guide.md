@@ -333,7 +333,7 @@ Ossza meg a hivatalos weboldalt külső kijelzőkön:
 - **Külön beállítások** – Minden profilnak saját beállításai és médiatartalmai vannak
 - **Auto Return** - Optionally return to the media list automatically after stopping website mirroring
 
-## Meeting Recordings {#meeting-recordings}
+## Összejövetel Felvételek {#meeting-recordings}
 
 M³ can help control meeting recording, but it does not include a built-in recorder.
 
