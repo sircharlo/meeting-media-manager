@@ -157,19 +157,19 @@ Ezekkel a beállításokkal ideiglenes módosításokat végezhet az összejöve
 - **Új hétvégi nap**: Új nap a hétvégi összejövetelhez
 - **Új hétvégi időpont**: Új időpont a hétvégi összejövetelhez
 
-### Automatic Meeting Schedule Updates {#automatic-meeting-schedule-updates}
+### Összejövetelek Ütemezésének Automatikus Frissítése {#automatic-meeting-schedule-updates}
 
 <!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
 
-When enabled, M³ periodically checks the official website of Jehovah's Witnesses for meeting day and time changes and updates the current profile automatically.
+Ha ez a funkció engedélyezve van, az M³ rendszeresen ellenőrzi Jehova Tanúi hivatalos honlapját, hogy van-e változás a gyülekezeti összejövetelek napjában és időpontjában, és automatikusan frissíti az aktuális profilt.
 
-This only works for profiles that were added with congregation lookup and whose congregation name has not been manually changed. If synchronization was disabled because the congregation name changed, use **Enable schedule sync** to link the profile again.
+Ez csak azoknál a profiloknál működik, amelyeket a gyülekezet-kereső segítségével adtak hozzá, és amelyek gyülekezetének nevét nem módosították kézzel. Ha a szinkronizálás a gyülekezet nevének megváltoztatása miatt lett letiltva, akkor az **Ütemezés szinkronizálásának engedélyezése** opcióval kapcsolhatja össze újra a profilt.
 
-#### Refresh Meeting Schedule {#refresh-meeting-schedule}
+#### Összejövetelek Ütemezésének Frissítése {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
-Manually synchronize the current and future meeting schedule with the information from the official website.
+Kézzel szinkronizálja az aktuális és a jövőbeli összejövetelek ütemezését a hivatalos honlapon szereplő információkkal.
 
 ## Média lekérdezés és lejátszás {#media-retrieval-and-playback}
 
@@ -189,11 +189,11 @@ Aktiválja a média megjelenítési funkciót. Ez szükséges a média második 
 
 **Alapértelmezett**: `hamis`
 
-#### Enable Media Preview {#enable-media-preview}
+#### Média Előnézet Engedélyezése {#enable-media-preview}
 
 <!-- **Setting**: `enableMediaPreview` -->
 
-Show a live preview of the media window while an image or video is being displayed.
+Kép vagy videó kivetítése közben mutassa a médiaablak élő előnézetét.
 
 **Alapértelmezett**: `igaz`
 
@@ -354,7 +354,7 @@ Az OBS Studio WebSocket-kapcsolat jelszava.
 - **Jelenetváltás a média után**: A média lejátszása után automatikusan visszatér az előző jelenethez
 - **Előző jelenet megjegyzése**: Megjegyzi az előző jelenetet és visszaállítja azt
 - **Ikonok elrejtése**: Az OBS-hez kapcsolódó ikonok elrejtése a felületen
-- **Recording Controls**: Show controls that start and stop OBS recording from M³
+- **Felvételi vezérlők**: Mutassa a vezérlőket, amelyekkel az OBS felvétele elindítható és leállítható az M³-ból
 
 :::warning Fontos Megjegyzés
 
@@ -408,41 +408,41 @@ Gyorsbillentyű, amely akkor aktiválódik, amikor az utolsó ének lejátszásr
 
 **Alapértelmezett**: Nincs
 
-### Meeting Recordings {#meeting-recordings}
+### Összejövetel Felvételek {#meeting-recordings}
 
-#### Enable External Recording App Integration {#enable-external-recording-app-integration}
+#### Külső felvételi alkalmazás integrációjának engedélyezése {#enable-external-recording-app-integration}
 
 <!-- **Setting**: `recordingEnable` -->
 
-Let M³ control a separate recording application with keyboard shortcuts. This does not record inside M³; it sends the configured shortcuts when you press **Start Recording** or **Stop Recording** in the meeting recordings popup.
+Megengedi, hogy az M³ billentyűparancsokkal vezéreljen egy külső felvételi alkalmazást. Ez nem rögzít az M³-on belül; a beállított gyorsbillentyű-leütéseket küldi el, amikor az összejövetel rögzítésének ablakában a **Felvétel indítása** vagy a **Felvétel leállítása** gombra kattint.
 
-This option is hidden when OBS recording controls are enabled. If you use OBS Studio, use the OBS recording controls in the OBS integration instead.
+Ez az opció el van rejtve, ha az OBS felvételi vezérlői engedélyezve vannak. Ha az OBS Studio programot használja, akkor inkább az OBS-integrációban található OBS-felvételi vezérlőket érdemes használni.
 
 **Alapértelmezett**: `hamis`
 
-#### Recording Shortcuts and Folder {#recording-shortcuts-and-folder}
+#### Felvételi Gyorsbillentyűk és Mappa {#recording-shortcuts-and-folder}
 
 <!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
 
-Configure the keyboard shortcut that starts recording, the optional shortcut that stops recording, and the folder where the external app saves recordings. If no stop shortcut is provided, M³ reuses the start shortcut. When a folder is configured, M³ shows a button to open it.
+Állítsa be a felvétel elindításához szükséges billentyűparancsot, a felvétel leállításához szükséges opcionális billentyűparancsot, valamint azt a mappát, ahová a külső alkalmazás a felvételeket menti. Ha nem ad meg leállítási gyorsbillentyűt, az M³ az indítási gyorsbillentyűt használja újra. Ha egy mappa be van állítva, az M³ megjeleníti a mappa megnyitásához szükséges gombot.
 
-### Meeting Timer {#meeting-timer}
+### Összejöveteli Időzítő {#meeting-timer}
 
-#### Enable Meeting Timer {#enable-meeting-timer}
+#### Összejöveteli Időzítő Engedélyezése {#enable-meeting-timer}
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
-Enable a separate timer window for timing meeting parts. This is a beta feature and should only be enabled if approved locally.
+Engedélyez egy külön időzítő ablakot az összejövetel különböző részeinek időzítéséhez. Ez egy kísérleti funkció, amelyet csak akkor szabad engedélyezni, ha azt helyi szinten jóváhagyták.
 
 **Alapértelmezett**: `hamis`
 
-#### Timer Window Behavior {#timer-window-behavior}
+#### Időzítő Ablak Viselkedése {#timer-window-behavior}
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
-Configure whether the timer window opens automatically, whether participant timers count up or down by default, whether the clock uses 12-hour or 24-hour time, and whether the current timer value is shown on the action island timer button.
+Beállíthatja, hogy az időzítő ablak automatikusan megnyíljon-e, hogy a résztvevők időzítői alapértelmezés szerint felfelé vagy lefelé számoljanak-e, hogy az óra 12 órás vagy 24 órás időformátumot használjon-e, valamint hogy az aktuális időzítőérték megjelenjen-e az akciósziget időzítő gombján.
 
-#### Timer Display Formats {#timer-display-formats}
+#### Időzítő Kijelzési Formátumok {#timer-display-formats}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
@@ -599,7 +599,7 @@ Konvertálja az exportált médiafájlokat MP4 formátumba a jobb kompatibilitá
 
 ### Profile Settings Transfer {#profile-settings-transfer}
 
-Export the current profile's settings to a JSON file or import a previously exported profile settings file. Importing replaces the current profile's settings.
+Export the current profile's settings to a JSON file or import a previously exported profile settings file. Az importálás felülírja az aktuális profil beállításait.
 
 ### Veszélyes zóna {#danger-zone}
 
