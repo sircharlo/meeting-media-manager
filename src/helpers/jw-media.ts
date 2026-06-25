@@ -1440,15 +1440,20 @@ export const downloadFileIfNeeded = async ({
 
     // Seed meeting date on progress right away so UI can group even before onDownloadStarted
     if (downloadId) {
-      const seed = currentStateStore.downloadProgress[downloadId] || {};
+      interface DownloadProgress {
+        filename?: string;
+        meetingDate?: string;
+        progressCategory?: FileDownloader['progressCategory'];
+      }
+
+      const seed = (currentStateStore.downloadProgress[downloadId] ??
+        {}) as DownloadProgress;
+
       currentStateStore.downloadProgress[downloadId] = {
-        ...(seed as Record<string, unknown>),
+        ...seed,
         filename,
-        meetingDate:
-          (seed as { meetingDate?: string })?.meetingDate || meetingDate,
-        progressCategory:
-          (seed as { progressCategory?: FileDownloader['progressCategory'] })
-            ?.progressCategory || progressCategory,
+        meetingDate: seed.meetingDate ?? meetingDate,
+        progressCategory: seed.progressCategory ?? progressCategory,
       } as never;
     }
 

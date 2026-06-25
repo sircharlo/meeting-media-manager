@@ -69,7 +69,7 @@ const { configuredScenesAreAllUUIDs, currentSettings } = storeToRefs(
 const props = defineProps<{
   label?: string;
   list?: SettingsItemListKey;
-  rules?: SettingsItemRule[] | undefined;
+  rules?: SettingsItemRule[];
   settingId?: keyof SettingsValues;
   useInput?: boolean;
 }>();

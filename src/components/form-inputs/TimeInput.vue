@@ -50,7 +50,7 @@ const { currentSettings } = storeToRefs(useCurrentStateStore());
 defineProps<{
   label?: string;
   options: SettingsItemOption[] | undefined;
-  rules?: SettingsItemRule[] | undefined;
+  rules?: SettingsItemRule[];
 }>();
 
 const model = defineModel<null | string>({ required: true });
