@@ -800,16 +800,8 @@ export function fadeMediaWindow(direction: 'in' | 'out', duration = 300): void {
   try {
     const startOpacity = Math.max(0, win.getOpacity());
 
-    // Skip if already at target
-    if (
-      (direction === 'in' && win.isVisible() && startOpacity >= 0.99) ||
-      (direction === 'out' && startOpacity <= 0.01)
-    ) {
-      if (direction === 'in') {
-        focusMediaWindow();
-      } else {
-        win.hide();
-      }
+    if (isMediaWindowAtFadeTarget(win, direction, startOpacity)) {
+      completeMediaWindowFade(win, direction, targetOpacity);
       return;
     }
 
@@ -846,40 +838,47 @@ export function fadeMediaWindow(direction: 'in' | 'out', duration = 300): void {
         if (currentStep >= steps) {
           clearInterval(fadeInterval);
           clearTimeout(fallbackTimeout);
-
-          if (!win.isDestroyed()) {
-            win.setOpacity(targetOpacity);
-
-            if (direction === 'out') {
-              win.hide();
-            }
-          }
+          completeMediaWindowFade(win, direction, targetOpacity);
         }
       } catch {
         clearInterval(fadeInterval);
         clearTimeout(fallbackTimeout);
-
-        if (win && !win.isDestroyed()) {
-          win.setOpacity(targetOpacity);
-          if (direction === 'out') win.hide();
-        }
+        completeMediaWindowFade(win, direction, targetOpacity);
       }
     }, stepDuration);
 
     const fallbackTimeout = setTimeout(() => {
       clearInterval(fadeInterval);
-      if (win && !win.isDestroyed()) {
-        win.setOpacity(targetOpacity);
-        if (direction === 'out') win.hide();
-      }
+      completeMediaWindowFade(win, direction, targetOpacity);
     }, duration + WINDOW_MOVE_THROTTLE_MS);
   } catch {
-    if (win && !win.isDestroyed()) {
-      win.setOpacity(targetOpacity);
-      if (direction === 'out') win.hide();
-    }
+    completeMediaWindowFade(win, direction, targetOpacity);
   }
 }
+
+const completeMediaWindowFade = (
+  win: BrowserWindow | null,
+  direction: 'in' | 'out',
+  targetOpacity: number,
+) => {
+  if (!win || win.isDestroyed()) return;
+
+  win.setOpacity(targetOpacity);
+  if (direction === 'in') {
+    focusMediaWindow();
+    return;
+  }
+
+  win.hide();
+};
+
+const isMediaWindowAtFadeTarget = (
+  win: BrowserWindow,
+  direction: 'in' | 'out',
+  startOpacity: number,
+) =>
+  (direction === 'in' && win.isVisible() && startOpacity >= 0.99) ||
+  (direction === 'out' && startOpacity <= 0.01);
 
 const notifyMainWindowAboutScreenOrWindowChange = throttleWithTrailing(() => {
   sendToWindow(mainWindowInfo.mainWindow, 'screenChange');
