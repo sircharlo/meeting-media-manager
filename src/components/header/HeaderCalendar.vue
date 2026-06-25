@@ -1000,139 +1000,217 @@ const processPendingImport = async (targetSection: MediaSectionIdentifier) => {
   const importItem = pendingImport.value;
 
   try {
-    switch (importItem.type) {
-      case 'bible':
-        await downloadAdditionalRemoteVideo(
-          importItem.data.files,
-          selectedDate.value,
-          undefined,
-          false,
-          importItem.data.title,
-          targetSection,
-          importItem.data.customDuration,
-        );
-        break;
-      case 'jw-playlist': {
-        // ✅ Dialog handles all processing - just add processed items to store
-        if (importItem.data.items.length) {
-          jwStore.addToAdditionMediaMap(
-            importItem.data.items,
-            targetSection,
-            currentCongregation.value,
-            selectedDateObject.value,
-            isCoWeek(selectedDateObject.value?.date),
-          );
-        }
-        break;
-      }
-      case 'pt-media':
-        await addJwpubDocumentMediaToFiles(
-          importItem.data.dbPath,
-          importItem.data.doc,
-          targetSection,
-          {
-            issue: currentCongregation.value,
-            langwritten: '',
-            pub: 'S-34',
-          },
-        );
-        break;
-      case 'publication-media':
-        if (importItem.data.type === 'jwpub') {
-          await addJwpubDocumentMediaToFiles(
-            importItem.data.dbPath,
-            importItem.data.doc,
-            targetSection,
-          );
-        } else {
-          await downloadAdditionalRemoteVideo(
-            [importItem.data.media],
-            selectedDate.value,
-            importItem.data.media.trackImage.url,
-            false,
-            importItem.data.media.title,
-            targetSection,
-            undefined,
-            false,
-            'publication-media',
-          );
-        }
-        break;
-      case 'remote-video':
-        await downloadAdditionalRemoteVideo(
-          importItem.data.mediaItemLinks,
-          selectedDate.value,
-          importItem.data.thumbnailUrl,
-          false,
-          importItem.data.title,
-          targetSection,
-        );
-        break;
-      case 'song':
-        await downloadAdditionalRemoteVideo(
-          importItem.data.files,
-          selectedDate.value,
-          importItem.data.thumbnail,
-          importItem.data.songTrack,
-          importItem.data.title,
-          targetSection,
-        );
-        break;
-      case 'study-bible': {
-        const mediaItemsToAdd: MediaItem[] = [];
-        // Process MultimediaItems: images need conversion, videos need download
-        for (const mediaItem of importItem.data.items) {
-          if (mediaItem.MimeType.includes('image')) {
-            const filePath = await convertImageIfNeeded(mediaItem.FilePath);
-            const item = await createMediaItemFromPath(filePath, undefined, {
-              title: mediaItem.Label,
-            });
-            if (item) mediaItemsToAdd.push(item);
-          } else {
-            // Study Bible video
-            const lang = currentSettings.value?.lang || 'E';
-            const mediaLookup: PublicationFetcher = {
-              booknum: mediaItem.BookNumber,
-              docid: mediaItem.DocumentId || mediaItem.MepsDocumentId,
-              fileformat: 'MP4',
-              issue: mediaItem.IssueTagNumber,
-              langwritten: lang,
-              pub: mediaItem.KeySymbol,
-              track: mediaItem.Track || undefined,
-            };
-            const mediaItemFiles = await getPubMediaLinks(mediaLookup);
-            const { thumbnail, title } = await getJwMediaInfo(mediaLookup);
-            const item = await downloadAdditionalRemoteVideo(
-              mediaItemFiles?.files?.[lang]?.MP4 || [],
-              selectedDate.value,
-              thumbnail,
-              false,
-              title.replace(/^\d+\.\s*/, ''),
-              targetSection,
-              undefined,
-              true, // onlyCreateItem
-              'study-bible',
-            );
-            if (item && typeof item !== 'string') {
-              mediaItemsToAdd.push(item);
-            }
-          }
-        }
-        if (mediaItemsToAdd.length) {
-          addToAdditionMediaMap(
-            mediaItemsToAdd,
-            targetSection,
-            currentCongregation.value,
-            selectedDateObject.value,
-            isCoWeek(selectedDateObject.value?.date),
-          );
-        }
-        break;
-      }
-    }
+    await importPendingMediaItem(importItem, targetSection);
   } catch (error) {
     errorCatcher(error);
   }
+};
+
+const addImportedMediaItems = (
+  items: MediaItem[],
+  targetSection: MediaSectionIdentifier,
+) => {
+  if (!items.length) return;
+
+  addToAdditionMediaMap(
+    items,
+    targetSection,
+    currentCongregation.value,
+    selectedDateObject.value,
+    isCoWeek(selectedDateObject.value?.date),
+  );
+};
+
+const importBibleMedia = async (
+  importItem: Extract<PendingImport, { type: 'bible' }>,
+  targetSection: MediaSectionIdentifier,
+) => {
+  await downloadAdditionalRemoteVideo(
+    importItem.data.files,
+    selectedDate.value,
+    undefined,
+    false,
+    importItem.data.title,
+    targetSection,
+    importItem.data.customDuration,
+  );
+};
+
+const importJwPlaylistMedia = (
+  importItem: Extract<PendingImport, { type: 'jw-playlist' }>,
+  targetSection: MediaSectionIdentifier,
+) => {
+  if (!importItem.data.items.length) return;
+
+  jwStore.addToAdditionMediaMap(
+    importItem.data.items,
+    targetSection,
+    currentCongregation.value,
+    selectedDateObject.value,
+    isCoWeek(selectedDateObject.value?.date),
+  );
+};
+
+const importPendingMediaItem = async (
+  importItem: PendingImport,
+  targetSection: MediaSectionIdentifier,
+) => {
+  switch (importItem.type) {
+    case 'bible':
+      await importBibleMedia(importItem, targetSection);
+      break;
+    case 'jw-playlist':
+      importJwPlaylistMedia(importItem, targetSection);
+      break;
+    case 'pt-media':
+      await importPublicTalkMedia(importItem, targetSection);
+      break;
+    case 'publication-media':
+      await importPublicationMedia(importItem, targetSection);
+      break;
+    case 'remote-video':
+      await importRemoteVideo(importItem, targetSection);
+      break;
+    case 'song':
+      await importSongMedia(importItem, targetSection);
+      break;
+    case 'study-bible':
+      await importStudyBibleMedia(importItem, targetSection);
+      break;
+  }
+};
+
+const importPublicTalkMedia = async (
+  importItem: Extract<PendingImport, { type: 'pt-media' }>,
+  targetSection: MediaSectionIdentifier,
+) => {
+  await addJwpubDocumentMediaToFiles(
+    importItem.data.dbPath,
+    importItem.data.doc,
+    targetSection,
+    {
+      issue: currentCongregation.value,
+      langwritten: '',
+      pub: 'S-34',
+    },
+  );
+};
+
+const importPublicationMedia = async (
+  importItem: Extract<PendingImport, { type: 'publication-media' }>,
+  targetSection: MediaSectionIdentifier,
+) => {
+  if (importItem.data.type === 'jwpub') {
+    await addJwpubDocumentMediaToFiles(
+      importItem.data.dbPath,
+      importItem.data.doc,
+      targetSection,
+    );
+    return;
+  }
+
+  await downloadAdditionalRemoteVideo(
+    [importItem.data.media],
+    selectedDate.value,
+    importItem.data.media.trackImage.url,
+    false,
+    importItem.data.media.title,
+    targetSection,
+    undefined,
+    false,
+    'publication-media',
+  );
+};
+
+const importRemoteVideo = async (
+  importItem: Extract<PendingImport, { type: 'remote-video' }>,
+  targetSection: MediaSectionIdentifier,
+) => {
+  await downloadAdditionalRemoteVideo(
+    importItem.data.mediaItemLinks,
+    selectedDate.value,
+    importItem.data.thumbnailUrl,
+    false,
+    importItem.data.title,
+    targetSection,
+  );
+};
+
+const importSongMedia = async (
+  importItem: Extract<PendingImport, { type: 'song' }>,
+  targetSection: MediaSectionIdentifier,
+) => {
+  await downloadAdditionalRemoteVideo(
+    importItem.data.files,
+    selectedDate.value,
+    importItem.data.thumbnail,
+    importItem.data.songTrack,
+    importItem.data.title,
+    targetSection,
+  );
+};
+
+const importStudyBibleMedia = async (
+  importItem: Extract<PendingImport, { type: 'study-bible' }>,
+  targetSection: MediaSectionIdentifier,
+) => {
+  const mediaItemsToAdd: MediaItem[] = [];
+
+  for (const mediaItem of importItem.data.items) {
+    const item = mediaItem.MimeType.includes('image')
+      ? await createStudyBibleImageItem(mediaItem)
+      : await createStudyBibleVideoItem(mediaItem, targetSection);
+
+    if (item) mediaItemsToAdd.push(item);
+  }
+
+  addImportedMediaItems(mediaItemsToAdd, targetSection);
+};
+
+const createStudyBibleImageItem = async (
+  mediaItem: Extract<
+    PendingImport,
+    { type: 'study-bible' }
+  >['data']['items'][number],
+) => {
+  const filePath = await convertImageIfNeeded(mediaItem.FilePath);
+  return await createMediaItemFromPath(filePath, undefined, {
+    title: mediaItem.Label,
+  });
+};
+
+const createStudyBibleVideoItem = async (
+  mediaItem: Extract<
+    PendingImport,
+    { type: 'study-bible' }
+  >['data']['items'][number],
+  targetSection: MediaSectionIdentifier,
+) => {
+  const lang = currentSettings.value?.lang || 'E';
+  const mediaLookup: PublicationFetcher = {
+    booknum: mediaItem.BookNumber,
+    docid: mediaItem.DocumentId || mediaItem.MepsDocumentId,
+    fileformat: 'MP4',
+    issue: mediaItem.IssueTagNumber,
+    langwritten: lang,
+    pub: mediaItem.KeySymbol,
+    track: mediaItem.Track || undefined,
+  };
+  const mediaItemFiles = await getPubMediaLinks(mediaLookup);
+  const { thumbnail, title } = await getJwMediaInfo(mediaLookup);
+  const item = await downloadAdditionalRemoteVideo(
+    mediaItemFiles?.files?.[lang]?.MP4 || [],
+    selectedDate.value,
+    thumbnail,
+    false,
+    title.replace(/^\d+\.\s*/, ''),
+    targetSection,
+    undefined,
+    true,
+    'study-bible',
+  );
+
+  return item && typeof item !== 'string' ? item : null;
 };
 
 watchImmediate(

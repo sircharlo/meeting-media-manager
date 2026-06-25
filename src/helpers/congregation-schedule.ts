@@ -1,4 +1,5 @@
 import type {
+  CongregationMeeting,
   CongregationSearchResult,
   MeetingLanguage,
   MeetingSearchResponse,
@@ -19,6 +20,10 @@ import { updateLookupPeriod } from './date';
 import { errorCatcher } from './error-catcher';
 
 let meetingLanguagesPromise: null | Promise<Map<string, string>> = null;
+
+type SyncableScheduleSettings = SettingsValues & {
+  congregationName: string;
+};
 
 export const getMeetingLanguageMap = async () => {
   meetingLanguagesPromise ??= (async () => {
@@ -133,115 +138,143 @@ export const syncMeetingSchedule = async (force = false) => {
   try {
     const currentState = useCurrentStateStore();
     const { currentSettings, online } = storeToRefs(currentState);
+    const settings = currentSettings.value;
 
-    if (!currentSettings.value || !online.value) return false;
-
-    // Only sync if enabled or forced
-    if (!force && !currentSettings.value.enableAutomaticMeetingScheduleUpdates)
-      return false;
-
-    // Only sync if name hasn't been modified
-    if (
-      currentSettings.value.congregationNameModified ||
-      !currentSettings.value.congregationName
-    )
-      return false;
-
-    // Skip if a future change is already scheduled
-    if (currentSettings.value.meetingScheduleChangeDate) {
-      log(
-        '🔄 [syncMeetingSchedule] Skipping lookup as a future change is already scheduled.',
-        'congregationSchedule',
-        'log',
-      );
-      return false;
-    }
+    if (!canSyncMeetingSchedule(settings, online.value, force)) return false;
 
     const suggestions = await fetchCongregationSuggestions(
-      currentSettings.value.congregationName,
+      settings.congregationName,
     );
-    const exactMatch = suggestions.find(
-      (result) =>
-        result.name.toLowerCase() ===
-        currentSettings.value?.congregationName?.toLowerCase(),
+    const exactMatch = getExactCongregationMatch(
+      suggestions,
+      settings.congregationName,
     );
     if (!exactMatch) return false;
+
     const response = await fetchMeetingLocations(exactMatch.congregationGuid);
-
-    const congregationOnlineInfo = response?.items?.find((item) =>
-      item.congregationMeetings.some(
-        (meeting) => meeting.name === currentSettings.value?.congregationName,
-      ),
+    const selectedMeeting = findOnlineCongregationMeeting(
+      response,
+      settings.congregationName,
     );
+    if (!selectedMeeting) return false;
 
-    if (congregationOnlineInfo) {
-      const selectedMeeting = congregationOnlineInfo.congregationMeetings.find(
-        (meeting) => meeting.name === currentSettings.value?.congregationName,
-      );
-      if (!selectedMeeting) return false;
-      const normalized = normalizeSchedule({
-        changeStamp: null,
-        current: {
-          midweek: {
-            time: selectedMeeting.midweekMeetingTime.slice(
-              0,
-              5,
-            ) as `${number}:${number}`,
-            weekday:
-              selectedMeeting.midweekMeetingDay === 0
-                ? 7
-                : selectedMeeting.midweekMeetingDay,
-          },
-          weekend: {
-            time: selectedMeeting.weekendMeetingTime.slice(
-              0,
-              5,
-            ) as `${number}:${number}`,
-            weekday:
-              selectedMeeting.weekendMeetingDay === 0
-                ? 7
-                : selectedMeeting.weekendMeetingDay,
-          },
-        },
-        future: null,
-        futureDate: null,
-      });
+    const normalized = normalizeOnlineMeetingSchedule(selectedMeeting);
+    const changes = applyScheduleToSettings(settings, normalized);
+    await handleScheduleSyncChanges(changes);
 
-      const { currentChanged, futureChanged } = applyScheduleToSettings(
-        currentSettings.value,
-        normalized,
-      );
-
-      if (currentChanged) {
-        createTemporaryNotification({
-          message: i18n.global.t('meeting-current-schedule-updated'),
-          timeout: 10000,
-          type: 'info',
-        });
-      }
-
-      if (futureChanged) {
-        createTemporaryNotification({
-          message: i18n.global.t('meeting-future-schedule-updated'),
-          timeout: 10000,
-          type: 'info',
-        });
-      }
-
-      const scheduleChanged = currentChanged || futureChanged;
-      if (scheduleChanged) {
-        updateLookupPeriod({ reset: true });
-        const { fetchMedia } = await import('./jw-media');
-        await fetchMedia();
-      }
-
-      return scheduleChanged;
-    }
+    return changes.currentChanged || changes.futureChanged;
   } catch (error) {
     errorCatcher(error, {
       contexts: { fn: { name: 'syncMeetingSchedule' } },
     });
     return false;
+  }
+};
+
+const canSyncMeetingSchedule = (
+  currentSettings: null | SettingsValues | undefined,
+  online: boolean,
+  force: boolean,
+): currentSettings is SyncableScheduleSettings => {
+  if (!currentSettings || !online) return false;
+  if (!force && !currentSettings.enableAutomaticMeetingScheduleUpdates)
+    return false;
+  if (
+    currentSettings.congregationNameModified ||
+    !currentSettings.congregationName
+  )
+    return false;
+
+  if (!currentSettings.meetingScheduleChangeDate) return true;
+
+  log(
+    '🔄 [syncMeetingSchedule] Skipping lookup as a future change is already scheduled.',
+    'congregationSchedule',
+    'log',
+  );
+  return false;
+};
+
+const findOnlineCongregationMeeting = (
+  response: MeetingSearchResponse | null,
+  congregationName: string,
+) => {
+  const congregationOnlineInfo = response?.items?.find((item) =>
+    item.congregationMeetings.some(
+      (meeting) => meeting.name === congregationName,
+    ),
+  );
+
+  return congregationOnlineInfo?.congregationMeetings.find(
+    (meeting) => meeting.name === congregationName,
+  );
+};
+
+const getExactCongregationMatch = (
+  suggestions: CongregationSearchResult[],
+  congregationName: string,
+) =>
+  suggestions.find(
+    (result) => result.name.toLowerCase() === congregationName.toLowerCase(),
+  );
+
+const getOnlineMeetingWeekday = (weekday: number) =>
+  weekday === 0 ? 7 : weekday;
+
+const handleScheduleSyncChanges = async (changes: {
+  currentChanged: boolean;
+  futureChanged: boolean;
+}) => {
+  notifyScheduleSyncChanges(changes);
+
+  if (!changes.currentChanged && !changes.futureChanged) return;
+
+  updateLookupPeriod({ reset: true });
+  const { fetchMedia } = await import('./jw-media');
+  await fetchMedia();
+};
+
+const normalizeOnlineMeetingSchedule = (selectedMeeting: CongregationMeeting) =>
+  normalizeSchedule({
+    changeStamp: null,
+    current: {
+      midweek: {
+        time: selectedMeeting.midweekMeetingTime.slice(
+          0,
+          5,
+        ) as `${number}:${number}`,
+        weekday: getOnlineMeetingWeekday(selectedMeeting.midweekMeetingDay),
+      },
+      weekend: {
+        time: selectedMeeting.weekendMeetingTime.slice(
+          0,
+          5,
+        ) as `${number}:${number}`,
+        weekday: getOnlineMeetingWeekday(selectedMeeting.weekendMeetingDay),
+      },
+    },
+    future: null,
+    futureDate: null,
+  });
+
+const notifyScheduleSyncChanges = (changes: {
+  currentChanged: boolean;
+  futureChanged: boolean;
+}) => {
+  if (changes.currentChanged) {
+    createTemporaryNotification({
+      message: i18n.global.t('meeting-current-schedule-updated'),
+      timeout: 10000,
+      type: 'info',
+    });
+  }
+
+  if (changes.futureChanged) {
+    createTemporaryNotification({
+      message: i18n.global.t('meeting-future-schedule-updated'),
+      timeout: 10000,
+      type: 'info',
+    });
   }
 };
 

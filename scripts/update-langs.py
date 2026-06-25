@@ -277,21 +277,51 @@ def parse_locales_array(content: str) -> list[dict]:
     Each entry captures: value, englishName, label, langcode, signLangCodes (optional).
     Uses a regex to find each object block inside the array.
     """
-    # Extract the full locales array body
+    array_body = extract_locales_array_body(content)
+    if not array_body:
+        return []
+
+    return [
+        entry
+        for entry in (parse_locale_entry(block) for block in split_object_blocks(array_body))
+        if "value" in entry
+    ]
+
+
+def extract_locales_array_body(content: str) -> str:
     array_match = re.search(
         r"export const locales(?::[^=]+)?=\s*\[([\s\S]*?)\];\s*$",
         content,
         re.MULTILINE,
     )
-    if not array_match:
-        return []
+    return array_match.group(1) if array_match else ""
 
-    array_body = array_match.group(1)
 
-    # Split into individual object blocks by top-level braces
+def get_locale_entry_string_property(block: str, property_name: str) -> str | None:
+    match = re.search(rf"{property_name}:\s*'([^']+)'", block)
+    return match.group(1) if match else None
+
+
+def parse_locale_entry(block: str) -> dict:
+    entry = {}
+
+    for property_name in ("value", "englishName", "label", "langcode"):
+        value = get_locale_entry_string_property(block, property_name)
+        if value:
+            entry[property_name] = value
+
+    sign_lang_match = re.search(r"signLangCodes:\s*\[([^\]]*)\]", block)
+    if sign_lang_match:
+        entry["signLangCodes"] = re.findall(r"'([^']+)'", sign_lang_match.group(1))
+
+    return entry
+
+
+def split_object_blocks(array_body: str) -> list[str]:
     entries = []
     depth = 0
     current = []
+
     for char in array_body:
         if char == '{':
             depth += 1
@@ -303,35 +333,7 @@ def parse_locales_array(content: str) -> list[dict]:
                 entries.append("".join(current).strip())
                 current = []
 
-    parsed = []
-    for block in entries:
-        entry = {}
-
-        m = re.search(r"value:\s*'([^']+)'", block)
-        if m:
-            entry["value"] = m.group(1)
-
-        m = re.search(r"englishName:\s*'([^']+)'", block)
-        if m:
-            entry["englishName"] = m.group(1)
-
-        m = re.search(r"label:\s*'([^']+)'", block)
-        if m:
-            entry["label"] = m.group(1)
-
-        m = re.search(r"langcode:\s*'([^']+)'", block)
-        if m:
-            entry["langcode"] = m.group(1)
-
-        m = re.search(r"signLangCodes:\s*\[([^\]]*)\]", block)
-        if m:
-            codes = re.findall(r"'([^']+)'", m.group(1))
-            entry["signLangCodes"] = codes
-
-        if "value" in entry:
-            parsed.append(entry)
-
-    return parsed
+    return entries
 
 
 def build_locale_entry(entry: dict) -> str:

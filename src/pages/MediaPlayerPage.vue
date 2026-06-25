@@ -1067,6 +1067,59 @@ const loadFonts = async () => {
   fontsSet.value = true;
 };
 
+const clearWebsiteStream = () => {
+  if (currentMediaElement.value) {
+    currentMediaElement.value.pause();
+    currentMediaElement.value.srcObject = null;
+  }
+  postMediaPlayingAction('');
+  displayLayer1.value.isLive = false;
+  displayLayer1.value.url = '';
+};
+
+const resetFailedWebsiteStream = (
+  stream: MediaStream | null,
+  ready: boolean,
+) => {
+  if (!ready && stream) {
+    errorCatcher(new Error('Timed out waiting for media element'), {
+      contexts: { fn: { name: 'streamDisplay' } },
+    });
+  }
+  videoStreaming.value = false;
+  postMediaPlayingAction('');
+  currentMediaElement.value?.pause();
+  if (currentMediaElement.value?.srcObject) {
+    currentMediaElement.value.srcObject = null;
+  }
+};
+
+const shouldClearWebsiteStream = (
+  newWebStreamData: typeof webStreamData.value,
+  oldWebStreamData: typeof webStreamData.value,
+) =>
+  newWebStreamData !== 'previewingWebsite' &&
+  (oldWebStreamData === 'mirroringWebsite' ||
+    oldWebStreamData === 'previewingWebsite');
+
+const startWebsiteMirrorStream = async () => {
+  if (cameraStreamId.value) cameraStreamId.value = '';
+
+  displayLayer1.value.isLive = true;
+  displayLayer1.value.url = '';
+
+  const stream = await requestStream(false);
+  const ready = stream && (await ensureMediaElementReady(50));
+
+  if (!stream || !ready || !currentMediaElement.value) {
+    resetFailedWebsiteStream(stream, !!ready);
+    return;
+  }
+
+  currentMediaElement.value.srcObject = stream;
+  playMediaElement(false, true);
+};
+
 whenever(
   () => seekToData.value,
   (newSeekTo) => {
@@ -1259,51 +1312,13 @@ watch(
   async (newWebStreamData, oldWebStreamData) => {
     videoStreaming.value = newWebStreamData === 'mirroringWebsite';
     if (newWebStreamData !== 'mirroringWebsite') {
-      if (newWebStreamData !== 'previewingWebsite') {
-        if (
-          oldWebStreamData !== 'mirroringWebsite' &&
-          oldWebStreamData !== 'previewingWebsite'
-        ) {
-          return;
-        }
-
-        if (currentMediaElement.value) {
-          currentMediaElement.value.pause();
-          currentMediaElement.value.srcObject = null;
-        }
-        postMediaPlayingAction('');
-        displayLayer1.value.isLive = false;
-        displayLayer1.value.url = '';
+      if (shouldClearWebsiteStream(newWebStreamData, oldWebStreamData)) {
+        clearWebsiteStream();
       }
       return;
     }
 
-    if (cameraStreamId.value) cameraStreamId.value = '';
-
-    // Activate a display layer for streaming
-    displayLayer1.value.isLive = true;
-    displayLayer1.value.url = ''; // No URL for streaming, just activate the layer
-
-    const stream = await requestStream(false);
-    const ready = stream && (await ensureMediaElementReady(50));
-
-    if (!stream || !ready || !currentMediaElement.value) {
-      if (!ready && stream) {
-        errorCatcher(new Error('Timed out waiting for media element'), {
-          contexts: { fn: { name: 'streamDisplay' } },
-        });
-      }
-      videoStreaming.value = false;
-      postMediaPlayingAction('');
-      currentMediaElement.value?.pause();
-      if (currentMediaElement.value?.srcObject) {
-        currentMediaElement.value.srcObject = null;
-      }
-      return;
-    }
-
-    currentMediaElement.value.srcObject = stream;
-    playMediaElement(false, true);
+    await startWebsiteMirrorStream();
   },
 );
 

@@ -362,24 +362,29 @@ const normalizedSettingsFilter = computed(() =>
   getSettingsFilterValue().toLocaleLowerCase(),
 );
 
+const addFilteredSettingToGroup = (
+  result: Record<string, [keyof SettingsItems, SettingsItem][]>,
+  settingId: keyof SettingsItems,
+  item: SettingsItem,
+) => {
+  result[item.group] ??= [];
+  for (const subgroup of getSettingSubgroups(item)) {
+    result[item.group]?.push([settingId, { ...item, subgroup }]);
+  }
+};
+
+const getSettingSubgroups = (item: SettingsItem) =>
+  Array.isArray(item.subgroup) ? item.subgroup : [item.subgroup || ''];
+
 // Computed property for filtered settings by group
 const filteredSettingsByGroup = computed(() => {
   const result: Record<string, [keyof SettingsItems, SettingsItem][]> = {};
 
   for (const [settingId, item] of settingDefinitionEntries) {
-    if (shouldShowSetting(item, settingId)) {
-      if (!settingMatchesFilter(settingId, item)) continue;
+    if (!shouldShowSetting(item, settingId)) continue;
+    if (!settingMatchesFilter(settingId, item)) continue;
 
-      const subgroups = Array.isArray(item.subgroup)
-        ? item.subgroup
-        : [item.subgroup || ''];
-      for (const subgroup of subgroups) {
-        if (!result[item.group]) {
-          result[item.group] = [];
-        }
-        result[item.group]?.push([settingId, { ...item, subgroup }]);
-      }
-    }
+    addFilteredSettingToGroup(result, settingId, item);
   }
 
   return result;

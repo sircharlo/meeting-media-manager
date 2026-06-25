@@ -89,10 +89,7 @@ async function fixMarkdownAnchors(locale, markdownFile, totals) {
   let changed = false;
 
   if (enHeadings.length !== localeHeadings.length) {
-    totals.anchorWarnings += 1;
-    console.warn(
-      `[anchor] ${getRelativePath(localePath)}: heading count differs from English (${localeHeadings.length} vs ${enHeadings.length})`,
-    );
+    reportHeadingCountMismatch(localePath, localeHeadings, enHeadings, totals);
   }
 
   for (const localeHeading of localeHeadings) {
@@ -120,27 +117,20 @@ async function fixMarkdownAnchors(locale, markdownFile, totals) {
     totals.anchorChanges += 1;
     changed = true;
     lines[localeHeading.index] = updatedLine;
-
-    let before = '(missing)';
-    if (localeHeading.anchor) {
-      before =
-        localeHeading.anchorCount === 1
-          ? `{#${localeHeading.anchor}}`
-          : `${localeHeading.anchorCount} anchors ending with {#${localeHeading.anchor}}`;
-    }
-    const after = `{#${expectedAnchor}}`;
-    console.log(
-      `[anchor] ${getRelativePath(localePath)}:${localeHeading.index + 1}: ${before} -> ${after}`,
-    );
-    if (verbose) {
-      console.log(`  before: ${localeHeading.line}`);
-      console.log(`  after:  ${lines[localeHeading.index]}`);
-    }
+    logAnchorReplacement(localePath, localeHeading, expectedAnchor, lines);
   }
 
   if (changed && !checkOnly) {
     await writeFile(localePath, lines.join('\n'), 'utf-8');
   }
+}
+
+function getAnchorDescription(heading) {
+  if (!heading.anchor) return '(missing)';
+
+  return heading.anchorCount === 1
+    ? `{#${heading.anchor}}`
+    : `${heading.anchorCount} anchors ending with {#${heading.anchor}}`;
 }
 
 function getExpectedAnchor(localeHeading, enHeadings, enAnchorIndexes, state) {
@@ -186,7 +176,7 @@ async function getLocaleDirs() {
       (d) => d.isDirectory() && d.name !== 'assets' && d.name !== 'public',
     )
     .map((d) => d.name)
-    .sort();
+    .sort((a, b) => a.localeCompare(b));
 }
 
 async function getMarkdownFiles(dir, prefix = '') {
@@ -237,6 +227,23 @@ function isValidAnchor(anchor) {
   if (!anchor) return false;
 
   return [...anchor].every((char) => char !== '}' && char.trim() !== '');
+}
+
+function logAnchorReplacement(
+  localePath,
+  localeHeading,
+  expectedAnchor,
+  lines,
+) {
+  const before = getAnchorDescription(localeHeading);
+  const after = `{#${expectedAnchor}}`;
+  console.log(
+    `[anchor] ${getRelativePath(localePath)}:${localeHeading.index + 1}: ${before} -> ${after}`,
+  );
+  if (!verbose) return;
+
+  console.log(`  before: ${localeHeading.line}`);
+  console.log(`  after:  ${lines[localeHeading.index]}`);
 }
 
 async function main() {
@@ -319,6 +326,18 @@ function parseHeadings(content) {
 function replaceHeadingAnchor(line, anchor) {
   const withoutAnchors = line.slice(0, getTrailingHeadingAnchors(line).start);
   return `${withoutAnchors} {#${anchor}}`;
+}
+
+function reportHeadingCountMismatch(
+  localePath,
+  localeHeadings,
+  enHeadings,
+  totals,
+) {
+  totals.anchorWarnings += 1;
+  console.warn(
+    `[anchor] ${getRelativePath(localePath)}: heading count differs from English (${localeHeadings.length} vs ${enHeadings.length})`,
+  );
 }
 
 function trimEndIndex(value, end = value.length) {

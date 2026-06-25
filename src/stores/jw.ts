@@ -233,6 +233,19 @@ function extractCssUrls(html: string, baseUrl: string): string[] {
   return cssUrls;
 }
 
+const wtFontCssNames: Record<string, FontName> = {
+  WTClearTextGeorgian: 'WTClearTextGeorgian',
+  WTClearTextJapanese: 'WTClearTextJapanese',
+  WTMannaSansKaren: 'WTMannaSansKaren',
+  WTMannaSansMongolian: 'WTMannaSansMongolian',
+  WTMannaSansMyammar: 'WTMannaSansMyanmar',
+  WTMannaSansMyanmar: 'WTMannaSansMyanmar',
+  WTMannaSansTibetan: 'WTMannaSansTibetan',
+  WTSetthaSpecial: 'WTSetthaSpecial',
+  WTTextNew: 'WTTextNew',
+  WTXBZSpecial: 'WTXBZSpecial',
+};
+
 /**
  * Finds the jw-icons font URL within CSS text
  */
@@ -251,6 +264,36 @@ function findIconUrlInCss(cssText: string, cssUrl: string): null | string {
     }
   }
   return null;
+}
+
+function getFontFileUrl(fontFaceBlock: string) {
+  const woff2Match = /url\(["']?(https?:\/\/[^"')]+\.woff2)["']?\)/.exec(
+    fontFaceBlock,
+  );
+  const woffMatch = /url\(["']?(https?:\/\/[^"')]+\.woff)["']?\)/.exec(
+    fontFaceBlock,
+  );
+  return woff2Match?.[1] || woffMatch?.[1];
+}
+
+function getYeartextFontUrlsFromCss(cssText: string) {
+  const fontUrls: Partial<Record<FontName, string>> = {};
+  const fontFaceRegex =
+    /@font-face\s*\{[^}]*font-family:\s*['"]?(\w+)['"]?[^}]*\}/g;
+  let match;
+
+  while ((match = fontFaceRegex.exec(cssText)) !== null) {
+    const cssName = match[1];
+    if (!cssName) continue;
+
+    const fontName = wtFontCssNames[cssName];
+    const url = getFontFileUrl(match[0]);
+    if (fontName && url) {
+      fontUrls[fontName] = url;
+    }
+  }
+
+  return fontUrls;
 }
 
 export const useJwStore = defineStore('jw-store', {
@@ -662,50 +705,15 @@ export const useJwStore = defineStore('jw-store', {
         const html = await response.text();
         const cssUrls = extractCssUrls(html, this.urlVariables.base);
 
-        // WT/JW/Manna font names to search for in CSS @font-face declarations
-        const wtFontCssNames: Record<string, FontName> = {
-          WTClearTextGeorgian: 'WTClearTextGeorgian',
-          WTClearTextJapanese: 'WTClearTextJapanese',
-          WTMannaSansKaren: 'WTMannaSansKaren',
-          WTMannaSansMongolian: 'WTMannaSansMongolian',
-          WTMannaSansMyammar: 'WTMannaSansMyanmar', // CSS typo in JW.org
-          WTMannaSansMyanmar: 'WTMannaSansMyanmar',
-          WTMannaSansTibetan: 'WTMannaSansTibetan',
-          WTSetthaSpecial: 'WTSetthaSpecial',
-          WTTextNew: 'WTTextNew',
-          WTXBZSpecial: 'WTXBZSpecial',
-        };
-
         for (const cssUrl of cssUrls) {
           try {
             const cssResponse = await fetchRaw(cssUrl, undefined, true);
             if (!cssResponse.ok) continue;
             const cssText = await cssResponse.text();
-
-            // Parse @font-face blocks for WT fonts
-            const fontFaceRegex =
-              /@font-face\s*\{[^}]*font-family:\s*['"]?(\w+)['"]?[^}]*\}/g;
-            let match;
-            while ((match = fontFaceRegex.exec(cssText)) !== null) {
-              const cssName = match[1];
-              if (!cssName) continue;
-
-              const fontName = wtFontCssNames[cssName];
-              if (!fontName) continue;
-
-              // Extract woff2 URL, falling back to woff
-              const block = match[0];
-              const woff2Match = new RegExp(
-                /url\(["']?(https?:\/\/[^"')]+\.woff2)["']?\)/,
-              ).exec(block);
-              const woffMatch = new RegExp(
-                /url\(["']?(https?:\/\/[^"')]+\.woff)["']?\)/,
-              ).exec(block);
-              const url = woff2Match?.[1] || woffMatch?.[1];
-              if (url) {
-                this.yeartextFontUrls[fontName] = url;
-              }
-            }
+            this.yeartextFontUrls = {
+              ...this.yeartextFontUrls,
+              ...getYeartextFontUrlsFromCss(cssText),
+            };
           } catch (e) {
             errorCatcher(e, {
               contexts: {

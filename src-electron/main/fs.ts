@@ -951,36 +951,14 @@ const openZipFileForEntries = async (
       const errorCode = getErrorCode(error);
       const shouldRetry = shouldRetryZipRead(error, attempt);
 
-      addElectronBreadcrumb({
-        category: 'zip',
-        data: {
-          ...getZipDiagnostics(zipPath, fileSize),
-          attempt: attempt + 1,
-          errorCode,
-          maxAttempts: ZIP_OPEN_RETRY_COUNT + 1,
-          retrying: shouldRetry,
-        },
-        level: errorCode === 'ENOENT' ? 'info' : 'error',
-        message: 'Error opening zip entries',
+      addZipEntryOpenBreadcrumb(zipPath, fileSize, {
+        attempt,
+        errorCode,
+        shouldRetry,
       });
 
       if (!shouldRetry) {
-        const message = error instanceof Error ? error.message : String(error);
-        if (errorCode !== 'ENOENT' && !isIncompleteZipReadError(message)) {
-          captureElectronError(error, {
-            contexts: {
-              cloud_resource: {
-                ...getZipDiagnostics(zipPath, fileSize),
-                retryAttempts: attempt,
-              },
-              fn: {
-                args: { fileSize, zipPath },
-                name: 'getZipEntries openPromise',
-              },
-            },
-          });
-        }
-
+        captureZipEntryOpenError(error, zipPath, fileSize, attempt);
         throw error;
       }
 
@@ -989,6 +967,53 @@ const openZipFileForEntries = async (
   }
 
   throw lastError;
+};
+
+const addZipEntryOpenBreadcrumb = (
+  zipPath: string,
+  fileSize: number,
+  options: {
+    attempt: number;
+    errorCode?: string;
+    shouldRetry: boolean;
+  },
+) => {
+  addElectronBreadcrumb({
+    category: 'zip',
+    data: {
+      ...getZipDiagnostics(zipPath, fileSize),
+      attempt: options.attempt + 1,
+      errorCode: options.errorCode,
+      maxAttempts: ZIP_OPEN_RETRY_COUNT + 1,
+      retrying: options.shouldRetry,
+    },
+    level: options.errorCode === 'ENOENT' ? 'info' : 'error',
+    message: 'Error opening zip entries',
+  });
+};
+
+const captureZipEntryOpenError = (
+  error: unknown,
+  zipPath: string,
+  fileSize: number,
+  attempt: number,
+) => {
+  const errorCode = getErrorCode(error);
+  const message = error instanceof Error ? error.message : String(error);
+  if (errorCode === 'ENOENT' || isIncompleteZipReadError(message)) return;
+
+  captureElectronError(error, {
+    contexts: {
+      cloud_resource: {
+        ...getZipDiagnostics(zipPath, fileSize),
+        retryAttempts: attempt,
+      },
+      fn: {
+        args: { fileSize, zipPath },
+        name: 'getZipEntries openPromise',
+      },
+    },
+  });
 };
 
 const openZipBuffer = async (buffer: Buffer): Promise<ZipFile> =>
