@@ -20,7 +20,7 @@ async function fixIndexLinks(locale, totals) {
   const original = await readFile(indexPath, 'utf-8');
 
   const updated = original.replaceAll(
-    /^([ \t]*)link:[ \t]*(\S[^\n]*?)[ \t]*$/gm,
+    /^([ \t]*)link:[ \t]*(\S[^\n]*\S|\S)/gm,
     (m, indent, linkValue) => {
       const fixed = fixLink(locale, linkValue);
       if (fixed !== linkValue) {

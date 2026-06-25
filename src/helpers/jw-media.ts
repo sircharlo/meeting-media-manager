@@ -1394,6 +1394,53 @@ export const addJwpubDocumentMediaToFiles = async (
   }
 };
 
+interface DownloadProgress {
+  filename?: string;
+  meetingDate?: string;
+  progressCategory: FileDownloader['progressCategory'];
+}
+
+const pollUntilDownloaded = (
+  downloadId: string,
+  destinationPath: string,
+  remoteSize: number,
+  currentStateStore: ReturnType<typeof useCurrentStateStore>,
+): Promise<DownloadedFile> =>
+  new Promise<DownloadedFile>((resolve) => {
+    const interval = setInterval(() => {
+      if (currentStateStore.downloadProgress[downloadId]?.error) {
+        clearInterval(interval);
+        resolve({ error: true, path: destinationPath });
+        return;
+      }
+      if (!currentStateStore.downloadProgress[downloadId]?.complete) return;
+      clearInterval(interval);
+      void resolveDownloadedFile(destinationPath, remoteSize, resolve);
+    }, 500);
+  });
+
+const resolveDownloadedFile = async (
+  destinationPath: string,
+  remoteSize: number,
+  resolve: (value: DownloadedFile) => void,
+) => {
+  const maxAttempts = 10;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    if (await exists(destinationPath)) {
+      const statistics = await stat(destinationPath);
+      const hasExpectedSize = remoteSize <= 0 || statistics.size === remoteSize;
+      if (statistics.size > 0 && hasExpectedSize) {
+        resolve({ new: true, path: destinationPath });
+        return;
+      }
+    }
+    await new Promise((settle) => {
+      setTimeout(settle, 200);
+    });
+  }
+  resolve({ error: true, path: destinationPath });
+};
+
 export const downloadFileIfNeeded = async ({
   dir,
   filename,
@@ -1440,12 +1487,6 @@ export const downloadFileIfNeeded = async ({
 
     // Seed meeting date on progress right away so UI can group even before onDownloadStarted
     if (downloadId) {
-      interface DownloadProgress {
-        filename?: string;
-        meetingDate?: string;
-        progressCategory: FileDownloader['progressCategory'];
-      }
-
       const seed = (currentStateStore.downloadProgress[downloadId] ??
         {}) as DownloadProgress;
 
@@ -1457,52 +1498,16 @@ export const downloadFileIfNeeded = async ({
       } as never;
     }
 
-    const result = await new Promise<DownloadedFile>((resolve) => {
-      const interval = setInterval(() => {
-        if (!downloadId) {
-          clearInterval(interval);
-          resolve({
-            error: true,
-            path: destinationPath,
-          });
-          return;
-        }
-        if (currentStateStore.downloadProgress[downloadId]?.complete) {
-          clearInterval(interval);
-          void (async () => {
-            const maxAttempts = 10;
-            for (let attempt = 0; attempt < maxAttempts; attempt++) {
-              if (await exists(destinationPath)) {
-                const statistics = await stat(destinationPath);
-                const hasExpectedSize =
-                  remoteSize <= 0 || statistics.size === remoteSize;
-                if (statistics.size > 0 && hasExpectedSize) {
-                  resolve({
-                    new: true,
-                    path: destinationPath,
-                  });
-                  return;
-                }
-              }
-              await new Promise((settle) => {
-                setTimeout(settle, 200);
-              });
-            }
-            resolve({
-              error: true,
-              path: destinationPath,
-            });
-          })();
-        }
-        if (currentStateStore.downloadProgress[downloadId]?.error) {
-          clearInterval(interval);
-          resolve({
-            error: true,
-            path: destinationPath,
-          });
-        }
-      }, 500); // Check every 500ms
-    });
+    if (!downloadId) {
+      return { error: true, path: destinationPath };
+    }
+
+    const result = await pollUntilDownloaded(
+      downloadId,
+      destinationPath,
+      remoteSize,
+      currentStateStore,
+    );
     return result;
   } catch (error) {
     errorCatcher(error, {
