@@ -505,14 +505,12 @@ body.body--dark .study-bible-item :deep(img) {
 
 .study-bible-chapter-unavailable {
   background-color: #e0e0e0 !important;
-  /* border: 1px solid #c2c2c2; */
   color: #757575 !important;
   opacity: 1 !important;
 }
 
 body.body--dark .study-bible-chapter-unavailable {
   background-color: #343434 !important;
-  /* border-color: #4a4a4a; */
   color: #9e9e9e !important;
 }
 </style>

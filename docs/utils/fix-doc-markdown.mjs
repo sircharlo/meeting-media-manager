@@ -20,8 +20,8 @@ async function fixIndexLinks(locale, totals) {
   const original = await readFile(indexPath, 'utf-8');
 
   const updated = original.replaceAll(
-    /(^|\n)(\s*)link:\s*(.+?)\s*(?=\n|$)/g,
-    (m, lead, indent, linkValue) => {
+    /^([ \t]*)link:[ \t]*(.*)$/gm,
+    (m, indent, linkValue) => {
       const fixed = fixLink(locale, linkValue);
       if (fixed !== linkValue.trim()) {
         totals.linkChanges += 1;
@@ -30,7 +30,7 @@ async function fixIndexLinks(locale, totals) {
             `[link] ${getRelativePath(indexPath)}: ${linkValue.trim()} -> ${fixed}`,
           );
         }
-        return `${lead}${indent}link: ${fixed}`;
+        return `${indent}link: ${fixed}`;
       }
       return m;
     },
@@ -177,12 +177,7 @@ function getExpectedAnchor(localeHeading, enHeadings, enAnchorIndexes, state) {
 }
 
 function getHeadingAnchors(line) {
-  const match = /((?:\s*\{#[^}\s]+\})+)\s*$/.exec(line);
-  if (!match) return [];
-
-  return [...match[1].matchAll(/\{#([^}\s]+)\}/g)].map(
-    (anchorMatch) => anchorMatch[1],
-  );
+  return getTrailingHeadingAnchors(line).anchors;
 }
 
 async function getLocaleDirs() {
@@ -217,6 +212,31 @@ async function getMarkdownFiles(dir, prefix = '') {
 
 function getRelativePath(path) {
   return relative(resolve(__dirname, '../..'), path).replaceAll('\\', '/');
+}
+
+function getTrailingHeadingAnchors(line) {
+  const anchors = [];
+  let cursor = trimEndIndex(line);
+
+  while (cursor > 0 && line[cursor - 1] === '}') {
+    const openIndex = line.lastIndexOf('{#', cursor - 1);
+    if (openIndex === -1) break;
+
+    const anchor = line.slice(openIndex + 2, cursor - 1);
+    if (!isValidAnchor(anchor)) break;
+
+    anchors.unshift(anchor);
+    cursor = trimEndIndex(line, openIndex);
+  }
+
+  const start = anchors.length > 0 ? cursor : line.length;
+  return { anchors, start };
+}
+
+function isValidAnchor(anchor) {
+  if (!anchor) return false;
+
+  return [...anchor].every((char) => char !== '}' && char.trim() !== '');
 }
 
 async function main() {
@@ -279,7 +299,7 @@ function parseHeadings(content) {
 
     if (inFence) return;
 
-    const headingMatch = /^(#{1,6})\s+(.+?)\s*$/.exec(line);
+    const headingMatch = /^(#{1,6})[ \t]+.+$/.exec(line);
     if (!headingMatch) return;
 
     const anchors = getHeadingAnchors(line);
@@ -297,8 +317,16 @@ function parseHeadings(content) {
 }
 
 function replaceHeadingAnchor(line, anchor) {
-  const withoutAnchors = line.replace(/(?:\s*\{#[^}\s]+\})+\s*$/, '');
+  const withoutAnchors = line.slice(0, getTrailingHeadingAnchors(line).start);
   return `${withoutAnchors} {#${anchor}}`;
+}
+
+function trimEndIndex(value, end = value.length) {
+  let cursor = end;
+  while (cursor > 0 && value[cursor - 1].trim() === '') {
+    cursor -= 1;
+  }
+  return cursor;
 }
 
 await main();

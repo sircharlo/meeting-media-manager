@@ -252,13 +252,13 @@ export interface ElectronApi {
   toggleTimerWindow: (show: boolean) => void;
   unregisterAllShortcuts: () => void;
   unregisterShortcut: (shortcut: string) => void;
-  unwatchFolders: () => void;
+  unwatchFolders: () => Promise<void>;
   unzip: (
     input: string,
     output: string,
     opts?: UnzipOptions,
   ) => Promise<UnzipResult[]>;
-  watchFolder: (path: string) => void;
+  watchFolder: (path: string) => Promise<void>;
   zoomWebsiteWindow: (direction: 'in' | 'out') => void;
 }
 
@@ -287,7 +287,9 @@ export type ElectronIpcInvokeKey =
   | 'registerShortcut'
   | 'saveFileDialog'
   | 'set-hardware-acceleration'
-  | 'unzip';
+  | 'unwatchFolders'
+  | 'unzip'
+  | 'watchFolder';
 
 // BrowserWindow.webContents.send / ipcRenderer.on channels
 export type ElectronIpcListenKey =
@@ -337,8 +339,6 @@ export type ElectronIpcSendKey =
   | 'toggleWebsiteWindow'
   | 'unregisterAllShortcuts'
   | 'unregisterShortcut'
-  | 'unwatchFolders'
-  | 'watchFolder'
   | 'websiteWindowClosed'
   | 'zoomWebsiteWindow';
 

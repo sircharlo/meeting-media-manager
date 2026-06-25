@@ -1443,7 +1443,7 @@ export const downloadFileIfNeeded = async ({
       interface DownloadProgress {
         filename?: string;
         meetingDate?: string;
-        progressCategory?: FileDownloader['progressCategory'];
+        progressCategory: FileDownloader['progressCategory'];
       }
 
       const seed = (currentStateStore.downloadProgress[downloadId] ??
@@ -2442,7 +2442,7 @@ const getStudyBibleMediaUncached = async (
       }
 
       englishItems.forEach((englishItem) => {
-        const styItem = filteredMediaItems.find(
+        const styItem = filteredMediaItems.some(
           (item) =>
             englishItem.FilePath.replace(
               '_E_',

@@ -149,9 +149,9 @@ const electronApi: ElectronApi = {
   toggleTimerWindow: (s) => send('toggleTimerWindow', s),
   unregisterAllShortcuts: () => send('unregisterAllShortcuts'),
   unregisterShortcut: (s) => send('unregisterShortcut', s),
-  unwatchFolders: () => send('unwatchFolders'),
+  unwatchFolders: () => invoke('unwatchFolders'),
   unzip: (i, o, op) => invoke('unzip', i, o, op),
-  watchFolder: (p) => send('watchFolder', p),
+  watchFolder: (p) => invoke('watchFolder', p),
   zoomWebsiteWindow,
 };
 

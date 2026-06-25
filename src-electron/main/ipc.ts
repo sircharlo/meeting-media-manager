@@ -255,11 +255,6 @@ handleIpcSend(
   },
 );
 
-handleIpcSend('unwatchFolders', () => unwatchFolders());
-handleIpcSend('watchFolder', (_e, folderPath: string) =>
-  watchFolder(folderPath),
-);
-
 // IPC invoke/handle
 
 function handleIpcInvoke<T = unknown>(
@@ -394,6 +389,11 @@ handleIpcInvoke(
   'unzip',
   async (_e, input: string, output: string, opts?: UnzipOptions) =>
     unzipFile(input, output, opts),
+);
+
+handleIpcInvoke('unwatchFolders', async () => unwatchFolders());
+handleIpcInvoke('watchFolder', async (_e, folderPath: string) =>
+  watchFolder(folderPath),
 );
 
 handleIpcInvoke('getZipEntries', async (_e, zipPath: string) =>

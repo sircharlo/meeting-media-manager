@@ -413,7 +413,7 @@ const isFirstInSubgroup = (index: number, groupId: string) => {
 };
 
 const escapeRegExp = (value: string): string =>
-  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  value.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 
 const highlightSearchParts = (
   value: string,

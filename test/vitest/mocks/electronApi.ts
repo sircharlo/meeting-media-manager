@@ -241,13 +241,13 @@ export const electronApi: ElectronApi = {
   unregisterShortcut: function (shortcut) {
     throw new Error('Function not implemented.');
   },
-  unwatchFolders: function () {
+  unwatchFolders: async function () {
     throw new Error('Function not implemented.');
   },
   unzip: function (input, output, opts) {
     throw new Error('Function not implemented.');
   },
-  watchFolder: function (path) {
+  watchFolder: async function (path) {
     throw new Error('Function not implemented.');
   },
   zoomWebsiteWindow: function (direction) {
