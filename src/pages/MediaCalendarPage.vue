@@ -809,14 +809,14 @@ const downloadMemorialSong = async (songTrack: number) => {
       songTrackFiles?.files?.[currentSettings.value?.lang || 'E']?.MP4 || [];
     if (!files.length) return true;
 
-    const downloadId = (await downloadAdditionalRemoteVideo(
-      files,
-      selectedDate.value,
-      thumbnail,
-      songTrack,
-      title.replace(/^\d+\.\s*/, ''),
-      'memorial-talk',
-    )) as string | undefined;
+    const downloadId = (await downloadAdditionalRemoteVideo({
+      mediaItemLinks: files,
+      meetingDate: selectedDate.value,
+      section: 'memorial-talk',
+      song: songTrack,
+      thumbnailUrl: thumbnail,
+      title: title.replace(/^\d+\.\s*/, ''),
+    })) as string | undefined;
     await waitForDownloadComplete(downloadId);
     return true;
   } catch (error) {

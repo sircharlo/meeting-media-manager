@@ -1025,15 +1025,15 @@ const importBibleMedia = async (
   importItem: Extract<PendingImport, { type: 'bible' }>,
   targetSection: MediaSectionIdentifier,
 ) => {
-  await downloadAdditionalRemoteVideo(
-    importItem.data.files,
-    selectedDate.value,
-    undefined,
-    false,
-    importItem.data.title,
-    targetSection,
-    importItem.data.customDuration,
-  );
+  await downloadAdditionalRemoteVideo({
+    customDuration: importItem.data.customDuration,
+    mediaItemLinks: importItem.data.files,
+    meetingDate: selectedDate.value,
+    section: targetSection,
+    song: false,
+    thumbnailUrl: undefined,
+    title: importItem.data.title,
+  });
 };
 
 const importJwPlaylistMedia = (
@@ -1109,45 +1109,45 @@ const importPublicationMedia = async (
     return;
   }
 
-  await downloadAdditionalRemoteVideo(
-    [importItem.data.media],
-    selectedDate.value,
-    importItem.data.media.trackImage.url,
-    false,
-    importItem.data.media.title,
-    targetSection,
-    undefined,
-    false,
-    'publication-media',
-  );
+  await downloadAdditionalRemoteVideo({
+    customDuration: undefined,
+    mediaItemLinks: [importItem.data.media],
+    meetingDate: selectedDate.value,
+    onlyCreateItem: false,
+    progressCategory: 'publication-media',
+    section: targetSection,
+    song: false,
+    thumbnailUrl: importItem.data.media.trackImage.url,
+    title: importItem.data.media.title,
+  });
 };
 
 const importRemoteVideo = async (
   importItem: Extract<PendingImport, { type: 'remote-video' }>,
   targetSection: MediaSectionIdentifier,
 ) => {
-  await downloadAdditionalRemoteVideo(
-    importItem.data.mediaItemLinks,
-    selectedDate.value,
-    importItem.data.thumbnailUrl,
-    false,
-    importItem.data.title,
-    targetSection,
-  );
+  await downloadAdditionalRemoteVideo({
+    mediaItemLinks: importItem.data.mediaItemLinks,
+    meetingDate: selectedDate.value,
+    section: targetSection,
+    song: false,
+    thumbnailUrl: importItem.data.thumbnailUrl,
+    title: importItem.data.title,
+  });
 };
 
 const importSongMedia = async (
   importItem: Extract<PendingImport, { type: 'song' }>,
   targetSection: MediaSectionIdentifier,
 ) => {
-  await downloadAdditionalRemoteVideo(
-    importItem.data.files,
-    selectedDate.value,
-    importItem.data.thumbnail,
-    importItem.data.songTrack,
-    importItem.data.title,
-    targetSection,
-  );
+  await downloadAdditionalRemoteVideo({
+    mediaItemLinks: importItem.data.files,
+    meetingDate: selectedDate.value,
+    section: targetSection,
+    song: importItem.data.songTrack,
+    thumbnailUrl: importItem.data.thumbnail,
+    title: importItem.data.title,
+  });
 };
 
 const importStudyBibleMedia = async (
@@ -1198,17 +1198,17 @@ const createStudyBibleVideoItem = async (
   };
   const mediaItemFiles = await getPubMediaLinks(mediaLookup);
   const { thumbnail, title } = await getJwMediaInfo(mediaLookup);
-  const item = await downloadAdditionalRemoteVideo(
-    mediaItemFiles?.files?.[lang]?.MP4 || [],
-    selectedDate.value,
-    thumbnail,
-    false,
-    title.replace(/^\d+\.\s*/, ''),
-    targetSection,
-    undefined,
-    true,
-    'study-bible',
-  );
+  const item = await downloadAdditionalRemoteVideo({
+    customDuration: undefined,
+    mediaItemLinks: mediaItemFiles?.files?.[lang]?.MP4 || [],
+    meetingDate: selectedDate.value,
+    onlyCreateItem: true,
+    progressCategory: 'study-bible',
+    section: targetSection,
+    song: false,
+    thumbnailUrl: thumbnail,
+    title: title.replace(/^\d+\.\s*/, ''),
+  });
 
   return item && typeof item !== 'string' ? item : null;
 };

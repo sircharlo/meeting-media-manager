@@ -3612,6 +3612,171 @@ const checkMediaFileExistence = async (media: MultimediaItem) => {
   return { exists, media };
 };
 
+const processWeekendMedia = (
+  mediaWithoutVideos: MultimediaItem[],
+  videosInParagraphs: MultimediaItem[],
+  videosNotInParagraphs: MultimediaItem[],
+  currentStateStore: ReturnType<typeof useCurrentStateStore>,
+): MultimediaItem[] => {
+  const combined = [
+    ...mediaWithoutVideos,
+    ...videosInParagraphs,
+    ...videosNotInParagraphs,
+  ];
+
+  // Separate items with and without BeginPosition
+  const withBegin = combined.filter(
+    (item) => item.BeginPosition !== undefined && item.BeginPosition !== null,
+  );
+  const withoutBegin = combined.filter(
+    (item) => item.BeginPosition === undefined || item.BeginPosition === null,
+  );
+
+  // Sort those with BeginPosition
+  withBegin.sort((a, b) => (a.BeginPosition || 0) - (b.BeginPosition || 0));
+
+  // Final result: Insert all withoutBegin *before* the last item with BeginPosition
+  let final: MultimediaItem[] = [];
+  if (withBegin.length === 0) {
+    final.push(...withoutBegin);
+  } else {
+    const lastIndex = withBegin.length - 1;
+    const lastItem = withBegin[lastIndex];
+    if (!lastItem) return [];
+    final.push(...withBegin.slice(0, lastIndex), ...withoutBegin, lastItem);
+  }
+
+  final = final
+    .map((mediaObj) => {
+      // Mark media as being in a footnote if it's outside numbered paragraphs
+      // IsInNumberedParagraphs will be 0 for footnotes, 1 for regular content
+      if (
+        mediaObj &&
+        'IsInNumberedParagraphs' in mediaObj &&
+        mediaObj.IsInNumberedParagraphs === 0 &&
+        !mediaObj.TargetParagraphNumberLabel
+      ) {
+        return {
+          ...mediaObj,
+          TargetParagraphNumberLabel: FOOTNOTE_TARGET_PARAGRAPH,
+        };
+      }
+      return mediaObj;
+    })
+    .filter((item) => !!item)
+    .filter((v) => {
+      try {
+        // Exclude videos from paragraphs in the WT study if setting is enabled
+        if (
+          currentStateStore.currentSettings?.excludeWtParagraphVideos &&
+          v.IsInNumberedParagraphs === 1 &&
+          v.MimeType.includes('video')
+        ) {
+          return false;
+        }
+
+        // Exclude items from footnotes in the WT study if setting is enabled
+        if (
+          currentStateStore.currentSettings?.excludeFootnotes &&
+          v.TargetParagraphNumberLabel === FOOTNOTE_TARGET_PARAGRAPH
+        ) {
+          return false;
+        }
+
+        // Include all other items
+        return true;
+      } catch (e) {
+        // In case of error, include the item to be safe
+        errorCatcher(e);
+        return true;
+      }
+    });
+
+  const updatedMedia = final.map((item) => {
+    if (item.MultimediaId !== null && item.LinkMultimediaId !== null) {
+      const linkedItem = final.find(
+        (i) => i.MultimediaId === item.LinkMultimediaId,
+      );
+      if (linkedItem?.FilePath) {
+        item.FilePath = linkedItem.FilePath;
+        item.LinkMultimediaId = null;
+        linkedItem.LinkMultimediaId = linkedItem.MultimediaId;
+      }
+    }
+    return item;
+  });
+
+  return updatedMedia.filter((item) => item.LinkMultimediaId === null);
+};
+
+const mergeWeekendSongs = (
+  allMedia: MultimediaItem[],
+  songs: MultimediaItem[],
+  songMultimediaExtractItems: MultimediaExtractItem[],
+  currentStateStore: ReturnType<typeof useCurrentStateStore>,
+): MultimediaItem[] => {
+  let songMepsLanguageCodes: ('' | JwLangCode)[] = [];
+  try {
+    songMepsLanguageCodes = songMultimediaExtractItems.map((item) => {
+      const match = new RegExp(/\/(.*)\//).exec(item.Link);
+      const langOverride = match ? (match[1]?.split(':')[0] as JwLangCode) : '';
+      return langOverride === currentStateStore.currentSettings?.lang
+        ? ''
+        : langOverride;
+    });
+  } catch (e: unknown) {
+    errorCatcher(e);
+    songMepsLanguageCodes = songs.map(
+      () => currentStateStore.currentSettings?.lang || 'E',
+    );
+  }
+
+  const mergedSongs: MultimediaItem[] = songs
+    .map((song, index) => {
+      if (!songMepsLanguageCodes[index]) return song;
+      const langId = getJwLangId(songMepsLanguageCodes[index]);
+      return {
+        ...song,
+        ...(langId === undefined
+          ? {}
+          : { MepsLanguageAlternativeIndex: langId }),
+      };
+    })
+    .sort((a, b) => (a.MultimediaId || 0) - (b.MultimediaId || 0));
+
+  if (mergedSongs[0]) {
+    mergedSongs[0].BeginParagraphOrdinal = 0;
+    const index0 = allMedia.findIndex(
+      (item) =>
+        item.Track === mergedSongs[0]?.Track &&
+        item.KeySymbol === mergedSongs[0]?.KeySymbol,
+    );
+
+    if (index0 === -1) {
+      allMedia.unshift(mergedSongs[0]);
+    } else {
+      allMedia[index0] = mergedSongs[0];
+    }
+
+    if (mergedSongs[1]) {
+      mergedSongs[1].BeginParagraphOrdinal = LAST_SONG_ORDINAL;
+      const index1 = allMedia.findIndex(
+        (item) =>
+          item.Track === mergedSongs[1]?.Track &&
+          item.KeySymbol === mergedSongs[1]?.KeySymbol,
+      );
+
+      if (index1 === -1) {
+        allMedia.push(mergedSongs[1]);
+      } else {
+        allMedia[index1] = mergedSongs[1];
+      }
+    }
+  }
+
+  return allMedia;
+};
+
 export const getWeMedia = async (lookupDate: Date) => {
   log(
     `Getting weekend meeting media for date: ${formatDate(lookupDate, 'YYYYMMDD')}`,
@@ -3668,7 +3833,7 @@ export const getWeMedia = async (lookupDate: Date) => {
          INNER JOIN DocumentParagraph dp
            ON dm.BeginParagraphOrdinal = dp.ParagraphIndex
            AND dm.DocumentId = dp.DocumentId
-    		 LEFT JOIN Question q
+     		 LEFT JOIN Question q
            ON q.DocumentId = dm.DocumentId
            AND q.TargetParagraphOrdinal = dm.BeginParagraphOrdinal
          WHERE dm.DocumentId = ?
@@ -3691,7 +3856,7 @@ export const getWeMedia = async (lookupDate: Date) => {
            ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId
          INNER JOIN DocumentParagraph
            ON DocumentMultimedia.DocumentId = DocumentParagraph.DocumentId
-    		  AND DocumentMultimedia.BeginParagraphOrdinal = DocumentParagraph.ParagraphIndex
+     		  AND DocumentMultimedia.BeginParagraphOrdinal = DocumentParagraph.ParagraphIndex
          LEFT JOIN Question
            ON Question.DocumentId = DocumentMultimedia.DocumentId
            AND Question.TargetParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal
@@ -3704,98 +3869,11 @@ export const getWeMedia = async (lookupDate: Date) => {
     );
     await addFullPathsToMultimediaItems(mediaWithoutVideos, publication);
 
-    const combined = [
-      ...mediaWithoutVideos,
-      ...videosInParagraphs,
-      ...videosNotInParagraphs,
-    ];
-
-    // Separate items with and without BeginPosition
-    const withBegin = combined.filter(
-      (item) => item.BeginPosition !== undefined && item.BeginPosition !== null,
-    );
-    const withoutBegin = combined.filter(
-      (item) => item.BeginPosition === undefined || item.BeginPosition === null,
-    );
-
-    // Sort those with BeginPosition
-    withBegin.sort((a, b) => (a.BeginPosition || 0) - (b.BeginPosition || 0));
-
-    // Final result: Insert all withoutBegin *before* the last item with BeginPosition
-    let final = [];
-    if (withBegin.length === 0) {
-      final.push(...withoutBegin);
-    } else {
-      const lastIndex = withBegin.length - 1;
-      final.push(
-        ...withBegin.slice(0, lastIndex),
-        ...withoutBegin,
-        withBegin[lastIndex],
-      );
-    }
-
-    final = final
-      .map((mediaObj) => {
-        // Mark media as being in a footnote if it's outside numbered paragraphs
-        // IsInNumberedParagraphs will be 0 for footnotes, 1 for regular content
-        if (
-          mediaObj &&
-          'IsInNumberedParagraphs' in mediaObj &&
-          mediaObj.IsInNumberedParagraphs === 0 &&
-          !mediaObj.TargetParagraphNumberLabel
-        ) {
-          return {
-            ...mediaObj,
-            TargetParagraphNumberLabel: FOOTNOTE_TARGET_PARAGRAPH,
-          };
-        }
-        return mediaObj;
-      })
-      .filter((item) => !!item)
-      .filter((v) => {
-        try {
-          // Exclude videos from paragraphs in the WT study if setting is enabled
-          if (
-            currentStateStore.currentSettings?.excludeWtParagraphVideos &&
-            v.IsInNumberedParagraphs === 1 &&
-            v.MimeType.includes('video')
-          ) {
-            return false;
-          }
-
-          // Exclude items from footnotes in the WT study if setting is enabled
-          if (
-            currentStateStore.currentSettings?.excludeFootnotes &&
-            v.TargetParagraphNumberLabel === FOOTNOTE_TARGET_PARAGRAPH
-          ) {
-            return false;
-          }
-
-          // Include all other items
-          return true;
-        } catch (e) {
-          // In case of error, include the item to be safe
-          errorCatcher(e);
-          return true;
-        }
-      });
-
-    const updatedMedia = final.map((item) => {
-      if (item.MultimediaId !== null && item.LinkMultimediaId !== null) {
-        const linkedItem = final.find(
-          (i) => i.MultimediaId === item.LinkMultimediaId,
-        );
-        if (linkedItem?.FilePath) {
-          item.FilePath = linkedItem.FilePath;
-          item.LinkMultimediaId = null;
-          linkedItem.LinkMultimediaId = linkedItem.MultimediaId;
-        }
-      }
-      return item;
-    });
-
-    const finalMedia = updatedMedia.filter(
-      (item) => item.LinkMultimediaId === null,
+    const finalMedia = processWeekendMedia(
+      mediaWithoutVideos,
+      videosInParagraphs,
+      videosNotInParagraphs,
+      currentStateStore,
     );
 
     const songs = getWeekendSongs(
@@ -3821,67 +3899,12 @@ export const getWeMedia = async (lookupDate: Date) => {
         )
         .sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal);
 
-    let songMepsLanguageCodes: ('' | JwLangCode)[] = [];
-    try {
-      songMepsLanguageCodes = songMultimediaExtractItems.map((item) => {
-        const match = new RegExp(/\/(.*)\//).exec(item.Link);
-        const langOverride = match
-          ? (match[1]?.split(':')[0] as JwLangCode)
-          : '';
-        return langOverride === currentStateStore.currentSettings?.lang
-          ? ''
-          : langOverride;
-      });
-    } catch (e: unknown) {
-      errorCatcher(e);
-      songMepsLanguageCodes = songs.map(
-        () => currentStateStore.currentSettings?.lang || 'E',
-      );
-    }
-
-    const mergedSongs: MultimediaItem[] = songs
-      .map((song, index) => {
-        if (!songMepsLanguageCodes[index]) return song;
-        const langId = getJwLangId(songMepsLanguageCodes[index]);
-        return {
-          ...song,
-          ...(langId === undefined
-            ? {}
-            : { MepsLanguageAlternativeIndex: langId }),
-        };
-      })
-      .sort((a, b) => (a.MultimediaId || 0) - (b.MultimediaId || 0));
-
-    const allMedia = finalMedia;
-    if (mergedSongs[0]) {
-      mergedSongs[0].BeginParagraphOrdinal = 0;
-      const index0 = allMedia.findIndex(
-        (item) =>
-          item.Track === mergedSongs[0]?.Track &&
-          item.KeySymbol === mergedSongs[0]?.KeySymbol,
-      );
-
-      if (index0 === -1) {
-        allMedia.unshift(mergedSongs[0]);
-      } else {
-        allMedia[index0] = mergedSongs[0];
-      }
-
-      if (mergedSongs[1]) {
-        mergedSongs[1].BeginParagraphOrdinal = LAST_SONG_ORDINAL;
-        const index1 = allMedia.findIndex(
-          (item) =>
-            item.Track === mergedSongs[1]?.Track &&
-            item.KeySymbol === mergedSongs[1]?.KeySymbol,
-        );
-
-        if (index1 === -1) {
-          allMedia.push(mergedSongs[1]);
-        } else {
-          allMedia[index1] = mergedSongs[1];
-        }
-      }
-    }
+    const allMedia = mergeWeekendSongs(
+      finalMedia,
+      songs,
+      songMultimediaExtractItems,
+      currentStateStore,
+    );
 
     const mepsLanguagesByMediaItem = applyMepsLanguageOverrides(allMedia, {
       db,
@@ -4159,15 +4182,15 @@ const downloadBibleMissingMedia = async (
     (item) => item.track === media.ChapterNumber && !!item.markers,
   );
 
-  return downloadAdditionalRemoteVideo(
-    chapterMedia,
-    meetingDate || undefined,
-    media.ThumbnailFilePath,
-    false,
-    media.Label,
-    undefined,
-    getBibleVerseDuration(media, chapterMedia),
-  );
+  return downloadAdditionalRemoteVideo({
+    customDuration: getBibleVerseDuration(media, chapterMedia),
+    mediaItemLinks: chapterMedia,
+    meetingDate: meetingDate || undefined,
+    section: undefined,
+    song: false,
+    thumbnailUrl: media.ThumbnailFilePath,
+    title: media.Label,
+  });
 };
 
 const downloadStandardMissingMedia = async ({
@@ -4701,7 +4724,7 @@ const queueAdditionalMediaDownload = ({
   bestItemUrl: string;
   datedAdditionalMediaDir: string;
   meetingDate?: string;
-  progressCategory?: FileDownloader['progressCategory'];
+  progressCategory: FileDownloader['progressCategory'];
 }) => {
   downloadFileIfNeeded({
     dir: datedAdditionalMediaDir,
@@ -4713,17 +4736,32 @@ const queueAdditionalMediaDownload = ({
   });
 };
 
+export interface DownloadAdditionalRemoteVideoOptions {
+  customDuration?: { max: number; min: number };
+  mediaItemLinks: MediaItemsMediatorFile[] | MediaLink[];
+  meetingDate?: string;
+  onlyCreateItem?: boolean;
+  progressCategory?: FileDownloader['progressCategory'];
+  section?: MediaSectionIdentifier;
+  song?: false | number | string;
+  thumbnailUrl?: string;
+  title?: string;
+}
+
 export const downloadAdditionalRemoteVideo = async (
-  mediaItemLinks: MediaItemsMediatorFile[] | MediaLink[],
-  meetingDate?: string,
-  thumbnailUrl?: string,
-  song: false | number | string = false,
-  title?: string,
-  section?: MediaSectionIdentifier,
-  customDuration?: { max: number; min: number },
-  onlyCreateItem = false,
-  progressCategory?: FileDownloader['progressCategory'],
+  options: DownloadAdditionalRemoteVideoOptions,
 ): Promise<MediaItem | string | undefined> => {
+  const {
+    customDuration,
+    mediaItemLinks,
+    meetingDate,
+    onlyCreateItem = false,
+    progressCategory,
+    section,
+    song = false,
+    thumbnailUrl,
+    title,
+  } = options;
   try {
     const currentStateStore = useCurrentStateStore();
     const currentSettings = currentStateStore.currentSettings;

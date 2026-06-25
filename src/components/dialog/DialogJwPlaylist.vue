@@ -632,16 +632,16 @@ async function processVideoItem(
     item.ThumbnailFilePath,
   );
 
-  const mediaItem = await downloadAdditionalRemoteVideo(
-    videoLinks,
-    selectedDate.value,
-    thumbnailPath ? pathToFileURL(thumbnailPath) : undefined,
-    false,
-    itemLabel,
-    sectionToUse || props.section,
+  const mediaItem = await downloadAdditionalRemoteVideo({
     customDuration,
-    true, // onlyCreateItem
-  );
+    mediaItemLinks: videoLinks,
+    meetingDate: selectedDate.value,
+    onlyCreateItem: true,
+    section: sectionToUse || props.section,
+    song: false,
+    thumbnailUrl: thumbnailPath ? pathToFileURL(thumbnailPath) : undefined,
+    title: itemLabel,
+  });
 
   return { mediaItem, type: 'video' };
 }
