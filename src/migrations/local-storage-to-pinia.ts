@@ -15,6 +15,108 @@ import { useJwStore } from 'stores/jw';
 
 import type { MigrationFunction } from './types';
 
+const catchMigrationError = (error: unknown, name: string) => {
+  errorCatcher(error, {
+    contexts: {
+      fn: {
+        name,
+      },
+    },
+  });
+};
+
+const parseStorageItem = <T>(
+  key: string,
+  fallback: T,
+  name: string,
+  defaultJson = '{}',
+) => {
+  try {
+    const storedValue = String(QuasarStorage.getItem(key) || defaultJson);
+    return parseJsonSafe<T>(storedValue, fallback);
+  } catch (error) {
+    catchMigrationError(error, name);
+    return fallback;
+  }
+};
+
+const removeStorageItem = (key: string, name: string) => {
+  try {
+    QuasarStorage.removeItem(key);
+  } catch (error) {
+    catchMigrationError(error, name);
+  }
+};
+
+const normalizeLookupPeriodDates = (
+  lookupPeriod: Partial<Record<string, DateInfo[]>> | undefined,
+) => {
+  if (!lookupPeriod) return;
+
+  for (const [congId, dateInfo] of Object.entries(lookupPeriod)) {
+    if (!dateInfo || !Array.isArray(dateInfo)) {
+      errorCatcher(
+        new Error(
+          'Invalid dateInfo structure in localStorageToPiniaPersist for congregation',
+        ),
+        {
+          contexts: {
+            fn: {
+              congId,
+              name: 'localStorageToPiniaPersist lookupPeriod',
+            },
+          },
+        },
+      );
+      continue;
+    }
+
+    normalizeLookupPeriodDays(congId, dateInfo);
+  }
+};
+
+const normalizeLookupPeriodDays = (congId: string, dateInfo: DateInfo[]) => {
+  dateInfo.forEach((day, dayIndex) => {
+    if (!day || typeof day !== 'object') {
+      errorCatcher(
+        new Error('Invalid day object structure in localStorageToPiniaPersist'),
+        {
+          contexts: {
+            fn: {
+              congId,
+              dayIndex,
+              name: 'localStorageToPiniaPersist lookupPeriod',
+            },
+          },
+        },
+      );
+      return;
+    }
+
+    if (!day.date || day.date instanceof Date) return;
+
+    try {
+      errorCatcher(
+        new Error(
+          'Invalid date object structure in localStorageToPiniaPersist',
+        ),
+        {
+          contexts: {
+            fn: {
+              congId,
+              dayIndex,
+              name: 'localStorageToPiniaPersist lookupPeriod',
+            },
+          },
+        },
+      );
+      day.date = dateFromString(day.date);
+    } catch (error) {
+      catchMigrationError(error, 'localStorageToPiniaPersist lookupPeriod');
+    }
+  });
+};
+
 export const localStorageToPiniaPersist: MigrationFunction = async (
   appSettingsStore,
 ) => {
@@ -22,25 +124,9 @@ export const localStorageToPiniaPersist: MigrationFunction = async (
     const congregationStore = useCongregationSettingsStore();
     const jwStore = useJwStore();
 
-    let parsedCongregations: Record<string, SettingsValues>;
-    try {
-      const congregationsString = String(
-        QuasarStorage.getItem('congregations') || '{}',
-      );
-      parsedCongregations = parseJsonSafe<Record<string, SettingsValues>>(
-        congregationsString,
-        {},
-      );
-    } catch (error) {
-      errorCatcher(error, {
-        contexts: {
-          fn: {
-            name: 'localStorageToPiniaPersist congregations',
-          },
-        },
-      });
-      parsedCongregations = {};
-    }
+    const parsedCongregations = parseStorageItem<
+      Record<string, SettingsValues>
+    >('congregations', {}, 'localStorageToPiniaPersist congregations');
 
     try {
       congregationStore.$patch({
@@ -56,172 +142,38 @@ export const localStorageToPiniaPersist: MigrationFunction = async (
       });
     }
 
-    try {
-      QuasarStorage.removeItem('congregations');
-    } catch (error) {
-      errorCatcher(error, {
-        contexts: {
-          fn: {
-            name: 'localStorageToPiniaPersist congregations',
-          },
-        },
-      });
-    }
+    removeStorageItem(
+      'congregations',
+      'localStorageToPiniaPersist congregations',
+    );
 
-    let parsedLookupPeriod: Partial<Record<string, DateInfo[]>> | undefined;
-    try {
-      const lookupPeriodString = String(
-        QuasarStorage.getItem('lookupPeriod') || '{}',
-      );
-      parsedLookupPeriod = parseJsonSafe<Partial<Record<string, DateInfo[]>>>(
-        lookupPeriodString,
-        jwStore.lookupPeriod,
-      );
-    } catch (error) {
-      errorCatcher(error, {
-        contexts: {
-          fn: {
-            name: 'localStorageToPiniaPersist lookupPeriod',
-          },
-        },
-      });
-      parsedLookupPeriod = undefined;
-    }
+    const parsedLookupPeriod = parseStorageItem<
+      Partial<Record<string, DateInfo[]>> | undefined
+    >(
+      'lookupPeriod',
+      jwStore.lookupPeriod,
+      'localStorageToPiniaPersist lookupPeriod',
+    );
 
     // Ensure all dates in lookupPeriod are properly converted to Date objects
-    if (parsedLookupPeriod) {
-      for (const [congId, dateInfo] of Object.entries(parsedLookupPeriod)) {
-        if (!dateInfo || !Array.isArray(dateInfo)) {
-          errorCatcher(
-            new Error(
-              'Invalid dateInfo structure in localStorageToPiniaPersist for congregation',
-            ),
-            {
-              contexts: {
-                fn: {
-                  congId,
-                  name: 'localStorageToPiniaPersist lookupPeriod',
-                },
-              },
-            },
-          );
-          continue;
-        }
+    normalizeLookupPeriodDates(parsedLookupPeriod);
 
-        dateInfo.forEach((day, dayIndex) => {
-          // Validate day object structure
-          if (!day || typeof day !== 'object') {
-            errorCatcher(
-              new Error(
-                'Invalid day object structure in localStorageToPiniaPersist',
-              ),
-              {
-                contexts: {
-                  fn: {
-                    congId,
-                    dayIndex,
-                    name: 'localStorageToPiniaPersist lookupPeriod',
-                  },
-                },
-              },
-            );
-            return;
-          }
-
-          if (day.date && !(day.date instanceof Date)) {
-            try {
-              errorCatcher(
-                new Error(
-                  'Invalid date object structure in localStorageToPiniaPersist',
-                ),
-                {
-                  contexts: {
-                    fn: {
-                      congId,
-                      dayIndex,
-                      name: 'localStorageToPiniaPersist lookupPeriod',
-                    },
-                  },
-                },
-              );
-              day.date = dateFromString(day.date);
-            } catch (error) {
-              errorCatcher(error, {
-                contexts: {
-                  fn: {
-                    name: 'localStorageToPiniaPersist lookupPeriod',
-                  },
-                },
-              });
-              return;
-            }
-          }
-        });
-      }
-    }
-
-    let parsedJwLanguages: {
+    const parsedJwLanguages = parseStorageItem<{
       list: JwLanguage[];
       updated: Date | null | undefined;
-    };
-    let parsedJwSongs: Record<
-      string,
-      { list: MediaLink[]; updated: Date | null | undefined }
-    >;
-    let parsedYeartexts: Partial<Record<number, Record<string, string>>>;
+    }>(
+      'jwLanguages',
+      jwStore.jwLanguages,
+      'localStorageToPiniaPersist jwLanguages',
+    );
 
-    try {
-      const jwLanguagesString = String(
-        QuasarStorage.getItem('jwLanguages') || '{}',
-      );
-      parsedJwLanguages = parseJsonSafe<{
-        list: JwLanguage[];
-        updated: Date | null | undefined;
-      }>(jwLanguagesString, jwStore.jwLanguages);
-    } catch (error) {
-      errorCatcher(error, {
-        contexts: {
-          fn: {
-            name: 'localStorageToPiniaPersist jwLanguages',
-          },
-        },
-      });
-      parsedJwLanguages = jwStore.jwLanguages;
-    }
+    const parsedJwSongs = parseStorageItem<
+      Record<string, { list: MediaLink[]; updated: Date | null | undefined }>
+    >('jwSongs', jwStore.jwSongs, 'localStorageToPiniaPersist jwSongs');
 
-    try {
-      const jwSongsString = String(QuasarStorage.getItem('jwSongs') || '{}');
-      parsedJwSongs = parseJsonSafe<
-        Record<string, { list: MediaLink[]; updated: Date | null | undefined }>
-      >(jwSongsString, jwStore.jwSongs);
-    } catch (error) {
-      errorCatcher(error, {
-        contexts: {
-          fn: {
-            name: 'localStorageToPiniaPersist jwSongs',
-          },
-        },
-      });
-      parsedJwSongs = jwStore.jwSongs;
-    }
-
-    try {
-      const yeartextsString = String(
-        QuasarStorage.getItem('yeartexts') || '{}',
-      );
-      parsedYeartexts = parseJsonSafe<
-        Partial<Record<number, Record<string, string>>>
-      >(yeartextsString, jwStore.yeartexts);
-    } catch (error) {
-      errorCatcher(error, {
-        contexts: {
-          fn: {
-            name: 'localStorageToPiniaPersist yeartexts',
-          },
-        },
-      });
-      parsedYeartexts = jwStore.yeartexts;
-    }
+    const parsedYeartexts = parseStorageItem<
+      Partial<Record<number, Record<string, string>>>
+    >('yeartexts', jwStore.yeartexts, 'localStorageToPiniaPersist yeartexts');
 
     try {
       jwStore.$patch({
@@ -242,86 +194,31 @@ export const localStorageToPiniaPersist: MigrationFunction = async (
 
     // Remove migrated items from localStorage
     ['jwLanguages', 'jwSongs', 'lookupPeriod', 'yeartexts'].forEach((item) => {
-      try {
-        QuasarStorage.removeItem(item);
-      } catch (error) {
-        errorCatcher(error, {
-          contexts: {
-            fn: {
-              name: 'localStorageToPiniaPersist localStorage',
-            },
-          },
-        });
-      }
+      removeStorageItem(item, 'localStorageToPiniaPersist localStorage');
     });
 
-    let parsedMigrations: string[];
-    let parsedScreenPreferences: ScreenPreferences;
-
-    try {
-      const migrationsString = String(
-        QuasarStorage.getItem('migrations') || '[]',
-      );
-      parsedMigrations = parseJsonSafe(
-        migrationsString,
-        appSettingsStore.migrations,
-      );
-    } catch (error) {
-      errorCatcher(error, {
-        contexts: {
-          fn: {
-            name: 'localStorageToPiniaPersist migrations',
-          },
-        },
-      });
-      parsedMigrations = appSettingsStore.migrations;
-    }
+    const parsedMigrations = parseStorageItem<string[]>(
+      'migrations',
+      appSettingsStore.migrations,
+      'localStorageToPiniaPersist migrations',
+      '[]',
+    );
 
     appSettingsStore.migrations =
       appSettingsStore.migrations.concat(parsedMigrations);
-    try {
-      QuasarStorage.removeItem('migrations');
-    } catch (error) {
-      errorCatcher(error, {
-        contexts: {
-          fn: {
-            name: 'localStorageToPiniaPersist migrations',
-          },
-        },
-      });
-    }
+    removeStorageItem('migrations', 'localStorageToPiniaPersist migrations');
 
-    try {
-      const screenPreferencesString = String(
-        QuasarStorage.getItem('screenPreferences') || '{}',
-      );
-      parsedScreenPreferences = parseJsonSafe(
-        screenPreferencesString,
-        appSettingsStore.screenPreferences,
-      );
-    } catch (error) {
-      errorCatcher(error, {
-        contexts: {
-          fn: {
-            name: 'localStorageToPiniaPersist screenPreferences',
-          },
-        },
-      });
-      parsedScreenPreferences = appSettingsStore.screenPreferences;
-    }
+    const parsedScreenPreferences = parseStorageItem<ScreenPreferences>(
+      'screenPreferences',
+      appSettingsStore.screenPreferences,
+      'localStorageToPiniaPersist screenPreferences',
+    );
 
     appSettingsStore.screenPreferences = parsedScreenPreferences;
-    try {
-      QuasarStorage.removeItem('screenPreferences');
-    } catch (error) {
-      errorCatcher(error, {
-        contexts: {
-          fn: {
-            name: 'localStorageToPiniaPersist screenPreferences',
-          },
-        },
-      });
-    }
+    removeStorageItem(
+      'screenPreferences',
+      'localStorageToPiniaPersist screenPreferences',
+    );
     return true;
   } catch (error) {
     errorCatcher(error, {

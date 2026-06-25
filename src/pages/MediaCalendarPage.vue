@@ -175,6 +175,7 @@
 
 <script setup lang="ts">
 import type {
+  DateInfo,
   DocumentItem,
   MediaItem,
   MediaSectionIdentifier,
@@ -1125,39 +1126,40 @@ useEventListener<
 // Track pinyin setting across page navigations
 let lastPinyinState: boolean | undefined;
 
-// Handle pinyin state change: save additional songs, reset all media, re-fetch, re-add songs
-const handlePinyinChange = async (newPinyinActive: boolean) => {
-  const pinyinFolder = currentSettings.value?.pinyinSongFolder;
-  const days = lookupPeriod.value?.[currentCongregation.value] ?? [];
-  const selectedDay = selectedDateObject.value;
+interface SavedPinyinSong {
+  section: string;
+  songTrack: string;
+  streamUrl?: string;
+  thumbnailUrl?: string;
+  title?: string;
+}
 
-  // Step 1: Save additional song info from selected date only
-  const savedSongs: {
-    section: string;
-    songTrack: string;
-    streamUrl?: string;
-    thumbnailUrl?: string;
-    title?: string;
-  }[] = [];
+const collectAdditionalSongsForPinyin = (
+  selectedDay: DateInfo | undefined,
+): SavedPinyinSong[] => {
+  const savedSongs: SavedPinyinSong[] = [];
 
-  if (selectedDay) {
-    for (const s of selectedDay.mediaSections ?? []) {
-      for (const item of s.items ?? []) {
-        if (item.source === 'additional' && item.tag?.type === 'song') {
-          savedSongs.push({
-            section: s.config.uniqueId,
-            songTrack: String(item.tag.value),
-            streamUrl: item.streamUrl,
-            thumbnailUrl: item.thumbnailUrl,
-            title: item.title,
-          });
-        }
+  for (const section of selectedDay?.mediaSections ?? []) {
+    for (const item of section.items ?? []) {
+      if (item.source === 'additional' && item.tag?.type === 'song') {
+        savedSongs.push({
+          section: section.config.uniqueId,
+          songTrack: String(item.tag.value),
+          streamUrl: item.streamUrl,
+          thumbnailUrl: item.thumbnailUrl,
+          title: item.title,
+        });
       }
     }
   }
 
-  // Step 2: Reset dynamic items for all days;
-  // remove additional songs only from selected date
+  return savedSongs;
+};
+
+const resetDynamicMediaForPinyin = (
+  days: DateInfo[],
+  selectedDay: DateInfo | undefined,
+) => {
   days.forEach((day) => {
     day.status = null;
     const isSelected =
@@ -1170,57 +1172,69 @@ const handlePinyinChange = async (newPinyinActive: boolean) => {
       );
     });
   });
+};
 
-  // Step 3: Re-fetch dynamic media with new pinyin setting
-  await fetchMedia();
+const addSongToSectionMap = (
+  songsBySection: Record<string, MediaItem[]>,
+  section: string,
+  item: MediaItem | undefined,
+) => {
+  if (!item) return;
+  songsBySection[section] ??= [];
+  songsBySection[section].push(item);
+};
 
-  // Step 4: Re-add saved songs with current pinyin setting
+const createPinyinSongMediaItem = async (
+  song: SavedPinyinSong,
+  pinyinFolder: string,
+) => {
+  const trackNum = song.songTrack.padStart(3, '0');
+  const pinyinPath = join(pinyinFolder, `sjjm_s-Pi_CHS_${trackNum}_r720P.mp4`);
+  if (!(await pathExists(pinyinPath))) return undefined;
+
+  return createMediaItemFromPath(pinyinPath, undefined, {
+    song: song.songTrack,
+    title: song.title,
+    url: song.streamUrl,
+  });
+};
+
+const createCachedSongMediaItem = async (song: SavedPinyinSong) => {
+  if (!song.streamUrl) return undefined;
+
+  const cacheDir = await currentState.getDatedAdditionalMediaDirectory();
+  const normalPath = join(cacheDir, basename(song.streamUrl));
+  if (!(await pathExists(normalPath))) {
+    await downloadFileIfNeeded({
+      dir: cacheDir,
+      url: song.streamUrl,
+    });
+  }
+  if (!(await pathExists(normalPath))) return undefined;
+
+  return createMediaItemFromPath(normalPath, undefined, {
+    song: song.songTrack,
+    thumbnailUrl: song.thumbnailUrl,
+    title: song.title,
+    url: song.streamUrl,
+  });
+};
+
+const restoreAdditionalSongsForPinyin = async (
+  savedSongs: SavedPinyinSong[],
+  newPinyinActive: boolean,
+  pinyinFolder: string | undefined,
+) => {
   const songsBySection: Record<string, MediaItem[]> = {};
 
   for (const song of savedSongs) {
-    const trackNum = song.songTrack.padStart(3, '0');
-    const sec = song.section || 'imported-media';
+    const section = song.section || 'imported-media';
+    const item =
+      newPinyinActive && pinyinFolder
+        ? await createPinyinSongMediaItem(song, pinyinFolder)
+        : await createCachedSongMediaItem(song);
 
-    if (newPinyinActive && pinyinFolder) {
-      // Pinyin mode: use local pinyin file
-      const pinyinPath = join(
-        pinyinFolder,
-        `sjjm_s-Pi_CHS_${trackNum}_r720P.mp4`,
-      );
-      if (await pathExists(pinyinPath)) {
-        const item = await createMediaItemFromPath(pinyinPath, undefined, {
-          song: song.songTrack,
-          title: song.title,
-          url: song.streamUrl,
-        });
-        if (item) {
-          songsBySection[sec] ??= [];
-          songsBySection[sec].push(item);
-        }
-      }
-    } else if (song.streamUrl) {
-      // Normal mode: use cached file or download
-      const cacheDir = await currentState.getDatedAdditionalMediaDirectory();
-      const normalPath = join(cacheDir, basename(song.streamUrl));
-      if (!(await pathExists(normalPath))) {
-        await downloadFileIfNeeded({
-          dir: cacheDir,
-          url: song.streamUrl,
-        });
-      }
-      if (await pathExists(normalPath)) {
-        const item = await createMediaItemFromPath(normalPath, undefined, {
-          song: song.songTrack,
-          thumbnailUrl: song.thumbnailUrl,
-          title: song.title,
-          url: song.streamUrl,
-        });
-        if (item) {
-          songsBySection[sec] ??= [];
-          songsBySection[sec].push(item);
-        }
-      }
-    }
+    addSongToSectionMap(songsBySection, section, item);
   }
 
   for (const sec in songsBySection) {
@@ -1235,329 +1249,391 @@ const handlePinyinChange = async (newPinyinActive: boolean) => {
   }
 };
 
+// Handle pinyin state change: save additional songs, reset all media, re-fetch, re-add songs
+const handlePinyinChange = async (newPinyinActive: boolean) => {
+  const selectedDay = selectedDateObject.value ?? undefined;
+  const savedSongs = collectAdditionalSongsForPinyin(selectedDay);
+  resetDynamicMediaForPinyin(
+    lookupPeriod.value?.[currentCongregation.value] ?? [],
+    selectedDay,
+  );
+  await fetchMedia();
+  await restoreAdditionalSongsForPinyin(
+    savedSongs,
+    newPinyinActive,
+    currentSettings.value?.pinyinSongFolder ?? undefined,
+  );
+};
+
 // Selected media items state
 const selectedMediaItems = ref<string[]>([]); // Array of selected media item IDs
 const lastExtendDirection = ref<'down' | 'up' | null>(null); // Track the last extension direction
 
+const setDefaultSectionForImport = () => {
+  if (
+    !sectionToAddTo.value &&
+    selectedDateObject.value &&
+    isWeMeetingDay(selectedDateObject.value.date) &&
+    !isCoWeek(selectedDateObject.value.date)
+  ) {
+    sectionToAddTo.value = 'pt';
+  }
+};
+
+const notifySingleImportFile = (captionKey: string, filePath: string) => {
+  createTemporaryNotification({
+    caption: t(captionKey),
+    message: t('processing') + ' ' + basename(filePath),
+  });
+};
+
+const pickPreferredSingleImportFile = (files: (File | string)[]) => {
+  if (files.length <= 1) return files;
+
+  const jwPubFile = files.find((file) =>
+    isJwpub(getLocalPathFromFileObject(file)),
+  );
+  if (jwPubFile) {
+    const filePath = getLocalPathFromFileObject(jwPubFile);
+    notifySingleImportFile('jwpub-file-found', filePath);
+    return [jwPubFile];
+  }
+
+  const archiveFile = files.find((file) =>
+    isArchive(getLocalPathFromFileObject(file)),
+  );
+  if (archiveFile) {
+    const filePath = getLocalPathFromFileObject(archiveFile);
+    notifySingleImportFile('archive-file-found', filePath);
+    return [archiveFile];
+  }
+
+  return files;
+};
+
+const normalizeImportFilePath = async (
+  file: File | string,
+  filepath: string,
+) => {
+  if (isRemoteFile(file)) {
+    const baseFileName = basename(new URL(filepath).pathname);
+    return (
+      await downloadFileIfNeeded({
+        dir: await getTempPath(),
+        filename: await inferExtension(
+          baseFileName,
+          file instanceof File ? file.type : undefined,
+        ),
+        lowPriority: false,
+        url: filepath,
+      })
+    ).path;
+  }
+
+  if (!isImageString(filepath)) return filepath;
+
+  const [preamble, data] = filepath.split(';base64,');
+  const ext = preamble?.split('/')[1];
+  const tempFilename = uuid() + '.' + ext;
+  const tempFilepath = join(await getTempPath(), tempFilename);
+  await writeFile(tempFilepath, Buffer.from(data ?? '', 'base64'));
+  return tempFilepath;
+};
+
+const addImageFileToMediaItems = async (
+  filepath: string,
+  mediaItemsToAdd: MediaItem[],
+) => {
+  const destPath = await copyToDatedAdditionalMedia(
+    filepath,
+    sectionToAddTo.value,
+    false,
+  );
+  if (!destPath) return;
+
+  const item = await createMediaItemFromPath(destPath);
+  if (item) mediaItemsToAdd.push(item);
+};
+
+const normalizeFileNameParts = (items: (number | string)[]) =>
+  items.map((item) => {
+    if (Number.isFinite(item)) return item;
+    if (typeof item === 'string') return Number.parseInt(item, 10).toString();
+    return item;
+  });
+
+const findMatchingMissingMedia = (filepath: string) => {
+  const detectedPubMediaInfo = parse(filepath)
+    .name.split('_')
+    .filter((item) => !/^r\d+P$/.test(item));
+
+  return missingMedia.value.find((media) => {
+    return (
+      JSON.stringify(
+        normalizeFileNameParts(media.fileUrl?.split('_') || []),
+      ) === JSON.stringify(normalizeFileNameParts(detectedPubMediaInfo))
+    );
+  });
+};
+
+const addMediaFileToMediaItems = async (
+  filepath: string,
+  mediaItemsToAdd: MediaItem[],
+) => {
+  const matchingMissingItem = findMatchingMissingMedia(filepath);
+  const destPath = await copyToDatedAdditionalMedia(
+    filepath,
+    sectionToAddTo.value,
+    false,
+  );
+
+  if (matchingMissingItem) {
+    const metadata = await getMetadataFromMediaPath(destPath);
+    matchingMissingItem.fileUrl = pathToFileURL(destPath);
+    matchingMissingItem.duration = metadata.format.duration || 0;
+    matchingMissingItem.title = metadata.common.title || basename(destPath);
+    matchingMissingItem.isVideo = isVideo(filepath);
+    matchingMissingItem.isAudio = isAudio(filepath);
+    return;
+  }
+
+  if (!destPath) return;
+  const item = await createMediaItemFromPath(destPath);
+  if (item) mediaItemsToAdd.push(item);
+};
+
+const resetJwpubImportState = () => {
+  jwpubImportDb.value = '';
+  jwpubImportDocuments.value = [];
+  showFileImport.value = false;
+};
+
+const loadJwpubImportDocuments = (db: string, filepath: string) => {
+  const multimediaCount =
+    executeQuery<{ count: number }>(
+      db,
+      'SELECT COUNT(*) as count FROM Multimedia;',
+    )?.[0]?.count ?? 0;
+
+  if (multimediaCount === 0) {
+    createTemporaryNotification({
+      caption: basename(filepath),
+      icon: 'mmm-jwpub',
+      message: t('jwpubNoMultimedia'),
+      type: 'warning',
+    });
+    resetJwpubImportState();
+    return;
+  }
+
+  const mmTable = tableExists(db, 'DocumentMultimedia')
+    ? 'DocumentMultimedia'
+    : 'Multimedia';
+  jwpubImportDocuments.value = executeQuery<DocumentItem>(
+    db,
+    `SELECT DISTINCT Document.DocumentId, Title FROM Document JOIN ${mmTable} ON Document.DocumentId = ${mmTable}.DocumentId;`,
+  );
+};
+
+const processJwpubFile = async (filepath: string) => {
+  log('[addToFiles] Processing JWPUB file:', 'mediaCalendar', 'log', filepath);
+
+  const stagedJwpubPath = await stageUserJwpubForRead(filepath);
+  if (!stagedJwpubPath) return;
+
+  const publication = await identifyJwpub(stagedJwpubPath);
+  log(
+    '[addToFiles] Publication identified:',
+    'mediaCalendar',
+    'log',
+    publication,
+  );
+  if (!publication) {
+    errorCatcher('Could not identify JWPUB file', {
+      contexts: {
+        fn: {
+          args: {
+            filepath,
+          },
+          name: 'addToFiles (JWPUB identifyJwpub)',
+        },
+      },
+    });
+    return;
+  }
+
+  const publicationDirectory = await getPublicationDirectory(publication);
+  log(
+    '[addToFiles] Publication directory:',
+    'mediaCalendar',
+    'log',
+    publicationDirectory,
+  );
+  if (!publicationDirectory) {
+    errorCatcher('[addToFiles] Could not find publication directory', {
+      contexts: {
+        fn: {
+          args: {
+            filepath,
+            publication,
+          },
+          name: 'addToFiles (JWPUB getPublicationDirectory)',
+        },
+      },
+    });
+    return;
+  }
+
+  await updateLastUsedDate(
+    publicationDirectory,
+    selectedDateObject.value?.date || new Date(),
+  );
+
+  const unzipDir = await unzipJwpub(stagedJwpubPath, publicationDirectory);
+  const db = await findDb(unzipDir);
+  log('[addToFiles] Db found:', 'mediaCalendar', 'log', db ? 'yes' : 'no');
+  if (!db) {
+    errorCatcher('No db found after unzip', {
+      contexts: {
+        fn: {
+          args: {
+            filepath,
+            unzipDir,
+          },
+          name: 'addToFiles (JWPUB findDb)',
+        },
+      },
+    });
+    return;
+  }
+
+  jwpubImportDb.value = db;
+  loadJwpubImportDocuments(db, filepath);
+};
+
+const processJwPlaylistFile = async (filepath: string) => {
+  if (!selectedDateObject.value) return false;
+
+  log('JW Playlist file detected:', 'mediaCalendar', 'log', filepath);
+  log('Section to add to:', 'mediaCalendar', 'log', sectionToAddTo.value);
+
+  totalFiles.value = 0;
+  currentFile.value = 0;
+  const playlistStagingDir = join(
+    await getTempPath(),
+    `jwplaylist-import-${uuid()}`,
+  );
+  const stagedPlaylistPath = join(playlistStagingDir, basename(filepath));
+  await copy(filepath, stagedPlaylistPath);
+
+  globalThis.dispatchEvent(
+    new CustomEvent<{
+      jwPlaylistPath: string;
+      section: MediaSectionIdentifier | undefined;
+    }>('openJwPlaylistDialog', {
+      detail: {
+        jwPlaylistPath: stagedPlaylistPath,
+        section: sectionToAddTo.value,
+      },
+    }),
+  );
+  log('openJwPlaylistDialog event dispatched', 'mediaCalendar', 'log');
+  return true;
+};
+
+const processArchiveFile = async (filepath: string) => {
+  log('Archive file detected:', 'mediaCalendar', 'log', filepath);
+  const unzipDirectory = join(await getTempPath(), basename(filepath));
+  await remove(unzipDirectory);
+  await unzip(filepath, unzipDirectory);
+  const filesList = await readdir(unzipDirectory);
+  const filePaths = filesList.map((file) => join(unzipDirectory, file.name));
+  await addToFiles(filePaths);
+  await remove(unzipDirectory);
+};
+
+const notifyUnsupportedFile = (filepath: string) => {
+  createTemporaryNotification({
+    caption: filepath ? basename(filepath) : filepath,
+    icon: 'mmm-local-media',
+    message: t('filetypeNotSupported'),
+    type: 'negative',
+  });
+};
+
+const processImportFile = async (
+  file: File | string,
+  mediaItemsToAdd: MediaItem[],
+) => {
+  let filepath = getLocalPathFromFileObject(file);
+  if (!filepath) return;
+
+  filepath = await normalizeImportFilePath(file, filepath);
+  filepath = await convertImageIfNeeded(filepath);
+
+  if (isImage(filepath)) {
+    await addImageFileToMediaItems(filepath, mediaItemsToAdd);
+    return;
+  }
+
+  if (isVideo(filepath) || isAudio(filepath)) {
+    await addMediaFileToMediaItems(filepath, mediaItemsToAdd);
+    return;
+  }
+
+  if (isPdf(filepath)) {
+    return convertPdfToImages(filepath, await getTempPath());
+  }
+
+  if (isJwpub(filepath)) {
+    await processJwpubFile(filepath);
+    return;
+  }
+
+  if (isJwPlaylist(filepath) && (await processJwPlaylistFile(filepath))) {
+    return;
+  }
+
+  if (isArchive(filepath)) {
+    await processArchiveFile(filepath);
+    return;
+  }
+
+  notifyUnsupportedFile(filepath);
+};
+
+const finishImportedMediaItems = (mediaItemsToAdd: MediaItem[]) => {
+  if (!mediaItemsToAdd.length) return;
+
+  const targetSection = sectionToAddTo.value || 'imported-media';
+  jwStore.addToAdditionMediaMap(
+    mediaItemsToAdd,
+    targetSection,
+    currentCongregation.value,
+    selectedDateObject.value,
+    isCoWeek(selectedDateObject.value?.date),
+  );
+};
+
 const addToFiles = async (files: (File | string)[] | FileList) => {
   if (!files) return;
-  totalFiles.value = files.length;
-  if (!Array.isArray(files)) files = Array.from(files);
-
-  // Set a default section if...
-  if (
-    !sectionToAddTo.value && // ... a section is not already set AND
-    selectedDateObject.value && // ... a date is selected AND
-    isWeMeetingDay(selectedDateObject.value.date) && // ... this is a WE meeting AND
-    !isCoWeek(selectedDateObject.value.date) // ... and this is not a CO week
-  ) {
-    sectionToAddTo.value = 'pt'; // ... set section to pt (public talk)
-  }
-  if (files.length > 1) {
-    const jwPubFile = files.find((f) => isJwpub(getLocalPathFromFileObject(f)));
-    if (jwPubFile) {
-      files = [jwPubFile];
-      createTemporaryNotification({
-        caption: t('jwpub-file-found'),
-        message:
-          t('processing') +
-          ' ' +
-          basename(getLocalPathFromFileObject(files[0])),
-      });
-    }
-    const archiveFile = files.find((f) =>
-      isArchive(getLocalPathFromFileObject(f)),
-    );
-    if (archiveFile) {
-      files = [archiveFile];
-      createTemporaryNotification({
-        caption: t('archive-file-found'),
-        message:
-          t('processing') +
-          ' ' +
-          basename(getLocalPathFromFileObject(files[0])),
-      });
-    }
-  }
+  let selectedFiles = Array.isArray(files) ? files : Array.from(files);
+  totalFiles.value = selectedFiles.length;
+  setDefaultSectionForImport();
+  selectedFiles = pickPreferredSingleImportFile(selectedFiles);
   const mediaItemsToAdd: MediaItem[] = [];
 
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
+  for (let i = 0; i < selectedFiles.length; i++) {
+    const file = selectedFiles[i];
     if (!file) continue;
-    let filepath = getLocalPathFromFileObject(file);
     try {
-      if (!filepath) continue;
-      // Check if file is remote URL; if so, download it
-      if (isRemoteFile(file)) {
-        const baseFileName = basename(new URL(filepath).pathname);
-        filepath = (
-          await downloadFileIfNeeded({
-            dir: await getTempPath(),
-            filename: await inferExtension(
-              baseFileName,
-              file instanceof File ? file.type : undefined,
-            ),
-            // Additional media added by user should be a high priority download
-            lowPriority: false,
-            url: filepath,
-          })
-        ).path;
-      } else if (isImageString(filepath)) {
-        const [preamble, data] = filepath.split(';base64,');
-        const ext = preamble?.split('/')[1];
-        const tempFilename = uuid() + '.' + ext;
-        const tempFilepath = join(await getTempPath(), tempFilename);
-        await writeFile(tempFilepath, Buffer.from(data ?? '', 'base64'));
-        filepath = tempFilepath;
-      }
-      filepath = await convertImageIfNeeded(filepath);
-      if (isImage(filepath)) {
-        const destPath = await copyToDatedAdditionalMedia(
-          filepath,
-          sectionToAddTo.value,
-          false,
-        );
-        if (destPath) {
-          const item = await createMediaItemFromPath(destPath);
-          if (item) mediaItemsToAdd.push(item);
-        }
-      } else if (isVideo(filepath) || isAudio(filepath)) {
-        const detectedPubMediaInfo = parse(filepath)
-          .name.split('_')
-          .filter((item) => !/^r\d+P$/.test(item));
-        const normalizeArray = (arr: (number | string)[]) =>
-          arr.map((item) => {
-            if (Number.isFinite(item)) return item;
-            if (typeof item === 'string')
-              return Number.parseInt(item, 10).toString();
-            return item;
-          });
-        const matchingMissingItem = missingMedia.value.find((media) => {
-          return (
-            JSON.stringify(normalizeArray(media.fileUrl?.split('_') || [])) ===
-            JSON.stringify(normalizeArray(detectedPubMediaInfo))
-          );
-        });
-        const destPath = await copyToDatedAdditionalMedia(
-          filepath,
-          sectionToAddTo.value,
-          false,
-        );
-        if (matchingMissingItem) {
-          const metadata = await getMetadataFromMediaPath(destPath);
-          matchingMissingItem.fileUrl = pathToFileURL(destPath);
-          matchingMissingItem.duration = metadata.format.duration || 0;
-          matchingMissingItem.title =
-            metadata.common.title || basename(destPath);
-          matchingMissingItem.isVideo = isVideo(filepath);
-          matchingMissingItem.isAudio = isAudio(filepath);
-        } else if (destPath) {
-          const item = await createMediaItemFromPath(destPath);
-          if (item) mediaItemsToAdd.push(item);
-        }
-      } else if (isPdf(filepath)) {
-        const convertedImages = await convertPdfToImages(
-          filepath,
-          await getTempPath(),
-        );
-        files.splice(i + 1, 0, ...convertedImages);
-        totalFiles.value = files.length;
-      } else if (isJwpub(filepath)) {
-        log(
-          '🎯 [addToFiles] Processing JWPUB file:',
-          'mediaCalendar',
-          'log',
-          filepath,
-        );
-        try {
-          const stagedJwpubPath = await stageUserJwpubForRead(filepath);
-          if (!stagedJwpubPath) return;
-          const publication = await identifyJwpub(stagedJwpubPath);
-          log(
-            '🎯 [addToFiles] Publication identified:',
-            'mediaCalendar',
-            'log',
-            publication,
-          );
-
-          if (!publication) {
-            errorCatcher('Could not identify JWPUB file', {
-              contexts: {
-                fn: {
-                  args: {
-                    filepath,
-                  },
-                  name: 'addToFiles (JWPUB identifyJwpub)',
-                },
-              },
-            });
-            return;
-          }
-
-          const publicationDirectory =
-            await getPublicationDirectory(publication);
-          log(
-            '🎯 [addToFiles] Publication directory:',
-            'mediaCalendar',
-            'log',
-            publicationDirectory,
-          );
-          if (!publicationDirectory) {
-            errorCatcher(
-              '🎯 [addToFiles] Could not find publication directory',
-              {
-                contexts: {
-                  fn: {
-                    args: {
-                      filepath,
-                      publication,
-                    },
-                    name: 'addToFiles (JWPUB getPublicationDirectory)',
-                  },
-                },
-              },
-            );
-            return;
-          }
-
-          log(
-            '🎯 [addToFiles] Updating last used date for publication',
-            'mediaCalendar',
-            'log',
-          );
-          await updateLastUsedDate(
-            publicationDirectory,
-            selectedDateObject.value?.date || new Date(),
-          );
-
-          log(
-            '🎯 [addToFiles] Unzipping JWPUB to publication directory',
-            'mediaCalendar',
-            'log',
-          );
-          const unzipDir = await unzipJwpub(
-            stagedJwpubPath,
-            publicationDirectory,
-          );
-          log('🎯 [addToFiles] Unzip dir:', 'mediaCalendar', 'log', unzipDir);
-
-          const db = await findDb(unzipDir);
-          log(
-            '🎯 [addToFiles] Db found:',
-            'mediaCalendar',
-            'log',
-            db ? 'yes' : 'no',
-          );
-          if (!db) {
-            errorCatcher('No db found after unzip', {
-              contexts: {
-                fn: {
-                  args: {
-                    filepath,
-                    unzipDir,
-                  },
-                  name: 'addToFiles (JWPUB findDb)',
-                },
-              },
-            });
-            return;
-          }
-
-          jwpubImportDb.value = db;
-          const multimediaCount =
-            executeQuery<{ count: number }>(
-              db,
-              'SELECT COUNT(*) as count FROM Multimedia;',
-            )?.[0]?.count ?? 0;
-
-          if (multimediaCount === 0) {
-            createTemporaryNotification({
-              caption: basename(filepath),
-              icon: 'mmm-jwpub',
-              message: t('jwpubNoMultimedia'),
-              type: 'warning',
-            });
-            jwpubImportDb.value = '';
-            jwpubImportDocuments.value = [];
-            showFileImport.value = false;
-          } else {
-            const mmTable = tableExists(db, 'DocumentMultimedia')
-              ? 'DocumentMultimedia'
-              : 'Multimedia';
-            jwpubImportDocuments.value = executeQuery<DocumentItem>(
-              db,
-              `SELECT DISTINCT Document.DocumentId, Title FROM Document JOIN ${mmTable} ON Document.DocumentId = ${mmTable}.DocumentId;`,
-            );
-          }
-        } catch (error) {
-          errorCatcher(error, {
-            contexts: {
-              fn: {
-                args: { filepath },
-                name: 'addToFiles isJwpub',
-              },
-            },
-          });
-        }
-      } else if (isJwPlaylist(filepath) && selectedDateObject.value) {
-        // Show playlist selection dialog
-        log('🎯 JW Playlist file detected:', 'mediaCalendar', 'log', filepath);
-        log(
-          '🎯 Section to add to:',
-          'mediaCalendar',
-          'log',
-          sectionToAddTo.value,
-        );
-
-        // Reset progress tracking since we're switching to JW playlist dialog
-        totalFiles.value = 0;
-        currentFile.value = 0;
-        const playlistStagingDir = join(
-          await getTempPath(),
-          `jwplaylist-import-${uuid()}`,
-        );
-        const stagedPlaylistPath = join(playlistStagingDir, basename(filepath));
-        await copy(filepath, stagedPlaylistPath);
-
-        globalThis.dispatchEvent(
-          new CustomEvent<{
-            jwPlaylistPath: string;
-            section: MediaSectionIdentifier | undefined;
-          }>('openJwPlaylistDialog', {
-            detail: {
-              jwPlaylistPath: stagedPlaylistPath,
-              section: sectionToAddTo.value,
-            },
-          }),
-        );
-        log('🎯 openJwPlaylistDialog event dispatched', 'mediaCalendar', 'log');
-      } else if (isArchive(filepath)) {
-        log('🎯 Archive file detected:', 'mediaCalendar', 'log', filepath);
-        const unzipDirectory = join(await getTempPath(), basename(filepath));
-        log('🎯 Unzip directory:', 'mediaCalendar', 'log', unzipDirectory);
-        await remove(unzipDirectory);
-        log('🎯 Removed unzip directory', 'mediaCalendar', 'log');
-        await unzip(filepath, unzipDirectory);
-        log('🎯 Unzipped archive', 'mediaCalendar', 'log');
-        const filesList = await readdir(unzipDirectory);
-        log('🎯 Reading unzip directory', 'mediaCalendar', 'log', filesList);
-        const filePaths = filesList.map((file) =>
-          join(unzipDirectory, file.name),
-        );
-        log('🎯 Mapping files', 'mediaCalendar', 'log', filePaths);
-        await addToFiles(filePaths);
-        log('🎯 Added files', 'mediaCalendar', 'log');
-        await remove(unzipDirectory);
-        log('🎯 Removed unzip directory', 'mediaCalendar', 'log');
-      } else {
-        createTemporaryNotification({
-          caption: filepath ? basename(filepath) : filepath,
-          icon: 'mmm-local-media',
-          message: t('filetypeNotSupported'),
-          type: 'negative',
-        });
+      const convertedImages = await processImportFile(file, mediaItemsToAdd);
+      if (convertedImages?.length) {
+        selectedFiles.splice(i + 1, 0, ...convertedImages);
+        totalFiles.value = selectedFiles.length;
       }
     } catch (error) {
+      const filepath = getLocalPathFromFileObject(file);
       createTemporaryNotification({
         caption: filepath ? basename(filepath) : filepath,
         message: t('fileProcessError'),
@@ -1575,16 +1651,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
     currentFile.value++;
   }
 
-  if (mediaItemsToAdd.length) {
-    const targetSection = sectionToAddTo.value || 'imported-media';
-    jwStore.addToAdditionMediaMap(
-      mediaItemsToAdd,
-      targetSection,
-      currentCongregation.value,
-      selectedDateObject.value,
-      isCoWeek(selectedDateObject.value?.date),
-    );
-  }
+  finishImportedMediaItems(mediaItemsToAdd);
 
   if (showFileImport.value) {
     showFileImport.value = false;
@@ -2182,6 +2249,80 @@ const handleMediaItemClick = (payload: {
   anchorId.value = payload.mediaItemId; // new anchor
 };
 
+const getVisibleKeyboardMediaIds = () =>
+  keyboardShortcutMediaList.value
+    .filter((item) => !item.hidden)
+    .map((item) => item.uniqueId);
+
+const getSelectionCursorId = (direction: 'down' | 'up') =>
+  selectedMediaItems.value[
+    direction === 'up' ? 0 : selectedMediaItems.value.length - 1
+  ];
+
+const getWrappedSelectionIndex = (
+  currentIndex: number,
+  direction: 'down' | 'up',
+  allMediaItems: string[],
+) => {
+  const nextIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+  if (nextIndex < 0) return allMediaItems.length - 1;
+  if (nextIndex >= allMediaItems.length) return 0;
+  return nextIndex;
+};
+
+const getSelectionRange = (
+  allMediaItems: string[],
+  anchorIndex: number,
+  newIndex: number,
+) => {
+  const newStartIndex = Math.min(anchorIndex, newIndex);
+  const newEndIndex = Math.max(anchorIndex, newIndex);
+  return allMediaItems.slice(newStartIndex, newEndIndex + 1);
+};
+
+const shrinkSelection = (
+  allMediaItems: string[],
+  anchorIndex: number,
+  newIndex: number,
+  direction: 'down' | 'up',
+) => {
+  const selection = [...selectedMediaItems.value];
+  if (selection.length <= 1) {
+    selectedMediaItems.value = getSelectionRange(
+      allMediaItems,
+      anchorIndex,
+      newIndex,
+    );
+    return;
+  }
+
+  if (direction === 'up') {
+    selection.pop();
+  } else {
+    selection.shift();
+  }
+  selectedMediaItems.value = selection;
+};
+
+const applyExtendedSelection = (
+  allMediaItems: string[],
+  anchorIndex: number,
+  newIndex: number,
+  direction: 'down' | 'up',
+  shouldExpand: boolean,
+) => {
+  if (shouldExpand) {
+    selectedMediaItems.value = getSelectionRange(
+      allMediaItems,
+      anchorIndex,
+      newIndex,
+    );
+    return;
+  }
+
+  shrinkSelection(allMediaItems, anchorIndex, newIndex, direction);
+};
+
 // Function to extend selection using Shift+Up/Shift+Down
 function extendSelection(direction: 'down' | 'up') {
   log('extendSelection triggered', 'mediaCalendar', 'trace');
@@ -2201,9 +2342,7 @@ function extendSelection(direction: 'down' | 'up') {
   }
 
   // Get all media items in order
-  const allMediaItems = keyboardShortcutMediaList.value
-    .filter((item) => !item.hidden) // or keep hidden — but be consistent
-    .map((item) => item.uniqueId);
+  const allMediaItems = getVisibleKeyboardMediaIds();
 
   if (!allMediaItems.length) {
     log(
@@ -2215,10 +2354,7 @@ function extendSelection(direction: 'down' | 'up') {
   }
 
   // Find the index of the last selected item (the cursor position)
-  const lastSelectedId =
-    selectedMediaItems.value[
-      direction === 'up' ? 0 : selectedMediaItems.value.length - 1
-    ];
+  const lastSelectedId = getSelectionCursorId(direction);
   if (!lastSelectedId) {
     log(
       '🔄 [extendSelection] No last selected item, returning',
@@ -2247,19 +2383,21 @@ function extendSelection(direction: 'down' | 'up') {
   });
 
   // Calculate the new index based on direction
-  let newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+  const newIndex = getWrappedSelectionIndex(
+    currentIndex,
+    direction,
+    allMediaItems,
+  );
 
   // Handle boundary conditions (wrap around if needed)
-  if (newIndex < 0) {
-    newIndex = allMediaItems.length - 1; // Wrap to last item
+  if (direction === 'up' && newIndex > currentIndex) {
     log(
       '🔄 [extendSelection] Wrapping newIndex to last item:',
       'mediaCalendar',
       'log',
       newIndex,
     );
-  } else if (newIndex >= allMediaItems.length) {
-    newIndex = 0; // Wrap to first item
+  } else if (direction === 'down' && newIndex < currentIndex) {
     log(
       '🔄 [extendSelection] Wrapping newIndex to first item:',
       'mediaCalendar',
@@ -2340,47 +2478,13 @@ function extendSelection(direction: 'down' | 'up') {
     shouldExpand,
   });
 
-  if (shouldExpand) {
-    // Expanding the selection
-    log('🔄 [extendSelection] EXPANDING selection', 'mediaCalendar', 'log');
-    const newStartIndex = Math.min(anchorIndex, newIndex);
-    const newEndIndex = Math.max(anchorIndex, newIndex);
-    const newSelection = allMediaItems.slice(newStartIndex, newEndIndex + 1);
-    log(
-      '🔄 [extendSelection] New selection (expansion)',
-      'mediaCalendar',
-      'log',
-      {
-        newSelection,
-      },
-    );
-    selectedMediaItems.value = newSelection;
-  } else {
-    // SHRINKING selection
-    log('🔄 [extendSelection] SHRINKING selection', 'mediaCalendar', 'log');
-
-    const sel = selectedMediaItems.value;
-
-    // If we have more than 1 item selected, shrink by removing the end closer to direction reversal
-    if (sel.length > 1) {
-      if (direction === 'up') {
-        // Moving up — remove the FIRST item (bottom of list visually)
-        sel.pop();
-      } else {
-        // Moving down — remove the LAST item (top of list visually)
-        sel.shift();
-      }
-      selectedMediaItems.value = [...sel];
-    } else {
-      // If only one item left, switch to expansion like normal
-      const newStartIndex = Math.min(anchorIndex, newIndex);
-      const newEndIndex = Math.max(anchorIndex, newIndex);
-      selectedMediaItems.value = allMediaItems.slice(
-        newStartIndex,
-        newEndIndex + 1,
-      );
-    }
-  }
+  applyExtendedSelection(
+    allMediaItems,
+    anchorIndex,
+    newIndex,
+    direction,
+    shouldExpand,
+  );
 
   log('🔄 [extendSelection] Final state', 'mediaCalendar', 'log', {
     newHighlightedId: newMediaItemId,
@@ -2396,6 +2500,216 @@ const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
 >({
   name: 'get-current-media-window-variables',
 });
+
+type MediaPlayingPausedState = boolean | string | undefined;
+
+const shouldNotifyBackgroundMusicStillPlaying = (
+  newMediaPlaying: MediaPlayingPausedState,
+  newMediaPaused: MediaPlayingPausedState,
+  newMediaPlayingUrl: MediaPlayingPausedState,
+  oldMediaPlayingUrl: MediaPlayingPausedState,
+) => {
+  return (
+    newMediaPlaying &&
+    !newMediaPaused &&
+    typeof newMediaPlayingUrl === 'string' &&
+    newMediaPlayingUrl !== oldMediaPlayingUrl &&
+    (isAudio(newMediaPlayingUrl) || isVideo(newMediaPlayingUrl)) &&
+    backgroundMusicState.value?.playing &&
+    backgroundMusicState.value.state !== 'music.stopping'
+  );
+};
+
+const sendConfiguredCustomShortcut = (
+  shortcut: null | string | undefined,
+  logMessage: string,
+) => {
+  if (!shortcut) return;
+
+  log(logMessage, 'mediaCalendar', 'log', shortcut);
+  sendKeyboardShortcut(shortcut, 'CustomEvents');
+};
+
+const getVisibleMeetingSongs = () => {
+  return (selectedDateObject.value?.mediaSections ?? []).flatMap((section) =>
+    (section.items ?? []).filter(
+      (item) => item.tag?.type === 'song' && !item.hidden,
+    ),
+  );
+};
+
+const maybeSendLastSongShortcut = (oldMediaPlayingUrl: unknown) => {
+  const shortcut = currentSettings.value?.customEventLastSongShortcut;
+  if (!shortcut || !selectedDateObject.value || !selectedDayMeetingType.value) {
+    return;
+  }
+
+  log(
+    '🔄 [CustomEvents Verbose] Checking if the last played media item was the last song in the meeting',
+    'mediaCalendar',
+    'log',
+  );
+
+  const allSongs = getVisibleMeetingSongs();
+  const lastSong = allSongs[allSongs.length - 1];
+  const lastSongUrl = lastSong?.fileUrl || lastSong?.streamUrl;
+  const stoppedWasLastSong =
+    allSongs.length > 0 && lastSongUrl === oldMediaPlayingUrl;
+
+  log(
+    '🔄 [CustomEvents Verbose] Last song detection variables:',
+    'mediaCalendar',
+    'log',
+    {
+      lastSongUrl,
+      oldMediaPlayingUrl,
+      stoppedWasLastSong,
+    },
+  );
+
+  if (!stoppedWasLastSong) return;
+
+  sendConfiguredCustomShortcut(
+    shortcut,
+    '🔄 [CustomEvents] Sending last song played event shortcut:',
+  );
+};
+
+const handleCustomMediaEvents = (
+  newMediaPlaying: MediaPlayingPausedState,
+  newMediaPaused: MediaPlayingPausedState,
+  newMediaPlayingUrl: MediaPlayingPausedState,
+  oldMediaPlayingUrl: MediaPlayingPausedState,
+) => {
+  if (!currentSettings.value?.enableCustomEvents) return;
+
+  log('🔄 [CustomEvents] Custom events enabled', 'mediaCalendar', 'log');
+
+  if (newMediaPlaying && !oldMediaPlayingUrl) {
+    sendConfiguredCustomShortcut(
+      currentSettings.value?.customEventMediaPlayShortcut,
+      '🔄 [CustomEvents] Sending media play event shortcut:',
+    );
+    return;
+  }
+
+  if (newMediaPaused && newMediaPlayingUrl) {
+    sendConfiguredCustomShortcut(
+      currentSettings.value?.customEventMediaPauseShortcut,
+      '🔄 [CustomEvents] Sending media pause event shortcut:',
+    );
+    return;
+  }
+
+  if (!newMediaPlaying && oldMediaPlayingUrl) {
+    sendConfiguredCustomShortcut(
+      currentSettings.value?.customEventMediaStopShortcut,
+      '🔄 [CustomEvents] Sending media stop event shortcut:',
+    );
+    maybeSendLastSongShortcut(oldMediaPlayingUrl);
+  }
+};
+
+const getTargetObsScene = (
+  newMediaPlaying: MediaPlayingPausedState,
+  newMediaPaused: MediaPlayingPausedState,
+) => {
+  if (newMediaPaused) return 'camera';
+  if (newMediaPlaying) return 'media';
+  return 'camera';
+};
+
+const shouldPostponeObsImageScene = (
+  newMediaPlaying: MediaPlayingPausedState,
+  newMediaPaused: MediaPlayingPausedState,
+  newMediaPlayingUrl: MediaPlayingPausedState,
+) => {
+  return (
+    currentSettings.value?.obsPostponeImages &&
+    newMediaPlaying &&
+    !newMediaPaused &&
+    typeof newMediaPlayingUrl === 'string' &&
+    isImage(newMediaPlayingUrl)
+  );
+};
+
+const scheduleDelayedMediaScene = () => {
+  log(
+    '🔄 [MediaCalendarPage] Waiting for scene change delay',
+    'mediaCalendar',
+    'log',
+  );
+  mediaSceneTimeout = setTimeout(() => {
+    log(
+      '🔄 [MediaCalendarPage] Executing delayed media scene change',
+      'mediaCalendar',
+      'log',
+    );
+    sendObsSceneEvent('media');
+    mediaSceneTimeout = null;
+  }, changeDelay);
+};
+
+const switchToObsMediaScene = (wasPlayingBefore: boolean) => {
+  if (wasPlayingBefore) {
+    log(
+      '🔄 [MediaCalendarPage] Switching to media scene immediately',
+      'mediaCalendar',
+      'log',
+    );
+    sendObsSceneEvent('media');
+    return;
+  }
+
+  scheduleDelayedMediaScene();
+};
+
+const handleObsMediaSceneChange = (
+  newMediaPlaying: MediaPlayingPausedState,
+  newMediaPaused: MediaPlayingPausedState,
+  newMediaPlayingUrl: MediaPlayingPausedState,
+  oldMediaPlayingUrl: MediaPlayingPausedState,
+) => {
+  if (!currentSettings.value?.obsEnable) return;
+
+  if (
+    shouldPostponeObsImageScene(
+      newMediaPlaying,
+      newMediaPaused,
+      newMediaPlayingUrl,
+    )
+  ) {
+    log(
+      '🔄 [MediaCalendarPage] OBS image postponement active, skipping scene change',
+      'mediaCalendar',
+      'log',
+    );
+    return;
+  }
+
+  const targetScene = getTargetObsScene(newMediaPlaying, newMediaPaused);
+  const wasPlayingBefore = !!oldMediaPlayingUrl;
+
+  log('🔄 [MediaCalendarPage] OBS scene decision:', 'mediaCalendar', 'log', {
+    newMediaPaused,
+    newMediaPlaying,
+    oldMediaPlayingUrl,
+    targetScene,
+    wasPlayingBefore,
+  });
+
+  if (targetScene === 'media') {
+    switchToObsMediaScene(wasPlayingBefore);
+    return;
+  }
+
+  log(
+    '🔄 [MediaCalendarPage] Switching to camera scene',
+    'mediaCalendar',
+    'log',
+  );
+  sendObsSceneEvent('camera');
+};
 
 // Watch for banner column changes and manage visibility for transitions
 watch(
@@ -2694,213 +3008,34 @@ watch(
     );
 
     if (
-      newMediaPlaying &&
-      !newMediaPaused &&
-      typeof newMediaPlayingUrl === 'string' &&
-      newMediaPlayingUrl !== oldMediaPlayingUrl &&
-      (isAudio(newMediaPlayingUrl) || isVideo(newMediaPlayingUrl)) &&
-      backgroundMusicState.value?.playing &&
-      backgroundMusicState.value.state !== 'music.stopping'
+      shouldNotifyBackgroundMusicStillPlaying(
+        newMediaPlaying,
+        newMediaPaused,
+        newMediaPlayingUrl,
+        oldMediaPlayingUrl,
+      )
     ) {
       notifyBackgroundMusicStillPlaying();
     }
 
-    // Custom integration events
-    if (currentSettings.value?.enableCustomEvents) {
-      log('🔄 [CustomEvents] Custom events enabled', 'mediaCalendar', 'log');
-
-      if (newMediaPlaying && !oldMediaPlayingUrl) {
-        // Media started playing (from nothing to something)
-        if (currentSettings.value?.customEventMediaPlayShortcut) {
-          log(
-            '🔄 [CustomEvents] Sending media play event shortcut:',
-            'mediaCalendar',
-            'log',
-            currentSettings.value?.customEventMediaPlayShortcut,
-          );
-          sendKeyboardShortcut(
-            currentSettings.value?.customEventMediaPlayShortcut,
-            'CustomEvents',
-          );
-        }
-      } else if (newMediaPaused && newMediaPlayingUrl) {
-        // Media paused
-        if (currentSettings.value?.customEventMediaPauseShortcut) {
-          log(
-            '🔄 [CustomEvents] Sending media pause event shortcut:',
-            'mediaCalendar',
-            'log',
-            currentSettings.value?.customEventMediaPauseShortcut,
-          );
-          sendKeyboardShortcut(
-            currentSettings.value?.customEventMediaPauseShortcut,
-            'CustomEvents',
-          );
-        }
-      } else if (!newMediaPlaying && oldMediaPlayingUrl) {
-        // Media stopped (from something to nothing)
-        if (currentSettings.value?.customEventMediaStopShortcut) {
-          log(
-            '🔄 [CustomEvents] Sending media stop event shortcut:',
-            'mediaCalendar',
-            'log',
-            currentSettings.value?.customEventMediaStopShortcut,
-          );
-          sendKeyboardShortcut(
-            currentSettings.value?.customEventMediaStopShortcut,
-            'CustomEvents',
-          );
-        }
-
-        if (currentSettings.value?.customEventLastSongShortcut) {
-          // Since the shortcut is set, check if this was the last song in the meeting
-          if (selectedDateObject.value && selectedDayMeetingType.value) {
-            // This is a meeting day and something was playing before
-            log(
-              '🔄 [CustomEvents Verbose] Checking if the last played media item was the last song in the meeting',
-              'mediaCalendar',
-              'log',
-            );
-
-            // Check if the stopped media was a song and if it's the last one
-            const allSongs: MediaItem[] = [];
-            if (selectedDateObject.value.mediaSections) {
-              Object.values(selectedDateObject.value.mediaSections).forEach(
-                (section) => {
-                  if (section.items) {
-                    section.items.forEach((item) => {
-                      if (item.tag?.type === 'song' && !item.hidden) {
-                        allSongs.push(item);
-                      }
-                    });
-                  }
-                },
-              );
-            }
-
-            log(
-              '🔄 [CustomEvents Verbose] Total songs found in meeting:',
-              'mediaCalendar',
-              'log',
-              allSongs.length,
-            );
-
-            // Check if the stopped media was the last song
-            const lastSongUrl =
-              allSongs[allSongs.length - 1]?.fileUrl ||
-              allSongs[allSongs.length - 1]?.streamUrl;
-            const stoppedWasLastSong =
-              allSongs.length > 0 && lastSongUrl === oldMediaPlayingUrl;
-
-            log(
-              '🔄 [CustomEvents Verbose] Last song detection variables:',
-              'mediaCalendar',
-              'log',
-              {
-                lastSongUrl,
-                oldMediaPlayingUrl,
-                stoppedWasLastSong,
-              },
-            );
-
-            if (stoppedWasLastSong) {
-              log(
-                '🔄 [CustomEvents] Sending last song played event shortcut:',
-                'mediaCalendar',
-                'log',
-              );
-              sendKeyboardShortcut(
-                currentSettings.value?.customEventLastSongShortcut,
-                'CustomEvents',
-              );
-            }
-          }
-        }
-      }
-    }
+    handleCustomMediaEvents(
+      newMediaPlaying,
+      newMediaPaused,
+      newMediaPlayingUrl,
+      oldMediaPlayingUrl,
+    );
 
     if (mediaSceneTimeout) {
       clearTimeout(mediaSceneTimeout);
       mediaSceneTimeout = null;
     }
 
-    const getTargetScene = () => {
-      if (newMediaPaused) {
-        return 'camera';
-      } else if (newMediaPlaying) {
-        return 'media';
-      } else {
-        return 'camera';
-      }
-    };
-
-    if (currentSettings.value?.obsEnable) {
-      if (
-        currentSettings.value?.obsPostponeImages &&
-        newMediaPlaying &&
-        !newMediaPaused &&
-        typeof newMediaPlayingUrl === 'string' &&
-        isImage(newMediaPlayingUrl)
-      ) {
-        log(
-          '🔄 [MediaCalendarPage] OBS image postponement active, skipping scene change',
-          'mediaCalendar',
-          'log',
-        );
-        return;
-      }
-
-      const targetScene = getTargetScene();
-      const wasPlayingBefore = !!oldMediaPlayingUrl;
-
-      log(
-        '🔄 [MediaCalendarPage] OBS scene decision:',
-        'mediaCalendar',
-        'log',
-        {
-          newMediaPaused,
-          newMediaPlaying,
-          oldMediaPlayingUrl,
-          targetScene,
-          wasPlayingBefore,
-        },
-      );
-
-      if (targetScene === 'media') {
-        if (wasPlayingBefore) {
-          // If something was playing before, we change the scene immediately
-          log(
-            '🔄 [MediaCalendarPage] Switching to media scene immediately',
-            'mediaCalendar',
-            'log',
-          );
-          sendObsSceneEvent('media');
-        } else {
-          // If nothing was already playing, we wait a bit before changing the scene to prevent seeing the fade effect in OBS
-          log(
-            '🔄 [MediaCalendarPage] Waiting for scene change delay',
-            'mediaCalendar',
-            'log',
-          );
-          mediaSceneTimeout = setTimeout(() => {
-            log(
-              '🔄 [MediaCalendarPage] Executing delayed media scene change',
-              'mediaCalendar',
-              'log',
-            );
-            sendObsSceneEvent('media');
-            mediaSceneTimeout = null;
-          }, changeDelay);
-        }
-      } else {
-        log(
-          '🔄 [MediaCalendarPage] Switching to camera scene',
-          'mediaCalendar',
-          'log',
-        );
-        sendObsSceneEvent('camera');
-      }
-    }
+    handleObsMediaSceneChange(
+      newMediaPlaying,
+      newMediaPaused,
+      newMediaPlayingUrl,
+      oldMediaPlayingUrl,
+    );
   },
 );
 

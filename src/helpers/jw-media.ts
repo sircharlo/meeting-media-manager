@@ -4011,6 +4011,226 @@ export const getMwMedia = async (lookupDate: Date) => {
   }
 };
 
+const normalizeWatchtowerMagazineSymbol = (media: MultimediaItem) => {
+  if (
+    media.KeySymbol === 'w' &&
+    media.IssueTagNumber &&
+    Number.parseInt(media.IssueTagNumber.toString()) >= 20080101 &&
+    media.IssueTagNumber.toString().endsWith('01')
+  ) {
+    media.KeySymbol = 'wp';
+    log(
+      `Updated magazine symbol to wp: ${media.KeySymbol}`,
+      'mediaProcessing',
+      'info',
+    );
+  }
+};
+
+const getEffectiveMediaKeySymbol = (
+  media: MultimediaItem,
+  isSignLanguage: boolean,
+) => {
+  const currentStateStore = useCurrentStateStore();
+  if (media.KeySymbol === 'sjjm' && isSignLanguage) {
+    return currentStateStore.currentSongbook?.pub || media.KeySymbol;
+  }
+
+  return media.KeySymbol;
+};
+
+const mediaHasMepsLanguage = (
+  effectiveMediaKeySymbol: null | string | undefined,
+  mepsLanguageIndex: number | undefined,
+  isSignLanguage: boolean,
+  mepsLanguagesByMediaItem:
+    | undefined
+    | {
+        IssueTagNumber: number;
+        KeySymbol: null | string;
+        MepsLanguageIndex: number;
+        Track: null | number;
+      }[],
+) => {
+  if (mepsLanguageIndex === undefined) return false;
+  if (!isSignLanguage) return true;
+
+  return !!mepsLanguagesByMediaItem?.some(
+    (item) =>
+      item.KeySymbol === effectiveMediaKeySymbol &&
+      item.MepsLanguageIndex === mepsLanguageIndex,
+  );
+};
+
+const getMediaLanguageCandidates = (
+  media: MultimediaItem,
+  effectiveMediaKeySymbol: null | string | undefined,
+  isSignLanguage: boolean,
+  mepsLanguagesByMediaItem:
+    | undefined
+    | {
+        IssueTagNumber: number;
+        KeySymbol: null | string;
+        MepsLanguageIndex: number;
+        Track: null | number;
+      }[],
+) => {
+  const currentStateStore = useCurrentStateStore();
+  const mediaMepsLanguage =
+    mediaHasMepsLanguage(
+      effectiveMediaKeySymbol,
+      media.MepsLanguageIndex,
+      isSignLanguage,
+      mepsLanguagesByMediaItem,
+    ) && getJwLangCode(media.MepsLanguageIndex);
+  const mediaAltMepsLanguage =
+    media.MepsLanguageAlternativeIndex !== media.MepsLanguageIndex &&
+    mediaHasMepsLanguage(
+      effectiveMediaKeySymbol,
+      media.MepsLanguageAlternativeIndex,
+      isSignLanguage,
+      mepsLanguagesByMediaItem,
+    ) &&
+    getJwLangCode(media.MepsLanguageAlternativeIndex);
+
+  return [
+    currentStateStore.currentSettings?.lang,
+    mediaMepsLanguage,
+    mediaAltMepsLanguage,
+    currentStateStore.currentSettings?.langFallback,
+  ];
+};
+
+const isJwLangCandidate = (lang: unknown): lang is JwLangCode => {
+  return typeof lang === 'string' && !!lang;
+};
+
+const createMissingMediaPublicationFetcher = (
+  media: MultimediaItem,
+  langwritten: JwLangCode,
+): PublicationFetcher => ({
+  docid: media.MepsDocumentId,
+  fileformat: media.MimeType?.includes('audio') ? 'MP3' : 'MP4',
+  issue: media.IssueTagNumber,
+  langwritten,
+  pub: media.KeySymbol,
+  ...(typeof media.Track === 'number' &&
+    media.Track > 0 && { track: media.Track }),
+});
+
+const getBibleVerseDuration = (
+  media: MultimediaItem,
+  chapterMedia: MediaLink[],
+) => {
+  let min = 0;
+  let max = 0;
+  const verses = media.VerseNumbers?.sort((a, b) => a - b);
+  if (!verses) return { max, min };
+
+  min = timeToSeconds(
+    chapterMedia.map((item) =>
+      item.markers.markers.find((marker) => marker.verseNumber === verses[0]),
+    )?.[0]?.startTime || '0',
+  );
+
+  const endVerse = chapterMedia.map((item) =>
+    item.markers.markers.find((marker) => marker.verseNumber === verses.at(-1)),
+  )?.[0];
+
+  max = endVerse
+    ? timeToSeconds(endVerse.startTime) + timeToSeconds(endVerse.duration)
+    : 0;
+
+  return { max, min };
+};
+
+const downloadBibleMissingMedia = async (
+  media: MultimediaItem,
+  langwritten: JwLangCode,
+  meetingDate: null | string | undefined,
+) => {
+  const pubs = await getBibleMedia(false, langwritten);
+  const bookMedia: MediaLink[] =
+    Object.values(
+      pubs?.find((p) => p.booknum === media.BookNumber)?.files?.[langwritten] ??
+        {},
+    )[0] ?? [];
+  const chapterMedia = bookMedia.filter(
+    (item) => item.track === media.ChapterNumber && !!item.markers,
+  );
+
+  return downloadAdditionalRemoteVideo(
+    chapterMedia,
+    meetingDate || undefined,
+    media.ThumbnailFilePath,
+    false,
+    media.Label,
+    undefined,
+    getBibleVerseDuration(media, chapterMedia),
+  );
+};
+
+const downloadStandardMissingMedia = async ({
+  isDynamicMedia,
+  keepMediaLabels,
+  media,
+  meetingDate,
+  publicationFetcher,
+}: {
+  isDynamicMedia: boolean;
+  keepMediaLabels: boolean;
+  media: MultimediaItem;
+  meetingDate?: null | string;
+  publicationFetcher: PublicationFetcher;
+}) => {
+  const currentStateStore = useCurrentStateStore();
+
+  if (!media.FilePath || !(await pathExists(media.FilePath))) {
+    const { FilePath, Label, StreamDuration, StreamThumbnailUrl, StreamUrl } =
+      await downloadMissingMedia(
+        publicationFetcher,
+        meetingDate || currentStateStore.selectedDate,
+        isDynamicMedia,
+        true,
+      );
+    media.FilePath = FilePath ?? media.FilePath;
+    media.Label = keepMediaLabels
+      ? media.Label || Label || ''
+      : Label || media.Label;
+    media.StreamUrl = StreamUrl ?? media.StreamUrl;
+    media.Duration = StreamDuration ?? media.Duration;
+    media.ThumbnailUrl = StreamThumbnailUrl ?? media.ThumbnailUrl;
+  }
+
+  if (!media.FilePath && !media.StreamUrl) return false;
+
+  if (!media.Label) {
+    media.Label =
+      media.Label ||
+      media.Caption ||
+      (await getJwMediaInfo(publicationFetcher)).title ||
+      '';
+  }
+
+  return true;
+};
+
+const markMissingMediaDownloadErrors = (
+  publicationFetchers: PublicationFetcher[],
+  meetingDate: null | string | undefined,
+) => {
+  const currentStateStore = useCurrentStateStore();
+
+  for (const publicationFetcher of publicationFetchers) {
+    const downloadId = getPubId(publicationFetcher, true);
+    currentStateStore.downloadProgress[downloadId] = {
+      error: true,
+      filename: downloadId,
+      meetingDate,
+    };
+  }
+};
+
 export async function processMissingMediaInfo({
   allMedia,
   isDynamicMedia = false,
@@ -4033,22 +4253,7 @@ export async function processMissingMediaInfo({
     const currentStateStore = useCurrentStateStore();
     const errors = [];
 
-    // Special handling for wp
-    for (const m of allMedia) {
-      if (
-        m.KeySymbol === 'w' &&
-        m.IssueTagNumber &&
-        Number.parseInt(m.IssueTagNumber.toString()) >= 20080101 &&
-        m.IssueTagNumber.toString().endsWith('01')
-      ) {
-        m.KeySymbol = 'wp';
-        log(
-          `Updated magazine symbol to wp: ${m.KeySymbol}`,
-          'mediaProcessing',
-          'info',
-        );
-      }
-    }
+    allMedia.forEach(normalizeWatchtowerMagazineSymbol);
 
     const mediaChecksResults = await Promise.all(
       allMedia.map(checkMediaFileExistence),
@@ -4062,38 +4267,19 @@ export async function processMissingMediaInfo({
     for (const { media } of mediaToProcess) {
       const isSignLanguage =
         !!currentStateStore.currentLangObject?.isSignLanguage;
-      const effectiveMediaKeySymbol =
-        media.KeySymbol === 'sjjm' && isSignLanguage
-          ? currentStateStore.currentSongbook?.pub || media.KeySymbol
-          : media.KeySymbol;
-
-      const mediaHasMepsLanguage = (mepsLanguageIndex?: number) => {
-        if (mepsLanguageIndex === undefined) return false;
-        if (!isSignLanguage) return true;
-
-        return !!mepsLanguagesByMediaItem?.some(
-          (i) =>
-            i.KeySymbol === effectiveMediaKeySymbol &&
-            i.MepsLanguageIndex === mepsLanguageIndex,
-        );
-      };
-
-      const mediaMepsLanguage =
-        mediaHasMepsLanguage(media.MepsLanguageIndex) &&
-        getJwLangCode(media.MepsLanguageIndex);
-      const mediaAltMepsLanguage =
-        media.MepsLanguageAlternativeIndex !== media.MepsLanguageIndex &&
-        mediaHasMepsLanguage(media.MepsLanguageAlternativeIndex) &&
-        getJwLangCode(media.MepsLanguageAlternativeIndex);
-
-      const languageCandidates = [
-        currentStateStore.currentSettings?.lang,
-        mediaMepsLanguage,
-        mediaAltMepsLanguage,
-        currentStateStore.currentSettings?.langFallback,
-      ];
-
-      const langsWritten = [...new Set(languageCandidates)].filter(Boolean);
+      const effectiveMediaKeySymbol = getEffectiveMediaKeySymbol(
+        media,
+        isSignLanguage,
+      );
+      const languageCandidates = getMediaLanguageCandidates(
+        media,
+        effectiveMediaKeySymbol,
+        isSignLanguage,
+        mepsLanguagesByMediaItem,
+      );
+      const langsWritten = [...new Set(languageCandidates)].filter(
+        isJwLangCandidate,
+      );
 
       log(
         '[processMissingMediaInfo] Language resolution',
@@ -4115,19 +4301,13 @@ export async function processMissingMediaInfo({
       const triedPublicationFetchers: PublicationFetcher[] = [];
 
       for (const langwritten of langsWritten) {
-        if (!langwritten || !(media.KeySymbol || media.MepsDocumentId)) {
+        if (!langwritten || !(media.KeySymbol || media.MepsDocumentId))
           continue;
-        }
 
-        const publicationFetcher: PublicationFetcher = {
-          docid: media.MepsDocumentId,
-          fileformat: media.MimeType?.includes('audio') ? 'MP3' : 'MP4',
-          issue: media.IssueTagNumber,
+        const publicationFetcher = createMissingMediaPublicationFetcher(
+          media,
           langwritten,
-          pub: media.KeySymbol,
-          ...(typeof media.Track === 'number' &&
-            media.Track > 0 && { track: media.Track }),
-        };
+        );
         triedPublicationFetchers.push(publicationFetcher);
 
         log(
@@ -4138,104 +4318,31 @@ export async function processMissingMediaInfo({
         );
 
         if (media.KeySymbol === 'nwt') {
-          const pubs = await getBibleMedia(false, langwritten);
-          const bookMedia: MediaLink[] =
-            Object.values(
-              pubs?.find((p) => p.booknum === media.BookNumber)?.files?.[
-                langwritten
-              ] ?? {},
-            )[0] ?? [];
-          const chapterMedia = bookMedia.filter(
-            (m) => m.track === media.ChapterNumber && !!m.markers,
-          );
+          mediaWasDownloaded =
+            !!(await downloadBibleMissingMedia(
+              media,
+              langwritten,
+              meetingDate,
+            )) || mediaWasDownloaded;
+          continue;
+        }
 
-          let min = 0;
-          let max = 0;
-          const verses = media.VerseNumbers?.sort((a, b) => a - b);
-
-          if (verses) {
-            min = timeToSeconds(
-              chapterMedia.map((item) =>
-                item.markers.markers.find(
-                  (marker) => marker.verseNumber === verses[0],
-                ),
-              )?.[0]?.startTime || '0',
-            );
-
-            const endVerse = chapterMedia.map((item) =>
-              item.markers.markers.find(
-                (marker) => marker.verseNumber === verses.at(-1),
-              ),
-            )?.[0];
-
-            max = endVerse
-              ? timeToSeconds(endVerse.startTime) +
-                timeToSeconds(endVerse.duration)
-              : 0;
-          }
-
-          const uniqueId = await downloadAdditionalRemoteVideo(
-            chapterMedia,
-            meetingDate || undefined,
-            media.ThumbnailFilePath,
-            false,
-            media.Label,
-            undefined,
-            { max, min },
-          );
-
-          if (!uniqueId) {
-            continue;
-          }
-          mediaWasDownloaded = true;
-        } else {
-          try {
-            if (!media.FilePath || !(await pathExists(media.FilePath))) {
-              const {
-                FilePath,
-                Label,
-                StreamDuration,
-                StreamThumbnailUrl,
-                StreamUrl,
-              } = await downloadMissingMedia(
-                publicationFetcher,
-                meetingDate || currentStateStore.selectedDate,
-                isDynamicMedia,
-                true,
-              );
-              media.FilePath = FilePath ?? media.FilePath;
-              media.Label = keepMediaLabels
-                ? media.Label || Label || ''
-                : Label || media.Label;
-              media.StreamUrl = StreamUrl ?? media.StreamUrl;
-              media.Duration = StreamDuration ?? media.Duration;
-              media.ThumbnailUrl = StreamThumbnailUrl ?? media.ThumbnailUrl;
-            }
-            if (!media.FilePath && !media.StreamUrl) {
-              continue;
-            }
-            mediaWasDownloaded = true;
-            if (!media.Label) {
-              media.Label =
-                media.Label ||
-                media.Caption ||
-                (await getJwMediaInfo(publicationFetcher)).title ||
-                '';
-            }
-          } catch (e) {
-            errorCatcher(e);
-          }
+        try {
+          mediaWasDownloaded =
+            (await downloadStandardMissingMedia({
+              isDynamicMedia,
+              keepMediaLabels,
+              media,
+              meetingDate,
+              publicationFetcher,
+            })) || mediaWasDownloaded;
+        } catch (e) {
+          errorCatcher(e);
         }
       }
+
       if (!mediaWasDownloaded) {
-        for (const triedPublicationFetcher of triedPublicationFetchers) {
-          const downloadId = getPubId(triedPublicationFetcher, true);
-          currentStateStore.downloadProgress[downloadId] = {
-            error: true,
-            filename: downloadId,
-            meetingDate,
-          };
-        }
+        markMissingMediaDownloadErrors(triedPublicationFetchers, meetingDate);
         errors.push(...triedPublicationFetchers);
       }
     }
@@ -4330,12 +4437,131 @@ export const getJwMepsInfo = async () => {
   }
 };
 
+const findExistingPublicationFile = async (
+  publication: PublicationFetcher,
+  pubDir: string,
+) => {
+  if (!(await pathExists(pubDir))) return { FilePath: '' };
+
+  const dirItems = await readdir(pubDir);
+  const params = [
+    publication.issue,
+    publication.track,
+    publication.pub,
+    publication.docid,
+  ]
+    .filter((item) => item !== undefined && item !== null)
+    .map((item) => item.toString());
+
+  const matchingFile = dirItems.find((item) => {
+    if (!item.isFile || !item.name) return false;
+
+    const filePath = join(pubDir, item.name);
+    const fileExtension = extname(filePath).toLowerCase();
+    const nameMatches = params.every((param) =>
+      basename(item.name).includes(param),
+    );
+    const formatMatches =
+      !publication.fileformat ||
+      fileExtension.includes(publication.fileformat.toLowerCase());
+
+    return nameMatches && formatMatches;
+  });
+
+  return matchingFile
+    ? { FilePath: join(pubDir, matchingFile.name) }
+    : { FilePath: '' };
+};
+
+const getPublicationMediaItems = (
+  publication: PublicationFetcher,
+  responseObject: Publication,
+) => {
+  if (!publication.fileformat && publication.langwritten) {
+    publication.fileformat = Object.keys(
+      responseObject.files[publication.langwritten] || {},
+    )[0] as keyof PublicationFiles;
+  }
+
+  if (!publication.langwritten || !publication.fileformat) return [];
+
+  return (
+    responseObject.files[publication.langwritten]?.[publication.fileformat] ||
+    []
+  );
+};
+
+const shouldDownloadLowPriority = (
+  isMemorialMeeting: boolean,
+  meetingDate: string | undefined,
+) => {
+  if (isMemorialMeeting || !meetingDate) return false;
+  return getDateDiff(meetingDate, new Date(), 'days') > 1;
+};
+
+const downloadRelatedMediaAssets = async ({
+  bestItem,
+  downloadedFile,
+  isMemorialMeeting,
+  jwMediaInfo,
+  meetingDate,
+  pubDir,
+}: {
+  bestItem: MediaLink;
+  downloadedFile: DownloadedFile;
+  isMemorialMeeting: boolean;
+  jwMediaInfo: {
+    duration: number;
+    subtitles: string;
+    thumbnail: string;
+    title: string;
+  };
+  meetingDate?: string;
+  pubDir: string;
+}) => {
+  const currentStateStore = useCurrentStateStore();
+  const relatedUrls = [
+    currentStateStore.currentSettings?.enableSubtitles
+      ? jwMediaInfo.subtitles
+      : undefined,
+    jwMediaInfo.thumbnail,
+  ].filter((url): url is string => !!url);
+
+  for (const itemUrl of relatedUrls) {
+    const itemFilename = changeExt(
+      basename(bestItem.file.url),
+      extname(itemUrl),
+    );
+
+    if (
+      bestItem.file?.url &&
+      (downloadedFile?.new || !(await exists(join(pubDir, itemFilename))))
+    ) {
+      await downloadFileIfNeeded({
+        dir: pubDir,
+        filename: itemFilename,
+        lowPriority: shouldDownloadLowPriority(isMemorialMeeting, meetingDate),
+        meetingDate,
+        url: itemUrl,
+      });
+    }
+  }
+};
+
+interface MissingMediaDownloadResult {
+  FilePath: string;
+  Label?: string;
+  StreamDuration?: number;
+  StreamThumbnailUrl?: string;
+  StreamUrl?: string;
+}
+
 const downloadMissingMedia = async (
   publication: PublicationFetcher,
   meetingDate?: string,
   isDynamicMedia = false,
   suppressDownloadError = false,
-) => {
+): Promise<MissingMediaDownloadResult> => {
   try {
     const currentStateStore = useCurrentStateStore();
     const isMemorialMeeting =
@@ -4355,56 +4581,13 @@ const downloadMissingMedia = async (
       suppressDownloadError,
     );
     if (!responseObject?.files) {
-      if (!(await pathExists(pubDir))) return { FilePath: '' };
-      const files: string[] = [];
-      const dirItems = await readdir(pubDir);
-      const items = dirItems.filter((item) => item.isFile);
-      for (const item of items) {
-        const filePath = join(pubDir, item.name);
-        const fileExtension = extname(filePath).toLowerCase();
-
-        let match = true;
-        const params = [
-          publication.issue,
-          publication.track,
-          publication.pub,
-          publication.docid,
-        ]
-          .filter((i) => i !== undefined && i !== null)
-          .map((i) => i.toString());
-
-        for (const test of params) {
-          if (!item.name || !basename(item.name).includes(test)) {
-            match = false;
-            break;
-          }
-        }
-        if (
-          match &&
-          publication.fileformat &&
-          !fileExtension.includes(publication.fileformat.toLowerCase())
-        ) {
-          match = false;
-        }
-
-        if (match) {
-          files.push(filePath);
-        }
-      }
-      return files.length > 0 ? { FilePath: files[0] } : { FilePath: '' };
+      return findExistingPublicationFile(publication, pubDir);
     }
-    if (!responseObject) return { FilePath: '' };
-    if (!publication.fileformat && publication.langwritten) {
-      publication.fileformat = Object.keys(
-        responseObject.files[publication.langwritten] || {},
-      )[0] as keyof PublicationFiles;
-    }
-    const mediaItemLinks =
-      publication.langwritten && publication.fileformat
-        ? responseObject.files[publication.langwritten]?.[
-            publication.fileformat
-          ] || []
-        : [];
+
+    const mediaItemLinks = getPublicationMediaItems(
+      publication,
+      responseObject,
+    );
     const bestItem = findBestResolution(
       mediaItemLinks,
       useCurrentStateStore().currentSettings?.maxRes,
@@ -4431,36 +4614,14 @@ const downloadMissingMedia = async (
       size: bestItem.filesize,
       url: bestItem.file.url,
     });
-    for (const itemUrl of [
-      currentStateStore.currentSettings?.enableSubtitles
-        ? jwMediaInfo.subtitles
-        : undefined,
-      jwMediaInfo.thumbnail,
-    ].filter((u): u is string => !!u)) {
-      const itemFilename = changeExt(
-        basename(bestItem.file.url),
-        extname(itemUrl),
-      );
-
-      let lowPriority = false;
-
-      if (!isMemorialMeeting && meetingDate) {
-        lowPriority = getDateDiff(meetingDate, new Date(), 'days') > 1;
-      }
-
-      if (
-        bestItem.file?.url &&
-        (downloadedFile?.new || !(await exists(join(pubDir, itemFilename))))
-      ) {
-        await downloadFileIfNeeded({
-          dir: pubDir,
-          filename: itemFilename,
-          lowPriority,
-          meetingDate,
-          url: itemUrl,
-        });
-      }
-    }
+    await downloadRelatedMediaAssets({
+      bestItem,
+      downloadedFile,
+      isMemorialMeeting,
+      jwMediaInfo,
+      meetingDate,
+      pubDir,
+    });
     return {
       FilePath: join(pubDir, basename(bestItem.file.url)),
       Label: bestItem.title,
@@ -4472,6 +4633,84 @@ const downloadMissingMedia = async (
     errorCatcher(e);
     return { FilePath: '' };
   }
+};
+
+const getMediaLinkUrl = (item: MediaItemsMediatorFile | MediaLink) => {
+  if ('progressiveDownloadURL' in item) return item.progressiveDownloadURL;
+  return item.file.url;
+};
+
+const createPinyinAdditionalMedia = async ({
+  bestItemUrl,
+  currentSettings,
+  onlyCreateItem,
+  section,
+  song,
+  title,
+}: {
+  bestItemUrl: string | undefined;
+  currentSettings: ReturnType<typeof useCurrentStateStore>['currentSettings'];
+  onlyCreateItem: boolean;
+  section?: MediaSectionIdentifier;
+  song: false | number | string;
+  title?: string;
+}) => {
+  if (
+    !song ||
+    currentSettings?.lang !== 'CHS' ||
+    !currentSettings?.enablePinyinSongs ||
+    !useCurrentStateStore().pinyinActive ||
+    !currentSettings?.pinyinSongFolder
+  ) {
+    return undefined;
+  }
+
+  const trackNum = String(song).padStart(3, '0');
+  const pinyinPath = join(
+    currentSettings.pinyinSongFolder,
+    `sjjm_s-Pi_CHS_${trackNum}_r720P.mp4`,
+  );
+  if (!(await pathExists(pinyinPath))) return undefined;
+
+  const mediaOptions = {
+    song: song.toString(),
+    title,
+    url: bestItemUrl,
+  };
+
+  if (onlyCreateItem) {
+    return createMediaItemFromPath(pinyinPath, undefined, mediaOptions);
+  }
+
+  return addToAdditionMediaMapFromPath(
+    pinyinPath,
+    section,
+    undefined,
+    mediaOptions,
+  );
+};
+
+const queueAdditionalMediaDownload = ({
+  bestItem,
+  bestItemUrl,
+  datedAdditionalMediaDir,
+  meetingDate,
+  progressCategory,
+}: {
+  bestItem: MediaItemsMediatorFile | MediaLink;
+  bestItemUrl: string;
+  datedAdditionalMediaDir: string;
+  meetingDate?: string;
+  progressCategory?: FileDownloader['progressCategory'];
+}) => {
+  downloadFileIfNeeded({
+    dir: datedAdditionalMediaDir,
+    lowPriority: false,
+    meetingDate,
+    progressCategory,
+    size: bestItem.filesize,
+    url: bestItemUrl,
+  });
 };
 
 export const downloadAdditionalRemoteVideo = async (
@@ -4493,45 +4732,18 @@ export const downloadAdditionalRemoteVideo = async (
       mediaItemLinks,
       currentSettings?.maxRes,
     );
-
-    let bestItemUrl: string | undefined;
-
-    if (bestItem) {
-      if ('progressiveDownloadURL' in bestItem) {
-        bestItemUrl = bestItem.progressiveDownloadURL;
-      } else {
-        bestItemUrl = bestItem.file.url;
-      }
-    }
+    const bestItemUrl = bestItem ? getMediaLinkUrl(bestItem) : undefined;
 
     // Pinyin song substitution: use local pinyin file instead of downloading
-    if (
-      song &&
-      currentSettings?.lang === 'CHS' &&
-      currentSettings?.enablePinyinSongs &&
-      currentStateStore.pinyinActive &&
-      currentSettings?.pinyinSongFolder
-    ) {
-      const trackNum = String(song).padStart(3, '0');
-      const pinyinPath = join(
-        currentSettings.pinyinSongFolder,
-        `sjjm_s-Pi_CHS_${trackNum}_r720P.mp4`,
-      );
-      if (await pathExists(pinyinPath)) {
-        if (onlyCreateItem) {
-          return createMediaItemFromPath(pinyinPath, undefined, {
-            song: song.toString(),
-            title,
-            url: bestItemUrl,
-          });
-        }
-        return addToAdditionMediaMapFromPath(pinyinPath, section, undefined, {
-          song: song.toString(),
-          title,
-          url: bestItemUrl,
-        });
-      }
-    }
+    const pinyinMedia = await createPinyinAdditionalMedia({
+      bestItemUrl,
+      currentSettings,
+      onlyCreateItem,
+      section,
+      song,
+      title,
+    });
+    if (pinyinMedia) return pinyinMedia;
 
     if (!bestItem || !bestItemUrl) return undefined;
 
@@ -4560,14 +4772,12 @@ export const downloadAdditionalRemoteVideo = async (
         customDuration,
       );
 
-      downloadFileIfNeeded({
-        dir: datedAdditionalMediaDir,
-        // Additional media added by user should be a high priority download
-        lowPriority: false,
+      queueAdditionalMediaDownload({
+        bestItem,
+        bestItemUrl,
+        datedAdditionalMediaDir,
         meetingDate,
         progressCategory,
-        size: bestItem.filesize,
-        url: bestItemUrl,
       });
 
       return mediaItem;
@@ -4588,14 +4798,12 @@ export const downloadAdditionalRemoteVideo = async (
       customDuration,
     );
 
-    downloadFileIfNeeded({
-      dir: datedAdditionalMediaDir,
-      // Additional media added by user should be a high priority download
-      lowPriority: false,
+    queueAdditionalMediaDownload({
+      bestItem,
+      bestItemUrl,
+      datedAdditionalMediaDir,
       meetingDate,
       progressCategory,
-      size: bestItem.filesize,
-      url: bestItemUrl,
     });
 
     const key = bestItemUrl + datedAdditionalMediaDir;
@@ -4606,41 +4814,46 @@ export const downloadAdditionalRemoteVideo = async (
   }
 };
 
+const getPreferredImageTypes = (square: boolean): (keyof ImageTypeSizes)[] => {
+  if (square) return ['sqr', 'wss', 'lsr', 'pnr'];
+  return ['wss', 'lsr', 'sqr', 'pnr'];
+};
+
+const getImageSizesToConsider = (
+  minSize: keyof ImageSizes | undefined,
+): (keyof ImageSizes)[] => {
+  const sizeOrder: (keyof ImageSizes)[] = ['sm', 'md', 'lg', 'xl'];
+  const startIndex = minSize ? sizeOrder.indexOf(minSize) : 0;
+  return sizeOrder.slice(startIndex);
+};
+
+const getFirstPreferredImageSize = (
+  imageSizes: ImageSizes,
+  sizesToConsider: (keyof ImageSizes)[],
+) => {
+  const preferredSize = sizesToConsider.find((size) => size in imageSizes);
+  if (preferredSize) return imageSizes[preferredSize];
+
+  const fallbackSize = (Object.keys(imageSizes) as (keyof ImageSizes)[]).find(
+    (size) => !sizesToConsider.includes(size),
+  );
+  return fallbackSize ? imageSizes[fallbackSize] : undefined;
+};
+
 export function getBestImageUrl(
   images: ImageTypeSizes,
   minSize?: keyof ImageSizes,
   square = false,
 ) {
   try {
-    const preferredOrder: (keyof ImageTypeSizes)[] = [
-      'wss',
-      'lsr',
-      'sqr',
-      'pnr',
-    ];
-    if (square) {
-      const sqrIndex = preferredOrder.indexOf('sqr');
-      if (sqrIndex !== -1) {
-        preferredOrder.splice(sqrIndex, 1);
-        preferredOrder.unshift('sqr');
-      }
-    }
-    const sizeOrder: (keyof ImageSizes)[] = ['sm', 'md', 'lg', 'xl'];
-    const startIndex = minSize ? sizeOrder.indexOf(minSize) : 0;
-    const sizesToConsider = sizeOrder.slice(startIndex);
-    for (const key of preferredOrder) {
-      if (images[key] !== undefined) {
-        for (const size of sizesToConsider) {
-          if (size in images[key]) return images[key][size];
-        }
-        // If none of the preferred sizes are found, return any other size
-        const otherSizes = (
-          Object.keys(images[key]) as (keyof ImageSizes)[]
-        ).find((size) => !sizesToConsider.includes(size));
-        if (otherSizes) {
-          return images[key][otherSizes];
-        }
-      }
+    const sizesToConsider = getImageSizesToConsider(minSize);
+
+    for (const key of getPreferredImageTypes(square)) {
+      const imageSizes = images[key];
+      if (!imageSizes) continue;
+
+      const imageUrl = getFirstPreferredImageSize(imageSizes, sizesToConsider);
+      if (imageUrl) return imageUrl;
     }
   } catch (e) {
     errorCatcher(e);
