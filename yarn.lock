@@ -8410,7 +8410,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fantasticon@npm:^4.1.0":
+"fantasticon@npm:4.1.0":
   version: 4.1.0
   resolution: "fantasticon@npm:4.1.0"
   dependencies:
@@ -8428,6 +8428,27 @@ __metadata:
   bin:
     fantasticon: bin/fantasticon
   checksum: 10c0/a6c2487fb635b94bac0ca18d79658984fa5d13df065cf78c93f0c72c03ca3c3fd08cc11e2cdf82e654eae0b6edc88daf5292056f980f15af55758dd113cc3e27
+  languageName: node
+  linkType: hard
+
+"fantasticon@patch:fantasticon@npm%3A4.1.0#~/.yarn/patches/fantasticon-npm-4.1.0-3af043d076.patch":
+  version: 4.1.0
+  resolution: "fantasticon@patch:fantasticon@npm%3A4.1.0#~/.yarn/patches/fantasticon-npm-4.1.0-3af043d076.patch::version=4.1.0&hash=6c09d0"
+  dependencies:
+    case: "npm:^1.6.3"
+    cli-color: "npm:^2.0.4"
+    commander: "npm:^14.0.2"
+    glob: "npm:^13.0.0"
+    handlebars: "npm:^4.7.8"
+    slugify: "npm:^1.6.6"
+    svg2ttf: "npm:^6.0.3"
+    svgicons2svgfont: "npm:^15.0.1"
+    ttf2eot: "npm:^3.1.0"
+    ttf2woff: "npm:^3.0.0"
+    ttf2woff2: "npm:^8.0.0"
+  bin:
+    fantasticon: bin/fantasticon
+  checksum: 10c0/4ea02d060e7db499c132a76b61fbde8010fd5d29a25eb6046b570687c434f9ece776a04e8bca5afa3b0926db932623a6de36297efff45ac9ff14a0e2ba1971ab
   languageName: node
   linkType: hard
 
@@ -11102,7 +11123,7 @@ __metadata:
     eslint: "npm:^10.5.0"
     eslint-plugin-perfectionist: "npm:^5.9.1"
     eslint-plugin-vue: "npm:^10.9.2"
-    fantasticon: "npm:^4.1.0"
+    fantasticon: "patch:fantasticon@npm%3A4.1.0#~/.yarn/patches/fantasticon-npm-4.1.0-3af043d076.patch"
     fluent-ffmpeg: "npm:^2.1.3"
     fontkit: "npm:^2.0.4"
     fs-extra: "npm:^11.3.5"
