@@ -143,10 +143,10 @@ describe('getPublicationDirectoryContents', () => {
     ]);
 
     const all = await getPublicationDirectoryContents(pub);
-    expect(all.length).toBe(4);
+    expect(all).toHaveLength(4);
 
     const filtered = await getPublicationDirectoryContents(pub, 'jpg');
-    expect(filtered.length).toBe(2);
+    expect(filtered).toHaveLength(2);
 
     await remove(root);
   });

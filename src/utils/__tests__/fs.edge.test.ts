@@ -65,13 +65,13 @@ describe('fs edge cases', () => {
           pub: 'bt',
         });
         expect(all.some((p) => p.path.endsWith('subdir'))).toBe(false);
-        expect(all.length).toBe(3);
+        expect(all).toHaveLength(3);
 
         const jpgsUpper = await getPublicationDirectoryContents(
           { issue: '0', langwritten: 'E', pub: 'bt' },
           'JPG',
         );
-        expect(jpgsUpper.length).toBe(2);
+        expect(jpgsUpper).toHaveLength(2);
       } finally {
         await remove(pubDir);
       }

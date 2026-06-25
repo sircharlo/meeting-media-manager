@@ -74,7 +74,7 @@ describe('fetchAnnouncements', () => {
 
   it('should fetch the announcements', async () => {
     const result = await fetchAnnouncements();
-    expect(result.length).toBe(validAnnouncements.length);
+    expect(result).toHaveLength(validAnnouncements.length);
     expect(result).toEqual(expect.arrayContaining(validAnnouncements));
   });
 });
