@@ -1584,7 +1584,9 @@ const getMeetingDayRefreshCandidate = async (
     (section) => section.items || [],
   );
   const missingMediaCheckResults = await Promise.all(
-    allMedia.map(checkMissingDynamicMediaFile),
+    allMedia.map((media, mediaIndex) =>
+      checkMissingDynamicMediaFile(media, mediaIndex),
+    ),
   );
   const hasMissingMediaFile = missingMediaCheckResults.includes(true);
   if (hasMissingMediaFile) {
