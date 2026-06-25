@@ -20,14 +20,15 @@ async function fixIndexLinks(locale, totals) {
   const original = await readFile(indexPath, 'utf-8');
 
   const updated = original.replaceAll(
-    /^([ \t]*)link:[ \t]*(.*)$/gm,
+    /^([ \t]*)link:[ \t]*(\S[^\n]*?)[ \t]*$/gm,
     (m, indent, linkValue) => {
       const fixed = fixLink(locale, linkValue);
-      if (fixed !== linkValue.trim()) {
+      if (fixed !== linkValue) {
+        // no need to .trim() anymore
         totals.linkChanges += 1;
         if (verbose) {
           console.log(
-            `[link] ${getRelativePath(indexPath)}: ${linkValue.trim()} -> ${fixed}`,
+            `[link] ${getRelativePath(indexPath)}: ${linkValue} -> ${fixed}`,
           );
         }
         return `${indent}link: ${fixed}`;
@@ -306,7 +307,7 @@ function parseHeadings(content) {
 
     if (inFence) return;
 
-    const headingMatch = /^(#{1,6})[ \t]+.+$/.exec(line);
+    const headingMatch = /^(#{1,6})[ \t]+\S/.exec(line);
     if (!headingMatch) return;
 
     const anchors = getHeadingAnchors(line);

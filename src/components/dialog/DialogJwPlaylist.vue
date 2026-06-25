@@ -353,52 +353,53 @@ const loadPlaylistItems = async () => {
     // ---- Process Items ----
     const processedItems = await Promise.all(
       rawItems.map(async (item) => {
-        item.ThumbnailFilePath = item.ThumbnailFilePath
+        // Resolve thumbnail path
+        let thumbnailPath = item.ThumbnailFilePath
           ? join(outputPath, item.ThumbnailFilePath)
           : '';
 
         // Normalize thumbnail extension → JPG
-        if (
-          item.ThumbnailFilePath &&
-          (await pathExists(item.ThumbnailFilePath))
-        ) {
-          const ext = extname(item.ThumbnailFilePath).slice(1).toLowerCase();
+        if (thumbnailPath) {
+          const ext = extname(thumbnailPath).slice(1).toLowerCase();
           if (!ext || !JPG_EXTENSIONS.includes(ext)) {
+            const newPath = thumbnailPath + '.jpg';
             try {
-              const newPath = item.ThumbnailFilePath + '.jpg';
-              await rename(item.ThumbnailFilePath, newPath);
-              item.ThumbnailFilePath = newPath;
+              await rename(thumbnailPath, newPath);
+              thumbnailPath = newPath;
             } catch (err) {
+              // File may not exist or rename failed — keep original path
               errorCatcher(err);
             }
           }
         }
 
-        // Extract verse numbers
+        // Extract verse numbers (parameterized query to avoid SQL injection)
         const verseRows = executeQuery<{ Label: string }>(
           dbFile,
-          `SELECT Label FROM PlaylistItemMarker WHERE PlaylistItemId = ${item.PlaylistItemId}`,
+          `SELECT Label FROM PlaylistItemMarker WHERE PlaylistItemId = ?`,
+          [item.PlaylistItemId],
         );
 
-        const VerseNumbers = verseRows.map((v) => {
-          const match = v.Label.match(/\w+ (?:\d+:)?(\d+)/);
-          return match?.[1] ? Number.parseInt(match[1]) : 0;
+        const verseNumbers = verseRows.map((v) => {
+          // Matches e.g. "John 3:16" or "Genesis 1", captures the verse number
+          const match = v.Label.match(/^\S+ (?:\d+:)?(\d+)/);
+          return match?.[1] ? Number.parseInt(match[1], 10) : 0;
         });
 
         // Determine best preview path
         const candidatePath =
-          isImage(item.IndependentMediaFilePath) &&
-          item.IndependentMediaFilePath
+          item.IndependentMediaFilePath &&
+          isImage(item.IndependentMediaFilePath)
             ? join(outputPath, item.IndependentMediaFilePath)
-            : item.ThumbnailFilePath;
+            : thumbnailPath;
 
-        const ResolvedPreviewPath = await resolveFilePath(candidatePath);
+        const resolvedPreviewPath = await resolveFilePath(candidatePath);
 
         return {
           ...item,
-          ResolvedPreviewPath,
-          ThumbnailFilePath: item.ThumbnailFilePath || '',
-          VerseNumbers,
+          ResolvedPreviewPath: resolvedPreviewPath,
+          ThumbnailFilePath: thumbnailPath,
+          VerseNumbers: verseNumbers,
         };
       }),
     );

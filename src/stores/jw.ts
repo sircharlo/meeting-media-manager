@@ -266,24 +266,38 @@ function findIconUrlInCss(cssText: string, cssUrl: string): null | string {
   return null;
 }
 
-function getFontFileUrl(fontFaceBlock: string) {
-  const woff2Match = /url\(["']?(https?:\/\/[^"')]+\.woff2)["']?\)/.exec(
-    fontFaceBlock,
-  );
-  const woffMatch = /url\(["']?(https?:\/\/[^"')]+\.woff)["']?\)/.exec(
-    fontFaceBlock,
-  );
-  return woff2Match?.[1] || woffMatch?.[1];
+function getFontFileUrl(fontFaceBlock: string): string | undefined {
+  const urlRegex = /url\(["']?(https?:\/\/[^"')]+\.woff2?)["']?\)/g;
+  let woffUrl: string | undefined;
+
+  let match;
+  while ((match = urlRegex.exec(fontFaceBlock)) !== null) {
+    const url = match[1];
+    if (!url) continue;
+    if (url.endsWith('.woff2')) return url; // prefer woff2, return immediately
+    if (!woffUrl && url.endsWith('.woff')) woffUrl = url;
+  }
+
+  return woffUrl;
 }
 
-function getYeartextFontUrlsFromCss(cssText: string) {
+function getYeartextFontUrlsFromCss(
+  cssText: string,
+): Partial<Record<FontName, string>> {
   const fontUrls: Partial<Record<FontName, string>> = {};
-  const fontFaceRegex =
-    /@font-face\s*\{[^}]*font-family:\s*['"]?(\w+)['"]?[^}]*\}/g;
-  let match;
 
+  // Use[\s\S] instead of [^}]* to handle newlines, and[\s\S]*? to avoid
+  // crossing block boundaries while staying SonarQube-safe
+  const fontFaceRegex = /@font-face\s*\{([\s\S]*?)\}/g;
+  const fontFamilyRegex = /font-family:\s*['"]?([\w-]+)['"]?/;
+
+  let match;
   while ((match = fontFaceRegex.exec(cssText)) !== null) {
-    const cssName = match[1];
+    const blockContent = match[1];
+    if (!blockContent) continue;
+
+    const familyMatch = fontFamilyRegex.exec(blockContent);
+    const cssName = familyMatch?.[1];
     if (!cssName) continue;
 
     const fontName = wtFontCssNames[cssName];
