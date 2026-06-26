@@ -43,7 +43,7 @@
     "@quasar/extras": "^2.0.1",
     "@sentry/core": "^10.62.0",
     "@sentry/electron": "^7.14.0",
-    "@sentry/vue": "^10.61.0",
+    "@sentry/vue": "^10.62.0",
     "@vueuse/core": "^14.3.0",
     "@vueuse/router": "^14.3.0",
     "check-disk-space": "^3.4.0",
