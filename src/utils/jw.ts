@@ -72,8 +72,7 @@ export function findBestResolution(
 
     if (mediaLinks.some((m) => !m.subtitled)) {
       mediaLinks = mediaLinks.filter((m) => !m.subtitled) as
-        | MediaItemsMediatorFile[]
-        | MediaLink[];
+        MediaItemsMediatorFile[] | MediaLink[];
     }
 
     // Sort by resolution in ascending order

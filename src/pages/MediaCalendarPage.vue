@@ -440,11 +440,7 @@ interface BackgroundMusicAction {
 interface BackgroundMusicState {
   playing: boolean;
   state:
-    | ''
-    | 'music.error'
-    | 'music.playing'
-    | 'music.starting'
-    | 'music.stopping';
+    '' | 'music.error' | 'music.playing' | 'music.starting' | 'music.stopping';
 }
 
 const route = useRoute();

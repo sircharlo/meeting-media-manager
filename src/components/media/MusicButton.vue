@@ -49,11 +49,7 @@ defineProps<{
   musicButtonStatusText?: string;
   musicPlaying?: boolean;
   musicState?:
-    | ''
-    | 'music.error'
-    | 'music.playing'
-    | 'music.starting'
-    | 'music.stopping';
+    '' | 'music.error' | 'music.playing' | 'music.starting' | 'music.stopping';
 }>();
 
 const musicPopup = defineModel<boolean>({ required: true });

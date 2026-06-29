@@ -17,11 +17,9 @@ interface TestWindowState {
   };
 }
 
-const windowState = vi.hoisted(
-  (): TestWindowState => ({
-    mainWindow: null,
-  }),
-);
+const windowState = vi.hoisted((): TestWindowState => ({
+  mainWindow: null,
+}));
 
 vi.mock('node:fs/promises', () => ({
   mkdir: mocks.mkdir,

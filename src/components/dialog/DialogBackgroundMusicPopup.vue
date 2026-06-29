@@ -130,11 +130,7 @@ interface BackgroundMusicState {
 }
 
 type MusicState =
-  | ''
-  | 'music.error'
-  | 'music.playing'
-  | 'music.starting'
-  | 'music.stopping';
+  '' | 'music.error' | 'music.playing' | 'music.starting' | 'music.stopping';
 
 const currentState = useCurrentStateStore();
 const {

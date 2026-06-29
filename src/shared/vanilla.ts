@@ -146,8 +146,7 @@ type ConsoleMethod = (...args: unknown[]) => void;
 
 const getConsoleMethod = (type: LogType): ConsoleMethod => {
   const consoleObject = Reflect.get(globalThis, 'console') as
-    | Partial<Record<LogType, ConsoleMethod>>
-    | undefined;
+    Partial<Record<LogType, ConsoleMethod>> | undefined;
 
   return consoleObject?.[type] ?? consoleObject?.log ?? (() => undefined);
 };

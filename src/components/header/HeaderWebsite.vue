@@ -162,10 +162,8 @@ watchImmediate(
   () => {
     postWebStream(
       (mediaPlaying.value.action as
-        | ''
-        | 'inactive'
-        | 'mirroringWebsite'
-        | 'previewingWebsite') || 'inactive',
+        '' | 'inactive' | 'mirroringWebsite' | 'previewingWebsite') ||
+        'inactive',
     );
   },
 );

@@ -6,10 +6,7 @@ export interface TimerReportStatus {
 }
 
 export type TimerReportStatusKind =
-  | 'missing'
-  | 'on-time'
-  | 'overtime'
-  | 'undertime';
+  'missing' | 'on-time' | 'overtime' | 'undertime';
 
 export const getActualDurationSeconds = (
   timings?: MeetingPartTimings | null,

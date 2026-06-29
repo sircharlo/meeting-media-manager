@@ -36,11 +36,7 @@ export interface ConversionOptions {
 }
 
 export type DiscussionCategory =
-  | 'general'
-  | 'ideas'
-  | 'polls'
-  | 'q-a'
-  | 'translations';
+  'general' | 'ideas' | 'polls' | 'q-a' | 'translations';
 
 export type Display = Electron.Display & {
   mainWindow?: boolean;
@@ -352,19 +348,10 @@ export interface ExtractNestedZipEntryOptions {
 }
 
 export type FileDialogFilter =
-  | 'image'
-  | 'image+pdf'
-  | 'json'
-  | 'jwpub'
-  | 'jwpub+image'
-  | 'jwpub+image+pdf';
+  'image' | 'image+pdf' | 'json' | 'jwpub' | 'jwpub+image' | 'jwpub+image+pdf';
 
 export type MediaAccessStatus =
-  | 'denied'
-  | 'granted'
-  | 'not-determined'
-  | 'restricted'
-  | 'unknown';
+  'denied' | 'granted' | 'not-determined' | 'restricted' | 'unknown';
 
 export type NavigateWebsiteAction = 'back' | 'forward' | 'refresh';
 

@@ -45,11 +45,7 @@ export interface MediaPlayingState {
 }
 
 export type MediaPlayingStateAction =
-  | ''
-  | 'mirroringWebsite'
-  | 'pause'
-  | 'play'
-  | 'previewingWebsite';
+  '' | 'mirroringWebsite' | 'pause' | 'play' | 'previewingWebsite';
 
 export interface Songbook {
   fileformat: 'MP3' | 'MP4';

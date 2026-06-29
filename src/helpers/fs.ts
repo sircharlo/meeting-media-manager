@@ -20,11 +20,9 @@ import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
 let downloadFileIfNeededProvider:
-  | ((options: FileDownloader) => Promise<DownloadedFile>)
-  | null = null;
+  ((options: FileDownloader) => Promise<DownloadedFile>) | null = null;
 let getJwMediaInfoProvider:
-  | ((publication: PublicationFetcher) => Promise<JwMediaInfo>)
-  | null = null;
+  ((publication: PublicationFetcher) => Promise<JwMediaInfo>) | null = null;
 
 /**
  * Registers media providers to avoid circular dependencies.

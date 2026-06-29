@@ -668,14 +668,12 @@ const getExtractMultimedia = async (
     requestParams,
     settings?.includePrinted,
   )
-    .map(
-      (extractItem): MultimediaItem => ({
-        ...extractItem,
-        BeginParagraphOrdinal: extract.BeginParagraphOrdinal,
-        EndParagraphOrdinal: extract.EndParagraphOrdinal,
-        ExtractCaption: extract.ExtractCaption,
-      }),
-    )
+    .map((extractItem): MultimediaItem => ({
+      ...extractItem,
+      BeginParagraphOrdinal: extract.BeginParagraphOrdinal,
+      EndParagraphOrdinal: extract.EndParagraphOrdinal,
+      ExtractCaption: extract.ExtractCaption,
+    }))
     .filter(
       (extractItem) =>
         isSignLanguage ||
