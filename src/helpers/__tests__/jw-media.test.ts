@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const errorCatcherMock = vi.fn();
 const createTemporaryNotificationMock = vi.fn();
 const logMock = vi.fn();
+const updateLookupPeriodMock = vi.fn();
 const extractNestedZipEntryMock = vi.fn();
 const getZipEntriesMock = vi.fn();
 const unzipMock = vi.fn();
@@ -63,6 +64,7 @@ vi.mock('src/helpers/date', () => ({
   isMwMeetingDay: vi.fn(),
   isReplacedByMemorial: vi.fn(),
   isWeMeetingDay: vi.fn(),
+  updateLookupPeriod: updateLookupPeriodMock,
 }));
 
 vi.mock('src/helpers/error-catcher', () => ({
@@ -393,5 +395,21 @@ describe('jw-media helpers', () => {
     expect(ensureDirMock).toHaveBeenCalledTimes(2);
     expect(ensureDirMock).toHaveBeenCalledWith('/watch/2026-06-14');
     expect(ensureDirMock).toHaveBeenCalledWith('/watch/2026-06-21');
+  });
+
+  it('updates the lookup period before fetching meeting media', async () => {
+    currentStateStore.currentCongregation = 'abc';
+    currentStateStore.currentSettings = {};
+    jwStore.lookupPeriod = { abc: [] };
+    jwStore.urlVariables = {
+      base: 'jw.org',
+      mediator: 'https://b.jw-cdn.org/apis/mediator',
+    };
+
+    const { fetchMedia } = await import('../jw-media');
+
+    await fetchMedia();
+
+    expect(updateLookupPeriodMock).toHaveBeenCalledOnce();
   });
 });

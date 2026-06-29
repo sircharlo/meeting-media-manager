@@ -38,6 +38,7 @@ import {
   isMwMeetingDay,
   isReplacedByMemorial,
   isWeMeetingDay,
+  updateLookupPeriod,
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { exportAllDays } from 'src/helpers/export-media';
@@ -1748,6 +1749,8 @@ export const fetchMedia = async () => {
       );
       return;
     }
+
+    updateLookupPeriod();
 
     const dedupeDays = (days: DateInfo[]) => {
       try {
