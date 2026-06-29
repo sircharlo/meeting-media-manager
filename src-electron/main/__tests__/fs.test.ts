@@ -1,6 +1,7 @@
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mkdirMock = vi.fn();
+const readFileMock = vi.fn();
 const rmMock = vi.fn();
 const statMock = vi.fn();
 const writeFileMock = vi.fn();
@@ -22,6 +23,7 @@ vi.mock('chokidar', () => ({
 vi.mock('electron', () => ({
   app: {
     getPath: vi.fn(),
+    startAccessingSecurityScopedResource: vi.fn(() => vi.fn()),
   },
   dialog: {
     showOpenDialog: vi.fn(),
@@ -38,6 +40,7 @@ vi.mock('node:fs', () => ({
 
 vi.mock('node:fs/promises', () => ({
   mkdir: mkdirMock,
+  readFile: readFileMock,
   rm: rmMock,
   stat: statMock,
   writeFile: writeFileMock,
@@ -386,6 +389,106 @@ describe('getAppDataPath', () => {
     );
     expect(setTagMock).toHaveBeenCalledWith('path_mode', 'user');
     expect(setTagMock).toHaveBeenCalledWith('path_probe_result', 'failed');
+  });
+});
+
+describe('macOS folder permissions', () => {
+  beforeEach(async () => {
+    vi.resetModules();
+    vi.clearAllMocks();
+    const { app } = await import('electron');
+    const { mainWindowInfo } =
+      await import('src-electron/main/window/window-main');
+    vi.mocked(app.getPath).mockReturnValue('/user-data');
+    (
+      mainWindowInfo as typeof mainWindowInfo & {
+        mainWindow: Electron.BrowserWindow;
+      }
+    ).mainWindow = {} as Electron.BrowserWindow;
+    readFileMock.mockRejectedValue(new Error('no stored bookmarks'));
+    mkdirMock.mockResolvedValue(undefined);
+    writeFileMock.mockResolvedValue(undefined);
+    rmMock.mockResolvedValue(undefined);
+    setPlatform('darwin');
+  });
+
+  afterAll(() => {
+    if (originalPlatform) {
+      Object.defineProperty(process, 'platform', originalPlatform);
+    }
+  });
+
+  it('stores security scoped bookmarks returned by the folder dialog', async () => {
+    const { dialog } = await import('electron');
+    vi.mocked(dialog.showOpenDialog).mockResolvedValue({
+      bookmarks: ['bookmark-data'],
+      canceled: false,
+      filePaths: ['/Users/test/Documents'],
+    });
+
+    const { openFolderDialog } = await import('../fs');
+
+    await expect(openFolderDialog()).resolves.toMatchObject({
+      canceled: false,
+      filePaths: ['/Users/test/Documents'],
+    });
+
+    expect(dialog.showOpenDialog).toHaveBeenCalledWith(expect.any(Object), {
+      properties: ['openDirectory'],
+      securityScopedBookmarks: true,
+    });
+    expect(writeFileMock).toHaveBeenCalledWith(
+      '/user-data/security-scoped-bookmarks.json',
+      JSON.stringify({ '/Users/test/Documents': 'bookmark-data' }, null, 2),
+      'utf8',
+    );
+  });
+
+  it('opens a folder picker when a macOS permission probe fails', async () => {
+    const { dialog } = await import('electron');
+    const permissionError = new Error('operation not permitted');
+    (permissionError as Error & { code?: string }).code = 'EPERM';
+    mkdirMock
+      .mockRejectedValueOnce(permissionError)
+      .mockResolvedValue(undefined);
+    vi.mocked(dialog.showOpenDialog).mockResolvedValue({
+      canceled: false,
+      filePaths: ['/Users/test/Documents/El Arroyo'],
+    });
+
+    const { ensureMacosFolderPermission } = await import('../fs');
+
+    await expect(
+      ensureMacosFolderPermission('/Users/test/Documents/El Arroyo'),
+    ).resolves.toEqual({
+      path: '/Users/test/Documents/El Arroyo',
+      selectedPath: '/Users/test/Documents/El Arroyo',
+      status: 'granted',
+    });
+
+    expect(dialog.showOpenDialog).toHaveBeenCalledWith(expect.any(Object), {
+      defaultPath: '/Users/test/Documents/El Arroyo',
+      properties: ['openDirectory'],
+      securityScopedBookmarks: true,
+    });
+  });
+
+  it('can probe macOS folder permissions without opening the picker', async () => {
+    const { dialog } = await import('electron');
+    const permissionError = new Error('operation not permitted');
+    (permissionError as Error & { code?: string }).code = 'EPERM';
+    mkdirMock.mockRejectedValue(permissionError);
+
+    const { ensureMacosFolderPermission } = await import('../fs');
+
+    await expect(
+      ensureMacosFolderPermission('/Users/test/Documents/El Arroyo', false),
+    ).resolves.toEqual({
+      path: '/Users/test/Documents/El Arroyo',
+      status: 'failed',
+    });
+
+    expect(dialog.showOpenDialog).not.toHaveBeenCalled();
   });
 });
 

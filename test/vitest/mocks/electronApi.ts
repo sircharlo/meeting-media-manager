@@ -57,6 +57,10 @@ export const electronApi: ElectronApi = {
   downloadFile: function (url, saveDir, destFilename, lowPriority) {
     throw new Error('Function not implemented.');
   },
+  ensureMacosFolderPermission: async (folderPath) => ({
+    path: folderPath,
+    status: 'not-needed',
+  }),
   executeQuery: function (dbPath, query) {
     throw new Error('Function not implemented.');
   },

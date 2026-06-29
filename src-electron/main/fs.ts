@@ -56,6 +56,7 @@ const SHARED_PATH_HEALTH_FILENAME = 'shared-path-health.json';
 const PATH_PROBE_NETWORK_WARNING_THROTTLE_MS = 30000;
 const ZIP_OPEN_RETRY_COUNT = 3;
 const ZIP_OPEN_RETRY_DELAY_MS = 1000;
+const SECURITY_SCOPED_BOOKMARKS_FILENAME = 'security-scoped-bookmarks.json';
 const SHARED_PATH_HEALTH_FOLDERS = [
   'Additional Media',
   'Fonts',
@@ -125,8 +126,17 @@ let sharedPathBackoffLoaded = false;
 let lastPathProbeNetworkWarningAt = 0;
 const pathProbeNotificationPaths = new Set<string>();
 
-type PathMode = 'shared' | 'user';
+export interface MacosFolderPermissionResult {
+  errorCode?: string;
+  path: string;
+  selectedPath?: string;
+  status: MacosFolderPermissionStatus;
+}
 
+type MacosFolderPermissionStatus =
+  'cancelled' | 'failed' | 'granted' | 'not-needed';
+
+type PathMode = 'shared' | 'user';
 type PathProbeResult = 'backoff' | 'failed' | 'not-machine-wide' | 'passed';
 
 interface UnzipContext {
@@ -134,6 +144,7 @@ interface UnzipContext {
   opts?: UnzipOptions;
   output: string;
 }
+
 interface ZipfileState {
   extractedFiles: UnzipResult[];
   fileCount: number;
@@ -144,6 +155,31 @@ interface ZipGuardState {
   fileCount: number;
   totalUncompressedSize: number;
 }
+
+let securityScopedBookmarksLoaded = false;
+const securityScopedBookmarks = new Map<string, string>();
+const securityScopedAccessStops = new Map<string, () => void>();
+
+const stopSecurityScopedAccess = () => {
+  for (const [path, stopAccessing] of securityScopedAccessStops) {
+    try {
+      stopAccessing();
+    } catch (error) {
+      captureElectronError(error, {
+        contexts: {
+          fn: {
+            args: { path },
+            name: 'stopSecurityScopedAccess',
+          },
+        },
+      });
+    }
+  }
+
+  securityScopedAccessStops.clear();
+};
+
+app.once('will-quit', stopSecurityScopedAccess);
 
 const getZipEntryGuardError = (
   entry: Entry,
@@ -248,6 +284,114 @@ const isSharedPathBackoffActive = async () => {
 
 const markSharedPathUnhealthy = async () => {
   await persistSharedPathBackoff(Date.now() + SHARED_PATH_BACKOFF_MS);
+};
+
+const getSecurityScopedBookmarksFile = () =>
+  join(app.getPath('userData'), SECURITY_SCOPED_BOOKMARKS_FILENAME);
+
+const normalizeBookmarkPath = (filePath: string) => toUnix(resolve(filePath));
+
+const isSameOrChildPath = (parentPath: string, childPath: string) =>
+  childPath === parentPath || childPath.startsWith(`${parentPath}/`);
+
+const loadSecurityScopedBookmarks = async () => {
+  if (securityScopedBookmarksLoaded) return;
+  securityScopedBookmarksLoaded = true;
+
+  try {
+    const raw = await readFile(getSecurityScopedBookmarksFile(), 'utf8');
+    const parsed = JSON.parse(raw) as unknown;
+    if (!parsed || typeof parsed !== 'object') return;
+
+    for (const [path, bookmark] of Object.entries(parsed)) {
+      if (typeof bookmark === 'string') {
+        securityScopedBookmarks.set(normalizeBookmarkPath(path), bookmark);
+      }
+    }
+  } catch {
+    securityScopedBookmarks.clear();
+  }
+};
+
+const persistSecurityScopedBookmarks = async () => {
+  try {
+    await writeFile(
+      getSecurityScopedBookmarksFile(),
+      JSON.stringify(Object.fromEntries(securityScopedBookmarks), null, 2),
+      'utf8',
+    );
+  } catch (error) {
+    captureElectronError(error, {
+      contexts: {
+        fn: {
+          name: 'persistSecurityScopedBookmarks',
+        },
+      },
+    });
+  }
+};
+
+const storeSecurityScopedBookmarks = async (
+  filePaths: string[],
+  bookmarks?: string[],
+) => {
+  if (process.platform !== 'darwin' || !bookmarks?.length) return;
+
+  await loadSecurityScopedBookmarks();
+
+  filePaths.forEach((filePath, index) => {
+    const bookmark = bookmarks[index];
+    if (!bookmark) return;
+    securityScopedBookmarks.set(normalizeBookmarkPath(filePath), bookmark);
+  });
+
+  await persistSecurityScopedBookmarks();
+};
+
+const getNearestSecurityScopedBookmark = async (filePath: string) => {
+  await loadSecurityScopedBookmarks();
+
+  const normalizedPath = normalizeBookmarkPath(filePath);
+  let nearest: null | { bookmark: string; path: string } = null;
+
+  for (const [bookmarkPath, bookmark] of securityScopedBookmarks) {
+    if (!isSameOrChildPath(bookmarkPath, normalizedPath)) continue;
+    if (nearest && bookmarkPath.length <= nearest.path.length) continue;
+    nearest = { bookmark, path: bookmarkPath };
+  }
+
+  return nearest;
+};
+
+const startSecurityScopedAccess = async (filePath: string) => {
+  if (process.platform !== 'darwin') return false;
+
+  const nearest = await getNearestSecurityScopedBookmark(filePath);
+  if (!nearest) return false;
+  if (securityScopedAccessStops.has(nearest.path)) return true;
+
+  try {
+    securityScopedAccessStops.set(
+      nearest.path,
+      app.startAccessingSecurityScopedResource(nearest.bookmark) as () => void,
+    );
+    addElectronBreadcrumb({
+      category: 'filesystem',
+      data: { path: filePath, scopedPath: nearest.path },
+      message: 'Started security scoped folder access',
+    });
+    return true;
+  } catch (error) {
+    captureElectronError(error, {
+      contexts: {
+        fn: {
+          args: { filePath, scopedPath: nearest.path },
+          name: 'startSecurityScopedAccess',
+        },
+      },
+    });
+    return false;
+  }
 };
 
 const probeSharedSubfolders = async (sharedPath: string) => {
@@ -469,6 +613,56 @@ const notifyPathProbeNetworkWarning = () => {
   sendToWindow(mainWindowInfo.mainWindow, 'pathProbeNetworkWarning');
 };
 
+export async function ensureMacosFolderPermission(
+  folderPath: string,
+  prompt = true,
+): Promise<MacosFolderPermissionResult> {
+  if (process.platform !== 'darwin') {
+    return { path: folderPath, status: 'not-needed' };
+  }
+
+  await startSecurityScopedAccess(folderPath);
+
+  if (await isUsablePath(folderPath)) {
+    return { path: folderPath, status: 'granted' };
+  }
+
+  addElectronBreadcrumb({
+    category: 'filesystem',
+    data: { folderPath },
+    level: 'warning',
+    message: 'Folder permission probe failed before reauthorization',
+  });
+
+  if (!prompt) {
+    return { path: folderPath, status: 'failed' };
+  }
+
+  if (!mainWindowInfo.mainWindow) {
+    return { path: folderPath, status: 'failed' };
+  }
+
+  const result = await dialog.showOpenDialog(mainWindowInfo.mainWindow, {
+    defaultPath: folderPath,
+    properties: ['openDirectory'],
+    securityScopedBookmarks: true,
+  });
+
+  if (result.canceled || !result.filePaths[0]) {
+    return { path: folderPath, status: 'cancelled' };
+  }
+
+  const selectedPath = result.filePaths[0];
+  await storeSecurityScopedBookmarks(result.filePaths, result.bookmarks);
+  await startSecurityScopedAccess(selectedPath);
+
+  if (await isUsablePath(selectedPath)) {
+    return { path: folderPath, selectedPath, status: 'granted' };
+  }
+
+  return { path: folderPath, selectedPath, status: 'failed' };
+}
+
 export function isUsablePath(basePath?: string): Promise<boolean> {
   if (!basePath) return Promise.resolve(false);
 
@@ -577,17 +771,31 @@ export async function openFileDialog(
     filters.push({ extensions: ['json'], name: 'JSON' });
   }
 
-  return dialog.showOpenDialog(mainWindowInfo.mainWindow, {
+  const result = await dialog.showOpenDialog(mainWindowInfo.mainWindow, {
     filters,
     properties: single ? ['openFile'] : ['openFile', 'multiSelections'],
+    securityScopedBookmarks: process.platform === 'darwin',
   });
+
+  if (!result.canceled) {
+    await storeSecurityScopedBookmarks(result.filePaths, result.bookmarks);
+  }
+
+  return result;
 }
 
 export async function openFolderDialog() {
   if (!mainWindowInfo.mainWindow) return;
-  return dialog.showOpenDialog(mainWindowInfo.mainWindow, {
+  const result = await dialog.showOpenDialog(mainWindowInfo.mainWindow, {
     properties: ['openDirectory'],
+    securityScopedBookmarks: process.platform === 'darwin',
   });
+
+  if (!result.canceled) {
+    await storeSecurityScopedBookmarks(result.filePaths, result.bookmarks);
+  }
+
+  return result;
 }
 
 export async function saveFileDialog(

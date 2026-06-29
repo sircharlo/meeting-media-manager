@@ -35,6 +35,7 @@ import {
 } from 'src-electron/main/downloads';
 import { createVideoFromNonVideo } from 'src-electron/main/ffmpeg';
 import {
+  ensureMacosFolderPermission,
   extractNestedZipEntry,
   getAppDataPath,
   getZipEntries,
@@ -376,6 +377,12 @@ handleIpcInvoke(
 );
 
 handleIpcInvoke('openFolderDialog', async () => openFolderDialog());
+
+handleIpcInvoke(
+  'ensureMacosFolderPermission',
+  async (_e, folderPath: string, prompt?: boolean) =>
+    ensureMacosFolderPermission(folderPath, prompt),
+);
 
 handleIpcInvoke(
   'saveFileDialog',

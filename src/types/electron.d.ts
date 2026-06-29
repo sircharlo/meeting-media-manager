@@ -72,6 +72,10 @@ export interface ElectronApi {
     destFilename?: string,
     lowPriority?: boolean,
   ) => Promise<null | string>;
+  ensureMacosFolderPermission: (
+    folderPath: string,
+    prompt?: boolean,
+  ) => Promise<MacosFolderPermissionResult>;
   executeQuery: <T extends object = QueryResponseItem>(
     dbPath: string,
     query: string,
@@ -262,6 +266,7 @@ export interface ElectronApi {
 export type ElectronIpcInvokeKey =
   | 'createVideoFromNonVideo'
   | 'downloadFile'
+  | 'ensureMacosFolderPermission'
   | 'extractNestedZipEntry'
   | 'getAllScreens'
   | 'getAppDataPath'
@@ -349,6 +354,13 @@ export interface ExtractNestedZipEntryOptions {
 
 export type FileDialogFilter =
   'image' | 'image+pdf' | 'json' | 'jwpub' | 'jwpub+image' | 'jwpub+image+pdf';
+
+export interface MacosFolderPermissionResult {
+  errorCode?: string;
+  path: string;
+  selectedPath?: string;
+  status: 'cancelled' | 'failed' | 'granted' | 'not-needed';
+}
 
 export type MediaAccessStatus =
   'denied' | 'granted' | 'not-determined' | 'restricted' | 'unknown';

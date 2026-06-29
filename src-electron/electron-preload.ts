@@ -68,6 +68,8 @@ const electronApi: ElectronApi = {
     invoke('createVideoFromNonVideo', f, fP, oD),
   dirname,
   downloadFile: (u, sD, dF, lP) => invoke('downloadFile', u, sD, dF, lP),
+  ensureMacosFolderPermission: (folderPath, prompt) =>
+    invoke('ensureMacosFolderPermission', folderPath, prompt),
   executeQuery,
   extname,
   extractNestedZipEntry: (i, e, o, op) =>

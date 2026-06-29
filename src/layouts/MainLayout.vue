@@ -172,6 +172,7 @@ const { lookupPeriod } = storeToRefs(jwStore);
 const {
   basename,
   dirname,
+  ensureMacosFolderPermission,
   isArchitectureMismatch,
   onDownloadCancelled,
   onDownloadCompleted,
@@ -187,6 +188,7 @@ const {
   onWatchFolderError,
   onWatchFolderUpdate,
   pathToFileURL,
+  PLATFORM,
   relaunchApp,
   removeListeners,
   resolve,
@@ -209,6 +211,157 @@ const hasActiveDownloads = () => {
 };
 
 let cacheClearTriggered = false;
+const macosFolderPermissionPrompts = new Set<string>();
+
+type MacosFolderPermissionSetting = Extract<
+  keyof SettingsValues,
+  | 'cacheFolder'
+  | 'folderToWatch'
+  | 'mediaAutoExportFolder'
+  | 'pinyinSongFolder'
+  | 'recordingFolder'
+>;
+
+interface MacosFolderPermissionTarget {
+  label: string;
+  path: string;
+  setting: MacosFolderPermissionSetting;
+}
+
+const addMacosFolderPermissionTarget = (
+  targets: MacosFolderPermissionTarget[],
+  setting: MacosFolderPermissionSetting,
+  path: null | string | undefined,
+  label: string,
+) => {
+  if (!path) return;
+  targets.push({ label, path, setting });
+};
+
+const getMacosFolderPermissionTargets = () => {
+  const settings = currentSettings.value;
+  const targets: MacosFolderPermissionTarget[] = [];
+  if (!settings) return targets;
+
+  addMacosFolderPermissionTarget(
+    targets,
+    'cacheFolder',
+    settings.cacheFolder,
+    t('cacheFolder'),
+  );
+
+  if (settings.enableFolderWatcher) {
+    addMacosFolderPermissionTarget(
+      targets,
+      'folderToWatch',
+      settings.folderToWatch,
+      t('folderToWatch'),
+    );
+  }
+
+  if (settings.enableMediaAutoExport) {
+    addMacosFolderPermissionTarget(
+      targets,
+      'mediaAutoExportFolder',
+      settings.mediaAutoExportFolder,
+      t('mediaAutoExportFolder'),
+    );
+  }
+
+  if (settings.enablePinyinSongs) {
+    addMacosFolderPermissionTarget(
+      targets,
+      'pinyinSongFolder',
+      settings.pinyinSongFolder,
+      t('pinyinSongFolder'),
+    );
+  }
+
+  if (settings.recordingEnable) {
+    addMacosFolderPermissionTarget(
+      targets,
+      'recordingFolder',
+      settings.recordingFolder,
+      t('recordingFolder'),
+    );
+  }
+
+  return targets;
+};
+
+const confirmMacosFolderPermissionPrompt = (
+  target: MacosFolderPermissionTarget,
+) =>
+  new Promise<boolean>((resolve) => {
+    $q.dialog({
+      cancel: true,
+      message: t('macos-folder-permission-message', {
+        folder: target.label,
+        path: target.path,
+      }),
+      ok: {
+        color: 'primary',
+        label: t('choose-a-folder'),
+      },
+      persistent: true,
+      title: t('macos-folder-permission-title'),
+    })
+      .onOk(() => resolve(true))
+      .onCancel(() => resolve(false))
+      .onDismiss(() => resolve(false));
+  });
+
+const checkMacosFolderPermission = async (
+  target: MacosFolderPermissionTarget,
+) => {
+  if (PLATFORM !== 'darwin') return;
+  if (macosFolderPermissionPrompts.has(target.path)) return;
+
+  macosFolderPermissionPrompts.add(target.path);
+  try {
+    const probe = await ensureMacosFolderPermission(target.path, false);
+    if (probe.status === 'granted' || probe.status === 'not-needed') return;
+
+    const confirmed = await confirmMacosFolderPermissionPrompt(target);
+    if (!confirmed) return;
+
+    const result = await ensureMacosFolderPermission(target.path, true);
+    if (result.status !== 'granted') {
+      createTemporaryNotification({
+        message: t('macos-folder-permission-failed'),
+        type: 'warning',
+      });
+      return;
+    }
+
+    if (
+      result.selectedPath &&
+      result.selectedPath !== target.path &&
+      currentSettings.value
+    ) {
+      currentSettings.value[target.setting] = result.selectedPath;
+    }
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          name: 'checkMacosFolderPermission',
+          path: target.path,
+          setting: target.setting,
+        },
+      },
+    });
+  } finally {
+    macosFolderPermissionPrompts.delete(target.path);
+  }
+};
+
+const checkMacosProfileFolderPermissions = async () => {
+  if (PLATFORM !== 'darwin') return;
+  for (const target of getMacosFolderPermissionTargets()) {
+    await checkMacosFolderPermission(target);
+  }
+};
 
 const delayedCacheClear = () => {
   if (!currentSettings.value?.enableCacheAutoClear || cacheClearTriggered)
@@ -1194,6 +1347,23 @@ watchImmediate(
       ),
     );
   },
+);
+
+watchDebounced(
+  () => [
+    currentCongregation.value,
+    currentSettings.value?.cacheFolder,
+    currentSettings.value?.enableFolderWatcher,
+    currentSettings.value?.folderToWatch,
+    currentSettings.value?.enableMediaAutoExport,
+    currentSettings.value?.mediaAutoExportFolder,
+    currentSettings.value?.enablePinyinSongs,
+    currentSettings.value?.pinyinSongFolder,
+    currentSettings.value?.recordingEnable,
+    currentSettings.value?.recordingFolder,
+  ],
+  () => checkMacosProfileFolderPermissions(),
+  { debounce: 500, immediate: true },
 );
 
 watchImmediate(
