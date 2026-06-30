@@ -1649,7 +1649,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
 
   finishImportedMediaItems(mediaItemsToAdd);
 
-  if (showFileImport.value) {
+  if (showFileImport.value && !jwpubImportDocuments.value.length) {
     showFileImport.value = false;
   }
 };
@@ -2766,8 +2766,8 @@ watch(
 
 watch(
   () => [jwpubImportDb.value, jwpubImportDocuments.value],
-  async ([newJwpubImportDb, newJwpubImportDocuments]) => {
-    if (!!newJwpubImportDb || newJwpubImportDocuments?.length) {
+  async ([, newJwpubImportDocuments]) => {
+    if (newJwpubImportDocuments?.length) {
       showFileImport.value = true;
     }
   },

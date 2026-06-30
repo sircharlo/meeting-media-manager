@@ -231,8 +231,8 @@ const secondaryEmptyStateMessage = computed(() => {
 
 watch(
   () => [jwpubImportDb.value, jwpubImportDocuments.value],
-  ([newJwpubImportDb, newJwpubImportDocuments]) => {
-    if (!!newJwpubImportDb || newJwpubImportDocuments?.length) {
+  ([, newJwpubImportDocuments]) => {
+    if (newJwpubImportDocuments?.length) {
       showFileImportDialog.value = true;
     }
   },
