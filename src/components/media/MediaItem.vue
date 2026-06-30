@@ -776,7 +776,7 @@
               :disable="isCurrentlyPlaying"
               @click="
                 hideMediaItems(
-                  selectedMediaItems,
+                  selectedMediaItems || [],
                   currentCongregation,
                   selectedDateObject,
                 )

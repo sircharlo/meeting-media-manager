@@ -83,7 +83,7 @@
               })
           "
           @update:child-hidden="
-            element.children.forEach((child) => (child.hidden = !!$event))
+            element.children?.forEach((child) => (child.hidden = !!$event))
           "
           @update:expanded="expandedGroups[element.uniqueId] = $event"
           @update:hidden="element.hidden = !!$event"
