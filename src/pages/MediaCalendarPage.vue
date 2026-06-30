@@ -151,6 +151,7 @@
       v-model:jwpub-documents="jwpubImportDocuments"
       :current-file="currentFile"
       :dialog-id="'media-calendar-file-import'"
+      :jwpub-title="jwpubImportTitle"
       :section="sectionToAddTo"
       :total-files="totalFiles"
       @drop="handleDrop"
@@ -165,6 +166,7 @@
       :dialog-id="'media-calendar-jwpub-media-picker'"
       :document="selectedDocument"
       :model-value="showMediaPicker"
+      :publication-title="jwpubImportTitle"
       :section="sectionToAddTo"
       @cancel="onMediaPickerDismiss"
       @ok="onMediaPickerDismiss"
@@ -268,7 +270,11 @@ import {
   isVideo,
 } from 'src/utils/media';
 import { sendObsSceneEvent } from 'src/utils/obs';
-import { findDb, tableExists } from 'src/utils/sqlite';
+import {
+  findDb,
+  getPublicationTitleFromDb,
+  tableExists,
+} from 'src/utils/sqlite';
 import { useAppSettingsStore } from 'stores/app-settings';
 import {
   type MediaPlayingState,
@@ -293,6 +299,7 @@ const $q = useQuasar();
 
 const jwpubImportDb = ref('');
 const jwpubImportDocuments = ref<DocumentItem[]>([]);
+const jwpubImportTitle = ref('');
 
 const { dateLocale, t } = useLocale();
 useMeta({ title: t('titles.meetingMedia') });
@@ -1401,6 +1408,7 @@ const addMediaFileToMediaItems = async (
 const resetJwpubImportState = () => {
   jwpubImportDb.value = '';
   jwpubImportDocuments.value = [];
+  jwpubImportTitle.value = '';
   showFileImport.value = false;
 };
 
@@ -1504,6 +1512,7 @@ const processJwpubFile = async (filepath: string) => {
   }
 
   jwpubImportDb.value = db;
+  jwpubImportTitle.value = getPublicationTitleFromDb(db);
   loadJwpubImportDocuments(db, filepath);
 };
 
@@ -1677,6 +1686,7 @@ const onMediaPickerDismiss = () => {
   showMediaPicker.value = false;
   selectedDocument.value = undefined;
   jwpubImportDb.value = '';
+  jwpubImportTitle.value = '';
   showFileImport.value = false;
 };
 
@@ -2766,9 +2776,11 @@ watch(
 
 watch(
   () => [jwpubImportDb.value, jwpubImportDocuments.value],
-  async ([, newJwpubImportDocuments]) => {
+  async ([newJwpubImportDb, newJwpubImportDocuments]) => {
     if (newJwpubImportDocuments?.length) {
       showFileImport.value = true;
+    } else if (!newJwpubImportDb) {
+      jwpubImportTitle.value = '';
     }
   },
 );

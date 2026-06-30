@@ -14,15 +14,15 @@
     >
       <!-- {{ totalFiles || (!!jwpubDb && jwpubLoading) }} -->
       <div class="text-h6 row q-px-md q-pt-lg q-pb-md">
-        {{
-          t(
-            jwpubDocuments?.length && !(!!jwpubDb && jwpubLoading)
-              ? 'choose-a-document-for-import'
-              : 'add-extra-media',
-          )
-        }}
+        {{ jwpubTitle || t('add-extra-media') }}
       </div>
       <template v-if="jwpubDocuments?.length && !(!!jwpubDb && jwpubLoading)">
+        <div
+          v-if="jwpubDocuments?.length && !(!!jwpubDb && jwpubLoading)"
+          class="row q-px-md q-pb-sm text-body2 text-secondary"
+        >
+          {{ t('choose-a-document-for-import') }}
+        </div>
         <div class="row q-px-md overflow-auto">
           <q-list class="full-width">
             <q-item
@@ -161,6 +161,7 @@ const props = defineProps<{
   dialogId: string;
   jwpubDb?: string;
   jwpubDocuments?: DocumentItem[];
+  jwpubTitle?: string;
   modelValue: boolean;
   section: MediaSectionIdentifier | undefined;
   totalFiles: number;

@@ -104,6 +104,63 @@ export const tableExists = (db: string, tableName: string) => {
   }
 };
 
+const publicationTitleColumns = [
+  'DisplayTitle',
+  'ShortTitle',
+  'Title',
+  'ReferenceTitle',
+  'UndatedReferenceTitle',
+  'DisplayTitleRich',
+  'ShortTitleRich',
+  'TitleRich',
+  'ReferenceTitleRich',
+  'UndatedReferenceTitleRich',
+  'Symbol',
+  'UndatedSymbol',
+  'UniqueSymbol',
+  'EnglishSymbol',
+  'UniqueEnglishSymbol',
+  'RootSymbol',
+];
+
+const cleanPublicationTitle = (value: unknown) => {
+  if (typeof value !== 'string') return '';
+  return value
+    .replace(/<[^>]*>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+};
+
+export const getPublicationTitleFromDb = (db: string) => {
+  try {
+    if (!db || !tableExists(db, 'Publication')) return '';
+
+    const columns = executeQuery<{ name: string }>(
+      db,
+      'PRAGMA table_info(Publication)',
+    ).map((column) => column.name);
+    const availableTitleColumns = publicationTitleColumns.filter((column) =>
+      columns.includes(column),
+    );
+    if (!availableTitleColumns.length) return '';
+
+    const publication = executeQuery<Record<string, unknown>>(
+      db,
+      `SELECT ${availableTitleColumns.join(', ')} FROM Publication LIMIT 1`,
+    )[0];
+    if (!publication) return '';
+
+    return (
+      availableTitleColumns
+        .map((column) => cleanPublicationTitle(publication[column]))
+        .find(Boolean) ?? ''
+    );
+  } catch (error) {
+    errorCatcher(error);
+    return '';
+  }
+};
+
 export const getMediaVideoMarkers = (
   source: MultimediaItemsFetcher,
   mediaId: number,

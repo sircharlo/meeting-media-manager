@@ -6,11 +6,16 @@
     >
       <div class="row q-px-md q-pt-lg text-h6">
         <div class="col">
-          {{ t('select-media-items') }}
+          {{ publicationTitle || t('select-media-items') }}
         </div>
       </div>
-      <div class="row q-px-md q-py-md">
-        {{ t('select-media-items-explain') }}
+      <div class="row q-px-md q-py-md column">
+        <div v-if="document?.Title" class="text-body1">
+          {{ document.Title }}
+        </div>
+        <div class="text-body2 text-secondary">
+          {{ t('select-media-items-explain') }}
+        </div>
       </div>
 
       <div
@@ -31,7 +36,7 @@
                   <q-skeleton size="24px" type="QCheckbox" />
                 </q-item-section>
                 <q-item-section avatar>
-                  <q-skeleton height="48px" type="rect" width="48px" />
+                  <q-skeleton height="54px" type="rect" width="96px" />
                 </q-item-section>
                 <q-item-section>
                   <q-skeleton height="16px" type="text" width="80%" />
@@ -71,14 +76,15 @@
                     <q-img
                       v-if="item.ResolvedPreviewPath"
                       :alt="getMediaAlt(item)"
-                      class="thumbnail"
-                      fit="cover"
-                      height="48px"
+                      class="thumbnail-frame"
+                      fit="contain"
+                      height="54px"
                       :src="pathToFileURL(item.ResolvedPreviewPath)"
-                      width="48px"
+                      width="96px"
                     />
                     <q-icon
                       v-else
+                      class="thumbnail-frame"
                       color="primary"
                       :name="getMediaIcon(item)"
                       size="md"
@@ -179,6 +185,7 @@ const props = defineProps<{
   dialogId: string;
   document: DocumentItem | undefined;
   modelValue: boolean;
+  publicationTitle?: string;
   section: MediaSectionIdentifier | undefined;
 }>();
 
@@ -366,3 +373,15 @@ watch(
   },
 );
 </script>
+
+<style scoped>
+.thumbnail-frame {
+  align-items: center;
+  background: rgba(128, 128, 128, 0.12);
+  border-radius: 4px;
+  display: flex;
+  height: 54px;
+  justify-content: center;
+  width: 96px;
+}
+</style>
