@@ -135,7 +135,7 @@
     "vitepress": "^2.0.0-alpha.17",
     "vitest": "^4.1.9",
     "vue-eslint-parser": "^10.4.1",
-    "vue-tsc": ">=3.3.5 || 3.3.3"
+    "vue-tsc": ">=3.3.6"
   },
   "resolutions": {
     "vite": "8.1.0"
