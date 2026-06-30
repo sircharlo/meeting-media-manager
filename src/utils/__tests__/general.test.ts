@@ -4,6 +4,7 @@ import { uuid } from '../../shared/vanilla';
 import {
   camelToKebabCase,
   capitalize,
+  decodeEntities,
   getPreviousVersion,
   isEmpty,
   isUUID,
@@ -171,5 +172,26 @@ describe('parseJsonSafe', () => {
     expect(parseJsonSafe(undefined, { fallback: true })).toEqual({
       fallback: true,
     });
+  });
+});
+
+describe('decodeEntities', () => {
+  it.each([
+    ['plain text', 'plain text'],
+    ['Fish &amp; chips', 'Fish & chips'],
+    ['5 &lt; 10 &amp;&amp; 10 &gt; 5', '5 < 10 && 10 > 5'],
+    ['<p>Hello <strong>World</strong>!</p>', 'Hello World!'],
+    ['<p>Hello&nbsp;<em>World</em> &mdash; today</p>', 'Hello World — today'],
+    ['<div>Line 1<br>Line 2</div>', 'Line 1Line 2'],
+    ['<script>alert("hack")</script><p>Safe text</p>', ''],
+    ['<img src=x onerror=alert(1)>Image caption', 'Image caption'],
+    [
+      'Liste de lecture multimédia pour la visite',
+      'Liste de lecture multimédia pour la visite',
+    ],
+    ['', ''],
+    [undefined, ''],
+  ])('decodes entities and strips tags for %#', (input, expected) => {
+    expect(decodeEntities(input)).toBe(expected);
   });
 });

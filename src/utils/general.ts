@@ -220,20 +220,12 @@ export const parseJsonSafe = <T>(json: null | string | T, fallback: T): T => {
  */
 export const decodeEntities = (input?: string) => {
   try {
-    let output = input;
-    if (!output) return output ?? '';
+    if (!input) return input ?? '';
 
-    // First, remove all HTML tags
-    output = DOMPurify.sanitize(output, { ALLOWED_TAGS: [] });
-
-    // Then, decode HTML entities
-    const textarea = document.createElement('textarea');
-    textarea.innerHTML = output;
-    output = textarea.value;
-    textarea.remove();
-
-    // Finally, return the sanitized string
-    return output;
+    const cleanHtml = DOMPurify.sanitize(input, { ALLOWED_TAGS: [] });
+    const template = document.createElement('template');
+    template.innerHTML = cleanHtml;
+    return template.content.textContent ?? '';
   } catch {
     return input ?? '';
   }

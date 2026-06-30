@@ -14,6 +14,7 @@ const { executeQuery, join } = globalThis.electronApi;
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { log } from 'src/shared/vanilla';
 import { findFile, getPublicationDirectory } from 'src/utils/fs';
+import { decodeEntities } from 'src/utils/general';
 import { useCurrentStateStore } from 'stores/current-state';
 
 let getDbFromJWPUBProvider:
@@ -125,22 +126,20 @@ const publicationTitleColumns = [
 
 const cleanPublicationTitle = (value: unknown) => {
   if (typeof value !== 'string') return '';
-  return value
-    .replace(/<[^>]*>/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
+  return decodeEntities(value).trim();
 };
 
 export const getPublicationTitleFromDb = (db: string) => {
   try {
     if (!db || !tableExists(db, 'Publication')) return '';
 
-    const columns = executeQuery<{ name: string }>(
-      db,
-      'PRAGMA table_info(Publication)',
-    ).map((column) => column.name);
+    const columns = new Set(
+      executeQuery<{ name: string }>(db, 'PRAGMA table_info(Publication)').map(
+        (column) => column.name,
+      ),
+    );
     const availableTitleColumns = publicationTitleColumns.filter((column) =>
-      columns.includes(column),
+      columns.has(column),
     );
     if (!availableTitleColumns.length) return '';
 
