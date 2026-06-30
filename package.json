@@ -126,7 +126,7 @@
     "lint-staged": "^17.0.8",
     "lodash-es": "^4.18.1",
     "msw": "^2.14.6",
-    "oxc-minify": "^0.137.0",
+    "oxc-minify": "^0.138.0",
     "postcss": "^8.5.16",
     "prettier": "^3.9.3",
     "rollup-plugin-visualizer": "^7.0.1",
