@@ -4,6 +4,7 @@ vi.mock('electron', () => ({
   app: {
     getPath: vi.fn(),
     getVersion: vi.fn(),
+    once: vi.fn(),
   },
 }));
 

@@ -23,6 +23,7 @@ vi.mock('chokidar', () => ({
 vi.mock('electron', () => ({
   app: {
     getPath: vi.fn(),
+    once: vi.fn(),
     startAccessingSecurityScopedResource: vi.fn(() => vi.fn()),
   },
   dialog: {
