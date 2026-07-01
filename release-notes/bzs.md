@@ -4,6 +4,13 @@
 
 For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
 
+## v26.7.0
+
+### ✨ New Features
+
+- ✨ **Linked Audio Playback**: Added support for playing audio from one file together with video from another file. This can be useful for playing video slideshows with accompanying music.
+- ✨ **Watched Media Layouts**: Added persistence for watched media items and section order across watched folders. This ensures that the media list is displayed the same way even when the watched folder is synced across devices.
+
 ## v26.6.1
 
 ### ✨ New Features

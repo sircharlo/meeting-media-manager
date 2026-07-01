@@ -4,6 +4,13 @@
 
 For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
 
+## v26.7.0
+
+### ✨ New Features
+
+- ✨ **Reproducción de audio vinculado**: Se añadió soporte para reproducir audio de un archivo junto con vídeo de otro archivo. Esto puede ser útil para reproducir diapositivas de vídeo con música acompañante.
+- ✨ \*\*Diseños de medios Watched \*\*: Se agregó persistencia para elementos multimedia vistos y orden de sección a través de carpetas observadas. Esto asegura que la lista de medios se muestre de la misma manera incluso cuando la carpeta vigilada se sincroniza entre dispositivos.
+
 ## v26 6.1
 
 ### ✨ New Features
