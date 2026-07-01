@@ -4,6 +4,35 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.7.0
+
+### ✨ New Features
+
+- ✨ **Linked Audio Playback**: Added support for playing audio from one file together with video from another file. This can be useful for playing video slideshows with accompanying music.
+- ✨ **Watched Media Layouts**: Added persistence for watched media items and section order across watched folders. This ensures that the media list is displayed the same way even when the watched folder is synced across devices.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **JWPUB Import**: Improved JWPUB publication title display, so that selected documents are easier to identify.
+
+### 🐞 Bug Fixes
+
+- 🐞 **JWPUB Import**: Fixed cases where the JWPUB document picker did not appear when needed.
+- 🐞 **Media Fetching**: Normalized lookup periods before fetching media to avoid refreshing media for past meetings.
+- 🐞 **Media Preview**: Kept media preview synchronized while paused media is being scrubbed.
+- 🐞 **Audio Media**: Showed a fallback icon for audio files without thumbnails.
+- 🐞 **Search**: Fixed search popups not showing reliably in media and settings views.
+- 🐞 **macOS Folder Access**: Added folder reauthorization handling when macOS denies access to selected folders.
+- 🐞 **GPU Recovery**: Added a relaunch action for GPU crash recovery.
+- 🐞 **Updater and Crash Reporting**: Ignored non-actionable updater network errors and stopped reporting crash-loop fallback behavior to Sentry.
+- 🐞 **Security and Hardening**: Hardened shared cache installer permissions and validated nested shared cache directories.
+
+### 🔧 Chores
+
+- 🔧 **Code Quality**: Reduced cognitive complexity and resolved SonarQube findings.
+- 🔧 **Database**: Removed `better-sqlite3` in favor of Node.js' built-in SQLite3 support.
+- 🔧 **Testing**: Added focused coverage for watched folders, media section persistence, audio media, macOS folder access, and Electron app handler behavior.
+
 ## v26.6.1
 
 ### ✨ New Features
