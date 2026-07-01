@@ -427,9 +427,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron/rebuild@npm:^4.0.6":
-  version: 4.0.6
-  resolution: "@electron/rebuild@npm:4.0.6"
+"@electron/rebuild@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "@electron/rebuild@npm:4.1.0"
   dependencies:
     "@malept/cross-spawn-promise": "npm:^2.0.0"
     debug: "npm:^4.1.1"
@@ -442,7 +442,7 @@ __metadata:
       built: true
   bin:
     electron-rebuild: lib/cli.js
-  checksum: 10c0/60edfe1da2d25707d8b56e00832b0d1a6ea79d815af9628725dcc2c70ee46116e1103c2c9e829dfd14b5ad0ce76aae462e3d9178d11ed2cc71fc74204304e10d
+  checksum: 10c0/e55aeef94c75ef93f859502b315fdade5157eacc0fea227fdb83ca397f67b6bdbd5c92dd5c8f728ee4f64b267a3281ad23ab15e5c5c06ba2fbdf8af3add0a749
   languageName: node
   linkType: hard
 
@@ -11189,7 +11189,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "meeting-media-manager@workspace:."
   dependencies:
-    "@electron/rebuild": "npm:^4.0.6"
+    "@electron/rebuild": "npm:^4.1.0"
     "@eslint/config-helpers": "npm:^0.6.0"
     "@eslint/js": "npm:^10.0.1"
     "@fontsource-variable/inter": "npm:^5.2.8"
