@@ -4,6 +4,13 @@
 
 Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bestand op GitHub.
 
+## v26.7.0
+
+### ✨ Nieuwe functies
+
+- ✨ **Gelinkte Audio Playback**: Ondersteuning toegevoegd voor het afspelen van audio vanuit één bestand samen met video uit een ander bestand. Dit kan handig zijn voor het afspelen van video diavoorstellingen met begeleidende muziek.
+- ✨ **Bekeken Media Layouts**: Behoud toegevoegd voor bekeken media items en sectie in de bekeken mappen. Dit zorgt ervoor dat de medialijst op dezelfde manier wordt weergegeven, zelfs wanneer de bekeken map op verschillende apparaten wordt gesynchroniseerd.
+
 ## v26.6.1
 
 ### ✨ Nieuwe functies
