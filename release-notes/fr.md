@@ -4,6 +4,13 @@
 
 Pour la liste complète des changements entre les versions, consultez notre fichier CHANGELOG.md sur GitHub.
 
+## 7.0 v26.0
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **Lecture audio liée**: Ajout de la prise en charge de la lecture audio à partir d'un fichier avec la vidéo d'un autre fichier. Cela peut être utile pour la lecture de diaporamas vidéo avec la musique qui l'accompagne.
+- ✨ **Disposition des médias regardés**: Ajout de la persistance pour les éléments médias vus et l'ordre des sections dans les dossiers surveillés. Cela permet de s'assurer que la liste des médias est affichée de la même manière même lorsque le dossier surveillé est synchronisé entre différents périphériques.
+
 ## v26.6.1
 
 ### ✨ Nouvelles fonctionnalités
