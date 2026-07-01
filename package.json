@@ -86,7 +86,7 @@
     "yauzl": "^3.4.0"
   },
   "devDependencies": {
-    "@electron/rebuild": "^4.0.6",
+    "@electron/rebuild": "^4.1.0",
     "@eslint/config-helpers": "^0.6.0",
     "@eslint/js": "^10.0.1",
     "@intlify/unplugin-vue-i18n": "^11.2.4",
