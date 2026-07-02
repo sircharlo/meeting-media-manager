@@ -9,7 +9,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 ### 🐞 Bug Fixes
 
 - 🐞 **Updater Workflow**: Improved the update-and-quit workflow on macOS.
-- - 🐞 **Updater Downloads**: Fixed a rare edge case where the wrong version of a build could be downloaded by the auto-updater.
+- 🐞 **Updater Downloads**: Fixed a rare edge case where the wrong version of a build could be downloaded by the auto-updater.
 
 ## v26.7.0
 
