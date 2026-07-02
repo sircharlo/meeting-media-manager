@@ -2126,14 +2126,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jitsi/robotjs@npm:^0.6.22":
-  version: 0.6.22
-  resolution: "@jitsi/robotjs@npm:0.6.22"
+"@jitsi/robotjs@npm:^0.6.24":
+  version: 0.6.24
+  resolution: "@jitsi/robotjs@npm:0.6.24"
   dependencies:
     node-addon-api: "npm:^8.3.0"
     node-gyp: "npm:latest"
     node-gyp-build: "npm:^4.8.4"
-  checksum: 10c0/b1efb1ce96b3f90212c7442390d94f48c56cedc1acdc729e4a7730165a011b4e6071d1427845e037009f0c52628c22525bdd4c931a6f905633ca1ebac56046eb
+  checksum: 10c0/4e6295df47344ecd5d6b9da472f1582de12aa38365bdbabb1965d5b19c8ae3d986941328c78259eb180a26662f17ae78a16620c9e744c3d64f548d1400f330bd
   languageName: node
   linkType: hard
 
@@ -11198,7 +11198,7 @@ __metadata:
     "@fontsource-variable/noto-serif": "npm:^5.2.9"
     "@formkit/drag-and-drop": "npm:^0.6.1"
     "@intlify/unplugin-vue-i18n": "npm:^11.2.4"
-    "@jitsi/robotjs": "npm:^0.6.22"
+    "@jitsi/robotjs": "npm:^0.6.24"
     "@numairawan/video-duration": "npm:^1.0.0"
     "@opentelemetry/api-logs": "npm:^0.219.0"
     "@pinia/testing": "npm:^1.0.3"
