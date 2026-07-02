@@ -32,7 +32,10 @@ import {
   setAppQuitting,
   setShouldQuit,
 } from 'src-electron/main/session';
-import { initUpdater } from 'src-electron/main/updater';
+import {
+  initUpdater,
+  isUpdateInstallInProgress,
+} from 'src-electron/main/updater';
 import {
   captureElectronError,
   isIgnoredNativeCrashEvent,
@@ -517,7 +520,12 @@ if (gotTheLock) {
 
   app.on('before-quit', (e) => {
     setAppQuitting(true);
+
+    // Windows/Linux close prompts are handled by the BrowserWindow 'close'
+    // listener. This handler only adds the macOS app-quit prompt, and updater
+    // installs must bypass it so quitAndInstall can complete.
     if (PLATFORM !== 'darwin') return;
+    if (isUpdateInstallInProgress()) return;
     if (!mainWindowInfo.mainWindow || mainWindowInfo.mainWindow.isDestroyed())
       return;
     if (authorizedClose.authorized) {
