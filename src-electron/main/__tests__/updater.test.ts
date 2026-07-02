@@ -74,14 +74,18 @@ describe('updater install flow', () => {
   });
 
   it('calls quitAndInstall only once for duplicate install requests', async () => {
-    const { initUpdater, quitAndInstallUpdate } = await import('../updater');
+    const { initUpdater, isUpdateInstallInProgress, quitAndInstallUpdate } =
+      await import('../updater');
 
     await initUpdater();
     handlers.get('update-downloaded')?.({ version: '26.6.2' });
 
+    expect(isUpdateInstallInProgress()).toBe(false);
+
     quitAndInstallUpdate();
     quitAndInstallUpdate();
 
+    expect(isUpdateInstallInProgress()).toBe(true);
     expect(quitAndInstallMock).toHaveBeenCalledTimes(1);
     expect(quitAndInstallMock).toHaveBeenCalledWith(false, true);
   });

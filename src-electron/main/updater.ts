@@ -52,6 +52,8 @@ const updaterLogger = {
 let updateDownloaded = false;
 let updateInstallStarted = false;
 
+export const isUpdateInstallInProgress = () => updateInstallStarted;
+
 interface UpdateDownloadProgressInfo {
   bytesPerSecond?: number;
   delta?: number;
