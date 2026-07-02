@@ -8,8 +8,8 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- ✨ **Linked Audio Playback**: Added support for playing audio from one file together with video from another file. This can be useful for playing video slideshows with accompanying music.
-- ✨ **Watched Media Layouts**: Added persistence for watched media items and section order across watched folders. This ensures that the media list is displayed the same way even when the watched folder is synced across devices.
+- ✨ **Povezano predvajanje avdioposnetka**: Dodana je podpora za predvajanje avdioposnetka iz ene datoteke skupaj z videoposnetkom iz druge datoteke. To je uporabno pri predvajanju video predstavitev z glasbeno spremljavo.
+- ✨ **Postavitve spremljanih multimedijskih datotek**: M³ si zdaj zapomni, kako imaš razporejene multimedijske datoteke v spremljanih mapah — vključno z vrstnim redom razdelkov in označenimi datotekami. Zato bo seznam multimedijske vsebine videti enako na vseh napravah, ki uporabljajo isto spremljano mapo.
 
 ## v26.6.1
 
