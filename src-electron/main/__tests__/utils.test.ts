@@ -173,6 +173,23 @@ describe('isUpdaterFullDownloadFallbackError', () => {
     ).toBe(false);
   });
 
+  it('should handle non-string error fields during updater full download fallback', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-06-04T12:00:00.000Z'));
+
+    markUpdaterFullDownloadFallback(
+      'Cannot download differentially, fallback to full download: Error: net::ERR_NETWORK_IO_SUSPENDED',
+    );
+
+    expect(
+      isUpdaterFullDownloadFallbackError({
+        code: 500,
+        message: 'net::ERR_NETWORK_IO_SUSPENDED',
+        name: { value: 'Error' },
+      }),
+    ).toBe(false);
+  });
+
   it('should stop ignoring partial download errors after the fallback window', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-06-04T12:00:00.000Z'));
