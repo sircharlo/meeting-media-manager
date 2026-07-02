@@ -357,10 +357,14 @@ function getErrorDetails(error: unknown) {
   }
 
   return {
-    code: (error as { code?: string })?.code,
+    code: getErrorDetailText((error as { code?: unknown })?.code),
     message: error instanceof Error ? error.message : undefined,
-    name: (error as Error)?.name,
+    name: getErrorDetailText((error as { name?: unknown })?.name),
   };
+}
+
+function getErrorDetailText(value: unknown) {
+  return typeof value === 'string' ? value : undefined;
 }
 
 /**
