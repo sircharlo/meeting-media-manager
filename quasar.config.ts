@@ -13,7 +13,7 @@ import { name, productName, repository, version } from './package.json';
 // Environment
 const IS_DEV = process.env.NODE_ENV === 'development';
 const IS_BETA = version.includes('beta');
-const IS_TEST = process.env.TEST_VERSION == 'true';
+const IS_TEST = process.env.TEST_VERSION === 'true';
 
 // App
 const APP_NAME = `${name}${IS_TEST ? '-test' : ''}`;
