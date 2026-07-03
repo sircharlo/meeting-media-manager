@@ -2604,12 +2604,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opentelemetry/api-logs@npm:^0.219.0":
-  version: 0.219.0
-  resolution: "@opentelemetry/api-logs@npm:0.219.0"
+"@opentelemetry/api-logs@npm:^0.220.0":
+  version: 0.220.0
+  resolution: "@opentelemetry/api-logs@npm:0.220.0"
   dependencies:
     "@opentelemetry/api": "npm:^1.3.0"
-  checksum: 10c0/fa62c848eb1a4da6c87a3891d6b337b0d289d4d8cc56043289d1081c8e93684b6dfb48c18e08a1e8f839cc0da43094005829f98f70eeaf0832e4f75031a99b6e
+  checksum: 10c0/0189cb2e610b64f75509724721b8b3ed31869a21a94254106330647eccc2a56dc13024a2aa93f4e07e1758b0af8f21952e65b4d7b3bbe9dc380f03810253ede6
   languageName: node
   linkType: hard
 
@@ -11200,7 +11200,7 @@ __metadata:
     "@intlify/unplugin-vue-i18n": "npm:^11.2.4"
     "@jitsi/robotjs": "npm:^0.6.24"
     "@numairawan/video-duration": "npm:^1.0.0"
-    "@opentelemetry/api-logs": "npm:^0.219.0"
+    "@opentelemetry/api-logs": "npm:^0.220.0"
     "@pinia/testing": "npm:^1.0.3"
     "@quasar/app-vite": "npm:^2.6.2"
     "@quasar/extras": "npm:^2.0.2"
