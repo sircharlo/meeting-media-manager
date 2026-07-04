@@ -21,8 +21,23 @@ const ENSURE_DIR_RETRYABLE_CODES = new Set([
   'ENOENT',
   'EPERM',
 ]);
-const ENSURE_DIR_RETRY_COUNT = 3;
-const ENSURE_DIR_RETRY_DELAY_MS = 75;
+const ENSURE_DIR_RETRY_COUNT = 6;
+const ENSURE_DIR_RETRY_BASE_DELAY_MS = 100;
+const ENSURE_DIR_RETRY_MAX_DELAY_MS = 1500;
+
+/**
+ * Full-jitter exponential backoff. Shared machine-wide cache folders can see
+ * many concurrent downloads/unzips hitting the same parent directory at
+ * once, which on Windows/NTFS (and occasionally other filesystems under
+ * heavy contention) can cause `mkdir` to transiently fail with ENOENT/EBUSY
+ * even though the parent directory exists. Jitter avoids every stalled
+ * caller retrying in lockstep against that same contended directory.
+ */
+const getEnsureDirRetryDelay = (attempt: number) => {
+  const exponentialDelay = ENSURE_DIR_RETRY_BASE_DELAY_MS * 2 ** attempt;
+  const cappedDelay = Math.min(exponentialDelay, ENSURE_DIR_RETRY_MAX_DELAY_MS);
+  return Math.random() * cappedDelay;
+};
 
 interface EnsureDirAttemptDiagnostics {
   attempt: number;
@@ -132,7 +147,27 @@ const attachDirectoryDiagnostics = (
   (error as ErrorWithDirectoryDiagnostics).downloadDirDiagnostics = diagnostics;
 };
 
-export async function ensureDirWithRetry(dir: string) {
+const ensureDirPromises = new Map<string, Promise<void>>();
+
+/**
+ * Creates a directory with retry logic. Concurrent requests for the exact
+ * same directory (common when several files for the same publication are
+ * queued at once) are coalesced into a single attempt so parallel downloads
+ * don't pile more concurrent `mkdir` calls onto an already-contended shared
+ * folder.
+ */
+export function ensureDirWithRetry(dir: string): Promise<void> {
+  const existing = ensureDirPromises.get(dir);
+  if (existing) return existing;
+
+  const promise = createDirWithRetry(dir).finally(() => {
+    ensureDirPromises.delete(dir);
+  });
+  ensureDirPromises.set(dir, promise);
+  return promise;
+}
+
+async function createDirWithRetry(dir: string): Promise<void> {
   let lastError: unknown;
   const diagnostics: EnsureDirAttemptDiagnostics[] = [];
 
@@ -178,7 +213,7 @@ export async function ensureDirWithRetry(dir: string) {
         ENSURE_DIR_RETRYABLE_CODES.has(code ?? '') &&
         attempt < ENSURE_DIR_RETRY_COUNT;
       if (!shouldRetry) break;
-      await delay(ENSURE_DIR_RETRY_DELAY_MS);
+      await delay(getEnsureDirRetryDelay(attempt));
     }
   }
 

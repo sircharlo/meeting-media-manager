@@ -11,6 +11,12 @@ vi.mock('node:fs/promises', () => ({
   stat: mocks.stat,
 }));
 
+// Resolve retry delays instantly so tests aren't slowed down by the
+// exponential backoff used for real ENOENT/EBUSY contention.
+vi.mock('node:timers/promises', () => ({
+  setTimeout: vi.fn().mockResolvedValue(undefined),
+}));
+
 vi.mock('src-electron/main/utils', () => ({
   addElectronBreadcrumb: mocks.addElectronBreadcrumb,
   captureElectronError: vi.fn(),
@@ -82,7 +88,7 @@ describe('downloads.ensureDirWithRetry', () => {
     ).rejects.toThrow('missing parent');
 
     expect(error.downloadDirDiagnostics).toEqual(
-      Array.from({ length: 4 }, (_, attempt) => ({
+      Array.from({ length: 7 }, (_, attempt) => ({
         attempt,
         code: 'ENOENT',
         dir: '/tmp/Publications/w_X_20260400',
@@ -100,6 +106,23 @@ describe('downloads.ensureDirWithRetry', () => {
       level: 'warning',
       message: 'download-directory-create-failed',
     });
-    expect(mocks.addElectronBreadcrumb).toHaveBeenCalledTimes(4);
+    expect(mocks.addElectronBreadcrumb).toHaveBeenCalledTimes(7);
+  });
+
+  it('coalesces concurrent requests for the same directory into a single attempt', async () => {
+    mocks.mkdir.mockResolvedValue(undefined);
+    mocks.stat.mockResolvedValue(directoryStats);
+
+    await Promise.all([
+      ensureDirWithRetry('/tmp/Publications/w_X_20260400'),
+      ensureDirWithRetry('/tmp/Publications/w_X_20260400'),
+      ensureDirWithRetry('/tmp/Publications/w_X_20260400'),
+    ]);
+
+    expect(mocks.mkdir).toHaveBeenCalledTimes(1);
+
+    // A later call (after the previous one has settled) starts a fresh attempt
+    await ensureDirWithRetry('/tmp/Publications/w_X_20260400');
+    expect(mocks.mkdir).toHaveBeenCalledTimes(2);
   });
 });
