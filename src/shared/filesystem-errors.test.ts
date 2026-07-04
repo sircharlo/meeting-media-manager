@@ -64,4 +64,31 @@ describe('filesystem error helpers', () => {
       }),
     ).toBe(false);
   });
+
+  it('ignores transient scandir errors on cloud-sync/network paths', () => {
+    expect(
+      shouldIgnoreWatchFolderError(
+        String.raw`G:\.shortcut-targets-by-id\1uhAUmZUpn-NK8Ccr27CZmB9qoh30K4cw\AV Zoom Duty Documents\Meeting Media\2026-07-04`,
+        { code: 'UNKNOWN', syscall: 'scandir' },
+      ),
+    ).toBe(true);
+    expect(
+      shouldIgnoreWatchFolderError('G:/Meeting Media/2026-07-04', {
+        code: 'ENOENT',
+        syscall: 'scandir',
+      }),
+    ).toBe(true);
+    expect(
+      shouldIgnoreWatchFolderError('C:/Users/test/cache', {
+        code: 'UNKNOWN',
+        syscall: 'scandir',
+      }),
+    ).toBe(false);
+    expect(
+      shouldIgnoreWatchFolderError('G:/Meeting Media/2026-07-04', {
+        code: 'EACCES',
+        syscall: 'scandir',
+      }),
+    ).toBe(false);
+  });
 });

@@ -60,7 +60,16 @@ export const shouldIgnoreWatchFolderError = (
   }
 
   if (!isPossiblyNetworkFolderPath(folderPath)) return false;
+
+  if (error.syscall === 'watch') {
+    return NETWORK_WATCH_ERROR_CODES.has(error.code ?? '');
+  }
+
+  // Node labels readdir failures with syscall 'scandir'. Cloud-sync drives
+  // (Google Drive, OneDrive, etc.) can transiently fail to enumerate a
+  // folder mid-sync, especially newly-created date folders.
   return (
-    error.syscall === 'watch' && NETWORK_WATCH_ERROR_CODES.has(error.code ?? '')
+    error.syscall === 'scandir' &&
+    TRANSIENT_NETWORK_ACCESS_ERROR_CODES.has(error.code ?? '')
   );
 };
