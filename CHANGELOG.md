@@ -4,6 +4,17 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.7.2
+
+### 🐞 Bug Fixes
+
+- 🐞 **Updater Workflow**: Improved the update-and-quit workflow on macOS.
+- 🐞 **Updater Downloads**: Fixed a rare edge case where the wrong version of a build could be downloaded by the auto-updater.
+
+## v26.7.1
+
+### No user-facing changes
+
 ## v26.7.0
 
 ### ✨ New Features

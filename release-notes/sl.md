@@ -4,6 +4,13 @@
 
 Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.md na GitHubu.
 
+## v26.7.0
+
+### ✨ Nove funkcije
+
+- ✨ **Povezano predvajanje avdioposnetka**: Dodana je podpora za predvajanje avdioposnetka iz ene datoteke skupaj z videoposnetkom iz druge datoteke. To je uporabno pri predvajanju video predstavitev z glasbeno spremljavo.
+- ✨ **Postavitve spremljanih multimedijskih datotek**: M³ si zdaj zapomni, kako imaš razporejene multimedijske datoteke v spremljanih mapah — vključno z vrstnim redom razdelkov in označenimi datotekami. Zato bo seznam multimedijske vsebine videti enako na vseh napravah, ki uporabljajo isto spremljano mapo.
+
 ## v26.6.1
 
 ### ✨ Nove funkcije

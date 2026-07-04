@@ -136,8 +136,33 @@ jobs:
     outputs:
       id: ${{ steps.create_release.outputs.id || '' }}
 
+  debug-before-build:
+    name: Debug before build
+    runs-on: ubuntu-latest
+    needs: [bump-version, merge-version-bump, draft-release]
+    if: always()
+    steps:
+      - name: Print needs context
+        env:
+          NEEDS_JSON: ${{ toJSON(needs) }}
+        run: |
+          echo "========== NEEDS =========="
+          echo "$NEEDS_JSON"
+          echo
+
+          echo "========== Individual values =========="
+          echo "bump-version.result:        ${{ needs.bump-version.result }}"
+          echo "bump-version.outputs.draft_exists: ${{ needs.bump-version.outputs.draft_exists }}"
+          echo "bump-version.outputs.has_changes:  ${{ needs.bump-version.outputs.has_changes }}"
+          echo "bump-version.outputs.new_version:  ${{ needs.bump-version.outputs.new_version }}"
+          echo
+          echo "merge-version-bump.result:  ${{ needs.merge-version-bump.result }}"
+          echo
+          echo "draft-release.result:       ${{ needs.draft-release.result }}"
+          echo "draft-release.outputs.id:   ${{ needs.draft-release.outputs.id }}"
+
   build:
-    needs: [bump-version, draft-release]
+    needs: [bump-version, draft-release, debug-before-build]
     uses: ./.github/workflows/build.yml
     with:
       checkout-latest: true
@@ -151,7 +176,6 @@ jobs:
       MAC_CERTIFICATE_PASSWORD: ${{ secrets.MAC_CERTIFICATE_PASSWORD }}
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      TEST_VERSION: 'false'
 
   # publish-release:
   #   name: 'Publish release'

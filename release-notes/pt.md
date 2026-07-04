@@ -4,6 +4,13 @@
 
 Para obter a lista completa das mudanças entre versões, consulte nosso arquivo CHANGELOG.md no GitHub.
 
+## v26.7.0
+
+### ✨ Novos Recursos
+
+- ✨ **Reprodução de áudio vinculada**: Adicionado suporte para reproduzir áudio de um arquivo junto com vídeo de outro arquivo. Isso pode ser útil para reproduzir slideshows de vídeo com a música acompanhada.
+- ✨ **Layouts de Mídia assistidos**: Adicionada persistência de itens de mídia assistidos e ordem de seção nas pastas assistidas. Isso garante que a lista de mídia é exibida da mesma forma, mesmo quando a pasta assistida é sincronizada entre os dispositivos.
+
 ## v26.6.1
 
 ### ✨ Novos Recursos

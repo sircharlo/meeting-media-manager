@@ -4,6 +4,13 @@
 
 Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in unserer CHANGELOG.md Datei auf GitHub.
 
+## v26.7.0
+
+### ✨ Neue Funktionen
+
+- ✨ **Linked Audio Playback**: Unterstützung für die Wiedergabe von Audio aus einer Datei zusammen mit Video aus einer anderen Datei hinzugefügt. Dies kann zum Abspielen von Diashows mit begleitender Musik nützlich sein.
+- ✨ **Gesehene Medienlayouts**: Dauerhaftigkeit für beobachtete Medienelemente und Abschnittsreihenfolge in allen Ordnern hinzugefügt. Dadurch wird sichergestellt, dass die Medienliste auch dann angezeigt wird, wenn der überwachte Ordner über die Geräte hinweg synchronisiert wird.
+
 ## v26.6.1
 
 ### ✨ Neue Funktionen
