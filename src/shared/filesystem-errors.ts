@@ -41,8 +41,9 @@ export const isPossiblyNetworkFolderPath = (
 export const isExpectedNetworkPathAccessError = (
   error: unknown,
   path: string,
+  platform: NodeJS.Platform = process.platform,
 ) => {
-  if (!isPossiblyNetworkFolderPath(path)) return false;
+  if (!isPossiblyNetworkFolderPath(path, platform)) return false;
 
   const code = getFilesystemErrorCode(error);
   return TRANSIENT_NETWORK_ACCESS_ERROR_CODES.has(code ?? '');
@@ -51,6 +52,7 @@ export const isExpectedNetworkPathAccessError = (
 export const shouldIgnoreWatchFolderError = (
   folderPath: string,
   error: FilesystemErrorLike,
+  platform: NodeJS.Platform = process.platform,
 ) => {
   if (
     error.syscall === 'stat' &&
@@ -59,7 +61,7 @@ export const shouldIgnoreWatchFolderError = (
     return true;
   }
 
-  if (!isPossiblyNetworkFolderPath(folderPath)) return false;
+  if (!isPossiblyNetworkFolderPath(folderPath, platform)) return false;
 
   if (error.syscall === 'watch') {
     return NETWORK_WATCH_ERROR_CODES.has(error.code ?? '');

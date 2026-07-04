@@ -70,25 +70,29 @@ describe('filesystem error helpers', () => {
       shouldIgnoreWatchFolderError(
         String.raw`G:\.shortcut-targets-by-id\1uhAUmZUpn-NK8Ccr27CZmB9qoh30K4cw\AV Zoom Duty Documents\Meeting Media\2026-07-04`,
         { code: 'UNKNOWN', syscall: 'scandir' },
+        'win32',
       ),
     ).toBe(true);
     expect(
-      shouldIgnoreWatchFolderError('G:/Meeting Media/2026-07-04', {
-        code: 'ENOENT',
-        syscall: 'scandir',
-      }),
+      shouldIgnoreWatchFolderError(
+        'G:/Meeting Media/2026-07-04',
+        { code: 'ENOENT', syscall: 'scandir' },
+        'win32',
+      ),
     ).toBe(true);
     expect(
-      shouldIgnoreWatchFolderError('C:/Users/test/cache', {
-        code: 'UNKNOWN',
-        syscall: 'scandir',
-      }),
+      shouldIgnoreWatchFolderError(
+        'C:/Users/test/cache',
+        { code: 'UNKNOWN', syscall: 'scandir' },
+        'win32',
+      ),
     ).toBe(false);
     expect(
-      shouldIgnoreWatchFolderError('G:/Meeting Media/2026-07-04', {
-        code: 'EACCES',
-        syscall: 'scandir',
-      }),
+      shouldIgnoreWatchFolderError(
+        'G:/Meeting Media/2026-07-04',
+        { code: 'EACCES', syscall: 'scandir' },
+        'win32',
+      ),
     ).toBe(false);
   });
 });
