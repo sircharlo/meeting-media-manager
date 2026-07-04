@@ -39,7 +39,7 @@
     "@formkit/drag-and-drop": "^0.6.1",
     "@jitsi/robotjs": "^0.6.24",
     "@numairawan/video-duration": "^1.0.0",
-    "@opentelemetry/api-logs": "^0.219.0",
+    "@opentelemetry/api-logs": "^0.220.0",
     "@quasar/extras": "^2.0.2",
     "@sentry/core": "^10.63.0",
     "@sentry/electron": "^7.15.0",
