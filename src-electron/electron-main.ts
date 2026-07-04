@@ -11,20 +11,18 @@ import {
   shell,
 } from 'electron';
 import {
-  pathExists,
-  pathExistsSync,
-  readJson,
-  readJsonSync,
-  writeJson,
-  writeJsonSync,
-} from 'fs-extra/esm';
-import {
   APP_ID,
   IS_TEST,
   PLATFORM,
   PRODUCT_NAME,
 } from 'src-electron/constants';
 import { cancelAllDownloads } from 'src-electron/main/downloads';
+import {
+  readJsonResilient,
+  readJsonResilientSync,
+  writeJsonResilient,
+  writeJsonResilientSync,
+} from 'src-electron/main/resilient-storage';
 import { initScreenListeners } from 'src-electron/main/screen';
 import {
   initSessionListeners,
@@ -339,10 +337,10 @@ function isTruthyEnvironmentValue(value: string | undefined) {
 
 async function readGpuDiagnosticSnapshots() {
   try {
-    const filePath = getGpuDiagnosticsFilePath();
-    if (!(await pathExists(filePath))) return [];
-
-    const data = await readJson(filePath);
+    const data = await readJsonResilient(
+      app.getPath('userData'),
+      GPU_DIAGNOSTICS_FILE,
+    );
     return Array.isArray(data) ? data : [];
   } catch (error) {
     log('Failed to read GPU diagnostics:', 'electron', 'warn', error);
@@ -354,11 +352,11 @@ async function writeGpuDiagnosticSnapshot(
   snapshot: ReturnType<typeof getGpuDiagnosticSnapshot>,
 ) {
   try {
-    const filePath = getGpuDiagnosticsFilePath();
     const existing = await readGpuDiagnosticSnapshots();
-    await writeJson(filePath, [...existing.slice(-19), snapshot], {
-      spaces: 2,
-    });
+    await writeJsonResilient(app.getPath('userData'), GPU_DIAGNOSTICS_FILE, [
+      ...existing.slice(-19),
+      snapshot,
+    ]);
   } catch (error) {
     log('Failed to write GPU diagnostics:', 'electron', 'warn', error);
   }
@@ -566,35 +564,29 @@ function createWindowAndCaptureErrors() {
   app.whenReady().then(createMainWindow).catch(captureElectronError);
 }
 
+const CRASH_COUNT_FILE = 'crash-count.json';
+const GPU_DIAGNOSTICS_FILE = 'gpu-diagnostics.json';
+const HW_ACCEL_FILE = 'hw-accel-disabled.json';
+
 function getCrashCount() {
   try {
-    const filePath = getCrashCountFilePath();
-    if (pathExistsSync(filePath)) {
-      const data = readJsonSync(filePath);
-      return typeof data.count === 'number' ? data.count : 0;
-    }
+    const data = readJsonResilientSync(
+      app.getPath('userData'),
+      CRASH_COUNT_FILE,
+    ) as null | { count?: number };
+    return typeof data?.count === 'number' ? data.count : 0;
   } catch (error) {
     log('Failed to read crash count:', 'electron', 'warn', error);
   }
   return 0;
 }
 
-function getCrashCountFilePath() {
-  return join(app.getPath('userData'), 'crash-count.json');
-}
-
-function getGpuDiagnosticsFilePath() {
-  return join(app.getPath('userData'), 'gpu-diagnostics.json');
-}
-
-function getHwAccelFilePath() {
-  return join(app.getPath('userData'), 'hw-accel-disabled.json');
-}
-
 function incrementCrashCount() {
   try {
     const count = getCrashCount() + 1;
-    writeJsonSync(getCrashCountFilePath(), { count });
+    writeJsonResilientSync(app.getPath('userData'), CRASH_COUNT_FILE, {
+      count,
+    });
     return count;
   } catch (error) {
     log('Failed to write crash count:', 'electron', 'warn', error);
@@ -604,11 +596,11 @@ function incrementCrashCount() {
 
 function isHwAccelDisabled() {
   try {
-    const filePath = getHwAccelFilePath();
-    if (pathExistsSync(filePath)) {
-      const data = readJsonSync(filePath);
-      return data.disabled === true;
-    }
+    const data = readJsonResilientSync(
+      app.getPath('userData'),
+      HW_ACCEL_FILE,
+    ) as null | { disabled?: boolean };
+    return data?.disabled === true;
   } catch (error) {
     log('Failed to read hw accel setting:', 'electron', 'warn', error);
   }
@@ -617,7 +609,9 @@ function isHwAccelDisabled() {
 
 async function resetCrashCount() {
   try {
-    await writeJson(getCrashCountFilePath(), { count: 0 });
+    await writeJsonResilient(app.getPath('userData'), CRASH_COUNT_FILE, {
+      count: 0,
+    });
     log('Crash count reset to 0', 'electron', 'log');
   } catch (error) {
     log('Failed to reset crash count:', 'electron', 'warn', error);
@@ -626,8 +620,10 @@ async function resetCrashCount() {
 
 function setHwAccelDisabled(disabled: boolean, temporary = false) {
   try {
-    const filePath = getHwAccelFilePath();
-    writeJsonSync(filePath, { disabled, temporary });
+    writeJsonResilientSync(app.getPath('userData'), HW_ACCEL_FILE, {
+      disabled,
+      temporary,
+    });
     if (disabled) {
       // Notify user that a restart is recommended
       if (
@@ -656,11 +652,11 @@ ipcMain.handle('set-hardware-acceleration', (e, disabled: boolean) => {
 // Check if hardware acceleration was temporarily disabled due to a crash
 function wasHwAccelTemporarilyDisabled() {
   try {
-    const filePath = getHwAccelFilePath();
-    if (pathExistsSync(filePath)) {
-      const data = readJsonSync(filePath);
-      return data.disabled === true && data.temporary === true;
-    }
+    const data = readJsonResilientSync(
+      app.getPath('userData'),
+      HW_ACCEL_FILE,
+    ) as null | { disabled?: boolean; temporary?: boolean };
+    return data?.disabled === true && data?.temporary === true;
   } catch (error) {
     log('Failed to read hw accel setting:', 'electron', 'warn', error);
   }

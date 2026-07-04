@@ -4425,47 +4425,62 @@ export const getPubMediaLinks = async (
   }
 };
 
-export const getJwMepsInfo = async () => {
-  try {
-    const jwStore = useJwStore();
+// Guards against overlapping runs: the download + 3-level unzip below takes long
+// enough that the urlVariables watcher in MainLayout.vue can re-trigger a second
+// call before the first finishes, racing two extractions into the same directory.
+let jwMepsInfoPromise: null | Promise<void> = null;
 
-    if (!shouldUpdateList(jwStore.jwMepsLanguages, 3)) {
-      return;
+export const getJwMepsInfo = (): Promise<void> => {
+  if (jwMepsInfoPromise) return jwMepsInfoPromise;
+
+  jwMepsInfoPromise = (async () => {
+    try {
+      const jwStore = useJwStore();
+
+      if (!shouldUpdateList(jwStore.jwMepsLanguages, 3)) {
+        return;
+      }
+
+      const file = await downloadMissingMedia({
+        fileformat: 'ZIP',
+        langwritten: 'E',
+        pub: 'jwlb',
+      });
+      if (!file.FilePath) return;
+      const dir = dirname(file.FilePath);
+      await unzip(file.FilePath, dir);
+      const msixbundle = await findFile(dir, '.msixbundle');
+      if (!msixbundle) return;
+      await unzip(msixbundle, dir);
+      const msix = await findFile(dir, '_x64.msix');
+      if (!msix) return;
+      await unzip(msix, dir);
+      const mepsunit = await findFile(join(dir, 'Data'), '.db');
+      if (!mepsunit) return;
+      const dynamicMepsLangs = globalThis.electronApi
+        .executeQuery<JwMepsLanguage>(
+          mepsunit,
+          'SELECT LanguageId, PrimaryIetfCode, Symbol FROM Language',
+        )
+        .map((l) => ({
+          ...l,
+          PrimaryIetfCode: l.PrimaryIetfCode.toLowerCase() as JwLangSymbol,
+        }));
+      if (dynamicMepsLangs.length < jwStore.jwMepsLanguages.list.length) {
+        return;
+      }
+      jwStore.jwMepsLanguages = {
+        list: dynamicMepsLangs,
+        updated: new Date(),
+      };
+    } catch (e) {
+      errorCatcher(e);
+    } finally {
+      jwMepsInfoPromise = null;
     }
+  })();
 
-    const file = await downloadMissingMedia({
-      fileformat: 'ZIP',
-      langwritten: 'E',
-      pub: 'jwlb',
-    });
-    if (!file.FilePath) return;
-    const dir = dirname(file.FilePath);
-    await unzip(file.FilePath, dir);
-    const msixbundle = await findFile(dir, '.msixbundle');
-    if (!msixbundle) return;
-    await unzip(msixbundle, dir);
-    const msix = await findFile(dir, '_x64.msix');
-    if (!msix) return;
-    await unzip(msix, dir);
-    const mepsunit = await findFile(join(dir, 'Data'), '.db');
-    if (!mepsunit) return;
-    const dynamicMepsLangs = globalThis.electronApi
-      .executeQuery<JwMepsLanguage>(
-        mepsunit,
-        'SELECT LanguageId, PrimaryIetfCode, Symbol FROM Language',
-      )
-      .map((l) => ({
-        ...l,
-        PrimaryIetfCode: l.PrimaryIetfCode.toLowerCase() as JwLangSymbol,
-      }));
-    if (dynamicMepsLangs.length < jwStore.jwMepsLanguages.list.length) return;
-    jwStore.jwMepsLanguages = {
-      list: dynamicMepsLangs,
-      updated: new Date(),
-    };
-  } catch (e) {
-    errorCatcher(e);
-  }
+  return jwMepsInfoPromise;
 };
 
 const findExistingPublicationFile = async (

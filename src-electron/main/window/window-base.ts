@@ -5,7 +5,6 @@ import {
   BrowserWindow,
   type BrowserWindowConstructorOptions,
 } from 'electron';
-import { pathExists, readJson } from 'fs-extra/esm';
 import { fileURLToPath } from 'node:url';
 import {
   IS_BETA,
@@ -13,6 +12,7 @@ import {
   PLATFORM,
   PRODUCT_NAME,
 } from 'src-electron/constants';
+import { readJsonResilient } from 'src-electron/main/resilient-storage';
 import { urlVariables } from 'src-electron/main/session';
 import { captureElectronError, getIconPath } from 'src-electron/main/utils';
 import {
@@ -161,28 +161,27 @@ export function createWindow(
 export async function loadWindowPrefs(
   windowName: 'main' | 'media' | 'timer',
 ): Promise<null | WindowState> {
-  const mediaWindowStateFile = join(
-    app.getPath('userData'),
-    `${windowName}-window-state.json`,
-  );
+  const configFileName = `${windowName}-window-state.json`;
+  const userDataPath = app.getPath('userData');
 
   try {
-    if (!(await pathExists(mediaWindowStateFile))) {
+    const state = await readJsonResilient(userDataPath, configFileName);
+    if (!state) {
       log(
         '[loadWindowPrefs - ' + windowName + '] File does not exist:',
         'electronWindow',
         'log',
-        mediaWindowStateFile,
+        join(userDataPath, configFileName),
       );
       return null;
     }
-    return await readJson(mediaWindowStateFile, { throws: false });
+    return state as WindowState;
   } catch (e) {
     captureElectronError(e, {
       contexts: {
         fn: {
           name: 'loadWindowPrefs - ' + windowName,
-          path: mediaWindowStateFile,
+          path: join(userDataPath, configFileName),
         },
       },
     });

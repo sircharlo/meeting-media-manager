@@ -5,6 +5,7 @@ const browserWindowHandlers = new Map<string, () => void>();
 const captureElectronError = vi.fn();
 const ensureDir = vi.fn();
 const getDisplayMatching = vi.fn();
+const pathExistsSync = vi.fn();
 const readJsonSync = vi.fn();
 const writeJson = vi.fn();
 
@@ -35,6 +36,7 @@ vi.mock('electron', () => ({
 
 vi.mock('fs-extra/esm', () => ({
   ensureDir,
+  pathExistsSync,
   readJsonSync,
   writeJson,
 }));
@@ -57,6 +59,7 @@ describe('StatefulBrowserWindow', () => {
       bounds: { height: 1080, width: 1920, x: 0, y: 0 },
       scaleFactor: 1,
     });
+    pathExistsSync.mockReturnValue(false);
     readJsonSync.mockReturnValue(null);
   });
 

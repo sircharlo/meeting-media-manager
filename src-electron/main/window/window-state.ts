@@ -6,10 +6,13 @@ import {
   type Rectangle,
   screen,
 } from 'electron';
-import { ensureDir, readJsonSync, writeJson } from 'fs-extra/esm';
+import {
+  readJsonResilientSync,
+  writeJsonResilient,
+} from 'src-electron/main/resilient-storage';
 import { captureElectronError } from 'src-electron/main/utils';
 import { debounce, log } from 'src/shared/vanilla';
-import { dirname, join } from 'upath';
+import { join } from 'upath';
 
 export interface WindowState {
   displayBounds?: Rectangle;
@@ -38,17 +41,21 @@ interface ExtraOptions {
 export class StatefulBrowserWindow {
   public win: BrowserWindow;
 
-  private readonly fullStoreFileName: string;
+  private readonly configFileName: string;
+  private readonly configFilePath: string;
   private readonly saveState = async () => {
     try {
-      await ensureDir(dirname(this.fullStoreFileName));
-      await writeJson(this.fullStoreFileName, this.state, { spaces: 2 });
+      await writeJsonResilient(
+        this.configFilePath,
+        this.configFileName,
+        this.state,
+      );
     } catch (e) {
       captureElectronError(e, {
         contexts: {
           fn: {
             name: 'StatefulBrowserWindow.saveState',
-            path: this.fullStoreFileName,
+            path: join(this.configFilePath, this.configFileName),
           },
         },
       });
@@ -126,7 +133,8 @@ export class StatefulBrowserWindow {
 
     this.state = { height, isFullScreen, isMaximized, width, x, y };
 
-    this.fullStoreFileName = join(configFilePath, configFileName);
+    this.configFilePath = configFilePath;
+    this.configFileName = configFileName;
 
     this.manage();
   }
@@ -284,9 +292,7 @@ function refineOptionsAndState(
   } = options;
 
   const savedState = validateState(
-    readJsonSync(join(configFilePath, configFileName), {
-      throws: false,
-    }),
+    readJsonResilientSync(configFilePath, configFileName) as null | WindowState,
   );
 
   if (!savedState) return restOriginalOptions;
