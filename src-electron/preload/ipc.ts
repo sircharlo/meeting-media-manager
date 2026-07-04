@@ -2,6 +2,7 @@ import type {
   ElectronIpcInvokeKey,
   ElectronIpcListenKey,
   ElectronIpcSendKey,
+  ElectronIpcSendSyncKey,
 } from 'src/types';
 
 import { ipcRenderer } from 'electron/renderer';
@@ -19,6 +20,22 @@ export const send = (channel: ElectronIpcSendKey, ...args: unknown[]) => {
     log('[preload] send', 'electronIpc', 'debug', { args, channel });
   }
   ipcRenderer.send(channel, ...args);
+};
+
+/**
+ * Sends a message to the main process and blocks until it replies.
+ * Reserved for small, fast, main-process-only operations (e.g. safeStorage
+ * encryption) that must complete before a synchronous caller (such as a
+ * Pinia persistence serializer) can continue.
+ */
+export const sendSync = <T = unknown>(
+  channel: ElectronIpcSendSyncKey,
+  ...args: unknown[]
+): T => {
+  if (process.env.DEBUGGING) {
+    log('[preload] sendSync', 'electronIpc', 'debug', { args, channel });
+  }
+  return ipcRenderer.sendSync(channel, ...args) as T;
 };
 
 export const listen = (

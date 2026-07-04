@@ -12,6 +12,40 @@ interface Store {
   congregations: Partial<Record<string, SettingsValues>>;
 }
 
+/**
+ * Runs every congregation's `obsPassword` through `transform` (encrypting on
+ * save, decrypting on load), so the OBS websocket password is never written
+ * to disk as plain text. Returns a new object; does not mutate `state`.
+ * @param state The store state to transform
+ * @param transform The function to apply to each non-empty obsPassword
+ */
+export const transformObsPasswords = (
+  state: Store,
+  transform: (value: string) => string,
+): Store => ({
+  ...state,
+  congregations: Object.fromEntries(
+    Object.entries(state.congregations).map(([id, congregation]) => [
+      id,
+      congregation?.obsPassword
+        ? { ...congregation, obsPassword: transform(congregation.obsPassword) }
+        : congregation,
+    ]),
+  ),
+});
+
+export const deserializeCongregationSettings = (data: string): Store =>
+  transformObsPasswords(JSON.parse(data) as Store, (value) =>
+    globalThis.electronApi.decryptSecretSync(value),
+  );
+
+export const serializeCongregationSettings = (state: Store): string =>
+  JSON.stringify(
+    transformObsPasswords(state, (value) =>
+      globalThis.electronApi.encryptSecretSync(value),
+    ),
+  );
+
 export const useCongregationSettingsStore = defineStore(
   'congregation-settings',
   {
@@ -135,7 +169,17 @@ export const useCongregationSettingsStore = defineStore(
         return Object.keys(state.congregations)?.length;
       },
     },
-    persist: true,
+    persist: {
+      // Upgrades any legacy plain-text obsPassword to encrypted form right
+      // away instead of waiting for an unrelated setting to change and
+      // trigger the next save.
+      afterHydrate: (ctx) => ctx.store.$persist(),
+      serializer: {
+        deserialize: deserializeCongregationSettings,
+        serialize: (state) =>
+          serializeCongregationSettings(state as unknown as Store),
+      },
+    },
     state: (): Store => {
       return { announcements: {}, congregations: {} };
     },

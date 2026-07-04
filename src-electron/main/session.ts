@@ -62,8 +62,7 @@ const getCSP = (trustedHostnames: string[]) => {
     'media-src': `'self' ${trustedOrigins} file: data:`,
     'object-src': "'none'",
     'report-uri': `https://o1401005.ingest.us.sentry.io/api/4507449197920256/security/?sentry_key=40b7d92d692d42814570d217655198db&sentry_environment=${process.env.NODE_ENV}&sentry_release=${getAppVersion()}`,
-    'script-src':
-      "'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net",
+    'script-src': "'self' https://cdn.jsdelivr.net",
     'style-src': "'self' https://fonts.googleapis.com 'unsafe-inline'",
     'worker-src': "'self' file: blob: https://cdn.jsdelivr.net",
   };
@@ -138,10 +137,42 @@ const registerSessionHeadersListeners = () => {
   );
 };
 
+const BASE_DOMAIN_PATTERN =
+  /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/i;
+
+// Empty string is accepted so the renderer can still clear these values
+// (e.g. when the congregation's base URL changes) instead of being stuck
+// with stale trusted domains from a previous, unrelated congregation.
+const isEmptyOrValidBaseDomain = (value: string) =>
+  value === '' || BASE_DOMAIN_PATTERN.test(value);
+
+const isEmptyOrHttpsUrl = (value: string) => {
+  if (value === '') return true;
+  try {
+    return new URL(value).protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
+
+/**
+ * Updates the URL variables used to build the CSP and trusted-domain
+ * allowlists. Malformed values are ignored (rather than clearing or
+ * corrupting the existing trusted state) since this is called with
+ * renderer-supplied data that should not be able to widen the app's own
+ * trust boundary with garbage input.
+ * @param variables The URL variables reported by the renderer
+ */
 export const setElectronUrlVariables = (variables: UrlVariables) => {
-  urlVariables.base = variables.base;
-  urlVariables.mediator = variables.mediator;
-  urlVariables.pubMedia = variables.pubMedia;
+  if (isEmptyOrValidBaseDomain(variables.base)) {
+    urlVariables.base = variables.base;
+  }
+  if (isEmptyOrHttpsUrl(variables.mediator)) {
+    urlVariables.mediator = variables.mediator;
+  }
+  if (isEmptyOrHttpsUrl(variables.pubMedia)) {
+    urlVariables.pubMedia = variables.pubMedia;
+  }
 };
 
 export const quitStatus = {

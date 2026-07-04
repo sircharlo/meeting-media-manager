@@ -40,6 +40,7 @@ import {
   captureElectronError,
   isIgnoredNativeCrashEvent,
   isIgnoredUpdateError,
+  isSelf,
   isUpdaterFullDownloadFallbackError,
 } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
@@ -642,7 +643,13 @@ function setHwAccelDisabled(disabled: boolean, temporary = false) {
 }
 
 // IPC handler to update hardware acceleration setting from renderer
-ipcMain.handle('set-hardware-acceleration', (_, disabled: boolean) => {
+ipcMain.handle('set-hardware-acceleration', (e, disabled: boolean) => {
+  if (!isSelf(e.senderFrame?.url)) {
+    log(`Blocked IPC invoke from ${e.senderFrame?.url}`, 'electron', 'warn', {
+      channel: 'set-hardware-acceleration',
+    });
+    return;
+  }
   setHwAccelDisabled(disabled, false);
 });
 

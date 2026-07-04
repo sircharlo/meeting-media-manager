@@ -1,6 +1,5 @@
 import type { default as FsExtra } from 'fs-extra';
 import type { IAudioMetadata, IOptions } from 'music-metadata';
-import type robot from 'robotjs';
 import type {
   FileItem,
   JwSiteParams,
@@ -65,6 +64,11 @@ export interface ElectronApi {
     ffmpegPath: string,
     outputDir?: string,
   ) => Promise<string>;
+  /**
+   * Decrypts a secret previously encrypted with {@link encryptSecretSync}.
+   * @param cipherText The stored value to decrypt
+   */
+  decryptSecretSync: (cipherText: string) => string;
   dirname: typeof dirname;
   downloadFile: (
     url: string,
@@ -72,6 +76,12 @@ export interface ElectronApi {
     destFilename?: string,
     lowPriority?: boolean,
   ) => Promise<null | string>;
+  /**
+   * Encrypts a secret (e.g. the OBS websocket password) using the OS
+   * keychain, so it isn't persisted to disk as plain text.
+   * @param plainText The secret to encrypt
+   */
+  encryptSecretSync: (plainText: string) => string;
   ensureMacosFolderPermission: (
     folderPath: string,
     prompt?: boolean,
@@ -100,7 +110,7 @@ export interface ElectronApi {
    */
   fileUrlToPath: (url?: string) => string;
   focusMediaWindow: () => void;
-  fs: typeof FsExtra;
+  fs: ElectronFsApi;
   getAllScreens: () => Promise<Display[]>;
   getAppDataPath: () => Promise<string>;
   getBetaUpdatesPath: () => Promise<string>;
@@ -238,11 +248,16 @@ export interface ElectronApi {
   removeListeners: (channel: ElectronIpcListenKey) => void;
   resolve: typeof resolve;
   resumeAllDownloads: () => void;
-  robot: typeof robot;
   saveFileDialog: (
     defaultPath: string,
     filter?: FileDialogFilter,
   ) => Promise<Electron.SaveDialogReturnValue | undefined>;
+  /**
+   * Taps a key, optionally with modifier keys held down.
+   * @param key The key to tap.
+   * @param modifiers Modifier keys to hold while tapping.
+   */
+  sendKeyTap: (key: string, modifiers?: string[]) => void;
   setAutoStartAtLogin: (value: boolean) => void;
   setElectronUrlVariables: (variables: string) => void;
   setHardwareAcceleration: (disabled: boolean) => void;
@@ -261,6 +276,30 @@ export interface ElectronApi {
   watchFolder: (path: string) => Promise<void>;
   zoomWebsiteWindow: (direction: 'in' | 'out') => void;
 }
+
+/**
+ * The subset of fs-extra actually used by renderer code, exposed across the
+ * context bridge instead of the full fs-extra module so the renderer cannot
+ * reach filesystem capabilities (e.g. symlinks, permission changes, raw
+ * streams) that no app feature needs.
+ */
+export type ElectronFsApi = Pick<
+  typeof FsExtra,
+  | 'copy'
+  | 'copyFile'
+  | 'emptyDir'
+  | 'ensureDir'
+  | 'ensureFile'
+  | 'exists'
+  | 'move'
+  | 'pathExists'
+  | 'readFile'
+  | 'readJSON'
+  | 'remove'
+  | 'rename'
+  | 'stat'
+  | 'writeFile'
+>;
 
 // ipcMain.handle / ipcRenderer.invoke channels
 export type ElectronIpcInvokeKey =
@@ -342,6 +381,9 @@ export type ElectronIpcSendKey =
   | 'unregisterShortcut'
   | 'websiteWindowClosed'
   | 'zoomWebsiteWindow';
+
+// ipcMain.on with event.returnValue / ipcRenderer.sendSync channels
+export type ElectronIpcSendSyncKey = 'decryptSecretSync' | 'encryptSecretSync';
 
 export type ExternalWebsite = 'docs' | 'latestRelease' | 'repo';
 

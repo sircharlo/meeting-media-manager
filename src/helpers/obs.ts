@@ -41,7 +41,9 @@ const performConnectionAttempt = async (
   }
 };
 
-export const obsConnect = async (setup?: boolean) => {
+let ongoingConnectAttempt: null | Promise<void> = null;
+
+const runObsConnect = async (setup?: boolean) => {
   const obsState = useObsStateStore();
   try {
     const settings = getObsConnectionSettings();
@@ -74,6 +76,23 @@ export const obsConnect = async (setup?: boolean) => {
   } catch (error) {
     errorCatcher(error);
   }
+};
+
+/**
+ * Connects to OBS, retrying with backoff until connected or out of attempts.
+ * Concurrent calls (e.g. a settings change and a manual retry firing close
+ * together) share the same in-flight attempt instead of racing multiple
+ * overlapping connect/retry loops against each other.
+ * @param setup Whether this is the initial setup attempt (single try only)
+ */
+export const obsConnect = async (setup?: boolean) => {
+  if (ongoingConnectAttempt) return ongoingConnectAttempt;
+
+  ongoingConnectAttempt = runObsConnect(setup).finally(() => {
+    ongoingConnectAttempt = null;
+  });
+
+  return ongoingConnectAttempt;
 };
 
 export const obsStartRecording = async (): Promise<boolean> => {

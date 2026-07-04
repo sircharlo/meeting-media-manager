@@ -5289,6 +5289,15 @@ export const setUrlVariables = async (baseUrl: string | undefined) => {
     jwStore.urlVariables.pubMedia = '';
   };
 
+  const isHttpsUrl = (value?: string) => {
+    if (!value) return false;
+    try {
+      return new URL(value).protocol === 'https:';
+    } catch {
+      return false;
+    }
+  };
+
   const isValidUrlBasePart = (basePart?: string) => {
     if (!basePart) return false;
     const basePartWithoutPath = basePart.split('/')[0];
@@ -5351,12 +5360,14 @@ export const setUrlVariables = async (baseUrl: string | undefined) => {
     }
 
     const attributes = { ...div?.[0]?.attribs };
+    const mediatorUrl = attributes['data-mediator_url'];
+    const pubMediaUrl = attributes['data-pubmedia_url'];
 
-    if (attributes['data-mediator_url']) {
-      jwStore.urlVariables.mediator = attributes['data-mediator_url'];
+    if (mediatorUrl && isHttpsUrl(mediatorUrl)) {
+      jwStore.urlVariables.mediator = mediatorUrl;
     }
-    if (attributes['data-pubmedia_url']) {
-      jwStore.urlVariables.pubMedia = attributes['data-pubmedia_url'];
+    if (pubMediaUrl && isHttpsUrl(pubMediaUrl)) {
+      jwStore.urlVariables.pubMedia = pubMediaUrl;
     }
 
     if (!jwStore.urlVariables.mediator || !jwStore.urlVariables.pubMedia) {

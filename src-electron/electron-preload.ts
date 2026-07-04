@@ -1,8 +1,22 @@
-import type { ElectronApi } from 'src/types/electron';
+import type { ElectronApi, ElectronFsApi } from 'src/types/electron';
 
-import robot from '@jitsi/robotjs';
 import { contextBridge, webUtils } from 'electron/renderer';
-import fs from 'fs-extra';
+import {
+  copy,
+  copyFile,
+  emptyDir,
+  ensureDir,
+  ensureFile,
+  exists,
+  move,
+  pathExists,
+  readFile,
+  readJSON,
+  remove,
+  rename,
+  stat,
+  writeFile,
+} from 'fs-extra';
 import { PLATFORM } from 'src-electron/constants';
 import { initCloseListeners } from 'src-electron/preload/close';
 import { convertHeic } from 'src-electron/preload/converters';
@@ -21,7 +35,9 @@ import {
   listen,
   removeAllIpcListeners,
   send,
+  sendSync,
 } from 'src-electron/preload/ipc';
+import { sendKeyTap } from 'src-electron/preload/robot';
 import { initScreenListeners } from 'src-electron/preload/screen';
 import { executeQuery } from 'src-electron/preload/sqlite';
 import {
@@ -46,6 +62,23 @@ initCloseListeners();
 initScreenListeners();
 initWebsiteListeners();
 
+const fs: ElectronFsApi = {
+  copy,
+  copyFile,
+  emptyDir,
+  ensureDir,
+  ensureFile,
+  exists,
+  move,
+  pathExists,
+  readFile,
+  readJSON,
+  remove,
+  rename,
+  stat,
+  writeFile,
+};
+
 const getPathFromFileObject = (fo?: File | string) => {
   if (!fo) {
     return '';
@@ -66,8 +99,10 @@ const electronApi: ElectronApi = {
   convertHeic,
   createVideoFromNonVideo: (f, fP, oD) =>
     invoke('createVideoFromNonVideo', f, fP, oD),
+  decryptSecretSync: (cipherText) => sendSync('decryptSecretSync', cipherText),
   dirname,
   downloadFile: (u, sD, dF, lP) => invoke('downloadFile', u, sD, dF, lP),
+  encryptSecretSync: (plainText) => sendSync('encryptSecretSync', plainText),
   ensureMacosFolderPermission: (folderPath, prompt) =>
     invoke('ensureMacosFolderPermission', folderPath, prompt),
   executeQuery,
@@ -139,8 +174,8 @@ const electronApi: ElectronApi = {
   removeListeners: (c) => removeAllIpcListeners(c),
   resolve,
   resumeAllDownloads: () => send('resumeAllDownloads'),
-  robot,
   saveFileDialog: (d, f) => invoke('saveFileDialog', d, f),
+  sendKeyTap: (k, m) => sendKeyTap(k, m),
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),
   setElectronUrlVariables: (v) => send('setElectronUrlVariables', v),
   setHardwareAcceleration: (v) => invoke('set-hardware-acceleration', v),

@@ -1,0 +1,94 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+const errorCatcherMock = vi.fn();
+const sleepMock = vi.fn(() => Promise.resolve());
+const connectMock = vi.fn();
+const disconnectMock = vi.fn();
+const obsErrorHandlerMock = vi.fn();
+
+const currentStateStore = {
+  currentSettings: {
+    obsEnable: true,
+    obsPassword: 'hunter2',
+    obsPort: '4455',
+  } as Record<string, unknown>,
+};
+
+const obsStateStore = {
+  obsConnectionState: 'notConnected',
+  obsErrorHandler: obsErrorHandlerMock,
+  obsMessage: '',
+};
+
+vi.mock('src/helpers/error-catcher', () => ({
+  errorCatcher: errorCatcherMock,
+}));
+
+vi.mock('src/utils/general', () => ({
+  sleep: sleepMock,
+}));
+
+vi.mock('src/utils/obs', () => ({
+  initObsWebSocket: vi.fn(async () => undefined),
+  obsWebSocketInfo: {
+    obsWebSocket: { connect: connectMock, disconnect: disconnectMock },
+  },
+}));
+
+vi.mock('src/utils/settings', () => ({
+  portNumberValidator: (val: string) => {
+    const num = Number(val);
+    return Number.isInteger(num) && num > 0 && num < 65536;
+  },
+}));
+
+vi.mock('stores/current-state', () => ({
+  useCurrentStateStore: () => currentStateStore,
+}));
+
+vi.mock('stores/obs-state', () => ({
+  useObsStateStore: () => obsStateStore,
+}));
+
+describe('obsConnect', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    obsStateStore.obsConnectionState = 'notConnected';
+    currentStateStore.currentSettings = {
+      obsEnable: true,
+      obsPassword: 'hunter2',
+      obsPort: '4455',
+    };
+    connectMock.mockResolvedValue({
+      negotiatedRpcVersion: 1,
+      obsWebSocketVersion: '5.0',
+    });
+  });
+
+  it('shares a single connection attempt across concurrent calls', async () => {
+    const { obsConnect } = await import('../obs');
+
+    await Promise.all([obsConnect(), obsConnect(), obsConnect()]);
+
+    expect(connectMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('starts a fresh attempt once a previous one has finished', async () => {
+    const { obsConnect } = await import('../obs');
+
+    await obsConnect();
+    await obsConnect();
+
+    expect(connectMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not attempt to connect when OBS integration is disabled', async () => {
+    currentStateStore.currentSettings = { obsEnable: false };
+    const { obsConnect } = await import('../obs');
+
+    await obsConnect();
+
+    expect(connectMock).not.toHaveBeenCalled();
+    expect(disconnectMock).toHaveBeenCalled();
+  });
+});

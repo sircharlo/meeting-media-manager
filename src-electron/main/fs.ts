@@ -181,6 +181,30 @@ const stopSecurityScopedAccess = () => {
 
 app.once('will-quit', stopSecurityScopedAccess);
 
+/**
+ * Resolves a zip entry's target path and guards against "Zip Slip": a
+ * malicious entry name (e.g. containing `../` sequences) that would
+ * otherwise resolve outside of `output` and let a crafted archive write
+ * files anywhere on disk.
+ * @param output The directory the zip is being extracted into
+ * @param entryFileName The entry's file name, as read from the archive
+ * @returns The safe, fully-joined path for the entry
+ */
+const resolveZipEntryPath = (output: string, entryFileName: string) => {
+  const resolvedOutput = resolve(output);
+  const fullPath = join(output, entryFileName);
+  const resolvedFullPath = resolve(fullPath);
+
+  if (
+    resolvedFullPath !== resolvedOutput &&
+    !resolvedFullPath.startsWith(`${resolvedOutput}/`)
+  ) {
+    throw new Error(`Unsafe zip entry path: ${entryFileName}`);
+  }
+
+  return fullPath;
+};
+
 const getZipEntryGuardError = (
   entry: Entry,
   state: ZipGuardState,
@@ -941,8 +965,6 @@ const handleZipEntry = async (
   state: ZipfileState,
   zipfile: ZipFile,
 ): Promise<void> => {
-  const fullPath = join(context.output, entry.fileName);
-
   // Apply filter if provided
   if (
     context.opts?.includes?.length &&
@@ -950,6 +972,8 @@ const handleZipEntry = async (
   ) {
     return;
   }
+
+  const fullPath = resolveZipEntryPath(context.output, entry.fileName);
 
   const guardError = getZipEntryGuardError(entry, state);
   if (guardError) {
@@ -1355,7 +1379,7 @@ export async function extractNestedZipEntry(
         }
 
         const readStream = await innerZipfile.openReadStreamPromise(entry);
-        const fullPath = join(output, entry.fileName);
+        const fullPath = resolveZipEntryPath(output, entry.fileName);
         await ensureDir(dirname(fullPath));
         await pipeline(readStream, createWriteStream(fullPath));
         return { path: fullPath };

@@ -9,9 +9,9 @@ vi.mock('fs-extra/esm', () => ({
 vi.mock('node:fs/promises', () => ({
   stat: vi.fn(async (p: string) => {
     if (p.endsWith('.mp4')) {
-      return { mtimeMs: 200, size: 100 };
+      return { isFile: () => true, mtimeMs: 200, size: 100 };
     }
-    return { mtimeMs: 100, size: 100 };
+    return { isFile: () => true, mtimeMs: 100, size: 100 };
   }),
 }));
 
@@ -97,5 +97,23 @@ describe('ffmpeg.createVideoFromNonVideo', () => {
     await expect(
       createVideoFromNonVideo('/tmp/a.jpg', '/bin/ffmpeg'),
     ).rejects.toThrow('Could not determine dimensions of image.');
+  });
+
+  it('refuses to use a path that is not an FFmpeg binary', async () => {
+    await expect(
+      createVideoFromNonVideo('/tmp/a.mp3', '/bin/some-other-tool'),
+    ).rejects.toThrow('Refusing to use non-FFmpeg path');
+  });
+
+  it('refuses to use an FFmpeg path that is not a file', async () => {
+    const fsPromises = await import('node:fs/promises');
+    const statMock = fsPromises.stat as unknown as Mock<
+      (p: string) => Promise<{ isFile: () => boolean }>
+    >;
+    statMock.mockResolvedValueOnce({ isFile: () => false });
+
+    await expect(
+      createVideoFromNonVideo('/tmp/a.mp3', '/bin/ffmpeg-directory'),
+    ).rejects.toThrow('FFmpeg path is not a file');
   });
 });

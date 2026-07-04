@@ -6,6 +6,26 @@ import { basename, changeExt, extname, join } from 'upath';
 
 const conversionQueue = new Map<string, Promise<string>>();
 
+/**
+ * Sanity-checks that `ffmpegPath` actually looks like the app's own
+ * downloaded FFmpeg binary before it's handed to fluent-ffmpeg, which will
+ * spawn whatever executable path it's given. The app's cache directory is
+ * user-configurable, so this can't validate full path containment; it only
+ * guards against a path that clearly isn't an FFmpeg binary (e.g. an
+ * unrelated system executable) reaching the spawn call.
+ * @param ffmpegPath The path to validate
+ */
+const assertValidFfmpegPath = async (ffmpegPath: string): Promise<void> => {
+  if (!basename(ffmpegPath).toLowerCase().includes('ffmpeg')) {
+    throw new Error(`Refusing to use non-FFmpeg path: ${ffmpegPath}`);
+  }
+
+  const stats = await stat(ffmpegPath);
+  if (!stats.isFile()) {
+    throw new Error(`FFmpeg path is not a file: ${ffmpegPath}`);
+  }
+};
+
 const shouldUseExistingConversion = async (
   originalFile: string,
   convertedFilePath: string,
@@ -125,6 +145,8 @@ export const createVideoFromNonVideo = async (
   if (existingPromise) return existingPromise;
 
   const conversionPromise = (async (): Promise<string> => {
+    await assertValidFfmpegPath(ffmpegPath);
+
     const convertedFilePath = outputDir
       ? join(
           outputDir,

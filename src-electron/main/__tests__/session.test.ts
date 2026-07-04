@@ -76,6 +76,52 @@ describe('session listeners', () => {
     expect(onHeadersReceivedMock).toHaveBeenCalledTimes(1);
   });
 
+  it('ignores non-https mediator/pubMedia URLs and malformed base domains', async () => {
+    const { setElectronUrlVariables, urlVariables } =
+      await import('../session');
+
+    setElectronUrlVariables({
+      base: 'valid-domain.test',
+      mediator: 'https://mediator.test/',
+      pubMedia: 'https://pubmedia.test/',
+    });
+
+    setElectronUrlVariables({
+      base: 'not a domain!',
+      mediator: 'javascript:alert(1)',
+      pubMedia: 'not-a-url',
+    });
+
+    expect(urlVariables).toEqual({
+      base: 'valid-domain.test',
+      mediator: 'https://mediator.test/',
+      pubMedia: 'https://pubmedia.test/',
+    });
+  });
+
+  it('accepts empty strings to reset previously set URL variables', async () => {
+    const { setElectronUrlVariables, urlVariables } =
+      await import('../session');
+
+    setElectronUrlVariables({
+      base: 'valid-domain.test',
+      mediator: 'https://mediator.test/',
+      pubMedia: 'https://pubmedia.test/',
+    });
+
+    setElectronUrlVariables({
+      base: '',
+      mediator: '',
+      pubMedia: '',
+    });
+
+    expect(urlVariables).toEqual({
+      base: '',
+      mediator: '',
+      pubMedia: '',
+    });
+  });
+
   it('updates referer and origin for trusted requests using the single registered listener', async () => {
     const { initSessionListeners } = await import('../session');
 
@@ -181,5 +227,44 @@ describe('session listeners', () => {
         'Content-Security-Policy'
       ]?.[0];
     expect(csp).not.toContain('badly formed hostname');
+  });
+
+  it('does not allow unsafe-inline or unsafe-eval scripts in the CSP', async () => {
+    const { initSessionListeners } = await import('../session');
+    const utilsModule = await import('src-electron/main/utils');
+
+    vi.mocked(utilsModule.isSelf).mockReturnValue(true);
+
+    initSessionListeners();
+    readyCallbacks[0]?.();
+
+    const handler = onHeadersReceivedMock.mock.calls[0]?.[0] as (
+      details: { responseHeaders?: Record<string, string[]>; url: string },
+      callback: (result: {
+        responseHeaders?: Record<string, string[]>;
+      }) => void,
+    ) => void;
+
+    const callback = vi.fn();
+    handler(
+      {
+        responseHeaders: {},
+        url: 'file:///index.html',
+      },
+      callback,
+    );
+
+    const csp =
+      callback.mock.calls[0]?.[0]?.responseHeaders?.[
+        'Content-Security-Policy'
+      ]?.[0];
+
+    const scriptSrc = csp
+      ?.split(';')
+      .map((directive: string) => directive.trim())
+      .find((directive: string) => directive.startsWith('script-src'));
+
+    expect(scriptSrc).not.toContain("'unsafe-inline'");
+    expect(scriptSrc).not.toContain("'unsafe-eval'");
   });
 });

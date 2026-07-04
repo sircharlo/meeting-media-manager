@@ -7,7 +7,7 @@ import {
   type WebContents,
 } from 'electron';
 import { HD_RESOLUTION, PLATFORM } from 'src-electron/constants';
-import { captureElectronError } from 'src-electron/main/utils';
+import { captureElectronError, isTrustedDomain } from 'src-electron/main/utils';
 import {
   createWindow,
   logToWindow,
@@ -79,10 +79,21 @@ export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
     },
   );
 
-  // Prevent popups from opening new windows
+  // Prevent popups from opening new windows; only navigate the existing
+  // website window for popups targeting a trusted domain, since this
+  // handler overrides the app-wide trust check registered in security.ts.
   websiteWindowInfo.websiteWindow?.webContents.setWindowOpenHandler(
     (details) => {
-      websiteWindowInfo.websiteWindow?.loadURL(details.url);
+      if (isTrustedDomain(details.url)) {
+        websiteWindowInfo.websiteWindow?.loadURL(details.url);
+      } else {
+        logToWindow(
+          mainWindowInfo.mainWindow,
+          'Blocked website window popup to:',
+          details.url,
+          'warn',
+        );
+      }
       return { action: 'deny' };
     },
   );

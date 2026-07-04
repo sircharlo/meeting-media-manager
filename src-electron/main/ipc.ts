@@ -2,6 +2,7 @@ import type {
   DiscussionCategory,
   ElectronIpcInvokeKey,
   ElectronIpcSendKey,
+  ElectronIpcSendSyncKey,
   ExternalWebsite,
   ExtractNestedZipEntryOptions,
   FileDialogFilter,
@@ -10,6 +11,7 @@ import type {
   NavigateWebsiteAction,
   SettingsValues,
   UnzipOptions,
+  UrlVariables,
 } from 'src/types';
 
 import { homepage, repository } from 'app/package.json';
@@ -22,6 +24,7 @@ import {
   systemPreferences,
 } from 'electron';
 import { pathExists } from 'fs-extra/esm';
+import { stat } from 'node:fs/promises';
 import { arch, platform } from 'node:os';
 import { PLATFORM } from 'src-electron/constants';
 import { getLowDiskSpaceStatus } from 'src-electron/main/disk-space';
@@ -49,6 +52,7 @@ import {
   watchFolder,
 } from 'src-electron/main/fs';
 import { getAllScreens } from 'src-electron/main/screen';
+import { decryptSecret, encryptSecret } from 'src-electron/main/secrets';
 import { quitStatus, setElectronUrlVariables } from 'src-electron/main/session';
 import {
   registerShortcut,
@@ -116,6 +120,36 @@ function handleIpcSend(
   });
 }
 
+// IPC sendSync/on with event.returnValue
+
+function handleIpcSendSync<T>(
+  channel: ElectronIpcSendSyncKey,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  listener: (event: IpcMainEvent, ...args: any[]) => T,
+) {
+  ipcMain.on(channel, (e, ...args) => {
+    if (!isSelf(e.senderFrame?.url)) {
+      logToWindow(
+        mainWindowInfo.mainWindow,
+        `Blocked IPC sendSync from ${e.senderFrame?.url}`,
+        {},
+        'warn',
+      );
+      e.returnValue = undefined;
+      return;
+    }
+    e.returnValue = listener(e, ...args);
+  });
+}
+
+handleIpcSendSync('encryptSecretSync', (_e, plainText: string) =>
+  encryptSecret(plainText),
+);
+
+handleIpcSendSync('decryptSecretSync', (_e, cipherText: string) =>
+  decryptSecret(cipherText),
+);
+
 handleIpcSend(
   'toggleMediaWindow',
   async (_e, show: boolean, enableFadeTransitions = false) => {
@@ -165,7 +199,13 @@ handleIpcSend('pauseAllDownloads', () => {
 handleIpcSend('checkForUpdates', () => triggerUpdateCheck());
 
 handleIpcSend('setElectronUrlVariables', (_e, variables: string) => {
-  setElectronUrlVariables(JSON.parse(variables));
+  try {
+    setElectronUrlVariables(JSON.parse(variables) as UrlVariables);
+  } catch (error) {
+    captureElectronError(error, {
+      contexts: { fn: { name: 'setElectronUrlVariables', variables } },
+    });
+  }
 });
 
 handleIpcSend('setPathProbeNotificationPaths', (_e, paths: string[]) => {
@@ -245,10 +285,19 @@ handleIpcSend('openExternal', (_e, website: ExternalWebsite) => {
 handleIpcSend(
   'openDiscussion',
   (_e, category: DiscussionCategory, title: string, params = '{}') => {
+    let parsedParams: Record<string, string> = {};
+    try {
+      parsedParams = JSON.parse(params) as Record<string, string>;
+    } catch (error) {
+      captureElectronError(error, {
+        contexts: { fn: { name: 'openDiscussion', params } },
+      });
+    }
+
     const search = new URLSearchParams({
       category,
       title,
-      ...JSON.parse(params),
+      ...parsedParams,
     }).toString();
     openExternal(
       `${repository.url.replace('.git', '/discussions/new')}?${search}`,
@@ -390,7 +439,22 @@ handleIpcInvoke(
     saveFileDialog(defaultPath, filter),
 );
 
-handleIpcInvoke('openFolder', async (_e, path: string) => openPath(path));
+handleIpcInvoke('openFolder', async (_e, path: string) => {
+  // shell.openPath executes files (not just directories), so refuse to
+  // open anything that isn't an actual directory rather than trusting the
+  // caller's assumption that `path` points at a folder.
+  try {
+    const stats = await stat(path);
+    if (!stats.isDirectory()) return 'Path is not a directory';
+  } catch (error) {
+    captureElectronError(error, {
+      contexts: { fn: { name: 'openFolder', path } },
+    });
+    return 'Path does not exist';
+  }
+
+  return openPath(path);
+});
 
 handleIpcInvoke(
   'unzip',

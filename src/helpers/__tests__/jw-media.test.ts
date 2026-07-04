@@ -1,3 +1,4 @@
+import { fetchRaw } from 'src/utils/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const errorCatcherMock = vi.fn();
@@ -411,5 +412,45 @@ describe('jw-media helpers', () => {
     await fetchMedia();
 
     expect(updateLookupPeriodMock).toHaveBeenCalledOnce();
+  });
+
+  it('accepts valid https mediator and pubMedia URLs scraped from the base site', async () => {
+    jwStore.urlVariables = {};
+    vi.mocked(fetchRaw).mockResolvedValue({
+      ok: true,
+      text: () =>
+        Promise.resolve(
+          '<div id="pageConfig" data-mediator_url="https://b.jw-cdn.org/apis/mediator" data-pubmedia_url="https://b.jw-cdn.org/apis/pub-media"></div>',
+        ),
+    } as Response);
+
+    const { setUrlVariables } = await import('../jw-media');
+    await setUrlVariables('jw.org');
+
+    expect(jwStore.urlVariables).toEqual({
+      base: 'jw.org',
+      mediator: 'https://b.jw-cdn.org/apis/mediator',
+      pubMedia: 'https://b.jw-cdn.org/apis/pub-media',
+    });
+  });
+
+  it('discards a scraped mediator URL that is not https and resets url variables', async () => {
+    jwStore.urlVariables = {};
+    vi.mocked(fetchRaw).mockResolvedValue({
+      ok: true,
+      text: () =>
+        Promise.resolve(
+          '<div id="pageConfig" data-mediator_url="javascript:alert(1)" data-pubmedia_url="https://b.jw-cdn.org/apis/pub-media"></div>',
+        ),
+    } as Response);
+
+    const { setUrlVariables } = await import('../jw-media');
+    await setUrlVariables('jw.org');
+
+    expect(jwStore.urlVariables).toEqual({
+      base: 'jw.org',
+      mediator: '',
+      pubMedia: '',
+    });
   });
 });

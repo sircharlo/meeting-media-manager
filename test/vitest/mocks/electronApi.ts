@@ -2,11 +2,6 @@
 
 import type { ElectronApi } from 'src/types';
 
-const robot = {
-  getMousePos: () => ({ x: 0, y: 0 }),
-  mouseClick: () => undefined,
-  moveMouse: () => undefined,
-};
 import fs, { ensureDir } from 'fs-extra';
 import {
   fileUrlToPath,
@@ -53,10 +48,12 @@ export const electronApi: ElectronApi = {
   createVideoFromNonVideo: function (originalFile, ffmpegPath) {
     throw new Error('Function not implemented.');
   },
+  decryptSecretSync: (cipherText) => cipherText,
   dirname,
   downloadFile: function (url, saveDir, destFilename, lowPriority) {
     throw new Error('Function not implemented.');
   },
+  encryptSecretSync: (plainText) => plainText,
   ensureMacosFolderPermission: async (folderPath) => ({
     path: folderPath,
     status: 'not-needed',
@@ -216,9 +213,11 @@ export const electronApi: ElectronApi = {
   resumeAllDownloads: function () {
     throw new Error('Function not implemented.');
   },
-  robot,
   saveFileDialog: function (defaultPath, filter) {
     throw new Error('Function not implemented.');
+  },
+  sendKeyTap: function (key, modifiers) {
+    // no-op in tests
   },
   setAutoStartAtLogin: function (value) {
     throw new Error('Function not implemented.');

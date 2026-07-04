@@ -28,10 +28,49 @@ import {
   fetchJsonFromMainProcess,
   isIgnoredNativeCrashEvent,
   isIgnoredUpdateError,
+  isJwDomain,
+  isTrustedDomain,
   isUpdaterFullDownloadFallbackError,
   markUpdaterFullDownloadFallback,
   utils,
 } from '../utils';
+
+describe('isJwDomain', () => {
+  it('accepts jw.org and its subdomains', () => {
+    expect(isJwDomain('https://jw.org/')).toBe(true);
+    expect(isJwDomain('https://www.jw.org/en/')).toBe(true);
+    expect(isJwDomain('https://stream.jw.org/')).toBe(true);
+  });
+
+  it('rejects look-alike domains that merely end with a trusted suffix', () => {
+    expect(isJwDomain('https://evil-jw.org/')).toBe(false);
+    expect(isJwDomain('https://notjw.org/')).toBe(false);
+    expect(isJwDomain('https://xjw.org/')).toBe(false);
+    expect(isJwDomain('https://jw.org.evil.com/')).toBe(false);
+  });
+
+  it('rejects non-https protocols', () => {
+    expect(isJwDomain('http://jw.org/')).toBe(false);
+  });
+});
+
+describe('isTrustedDomain', () => {
+  it('accepts trusted domains and their subdomains', () => {
+    expect(isTrustedDomain('https://jw.org/')).toBe(true);
+    expect(isTrustedDomain('https://cdn.jw-cdn.org/')).toBe(true);
+    expect(isTrustedDomain('https://d1.cloudfront.net/')).toBe(true);
+  });
+
+  it('rejects look-alike domains that merely end with a trusted suffix', () => {
+    expect(isTrustedDomain('https://evil-jw-cdn.org/')).toBe(false);
+    expect(isTrustedDomain('https://notcloudfront.net/')).toBe(false);
+    expect(isTrustedDomain('https://fakeakamaihd.net/')).toBe(false);
+  });
+
+  it('rejects an undefined url', () => {
+    expect(isTrustedDomain(undefined)).toBe(false);
+  });
+});
 
 describe('isIgnoredUpdateError', () => {
   it('should return true for ERR_NETWORK_CHANGED', () => {
