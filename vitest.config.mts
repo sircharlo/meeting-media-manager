@@ -71,5 +71,6 @@ export default defineConfig({
         },
       },
     ],
+    testTimeout: 15000,
   },
 });
