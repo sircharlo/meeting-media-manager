@@ -3371,10 +3371,20 @@ const getWatchedMediaPlacement = async ({
     watchedItemPath,
   });
 
+  if (sectionInfo) {
+    return { order: sectionInfo.order, section: sectionInfo.section };
+  }
+
+  // No explicit override on record: fall back to the order/section encoded
+  // in the filename by the media auto-export feature (or reproduced manually).
+  const { getExportedFilenamePlacement } =
+    await import('src/helpers/media-sections');
+  const filenamePlacement = getExportedFilenamePlacement(filename);
+
   return {
-    order: sectionInfo?.order,
+    order: filenamePlacement?.order,
     section:
-      sectionInfo?.section ||
+      filenamePlacement?.section ||
       getLegacyWatchedSection(filename) ||
       getDefaultWatchedSection(parentDate),
   };

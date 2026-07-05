@@ -12,6 +12,53 @@ const writeFileMock = vi.fn();
 
 const toPath = (fileUrl: string) => fileUrl.replace('file://', '');
 
+vi.mock('boot/i18n', () => ({
+  i18n: {
+    global: {
+      t: (key: string) =>
+        ({
+          ayfm: 'Apply Yourself to the Field Ministry',
+          'circuit-overseer': 'Circuit Overseer',
+          lac: 'Living as Christians',
+          pt: 'Public talk',
+          tgw: "Treasures from God's Word",
+          wt: 'Watchtower Study',
+        })[key] ?? key,
+    },
+  },
+}));
+
+describe('getExportedFilenamePlacement', () => {
+  it('parses the section and item number out of an exported filename', async () => {
+    const { getExportedFilenamePlacement } = await import('../media-sections');
+
+    expect(
+      getExportedFilenamePlacement('01 Public talk - 01 MTG Start.mp4'),
+    ).toEqual({ order: 1001, section: 'pt' });
+
+    expect(
+      getExportedFilenamePlacement(
+        '02 Watchtower Study - 04 In-home conversation.jpg',
+      ),
+    ).toEqual({ order: 2004, section: 'wt' });
+  });
+
+  it('still returns the parsed order when the section name is unrecognized', async () => {
+    const { getExportedFilenamePlacement } = await import('../media-sections');
+
+    expect(
+      getExportedFilenamePlacement('05 Some Custom Segment - 02 Foo.mp4'),
+    ).toEqual({ order: 5002, section: undefined });
+  });
+
+  it('returns null for filenames with no export naming convention', async () => {
+    const { getExportedFilenamePlacement } = await import('../media-sections');
+
+    expect(getExportedFilenamePlacement('MTG Start.mp4')).toBeNull();
+    expect(getExportedFilenamePlacement('Video1.mp4')).toBeNull();
+  });
+});
+
 describe('watched media layout persistence', () => {
   beforeEach(() => {
     vi.resetModules();

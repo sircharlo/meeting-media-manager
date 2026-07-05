@@ -7,6 +7,7 @@ import type {
   MediaSectionWithConfig,
 } from 'src/types';
 
+import { i18n } from 'boot/i18n';
 import { getMeetingSections, standardSections } from 'src/constants/media';
 import { isCoWeek } from 'src/helpers/date';
 import { log } from 'src/shared/vanilla';
@@ -318,6 +319,47 @@ const getWatchedOrder = (items: MediaItem[], itemIndex: number) => {
   }
 
   return itemIndex;
+};
+
+// Sections the media auto-export feature can produce a folder name for (see
+// buildDestinationPath in helpers/export-media.ts), used to reverse-match an
+// exported section name back to a MediaSectionIdentifier.
+const EXPORTABLE_SECTION_IDS: MediaSectionIdentifier[] = [
+  ...standardSections,
+  'pt',
+];
+
+// Matches the naming convention written by the media auto-export feature:
+// "<section#> <section name> - <item#> <title>.<ext>". Used as a fallback
+// ordering signal for watched items with no .section-order.json entry, e.g.
+// files brought into the watch folder from another device's export, or
+// copied in manually following the same numbering convention.
+const EXPORTED_FILENAME_PATTERN = /^(\d{1,3})\s+(.+?)\s-\s(\d{1,3})\s/;
+
+const getSectionIdFromExportedName = (
+  sectionName: string,
+): MediaSectionIdentifier | undefined => {
+  const normalized = sectionName.trim().toLowerCase();
+  return EXPORTABLE_SECTION_IDS.find(
+    (id) => i18n.global.t(id).trim().toLowerCase() === normalized,
+  );
+};
+
+export const getExportedFilenamePlacement = (
+  filename: string,
+): null | { order: number; section?: MediaSectionIdentifier } => {
+  const match = EXPORTED_FILENAME_PATTERN.exec(filename);
+  if (!match) return null;
+
+  const [, sectionNumber, sectionName, itemNumber] = match;
+  const sectionIndex = Number.parseInt(sectionNumber ?? '', 10);
+  const itemIndex = Number.parseInt(itemNumber ?? '', 10);
+  if (Number.isNaN(sectionIndex) || Number.isNaN(itemIndex)) return null;
+
+  return {
+    order: sectionIndex * 1000 + itemIndex,
+    section: getSectionIdFromExportedName(sectionName ?? ''),
+  };
 };
 
 const readWatchedMediaSectionOrder = async (
