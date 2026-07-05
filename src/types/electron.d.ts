@@ -75,7 +75,7 @@ export interface ElectronApi {
     saveDir: string,
     destFilename?: string,
     lowPriority?: boolean,
-  ) => Promise<null | string>;
+  ) => Promise<null | { key: string; saveDir: string }>;
   /**
    * Encrypts a secret (e.g. the OBS websocket password) using the OS
    * keychain, so it isn't persisted to disk as plain text.

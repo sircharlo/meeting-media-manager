@@ -40,7 +40,10 @@ vi.mock('countries-and-timezones', () => ({
 }));
 
 vi.mock('electron', () => ({
-  app: { getLocaleCountryCode: vi.fn(() => 'US') },
+  app: {
+    getLocaleCountryCode: vi.fn(() => 'US'),
+    getPath: vi.fn(() => '/tmp'),
+  },
 }));
 
 interface ErrorWithDirectoryDiagnostics extends Error {
@@ -63,7 +66,7 @@ describe('downloads.ensureDirWithRetry', () => {
 
     await expect(
       ensureDirWithRetry('/tmp/Publications/w_X_20260400'),
-    ).resolves.toBeUndefined();
+    ).resolves.toBe('/tmp/Publications/w_X_20260400');
 
     expect(mocks.mkdir).toHaveBeenCalledWith('/tmp/Publications/w_X_20260400', {
       recursive: true,

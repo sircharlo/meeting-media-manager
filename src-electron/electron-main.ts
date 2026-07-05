@@ -18,6 +18,7 @@ import {
 } from 'src-electron/constants';
 import { cancelAllDownloads } from 'src-electron/main/downloads';
 import {
+  pruneStaleFallbackEntries,
   readJsonResilient,
   readJsonResilientSync,
   writeJsonResilient,
@@ -562,6 +563,14 @@ process.stderr.on('error', (err: NodeJS.ErrnoException) => {
 
 function createWindowAndCaptureErrors() {
   app.whenReady().then(createMainWindow).catch(captureElectronError);
+  app
+    .whenReady()
+    .then(pruneStaleFallbackEntries)
+    .catch((error: unknown) =>
+      captureElectronError(error, {
+        contexts: { fn: { name: 'pruneStaleFallbackEntries' } },
+      }),
+    );
 }
 
 const CRASH_COUNT_FILE = 'crash-count.json';

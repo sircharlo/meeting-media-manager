@@ -4,6 +4,7 @@ import { getCountriesForTimezone } from 'countries-and-timezones';
 import { app, type BrowserWindow } from 'electron';
 import { mkdir, stat } from 'node:fs/promises';
 import { setTimeout as delay } from 'node:timers/promises';
+import { getFallbackDir } from 'src-electron/main/resilient-storage';
 import { quitStatus } from 'src-electron/main/session';
 import {
   addElectronBreadcrumb,
@@ -13,7 +14,7 @@ import {
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import { log } from 'src/shared/vanilla';
-import { basename, dirname } from 'upath';
+import { basename, dirname, join } from 'upath';
 
 const ENSURE_DIR_RETRYABLE_CODES = new Set([
   'EACCES',
@@ -147,16 +148,24 @@ const attachDirectoryDiagnostics = (
   (error as ErrorWithDirectoryDiagnostics).downloadDirDiagnostics = diagnostics;
 };
 
-const ensureDirPromises = new Map<string, Promise<void>>();
+const ensureDirPromises = new Map<string, Promise<string>>();
+const DOWNLOAD_FALLBACK_FINGERPRINT = ['download-directory-fallback-to-temp'];
 
 /**
- * Creates a directory with retry logic. Concurrent requests for the exact
- * same directory (common when several files for the same publication are
- * queued at once) are coalesced into a single attempt so parallel downloads
- * don't pile more concurrent `mkdir` calls onto an already-contended shared
- * folder.
+ * Creates a directory with retry logic, falling back to a directory under
+ * the OS temp folder if the requested directory remains unusable after all
+ * retries (e.g. a user-configured cache folder that lost permission). Only
+ * the fallback attempt itself is reported to Sentry, with a fixed generic
+ * message/fingerprint so occurrences across many users' machines group
+ * together instead of being split by their individual paths.
+ * Concurrent requests for the exact same directory (common when several
+ * files for the same publication are queued at once) are coalesced into a
+ * single attempt so parallel downloads don't pile more concurrent `mkdir`
+ * calls onto an already-contended shared folder.
+ * @returns The directory that is actually usable (the requested one, or the
+ * temp fallback).
  */
-export function ensureDirWithRetry(dir: string): Promise<void> {
+export function ensureDirWithRetry(dir: string): Promise<string> {
   const existing = ensureDirPromises.get(dir);
   if (existing) return existing;
 
@@ -167,22 +176,35 @@ export function ensureDirWithRetry(dir: string): Promise<void> {
   return promise;
 }
 
-async function createDirWithRetry(dir: string): Promise<void> {
+async function tryCreateDir(
+  dir: string,
+): Promise<undefined | { error: unknown }> {
+  try {
+    await mkdir(dir, { recursive: true });
+    const dirStats = await stat(dir);
+    if (!dirStats.isDirectory()) {
+      const error = new Error(
+        `Download destination is not a directory: ${dir}`,
+      );
+      (error as NodeJS.ErrnoException).code = 'ENOTDIR';
+      return { error };
+    }
+    return undefined;
+  } catch (error) {
+    return { error };
+  }
+}
+
+const getDownloadFallbackDir = (dir: string) =>
+  join(getFallbackDir(), 'Downloads', basename(dir));
+
+async function createDirWithRetry(dir: string): Promise<string> {
   let lastError: unknown;
   const diagnostics: EnsureDirAttemptDiagnostics[] = [];
 
   for (let attempt = 0; attempt <= ENSURE_DIR_RETRY_COUNT; attempt += 1) {
-    try {
-      await mkdir(dir, { recursive: true });
-      const dirStats = await stat(dir);
-      if (!dirStats.isDirectory()) {
-        const error = new Error(
-          `Download destination is not a directory: ${dir}`,
-        );
-        (error as NodeJS.ErrnoException).code = 'ENOTDIR';
-        throw error;
-      }
-
+    const result = await tryCreateDir(dir);
+    if (!result) {
       if (attempt > 0) {
         addElectronBreadcrumb({
           category: 'downloads.filesystem',
@@ -191,30 +213,58 @@ async function createDirWithRetry(dir: string): Promise<void> {
           message: 'download-directory-created-after-retry',
         });
       }
-      return;
-    } catch (error) {
-      lastError = error;
-      const attemptDiagnostics = await getDirectoryFailureDiagnostics(
-        dir,
-        attempt,
-        error,
-      );
-      diagnostics.push(attemptDiagnostics);
-
-      addElectronBreadcrumb({
-        category: 'downloads.filesystem',
-        data: attemptDiagnostics,
-        level: 'warning',
-        message: 'download-directory-create-failed',
-      });
-
-      const code = getErrorCode(error);
-      const shouldRetry =
-        ENSURE_DIR_RETRYABLE_CODES.has(code ?? '') &&
-        attempt < ENSURE_DIR_RETRY_COUNT;
-      if (!shouldRetry) break;
-      await delay(getEnsureDirRetryDelay(attempt));
+      return dir;
     }
+
+    const { error } = result;
+    lastError = error;
+    const attemptDiagnostics = await getDirectoryFailureDiagnostics(
+      dir,
+      attempt,
+      error,
+    );
+    diagnostics.push(attemptDiagnostics);
+
+    addElectronBreadcrumb({
+      category: 'downloads.filesystem',
+      data: attemptDiagnostics,
+      level: 'warning',
+      message: 'download-directory-create-failed',
+    });
+
+    const code = getErrorCode(error);
+    const shouldRetry =
+      ENSURE_DIR_RETRYABLE_CODES.has(code ?? '') &&
+      attempt < ENSURE_DIR_RETRY_COUNT;
+    if (!shouldRetry) break;
+    await delay(getEnsureDirRetryDelay(attempt));
+  }
+
+  const fallbackDir = getDownloadFallbackDir(dir);
+  const fallbackResult = await tryCreateDir(fallbackDir);
+  if (!fallbackResult) {
+    addElectronBreadcrumb({
+      category: 'downloads.filesystem',
+      data: { attempts: diagnostics.length, dir, fallbackDir },
+      level: 'warning',
+      message: 'download-directory-fell-back-to-temp',
+    });
+    captureElectronError(
+      new Error(
+        'Download destination directory became unusable; falling back to a temp directory',
+      ),
+      {
+        contexts: {
+          fn: {
+            attempts: diagnostics.length,
+            lastErrorCode: getErrorCode(lastError),
+            name: 'createDirWithRetry',
+          },
+        },
+        fingerprint: DOWNLOAD_FALLBACK_FINGERPRINT,
+      },
+    );
+    return fallbackDir;
   }
 
   attachDirectoryDiagnostics(lastError, diagnostics);
@@ -517,6 +567,17 @@ const loadElectronDownloadManager: () => Promise<EDMType | null> = async () => {
   return manager;
 };
 
+export interface DownloadFileResult {
+  /** The queue/progress-tracking key: the url concatenated with the resolved saveDir. */
+  key: string;
+  /**
+   * The directory the file will actually be saved to. Usually equal to the
+   * requested `saveDir`, but may point at a temp fallback directory if the
+   * requested directory turned out to be unusable.
+   */
+  saveDir: string;
+}
+
 /**
  * Cancels all downloads.
  */
@@ -554,25 +615,25 @@ export async function cancelAllDownloads() {
  * @param saveDir The directory to save the file to.
  * @param destFilename The name of the file to save as.
  * @param lowPriority Whether to download the file at a low priority.
- * @returns The url concatenated with saveDir, or null if the download failed.
+ * @returns The resolved save directory and queue key, or null if the download failed.
  */
 export async function downloadFile(
   url: string,
   saveDir: string,
   destFilename?: string,
   lowPriority = false,
-) {
+): Promise<DownloadFileResult | null> {
   if (!getDownloadWindow() || !url || !saveDir) return null;
   try {
     // Allow queue processing again after a previous cancelAll cycle
     cancelAll = false;
 
-    await ensureDirWithRetry(saveDir);
+    const resolvedSaveDir = await ensureDirWithRetry(saveDir);
 
     if (!destFilename) destFilename = basename(url);
 
-    const fileToDownload = { destFilename, saveDir, url };
-    const key = url + saveDir;
+    const fileToDownload = { destFilename, saveDir: resolvedSaveDir, url };
+    const key = url + resolvedSaveDir;
 
     // Check if already in progress
     const existing = ongoingDownloads.get(key);
@@ -593,7 +654,7 @@ export async function downloadFile(
         });
       }
 
-      return key;
+      return { key, saveDir: resolvedSaveDir };
     }
 
     // New Download
@@ -618,7 +679,7 @@ export async function downloadFile(
     // Trigger queue processing
     processQueue();
 
-    return key;
+    return { key, saveDir: resolvedSaveDir };
   } catch (error) {
     captureElectronError(error, {
       contexts: {

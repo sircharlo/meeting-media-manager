@@ -6,9 +6,11 @@ import {
   pathExistsSync,
   readJson,
   readJsonSync,
+  remove,
   writeJson,
   writeJsonSync,
 } from 'fs-extra/esm';
+import { readdir, stat } from 'node:fs/promises';
 import { join } from 'upath';
 
 /**
@@ -22,6 +24,11 @@ import { join } from 'upath';
  * existing file is locked.
  */
 let cachedFallbackDir: null | string = null;
+export function getFallbackDir(): string {
+  cachedFallbackDir ??= join(app.getPath('temp'), 'Meeting Media Manager');
+  return cachedFallbackDir;
+}
+
 export async function readJsonResilient(
   primaryDir: string,
   fileName: string,
@@ -90,7 +97,71 @@ export function writeJsonResilientSync(
   }
 }
 
-function getFallbackDir(): string {
-  cachedFallbackDir ??= join(app.getPath('temp'), 'Meeting Media Manager');
-  return cachedFallbackDir;
+const FALLBACK_ENTRY_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+
+/**
+ * Removes per-download/per-publication fallback folders (under the OS temp
+ * directory) that haven't been written to in over a month. Data only ever
+ * lands here because a user's configured folder was temporarily unusable,
+ * so once it's stopped being touched for a while it's safe to assume the
+ * folder was fixed (or is no longer relevant) and reclaim the disk space.
+ */
+export async function pruneStaleFallbackEntries(): Promise<void> {
+  const root = getFallbackDir();
+  let namespaces: { isDirectory: () => boolean; name: string }[];
+  try {
+    namespaces = await readdir(root, { withFileTypes: true });
+  } catch {
+    return;
+  }
+
+  for (const namespace of namespaces) {
+    if (!namespace.isDirectory()) continue;
+    const namespaceDir = join(root, namespace.name);
+
+    let entries: { isDirectory: () => boolean; name: string }[];
+    try {
+      entries = await readdir(namespaceDir, { withFileTypes: true });
+    } catch {
+      continue;
+    }
+
+    for (const entry of entries) {
+      if (!entry.isDirectory()) continue;
+      const entryDir = join(namespaceDir, entry.name);
+      const newestMtimeMs = await getNewestMtimeMs(entryDir);
+      const isStale =
+        !newestMtimeMs ||
+        Date.now() - newestMtimeMs >= FALLBACK_ENTRY_MAX_AGE_MS;
+      if (!isStale) continue;
+
+      await remove(entryDir).catch(() => undefined);
+    }
+  }
+}
+
+async function getNewestMtimeMs(dir: string): Promise<number> {
+  let newest = 0;
+  let entries: { isDirectory: () => boolean; name: string }[];
+  try {
+    entries = await readdir(dir, { withFileTypes: true });
+  } catch {
+    return newest;
+  }
+
+  for (const entry of entries) {
+    const entryPath = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      newest = Math.max(newest, await getNewestMtimeMs(entryPath));
+      continue;
+    }
+    try {
+      const stats = await stat(entryPath);
+      newest = Math.max(newest, stats.mtimeMs);
+    } catch {
+      // Ignore files that disappear mid-scan
+    }
+  }
+
+  return newest;
 }

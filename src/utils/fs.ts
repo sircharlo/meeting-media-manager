@@ -56,8 +56,58 @@ export const registerCachePathProvider = (
   getCacheFolderProvider = provider;
 };
 
+// Once a real read/write against the custom cache folder fails with a
+// permission-class error, the coarse isUsablePath probe can no longer be
+// trusted for it (it only tests creating a brand-new file, which can succeed
+// even when pre-existing files are unreadable). Rather than re-probing and
+// looping on the same broken folder, stop resolving to it for the rest of
+// the session so every getPublicationDirectory() caller (extraction,
+// playback path building, rediscovery on next launch) consistently lands on
+// the writable app-default path instead.
+let customCachePathDisabledForSession = false;
+
+/**
+ * Disables the custom cache folder for the remainder of the session after a
+ * real filesystem operation (not just the startup probe) fails against it
+ * with a permission-class error. Safe to call repeatedly/without a custom
+ * path configured; it's a no-op after the first call.
+ * @param error The filesystem error that triggered the fallback.
+ */
+export const invalidateCustomCachePath = (error: unknown) => {
+  if (customCachePathDisabledForSession) return;
+  customCachePathDisabledForSession = true;
+  defaultDataPath = null;
+
+  log(
+    '📁 Custom cache folder became inaccessible. Using default app data path for the rest of this session.',
+    'filesystem',
+    'warn',
+    error,
+  );
+
+  errorCatcher(
+    new Error(
+      'Custom cache folder became inaccessible; falling back to the default app data location for this session',
+    ),
+    {
+      contexts: {
+        fn: {
+          errorCode:
+            typeof error === 'object' && error !== null && 'code' in error
+              ? (error as { code?: unknown }).code
+              : undefined,
+          name: 'invalidateCustomCachePath',
+        },
+      },
+      fingerprint: ['custom-cache-folder-disabled-for-session'],
+    },
+  );
+};
+
 export const getCachedUserDataPath = async (): Promise<string> => {
-  const customPath = getCacheFolderProvider?.();
+  const customPath = customCachePathDisabledForSession
+    ? undefined
+    : getCacheFolderProvider?.();
 
   // Fast path: already resolved
   if (defaultDataPath) {

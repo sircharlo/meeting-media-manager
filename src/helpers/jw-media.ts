@@ -72,6 +72,7 @@ import {
   findFile,
   getPublicationDirectory,
   getTempPath,
+  invalidateCustomCachePath,
   trimFilepathAsNeeded,
 } from 'src/utils/fs';
 import { sanitizeId } from 'src/utils/general';
@@ -400,6 +401,13 @@ const isCloudStorageReadError = (error: unknown) => {
   return /connection timed out|resource busy|temporarily unavailable/i.test(
     message,
   );
+};
+
+const PERMISSION_ERROR_CODES = new Set(['EACCES', 'EPERM']);
+
+const isPermissionError = (error: unknown) => {
+  const errorCode = (error as { code?: string })?.code;
+  return !!errorCode && PERMISSION_ERROR_CODES.has(errorCode);
 };
 
 interface DirectoryDiagnostic {
@@ -850,6 +858,7 @@ export async function identifyJwpub(jwpubPath: string) {
         'error',
         error,
       );
+      if (isPermissionError(error)) invalidateCustomCachePath(error);
       warnCloudJwpubUnavailable(jwpubPath, error);
       return;
     }
@@ -867,6 +876,8 @@ export async function identifyJwpub(jwpubPath: string) {
     // 3. Get publication info
     return getPublicationInfoFromDb(dbPath);
   } catch (error) {
+    if (isPermissionError(error)) invalidateCustomCachePath(error);
+
     errorCatcher(error, {
       contexts: {
         fn: {
@@ -1034,6 +1045,12 @@ const jwpubExtractor = async (jwpubPath: string, outputPath: string) => {
 
     return outputPath;
   } catch (error) {
+    // A permission error here means the coarse startup probe for the custom
+    // cache folder passed, but a real read/write against it just failed.
+    // Stop resolving publication directories to it for the rest of the
+    // session instead of retrying the same broken folder on every publication.
+    if (isPermissionError(error)) invalidateCustomCachePath(error);
+
     // If anything fails, clean up the output directory to avoid partial extractions
     try {
       await remove(outputPath);
@@ -1484,24 +1501,30 @@ export const downloadFileIfNeeded = async ({
         };
       }
     }
-    const downloadId = await downloadFile(url, dir, filename, lowPriority);
+    const downloadResult = await downloadFile(url, dir, filename, lowPriority);
 
-    // Seed meeting date on progress right away so UI can group even before onDownloadStarted
-    if (downloadId) {
-      const seed = (currentStateStore.downloadProgress[downloadId] ??
-        {}) as DownloadProgress;
-
-      currentStateStore.downloadProgress[downloadId] = {
-        ...seed,
-        filename,
-        meetingDate: seed.meetingDate ?? meetingDate,
-        progressCategory: seed.progressCategory ?? progressCategory,
-      } as never;
-    }
-
-    if (!downloadId) {
+    if (!downloadResult) {
       return { error: true, path: destinationPath };
     }
+
+    const { key: downloadId, saveDir: resolvedDir } = downloadResult;
+    // downloadFile can fall back to a temp directory if `dir` turned out to
+    // be unusable (e.g. a permission error); recompute the destination so we
+    // poll/report the path the file will actually land at.
+    if (resolvedDir !== dir) {
+      destinationPath = join(resolvedDir, filename);
+    }
+
+    // Seed meeting date on progress right away so UI can group even before onDownloadStarted
+    const seed = (currentStateStore.downloadProgress[downloadId] ??
+      {}) as DownloadProgress;
+
+    currentStateStore.downloadProgress[downloadId] = {
+      ...seed,
+      filename,
+      meetingDate: seed.meetingDate ?? meetingDate,
+      progressCategory: seed.progressCategory ?? progressCategory,
+    } as never;
 
     const result = await pollUntilDownloaded(
       downloadId,

@@ -100,7 +100,10 @@ describe('downloads window lifetime', () => {
     const { downloadFile } = await import('../downloads');
     await expect(
       downloadFile('https://example.test/file.mp4', '/tmp/media'),
-    ).resolves.toBe('https://example.test/file.mp4/tmp/media');
+    ).resolves.toEqual({
+      key: 'https://example.test/file.mp4/tmp/media',
+      saveDir: '/tmp/media',
+    });
     await Promise.resolve();
 
     expect(mocks.download).not.toHaveBeenCalled();

@@ -367,8 +367,14 @@ export const setupFFmpeg = async (): Promise<string> => {
       return currentState.ffmpegPath;
     }
 
-    await downloadFfmpeg(version.browser_download_url, ffmpegDir);
-    const ffmpegPath = await unzipAndFindFFmpeg(ffmpegZipPath, ffmpegDir);
+    const resolvedFfmpegDir = await downloadFfmpeg(
+      version.browser_download_url,
+      ffmpegDir,
+    );
+    const ffmpegPath = await unzipAndFindFFmpeg(
+      join(resolvedFfmpegDir, version.name),
+      resolvedFfmpegDir,
+    );
 
     currentState.ffmpegPath = ffmpegPath;
     return ffmpegPath;
@@ -378,15 +384,17 @@ export const setupFFmpeg = async (): Promise<string> => {
   }
 };
 
-// Download FFmpeg
-async function downloadFfmpeg(url: string, dir: string): Promise<void> {
+// Download FFmpeg. Returns the directory it was actually saved to, which may
+// be a temp fallback if `dir` turned out to be unusable.
+async function downloadFfmpeg(url: string, dir: string): Promise<string> {
   // FFmpeg is a large file, so we don't want to download it as a high priority
-  const downloadId = await downloadFile(url, dir, undefined, true);
+  const downloadResult = await downloadFile(url, dir, undefined, true);
 
   await new Promise<void>((resolve, reject) => {
     const interval = setInterval(() => {
-      if (downloadId) {
-        const progress = useCurrentStateStore().downloadProgress[downloadId];
+      if (downloadResult) {
+        const progress =
+          useCurrentStateStore().downloadProgress[downloadResult.key];
         if (progress?.complete) {
           clearInterval(interval);
           resolve();
@@ -397,6 +405,8 @@ async function downloadFfmpeg(url: string, dir: string): Promise<void> {
       }
     }, 500);
   });
+
+  return downloadResult?.saveDir ?? dir;
 }
 
 // Fetch the latest FFmpeg release
