@@ -222,7 +222,18 @@ export const decodeEntities = (input?: string) => {
   try {
     if (!input) return input ?? '';
 
-    const cleanHtml = DOMPurify.sanitize(input, { ALLOWED_TAGS: [] });
+    // Strip <script>/<style> tags along with their text content first:
+    // DOMPurify's ALLOWED_TAGS allowlist unwraps disallowed tags but keeps
+    // their inner text, which would otherwise leak raw script/style source.
+    const stripTemplate = document.createElement('template');
+    stripTemplate.innerHTML = input;
+    stripTemplate.content
+      .querySelectorAll('script, style')
+      .forEach((el) => el.remove());
+
+    const cleanHtml = DOMPurify.sanitize(stripTemplate.innerHTML, {
+      ALLOWED_TAGS: [],
+    });
     const template = document.createElement('template');
     template.innerHTML = cleanHtml;
     return template.content.textContent ?? '';

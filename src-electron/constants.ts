@@ -2,14 +2,14 @@ import os from 'node:os';
 
 // Environment
 export const PLATFORM = process?.platform || os.platform();
-export const IS_DEV = process.env.IS_DEV;
-export const IS_BETA = process.env.IS_BETA;
-export const IS_TEST = process.env.IS_TEST;
+export const IS_DEV = import.meta.env.IS_DEV;
+export const IS_BETA = import.meta.env.IS_BETA;
+export const IS_TEST = import.meta.env.IS_TEST;
 
 // App
-export const APP_ID = process.env.APP_ID;
-export const APP_NAME = process.env.APP_NAME;
-export const PRODUCT_NAME = process.env.PRODUCT_NAME;
+export const APP_ID = import.meta.env.APP_ID;
+export const APP_NAME = import.meta.env.APP_NAME;
+export const PRODUCT_NAME = import.meta.env.PRODUCT_NAME;
 
 // Domains
 export const JW_DOMAINS: string[] = ['jw.org', 'jwevent.org', 'stream.jw.org'];

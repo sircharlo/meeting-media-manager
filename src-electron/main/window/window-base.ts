@@ -71,11 +71,7 @@ export function createWindow(
           ? undefined
           : resolve(
               fileURLToPath(new URL('.', import.meta.url)),
-              join(
-                process.env.QUASAR_ELECTRON_PRELOAD_FOLDER,
-                'electron-preload' +
-                  process.env.QUASAR_ELECTRON_PRELOAD_EXTENSION,
-              ),
+              'electron-preload.cjs',
             ),
       sandbox: name === 'website',
       webSecurity: !IS_DEV,
@@ -102,7 +98,10 @@ export function createWindow(
   });
 
   // Hide the menu bar
-  if (PLATFORM !== 'darwin' && (name !== 'main' || !process.env.DEBUGGING)) {
+  if (
+    PLATFORM !== 'darwin' &&
+    (name !== 'main' || !import.meta.env.QUASAR_DEBUG)
+  ) {
     win.setMenuBarVisibility(false);
   }
 
@@ -131,8 +130,8 @@ export function createWindow(
   }
   if (page.startsWith('https://')) {
     win.loadURL(page);
-  } else if (process.env.DEV) {
-    win.loadURL(process.env.APP_URL + `?page=${page}`);
+  } else if (import.meta.env.QUASAR_DEV) {
+    win.loadURL(import.meta.env.QUASAR_APP_URL + `?page=${page}`);
   } else {
     // Use absolute path for index.html in production builds
     const indexPath = resolve(app.getAppPath(), 'index.html');
@@ -141,7 +140,7 @@ export function createWindow(
 
   // Devtools
   let devToolsOpenedCount = 0; // Track the number of times the devtools-opened event is fired
-  if (process.env.DEBUGGING) {
+  if (import.meta.env.QUASAR_DEBUG) {
     win.webContents.openDevTools(); // I like having dev tools open for all windows in dev
   } else {
     // Prevent devtools from being opened in production unless it's attempted more than twice
@@ -195,7 +194,7 @@ export function logToWindow(
   ctx: boolean | number | Record<string, unknown> | string = {},
   level: 'debug' | 'error' | 'info' | 'warn' = 'info',
 ) {
-  if (level === 'debug' && !process.env.DEBUGGING) return;
+  if (level === 'debug' && !import.meta.env.QUASAR_DEBUG) return;
   sendToWindow(win, 'log', { ctx, level, msg });
 }
 

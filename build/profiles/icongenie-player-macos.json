@@ -8,7 +8,7 @@
     {
       "generator": "icns",
       "name": "media-player.icns",
-      "folder": "src-electron/icons"
+      "folder": "src-electron/electron-assets/icons"
     }
   ]
 }

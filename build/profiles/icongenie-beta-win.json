@@ -8,12 +8,12 @@
     {
       "generator": "ico",
       "name": "beta.ico",
-      "folder": "src-electron/icons"
+      "folder": "src-electron/electron-assets/icons"
     },
     {
       "generator": "png",
       "name": "beta.png",
-      "folder": "src-electron/icons",
+      "folder": "src-electron/electron-assets/icons",
       "sizes": [512]
     }
   ]

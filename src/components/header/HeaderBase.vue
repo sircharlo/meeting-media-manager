@@ -98,7 +98,7 @@ import HeaderCongregation from './HeaderCongregation.vue';
 import HeaderSettings from './HeaderSettings.vue';
 import HeaderWebsite from './HeaderWebsite.vue';
 
-const isBetaVersion = process.env.IS_BETA;
+const isBetaVersion = import.meta.env.IS_BETA;
 
 const updatesAreDisabled = ref(false);
 

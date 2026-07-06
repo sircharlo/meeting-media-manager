@@ -183,7 +183,7 @@ describe('decodeEntities', () => {
     ['<p>Hello <strong>World</strong>!</p>', 'Hello World!'],
     ['<p>Hello&nbsp;<em>World</em> &mdash; today</p>', 'Hello World — today'],
     ['<div>Line 1<br>Line 2</div>', 'Line 1Line 2'],
-    ['<script>alert("hack")</script><p>Safe text</p>', ''],
+    ['<script>alert("hack")</script><p>Safe text</p>', 'Safe text'],
     ['<img src=x onerror=alert(1)>Image caption', 'Image caption'],
     [
       'Liste de lecture multimédia pour la visite',

@@ -78,7 +78,8 @@ describe('StatefulBrowserWindow', () => {
       configFilePath: 'C:/Users/Test/AppData/Roaming/M3',
     });
 
-    browserWindowHandlers.get('closed')?.();
+    const closedHandler = browserWindowHandlers.get('closed');
+    closedHandler?.();
     await vi.waitFor(() => {
       expect(captureElectronError).toHaveBeenCalledWith(error, {
         contexts: {
@@ -92,7 +93,7 @@ describe('StatefulBrowserWindow', () => {
 
     expect(statefulWindow.win.removeListener).toHaveBeenCalledWith(
       'closed',
-      expect.any(Function),
+      closedHandler,
     );
   });
 });

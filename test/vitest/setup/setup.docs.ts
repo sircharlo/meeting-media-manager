@@ -5,7 +5,7 @@ import { releases } from './../mocks/github';
 
 initHttpHandlers([
   http.get(
-    `${process.env.repository?.replace(
+    `${import.meta.env.repository?.replace(
       'github.com',
       'api.github.com/repos',
     )}/releases`,

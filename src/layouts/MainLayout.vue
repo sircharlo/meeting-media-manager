@@ -111,7 +111,7 @@ const miniState = ref(true);
 // Pause flag for yeartext watcher during preview
 const yeartextWatcherPaused = ref(false);
 
-const productName = process.env.PRODUCT_NAME;
+const productName = import.meta.env.PRODUCT_NAME;
 
 useMeta({
   titleTemplate: (title) => (title ? `${title} - M³` : `${productName}`),
@@ -1212,7 +1212,7 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
 
     const { updatesDisabled } = await import('src/utils/fs');
 
-    const isBetaVersion = process.env.IS_BETA;
+    const isBetaVersion = import.meta.env.IS_BETA;
     const areUpdatesDisabled = await updatesDisabled();
     const hasArchitectureMismatch = await isArchitectureMismatch();
 

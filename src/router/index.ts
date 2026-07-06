@@ -1,4 +1,3 @@
-import { defineRouter } from '@quasar/app-vite/wrappers';
 import routes from 'src/router/routes';
 import {
   createMemoryHistory,
@@ -6,6 +5,8 @@ import {
   createWebHashHistory,
   createWebHistory,
 } from 'vue-router';
+
+import { defineRouter } from '#q-app';
 
 /*
  * If not building with SSR mode, you can
@@ -18,15 +19,15 @@ import {
 
 export default defineRouter(function () {
   let createHistory = createWebHashHistory;
-  if (process.env.SERVER) {
+  if (import.meta.env.QUASAR_SERVER) {
     createHistory = createMemoryHistory;
-  } else if (process.env.VUE_ROUTER_MODE === 'history') {
+  } else if (import.meta.env.QUASAR_VUE_ROUTER_MODE === 'history') {
     createHistory = createWebHistory;
   }
 
   const Router = createRouter({
     // quasar.conf.js -> build -> publicPath
-    history: createHistory(process.env.VUE_ROUTER_BASE),
+    history: createHistory(import.meta.env.QUASAR_VUE_ROUTER_BASE),
     routes,
 
     // Leave this as is and make changes in quasar.conf.js instead!

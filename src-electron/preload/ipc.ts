@@ -9,14 +9,14 @@ import { ipcRenderer } from 'electron/renderer';
 import { log } from 'src/shared/vanilla';
 
 export const invoke = (channel: ElectronIpcInvokeKey, ...args: unknown[]) => {
-  if (process.env.DEBUGGING) {
+  if (import.meta.env.QUASAR_DEBUG) {
     log('[preload] invoke', 'electronIpc', 'debug', { args, channel });
   }
   return ipcRenderer.invoke(channel, ...args);
 };
 
 export const send = (channel: ElectronIpcSendKey, ...args: unknown[]) => {
-  if (process.env.DEBUGGING) {
+  if (import.meta.env.QUASAR_DEBUG) {
     log('[preload] send', 'electronIpc', 'debug', { args, channel });
   }
   ipcRenderer.send(channel, ...args);
@@ -32,7 +32,7 @@ export const sendSync = <T = unknown>(
   channel: ElectronIpcSendSyncKey,
   ...args: unknown[]
 ): T => {
-  if (process.env.DEBUGGING) {
+  if (import.meta.env.QUASAR_DEBUG) {
     log('[preload] sendSync', 'electronIpc', 'debug', { args, channel });
   }
   return ipcRenderer.sendSync(channel, ...args) as T;
@@ -43,7 +43,7 @@ export const listen = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   callback: (args: any) => void,
 ) => {
-  if (process.env.DEBUGGING) {
+  if (import.meta.env.QUASAR_DEBUG) {
     log('[preload] listen', 'electronIpc', 'debug', { channel });
   }
   ipcRenderer.on(channel, (_e, args) => callback(args));

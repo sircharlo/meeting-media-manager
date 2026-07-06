@@ -61,7 +61,12 @@ describe('sendKeyboardShortcut', () => {
 
     expect(sendKeyTap).not.toHaveBeenCalled();
     expect(errorCatcher).toHaveBeenCalledWith(
-      expect.any(Error),
+      expect.objectContaining({
+        message: expect.stringContaining(
+          'Unsupported keyboard shortcut format: ctrl+alt+shift+meta+s',
+        ),
+        name: 'UnsupportedKeyboardShortcutError',
+      }),
       expect.objectContaining({
         contexts: {
           fn: expect.objectContaining({
@@ -81,7 +86,7 @@ describe('sendKeyboardShortcut', () => {
     sendKeyboardShortcut('ctrl+s');
 
     expect(errorCatcher).toHaveBeenCalledWith(
-      expect.any(Error),
+      expect.objectContaining({ message: 'robotjs failure' }),
       expect.objectContaining({
         contexts: {
           fn: expect.objectContaining({ name: 'sendKeyboardShortcut' }),

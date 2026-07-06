@@ -1,6 +1,7 @@
-import { defineBoot } from '@quasar/app-vite/wrappers';
 import messages from 'src/i18n';
 import { createI18n } from 'vue-i18n';
+
+import { defineBoot } from '#q-app';
 
 export type MessageLanguages = keyof typeof messages;
 export type MessageSchema = (typeof messages)['en'];

@@ -117,14 +117,14 @@ export const fetchRaw = async (
   if (isCacheable) {
     const cachedResponse = fetchCache.get(cacheKey);
     if (cachedResponse) {
-      if (!process.env.VITEST) {
+      if (!import.meta.env.VITEST) {
         log('fetchRaw (cached)', 'api', 'debug', { cache, init, url });
       }
       return buildCachedResponse(cachedResponse);
     }
   }
 
-  if (!process.env.VITEST)
+  if (!import.meta.env.VITEST)
     log('fetchRaw', 'api', 'debug', { cache, init, url });
 
   const response = await fetch(url, init);
@@ -289,9 +289,9 @@ export const fetchYeartext = async (
  * @returns The announcements.
  */
 export const fetchAnnouncements = async (): Promise<Announcement[]> => {
-  if (!process.env.repository) return [];
+  if (!import.meta.env.repository) return [];
   const result = await fetchJson<Announcement[]>(
-    `${process.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/announcements.json`,
+    `${import.meta.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/announcements.json`,
   );
   return result?.filter((a) => !!a.id && !!a.message) || [];
 };
@@ -305,11 +305,11 @@ export const fetchMemorials = async (): Promise<null | Record<
   `${number}/${number}/${number}`
 >> => {
   try {
-    if (!process.env.repository) return null;
+    if (!import.meta.env.repository) return null;
     const result = await fetchJson<
       Record<string, `${number}/${number}/${number}`>
     >(
-      `${process.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/memorials.json`,
+      `${import.meta.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/memorials.json`,
     );
     if (!result) return null;
     const memorials: Record<number, `${number}/${number}/${number}`> = {};
@@ -357,9 +357,9 @@ export const fetchReleaseNotes = async (
   lang: string,
 ): Promise<null | string> => {
   try {
-    if (!process.env.repository) return null;
+    if (!import.meta.env.repository) return null;
     const res = await fetchRaw(
-      `${process.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/release-notes/${lang}.md`,
+      `${import.meta.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/release-notes/${lang}.md`,
       undefined,
       true,
     );
@@ -376,8 +376,8 @@ export const fetchReleaseNotes = async (
  * @returns The latest version.
  */
 export const fetchLatestVersion = async () => {
-  if (!process.env.repository) return;
-  const url = `${process.env.repository.replace('github.com', 'api.github.com/repos')}/releases`;
+  if (!import.meta.env.repository) return;
+  const url = `${import.meta.env.repository.replace('github.com', 'api.github.com/repos')}/releases`;
   const includeBeta = !(await betaUpdatesDisabled());
   const result = await fetchJson<Release[]>(url);
   return result?.find((r) => includeBeta || !r.prerelease)?.tag_name.slice(1);

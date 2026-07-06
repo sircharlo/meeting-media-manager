@@ -107,7 +107,7 @@ const {
   quitAndInstall,
 } = globalThis.electronApi;
 
-const version = process.env.version;
+const version = import.meta.env.version;
 const latestVersion = ref('');
 const updatesEnabled = ref(true);
 
@@ -238,7 +238,7 @@ onMounted(() => {
   }
 });
 
-const isTestVersion = process.env.IS_TEST;
+const isTestVersion = import.meta.env.IS_TEST;
 
 // Test version banner for users who are using a test version
 const testVersionAnnouncement = computed((): Announcement => {

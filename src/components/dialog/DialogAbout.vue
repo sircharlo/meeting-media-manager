@@ -241,8 +241,8 @@ const handleHide = () => {
 };
 
 const { locale, t } = useI18n();
-const appVersion = process.env.version;
-const isBetaVersion = process.env.IS_BETA;
+const appVersion = import.meta.env.version;
+const isBetaVersion = import.meta.env.IS_BETA;
 
 const updatesEnabled = ref(true);
 const betaUpdatesEnabled = ref(false);

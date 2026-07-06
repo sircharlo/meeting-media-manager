@@ -13,7 +13,7 @@ export const errorCatcher = async (error: unknown, context?: CaptureCtx) => {
     errorCatcher((error as { cause: unknown }).cause, context);
   }
 
-  if (process.env.IS_DEV) {
+  if (import.meta.env.IS_DEV) {
     log(error, 'errorHandling', 'error');
     log('context', 'errorHandling', 'warn', context);
   } else {

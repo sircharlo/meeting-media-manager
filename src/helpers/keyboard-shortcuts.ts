@@ -2,6 +2,13 @@ import { log } from 'src/shared/vanilla';
 
 import { errorCatcher } from './error-catcher';
 
+class UnsupportedKeyboardShortcutError extends Error {
+  constructor(shortcut: string) {
+    super(`Unsupported keyboard shortcut format: ${shortcut}`);
+    this.name = 'UnsupportedKeyboardShortcutError';
+  }
+}
+
 /**
  * Sends a keyboard shortcut using robotjs
  * @param shortcut - The keyboard shortcut string (e.g., "ctrl+shift+s", "cmd+alt+f4")
@@ -59,7 +66,7 @@ export const sendKeyboardShortcut = (
     ) {
       sendKeyTap(robotKeys[3], [robotKeys[0], robotKeys[1], robotKeys[2]]);
     } else {
-      errorCatcher(new Error('Unsupported keyboard shortcut format'), {
+      errorCatcher(new UnsupportedKeyboardShortcutError(shortcut), {
         contexts: {
           fn: {
             context,

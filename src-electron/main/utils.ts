@@ -87,7 +87,10 @@ export function getIconPath(icon: 'beta' | 'icon' | 'media-player' | 'timer') {
   return resolve(
     join(
       fileURLToPath(
-        new URL(IS_DEV ? './../../src-electron' : '.', import.meta.url),
+        new URL(
+          IS_DEV ? './../../src-electron/electron-assets' : './electron-assets',
+          import.meta.url,
+        ),
       ),
       'icons',
       `${icon}.${ext}`,
@@ -179,7 +182,7 @@ export function isMachineWideInstallation(): boolean {
   const exe = app.getPath('exe');
   if (PLATFORM === 'win32') {
     return (
-      !!process.env.DEBUGGING || // Always show as machine-wide when debugging
+      !!import.meta.env.QUASAR_DEBUG || // Always show as machine-wide when debugging
       (exe.toLowerCase().includes('program files') &&
         !exe.toLowerCase().includes('users'))
     );
@@ -200,8 +203,8 @@ export function isSelf(url?: string): boolean {
     if (!url) return false;
     const parsedUrl = new URL(url);
 
-    if (process.env.DEV) {
-      return parsedUrl.origin === process.env.APP_URL;
+    if (import.meta.env.QUASAR_DEV) {
+      return parsedUrl.origin === import.meta.env.QUASAR_APP_URL;
     }
 
     return (

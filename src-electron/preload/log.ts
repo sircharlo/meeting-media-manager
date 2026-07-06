@@ -13,7 +13,7 @@ export function capturePreloadError(error: unknown, context?: CaptureCtx) {
     capturePreloadError(error.cause, context);
   }
 
-  if (process.env.IS_DEV) {
+  if (import.meta.env.IS_DEV) {
     log(error, 'errorHandling', 'error');
     log('context', 'errorHandling', 'warn', context);
   } else {

@@ -54,6 +54,10 @@ import {
 import { log } from 'src/shared/vanilla';
 import { join, resolve } from 'upath';
 
+const CRASH_COUNT_FILE = 'crash-count.json';
+const GPU_DIAGNOSTICS_FILE = 'gpu-diagnostics.json';
+const HW_ACCEL_FILE = 'hw-accel-disabled.json';
+
 protocol.registerSchemesAsPrivileged([
   {
     privileges: {
@@ -572,10 +576,6 @@ function createWindowAndCaptureErrors() {
       }),
     );
 }
-
-const CRASH_COUNT_FILE = 'crash-count.json';
-const GPU_DIAGNOSTICS_FILE = 'gpu-diagnostics.json';
-const HW_ACCEL_FILE = 'hw-accel-disabled.json';
 
 function getCrashCount() {
   try {

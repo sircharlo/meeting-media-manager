@@ -43,14 +43,14 @@ initHttpHandlers([
     HttpResponse.json(jwYeartext),
   ),
   http.get(
-    `${process.env.repository?.replace(
+    `${import.meta.env.repository?.replace(
       'github.com',
       'api.github.com/repos',
     )}/releases`,
     () => HttpResponse.json(releases),
   ),
   http.get(
-    `${process.env.repository?.replace(
+    `${import.meta.env.repository?.replace(
       'github',
       'raw.githubusercontent',
     )}/refs/heads/master/announcements.json`,

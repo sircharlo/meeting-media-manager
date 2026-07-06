@@ -255,7 +255,7 @@ describe('fetchJson network errors', () => {
 });
 
 describe('fetchMemorials', () => {
-  const memorialsUrl = `${process.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/memorials.json`;
+  const memorialsUrl = `${import.meta.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/memorials.json`;
 
   afterEach(() => {
     vi.restoreAllMocks();

@@ -8,12 +8,12 @@
     {
       "generator": "ico",
       "name": "media-player.ico",
-      "folder": "src-electron/icons"
+      "folder": "src-electron/electron-assets/icons"
     },
     {
       "generator": "png",
       "name": "media-player.png",
-      "folder": "src-electron/icons",
+      "folder": "src-electron/electron-assets/icons",
       "sizes": [512]
     }
   ]

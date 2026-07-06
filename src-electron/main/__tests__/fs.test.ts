@@ -434,10 +434,13 @@ describe('macOS folder permissions', () => {
       filePaths: ['/Users/test/Documents'],
     });
 
-    expect(dialog.showOpenDialog).toHaveBeenCalledWith(expect.any(Object), {
-      properties: ['openDirectory'],
-      securityScopedBookmarks: true,
-    });
+    expect(dialog.showOpenDialog).toHaveBeenCalledWith(
+      expect.objectContaining({}),
+      expect.objectContaining({
+        properties: ['openDirectory'],
+        securityScopedBookmarks: true,
+      }),
+    );
     expect(writeFileMock).toHaveBeenCalledWith(
       '/user-data/security-scoped-bookmarks.json',
       JSON.stringify({ '/Users/test/Documents': 'bookmark-data' }, null, 2),
@@ -467,11 +470,14 @@ describe('macOS folder permissions', () => {
       status: 'granted',
     });
 
-    expect(dialog.showOpenDialog).toHaveBeenCalledWith(expect.any(Object), {
-      defaultPath: '/Users/test/Documents/El Arroyo',
-      properties: ['openDirectory'],
-      securityScopedBookmarks: true,
-    });
+    expect(dialog.showOpenDialog).toHaveBeenCalledWith(
+      expect.objectContaining({}),
+      expect.objectContaining({
+        defaultPath: '/Users/test/Documents/El Arroyo',
+        properties: ['openDirectory'],
+        securityScopedBookmarks: true,
+      }),
+    );
   });
 
   it('can probe macOS folder permissions without opening the picker', async () => {

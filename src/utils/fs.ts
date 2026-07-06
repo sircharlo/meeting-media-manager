@@ -415,7 +415,7 @@ export const wasUpdateInstalled = async (congId: string, newCong = false) => {
     await ensureDir(dirname(lastVersionFile));
 
     if (newCong) {
-      await writeFile(lastVersionFile, process.env.version ?? '');
+      await writeFile(lastVersionFile, import.meta.env.version ?? '');
       return false;
     }
 
@@ -423,10 +423,10 @@ export const wasUpdateInstalled = async (congId: string, newCong = false) => {
       const lastVersion = await readFile(lastVersionFile, {
         encoding: 'utf-8',
       });
-      await writeFile(lastVersionFile, process.env.version ?? '');
-      return lastVersion !== (process.env.version ?? '');
+      await writeFile(lastVersionFile, import.meta.env.version ?? '');
+      return lastVersion !== (import.meta.env.version ?? '');
     } else {
-      await writeFile(lastVersionFile, process.env.version ?? '', {
+      await writeFile(lastVersionFile, import.meta.env.version ?? '', {
         encoding: 'utf-8',
       });
       return true;

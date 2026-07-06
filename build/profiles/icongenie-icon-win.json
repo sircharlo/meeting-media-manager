@@ -19,12 +19,12 @@
     {
       "generator": "ico",
       "name": "icon.ico",
-      "folder": "src-electron/icons"
+      "folder": "src-electron/electron-assets/icons"
     },
     {
       "generator": "png",
       "name": "icon.png",
-      "folder": "src-electron/icons",
+      "folder": "src-electron/electron-assets/icons",
       "sizes": [512]
     }
   ]
