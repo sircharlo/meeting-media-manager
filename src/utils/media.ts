@@ -22,7 +22,7 @@ const {
   parseMediaFile,
   pathToFileURL,
 } = globalThis.electronApi;
-const { exists } = fs;
+const { pathExists } = fs;
 
 /**
  * Checks if a file is of a certain type.
@@ -220,7 +220,7 @@ export const getMetadataFromMediaPath = async (
   };
   try {
     mediaPath = fileUrlToPath(mediaPath);
-    if (!mediaPath || !(await exists(mediaPath))) {
+    if (!mediaPath || !(await pathExists(mediaPath))) {
       return defaultMetadata;
     }
 

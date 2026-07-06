@@ -43,16 +43,18 @@ import {
   isUpdaterFullDownloadFallbackError,
 } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
-import 'src-electron/main/ipc';
-import 'src-electron/main/security';
 import {
   authorizedClose,
   createMainWindow,
   focusMainWindow,
   mainWindowInfo,
 } from 'src-electron/main/window/window-main';
+import 'src-electron/main/ipc';
+import 'src-electron/main/security';
 import { log } from 'src/shared/vanilla';
 import { join, resolve } from 'upath';
+
+import { registerQuasarRuntime } from '#q-app/electron/main';
 
 const CRASH_COUNT_FILE = 'crash-count.json';
 const GPU_DIAGNOSTICS_FILE = 'gpu-diagnostics.json';
@@ -566,7 +568,11 @@ process.stderr.on('error', (err: NodeJS.ErrnoException) => {
 });
 
 function createWindowAndCaptureErrors() {
-  app.whenReady().then(createMainWindow).catch(captureElectronError);
+  app
+    .whenReady()
+    .then(registerQuasarRuntime)
+    .then(createMainWindow)
+    .catch(captureElectronError);
   app
     .whenReady()
     .then(pruneStaleFallbackEntries)

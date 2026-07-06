@@ -13,7 +13,7 @@ import { useJwStore } from 'stores/jw';
 import { ref } from 'vue';
 
 const { extname, fs, join } = globalThis.electronApi;
-const { ensureDir, exists, readFile, writeFile } = fs;
+const { ensureDir, pathExists, readFile, writeFile } = fs;
 
 let jwIconsGlyphMapPromise: null | Promise<void> = null;
 let jwIconsGlyphMap: null | Record<string, string> = null;
@@ -274,7 +274,7 @@ const getExistingLocalFontPath = async (
   fontName: FontName,
 ) => {
   for (const fontPath of getFontPathCandidates(fontsDir, fontName)) {
-    if (await exists(fontPath)) {
+    if (await pathExists(fontPath)) {
       return fontPath;
     }
   }

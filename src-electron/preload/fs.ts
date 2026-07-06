@@ -3,7 +3,7 @@
 import type { IOptions } from 'music-metadata';
 import type { FileItem, VideoDuration } from 'src/types';
 
-import { type Dirent, exists, readdir, stat } from 'fs-extra';
+import { type Dirent, pathExists, readdir, stat } from 'fs-extra';
 import url from 'node:url';
 import { PLATFORM } from 'src-electron/constants';
 import { capturePreloadError } from 'src-electron/preload/log';
@@ -115,7 +115,7 @@ export const readDirectory = async (
   recursive?: boolean,
 ) => {
   try {
-    if (!(await exists(dir))) return [];
+    if (!(await pathExists(dir))) return [];
     return await readDirRecursive(dir, withSizes, recursive);
   } catch (error) {
     capturePreloadError(error);

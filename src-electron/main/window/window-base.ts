@@ -5,7 +5,6 @@ import {
   BrowserWindow,
   type BrowserWindowConstructorOptions,
 } from 'electron';
-import { fileURLToPath } from 'node:url';
 import {
   IS_BETA,
   IS_DEV,
@@ -69,10 +68,7 @@ export function createWindow(
       preload:
         name === 'website'
           ? undefined
-          : resolve(
-              fileURLToPath(new URL('.', import.meta.url)),
-              'electron-preload.cjs',
-            ),
+          : join(import.meta.dirname, 'electron-preload.cjs'),
       sandbox: name === 'website',
       webSecurity: !IS_DEV,
       ...options?.webPreferences,

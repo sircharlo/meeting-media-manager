@@ -367,9 +367,9 @@ const readWatchedMediaSectionOrder = async (
 ): Promise<WatchedMediaSectionOrder> => {
   try {
     const { fs, hideFileOnWindows, showFileOnWindows } = globalThis.electronApi;
-    const { exists, readJSON } = fs;
+    const { pathExists, readJSON } = fs;
 
-    if (!(await exists(sectionOrderFilePath))) return {};
+    if (!(await pathExists(sectionOrderFilePath))) return {};
 
     await showFileOnWindows(sectionOrderFilePath);
     const result = await readJSON(sectionOrderFilePath);
@@ -489,11 +489,11 @@ export const removeWatchedMediaSectionInfo = async (
     // Access electron API functions
     const { fs, hideFileOnWindows, join, showFileOnWindows } =
       globalThis.electronApi;
-    const { exists, readJSON, writeFile } = fs;
+    const { pathExists, readJSON, writeFile } = fs;
 
     const sectionOrderFilePath = join(datedFolderPath, '.section-order.json');
 
-    if (!(await exists(sectionOrderFilePath))) {
+    if (!(await pathExists(sectionOrderFilePath))) {
       return;
     }
 

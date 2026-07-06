@@ -1,7 +1,6 @@
 import { addBreadcrumb, captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
 import { app } from 'electron';
-import { fileURLToPath } from 'node:url';
 import {
   IS_DEV,
   JW_DOMAINS,
@@ -16,7 +15,9 @@ import {
   NETWORK_ERROR_CODES,
 } from 'src/shared/network-errors';
 import { log } from 'src/shared/vanilla';
-import { join, resolve } from 'upath';
+import { join } from 'upath';
+
+import { resolveElectronAssetsPath } from '#q-app/electron/main';
 
 type CaptureCtx = Parameters<typeof captureException>[1];
 interface NativeCrashEvent {
@@ -84,18 +85,7 @@ export function getIconPath(icon: 'beta' | 'icon' | 'media-player' | 'timer') {
 
   const ext = extByPlatform[PLATFORM] ?? 'png';
 
-  return resolve(
-    join(
-      fileURLToPath(
-        new URL(
-          IS_DEV ? './../../src-electron/electron-assets' : './electron-assets',
-          import.meta.url,
-        ),
-      ),
-      'icons',
-      `${icon}.${ext}`,
-    ),
-  );
+  return resolveElectronAssetsPath('icons', `${icon}.${ext}`);
 }
 
 let isMachineWideAlreadyLogged = false;

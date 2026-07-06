@@ -44,7 +44,7 @@ async function moveStandardFolders(
   folders: string[],
   userDataPath: string,
   sharedPath: string,
-  exists: (p: string) => Promise<boolean>,
+  pathExists: (p: string) => Promise<boolean>,
   move: (a: string, b: string) => Promise<void>,
   join: (...p: string[]) => string,
 ) {
@@ -52,10 +52,10 @@ async function moveStandardFolders(
     const src = join(userDataPath, folder);
     const dest = join(sharedPath, folder);
 
-    const srcExists = await exists(src);
+    const srcExists = await pathExists(src);
     if (!srcExists) continue;
 
-    const destExists = await exists(dest);
+    const destExists = await pathExists(dest);
     if (destExists) continue;
 
     await move(src, dest);
@@ -108,7 +108,7 @@ export const moveCacheToMachineWide: MigrationFunction = async () => {
   try {
     const { fs, getSharedDataPath, getUserDataPath, join } =
       globalThis.electronApi;
-    const { exists, move } = fs;
+    const { move, pathExists } = fs;
 
     const sharedPath = await getSharedDataPath();
     if (!sharedPath) return true;
@@ -125,7 +125,7 @@ export const moveCacheToMachineWide: MigrationFunction = async () => {
       foldersToMove,
       userDataPath,
       sharedPath,
-      exists,
+      pathExists,
       move,
       join,
     );

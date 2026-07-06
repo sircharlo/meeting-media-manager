@@ -27,7 +27,7 @@ import {
 } from '../fs';
 
 const { fs } = globalThis.electronApi;
-const { emptyDir, ensureFile, exists, remove } = fs;
+const { emptyDir, ensureFile, pathExists, remove } = fs;
 
 installPinia();
 
@@ -114,13 +114,13 @@ describe('removeEmptyDirs', () => {
     await emptyDir(emptyDirectory);
     await ensureFile(file);
 
-    expect(await exists(emptyDirectory)).toBe(true);
-    expect(await exists(file)).toBe(true);
+    expect(await pathExists(emptyDirectory)).toBe(true);
+    expect(await pathExists(file)).toBe(true);
 
     await removeEmptyDirs(root);
 
-    expect(await exists(emptyDirectory)).toBe(false);
-    expect(await exists(file)).toBe(true);
+    expect(await pathExists(emptyDirectory)).toBe(false);
+    expect(await pathExists(file)).toBe(true);
 
     await remove(root);
   });

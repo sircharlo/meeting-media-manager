@@ -28,7 +28,7 @@ const {
   join,
   readdir,
 } = globalThis.electronApi;
-const { copy, ensureDir, exists, remove, stat } = fs;
+const { copy, ensureDir, pathExists, remove, stat } = fs;
 
 // Create a queue to limit the number of exports running at the same time
 let folderExportQueue: PQueue | undefined;
@@ -307,7 +307,7 @@ const processMediaItem = async ({
   totalItems: number;
 }) => {
   const sourceFilePath = fileUrlToPath(mediaItem.fileUrl);
-  if (!sourceFilePath || !(await exists(sourceFilePath))) return;
+  if (!sourceFilePath || !(await pathExists(sourceFilePath))) return;
 
   const destFilePath = await buildDestinationPath({
     destFolder,
@@ -378,7 +378,7 @@ const canSkipFile = async (
   sourceFilePath: string,
   destFilePath: string,
 ): Promise<boolean> => {
-  if (!(await exists(destFilePath))) {
+  if (!(await pathExists(destFilePath))) {
     return false;
   }
 
@@ -456,7 +456,7 @@ const deleteOldExportFolders = async () => {
   const destFolder = currentStateStore.currentSettings.mediaAutoExportFolder;
 
   try {
-    if (!(await exists(destFolder))) return;
+    if (!(await pathExists(destFolder))) return;
 
     const dirItems: FileItem[] = await readdir(destFolder);
     const today = new Date();

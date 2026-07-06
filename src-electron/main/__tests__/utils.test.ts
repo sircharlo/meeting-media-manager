@@ -8,6 +8,12 @@ vi.mock('electron', () => ({
   },
 }));
 
+vi.mock('#q-app/electron/main', () => ({
+  resolveElectronAssetsPath: vi.fn((...args: string[]) =>
+    ['electron-assets', ...args].join('/'),
+  ),
+}));
+
 vi.mock('@sentry/electron/main', () => ({
   captureException: vi.fn(),
 }));

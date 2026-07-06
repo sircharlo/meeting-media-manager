@@ -31,15 +31,7 @@ const isUsablePath = (path: string) => {
   isUsablePathPromises.set(path, promise);
   return promise;
 };
-const {
-  ensureDir,
-  ensureFile,
-  exists,
-  pathExists,
-  readFile,
-  remove,
-  writeFile,
-} = fs;
+const { ensureDir, ensureFile, pathExists, readFile, remove, writeFile } = fs;
 
 let defaultDataPath: null | string = null;
 
@@ -358,7 +350,7 @@ export const trimFilepathAsNeeded = (filepath: string, maxBytes = 230) => {
  * @returns Whether auto updates are disabled.
  */
 export const updatesDisabled = async () =>
-  exists(await getUpdatesDisabledPath());
+  pathExists(await getUpdatesDisabledPath());
 
 /**
  * Toggles auto updates.
@@ -382,7 +374,7 @@ export const toggleAutoUpdates = async (enable: boolean) => {
  * @returns Wether beta updates are disabled.
  */
 export const betaUpdatesDisabled = async () =>
-  !(await exists(await getBetaUpdatesPath()));
+  !(await pathExists(await getBetaUpdatesPath()));
 
 /**
  * Toggles beta updates
@@ -419,7 +411,7 @@ export const wasUpdateInstalled = async (congId: string, newCong = false) => {
       return false;
     }
 
-    if (await exists(lastVersionFile)) {
+    if (await pathExists(lastVersionFile)) {
       const lastVersion = await readFile(lastVersionFile, {
         encoding: 'utf-8',
       });

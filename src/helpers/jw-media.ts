@@ -126,7 +126,7 @@ const {
   setElectronUrlVariables,
   unzip,
 } = globalThis.electronApi;
-const { copy, ensureDir, exists, pathExists, remove, rename, stat } = fs;
+const { copy, ensureDir, pathExists, remove, rename, stat } = fs;
 
 const backgroundMusicLibraryCache = new Map<string, Promise<SongItem[]>>();
 const publicationMediaLinksCache = new Map<string, Promise<MediaLink[]>>();
@@ -260,7 +260,7 @@ const getExpectedDownloadPath = async (
 
 const getValidLocalSongPath = async (song: SongItem): Promise<string> => {
   try {
-    if (!song.path || !(await exists(song.path))) return '';
+    if (!song.path || !(await pathExists(song.path))) return '';
 
     if (!song.filesize) return song.path;
 
@@ -1182,7 +1182,7 @@ export const copyToDatedAdditionalMedia = async (
   );
 
   try {
-    if (!filepathToCopy || !(await exists(filepathToCopy))) return '';
+    if (!filepathToCopy || !(await pathExists(filepathToCopy))) return '';
     let datedAdditionalMediaPath = join(
       datedAdditionalMediaDir,
       basename(filepathToCopy),
@@ -1193,7 +1193,7 @@ export const copyToDatedAdditionalMedia = async (
         '-' +
         pathToFileURL(datedAdditionalMediaPath),
     );
-    if (await exists(datedAdditionalMediaPath)) {
+    if (await pathExists(datedAdditionalMediaPath)) {
       if (filepathToCopy !== datedAdditionalMediaPath) {
         try {
           await remove(datedAdditionalMediaPath);
@@ -1444,7 +1444,7 @@ const resolveDownloadedFile = async (
 ) => {
   const maxAttempts = 10;
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    if (await exists(destinationPath)) {
+    if (await pathExists(destinationPath)) {
       const statistics = await stat(destinationPath);
       const hasExpectedSize = remoteSize <= 0 || statistics.size === remoteSize;
       if (statistics.size > 0 && hasExpectedSize) {
@@ -1491,7 +1491,7 @@ export const downloadFileIfNeeded = async ({
           return +(response?.headers?.get('content-length') || 0);
         })
         .catch(() => 0));
-    if (await exists(destinationPath)) {
+    if (await pathExists(destinationPath)) {
       const statistics = await stat(destinationPath);
       const localSize = statistics.size;
       if (remoteSize > 0 && localSize === remoteSize) {
@@ -1929,7 +1929,7 @@ export const resolveFilePath = async (
     if (!targetPath) return undefined;
 
     // Check if the file exists
-    if (await exists(targetPath)) return targetPath;
+    if (await pathExists(targetPath)) return targetPath;
 
     // If it doesn't exist, try to find it (handling missing extension)
     const dir = dirname(targetPath);
@@ -2993,7 +2993,7 @@ export const dynamicMediaMapper = async (
 
       if (m.Duration) return m.Duration;
 
-      if (await exists(m.FilePath)) {
+      if (await pathExists(m.FilePath)) {
         const meta = await getMetadataFromMediaPath(m.FilePath);
         if (meta?.format.duration) return meta.format.duration;
       }
@@ -4614,7 +4614,7 @@ const downloadRelatedMediaAssets = async ({
 
     if (
       bestItem.file?.url &&
-      (downloadedFile?.new || !(await exists(join(pubDir, itemFilename))))
+      (downloadedFile?.new || !(await pathExists(join(pubDir, itemFilename))))
     ) {
       await downloadFileIfNeeded({
         dir: pubDir,

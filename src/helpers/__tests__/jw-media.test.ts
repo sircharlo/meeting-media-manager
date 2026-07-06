@@ -206,7 +206,6 @@ describe('jw-media helpers', () => {
       fs: {
         copy: copyMock,
         ensureDir: ensureDirMock,
-        exists: vi.fn(),
         pathExists: pathExistsMock,
         readdir: readdirMock,
         remove: removeMock,

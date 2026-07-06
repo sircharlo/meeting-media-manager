@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const files = new Map<string, string>();
 const writes = new Map<string, string>();
-const existsMock = vi.fn();
+const pathExistsMock = vi.fn();
 const hideFileOnWindowsMock = vi.fn();
 const readJsonMock = vi.fn();
 const showFileOnWindowsMock = vi.fn();
@@ -65,7 +65,7 @@ describe('watched media layout persistence', () => {
     vi.clearAllMocks();
     files.clear();
     writes.clear();
-    existsMock.mockImplementation(async (path: string) => files.has(path));
+    pathExistsMock.mockImplementation(async (path: string) => files.has(path));
     hideFileOnWindowsMock.mockResolvedValue(undefined);
     readJsonMock.mockImplementation(async (path: string) =>
       JSON.parse(files.get(path) ?? '{}'),
@@ -81,7 +81,7 @@ describe('watched media layout persistence', () => {
       dirname: (value: string) => value.split('/').slice(0, -1).join('/'),
       fileUrlToPath: toPath,
       fs: {
-        exists: existsMock,
+        pathExists: pathExistsMock,
         readJSON: readJsonMock,
         writeFile: writeFileMock,
       },

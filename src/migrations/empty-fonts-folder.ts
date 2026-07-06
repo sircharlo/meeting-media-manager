@@ -6,7 +6,7 @@ export const emptyFontsFolder: MigrationFunction = async () => {
   try {
     const { fs, getSharedDataPath, getUserDataPath, join } =
       globalThis.electronApi;
-    const { emptyDir, exists } = fs;
+    const { emptyDir, pathExists } = fs;
 
     const userDataPath = await getUserDataPath();
     const sharedDataPath = await getSharedDataPath();
@@ -17,7 +17,7 @@ export const emptyFontsFolder: MigrationFunction = async () => {
 
     for (const basePath of new Set(pathsToCheck)) {
       const fontsPath = join(basePath, 'Fonts');
-      if (!(await exists(fontsPath))) continue;
+      if (!(await pathExists(fontsPath))) continue;
       await emptyDir(fontsPath);
     }
 

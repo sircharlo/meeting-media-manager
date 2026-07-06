@@ -65,7 +65,7 @@ const {
   unzip,
   watchFolder,
 } = globalThis.electronApi;
-const { exists, pathExists, stat, writeFile } = fs;
+const { pathExists, stat, writeFile } = fs;
 
 const withCacheBust = (url: string, forceRefresh?: boolean) => {
   if (!url || !forceRefresh) return url;
@@ -76,7 +76,7 @@ const withCacheBust = (url: string, forceRefresh?: boolean) => {
 const getThumbnailFromMetadata = async (mediaPath: string) => {
   try {
     mediaPath = fileUrlToPath(mediaPath);
-    if (!mediaPath || !(await exists(mediaPath))) return '';
+    if (!mediaPath || !(await pathExists(mediaPath))) return '';
     const metadata = await parseMediaFile(mediaPath);
     const thumbnailData = metadata?.common?.picture?.[0]?.data || null;
     const thumbnailFormat = metadata?.common?.picture?.[0]?.format || null;
@@ -234,7 +234,7 @@ export const getThumbnailUrl = async (
   try {
     if (!filepath) return '';
     filepath = fileUrlToPath(filepath);
-    if (!filepath || !(await exists(filepath))) return '';
+    if (!filepath || !(await pathExists(filepath))) return '';
     let thumbnailUrl = '';
     if (isImage(filepath)) {
       thumbnailUrl = pathToFileURL(filepath);
@@ -242,7 +242,7 @@ export const getThumbnailUrl = async (
       thumbnailUrl = await getThumbnailFromMetadata(filepath);
     } else if (isVideo(filepath)) {
       const thumbnailPath = filepath.split('.')[0] + '.jpg';
-      if (await exists(thumbnailPath)) {
+      if (await pathExists(thumbnailPath)) {
         thumbnailUrl = pathToFileURL(thumbnailPath);
       } else {
         thumbnailUrl = await getThumbnailFromVideoPath(filepath, thumbnailPath);
@@ -307,7 +307,7 @@ export const getSubtitlesUrl = async (
           url: subtitles,
         });
         subtitlesPath = join(subDirectory, subtitlesFilename);
-        if (await exists(subtitlesPath)) {
+        if (await pathExists(subtitlesPath)) {
           subtitlesUrl = pathToFileURL(subtitlesPath);
         }
       }

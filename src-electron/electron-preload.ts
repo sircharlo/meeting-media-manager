@@ -7,7 +7,6 @@ import {
   emptyDir,
   ensureDir,
   ensureFile,
-  exists,
   move,
   pathExists,
   readFile,
@@ -68,15 +67,14 @@ const fs: ElectronFsApi = {
   emptyDir,
   ensureDir,
   ensureFile,
-  exists,
   move,
   pathExists,
-  readFile,
-  readJSON,
+  readFile: readFile as unknown as ElectronFsApi['readFile'],
+  readJSON: readJSON as unknown as ElectronFsApi['readJSON'],
   remove,
   rename,
   stat,
-  writeFile,
+  writeFile: writeFile as unknown as ElectronFsApi['writeFile'],
 };
 
 const getPathFromFileObject = (fo?: File | string) => {

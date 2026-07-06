@@ -40,7 +40,7 @@ function collectMediaItems(day: DateInfo): MediaItem[] {
 }
 
 async function updateAllSubdirsWithDate(basePath: string, date: string) {
-  if (!(await fs.exists(basePath))) return;
+  if (!(await fs.pathExists(basePath))) return;
 
   const items = await readdir(basePath, false, false);
   const dirs = items.filter((i) => i.isDirectory);
@@ -61,7 +61,7 @@ async function updateFromMediaItem(item: MediaItem, date: string) {
 }
 
 async function updateTwoLevelSubdirsWithDate(basePath: string, date: string) {
-  if (!(await fs.exists(basePath))) return;
+  if (!(await fs.pathExists(basePath))) return;
 
   const level1 = await readdir(basePath, false, false);
   const level1Dirs = level1.filter((d) => d.isDirectory);

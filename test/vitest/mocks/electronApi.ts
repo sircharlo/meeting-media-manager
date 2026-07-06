@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import type { ElectronApi } from 'src/types';
+import type { ElectronApi, ElectronFsApi } from 'src/types';
 
 import fs, { ensureDir } from 'fs-extra';
 import {
@@ -69,7 +69,7 @@ export const electronApi: ElectronApi = {
   focusMediaWindow: function () {
     throw new Error('Function not implemented.');
   },
-  fs,
+  fs: fs as unknown as ElectronFsApi,
   getAllScreens: function () {
     throw new Error('Function not implemented.');
   },

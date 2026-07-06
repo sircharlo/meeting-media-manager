@@ -1,5 +1,6 @@
 import type { default as FsExtra } from 'fs-extra';
 import type { IAudioMetadata, IOptions } from 'music-metadata';
+import type { Stats, WriteFileOptions } from 'node:fs';
 import type {
   FileItem,
   JwSiteParams,
@@ -282,24 +283,73 @@ export interface ElectronApi {
  * context bridge instead of the full fs-extra module so the renderer cannot
  * reach filesystem capabilities (e.g. symlinks, permission changes, raw
  * streams) that no app feature needs.
+ *
+ * The passthrough fs methods below (copyFile, readFile, readJSON, rename,
+ * stat, writeFile) are hand-typed instead of picked from `typeof FsExtra`:
+ * @types/fs-extra re-exports these from Node's plain callback/sync `fs`
+ * types, which don't reflect that fs-extra wraps them with `universalify`
+ * to also support promises. Picking from the merged type produces target
+ * signatures the actual (string-path-only) promise-based values can't
+ * satisfy.
  */
 export type ElectronFsApi = Pick<
   typeof FsExtra,
   | 'copy'
-  | 'copyFile'
   | 'emptyDir'
   | 'ensureDir'
   | 'ensureFile'
-  | 'exists'
   | 'move'
   | 'pathExists'
-  | 'readFile'
-  | 'readJSON'
   | 'remove'
-  | 'rename'
-  | 'stat'
-  | 'writeFile'
->;
+> & {
+  copyFile: (src: string, dest: string, mode?: number) => Promise<void>;
+  readFile: {
+    (
+      path: string,
+      options?:
+        | null
+        | undefined
+        | { encoding?: null | undefined; flag?: string | undefined },
+    ): Promise<Buffer>;
+    (
+      path: string,
+      options:
+        | BufferEncoding
+        | { encoding: BufferEncoding; flag?: string | undefined },
+    ): Promise<string>;
+    (
+      path: string,
+      options?:
+        | null
+        | string
+        | undefined
+        | {
+            encoding?: BufferEncoding | null | undefined;
+            flag?: string | undefined;
+          },
+    ): Promise<Buffer | string>;
+  };
+  readJSON: (
+    file: string,
+    options?:
+      | null
+      | string
+      | undefined
+      | {
+          encoding?: string | undefined;
+          flag?: string | undefined;
+          throws?: boolean | undefined;
+        },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ) => Promise<any>;
+  rename: (oldPath: string, newPath: string) => Promise<void>;
+  stat: (path: string) => Promise<Stats>;
+  writeFile: (
+    path: string,
+    data: NodeJS.ArrayBufferView | string,
+    options?: BufferEncoding | WriteFileOptions,
+  ) => Promise<void>;
+};
 
 // ipcMain.handle / ipcRenderer.invoke channels
 export type ElectronIpcInvokeKey =

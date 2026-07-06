@@ -26,7 +26,7 @@ import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
 const { fs, join, normalize, readdir } = globalThis.electronApi;
-const { exists, pathExists, remove } = fs;
+const { pathExists, remove } = fs;
 
 /**
  * Builds a map of file sizes by path
@@ -313,7 +313,7 @@ export const cleanPersistedStores = () => {
 };
 
 const cleanCongregationFolders = async (root: string, congIds: Set<string>) => {
-  if (!root || !congIds || !(await exists(root))) return;
+  if (!root || !congIds || !(await pathExists(root))) return;
   const folders = await readdir(root);
   await Promise.allSettled(
     folders
@@ -323,7 +323,7 @@ const cleanCongregationFolders = async (root: string, congIds: Set<string>) => {
 };
 
 const cleanPublicTalkPubs = async (folder: string, congIds: Set<string>) => {
-  if (!folder || !congIds || !(await exists(folder))) return;
+  if (!folder || !congIds || !(await pathExists(folder))) return;
   const files = await readdir(folder);
 
   await Promise.allSettled(
@@ -339,7 +339,7 @@ const cleanPublicTalkPubs = async (folder: string, congIds: Set<string>) => {
 };
 
 const cleanDateFolders = async (root?: string) => {
-  if (!root || !(await exists(root))) return;
+  if (!root || !(await pathExists(root))) return;
 
   const folders = await readdir(root);
 
