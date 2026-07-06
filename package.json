@@ -76,7 +76,7 @@
     "quasar": "^2.21.1",
     "readable-stream": "^4.7.0",
     "require-in-the-middle": "^8.0.1",
-    "type-fest": "^5.7.0",
+    "type-fest": "^5.8.0",
     "upath": "^3.0.8",
     "vue": "^3.5.39",
     "vue-i18n": "^11.4.6",
