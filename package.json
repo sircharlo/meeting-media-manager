@@ -91,7 +91,7 @@
     "@eslint/js": "^10.0.1",
     "@intlify/unplugin-vue-i18n": "^11.2.4",
     "@pinia/testing": "^1.0.3",
-    "@quasar/app-vite": "^2.6.2",
+    "@quasar/app-vite": "^3.0.0",
     "@quasar/icongenie": "^6.0.0",
     "@quasar/quasar-app-extension-testing-unit-vitest": "1.2.3",
     "@quasar/vite-plugin": "^1.12.0",
