@@ -8,8 +8,8 @@ No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera 
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ✨ **Linked Audio Playback**: Added support for playing audio from one file together with video from another file. This can be useful for playing video slideshows with accompanying music.
-- ✨ **Watched Media Layouts**: Added persistence for watched media items and section order across watched folders. This ensures that the media list is displayed the same way even when the watched folder is synced across devices.
+- ✨ Taioraa upaupa amui: Ua faaôhia mai te ravea no te hauti i te upaupa no roto mai i te hoê manaˈo (fichier) e te video no roto mai i te tahi atu manaˈo amui. E nehenehe te reira e tauturu ia hauti i te mau video faaiteite hohoˈa (slideshows) e te upaupa tei amui-atoa-hia.
+- ✨ Mau huru faanahoraa no te mau video mataitaihia: Ua faaôhia mai te ravea no te haamanaˈo i te mau video i mataitaihia e te huru i faanahohia ˈi te mau tuhaa i roto i te mau pueraa parau (dossiers) i mataitaihia. E faaite te reira e ua riro te tapura o te mau video mai te reira noa te huru i te iteraa, noa ˈtu e ua tuatihia (synchronisé) te pueraa parau (dossier) i mataitaihia na nia i te mau matini huru rau.
 
 ## v26.6.1
 
