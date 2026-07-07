@@ -27,12 +27,12 @@ async function generateFromProfile(profilePath) {
 }
 
 async function generateIcns(sourceBuffer, asset) {
-  const buffer = png2icons.createICNS(sourceBuffer, png2icons.BICUBIC2, 0);
+  const buffer = png2icons.createICNS(sourceBuffer, png2icons.BICUBIC, 0);
   await writeFile(join(asset.folder, asset.name), buffer);
 }
 
 async function generateIco(sourceBuffer, asset) {
-  const buffer = png2icons.createICO(sourceBuffer, png2icons.BICUBIC2, 0, true);
+  const buffer = png2icons.createICO(sourceBuffer, png2icons.BICUBIC, 0, true);
   await writeFile(join(asset.folder, asset.name), buffer);
 }
 
