@@ -1,8 +1,6 @@
 {
   "params": {
-    "icon": "build/logos/icon-512-Windows.png",
-    "quality": 12,
-    "skipTrim": true
+    "icon": "build/logos/icon-512-Windows.png"
   },
   "assets": [
     {

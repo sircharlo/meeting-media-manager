@@ -1,18 +1,16 @@
 {
   "params": {
-    "icon": "build/logos/beta-icon-512-Windows.png",
-    "quality": 12,
-    "skipTrim": true
+    "icon": "build/logos/timer-icon-512-Windows.png"
   },
   "assets": [
     {
       "generator": "ico",
-      "name": "beta.ico",
+      "name": "timer.ico",
       "folder": "src-electron/electron-assets/icons"
     },
     {
       "generator": "png",
-      "name": "beta.png",
+      "name": "timer.png",
       "folder": "src-electron/electron-assets/icons",
       "sizes": [512]
     }
