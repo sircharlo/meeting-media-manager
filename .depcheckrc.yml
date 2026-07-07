@@ -17,6 +17,14 @@
 ignores:
   # depcheck can't see itself.
   - depcheck
+  # depcheck resolves 'buffer' as a Node builtin (via is-core-module) and
+  # skips it as "no install needed" - it can't tell that apart from this
+  # actually being the npm polyfill package of the same name, which src/**
+  # needs because the renderer runs with contextIsolation and no Node
+  # integration (no real `buffer` builtin available there). Genuinely used
+  # in src/helpers/fonts.ts, src/helpers/fs.ts, src/utils/converters.ts,
+  # src/utils/fs.ts, and src/pages/MediaCalendarPage.vue.
+  - buffer
   # @types packages are never imported by name - TS resolves them
   # implicitly for the package they describe.
   - '@types/*'
