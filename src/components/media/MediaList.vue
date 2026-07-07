@@ -30,7 +30,7 @@
     />
     <!-- Empty State -->
     <SectionEmptyState
-      v-if="(isEmpty || someItemsAreHidden) && !isDragging"
+      v-if="isEmpty || someItemsAreHidden"
       :all-items-are-hidden="allItemsAreHidden"
       :is-dragging="isDragging"
       :selected-date="selectedDateObject"
@@ -44,14 +44,6 @@
       :class="{ 'drop-here': isDragging }"
       :data-list="mediaList.config?.uniqueId"
     >
-      <template v-if="(isEmpty || someItemsAreHidden) && isDragging">
-        <SectionEmptyState
-          :all-items-are-hidden="allItemsAreHidden"
-          :is-dragging="isDragging"
-          :selected-date="selectedDateObject"
-          :some-items-are-hidden="someItemsAreHidden"
-        />
-      </template>
       <template v-for="element in sortableItems" :key="element.uniqueId">
         <!-- Render dividers -->
         <MediaDivider

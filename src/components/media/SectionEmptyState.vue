@@ -1,5 +1,5 @@
 <template>
-  <q-item data-non-draggable>
+  <q-item>
     <q-item-section class="align-center text-grey text-subtitle2">
       <div class="row items-center">
         <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
