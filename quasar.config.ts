@@ -145,7 +145,10 @@ export default defineConfig((ctx) => {
           target: 'AppImage',
         },
         mac: {
-          entitlements: '../build/entitlements.mac.plist',
+          // Unlike other resource paths in this config, mac.entitlements is read
+          // via fs.readFile relative to process.cwd() (the repo root), not
+          // resolved against src-electron/projectDir — so no '../' prefix here.
+          entitlements: 'build/entitlements.mac.plist',
           extendInfo: {
             NSAppleEventsUsageDescription:
               'Apple Events access is required to control media playback and window management. Please note that this app will never access or control other applications on your device without your explicit permission.',
