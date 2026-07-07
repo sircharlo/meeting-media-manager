@@ -75,6 +75,8 @@ jobs:
         run: yarn quasar prepare
       - name: Lint files
         run: yarn lint
+      - name: Check for unused dependencies
+        run: yarn depcheck
       - name: Run tests
         run: yarn test:unit
 

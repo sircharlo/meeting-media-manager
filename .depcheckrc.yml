@@ -1,0 +1,61 @@
+# Config for `yarn depcheck` (root project: src/ renderer + tooling).
+# See src-electron/.depcheckrc.yml for the Electron main/preload project.
+#
+# Run with --skip-missing (see the "depcheck" package.json script): this
+# project's TypeScript path aliases (quasar.config.ts's build.alias, plus
+# Quasar's own #q-app) aren't real npm packages, so depcheck always reports
+# them as "missing dependencies". They can't be suppressed via `ignores`
+# either - depcheck's matcher treats any pattern starting with "#" as a
+# comment (minimatch's `nocomment` default), so "#q-app" silently matches
+# nothing. --skip-missing drops that whole (not useful here) category
+# instead; "unused dependencies" below is the one that matters.
+#
+# Every entry below is a known false positive, not a "trust me" catch-all -
+# if depcheck starts flagging something new, that's a real signal: either
+# use it properly, remove it, or (if it's a genuine new false-positive
+# category) add it here with a reason.
+ignores:
+  # depcheck can't see itself.
+  - depcheck
+  # @types packages are never imported by name - TS resolves them
+  # implicitly for the package they describe.
+  - '@types/*'
+  # Only invoked via the "electron-rebuild" package.json script, never
+  # imported - rebuilds @jitsi/robotjs's native binding for this machine's
+  # Node/Electron ABI.
+  - '@electron/rebuild'
+  # Referenced by plugin id string in quasar.config.ts's vitePlugins array,
+  # not via a static `import`, so depcheck can't see the usage.
+  - '@intlify/unplugin-vue-i18n'
+  # Quasar's icon-font tooling resolves this internally based on the
+  # framework's default iconSet; nothing in our source imports it directly.
+  - '@quasar/extras'
+  # These are runtime dependencies of src-electron/** (see
+  # src-electron/package.json), duplicated here ONLY so that
+  # `vue-tsc --noEmit -p tsconfig.json` (invoked by `yarn lint`, which also
+  # type-checks src-electron/**) can resolve their types from this
+  # project's node_modules. depcheck treats src-electron as a separate
+  # package (it has its own package.json) and never sees these imports.
+  #
+  # If you're adding a package here "just in case": don't. Only add an
+  # entry when it's a real src-electron dependency that also needs to
+  # type-check from root - and add/remove it in src-electron/package.json
+  # first. This exact kind of unreviewed duplication (a package copied into
+  # a package.json without anything there actually importing it) is what
+  # shipped a crash to every user in 2026-07 - see git blame on this file.
+  - '@jitsi/robotjs'
+  - '@numairawan/video-duration'
+  - '@opentelemetry/api-logs'
+  - '@sentry/core'
+  - '@sentry/electron'
+  - check-disk-space
+  - chokidar
+  - countries-and-timezones
+  - electron-dl-manager
+  - electron-updater
+  - fluent-ffmpeg
+  - heic-convert
+  - image-size
+  - mime
+  - upath
+  - yauzl

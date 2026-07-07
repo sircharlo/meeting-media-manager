@@ -1,0 +1,32 @@
+# Config for `yarn depcheck` (Electron main/preload project). See
+# ../.depcheckrc.yml for the root/renderer project.
+#
+# This project is what actually gets packaged into app.asar, and its main
+# bundle is built by leaving every entry in "dependencies" here external
+# (see quasar.config.ts + @quasar/app-vite's electron-config.js) rather
+# than inlining it. That means an unused entry here isn't just clutter -
+# it can force a package to stay external for no reason, and any runtime
+# version drift in an externalized package crashes the whole app before a
+# window even opens (this happened with @sentry/core and
+# @opentelemetry/api-logs in 2026-07). Keep this file, and this
+# package.json, as tight as possible.
+#
+# Run with --skip-missing (see the root "depcheck" package.json script):
+# this project's TypeScript path aliases (app, src-electron, src, etc. -
+# see quasar.config.ts's build.alias) aren't real npm packages, so
+# depcheck always reports them as "missing dependencies", and that can't
+# be fixed via `ignores` (depcheck's matcher treats a leading "#" as a
+# comment, so Quasar's "#q-app" alias can't be listed here at all).
+# --skip-missing drops that whole category; "unused dependencies" below is
+# the one that actually matters for this file.
+ignores:
+  # @types packages are never imported by name.
+  - '@types/*'
+  # Only referenced by the electron.builder config object in
+  # ../quasar.config.ts (consumed by the Quasar/electron-builder CLI
+  # itself), never imported from our code.
+  - electron-builder
+  # Electron main/preload code is tested by root's vitest config
+  # (`vitest --project electron`, see ../package.json), so vitest itself
+  # only needs to live in root's node_modules, not here.
+  - vitest
