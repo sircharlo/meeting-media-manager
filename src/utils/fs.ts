@@ -1,6 +1,6 @@
 import type { PublicationFetcher } from 'src/types';
 
-import { Buffer } from 'node:buffer';
+import { Buffer } from 'buffer'; // NOSONAR: this is not nodejs Buffer, it's the browser one
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { log } from 'src/shared/vanilla';
 import { getPubId } from 'src/utils/jw';

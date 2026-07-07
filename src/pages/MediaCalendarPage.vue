@@ -190,6 +190,7 @@ import {
   useEventListener,
   watchImmediate,
 } from '@vueuse/core';
+import { Buffer } from 'buffer'; // NOSONAR: this is not nodejs Buffer, it's the browser one
 import DialogFileImport from 'components/dialog/DialogFileImport.vue';
 import DialogJwpubMediaPicker from 'components/dialog/DialogJwpubMediaPicker.vue';
 import DialogSectionPicker from 'components/dialog/DialogSectionPicker.vue';
@@ -197,7 +198,6 @@ import MediaEmptyState from 'components/media/MediaEmptyState.vue';
 import MediaList from 'components/media/MediaList.vue';
 import DOMPurify from 'dompurify';
 import Mousetrap from 'mousetrap';
-import { Buffer } from 'node:buffer';
 import { storeToRefs } from 'pinia';
 import { type QInput, useMeta, useQuasar } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
