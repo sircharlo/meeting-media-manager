@@ -15,7 +15,6 @@ import { LONG_MEDIA_DURATION } from 'src/constants/jw';
 import { settingsDefinitions } from 'src/constants/settings';
 import { isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { dismissAllTemporaryNotifications } from 'src/helpers/notifications';
 import { datesAreSame, formatDate } from 'src/utils/date';
 import {
   getAdditionalMediaPath,
@@ -216,6 +215,8 @@ export const useCurrentStateStore = defineStore('current-state', {
       this.downloadProgress = {};
 
       // Dismiss all active notifications when changing congregation
+      const { dismissAllTemporaryNotifications } =
+        await import('src/helpers/notifications');
       dismissAllTemporaryNotifications();
 
       this.currentCongregation = value.toString();

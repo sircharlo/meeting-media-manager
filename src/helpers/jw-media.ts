@@ -106,11 +106,7 @@ import {
   useJwStore,
 } from 'stores/jw';
 
-import {
-  createMeetingSections,
-  getExportedFilenamePlacement,
-  getWatchedMediaSectionInfo,
-} from './media-sections';
+import { createMeetingSections } from './media-sections';
 
 const {
   basename,
@@ -3381,6 +3377,8 @@ const getWatchedMediaPlacement = async ({
 
   // No explicit override on record: fall back to the order/section encoded
   // in the filename by the media auto-export feature (or reproduced manually).
+  const { getExportedFilenamePlacement } =
+    await import('src/helpers/media-sections');
   const filenamePlacement = getExportedFilenamePlacement(filename);
 
   return {
@@ -3406,6 +3404,8 @@ const getWatchedMediaSectionInfoSafe = async ({
     log(`watchedDayFolder: ${watchedDayFolder}`, 'watchedFolder', 'info');
     if (!watchedDayFolder) return null;
 
+    const { getWatchedMediaSectionInfo } =
+      await import('src/helpers/media-sections');
     const sectionInfo = await getWatchedMediaSectionInfo(
       watchedDayFolder,
       filename,
