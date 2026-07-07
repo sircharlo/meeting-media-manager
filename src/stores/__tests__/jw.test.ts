@@ -2,7 +2,7 @@ import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
-  addUniqueByIdToTop,
+  addUniqueByIdAt,
   deduplicateById,
   shouldUpdateList,
   useJwStore,
@@ -69,15 +69,15 @@ describe('JW Store', () => {
     });
   });
 
-  describe('addUniqueByIdToTop', () => {
-    it('should add unique items to target array', () => {
+  describe('addUniqueByIdAt', () => {
+    it('should add unique items to target array at the given index', () => {
       const target = [{ name: 'Item 1', uniqueId: '1' }];
       const source = [
         { name: 'Item 2', uniqueId: '2' },
         { name: 'Item 3', uniqueId: '3' },
       ];
 
-      addUniqueByIdToTop(target, source);
+      addUniqueByIdAt(target, source, 0);
 
       expect(target).toHaveLength(3);
       expect(target.map((item) => item.uniqueId)).toEqual(['2', '3', '1']);
@@ -90,10 +90,22 @@ describe('JW Store', () => {
         { name: 'Item 2', uniqueId: '2' },
       ];
 
-      addUniqueByIdToTop(target, source);
+      addUniqueByIdAt(target, source, 0);
 
       expect(target).toHaveLength(2);
       expect(target.map((item) => item.uniqueId)).toEqual(['2', '1']);
+    });
+
+    it('should append unique items to the end of the array', () => {
+      const target = [{ name: 'Item 1', uniqueId: '1' }];
+      const source = [
+        { name: 'Item 2', uniqueId: '2' },
+        { name: 'Item 3', uniqueId: '3' },
+      ];
+
+      addUniqueByIdAt(target, source, target.length);
+
+      expect(target.map((item) => item.uniqueId)).toEqual(['1', '2', '3']);
     });
   });
 

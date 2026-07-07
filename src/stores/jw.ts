@@ -97,16 +97,25 @@ interface Store {
   yeartexts: Partial<Record<number, Partial<Record<JwLangCode, string>>>>;
 }
 
-export function addUniqueByIdToTop<T extends { uniqueId: string }>(
+/**
+ * Inserts the unique items from sourceArray into targetArray at the given
+ * index, preserving their relative order and skipping items whose uniqueId
+ * already exists in targetArray (or earlier in sourceArray itself).
+ */
+export function addUniqueByIdAt<T extends { uniqueId: string }>(
   targetArray: (T | undefined)[],
   sourceArray: (T | undefined)[],
+  index: number,
 ): void {
-  // Add to the beginning of the array (reverse source to maintain original order)
-  [...sourceArray].reverse().forEach((item) => {
-    if (!targetArray.some((obj) => obj?.uniqueId === item?.uniqueId)) {
-      targetArray.unshift(item);
-    }
-  });
+  const newItems: (T | undefined)[] = [];
+  for (const item of sourceArray) {
+    const alreadyExists =
+      targetArray.some((obj) => obj?.uniqueId === item?.uniqueId) ||
+      newItems.some((obj) => obj?.uniqueId === item?.uniqueId);
+    if (!alreadyExists) newItems.push(item);
+  }
+  if (!newItems.length) return;
+  targetArray.splice(index, 0, ...newItems);
 }
 
 export function deduplicateById<T extends { uniqueId: string }>(
@@ -318,6 +327,7 @@ export const useJwStore = defineStore('jw-store', {
       currentCongregation: string,
       selectedDateObject: DateInfo | null,
       coWeek: boolean,
+      appendToEnd = false,
     ) {
       try {
         // Early exit if no media or selected date object
@@ -378,7 +388,17 @@ export const useJwStore = defineStore('jw-store', {
         });
 
         // Add media items to the section
-        addUniqueByIdToTop(sectionMedia, mediaArray);
+        if (appendToEnd) {
+          // e.g. a closing song: goes after everything else in the section
+          addUniqueByIdAt(sectionMedia, mediaArray, sectionMedia.length);
+        } else {
+          // Keep an opening song in first place instead of bumping it down
+          const isFirstSection =
+            period.mediaSections[0] === targetSectionContainer;
+          const songIsFirst = sectionMedia[0]?.tag?.type === 'song';
+          const insertIndex = isFirstSection && songIsFirst ? 1 : 0;
+          addUniqueByIdAt(sectionMedia, mediaArray, insertIndex);
+        }
       } catch (e) {
         errorCatcher(e);
       }

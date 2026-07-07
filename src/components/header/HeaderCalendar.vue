@@ -1141,6 +1141,9 @@ const importSongMedia = async (
   targetSection: MediaSectionIdentifier,
 ) => {
   await downloadAdditionalRemoteVideo({
+    // A song added to the circuit overseer section is always the closing
+    // song, so it belongs at the end rather than pushed to the top
+    appendToEnd: targetSection === 'circuit-overseer',
     mediaItemLinks: importItem.data.files,
     meetingDate: selectedDate.value,
     section: targetSection,

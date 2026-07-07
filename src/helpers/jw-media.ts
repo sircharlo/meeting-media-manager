@@ -1310,6 +1310,7 @@ export const addToAdditionMediaMapFromPath = async (
     url?: string;
   },
   customDuration?: { max: number; min: number },
+  appendToEnd = false,
 ) => {
   try {
     const item = await createMediaItemFromPath(
@@ -1333,6 +1334,7 @@ export const addToAdditionMediaMapFromPath = async (
       currentStateStore.currentCongregation,
       currentStateStore.selectedDateObject,
       isCoWeek(currentStateStore.selectedDateObject?.date),
+      appendToEnd,
     );
     return item.uniqueId;
   } catch (error) {
@@ -4785,6 +4787,7 @@ const queueAdditionalMediaDownload = ({
 };
 
 export interface DownloadAdditionalRemoteVideoOptions {
+  appendToEnd?: boolean;
   customDuration?: { max: number; min: number };
   mediaItemLinks: MediaItemsMediatorFile[] | MediaLink[];
   meetingDate?: string;
@@ -4800,6 +4803,7 @@ export const downloadAdditionalRemoteVideo = async (
   options: DownloadAdditionalRemoteVideoOptions,
 ): Promise<MediaItem | string | undefined> => {
   const {
+    appendToEnd = false,
     customDuration,
     mediaItemLinks,
     meetingDate,
@@ -4882,6 +4886,7 @@ export const downloadAdditionalRemoteVideo = async (
         url: bestItemUrl,
       },
       customDuration,
+      appendToEnd,
     );
 
     queueAdditionalMediaDownload({
