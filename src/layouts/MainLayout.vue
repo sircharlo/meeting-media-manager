@@ -86,7 +86,10 @@ import {
   registerAllCustomShortcuts,
   unregisterAllCustomShortcuts,
 } from 'src/helpers/keyboardShortcuts';
-import { getOrCreateMediaSection } from 'src/helpers/media-sections';
+import {
+  getOrCreateMediaSection,
+  removeWatchedMediaSectionInfo,
+} from 'src/helpers/media-sections';
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
@@ -512,8 +515,6 @@ async function handleUnlinkCleanup(changedPath: string) {
     const filename = basename(changedPath);
     const watchedDayFolder = dirname(changedPath);
     if (watchedDayFolder) {
-      const { removeWatchedMediaSectionInfo } =
-        await import('src/helpers/media-sections');
       await removeWatchedMediaSectionInfo(watchedDayFolder, filename);
     }
   } catch (error) {
