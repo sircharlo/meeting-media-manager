@@ -1,13 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  getCloudStorageProvider,
+  getFilesystemErrorCode,
+  isCloudStoragePath,
   isExpectedNetworkPathAccessError,
   isPossiblyNetworkFolderPath,
   shouldIgnoreWatchFolderError,
 } from './filesystem-errors';
 
 describe('filesystem error helpers', () => {
-  it('detects UNC, WebDAV, and mapped Windows network-like paths', () => {
+  it('detects UNC, WebDAV, mapped Windows, and cloud-sync network-like paths', () => {
     expect(
       isPossiblyNetworkFolderPath(String.raw`\\server\share`, 'win32'),
     ).toBe(true);
@@ -21,6 +24,32 @@ describe('filesystem error helpers', () => {
     expect(isPossiblyNetworkFolderPath('C:/Users/test/cache', 'win32')).toBe(
       false,
     );
+    expect(
+      isPossiblyNetworkFolderPath(
+        String.raw`C:\Users\PC\Nextcloud\Hall\MediaSyncer`,
+        'win32',
+      ),
+    ).toBe(true);
+  });
+
+  it('recognizes known cloud-sync providers from a path, including Nextcloud', () => {
+    expect(
+      getCloudStorageProvider(
+        String.raw`C:\Users\PC\Nextcloud\Hall\MediaSyncer`,
+      ),
+    ).toBe('Nextcloud');
+    expect(isCloudStoragePath('C:/Users/test/OneDrive/Media')).toBe(true);
+    expect(isCloudStoragePath('C:/Users/test/cache')).toBe(false);
+  });
+
+  it('normalizes unmapped raw OS error codes to UNKNOWN', () => {
+    // Node falls back to `Unknown system error <errno>` (via
+    // util.getSystemErrorName) as both `code` and `message` when libuv can't
+    // translate a raw OS error - this isn't the generic 'UNKNOWN' code.
+    expect(
+      getFilesystemErrorCode({ code: 'Unknown system error -214545202' }),
+    ).toBe('UNKNOWN');
+    expect(getFilesystemErrorCode({ code: 'EACCES' })).toBe('EACCES');
   });
 
   it('classifies transient access errors only for likely network paths', () => {
@@ -42,6 +71,14 @@ describe('filesystem error helpers', () => {
         String.raw`\\server@SSL@2078\DavWWWRoot`,
       ),
     ).toBe(false);
+    // Real-world Nextcloud VFS probe failure: raw untranslated OS error on a
+    // local, cloud-synced folder should be treated as transient, not a bug.
+    expect(
+      isExpectedNetworkPathAccessError(
+        { code: 'Unknown system error -214545202' },
+        String.raw`C:\Users\PC\Nextcloud\Hall\MediaSyncer`,
+      ),
+    ).toBe(true);
   });
 
   it('keeps watch-folder ignore behavior centralized', () => {

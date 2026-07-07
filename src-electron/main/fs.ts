@@ -25,6 +25,7 @@ import {
   PDF_EXTENSIONS,
 } from 'src/constants/media';
 import {
+  getCloudStorageProvider,
   getFilesystemErrorCode,
   isExpectedNetworkPathAccessError,
   isPossiblyNetworkFolderPath,
@@ -62,18 +63,6 @@ const SHARED_PATH_HEALTH_FOLDERS = [
   'Fonts',
   'Publications',
 ];
-
-const getCloudStorageProvider = (filePath: string) => {
-  const normalizedPath = toUnix(filePath).toLowerCase();
-
-  if (normalizedPath.includes('/library/mobile documents/')) return 'iCloud';
-  if (normalizedPath.includes('/icloud drive/')) return 'iCloud';
-  if (normalizedPath.includes('/dropbox/')) return 'Dropbox';
-  if (normalizedPath.includes('/onedrive')) return 'OneDrive';
-  if (normalizedPath.includes('/google drive/')) return 'Google Drive';
-
-  return undefined;
-};
 
 const isRetryableZipError = (error: unknown) => {
   const errorCode = getErrorCode(error);

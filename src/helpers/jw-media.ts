@@ -49,7 +49,10 @@ import {
 } from 'src/helpers/fs';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { updateLastUsedDate } from 'src/helpers/usage';
-import { isPossiblyNetworkFolderPath } from 'src/shared/filesystem-errors';
+import {
+  isCloudStoragePath,
+  isPossiblyNetworkFolderPath,
+} from 'src/shared/filesystem-errors';
 import { NETWORK_ERROR_CODES } from 'src/shared/network-errors';
 import { log, sanitizeFilename, uuid } from 'src/shared/vanilla';
 import {
@@ -385,17 +388,6 @@ const getJwLangId = (symbol?: JwLangCode): number | undefined => {
 const ongoingUnzips = new Map<string, Promise<string | undefined>>();
 const ZIP_ENTRY_DIAGNOSTIC_LIMIT = 50;
 const MAX_IDENTIFY_IN_MEMORY_CONTENTS_SIZE = 150000000; // 150 MB
-
-const isCloudStoragePath = (path: string) => {
-  const normalizedPath = path.replaceAll('\\', '/').toLowerCase();
-  return (
-    normalizedPath.includes('/library/mobile documents/') ||
-    normalizedPath.includes('/icloud drive/') ||
-    normalizedPath.includes('/dropbox/') ||
-    normalizedPath.includes('/onedrive') ||
-    normalizedPath.includes('/google drive/')
-  );
-};
 
 const isCloudStorageReadError = (error: unknown) => {
   const errorCode = (error as { code?: string })?.code;
