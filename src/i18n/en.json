@@ -297,6 +297,7 @@
   "jw-playlist-explain": "Playlist file exported from JW Library",
   "jw-playlist-import": "JW playlist import",
   "jw-playlist-import-explain": "This feature allows you to import a JW Library playlist file. The app will automatically copy selected media files from the playlist and add them to the media list. Videos will be downloaded in the language configured in the playlist if needed.",
+  "jw-playlist-watched-import-failed": "The JW Library playlist file \"{fileName}\" could not be imported and was skipped.",
   "jweventSite": "Jehovah's Witnesses Conventions",
   "jwpub-file": "JWPUB file",
   "jwpub-file-explain": "Publication downloaded from the official website of Jehovah's Witnesses",

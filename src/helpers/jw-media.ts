@@ -772,6 +772,16 @@ const getMediaFromJwPlaylist = async (
         },
       },
     });
+
+    const t = i18n.global.t;
+    createTemporaryNotification({
+      group: 'jwPlaylistWatchedImportFailed',
+      message: t('jw-playlist-watched-import-failed', {
+        fileName: basename(jwPlaylistPath),
+      }),
+      type: 'negative',
+    });
+
     return [];
   }
 };
