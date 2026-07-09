@@ -4,6 +4,13 @@
 
 Para obter a lista completa das mudanças entre versões, consulte nosso arquivo CHANGELOG.md no GitHub.
 
+## v26.7.4
+
+### ✨ Novos Recursos
+
+- ✨ **Recuperação de mídia faltando**: itens de mídia cujo arquivo local não apareceu (por exemplo, excluído pela corrida de limpeza automática de cache, ou removido manualmente) agora mostra um botão para executar desabilitado, uma legenda "faltando" nomeando o arquivo para procurar, e uma nova ação "Localizar arquivo" para converter o item para um arquivo no disco.
+- ✨ **Aviso de Compatibilidade**: Adicionado um aviso descartado de banners em breve para be/combos de arquitetura não suportados (macOS 12 Monterey e Windows 32-bit) para atualizar antes de atualizações futuras do app requerem suporte ao sistema mais recente.
+
 ## v26.7.0
 
 ### ✨ Novos Recursos

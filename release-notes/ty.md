@@ -4,6 +4,13 @@
 
 No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera parau, a hi’o i ta māua pu’e parau CHANGELOG.md i ni’a i GitHub.
 
+## v26.7.4
+
+### ✨ Te mau rave’a ‘āpī
+
+- ✨ **Missing Media Recovery**: Media items whose local file went missing (e.g. deleted by the cache auto-clear race, or removed manually) now show a disabled play button, a "missing" caption naming the file to look for, and a new "Locate file" action to relink the item to a file on disk.
+- ✨ **Compatibility Warning**: Added a dismissible banner warning users on soon-to-be-unsupported OS/architecture combos (macOS 12 Monterey and Windows 32-bit) to upgrade before future app updates require newer system support.
+
 ## v26.7.0
 
 ### ✨ Te mau rave’a ‘āpī
