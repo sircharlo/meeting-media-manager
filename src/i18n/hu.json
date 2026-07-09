@@ -327,6 +327,8 @@
   "localAppLang-explain": "Ez az a nyelv, amelyen az M³ megjelenik. Ez nem befolyásolja azt a nyelvet, amelyen a média letöltésre kerül.",
   "localDateFormat": "Dátum formátum",
   "localDateFormat-explain": "Testreszabhatja, hogyan jelenjenek meg a dátumok az alkalmazásban.",
+  "locate-missing-media": "Locate file",
+  "locate-missing-media-explain": "Choose the file on your computer that corresponds to this media item.",
   "look-for-this-button-in-m-s-footer": "Keresd ezt a gombot az M³ alsó részén:",
   "low-disk-space-warning": "Kevés a lemezterület",
   "m-is-now-ready-to-be-used": "Az M³ most már készen áll a használatra.",

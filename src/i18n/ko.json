@@ -327,6 +327,8 @@
   "localAppLang-explain": "M³ 내부에 표시하는 언어를 지정합니다. 다운로드하는 미디어 언어에는 영향을 주지 않습니다.",
   "localDateFormat": "날짜 형식",
   "localDateFormat-explain": "앱에 표시되는 날짜 형식을 지정합니다.",
+  "locate-missing-media": "Locate file",
+  "locate-missing-media-explain": "Choose the file on your computer that corresponds to this media item.",
   "look-for-this-button-in-m-s-footer": "M³ 하단의 다음 버튼을 확인하십시오:",
   "low-disk-space-warning": "디스크 공간 부족",
   "m-is-now-ready-to-be-used": "이제 M³ 를 사용할 준비가 되었습니다.",

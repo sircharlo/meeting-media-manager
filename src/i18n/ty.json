@@ -327,6 +327,8 @@
   "localAppLang-explain": "Nā roto i teie reo e fa’a’itehia ai te M³. ’Aita te reira e taui i te reo e roromi-uira-hia ai te mau media.",
   "localDateFormat": "Fa’ahorora’a ta’io mahana",
   "localDateFormat-explain": "A fa’anehenehe i te huru fa’a’itera’a i te mau ta’io mahana i roto i te application.",
+  "locate-missing-media": "Locate file",
+  "locate-missing-media-explain": "Choose the file on your computer that corresponds to this media item.",
   "look-for-this-button-in-m-s-footer": "A hi’o i teie pitopito i raro roa i te rorouira M³:",
   "low-disk-space-warning": "’Aita e vāhi fa’aherehera’a i toe",
   "m-is-now-ready-to-be-used": "Ua ineine te M³ nō te fa’ahoro.",

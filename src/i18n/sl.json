@@ -327,6 +327,8 @@
   "localAppLang-explain": "To je jezik, v katerem bo prikazan M³. To ne vpliva na jezik, v katerem je prenesena multimedijska vsebina.",
   "localDateFormat": "Format datuma",
   "localDateFormat-explain": "Prilagodi prikaz datumov v aplikaciji.",
+  "locate-missing-media": "Locate file",
+  "locate-missing-media-explain": "Choose the file on your computer that corresponds to this media item.",
   "look-for-this-button-in-m-s-footer": "Ta gumb poišči na spodnjem robu M³:",
   "low-disk-space-warning": "Pomanjkanje prostora na disku",
   "m-is-now-ready-to-be-used": "M³ je zdaj pripravljen za uporabo.",

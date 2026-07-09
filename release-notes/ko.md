@@ -4,6 +4,13 @@
 
 버전별 전체 변경 사항은, GitHub 의 CHANGELOG.md 파일을 확인해주세요.
 
+## v26.7.4
+
+### ✨ 새로운 기능
+
+- ✨ **Missing Media Recovery**: Media items whose local file went missing (e.g. deleted by the cache auto-clear race, or removed manually) now show a disabled play button, a "missing" caption naming the file to look for, and a new "Locate file" action to relink the item to a file on disk.
+- ✨ **Compatibility Warning**: Added a dismissible banner warning users on soon-to-be-unsupported OS/architecture combos (macOS 12 Monterey and Windows 32-bit) to upgrade before future app updates require newer system support.
+
 ## v26.7.0
 
 ### ✨ 새로운 기능

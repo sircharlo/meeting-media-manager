@@ -327,6 +327,8 @@
   "localAppLang-explain": "Это язык, на котором будет отображаться M³. Это не влияет на язык, на котором загружается мультимедиа.",
   "localDateFormat": "Формат даты",
   "localDateFormat-explain": "Настройте отображение дат в приложении.",
+  "locate-missing-media": "Найти файл",
+  "locate-missing-media-explain": "Выберите файл на вашем компьютере, соответствующий этому элементу.",
   "look-for-this-button-in-m-s-footer": "Поищите эту кнопку в нижнем колонтитуле M³:",
   "low-disk-space-warning": "Мало места на диске",
   "m-is-now-ready-to-be-used": "M³ теперь готов к использованию.",
