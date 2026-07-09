@@ -41,11 +41,10 @@
             <!-- eslint-disable-next-line vue/no-v-html -->
             <span v-html="sanitize(element.extractCaption || '')"></span>
             <q-badge
-              class="q-ml-sm text-primary"
-              :color="$q.dark.isActive ? 'accent-400' : 'accent-200'"
-              :label="element.children?.length"
+              class="q-ml-sm bg-primary-semi-transparent"
+              :label="`${element.children?.length} ${t('items')}`"
               rounded
-              :text-color="$q.dark.isActive ? 'white' : 'accent-200'"
+              text-color="white"
             />
           </div>
         </q-item-section>
