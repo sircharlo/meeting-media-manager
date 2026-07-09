@@ -4,12 +4,19 @@
 
 Pour la liste complète des changements entre les versions, consultez notre fichier CHANGELOG.md sur GitHub.
 
+## v26.7.4
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **Récupération de média manquante**: Les éléments de média dont le fichier local a été manquant (e.g. effacé par le cache automatiquement la course, ou supprimé manuellement) affiche maintenant un bouton de lecture désactivé, une légende "manquante" nommant le fichier à rechercher, et une nouvelle action "Localiser le fichier" pour relier l'élément à un fichier sur le disque.
+- ✨ **Avertissement de compatibilité**: a ajouté une bannière d'avertissement pour les utilisateurs sur les combos OS/architecture (macOS 12 Monterey et Windows 32-bit) bientôt non pris en charge pour mettre à jour avant les mises à jour futures des applications nécessitant une prise en charge plus récente du système.
+
 ## 7.0 v26.0
 
 ### ✨ Nouvelles fonctionnalités
 
-- ✨ **Lecture audio liée**: Ajout de la prise en charge de la lecture audio à partir d'un fichier avec la vidéo d'un autre fichier. Cela peut être utile pour la lecture de diaporamas vidéo avec la musique qui l'accompagne.
-- ✨ **Disposition des médias regardés**: Ajout de la persistance pour les éléments médias vus et l'ordre des sections dans les dossiers surveillés. Cela permet de s'assurer que la liste des médias est affichée de la même manière même lorsque le dossier surveillé est synchronisé entre différents périphériques.
+- ✨ **Lecture audio liée** : Ajout de la prise en charge de la lecture de l'audio d'un fichier en même temps que la vidéo d'un autre fichier. Cela peut s'avérer utile pour lire des diaporamas vidéo accompagnés de musique.
+- ✨ **Dispositions des médias surveillés** : Ajout de la persistance pour les éléments multimédias surveillés et l'ordre des sections dans tous les dossiers surveillés. Cela garantit que la liste des fichiers multimédias s'affiche de la même manière, même lorsqu'un dossier surveillé est synchronisé entre plusieurs appareils.
 
 ## v26.6.1
 
