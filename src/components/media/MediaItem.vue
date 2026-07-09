@@ -2296,7 +2296,7 @@ const currentSongIsDuplicated = computed(() => {
 });
 
 const fileIsAvailable = computed(() => {
-  return isFileUrl(props.media.fileUrl);
+  return isFileUrl(props.media.fileUrl) && localFile.value;
 });
 
 const streamIsAvailable = computed(() => {
