@@ -4,6 +4,13 @@
 
 Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in unserer CHANGELOG.md Datei auf GitHub.
 
+## v26.7.4
+
+### ✨ Neue Funktionen
+
+- ✨ **Fehlende Media Recovery**: Medien-Elemente, deren lokale Datei fehlte (z. durch das automatische Löschen des Caches gelöscht oder manuell entfernt) zeigt nun einen deaktivierten Play-Button an, eine "fehlende" Beschriftung mit Namen der zu suchenden Datei und eine neue "Datei suchen"-Aktion, um das Element erneut auf eine Datei auf der Festplatte zu verlinken.
+- ✨ **Kompatibilitätswarnung**: Ein unzulässiger Banner wurde hinzugefügt, der Benutzer auf bald nicht unterstützten OS/Architektur-Combos (macOS 12 Monterey und Windows 32 bit) warnt, bevor zukünftige App-Aktualisierungen eine neuere Systemunterstützung benötigen.
+
 ## v26.7.0
 
 ### ✨ Neue Funktionen
