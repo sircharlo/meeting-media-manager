@@ -623,12 +623,20 @@ const fixSjjmItems = (
  * widescreen "television" crop). Only one should be shown: keep the item that
  * carries the paragraph/document association and adopt the linked item's file,
  * then drop the linked item from the results.
+ *
+ * This does not apply to videos (CategoryType === -1): there, LinkMultimediaId
+ * points to the video's cover thumbnail picture, a distinct, unrelated media
+ * item that must be kept separately rather than merged into the video.
  */
 export const dedupeLinkedMultimedia = (
   items: MultimediaItem[],
 ): MultimediaItem[] => {
   const deduped = items.map((item) => {
-    if (item.MultimediaId !== null && item.LinkMultimediaId) {
+    if (
+      item.MultimediaId !== null &&
+      item.LinkMultimediaId &&
+      item.CategoryType !== -1
+    ) {
       const linkedItem = items.find(
         (i) => i.MultimediaId === item.LinkMultimediaId,
       );
@@ -641,7 +649,12 @@ export const dedupeLinkedMultimedia = (
     return item;
   });
 
-  return deduped.filter((item) => !item.LinkMultimediaId);
+  // Videos are exempt from the "truthy LinkMultimediaId means drop" rule
+  // below: their LinkMultimediaId is left pointing at their (unrelated,
+  // separately kept) cover picture rather than being cleared by a merge.
+  return deduped.filter(
+    (item) => item.CategoryType === -1 || !item.LinkMultimediaId,
+  );
 };
 
 export const getDocumentMultimediaItems = (
