@@ -4,6 +4,27 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.7.3
+
+### 🐞 Bug Fixes
+
+- 🐞 **Security and Hardening**: Hardened Electron's domain trust checks, narrowed the preload API surface, removed unsafe CSP directives, fixed a zip-slip path-traversal vulnerability in JWPUB/zip extraction, and encrypted the OBS WebSocket password at rest.
+- 🐞 **Watched Folders**: Notified the user when a watched-folder playlist import fails instead of silently dropping it, restored the intended item order/section when only the auto-export filename numbering is available, and ignored transient cloud-sync scan errors (Google Drive, Nextcloud, and similar).
+- 🐞 **Cloud Storage**: Recognized Nextcloud-synced folders during cloud-storage detection.
+- 🐞 **Media Labels**: Fixed missing paragraph labels outside study articles and deduplicated linked picture variants in the midweek/additional-media picker.
+- 🐞 **Media List**: Fixed the background color for multiple-item group descriptions and fixed dragging items in sections showing the empty-state placeholder.
+- 🐞 **Additional Media**: Fixed the closing song being added to the top of a section instead of the bottom, and kept opening songs first.
+- 🐞 **Playlist Import**: Reduced false-positive zip-bomb detection that could reject legitimate `.jwlplaylist` imports.
+- 🐞 **Downloads and Caching**: Fell back to temporary storage when downloads or a custom cache folder become unusable, and hardened download directory creation against transient errors on shared cache folders.
+- 🐞 **Reliability**: Fell back to a writable location for window-state and crash-count files when the user data folder is locked, and guarded against concurrent JW MEPS info downloads corrupting each other.
+- 🐞 **Updater**: Ignored `net::ERR_INTERNET_DISCONNECTED` during update checks instead of reporting it as a crash.
+
+### 🔧 Chores
+
+- 🔧 **Dependencies**: Replaced `icongenie` with `sharp`/`png2icons` to drop vulnerable transitive dependencies, and cleaned up `buffer` and Electron dependency management.
+- 🔧 **Build Tooling**: Upgraded `@quasar/app-vite` to 3.0.0 and fixed related build and publish issues.
+- 🔧 **Testing**: Parameterized date utility tests and stabilized CI test timing and platform detection.
+
 ## v26.7.2
 
 ### 🐞 Bug Fixes
