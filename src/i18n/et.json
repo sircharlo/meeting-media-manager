@@ -297,6 +297,7 @@
   "jw-playlist-explain": "Playlisti fail, mis on ekporditud JW Library rakendusest",
   "jw-playlist-import": "JW Playlisti Import",
   "jw-playlist-import-explain": "See funktsioon võimaldab importida JW Library esitusloendi faili. Rakendus kopeerib automaatselt esitusloendist valitud meediafailid ja lisab need meedialoendisse. Videod laaditakse vajaduse korral alla esitusloendis konfigureeritud keeles.",
+  "jw-playlist-watched-import-failed": "The JW Library playlist file \"{fileName}\" could not be imported and was skipped.",
   "jweventSite": "Jehoova tunnistajate kokkutulekud",
   "jwpub-file": "JWPUB fail",
   "jwpub-file-explain": "Väljaanded laaditud alla Jehoova tunnistajate veebisaidilt",
