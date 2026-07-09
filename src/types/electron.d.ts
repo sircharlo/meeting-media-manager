@@ -8,6 +8,7 @@ import type {
   SettingsValues,
   VideoDuration,
 } from 'src/types/electron';
+import type { OsSupportWarning } from 'src/types/general';
 import type {
   basename,
   changeExt,
@@ -118,6 +119,7 @@ export interface ElectronApi {
   getLocales: () => Promise<string[]>;
   getLocalPathFromFileObject: (fileObject: File | string | undefined) => string;
   getLowDiskSpaceStatus: () => Promise<boolean>;
+  getOsSupportWarning: () => Promise<null | OsSupportWarning>;
   getScreenAccessStatus: () => Promise<MediaAccessStatus>;
   getSharedDataPath: () => Promise<null | string>;
   getUpdatesDisabledPath: () => Promise<string>;
@@ -362,6 +364,7 @@ export type ElectronIpcInvokeKey =
   | 'getBetaUpdatesPath'
   | 'getLocales'
   | 'getLowDiskSpaceStatus'
+  | 'getOsSupportWarning'
   | 'getScreenAccessStatus'
   | 'getSharedDataPath'
   | 'getUpdatesDisabledPath'

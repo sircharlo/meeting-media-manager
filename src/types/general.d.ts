@@ -50,6 +50,12 @@ export type FontName =
   | 'WTTextNew'
   | 'WTXBZSpecial';
 
+/**
+ * Identifies an OS/architecture combination that Electron is dropping
+ * prebuilt support for in an upcoming major version.
+ */
+export type OsSupportWarning = 'mac-legacy' | 'win32-ia32';
+
 export interface UrlVariables {
   base: string;
   mediator: string;

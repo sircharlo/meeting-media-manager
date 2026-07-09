@@ -82,6 +82,7 @@ export const electronApi: ElectronApi = {
   getLowDiskSpaceStatus: function () {
     throw new Error('Function not implemented.');
   },
+  getOsSupportWarning: async () => null,
   getScreenAccessStatus: function () {
     throw new Error('Function not implemented.');
   },

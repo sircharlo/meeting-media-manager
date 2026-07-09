@@ -77,7 +77,11 @@
   </q-slide-transition>
 </template>
 <script setup lang="ts">
-import type { Announcement, AnnouncementAction } from 'src/types';
+import type {
+  Announcement,
+  AnnouncementAction,
+  OsSupportWarning,
+} from 'src/types';
 
 import prettyBytes from 'pretty-bytes';
 import { useQuasar } from 'quasar';
@@ -98,6 +102,7 @@ const currentStateStore = useCurrentStateStore();
 const congregationStore = useCongregationSettingsStore();
 
 const {
+  getOsSupportWarning,
   onUpdateAvailable,
   onUpdateDownloaded,
   onUpdateDownloadProgress,
@@ -238,6 +243,33 @@ onMounted(() => {
   }
 });
 
+const osSupportWarning = ref<null | OsSupportWarning>(null);
+
+onMounted(async () => {
+  try {
+    osSupportWarning.value = await getOsSupportWarning();
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: { fn: { name: 'getOsSupportWarning' } },
+    });
+  }
+});
+
+// Banner warning users whose OS/architecture will soon lose Electron support
+const osSupportAnnouncement = computed((): Announcement => {
+  return {
+    icon: 'warning',
+    id: `os-support-${osSupportWarning.value}`,
+    message:
+      osSupportWarning.value === 'mac-legacy'
+        ? 'os-support-warning-mac'
+        : 'os-support-warning-win32-ia32',
+    persistent: true,
+    platform: osSupportWarning.value ? 'all' : 'none',
+    type: 'warning',
+  };
+});
+
 const isTestVersion = import.meta.env.IS_TEST;
 
 // Test version banner for users who are using a test version
@@ -334,6 +366,7 @@ const systemAnnouncements = computed(() =>
     newUpdateAnnouncement.value,
     untranslatedAnnouncement.value,
     testVersionAnnouncement.value,
+    osSupportAnnouncement.value,
   ].filter((a) => !!a),
 );
 

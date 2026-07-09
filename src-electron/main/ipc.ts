@@ -9,6 +9,7 @@ import type {
   JwSiteParams,
   MediaAccessStatus,
   NavigateWebsiteAction,
+  OsSupportWarning,
   SettingsValues,
   UnzipOptions,
   UrlVariables,
@@ -379,6 +380,23 @@ handleIpcInvoke(
   'isArchitectureMismatch',
   async () => process.arch === 'ia32' && (await isOS64Bit()),
 );
+
+function getOsSupportWarning(): null | OsSupportWarning {
+  if (platform() === 'darwin') {
+    const majorVersion = Number.parseInt(
+      process.getSystemVersion().split('.')[0] ?? '',
+      10,
+    );
+    // Electron 44 will require macOS 13 (Ventura) or later
+    if (majorVersion && majorVersion < 13) return 'mac-legacy';
+  } else if (platform() === 'win32' && process.arch === 'ia32') {
+    // Electron 44 will drop prebuilt Windows 32-bit (ia32) binaries
+    return 'win32-ia32';
+  }
+  return null;
+}
+
+handleIpcInvoke('getOsSupportWarning', async () => getOsSupportWarning());
 
 handleIpcInvoke(
   'getScreenAccessStatus',
