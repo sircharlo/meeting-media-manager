@@ -180,6 +180,33 @@ function isFileReferenced(
 }
 
 /**
+ * Additional media is stored in per-date (YYYYMMDD) subfolders under
+ * `Additional Media/{congId}`. Those folders aren't tied to a fetchable
+ * fileUrl the way jw.org media is, so they can't rely on the in-memory
+ * store to know they're still needed. Protect any dated subfolder whose
+ * date is today or in the future, regardless of what's currently loaded
+ * in the store.
+ */
+function isInFutureDatedFolder(
+  parentPath: string,
+  dateFolderRoot?: string,
+): boolean {
+  if (!dateFolderRoot) return false;
+
+  const normalizedRoot = normalizePath(dateFolderRoot);
+  const normalizedParent = normalizePath(parentPath);
+  if (!normalizedParent.startsWith(normalizedRoot)) return false;
+
+  const relative = parentPath
+    .slice(dateFolderRoot.length)
+    .replaceAll(/^[/\\]+/g, '');
+  const dateSegment = relative.split(/[/\\]/)[0];
+  if (!dateSegment || !/^\d{8}$/.test(dateSegment)) return false;
+
+  return !isInPast(dateFromString(dateSegment));
+}
+
+/**
  * Checks if a file should be protected from deletion
  */
 function isProtectedFile(fileName: string, parentFolder: string): boolean {
@@ -219,6 +246,7 @@ function pathsOverlap(path1: string, path2: string): boolean {
 async function processCacheDirectory(
   cacheDir: string,
   referencedParentDirectories: Set<string>,
+  dateFolderRoot?: string,
 ): Promise<CacheFile[]> {
   const files: CacheFile[] = [];
 
@@ -242,6 +270,12 @@ async function processCacheDirectory(
         normalizedParentPath,
         referencedParentDirectories,
       );
+
+      // Protect additional media saved for a future/today's meeting, even
+      // if the store hasn't (re)loaded that day's media yet this session
+      if (!isReferenced) {
+        isReferenced = isInFutureDatedFolder(item.parentPath, dateFolderRoot);
+      }
 
       // If not proactively referenced, check the "last used" date
       if (!isReferenced) {
@@ -525,7 +559,10 @@ const buildReferencedFileUrls = (mediaItems: MediaItem[]): Set<string> => {
   return referencedFileUrls;
 };
 
-const getCacheFiles = async (cacheDirs: string[]): Promise<CacheFile[]> => {
+const getCacheFiles = async (
+  cacheDirs: string[],
+  dateFolderRoot?: string,
+): Promise<CacheFile[]> => {
   try {
     // Collect all media items
     const allMediaItems = collectAllMediaItems();
@@ -540,7 +577,11 @@ const getCacheFiles = async (cacheDirs: string[]): Promise<CacheFile[]> => {
     // Process each cache directory
     const fileArrays = await Promise.all(
       cacheDirs.map((cacheDir) =>
-        processCacheDirectory(cacheDir, referencedParentDirectories),
+        processCacheDirectory(
+          cacheDir,
+          referencedParentDirectories,
+          dateFolderRoot,
+        ),
       ),
     );
 
@@ -600,18 +641,15 @@ export const analyzeCacheFiles = async (): Promise<CacheAnalysis> => {
     const frequentlyUsedDirectories = await loadFrequentlyUsedDirectories();
 
     // Get cache directories
+    const additionalMediaCongDir = currentState.currentCongregation
+      ? join(await getAdditionalMediaPath(), currentState.currentCongregation)
+      : undefined;
+
     const dirs = [
       ...new Set([
         await getPublicationsPath(),
         await getTempPath(),
-        ...(currentState.currentCongregation
-          ? [
-              join(
-                await getAdditionalMediaPath(),
-                currentState.currentCongregation,
-              ),
-            ]
-          : []),
+        ...(additionalMediaCongDir ? [additionalMediaCongDir] : []),
       ]),
     ];
 
@@ -622,7 +660,7 @@ export const analyzeCacheFiles = async (): Promise<CacheAnalysis> => {
     ).filter((s) => typeof s === 'string');
 
     // Get all cache files
-    const cacheFiles = await getCacheFiles(cacheDirs);
+    const cacheFiles = await getCacheFiles(cacheDirs, additionalMediaCongDir);
 
     // Calculate used and unused directories
     const usedParentDirectories = calculateUsedParentDirectories(cacheFiles);

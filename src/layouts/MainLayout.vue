@@ -205,6 +205,8 @@ updateMemorials(online.value);
 updateJwLanguages(online.value);
 
 const hasActiveDownloads = () => {
+  if (currentState.fetchingMeetingsCount > 0) return true;
+
   return Object.values(downloadProgress.value).some(
     (item) =>
       !item.complete &&

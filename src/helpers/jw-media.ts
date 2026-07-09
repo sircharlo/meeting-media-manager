@@ -3652,9 +3652,12 @@ const getMidweekIssueDb = async (
 const checkMediaFileExistence = async (media: MultimediaItem) => {
   if (!media.KeySymbol && !media.MepsDocumentId) return null;
 
-  const exists =
-    !!media.StreamUrl ||
-    (!!media.FilePath && (await pathExists(media.FilePath)));
+  // A FilePath means a local copy was expected: verify it's actually still
+  // on disk rather than trusting a StreamUrl set alongside it (StreamUrl is
+  // also set after a successful download, not only for stream-only media).
+  const exists = media.FilePath
+    ? await pathExists(media.FilePath)
+    : !!media.StreamUrl;
   return { exists, media };
 };
 
