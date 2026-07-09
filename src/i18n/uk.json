@@ -327,6 +327,8 @@
   "localAppLang-explain": "Це мова, на якій буде відображатися M³. Це не вплине на мову, в якій завантажується медіа.",
   "localDateFormat": "Date format",
   "localDateFormat-explain": "Customize how dates are shown in the app.",
+  "locate-missing-media": "Знайти файл",
+  "locate-missing-media-explain": "Виберіть файл на вашому комп'ютері який відповідає цьому медіа-елементу.",
   "look-for-this-button-in-m-s-footer": "Шукайте цю кнопку в нижній частині M³:",
   "low-disk-space-warning": "Low disk space",
   "m-is-now-ready-to-be-used": "M³ готовий до використання.",
