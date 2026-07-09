@@ -397,6 +397,44 @@ const buildDocumentMultimediaQuery = (
   if (ParagraphColumnsExist) select += ', DocumentParagraph.*';
   if (LinkMultimediaIdExists)
     select += ', LinkedMultimedia.FilePath AS LinkedPreviewFilePath';
+  if (ParagraphColumnsExist) {
+    // The same MultimediaId can appear in multiple DocumentMultimedia rows
+    // (e.g. one picture referenced at several points in a document), and the
+    // outer query GROUP BYs on MultimediaId, arbitrarily collapsing those rows
+    // into one. Aggregate the paragraph range across *all* of a media item's
+    // placements so the label reflects every paragraph it's associated with,
+    // not just whichever placement SQLite happened to keep.
+    const aggregatedBegin = `(SELECT MIN(dmAgg.BeginParagraphOrdinal) FROM ${mmTable} dmAgg WHERE dmAgg.DocumentId = ${mmTable}.DocumentId AND dmAgg.MultimediaId = ${mmTable}.MultimediaId)`;
+    const aggregatedEnd = `(SELECT MAX(dmAgg.EndParagraphOrdinal) FROM ${mmTable} dmAgg WHERE dmAgg.DocumentId = ${mmTable}.DocumentId AND dmAgg.MultimediaId = ${mmTable}.MultimediaId)`;
+
+    // A media item can span a range of paragraphs (BeginParagraphOrdinal to
+    // EndParagraphOrdinal), and not every paragraph in that range has a label
+    // (e.g. headings). Find the label of the first and last *labeled*
+    // paragraph in the range so multi-paragraph items can be shown as
+    // "first-last" instead of just the (possibly unlabeled) first paragraph.
+    const labeledParagraphInRange = (order: 'ASC' | 'DESC') =>
+      `(SELECT dpr.ParagraphNumberLabel FROM DocumentParagraph dpr
+          WHERE dpr.DocumentId = ${mmTable}.DocumentId
+            AND dpr.ParagraphIndex >= ${aggregatedBegin}
+            AND dpr.ParagraphIndex <= ${aggregatedEnd}
+            AND dpr.ParagraphNumberLabel IS NOT NULL
+            AND dpr.ParagraphNumberLabel <> ''
+          ORDER BY dpr.ParagraphIndex ${order} LIMIT 1)`;
+    const firstLabel = labeledParagraphInRange('ASC');
+    const lastLabel = labeledParagraphInRange('DESC');
+    const rangeLabel = `CASE
+        WHEN ${firstLabel} IS NULL THEN NULL
+        WHEN ${firstLabel} = ${lastLabel} THEN ${firstLabel}
+        ELSE ${firstLabel} || '-' || ${lastLabel}
+      END`;
+
+    // Question.TargetParagraphNumberLabel only exists for documents with study
+    // questions (e.g. Watchtower study articles); fall back to the paragraph
+    // range label so a real paragraph number is always available.
+    select += targetParNrExists
+      ? `, COALESCE(Question.TargetParagraphNumberLabel, ${rangeLabel}) AS TargetParagraphNumberLabel`
+      : `, ${rangeLabel} AS TargetParagraphNumberLabel`;
+  }
 
   let from = ' FROM Multimedia';
   if (mmTable === 'DocumentMultimedia') {
@@ -579,6 +617,33 @@ const fixSjjmItems = (
   }
 };
 
+/**
+ * When a Multimedia row has a LinkMultimediaId, it and the row it points to
+ * are two variants of the same picture (e.g. a portrait "content" crop and a
+ * widescreen "television" crop). Only one should be shown: keep the item that
+ * carries the paragraph/document association and adopt the linked item's file,
+ * then drop the linked item from the results.
+ */
+export const dedupeLinkedMultimedia = (
+  items: MultimediaItem[],
+): MultimediaItem[] => {
+  const deduped = items.map((item) => {
+    if (item.MultimediaId !== null && item.LinkMultimediaId) {
+      const linkedItem = items.find(
+        (i) => i.MultimediaId === item.LinkMultimediaId,
+      );
+      if (linkedItem?.FilePath) {
+        item.FilePath = linkedItem.FilePath;
+        item.LinkMultimediaId = null;
+        linkedItem.LinkMultimediaId = linkedItem.MultimediaId;
+      }
+    }
+    return item;
+  });
+
+  return deduped.filter((item) => !item.LinkMultimediaId);
+};
+
 export const getDocumentMultimediaItems = (
   source: MultimediaItemsFetcher,
   includePrinted: boolean | undefined,
@@ -604,7 +669,7 @@ export const getDocumentMultimediaItems = (
     // by mapping them from DocumentExtract (sjj) ordinals sequentially
     fixSjjmItems(items, source.db, source.docId, ParagraphColumnsExist);
 
-    return items;
+    return dedupeLinkedMultimedia(items);
   } catch (error) {
     errorCatcher(error);
     return [];

@@ -105,7 +105,7 @@ export interface MultimediaItem {
   StreamUrl?: string;
   SuppressZoom?: number;
   tableQuestionIsUsed?: boolean;
-  TargetParagraphNumberLabel: number;
+  TargetParagraphNumberLabel: number | string;
   ThumbnailFilePath?: string;
   ThumbnailUrl?: string;
   Title?: string;

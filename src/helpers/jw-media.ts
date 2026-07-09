@@ -92,6 +92,7 @@ import {
 } from 'src/utils/media';
 import {
   addFullFilePathToMultimediaItem,
+  dedupeLinkedMultimedia,
   findDb,
   getDocumentExtractItems,
   getDocumentMultimediaItems,
@@ -3737,21 +3738,7 @@ const processWeekendMedia = (
       }
     });
 
-  const updatedMedia = final.map((item) => {
-    if (item.MultimediaId !== null && item.LinkMultimediaId !== null) {
-      const linkedItem = final.find(
-        (i) => i.MultimediaId === item.LinkMultimediaId,
-      );
-      if (linkedItem?.FilePath) {
-        item.FilePath = linkedItem.FilePath;
-        item.LinkMultimediaId = null;
-        linkedItem.LinkMultimediaId = linkedItem.MultimediaId;
-      }
-    }
-    return item;
-  });
-
-  return updatedMedia.filter((item) => item.LinkMultimediaId === null);
+  return dedupeLinkedMultimedia(final);
 };
 
 const mergeWeekendSongs = (
@@ -3893,9 +3880,40 @@ export const getWeMedia = async (lookupDate: Date) => {
       (video) => !video.TargetParagraphNumberLabel,
     );
 
+    // The same MultimediaId can appear in multiple DocumentMultimedia rows
+    // (e.g. one picture referenced at several points in a document), and the
+    // query below GROUP BYs on MultimediaId, arbitrarily collapsing those rows
+    // into one. Aggregate the paragraph range across *all* of a picture's
+    // placements so the label reflects every paragraph it's associated with,
+    // not just whichever placement SQLite happened to keep.
+    const aggregatedBegin = `(SELECT MIN(dmAgg.BeginParagraphOrdinal) FROM DocumentMultimedia dmAgg WHERE dmAgg.DocumentId = DocumentMultimedia.DocumentId AND dmAgg.MultimediaId = DocumentMultimedia.MultimediaId)`;
+    const aggregatedEnd = `(SELECT MAX(dmAgg.EndParagraphOrdinal) FROM DocumentMultimedia dmAgg WHERE dmAgg.DocumentId = DocumentMultimedia.DocumentId AND dmAgg.MultimediaId = DocumentMultimedia.MultimediaId)`;
+
+    // A picture can span a range of paragraphs (BeginParagraphOrdinal to
+    // EndParagraphOrdinal), and not every paragraph in that range has a label
+    // (e.g. headings). Find the label of the first and last *labeled*
+    // paragraph in the range so multi-paragraph pictures can be shown as
+    // "first-last" instead of just the (possibly unlabeled) first paragraph.
+    const labeledParagraphInRange = (order: 'ASC' | 'DESC') =>
+      `(SELECT dpr.ParagraphNumberLabel FROM DocumentParagraph dpr
+          WHERE dpr.DocumentId = DocumentMultimedia.DocumentId
+            AND dpr.ParagraphIndex >= ${aggregatedBegin}
+            AND dpr.ParagraphIndex <= ${aggregatedEnd}
+            AND dpr.ParagraphNumberLabel IS NOT NULL
+            AND dpr.ParagraphNumberLabel <> ''
+          ORDER BY dpr.ParagraphIndex ${order} LIMIT 1)`;
+    const firstLabel = labeledParagraphInRange('ASC');
+    const lastLabel = labeledParagraphInRange('DESC');
+    const rangeLabel = `CASE
+        WHEN ${firstLabel} IS NULL THEN NULL
+        WHEN ${firstLabel} = ${lastLabel} THEN ${firstLabel}
+        ELSE ${firstLabel} || '-' || ${lastLabel}
+      END`;
+
     const mediaWithoutVideos = executeQuery<MultimediaItem>(
       db,
-      `SELECT *
+      `SELECT *,
+         COALESCE(Question.TargetParagraphNumberLabel, ${rangeLabel}) AS TargetParagraphNumberLabel
        FROM DocumentMultimedia
          INNER JOIN Multimedia
            ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId
