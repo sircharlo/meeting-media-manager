@@ -100,6 +100,7 @@
             element.customDuration = JSON.parse($event) || undefined
           "
           @update:hidden="element.hidden = !!$event"
+          @update:relink="Object.assign(element, $event)"
           @update:tag="element.tag = $event"
           @update:title="
             nextTick(() => {

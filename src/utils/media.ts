@@ -196,6 +196,28 @@ export const isImageString = (url: string) => {
 };
 
 /**
+ * Derives a filename search mask from a publication media id, for use as a
+ * native file dialog's `defaultPath` hint. Media file names are usually the
+ * pubMediaId plus some zero-padding/resolution suffix (e.g. pubMediaId
+ * `S-337-26v_F_2` vs file `S-337-26v_F_02_r720P.mp4`), so the last
+ * underscore-delimited segment is replaced with a wildcard rather than
+ * matched literally.
+ * @param pubMediaId The publication media id to derive a mask from.
+ * @returns A wildcard filename mask, or undefined if no id was given.
+ * @example
+ * getFileNameMaskFromPubMediaId('S-337-26v_F_2') // 'S-337-26v_F_*'
+ * getFileNameMaskFromPubMediaId('nwt')           // 'nwt*'
+ */
+export const getFileNameMaskFromPubMediaId = (
+  pubMediaId?: string,
+): string | undefined => {
+  if (!pubMediaId) return undefined;
+  return pubMediaId.includes('_')
+    ? `${pubMediaId.replace(/_[^_]*$/, '_')}*`
+    : `${pubMediaId}*`;
+};
+
+/**
  * Gets the metadata of a media file.
  * @param mediaPath The path to the media file.
  * @returns The metadata of the media file.

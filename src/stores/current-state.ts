@@ -61,6 +61,7 @@ interface Store {
   extractedFiles: Partial<Record<string, string>>;
   fetchingMeetingsCount: number;
   ffmpegPath: string;
+  lastCacheClearAt: number;
   lookupInProgress: boolean;
   mediaPlaying: MediaPlayingState;
   mediaWindowCustomBackground: string;
@@ -463,6 +464,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       extractedFiles: {},
       fetchingMeetingsCount: 0,
       ffmpegPath: '',
+      lastCacheClearAt: 0,
       lookupInProgress: false,
       mediaPlaying: {
         action: '',

@@ -157,7 +157,7 @@ const electronApi: ElectronApi = {
   onWebsiteWindowClosed: (cb) => listen('websiteWindowClosed', cb),
   openDiscussion: (c, t, p) => send('openDiscussion', c, t, p),
   openExternal: (w) => send('openExternal', w),
-  openFileDialog: (s, f) => invoke('openFileDialog', s, f),
+  openFileDialog: (s, f, d) => invoke('openFileDialog', s, f, d),
   openFolder: (path) => invoke('openFolder', path),
   openFolderDialog: () => invoke('openFolderDialog'),
   openWebsiteWindow,

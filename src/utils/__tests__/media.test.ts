@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import {
+  getFileNameMaskFromPubMediaId,
   isAudio,
   isHeic,
   isImage,
@@ -18,6 +19,23 @@ vi.mock('src/helpers/error-catcher', () => ({
 }));
 
 describe('Media Utilities', () => {
+  describe('getFileNameMaskFromPubMediaId', () => {
+    it('should replace the last underscore segment with a wildcard', () => {
+      expect(getFileNameMaskFromPubMediaId('S-337-26v_F_2')).toBe(
+        'S-337-26v_F_*',
+      );
+    });
+
+    it('should append a wildcard when there is no underscore', () => {
+      expect(getFileNameMaskFromPubMediaId('nwt')).toBe('nwt*');
+    });
+
+    it('should return undefined when no pubMediaId is given', () => {
+      expect(getFileNameMaskFromPubMediaId(undefined)).toBeUndefined();
+      expect(getFileNameMaskFromPubMediaId('')).toBeUndefined();
+    });
+  });
+
   describe('isLikelyFile', () => {
     it('should return true for files with extensions', () => {
       expect(isLikelyFile('image.jpg')).toBe(true);

@@ -761,6 +761,7 @@ export function isUsablePath(basePath?: string): Promise<boolean> {
 export async function openFileDialog(
   single: boolean,
   filter: FileDialogFilter,
+  defaultPath?: string,
 ) {
   if (!mainWindowInfo.mainWindow) return;
 
@@ -797,6 +798,7 @@ export async function openFileDialog(
   }
 
   const result = await dialog.showOpenDialog(mainWindowInfo.mainWindow, {
+    ...(defaultPath ? { defaultPath } : {}),
     filters,
     properties: single ? ['openFile'] : ['openFile', 'multiSelections'],
     securityScopedBookmarks: process.platform === 'darwin',

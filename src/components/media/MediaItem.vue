@@ -431,6 +431,18 @@
               "
               @dblclick="handleTitleEdit(true)"
             >
+              <q-badge
+                v-if="
+                  media.pubMediaId &&
+                  media.source === 'additional' &&
+                  !fileIsAvailable &&
+                  !streamIsAvailable
+                "
+                class="q-mr-sm bg-primary-semi-transparent"
+                :label="media.pubMediaId"
+                rounded
+                text-color="white"
+              />
               <!-- eslint-disable-next-line vue/no-v-html -->
               <span v-html="highlightedDisplayMediaTitle"></span>
               <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
@@ -472,6 +484,23 @@
                   }
                 "
               />
+              <q-btn
+                v-if="
+                  media.source === 'additional' &&
+                  !fileIsAvailable &&
+                  !streamIsAvailable
+                "
+                color="primary"
+                icon="mmm-folder-open"
+                outline
+                round
+                size="sm"
+                @click.stop="locateMissingFile"
+              >
+                <q-tooltip :delay="500">
+                  {{ t('locate-missing-media') }}
+                </q-tooltip>
+              </q-btn>
               <q-icon
                 v-if="repeat || isSlideshowLooping"
                 color="warning"
@@ -909,6 +938,26 @@
               </q-item-section>
             </q-item>
             <q-item
+              v-if="
+                media.source === 'additional' &&
+                !fileIsAvailable &&
+                !streamIsAvailable
+              "
+              v-close-popup
+              clickable
+              @click="locateMissingFile"
+            >
+              <q-item-section avatar>
+                <q-icon color="primary" name="mmm-folder-open" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('locate-missing-media') }}</q-item-label>
+                <q-item-label caption>
+                  {{ t('locate-missing-media-explain') }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
               v-if="media.source === 'additional'"
               v-close-popup
               clickable
@@ -1142,6 +1191,10 @@ import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { FOOTNOTE_TARGET_PARAGRAPH } from 'src/constants/jw';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getThumbnailUrl } from 'src/helpers/fs';
+import {
+  copyToDatedAdditionalMedia,
+  createMediaItemFromPath,
+} from 'src/helpers/jw-media';
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { triggerMediaWindowAutoHide } from 'src/helpers/mediaWindowAutoHide';
 import { createTemporaryNotification } from 'src/helpers/notifications';
@@ -1149,7 +1202,12 @@ import { triggerZoomScreenShare } from 'src/helpers/zoom';
 import { isExpectedNetworkPathAccessError } from 'src/shared/filesystem-errors';
 import { log, throttleWithTrailing, uuid } from 'src/shared/vanilla';
 import { isFileUrl } from 'src/utils/fs';
-import { isAudio, isImage, isVideo } from 'src/utils/media';
+import {
+  getFileNameMaskFromPubMediaId,
+  isAudio,
+  isImage,
+  isVideo,
+} from 'src/utils/media';
 import { sendObsSceneEvent } from 'src/utils/obs';
 import { formatTime, timeToSeconds } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -1331,6 +1389,7 @@ const emit = defineEmits<{
   (e: 'update:hidden', value: boolean): void;
   (e: 'update:tag', value: Tag): void;
   (e: 'update:customDuration' | 'update:title', value: string): void;
+  (e: 'update:relink', value: Partial<MediaItem>): void;
   (e: 'click', value: Event): void;
 }>();
 
@@ -1350,7 +1409,7 @@ const mediaTitle = ref(props.media.title);
 const discoveredThumbnailUrl = ref('');
 const failedThumbnailUrl = ref('');
 
-const { basename, fileUrlToPath, fs } = globalThis.electronApi;
+const { basename, fileUrlToPath, fs, openFileDialog } = globalThis.electronApi;
 
 const { pathExists, stat } = fs;
 const PATH_ACCESS_WARNING_THROTTLE_MS = 30000;
@@ -1620,7 +1679,46 @@ const updateLocalFile = async () => {
   }
 };
 
-const { pause } = useTimeoutPoll(updateLocalFile, 1000);
+const { pause, resume } = useTimeoutPoll(updateLocalFile, 1000);
+
+const locateMissingFile = async () => {
+  try {
+    const result = await openFileDialog(
+      true,
+      undefined,
+      getFileNameMaskFromPubMediaId(props.media.pubMediaId),
+    );
+    const filePath = result?.filePaths[0];
+    if (!filePath) return;
+
+    const destPath = await copyToDatedAdditionalMedia(
+      filePath,
+      props.media.originalSection,
+      false,
+    );
+    if (!destPath) return;
+
+    const relinked = await createMediaItemFromPath(
+      destPath,
+      props.media.uniqueId,
+    );
+    if (!relinked) return;
+
+    emit('update:relink', {
+      duration: relinked.duration,
+      fileUrl: relinked.fileUrl,
+      isAudio: relinked.isAudio,
+      isImage: relinked.isImage,
+      isVideo: relinked.isVideo,
+      thumbnailUrl: relinked.thumbnailUrl,
+      title: relinked.title,
+    });
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: { fn: { name: 'MediaItem.locateMissingFile' } },
+    });
+  }
+};
 
 const markersPanelOpen = ref(false);
 const startSelectedMarker = ref<null | VideoMarker>(null);
@@ -2048,6 +2146,9 @@ const playButtonTooltip = computed(() => {
   if (!fileIsAvailable.value && streamIsAvailable.value) {
     return t('play-while-downloading');
   }
+  if (!fileIsAvailable.value && !streamIsAvailable.value) {
+    return t('media-item-missing-explain');
+  }
   return '';
 });
 
@@ -2450,6 +2551,17 @@ watch(isCurrentlyPlaying, (playing) => {
     updatePlaybackRate(1);
   }
 });
+
+// The poll above pauses itself once a local file is confirmed present (see
+// the `whenever` below), so it won't notice a file that's deleted later
+// (e.g. by cache auto-clear) while this item stays mounted. Re-arm it
+// whenever a cache clear actually removed something.
+watch(
+  () => currentState.lastCacheClearAt,
+  (clearedAt) => {
+    if (clearedAt) resume();
+  },
+);
 
 whenever(
   () => localFile.value,

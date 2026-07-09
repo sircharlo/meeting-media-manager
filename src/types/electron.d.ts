@@ -218,6 +218,7 @@ export interface ElectronApi {
   openFileDialog: (
     single?: boolean,
     filter?: FileDialogFilter,
+    defaultPath?: string,
   ) => Promise<Electron.OpenDialogReturnValue | undefined>;
   openFolder: (path: string) => Promise<string>;
   openFolderDialog: () => Promise<Electron.OpenDialogReturnValue | undefined>;

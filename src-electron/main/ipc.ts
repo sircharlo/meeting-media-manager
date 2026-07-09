@@ -439,8 +439,8 @@ handleIpcInvoke(
 
 handleIpcInvoke(
   'openFileDialog',
-  async (_e, single: boolean, filter: FileDialogFilter) =>
-    openFileDialog(single, filter),
+  async (_e, single: boolean, filter: FileDialogFilter, defaultPath?: string) =>
+    openFileDialog(single, filter, defaultPath),
 );
 
 handleIpcInvoke('openFolderDialog', async () => openFolderDialog());

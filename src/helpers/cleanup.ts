@@ -783,6 +783,11 @@ export const deleteCacheFiles = async (
     // Remove empty directories
     await cleanupEmptyDirectories(analysis.untouchableDirectories);
 
+    // Let mounted media items know they should re-verify local file presence
+    if (deletionResult.itemsDeleted > 0) {
+      useCurrentStateStore().lastCacheClearAt = Date.now();
+    }
+
     // Update lookup period if deleting all cache
     if (type === 'all') {
       log(
