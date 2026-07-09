@@ -297,6 +297,7 @@
   "jw-playlist-explain": "Arquivo Playlist exportado do JW Library",
   "jw-playlist-import": "Importação de lista de reprodução da JW",
   "jw-playlist-import-explain": "Esse recurso permite importar um arquivo de uma playlist do JW Library. O aplicativo vai copiar automaticamente as mídias selecionadas dessa playlist e adicioná-las à sua lista de arquivos. Se necessário, os vídeos serão baixados no idioma configurado na playlist.",
+  "jw-playlist-watched-import-failed": "O arquivo de lista de reprodução da biblioteca JW \"{fileName}\" não pôde ser importado e foi ignorado.",
   "jweventSite": "Congressos das Testemunhas de Jeová",
   "jwpub-file": "Arquivo JWPUB",
   "jwpub-file-explain": "Publicação baixada no site oficial das Testemunhas de Jeová",
