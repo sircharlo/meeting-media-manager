@@ -45,7 +45,16 @@ const ongoingDecompressions = new Map<string, Promise<UnzipResult[]>>();
 
 const MAX_FILES = 10000;
 const MAX_SIZE = 2000000000; // 2 GB
-const THRESHOLD_RATIO = 100;
+// A single-pass DEFLATE stream can't exceed ~1032:1; legitimate archives
+// (sparse databases, repetitive JSON/text) can still land in the low
+// hundreds, so this stays close to the real ceiling to avoid false
+// positives while still catching genuinely crafted zip bombs.
+const THRESHOLD_RATIO = 1032;
+// Below this size, even a maximal-ratio entry can't meaningfully contribute
+// to resource exhaustion (already bounded separately by MAX_SIZE/MAX_FILES),
+// so skip the ratio check to avoid flagging small, highly-compressible
+// legitimate files.
+const MIN_RATIO_CHECK_SIZE = 10000000; // 10 MB
 const MAX_IN_MEMORY_ZIP_ENTRY_SIZE = 150000000; // 150 MB
 const MAX_IN_MEMORY_ZIP_TOTAL_SIZE = 250000000; // 250 MB
 const PATH_PROBE_SETTLE_DELAY_MS = 50;
@@ -223,7 +232,10 @@ const getZipEntryGuardError = (
     return new Error('Reached max. size (failsafe)');
   }
 
-  if (entry.compressedSize > 0) {
+  if (
+    entry.compressedSize > 0 &&
+    entry.uncompressedSize >= MIN_RATIO_CHECK_SIZE
+  ) {
     const compressionRatio = entry.uncompressedSize / entry.compressedSize;
     if (compressionRatio > THRESHOLD_RATIO) {
       return new Error('Reached max. compression ratio (failsafe)');
