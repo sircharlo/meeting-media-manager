@@ -4,6 +4,13 @@
 
 For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
 
+## v26.7.4
+
+### ✨ New Features
+
+- ✨ **Missing Media Recovery**: Media items whose local file went missing (e.g. deleted by the cache auto-clear race, or removed manually) now show a disabled play button, a "missing" caption naming the file to look for, and a new "Locate file" action to relink the item to a file on disk.
+- ✨ **Compatibility Warning**: Added a dismissible banner warning users on soon-to-be-unsupported OS/architecture combos (macOS 12 Monterey and Windows 32-bit) to upgrade before future app updates require newer system support.
+
 ## v26.7.0
 
 ### ✨ New Features
