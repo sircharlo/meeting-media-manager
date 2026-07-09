@@ -297,6 +297,7 @@
   "jw-playlist-explain": "JW Library-ből exportált lejátszási lista fájl",
   "jw-playlist-import": "JW lejátszási lista importálás",
   "jw-playlist-import-explain": "Ez a funkció lehetővé teszi JW Library lejátszási lista fájlok importálását. Az alkalmazás automatikusan másolja a lejátszási listából a kiválasztott médiafájlokat és hozzáadja őket a médialistához. A videók a lejátszási listában beállított nyelven lesznek letöltve szükség esetén.",
+  "jw-playlist-watched-import-failed": "The JW Library playlist file \"{fileName}\" could not be imported and was skipped.",
   "jweventSite": "Jehova Tanúi Kongresszusai",
   "jwpub-file": "JWPUB fájl",
   "jwpub-file-explain": "Jehova Tanúi hivatalos honlapjáról letöltött kiadvány",
