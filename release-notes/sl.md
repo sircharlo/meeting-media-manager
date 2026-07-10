@@ -8,8 +8,8 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- ✨ **Missing Media Recovery**: Media items whose local file went missing (e.g. deleted by the cache auto-clear race, or removed manually) now show a disabled play button, a "missing" caption naming the file to look for, and a new "Locate file" action to relink the item to a file on disk.
-- ✨ **Compatibility Warning**: Added a dismissible banner warning users on soon-to-be-unsupported OS/architecture combos (macOS 12 Monterey and Windows 32-bit) to upgrade before future app updates require newer system support.
+- ✨**Obnovitev manjkajoče multimedijske datoteke**: Multimedijske datoteke, katerih lokalna datoteka je izginila (npr. izbrisana zaradi samodejnega čiščenja predpomnilnika ali odstranjena ročno), zdaj prikažejo onemogočen gumb za predvajanje, oznako »manjka« z imenom datoteke, ki jo je treba poiskati, ter novo možnost »Poišči datoteko« za ponovno povezavo z datoteko na disku.
+- ✨ **Opozorilo o združljivosti**: Dodana je pasica z opozorilom za uporabnike, ki uporabljajo kombinacije sistema/arhitekture (macOS 12 Monterey in 32-bitni Windows), ki kmalu ne bodo več podprte. Opozorilo priporoča nadgradnjo, preden bodo prihodnje posodobitve zahtevale novejšo sistemsko podporo.
 
 ## v26.7.0
 
