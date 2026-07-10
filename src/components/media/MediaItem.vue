@@ -68,6 +68,8 @@
                   ref="mediaImage"
                   fit="contain"
                   :ratio="16 / 9"
+                  spinner-color="white"
+                  spinner-size="2em"
                   :src="mediaThumbnailUrl"
                   width="150px"
                   @error="imageLoadingError"
@@ -220,6 +222,8 @@
               ref="mediaImage"
               fit="contain"
               :ratio="16 / 9"
+              spinner-color="white"
+              spinner-size="2em"
               :src="mediaThumbnailUrl"
               width="150px"
               @error="imageLoadingError"
@@ -1447,17 +1451,28 @@ const getDisplayableThumbnailUrl = (thumbnailUrl?: string) => {
   return thumbnailUrl;
 };
 
+const mediaIsAudio = computed(() => {
+  return !!props.media.isAudio || isAudio(props.media.fileUrl ?? '');
+});
+
 const mediaThumbnailUrl = computed(() => {
   const discoveredUrl = getDisplayableThumbnailUrl(
     discoveredThumbnailUrl.value,
   );
   if (discoveredUrl) return discoveredUrl;
   if (props.media.isImage) return props.media.fileUrl ?? '';
-  return getDisplayableThumbnailUrl(props.media.thumbnailUrl);
-});
 
-const mediaIsAudio = computed(() => {
-  return !!props.media.isAudio || isAudio(props.media.fileUrl ?? '');
+  const explicitUrl = getDisplayableThumbnailUrl(props.media.thumbnailUrl);
+  if (explicitUrl) return explicitUrl;
+
+  // No thumbnail known yet: point q-img at the underlying file itself so its
+  // native spinner shows immediately. The file isn't a valid <img> source,
+  // so it errors out quickly, and @error routes into imageLoadingError ->
+  // findThumbnailUrl(), which does the real lookup (embedded picture/video
+  // metadata, then a frame-grab) once the file exists on disk.
+  return mediaIsAudio.value
+    ? ''
+    : getDisplayableThumbnailUrl(props.media.fileUrl);
 });
 
 const showAudioThumbnailFallback = computed(() => {
@@ -2324,8 +2339,7 @@ const confirmDeleteSelectedMedia = () => {
 onMounted(async () => {
   void updateLocalFile();
   initializeImageDuration();
-  if (props.media.duration && !mediaThumbnailUrl.value)
-    await findThumbnailUrl();
+  if (!mediaThumbnailUrl.value) await findThumbnailUrl();
 });
 
 const playButton = useTemplateRef<QBtn>('playButton');

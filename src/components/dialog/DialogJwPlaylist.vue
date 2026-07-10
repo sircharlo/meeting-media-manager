@@ -198,6 +198,7 @@ import type {
   MediaSectionIdentifier,
   MultimediaItem,
   PlaylistTagItem,
+  PublicationFetcher,
 } from 'src/types';
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
@@ -350,6 +351,26 @@ const loadPlaylistItems = async () => {
       `,
     );
 
+    // JW Library sometimes stores playlist image assets (thumbnails as well
+    // as independent-media pictures) under a bare UUID filename with no
+    // extension at all. Every consumer downstream (isImage(), the browser's
+    // file:// mime lookup, etc.) keys off the extension, so an extensionless
+    // asset silently fails to be recognized as an image — jpg is by far the
+    // most common actual format for these, so rename to add it when missing.
+    const ensureJpgExtension = async (absolutePath: string) => {
+      const ext = extname(absolutePath).slice(1).toLowerCase();
+      if (ext && JPG_EXTENSIONS.includes(ext)) return absolutePath;
+      const newPath = absolutePath + '.jpg';
+      try {
+        await rename(absolutePath, newPath);
+        return newPath;
+      } catch (err) {
+        // File may not exist or rename failed — keep original path
+        errorCatcher(err);
+        return absolutePath;
+      }
+    };
+
     // ---- Process Items ----
     const processedItems = await Promise.all(
       rawItems.map(async (item) => {
@@ -358,19 +379,21 @@ const loadPlaylistItems = async () => {
           ? join(outputPath, item.ThumbnailFilePath)
           : '';
 
-        // Normalize thumbnail extension → JPG
         if (thumbnailPath) {
-          const ext = extname(thumbnailPath).slice(1).toLowerCase();
-          if (!ext || !JPG_EXTENSIONS.includes(ext)) {
-            const newPath = thumbnailPath + '.jpg';
-            try {
-              await rename(thumbnailPath, newPath);
-              thumbnailPath = newPath;
-            } catch (err) {
-              // File may not exist or rename failed — keep original path
-              errorCatcher(err);
-            }
-          }
+          thumbnailPath = await ensureJpgExtension(thumbnailPath);
+        }
+
+        // The independent-media file itself can suffer from the same
+        // missing-extension issue; only image assets get the jpg fallback,
+        // since audio/video files must keep their real extension.
+        let independentMediaFilePath = item.IndependentMediaFilePath;
+        if (independentMediaFilePath && item.MimeType?.includes('image')) {
+          const normalizedPath = await ensureJpgExtension(
+            join(outputPath, independentMediaFilePath),
+          );
+          independentMediaFilePath = normalizedPath.slice(
+            outputPath.length + 1,
+          );
         }
 
         // Extract verse numbers (parameterized query to avoid SQL injection)
@@ -388,15 +411,15 @@ const loadPlaylistItems = async () => {
 
         // Determine best preview path
         const candidatePath =
-          item.IndependentMediaFilePath &&
-          isImage(item.IndependentMediaFilePath)
-            ? join(outputPath, item.IndependentMediaFilePath)
+          independentMediaFilePath && isImage(independentMediaFilePath)
+            ? join(outputPath, independentMediaFilePath)
             : thumbnailPath;
 
         const resolvedPreviewPath = await resolveFilePath(candidatePath);
 
         return {
           ...item,
+          IndependentMediaFilePath: independentMediaFilePath,
           ResolvedPreviewPath: resolvedPreviewPath,
           ThumbnailFilePath: thumbnailPath,
           VerseNumbers: verseNumbers,
@@ -610,14 +633,16 @@ async function processVideoItem(
 ) {
   const lang = getJwLangCode(item.MepsLanguage) || 'E';
 
-  const pubDownload = await getPubMediaLinks({
+  const mediaLookup: PublicationFetcher = {
     booknum: item.BookNumber,
     docid: item.DocumentId,
     issue: item.IssueTagNumber,
     langwritten: lang,
     pub: item.KeySymbol,
     track: item.Track,
-  });
+  };
+
+  const pubDownload = await getPubMediaLinks(mediaLookup);
 
   const videoLinks = pubDownload?.files?.[lang]?.['MP4'];
   if (!videoLinks) return { type: 'skip' };
@@ -640,6 +665,7 @@ async function processVideoItem(
     onlyCreateItem: true,
     section: sectionToUse || props.section,
     song: false,
+    thumbnailLookup: mediaLookup,
     thumbnailUrl: thumbnailPath ? pathToFileURL(thumbnailPath) : undefined,
     title: itemLabel,
   });

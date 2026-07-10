@@ -4817,6 +4817,43 @@ const queueAdditionalMediaDownload = ({
   });
 };
 
+const isRemoteUrl = (value: string) => /^https?:\/\//i.test(value);
+
+/**
+ * Resolves the thumbnail to use for a remote video, in priority order:
+ * an explicitly provided thumbnail (e.g. one embedded in a jwpub/playlist
+ * package), then a jw.org API thumbnail looked up from `thumbnailLookup`.
+ * Any remote (http/https) thumbnail is downloaded and cached alongside the
+ * video so it survives offline use; local file:// thumbnails pass through
+ * untouched. If neither source yields anything, undefined is returned and
+ * the caller falls back to the video-embedded/frame-grab thumbnail once the
+ * video file itself is available (see getThumbnailUrl in helpers/fs.ts).
+ */
+const resolveRemoteThumbnailUrl = async (
+  thumbnailUrl: string | undefined,
+  thumbnailLookup: PublicationFetcher | undefined,
+  dir: string,
+): Promise<string | undefined> => {
+  try {
+    const resolvedUrl =
+      thumbnailUrl ||
+      (thumbnailLookup
+        ? (await getJwMediaInfo(thumbnailLookup)).thumbnail || undefined
+        : undefined);
+    if (!resolvedUrl || !isRemoteUrl(resolvedUrl)) return resolvedUrl;
+
+    const { path } = await downloadFileIfNeeded({
+      dir,
+      lowPriority: true,
+      url: resolvedUrl,
+    });
+    return path ? pathToFileURL(path) : resolvedUrl;
+  } catch (e) {
+    errorCatcher(e);
+    return thumbnailUrl;
+  }
+};
+
 export interface DownloadAdditionalRemoteVideoOptions {
   appendToEnd?: boolean;
   customDuration?: { max: number; min: number };
@@ -4826,6 +4863,7 @@ export interface DownloadAdditionalRemoteVideoOptions {
   progressCategory?: FileDownloader['progressCategory'];
   section?: MediaSectionIdentifier;
   song?: false | number | string;
+  thumbnailLookup?: PublicationFetcher;
   thumbnailUrl?: string;
   title?: string;
 }
@@ -4842,7 +4880,8 @@ export const downloadAdditionalRemoteVideo = async (
     progressCategory,
     section,
     song = false,
-    thumbnailUrl,
+    thumbnailLookup,
+    thumbnailUrl: thumbnailUrlOption,
     title,
   } = options;
   try {
@@ -4874,6 +4913,12 @@ export const downloadAdditionalRemoteVideo = async (
     await updateLastUsedDate(
       datedAdditionalMediaDir,
       meetingDate || currentStateStore.selectedDate,
+    );
+
+    const thumbnailUrl = await resolveRemoteThumbnailUrl(
+      thumbnailUrlOption,
+      thumbnailLookup,
+      datedAdditionalMediaDir,
     );
 
     const mediaFilePath = join(datedAdditionalMediaDir, basename(bestItemUrl));
