@@ -7,16 +7,18 @@
     >
       <div>
         {{ t('update-downloading') }}
-        <div v-if="downloadProgress" class="q-mt-sm">
+        <div class="q-mt-sm">
           <q-linear-progress
             color="primary"
+            :indeterminate="!downloadProgress"
+            instant-feedback
             rounded
             size="md"
             stripe
-            :value="(downloadProgress.percent || 0) / 100"
+            :value="smoothedPercent / 100"
           />
-          <div v-if="downloadProgressText" class="text-caption q-mt-xs">
-            {{ downloadProgressText }}
+          <div class="text-caption q-mt-xs">
+            {{ downloadProgressText || t('update-preparing') }}
           </div>
         </div>
       </div>
@@ -93,7 +95,14 @@ import { updatesDisabled } from 'src/utils/fs';
 import { getPreviousVersion, isVersionWithinBounds } from 'src/utils/general';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, onMounted, ref, watchEffect } from 'vue';
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+  watchEffect,
+} from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const $q = useQuasar();
@@ -159,6 +168,36 @@ const downloadProgress = ref<null | {
   transferred: number;
 }>(null);
 
+// Eases the displayed percentage toward the latest known value instead of
+// snapping to it, since download-progress events arrive in irregular,
+// second-or-so bursts and a direct binding looks jagged.
+const smoothedPercent = ref(0);
+let progressAnimationFrame: null | number = null;
+
+const stopProgressAnimation = () => {
+  if (progressAnimationFrame === null) return;
+  cancelAnimationFrame(progressAnimationFrame);
+  progressAnimationFrame = null;
+};
+
+const animateProgress = () => {
+  const target = downloadProgress.value?.percent ?? 0;
+  const delta = target - smoothedPercent.value;
+
+  if (Math.abs(delta) < 0.1) {
+    smoothedPercent.value = target;
+    progressAnimationFrame = null;
+    return;
+  }
+
+  smoothedPercent.value += delta * 0.15;
+  progressAnimationFrame = requestAnimationFrame(animateProgress);
+};
+
+onBeforeUnmount(() => {
+  stopProgressAnimation();
+});
+
 const downloadProgressText = computed(() => {
   if (!downloadProgress.value) return '';
 
@@ -166,7 +205,7 @@ const downloadProgressText = computed(() => {
 
   // Add percentage if available
   if (downloadProgress.value.percent != null) {
-    parts.push(`${Math.round(downloadProgress.value.percent)}%`);
+    parts.push(`${Math.round(smoothedPercent.value)}%`);
   }
 
   // Add transferred/total if both are available
@@ -199,6 +238,8 @@ onMounted(() => {
         showAutoUpdateAvailableBanner.value = true;
         showAutoUpdateDownloadedBanner.value = false;
         downloadProgress.value = null;
+        stopProgressAnimation();
+        smoothedPercent.value = 0;
       } catch (error) {
         errorCatcher(error, {
           contexts: { fn: { name: 'onUpdateAvailable' } },
@@ -221,6 +262,7 @@ onMounted(() => {
         showAutoUpdateAvailableBanner.value = false;
         showAutoUpdateDownloadedBanner.value = true;
         downloadProgress.value = null;
+        stopProgressAnimation();
       } catch (error) {
         errorCatcher(error, {
           contexts: { fn: { name: 'onUpdateDownloaded' } },
@@ -379,6 +421,13 @@ const activeAnnouncements = computed(() =>
     if (!matchesScope(a)) return false;
     return isVersionOk(a);
   }),
+);
+
+watch(
+  () => downloadProgress.value?.percent,
+  () => {
+    progressAnimationFrame ??= requestAnimationFrame(animateProgress);
+  },
 );
 
 watchEffect(() => {
