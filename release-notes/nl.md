@@ -8,7 +8,7 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 
 ### ✨ Nieuwe functies
 
-- ✨ \*\*Ontbrekende Media Herstel \*\*: Media items waarvan het lokale bestand ontbrak (bijv. Toon nu een uitgeschakelde afspeelknop of handmatig verwijderd door de cache. een "ontbreekt"-bijschrift waarin het te zoeken bestand wordt genoemd en een nieuwe "Lokaliseer bestand" actie om het item opnieuw te koppelen aan een bestand op de schijf.
+- ✨ \*\*Ontbrekende Media Herstel \*\*: Media items waarvan het lokale bestand ontbrak (bijv. Toon nu een uitgeschakelde afspeelknop verwijdert door de cache automatisch te wissen of handmatig te verwijderen. een "ontbreekt"-bijschrift waarin het te zoeken bestand wordt genoemd en een nieuwe "Lokaliseer bestand" actie om het item opnieuw te koppelen aan een bestand op de schijf.
 - ✨ **Compatibiliteitswaarschuwing**: Heeft een verwijderbare banner waarschuwingsgebruikers toegevoegd in soon-to-be-niet-ondersteunde OS/architecture combos (macOS 12 Monterey en Windows 32-bit) om te upgraden voordat toekomstige app updates een nieuwere systeem ondersteuning vereisen.
 
 ## v26.7.0
