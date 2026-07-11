@@ -8,7 +8,7 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 
 ### ✨ New Features
 
-- ✨ **Falta recuperación de medios**: Elementos multimedia cuyo archivo local no se pudo encontrar (p. ej. borrado por la caché auto-clear race, o eliminado manualmente) ahora muestra un botón de reproducción desactivado, una leyenda "perdida" nombrando el archivo a buscar, y una nueva acción de "Localizar archivo" para volver a vincular el elemento a un archivo en el disco.
+- ✨ **Falta recuperación de medios**: Elementos multimedia cuyo archivo local no se pudo encontrar (p. ej. borrado por la caché automáticamente, o eliminado manualmente) ahora muestra un botón de reproducción desactivado, una leyenda "perdida" nombrando el archivo a buscar, y una nueva acción de "Localizar archivo" para volver a vincular el elemento a un archivo en el disco.
 - ✨ **Advertencia de compatibilidad**: Se agregó un aviso de banner no admisible a los usuarios en las combinaciones de arquitectura y sistema operativo pronto no soportadas (MacOS 12 Monterey y Windows 32-bit) para actualizar antes de que las futuras actualizaciones de la aplicación requieran soporte más reciente del sistema.
 
 ## v26.7.0
