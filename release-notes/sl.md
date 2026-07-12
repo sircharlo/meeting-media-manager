@@ -8,7 +8,8 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- ✨**Obnovitev manjkajoče multimedijske datoteke**: Multimedijske datoteke, katerih lokalna datoteka je izginila (npr. izbrisana zaradi samodejnega čiščenja predpomnilnika ali odstranjena ročno), zdaj prikažejo onemogočen gumb za predvajanje, oznako »manjka« z imenom datoteke, ki jo je treba poiskati, ter novo možnost »Poišči datoteko« za ponovno povezavo z datoteko na disku.
+- v26.7.4
+  ✨ \*\*Obnovitev manjkajoče multimedijske datoteke: Multimedijske datoteke, katerih lokalna datoteka je izginila (npr. izbrisana zaradi samodejnega čiščenja predpomnilnika ali odstranjena ročno), zdaj prikažejo onemogočen gumb za predvajanje, oznako »manjka« z imenom datoteke, ki jo je treba poiskati, ter novo možnost »Poišči datoteko« za ponovno povezavo z datoteko na disku.
 - ✨ **Opozorilo o združljivosti**: Dodana je pasica z opozorilom za uporabnike, ki uporabljajo kombinacije sistema/arhitekture (macOS 12 Monterey in 32-bitni Windows), ki kmalu ne bodo več podprte. Opozorilo priporoča nadgradnjo, preden bodo prihodnje posodobitve zahtevale novejšo sistemsko podporo.
 
 ## v26.7.0
