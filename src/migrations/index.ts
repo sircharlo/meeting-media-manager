@@ -28,6 +28,7 @@ export const MIGRATION_REGISTRY: Record<string, MigrationFunction> = {
   '26.1.6 refreshDynamicMedia': refreshDynamicMedia,
   '26.1.7 refreshDynamicMedia': refreshDynamicMedia,
   '26.4.6 emptyFontsFolder': emptyFontsFolder,
+  '26.7.5 refreshDynamicMedia': refreshDynamicMedia,
   addBaseUrlToAllCongregations,
   firstRun,
   localStorageToPiniaPersist,
