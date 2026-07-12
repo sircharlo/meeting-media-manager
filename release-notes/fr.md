@@ -8,8 +8,8 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 ### ✨ Nouvelles fonctionnalités
 
-- ✨ **Récupération de média manquante**: Les éléments de média dont le fichier local a été manquant (e.g. effacé par le cache automatiquement la course, ou supprimé manuellement) affiche maintenant un bouton de lecture désactivé, une légende "manquante" nommant le fichier à rechercher, et une nouvelle action "Localiser le fichier" pour relier l'élément à un fichier sur le disque.
-- ✨ **Avertissement de compatibilité**: a ajouté une bannière d'avertissement pour les utilisateurs sur les combos OS/architecture (macOS 12 Monterey et Windows 32-bit) bientôt non pris en charge pour mettre à jour avant les mises à jour futures des applications nécessitant une prise en charge plus récente du système.
+- ✨ **Récupération des médias manquants** : Les éléments multimédias dont le fichier local a disparu (par exemple, supprimé lors de l'effacement automatique du cache ou supprimé manuellement) affichent désormais un bouton de lecture désactivé, une légende « manquant » indiquant le nom du fichier à rechercher, ainsi qu'une nouvelle action « Localiser le fichier » permettant de relier à nouveau l'élément à un fichier sur le disque.
+- ✨ **Avertissement de compatibilité** : Ajout d'une bannière (qui peut être masquée) avertissant les utilisateurs que certaines combinaisons de systèmes d'exploitation et d'architectures (macOS 12 Monterey et Windows 32 bits) ne seront bientôt plus prises en charge, afin qu'ils procèdent à une mise à niveau avant que les futures mises à jour de l'application n'exigent un système plus récent.
 
 ## 7.0 v26.0
 
