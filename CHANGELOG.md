@@ -4,6 +4,16 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.7.5
+
+### 🐞 Bug Fixes
+
+- 🐞 **Meeting Media**: Fixed pictures being silently dropped from the media list when a document's illustration set included multiple embedded-language picture variants with no other distinguishing info (e.g. some Watchtower study article illustrations) — only the first would show. Affected congregations will have this week's media refreshed automatically after updating.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Update Notifications**: Smoothed the update-download progress bar animation, which previously sat static and then snapped between values.
+
 ## v26.7.4
 
 ### ✨ New Features
