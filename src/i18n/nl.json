@@ -727,6 +727,7 @@
   "update-downloading": "Er is een nieuwe versie van M³ beschikbaar en deze wordt op de achtergrond gedownload.",
   "update-error-read-only-volume": "M³ kon niet worden bijgewerkt omdat het is opgeslagen in een map die alleen-lezen is. Verplaats M³ naar een andere locatie, zoals de map Programma's.",
   "update-failed": "Update mislukt",
+  "update-preparing": "Preparing to download…",
   "updates-disabled-warning": "Schakel updates in om nieuwe functies, bugfixes en belangrijke beveiligingsupdates te ontvangen.",
   "use-the-import-button-to-add-media-for-this-date-or-select-another-date-to-view-the-corresponding-meeting-media": "Gebruik de @:extra-media-knop om media toe te voegen voor deze datum, of selecteer een andere datum om de bijbehorende media voor die dag te bekijken.",
   "use-the-slider-below-to-adjust-the-start-and-end-time-of-this-media-item": "Gebruik de schuifregelaar hieronder om de start- en eindtijd van dit media-item aan te passen. Dit is handig voor het afspelen van slechts bepaalde delen van een video.",
