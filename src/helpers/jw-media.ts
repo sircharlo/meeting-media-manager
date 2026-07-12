@@ -3025,10 +3025,17 @@ export const dynamicMediaMapper = async (
 
     // --- Helper: generate pubMediaId --------------------------------------
     const createPubMediaId = (m: MultimediaItem) => {
+      // Fall back to MultimediaId (unique per picture within the document)
+      // when there's no KeySymbol/IssueTagNumber/MepsDocumentId to key off of.
+      // Without this, plain in-document illustrations that share the same
+      // MepsLanguageIndex (e.g. a set of embedded-language picture variants
+      // like "_F_cnt_4/5/6") would all resolve to the same id, causing
+      // replaceMissingMediaByPubMediaId to treat them as duplicates of one
+      // another and silently drop all but the first.
       const base =
         m.KeySymbol || m.IssueTagNumber
           ? [m.KeySymbol, m.IssueTagNumber]
-          : [m.MepsDocumentId];
+          : [m.MepsDocumentId || m.MultimediaId];
 
       const extra = [
         m.MepsLanguageIndex === undefined
