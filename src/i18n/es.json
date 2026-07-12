@@ -727,6 +727,7 @@
   "update-downloading": "Una nueva versión de M3 está disponible y se está descargando en segundo plano.",
   "update-error-read-only-volume": "M³  no se pudo actualizar porque está almacenado en un directorio que es de sólo lectura. Por favor, mueva M³  a una ubicación diferente, como la carpeta Aplicaciones.",
   "update-failed": "Actualización fallida",
+  "update-preparing": "Preparando descargar…",
   "updates-disabled-warning": "Por favor, habilite las actualizaciones para recibir nuevas características, correcciones de errores y actualizaciones de seguridad importantes.",
   "use-the-import-button-to-add-media-for-this-date-or-select-another-date-to-view-the-corresponding-meeting-media": "Utilice el botón @:extra-media para añadir contenido multimedia para esta fecha, o seleccione una fecha diferente para ver la multimedia correspondientes a ese día.",
   "use-the-slider-below-to-adjust-the-start-and-end-time-of-this-media-item": "Utilice el control deslizante a continuación para ajustar la hora de inicio y finalización de este elemento multimedia. Esto es útil para reproducir solo ciertas partes de un video.",
