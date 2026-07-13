@@ -25,6 +25,8 @@ jobs:
           sudo apt-get install -y libx11-dev libxtst-dev libxinerama-dev libx11-xcb-dev libxkbcommon-x11-dev libxss-dev libpng-dev libpng++-dev xvfb
       - name: Install dependencies
         run: yarn install
+      - name: Verify Electron binary is installed
+        run: node -e "console.log(require('electron'))"
       - name: Prepare Quasar
         run: yarn quasar prepare
       - name: Build unpacked Electron app
@@ -34,6 +36,13 @@ jobs:
           yarn build:unpacked
       - name: Capture demo-mode screenshots
         run: xvfb-run -a yarn screenshot:refresh
+      - name: Upload debug output on failure
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: screenshot-debug-output
+          path: test/playwright/debug-output/
+          if-no-files-found: ignore
       - name: Check for screenshot changes
         id: diff
         run: |

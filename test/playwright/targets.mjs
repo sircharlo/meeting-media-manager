@@ -8,7 +8,7 @@ export const targets = [
     prepare: async (window) => {
       await window
         .getByText('Sample video illustration')
-        .waitFor({ state: 'visible', timeout: 30000 });
+        .waitFor({ state: 'visible', timeout: 60000 });
     },
   },
 ];
