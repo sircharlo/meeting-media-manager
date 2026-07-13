@@ -1,3 +1,4 @@
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { _electron as electron } from 'playwright';
 
@@ -46,6 +47,43 @@ export async function launchDemoApp() {
 
   await window.waitForLoadState('domcontentloaded');
   return { app, window };
+}
+
+/**
+ * Screenshots `window` on an interval into `dir` (must already exist) until
+ * the returned stop function is called, so a hang is visible as a sequence
+ * of frames instead of a single post-mortem attempt that also times out.
+ * Each tick is best-effort: a slow/unresponsive renderer just skips a frame
+ * rather than piling up overlapping screenshot calls.
+ */
+export function startPeriodicScreenshots(window, dir, intervalMs = 1000) {
+  let tick = 0;
+  let busy = false;
+
+  const timer = setInterval(() => {
+    if (busy) return;
+    busy = true;
+    const label = String(++tick).padStart(3, '0');
+    const path = join(dir, `tick-${label}.png`);
+
+    Promise.race([
+      window.screenshot({ path }),
+      new Promise((_, reject) => {
+        setTimeout(
+          () => reject(new Error('tick screenshot timeout')),
+          intervalMs * 2,
+        );
+      }),
+    ])
+      .catch((error) =>
+        console.error(`[tick ${label}] screenshot skipped:`, error.message),
+      )
+      .finally(() => {
+        busy = false;
+      });
+  }, intervalMs);
+
+  return () => clearInterval(timer);
 }
 
 /**

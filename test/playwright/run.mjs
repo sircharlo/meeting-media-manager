@@ -1,11 +1,12 @@
 #!/usr/bin/env node
-import { mkdir } from 'node:fs/promises';
+import { mkdir, rm } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import {
   captureScreenshot,
   launchDemoApp,
+  startPeriodicScreenshots,
   startProfiling,
   stopProfilingAndSave,
 } from './capture.mjs';
@@ -23,13 +24,20 @@ async function run() {
   });
   try {
     for (const target of targets) {
+      const ticksDir = resolve(DEBUG_DIR, `${target.name}-ticks`);
+      await mkdir(ticksDir, { recursive: true });
+      const stopTicks = startPeriodicScreenshots(window, ticksDir, 1000);
+
       try {
         await target.prepare(window);
+        stopTicks();
+        await rm(ticksDir, { force: true, recursive: true });
       } catch (error) {
-        // Leave a screenshot + CPU profile behind so a hang/freeze is
-        // diagnosable without being able to run Electron locally. Load the
-        // .cpuprofile file in Chrome DevTools' Performance/Profiler tab.
-        await mkdir(DEBUG_DIR, { recursive: true });
+        stopTicks();
+        // Leave the tick screenshots + a final screenshot + CPU profile
+        // behind so a hang/freeze is diagnosable without being able to run
+        // Electron locally. Load the .cpuprofile file in Chrome DevTools'
+        // Performance/Profiler tab.
         await withTimeout(
           window.screenshot({
             path: resolve(DEBUG_DIR, `${target.name}-failure.png`),
