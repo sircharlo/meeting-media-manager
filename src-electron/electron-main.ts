@@ -12,6 +12,7 @@ import {
 } from 'electron';
 import {
   APP_ID,
+  IS_DEMO_MODE,
   IS_TEST,
   PLATFORM,
   PRODUCT_NAME,
@@ -423,7 +424,7 @@ if (gotTheLock) {
     app.commandLine.appendSwitch('gtk-version', '3'); // Force GTK 3 on Linux (Workaround for https://github.com/electron/electron/issues/46538)
   }
 
-  initUpdater();
+  if (!IS_DEMO_MODE) initUpdater();
 
   initScreenListeners();
   createApplicationMenu();

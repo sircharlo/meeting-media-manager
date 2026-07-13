@@ -136,6 +136,8 @@ export interface ElectronApi {
   hideFileOnWindows: (filePath: string) => Promise<void>;
   inferExtension: (filename: string, filetype?: string) => Promise<string>;
   isArchitectureMismatch: () => Promise<boolean>;
+  /** `true` when the app was launched with `M3_DEMO_MODE` set, for automated screenshotting. */
+  isDemoMode: boolean;
   isDownloadComplete: (downloadId: string) => Promise<boolean | null>;
   isDownloadErrorExpected: () => Promise<boolean>;
   isUsablePath: (path: string) => Promise<boolean>;

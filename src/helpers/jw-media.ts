@@ -127,6 +127,7 @@ const {
   fileUrlToPath,
   fs,
   getZipEntries,
+  isDemoMode,
   isUsablePath: isUsablePathRaw,
   join,
   pathToFileURL,
@@ -1769,6 +1770,8 @@ const updateFetchedMeetingDayStatus = (day: DateInfo, error: boolean) => {
 
 export const fetchMedia = async () => {
   try {
+    if (isDemoMode) return;
+
     const currentStateStore = useCurrentStateStore();
     if (
       !currentStateStore.currentCongregation ||

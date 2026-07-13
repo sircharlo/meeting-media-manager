@@ -5,6 +5,9 @@ export const PLATFORM = process?.platform || os.platform();
 export const IS_DEV = import.meta.env.IS_DEV;
 export const IS_BETA = import.meta.env.IS_BETA;
 export const IS_TEST = import.meta.env.IS_TEST;
+export const IS_DEMO_MODE =
+  process.env.M3_DEMO_MODE === '1' ||
+  process.env.M3_DEMO_MODE?.toLowerCase() === 'true';
 
 // App
 export const APP_ID = import.meta.env.APP_ID;

@@ -692,7 +692,13 @@ export const useJwStore = defineStore('jw-store', {
       online: boolean;
     }) {
       try {
-        if (!online || !lang || isSignLanguage) return;
+        if (
+          !online ||
+          !lang ||
+          isSignLanguage ||
+          globalThis.electronApi.isDemoMode
+        )
+          return;
 
         const year = new Date().getFullYear();
         const promises: Promise<{ wtlocale: JwLangCode; yeartext?: string }>[] =

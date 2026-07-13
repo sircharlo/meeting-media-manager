@@ -1,0 +1,55 @@
+name: Refresh README screenshot
+
+on:
+  schedule:
+    - cron: '0 6 1 * *'
+  workflow_dispatch:
+
+jobs:
+  screenshot:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+      - name: Setup Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
+        with:
+          node-version: 24
+          cache: 'yarn'
+      - name: Install X11 and xvfb development libraries (Linux only)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libx11-dev libxtst-dev libxinerama-dev libx11-xcb-dev libxkbcommon-x11-dev libxss-dev libpng-dev libpng++-dev xvfb
+      - name: Install dependencies
+        run: yarn install
+      - name: Prepare Quasar
+        run: yarn quasar prepare
+      - name: Build unpacked Electron app
+        run: |
+          yarn generate:icons
+          yarn generate:logos
+          yarn build:unpacked
+      - name: Capture demo-mode screenshots
+        run: xvfb-run -a yarn screenshot:refresh
+      - name: Check for screenshot changes
+        id: diff
+        run: |
+          if git diff --quiet -- docs/src/assets/m3-preview.png; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Open pull request with refreshed screenshot
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          add-paths: docs/src/assets/m3-preview.png
+          body: >
+            Automated monthly refresh of the README preview screenshot,
+            generated from placeholder demo data (see `src/helpers/demo-mode.ts`).
+          branch: chore/refresh-readme-screenshot
+          commit-message: 'chore: refresh README screenshot'
+          title: 'chore: refresh README screenshot'

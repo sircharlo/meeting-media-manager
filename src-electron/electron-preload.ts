@@ -16,7 +16,7 @@ import {
   stat,
   writeFile,
 } from 'fs-extra';
-import { PLATFORM } from 'src-electron/constants';
+import { IS_DEMO_MODE, PLATFORM } from 'src-electron/constants';
 import { initCloseListeners } from 'src-electron/preload/close';
 import { convertHeic } from 'src-electron/preload/converters';
 import {
@@ -126,6 +126,7 @@ const electronApi: ElectronApi = {
   hideFileOnWindows,
   inferExtension,
   isArchitectureMismatch: () => invoke('isArchitectureMismatch'),
+  isDemoMode: IS_DEMO_MODE,
   isDownloadComplete: (downloadId: string) =>
     invoke('isDownloadComplete', downloadId),
   isDownloadErrorExpected: () => invoke('isDownloadErrorExpected'),

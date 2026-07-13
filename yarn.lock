@@ -3712,9 +3712,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/eslint-plugin@npm:^1.6.22":
-  version: 1.6.22
-  resolution: "@vitest/eslint-plugin@npm:1.6.22"
+"@vitest/eslint-plugin@npm:^1.6.23":
+  version: 1.6.23
+  resolution: "@vitest/eslint-plugin@npm:1.6.23"
   dependencies:
     "@typescript-eslint/scope-manager": "npm:^8.58.0"
     "@typescript-eslint/utils": "npm:^8.58.0"
@@ -3730,7 +3730,7 @@ __metadata:
       optional: true
     vitest:
       optional: true
-  checksum: 10c0/894b87936c98ea9eeeb26ce08fa297fa52f1c48c27d97d2ec437acad28644d639fb21c7fe8fe58ce47e483f7596d80100b45a14bf95d9b6d3454bd274bfa28f0
+  checksum: 10c0/a8d67626598d46499491935fbbd39392115a1b79aaae3ea4f427bcd96741f260b70f0270a44c4f6195acc9416eb17ac9c40ce4038045fd344553549e30c87860
   languageName: node
   linkType: hard
 
@@ -5681,7 +5681,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^3.3.1, dompurify@npm:^3.4.11":
+"dompurify@npm:^3.3.1":
   version: 3.4.11
   resolution: "dompurify@npm:3.4.11"
   dependencies:
@@ -5690,6 +5690,18 @@ __metadata:
     "@types/trusted-types":
       optional: true
   checksum: 10c0/31439481c7e8fc3805d40c376936fd66936620fb1b1a31a2ec097f6165412c37f2d868e082c9ceba62bb37661c1ea132a5db4d5213434317e30df68d4aca9cc9
+  languageName: node
+  linkType: hard
+
+"dompurify@npm:^3.4.12":
+  version: 3.4.12
+  resolution: "dompurify@npm:3.4.12"
+  dependencies:
+    "@types/trusted-types": "npm:^2.0.7"
+  dependenciesMeta:
+    "@types/trusted-types":
+      optional: true
+  checksum: 10c0/127a13817353d4e20e75a991a9022a04c3af12af7479f68e2b8bee6dbc7330a96edfb8f4ebff96f4f0f24cd43e8dbba46214131f510c3aa87a843bd8b610d0ab
   languageName: node
   linkType: hard
 
@@ -6346,9 +6358,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^10.6.0":
-  version: 10.6.0
-  resolution: "eslint@npm:10.6.0"
+"eslint@npm:^10.7.0":
+  version: 10.7.0
+  resolution: "eslint@npm:10.7.0"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.8.0"
     "@eslint-community/regexpp": "npm:^4.12.2"
@@ -6387,7 +6399,7 @@ __metadata:
       optional: true
   bin:
     eslint: bin/eslint.js
-  checksum: 10c0/ebe0261fc750afb7f1a0c5a14f5288e57b971e0bee9754b1620132d22ad0c23690183977b0c9514ffa7ad460768d689d3fb9792ad9267b6c6205e2e0c17d8563
+  checksum: 10c0/d9415f506730c098ab8897da39f5719cdf9d1026c9511c322d4a272677f904b7d43ff423d63ee941c9a03d74d1a75563ce2668886734b1f293b22e57911a6dd6
   languageName: node
   linkType: hard
 
@@ -6982,12 +6994,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fsevents@npm:2.3.2":
+  version: 2.3.2
+  resolution: "fsevents@npm:2.3.2"
+  dependencies:
+    node-gyp: "npm:latest"
+  checksum: 10c0/be78a3efa3e181cda3cf7a4637cb527bcebb0bd0ea0440105a3bb45b86f9245b307dc10a2507e8f4498a7d4ec349d1910f4d73e4d4495b16103106e07eee735b
+  conditions: os=darwin
+  languageName: node
+  linkType: hard
+
 "fsevents@npm:~2.3.3":
   version: 2.3.3
   resolution: "fsevents@npm:2.3.3"
   dependencies:
     node-gyp: "npm:latest"
   checksum: 10c0/a1f0c44595123ed717febbc478aa952e47adfc28e2092be66b8ab1635147254ca6cfe1df792a8997f22716d4cbafc73309899ff7bfac2ac3ad8cf2e4ecc3ec60
+  conditions: os=darwin
+  languageName: node
+  linkType: hard
+
+"fsevents@patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>":
+  version: 2.3.2
+  resolution: "fsevents@patch:fsevents@npm%3A2.3.2#optional!builtin<compat/fsevents>::version=2.3.2&hash=df0bf1"
+  dependencies:
+    node-gyp: "npm:latest"
   conditions: os=darwin
   languageName: node
   linkType: hard
@@ -8591,7 +8622,7 @@ __metadata:
     "@types/pretty-bytes": "npm:^5.2.0"
     "@types/yauzl": "npm:^3.4.0"
     "@vitejs/plugin-vue": "npm:^6.0.7"
-    "@vitest/eslint-plugin": "npm:^1.6.22"
+    "@vitest/eslint-plugin": "npm:^1.6.23"
     "@vue/eslint-config-prettier": "npm:^10.2.0"
     "@vue/eslint-config-typescript": "npm:^14.9.0"
     "@vue/test-utils": "npm:^2.4.11"
@@ -8604,12 +8635,12 @@ __metadata:
     chokidar: "npm:^5.0.0"
     countries-and-timezones: "npm:^3.9.0"
     depcheck: "npm:^1.4.7"
-    dompurify: "npm:^3.4.11"
+    dompurify: "npm:^3.4.12"
     electron: "npm:^43.1.0"
     electron-builder: "npm:26.15.3"
     electron-dl-manager: "npm:^4.2.3"
     electron-updater: "npm:^6.8.9"
-    eslint: "npm:^10.6.0"
+    eslint: "npm:^10.7.0"
     eslint-plugin-perfectionist: "npm:^5.10.0"
     eslint-plugin-vue: "npm:^10.9.2"
     fantasticon: "patch:fantasticon@npm%3A4.1.0#~/.yarn/patches/fantasticon-npm-4.1.0-3af043d076.patch"
@@ -8635,11 +8666,12 @@ __metadata:
     pdf-parse: "npm:^2.4.5"
     pinia: "npm:^3.0.4"
     pinia-plugin-persistedstate: "npm:^4.7.1"
+    playwright: "npm:^1.61.1"
     png2icons: "npm:^2.0.1"
-    postcss: "npm:^8.5.16"
-    prettier: "npm:^3.9.4"
+    postcss: "npm:^8.5.19"
+    prettier: "npm:^3.9.5"
     pretty-bytes: "npm:^7.1.0"
-    quasar: "npm:^2.21.2"
+    quasar: "npm:^2.21.3"
     rollup-plugin-visualizer: "npm:^7.0.1"
     sharp: "npm:^0.35.3"
     type-fest: "npm:^5.8.0"
@@ -9873,6 +9905,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"playwright-core@npm:1.61.1":
+  version: 1.61.1
+  resolution: "playwright-core@npm:1.61.1"
+  bin:
+    playwright-core: cli.js
+  checksum: 10c0/c28896ba82a602182e240ed4f9c467fb0dd9cb57d510f8aba9f25183fe1cde3a0105725a29baffa4157fe885bbb11e228032a2aad0424111584fde45303f07bd
+  languageName: node
+  linkType: hard
+
+"playwright@npm:^1.61.1":
+  version: 1.61.1
+  resolution: "playwright@npm:1.61.1"
+  dependencies:
+    fsevents: "npm:2.3.2"
+    playwright-core: "npm:1.61.1"
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    playwright: cli.js
+  checksum: 10c0/cea1bc4d2a64ec3ef683891606774029da7b8a8036ed98332565cec2f8e89549ca1fab9a89fbfba4e08e27e0d7e7d148031e965af66d5ff97bb3c34058cfcad0
+  languageName: node
+  linkType: hard
+
 "please-upgrade-node@npm:^3.2.0":
   version: 3.2.0
   resolution: "please-upgrade-node@npm:3.2.0"
@@ -9948,6 +10004,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"postcss@npm:^8.5.19":
+  version: 8.5.19
+  resolution: "postcss@npm:8.5.19"
+  dependencies:
+    nanoid: "npm:^3.3.12"
+    picocolors: "npm:^1.1.1"
+    source-map-js: "npm:^1.2.1"
+  checksum: 10c0/302af9e4dfa8cce4f43af1798576b3a77ab7b23abac5522328c6c7a830d49b31281cba9d6071e478e6970a05ef82346d1570b8fbffae912f26a4f1a1a07f0a44
+  languageName: node
+  linkType: hard
+
 "powershell-utils@npm:^0.1.0":
   version: 0.1.0
   resolution: "powershell-utils@npm:0.1.0"
@@ -9971,12 +10038,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.9.4":
-  version: 3.9.4
-  resolution: "prettier@npm:3.9.4"
+"prettier@npm:^3.9.5":
+  version: 3.9.5
+  resolution: "prettier@npm:3.9.5"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10c0/dc6ec13d692745c6b7e7bf39beda9eb1b3b76c619118319bce393928c392264b1273337c75f80499695e165affefc7b3a9d2ebb18983af0a8f4dfbb2f45f6ff3
+  checksum: 10c0/0349dd9e6d8010965de6f69e6b6ee2484b8caf78c66675afced6c75ad60ff24c3a2a4f41153fb8adeaee4d8f539641b48cebc71d283cec4d146e9962126c5ceb
   languageName: node
   linkType: hard
 
@@ -10122,10 +10189,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"quasar@npm:^2.21.2":
-  version: 2.21.2
-  resolution: "quasar@npm:2.21.2"
-  checksum: 10c0/e151c0c1ef99969ffbdb6027dcdbb4cfc7cf0714906f48fbf9bef399df09af4b1de713f6cd9baf3fd8ddd03fa5be29974f8ec2bf0cdaf53b1a79ea895a0f9315
+"quasar@npm:^2.21.3":
+  version: 2.21.3
+  resolution: "quasar@npm:2.21.3"
+  checksum: 10c0/d3b4728729b3af3b46b1507b19187265fb945499e1c52a0c666528e07fed2887abd79423ff4fe77d3c7c05b764d3e88d3357e69508c269798ff316c0393f8c3a
   languageName: node
   linkType: hard
 

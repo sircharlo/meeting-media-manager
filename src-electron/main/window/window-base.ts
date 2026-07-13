@@ -7,6 +7,7 @@ import {
 } from 'electron';
 import {
   IS_BETA,
+  IS_DEMO_MODE,
   IS_DEV,
   PLATFORM,
   PRODUCT_NAME,
@@ -102,7 +103,9 @@ export function createWindow(
   }
 
   // Load the app
-  let page = 'initial-congregation-selector';
+  let page = IS_DEMO_MODE
+    ? 'media-calendar/initial'
+    : 'initial-congregation-selector';
   switch (name) {
     case 'media':
       page = 'media-player';

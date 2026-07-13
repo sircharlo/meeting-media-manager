@@ -100,6 +100,7 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   isArchitectureMismatch: async () => false,
+  isDemoMode: false,
   isDownloadComplete: async () => null,
   isDownloadErrorExpected: async () => false,
   isUsablePath: async function (path) {
