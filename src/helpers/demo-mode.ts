@@ -22,9 +22,10 @@ const DEMO_SECTION_ITEM_TITLES: Partial<Record<string, string[]>> = {
   tgw: ['Sample video illustration', 'Sample discussion point'],
 };
 
-const getTodayWeekDay = (): SettingsValues['mwDay'] => {
+const getWeekDay = (offset = 0): SettingsValues['mwDay'] => {
   const day = new Date().getDay();
-  return String(day === 0 ? 6 : day - 1) as SettingsValues['mwDay'];
+  const isoDay = day === 0 ? 6 : day - 1; // Monday=0 .. Sunday=6
+  return String((isoDay + offset) % 7) as SettingsValues['mwDay'];
 };
 
 const buildDemoDateInfo = (): DateInfo => {
@@ -76,8 +77,12 @@ export const seedDemoData = () => {
 
   settings.congregationName = 'Sample Congregation';
   settings.congregationNameModified = true;
-  settings.mwDay = getTodayWeekDay();
+  // mwDay is today, so the demo date is treated as a real meeting day; weDay
+  // just needs a value to satisfy required-settings validation.
+  settings.mwDay = getWeekDay();
   settings.mwStartTime = '19:00' as SettingsValues['mwStartTime'];
+  settings.weDay = getWeekDay(3);
+  settings.weStartTime = '10:00' as SettingsValues['weStartTime'];
 
   currentStateStore.currentCongregation = demoId;
   jwStore.lookupPeriod[demoId] = [buildDemoDateInfo()];

@@ -110,6 +110,14 @@ export const fetchRaw = async (
   init?: RequestInit,
   cache = false,
 ) => {
+  // Demo mode must never reach the network (no real congregation, no real
+  // JW.org content) — fail the same way a real offline device would, so the
+  // app's existing offline handling takes over rather than needing bespoke
+  // handling at every call site.
+  if (globalThis.electronApi?.isDemoMode) {
+    throw new TypeError('fetch failed', { cause: { code: 'ENOTFOUND' } });
+  }
+
   const method = init?.method?.toUpperCase() || 'GET';
   const isCacheable = cache && (method === 'GET' || method === 'HEAD');
   const cacheKey = `${method}:${url}:${JSON.stringify(init?.headers || {})}`;

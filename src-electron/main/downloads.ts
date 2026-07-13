@@ -4,6 +4,7 @@ import { getCountriesForTimezone } from 'countries-and-timezones';
 import { app, type BrowserWindow } from 'electron';
 import { mkdir, stat } from 'node:fs/promises';
 import { setTimeout as delay } from 'node:timers/promises';
+import { IS_DEMO_MODE } from 'src-electron/constants';
 import { getFallbackDir } from 'src-electron/main/resilient-storage';
 import { quitStatus } from 'src-electron/main/session';
 import {
@@ -623,7 +624,7 @@ export async function downloadFile(
   destFilename?: string,
   lowPriority = false,
 ): Promise<DownloadFileResult | null> {
-  if (!getDownloadWindow() || !url || !saveDir) return null;
+  if (IS_DEMO_MODE || !getDownloadWindow() || !url || !saveDir) return null;
   try {
     // Allow queue processing again after a previous cancelAll cycle
     cancelAll = false;
