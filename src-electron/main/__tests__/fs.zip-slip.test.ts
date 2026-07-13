@@ -204,3 +204,120 @@ describe('Zip Slip protection', () => {
     expect(createWriteStreamMock).not.toHaveBeenCalled();
   });
 });
+
+describe('EEXIST directory race tolerance', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    statMock.mockResolvedValue({ size: 1024 });
+  });
+
+  const makeEexistError = (path: string) => {
+    const error = new Error(`EEXIST: file already exists, mkdir '${path}'`);
+    (error as Error & { code?: string }).code = 'EEXIST';
+    return error;
+  };
+
+  it('tolerates a spurious EEXIST for a directory entry when the directory already exists', async () => {
+    const dirEntry = {
+      compressedSize: 0,
+      fileName: 'sub/',
+      uncompressedSize: 0,
+    };
+    const zipfile = {
+      close: vi.fn(),
+      eachEntry: async function* () {
+        yield dirEntry;
+      },
+    };
+    yauzlOpenMock.mockResolvedValue(zipfile);
+
+    ensureDirMock.mockRejectedValueOnce(makeEexistError('/tmp/out/sub'));
+    statMock.mockImplementation((path: string) =>
+      path === '/tmp/out/sub'
+        ? Promise.resolve({ isDirectory: () => true })
+        : Promise.resolve({ size: 1024 }),
+    );
+
+    const { unzipFile } = await import('../fs');
+
+    await expect(unzipFile('/tmp/safe.jwpub', '/tmp/out')).resolves.toEqual([]);
+
+    expect(ensureDirMock).toHaveBeenCalledWith('/tmp/out/sub');
+    expect(ensureDirMock).toHaveBeenCalledTimes(1);
+    expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
+
+  it('tolerates a spurious EEXIST for a file entry parent directory (matches the Windows unzip crash)', async () => {
+    const fileEntry = {
+      compressedSize: 5,
+      fileName: 'sub/file.txt',
+      uncompressedSize: 5,
+    };
+    const zipfile = {
+      close: vi.fn(),
+      eachEntry: async function* () {
+        yield fileEntry;
+      },
+      openReadStreamPromise: vi.fn().mockResolvedValue(createFakeStream('ok')),
+    };
+    yauzlOpenMock.mockResolvedValue(zipfile);
+
+    ensureDirMock.mockRejectedValueOnce(makeEexistError('/tmp/out/sub'));
+    statMock.mockImplementation((path: string) =>
+      path === '/tmp/out/sub'
+        ? Promise.resolve({ isDirectory: () => true })
+        : Promise.resolve({ size: 1024 }),
+    );
+
+    const { unzipFile } = await import('../fs');
+
+    await expect(unzipFile('/tmp/race.jwpub', '/tmp/out')).resolves.toEqual([
+      { path: 'sub/file.txt' },
+    ]);
+
+    expect(createWriteStreamMock).toHaveBeenCalledWith('/tmp/out/sub/file.txt');
+    expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
+
+  it('still throws when EEXIST is caused by a real file blocking directory creation', async () => {
+    const dirEntry = {
+      compressedSize: 0,
+      fileName: 'sub/',
+      uncompressedSize: 0,
+    };
+    const zipfile = {
+      close: vi.fn(),
+      eachEntry: async function* () {
+        yield dirEntry;
+      },
+    };
+    yauzlOpenMock.mockResolvedValue(zipfile);
+
+    const eexistError = makeEexistError('/tmp/out/sub');
+    ensureDirMock.mockRejectedValue(eexistError);
+    statMock.mockImplementation((path: string) =>
+      path === '/tmp/out/sub'
+        ? Promise.resolve({ isDirectory: () => false })
+        : Promise.resolve({ size: 1024 }),
+    );
+
+    const { unzipFile } = await import('../fs');
+
+    await expect(unzipFile('/tmp/blocked.jwpub', '/tmp/out')).rejects.toBe(
+      eexistError,
+    );
+
+    // createDirectory retries up to 3 attempts regardless of error code
+    expect(ensureDirMock).toHaveBeenCalledTimes(3);
+    expect(captureElectronErrorMock).toHaveBeenCalledWith(
+      eexistError,
+      expect.objectContaining({
+        contexts: expect.objectContaining({
+          fn: expect.objectContaining({
+            name: 'unzipFile ensureDir (dir entry)',
+          }),
+        }),
+      }),
+    );
+  });
+});

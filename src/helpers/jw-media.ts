@@ -916,9 +916,11 @@ const extractContentsFromJwpub = async (
       error,
     );
     warnCloudJwpubUnavailable(jwpubPath, error);
+    if (isPermissionError(error)) invalidateCustomCachePath(error);
     // If we can't read the entries to even start extraction, the file might be locked, damaged, or still downloading from cloud storage.
-    // Cloud-managed placeholders should not be deleted because the provider may hydrate them after this attempt.
-    if (!isCloudStorageReadError(error)) {
+    // Cloud-managed placeholders should not be deleted because the provider may hydrate them after this attempt,
+    // and permission errors mean the folder is inaccessible right now, not that the file itself is corrupt.
+    if (!isCloudStorageReadError(error) && !isPermissionError(error)) {
       await remove(jwpubPath).catch(() => undefined);
     }
     throw error;
@@ -955,9 +957,12 @@ const extractContentsFromJwpub = async (
       });
     } catch (error) {
       warnCloudJwpubUnavailable(jwpubPath, error);
+      if (isPermissionError(error)) invalidateCustomCachePath(error);
       // If unzipping the JWPUB fails, it's likely corrupted.
-      // Remove it to force a re-download on next attempt unless cloud storage may still be hydrating the file.
-      if (isCloudStorageReadError(error)) throw error;
+      // Remove it to force a re-download on next attempt unless cloud storage may still
+      // be hydrating the file, or the folder is just temporarily inaccessible.
+      if (isCloudStorageReadError(error) || isPermissionError(error))
+        throw error;
 
       await remove(jwpubPath).catch((removeError) =>
         errorCatcher(removeError, {
@@ -1023,6 +1028,12 @@ const extractDbFromContents = async (outputPath: string, jwpubPath: string) => {
       const dbFileAfterUnzip = await findDb(outputPath);
       if (!dbFileAfterUnzip) throw new Error('DB still not found after unzip');
     } catch (error) {
+      if (isPermissionError(error)) invalidateCustomCachePath(error);
+      // Cloud-managed placeholders and permission errors mean the files are
+      // temporarily inaccessible, not that they're corrupt — don't delete them.
+      if (isCloudStorageReadError(error) || isPermissionError(error))
+        throw error;
+
       // If unzipping contents fails, it might be corrupted.
       // Remove it so it can be re-extracted next time.
       await remove(contentsPath).catch((removeError) =>
