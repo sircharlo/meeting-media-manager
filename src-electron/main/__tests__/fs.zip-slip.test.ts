@@ -7,7 +7,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const mkdirMock = vi.fn();
 const readFileMock = vi.fn();
 const rmMock = vi.fn();
-const statMock = vi.fn(() => Promise.resolve({ size: 1024 }));
+const statMock = vi.fn((path: string) => {
+  void path;
+  return Promise.resolve({ size: 1024 } as {
+    isDirectory?: () => boolean;
+    size?: number;
+  });
+});
 const writeFileMock = vi.fn();
 const delayMock = vi.fn(() => Promise.resolve());
 const captureElectronErrorMock = vi.fn();
