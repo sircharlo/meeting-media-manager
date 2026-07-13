@@ -733,7 +733,7 @@
             <q-btn
               v-if="mediaPlaying.action !== '' || mediaPlaying.action === ''"
               ref="stopButton"
-              class="q-ml-sm"
+              :class="{ 'q-ml-sm': stopButtonHasPrecedingButton }"
               color="negative"
               :icon="
                 !localFile && mediaPlaying.currentPosition === 0
@@ -2169,6 +2169,19 @@ const playButtonTooltip = computed(() => {
     return t('media-item-missing-explain');
   }
   return '';
+});
+
+const stopButtonHasPrecedingButton = computed(() => {
+  return (
+    (isImage(mediaPlaying.value.url) &&
+      obsConnectionState.value === 'connected') ||
+    mediaPlaying.value.action === 'pause' ||
+    !!(
+      localFile.value &&
+      props.media.duration &&
+      (mediaPlaying.value.action === 'play' || !mediaPlaying.value.action)
+    )
+  );
 });
 
 const mediaPan = ref<{ x: number; y: number }>({
