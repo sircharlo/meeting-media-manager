@@ -42,7 +42,13 @@
             <span v-html="sanitize(element.extractCaption || '')"></span>
             <q-badge
               class="q-ml-sm bg-primary-semi-transparent"
-              :label="`${element.children?.length} ${t('items')}`"
+              :label="
+                t(
+                  'items',
+                  { count: element.children?.length ?? 0 },
+                  element.children?.length ?? 0,
+                )
+              "
               rounded
               text-color="white"
             />

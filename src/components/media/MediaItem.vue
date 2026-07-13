@@ -676,7 +676,11 @@
               push
               rounded
               @click="markersPanelOpen = !markersPanelOpen"
-            />
+            >
+              <q-tooltip :delay="500">
+                {{ t('choose-a-clip') }}
+              </q-tooltip>
+            </q-btn>
           </template>
         </div>
         <template v-else>

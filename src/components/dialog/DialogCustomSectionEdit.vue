@@ -51,6 +51,7 @@
               <q-item-section side>
                 <div class="row">
                   <q-btn flat icon="mmm-palette" round>
+                    <q-tooltip :delay="500">{{ t('change-color') }}</q-tooltip>
                     <q-popup-proxy
                       cover
                       transition-hide="scale"
@@ -76,7 +77,9 @@
                     icon="mmm-delete"
                     round
                     @click="handleDeleteSection(element.config?.uniqueId)"
-                  />
+                  >
+                    <q-tooltip :delay="500">{{ t('delete') }}</q-tooltip>
+                  </q-btn>
                 </div>
               </q-item-section>
             </q-item>

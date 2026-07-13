@@ -17,7 +17,14 @@
             round
             size="sm"
             @click="startSongUpdate()"
-          />
+          >
+            <q-tooltip :delay="500">
+              <div>{{ t('click-to-refresh-list') }}</div>
+              <div v-if="songsUpdated">
+                {{ t('list-last-updated', { date: songsUpdated }) }}
+              </div>
+            </q-tooltip>
+          </q-btn>
         </div>
       </div>
       <div class="row q-px-md q-pt-md">
@@ -163,6 +170,13 @@ const resetDialogState = () => {
   loading.value = false;
   isProcessing.value = false;
 };
+
+const songsUpdated = computed(() => {
+  const lang = currentSettings.value?.lang;
+  const updated = lang ? jwStore.jwSongs[lang]?.updated : null;
+  if (!updated || new Date(updated).getTime() === 0) return undefined;
+  return new Date(updated).toLocaleString();
+});
 
 const filteredSongs = computed((): MediaLink[] => {
   if (filter.value) {

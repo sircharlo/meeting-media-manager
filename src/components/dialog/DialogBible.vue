@@ -23,7 +23,11 @@
               loading = true;
               fetchBibleMedia(true);
             "
-          />
+          >
+            <q-tooltip :delay="500">
+              {{ t('click-to-refresh-list') }}
+            </q-tooltip>
+          </q-btn>
         </div>
       </div>
       <div class="row q-px-md q-py-md">

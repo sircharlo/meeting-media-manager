@@ -59,7 +59,11 @@
                     round
                     size="xs"
                     @click.stop="navigateToDate(dateKey)"
-                  />
+                  >
+                    <q-tooltip :delay="500">
+                      {{ t('go-to-this-date') }}
+                    </q-tooltip>
+                  </q-btn>
                 </div>
               </template>
 
@@ -254,7 +258,7 @@ function statusCaption(dateKey: string, group: typeof filteredDownloads.value) {
   if (loading > 0) return t('loading');
   if (error > 0) return `${t('failed')} (${error})`;
   if (complete === total) return t('completed');
-  return `${total} ${t('items')}`;
+  return t('items', { count: total }, total);
 }
 
 const WARNING_SHOULD_BECOME_AVAILABLE = `${t('errorDownloadingMeetingMedia')}. ${t('willProbablyBeAvailableLater')}.`;

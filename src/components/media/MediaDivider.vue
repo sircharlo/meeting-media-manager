@@ -38,7 +38,9 @@
             color: divider.textColor,
           }"
           @click="startEdit"
-        />
+        >
+          <q-tooltip :delay="500">{{ t('edit') }}</q-tooltip>
+        </q-btn>
         <q-btn
           v-if="isEditing"
           flat
@@ -47,7 +49,9 @@
           size="sm"
           :style="{ color: divider.textColor }"
           @click="saveTitle"
-        />
+        >
+          <q-tooltip :delay="500">{{ t('save') }}</q-tooltip>
+        </q-btn>
         <q-btn
           v-if="isEditing"
           flat
@@ -56,6 +60,7 @@
           size="sm"
           :style="{ color: divider.textColor }"
         >
+          <q-tooltip :delay="500">{{ t('change-color') }}</q-tooltip>
           <q-popup-proxy cover transition-hide="scale" transition-show="scale">
             <q-color
               v-model="currentBgColor"
@@ -74,7 +79,9 @@
           size="sm"
           :style="{ color: divider.textColor }"
           @click="deleteDivider"
-        />
+        >
+          <q-tooltip :delay="500">{{ t('delete') }}</q-tooltip>
+        </q-btn>
       </div>
     </q-item-section>
   </q-item>
@@ -90,6 +97,9 @@ import {
 } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed, nextTick, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps<{
   divider: MediaDivider;
