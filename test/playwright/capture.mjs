@@ -6,6 +6,16 @@ const ELECTRON_MAIN_PATH = fileURLToPath(
   new URL('../../dist/electron/UnPackaged/electron-main.js', import.meta.url),
 );
 
+// The app opens more than one BrowserWindow at startup (a hidden media
+// presentation window, sometimes a timer window). electron.launch()'s
+// firstWindow() just returns whichever one finishes loading first, which is
+// racy and can hand back the hidden presentation window instead of the main
+// one — that window is never shown (see src-electron/main/window/window-base.ts,
+// `if (name === 'media') return;` skips its .show()), so it never paints and
+// every wait against it just times out. Identify the main window by URL
+// instead of trusting "first".
+const NON_MAIN_WINDOW_URL_PATTERN = /#\/(?:media-player|timer)\b/;
+
 /** Screenshots just the app's content (`#q-app`), excluding OS window chrome. */
 export async function captureScreenshot(window, outputPath) {
   await window.locator('#q-app').screenshot({ path: outputPath });
@@ -37,7 +47,7 @@ export async function launchDemoApp() {
   app.process().stdout?.on('data', (d) => process.stdout.write(`[main] ${d}`));
   app.process().stderr?.on('data', (d) => process.stderr.write(`[main] ${d}`));
 
-  const window = await app.firstWindow();
+  const window = await findMainWindow(app);
   window.on('console', (msg) =>
     console.log(`[renderer:${msg.type()}] ${msg.text()}`),
   );
@@ -45,7 +55,6 @@ export async function launchDemoApp() {
     console.error('[renderer:pageerror]', error),
   );
 
-  await window.waitForLoadState('domcontentloaded');
   return { app, window };
 }
 
@@ -101,4 +110,45 @@ export async function stopProfilingAndSave(client, outputPath) {
   const { profile } = await client.send('Profiler.stop');
   const { writeFile } = await import('node:fs/promises');
   await writeFile(outputPath, JSON.stringify(profile));
+}
+
+async function findMainWindow(app, timeoutMs = 30000) {
+  for (const page of app.windows()) {
+    if (await isMainWindow(page)) return page;
+  }
+
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      app.off('window', onWindow);
+      reject(
+        new Error(`Timed out after ${timeoutMs}ms waiting for the main window`),
+      );
+    }, timeoutMs);
+
+    function onWindow(page) {
+      isMainWindow(page).then((matched) => {
+        if (!matched) return;
+        clearTimeout(timer);
+        app.off('window', onWindow);
+        resolve(page);
+      });
+    }
+
+    app.on('window', onWindow);
+  });
+}
+
+async function isMainWindow(page) {
+  await page.waitForLoadState('domcontentloaded').catch(() => undefined);
+  // Give Vue Router a moment to resolve the initial hash route after load.
+  for (let attempt = 0; attempt < 20; attempt++) {
+    const url = page.url();
+    if (NON_MAIN_WINDOW_URL_PATTERN.test(url)) return false;
+    if (url.startsWith('https://')) return false; // the "present website" window
+    if (url.includes('#/')) return true; // routed somewhere, and not excluded above
+    await new Promise((resolve) => {
+      setTimeout(resolve, 100);
+    });
+  }
+  return false;
 }
