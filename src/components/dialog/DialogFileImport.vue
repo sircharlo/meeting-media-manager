@@ -33,7 +33,25 @@
               @click="handleJwpubImport(jwpubImportDocument)"
             >
               <q-item-section class="no-wrap">
-                {{ jwpubImportDocument.Title }}
+                <q-item-label>{{ jwpubImportDocument.Title }}</q-item-label>
+                <q-item-label
+                  v-if="
+                    formatPageLabel(
+                      t,
+                      jwpubImportDocument.FirstPageNumber,
+                      jwpubImportDocument.LastPageNumber,
+                    )
+                  "
+                  caption
+                >
+                  {{
+                    formatPageLabel(
+                      t,
+                      jwpubImportDocument.FirstPageNumber,
+                      jwpubImportDocument.LastPageNumber,
+                    )
+                  }}
+                </q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
@@ -151,6 +169,7 @@ import {
 } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { log } from 'src/shared/vanilla';
+import { formatPageLabel } from 'src/utils/general';
 import { computed, onUnmounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 

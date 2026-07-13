@@ -243,6 +243,31 @@ export const decodeEntities = (input?: string) => {
 };
 
 /**
+ * Formats a document's page number(s) for display (e.g. in a document
+ * listing), handling documents with no page info, a single page, or a
+ * page range.
+ * @param t The i18n translate function.
+ * @param firstPageNumber The document's first page number, if any.
+ * @param lastPageNumber The document's last page number, if any.
+ * @returns The formatted page label, or an empty string if no page info is available.
+ * @example
+ * formatPageLabel(t, 32, 32) // 'Page 32'
+ * formatPageLabel(t, 2, 7) // 'Pages 2-7'
+ * formatPageLabel(t, 0, 0) // ''
+ */
+export const formatPageLabel = (
+  t: (key: string, params: Record<string, unknown>) => string,
+  firstPageNumber?: null | number,
+  lastPageNumber?: null | number,
+) => {
+  if (!firstPageNumber) return '';
+  if (!lastPageNumber || lastPageNumber === firstPageNumber) {
+    return t('page-number', { page: firstPageNumber });
+  }
+  return t('page-range', { first: firstPageNumber, last: lastPageNumber });
+};
+
+/**
  * Recursively converts an observed object to its raw form.
  * @param observed The observed object to convert.
  * @returns The raw object.

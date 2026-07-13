@@ -105,6 +105,34 @@ export const tableExists = (db: string, tableName: string) => {
   }
 };
 
+/**
+ * Filters a list of column names down to those that actually exist on a
+ * table, so optional columns (e.g. ones absent from older publication
+ * schemas) can be added to a SELECT without risking a query failure.
+ * @param db Database path.
+ * @param tableName Table to inspect.
+ * @param columns Candidate column names.
+ * @returns The subset of `columns` that exist on `tableName`.
+ */
+export const getExistingColumns = (
+  db: string,
+  tableName: string,
+  columns: string[],
+) => {
+  try {
+    if (!db || !tableName) return [];
+    const existing = new Set(
+      executeQuery<{ name: string }>(db, `PRAGMA table_info(${tableName})`).map(
+        (column) => column.name,
+      ),
+    );
+    return columns.filter((column) => existing.has(column));
+  } catch (error) {
+    errorCatcher(error);
+    return [];
+  }
+};
+
 const publicationTitleColumns = [
   'DisplayTitle',
   'ShortTitle',

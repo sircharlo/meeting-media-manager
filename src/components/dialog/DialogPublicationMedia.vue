@@ -345,6 +345,24 @@
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>{{ doc.Title }}</q-item-label>
+                  <q-item-label
+                    v-if="
+                      formatPageLabel(
+                        t,
+                        doc.FirstPageNumber,
+                        doc.LastPageNumber,
+                      )
+                    "
+                    caption
+                  >
+                    {{
+                      formatPageLabel(
+                        t,
+                        doc.FirstPageNumber,
+                        doc.LastPageNumber,
+                      )
+                    }}
+                  </q-item-label>
                 </q-item-section>
                 <q-item-section v-if="!docHasMedia.has(doc.DocumentId)" side>
                   <q-icon color="grey" name="mmm-info">
@@ -496,9 +514,9 @@ import {
   getPublicationDirectoryContents,
   getTempPath,
 } from 'src/utils/fs';
-import { decodeEntities } from 'src/utils/general';
+import { decodeEntities, formatPageLabel } from 'src/utils/general';
 import { findBestResolutions } from 'src/utils/jw';
-import { tableExists } from 'src/utils/sqlite';
+import { getExistingColumns, tableExists } from 'src/utils/sqlite';
 import { formatTime } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -883,6 +901,18 @@ async function fetchJwtToken(): Promise<boolean> {
   }
 }
 
+function getPublicationDocuments(dbPath: string): DocumentItem[] {
+  const pageColumns = getExistingColumns(dbPath, 'Document', [
+    'FirstPageNumber',
+    'LastPageNumber',
+  ]);
+  const columns = ['DocumentId', 'Title', ...pageColumns].join(', ');
+  return executeQuery<DocumentItem>(
+    dbPath,
+    `SELECT ${columns} FROM Document WHERE Type <> 1 ORDER BY DocumentId`,
+  );
+}
+
 function goBack() {
   switch (step.value) {
     case 'article': {
@@ -972,11 +1002,7 @@ async function handleJwpubResult(
   if (!dbPath) return false;
 
   selection.dbPath = dbPath;
-  const docs = executeQuery<DocumentItem>(
-    dbPath,
-    `SELECT DocumentId, Title FROM Document WHERE Type <> 1 ORDER BY DocumentId`,
-  );
-  documents.value = docs;
+  documents.value = getPublicationDocuments(dbPath);
   await buildDocumentHasMedia(dbPath);
   await buildDocumentPreviews(dbPath);
   step.value = 'article';
@@ -1518,11 +1544,7 @@ async function selectMonth(m: number) {
     }
     selection.dbPath = db;
     // Load articles (documents)
-    const docs = executeQuery<DocumentItem>(
-      db,
-      `SELECT DocumentId, Title FROM Document WHERE Type <> 1 ORDER BY DocumentId`,
-    );
-    documents.value = docs;
+    documents.value = getPublicationDocuments(db);
     await buildDocumentHasMedia(db);
     await buildDocumentPreviews(db);
     step.value = 'article';
@@ -1556,11 +1578,7 @@ async function selectPublication(choice: FilterChoice) {
       return;
     }
     selection.dbPath = db;
-    const docs = executeQuery<DocumentItem>(
-      db,
-      `SELECT DocumentId, Title FROM Document WHERE Type <> 1 ORDER BY DocumentId`,
-    );
-    documents.value = docs;
+    documents.value = getPublicationDocuments(db);
     await buildDocumentHasMedia(db);
     await buildDocumentPreviews(db);
     step.value = 'article';

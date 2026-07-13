@@ -272,6 +272,7 @@ import {
 import { sendObsSceneEvent } from 'src/utils/obs';
 import {
   findDb,
+  getExistingColumns,
   getPublicationTitleFromDb,
   tableExists,
 } from 'src/utils/sqlite';
@@ -1433,9 +1434,14 @@ const loadJwpubImportDocuments = (db: string, filepath: string) => {
   const mmTable = tableExists(db, 'DocumentMultimedia')
     ? 'DocumentMultimedia'
     : 'Multimedia';
+  const pageColumns = getExistingColumns(db, 'Document', [
+    'FirstPageNumber',
+    'LastPageNumber',
+  ]).map((column) => `Document.${column}`);
+  const columns = ['Document.DocumentId', 'Title', ...pageColumns].join(', ');
   jwpubImportDocuments.value = executeQuery<DocumentItem>(
     db,
-    `SELECT DISTINCT Document.DocumentId, Title FROM Document JOIN ${mmTable} ON Document.DocumentId = ${mmTable}.DocumentId;`,
+    `SELECT DISTINCT ${columns} FROM Document JOIN ${mmTable} ON Document.DocumentId = ${mmTable}.DocumentId;`,
   );
 };
 

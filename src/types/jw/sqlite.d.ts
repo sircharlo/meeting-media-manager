@@ -2,6 +2,8 @@ import type { JwLangCode } from './lang';
 export interface DocumentItem {
   DocumentId: number;
   FeatureTitle: string;
+  FirstPageNumber?: null | number;
+  LastPageNumber?: null | number;
   Title: string;
 }
 
