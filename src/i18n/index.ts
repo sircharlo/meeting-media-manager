@@ -40,6 +40,9 @@ import hu from './hu.json' with { type: 'json' };
 // 95.4% translated as of 2026-07-13
 import et from './et.json' with { type: 'json' };
 
+// 83.0% translated as of 2026-07-13
+import it from './it.json' with { type: 'json' };
+
 // 66.5% translated as of 2026-07-13
 import ko from './ko.json' with { type: 'json' };
 
@@ -56,6 +59,7 @@ export default {
   et,
   fr,
   hu,
+  it,
   ko,
   nl,
   pt,
