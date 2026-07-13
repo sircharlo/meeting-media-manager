@@ -1,10 +1,66 @@
+import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { _electron as electron } from 'playwright';
+import sharp from 'sharp';
 
 const ELECTRON_MAIN_PATH = fileURLToPath(
   new URL('../../dist/electron/UnPackaged/electron-main.js', import.meta.url),
 );
+
+// macOS-screenshot-style presentation: rounded corners + a soft drop shadow
+// on transparent padding, so the README preview doesn't look like a bare
+// rectangle floating in the page.
+const SHADOW_PADDING = 48;
+const SHADOW_RADIUS = 14;
+const SHADOW_BLUR = 24;
+const SHADOW_OFFSET_Y = 12;
+
+/** Rounds an image's corners and composites it onto a padded, drop-shadowed transparent canvas. */
+async function addDropShadow(buffer) {
+  const { height, width } = await sharp(buffer).metadata();
+
+  const roundedMask = Buffer.from(
+    `<svg width="${width}" height="${height}"><rect width="${width}" height="${height}" rx="${SHADOW_RADIUS}" ry="${SHADOW_RADIUS}"/></svg>`,
+  );
+  const rounded = await sharp(buffer)
+    .composite([{ blend: 'dest-in', input: roundedMask }])
+    .png()
+    .toBuffer();
+
+  const canvasWidth = width + SHADOW_PADDING * 2;
+  const canvasHeight = height + SHADOW_PADDING * 2;
+  const shadow = Buffer.from(
+    `<svg width="${canvasWidth}" height="${canvasHeight}">
+      <defs>
+        <filter id="blur" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="${SHADOW_BLUR}" />
+        </filter>
+      </defs>
+      <rect
+        x="${SHADOW_PADDING}" y="${SHADOW_PADDING + SHADOW_OFFSET_Y}"
+        width="${width}" height="${height}"
+        rx="${SHADOW_RADIUS}" ry="${SHADOW_RADIUS}"
+        fill="black" fill-opacity="0.35" filter="url(#blur)"
+      />
+    </svg>`,
+  );
+
+  return sharp({
+    create: {
+      background: { alpha: 0, b: 0, g: 0, r: 0 },
+      channels: 4,
+      height: canvasHeight,
+      width: canvasWidth,
+    },
+  })
+    .composite([
+      { input: shadow, left: 0, top: 0 },
+      { input: rounded, left: SHADOW_PADDING, top: SHADOW_PADDING },
+    ])
+    .png()
+    .toBuffer();
+}
 
 // The app opens more than one BrowserWindow at startup (a hidden media
 // presentation window, sometimes a timer window). electron.launch()'s
@@ -16,9 +72,14 @@ const ELECTRON_MAIN_PATH = fileURLToPath(
 // instead of trusting "first".
 const NON_MAIN_WINDOW_URL_PATTERN = /#\/(?:media-player|timer)\b/;
 
-/** Screenshots just the app's content (`#q-app`), excluding OS window chrome. */
+/**
+ * Screenshots just the app's content (`#q-app`), excluding OS window chrome,
+ * then presents it with rounded corners and a soft drop shadow.
+ */
 export async function captureScreenshot(window, outputPath) {
-  await window.locator('#q-app').screenshot({ path: outputPath });
+  const raw = await window.locator('#q-app').screenshot();
+  const shadowed = await addDropShadow(raw);
+  await writeFile(outputPath, shadowed);
 }
 
 /**

@@ -86,3 +86,4 @@ stats.html
 .yalc
 yalc.lock
 __pycache__/
+test/playwright/debug-output/*

@@ -95,14 +95,7 @@ import { updatesDisabled } from 'src/utils/fs';
 import { getPreviousVersion, isVersionWithinBounds } from 'src/utils/general';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
-import {
-  computed,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  watch,
-  watchEffect,
-} from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const $q = useQuasar();
@@ -430,12 +423,25 @@ watch(
   },
 );
 
-watchEffect(() => {
-  if (!currentStateStore.online) return;
-  loadLatestVersion();
-  loadAnnouncements();
-  getUpdatesEnabled();
-});
+// A plain watchEffect here is a trap: loadAnnouncements()/loadLatestVersion()
+// each read their guard ref (announcements.value / latestVersion.value)
+// synchronously before their first await, so watchEffect's auto-tracking
+// picks them up as dependencies too. When the fetch keeps failing (e.g. no
+// network, or demo mode's fetchRaw() rejects instantly), the later
+// `announcements.value = []` / `latestVersion.value = ''` write is a *new*
+// value that re-triggers this effect — an infinite reactive loop with no
+// real I/O in between, since demo mode's rejection is synchronous. Watching
+// only `online` explicitly avoids tracking those incidental reads.
+watch(
+  () => currentStateStore.online,
+  (online) => {
+    if (!online) return;
+    loadLatestVersion();
+    loadAnnouncements();
+    getUpdatesEnabled();
+  },
+  { immediate: true },
+);
 
 if (import.meta.env.NEVER) {
   defineExpose({});

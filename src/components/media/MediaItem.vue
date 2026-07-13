@@ -67,6 +67,7 @@
                 <q-img
                   ref="mediaImage"
                   fit="contain"
+                  :no-spinner="isDemoMode"
                   :ratio="16 / 9"
                   spinner-color="white"
                   spinner-size="2em"
@@ -221,6 +222,7 @@
               v-if="!showAudioThumbnailFallback"
               ref="mediaImage"
               fit="contain"
+              :no-spinner="isDemoMode"
               :ratio="16 / 9"
               spinner-color="white"
               spinner-size="2em"
@@ -361,7 +363,8 @@
             v-if="
               (media.source !== 'dynamic' &&
                 !currentSettings?.disableMediaFetching &&
-                fileIsAvailable) ||
+                fileIsAvailable &&
+                !(isDemoMode && !media.tag?.type)) ||
               media.tag?.type
             "
             :class="mediaTagClasses"
@@ -1391,6 +1394,8 @@ const props = defineProps<{
   selectedMediaItems?: string[];
 }>();
 
+const isDemoMode = !!globalThis.electronApi?.isDemoMode;
+
 const repeat = defineModel<boolean | undefined>('repeat', { required: true });
 
 const emit = defineEmits<{
@@ -2157,6 +2162,7 @@ const repeatTooltip = computed(() => {
 
 const playButtonIcon = computed(() => {
   if (isSlideshowLinkedAudio.value) return 'mmm-link';
+  if (isDemoMode) return 'mmm-play';
   return localFile.value ? 'mmm-play' : 'mmm-stream-play';
 });
 
@@ -2428,6 +2434,10 @@ const currentSongIsDuplicated = computed(() => {
 });
 
 const fileIsAvailable = computed(() => {
+  // Demo mode's placeholder items have no real file on disk by design —
+  // treat them as available so the play button and "missing" messaging
+  // don't make a synthetic screenshot look broken.
+  if (isDemoMode) return true;
   return isFileUrl(props.media.fileUrl) && localFile.value;
 });
 

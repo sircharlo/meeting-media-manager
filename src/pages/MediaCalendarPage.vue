@@ -1004,7 +1004,8 @@ const checkCoDate = () => {
   if (
     !currentSettings.value ||
     currentSettings.value?.disableMediaFetching ||
-    route.params?.typeOfLoad !== 'initial'
+    route.params?.typeOfLoad !== 'initial' ||
+    globalThis.electronApi?.isDemoMode
   )
     return;
   if (

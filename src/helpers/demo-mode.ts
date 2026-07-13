@@ -1,4 +1,4 @@
-import type { DateInfo, MediaItem, SettingsValues } from 'src/types';
+import type { DateInfo, MediaItem, SettingsValues, Tag } from 'src/types';
 
 import { createMeetingSections } from 'src/helpers/media-sections';
 import { uuid } from 'src/shared/vanilla';
@@ -13,14 +13,45 @@ const demoThumbnail = (hue: number) =>
     `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="90"><rect width="160" height="90" fill="hsl(${hue},45%,55%)"/></svg>`,
   )}`;
 
-const DEMO_SECTION_ITEM_TITLES: Partial<Record<string, string[]>> = {
-  ayfm: ['Sample field ministry video'],
+interface DemoItemSeed {
+  // Videos get a simulated runtime for the thumbnail-corner overlay; images
+  // don't (real still images never carry a duration).
+  duration?: number;
+  tag?: Tag;
+  title: string;
+}
+
+const DEMO_SECTION_ITEMS: Partial<Record<string, DemoItemSeed[]>> = {
+  ayfm: [{ duration: 143, title: 'Sample AYFM video' }],
   lac: [
-    'Sample congregation Bible study segment',
-    'Sample living as Christians video',
+    {
+      duration: 214,
+      tag: { type: 'song', value: 89 },
+      title: 'Sample LAC song',
+    },
+    {
+      tag: { type: 'paragraph', value: 3 },
+      title: 'Sample LAC photo',
+    },
   ],
-  tgw: ['Sample video illustration', 'Sample discussion point'],
+  tgw: [
+    {
+      duration: 187,
+      tag: { type: 'song', value: 7 },
+      title: 'Sample TGW song',
+    },
+    { title: 'Sample TGW photo' },
+  ],
 };
+
+// Demonstrates a collapsed media group (e.g. a multi-image jwpub extract) —
+// cbs:false + a non-empty children array + extractCaption is what
+// useMediaSection.ts reads to render a group starting collapsed.
+const DEMO_GROUP_CHILD_TITLES = [
+  'Sample TGW photo 1',
+  'Sample TGW photo 2',
+  'Sample TGW photo 3',
+];
 
 const getWeekDay = (offset = 0): SettingsValues['mwDay'] => {
   const day = new Date().getDay();
@@ -28,29 +59,67 @@ const getWeekDay = (offset = 0): SettingsValues['mwDay'] => {
   return String((isoDay + offset) % 7) as SettingsValues['mwDay'];
 };
 
-const buildDemoDateInfo = (): DateInfo => {
+const buildDemoDateInfo = (
+  jwStore: ReturnType<typeof useJwStore>,
+  congId: string,
+): DateInfo => {
   const dateInfo: DateInfo = {
     date: new Date(),
     mediaSections: [],
     status: 'complete',
   };
 
+  // createMeetingSections() calls getMeetingType(), which looks the date up
+  // in jwStore.lookupPeriod[congId] to decide mw vs we — so the entry has to
+  // be registered *before* computing sections, or the lookup finds nothing,
+  // meetingType comes back null, and no sections (and thus no items) are
+  // ever created.
+  jwStore.lookupPeriod[congId] = [dateInfo];
   createMeetingSections(dateInfo);
 
   let hue = 200;
+  const nextThumbnail = () => {
+    hue = (hue + 40) % 360;
+    return demoThumbnail(hue);
+  };
+
   dateInfo.mediaSections.forEach((section) => {
-    const titles = DEMO_SECTION_ITEM_TITLES[section.config.uniqueId];
-    if (!titles) return;
-    section.items = titles.map((title): MediaItem => {
-      hue = (hue + 40) % 360;
+    const items = DEMO_SECTION_ITEMS[section.config.uniqueId];
+    if (!items) return;
+    section.items = items.map(({ duration, tag, title }): MediaItem => {
+      // Images use fileUrl for display (that's the file itself); videos use
+      // thumbnailUrl and get a duration for the runtime overlay.
+      const isImage = duration === undefined;
       return {
-        isImage: true,
-        thumbnailUrl: demoThumbnail(hue),
+        duration,
+        fileUrl: isImage ? nextThumbnail() : undefined,
+        isImage,
+        tag,
+        thumbnailUrl: isImage ? undefined : nextThumbnail(),
         title,
         type: 'media',
         uniqueId: uuid(),
       };
     });
+
+    if (section.config.uniqueId === 'tgw') {
+      section.items.push({
+        cbs: false,
+        children: DEMO_GROUP_CHILD_TITLES.map((title): MediaItem => ({
+          fileUrl: nextThumbnail(),
+          isImage: true,
+          title,
+          type: 'media',
+          uniqueId: uuid(),
+        })),
+        extractCaption: 'Sample TGW photo group',
+        fileUrl: nextThumbnail(),
+        isImage: true,
+        title: 'Sample TGW photo group',
+        type: 'media',
+        uniqueId: uuid(),
+      });
+    }
   });
 
   return dateInfo;
@@ -83,7 +152,9 @@ export const seedDemoData = () => {
   settings.mwStartTime = '19:00' as SettingsValues['mwStartTime'];
   settings.weDay = getWeekDay(3);
   settings.weStartTime = '10:00' as SettingsValues['weStartTime'];
+  // Show the play button on media items in the screenshot; off by default.
+  settings.enableMediaDisplayButton = true;
 
   currentStateStore.currentCongregation = demoId;
-  jwStore.lookupPeriod[demoId] = [buildDemoDateInfo()];
+  buildDemoDateInfo(jwStore, demoId);
 };

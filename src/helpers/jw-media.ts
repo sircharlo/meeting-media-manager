@@ -4511,6 +4511,7 @@ let jwMepsInfoPromise: null | Promise<void> = null;
 
 export const getJwMepsInfo = (): Promise<void> => {
   if (jwMepsInfoPromise) return jwMepsInfoPromise;
+  if (isDemoMode) return Promise.resolve();
 
   jwMepsInfoPromise = (async () => {
     try {
