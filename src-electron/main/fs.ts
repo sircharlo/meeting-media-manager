@@ -200,7 +200,7 @@ const resolveZipEntryPath = (output: string, entryFileName: string) => {
     throw new Error(`Unsafe zip entry path: ${entryFileName}`);
   }
 
-  return fullPath;
+  return fullPath.replace(/\/+$/, '');
 };
 
 const getZipEntryGuardError = (
