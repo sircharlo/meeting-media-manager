@@ -7,7 +7,7 @@ export const targets = [
     outputPath: 'docs/src/assets/m3-preview.png',
     prepare: async (window) => {
       await window
-        .getByText('Sample video illustration')
+        .getByText('Sample TGW song')
         .waitFor({ state: 'visible', timeout: 60000 });
     },
   },
