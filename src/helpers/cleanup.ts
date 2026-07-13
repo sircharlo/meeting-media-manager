@@ -832,6 +832,10 @@ export const cleanCache = async () => {
       cleanDateFolders(settings.mediaAutoExportFolder);
     }
 
+    if (settings?.enableFolderWatcher && settings?.folderToWatch) {
+      cleanDateFolders(settings.folderToWatch);
+    }
+
     return true;
   } catch (error) {
     errorCatcher(error, {
