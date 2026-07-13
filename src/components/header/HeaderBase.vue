@@ -31,7 +31,7 @@
             <q-icon name="mmm-updates-disabled" size="small" />
           </q-badge>
           <q-badge
-            v-else-if="isBetaVersion"
+            v-else-if="isBetaVersion && !isDemoMode"
             color="negative"
             floating
             label="β"
@@ -99,6 +99,7 @@ import HeaderSettings from './HeaderSettings.vue';
 import HeaderWebsite from './HeaderWebsite.vue';
 
 const isBetaVersion = import.meta.env.IS_BETA;
+const isDemoMode = !!globalThis.electronApi?.isDemoMode;
 
 const updatesAreDisabled = ref(false);
 

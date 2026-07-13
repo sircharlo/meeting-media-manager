@@ -1,3 +1,4 @@
+import { FULL_HD } from 'app/src/constants/media';
 import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -72,6 +73,11 @@ async function addDropShadow(buffer) {
 // instead of trusting "first".
 const NON_MAIN_WINDOW_URL_PATTERN = /#\/(?:media-player|timer)\b/;
 
+// Between Full HD (1920x1080) and 4K (3840x2160), so the README preview
+// reads crisply on high-DPI displays without being a multi-megabyte 4K PNG.
+const CAPTURE_WIDTH = FULL_HD.width;
+const CAPTURE_HEIGHT = FULL_HD.height;
+
 /**
  * Screenshots just the app's content (`#q-app`), excluding OS window chrome,
  * then presents it with rounded corners and a soft drop shadow.
@@ -114,6 +120,16 @@ export async function launchDemoApp() {
   );
   window.on('pageerror', (error) =>
     console.error('[renderer:pageerror]', error),
+  );
+
+  // Playwright's page has no concept of resizing an Electron BrowserWindow
+  // (it's not a browser viewport) — go through the main-process window
+  // handle instead, and size the content area itself so OS window chrome
+  // doesn't throw off the final pixel dimensions.
+  const browserWindow = await app.browserWindow(window);
+  await browserWindow.evaluate(
+    (win, [width, height]) => win.setContentSize(width, height),
+    [CAPTURE_WIDTH, CAPTURE_HEIGHT],
   );
 
   return { app, window };

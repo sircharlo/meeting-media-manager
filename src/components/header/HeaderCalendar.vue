@@ -305,23 +305,9 @@
       size="xs"
     />
     <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
-      {{
-        getLocalDate(
-          selectedDate,
-          dateLocale,
-          currentSettings?.localDateFormat,
-        ) || t('select-a-date')
-      }}
+      {{ calendarDateLabel }}
     </q-tooltip>
-    {{
-      $q.screen.gt.xs
-        ? getLocalDate(
-            selectedDate,
-            dateLocale,
-            currentSettings?.localDateFormat,
-          ) || t('select-a-date')
-        : ''
-    }}
+    {{ $q.screen.gt.xs ? calendarDateLabel : '' }}
     <q-popup-proxy v-model="datePickerActive" :offset="[0, 11]">
       <q-date
         v-model="selectedDate"
@@ -493,6 +479,21 @@ const {
 
 const section = ref<MediaSectionIdentifier | undefined>();
 const datePickerActive = ref(false);
+
+// Screenshot reproducibility: the demo congregation's meeting day is always
+// "today" (see src/helpers/demo-mode.ts), so the label would differ on
+// every run — freeze only the displayed text, leaving selectedDate and the
+// rest of the calendar logic untouched.
+const calendarDateLabel = computed(() => {
+  if (globalThis.electronApi?.isDemoMode) return 'September 1, 1914';
+  return (
+    getLocalDate(
+      selectedDate.value,
+      dateLocale.value,
+      currentSettings.value?.localDateFormat,
+    ) || t('select-a-date')
+  );
+});
 
 // Dialog state refs
 const showCustomSectionEdit = ref(false);

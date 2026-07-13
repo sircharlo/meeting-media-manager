@@ -60,6 +60,10 @@ async function run() {
       }
       const outputPath = resolve(REPO_ROOT, target.outputPath);
       await mkdir(dirname(outputPath), { recursive: true });
+      // Give animations/transitions/lazy image loads a moment to settle
+      // before capturing, rather than snapping the instant the wait
+      // condition first becomes true.
+      await window.waitForTimeout(5000);
       await captureScreenshot(window, outputPath);
       console.log(`Captured ${target.name} -> ${target.outputPath}`);
     }

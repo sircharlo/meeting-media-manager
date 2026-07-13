@@ -37,7 +37,10 @@ jobs:
           yarn generate:logos
           yarn build:unpacked
       - name: Capture demo-mode screenshots
-        run: xvfb-run -a yarn screenshot:refresh
+        # Default Xvfb screen is smaller than the capture's target window
+        # size (2560x1440); without a bigger virtual screen Electron clamps
+        # the window to whatever the display's work area actually is.
+        run: xvfb-run -a --server-args="-screen 0 2560x1440x24" yarn screenshot:refresh
       - name: Upload debug output on failure
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
@@ -48,11 +51,18 @@ jobs:
       - name: Check for screenshot changes
         id: diff
         run: |
-          if git diff --quiet -- docs/src/assets/m3-preview.png; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
+          # A raw byte/git diff always "changes" even when nothing meaningful
+          # did: demo-mode data is fully deterministic, but Chromium's
+          # rasterizer still introduces a pixel or two of ±1 AA jitter run to
+          # run. Compare pixels with a small tolerance instead.
+          changed=true
+          if git cat-file -e HEAD:docs/src/assets/m3-preview.png 2>/dev/null; then
+            git show HEAD:docs/src/assets/m3-preview.png > /tmp/previous-preview.png
+            if node test/playwright/compare-screenshot.mjs /tmp/previous-preview.png docs/src/assets/m3-preview.png; then
+              changed=false
+            fi
           fi
+          echo "changed=$changed" >> "$GITHUB_OUTPUT"
       - name: Open pull request with refreshed screenshot
         if: steps.diff.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1

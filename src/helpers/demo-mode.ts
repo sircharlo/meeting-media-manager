@@ -17,19 +17,25 @@ interface DemoItemSeed {
   // Videos get a simulated runtime for the thumbnail-corner overlay; images
   // don't (real still images never carry a duration).
   duration?: number;
+  // Literal, per-item hue — not computed/incremented — so the screenshot's
+  // pixels are identical on every run (needed for the CI diff check that
+  // skips opening a PR when nothing actually changed).
+  hue: number;
   tag?: Tag;
   title: string;
 }
 
 const DEMO_SECTION_ITEMS: Partial<Record<string, DemoItemSeed[]>> = {
-  ayfm: [{ duration: 143, title: 'Sample AYFM video' }],
+  ayfm: [{ duration: 143, hue: 320, title: 'Sample AYFM video' }],
   lac: [
     {
       duration: 214,
+      hue: 40,
       tag: { type: 'song', value: 89 },
       title: 'Sample LAC song',
     },
     {
+      hue: 80,
       tag: { type: 'paragraph', value: 3 },
       title: 'Sample LAC photo',
     },
@@ -37,20 +43,22 @@ const DEMO_SECTION_ITEMS: Partial<Record<string, DemoItemSeed[]>> = {
   tgw: [
     {
       duration: 187,
+      hue: 240,
       tag: { type: 'song', value: 7 },
       title: 'Sample TGW song',
     },
-    { title: 'Sample TGW photo' },
+    { hue: 280, title: 'Sample TGW photo' },
   ],
 };
 
 // Demonstrates a collapsed media group (e.g. a multi-image jwpub extract) —
 // cbs:false + a non-empty children array + extractCaption is what
 // useMediaSection.ts reads to render a group starting collapsed.
-const DEMO_GROUP_CHILD_TITLES = [
-  'Sample TGW photo 1',
-  'Sample TGW photo 2',
-  'Sample TGW photo 3',
+const DEMO_GROUP_COVER_HUE = 120;
+const DEMO_GROUP_CHILDREN = [
+  { hue: 0, title: 'Sample TGW photo 1' },
+  { hue: 160, title: 'Sample TGW photo 2' },
+  { hue: 200, title: 'Sample TGW photo 3' },
 ];
 
 const getWeekDay = (offset = 0): SettingsValues['mwDay'] => {
@@ -77,25 +85,20 @@ const buildDemoDateInfo = (
   jwStore.lookupPeriod[congId] = [dateInfo];
   createMeetingSections(dateInfo);
 
-  let hue = 200;
-  const nextThumbnail = () => {
-    hue = (hue + 40) % 360;
-    return demoThumbnail(hue);
-  };
-
   dateInfo.mediaSections.forEach((section) => {
     const items = DEMO_SECTION_ITEMS[section.config.uniqueId];
     if (!items) return;
-    section.items = items.map(({ duration, tag, title }): MediaItem => {
+    section.items = items.map(({ duration, hue, tag, title }): MediaItem => {
       // Images use fileUrl for display (that's the file itself); videos use
       // thumbnailUrl and get a duration for the runtime overlay.
       const isImage = duration === undefined;
+      const thumbnail = demoThumbnail(hue);
       return {
         duration,
-        fileUrl: isImage ? nextThumbnail() : undefined,
+        fileUrl: isImage ? thumbnail : undefined,
         isImage,
         tag,
-        thumbnailUrl: isImage ? undefined : nextThumbnail(),
+        thumbnailUrl: isImage ? undefined : thumbnail,
         title,
         type: 'media',
         uniqueId: uuid(),
@@ -105,15 +108,15 @@ const buildDemoDateInfo = (
     if (section.config.uniqueId === 'tgw') {
       section.items.push({
         cbs: false,
-        children: DEMO_GROUP_CHILD_TITLES.map((title): MediaItem => ({
-          fileUrl: nextThumbnail(),
+        children: DEMO_GROUP_CHILDREN.map(({ hue, title }): MediaItem => ({
+          fileUrl: demoThumbnail(hue),
           isImage: true,
           title,
           type: 'media',
           uniqueId: uuid(),
         })),
         extractCaption: 'Sample TGW photo group',
-        fileUrl: nextThumbnail(),
+        fileUrl: demoThumbnail(DEMO_GROUP_COVER_HUE),
         isImage: true,
         title: 'Sample TGW photo group',
         type: 'media',
