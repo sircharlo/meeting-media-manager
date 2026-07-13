@@ -1,4 +1,3 @@
-import { FULL_HD } from 'app/src/constants/media';
 import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -73,10 +72,11 @@ async function addDropShadow(buffer) {
 // instead of trusting "first".
 const NON_MAIN_WINDOW_URL_PATTERN = /#\/(?:media-player|timer)\b/;
 
-// Between Full HD (1920x1080) and 4K (3840x2160), so the README preview
-// reads crisply on high-DPI displays without being a multi-megabyte 4K PNG.
-const CAPTURE_WIDTH = FULL_HD.width;
-const CAPTURE_HEIGHT = FULL_HD.height;
+// Matches src/constants/media.ts's FULL_HD — kept as a plain local constant
+// since this script runs under plain Node (not bundled through Quasar/Vite),
+// so the `app/...` alias and TypeScript imports don't resolve here.
+const CAPTURE_WIDTH = 1920;
+const CAPTURE_HEIGHT = 1080;
 
 /**
  * Screenshots just the app's content (`#q-app`), excluding OS window chrome,
