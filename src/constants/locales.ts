@@ -10,6 +10,7 @@ export type LanguageValue =
   | 'et'
   | 'fr'
   | 'hu'
+  | 'ko'
   | 'nl'
   | 'pt'
   | 'ru'
@@ -27,6 +28,7 @@ export const enabled: LanguageValue[] = [
   'et',
   'fr',
   'hu',
+  'ko',
   'nl',
   'pt',
   'ru',
@@ -123,6 +125,12 @@ export const locales: {
     label: 'magyar',
     langcode: 'H',
     value: 'hu',
+  },
+  {
+    englishName: 'Korean',
+    label: '한국어',
+    langcode: 'KO',
+    value: 'ko',
   },
   {
     englishName: 'Dutch',
