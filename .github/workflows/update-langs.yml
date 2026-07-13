@@ -1,0 +1,109 @@
+name: Auto-update enabled languages
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - src/i18n/*.json
+  workflow_dispatch:
+
+jobs:
+  update-langs:
+    runs-on: ubuntu-latest
+    if: github.repository == 'sircharlo/meeting-media-manager'
+    permissions:
+      contents: write
+    outputs:
+      branch: ${{ steps.branch.outputs.name }}
+      has_changes: ${{ steps.commit.outputs.has_changes }}
+      has_placeholder: ${{ steps.commit.outputs.has_placeholder }}
+    steps:
+      - id: branch
+        name: Set update branch name
+        run: echo "name=chore/update-langs-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.x'
+
+      - name: Set up Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
+        with:
+          node-version: 24
+
+      - name: Run update-langs script
+        run: python scripts/update-langs.py < /dev/null
+
+      - name: Format generated files with Prettier
+        run: |
+          corepack enable
+          yarn dlx prettier@3.9.4 --write src/i18n/index.ts docs/locales/index.ts src/constants/locales.ts
+
+      - name: Commit and push update branch
+        id: commit
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add src/i18n/index.ts docs/locales/index.ts src/constants/locales.ts
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            echo "has_placeholder=false" >> "$GITHUB_OUTPUT"
+          else
+            if git diff --staged | grep -q PLACEHOLDER; then
+              echo "has_placeholder=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "has_placeholder=false" >> "$GITHUB_OUTPUT"
+            fi
+            git commit -m "chore: auto-update enabled languages from Crowdin progress"
+            git push origin "HEAD:${{ steps.branch.outputs.name }}"
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  # No new (placeholder) languages were introduced, so it's safe to merge
+  # automatically: this only flips already-known languages in/out of enabled[].
+  merge-langs:
+    needs: update-langs
+    if: needs.update-langs.outputs.has_changes == 'true' && needs.update-langs.outputs.has_placeholder == 'false'
+    uses: ./.github/workflows/pr-creator-and-waiter.yml
+    with:
+      head: ${{ needs.update-langs.outputs.branch }}
+      title: 'chore: auto-update enabled languages from Crowdin progress'
+      body: Automated update of `enabled` languages based on Crowdin translation progress (≥5% threshold). No new languages were introduced, so this was merged automatically.
+      admin: true
+    secrets: inherit
+
+  # A brand-new language crossed the threshold and needs a human to fill in
+  # its JW.org langcode/name (not derivable from Crowdin), so leave it as a
+  # PR for review instead of auto-merging.
+  review-langs:
+    needs: update-langs
+    if: needs.update-langs.outputs.has_changes == 'true' && needs.update-langs.outputs.has_placeholder == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Create pull request for review
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          HEAD_BRANCH: ${{ needs.update-langs.outputs.branch }}
+        run: |
+          gh pr create \
+            --base master \
+            --head "$HEAD_BRANCH" \
+            --title "chore: auto-update enabled languages from Crowdin progress" \
+            --label translations \
+            --body "$(cat <<'EOF'
+          A new language crossed the translation threshold and was added to `src/constants/locales.ts` with placeholder values.
+
+          Search the diff for `PLACEHOLDER_ENGLISH_NAME`, `PLACEHOLDER_LABEL`, and `PLACEHOLDER_LANGCODE` and replace them with the correct JW.org language name/code before merging this PR.
+          EOF
+          )"

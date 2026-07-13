@@ -27,9 +27,27 @@ SRC_I18N     = REPO_ROOT / "src" / "i18n"
 DOCS_LOCALES = REPO_ROOT / "docs" / "locales"
 DOCS_SRC     = REPO_ROOT / "docs" / "src"
 SRC_CONSTANTS_LOCALES = REPO_ROOT / "src" / "constants" / "locales.ts"
+JW_LANGUAGES_CACHE = SCRIPT_DIR / "jw-languages-cache.json"
 TODAY        = date.today().strftime("%Y-%m-%d")
-PERCENTAGE_THRESHOLD = 40
+PERCENTAGE_THRESHOLD = 5
 IGNORED_DOCS_SRC_DIRS = {"assets", "public"}
+
+
+# ── JW languages cache ──────────────────────────────────────────────────────
+# A one-time snapshot of https://www.jw.org/en/languages/ (see
+# scripts/jw-languages-cache.json), used to auto-fill englishName/label/langcode
+# for newly-enabled languages so a human doesn't need to look them up. Only
+# languages added to jw.org *after* the snapshot was taken will miss the cache
+# and fall back to PLACEHOLDER_* values needing manual entry — rare, since new
+# jw.org languages are added infrequently. Regenerate the snapshot with:
+#   curl -s https://www.jw.org/en/languages/
+# (see the "languages" array; keep symbol/langcode/name/vernacularName).
+
+def load_jw_languages_cache(path: Path) -> dict[str, dict]:
+    if not path.exists():
+        return {}
+    data = json.loads(path.read_text(encoding="utf-8"))
+    return {lang["symbol"]: lang for lang in data.get("languages", [])}
 
 # Matches locale JSON import lines (active or commented-out)
 LOCALE_IMPORT_LINE = re.compile(
@@ -263,7 +281,7 @@ def update_index(
         updated = re.sub(r"export\s+default\s*\{[\s\S]*?\};", new_export, updated)
     elif label == "docs/locales/index.ts":
         new_export = f"const messages: Partial<Record<LanguageValue, Partial<typeof en>>> = {{\n  {keys_str},\n}};"
-        updated = re.sub(r"const\s+messages:\s*Record<LanguageValue,\s*Partial<typeof\s*en>>\s*=\s*\{[\s\S]*?\};", new_export, updated)
+        updated = re.sub(r"const\s+messages:\s*Partial<Record<LanguageValue,\s*Partial<typeof\s*en>>>\s*=\s*\{[\s\S]*?\};", new_export, updated)
         
     path.write_text(updated, encoding="utf-8")
     print(f"✅  Updated {path}")
@@ -347,7 +365,7 @@ def build_locale_entry(entry: dict) -> str:
         lines.append(f"    signLangCodes: [{codes}],")
     lines.append(f"    value: '{entry['value']}',")
     lines.append("  }")
-    return "\n  ".join(lines)
+    return "\n".join(lines)
 
 
 def update_locales_type(stats: dict[str, tuple[str, float]], path: Path) -> None:
@@ -380,16 +398,28 @@ def update_locales_type(stats: dict[str, tuple[str, float]], path: Path) -> None
     existing_by_value = {e["value"]: e for e in existing_entries}
 
     # Remove entries whose value is no longer in LanguageValue
-    # Add placeholder entries for brand-new values
+    # Add new entries for brand-new values, filled from the jw.org cache when
+    # possible, otherwise as a placeholder needing manual entry.
+    jw_cache = load_jw_languages_cache(JW_LANGUAGES_CACHE)
     new_entries = []
     removed = []
-    added = []
+    added_from_cache = []
+    added_as_placeholder = []
 
     for key in active_keys:
         if key in existing_by_value:
             new_entries.append(existing_by_value[key])
+        elif key in jw_cache:
+            cached = jw_cache[key]
+            new_entries.append({
+                "value": key,
+                "englishName": cached["name"],
+                "label": cached["vernacularName"],
+                "langcode": cached["langcode"],
+            })
+            added_from_cache.append(key)
         else:
-            # New lang detected — insert placeholder
+            # Brand-new lang not in the jw.org snapshot — insert placeholder
             placeholder = {
                 "value": key,
                 "englishName": "PLACEHOLDER_ENGLISH_NAME",
@@ -397,7 +427,7 @@ def update_locales_type(stats: dict[str, tuple[str, float]], path: Path) -> None
                 "langcode": "PLACEHOLDER_LANGCODE",
             }
             new_entries.append(placeholder)
-            added.append(key)
+            added_as_placeholder.append(key)
 
     for existing_key in existing_by_value:
         if existing_key not in active_keys:
@@ -405,8 +435,10 @@ def update_locales_type(stats: dict[str, tuple[str, float]], path: Path) -> None
 
     if removed:
         print(f"  🗑️   Removed from locales[]: {', '.join(removed)}")
-    if added:
-        print(f"  ➕  Added placeholder(s) to locales[]: {', '.join(added)}")
+    if added_from_cache:
+        print(f"  ➕  Added to locales[] from jw.org cache: {', '.join(added_from_cache)}")
+    if added_as_placeholder:
+        print(f"  ⚠️   Added placeholder(s) to locales[] (not in jw.org cache): {', '.join(added_as_placeholder)}")
 
     # Render the new array
     rendered_entries = ",\n  ".join(build_locale_entry(e) for e in new_entries)

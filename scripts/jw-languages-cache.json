@@ -1,0 +1,6949 @@
+{
+  "_comment": "One-time snapshot of https://www.jw.org/en/languages/, used by update-langs.py to auto-fill englishName/label/langcode for newly-enabled languages without manual lookup. Regenerate with: curl -s https://www.jw.org/en/languages/ | python -c \"...\" (see scripts/update-langs.py). Languages added to jw.org after this snapshot will fall back to PLACEHOLDER_* values requiring manual entry.",
+  "_fetchedAt": "2026-07-13",
+  "_source": "https://www.jw.org/en/languages/",
+  "languages": [
+    {
+      "symbol": "ab",
+      "langcode": "ABK",
+      "name": "Abkhaz",
+      "vernacularName": "аԥсуа"
+    },
+    {
+      "symbol": "aba",
+      "langcode": "ABB",
+      "name": "Abbey",
+      "vernacularName": "Abɛ"
+    },
+    {
+      "symbol": "abn",
+      "langcode": "AU",
+      "name": "Abua",
+      "vernacularName": "Abua"
+    },
+    {
+      "symbol": "abx",
+      "langcode": "ABN",
+      "name": "Abaknon",
+      "vernacularName": "Abaknon"
+    },
+    {
+      "symbol": "abz",
+      "langcode": "ABU",
+      "name": "Abui",
+      "vernacularName": "Alor Abui"
+    },
+    {
+      "symbol": "acf",
+      "langcode": "LUC",
+      "name": "Saint Lucian Creole",
+      "vernacularName": "Kwéyòl (Patwa)"
+    },
+    {
+      "symbol": "ach",
+      "langcode": "AC",
+      "name": "Acholi",
+      "vernacularName": "Acholi"
+    },
+    {
+      "symbol": "acm",
+      "langcode": "ARQ",
+      "name": "Arabic (Iraq)",
+      "vernacularName": "العربية (اللهجة‏ ‏العراقية)‏"
+    },
+    {
+      "symbol": "acr",
+      "langcode": "ACH",
+      "name": "Achi",
+      "vernacularName": "achi"
+    },
+    {
+      "symbol": "acr-x-acc",
+      "langcode": "ACC",
+      "name": "Achi (Cubulco)",
+      "vernacularName": "achí de cubulco"
+    },
+    {
+      "symbol": "acr-x-acr",
+      "langcode": "ACR",
+      "name": "Achi (Rabinal)",
+      "vernacularName": "achí de rabinal"
+    },
+    {
+      "symbol": "acu",
+      "langcode": "AHW",
+      "name": "Achuar-Shiwiar",
+      "vernacularName": "achuar-shiwiar"
+    },
+    {
+      "symbol": "ada",
+      "langcode": "DG",
+      "name": "Dangme",
+      "vernacularName": "Dangme"
+    },
+    {
+      "symbol": "adh",
+      "langcode": "ADH",
+      "name": "Adhola",
+      "vernacularName": "Dhopadhola"
+    },
+    {
+      "symbol": "ady",
+      "langcode": "AD",
+      "name": "Adyghe",
+      "vernacularName": "адыгабзэ"
+    },
+    {
+      "symbol": "aeb",
+      "langcode": "ATN",
+      "name": "Arabic (Tunisia)",
+      "vernacularName": "العربية (الدّارجة‏ ‏التّونسيّة)"
+    },
+    {
+      "symbol": "aed",
+      "langcode": "LSA",
+      "name": "Argentinean Sign Language",
+      "vernacularName": "lengua de señas argentina"
+    },
+    {
+      "symbol": "aen",
+      "langcode": "ARS",
+      "name": "Armenian Sign Language",
+      "vernacularName": "Հայերեն ժեստերի լեզու"
+    },
+    {
+      "symbol": "af",
+      "langcode": "AF",
+      "name": "Afrikaans",
+      "vernacularName": "Afrikaans"
+    },
+    {
+      "symbol": "agr",
+      "langcode": "AGR",
+      "name": "Awajun",
+      "vernacularName": "awajun"
+    },
+    {
+      "symbol": "aha",
+      "langcode": "AHN",
+      "name": "Ahanta",
+      "vernacularName": "Aɣɩnda"
+    },
+    {
+      "symbol": "ahk",
+      "langcode": "AKA",
+      "name": "Akha",
+      "vernacularName": "Akha"
+    },
+    {
+      "symbol": "aia",
+      "langcode": "ARO",
+      "name": "Arosi",
+      "vernacularName": "Arosi"
+    },
+    {
+      "symbol": "aii",
+      "langcode": "AS",
+      "name": "Assyrian",
+      "vernacularName": "ܐܵܬܘܿܪܵܝܵܐ"
+    },
+    {
+      "symbol": "ajg",
+      "langcode": "AJG",
+      "name": "Aja",
+      "vernacularName": "Aja"
+    },
+    {
+      "symbol": "aji",
+      "langcode": "HO",
+      "name": "Ajië",
+      "vernacularName": "A'jië"
+    },
+    {
+      "symbol": "ajp",
+      "langcode": "AJD",
+      "name": "Arabic (Jordan)",
+      "vernacularName": "العربية (اللهجة‏ ‏الأردنية)‏"
+    },
+    {
+      "symbol": "akl",
+      "langcode": "IKN",
+      "name": "Inakeanon",
+      "vernacularName": "Inakeanon"
+    },
+    {
+      "symbol": "aln",
+      "langcode": "ALG",
+      "name": "Albanian (Gheg)",
+      "vernacularName": "Albanian (Gheg)"
+    },
+    {
+      "symbol": "alq",
+      "langcode": "ALQ",
+      "name": "Algonquin",
+      "vernacularName": "Anishinàbemowin"
+    },
+    {
+      "symbol": "alt",
+      "langcode": "ALT",
+      "name": "Altai",
+      "vernacularName": "алтай"
+    },
+    {
+      "symbol": "alz",
+      "langcode": "ALU",
+      "name": "Alur",
+      "vernacularName": "Alur"
+    },
+    {
+      "symbol": "am",
+      "langcode": "AM",
+      "name": "Amharic",
+      "vernacularName": "አማርኛ"
+    },
+    {
+      "symbol": "ami",
+      "langcode": "AI",
+      "name": "Amis",
+      "vernacularName": "阿美語"
+    },
+    {
+      "symbol": "amu",
+      "langcode": "AMG",
+      "name": "Amuzgo (Guerrero)",
+      "vernacularName": "ñoomndaa"
+    },
+    {
+      "symbol": "ane",
+      "langcode": "XRC",
+      "name": "Xârâcùù",
+      "vernacularName": "Xârâcùù"
+    },
+    {
+      "symbol": "anm",
+      "langcode": "ANM",
+      "name": "Anal",
+      "vernacularName": "Anal"
+    },
+    {
+      "symbol": "ann",
+      "langcode": "OBL",
+      "name": "Obolo",
+      "vernacularName": "Obolo"
+    },
+    {
+      "symbol": "any-ci",
+      "langcode": "AYI",
+      "name": "Anyin (Indenie)",
+      "vernacularName": "Anyin (Indenie)"
+    },
+    {
+      "symbol": "aoc",
+      "langcode": "PMN",
+      "name": "Pemon",
+      "vernacularName": "pemon pe"
+    },
+    {
+      "symbol": "aoz",
+      "langcode": "UBM",
+      "name": "Uab Meto",
+      "vernacularName": "Timor Dawan"
+    },
+    {
+      "symbol": "apc",
+      "langcode": "ALN",
+      "name": "Arabic (Lebanon)",
+      "vernacularName": "العربية (اللهجة اللبنانية)"
+    },
+    {
+      "symbol": "apc-sy",
+      "langcode": "ASR",
+      "name": "Arabic (Syria)",
+      "vernacularName": "العربية (اللهجة‏ السورية)‏"
+    },
+    {
+      "symbol": "apd",
+      "langcode": "ASN",
+      "name": "Arabic (Sudanese)",
+      "vernacularName": "العربية (اللهجة السودانية)"
+    },
+    {
+      "symbol": "app",
+      "langcode": "APM",
+      "name": "Apma",
+      "vernacularName": "Apma"
+    },
+    {
+      "symbol": "ar",
+      "langcode": "A",
+      "name": "Arabic",
+      "vernacularName": "العربية"
+    },
+    {
+      "symbol": "arh",
+      "langcode": "ARH",
+      "name": "Arhuaco",
+      "vernacularName": "Arhuaco"
+    },
+    {
+      "symbol": "arn",
+      "langcode": "MPD",
+      "name": "Mapudungun",
+      "vernacularName": "mapudungun"
+    },
+    {
+      "symbol": "arn-x-cdg",
+      "langcode": "CDG",
+      "name": "Chedungun (Coast)",
+      "vernacularName": "Chedungun labquenche"
+    },
+    {
+      "symbol": "arn-x-phn",
+      "langcode": "PHN",
+      "name": "Pehuenche",
+      "vernacularName": "chedungun (pewenche)"
+    },
+    {
+      "symbol": "arq",
+      "langcode": "ADZ",
+      "name": "Arabic (Algeria)",
+      "vernacularName": "العربيّة (الدّارجة الجزائريّة)"
+    },
+    {
+      "symbol": "ary",
+      "langcode": "AMO",
+      "name": "Arabic (Morocco)",
+      "vernacularName": "العربية (الدارجة المغربية)"
+    },
+    {
+      "symbol": "arz",
+      "langcode": "AEY",
+      "name": "Arabic (Egypt)",
+      "vernacularName": "العربية (اللهجة المصرية)"
+    },
+    {
+      "symbol": "as",
+      "langcode": "AE",
+      "name": "Assamese",
+      "vernacularName": "অসমীয়া"
+    },
+    {
+      "symbol": "ase",
+      "langcode": "ASL",
+      "name": "American Sign Language",
+      "vernacularName": "American Sign Language"
+    },
+    {
+      "symbol": "asf",
+      "langcode": "AUS",
+      "name": "Australian Sign Language",
+      "vernacularName": "Auslan (Australian Sign Language)"
+    },
+    {
+      "symbol": "asq",
+      "langcode": "OGS",
+      "name": "Austrian Sign Language",
+      "vernacularName": "Österreichische Gebärdensprache"
+    },
+    {
+      "symbol": "ati",
+      "langcode": "ATI",
+      "name": "Attié",
+      "vernacularName": "Akie"
+    },
+    {
+      "symbol": "av",
+      "langcode": "AV",
+      "name": "Avar",
+      "vernacularName": "магӀарул"
+    },
+    {
+      "symbol": "awa",
+      "langcode": "AWD",
+      "name": "Awadhi",
+      "vernacularName": "Awadhi"
+    },
+    {
+      "symbol": "ay",
+      "langcode": "AP",
+      "name": "Aymara",
+      "vernacularName": "Aymara"
+    },
+    {
+      "symbol": "az",
+      "langcode": "AJR",
+      "name": "Azerbaijani",
+      "vernacularName": "Azərbaycan"
+    },
+    {
+      "symbol": "az-cyrl",
+      "langcode": "AJ",
+      "name": "Azerbaijani (Cyrillic)",
+      "vernacularName": "Aзәрбајҹан (кирил әлифбасы)"
+    },
+    {
+      "symbol": "azb",
+      "langcode": "AJA",
+      "name": "Azerbaijani (Arabic)",
+      "vernacularName": "آذربايجانى (عربى)"
+    },
+    {
+      "symbol": "azo",
+      "langcode": "AWN",
+      "name": "Awing",
+      "vernacularName": "Awing"
+    },
+    {
+      "symbol": "ba",
+      "langcode": "BAK",
+      "name": "Bashkir",
+      "vernacularName": "башҡорт"
+    },
+    {
+      "symbol": "ban",
+      "langcode": "BLN",
+      "name": "Balinese",
+      "vernacularName": "Bali"
+    },
+    {
+      "symbol": "bas",
+      "langcode": "BS",
+      "name": "Bassa (Cameroon)",
+      "vernacularName": "Basaa (Kamerun)"
+    },
+    {
+      "symbol": "bax",
+      "langcode": "BMN",
+      "name": "Bamun",
+      "vernacularName": "Shü Pamom"
+    },
+    {
+      "symbol": "bba",
+      "langcode": "BB",
+      "name": "Bariba",
+      "vernacularName": "Baatɔnum"
+    },
+    {
+      "symbol": "bbc",
+      "langcode": "BT",
+      "name": "Batak (Toba)",
+      "vernacularName": "Batak (Toba)"
+    },
+    {
+      "symbol": "bbj",
+      "langcode": "GHM",
+      "name": "Ghomálá’",
+      "vernacularName": "Bandjoun-Baham"
+    },
+    {
+      "symbol": "bci",
+      "langcode": "AO",
+      "name": "Baoule",
+      "vernacularName": "Wawle"
+    },
+    {
+      "symbol": "bcl",
+      "langcode": "BI",
+      "name": "Bicol",
+      "vernacularName": "Bicol"
+    },
+    {
+      "symbol": "bcy",
+      "langcode": "BCM",
+      "name": "Bacama",
+      "vernacularName": "Bacama"
+    },
+    {
+      "symbol": "bdq",
+      "langcode": "BNR",
+      "name": "Bahnar",
+      "vernacularName": "Bahnar"
+    },
+    {
+      "symbol": "be",
+      "langcode": "BEL",
+      "name": "Belorussian",
+      "vernacularName": "беларуская"
+    },
+    {
+      "symbol": "bem",
+      "langcode": "CW",
+      "name": "Cibemba",
+      "vernacularName": "Cibemba"
+    },
+    {
+      "symbol": "bfa",
+      "langcode": "BH",
+      "name": "Bari",
+      "vernacularName": "Bari"
+    },
+    {
+      "symbol": "bfi",
+      "langcode": "BSL",
+      "name": "British Sign Language",
+      "vernacularName": "British Sign Language"
+    },
+    {
+      "symbol": "bfn",
+      "langcode": "BNK",
+      "name": "Bunak",
+      "vernacularName": "Bunak"
+    },
+    {
+      "symbol": "bfq",
+      "langcode": "BDG",
+      "name": "Badaga",
+      "vernacularName": "படகா"
+    },
+    {
+      "symbol": "bg",
+      "langcode": "BL",
+      "name": "Bulgarian",
+      "vernacularName": "български"
+    },
+    {
+      "symbol": "bgc",
+      "langcode": "HRV",
+      "name": "Haryanvi",
+      "vernacularName": "Haryanvi"
+    },
+    {
+      "symbol": "bho",
+      "langcode": "BHJ",
+      "name": "Bhojpuri",
+      "vernacularName": "भोजपुरी"
+    },
+    {
+      "symbol": "bho-mu",
+      "langcode": "BHM",
+      "name": "Bhojpuri (Mauritius)",
+      "vernacularName": "Bhojpuri (Mauritius)"
+    },
+    {
+      "symbol": "bhw",
+      "langcode": "IK",
+      "name": "Biak",
+      "vernacularName": "Biak"
+    },
+    {
+      "symbol": "bi",
+      "langcode": "LM",
+      "name": "Bislama",
+      "vernacularName": "Bislama"
+    },
+    {
+      "symbol": "bib",
+      "langcode": "BLB",
+      "name": "Bisa (Lebir)",
+      "vernacularName": "Bɩsa"
+    },
+    {
+      "symbol": "bin",
+      "langcode": "ED",
+      "name": "Edo",
+      "vernacularName": "Edo"
+    },
+    {
+      "symbol": "bja",
+      "langcode": "BDZ",
+      "name": "Budza",
+      "vernacularName": "Ebudza"
+    },
+    {
+      "symbol": "bjn",
+      "langcode": "BNJ",
+      "name": "Banjar",
+      "vernacularName": "Banjar"
+    },
+    {
+      "symbol": "bjo",
+      "langcode": "BNM",
+      "name": "Banda (Mid-Southern)",
+      "vernacularName": "Banda (Mid-Southern)"
+    },
+    {
+      "symbol": "bkh",
+      "langcode": "BKK",
+      "name": "Bakoko",
+      "vernacularName": "Bakoko"
+    },
+    {
+      "symbol": "bla",
+      "langcode": "BLF",
+      "name": "Blackfoot",
+      "vernacularName": "Siksikáíitsi'powahsini"
+    },
+    {
+      "symbol": "blk",
+      "langcode": "PAO",
+      "name": "Pa'o",
+      "vernacularName": "Pa'o"
+    },
+    {
+      "symbol": "blv",
+      "langcode": "KBL",
+      "name": "Kibala",
+      "vernacularName": "Kibala"
+    },
+    {
+      "symbol": "bm",
+      "langcode": "AR",
+      "name": "Bambara",
+      "vernacularName": "Bamanankan"
+    },
+    {
+      "symbol": "bmb",
+      "langcode": "BMB",
+      "name": "Bembe",
+      "vernacularName": "Kibembe"
+    },
+    {
+      "symbol": "bmm",
+      "langcode": "BTS",
+      "name": "Betsimisaraka (Northern)",
+      "vernacularName": "Betsimisaraka Avaratra"
+    },
+    {
+      "symbol": "bmq",
+      "langcode": "BMU",
+      "name": "Bomu",
+      "vernacularName": "Boomu"
+    },
+    {
+      "symbol": "bn",
+      "langcode": "BE",
+      "name": "Bengali",
+      "vernacularName": "বাংলা"
+    },
+    {
+      "symbol": "bnn",
+      "langcode": "BNN",
+      "name": "Bunun (South)",
+      "vernacularName": "布農語（南部）"
+    },
+    {
+      "symbol": "bo",
+      "langcode": "TBT",
+      "name": "Tibetan",
+      "vernacularName": "བོད་སྐད།"
+    },
+    {
+      "symbol": "bom",
+      "langcode": "BRM",
+      "name": "Berom",
+      "vernacularName": "Berom"
+    },
+    {
+      "symbol": "bps",
+      "langcode": "BNS",
+      "name": "Blaan (Sarangani)",
+      "vernacularName": "Blaan (Sarangani)"
+    },
+    {
+      "symbol": "bqn",
+      "langcode": "BLS",
+      "name": "Bulgarian Sign Language",
+      "vernacularName": "български жестов език"
+    },
+    {
+      "symbol": "brf",
+      "langcode": "KBI",
+      "name": "Kibira",
+      "vernacularName": "Kibira"
+    },
+    {
+      "symbol": "bs",
+      "langcode": "BSN",
+      "name": "Bosnian",
+      "vernacularName": "bosanski"
+    },
+    {
+      "symbol": "bsq",
+      "langcode": "BA",
+      "name": "Bassa (Liberia)",
+      "vernacularName": "Ɓǎsɔ́ɔ̀ (Ɖàbíɖà)"
+    },
+    {
+      "symbol": "btd",
+      "langcode": "BTD",
+      "name": "Batak (Dairi)",
+      "vernacularName": "Pakpak"
+    },
+    {
+      "symbol": "btg",
+      "langcode": "ET",
+      "name": "Bété",
+      "vernacularName": "ˈBhɛtɩgbʋʋ"
+    },
+    {
+      "symbol": "bts",
+      "langcode": "BTK",
+      "name": "Batak (Simalungun)",
+      "vernacularName": "Batak (Simalungun)"
+    },
+    {
+      "symbol": "btx",
+      "langcode": "AK",
+      "name": "Batak (Karo)",
+      "vernacularName": "Batak (Karo)"
+    },
+    {
+      "symbol": "buc",
+      "langcode": "BSH",
+      "name": "Bushi",
+      "vernacularName": "Kibushi"
+    },
+    {
+      "symbol": "buf",
+      "langcode": "BSG",
+      "name": "Bushoong",
+      "vernacularName": "Bushoong"
+    },
+    {
+      "symbol": "bum",
+      "langcode": "BO",
+      "name": "Boulou",
+      "vernacularName": "Bulu"
+    },
+    {
+      "symbol": "bvl",
+      "langcode": "BVL",
+      "name": "Bolivian Sign Language",
+      "vernacularName": "lengua de señas boliviana"
+    },
+    {
+      "symbol": "bwb",
+      "langcode": "NNR",
+      "name": "Namosi-Naitasiri-Serua",
+      "vernacularName": "Namosi-Naitasiri-Serua"
+    },
+    {
+      "symbol": "bwg",
+      "langcode": "BRW",
+      "name": "Barwe",
+      "vernacularName": "Barwe"
+    },
+    {
+      "symbol": "bwi",
+      "langcode": "BNW",
+      "name": "Baniwa",
+      "vernacularName": "Baniua"
+    },
+    {
+      "symbol": "bwr",
+      "langcode": "BUR",
+      "name": "Bura",
+      "vernacularName": "Bura"
+    },
+    {
+      "symbol": "bxa",
+      "langcode": "BAU",
+      "name": "Bauro",
+      "vernacularName": "Bauro"
+    },
+    {
+      "symbol": "bxk",
+      "langcode": "LK",
+      "name": "Bukusu",
+      "vernacularName": "Bukusu"
+    },
+    {
+      "symbol": "bxr",
+      "langcode": "BY",
+      "name": "Buryat",
+      "vernacularName": "буряад"
+    },
+    {
+      "symbol": "byv",
+      "langcode": "DU",
+      "name": "Medumba",
+      "vernacularName": "Bangangté"
+    },
+    {
+      "symbol": "bzc",
+      "langcode": "BTA",
+      "name": "Betsimisaraka (Southern)",
+      "vernacularName": "Betsimisaraka Atsimo"
+    },
+    {
+      "symbol": "bzd",
+      "langcode": "BRI",
+      "name": "Bribri",
+      "vernacularName": "bribri"
+    },
+    {
+      "symbol": "bzj",
+      "langcode": "BZK",
+      "name": "Belize Kriol",
+      "vernacularName": "Bileez Kriol"
+    },
+    {
+      "symbol": "bzs",
+      "langcode": "LSB",
+      "name": "Brazilian Sign Language",
+      "vernacularName": "Língua brasileira de sinais (Libras)"
+    },
+    {
+      "symbol": "ca-x-vlc",
+      "langcode": "VLC",
+      "name": "Valencian",
+      "vernacularName": "valencià"
+    },
+    {
+      "symbol": "cab",
+      "langcode": "GRF",
+      "name": "Garifuna",
+      "vernacularName": "Garifuna"
+    },
+    {
+      "symbol": "cac",
+      "langcode": "CHJ",
+      "name": "Chuj",
+      "vernacularName": "chuj"
+    },
+    {
+      "symbol": "cag",
+      "langcode": "NVC",
+      "name": "Nivaclé",
+      "vernacularName": "nivaĉle"
+    },
+    {
+      "symbol": "cak",
+      "langcode": "CQ",
+      "name": "Cakchiquel (Western)",
+      "vernacularName": "Kaqchikel occidental"
+    },
+    {
+      "symbol": "cak-x-cqc",
+      "langcode": "CQC",
+      "name": "Cakchiquel (Central)",
+      "vernacularName": "Kaqchikel central"
+    },
+    {
+      "symbol": "cak-x-cqe",
+      "langcode": "CQE",
+      "name": "Cakchiquel (Eastern)",
+      "vernacularName": "Kaqchikel oriental"
+    },
+    {
+      "symbol": "caq",
+      "langcode": "NC",
+      "name": "Nicobarese",
+      "vernacularName": "Nicobarese"
+    },
+    {
+      "symbol": "car-x-crb",
+      "langcode": "CRB",
+      "name": "Carib",
+      "vernacularName": "Kariʼnia"
+    },
+    {
+      "symbol": "car-x-tyw",
+      "langcode": "TYW",
+      "name": "Tyrewuju",
+      "vernacularName": "Tilewuyu"
+    },
+    {
+      "symbol": "cas",
+      "langcode": "TSM",
+      "name": "Tsimané",
+      "vernacularName": "Tsimané"
+    },
+    {
+      "symbol": "cat",
+      "langcode": "AN",
+      "name": "Catalan",
+      "vernacularName": "català"
+    },
+    {
+      "symbol": "cax",
+      "langcode": "CHQ",
+      "name": "Chiquitano",
+      "vernacularName": "Chiquitano"
+    },
+    {
+      "symbol": "cbi",
+      "langcode": "CPL",
+      "name": "Cha’palaa",
+      "vernacularName": "cha'palaa"
+    },
+    {
+      "symbol": "cbk",
+      "langcode": "CC",
+      "name": "Chavacano",
+      "vernacularName": "Chavacano"
+    },
+    {
+      "symbol": "cbt",
+      "langcode": "HWI",
+      "name": "Shawi",
+      "vernacularName": "shawi"
+    },
+    {
+      "symbol": "cce",
+      "langcode": "CPI",
+      "name": "Chopi",
+      "vernacularName": "Txitxopi"
+    },
+    {
+      "symbol": "cdo",
+      "langcode": "CHF",
+      "name": "Chinese (Fuzhounese)",
+      "vernacularName": "中文（福州话）"
+    },
+    {
+      "symbol": "ce",
+      "langcode": "HE",
+      "name": "Chechen",
+      "vernacularName": "нохчийн"
+    },
+    {
+      "symbol": "ceb",
+      "langcode": "CV",
+      "name": "Cebuano",
+      "vernacularName": "Cebuano"
+    },
+    {
+      "symbol": "cfg",
+      "langcode": "CMK",
+      "name": "Como Karim",
+      "vernacularName": "Como Karim"
+    },
+    {
+      "symbol": "cfm",
+      "langcode": "FLM",
+      "name": "Chin (Falam)",
+      "vernacularName": "Chin (Falam)"
+    },
+    {
+      "symbol": "cgg",
+      "langcode": "CGG",
+      "name": "Chiga",
+      "vernacularName": "Orukiga"
+    },
+    {
+      "symbol": "ch",
+      "langcode": "CM",
+      "name": "Chamorro",
+      "vernacularName": "Chamorro"
+    },
+    {
+      "symbol": "chd",
+      "langcode": "CLX",
+      "name": "Chontal (Oaxaca)",
+      "vernacularName": "lataiki"
+    },
+    {
+      "symbol": "chf",
+      "langcode": "CLT",
+      "name": "Chontal (Tabasco)",
+      "vernacularName": "yokotʼan"
+    },
+    {
+      "symbol": "chj",
+      "langcode": "CNO",
+      "name": "Chinantec (Ojitlan)",
+      "vernacularName": "jújmi kiʼtsa köwɨ̱"
+    },
+    {
+      "symbol": "chk",
+      "langcode": "TE",
+      "name": "Chuukese",
+      "vernacularName": "Chuuk"
+    },
+    {
+      "symbol": "cho",
+      "langcode": "CTW",
+      "name": "Choctaw",
+      "vernacularName": "Choctaw"
+    },
+    {
+      "symbol": "chr",
+      "langcode": "CKE",
+      "name": "Cherokee",
+      "vernacularName": "ᏣᎳᎩ ᎦᏬᏂᎯᏍᏗ"
+    },
+    {
+      "symbol": "chw",
+      "langcode": "CO",
+      "name": "Chuabo",
+      "vernacularName": "Etxuwabo"
+    },
+    {
+      "symbol": "cjk",
+      "langcode": "CK",
+      "name": "Chokwe",
+      "vernacularName": "Chokwe"
+    },
+    {
+      "symbol": "cjp",
+      "langcode": "CAB",
+      "name": "Cabécar (Tayní)",
+      "vernacularName": "cabécar"
+    },
+    {
+      "symbol": "ckb",
+      "langcode": "RDA",
+      "name": "Kurdish Sorani",
+      "vernacularName": "کوردی سۆرانی"
+    },
+    {
+      "symbol": "cld",
+      "langcode": "ACS",
+      "name": "Assyro-Chaldean (Silopi)",
+      "vernacularName": "Assyro-Chaldean (Silopi)"
+    },
+    {
+      "symbol": "cmi",
+      "langcode": "EMC",
+      "name": "Emberá (Chamí)",
+      "vernacularName": "ẽbẽra beɗea chamí"
+    },
+    {
+      "symbol": "cmn-hans",
+      "langcode": "CHS",
+      "name": "Chinese Mandarin (Simplified)",
+      "vernacularName": "中文简体（普通话）"
+    },
+    {
+      "symbol": "cmn-hant",
+      "langcode": "CH",
+      "name": "Chinese Mandarin (Traditional)",
+      "vernacularName": "中文繁體（國語）"
+    },
+    {
+      "symbol": "cmn-x-chk",
+      "langcode": "CHK",
+      "name": "Chinese (Yunnanese)",
+      "vernacularName": "Chinese (Yunnanese)"
+    },
+    {
+      "symbol": "cmn-x-csn",
+      "langcode": "CSN",
+      "name": "Chinese (Sichuanese)",
+      "vernacularName": "中文（四川话）"
+    },
+    {
+      "symbol": "cmo",
+      "langcode": "MNC",
+      "name": "Mnong (Central)",
+      "vernacularName": "Bunong"
+    },
+    {
+      "symbol": "cnh",
+      "langcode": "HK",
+      "name": "Chin (Hakha)",
+      "vernacularName": "Chin (Hakha)"
+    },
+    {
+      "symbol": "cni",
+      "langcode": "AHK",
+      "name": "Ashaninka",
+      "vernacularName": "ashaninka"
+    },
+    {
+      "symbol": "cnr",
+      "langcode": "MNT",
+      "name": "Montenegrin",
+      "vernacularName": "crnogorski"
+    },
+    {
+      "symbol": "co",
+      "langcode": "CSC",
+      "name": "Corsican",
+      "vernacularName": "Corsu"
+    },
+    {
+      "symbol": "crh-x-ctc",
+      "langcode": "CTC",
+      "name": "Crimean Tatar (Cyrillic)",
+      "vernacularName": "къырымтатар (кирилл)"
+    },
+    {
+      "symbol": "cri",
+      "langcode": "STN",
+      "name": "Sãotomense",
+      "vernacularName": "Santome"
+    },
+    {
+      "symbol": "crj-latn",
+      "langcode": "CSR",
+      "name": "Cree Southern East (Roman)",
+      "vernacularName": "Iinuuayimuwin"
+    },
+    {
+      "symbol": "crk-latn",
+      "langcode": "CY",
+      "name": "Cree Plains (Roman)",
+      "vernacularName": "nēhiyawēwin"
+    },
+    {
+      "symbol": "crk-x-cys",
+      "langcode": "CYS",
+      "name": "Cree Plains (Syllabics)",
+      "vernacularName": "ᓀᐦᐃᔭᐁᐧᐃᐧᐣ"
+    },
+    {
+      "symbol": "crm-x-oc",
+      "langcode": "OC",
+      "name": "Cree Omushkego (Roman)",
+      "vernacularName": "Cree Omushkego (Roman)"
+    },
+    {
+      "symbol": "crn",
+      "langcode": "COR",
+      "name": "Cora (El Nayar)",
+      "vernacularName": "cora (el nayar)"
+    },
+    {
+      "symbol": "crs",
+      "langcode": "SC",
+      "name": "Seychelles Creole",
+      "vernacularName": "Kreol Seselwa"
+    },
+    {
+      "symbol": "crt",
+      "langcode": "CTI",
+      "name": "Chorote (Iyojwa'ja)",
+      "vernacularName": "chorote (iyojwa'ja)"
+    },
+    {
+      "symbol": "cs",
+      "langcode": "B",
+      "name": "Czech",
+      "vernacularName": "čeština"
+    },
+    {
+      "symbol": "csb",
+      "langcode": "KSH",
+      "name": "Kashubian",
+      "vernacularName": "kaszëbsczi"
+    },
+    {
+      "symbol": "csc",
+      "langcode": "CLS",
+      "name": "Catalan Sign Language",
+      "vernacularName": "llengua de signes catalana"
+    },
+    {
+      "symbol": "cse",
+      "langcode": "CSE",
+      "name": "Czech Sign Language",
+      "vernacularName": "český znakový jazyk"
+    },
+    {
+      "symbol": "csf",
+      "langcode": "CBS",
+      "name": "Cuban Sign Language",
+      "vernacularName": "lengua de señas cubana"
+    },
+    {
+      "symbol": "csg",
+      "langcode": "SCH",
+      "name": "Chilean Sign Language",
+      "vernacularName": "lengua de señas chilena"
+    },
+    {
+      "symbol": "csl",
+      "langcode": "CSL",
+      "name": "Chinese Sign Language",
+      "vernacularName": "中国手语"
+    },
+    {
+      "symbol": "csn",
+      "langcode": "LSC",
+      "name": "Colombian Sign Language",
+      "vernacularName": "lengua de señas colombiana"
+    },
+    {
+      "symbol": "csq",
+      "langcode": "HZJ",
+      "name": "Croatian Sign Language",
+      "vernacularName": "hrvatski znakovni jezik"
+    },
+    {
+      "symbol": "csr",
+      "langcode": "SCR",
+      "name": "Costa Rican Sign Language",
+      "vernacularName": "lengua de señas costarricense"
+    },
+    {
+      "symbol": "csw-x-yc",
+      "langcode": "YC",
+      "name": "Cree West Swampy (Roman)",
+      "vernacularName": "Ininîmowin"
+    },
+    {
+      "symbol": "csw-x-ycs",
+      "langcode": "YCS",
+      "name": "Cree West Swampy (Syllabics)",
+      "vernacularName": "ᐃᓂᓃᒧᐏᐣ"
+    },
+    {
+      "symbol": "ctd",
+      "langcode": "CI",
+      "name": "Chin (Tiddim)",
+      "vernacularName": "Chin (Tedim)"
+    },
+    {
+      "symbol": "cto",
+      "langcode": "EMB",
+      "name": "Emberá (Catío)",
+      "vernacularName": "embera katio"
+    },
+    {
+      "symbol": "ctu",
+      "langcode": "CHL",
+      "name": "Chol",
+      "vernacularName": "ch'ol"
+    },
+    {
+      "symbol": "cub",
+      "langcode": "CBE",
+      "name": "Cubeo",
+      "vernacularName": "Cubeo"
+    },
+    {
+      "symbol": "cuk",
+      "langcode": "UN",
+      "name": "Guna",
+      "vernacularName": "dule"
+    },
+    {
+      "symbol": "cv",
+      "langcode": "CU",
+      "name": "Chuvash",
+      "vernacularName": "чӑвашла"
+    },
+    {
+      "symbol": "cwd-x-wc",
+      "langcode": "WC",
+      "name": "Cree Woods (Roman)",
+      "vernacularName": "Nîhithawîwin"
+    },
+    {
+      "symbol": "cwd-x-wcs",
+      "langcode": "WCS",
+      "name": "Cree Woods (Syllabics)",
+      "vernacularName": "ᓀᐦᐃᖬᐁᐧᐃᐧᐣ"
+    },
+    {
+      "symbol": "cy",
+      "langcode": "W",
+      "name": "Welsh",
+      "vernacularName": "Cymraeg"
+    },
+    {
+      "symbol": "czt",
+      "langcode": "ZO",
+      "name": "Chin (Zotung)",
+      "vernacularName": "Chin (Zotung)"
+    },
+    {
+      "symbol": "da",
+      "langcode": "D",
+      "name": "Danish",
+      "vernacularName": "Dansk"
+    },
+    {
+      "symbol": "daf",
+      "langcode": "YCB",
+      "name": "Yacouba",
+      "vernacularName": "Yaoba"
+    },
+    {
+      "symbol": "dag",
+      "langcode": "DGB",
+      "name": "Dagbani",
+      "vernacularName": "Dagbanli"
+    },
+    {
+      "symbol": "dak",
+      "langcode": "DT",
+      "name": "Dakota",
+      "vernacularName": "Dakota"
+    },
+    {
+      "symbol": "dar",
+      "langcode": "DRG",
+      "name": "Dargwa",
+      "vernacularName": "дарган"
+    },
+    {
+      "symbol": "dav",
+      "langcode": "AT",
+      "name": "Taita",
+      "vernacularName": "Kidawida"
+    },
+    {
+      "symbol": "ddg",
+      "langcode": "FTL",
+      "name": "Fataluku",
+      "vernacularName": "Fataluku"
+    },
+    {
+      "symbol": "ddn",
+      "langcode": "DND",
+      "name": "Dendi",
+      "vernacularName": "Dendi"
+    },
+    {
+      "symbol": "de",
+      "langcode": "X",
+      "name": "German",
+      "vernacularName": "Deutsch"
+    },
+    {
+      "symbol": "dez",
+      "langcode": "DNS",
+      "name": "Dengese",
+      "vernacularName": "Londengese"
+    },
+    {
+      "symbol": "dga",
+      "langcode": "DGA",
+      "name": "Dagaare",
+      "vernacularName": "Dagaare"
+    },
+    {
+      "symbol": "dhv",
+      "langcode": "LF",
+      "name": "Drehu",
+      "vernacularName": "Drehu"
+    },
+    {
+      "symbol": "dic",
+      "langcode": "DDL",
+      "name": "Dida (Lakota)",
+      "vernacularName": "Dida (Lakota)"
+    },
+    {
+      "symbol": "din",
+      "langcode": "DI",
+      "name": "Dinka",
+      "vernacularName": "Dinka"
+    },
+    {
+      "symbol": "diu",
+      "langcode": "RNY",
+      "name": "Rumanyo",
+      "vernacularName": "Rumanyo"
+    },
+    {
+      "symbol": "dje",
+      "langcode": "ZR",
+      "name": "Zarma",
+      "vernacularName": "Zarma"
+    },
+    {
+      "symbol": "djk",
+      "langcode": "AKN",
+      "name": "Aukan",
+      "vernacularName": "Okanisitongo"
+    },
+    {
+      "symbol": "dng",
+      "langcode": "DGN",
+      "name": "Dungan",
+      "vernacularName": "Dungan"
+    },
+    {
+      "symbol": "drg",
+      "langcode": "RGS",
+      "name": "Rungus",
+      "vernacularName": "Momogun"
+    },
+    {
+      "symbol": "dru",
+      "langcode": "RKI",
+      "name": "Rukai",
+      "vernacularName": "Drekay"
+    },
+    {
+      "symbol": "dse",
+      "langcode": "NGT",
+      "name": "Dutch Sign Language",
+      "vernacularName": "Nederlandse Gebarentaal"
+    },
+    {
+      "symbol": "dsl",
+      "langcode": "DSL",
+      "name": "Danish Sign Language",
+      "vernacularName": "Dansk tegnsprog"
+    },
+    {
+      "symbol": "dtp",
+      "langcode": "KAD",
+      "name": "Dusun",
+      "vernacularName": "Dusun"
+    },
+    {
+      "symbol": "dts",
+      "langcode": "DTS",
+      "name": "Dogon (Toro So)",
+      "vernacularName": "Dɔgɔn (Tɔrɔ Sɔ)"
+    },
+    {
+      "symbol": "dua",
+      "langcode": "DA",
+      "name": "Douala",
+      "vernacularName": "Douala"
+    },
+    {
+      "symbol": "dyo",
+      "langcode": "DO",
+      "name": "Diola",
+      "vernacularName": "Jóola"
+    },
+    {
+      "symbol": "dyu",
+      "langcode": "JL",
+      "name": "Jula",
+      "vernacularName": "Jula"
+    },
+    {
+      "symbol": "dzo-latn",
+      "langcode": "DZR",
+      "name": "Dzongkha (Roman)",
+      "vernacularName": "Dzongkha (Roman)"
+    },
+    {
+      "symbol": "dzo-tibt",
+      "langcode": "DZ",
+      "name": "Dzongkha (Tibetan)",
+      "vernacularName": "Dzongkha (Tibetan)"
+    },
+    {
+      "symbol": "ecs",
+      "langcode": "SEC",
+      "name": "Ecuadorian Sign Language",
+      "vernacularName": "lengua de señas ecuatoriana"
+    },
+    {
+      "symbol": "ee",
+      "langcode": "EW",
+      "name": "Ewe",
+      "vernacularName": "Eʋegbe"
+    },
+    {
+      "symbol": "efi",
+      "langcode": "EF",
+      "name": "Efik",
+      "vernacularName": "Efịk"
+    },
+    {
+      "symbol": "eko",
+      "langcode": "KTI",
+      "name": "Koti",
+      "vernacularName": "Koti"
+    },
+    {
+      "symbol": "el",
+      "langcode": "G",
+      "name": "Greek",
+      "vernacularName": "Ελληνική"
+    },
+    {
+      "symbol": "emk",
+      "langcode": "MKE",
+      "name": "Maninkakan (Eastern)",
+      "vernacularName": "Mandingo"
+    },
+    {
+      "symbol": "emp",
+      "langcode": "EMP",
+      "name": "Emberá (Northern)",
+      "vernacularName": "Emberá dóbida"
+    },
+    {
+      "symbol": "en",
+      "langcode": "E",
+      "name": "English",
+      "vernacularName": "English"
+    },
+    {
+      "symbol": "en-ng",
+      "langcode": "ENG",
+      "name": "English (Nigeria)",
+      "vernacularName": "English (Nigeria)"
+    },
+    {
+      "symbol": "en-zm",
+      "langcode": "EZM",
+      "name": "English (Zambia)",
+      "vernacularName": "English (Zambia)"
+    },
+    {
+      "symbol": "enq",
+      "langcode": "EA",
+      "name": "Enga",
+      "vernacularName": "Enga"
+    },
+    {
+      "symbol": "erk",
+      "langcode": "EFS",
+      "name": "Efate (South)",
+      "vernacularName": "Efate (South)"
+    },
+    {
+      "symbol": "es",
+      "langcode": "S",
+      "name": "Spanish",
+      "vernacularName": "español"
+    },
+    {
+      "symbol": "es-es",
+      "langcode": "SSP",
+      "name": "Spanish (Spain)",
+      "vernacularName": "español (de España)"
+    },
+    {
+      "symbol": "esn",
+      "langcode": "LSS",
+      "name": "Salvadoran Sign Language",
+      "vernacularName": "lengua de señas salvadoreña"
+    },
+    {
+      "symbol": "eso",
+      "langcode": "STD",
+      "name": "Estonian Sign Language",
+      "vernacularName": "eesti viipekeel"
+    },
+    {
+      "symbol": "esu",
+      "langcode": "YU",
+      "name": "Central Alaskan Yupik",
+      "vernacularName": "Central Alaskan Yupik"
+    },
+    {
+      "symbol": "et",
+      "langcode": "ST",
+      "name": "Estonian",
+      "vernacularName": "eesti"
+    },
+    {
+      "symbol": "eth",
+      "langcode": "ESL",
+      "name": "Ethiopian Sign Language",
+      "vernacularName": "የኢትዮጵያ ምልክት ቋንቋ"
+    },
+    {
+      "symbol": "eto",
+      "langcode": "ETN",
+      "name": "Eton",
+      "vernacularName": "Iton"
+    },
+    {
+      "symbol": "etu",
+      "langcode": "EJH",
+      "name": "Ejagham",
+      "vernacularName": "Ejagham"
+    },
+    {
+      "symbol": "eu",
+      "langcode": "BQ",
+      "name": "Basque",
+      "vernacularName": "Euskara"
+    },
+    {
+      "symbol": "ewo",
+      "langcode": "EWN",
+      "name": "Ewondo",
+      "vernacularName": "Ewondo"
+    },
+    {
+      "symbol": "fa",
+      "langcode": "PR",
+      "name": "Persian",
+      "vernacularName": "فارسی"
+    },
+    {
+      "symbol": "fan",
+      "langcode": "FGN",
+      "name": "Fang",
+      "vernacularName": "Fang"
+    },
+    {
+      "symbol": "fat",
+      "langcode": "FA",
+      "name": "Fante",
+      "vernacularName": "Mfantse"
+    },
+    {
+      "symbol": "fcs",
+      "langcode": "LSQ",
+      "name": "Quebec Sign Language",
+      "vernacularName": "Langue des signes québécoise"
+    },
+    {
+      "symbol": "ffm",
+      "langcode": "FU",
+      "name": "Fulfulde (Maasina)",
+      "vernacularName": "Fulfulde (Maasina)"
+    },
+    {
+      "symbol": "fi",
+      "langcode": "FI",
+      "name": "Finnish",
+      "vernacularName": "suomi"
+    },
+    {
+      "symbol": "fij-x-fnr",
+      "langcode": "FNR",
+      "name": "Ra",
+      "vernacularName": "Ra"
+    },
+    {
+      "symbol": "fij-x-kdv",
+      "langcode": "KDV",
+      "name": "Kadavu",
+      "vernacularName": "Kadavu"
+    },
+    {
+      "symbol": "fij-x-mct",
+      "langcode": "MCT",
+      "name": "Macuata",
+      "vernacularName": "Macuata"
+    },
+    {
+      "symbol": "fij-x-ndi",
+      "langcode": "NDI",
+      "name": "Nadi",
+      "vernacularName": "Nadi"
+    },
+    {
+      "symbol": "fj",
+      "langcode": "FN",
+      "name": "Fijian",
+      "vernacularName": "vakaViti"
+    },
+    {
+      "symbol": "flr",
+      "langcode": "KFL",
+      "name": "Kifulero",
+      "vernacularName": "Kifuliiru"
+    },
+    {
+      "symbol": "fmp",
+      "langcode": "FFE",
+      "name": "Fe'fe'",
+      "vernacularName": "Bafang"
+    },
+    {
+      "symbol": "fo",
+      "langcode": "FR",
+      "name": "Faroese",
+      "vernacularName": "Føroyskt"
+    },
+    {
+      "symbol": "fon",
+      "langcode": "FO",
+      "name": "Fon",
+      "vernacularName": "Fɔngbe"
+    },
+    {
+      "symbol": "fr",
+      "langcode": "F",
+      "name": "French",
+      "vernacularName": "Français"
+    },
+    {
+      "symbol": "fr-bj",
+      "langcode": "FBN",
+      "name": "French (Benin)",
+      "vernacularName": "Français (Bénin)"
+    },
+    {
+      "symbol": "fr-ca",
+      "langcode": "FCA",
+      "name": "French (Canada)",
+      "vernacularName": "Français (Canada)"
+    },
+    {
+      "symbol": "fr-cl",
+      "langcode": "FCD",
+      "name": "French (Côte d'Ivoire)",
+      "vernacularName": "Français Ivoirien"
+    },
+    {
+      "symbol": "fr-x-acd",
+      "langcode": "ACD",
+      "name": "Acadian",
+      "vernacularName": "Acadien"
+    },
+    {
+      "symbol": "fse",
+      "langcode": "FID",
+      "name": "Finnish Sign Language",
+      "vernacularName": "suomalainen viittomakieli"
+    },
+    {
+      "symbol": "fsl",
+      "langcode": "LSF",
+      "name": "French Sign Language",
+      "vernacularName": "Langue des signes française"
+    },
+    {
+      "symbol": "fub",
+      "langcode": "FD",
+      "name": "Fulfulde (Cameroon)",
+      "vernacularName": "Fulfulde (Kamerun)"
+    },
+    {
+      "symbol": "fud",
+      "langcode": "FT",
+      "name": "Futuna (East)",
+      "vernacularName": "Fakafutuna"
+    },
+    {
+      "symbol": "fuf",
+      "langcode": "PLR",
+      "name": "Pular",
+      "vernacularName": "Fula"
+    },
+    {
+      "symbol": "fuv",
+      "langcode": "FLN",
+      "name": "Fulfulde (Nigerian)",
+      "vernacularName": "Fulfulde (Nigerian)"
+    },
+    {
+      "symbol": "fwa",
+      "langcode": "FW",
+      "name": "Fwâi",
+      "vernacularName": "Fwâi"
+    },
+    {
+      "symbol": "fy",
+      "langcode": "FS",
+      "name": "Frisian",
+      "vernacularName": "Frysk"
+    },
+    {
+      "symbol": "ga",
+      "langcode": "GC",
+      "name": "Irish",
+      "vernacularName": "Gaeilge"
+    },
+    {
+      "symbol": "gaa",
+      "langcode": "GA",
+      "name": "Ga",
+      "vernacularName": "Ga"
+    },
+    {
+      "symbol": "gag-x-gz",
+      "langcode": "GZ",
+      "name": "Gagauz",
+      "vernacularName": "гaгaуз"
+    },
+    {
+      "symbol": "gag-x-gzr",
+      "langcode": "GZR",
+      "name": "Gagauz (Roman)",
+      "vernacularName": "gagauz (latin)"
+    },
+    {
+      "symbol": "gba",
+      "langcode": "GBA",
+      "name": "Gbaya",
+      "vernacularName": "Gbaya"
+    },
+    {
+      "symbol": "gbm",
+      "langcode": "GRW",
+      "name": "Garhwali",
+      "vernacularName": "गढ़वाली"
+    },
+    {
+      "symbol": "gbr",
+      "langcode": "GBG",
+      "name": "Gbagyi",
+      "vernacularName": "Gbagyi"
+    },
+    {
+      "symbol": "gcf",
+      "langcode": "GCR",
+      "name": "Guadeloupean Creole",
+      "vernacularName": "Kréyòl Gwadloup"
+    },
+    {
+      "symbol": "gcf-x-mtc",
+      "langcode": "MTC",
+      "name": "Martiniquan Creole",
+      "vernacularName": "Kréyol Matinik"
+    },
+    {
+      "symbol": "gcr",
+      "langcode": "GNC",
+      "name": "Guianese Creole",
+      "vernacularName": "Kréyòl gwiyanè"
+    },
+    {
+      "symbol": "gd",
+      "langcode": "GCS",
+      "name": "Scottish Gaelic",
+      "vernacularName": "Gàidhlig"
+    },
+    {
+      "symbol": "geh",
+      "langcode": "HTX",
+      "name": "Hutterite German",
+      "vernacularName": "Hutterite German"
+    },
+    {
+      "symbol": "gil",
+      "langcode": "GB",
+      "name": "Kiribati",
+      "vernacularName": "Kiribati"
+    },
+    {
+      "symbol": "gkn",
+      "langcode": "GN",
+      "name": "Gokana",
+      "vernacularName": "Gokana"
+    },
+    {
+      "symbol": "gkp",
+      "langcode": "GRZ",
+      "name": "Guerze",
+      "vernacularName": "Kpɛlɛɛwoo"
+    },
+    {
+      "symbol": "gl",
+      "langcode": "GLC",
+      "name": "Galician",
+      "vernacularName": "Galego"
+    },
+    {
+      "symbol": "goa",
+      "langcode": "GO",
+      "name": "Gouro",
+      "vernacularName": "Goro"
+    },
+    {
+      "symbol": "gog",
+      "langcode": "GG",
+      "name": "Gogo",
+      "vernacularName": "Cigogo"
+    },
+    {
+      "symbol": "gom",
+      "langcode": "KT",
+      "name": "Konkani (Roman)",
+      "vernacularName": "Konkani (Romi)"
+    },
+    {
+      "symbol": "grb",
+      "langcode": "GRB",
+      "name": "Grebo",
+      "vernacularName": "Grebo"
+    },
+    {
+      "symbol": "grt-x-gaa",
+      "langcode": "GAA",
+      "name": "Garo (Achik)",
+      "vernacularName": "Garo (Achik)"
+    },
+    {
+      "symbol": "grt-x-gar",
+      "langcode": "GAR",
+      "name": "Garo (Abeng)",
+      "vernacularName": "গারো (আবেং)"
+    },
+    {
+      "symbol": "gse",
+      "langcode": "GHS",
+      "name": "Ghanaian Sign Language",
+      "vernacularName": "Ghanaian Sign Language"
+    },
+    {
+      "symbol": "gsg",
+      "langcode": "DGS",
+      "name": "German Sign Language",
+      "vernacularName": "Deutsche Gebärdensprache"
+    },
+    {
+      "symbol": "gsm",
+      "langcode": "LSG",
+      "name": "Guatemalan Sign Language",
+      "vernacularName": "lengua de señas de Guatemala"
+    },
+    {
+      "symbol": "gss",
+      "langcode": "GSL",
+      "name": "Greek Sign Language",
+      "vernacularName": "Ελληνική Νοηματική Γλώσσα"
+    },
+    {
+      "symbol": "gsw",
+      "langcode": "XSW",
+      "name": "Swiss German",
+      "vernacularName": "Schweizerdeutsch"
+    },
+    {
+      "symbol": "gsw-x-ltn",
+      "langcode": "LTN",
+      "name": "Alsatian",
+      "vernacularName": "Elsässisch"
+    },
+    {
+      "symbol": "gu",
+      "langcode": "GU",
+      "name": "Gujarati",
+      "vernacularName": "ગુજરાતી"
+    },
+    {
+      "symbol": "gu-latn",
+      "langcode": "GRM",
+      "name": "Gujarati (Roman)",
+      "vernacularName": "Gujarati (Roman)"
+    },
+    {
+      "symbol": "guc",
+      "langcode": "WY",
+      "name": "Wayuunaiki",
+      "vernacularName": "Wayuunaiki"
+    },
+    {
+      "symbol": "gug",
+      "langcode": "GI",
+      "name": "Guarani",
+      "vernacularName": "guarani"
+    },
+    {
+      "symbol": "guh",
+      "langcode": "GHB",
+      "name": "Guahibo",
+      "vernacularName": "guahibo"
+    },
+    {
+      "symbol": "gui",
+      "langcode": "GIB",
+      "name": "Guarani (Bolivia)",
+      "vernacularName": "Guaraní boliviano"
+    },
+    {
+      "symbol": "gum",
+      "langcode": "GBM",
+      "name": "Guambiano",
+      "vernacularName": "Namtrik"
+    },
+    {
+      "symbol": "gun",
+      "langcode": "GIM",
+      "name": "Guaraní (Mbyá)",
+      "vernacularName": "Guaraní (Mbyá)"
+    },
+    {
+      "symbol": "guo",
+      "langcode": "GBR",
+      "name": "Guayabero",
+      "vernacularName": "jiw"
+    },
+    {
+      "symbol": "gur",
+      "langcode": "FF",
+      "name": "Frafra",
+      "vernacularName": "Farefare"
+    },
+    {
+      "symbol": "guw",
+      "langcode": "EG",
+      "name": "Gun",
+      "vernacularName": "Gungbe"
+    },
+    {
+      "symbol": "guw-bj",
+      "langcode": "GNB",
+      "name": "Gun (Benin)",
+      "vernacularName": "Gun (Benin)"
+    },
+    {
+      "symbol": "gux",
+      "langcode": "GRC",
+      "name": "Gourmanchéma",
+      "vernacularName": "Gulmancema"
+    },
+    {
+      "symbol": "guz",
+      "langcode": "II",
+      "name": "Kisii",
+      "vernacularName": "Kisii"
+    },
+    {
+      "symbol": "gxx",
+      "langcode": "GUR",
+      "name": "Guéré",
+      "vernacularName": "wɛ"
+    },
+    {
+      "symbol": "gym",
+      "langcode": "NGB",
+      "name": "Ngabere",
+      "vernacularName": "ngäbere"
+    },
+    {
+      "symbol": "gyn",
+      "langcode": "GCE",
+      "name": "Guyanese Creole English",
+      "vernacularName": "Guyanese Creole English"
+    },
+    {
+      "symbol": "gyr",
+      "langcode": "GRY",
+      "name": "Guarayu",
+      "vernacularName": "Guarayu"
+    },
+    {
+      "symbol": "ha",
+      "langcode": "HA",
+      "name": "Hausa",
+      "vernacularName": "Hausa"
+    },
+    {
+      "symbol": "hab",
+      "langcode": "SLV",
+      "name": "Vietnamese Sign Language",
+      "vernacularName": "Việt Nam (Ngôn ngữ ký hiệu)"
+    },
+    {
+      "symbol": "hak",
+      "langcode": "CHH",
+      "name": "Hakka (Taiwan)",
+      "vernacularName": "客家話（台灣）"
+    },
+    {
+      "symbol": "hak-id",
+      "langcode": "HKI",
+      "name": "Hakka (Indonesia)",
+      "vernacularName": "Cina Khek (Indonesia)"
+    },
+    {
+      "symbol": "hav",
+      "langcode": "HVU",
+      "name": "Havu",
+      "vernacularName": "Ekihavu"
+    },
+    {
+      "symbol": "haw",
+      "langcode": "HW",
+      "name": "Hawaiian",
+      "vernacularName": "ʻŌlelo Hawaiʻi"
+    },
+    {
+      "symbol": "hay",
+      "langcode": "HY",
+      "name": "Haya",
+      "vernacularName": "Ekihaya"
+    },
+    {
+      "symbol": "hch",
+      "langcode": "HCH",
+      "name": "Wixárika",
+      "vernacularName": "wixárika"
+    },
+    {
+      "symbol": "hds",
+      "langcode": "SHO",
+      "name": "Honduras Sign Language",
+      "vernacularName": "lengua de señas hondureña"
+    },
+    {
+      "symbol": "hdy",
+      "langcode": "HDY",
+      "name": "Hadiyya",
+      "vernacularName": "Hadiyya"
+    },
+    {
+      "symbol": "he",
+      "langcode": "Q",
+      "name": "Hebrew",
+      "vernacularName": "עברית"
+    },
+    {
+      "symbol": "heh",
+      "langcode": "HH",
+      "name": "Hehe",
+      "vernacularName": "Kihehe"
+    },
+    {
+      "symbol": "hem",
+      "langcode": "KHB",
+      "name": "Kihemba",
+      "vernacularName": "Kihemba"
+    },
+    {
+      "symbol": "hi",
+      "langcode": "HI",
+      "name": "Hindi",
+      "vernacularName": "हिंदी"
+    },
+    {
+      "symbol": "hi-latn",
+      "langcode": "HRM",
+      "name": "Hindi (Roman)",
+      "vernacularName": "Hindi (Roman)"
+    },
+    {
+      "symbol": "hif",
+      "langcode": "HFJ",
+      "name": "Hindi (Fiji)",
+      "vernacularName": "Hindi (Fiji)"
+    },
+    {
+      "symbol": "hig",
+      "langcode": "KMW",
+      "name": "Kamwe",
+      "vernacularName": "Kamwe"
+    },
+    {
+      "symbol": "hil",
+      "langcode": "HV",
+      "name": "Hiligaynon",
+      "vernacularName": "Hiligaynon"
+    },
+    {
+      "symbol": "hin-x-khl",
+      "langcode": "KHL",
+      "name": "Khari Boli",
+      "vernacularName": "Khari Boli"
+    },
+    {
+      "symbol": "hks",
+      "langcode": "HSL",
+      "name": "Hong Kong Sign Language",
+      "vernacularName": "香港手語"
+    },
+    {
+      "symbol": "hla",
+      "langcode": "HLA",
+      "name": "Halia",
+      "vernacularName": "Halia"
+    },
+    {
+      "symbol": "hlt",
+      "langcode": "CMT",
+      "name": "Chin (Matu)",
+      "vernacularName": "Chin (Matu)"
+    },
+    {
+      "symbol": "hmn",
+      "langcode": "HM",
+      "name": "Hmong (White)",
+      "vernacularName": "Hmoob Dawb"
+    },
+    {
+      "symbol": "hne-deva",
+      "langcode": "CGD",
+      "name": "Chhattisgarhi (Devanagari)",
+      "vernacularName": "छत्तीसगढ़ी (देवनागरी)"
+    },
+    {
+      "symbol": "hnj",
+      "langcode": "HMN",
+      "name": "Hmong (Green)",
+      "vernacularName": "Moob Ntsuab"
+    },
+    {
+      "symbol": "hns",
+      "langcode": "SRI",
+      "name": "Sarnami",
+      "vernacularName": "Sarnami Hindoestani"
+    },
+    {
+      "symbol": "ho",
+      "langcode": "MO",
+      "name": "Hiri Motu",
+      "vernacularName": "Hiri Motu"
+    },
+    {
+      "symbol": "hop",
+      "langcode": "HPI",
+      "name": "Hopi",
+      "vernacularName": "Hopi"
+    },
+    {
+      "symbol": "hr",
+      "langcode": "C",
+      "name": "Croatian",
+      "vernacularName": "hrvatski"
+    },
+    {
+      "symbol": "hrx",
+      "langcode": "HSK",
+      "name": "Hunsrik",
+      "vernacularName": "Hunsrik"
+    },
+    {
+      "symbol": "hsh",
+      "langcode": "HDF",
+      "name": "Hungarian Sign Language",
+      "vernacularName": "magyar jelnyelv"
+    },
+    {
+      "symbol": "ht",
+      "langcode": "CR",
+      "name": "Haitian Creole",
+      "vernacularName": "Kreyòl ayisyen"
+    },
+    {
+      "symbol": "hu",
+      "langcode": "H",
+      "name": "Hungarian",
+      "vernacularName": "magyar"
+    },
+    {
+      "symbol": "hul",
+      "langcode": "HU",
+      "name": "Hula",
+      "vernacularName": "Vula’a"
+    },
+    {
+      "symbol": "hus",
+      "langcode": "HST",
+      "name": "Huastec (San Luis Potosi)",
+      "vernacularName": "tének"
+    },
+    {
+      "symbol": "hus-x-hsv",
+      "langcode": "HSV",
+      "name": "Huastec (Veracruz)",
+      "vernacularName": "tének de Veracruz"
+    },
+    {
+      "symbol": "huv",
+      "langcode": "HUV",
+      "name": "Huave (San Mateo del Mar)",
+      "vernacularName": "ombeayiiüts"
+    },
+    {
+      "symbol": "hvn",
+      "langcode": "HWU",
+      "name": "Hawu",
+      "vernacularName": "Sabu"
+    },
+    {
+      "symbol": "hwc",
+      "langcode": "HWP",
+      "name": "Hawai’i Pidgin",
+      "vernacularName": "Hawai’i Pidgin"
+    },
+    {
+      "symbol": "hy",
+      "langcode": "REA",
+      "name": "Armenian",
+      "vernacularName": "Հայերեն"
+    },
+    {
+      "symbol": "hy-x-krb",
+      "langcode": "KRB",
+      "name": "Armenian (Eastern dialect)",
+      "vernacularName": "Հայերեն (արևելյան բարբառ)"
+    },
+    {
+      "symbol": "hyw",
+      "langcode": "R",
+      "name": "Armenian (West)",
+      "vernacularName": "Արեւմտահայերէն"
+    },
+    {
+      "symbol": "hyw-x-hma",
+      "langcode": "HMA",
+      "name": "Hamshen (Armenian)",
+      "vernacularName": "համշեներեն (հայերեն)"
+    },
+    {
+      "symbol": "hyw-x-hms",
+      "langcode": "HMS",
+      "name": "Hamshen (Cyrillic)",
+      "vernacularName": "һамшенерен (кирилица)"
+    },
+    {
+      "symbol": "hz",
+      "langcode": "HR",
+      "name": "Herero",
+      "vernacularName": "Otjiherero"
+    },
+    {
+      "symbol": "iai",
+      "langcode": "IAA",
+      "name": "Iaai",
+      "vernacularName": "Iaai"
+    },
+    {
+      "symbol": "iba",
+      "langcode": "IA",
+      "name": "Iban",
+      "vernacularName": "Iban"
+    },
+    {
+      "symbol": "ibg",
+      "langcode": "IG",
+      "name": "Ibanag",
+      "vernacularName": "Ibanag"
+    },
+    {
+      "symbol": "ibl",
+      "langcode": "IBL",
+      "name": "Ibaloi",
+      "vernacularName": "Ibaloi"
+    },
+    {
+      "symbol": "icr",
+      "langcode": "CRE",
+      "name": "Islander Creole English",
+      "vernacularName": "San Andrés Creole"
+    },
+    {
+      "symbol": "id",
+      "langcode": "IN",
+      "name": "Indonesian",
+      "vernacularName": "Indonesia"
+    },
+    {
+      "symbol": "idu",
+      "langcode": "ID",
+      "name": "Idoma",
+      "vernacularName": "Idoma"
+    },
+    {
+      "symbol": "ifk",
+      "langcode": "IF",
+      "name": "Ifugao",
+      "vernacularName": "Ifugao"
+    },
+    {
+      "symbol": "ig",
+      "langcode": "IB",
+      "name": "Igbo",
+      "vernacularName": "Igbo"
+    },
+    {
+      "symbol": "igb",
+      "langcode": "EBA",
+      "name": "Ebira",
+      "vernacularName": "Ebira"
+    },
+    {
+      "symbol": "ige",
+      "langcode": "IGE",
+      "name": "Igede",
+      "vernacularName": "Igede"
+    },
+    {
+      "symbol": "igl",
+      "langcode": "AA",
+      "name": "Igala",
+      "vernacularName": "Igala"
+    },
+    {
+      "symbol": "ign",
+      "langcode": "IGN",
+      "name": "Ignaciano",
+      "vernacularName": "Ignaciano"
+    },
+    {
+      "symbol": "ijc",
+      "langcode": "IJ",
+      "name": "Ijaw",
+      "vernacularName": "Ijaw"
+    },
+    {
+      "symbol": "ilo",
+      "langcode": "IL",
+      "name": "Iloko",
+      "vernacularName": "Iloko"
+    },
+    {
+      "symbol": "inb",
+      "langcode": "INB",
+      "name": "Inga",
+      "vernacularName": "Inga"
+    },
+    {
+      "symbol": "inl",
+      "langcode": "INI",
+      "name": "Indonesian Sign Language",
+      "vernacularName": "Bahasa Isyarat Indonesia"
+    },
+    {
+      "symbol": "ins",
+      "langcode": "INS",
+      "name": "Indian Sign Language",
+      "vernacularName": "Indian Sign Language"
+    },
+    {
+      "symbol": "is",
+      "langcode": "IC",
+      "name": "Icelandic",
+      "vernacularName": "íslenska"
+    },
+    {
+      "symbol": "ise",
+      "langcode": "ISL",
+      "name": "Italian Sign Language",
+      "vernacularName": "Lingua dei segni italiana"
+    },
+    {
+      "symbol": "isg",
+      "langcode": "ISG",
+      "name": "Irish Sign Language",
+      "vernacularName": "Irish Sign Language"
+    },
+    {
+      "symbol": "ish",
+      "langcode": "IH",
+      "name": "Esan",
+      "vernacularName": "Esan"
+    },
+    {
+      "symbol": "iso",
+      "langcode": "IS",
+      "name": "Isoko",
+      "vernacularName": "Isoko"
+    },
+    {
+      "symbol": "isr",
+      "langcode": "QSL",
+      "name": "Israeli Sign Language",
+      "vernacularName": "שפת סימנים ישראלית"
+    },
+    {
+      "symbol": "it",
+      "langcode": "I",
+      "name": "Italian",
+      "vernacularName": "Italiano"
+    },
+    {
+      "symbol": "its",
+      "langcode": "IT",
+      "name": "Itsekiri",
+      "vernacularName": "Itsekiri"
+    },
+    {
+      "symbol": "itv",
+      "langcode": "ITW",
+      "name": "Itawit",
+      "vernacularName": "Itawit"
+    },
+    {
+      "symbol": "iu",
+      "langcode": "IU",
+      "name": "Inuktitut (Syllabics)",
+      "vernacularName": "ᐃᓄᒃᑎᑐᑦ (ᖃᓂᐅᔮᖅᐸᐃᑦ)"
+    },
+    {
+      "symbol": "iu-latn",
+      "langcode": "IUR",
+      "name": "Inuktitut (Roman)",
+      "vernacularName": "Inuktitut"
+    },
+    {
+      "symbol": "ium",
+      "langcode": "IMN",
+      "name": "Iu Mien",
+      "vernacularName": "Iu-Mienh"
+    },
+    {
+      "symbol": "ivv",
+      "langcode": "IV",
+      "name": "Ivatan",
+      "vernacularName": "Ivatan"
+    },
+    {
+      "symbol": "ixl",
+      "langcode": "IXL",
+      "name": "Ixil",
+      "vernacularName": "ixil"
+    },
+    {
+      "symbol": "ja",
+      "langcode": "J",
+      "name": "Japanese",
+      "vernacularName": "日本語"
+    },
+    {
+      "symbol": "jac-x-jc",
+      "langcode": "JC",
+      "name": "Popti'",
+      "vernacularName": "poptí"
+    },
+    {
+      "symbol": "jam-x-jcr",
+      "langcode": "JCR",
+      "name": "Jamaican Creole",
+      "vernacularName": "Patwa"
+    },
+    {
+      "symbol": "jav",
+      "langcode": "JVN",
+      "name": "Javanese (Eastern)",
+      "vernacularName": "Jawa Timur"
+    },
+    {
+      "symbol": "jiv",
+      "langcode": "SHU",
+      "name": "Shuar",
+      "vernacularName": "shuar"
+    },
+    {
+      "symbol": "jje",
+      "langcode": "JJU",
+      "name": "Jejueo",
+      "vernacularName": "제주어"
+    },
+    {
+      "symbol": "jls",
+      "langcode": "JML",
+      "name": "Jamaican Sign Language",
+      "vernacularName": "Jamaican Sign Language"
+    },
+    {
+      "symbol": "jmx",
+      "langcode": "MXO",
+      "name": "Mixtec (Huajuapan)",
+      "vernacularName": "Tu̱ʼun ndaʼví"
+    },
+    {
+      "symbol": "jra",
+      "langcode": "JAR",
+      "name": "Jarai",
+      "vernacularName": "Jarai"
+    },
+    {
+      "symbol": "jsl",
+      "langcode": "JSL",
+      "name": "Japanese Sign Language",
+      "vernacularName": "日本手話"
+    },
+    {
+      "symbol": "jv",
+      "langcode": "JA",
+      "name": "Javanese",
+      "vernacularName": "Jawa"
+    },
+    {
+      "symbol": "jw-gde",
+      "langcode": "GDE",
+      "name": "Gedeo",
+      "vernacularName": "Gede'uffa"
+    },
+    {
+      "symbol": "ka",
+      "langcode": "GE",
+      "name": "Georgian",
+      "vernacularName": "ქართული"
+    },
+    {
+      "symbol": "kaa",
+      "langcode": "KRK",
+      "name": "Karakalpak",
+      "vernacularName": "қарақалпақ"
+    },
+    {
+      "symbol": "kab",
+      "langcode": "KBY",
+      "name": "Kabyle",
+      "vernacularName": "Taqbaylit"
+    },
+    {
+      "symbol": "kac",
+      "langcode": "AH",
+      "name": "Kachin",
+      "vernacularName": "Kachin"
+    },
+    {
+      "symbol": "kam",
+      "langcode": "KB",
+      "name": "Kamba",
+      "vernacularName": "Kikamba"
+    },
+    {
+      "symbol": "kbd",
+      "langcode": "KBR",
+      "name": "Kabardin-Cherkess",
+      "vernacularName": "адыгэбзэ"
+    },
+    {
+      "symbol": "kbp",
+      "langcode": "KAB",
+      "name": "Kabiye",
+      "vernacularName": "Kabɩyɛ"
+    },
+    {
+      "symbol": "kck-x-kl",
+      "langcode": "KL",
+      "name": "Kalanga (Botswana)",
+      "vernacularName": "Kalanga (Botswana)"
+    },
+    {
+      "symbol": "kck-x-klz",
+      "langcode": "KLZ",
+      "name": "Kalanga (Zimbabwe)",
+      "vernacularName": "Kalanga (Zimbabwe)"
+    },
+    {
+      "symbol": "kde",
+      "langcode": "MKD",
+      "name": "Makonde",
+      "vernacularName": "Shimakonde"
+    },
+    {
+      "symbol": "kdh",
+      "langcode": "TEM",
+      "name": "Tem",
+      "vernacularName": "Kotokoli"
+    },
+    {
+      "symbol": "kdk",
+      "langcode": "KWN",
+      "name": "Numèè (Kwenyii)",
+      "vernacularName": "Kwényï"
+    },
+    {
+      "symbol": "kdn",
+      "langcode": "KDA",
+      "name": "Kunda",
+      "vernacularName": "Kunda"
+    },
+    {
+      "symbol": "kdt",
+      "langcode": "KUY",
+      "name": "Kuy",
+      "vernacularName": "Kuy"
+    },
+    {
+      "symbol": "kea",
+      "langcode": "KBV",
+      "name": "Kabuverdianu",
+      "vernacularName": "Kabuverdianu"
+    },
+    {
+      "symbol": "kea-x-kbt",
+      "langcode": "KBT",
+      "name": "Kabuverdianu (Barlaventu)",
+      "vernacularName": "Kabuverdianu (Barlaventu)"
+    },
+    {
+      "symbol": "kei",
+      "langcode": "KEI",
+      "name": "Kei",
+      "vernacularName": "Kei"
+    },
+    {
+      "symbol": "kek",
+      "langcode": "GK",
+      "name": "Kekchi",
+      "vernacularName": "q’eqchi’"
+    },
+    {
+      "symbol": "kem",
+      "langcode": "KEM",
+      "name": "Kemak",
+      "vernacularName": "Kemak"
+    },
+    {
+      "symbol": "kex",
+      "langcode": "KND",
+      "name": "Konkani (Devanagari)",
+      "vernacularName": "कोंकणी (देवनागरी)"
+    },
+    {
+      "symbol": "kfr",
+      "langcode": "KCC",
+      "name": "Kutchi",
+      "vernacularName": "કચ્છી"
+    },
+    {
+      "symbol": "kg",
+      "langcode": "MK",
+      "name": "Kongo",
+      "vernacularName": "Kikongo (Rép. dém. du congo)"
+    },
+    {
+      "symbol": "kg-x-mnn",
+      "langcode": "MNN",
+      "name": "Kimanyanga",
+      "vernacularName": "Kimanianga"
+    },
+    {
+      "symbol": "kgk",
+      "langcode": "KAA",
+      "name": "Kaiwá",
+      "vernacularName": "Guarani (Kaiowá)"
+    },
+    {
+      "symbol": "kgp",
+      "langcode": "KGG",
+      "name": "Kaingang",
+      "vernacularName": "Kaingang"
+    },
+    {
+      "symbol": "kha",
+      "langcode": "KS",
+      "name": "Khasi",
+      "vernacularName": "Khasi"
+    },
+    {
+      "symbol": "khy",
+      "langcode": "KLE",
+      "name": "Kele",
+      "vernacularName": "Lokele"
+    },
+    {
+      "symbol": "ki",
+      "langcode": "KQ",
+      "name": "Kikuyu",
+      "vernacularName": "Gĩkũyũ"
+    },
+    {
+      "symbol": "kiu",
+      "langcode": "ZZN",
+      "name": "Zazaki (Northern)",
+      "vernacularName": "Zazaca (Kuzey)"
+    },
+    {
+      "symbol": "kj",
+      "langcode": "KY",
+      "name": "Kwanyama",
+      "vernacularName": "Oshikwanyama"
+    },
+    {
+      "symbol": "kjb",
+      "langcode": "QNJ",
+      "name": "Q'anjob'al",
+      "vernacularName": "q'anjob'al"
+    },
+    {
+      "symbol": "kjh",
+      "langcode": "KHK",
+      "name": "Khakass",
+      "vernacularName": "хакас"
+    },
+    {
+      "symbol": "kk",
+      "langcode": "AZ",
+      "name": "Kazakh",
+      "vernacularName": "қазақ"
+    },
+    {
+      "symbol": "kk-arab",
+      "langcode": "AZA",
+      "name": "Kazakh (Arabic)",
+      "vernacularName": "قازاق ٴتىلى (ارابشا جازۋى)"
+    },
+    {
+      "symbol": "kl",
+      "langcode": "GL",
+      "name": "Greenlandic",
+      "vernacularName": "Kalaallisut"
+    },
+    {
+      "symbol": "kl-x-gle",
+      "langcode": "GLE",
+      "name": "Greenlandic (East)",
+      "vernacularName": "Tunumiisut"
+    },
+    {
+      "symbol": "kln",
+      "langcode": "KJ",
+      "name": "Kalenjin",
+      "vernacularName": "Kalenjin"
+    },
+    {
+      "symbol": "km",
+      "langcode": "CB",
+      "name": "Cambodian",
+      "vernacularName": "ខ្មែរ"
+    },
+    {
+      "symbol": "kmb",
+      "langcode": "KIM",
+      "name": "Kimbundu",
+      "vernacularName": "Kimbundu"
+    },
+    {
+      "symbol": "kmr-cyrl",
+      "langcode": "RDC",
+      "name": "Kurdish Kurmanji (Cyrillic)",
+      "vernacularName": "К′öрди Кöрманщи (Кирили)"
+    },
+    {
+      "symbol": "kmr-x-rd",
+      "langcode": "RD",
+      "name": "Kurdish Kurmanji",
+      "vernacularName": "Kurdî (Kurmancî)"
+    },
+    {
+      "symbol": "kmr-x-rdu",
+      "langcode": "RDU",
+      "name": "Kurdish Kurmanji (Caucasus)",
+      "vernacularName": "Kurdî Kurmancî (Kavkazûs)"
+    },
+    {
+      "symbol": "kn",
+      "langcode": "KA",
+      "name": "Kannada",
+      "vernacularName": "ಕನ್ನಡ"
+    },
+    {
+      "symbol": "kn-x-kbb",
+      "langcode": "KBB",
+      "name": "Kannada (Baraha Bhaashe)",
+      "vernacularName": "ಕನ್ನಡ (ಬರಹ ಭಾಷೆ)"
+    },
+    {
+      "symbol": "kne",
+      "langcode": "KNY",
+      "name": "Kankanaey",
+      "vernacularName": "Kankanaey"
+    },
+    {
+      "symbol": "knf",
+      "langcode": "MKY",
+      "name": "Mankanya",
+      "vernacularName": "Mankanya"
+    },
+    {
+      "symbol": "knj",
+      "langcode": "KAN",
+      "name": "Akateko",
+      "vernacularName": "akateko"
+    },
+    {
+      "symbol": "knn",
+      "langcode": "KN",
+      "name": "Konkani (Kannada)",
+      "vernacularName": "ಕೊಂಕಣಿ (ಕನ್ನಡ)"
+    },
+    {
+      "symbol": "kno",
+      "langcode": "KNO",
+      "name": "Kono",
+      "vernacularName": "Kono"
+    },
+    {
+      "symbol": "knx",
+      "langcode": "DKA",
+      "name": "Dayak Ahe",
+      "vernacularName": "Dayak Ahe"
+    },
+    {
+      "symbol": "kny",
+      "langcode": "KYK",
+      "name": "Kanyok",
+      "vernacularName": "Ciin-kanyok"
+    },
+    {
+      "symbol": "ko",
+      "langcode": "KO",
+      "name": "Korean",
+      "vernacularName": "한국어"
+    },
+    {
+      "symbol": "ko-cn",
+      "langcode": "KOC",
+      "name": "Korean (China)",
+      "vernacularName": "조선어"
+    },
+    {
+      "symbol": "koi",
+      "langcode": "KMP",
+      "name": "Komi-Permyak",
+      "vernacularName": "коми-пермяцкӧй"
+    },
+    {
+      "symbol": "koo",
+      "langcode": "LHK",
+      "name": "Lhukonzo",
+      "vernacularName": "Lhukonzo"
+    },
+    {
+      "symbol": "kos",
+      "langcode": "OS",
+      "name": "Kosraean",
+      "vernacularName": "Kosraean"
+    },
+    {
+      "symbol": "kpc",
+      "langcode": "CPC",
+      "name": "Curripaco",
+      "vernacularName": "Curripaco"
+    },
+    {
+      "symbol": "kpg",
+      "langcode": "KPM",
+      "name": "Kapingamarangi",
+      "vernacularName": "Kapingamarangi"
+    },
+    {
+      "symbol": "kpv",
+      "langcode": "KM",
+      "name": "Komi",
+      "vernacularName": "коми"
+    },
+    {
+      "symbol": "kqn",
+      "langcode": "KD",
+      "name": "Kikaonde",
+      "vernacularName": "Kikaonde"
+    },
+    {
+      "symbol": "krc",
+      "langcode": "BAL",
+      "name": "Karachay-Balkar",
+      "vernacularName": "къарачай-малкъар"
+    },
+    {
+      "symbol": "kri",
+      "langcode": "KRI",
+      "name": "Krio",
+      "vernacularName": "Krio"
+    },
+    {
+      "symbol": "krj",
+      "langcode": "KNR",
+      "name": "Kinaray-a",
+      "vernacularName": "Kinaray-a"
+    },
+    {
+      "symbol": "kru",
+      "langcode": "KRH",
+      "name": "Kurukh",
+      "vernacularName": "Kurukh"
+    },
+    {
+      "symbol": "ksd",
+      "langcode": "KUA",
+      "name": "Kuanua",
+      "vernacularName": "Tinata Tuna"
+    },
+    {
+      "symbol": "ksf",
+      "langcode": "BFI",
+      "name": "Bafia",
+      "vernacularName": "bafia (rikpag)"
+    },
+    {
+      "symbol": "kss",
+      "langcode": "KI",
+      "name": "Kisi",
+      "vernacularName": "Kisiei"
+    },
+    {
+      "symbol": "ksw",
+      "langcode": "KR",
+      "name": "Karen (S'gaw)",
+      "vernacularName": "ကညီ(စှီၤ)ကျိာ်"
+    },
+    {
+      "symbol": "ktu-x-kgl",
+      "langcode": "KGL",
+      "name": "Kikongo ya Leta",
+      "vernacularName": "Kikongo ya leta"
+    },
+    {
+      "symbol": "ktu-x-kit",
+      "langcode": "KIT",
+      "name": "Kituba",
+      "vernacularName": "Kituba"
+    },
+    {
+      "symbol": "kue",
+      "langcode": "KUM",
+      "name": "Kuman",
+      "vernacularName": "Kuman"
+    },
+    {
+      "symbol": "kuj",
+      "langcode": "KUR",
+      "name": "Kuria",
+      "vernacularName": "Igikuria"
+    },
+    {
+      "symbol": "kum",
+      "langcode": "KMK",
+      "name": "Kumyk",
+      "vernacularName": "къумукъ"
+    },
+    {
+      "symbol": "kun",
+      "langcode": "KNM",
+      "name": "Kunama",
+      "vernacularName": "Kunama"
+    },
+    {
+      "symbol": "kus",
+      "langcode": "KUS",
+      "name": "Kusaal",
+      "vernacularName": "Kusaal"
+    },
+    {
+      "symbol": "kvk",
+      "langcode": "KSL",
+      "name": "Korean Sign Language",
+      "vernacularName": "한국 수어"
+    },
+    {
+      "symbol": "kwd",
+      "langcode": "KWA",
+      "name": "Kwaio",
+      "vernacularName": "Kwaio"
+    },
+    {
+      "symbol": "kwf",
+      "langcode": "KW",
+      "name": "Kwara'ae",
+      "vernacularName": "Kwara'ae"
+    },
+    {
+      "symbol": "kwi",
+      "langcode": "AWA",
+      "name": "Awa (Cuaiquer)",
+      "vernacularName": "awapit"
+    },
+    {
+      "symbol": "kwn",
+      "langcode": "WG",
+      "name": "Kwangali",
+      "vernacularName": "Rukwangali"
+    },
+    {
+      "symbol": "kwy",
+      "langcode": "KG",
+      "name": "Kikongo",
+      "vernacularName": "Kikongo"
+    },
+    {
+      "symbol": "kxm",
+      "langcode": "KMN",
+      "name": "Khmer (Northern)",
+      "vernacularName": "ขแมร์เสียม"
+    },
+    {
+      "symbol": "ky",
+      "langcode": "KZ",
+      "name": "Kirghiz",
+      "vernacularName": "кыргыз"
+    },
+    {
+      "symbol": "kyk",
+      "langcode": "KMY",
+      "name": "Kamayo",
+      "vernacularName": "Kamayo"
+    },
+    {
+      "symbol": "kzj",
+      "langcode": "KAZ",
+      "name": "Kadazan",
+      "vernacularName": "Kadazan"
+    },
+    {
+      "symbol": "kzn",
+      "langcode": "KKL",
+      "name": "Kokola",
+      "vernacularName": "Kokola"
+    },
+    {
+      "symbol": "lai",
+      "langcode": "LMB",
+      "name": "Lambya",
+      "vernacularName": "Chilambya"
+    },
+    {
+      "symbol": "laj",
+      "langcode": "LN",
+      "name": "Lango",
+      "vernacularName": "Lango"
+    },
+    {
+      "symbol": "lam",
+      "langcode": "AB",
+      "name": "Lamba",
+      "vernacularName": "Lamba"
+    },
+    {
+      "symbol": "lb",
+      "langcode": "LX",
+      "name": "Luxembourgish",
+      "vernacularName": "Lëtzebuergesch"
+    },
+    {
+      "symbol": "lbe",
+      "langcode": "LAK",
+      "name": "Lak",
+      "vernacularName": "лакку"
+    },
+    {
+      "symbol": "lch",
+      "langcode": "LC",
+      "name": "Luchazi",
+      "vernacularName": "Luchazi"
+    },
+    {
+      "symbol": "ldi",
+      "langcode": "LR",
+      "name": "Lari",
+      "vernacularName": "Kilari"
+    },
+    {
+      "symbol": "lea",
+      "langcode": "LGA",
+      "name": "Lega",
+      "vernacularName": "Lega"
+    },
+    {
+      "symbol": "leb",
+      "langcode": "LLB",
+      "name": "Lala-Bisa",
+      "vernacularName": "Lala-Bisa"
+    },
+    {
+      "symbol": "led",
+      "langcode": "LND",
+      "name": "Lendu",
+      "vernacularName": "Baledha"
+    },
+    {
+      "symbol": "leh",
+      "langcode": "LJ",
+      "name": "Lenje",
+      "vernacularName": "Cilenje"
+    },
+    {
+      "symbol": "lel",
+      "langcode": "BHL",
+      "name": "Bushilele",
+      "vernacularName": "Bushilele"
+    },
+    {
+      "symbol": "lez",
+      "langcode": "LZ",
+      "name": "Lezgian",
+      "vernacularName": "лезги"
+    },
+    {
+      "symbol": "lg",
+      "langcode": "LU",
+      "name": "Luganda",
+      "vernacularName": "Luganda"
+    },
+    {
+      "symbol": "lgg",
+      "langcode": "LG",
+      "name": "Lugbara",
+      "vernacularName": "Lugbara"
+    },
+    {
+      "symbol": "lhu",
+      "langcode": "LAH",
+      "name": "Lahu",
+      "vernacularName": "Laˇhuˍ hkawˇ"
+    },
+    {
+      "symbol": "lia",
+      "langcode": "LWC",
+      "name": "Limba (West-Central)",
+      "vernacularName": "Limba (West-Central)"
+    },
+    {
+      "symbol": "lir",
+      "langcode": "ELI",
+      "name": "Liberian English",
+      "vernacularName": "Liberian English"
+    },
+    {
+      "symbol": "lis",
+      "langcode": "LIS",
+      "name": "Lisu",
+      "vernacularName": "ꓡꓲ-ꓢꓴ"
+    },
+    {
+      "symbol": "lkt",
+      "langcode": "LKT",
+      "name": "Lakota",
+      "vernacularName": "Lakotiya"
+    },
+    {
+      "symbol": "llb",
+      "langcode": "LLO",
+      "name": "Lolo",
+      "vernacularName": "Ilolo"
+    },
+    {
+      "symbol": "lld-x-lad",
+      "langcode": "LAD",
+      "name": "Ladin (Gardenese)",
+      "vernacularName": "Ladin de Gherdëina"
+    },
+    {
+      "symbol": "lln",
+      "langcode": "LL",
+      "name": "Lele",
+      "vernacularName": "Lele"
+    },
+    {
+      "symbol": "llp",
+      "langcode": "EFN",
+      "name": "Efate (North)",
+      "vernacularName": "Efate (North)"
+    },
+    {
+      "symbol": "lls",
+      "langcode": "LTS",
+      "name": "Lithuanian Sign Language",
+      "vernacularName": "lietuvių gestų"
+    },
+    {
+      "symbol": "llx",
+      "langcode": "LNN",
+      "name": "Lauan",
+      "vernacularName": "Lauan"
+    },
+    {
+      "symbol": "lml",
+      "langcode": "HNO",
+      "name": "Hano",
+      "vernacularName": "Hano"
+    },
+    {
+      "symbol": "lmn",
+      "langcode": "LMD",
+      "name": "Lambadi",
+      "vernacularName": "Lambadi"
+    },
+    {
+      "symbol": "lmp",
+      "langcode": "LBM",
+      "name": "Limbum",
+      "vernacularName": "Limbum"
+    },
+    {
+      "symbol": "ln",
+      "langcode": "LI",
+      "name": "Lingala",
+      "vernacularName": "Lingala"
+    },
+    {
+      "symbol": "lnu",
+      "langcode": "LGD",
+      "name": "Longuda",
+      "vernacularName": "Longuda"
+    },
+    {
+      "symbol": "lo",
+      "langcode": "LA",
+      "name": "Laotian",
+      "vernacularName": "ລາວ"
+    },
+    {
+      "symbol": "loe",
+      "langcode": "SAL",
+      "name": "Saluan",
+      "vernacularName": "Saluan"
+    },
+    {
+      "symbol": "log",
+      "langcode": "LGO",
+      "name": "Logo",
+      "vernacularName": "Logoti"
+    },
+    {
+      "symbol": "lol",
+      "langcode": "LOM",
+      "name": "Lomongo",
+      "vernacularName": "Lɔmɔngɔ"
+    },
+    {
+      "symbol": "lom",
+      "langcode": "OM",
+      "name": "Loma",
+      "vernacularName": "Lɔɔma"
+    },
+    {
+      "symbol": "loz",
+      "langcode": "SK",
+      "name": "Silozi",
+      "vernacularName": "Silozi"
+    },
+    {
+      "symbol": "lsl",
+      "langcode": "LSL",
+      "name": "Latvian Sign Language",
+      "vernacularName": "latviešu zīmju valoda"
+    },
+    {
+      "symbol": "lsm",
+      "langcode": "LH",
+      "name": "Samia",
+      "vernacularName": "Samia"
+    },
+    {
+      "symbol": "lsp",
+      "langcode": "PSL",
+      "name": "Panamanian Sign Language",
+      "vernacularName": "lengua de señas panameñas"
+    },
+    {
+      "symbol": "lst",
+      "langcode": "TTS",
+      "name": "Trinidad and Tobago Sign Language",
+      "vernacularName": "Trinidad and Tobago Sign Language"
+    },
+    {
+      "symbol": "lsy",
+      "langcode": "MTS",
+      "name": "Mauritian Sign Language",
+      "vernacularName": "Mauritian Sign Language"
+    },
+    {
+      "symbol": "lt",
+      "langcode": "L",
+      "name": "Lithuanian",
+      "vernacularName": "lietuvių"
+    },
+    {
+      "symbol": "ltg",
+      "langcode": "LTG",
+      "name": "Latgalian",
+      "vernacularName": "Latgalīšu"
+    },
+    {
+      "symbol": "lu",
+      "langcode": "KU",
+      "name": "Kiluba",
+      "vernacularName": "Kiluba"
+    },
+    {
+      "symbol": "lua",
+      "langcode": "SH",
+      "name": "Tshiluba",
+      "vernacularName": "Tshiluba"
+    },
+    {
+      "symbol": "lue",
+      "langcode": "LV",
+      "name": "Luvale",
+      "vernacularName": "Luvale"
+    },
+    {
+      "symbol": "lun",
+      "langcode": "LD",
+      "name": "Lunda",
+      "vernacularName": "Lunda"
+    },
+    {
+      "symbol": "luo",
+      "langcode": "LO",
+      "name": "Luo",
+      "vernacularName": "Dholuo"
+    },
+    {
+      "symbol": "lus",
+      "langcode": "LS",
+      "name": "Mizo",
+      "vernacularName": "Mizo"
+    },
+    {
+      "symbol": "lv",
+      "langcode": "LT",
+      "name": "Latvian",
+      "vernacularName": "latviešu"
+    },
+    {
+      "symbol": "lwg",
+      "langcode": "LW",
+      "name": "Wanga",
+      "vernacularName": "Kiwanga"
+    },
+    {
+      "symbol": "mad",
+      "langcode": "MDR",
+      "name": "Madura",
+      "vernacularName": "Madura"
+    },
+    {
+      "symbol": "maf",
+      "langcode": "MAF",
+      "name": "Mafa",
+      "vernacularName": "Mafa"
+    },
+    {
+      "symbol": "mai",
+      "langcode": "MHL",
+      "name": "Maithili",
+      "vernacularName": "मैथिली"
+    },
+    {
+      "symbol": "mam",
+      "langcode": "MZ",
+      "name": "Mam",
+      "vernacularName": "mam"
+    },
+    {
+      "symbol": "mas",
+      "langcode": "MS",
+      "name": "Maasai",
+      "vernacularName": "Maasai"
+    },
+    {
+      "symbol": "mau",
+      "langcode": "MAZ",
+      "name": "Mazatec (Huautla)",
+      "vernacularName": "énná"
+    },
+    {
+      "symbol": "mav",
+      "langcode": "STM",
+      "name": "Sateré-Mawé",
+      "vernacularName": "Satere Mawe"
+    },
+    {
+      "symbol": "maz",
+      "langcode": "MZH",
+      "name": "Mazahua",
+      "vernacularName": "jñatrjo"
+    },
+    {
+      "symbol": "mbc",
+      "langcode": "MCS",
+      "name": "Macushi",
+      "vernacularName": "Makusi"
+    },
+    {
+      "symbol": "mbm",
+      "langcode": "OMB",
+      "name": "Ombamba",
+      "vernacularName": "Ombamba"
+    },
+    {
+      "symbol": "mbn",
+      "langcode": "MCG",
+      "name": "Hitnu",
+      "vernacularName": "Jitnu"
+    },
+    {
+      "symbol": "mbo",
+      "langcode": "MBO",
+      "name": "Mbo",
+      "vernacularName": "Mbo"
+    },
+    {
+      "symbol": "mbp",
+      "langcode": "MLY",
+      "name": "Malayo",
+      "vernacularName": "wiwa dumuna"
+    },
+    {
+      "symbol": "mcf",
+      "langcode": "MSS",
+      "name": "Matses",
+      "vernacularName": "Matses"
+    },
+    {
+      "symbol": "mch",
+      "langcode": "MQR",
+      "name": "Maquiritari",
+      "vernacularName": "Ye’kuana"
+    },
+    {
+      "symbol": "mck",
+      "langcode": "MBD",
+      "name": "Mbunda",
+      "vernacularName": "Mbunda"
+    },
+    {
+      "symbol": "mco",
+      "langcode": "MX",
+      "name": "Mixe (North Central)",
+      "vernacularName": "ayuk"
+    },
+    {
+      "symbol": "mcp",
+      "langcode": "MKA",
+      "name": "Makaa",
+      "vernacularName": "Makaa"
+    },
+    {
+      "symbol": "mdd",
+      "langcode": "MMU",
+      "name": "Mbum",
+      "vernacularName": "Mbum"
+    },
+    {
+      "symbol": "mdf",
+      "langcode": "MOK",
+      "name": "Moksha",
+      "vernacularName": "мокшень"
+    },
+    {
+      "symbol": "mdh",
+      "langcode": "MU",
+      "name": "Maguindanao",
+      "vernacularName": "Maguindanao"
+    },
+    {
+      "symbol": "mdj",
+      "langcode": "MGB",
+      "name": "Mangbetu",
+      "vernacularName": "Némangbetu"
+    },
+    {
+      "symbol": "mdl",
+      "langcode": "MLS",
+      "name": "Maltese Sign Language",
+      "vernacularName": "Lingwa tas-Sinjali Maltija"
+    },
+    {
+      "symbol": "mdp",
+      "langcode": "MBL",
+      "name": "Mbala",
+      "vernacularName": "Gimbala"
+    },
+    {
+      "symbol": "med",
+      "langcode": "MLP",
+      "name": "Melpa",
+      "vernacularName": "Melpa"
+    },
+    {
+      "symbol": "meh",
+      "langcode": "MXT",
+      "name": "Mixtec (Tlaxiaco)",
+      "vernacularName": "saʼan savi"
+    },
+    {
+      "symbol": "men",
+      "langcode": "ME",
+      "name": "Mende",
+      "vernacularName": "Mɛnde"
+    },
+    {
+      "symbol": "mer",
+      "langcode": "UU",
+      "name": "Meru",
+      "vernacularName": "Kĩmĩĩrũ"
+    },
+    {
+      "symbol": "meu",
+      "langcode": "MTU",
+      "name": "Motu",
+      "vernacularName": "Motu"
+    },
+    {
+      "symbol": "mev",
+      "langcode": "MNO",
+      "name": "Mano",
+      "vernacularName": "Maa"
+    },
+    {
+      "symbol": "mfe",
+      "langcode": "CE",
+      "name": "Mauritian Creole",
+      "vernacularName": "Kreol Morisien"
+    },
+    {
+      "symbol": "mfq",
+      "langcode": "MBA",
+      "name": "Moba",
+      "vernacularName": "Muaba"
+    },
+    {
+      "symbol": "mfs",
+      "langcode": "LSM",
+      "name": "Mexican Sign Language",
+      "vernacularName": "lengua de señas mexicana"
+    },
+    {
+      "symbol": "mfv",
+      "langcode": "MJK",
+      "name": "Mandjak",
+      "vernacularName": "Manjaku"
+    },
+    {
+      "symbol": "mfy",
+      "langcode": "MYO",
+      "name": "Mayo",
+      "vernacularName": "yoremnok'ki"
+    },
+    {
+      "symbol": "mg",
+      "langcode": "MG",
+      "name": "Malagasy",
+      "vernacularName": "Malagasy"
+    },
+    {
+      "symbol": "mgd",
+      "langcode": "MOR",
+      "name": "Moru",
+      "vernacularName": "Moru"
+    },
+    {
+      "symbol": "mgh",
+      "langcode": "MWM",
+      "name": "Makhuwa-Meetto",
+      "vernacularName": "Imakhuwa Imeetto"
+    },
+    {
+      "symbol": "mgm-x-mma",
+      "langcode": "MMA",
+      "name": "Mambae (Aileu)",
+      "vernacularName": "Mambae (Aileu)"
+    },
+    {
+      "symbol": "mgm-x-mme",
+      "langcode": "MME",
+      "name": "Mambae (Ermera)",
+      "vernacularName": "Mambae (Ermera)"
+    },
+    {
+      "symbol": "mgm-x-mms",
+      "langcode": "MMS",
+      "name": "Mambae (Ainaro and Same)",
+      "vernacularName": "Mambae (Ainaro no Same)"
+    },
+    {
+      "symbol": "mgo",
+      "langcode": "MTA",
+      "name": "Meta'",
+      "vernacularName": "Meta'"
+    },
+    {
+      "symbol": "mgr",
+      "langcode": "MWL",
+      "name": "Mambwe-Lungu",
+      "vernacularName": "Cimambwe-Lungu"
+    },
+    {
+      "symbol": "mgv",
+      "langcode": "MTN",
+      "name": "Matengo",
+      "vernacularName": "Kimatengo"
+    },
+    {
+      "symbol": "mh",
+      "langcode": "MH",
+      "name": "Marshallese",
+      "vernacularName": "Kajin M̦ajel̦"
+    },
+    {
+      "symbol": "mhi",
+      "langcode": "MDI",
+      "name": "Madi",
+      "vernacularName": "Madi"
+    },
+    {
+      "symbol": "mhm",
+      "langcode": "MKM",
+      "name": "Makhuwa-Moniga",
+      "vernacularName": "Makhuwa-Moniga"
+    },
+    {
+      "symbol": "mhr",
+      "langcode": "MAR",
+      "name": "Mari",
+      "vernacularName": "марий"
+    },
+    {
+      "symbol": "mhw",
+      "langcode": "MBK",
+      "name": "Mbukushu",
+      "vernacularName": "Thimbukushu"
+    },
+    {
+      "symbol": "mi",
+      "langcode": "MA",
+      "name": "Maori",
+      "vernacularName": "Te Reo Māori"
+    },
+    {
+      "symbol": "mic",
+      "langcode": "MKQ",
+      "name": "Mi’kmaq",
+      "vernacularName": "Mi'kmaw"
+    },
+    {
+      "symbol": "mio",
+      "langcode": "MXC",
+      "name": "Mixtec (Costa)",
+      "vernacularName": "saʼan xiñi saví"
+    },
+    {
+      "symbol": "miq",
+      "langcode": "MIS",
+      "name": "Miskito",
+      "vernacularName": "miskitu"
+    },
+    {
+      "symbol": "mjl",
+      "langcode": "MDL",
+      "name": "Mandeali",
+      "vernacularName": "Mandeali"
+    },
+    {
+      "symbol": "mk",
+      "langcode": "MC",
+      "name": "Macedonian",
+      "vernacularName": "македонски"
+    },
+    {
+      "symbol": "mkj",
+      "langcode": "MKL",
+      "name": "Mokilese",
+      "vernacularName": "Mokilese"
+    },
+    {
+      "symbol": "mkz-x-mko",
+      "langcode": "MKO",
+      "name": "Makasae (Ossu)",
+      "vernacularName": "Makasae (Ossu)"
+    },
+    {
+      "symbol": "mkz-x-mks",
+      "langcode": "MKS",
+      "name": "Makasae",
+      "vernacularName": "Makasae"
+    },
+    {
+      "symbol": "ml",
+      "langcode": "MY",
+      "name": "Malayalam",
+      "vernacularName": "മലയാളം"
+    },
+    {
+      "symbol": "mln",
+      "langcode": "MLG",
+      "name": "Malango",
+      "vernacularName": "Malango"
+    },
+    {
+      "symbol": "mlu",
+      "langcode": "OB",
+      "name": "To'abaita",
+      "vernacularName": "Toabaita"
+    },
+    {
+      "symbol": "mn",
+      "langcode": "KHA",
+      "name": "Mongolian",
+      "vernacularName": "монгол"
+    },
+    {
+      "symbol": "mni",
+      "langcode": "MI",
+      "name": "Manipuri",
+      "vernacularName": "মৈতৈলোন্"
+    },
+    {
+      "symbol": "mni-latn",
+      "langcode": "MIR",
+      "name": "Manipuri (Roman)",
+      "vernacularName": "Manipuri (Roman)"
+    },
+    {
+      "symbol": "mnk",
+      "langcode": "MNK",
+      "name": "Mandinka",
+      "vernacularName": "Mandinka"
+    },
+    {
+      "symbol": "mns",
+      "langcode": "MNI",
+      "name": "Mansi",
+      "vernacularName": "маньси"
+    },
+    {
+      "symbol": "mny",
+      "langcode": "MYW",
+      "name": "Manyawa",
+      "vernacularName": "Emanyawa"
+    },
+    {
+      "symbol": "moh",
+      "langcode": "MHK",
+      "name": "Mohawk",
+      "vernacularName": "Kanienʼkéha"
+    },
+    {
+      "symbol": "mop",
+      "langcode": "MAP",
+      "name": "Maya (Mopán)",
+      "vernacularName": "T'an"
+    },
+    {
+      "symbol": "mos",
+      "langcode": "MM",
+      "name": "Moore",
+      "vernacularName": "Moore"
+    },
+    {
+      "symbol": "mot",
+      "langcode": "BSA",
+      "name": "Barí (South America)",
+      "vernacularName": "Barí (South America)"
+    },
+    {
+      "symbol": "mqj",
+      "langcode": "AMA",
+      "name": "Mamasa",
+      "vernacularName": "Mamasa"
+    },
+    {
+      "symbol": "mqm",
+      "langcode": "MQ",
+      "name": "Marquesian (Hiva Oa)",
+      "vernacularName": "Marquisien (Hiva Oa)"
+    },
+    {
+      "symbol": "mr",
+      "langcode": "MR",
+      "name": "Marathi",
+      "vernacularName": "मराठी"
+    },
+    {
+      "symbol": "mrh",
+      "langcode": "MAA",
+      "name": "Chin (Mara)",
+      "vernacularName": "Chin (Mara)"
+    },
+    {
+      "symbol": "mrj",
+      "langcode": "MRH",
+      "name": "Mari (Hill)",
+      "vernacularName": "кырык мары"
+    },
+    {
+      "symbol": "mrq",
+      "langcode": "MQN",
+      "name": "Marquesian (Nuku Hiva)",
+      "vernacularName": "Marquisien (Nuku Hiva)"
+    },
+    {
+      "symbol": "mrv",
+      "langcode": "MGR",
+      "name": "Mangareva",
+      "vernacularName": "Mangareva"
+    },
+    {
+      "symbol": "mrw",
+      "langcode": "MW",
+      "name": "Maranaw",
+      "vernacularName": "Maranaw"
+    },
+    {
+      "symbol": "ms",
+      "langcode": "ML",
+      "name": "Malay",
+      "vernacularName": "Melayu"
+    },
+    {
+      "symbol": "mse",
+      "langcode": "MOU",
+      "name": "Moussey",
+      "vernacularName": "Moussey"
+    },
+    {
+      "symbol": "msr",
+      "langcode": "MSR",
+      "name": "Mongolian Sign Language",
+      "vernacularName": "монгол дохионы хэл"
+    },
+    {
+      "symbol": "mt",
+      "langcode": "MT",
+      "name": "Maltese",
+      "vernacularName": "Malti"
+    },
+    {
+      "symbol": "mtr",
+      "langcode": "MWR",
+      "name": "Mewari",
+      "vernacularName": "Mewari"
+    },
+    {
+      "symbol": "mua",
+      "langcode": "OU",
+      "name": "Moundang",
+      "vernacularName": "Moundang"
+    },
+    {
+      "symbol": "mvf",
+      "langcode": "KHC",
+      "name": "Mongolian (Traditional)",
+      "vernacularName": "Mongolian (Traditional)"
+    },
+    {
+      "symbol": "mwm",
+      "langcode": "SAR",
+      "name": "Sar",
+      "vernacularName": "Sar"
+    },
+    {
+      "symbol": "mwn",
+      "langcode": "NM",
+      "name": "Cinamwanga",
+      "vernacularName": "Cinamwanga"
+    },
+    {
+      "symbol": "mwv",
+      "langcode": "MWI",
+      "name": "Mentawai",
+      "vernacularName": "Mentawai"
+    },
+    {
+      "symbol": "mxg",
+      "langcode": "MBN",
+      "name": "Mbangala",
+      "vernacularName": "Mbangala"
+    },
+    {
+      "symbol": "mxv",
+      "langcode": "MXG",
+      "name": "Mixtec (Guerrero)",
+      "vernacularName": "tu’un sâví"
+    },
+    {
+      "symbol": "my",
+      "langcode": "BU",
+      "name": "Myanmar",
+      "vernacularName": "မြန်မာ"
+    },
+    {
+      "symbol": "myv",
+      "langcode": "EZ",
+      "name": "Erzya",
+      "vernacularName": "эрзянь"
+    },
+    {
+      "symbol": "mzc",
+      "langcode": "TTM",
+      "name": "Madagascar Sign Language",
+      "vernacularName": "Tenin’ny Tanana Malagasy"
+    },
+    {
+      "symbol": "mzh",
+      "langcode": "WCH",
+      "name": "Wichi",
+      "vernacularName": "wichí"
+    },
+    {
+      "symbol": "mzv",
+      "langcode": "MNJ",
+      "name": "Mandja",
+      "vernacularName": "Mandja"
+    },
+    {
+      "symbol": "mzy",
+      "langcode": "SLM",
+      "name": "Mozambican Sign Language",
+      "vernacularName": "Língua de Sinais Moçambicana"
+    },
+    {
+      "symbol": "na",
+      "langcode": "NR",
+      "name": "Nauruan",
+      "vernacularName": "Nauruan"
+    },
+    {
+      "symbol": "nag",
+      "langcode": "NGD",
+      "name": "Nagamese",
+      "vernacularName": "Nagamese"
+    },
+    {
+      "symbol": "nan-x-chd",
+      "langcode": "CHD",
+      "name": "Teochew",
+      "vernacularName": "潮州"
+    },
+    {
+      "symbol": "nan-x-chn",
+      "langcode": "CHN",
+      "name": "Min Nan (Quanzhou)",
+      "vernacularName": "闽南语（泉州）"
+    },
+    {
+      "symbol": "nan-x-chw",
+      "langcode": "CHW",
+      "name": "Min Nan (Taiwan)",
+      "vernacularName": "閩南語（台灣）"
+    },
+    {
+      "symbol": "nan-x-chx",
+      "langcode": "CHX",
+      "name": "Chinese (Hainanese)",
+      "vernacularName": "中文（海南话）"
+    },
+    {
+      "symbol": "nan-x-mdh",
+      "langcode": "MDH",
+      "name": "Medan Hokkien",
+      "vernacularName": "Hokkien Medan"
+    },
+    {
+      "symbol": "nan-x-twd",
+      "langcode": "TWD",
+      "name": "Teochew (Indonesia)",
+      "vernacularName": "Teochew (Indonesia)"
+    },
+    {
+      "symbol": "naq-x-dmr",
+      "langcode": "DMR",
+      "name": "Damara",
+      "vernacularName": "Damara"
+    },
+    {
+      "symbol": "naq-x-na",
+      "langcode": "NA",
+      "name": "Nama",
+      "vernacularName": "ǀApakhoen gowab"
+    },
+    {
+      "symbol": "nba",
+      "langcode": "NGL",
+      "name": "Ngangela",
+      "vernacularName": "Ngangela"
+    },
+    {
+      "symbol": "nbs",
+      "langcode": "SLN",
+      "name": "Namibian Sign Language",
+      "vernacularName": "Namibian Sign Language"
+    },
+    {
+      "symbol": "nbu",
+      "langcode": "NGR",
+      "name": "Naga (Rongmei)",
+      "vernacularName": "Naga (Rongmei)"
+    },
+    {
+      "symbol": "ncb",
+      "langcode": "NCW",
+      "name": "Nancowry",
+      "vernacularName": "Nancowry"
+    },
+    {
+      "symbol": "nch",
+      "langcode": "NHH",
+      "name": "Nahuatl (Huasteca)",
+      "vernacularName": "náhuatl de la huasteca"
+    },
+    {
+      "symbol": "ncj",
+      "langcode": "NHT",
+      "name": "Nahuatl (Northern Puebla)",
+      "vernacularName": "náhuatl del norte de Puebla"
+    },
+    {
+      "symbol": "ncs",
+      "langcode": "LSN",
+      "name": "Nicaraguan Sign Language",
+      "vernacularName": "lenguaje de señas nicaragüense"
+    },
+    {
+      "symbol": "ncx",
+      "langcode": "NHC",
+      "name": "Nahuatl (Central)",
+      "vernacularName": "náhuatl del centro"
+    },
+    {
+      "symbol": "nd",
+      "langcode": "NBZ",
+      "name": "Ndebele (Zimbabwe)",
+      "vernacularName": "Ndebele (Zimbabwe)"
+    },
+    {
+      "symbol": "ndc",
+      "langcode": "NDA",
+      "name": "Ndau",
+      "vernacularName": "Cindau"
+    },
+    {
+      "symbol": "ndc-x-ndw",
+      "langcode": "NDW",
+      "name": "Ndau (Western)",
+      "vernacularName": "Ndau (Western)"
+    },
+    {
+      "symbol": "ndh",
+      "langcode": "NDL",
+      "name": "Ndali",
+      "vernacularName": "Ichindali"
+    },
+    {
+      "symbol": "nds",
+      "langcode": "PMR",
+      "name": "Pomeranian",
+      "vernacularName": "Pomerisch"
+    },
+    {
+      "symbol": "ne",
+      "langcode": "NP",
+      "name": "Nepali",
+      "vernacularName": "नेपाली"
+    },
+    {
+      "symbol": "nen",
+      "langcode": "RE",
+      "name": "Nengone",
+      "vernacularName": "Nengone"
+    },
+    {
+      "symbol": "new",
+      "langcode": "NW",
+      "name": "Newari",
+      "vernacularName": "नेवारी"
+    },
+    {
+      "symbol": "nfl",
+      "langcode": "AYW",
+      "name": "Ayiwo",
+      "vernacularName": "Ayiwo"
+    },
+    {
+      "symbol": "ng",
+      "langcode": "OD",
+      "name": "Ndonga",
+      "vernacularName": "Oshindonga"
+    },
+    {
+      "symbol": "nga",
+      "langcode": "NGK",
+      "name": "Ngbaka",
+      "vernacularName": "Ngbaka"
+    },
+    {
+      "symbol": "ngb",
+      "langcode": "NGN",
+      "name": "Ngbandi (Northern)",
+      "vernacularName": "Ngbandi (ya Nɔrdi)"
+    },
+    {
+      "symbol": "ngc",
+      "langcode": "LIN",
+      "name": "Lingombe",
+      "vernacularName": "Lingombe"
+    },
+    {
+      "symbol": "ngl",
+      "langcode": "LE",
+      "name": "Lomwe",
+      "vernacularName": "Elomwe"
+    },
+    {
+      "symbol": "ngu",
+      "langcode": "NHG",
+      "name": "Nahuatl (Guerrero)",
+      "vernacularName": "náhuatl de guerrero"
+    },
+    {
+      "symbol": "nhk",
+      "langcode": "NHV",
+      "name": "Nahuatl (Veracruz)",
+      "vernacularName": "náhuatl de Veracruz"
+    },
+    {
+      "symbol": "nia",
+      "langcode": "NI",
+      "name": "Nias",
+      "vernacularName": "Nias"
+    },
+    {
+      "symbol": "nih",
+      "langcode": "NY",
+      "name": "Nyiha",
+      "vernacularName": "Nyiha"
+    },
+    {
+      "symbol": "nij",
+      "langcode": "DK",
+      "name": "Dayak Ngaju",
+      "vernacularName": "Dayak Ngaju"
+    },
+    {
+      "symbol": "niu",
+      "langcode": "NN",
+      "name": "Niuean",
+      "vernacularName": "Faka-Niue"
+    },
+    {
+      "symbol": "njm",
+      "langcode": "NGG",
+      "name": "Naga (Angami)",
+      "vernacularName": "Naga (Angami)"
+    },
+    {
+      "symbol": "njn",
+      "langcode": "NLM",
+      "name": "Naga (Liangmai)",
+      "vernacularName": "Naga (Liangmai)"
+    },
+    {
+      "symbol": "nka",
+      "langcode": "NKY",
+      "name": "Nkoya",
+      "vernacularName": "Nkoya"
+    },
+    {
+      "symbol": "nkr",
+      "langcode": "NKR",
+      "name": "Nukuoro",
+      "vernacularName": "Nukuoro"
+    },
+    {
+      "symbol": "nl",
+      "langcode": "O",
+      "name": "Dutch",
+      "vernacularName": "Nederlands"
+    },
+    {
+      "symbol": "nl-be",
+      "langcode": "OBG",
+      "name": "Dutch (Belgium)",
+      "vernacularName": "Nederlands (België)"
+    },
+    {
+      "symbol": "nl-sr",
+      "langcode": "OSR",
+      "name": "Dutch (Suriname)",
+      "vernacularName": "Nederlands (Suriname)"
+    },
+    {
+      "symbol": "nla",
+      "langcode": "NML",
+      "name": "Ngombale",
+      "vernacularName": "Babadjou"
+    },
+    {
+      "symbol": "nmf",
+      "langcode": "TT",
+      "name": "Tangkhul",
+      "vernacularName": "Tangkhul"
+    },
+    {
+      "symbol": "nmg",
+      "langcode": "KWS",
+      "name": "Kwasio",
+      "vernacularName": "Kwasio"
+    },
+    {
+      "symbol": "nmk",
+      "langcode": "NMK",
+      "name": "Namakura",
+      "vernacularName": "Namakura"
+    },
+    {
+      "symbol": "nmq",
+      "langcode": "NB",
+      "name": "Nambya",
+      "vernacularName": "Nambya"
+    },
+    {
+      "symbol": "nnb",
+      "langcode": "KIN",
+      "name": "Kinande",
+      "vernacularName": "Kinande"
+    },
+    {
+      "symbol": "nnh",
+      "langcode": "NMB",
+      "name": "Ngiemboon",
+      "vernacularName": "Ngiemboon"
+    },
+    {
+      "symbol": "no",
+      "langcode": "N",
+      "name": "Norwegian",
+      "vernacularName": "Norsk"
+    },
+    {
+      "symbol": "nod",
+      "langcode": "SIR",
+      "name": "Thai (Northern)",
+      "vernacularName": "กำเมือง"
+    },
+    {
+      "symbol": "nr",
+      "langcode": "NBL",
+      "name": "Ndebele",
+      "vernacularName": "IsiNdebele"
+    },
+    {
+      "symbol": "nse",
+      "langcode": "NEN",
+      "name": "Nsenga (Zambia)",
+      "vernacularName": "Cinsenga"
+    },
+    {
+      "symbol": "nse-mz",
+      "langcode": "NSM",
+      "name": "Nsenga (Mozambique)",
+      "vernacularName": "Chinsenga (Mozambique)"
+    },
+    {
+      "symbol": "nsi",
+      "langcode": "NNS",
+      "name": "Nigerian Sign Language",
+      "vernacularName": "Nigerian Sign Language"
+    },
+    {
+      "symbol": "nsl",
+      "langcode": "NDF",
+      "name": "Norwegian Sign Language",
+      "vernacularName": "Norsk tegnspråk"
+    },
+    {
+      "symbol": "nso",
+      "langcode": "SE",
+      "name": "Sepedi",
+      "vernacularName": "Sepedi"
+    },
+    {
+      "symbol": "nso-x-spl",
+      "langcode": "SPL",
+      "name": "Sepulana",
+      "vernacularName": "Sepulana"
+    },
+    {
+      "symbol": "nsp",
+      "langcode": "NSL",
+      "name": "Nepali Sign Language",
+      "vernacularName": "नेपाली साङ्केतिक भाषा"
+    },
+    {
+      "symbol": "nsx",
+      "langcode": "SGO",
+      "name": "Songo",
+      "vernacularName": "Songo"
+    },
+    {
+      "symbol": "ntu",
+      "langcode": "NTU",
+      "name": "Natügu",
+      "vernacularName": "Natügu"
+    },
+    {
+      "symbol": "nua",
+      "langcode": "YNG",
+      "name": "Yuanga",
+      "vernacularName": "Yuanga"
+    },
+    {
+      "symbol": "nuq",
+      "langcode": "NKM",
+      "name": "Nukumanu",
+      "vernacularName": "Nukumanu"
+    },
+    {
+      "symbol": "nus",
+      "langcode": "UE",
+      "name": "Nuer",
+      "vernacularName": "Thok Nath"
+    },
+    {
+      "symbol": "nv",
+      "langcode": "NV",
+      "name": "Navajo",
+      "vernacularName": "Diné Bizaad"
+    },
+    {
+      "symbol": "nxa",
+      "langcode": "NTE",
+      "name": "Nauete",
+      "vernacularName": "Nauete"
+    },
+    {
+      "symbol": "ny",
+      "langcode": "CN",
+      "name": "Chichewa",
+      "vernacularName": "Chichewa"
+    },
+    {
+      "symbol": "nya",
+      "langcode": "CIN",
+      "name": "Cinyanja",
+      "vernacularName": "Cinyanja"
+    },
+    {
+      "symbol": "nyd",
+      "langcode": "LB",
+      "name": "Olunyole",
+      "vernacularName": "Olunyole"
+    },
+    {
+      "symbol": "nyf",
+      "langcode": "GY",
+      "name": "Giryama",
+      "vernacularName": "Giryama"
+    },
+    {
+      "symbol": "nyk",
+      "langcode": "NK",
+      "name": "Nyaneka",
+      "vernacularName": "Nyaneka"
+    },
+    {
+      "symbol": "nym",
+      "langcode": "YM",
+      "name": "Nyamwezi",
+      "vernacularName": "Nyamwezi"
+    },
+    {
+      "symbol": "nyn",
+      "langcode": "RR",
+      "name": "Runyankore",
+      "vernacularName": "Runyankore"
+    },
+    {
+      "symbol": "nyu",
+      "langcode": "NYU",
+      "name": "Nyungwe",
+      "vernacularName": "Cinyungwe"
+    },
+    {
+      "symbol": "nyy-x-kk",
+      "langcode": "KK",
+      "name": "Kinyakyusa",
+      "vernacularName": "Kinyakyusa"
+    },
+    {
+      "symbol": "nyy-x-nkn",
+      "langcode": "NKN",
+      "name": "Kyangonde",
+      "vernacularName": "Kyangonde"
+    },
+    {
+      "symbol": "nzb",
+      "langcode": "NJB",
+      "name": "Njebi",
+      "vernacularName": "Njebi"
+    },
+    {
+      "symbol": "nzi",
+      "langcode": "NZ",
+      "name": "Nzema",
+      "vernacularName": "Nzema"
+    },
+    {
+      "symbol": "nzs",
+      "langcode": "NZS",
+      "name": "New Zealand Sign Language",
+      "vernacularName": "New Zealand Sign Language"
+    },
+    {
+      "symbol": "nzu",
+      "langcode": "TEB",
+      "name": "Teke (Congo Brazzaville)",
+      "vernacularName": "Teke (Congo Brazzaville)"
+    },
+    {
+      "symbol": "ogo",
+      "langcode": "OG",
+      "name": "Khana",
+      "vernacularName": "Khana"
+    },
+    {
+      "symbol": "ojb-x-nor",
+      "langcode": "NOR",
+      "name": "Northern Ojibwe (Roman)",
+      "vernacularName": "Anishinaabemowin"
+    },
+    {
+      "symbol": "ojb-x-nos",
+      "langcode": "NOS",
+      "name": "Northern Ojibwe (Syllabics)",
+      "vernacularName": "ᐊᓂᔑᓈᐯᒧᐎᓐ"
+    },
+    {
+      "symbol": "oke",
+      "langcode": "OKP",
+      "name": "Okpe",
+      "vernacularName": "Okpe"
+    },
+    {
+      "symbol": "okv",
+      "langcode": "ORK",
+      "name": "Orokaiva",
+      "vernacularName": "Orokaiva"
+    },
+    {
+      "symbol": "olu",
+      "langcode": "KVM",
+      "name": "Kuvale (Mucubal)",
+      "vernacularName": "Kuvale (Mucubal)"
+    },
+    {
+      "symbol": "om",
+      "langcode": "OA",
+      "name": "Oromo",
+      "vernacularName": "Afaan Oromoo"
+    },
+    {
+      "symbol": "omb",
+      "langcode": "ABE",
+      "name": "Ambae (East)",
+      "vernacularName": "Ambae (East)"
+    },
+    {
+      "symbol": "ood",
+      "langcode": "PPG",
+      "name": "O’odham (Tohono)",
+      "vernacularName": "O’odham"
+    },
+    {
+      "symbol": "or",
+      "langcode": "OI",
+      "name": "Odia",
+      "vernacularName": "ଓଡ଼ିଆ"
+    },
+    {
+      "symbol": "ory-x-odn",
+      "langcode": "ODN",
+      "name": "Sundargadi",
+      "vernacularName": "Sundargadi"
+    },
+    {
+      "symbol": "os",
+      "langcode": "OSS",
+      "name": "Ossetian",
+      "vernacularName": "ирон"
+    },
+    {
+      "symbol": "os-x-dgr",
+      "langcode": "DGR",
+      "name": "Digor",
+      "vernacularName": "дигорон"
+    },
+    {
+      "symbol": "os-x-osc",
+      "langcode": "OSC",
+      "name": "Ossetian (Chsan)",
+      "vernacularName": "Ирон (чысайнаг)"
+    },
+    {
+      "symbol": "os-x-osk",
+      "langcode": "OSK",
+      "name": "Ossetian (Kudar)",
+      "vernacularName": "Ирон (къуыдайраг)"
+    },
+    {
+      "symbol": "ote",
+      "langcode": "OTM",
+      "name": "Otomi (Mezquital Valley)",
+      "vernacularName": "Ñañu"
+    },
+    {
+      "symbol": "otm",
+      "langcode": "OTE",
+      "name": "Otomi (Eastern Highland)",
+      "vernacularName": "ñuhü"
+    },
+    {
+      "symbol": "ots",
+      "langcode": "OTS",
+      "name": "Otomi (State of Mexico)",
+      "vernacularName": "ñätho"
+    },
+    {
+      "symbol": "otw",
+      "langcode": "ODW",
+      "name": "Odawa",
+      "vernacularName": "Nishnaabemwin"
+    },
+    {
+      "symbol": "pa",
+      "langcode": "PJ",
+      "name": "Punjabi",
+      "vernacularName": "ਪੰਜਾਬੀ"
+    },
+    {
+      "symbol": "pa-latn",
+      "langcode": "PJR",
+      "name": "Punjabi (Roman)",
+      "vernacularName": "Punjabi (Roman)"
+    },
+    {
+      "symbol": "pag",
+      "langcode": "PN",
+      "name": "Pangasinan",
+      "vernacularName": "Pangasinan"
+    },
+    {
+      "symbol": "pap",
+      "langcode": "PA",
+      "name": "Papiamento (Curaçao)",
+      "vernacularName": "Papiamentu (Kòrsou)"
+    },
+    {
+      "symbol": "pap-x-paa",
+      "langcode": "PAA",
+      "name": "Papiamento (Aruba)",
+      "vernacularName": "Papiamento (Aruba)"
+    },
+    {
+      "symbol": "pau",
+      "langcode": "PU",
+      "name": "Palauan",
+      "vernacularName": "Palauan"
+    },
+    {
+      "symbol": "pbb",
+      "langcode": "PAZ",
+      "name": "Páez",
+      "vernacularName": "nasa yuwe"
+    },
+    {
+      "symbol": "pbo",
+      "langcode": "PPL",
+      "name": "Papel",
+      "vernacularName": "Oium"
+    },
+    {
+      "symbol": "pcm",
+      "langcode": "NGP",
+      "name": "Nigerian Pidgin",
+      "vernacularName": "Nigerian Pidgin"
+    },
+    {
+      "symbol": "pdc",
+      "langcode": "XPA",
+      "name": "Pennsylvania German",
+      "vernacularName": "Pennsylvania Dutch (Deitsh)"
+    },
+    {
+      "symbol": "pdt",
+      "langcode": "LWX",
+      "name": "Low German",
+      "vernacularName": "Plautdietsch"
+    },
+    {
+      "symbol": "pem",
+      "langcode": "KIP",
+      "name": "Kipende",
+      "vernacularName": "Kipende"
+    },
+    {
+      "symbol": "pga",
+      "langcode": "JU",
+      "name": "Arabic (Sudanese Creole)",
+      "vernacularName": "Arabi Juba"
+    },
+    {
+      "symbol": "phm",
+      "langcode": "PHM",
+      "name": "Phimbi",
+      "vernacularName": "Chiphimbi"
+    },
+    {
+      "symbol": "pht",
+      "langcode": "SIH",
+      "name": "Phu Thai",
+      "vernacularName": "ภูไท"
+    },
+    {
+      "symbol": "pid",
+      "langcode": "PRA",
+      "name": "Piaroa",
+      "vernacularName": "huo̧ttö̧ja̧"
+    },
+    {
+      "symbol": "pis",
+      "langcode": "SP",
+      "name": "Solomon Islands Pidgin",
+      "vernacularName": "Solomon Islands Pidgin"
+    },
+    {
+      "symbol": "pjt",
+      "langcode": "PTJ",
+      "name": "Pitjantjatjara",
+      "vernacularName": "Pitjantjatjara"
+    },
+    {
+      "symbol": "pko",
+      "langcode": "POK",
+      "name": "Pokot",
+      "vernacularName": "Pokot"
+    },
+    {
+      "symbol": "pl",
+      "langcode": "P",
+      "name": "Polish",
+      "vernacularName": "polski"
+    },
+    {
+      "symbol": "plg",
+      "langcode": "PLG",
+      "name": "Pilagá",
+      "vernacularName": "pilagá"
+    },
+    {
+      "symbol": "pls",
+      "langcode": "NGM",
+      "name": "Ngigua (San Marcos Tlacoyalco)",
+      "vernacularName": "ngigua de San Marcos Tlacoyalco"
+    },
+    {
+      "symbol": "plt-x-bto",
+      "langcode": "BTO",
+      "name": "Betsileo",
+      "vernacularName": "Betsileo"
+    },
+    {
+      "symbol": "plu",
+      "langcode": "PLK",
+      "name": "Palikúr",
+      "vernacularName": "Palikur"
+    },
+    {
+      "symbol": "pma",
+      "langcode": "PMA",
+      "name": "Paama",
+      "vernacularName": "Paama"
+    },
+    {
+      "symbol": "pmf",
+      "langcode": "PMO",
+      "name": "Pamona",
+      "vernacularName": "Pamona"
+    },
+    {
+      "symbol": "pmy",
+      "langcode": "MPN",
+      "name": "Malay (Papuan)",
+      "vernacularName": "Malay (Papuan)"
+    },
+    {
+      "symbol": "pnb",
+      "langcode": "PJN",
+      "name": "Punjabi (Shahmukhi)",
+      "vernacularName": "پنجابی (شاہ مُکھی)"
+    },
+    {
+      "symbol": "pnb-latn",
+      "langcode": "PJS",
+      "name": "Punjabi (Shahmukhi) Roman",
+      "vernacularName": "Punjabi (Shahmukhi) Roman"
+    },
+    {
+      "symbol": "poh",
+      "langcode": "PQM",
+      "name": "Poqomchi'",
+      "vernacularName": "poqomchi'"
+    },
+    {
+      "symbol": "poi",
+      "langcode": "PPU",
+      "name": "Popoluca (Highland)",
+      "vernacularName": "popoluca de la Sierra"
+    },
+    {
+      "symbol": "pon",
+      "langcode": "PP",
+      "name": "Pohnpeian",
+      "vernacularName": "Lokaiahn Pohnpei"
+    },
+    {
+      "symbol": "pov",
+      "langcode": "TCR",
+      "name": "Bissau Guinean Creole",
+      "vernacularName": "Kriol di Gine-Bisau"
+    },
+    {
+      "symbol": "pri",
+      "langcode": "PIC",
+      "name": "Paicî",
+      "vernacularName": "Paicî"
+    },
+    {
+      "symbol": "prk",
+      "langcode": "WAM",
+      "name": "Wa",
+      "vernacularName": "Vax"
+    },
+    {
+      "symbol": "prl",
+      "langcode": "SPE",
+      "name": "Peruvian Sign Language",
+      "vernacularName": "lengua de señas peruana"
+    },
+    {
+      "symbol": "prs",
+      "langcode": "DAR",
+      "name": "Dari",
+      "vernacularName": "دری"
+    },
+    {
+      "symbol": "ps",
+      "langcode": "PH",
+      "name": "Pashto",
+      "vernacularName": "پښتو"
+    },
+    {
+      "symbol": "pso",
+      "langcode": "PDF",
+      "name": "Polish Sign Language",
+      "vernacularName": "polski język migowy"
+    },
+    {
+      "symbol": "psp",
+      "langcode": "FSL",
+      "name": "Filipino Sign Language",
+      "vernacularName": "Filipino Sign Language"
+    },
+    {
+      "symbol": "psr",
+      "langcode": "LGP",
+      "name": "Portuguese Sign Language",
+      "vernacularName": "Língua Gestual Portuguesa"
+    },
+    {
+      "symbol": "pt",
+      "langcode": "T",
+      "name": "Portuguese (Brazil)",
+      "vernacularName": "Português (Brasil)"
+    },
+    {
+      "symbol": "pt-ao",
+      "langcode": "TNG",
+      "name": "Portuguese (Angola)",
+      "vernacularName": "Português (Angola)"
+    },
+    {
+      "symbol": "pt-mz",
+      "langcode": "TMM",
+      "name": "Portuguese (Mozambique)",
+      "vernacularName": "Português (Moçambique)"
+    },
+    {
+      "symbol": "pt-pt",
+      "langcode": "TPO",
+      "name": "Portuguese (Portugal)",
+      "vernacularName": "Português (Portugal)"
+    },
+    {
+      "symbol": "puu",
+      "langcode": "PUN",
+      "name": "Punu",
+      "vernacularName": "Punu"
+    },
+    {
+      "symbol": "pwn",
+      "langcode": "PWN",
+      "name": "Paiwan",
+      "vernacularName": "Payuan"
+    },
+    {
+      "symbol": "pwo",
+      "langcode": "PK",
+      "name": "Karen (Pwo Western)",
+      "vernacularName": "Karen (Pwo Western)"
+    },
+    {
+      "symbol": "pww",
+      "langcode": "KPN",
+      "name": "Karen (Pwo Northern)",
+      "vernacularName": "โผล่ง"
+    },
+    {
+      "symbol": "pys",
+      "langcode": "LSP",
+      "name": "Paraguayan Sign Language",
+      "vernacularName": "lengua de señas paraguaya"
+    },
+    {
+      "symbol": "pyu",
+      "langcode": "PYM",
+      "name": "Puyuma",
+      "vernacularName": "Pinuyumayan"
+    },
+    {
+      "symbol": "qu",
+      "langcode": "QUB",
+      "name": "Quechua (Bolivia)",
+      "vernacularName": "Quechua (Bolivia)"
+    },
+    {
+      "symbol": "qu-x-qib",
+      "langcode": "QIB",
+      "name": "Quichua (Chibuleo)",
+      "vernacularName": "quichua (chibuleo)"
+    },
+    {
+      "symbol": "qu-x-qxl",
+      "langcode": "QCS",
+      "name": "Quichua (Salasaca)",
+      "vernacularName": "quichua (salasaca)"
+    },
+    {
+      "symbol": "qub",
+      "langcode": "QUL",
+      "name": "Quechua (Huallaga Huánuco)",
+      "vernacularName": "Quechua de Huánuco (Huallaga)"
+    },
+    {
+      "symbol": "quc",
+      "langcode": "QC",
+      "name": "Quiche",
+      "vernacularName": "quiché"
+    },
+    {
+      "symbol": "que",
+      "langcode": "QUN",
+      "name": "Quechua (Ancash)",
+      "vernacularName": "Quechua (Ancash)"
+    },
+    {
+      "symbol": "quf",
+      "langcode": "QUM",
+      "name": "Quechua (Lambayeque)",
+      "vernacularName": "quechua (lambayeque)"
+    },
+    {
+      "symbol": "qug",
+      "langcode": "QIC",
+      "name": "Quichua (Chimborazo)",
+      "vernacularName": "quichua (chimborazo)"
+    },
+    {
+      "symbol": "qug-x-qix",
+      "langcode": "QIX",
+      "name": "Quichua (Cotopaxi)",
+      "vernacularName": "quichua (cotopaxi)"
+    },
+    {
+      "symbol": "qus",
+      "langcode": "QIS",
+      "name": "Quichua (Santiago del Estero)",
+      "vernacularName": "quichua (Santiago del Estero)"
+    },
+    {
+      "symbol": "quw",
+      "langcode": "QIT",
+      "name": "Quichua (Tena)",
+      "vernacularName": "quichua (tena)"
+    },
+    {
+      "symbol": "quy",
+      "langcode": "QUA",
+      "name": "Quechua (Ayacucho)",
+      "vernacularName": "Quechua (Ayacucho)"
+    },
+    {
+      "symbol": "quz",
+      "langcode": "QU",
+      "name": "Quechua (Cuzco)",
+      "vernacularName": "quechua (Cusco)"
+    },
+    {
+      "symbol": "qvi",
+      "langcode": "QII",
+      "name": "Quichua (Imbabura)",
+      "vernacularName": "quichua (imbabura)"
+    },
+    {
+      "symbol": "qvw",
+      "langcode": "QUH",
+      "name": "Quechua (Huaylla Wanca)",
+      "vernacularName": "quechua wanca"
+    },
+    {
+      "symbol": "qvz",
+      "langcode": "QIP",
+      "name": "Quichua (Pastaza)",
+      "vernacularName": "quichua (pastaza)"
+    },
+    {
+      "symbol": "qxr",
+      "langcode": "QCC",
+      "name": "Quichua (Cañar)",
+      "vernacularName": "quichua (cañar)"
+    },
+    {
+      "symbol": "rag",
+      "langcode": "OL",
+      "name": "Maragoli",
+      "vernacularName": "Luragooli"
+    },
+    {
+      "symbol": "rap",
+      "langcode": "RPN",
+      "name": "Rapa Nui",
+      "vernacularName": "rapa nui"
+    },
+    {
+      "symbol": "rar",
+      "langcode": "RA",
+      "name": "Cook Islands Māori",
+      "vernacularName": "Kuki Airani"
+    },
+    {
+      "symbol": "rcf",
+      "langcode": "RCR",
+      "name": "Réunion Creole",
+      "vernacularName": "Kréol Rénioné"
+    },
+    {
+      "symbol": "rm-x-rh",
+      "langcode": "RH",
+      "name": "Romansh (Ladin)",
+      "vernacularName": "Rumantsch (Ladin)"
+    },
+    {
+      "symbol": "rm-x-rhs",
+      "langcode": "RHS",
+      "name": "Romansh (Sursilvan)",
+      "vernacularName": "romontsch (sursilvan)"
+    },
+    {
+      "symbol": "rmc-sk",
+      "langcode": "RMS",
+      "name": "Romany (Eastern Slovakia)",
+      "vernacularName": "romanes (vichodno Slovačiko)"
+    },
+    {
+      "symbol": "rml",
+      "langcode": "RMT",
+      "name": "Romany (Poland)",
+      "vernacularName": "romani (Polska Roma)"
+    },
+    {
+      "symbol": "rml-ru",
+      "langcode": "RMP",
+      "name": "Romany (Northern Russia)",
+      "vernacularName": "романы (русска рома)"
+    },
+    {
+      "symbol": "rmn-cyrl",
+      "langcode": "RMC",
+      "name": "Romany (Macedonia) Cyrillic",
+      "vernacularName": "романе (Македонија) кирилица"
+    },
+    {
+      "symbol": "rmn-x-rbh",
+      "langcode": "RBH",
+      "name": "Romany (Bosnia and Herzegovina)",
+      "vernacularName": "Romany (Bosnia and Herzegovina)"
+    },
+    {
+      "symbol": "rmn-x-rm",
+      "langcode": "RM",
+      "name": "Romany (Macedonia)",
+      "vernacularName": "romane (Makedonija)"
+    },
+    {
+      "symbol": "rmn-x-rmb",
+      "langcode": "RMB",
+      "name": "Romany (Western Bulgaria)",
+      "vernacularName": "ромски (западна България)"
+    },
+    {
+      "symbol": "rmn-x-rme",
+      "langcode": "RME",
+      "name": "Romany (Serbia)",
+      "vernacularName": "Romane (Srbija)"
+    },
+    {
+      "symbol": "rmn-x-rmg",
+      "langcode": "RMG",
+      "name": "Romany (Southern Greece)",
+      "vernacularName": "Ρομανί (Νότια Ελλάδα)"
+    },
+    {
+      "symbol": "rmn-x-rmn",
+      "langcode": "RMN",
+      "name": "Romany (Northern Greece)",
+      "vernacularName": "Ρομανί (Βόρεια Ελλάδα)"
+    },
+    {
+      "symbol": "rmn-x-rmy",
+      "langcode": "RMY",
+      "name": "Romany (Central Bulgaria)",
+      "vernacularName": "ромски (централна България)"
+    },
+    {
+      "symbol": "rmn-x-rnc",
+      "langcode": "RNC",
+      "name": "Romany (Crimea)",
+      "vernacularName": "Романи (крымски)"
+    },
+    {
+      "symbol": "rmn-x-rrl",
+      "langcode": "RRL",
+      "name": "Romany (Arli)",
+      "vernacularName": "Romany (Arli)"
+    },
+    {
+      "symbol": "rmn-x-rsp",
+      "langcode": "RSP",
+      "name": "Romany (Spoitori)",
+      "vernacularName": "Romany (Spoitori)"
+    },
+    {
+      "symbol": "rmo",
+      "langcode": "RMX",
+      "name": "Romany (Germany)",
+      "vernacularName": "Romanes (Sinti)"
+    },
+    {
+      "symbol": "rmo-fr",
+      "langcode": "RMF",
+      "name": "Romany (France)",
+      "vernacularName": "Romanes (Manouche)"
+    },
+    {
+      "symbol": "rms",
+      "langcode": "LMG",
+      "name": "Romanian Sign Language",
+      "vernacularName": "Limba semnelor române"
+    },
+    {
+      "symbol": "rmy",
+      "langcode": "RMR",
+      "name": "Romany (Romania)",
+      "vernacularName": "Rromani (România)"
+    },
+    {
+      "symbol": "rmy-al",
+      "langcode": "RML",
+      "name": "Romany (Albania)",
+      "vernacularName": "rome (shqipëri)"
+    },
+    {
+      "symbol": "rmy-ar",
+      "langcode": "RMA",
+      "name": "Romany (Argentina)",
+      "vernacularName": "Romanes Kalderash"
+    },
+    {
+      "symbol": "rmy-cl",
+      "langcode": "RMH",
+      "name": "Romany (Chile)",
+      "vernacularName": "Romane Jorajane"
+    },
+    {
+      "symbol": "rmy-ua",
+      "langcode": "RMU",
+      "name": "Romany (Ukraine)",
+      "vernacularName": "Романі (ромунгри, Україна)"
+    },
+    {
+      "symbol": "rmy-x-lva",
+      "langcode": "LVA",
+      "name": "Romany (Lovari, Hungary)",
+      "vernacularName": "romani (lovári, Ungriko Them)"
+    },
+    {
+      "symbol": "rmy-x-rck",
+      "langcode": "RCK",
+      "name": "Romany (Meçkar)",
+      "vernacularName": "Romany (Meçkar)"
+    },
+    {
+      "symbol": "rmy-x-rmk",
+      "langcode": "RMK",
+      "name": "Romany (Kalderash, Russia)",
+      "vernacularName": "хомани (котлярско, Хусыя)"
+    },
+    {
+      "symbol": "rmy-x-rmv",
+      "langcode": "RMV",
+      "name": "Romany (Vlax, Russia)",
+      "vernacularName": "романи (влахитско, Россия)"
+    },
+    {
+      "symbol": "rmy-x-rvc",
+      "langcode": "RVC",
+      "name": "Romany (Moldova) Cyrillic",
+      "vernacularName": "Романи (Молдова) кирилик"
+    },
+    {
+      "symbol": "rmy-x-rvk",
+      "langcode": "RVK",
+      "name": "Romany (Lovari, Chokeshi)",
+      "vernacularName": "Романі (ловарі, чокещі)"
+    },
+    {
+      "symbol": "rnd",
+      "langcode": "DR",
+      "name": "Uruund",
+      "vernacularName": "Uruund"
+    },
+    {
+      "symbol": "rng",
+      "langcode": "RN",
+      "name": "Ronga",
+      "vernacularName": "Xironga"
+    },
+    {
+      "symbol": "ro",
+      "langcode": "M",
+      "name": "Romanian",
+      "vernacularName": "Română"
+    },
+    {
+      "symbol": "ro-x-rnk",
+      "langcode": "RNK",
+      "name": "Romanian (Vlach, Bačka)",
+      "vernacularName": "rumunski (vlaški, Bačka)"
+    },
+    {
+      "symbol": "ro-x-rnn",
+      "langcode": "RNN",
+      "name": "Romanian (Vlach)",
+      "vernacularName": "rumunski (vlaški)"
+    },
+    {
+      "symbol": "rob",
+      "langcode": "WMA",
+      "name": "Waima",
+      "vernacularName": "Waima"
+    },
+    {
+      "symbol": "ron-x-bea",
+      "langcode": "BEA",
+      "name": "Beas",
+      "vernacularName": "Beas"
+    },
+    {
+      "symbol": "rsl",
+      "langcode": "RSL",
+      "name": "Russian Sign Language",
+      "vernacularName": "русский жестовый"
+    },
+    {
+      "symbol": "rtm",
+      "langcode": "RO",
+      "name": "Rotuman",
+      "vernacularName": "Rotuạm ta"
+    },
+    {
+      "symbol": "ru",
+      "langcode": "U",
+      "name": "Russian",
+      "vernacularName": "русский"
+    },
+    {
+      "symbol": "rue",
+      "langcode": "RSC",
+      "name": "Rusyn (Carpathian)",
+      "vernacularName": "Закарпатська русинська"
+    },
+    {
+      "symbol": "rug",
+      "langcode": "RV",
+      "name": "Roviana",
+      "vernacularName": "Roviana"
+    },
+    {
+      "symbol": "run",
+      "langcode": "RU",
+      "name": "Kirundi",
+      "vernacularName": "Ikirundi"
+    },
+    {
+      "symbol": "rw",
+      "langcode": "YW",
+      "name": "Kinyarwanda",
+      "vernacularName": "Ikinyarwanda"
+    },
+    {
+      "symbol": "rwr",
+      "langcode": "MRW",
+      "name": "Marwari",
+      "vernacularName": "Marwari"
+    },
+    {
+      "symbol": "sah",
+      "langcode": "YK",
+      "name": "Yakutsk",
+      "vernacularName": "сахалыы"
+    },
+    {
+      "symbol": "saq",
+      "langcode": "SBR",
+      "name": "Samburu",
+      "vernacularName": "Sampur"
+    },
+    {
+      "symbol": "sas",
+      "langcode": "SSK",
+      "name": "Sasak",
+      "vernacularName": "Sasak"
+    },
+    {
+      "symbol": "sat",
+      "langcode": "SHR",
+      "name": "Santhali (Roman)",
+      "vernacularName": "Santhali (Roman)"
+    },
+    {
+      "symbol": "sat-deva",
+      "langcode": "SHD",
+      "name": "Santhali (Devanagari)",
+      "vernacularName": "Santhali (Devanagari)"
+    },
+    {
+      "symbol": "sba",
+      "langcode": "NG",
+      "name": "Ngambaye",
+      "vernacularName": "Ngambay"
+    },
+    {
+      "symbol": "sbs",
+      "langcode": "KHN",
+      "name": "Kuhane (Subiya)",
+      "vernacularName": "Kuhane (Subiya)"
+    },
+    {
+      "symbol": "sby",
+      "langcode": "SOL",
+      "name": "Soli",
+      "vernacularName": "Cisoli"
+    },
+    {
+      "symbol": "sck-deva",
+      "langcode": "SDD",
+      "name": "Sadri (Devanagari)",
+      "vernacularName": "सादरी (देवनागरी)"
+    },
+    {
+      "symbol": "sd",
+      "langcode": "ND",
+      "name": "Sindhi (Arabic)",
+      "vernacularName": "سِنڌي"
+    },
+    {
+      "symbol": "sd-deva",
+      "langcode": "NDV",
+      "name": "Sindhi (Devanagari)",
+      "vernacularName": "Sindhi (Devanagari)"
+    },
+    {
+      "symbol": "sda",
+      "langcode": "TOR",
+      "name": "Toraja",
+      "vernacularName": "Toraja"
+    },
+    {
+      "symbol": "sdo",
+      "langcode": "BDY",
+      "name": "Bidayuh (Bukar)",
+      "vernacularName": "Bidayuh (Bukar)"
+    },
+    {
+      "symbol": "se",
+      "langcode": "LP",
+      "name": "Saami (North)",
+      "vernacularName": "sámegiella (davvi)"
+    },
+    {
+      "symbol": "sef",
+      "langcode": "SFC",
+      "name": "Senoufo (Cebaara)",
+      "vernacularName": "Senarì"
+    },
+    {
+      "symbol": "seh",
+      "langcode": "SEN",
+      "name": "Sena",
+      "vernacularName": "Cisena"
+    },
+    {
+      "symbol": "sfb",
+      "langcode": "SBF",
+      "name": "Belgian French Sign Language",
+      "vernacularName": "Langue des signes de Belgique francophone"
+    },
+    {
+      "symbol": "sfs",
+      "langcode": "SAS",
+      "name": "South African Sign Language",
+      "vernacularName": "South African Sign Language"
+    },
+    {
+      "symbol": "sfw",
+      "langcode": "SHW",
+      "name": "Sehwi",
+      "vernacularName": "Sehwi"
+    },
+    {
+      "symbol": "sg",
+      "langcode": "SG",
+      "name": "Sango",
+      "vernacularName": "Sango"
+    },
+    {
+      "symbol": "sgd",
+      "langcode": "SRG",
+      "name": "Surigaonon",
+      "vernacularName": "Surigaonon"
+    },
+    {
+      "symbol": "sgg",
+      "langcode": "SGS",
+      "name": "Swiss German Sign Language",
+      "vernacularName": "Deutschschweizer Gebärdensprache"
+    },
+    {
+      "symbol": "sgh",
+      "langcode": "SGH",
+      "name": "Shughni",
+      "vernacularName": "шуғнонӣ"
+    },
+    {
+      "symbol": "sgn-ao",
+      "langcode": "LAS",
+      "name": "Angolan Sign Language",
+      "vernacularName": "Língua angolana de sinais"
+    },
+    {
+      "symbol": "sgn-bd",
+      "langcode": "BGS",
+      "name": "Bengali Sign Language",
+      "vernacularName": "Bengali Sign Language"
+    },
+    {
+      "symbol": "sgn-bf",
+      "langcode": "BFL",
+      "name": "Burkina Faso Sign Language",
+      "vernacularName": "Burkina Faso Sign Language"
+    },
+    {
+      "symbol": "sgn-bi",
+      "langcode": "BRS",
+      "name": "Burundi Sign Language",
+      "vernacularName": "Langue des signes burundaise"
+    },
+    {
+      "symbol": "sgn-bj",
+      "langcode": "BNL",
+      "name": "Benin Sign Language",
+      "vernacularName": "Benin Sign Language"
+    },
+    {
+      "symbol": "sgn-bw",
+      "langcode": "WSL",
+      "name": "Botswana Sign Language",
+      "vernacularName": "Botswana Sign Language"
+    },
+    {
+      "symbol": "sgn-cd",
+      "langcode": "CGS",
+      "name": "Congolese Sign Language",
+      "vernacularName": "Langue des signes congolaise"
+    },
+    {
+      "symbol": "sgn-cf",
+      "langcode": "CRS",
+      "name": "Central African Republic Sign Language",
+      "vernacularName": "Langue des signes centrafricaine"
+    },
+    {
+      "symbol": "sgn-ci",
+      "langcode": "LSI",
+      "name": "Ivorian Sign Language",
+      "vernacularName": "Langue des signes ivoirienne"
+    },
+    {
+      "symbol": "sgn-cm",
+      "langcode": "CML",
+      "name": "Cameroon Sign Language",
+      "vernacularName": "Langue des signes camerounaise"
+    },
+    {
+      "symbol": "sgn-er",
+      "langcode": "ERS",
+      "name": "Eritrean Sign Language",
+      "vernacularName": "Eritrean Sign Language"
+    },
+    {
+      "symbol": "sgn-fj",
+      "langcode": "FJS",
+      "name": "Fiji Sign Language",
+      "vernacularName": "Fiji Sign Language"
+    },
+    {
+      "symbol": "sgn-ge",
+      "langcode": "GGS",
+      "name": "Georgian Sign Language",
+      "vernacularName": "ქართული ჟესტური ენა"
+    },
+    {
+      "symbol": "sgn-kh",
+      "langcode": "CBL",
+      "name": "Cambodian Sign Language",
+      "vernacularName": "ភាសាសញ្ញាខ្មែរ"
+    },
+    {
+      "symbol": "sgn-lb",
+      "langcode": "LBS",
+      "name": "Lebanese Sign Language",
+      "vernacularName": "لغة الإشارات اللبنانية"
+    },
+    {
+      "symbol": "sgn-mm",
+      "langcode": "BUS",
+      "name": "Myanmar Sign Language",
+      "vernacularName": "မြန်မာ လက်သင်္ကေတပြဘာသာစကား"
+    },
+    {
+      "symbol": "sgn-mw",
+      "langcode": "MSL",
+      "name": "Malawi Sign Language",
+      "vernacularName": "Chinenero Chamanja cha ku Malawi"
+    },
+    {
+      "symbol": "sgn-pg",
+      "langcode": "MNS",
+      "name": "Melanesian Sign Language",
+      "vernacularName": "Melanesian Sign Language"
+    },
+    {
+      "symbol": "sgn-rs",
+      "langcode": "SBS",
+      "name": "Serbian Sign Language",
+      "vernacularName": "srpski znakovni jezik"
+    },
+    {
+      "symbol": "sgn-rw",
+      "langcode": "RWS",
+      "name": "Rwandan Sign Language",
+      "vernacularName": "Ururimi rw'amarenga yo mu Rwanda"
+    },
+    {
+      "symbol": "sgn-si",
+      "langcode": "SZJ",
+      "name": "Slovenian Sign Language",
+      "vernacularName": "slovenski znakovni jezik"
+    },
+    {
+      "symbol": "sgn-sr",
+      "langcode": "SSU",
+      "name": "Suriname Sign Language",
+      "vernacularName": "Surinaamse Gebarentaal"
+    },
+    {
+      "symbol": "sgn-sz",
+      "langcode": "SWS",
+      "name": "Swazi Sign Language",
+      "vernacularName": "Swazi Sign Language"
+    },
+    {
+      "symbol": "sgn-tg",
+      "langcode": "TGS",
+      "name": "Togo Sign Language",
+      "vernacularName": "Togo Sign Language"
+    },
+    {
+      "symbol": "sgn-ws",
+      "langcode": "SMS",
+      "name": "Samoan Sign Language",
+      "vernacularName": "Samoan Sign Language"
+    },
+    {
+      "symbol": "shk",
+      "langcode": "SL",
+      "name": "Shilluk",
+      "vernacularName": "Dhøg Cøllø"
+    },
+    {
+      "symbol": "shn",
+      "langcode": "SHA",
+      "name": "Shan",
+      "vernacularName": "Shan"
+    },
+    {
+      "symbol": "shp",
+      "langcode": "SHC",
+      "name": "Shipibo-Conibo",
+      "vernacularName": "shipibo-conibo"
+    },
+    {
+      "symbol": "shr",
+      "langcode": "MSH",
+      "name": "Mashi",
+      "vernacularName": "Mashi"
+    },
+    {
+      "symbol": "si",
+      "langcode": "SN",
+      "name": "Sinhala",
+      "vernacularName": "සිංහල"
+    },
+    {
+      "symbol": "sid",
+      "langcode": "DM",
+      "name": "Sidama",
+      "vernacularName": "Sidaamu Afoo"
+    },
+    {
+      "symbol": "sk",
+      "langcode": "V",
+      "name": "Slovak",
+      "vernacularName": "slovenčina"
+    },
+    {
+      "symbol": "skg-x-skl",
+      "langcode": "SKL",
+      "name": "Sakalava",
+      "vernacularName": "Sakalava"
+    },
+    {
+      "symbol": "skg-x-vz",
+      "langcode": "VZ",
+      "name": "Vezo",
+      "vernacularName": "Vezo"
+    },
+    {
+      "symbol": "sl",
+      "langcode": "SV",
+      "name": "Slovenian",
+      "vernacularName": "slovenščina"
+    },
+    {
+      "symbol": "sls",
+      "langcode": "SGL",
+      "name": "Singapore Sign Language",
+      "vernacularName": "Singapore Sign Language"
+    },
+    {
+      "symbol": "sm",
+      "langcode": "SM",
+      "name": "Samoan",
+      "vernacularName": "Faa-Samoa"
+    },
+    {
+      "symbol": "sn",
+      "langcode": "CA",
+      "name": "Shona",
+      "vernacularName": "Shona"
+    },
+    {
+      "symbol": "snd-x-ndn",
+      "langcode": "NDN",
+      "name": "Sindhi (Indonesia)",
+      "vernacularName": "Sindhi (Indonesia)"
+    },
+    {
+      "symbol": "sng",
+      "langcode": "SGA",
+      "name": "Sanga",
+      "vernacularName": "Kisanga"
+    },
+    {
+      "symbol": "snk",
+      "langcode": "SNK",
+      "name": "Soninke",
+      "vernacularName": "Soninke"
+    },
+    {
+      "symbol": "so",
+      "langcode": "SO",
+      "name": "Somali",
+      "vernacularName": "Soomaali"
+    },
+    {
+      "symbol": "soa",
+      "langcode": "SIG",
+      "name": "Thai Song",
+      "vernacularName": "ไทยซ้ง"
+    },
+    {
+      "symbol": "soe",
+      "langcode": "SGM",
+      "name": "Songomeno",
+      "vernacularName": "Losongomino"
+    },
+    {
+      "symbol": "sop",
+      "langcode": "KSN",
+      "name": "Kisonge",
+      "vernacularName": "Kisongye"
+    },
+    {
+      "symbol": "sou",
+      "langcode": "SIS",
+      "name": "Thai (Southern)",
+      "vernacularName": "ไทย (ใต้)"
+    },
+    {
+      "symbol": "sq",
+      "langcode": "AL",
+      "name": "Albanian",
+      "vernacularName": "shqip"
+    },
+    {
+      "symbol": "sqk",
+      "langcode": "ALS",
+      "name": "Albanian Sign Language",
+      "vernacularName": "shqipe e shenjave"
+    },
+    {
+      "symbol": "sqs",
+      "langcode": "SLS",
+      "name": "Sri Lankan Sign Language",
+      "vernacularName": "ශ්‍රී ලංකා සංඥා භාෂාව"
+    },
+    {
+      "symbol": "sr-cyrl",
+      "langcode": "SB",
+      "name": "Serbian (Cyrillic)",
+      "vernacularName": "српски (ћирилица)"
+    },
+    {
+      "symbol": "sr-latn",
+      "langcode": "SBO",
+      "name": "Serbian (Roman)",
+      "vernacularName": "srpski (latinica)"
+    },
+    {
+      "symbol": "srm",
+      "langcode": "SRM",
+      "name": "Saramaccan",
+      "vernacularName": "Saamakatöngö"
+    },
+    {
+      "symbol": "srn",
+      "langcode": "SR",
+      "name": "Sranantongo",
+      "vernacularName": "Sranantongo"
+    },
+    {
+      "symbol": "srr",
+      "langcode": "ER",
+      "name": "Serer",
+      "vernacularName": "Seereer"
+    },
+    {
+      "symbol": "ss",
+      "langcode": "SWI",
+      "name": "Swati",
+      "vernacularName": "SiSwati"
+    },
+    {
+      "symbol": "ssp",
+      "langcode": "LSE",
+      "name": "Spanish Sign Language",
+      "vernacularName": "lengua de signos española"
+    },
+    {
+      "symbol": "st",
+      "langcode": "SU",
+      "name": "Sesotho (Lesotho)",
+      "vernacularName": "Sesotho (Lesotho)"
+    },
+    {
+      "symbol": "st-za",
+      "langcode": "SSA",
+      "name": "Sesotho (South Africa)",
+      "vernacularName": "Sesotho (South Africa)"
+    },
+    {
+      "symbol": "su",
+      "langcode": "SD",
+      "name": "Sunda",
+      "vernacularName": "Sunda"
+    },
+    {
+      "symbol": "suk",
+      "langcode": "UK",
+      "name": "Sukuma",
+      "vernacularName": "Kisukuma"
+    },
+    {
+      "symbol": "sus",
+      "langcode": "SUS",
+      "name": "Susu",
+      "vernacularName": "Soso xui"
+    },
+    {
+      "symbol": "sv",
+      "langcode": "Z",
+      "name": "Swedish",
+      "vernacularName": "Svenska"
+    },
+    {
+      "symbol": "sva-x-svl",
+      "langcode": "SVL",
+      "name": "Svan (Lower)",
+      "vernacularName": "ჩუბე ლუშვანუ"
+    },
+    {
+      "symbol": "sva-x-svn",
+      "langcode": "SVN",
+      "name": "Svan (Upper)",
+      "vernacularName": "ჟიბე ლუშნუ"
+    },
+    {
+      "symbol": "svk",
+      "langcode": "VSL",
+      "name": "Slovak Sign Language",
+      "vernacularName": "slovenský posunkový jazyk"
+    },
+    {
+      "symbol": "sw",
+      "langcode": "SW",
+      "name": "Swahili",
+      "vernacularName": "Kiswahili"
+    },
+    {
+      "symbol": "swb-x-orr",
+      "langcode": "ORR",
+      "name": "Mahorian (Roman)",
+      "vernacularName": "Shimaore (Alifuɓe)"
+    },
+    {
+      "symbol": "swc",
+      "langcode": "ZS",
+      "name": "Swahili (Congo)",
+      "vernacularName": "Kiswahili (Congo)"
+    },
+    {
+      "symbol": "swc-x-swk",
+      "langcode": "SWK",
+      "name": "Swahili (Katanga)",
+      "vernacularName": "Swahili (Katanga)"
+    },
+    {
+      "symbol": "swl",
+      "langcode": "SSL",
+      "name": "Swedish Sign Language",
+      "vernacularName": "Svenskt teckenspråk"
+    },
+    {
+      "symbol": "sxn",
+      "langcode": "SGR",
+      "name": "Sangir",
+      "vernacularName": "Sangir"
+    },
+    {
+      "symbol": "syl-x-syl",
+      "langcode": "SYL",
+      "name": "Sylheti (Bengali)",
+      "vernacularName": "সেলেটি (বাংলা)"
+    },
+    {
+      "symbol": "szl",
+      "langcode": "SSN",
+      "name": "Silesian",
+      "vernacularName": "jynzyk Ślónska Cieszyńskigo"
+    },
+    {
+      "symbol": "ta",
+      "langcode": "TL",
+      "name": "Tamil",
+      "vernacularName": "தமிழ்"
+    },
+    {
+      "symbol": "ta-x-tlr",
+      "langcode": "TLR",
+      "name": "Tamil (Roman)",
+      "vernacularName": "Thamil (Rōman)"
+    },
+    {
+      "symbol": "ta-x-tls",
+      "langcode": "TLS",
+      "name": "Tamil (Spoken)",
+      "vernacularName": "Tamil (Spoken)"
+    },
+    {
+      "symbol": "tab",
+      "langcode": "TBN",
+      "name": "Tabasaran",
+      "vernacularName": "табасаран"
+    },
+    {
+      "symbol": "tac",
+      "langcode": "TRW",
+      "name": "Tarahumara (Western)",
+      "vernacularName": "tarahumara occidental"
+    },
+    {
+      "symbol": "taj",
+      "langcode": "TME",
+      "name": "Tamang (Eastern)",
+      "vernacularName": "Tamang (Eastern)"
+    },
+    {
+      "symbol": "tao",
+      "langcode": "YMI",
+      "name": "Yami",
+      "vernacularName": "Yami"
+    },
+    {
+      "symbol": "tap",
+      "langcode": "TBW",
+      "name": "Taabwa",
+      "vernacularName": "Taabwa"
+    },
+    {
+      "symbol": "tar",
+      "langcode": "TRH",
+      "name": "Tarahumara (Central)",
+      "vernacularName": "ralámuli"
+    },
+    {
+      "symbol": "tay",
+      "langcode": "ATY",
+      "name": "Atayal",
+      "vernacularName": "Tayal"
+    },
+    {
+      "symbol": "tbz",
+      "langcode": "DTM",
+      "name": "Ditammari",
+      "vernacularName": "Ditammari"
+    },
+    {
+      "symbol": "tca",
+      "langcode": "TCN",
+      "name": "Ticuna",
+      "vernacularName": "Ticuna"
+    },
+    {
+      "symbol": "tcf",
+      "langcode": "TLN",
+      "name": "Tlapanec",
+      "vernacularName": "me̱ʼpha̱a̱"
+    },
+    {
+      "symbol": "tcs",
+      "langcode": "TSC",
+      "name": "Torres Strait Creole",
+      "vernacularName": "Tores Streit Kriol"
+    },
+    {
+      "symbol": "tcy",
+      "langcode": "TLU",
+      "name": "Tulu",
+      "vernacularName": "ತುಳು"
+    },
+    {
+      "symbol": "tcz",
+      "langcode": "KUK",
+      "name": "Chin (Kuki)",
+      "vernacularName": "Chin (Kuki)"
+    },
+    {
+      "symbol": "tdj",
+      "langcode": "TMW",
+      "name": "Tamang (Western)",
+      "vernacularName": "Tamang (Western)"
+    },
+    {
+      "symbol": "tdt",
+      "langcode": "TTP",
+      "name": "Tetun Dili",
+      "vernacularName": "Tetun Dili"
+    },
+    {
+      "symbol": "tdx",
+      "langcode": "TND",
+      "name": "Tandroy",
+      "vernacularName": "Tandroy"
+    },
+    {
+      "symbol": "te",
+      "langcode": "TU",
+      "name": "Telugu",
+      "vernacularName": "తెలుగు"
+    },
+    {
+      "symbol": "tek",
+      "langcode": "TEK",
+      "name": "Teke (Congo Kinshasa)",
+      "vernacularName": "Kiteke (Congo Kinshasa)"
+    },
+    {
+      "symbol": "tem",
+      "langcode": "TMN",
+      "name": "Themne",
+      "vernacularName": "Themne"
+    },
+    {
+      "symbol": "teo",
+      "langcode": "IE",
+      "name": "Ateso",
+      "vernacularName": "Ateso"
+    },
+    {
+      "symbol": "ter",
+      "langcode": "TER",
+      "name": "Terêna",
+      "vernacularName": "Terêna"
+    },
+    {
+      "symbol": "tet",
+      "langcode": "TTB",
+      "name": "Tetun Belu",
+      "vernacularName": "Tetun Belu"
+    },
+    {
+      "symbol": "tg",
+      "langcode": "TJ",
+      "name": "Tajiki",
+      "vernacularName": "тоҷикӣ"
+    },
+    {
+      "symbol": "tg-uz",
+      "langcode": "TJU",
+      "name": "Tajiki (Samarkand)",
+      "vernacularName": "тоҷикӣ (Самарқанд)"
+    },
+    {
+      "symbol": "th",
+      "langcode": "SI",
+      "name": "Thai",
+      "vernacularName": "ไทย"
+    },
+    {
+      "symbol": "th-x-sik",
+      "langcode": "SIK",
+      "name": "Thai (Korat)",
+      "vernacularName": "ไทย (โคราช)"
+    },
+    {
+      "symbol": "ti",
+      "langcode": "TI",
+      "name": "Tigrinya",
+      "vernacularName": "ትግርኛ"
+    },
+    {
+      "symbol": "tiv",
+      "langcode": "TV",
+      "name": "Tiv",
+      "vernacularName": "Tiv"
+    },
+    {
+      "symbol": "tk",
+      "langcode": "TMR",
+      "name": "Turkmen",
+      "vernacularName": "türkmen"
+    },
+    {
+      "symbol": "tk-cyrl",
+      "langcode": "TM",
+      "name": "Turkmen (Cyrillic)",
+      "vernacularName": "түркмен (кириллица)"
+    },
+    {
+      "symbol": "tkl",
+      "langcode": "OE",
+      "name": "Tokelauan",
+      "vernacularName": "Faka-Tokelau"
+    },
+    {
+      "symbol": "tl",
+      "langcode": "TG",
+      "name": "Tagalog",
+      "vernacularName": "Tagalog"
+    },
+    {
+      "symbol": "tll",
+      "langcode": "OT",
+      "name": "Otetela",
+      "vernacularName": "Ɔtɛtɛla"
+    },
+    {
+      "symbol": "tly-x-tly",
+      "langcode": "TLY",
+      "name": "Talysh",
+      "vernacularName": "Toloş"
+    },
+    {
+      "symbol": "tly-x-tyc",
+      "langcode": "TYC",
+      "name": "Talysh (Cyrillic)",
+      "vernacularName": "Толош (кирил әлифба)"
+    },
+    {
+      "symbol": "tn",
+      "langcode": "TN",
+      "name": "Setswana",
+      "vernacularName": "Setswana"
+    },
+    {
+      "symbol": "tnl",
+      "langcode": "LNK",
+      "name": "Lenakel",
+      "vernacularName": "Lenakel"
+    },
+    {
+      "symbol": "to",
+      "langcode": "TO",
+      "name": "Tongan",
+      "vernacularName": "Faka-Tonga"
+    },
+    {
+      "symbol": "tob",
+      "langcode": "TOB",
+      "name": "Toba",
+      "vernacularName": "toba"
+    },
+    {
+      "symbol": "tog",
+      "langcode": "CT",
+      "name": "Chitonga (Malawi)",
+      "vernacularName": "Chitonga (Malawi)"
+    },
+    {
+      "symbol": "toh",
+      "langcode": "GTN",
+      "name": "Gitonga",
+      "vernacularName": "Gitonga"
+    },
+    {
+      "symbol": "toi",
+      "langcode": "CG",
+      "name": "Chitonga",
+      "vernacularName": "Chitonga"
+    },
+    {
+      "symbol": "toi-zw",
+      "langcode": "CGW",
+      "name": "Chitonga (Zimbabwe)",
+      "vernacularName": "Chitonga (Zimbabwe)"
+    },
+    {
+      "symbol": "toj",
+      "langcode": "TJO",
+      "name": "Tojolabal",
+      "vernacularName": "tojol-abʼal"
+    },
+    {
+      "symbol": "top",
+      "langcode": "TOT",
+      "name": "Totonac",
+      "vernacularName": "totonaco"
+    },
+    {
+      "symbol": "tpi",
+      "langcode": "MP",
+      "name": "Tok Pisin",
+      "vernacularName": "Tok Pisin"
+    },
+    {
+      "symbol": "tqo",
+      "langcode": "TR",
+      "name": "Toaripi",
+      "vernacularName": "Toaripi"
+    },
+    {
+      "symbol": "tr",
+      "langcode": "TK",
+      "name": "Turkish",
+      "vernacularName": "Türkçe"
+    },
+    {
+      "symbol": "tr-cryl",
+      "langcode": "TKC",
+      "name": "Turkish (Cyrillic)",
+      "vernacularName": "Тюркче (Кирил Алфабеси)"
+    },
+    {
+      "symbol": "trp",
+      "langcode": "KBK",
+      "name": "Kokborok",
+      "vernacularName": "Kokborok"
+    },
+    {
+      "symbol": "trv-x-sdq",
+      "langcode": "SDQ",
+      "name": "Seediq",
+      "vernacularName": "Seediq"
+    },
+    {
+      "symbol": "trv-x-trk",
+      "langcode": "TRK",
+      "name": "Taroko",
+      "vernacularName": "Truku"
+    },
+    {
+      "symbol": "ts",
+      "langcode": "TS",
+      "name": "Tsonga",
+      "vernacularName": "Xitsonga"
+    },
+    {
+      "symbol": "tsc",
+      "langcode": "AW",
+      "name": "Tshwa",
+      "vernacularName": "ciTshwa"
+    },
+    {
+      "symbol": "tsg",
+      "langcode": "TA",
+      "name": "Tausug",
+      "vernacularName": "Tausug"
+    },
+    {
+      "symbol": "tsm",
+      "langcode": "TKL",
+      "name": "Turkish Sign Language",
+      "vernacularName": "Türk İşaret Dili"
+    },
+    {
+      "symbol": "tso-mz",
+      "langcode": "CGM",
+      "name": "Changana (Mozambique)",
+      "vernacularName": "xiChangana (Moçambique)"
+    },
+    {
+      "symbol": "tso-zw",
+      "langcode": "CGA",
+      "name": "Changana (Zimbabwe)",
+      "vernacularName": "Xichangana (Zimbabwe)"
+    },
+    {
+      "symbol": "tsq",
+      "langcode": "SIL",
+      "name": "Thai Sign Language",
+      "vernacularName": "ภาษามือไทย"
+    },
+    {
+      "symbol": "tss",
+      "langcode": "TSL",
+      "name": "Taiwanese Sign Language",
+      "vernacularName": "台灣手語"
+    },
+    {
+      "symbol": "tsz",
+      "langcode": "TRS",
+      "name": "Tarascan",
+      "vernacularName": "Purépecha"
+    },
+    {
+      "symbol": "tt",
+      "langcode": "TAT",
+      "name": "Tatar",
+      "vernacularName": "татар"
+    },
+    {
+      "symbol": "tt-x-kry",
+      "langcode": "KRY",
+      "name": "Kryashen",
+      "vernacularName": "керәшен татар"
+    },
+    {
+      "symbol": "ttj",
+      "langcode": "RT",
+      "name": "Rutoro",
+      "vernacularName": "Rutoro"
+    },
+    {
+      "symbol": "tts",
+      "langcode": "SIE",
+      "name": "Thai (Northeastern)",
+      "vernacularName": "อีสาน"
+    },
+    {
+      "symbol": "ttt-x-ttr",
+      "langcode": "TTR",
+      "name": "Tat (Roman)",
+      "vernacularName": "Tat (Roman)"
+    },
+    {
+      "symbol": "tui",
+      "langcode": "TPR",
+      "name": "Toupouri",
+      "vernacularName": "Toupouri"
+    },
+    {
+      "symbol": "tum",
+      "langcode": "TB",
+      "name": "Chitumbuka",
+      "vernacularName": "Chitumbuka"
+    },
+    {
+      "symbol": "tuo",
+      "langcode": "TUO",
+      "name": "Tucano",
+      "vernacularName": "Dahse ye"
+    },
+    {
+      "symbol": "tur-x-tkm",
+      "langcode": "TKM",
+      "name": "Turkish (Meskhetian)",
+      "vernacularName": "ахыска"
+    },
+    {
+      "symbol": "tuv",
+      "langcode": "TRN",
+      "name": "Turkana",
+      "vernacularName": "Ng'aturkana"
+    },
+    {
+      "symbol": "tvl",
+      "langcode": "VL",
+      "name": "Tuvaluan",
+      "vernacularName": "Tuvalu"
+    },
+    {
+      "symbol": "tvu",
+      "langcode": "TNN",
+      "name": "Tunen",
+      "vernacularName": "Banen"
+    },
+    {
+      "symbol": "tw",
+      "langcode": "TW",
+      "name": "Twi",
+      "vernacularName": "Twi"
+    },
+    {
+      "symbol": "tw-x-twk",
+      "langcode": "TWK",
+      "name": "Twi (Akuapem)",
+      "vernacularName": "Twi (Akuapem)"
+    },
+    {
+      "symbol": "tw-x-tws",
+      "langcode": "TWS",
+      "name": "Twi (Asante)",
+      "vernacularName": "Twi (Asante)"
+    },
+    {
+      "symbol": "twx",
+      "langcode": "TEW",
+      "name": "Tewe",
+      "vernacularName": "Ciutee"
+    },
+    {
+      "symbol": "txq",
+      "langcode": "TII",
+      "name": "Tii",
+      "vernacularName": "Rote Tii"
+    },
+    {
+      "symbol": "ty",
+      "langcode": "TH",
+      "name": "Tahitian",
+      "vernacularName": "Tahiti"
+    },
+    {
+      "symbol": "tyv",
+      "langcode": "VI",
+      "name": "Tuvinian",
+      "vernacularName": "тыва"
+    },
+    {
+      "symbol": "tza",
+      "langcode": "TZL",
+      "name": "Tanzanian Sign Language",
+      "vernacularName": "Lugha ya Alama ya Tanzania"
+    },
+    {
+      "symbol": "tzh",
+      "langcode": "TZE",
+      "name": "Tzeltal",
+      "vernacularName": "tseltal"
+    },
+    {
+      "symbol": "tzj",
+      "langcode": "TZU",
+      "name": "Tzutujil",
+      "vernacularName": "tzʼutujil"
+    },
+    {
+      "symbol": "tzm",
+      "langcode": "TMZ",
+      "name": "Tamazight",
+      "vernacularName": "Tamazight"
+    },
+    {
+      "symbol": "tzo",
+      "langcode": "TZO",
+      "name": "Tzotzil",
+      "vernacularName": "tsotsil"
+    },
+    {
+      "symbol": "uar",
+      "langcode": "KE",
+      "name": "Tairuma",
+      "vernacularName": "Tairuma"
+    },
+    {
+      "symbol": "udm",
+      "langcode": "UM",
+      "name": "Udmurt",
+      "vernacularName": "удмурт"
+    },
+    {
+      "symbol": "ug-cyrl",
+      "langcode": "UG",
+      "name": "Uighur (Cyrillic)",
+      "vernacularName": "Уйғур (кирилл йезиғи)"
+    },
+    {
+      "symbol": "ug-x-uga",
+      "langcode": "UGA",
+      "name": "Uighur (Arabic)",
+      "vernacularName": "ئۇيغۇر تىلى ‏(‏ئەرەب يېزىقى‏)‏‏‏‏"
+    },
+    {
+      "symbol": "ugn",
+      "langcode": "USL",
+      "name": "Ugandan Sign Language",
+      "vernacularName": "Ugandan Sign Language"
+    },
+    {
+      "symbol": "ugy",
+      "langcode": "LSU",
+      "name": "Uruguayan Sign Language",
+      "vernacularName": "lengua de señas uruguaya"
+    },
+    {
+      "symbol": "uk",
+      "langcode": "K",
+      "name": "Ukrainian",
+      "vernacularName": "українська"
+    },
+    {
+      "symbol": "uki",
+      "langcode": "KUI",
+      "name": "Kui",
+      "vernacularName": "Kui"
+    },
+    {
+      "symbol": "ukl",
+      "langcode": "UKL",
+      "name": "Ukrainian Sign Language",
+      "vernacularName": "українська жестова мова"
+    },
+    {
+      "symbol": "umb",
+      "langcode": "UB",
+      "name": "Umbundu",
+      "vernacularName": "Umbundu"
+    },
+    {
+      "symbol": "unr",
+      "langcode": "MNR",
+      "name": "Mundari",
+      "vernacularName": "Mundari"
+    },
+    {
+      "symbol": "upv",
+      "langcode": "URP",
+      "name": "Uripiv",
+      "vernacularName": "Uripiv"
+    },
+    {
+      "symbol": "ur",
+      "langcode": "UD",
+      "name": "Urdu",
+      "vernacularName": "اُردو"
+    },
+    {
+      "symbol": "urh",
+      "langcode": "UR",
+      "name": "Urhobo",
+      "vernacularName": "Urhobo"
+    },
+    {
+      "symbol": "uz-cyrl",
+      "langcode": "UZ",
+      "name": "Uzbek",
+      "vernacularName": "ўзбекча"
+    },
+    {
+      "symbol": "uz-latn",
+      "langcode": "UZR",
+      "name": "Uzbek (Roman)",
+      "vernacularName": "o‘zbekcha (lotincha)"
+    },
+    {
+      "symbol": "uzn-x-uzh",
+      "langcode": "UZH",
+      "name": "Uzbek (Horezm)",
+      "vernacularName": "ўзбекча (хоразм шеваси)"
+    },
+    {
+      "symbol": "ve",
+      "langcode": "VE",
+      "name": "Venda",
+      "vernacularName": "Luvenda"
+    },
+    {
+      "symbol": "vec",
+      "langcode": "TAL",
+      "name": "Talian",
+      "vernacularName": "Talian"
+    },
+    {
+      "symbol": "vgt",
+      "langcode": "VGT",
+      "name": "Flemish Sign Language",
+      "vernacularName": "Vlaamse Gebarentaal"
+    },
+    {
+      "symbol": "vi",
+      "langcode": "VT",
+      "name": "Vietnamese",
+      "vernacularName": "Việt"
+    },
+    {
+      "symbol": "vmk",
+      "langcode": "MHS",
+      "name": "Makhuwa-Shirima",
+      "vernacularName": "Makhuwa-Shirima"
+    },
+    {
+      "symbol": "vmw",
+      "langcode": "MAC",
+      "name": "Macua",
+      "vernacularName": "Emakhuwa"
+    },
+    {
+      "symbol": "vro",
+      "langcode": "VRU",
+      "name": "Voru",
+      "vernacularName": "võro"
+    },
+    {
+      "symbol": "vsl",
+      "langcode": "LSV",
+      "name": "Venezuelan Sign Language",
+      "vernacularName": "lengua de señas venezolana"
+    },
+    {
+      "symbol": "wal",
+      "langcode": "WL",
+      "name": "Wolaita",
+      "vernacularName": "Wolayttattuwa"
+    },
+    {
+      "symbol": "wap",
+      "langcode": "WPH",
+      "name": "Wapishana",
+      "vernacularName": "Wapichana"
+    },
+    {
+      "symbol": "war",
+      "langcode": "SA",
+      "name": "Waray-Waray",
+      "vernacularName": "Waray-Waray"
+    },
+    {
+      "symbol": "wba",
+      "langcode": "WRO",
+      "name": "Warao",
+      "vernacularName": "warao"
+    },
+    {
+      "symbol": "wes",
+      "langcode": "PCM",
+      "name": "Pidgin (Cameroon)",
+      "vernacularName": "Pidgin for Cameroon"
+    },
+    {
+      "symbol": "wes-x-pgw",
+      "langcode": "PGW",
+      "name": "Pidgin (West Africa)",
+      "vernacularName": "Pidgin (West Africa)"
+    },
+    {
+      "symbol": "wew",
+      "langcode": "WJW",
+      "name": "Wejewa",
+      "vernacularName": "Wejewa (Sumba Barat)"
+    },
+    {
+      "symbol": "whg",
+      "langcode": "JWK",
+      "name": "Jiwaka",
+      "vernacularName": "Jiwaka Yu"
+    },
+    {
+      "symbol": "wls",
+      "langcode": "WA",
+      "name": "Wallisian",
+      "vernacularName": "Faka'uvea"
+    },
+    {
+      "symbol": "wmh",
+      "langcode": "WMO",
+      "name": "Waimoa",
+      "vernacularName": "Waimoa"
+    },
+    {
+      "symbol": "wo",
+      "langcode": "WO",
+      "name": "Wolof",
+      "vernacularName": "Wolof"
+    },
+    {
+      "symbol": "wuu-x-chg",
+      "langcode": "CHG",
+      "name": "Chinese (Shanghainese)",
+      "vernacularName": "中文（上海话）"
+    },
+    {
+      "symbol": "wuu-x-wnz",
+      "langcode": "WNZ",
+      "name": "Chinese (Wenzhounese)",
+      "vernacularName": "中文（温州话）"
+    },
+    {
+      "symbol": "wwa",
+      "langcode": "WMM",
+      "name": "Waama",
+      "vernacularName": "Waama"
+    },
+    {
+      "symbol": "wyy-x-fnb",
+      "langcode": "FNB",
+      "name": "Ba",
+      "vernacularName": "Ba"
+    },
+    {
+      "symbol": "wyy-x-ndr",
+      "langcode": "NDR",
+      "name": "Nadroga",
+      "vernacularName": "Nadroga"
+    },
+    {
+      "symbol": "xal",
+      "langcode": "KLK",
+      "name": "Kalmyk",
+      "vernacularName": "хальмг"
+    },
+    {
+      "symbol": "xav",
+      "langcode": "XV",
+      "name": "Xavante",
+      "vernacularName": "A'uwẽ mreme"
+    },
+    {
+      "symbol": "xbr",
+      "langcode": "KMB",
+      "name": "Kambera",
+      "vernacularName": "Kambera (Sumba Timur)"
+    },
+    {
+      "symbol": "xdy",
+      "langcode": "DYT",
+      "name": "Dayak Tomun",
+      "vernacularName": "Dayak Tomun"
+    },
+    {
+      "symbol": "xh",
+      "langcode": "XO",
+      "name": "Xhosa",
+      "vernacularName": "IsiXhosa"
+    },
+    {
+      "symbol": "xki",
+      "langcode": "KSI",
+      "name": "Kenyan Sign Language",
+      "vernacularName": "Kenyan Sign Language"
+    },
+    {
+      "symbol": "xmc",
+      "langcode": "MHM",
+      "name": "Makhuwa-Marrevone",
+      "vernacularName": "Makhuwa-Marrevone"
+    },
+    {
+      "symbol": "xmf",
+      "langcode": "MGL",
+      "name": "Mingrelian",
+      "vernacularName": "მარგალური"
+    },
+    {
+      "symbol": "xmg",
+      "langcode": "MGK",
+      "name": "Mengaka",
+      "vernacularName": "Mengaka"
+    },
+    {
+      "symbol": "xml",
+      "langcode": "BIM",
+      "name": "Malaysian Sign Language",
+      "vernacularName": "Bahasa Isyarat Malaysia"
+    },
+    {
+      "symbol": "xmm",
+      "langcode": "MNM",
+      "name": "Manado Malay",
+      "vernacularName": "Manado"
+    },
+    {
+      "symbol": "xmv",
+      "langcode": "TNK",
+      "name": "Tankarana",
+      "vernacularName": "Tankarana"
+    },
+    {
+      "symbol": "xmw",
+      "langcode": "TMH",
+      "name": "Tsimihety",
+      "vernacularName": "Tsimihety"
+    },
+    {
+      "symbol": "xnr",
+      "langcode": "KGH",
+      "name": "Kangri (Hamirpuri)",
+      "vernacularName": "कंगड़ी (हमीरपुरी)"
+    },
+    {
+      "symbol": "xon",
+      "langcode": "KKB",
+      "name": "Konkomba",
+      "vernacularName": "Konkomba"
+    },
+    {
+      "symbol": "xpe",
+      "langcode": "KP",
+      "name": "Kpelle",
+      "vernacularName": "Kpelle"
+    },
+    {
+      "symbol": "xsm",
+      "langcode": "KSM",
+      "name": "Kasem",
+      "vernacularName": "Kasem"
+    },
+    {
+      "symbol": "xtd",
+      "langcode": "MXN",
+      "name": "Mixtec (Tilantongo)",
+      "vernacularName": "ñutnuu"
+    },
+    {
+      "symbol": "yaf",
+      "langcode": "YAK",
+      "name": "Yaka",
+      "vernacularName": "Iyaka"
+    },
+    {
+      "symbol": "yan",
+      "langcode": "MYG",
+      "name": "Mayangna",
+      "vernacularName": "mayangna"
+    },
+    {
+      "symbol": "yao",
+      "langcode": "YA",
+      "name": "Chiyao",
+      "vernacularName": "Chiyao"
+    },
+    {
+      "symbol": "yap",
+      "langcode": "YP",
+      "name": "Yapese",
+      "vernacularName": "Waab"
+    },
+    {
+      "symbol": "yaq",
+      "langcode": "YQ",
+      "name": "Yaqui",
+      "vernacularName": "jiiak noki"
+    },
+    {
+      "symbol": "yas",
+      "langcode": "YBS",
+      "name": "Yambassa",
+      "vernacularName": "Yambassa"
+    },
+    {
+      "symbol": "yaz",
+      "langcode": "LKA",
+      "name": "Lokaa",
+      "vernacularName": "Lokaa"
+    },
+    {
+      "symbol": "yba",
+      "langcode": "YLA",
+      "name": "Yala",
+      "vernacularName": "Yala"
+    },
+    {
+      "symbol": "ybb",
+      "langcode": "BM",
+      "name": "Yemba",
+      "vernacularName": "Dschang"
+    },
+    {
+      "symbol": "yer",
+      "langcode": "YG",
+      "name": "Tarok",
+      "vernacularName": "Tarok"
+    },
+    {
+      "symbol": "yky",
+      "langcode": "YKM",
+      "name": "Yakoma",
+      "vernacularName": "Yakoma"
+    },
+    {
+      "symbol": "yly",
+      "langcode": "NYL",
+      "name": "Nyelâyu",
+      "vernacularName": "Nyelâyu"
+    },
+    {
+      "symbol": "yno",
+      "langcode": "YN",
+      "name": "Yong",
+      "vernacularName": "Yong"
+    },
+    {
+      "symbol": "yns",
+      "langcode": "YNS",
+      "name": "Yansi",
+      "vernacularName": "Iyanzi"
+    },
+    {
+      "symbol": "yo",
+      "langcode": "YR",
+      "name": "Yoruba",
+      "vernacularName": "Yorùbá"
+    },
+    {
+      "symbol": "yom-x-ibi",
+      "langcode": "IBI",
+      "name": "Ibinda",
+      "vernacularName": "Ibinda"
+    },
+    {
+      "symbol": "yom-x-ymb",
+      "langcode": "YMB",
+      "name": "Yombe",
+      "vernacularName": "Yombe"
+    },
+    {
+      "symbol": "yrk",
+      "langcode": "NNT",
+      "name": "Nenets",
+      "vernacularName": "ненэцяʼ"
+    },
+    {
+      "symbol": "yrk-x-nnf",
+      "langcode": "NNF",
+      "name": "Nenets (Forest)",
+      "vernacularName": "нешаӈ"
+    },
+    {
+      "symbol": "yrl",
+      "langcode": "NGU",
+      "name": "Nhengatu",
+      "vernacularName": "Nheengatu"
+    },
+    {
+      "symbol": "yua",
+      "langcode": "MAY",
+      "name": "Maya",
+      "vernacularName": "maaya"
+    },
+    {
+      "symbol": "yue-hans",
+      "langcode": "CNS",
+      "name": "Chinese Cantonese (Simplified)",
+      "vernacularName": "中文简体（广东话）"
+    },
+    {
+      "symbol": "yue-hant",
+      "langcode": "CHC",
+      "name": "Chinese Cantonese (Traditional)",
+      "vernacularName": "中文繁體（廣東話）"
+    },
+    {
+      "symbol": "yup",
+      "langcode": "YKP",
+      "name": "Yukpa",
+      "vernacularName": "yukpa"
+    },
+    {
+      "symbol": "zab",
+      "langcode": "ZPD",
+      "name": "Zapotec (del Valle)",
+      "vernacularName": "ditsa"
+    },
+    {
+      "symbol": "zai",
+      "langcode": "ZPI",
+      "name": "Zapotec (Isthmus)",
+      "vernacularName": "diidxazá"
+    },
+    {
+      "symbol": "zav",
+      "langcode": "ZPV",
+      "name": "Zapotec (Villa Alta)",
+      "vernacularName": "didza xhidza"
+    },
+    {
+      "symbol": "zdj",
+      "langcode": "CMG",
+      "name": "Comorian (Ngazidja)",
+      "vernacularName": "Shikomori (Ngazidja)"
+    },
+    {
+      "symbol": "zib",
+      "langcode": "ZSL",
+      "name": "Zimbabwe Sign Language",
+      "vernacularName": "Zimbabwe Sign Language"
+    },
+    {
+      "symbol": "zne",
+      "langcode": "ZN",
+      "name": "Zande",
+      "vernacularName": "Zande"
+    },
+    {
+      "symbol": "zpa",
+      "langcode": "ZPL",
+      "name": "Zapotec (Lachiguiri)",
+      "vernacularName": "diitza"
+    },
+    {
+      "symbol": "zpd",
+      "langcode": "ZPX",
+      "name": "Zapotec (Ixtlán)",
+      "vernacularName": "Dillexhon"
+    },
+    {
+      "symbol": "zpf",
+      "langcode": "ZPT",
+      "name": "Zapotec (Quiatoni)",
+      "vernacularName": "zapoteco de Quiatoni"
+    },
+    {
+      "symbol": "zpg",
+      "langcode": "ZPG",
+      "name": "Zapotec (Guevea)",
+      "vernacularName": "dîdzrie’"
+    },
+    {
+      "symbol": "zpj",
+      "langcode": "ZPC",
+      "name": "Zapotec (Quiavicuzas)",
+      "vernacularName": "ditz zea"
+    },
+    {
+      "symbol": "zpr",
+      "langcode": "ZPS",
+      "name": "Zapotec (Santiago Xanica)",
+      "vernacularName": "Zapotec (Santiago Xanica)"
+    },
+    {
+      "symbol": "zsl",
+      "langcode": "ZAS",
+      "name": "Zambian Sign Language",
+      "vernacularName": "Zambian Sign Language"
+    },
+    {
+      "symbol": "ztp",
+      "langcode": "ZPM",
+      "name": "Zapotec (Loxicha)",
+      "vernacularName": "diʼste Loxich"
+    },
+    {
+      "symbol": "zu",
+      "langcode": "ZU",
+      "name": "Zulu",
+      "vernacularName": "IsiZulu"
+    }
+  ]
+}
