@@ -25,6 +25,8 @@ jobs:
           sudo apt-get install -y libx11-dev libxtst-dev libxinerama-dev libx11-xcb-dev libxkbcommon-x11-dev libxss-dev libpng-dev libpng++-dev xvfb
       - name: Install dependencies
         run: yarn install
+      - name: Install Chromium runtime dependencies (Linux only)
+        run: npx playwright install-deps
       - name: Verify Electron binary is installed
         run: node -e "console.log(require('electron'))"
       - name: Prepare Quasar

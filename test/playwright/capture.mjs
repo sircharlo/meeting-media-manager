@@ -17,7 +17,17 @@ export async function captureScreenshot(window, outputPath) {
  */
 export async function launchDemoApp() {
   const app = await electron.launch({
-    args: [ELECTRON_MAIN_PATH, '--no-sandbox', '--disable-dev-shm-usage'],
+    args: [
+      ELECTRON_MAIN_PATH,
+      '--no-sandbox',
+      '--disable-dev-shm-usage',
+      // Headless CI runners have no real GPU; without this the GPU process
+      // repeatedly fails to initialize (GpuControl.CreateCommandBuffer) and
+      // Electron keeps respawning it, which is what ran the renderer out of
+      // memory rather than ever finishing a first paint.
+      '--disable-gpu',
+      '--disable-software-rasterizer',
+    ],
     env: { ...process.env, M3_DEMO_MODE: '1' },
   });
 
