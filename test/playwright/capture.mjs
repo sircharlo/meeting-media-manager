@@ -37,3 +37,20 @@ export async function launchDemoApp() {
   await window.waitForLoadState('domcontentloaded');
   return { app, window };
 }
+
+/**
+ * Starts a CPU profiler on the renderer via CDP, so a hang/freeze can be
+ * diagnosed (which function is stuck) instead of just timing out blind.
+ */
+export async function startProfiling(window) {
+  const client = await window.context().newCDPSession(window);
+  await client.send('Profiler.enable');
+  await client.send('Profiler.start');
+  return client;
+}
+
+export async function stopProfilingAndSave(client, outputPath) {
+  const { profile } = await client.send('Profiler.stop');
+  const { writeFile } = await import('node:fs/promises');
+  await writeFile(outputPath, JSON.stringify(profile));
+}
