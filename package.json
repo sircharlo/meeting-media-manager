@@ -109,7 +109,7 @@
     "depcheck": "^1.4.7",
     "electron": "^43.1.0",
     "electron-builder": "26.15.3",
-    "eslint": "^10.6.0",
+    "eslint": "^10.7.0",
     "eslint-plugin-perfectionist": "^5.10.0",
     "eslint-plugin-vue": "^10.9.2",
     "fantasticon": "patch:fantasticon@npm%3A4.1.0#~/.yarn/patches/fantasticon-npm-4.1.0-3af043d076.patch",
