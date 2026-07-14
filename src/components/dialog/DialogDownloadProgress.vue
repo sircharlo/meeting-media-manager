@@ -94,7 +94,7 @@ const visibleItems = computed(() =>
 );
 
 const knownTotalItems = computed(() =>
-  visibleItems.value.filter((item) => item.total !== undefined),
+  categoryItems.value.filter((item) => item.total !== undefined),
 );
 
 const totalBytes = computed(() =>
@@ -102,7 +102,11 @@ const totalBytes = computed(() =>
 );
 
 const loadedBytes = computed(() =>
-  knownTotalItems.value.reduce((sum, item) => sum + (item.loaded ?? 0), 0),
+  knownTotalItems.value.reduce(
+    (sum, item) =>
+      sum + (item.complete ? (item.total ?? 0) : (item.loaded ?? 0)),
+    0,
+  ),
 );
 
 const hasKnownTotal = computed(() => totalBytes.value > 0);

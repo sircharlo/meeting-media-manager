@@ -1437,6 +1437,7 @@ interface DownloadProgress {
   filename?: string;
   meetingDate?: string;
   progressCategory: FileDownloader['progressCategory'];
+  total?: number;
 }
 
 const pollUntilDownloaded = (
@@ -1545,6 +1546,7 @@ export const downloadFileIfNeeded = async ({
       filename,
       meetingDate: seed.meetingDate ?? meetingDate,
       progressCategory: seed.progressCategory ?? progressCategory,
+      total: seed.total ?? (remoteSize > 0 ? remoteSize : undefined),
     } as never;
 
     const result = await pollUntilDownloaded(
