@@ -8,8 +8,9 @@ No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera 
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ✨ **Missing Media Recovery**: Media items whose local file went missing (e.g. deleted by the cache auto-clear, or removed manually) now show a disabled play button, a "missing" caption naming the file to look for, and a new "Locate file" action to relink the item to a file on disk.
-- ✨ **Compatibility Warning**: Added a dismissible banner warning users on soon-to-be-unsupported OS/architecture combos (macOS 12 Monterey and Windows 32-bit) to upgrade before future app updates require newer system support.
+- ✨ Te fa'aora-raa i te mau nota ere:
+  Te mau nota o te pūpū i ni'a i te rahi pāto'ai i ere, e fa'aite nei i te hoê pātene pā'ī i'ore e nehenehe, i te hoê tapa'o 'ere' e fa'aite ana i te pūpū ia rapa, e te hoê ohipa 'Rapa i te pūpū' no te fa'afariu i te nota i te hoê pūpū i ni'a i te diska.
+- ✨ Te ha'apōpō-raa no te fa'ahō'ē: Ua tāpūhia te hoê parau e nehenehe e fa'aru'e, e ha'apōpō nei i te mau ta'ata no ni'a i te mau pūnaha fa'atere e te mau tuhaa e tatai e ore e fa'atupu-hia (mai te macOS 12 Monterey e te Windows 32-bit) ia fa'apī i to ratou rahi pāto'ai i mua a'e i te mau faaapīraa o te mau taupiti e titau i te mau pūnaha fa'atere api.
 
 ## v26.7.0
 
