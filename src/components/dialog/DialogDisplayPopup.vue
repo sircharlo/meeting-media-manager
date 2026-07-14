@@ -692,6 +692,7 @@ const notifyInvalidBackgroundFile = () => {
 const notifyCustomBackgroundSet = () => {
   createTemporaryNotification({
     caption: t('custom-background-will-not-persist'),
+    icon: 'mmm-background',
     message: t('custom-background-set'),
     type: 'positive',
   });
@@ -699,7 +700,7 @@ const notifyCustomBackgroundSet = () => {
 
 const notifyCustomBackgroundRemoved = () => {
   createTemporaryNotification({
-    icon: 'mmm-reset',
+    icon: 'mmm-background-remove',
     message: t('custom-background-removed'),
     type: 'positive',
   });

@@ -15,6 +15,22 @@
     >
       <div class="card-title row q-px-md q-mb-none items-center">
         <div class="col">{{ t('media-sync') }}</div>
+        <div class="col-shrink">
+          <q-btn
+            color="primary"
+            :disable="refreshDisabled"
+            flat
+            icon="mmm-refresh"
+            :loading="fetchOrDownloadsAreRunning"
+            round
+            size="sm"
+            @click="onRefreshMeetingMedia"
+          >
+            <q-tooltip v-if="!fetchOrDownloadsAreRunning" :delay="500">
+              {{ t('refresh-all-meeting-media') }}
+            </q-tooltip>
+          </q-btn>
+        </div>
       </div>
 
       <div class="row items-center no-wrap q-px-md q-mb-sm q-gutter-x-sm">
@@ -177,24 +193,6 @@
             </transition-group>
           </q-list>
         </template>
-      </div>
-
-      <q-separator class="bg-accent-200" />
-      <div
-        class="action-popup__footer q-px-md q-pt-md row q-gutter-sm justify-end"
-      >
-        <q-btn
-          color="warning"
-          :disable="refreshDisabled"
-          icon="mmm-reset"
-          :label="t('refresh-all-meeting-media')"
-          :loading="fetchOrDownloadsAreRunning"
-          @click="onRefreshMeetingMedia"
-        >
-          <q-tooltip v-if="!fetchOrDownloadsAreRunning">
-            {{ t('refresh-all-meeting-media') }}
-          </q-tooltip>
-        </q-btn>
       </div>
     </div>
   </q-menu>

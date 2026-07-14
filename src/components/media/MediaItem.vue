@@ -175,7 +175,7 @@
                   style="padding: 5px !important; cursor: pointer"
                   @click="zoomReset(true)"
                 >
-                  <q-icon color="white" name="mmm-refresh" />
+                  <q-icon color="white" name="mmm-reset" />
                 </q-badge>
               </div>
             </transition>
