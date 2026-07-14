@@ -2,22 +2,41 @@
   <q-menu
     ref="downloadPopup"
     v-model="open"
-    anchor="bottom middle"
+    anchor="top middle"
     no-parent-event
     :offset="[0, 8]"
-    self="top middle"
+    self="bottom middle"
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <div class="action-popup action-popup--scroll-layout q-py-md">
+    <div
+      ref="popupContent"
+      class="action-popup action-popup--scroll-layout q-py-md"
+    >
       <div class="card-title row q-px-md q-mb-none items-center">
         <div class="col">{{ t('media-sync') }}</div>
       </div>
 
+      <div class="row items-center no-wrap q-px-md q-mb-sm q-gutter-x-sm">
+        <q-spinner
+          v-if="checkingCount > 0 || downloadingCount > 0"
+          color="primary"
+          size="16px"
+        />
+        <q-icon v-else :color="summaryColor" :name="summaryIcon" size="16px" />
+        <div class="text-caption text-weight-medium ellipsis">
+          {{ summaryText }}
+        </div>
+      </div>
+
       <div class="action-popup__scroll q-col-gutter-y-sm">
         <template v-if="groupedByDateEntries.length === 0">
-          <div class="row flex-center q-px-md q-mb-sm">
-            <div class="col ellipsis text-weight-medium text-dark-grey">
+          <div class="column flex-center q-px-md q-py-lg text-center">
+            <q-icon color="positive" name="mmm-cloud-done" size="48px" />
+            <div class="text-weight-medium q-mt-sm">
+              {{ t('all-caught-up') }}
+            </div>
+            <div class="text-caption text-dark-grey">
               {{ t('noDownloadsInProgress') }}
             </div>
           </div>
@@ -25,92 +44,137 @@
 
         <template v-else>
           <q-list class="full-width" dense>
-            <q-expansion-item
-              v-for="[dateKey, group] in groupedByDateEntries"
-              :key="dateKey"
-              dense-toggle
-              expand-separator
-              :model-value="expandedDates.has(dateKey)"
-              @update:model-value="(v) => handleExpansionToggle(dateKey, v)"
-            >
-              <template #header>
-                <div class="row items-center full-width">
-                  <q-icon
-                    class="q-mr-sm"
-                    :color="statusColor(dateKey)"
-                    :name="statusIcon(dateKey)"
-                    size="sm"
-                  />
-                  <div class="col">
-                    <q-item-section>
-                      <q-item-label>
-                        {{ localDate(dateKey) || t('unknown-date') }}
-                      </q-item-label>
-                      <q-item-label caption>{{
-                        statusCaption(dateKey, group)
-                      }}</q-item-label>
-                    </q-item-section>
-                  </div>
-                  <q-btn
-                    class="q-mr-sm"
-                    color="primary"
-                    flat
-                    icon="mmm-arrow-outward"
-                    round
-                    size="xs"
-                    @click.stop="navigateToDate(dateKey)"
-                  >
-                    <q-tooltip :delay="500">
-                      {{ t('go-to-this-date') }}
-                    </q-tooltip>
-                  </q-btn>
-                </div>
-              </template>
+            <transition-group name="date-row">
+              <template
+                v-for="[dateKey, group] in groupedByDateEntries"
+                :key="dateKey"
+              >
+                <q-expansion-item
+                  v-if="group.length"
+                  :key="`${dateKey}-files`"
+                  dense-toggle
+                  expand-separator
+                  :model-value="expandedDates.has(dateKey)"
+                  @update:model-value="(v) => handleExpansionToggle(dateKey, v)"
+                >
+                  <template #header>
+                    <div class="row items-center full-width">
+                      <q-icon
+                        class="q-mr-sm"
+                        :color="statusColor(dateKey)"
+                        :name="statusIcon(dateKey)"
+                        size="sm"
+                      />
+                      <div class="col">
+                        <q-item-section>
+                          <q-item-label>
+                            {{ localDate(dateKey) || t('unknown-date') }}
+                          </q-item-label>
+                          <q-item-label caption>{{
+                            statusCaption(dateKey, group)
+                          }}</q-item-label>
+                        </q-item-section>
+                      </div>
+                      <q-btn
+                        class="q-mr-sm"
+                        color="primary"
+                        flat
+                        icon="mmm-arrow-outward"
+                        round
+                        size="xs"
+                        @click.stop="navigateToDate(dateKey)"
+                      >
+                        <q-tooltip :delay="500">
+                          {{ t('go-to-this-date') }}
+                        </q-tooltip>
+                      </q-btn>
+                    </div>
+                  </template>
 
-              <q-list class="full-width q-px-lg" dense>
-                <q-item v-for="(item, id) in group" :key="id" dense>
+                  <q-list class="full-width q-px-lg" dense>
+                    <q-item v-for="(item, id) in group" :key="id" dense>
+                      <q-item-section>
+                        <q-item-label class="text-weight-medium text-dark-grey">
+                          {{ basename(item.filename) }}
+                        </q-item-label>
+                      </q-item-section>
+                      <q-item-section side>
+                        <div v-if="item.error" class="row items-center no-wrap">
+                          <q-icon
+                            :color="
+                              itemErrorSeverity(item) === 'error'
+                                ? 'negative'
+                                : 'info'
+                            "
+                            :name="
+                              itemErrorSeverity(item) === 'error'
+                                ? 'mmm-error'
+                                : 'mmm-info'
+                            "
+                            :size="
+                              itemErrorSeverity(item) === 'error' ? 'sm' : 'xs'
+                            "
+                          >
+                            <q-tooltip>{{ errorTooltip(item) }}</q-tooltip>
+                          </q-icon>
+                        </div>
+                        <q-icon
+                          v-else-if="item.complete"
+                          color="positive"
+                          name="mmm-cloud-done"
+                          size="sm"
+                        />
+                        <q-circular-progress
+                          v-else-if="item.loaded && item.total"
+                          color="primary"
+                          size="sm"
+                          :thickness="0.3"
+                          :value="(item.loaded / item.total) * 100"
+                        />
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-expansion-item>
+
+                <q-item v-else :key="`${dateKey}-checking`" dense>
+                  <q-item-section avatar style="min-width: 0">
+                    <q-spinner
+                      v-if="getStatus(dateKey) === 'checking'"
+                      color="secondary"
+                      size="sm"
+                    />
+                    <q-icon
+                      v-else
+                      :color="statusColor(dateKey)"
+                      :name="statusIcon(dateKey)"
+                      size="sm"
+                    />
+                  </q-item-section>
                   <q-item-section>
-                    <q-item-label class="text-weight-medium text-dark-grey">
-                      {{ basename(item.filename) }}
+                    <q-item-label>
+                      {{ localDate(dateKey) || t('unknown-date') }}
                     </q-item-label>
+                    <q-item-label caption>{{
+                      statusCaption(dateKey, group)
+                    }}</q-item-label>
                   </q-item-section>
                   <q-item-section side>
-                    <div v-if="item.error" class="row items-center no-wrap">
-                      <q-icon
-                        :color="
-                          itemErrorSeverity(item) === 'error'
-                            ? 'negative'
-                            : 'info'
-                        "
-                        :name="
-                          itemErrorSeverity(item) === 'error'
-                            ? 'mmm-error'
-                            : 'mmm-info'
-                        "
-                        :size="
-                          itemErrorSeverity(item) === 'error' ? 'sm' : 'xs'
-                        "
-                      >
-                        <q-tooltip>{{ errorTooltip(item) }}</q-tooltip>
-                      </q-icon>
-                    </div>
-                    <q-icon
-                      v-else-if="item.complete"
-                      color="positive"
-                      name="mmm-cloud-done"
-                      size="sm"
-                    />
-                    <q-circular-progress
-                      v-else-if="item.loaded && item.total"
+                    <q-btn
                       color="primary"
-                      size="sm"
-                      :thickness="0.3"
-                      :value="(item.loaded / item.total) * 100"
-                    />
+                      flat
+                      icon="mmm-arrow-outward"
+                      round
+                      size="xs"
+                      @click="navigateToDate(dateKey)"
+                    >
+                      <q-tooltip :delay="500">
+                        {{ t('go-to-this-date') }}
+                      </q-tooltip>
+                    </q-btn>
                   </q-item-section>
                 </q-item>
-              </q-list>
-            </q-expansion-item>
+              </template>
+            </transition-group>
           </q-list>
         </template>
       </div>
@@ -140,12 +204,12 @@
 import { storeToRefs } from 'pinia';
 import { type QMenu, useQuasar } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
-import { SORTER } from 'src/constants/general';
+import { DOWNLOAD_ROW_AUTO_COLLAPSE_MS, SORTER } from 'src/constants/general';
 import { updateLookupPeriod } from 'src/helpers/date';
 import { fetchMedia } from 'src/helpers/jw-media';
 import { dateFromString, getDateDiff, getLocalDate } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, ref, useTemplateRef, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 // ─── Setup ───────────────────────────────────────────────────────────────────
@@ -158,12 +222,18 @@ const { dateLocale } = useLocale();
 const open = defineModel<boolean>({ default: false });
 
 const currentState = useCurrentStateStore();
-const { currentSettings, downloadProgress, mediaIsPlaying, selectedDate } =
-  storeToRefs(currentState);
+const {
+  currentSettings,
+  downloadProgress,
+  mediaIsPlaying,
+  meetingCheckStatus,
+  selectedDate,
+} = storeToRefs(currentState);
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type DateStatus = 'complete' | 'error' | 'loading' | 'none' | 'warning';
+type DateStatus =
+  'checking' | 'complete' | 'error' | 'loading' | 'none' | 'warning';
 // 'auto' means expansion is driven by status; manual overrides it.
 type ExpansionMode = 'auto' | 'manual-closed' | 'manual-open';
 
@@ -182,6 +252,11 @@ const groupedByDate = computed(() => {
     map[key] ??= [];
     map[key].push(item);
   }
+  // Dates that are being (or were just) checked for updates get their own
+  // row even before any file needs downloading - or when nothing did.
+  for (const key of Object.keys(meetingCheckStatus.value)) {
+    map[key] ??= [];
+  }
   return map;
 });
 
@@ -197,13 +272,22 @@ const groupedByDateEntries = computed(() =>
 // ─── Status helpers ───────────────────────────────────────────────────────────
 
 function computeStatus(dateKey: string): DateStatus {
-  const group = groupedByDate.value[dateKey];
-  if (!group?.length) return 'none';
-  if (group.some((i) => i.error)) {
+  const group = groupedByDate.value[dateKey] ?? [];
+  if (group.length) {
+    if (group.some((i) => i.error)) {
+      return isWithin7Days(dateKey) ? 'error' : 'warning';
+    }
+    if (group.some((i) => !i.complete && !i.error)) return 'loading';
+    if (group.every((i) => i.complete)) return 'complete';
+  }
+
+  const checkState = meetingCheckStatus.value[dateKey];
+  if (checkState === 'checking') return 'checking';
+  if (checkState === 'error') {
     return isWithin7Days(dateKey) ? 'error' : 'warning';
   }
-  if (group.some((i) => !i.complete && !i.error)) return 'loading';
-  if (group.every((i) => i.complete)) return 'complete';
+  if (checkState === 'complete') return 'complete';
+
   return 'none';
 }
 
@@ -234,15 +318,17 @@ const localDate = (dateKey: string) =>
 
 const statusIcon = (dateKey: string): string =>
   ({
+    checking: 'mmm-search',
     complete: 'mmm-cloud-done',
     error: 'mmm-error',
     loading: 'mmm-download',
-    none: 'mmm-calendar',
+    none: 'mmm-calendar-month',
     warning: 'mmm-warning',
   })[getStatus(dateKey)];
 
 const statusColor = (dateKey: string): string =>
   ({
+    checking: 'secondary',
     complete: 'positive',
     error: 'negative',
     loading: 'primary',
@@ -251,6 +337,13 @@ const statusColor = (dateKey: string): string =>
   })[getStatus(dateKey)];
 
 function statusCaption(dateKey: string, group: typeof filteredDownloads.value) {
+  if (!group.length) {
+    const status = getStatus(dateKey);
+    if (status === 'checking') return t('checking-for-updates');
+    if (status === 'error' || status === 'warning') return t('failed');
+    if (status === 'complete') return t('completed');
+    return '';
+  }
   const total = group.length;
   const complete = group.filter((i) => i.complete).length;
   const error = group.filter((i) => i.error).length;
@@ -286,9 +379,80 @@ function itemErrorSeverity(item: { meetingDate?: null | string }) {
   return isWithin7Days(item.meetingDate) ? 'error' : 'warning';
 }
 
-// ─── Expansion state ──────────────────────────────────────────────────────────
+// ─── Summary header ───────────────────────────────────────────────────────────
 
-const AUTO_COLLAPSE_MS = 4000;
+const checkingEntries = computed(() =>
+  Object.entries(meetingCheckStatus.value),
+);
+
+const checkingCount = computed(
+  () => checkingEntries.value.filter(([, v]) => v === 'checking').length,
+);
+
+const checkingTotal = computed(() => checkingEntries.value.length);
+
+const activeDownloadItems = computed(() =>
+  Object.values(downloadProgress.value).filter(
+    (i) =>
+      !i.complete && !i.error && (!i.loaded || !i.total || i.loaded < i.total),
+  ),
+);
+
+const downloadingCount = computed(() => activeDownloadItems.value.length);
+
+const erroredCount = computed(() => {
+  const dateErrors = checkingEntries.value.filter(
+    ([key, v]) => v === 'error' && isWithin7Days(key),
+  ).length;
+  const itemErrors = Object.values(downloadProgress.value).filter(
+    (i) => i.error && isWithin7Days(i.meetingDate),
+  ).length;
+  return dateErrors + itemErrors;
+});
+
+const summaryText = computed(() => {
+  const parts: string[] = [];
+  if (checkingCount.value > 0) {
+    parts.push(
+      t('checking-meeting-dates', {
+        current: checkingCount.value,
+        total: checkingTotal.value,
+      }),
+    );
+  }
+  if (downloadingCount.value > 0) {
+    parts.push(
+      t(
+        'downloading-files',
+        { count: downloadingCount.value },
+        downloadingCount.value,
+      ),
+    );
+  }
+  if (parts.length) return parts.join(' · ');
+
+  if (erroredCount.value > 0) {
+    return t(
+      'n-items-failed',
+      { count: erroredCount.value },
+      erroredCount.value,
+    );
+  }
+
+  return t('up-to-date');
+});
+
+const summaryIcon = computed(() => {
+  if (erroredCount.value > 0) return 'mmm-warning';
+  return 'mmm-cloud-done';
+});
+
+const summaryColor = computed(() => {
+  if (erroredCount.value > 0) return 'warning';
+  return 'positive';
+});
+
+// ─── Expansion state ──────────────────────────────────────────────────────────
 
 // Single source of truth for expansion. 'auto' defers to shouldAutoExpand().
 const expansionModes = ref<Record<string, ExpansionMode>>({});
@@ -305,25 +469,23 @@ const expandedDates = computed(() => {
       // auto: expand while loading/erroring; keep open briefly after completion
       if (shouldAutoExpand(k)) return true;
       const t0 = completedAt.value[k];
-      return t0 !== undefined && now - t0 < AUTO_COLLAPSE_MS;
+      return t0 !== undefined && now - t0 < DOWNLOAD_ROW_AUTO_COLLAPSE_MS;
     }),
   );
 });
 
 const downloadPopup = useTemplateRef<QMenu>('downloadPopup');
+const popupContent = useTemplateRef<HTMLElement>('popupContent');
+let popupResizeObserver: ResizeObserver | undefined;
 
 function handleExpansionToggle(dateKey: string, expanded: boolean) {
   expansionModes.value[dateKey] = expanded ? 'manual-open' : 'manual-closed';
-  // Let the expansion animation finish before repositioning.
-  setTimeout(() => downloadPopup.value?.updatePosition(), 300);
 }
 
 // ─── Actions ──────────────────────────────────────────────────────────────────
 
 const fetchOrDownloadsAreRunning = computed(
-  () =>
-    currentState.fetchingMeetingsCount > 0 ||
-    Object.values(downloadProgress.value).some((i) => i.loaded),
+  () => currentState.hasActiveMediaWork,
 );
 
 const refreshDisabled = computed(
@@ -366,7 +528,7 @@ watch(
             // Trigger recompute by nudging the ref.
             completedAt.value = { ...completedAt.value };
           }
-        }, AUTO_COLLAPSE_MS + 50);
+        }, DOWNLOAD_ROW_AUTO_COLLAPSE_MS + 50);
       }
     }
   },
@@ -380,9 +542,37 @@ watch(open, (isOpen) => {
   completedAt.value = {};
 });
 
-// Keep popup position in sync as the item list grows/shrinks.
-watch(
-  () => filteredDownloads.value.length,
-  () => setTimeout(() => downloadPopup.value?.updatePosition(), 10),
-);
+// The popup is anchored bottom-up (self="bottom middle") so it visually
+// grows out of the action island. That only holds if we reposition every
+// time the content's actual rendered size changes - row add/remove,
+// expand/collapse animations, fade-out transitions completing, etc. A
+// ResizeObserver catches all of these at the moment they really happen,
+// instead of guessing with setTimeout delays tied to animation durations.
+watch(popupContent, (el) => {
+  popupResizeObserver?.disconnect();
+  popupResizeObserver = undefined;
+  if (!el) return;
+  popupResizeObserver = new ResizeObserver(() => {
+    downloadPopup.value?.updatePosition();
+  });
+  popupResizeObserver.observe(el);
+});
+
+onBeforeUnmount(() => popupResizeObserver?.disconnect());
 </script>
+
+<style scoped lang="scss">
+.date-row-move,
+.date-row-enter-active,
+.date-row-leave-active {
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.date-row-enter-from,
+.date-row-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+</style>

@@ -9,7 +9,10 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <div class="action-popup action-popup--scroll-layout q-py-md">
+    <div
+      ref="popupContent"
+      class="action-popup action-popup--scroll-layout q-py-md"
+    >
       <div class="card-title row q-px-md q-mb-none">
         {{ t('timer') }}
       </div>
@@ -588,10 +591,12 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { useAppSettingsStore } from 'src/stores/app-settings';
 import { getTimerReportStatus } from 'src/utils/timer-report';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, ref, useTemplateRef, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const timerPopup = useTemplateRef<QMenu>('timerPopup');
+const popupContent = useTemplateRef<HTMLElement>('popupContent');
+let popupResizeObserver: ResizeObserver | undefined;
 
 const { t } = useI18n();
 
@@ -961,21 +966,22 @@ whenever(
   },
 );
 
-// UI update handler
-watch(
-  () => [
-    timerRunning.value,
-    timerMode.value,
-    timerPreferences.value?.preferWindowed,
-  ],
-  () => {
-    setTimeout(() => {
-      if (timerPopup.value) {
-        timerPopup.value.updatePosition();
-      }
-    }, 10);
-  },
-);
+// Anchored bottom-up (self="bottom middle") so it visually grows out of the
+// action island. A ResizeObserver repositions it whenever its rendered size
+// actually changes - custom timer parts added/removed, meeting-day section
+// swaps, screen list thresholds, etc. - instead of guessing which reactive
+// values might affect height.
+watch(popupContent, (el) => {
+  popupResizeObserver?.disconnect();
+  popupResizeObserver = undefined;
+  if (!el) return;
+  popupResizeObserver = new ResizeObserver(() => {
+    timerPopup.value?.updatePosition();
+  });
+  popupResizeObserver.observe(el);
+});
+
+onBeforeUnmount(() => popupResizeObserver?.disconnect());
 
 watch(
   screenList,

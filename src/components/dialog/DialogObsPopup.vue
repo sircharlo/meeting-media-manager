@@ -1,5 +1,6 @@
 <template>
   <q-menu
+    ref="obsPopup"
     v-model="open"
     anchor="top middle"
     no-parent-event
@@ -8,7 +9,10 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <div class="action-popup action-popup--scroll-layout q-py-md">
+    <div
+      ref="popupContent"
+      class="action-popup action-popup--scroll-layout q-py-md"
+    >
       <div class="card-title col-shrink full-width q-px-md q-mb-none">
         {{ t('scene-selection') }}
       </div>
@@ -78,6 +82,7 @@
 </template>
 
 <script setup lang="ts">
+import type { QMenu } from 'quasar';
 import type { ObsSceneType } from 'src/types';
 
 import { useEventListener, watchImmediate } from '@vueuse/core';
@@ -97,10 +102,14 @@ import { isImage } from 'src/utils/media';
 import { obsWebSocketInfo } from 'src/utils/obs';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useObsStateStore } from 'stores/obs-state';
-import { computed, ref } from 'vue';
+import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const open = defineModel<boolean>({ default: false });
+
+const obsPopup = useTemplateRef<QMenu>('obsPopup');
+const popupContent = useTemplateRef<HTMLElement>('popupContent');
+let popupResizeObserver: ResizeObserver | undefined;
 
 const currentState = useCurrentStateStore();
 const {
@@ -363,4 +372,20 @@ watchImmediate(
     obsRecordingFolder.value = folder;
   },
 );
+
+// Anchored bottom-up (self="bottom middle") so it visually grows out of the
+// action island. A ResizeObserver repositions it whenever its rendered size
+// actually changes - scene list length, recording controls toggling, etc. -
+// instead of guessing which reactive values might affect height.
+watch(popupContent, (el) => {
+  popupResizeObserver?.disconnect();
+  popupResizeObserver = undefined;
+  if (!el) return;
+  popupResizeObserver = new ResizeObserver(() => {
+    obsPopup.value?.updatePosition();
+  });
+  popupResizeObserver.observe(el);
+});
+
+onBeforeUnmount(() => popupResizeObserver?.disconnect());
 </script>

@@ -127,6 +127,10 @@ export type MediaSectionIdentifier =
   | 'wt'
   | string;
 
+export type MeetingCheckStatus = 'checking' | 'complete' | 'error';
+
+export type MeetingCheckStatuses = Record<string, MeetingCheckStatus>;
+
 export interface SongItem {
   duration?: number; // or the correct type for duration
   filesize?: number;

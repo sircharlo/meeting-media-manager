@@ -9,7 +9,10 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <div class="action-popup action-popup--scroll-layout q-py-md">
+    <div
+      ref="popupContent"
+      class="action-popup action-popup--scroll-layout q-py-md"
+    >
       <div class="card-title row q-px-md q-mb-none">
         {{ t('setupWizard.backgroundMusic') }}
       </div>
@@ -31,7 +34,7 @@
         </p>
         <div class="action-popup__scroll">
           <template v-for="(song, i) in songList" :key="i">
-            <div class="row q-my-sm q-pl-md q-pr-scroll">
+            <div class="row q-my-sm q-pl-md action-popup__song-row">
               <div class="col text-weight-medium">
                 {{ song.title }}
               </div>
@@ -111,7 +114,7 @@ import { downloadBackgroundMusic } from 'src/helpers/jw-media';
 import { log } from 'src/shared/vanilla';
 import { formatTime } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, ref, useTemplateRef, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -277,6 +280,8 @@ defineExpose({
 });
 
 const musicPopup = useTemplateRef<QMenu>('musicPopup');
+const popupContent = useTemplateRef<HTMLElement>('popupContent');
+let popupResizeObserver: ResizeObserver | undefined;
 
 const getDebugTimestamp = () => new Date().toISOString();
 
@@ -785,17 +790,22 @@ watch(
   },
 );
 
-// UI update handler
-watch(
-  () => [musicState.value, musicPlaying.value, songList.value.length],
-  () => {
-    setTimeout(() => {
-      if (musicPopup.value) {
-        musicPopup.value.updatePosition();
-      }
-    }, 10);
-  },
-);
+// Anchored bottom-up (self="bottom middle") so it visually grows out of the
+// action island. A ResizeObserver repositions it whenever its rendered size
+// actually changes - song list growing/shrinking, playing state toggling
+// the whole song section, the meeting-countdown row, etc. - instead of
+// guessing which reactive values might affect height.
+watch(popupContent, (el) => {
+  popupResizeObserver?.disconnect();
+  popupResizeObserver = undefined;
+  if (!el) return;
+  popupResizeObserver = new ResizeObserver(() => {
+    musicPopup.value?.updatePosition();
+  });
+  popupResizeObserver.observe(el);
+});
+
+onBeforeUnmount(() => popupResizeObserver?.disconnect());
 
 whenever(
   () => volumeData.value,
@@ -811,5 +821,10 @@ whenever(
   min-width: 6ch;
   text-align: center;
   white-space: nowrap;
+}
+
+/* 6px + the 10px scrollbar gutter reserved on .action-popup__scroll = the 16px (q-px-md) used by the current-song row above */
+.action-popup__song-row {
+  padding-right: 6px;
 }
 </style>

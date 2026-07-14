@@ -9,7 +9,10 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <div class="action-popup action-popup--scroll-layout q-py-md">
+    <div
+      ref="popupContent"
+      class="action-popup action-popup--scroll-layout q-py-md"
+    >
       <div class="card-title col-shrink full-width q-px-md q-mb-none">
         {{ t('meetingRecording') }}
       </div>
@@ -62,7 +65,7 @@ import type { QMenu } from 'quasar';
 import { storeToRefs } from 'pinia';
 import { sendKeyboardShortcut } from 'src/helpers/keyboard-shortcuts';
 import { useCurrentStateStore } from 'stores/current-state';
-import { useTemplateRef, watch } from 'vue';
+import { onBeforeUnmount, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
@@ -82,6 +85,8 @@ const emit = defineEmits<{
 const { t } = useI18n();
 
 const recordingPopup = useTemplateRef<QMenu>('recordingPopup');
+const popupContent = useTemplateRef<HTMLElement>('popupContent');
+let popupResizeObserver: ResizeObserver | undefined;
 
 const toggleRecording = () => {
   if (!currentSettings.value) return;
@@ -110,17 +115,21 @@ const openRecordingFolder = () => {
   openFolder(currentSettings.value.recordingFolder);
 };
 
-// Update popup position when recording state changes
-watch(
-  () => props.isRecording,
-  () => {
-    setTimeout(() => {
-      if (recordingPopup.value) {
-        recordingPopup.value.updatePosition();
-      }
-    }, 10);
-  },
-);
+// Anchored bottom-up (self="bottom middle") so it visually grows out of the
+// action island. A ResizeObserver repositions it whenever its rendered size
+// actually changes, instead of guessing which reactive values might affect
+// height.
+watch(popupContent, (el) => {
+  popupResizeObserver?.disconnect();
+  popupResizeObserver = undefined;
+  if (!el) return;
+  popupResizeObserver = new ResizeObserver(() => {
+    recordingPopup.value?.updatePosition();
+  });
+  popupResizeObserver.observe(el);
+});
+
+onBeforeUnmount(() => popupResizeObserver?.disconnect());
 </script>
 
 <style scoped>

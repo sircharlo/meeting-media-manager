@@ -24,6 +24,7 @@ import type {
 
 import { queues } from 'boot/globals';
 import { i18n } from 'boot/i18n';
+import { DOWNLOAD_ROW_AUTO_COLLAPSE_MS } from 'src/constants/general';
 import {
   FEB_2023,
   FOOTNOTE_TARGET_PARAGRAPH,
@@ -1770,6 +1771,45 @@ const updateFetchedMeetingDayStatus = (day: DateInfo, error: boolean) => {
   day.status = error ? 'error' : 'complete';
 };
 
+// Tracked so a date re-checked before its previous prune fires doesn't leave
+// two redundant timers running, and so a congregation switch can cancel all
+// of them via clearMeetingCheckStatusPruneTimers() instead of leaking timers
+// that would otherwise mutate the next congregation's state after the fact.
+const meetingCheckPruneTimers = new Map<
+  string,
+  ReturnType<typeof setTimeout>
+>();
+
+// Removes a resolved-with-nothing-to-download date from meetingCheckStatus
+// once its popup row would have finished collapsing, so it doesn't linger
+// forever. Errors are left in place - they persist like downloadProgress
+// errors do, until overwritten or the congregation changes.
+const scheduleMeetingCheckStatusPrune = (dateKey: string) => {
+  const existingTimer = meetingCheckPruneTimers.get(dateKey);
+  if (existingTimer) clearTimeout(existingTimer);
+
+  const timer = setTimeout(() => {
+    meetingCheckPruneTimers.delete(dateKey);
+    const currentStateStore = useCurrentStateStore();
+    if (currentStateStore.meetingCheckStatus[dateKey] !== 'complete') return;
+    const hasDownloadItems = Object.values(
+      currentStateStore.downloadProgress,
+    ).some((item) => item.meetingDate === dateKey);
+    if (hasDownloadItems) return;
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+    delete currentStateStore.meetingCheckStatus[dateKey];
+  }, DOWNLOAD_ROW_AUTO_COLLAPSE_MS + 250);
+
+  meetingCheckPruneTimers.set(dateKey, timer);
+};
+
+// Called when the congregation changes so a still-pending prune from the
+// previous congregation can't later delete/misjudge the new one's state.
+export const clearMeetingCheckStatusPruneTimers = () => {
+  for (const timer of meetingCheckPruneTimers.values()) clearTimeout(timer);
+  meetingCheckPruneTimers.clear();
+};
+
 export const fetchMedia = async () => {
   try {
     if (isDemoMode) return;
@@ -1860,6 +1900,8 @@ export const fetchMedia = async () => {
 
     meetingsToFetch.forEach((day) => {
       day.status = null;
+      currentStateStore.meetingCheckStatus[formatDate(day.date, 'YYYYMMDD')] =
+        'checking';
     });
     if (queues.meetings[currentStateStore.currentCongregation]) {
       queues.meetings[currentStateStore.currentCongregation]?.start();
@@ -1891,6 +1933,7 @@ export const fetchMedia = async () => {
       );
     }
     for (const day of meetingsToFetch) {
+      const dateKey = formatDate(day.date, 'YYYYMMDD');
       try {
         queue
           ?.add(async () => processQueuedMeetingDay(day))
@@ -1898,10 +1941,16 @@ export const fetchMedia = async () => {
             log('❌ Error during media processing:', 'mediaFetching', 'error');
             day.status = isInPast(day.date) ? 'complete' : 'error';
             throw error;
+          })
+          .finally(() => {
+            currentStateStore.meetingCheckStatus[dateKey] =
+              day.status === 'error' ? 'error' : 'complete';
+            scheduleMeetingCheckStatusPrune(dateKey);
           });
       } catch (error) {
         errorCatcher(error);
         day.status = 'error';
+        currentStateStore.meetingCheckStatus[dateKey] = 'error';
       }
     }
     await queue?.onIdle();

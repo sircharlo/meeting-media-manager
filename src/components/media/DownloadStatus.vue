@@ -77,15 +77,5 @@ const someHaveError = computed(() => {
   );
 });
 
-const someAreLoading = computed(() => {
-  return (
-    currentState.fetchingMeetingsCount > 0 ||
-    Object.values(downloadProgress.value).some(
-      (item: DownloadProgressItem) =>
-        !item.complete &&
-        !item.error &&
-        (!item.loaded || !item.total || item.loaded < item.total),
-    )
-  );
-});
+const someAreLoading = computed(() => currentState.hasActiveMediaWork);
 </script>

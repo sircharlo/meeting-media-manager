@@ -13,12 +13,8 @@
   @extend .one-hundred-vw;
 }
 
-.app-main-scroll {
-  height: calc(100vh - 56px);
-  margin-top: 56px;
-  overflow-x: hidden !important;
-  overflow-y: auto;
-  padding-top: 0 !important;
+.app-main-scroll,
+.action-popup__scroll {
   scrollbar-width: thin;
 
   &::-webkit-scrollbar {
@@ -36,7 +32,16 @@
   }
 }
 
-body.body--light .app-main-scroll {
+.app-main-scroll {
+  height: calc(100vh - 56px);
+  margin-top: 56px;
+  overflow-x: hidden !important;
+  overflow-y: auto;
+  padding-top: 0 !important;
+}
+
+body.body--light .app-main-scroll,
+body.body--light .action-popup__scroll {
   scrollbar-color: rgba($primary, 0.45) transparent;
 
   &::-webkit-scrollbar-thumb {
@@ -48,7 +53,8 @@ body.body--light .app-main-scroll {
   }
 }
 
-body.body--dark .app-main-scroll {
+body.body--dark .app-main-scroll,
+body.body--dark .action-popup__scroll {
   scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
 
   &::-webkit-scrollbar-thumb {
@@ -613,6 +619,7 @@ a {
   min-height: 0;
   overflow: auto;
   overscroll-behavior: contain;
+  scrollbar-gutter: stable;
 }
 
 .action-popup__footer {

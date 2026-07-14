@@ -5,6 +5,7 @@ import type {
   JwSite,
   MediaItem,
   MediaLink,
+  MeetingCheckStatuses,
   SettingsItem,
   SettingsItems,
   SettingsValues,
@@ -66,6 +67,7 @@ interface Store {
   mediaPlaying: MediaPlayingState;
   mediaWindowCustomBackground: string;
   mediaWindowVisible: boolean;
+  meetingCheckStatus: MeetingCheckStatuses;
   meetingDay: boolean;
   online: boolean;
   onlyShowInvalidSettings: boolean;
@@ -215,6 +217,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       // Cancel all pending downloads from the previous congregation
       cancelAllDownloads();
       this.downloadProgress = {};
+      this.meetingCheckStatus = {};
 
       // Dismiss all active notifications when changing congregation
       dismissAllTemporaryNotifications();
@@ -351,6 +354,22 @@ export const useCurrentStateStore = defineStore('current-state', {
       if (!currentLanguage) return [];
       return jwStore.jwSongs[currentLanguage]?.list || [];
     },
+    // Single source of truth for "is a meeting refresh doing anything right
+    // now" - covers checking meeting dates, downloading files, and the
+    // legacy p-queue counter, so the island button, the popup, and the
+    // cache auto-clear guard can never disagree with each other.
+    hasActiveMediaWork(): boolean {
+      if (this.fetchingMeetingsCount > 0) return true;
+      if (Object.values(this.meetingCheckStatus).includes('checking')) {
+        return true;
+      }
+      return Object.values(this.downloadProgress).some(
+        (item) =>
+          !item.complete &&
+          !item.error &&
+          (!item.loaded || !item.total || item.loaded < item.total),
+      );
+    },
     isSelectedDayToday(): boolean {
       try {
         const selectedDateObj = this.selectedDateObject;
@@ -481,6 +500,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       },
       mediaWindowCustomBackground: '',
       mediaWindowVisible: true,
+      meetingCheckStatus: {},
       meetingDay: false,
       online: true,
       onlyShowInvalidSettings: false,

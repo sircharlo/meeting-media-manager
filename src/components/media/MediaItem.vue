@@ -561,8 +561,7 @@
           >
             <div class="row flex-center">
               <div
-                class="col-shrink text-caption text-accent-400 q-mx-sm text-left"
-                style="min-width: 40px"
+                class="col-shrink text-caption text-accent-400 q-mx-sm text-left media-item__time"
               >
                 {{
                   formatTime(
@@ -598,8 +597,7 @@
                 />
               </div>
               <div
-                class="col-shrink text-caption text-accent-400 q-mx-sm text-right"
-                style="min-width: 40px"
+                class="col-shrink text-caption text-accent-400 q-mx-sm text-right media-item__time"
               >
                 {{
                   '-' +
@@ -2632,6 +2630,12 @@ whenever(
   align-items: center;
   display: flex;
   justify-content: center;
+}
+
+.media-item__time {
+  font-variant-numeric: tabular-nums;
+  min-width: 40px;
+  white-space: nowrap;
 }
 
 :deep(.media-filter__highlight) {

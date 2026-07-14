@@ -76,6 +76,7 @@ import { exportAllDays } from 'src/helpers/export-media';
 import { setElementFont } from 'src/helpers/fonts';
 import { watchExternalFolder } from 'src/helpers/fs';
 import {
+  clearMeetingCheckStatusPruneTimers,
   downloadSongbookVideos,
   getJwMepsInfo,
   setUrlVariables,
@@ -161,6 +162,7 @@ const {
   isSelectedDayToday,
   mediaIsPlaying,
   mediaPlaying,
+  meetingCheckStatus,
   online,
   selectedDate,
   selectedDayMeetingType,
@@ -204,16 +206,7 @@ const {
 updateMemorials(online.value);
 updateJwLanguages(online.value);
 
-const hasActiveDownloads = () => {
-  if (currentState.fetchingMeetingsCount > 0) return true;
-
-  return Object.values(downloadProgress.value).some(
-    (item) =>
-      !item.complete &&
-      !item.error &&
-      (!item.loaded || !item.total || item.loaded < item.total),
-  );
-};
+const hasActiveDownloads = () => currentState.hasActiveMediaWork;
 
 let cacheClearTriggered = false;
 const macosFolderPermissionPrompts = new Set<string>();
@@ -1182,6 +1175,8 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
     }
 
     downloadProgress.value = {};
+    clearMeetingCheckStatusPruneTimers();
+    meetingCheckStatus.value = {};
 
     const scheduleChanged = !!(await syncMeetingSchedule());
 
