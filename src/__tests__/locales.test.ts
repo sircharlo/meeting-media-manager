@@ -51,6 +51,7 @@ describe('Locales', () => {
       'layouts',
       'pages',
       'stores',
+      'utils',
     ]);
 
     const files = await Promise.all(
