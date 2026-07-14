@@ -22,6 +22,27 @@ interface SongQueueOptions {
   timeBeforeMeetingStart: number;
 }
 
+/**
+ * Shuffles songs randomly, giving songs with a higher track number (JW's
+ * song number in the songbook) a slightly higher chance of sorting earlier,
+ * so newer songs get played somewhat more often without excluding older
+ * ones. Uses the standard Efraimidis-Spirakis weighted sampling key
+ * (random()^(1/weight), sorted descending) rather than a flat random sort.
+ */
+function weightedShuffle(songs: SongItem[]): SongItem[] {
+  const maxTrack = Math.max(1, ...songs.map((song) => song.track ?? 0));
+  const TRACK_WEIGHT_BIAS = maxTrack * 0.5;
+
+  return songs
+    .map((song) => {
+      const normalizedTrack = (song.track ?? 0) / maxTrack;
+      const weight = 1 + normalizedTrack * TRACK_WEIGHT_BIAS;
+      return { key: Math.random() ** (1 / weight), song };
+    })
+    .sort((a, b) => b.key - a.key)
+    .map(({ song }) => song);
+}
+
 const getDebugTimestamp = () => new Date().toISOString();
 
 const getElapsedMilliseconds = (startedAt: number) => {
@@ -186,6 +207,12 @@ export function extractMeetingDaySongs(
       })
       .filter((song): song is SongItem => !!song);
 
+    // Flag them so the UI can highlight which song(s) are scheduled to end
+    // right as the meeting starts, rather than just being regular filler.
+    meetingSongs.forEach((song) => {
+      song.isMeetingSong = true;
+    });
+
     logBackgroundMusicTiming('extract meeting day songs finished', startedAt, {
       meetingSongs: meetingSongs.length,
     });
@@ -207,9 +234,7 @@ export async function fetchSongLibrary(lang: JwLangCode): Promise<SongItem[]> {
       lang,
     });
 
-    const songs = (await fetchBackgroundMusicSongLibrary(lang)).sort(
-      () => Math.random() - 0.5,
-    );
+    const songs = weightedShuffle(await fetchBackgroundMusicSongLibrary(lang));
 
     logBackgroundMusicTiming('fetch API song library finished', startedAt, {
       songs: songs.length,
@@ -230,16 +255,26 @@ export function formatRemainingTime(seconds: number): string {
 }
 
 /**
- * Gets the next song from the queue
+ * Gets the next song from the queue.
+ *
+ * `requeue` controls what happens to the song once it's taken off the
+ * front: true cycles it back to the end for continuous ambient playback,
+ * false leaves it consumed. Meeting-day queues are built by
+ * calculateOptimalSongQueue() to run exactly up to fadeout time, with the
+ * meeting's own song(s) placed last - requeueing there would loop playback
+ * back around to earlier, non-meeting songs instead of naturally ending
+ * after the meeting song.
  */
 export async function getNextSongFromQueue(
   songQueue: SongItem[],
   currentSongTitle: (title: string) => void,
+  requeue = true,
 ): Promise<NextSongResult> {
   const startedAt = performance.now();
   try {
     logBackgroundMusicTiming('get next song from queue started', undefined, {
       queueLength: songQueue.length,
+      requeue,
     });
 
     if (!songQueue.length) {
@@ -252,8 +287,10 @@ export async function getNextSongFromQueue(
       return { nextSongUrl: '', secsFromEnd: 0 };
     }
 
-    // Add song back to end of queue for continuous play
-    songQueue.push(nextSong);
+    if (requeue) {
+      // Add song back to end of queue for continuous play
+      songQueue.push(nextSong);
+    }
 
     currentSongTitle(nextSong.title || basename(nextSong.path));
     const playbackUrlStartedAt = performance.now();

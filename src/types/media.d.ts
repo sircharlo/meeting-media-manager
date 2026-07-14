@@ -134,6 +134,7 @@ export type MeetingCheckStatuses = Record<string, MeetingCheckStatus>;
 export interface SongItem {
   duration?: number; // or the correct type for duration
   filesize?: number;
+  isMeetingSong?: boolean;
   path: string;
   remoteUrl?: string;
   title?: string;

@@ -16,6 +16,21 @@
       <div class="card-title row q-px-md q-mb-none">
         {{ t('setupWizard.backgroundMusic') }}
       </div>
+
+      <div class="row items-center no-wrap q-px-md q-mb-sm q-gutter-x-sm">
+        <q-spinner
+          v-if="
+            musicState === 'music.starting' || musicState === 'music.stopping'
+          "
+          color="primary"
+          size="16px"
+        />
+        <q-icon v-else :color="summaryColor" :name="summaryIcon" size="16px" />
+        <div class="text-caption text-weight-medium ellipsis">
+          {{ summaryText }}
+        </div>
+      </div>
+
       <template v-if="musicPlaying">
         <p class="card-section-title text-dark-grey row q-px-md q-pt-sm">
           {{ t('current-song') }}
@@ -34,9 +49,23 @@
         </p>
         <div class="action-popup__scroll">
           <template v-for="(song, i) in songList" :key="i">
-            <div class="row q-my-sm q-pl-md action-popup__song-row">
-              <div class="col text-weight-medium">
-                {{ song.title }}
+            <div
+              class="row items-center q-my-sm q-pl-md action-popup__song-row"
+              :class="{ 'action-popup__song-row--meeting': song.isMeetingSong }"
+            >
+              <div class="col row items-center no-wrap text-weight-medium">
+                <q-icon
+                  v-if="song.isMeetingSong"
+                  class="q-mr-xs"
+                  color="primary"
+                  name="mmm-calendar-month"
+                  size="xs"
+                >
+                  <q-tooltip>{{
+                    t('background-music-meeting-song')
+                  }}</q-tooltip>
+                </q-icon>
+                <div class="ellipsis">{{ song.title }}</div>
               </div>
               <div class="action-popup__duration row text-grey">
                 {{ formatTime(song.duration ?? 0) }}
@@ -54,10 +83,16 @@
             {{ displayStatusText }}
           </div>
           <div
-            v-if="musicPlaying && meetingDay && shouldShowMeetingCountdown"
+            v-if="
+              musicPlaying && meetingStartDateTime && shouldShowMeetingCountdown
+            "
             class="row text-dark-grey"
           >
-            {{ t('until-meeting-starts') }}
+            {{
+              t('background-music-meeting-starts-at', {
+                time: formatClockTime(meetingStartDateTime),
+              })
+            }}
           </div>
         </div>
         <div class="col-grow">
@@ -108,7 +143,10 @@ import {
   getNextSongFromQueue,
   prepareMeetingDaySongQueue,
 } from 'src/helpers/background-music';
-import { remainingTimeBeforeMeetingStart } from 'src/helpers/date';
+import {
+  getTodaysMeetingStartDateTime,
+  remainingTimeBeforeMeetingStart,
+} from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadBackgroundMusic } from 'src/helpers/jw-media';
 import { log } from 'src/shared/vanilla';
@@ -141,7 +179,6 @@ const {
   currentSettings,
   isSelectedDayToday,
   mediaIsPlaying,
-  meetingDay,
   selectedDateObject,
   selectedDayMeetingType,
 } = storeToRefs(currentState);
@@ -175,6 +212,11 @@ const musicState = ref<MusicState>('');
 
 const musicPlayingTitle = ref('');
 const songList = ref<SongItem[]>([]);
+// Meeting-day queues are time-boxed to end exactly at fadeout, with the
+// meeting's own song(s) last - they must NOT be requeued once played, or
+// playback loops back around to earlier, non-meeting songs. Only ambient
+// (non-meeting-day) playback should loop indefinitely.
+const shouldLoopQueue = ref(true);
 const initialStartOffset = ref(0); // Stores the calculated start offset for first song
 const musicStartId = ref(0);
 const musicStartTiming = ref<null | {
@@ -271,6 +313,64 @@ const displayStatusText = computed(() => {
       return t('music.not-playing');
   }
 });
+
+// ─── Planned clock times ────────────────────────────────────────────────────
+// Today's actual meeting start/stop/auto-start moments, so the popup can
+// show concrete times ("stops at 7:28 PM") alongside the countdown text
+// already used on the compact island button.
+
+const formatClockTime = (date: Date) =>
+  date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+const meetingStartDateTime = computed(() =>
+  isMeetingToday.value ? getTodaysMeetingStartDateTime() : null,
+);
+
+const musicStopDateTime = computed(() => {
+  const start = meetingStartDateTime.value;
+  if (!start) return null;
+  return new Date(start.getTime() - MEETING_STOP_BUFFER_SECONDS.value * 1000);
+});
+
+const autoStartDateTime = computed(() => {
+  const start = meetingStartDateTime.value;
+  if (!start || !currentSettings.value?.autoStartMusic) return null;
+  return new Date(start.getTime() - AUTO_START_WINDOW_HOURS * 3600 * 1000);
+});
+
+// ─── Summary row ────────────────────────────────────────────────────────────
+
+const summaryText = computed(() => {
+  switch (musicState.value) {
+    case 'music.error':
+      return t('background-music-error');
+    case 'music.playing':
+      return musicStopDateTime.value
+        ? t('background-music-stops-at', {
+            time: formatClockTime(musicStopDateTime.value),
+          })
+        : t('background-music-playing');
+    case 'music.starting':
+      return t('music.starting');
+    case 'music.stopping':
+      return t('music.stopping');
+    default:
+      return autoStartDateTime.value &&
+        autoStartDateTime.value.getTime() > Date.now()
+        ? t('background-music-auto-starts-at', {
+            time: formatClockTime(autoStartDateTime.value),
+          })
+        : t('background-music-idle');
+  }
+});
+
+const summaryIcon = computed(() =>
+  musicState.value === 'music.error' ? 'mmm-warning' : 'mmm-music-note',
+);
+
+const summaryColor = computed(() =>
+  musicState.value === 'music.error' ? 'warning' : 'primary',
+);
 
 // Expose for parent components
 defineExpose({
@@ -409,6 +509,7 @@ async function playMusic(reason = 'manual') {
 
       songList.value = queue;
       initialStartOffset.value = startOffsetSeconds;
+      shouldLoopQueue.value = false;
       logMusicStartStep(
         'meeting day song queue prepared',
         meetingQueueStartedAt,
@@ -419,9 +520,14 @@ async function playMusic(reason = 'manual') {
         },
       );
     } else {
-      // Not a meeting day: just shuffle and play
+      // No meeting to build a time-boxed queue around - either it's not a
+      // meeting day, or it is but the meeting has already started/ended
+      // (e.g. music manually restarted after the meeting). Either way
+      // there's no fadeout point to aim for, so just shuffle and loop
+      // through the whole library indefinitely.
       songList.value = enrichedSongs;
       initialStartOffset.value = 0;
+      shouldLoopQueue.value = true;
       logMusicStartTiming('non-meeting song queue prepared', 'debug', {
         queueLength: songList.value.length,
       });
@@ -434,6 +540,7 @@ async function playMusic(reason = 'manual') {
       (title) => {
         musicPlayingTitle.value = title;
       },
+      shouldLoopQueue.value,
     );
     logMusicStartStep('next song selected', nextSongStartedAt, {
       hasNextSongUrl: !!nextSongUrl,
@@ -523,9 +630,21 @@ const handleMusicEnded = async () => {
     (title) => {
       musicPlayingTitle.value = title;
     },
+    shouldLoopQueue.value,
   );
 
-  if (!nextSongUrl) return;
+  if (!nextSongUrl) {
+    // Meeting-day queue ran out (its own song(s) already played last) -
+    // this is a natural end, not an error, so just settle back to idle
+    // instead of leaving the UI stuck showing "playing".
+    log(
+      '🎵 Song queue exhausted, stopping background music',
+      'backgroundMusic',
+      'info',
+    );
+    musicState.value = '';
+    return;
+  }
 
   musicPlayerSource.value.src = nextSongUrl;
   log(
@@ -693,9 +812,14 @@ const { post: postBackgroundMusicState } = useBroadcastChannel<
   name: 'background-music-state',
 });
 
-// Update music state when playing changes
+// Update music state when playing changes. Also wait for duration metadata
+// (populated asynchronously via the audio element's durationchange event) -
+// switching to 'music.playing' before it's available makes
+// currentSongRemainingTime briefly compute against a duration of 0 (a
+// negative diff, clamped to "00:00" by formatTime), flashing a wrong time
+// before it corrects itself a moment later.
 whenever(
-  () => musicPlaying.value,
+  () => musicPlaying.value && duration.value > 0,
   () => {
     musicState.value = 'music.playing';
   },
@@ -826,5 +950,10 @@ whenever(
 /* 6px + the 10px scrollbar gutter reserved on .action-popup__scroll = the 16px (q-px-md) used by the current-song row above */
 .action-popup__song-row {
   padding-right: 6px;
+}
+
+.action-popup__song-row--meeting {
+  background: color-mix(in srgb, var(--q-primary) 10%, transparent);
+  border-radius: 4px;
 }
 </style>

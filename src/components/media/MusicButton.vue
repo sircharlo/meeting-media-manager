@@ -11,7 +11,6 @@
     "
     no-caps
     rounded
-    :style="musicPlaying ? 'min-width: 110px;' : ''"
     :text-color="
       musicPopup
         ? !(musicPlaying && musicState === 'music.stopping')
@@ -22,12 +21,19 @@
     unelevated
     @click="musicPopup = !musicPopup"
   >
-    <q-icon name="mmm-music-note" />
     <div
-      v-if="musicPlaying || musicState === 'music.starting'"
-      class="music-button__status q-ml-sm"
+      class="music-button__clip"
+      :style="clipWidth === null ? {} : { width: `${clipWidth}px` }"
     >
-      {{ musicButtonStatusText }}
+      <div ref="measureEl" class="music-button__inner">
+        <q-icon name="mmm-music-note" />
+        <div
+          v-if="musicPlaying || musicState === 'music.starting'"
+          class="music-button__status q-ml-sm"
+        >
+          {{ musicButtonStatusText }}
+        </div>
+      </div>
     </div>
 
     <q-tooltip v-if="!musicPopup" :delay="1000" :offset="[14, 22]">
@@ -39,6 +45,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { useCurrentStateStore } from 'stores/current-state';
+import { onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -53,9 +60,44 @@ defineProps<{
 }>();
 
 const musicPopup = defineModel<boolean>({ required: true });
+
+// The button's content (icon-only vs icon+status text of varying length)
+// changes width whenever playback state changes - starting/playing/
+// stopping/idle. `.music-button__clip` is animated to the inner content's
+// measured natural width via a ResizeObserver, so the button smoothly
+// grows/shrinks instead of snapping between sizes.
+const measureEl = useTemplateRef<HTMLElement>('measureEl');
+const clipWidth = ref<null | number>(null);
+let widthObserver: ResizeObserver | undefined;
+
+watch(measureEl, (el) => {
+  widthObserver?.disconnect();
+  widthObserver = undefined;
+  if (!el) return;
+  widthObserver = new ResizeObserver(([entry]) => {
+    if (!entry) return;
+    clipWidth.value = entry.contentRect.width;
+  });
+  widthObserver.observe(el);
+});
+
+onBeforeUnmount(() => widthObserver?.disconnect());
 </script>
 
 <style scoped>
+.music-button__clip {
+  align-items: center;
+  display: flex;
+  overflow: hidden;
+  transition: width 0.25s ease;
+}
+
+.music-button__inner {
+  align-items: center;
+  display: inline-flex;
+  white-space: nowrap;
+}
+
 .music-button__status {
   font-variant-numeric: tabular-nums;
   min-width: 6ch;
