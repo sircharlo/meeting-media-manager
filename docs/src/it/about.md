@@ -50,7 +50,7 @@ Per adunanze di congregazione **ibride** o **di persona** la modalità di presen
 - **Controlli multimediali avanzati**: Miniature multimediali con capacità di zoom e panoramica
 - **Timing personalizzato**: imposta i tempi di inizio e fine personalizzati per la riproduzione multimediale
 - **Controlli di riproduzione**: Pulsanti di pausa/riproduzione/stop facili da usare con tasti scorciatoia
-- **Live preview and speed control**: Preview the audience display and optionally adjust audio or video playback speed
+- **Anteprima dal vivo e controllo della velocità**: visualizza in anteprima ciò che vede il pubblico e, se vuoi, regola la velocità di riproduzione dell'audio o del video
 - **Supporto multi-monitor**: Rilevamento e gestione automatici dei monitor esterni
 - **Presentazione Pulita**: interfaccia di presentazione multimediale senza distrazioni
 
@@ -68,14 +68,14 @@ Per adunanze di congregazione **ibride** o **di persona** la modalità di presen
 
 - **Cambio automatico della scena**: Integrazione perfetta con OBS Studio per adunanze ibride
 - **Gestione delle scene**: Cambio automatico tra fotocamera, media e altre scene
-- **Recording controls**: Start and stop OBS recordings from M³ when enabled
+- **Controlli di registrazione**: avvia e ferma le registrazioni di OBS da M³ quando abilitato
 
 ### Importazione e gestione multimediale {#about-media-import}
 
 - **File JWPUB**: Importa e gestisci i file JWPUB con facilità
 - **File JWLPLAYLIST**: Supporto per i file JW Library playlist
 - **Media personalizzati**: Importa video, immagini, file audio e PDF personalizzati
-- **Bible media**: Import Study Bible media, sign-language Bible media, and audio recordings of the New World Translation
+- **Media biblici**: importa i media della Bibbia per lo studio, i media biblici nella lingua dei segni e le registrazioni audio della Traduzione del Nuovo Mondo
 - **Discussioni pubbliche**: Avere sempre una panoramica sui media pronta del discorso pubblico pronta all'uso con l'importatore S-34
 
 ### Funzionalità Avanzate {#about-advanced-features}
@@ -83,10 +83,10 @@ Per adunanze di congregazione **ibride** o **di persona** la modalità di presen
 - **Monitoraggio delle cartelle**: Sincronizza automaticamente i supporti dalle cartelle monitorate (Dropbox, OneDrive, ecc.)
 - **Esportazione media**: Esporta automaticamente i media in cartelle, organizzati per data
 - **Presentazione del sito**: Presenta il sito ufficiale sui monitor esterni
-- **Meeting timer**: Optional timer window for timing meeting parts
-- **Meeting recording helpers**: Control OBS recording or an external recording application
+- **Timer dell'adunanza**: finestra timer facoltativa per cronometrare le parti dell'adunanza
+- **Strumenti per la registrazione dell'adunanza**: controlla la registrazione di OBS o un'applicazione di registrazione esterna
 - **Scorciatoie da tastiera**: Scorciatoie da tastiera personalizzabili per molte funzioni
-- **Multiple profiles**: Manage different congregations or groups with separate profiles, including profile settings import and export
+- **Profili multipli**: gestisci congregazioni o gruppi diversi con profili separati, inclusi l'importazione e l'esportazione delle impostazioni del profilo
 
 ## M³ funziona nella mia lingua? {#does-m3-work-in-my-language}
 
@@ -98,11 +98,11 @@ I media per le adunanze dei Testimoni di Geova possono essere scaricati automati
 
 M³ è stato tradotto in molte lingue da volontari. È possibile configurare la lingua che si desidera visualizzare nell'interfaccia di M³, indipendentemente dalla lingua utilizzata per il download dei media. Questo significa che è possibile utilizzare M³ nella lingua preferita mentre il download dei media in qualsiasi altra lingua supportata.
 
-For details about fallback languages and subtitles, see the [FAQ](faq#language-support).
+Per dettagli sulle lingue di ripiego e i sottotitoli, consulta le [FAQ](faq#language-support).
 
 ## Requisiti di Sistema {#system-requirements}
 
-For supported operating systems and requirements, see the answers in the [FAQ](faq#technical-questions).
+Per i sistemi operativi supportati e i requisiti, consulta le risposte nelle [FAQ](faq#technical-questions).
 
 **Prova oggi M³  e scopri cosa può fare! Presentare i media alle adunanze di congregazione non è mai stato facile.**
 

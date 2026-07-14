@@ -1,140 +1,140 @@
 # Guida Impostazioni {#settings-guide}
 
-This comprehensive guide explains all the settings available in M³, organized by category. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
+Questa guida completa spiega tutte le impostazioni disponibili in M³, organizzate per categoria. Capire queste impostazioni ti aiuterà a configurare M³ in modo che funzioni perfettamente per le esigenze della tua congregazione.
 
-## Application Configuration {#application-configuration}
+## Configurazione dell'applicazione {#application-configuration}
 
-### Display Language {#display-language}
+### Lingua di visualizzazione {#display-language}
 
 <!-- **Setting**: `localAppLang` -->
 
-Choose the language for M³'s interface. This is independent of the language used for media downloads.
+Scegli la lingua dell'interfaccia di M³. È indipendente dalla lingua usata per il download dei media.
 
-**Options**: All available interface languages (English, Spanish, French, etc.)
+**Opzioni**: tutte le lingue dell'interfaccia disponibili (inglese, spagnolo, francese, ecc.)
 
-**Default**: English
+**Predefinito**: inglese
 
-### Dark Mode {#dark-mode}
+### Modalità scura {#dark-mode}
 
 <!-- **Setting**: `darkMode` -->
 
-Control the appearance theme of M³.
+Controlla il tema dell'aspetto di M³.
 
-**Options**:
+**Opzioni**:
 
-- Automatically switch based on system preference
-- Always use dark mode
-- Always use light mode
+- Cambia automaticamente in base alle preferenze di sistema
+- Usa sempre la modalità scura
+- Usa sempre la modalità chiara
 
-**Default**: Auto
+**Predefinito**: Automatico
 
-### First Day of Week {#first-day-of-week}
+### Primo giorno della settimana {#first-day-of-week}
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the calendar view.
+Imposta quale giorno deve essere considerato il primo giorno della settimana nella vista calendario.
 
-**Options**: Sunday through Saturday
+**Opzioni**: da domenica a sabato
 
-**Default**: Sunday
+**Predefinito**: domenica
 
-### Date Format {#date-format}
+### Formato della data {#date-format}
 
 <!-- **Setting**: `localDateFormat` -->
 
-Format used to display dates in the app.
+Formato usato per mostrare le date nell'app.
 
-**Example**: D MMMM YYYY
+**Esempio**: D MMMM YYYY
 
-**Default**: D MMMM YYYY
+**Predefinito**: D MMMM YYYY
 
-### Auto-Start at Login {#auto-start-at-login}
+### Avvio automatico all'accesso {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
 
-Automatically start M³ when the computer boots up.
+Avvia automaticamente M³ all'accensione del computer.
 
-**Default**: `false`
+**Predefinito**: `false`
 
-## Congregation Meetings {#congregation-meetings}
+## Adunanze di congregazione {#congregation-meetings}
 
-### Congregation Name {#congregation-name}
+### Nome della congregazione {#congregation-name}
 
 <!-- **Setting**: `congregationName` -->
 
-The name of your congregation. This is used for organization and display purposes.
+Il nome della tua congregazione. Viene usato a scopo di organizzazione e visualizzazione.
 
-**Default**: Empty (must be set during setup)
+**Predefinito**: vuoto (deve essere impostato durante la configurazione)
 
-### Meeting Language {#meeting-language}
+### Lingua delle adunanze {#meeting-language}
 
 <!-- **Setting**: `lang` -->
 
-The primary language for media downloads. This should match the language used in your congregation's meetings.
+La lingua principale per il download dei media. Dovrebbe corrispondere alla lingua usata nelle adunanze della tua congregazione.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Opzioni**: tutte le lingue disponibili sul sito ufficiale dei Testimoni di Geova
 
-**Default**: English (E)
+**Predefinito**: inglese (E)
 
-### Fallback Language {#fallback-language}
+### Lingua di ripiego {#fallback-language}
 
 <!-- **Setting**: `langFallback` -->
 
-A secondary language to use when media isn't available in the primary language.
+Una lingua secondaria da usare quando i media non sono disponibili nella lingua principale.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Opzioni**: tutte le lingue disponibili sul sito ufficiale dei Testimoni di Geova
 
-**Default**: None
+**Predefinito**: Nessuna
 
-### Midweek Meeting Day {#midweek-meeting-day}
+### Giorno dell'adunanza infrasettimanale {#midweek-meeting-day}
 
 <!-- **Setting**: `mwDay` -->
 
-The day of the week when your midweek meeting is held.
+Il giorno della settimana in cui si tiene l'adunanza infrasettimanale.
 
-**Options**: Sunday through Saturday
+**Opzioni**: da domenica a sabato
 
-**Default**: None (must be set during setup)
+**Predefinito**: Nessuno (deve essere impostato durante la configurazione)
 
-### Midweek Meeting Time {#midweek-meeting-time}
+### Orario dell'adunanza infrasettimanale {#midweek-meeting-time}
 
 <!-- **Setting**: `mwStartTime` -->
 
-The start time of your midweek meeting.
+L'orario di inizio dell'adunanza infrasettimanale.
 
-**Format**: HH:MM (24-hour format)
+**Formato**: HH:MM (formato 24 ore)
 
-**Default**: None (must be set during setup)
+**Predefinito**: Nessuno (deve essere impostato durante la configurazione)
 
-### Weekend Meeting Day {#weekend-meeting-day}
+### Giorno dell'adunanza del fine settimana {#weekend-meeting-day}
 
 <!-- **Setting**: `weDay` -->
 
-The day of the week when your weekend meeting is held.
+Il giorno della settimana in cui si tiene l'adunanza del fine settimana.
 
-**Options**: Sunday through Saturday
+**Opzioni**: da domenica a sabato
 
-**Default**: None (must be set during setup)
+**Predefinito**: Nessuno (deve essere impostato durante la configurazione)
 
-### Weekend Meeting Time {#weekend-meeting-time}
+### Orario dell'adunanza del fine settimana {#weekend-meeting-time}
 
 <!-- **Setting**: `weStartTime` -->
 
-The start time of your weekend meeting.
+L'orario di inizio dell'adunanza del fine settimana.
 
-**Format**: HH:MM (24-hour format)
+**Formato**: HH:MM (formato 24 ore)
 
-**Default**: None (must be set during setup)
+**Predefinito**: Nessuno (deve essere impostato durante la configurazione)
 
-### Circuit Overseer Week {#circuit-overseer-week}
+### Settimana del sorvegliante di circoscrizione {#circuit-overseer-week}
 
 <!-- **Setting**: `coWeek` -->
 
-The week of the next circuit overseer's visit.
+La settimana della prossima visita del sorvegliante di circoscrizione.
 
-**Format**: MM/DD/YYYY
+**Formato**: MM/DD/YYYY
 
-**Default**: None
+**Predefinito**: Nessuna
 
 ### Data Commemorazione {#memorial-date}
 
@@ -142,533 +142,533 @@ The week of the next circuit overseer's visit.
 
 La data della prossima Commemorazione.
 
-**Format**: MM/DD/YYYY
+**Formato**: MM/DD/YYYY
 
-**Default**: Automatically retrieved periodically
+**Predefinito**: recuperato automaticamente a intervalli regolari
 
-### Meeting Schedule Changes {#meeting-schedule-changes}
+### Modifiche al programma delle adunanze {#meeting-schedule-changes}
 
-These settings allow you to configure temporary changes to your meeting schedule:
+Queste impostazioni ti permettono di configurare modifiche temporanee al programma delle adunanze:
 
-- **Change Date**: When the change takes effect
-- **One-time Change**: Whether this is a permanent or temporary change
-- **New Midweek Day**: New day for midweek meeting
-- **New Midweek Time**: New time for midweek meeting
-- **New Weekend Day**: New day for weekend meeting
-- **New Weekend Time**: New time for weekend meeting
+- **Data della modifica**: quando la modifica ha effetto
+- **Modifica una tantum**: se si tratta di una modifica permanente o temporanea
+- **Nuovo giorno infrasettimanale**: nuovo giorno per l'adunanza infrasettimanale
+- **Nuovo orario infrasettimanale**: nuovo orario per l'adunanza infrasettimanale
+- **Nuovo giorno del fine settimana**: nuovo giorno per l'adunanza del fine settimana
+- **Nuovo orario del fine settimana**: nuovo orario per l'adunanza del fine settimana
 
-### Automatic Meeting Schedule Updates {#automatic-meeting-schedule-updates}
+### Aggiornamenti automatici del programma delle adunanze {#automatic-meeting-schedule-updates}
 
 <!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
 
-When enabled, M³ periodically checks the official website of Jehovah's Witnesses for meeting day and time changes and updates the current profile automatically.
+Quando abilitato, M³ controlla periodicamente sul sito ufficiale dei Testimoni di Geova le modifiche del giorno e dell'orario delle adunanze e aggiorna automaticamente il profilo corrente.
 
-This only works for profiles that were added with congregation lookup and whose congregation name has not been manually changed. If synchronization was disabled because the congregation name changed, use **Enable schedule sync** to link the profile again.
+Funziona solo per i profili aggiunti con la ricerca della congregazione e il cui nome della congregazione non è stato modificato manualmente. Se la sincronizzazione è stata disabilitata perché il nome della congregazione è cambiato, usa **Abilita sincronizzazione programma** per ricollegare il profilo.
 
-#### Refresh Meeting Schedule {#refresh-meeting-schedule}
+#### Aggiorna il programma delle adunanze {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
-Manually synchronize the current and future meeting schedule with the information from the official website.
+Sincronizza manualmente il programma delle adunanze attuale e futuro con le informazioni del sito ufficiale.
 
-## Media Retrieval and Playback {#media-retrieval-and-playback}
+## Recupero e riproduzione dei media {#media-retrieval-and-playback}
 
-### Metered Connection {#metered-connection}
+### Connessione a consumo {#metered-connection}
 
 <!-- **Setting**: `meteredConnection` -->
 
-Enable this if you're on a limited data connection to reduce bandwidth usage.
+Abilita questa opzione se hai una connessione dati limitata per ridurre l'uso della banda.
 
-**Default**: `false`
+**Predefinito**: `false`
 
-### Media Display {#media-display-button}
+### Visualizzazione dei media {#media-display-button}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
-Enable the media display functionality. This is required to present media on a second monitor.
+Abilita la funzione di visualizzazione dei media. È necessaria per presentare i media su un secondo monitor.
 
-**Default**: `false`
+**Predefinito**: `false`
 
-#### Enable Media Preview {#enable-media-preview}
+#### Abilita l'anteprima dei media {#enable-media-preview}
 
 <!-- **Setting**: `enableMediaPreview` -->
 
-Show a live preview of the media window while an image or video is being displayed.
+Mostra un'anteprima dal vivo della finestra multimediale mentre viene mostrata un'immagine o un video.
 
-**Default**: `true`
+**Predefinito**: `true`
 
-#### Begin Playback Paused {#begin-playback-paused}
+#### Avvia la riproduzione in pausa {#begin-playback-paused}
 
 <!-- **Setting**: `beginPlaybackPaused` -->
 
-Start videos in a paused state when playback begins.
+Avvia i video in stato di pausa quando inizia la riproduzione.
 
-**Default**: `false`
+**Predefinito**: `false`
 
 ### Musica di Sottofondo {#settings-guide-background-music}
 
-#### Enable Music {#enable-music-button}
+#### Abilita la musica {#enable-music-button}
 
 <!-- **Setting**: `enableMusicButton` -->
 
-Enable background music functionality.
+Abilita la funzione della musica di sottofondo.
 
-**Default**: `true`
+**Predefinito**: `true`
 
-#### Auto-Start Music {#auto-start-music}
+#### Avvio automatico della musica {#auto-start-music}
 
 <!-- **Setting**: `autoStartMusic` -->
 
-Automatically start background music when M³ launches if appropriate.
+Avvia automaticamente la musica di sottofondo all'avvio di M³ quando opportuno.
 
-**Default**: `true`
+**Predefinito**: `true`
 
-#### Meeting Stop Buffer {#meeting-stop-buffer}
+#### Margine di arresto prima dell'adunanza {#meeting-stop-buffer}
 
 <!-- **Setting**: `meetingStopBufferSeconds` -->
 
-How many seconds before meeting start time to stop background music.
+Quanti secondi prima dell'orario di inizio dell'adunanza fermare la musica di sottofondo.
 
-**Range**: 0-300 seconds
+**Intervallo**: 0-300 secondi
 
-**Default**: 60 seconds
+**Predefinito**: 60 secondi
 
-#### Music Volume {#music-volume}
+#### Volume della musica {#music-volume}
 
 <!-- **Setting**: `musicVolume` -->
 
-Volume level for background music (1-100%).
+Livello del volume della musica di sottofondo (1-100%).
 
-**Default**: 100%
+**Predefinito**: 100%
 
-### Cache Management {#cache-management}
+### Gestione della cache {#cache-management}
 
-#### Enable Extra Cache {#enable-extra-cache}
+#### Abilita la cache extra {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Enable additional caching for better performance.
+Abilita la memorizzazione aggiuntiva nella cache per prestazioni migliori.
 
-**Default**: `false`
+**Predefinito**: `false`
 
-#### Cache Folder {#cache-folder}
+#### Cartella della cache {#cache-folder}
 
 <!-- **Setting**: `cacheFolder` -->
 
-Custom location for storing cached media files.
+Posizione personalizzata per archiviare i file multimediali nella cache.
 
-**Default**: System default location
+**Predefinito**: posizione predefinita del sistema
 
-#### Enable Cache Auto-Clear {#enable-cache-auto-clear}
+#### Abilita la cancellazione automatica della cache {#enable-cache-auto-clear}
 
 <!-- **Setting**: `enableCacheAutoClear` -->
 
-Automatically clear old cached files to save disk space.
+Cancella automaticamente i vecchi file nella cache per risparmiare spazio su disco.
 
-**Default**: `true`
+**Predefinito**: `true`
 
 ### Monitoraggio Cartelle {#settings-guide-folder-monitoring}
 
-#### Enable Folder Watcher {#enable-folder-watcher}
+#### Abilita il monitoraggio delle cartelle {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Monitor a folder for new media files and automatically add them to M³.
+Monitora una cartella per nuovi file multimediali e aggiungili automaticamente a M³.
 
-**Default**: `false`
+**Predefinito**: `false`
 
-#### Folder to Watch {#folder-to-watch}
+#### Cartella da monitorare {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-The folder path to monitor for new media files.
+Il percorso della cartella da monitorare per i nuovi file multimediali.
 
-**Default**: Empty
+**Predefinito**: vuoto
 
-## Integrations {#integrations}
+## Integrazioni {#integrations}
 
 ### Integrazione di Zoom {#settings-guide-zoom-integration}
 
-#### Enable Zoom {#enable-zoom}
+#### Abilita Zoom {#enable-zoom}
 
 <!-- **Setting**: `zoomEnable` -->
 
-Enable Zoom meeting integration features.
+Abilita le funzioni di integrazione con le riunioni Zoom.
 
-**Default**: `false`
+**Predefinito**: `false`
 
-#### Screen Share Shortcut {#screen-share-shortcut}
+#### Scorciatoia per la condivisione dello schermo {#screen-share-shortcut}
 
 <!-- **Setting**: `zoomScreenShareShortcut` -->
 
-Keyboard shortcut to trigger Zoom screen sharing.
+Scorciatoia da tastiera per attivare la condivisione dello schermo di Zoom.
 
-**Default**: None
+**Predefinito**: Nessuna
 
 ### Integrazione di OBS Studio {#settings-guide-obs-integration}
 
-#### Enable OBS {#enable-obs}
+#### Abilita OBS {#enable-obs}
 
 <!-- **Setting**: `obsEnable` -->
 
-Enable OBS Studio integration for automatic scene switching.
+Abilita l'integrazione con OBS Studio per il cambio automatico di scena.
 
-**Default**: `false`
+**Predefinito**: `false`
 
-:::warning Important Note
+:::warning Nota importante
 
-**Audio Configuration Required**: The OBS Studio integration only handles screen sharing. Audio from M³ media is **not automatically transmitted** to Zoom participants when using OBS Studio. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**Configurazione audio necessaria**: l'integrazione con OBS Studio gestisce solo la condivisione dello schermo. L'audio dei media di M³ **non viene trasmesso automaticamente** ai partecipanti su Zoom quando si usa OBS Studio. Devi configurare le impostazioni dell'Audio originale di Zoom o usare «Condividi audio del computer» per garantire che i partecipanti all'adunanza possano sentire i media. Consulta la [Guida utente](/user-guide#audio-configuration) per istruzioni dettagliate sulla configurazione dell'audio.
 
-**Note**: The Zoom integration uses Zoom's native screen sharing which handles audio more seamlessly than OBS Studio integration.
+**Nota**: l'integrazione con Zoom usa la condivisione dello schermo nativa di Zoom, che gestisce l'audio in modo più fluido rispetto all'integrazione con OBS Studio.
 
 :::
 
-#### OBS Port {#obs-port}
+#### Porta OBS {#obs-port}
 
 <!-- **Setting**: `obsPort` -->
 
-The port number for connecting to OBS Studio WebSocket.
+Il numero di porta per connettersi al WebSocket di OBS Studio.
 
-**Default**: None
+**Predefinito**: Nessuna
 
-#### OBS Password {#obs-password}
+#### Password OBS {#obs-password}
 
 <!-- **Setting**: `obsPassword` -->
 
-The password for OBS Studio WebSocket connection.
+La password per la connessione WebSocket di OBS Studio.
 
-**Default**: None
+**Predefinito**: Nessuna
 
-#### OBS Scenes {#obs-scenes}
+#### Scene OBS {#obs-scenes}
 
-Configure which OBS scenes to use for different purposes:
+Configura quali scene di OBS usare per scopi diversi:
 
-- **Camera Scene**: Scene showing the camera/lectern
-- **Media Scene**: Scene for displaying media
-- **Image Scene**: Scene for displaying images (for example, a PIP scene showing both media and the speaker)
+- **Scena videocamera**: scena che mostra la videocamera/il leggìo
+- **Scena media**: scena per mostrare i media
+- **Scena immagini**: scena per mostrare le immagini (ad esempio una scena PIP che mostra sia i media sia l'oratore)
 
-#### OBS Advanced Options {#obs-advanced-options}
+#### Opzioni avanzate OBS {#obs-advanced-options}
 
-- **Postpone Images**: Delay sharing images to OBS until manually triggered
-- **Quick Toggle**: Enable quick on/off toggle for OBS integration
-- **Switch Scene After Media**: Automatically return to previous scene after media
-- **Remember Previous Scene**: Remember and restore the previous scene
-- **Hide Icons**: Hide OBS-related icons in the interface
-- **Recording Controls**: Show controls that start and stop OBS recording from M³
+- **Posticipa le immagini**: ritarda la condivisione delle immagini a OBS finché non vengono attivate manualmente
+- **Attivazione rapida**: abilita l'attivazione/disattivazione rapida dell'integrazione con OBS
+- **Cambia scena dopo il media**: torna automaticamente alla scena precedente dopo il media
+- **Ricorda la scena precedente**: ricorda e ripristina la scena precedente
+- **Nascondi le icone**: nascondi le icone relative a OBS nell'interfaccia
+- **Controlli di registrazione**: mostra i controlli che avviano e fermano la registrazione di OBS da M³
 
-:::warning Important Note
+:::warning Nota importante
 
-**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**Configurazione audio necessaria**: l'integrazione con OBS Studio gestisce solo il video/il cambio di scena. L'audio dei media di M³ **non viene trasmesso automaticamente** a Zoom o OBS. Il flusso video funziona come una videocamera virtuale senza audio, proprio come una webcam. Devi configurare le impostazioni dell'Audio originale di Zoom o usare «Condividi audio del computer» per garantire che i partecipanti all'adunanza possano sentire i media. Consulta la [Guida utente](/user-guide#audio-configuration) per istruzioni dettagliate sulla configurazione dell'audio.
 
-**Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
+**Alternativa**: valuta di usare invece l'integrazione con Zoom, poiché usa la condivisione dello schermo nativa di Zoom che gestisce l'audio in modo più fluido.
 
 :::
 
-### Custom Events {#custom-events}
+### Eventi personalizzati {#custom-events}
 
-#### Enable Custom Events {#enable-custom-events}
+#### Abilita gli eventi personalizzati {#enable-custom-events}
 
 <!-- **Setting**: `enableCustomEvents` -->
 
-Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
+Abilita scorciatoie personalizzate che verranno attivate quando viene rilevato un evento specifico (ad es. quando un media viene riprodotto, messo in pausa o fermato).
 
-**Default**: `false`
+**Predefinito**: `false`
 
-#### Custom Event Shortcuts {#custom-event-shortcuts}
+#### Scorciatoie per gli eventi personalizzati {#custom-event-shortcuts}
 
-##### Play Media Shortcut {#custom-event-media-play-shortcut}
+##### Scorciatoia riproduci media {#custom-event-media-play-shortcut}
 
 <!-- **Setting**: `customEventMediaPlayShortcut` -->
 
-Shortcut that is triggered when media is played.
+Scorciatoia che viene attivata quando un media viene riprodotto.
 
-**Default**: None
+**Predefinito**: Nessuna
 
-##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
+##### Scorciatoia pausa media {#custom-event-media-pause-shortcut}
 
 <!-- **Setting**: `customEventMediaPauseShortcut` -->
 
-Shortcut that is triggered when media is paused.
+Scorciatoia che viene attivata quando un media viene messo in pausa.
 
-**Default**: None
+**Predefinito**: Nessuna
 
-##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
+##### Scorciatoia ferma media {#custom-event-media-stop-shortcut}
 
 <!-- **Setting**: `customEventMediaStopShortcut` -->
 
-Shortcut that is triggered when media is stopped.
+Scorciatoia che viene attivata quando un media viene fermato.
 
-**Default**: None
+**Predefinito**: Nessuna
 
-##### Last Song Shortcut {#custom-event-last-song-shortcut}
+##### Scorciatoia ultimo cantico {#custom-event-last-song-shortcut}
 
 <!-- **Setting**: `customEventLastSongShortcut` -->
 
-Shortcut that is triggered when the last song is played during a meeting.
+Scorciatoia che viene attivata quando viene riprodotto l'ultimo cantico durante un'adunanza.
 
-**Default**: None
+**Predefinito**: Nessuna
 
-### Meeting Recordings {#meeting-recordings}
+### Registrazioni delle adunanze {#meeting-recordings}
 
-#### Enable External Recording App Integration {#enable-external-recording-app-integration}
+#### Abilita l'integrazione con app di registrazione esterne {#enable-external-recording-app-integration}
 
 <!-- **Setting**: `recordingEnable` -->
 
-Let M³ control a separate recording application with keyboard shortcuts. This does not record inside M³; it sends the configured shortcuts when you press **Start Recording** or **Stop Recording** in the meeting recordings popup.
+Consenti a M³ di controllare un'applicazione di registrazione separata con scorciatoie da tastiera. Questo non registra all'interno di M³; invia le scorciatoie configurate quando premi **Avvia registrazione** o **Ferma registrazione** nel popup delle registrazioni delle adunanze.
 
-This option is hidden when OBS recording controls are enabled. If you use OBS Studio, use the OBS recording controls in the OBS integration instead.
+Questa opzione è nascosta quando i controlli di registrazione OBS sono abilitati. Se usi OBS Studio, usa invece i controlli di registrazione OBS nell'integrazione con OBS.
 
-**Default**: `false`
+**Predefinito**: `false`
 
-#### Recording Shortcuts and Folder {#recording-shortcuts-and-folder}
+#### Scorciatoie e cartella di registrazione {#recording-shortcuts-and-folder}
 
 <!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
 
-Configure the keyboard shortcut that starts recording, the optional shortcut that stops recording, and the folder where the external app saves recordings. If no stop shortcut is provided, M³ reuses the start shortcut. When a folder is configured, M³ shows a button to open it.
+Configura la scorciatoia da tastiera che avvia la registrazione, la scorciatoia facoltativa che la ferma e la cartella in cui l'app esterna salva le registrazioni. Se non viene fornita una scorciatoia di arresto, M³ riutilizza la scorciatoia di avvio. Quando è configurata una cartella, M³ mostra un pulsante per aprirla.
 
-### Meeting Timer {#meeting-timer}
+### Timer dell'adunanza {#meeting-timer}
 
-#### Enable Meeting Timer {#enable-meeting-timer}
+#### Abilita il timer dell'adunanza {#enable-meeting-timer}
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
-Enable a separate timer window for timing meeting parts. This is a beta feature and should only be enabled if approved locally.
+Abilita una finestra timer separata per cronometrare le parti dell'adunanza. Questa è una funzione beta e dovrebbe essere abilitata solo se approvata localmente.
 
-**Default**: `false`
+**Predefinito**: `false`
 
-#### Timer Window Behavior {#timer-window-behavior}
+#### Comportamento della finestra del timer {#timer-window-behavior}
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
-Configure whether the timer window opens automatically, whether participant timers count up or down by default, whether the clock uses 12-hour or 24-hour time, and whether the current timer value is shown on the action island timer button.
+Configura se la finestra del timer si apre automaticamente, se i timer dei partecipanti contano in avanti o alla rovescia per impostazione predefinita, se l'orologio usa il formato a 12 o 24 ore, e se il valore corrente del timer è mostrato sul pulsante del timer nell'isola delle azioni.
 
-#### Timer Display Formats {#timer-display-formats}
+#### Formati di visualizzazione del timer {#timer-display-formats}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
-Choose analog or digital display formats for the time of day and countdown timers. The countdown warning indicator can shift the analog countdown ring toward a warning color during the final minute.
+Scegli formati di visualizzazione analogici o digitali per l'ora del giorno e i timer del conto alla rovescia. L'indicatore di avviso del conto alla rovescia può spostare l'anello analogico del conto alla rovescia verso un colore di avviso durante l'ultimo minuto.
 
-#### Meeting Countdown and Schedule Status {#meeting-countdown-and-schedule-status}
+#### Conto alla rovescia dell'adunanza e stato del programma {#meeting-countdown-and-schedule-status}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
-Show a countdown before scheduled meetings and optionally display whether the meeting is ahead of or behind schedule. The meeting countdown appears only on the timer display, not on the main media display.
+Mostra un conto alla rovescia prima delle adunanze programmate e, se vuoi, indica se l'adunanza è in anticipo o in ritardo sul programma. Il conto alla rovescia dell'adunanza appare solo sul display del timer, non sulla visualizzazione principale dei media.
 
-#### Timer Appearance and Overtime {#timer-appearance-and-overtime}
+#### Aspetto del timer e tempo superato {#timer-appearance-and-overtime}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
-Customize the timer text size and colors, and configure overtime indicators such as alternate colors, blinking, and showing only the elapsed overtime amount in count-up mode.
+Personalizza la dimensione e i colori del testo del timer e configura gli indicatori di tempo superato, come colori alternati, lampeggiamento e la visualizzazione del solo tempo superato trascorso in modalità conteggio in avanti.
 
-## Advanced Settings {#advanced-settings}
+## Impostazioni avanzate {#advanced-settings}
 
 ### Scorciatoie da Tastiera {#settings-guide-keyboard-shortcuts}
 
-#### Enable Keyboard Shortcuts {#enable-keyboard-shortcuts}
+#### Abilita le scorciatoie da tastiera {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
-Enable customizable keyboard shortcuts for media control.
+Abilita scorciatoie da tastiera personalizzabili per il controllo dei media.
 
-**Default**: `false`
+**Predefinito**: `false`
 
-#### Media Control Shortcuts {#media-control-shortcuts}
+#### Scorciatoie per il controllo dei media {#media-control-shortcuts}
 
-Configure shortcuts for media playback:
+Configura le scorciatoie per la riproduzione dei media:
 
-- **Media Window**: Open/close media window
-- **Previous Media**: Go to previous media item
-- **Next Media**: Go to next media item
-- **Pause/Resume**: Pause or resume media playback
-- **Stop Media**: Stop media playback
-- **Music Toggle**: Toggle background music
+- **Finestra multimediale**: apri/chiudi la finestra multimediale
+- **Media precedente**: vai all'elemento multimediale precedente
+- **Media successivo**: vai all'elemento multimediale successivo
+- **Pausa/Riprendi**: metti in pausa o riprendi la riproduzione dei media
+- **Ferma il media**: ferma la riproduzione dei media
+- **Attiva/disattiva musica**: attiva o disattiva la musica di sottofondo
 
-### Media Display {#media-display}
+### Visualizzazione dei media {#media-display}
 
-#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+#### Abilita le transizioni in dissolvenza della finestra multimediale {#enable-media-window-fade-transitions}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
-Enable fade-in/out transitions when showing or hiding the media window.
+Abilita le transizioni in dissolvenza in entrata/uscita quando si mostra o si nasconde la finestra multimediale.
 
-**Default**: `true`
+**Predefinito**: `true`
 
-#### Enable Playback Speed Control {#enable-playback-speed-control}
+#### Abilita il controllo della velocità di riproduzione {#enable-playback-speed-control}
 
 <!-- **Setting**: `enablePlaybackSpeedControl` -->
 
-Allow audio and video playback speed to be adjusted from the media item's context menu.
+Consente di regolare la velocità di riproduzione di audio e video dal menu contestuale dell'elemento multimediale.
 
-**Default**: `false`
+**Predefinito**: `false`
 
-#### Hide Media Logo {#hide-media-logo}
+#### Nascondi il logo nei media {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
-Hide the logo in the media window.
+Nasconde il logo nella finestra multimediale.
 
-**Default**: `false`
+**Predefinito**: `false`
 
-#### Maximum Resolution {#maximum-resolution}
+#### Risoluzione massima {#maximum-resolution}
 
 <!-- **Setting**: `maxRes` -->
 
-Maximum resolution for downloaded media files.
+Risoluzione massima per i file multimediali scaricati.
 
-**Options**: 240p, 360p, 480p, 720p, 1080p
+**Opzioni**: 240p, 360p, 480p, 720p, 1080p
 
-**Default**: 720p
+**Predefinito**: 720p
 
-#### Include Printed Media {#include-printed-media}
+#### Includi i media stampati {#include-printed-media}
 
 <!-- **Setting**: `includePrinted` -->
 
-Include media from the printed publications in media downloads.
+Includi i media delle pubblicazioni stampate nei download dei media.
 
-**Default**: `true`
+**Predefinito**: `true`
 
-#### Exclude Footnotes {#exclude-footnotes}
+#### Escludi le note in calce {#exclude-footnotes}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
-Exclude footnote images from media downloads when possible.
+Escludi le immagini delle note in calce dai download dei media quando possibile.
 
-**Default**: `false`
+**Predefinito**: `false`
 
-#### Exclude Additional Watchtower Study Videos {#exclude-additional-watchtower-study-videos}
+#### Escludi i video aggiuntivi dello Studio Torre di Guardia {#exclude-additional-watchtower-study-videos}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 
-Exclude additional videos that are referenced in Watchtower Study paragraphs.
+Escludi i video aggiuntivi a cui si fa riferimento nei paragrafi dello Studio Torre di Guardia.
 
-**Default**: `false`
+**Predefinito**: `false`
 
-#### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
+#### Escludi i media dell'opuscolo Insegna {#exclude-theocratic-ministry-school}
 
 <!-- **Setting**: `excludeTh` -->
 
-Exclude media from the Teaching (th) brochure from media downloads.
+Escludi dai download dei media i media dell'opuscolo Insegna (th).
 
-**Default**: `true`
+**Predefinito**: `true`
 
-### Subtitles {#subtitles}
+### Sottotitoli {#subtitles}
 
-#### Enable Subtitles {#enable-subtitles}
+#### Abilita i sottotitoli {#enable-subtitles}
 
 <!-- **Setting**: `enableSubtitles` -->
 
-Enable subtitle support for media playback.
+Abilita il supporto dei sottotitoli per la riproduzione dei media.
 
-**Default**: `false`
+**Predefinito**: `false`
 
-#### Subtitle Language {#subtitle-language}
+#### Lingua dei sottotitoli {#subtitle-language}
 
 <!-- **Setting**: `langSubtitles` -->
 
-Language for subtitles (can be different from media language).
+Lingua dei sottotitoli (può essere diversa dalla lingua dei media).
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Opzioni**: tutte le lingue disponibili sul sito ufficiale dei Testimoni di Geova
 
-**Default**: None
+**Predefinito**: Nessuna
 
 ### Esportazione Media {#settings-guide-media-export}
 
-#### Enable Media Auto-Export {#enable-media-auto-export}
+#### Abilita l'esportazione automatica dei media {#enable-media-auto-export}
 
 <!-- **Setting**: `enableMediaAutoExport` -->
 
-Automatically export media files to a specified folder.
+Esporta automaticamente i file multimediali in una cartella specificata.
 
-**Default**: `false`
+**Predefinito**: `false`
 
-#### Media Export Folder {#media-export-folder}
+#### Cartella di esportazione dei media {#media-export-folder}
 
 <!-- **Setting**: `mediaAutoExportFolder` -->
 
-Folder path where media files will be automatically exported.
+Percorso della cartella in cui i file multimediali verranno esportati automaticamente.
 
-**Default**: Empty
+**Predefinito**: vuoto
 
-#### Convert Files to MP4 {#convert-files-to-mp4}
+#### Converti i file in MP4 {#convert-files-to-mp4}
 
-**Setting**: `convertFilesToMp4`
+**Impostazione**: `convertFilesToMp4`
 
-Convert exported media files to MP4 format for better compatibility.
+Converte i file multimediali esportati in formato MP4 per una migliore compatibilità.
 
-**Default**: `false`
+**Predefinito**: `false`
 
-### Profile Settings Transfer {#profile-settings-transfer}
+### Trasferimento delle impostazioni del profilo {#profile-settings-transfer}
 
-Export the current profile's settings to a JSON file or import a previously exported profile settings file. Importing replaces the current profile's settings.
+Esporta le impostazioni del profilo corrente in un file JSON o importa un file di impostazioni del profilo esportato in precedenza. L'importazione sostituisce le impostazioni del profilo corrente.
 
-### Danger Zone {#danger-zone}
+### Zona pericolosa {#danger-zone}
 
-:::warning Warning
+:::warning Attenzione
 
-These settings should only be changed if you understand their implications.
+Queste impostazioni dovrebbero essere modificate solo se ne comprendi le implicazioni.
 
 :::
 
-#### Base URL {#base-url}
+#### URL di base {#base-url}
 
 <!-- **Setting**: `baseUrl` -->
 
-Base domain used to download publications and media.
+Dominio di base usato per scaricare pubblicazioni e media.
 
-**Default**: `jw.org`
+**Predefinito**: `jw.org`
 
-#### Disable Hardware Acceleration {#disable-hardware-acceleration}
+#### Disabilita l'accelerazione hardware {#disable-hardware-acceleration}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
-Disable hardware acceleration after restarting M³. This may help with graphical glitches or crashes on some systems, but is not otherwise recommended.
+Disabilita l'accelerazione hardware dopo aver riavviato M³. Può aiutare con problemi grafici o arresti anomali su alcuni sistemi, ma non è altrimenti consigliato.
 
-**Default**: `false`
+**Predefinito**: `false`
 
-#### Suppress Hardware Acceleration Reminder {#suppress-hardware-acceleration-reminder}
+#### Nascondi il promemoria dell'accelerazione hardware {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
-Hide the reminder to re-enable hardware acceleration after it has been manually disabled.
+Nascondi il promemoria per riattivare l'accelerazione hardware dopo che è stata disabilitata manualmente.
 
-**Default**: `false`
+**Predefinito**: `false`
 
-#### Disable Media Fetching {#disable-media-fetching}
+#### Disabilita il recupero dei media {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
-Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
+Disabilita completamente i download automatici dei media. Usa questa opzione solo per i profili che verranno usati per eventi speciali o altre configurazioni personalizzate.
 
-**Default**: `false`
+**Predefinito**: `false`
 
-## Tips for Optimal Configuration {#configuration-tips}
+## Consigli per una configurazione ottimale {#configuration-tips}
 
-### For New Users {#new-users}
+### Per i nuovi utenti {#new-users}
 
-1. Start with the setup wizard to configure basic settings
-2. Enable "Media Display Button" to access presentation features
-3. Configure your meeting schedule accurately
-4. Set up OBS integration if you use hybrid meetings
+1. Inizia con la configurazione guidata per impostare le impostazioni di base
+2. Abilita «Pulsante di visualizzazione dei media» per accedere alle funzioni di presentazione
+3. Configura con precisione il programma delle adunanze
+4. Configura l'integrazione con OBS se fai adunanze ibride
 
-### For Advanced Users {#advanced-users}
+### Per gli utenti esperti {#advanced-users}
 
-1. Use folder monitoring to sync media from cloud storage
-2. Enable media auto-export for backup purposes
-3. Configure keyboard shortcuts for efficient operation
-4. Configure Zoom integration for automatic screen sharing
+1. Usa il monitoraggio delle cartelle per sincronizzare i media da un archivio cloud
+2. Abilita l'esportazione automatica dei media a scopo di backup
+3. Configura le scorciatoie da tastiera per un uso efficiente
+4. Configura l'integrazione con Zoom per la condivisione automatica dello schermo
 
-### Performance Optimization {#performance-optimization}
+### Ottimizzazione delle prestazioni {#performance-optimization}
 
-1. Enable extra cache for better performance
-2. Use appropriate maximum resolution for your needs
-3. Configure cache auto-clear to manage disk space
-4. Consider metered connection setting if on limited bandwidth
+1. Abilita la cache extra per prestazioni migliori
+2. Usa una risoluzione massima adeguata alle tue esigenze
+3. Configura la cancellazione automatica della cache per gestire lo spazio su disco
+4. Valuta l'impostazione della connessione a consumo se hai una banda limitata
 
 ### Risoluzione Problemi {#settings-guide-troubleshooting}
 
-- If media isn't downloading, check your meeting schedule settings
-- If OBS integration isn't working, verify port and password settings
-- If performance is slow, try enabling extra cache or reducing resolution
-- If you're having language issues, check both interface and media language settings
-- If Zoom participants can't hear media audio, configure Zoom's Original Audio settings or use "Share Computer Sound"
-- **Tip**: Consider using Zoom integration instead of OBS Studio for simpler audio handling
+- Se i media non si scaricano, controlla le impostazioni del programma delle adunanze
+- Se l'integrazione con OBS non funziona, verifica le impostazioni della porta e della password
+- Se le prestazioni sono lente, prova ad abilitare la cache extra o a ridurre la risoluzione
+- Se hai problemi con le lingue, controlla le impostazioni della lingua sia dell'interfaccia sia dei media
+- Se i partecipanti su Zoom non riescono a sentire l'audio dei media, configura le impostazioni dell'Audio originale di Zoom o usa «Condividi audio del computer»
+- **Suggerimento**: valuta di usare l'integrazione con Zoom invece di OBS Studio per una gestione dell'audio più semplice
