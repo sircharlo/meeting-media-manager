@@ -16,6 +16,9 @@ import en from './en.json' with { type: 'json' };
 // 98.5% translated as of 2026-07-14
 import pt from './pt.json' with { type: 'json' };
 
+// 98.5% translated as of 2026-07-14
+import ty from './ty.json' with { type: 'json' };
+
 // 98.2% translated as of 2026-07-14
 import it from './it.json' with { type: 'json' };
 
@@ -24,9 +27,6 @@ import fr from './fr.json' with { type: 'json' };
 
 // 97.9% translated as of 2026-07-14
 import es from './es.json' with { type: 'json' };
-
-// 97.7% translated as of 2026-07-14
-import ty from './ty.json' with { type: 'json' };
 
 // 97.6% translated as of 2026-07-14
 import sl from './sl.json' with { type: 'json' };
