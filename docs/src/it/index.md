@@ -8,7 +8,7 @@ hero:
   image: /logo.svg
   actions:
     - theme: brand
-      text: Download
+      text: Scarica
       link: /download
     - theme: brand
       text: Informazioni
@@ -46,8 +46,8 @@ features:
     details: Sincronizza automaticamente i media dalle cartelle monitorate (come Dropbox o OneDrive) ed esporta i media in cartelle.
   - icon: 🎯
     title: Funzionalità avanzate
-    details: Import custom media, JWPUB files, playlists, audio Bible recordings, Study Bible media, public talk media, and manage multiple congregations.
+    details: Importa media personalizzati, file JWPUB, playlist, registrazioni audio della Bibbia, media della Bibbia per lo studio, media per i discorsi pubblici e gestisci più congregazioni.
   - icon: ⏱️
-    title: Meeting Timer and Recording Controls
-    details: Use an optional timer display for participant timing and control OBS or external recording apps from M³.
+    title: Timer dell'adunanza e controlli di registrazione
+    details: Usa un display timer facoltativo per cronometrare i partecipanti e controlla OBS o app di registrazione esterne da M³.
 ---
