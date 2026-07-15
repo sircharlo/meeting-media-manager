@@ -16,6 +16,7 @@ import { datesAreSame, formatDate, getSpecificWeekday } from 'src/utils/date';
 import { getTempPath, trimFilepathAsNeeded } from 'src/utils/fs';
 import { pad } from 'src/utils/general';
 import { isJwPlaylist, isVideo } from 'src/utils/media';
+import { createQueue } from 'src/utils/queue';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
@@ -39,10 +40,7 @@ export const pendingDays = new Set<string>();
 const dirtyDays = new Set<string>();
 
 const getQueue = async () => {
-  if (!folderExportQueue) {
-    const { default: PQueue } = await import('p-queue');
-    folderExportQueue = new PQueue({ concurrency: 2 });
-  }
+  folderExportQueue ??= await createQueue(2);
   return folderExportQueue;
 };
 

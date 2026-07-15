@@ -60,7 +60,6 @@ interface Store {
   currentCongregation: string;
   downloadProgress: DownloadProgressItems;
   extractedFiles: Partial<Record<string, string>>;
-  fetchingMeetingsCount: number;
   ffmpegPath: string;
   lastCacheClearAt: number;
   lookupInProgress: boolean;
@@ -355,11 +354,10 @@ export const useCurrentStateStore = defineStore('current-state', {
       return jwStore.jwSongs[currentLanguage]?.list || [];
     },
     // Single source of truth for "is a meeting refresh doing anything right
-    // now" - covers checking meeting dates, downloading files, and the
-    // legacy p-queue counter, so the island button, the popup, and the
-    // cache auto-clear guard can never disagree with each other.
+    // now" - covers checking meeting dates and downloading files, so the
+    // island button, the popup, and the cache auto-clear guard can never
+    // disagree with each other.
     hasActiveMediaWork(): boolean {
-      if (this.fetchingMeetingsCount > 0) return true;
       if (Object.values(this.meetingCheckStatus).includes('checking')) {
         return true;
       }
@@ -481,7 +479,6 @@ export const useCurrentStateStore = defineStore('current-state', {
       currentCongregation: '',
       downloadProgress: {},
       extractedFiles: {},
-      fetchingMeetingsCount: 0,
       ffmpegPath: '',
       lastCacheClearAt: 0,
       lookupInProgress: false,
