@@ -228,6 +228,8 @@
   "error": "Hiba",
   "error-reading-playlist-file": "A JW Library lejátszási lista fájl nem olvasható. Lehet, hogy sérült vagy érvénytelen.",
   "errorDownloadingMeetingMedia": "Hiba történt az összejöveteli média letöltése közben",
+  "excludeCbsPubs": "Exclude videos from these publications during the Congregation Bible Study",
+  "excludeCbsPubs-explain": "Videos referenced in these publications will not be shown during the Congregation Bible Study. Search by publication title or symbol.",
   "excludeFootnotes": "Média figyelmen kívül hagyása az Őrtorony-tanulmányozás lábjegyzeteiből",
   "excludeFootnotes-explain": "Ne használjon videókat vagy más médiaanyagokat az Őrtorony-cikkek lábjegyzeteiből.",
   "excludeTh": "Minden médiatartalom kihagyása a Tanítás füzetből",

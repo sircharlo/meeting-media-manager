@@ -228,6 +228,8 @@
   "error": "Hape",
   "error-reading-playlist-file": "’Aore i ti’a ’ia tai’ohia te vaira’a parau tāpura hōho’a a te JW Library. Pāpū roa ’ua ’ino tōna fā’ito ’aore rā ’ua hape.",
   "errorDownloadingMeetingMedia": "Hape i te fā’utara’a mai i te mau media nō te putuputura’a",
+  "excludeCbsPubs": "Exclude videos from these publications during the Congregation Bible Study",
+  "excludeCbsPubs-explain": "Videos referenced in these publications will not be shown during the Congregation Bible Study. Search by publication title or symbol.",
   "excludeFootnotes": "’A ’ūpooti i te mau media mai roto mai i te mau tātara’ra’a nō te Ha’api’ira’a o Te Pare Tia’ira’a",
   "excludeFootnotes-explain": "’Eiaha e fa’ari’i i te mau tāta’ira’a hōho’a ’aore rā i te tahi atu mau media mai roto mai i te mau tātara’ra’a nō te mau parau pāpa’i o Te Pare Tia’ira’a.",
   "excludeTh": "’A ’ūpooti i te mau media tā’āto’a mai roto mai i te porotita Ha’api’ira’a",

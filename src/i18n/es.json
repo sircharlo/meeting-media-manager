@@ -228,6 +228,8 @@
   "error": "Error",
   "error-reading-playlist-file": "El archivo de lista de reproducción de JW Library no pudo ser leído. Puede estar corrupto o no ser válido.",
   "errorDownloadingMeetingMedia": "Error al descargar archivos multimedia de reunión",
+  "excludeCbsPubs": "Excluir videos de estas publicaciones durante el Estudio Bíblico de Presentación",
+  "excludeCbsPubs-explain": "Los videos referenciados en estas publicaciones no se mostrarán durante el Estudio Bíblico de Representación. Búsqueda por título o símbolo.",
   "excludeFootnotes": "Excluir los contenidos de las notas al pie de página en La Atalaya, edición de Estudio",
   "excludeFootnotes-explain": "No incluya vídeos u otros medios a partir de notas a pie de página en los artículos de la Atalaya.",
   "excludeTh": "Excluir todos los medios de comunicación del folleto Maestros",

@@ -228,6 +228,8 @@
   "error": "Fehler",
   "error-reading-playlist-file": "Die JW Library-Wiedergabelistendatei konnte nicht gelesen werden. Sie ist möglicherweise beschädigt oder ungültig.",
   "errorDownloadingMeetingMedia": "Fehler beim Herunterladen der Medien",
+  "excludeCbsPubs": "Videos aus diesen Publikationen während der Bibelstudie der Kongregation ausschließen",
+  "excludeCbsPubs-explain": "Videos, auf die in diesen Publikationen verwiesen wird, werden während der Bibelstudie der Kongregation nicht angezeigt.",
   "excludeFootnotes": "Medien aus Fußnoten des Wachtturmstudiums ausschließen",
   "excludeFootnotes-explain": "Videos oder andere Medien aus Fußnoten von Wachtturm-Artikeln ausschließen.",
   "excludeTh": "Medien der Lesen-und-Lehren-Broschüre ausnehmen",

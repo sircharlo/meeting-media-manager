@@ -228,6 +228,8 @@
   "error": "Viga",
   "error-reading-playlist-file": "JW Library esitusloendi faili ei õnnestunud lugeda. See võib olla rikutud või kehtetu.",
   "errorDownloadingMeetingMedia": "Viga meediafailide allalaadimisel",
+  "excludeCbsPubs": "Exclude videos from these publications during the Congregation Bible Study",
+  "excludeCbsPubs-explain": "Videos referenced in these publications will not be shown during the Congregation Bible Study. Search by publication title or symbol.",
   "excludeFootnotes": "Ära impordi meediat Vahitorni märkustest",
   "excludeFootnotes-explain": "Ära impordi videoid või muid meedifaile Vahitorni artiklitest.",
   "excludeTh": "Ära arvesta \"Õpeta armastusega\" brošüürist meediafaile",

@@ -228,6 +228,8 @@
   "error": "Napaka",
   "error-reading-playlist-file": "Datoteke seznama predvajanja JW Library ni mogoče prebrati. Morda je poškodovana ali neveljavna.",
   "errorDownloadingMeetingMedia": "Napaka pri prenosu multimedijske vsebine za shod",
+  "excludeCbsPubs": "Exclude videos from these publications during the Congregation Bible Study",
+  "excludeCbsPubs-explain": "Videos referenced in these publications will not be shown during the Congregation Bible Study. Search by publication title or symbol.",
   "excludeFootnotes": "Ne vključi multimedije iz podčrtnih opomb v preučevalni izdaji Stražnega stolpa",
   "excludeFootnotes-explain": "Ne vključi videoposnetkov ali druge multimedijske vsebine iz podčrtnih opomb v Stražnem stolpu.",
   "excludeTh": "Ne vključi nobene multimedijske vsebine iz brošure Posvečaj se branju in poučevanju",
