@@ -58,6 +58,11 @@
     :setting-id="settingId"
     use-input
   />
+  <PubSymbolsInput
+    v-else-if="item.type === 'pubSymbols'"
+    v-model="model"
+    v-bind="$attrs"
+  />
   <ShortcutInput
     v-else-if="item.type === 'shortcut'"
     v-model="model"
@@ -80,6 +85,7 @@ import type { SettingsItem, SettingsValues } from 'src/types';
 import ColorInput from 'components/form-inputs/ColorInput.vue';
 import DateInput from 'components/form-inputs/DateInput.vue';
 import FolderInput from 'components/form-inputs/FolderInput.vue';
+import PubSymbolsInput from 'components/form-inputs/PubSymbolsInput.vue';
 import SelectInput from 'components/form-inputs/SelectInput.vue';
 import ShortcutInput from 'components/form-inputs/ShortcutInput.vue';
 import SliderInput from 'components/form-inputs/SliderInput.vue';
