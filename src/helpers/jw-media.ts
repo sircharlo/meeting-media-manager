@@ -114,6 +114,7 @@ import {
 
 import {
   createMeetingSections,
+  findMediaSection,
   getExportedFilenamePlacement,
   getWatchedMediaSectionInfo,
 } from './media-sections';
@@ -1738,7 +1739,26 @@ const processQueuedMeetingDay = async (day: DateInfo) => {
   day.mediaSections ??= [];
   createMeetingSections(day);
   replaceMissingMediaByPubMediaId(day, fetchResult.media);
+  applyFetchedSectionTitles(day, fetchResult.sectionTitles);
   updateFetchedMeetingDayStatus(day, fetchResult.error);
+};
+
+// The document title (e.g. the specific Watchtower study article) isn't
+// known until the media fetch resolves, so it's applied as a subtitle onto
+// the already-created section config rather than being part of the
+// standard section setup in createMeetingSections().
+const applyFetchedSectionTitles = (
+  day: DateInfo,
+  sectionTitles?: Partial<Record<MediaSectionIdentifier, string>>,
+) => {
+  if (!sectionTitles) return;
+  for (const [sectionId, title] of Object.entries(sectionTitles)) {
+    const section = findMediaSection(
+      day.mediaSections ?? [],
+      sectionId as MediaSectionIdentifier,
+    );
+    if (section) section.config.documentTitle = title;
+  }
 };
 
 const shouldSkipMeteredMeeting = (
@@ -2903,6 +2923,7 @@ const getWtIssue = async (
   docId: number;
   issueString: string;
   publication: PublicationFetcher;
+  title: string;
   weekNr: number;
 }> => {
   const defaultResult: {
@@ -2910,6 +2931,7 @@ const getWtIssue = async (
     docId: number;
     issueString: string;
     publication: PublicationFetcher;
+    title: string;
     weekNr: number;
   } = {
     db: '',
@@ -2919,6 +2941,7 @@ const getWtIssue = async (
       langwritten: '',
       pub: '',
     },
+    title: '',
     weekNr: -1,
   };
   try {
@@ -2952,12 +2975,13 @@ const getWtIssue = async (
     if (weekNr === -1) {
       return defaultResult;
     }
-    const docId =
-      executeQuery<{ DocumentId: number }>(
-        db,
-        `SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET ${weekNr}`,
-      )[0]?.DocumentId ?? -1;
-    return { db, docId, issueString, publication, weekNr };
+    const wtDocument = executeQuery<{ DocumentId: number; Title: string }>(
+      db,
+      `SELECT Document.DocumentId, Document.Title FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET ${weekNr}`,
+    )[0];
+    const docId = wtDocument?.DocumentId ?? -1;
+    const title = wtDocument?.Title ?? '';
+    return { db, docId, issueString, publication, title, weekNr };
   } catch (e) {
     if (lastChance) errorCatcher(e);
     return defaultResult;
@@ -3666,6 +3690,7 @@ const getEmptyWeekendIssue = () => ({
     langwritten: '' as const,
     pub: '',
   },
+  title: '',
   weekNr: -1,
 });
 
@@ -3900,7 +3925,18 @@ const mergeWeekendSongs = (
   return allMedia;
 };
 
-export const getWeMedia = async (lookupDate: Date) => {
+// Shared by getWeMedia/getMwMedia so fetchMeetingMediaForDay's inferred
+// return type carries `sectionTitles` as optional on both branches, instead
+// of TS rejecting the property access on whichever branch omits it.
+interface MeetingMediaFetchResult {
+  error: boolean;
+  media: Record<string, MediaItem[]>;
+  sectionTitles?: Partial<Record<MediaSectionIdentifier, string>>;
+}
+
+export const getWeMedia = async (
+  lookupDate: Date,
+): Promise<MeetingMediaFetchResult> => {
   log(
     `Getting weekend meeting media for date: ${formatDate(lookupDate, 'YYYYMMDD')}`,
     'weMedia',
@@ -3920,7 +3956,7 @@ export const getWeMedia = async (lookupDate: Date) => {
     }
 
     const monday = getSpecificWeekday(lookupDate, 0);
-    const { db, docId, issueString, publication } =
+    const { db, docId, issueString, publication, title } =
       await getWeekendIssueWithFallback(monday, lookupDate);
 
     if (!db || docId < 0) {
@@ -4080,6 +4116,7 @@ export const getWeMedia = async (lookupDate: Date) => {
     return {
       error: false,
       media: { wt: mediaForDay },
+      sectionTitles: title ? { wt: title } : undefined,
     };
   } catch (e) {
     errorCatcher(e, {
@@ -4092,7 +4129,9 @@ export const getWeMedia = async (lookupDate: Date) => {
   }
 };
 
-export const getMwMedia = async (lookupDate: Date) => {
+export const getMwMedia = async (
+  lookupDate: Date,
+): Promise<MeetingMediaFetchResult> => {
   log(
     `Getting midweek meeting media for date: ${formatDate(lookupDate, 'YYYYMMDD')}`,
     'mwMedia',

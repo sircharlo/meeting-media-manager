@@ -223,13 +223,11 @@ export const getSectionBgColor = (section: MediaSection | undefined) => {
   return section.bgColor || 'var(--q-primary)';
 };
 
-export const getTextColor = (section?: MediaSectionWithConfig) => {
-  const bgColor = section?.config?.bgColor;
-  if (!bgColor) return '#ffffff';
-  // Convert HEX to RGB
+// Parses a "#rgb"/"#rrggbb" or "rgb(a)(...)" color string into channels.
+const parseColorToRgb = (color: string): [number, number, number] | null => {
   let b, g, r;
-  if (bgColor.startsWith('#')) {
-    const hex = bgColor.replace('#', '');
+  if (color.startsWith('#')) {
+    const hex = color.replace('#', '');
     [r, g, b] = [0, 1, 2].map((i) =>
       Number.parseInt(
         hex.length === 3
@@ -238,12 +236,26 @@ export const getTextColor = (section?: MediaSectionWithConfig) => {
         16,
       ),
     );
-  } else if (bgColor.startsWith('rgb')) {
-    [r, g, b] = bgColor
+  } else if (color.startsWith('rgb')) {
+    [r, g, b] = color
       .replaceAll(/rgba?|\(|\)|\s/g, '')
       .split(',')
       .map(Number);
   } else {
+    return null;
+  }
+
+  return r === undefined || g === undefined || b === undefined
+    ? null
+    : [r, g, b];
+};
+
+export const getTextColor = (section?: MediaSectionWithConfig) => {
+  const bgColor = section?.config?.bgColor;
+  if (!bgColor) return '#ffffff';
+
+  const rgb = parseColorToRgb(bgColor);
+  if (!rgb) {
     errorCatcher(new Error('Invalid color format'), {
       contexts: {
         fn: {
@@ -254,10 +266,10 @@ export const getTextColor = (section?: MediaSectionWithConfig) => {
     });
     return '#ffffff'; // Default to white if invalid input
   }
+  const [r, g, b] = rgb;
 
   // Calculate relative luminance
-  const luminance = (val: number | undefined) => {
-    if (val === undefined) return 0;
+  const luminance = (val: number) => {
     val /= 255;
     return val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4);
   };
@@ -267,6 +279,47 @@ export const getTextColor = (section?: MediaSectionWithConfig) => {
 
   // Return white or black based on contrast
   return lum > 0.3 ? '#000000' : '#ffffff';
+};
+
+// Mirrors the hardcoded left-bar colors in the `.media-section` SCSS rules
+// for the meeting sections that always use the same color (see app.scss).
+// Custom sections (including "imported-media" and "pt") use their own
+// stored bgColor instead, applied via the `--bg-color` CSS variable.
+const STANDARD_SECTION_COLORS: Record<string, string> = {
+  ayfm: 'rgb(214, 143, 0)',
+  'circuit-overseer': 'rgb(148, 94, 181)',
+  lac: 'rgb(191, 47, 19)',
+  tgw: 'rgb(60, 127, 139)',
+  wt: 'rgb(214, 143, 0)',
+};
+
+export const getSectionAccentColor = (
+  sectionId: MediaSectionIdentifier | undefined,
+  mediaSections?: MediaSectionWithConfig[],
+): string => {
+  const standardColor = sectionId ? STANDARD_SECTION_COLORS[sectionId] : null;
+  if (standardColor) return standardColor;
+
+  const section = sectionId
+    ? findMediaSection(mediaSections ?? [], sectionId)
+    : undefined;
+  return section?.config.bgColor || defaultAdditionalSection.config.bgColor;
+};
+
+export const withAlpha = (color: string, alpha: number): string => {
+  const rgb = parseColorToRgb(color);
+  if (!rgb) return color;
+  const [r, g, b] = rgb;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
+export const mixWithWhite = (color: string, weight: number): string => {
+  const rgb = parseColorToRgb(color);
+  if (!rgb) return color;
+  const [r, g, b] = rgb;
+  const mix = (channel: number) =>
+    Math.round(channel * (1 - weight) + 255 * weight);
+  return `rgb(${mix(r)}, ${mix(g)}, ${mix(b)})`;
 };
 
 const getNumericSortOrder = (item?: MediaItem) => {

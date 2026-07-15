@@ -97,7 +97,12 @@
             "
             class="row items-center justify-center q-mt-lg q-gutter-md"
           >
-            <q-btn color="primary" outline @click="goToNextDayWithMedia()">
+            <q-btn
+              class="btn-tonal"
+              color="primary"
+              flat
+              @click="goToNextDayWithMedia()"
+            >
               <q-icon class="q-mr-sm" name="mmm-go-to-date" size="xs" />
               {{ t('next-day-with-media') }}
             </q-btn>

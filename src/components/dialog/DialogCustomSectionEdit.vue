@@ -50,7 +50,7 @@
               </q-item-section>
               <q-item-section side>
                 <div class="row">
-                  <q-btn flat icon="mmm-palette" round>
+                  <q-btn class="btn-tonal" flat icon="mmm-palette" round>
                     <q-tooltip :delay="500">{{ t('change-color') }}</q-tooltip>
                     <q-popup-proxy
                       cover
@@ -72,6 +72,7 @@
                   </q-btn>
 
                   <q-btn
+                    class="btn-tonal"
                     color="negative"
                     flat
                     icon="mmm-delete"

@@ -626,13 +626,76 @@ a {
   flex: 0 0 auto;
 }
 
-.media-tag {
-  min-width: 80px;
-  border-radius: 6px;
+// A soft wash of the button's own current color instead of a border, so
+// small icon-only actions still read as clearly filled/interactive at rest
+// without the stroked-ring look of an outline button. `currentColor` picks
+// up whatever text color the button already has (a Quasar text-* utility,
+// or a custom color like the per-section --bg-color), so this one class
+// works everywhere without needing a variant per color.
+.btn-tonal {
+  background: color-mix(in srgb, currentColor 16%, transparent);
 }
 
-.media-tag .q-chip__content {
+.media-tag {
+  border-radius: 11px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  height: 48px;
+  overflow: hidden;
+  width: 44px;
+}
+
+.media-tag__icon,
+.media-tag__value {
+  align-items: center;
+  display: flex;
+  flex: 1 1 0;
   justify-content: center;
+  min-height: 0;
+  overflow: hidden;
+  width: 100%;
+}
+
+.media-tag__icon {
+  font-size: 18px;
+}
+
+.media-tag__value {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  padding: 0 3px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Icon-only tags carry no content (source/provenance markers, e.g. watched
+// or fetched-as-additional-media) and sit next to the transport controls, so
+// they stay small and quiet rather than competing with the play button.
+.media-tag--icon-only {
+  border-radius: 8px;
+  height: 26px;
+  width: 26px;
+}
+
+.media-tag--icon-only .media-tag__icon {
+  flex: 1 1 100%;
+  font-size: 13px;
+}
+
+// Song tag's value text picks up the cap's blue instead of the default ink
+// color, so the number reads as part of the same tag as the note icon above
+// it. Set explicitly (rather than the text-accent-* utilities) because those
+// are remapped for use on the page background, not on this chip's own
+// bg-accent-200 fill, and collide with it in dark mode.
+.media-tag--song .media-tag__value {
+  color: $accent-400;
+}
+
+body.body--dark .media-tag--song .media-tag__value {
+  color: $accent-200;
 }
 
 .q-menu .q-item__section--avatar,

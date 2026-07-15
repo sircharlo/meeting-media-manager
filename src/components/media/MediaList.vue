@@ -37,79 +37,81 @@
       :some-items-are-hidden="someItemsAreHidden"
     />
     <!-- Media Items -->
-    <div
-      v-show="!isCollapsed || hasMediaFilterTerms"
-      ref="dragDropContainer"
-      class="sortable-media"
-      :class="{ 'drop-here': isDragging }"
-      :data-list="mediaList.config?.uniqueId"
-    >
-      <template v-for="element in sortableItems" :key="element.uniqueId">
-        <!-- Render dividers -->
-        <MediaDivider
-          v-if="element.type === 'divider'"
-          :divider="element as any"
-          @delete="handleDeleteDivider"
-          @update:color="
-            (bgColor, textColor) =>
-              handleUpdateDividerColor(element.uniqueId, bgColor, textColor)
-          "
-          @update:title="
-            (title) => handleUpdateDividerTitle(element.uniqueId, title)
-          "
-        />
-        <!-- Render media groups -->
-        <MediaGroup
-          v-else-if="element.children"
-          :element="element"
-          :expanded="expandedGroups[element.uniqueId] ?? false"
-          :media-filter-terms="mediaFilterTerms"
-          :selected="selectedMediaItems?.includes(element.uniqueId)"
-          :selected-media-items="selectedMediaItems"
-          @item-clicked="
-            (payload) =>
-              emit('item-clicked', {
-                event: payload.event as MouseEvent,
-                mediaItemId: payload.mediaItemId,
-                sectionId: element.uniqueId,
+    <q-slide-transition>
+      <div
+        v-show="!isCollapsed || hasMediaFilterTerms"
+        ref="dragDropContainer"
+        class="sortable-media"
+        :class="{ 'drop-here': isDragging }"
+        :data-list="mediaList.config?.uniqueId"
+      >
+        <template v-for="element in sortableItems" :key="element.uniqueId">
+          <!-- Render dividers -->
+          <MediaDivider
+            v-if="element.type === 'divider'"
+            :divider="element as any"
+            @delete="handleDeleteDivider"
+            @update:color="
+              (bgColor, textColor) =>
+                handleUpdateDividerColor(element.uniqueId, bgColor, textColor)
+            "
+            @update:title="
+              (title) => handleUpdateDividerTitle(element.uniqueId, title)
+            "
+          />
+          <!-- Render media groups -->
+          <MediaGroup
+            v-else-if="element.children"
+            :element="element"
+            :expanded="expandedGroups[element.uniqueId] ?? false"
+            :media-filter-terms="mediaFilterTerms"
+            :selected="selectedMediaItems?.includes(element.uniqueId)"
+            :selected-media-items="selectedMediaItems"
+            @item-clicked="
+              (payload) =>
+                emit('item-clicked', {
+                  event: payload.event as MouseEvent,
+                  mediaItemId: payload.mediaItemId,
+                  sectionId: element.uniqueId,
+                })
+            "
+            @update:child-hidden="
+              element.children?.forEach((child) => (child.hidden = !!$event))
+            "
+            @update:expanded="expandedGroups[element.uniqueId] = $event"
+            @update:hidden="element.hidden = !!$event"
+          />
+          <!-- Render media items -->
+          <MediaItem
+            v-else
+            v-model:repeat="element.repeat"
+            :media="element"
+            :media-filter-terms="mediaFilterTerms"
+            :selected="selectedMediaItems?.includes(element.uniqueId)"
+            :selected-media-items="selectedMediaItems"
+            @click="
+              (evt) =>
+                emit('item-clicked', {
+                  event: evt as MouseEvent,
+                  mediaItemId: element.uniqueId,
+                  sectionId: props.mediaList.config?.uniqueId,
+                })
+            "
+            @update:custom-duration="
+              element.customDuration = JSON.parse($event) || undefined
+            "
+            @update:hidden="element.hidden = !!$event"
+            @update:relink="Object.assign(element, $event)"
+            @update:tag="element.tag = $event"
+            @update:title="
+              nextTick(() => {
+                element.title = $event;
               })
-          "
-          @update:child-hidden="
-            element.children?.forEach((child) => (child.hidden = !!$event))
-          "
-          @update:expanded="expandedGroups[element.uniqueId] = $event"
-          @update:hidden="element.hidden = !!$event"
-        />
-        <!-- Render media items -->
-        <MediaItem
-          v-else
-          v-model:repeat="element.repeat"
-          :media="element"
-          :media-filter-terms="mediaFilterTerms"
-          :selected="selectedMediaItems?.includes(element.uniqueId)"
-          :selected-media-items="selectedMediaItems"
-          @click="
-            (evt) =>
-              emit('item-clicked', {
-                event: evt as MouseEvent,
-                mediaItemId: element.uniqueId,
-                sectionId: props.mediaList.config?.uniqueId,
-              })
-          "
-          @update:custom-duration="
-            element.customDuration = JSON.parse($event) || undefined
-          "
-          @update:hidden="element.hidden = !!$event"
-          @update:relink="Object.assign(element, $event)"
-          @update:tag="element.tag = $event"
-          @update:title="
-            nextTick(() => {
-              element.title = $event;
-            })
-          "
-        />
-      </template>
-    </div>
+            "
+          />
+        </template>
+      </div>
+    </q-slide-transition>
 
     <!-- Add Divider Dialog -->
     <DialogAddDivider

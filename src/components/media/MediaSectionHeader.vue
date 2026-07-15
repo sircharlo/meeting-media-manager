@@ -26,7 +26,7 @@
 
     <q-item-section
       ref="sectionHeader"
-      class="text-bold text-uppercase text-spaced row justify-between col-grow"
+      class="col-grow"
       :class="{ 'cursor-pointer': isHovered && isCustom }"
       @click.stop="isCustom && !canCollapse ? undefined : () => {}"
       @dblclick="isCustom ? handleDoubleClick() : undefined"
@@ -42,22 +42,27 @@
         @keyup.esc="handleRename(false)"
       />
       <template v-else>
-        {{
-          !mediaList.config?.label &&
-          (mediaList.config?.uniqueId === 'imported-media' ||
-            mediaList.config?.uniqueId.startsWith('custom-'))
-            ? t('imported-media')
-            : mediaList.config?.label || t(mediaList.config?.uniqueId)
-        }}
+        <div class="text-bold text-uppercase text-spaced row justify-between">
+          {{
+            !mediaList.config?.label &&
+            (mediaList.config?.uniqueId === 'imported-media' ||
+              mediaList.config?.uniqueId.startsWith('custom-'))
+              ? t('imported-media')
+              : mediaList.config?.label || t(mediaList.config?.uniqueId)
+          }}
+        </div>
+        <div v-if="mediaList.config?.documentTitle" class="section-subtitle">
+          {{ mediaList.config.documentTitle }}
+        </div>
       </template>
     </q-item-section>
 
     <q-item-section side>
-      <div class="row items-center">
+      <div class="row items-center q-gutter-sm">
         <!-- Three-dots menu for other controls -->
         <template v-if="isCustom && !selectedDayMeetingType">
           <q-btn
-            class="custom-text-color"
+            class="custom-text-color btn-tonal"
             flat
             icon="mmm-dots"
             round
@@ -182,26 +187,21 @@
         <!-- Add Media Button -->
         <template v-if="hasAddMediaButton">
           <q-btn
-            class="add-media-shortcut"
-            :class="[
-              !buttonLabel
-                ? 'custom-text-color'
-                : 'bg-' + mediaList.config?.uniqueId,
-            ]"
+            class="add-media-shortcut btn-tonal"
+            :class="!buttonLabel ? 'custom-text-color' : undefined"
             :color="
               !isCustom || (isCustom && selectedDayMeetingType === 'we')
                 ? mediaList.config?.uniqueId
                 : undefined
             "
-            :flat="!buttonLabel"
+            flat
             :icon="isSongButton ? 'mmm-music-note' : 'mmm-add-media'"
             :label="buttonLabel"
-            :outline="!!buttonLabel"
             :round="!buttonLabel"
             size="sm"
             @click.stop="handleAddClick"
           >
-            <q-tooltip v-if="!$q.screen.gt.xs" :delay="500">
+            <q-tooltip :delay="500">
               {{ tooltipText }}
             </q-tooltip>
           </q-btn>
@@ -209,9 +209,9 @@
         <!-- Chevron for collapsing (non-meeting days only) -->
         <template v-if="canCollapse">
           <q-btn
-            class="q-ml-sm"
+            class="btn-tonal"
             color="primary"
-            :flat="!collapsed"
+            flat
             :icon="collapsed ? 'mmm-left' : 'mmm-down'"
             round
             size="sm"
@@ -417,5 +417,17 @@ defineExpose({
 .add-media-shortcut {
   max-width: 100%;
   border-radius: 4px;
+}
+
+// Sits below the (bold, uppercase) section title as a quieter second line,
+// so the specific document (e.g. this week's study article) reads as
+// detail rather than competing with the section name for attention.
+.section-subtitle {
+  font-size: 0.8em;
+  font-weight: 500;
+  opacity: 0.75;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

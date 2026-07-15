@@ -110,6 +110,7 @@ export interface MediaItem {
 
 export interface MediaSection {
   bgColor?: string;
+  documentTitle?: string;
   jwIconKeyword?: string;
   label?: string;
   repeat?: boolean; // Whether the section should repeat

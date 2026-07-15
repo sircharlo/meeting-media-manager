@@ -25,7 +25,7 @@
           </template>
           <q-spinner v-else color="primary" size="sm" />
         </div>
-        <q-btn color="primary" outline @click="browse">
+        <q-btn color="primary" @click="browse">
           <q-icon class="q-mr-sm" name="mmm-local-media" />
           {{ s34Db ? t('replace') : t('browse') }}
         </q-btn>

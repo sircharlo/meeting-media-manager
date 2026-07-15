@@ -26,9 +26,10 @@
               "
             />
             <q-btn
+              class="btn-tonal"
               color="primary"
+              flat
               :label="t('import-profile-settings')"
-              outline
               @click="importProfileSettingsForWizard"
             />
             <q-btn
@@ -88,10 +89,11 @@
             <TextInput v-model="currentSettings.congregationName" />
             <q-btn
               v-if="regularProfile"
+              class="btn-tonal"
               color="primary"
+              flat
               icon="mmm-search"
               :label="t('congregation-lookup')"
-              outline
               @click="openCongregationLookup"
             />
           </div>
@@ -310,11 +312,11 @@
           <p>
             {{ t('look-for-this-button-in-m-s-footer') }}
             <q-btn
-              class="super-rounded q-ml-sm"
+              class="super-rounded q-ml-sm btn-tonal"
               color="primary"
               disable
+              flat
               icon="mmm-media-display-active"
-              outline
             />
           </p>
           <p>
@@ -352,11 +354,11 @@
           <p>
             {{ t('also-look-for-this-button-in-m-s-footer') }}
             <q-btn
-              class="super-rounded q-ml-sm"
+              class="super-rounded q-ml-sm btn-tonal"
               color="primary"
               disable
+              flat
               icon="mmm-music-note"
-              outline
             />
           </p>
           <p>

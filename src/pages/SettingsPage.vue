@@ -88,15 +88,17 @@
               >
                 <div class="q-gutter-sm row justify-end">
                   <q-btn
+                    class="btn-tonal"
                     color="primary"
+                    flat
                     :label="t('export-profile-settings')"
-                    outline
                     @click="exportCurrentProfileSettings"
                   />
                   <q-btn
+                    class="btn-tonal"
                     color="primary"
+                    flat
                     :label="t('import-profile-settings')"
-                    outline
                     @click="importCurrentProfileSettings"
                   />
                 </div>

@@ -687,7 +687,7 @@ const getEventDayColor = (eventDate: string) => {
     if (lookupDate?.status === 'error') {
       return 'negative';
     } else if (lookupDate?.status === 'complete' || isMemorialDay(eventDate)) {
-      return 'primary';
+      return 'positive';
     }
     if (additionalMediaForDayExists(eventDate)) return 'imported-media';
   } catch (error) {

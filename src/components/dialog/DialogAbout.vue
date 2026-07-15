@@ -157,18 +157,16 @@
             :label="t('auto-update-app')"
             unchecked-icon="mmm-clear"
           />
-          <q-btn
+          <q-icon
             v-if="!updatesEnabled"
             color="negative"
-            flat
-            icon="mmm-warning"
-            round
+            name="mmm-warning"
             size="sm"
           >
             <q-tooltip>
               {{ t('auto-update-app-explain') }}
             </q-tooltip>
-          </q-btn>
+          </q-icon>
         </div>
       </div>
       <div v-if="updatesEnabled" class="row">
@@ -184,17 +182,15 @@
           >
             {{ t('receive-beta-updates') }}
           </q-toggle>
-          <q-btn
+          <q-icon
             :color="betaUpdatesEnabled ? 'negative' : 'primary'"
-            flat
-            :icon="betaUpdatesEnabled ? 'mmm-warning' : 'mmm-info'"
-            round
+            :name="betaUpdatesEnabled ? 'mmm-warning' : 'mmm-info'"
             size="sm"
           >
             <q-tooltip>
               {{ t('receive-beta-updates-explain') }}
             </q-tooltip>
-          </q-btn>
+          </q-icon>
         </div>
       </div>
     </div>

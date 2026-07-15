@@ -98,6 +98,9 @@
                         : ''
                     }}
                     {{ formatTime(mediaCustomDuration.max ?? media.duration) }}
+                    <q-tooltip :delay="500">
+                      {{ t('set-custom-durations') }}
+                    </q-tooltip>
                   </q-badge>
                 </q-img>
               </div>
@@ -176,6 +179,7 @@
                   @click="zoomReset(true)"
                 >
                   <q-icon color="white" name="mmm-reset" />
+                  <q-tooltip :delay="500">{{ t('reset-zoom') }}</q-tooltip>
                 </q-badge>
               </div>
             </transition>
@@ -200,6 +204,7 @@
                     @mouseup="stopZoom"
                   >
                     <q-icon color="white" name="mmm-minus" />
+                    <q-tooltip :delay="500">{{ t('zoom-out') }}</q-tooltip>
                   </q-badge>
                   <q-separator class="bg-grey-8 q-my-xs" vertical />
                   <q-badge
@@ -211,6 +216,7 @@
                     @mouseup="stopZoom"
                   >
                     <q-icon color="white" name="mmm-plus" />
+                    <q-tooltip :delay="500">{{ t('zoom-in') }}</q-tooltip>
                   </q-badge>
                 </div>
               </div>
@@ -256,6 +262,9 @@
                   : ''
               }}
               {{ formatTime(mediaCustomDuration.max ?? media.duration) }}
+              <q-tooltip :delay="500">
+                {{ t('set-custom-durations') }}
+              </q-tooltip>
             </q-badge>
             <BaseDialog
               v-model="mediaDurationPopup"
@@ -359,58 +368,53 @@
       </div>
       <div class="col">
         <div class="row items-center">
-          <div
-            v-if="
-              (media.source !== 'dynamic' &&
-                !currentSettings?.disableMediaFetching &&
-                fileIsAvailable &&
-                !(isDemoMode && !media.tag?.type)) ||
-              media.tag?.type
-            "
-            :class="mediaTagClasses"
-            side
-          >
-            <q-chip
-              :class="[
-                'media-tag full-width',
-                media.tag?.type === 'song'
-                  ? currentSongIsDuplicated
-                    ? 'bg-warning'
-                    : 'bg-accent-400'
-                  : 'bg-accent-200',
-              ]"
-              :clickable="false"
-              :ripple="false"
-              :text-color="media.tag?.type === 'song' ? 'white' : undefined"
+          <div v-if="showContentTag" :class="mediaTagClasses" side>
+            <div
+              class="media-tag"
+              :class="{
+                'media-tag--icon-only': !tagValueText,
+                'media-tag--song': tagVariant === 'song',
+              }"
+              @dblclick="openEditTagDialog"
             >
-              <q-icon
-                :class="{ 'q-mr-xs': media.tag?.type }"
-                :name="
-                  media.source === 'watched'
-                    ? 'mmm-watched-media'
-                    : media.source === 'additional' &&
-                        !currentSettings?.disableMediaFetching &&
-                        fileIsAvailable
-                      ? 'mmm-add-media'
-                      : media.tag?.type === 'paragraph'
-                        ? media.tag.value !== FOOTNOTE_TARGET_PARAGRAPH
-                          ? 'mmm-paragraph'
-                          : 'mmm-footnote'
-                        : 'mmm-music-note'
+              <div
+                class="media-tag__icon text-white"
+                :class="
+                  tagVariant === 'song'
+                    ? 'bg-accent-400'
+                    : tagVariant === 'warn'
+                      ? 'bg-warning'
+                      : tagVariant === 'neutral'
+                        ? 'bg-accent-300'
+                        : undefined
                 "
-              />
-              <q-tooltip v-if="tagTooltipText" :delay="500">
-                {{ tagTooltipText }}
+                :style="
+                  tagVariant === 'paragraph' ? paragraphCapStyle : undefined
+                "
+              >
+                <q-icon :name="tagIconName" />
+              </div>
+              <div
+                v-if="tagValueText"
+                class="media-tag__value"
+                :class="
+                  tagVariant === 'warn'
+                    ? 'bg-warning text-white'
+                    : tagVariant === 'song'
+                      ? 'bg-accent-200'
+                      : undefined
+                "
+                :style="[
+                  { fontSize: tagValueFontSize },
+                  tagVariant === 'paragraph' ? paragraphValueStyle : {},
+                ]"
+              >
+                {{ tagValueText }}
+              </div>
+              <q-tooltip v-if="contentTagTooltipText" :delay="500">
+                {{ contentTagTooltipText }}
               </q-tooltip>
-              <template v-if="media?.tag?.type">
-                {{
-                  media.tag?.type === 'paragraph' &&
-                  media.tag.value === FOOTNOTE_TARGET_PARAGRAPH
-                    ? t('footnote')
-                    : media.tag?.value
-                }}
-              </template>
-            </q-chip>
+            </div>
           </div>
           <div
             :class="{
@@ -497,9 +501,10 @@
                   !fileIsAvailable &&
                   !streamIsAvailable
                 "
+                class="btn-tonal"
                 color="primary"
+                flat
                 icon="mmm-folder-open"
-                outline
                 round
                 size="sm"
                 @click.stop="locateMissingFile"
@@ -530,9 +535,10 @@
               </q-icon>
               <q-btn
                 v-if="playbackRate !== 1"
+                class="btn-tonal"
                 color="negative"
+                flat
                 icon="mmm-playback-speed"
-                outline
                 round
                 size="sm"
                 @click.stop="changePlaybackRate(0, true)"
@@ -614,6 +620,13 @@
             </div>
           </div>
         </transition>
+      </div>
+      <div v-if="showSourceTag" class="col-shrink q-mr-sm">
+        <q-icon color="accent-400" :name="sourceIconName" size="sm">
+          <q-tooltip v-if="sourceTooltipText" :delay="500">
+            {{ sourceTooltipText }}
+          </q-tooltip>
+        </q-icon>
       </div>
       <template v-if="shouldShowPlayButton">
         <div
@@ -712,9 +725,10 @@
             <q-btn
               v-if="mediaPlaying.action === 'pause'"
               ref="pauseResumeButton"
+              class="btn-tonal"
               color="primary"
+              flat
               icon="mmm-play"
-              outline
               rounded
               @click="mediaPlaying.action = 'play'"
             />
@@ -725,9 +739,10 @@
                 (mediaPlaying.action === 'play' || !mediaPlaying.action)
               "
               ref="pauseResumeButton"
+              class="btn-tonal"
               color="negative"
+              flat
               icon="mmm-pause"
-              outline
               rounded
               @click="mediaPlaying.action = 'pause'"
             />
@@ -867,7 +882,7 @@
                 <q-item-label caption>{{ t('rename-explain') }}</q-item-label>
               </q-item-section>
             </q-item>
-            <q-item v-close-popup clickable @click="mediaEditTagDialog = true">
+            <q-item v-close-popup clickable @click="openEditTagDialog">
               <q-item-section avatar>
                 <q-icon name="mmm-tag" />
               </q-item-section>
@@ -1039,8 +1054,9 @@
                         startSelectedMarker.VideoMarkerId ===
                           marker.VideoMarkerId))
                   "
+                  class="btn-tonal"
                   color="primary"
-                  outline
+                  flat
                   push
                   rounded
                   size="sm"
@@ -1095,28 +1111,19 @@
           :options="tagTypes"
         />
         <q-input
+          ref="tagValueInput"
           v-model="mediaTag.value"
           dense
           :disable="!mediaTag.type"
-          focused
           outlined
         />
       </q-card-section>
       <q-card-actions align="right">
         <q-btn
-          color="negative"
-          flat
-          :label="t('dismiss')"
-          @click="mediaEditTagDialog = false"
-        />
-        <q-btn
           color="primary"
           flat
-          :label="t('save')"
-          @click="
-            emit('update:tag', mediaTag);
-            mediaEditTagDialog = false;
-          "
+          :label="t('close')"
+          @click="mediaEditTagDialog = false"
         />
       </q-card-actions>
     </q-card>
@@ -1195,7 +1202,7 @@ import {
 } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
-import { type QBtn, type QImg, QItem, useQuasar } from 'quasar';
+import { type QBtn, type QImg, type QInput, QItem, useQuasar } from 'quasar';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { FOOTNOTE_TARGET_PARAGRAPH } from 'src/constants/jw';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -1204,6 +1211,11 @@ import {
   copyToDatedAdditionalMedia,
   createMediaItemFromPath,
 } from 'src/helpers/jw-media';
+import {
+  getSectionAccentColor,
+  mixWithWhite,
+  withAlpha,
+} from 'src/helpers/media-sections';
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { triggerMediaWindowAutoHide } from 'src/helpers/mediaWindowAutoHide';
 import { createTemporaryNotification } from 'src/helpers/notifications';
@@ -1553,6 +1565,22 @@ const mediaTag = ref<Tag>({
   }),
 });
 
+const tagValueInput = ref<QInput>();
+
+// Re-derive from the item's current saved tag on every open, rather than
+// only once at component setup, so a stale edit left over from a previous
+// (possibly cancelled) session - or a tag that changed underneath this item
+// after mount - doesn't linger in the dialog.
+const openEditTagDialog = () => {
+  mediaTag.value = {
+    ...(props.media.tag || {
+      type: '',
+      value: '',
+    }),
+  };
+  mediaEditTagDialog.value = true;
+};
+
 const tagTypes = [
   {
     label: t('none'),
@@ -1573,10 +1601,137 @@ const mediaTagClasses = computed(() => {
   return {
     'col-12': !$q.screen.gt.xs,
     'col-shrink': $q.screen.gt.xs,
+    flex: !$q.screen.gt.xs,
+    'justify-center': !$q.screen.gt.xs,
     'q-pl-md': $q.screen.gt.xs,
     'q-pr-none': $q.screen.gt.xs,
     'q-px-md': !$q.screen.gt.xs,
   };
+});
+
+const tagVariant = computed(() => {
+  if (props.media.tag?.type === 'song') {
+    return currentSongIsDuplicated.value ? 'warn' : 'song';
+  }
+  if (props.media.tag?.type === 'paragraph') return 'paragraph';
+  return 'neutral';
+});
+
+// Paragraph tags borrow the color of the meeting section the item belongs
+// to (the same one behind that section's colored left-edge bar), rather
+// than a fixed color, so they read as part of that section at a glance.
+const paragraphSectionColor = computed(() =>
+  getSectionAccentColor(
+    props.media.originalSection,
+    selectedDateObject.value?.mediaSections,
+  ),
+);
+
+const paragraphCapStyle = computed(() => ({
+  backgroundColor: paragraphSectionColor.value,
+}));
+
+const paragraphValueStyle = computed(() => {
+  const color = paragraphSectionColor.value;
+  return $q.dark.isActive
+    ? {
+        backgroundColor: withAlpha(color, 0.3),
+        color: mixWithWhite(color, 0.55),
+      }
+    : { backgroundColor: withAlpha(color, 0.16), color };
+});
+
+// Shared by both tags: mirrors the file-fetch/availability gate that used
+// to guard the single combined tag before it was split in two.
+const sourceTagFetchOk = computed(() => {
+  return (
+    props.media.source !== 'dynamic' &&
+    !currentSettings.value?.disableMediaFetching &&
+    fileIsAvailable.value
+  );
+});
+
+// The provenance badge (watched / fetched-as-additional). Independent of
+// the content tag below so both can appear side by side, e.g. an
+// additional-media song.
+const showSourceTag = computed(() => {
+  if (props.media.source !== 'watched' && props.media.source !== 'additional') {
+    return false;
+  }
+  if (!sourceTagFetchOk.value) return false;
+  if (isDemoMode && !props.media.tag?.type) return false;
+  return true;
+});
+
+const sourceIconName = computed(() =>
+  props.media.source === 'watched' ? 'mmm-watched-media' : 'mmm-add-media',
+);
+
+const sourceTooltipText = computed(() => {
+  if (props.media.source === 'watched') return t('watched-media-item-explain');
+  if (props.media.source === 'additional') return t('extra-media-item-explain');
+  return null;
+});
+
+// The content tag (song/paragraph number, or a plain fetched-media marker
+// when there's no tag at all). Skip the plain-marker fallback when the
+// source tag is already showing, so a watched/additional item with no real
+// tag doesn't get a second, redundant badge next to the thumbnail.
+const showContentTag = computed(() => {
+  if (props.media.tag?.type) return true;
+  if (isDemoMode || showSourceTag.value) return false;
+  return sourceTagFetchOk.value;
+});
+
+const tagIconName = computed(() => {
+  if (props.media.tag?.type === 'paragraph') {
+    return props.media.tag.value !== FOOTNOTE_TARGET_PARAGRAPH
+      ? 'mmm-paragraph'
+      : 'mmm-footnote';
+  }
+  return 'mmm-music-note';
+});
+
+const contentTagTooltipText = computed(() => {
+  if (currentSongIsDuplicated.value) return t('this-song-is-duplicated');
+
+  if (props.media.tag?.type === 'song') return t('song-media-item-explain');
+
+  if (props.media.tag?.type === 'paragraph') {
+    if (props.media.tag.value === FOOTNOTE_TARGET_PARAGRAPH) {
+      return t('footnote-media-item-explain');
+    }
+
+    const value = props.media.tag.value?.toString() ?? '';
+    return t(
+      /^\d+$/.test(value)
+        ? 'paragraph-media-item-explain'
+        : 'paragraphs-media-item-explain',
+      { value },
+    );
+  }
+
+  return null;
+});
+
+const tagValueText = computed(() => {
+  if (!props.media.tag?.type) return null;
+  if (
+    props.media.tag.type === 'paragraph' &&
+    props.media.tag.value === FOOTNOTE_TARGET_PARAGRAPH
+  ) {
+    return t('footnote');
+  }
+  return props.media.tag.value?.toString() ?? null;
+});
+
+// Song/paragraph numbers are usually 1-2 digits, but paragraph ranges
+// ("88-93") or translated footnote labels can run longer than the fixed-width
+// tag comfortably fits at full size, so shrink the text instead of clipping it.
+const tagValueFontSize = computed(() => {
+  const length = tagValueText.value?.length ?? 0;
+  if (length <= 3) return '13px';
+  return '10.5px';
 });
 
 const handleTitleEdit = (value: boolean) => {
@@ -2443,26 +2598,6 @@ const streamIsAvailable = computed(() => {
   return !!props.media.streamUrl;
 });
 
-const tagTooltipText = computed(() => {
-  if (currentSongIsDuplicated.value) {
-    return t('this-song-is-duplicated');
-  }
-
-  if (props.media.source === 'watched') {
-    return t('watched-media-item-explain');
-  }
-
-  if (
-    props.media.source === 'additional' &&
-    !currentSettings.value?.disableMediaFetching &&
-    fileIsAvailable.value
-  ) {
-    return t('extra-media-item-explain');
-  }
-
-  return null;
-});
-
 // Image duration control functions
 // const formatImageDuration = (seconds: number): string => {
 //   if (seconds < 60) {
@@ -2608,6 +2743,41 @@ whenever(
     pause();
   },
   { immediate: true },
+);
+
+// The tag value field is disabled until a type is chosen, so a plain
+// `autofocus` prop only ever focuses it when a type is already set at
+// mount time. Watching for the type becoming set - whether that's already
+// true on open, or happens moments later via the option group - covers
+// both cases.
+watch(
+  () => mediaEditTagDialog.value && !!mediaTag.value.type,
+  (canFocus) => {
+    if (!canFocus) return;
+    nextTick(() => tagValueInput.value?.focus());
+  },
+);
+
+// A tag with no type has no value either (the value field is disabled in
+// that state), so clearing the type should clear any leftover value text
+// rather than emitting a value the UI wouldn't otherwise show.
+watch(
+  () => mediaTag.value.type,
+  (type) => {
+    if (!type) mediaTag.value.value = '';
+  },
+);
+
+// Applies edits live as they're made - matching the title rename behavior -
+// instead of requiring an explicit Save. Guarded to the dialog being open so
+// the reset in openEditTagDialog() (which sets these to their current
+// saved values) never fires this from a false "change".
+watch(
+  () => [mediaTag.value.type, mediaTag.value.value] as const,
+  () => {
+    if (!mediaEditTagDialog.value) return;
+    emit('update:tag', mediaTag.value);
+  },
 );
 </script>
 

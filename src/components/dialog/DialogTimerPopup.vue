@@ -362,21 +362,23 @@
                 <q-item-section side>
                   <div class="row q-gutter-xs">
                     <q-btn
+                      class="btn-tonal"
                       color="primary"
                       dense
                       :disable="(partDurations[part.value] || 0) <= 1"
+                      flat
                       icon="mmm-minus"
-                      outline
                       size="sm"
                       @click.stop="adjustPartDuration(part.value, -1)"
                     >
                       <q-tooltip>{{ t('decrease-duration') }}</q-tooltip>
                     </q-btn>
                     <q-btn
+                      class="btn-tonal"
                       color="primary"
                       dense
+                      flat
                       icon="mmm-plus"
-                      outline
                       size="sm"
                       @click.stop="adjustPartDuration(part.value, 1)"
                     >
@@ -388,10 +390,11 @@
                           partTimings[part.value]?.endTime) &&
                         !timerRunning
                       "
+                      class="btn-tonal"
                       color="warning"
                       dense
+                      flat
                       icon="mmm-reset"
-                      outline
                       size="sm"
                       @click.stop="
                         () => {
@@ -409,10 +412,11 @@
                       v-if="
                         !timerRunning && !partTimings[part.value]?.startTime
                       "
+                      class="btn-tonal"
                       color="positive"
                       dense
+                      flat
                       icon="mmm-play"
-                      outline
                       size="sm"
                       @click.stop="selectPart(part.value)"
                     >
