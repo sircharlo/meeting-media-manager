@@ -1,6 +1,7 @@
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mkdirMock = vi.fn();
+const readdirMock = vi.fn();
 const readFileMock = vi.fn();
 const rmMock = vi.fn();
 const statMock = vi.fn();
@@ -15,6 +16,9 @@ const watchMock = vi.fn();
 const sendToWindowMock = vi.fn();
 const yauzlOpenMock = vi.fn();
 const yauzlFromBufferPromiseMock = vi.fn();
+const createReadStreamMock = vi.fn();
+const createWriteStreamMock = vi.fn(() => ({ on: vi.fn() }));
+const pipelineMock = vi.fn(() => Promise.resolve());
 
 vi.mock('chokidar', () => ({
   watch: watchMock,
@@ -36,11 +40,13 @@ vi.mock('fs-extra', () => ({
 }));
 
 vi.mock('node:fs', () => ({
-  createWriteStream: vi.fn(),
+  createReadStream: createReadStreamMock,
+  createWriteStream: createWriteStreamMock,
 }));
 
 vi.mock('node:fs/promises', () => ({
   mkdir: mkdirMock,
+  readdir: readdirMock,
   readFile: readFileMock,
   rm: rmMock,
   stat: statMock,
@@ -48,7 +54,7 @@ vi.mock('node:fs/promises', () => ({
 }));
 
 vi.mock('node:stream/promises', () => ({
-  pipeline: vi.fn(),
+  pipeline: pipelineMock,
 }));
 
 vi.mock('node:timers/promises', () => ({
@@ -115,6 +121,12 @@ vi.mock('yauzl', () => ({
   fromBufferPromise: yauzlFromBufferPromiseMock,
   openPromise: yauzlOpenMock,
 }));
+
+const makeDirent = (name: string, isDirectory = false) => ({
+  isDirectory: () => isDirectory,
+  isFile: () => !isDirectory,
+  name,
+});
 
 const originalPlatform = Object.getOwnPropertyDescriptor(process, 'platform');
 
@@ -726,6 +738,132 @@ describe('getZipEntries', () => {
       }),
     );
     expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
+
+  it('reads entries from a JWPUB that was already extracted into a directory', async () => {
+    statMock.mockImplementation(async (path: string) => {
+      if (path === '/tmp/parent-dir.jwpub') {
+        return { isDirectory: () => true, size: 0 };
+      }
+      if (path === '/tmp/parent-dir.jwpub/manifest.json') {
+        return { isDirectory: () => false, size: 75 };
+      }
+      if (path === '/tmp/parent-dir.jwpub/contents') {
+        return { isDirectory: () => false, size: 100 };
+      }
+      throw new Error(`unexpected stat: ${path}`);
+    });
+    readdirMock.mockResolvedValue([
+      makeDirent('manifest.json'),
+      makeDirent('contents'),
+    ]);
+
+    const { getZipEntries } = await import('../fs');
+
+    await expect(getZipEntries('/tmp/parent-dir.jwpub')).resolves.toEqual({
+      contents: 100,
+      'manifest.json': 75,
+    });
+
+    expect(yauzlOpenMock).not.toHaveBeenCalled();
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: 'zip',
+        data: expect.objectContaining({
+          isDirectorySource: true,
+          zipPath: '/tmp/parent-dir.jwpub',
+        }),
+        message: 'Finished reading zip entries',
+      }),
+    );
+  });
+
+  it('copies files straight from an already-extracted JWPUB directory instead of unzipping', async () => {
+    statMock.mockImplementation(async (path: string) => {
+      if (path === '/tmp/parent-dir.jwpub') {
+        return { isDirectory: () => true, size: 0 };
+      }
+      if (path === '/tmp/parent-dir.jwpub/contents') {
+        return { isDirectory: () => false, size: 4 };
+      }
+      throw new Error(`unexpected stat: ${path}`);
+    });
+    readdirMock.mockResolvedValue([makeDirent('contents')]);
+    createReadStreamMock.mockReturnValue({ readStream: true });
+    createWriteStreamMock.mockReturnValue({ on: vi.fn() });
+    pipelineMock.mockResolvedValue(undefined);
+
+    const { unzipFile } = await import('../fs');
+
+    await expect(
+      unzipFile('/tmp/parent-dir.jwpub', '/tmp/out', {
+        includes: ['contents'],
+      }),
+    ).resolves.toEqual([{ path: 'contents' }]);
+
+    expect(yauzlOpenMock).not.toHaveBeenCalled();
+    expect(createReadStreamMock).toHaveBeenCalledWith(
+      '/tmp/parent-dir.jwpub/contents',
+    );
+    expect(pipelineMock).toHaveBeenCalled();
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: 'unzip',
+        data: expect.objectContaining({ isDirectorySource: true }),
+        message: 'Starting unzip',
+      }),
+    );
+  });
+});
+
+describe('extractNestedZipEntry', () => {
+  beforeEach(() => {
+    vi.resetModules();
+    vi.clearAllMocks();
+  });
+
+  it('reads the outer entry directly off disk when the JWPUB is a directory', async () => {
+    statMock.mockImplementation(async (path: string) => {
+      if (path === '/tmp/parent-dir.jwpub') {
+        return { isDirectory: () => true, size: 0 };
+      }
+      if (path === '/tmp/parent-dir.jwpub/contents') {
+        return { isDirectory: () => false, size: 4 };
+      }
+      throw new Error(`unexpected stat: ${path}`);
+    });
+    readdirMock.mockResolvedValue([makeDirent('contents')]);
+    readFileMock.mockResolvedValue(Buffer.from('data'));
+
+    const innerEntry = {
+      compressedSize: 4,
+      fileName: 'pub.db',
+      uncompressedSize: 4,
+    };
+    const innerZipfile = {
+      close: vi.fn(),
+      eachEntry: async function* () {
+        yield innerEntry;
+      },
+      openReadStreamPromise: vi.fn(async () => ({ on: vi.fn() })),
+    };
+    yauzlFromBufferPromiseMock.mockResolvedValue(innerZipfile);
+    createWriteStreamMock.mockReturnValue({ on: vi.fn() });
+    pipelineMock.mockResolvedValue(undefined);
+
+    const { extractNestedZipEntry } = await import('../fs');
+
+    await expect(
+      extractNestedZipEntry('/tmp/parent-dir.jwpub', 'contents', '/tmp/out', {
+        innerEntryNameSuffix: '.db',
+      }),
+    ).resolves.toEqual({ path: '/tmp/out/pub.db' });
+
+    expect(yauzlOpenMock).not.toHaveBeenCalled();
+    expect(readFileMock).toHaveBeenCalledWith('/tmp/parent-dir.jwpub/contents');
+    expect(yauzlFromBufferPromiseMock).toHaveBeenCalledWith(
+      Buffer.from('data'),
+    );
   });
 });
 

@@ -8,8 +8,15 @@ import type {
 import { watch as filesystemWatch, type FSWatcher } from 'chokidar';
 import { app, dialog } from 'electron';
 import { ensureDir, type Stats } from 'fs-extra';
-import { createWriteStream } from 'node:fs';
-import { mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { createReadStream, createWriteStream } from 'node:fs';
+import {
+  mkdir,
+  readdir,
+  readFile,
+  rm,
+  stat,
+  writeFile,
+} from 'node:fs/promises';
 import { pipeline } from 'node:stream/promises';
 import { setTimeout as delay } from 'node:timers/promises';
 import {
@@ -203,8 +210,19 @@ const resolveZipEntryPath = (output: string, entryFileName: string) => {
   return fullPath.replace(/\/+$/, '');
 };
 
+/**
+ * A zip entry, or a stand-in for one built from a plain file on disk (see
+ * collectDirectoryZipEntries). Real yauzl Entry objects satisfy this too, so
+ * the same guard/handling code works for both sources.
+ */
+interface ZipLikeEntry {
+  compressedSize?: number;
+  fileName: string;
+  uncompressedSize: number;
+}
+
 const getZipEntryGuardError = (
-  entry: Entry,
+  entry: ZipLikeEntry,
   state: ZipGuardState,
   limits: {
     maxEntrySize?: number;
@@ -233,6 +251,7 @@ const getZipEntryGuardError = (
   }
 
   if (
+    entry.compressedSize !== undefined &&
     entry.compressedSize > 0 &&
     entry.uncompressedSize >= MIN_RATIO_CHECK_SIZE
   ) {
@@ -243,6 +262,40 @@ const getZipEntryGuardError = (
   }
 
   return undefined;
+};
+
+/**
+ * Walks a directory and reports each file/subdirectory as if it were a zip
+ * entry (POSIX-style relative paths, directories suffixed with `/`). Used to
+ * transparently support JWPUB/zip files that were already extracted into a
+ * folder before being handed to us (e.g. a JWPUB that macOS auto-expanded
+ * and the user then re-zipped as a folder rather than a file).
+ */
+const collectDirectoryZipEntries = async (
+  dirPath: string,
+): Promise<ZipLikeEntry[]> => {
+  const entries: ZipLikeEntry[] = [];
+
+  const walk = async (currentPath: string, prefix: string): Promise<void> => {
+    const dirents = await readdir(currentPath, { withFileTypes: true });
+    for (const dirent of dirents) {
+      const entryName = prefix ? `${prefix}/${dirent.name}` : dirent.name;
+      const fullPath = join(currentPath, dirent.name);
+      if (dirent.isDirectory()) {
+        entries.push({ fileName: `${entryName}/`, uncompressedSize: 0 });
+        await walk(fullPath, entryName);
+      } else if (dirent.isFile()) {
+        const fileStats = await stat(fullPath);
+        entries.push({
+          fileName: entryName,
+          uncompressedSize: fileStats.size,
+        });
+      }
+    }
+  };
+
+  await walk(dirPath, '');
+  return entries;
 };
 
 const getSharedPathHealthFile = () =>
@@ -912,7 +965,7 @@ const createDirectory = async (
  * Processes a file entry with retry logic
  */
 const processFileEntry = async (
-  entry: Entry,
+  entry: ZipLikeEntry,
   readStream: NodeJS.ReadableStream,
   fullPath: string,
   context: UnzipContext,
@@ -1031,6 +1084,42 @@ const handleZipEntry = async (
 };
 
 /**
+ * Handles a directory-sourced "zip" entry (see collectDirectoryZipEntries).
+ * Mirrors handleZipEntry, but reads the entry straight off disk instead of
+ * decompressing it from a zip file.
+ */
+const handleDirectoryZipEntry = async (
+  entry: ZipLikeEntry,
+  sourceDir: string,
+  context: UnzipContext,
+  state: ZipfileState,
+): Promise<void> => {
+  if (
+    context.opts?.includes?.length &&
+    !context.opts.includes.includes(entry.fileName)
+  ) {
+    return;
+  }
+
+  const fullPath = resolveZipEntryPath(context.output, entry.fileName);
+
+  const guardError = getZipEntryGuardError(entry, state);
+  if (guardError) {
+    throw guardError;
+  }
+
+  if (entry.fileName.endsWith('/')) {
+    // Directory
+    await createDirectory(fullPath, context);
+    return;
+  }
+
+  const sourcePath = resolveZipEntryPath(sourceDir, entry.fileName);
+  const readStream = createReadStream(sourcePath);
+  await processFileEntry(entry, readStream, fullPath, context, state);
+};
+
+/**
  * Decompresses a zip file
  */
 const decompress = async (
@@ -1040,10 +1129,17 @@ const decompress = async (
 ): Promise<UnzipResult[]> => {
   const stats = await stat(input).catch(() => undefined);
   const fileSize = stats?.size ?? 0;
+  const isDirectorySource = !!stats?.isDirectory?.();
 
   addElectronBreadcrumb({
     category: 'unzip',
-    data: { fileSize, includes: opts?.includes, input, output },
+    data: {
+      fileSize,
+      includes: opts?.includes,
+      input,
+      isDirectorySource,
+      output,
+    },
     message: 'Starting unzip',
   });
 
@@ -1054,20 +1150,37 @@ const decompress = async (
     fileCount: 0,
     totalUncompressedSize: 0,
   };
-  const zipfile = await openZipFileForUnzip(input, output, fileSize, opts);
 
-  try {
-    for await (const entry of zipfile.eachEntry()) {
-      await handleZipEntry(entry, context, state, zipfile);
+  if (isDirectorySource) {
+    try {
+      const dirEntries = await collectDirectoryZipEntries(input);
+      for (const entry of dirEntries) {
+        await handleDirectoryZipEntry(entry, input, context, state);
+      }
+    } catch (error) {
+      captureElectronError(error, {
+        contexts: {
+          fn: { args: { input, output }, name: 'unzipFile directory error' },
+        },
+      });
+      throw error;
     }
-  } catch (error) {
-    zipfile.close();
-    captureElectronError(error, {
-      contexts: {
-        fn: { args: { input, output }, name: 'unzipFile zipfile error' },
-      },
-    });
-    throw error;
+  } else {
+    const zipfile = await openZipFileForUnzip(input, output, fileSize, opts);
+
+    try {
+      for await (const entry of zipfile.eachEntry()) {
+        await handleZipEntry(entry, context, state, zipfile);
+      }
+    } catch (error) {
+      zipfile.close();
+      captureElectronError(error, {
+        contexts: {
+          fn: { args: { input, output }, name: 'unzipFile zipfile error' },
+        },
+      });
+      throw error;
+    }
   }
 
   addElectronBreadcrumb({
@@ -1357,6 +1470,61 @@ const readZipEntriesIntoMemory = async (
   return entries;
 };
 
+const readDirectoryEntriesIntoMemory = async (
+  dirPath: string,
+  includes: string[],
+  options: Pick<ExtractNestedZipEntryOptions, 'maxTotalSize'> &
+    Required<Pick<ExtractNestedZipEntryOptions, 'maxEntrySize'>>,
+) => {
+  const entries: { data: Buffer; path: string }[] = [];
+  const guardState: ZipGuardState = {
+    fileCount: 0,
+    totalUncompressedSize: 0,
+  };
+
+  try {
+    const dirEntries = await collectDirectoryZipEntries(dirPath);
+
+    for (const entry of dirEntries) {
+      try {
+        const guardError = getZipEntryGuardError(entry, guardState, {
+          maxEntrySize: options.maxEntrySize,
+          maxTotalSize: options.maxTotalSize ?? MAX_IN_MEMORY_ZIP_TOTAL_SIZE,
+        });
+        if (guardError) throw guardError;
+
+        if (
+          entry.fileName.endsWith('/') ||
+          !includes.includes(entry.fileName)
+        ) {
+          continue;
+        }
+
+        const sourcePath = resolveZipEntryPath(dirPath, entry.fileName);
+        entries.push({
+          data: await readFile(sourcePath),
+          path: entry.fileName,
+        });
+        if (entries.length === includes.length) break;
+      } catch (error) {
+        captureZipErrorOnce(error, {
+          args: { dirPath, entry: entry.fileName, includes },
+          name: 'readDirectoryEntriesIntoMemory entry',
+        });
+        throw error;
+      }
+    }
+  } catch (error) {
+    captureZipErrorOnce(error, {
+      args: { dirPath, includes },
+      name: 'readDirectoryEntriesIntoMemory',
+    });
+    throw error;
+  }
+
+  return entries;
+};
+
 export async function extractNestedZipEntry(
   input: string,
   outerEntryName: string,
@@ -1365,10 +1533,16 @@ export async function extractNestedZipEntry(
 ): Promise<UnzipResult> {
   const maxEntrySize = opts.maxEntrySize ?? MAX_IN_MEMORY_ZIP_ENTRY_SIZE;
   const maxTotalSize = opts.maxTotalSize ?? MAX_IN_MEMORY_ZIP_TOTAL_SIZE;
-  const [outerEntry] = await readZipEntriesIntoMemory(input, [outerEntryName], {
-    maxEntrySize,
-    maxTotalSize,
-  });
+  const inputStats = await stat(input).catch(() => undefined);
+  const [outerEntry] = inputStats?.isDirectory?.()
+    ? await readDirectoryEntriesIntoMemory(input, [outerEntryName], {
+        maxEntrySize,
+        maxTotalSize,
+      })
+    : await readZipEntriesIntoMemory(input, [outerEntryName], {
+        maxEntrySize,
+        maxTotalSize,
+      });
 
   if (!outerEntry) {
     throw new Error(`Zip entry not found: ${outerEntryName}`);
@@ -1447,10 +1621,11 @@ export async function getZipEntries(
 ): Promise<Record<string, number>> {
   const stats = await getZipFileStats(zipPath);
   const fileSize = stats.size;
+  const isDirectorySource = !!stats.isDirectory?.();
 
   addElectronBreadcrumb({
     category: 'zip',
-    data: getZipDiagnostics(zipPath, fileSize),
+    data: { ...getZipDiagnostics(zipPath, fileSize), isDirectorySource },
     message: 'Reading zip entries',
   });
 
@@ -1460,10 +1635,15 @@ export async function getZipEntries(
     fileCount: 0,
     totalUncompressedSize: 0,
   };
-  const zipfile = await openZipFileForEntries(zipPath, fileSize);
+  const zipfile = isDirectorySource
+    ? undefined
+    : await openZipFileForEntries(zipPath, fileSize);
 
   try {
-    for await (const entry of zipfile.eachEntry()) {
+    const zipEntries = zipfile
+      ? zipfile.eachEntry()
+      : await collectDirectoryZipEntries(zipPath);
+    for await (const entry of zipEntries) {
       const guardError = getZipEntryGuardError(entry, guardState);
       if (guardError) throw guardError;
 
@@ -1475,7 +1655,7 @@ export async function getZipEntries(
   } catch (error) {
     addElectronBreadcrumb({
       category: 'zip',
-      data: getZipDiagnostics(zipPath, fileSize),
+      data: { ...getZipDiagnostics(zipPath, fileSize), isDirectorySource },
       level: 'error',
       message: 'Zip entry stream error',
     });
@@ -1490,7 +1670,7 @@ export async function getZipEntries(
     });
     throw error;
   } finally {
-    zipfile.close();
+    zipfile?.close();
   }
 
   addElectronBreadcrumb({
@@ -1500,6 +1680,7 @@ export async function getZipEntries(
       contentsSize: entries.contents,
       entryCount: guardState.fileCount,
       entryNamesSample,
+      isDirectorySource,
       totalUncompressedSize: guardState.totalUncompressedSize,
     },
     message: 'Finished reading zip entries',
