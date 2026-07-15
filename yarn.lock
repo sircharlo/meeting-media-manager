@@ -5940,9 +5940,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^43.1.0":
-  version: 43.1.0
-  resolution: "electron@npm:43.1.0"
+"electron@npm:^43.1.1":
+  version: 43.1.1
+  resolution: "electron@npm:43.1.1"
   dependencies:
     "@electron-internal/extract-zip": "npm:^1.0.1"
     "@electron/get": "npm:^5.0.0"
@@ -5950,7 +5950,7 @@ __metadata:
   bin:
     electron: cli.js
     install-electron: install.js
-  checksum: 10c0/f5543ce1114ddf84f4872f4c214fb4f0a3990bc2634bbdb60ebbc49b155c46cfde71efb7852863da27ed0592cac1db074424868009495de07ea07f12a8dcfd9d
+  checksum: 10c0/d977a9178aec6d7bb8865a57c3a037bbd2ccdc16539c02b9b463a79db948ed2e49f51258e1946a891207ca3dda8d1c6e7f8c055731f0d8462ae92b79da7777a2
   languageName: node
   linkType: hard
 
@@ -8677,7 +8677,7 @@ __metadata:
     countries-and-timezones: "npm:^3.9.0"
     depcheck: "npm:^1.4.7"
     dompurify: "npm:^3.4.12"
-    electron: "npm:^43.1.0"
+    electron: "npm:^43.1.1"
     electron-builder: "npm:26.15.3"
     electron-dl-manager: "npm:^4.2.3"
     electron-updater: "npm:^6.8.9"
@@ -8701,7 +8701,7 @@ __metadata:
     mime: "npm:^4.1.0"
     mousetrap: "npm:^1.6.5"
     msw: "npm:^2.15.0"
-    music-metadata: "npm:^11.13.0"
+    music-metadata: "npm:^11.14.0"
     obs-websocket-js: "npm:^5.0.8"
     p-queue: "npm:^9.3.1"
     pdf-parse: "npm:^2.4.5"
@@ -9126,9 +9126,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^11.13.0":
-  version: 11.13.0
-  resolution: "music-metadata@npm:11.13.0"
+"music-metadata@npm:^11.14.0":
+  version: 11.14.0
+  resolution: "music-metadata@npm:11.14.0"
   dependencies:
     "@borewit/text-codec": "npm:^0.2.2"
     "@tokenizer/token": "npm:^0.3.0"
@@ -9140,7 +9140,7 @@ __metadata:
     token-types: "npm:^6.1.2"
     uint8array-extras: "npm:^1.5.0"
     win-guid: "npm:^0.2.1"
-  checksum: 10c0/5539fd227b7cf10780ab05ca8954b46ae069916ee90b9e855fd2074b8265b62b32dfdf0e548eebdd8115f4bd008f56d3b210b49243244413ded4287caf25b68a
+  checksum: 10c0/f86d3d3a0d9561bd4a771bff17c7b3fa9f4e5ecbdb49b5df8726ce4a90bab2d32e3d357c59eb4309aba3abc79abad2e93549601e8eaecc16691b6d7d5fd87e51
   languageName: node
   linkType: hard
 

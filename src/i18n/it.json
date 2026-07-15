@@ -228,6 +228,8 @@
   "error": "Errore",
   "error-reading-playlist-file": "Il file della playlist JW Library non può essere letto. Potrebbe essere danneggiato o non valido.",
   "errorDownloadingMeetingMedia": "Errore durante il download dei media riunione",
+  "excludeCbsPubs": "Escludi video da queste pubblicazioni durante lo studio biblico della Congregazione",
+  "excludeCbsPubs-explain": "I video citati in queste pubblicazioni non saranno mostrati durante lo studio biblico della Congregazione. Ricerca per titolo di pubblicazione o simbolo.",
   "excludeFootnotes": "Escludi media contenuti nelle note in calce dello studio Torre di Guardia",
   "excludeFootnotes-explain": "Non includere video o altri supporti da note a piè di pagina in articoli Watchtower.",
   "excludeTh": "Escludi tutti i media dell'opuscolo Lettura e insegnamento (th)",
