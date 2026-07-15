@@ -98,7 +98,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/generator@npm:^8.0.0-rc.4":
+"@babel/generator@npm:^8.0.0":
   version: 8.0.0
   resolution: "@babel/generator@npm:8.0.0"
   dependencies:
@@ -3855,9 +3855,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue-macros/common@npm:^3.1.1":
-  version: 3.1.2
-  resolution: "@vue-macros/common@npm:3.1.2"
+"@vue-macros/common@npm:^3.1.3":
+  version: 3.1.3
+  resolution: "@vue-macros/common@npm:3.1.3"
   dependencies:
     "@vue/compiler-sfc": "npm:^3.5.22"
     ast-kit: "npm:^2.1.2"
@@ -3869,7 +3869,7 @@ __metadata:
   peerDependenciesMeta:
     vue:
       optional: true
-  checksum: 10c0/2ea55f5296239f3d065f73abfedcd657467b4ecf2e81d9cc1d7194c68421b7d24505cfacd52e4732e5431d160b23c44cf937e584373c9ea4442d5f0e67f25fa6
+  checksum: 10c0/8ba2cc40230c80c84307130f6f6182333b1dd489b64039687a3e4afc241ccec8c1833035e8c40c25db9ccada6f1a8632a607d75c5a954faf9036be02e760ed68
   languageName: node
   linkType: hard
 
@@ -3939,7 +3939,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/devtools-api@npm:^8.1.2, @vue/devtools-api@npm:^8.1.4":
+"@vue/devtools-api@npm:^8.1.4, @vue/devtools-api@npm:^8.1.5":
   version: 8.1.5
   resolution: "@vue/devtools-api@npm:8.1.5"
   dependencies:
@@ -4539,12 +4539,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"autoprefixer@npm:^10.5.2":
-  version: 10.5.2
-  resolution: "autoprefixer@npm:10.5.2"
+"autoprefixer@npm:^10.5.3":
+  version: 10.5.3
+  resolution: "autoprefixer@npm:10.5.3"
   dependencies:
-    browserslist: "npm:^4.28.4"
-    caniuse-lite: "npm:^1.0.30001799"
+    browserslist: "npm:^4.28.6"
+    caniuse-lite: "npm:^1.0.30001805"
     fraction.js: "npm:^5.3.4"
     picocolors: "npm:^1.1.1"
     postcss-value-parser: "npm:^4.2.0"
@@ -4552,7 +4552,7 @@ __metadata:
     postcss: ^8.1.0
   bin:
     autoprefixer: bin/autoprefixer
-  checksum: 10c0/588fec73c061da8a95f6a7f4f0cde811a581087852325564d2d8f15c9356b204db50c1566c57e06dc0b1bcdf2b8ff10f85e89ef08d94c10f0e5ba187a4c52690
+  checksum: 10c0/a166d39192a6ef735cd09c244c579cde560ae4bb7407073ac6ef2c0f26390bccd0ffa46f3b1b104526c862530e94755dddfa910b0c4d63073447e31de5d89d3e
   languageName: node
   linkType: hard
 
@@ -4695,7 +4695,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserslist@npm:^4.24.0, browserslist@npm:^4.28.4":
+"browserslist@npm:^4.24.0":
   version: 4.28.5
   resolution: "browserslist@npm:4.28.5"
   dependencies:
@@ -4707,6 +4707,21 @@ __metadata:
   bin:
     browserslist: cli.js
   checksum: 10c0/d6bb4ab286a7071db52cbeabd46ff816e09c9171d7e5da246f0b9489601ad3d4adb9fc3d14fa934a8646078f8a717507c0518a364128735a3b5a7875900b5a19
+  languageName: node
+  linkType: hard
+
+"browserslist@npm:^4.28.6":
+  version: 4.28.6
+  resolution: "browserslist@npm:4.28.6"
+  dependencies:
+    baseline-browser-mapping: "npm:^2.10.42"
+    caniuse-lite: "npm:^1.0.30001803"
+    electron-to-chromium: "npm:^1.5.389"
+    node-releases: "npm:^2.0.51"
+    update-browserslist-db: "npm:^1.2.3"
+  bin:
+    browserslist: cli.js
+  checksum: 10c0/259e3c2e0e59daf1fab0889303d397b35505c1c910e503a329990c4f6c0e589c0959fcd2627487311e4a94d7b9e2a9b1fa02875592f5c98b8e9e03e0ccd1e3ea
   languageName: node
   linkType: hard
 
@@ -4899,10 +4914,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.30001799, caniuse-lite@npm:^1.0.30001800":
+"caniuse-lite@npm:^1.0.30001800":
   version: 1.0.30001803
   resolution: "caniuse-lite@npm:1.0.30001803"
   checksum: 10c0/71586e9c84633cf766b208448eb76f860ec6e3befffc626d1f004e1902da063a7ab96cc94d1f4b36c0324e12997b3325a726de3287edfec91d0df495627a1d43
+  languageName: node
+  linkType: hard
+
+"caniuse-lite@npm:^1.0.30001803, caniuse-lite@npm:^1.0.30001805":
+  version: 1.0.30001805
+  resolution: "caniuse-lite@npm:1.0.30001805"
+  checksum: 10c0/5245ea10d6addc9e054da52c622bf7730747b717fb30f01a9ffc8917e101221d90352440da23ff46f686579e7eeaaac6134801e07638c3a388d65d52dc8b17ac
   languageName: node
   linkType: hard
 
@@ -5892,6 +5914,13 @@ __metadata:
   version: 1.5.388
   resolution: "electron-to-chromium@npm:1.5.388"
   checksum: 10c0/7ae7c7d348858917f7b38295c121496af76906b9d4be556fa9661762f16481e992004c7859acf6a0fbb21be5d32a3293752d6605eaf843dc427c308bb57fdb34
+  languageName: node
+  linkType: hard
+
+"electron-to-chromium@npm:^1.5.389":
+  version: 1.5.392
+  resolution: "electron-to-chromium@npm:1.5.392"
+  checksum: 10c0/13b691fb97ef02f6c3da6fecb530d667a2c72c951aaca2c5c13271074d6e2f9a9bb23c84939a6b9274fef1611247f3a7affba7b3961d0bdc0324d59f97046269
   languageName: node
   linkType: hard
 
@@ -8392,7 +8421,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"local-pkg@npm:^1.1.2":
+"local-pkg@npm:^1.1.2, local-pkg@npm:^1.2.1":
   version: 1.2.1
   resolution: "local-pkg@npm:1.2.1"
   dependencies:
@@ -8640,7 +8669,7 @@ __metadata:
     "@vue/test-utils": "npm:^2.4.11"
     "@vueuse/core": "npm:^14.3.0"
     "@vueuse/router": "npm:^14.3.0"
-    autoprefixer: "npm:^10.5.2"
+    autoprefixer: "npm:^10.5.3"
     buffer: "npm:^6.0.3"
     check-disk-space: "npm:^3.4.0"
     cheerio: "npm:^1.2.0"
@@ -8695,7 +8724,7 @@ __metadata:
     vue: "npm:^3.5.39"
     vue-eslint-parser: "npm:^10.4.1"
     vue-i18n: "npm:^11.4.6"
-    vue-router: "npm:^5.1.0"
+    vue-router: "npm:^5.2.0"
     vue-tsc: "npm:^3.3.7"
     vue-zoomable: "npm:^1.2.8"
     yauzl: "npm:^3.4.0"
@@ -9320,6 +9349,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-releases@npm:^2.0.51":
+  version: 2.0.51
+  resolution: "node-releases@npm:2.0.51"
+  checksum: 10c0/6cf3fe1f9eabe02ce6de67e9db77b73edc9f5625003791e1f8f239f8e2a851450a5aeb1eff2cc43cfb26312e19b26bfe07626bf428479e6a76f56553fc6148da
+  languageName: node
+  linkType: hard
+
 "nopt@npm:^10.0.0":
   version: 10.0.1
   resolution: "nopt@npm:10.0.1"
@@ -9375,6 +9411,13 @@ __metadata:
   version: 8.1.1
   resolution: "normalize-url@npm:8.1.1"
   checksum: 10c0/1beb700ce42acb2288f39453cdf8001eead55bbf046d407936a40404af420b8c1c6be97a869884ae9e659d7b1c744e40e905c875ac9290644eec2e3e6fb0b370
+  languageName: node
+  linkType: hard
+
+"nostics@npm:^1.1.4":
+  version: 1.1.4
+  resolution: "nostics@npm:1.1.4"
+  checksum: 10c0/297adc5af7fdd03b8a24f3a26fb6dfae7902d533815deeae72ea4a3e11e90225bd357c4a7e40726eef51026147b7d389424d5ac3ade56bc2731c4fc8b22a19ca
   languageName: node
   linkType: hard
 
@@ -11787,7 +11830,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tinyglobby@npm:^0.2.12, tinyglobby@npm:^0.2.15, tinyglobby@npm:^0.2.16, tinyglobby@npm:^0.2.17":
+"tinyglobby@npm:^0.2.12, tinyglobby@npm:^0.2.15, tinyglobby@npm:^0.2.17":
   version: 0.2.17
   resolution: "tinyglobby@npm:0.2.17"
   dependencies:
@@ -12219,7 +12262,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unplugin-utils@npm:^0.3.0, unplugin-utils@npm:^0.3.1":
+"unplugin-utils@npm:^0.3.0, unplugin-utils@npm:^0.3.2":
   version: 0.3.2
   resolution: "unplugin-utils@npm:0.3.2"
   dependencies:
@@ -12241,7 +12284,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unplugin@npm:^3.0.0":
+"unplugin@npm:^3.3.0":
   version: 3.3.0
   resolution: "unplugin@npm:3.3.0"
   dependencies:
@@ -12667,33 +12710,34 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-router@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "vue-router@npm:5.1.0"
+"vue-router@npm:^5.2.0":
+  version: 5.2.0
+  resolution: "vue-router@npm:5.2.0"
   dependencies:
-    "@babel/generator": "npm:^8.0.0-rc.4"
-    "@vue-macros/common": "npm:^3.1.1"
-    "@vue/devtools-api": "npm:^8.1.2"
+    "@babel/generator": "npm:^8.0.0"
+    "@vue-macros/common": "npm:^3.1.3"
+    "@vue/devtools-api": "npm:^8.1.5"
     ast-walker-scope: "npm:^0.9.0"
     chokidar: "npm:^5.0.0"
     json5: "npm:^2.2.3"
-    local-pkg: "npm:^1.1.2"
+    local-pkg: "npm:^1.2.1"
     magic-string: "npm:^0.30.21"
     mlly: "npm:^1.8.2"
     muggle-string: "npm:^0.4.1"
+    nostics: "npm:^1.1.4"
     pathe: "npm:^2.0.3"
-    picomatch: "npm:^4.0.3"
+    picomatch: "npm:^4.0.5"
     scule: "npm:^1.3.0"
-    tinyglobby: "npm:^0.2.16"
-    unplugin: "npm:^3.0.0"
-    unplugin-utils: "npm:^0.3.1"
+    tinyglobby: "npm:^0.2.17"
+    unplugin: "npm:^3.3.0"
+    unplugin-utils: "npm:^0.3.2"
     yaml: "npm:^2.9.0"
   peerDependencies:
     "@pinia/colada": ">=0.21.2"
-    "@vue/compiler-sfc": ^3.5.34
-    pinia: ^3.0.4
-    vite: ^7.0.0 || ^8.0.0
-    vue: ^3.5.34
+    "@vue/compiler-sfc": ^3.5.34 || ^4.0.0
+    pinia: ^3.0.4 || ^4.0.2
+    vite: ^7.3.0 || ^8.0.0
+    vue: ^3.5.34 || ^4.0.0
   peerDependenciesMeta:
     "@pinia/colada":
       optional: true
@@ -12703,7 +12747,7 @@ __metadata:
       optional: true
     vite:
       optional: true
-  checksum: 10c0/9f0066c924faa1bce197d7e329d66c5638a1913302266e99450d90cce8a3843bf7dfa5d48ea08e0ed2af2355f7f06db07d816399b8c9d5282fafacdc88c4d6ec
+  checksum: 10c0/4deca3d380185fd6ebdd398da294aeddbbbccd1db7b2eaf966ade3b892c96453eee66029fcbad1f951103b1d636b399c87578282c1287c7a697dc58c7305d41f
   languageName: node
   linkType: hard
 
