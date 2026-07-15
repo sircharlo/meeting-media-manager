@@ -228,6 +228,8 @@
   "error": "Erro",
   "error-reading-playlist-file": "O arquivo de lista de reprodução da JW Library não pôde ser lido. Pode estar corrompido ou inválido.",
   "errorDownloadingMeetingMedia": "Erro ao baixar mídias da reunião",
+  "excludeCbsPubs": "Excluir vídeos destas publicações durante o Estudo Bíblico de Congregação",
+  "excludeCbsPubs-explain": "Os vídeos referenciados nestas publicações não serão exibidos durante o Estudo Bíblico da Congregação. Busca por título ou símbolo de publicação.",
   "excludeFootnotes": "Excluir mídias das notas de rodapé de A Sentinela",
   "excludeFootnotes-explain": "Não incluir vídeos ou outras mídias das notas de rodapé dos artigos de A Sentinela.",
   "excludeTh": "Excluir todas as mídias da brochura Melhore",
