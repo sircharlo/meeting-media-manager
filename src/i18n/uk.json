@@ -228,6 +228,8 @@
   "error": "Помилка",
   "error-reading-playlist-file": "The JW Library playlist file could not be read. It may be corrupted or invalid.",
   "errorDownloadingMeetingMedia": "Error downloading meeting media",
+  "excludeCbsPubs": "Виключити відео з цих публікацій під час вивчення консультації біблій",
+  "excludeCbsPubs-explain": "Відео, згадані в цих публікаціях, не буде показано під час дослідження Біблії Конгрегації. Пошук за назвою чи символом.",
   "excludeFootnotes": "Не додавати медіа з приміток до журналу \"Вартова башта\"",
   "excludeFootnotes-explain": "Не включати відео або інше медіа з приміток у статтях з Вартової Башти.",
   "excludeTh": "Виключити усі медіа з навчальної брошури",

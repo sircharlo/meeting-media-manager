@@ -228,6 +228,8 @@
   "error": "Fout",
   "error-reading-playlist-file": "Het JW Library-afspeellijstbestand kon niet worden gelezen. Het kan beschadigd of ongeldig zijn.",
   "errorDownloadingMeetingMedia": "Fout bij downloaden van vergadermedia",
+  "excludeCbsPubs": "Sluit video's uit van deze publicaties tijdens de Congregatie Bijbel Studie",
+  "excludeCbsPubs-explain": "Video's waarnaar wordt verwezen in deze publicaties worden niet getoond tijdens de Bijbel van Congregatie. Zoek op publicatitel of symbool.",
   "excludeFootnotes": "Sluit media in de voetnoten van de Wachttoren studie uit",
   "excludeFootnotes-explain": "Voeg geen video's of andere media van voetnoten uit de Wachttoren toe.",
   "excludeTh": "Sluit alle media van de th brochure uit",
