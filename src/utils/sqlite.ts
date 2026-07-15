@@ -835,6 +835,12 @@ const getExtractMultimedia = async (
       BeginParagraphOrdinal: extract.BeginParagraphOrdinal,
       EndParagraphOrdinal: extract.EndParagraphOrdinal,
       ExtractCaption: extract.ExtractCaption,
+      // The item's own KeySymbol identifies where its file comes from (e.g. a
+      // video pulled in from a separate video-compilation publication), which
+      // can differ from the publication being read/discussed here. Keep that
+      // distinct so callers can tell "what pub is this reading" from "what
+      // pub does this specific file belong to".
+      ExtractSymbol: symbol,
     }))
     .filter(
       (extractItem) =>

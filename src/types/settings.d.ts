@@ -188,6 +188,7 @@ export type SettingsItemType =
   | 'date'
   | 'list'
   | 'path'
+  | 'pubSymbols'
   | 'shortcut'
   | 'slider'
   | 'text'
@@ -226,6 +227,7 @@ export interface SettingsValues {
   enablePlaybackSpeedControl: boolean;
   enableSubtitles: boolean;
   enableTimerDisplay: boolean;
+  excludeCbsPubs: string[];
   excludeFootnotes: boolean;
   excludeTh: boolean;
   excludeWtParagraphVideos: boolean;
