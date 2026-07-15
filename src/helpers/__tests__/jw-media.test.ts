@@ -1,3 +1,5 @@
+import type { MultimediaItem } from 'src/types';
+
 import { fetchRaw } from 'src/utils/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -451,5 +453,157 @@ describe('jw-media helpers', () => {
       mediator: '',
       pubMedia: '',
     });
+  });
+
+  it('excludes CBS videos from configured publications but keeps CBS images and non-CBS videos', async () => {
+    currentStateStore.currentSettings = { excludeCbsPubs: ['WCG'] };
+
+    const { isCoWeek, isMwMeetingDay, isWeMeetingDay } =
+      await import('src/helpers/date');
+    const { convertImageIfNeeded } = await import('src/utils/converters');
+    const { sanitizeId } = await import('src/utils/general');
+    const { isLikelyFile } = await import('src/utils/media');
+
+    vi.mocked(isMwMeetingDay).mockReturnValue(true);
+    vi.mocked(isWeMeetingDay).mockReturnValue(false);
+    vi.mocked(isCoWeek).mockReturnValue(false);
+    vi.mocked(convertImageIfNeeded).mockImplementation(
+      async (path) => path as string,
+    );
+    vi.mocked(sanitizeId).mockImplementation((value: string) => value);
+    vi.mocked(isLikelyFile).mockReturnValue(false);
+    formatDateMock.mockReturnValue('20260615');
+
+    const baseItem = (overrides: Partial<MultimediaItem>): MultimediaItem => ({
+      BeginParagraphOrdinal: 0,
+      Caption: '',
+      CategoryType: 1,
+      DocumentId: 1,
+      FilePath: '/tmp/file',
+      Label: 'Label',
+      MajorType: 1,
+      MimeType: 'video/mp4',
+      MultimediaId: 1,
+      TargetParagraphNumberLabel: 0,
+      ...overrides,
+    });
+
+    // Not in the CBS paragraph range: kept even though it's a wcg video.
+    const earlyWcgVideo = baseItem({
+      BeginParagraphOrdinal: 5,
+      KeySymbol: 'wcg',
+    });
+    // In the CBS paragraph range and a video from an excluded pub: dropped
+    // before mapping/downloading.
+    const cbsWcgVideo = baseItem({
+      BeginParagraphOrdinal: 24,
+      KeySymbol: 'wcg',
+    });
+    // In the CBS paragraph range but an image, not a video: kept.
+    const cbsWcgImage = baseItem({
+      BeginParagraphOrdinal: 24,
+      IssueTagNumber: 1001,
+      KeySymbol: 'wcg',
+      MimeType: 'image/jpeg',
+    });
+    // Real-world case: a video embedded in the wcg reading, but sourced from
+    // a different publication (a video compilation). ExtractSymbol carries
+    // the reading's own pub ('wcg'), while KeySymbol is the video's own
+    // source pub ('jwbcov21') - exclusion must key off ExtractSymbol.
+    const cbsVideoFromDifferentSourcePub = baseItem({
+      BeginParagraphOrdinal: 24,
+      ExtractSymbol: 'wcg',
+      IssueTagNumber: 1002,
+      KeySymbol: 'jwbcov21',
+    });
+    // Last item (defines lastParagraph); unrelated pub, kept.
+    const lastVideo = baseItem({
+      BeginParagraphOrdinal: 25,
+      KeySymbol: 'xyz',
+    });
+
+    const { dynamicMediaMapper } = await import('../jw-media');
+
+    const result = await dynamicMediaMapper(
+      [
+        earlyWcgVideo,
+        cbsWcgVideo,
+        cbsWcgImage,
+        cbsVideoFromDifferentSourcePub,
+        lastVideo,
+      ],
+      new Date('2026-06-15'),
+      'dynamic',
+    );
+
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+
+    const pubMediaIds = result.map((m) => m.pubMediaId);
+    expect(pubMediaIds).toContain('wcg');
+    expect(pubMediaIds).toContain('wcg_1001');
+    expect(pubMediaIds).toContain('xyz');
+    expect(pubMediaIds).not.toContain('jwbcov21_1002');
+    expect(result).toHaveLength(3);
+  });
+
+  it('keeps a video from an excluded CBS publication when it is not actually part of the CBS (e.g. a manual import)', async () => {
+    currentStateStore.currentSettings = { excludeCbsPubs: ['wcg'] };
+
+    const { isCoWeek, isMwMeetingDay, isWeMeetingDay } =
+      await import('src/helpers/date');
+    const { convertImageIfNeeded } = await import('src/utils/converters');
+    const { sanitizeId } = await import('src/utils/general');
+    const { isLikelyFile } = await import('src/utils/media');
+
+    vi.mocked(isMwMeetingDay).mockReturnValue(true);
+    vi.mocked(isWeMeetingDay).mockReturnValue(false);
+    vi.mocked(isCoWeek).mockReturnValue(false);
+    vi.mocked(convertImageIfNeeded).mockImplementation(
+      async (path) => path as string,
+    );
+    vi.mocked(sanitizeId).mockImplementation((value: string) => value);
+    vi.mocked(isLikelyFile).mockReturnValue(false);
+    formatDateMock.mockReturnValue('20260615');
+
+    const baseItem = (overrides: Partial<MultimediaItem>): MultimediaItem => ({
+      BeginParagraphOrdinal: 0,
+      Caption: '',
+      CategoryType: 1,
+      DocumentId: 1,
+      FilePath: '/tmp/file',
+      Label: 'Label',
+      MajorType: 1,
+      MimeType: 'video/mp4',
+      MultimediaId: 1,
+      TargetParagraphNumberLabel: 0,
+      ...overrides,
+    });
+
+    // Same paragraph ordinal as the CBS example above, but manually imported
+    // (source: 'additional'), so it isn't actually part of the CBS and
+    // should not be excluded.
+    const manuallyImportedWcgVideo = baseItem({
+      BeginParagraphOrdinal: 24,
+      KeySymbol: 'wcg',
+    });
+    const lastVideo = baseItem({
+      BeginParagraphOrdinal: 25,
+      KeySymbol: 'xyz',
+    });
+
+    const { dynamicMediaMapper } = await import('../jw-media');
+
+    const result = await dynamicMediaMapper(
+      [manuallyImportedWcgVideo, lastVideo],
+      new Date('2026-06-15'),
+      'additional',
+    );
+
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+
+    const pubMediaIds = result.map((m) => m.pubMediaId);
+    expect(pubMediaIds).toContain('wcg');
+    expect(result).toHaveLength(2);
+    expect(result.find((m) => m.pubMediaId === 'wcg')?.cbs).toBe(false);
   });
 });
