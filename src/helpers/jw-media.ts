@@ -3034,6 +3034,21 @@ const getTagValue = (
   return undefined;
 };
 
+// A media item is considered part of the Congregation Bible Study when it
+// falls in the last ~2 paragraphs of a non-additional midweek meeting.
+const isCbsParagraph = (
+  media: Pick<MultimediaItem, 'BeginParagraphOrdinal'>,
+  context: {
+    isAdditional: boolean;
+    isMeetingMw: boolean;
+    lastParagraph: number;
+  },
+) =>
+  !context.isAdditional &&
+  context.isMeetingMw &&
+  media.BeginParagraphOrdinal >= context.lastParagraph - 2 &&
+  media.BeginParagraphOrdinal < context.lastParagraph;
+
 export const dynamicMediaMapper = async (
   allMedia: MultimediaItem[],
   lookupDate: Date,
@@ -3125,9 +3140,28 @@ export const dynamicMediaMapper = async (
       resolveDuration,
     };
 
+    // --- Exclude CBS videos from configured publications --------------------
+    // Filtered out before mapping/downloading so excluded videos are never
+    // fetched in the first place. ExtractSymbol (the publication being
+    // read/discussed) is preferred over KeySymbol, since an embedded video
+    // often has a different publication symbol than the one being read.
+    const excludeCbsPubs = (currentSettings?.excludeCbsPubs || []).map((s) =>
+      s.toLowerCase(),
+    );
+    const filteredMedia = excludeCbsPubs.length
+      ? allMedia.filter((m) => {
+          const symbol = m.ExtractSymbol || m.KeySymbol;
+          if (!symbol) return true;
+          if (!isCbsParagraph(m, { isAdditional, isMeetingMw, lastParagraph }))
+            return true;
+          if (!excludeCbsPubs.includes(symbol.toLowerCase())) return true;
+          return !(m.MimeType?.includes('video') || isVideo(m.FilePath));
+        })
+      : allMedia;
+
     // --- Map media ---------------------------------------------------------
     const mediaItems = await Promise.all(
-      allMedia.map((m, index) =>
+      filteredMedia.map((m, index) =>
         mapDynamicMediaItem(m, index, mapperContext, createPubMediaId),
       ),
     );
@@ -3320,11 +3354,7 @@ const mapDynamicMediaItem = async (
     (await getThumbnailUrl(media.ThumbnailFilePath || media.FilePath));
 
   return {
-    cbs:
-      !context.isAdditional &&
-      context.isMeetingMw &&
-      media.BeginParagraphOrdinal >= context.lastParagraph - 2 &&
-      media.BeginParagraphOrdinal < context.lastParagraph,
+    cbs: isCbsParagraph(media, context),
     customDuration,
     duration,
     extractCaption: media.ExtractCaption,

@@ -228,6 +228,8 @@
   "error": "Error",
   "error-reading-playlist-file": "The JW Library playlist file could not be read. It may be corrupted or invalid.",
   "errorDownloadingMeetingMedia": "Error downloading meeting media",
+  "excludeCbsPubs": "Exclude videos from these publications during the Congregation Bible Study",
+  "excludeCbsPubs-explain": "Videos referenced in these publications will not be shown during the Congregation Bible Study. Search by publication title or symbol.",
   "excludeFootnotes": "Exclude media from footnotes in the Watchtower Study",
   "excludeFootnotes-explain": "Do not include videos or other media from footnotes in Watchtower articles.",
   "excludeTh": "Exclude all media from the Teaching brochure",
