@@ -1663,6 +1663,16 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
     currentFile.value++;
   }
 
+  // A dropped/imported file can relink an existing "missing" media item in
+  // place (findMatchingMissingMedia above) rather than going through
+  // MediaItem's own locateMissingFile/relink flow, which is the only path
+  // that component listens on to know a file reappeared. Reusing this
+  // existing signal (already watched by every mounted MediaItem to
+  // re-verify local file presence) lets them pick up the change and refresh
+  // their thumbnail without MediaCalendarPage needing to reach into their
+  // internals.
+  currentState.lastCacheClearAt = Date.now();
+
   finishImportedMediaItems(mediaItemsToAdd);
 
   if (showFileImport.value && !jwpubImportDocuments.value.length) {

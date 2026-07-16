@@ -1210,6 +1210,7 @@ import { getThumbnailUrl } from 'src/helpers/fs';
 import {
   copyToDatedAdditionalMedia,
   createMediaItemFromPath,
+  downloadFileIfNeeded,
 } from 'src/helpers/jw-media';
 import {
   getSectionAccentColor,
@@ -1432,7 +1433,8 @@ const mediaTitle = ref(props.media.title);
 const discoveredThumbnailUrl = ref('');
 const failedThumbnailUrl = ref('');
 
-const { basename, fileUrlToPath, fs, openFileDialog } = globalThis.electronApi;
+const { basename, dirname, fileUrlToPath, fs, openFileDialog } =
+  globalThis.electronApi;
 
 const { pathExists, stat } = fs;
 const PATH_ACCESS_WARNING_THROTTLE_MS = 30000;
@@ -1848,15 +1850,140 @@ const getPlaybackUrl = (media: MediaItem) => {
   return media.streamUrl ?? media.fileUrl ?? '';
 };
 
-const updateLocalFile = async () => {
-  const checkId = ++localFileCheckId;
-  const isLocal = await fileIsLocal();
-  if (checkId === localFileCheckId) {
-    localFile.value = isLocal;
+// Poll quickly at first (a download or manual fix is often seconds away),
+// then back off to a slow heartbeat rather than hammering pathExists/stat
+// once a second forever for a file that isn't coming back on its own. Reset
+// to the fast phase whenever a cache clear might have changed something (see
+// the lastCacheClearAt watch below).
+const LOCAL_FILE_POLL_FAST_INTERVAL_MS = 1000;
+const LOCAL_FILE_POLL_SLOW_INTERVAL_MS = 60000;
+const LOCAL_FILE_POLL_FAST_ATTEMPTS = 30;
+
+let localFilePollAttempts = 0;
+const localFilePollInterval = computed(() =>
+  localFilePollAttempts < LOCAL_FILE_POLL_FAST_ATTEMPTS
+    ? LOCAL_FILE_POLL_FAST_INTERVAL_MS
+    : LOCAL_FILE_POLL_SLOW_INTERVAL_MS,
+);
+
+// Additional-media items picked from jw.org (songs, videos) keep the remote
+// streamUrl they were originally fetched from, unlike a plain locally
+// imported file. When one of those goes missing, redownload it straight back
+// to its original path instead of only ever offering the manual
+// "locate missing file" picker. Throttled independently of the (much
+// cheaper) pathExists poll above so a persistently missing file doesn't
+// retry the actual network request every second.
+const REDOWNLOAD_MIN_INTERVAL_MS = 15000;
+let redownloadInFlight = false;
+let lastRedownloadAttemptAt = 0;
+
+// Call whenever a file that was missing is confirmed restored at `fileUrl`
+// (auto-redownload above, or a manual locateMissingFile relink below), to
+// make the thumbnail catch up. For images, the file itself doubles as its
+// own thumbnail (see mediaThumbnailUrl) - if the restored copy landed at the
+// exact same path as before (e.g. relinking to a same-named backup, or
+// redownloading in place), that src string never actually changes, so
+// neither Vue nor the browser would retry loading it on their own; force a
+// fresh request with a cache-busting query string. Non-image items instead
+// fall back through to the explicit thumbnailUrl / fileUrl error cycle,
+// which naturally re-triggers findThumbnailUrl() once the (possibly new)
+// fileUrl/thumbnailUrl prop lands and the file exists.
+const refreshThumbnailAfterFileRestored = (
+  fileUrl?: string,
+  isImage?: boolean,
+) => {
+  discoveredThumbnailUrl.value =
+    isImage && fileUrl ? `${fileUrl}?restored=${Date.now()}` : '';
+  failedThumbnailUrl.value = '';
+};
+
+// The thumbnail image (when jw.org provided a distinct one, e.g. a song's
+// still image) lives next to the main file and can go missing along with
+// it. Only worth attempting once the main file redownload above already
+// succeeded - it's a small nice-to-have alongside restoring playback, not
+// worth its own independent poll/trigger.
+const redownloadMissingThumbnailIfNeeded = async () => {
+  if (!props.media.thumbnailStreamUrl || !isFileUrl(props.media.thumbnailUrl)) {
+    return;
+  }
+  const thumbnailPath = fileUrlToPath(props.media.thumbnailUrl);
+  if (!thumbnailPath || (await pathExists(thumbnailPath))) return;
+
+  await downloadFileIfNeeded({
+    dir: dirname(thumbnailPath),
+    filename: basename(thumbnailPath),
+    url: props.media.thumbnailStreamUrl,
+  });
+};
+
+const attemptAdditionalMediaRedownload = async () => {
+  if (redownloadInFlight) return;
+  if (props.media.source !== 'additional' || !props.media.streamUrl) return;
+  if (Date.now() - lastRedownloadAttemptAt < REDOWNLOAD_MIN_INTERVAL_MS) return;
+
+  const filePath = fileUrlToPath(props.media.fileUrl);
+  if (!filePath) return;
+
+  lastRedownloadAttemptAt = Date.now();
+  redownloadInFlight = true;
+  try {
+    const result = await downloadFileIfNeeded({
+      dir: dirname(filePath),
+      filename: basename(filePath),
+      url: props.media.streamUrl,
+    });
+    if (result.error || !result.path) return;
+
+    await redownloadMissingThumbnailIfNeeded();
+
+    // updateLocalFile() below picks up the false -> true transition and
+    // handles the thumbnail refresh itself.
+    localFilePollAttempts = 0;
+    await updateLocalFile();
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          mediaId: props.media.uniqueId,
+          name: 'attemptAdditionalMediaRedownload',
+        },
+      },
+    });
+  } finally {
+    redownloadInFlight = false;
   }
 };
 
-const { pause, resume } = useTimeoutPoll(updateLocalFile, 1000);
+const updateLocalFile = async () => {
+  localFilePollAttempts++;
+  const checkId = ++localFileCheckId;
+  const isLocal = await fileIsLocal();
+  if (checkId === localFileCheckId) {
+    const wasLocal = localFile.value;
+    localFile.value = isLocal;
+    // Catch-all for a file reappearing regardless of how: our own
+    // auto-redownload, a manual locateMissingFile relink, or a completely
+    // separate flow like dropping a same-named replacement onto the media
+    // list (MediaCalendarPage.vue mutates the store item directly there,
+    // with no way to reach this component's local thumbnail state). Keying
+    // off the false -> true transition here means every recovery path gets
+    // this for free instead of needing its own explicit refresh call.
+    if (isLocal && !wasLocal) {
+      refreshThumbnailAfterFileRestored(
+        props.media.fileUrl,
+        props.media.isImage,
+      );
+    }
+  }
+  if (!isLocal) {
+    void attemptAdditionalMediaRedownload();
+  }
+};
+
+const { pause, resume } = useTimeoutPoll(
+  updateLocalFile,
+  localFilePollInterval,
+);
 
 const locateMissingFile = async () => {
   try {
@@ -1890,6 +2017,14 @@ const locateMissingFile = async () => {
       thumbnailUrl: relinked.thumbnailUrl,
       title: relinked.title,
     });
+
+    // The parent's @update:relink handler (MediaList.vue) mutates the same
+    // reactive media object in place, so props.media.fileUrl already
+    // reflects the relink by the time emit() returns. Re-run the poll now
+    // so the false -> true transition (and thumbnail refresh) fires
+    // immediately instead of waiting for the next scheduled tick.
+    localFilePollAttempts = 0;
+    await updateLocalFile();
   } catch (error) {
     errorCatcher(error, {
       contexts: { fn: { name: 'MediaItem.locateMissingFile' } },
@@ -2138,7 +2273,17 @@ useEventListener(
   { passive: true },
 );
 
+// runThumbnailCheck schedules its own retries via setTimeout rather than
+// awaiting them, so the chain outlives the initial findThumbnailUrl() call.
+// Without this guard, every @error firing (e.g. one per second from the
+// local-file poll above re-swapping the <q-img> src) would spawn another
+// independent 30-retry chain on top of whichever ones are already running.
+let thumbnailLookupInProgress = false;
+
 async function findThumbnailUrl() {
+  if (thumbnailLookupInProgress) return;
+  thumbnailLookupInProgress = true;
+
   let fileRetryCount = 0;
   let thumbnailRetryCount = 0;
 
@@ -2150,23 +2295,25 @@ async function findThumbnailUrl() {
       if (fileRetryCount < 30) {
         fileRetryCount++;
         setTimeout(runThumbnailCheck, 2000); // Retry after 2 seconds
+        return;
       }
+      thumbnailLookupInProgress = false;
       return;
     }
 
-    if (fileExists) {
-      const thumbnailUrl = getDisplayableThumbnailUrl(
-        await getThumbnailUrl(props.media.fileUrl),
-      );
-      if (!discoveredThumbnailUrl.value) {
-        discoveredThumbnailUrl.value = thumbnailUrl;
-      }
-      const retryLimit = mediaIsAudio.value ? 0 : 5;
-      if (!discoveredThumbnailUrl.value && thumbnailRetryCount < retryLimit) {
-        thumbnailRetryCount++;
-        setTimeout(runThumbnailCheck, 2000); // Retry after 2 seconds
-      }
+    const thumbnailUrl = getDisplayableThumbnailUrl(
+      await getThumbnailUrl(props.media.fileUrl),
+    );
+    if (!discoveredThumbnailUrl.value) {
+      discoveredThumbnailUrl.value = thumbnailUrl;
     }
+    const retryLimit = mediaIsAudio.value ? 0 : 5;
+    if (!discoveredThumbnailUrl.value && thumbnailRetryCount < retryLimit) {
+      thumbnailRetryCount++;
+      setTimeout(runThumbnailCheck, 2000); // Retry after 2 seconds
+      return;
+    }
+    thumbnailLookupInProgress = false;
   };
 
   // Run immediately
@@ -2733,7 +2880,9 @@ watch(isCurrentlyPlaying, (playing) => {
 watch(
   () => currentState.lastCacheClearAt,
   (clearedAt) => {
-    if (clearedAt) resume();
+    if (!clearedAt) return;
+    localFilePollAttempts = 0;
+    resume();
   },
 );
 

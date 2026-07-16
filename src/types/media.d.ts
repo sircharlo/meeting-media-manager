@@ -102,6 +102,7 @@ export interface MediaItem {
   subtitlesUrl?: string;
   tag?: Tag;
   textColor?: string;
+  thumbnailStreamUrl?: string;
   thumbnailUrl?: string;
   title: string;
   type: 'divider' | 'media';

@@ -1253,6 +1253,7 @@ export const createMediaItemFromPath = async (
     duration?: number;
     filesize?: number;
     song?: string;
+    thumbnailStreamUrl?: string;
     thumbnailUrl?: string;
     title?: string;
     url?: string;
@@ -1301,6 +1302,7 @@ export const createMediaItemFromPath = async (
         type: additionalInfo?.song ? 'song' : undefined,
         value: additionalInfo?.song ?? undefined,
       },
+      thumbnailStreamUrl: additionalInfo?.thumbnailStreamUrl,
       thumbnailUrl:
         additionalInfo?.thumbnailUrl ??
         (await getThumbnailUrl(additionalFilePath, true)),
@@ -1331,6 +1333,7 @@ export const addToAdditionMediaMapFromPath = async (
     duration?: number;
     filesize?: number;
     song?: string;
+    thumbnailStreamUrl?: string;
     thumbnailUrl?: string;
     title?: string;
     url?: string;
@@ -4953,32 +4956,40 @@ const isRemoteUrl = (value: string) => /^https?:\/\//i.test(value);
  * package), then a jw.org API thumbnail looked up from `thumbnailLookup`.
  * Any remote (http/https) thumbnail is downloaded and cached alongside the
  * video so it survives offline use; local file:// thumbnails pass through
- * untouched. If neither source yields anything, undefined is returned and
- * the caller falls back to the video-embedded/frame-grab thumbnail once the
- * video file itself is available (see getThumbnailUrl in helpers/fs.ts).
+ * untouched. If neither source yields anything, both fields are undefined
+ * and the caller falls back to the video-embedded/frame-grab thumbnail once
+ * the video file itself is available (see getThumbnailUrl in helpers/fs.ts).
+ * `remoteUrl` (the original http(s) source, when there was one) is returned
+ * alongside `localUrl` so it can be persisted on the media item and reused
+ * to redownload the thumbnail later if the local copy goes missing.
  */
 const resolveRemoteThumbnailUrl = async (
   thumbnailUrl: string | undefined,
   thumbnailLookup: PublicationFetcher | undefined,
   dir: string,
-): Promise<string | undefined> => {
+): Promise<{ localUrl: string | undefined; remoteUrl: string | undefined }> => {
   try {
     const resolvedUrl =
       thumbnailUrl ||
       (thumbnailLookup
         ? (await getJwMediaInfo(thumbnailLookup)).thumbnail || undefined
         : undefined);
-    if (!resolvedUrl || !isRemoteUrl(resolvedUrl)) return resolvedUrl;
+    if (!resolvedUrl || !isRemoteUrl(resolvedUrl)) {
+      return { localUrl: resolvedUrl, remoteUrl: undefined };
+    }
 
     const { path } = await downloadFileIfNeeded({
       dir,
       lowPriority: true,
       url: resolvedUrl,
     });
-    return path ? pathToFileURL(path) : resolvedUrl;
+    return {
+      localUrl: path ? pathToFileURL(path) : resolvedUrl,
+      remoteUrl: resolvedUrl,
+    };
   } catch (e) {
     errorCatcher(e);
-    return thumbnailUrl;
+    return { localUrl: thumbnailUrl, remoteUrl: undefined };
   }
 };
 
@@ -5043,11 +5054,12 @@ export const downloadAdditionalRemoteVideo = async (
       meetingDate || currentStateStore.selectedDate,
     );
 
-    const thumbnailUrl = await resolveRemoteThumbnailUrl(
-      thumbnailUrlOption,
-      thumbnailLookup,
-      datedAdditionalMediaDir,
-    );
+    const { localUrl: thumbnailUrl, remoteUrl: thumbnailStreamUrl } =
+      await resolveRemoteThumbnailUrl(
+        thumbnailUrlOption,
+        thumbnailLookup,
+        datedAdditionalMediaDir,
+      );
 
     const mediaFilePath = join(datedAdditionalMediaDir, basename(bestItemUrl));
 
@@ -5059,6 +5071,7 @@ export const downloadAdditionalRemoteVideo = async (
           duration: bestItem.duration,
           filesize: bestItem.filesize,
           song: song ? song.toString() : undefined,
+          thumbnailStreamUrl,
           thumbnailUrl,
           title,
           url: bestItemUrl,
@@ -5085,6 +5098,7 @@ export const downloadAdditionalRemoteVideo = async (
         duration: bestItem.duration,
         filesize: bestItem.filesize,
         song: song ? song.toString() : undefined,
+        thumbnailStreamUrl,
         thumbnailUrl,
         title,
         url: bestItemUrl,
