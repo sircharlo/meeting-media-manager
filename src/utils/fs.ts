@@ -153,7 +153,11 @@ const CONG_PREFERENCES_FOLDER = 'Cong Preferences';
  * @param create Whether to create the directory if it doesn't exist.
  * @returns The full path of the directory.
  */
-const getCachePath = async (paths: string | string[], create = false) => {
+const getCachePath = async (
+  paths: string | string[],
+  create = false,
+  { bypassCustomPath = false } = {},
+) => {
   const pathArray = Array.isArray(paths) ? paths : [paths];
   const parts = pathArray.filter((p) => !!p);
 
@@ -166,7 +170,10 @@ const getCachePath = async (paths: string | string[], create = false) => {
   };
 
   try {
-    return await buildPath(await getCachedUserDataPath());
+    const basePath = bypassCustomPath
+      ? await getAppDataPath()
+      : await getCachedUserDataPath();
+    return await buildPath(basePath);
   } catch (error) {
     defaultDataPath = await getAppDataPath();
     const fallbackPath = await buildPath(defaultDataPath);
@@ -186,7 +193,15 @@ const getCachePath = async (paths: string | string[], create = false) => {
 };
 
 export const getFontsPath = () => getCachePath('Fonts');
-export const getTempPath = () => getCachePath('Temp', true);
+
+// Temp is pure scratch space (jwpub extraction staging, PDF conversion,
+// etc.) with no benefit from being shared across installs, unlike
+// Publications/Fonts/Additional Media. Routing it through a cloud-synced
+// custom cache folder buys nothing and exposes rapid ephemeral read/write
+// churn to sync-agent hydration/locking issues (e.g. OneDrive), so it
+// always uses the shared/machine-wide-or-per-user path instead.
+export const getTempPath = () =>
+  getCachePath('Temp', true, { bypassCustomPath: true });
 export const getPublicationsPath = () =>
   getCachePath(PUBLICATION_FOLDER, false);
 export const getAdditionalMediaPath = () =>

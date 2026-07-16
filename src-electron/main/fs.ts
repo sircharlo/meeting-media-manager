@@ -10,6 +10,7 @@ import { app, dialog } from 'electron';
 import { ensureDir, type Stats } from 'fs-extra';
 import { createReadStream, createWriteStream } from 'node:fs';
 import {
+  copyFile,
   mkdir,
   readdir,
   readFile,
@@ -80,7 +81,7 @@ const SHARED_PATH_HEALTH_FOLDERS = [
   'Publications',
 ];
 
-const isRetryableZipError = (error: unknown) => {
+const isRetryableZipError = (error: unknown, zipPath?: string) => {
   const errorCode = getErrorCode(error);
   if (errorCode && NETWORK_ERROR_CODES.has(errorCode)) return true;
   if (errorCode === 'ENOENT') return true;
@@ -88,9 +89,18 @@ const isRetryableZipError = (error: unknown) => {
   const message = error instanceof Error ? error.message : String(error);
   if (isIncompleteZipReadError(message)) return true;
 
-  return /connection timed out|resource busy|temporarily unavailable/i.test(
-    message,
-  );
+  if (
+    /connection timed out|resource busy|temporarily unavailable/i.test(message)
+  ) {
+    return true;
+  }
+
+  // Cloud-sync drivers (OneDrive, etc.) and network shares commonly surface
+  // opaque EINVAL/ENOENT/UNKNOWN errors while a file is still hydrating or
+  // briefly locked by the sync agent - worth a retry there even though
+  // those codes aren't retryable in general (e.g. a genuinely missing/
+  // invalid file on local disk).
+  return !!zipPath && isExpectedNetworkPathAccessError(error, dirname(zipPath));
 };
 
 const isIncompleteZipReadError = (message: string) =>
@@ -1212,7 +1222,7 @@ const openZipFileForUnzip = async (
     } catch (error) {
       lastError = error;
       const errorCode = getErrorCode(error);
-      const shouldRetry = shouldRetryZipRead(error, attempt);
+      const shouldRetry = shouldRetryZipRead(error, attempt, input);
 
       addElectronBreadcrumb({
         category: 'unzip',
@@ -1251,8 +1261,72 @@ const getZipDiagnostics = (zipPath: string, fileSize: number) => {
   };
 };
 
-const shouldRetryZipRead = (error: unknown, attempt: number) =>
-  attempt < ZIP_OPEN_RETRY_COUNT && isRetryableZipError(error);
+const shouldRetryZipRead = (
+  error: unknown,
+  attempt: number,
+  zipPath?: string,
+) => attempt < ZIP_OPEN_RETRY_COUNT && isRetryableZipError(error, zipPath);
+
+const LOCAL_FALLBACK_SUBFOLDER = 'local-fallback-copy';
+
+/**
+ * Last-resort fallback for a zip read that keeps failing on a cloud-synced
+ * custom cache folder, a mapped network drive, or a UNC share: copies the
+ * source file onto the always-local userData path and lets the caller retry
+ * there once. In-place retries can't help when a cloud-sync agent has the
+ * file mid-hydration or transiently locked - a plain local copy sidesteps
+ * that class of failure entirely, at the cost of a one-off local disk copy.
+ * Returns the local copy's path, or undefined if this fallback isn't
+ * applicable (local source) or the copy itself failed.
+ */
+const attemptZipLocalFallbackCopy = async (
+  zipPath: string,
+  error: unknown,
+): Promise<string | undefined> => {
+  if (!isPossiblyNetworkFolderPath(dirname(zipPath))) return undefined;
+
+  const userDataPath = app.getPath('userData');
+  if (isPossiblyNetworkFolderPath(userDataPath)) return undefined;
+
+  const localDir = join(userDataPath, 'Temp', LOCAL_FALLBACK_SUBFOLDER, uuid());
+  const localPath = join(localDir, basename(zipPath));
+
+  try {
+    await mkdir(localDir, { recursive: true });
+    await copyFile(zipPath, localPath);
+  } catch (copyError) {
+    addElectronBreadcrumb({
+      category: 'zip',
+      data: {
+        ...getZipDiagnostics(zipPath, 0),
+        copyErrorCode: getErrorCode(copyError),
+        originalErrorCode: getErrorCode(error),
+      },
+      level: 'warning',
+      message: 'Local fallback copy failed',
+    });
+    await rm(localDir, { force: true, recursive: true }).catch(() => undefined);
+    return undefined;
+  }
+
+  addElectronBreadcrumb({
+    category: 'zip',
+    data: {
+      ...getZipDiagnostics(zipPath, 0),
+      localPath,
+      originalErrorCode: getErrorCode(error),
+    },
+    message: 'Retrying zip read against local userData fallback copy',
+  });
+
+  return localPath;
+};
+
+const cleanupZipLocalFallbackCopy = async (localPath: string) => {
+  await rm(dirname(localPath), { force: true, recursive: true }).catch(
+    () => undefined,
+  );
+};
 
 const getZipFileStats = async (zipPath: string) => {
   let lastError: unknown;
@@ -1263,7 +1337,7 @@ const getZipFileStats = async (zipPath: string) => {
     } catch (error) {
       lastError = error;
       const errorCode = getErrorCode(error);
-      const shouldRetry = shouldRetryZipRead(error, attempt);
+      const shouldRetry = shouldRetryZipRead(error, attempt, zipPath);
 
       addElectronBreadcrumb({
         category: 'zip',
@@ -1316,7 +1390,7 @@ const openZipFileForEntries = async (
     } catch (error) {
       lastError = error;
       const errorCode = getErrorCode(error);
-      const shouldRetry = shouldRetryZipRead(error, attempt);
+      const shouldRetry = shouldRetryZipRead(error, attempt, zipPath);
 
       addZipEntryOpenBreadcrumb(zipPath, fileSize, {
         attempt,
@@ -1619,6 +1693,49 @@ export async function extractNestedZipEntry(
 export async function getZipEntries(
   zipPath: string,
 ): Promise<Record<string, number>> {
+  try {
+    return await getZipEntriesInternal(zipPath);
+  } catch (error) {
+    const localFallbackPath = await attemptZipLocalFallbackCopy(zipPath, error);
+    if (!localFallbackPath) throw error;
+
+    try {
+      return await getZipEntriesInternal(localFallbackPath);
+    } finally {
+      await cleanupZipLocalFallbackCopy(localFallbackPath);
+    }
+  }
+}
+
+/**
+ * Decompresses a file using yauzl for memory efficiency
+ * Properly waits for all write streams to finish and flush to disk
+ * before resolving the promise.
+ */
+export async function unzipFile(
+  input: string,
+  output: string,
+  opts?: UnzipOptions,
+): Promise<UnzipResult[]> {
+  const cacheKey = `${input}->${output}`;
+  const existing = ongoingDecompressions.get(cacheKey);
+  if (existing) return existing;
+
+  const decompressionPromise = decompressWithLocalFallback(
+    input,
+    output,
+    opts,
+  ).finally(() => {
+    ongoingDecompressions.delete(cacheKey);
+  });
+
+  ongoingDecompressions.set(cacheKey, decompressionPromise);
+  return decompressionPromise;
+}
+
+async function getZipEntriesInternal(
+  zipPath: string,
+): Promise<Record<string, number>> {
   const stats = await getZipFileStats(zipPath);
   const fileSize = stats.size;
   const isDirectorySource = !!stats.isDirectory?.();
@@ -1690,26 +1807,28 @@ export async function getZipEntries(
 }
 
 /**
- * Decompresses a file using yauzl for memory efficiency
- * Properly waits for all write streams to finish and flush to disk
- * before resolving the promise.
+ * Wraps {@link decompress} with the same local-copy fallback as
+ * {@link getZipEntries}: only the source `input` is copied, so extraction
+ * still writes to the caller's original `output` location unchanged.
  */
-export async function unzipFile(
+const decompressWithLocalFallback = async (
   input: string,
   output: string,
   opts?: UnzipOptions,
-): Promise<UnzipResult[]> {
-  const cacheKey = `${input}->${output}`;
-  const existing = ongoingDecompressions.get(cacheKey);
-  if (existing) return existing;
+): Promise<UnzipResult[]> => {
+  try {
+    return await decompress(input, output, opts);
+  } catch (error) {
+    const localFallbackPath = await attemptZipLocalFallbackCopy(input, error);
+    if (!localFallbackPath) throw error;
 
-  const decompressionPromise = decompress(input, output, opts).finally(() => {
-    ongoingDecompressions.delete(cacheKey);
-  });
-
-  ongoingDecompressions.set(cacheKey, decompressionPromise);
-  return decompressionPromise;
-}
+    try {
+      return await decompress(localFallbackPath, output, opts);
+    } finally {
+      await cleanupZipLocalFallbackCopy(localFallbackPath);
+    }
+  }
+};
 
 const watchers = new Set<FSWatcher>();
 const datePattern = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD
