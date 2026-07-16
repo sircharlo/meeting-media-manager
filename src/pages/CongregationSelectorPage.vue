@@ -123,6 +123,7 @@ import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
+import { removeCongregationCache } from 'src/helpers/cleanup';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadSongbookVideos } from 'src/helpers/jw-media';
 import { createTemporaryNotification } from 'src/helpers/notifications';
@@ -241,6 +242,7 @@ const autoSelectCongregation = () => {
 
 const removeCongregation = async (id: number | string) => {
   deleteCongregation(id);
+  await removeCongregationCache(String(id));
 };
 
 onMounted(async () => {

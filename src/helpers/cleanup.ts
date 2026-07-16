@@ -346,30 +346,56 @@ export const cleanPersistedStores = () => {
   cleanCongregationRecord(useJwStore().lookupPeriod, congIds);
 };
 
-const cleanCongregationFolders = async (root: string, congIds: Set<string>) => {
-  if (!root || !congIds || !(await pathExists(root))) return;
-  const folders = await readdir(root);
-  await Promise.allSettled(
-    folders
-      .filter((f) => !congIds.has(f.name))
-      .map((f) => remove(join(root, f.name))),
-  );
-};
-
-const cleanPublicTalkPubs = async (folder: string, congIds: Set<string>) => {
-  if (!folder || !congIds || !(await pathExists(folder))) return;
+/**
+ * Removes the S-34/S-34mp public talk outline file(s) tagged for a specific
+ * congregation ID (filename shape `S-34(mp)?_{congId}_...`).
+ */
+const removeCongregationPublicTalkPubs = async (
+  folder: string,
+  congId: string,
+) => {
+  if (!folder || !congId || !(await pathExists(folder))) return;
   const files = await readdir(folder);
 
   await Promise.allSettled(
     files
-      .filter((f) => /^S-34(?:mp_|_)/.test(f.name))
-      .map((f) => {
-        const congIdOrLang = f.name.split('_')[1];
-        if (!congIdOrLang?.includes('-') || congIds.has(congIdOrLang))
-          return Promise.resolve();
-        return remove(join(folder, f));
-      }),
+      .filter(
+        (f) => /^S-34(?:mp_|_)/.test(f.name) && f.name.split('_')[1] === congId,
+      )
+      .map((f) => remove(join(folder, f.name))),
   );
+};
+
+/**
+ * Deletes a specific congregation's cached data (Additional Media,
+ * Cong Preferences, S-34 outlines). Congregation IDs are generated locally
+ * per install, not tied to a shared account identity, so a machine-wide
+ * cache folder can end up holding data for congregations that a *different*
+ * install/profile sharing that folder (e.g. a dev build and the installed
+ * app) doesn't know about. That means "this process doesn't recognize this
+ * congId" is never a safe signal to delete it - only an explicit user action
+ * (removing the congregation here) is. Call this right after removing a
+ * congregation from the store, while its ID is still known for certain to be
+ * gone.
+ */
+export const removeCongregationCache = async (
+  congId: string,
+): Promise<void> => {
+  if (!congId) return;
+
+  try {
+    const additionalMediaPath = await getAdditionalMediaPath();
+
+    await Promise.allSettled([
+      remove(join(additionalMediaPath, congId)),
+      remove(join(await congPreferencesPath(), congId)),
+      removeCongregationPublicTalkPubs(additionalMediaPath, congId),
+    ]);
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: { fn: { congId, name: 'removeCongregationCache' } },
+    });
+  }
 };
 
 const cleanDateFolders = async (root?: string) => {
@@ -819,10 +845,6 @@ export const cleanCache = async () => {
     const settings = useCurrentStateStore().currentSettings;
 
     const additionalMediaPath = await getAdditionalMediaPath();
-
-    cleanPublicTalkPubs(additionalMediaPath, congIds);
-    cleanCongregationFolders(additionalMediaPath, congIds);
-    cleanCongregationFolders(await congPreferencesPath(), congIds);
 
     congIds.forEach((congId) => {
       cleanDateFolders(join(additionalMediaPath, congId));

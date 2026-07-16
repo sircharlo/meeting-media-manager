@@ -19,11 +19,7 @@
               color="negative"
               flat
               :label="t('cancel')"
-              @click="
-                deleteCongregation(currentCongregation);
-                currentCongregation = '';
-                goToPage('/congregation-selector');
-              "
+              @click="cancelSetup"
             />
             <q-btn
               class="btn-tonal"
@@ -657,6 +653,7 @@ import TextInput from 'components/form-inputs/TextInput.vue';
 import TimeInput from 'components/form-inputs/TimeInput.vue';
 import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
+import { removeCongregationCache } from 'src/helpers/cleanup';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadSongbookVideos, fetchMedia } from 'src/helpers/jw-media';
 import { createTemporaryNotification } from 'src/helpers/notifications';
@@ -760,6 +757,14 @@ const goToPage = (path: string) => {
   } catch (error) {
     errorCatcher(error);
   }
+};
+
+const cancelSetup = async () => {
+  const congId = currentCongregation.value;
+  deleteCongregation(congId);
+  currentCongregation.value = '';
+  goToPage('/congregation-selector');
+  await removeCongregationCache(congId);
 };
 
 const step = ref(1);
