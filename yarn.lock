@@ -8833,7 +8833,7 @@ __metadata:
     png2icons: "npm:^2.0.1"
     postcss: "npm:^8.5.19"
     prettier: "npm:^3.9.5"
-    pretty-bytes: "npm:^7.1.0"
+    pretty-bytes: "npm:^7.1.1"
     quasar: "npm:^2.21.4"
     rollup-plugin-visualizer: "npm:^7.0.1"
     sharp: "npm:^0.35.3"
@@ -10224,10 +10224,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pretty-bytes@npm:*, pretty-bytes@npm:^7.1.0":
+"pretty-bytes@npm:*":
   version: 7.1.0
   resolution: "pretty-bytes@npm:7.1.0"
   checksum: 10c0/9458f17007bbf8b61d11ef82091bfe7f87bb2f3fd7e6aa917744eb6dc709346995f698ecbf6597ac353b0d44bb7982054f7a2325f3260c9909d09aaafbdab5ca
+  languageName: node
+  linkType: hard
+
+"pretty-bytes@npm:^7.1.1":
+  version: 7.1.1
+  resolution: "pretty-bytes@npm:7.1.1"
+  checksum: 10c0/fde0a5d0027b6ba315978a8190cf4348c8f115f02bb2ca4efc092ad6ddc8238bd8ad5e53ba531fb57de036168787c7ab9bed165841f4634febddb492505e8aaa
   languageName: node
   linkType: hard
 
