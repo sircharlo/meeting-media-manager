@@ -74,7 +74,7 @@
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",
     "pretty-bytes": "^7.1.0",
-    "quasar": "^2.21.3",
+    "quasar": "^2.21.4",
     "type-fest": "^5.8.0",
     "upath": "^3.0.8",
     "vue": "^3.5.39",
