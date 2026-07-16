@@ -69,7 +69,10 @@
             size="sm"
             @click.stop
           >
-            <q-menu>
+            <q-tooltip v-if="!moreOptionsMenuActive" :delay="500">
+              {{ t('more-options') }}
+            </q-tooltip>
+            <q-menu v-model="moreOptionsMenuActive">
               <q-list style="min-width: 150px">
                 <!-- Color Picker -->
                 <q-item clickable @click="showColorPicker = true">
@@ -201,7 +204,7 @@
             size="sm"
             @click.stop="handleAddClick"
           >
-            <q-tooltip :delay="500">
+            <q-tooltip v-if="!buttonLabel" :delay="500">
               {{ tooltipText }}
             </q-tooltip>
           </q-btn>
@@ -282,6 +285,7 @@ const isHovered = useElementHover(sectionHeader);
 const renameInput = ref<HTMLInputElement>();
 const hexValue = ref(props.mediaList.config?.bgColor || '#ffffff');
 const showColorPicker = ref(false);
+const moreOptionsMenuActive = ref(false);
 
 // Computed properties
 const buttonLabel = computed(() => {

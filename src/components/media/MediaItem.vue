@@ -494,7 +494,11 @@
                     contextMenu = true;
                   }
                 "
-              />
+              >
+                <q-tooltip v-if="!contextMenu" :delay="500">
+                  {{ t('more-options') }}
+                </q-tooltip>
+              </q-btn>
               <q-btn
                 v-if="
                   media.source === 'additional' &&
@@ -671,7 +675,7 @@
                 :unelevated="!fileIsAvailable && !streamIsAvailable"
                 @click="setMediaPlaying(media)"
               >
-                <q-tooltip v-if="playButtonTooltip" :delay="1000">
+                <q-tooltip :delay="1000">
                   {{ playButtonTooltip }}
                 </q-tooltip>
               </q-btn>
@@ -731,7 +735,11 @@
               icon="mmm-play"
               rounded
               @click="mediaPlaying.action = 'play'"
-            />
+            >
+              <q-tooltip :delay="1000">
+                {{ t('resume') }}
+              </q-tooltip>
+            </q-btn>
             <q-btn
               v-else-if="
                 localFile &&
@@ -745,7 +753,11 @@
               icon="mmm-pause"
               rounded
               @click="mediaPlaying.action = 'pause'"
-            />
+            >
+              <q-tooltip :delay="1000">
+                {{ t('pause') }}
+              </q-tooltip>
+            </q-btn>
             <q-btn
               v-if="mediaPlaying.action !== '' || mediaPlaying.action === ''"
               ref="stopButton"
@@ -767,6 +779,9 @@
                 v-if="!localFile && mediaPlaying.currentPosition === 0"
                 size="xs"
               />
+              <q-tooltip :delay="1000">
+                {{ t('stop') }}
+              </q-tooltip>
             </q-btn>
           </div>
         </template>
@@ -940,7 +955,11 @@
                     round
                     size="sm"
                     @click.stop="changePlaybackRate(-0.5)"
-                  />
+                  >
+                    <q-tooltip :delay="500">
+                      {{ t('decrease-playback-speed') }}
+                    </q-tooltip>
+                  </q-btn>
                   <span
                     class="text-caption text-weight-bold"
                     style="min-width: 36px; text-align: center"
@@ -957,7 +976,11 @@
                     round
                     size="sm"
                     @click.stop="changePlaybackRate(0.5)"
-                  />
+                  >
+                    <q-tooltip :delay="500">
+                      {{ t('increase-playback-speed') }}
+                    </q-tooltip>
+                  </q-btn>
                 </div>
               </q-item-section>
             </q-item>
@@ -2474,7 +2497,7 @@ const playButtonTooltip = computed(() => {
   if (!fileIsAvailable.value && !streamIsAvailable.value) {
     return t('media-item-missing-explain');
   }
-  return '';
+  return t('play');
 });
 
 const stopButtonHasPrecedingButton = computed(() => {

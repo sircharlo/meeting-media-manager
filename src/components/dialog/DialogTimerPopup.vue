@@ -407,6 +407,7 @@
                         }
                       "
                     >
+                      <q-tooltip>{{ t('reset') }}</q-tooltip>
                     </q-btn>
                     <q-btn
                       v-if="

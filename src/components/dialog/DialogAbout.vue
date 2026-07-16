@@ -27,7 +27,11 @@
           </div>
         </div>
         <div class="col-shrink">
-          <q-btn flat icon="close" round @click="handleHide" />
+          <q-btn flat icon="close" round @click="handleHide">
+            <q-tooltip :delay="500">
+              {{ t('close') }}
+            </q-tooltip>
+          </q-btn>
         </div>
       </div>
       <div class="row">
@@ -79,7 +83,11 @@
                 size="sm"
                 text-color="white"
                 @click="carousel.previous()"
-              />
+              >
+                <q-tooltip :delay="500">
+                  {{ t('previous') }}
+                </q-tooltip>
+              </q-btn>
               <q-btn
                 color="primary"
                 dense
@@ -88,7 +96,11 @@
                 size="sm"
                 text-color="white"
                 @click="carousel.next()"
-              />
+              >
+                <q-tooltip :delay="500">
+                  {{ t('next') }}
+                </q-tooltip>
+              </q-btn>
             </q-carousel-control>
           </template>
         </q-carousel>

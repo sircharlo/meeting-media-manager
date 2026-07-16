@@ -38,6 +38,9 @@
             style="top: -1px; right: 0px; text-transform: none"
           />
         </q-avatar>
+        <q-tooltip anchor="center right" :delay="1000" self="center left">
+          {{ t('about') }}
+        </q-tooltip>
       </q-btn>
       <q-separator class="bg-semi-white-24 q-ml-none" inset vertical />
       <div class="col q-ml-md flex items-center">

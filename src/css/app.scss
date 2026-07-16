@@ -448,6 +448,29 @@ body.body--dark {
   font-size: 0.9em;
 }
 
+// Always dark-on-light (independent of body--light/body--dark) so a tooltip
+// reads the same, obviously-elevated way over any background — a small
+// cousin of .action-island's glow, but a rounded card rather than a pill so
+// it stays distinct from that fully-rounded chip.
+.q-tooltip.q-tooltip--style {
+  padding: 0.65em 1em;
+  font-size: 0.9em;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: $secondary;
+  background: linear-gradient(
+    155deg,
+    color-mix(in srgb, white 97%, $primary 30%),
+    $accent-100
+  );
+  border: 0.25em solid color-mix(in srgb, $primary 40%, transparent);
+  border-radius: $generic-border-radius;
+  box-shadow:
+    0px 2px 8px 0px rgba(0, 0, 0, 0.12),
+    0px 6px 24px 0px color-mix(in srgb, $primary 30%, transparent);
+  backdrop-filter: blur(12px);
+}
+
 .super-rounded {
   border-radius: 6em;
 }

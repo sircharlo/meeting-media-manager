@@ -15,6 +15,9 @@
         @mouseover="hoveredCongregation = id"
       >
         <q-item class="items-center">
+          <q-tooltip v-if="!hoveringDeleteButton" :delay="1000">
+            {{ t('selectThisProfile') }}
+          </q-tooltip>
           <div class="col">
             <div
               :class="
@@ -58,16 +61,21 @@
           </div>
           <div class="col-shrink">
             <q-btn
-              :class="
-                (hoveredCongregation !== id ? 'invisible' : '') + ' q-mr-lg'
-              "
+              v-if="hoveredCongregation === id"
+              class="q-mr-lg"
               color="negative"
               flat
               icon="mmm-delete"
-              :label="t('delete')"
+              round
               size="md"
               @click.stop="congToDelete = id"
-            />
+              @mouseleave="hoveringDeleteButton = false"
+              @mouseover="hoveringDeleteButton = true"
+            >
+              <q-tooltip :delay="500">
+                {{ t('delete') }}
+              </q-tooltip>
+            </q-btn>
             <q-icon
               :class="
                 currentCongregation === id ? 'text-primary' : 'text-accent-300'
@@ -158,6 +166,7 @@ const deletePending = computed(() => {
 });
 const dialogId = 'congregation-delete-dialog';
 const hoveredCongregation = ref<number | string>('');
+const hoveringDeleteButton = ref(false);
 
 const sortedCongregations = computed(() =>
   Object.entries(congregations.value)

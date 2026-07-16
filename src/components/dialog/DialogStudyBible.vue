@@ -15,7 +15,11 @@
           icon="mmm-left"
           round
           @click="goBack"
-        />
+        >
+          <q-tooltip :delay="500">
+            {{ t('back') }}
+          </q-tooltip>
+        </q-btn>
         <template v-if="!bibleBook">
           {{ t('add-media-study-bible') }}
         </template>

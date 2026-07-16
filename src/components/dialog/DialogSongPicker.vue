@@ -83,7 +83,7 @@
             @mouseout="if (!loading) hoveredSong = null;"
             @mouseover="if (!loading) hoveredSong = song.track;"
           >
-            <q-tooltip v-if="!loading" class="bg-black text-white">
+            <q-tooltip v-if="!loading">
               {{ song.title }}
             </q-tooltip>
           </q-btn>
