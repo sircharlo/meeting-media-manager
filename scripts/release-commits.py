@@ -20,7 +20,9 @@ LEGACY_PATTERN = re.compile(
     flags=re.IGNORECASE | re.ASCII,
 )
 SKIP_SUBJECT_PATTERN = re.compile(
-    r"^chore(?:\([^)]*\))?: (?:bump version|auto-update release-notes)",
+    r"^chore(?:\([^)]*\))?: (?:bump version|auto-update release-notes"
+    r"|auto-update enabled languages)"
+    r"|^feat: new translations for ",
     flags=re.IGNORECASE | re.ASCII,
 )
 DOC_ONLY_PATHS = (
