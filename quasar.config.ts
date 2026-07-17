@@ -27,6 +27,7 @@ const SENTRY_ORG = 'jw-projects';
 const SENTRY_PROJECT = 'mmm-v2';
 const SENTRY_VERSION = `${name}@${version}`;
 const SENTRY_AUTH_TOKEN = process.env.SENTRY_AUTH_TOKEN;
+const SENTRY_DSN = process.env.SENTRY_DSN ?? '';
 const ENABLE_SOURCE_MAPS = !!SENTRY_AUTH_TOKEN && !IS_TEST;
 
 const repoURL = repository.url.replace('.git', '');
@@ -81,6 +82,7 @@ export default defineConfig((ctx) => {
         IS_TEST,
         PRODUCT_NAME,
         repository: repoURL,
+        SENTRY_DSN,
         version,
       },
       extendViteConf(viteConf) {

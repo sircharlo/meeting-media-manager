@@ -14,6 +14,9 @@ export const APP_ID = import.meta.env.APP_ID;
 export const APP_NAME = import.meta.env.APP_NAME;
 export const PRODUCT_NAME = import.meta.env.PRODUCT_NAME;
 
+// Sentry
+export const SENTRY_DSN = import.meta.env.SENTRY_DSN;
+
 // Domains
 export const JW_DOMAINS: string[] = ['jw.org', 'jwevent.org', 'stream.jw.org'];
 export const TRUSTED_DOMAINS: string[] = JW_DOMAINS.concat([

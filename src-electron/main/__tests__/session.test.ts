@@ -28,6 +28,7 @@ vi.mock('electron', () => ({
 }));
 
 vi.mock('src-electron/constants', () => ({
+  SENTRY_DSN: 'https://fake-key@fake.ingest.sentry.io/123456',
   TRUSTED_DOMAINS: [],
 }));
 

@@ -16,6 +16,7 @@ import {
   IS_TEST,
   PLATFORM,
   PRODUCT_NAME,
+  SENTRY_DSN,
 } from 'src-electron/constants';
 import { cancelAllDownloads } from 'src-electron/main/downloads';
 import {
@@ -74,64 +75,66 @@ protocol.registerSchemesAsPrivileged([
   },
 ]);
 
-initSentry({
-  beforeSend(event) {
-    try {
-      if (quitStatus.isAppQuitting) {
-        return null;
-      }
-
-      if (isIgnoredNativeCrashEvent(event)) {
-        return null;
-      }
-
-      const crashpad = event.contexts?.crashpad ?? event.contexts?.electron;
-      const dumpFile = crashpad?.['DumpWithoutCrashing-file'];
-
-      // Ignore known non-fatal native crash reports
-      if (typeof dumpFile === 'string') {
-        // Filter site_info.cc crashes
-        if (dumpFile.includes('site_info.cc')) {
+if (SENTRY_DSN) {
+  initSentry({
+    beforeSend(event) {
+      try {
+        if (quitStatus.isAppQuitting) {
           return null;
         }
 
-        // Filter GPU/graphics diagnostic crashes
-        if (dumpFile.includes('dcomp_presenter.cc')) {
+        if (isIgnoredNativeCrashEvent(event)) {
           return null;
         }
-      }
 
-      const logFatal = event.contexts?.electron?.LOG_FATAL;
-      if (
-        typeof logFatal === 'string' &&
-        logFatal.includes("GPU process isn't usable")
-      ) {
-        event.contexts = {
-          ...event.contexts,
-          gpuDiagnostic: getGpuDiagnosticSnapshot('sentry-before-send'),
-        };
-        event.tags = { ...event.tags, gpuFatal: 'unusable-gpu-process' };
-      }
+        const crashpad = event.contexts?.crashpad ?? event.contexts?.electron;
+        const dumpFile = crashpad?.['DumpWithoutCrashing-file'];
 
-      const error = event.exception?.values?.[0];
-      if (
-        error?.value &&
-        (isIgnoredUpdateError(error.value) ||
-          isUpdaterFullDownloadFallbackError(error.value) ||
-          error.value.includes('EPIPE'))
-      ) {
-        return null;
+        // Ignore known non-fatal native crash reports
+        if (typeof dumpFile === 'string') {
+          // Filter site_info.cc crashes
+          if (dumpFile.includes('site_info.cc')) {
+            return null;
+          }
+
+          // Filter GPU/graphics diagnostic crashes
+          if (dumpFile.includes('dcomp_presenter.cc')) {
+            return null;
+          }
+        }
+
+        const logFatal = event.contexts?.electron?.LOG_FATAL;
+        if (
+          typeof logFatal === 'string' &&
+          logFatal.includes("GPU process isn't usable")
+        ) {
+          event.contexts = {
+            ...event.contexts,
+            gpuDiagnostic: getGpuDiagnosticSnapshot('sentry-before-send'),
+          };
+          event.tags = { ...event.tags, gpuFatal: 'unusable-gpu-process' };
+        }
+
+        const error = event.exception?.values?.[0];
+        if (
+          error?.value &&
+          (isIgnoredUpdateError(error.value) ||
+            isUpdaterFullDownloadFallbackError(error.value) ||
+            error.value.includes('EPIPE'))
+        ) {
+          return null;
+        }
+      } catch (err) {
+        log(err, 'electron', 'error');
       }
-    } catch (err) {
-      log(err, 'electron', 'error');
-    }
-    return event;
-  },
-  dsn: 'https://40b7d92d692d42814570d217655198db@o1401005.ingest.us.sentry.io/4507449197920256',
-  environment: IS_TEST ? 'test' : process.env.NODE_ENV,
-  release: `${name}@${version}`,
-  tracesSampleRate: 1,
-});
+      return event;
+    },
+    dsn: SENTRY_DSN,
+    environment: IS_TEST ? 'test' : process.env.NODE_ENV,
+    release: `${name}@${version}`,
+    tracesSampleRate: 1,
+  });
+}
 
 const gotTheLock = app.requestSingleInstanceLock();
 

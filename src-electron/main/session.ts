@@ -1,7 +1,7 @@
 import type { UrlVariables } from 'src/types';
 
 import { app, session } from 'electron';
-import { TRUSTED_DOMAINS } from 'src-electron/constants';
+import { SENTRY_DSN, TRUSTED_DOMAINS } from 'src-electron/constants';
 import {
   getAppVersion,
   isJwDomain,
@@ -31,6 +31,25 @@ const getTrustedHostnames = () => {
   );
 };
 
+/**
+ * Derives the Sentry security-report endpoint from the DSN, so the CSP
+ * report-uri stays in sync with whichever project SENTRY_DSN points at
+ * (and is simply omitted when no DSN is configured, e.g. unofficial builds).
+ * @returns The security-report endpoint, or undefined if no DSN is set
+ */
+const getSentryReportUri = (): string | undefined => {
+  if (!SENTRY_DSN) return undefined;
+
+  try {
+    const dsn = new URL(SENTRY_DSN);
+    const projectId = dsn.pathname.replace(/^\//, '');
+
+    return `https://${dsn.host}/api/${projectId}/security/?sentry_key=${dsn.username}&sentry_environment=${process.env.NODE_ENV}&sentry_release=${getAppVersion()}`;
+  } catch {
+    return undefined;
+  }
+};
+
 const getCSP = (trustedHostnames: string[]) => {
   const sanitizedHostnames = trustedHostnames
     .map((hostname) => hostname.trim().toLowerCase())
@@ -52,6 +71,8 @@ const getCSP = (trustedHostnames: string[]) => {
     ),
   ).join(' ');
 
+  const sentryReportUri = getSentryReportUri();
+
   const csp: Record<string, string> = {
     'base-uri': "'none'",
     'connect-src': "'self' https: ws: devtools:",
@@ -61,7 +82,7 @@ const getCSP = (trustedHostnames: string[]) => {
     'img-src': `'self' ${trustedOrigins} file: data: blob:`,
     'media-src': `'self' ${trustedOrigins} file: data:`,
     'object-src': "'none'",
-    'report-uri': `https://o1401005.ingest.us.sentry.io/api/4507449197920256/security/?sentry_key=40b7d92d692d42814570d217655198db&sentry_environment=${process.env.NODE_ENV}&sentry_release=${getAppVersion()}`,
+    ...(sentryReportUri ? { 'report-uri': sentryReportUri } : {}),
     'script-src': "'self' https://cdn.jsdelivr.net",
     'style-src': "'self' https://fonts.googleapis.com 'unsafe-inline'",
     'worker-src': "'self' file: blob: https://cdn.jsdelivr.net",

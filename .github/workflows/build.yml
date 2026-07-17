@@ -25,6 +25,8 @@ on:
         required: true
       SENTRY_AUTH_TOKEN:
         required: true
+      SENTRY_DSN:
+        required: true
       SONAR_TOKEN:
         required: true
 
@@ -152,6 +154,7 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           GITHUB_TOKEN: ${{ github.token }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           TEST_VERSION: ${{ !inputs.publish-release }}
 
       - name: Retry build without notarization (macOS agreement expired)
@@ -162,6 +165,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           TEST_VERSION: ${{ !inputs.publish-release }}
       - name: Clean up keychain and provisioning profile
         if: always() && runner.os == 'macOS' && github.actor != 'dependabot[bot]'

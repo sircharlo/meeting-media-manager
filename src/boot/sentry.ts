@@ -10,10 +10,10 @@ import { defineBoot } from '#q-app';
 
 export default defineBoot(({ app, router }) => {
   try {
-    if (!import.meta.env.IS_DEV) {
+    if (!import.meta.env.IS_DEV && import.meta.env.SENTRY_DSN) {
       init({
         app,
-        dsn: 'https://40b7d92d692d42814570d217655198db@o1401005.ingest.us.sentry.io/4507449197920256',
+        dsn: import.meta.env.SENTRY_DSN,
         integrations: [
           vueIntegration({ app }),
           browserSessionIntegration(),
