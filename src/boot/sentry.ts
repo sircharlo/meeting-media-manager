@@ -30,9 +30,16 @@ export default defineBoot(({ app, router }) => {
     }
     const dsn = import.meta.env.SENTRY_DSN;
     const release = `${import.meta.env.APP_NAME}@${import.meta.env.version}`;
+    let environment: 'beta' | 'production' | 'test' = 'production';
+    if (import.meta.env.IS_TEST) {
+      environment = 'test';
+    } else if (import.meta.env.IS_BETA) {
+      environment = 'beta';
+    }
 
     log('Sentry initialized (renderer process)', 'sentry', 'debug', {
       dsn,
+      environment,
       release,
     });
 
@@ -47,6 +54,7 @@ export default defineBoot(({ app, router }) => {
         return scrubbedEvent;
       },
       dsn,
+      environment,
       integrations: [
         vueIntegration({ app }),
         browserSessionIntegration(),

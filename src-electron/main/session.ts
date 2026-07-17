@@ -2,7 +2,11 @@ import type { UrlVariables } from 'src/types';
 
 import { log } from 'app/src/shared/vanilla';
 import { app, session } from 'electron';
-import { SENTRY_DSN, TRUSTED_DOMAINS } from 'src-electron/constants';
+import {
+  SENTRY_DSN,
+  SENTRY_ENVIRONMENT,
+  TRUSTED_DOMAINS,
+} from 'src-electron/constants';
 import {
   getAppVersion,
   isJwDomain,
@@ -53,7 +57,7 @@ const getSentryReportUri = (): string | undefined => {
     const dsn = new URL(SENTRY_DSN);
     const projectId = dsn.pathname.replace(/^\//, '');
 
-    return `https://${dsn.host}/api/${projectId}/security/?sentry_key=${dsn.username}&sentry_environment=${process.env.NODE_ENV}&sentry_release=${getAppVersion()}`;
+    return `https://${dsn.host}/api/${projectId}/security/?sentry_key=${dsn.username}&sentry_environment=${SENTRY_ENVIRONMENT}&sentry_release=${getAppVersion()}`;
   } catch {
     return undefined;
   }

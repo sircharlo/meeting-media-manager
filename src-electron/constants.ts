@@ -15,7 +15,15 @@ export const APP_NAME = import.meta.env.APP_NAME;
 export const PRODUCT_NAME = import.meta.env.PRODUCT_NAME;
 
 // Sentry
+const getSentryEnvironment = () => {
+  if (IS_TEST) return 'test';
+  if (IS_DEV) return 'development';
+  if (IS_BETA) return 'beta';
+  return 'production';
+};
+
 export const SENTRY_DSN = import.meta.env.SENTRY_DSN;
+export const SENTRY_ENVIRONMENT = getSentryEnvironment();
 
 // Domains
 export const JW_DOMAINS: string[] = ['jw.org', 'jwevent.org', 'stream.jw.org'];

@@ -17,6 +17,7 @@ import {
   PLATFORM,
   PRODUCT_NAME,
   SENTRY_DSN,
+  SENTRY_ENVIRONMENT,
 } from 'src-electron/constants';
 import { cancelAllDownloads } from 'src-electron/main/downloads';
 import {
@@ -69,12 +70,11 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 if (SENTRY_DSN) {
-  const sentryEnvironment = IS_TEST ? 'test' : process.env.NODE_ENV;
   const sentryRelease = `${name}@${version}`;
 
   log('Sentry initialized (main process)', 'sentry', 'debug', {
     dsn: SENTRY_DSN,
-    environment: sentryEnvironment,
+    environment: SENTRY_ENVIRONMENT,
     release: sentryRelease,
   });
 
@@ -104,7 +104,7 @@ if (SENTRY_DSN) {
       return scrubbedEvent;
     },
     dsn: SENTRY_DSN,
-    environment: sentryEnvironment,
+    environment: SENTRY_ENVIRONMENT,
     release: sentryRelease,
     tracesSampleRate: 1,
   });
