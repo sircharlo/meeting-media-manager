@@ -7,49 +7,49 @@ export const localeOptions = locales.filter((locale) =>
 
 // ! This file will be updated by the update-langs script.
 
-// 100.0% translated as of 2026-07-16
+// 100.0% translated as of 2026-07-17
 import en from './en.json' with { type: 'json' };
 
-// 99.0% translated as of 2026-07-16
+// 99.0% translated as of 2026-07-17
 import fr from './fr.json' with { type: 'json' };
 
-// 98.4% translated as of 2026-07-16
-import pt from './pt.json' with { type: 'json' };
-
-// 98.3% translated as of 2026-07-16
-import sl from './sl.json' with { type: 'json' };
-
-// 98.2% translated as of 2026-07-16
-import it from './it.json' with { type: 'json' };
-
-// 97.8% translated as of 2026-07-16
-import es from './es.json' with { type: 'json' };
-
-// 97.5% translated as of 2026-07-16
+// 98.5% translated as of 2026-07-17
 import ty from './ty.json' with { type: 'json' };
 
-// 97.3% translated as of 2026-07-16
+// 98.4% translated as of 2026-07-17
+import pt from './pt.json' with { type: 'json' };
+
+// 98.3% translated as of 2026-07-17
+import sl from './sl.json' with { type: 'json' };
+
+// 98.2% translated as of 2026-07-17
+import it from './it.json' with { type: 'json' };
+
+// 97.8% translated as of 2026-07-17
+import es from './es.json' with { type: 'json' };
+
+// 97.3% translated as of 2026-07-17
 import ru from './ru.json' with { type: 'json' };
 
-// 97.2% translated as of 2026-07-16
+// 97.2% translated as of 2026-07-17
 import nl from './nl.json' with { type: 'json' };
 
-// 97.1% translated as of 2026-07-16
+// 97.1% translated as of 2026-07-17
 import de from './de.json' with { type: 'json' };
 
-// 93.7% translated as of 2026-07-16
+// 93.7% translated as of 2026-07-17
 import hu from './hu.json' with { type: 'json' };
 
-// 92.4% translated as of 2026-07-16
+// 92.4% translated as of 2026-07-17
 import et from './et.json' with { type: 'json' };
 
-// 66.0% translated as of 2026-07-16
+// 66.0% translated as of 2026-07-17
 import uk from './uk.json' with { type: 'json' };
 
-// 64.4% translated as of 2026-07-16
+// 64.4% translated as of 2026-07-17
 import ko from './ko.json' with { type: 'json' };
 
-// 0.9% translated as of 2026-07-16
+// 0.9% translated as of 2026-07-17
 // import bzs from './bzs.json' with { type: 'json' };
 
 export default {
