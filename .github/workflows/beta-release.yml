@@ -59,23 +59,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
-          persist-credentials: false
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Create local bump branch
         run: |
           git checkout -B "${{ steps.bump-branch.outputs.name }}"
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.x'
       - name: Automated Version Bump
         id: version-bump
-        uses: phips28/gh-action-bump-version@215e27a882516826c59df7f09da8c67d5f375cbd # v11.1.5
-        with:
-          version-type: prerelease
-          preid: 'beta'
-          tag-prefix: 'v'
-          skip-tag: 'true'
-          bump-policy: 'last-commit'
-          target-branch: ${{ steps.bump-branch.outputs.name }}
-          commit-message: 'chore: bump version to {{version}} [skip ci]'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python build/bump-beta-version.py --github-output "$GITHUB_OUTPUT"
+      - name: Commit and push bump branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -a -m "chore: bump version to ${{ steps.version-bump.outputs.newTag }} [skip ci]"
+          git push origin "HEAD:${{ steps.bump-branch.outputs.name }}"
       - name: Output new version
         env:
           NEW_VERSION: ${{ steps.version-bump.outputs.newTag }}
