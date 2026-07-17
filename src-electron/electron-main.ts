@@ -29,7 +29,6 @@ import {
 import { initScreenListeners } from 'src-electron/main/screen';
 import {
   initSessionListeners,
-  quitStatus,
   setAppQuitting,
   setShouldQuit,
 } from 'src-electron/main/session';
@@ -37,13 +36,7 @@ import {
   initUpdater,
   isUpdateInstallInProgress,
 } from 'src-electron/main/updater';
-import {
-  captureElectronError,
-  isIgnoredNativeCrashEvent,
-  isIgnoredUpdateError,
-  isSelf,
-  isUpdaterFullDownloadFallbackError,
-} from 'src-electron/main/utils';
+import { captureElectronError, isSelf } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import {
   authorizedClose,
@@ -53,7 +46,7 @@ import {
 } from 'src-electron/main/window/window-main';
 import 'src-electron/main/ipc';
 import 'src-electron/main/security';
-import { log } from 'src/shared/vanilla';
+import { log, scrubUserPathsDeep } from 'src/shared/vanilla';
 import { join, resolve } from 'upath';
 
 import { registerQuasarRuntime } from '#q-app/electron/main';
@@ -76,33 +69,18 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 if (SENTRY_DSN) {
+  const sentryEnvironment = IS_TEST ? 'test' : process.env.NODE_ENV;
+  const sentryRelease = `${name}@${version}`;
+
+  log('Sentry initialized (main process)', 'sentry', 'debug', {
+    dsn: SENTRY_DSN,
+    environment: sentryEnvironment,
+    release: sentryRelease,
+  });
+
   initSentry({
     beforeSend(event) {
       try {
-        if (quitStatus.isAppQuitting) {
-          return null;
-        }
-
-        if (isIgnoredNativeCrashEvent(event)) {
-          return null;
-        }
-
-        const crashpad = event.contexts?.crashpad ?? event.contexts?.electron;
-        const dumpFile = crashpad?.['DumpWithoutCrashing-file'];
-
-        // Ignore known non-fatal native crash reports
-        if (typeof dumpFile === 'string') {
-          // Filter site_info.cc crashes
-          if (dumpFile.includes('site_info.cc')) {
-            return null;
-          }
-
-          // Filter GPU/graphics diagnostic crashes
-          if (dumpFile.includes('dcomp_presenter.cc')) {
-            return null;
-          }
-        }
-
         const logFatal = event.contexts?.electron?.LOG_FATAL;
         if (
           typeof logFatal === 'string' &&
@@ -114,26 +92,29 @@ if (SENTRY_DSN) {
           };
           event.tags = { ...event.tags, gpuFatal: 'unusable-gpu-process' };
         }
-
-        const error = event.exception?.values?.[0];
-        if (
-          error?.value &&
-          (isIgnoredUpdateError(error.value) ||
-            isUpdaterFullDownloadFallbackError(error.value) ||
-            error.value.includes('EPIPE'))
-        ) {
-          return null;
-        }
       } catch (err) {
         log(err, 'electron', 'error');
       }
-      return event;
+
+      const scrubbedEvent = scrubUserPathsDeep(event);
+      log('Sentry event sending (main process)', 'sentry', 'debug', {
+        dsn: SENTRY_DSN,
+        event: scrubbedEvent,
+      });
+      return scrubbedEvent;
     },
     dsn: SENTRY_DSN,
-    environment: IS_TEST ? 'test' : process.env.NODE_ENV,
-    release: `${name}@${version}`,
+    environment: sentryEnvironment,
+    release: sentryRelease,
     tracesSampleRate: 1,
   });
+} else {
+  log(
+    'Sentry DSN is undefined, Sentry will not be initialized in main process',
+    'sentry',
+    'debug',
+    { SENTRY_DSN },
+  );
 }
 
 const gotTheLock = app.requestSingleInstanceLock();

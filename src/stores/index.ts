@@ -33,35 +33,62 @@ export default defineStore(() => {
 
   pinia.use(
     createSentryPiniaPlugin({
-      attachPiniaState: false, // Until https://github.com/getsentry/sentry-javascript/issues/14441 is fixed
+      attachPiniaState: true,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       stateTransformer: (state: Record<string, any>) => {
         try {
-          // Transform the state to remove unneeded information that only takes up space
-          const transformedState = {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const jwStore: Record<string, any> = state['jw-store'] || {};
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const congregationSettings: Record<string, any> =
+            state['congregation-settings'] || {};
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const congregations: Record<string, any> =
+            congregationSettings.congregations || {};
+
+          // Transform the state to remove unneeded/sensitive information
+          return {
             ...state,
-            jwBibleFiles:
-              'FILTERED (length: ' +
-              Object.keys(state.jwBibleFiles || {}).length +
-              ')',
-            jwLanguages:
-              'FILTERED (length: ' +
-              (state.jwLanguages?.list?.length || 0) +
-              ')',
-            jwMepsLanguages:
-              'FILTERED (length: ' +
-              (state.jwMepsLanguages?.list?.length || 0) +
-              ')',
-            jwSongs:
-              'FILTERED (length: ' +
-              (Object.keys(state.jwSongs || {}).length || 0) +
-              ')',
-            yeartexts:
-              'FILTERED (length: ' +
-              (Object.keys(state.yeartexts || {}).length || 0) +
-              ')',
+            'congregation-settings': {
+              ...congregationSettings,
+              congregations: Object.fromEntries(
+                Object.entries(congregations).map(([id, settings]) => [
+                  id,
+                  {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    ...(settings as Record<string, any>),
+                    obsPassword: (settings as { obsPassword?: string })
+                      ?.obsPassword
+                      ? 'REDACTED'
+                      : null,
+                  },
+                ]),
+              ),
+            },
+            'jw-store': {
+              ...jwStore,
+              jwBibleFiles:
+                'FILTERED (length: ' +
+                Object.keys(jwStore.jwBibleFiles || {}).length +
+                ')',
+              jwLanguages:
+                'FILTERED (length: ' +
+                (jwStore.jwLanguages?.list?.length || 0) +
+                ')',
+              jwMepsLanguages:
+                'FILTERED (length: ' +
+                (jwStore.jwMepsLanguages?.list?.length || 0) +
+                ')',
+              jwSongs:
+                'FILTERED (length: ' +
+                (Object.keys(jwStore.jwSongs || {}).length || 0) +
+                ')',
+              yeartexts:
+                'FILTERED (length: ' +
+                (Object.keys(jwStore.yeartexts || {}).length || 0) +
+                ')',
+            },
           };
-          return transformedState;
         } catch (error) {
           log(error, 'stores', 'error');
           return state;

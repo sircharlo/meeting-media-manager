@@ -86,6 +86,51 @@ export const debounce = <T extends unknown[]>(
   };
 };
 
+// Matches the OS home-directory segment of a filesystem path or file:// URL
+// (Windows `C:\Users\<name>` or `C:/Users/<name>`, macOS `/Users/<name>`,
+// Linux `/home/<name>`) so the username can be redacted while the rest of
+// the path is preserved.
+const HOME_DIRECTORY_PATH_PATTERNS: RegExp[] = [
+  /([A-Za-z]:[\\/]Users[\\/])[^\\/]+/g,
+  /(\/Users\/)[^/]+/g,
+  /(\/home\/)[^/]+/g,
+];
+
+/**
+ * Redacts the username segment of any OS home-directory path found in a
+ * string, so error messages don't leak PII and so the same underlying error
+ * from different users' machines produces an identical message (letting
+ * Sentry group them into a single issue instead of one per user/path).
+ * @param value The string to scrub
+ * @returns The string with home-directory usernames replaced by `<user>`
+ */
+export const scrubUserPaths = (value: string): string =>
+  HOME_DIRECTORY_PATH_PATTERNS.reduce(
+    (result, pattern) => result.replace(pattern, '$1<user>'),
+    value,
+  );
+
+/**
+ * Recursively applies {@link scrubUserPaths} to every string value in an
+ * object/array tree, e.g. a Sentry event (exception messages, stack frame
+ * paths, breadcrumbs, extra/context data, etc).
+ * @param value The value to scrub
+ * @returns A deep copy of `value` with home-directory usernames redacted
+ */
+export const scrubUserPathsDeep = <T>(value: T): T => {
+  if (typeof value === 'string') return scrubUserPaths(value) as T;
+  if (Array.isArray(value)) return value.map(scrubUserPathsDeep) as T;
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([key, val]) => [
+        key,
+        scrubUserPathsDeep(val),
+      ]),
+    ) as T;
+  }
+  return value;
+};
+
 const logPrefixes = {
   api: '🌐 API',
   backgroundMusic: '🎵 Background Music',
@@ -130,6 +175,7 @@ const logPrefixes = {
   mwMedia: '🌅 Midweek Meeting Media',
   obs: '📡 OBS',
   publicationMedia: '📰 Publication Media',
+  sentry: '🐛 Sentry',
   shortcutInput: '🎹 Shortcut Input',
   sqlite: '🗄️ SQLite',
   stores: '🧠 Stores',

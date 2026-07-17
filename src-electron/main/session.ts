@@ -1,5 +1,6 @@
 import type { UrlVariables } from 'src/types';
 
+import { log } from 'app/src/shared/vanilla';
 import { app, session } from 'electron';
 import { SENTRY_DSN, TRUSTED_DOMAINS } from 'src-electron/constants';
 import {
@@ -38,7 +39,15 @@ const getTrustedHostnames = () => {
  * @returns The security-report endpoint, or undefined if no DSN is set
  */
 const getSentryReportUri = (): string | undefined => {
-  if (!SENTRY_DSN) return undefined;
+  if (!SENTRY_DSN) {
+    log(
+      'Sentry DSN is undefined, cannot create Sentry report URI',
+      'sentry',
+      'debug',
+      { SENTRY_DSN },
+    );
+    return undefined;
+  }
 
   try {
     const dsn = new URL(SENTRY_DSN);
