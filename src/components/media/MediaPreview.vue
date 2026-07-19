@@ -204,7 +204,18 @@ const syncVideos = async () => {
     if (element.paused) {
       log('Playing video preview', 'mediaPreview');
       await element.play().catch((error: unknown) => {
-        reportPreviewError(error, 'MediaPreview.syncVideoElement.play');
+        // Same benign play()-interruption cases already filtered out in
+        // MediaPlayerPage.vue: swapping sources/pausing quickly triggers
+        // these routinely and they carry no diagnostic value.
+        const ignoredErrors = [
+          'removed from the document',
+          'new load request',
+          'interrupted by a call to pause',
+        ];
+        const message = error instanceof Error ? error.message : '';
+        if (!ignoredErrors.some((msg) => message.includes(msg))) {
+          reportPreviewError(error, 'MediaPreview.syncVideoElement.play');
+        }
       });
     }
 
