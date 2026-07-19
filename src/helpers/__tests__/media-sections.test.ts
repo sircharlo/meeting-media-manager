@@ -7,6 +7,7 @@ const writes = new Map<string, string>();
 const pathExistsMock = vi.fn();
 const hideFileOnWindowsMock = vi.fn();
 const readJsonMock = vi.fn();
+const renameMock = vi.fn();
 const showFileOnWindowsMock = vi.fn();
 const writeFileMock = vi.fn();
 
@@ -73,7 +74,12 @@ describe('watched media layout persistence', () => {
     showFileOnWindowsMock.mockResolvedValue(undefined);
     writeFileMock.mockImplementation(async (path: string, content: string) => {
       files.set(path, content);
-      writes.set(path, content);
+    });
+    renameMock.mockImplementation(async (from: string, to: string) => {
+      const content = files.get(from) ?? '';
+      files.delete(from);
+      files.set(to, content);
+      writes.set(to, content);
     });
 
     vi.stubGlobal('electronApi', {
@@ -83,6 +89,7 @@ describe('watched media layout persistence', () => {
       fs: {
         pathExists: pathExistsMock,
         readJSON: readJsonMock,
+        rename: renameMock,
         writeFile: writeFileMock,
       },
       hideFileOnWindows: hideFileOnWindowsMock,
@@ -154,16 +161,25 @@ describe('watched media layout persistence', () => {
       'local-image.jpg': { order: 29, section: 'lac' },
       'local-video.mp4': { order: 15, section: 'tgw' },
     });
-    expect(showFileOnWindowsMock).toHaveBeenCalledWith(
+    // Write goes to a temp path first, then gets renamed into place.
+    expect(writeFileMock).toHaveBeenCalledWith(
+      expect.stringMatching(
+        /^\/watched\/2026-06-11\/\.section-order\.json\.\d+\.tmp$/,
+      ),
+      expect.any(String),
+      'utf-8',
+    );
+    expect(renameMock).toHaveBeenCalledWith(
+      writeFileMock.mock.calls[0]?.[0],
       '/watched/2026-06-11/.section-order.json',
     );
     expect(hideFileOnWindowsMock).toHaveBeenCalledWith(
       '/watched/2026-06-11/.section-order.json',
     );
-    expect(showFileOnWindowsMock.mock.invocationCallOrder[0]).toBeLessThan(
-      writeFileMock.mock.invocationCallOrder[0] ?? 0,
-    );
     expect(writeFileMock.mock.invocationCallOrder[0]).toBeLessThan(
+      renameMock.mock.invocationCallOrder[0] ?? 0,
+    );
+    expect(renameMock.mock.invocationCallOrder[0]).toBeLessThan(
       hideFileOnWindowsMock.mock.invocationCallOrder[0] ?? 0,
     );
   });
@@ -200,7 +216,10 @@ describe('watched media layout persistence', () => {
     await saveWatchedMediaLayout(mediaSections);
 
     const sectionOrderFilePath = '/watched/2026-06-11/.section-order.json';
-    expect(showFileOnWindowsMock).toHaveBeenCalledTimes(2);
+    // showFileOnWindows only guards the read now; the write goes to a
+    // fresh temp path (never hidden) and only hides the final file after
+    // the rename.
+    expect(showFileOnWindowsMock).toHaveBeenCalledTimes(1);
     expect(hideFileOnWindowsMock).toHaveBeenCalledTimes(2);
     expect(showFileOnWindowsMock).toHaveBeenNthCalledWith(
       1,
@@ -210,27 +229,32 @@ describe('watched media layout persistence', () => {
       1,
       sectionOrderFilePath,
     );
-    expect(showFileOnWindowsMock).toHaveBeenNthCalledWith(
-      2,
-      sectionOrderFilePath,
-    );
     expect(hideFileOnWindowsMock).toHaveBeenNthCalledWith(
       2,
       sectionOrderFilePath,
     );
     expect(readJsonMock).toHaveBeenCalledWith(sectionOrderFilePath);
+
+    const expectedContent = JSON.stringify(
+      {
+        'existing.png': { order: 2, section: 'pt' },
+        'local-video.mp4': { order: 0, section: 'tgw' },
+      },
+      null,
+      2,
+    );
     expect(writeFileMock).toHaveBeenCalledWith(
-      '/watched/2026-06-11/.section-order.json',
-      JSON.stringify(
-        {
-          'existing.png': { order: 2, section: 'pt' },
-          'local-video.mp4': { order: 0, section: 'tgw' },
-        },
-        null,
-        2,
+      expect.stringMatching(
+        /^\/watched\/2026-06-11\/\.section-order\.json\.\d+\.tmp$/,
       ),
+      expectedContent,
       'utf-8',
     );
+    expect(renameMock).toHaveBeenCalledWith(
+      writeFileMock.mock.calls[0]?.[0],
+      sectionOrderFilePath,
+    );
+
     expect(showFileOnWindowsMock.mock.invocationCallOrder[0]).toBeLessThan(
       readJsonMock.mock.invocationCallOrder[0] ?? 0,
     );
@@ -238,12 +262,12 @@ describe('watched media layout persistence', () => {
       hideFileOnWindowsMock.mock.invocationCallOrder[0] ?? 0,
     );
     expect(hideFileOnWindowsMock.mock.invocationCallOrder[0]).toBeLessThan(
-      showFileOnWindowsMock.mock.invocationCallOrder[1] ?? 0,
-    );
-    expect(showFileOnWindowsMock.mock.invocationCallOrder[1]).toBeLessThan(
       writeFileMock.mock.invocationCallOrder[0] ?? 0,
     );
     expect(writeFileMock.mock.invocationCallOrder[0]).toBeLessThan(
+      renameMock.mock.invocationCallOrder[0] ?? 0,
+    );
+    expect(renameMock.mock.invocationCallOrder[0]).toBeLessThan(
       hideFileOnWindowsMock.mock.invocationCallOrder[1] ?? 0,
     );
   });

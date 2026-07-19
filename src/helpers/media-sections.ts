@@ -446,11 +446,17 @@ const writeWatchedMediaSectionOrder = async (
   sectionOrderFilePath: string,
   data: WatchedMediaSectionOrder,
 ) => {
-  const { fs, hideFileOnWindows, showFileOnWindows } = globalThis.electronApi;
-  const { writeFile } = fs;
+  const { fs, hideFileOnWindows } = globalThis.electronApi;
+  const { rename, writeFile } = fs;
 
-  await showFileOnWindows(sectionOrderFilePath);
-  await writeFile(sectionOrderFilePath, JSON.stringify(data, null, 2), 'utf-8');
+  // Write to a temp file and rename into place rather than writing the
+  // target directly. A rename is atomic; a multi-KB write is not, and this
+  // file commonly lives in a cloud-synced folder (OneDrive, etc.) whose
+  // background sync I/O can interleave with an in-place write and leave
+  // truncated/corrupted JSON for the next reader to trip over.
+  const tempPath = `${sectionOrderFilePath}.${Date.now()}.tmp`;
+  await writeFile(tempPath, JSON.stringify(data, null, 2), 'utf-8');
+  await rename(tempPath, sectionOrderFilePath);
   await hideFileOnWindows(sectionOrderFilePath);
 };
 
