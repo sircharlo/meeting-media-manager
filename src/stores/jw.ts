@@ -533,8 +533,12 @@ export const useJwStore = defineStore('jw-store', {
     },
     async updateJwIconsUrl() {
       try {
+        // This whole method exists to get the *current* truth after a
+        // cached/default URL just failed - fetchRaw's cache has no TTL, so
+        // reusing it here could wedge the session on an already-dead URL
+        // (from an earlier call) until restart. Always fetch fresh.
         const wolUrl = `https://wol.${this.urlVariables.base}/en/wol/h/r1/lp-e`;
-        const response = await fetchRaw(wolUrl, undefined, true);
+        const response = await fetchRaw(wolUrl);
         if (!response.ok) return;
 
         const html = await response.text();
@@ -542,7 +546,7 @@ export const useJwStore = defineStore('jw-store', {
 
         for (const cssUrl of cssUrls) {
           try {
-            const cssResponse = await fetchRaw(cssUrl, undefined, true);
+            const cssResponse = await fetchRaw(cssUrl);
             if (!cssResponse.ok) continue;
             const cssText = await cssResponse.text();
             const fontUrl = findIconUrlInCss(cssText, cssUrl);
