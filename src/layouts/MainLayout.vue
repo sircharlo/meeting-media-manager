@@ -1183,6 +1183,14 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
     if (!scheduleChanged) updateLookupPeriod();
     delayedCacheClear();
 
+    // On macOS, a custom cacheFolder (e.g. under ~/Documents) can lose TCC
+    // access between launches. Confirm access — reprompting the user if
+    // needed — before the queue starts reading from it; otherwise every
+    // file read races the (debounced, human-interactive) permission check
+    // and fails until the user responds. No-op on other platforms and when
+    // access is already granted, so this adds no latency in the common case.
+    await checkMacosProfileFolderPermissions();
+
     if (queues.meetings[newCongregation]) {
       log(
         `▶️ Starting meeting fetch queue for congregation switch: ${newCongregation}`,
@@ -1349,7 +1357,6 @@ watchImmediate(
 
 watchDebounced(
   () => [
-    currentCongregation.value,
     currentSettings.value?.cacheFolder,
     currentSettings.value?.enableFolderWatcher,
     currentSettings.value?.folderToWatch,
