@@ -673,17 +673,30 @@ const getMediaFromJwPlaylist = async (
             );
             item.ThumbnailFilePath += '.jpg';
           } catch (error) {
-            await errorCatcher(error, {
-              contexts: {
-                fn: {
-                  args: {
-                    item,
-                    outputPath,
+            // Playlist items are processed concurrently and can share the
+            // same thumbnail file. If another item already renamed it, the
+            // target now exists — that's a benign race, not an error.
+            if (
+              error &&
+              typeof error === 'object' &&
+              'code' in error &&
+              error.code === 'ENOENT' &&
+              (await pathExists(item.ThumbnailFilePath + '.jpg'))
+            ) {
+              item.ThumbnailFilePath += '.jpg';
+            } else {
+              await errorCatcher(error, {
+                contexts: {
+                  fn: {
+                    args: {
+                      item,
+                      outputPath,
+                    },
+                    name: 'getMediaFromJwPlaylist rename thumbnail',
                   },
-                  name: 'getMediaFromJwPlaylist rename thumbnail',
                 },
-              },
-            });
+              });
+            }
           }
         }
         const durationTicks =
@@ -4953,7 +4966,7 @@ const isRemoteUrl = (value: string) => /^https?:\/\//i.test(value);
 /**
  * Resolves the thumbnail to use for a remote video, in priority order:
  * an explicitly provided thumbnail (e.g. one embedded in a jwpub/playlist
- * package), then a jw.org API thumbnail looked up from `thumbnailLookup`.
+ * package), then a website thumbnail looked up from `thumbnailLookup`.
  * Any remote (http/https) thumbnail is downloaded and cached alongside the
  * video so it survives offline use; local file:// thumbnails pass through
  * untouched. If neither source yields anything, both fields are undefined
