@@ -3,6 +3,34 @@ import { log } from 'src/shared/vanilla';
 
 type CaptureCtx = Parameters<typeof captureException>[1];
 
+/**
+ * Node fs errors (ENOENT, EPERM, EBUSY, ...) embed the full dynamic file
+ * path in their message. Sentry's default grouping picks that up, so what's
+ * really one recurring failure fragments into a separate issue per unique
+ * path. Group by the stable parts instead — error code, syscall, and the
+ * originating function (from the `contexts.fn.name` callers already pass).
+ */
+const nodeFsErrorFingerprint = (
+  error: unknown,
+  context?: CaptureCtx,
+): string[] | undefined => {
+  if (typeof error !== 'object' || error === null) return undefined;
+  const { code, syscall } = error as { code?: unknown; syscall?: unknown };
+  if (typeof code !== 'string' || typeof syscall !== 'string') return undefined;
+
+  const fnName =
+    context && typeof context === 'object' && 'contexts' in context
+      ? (context.contexts as undefined | { fn?: { name?: unknown } })?.fn?.name
+      : undefined;
+
+  return [
+    'node-fs-error',
+    code,
+    syscall,
+    typeof fnName === 'string' ? fnName : 'unknown',
+  ];
+};
+
 export const errorCatcher = async (error: unknown, context?: CaptureCtx) => {
   if (!error) return;
 
@@ -27,6 +55,12 @@ export const errorCatcher = async (error: unknown, context?: CaptureCtx) => {
     log(error, 'errorHandling', 'error');
     log('context', 'errorHandling', 'warn', context);
   } else {
-    captureException(error, context);
+    const fingerprint = nodeFsErrorFingerprint(error, context);
+    captureException(
+      error,
+      fingerprint && typeof context !== 'function'
+        ? ({ ...context, fingerprint } as CaptureCtx)
+        : context,
+    );
   }
 };
