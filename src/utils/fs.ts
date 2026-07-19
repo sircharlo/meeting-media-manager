@@ -173,6 +173,18 @@ const getCachePath = async (
     const basePath = bypassCustomPath
       ? await getAppDataPath()
       : await getCachedUserDataPath();
+    if (!basePath) {
+      // Both resolvers are typed to always return a string, but the IPC
+      // call underlying getAppDataPath() has occasionally resolved to a
+      // falsy value in practice (cause unconfirmed - a main-process
+      // handler race is suspected). Turn that into a self-describing
+      // error instead of the opaque "path argument must be of type
+      // string" TypeError that join() would otherwise throw, so the next
+      // occurrence is diagnosable from the Sentry report alone.
+      throw new Error(
+        `getCachePath: base path resolver returned a falsy value (${JSON.stringify(basePath)})`,
+      );
+    }
     return await buildPath(basePath);
   } catch (error) {
     defaultDataPath = await getAppDataPath();
