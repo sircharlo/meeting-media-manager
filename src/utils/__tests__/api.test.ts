@@ -252,6 +252,29 @@ describe('fetchJson network errors', () => {
     expect(result).toBeNull();
     expect(errorCatcher).not.toHaveBeenCalled();
   });
+
+  it('should not report a 504 Gateway Timeout status', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(null, { status: 504 }),
+    );
+
+    const result = await fetchJson(handledUrl);
+
+    expect(result).toBeNull();
+    expect(errorCatcher).not.toHaveBeenCalled();
+  });
+
+  it('should not report an empty/truncated JSON response body', async () => {
+    // A 200 OK with an empty body throws a SyntaxError out of response.json()
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response('', { status: 200 }),
+    );
+
+    const result = await fetchJson(handledUrl);
+
+    expect(result).toBeNull();
+    expect(errorCatcher).not.toHaveBeenCalled();
+  });
 });
 
 describe('fetchMemorials', () => {

@@ -159,7 +159,9 @@ function isIgnored400ForPub(params?: URLSearchParams) {
 }
 
 function isIgnoredStatus(status: number) {
-  return [403, 404, 429, 502].includes(status);
+  // 502/504 are both transient upstream-gateway failures (Bad Gateway /
+  // Gateway Timeout) - same class of noise, 504 was just missing here.
+  return [403, 404, 429, 502, 504].includes(status);
 }
 
 function isOkResponse(response: Response) {
