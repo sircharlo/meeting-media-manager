@@ -229,7 +229,9 @@ describe('JW Store', () => {
   });
 
   describe('updateJwIconsUrl', () => {
-    it('keeps the default fallback when offline css does not expose jw-icons', async () => {
+    it('leaves the url empty when offline css does not expose jw-icons', async () => {
+      // No hardcoded fallback: The website rotates this asset's hash
+      // periodically, so a baked-in URL would just go stale and 404.
       const store = useJwStore();
       const api = await import('src/utils/api');
       vi.mocked(api.fetchRaw)
@@ -249,9 +251,7 @@ describe('JW Store', () => {
       await store.updateJwIconsUrl();
 
       expect(store.jwIconsUrl).toBe('');
-      expect(store.fontUrls['jw-icons-all']).toContain(
-        '/assets/fonts/jw-icons-all-81d446b.woff',
-      );
+      expect(store.fontUrls['jw-icons-all']).toBe('');
     });
 
     it('stores the discovered jw-icons font url when css is available', async () => {

@@ -30,7 +30,7 @@ const DEFAULT_YEARTEXT_FONT: YeartextFontConfig = {
 };
 
 // Maps JwLanguage.script (uppercase) to font config
-// Based on JW.org's jwac.ms-* CSS classes
+// Based on the website's jwac.ms-* CSS classes
 const YEARTEXT_FONTS: Record<string, YeartextFontConfig> = {
   ARABIC: {
     cdnFont: 'NotoNaskhArabic',
@@ -140,7 +140,7 @@ const YEARTEXT_FONTS: Record<string, YeartextFontConfig> = {
 };
 
 // Language-specific overrides (script.langCode → font config)
-// From JW.org CSS: .jwac.ms-SCRIPT.ml-LANG rules
+// From the website's CSS: .jwac.ms-SCRIPT.ml-LANG rules
 const YEARTEXT_LANG_OVERRIDES: Record<string, YeartextFontConfig> = {
   'ARABIC.AJA': {
     cdnFont: 'WTXBZSpecial',
@@ -405,7 +405,10 @@ const resolveFontRequest = async (
     );
 
   let resolvedUrl = originalUrl;
-  let response = await fetchFont(resolvedUrl);
+  // originalUrl can be empty for jw-icons-all (no static fallback — see
+  // jw.ts fontUrls getter), so skip straight to discovering it below
+  // instead of issuing a fetch with an empty URL.
+  let response = resolvedUrl ? await fetchFont(resolvedUrl) : undefined;
 
   if (!response?.ok && fontName === 'jw-icons-all') {
     await store.updateJwIconsUrl();

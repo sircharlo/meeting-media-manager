@@ -791,9 +791,10 @@ export const useJwStore = defineStore('jw-store', {
 
       return {
         AbyssinicaSIL: jsdelivr('abyssinica-sil', 'latin-400-normal.woff2'),
-        'jw-icons-all':
-          state.jwIconsUrl ||
-          getFontUrl('base', '/assets/fonts/jw-icons-all-81d446b.woff'),
+        // No hardcoded fallback here: The website rotates this asset's hash
+        // periodically, so a baked-in URL inevitably goes stale and 404s.
+        // jwIconsUrl is discovered dynamically via updateJwIconsUrl().
+        'jw-icons-all': state.jwIconsUrl,
         NotoNaskhArabic: jsdelivr(
           'noto-naskh-arabic:vf',
           'arabic-wght-normal.woff2',
