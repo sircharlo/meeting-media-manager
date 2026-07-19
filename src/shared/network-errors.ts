@@ -25,6 +25,13 @@ export function isFetchNetworkError(error: unknown): boolean {
     return true;
   }
 
+  // A bare browser `TypeError: Failed to fetch` carries no further detail
+  // (DNS failure, connection refused, offline, ...) — same class of noise
+  // as the Node/undici error codes above, just without a `.code`.
+  if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
+    return true;
+  }
+
   if (!error.message.includes('fetch failed')) return false;
 
   const cause = error.cause as Record<string, unknown> | undefined;

@@ -99,6 +99,9 @@ describe('isIgnoredUpdateError', () => {
     expect(isIgnoredUpdateError('net::ERR_NAME_NOT_RESOLVED')).toBe(true);
     expect(isIgnoredUpdateError('net::ERR_TIMED_OUT')).toBe(true);
     expect(isIgnoredUpdateError('net::ERR_INTERNET_DISCONNECTED')).toBe(true);
+    expect(isIgnoredUpdateError('net::ERR_HTTP2_SERVER_REFUSED_STREAM')).toBe(
+      true,
+    );
     expect(
       isIgnoredUpdateError(
         "Error: ENOENT: no such file or directory, unlink '/home/test/dir/meeting-media-manager-30.1.4-x86_64.AppImage'",
