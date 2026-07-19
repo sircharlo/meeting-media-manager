@@ -7,7 +7,7 @@ import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
 // Generic, non-JW-content placeholder thumbnails (inline SVGs, not bundled
-// files) so demo mode never ships or displays real jw.org media.
+// files) so demo mode never ships or displays real website media.
 const demoThumbnail = (hue: number) =>
   `data:image/svg+xml;utf8,${encodeURIComponent(
     `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="90"><rect width="160" height="90" fill="hsl(${hue},45%,55%)"/></svg>`,

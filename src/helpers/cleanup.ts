@@ -182,7 +182,7 @@ function isFileReferenced(
 /**
  * Additional media is stored in per-date (YYYYMMDD) subfolders under
  * `Additional Media/{congId}`. Those folders aren't tied to a fetchable
- * fileUrl the way jw.org media is, so they can't rely on the in-memory
+ * fileUrl the way website media is, so they can't rely on the in-memory
  * store to know they're still needed. Protect any dated subfolder whose
  * date is today or in the future, regardless of what's currently loaded
  * in the store.

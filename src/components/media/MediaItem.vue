@@ -1889,7 +1889,7 @@ const localFilePollInterval = computed(() =>
     : LOCAL_FILE_POLL_SLOW_INTERVAL_MS,
 );
 
-// Additional-media items picked from jw.org (songs, videos) keep the remote
+// Additional-media items picked from the website (songs, videos) keep the remote
 // streamUrl they were originally fetched from, unlike a plain locally
 // imported file. When one of those goes missing, redownload it straight back
 // to its original path instead of only ever offering the manual
@@ -1920,7 +1920,7 @@ const refreshThumbnailAfterFileRestored = (
   failedThumbnailUrl.value = '';
 };
 
-// The thumbnail image (when jw.org provided a distinct one, e.g. a song's
+// The thumbnail image (when the website provided a distinct one, e.g. a song's
 // still image) lives next to the main file and can go missing along with
 // it. Only worth attempting once the main file redownload above already
 // succeeded - it's a small nice-to-have alongside restoring playback, not

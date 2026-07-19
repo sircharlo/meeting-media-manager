@@ -1,5 +1,5 @@
 {
-  "_comment": "One-time snapshot of https://www.jw.org/en/languages/, used by update-langs.py to auto-fill englishName/label/langcode for newly-enabled languages without manual lookup. Regenerate with: curl -s https://www.jw.org/en/languages/ | python -c \"...\" (see scripts/update-langs.py). Languages added to jw.org after this snapshot will fall back to PLACEHOLDER_* values requiring manual entry.",
+  "_comment": "One-time snapshot of https://www.jw.org/en/languages/, used by update-langs.py to auto-fill englishName/label/langcode for newly-enabled languages without manual lookup. Regenerate with: curl -s https://www.jw.org/en/languages/ | python -c \"...\" (see scripts/update-langs.py). Languages added to the website after this snapshot will fall back to PLACEHOLDER_* values requiring manual entry.",
   "_fetchedAt": "2026-07-13",
   "_source": "https://www.jw.org/en/languages/",
   "languages": [

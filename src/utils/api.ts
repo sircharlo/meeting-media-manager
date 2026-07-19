@@ -111,7 +111,7 @@ export const fetchRaw = async (
   cache = false,
 ) => {
   // Demo mode must never reach the network (no real congregation, no real
-  // JW.org content) — fail the same way a real offline device would, so the
+  // website content) — fail the same way a real offline device would, so the
   // app's existing offline handling takes over rather than needing bespoke
   // handling at every call site.
   if (globalThis.electronApi?.isDemoMode) {

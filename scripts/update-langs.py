@@ -33,13 +33,13 @@ PERCENTAGE_THRESHOLD = 5
 IGNORED_DOCS_SRC_DIRS = {"assets", "public"}
 
 
-# ── JW languages cache ──────────────────────────────────────────────────────
+# ── website languages cache ──────────────────────────────────────────────────────
 # A one-time snapshot of https://www.jw.org/en/languages/ (see
 # scripts/jw-languages-cache.json), used to auto-fill englishName/label/langcode
 # for newly-enabled languages so a human doesn't need to look them up. Only
-# languages added to jw.org *after* the snapshot was taken will miss the cache
+# languages added to the website *after* the snapshot was taken will miss the cache
 # and fall back to PLACEHOLDER_* values needing manual entry — rare, since new
-# jw.org languages are added infrequently. Regenerate the snapshot with:
+# website languages are added infrequently. Regenerate the snapshot with:
 #   curl -s https://www.jw.org/en/languages/
 # (see the "languages" array; keep symbol/langcode/name/vernacularName).
 
@@ -398,7 +398,7 @@ def update_locales_type(stats: dict[str, tuple[str, float]], path: Path) -> None
     existing_by_value = {e["value"]: e for e in existing_entries}
 
     # Remove entries whose value is no longer in LanguageValue
-    # Add new entries for brand-new values, filled from the jw.org cache when
+    # Add new entries for brand-new values, filled from the website cache when
     # possible, otherwise as a placeholder needing manual entry.
     jw_cache = load_jw_languages_cache(JW_LANGUAGES_CACHE)
     new_entries = []
@@ -419,7 +419,7 @@ def update_locales_type(stats: dict[str, tuple[str, float]], path: Path) -> None
             })
             added_from_cache.append(key)
         else:
-            # Brand-new lang not in the jw.org snapshot — insert placeholder
+            # Brand-new lang not in the website snapshot — insert placeholder
             placeholder = {
                 "value": key,
                 "englishName": "PLACEHOLDER_ENGLISH_NAME",
@@ -436,9 +436,9 @@ def update_locales_type(stats: dict[str, tuple[str, float]], path: Path) -> None
     if removed:
         print(f"  🗑️   Removed from locales[]: {', '.join(removed)}")
     if added_from_cache:
-        print(f"  ➕  Added to locales[] from jw.org cache: {', '.join(added_from_cache)}")
+        print(f"  ➕  Added to locales[] from the website cache: {', '.join(added_from_cache)}")
     if added_as_placeholder:
-        print(f"  ⚠️   Added placeholder(s) to locales[] (not in jw.org cache): {', '.join(added_as_placeholder)}")
+        print(f"  ⚠️   Added placeholder(s) to locales[] (not in the website cache): {', '.join(added_as_placeholder)}")
 
     # Render the new array
     rendered_entries = ",\n  ".join(build_locale_entry(e) for e in new_entries)
