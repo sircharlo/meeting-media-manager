@@ -150,6 +150,7 @@ import {
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadBackgroundMusic } from 'src/helpers/jw-media';
 import { log } from 'src/shared/vanilla';
+import { sleep } from 'src/utils/general';
 import { formatTime } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
@@ -421,6 +422,14 @@ const logMusicStartStep = (
   );
 };
 
+// How long to keep retrying an empty song library before giving up. Auto
+// start can fire before the songbook/library has anything in it yet (e.g.
+// right after downloadBackgroundMusic() kicks off, or before currentSongbook
+// itself has resolved) - that's a startup race, not a real "no songs"
+// state, so it's worth waiting rather than failing immediately.
+const SONG_LIBRARY_RETRY_TIMEOUT_MS = 2 * 60 * 1000;
+const SONG_LIBRARY_RETRY_INTERVAL_MS = 15 * 1000;
+
 /**
  * Initializes and plays background music
  */
@@ -430,7 +439,9 @@ async function playMusic(reason = 'manual') {
     reason,
     startedAt: performance.now(),
   };
-  musicStartId.value = musicStartTiming.value.id;
+  const thisStartId = musicStartTiming.value.id;
+  musicStartId.value = thisStartId;
+  const isStale = () => musicStartId.value !== thisStartId;
 
   try {
     logMusicStartTiming('start requested', 'debug', {
@@ -468,85 +479,109 @@ async function playMusic(reason = 'manual') {
     volume.value = 0;
     logMusicStartTiming('audio source attached and volume set to 0');
 
-    // Fetch and prepare song library
-    const fetchLibraryStartedAt = performance.now();
-    const rawSongLibrary = await fetchSongLibrary(
-      currentSettings.value?.lang || 'E',
-    );
-    logMusicStartStep('song library fetched', fetchLibraryStartedAt, {
-      songs: rawSongLibrary.length,
-    });
+    // Fetches the song library, prepares the queue (meeting-day or not),
+    // and picks the next song. Returns '' if the library came back empty.
+    const buildQueueAndGetNextSongUrl = async () => {
+      // Settings may not have finished loading yet on a very early auto
+      // start; treat that the same as an empty library so the retry loop
+      // below waits it out instead of failing immediately.
+      if (!currentSettings.value) return '';
 
-    const enrichMetadataStartedAt = performance.now();
-    const enrichedSongs = await enrichSongsWithMetadata(rawSongLibrary);
-    logMusicStartStep('song metadata enriched', enrichMetadataStartedAt, {
-      songs: enrichedSongs.length,
-    });
-
-    // Prepare queue based on meeting day or not
-    const timeBeforeMeetingStart =
-      timeUntilMeeting.value - MEETING_STOP_BUFFER_SECONDS.value;
-    logMusicStartTiming('queue preparation started', 'debug', {
-      isMeetingToday: isMeetingToday.value,
-      timeBeforeMeetingStart,
-    });
-
-    if (isMeetingToday.value && timeBeforeMeetingStart > 0) {
-      // Meeting day: optimize queue to end precisely at fadeout time
-      const meetingQueueStartedAt = performance.now();
-      const selectedDayMedia = Object.values(
-        selectedDateObject.value?.mediaSections ?? {},
-      ).flatMap((section) => section.items || []);
-
-      const { queue, startOffsetSeconds } = await prepareMeetingDaySongQueue(
-        enrichedSongs,
-        {
-          currentSettings: currentSettings.value,
-          selectedDayMedia,
-          timeBeforeMeetingStart,
-        },
+      const fetchLibraryStartedAt = performance.now();
+      const rawSongLibrary = await fetchSongLibrary(
+        currentSettings.value?.lang || 'E',
       );
-
-      songList.value = queue;
-      initialStartOffset.value = startOffsetSeconds;
-      shouldLoopQueue.value = false;
-      logMusicStartStep(
-        'meeting day song queue prepared',
-        meetingQueueStartedAt,
-        {
-          queueLength: queue.length,
-          selectedDayMedia: selectedDayMedia.length,
-          startOffsetSeconds,
-        },
-      );
-    } else {
-      // No meeting to build a time-boxed queue around - either it's not a
-      // meeting day, or it is but the meeting has already started/ended
-      // (e.g. music manually restarted after the meeting). Either way
-      // there's no fadeout point to aim for, so just shuffle and loop
-      // through the whole library indefinitely.
-      songList.value = enrichedSongs;
-      initialStartOffset.value = 0;
-      shouldLoopQueue.value = true;
-      logMusicStartTiming('non-meeting song queue prepared', 'debug', {
-        queueLength: songList.value.length,
+      logMusicStartStep('song library fetched', fetchLibraryStartedAt, {
+        songs: rawSongLibrary.length,
       });
+
+      const enrichMetadataStartedAt = performance.now();
+      const enrichedSongs = await enrichSongsWithMetadata(rawSongLibrary);
+      logMusicStartStep('song metadata enriched', enrichMetadataStartedAt, {
+        songs: enrichedSongs.length,
+      });
+
+      // Prepare queue based on meeting day or not
+      const timeBeforeMeetingStart =
+        timeUntilMeeting.value - MEETING_STOP_BUFFER_SECONDS.value;
+      logMusicStartTiming('queue preparation started', 'debug', {
+        isMeetingToday: isMeetingToday.value,
+        timeBeforeMeetingStart,
+      });
+
+      if (isMeetingToday.value && timeBeforeMeetingStart > 0) {
+        // Meeting day: optimize queue to end precisely at fadeout time
+        const meetingQueueStartedAt = performance.now();
+        const selectedDayMedia = Object.values(
+          selectedDateObject.value?.mediaSections ?? {},
+        ).flatMap((section) => section.items || []);
+
+        const { queue, startOffsetSeconds } = await prepareMeetingDaySongQueue(
+          enrichedSongs,
+          {
+            currentSettings: currentSettings.value,
+            selectedDayMedia,
+            timeBeforeMeetingStart,
+          },
+        );
+
+        songList.value = queue;
+        initialStartOffset.value = startOffsetSeconds;
+        shouldLoopQueue.value = false;
+        logMusicStartStep(
+          'meeting day song queue prepared',
+          meetingQueueStartedAt,
+          {
+            queueLength: queue.length,
+            selectedDayMedia: selectedDayMedia.length,
+            startOffsetSeconds,
+          },
+        );
+      } else {
+        // No meeting to build a time-boxed queue around - either it's not a
+        // meeting day, or it is but the meeting has already started/ended
+        // (e.g. music manually restarted after the meeting). Either way
+        // there's no fadeout point to aim for, so just shuffle and loop
+        // through the whole library indefinitely.
+        songList.value = enrichedSongs;
+        initialStartOffset.value = 0;
+        shouldLoopQueue.value = true;
+        logMusicStartTiming('non-meeting song queue prepared', 'debug', {
+          queueLength: songList.value.length,
+        });
+      }
+
+      // Get and play the first song
+      const nextSongStartedAt = performance.now();
+      const { nextSongUrl } = await getNextSongFromQueue(
+        songList.value,
+        (title) => {
+          musicPlayingTitle.value = title;
+        },
+        shouldLoopQueue.value,
+      );
+      logMusicStartStep('next song selected', nextSongStartedAt, {
+        hasNextSongUrl: !!nextSongUrl,
+        title: musicPlayingTitle.value,
+      });
+
+      return nextSongUrl;
+    };
+
+    const retryDeadline = performance.now() + SONG_LIBRARY_RETRY_TIMEOUT_MS;
+    let nextSongUrl = await buildQueueAndGetNextSongUrl();
+    while (!nextSongUrl && performance.now() < retryDeadline) {
+      if (isStale()) return;
+      logMusicStartTiming(
+        'song library empty, waiting for songs to appear',
+        'debug',
+      );
+      await sleep(SONG_LIBRARY_RETRY_INTERVAL_MS);
+      if (isStale()) return;
+      nextSongUrl = await buildQueueAndGetNextSongUrl();
     }
 
-    // Get and play the first song
-    const nextSongStartedAt = performance.now();
-    const { nextSongUrl } = await getNextSongFromQueue(
-      songList.value,
-      (title) => {
-        musicPlayingTitle.value = title;
-      },
-      shouldLoopQueue.value,
-    );
-    logMusicStartStep('next song selected', nextSongStartedAt, {
-      hasNextSongUrl: !!nextSongUrl,
-      title: musicPlayingTitle.value,
-    });
-
+    if (isStale()) return;
     if (!nextSongUrl) throw new Error('No next song found');
 
     musicPlayerSource.value.src = nextSongUrl;
