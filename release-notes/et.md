@@ -4,6 +4,13 @@
 
 Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGELOG.md GitHubis.
 
+## v26.7.6
+
+### ✨ Uued funktsioonid
+
+- ✨ **CBS Video Exclusion**: Added a setting to exclude Congregation Bible Study videos from specific publications (defaults to the **Walk Courageously With God** book), with a searchable publication picker.
+- ✨ **Document Page Numbers**: Publication Media and JWPUB import listings now show each document's page number (or numbers when there are multiple pages) after its title. This can help you to quickly find specific media when you know the page number on which it is found.
+
 ## v26.7.4
 
 ### ✨ Uued funktsioonid
