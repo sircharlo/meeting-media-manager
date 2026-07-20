@@ -8,8 +8,8 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ### ✨ Nuove Funzionalità
 
-- ✨ **Esclusione Video CBS**: Aggiunta un'impostazione per escludere i video di Congregazione Bibbia di studio da pubblicazioni specifiche (default per il **Camminare coraggiosamente con Dio** libro), con un selettore di pubblicazione ricercabile.
-- ✨ **Numeri di pagina del documento**: Pubblicazione Media e JWPUB import listings ora mostra il numero di pagina di ogni documento (o i numeri quando ci sono più pagine) dopo il suo titolo. Questo può aiutare a trovare rapidamente i media specifici quando si conosce il numero di pagina su cui è trovato.
+- ✨ **Esclusione Video CBS**: Aggiunta un'impostazione per escludere i video di Studio Biblico di Congregazione da pubblicazioni specifiche (default per il **Camminare coraggiosamente con Dio** libro), con un selettore di pubblicazione ricercabile.
+- ✨ **Numeri di pagina del documento**: Pubblicazione Media e JWPUB importati ora mostra il numero di pagina di ogni documento (o i numeri quando ci sono più pagine) dopo il suo titolo. Questo può aiutare a trovare rapidamente i media specifici quando si conosce il numero di pagina su cui è trovato.
 
 ## v26.7.4
 
