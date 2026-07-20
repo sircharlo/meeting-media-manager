@@ -4,6 +4,13 @@
 
 Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in unserer CHANGELOG.md Datei auf GitHub.
 
+## v26.7.6
+
+### ✨ Neue Funktionen
+
+- ✨ **CBS Video Exklusion**: Eine Einstellung hinzugefügt, um Kongregation Bible Study Videos von bestimmten Publikationen auszuschließen (Standard ist das **Ermüdliche** Buch mit Gottes\*\*), mit einem durchsuchbaren Publikationswähler.
+- ✨ **Dokumentenseitennummern**: Veröffentlichungsmedien und JWPUB-Importlisten zeigen nun die Seitennummer jedes Dokuments (oder Zahlen, wenn mehrere Seiten vorhanden sind) nach dem Titel an. Dies kann Ihnen helfen, schnell bestimmte Medien zu finden, wenn Sie die Seitenzahl kennen, auf der sie gefunden wird.
+
 ## v26.7.4
 
 ### ✨ Neue Funktionen
