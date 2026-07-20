@@ -121,6 +121,9 @@ export const getExistingColumns = (
 ) => {
   try {
     if (!db || !tableName) return [];
+    if (!/^[a-zA-Z0-9_]+$/.test(tableName)) {
+      throw new Error('Invalid input');
+    }
     const existing = new Set(
       executeQuery<{ name: string }>(db, `PRAGMA table_info(${tableName})`).map(
         (column) => column.name,
