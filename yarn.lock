@@ -778,10 +778,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fontsource-variable/inter@npm:^5.2.8":
-  version: 5.2.8
-  resolution: "@fontsource-variable/inter@npm:5.2.8"
-  checksum: 10c0/35b46df31c8c18f55f87228acf6297e4dac6cc9f38d0faaafdaf5a40e40c386cf1bfb115fb0fe0dcdb9b7e14f582843693ccf070d9c903072a5b2fc0f8dfde56
+"@fontsource-variable/inter@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "@fontsource-variable/inter@npm:5.3.0"
+  checksum: 10c0/46fbe41e8482a718f99634c8254346c6081d615415059be12e177224c903d688199125967825e75d4b8122668fd83f70880e11d4e02d08c20b503c65fe2a96d1
   languageName: node
   linkType: hard
 
@@ -8710,7 +8710,7 @@ __metadata:
     "@electron/rebuild": "npm:^4.2.0"
     "@eslint/config-helpers": "npm:^0.6.0"
     "@eslint/js": "npm:^10.0.1"
-    "@fontsource-variable/inter": "npm:^5.2.8"
+    "@fontsource-variable/inter": "npm:^5.3.0"
     "@fontsource-variable/noto-serif": "npm:^5.2.9"
     "@formkit/drag-and-drop": "npm:^0.6.1"
     "@intlify/unplugin-vue-i18n": "npm:^11.2.4"
