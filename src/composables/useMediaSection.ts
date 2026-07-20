@@ -150,10 +150,15 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
 
       if (newDate === oldDate || !Array.isArray(items)) return;
 
-      log('🔄 Updating expanded groups for section:', 'mediaSections', 'log', {
-        itemCount: items.length,
-        sectionId: mediaList.config?.uniqueId,
-      });
+      log(
+        '🔄 Updating expanded groups for section:',
+        'mediaSections',
+        'debug',
+        {
+          itemCount: items.length,
+          sectionId: mediaList.config?.uniqueId,
+        },
+      );
 
       expandedGroups.value = items.reduce(
         (acc, item) => {
@@ -162,7 +167,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
             log(
               '📂 Setting expanded state for group:',
               'mediaSections',
-              'log',
+              'debug',
               {
                 expanded: !!item.cbs,
                 hasChildren: !!item.children?.length,
@@ -176,7 +181,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
         {} as Record<string, boolean>,
       );
 
-      log('✅ Expanded groups updated:', 'mediaSections', 'log', {
+      log('✅ Expanded groups updated:', 'mediaSections', 'debug', {
         expandedGroups: expandedGroups.value,
         sectionId: mediaList.config?.uniqueId,
       });
@@ -186,7 +191,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
 
   // Actions
   const updateSectionLabel = (label: string) => {
-    log('🏷️ Updating section label:', 'mediaSections', 'log', {
+    log('🏷️ Updating section label:', 'mediaSections', 'debug', {
       hasCustomSections: !!selectedDateObject.value?.mediaSections,
       newLabel: label,
       sectionId: mediaList.config?.uniqueId,
@@ -211,7 +216,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   };
 
   const updateSectionColor = (bgColor: string) => {
-    log('🎨 Updating section color:', 'mediaSections', 'log', {
+    log('🎨 Updating section color:', 'mediaSections', 'debug', {
       hasCustomSections: !!selectedDateObject.value?.mediaSections,
       newColor: bgColor,
       sectionId: mediaList.config?.uniqueId,
@@ -236,7 +241,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   };
 
   const updateSectionRepeat = (repeat: boolean, interval?: number) => {
-    log('🔄 Updating section repeat:', 'mediaSections', 'log', {
+    log('🔄 Updating section repeat:', 'mediaSections', 'debug', {
       hasCustomSections: !!selectedDateObject.value?.mediaSections,
       newInterval: interval,
       newRepeat: repeat,
@@ -270,7 +275,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   };
 
   const moveSection = (direction: 'down' | 'up') => {
-    log('📦 Moving section:', 'mediaSections', 'log', {
+    log('📦 Moving section:', 'mediaSections', 'debug', {
       direction,
       hasCustomSections: !!selectedDateObject.value?.mediaSections,
       sectionId: mediaList.config?.uniqueId,
@@ -334,7 +339,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   };
 
   const deleteSection = () => {
-    log('🗑️ Deleting section:', 'mediaSections', 'log', {
+    log('🗑️ Deleting section:', 'mediaSections', 'debug', {
       hasCustomSections: !!selectedDateObject.value?.mediaSections,
       sectionId: mediaList.config?.uniqueId,
     });
@@ -384,7 +389,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   };
 
   const addSong = (section: MediaSectionIdentifier | undefined) => {
-    log('🎵 Adding song to section:', 'mediaSections', 'log', {
+    log('🎵 Adding song to section:', 'mediaSections', 'debug', {
       section,
       sectionId: mediaList.config?.uniqueId,
     });

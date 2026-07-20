@@ -184,7 +184,7 @@ export const registerAllCustomShortcuts = () => {
     log(
       '⌨️ Registering configured keyboard shortcuts',
       'keyboardShortcuts',
-      'info',
+      'debug',
     );
     for (const shortcutName of Object.keys(shortcutCallbacks)) {
       registerCustomShortcut(shortcutName as keyof SettingsValues);
@@ -203,7 +203,7 @@ export const unregisterAllCustomShortcuts = () => {
   log(
     '⌨️ Unregistering all currently active keyboard shortcuts',
     'keyboardShortcuts',
-    'info',
+    'debug',
   );
   try {
     unregisterAllShortcuts();
