@@ -8,8 +8,8 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- ✨ **CBS Video Exclusion**: Added a setting to exclude Congregation Bible Study videos from specific publications (defaults to the **Walk Courageously With God** book), with a searchable publication picker.
-- ✨ **Document Page Numbers**: Publication Media and JWPUB import listings now show each document's page number (or numbers when there are multiple pages) after its title. This can help you to quickly find specific media when you know the page number on which it is found.
+- ✨ **Izključitev videoposnetkov za OPB**: Dodana je nastavitev za izključitev videoposnetkov za Občinsko preučevanje Biblije iz določenih publikacij (privzeto iz knjige **Pogumno hodi z Bogom**). Na voljo je tudi iskalnik za izbiro publikacije po naslovu ali simbolu.
+- ✨ **Številke strani dokumentov**: Seznam multimedijske vsebine v publikacijah ter uvoz JWPUB datotek zdaj prikazujeta številko strani vsakega dokumenta (ali več številk, če je dokument na več straneh). To pomaga hitreje najti določeno multimedijsko datoteko, če veš, na kateri strani se nahaja.
 
 ## v26.7.4
 
