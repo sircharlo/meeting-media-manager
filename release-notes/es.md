@@ -4,6 +4,13 @@
 
 For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
 
+## v26.7.6
+
+### ✨ New Features
+
+- ✨ **Exclusión de vídeo de CBS**: Se añadió un ajuste para excluir vídeos de estudio bíblico de notificación de publicaciones específicas (por defecto el libro **Caminar con coraje con Dios**), con un selector de publicación que se puede buscar.
+- ✨ **Números de página de documentos**: Los anuncios de importación de publicaciones y JWPUB muestran ahora el número de página de cada documento (o números cuando hay varias páginas) después de su título. Esto puede ayudarte a encontrar rápidamente un medio específico cuando conozcas el número de página en el que se encuentra.
+
 ## v26.7.4
 
 ### ✨ New Features
