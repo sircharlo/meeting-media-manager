@@ -785,10 +785,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fontsource-variable/noto-serif@npm:^5.2.9":
-  version: 5.2.9
-  resolution: "@fontsource-variable/noto-serif@npm:5.2.9"
-  checksum: 10c0/403c2199aebc201fb04b85494c2d789089ae70c99313a066b985ef80219a3fc10b9eef5f490b88361d48d97c9142603fc1e429ae3a7ca393f53c7dec46f7faa2
+"@fontsource-variable/noto-serif@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "@fontsource-variable/noto-serif@npm:5.3.0"
+  checksum: 10c0/26d965ed491054967317dfded8cca74e2db48182cec29c61bf6d72912a1312558bd476c3691cd525a3f5b3ba9007a2688ea4a7b4bde575b3f38de3d26146533b
   languageName: node
   linkType: hard
 
@@ -8711,7 +8711,7 @@ __metadata:
     "@eslint/config-helpers": "npm:^0.6.0"
     "@eslint/js": "npm:^10.0.1"
     "@fontsource-variable/inter": "npm:^5.2.8"
-    "@fontsource-variable/noto-serif": "npm:^5.2.9"
+    "@fontsource-variable/noto-serif": "npm:^5.3.0"
     "@formkit/drag-and-drop": "npm:^0.6.1"
     "@intlify/unplugin-vue-i18n": "npm:^11.2.4"
     "@jitsi/robotjs": "npm:^0.6.24"
