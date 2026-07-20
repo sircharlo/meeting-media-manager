@@ -8,8 +8,8 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 ### ✨ Nouvelles fonctionnalités
 
-- ✨ **l'exclusion de la vidéo CBS**: a ajouté un paramètre pour exclure les vidéos de Congrégation Bible Study de certaines publications (par défaut, **Marcher courageusement avec Dieu**), avec un sélecteur de publications interrogeable.
-- ✨ **Numéros de page de documents**: Les listes d'importation de publications et JWPUB affichent maintenant le numéro de page de chaque document (ou les nombres lorsqu'il y a plusieurs pages) après son titre. Cela peut vous aider à trouver rapidement des médias spécifiques lorsque vous connaissez le numéro de page sur lequel il se trouve.
+- ✨ **Exclusion des vidéos de l'étude biblique de l'assemblée** : Ajout d'un paramètre permettant d'exclure les vidéos de l'étude biblique de l'assemblée de certaines publications (par défaut, le livre **Marche courageusement avec Dieu**), avec un sélecteur de publications permettant d'effectuer une recherche.
+- ✨ **Numéros de page des documents** : Les listes des médias pour les publications et les fichiers JWPUB affichent désormais le(s) numéro(s) de page(s) de chaque document après son titre. Cette fonction peut vous aider à retrouver rapidement un élément multimédia précis lorsque vous connaissez le numéro de page sur lequel il se trouve.
 
 ## v26.7.4
 
