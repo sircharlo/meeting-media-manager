@@ -102,10 +102,18 @@ export const useCurrentStateStore = defineStore('current-state', {
     },
     async getDatedAdditionalMediaDirectory(destDate?: string) {
       try {
-        if (!destDate) destDate = this.selectedDate;
-        if (!destDate) return '';
+        // Falling back to '' here (e.g. right after a congregation switch,
+        // before selectedDate has initialized) is dangerous: callers join()
+        // it with a filename, producing a bare relative path that Node
+        // resolves against process.cwd() - the app's own install directory
+        // in a packaged build. Default to today instead of ever returning
+        // an unusable empty directory.
+        if (!destDate) destDate = this.selectedDate || undefined;
         const additionalMediaPath = await getAdditionalMediaPath();
-        const dateString = formatDate(new Date(destDate), 'YYYYMMDD');
+        const dateString = formatDate(
+          destDate ? new Date(destDate) : new Date(),
+          'YYYYMMDD',
+        );
         const datedAdditionalMediaDirectory = join(
           additionalMediaPath,
           this.currentCongregation,
