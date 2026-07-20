@@ -4,6 +4,13 @@
 
 Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bestand op GitHub.
 
+## v26.7.6
+
+### ✨ Nieuwe functies
+
+- ✨ **CBS Video Exclusie**: Voeg een instelling toe om Congregation Bible Study video's uit te sluiten van specifieke publicaties (standaard ingesteld op de **Walk Couragewijze met God** boek), met een doorzoekbare publicatie-kiezer.
+- ✨ **Document Pagina Numbers**: Publicatie Media en JWPUB import lijsten tonen nu het paginanummer van elk document (of nummers wanneer er meerdere pagina's zijn) na de titel. Dit kan u helpen om snel specifieke media te vinden wanneer u het paginanummer kent waarop het is gevonden.
+
 ## v26.7.4
 
 ### ✨ Nieuwe functies
