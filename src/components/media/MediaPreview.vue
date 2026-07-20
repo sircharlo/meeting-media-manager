@@ -38,26 +38,45 @@
           :style="imageStyle"
           @dragstart.prevent.stop
         />
-        <video
-          v-else
-          ref="previewVideo"
-          class="media-preview-content"
-          disableRemotePlayback
-          draggable="false"
-          muted
-          playsinline
-          preload="metadata"
-          :src="currentUrl"
-          @canplay="syncVideos()"
-          @dragstart.prevent.stop
-          @loadedmetadata="syncVideos()"
-        />
+        <template v-else>
+          <video
+            ref="previewVideo"
+            class="media-preview-content"
+            :class="{ 'media-preview-content--source': isCanvasMode }"
+            disableRemotePlayback
+            draggable="false"
+            muted
+            playsinline
+            preload="metadata"
+            :src="currentUrl"
+            @canplay="syncVideos()"
+            @dragstart.prevent.stop
+            @loadedmetadata="syncVideos()"
+          />
+          <canvas
+            v-if="isCanvasMode"
+            ref="previewCanvas"
+            class="media-preview-content"
+            draggable="false"
+            @dragstart.prevent.stop
+          />
+        </template>
         <div v-if="showProgress" class="media-preview-progress">
           <div class="media-preview-progress__rail">
             <div class="media-preview-progress__bar" :style="progressStyle" />
           </div>
         </div>
       </div>
+      <button
+        v-if="isDev && videoPreview && !modalOpen"
+        class="media-preview-mode-toggle"
+        type="button"
+        @click.stop="toggleRenderMode"
+        @dragstart.prevent.stop
+        @pointerdown.stop
+      >
+        {{ canvasRenderMode }}
+      </button>
       <template v-if="!modalOpen">
         <span
           v-for="handle in resizeHandles"
@@ -80,10 +99,18 @@
 import { useDebounceFn, useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { createTemporaryNotification } from 'src/helpers/notifications';
 import { log } from 'src/shared/vanilla';
 import { isImage, isVideo } from 'src/utils/media';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, nextTick, ref, useTemplateRef, watch } from 'vue';
+import {
+  computed,
+  nextTick,
+  onUnmounted,
+  ref,
+  useTemplateRef,
+  watch,
+} from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -92,6 +119,21 @@ const { currentSettings, mediaPlaying } = storeToRefs(useCurrentStateStore());
 const modalOpen = ref(false);
 const previewButton = useTemplateRef<HTMLButtonElement>('previewButton');
 const previewVideo = useTemplateRef<HTMLVideoElement>('previewVideo');
+const previewCanvas = useTemplateRef<HTMLCanvasElement>('previewCanvas');
+const isDev = import.meta.env.DEV;
+// Canvas mode is the default for real users. Dev builds still
+// default to video and can flip the mode via the on-screen toggle (persisted
+// in localStorage) to keep comparing the two.
+const storedRenderMode =
+  isDev && typeof localStorage !== 'undefined'
+    ? localStorage.getItem('mediaPreviewRenderMode')
+    : null;
+let initialRenderMode: 'canvas' | 'video' = 'canvas';
+if (isDev) {
+  initialRenderMode = storedRenderMode === 'canvas' ? 'canvas' : 'video';
+}
+const canvasRenderMode = ref<'canvas' | 'video'>(initialRenderMode);
+const isCanvasMode = computed(() => canvasRenderMode.value === 'canvas');
 const collapsedBottom = ref<number | undefined>();
 const collapsedRight = ref<number | undefined>();
 const collapsedWidth = ref<number | undefined>();
@@ -155,6 +197,89 @@ const reportPreviewError = (error: unknown, name: string) => {
   });
 };
 
+const toggleRenderMode = () => {
+  canvasRenderMode.value = isCanvasMode.value ? 'video' : 'canvas';
+  localStorage?.setItem('mediaPreviewRenderMode', canvasRenderMode.value);
+};
+
+let videoFrameCallbackHandle: number | undefined;
+let animationFrameHandle: number | undefined;
+let canvasResizeObserver: ResizeObserver | undefined;
+
+const cancelFrameLoop = () => {
+  const element = previewVideo.value;
+  if (
+    videoFrameCallbackHandle !== undefined &&
+    element &&
+    'cancelVideoFrameCallback' in element
+  ) {
+    element.cancelVideoFrameCallback(videoFrameCallbackHandle);
+  }
+  videoFrameCallbackHandle = undefined;
+
+  if (animationFrameHandle !== undefined) {
+    cancelAnimationFrame(animationFrameHandle);
+    animationFrameHandle = undefined;
+  }
+};
+
+// Match the canvas' backing-store resolution to how big it's actually
+// displayed (in device pixels), so drawImage does the one-and-only
+// downscale itself instead of leaving a second, lower-quality resize
+// to the compositor when the CSS box is much smaller than the source video.
+const resizeCanvasToDisplaySize = () => {
+  const canvas = previewCanvas.value;
+  if (!canvas) return;
+
+  const dpr = globalThis.devicePixelRatio || 1;
+  const targetWidth = Math.max(1, Math.round(canvas.clientWidth * dpr));
+  const targetHeight = Math.max(1, Math.round(canvas.clientHeight * dpr));
+
+  if (canvas.width !== targetWidth || canvas.height !== targetHeight) {
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
+  }
+};
+
+const drawCurrentFrame = () => {
+  const element = previewVideo.value;
+  const canvas = previewCanvas.value;
+  if (!element || !canvas || !element.videoWidth || !element.videoHeight) {
+    return;
+  }
+
+  resizeCanvasToDisplaySize();
+
+  const context = canvas.getContext('2d');
+  if (!context) return;
+
+  context.imageSmoothingEnabled = true;
+  context.imageSmoothingQuality = 'high';
+  context.drawImage(element, 0, 0, canvas.width, canvas.height);
+};
+
+const scheduleFrameLoop = () => {
+  const element = previewVideo.value;
+  if (!isCanvasMode.value || !element) return;
+
+  if ('requestVideoFrameCallback' in element) {
+    videoFrameCallbackHandle = element.requestVideoFrameCallback(() => {
+      drawCurrentFrame();
+      scheduleFrameLoop();
+    });
+  } else {
+    animationFrameHandle = requestAnimationFrame(() => {
+      drawCurrentFrame();
+      scheduleFrameLoop();
+    });
+  }
+};
+
+onUnmounted(() => {
+  cancelFrameLoop();
+  canvasResizeObserver?.disconnect();
+});
+
 const syncVideoTime = (element: HTMLVideoElement, acceptableDrift: number) => {
   const expectedPosition = mediaPlaying.value.currentPosition || 0;
   const currentDrift = Math.abs(element.currentTime - expectedPosition);
@@ -165,6 +290,65 @@ const syncVideoTime = (element: HTMLVideoElement, acceptableDrift: number) => {
       'mediaPreview',
     );
     element.currentTime = expectedPosition;
+    return true;
+  }
+  return false;
+};
+
+// If the preview can't keep up with real playback and needs this many
+// corrections within a single video, the machine is too slow for it —
+// turn it off rather than let it keep eating cycles every playback.
+const DRIFT_CORRECTIONS_BEFORE_AUTO_DISABLE = 5;
+const driftCorrectionCount = ref(0);
+
+const disablePreviewForPerformance = () => {
+  if (currentSettings.value?.enableMediaPreview === false) return;
+
+  log(
+    `Disabling media preview after ${driftCorrectionCount.value} drift corrections in one playback`,
+    'mediaPreview',
+    'warn',
+  );
+
+  if (currentSettings.value) currentSettings.value.enableMediaPreview = false;
+
+  createTemporaryNotification({
+    actions: [
+      {
+        color: 'dark',
+        handler: () => {
+          if (currentSettings.value) {
+            currentSettings.value.enableMediaPreview = true;
+          }
+        },
+        label: t('turn-back-on'),
+      },
+    ],
+    caption: t('media-preview-auto-disabled-explain'),
+    group: 'media-preview-auto-disabled',
+    message: t('media-preview-auto-disabled'),
+    timeout: 15000,
+    type: 'warning',
+  });
+
+  errorCatcher(
+    new Error('Media preview auto-disabled after repeated drift corrections'),
+    {
+      contexts: {
+        fn: {
+          driftCorrectionCount: driftCorrectionCount.value,
+          name: 'MediaPreview.disablePreviewForPerformance',
+        },
+      },
+    },
+  );
+};
+
+const registerDriftCorrection = () => {
+  driftCorrectionCount.value += 1;
+  if (driftCorrectionCount.value >= DRIFT_CORRECTIONS_BEFORE_AUTO_DISABLE) {
+    disablePreviewForPerformance();
+    driftCorrectionCount.value = 0;
   }
 };
 
@@ -187,6 +371,7 @@ const syncVideos = async () => {
       log('Pausing video preview', 'mediaPreview');
       element.pause();
       syncVideoTime(element, 0);
+      if (isCanvasMode.value) drawCurrentFrame();
       return;
     }
 
@@ -220,7 +405,8 @@ const syncVideos = async () => {
     }
 
     const acceptableDrift = 0.2 * playbackRate;
-    syncVideoTime(element, acceptableDrift);
+    if (syncVideoTime(element, acceptableDrift)) registerDriftCorrection();
+    if (isCanvasMode.value) drawCurrentFrame();
   } catch (error) {
     reportPreviewError(error, 'MediaPreview.syncVideos');
   }
@@ -617,6 +803,26 @@ watch(
     syncVideos();
   },
 );
+
+watch(currentUrl, () => {
+  driftCorrectionCount.value = 0;
+});
+
+watch(
+  () => [isCanvasMode.value, previewVideo.value, previewCanvas.value] as const,
+  ([canvasMode, element, canvas]) => {
+    cancelFrameLoop();
+    canvasResizeObserver?.disconnect();
+    canvasResizeObserver = undefined;
+
+    if (canvasMode && element && canvas) {
+      canvasResizeObserver = new ResizeObserver(() => drawCurrentFrame());
+      canvasResizeObserver.observe(canvas);
+      scheduleFrameLoop();
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <style scoped>
@@ -837,6 +1043,33 @@ watch(
   height: 100%;
   object-fit: contain;
   transform-origin: center;
+}
+
+.media-preview-content--source {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.media-preview-mode-toggle {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  z-index: 1;
+  padding: 2px 6px;
+  font-size: 10px;
+  line-height: 1.4;
+  color: white;
+  text-transform: uppercase;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.45);
+  border: none;
+  border-radius: 4px;
 }
 
 @media (max-width: 599px) {
