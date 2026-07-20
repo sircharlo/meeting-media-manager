@@ -4072,13 +4072,15 @@ export const getWeMedia = async (
          LEFT JOIN Question
            ON Question.DocumentId = DocumentMultimedia.DocumentId
            AND Question.TargetParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal
-         WHERE DocumentMultimedia.DocumentId = ${docId}
+         WHERE DocumentMultimedia.DocumentId = ?
            AND CategoryType <> 9
            AND CategoryType <> -1
-           AND (KeySymbol != '${currentStateStore.currentSongbook?.pub}' OR KeySymbol IS NULL)
+           AND (KeySymbol != ? OR KeySymbol IS NULL)
          GROUP BY DocumentMultimedia.MultimediaId
          ORDER BY DocumentParagraph.BeginPosition`, // pictures
+      [docId, currentStateStore.currentSongbook?.pub],
     );
+</original_code>
     await addFullPathsToMultimediaItems(mediaWithoutVideos, publication);
 
     const finalMedia = processWeekendMedia(
