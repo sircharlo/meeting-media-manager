@@ -33,7 +33,7 @@ export default defineStore(() => {
 
   pinia.use(
     createSentryPiniaPlugin({
-      attachPiniaState: true,
+      attachPiniaState: false,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       stateTransformer: (state: Record<string, any>) => {
         try {
