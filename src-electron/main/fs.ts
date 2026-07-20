@@ -592,8 +592,14 @@ const getProbePathContext = (basePath: string) => {
 const isInvalidWindowsResolvedPath = (resolvedBase: string) => {
   if (process.platform !== 'win32') return false;
 
+  // A resolved path whose final segment is a bare '?' is never a real
+  // folder. Originally this only checked for '/?' and '//?' exactly, but
+  // the same malformed-resolution shape has shown up with a drive letter
+  // or UNC prefix still attached (e.g. a virtual/mapped drive resolving
+  // oddly) and slipped past that exact match - check the general shape
+  // instead of two hardcoded strings.
   const unixResolvedBase = toUnix(resolvedBase);
-  return unixResolvedBase === '/?' || unixResolvedBase === '//?';
+  return basename(unixResolvedBase) === '?';
 };
 
 const WINDOWS_RETRYABLE_PROBE_CODES = new Set(['EBUSY', 'EPERM']);

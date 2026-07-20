@@ -94,7 +94,7 @@ vi.mock('upath', () => {
   const join = vi.fn((...parts: string[]) => parts.join('/'));
   const resolve = vi.fn((value: string) => value);
   const toUnix = vi.fn((value: string) => value.replaceAll('\\', '/'));
-  const basename = vi.fn();
+  const basename = vi.fn((value: string) => value.split('/').pop() ?? value);
   const dirname = vi.fn();
 
   return {
@@ -319,6 +319,25 @@ describe('isUsablePath', () => {
         level: 'error',
       }),
     );
+    expect(captureElectronErrorMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Invalid Windows path resolved for filesystem probe',
+      }),
+      expect.anything(),
+    );
+  });
+
+  it('also catches the extended-path marker with a drive letter or UNC prefix still attached', async () => {
+    setPlatform('win32');
+
+    const { isUsablePath } = await import('../fs');
+
+    // A drive letter (or UNC prefix) can survive resolution around this
+    // malformed shape - only the exact bare '\?'/'\\?' forms were checked
+    // before, missing this variant.
+    await expect(isUsablePath(String.raw`C:\?`)).resolves.toBe(false);
+
+    expect(mkdirMock).not.toHaveBeenCalled();
     expect(captureElectronErrorMock).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'Invalid Windows path resolved for filesystem probe',
