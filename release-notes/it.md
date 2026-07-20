@@ -4,6 +4,13 @@
 
 Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGELOG.md su GitHub.
 
+## v26.7.6
+
+### ✨ Nuove Funzionalità
+
+- ✨ **Esclusione Video CBS**: Aggiunta un'impostazione per escludere i video di Congregazione Bibbia di studio da pubblicazioni specifiche (default per il **Camminare coraggiosamente con Dio** libro), con un selettore di pubblicazione ricercabile.
+- ✨ **Numeri di pagina del documento**: Pubblicazione Media e JWPUB import listings ora mostra il numero di pagina di ogni documento (o i numeri quando ci sono più pagine) dopo il suo titolo. Questo può aiutare a trovare rapidamente i media specifici quando si conosce il numero di pagina su cui è trovato.
+
 ## v26.7.4
 
 ### ✨ Nuove Funzionalità
@@ -13,14 +20,14 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.7.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Riproduzione audio collegata**: aggiunto il supporto per riprodurre l'audio di un file insieme al video di un altro file. Può essere utile per riprodurre presentazioni video con musica di accompagnamento.
 - ✨ **Layout dei media monitorati**: aggiunta la persistenza degli elementi multimediali monitorati e dell'ordine delle sezioni tra le cartelle monitorate. Questo garantisce che l'elenco dei media venga mostrato allo stesso modo anche quando la cartella monitorata è sincronizzata tra più dispositivi.
 
 ## v26.6.1
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Anteprima dei media**: aggiunto un overlay di anteprima dei media dal vivo che può essere attivato o disattivato dalle impostazioni o dal popup di visualizzazione.
 - ✨ **Cerca media**: aggiunta una casella di ricerca rapida nell'elenco dei media che consente di trovare rapidamente i media per titolo. Per usarla, basta usare la scorciatoia da tastiera standard per la ricerca (Ctrl+F o Cmd+F).
@@ -29,7 +36,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.6.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Timer**: aggiunte modalità di visualizzazione analogica e lo stato del resoconto dei tempi.
 - ✨ **Profili**: aggiunte l'importazione e l'esportazione delle impostazioni del profilo nelle impostazioni Avanzate e nella Configurazione guidata.
@@ -37,25 +44,25 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.5.0
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Importazione PDF**: aggiunto un nuovo flusso di importazione PDF alla finestra Media delle pubblicazioni, che consente di importare automaticamente la versione PDF di una pubblicazione come singole immagini quando desiderato.
 
 ## v26.4.8
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **JW Stream**: Aggiunto JW Stream alla lista dei siti web che possono essere mirrored.
 
 ## v26.4.0
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Timer di riunione**: È stata aggiunta una nuova funzione di timer di riunione. È facoltativo e può essere abilitato nelle impostazioni avanzate, se lo si desidera. Il timer può essere utilizzato per consentire all'operatore multimediale di tenere traccia del tempo dedicato alle parti di riunione, o per visualizzare il tempo trascorso sulla parte di riunione corrente su uno schermo dedicato visibile solo all'altoparlante.
 
 ## v26.3.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Memorial Media**: Il recupero automatico dei media commemorativi è ora fuori dalla beta! L'app scaricherà automaticamente il Memorial Welcome Video e l'immagine da visualizzare durante il Memoriale, quando disponibile nella lingua configurata.
 - ✨ **Velocità di riproduzione**: Aggiunto controllo della velocità di riproduzione con indicatore visivo, e ripristino manuale. Questa funzione è visibile solo se abilitata nelle impostazioni avanzate.
@@ -69,7 +76,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.1.5
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Media Commemorazione**: Recupera automaticamente banner Commemorazione e video introduttivo nelle lingue supportate quando la data della Commemorazione è selezionata.
 
@@ -145,14 +152,14 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v25.9.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Miglioramenti del Popup di Download**: Aggiunto il pulsante di aggiornamento e download raggruppati per data nel popup di download.
 - ✨ **Memoria dell'ordine dei media monitorati**: aggiunta la memoria dell'ordine delle sezioni per gli elementi multimediali monitorati.
 
 ## v25.8.3
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Transizioni in dissolvenza della finestra multimediale**: aggiunta una nuova impostazione avanzata per far comparire e scomparire in dissolvenza la finestra multimediale, offrendo transizioni visive più morbide.
 - ✨ **Controllo della durata delle immagini e monitoraggio dell'avanzamento**: aggiunte le funzioni di controllo della durata delle immagini e di monitoraggio dell'avanzamento per le sezioni ripetute.
@@ -181,14 +188,14 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## 25.5.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - 🖼️ **Opzione di ritardo OBS per le immagini**: aggiunge un'impostazione di OBS Studio per ritardare i cambi di scena quando si mostrano le immagini, migliorando le transizioni.
 - 🔊 **Supporto per il formato audio `.m4a`**: aggiunge la compatibilità con i file audio `.m4a` per ampliare i tipi di media supportati.
 
 ## 25.4.0
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - 🇵🇭 **Nuova lingua: tagalog**: aggiunto il supporto per il tagalog, ampliando le capacità multilingue dell'app.
 - 🎞 **Supporto per il formato video `.m4v`**: ora supporta la riproduzione dei file `.m4v` per migliorare la compatibilità dei media.
@@ -210,7 +217,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## 25.2.1
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - 🔄 **Consenti tentativi di ricostruzione OBS**: Introdurre la possibilità di forzare manualmente OBS a riconnettersi quando necessario.
 - 🗑️ **Auto Cleanup Old Export Date Folders**: Rimuovere automaticamente le cartelle di data di esportazione obsolete per mantenere lo storage organizzato.
@@ -254,6 +261,6 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## 24.10.9
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - **funzione**: Aggiunta un'opzione per eliminare tutti i file multimediali aggiuntivi per il giorno attualmente selezionato

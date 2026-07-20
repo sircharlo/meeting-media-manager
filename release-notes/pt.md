@@ -4,6 +4,13 @@
 
 Para obter a lista completa das mudanças entre versões, consulte nosso arquivo CHANGELOG.md no GitHub.
 
+## v26.7.6
+
+### ✨ Novos Recursos
+
+- ✨ **Exclusão de Vídeo CBS**: Adicionada uma configuração para excluir vídeos de estudos de Bíblia de Congregação de publicações específicas (o padrão é **Walk corajosamente com o livro Deus**), com um seletor de publicação pesquisável
+- ✨ **Número de Página do documento**: Mídia de Publicação e listagens de importação do JWPUB agora mostram o número da página de cada documento (ou os números quando há várias páginas) após o título. Isso pode ajudá-lo a encontrar rapidamente uma mídia específica quando você souber o número da página em que ela é encontrada.
+
 ## v26.7.4
 
 ### ✨ Novos Recursos

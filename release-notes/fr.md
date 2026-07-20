@@ -4,6 +4,13 @@
 
 Pour la liste complète des changements entre les versions, consultez notre fichier CHANGELOG.md sur GitHub.
 
+## v26.7.6
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **l'exclusion de la vidéo CBS**: a ajouté un paramètre pour exclure les vidéos de Congrégation Bible Study de certaines publications (par défaut, **Marcher courageusement avec Dieu**), avec un sélecteur de publications interrogeable.
+- ✨ **Numéros de page de documents**: Les listes d'importation de publications et JWPUB affichent maintenant le numéro de page de chaque document (ou les nombres lorsqu'il y a plusieurs pages) après son titre. Cela peut vous aider à trouver rapidement des médias spécifiques lorsque vous connaissez le numéro de page sur lequel il se trouve.
+
 ## v26.7.4
 
 ### ✨ Nouvelles fonctionnalités
