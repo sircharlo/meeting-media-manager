@@ -120,7 +120,7 @@ export const getExistingColumns = (
   columns: string[],
 ) => {
   try {
-    if (!db || !tableName) return [];
+    if (!db || !tableName || !/^\w+$/.test(tableName)) return [];
     const existing = new Set(
       executeQuery<{ name: string }>(db, `PRAGMA table_info(${tableName})`).map(
         (column) => column.name,
