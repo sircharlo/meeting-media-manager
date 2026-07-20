@@ -4,6 +4,35 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.7.6
+
+### ✨ New Features
+
+- ✨ **CBS Video Exclusion**: Added a setting to exclude Congregation Bible Study videos from specific publications (defaults to the **Walk Courageously With God** book), with a searchable publication picker.
+- ✨ **Document Page Numbers**: Publication Media and JWPUB import listings now show each document's page number (or numbers when there are multiple pages) after its title. This can help you to quickly find specific media when you know the page number on which it is found.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Tooltips**: Redesigned tooltip styling for a consistent look in light and dark mode, and added tooltips to many previously-unlabeled icon-only buttons.
+- 🛠️ **Media List**: Reworked media item tags with section-matched colors, added a collapse animation to media lists, switched several dialogs to a flatter button style, and added a Watchtower study article subtitle under the appropriate section header.
+- 🛠️ **Background Music**: Smoothed the action-island music button's size transitions, added a status summary and clock times to the background music popup, highlighted meeting-day songs in the upcoming list, and fixed the meeting-day song queue looping instead of stopping after the meeting's song.
+- 🛠️ **Downloads Popup**: Showed meeting-date checking progress before downloads start, and fixed action-island popups drifting out of alignment as their content changed.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Security**: Parameterized SQL queries built from document IDs, songbook publication codes, and table names to prevent SQL injection.
+- 🐞 **Error Reporting**: Hardened Sentry error reporting — moved the DSN out of source into a build-time secret, improved PII scrubbing and better issue grouping, stopped reporting transient network failures, 504s/empty API responses, raw DOM events, and duplicate error causes as bugs, fixed the reported environment showing as "undefined", grouped filesystem errors by code/syscall instead of file path, and cut attachment bandwidth by no longer attaching a full Pinia state dump to every event.
+- 🐞 **Watched Folders**: Skipped creating watched folders when the folder isn't usable, properly cleaned up watched folders for past dates, stopped deleting unrecognized congregation folders from shared cache, and recognized macOS `/Volumes` paths as possibly removable/network locations.
+- 🐞 **JWPUB and Zip Import**: Transparently read JWPUB/zip sources that were extracted into a directory, hardened zip reads against cloud-sync and network path failures, fixed resolved zip entry paths retaining a trailing slash, and avoided deleting JWPUB files on permission errors, tolerating an `EEXIST` directory race on Windows.
+- 🐞 **Additional Media**: Automatically healed missing additional media instead of failing indefinitely, fixed a case where the dated additional-media directory could resolve to an empty path, and retried an empty song library before giving up on background music.
+- 🐞 **Thumbnails**: Fixed spurious ENOENT errors being reported as bugs when concurrent JW Playlist imports raced to rename shared thumbnail files, and fixed an oversized loading spinner on thumbnails.
+- 🐞 **Media List**: Fixed incorrect singular/plural media item counts and missing tooltips, fixed the stop button's margin when no sibling button precedes it, stopped the Study Bible download progress bar from decreasing, and ignored benign playback-interruption errors during media preview sync.
+- 🐞 **Reliability**: Retried `.last-used` file operations on transient Windows file locks, wrote `.section-order.json` atomically via a temp file and rename, stopped re-caching `updateJwIconsUrl`'s own lookups, made a cache-path error self-diagnosing when given a falsy base path, broadened the malformed-path check to catch any bare `?` path segment, gated the meeting fetch queue start on the macOS folder permission check, and fixed a `robotjs` key-tap argument-count bug causing key-tap failures.
+
+### 🔧 Chores
+
+- 🔧 **Release Process**: Replaced the version-bump GitHub Action with an inline script, excluded Crowdin translation-sync commits from generated release notes, and prevented transient SonarQube failures from blocking release publishing.
+
 ## v26.7.5
 
 ### 🐞 Bug Fixes
