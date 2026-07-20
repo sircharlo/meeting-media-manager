@@ -1,0 +1,51 @@
+name: Refresh jw-icons fallback glyph map
+
+on:
+  schedule:
+    - cron: '0 7 1 * *'
+  workflow_dispatch:
+
+jobs:
+  refresh-jw-icons-fallbacks:
+    runs-on: ubuntu-latest
+    if: github.repository == 'sircharlo/meeting-media-manager'
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Run refresh-jw-icons-fallbacks script
+        run: yarn refresh:jw-icons-fallbacks
+
+      - name: Format generated file with Prettier
+        run: yarn dlx prettier@3.9.4 --write src/constants/jw-icons.ts
+
+      - name: Check for changes
+        id: diff
+        run: |
+          if git diff --quiet -- src/constants/jw-icons.ts; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open pull request with refreshed fallback glyphs
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          add-paths: src/constants/jw-icons.ts
+          body-path: jw-icons-refresh-summary.md
+          branch: chore/refresh-jw-icons-fallbacks
+          commit-message: 'chore: refresh jw-icons fallback glyph map'
+          title: 'chore: refresh jw-icons fallback glyph map'

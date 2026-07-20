@@ -24,7 +24,12 @@ import {
   findMediaSection,
   getOrCreateMediaSection,
 } from 'src/helpers/media-sections';
-import { log } from 'src/shared/vanilla';
+import {
+  extractCssUrls,
+  findIconUrlInCss,
+  getYeartextFontUrlsFromCss,
+  log,
+} from 'src/shared/vanilla';
 import {
   fetchJwLanguages,
   fetchMemorials,
@@ -222,101 +227,6 @@ export function replaceMissingMediaByPubMediaId(
       });
     }
   });
-}
-
-/**
- * Extracts CSS URLs from HTML content
- */
-function extractCssUrls(html: string, baseUrl: string): string[] {
-  const cssRegex = /href=["']([^"']+\.css)["']/g;
-  const cssUrls: string[] = [];
-  let match;
-  while ((match = cssRegex.exec(html)) !== null) {
-    let url = match[1];
-    if (!url) continue;
-    if (url.startsWith('/')) {
-      url = `https://wol.${baseUrl}${url}`;
-    }
-    cssUrls.push(url);
-  }
-  return cssUrls;
-}
-
-const wtFontCssNames: Record<string, FontName> = {
-  WTClearTextGeorgian: 'WTClearTextGeorgian',
-  WTClearTextJapanese: 'WTClearTextJapanese',
-  WTMannaSansKaren: 'WTMannaSansKaren',
-  WTMannaSansMongolian: 'WTMannaSansMongolian',
-  WTMannaSansMyammar: 'WTMannaSansMyanmar',
-  WTMannaSansMyanmar: 'WTMannaSansMyanmar',
-  WTMannaSansTibetan: 'WTMannaSansTibetan',
-  WTSetthaSpecial: 'WTSetthaSpecial',
-  WTTextNew: 'WTTextNew',
-  WTXBZSpecial: 'WTXBZSpecial',
-};
-
-/**
- * Finds the jw-icons font URL within CSS text
- */
-function findIconUrlInCss(cssText: string, cssUrl: string): null | string {
-  const fontFaceBlocks = cssText.match(/@font-face\s*\{[^}]*\}/gi);
-  if (!fontFaceBlocks) return null;
-
-  for (const block of fontFaceBlocks) {
-    if (block.includes('jw-icons')) {
-      const fontMatch = new RegExp(
-        /url\(["']?([^"']+\.(woff2?|ttf|otf)[^"']*)["']?\)/i,
-      ).exec(block);
-      if (fontMatch?.[1]) {
-        return new URL(fontMatch[1], cssUrl).href;
-      }
-    }
-  }
-  return null;
-}
-
-function getFontFileUrl(fontFaceBlock: string): string | undefined {
-  const urlRegex = /url\(["']?(https?:\/\/[^"')]+\.woff2?)["']?\)/g;
-  let woffUrl: string | undefined;
-
-  let match;
-  while ((match = urlRegex.exec(fontFaceBlock)) !== null) {
-    const url = match[1];
-    if (!url) continue;
-    if (url.endsWith('.woff2')) return url; // prefer woff2, return immediately
-    if (!woffUrl && url.endsWith('.woff')) woffUrl = url;
-  }
-
-  return woffUrl;
-}
-
-function getYeartextFontUrlsFromCss(
-  cssText: string,
-): Partial<Record<FontName, string>> {
-  const fontUrls: Partial<Record<FontName, string>> = {};
-
-  // Use[\s\S] instead of [^}]* to handle newlines, and[\s\S]*? to avoid
-  // crossing block boundaries while staying SonarQube-safe
-  const fontFaceRegex = /@font-face\s*\{([\s\S]*?)\}/g;
-  const fontFamilyRegex = /font-family:\s*['"]?([\w-]+)['"]?/;
-
-  let match;
-  while ((match = fontFaceRegex.exec(cssText)) !== null) {
-    const blockContent = match[1];
-    if (!blockContent) continue;
-
-    const familyMatch = fontFamilyRegex.exec(blockContent);
-    const cssName = familyMatch?.[1];
-    if (!cssName) continue;
-
-    const fontName = wtFontCssNames[cssName];
-    const url = getFontFileUrl(match[0]);
-    if (fontName && url) {
-      fontUrls[fontName] = url;
-    }
-  }
-
-  return fontUrls;
 }
 
 export const useJwStore = defineStore('jw-store', {

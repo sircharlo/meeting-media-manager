@@ -21,6 +21,7 @@
     "generate:icons": "node ./build/svg2font.js",
     "generate:jw-icons-fallbacks": "node ./scripts/update-jw-icons-fallbacks.mjs",
     "generate:logos": "node ./build/generate-logos.js",
+    "refresh:jw-icons-fallbacks": "node ./scripts/refresh-jw-icons-fallbacks.mjs",
     "dev": "quasar dev -m electron",
     "build": "quasar build -m electron",
     "build:debug": "quasar build -m electron --debug",

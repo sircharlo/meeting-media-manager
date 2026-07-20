@@ -1,3 +1,5 @@
+import type { FontName } from 'src/types';
+
 /**
  * Generates a UUID.
  * @returns The generated UUID.
@@ -269,4 +271,121 @@ export const sanitizeFilename = (input: string, replacement = ''): string => {
   if (!replacement) return output;
 
   return sanitizeFilenameInternal(output, '');
+};
+
+/**
+ * Extracts .css stylesheet URLs referenced via `<link href="...">` tags in
+ * HTML, resolving any origin-relative ones against the WOL (wol.<baseUrl>)
+ * domain. Framework-agnostic so it can also run outside the app (e.g. the
+ * scripts/refresh-jw-icons-fallbacks.mjs CI script).
+ * @param html The HTML to scan
+ * @param baseUrl The congregation's base domain (e.g. `jw.org`)
+ * @returns The list of discovered, fully-qualified CSS URLs
+ */
+export const extractCssUrls = (html: string, baseUrl: string): string[] => {
+  const cssRegex = /href=["']([^"']+\.css)["']/g;
+  const cssUrls: string[] = [];
+  let match;
+  while ((match = cssRegex.exec(html)) !== null) {
+    let url = match[1];
+    if (!url) continue;
+    if (url.startsWith('/')) {
+      url = `https://wol.${baseUrl}${url}`;
+    }
+    cssUrls.push(url);
+  }
+  return cssUrls;
+};
+
+/**
+ * Finds the jw-icons font URL within CSS text by locating its @font-face
+ * block and extracting the url() it declares.
+ * @param cssText The CSS to scan
+ * @param cssUrl The URL `cssText` was fetched from, used to resolve
+ * relative url()s
+ * @returns The absolute font URL, or null if no jw-icons @font-face was found
+ */
+export const findIconUrlInCss = (
+  cssText: string,
+  cssUrl: string,
+): null | string => {
+  const fontFaceBlocks = cssText.match(/@font-face\s*\{[^}]*\}/gi);
+  if (!fontFaceBlocks) return null;
+
+  for (const block of fontFaceBlocks) {
+    if (block.includes('jw-icons')) {
+      const fontMatch = new RegExp(
+        /url\(["']?([^"']+\.(woff2?|ttf|otf)[^"']*)["']?\)/i,
+      ).exec(block);
+      if (fontMatch?.[1]) {
+        return new URL(fontMatch[1], cssUrl).href;
+      }
+    }
+  }
+  return null;
+};
+
+// Maps the CSS font-family name WOL's stylesheets use for each WT/Manna
+// yeartext font to this app's FontName identifier.
+const wtFontCssNames: Record<string, FontName> = {
+  WTClearTextGeorgian: 'WTClearTextGeorgian',
+  WTClearTextJapanese: 'WTClearTextJapanese',
+  WTMannaSansKaren: 'WTMannaSansKaren',
+  WTMannaSansMongolian: 'WTMannaSansMongolian',
+  WTMannaSansMyammar: 'WTMannaSansMyanmar',
+  WTMannaSansMyanmar: 'WTMannaSansMyanmar',
+  WTMannaSansTibetan: 'WTMannaSansTibetan',
+  WTSetthaSpecial: 'WTSetthaSpecial',
+  WTTextNew: 'WTTextNew',
+  WTXBZSpecial: 'WTXBZSpecial',
+};
+
+const getFontFileUrl = (fontFaceBlock: string): string | undefined => {
+  const urlRegex = /url\(["']?(https?:\/\/[^"')]+\.woff2?)["']?\)/g;
+  let woffUrl: string | undefined;
+
+  let match;
+  while ((match = urlRegex.exec(fontFaceBlock)) !== null) {
+    const url = match[1];
+    if (!url) continue;
+    if (url.endsWith('.woff2')) return url; // prefer woff2, return immediately
+    if (!woffUrl && url.endsWith('.woff')) woffUrl = url;
+  }
+
+  return woffUrl;
+};
+
+/**
+ * Extracts each WT/Manna yeartext font's URL from WOL's CSS by matching its
+ * @font-face block's font-family name against {@link wtFontCssNames}.
+ * @param cssText The CSS to scan
+ * @returns A map of discovered font URLs, keyed by FontName
+ */
+export const getYeartextFontUrlsFromCss = (
+  cssText: string,
+): Partial<Record<FontName, string>> => {
+  const fontUrls: Partial<Record<FontName, string>> = {};
+
+  // Use [\s\S] instead of [^}]* to handle newlines, and [\s\S]*? to avoid
+  // crossing block boundaries while staying SonarQube-safe
+  const fontFaceRegex = /@font-face\s*\{([\s\S]*?)\}/g;
+  const fontFamilyRegex = /font-family:\s*['"]?([\w-]+)['"]?/;
+
+  let match;
+  while ((match = fontFaceRegex.exec(cssText)) !== null) {
+    const blockContent = match[1];
+    if (!blockContent) continue;
+
+    const familyMatch = fontFamilyRegex.exec(blockContent);
+    const cssName = familyMatch?.[1];
+    if (!cssName) continue;
+
+    const fontName = wtFontCssNames[cssName];
+    const url = getFontFileUrl(match[0]);
+    if (fontName && url) {
+      fontUrls[fontName] = url;
+    }
+  }
+
+  return fontUrls;
 };
