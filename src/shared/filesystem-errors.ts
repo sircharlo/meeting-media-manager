@@ -28,14 +28,42 @@ const CLOUD_STORAGE_PROVIDERS: [marker: string, provider: string][] = [
   ['/nextcloud', 'Nextcloud'],
 ];
 
+// Errors thrown by fs functions Electron exposes straight through
+// contextBridge (rather than through an ipcRenderer.invoke channel) lose
+// non-standard properties like `code`/`syscall` by the time they reach the
+// renderer - only `name`/`message`/`stack` survive the crossing. The code
+// and syscall are still in the message text Node generated them from, e.g.
+// "ENOENT: no such file or directory, rename 'a' -> 'b'".
+const NODE_FS_ERROR_MESSAGE_PATTERN = /^(E[A-Z]+): .+?, (\w+)/;
+
+const parseNodeFsErrorMessage = (message: unknown) => {
+  if (typeof message !== 'string') return undefined;
+  const match = NODE_FS_ERROR_MESSAGE_PATTERN.exec(message);
+  return match ? { code: match[1], syscall: match[2] } : undefined;
+};
+
 export const getFilesystemErrorCode = (error: unknown) => {
-  if (typeof error !== 'object' || error === null || !('code' in error)) {
-    return undefined;
-  }
+  if (typeof error !== 'object' || error === null) return undefined;
 
   const code = (error as { code?: unknown }).code;
-  if (typeof code !== 'string') return undefined;
-  return UNKNOWN_SYSTEM_ERROR_CODE_PATTERN.test(code) ? 'UNKNOWN' : code;
+  const resolvedCode =
+    typeof code === 'string'
+      ? code
+      : parseNodeFsErrorMessage((error as { message?: unknown }).message)?.code;
+
+  if (!resolvedCode) return undefined;
+  return UNKNOWN_SYSTEM_ERROR_CODE_PATTERN.test(resolvedCode)
+    ? 'UNKNOWN'
+    : resolvedCode;
+};
+
+export const getFilesystemErrorSyscall = (error: unknown) => {
+  if (typeof error !== 'object' || error === null) return undefined;
+
+  const syscall = (error as { syscall?: unknown }).syscall;
+  if (typeof syscall === 'string') return syscall;
+  return parseNodeFsErrorMessage((error as { message?: unknown }).message)
+    ?.syscall;
 };
 
 export const normalizeFilesystemPath = (path: string) =>

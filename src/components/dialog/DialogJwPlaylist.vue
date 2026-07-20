@@ -215,6 +215,7 @@ import {
   resolveFilePath,
 } from 'src/helpers/jw-media';
 import { createTemporaryNotification } from 'src/helpers/notifications';
+import { getFilesystemErrorCode } from 'src/shared/filesystem-errors';
 import { log } from 'src/shared/vanilla';
 import { getTempPath } from 'src/utils/fs';
 import { isImage } from 'src/utils/media';
@@ -268,12 +269,20 @@ const { basename, executeQuery, extname, fs, join, pathToFileURL, unzip } =
   globalThis.electronApi;
 const { pathExists, rename } = fs;
 
+// The jwPlaylistPath watcher and the dialog-open watcher below can both
+// fire for the same path change (path changes while the dialog opens),
+// which would otherwise run this whole extraction/processing pipeline
+// twice concurrently and race on the file renames further down.
+let loadingPlaylistPath: string | undefined;
+
 const loadPlaylistItems = async () => {
+  if (!props.jwPlaylistPath || loadingPlaylistPath === props.jwPlaylistPath) {
+    return;
+  }
+  loadingPlaylistPath = props.jwPlaylistPath;
   loading.value = true;
 
   try {
-    if (!props.jwPlaylistPath) return;
-
     // Extract package
     const tempDir = await getTempPath();
     const outputPath = join(tempDir, basename(props.jwPlaylistPath));
@@ -368,12 +377,12 @@ const loadPlaylistItems = async () => {
         // Playlist items are processed concurrently below and can share the
         // same thumbnail/independent-media file. If another item already
         // renamed it, the target now exists — that's a benign race, not an
-        // error.
+        // error. `rename` is exposed straight through Electron's
+        // contextBridge, so the thrown error's `code` doesn't survive the
+        // crossing — getFilesystemErrorCode falls back to parsing it back
+        // out of the message text.
         if (
-          err &&
-          typeof err === 'object' &&
-          'code' in err &&
-          err.code === 'ENOENT' &&
+          getFilesystemErrorCode(err) === 'ENOENT' &&
           (await pathExists(newPath))
         ) {
           return newPath;
@@ -445,6 +454,7 @@ const loadPlaylistItems = async () => {
   } catch (err) {
     errorCatcher(err);
   } finally {
+    loadingPlaylistPath = undefined;
     loading.value = false;
   }
 };

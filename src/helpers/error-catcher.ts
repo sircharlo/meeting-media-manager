@@ -1,4 +1,8 @@
 import { captureException } from '@sentry/vue';
+import {
+  getFilesystemErrorCode,
+  getFilesystemErrorSyscall,
+} from 'src/shared/filesystem-errors';
 import { log } from 'src/shared/vanilla';
 
 type CaptureCtx = Parameters<typeof captureException>[1];
@@ -14,9 +18,9 @@ const nodeFsErrorFingerprint = (
   error: unknown,
   context?: CaptureCtx,
 ): string[] | undefined => {
-  if (typeof error !== 'object' || error === null) return undefined;
-  const { code, syscall } = error as { code?: unknown; syscall?: unknown };
-  if (typeof code !== 'string' || typeof syscall !== 'string') return undefined;
+  const code = getFilesystemErrorCode(error);
+  const syscall = getFilesystemErrorSyscall(error);
+  if (!code || !syscall) return undefined;
 
   const fnName =
     context && typeof context === 'object' && 'contexts' in context

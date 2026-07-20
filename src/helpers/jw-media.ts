@@ -51,6 +51,7 @@ import {
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { updateLastUsedDate } from 'src/helpers/usage';
 import {
+  getFilesystemErrorCode,
   isCloudStoragePath,
   isPossiblyNetworkFolderPath,
 } from 'src/shared/filesystem-errors';
@@ -682,11 +683,12 @@ const getMediaFromJwPlaylist = async (
             // Playlist items are processed concurrently and can share the
             // same thumbnail file. If another item already renamed it, the
             // target now exists — that's a benign race, not an error.
+            // `rename` is exposed straight through Electron's contextBridge,
+            // so the thrown error's `code` doesn't survive the crossing —
+            // getFilesystemErrorCode falls back to parsing it back out of
+            // the message text.
             if (
-              error &&
-              typeof error === 'object' &&
-              'code' in error &&
-              error.code === 'ENOENT' &&
+              getFilesystemErrorCode(error) === 'ENOENT' &&
               (await pathExists(item.ThumbnailFilePath + '.jpg'))
             ) {
               item.ThumbnailFilePath += '.jpg';
