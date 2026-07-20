@@ -63,6 +63,12 @@ export const isPossiblyNetworkFolderPath = (
   // On Windows, a non-C: drive letter may indicate a mapped network drive.
   if (platform === 'win32' && /^[a-bd-zA-BD-Z]:/.test(unixPath)) return true;
 
+  // On macOS, anything under /Volumes is an external/removable/network-
+  // mounted volume (USB drive, network share, mounted disk image, ...) -
+  // the same "can legitimately disappear" territory as a non-C: drive
+  // letter on Windows.
+  if (platform === 'darwin' && /^\/volumes\//i.test(unixPath)) return true;
+
   return false;
 };
 

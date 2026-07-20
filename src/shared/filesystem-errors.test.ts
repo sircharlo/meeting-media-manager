@@ -32,6 +32,24 @@ describe('filesystem error helpers', () => {
     ).toBe(true);
   });
 
+  it('treats anything under /Volumes as removable/network on macOS only', () => {
+    expect(
+      isPossiblyNetworkFolderPath(
+        '/Volumes/Meeting Media Manager 26.7.5-universal',
+        'darwin',
+      ),
+    ).toBe(true);
+    expect(
+      isPossiblyNetworkFolderPath('/Volumes/External Drive/Media', 'darwin'),
+    ).toBe(true);
+    expect(
+      isPossiblyNetworkFolderPath('/Users/test/Library/Caches', 'darwin'),
+    ).toBe(false);
+    // /Volumes is only meaningful as a macOS mount point - don't treat a
+    // same-named folder as network-like on other platforms.
+    expect(isPossiblyNetworkFolderPath('/Volumes/Media', 'linux')).toBe(false);
+  });
+
   it('recognizes known cloud-sync providers from a path, including Nextcloud', () => {
     expect(
       getCloudStorageProvider(
