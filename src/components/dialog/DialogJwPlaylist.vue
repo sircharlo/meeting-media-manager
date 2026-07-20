@@ -365,8 +365,22 @@ const loadPlaylistItems = async () => {
         await rename(absolutePath, newPath);
         return newPath;
       } catch (err) {
-        // File may not exist or rename failed — keep original path
-        errorCatcher(err);
+        // Playlist items are processed concurrently below and can share the
+        // same thumbnail/independent-media file. If another item already
+        // renamed it, the target now exists — that's a benign race, not an
+        // error.
+        if (
+          err &&
+          typeof err === 'object' &&
+          'code' in err &&
+          err.code === 'ENOENT' &&
+          (await pathExists(newPath))
+        ) {
+          return newPath;
+        }
+        errorCatcher(err, {
+          contexts: { fn: { name: 'ensureJpgExtension rename' } },
+        });
         return absolutePath;
       }
     };
