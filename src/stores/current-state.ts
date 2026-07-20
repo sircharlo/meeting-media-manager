@@ -35,8 +35,25 @@ const { ensureDir } = fs;
 export interface MediaPlayingState {
   action: MediaPlayingStateAction;
   currentPosition: number;
+  /**
+   * `Date.now()` timestamp at which `currentPosition` was last set from a
+   * media window report. Lets consumers extrapolate the real, current
+   * position (accounting for report throttling/round-trip time) instead of
+   * treating `currentPosition` as still accurate by the time they read it.
+   */
+  currentPositionUpdatedAt: number;
   pan: Partial<{ x: number; y: number }>;
+  /**
+   * Set to the current `playToken` once `currentPosition` (driven by the
+   * media window's `current-time` reports) is observed actually advancing
+   * for that play request, not just reporting a value. Lets consumers like
+   * the media preview wait for confirmed, moving playback instead of
+   * assuming playback started as soon as it was requested.
+   */
+  playbackConfirmedToken: number;
   playbackRate: number;
+  /** Bumped whenever a genuinely new playback request starts. */
+  playToken: number;
   seekTo: number;
   shouldLoop: boolean;
   slideshowAudioUrl: string;
@@ -493,8 +510,11 @@ export const useCurrentStateStore = defineStore('current-state', {
       mediaPlaying: {
         action: '',
         currentPosition: 0,
+        currentPositionUpdatedAt: 0,
         pan: { x: 0, y: 0 },
+        playbackConfirmedToken: 0,
         playbackRate: 1,
+        playToken: 0,
         seekTo: 0,
         shouldLoop: false,
         slideshowAudioUrl: '',

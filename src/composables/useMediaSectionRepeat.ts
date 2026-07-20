@@ -219,11 +219,14 @@ export function useMediaSectionRepeat() {
     mediaPlaying.value = {
       action: 'play',
       currentPosition: 0,
+      currentPositionUpdatedAt: 0,
       pan: {
         x: 0,
         y: 0,
       },
+      playbackConfirmedToken: 0,
       playbackRate: 1,
+      playToken: 0,
       seekTo: 0,
       shouldLoop: false,
       slideshowAudioUrl: '',

@@ -641,6 +641,10 @@ const { data: currentTimeData } = useBroadcastChannel<number, number>({
 const changeDelay = 600; // 600ms delay: "--animate-duration" = 300ms, "slow" = "--animate-duration" * 2
 let mediaSceneTimeout: NodeJS.Timeout | null = null;
 const seenErrors = new Set<string>();
+// Tracks the last current-time value seen for the active play request, so we
+// can detect when playback has genuinely started advancing (see the
+// currentTimeData watcher below).
+let lastConfirmingPosition: number | undefined;
 
 const { post: postCustomBackground } = useBroadcastChannel<string, string>({
   name: 'custom-background',
@@ -2204,11 +2208,14 @@ const mediaLists = computed(() => {
 const atRest: MediaPlayingState = {
   action: '',
   currentPosition: 0,
+  currentPositionUpdatedAt: 0,
   pan: {
     x: 0,
     y: 0,
   },
+  playbackConfirmedToken: 0,
   playbackRate: 1,
+  playToken: 0,
   seekTo: 0,
   shouldLoop: false,
   slideshowAudioUrl: '',
@@ -2888,6 +2895,22 @@ watch(
   },
 );
 
+// Issue a fresh play token whenever a genuinely new playback request starts
+// (either the action just became 'play', or a new url is playing while
+// already in the 'play' state, e.g. skipping to the next item). Consumers
+// like the media preview wait for `playbackConfirmedToken` to catch up
+// before assuming playback has really begun, instead of racing ahead on the
+// optimistic local 'play' action.
+watch(
+  () => [mediaPlaying.value.action, mediaPlaying.value.url] as const,
+  ([newAction]) => {
+    if (newAction !== 'play') return;
+
+    mediaPlaying.value.playToken += 1;
+    lastConfirmingPosition = undefined;
+  },
+);
+
 watch(
   () => [mediaPlaying.value.zoom, mediaPlaying.value.pan],
   (newValues, oldValues) => {
@@ -2981,7 +3004,27 @@ watch(
   (newCurrentTime) => {
     nextTick(() => {
       mediaPlaying.value.currentPosition = newCurrentTime;
+      mediaPlaying.value.currentPositionUpdatedAt = Date.now();
     });
+
+    // Confirm playback only once the media window's reported position has
+    // actually advanced since this play request started - the first report
+    // after a seek/play can still be a stale/initial value, not proof
+    // playback is really moving. Consumers (e.g. the media preview) hold
+    // off starting until this catches up, so they start already in sync
+    // instead of playing early and needing a visible resync.
+    if (
+      mediaPlaying.value.action === 'play' &&
+      typeof newCurrentTime === 'number'
+    ) {
+      if (lastConfirmingPosition === undefined) {
+        lastConfirmingPosition = newCurrentTime;
+      } else if (newCurrentTime > lastConfirmingPosition) {
+        mediaPlaying.value.playbackConfirmedToken =
+          mediaPlaying.value.playToken;
+        lastConfirmingPosition = newCurrentTime;
+      }
+    }
   },
 );
 

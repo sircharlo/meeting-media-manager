@@ -158,6 +158,16 @@ const suppressNextClick = ref(false);
 const currentUrl = computed(() => mediaPlaying.value.url);
 const imagePreview = computed(() => isImage(currentUrl.value));
 const mediaAction = computed(() => mediaPlaying.value.action);
+// playbackConfirmedToken only catches up to playToken once the media
+// window's reported position has actually been observed advancing (see
+// MediaCalendarPage.vue). Until then, avoid starting the preview so it
+// doesn't play ahead of the real window and need a drift correction/false
+// start.
+const realPlaybackConfirmed = computed(
+  () =>
+    mediaPlaying.value.playToken > 0 &&
+    mediaPlaying.value.playbackConfirmedToken === mediaPlaying.value.playToken,
+);
 const videoPreview = computed(() => isVideo(currentUrl.value));
 const previewEnabled = computed(
   () =>
@@ -280,8 +290,26 @@ onUnmounted(() => {
   canvasResizeObserver?.disconnect();
 });
 
+// mediaPlaying.currentPosition is only as fresh as the last throttled
+// current-time report from the media window. Extrapolate forward by however
+// long has elapsed since that report so the preview targets where real
+// playback actually is *now*, not where it was ~0.3s (report interval) plus
+// IPC round-trip ago - that gap is exactly what showed up as small,
+// consistent "exceeded acceptable drift" corrections right after starting.
+const getExpectedPosition = () => {
+  const base = mediaPlaying.value.currentPosition || 0;
+  if (mediaAction.value !== 'play') return base;
+
+  const updatedAt = mediaPlaying.value.currentPositionUpdatedAt;
+  if (!updatedAt) return base;
+
+  const elapsedSeconds = Math.max(0, (Date.now() - updatedAt) / 1000);
+  const playbackRate = mediaPlaying.value.playbackRate || 1;
+  return base + elapsedSeconds * playbackRate;
+};
+
 const syncVideoTime = (element: HTMLVideoElement, acceptableDrift: number) => {
-  const expectedPosition = mediaPlaying.value.currentPosition || 0;
+  const expectedPosition = getExpectedPosition();
   const currentDrift = Math.abs(element.currentTime - expectedPosition);
   const excessiveDrift = currentDrift - acceptableDrift;
   if (excessiveDrift > 0) {
@@ -295,17 +323,22 @@ const syncVideoTime = (element: HTMLVideoElement, acceptableDrift: number) => {
   return false;
 };
 
-// If the preview can't keep up with real playback and needs this many
-// corrections within a single video, the machine is too slow for it —
-// turn it off rather than let it keep eating cycles every playback.
+// A machine that genuinely can't keep up corrects often and repeatedly, not
+// just once in a while - an isolated correction or two over a long video
+// (a brief hiccup, a GC pause) isn't evidence of that. Only auto-disable
+// once this many corrections land within this rolling window, i.e. a
+// sustained inability to keep up rather than a raw lifetime count (which a
+// long enough video would eventually trip even with correction attempts
+// spread harmlessly far apart).
 const DRIFT_CORRECTIONS_BEFORE_AUTO_DISABLE = 5;
-const driftCorrectionCount = ref(0);
+const DRIFT_CORRECTION_WINDOW_SECONDS = 30;
+const recentDriftCorrections = ref<number[]>([]);
 
 const disablePreviewForPerformance = () => {
   if (currentSettings.value?.enableMediaPreview === false) return;
 
   log(
-    `Disabling media preview after ${driftCorrectionCount.value} drift corrections in one playback`,
+    `Disabling media preview after ${recentDriftCorrections.value.length} drift corrections within ${DRIFT_CORRECTION_WINDOW_SECONDS}s`,
     'mediaPreview',
     'warn',
   );
@@ -336,7 +369,8 @@ const disablePreviewForPerformance = () => {
     {
       contexts: {
         fn: {
-          driftCorrectionCount: driftCorrectionCount.value,
+          driftCorrectionCount: recentDriftCorrections.value.length,
+          driftCorrectionWindowSeconds: DRIFT_CORRECTION_WINDOW_SECONDS,
           name: 'MediaPreview.disablePreviewForPerformance',
         },
       },
@@ -345,10 +379,21 @@ const disablePreviewForPerformance = () => {
 };
 
 const registerDriftCorrection = () => {
-  driftCorrectionCount.value += 1;
-  if (driftCorrectionCount.value >= DRIFT_CORRECTIONS_BEFORE_AUTO_DISABLE) {
+  const now = Date.now();
+  const windowStart = now - DRIFT_CORRECTION_WINDOW_SECONDS * 1000;
+
+  recentDriftCorrections.value = [
+    ...recentDriftCorrections.value.filter(
+      (timestamp) => timestamp > windowStart,
+    ),
+    now,
+  ];
+
+  if (
+    recentDriftCorrections.value.length >= DRIFT_CORRECTIONS_BEFORE_AUTO_DISABLE
+  ) {
     disablePreviewForPerformance();
-    driftCorrectionCount.value = 0;
+    recentDriftCorrections.value = [];
   }
 };
 
@@ -386,7 +431,26 @@ const syncVideos = async () => {
       element.playbackRate = playbackRate;
     }
 
+    if (element.paused && !realPlaybackConfirmed.value) {
+      log(
+        'Holding video preview until media window position is confirmed moving',
+        'mediaPreview',
+      );
+      // Deliberately don't touch currentTime here. Seeking a
+      // preload="metadata" source can require re-buffering, which can
+      // re-fire canplay and loop straight back into this branch - producing
+      // rapid, needless seeks that look like choppy playback and compete
+      // for bandwidth with the real media window. The single seed-seek
+      // right before play() below is all that's needed to start in sync.
+      return;
+    }
+
     if (element.paused) {
+      // Seed the starting position before playing (rather than playing
+      // then correcting afterwards) so the preview starts already in sync
+      // instead of visibly jumping right after it begins.
+      syncVideoTime(element, 0);
+
       log('Playing video preview', 'mediaPreview');
       await element.play().catch((error: unknown) => {
         // Same benign play()-interruption cases already filtered out in
@@ -798,6 +862,7 @@ watch(
     mediaAction.value,
     mediaPlaying.value.currentPosition,
     modalOpen.value,
+    realPlaybackConfirmed.value,
   ],
   () => {
     syncVideos();
@@ -805,7 +870,7 @@ watch(
 );
 
 watch(currentUrl, () => {
-  driftCorrectionCount.value = 0;
+  recentDriftCorrections.value = [];
 });
 
 watch(
