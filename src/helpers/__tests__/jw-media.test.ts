@@ -22,6 +22,7 @@ const basenameMock = vi.fn(
 const ensureDirMock = vi.fn();
 const formatDateMock = vi.fn();
 const getTempPathMock = vi.fn(async () => '/tmp');
+const isUsablePathMock = vi.fn(async () => true);
 const currentStateStore = {
   currentCongregation: '',
   currentSettings: {},
@@ -215,7 +216,7 @@ describe('jw-media helpers', () => {
         stat: statMock,
       },
       getZipEntries: getZipEntriesMock,
-      isUsablePath: vi.fn(),
+      isUsablePath: isUsablePathMock,
       join: joinMock,
       pathToFileURL: vi.fn(),
       readdir: readdirMock,
@@ -397,6 +398,26 @@ describe('jw-media helpers', () => {
     expect(ensureDirMock).toHaveBeenCalledTimes(2);
     expect(ensureDirMock).toHaveBeenCalledWith('/watch/2026-06-14');
     expect(ensureDirMock).toHaveBeenCalledWith('/watch/2026-06-21');
+  });
+
+  it('skips creating watched folders when the watch folder is not a usable path', async () => {
+    currentStateStore.currentCongregation = 'abc';
+    currentStateStore.currentSettings = {
+      enableFolderWatcher: true,
+      // What a native folder picker can hand back in rare cases when
+      // browsing "Network" without fully selecting a share.
+      folderToWatch: String.raw`\\?`,
+    };
+    jwStore.lookupPeriod = {};
+    isUsablePathMock.mockResolvedValueOnce(false);
+
+    const { ensureWatchedMeetingDayFolders } = await import('../jw-media');
+
+    await ensureWatchedMeetingDayFolders();
+
+    expect(isUsablePathMock).toHaveBeenCalledWith(String.raw`\\?`);
+    expect(ensureDirMock).not.toHaveBeenCalled();
+    expect(errorCatcherMock).not.toHaveBeenCalled();
   });
 
   it('updates the lookup period before fetching meeting media', async () => {

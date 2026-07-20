@@ -162,6 +162,12 @@ export const ensureWatchedMeetingDayFolders = async () => {
       return;
     }
 
+    // Guards against malformed values a native folder picker can hand back
+    // in rare cases (e.g. a bare UNC-prefix stub like '\\?' when browsing
+    // "Network" without fully selecting a share) rather than attempting
+    // mkdir against a path that was never a real directory to begin with.
+    if (!(await isUsablePath(watchFolder))) return;
+
     const jwStore = useJwStore();
     const days = jwStore.lookupPeriod[currentCongregation] ?? [];
     const meetingDayFolders = days
