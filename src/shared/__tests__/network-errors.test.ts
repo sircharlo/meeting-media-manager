@@ -31,6 +31,12 @@ describe('isFetchNetworkError', () => {
     expect(isFetchNetworkError(error)).toBe(true);
   });
 
+  it('returns true for a "Failed to fetch" TypeError with a host suffix', () => {
+    const error = new Error('Failed to fetch (b.some-cdn.org)');
+    error.name = 'TypeError';
+    expect(isFetchNetworkError(error)).toBe(true);
+  });
+
   it('returns false for a TypeError with an unrelated message', () => {
     const error = new Error('Cannot read properties of undefined');
     error.name = 'TypeError';

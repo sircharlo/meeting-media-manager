@@ -27,8 +27,13 @@ export function isFetchNetworkError(error: unknown): boolean {
 
   // A bare browser `TypeError: Failed to fetch` carries no further detail
   // (DNS failure, connection refused, offline, ...) — same class of noise
-  // as the Node/undici error codes above, just without a `.code`.
-  if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
+  // as the Node/undici error codes above, just without a `.code`. Some
+  // runtimes append a parenthesized host to the message (e.g. "Failed to
+  // fetch (b.jw-cdn.org)"), so match on prefix rather than exact equality.
+  if (
+    error.name === 'TypeError' &&
+    error.message.startsWith('Failed to fetch')
+  ) {
     return true;
   }
 
