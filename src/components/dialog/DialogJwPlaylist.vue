@@ -265,8 +265,17 @@ const includeNumbering = ref(true);
 const currentState = useCurrentStateStore();
 const { selectedDate, selectedDateObject } = storeToRefs(currentState);
 
-const { basename, executeQuery, extname, fs, join, pathToFileURL, unzip } =
-  globalThis.electronApi;
+const {
+  basename,
+  dirname,
+  executeQuery,
+  extname,
+  fs,
+  join,
+  pathToFileURL,
+  readdir,
+  unzip,
+} = globalThis.electronApi;
 const { pathExists, rename } = fs;
 
 // The jwPlaylistPath watcher and the dialog-open watcher below can both
@@ -387,8 +396,18 @@ const loadPlaylistItems = async () => {
         ) {
           return newPath;
         }
+        // The source is genuinely missing rather than just already renamed
+        // by a concurrent call — capture what's actually in the containing
+        // directory to tell apart "never extracted" from "renamed to
+        // something unexpected" next time this comes up in Sentry.
+        const dirListing = await readdir(dirname(absolutePath));
         errorCatcher(err, {
-          contexts: { fn: { name: 'ensureJpgExtension rename' } },
+          contexts: {
+            fn: {
+              dirListing: dirListing.map((entry) => entry.name),
+              name: 'ensureJpgExtension rename',
+            },
+          },
         });
         return absolutePath;
       }
