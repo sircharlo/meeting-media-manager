@@ -442,6 +442,28 @@ const readWatchedMediaSectionOrder = async (
   }
 };
 
+// Serializes read-modify-write cycles per section-order file. Without this,
+// two overlapping saves for the same folder (e.g. rapid reorders that each
+// fire an unawaited saveWatchedMediaLayout call) can both write their own
+// temp file with the same Date.now()-based name, then race to rename it into
+// place - the second rename fails with ENOENT because the first already
+// moved that path away.
+const sectionOrderWriteLocks = new Map<string, Promise<void>>();
+
+const withSectionOrderLock = (
+  sectionOrderFilePath: string,
+  task: () => Promise<void>,
+): Promise<void> => {
+  const previous =
+    sectionOrderWriteLocks.get(sectionOrderFilePath) ?? Promise.resolve();
+  const next = previous.then(task, task);
+  sectionOrderWriteLocks.set(
+    sectionOrderFilePath,
+    next.catch(() => undefined),
+  );
+  return next;
+};
+
 const writeWatchedMediaSectionOrder = async (
   sectionOrderFilePath: string,
   data: WatchedMediaSectionOrder,
@@ -489,12 +511,15 @@ export const saveWatchedMediaLayout = async (
 
     for (const [datedFolderPath, layoutData] of Object.entries(dataByFolder)) {
       const sectionOrderFilePath = join(datedFolderPath, '.section-order.json');
-      const existingData =
-        await readWatchedMediaSectionOrder(sectionOrderFilePath);
 
-      await writeWatchedMediaSectionOrder(sectionOrderFilePath, {
-        ...existingData,
-        ...layoutData,
+      await withSectionOrderLock(sectionOrderFilePath, async () => {
+        const existingData =
+          await readWatchedMediaSectionOrder(sectionOrderFilePath);
+
+        await writeWatchedMediaSectionOrder(sectionOrderFilePath, {
+          ...existingData,
+          ...layoutData,
+        });
       });
     }
   } catch (error) {
