@@ -1173,6 +1173,14 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
       return; // exit early — no need to run notifications
     }
 
+    // The cleanCache() call at startup runs before a congregation has been
+    // selected (currentCongregation is still empty then), so its
+    // folderToWatch/mediaAutoExportFolder cleanup silently no-ops -
+    // currentSettings resolves to undefined until a congregation is active.
+    // Re-run it now that one is, and again on every later switch, so those
+    // folders actually get cleaned up.
+    cleanCache();
+
     setElectronUrlVariables(JSON.stringify(jwStore.urlVariables));
 
     const year = new Date().getFullYear();
