@@ -405,6 +405,7 @@ const cleanDateFolders = async (root?: string) => {
 
   await Promise.allSettled(
     folders
+      .filter((f) => f.isDirectory)
       .filter((f) => !f.name.includes('.jwlplaylist'))
       .filter((f) => isInPast(getSpecificWeekday(f.name, 6)))
       .map((f) => remove(join(root, f.name))),
