@@ -685,21 +685,6 @@ export const useJwStore = defineStore('jw-store', {
   },
   getters: {
     fontUrls: (state): Record<FontName, string> => {
-      const { urlVariables } = state;
-
-      const getFontUrl = (type: 'base' | 'mediator', path = '') => {
-        const url = urlVariables[type];
-        if (!type || !url) return '';
-        try {
-          const baseUrl = type === 'base' ? `https://wol.${url}` : url;
-          const hostname = new URL(baseUrl).hostname;
-          return `https://${hostname}${path}`;
-        } catch (error) {
-          errorCatcher(error);
-          return '';
-        }
-      };
-
       const jsdelivr = (font: string, file: string) =>
         `https://cdn.jsdelivr.net/fontsource/fonts/${font}@latest/${file}`;
 
@@ -778,14 +763,13 @@ export const useJwStore = defineStore('jw-store', {
           'noto-serif-sinhala:vf',
           'sinhala-wght-normal.woff2',
         ),
-        'Wt-BaeumMyungjo': getFontUrl(
-          'mediator',
-          '/fonts/wt-baeum-myungjo/1.000/Wt-BaeumMyungjo-Regular.woff',
-        ),
-        'Wt-ClearText-Bold': getFontUrl(
-          'mediator',
-          '/fonts/wt-clear-text/1.029/Wt-ClearText-Bold.woff2',
-        ),
+        // No hardcoded fallback here either: these paths are versioned
+        // (e.g. /1.000/, /1.029/) and the website bumps that version
+        // periodically, so a baked-in URL inevitably goes stale. Discovered
+        // dynamically via updateYeartextFontUrls(), same as the other
+        // WT/Manna yeartext fonts below.
+        'Wt-BaeumMyungjo': state.yeartextFontUrls['Wt-BaeumMyungjo'] || '',
+        'Wt-ClearText-Bold': state.yeartextFontUrls['Wt-ClearText-Bold'] || '',
         ...state.yeartextFontUrls,
       } as Record<FontName, string>;
     },

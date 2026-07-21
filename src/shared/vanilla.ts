@@ -328,6 +328,8 @@ export const findIconUrlInCss = (
 // Maps the CSS font-family name WOL's stylesheets use for each WT/Manna
 // yeartext font to this app's FontName identifier.
 const wtFontCssNames: Record<string, FontName> = {
+  WTBaeumMyungjo: 'Wt-BaeumMyungjo',
+  WTClearText: 'Wt-ClearText-Bold',
   WTClearTextGeorgian: 'WTClearTextGeorgian',
   WTClearTextJapanese: 'WTClearTextJapanese',
   WTMannaSansKaren: 'WTMannaSansKaren',
@@ -370,6 +372,7 @@ export const getYeartextFontUrlsFromCss = (
   // crossing block boundaries while staying SonarQube-safe
   const fontFaceRegex = /@font-face\s*\{([\s\S]*?)\}/g;
   const fontFamilyRegex = /font-family:\s*['"]?([\w-]+)['"]?/;
+  const fontStyleRegex = /font-style:\s*italic/i;
 
   let match;
   while ((match = fontFaceRegex.exec(cssText)) !== null) {
@@ -379,6 +382,11 @@ export const getYeartextFontUrlsFromCss = (
     const familyMatch = fontFamilyRegex.exec(blockContent);
     const cssName = familyMatch?.[1];
     if (!cssName) continue;
+
+    // Some families (e.g. WTClearText, WTBaeumMyungjo) declare an italic
+    // @font-face under the same font-family name - skip it so it doesn't
+    // win over the upright weight when both share a FontName below.
+    if (fontStyleRegex.test(blockContent)) continue;
 
     const fontName = wtFontCssNames[cssName];
     const url = getFontFileUrl(match[0]);

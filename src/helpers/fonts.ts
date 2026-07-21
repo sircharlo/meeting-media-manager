@@ -428,13 +428,22 @@ const resolveFontRequest = async (
     );
 
   let resolvedUrl = originalUrl;
-  // originalUrl can be empty for jw-icons-all (no static fallback — see
-  // jw.ts fontUrls getter), so skip straight to discovering it below
-  // instead of issuing a fetch with an empty URL.
+  // originalUrl can be empty for jw-icons-all and the two WT yeartext fonts
+  // below (no static fallback — see jw.ts fontUrls getter), so skip
+  // straight to discovering it below instead of issuing a fetch with an
+  // empty URL.
   let response = resolvedUrl ? await fetchFont(resolvedUrl) : undefined;
 
-  if (!response?.ok && fontName === 'jw-icons-all') {
-    await store.updateJwIconsUrl();
+  const isJwIcons = fontName === 'jw-icons-all';
+  const isDynamicYeartextFont =
+    fontName === 'Wt-BaeumMyungjo' || fontName === 'Wt-ClearText-Bold';
+
+  if (!response?.ok && (isJwIcons || isDynamicYeartextFont)) {
+    if (isJwIcons) {
+      await store.updateJwIconsUrl();
+    } else {
+      await store.updateYeartextFontUrls();
+    }
     const fallbackUrl = store.fontUrls[fontName];
     if (fallbackUrl && fallbackUrl !== originalUrl) {
       resolvedUrl = fallbackUrl;
