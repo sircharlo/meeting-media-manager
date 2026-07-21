@@ -4,6 +4,12 @@
 
 Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGELOG.md su GitHub.
 
+## v26.7.7
+
+### ✨ Nuove Funzionalità
+
+- ✨ **Media Preview Quality**: Ora l'anteprima dei media rende i fotogrammi video tramite tela con downscaling di alta qualità, fissando anteprime jagged/blurry (soprattutto su contenuti testo-pesanti come le canzoni). L'anteprima si disattiva automaticamente anche se deve correggere ripetutamente la deriva di riproduzione su un singolo video, con un clic per riaccenderlo.
+
 ## v26.7.6
 
 ### ✨ Nuove Funzionalità
@@ -13,21 +19,21 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.7.4
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Recupero dei media mancanti**: gli elementi multimediali il cui file locale è andato perso (ad es. eliminato dalla cancellazione automatica della cache, o rimosso manualmente) mostrano ora un pulsante di riproduzione disabilitato, una didascalia «mancante» che indica il file da cercare e una nuova azione «Individua file» per ricollegare l'elemento a un file sul disco.
 - ✨ **Avviso di compatibilità**: aggiunto un banner ignorabile che avvisa gli utenti con combinazioni di sistema operativo/architettura presto non più supportate (macOS 12 Monterey e Windows a 32 bit) di aggiornare prima che i futuri aggiornamenti dell'app richiedano un sistema più recente.
 
 ## v26.7.0
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Riproduzione audio collegata**: aggiunto il supporto per riprodurre l'audio di un file insieme al video di un altro file. Può essere utile per riprodurre presentazioni video con musica di accompagnamento.
 - ✨ **Layout dei media monitorati**: aggiunta la persistenza degli elementi multimediali monitorati e dell'ordine delle sezioni tra le cartelle monitorate. Questo garantisce che l'elenco dei media venga mostrato allo stesso modo anche quando la cartella monitorata è sincronizzata tra più dispositivi.
 
 ## v26.6.1
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Anteprima dei media**: aggiunto un overlay di anteprima dei media dal vivo che può essere attivato o disattivato dalle impostazioni o dal popup di visualizzazione.
 - ✨ **Cerca media**: aggiunta una casella di ricerca rapida nell'elenco dei media che consente di trovare rapidamente i media per titolo. Per usarla, basta usare la scorciatoia da tastiera standard per la ricerca (Ctrl+F o Cmd+F).
@@ -36,7 +42,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.6.0
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Timer**: aggiunte modalità di visualizzazione analogica e lo stato del resoconto dei tempi.
 - ✨ **Profili**: aggiunte l'importazione e l'esportazione delle impostazioni del profilo nelle impostazioni Avanzate e nella Configurazione guidata.
@@ -44,19 +50,19 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.5.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Importazione PDF**: aggiunto un nuovo flusso di importazione PDF alla finestra Media delle pubblicazioni, che consente di importare automaticamente la versione PDF di una pubblicazione come singole immagini quando desiderato.
 
 ## v26.4.8
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **JW Stream**: Aggiunto JW Stream alla lista dei siti web che possono essere mirrored.
 
 ## v26.4.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Timer di riunione**: È stata aggiunta una nuova funzione di timer di riunione. È facoltativo e può essere abilitato nelle impostazioni avanzate, se lo si desidera. Il timer può essere utilizzato per consentire all'operatore multimediale di tenere traccia del tempo dedicato alle parti di riunione, o per visualizzare il tempo trascorso sulla parte di riunione corrente su uno schermo dedicato visibile solo all'altoparlante.
 
@@ -70,7 +76,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.2.0
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Controllo spazio su disco**: Aggiunta funzionalità per monitorare e notificare quando lo spazio su disco è basso.
 
@@ -142,7 +148,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v25.9.1
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Finestra multimediale sempre in primo piano e comportamento a schermo intero**: corretto e migliorato il comportamento sempre-in-primo-piano della finestra multimediale, adattandolo dinamicamente in base allo stato a schermo intero.
 - ✨ **Impostazione del formato di visualizzazione della data**: aggiunta un'impostazione utente per configurare un formato di visualizzazione della data.
@@ -152,7 +158,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v25.9.0
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Miglioramenti del Popup di Download**: Aggiunto il pulsante di aggiornamento e download raggruppati per data nel popup di download.
 - ✨ **Memoria dell'ordine dei media monitorati**: aggiunta la memoria dell'ordine delle sezioni per gli elementi multimediali monitorati.
@@ -181,14 +187,14 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## 25.6.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Impostazione di connessione a consumo**: Aggiunta una nuova impostazione per ridurre l'utilizzo della banda di download sulle connessioni a consumo.
 - ✨ **Migliorata la gestione dei media in streaming**: Migliore supporto per i media in streaming, riducendo i problemi legati alla latenza.
 
 ## 25.5.0
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - 🖼️ **Opzione di ritardo OBS per le immagini**: aggiunge un'impostazione di OBS Studio per ritardare i cambi di scena quando si mostrano le immagini, migliorando le transizioni.
 - 🔊 **Supporto per il formato audio `.m4a`**: aggiunge la compatibilità con i file audio `.m4a` per ampliare i tipi di media supportati.
@@ -208,7 +214,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## 25.3.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - 🎵 **Riproduci la musica di sottofondo con i video**: consente alla musica di sottofondo di continuare a suonare mentre si guardano i video.
 - 🎥 **Feed della videocamera per i media nella lingua dei segni**: aggiunge la possibilità di mostrare un feed della videocamera nella finestra multimediale specificamente per gli utenti della lingua dei segni.
@@ -253,7 +259,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## 24.10.10
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - **nuovo**: Aggiunte scorciatoie da tastiera per navigare all'elemento multimediale successivo/precedente
 - **nuovo**: Aggiunto un menu con il tasto destro del mouse agli elementi multimediali per nascondere gli elementi multimediali e rinominarli
