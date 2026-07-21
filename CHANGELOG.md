@@ -4,6 +4,27 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.7.7
+
+### ✨ New Features
+
+- ✨ **Media Preview Quality**: Media preview now renders video frames via canvas with high-quality downscaling, fixing jagged/blurry previews (especially on text-heavy content like songs). The preview also auto-disables itself if it has to repeatedly correct playback drift on a single video, with a one-click way to turn it back on.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Cache Cleanup**: Fixed dated watched/export folders never actually being cleaned up, since cache cleanup was in some cases running before a congregation had been selected.
+- 🐞 **Watched Folders**: Stopped a disabled or leftover auto-export folder path from blocking the folder watcher whenever a watched folder's name merely shared a prefix with it.
+- 🐞 **Fonts**: Resolved font URLs dynamically instead of from hardcoded, version-pinned paths that went stale, and stopped italic font variants from being matched ahead of the intended upright glyph. Also retried the `jw-icons` font download once before falling back to the static glyph map if the font file went missing (e.g. due to antivirus quarantine on Windows).
+- 🐞 **JWPUB and Zip Import**: Captured directory listings on genuine (non-race) `ENOENT` errors during thumbnail extraction to aid diagnosis, and fixed the same playlist import running twice concurrently on a normal file drop, which could cause renames to race each other.
+- 🐞 **Media Preview**: Fixed the preview racing ahead of and visibly resyncing with the actual media window, by waiting for confirmed, moving playback before starting it.
+- 🐞 **Error Reporting**: Matched additional "Failed to fetch" network-error variants so they're no longer reported to Sentry, preserved `Date` objects instead of silently corrupting them into `{}` when relaying data across some internal calls (which could collapse a day's media onto today), and preserved filesystem error codes/syscalls across Electron's context bridge so related errors group correctly and benign-race detection works.
+
+### 🔧 Chores
+
+- 🔧 **jw-icons Fallback Map**: Added a monthly automated check that rediscovers the `jw-icons` glyph map's source font URL and opens a PR when it changes, instead of relying solely on manual updates.
+- 🔧 **Logging**: Reduced log noise from routine media section updates.
+- 🔧 **Dependencies**: Updated `p-queue`, `postcss`, and `brace-expansion`.
+
 ## v26.7.6
 
 ### ✨ New Features
