@@ -86,7 +86,7 @@
   },
   "devDependencies": {
     "@electron/rebuild": "^4.2.0",
-    "@eslint/config-helpers": "^0.6.0",
+    "@eslint/config-helpers": "^0.7.0",
     "@eslint/js": "^10.0.1",
     "@intlify/unplugin-vue-i18n": "^11.2.4",
     "@pinia/testing": "^2.0.1",
