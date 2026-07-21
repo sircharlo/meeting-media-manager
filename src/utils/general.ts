@@ -281,6 +281,11 @@ export function toRawDeep<T>(observed: T): T {
 
   if (val === null) return null as T;
 
+  // Date (and other built-ins like RegExp) have no enumerable own
+  // properties, so the generic Object.entries/fromEntries path below would
+  // silently flatten them to {} instead of preserving their value.
+  if (val instanceof Date) return new Date(val.getTime()) as T;
+
   if (typeof val === 'object') {
     const entries = Object.entries(val).map(([key, val]) => [
       key,
