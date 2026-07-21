@@ -4,6 +4,12 @@
 
 Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in unserer CHANGELOG.md Datei auf GitHub.
 
+## v26.7.7
+
+### ✨ Neue Funktionen
+
+- ✨ **Media Preview Quality**: Media preview renders video frames via canvas with high-quality downscaling, fixing jagged/blurry previews (especially on text-heavy content like songs). Die Vorschau deaktiviert sich auch automatisch, wenn die Wiedergabelücke auf einem einzelnen Video wiederholt korrigiert werden muss mit einem Klick um es wieder einzuschalten.
+
 ## v26.7.6
 
 ### ✨ Neue Funktionen
