@@ -569,13 +569,26 @@ const updateWatchFolderRef = async ({
   try {
     // Prevent self-feedback loops when auto-export writes into (or under)
     // the watched folder. Those events could trigger expensive watched-item
-    // remapping on startup/playback and cause a temporary UI freeze.
-    if (changedPath && currentSettings.value?.mediaAutoExportFolder) {
+    // remapping on startup/playback and cause a temporary UI freeze. Only
+    // applies while auto-export is actually enabled, and only to the export
+    // folder itself or a genuine subfolder of it — a plain startsWith would
+    // also match unrelated sibling folders that merely share a name prefix
+    // (e.g. export folder "temp" would wrongly swallow watch folder "temp2").
+    if (
+      changedPath &&
+      currentSettings.value?.enableMediaAutoExport &&
+      currentSettings.value?.mediaAutoExportFolder
+    ) {
       const normalizedChangedPath = resolve(changedPath);
       const normalizedExportFolder = resolve(
         currentSettings.value.mediaAutoExportFolder,
       );
-      if (normalizedChangedPath.startsWith(normalizedExportFolder)) return;
+      if (
+        normalizedChangedPath === normalizedExportFolder ||
+        normalizedChangedPath.startsWith(`${normalizedExportFolder}/`)
+      ) {
+        return;
+      }
     }
 
     day = day?.replaceAll('-', '/');
