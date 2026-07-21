@@ -4,6 +4,12 @@
 
 Para obter a lista completa das mudanças entre versões, consulte nosso arquivo CHANGELOG.md no GitHub.
 
+## v26.7.7
+
+### ✨ Novos Recursos
+
+- ✨ **Qualidade de Pré-visualização de Mídia**: Visualização de mídia agora renderiza quadros de vídeo via tela com downscaling, correção de pré-visualizações jagged/blurry (especialmente sobre conteúdo pesado de texto como músicas). A pré-visualização também se desabilita automaticamente se tiver que corrigir repetidamente a derivação de reprodução em um único vídeo, com um clique para reativá-lo.
+
 ## v26.7.6
 
 ### ✨ Novos Recursos

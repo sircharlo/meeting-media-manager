@@ -4,6 +4,12 @@
 
 For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
 
+## v26.7.7
+
+### ✨ New Features
+
+- ✨ **Calidad de vista previa de los medios**: La vista previa de los medios ahora renderiza los marcos de vídeo a través de lienzo con escala baja de alta calidad, corrigiendo previsualizaciones jagged/borrosas (especialmente en contenido pesado como canciones). La vista previa también se desactiva automáticamente si tiene que corregir repetidamente el giro de reproducción en un solo video, con un solo clic para volver a encenderlo.
+
 ## v26.7.6
 
 ### ✨ New Features

@@ -4,6 +4,12 @@
 
 Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bestand op GitHub.
 
+## v26.7.7
+
+### ✨ Nieuwe functies
+
+- ✨ **Media Preview Quality**: Media preview geeft nu video frames via canvas met kwalitatieve downscaling, fixing op gedroogde / vervaging previews (vooral op tekst zware inhoud zoals nummers). Het voorbeeld schakelt zichzelf ook automatisch uit als het herhaaldelijk het afspeel-drift op één video moet corrigeren met één klik om het weer aan te zetten.
+
 ## v26.7.6
 
 ### ✨ Nieuwe functies
