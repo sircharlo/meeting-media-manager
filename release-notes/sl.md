@@ -8,7 +8,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- ✨ **Media Preview Quality**: Media preview now renders video frames via canvas with high-quality downscaling, fixing jagged/blurry previews (especially on text-heavy content like songs). The preview also auto-disables itself if it has to repeatedly correct playback drift on a single video, with a one-click way to turn it back on.
+- ✨ **Kakovost predogleda multimedijske vsebine**: Predogled multimedijske vsebine zdaj izrisuje sličice videoposnetkov prek platna (canvas) z visokokakovostnim pomanjševanjem, kar odpravi nazobčane ali zamegljene predoglede (zlasti pri vsebini z veliko besedila, kot so pesmi). Predogled se tudi samodejno izklopi, če mora pri enem videoposnetku večkrat popravljati zamik predvajanja, pri čemer je na voljo možnost za ponovno vklop z enim klikom.
 
 ## v26.7.6
 
