@@ -1,59 +1,6 @@
 <template>
   <q-slide-transition>
     <q-banner
-      v-if="showAutoUpdateAvailableBanner"
-      class="bg-info q-ma-md"
-      rounded
-    >
-      <div>
-        {{ t('update-downloading') }}
-        <div class="q-mt-sm">
-          <q-linear-progress
-            color="primary"
-            :indeterminate="!downloadProgress"
-            instant-feedback
-            rounded
-            size="md"
-            stripe
-            :value="smoothedPercent / 100"
-          />
-          <div class="text-caption q-mt-xs">
-            {{ downloadProgressText || t('update-preparing') }}
-          </div>
-        </div>
-      </div>
-      <template #avatar>
-        <q-icon name="mmm-download" />
-      </template>
-      <template #action>
-        <q-btn
-          flat
-          :label="t('dismiss')"
-          @click="showAutoUpdateAvailableBanner = false"
-        />
-      </template>
-    </q-banner>
-    <q-banner
-      v-else-if="showAutoUpdateDownloadedBanner"
-      class="bg-positive q-ma-md"
-      rounded
-    >
-      {{ t('update-downloaded') }}
-      <template #avatar>
-        <q-icon name="mmm-check" />
-      </template>
-      <template #action>
-        <q-btn flat :label="t('quit-and-install')" @click="quitAndInstall()" />
-        <q-btn
-          flat
-          :label="t('dismiss')"
-          @click="showAutoUpdateDownloadedBanner = false"
-        />
-      </template>
-    </q-banner>
-  </q-slide-transition>
-  <q-slide-transition>
-    <q-banner
       v-for="announcement in activeAnnouncements"
       :key="announcement.id"
       :class="`q-ma-md ${bgColor(announcement.type)}`"
@@ -86,7 +33,7 @@ import type {
 } from 'src/types';
 
 import prettyBytes from 'pretty-bytes';
-import { useQuasar } from 'quasar';
+import { type QNotifyUpdateOptions, useQuasar } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
@@ -95,7 +42,7 @@ import { updatesDisabled } from 'src/utils/fs';
 import { getPreviousVersion, isVersionWithinBounds } from 'src/utils/general';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const $q = useQuasar();
@@ -151,88 +98,80 @@ const loadAnnouncements = async () => {
   announcements.value = await fetchAnnouncements();
 };
 
-const showAutoUpdateAvailableBanner = ref(false);
-const showAutoUpdateDownloadedBanner = ref(false);
-const downloadProgress = ref<null | {
+// The updater function returned by Notify.create()/createTemporaryNotification():
+// calling it with props updates the existing notification in place (per
+// https://quasar.dev/quasar-plugins/notify#updatable-notifications); calling
+// it with no args dismisses it. Only non-grouped notifications support this,
+// which is why the update/downloaded notification below never sets `group`.
+let updateNotify: ((props?: QNotifyUpdateOptions) => void) | undefined;
+
+const downloadProgressCaption = (info: {
   bytesPerSecond: number;
   delta: number;
   percent: number;
   total: number;
   transferred: number;
-}>(null);
-
-// Eases the displayed percentage toward the latest known value instead of
-// snapping to it, since download-progress events arrive in irregular,
-// second-or-so bursts and a direct binding looks jagged.
-const smoothedPercent = ref(0);
-let progressAnimationFrame: null | number = null;
-
-const stopProgressAnimation = () => {
-  if (progressAnimationFrame === null) return;
-  cancelAnimationFrame(progressAnimationFrame);
-  progressAnimationFrame = null;
-};
-
-const animateProgress = () => {
-  const target = downloadProgress.value?.percent ?? 0;
-  const delta = target - smoothedPercent.value;
-
-  if (Math.abs(delta) < 0.1) {
-    smoothedPercent.value = target;
-    progressAnimationFrame = null;
-    return;
-  }
-
-  smoothedPercent.value += delta * 0.15;
-  progressAnimationFrame = requestAnimationFrame(animateProgress);
-};
-
-onBeforeUnmount(() => {
-  stopProgressAnimation();
-});
-
-const downloadProgressText = computed(() => {
-  if (!downloadProgress.value) return '';
-
+}) => {
   const parts: string[] = [];
 
-  // Add percentage if available
-  if (downloadProgress.value.percent != null) {
-    parts.push(`${Math.round(smoothedPercent.value)}%`);
+  if (info.percent != null) {
+    parts.push(`${Math.round(info.percent)}%`);
   }
 
-  // Add transferred/total if both are available
-  if (
-    downloadProgress.value.transferred != null &&
-    downloadProgress.value.total != null
-  ) {
-    parts.push(
-      `${prettyBytes(downloadProgress.value.transferred)} / ${prettyBytes(downloadProgress.value.total)}`,
-    );
+  if (info.transferred != null && info.total != null) {
+    parts.push(`${prettyBytes(info.transferred)} / ${prettyBytes(info.total)}`);
   }
 
-  // Add speed if available
-  if (
-    downloadProgress.value.bytesPerSecond != null &&
-    downloadProgress.value.bytesPerSecond > 0
-  ) {
-    parts.push(
-      `(${prettyBytes(downloadProgress.value.bytesPerSecond)}${t('perSecond')})`,
-    );
+  if (info.bytesPerSecond != null && info.bytesPerSecond > 0) {
+    parts.push(`(${prettyBytes(info.bytesPerSecond)}${t('perSecond')})`);
   }
 
   return parts.join(' - ');
-});
+};
+
+const handleUpdateAvailable = () => {
+  updateNotify?.();
+  updateNotify = createTemporaryNotification({
+    caption: t('update-preparing'),
+    message: t('update-downloading'),
+    type: 'ongoing',
+  });
+};
+
+const handleUpdateDownloadProgress = (info: {
+  bytesPerSecond: number;
+  delta: number;
+  percent: number;
+  total: number;
+  transferred: number;
+}) => {
+  updateNotify?.({ caption: downloadProgressCaption(info) });
+};
+
+const handleUpdateDownloaded = () => {
+  updateNotify?.({
+    actions: [
+      {
+        color: 'white',
+        handler: () => quitAndInstall(),
+        label: t('quit-and-install'),
+      },
+      { color: 'white', icon: 'close', round: true },
+    ],
+    caption: undefined,
+    icon: 'mmm-check',
+    message: t('update-downloaded'),
+    spinner: false,
+    timeout: 0,
+    type: 'positive',
+  });
+};
 
 onMounted(() => {
   try {
     onUpdateAvailable(() => {
       try {
-        showAutoUpdateAvailableBanner.value = true;
-        showAutoUpdateDownloadedBanner.value = false;
-        downloadProgress.value = null;
-        stopProgressAnimation();
-        smoothedPercent.value = 0;
+        handleUpdateAvailable();
       } catch (error) {
         errorCatcher(error, {
           contexts: { fn: { name: 'onUpdateAvailable' } },
@@ -242,7 +181,7 @@ onMounted(() => {
 
     onUpdateDownloadProgress((info) => {
       try {
-        downloadProgress.value = info;
+        handleUpdateDownloadProgress(info);
       } catch (error) {
         errorCatcher(error, {
           contexts: { fn: { info, name: 'onUpdateDownloadProgress' } },
@@ -252,10 +191,7 @@ onMounted(() => {
 
     onUpdateDownloaded(() => {
       try {
-        showAutoUpdateAvailableBanner.value = false;
-        showAutoUpdateDownloadedBanner.value = true;
-        downloadProgress.value = null;
-        stopProgressAnimation();
+        handleUpdateDownloaded();
       } catch (error) {
         errorCatcher(error, {
           contexts: { fn: { name: 'onUpdateDownloaded' } },
@@ -277,6 +213,52 @@ onMounted(() => {
     });
   }
 });
+
+// Dev-only: lets a developer preview the whole updater notification
+// lifecycle (downloading -> progress -> downloaded) without a real update.
+if (import.meta.env.DEV) {
+  const simulateUpdateFlow = () => {
+    handleUpdateAvailable();
+
+    const total = 87 * 1024 * 1024;
+    let transferred = 0;
+    const interval = setInterval(() => {
+      transferred = Math.min(
+        total,
+        transferred + total * (0.05 + Math.random() * 0.1),
+      );
+      handleUpdateDownloadProgress({
+        bytesPerSecond: total * 0.08,
+        delta: 0,
+        percent: (transferred / total) * 100,
+        total,
+        transferred,
+      });
+
+      if (transferred >= total) {
+        clearInterval(interval);
+        handleUpdateDownloaded();
+      }
+    }, 500);
+  };
+
+  onMounted(() => {
+    createTemporaryNotification({
+      actions: [
+        {
+          color: 'white',
+          handler: simulateUpdateFlow,
+          label: 'Simulate updater',
+          noDismiss: true,
+        },
+        { color: 'white', icon: 'close', round: true },
+      ],
+      message: 'Dev only: preview the auto-updater notifications',
+      timeout: 0,
+      type: 'info',
+    });
+  });
+}
 
 const osSupportWarning = ref<null | OsSupportWarning>(null);
 
@@ -414,13 +396,6 @@ const activeAnnouncements = computed(() =>
     if (!matchesScope(a)) return false;
     return isVersionOk(a);
   }),
-);
-
-watch(
-  () => downloadProgress.value?.percent,
-  () => {
-    progressAnimationFrame ??= requestAnimationFrame(animateProgress);
-  },
 );
 
 // A plain watchEffect here is a trap: loadAnnouncements()/loadLatestVersion()
