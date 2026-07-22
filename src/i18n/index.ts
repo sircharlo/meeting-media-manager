@@ -23,6 +23,9 @@ import ty from './ty.json' with { type: 'json' };
 import pt from './pt.json' with { type: 'json' };
 
 // 98.2% translated as of 2026-07-22
+import et from './et.json' with { type: 'json' };
+
+// 98.2% translated as of 2026-07-22
 import it from './it.json' with { type: 'json' };
 
 // 97.8% translated as of 2026-07-22
@@ -39,9 +42,6 @@ import de from './de.json' with { type: 'json' };
 
 // 93.4% translated as of 2026-07-22
 import hu from './hu.json' with { type: 'json' };
-
-// 92.0% translated as of 2026-07-22
-import et from './et.json' with { type: 'json' };
 
 // 66.1% translated as of 2026-07-22
 import uk from './uk.json' with { type: 'json' };
