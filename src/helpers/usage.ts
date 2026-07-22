@@ -73,12 +73,21 @@ export const updateLastUsedDate = async (
   }
 };
 
+// A handful of corrupted markers have shown up in the wild as a valid date
+// with a couple of extra trailing digits (e.g. "2026021717") - consistent
+// with a torn/partial write on a synced or removable drive rather than
+// anything this app wrote. Validate before handing it to dateFromString so
+// corrupted content is treated as "no data" instead of silently making the
+// folder look used-today (dateFromString's fallback on parse failure).
+const LAST_USED_DATE_FORMAT = /^\d{4}-\d{2}-\d{2}$|^\d{8}$/;
+
 export const getLastUsedDate = async (
   folderPath: string,
 ): Promise<null | string> => {
   try {
     const filePath = join(folderPath, LAST_USED_FILENAME);
-    return await withLockRetry(() => readFile(filePath, 'utf-8'));
+    const dateStr = await withLockRetry(() => readFile(filePath, 'utf-8'));
+    return LAST_USED_DATE_FORMAT.test(dateStr) ? dateStr : null;
   } catch {
     return null;
   }

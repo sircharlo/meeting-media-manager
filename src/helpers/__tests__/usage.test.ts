@@ -120,5 +120,23 @@ describe('usage', () => {
       expect(readFileMock).toHaveBeenCalledTimes(1);
       expect(result).toBeNull();
     });
+
+    it('accepts a YYYYMMDD date with no separators', async () => {
+      readFileMock.mockResolvedValue('20260719');
+
+      const { getLastUsedDate } = await import('../usage');
+      const result = await getLastUsedDate('/cache/pub');
+
+      expect(result).toBe('20260719');
+    });
+
+    it('returns null for a corrupted date string (partial-write leftovers)', async () => {
+      readFileMock.mockResolvedValue('2026021717');
+
+      const { getLastUsedDate } = await import('../usage');
+      const result = await getLastUsedDate('/cache/pub');
+
+      expect(result).toBeNull();
+    });
   });
 });
