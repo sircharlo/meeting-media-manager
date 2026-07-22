@@ -96,7 +96,7 @@
 </template>
 
 <script setup lang="ts">
-import { useDebounceFn, useEventListener } from '@vueuse/core';
+import { useDebounceFn, useEventListener, useThrottleFn } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
@@ -330,8 +330,15 @@ const syncVideoTime = (element: HTMLVideoElement, acceptableDrift: number) => {
 // sustained inability to keep up rather than a raw lifetime count (which a
 // long enough video would eventually trip even with correction attempts
 // spread harmlessly far apart).
+//
+// syncVideos (and thus each drift check) is throttled to roughly once every
+// 5s during steady live playback (see throttledSyncVideos below), so a
+// window needs to be long enough to accumulate several check opportunities
+// - otherwise "5 corrections" would require nearly every single check to
+// fail. At 60s, that's ~12 checks, so 5 corrections is a real sustained
+// pattern (~40% of checks) without demanding near-constant failure.
 const DRIFT_CORRECTIONS_BEFORE_AUTO_DISABLE = 5;
-const DRIFT_CORRECTION_WINDOW_SECONDS = 30;
+const DRIFT_CORRECTION_WINDOW_SECONDS = 60;
 const recentDriftCorrections = ref<number[]>([]);
 
 const disablePreviewForPerformance = () => {
@@ -475,6 +482,15 @@ const syncVideos = async () => {
     reportPreviewError(error, 'MediaPreview.syncVideos');
   }
 };
+
+// mediaPlaying.currentPosition ticks roughly every 300ms while media is
+// actually playing (see the currentTimeData watcher in
+// MediaCalendarPage.vue), which is far more often than a drift check needs
+// to run. Throttle those routine ticks so steady, live playback only
+// re-syncs a few times a minute; real transitions (source swap, play/pause,
+// modal toggle, playback confirmation) bypass this and still resync
+// immediately via the watcher below.
+const throttledSyncVideos = useThrottleFn(syncVideos, 5000);
 
 const closeModalWhenHidden = () => {
   if (!showPreview.value) modalOpen.value = false;
@@ -860,12 +876,18 @@ watch(
   () => [
     currentUrl.value,
     mediaAction.value,
-    mediaPlaying.value.currentPosition,
     modalOpen.value,
     realPlaybackConfirmed.value,
   ],
   () => {
     syncVideos();
+  },
+);
+
+watch(
+  () => mediaPlaying.value.currentPosition,
+  () => {
+    throttledSyncVideos();
   },
 );
 
