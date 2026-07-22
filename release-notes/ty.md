@@ -8,14 +8,14 @@ No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera 
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ✨ **Media Preview Quality**: Media preview now renders video frames via canvas with high-quality downscaling, fixing jagged/blurry previews (especially on text-heavy content like songs). The preview also auto-disables itself if it has to repeatedly correct playback drift on a single video, with a one-click way to turn it back on.
+- ✨ Te huru o te faʻaite-mua-raʻa i te mau nota: E faʻa-hoʻē-faahou-hia te mauhohoʻa ata video na roto i te matini taʻahia (canvas) ma te huri-haihai-raʻa teitei, e na reira e tano ai te mau faʻaite-mua-raʻa matauhia (no te mau parau hīmene rahi i niʻa i te mau nota). E tāpuni hoʻi te faʻaite-mua-raʻa ia ˈna iho mai te peu e e titauhia ia faʻatonu-faahou-hia te taime tahe (playback) i niʻa i hoʻi hoʻhoʻa ata video anaʻe, e hoʻi hoʻi hoʻokahi noa patoraa ia faʻa-puru-faahou.
 
 ## v26.7.6
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ✨ **CBS Video Exclusion**: Added a setting to exclude Congregation Bible Study videos from specific publications (defaults to the **Walk Courageously With God** book), with a searchable publication picker.
-- ✨ **Document Page Numbers**: Publication Media and JWPUB import listings now show each document's page number (or numbers when there are multiple pages) after its title. This can help you to quickly find specific media when you know the page number on which it is found.
+- ✨ Te taʻiraa ata video no te Haʻapiiraa Bibilia a te amuiraa (CBS): Ua tuʻu-atoa-hia te hoʻē faʻatonuraga no te tuʻu i te pae i te mau ata video no te Haʻapiiraa Bibilia a te amuiraa no roto mai i te mau Papai taa ê (tei faaauhia i niʻa i te buka Haere ma te Puai e te Atua), ma te hoʻē taioraa imiraa papai.
+- ✨ Te numera api o te mau Papai: E faʻaitehia i teie nei te numera api (aore ra te mau numera api mai te peu e e rave rahi api) o te mau Papai i muri i to ratou iʻoa, i roto i te tapura no te mau Papai e no te JWPUB. E tauturu teie ia oe ia imi oioi i te mau nota taa ê ia ite oe i te numera api o te vahi i reira i te iteraahia.
 
 ## v26.7.4
 
