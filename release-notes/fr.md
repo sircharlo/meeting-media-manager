@@ -8,7 +8,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 ### ✨ Nouvelles fonctionnalités
 
-- ✨ **Qualité de l'aperçu du média**: L'aperçu des médias rend maintenant les images vidéo via la toile avec une mise à l'échelle descendante de haute qualité, corrigeant les aperçus jagged/flou (surtout sur le contenu lourd comme les chansons). L'aperçu s'auto-désactive également s'il doit corriger à plusieurs reprises la dérive de lecture sur une seule vidéo, avec un moyen simple de le réactiver.
+- ✨ **Qualité de l’aperçu des médias** : L’aperçu des médias affiche désormais les images des vidéos avec une mise à l’échelle de haute qualité, ce qui corrige les aperçus saccadés ou flous (en particulier pour les contenus comportant beaucoup de texte, comme les cantiques). L'aperçu se désactive également automatiquement si elle doit corriger à plusieurs reprises un décalage de lecture sur une même vidéo, mais il est possible de la réactiver d'un simple clic.
 
 ## v26.7.6
 
