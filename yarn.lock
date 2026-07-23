@@ -2256,9 +2256,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/app-vite@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "@quasar/app-vite@npm:3.1.0"
+"@quasar/app-vite@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "@quasar/app-vite@npm:3.2.0"
   dependencies:
     "@clack/prompts": "npm:^1.7.0"
     "@quasar/art": "npm:^1.0.0"
@@ -2320,7 +2320,7 @@ __metadata:
       optional: true
   bin:
     quasar: ./bin/quasar.js
-  checksum: 10c0/f9bed66948c7dcdd0322fced2916dacb046fc94a4f78cfcfaf6b20b7379b12c174e9db1fb18905a289523206ea397e16e3c6d0b1824dc0983b39e905a0492f10
+  checksum: 10c0/ba706e0d9f73248ef1f7012307187dc40c9157d7e307792d97c4cf6b4b68e72a2980915ca9dd62daa1d24b3abb5a950b8cb8374d755fa15e61647625f667ede0
   languageName: node
   linkType: hard
 
@@ -8455,7 +8455,7 @@ __metadata:
     "@numairawan/video-duration": "npm:^1.0.0"
     "@opentelemetry/api-logs": "npm:^0.221.0"
     "@pinia/testing": "npm:^2.0.1"
-    "@quasar/app-vite": "npm:^3.1.0"
+    "@quasar/app-vite": "npm:^3.2.0"
     "@quasar/extras": "npm:^2.0.2"
     "@quasar/vite-plugin": "npm:^1.12.0"
     "@sentry/core": "npm:^10.67.0"
