@@ -2256,9 +2256,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/app-vite@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "@quasar/app-vite@npm:3.1.0"
+"@quasar/app-vite@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "@quasar/app-vite@npm:3.2.0"
   dependencies:
     "@clack/prompts": "npm:^1.7.0"
     "@quasar/art": "npm:^1.0.0"
@@ -2320,7 +2320,7 @@ __metadata:
       optional: true
   bin:
     quasar: ./bin/quasar.js
-  checksum: 10c0/f9bed66948c7dcdd0322fced2916dacb046fc94a4f78cfcfaf6b20b7379b12c174e9db1fb18905a289523206ea397e16e3c6d0b1824dc0983b39e905a0492f10
+  checksum: 10c0/ba706e0d9f73248ef1f7012307187dc40c9157d7e307792d97c4cf6b4b68e72a2980915ca9dd62daa1d24b3abb5a950b8cb8374d755fa15e61647625f667ede0
   languageName: node
   linkType: hard
 
@@ -3964,9 +3964,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/language-core@npm:3.3.7":
-  version: 3.3.7
-  resolution: "@vue/language-core@npm:3.3.7"
+"@vue/language-core@npm:3.3.8":
+  version: 3.3.8
+  resolution: "@vue/language-core@npm:3.3.8"
   dependencies:
     "@volar/language-core": "npm:2.4.28"
     "@vue/compiler-dom": "npm:^3.5.0"
@@ -3975,7 +3975,7 @@ __metadata:
     muggle-string: "npm:^0.4.1"
     path-browserify: "npm:^1.0.1"
     picomatch: "npm:^4.0.4"
-  checksum: 10c0/9f8128c2b71f83750af69d240e898fadcbd825c9749fc7b72b1b68e5c7d231462a9482ae469dbaa66104641adb57314678cbc591bb0a931c57e53af19cf938bd
+  checksum: 10c0/2e321f027dfb10f28cb6052629e1f1fba3e12b659284c68755097aa678ea56c190dd43aad2da1fb237debc399fd7ab2922d7e576a4eb072c5f094cdaea412b2d
   languageName: node
   linkType: hard
 
@@ -7222,9 +7222,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"happy-dom@npm:^20.11.0":
-  version: 20.11.0
-  resolution: "happy-dom@npm:20.11.0"
+"happy-dom@npm:^20.11.1":
+  version: 20.11.1
+  resolution: "happy-dom@npm:20.11.1"
   dependencies:
     "@types/node": "npm:>=20.0.0"
     "@types/whatwg-mimetype": "npm:^3.0.2"
@@ -7233,7 +7233,7 @@ __metadata:
     entities: "npm:^7.0.1"
     whatwg-mimetype: "npm:^3.0.0"
     ws: "npm:^8.21.0"
-  checksum: 10c0/ef63674e3c3485c3793bbf4b18f842bc443cc53f430a36c278008fed6b2c873c14e29cd840d010565cc99038b851a47a566c96b984bcf534ab94ead099aa0529
+  checksum: 10c0/f2335e8b87f1917c3725051c22dd7dafef13229af0dde9412d146fbaa961713a81ca4dcc741ecef8bf5fb64ea4182e3886305ac93ecb822dec7be028a6f7c51e
   languageName: node
   linkType: hard
 
@@ -8227,9 +8227,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lint-staged@npm:^17.1.1":
-  version: 17.1.1
-  resolution: "lint-staged@npm:17.1.1"
+"lint-staged@npm:^17.2.0":
+  version: 17.2.0
+  resolution: "lint-staged@npm:17.2.0"
   dependencies:
     picomatch: "npm:^4.0.5"
     string-argv: "npm:^0.3.2"
@@ -8240,7 +8240,7 @@ __metadata:
       optional: true
   bin:
     lint-staged: bin/lint-staged.js
-  checksum: 10c0/d0805465afb6fbee8eae91290dc7edeb962293f696b8a1b26ef79a58db9c2c835e122c673a95fe762927588171fa38d022e5bc77e444d4d998091b67fe2afc69
+  checksum: 10c0/47eb70637304faa5c723a7adee4f7699a78f928b710b09f167240642285656cf0987b316e3ad4ca34bda10466fbad7a1cb4922cfbf470e5ad0d836eb384f2809
   languageName: node
   linkType: hard
 
@@ -8455,7 +8455,7 @@ __metadata:
     "@numairawan/video-duration": "npm:^1.0.0"
     "@opentelemetry/api-logs": "npm:^0.221.0"
     "@pinia/testing": "npm:^2.0.1"
-    "@quasar/app-vite": "npm:^3.1.0"
+    "@quasar/app-vite": "npm:^3.2.0"
     "@quasar/extras": "npm:^2.0.2"
     "@quasar/vite-plugin": "npm:^1.12.0"
     "@sentry/core": "npm:^10.67.0"
@@ -8500,14 +8500,14 @@ __metadata:
     fontkit: "npm:^2.0.4"
     fs-extra: "npm:^11.3.6"
     globals: "npm:^17.7.0"
-    happy-dom: "npm:^20.11.0"
+    happy-dom: "npm:^20.11.1"
     heic-convert: "npm:^2.1.0"
     husky: "npm:^9.1.7"
     image-size: "npm:^2.0.2"
     is-online: "npm:^12.0.2"
     jspdf: "npm:^4.2.1"
     jspdf-autotable: "npm:^5.0.8"
-    lint-staged: "npm:^17.1.1"
+    lint-staged: "npm:^17.2.0"
     lodash-es: "npm:^4.18.1"
     mime: "npm:^4.1.0"
     mousetrap: "npm:^1.6.5"
@@ -8536,7 +8536,7 @@ __metadata:
     vue-eslint-parser: "npm:^10.4.1"
     vue-i18n: "npm:^11.4.7"
     vue-router: "npm:^5.2.0"
-    vue-tsc: "npm:^3.3.7"
+    vue-tsc: "npm:^3.3.8"
     vue-zoomable: "npm:^1.2.8"
     yauzl: "npm:^3.4.0"
   languageName: unknown
@@ -12397,17 +12397,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-tsc@npm:^3.3.7":
-  version: 3.3.7
-  resolution: "vue-tsc@npm:3.3.7"
+"vue-tsc@npm:^3.3.8":
+  version: 3.3.8
+  resolution: "vue-tsc@npm:3.3.8"
   dependencies:
     "@volar/typescript": "npm:2.4.28"
-    "@vue/language-core": "npm:3.3.7"
+    "@vue/language-core": "npm:3.3.8"
   peerDependencies:
     typescript: ">=5.0.0"
   bin:
     vue-tsc: bin/vue-tsc.js
-  checksum: 10c0/35bbda9142e0b2212826ef77e9cdf49dd90fe82c40e909ea228dc100e9a10b179edda814938b0237c981e5688a419bd2f557f643a05675379c4b05cbde4019e3
+  checksum: 10c0/5fe554acf49758aa906b350adeed3bbf8cc46ca824126220aad301e351ffe8a051b7a17c73fc88157023090278bdc29a7724d4f621faade91e80b0e8bbf957ee
   languageName: node
   linkType: hard
 

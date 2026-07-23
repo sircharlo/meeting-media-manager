@@ -90,7 +90,7 @@
     "@eslint/js": "^10.0.1",
     "@intlify/unplugin-vue-i18n": "^11.2.4",
     "@pinia/testing": "^2.0.1",
-    "@quasar/app-vite": "^3.1.0",
+    "@quasar/app-vite": "^3.2.0",
     "@quasar/vite-plugin": "^1.12.0",
     "@sentry/rollup-plugin": "^5.4.0",
     "@sentry/vite-plugin": "^5.4.0",
@@ -118,9 +118,9 @@
     "eslint-plugin-vue": "^10.10.0",
     "fantasticon": "patch:fantasticon@npm%3A4.1.0#~/.yarn/patches/fantasticon-npm-4.1.0-3af043d076.patch",
     "globals": "^17.7.0",
-    "happy-dom": "^20.11.0",
+    "happy-dom": "^20.11.1",
     "husky": "^9.1.7",
-    "lint-staged": "^17.1.1",
+    "lint-staged": "^17.2.0",
     "lodash-es": "^4.18.1",
     "msw": "^2.15.0",
     "playwright": "^1.61.1",
@@ -134,7 +134,7 @@
     "vitepress": "^2.0.0-alpha.17",
     "vitest": "^4.1.10",
     "vue-eslint-parser": "^10.4.1",
-    "vue-tsc": "^3.3.7"
+    "vue-tsc": "^3.3.8"
   },
   "browserslist": [
     "Electron >= 37"
