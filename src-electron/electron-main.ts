@@ -73,6 +73,26 @@ protocol.registerSchemesAsPrivileged([
   },
 ]);
 
+function findLogFatalMessage(contexts: Record<string, unknown> | undefined) {
+  if (!contexts) return undefined;
+
+  for (const context of Object.values(contexts)) {
+    if (!context || typeof context !== 'object') continue;
+
+    const direct = (context as Record<string, unknown>).LOG_FATAL;
+    if (typeof direct === 'string') return direct;
+
+    // Electron/Crashpad nests custom annotations one level deeper on some platforms.
+    const crashpad = (context as Record<string, unknown>).crashpad;
+    if (crashpad && typeof crashpad === 'object') {
+      const nested = (crashpad as Record<string, unknown>).LOG_FATAL;
+      if (typeof nested === 'string') return nested;
+    }
+  }
+
+  return undefined;
+}
+
 if (SENTRY_DSN) {
   const sentryRelease = `${name}@${version}`;
 
@@ -87,7 +107,7 @@ if (SENTRY_DSN) {
       if (isIgnoredUnhandledNetworkEvent(event)) return null;
 
       try {
-        const logFatal = event.contexts?.electron?.LOG_FATAL;
+        const logFatal = findLogFatalMessage(event.contexts);
         if (
           typeof logFatal === 'string' &&
           logFatal.includes("GPU process isn't usable")
@@ -421,6 +441,8 @@ if (gotTheLock) {
   initSessionListeners();
 
   let videoCaptureCrashCount = 0;
+  let gpuCrashCount = 0;
+  let hasRelaunchedForGpuCrash = false;
 
   function handleProcessCrash(
     type: string,
@@ -448,6 +470,28 @@ if (gotTheLock) {
         );
         // Persist to user prefs for next run and notify user
         setHwAccelDisabled(true, true);
+      }
+    }
+
+    if (isGpuCrash) {
+      gpuCrashCount++;
+      log(`GPU crash count this session: ${gpuCrashCount}`, 'electron', 'log');
+
+      // Once Chromium exhausts its own GPU fallback modes it kills the whole
+      // browser process (IntentionallyCrashBrowserForUnusableGpuProcess), with
+      // no JS event and no chance for the user to see the disabled-hw-accel
+      // flag above take effect. Relaunch proactively on a second crash in the
+      // same session so the flag is picked up before Chromium can do that.
+      if (gpuCrashCount >= 2 && !hasRelaunchedForGpuCrash) {
+        hasRelaunchedForGpuCrash = true;
+        log(
+          'Repeated GPU crashes this session. Relaunching with hardware acceleration disabled.',
+          'electron',
+          'warn',
+        );
+        app.relaunch();
+        app.exit(0);
+        return;
       }
     }
 
