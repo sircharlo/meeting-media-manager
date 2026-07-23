@@ -73,7 +73,14 @@ const withCacheBust = (url: string, forceRefresh?: boolean) => {
   return `${url}${separator}timestamp=${Date.now()}`;
 };
 
-const getThumbnailFromMetadata = async (mediaPath: string) => {
+const getThumbnailFromMetadata = async (
+  mediaPath: string,
+  // The video-thumbnail path calls this as a first attempt and falls back
+  // to grabbing a frame from the <video> element, so a failure here isn't
+  // yet a real problem worth reporting - only report when this is the only
+  // attempt being made (e.g. for audio files, which have no such fallback).
+  report = true,
+) => {
   try {
     mediaPath = fileUrlToPath(mediaPath);
     if (!mediaPath || !(await pathExists(mediaPath))) return '';
@@ -110,7 +117,7 @@ const getThumbnailFromMetadata = async (mediaPath: string) => {
       return '';
     }
   } catch (error) {
-    if (!mediaPath?.toLowerCase().endsWith('.mov')) {
+    if (report && !mediaPath?.toLowerCase().endsWith('.mov')) {
       errorCatcher(error, {
         contexts: { fn: { mediaPath, name: 'getThumbnailFromMetadata' } },
       });
@@ -175,7 +182,7 @@ const getThumbnailFromVideoPath = async (
     throw new Error(`Video file does not exist: ${videoPath}`);
   }
 
-  const url = await getThumbnailFromMetadata(videoFileUrl);
+  const url = await getThumbnailFromMetadata(videoFileUrl, false);
   if (url) {
     return url;
   }
