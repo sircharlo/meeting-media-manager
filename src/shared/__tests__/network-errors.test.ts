@@ -25,49 +25,60 @@ describe('isFetchNetworkError', () => {
     expect(isFetchNetworkError(error)).toBe(true);
   });
 
-  it('returns true for a bare browser "Failed to fetch" TypeError', () => {
-    const error = new Error('Failed to fetch');
-    error.name = 'TypeError';
-    expect(isFetchNetworkError(error)).toBe(true);
-  });
-
-  it('returns true for a "Failed to fetch" TypeError with a host suffix', () => {
-    const error = new Error('Failed to fetch (b.some-cdn.org)');
-    error.name = 'TypeError';
-    expect(isFetchNetworkError(error)).toBe(true);
-  });
-
-  it('returns false for a TypeError with an unrelated message', () => {
-    const error = new Error('Cannot read properties of undefined');
-    error.name = 'TypeError';
-    expect(isFetchNetworkError(error)).toBe(false);
-  });
-
-  it('returns true for a SyntaxError from an empty/truncated JSON response body', () => {
-    const error = new Error(
-      "Failed to execute 'json' on 'Response': Unexpected end of JSON input",
-    );
-    error.name = 'SyntaxError';
-    expect(isFetchNetworkError(error)).toBe(true);
-  });
-
-  it('returns false for a SyntaxError with an unrelated message', () => {
-    const error = new Error('Unexpected token < in JSON at position 0');
-    error.name = 'SyntaxError';
-    expect(isFetchNetworkError(error)).toBe(false);
-  });
-
-  it('returns true for undici "fetch failed" with a network-error cause', () => {
-    const error = new Error('fetch failed', {
-      cause: { code: 'ENOTFOUND' },
-    });
-    expect(isFetchNetworkError(error)).toBe(true);
-  });
-
-  it('returns false for "fetch failed" with an unrelated cause', () => {
-    const error = new Error('fetch failed', {
-      cause: { code: 'SOME_OTHER_CODE' },
-    });
-    expect(isFetchNetworkError(error)).toBe(false);
+  it.each<{ error: () => Error; expected: boolean; name: string }>([
+    {
+      error: () =>
+        Object.assign(new Error('Failed to fetch'), { name: 'TypeError' }),
+      expected: true,
+      name: 'a bare browser "Failed to fetch" TypeError',
+    },
+    {
+      error: () =>
+        Object.assign(new Error('Failed to fetch (b.some-cdn.org)'), {
+          name: 'TypeError',
+        }),
+      expected: true,
+      name: 'a "Failed to fetch" TypeError with a host suffix',
+    },
+    {
+      error: () =>
+        Object.assign(new Error('Cannot read properties of undefined'), {
+          name: 'TypeError',
+        }),
+      expected: false,
+      name: 'a TypeError with an unrelated message',
+    },
+    {
+      error: () =>
+        Object.assign(
+          new Error(
+            "Failed to execute 'json' on 'Response': Unexpected end of JSON input",
+          ),
+          { name: 'SyntaxError' },
+        ),
+      expected: true,
+      name: 'a SyntaxError from an empty/truncated JSON response body',
+    },
+    {
+      error: () =>
+        Object.assign(new Error('Unexpected token < in JSON at position 0'), {
+          name: 'SyntaxError',
+        }),
+      expected: false,
+      name: 'a SyntaxError with an unrelated message',
+    },
+    {
+      error: () => new Error('fetch failed', { cause: { code: 'ENOTFOUND' } }),
+      expected: true,
+      name: 'undici "fetch failed" with a network-error cause',
+    },
+    {
+      error: () =>
+        new Error('fetch failed', { cause: { code: 'SOME_OTHER_CODE' } }),
+      expected: false,
+      name: '"fetch failed" with an unrelated cause',
+    },
+  ])('returns $expected for $name', ({ error, expected }) => {
+    expect(isFetchNetworkError(error())).toBe(expected);
   });
 });
