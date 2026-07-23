@@ -341,6 +341,9 @@ const buildJwIconsMap = async (fontPath: string) => {
 };
 
 export const getJwIconFromKeyword = (keyword: number | string | undefined) => {
+  // Establish a reactive dependency so callers (used directly in templates)
+  // re-render once the glyph map finishes loading asynchronously.
+  void jwIconsGlyphMapVersion.value;
   if (!keyword) return '';
   const icon = keywordToJwIconMapping[keyword.toString()];
   if (!icon) return '';
