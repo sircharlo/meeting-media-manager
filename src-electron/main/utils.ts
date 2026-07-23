@@ -28,6 +28,7 @@ const UPDATE_IGNORE_ERRORS: (string | string[])[] = [
   ...NETWORK_ERROR_CODES,
   'ENOSPC',
   'EPIPE',
+  'ERR_ADDRESS_UNREACHABLE',
   'ERR_CONNECTION_CLOSED',
   'ERR_CONNECTION_RESET',
   'ERR_CONNECTION_TIMED_OUT',
@@ -243,6 +244,36 @@ export const isValidUrl = (url: string): boolean => {
     return false;
   }
 };
+
+/**
+ * Checks whether a Sentry error event is an unhandled rejection carrying a
+ * known-benign update/network error (see isIgnoredUpdateError). These
+ * originate from Electron's native net stack (used internally by
+ * electron-updater's HTTP executor) as raw unhandled promise rejections, so
+ * they never reach the explicit isIgnoredUpdateError checks in updater.ts and
+ * must be filtered at the Sentry beforeSend level instead.
+ * @param event The Sentry error event to check
+ * @returns Whether the event should be dropped
+ */
+export function isIgnoredUnhandledNetworkEvent(event: {
+  exception?: {
+    values?: {
+      mechanism?: { handled?: boolean };
+      type?: string;
+      value?: string;
+    }[];
+  };
+}): boolean {
+  const values = event.exception?.values ?? [];
+  return values.some(
+    (value) =>
+      value.mechanism?.handled === false &&
+      isIgnoredUpdateError({
+        message: value.value ?? '',
+        name: value.type,
+      } as Error),
+  );
+}
 
 /**
  * Checks if an update error should be ignored (not reported to Sentry)

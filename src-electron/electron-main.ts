@@ -37,7 +37,11 @@ import {
   initUpdater,
   isUpdateInstallInProgress,
 } from 'src-electron/main/updater';
-import { captureElectronError, isSelf } from 'src-electron/main/utils';
+import {
+  captureElectronError,
+  isIgnoredUnhandledNetworkEvent,
+  isSelf,
+} from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import {
   authorizedClose,
@@ -80,6 +84,8 @@ if (SENTRY_DSN) {
 
   initSentry({
     beforeSend(event) {
+      if (isIgnoredUnhandledNetworkEvent(event)) return null;
+
       try {
         const logFatal = event.contexts?.electron?.LOG_FATAL;
         if (

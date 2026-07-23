@@ -32,6 +32,7 @@ vi.mock('app/package.json', () => ({
 
 import {
   fetchJsonFromMainProcess,
+  isIgnoredUnhandledNetworkEvent,
   isIgnoredUpdateError,
   isJwDomain,
   isTrustedDomain,
@@ -132,6 +133,64 @@ describe('isIgnoredUpdateError', () => {
     );
     error.name = 'YAMLException';
     expect(isIgnoredUpdateError(error)).toBe(true);
+  });
+
+  it('should return true for ERR_ADDRESS_UNREACHABLE', () => {
+    expect(isIgnoredUpdateError('net::ERR_ADDRESS_UNREACHABLE')).toBe(true);
+  });
+});
+
+describe('isIgnoredUnhandledNetworkEvent', () => {
+  it('should ignore unhandled rejections carrying a known network error', () => {
+    expect(
+      isIgnoredUnhandledNetworkEvent({
+        exception: {
+          values: [
+            {
+              mechanism: { handled: false },
+              type: 'Error',
+              value: 'net::ERR_NETWORK_CHANGED',
+            },
+          ],
+        },
+      }),
+    ).toBe(true);
+  });
+
+  it('should not ignore handled exceptions with the same message', () => {
+    expect(
+      isIgnoredUnhandledNetworkEvent({
+        exception: {
+          values: [
+            {
+              mechanism: { handled: true },
+              type: 'Error',
+              value: 'net::ERR_NETWORK_CHANGED',
+            },
+          ],
+        },
+      }),
+    ).toBe(false);
+  });
+
+  it('should not ignore unhandled rejections with an unrelated message', () => {
+    expect(
+      isIgnoredUnhandledNetworkEvent({
+        exception: {
+          values: [
+            {
+              mechanism: { handled: false },
+              type: 'Error',
+              value: 'Fatal exception',
+            },
+          ],
+        },
+      }),
+    ).toBe(false);
+  });
+
+  it('should not ignore events without exception values', () => {
+    expect(isIgnoredUnhandledNetworkEvent({})).toBe(false);
   });
 });
 
