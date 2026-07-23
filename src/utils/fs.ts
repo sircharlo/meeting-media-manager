@@ -429,8 +429,10 @@ const lastVersionPath = (congId: string) =>
  * Verifies whether a new version has been installed.
  */
 export const wasUpdateInstalled = async (congId: string, newCong = false) => {
+  let lastVersionFile: string | undefined;
+
   try {
-    const lastVersionFile = await lastVersionPath(congId);
+    lastVersionFile = await lastVersionPath(congId);
     await ensureDir(dirname(lastVersionFile));
 
     if (newCong) {
@@ -451,7 +453,16 @@ export const wasUpdateInstalled = async (congId: string, newCong = false) => {
       return true;
     }
   } catch (error) {
-    errorCatcher(error, { contexts: { fn: { name: 'wasUpdateInstalled' } } });
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          congId,
+          lastVersionFile,
+          name: 'wasUpdateInstalled',
+          newCong,
+        },
+      },
+    });
     return false;
   }
 };
