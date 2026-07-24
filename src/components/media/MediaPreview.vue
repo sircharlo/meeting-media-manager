@@ -420,8 +420,14 @@ const syncVideos = async () => {
     }
 
     if (mediaAction.value !== 'play') {
-      log('Pausing video preview', 'mediaPreview');
-      element.pause();
+      if (!element.paused) {
+        // Only pause if the video preview is playing. If it is already paused,
+        // do nothing. This prevents the video from being paused unnecessarily.
+        log('Pausing video preview', 'mediaPreview');
+        element.pause();
+      }
+
+      // Sync the video time to the media window position
       syncVideoTime(element, 0);
       if (isCanvasMode.value) drawCurrentFrame();
       return;
@@ -489,7 +495,8 @@ const syncVideos = async () => {
 // to run. Throttle those routine ticks so steady, live playback only
 // re-syncs a few times a minute; real transitions (source swap, play/pause,
 // modal toggle, playback confirmation) bypass this and still resync
-// immediately via the watcher below.
+// immediately via the watcher below. A paused scrub also bypasses this - see
+// that watcher for why.
 const throttledSyncVideos = useThrottleFn(syncVideos, 5000);
 
 const closeModalWhenHidden = () => {
@@ -887,7 +894,17 @@ watch(
 watch(
   () => mediaPlaying.value.currentPosition,
   () => {
-    throttledSyncVideos();
+    // Throttling only makes sense for the steady stream of ticks during
+    // live playback. While paused, a currentPosition change is a deliberate
+    // scrub and should be reflected right away, not sit unapplied for up to
+    // 5s. (syncVideos itself doesn't register a drift correction in this
+    // case anyway - see the mediaAction.value !== 'play' branch above - so
+    // calling it directly here doesn't affect the auto-disable count either.)
+    if (mediaAction.value !== 'play') {
+      syncVideos();
+    } else {
+      throttledSyncVideos();
+    }
   },
 );
 
