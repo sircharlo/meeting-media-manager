@@ -4,6 +4,21 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.7.8
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Update Notifications**: Replaced the auto-update banners with in-place notifications. The "ready to install" notification stays open until the app is quit or the notification is dismissed.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Crash Recovery**: Fixed GPU-fatal-crash detection reading the wrong Sentry context, so it never actually tagged the crash it was written for, and now proactively relaunches the app (with hardware acceleration already disabled) after a second in-session GPU crash instead of waiting for Chromium to force-quit uncontrolled.
+- 🐞 **Meeting Icons**: Fixed meeting icons (public talk, Watchtower, etc.) sometimes rendering blank on first load until navigating away and back, caused by a non-reactive dependency on the async `jw-icons` glyph map.
+- 🐞 **Media Preview**: Throttled preview/live playback sync checks to roughly every 5 seconds instead of every playback tick (~300ms), while still resyncing immediately on real transitions (source change, play/pause) and on scrubbing while paused.
+- 🐞 **Error Reporting**: Stopped reporting transient network blips from the auto-updater's request layer that were bypassing the existing error allowlist, and metadata-thumbnail lookups that still have a working video-frame fallback, and added congregation ID and file path context to update-marker read errors.
+- 🐞 **Watched Folders**: Serialized concurrent watched-media section-order writes per file to stop a race where overlapping saves could fail, and added a retry for transient Windows file locks (e.g. from Dropbox) during those same writes.
+- 🐞 **Cache Cleanup**: Stopped stray non-folder entries (e.g. macOS `.DS_Store`) from breaking expired date-folder cleanup, and treated corrupted `.last-used` marker files as missing instead of misreading them as "used today" and skipping cleanup.
+
 ## v26.7.7
 
 ### ✨ New Features
