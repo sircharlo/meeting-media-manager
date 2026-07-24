@@ -46,7 +46,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const $q = useQuasar();
-const { t } = useI18n();
+const { locale, t } = useI18n();
 const currentStateStore = useCurrentStateStore();
 const congregationStore = useCongregationSettingsStore();
 
@@ -105,6 +105,22 @@ const loadAnnouncements = async () => {
 // which is why the update/downloaded notification below never sets `group`.
 let updateNotify: ((props?: QNotifyUpdateOptions) => void) | undefined;
 
+// Tracks which step of the updater lifecycle is currently shown, so the
+// notification's text can be re-translated in place if the active locale
+// changes (e.g. when switching to a congregation with a different app
+// language) without losing or resetting the notification itself.
+type UpdatePhase = 'downloaded' | 'downloading' | null;
+let updatePhase: UpdatePhase = null;
+let lastProgressInfo:
+  | undefined
+  | {
+      bytesPerSecond: number;
+      delta: number;
+      percent: number;
+      total: number;
+      transferred: number;
+    };
+
 const downloadProgressCaption = (info: {
   bytesPerSecond: number;
   delta: number;
@@ -131,9 +147,14 @@ const downloadProgressCaption = (info: {
 
 const handleUpdateAvailable = () => {
   updateNotify?.();
+  updatePhase = 'downloading';
+  lastProgressInfo = undefined;
   updateNotify = createTemporaryNotification({
     caption: t('update-preparing'),
     message: t('update-downloading'),
+    // Survives dismissAllTemporaryNotifications() (e.g. congregation
+    // switches) since it isn't tied to any specific congregation.
+    protect: true,
     type: 'ongoing',
   });
 };
@@ -145,10 +166,12 @@ const handleUpdateDownloadProgress = (info: {
   total: number;
   transferred: number;
 }) => {
+  lastProgressInfo = info;
   updateNotify?.({ caption: downloadProgressCaption(info) });
 };
 
 const handleUpdateDownloaded = () => {
+  updatePhase = 'downloaded';
   updateNotify?.({
     actions: [
       {
@@ -417,6 +440,34 @@ watch(
   },
   { immediate: true },
 );
+
+// Re-translate the in-progress updater notification, if any, when the
+// active locale changes (e.g. after switching to a congregation configured
+// with a different app language) so its text always matches what's shown.
+watch(locale, () => {
+  if (!updateNotify || !updatePhase) return;
+
+  if (updatePhase === 'downloading') {
+    updateNotify({
+      caption: lastProgressInfo
+        ? downloadProgressCaption(lastProgressInfo)
+        : t('update-preparing'),
+      message: t('update-downloading'),
+    });
+  } else if (updatePhase === 'downloaded') {
+    updateNotify({
+      actions: [
+        {
+          color: 'white',
+          handler: () => quitAndInstall(),
+          label: t('quit-and-install'),
+        },
+        { color: 'white', icon: 'close', round: true },
+      ],
+      message: t('update-downloaded'),
+    });
+  }
+});
 
 if (import.meta.env.NEVER) {
   defineExpose({});

@@ -20,6 +20,14 @@ interface AllowedNotifyProps {
   message?: QNotifyCreateOptions['message'];
   noClose?: boolean;
   position?: QNotifyCreateOptions['position'];
+  /**
+   * When true, this notification is not tracked by
+   * dismissAllTemporaryNotifications() and therefore survives events (like
+   * switching congregations) that dismiss regular temporary notifications.
+   * Use this for app-level notifications (e.g. the updater) that aren't tied
+   * to the currently selected congregation.
+   */
+  protect?: boolean;
   timeout?: QNotifyCreateOptions['timeout'];
   type?: AllowedNotifyType; // 👈 strict union
 }
@@ -48,6 +56,7 @@ export const createTemporaryNotification = (
       message,
       noClose = false,
       position = 'top',
+      protect = false,
       timeout = 5000,
       type,
     } = props;
@@ -88,8 +97,9 @@ export const createTemporaryNotification = (
       }),
     });
 
-    // Track the dismiss function if it exists
-    if (dismiss) {
+    // Track the dismiss function if it exists, unless it's protected from
+    // being swept up by dismissAllTemporaryNotifications()
+    if (dismiss && !protect) {
       activeTemporaryNotifications.push(dismiss);
 
       // Auto-remove from tracking after timeout (if not indefinite)
