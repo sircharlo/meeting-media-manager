@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 0
       - name: SonarQube Scan
@@ -50,12 +50,12 @@ jobs:
     steps:
       - name: Check out master branch
         if: ${{ inputs.checkout-latest == true }}
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: master
       - name: Check out Git repository
         if: ${{ inputs.checkout-latest == false }}
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Setup Node
         if: ${{ !inputs.publish-release }}
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
@@ -92,12 +92,12 @@ jobs:
     steps:
       - name: Check out master branch
         if: ${{ inputs.checkout-latest == true }}
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: master
       - name: Check out Git repository
         if: ${{ inputs.checkout-latest == false }}
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Setup Node
         if: ${{ !inputs.publish-release }}
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
