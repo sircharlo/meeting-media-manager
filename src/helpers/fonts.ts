@@ -14,7 +14,7 @@ import { useJwStore } from 'stores/jw';
 import { ref } from 'vue';
 
 const { extname, fs, join } = globalThis.electronApi;
-const { ensureDir, pathExists, readFile, writeFile } = fs;
+const { ensureDir, pathExists, readFile, remove, writeFile } = fs;
 
 let jwIconsGlyphMapPromise: null | Promise<void> = null;
 let jwIconsGlyphMap: null | Record<string, string> = null;
@@ -310,15 +310,27 @@ const buildJwIconsMap = async (fontPath: string) => {
     try {
       jwIconsGlyphMap = parseJwIconsGlyphMap(await readFile(fontPath));
     } catch (error) {
-      // The font file can vanish between setElementFont() confirming/
-      // downloading it and this read (seen in Sentry as MMM-V2-3EH, likely
-      // AV quarantine on Windows) - redownload once to get an accurate,
+      // The local font file can be unusable in two ways worth one retry
+      // each: it can vanish between setElementFont() confirming/downloading
+      // it and this read (ENOENT, seen in Sentry as MMM-V2-3EH, likely AV
+      // quarantine on Windows), or it can exist but have unparseable
+      // content (a truncated/corrupted download written to disk without
+      // validation, seen as fontkit's "Unknown font format"). Both are
+      // recoverable the same way: redownload once to get an accurate,
       // up-to-date glyph map instead of dropping straight to the static
       // fallback.
       let recovered = false;
       let reportedError = error;
-      if (getFilesystemErrorCode(error) === 'ENOENT') {
+      const isRecoverable =
+        getFilesystemErrorCode(error) === 'ENOENT' ||
+        (error instanceof Error && error.message === 'Unknown font format');
+      if (isRecoverable) {
         try {
+          // getLocalFontPath() reuses an existing file at this path without
+          // re-downloading, so a corrupted-but-present file (as opposed to
+          // one that's already vanished) has to be cleared out first or the
+          // "retry" would just re-parse the same bad bytes.
+          await remove(fontPath).catch(() => undefined);
           delete localFontPathPromises['jw-icons-all'];
           const freshFontPath = await getLocalFontPath('jw-icons-all');
           jwIconsGlyphMap = parseJwIconsGlyphMap(await readFile(freshFontPath));
