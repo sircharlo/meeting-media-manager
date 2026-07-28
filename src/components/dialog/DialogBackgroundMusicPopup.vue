@@ -430,10 +430,41 @@ const logMusicStartStep = (
 const SONG_LIBRARY_RETRY_TIMEOUT_MS = 2 * 60 * 1000;
 const SONG_LIBRARY_RETRY_INTERVAL_MS = 15 * 1000;
 
+// After an auto-triggered attempt fails (song library permanently empty,
+// e.g. every song failed to download), the auto-start watcher below would
+// otherwise see musicState flip to 'music.error' and immediately fire
+// another attempt - each one waiting up to SONG_LIBRARY_RETRY_TIMEOUT_MS
+// before failing again, but with no cooldown between cycles, a persistent
+// failure retries nonstop for as long as the meeting-day auto-start window
+// stays open. Wait this long between auto-retries instead.
+const AUTO_START_ERROR_COOLDOWN_MS = SONG_LIBRARY_RETRY_TIMEOUT_MS;
+let autoStartRetryTimer: ReturnType<typeof setTimeout> | undefined;
+
+/**
+ * Schedules a single cooldown-gated auto-start retry after a failure,
+ * regardless of what triggered the failing attempt (manual or auto) - a
+ * manual click failing during the auto-start window shouldn't disable
+ * auto-recovery for the rest of the meeting day. Re-checked at fire time so
+ * it's a no-op if something else already resolved the error state.
+ */
+const scheduleAutoStartRetry = () => {
+  clearTimeout(autoStartRetryTimer);
+  autoStartRetryTimer = setTimeout(() => {
+    autoStartRetryTimer = undefined;
+    if (shouldAutoStart.value && musicState.value === 'music.error') {
+      log('🎵 Retrying auto-start after cooldown', 'backgroundMusic', 'info');
+      playMusic('auto');
+    }
+  }, AUTO_START_ERROR_COOLDOWN_MS);
+};
+
 /**
  * Initializes and plays background music
  */
 async function playMusic(reason = 'manual') {
+  clearTimeout(autoStartRetryTimer);
+  autoStartRetryTimer = undefined;
+
   musicStartTiming.value = {
     id: musicStartId.value + 1,
     reason,
@@ -622,6 +653,7 @@ async function playMusic(reason = 'manual') {
     musicState.value = 'music.error';
     logMusicStartTiming('start failed', 'warn');
     errorCatcher(error);
+    scheduleAutoStartRetry();
   }
 }
 
@@ -793,6 +825,7 @@ useEventListener(musicPlayer, 'error', (event) => {
   logAudioEventTiming(event);
   if (event.target instanceof HTMLAudioElement) {
     musicState.value = 'music.error';
+    scheduleAutoStartRetry();
     if (event.target.error?.message) {
       const ignoredErrors = [
         'removed from the document',
@@ -892,6 +925,13 @@ watch(
     }
     if (oldSelectedDate !== newSelectedDate) {
       musicAlreadyStoppedManually.value = false;
+      // A stuck error from a previous day shouldn't suppress auto-start
+      // forever - the auto-start watcher no longer retries on its own once
+      // in 'music.error' (see AUTO_START_ERROR_COOLDOWN_MS), so give each
+      // new day a fresh attempt.
+      if (musicState.value === 'music.error') {
+        musicState.value = '';
+      }
     }
   },
   { immediate: true },
@@ -905,7 +945,11 @@ watchImmediate(
       shouldStart &&
       state !== 'music.starting' &&
       state !== 'music.stopping' &&
-      state !== 'music.playing'
+      state !== 'music.playing' &&
+      // A failure schedules its own cooldown retry in playMusic() rather
+      // than reacting to this state change immediately - see
+      // AUTO_START_ERROR_COOLDOWN_MS.
+      state !== 'music.error'
     ) {
       log('🎵 Auto-starting background music', 'backgroundMusic', 'info');
       playMusic('auto');
@@ -964,7 +1008,10 @@ watch(popupContent, (el) => {
   popupResizeObserver.observe(el);
 });
 
-onBeforeUnmount(() => popupResizeObserver?.disconnect());
+onBeforeUnmount(() => {
+  popupResizeObserver?.disconnect();
+  clearTimeout(autoStartRetryTimer);
+});
 
 whenever(
   () => volumeData.value,
