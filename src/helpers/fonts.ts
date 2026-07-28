@@ -367,17 +367,17 @@ export const setElementFont = async (fontName: FontName) => {
         await buildJwIconsMap(fontPath);
       }
       return true;
-    } catch (error) {
-      errorCatcher(error, {
-        contexts: { fn: { fontName, name: 'setElementFont first try' } },
-      });
+    } catch {
+      // The local font file can be transiently unavailable (still
+      // downloading, briefly locked by a sync agent, etc.) - fall back to
+      // loading directly from the CDN URL. setFallbackFont() already
+      // reports its own failure with full context, so this first attempt
+      // isn't reported separately: it's noise when the fallback recovers,
+      // and double reporting when it doesn't.
       const url = useJwStore().fontUrls[fontName];
       const fallbackLoaded = await setFallbackFont(fontName, url);
 
       if (!fallbackLoaded) {
-        errorCatcher(error, {
-          contexts: { fn: { fontName, name: 'setElementFont fallback', url } },
-        });
         fontFacePromises[fontName] = undefined;
       }
 
