@@ -158,6 +158,18 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
+// <audio>.play() rejects with these when interrupted by something the app
+// itself just did (pausing, loading a new source, removing the element) -
+// expected noise, not a real playback failure worth reporting.
+const IGNORABLE_PLAYBACK_ERROR_MESSAGES = [
+  'removed from the document',
+  'new load request',
+  'interrupted by a call to pause',
+];
+const isIgnorablePlaybackError = (message?: null | string) =>
+  !!message &&
+  IGNORABLE_PLAYBACK_ERROR_MESSAGES.some((msg) => message.includes(msg));
+
 const open = defineModel<boolean>({ default: false });
 
 interface BackgroundMusicAction {
@@ -724,7 +736,13 @@ const handleMusicEnded = async () => {
     },
   );
   musicPlayer.value?.load();
-  musicPlayer.value?.play();
+  musicPlayer.value?.play().catch((error: Error) => {
+    if (!isIgnorablePlaybackError(error.message)) {
+      errorCatcher(error, {
+        contexts: { fn: { name: 'handleMusicEnded' } },
+      });
+    }
+  });
 };
 
 /**
@@ -826,20 +844,11 @@ useEventListener(musicPlayer, 'error', (event) => {
   if (event.target instanceof HTMLAudioElement) {
     musicState.value = 'music.error';
     scheduleAutoStartRetry();
-    if (event.target.error?.message) {
-      const ignoredErrors = [
-        'removed from the document',
-        'new load request',
-        'interrupted by a call to pause',
-      ];
-
-      if (
-        !ignoredErrors.some((msg) =>
-          (event.target as HTMLAudioElement)?.error?.message?.includes(msg),
-        )
-      ) {
-        errorCatcher(event.target.error);
-      }
+    if (
+      event.target.error?.message &&
+      !isIgnorablePlaybackError(event.target.error.message)
+    ) {
+      errorCatcher(event.target.error);
     }
   }
 });
