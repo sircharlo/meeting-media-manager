@@ -96,8 +96,14 @@ const resetImportedMediaSection = (
 };
 
 const isValidTargetDate = (targetDate: string, congId: string) => {
+  // additionalMediaMaps was historically keyed by selectedDate, which this
+  // app has always stored as YYYY/MM/DD (see e.g. current-state's
+  // selectedDate) - not just the YYYY-MM-DD/YYYYMMDD forms below. Missing
+  // this format made the migration reject and drop real, migratable data.
   const hasValidFormat =
-    /^\d{4}-\d{2}-\d{2}$/.test(targetDate) || /^\d{8}$/.test(targetDate);
+    /^\d{4}-\d{2}-\d{2}$/.test(targetDate) ||
+    /^\d{4}\/\d{2}\/\d{2}$/.test(targetDate) ||
+    /^\d{8}$/.test(targetDate);
   if (targetDate.trim() && hasValidFormat) return true;
 
   reportMoveAdditionalMediaError(
