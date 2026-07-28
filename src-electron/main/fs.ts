@@ -1143,6 +1143,8 @@ const decompress = async (
   output: string,
   opts?: UnzipOptions,
 ): Promise<UnzipResult[]> => {
+  await startSecurityScopedAccess(input);
+
   const stats = await stat(input).catch(() => undefined);
   const fileSize = stats?.size ?? 0;
   const isDirectorySource = !!stats?.isDirectory?.();
@@ -1335,6 +1337,8 @@ const cleanupZipLocalFallbackCopy = async (localPath: string) => {
 };
 
 const getZipFileStats = async (zipPath: string) => {
+  await startSecurityScopedAccess(zipPath);
+
   let lastError: unknown;
 
   for (let attempt = 0; attempt <= ZIP_OPEN_RETRY_COUNT; attempt++) {
