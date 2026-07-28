@@ -6,6 +6,16 @@ import { portNumberValidator } from 'src/utils/settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useObsStateStore } from 'stores/obs-state';
 
+// obsWebSocketInfo.obsWebSocket exists as soon as connect() is called, but
+// obs-websocket-js only accepts .call() requests once the 'Identified'
+// handshake completes (obsConnectionState flips to 'connected' - see
+// ObsStatus.vue). Callers that only checked the socket's existence could
+// race an in-flight connection attempt and throw "Socket not identified"/
+// "Not connected" instead of failing gracefully.
+const isObsWebSocketReady = () =>
+  !!obsWebSocketInfo.obsWebSocket &&
+  useObsStateStore().obsConnectionState === 'connected';
+
 const getObsConnectionSettings = () => {
   const currentState = useCurrentStateStore();
   if (!currentState.currentSettings?.obsEnable) return 'disabled';
@@ -97,12 +107,12 @@ export const obsConnect = async (setup?: boolean) => {
 
 export const obsStartRecording = async (): Promise<boolean> => {
   try {
-    if (!obsWebSocketInfo.obsWebSocket) {
+    if (!isObsWebSocketReady()) {
       log('OBS WebSocket not connected', 'obs', 'warn');
       return false;
     }
 
-    await obsWebSocketInfo.obsWebSocket.call('StartRecord');
+    await obsWebSocketInfo.obsWebSocket?.call('StartRecord');
     return true;
   } catch (error) {
     errorCatcher(error);
@@ -112,12 +122,12 @@ export const obsStartRecording = async (): Promise<boolean> => {
 
 export const obsStopRecording = async (): Promise<boolean> => {
   try {
-    if (!obsWebSocketInfo.obsWebSocket) {
+    if (!isObsWebSocketReady()) {
       log('OBS WebSocket not connected', 'obs', 'warn');
       return false;
     }
 
-    await obsWebSocketInfo.obsWebSocket.call('StopRecord');
+    await obsWebSocketInfo.obsWebSocket?.call('StopRecord');
     return true;
   } catch (error) {
     errorCatcher(error);
@@ -127,14 +137,14 @@ export const obsStopRecording = async (): Promise<boolean> => {
 
 export const obsGetRecordingDirectory = async (): Promise<null | string> => {
   try {
-    if (!obsWebSocketInfo.obsWebSocket) {
+    if (!isObsWebSocketReady()) {
       log('OBS WebSocket not connected', 'obs', 'warn');
       return null;
     }
 
     const response =
-      await obsWebSocketInfo.obsWebSocket.call('GetRecordDirectory');
-    return response.recordDirectory || null;
+      await obsWebSocketInfo.obsWebSocket?.call('GetRecordDirectory');
+    return response?.recordDirectory || null;
   } catch (error) {
     errorCatcher(error);
     return null;
@@ -143,13 +153,13 @@ export const obsGetRecordingDirectory = async (): Promise<null | string> => {
 
 export const obsGetRecordingState = async (): Promise<boolean> => {
   try {
-    if (!obsWebSocketInfo.obsWebSocket) {
+    if (!isObsWebSocketReady()) {
       log('OBS WebSocket not connected', 'obs', 'warn');
       return false;
     }
 
     const response =
-      await obsWebSocketInfo.obsWebSocket.call('GetRecordStatus');
+      await obsWebSocketInfo.obsWebSocket?.call('GetRecordStatus');
     return response?.outputActive || false;
   } catch (error) {
     errorCatcher(error);

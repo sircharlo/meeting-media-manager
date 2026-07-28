@@ -92,3 +92,37 @@ describe('obsConnect', () => {
     expect(disconnectMock).toHaveBeenCalled();
   });
 });
+
+describe('OBS RPC calls before the socket is identified', () => {
+  const callMock = vi.fn();
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    obsStateStore.obsConnectionState = 'connecting';
+  });
+
+  it('does not call the socket while still connecting', async () => {
+    const obsUtils = await import('src/utils/obs');
+    obsUtils.obsWebSocketInfo.obsWebSocket = { call: callMock } as never;
+
+    const { obsGetRecordingState, obsStartRecording } = await import('../obs');
+
+    await expect(obsStartRecording()).resolves.toBe(false);
+    await expect(obsGetRecordingState()).resolves.toBe(false);
+
+    expect(callMock).not.toHaveBeenCalled();
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+  });
+
+  it('calls the socket once identified', async () => {
+    obsStateStore.obsConnectionState = 'connected';
+    const obsUtils = await import('src/utils/obs');
+    callMock.mockResolvedValue({ outputActive: true });
+    obsUtils.obsWebSocketInfo.obsWebSocket = { call: callMock } as never;
+
+    const { obsGetRecordingState } = await import('../obs');
+
+    await expect(obsGetRecordingState()).resolves.toBe(true);
+    expect(callMock).toHaveBeenCalledWith('GetRecordStatus');
+  });
+});
