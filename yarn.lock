@@ -8515,7 +8515,7 @@ __metadata:
     pinia-plugin-persistedstate: "npm:^4.7.1"
     playwright: "npm:^1.62.0"
     png2icons: "npm:^2.0.1"
-    postcss: "npm:^8.5.24"
+    postcss: "npm:^8.5.25"
     prettier: "npm:^3.9.6"
     pretty-bytes: "npm:^7.1.1"
     quasar: "npm:^2.23.2"
@@ -9831,14 +9831,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.5.24":
-  version: 8.5.24
-  resolution: "postcss@npm:8.5.24"
+"postcss@npm:^8.5.25":
+  version: 8.5.25
+  resolution: "postcss@npm:8.5.25"
   dependencies:
     nanoid: "npm:^3.3.16"
     picocolors: "npm:^1.1.1"
     source-map-js: "npm:^1.2.1"
-  checksum: 10c0/b3854840ffee4604249a1bad97291105a974009d63b068b716dbee1d2e034bb965353a9fb4d6e957ede475b2acf4167cd4b1d41074f8dd3ce2fe488b60c8ce44
+  checksum: 10c0/0a12c1e74b456c57122e81f684e02fd98ff4d57526f794d10c996df1147158808f5ae373ac82b988c8de6cbbaa82dbd7b13803b14f5dd3cf7cc6a42ccad5c9f2
   languageName: node
   linkType: hard
 
