@@ -80,6 +80,7 @@ vi.mock('src/helpers/export-media', () => ({
 }));
 
 vi.mock('src/helpers/fs', () => ({
+  getRendererPlatform: vi.fn(() => 'win32'),
   getSubtitlesUrl: vi.fn(),
   getThumbnailUrl: vi.fn(),
   registerMediaProviders: vi.fn(),

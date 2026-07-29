@@ -75,18 +75,21 @@ describe('filesystem error helpers', () => {
       isExpectedNetworkPathAccessError(
         { code: 'UNKNOWN' },
         String.raw`\\server@SSL@2078\DavWWWRoot`,
+        'win32',
       ),
     ).toBe(true);
     expect(
       isExpectedNetworkPathAccessError(
         { code: 'UNKNOWN' },
         'C:/Users/test/cache',
+        'win32',
       ),
     ).toBe(false);
     expect(
       isExpectedNetworkPathAccessError(
         { code: 'EACCES' },
         String.raw`\\server@SSL@2078\DavWWWRoot`,
+        'win32',
       ),
     ).toBe(false);
     // Real-world Nextcloud VFS probe failure: raw untranslated OS error on a
@@ -95,28 +98,32 @@ describe('filesystem error helpers', () => {
       isExpectedNetworkPathAccessError(
         { code: 'Unknown system error -214545202' },
         String.raw`C:\Users\PC\Nextcloud\Hall\MediaSyncer`,
+        'win32',
       ),
     ).toBe(true);
   });
 
   it('keeps watch-folder ignore behavior centralized', () => {
     expect(
-      shouldIgnoreWatchFolderError('C:/Users/test/cache', {
-        code: 'UNKNOWN',
-        syscall: 'stat',
-      }),
+      shouldIgnoreWatchFolderError(
+        'C:/Users/test/cache',
+        { code: 'UNKNOWN', syscall: 'stat' },
+        'win32',
+      ),
     ).toBe(true);
     expect(
-      shouldIgnoreWatchFolderError(String.raw`\\server\share`, {
-        code: 'EISDIR',
-        syscall: 'watch',
-      }),
+      shouldIgnoreWatchFolderError(
+        String.raw`\\server\share`,
+        { code: 'EISDIR', syscall: 'watch' },
+        'win32',
+      ),
     ).toBe(true);
     expect(
-      shouldIgnoreWatchFolderError('C:/Users/test/cache', {
-        code: 'EACCES',
-        syscall: 'watch',
-      }),
+      shouldIgnoreWatchFolderError(
+        'C:/Users/test/cache',
+        { code: 'EACCES', syscall: 'watch' },
+        'win32',
+      ),
     ).toBe(false);
   });
 

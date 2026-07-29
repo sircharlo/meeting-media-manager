@@ -100,7 +100,10 @@ const isRetryableZipError = (error: unknown, zipPath?: string) => {
   // briefly locked by the sync agent - worth a retry there even though
   // those codes aren't retryable in general (e.g. a genuinely missing/
   // invalid file on local disk).
-  return !!zipPath && isExpectedNetworkPathAccessError(error, dirname(zipPath));
+  return (
+    !!zipPath &&
+    isExpectedNetworkPathAccessError(error, dirname(zipPath), process.platform)
+  );
 };
 
 const isIncompleteZipReadError = (message: string) =>
@@ -691,7 +694,7 @@ export const setPathProbeNotificationPaths = (paths: string[] = []) => {
 
 const hasPossibleNetworkPathInNotificationSettings = () => {
   return [...pathProbeNotificationPaths].some((path) =>
-    isPossiblyNetworkFolderPath(path),
+    isPossiblyNetworkFolderPath(path, process.platform),
   );
 };
 
@@ -763,7 +766,10 @@ export function isUsablePath(basePath?: string): Promise<boolean> {
   if (!isUsablePathPromises.has(basePath)) {
     const promise = (async () => {
       const { resolvedBase, testDir, testFile } = getProbePathContext(basePath);
-      const likelyNetworkPath = isPossiblyNetworkFolderPath(basePath);
+      const likelyNetworkPath = isPossiblyNetworkFolderPath(
+        basePath,
+        process.platform,
+      );
 
       try {
         if (isInvalidWindowsResolvedPath(resolvedBase)) {
@@ -784,6 +790,7 @@ export function isUsablePath(basePath?: string): Promise<boolean> {
         const transientNetworkError = isExpectedNetworkPathAccessError(
           e,
           basePath,
+          process.platform,
         );
         if (hasPossibleNetworkPathInNotificationSettings()) {
           notifyPathProbeNetworkWarning();
@@ -1264,7 +1271,10 @@ const getZipDiagnostics = (zipPath: string, fileSize: number) => {
     cloudProvider,
     fileSize,
     isCloudStoragePath: !!cloudProvider,
-    isPossiblyNetworkPath: isPossiblyNetworkFolderPath(dirname(zipPath)),
+    isPossiblyNetworkPath: isPossiblyNetworkFolderPath(
+      dirname(zipPath),
+      process.platform,
+    ),
     zipPath,
   };
 };
@@ -1291,10 +1301,14 @@ const attemptZipLocalFallbackCopy = async (
   zipPath: string,
   error: unknown,
 ): Promise<string | undefined> => {
-  if (!isPossiblyNetworkFolderPath(dirname(zipPath))) return undefined;
+  if (!isPossiblyNetworkFolderPath(dirname(zipPath), process.platform)) {
+    return undefined;
+  }
 
   const userDataPath = app.getPath('userData');
-  if (isPossiblyNetworkFolderPath(userDataPath)) return undefined;
+  if (isPossiblyNetworkFolderPath(userDataPath, process.platform)) {
+    return undefined;
+  }
 
   const localDir = join(userDataPath, 'Temp', LOCAL_FALLBACK_SUBFOLDER, uuid());
   const localPath = join(localDir, basename(zipPath));
@@ -1858,7 +1872,10 @@ export async function unwatchFolders() {
 }
 
 export async function watchFolder(folderPath: string) {
-  const pathIsPossiblyNetwork = isPossiblyNetworkFolderPath(folderPath);
+  const pathIsPossiblyNetwork = isPossiblyNetworkFolderPath(
+    folderPath,
+    process.platform,
+  );
 
   watchers.add(
     filesystemWatch(folderPath, {
@@ -1897,7 +1914,9 @@ export async function watchFolder(folderPath: string) {
             isPossiblyNetwork: pathIsPossiblyNetwork,
           });
 
-          if (shouldIgnoreWatchFolderError(folderPath, e)) return;
+          if (shouldIgnoreWatchFolderError(folderPath, e, process.platform)) {
+            return;
+          }
           captureElectronError(error, context);
         } catch (err) {
           // Log the failure of the original try

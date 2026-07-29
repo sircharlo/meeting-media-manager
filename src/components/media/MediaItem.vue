@@ -20,7 +20,7 @@
     <div class="row full-width items-center justify-center">
       <div class="col-shrink">
         <div
-          class="q-pr-none rounded-borders overflow-hidden relative-position bg-black"
+          class="q-pr-none rounded-borders overflow-hidden relative-position bg-black media-thumbnail-frame"
           :style="{
             opacity: !fileIsAvailable && !streamIsAvailable ? 0.64 : undefined,
           }"
@@ -94,10 +94,12 @@
                     />
                     {{
                       customDurationIsSet
-                        ? formatTime(mediaCustomDuration.min ?? 0) + ' - '
+                        ? formatTime(appliedCustomDuration.min ?? 0) + ' - '
                         : ''
                     }}
-                    {{ formatTime(mediaCustomDuration.max ?? media.duration) }}
+                    {{
+                      formatTime(appliedCustomDuration.max ?? media.duration)
+                    }}
                     <q-tooltip :delay="500">
                       {{ t('set-custom-durations') }}
                     </q-tooltip>
@@ -258,10 +260,10 @@
               />
               {{
                 customDurationIsSet
-                  ? formatTime(mediaCustomDuration.min ?? 0) + ' - '
+                  ? formatTime(appliedCustomDuration.min ?? 0) + ' - '
                   : ''
               }}
-              {{ formatTime(mediaCustomDuration.max ?? media.duration) }}
+              {{ formatTime(appliedCustomDuration.max ?? media.duration) }}
               <q-tooltip :delay="500">
                 {{ t('set-custom-durations') }}
               </q-tooltip>
@@ -271,10 +273,13 @@
               :dialog-id="'media-duration-popup-' + props.media.uniqueId"
               persistent
             >
-              <q-card>
+              <q-card class="round-card">
                 <q-card-section
-                  class="row items-center text-bigger text-semibold q-pb-none"
+                  class="row items-center no-wrap text-bigger text-semibold text-primary q-pb-none"
                 >
+                  <div class="icon-chip q-mr-sm">
+                    <q-icon name="mmm-time" size="xs" />
+                  </div>
                   {{ t('set-custom-durations') }}
                 </q-card-section>
                 <q-card-section>
@@ -292,9 +297,10 @@
                     <div class="col-shrink q-pr-md time-duration">
                       <q-input
                         v-model="customDurationMinUserInput"
-                        class="text-center q-pa-none"
+                        class="bg-accent-100 text-center"
                         dense
-                        style="width: 3.5em"
+                        outlined
+                        style="width: 4.5em"
                         @update:model-value="
                           if ($event && media.duration) {
                             let val = Math.max(
@@ -306,18 +312,17 @@
                             );
                             if (val >= media.duration) val = 0;
                             customDurationMinUserInput = formatTime(val);
-                            mediaCustomDuration.min = val;
+                            draftCustomDuration.min = val;
                           }
                         "
                       />
                     </div>
                     <div class="col flex">
                       <q-range
-                        v-model="mediaCustomDuration"
+                        v-model="draftCustomDuration"
                         :max="media.duration"
                         :min="0"
                         :step="0.1"
-                        @change="updateMediaCustomDuration($event)"
                         @update:model-value="
                           customDurationMinUserInput = formatTime($event.min);
                           customDurationMaxUserInput = formatTime($event.max);
@@ -327,9 +332,10 @@
                     <div class="col-shrink q-pl-md time-duration">
                       <q-input
                         v-model="customDurationMaxUserInput"
-                        class="text-center q-pa-none"
+                        class="bg-accent-100 text-center"
                         dense
-                        style="width: 3.5em"
+                        outlined
+                        style="width: 4.5em"
                         @update:model-value="
                           if ($event && media.duration) {
                             let val = Math.max(
@@ -340,7 +346,7 @@
                               0,
                             );
                             customDurationMaxUserInput = formatTime(val);
-                            mediaCustomDuration.max = val;
+                            draftCustomDuration.max = val;
                           }
                         "
                       />
@@ -353,6 +359,11 @@
                     flat
                     :label="t('reset')"
                     @click="resetMediaDuration()"
+                  />
+                  <q-btn
+                    flat
+                    :label="t('cancel')"
+                    @click="cancelMediaDuration()"
                   />
                   <q-btn
                     color="primary"
@@ -411,6 +422,12 @@
               >
                 {{ tagValueText }}
               </div>
+              <q-icon
+                class="media-tag__edit-badge cursor-pointer"
+                name="mmm-edit"
+                size="10px"
+                @click="openEditTagDialog"
+              />
               <q-tooltip v-if="contentTagTooltipText" :delay="500">
                 {{ contentTagTooltipText }}
               </q-tooltip>
@@ -482,6 +499,7 @@
               </q-icon>
               <q-btn
                 ref="moreButton"
+                :aria-label="t('more-options')"
                 color="accent-400"
                 flat
                 icon="mmm-dots"
@@ -505,6 +523,7 @@
                   !fileIsAvailable &&
                   !streamIsAvailable
                 "
+                :aria-label="t('locate-missing-media')"
                 class="btn-tonal"
                 color="primary"
                 flat
@@ -575,7 +594,10 @@
               >
                 {{
                   formatTime(
-                    Math.max(mediaElapsed - (mediaCustomDuration.min || 0), 0),
+                    Math.max(
+                      mediaElapsed - (appliedCustomDuration.min || 0),
+                      0,
+                    ),
                   )
                 }}
               </div>
@@ -583,8 +605,8 @@
                 <q-slider
                   v-model="mediaElapsed"
                   color="primary"
-                  :inner-max="mediaCustomDuration.max"
-                  :inner-min="mediaCustomDuration.min"
+                  :inner-max="appliedCustomDuration.max"
+                  :inner-min="appliedCustomDuration.min"
                   inner-track-color="accent-400"
                   label
                   :label-color="
@@ -613,7 +635,7 @@
                   '-' +
                   formatTime(
                     Math.max(
-                      (mediaCustomDuration.max ||
+                      (appliedCustomDuration.max ||
                         media.duration ||
                         imageDuration) - mediaElapsed,
                       0,
@@ -1124,90 +1146,149 @@
     v-model="mediaEditTagDialog"
     :dialog-id="'media-edit-tag-dialog-' + props.media.uniqueId"
   >
-    <q-card class="modal-confirm">
+    <q-card class="modal-confirm round-card tag-edit-card">
+      <q-card-section
+        class="row items-center no-wrap text-bigger text-semibold text-primary q-pb-none"
+      >
+        <div class="icon-chip q-mr-sm">
+          <q-icon name="mmm-tag" size="xs" />
+        </div>
+        {{ t('change-tag') }}
+      </q-card-section>
       <q-card-section class="items-center">
-        <q-option-group
+        <q-btn-toggle
           v-model="mediaTag.type"
-          color="primary"
-          inline
-          name="tagType"
+          class="full-width q-mb-md tag-type-toggle"
           :options="tagTypes"
+          spread
+          toggle-color="primary"
+          unelevated
         />
-        <q-input
-          ref="tagValueInput"
-          v-model="mediaTag.value"
-          dense
-          :disable="!mediaTag.type"
-          outlined
-        />
+        <div class="row items-center no-wrap q-gutter-sm">
+          <div class="col text-smaller text-dark-grey">
+            {{
+              mediaTag.type
+                ? tagTypes.find((option) => option.value === mediaTag.type)
+                    ?.label
+                : ''
+            }}
+          </div>
+          <div class="text-smaller text-dark-grey text-center tag-preview-slot">
+            {{ t('preview') }}
+          </div>
+        </div>
+        <div class="row items-start no-wrap q-gutter-sm">
+          <q-input
+            ref="tagValueInput"
+            v-model="mediaTag.value"
+            class="col bg-accent-100 tag-value-input"
+            dense
+            :disable="!mediaTag.type"
+            outlined
+          />
+          <div class="tag-preview-slot">
+            <div
+              v-if="mediaTag.type && mediaTag.value"
+              class="media-tag"
+              :class="{ 'media-tag--song': mediaTag.type === 'song' }"
+            >
+              <div
+                class="media-tag__icon text-white"
+                :class="mediaTag.type === 'song' ? 'bg-accent-400' : undefined"
+                :style="
+                  mediaTag.type === 'paragraph' ? paragraphCapStyle : undefined
+                "
+              >
+                <q-icon
+                  :name="
+                    mediaTag.type === 'song'
+                      ? 'mmm-music-note'
+                      : 'mmm-paragraph'
+                  "
+                />
+              </div>
+              <div
+                class="media-tag__value"
+                :class="mediaTag.type === 'song' ? 'bg-accent-200' : undefined"
+                :style="
+                  mediaTag.type === 'paragraph' ? paragraphValueStyle : {}
+                "
+              >
+                {{ mediaTag.value }}
+              </div>
+            </div>
+            <div v-else class="media-tag-ghost" />
+          </div>
+        </div>
       </q-card-section>
       <q-card-actions align="right">
-        <q-btn
-          color="primary"
-          flat
-          :label="t('close')"
-          @click="mediaEditTagDialog = false"
-        />
+        <q-btn flat :label="t('cancel')" @click="cancelEditTag" />
+        <q-btn color="primary" flat :label="t('save')" @click="saveEditTag" />
       </q-card-actions>
     </q-card>
   </BaseDialog>
-  <BaseDialog
+  <ConfirmDialog
     v-model="mediaStopPending"
+    :confirm-label="t('stop')"
     :dialog-id="'media-stop-pending-' + props.media.uniqueId"
-  >
-    <q-card class="modal-confirm">
-      <q-card-section
-        class="row items-center text-bigger text-semibold text-negative q-pb-none"
-      >
-        <q-icon class="q-mr-sm" name="mmm-stop" />
-        {{ t('stop-media') }}
-      </q-card-section>
-      <q-card-section class="row items-center">
-        {{ t('sureStopVideo') }}
-      </q-card-section>
-      <q-card-actions align="right" class="text-primary">
-        <q-btn flat :label="t('cancel')" @click="mediaToStop = ''" />
-        <q-btn
-          ref="stopButton"
-          color="negative"
-          flat
-          :label="t('stop')"
-          @click="stopMedia()"
-        />
-      </q-card-actions>
-    </q-card>
-  </BaseDialog>
-  <BaseDialog
+    icon="mmm-stop"
+    :message="t('sureStopVideo')"
+    :title="t('stop-media')"
+    @cancel="mediaToStop = ''"
+    @confirm="stopMedia()"
+  />
+  <ConfirmDialog
     v-model="mediaDeletePending"
+    :confirm-label="t('delete')"
     :dialog-id="'media-delete-pending-' + props.media.uniqueId"
-  >
-    <q-card class="modal-confirm">
-      <q-card-section
-        class="row items-center text-bigger text-semibold text-negative q-pb-none"
-      >
-        <q-icon class="q-mr-sm" name="mmm-delete" />
-        {{ t('delete-media') }}
-      </q-card-section>
-      <q-card-section class="row items-center">
-        {{
-          t('are-you-sure-delete', {
-            mediaToDelete:
-              props.media.title ||
-              (props.media.fileUrl ? getBasename(props.media.fileUrl) : ''),
-          })
-        }}
-      </q-card-section>
-      <q-card-actions align="right" class="text-primary">
-        <q-btn flat :label="t('cancel')" @click="mediaToDelete = ''" />
-        <q-btn
-          color="negative"
-          flat
-          :label="t('delete')"
-          @click="deleteMedia()"
-        />
-      </q-card-actions>
-    </q-card>
-  </BaseDialog>
+    icon="mmm-delete"
+    :message="
+      t('are-you-sure-delete', {
+        mediaToDelete:
+          props.media.title ||
+          (props.media.fileUrl ? getBasename(props.media.fileUrl) : ''),
+      })
+    "
+    :title="t('delete-media')"
+    @cancel="mediaToDelete = ''"
+    @confirm="deleteMedia()"
+  />
+  <ConfirmDialog
+    v-model="replayMarkerConfirmPending"
+    :confirm-label="t('confirm')"
+    :dialog-id="'media-replay-marker-pending-' + props.media.uniqueId"
+    icon="mmm-play"
+    icon-color="primary"
+    :message="t('play-only-this-clip-question')"
+    :title="t('confirm')"
+    @cancel="pendingReplayMarker = null"
+    @confirm="confirmReplayMarker"
+  />
+  <ConfirmDialog
+    v-model="entireFileConfirmPending"
+    :confirm-label="t('play-entire-file')"
+    :dialog-id="'media-play-entire-file-pending-' + props.media.uniqueId"
+    icon="mmm-play"
+    icon-color="primary"
+    :message="t('entireFile-question')"
+    :title="t('confirm')"
+    @cancel="entireFileConfirmPending = false"
+    @confirm="confirmPlayEntireFile"
+  />
+  <ConfirmDialog
+    v-model="deleteSelectedMediaConfirmPending"
+    :confirm-label="t('delete')"
+    :dialog-id="'media-delete-selected-pending-' + props.media.uniqueId"
+    icon="mmm-delete"
+    :message="
+      t('delete-selected-media-confirmation', {
+        count: deletableSelectedMediaItems?.length || 0,
+      })
+    "
+    :title="t('confirm')"
+    @cancel="deleteSelectedMediaConfirmPending = false"
+    @confirm="doDeleteSelectedMedia"
+  />
 </template>
 
 <script setup lang="ts">
@@ -1224,12 +1305,13 @@ import {
   whenever,
 } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import { storeToRefs } from 'pinia';
 import { type QBtn, type QImg, type QInput, QItem, useQuasar } from 'quasar';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { FOOTNOTE_TARGET_PARAGRAPH } from 'src/constants/jw';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { getThumbnailUrl } from 'src/helpers/fs';
+import { getRendererPlatform, getThumbnailUrl } from 'src/helpers/fs';
 import {
   copyToDatedAdditionalMedia,
   createMediaItemFromPath,
@@ -1377,9 +1459,19 @@ const { currentSceneType, obsConnectionState } = storeToRefs(obsState);
 
 const mediaDurationPopup = ref(false);
 const mediaToStop = ref('');
-const mediaStopPending = computed(() => !!mediaToStop.value);
+const mediaStopPending = computed({
+  get: () => !!mediaToStop.value,
+  set: (value) => {
+    if (!value) mediaToStop.value = '';
+  },
+});
 const mediaToDelete = ref('');
-const mediaDeletePending = computed(() => !!mediaToDelete.value);
+const mediaDeletePending = computed({
+  get: () => !!mediaToDelete.value,
+  set: (value) => {
+    if (!value) mediaToDelete.value = '';
+  },
+});
 
 // Section repeat functionality
 const {
@@ -1606,16 +1698,42 @@ const openEditTagDialog = () => {
   mediaEditTagDialog.value = true;
 };
 
+// Explicit Save/Cancel (rather than applying edits live) so Cancel can
+// discard the in-progress draft: `mediaTag` only ever gets re-derived from
+// the item's actual saved tag when the dialog is opened
+// (openEditTagDialog above), so simply closing without emitting on Cancel
+// is enough to "revert" - next open starts fresh from the real saved value.
+const saveEditTag = () => {
+  emit('update:tag', {
+    type: mediaTag.value.type,
+    // Kept even when type is empty (tag switched to "None" and saved) -
+    // every read site (tagVariant, tagValueText, showContentTag, etc.)
+    // already gates on `type` first, so a value sitting unused alongside an
+    // empty type is inert. Keeping it means picking a type again later
+    // (here or on a future open) restores the last value typed instead of
+    // starting blank.
+    value: mediaTag.value.value,
+  });
+  mediaEditTagDialog.value = false;
+};
+
+const cancelEditTag = () => {
+  mediaEditTagDialog.value = false;
+};
+
 const tagTypes = [
   {
+    icon: 'mmm-clear',
     label: t('none'),
     value: '',
   },
   {
+    icon: 'mmm-music-note',
     label: t('song'),
     value: 'song',
   },
   {
+    icon: 'mmm-paragraph',
     label: t('paragraph'),
     value: 'paragraph',
   },
@@ -1785,7 +1903,7 @@ const updateMediaCustomDuration = (customDuration?: {
   min: number;
 }) => {
   emit('update:customDuration', JSON.stringify(customDuration || ''));
-  mediaCustomDuration.value = {
+  draftCustomDuration.value = {
     max: customDuration?.max ?? props.media.duration,
     min: customDuration?.min ?? 0,
   };
@@ -1800,7 +1918,19 @@ const customDurationIsSet = computed(() => {
   );
 });
 
-const mediaCustomDuration = ref({
+// The actually-applied trim range (badge text, live playback slider) -
+// sourced from the persisted prop, not the popup's in-progress draft below,
+// so editing (typing or dragging) doesn't visibly "live apply" anywhere
+// outside the popup before Save is clicked.
+const appliedCustomDuration = computed(() => ({
+  max: props.media.customDuration?.max ?? props.media.duration,
+  min: props.media.customDuration?.min ?? 0,
+}));
+
+// The duration popup's own working copy while it's open - only persisted
+// (via updateMediaCustomDuration, which emits update:customDuration) when
+// Save is clicked. Cancel just discards whatever's in here.
+const draftCustomDuration = ref({
   max: props.media.duration
     ? props.media.customDuration?.max || props.media.duration
     : undefined,
@@ -1808,11 +1938,11 @@ const mediaCustomDuration = ref({
 });
 
 const customDurationMinUserInput = ref(
-  formatTime(mediaCustomDuration.value.min),
+  formatTime(draftCustomDuration.value.min),
 );
 
 const customDurationMaxUserInput = ref(
-  formatTime(mediaCustomDuration.value.max),
+  formatTime(draftCustomDuration.value.max),
 );
 
 const getBasename = (fileUrl: string) => {
@@ -1846,7 +1976,9 @@ const fileIsLocal = async () => {
     if (localSize !== props.media.filesize) return false;
     return true;
   } catch (error) {
-    if (isExpectedNetworkPathAccessError(error, filePath)) {
+    if (
+      isExpectedNetworkPathAccessError(error, filePath, getRendererPlatform())
+    ) {
       notifyPathAccessWarning();
     } else {
       errorCatcher(error, {
@@ -2180,6 +2312,14 @@ const setRangeAndPlay = (min: number, max: number) => {
   endSelectedMarker.value = null;
 };
 
+const pendingReplayMarker = ref<null | VideoMarker>(null);
+const replayMarkerConfirmPending = computed({
+  get: () => !!pendingReplayMarker.value,
+  set: (value) => {
+    if (!value) pendingReplayMarker.value = null;
+  },
+});
+
 const playMarkerOnly = (marker: VideoMarker) => {
   const playMarker = () => {
     const { max, min } = getMarkerTimes(marker);
@@ -2190,27 +2330,27 @@ const playMarkerOnly = (marker: VideoMarker) => {
     playMarker();
     return;
   }
-  $q.dialog({
-    cancel: { label: t('cancel') },
-    message: t('play-only-this-clip-question'),
-    ok: { label: t('confirm') },
-    persistent: true,
-    title: t('confirm'),
-  }).onOk(() => {
-    playMarker();
-  });
+  pendingReplayMarker.value = marker;
 };
 
+const confirmReplayMarker = () => {
+  const marker = pendingReplayMarker.value;
+  pendingReplayMarker.value = null;
+  if (!marker) return;
+  const { max, min } = getMarkerTimes(marker);
+  setRangeAndPlay(min, max);
+  playedMarkerIds.value.add(marker.VideoMarkerId);
+};
+
+const entireFileConfirmPending = ref(false);
+
 const onPlayEntireFileClick = () => {
-  $q.dialog({
-    cancel: { label: t('cancel') },
-    message: t('entireFile-question'),
-    ok: { label: t('play-entire-file') },
-    persistent: true,
-    title: t('confirm'),
-  }).onOk(() => {
-    setMediaPlaying(props.media, true);
-  });
+  entireFileConfirmPending.value = true;
+};
+
+const confirmPlayEntireFile = () => {
+  entireFileConfirmPending.value = false;
+  setMediaPlaying(props.media, true);
 };
 
 const getMarkerDuration = (marker: VideoMarker) => {
@@ -2351,10 +2491,16 @@ async function findThumbnailUrl() {
 
 const showMediaDurationPopup = () => {
   try {
-    mediaCustomDuration.value = props.media.customDuration || {
+    draftCustomDuration.value = props.media.customDuration || {
       max: props.media.duration,
       min: 0,
     };
+    customDurationMinUserInput.value = formatTime(
+      draftCustomDuration.value.min,
+    );
+    customDurationMaxUserInput.value = formatTime(
+      draftCustomDuration.value.max,
+    );
     mediaDurationPopup.value = true;
   } catch (error) {
     errorCatcher(error);
@@ -2366,10 +2512,10 @@ const resetMediaDuration = () => {
     mediaDurationPopup.value = false;
     updateMediaCustomDuration();
     customDurationMinUserInput.value = formatTime(
-      mediaCustomDuration.value.min,
+      draftCustomDuration.value.min,
     );
     customDurationMaxUserInput.value = formatTime(
-      mediaCustomDuration.value.max,
+      draftCustomDuration.value.max,
     );
   } catch (error) {
     errorCatcher(error);
@@ -2378,10 +2524,27 @@ const resetMediaDuration = () => {
 
 const saveMediaDuration = () => {
   try {
+    // Neither dragging the range slider nor typing into the min/max fields
+    // persists on its own anymore (draftCustomDuration is popup-local) -
+    // Save is the only thing that actually applies whatever the draft
+    // currently holds, regardless of how it got there.
+    if (
+      draftCustomDuration.value.min !== undefined &&
+      draftCustomDuration.value.max !== undefined
+    ) {
+      updateMediaCustomDuration({
+        max: draftCustomDuration.value.max,
+        min: draftCustomDuration.value.min,
+      });
+    }
     mediaDurationPopup.value = false;
   } catch (error) {
     errorCatcher(error);
   }
+};
+
+const cancelMediaDuration = () => {
+  mediaDurationPopup.value = false;
 };
 
 const { post } = useBroadcastChannel<number, number>({ name: 'seek-to' });
@@ -2673,22 +2836,19 @@ function deleteMedia() {
   mediaToDelete.value = '';
 }
 
+const deleteSelectedMediaConfirmPending = ref(false);
+
 const confirmDeleteSelectedMedia = () => {
-  $q.dialog({
-    cancel: { label: t('cancel') },
-    message: t('delete-selected-media-confirmation', {
-      count: deletableSelectedMediaItems.value?.length || 0,
-    }),
-    ok: { color: 'negative', label: t('delete') },
-    persistent: true,
-    title: t('confirm'),
-  }).onOk(() => {
-    deleteMediaItems(
-      deletableSelectedMediaItems.value,
-      currentCongregation.value,
-      selectedDateObject.value,
-    );
-  });
+  deleteSelectedMediaConfirmPending.value = true;
+};
+
+const doDeleteSelectedMedia = () => {
+  deleteSelectedMediaConfirmPending.value = false;
+  deleteMediaItems(
+    deletableSelectedMediaItems.value,
+    currentCongregation.value,
+    selectedDateObject.value,
+  );
 };
 
 onMounted(async () => {
@@ -2938,31 +3098,17 @@ watch(
     nextTick(() => tagValueInput.value?.focus());
   },
 );
-
-// A tag with no type has no value either (the value field is disabled in
-// that state), so clearing the type should clear any leftover value text
-// rather than emitting a value the UI wouldn't otherwise show.
-watch(
-  () => mediaTag.value.type,
-  (type) => {
-    if (!type) mediaTag.value.value = '';
-  },
-);
-
-// Applies edits live as they're made - matching the title rename behavior -
-// instead of requiring an explicit Save. Guarded to the dialog being open so
-// the reset in openEditTagDialog() (which sets these to their current
-// saved values) never fires this from a false "change".
-watch(
-  () => [mediaTag.value.type, mediaTag.value.value] as const,
-  () => {
-    if (!mediaEditTagDialog.value) return;
-    emit('update:tag', mediaTag.value);
-  },
-);
 </script>
 
 <style lang="scss" scoped>
+// The tag-type toggle's 3 segments now each carry both an icon and a label,
+// spread to fill the card evenly - without a floor on the card's own width,
+// a longer-locale label (e.g. German "Absatz") has less room to breathe
+// before wrapping/crowding its segment.
+.tag-edit-card {
+  min-width: 320px;
+}
+
 .media-filter-filename-match {
   background: rgba(255, 235, 112, 0.2);
 }
@@ -2983,6 +3129,17 @@ watch(
   justify-content: center;
 }
 
+// A subtle diagonal wash instead of flat black - so the letterboxed edges
+// around a contained image/video, and the audio fallback's own background,
+// read as an intentional frame rather than a missing image.
+.media-thumbnail-frame {
+  background-image: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.6),
+    rgba(0, 0, 0, 0.8)
+  ) !important;
+}
+
 .media-item__time {
   font-variant-numeric: tabular-nums;
   min-width: 40px;
@@ -2992,7 +3149,7 @@ watch(
 :deep(.media-filter__highlight) {
   background: #ffeb70;
   border-radius: 3px;
-  color: inherit;
+  color: #1d1d1d;
   display: inline-block;
   padding: 0 0.08em;
 }

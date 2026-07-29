@@ -79,9 +79,14 @@ export const getCloudStorageProvider = (filePath: string) => {
 export const isCloudStoragePath = (filePath: string) =>
   !!getCloudStorageProvider(filePath);
 
+// `platform` has no default here on purpose: `process.platform` doesn't
+// exist in the renderer (no Node globals across Electron's contextBridge),
+// so a default that silently falls back to it would throw ReferenceError
+// for any renderer caller that forgets to pass it explicitly. Requiring the
+// argument turns that into a compile-time error instead.
 export const isPossiblyNetworkFolderPath = (
   folderPath: string,
-  platform: NodeJS.Platform = process.platform,
+  platform: NodeJS.Platform,
 ) => {
   const unixPath = normalizeFilesystemPath(folderPath);
   if (unixPath.startsWith('//')) return true;
@@ -103,7 +108,7 @@ export const isPossiblyNetworkFolderPath = (
 export const isExpectedNetworkPathAccessError = (
   error: unknown,
   path: string,
-  platform: NodeJS.Platform = process.platform,
+  platform: NodeJS.Platform,
 ) => {
   if (!isPossiblyNetworkFolderPath(path, platform)) return false;
 
@@ -114,7 +119,7 @@ export const isExpectedNetworkPathAccessError = (
 export const shouldIgnoreWatchFolderError = (
   folderPath: string,
   error: FilesystemErrorLike,
-  platform: NodeJS.Platform = process.platform,
+  platform: NodeJS.Platform,
 ) => {
   if (
     error.syscall === 'stat' &&

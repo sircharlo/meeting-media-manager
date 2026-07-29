@@ -19,6 +19,15 @@ import { isAudio, isImage, isVideo } from 'src/utils/media';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
+// Node's `process.platform` doesn't exist in the renderer - map Quasar's
+// Electron-provided OS detection to the same values so renderer code can
+// call the shared filesystem-error helpers in src/shared/filesystem-errors.
+export const getRendererPlatform = (): NodeJS.Platform => {
+  if (Platform.is.win) return 'win32';
+  if (Platform.is.mac) return 'darwin';
+  return 'linux';
+};
+
 let downloadFileIfNeededProvider:
   ((options: FileDownloader) => Promise<DownloadedFile>) | null = null;
 let getJwMediaInfoProvider:

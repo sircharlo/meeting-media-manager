@@ -44,6 +44,7 @@ import {
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { exportAllDays } from 'src/helpers/export-media';
 import {
+  getRendererPlatform,
   getSubtitlesUrl,
   getThumbnailUrl,
   registerMediaProviders,
@@ -460,7 +461,7 @@ const isJwpubFileUnavailableError = (error: unknown, jwpubPath: string) => {
   if (errorCode === 'ENOENT') return true;
   if (isCloudStorageReadError(error)) return true;
   return (
-    isPossiblyNetworkFolderPath(dirname(jwpubPath)) &&
+    isPossiblyNetworkFolderPath(dirname(jwpubPath), getRendererPlatform()) &&
     ['EINVAL', 'UNKNOWN'].includes(errorCode ?? '')
   );
 };
