@@ -534,7 +534,7 @@
   "pinyinSongFolder": "Carpeta de canciones de Pinyin",
   "pinyinSongFolder-explain": "Carpeta que contiene canciones de vídeo pinyin (por ejemplo, sjm_s-Pi_CHS_066_r720P.mp4). Cuando se encuentre un archivo pinyin que coincida con el número de la canción de la reunión, se reproducirá en su lugar.",
   "planned-start-time": "Hora de inicio planificada",
-  "play": "Jugar",
+  "play": "Reproducir",
   "play-entire-file": "Reproducir todo el archivo",
   "play-music": "Reproducir música",
   "play-only-this-clip": "Reproducir solo este clip",
