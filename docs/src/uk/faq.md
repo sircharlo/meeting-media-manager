@@ -81,8 +81,8 @@ You can import custom media in several ways:
 - **Drag and Drop**: Drag files directly into M³
 - **Folder Monitoring**: Set up a watched folder for automatic imports
 - **JWPUB Files and Playlists**: Import publications and playlists
-- **Публічні розмови Media**: Імпорт файлів S-34 або S-34mp JWPUB для публічних розмов
-- **Забіблійні інструменти та вивчення Біблії**: Додавання аудіо біблійних записів, вивчення Біблії або підписання мовних медіа
+- **Public Talk Media**: Import S-34 or S-34mp JWPUB files for public talk media
+- **Bible and Study Bible Tools**: Add audio Bible recordings, Study Bible media, or sign-language Bible media
 
 ### :speaker: Can I import audio Bible recordings? {#audio-bible}
 
@@ -128,9 +128,9 @@ Background music features include:
 
 ### :stopwatch: Does M³ include a meeting timer? {#faq-meeting-timer}
 
-Так. Коли увімкнено, M3 може показати окреме вікно таймера для учасників. Він може розраховуватися або зменшити, показ поточного разу на дозустріч, і необов’язково вказують на постійні чи попереду зустрічі або за графіком.
+Yes. When enabled, M³ can show a separate timer window for participant timing. It can count up or down, show the current time, show a pre-meeting countdown, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
 
-Таймер - це бета-функція і має бути ввімкнена лише при схваленні локально.
+The timer is a beta feature and should only be enabled if approved locally.
 
 ### :video_camera: How do I set up the Zoom integration? {#zoom-setup}
 
@@ -169,12 +169,12 @@ This feature delays sharing images to OBS until you manually trigger them. This 
 - Having more control over timing
 - Avoiding premature scene changes
 
-### :record_button: можуть записувати зустрічі M3? {#faq-recordings}
+### :record_button: Can M³ record meetings? {#faq-recordings}
 
-M3 не містить вбудованого рекордера, але може допомогти контролювати запис двома способами:
+M³ does not include a built-in recorder, but it can help control recording in two ways:
 
-- Якщо ви використовуєте OBS Studio, увімкніть OBS керування записами і зупиніть OBS запис з OBS виринаючого вікна
-- Якщо ви використовуєте інший додаток запису, налаштуйте комбінації клавіш так, щоб M3 могли надсилати команди запуску і зупинити виконання записів зустрічі
+- If you use OBS Studio, enable OBS recording controls and start or stop OBS recording from the OBS popup
+- If you use another recording app, configure keyboard shortcuts so M³ can send the start and stop commands from the meeting recordings popup
 
 ## Advanced Features {#faq-advanced-features}
 
@@ -203,7 +203,7 @@ Yes! M³ supports multiple profiles for:
 - Different groups
 - Separate settings and media for each
 
-Профілі також можна експортувати у файл JSON і імпортувати на інший комп'ютер або в інший профіль. Імпорт замінює параметри поточного профілю.
+Profiles can also be exported to a JSON file and imported on another computer or into another profile. Importing replaces the current profile's settings.
 
 ## Troubleshooting {#faq-troubleshooting}
 

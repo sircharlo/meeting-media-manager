@@ -1,39 +1,39 @@
 <!-- markdownlint-disable no-duplicate-heading -->
 
-# Újdonságok
+# What's New
 
-A verziók közötti változások teljes listáját megtalálja a GitHubon található CHANGELOG.md fájlban.
+For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
 
 ## v26.7.7
 
-### ✨ Új funkciók
+### ✨ New Features
 
 - ✨ **Media Preview Quality**: Media preview now renders video frames via canvas with high-quality downscaling, fixing jagged/blurry previews (especially on text-heavy content like songs). The preview also auto-disables itself if it has to repeatedly correct playback drift on a single video, with a one-click way to turn it back on.
 
 ## v26.7.6
 
-### ✨ Új funkciók
+### ✨ New Features
 
 - ✨ **CBS Video Exclusion**: Added a setting to exclude Congregation Bible Study videos from specific publications (defaults to the **Walk Courageously With God** book), with a searchable publication picker.
 - ✨ **Document Page Numbers**: Publication Media and JWPUB import listings now show each document's page number (or numbers when there are multiple pages) after its title. This can help you to quickly find specific media when you know the page number on which it is found.
 
 ## v26.7.4
 
-### ✨ Új funkciók
+### ✨ New Features
 
 - ✨ **Missing Media Recovery**: Media items whose local file went missing (e.g. deleted by the cache auto-clear, or removed manually) now show a disabled play button, a "missing" caption naming the file to look for, and a new "Locate file" action to relink the item to a file on disk.
 - ✨ **Compatibility Warning**: Added a dismissible banner warning users on soon-to-be-unsupported OS/architecture combos (macOS 12 Monterey and Windows 32-bit) to upgrade before future app updates require newer system support.
 
 ## v26.7.0
 
-### ✨ Új funkciók
+### ✨ New Features
 
 - ✨ **Linked Audio Playback**: Added support for playing audio from one file together with video from another file. This can be useful for playing video slideshows with accompanying music.
 - ✨ **Watched Media Layouts**: Added persistence for watched media items and section order across watched folders. This ensures that the media list is displayed the same way even when the watched folder is synced across devices.
 
 ## v26.6.1
 
-### ✨ Új funkciók
+### ✨ New Features
 
 - ✨ **Media Preview**: Added a live media preview overlay that can be toggled on or off from the settings or from the display popup.
 - ✨ **Search media**: Added a quick search box in the media list that allows you to quickly find media by title. To use it, simply use the standard keyboard shortcut for search (Ctrl+F or Cmd+F).
@@ -42,7 +42,7 @@ A verziók közötti változások teljes listáját megtalálja a GitHubon talá
 
 ## v26.6.0
 
-### ✨ Új funkciók
+### ✨ New Features
 
 - ✨ **Timer**: Added analog display modes and timing report status.
 - ✨ **Profiles**: Added profile settings import and export in Advanced settings and the Setup Wizard.
@@ -50,129 +50,129 @@ A verziók közötti változások teljes listáját megtalálja a GitHubon talá
 
 ## v26.5.0
 
-### ✨ Új funkciók
+### ✨ New Features
 
 - ✨ **PDF Import**: Added a new PDF import flow to the Publication Media dialog, allowing the PDF version of a publication to be automatically imported as individual images when desired.
 
 ## v26.4.8
 
-### ✨ Új funkciók
+### ✨ New Features
 
 - ✨ **JW Stream**: Added JW Stream to the list of websites that can be mirrored.
 
 ## v26.4.0
 
-### ✨ Új funkciók
+### ✨ New Features
 
-- ✨ **Összejövetel-időzítő**: Új összejövetel-időzítő funkció került bevezetésre. Ez opcionális funkció, amelyet szükség esetén a haladó beállítások között lehet engedélyezni. Az időzítő segítségével a technikus nyomon követheti az egyes összejöveteli szakaszokra fordított időt, illetve a jelenlegi összejöveteli szakaszra fordított időt egy olyan külön képernyőn jelenítheti meg, amelyet csak az előadó láthat.
+- ✨ **Meeting Timer**: A new meeting timer feature has been added. It is optional and can be enabled in the advanced settings, if desired. The timer can be used to allow the media operator to keep track of the time spent on meeting parts, or to display the time spent on the current meeting part on a dedicated screen visible only to the speaker.
 
 ## v26.3.0
 
-### ✨ Új funkciók
+### ✨ New Features
 
-- ✨ **Emlékünnepi Média**: Az Emlékünnepi Média automatikus letöltése kilépett a kísérleti fázisból! Az alkalmazás automatikusan letölti az Emlékünnepi Üdvözlő videót és a képet, amelyeket az Emlékünnepen kell megjeleníteni, ha a beállított nyelven elérhetők.
-- ✨ **Lejátszási sebesség**: Hozzáadtuk a lejátszási sebesség szabályozását vizuális jelzővel és kézi visszaállítási funkcióval. Ez a funkció csak akkor látható, ha a haladó beállításokban engedélyezve van.
-- ✨ **Pinyin-dalok**: Hozzáadtunk egy kapcsolót a pinyin-dalok beállításához a kínai nyelvű összejövetelek számára.
+- ✨ **Memorial Media**: Automatic Memorial media retrieval is now out of beta! The app will automatically download the Memorial Welcome Video and image to display during the Memorial, when available in the configured language.
+- ✨ **Playback Speed**: Added playback speed control with visual indicator, and manual reset. This feature is only visible if enabled in the advanced settings.
+- ✨ **Pinyin Songs**: Added a toggle for pinyin song substitution for meetings held in Chinese.
 
 ## v26.2.0
 
-### ✨ Új funkciók
+### ✨ New Features
 
-- ✨ **Lemezterület ellenőrzése**: Hozzáadtuk a funkciót, amely figyelemmel kíséri és értesít, ha a lemezterület szűkössé válik.
+- ✨ **Disk Space Check**: Added functionality to monitor and notify when disk space is low.
 
 ## v26.1.5
 
-### ✨ Új funkciók
+### ✨ New Features
 
-- ✨ **Emlékünnepi média**: Az emlékünnep dátumának kiválasztásakor automatikusan letölti az emlékünnepi borítóképet és a bemutató videót a támogatott nyelveken.
+- ✨ **Memorial Media**: Automatically fetch Memorial banner and intro video in supported languages when the Memorial date is selected.
 
 ## v26.1.0
 
-### ✨ Új funkciók
+### ✨ New Features
 
-- ✨ **Automatikus összejövetel-időpont szinkronizálás**: Hozzáadtuk azt a funkciót, hogy az összejövetelek dátumát és időpontját automatikusan szinkronizáljuk a hivatalos weboldallal. Ez a funkció alapértelmezés szerint engedélyezett, és a beállításokban manuálisan is be- vagy kikapcsolható.
-- ✨ **Jövőbeli időpontváltozások**: Az alkalmazás mostantól figyelembe veszi a jövőbeli időpontváltozásokat is, ha a gyülekezet létrehozásakor a weboldalon található keresőt használja, amennyiben az elérhető.
-- ✨ **Megosztott gyorsítótár az egész gépre kiterjedő telepítésekhez**: Az egész gépre kiterjedő telepítések mostantól alapértelmezés szerint egy közös mappát használnak, így optimalizálva a tárhely és a sávszélesség használatát ugyanazon a számítógépen több felhasználó számára.
+- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
+- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
+- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
 
 ## v25.12.2
 
-### ✨ Új funkciók
+### ✨ New Features
 
-- ✨ **Nagyítás/Pásztázás gombok**: Hozzáadott funkció: a nagyítás és a pásztázás gombok lenyomva tartásával folyamatosan állítható a kép.
+- ✨ **Zoom/Pan buttons**: Added the ability to press and hold zoom and pan buttons for continuous adjustment.
 
 ## v25.12.0
 
-### ✨ Új funkciók
+### ✨ New Features
 
-- ✨ **Többszörös kiválasztás környezeti menü**: Több médiaelem kiválasztása esetén a jobb egérgombbal elérhető menü műveletek támogatása hozzáadva.
-- ✨ **Billentyűparancsok**: Hozzáadva a `Ctrl/Cmd+A` billentyűkombináció az összes média kijelöléséhez, a `H` billentyű a kijelölt média elrejtéséhez, valamint a `Shift+Fel/Le` billentyűkombináció a billentyűzetes navigációhoz.
-- ✨ **Őrtorony Tanulmányozás Videó Beállítások**: Hozzáadtunk egy beállítást, amelynek segítségével kizárhatók a felesleges Őrtorony tanulmányozási videók.
-- ✨ **Összecsukható szakaszok**: Hozzáadtuk a lehetőséget, hogy összecsukhassuk a szakaszokat a nem összejöveteli napokon, így a nézet áttekinthetőbb lesz.
-- ✨ **JW Events weboldal**: Hozzáadottuk azt a lehetőséget, hogy a fő hivatalos weboldal mellett a JW Events weboldalt is meg lehessen jeleníteni.
-- ✨ **Lejátszási lista importálásának testreszabása**: Lehetővé vált a JW lejátszási listák importálásakor a médiaelemekhez hozzáadott előtag testreszabása.
-- ✨ **Weboldal tükrözés navigáció**: Hozzáadtunk egy kapcsolót, amely automatikusan a médiakönyvtárhoz navigál, miután a weboldal tükrözése leállt.
-- ✨ **OBS felvétel vezérlők**: Hozzáadva az OBS felvételek vezérlésének lehetősége.
-- ✨ **Éviszöveg előnézet**: Hozzáadottuk azt a lehetőséget, hogy minden év decemberétől előnézetben megtekinthető legyen a következő év éviszövege.
-- ✨ **Frissítési értesítések**: Hozzáadtunk figyelmeztető értesítéseket, ha béta verziót futtat, vagy ha a frissítések le vannak tiltva, és javítottuk a frissítések letöltési folyamatának megjelenítését.
-- ✨ **Hardveres gyorsítás beállítások**: Hozzáadtunk egy opciót, amellyel szükség esetén véglegesen letilthatja a hardveres gyorsítást.
+- ✨ **Multi-Select Context Menu**: Added support for right-click menu actions when multiple media items are selected.
+- ✨ **Keyboard Shortcuts**: Added `Ctrl/Cmd+A` to select all media, `H` to hide selected media, and `Shift+Up/Down` for keyboard selection navigation.
+- ✨ **Watchtower Study Video Settings**: Added a setting to exclude extra Watchtower study videos.
+- ✨ **Collapsible Sections**: Added ability to collapse sections on non-meeting days for a cleaner view.
+- ✨ **JW Events Website**: Added the ability to present the JW Events website in addition to the main official website.
+- ✨ **Playlist Import Customization**: Allowed ability to customize the prefix that is added to media items when importing JW playlists.
+- ✨ **Website Mirroring Navigation**: Added a toggle to automatically navigate to the media list after website mirroring is stopped.
+- ✨ **OBS Recording Controls**: Added the ability to control OBS recordings.
+- ✨ **Yeartext Preview**: Added the ability to preview next year's yeartext as of December of every year.
+- ✨ **Update Notifications**: Added warning notifications if running a beta version or if updates are disabled, and improved update download progress display.
+- ✨ **Hardware Acceleration Settings**: Added an option to permanently disable hardware acceleration if needed.
 
 ## v25.11.0
 
-### ✨ Új funkciók
+### ✨ New Features
 
-- ✨ **JWPUB média kiválasztás**: Hozzáadtunk egy lehetőséget, amellyel kiválaszthatók az egyes médiák a JWPUB fájlokból.
-- ✨ **Automatikus fókuszálás a médiaablakra**: Hozzáadtunk egy opcionális beállítást, amellyel a Zoom képernyőmegosztás után automatikusan a médiaablakra állítja a fókuszt.
-- ✨ **Képernyőn megjelenő kurzor**: Továbbfejlesztett weboldal-ablak kurzor, amely jobb láthatóságot biztosít az egérmutató számára a TV-képernyőn.
-- ✨ **Összejövetel rögzítése**: Új összejövetel rögzítési funkciót adtunk hozzá, amellyel külső rögzítő alkalmazások vezérelhetők.
-- ✨ **Webhelykeresés**: Hozzáadtunk egy intelligens keresőfunkciót, amellyel a webhelyen található médiatartalmakat és kiadványokat lehet keresni.
-- ✨ **Egyszerű kézi folyóirat importálás**: Hozzáadtunk egy funkciót, amellyel könnyedén importálhatók a JW.org webhelyről származó folyóiratok, például folyóiratok, könyvek, programfüzetek és meghívók.
-- ✨ **Jelnyelvi fejlesztések**: Hozzáadottuk a teljes fájlok lejátszása előtti megerősítést a jelnyelvek esetében, valamint megkönnyítettük az egynél több klip kiválasztását, például amikor több bekezdést kell egymás után felolvasni.
-- ✨ **Klip navigáció**: Hozzáadtuk a klipek listájához az időtartam megjelenítést és javítottuk a klip navigációt.
-- 🛠️ **Média megjelenítése**: Ha elindul a lejátszás, a média megjelenítése láthatóvá válik, még akkor is, ha korábban el volt rejtve.
+- ✨ **JWPUB Media Selection**: Added a way to select individual media from JWPUB files.
+- ✨ **Auto-Focus Media Window**: Added an optional setting to automatically focus the media window after Zoom screen sharing.
+- ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
+- ✨ **Meeting Recording**: Added a new meeting recording feature, to control an external recording app.
+- ✨ **Site Search**: Added ability to search for media or publications on the site using smart search.
+- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from JW.org, such as magazine, books, programs and invitations.
+- ✨ **Sign Language Improvements**: Added confirmation before playing entire files for sign languages and support for selecting multiple clips, such as for when multiple paragraphs are to be read consecutively.
+- ✨ **Clip Navigation**: Added duration display to clip list items and improved clip navigation.
+- 🛠️ **Media Display**: Ensured media display becomes visible when playback starts, even if it was hidden before.
 
 ## v25.10.1
 
-### ✨ Új funkciók
+### ✨ New Features
 
-- ✨ **Beállítási varázsló – Zoom lépés**: A beállítási varázslóba hozzáadtunk egy Zoom-integrációs lépést az egyszerűbb kezdeti konfigurálás érdekében.
-- ✨ **A képernyőválasztó fejlesztései**: A megjelenítő felugró ablakban pontos vizuális ábrázolást jelenít meg az összes képernyőről, valamint a főablak aktuális méretéről és elhelyezkedéséről. Így könnyebb kiválasztani azt a képernyőt, amelyen a médiaablakot meg kell jeleníteni.
-- ✨ **Médiaablak beállítás**: Az alkalmazás mostantól megjegyzi azt a képernyőt, amelyen a felhasználó a médiaablak megjelenítését preferálja.
+- ✨ **Setup Wizard – Zoom Step**: Added a Zoom integration step to the setup wizard for easier initial configuration.
+- ✨ **Screen Picker Enhancements**: Show an accurate visual representation of all screens, as well as the main window’s current size and location, in the display popup. This makes it easier to choose the correct screen on which the media window should be displayed.
+- ✨ **Media Window Preference**: The app will now remember the preferred screen on which the media window should be displayed, if specified by the user.
 
 ## v25.10.0
 
-### ✨ Új funkciók
+### ✨ New Features
 
-- ✨ **Lejátszás szüneteltetett állapotban történő indítása**: Új beállítást vezettünk be, amely lehetővé teszi a lejátszás szüneteltetett állapotban történő indítását. Ez hasznos lehet az AV-operátoroknak, hogy elvégezhessék a szükséges beállításokat (például elindítsák a Zoom-megosztást) még mielőtt a média elindulna a médiaablakban.
-- ✨ **Frissítési értesítések**: A felhasználók ezentúl az alkalmazáson belüli sávon keresztül kapnak értesítést a frissítésekről, amelyen keresztül a felhasználó azonnal telepítheti a frissítéseket, anélkül, hogy meg kellene várnia az alkalmazás következő újraindítását.
-- ✨ **Egyéni események**: Hozzáadtunk opcionális akciókat, amelyek billentyűparancsokat indíthatnak el, ha bizonyos események történnek. Ez hasznos lehet az AV-operátorok számára, hogy az alkalmazáson kívül is automatikusan végrehajthassanak műveleteket. Például a projektorral felszerelt előadótermekben az intelligens világítás be- és kikapcsolható a média lejátszása előtt és után; vagy egy Zoom-meetingen az összejövetel záró éneke után elindítható egy szkript, amely automatizálja a különböző műveleteket.
+- ✨ **Begin Playback Paused**: Added a new setting to allow playback to begin paused, which can be useful for AV operators to prepare their setup (such as starting Zoom sharing) before the media starts playing in the media window.
+- ✨ **Update Notifications**: Users will now be notified of updates through an in-app banner, which will also allow the user to install updates immediately, instead of waiting for the next app restart.
+- ✨ **Custom Events**: Added optional events hooks that can trigger keyboard shortcuts when certain events are detected. This can be useful for AV operators to execute actions automatically outside of the app. For example, smart lights could be turned on and off before and after media plays in auditoriums where projectors are used; or a script can be called after a meeting's last song has been played to automate various actions in a Zoom meeting.
 
 ## v25.9.1
 
-### ✨ Új funkciók
+### ✨ New Features
 
-- ✨ **A médiaablak „Mindig előtérben” és teljes képernyős viselkedése**: Javítottuk és továbbfejlesztettük a médiaablak „Mindig előtérben” viselkedését, amely most már a teljes képernyős állapotnak megfelelően dinamikusan alkalmazkodik.
-- ✨ **A dátum megjelenítési formátumának beállítása**: Hozzáadtunk egy felhasználói beállítást a dátum megjelenítési formátumának konfigurálásához.
-- ✨ **Média átmenetek**: A média megjelenítéséhez átmeneti effekteket vezettünk be a korábban alkalmazott, hirtelen fekete képernyőre váltás helyett.
-- ✨ **Zene automatikus leállítása**: Optimalizáltuk a háttérzene automatikus leállításának működését, így az mostantól függetlenül attól, hogy a zene automatikusan elindult-e vagy sem, ugyanúgy viselkedik
-- ✨ **Egérkattintás-átvitel inaktív ablakokban macOS esetén**: Engedélyeztük az egérkattintás-átvitelt a főablakban macOS rendszeren, ami megkönnyíti az alkalmazás vezérlését akkor is, ha az éppen nincs fókuszban.
+- ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
+- ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
+- ✨ **Media Crossfade**: Implemented crossfade transitions for media display, instead of the more abrupt fade-to-black transition that was present before.
+- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not
+- ✨ **macOS Click-Through on Inactive Windows**: Enabled mouse click passthrough on the main window for macOS, which should make it easier to control the app even when it's not focused.
 
 ## v25.9.0
 
-### ✨ Új funkciók
+### ✨ New Features
 
-- ✨ **A letöltési felugró ablak fejlesztései**: Hozzáadtunk egy frissítés gombot, valamint a letöltési felugró ablakban bevezettük a letöltések dátum szerinti csoportosítását.
-- ✨ **A megtekintett médiaelemek sorrendjének mentése**: Hozzáadottuk a megtekintett médiaelemek sorrendjének mentési funkcióját.
+- ✨ **Download Popup Enhancements**: Added refresh button and download grouping by date in the download popup.
+- ✨ **Watched Media Order Memory**: Added section order memory for watched media items.
 
 ## v25.8.3
 
-### ✨ Új funkciók
+### ✨ New Features
 
-- ✨ **A médiaablak elhalványuló átmenetei**: Új speciális beállítást vezettünk be, amely lehetővé teszi a médiaablak fokozatos megjelenését és eltűnését, így biztosítva a simább vizuális átmeneteket.
+- ✨ **Media Window Fade Transitions**: Added a new advanced setting to make the media window fade in and out, providing smoother visual transitions.
 - ✨ **Image Duration Control and Progress Tracking**: Added image duration control and progress tracking capabilities for repeated sections.
 
 ## v25.8.1
 
-### ✨ Új funkciók
+### ✨ New Features
 
 - ✨ **Custom Media Sections**: Complete system for creating, editing, and managing custom media sections with color customization and drag-and-drop reordering.
 - ✨ **Media Dividers**: Add titled dividers within media lists for better organization with top/bottom positioning options.
@@ -181,40 +181,40 @@ A verziók közötti változások teljes listáját megtalálja a GitHubon talá
 
 ## v25.7.0
 
-### ✨ Új funkciók
+### ✨ New Features
 
 - No new features for this release!
 
 ## 25.6.0
 
-### ✨ Új funkciók
+### ✨ New Features
 
 - ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
 - ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
 
 ## 25.5.0
 
-### ✨ Új funkciók
+### ✨ New Features
 
 - 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
 - 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
 
 ## 25.4.0
 
-### ✨ Új funkciók
+### ✨ New Features
 
 - 🇵🇭 **New Language: Tagalog**: Added support for Tagalog, expanding the app's multilingual capabilities.
 - 🎞 **Support for `.m4v` Video Format**: Now supports playback of `.m4v` files to improve media compatibility.
 
 ## 25.3.1
 
-### ✨ Új funkciók
+### ✨ New Features
 
 - 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
 
 ## 25.3.0
 
-### ✨ Új funkciók
+### ✨ New Features
 
 - 🎵 **Play Background Music with Videos**: Allow background music to continue playing while videos are being viewed.
 - 🎥 **Camera Feed for Sign Language Media**: Add the ability to display a camera feed on the media window specifically for sign language users.
@@ -223,14 +223,14 @@ A verziók közötti változások teljes listáját megtalálja a GitHubon talá
 
 ## 25.2.1
 
-### ✨ Új funkciók
+### ✨ New Features
 
 - 🔄 **Allow OBS Reconnection Attempts**: Introduce the possibility to manually force OBS to reconnect when needed.
 - 🗑 **Auto Cleanup Old Export Date Folders**: Automatically remove outdated export date folders to keep storage organized.
 
 ## 25.2.0
 
-### ✨ Új funkciók
+### ✨ New Features
 
 - 🌍 **Use System Locale by Default**: Automatically detect and use the system's locale for a more personalized experience.
 - 🏷 **Tag Support for Exported Media**: Add metadata tags to exported media files for better organization.
@@ -239,7 +239,7 @@ A verziók közötti változások teljes listáját megtalálja a GitHubon talá
 
 ## 25.1.0
 
-### ✨ Új funkciók
+### ✨ New Features
 
 - 📅 **Open Previous Dates**: Allow opening previous dates of the current week, which is useful when the meeting day is moved later in the week.
 - 🛑 **Error Banner for OBS Studio**: Add an error banner when OBS Studio is not connected on a meeting day, ensuring users are alerted.
@@ -249,7 +249,7 @@ A verziók közötti változások teljes listáját megtalálja a GitHubon talá
 
 ## 24.11.0
 
-### ✨ Új funkciók
+### ✨ New Features
 
 - **feat**: Presenting the website is now supported on macOS 🚀
 - **feat**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
@@ -259,7 +259,7 @@ A verziók közötti változások teljes listáját megtalálja a GitHubon talá
 
 ## 24.10.10
 
-### ✨ Új funkciók
+### ✨ New Features
 
 - **new**: Added keyboard shortcuts to navigate to the next/previous media item
 - **new**: Added a right-click menu to media items to hide media items and rename them
@@ -267,6 +267,6 @@ A verziók közötti változások teljes listáját megtalálja a GitHubon talá
 
 ## 24.10.9
 
-### ✨ Új funkciók
+### ✨ New Features
 
 - **feat**: Added an option to delete all extra media files for the currently selected day

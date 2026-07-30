@@ -54,7 +54,7 @@ Format used to display dates in the app.
 
 Automatically start M³ when the computer boots up.
 
-**기본값**: `false`
+**Default**: `false`
 
 ## Congregation Meetings {#congregation-meetings}
 
@@ -84,7 +84,7 @@ A secondary language to use when media isn't available in the primary language.
 
 **Options**: All available languages from the official website of Jehovah's Witnesses
 
-**기본값**: 없음
+**Default**: None
 
 ### Midweek Meeting Day {#midweek-meeting-day}
 
@@ -94,7 +94,7 @@ The day of the week when your midweek meeting is held.
 
 **Options**: Sunday through Saturday
 
-**기본값**: 없음 (must be set during setup)
+**Default**: None (must be set during setup)
 
 ### Midweek Meeting Time {#midweek-meeting-time}
 
@@ -104,7 +104,7 @@ The start time of your midweek meeting.
 
 **Format**: HH:MM (24-hour format)
 
-**기본값**: 없음 (must be set during setup)
+**Default**: None (must be set during setup)
 
 ### Weekend Meeting Day {#weekend-meeting-day}
 
@@ -114,7 +114,7 @@ The day of the week when your weekend meeting is held.
 
 **Options**: Sunday through Saturday
 
-**기본값**: 없음 (must be set during setup)
+**Default**: None (must be set during setup)
 
 ### Weekend Meeting Time {#weekend-meeting-time}
 
@@ -124,7 +124,7 @@ The start time of your weekend meeting.
 
 **Format**: HH:MM (24-hour format)
 
-**기본값**: 없음 (must be set during setup)
+**Default**: None (must be set during setup)
 
 ### Circuit Overseer Week {#circuit-overseer-week}
 
@@ -134,7 +134,7 @@ The week of the next circuit overseer's visit.
 
 **Format**: MM/DD/YYYY
 
-**기본값**: 없음
+**Default**: None
 
 ### Memorial Date {#memorial-date}
 
@@ -179,7 +179,7 @@ Manually synchronize the current and future meeting schedule with the informatio
 
 Enable this if you're on a limited data connection to reduce bandwidth usage.
 
-**기본값**: `false`
+**Default**: `false`
 
 ### Media Display {#media-display-button}
 
@@ -187,7 +187,7 @@ Enable this if you're on a limited data connection to reduce bandwidth usage.
 
 Enable the media display functionality. This is required to present media on a second monitor.
 
-**기본값**: `false`
+**Default**: `false`
 
 #### Enable Media Preview {#enable-media-preview}
 
@@ -203,7 +203,7 @@ Show a live preview of the media window while an image or video is being display
 
 Start videos in a paused state when playback begins.
 
-**기본값**: `false`
+**Default**: `false`
 
 ### Background Music {#settings-guide-background-music}
 
@@ -249,7 +249,7 @@ Volume level for background music (1-100%).
 
 Enable additional caching for better performance.
 
-**기본값**: `false`
+**Default**: `false`
 
 #### Cache Folder {#cache-folder}
 
@@ -275,7 +275,7 @@ Automatically clear old cached files to save disk space.
 
 Monitor a folder for new media files and automatically add them to M³.
 
-**기본값**: `false`
+**Default**: `false`
 
 #### Folder to Watch {#folder-to-watch}
 
@@ -285,61 +285,61 @@ The folder path to monitor for new media files.
 
 **Default**: Empty
 
-## 통합 {#integrations}
+## Integrations {#integrations}
 
 ### Zoom Integration {#settings-guide-zoom-integration}
 
-#### Zoom 활성화 {#enable-zoom}
+#### Enable Zoom {#enable-zoom}
 
 <!-- **Setting**: `zoomEnable` -->
 
-Zoom 집회 통합 기능을 활성화합니다.
+Enable Zoom meeting integration features.
 
-**기본값**: `false`
+**Default**: `false`
 
-#### 화면 공유 단축키 {#screen-share-shortcut}
+#### Screen Share Shortcut {#screen-share-shortcut}
 
 <!-- **Setting**: `zoomScreenShareShortcut` -->
 
-Zoom 화면 공유를 실행하는 키보드 단축키입니다.
+Keyboard shortcut to trigger Zoom screen sharing.
 
-**기본값**: 없음
+**Default**: None
 
 ### OBS Studio Integration {#settings-guide-obs-integration}
 
-#### OBS 활성화 {#enable-obs}
+#### Enable OBS {#enable-obs}
 
 <!-- **Setting**: `obsEnable` -->
 
-자동 장면 전환을 위해 OBS Studio 통합을 활성화합니다.
+Enable OBS Studio integration for automatic scene switching.
 
-**기본값**: `false`
+**Default**: `false`
 
-:::warning 중요한 참고 사항
+:::warning Important Note
 
-**오디오 구성 필요**: OBS Studio 통합은 화면 공유만 처리합니다. OBS Studio 사용 시 M³ 미디어의 오디오는 Zoom 참가자에게 **자동으로 전송되지 않습니다**. 집회 참석자가 오디오를 들을 수 있도록 Zoom의 원본 오디오 설정을 구성하거나 "컴퓨터 소리 공유"를 사용해야 합니다. 자세한 오디오 설정 지침은 [사용자 가이드](/user-guide#audio-configuration)를 참조하세요.
+**Audio Configuration Required**: The OBS Studio integration only handles screen sharing. Audio from M³ media is **not automatically transmitted** to Zoom participants when using OBS Studio. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
 
-**참고**: Zoom 통합은 Zoom 기본 화면 공유를 사용하므로 OBS Studio 통합보다 오디오 처리가 더 자연스럽습니다.
+**Note**: The Zoom integration uses Zoom's native screen sharing which handles audio more seamlessly than OBS Studio integration.
 
 :::
 
-#### OBS 포트 {#obs-port}
+#### OBS Port {#obs-port}
 
 <!-- **Setting**: `obsPort` -->
 
-OBS Studio WebSocket에 연결할 포트 번호입니다.
+The port number for connecting to OBS Studio WebSocket.
 
-**기본값**: 없음
+**Default**: None
 
-#### OBS 비밀번호 {#obs-password}
+#### OBS Password {#obs-password}
 
 <!-- **Setting**: `obsPassword` -->
 
-OBS Studio WebSocket 연결 비밀번호입니다.
+The password for OBS Studio WebSocket connection.
 
-**기본값**: 없음
+**Default**: None
 
-#### OBS 장면 {#obs-scenes}
+#### OBS Scenes {#obs-scenes}
 
 Configure which OBS scenes to use for different purposes:
 
@@ -347,32 +347,32 @@ Configure which OBS scenes to use for different purposes:
 - **Media Scene**: Scene for displaying media
 - **Image Scene**: Scene for displaying images (for example, a PIP scene showing both media and the speaker)
 
-#### 고급 OBS 옵션 {#obs-advanced-options}
+#### OBS Advanced Options {#obs-advanced-options}
 
 - **Postpone Images**: Delay sharing images to OBS until manually triggered
-- **빠른 전환**: OBS 통합을 빠르게 켜고 끄는 토글 활성화
-- **미디어 후 장면 전환**: 미디어 재생 후 이전 장면으로 자동 복귀
+- **Quick Toggle**: Enable quick on/off toggle for OBS integration
+- **Switch Scene After Media**: Automatically return to previous scene after media
 - **Remember Previous Scene**: Remember and restore the previous scene
 - **Hide Icons**: Hide OBS-related icons in the interface
 - **Recording Controls**: Show controls that start and stop OBS recording from M³
 
-:::warning 중요한 참고 사항
+:::warning Important Note
 
-**오디오 구성 필요**: OBS Studio 통합은 비디오/장면 전환만 처리합니다. M³ 미디어 오디오는 Zoom 또는 OBS로 **자동 전송되지 않습니다**. 비디오 스트림은 웹캠처럼 소리 없는 가상 카메라로 동작합니다. 집회 참석자가 오디오를 들을 수 있도록 Zoom의 원본 오디오 설정을 구성하거나 "컴퓨터 소리 공유"를 사용해야 합니다. 자세한 오디오 설정 지침은 [사용자 가이드](/user-guide#audio-configuration)를 참조하세요.
+**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
 
 **Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
 
 :::
 
-### 사용자 지정 이벤트 {#custom-events}
+### Custom Events {#custom-events}
 
-#### 사용자 지정 이벤트 활성화 {#enable-custom-events}
+#### Enable Custom Events {#enable-custom-events}
 
 <!-- **Setting**: `enableCustomEvents` -->
 
-특정 이벤트(예: 미디어 재생/일시정지/중지)가 감지되면 트리거되는 사용자 지정 단축키를 활성화합니다.
+Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
 
-**기본값**: `false`
+**Default**: `false`
 
 #### Custom Event Shortcuts {#custom-event-shortcuts}
 
@@ -382,7 +382,7 @@ Configure which OBS scenes to use for different purposes:
 
 Shortcut that is triggered when media is played.
 
-**기본값**: 없음
+**Default**: None
 
 ##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
 
@@ -390,7 +390,7 @@ Shortcut that is triggered when media is played.
 
 Shortcut that is triggered when media is paused.
 
-**기본값**: 없음
+**Default**: None
 
 ##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
 
@@ -398,7 +398,7 @@ Shortcut that is triggered when media is paused.
 
 Shortcut that is triggered when media is stopped.
 
-**기본값**: 없음
+**Default**: None
 
 ##### Last Song Shortcut {#custom-event-last-song-shortcut}
 
@@ -406,7 +406,7 @@ Shortcut that is triggered when media is stopped.
 
 Shortcut that is triggered when the last song is played during a meeting.
 
-**기본값**: 없음
+**Default**: None
 
 ### Meeting Recordings {#meeting-recordings}
 
@@ -418,7 +418,7 @@ Let M³ control a separate recording application with keyboard shortcuts. This d
 
 This option is hidden when OBS recording controls are enabled. If you use OBS Studio, use the OBS recording controls in the OBS integration instead.
 
-**기본값**: `false`
+**Default**: `false`
 
 #### Recording Shortcuts and Folder {#recording-shortcuts-and-folder}
 
@@ -434,7 +434,7 @@ Configure the keyboard shortcut that starts recording, the optional shortcut tha
 
 Enable a separate timer window for timing meeting parts. This is a beta feature and should only be enabled if approved locally.
 
-**기본값**: `false`
+**Default**: `false`
 
 #### Timer Window Behavior {#timer-window-behavior}
 
@@ -460,17 +460,17 @@ Show a countdown before scheduled meetings and optionally display whether the me
 
 Customize the timer text size and colors, and configure overtime indicators such as alternate colors, blinking, and showing only the elapsed overtime amount in count-up mode.
 
-## 고급 설정 {#advanced-settings}
+## Advanced Settings {#advanced-settings}
 
 ### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
 
-#### 키보드 단축키 활성화 {#enable-keyboard-shortcuts}
+#### Enable Keyboard Shortcuts {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
-미디어 제어용 사용자 지정 키보드 단축키를 활성화합니다.
+Enable customizable keyboard shortcuts for media control.
 
-**기본값**: `false`
+**Default**: `false`
 
 #### Media Control Shortcuts {#media-control-shortcuts}
 
@@ -485,11 +485,11 @@ Configure shortcuts for media playback:
 
 ### Media Display {#media-display}
 
-#### 미디어 창 페이드 전환 활성화 {#enable-media-window-fade-transitions}
+#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
-미디어 창을 표시하거나 숨길 때 페이드 인/아웃 전환을 활성화합니다.
+Enable fade-in/out transitions when showing or hiding the media window.
 
 **Default**: `true`
 
@@ -499,7 +499,7 @@ Configure shortcuts for media playback:
 
 Allow audio and video playback speed to be adjusted from the media item's context menu.
 
-**기본값**: `false`
+**Default**: `false`
 
 #### Hide Media Logo {#hide-media-logo}
 
@@ -507,7 +507,7 @@ Allow audio and video playback speed to be adjusted from the media item's contex
 
 Hide the logo in the media window.
 
-**기본값**: `false`
+**Default**: `false`
 
 #### Maximum Resolution {#maximum-resolution}
 
@@ -533,7 +533,7 @@ Include media from the printed publications in media downloads.
 
 Exclude footnote images from media downloads when possible.
 
-**기본값**: `false`
+**Default**: `false`
 
 #### Exclude Additional Watchtower Study Videos {#exclude-additional-watchtower-study-videos}
 
@@ -541,7 +541,7 @@ Exclude footnote images from media downloads when possible.
 
 Exclude additional videos that are referenced in Watchtower Study paragraphs.
 
-**기본값**: `false`
+**Default**: `false`
 
 #### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
 
@@ -551,15 +551,15 @@ Exclude media from the Teaching (th) brochure from media downloads.
 
 **Default**: `true`
 
-### 자막 {#subtitles}
+### Subtitles {#subtitles}
 
-#### 자막 활성화 {#enable-subtitles}
+#### Enable Subtitles {#enable-subtitles}
 
 <!-- **Setting**: `enableSubtitles` -->
 
-미디어 재생 시 자막 지원을 활성화합니다.
+Enable subtitle support for media playback.
 
-**기본값**: `false`
+**Default**: `false`
 
 #### Subtitle Language {#subtitle-language}
 
@@ -569,7 +569,7 @@ Language for subtitles (can be different from media language).
 
 **Options**: All available languages from the official website of Jehovah's Witnesses
 
-**기본값**: 없음
+**Default**: None
 
 ### Media Export {#settings-guide-media-export}
 
@@ -579,7 +579,7 @@ Language for subtitles (can be different from media language).
 
 Automatically export media files to a specified folder.
 
-**기본값**: `false`
+**Default**: `false`
 
 #### Media Export Folder {#media-export-folder}
 
@@ -591,11 +591,11 @@ Folder path where media files will be automatically exported.
 
 #### Convert Files to MP4 {#convert-files-to-mp4}
 
-**설정**: `convertFilesToMp4`
+**Setting**: `convertFilesToMp4`
 
 Convert exported media files to MP4 format for better compatibility.
 
-**기본값**: `false`
+**Default**: `false`
 
 ### Profile Settings Transfer {#profile-settings-transfer}
 
@@ -623,7 +623,7 @@ Base domain used to download publications and media.
 
 Disable hardware acceleration after restarting M³. This may help with graphical glitches or crashes on some systems, but is not otherwise recommended.
 
-**기본값**: `false`
+**Default**: `false`
 
 #### Suppress Hardware Acceleration Reminder {#suppress-hardware-acceleration-reminder}
 
@@ -631,7 +631,7 @@ Disable hardware acceleration after restarting M³. This may help with graphical
 
 Hide the reminder to re-enable hardware acceleration after it has been manually disabled.
 
-**기본값**: `false`
+**Default**: `false`
 
 #### Disable Media Fetching {#disable-media-fetching}
 
@@ -639,32 +639,32 @@ Hide the reminder to re-enable hardware acceleration after it has been manually 
 
 Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
 
-**기본값**: `false`
+**Default**: `false`
 
 ## Tips for Optimal Configuration {#configuration-tips}
 
-### 신규 사용자 {#new-users}
+### For New Users {#new-users}
 
 1. Start with the setup wizard to configure basic settings
-2. 프레젠테이션 기능을 사용하려면 "미디어 표시 버튼"을 활성화하세요
+2. Enable "Media Display Button" to access presentation features
 3. Configure your meeting schedule accurately
 4. Set up OBS integration if you use hybrid meetings
 
-### 고급 사용자 {#advanced-users}
+### For Advanced Users {#advanced-users}
 
 1. Use folder monitoring to sync media from cloud storage
-2. 백업 용도로 미디어 자동 내보내기를 활성화하세요
+2. Enable media auto-export for backup purposes
 3. Configure keyboard shortcuts for efficient operation
 4. Configure Zoom integration for automatic screen sharing
 
-### 성능 최적화 {#performance-optimization}
+### Performance Optimization {#performance-optimization}
 
-1. 더 나은 성능을 위해 추가 캐시를 활성화하세요
+1. Enable extra cache for better performance
 2. Use appropriate maximum resolution for your needs
 3. Configure cache auto-clear to manage disk space
 4. Consider metered connection setting if on limited bandwidth
 
-### 문제 해결 {#settings-guide-troubleshooting}
+### Troubleshooting {#settings-guide-troubleshooting}
 
 - If media isn't downloading, check your meeting schedule settings
 - If OBS integration isn't working, verify port and password settings

@@ -140,7 +140,7 @@ The week of the next circuit overseer's visit.
 
 <!-- **Setting**: `memorialDate` -->
 
-La fecha de la próxima celebración del Memorial.
+The date of the next Memorial celebration.
 
 **Format**: MM/DD/YYYY
 
@@ -157,19 +157,19 @@ These settings allow you to configure temporary changes to your meeting schedule
 - **New Weekend Day**: New day for weekend meeting
 - **New Weekend Time**: New time for weekend meeting
 
-### Actualizaciones del Horario de Reuniones Automáticas {#actualizaciones de reuniones automáticas-programadas} {#automatic-meeting-schedule-updates}
+### Automatic Meeting Schedule Updates {#automatic-meeting-schedule-updates}
 
 <!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
 
-Cuando está habilitado, M3 periódicamente comprueba el sitio web oficial de los Testigos de Jehová para los cambios de día y hora de la reunión y actualiza el perfil actual automáticamente.
+When enabled, M³ periodically checks the official website of Jehovah's Witnesses for meeting day and time changes and updates the current profile automatically.
 
-Esto sólo funciona para perfiles que fueron añadidos con la búsqueda de congestión y cuyo nombre de congestión no ha sido cambiado manualmente. Si la sincronización fue deshabilitada porque el nombre de la congestión cambió, utilice **Activar schedule sync** para vincular el perfil de nuevo.
+This only works for profiles that were added with congregation lookup and whose congregation name has not been manually changed. If synchronization was disabled because the congregation name changed, use **Enable schedule sync** to link the profile again.
 
-#### Actualizar el horario de reunión {#refresh-meeting-schedule}
+#### Refresh Meeting Schedule {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
-Sincronizar manualmente el calendario de reuniones actual y futuro con la información del sitio web oficial.
+Manually synchronize the current and future meeting schedule with the information from the official website.
 
 ## Media Retrieval and Playback {#media-retrieval-and-playback}
 
@@ -189,11 +189,11 @@ Enable the media display functionality. This is required to present media on a s
 
 **Default**: `false`
 
-#### Habilitar vista previa multimedia {#enable-media-preview}
+#### Enable Media Preview {#enable-media-preview}
 
 <!-- **Setting**: `enableMediaPreview` -->
 
-Mostrar una vista previa en vivo de la ventana de medios mientras se muestra una imagen o vídeo.
+Show a live preview of the media window while an image or video is being displayed.
 
 **Default**: `true`
 
@@ -354,7 +354,7 @@ Configure which OBS scenes to use for different purposes:
 - **Switch Scene After Media**: Automatically return to previous scene after media
 - **Remember Previous Scene**: Remember and restore the previous scene
 - **Hide Icons**: Hide OBS-related icons in the interface
-- **Control de grabación**: Muestra los controles que comienzan y detienen la grabación de OBS desde M3
+- **Recording Controls**: Show controls that start and stop OBS recording from M³
 
 :::warning Important Note
 
@@ -408,57 +408,57 @@ Shortcut that is triggered when the last song is played during a meeting.
 
 **Default**: None
 
-### Grabaciones de reunión {#grabaciones de reuniones} {#meeting-recordings}
+### Meeting Recordings {#meeting-recordings}
 
-#### Habilitar integración de la aplicación de grabación externa {#enable-external-recording-app-integration}
+#### Enable External Recording App Integration {#enable-external-recording-app-integration}
 
 <!-- **Setting**: `recordingEnable` -->
 
-Permite a M3 controlar una aplicación de grabación separada con atajos de teclado. Esto no graba dentro de M3; envía los accesos directos configurados cuando pulsa **Iniciar grabación** o **Detener grabación** en la ventana emergente de grabaciones de reuniones.
+Let M³ control a separate recording application with keyboard shortcuts. This does not record inside M³; it sends the configured shortcuts when you press **Start Recording** or **Stop Recording** in the meeting recordings popup.
 
-Esta opción se oculta cuando los controles de grabación OBS están habilitados. Si utiliza OBS Studio, utilice en su lugar los controles de grabación OBS en la integración OBS.
+This option is hidden when OBS recording controls are enabled. If you use OBS Studio, use the OBS recording controls in the OBS integration instead.
 
 **Default**: `false`
 
-#### Grabando accesos directos y carpeta {#grabación-accesos directos y carpeta} {#recording-shortcuts-and-folder}
+#### Recording Shortcuts and Folder {#recording-shortcuts-and-folder}
 
 <!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
 
-Configure el acceso directo del teclado que comienza a grabar, el acceso directo opcional que detiene la grabación y la carpeta donde la aplicación externa guarda grabaciones. Si no se proporciona un atajo de parada, M3 reutiliza el atajo de inicio. Cuando una carpeta está configurada, M3 muestra un botón para abrirla.
+Configure the keyboard shortcut that starts recording, the optional shortcut that stops recording, and the folder where the external app saves recordings. If no stop shortcut is provided, M³ reuses the start shortcut. When a folder is configured, M³ shows a button to open it.
 
-### Temporizador de reunión {#meeting-timer}
+### Meeting Timer {#meeting-timer}
 
-#### Activar temporizador de reunión {#enable-meeting-timer}
+#### Enable Meeting Timer {#enable-meeting-timer}
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
-Habilita una ventana de temporizador separada para las partes de la reunión. Esta es una característica beta y solo debería ser habilitada si se aprueba localmente.
+Enable a separate timer window for timing meeting parts. This is a beta feature and should only be enabled if approved locally.
 
 **Default**: `false`
 
-#### Comportamiento de ventana de temporizador {#timer-window-behavior}
+#### Timer Window Behavior {#timer-window-behavior}
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
-Configurar si la ventana del temporizador se abre automáticamente, si los temporizadores de los participantes cuentan hacia arriba o hacia abajo por defecto, si el reloj utiliza 12 horas o 24 horas, y si el valor actual del temporizador se muestra en el botón de acción del temporizador de la isla.
+Configure whether the timer window opens automatically, whether participant timers count up or down by default, whether the clock uses 12-hour or 24-hour time, and whether the current timer value is shown on the action island timer button.
 
-#### Formatos de visualización de temporizadores {#timer-display-formats}
+#### Timer Display Formats {#timer-display-formats}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
-Elija formatos de pantalla analógica o digital para la hora del día y los temporizadores de cuenta regresiva. El indicador de advertencia de cuenta regresiva puede desplazar el anillo de cuenta regresiva hacia un color de advertencia durante el minuto final.
+Choose analog or digital display formats for the time of day and countdown timers. The countdown warning indicator can shift the analog countdown ring toward a warning color during the final minute.
 
-#### Cuenta regresiva de reuniones y estado del horario {#reunión-cuenta regresiva y estado de programación} {#meeting-countdown-and-schedule-status}
+#### Meeting Countdown and Schedule Status {#meeting-countdown-and-schedule-status}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
-Mostrar una cuenta regresiva antes de las reuniones programadas y opcionalmente mostrar si la reunión está por delante o por detrás de lo programado. La cuenta regresiva de la reunión aparece sólo en la pantalla del temporizador, no en la pantalla principal de los medios.
+Show a countdown before scheduled meetings and optionally display whether the meeting is ahead of or behind schedule. The meeting countdown appears only on the timer display, not on the main media display.
 
-#### Temporizador Apariencia y Tiempo Extras: {#apariencia temporizador-y-overtime} {#timer-appearance-and-overtime}
+#### Timer Appearance and Overtime {#timer-appearance-and-overtime}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
-Personalizar el tamaño del texto del temporizador y los colores, y configurar indicadores extras como colores alternativos, parpadeando, y mostrando sólo la cantidad de horas extras en el modo contador.
+Customize the timer text size and colors, and configure overtime indicators such as alternate colors, blinking, and showing only the elapsed overtime amount in count-up mode.
 
 ## Advanced Settings {#advanced-settings}
 
@@ -493,11 +493,11 @@ Enable fade-in/out transitions when showing or hiding the media window.
 
 **Default**: `true`
 
-#### Habilitar control de velocidad de reproducción {#enable-playback-speed-control}
+#### Enable Playback Speed Control {#enable-playback-speed-control}
 
 <!-- **Setting**: `enablePlaybackSpeedControl` -->
 
-Permite ajustar la velocidad de reproducción de audio y vídeo desde el menú contextual del elemento multimedia.
+Allow audio and video playback speed to be adjusted from the media item's context menu.
 
 **Default**: `false`
 
@@ -515,7 +515,7 @@ Hide the logo in the media window.
 
 Maximum resolution for downloaded media files.
 
-**Opciones**: 240p, 360p, 480p, 720p, 1080p
+**Options**: 240p, 360p, 480p, 720p, 1080p
 
 **Default**: 720p
 
@@ -535,11 +535,11 @@ Exclude footnote images from media downloads when possible.
 
 **Default**: `false`
 
-#### Excluir videos adicionales de la torre de vigilancia {#exclude-additional-watchtower-study-videos}
+#### Exclude Additional Watchtower Study Videos {#exclude-additional-watchtower-study-videos}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 
-Excluir vídeos adicionales a los que se hace referencia en los párrafos de Watchtower Study.
+Exclude additional videos that are referenced in Watchtower Study paragraphs.
 
 **Default**: `false`
 
@@ -597,9 +597,9 @@ Convert exported media files to MP4 format for better compatibility.
 
 **Default**: `false`
 
-### Transferir ajustes del perfil {#profile-settings-transfer}
+### Profile Settings Transfer {#profile-settings-transfer}
 
-Exportar la configuración del perfil actual a un archivo JSON o importar un archivo de configuración de perfil previamente exportado. La importación reemplaza la configuración del perfil actual.
+Export the current profile's settings to a JSON file or import a previously exported profile settings file. Importing replaces the current profile's settings.
 
 ### Danger Zone {#danger-zone}
 
@@ -617,19 +617,19 @@ Base domain used to download publications and media.
 
 **Default**: `jw.org`
 
-#### Desactivar aceleración de hardware {#disable-hardware-acceleration}
+#### Disable Hardware Acceleration {#disable-hardware-acceleration}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
-Desactivar la aceleración de hardware después de reiniciar M3. Esto puede ayudar con errores gráficos o bloqueos en algunos sistemas, pero no es recomendable.
+Disable hardware acceleration after restarting M³. This may help with graphical glitches or crashes on some systems, but is not otherwise recommended.
 
 **Default**: `false`
 
-#### Suprimir Recordatorio de Aceleración de hardware {#suppress-hardware-acceleration-reminder}
+#### Suppress Hardware Acceleration Reminder {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
-Ocultar el recordatorio para volver a habilitar la aceleración de hardware después de que se ha desactivado manualmente.
+Hide the reminder to re-enable hardware acceleration after it has been manually disabled.
 
 **Default**: `false`
 

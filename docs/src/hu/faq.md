@@ -1,10 +1,10 @@
 # Gyakran Ismételt Kérdések {#frequently-asked-questions}
 
-## Általános kérdések {#general-questions}
+## General Questions {#general-questions}
 
-### :earth_americas: Függ-e ez az alkalmazás külső webhelyektől, forrásoktól vagy "kurátoroktól" a kiadványok, összejöveteli média vagy más tartalmak letöltéséhez? {#external-dependencies}
+### :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content? {#external-dependencies}
 
-**Nem.** Az alkalmazás hasonlóan működik, mint a JW Library. Közvetlenül a Jehova Tanúi hivatalos honlapjáról és annak tartalomszolgáltató hálózatáról tölti le a kiadványokat, médiát és egyéb tartalmakat. Az alkalmazás automatikusan meghatározza, hogy mit kell letölteni, és hogy a korábban letöltött tartalom már nem aktuális, ezért azt újra le kell tölteni.
+**No.** The app behaves similarly to JW Library. It downloads publications, media and other content directly from the official website of Jehovah's Witnesses and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
 
 :::info Megjegyzés
 
@@ -12,341 +12,341 @@ Az alkalmazás forráskódja mindenki számára elérhető, hogy megvizsgálja �
 
 :::
 
-### :thinking: Ez az alkalmazás sérti Jehova Tanúi hivatalos honlapjának felhasználási feltételeit? {#terms-of-use}
+### :thinking: Does this app infringe the Terms of Use of the official website of Jehovah's Witnesses? {#terms-of-use}
 
-**Nem.** Jehova Tanúi hivatalos weboldalának [felhasználási feltételei](https://www.jw.org/finder?docid=1011511&prefer=content) kifejezetten engedélyezik az általunk alkalmazott felhasználási módot. Íme a vonatkozó részlet az említett feltételekből (kiemelés hozzáadva):
+**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content) of the official website of Jehovah's Witnesses explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
 
 > Tilos:
 >
-> Terjesztési céllal olyan szoftveralkalmazást készíteni, eszközt vagy módszert alkalmazni, amelynek célja kifejezetten a honlapon található adatok, HTML-állományok, képek vagy szövegek gyűjtése, másolása, kinyerése, lehalászása vagy letapogatása. (Ez a tilalom **nem** vonatkozik azon ingyenes, nem kereskedelmi célú alkalmazások terjesztésére, melyek célja elektronikus fájlok [pl. EPUB, PDF, MP3 és MP4 fájlok] letöltése a honlap nyilvánosan elérhető részéről.)
+> Create for distribution purposes, any software applications, tools, or techniques that are specifically made to collect, copy, download, extract, harvest, or scrape data, HTML, images, or text from this site. (This does **not** prohibit the distribution of free, non-commercial applications designed to download electronic files such as EPUB, PDF, MP3, and MP4 files from public areas of this site.)
 
-### :question: Mely operációs rendszereket támogatja az M³? {#operating-systems}
+### :question: What operating systems does M³ support? {#operating-systems}
 
-Az M³ támogatja a Windows, macOS és Linux operációs rendszereket:
+M³ supports Windows, macOS, and Linux:
 
-- **Windows**: Windows 10 és újabb verziók (64 bites és 32 bites változatok elérhetők)
-- **macOS**: macOS 10.15 (Catalina) és újabb verziók (Univerzális kiadás)
-- **Linux**: A legtöbb modern Linux-disztribúció (AppImage formátum)
+- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
+- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
+- **Linux**: Most modern Linux distributions (AppImage format)
 
-### :globe_with_meridians: Az M³ az én nyelvemen is működik? {#language-support}
+### :globe_with_meridians: Does M³ work in my language? {#language-support}
 
-**Igen!** Az M³ átfogó többnyelvű támogatást nyújt:
+**Yes!** M³ provides comprehensive multi-language support:
 
-- **Média**: Több száz nyelven elérhető médiaanyagok letöltése Jehova tanúi hivatalos honlapjáról
-- **Alkalmazás felület**: Használja az M³ felületét számos különböző nyelven
-- **Független beállítások**: Az interfészt egy nyelven használhatja, miközben a médiát egy másik nyelven tölti le
-- **Tartalék nyelvek**: Konfigurálja a tartalék nyelveket arra az esetre, ha a média nem érhető el az elsődleges nyelven
-- **Felirat támogatás**: Feliratok letöltése és megjelenítése különböző nyelveken
+- **Media**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
+- **App Interface**: Use M³'s interface in many different languages
+- **Independent Settings**: You can use the interface in one language while downloading media in another
+- **Fallback languages**: Configure fallback languages for when media isn't available in the primary language
+- **Subtitle support**: Download and display subtitles in various languages
 
-## Telepítés és beállítás {#installation-setup}
+## Installation and Setup {#installation-setup}
 
-### :computer: Hogyan tölthetem le és telepíthetem az az M³ programot? {#installation}
+### :computer: How do I download and install M³? {#installation}
 
-Töltse le a megfelelő verziót a [Letöltési oldalról](download), és kövesse a [Felhasználói útmutatóban](user-guide) leírt lépéseket.
+Download the appropriate version from the [Download page](download) and follow the steps in the [User Guide](user-guide).
 
-### :gear: Hogyan állítsam be az M³-at az első alkalommal? {#first-time-setup}
+### :gear: How do I set up M³ for the first time? {#first-time-setup}
 
-Az M³ tartalmaz egy telepítő varázslót, amely végigvezeti Önt a legfontosabb beállításokon:
+M³ includes a setup wizard that guides you through the essential configuration:
 
-1. Válassza ki a felület nyelvét
-2. Válassza ki a profil típusát (Általános vagy Egyéb)
-3. Gyülekezeti információk konfigurálása
-4. Összejövetel ütemezésének beállítása
-5. Konfigurálja az opcionális funkciókat, például az OBS integrációt
+1. Choose your interface language
+2. Select profile type (Regular or Other)
+3. Configure congregation information
+4. Set up meeting schedule
+5. Configure optional features like OBS integration
 
-## Médiakezelés {#faq-media-management}
+## Media Management {#faq-media-management}
 
-### :desktop_computer: Hogyan tölti le az M³ a médiafájlokat? {#media-download}
+### :desktop_computer: How does M³ download media? {#media-download}
 
-Az M³ automatikusan letölti a közelgő összejövetelekhez tartozó médiát az alábbiak szerint:
+M³ automatically downloads media for upcoming meetings by:
 
-1. Ellenőrzi az összejövetelek ütemezését
-2. Meghatározza, hogy milyen médiaanyagokra van szükség
-3. Letölti Jehova Tanúi hivatalos weboldaláról a kiválasztott nyelven
-4. A média rendezése a dátum és az összejövetel típusa szerint
-5. Fájlok gyorsítótárazása offline használatra
+1. Checking your meeting schedule
+2. Determining what media is needed
+3. Downloading from the official website of Jehovah's Witnesses in your selected language
+4. Organizing media by date and meeting type
+5. Caching files for offline use
 
-### :calendar: Letölthetek médiafájlokat konkrét dátumokra? {#specific-dates}
+### :calendar: Can I download media for specific dates? {#specific-dates}
 
-Igen! Az M³ lehetővé teszi, hogy:
+Yes! M³ allows you to:
 
-- Letöltse a következő összejövetelek médiáját automatikusan
-- Saját fájlokat importáljon bármely időponthoz
+- Download media for upcoming meetings automatically
+- Import custom media for any date
 
-### :open_file_folder: Hogyan importálhatom a saját médiafájljaimat? {#import-media}
+### :open_file_folder: How do I import my own media files? {#import-media}
 
-Az egyéni médiát többféle módon importálhatja:
+You can import custom media in several ways:
 
-- **Fájl importálása**: Az importálás gombbal videókat, képeket vagy hangfájlokat adhat hozzá
-- **Fogd és vidd**: Húzza a fájlokat közvetlenül az M³-ba
-- **Mappafigyelés**: Állítson be egy figyelt mappát az automatikus importáláshoz
-- **JWPUB fájlok és lejátszási listák**: Kiadványok és lejátszási listák importálása
-- **Nyilvános előadásokhoz szükséges média**: S-34 vagy S-34mp JWPUB fájlok importálása a nyilvános előadásokhoz szükséges média számára
-- **A Biblia és a Tanulmányozási Biblia Segédeszközei**: Hozzáadhat Biblia-hangfelvételeket, a Tanulmányozási Biblia médiaelemeit, vagy jelnyelvű Biblia médiát
+- **File Import**: Use the import button to add videos, images, or audio files
+- **Drag and Drop**: Drag files directly into M³
+- **Folder Monitoring**: Set up a watched folder for automatic imports
+- **JWPUB Files and Playlists**: Import publications and playlists
+- **Public Talk Media**: Import S-34 or S-34mp JWPUB files for public talk media
+- **Bible and Study Bible Tools**: Add audio Bible recordings, Study Bible media, or sign-language Bible media
 
-### :speaker: Importálhatok hangfelvételeket a Bibliából? {#audio-bible}
+### :speaker: Can I import audio Bible recordings? {#audio-bible}
 
-Igen! Az M³ tartalmaz egy Hangos Biblia funkciót, amely lehetővé teszi, hogy:
+Yes! M³ includes an Audio Bible feature that allows you to:
 
-1. Kiválasszon bibliai könyveket és fejezeteket
-2. Kiválasszon konkrét verseket vagy szakaszokat
-3. Hangfelvételeket tölthet le
-4. Használhatja őket az összejöveteleken
+1. Select Bible books and chapters
+2. Choose specific verses or verse ranges
+3. Download audio recordings
+4. Use them at the meetings
 
-## Prezentációs funkciók {#faq-presentation-features}
+## Presentation Features {#faq-presentation-features}
 
-### :tv: Hogyan mutassam be a médiaanyagokat az összejöveteleken? {#present-media}
+### :tv: How do I present media during meetings? {#present-media}
 
-A média bemutatásához:
+To present media:
 
-1. Válassza ki a dátumot
-2. Kattintson a lejátszás gombra a bemutatni kívánt médiaelemnél, vagy használja a billentyűparancsokat
-3. A médialejátszó vezérlőivel szüneteltetheti a lejátszást, navigálhat vagy leállíthatja a lejátszást
-4. Használhatja a képek nagyítás/eltolás funkcióit
-5. Ha szükséges, beállíthat egyedi időzítést
+1. Select the date
+2. Click the play button on the media item you want to present or use keyboard shortcuts
+3. Use the media player controls to pause, navigate, or stop playback
+4. Use zoom/pan features for images
+5. Set custom timing if needed
 
-### :keyboard: Milyen billentyűparancsok állnak rendelkezésre? {#faq-keyboard-shortcuts}
+### :keyboard: What keyboard shortcuts are available? {#faq-keyboard-shortcuts}
 
-Az M³ testreszabható billentyűparancsokat támogat a következő funkciókhoz:
+M³ supports customizable keyboard shortcuts for:
 
-- Médiaablak megnyitása/bezárása
-- Előző/következő média navigáció
-- Lejátszás/szünet/leállítás vezérlők
-- Háttérzene be-/kikapcsolása
+- Opening/closing media window
+- Previous/next media navigation
+- Play/pause/stop controls
+- Background music toggle
 
 <!-- - Fullscreen mode -->
 
-### :notes: Hogyan működik a háttérzene? {#faq-background-music}
+### :notes: How does background music work? {#faq-background-music}
 
-A háttérzene funkciók a következők:
+Background music features include:
 
-- Automatikus lejátszás az M³ indításakor, az összejövetel kezdete előtt
-- Automatikus leállítás az összejövetel kezdete előtt
-- Egy kattintással újraindítható az összejövetel után
-- Független hangerő-szabályozás
-- Konfigurálható stop puffer idő
+- Automatic playback when M³ starts, before the meeting begins
+- Automatic stop before meetings begin
+- One-click restart after meetings
+- Independent volume control
+- Configurable stop buffer time
 
-### :stopwatch: Van az M³-ban időmérő? {#faq-meeting-timer}
+### :stopwatch: Does M³ include a meeting timer? {#faq-meeting-timer}
 
-Igen. Ha engedélyezve van, az M³ külön időmérő ablakot jeleníthet meg a résztvevők időméréséhez. Fel- vagy visszaszámolhat, megjelenítheti az aktuális időt, az összejövetel előtti visszaszámlálást, és opcionálisan jelezheti az időtúllépést, illetve azt, hogy az összejövetel milyen ütemben halad a tervhez képest.
+Yes. When enabled, M³ can show a separate timer window for participant timing. It can count up or down, show the current time, show a pre-meeting countdown, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
 
-Az időzítő egy bétafunkció, ezért csak akkor szabad engedélyezni, ha azt helyi szinten jóváhagyták.
+The timer is a beta feature and should only be enabled if approved locally.
 
-### :video_camera: Hogyan állíthatom be a Zoom integrációt? {#zoom-setup}
+### :video_camera: How do I set up the Zoom integration? {#zoom-setup}
 
-A Zoom integrációhoz:
+To integrate with Zoom:
 
-1. Engedélyezze a Zoom integrációt az M³ beállításaiban
-2. Konfigurálja a Zoomban beállított képernyőmegosztási gyorsbillentyűt. Győződjön meg arról, hogy a gyorsbillentyű a Zoom beállításaiban „global” beállítású.
-3. Az M³ automatikusan elindítja és leállítja a Zoom képernyőmegosztását a tartalom bemutatása során
+1. Enable Zoom integration in M³ settings
+2. Configure the screen sharing shortcut that is set up in Zoom. Ensure that shortcut is "global" in Zoom's settings.
+3. M³ will automatically start and stop Zoom screen sharing during media presentations
 
-## OBS Studio integráció {#faq-obs-integration}
+## OBS Studio Integration {#faq-obs-integration}
 
-### :video_camera: Hogyan állíthatom be az OBS Studio integrációt? {#faq-obs-setup}
+### :video_camera: How do I set up the OBS Studio integration? {#faq-obs-setup}
 
-Az OBS Studio-val történő integrációhoz:
+To integrate with OBS Studio:
 
-1. Telepítse az OBS Studiot és a WebSocket bővítményt
-2. Engedélyezze az OBS integrációt az M³ beállításaiban
-3. Írja be az OBS portot és a jelszót
-4. Konfigurálja a kamera, a média és a képek jeleneteit
-5. Tesztelje a lejátszást
+1. Install OBS Studio and the WebSocket plugin
+2. Enable OBS integration in M³ settings
+3. Enter the OBS port and password
+4. Configure scenes for camera, media, and images
+5. Test playback
 
-### :arrows_counterclockwise: Hogyan működik az automatikus jelenetváltás? {#faq-scene-switching}
+### :arrows_counterclockwise: How does automatic scene switching work? {#faq-scene-switching}
 
-Az M³ automatikusan vált OBS jelenetek között a következő alapon:
+M³ automatically switches OBS scenes based on:
 
-- Médiatípus (videó, kép stb.)
-- A jelenetek konfigurációja
-- Beállítások, mint például „Képek elhalasztása”
-- Egy média lejátszása után vissza kell-e térni az előző jelenethez
+- Media type (video, image, etc.)
+- Your scene configuration
+- Settings like "Postpone Images"
+- Whether to return to previous scene after media
 
-### :pause_button: Mi az a „Képek elhalasztása” funkció? {#faq-postpone-images}
+### :pause_button: What is the "Postpone Images" feature? {#faq-postpone-images}
 
-Ez a funkció késlelteti a képek továbbítását az OBS programba, amíg azokat manuálisan el nem indítja. Ez hasznos a következő esetekben:
+This feature delays sharing images to OBS until you manually trigger them. This is useful for:
 
-- Először a személyesen jelen lévő közönségnek kell megmutatni a képeket
-- Az időzítés jobb kontrollja
-- A korai jelenetváltások elkerülése
+- Showing images to in-person audience first
+- Having more control over timing
+- Avoiding premature scene changes
 
-### :record_button: Képes az M³ felvenni az összejöveteleket? {#faq-recordings}
+### :record_button: Can M³ record meetings? {#faq-recordings}
 
-Az M³ nem rendelkezik beépített felvevővel, de kétféle módon tudja segíteni a felvétel vezérlését:
+M³ does not include a built-in recorder, but it can help control recording in two ways:
 
-- Ha az OBS Studio programot használja, engedélyezze az OBS felvételi vezérlőelemeit, és az OBS felugró ablakából indítsa el vagy állítsa le az OBS felvételt
-- Ha másik felvételi alkalmazást használ, állítsa be a billentyűparancsokat úgy, hogy az M³ az összejövetel-felvételek párbeszédablakából küldhesse el a kezdés és leállítás parancsokat
+- If you use OBS Studio, enable OBS recording controls and start or stop OBS recording from the OBS popup
+- If you use another recording app, configure keyboard shortcuts so M³ can send the start and stop commands from the meeting recordings popup
 
-## Fejlett funkciók {#faq-advanced-features}
+## Advanced Features {#faq-advanced-features}
 
-### :cloud: Hogyan működik a mappák figyelése? {#faq-folder-monitoring}
+### :cloud: How does folder monitoring work? {#faq-folder-monitoring}
 
-A mappák figyelése lehetővé teszi a következőket:
+Folder monitoring allows you to:
 
-1. Válasszon ki egy mappát, amelyet figyelni szeretne
-2. Automatikusan importálja az új médiafájlokat, amelyek szinkronizálva vannak a Dropbox vagy OneDrive felhőtárhellyel
+1. Select a folder to watch for new files
+2. Automatically import new media files that are synced with cloud storage like Dropbox or OneDrive
 
-### :file_folder: Mi az automatikus médiaexportálás? {#faq-media-export}
+### :file_folder: What is media auto-export? {#faq-media-export}
 
-A média automatikus exportálása:
+Media auto-export automatically:
 
-1. A médiafájlokat egy megadott mappába exportálja
-2. A fájlokat dátum és szakasz szerint rendezi
-3. MP4 formátumba konvertálja a fájlokat (opcionális)
-4. Rendezett biztonsági másolatot készít az összejövetel médiafájljairól
+1. Exports media files to a specified folder
+2. Organizes files by date and section
+3. Converts files to MP4 format (optional)
+4. Maintains an organized backup of meeting media files
 
-### :family: Több gyülekezetet is lehet kezelni? {#faq-multiple-congregations}
+### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
 
-Igen! Az M³ több profilt támogat a következők számára:
+Yes! M³ supports multiple profiles for:
 
-- Különböző gyülekezetek
-- Különleges események
-- Különböző csoportok
-- Külön beállítások és média mindegyikhez
+- Different congregations
+- Special events
+- Different groups
+- Separate settings and media for each
 
-A profilokat JSON-fájlba is exportálhatjuk, majd egy másik számítógépre vagy egy másik profilba importálhatjuk. Az importálás felülírja az aktuális profil beállításait.
+Profiles can also be exported to a JSON file and imported on another computer or into another profile. Importing replaces the current profile's settings.
 
-## Hibaelhárítás {#faq-troubleshooting}
+## Troubleshooting {#faq-troubleshooting}
 
-### :warning: A média nem töltődik le. Mit kell ellenőriznem? {#faq-media-not-downloading}
+### :warning: Media isn't downloading. What should I check? {#faq-media-not-downloading}
 
-Ellenőrizze ezeket a gyakori problémákat:
+Check these common issues:
 
-1. **Összejövetelek ütemezése**: Ellenőrizze, hogy az összejövetelek napjai és időpontjai helyesek-e
-2. **Nyelvi beállítások**: Győződjön meg arról, hogy a média nyelve helyesen van beállítva
-3. **Internetkapcsolat**: Ellenőrizze az internetkapcsolatát
-4. **Nyelvi elérhetőség**: Ellenőrizze, hogy a média elérhető-e a kiválasztott nyelven
+1. **Meeting Schedule**: Verify your meeting days and times are correct
+2. **Language Settings**: Ensure your media language is set correctly
+3. **Internet Connection**: Check your internet connection
+4. **Language Availability**: Verify media is available in your selected language
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: Az OBS integráció nem működik. Mit kell ellenőriznem? {#faq-obs-not-working}
+### :video_camera: The OBS integration isn't working. What should I verify? {#faq-obs-not-working}
 
-Ellenőrizze ezeket az OBS-hez kapcsolódó problémákat:
+Check these OBS-related issues:
 
-1. **OBS telepítése**: Győződjön meg arról, hogy az OBS Studio telepítve van és fut
-2. **WebSocket plugin**: Ellenőrizze, hogy a WebSocket plugin telepítve van-e
-3. **Port és jelszó**: Ellenőrizze az OBS port és jelszó beállításait
-4. **Tűzfal**: Győződjön meg arról, hogy a tűzfal nem blokkolja a kapcsolatot
+1. **OBS Installation**: Ensure OBS Studio is installed and running
+2. **WebSocket Plugin**: Verify the WebSocket plugin is installed
+3. **Port and Password**: Check your OBS port and password settings
+4. **Firewall**: Ensure the firewall isn't blocking the connection
 
-### :speaker: Az OBS Studio használata esetén a Meeting Media Manager automatikusan továbbítja a média hangját a Zoomnak? {#audio-to-zoom}
+### :speaker: Does Meeting Media Manager automatically send the media audio to Zoom when using OBS Studio? {#audio-to-zoom}
 
-**Nem.** Az M³ nem továbbítja automatikusan a média hangját a Zoom vagy az OBS Studio programnak. A videó stream úgy működik, mint egy hang nélküli virtuális kamera, akárcsak egy webkamera. Ahhoz, hogy a zene/videó hangja automatikusan elérhető legyen a Zoomban, meg kell győződnie arról, hogy a Zoom „hallja” a számítógépről érkező audiojelet, majd engedélyeznie kell az **Original Audio** (Eredeti hang) beállítást a Zoomban.
+**No.** M³ does not automatically send media audio to Zoom or OBS Studio. The video stream works like a virtual camera with no sound, just like a webcam. To have the music/video sound available in Zoom automatically, you need to ensure that Zoom 'hears' the audio feed coming from the computer, and then you should enable the **Original Audio** setting in Zoom.
 
-**Fontos megjegyzések:**
+**Important Notes:**
 
-- A videokonferencia megkezdése előtt **minden alkalommal** engedélyeznie kell az eredeti hangot
-- Ez a beállítás nem kapcsolódik az M³-hoz – ugyanez a hangprobléma merülne fel bármely más médialejátszó használata esetén is, ha nem használná a Zoom képernyő- és hangmegosztási funkcióit
-- Az Eredeti hang beállításnak három albeállítása van – általában az első kettőt érdemes engedélyezni, a harmadikat pedig letiltani az optimális hangminőség érdekében
-- Ha továbbra is hangproblémák merülnek fel, akkor lehet, hogy a Zoom „Számítógép hangjának megosztása” opcióját kell használnia
-- Alternatív megoldásként fontolja meg a Zoom integráció használatát, mivel ez a Zoom natív képernyőmegosztását használja.
+- You must enable Original Audio **every time** before starting a Zoom meeting
+- This setting is not related to M³ - you would face the same audio issue when using any other media player and not using Zoom's screen and audio sharing features
+- The Original Audio setting has three sub-options - typically the first two should be enabled and the third disabled for optimal audio quality
+- If you're still experiencing audio issues, you may need to use Zoom's "Share Computer Sound" option instead
+- Alternatively, look into using the Zoom integration instead, as it uses Zoom's native screen sharing.
 
-**Miért van erre szükség?**
-Az M³ hanggal ellátott médiát játszik le a számítógépen, de ez az audio nem kerül automatikusan továbbításra a videó streamen keresztül a Zoomba, ha OBS Studio-t használ. Az Eredeti Hang beállítás lehetővé teszi a Zoom számára, hogy a képernyő megosztása közben rögzítse a számítógépen lejátszott hangot, ha a számítógép megfelelően van konfigurálva (például: a számítógép rendelkezik egy második hangkártyával, amelyet média lejátszáshoz használnak, és amelyet a Zoom mikrofonként érzékel).
+**Why is this necessary?**
+M³ plays media with sound on your computer, but this audio is not automatically transmitted through the video stream to Zoom when using OBS Studio. The Original Audio setting allows Zoom to capture the audio playing on your computer during screen sharing, if your computer is configured properly (for example: the computer has a second sound card that is used for media playback which Zoom listens to as a microphone.)
 
-### :snail: Az M³ lassan fut. Hogyan javíthatom a teljesítményt? {#performance-issues}
+### :snail: M³ is running slowly. How can I improve performance? {#performance-issues}
 
-Próbálja ki ezeket a megoldásokat:
+Try these performance optimizations:
 
-1. **Extra gyorsítótár engedélyezése**: Kapcsolja be a beállításokban a további gyorsítótárazást
-2. **Más alkalmazások bezárása**: Zárjon be minden felesleges alkalmazást
-3. **Ellenőrizze a lemezterületet**: Győződjön meg arról, hogy elegendő szabad lemezterület áll rendelkezésre
-4. **Felbontás csökkentése**: Csökkentse a maximális felbontás értékét
+1. **Enable Extra Cache**: Turn on additional caching in settings
+2. **Close Other Apps**: Close unnecessary applications
+3. **Check Disk Space**: Ensure you have sufficient free disk space
+4. **Reduce Resolution**: Lower the maximum resolution setting
 
-### :speech_balloon: Nyelvi problémáim vannak. Mit kell ellenőriznem? {#faq-language-issues}
+### :speech_balloon: I'm having language issues. What should I check? {#faq-language-issues}
 
-Ellenőrizze a következő nyelvi beállításokat:
+Verify these language settings:
 
-1. **Felület nyelve**: Ellenőrizze a megjelenítési nyelv beállításait
-2. **Média nyelv**: Ellenőrizze a média letöltésének nyelvét
-3. **Nyelvi elérhetőség**: Győződjön meg arról, hogy a média nyelve elérhető-e Jehova Tanúi hivatalos weboldalán
-4. **Tartalék nyelv**: Próbáljon meg beállítani egy tartalék nyelvet
+1. **Interface Language**: Check your display language setting
+2. **Media Language**: Verify your media download language
+3. **Language Availability**: Ensure the media language is available on the official website of Jehovah's Witnesses
+4. **Fallback Language**: Try setting a fallback language
 
-## Támogatás és közösség {#support-community}
+## Support and Community {#support-community}
 
-### :radioactive: Hogyan tudok problémát jelenteni? {#how-do-i-report-an-issue}
+### :radioactive: How do I report an issue? {#how-do-i-report-an-issue}
 
-Kérjük, [jelentse a problémát](https://github.com/sircharlo/meeting-media-manager/issues) a hivatalos GitHub-tárolóban. Az alábbiakat írja bele:
+Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository. Include:
 
-- A probléma részletes leírása
-- A probléma reprodukálásának lépései
-- Az operációs rendszer és az M³ verziója
-- Bármilyen hibaüzenet, naplófájl és képernyőkép
+- Detailed description of the problem
+- Steps to reproduce the issue
+- Your operating system and M³ version
+- Any error messages, logs and screenshots
 
-### :new: Hogyan kérhetek új funkciót vagy fejlesztést? {#how-can-i-request-a-new-feature-or-enhancement}
+### :new: How can I request a new feature or enhancement? {#how-can-i-request-a-new-feature-or-enhancement}
 
-Kérjük, [nyisson egy beszélgetést] (https://github.com/sircharlo/meeting-media-manager/discussions) a hivatalos GitHub-tárolóban. Írja le:
+Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository. Describe:
 
-- A funkció, amelyet szívesen látna
-- Milyen előnyökkel járna ez a felhasználók számára
-- Bármilyen speciális igény vagy elképzelés
+- The feature you'd like to see
+- How it would benefit users
+- Any specific requirements or preferences
 
-### :handshake: Hogyan tudok programkódot hozzáadni? {#how-can-i-contribute-some-code}
+### :handshake: How can I contribute some code? {#how-can-i-contribute-some-code}
 
-Kérjük, olvassa el a hivatalos GitHub-tárolóban található [hozzájárulási útmutatót](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md). Örömmel fogadjuk a kódhoz való hozzájárulásokat és a Pull Requesteket!
+Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository. We welcome code contributions and Pull Requests!
 
-### :globe_with_meridians: Hogyan segíthetek a fordítási munkákban? {#translations}
+### :globe_with_meridians: How can I help with translations? {#translations}
 
-Az M³ a Crowdin szolgáltatást használja a fordítások kezelésére. A fordításokhoz a következőképpen járulhat hozzá:
+M³ uses Crowdin for translation management. You can contribute translations by:
 
-1. A [Crowdin projekt](https://crowdin.com/project/meeting-media-manager) megtekintése
-2. A nyelv kiválasztása
-3. Fordításra szoruló szövegek
-4. A meglévő fordítások felülvizsgálata
+1. Visiting the [Crowdin project](https://crowdin.com/project/meeting-media-manager)
+2. Selecting your language
+3. Translating strings that need work
+4. Reviewing existing translations
 
-### :x: Adományozhatok a projektnek? {#can-i-make-a-donation-to-the-project}
+### :x: Can I make a donation to the project? {#can-i-make-a-donation-to-the-project}
 
-Köszönjük, hogy támogatni szeretné a projektet! Azonban Máté 10:8 szellemében adományokat **nem** fogadunk el, és soha nem is fogunk. Ez az alkalmazás szeretettel és egy kis szabadidővel készült. Kérjük élvezze! :tada:
+Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
 
-:::tip :book: Máté 10:8
+:::tip :book: Matthew 10:8
 
-"Ingyen kaptátok, ingyen adjátok!"
+"You received free, give free."
 
 :::
 
-## Műszaki kérdések {#technical-questions}
+## Technical Questions {#technical-questions}
 
-### :computer: Milyen hardver- és szoftverkövetelményei vannak az M³-nak? {#hardware-and-software-requirements}
+### :computer: What hardware and software requirements does M³ have? {#hardware-and-software-requirements}
 
-Az M³ úgy lett kialakítva, hogy számos operációs rendszeren működjön:
+M³ is designed to work on a wide range of operating systems:
 
-- **Windows**: Windows 10 és újabb verziók (64 bites és 32 bites változatok elérhetők)
-- **macOS**: macOS 10.15 (Catalina) és újabb verziók (Univerzális kiadás)
-- **Linux**: A legtöbb modern Linux-disztribúció (AppImage formátum)
+- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
+- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
+- **Linux**: Most modern Linux distributions (AppImage format)
 
-Az M³ hardverkövetelményei a következők:
+M³ has the following hardware requirements:
 
-- **Minimum**: 4 GB RAM, 6 GB szabad lemezterület
-- **Ajánlott**: 8 GB RAM, 15 GB szabad lemezterület a média gyorsítótárhoz
-- **Hálózat**: Internetkapcsolat a médiafájlok letöltéséhez
+- **Minimum**: 4GB RAM, 6GB free disk space
+- **Recommended**: 8GB RAM, 15GB free disk space for media caching
+- **Network**: Internet connection for media downloads
 
-A használt funkcióktól függően az M³ mellé további szoftverekre is szükség lehet:
+Depending on the features you use, M³ also requires the following additional software:
 
-- **Zoom**: Csak akkor szükséges, ha a Zoom integrációs funkciókat használja
-- **OBS Studio**: Csak akkor szükséges, ha az OBS integrációs funkciókat használja
+- **Zoom**: Required only if using Zoom integration features
+- **OBS Studio**: Required only if using OBS integration features
 
-### :floppy_disk: Mennyi lemezterületet használ az M³? {#disk-space}
+### :floppy_disk: How much disk space does M³ use? {#disk-space}
 
-A lemezterület használata a következőktől függ:
+Disk space usage depends on:
 
-- **Médiafelbontás**: A magasabb felbontás több helyet igényel
-- **Gyorsítótárban tárolt tartalom**: A médiafájlok helyileg gyorsítótárban vannak tárolva
-- **Extra gyorsítótár**: A további gyorsítótár használat növelheti a felhasználást
-- **Exportált média**: Az automatikus export funkciók további helyet igényelnek
+- **Media Resolution**: Higher resolutions use more space
+- **Cached Content**: Media files are cached locally
+- **Extra Cache**: Additional caching can increase usage
+- **Exported Media**: Auto-export features use additional space
 
-A tipikus felhasználás a beállításoktól és a használattól függően 2-10 Gb között mozog.
+Typical usage ranges from 2-10GB depending on settings and usage.
 
-### :shield: Az M³ biztonságos és megbízható? {#security-privacy}
+### :shield: Is M³ secure and private? {#security-privacy}
 
-Igen! Az M³ a biztonság és az adatvédelem jegyében lett kialakítva:
+Yes! M³ is designed with security and privacy in mind:
 
-- **Helyi tárolás**: Az összes összejöveteli adatot a számítógépén tárolja
-- **Közvetlen letöltések**: A média közvetlenül Jehova Tanúi hivatalos weboldaláról tölthető le
-- **Nyílt forráskód**: A kód nyílt, így ellenőrizhető és megtekinthető
-- **Hibabejelentések**: A hibabejelentések céljából korlátozott mennyiségű adat gyűjthető
+- **Local Storage**: All meeting data is stored locally on your computer
+- **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses
+- **Open Source**: The code is open for review and verification
+- **Bug Reports**: Limited data may be collected for bug reporting purposes
 
-### :arrows_clockwise: Milyen gyakran ellenőrzi az M³ a frissítéseket? {#update-frequency}
+### :arrows_clockwise: How often does M³ check for updates? {#update-frequency}
 
-Az M³ a következő frissítéseket keresi:
+M³ checks for updates:
 
-- **Alkalmazásfrissítések**: Az alkalmazás megnyitásakor automatikusan ellenőrzi az új verziók elérhetőségét
-- **Médiafrissítések**: Az alkalmazás megnyitásakor automatikusan ellenőrzi, hogy vannak-e új összejöveteli médiafájlok
-- **Nyelvi frissítések**: Új nyelvek dinamikus felismerése szükség szerint
+- **Application Updates**: Automatically checks for new versions every time the app is opened
+- **Media Updates**: Automatically checks for new meeting media every time the app is opened
+- **Language Updates**: Dynamic detection of new languages as needed
