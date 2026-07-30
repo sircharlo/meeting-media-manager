@@ -22,6 +22,7 @@ import {
   fetchJwLanguages,
   fetchLatestVersion,
   fetchMemorials,
+  fetchPubMediaLinks,
   fetchRaw,
   fetchYeartext,
 } from '../api';
@@ -326,5 +327,105 @@ describe('fetchMemorials', () => {
     const memorials = await fetchMemorials();
 
     expect(memorials).toBeNull();
+  });
+});
+
+describe('fetchPubMediaLinks docid/pub fallback', () => {
+  const pubMediaUrl = 'https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS';
+  const okBody = JSON.stringify({ files: { LSQ: { MP4: [] } } });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    clearFetchCache();
+  });
+
+  it('sends docid (and omits pub) when docid is present', async () => {
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(new Response(okBody, { status: 200 }));
+
+    await fetchPubMediaLinks(
+      {
+        docid: 2026403,
+        fileformat: 'MP4',
+        issue: 20260500,
+        langwritten: 'LSQ',
+        pub: 'w',
+        track: 4,
+      },
+      pubMediaUrl,
+    );
+
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    const requestedUrl = new URL(fetchSpy.mock.calls[0]?.[0] as string);
+    expect(requestedUrl.searchParams.get('docid')).toBe('2026403');
+    expect(requestedUrl.searchParams.get('pub')).toBe('');
+  });
+
+  it('falls back to pub/issue/track when the docid lookup 404s', async () => {
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(new Response(null, { status: 404 }))
+      .mockResolvedValueOnce(new Response(okBody, { status: 200 }));
+
+    const response = await fetchPubMediaLinks(
+      {
+        docid: 2026403,
+        fileformat: 'MP4',
+        issue: 20260500,
+        langwritten: 'LSQ',
+        pub: 'w',
+        track: 4,
+      },
+      pubMediaUrl,
+    );
+
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+
+    const firstUrl = new URL(fetchSpy.mock.calls[0]?.[0] as string);
+    expect(firstUrl.searchParams.get('docid')).toBe('2026403');
+    expect(firstUrl.searchParams.get('pub')).toBe('');
+
+    const secondUrl = new URL(fetchSpy.mock.calls[1]?.[0] as string);
+    expect(secondUrl.searchParams.get('docid')).toBe('');
+    expect(secondUrl.searchParams.get('pub')).toBe('w');
+    expect(secondUrl.searchParams.get('issue')).toBe('20260500');
+    expect(secondUrl.searchParams.get('track')).toBe('4');
+
+    expect(response).not.toBeNull();
+  });
+
+  it('does not retry when there is no pub to fall back to', async () => {
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(new Response(null, { status: 404 }));
+
+    const response = await fetchPubMediaLinks(
+      { docid: 2026403, fileformat: 'MP4', langwritten: 'LSQ' },
+      pubMediaUrl,
+    );
+
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(response).toBeNull();
+  });
+
+  it('does not retry when the docid lookup succeeds', async () => {
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(new Response(okBody, { status: 200 }));
+
+    await fetchPubMediaLinks(
+      {
+        docid: 2026403,
+        fileformat: 'MP4',
+        issue: 20260500,
+        langwritten: 'LSQ',
+        pub: 'w',
+        track: 4,
+      },
+      pubMediaUrl,
+    );
+
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 });
