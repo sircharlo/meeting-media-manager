@@ -42,7 +42,7 @@
         @keyup.esc="handleRename(false)"
       />
       <template v-else>
-        <div class="text-bold text-uppercase text-spaced row justify-between">
+        <div class="section-title row justify-between">
           {{
             !mediaList.config?.label &&
             (mediaList.config?.uniqueId === 'imported-media' ||
@@ -62,6 +62,7 @@
         <!-- Three-dots menu for other controls -->
         <template v-if="isCustom && !selectedDayMeetingType">
           <q-btn
+            :aria-label="t('more-options')"
             class="custom-text-color btn-tonal"
             flat
             icon="mmm-dots"
@@ -175,6 +176,7 @@
           "
         >
           <q-btn
+            :aria-label="t('stop-repeat-section')"
             color="positive"
             icon="mmm-repeat"
             round
@@ -190,6 +192,7 @@
         <!-- Add Media Button -->
         <template v-if="hasAddMediaButton">
           <q-btn
+            :aria-label="!buttonLabel ? tooltipText : undefined"
             class="add-media-shortcut btn-tonal"
             :class="!buttonLabel ? 'custom-text-color' : undefined"
             :color="
@@ -212,6 +215,7 @@
         <!-- Chevron for collapsing (non-meeting days only) -->
         <template v-if="canCollapse">
           <q-btn
+            :aria-label="collapsed ? t('expand') : t('collapse')"
             class="btn-tonal"
             color="primary"
             flat
@@ -423,9 +427,9 @@ defineExpose({
   border-radius: 4px;
 }
 
-// Sits below the (bold, uppercase) section title as a quieter second line,
-// so the specific document (e.g. this week's study article) reads as
-// detail rather than competing with the section name for attention.
+// Sits below the section title as a quieter second line, so the specific
+// document (e.g. this week's study article) reads as detail rather than
+// competing with the section name for attention.
 .section-subtitle {
   font-size: 0.8em;
   font-weight: 500;
@@ -434,4 +438,8 @@ defineExpose({
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+// .section-title lives in src/css/app.scss as a global utility - it's also
+// reused (unstyled here) by PresentWebsite.vue's section headers, which
+// share the same text-{id} convention.
 </style>

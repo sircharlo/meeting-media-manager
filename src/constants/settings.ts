@@ -693,7 +693,6 @@ export const settingsDefinitions: SettingsItems = {
   },
   enablePinyinSongs: {
     group: 'advanced',
-    hidden: true,
     type: 'toggle',
   },
   pinyinSongFolder: {

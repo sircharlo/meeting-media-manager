@@ -1,14 +1,20 @@
 <template>
   <BaseDialog v-model="dialogValue" :dialog-id="dialogId" persistent>
-    <q-card class="q-pa-md" style="min-width: 300px">
-      <q-card-section>
-        <div class="text-h6">{{ t('add-divider') }}</div>
+    <q-card class="round-card" style="min-width: 300px">
+      <q-card-section
+        class="row items-center no-wrap text-bigger text-semibold text-primary"
+      >
+        <div class="icon-chip q-mr-sm">
+          <q-icon name="mmm-minus" size="xs" />
+        </div>
+        {{ t('add-divider') }}
       </q-card-section>
 
-      <q-card-section>
+      <q-card-section class="q-pt-none">
         <q-input
           ref="dividerTitleInput"
           v-model="dividerTitle"
+          class="bg-accent-100"
           dense
           :label="t('optional-title')"
           outlined
@@ -17,20 +23,19 @@
         />
       </q-card-section>
 
-      <q-card-section>
+      <q-card-section class="q-pt-none">
         <div class="text-subtitle2 q-mb-sm">{{ t('position') }}:</div>
-        <q-btn-group spread>
-          <q-btn
-            :color="addToTop ? 'primary' : 'secondary'"
-            :label="t('top')"
-            @click="addToTop = true"
-          />
-          <q-btn
-            :color="!addToTop ? 'primary' : 'secondary'"
-            :label="t('bottom')"
-            @click="addToTop = false"
-          />
-        </q-btn-group>
+        <q-btn-toggle
+          v-model="addToTop"
+          class="full-width"
+          :options="[
+            { label: t('top'), value: true },
+            { label: t('bottom'), value: false },
+          ]"
+          spread
+          toggle-color="primary"
+          unelevated
+        />
       </q-card-section>
 
       <q-card-actions align="right">

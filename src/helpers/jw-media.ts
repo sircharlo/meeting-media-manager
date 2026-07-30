@@ -1873,10 +1873,19 @@ export const clearMeetingCheckStatusPruneTimers = () => {
 };
 
 export const fetchMedia = async () => {
+  // Set synchronously (before the first await) so anything reacting to it -
+  // e.g. MediaCalendarPage's error/missing-media notifications and the
+  // per-day skeleton - sees "a refresh just started" immediately, rather
+  // than for however long it takes this function to actually reach the
+  // point of updating each day's real status. Without this, switching
+  // congregations (or any other fetchMedia() trigger) has a window where
+  // stale leftover status from before the refresh is still all that's
+  // available, and gets shown as if it were current.
+  const currentStateStore = useCurrentStateStore();
+  currentStateStore.mediaRefreshPending = true;
   try {
     if (isDemoMode) return;
 
-    const currentStateStore = useCurrentStateStore();
     if (
       !currentStateStore.currentCongregation ||
       !!currentStateStore.currentSettings?.disableMediaFetching
@@ -1965,6 +1974,16 @@ export const fetchMedia = async () => {
       currentStateStore.meetingCheckStatus[formatDate(day.date, 'YYYYMMDD')] =
         'checking';
     });
+    // Every day's fate is now determined: candidates are flagged 'checking'
+    // above, everything else was left exactly as it was. From here on,
+    // per-day meetingCheckStatus is the authoritative signal - this global
+    // flag only needed to cover the gap before that determination existed.
+    // Clearing it now (rather than waiting for the whole queue below,
+    // including downloads, to finish) matters because a day not part of
+    // meetingsToFetch (e.g. one that already has valid media) would
+    // otherwise sit under a skeleton for however long the OTHER days in this
+    // batch take to download, despite its own status already being settled.
+    currentStateStore.mediaRefreshPending = false;
     if (queues.meetings[currentStateStore.currentCongregation]) {
       queues.meetings[currentStateStore.currentCongregation]?.start();
     } else {
@@ -2009,6 +2028,8 @@ export const fetchMedia = async () => {
   } catch (error) {
     log('❌ Error in fetchMedia:', 'mediaFetching', 'error');
     errorCatcher(error);
+  } finally {
+    currentStateStore.mediaRefreshPending = false;
   }
 };
 

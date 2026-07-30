@@ -2,10 +2,51 @@ import { defaultSettings } from 'src/constants/settings';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
+  backfillQuickStartTourSeen,
   deserializeCongregationSettings,
   serializeCongregationSettings,
   transformObsPasswords,
 } from '../congregation-settings';
+
+describe('backfillQuickStartTourSeen', () => {
+  it('marks a pre-existing congregation missing from quickStartTourSeen as seen', () => {
+    const result = backfillQuickStartTourSeen(
+      { abc: { ...defaultSettings } },
+      {},
+    );
+
+    expect(result.abc).toBe(true);
+  });
+
+  it('does not touch a congregation not present in congregations (e.g. created later in the same session, after hydrate already ran)', () => {
+    const quickStartTourSeen = {};
+
+    const result = backfillQuickStartTourSeen({}, quickStartTourSeen);
+
+    expect(result).toEqual({});
+  });
+
+  it('does not overwrite an existing entry, seen or unseen', () => {
+    const result = backfillQuickStartTourSeen(
+      { abc: { ...defaultSettings }, def: { ...defaultSettings } },
+      { abc: false, def: true },
+    );
+
+    expect(result.abc).toBe(false);
+    expect(result.def).toBe(true);
+  });
+
+  it('mutates and returns the same object that was passed in', () => {
+    const quickStartTourSeen = {};
+
+    const result = backfillQuickStartTourSeen(
+      { abc: { ...defaultSettings } },
+      quickStartTourSeen,
+    );
+
+    expect(result).toBe(quickStartTourSeen);
+  });
+});
 
 describe('transformObsPasswords', () => {
   it('runs the transform on congregations with a non-empty obsPassword', () => {
@@ -15,6 +56,7 @@ describe('transformObsPasswords', () => {
         abc: { ...defaultSettings, obsPassword: 'hunter2' },
         def: { ...defaultSettings, obsPassword: null },
       },
+      quickStartTourSeen: {},
     };
 
     const result = transformObsPasswords(state, (value) => `T(${value})`);
@@ -27,6 +69,7 @@ describe('transformObsPasswords', () => {
     const state = {
       announcements: {},
       congregations: { abc: { ...defaultSettings, obsPassword: 'hunter2' } },
+      quickStartTourSeen: {},
     };
 
     transformObsPasswords(state, (value) => `T(${value})`);
@@ -51,6 +94,7 @@ describe('serializeCongregationSettings / deserializeCongregationSettings', () =
     const state = {
       announcements: {},
       congregations: { abc: { ...defaultSettings, obsPassword: 'hunter2' } },
+      quickStartTourSeen: {},
     };
 
     const serialized = serializeCongregationSettings(state);
@@ -73,6 +117,7 @@ describe('serializeCongregationSettings / deserializeCongregationSettings', () =
     const state = {
       announcements: {},
       congregations: { abc: { ...defaultSettings, obsPassword: '' } },
+      quickStartTourSeen: {},
     };
 
     const serialized = serializeCongregationSettings(state);

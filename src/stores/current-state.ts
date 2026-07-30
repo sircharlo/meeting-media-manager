@@ -6,6 +6,7 @@ import type {
   MediaItem,
   MediaLink,
   MeetingCheckStatuses,
+  SettingsGroupKey,
   SettingsItem,
   SettingsItems,
   SettingsValues,
@@ -74,6 +75,15 @@ export interface Songbook {
 
 interface Store {
   autoReturnFromWebsite: boolean;
+  /**
+   * Whether the congregation switcher opened as part of the app's initial
+   * bootstrap (fresh launch, no congregation selected yet) rather than a
+   * manual reopen. Mirrors the old `/initial-congregation-selector` route's
+   * `isHomePage` distinction: only the bootstrap open auto-selects a lone
+   * existing congregation.
+   */
+  congregationSwitcherBootstrap: boolean;
+  congregationSwitcherOpen: boolean;
   currentCongregation: string;
   downloadProgress: DownloadProgressItems;
   extractedFiles: Partial<Record<string, string>>;
@@ -81,6 +91,7 @@ interface Store {
   lastCacheClearAt: number;
   lookupInProgress: boolean;
   mediaPlaying: MediaPlayingState;
+  mediaRefreshPending: boolean;
   mediaWindowCustomBackground: string;
   mediaWindowVisible: boolean;
   meetingCheckStatus: MeetingCheckStatuses;
@@ -89,6 +100,16 @@ interface Store {
   onlyShowInvalidSettings: boolean;
   pinyinActive: boolean;
   selectedDate: string;
+  /**
+   * Which Settings-page groups are expanded, per congregation profile.
+   * Deliberately session-only (not in this store's `persist.pick`
+   * allowlist below) - it only needs to survive navigating away from and
+   * back to the Settings page within a running session, not an app
+   * restart.
+   */
+  settingsExpansionState: Partial<
+    Record<string, Partial<Record<SettingsGroupKey, boolean>>>
+  >;
   timerWindowVisible: boolean;
   websiteSelection: JwSite;
 }
@@ -235,6 +256,10 @@ export const useCurrentStateStore = defineStore('current-state', {
 
       return false;
     },
+    openCongregationSwitcher(opts?: { isBootstrap?: boolean }) {
+      this.congregationSwitcherBootstrap = !!opts?.isBootstrap;
+      this.congregationSwitcherOpen = true;
+    },
     setCongregation: async function (value: number | string) {
       if (!value) return false;
 
@@ -242,6 +267,16 @@ export const useCurrentStateStore = defineStore('current-state', {
       cancelAllDownloads();
       this.downloadProgress = {};
       this.meetingCheckStatus = {};
+
+      // Set before currentCongregation changes below, so anything watching
+      // currentCongregation (e.g. MediaCalendarPage's error/missing-media
+      // notifications) already sees a refresh as pending on the very same
+      // reactive flush that the switch itself triggers - fetchMedia() (called
+      // separately, once the new congregation's page has settled) only
+      // reaches its own point of setting this moments later, which would
+      // otherwise leave a window where this flag still reads false and the
+      // previous congregation's stale leftover status gets shown as current.
+      this.mediaRefreshPending = true;
 
       // Dismiss all active notifications when changing congregation
       dismissAllTemporaryNotifications();
@@ -501,6 +536,8 @@ export const useCurrentStateStore = defineStore('current-state', {
   state: (): Store => {
     return {
       autoReturnFromWebsite: false,
+      congregationSwitcherBootstrap: false,
+      congregationSwitcherOpen: false,
       currentCongregation: '',
       downloadProgress: {},
       extractedFiles: {},
@@ -523,6 +560,7 @@ export const useCurrentStateStore = defineStore('current-state', {
         url: '',
         zoom: 1,
       },
+      mediaRefreshPending: false,
       mediaWindowCustomBackground: '',
       mediaWindowVisible: true,
       meetingCheckStatus: {},
@@ -531,6 +569,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       onlyShowInvalidSettings: false,
       pinyinActive: false,
       selectedDate: formatDate(new Date(), 'YYYY/MM/DD'),
+      settingsExpansionState: {},
       timerWindowVisible: false,
       websiteSelection: undefined,
     };

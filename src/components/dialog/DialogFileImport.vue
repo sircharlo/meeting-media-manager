@@ -13,7 +13,12 @@
       style="flex-flow: column"
     >
       <!-- {{ totalFiles || (!!jwpubDb && jwpubLoading) }} -->
-      <div class="text-h6 row q-px-md q-pt-lg q-pb-md">
+      <div
+        class="row items-center no-wrap text-bigger text-semibold text-primary q-px-md q-pt-lg q-pb-md"
+      >
+        <div class="icon-chip q-mr-sm">
+          <q-icon name="mmm-add-media" size="xs" />
+        </div>
         {{ jwpubTitle || t('add-extra-media') }}
       </div>
       <template v-if="jwpubDocuments?.length && !(!!jwpubDb && jwpubLoading)">
@@ -74,28 +79,35 @@
       </template>
       <template v-else>
         <div class="row q-px-md">
-          <p>{{ t('local-media-explain-1') }}</p>
-          <a>
-            {{ t('local-media-explain-2') }}
-            <q-tooltip>
-              <div class="row">
-                <strong>{{ t('images:') }}&nbsp;</strong>
-                {{ IMG_EXTENSIONS.sort().join(', ') }}
-              </div>
-              <div class="row">
-                <strong>{{ t('videos:') }}&nbsp;</strong>
-                {{ VIDEO_EXTENSIONS.sort().join(', ') }}
-              </div>
-              <div class="row">
-                <strong>{{ t('audio:') }}&nbsp;</strong>
-                {{ AUDIO_EXTENSIONS.sort().join(', ') }}
-              </div>
-              <div class="row">
-                <strong>{{ t('other:') }}&nbsp;</strong>
-                {{ OTHER_EXTENSIONS.sort().join(', ') }}
-              </div>
-            </q-tooltip>
-          </a>
+          <p>
+            {{ t('local-media-explain-1') }} {{ t('local-media-explain-2') }}
+            <q-icon
+              class="q-ml-xs cursor-pointer"
+              color="primary"
+              name="mmm-info"
+              size="xs"
+              tabindex="0"
+            >
+              <q-tooltip>
+                <div class="row">
+                  <strong>{{ t('images:') }}&nbsp;</strong>
+                  {{ IMG_EXTENSIONS.sort().join(', ') }}
+                </div>
+                <div class="row">
+                  <strong>{{ t('videos:') }}&nbsp;</strong>
+                  {{ VIDEO_EXTENSIONS.sort().join(', ') }}
+                </div>
+                <div class="row">
+                  <strong>{{ t('audio:') }}&nbsp;</strong>
+                  {{ AUDIO_EXTENSIONS.sort().join(', ') }}
+                </div>
+                <div class="row">
+                  <strong>{{ t('other:') }}&nbsp;</strong>
+                  {{ OTHER_EXTENSIONS.sort().join(', ') }}
+                </div>
+              </q-tooltip>
+            </q-icon>
+          </p>
         </div>
         <div class="row q-px-md q-pt-md">
           <div
@@ -145,12 +157,7 @@
         </div>
       </template>
       <div class="row q-px-md q-py-md justify-end">
-        <q-btn
-          color="negative"
-          flat
-          :label="t('cancel')"
-          @click="handleCancel"
-        />
+        <q-btn flat :label="t('cancel')" @click="handleCancel" />
       </div>
     </div>
   </BaseDialog>

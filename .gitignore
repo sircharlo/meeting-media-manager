@@ -4,6 +4,7 @@ node_modules
 
 # Personal local scratch files
 /qa-checklist.html
+/design-audit-notes.md
 
 # Quasar core related directories
 .quasar

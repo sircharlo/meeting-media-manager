@@ -26,10 +26,11 @@
           </template>
         </q-input>
         <q-btn
+          :aria-label="t('close')"
           color="primary"
           dense
           flat
-          icon="close"
+          icon="mmm-clear"
           round
           @click="closeSettingsFilter"
         >
@@ -115,7 +116,7 @@
               >
                 <q-separator class="bg-accent-200" spaced />
                 <q-item-label
-                  class="q-pl-xl q-ml-lg text-accent-400 text-uppercase"
+                  class="q-pl-xl q-ml-lg text-dark-grey settings-subgroup-label"
                   header
                 >
                   {{ t(item.subgroup) }}
@@ -156,7 +157,7 @@
                       </mark>
                       <span v-else>{{ part.text }}</span>
                     </template>
-                    <q-badge v-if="item.beta" align="top">
+                    <q-badge v-if="item.beta" align="top" class="q-ml-sm">
                       <q-tooltip>{{ t('beta-tooltip') }}</q-tooltip>
                       {{ t('beta') }}
                     </q-badge>
@@ -332,8 +333,14 @@ useEventListener(globalThis, 'toggleSettingsFilter', toggleSettingsFilter);
 
 // Store initializations
 const currentState = useCurrentStateStore();
-const { currentLangObject, currentSettings, online, onlyShowInvalidSettings } =
-  storeToRefs(currentState);
+const {
+  currentCongregation,
+  currentLangObject,
+  currentSettings,
+  online,
+  onlyShowInvalidSettings,
+  settingsExpansionState,
+} = storeToRefs(currentState);
 const { getInvalidSettings } = currentState;
 
 const jwStore = useJwStore();
@@ -344,7 +351,6 @@ const obsState = useObsStateStore();
 const { scenes } = storeToRefs(obsState);
 
 // Ref and reactive initializations
-const expansionState = ref<Partial<Record<SettingsGroupKey, boolean>>>({});
 const settingsFormDynamic = useTemplateRef<QForm>('settingsFormDynamic');
 const settingsValid = ref(true);
 
@@ -403,12 +409,17 @@ const hasVisibleSettings = (groupId: SettingsGroupKey): boolean => {
 };
 
 const isGroupExpanded = (groupId: SettingsGroupKey): boolean => {
-  return !!normalizedSettingsFilter.value || !!expansionState.value[groupId];
+  return (
+    !!normalizedSettingsFilter.value ||
+    !!settingsExpansionState.value[currentCongregation.value]?.[groupId]
+  );
 };
 
 const updateGroupExpansion = (groupId: SettingsGroupKey, expanded: boolean) => {
-  if (normalizedSettingsFilter.value) return;
-  expansionState.value[groupId] = expanded;
+  if (normalizedSettingsFilter.value || !currentCongregation.value) return;
+  const congId = currentCongregation.value;
+  const group = (settingsExpansionState.value[congId] ??= {});
+  group[groupId] = expanded;
 };
 
 // Helper method to check if this is the first item in a subgroup
@@ -587,7 +598,11 @@ const validateSettingsLocal = () => {
         });
     }
     for (const invalidSetting of getInvalidSettings()) {
-      expansionState.value[settingsDefinitions[invalidSetting].group] = true;
+      if (currentCongregation.value) {
+        (settingsExpansionState.value[currentCongregation.value] ??= {})[
+          settingsDefinitions[invalidSetting].group
+        ] = true;
+      }
     }
   } catch (error) {
     errorCatcher(error);
@@ -671,7 +686,11 @@ onMounted(() => {
 whenever(
   settingParam,
   (setting) => {
-    expansionState.value[settingsDefinitions[setting].group] = true;
+    if (currentCongregation.value) {
+      (settingsExpansionState.value[currentCongregation.value] ??= {})[
+        settingsDefinitions[setting].group
+      ] = true;
+    }
     setTimeout(() => {
       if (!setting) return;
       const el = document.getElementById(setting);
@@ -697,6 +716,15 @@ watch(
 </script>
 
 <style scoped>
+/* Normal-case, medium-weight in place of the old all-caps treatment - the
+   group header above it (icon + label) already reads as the primary
+   heading, so this subgroup label just needs enough weight to separate
+   from the setting rows below it, not full shouting caps. */
+.settings-subgroup-label {
+  font-weight: 650;
+  letter-spacing: 0.02em;
+}
+
 .settings-filter-overlay {
   border-radius: 0 0 8px 8px;
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
@@ -744,7 +772,7 @@ body.body--dark
   animation: settings-filter-bounce 320ms ease;
   background: #ffeb70;
   border-radius: 3px;
-  color: inherit;
+  color: #1d1d1d;
   display: inline-block;
   padding: 0 0.08em;
 }

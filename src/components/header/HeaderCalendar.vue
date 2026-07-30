@@ -52,7 +52,11 @@
     <q-tooltip v-if="!$q.screen.gt.sm" :delay="1000">
       {{ t('extra-media') }}
     </q-tooltip>
-    <q-menu ref="importMenu" :offset="[0, 11]">
+    <q-menu
+      ref="importMenu"
+      :offset="[0, 11]"
+      @before-show="handleImportMenuBeforeShow"
+    >
       <q-list class="list-primary">
         <q-item-label header>{{ t('from-jw-org') }}</q-item-label>
         <q-item
@@ -61,7 +65,6 @@
           :disable="!online"
           @click="
             () => {
-              clearSection();
               openSongPicker(section);
             }
           "
@@ -80,7 +83,6 @@
           :disable="!online"
           @click="
             () => {
-              clearSection();
               openRemoteVideo();
             }
           "
@@ -101,7 +103,6 @@
           :disable="!online"
           @click="
             () => {
-              clearSection();
               openPublicationMedia();
             }
           "
@@ -122,7 +123,6 @@
           :disable="!online"
           @click="
             () => {
-              clearSection();
               openStudyBible();
             }
           "
@@ -141,7 +141,6 @@
           :disable="!online"
           @click="
             () => {
-              clearSection();
               openBible();
             }
           "
@@ -175,7 +174,6 @@
           clickable
           @click="
             () => {
-              clearSection();
               openPublicTalkMediaPicker();
             }
           "
@@ -201,7 +199,6 @@
             clickable
             @click="
               () => {
-                clearSection();
                 openFileImportDialog();
               }
             "
@@ -266,38 +263,23 @@
       </q-list>
     </q-menu>
   </q-btn>
-  <BaseDialog v-model="mediaDeleteAllPending" :dialog-id="dialogId" persistent>
-    <q-card class="modal-confirm">
-      <q-card-section
-        class="row items-center text-bigger text-semibold text-negative q-pb-none"
-      >
-        <q-icon class="q-mr-sm" name="mmm-delete" />
-        {{ t('delete-all-additional-media') }}
-      </q-card-section>
-      <q-card-section class="row items-center">
-        {{ t('are-you-sure-delete-all') }}
-      </q-card-section>
-      <q-card-actions align="right" class="text-primary">
-        <q-btn
-          flat
-          :label="t('cancel')"
-          @click="mediaDeleteAllPending = false"
-        />
-        <q-btn
-          color="negative"
-          flat
-          :label="t('delete')"
-          @click="
-            clearAdditionalMediaForSelectedDate(
-              currentCongregation,
-              selectedDateObject,
-            );
-            mediaDeleteAllPending = false;
-          "
-        />
-      </q-card-actions>
-    </q-card>
-  </BaseDialog>
+  <ConfirmDialog
+    v-model="mediaDeleteAllPending"
+    :confirm-label="t('delete')"
+    :dialog-id="dialogId"
+    icon="mmm-delete"
+    :message="t('are-you-sure-delete-all')"
+    persistent
+    :title="t('delete-all-additional-media')"
+    @cancel="mediaDeleteAllPending = false"
+    @confirm="
+      clearAdditionalMediaForSelectedDate(
+        currentCongregation,
+        selectedDateObject,
+      );
+      mediaDeleteAllPending = false;
+    "
+  />
   <q-btn color="white-transparent" :disable="mediaIsPlaying" unelevated>
     <q-icon
       :class="{ 'q-mr-sm': $q.screen.gt.xs }"
@@ -353,6 +335,7 @@
   />
   <DialogSectionPicker
     v-model="showSectionPicker"
+    dialog-id="header-calendar-section-picker"
     :files="pendingFiles"
     @section-selected="handleSectionSelected"
   />
@@ -414,7 +397,7 @@ import type {
 } from 'src/types';
 
 import { useEventListener, watchImmediate } from '@vueuse/core';
-import BaseDialog from 'components/dialog/BaseDialog.vue';
+import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import DialogBible from 'components/dialog/DialogBible.vue';
 import DialogCustomSectionEdit from 'components/dialog/DialogCustomSectionEdit.vue';
 import DialogJwPlaylist from 'components/dialog/DialogJwPlaylist.vue';
@@ -651,11 +634,33 @@ const maxDate = () => {
 };
 
 const importMenu = useTemplateRef<QMenu>('importMenu');
+// Set alongside `section` whenever openImportMenu is given a real section,
+// so handleImportMenuBeforeShow (bound to the menu's own @before-show, not
+// a click handler on the anchor button - that fought Quasar's own
+// anchor-click show/hide toggle and broke opening the menu) can tell "this
+// open already has a known section" apart from "this open came from the
+// generic top-of-page button, which has no section wiring of its own", and
+// only clear `section` in the latter case.
+let sectionExplicitlySet = false;
+
 const openImportMenu = (newSection?: MediaSectionIdentifier) => {
-  if (newSection) {
-    section.value = newSection;
-  }
+  // Always reflects exactly what triggered this open: a specific section's
+  // own "add media" button sets it, the generic (not-tied-to-any-section)
+  // trigger passes nothing and correctly clears any section left over from
+  // a previous open. Doing this once, here, rather than each menu item
+  // clearing it again on click (as this used to), is what lets a
+  // specific-section open skip the redundant section-picker prompt below.
+  section.value = newSection;
+  sectionExplicitlySet = !!newSection;
   importMenu.value?.show();
+};
+
+const handleImportMenuBeforeShow = () => {
+  if (sectionExplicitlySet) {
+    sectionExplicitlySet = false;
+    return;
+  }
+  section.value = undefined;
 };
 
 const dateOptions = (lookupDate: string) => {
@@ -913,10 +918,6 @@ const handleSectionSelected = async (
     await processPendingImport(selectedSection);
     pendingImport.value = null;
   }
-};
-
-const clearSection = () => {
-  section.value = undefined;
 };
 
 // Wrapper functions that check for section specification

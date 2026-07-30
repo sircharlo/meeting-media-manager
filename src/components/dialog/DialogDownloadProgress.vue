@@ -11,7 +11,7 @@
             :thickness="0.18"
             :value="aggregatePercent"
           >
-            <span class="text-caption"
+            <span class="text-caption download-progress-percent"
               >{{ Math.round(aggregatePercent) }}%</span
             >
           </q-circular-progress>
@@ -21,7 +21,7 @@
             <div class="text-weight-medium">
               {{ label }}
             </div>
-            <div class="text-caption text-grey-8">
+            <div class="text-caption text-dark-grey">
               {{ progressSummary }}
             </div>
             <q-linear-progress
@@ -48,7 +48,7 @@
               </q-item-label>
             </q-item-section>
             <q-item-section side>
-              <q-item-label class="text-caption text-grey-8">
+              <q-item-label class="text-caption text-dark-grey">
                 {{ itemProgressLabel(item) }}
               </q-item-label>
             </q-item-section>
@@ -146,3 +146,13 @@ function itemProgressLabel(item: DownloadProgressItem) {
   return `${formatBytes(item.loaded ?? 0)} / ${formatBytes(item.total)}`;
 }
 </script>
+
+<style scoped>
+/* The circular progress's centered percentage text inherits currentColor,
+   which q-circular-progress's color="primary" sets to the theme's primary
+   blue - low-contrast against this card's dark-mode background (same root
+   cause as the focused-field-label fix in app.scss). */
+body.body--dark .download-progress-percent {
+  color: color-mix(in srgb, var(--q-primary) 55%, white);
+}
+</style>

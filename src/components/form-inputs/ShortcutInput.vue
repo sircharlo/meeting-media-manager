@@ -30,10 +30,13 @@
       @hide="stopListening()"
       @show="startListening()"
     >
-      <q-card class="modal-confirm">
+      <q-card class="modal-confirm round-card">
         <q-card-section
-          class="row items-center text-bigger text-semibold q-pb-none"
+          class="row items-center no-wrap text-bigger text-semibold text-primary q-pb-none"
         >
+          <div class="icon-chip q-mr-sm">
+            <q-icon name="mmm-configuration" size="xs" />
+          </div>
           {{ t('enter-a-key-combination') }}
         </q-card-section>
         <q-card-section class="row items-center">
@@ -62,11 +65,7 @@
             :label="t('clear')"
             @click="localValue = ''"
           />
-          <q-btn
-            flat
-            :label="localValue ? t('confirm') : t('cancel')"
-            @click="shortcutPicker = false"
-          />
+          <q-btn flat :label="t('close')" @click="shortcutPicker = false" />
         </q-card-actions>
       </q-card>
     </BaseDialog>

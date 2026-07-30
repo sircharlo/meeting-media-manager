@@ -309,7 +309,12 @@
   </q-menu>
   <BaseDialog v-model="showCustomBackgroundPicker" :dialog-id="props.dialogId">
     <div class="bg-secondary-contrast flex q-px-none" style="flex-flow: column">
-      <div class="text-h6 row q-px-md q-pt-lg">
+      <div
+        class="row items-center no-wrap text-bigger text-semibold text-primary q-px-md q-pt-lg"
+      >
+        <div class="icon-chip q-mr-sm">
+          <q-icon name="mmm-background" size="xs" />
+        </div>
         {{ t('choose-an-image') }}
       </div>
       <div class="row q-px-md q-py-md">
@@ -349,7 +354,6 @@
       </div>
       <div class="q-px-md q-py-md row justify-end">
         <q-btn
-          color="negative"
           flat
           @click="
             jwpubImportFilePath = '';
@@ -544,6 +548,13 @@ const processJwpubBackground = async (filepath: string) => {
 
   if (jwpubImages.value.length === 0) {
     notifyInvalidBackgroundFile();
+    // Without this, showCustomBackgroundPicker/q-inner-loading's
+    // `!!jwpubImportFilePath` condition never goes false again since
+    // nothing else clears it on this particular (no-throw, just empty-
+    // results) path - unlike the catch blocks elsewhere in this file that
+    // already reset it - so the loading spinner would stay stuck forever
+    // instead of settling into the empty-state message below.
+    jwpubImportFilePath.value = '';
   }
 };
 

@@ -4,8 +4,24 @@
       class="bg-secondary-contrast flex medium-overlay q-px-none"
       style="flex-flow: column"
     >
-      <div class="text-h6 row q-px-md q-pt-lg">
+      <div
+        class="text-bigger text-semibold text-primary row q-px-md q-pt-lg items-center"
+      >
+        <div class="icon-chip q-mr-sm">
+          <q-icon name="mmm-lectern" size="xs" />
+        </div>
         {{ t('import-media-from-s34mp') }}
+        <q-icon
+          class="q-ml-sm cursor-pointer"
+          color="primary"
+          name="mmm-info"
+          size="xs"
+          tabindex="0"
+        >
+          <q-tooltip max-width="320px">
+            {{ t('import-media-from-s34mp-explain') }}
+          </q-tooltip>
+        </q-icon>
       </div>
       <div class="row q-px-md q-pt-md">
         {{
@@ -77,12 +93,7 @@
         </div>
       </template>
       <div class="row q-px-md q-py-md justify-end">
-        <q-btn
-          color="negative"
-          flat
-          :label="t('cancel')"
-          @click="dismissPopup"
-        />
+        <q-btn flat :label="t('cancel')" @click="dismissPopup" />
       </div>
     </div>
   </BaseDialog>

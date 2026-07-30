@@ -10,6 +10,7 @@ import { wasUpdateInstalled } from 'src/utils/fs';
 interface Store {
   announcements: Partial<Record<string, string[]>>;
   congregations: Partial<Record<string, SettingsValues>>;
+  quickStartTourSeen: Partial<Record<string, boolean>>;
 }
 
 /**
@@ -33,6 +34,28 @@ export const transformObsPasswords = (
     ]),
   ),
 });
+
+/**
+ * Marks every congregation that already existed at hydrate time as having
+ * seen the post-setup quick-start tour, without touching one created later
+ * in the same session (so the tour still shows for genuinely new profiles)
+ * or overwriting an entry that's already present either way. Mutates (and
+ * returns, for convenience at the call site) the same quickStartTourSeen
+ * map that was passed in.
+ * @param congregations The store's congregations map at hydrate time
+ * @param quickStartTourSeen The store's quickStartTourSeen map to backfill
+ */
+export const backfillQuickStartTourSeen = (
+  congregations: Store['congregations'],
+  quickStartTourSeen: Store['quickStartTourSeen'],
+): Store['quickStartTourSeen'] => {
+  Object.keys(congregations).forEach((congId) => {
+    if (!(congId in quickStartTourSeen)) {
+      quickStartTourSeen[congId] = true;
+    }
+  });
+  return quickStartTourSeen;
+};
 
 export const deserializeCongregationSettings = (data: string): Store =>
   transformObsPasswords(JSON.parse(data) as Store, (value) =>
@@ -67,6 +90,10 @@ export const useCongregationSettingsStore = defineStore(
         if (!this.announcements[congId].includes(id)) {
           this.announcements[congId].push(id);
         }
+      },
+      markQuickStartTourSeen(congId: string) {
+        if (!congId) return;
+        this.quickStartTourSeen[congId] = true;
       },
       updateCongregationsWithMissingSettings() {
         let updatedCount = 0;
@@ -170,10 +197,21 @@ export const useCongregationSettingsStore = defineStore(
       },
     },
     persist: {
-      // Upgrades any legacy plain-text obsPassword to encrypted form right
-      // away instead of waiting for an unrelated setting to change and
-      // trigger the next save.
-      afterHydrate: (ctx) => ctx.store.$persist(),
+      // Upgrades any legacy plain-text obsPassword to encrypted form, and
+      // marks every congregation that already existed on disk at load time
+      // as having seen the post-setup quick-start tour - otherwise every
+      // profile that predates that feature would show it on next launch,
+      // spamming users who've long since found the footer buttons on their
+      // own. A congregation created later in the same session (via
+      // createCongregation()) isn't touched by this, so the tour still
+      // shows for genuinely new profiles going forward.
+      afterHydrate: (ctx) => {
+        backfillQuickStartTourSeen(
+          ctx.store.congregations,
+          ctx.store.quickStartTourSeen,
+        );
+        ctx.store.$persist();
+      },
       serializer: {
         deserialize: deserializeCongregationSettings,
         serialize: (state) =>
@@ -181,7 +219,7 @@ export const useCongregationSettingsStore = defineStore(
       },
     },
     state: (): Store => {
-      return { announcements: {}, congregations: {} };
+      return { announcements: {}, congregations: {}, quickStartTourSeen: {} };
     },
   },
 );

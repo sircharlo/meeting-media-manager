@@ -1,7 +1,6 @@
 <template>
   <q-item
-    ref="dividerElement"
-    :class="['media-divider', { 'is-editing': isEditing }]"
+    :class="['media-divider hover-reveal-group', { 'is-editing': isEditing }]"
     dense
     :style="{
       ...dividerStyles,
@@ -28,15 +27,13 @@
     <q-item-section side>
       <div class="row items-center">
         <q-btn
-          :disabled="isEditing"
+          v-if="!isEditing"
+          class="hover-reveal"
           flat
           icon="mmm-edit"
           round
           size="sm"
-          :style="{
-            visibility: !isEditing && isHovering ? 'visible' : 'hidden',
-            color: divider.textColor,
-          }"
+          :style="{ color: divider.textColor }"
           @click="startEdit"
         >
           <q-tooltip :delay="500">{{ t('edit') }}</q-tooltip>
@@ -90,10 +87,11 @@
 <script setup lang="ts">
 import type { MediaDivider } from 'src/types';
 
-import { useElementHover, whenever } from '@vueuse/core';
+import { whenever } from '@vueuse/core';
 import {
   findMediaSection,
   getSectionBgColor,
+  getTextColorForBgColor,
 } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed, nextTick, ref } from 'vue';
@@ -111,37 +109,11 @@ const emit = defineEmits<{
   'update:title': [title: string];
 }>();
 
-const dividerElement = ref<HTMLElement>();
 const isEditing = ref(false);
-const isHovering = useElementHover(dividerElement);
 const editTitle = ref('');
 const currentBgColor = ref(props.divider.bgColor || 'var(--q-secondary)');
 
 const editTitleInput = ref<HTMLInputElement>();
-
-// Calculate luminance and determine text color (memoized)
-const calculateLuminance = (hexColor: string): number => {
-  // Remove # if present and validate
-  const hex = hexColor.replace('#', '');
-  if (hex.length !== 6) return 0.5; // Default to middle luminance for invalid colors
-
-  // Convert to RGB
-  const r = Number.parseInt(hex.substr(0, 2), 16);
-  const g = Number.parseInt(hex.substr(2, 2), 16);
-  const b = Number.parseInt(hex.substr(4, 2), 16);
-
-  // Calculate relative luminance using sRGB coefficients
-  const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
-  return luminance;
-};
-
-const getContrastTextColor = (bgColor: string): string => {
-  // Handle CSS variables and non-hex colors
-  if (!bgColor.startsWith('#')) return '#ffffff';
-
-  const luminance = calculateLuminance(bgColor);
-  return luminance > 0.5 ? '#000000' : '#ffffff';
-};
 
 const dividerStyles = computed(() => {
   const { selectedDateObject } = useCurrentStateStore();
@@ -184,7 +156,7 @@ const cancelEdit = () => {
 };
 
 const handleColorChange = (newColor: string) => {
-  const textColor = getContrastTextColor(newColor);
+  const textColor = getTextColorForBgColor(newColor);
   emit('update:color', newColor, textColor);
 };
 
@@ -229,14 +201,5 @@ whenever(isEditing, () => {
   &:hover {
     opacity: 0.8;
   }
-}
-
-.media-divider:hover .q-item-section--side {
-  opacity: 1;
-}
-
-.q-item-section--side {
-  opacity: 0;
-  transition: opacity 0.2s ease;
 }
 </style>

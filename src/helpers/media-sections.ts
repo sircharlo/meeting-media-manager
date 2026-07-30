@@ -251,8 +251,13 @@ const parseColorToRgb = (color: string): [number, number, number] | null => {
     : [r, g, b];
 };
 
-export const getTextColor = (section?: MediaSectionWithConfig) => {
-  const bgColor = section?.config?.bgColor;
+// Gamma-corrected relative-luminance black/white contrast pick, usable for
+// any bgColor string (hex or rgb()) - not just a MediaSection's own color.
+// getTextColor() below wraps this for the section-shaped call sites; other
+// consumers needing text-on-arbitrary-color contrast (e.g. the congregation
+// switcher's hashed avatar colors) should call this directly rather than
+// re-implementing their own luminance math.
+export const getTextColorForBgColor = (bgColor?: string) => {
   if (!bgColor) return '#ffffff';
 
   const rgb = parseColorToRgb(bgColor);
@@ -261,7 +266,7 @@ export const getTextColor = (section?: MediaSectionWithConfig) => {
       contexts: {
         fn: {
           bgColor,
-          name: 'getTextColor',
+          name: 'getTextColorForBgColor',
         },
       },
     });
@@ -281,6 +286,9 @@ export const getTextColor = (section?: MediaSectionWithConfig) => {
   // Return white or black based on contrast
   return lum > 0.3 ? '#000000' : '#ffffff';
 };
+
+export const getTextColor = (section?: MediaSectionWithConfig) =>
+  getTextColorForBgColor(section?.config?.bgColor);
 
 // Mirrors the hardcoded left-bar colors in the `.media-section` SCSS rules
 // for the meeting sections that always use the same color (see app.scss).

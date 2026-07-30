@@ -6,26 +6,30 @@
           <q-avatar class="text-white bg-website" size="md">
             <q-icon name="mmm-open-web" size="sm" />
           </q-avatar>
-          <div class="text-bold text-uppercase text-spaced">
+          <div class="section-title">
             {{ t('titles.presentWebsite') }}
           </div>
         </q-item>
         <q-item>
-          {{
-            t(
-              'when-you-click-the-button-on-the-top-right-corner-of-this-window-a-new-window-will-open-where-the-website-will-be-presented-what-you-see-in-this-window-will-be-mirrored-into-the-media-window',
-            )
-          }}
-        </q-item>
-        <q-item>
-          {{ t('you-can-navigate-the-website-before-presenting-it') }}
-        </q-item>
-        <q-item>
-          {{
-            t(
-              'when-you-are-done-presenting-the-website-you-can-either-close-the-website-window-or-click-again-on-the-button-in-the-top-right-corner-of-this-window',
-            )
-          }}
+          <q-item-section>
+            <p class="q-mb-sm">
+              {{
+                t(
+                  'when-you-click-the-button-on-the-top-right-corner-of-this-window-a-new-window-will-open-where-the-website-will-be-presented-what-you-see-in-this-window-will-be-mirrored-into-the-media-window',
+                )
+              }}
+            </p>
+            <p class="q-mb-sm">
+              {{ t('you-can-navigate-the-website-before-presenting-it') }}
+            </p>
+            <p class="q-mb-none">
+              {{
+                t(
+                  'when-you-are-done-presenting-the-website-you-can-either-close-the-website-window-or-click-again-on-the-button-in-the-top-right-corner-of-this-window',
+                )
+              }}
+            </p>
+          </q-item-section>
         </q-item>
       </div>
       <div class="media-section website">
@@ -33,7 +37,7 @@
           <q-avatar class="text-white bg-website" size="md">
             <q-icon name="mmm-sites" size="sm" />
           </q-avatar>
-          <div class="text-bold text-uppercase text-spaced">
+          <div class="section-title">
             {{ t('websiteSelection') }}
           </div>
         </q-item>
@@ -53,7 +57,7 @@
           <q-avatar class="text-white bg-website" size="md">
             <q-icon name="mmm-tune" size="sm" />
           </q-avatar>
-          <div class="text-bold text-uppercase text-spaced">
+          <div class="section-title">
             {{ t('settings') }}
           </div>
         </q-item>

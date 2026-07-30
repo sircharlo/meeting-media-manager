@@ -412,6 +412,7 @@ function updateMeetingScheduleIfNeeded(settings: SettingsValues) {
 
   // Notify user
   createTemporaryNotification({
+    deferWhileDialogOpen: true,
     message: i18n.global.t('meeting-schedule-change-applied'),
     timeout: 10000,
     type: 'info',

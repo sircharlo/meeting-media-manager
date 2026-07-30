@@ -4,7 +4,12 @@
       class="bg-secondary-contrast large-overlay q-px-none flex"
       style="flex-flow: column"
     >
-      <div class="row q-px-md q-pt-lg text-h6">
+      <div
+        class="row q-px-md q-pt-lg text-bigger text-semibold text-primary items-center"
+      >
+        <div class="icon-chip q-mr-sm">
+          <q-icon name="mmm-jwpub" size="xs" />
+        </div>
         <div class="col">
           {{ publicationTitle || t('select-media-items') }}
         </div>
@@ -135,7 +140,6 @@
         </div>
         <div class="col-shrink q-gutter-x-sm">
           <q-btn
-            color="negative"
             :disable="isProcessing"
             flat
             :label="t('cancel')"
@@ -144,7 +148,7 @@
           <q-btn
             v-if="selectedItems.length"
             color="primary"
-            :label="t('add') + ` (${selectedItems.length})`"
+            :label="t('add-count', { count: selectedItems.length })"
             :loading="isProcessing"
             @click="addSelectedItems"
           />

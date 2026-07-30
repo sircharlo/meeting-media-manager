@@ -1,21 +1,17 @@
 <template>
-  <div
-    class="fullscreen bg-blue text-white text-center q-pa-md flex flex-center"
-  >
+  <div class="fullscreen text-center q-pa-md flex flex-center">
     <div>
-      <div style="font-size: 30vh">404</div>
-
-      <div class="text-h2" style="opacity: 0.4">
+      <div class="text-h4 q-mt-lg">
         {{ t('oops-nothing-here') }}
       </div>
 
       <q-btn
         class="q-mt-xl"
-        color="white"
-        :label="t('go-home')"
+        color="primary"
+        icon="mmm-media"
+        :label="t('titles.meetingMedia')"
         no-caps
-        text-color="blue"
-        to="/"
+        to="/media-calendar"
         unelevated
       />
     </div>

@@ -1,7 +1,13 @@
 <template>
   <q-page padding>
     <template v-if="currentSettings">
-      <q-stepper v-model="step" animated color="primary" vertical>
+      <div class="wizard-progress-track">
+        <div
+          class="wizard-progress-fill"
+          :style="{ width: stepProgress * 100 + '%' }"
+        />
+      </div>
+      <q-stepper v-model="step" color="primary" vertical>
         <q-step
           :done="step > 1"
           icon="mmm-ui-language"
@@ -47,7 +53,7 @@
           <p>{{ t('profile-type-special') }}</p>
           <p>{{ t('profile-type-choose-regular') }}</p>
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn color="negative" flat :label="t('back')" @click="step--" />
+            <q-btn flat :label="t('back')" @click="step--" />
             <q-btn
               color="primary"
               flat
@@ -94,27 +100,13 @@
             />
           </div>
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn color="negative" flat :label="t('back')" @click="step--" />
+            <q-btn flat :label="t('back')" @click="step--" />
             <q-btn
               color="primary"
               :disable="!currentSettings?.congregationName"
               :label="t('continue')"
-              @click="step++"
+              @click="step = 5"
             />
-          </q-stepper-navigation>
-        </q-step>
-        <q-step
-          :done="step > 4"
-          icon="mmm-download"
-          :name="4"
-          :title="t('cacheFolder')"
-        >
-          <p>{{ t('cacheFolder-explain') }}</p>
-          <p>{{ t('cacheFolder-wizard') }}</p>
-          <FolderInput v-model="currentSettings.cacheFolder" />
-          <q-stepper-navigation class="q-gutter-sm">
-            <q-btn color="negative" flat :label="t('back')" @click="step--" />
-            <q-btn color="primary" :label="t('continue')" @click="step++" />
           </q-stepper-navigation>
         </q-step>
         <q-step
@@ -131,38 +123,13 @@
             use-input
           />
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn color="negative" flat :label="t('back')" @click="step--" />
+            <q-btn flat :label="t('back')" @click="step = 3" />
             <q-btn
               color="primary"
               :disable="!currentSettings.lang"
               :label="t('continue')"
               @click="
                 currentSettings.enableMediaDisplayButton = true;
-                step = currentSettings.lang === 'CHS' ? 6 : 7;
-              "
-            />
-          </q-stepper-navigation>
-        </q-step>
-        <q-step
-          v-if="currentSettings?.lang === 'CHS'"
-          :disable="currentSettings?.lang !== 'CHS'"
-          :done="step > 6"
-          icon="mmm-music-note"
-          :name="6"
-          :title="t('enablePinyinSongs')"
-        >
-          <p>{{ t('pinyinSongs-wizard') }}</p>
-          <p>{{ t('pinyinSongFolder-explain') }}</p>
-          <FolderInput v-model="currentSettings.pinyinSongFolder" />
-          <q-stepper-navigation class="q-gutter-sm">
-            <q-btn color="negative" flat :label="t('back')" @click="step = 5" />
-            <q-btn
-              color="primary"
-              :label="t('continue')"
-              @click="
-                if (currentSettings?.pinyinSongFolder) {
-                  currentSettings.enablePinyinSongs = true;
-                }
                 step = 7;
               "
             />
@@ -172,7 +139,11 @@
           :done="step > 7"
           icon="mmm-yeartext"
           :name="7"
-          :title="t('yeartext')"
+          :title="
+            currentLangObject?.isSignLanguage
+              ? t('media-display')
+              : t('yeartext')
+          "
         >
           <!-- This icon is from the Material Design Icons collection -->
           <p>
@@ -183,16 +154,13 @@
             }}
           </p>
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn
-              color="negative"
-              flat
-              :label="t('back')"
-              @click="step = currentSettings?.lang === 'CHS' ? 6 : 5"
-            />
+            <q-btn flat :label="t('back')" @click="step = 5" />
             <q-btn
               color="primary"
               :label="t('continue')"
-              @click="step = regularProfile ? step + 1 : 103"
+              @click="
+                step = !regularProfile ? 200 : scheduleAppliedViaLookup ? 9 : 8
+              "
             />
           </q-stepper-navigation>
         </q-step>
@@ -229,7 +197,7 @@
             />
           </p>
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn color="negative" flat :label="t('back')" @click="step--" />
+            <q-btn flat :label="t('back')" @click="step--" />
             <q-btn
               color="primary"
               :disable="
@@ -258,6 +226,7 @@
             {{ t('this-will-speed-up-media-retrieval-for-meetings') }}
           </p>
           <q-stepper-navigation class="q-gutter-sm">
+            <q-btn flat :label="t('back')" @click="step--" />
             <q-btn flat :label="t('no')" @click="step++" />
             <q-btn
               color="primary"
@@ -286,87 +255,15 @@
             }}
           </p>
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn color="negative" flat :label="t('back')" @click="step--" />
+            <q-btn flat :label="t('back')" @click="step--" />
             <q-btn
               color="primary"
               :label="t('continue')"
               @click="
                 fetchMedia();
-                step = 101;
+                step = 200;
               "
             />
-          </q-stepper-navigation>
-        </q-step>
-        <q-step
-          v-if="regularProfile"
-          :disable="!regularProfile"
-          :done="step > 101"
-          icon="mmm-stream-now"
-          :name="101"
-          :title="t('media-display')"
-        >
-          <p>
-            {{ t('look-for-this-button-in-m-s-footer') }}
-            <q-btn
-              class="super-rounded q-ml-sm btn-tonal"
-              color="primary"
-              disable
-              flat
-              icon="mmm-media-display-active"
-            />
-          </p>
-          <p>
-            {{
-              t(
-                'clicking-it-will-allow-you-to-temporarily-hide-the-media-and-yeartext-and-reveal-the-zoom-participants-underneath-once-the-zoom-part-is-over-you-can-show-the-yeartext-again-using-the-same-button',
-              )
-            }}
-          </p>
-          <p>
-            {{
-              t(
-                'to-quickly-show-and-hide-zoom-participants-on-the-tv-screens-when-needed-make-sure-that-the-setting-to-use-dual-monitors-in-zoom-is-enabled',
-              )
-            }}
-          </p>
-          <q-stepper-navigation class="q-gutter-sm">
-            <q-btn
-              color="negative"
-              flat
-              :label="t('back')"
-              @click="step = 10"
-            />
-            <q-btn color="primary" :label="t('continue')" @click="step++" />
-          </q-stepper-navigation>
-        </q-step>
-        <q-step
-          v-if="regularProfile"
-          :disable="!regularProfile"
-          :done="step > 102"
-          icon="mmm-music-note"
-          :name="102"
-          :title="t('setupWizard.backgroundMusic')"
-        >
-          <p>
-            {{ t('also-look-for-this-button-in-m-s-footer') }}
-            <q-btn
-              class="super-rounded q-ml-sm btn-tonal"
-              color="primary"
-              disable
-              flat
-              icon="mmm-music-note"
-            />
-          </p>
-          <p>
-            {{
-              t(
-                'clicking-it-will-allow-you-to-start-and-stop-the-playback-of-background-music-music-will-start-playing-automatically-before-a-meeting-is-scheduled-to-start-when-m-is-launched-and-will-also-stop-automatically-before-the-meeting-starts-however-background-music-playback-will-need-to-be-manually-started-after-the-closing-prayer-using-this-button',
-              )
-            }}
-          </p>
-          <q-stepper-navigation class="q-gutter-sm">
-            <q-btn color="negative" flat :label="t('back')" @click="step--" />
-            <q-btn color="primary" :label="t('continue')" @click="step++" />
           </q-stepper-navigation>
         </q-step>
         <q-step
@@ -386,12 +283,13 @@
             }}
           </p>
           <q-stepper-navigation class="q-gutter-sm">
+            <q-btn flat :label="t('back')" @click="step = 200" />
             <q-btn
               flat
               :label="t('no')"
               @click="
                 obsUsed = false;
-                step = 200;
+                step = 300;
               "
             />
             <q-btn
@@ -405,8 +303,7 @@
           </q-stepper-navigation>
         </q-step>
         <q-step
-          v-if="step >= 200 && !obsUsed"
-          :disable="obsUsed"
+          v-if="step >= 200"
           :done="step > 200"
           icon="mmm-integrations"
           :name="200"
@@ -419,7 +316,12 @@
             {{ t('zoom-integration-explain') }}
           </p>
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn flat :label="t('no')" @click="step = 300" />
+            <q-btn
+              flat
+              :label="t('back')"
+              @click="step = regularProfile ? 10 : 7"
+            />
+            <q-btn flat :label="t('no')" @click="step = 103" />
             <q-btn
               color="primary"
               :label="t('yes')"
@@ -431,8 +333,8 @@
           </q-stepper-navigation>
         </q-step>
         <q-step
-          v-if="step >= 201 && currentSettings?.zoomEnable && !obsUsed"
-          :disable="!currentSettings?.zoomEnable || obsUsed"
+          v-if="step >= 201 && currentSettings?.zoomEnable"
+          :disable="!currentSettings?.zoomEnable"
           :done="step > 201"
           icon="mmm-integrations"
           :name="201"
@@ -445,12 +347,7 @@
             shortcut-name="zoomScreenShareShortcut"
           />
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn
-              color="negative"
-              flat
-              :label="t('back')"
-              @click="step = 200"
-            />
+            <q-btn flat :label="t('back')" @click="step = 200" />
             <q-btn
               color="primary"
               :disable="!currentSettings?.zoomScreenShareShortcut"
@@ -637,6 +534,7 @@
     <DialogCongregationLookup
       v-model="showCongregationLookup"
       :dialog-id="'setup-wizard-congregation-lookup'"
+      @applied="scheduleAppliedViaLookup = true"
     />
   </q-page>
 </template>
@@ -646,7 +544,6 @@ import type { LanguageValue } from 'src/constants/locales';
 
 import { watchImmediate } from '@vueuse/core';
 import DialogCongregationLookup from 'components/dialog/DialogCongregationLookup.vue';
-import FolderInput from 'components/form-inputs/FolderInput.vue';
 import SelectInput from 'components/form-inputs/SelectInput.vue';
 import ShortcutInput from 'components/form-inputs/ShortcutInput.vue';
 import TextInput from 'components/form-inputs/TextInput.vue';
@@ -663,7 +560,7 @@ import { importProfileSettingsFromFile } from 'src/utils/profile-settings';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
-import { nextTick, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
@@ -678,6 +575,7 @@ const congregationSettings = useCongregationSettingsStore();
 const { deleteCongregation } = congregationSettings;
 
 const regularProfile = ref(false);
+const scheduleAppliedViaLookup = ref(false);
 
 const obsUsed = ref(false);
 const obsIntegrate = ref(false);
@@ -763,11 +661,61 @@ const cancelSetup = async () => {
   const congId = currentCongregation.value;
   deleteCongregation(congId);
   currentCongregation.value = '';
-  goToPage('/congregation-selector');
+  currentState.openCongregationSwitcher();
+  goToPage('/media-calendar');
   await removeCongregationCache(congId);
 };
 
 const step = ref(1);
+
+// The wizard branches a lot (regular vs. special profile, OBS, Zoom, sign
+// language...), so there's no single "step 7 of 12" that's true for every
+// session. Rather than compute the exact reachable path (which would also
+// need to react to earlier answers changing), this is every step name in
+// the order it's reached - a reasonable, generally-forward-moving progress
+// indicator - unlike a flat superset of every possible step, this only
+// counts the steps actually reachable given the answers given so far, so it
+// no longer jumps non-monotonically when a branch is skipped (e.g. a
+// special profile skipping 8-10, or Zoom being enabled and skipping OBS
+// entirely). Mirrors the exact branch conditions the q-step v-ifs and their
+// own navigation buttons use below: regularProfile gates 8/9/10; from step
+// 200 "yes" jumps straight to 201 then 300 (OBS is only offered if Zoom is
+// declined - see step 200's "no" button); obsUsed/obsIntegrate gate 104 and
+// 105-107. Before a branching question has actually been answered, this
+// falls back to whatever that setting is currently persisted as (e.g. a
+// previous run's answer) as a reasonable best-guess default - the total
+// simply adjusts (and the bar's implied position shifts accordingly) once
+// the user actually answers it, same as any progress estimate over a
+// branching flow.
+const reachableStepNames = computed(() => {
+  const names = [1, 2, 3, 5, 7];
+  if (regularProfile.value) {
+    // Step 7's own continue button skips straight to 9 when the schedule
+    // was already applied via the congregation lookup dialog (see its
+    // @click above) - step 8 (meeting days/times) never gets shown in that
+    // case, so it must be excluded here too or the bar jumps by 2 steps
+    // instead of 1 when that branch is taken.
+    if (!scheduleAppliedViaLookup.value) names.push(8);
+    names.push(9, 10);
+  }
+  names.push(200);
+  if (currentSettings.value?.zoomEnable) {
+    names.push(201);
+  } else {
+    names.push(103);
+    if (obsUsed.value) {
+      names.push(104);
+      if (obsIntegrate.value) names.push(105, 106, 107);
+    }
+  }
+  names.push(300);
+  return names;
+});
+const stepProgress = computed(() => {
+  const names = reachableStepNames.value;
+  const index = names.indexOf(step.value);
+  return index === -1 ? 0 : index / (names.length - 1);
+});
 
 const showCongregationLookup = ref(false);
 
@@ -817,3 +765,79 @@ watchImmediate(
   },
 );
 </script>
+
+<style scoped>
+.wizard-progress-track {
+  background: rgba(128, 128, 128, 0.25);
+  border-radius: 3px;
+  height: 5px;
+  margin: 0 0 1em;
+  overflow: hidden;
+  width: 100%;
+}
+
+.wizard-progress-fill {
+  background: var(--q-primary);
+  border-radius: 3px;
+  height: 100%;
+  transition: width 200ms ease;
+}
+
+/* One question per screen: only the active step's header is shown at all -
+   Quasar's vertical stepper otherwise always renders every step's header in
+   a single always-expanded list, which reads as a long checklist rather
+   than a focused wizard, especially with over a dozen branching steps. None of the
+   step/jump logic (`step` model, `:name`/`v-if` branching) changes - this is
+   a pure presentation change on top of it, and the progress bar above takes
+   over signaling "how far along" instead of the visible list of steps. */
+:deep(.q-stepper__tab:not(.q-stepper__tab--active)) {
+  display: none;
+}
+
+/* With neighboring tabs hidden, the connector line segments Quasar draws
+   between consecutive dots would otherwise dangle toward a now-zero-size
+   neighbor - the progress bar above already communicates sequence, so drop
+   these entirely rather than leave a stray line fragment. */
+:deep(.q-stepper__dot::before),
+:deep(.q-stepper__dot::after) {
+  display: none;
+}
+
+:deep(.q-stepper__tab--active .q-stepper__title) {
+  font-weight: 650;
+}
+
+/* Quasar's own step transition (`animated` prop) is an accordion-style
+   collapse/expand of each step's content in place, which reads as an
+   inelegant "morph" now that only one step is ever visible at a time -
+   dropped in favor of a plain fade+scale entrance on whichever step just
+   became active. There's no matching exit animation for the outgoing step
+   (Quasar removes it from the DOM immediately, before any transition could
+   run) - only the incoming step animates. */
+@media (prefers-reduced-motion: no-preference) {
+  :deep(.q-stepper__step-content) {
+    animation: wizard-step-enter 260ms ease-out;
+  }
+
+  /* The header (icon + title) toggles via the display:none rule above
+     rather than unmounting, but a display:none -> displayed transition
+     still restarts a CSS animation same as a fresh insertion would - so
+     this fires every time a step becomes active, same as the body, instead
+     of the title just snapping in on its own. */
+  :deep(.q-stepper__tab--active) {
+    animation: wizard-step-enter 260ms ease-out;
+  }
+}
+
+@keyframes wizard-step-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+</style>

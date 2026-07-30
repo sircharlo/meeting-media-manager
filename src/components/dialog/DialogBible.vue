@@ -4,20 +4,41 @@
       class="bg-secondary-contrast large-overlay q-px-none flex"
       style="flex-flow: column"
     >
-      <div class="row q-px-md q-pt-lg text-h6">
+      <div
+        class="row q-px-md q-pt-lg text-bigger text-semibold text-primary items-center"
+      >
+        <q-btn
+          v-if="selectedBibleBook"
+          :aria-label="t('back')"
+          class="q-mr-sm"
+          dense
+          :disable="isProcessing"
+          flat
+          icon="mmm-left"
+          round
+          @click="resetBibleBook(!selectedChapter)"
+        >
+          <q-tooltip :delay="500">
+            {{ t('back') }}
+          </q-tooltip>
+        </q-btn>
+        <div class="icon-chip q-mr-sm">
+          <q-icon name="mmm-audio-bible" size="xs" />
+        </div>
         <div class="col">
           {{
             currentLangObject?.isSignLanguage
               ? t('sign-language-bible')
-              : t('add-media-audio-bible')
+              : t('audio-bible')
           }}
         </div>
         <div class="col-shrink">
           <q-btn
+            :aria-label="t('click-to-refresh-list')"
             color="primary"
             flat
             icon="mmm-cloud-done"
-            :loading="loading || !bibleMedia?.length"
+            :loading="loading"
             round
             @click="
               loading = true;
@@ -189,29 +210,19 @@
       <div class="row q-px-md q-py-md row">
         <div class="col text-right q-gutter-x-sm">
           <q-btn
-            v-if="selectedBibleBook"
-            color="primary"
+            v-close-popup
             :disable="isProcessing"
             flat
-            :label="t('back')"
-            @click="resetBibleBook(!selectedChapter)"
+            :label="t('cancel')"
+            @click="resetBibleBook(true, true)"
           />
           <q-btn
             v-if="chosenVerses.length"
             v-close-popup
             color="primary"
-            :label="t('add') + totalChosenVerses"
+            :label="t('add-count', { count: totalChosenVerses })"
             :loading="isProcessing"
             @click="addSelectedVerses()"
-          />
-          <q-btn
-            v-else
-            v-close-popup
-            color="negative"
-            :disable="isProcessing"
-            flat
-            :label="t('cancel')"
-            @click="resetBibleBook(true, true)"
           />
         </div>
       </div>
@@ -348,14 +359,14 @@ const isProcessing = ref<boolean>(false);
 const chosenVerses = ref<number[]>([]);
 const hoveredVerse = ref<null | number>(null);
 const totalChosenVerses = computed(() => {
-  if (!chosenVerses.value.length) return '';
-  if (chosenVerses.value.length === 1) return ' (1)';
+  if (!chosenVerses.value.length) return 0;
+  if (chosenVerses.value.length === 1) return 1;
   if (chosenVerses.value.length === 2) {
     const [start, end] = chosenVerses.value;
-    if (!start || !end) return '';
-    return ' (' + (Math.abs(start - end) + 1) + ')';
+    if (!start || !end) return 0;
+    return Math.abs(start - end) + 1;
   }
-  return '';
+  return 0;
 });
 
 const toggleVerse = (verse: number) => {

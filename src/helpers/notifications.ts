@@ -1,5 +1,7 @@
 import { Notify, type QNotifyCreateOptions } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { useDialogStateStore } from 'stores/dialog-state';
+import { watch } from 'vue';
 
 // 1. Strict allowed types
 const allowedTypes = [
@@ -15,6 +17,30 @@ const allowedTypes = [
 interface AllowedNotifyProps {
   actions?: QNotifyCreateOptions['actions'];
   caption?: QNotifyCreateOptions['caption'];
+  /**
+   * Extra CSS class(es) applied to the notification card itself - mainly
+   * useful as a `:has()` hook so a specific dialog can boost the whole
+   * (shared, app-wide) `.q-notifications__list` container above itself
+   * while one of its own notifications is showing, without affecting
+   * notifications everywhere else. See DialogCongregationSwitcher.vue for
+   * an example.
+   */
+  classes?: QNotifyCreateOptions['classes'];
+  /**
+   * When true, and a dialog (any BaseDialog-registered one, e.g. a picker or
+   * the congregation switcher) is open at the moment this is called, hold
+   * off actually creating the notification until every open dialog has
+   * closed, instead of potentially rendering on top of one - Quasar
+   * notifications sit above dialogs in z-index by default, so a
+   * notification that happens to fire on the same event that closes a
+   * modal (e.g. a congregation-switch side effect racing the congregation
+   * switcher's own close) can otherwise visibly stack on top of it.
+   *
+   * Returns `undefined` immediately when deferring, since the notification
+   * (and its dismiss handle) doesn't exist yet - only opt in for
+   * notifications whose caller doesn't need that handle.
+   */
+  deferWhileDialogOpen?: boolean;
   group?: QNotifyCreateOptions['group'];
   icon?: QNotifyCreateOptions['icon'];
   message?: QNotifyCreateOptions['message'];
@@ -48,9 +74,25 @@ export const createTemporaryNotification = (
   props: NoExtraKeys<AllowedNotifyProps>,
 ) => {
   try {
+    if (props.deferWhileDialogOpen) {
+      const dialogStateStore = useDialogStateStore();
+      if (dialogStateStore.isAnyDialogOpen) {
+        const stopWaiting = watch(
+          () => dialogStateStore.isAnyDialogOpen,
+          (stillOpen) => {
+            if (stillOpen) return;
+            stopWaiting();
+            createTemporaryNotification(props);
+          },
+        );
+        return undefined;
+      }
+    }
+
     const {
       actions,
       caption,
+      classes,
       group,
       icon,
       message,
@@ -83,6 +125,7 @@ export const createTemporaryNotification = (
       position,
       timeout,
       ...(caption && { caption }),
+      ...(classes && { classes }),
       ...(type && { type }),
       ...(resolvedIcon && { icon: resolvedIcon }),
       ...(group && { group }),

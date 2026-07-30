@@ -6,8 +6,8 @@
     hide-bottom-space
     mask="time"
     outlined
-    :rules="getRules(rules, currentSettings?.disableMediaFetching)"
-    style="width: 240px"
+    :rules="combinedRules"
+    :style="fullWidth ? 'width: 100%' : 'width: 240px'"
     v-bind="{ label: label || undefined }"
     @focus="focusHandler"
   >
@@ -36,22 +36,35 @@
 </template>
 
 <script setup lang="ts">
+import type { ValidationRule } from 'quasar';
 import type { SettingsItemOption, SettingsItemRule } from 'src/types';
 
 import { storeToRefs } from 'pinia';
 import { getRules, getTimeOptions } from 'src/utils/settings';
 import { useCurrentStateStore } from 'stores/current-state';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
 const { currentSettings } = storeToRefs(useCurrentStateStore());
 
-defineProps<{
+const props = defineProps<{
+  // Escape hatch for callers with bespoke validation (e.g. "end time must
+  // be after this meeting's start time") that doesn't fit the fixed
+  // SettingsItemRule enum below - merged onto the standard rules rather
+  // than replacing them.
+  extraRules?: ValidationRule[];
+  fullWidth?: boolean;
   label?: string;
   options: SettingsItemOption[] | undefined;
   rules?: SettingsItemRule[];
 }>();
+
+const combinedRules = computed(() => [
+  ...(getRules(props.rules, currentSettings.value?.disableMediaFetching) ?? []),
+  ...(props.extraRules ?? []),
+]);
 
 const model = defineModel<null | string>({ required: true });
 

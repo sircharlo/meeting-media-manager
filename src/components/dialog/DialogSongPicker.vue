@@ -4,16 +4,22 @@
       class="bg-secondary-contrast flex medium-overlay q-px-none"
       style="flex-flow: column"
     >
-      <div class="text-h6 row q-px-md q-pt-lg">
+      <div
+        class="text-bigger text-semibold text-primary row q-px-md q-pt-lg items-center"
+      >
+        <div class="icon-chip q-mr-sm">
+          <q-icon name="mmm-music-note" size="xs" />
+        </div>
         <div class="col">
           {{ t('choose-a-song') }}
         </div>
         <div class="col-shrink">
           <q-btn
+            :aria-label="t('click-to-refresh-list')"
             color="primary"
             flat
             icon="mmm-cloud-done"
-            :loading="loading || !filteredSongs?.length"
+            :loading="loading"
             round
             size="sm"
             @click="startSongUpdate()"
@@ -91,12 +97,7 @@
       </div>
       <div class="row q-px-md q-py-md row">
         <div class="col text-right">
-          <q-btn
-            color="negative"
-            flat
-            :label="t('cancel')"
-            @click="dismissPopup"
-          />
+          <q-btn flat :label="t('cancel')" @click="dismissPopup" />
         </div>
       </div>
     </div>

@@ -33,11 +33,12 @@
           {{ mediaFilterMatchLabel }}
         </div>
         <q-btn
+          :aria-label="t('previous-search-match')"
           color="primary"
           dense
           :disable="!mediaFilterMatchCount"
           flat
-          icon="keyboard_arrow_up"
+          icon="mmm-up"
           round
           @click="goToPreviousMediaFilterMatch"
         >
@@ -46,11 +47,12 @@
           }}</q-tooltip>
         </q-btn>
         <q-btn
+          :aria-label="t('next-search-match')"
           color="primary"
           dense
           :disable="!mediaFilterMatchCount"
           flat
-          icon="keyboard_arrow_down"
+          icon="mmm-down"
           round
           @click="goToNextMediaFilterMatch"
         >
@@ -59,10 +61,11 @@
           }}</q-tooltip>
         </q-btn>
         <q-btn
+          :aria-label="t('close')"
           color="primary"
           dense
           flat
-          icon="close"
+          icon="mmm-clear"
           round
           @click="closeMediaFilter"
         >
@@ -100,10 +103,11 @@
           </q-banner>
         </div>
       </q-slide-transition>
-      <MediaEmptyState
+      <EmptyState
         v-if="showEmptyState"
         :go-to-next-day-with-media="goToNextDayWithMedia"
         :open-import-menu="openImportMenu"
+        :retry-fetch="() => fetchMedia()"
       />
     </div>
     <template v-if="!showEmptyState">
@@ -145,6 +149,7 @@
     />
 
     <!-- Dialog Components -->
+    <QuickStartGuide v-model="showQuickStartGuide" />
     <DialogFileImport
       v-model="showFileImport"
       v-model:jwpub-db="jwpubImportDb"
@@ -158,8 +163,13 @@
     />
     <DialogSectionPicker
       v-model="showSectionPicker"
+      dialog-id="section-picker"
       :files="pendingFiles"
       @section-selected="handleSectionSelected"
+    />
+    <DialogPdfPageSelection
+      ref="pdfPageSelectionRef"
+      dialog-id="media-calendar-pdf-page-selection"
     />
     <DialogJwpubMediaPicker
       :db-path="jwpubImportDb"
@@ -171,6 +181,37 @@
       @cancel="onMediaPickerDismiss"
       @ok="onMediaPickerDismiss"
       @update:model-value="showMediaPicker = $event"
+    />
+    <ConfirmDialog
+      v-model="deleteSelectedConfirmPending"
+      :confirm-label="t('delete')"
+      dialog-id="media-calendar-delete-selected-confirm"
+      icon="mmm-delete"
+      :message="
+        t('delete-selected-media-confirmation', {
+          count: pendingDeletableSelectedMediaItems.length,
+        })
+      "
+      persistent
+      :title="t('confirm')"
+      @cancel="deleteSelectedConfirmPending = false"
+      @confirm="confirmDeleteSelectedKeyboard"
+    />
+    <ConfirmDialog
+      v-model="hideSelectedConfirmPending"
+      :confirm-label="t('hide-from-list')"
+      dialog-id="media-calendar-hide-selected-confirm"
+      icon="mmm-eye"
+      icon-color="primary"
+      :message="
+        t('hide-selected-media-confirmation', {
+          count: selectedMediaItems.length,
+        })
+      "
+      persistent
+      :title="t('confirm')"
+      @cancel="hideSelectedConfirmPending = false"
+      @confirm="confirmHideSelected"
     />
   </q-page>
 </template>
@@ -191,11 +232,14 @@ import {
   watchImmediate,
 } from '@vueuse/core';
 import { Buffer } from 'buffer'; // NOSONAR: this is not nodejs Buffer, it's the browser one
+import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import DialogFileImport from 'components/dialog/DialogFileImport.vue';
 import DialogJwpubMediaPicker from 'components/dialog/DialogJwpubMediaPicker.vue';
+import DialogPdfPageSelection from 'components/dialog/DialogPdfPageSelection.vue';
 import DialogSectionPicker from 'components/dialog/DialogSectionPicker.vue';
-import MediaEmptyState from 'components/media/MediaEmptyState.vue';
+import EmptyState from 'components/media/EmptyState.vue';
 import MediaList from 'components/media/MediaList.vue';
+import QuickStartGuide from 'components/ui/QuickStartGuide.vue';
 import DOMPurify from 'dompurify';
 import Mousetrap from 'mousetrap';
 import { storeToRefs } from 'pinia';
@@ -277,6 +321,7 @@ import {
   tableExists,
 } from 'src/utils/sqlite';
 import { useAppSettingsStore } from 'stores/app-settings';
+import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import {
   type MediaPlayingState,
   useCurrentStateStore,
@@ -461,6 +506,7 @@ const { lookupPeriod, urlVariables } = storeToRefs(jwStore);
 const currentState = useCurrentStateStore();
 const { getMeetingType } = currentState;
 const {
+  congregationSwitcherOpen,
   countItemsForSelectedDate,
   countItemsHiddenForSelectedDate,
   currentCongregation,
@@ -472,7 +518,9 @@ const {
   mediaIsPlaying,
   mediaPaused,
   mediaPlaying,
+  mediaRefreshPending,
   mediaWindowCustomBackground,
+  meetingCheckStatus,
   missingMedia,
   selectedDate,
   selectedDateObject,
@@ -481,10 +529,12 @@ const {
 } = storeToRefs(currentState);
 const obsState = useObsStateStore();
 const { obsConnectionState } = storeToRefs(obsState);
+const congregationSettingsStore = useCongregationSettingsStore();
 
 const totalFiles = ref(0);
 const currentFile = ref(0);
 const showFileImport = ref(false);
+const showQuickStartGuide = ref(false);
 const showSectionPicker = ref(false);
 const showMediaPicker = ref(false);
 const selectedDocument = ref<DocumentItem | undefined>();
@@ -722,6 +772,7 @@ const addMemorialIntroVideos = async (
   introSection.items.push(...mappedVideos);
 
   createTemporaryNotification({
+    deferWhileDialogOpen: true,
     group: 'memorial-fetch-video',
     message: t('memorialFetchVideoSuccess'),
     type: 'positive',
@@ -734,6 +785,7 @@ const addMemorialSongsIfNeeded = async (
   if (memorialSection.items?.length) return;
 
   createTemporaryNotification({
+    deferWhileDialogOpen: true,
     group: 'memorial-fetch',
     icon: 'mmm-info',
     message: t('memorialFetchSongs'),
@@ -750,6 +802,7 @@ const addMemorialSongsIfNeeded = async (
   const allSongsDownloaded = successfulSongs === songsToAdd.length;
 
   createTemporaryNotification({
+    deferWhileDialogOpen: true,
     group: 'memorial-fetch',
     message: t(
       allSongsDownloaded
@@ -768,6 +821,7 @@ const applyFetchedMemorialMedia = async (
   forceRefetch: boolean,
 ) => {
   createTemporaryNotification({
+    deferWhileDialogOpen: true,
     group: 'memorial-fetch',
     icon: 'mmm-info',
     message: t('attemptingToFetchMemorialBannerAndIntroVideo'),
@@ -777,6 +831,7 @@ const applyFetchedMemorialMedia = async (
   const memorialMedia = await getMemorialMedia(forceRefetch);
   if (!memorialMedia) {
     createTemporaryNotification({
+      deferWhileDialogOpen: true,
       group: 'memorial-fetch',
       message: t('memorialFetchError'),
       type: 'negative',
@@ -785,6 +840,7 @@ const applyFetchedMemorialMedia = async (
   }
 
   createTemporaryNotification({
+    deferWhileDialogOpen: true,
     group: 'memorial-fetch',
     message: t('memorialFetchSuccess'),
     type: 'positive',
@@ -920,6 +976,7 @@ const isSelectedMemorialDate = () =>
 const notifyMemorialBackgroundResult = (backgroundPath?: string) => {
   if (!backgroundPath) {
     createTemporaryNotification({
+      deferWhileDialogOpen: true,
       group: 'memorial-fetch-bg',
       message: t('memorialFetchErrorNoBg'),
       type: 'negative',
@@ -929,6 +986,7 @@ const notifyMemorialBackgroundResult = (backgroundPath?: string) => {
 
   postCustomBackground(backgroundPath);
   createTemporaryNotification({
+    deferWhileDialogOpen: true,
     group: 'memorial-fetch-bg',
     message: t('memorialFetchBgSuccess'),
     type: 'positive',
@@ -1009,13 +1067,29 @@ const checkCoDate = () => {
     !currentSettings.value ||
     currentSettings.value?.disableMediaFetching ||
     route.params?.typeOfLoad !== 'initial' ||
-    globalThis.electronApi?.isDemoMode
+    globalThis.electronApi?.isDemoMode ||
+    // A congregation with no meeting days set yet hasn't been through the
+    // setup wizard at all - this is its first launch. The currentCongregation
+    // watcher below can invoke this while the route param above is still
+    // stale from the previously active congregation (setCongregation()
+    // resolves, and this watcher's callback can run, before the later
+    // router.push('/setup-wizard') in DialogCongregationSwitcher.vue
+    // actually lands), so without this check a brand-new congregation could
+    // get a "you haven't set a CO date" nag before the user has configured
+    // anything at all.
+    (currentSettings.value?.mwDay == null &&
+      currentSettings.value?.weDay == null)
   )
     return;
   if (
     !currentSettings.value?.coWeek ||
     getDateDiff(new Date(), currentSettings.value?.coWeek, 'months') > 2
   ) {
+    // This can fire right as the congregation switcher modal is closing
+    // (both react to the same route change landing on
+    // /media-calendar/initial) - deferWhileDialogOpen holds it back until
+    // nothing is open, rather than it stacking visually on top of a
+    // still-open/closing modal.
     createTemporaryNotification({
       actions: [
         {
@@ -1031,12 +1105,43 @@ const checkCoDate = () => {
         },
       ],
       caption: t('dont-forget-to-add-circuit-overseer-date'),
+      deferWhileDialogOpen: true,
       icon: 'mmm-error',
       message: t('no-circuit-overseer-date-set'),
       timeout: 30000,
       type: 'primary',
     });
   }
+};
+
+// Replaces the wizard's own footer-button tutorial steps (previously
+// mandatory during setup) with an optional tour shown once, the first time
+// a congregation profile actually reaches this page with the footer
+// buttons visible - called from both onMounted (first mount, e.g. right
+// after the wizard finishes) and the currentCongregation watcher below
+// (switching to a different, not-yet-toured profile while this page stays
+// mounted).
+const maybeShowQuickStartGuide = () => {
+  const congId = currentCongregation.value;
+  if (!congId || congregationSettingsStore.quickStartTourSeen[congId]) return;
+  // While the congregation switcher is open (e.g. bootstrapping a brand-new
+  // profile that's about to be routed to /setup-wizard), this page is only
+  // mounted underneath it, not actually being looked at yet - the
+  // currentCongregation watcher below still fires the instant
+  // setCongregation() assigns the new id, before that redirect lands.
+  // enableMusicButton defaults to true, so without this guard a fresh,
+  // not-yet-configured congregation would immediately satisfy the check
+  // below and get marked as toured before the wizard ever ran, permanently
+  // skipping the real tour once setup actually finishes.
+  if (congregationSwitcherOpen.value) return;
+  if (
+    !currentSettings.value?.enableMediaDisplayButton &&
+    !currentSettings.value?.enableMusicButton
+  )
+    return;
+
+  congregationSettingsStore.markQuickStartTourSeen(congId);
+  showQuickStartGuide.value = true;
 };
 
 const sectionToAddTo = ref<MediaSectionIdentifier | undefined>();
@@ -1577,6 +1682,10 @@ const notifyUnsupportedFile = (filepath: string) => {
   });
 };
 
+const pdfPageSelectionRef = ref<InstanceType<
+  typeof DialogPdfPageSelection
+> | null>(null);
+
 const processImportFile = async (
   file: File | string,
   mediaItemsToAdd: MediaItem[],
@@ -1598,7 +1707,10 @@ const processImportFile = async (
   }
 
   if (isPdf(filepath)) {
-    return convertPdfToImages(filepath, await getTempPath());
+    const selectedPages =
+      await pdfPageSelectionRef.value?.selectPdfPages(filepath);
+    if (!selectedPages) return;
+    return convertPdfToImages(filepath, await getTempPath(), selectedPages);
   }
 
   if (isJwpub(filepath)) {
@@ -1629,6 +1741,11 @@ const finishImportedMediaItems = (mediaItemsToAdd: MediaItem[]) => {
     selectedDateObject.value,
     isCoWeek(selectedDateObject.value?.date),
   );
+  // Forget which section this add targeted once it's actually applied,
+  // rather than letting it silently carry over into the next unrelated
+  // add (e.g. a later drag-and-drop, or the generic top-menu import) that
+  // never explicitly specifies a section of its own.
+  sectionToAddTo.value = undefined;
 };
 
 const addToFiles = async (files: (File | string)[] | FileList) => {
@@ -1726,6 +1843,12 @@ const dropActive = (event: DragEvent) => {
 const handleDrop = (event: DragEvent) => {
   event.preventDefault();
   event.stopPropagation();
+
+  // Clean slate for every drop - dropActive() already resets this on
+  // dragover, but that's a separate event that isn't guaranteed to have
+  // fired first in every case, and a stale section from an earlier,
+  // unrelated add shouldn't silently apply to this one.
+  sectionToAddTo.value = undefined;
 
   try {
     if (event.dataTransfer?.files?.length) {
@@ -1958,6 +2081,33 @@ Mousetrap.bind('space', () => {
 Mousetrap.bind('esc', () => {
   executeLocalShortcut('shortcutMediaStop');
 });
+const deleteSelectedConfirmPending = ref(false);
+const pendingDeletableSelectedMediaItems = ref<string[]>([]);
+
+function confirmDeleteSelectedKeyboard() {
+  deleteSelectedConfirmPending.value = false;
+  deleteMediaItems(
+    pendingDeletableSelectedMediaItems.value,
+    currentCongregation.value,
+    selectedDateObject.value,
+  );
+  // Clear selection after deletion
+  selectedMediaItems.value = [];
+}
+
+const hideSelectedConfirmPending = ref(false);
+
+function confirmHideSelected() {
+  hideSelectedConfirmPending.value = false;
+  hideMediaItems(
+    selectedMediaItems.value,
+    currentCongregation.value,
+    selectedDateObject.value,
+  );
+  // Clear selection after hiding
+  selectedMediaItems.value = [];
+}
+
 Mousetrap.bind('del', () => {
   if (selectedMediaItems.value.length > 0) {
     // Filter to only include additional media items (similar to MediaItem.vue)
@@ -1970,23 +2120,8 @@ Mousetrap.bind('del', () => {
       .map((item) => item.uniqueId);
 
     if (deletableSelectedMediaItems.length > 0) {
-      $q.dialog({
-        cancel: { label: t('cancel') },
-        message: t('delete-selected-media-confirmation', {
-          count: deletableSelectedMediaItems?.length || 0,
-        }),
-        ok: { color: 'negative', label: t('delete') },
-        persistent: true,
-        title: t('confirm'),
-      }).onOk(() => {
-        deleteMediaItems(
-          deletableSelectedMediaItems,
-          currentCongregation.value,
-          selectedDateObject.value,
-        );
-        // Clear selection after deletion
-        selectedMediaItems.value = [];
-      });
+      pendingDeletableSelectedMediaItems.value = deletableSelectedMediaItems;
+      deleteSelectedConfirmPending.value = true;
     }
   }
 });
@@ -2010,23 +2145,7 @@ Mousetrap.bind('mod+a', (e) => {
 });
 Mousetrap.bind('h', () => {
   if (selectedMediaItems.value.length > 0) {
-    $q.dialog({
-      cancel: { label: t('cancel') },
-      message: t('hide-selected-media-confirmation', {
-        count: selectedMediaItems.value.length,
-      }),
-      ok: { label: t('hide-from-list') },
-      persistent: true,
-      title: t('confirm'),
-    }).onOk(() => {
-      hideMediaItems(
-        selectedMediaItems.value,
-        currentCongregation.value,
-        selectedDateObject.value,
-      );
-      // Clear selection after hiding
-      selectedMediaItems.value = [];
-    });
+    hideSelectedConfirmPending.value = true;
   }
 });
 
@@ -2119,6 +2238,27 @@ const showObsBanner = computed(
 
 const showEmptyState = computed(() => {
   if (!selectedDateObject.value) return true;
+
+  // A day actively being (re)fetched should always route through the
+  // EmptyState/skeleton branch, even if it still has stale mediaSections
+  // and/or a stale truthy `status` left over from before the refresh was
+  // queued - meetingCheckStatus's 'checking' state is set independently of
+  // `status` in fetchMedia() and is the authoritative "in flight" signal.
+  // Without this, a day refreshing in the background while already showing
+  // old media would keep rendering that stale content with no loading
+  // indication until the new data silently replaces it.
+  if (
+    meetingCheckStatus.value[
+      formatDate(selectedDateObject.value.date, 'YYYYMMDD')
+    ] === 'checking' ||
+    // Same "refresh just started, per-day status not determined yet" gap as
+    // EmptyState.vue's isCheckingSelectedDay - see the comment there.
+    (mediaRefreshPending.value &&
+      !!selectedDayMeetingType.value &&
+      !currentSettings.value?.disableMediaFetching)
+  ) {
+    return true;
+  }
 
   const noMediaSections = !selectedDateObject.value.mediaSections?.length;
 
@@ -3107,12 +3247,24 @@ watch(
   },
 );
 
+// `pending` rides along in the watched source (rather than being checked
+// only inside the callback) so that once a refresh finishes and this flips
+// back to false, the watcher re-evaluates against the now-settled status -
+// otherwise a day whose `status` was already 'error' before the refresh
+// even started, and still is after, would never re-trigger this callback
+// (its own value never changed), permanently swallowing a real error.
 watch(
-  () =>
-    lookupPeriod.value[currentCongregation.value]
+  () => ({
+    errorVals: lookupPeriod.value[currentCongregation.value]
       ?.filter((d) => d.status === 'error')
       .map((d) => formatDate(d.date, 'YYYY/MM/DD')),
-  (errorVals) => {
+    pending: mediaRefreshPending.value,
+  }),
+  ({ errorVals, pending }) => {
+    // Stale leftover status from before this refresh, or a day still being
+    // (re)checked - wait for the refresh to actually finish rather than
+    // notifying about status that might resolve itself in a moment.
+    if (pending) return;
     errorVals?.forEach((errorVal) => {
       const daysUntilError = getDateDiff(errorVal, new Date(), 'days');
       if (
@@ -3137,11 +3289,17 @@ watch(
 );
 
 watch(
-  () =>
-    missingMedia.value
+  () => ({
+    missingFileUrls: missingMedia.value
       .map((m) => m.fileUrl)
       .filter((f) => typeof f === 'string'),
-  (missingFileUrls) => {
+    pending: mediaRefreshPending.value,
+  }),
+  ({ missingFileUrls, pending }) => {
+    // Same reasoning as the error-notification watcher above: the selected
+    // day's media list can briefly look "missing" while a refresh is still
+    // populating it, so wait for that refresh to actually finish.
+    if (pending) return;
     missingFileUrls?.forEach((missingFileUrl) => {
       if (seenErrors.has(currentCongregation.value + missingFileUrl)) return;
       createTemporaryNotification({
@@ -3245,6 +3403,7 @@ onMounted(() => {
     router.push('/settings');
   }
   checkCoDate();
+  maybeShowQuickStartGuide();
 
   watch(
     () => urlVariables.value.mediator,
@@ -3274,6 +3433,54 @@ onMounted(() => {
     },
   );
 });
+
+// Congregation switching no longer always remounts this page - the
+// congregation switcher is a modal now, not a separate route, so Vue
+// Router can reuse this same component instance across a congregation
+// switch instead of unmounting/remounting it. Watch currentCongregation
+// directly (rather than the route's "initial load" param, as this used
+// to) so jumping to the next day with media, the memorial-day check, and
+// the CO-week reminder still fire when switching congregations while
+// already on this page, not just on a fresh mount (onMounted above still
+// covers that first-mount case).
+//
+// The route param this previously watched (route.params.typeOfLoad)
+// doesn't reliably change on every switch: a normal switch always pushes
+// to the same '/media-calendar/initial' path, so after the first switch
+// landed there, every subsequent switch pushes to that exact same route -
+// Vue's watch never re-fires for a source value that didn't actually
+// change, silently skipping this whole block on the second, third, etc.
+// switch and leaving the previous congregation's selected date in place
+// indefinitely. currentCongregation, by contrast, genuinely changes on
+// every single switch (confirmed via setCongregation, which only ever
+// assigns a new truthy id, never a transient empty value), so it doesn't
+// have that staleness problem.
+watch(
+  () => currentCongregation.value,
+  (newCongregation, oldCongregation) => {
+    if (!newCongregation || newCongregation === oldCongregation) return;
+    // Reset first, rather than leaving whatever day the previous
+    // congregation had selected in place until goToNextDayWithMedia()
+    // manages to recompute one - that recompute depends on this
+    // congregation's lookupPeriod data already being available, which can
+    // still be loading right as this fires, letting the old congregation's
+    // selected date visibly bleed through in the meantime.
+    selectedDate.value = '';
+    goToNextDayWithMedia();
+    checkMemorialDate();
+    if (!selectedDate.value) {
+      selectedDate.value = formatDate(new Date(), 'YYYY/MM/DD');
+    }
+    checkCoDate();
+    maybeShowQuickStartGuide();
+    // onMounted's own fetchMedia() call only covers a fresh mount - this
+    // page is reused (not remounted) across an in-place congregation switch,
+    // so without this the newly selected congregation's errored/incomplete
+    // days just sit there unretried until something else happens to
+    // trigger a refetch.
+    fetchMedia();
+  },
+);
 
 watchImmediate(
   () => getCurrentMediaWindowVariables.value,

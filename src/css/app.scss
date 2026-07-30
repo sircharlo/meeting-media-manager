@@ -194,13 +194,20 @@ body.body--light {
     color: $accent-400;
   }
 
+  .text-primary-emphasis {
+    color: $primary;
+  }
+
   .list-primary .q-hoverable:hover {
     background: $accent-100 !important;
   }
 
   .media-section {
     background: white;
-    border: 1px solid $accent-300;
+    border: 1px solid color-mix(in srgb, $accent-300 45%, transparent);
+    box-shadow:
+      0px 2px 12px 0px rgba(35, 60, 120, 0.06),
+      0px 6px 20px 0px rgba(35, 60, 120, 0.05);
 
     & .q-item.selected-to-drag {
       background-color: $accent-200;
@@ -254,6 +261,17 @@ body.body--dark {
     color: $dark-grey-dark;
   }
 
+  // Quasar floats a field's label up into the primary theme color while
+  // it's focused (`.q-field--highlighted .q-field__label { color:
+  // currentColor }`, inheriting the field's `text-primary` class) - fine on
+  // the light background this color was tuned for, but low-contrast and
+  // hard to read against dark-mode field backgrounds. Unfocused labels use
+  // the default (already-legible) text color, so only this focused state
+  // needs a dark-mode-specific override.
+  .q-field--highlighted .q-field__label {
+    color: color-mix(in srgb, $primary 55%, white);
+  }
+
   .text-accent-200 {
     color: $accent-200-dark;
   }
@@ -266,6 +284,15 @@ body.body--dark {
     color: $accent-100-dark;
   }
 
+  // Same low-contrast-focused-label problem as the .q-field--highlighted
+  // override above, but for text that's directly `text-primary` on a
+  // dark-mode tinted background (e.g. NavDrawer's active nav item) rather
+  // than an inherited `currentColor` - same fix, brightened primary rather
+  // than the saturated brand blue tuned for light backgrounds.
+  .text-primary-emphasis {
+    color: color-mix(in srgb, $primary 55%, white);
+  }
+
   .text-secondary {
     color: $secondary-contrast !important;
   }
@@ -276,7 +303,10 @@ body.body--dark {
 
   .media-section {
     background: $dark;
-    border-color: $accent-100-dark;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+      0 2px 10px rgba(0, 0, 0, 0.35),
+      0 6px 20px rgba(0, 0, 0, 0.25);
 
     &
       .clip:not(.bg-accent-100):not(.bg-accent-100-transparent):not(
@@ -310,6 +340,14 @@ body.body--dark {
     background-color: $sorting-bg-dark !important;
     border-color: $sorting-border-dark !important;
   }
+
+  .q-menu,
+  .round-card {
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow:
+      0 2px 10px rgba(0, 0, 0, 0.35),
+      0 8px 24px rgba(0, 0, 0, 0.25);
+  }
 }
 
 .list-droppable {
@@ -331,7 +369,7 @@ body.body--dark {
   padding-top: 1em;
   padding-bottom: 1em;
   position: relative;
-  border-radius: 0.75em;
+  border-radius: 1.1em;
   margin-bottom: 1em;
 
   &:before {
@@ -426,6 +464,17 @@ body.body--dark {
 .text-congregation {
   font-size: 70%;
   font-weight: 200;
+}
+
+// Normal-case, medium-weight section title. Used by MediaSectionHeader.vue
+// and PresentWebsite.vue. In both consumers the leading icon avatar is a
+// sibling element, not a child of this div (which wraps only the text run),
+// so this stays a plain single-child flex container.
+.section-title {
+  align-items: center;
+  display: flex;
+  font-size: 1.1em;
+  font-weight: 650;
 }
 
 .bg-white-transparent {
@@ -573,10 +622,14 @@ body.body--dark {
 .q-list,
 .q-notification,
 .q-time,
-.q-date,
-.q-item:focus-visible {
+.q-date {
   user-select: none;
   outline: none;
+}
+
+.q-item:focus-visible {
+  outline: 2px solid var(--q-primary);
+  outline-offset: -2px;
 }
 
 .q-dialog .q-list,
@@ -659,6 +712,62 @@ a {
   background: color-mix(in srgb, currentColor 16%, transparent);
 }
 
+// A small tinted circle for a leading icon in a dialog header, colored via
+// the same currentColor trick as .btn-tonal - it inherits whatever text-*
+// color class its container already sets (e.g. text-negative, text-primary)
+// so one class works for every severity/intent without a modifier per color.
+.icon-chip {
+  align-items: center;
+  background: color-mix(in srgb, currentColor 15%, transparent);
+  border-radius: 0.75em;
+  display: flex;
+  flex-shrink: 0;
+  height: 2em;
+  justify-content: center;
+  width: 2em;
+}
+
+// Hidden until its .hover-reveal-group ancestor is hovered (or focused, for
+// keyboard users - :focus-within so tabbing to the revealed control itself
+// keeps it visible), then fades in after a short pause so a passing cursor
+// doesn't flash it. Fade-out on mouse-leave/blur stays instant (no delay) -
+// only the appearing direction is delayed. Same idiom already used ad hoc by
+// the tag-chip pencil-hint badge and the congregation switcher's dots
+// button; reach for this shared pair instead of re-implementing it a third
+// time.
+.hover-reveal {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.hover-reveal-group:hover .hover-reveal,
+.hover-reveal-group:focus-within .hover-reveal {
+  opacity: 1;
+  transition-delay: 400ms;
+}
+
+// A solid, opaque selection badge for grid/thumbnail multiselect UIs (photo-
+// picker style: click a thumbnail to toggle it, selected ones get this
+// corner checkmark) - deliberately not .icon-chip's translucent currentColor
+// tint, since that only reads well over a plain surface and can nearly
+// disappear over a bright/light thumbnail image sitting behind it. Solid
+// fill + a white ring keeps it visible regardless of what's underneath.
+// Expects a `position: relative` (or Quasar's .relative-position) ancestor.
+.grid-select-check {
+  align-items: center;
+  background: var(--q-primary);
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  display: flex;
+  height: 22px;
+  justify-content: center;
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  width: 22px;
+}
+
 .media-tag {
   border-radius: 11px;
   display: flex;
@@ -666,7 +775,96 @@ a {
   flex-shrink: 0;
   height: 48px;
   overflow: hidden;
+  position: relative;
   width: 44px;
+}
+
+// Reserves the live-preview chip's footprint in the tag-edit dialog
+// (MediaItem.vue) so the dialog's height stays constant whether or not a
+// chip is currently rendered - a dashed outline of the same dimensions
+// stands in for it when there's no type/value to preview yet. Also reused
+// (as a plain fixed-width cell, no chip inside) for the "Preview" caption
+// above it, so the caption and the chip/ghost stay centered on each other.
+.tag-preview-slot {
+  flex-shrink: 0;
+  width: 44px;
+}
+
+.media-tag-ghost {
+  border: 2px dashed $accent-300;
+  border-radius: 11px;
+  height: 48px;
+  width: 44px;
+}
+
+body.body--dark .media-tag-ghost {
+  border-color: $accent-300-dark;
+}
+
+// Matches the value field's outlined box to the 48px-tall preview chip next
+// to it, so the two line up instead of the (shorter, dense-by-default) field
+// looking mismatched against its own preview. Needs `height` (not
+// min-height) on both elements Quasar's own dense-mode rule targets:
+// `.q-field__control-container` sets `height: inherit`, copying whatever
+// `.q-field__control`'s computed `height` property is - min-height alone
+// grows the rendered box but leaves that computed value (and everything
+// that inherits it) still pinned to Quasar's dense 40px, so the border grows
+// while the label/input content inside stays confined to the old height.
+.tag-value-input.q-field--dense .q-field__control,
+.tag-value-input.q-field--dense .q-field__marginal {
+  height: 48px;
+}
+
+// The tag-type segmented toggle (MediaItem.vue) otherwise renders inactive
+// options with a transparent background, which just shows the dialog's own
+// white card behind them - flat and disconnected from the rest of the app's
+// tonal-surface language (icon-chip, .btn-tonal, the accent-100 field right
+// below it). Giving inactive segments the same accent-100 wash as that field
+// ties the whole control together; the active segment's own .bg-primary
+// class (from toggle-color="primary") is left untouched.
+.tag-type-toggle {
+  border-radius: $generic-border-radius;
+  overflow: hidden;
+
+  .q-btn:not(.bg-primary) {
+    background: $accent-100;
+  }
+}
+
+body.body--dark .tag-type-toggle .q-btn:not(.bg-primary) {
+  background: $accent-100-dark;
+}
+
+// The tag is editable via a single click, but nothing about its resting
+// state says so - this pencil badge fades in on hover as a discoverability
+// hint.
+.media-tag__edit-badge {
+  background: $primary;
+  border-radius: 50%;
+  color: white;
+  opacity: 0;
+  padding: 2px;
+  // `opacity: 0` (unlike `visibility: hidden`) leaves the element hit-
+  // testable, so without this it's a real, invisible click target at rest -
+  // disabled here and re-enabled only once actually revealed below.
+  pointer-events: none;
+  position: absolute;
+  // Inset rather than overlapping the edge: .media-tag has overflow:hidden
+  // (needed to clip its own icon/value sections' corners), so a badge
+  // positioned outside the box - as this originally was - gets clipped
+  // and never actually shows.
+  right: 2px;
+  top: 2px;
+  transition: opacity 150ms ease;
+}
+
+.media-tag:hover .media-tag__edit-badge {
+  opacity: 1;
+  pointer-events: auto;
+  // Only the fade-IN is delayed (hovering briefly while passing over the
+  // item shouldn't flash the badge); fading back out on mouse-leave stays
+  // instant since that transition-delay isn't set on this base rule.
+  transition-delay: 400ms;
 }
 
 .media-tag__icon,
@@ -734,7 +932,6 @@ body.body--dark .media-tag--song .media-tag__value {
 
 .time-duration {
   font-size: 0.9em;
-  color: $accent-300;
 }
 
 .text-smaller {
@@ -782,14 +979,6 @@ body.body--dark .media-tag--song .media-tag__value {
 
 .study-bible-item-selected {
   border-color: $primary;
-}
-
-.study-bible-item-selected .q-checkbox {
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 0;
-  background: transparent;
 }
 
 .study-bible-item .q-badge {

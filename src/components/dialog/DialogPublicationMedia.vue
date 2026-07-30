@@ -4,13 +4,18 @@
       class="bg-secondary-contrast flex large-overlay q-px-none medium-overlay"
       style="flex-flow: column"
     >
-      <div class="text-h6 row q-px-md q-pt-lg">
+      <div
+        class="text-bigger text-semibold text-primary row q-px-md q-pt-lg items-center"
+      >
+        <div class="icon-chip q-mr-sm">
+          <q-icon name="mmm-bookshelf" size="xs" />
+        </div>
         <div class="col">{{ t('publication-media') }}</div>
         <div class="col-shrink">
           <q-spinner v-if="loading" color="primary" />
         </div>
       </div>
-      <div class="text-subtitle2 q-pb-sm q-px-md">
+      <div class="text-subtitle2 q-pt-md q-px-md">
         <q-breadcrumbs>
           <q-breadcrumbs-el
             v-for="(crumb, i) in breadcrumbs"
@@ -23,7 +28,7 @@
       <!-- Search Input -->
       <div
         v-if="step === 'search' || step === 'category'"
-        class="q-px-md q-pb-md"
+        class="q-px-md q-py-md"
       >
         <q-input
           v-model="searchQuery"
@@ -135,13 +140,13 @@
                           </q-img>
                         </q-card-section>
                         <q-card-section class="q-pt-md">
-                          <div class="text-caption text-grey-6 q-mb-xs">
+                          <div class="text-caption text-dark-grey q-mb-xs">
                             {{ decodeEntities(result.context) }}
                           </div>
                           <div class="text-body2 text-weight-medium q-mb-sm">
                             {{ decodeEntities(result.title) }}
                           </div>
-                          <div class="text-caption text-grey-7">
+                          <div class="text-caption text-dark-grey">
                             {{ decodeEntities(result.snippet) }}
                           </div>
                         </q-card-section>
@@ -468,7 +473,6 @@
             @click="importPdfVersion"
           />
           <q-btn
-            color="negative"
             :disable="isProcessing"
             flat
             :label="t('cancel')"
@@ -478,6 +482,11 @@
       </div>
     </div>
   </BaseDialog>
+
+  <DialogPdfPageSelection
+    ref="pdfPageSelectionRef"
+    dialog-id="publication-media-pdf-page-selection"
+  />
 </template>
 
 <script setup lang="ts">
@@ -494,8 +503,8 @@ import type { MediaLink, Publication } from 'src/types/jw/publications';
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import DialogDownloadProgress from 'components/dialog/DialogDownloadProgress.vue';
+import DialogPdfPageSelection from 'components/dialog/DialogPdfPageSelection.vue';
 import { storeToRefs } from 'pinia';
-import { useQuasar } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getJwIconFromKeyword } from 'src/helpers/fonts';
@@ -507,7 +516,7 @@ import {
 } from 'src/helpers/jw-media';
 import { log } from 'src/shared/vanilla';
 import { fetchJson, fetchPubMediaLinks } from 'src/utils/api';
-import { convertPdfToImages, getNrOfPdfPages } from 'src/utils/converters';
+import { convertPdfToImages } from 'src/utils/converters';
 import { getLocalDate } from 'src/utils/date';
 import {
   getPublicationDirectory,
@@ -547,8 +556,6 @@ const dialogValue = computed({
   get: () => props.modelValue,
   set: (value) => emit('update:modelValue', value),
 });
-
-const $q = useQuasar();
 
 const jwStore = useJwStore();
 const { urlVariables } = storeToRefs(jwStore);
@@ -747,12 +754,12 @@ async function buildDocumentPreviews(db: string) {
 }
 
 // Search endpoints configuration
-const searchEndpoints = ref([
+const searchEndpoints = computed(() => [
   {
     enabled: true,
     name: 'Publications',
     queryParam: 'q',
-    url: `https://b.jw-cdn.org/apis/search/results/${currentSettings.value?.lang}/publications`,
+    url: `https://b.jw-cdn.org/apis/search/results/${currentSettings.value?.lang || 'E'}/publications`,
   },
 ]);
 
@@ -1086,6 +1093,10 @@ async function importDocument(doc: DocumentItem) {
   dialogValue.value = false;
 }
 
+const pdfPageSelectionRef = ref<InstanceType<
+  typeof DialogPdfPageSelection
+> | null>(null);
+
 async function importPdfVersion() {
   try {
     if (!pdfImportAvailable.value || loading.value) return;
@@ -1126,45 +1137,9 @@ async function importPdfVersion() {
 
     const tempDir = await getTempPath();
 
-    const totalPages = await getNrOfPdfPages(pdfPath);
-    let selectedPages = new Set(
-      Array.from({ length: totalPages }, (_, i) => i),
-    );
-    if (totalPages > 5) {
-      const selectionInput = await new Promise<null | string>((resolve) => {
-        $q.dialog({
-          cancel: true,
-          persistent: true,
-          prompt: {
-            model: `1-${totalPages}`,
-            type: 'text',
-          },
-          title: t('pdf-page-selection-prompt', { totalPages }),
-        })
-          .onOk((data: string) => resolve(data))
-          .onCancel(() => resolve(null));
-      });
-      if (!selectionInput) return;
-      const parsed = selectionInput
-        .split(',')
-        .flatMap((part) => {
-          const trimmed = part.trim();
-          if (trimmed.includes('-')) {
-            const [a, b] = trimmed.split('-').map((n) => Number.parseInt(n));
-            if (Number.isNaN(a) || Number.isNaN(b)) return [];
-            return Array.from(
-              { length: (b || 0) - (a || 0) + 1 },
-              (_, i) => (a || 0) + i,
-            );
-          }
-          const n = Number.parseInt(trimmed);
-          return Number.isNaN(n) ? [] : [n];
-        })
-        .filter((n) => n >= 1 && n <= totalPages)
-        .map((n) => n - 1);
-      if (!parsed.length) return;
-      selectedPages = new Set(parsed);
-    }
+    const selectedPages =
+      await pdfPageSelectionRef.value?.selectPdfPages(pdfPath);
+    if (!selectedPages) return;
     const convertedImages = await convertPdfToImages(
       pdfPath,
       tempDir,

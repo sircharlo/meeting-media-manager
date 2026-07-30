@@ -29,9 +29,10 @@
       @update-label="updateSectionLabel"
     />
     <!-- Empty State -->
-    <SectionEmptyState
+    <EmptyState
       v-if="isEmpty || someItemsAreHidden"
       :all-items-are-hidden="allItemsAreHidden"
+      compact
       :is-dragging="isDragging"
       :selected-date="selectedDateObject"
       :some-items-are-hidden="someItemsAreHidden"
@@ -139,11 +140,11 @@ import {
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, nextTick, ref, watch } from 'vue';
 
+import EmptyState from './EmptyState.vue';
 import MediaDivider from './MediaDivider.vue';
 import MediaGroup from './MediaGroup.vue';
 import MediaItem from './MediaItem.vue';
 import MediaSectionHeader from './MediaSectionHeader.vue';
-import SectionEmptyState from './SectionEmptyState.vue';
 
 const props = defineProps<{
   mediaFilterTerms?: string[];

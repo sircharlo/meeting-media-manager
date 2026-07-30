@@ -25,19 +25,29 @@
       @pointerdown="startDrag"
     >
       <span v-if="modalOpen" class="media-preview-close">
-        <q-icon name="close" size="sm" />
+        <q-icon name="mmm-clear" size="sm" />
         <q-tooltip :delay="1000">{{ t('close') }}</q-tooltip>
       </span>
       <div class="media-preview-surface">
         <img
-          v-if="imagePreview"
+          v-if="imagePreview && !imageLoadError"
           alt=""
           class="media-preview-content"
           draggable="false"
           :src="currentUrl"
           :style="imageStyle"
           @dragstart.prevent.stop
+          @error="imageLoadError = true"
         />
+        <div
+          v-else-if="imagePreview && imageLoadError"
+          class="media-preview-content media-preview-broken column items-center justify-center"
+        >
+          <q-icon color="grey" name="mmm-image-broken" size="2em" />
+          <div class="text-caption q-mt-sm">
+            {{ t('unable-to-load-image') }}
+          </div>
+        </div>
         <template v-else>
           <video
             ref="previewVideo"
@@ -157,6 +167,7 @@ const suppressNextClick = ref(false);
 
 const currentUrl = computed(() => mediaPlaying.value.url);
 const imagePreview = computed(() => isImage(currentUrl.value));
+const imageLoadError = ref(false);
 const mediaAction = computed(() => mediaPlaying.value.action);
 // playbackConfirmedToken only catches up to playToken once the media
 // window's reported position has actually been observed advancing (see
@@ -910,6 +921,7 @@ watch(
 
 watch(currentUrl, () => {
   recentDriftCorrections.value = [];
+  imageLoadError.value = false;
 });
 
 watch(
@@ -1147,6 +1159,13 @@ watch(
   height: 100%;
   object-fit: contain;
   transform-origin: center;
+}
+
+.media-preview-broken {
+  align-items: center;
+  background: rgba(0, 0, 0, 0.06);
+  display: flex;
+  justify-content: center;
 }
 
 .media-preview-content--source {

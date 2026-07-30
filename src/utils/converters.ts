@@ -26,42 +26,113 @@ export const getNrOfPdfPages = async (pdfPath: string): Promise<number> => {
   }
 };
 
+// Small enough to render quickly and stay light in memory for a PDF with
+// hundreds of pages, but still legible enough to recognize a page's content
+// in a thumbnail grid.
+const PDF_THUMBNAIL_WIDTH = 220;
+
+export interface PdfThumbnailSession {
+  destroy: () => Promise<void>;
+  getThumbnail: (pageNumber: number) => Promise<null | string>;
+}
+
+/**
+ * Loads a PDF once and returns a handle for rendering individual page
+ * thumbnails on demand, so a caller (e.g. a paginated thumbnail grid) can
+ * request only the pages currently in view - one at a time or in small
+ * batches - instead of rendering the entire document up front. Reuses the
+ * same parsed document across calls; only `destroy()` re-reads/re-parses.
+ */
+export const openPdfThumbnailSession = async (
+  pdfPath: string,
+): Promise<PdfThumbnailSession> => {
+  const buffer = await readFile(pdfPath);
+  const parser = new PDFParse({ data: buffer });
+  // Cancelling mid-render (dialog closed/cancelled while a getScreenshot()
+  // call is still in flight) makes that call reject once destroy() tears
+  // down the parser - expected during a normal cancel, not a real failure,
+  // so it shouldn't get reported to errorCatcher.
+  let destroyed = false;
+
+  return {
+    destroy: () => {
+      destroyed = true;
+      return parser.destroy();
+    },
+    getThumbnail: async (pageNumber: number) => {
+      try {
+        const result = await parser.getScreenshot({
+          desiredWidth: PDF_THUMBNAIL_WIDTH,
+          imageBuffer: false,
+          imageDataUrl: true,
+          partial: [pageNumber],
+        });
+        return result.pages[0]?.dataUrl || null;
+      } catch (e) {
+        if (!destroyed) errorCatcher(e);
+        return null;
+      }
+    },
+  };
+};
+
 export const convertPdfToImages = async (
   pdfPath: string,
   outputFolder: string,
   pages?: Set<number>,
 ): Promise<string[]> => {
-  const outputImages: string[] = [];
   try {
     const buffer = await readFile(pdfPath);
     const parser = new PDFParse({ data: buffer });
 
+    // `pages` is 0-indexed; `partial` expects 1-indexed page numbers, and
+    // restricts rendering to just those pages instead of the whole document.
+    const pageNumbers = pages?.size
+      ? [...pages].sort((a, b) => a - b).map((page) => page + 1)
+      : undefined;
+
     const result = await parser.getScreenshot({
       desiredWidth: FULL_HD.width * 2,
       imageBuffer: false,
+      partial: pageNumbers,
     });
 
     const parsedPath = parse(pdfPath);
 
-    for (let i = 0; i < result.pages.length; i++) {
-      if (pages && !pages.has(i)) continue;
+    const writeResults = await Promise.allSettled(
+      result.pages.map(async (page) => {
+        const pageDataUrl = page.dataUrl;
+        if (!pageDataUrl) return null;
 
-      const pageDataUrl = result.pages[i]?.dataUrl;
-      if (pageDataUrl) {
-        const outputPath = `${outputFolder}/${parsedPath.name}_${i + 1}.png`;
+        // Paired directly from the same getScreenshot() response rather
+        // than re-derived from its array index - safe even if a requested
+        // page were ever out of range and silently dropped from the
+        // result, which would otherwise shift every later index and
+        // mislabel the remaining pages.
+        const pageNumber = page.pageNumber;
+        const outputPath = `${outputFolder}/${parsedPath.name}_${pageNumber}.png`;
         await writeFile(
           outputPath,
           Buffer.from(pageDataUrl.split(',')[1] ?? '', 'base64'),
         );
-        outputImages.push(outputPath);
-      }
-    }
+        return outputPath;
+      }),
+    );
 
     await parser.destroy();
+
+    const outputImages: string[] = [];
+    for (const writeResult of writeResults) {
+      if (writeResult.status === 'fulfilled') {
+        if (writeResult.value) outputImages.push(writeResult.value);
+      } else {
+        errorCatcher(writeResult.reason);
+      }
+    }
     return outputImages;
   } catch (e) {
     errorCatcher(e);
-    return outputImages;
+    return [];
   }
 };
 

@@ -207,14 +207,13 @@
                   {{ t('cbs-custom-end-time') }}
                 </div>
                 <div class="row q-px-md q-pb-sm">
-                  <q-input
+                  <TimeInput
                     v-model="cbsCustomEndTime"
-                    class="full-width"
                     :disable="timerRunning"
+                    :extra-rules="cbsEndTimeRules"
+                    full-width
                     :label="t('end-time')"
-                    mask="##:##"
-                    outlined
-                    :rules="cbsEndTimeRules"
+                    :options="undefined"
                   />
                 </div>
               </template>
@@ -230,14 +229,13 @@
               {{ t('wt-custom-end-time') }}
             </div>
             <div class="row q-px-md q-pb-sm">
-              <q-input
+              <TimeInput
                 v-model="wtCustomEndTime"
-                class="full-width"
                 :disable="timerRunning"
-                filled
+                :extra-rules="wtEndTimeRules"
+                full-width
                 :label="t('end-time')"
-                mask="##:##"
-                :rules="wtEndTimeRules"
+                :options="undefined"
               />
             </div>
           </template>
@@ -455,7 +453,7 @@
                 unelevated
                 @click="startTimer()"
               >
-                <q-icon class="q-mr-sm" name="play_arrow" />
+                <q-icon class="q-mr-sm" name="mmm-play" />
                 {{ t('start') }}
               </q-btn>
             </template>
@@ -479,7 +477,7 @@
                   unelevated
                   @click="stopTimer()"
                 >
-                  <q-icon class="q-mr-sm" name="stop" />
+                  <q-icon class="q-mr-sm" name="mmm-stop" />
                   {{ t('stop') }}
                 </q-btn>
               </div>
@@ -491,7 +489,7 @@
             unelevated
             @click="exportPdfReport"
           >
-            <q-icon class="q-mr-sm" name="picture_as_pdf" />
+            <q-icon class="q-mr-sm" name="mmm-file" />
             {{ t('export-pdf-report') }}
           </q-btn>
 
@@ -503,7 +501,7 @@
             >
               {{ formattedTime }}
             </div>
-            <div class="text-caption text-grey-6">
+            <div class="text-caption text-dark-grey">
               {{ timerMode === 'countup' ? t('elapsed') : t('remaining') }}
             </div>
           </div>
@@ -550,27 +548,28 @@
   </q-menu>
 
   <!-- Edit Dialog -->
-  <q-dialog v-model="editDialogOpen">
-    <q-card>
-      <q-card-section>
-        <div class="text-h6">{{ editPart?.label }}</div>
-      </q-card-section>
-
-      <q-card-section class="q-pt-none">
-        <q-input
-          v-model.number="editDuration"
-          :label="t('duration-minutes')"
-          min="1"
-          type="number"
-        />
-      </q-card-section>
-
-      <q-card-actions align="right">
-        <q-btn v-close-popup flat :label="t('cancel')" @click="cancelEdit" />
-        <q-btn v-close-popup flat :label="t('save')" @click="saveEdit" />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
+  <ConfirmDialog
+    v-model="editDialogOpen"
+    :confirm-label="t('save')"
+    dialog-id="timer-edit-part"
+    icon="mmm-time"
+    icon-color="primary"
+    :title="editPart?.label ?? ''"
+    @cancel="cancelEdit"
+    @confirm="saveEdit"
+  >
+    <q-card-section>
+      <q-input
+        v-model.number="editDuration"
+        class="bg-accent-100"
+        dense
+        :label="t('duration-minutes')"
+        min="1"
+        outlined
+        type="number"
+      />
+    </q-card-section>
+  </ConfirmDialog>
 </template>
 
 <script setup lang="ts">
@@ -583,6 +582,8 @@ import {
   watchImmediate,
   whenever,
 } from '@vueuse/core';
+import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
+import TimeInput from 'components/form-inputs/TimeInput.vue';
 import { storeToRefs } from 'pinia';
 import { QMenu } from 'quasar';
 import useTimer from 'src/composables/useTimer';

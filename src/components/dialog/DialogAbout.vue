@@ -27,7 +27,7 @@
           </div>
         </div>
         <div class="col-shrink">
-          <q-btn flat icon="close" round @click="handleHide">
+          <q-btn flat icon="mmm-clear" round @click="handleHide">
             <q-tooltip :delay="500">
               {{ t('close') }}
             </q-tooltip>
@@ -111,21 +111,21 @@
       <div class="row q-gutter-x-md">
         <div class="col">
           <q-btn
-            class="q-pa-md full-width"
-            color="accent-400"
+            class="btn-tonal q-pa-md full-width"
+            color="primary"
+            flat
             no-caps
-            outline
-            target="_blank"
+            rounded
             @click="openExternal('repo')"
           >
             <div class="row q-gutter-x-md full-width items-center">
               <div class="col-shrink text-primary q-ml-none">
                 <q-icon name="mmm-github" />
               </div>
-              <div class="col-shrink text-secondary">
+              <div class="col-shrink text-primary">
                 {{ t('github-repo') }}
               </div>
-              <div class="col text-right text-accent-400">
+              <div class="col text-right text-primary">
                 <q-icon name="mmm-arrow-outward" />
               </div>
             </div>
@@ -133,21 +133,21 @@
         </div>
         <div class="col">
           <q-btn
-            class="q-pa-md full-width"
-            color="accent-400"
+            class="btn-tonal q-pa-md full-width"
+            color="primary"
+            flat
             no-caps
-            outline
-            target="_blank"
+            rounded
             @click="openExternal('docs')"
           >
             <div class="row q-gutter-x-md full-width items-center">
               <div class="col-shrink text-primary q-ml-none">
                 <q-icon name="mmm-guide" />
               </div>
-              <div class="col-shrink text-secondary">
+              <div class="col-shrink text-primary">
                 {{ t('user-guide') }}
               </div>
-              <div class="col text-right text-accent-400">
+              <div class="col text-right text-primary">
                 <q-icon name="mmm-arrow-outward" />
               </div>
             </div>

@@ -17,6 +17,7 @@
         <div class="col">{{ t('media-sync') }}</div>
         <div class="col-shrink">
           <q-btn
+            :aria-label="t('refresh-all-meeting-media')"
             color="primary"
             :disable="refreshDisabled"
             flat
@@ -196,11 +197,26 @@
       </div>
     </div>
   </q-menu>
+  <ConfirmDialog
+    v-model="refreshConfirmOpen"
+    confirm-color="primary"
+    :confirm-label="t('confirm')"
+    dialog-id="refresh-meeting-media-confirm"
+    icon="mmm-refresh"
+    icon-color="primary"
+    :message="t('refresh-all-meeting-media-confirm')"
+    persistent
+    :title="t('refresh-all-meeting-media')"
+    @cancel="refreshConfirmOpen = false"
+    @confirm="doRefreshMeetingMedia"
+  />
 </template>
 
 <script setup lang="ts">
+import type { QMenu } from 'quasar';
+
+import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import { storeToRefs } from 'pinia';
-import { type QMenu, useQuasar } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
 import { DOWNLOAD_ROW_AUTO_COLLAPSE_MS, SORTER } from 'src/constants/general';
 import { updateLookupPeriod } from 'src/helpers/date';
@@ -213,7 +229,6 @@ import { useI18n } from 'vue-i18n';
 // ─── Setup ───────────────────────────────────────────────────────────────────
 
 const { t } = useI18n();
-const $q = useQuasar();
 const { basename } = globalThis.electronApi;
 const { dateLocale } = useLocale();
 
@@ -497,18 +512,24 @@ function navigateToDate(dateKey?: string) {
     : dateKey.replace(/(\d{4})(\d{2})(\d{2})/, '$1/$2/$3');
 }
 
+const refreshConfirmOpen = ref(false);
+
+async function doRefreshMeetingMedia() {
+  // Close immediately rather than blocking on the fetch - the refresh
+  // button itself already shows :loading="fetchOrDownloadsAreRunning" (a
+  // global "is any media work active" store flag, not something local to
+  // this dialog) for as long as the refresh is actually running, so the
+  // user isn't left without feedback - they're just free to close this
+  // popup, switch dates, or otherwise keep using the app while it runs
+  // instead of being stuck behind a persistent confirm dialog.
+  refreshConfirmOpen.value = false;
+  updateLookupPeriod({ reset: true });
+  await fetchMedia();
+}
+
 function onRefreshMeetingMedia() {
   if (refreshDisabled.value) return;
-  $q.dialog({
-    cancel: { label: t('cancel') },
-    message: t('refresh-all-meeting-media-confirm'),
-    ok: { label: t('confirm') },
-    persistent: true,
-    title: t('refresh-all-meeting-media'),
-  }).onOk(async () => {
-    updateLookupPeriod({ reset: true });
-    await fetchMedia();
-  });
+  refreshConfirmOpen.value = true;
 }
 
 // React to status changes: track completion timestamps, schedule auto-collapse.

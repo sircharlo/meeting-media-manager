@@ -263,6 +263,7 @@ const notifyScheduleSyncChanges = (changes: {
 }) => {
   if (changes.currentChanged) {
     createTemporaryNotification({
+      deferWhileDialogOpen: true,
       message: i18n.global.t('meeting-current-schedule-updated'),
       timeout: 10000,
       type: 'info',
@@ -271,6 +272,7 @@ const notifyScheduleSyncChanges = (changes: {
 
   if (changes.futureChanged) {
     createTemporaryNotification({
+      deferWhileDialogOpen: true,
       message: i18n.global.t('meeting-future-schedule-updated'),
       timeout: 10000,
       type: 'info',

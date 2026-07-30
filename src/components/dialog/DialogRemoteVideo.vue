@@ -4,13 +4,29 @@
       class="bg-secondary-contrast flex large-overlay q-px-none medium-overlay"
       style="flex-flow: column"
     >
-      <div class="text-h6 row q-px-md q-pt-lg">
+      <div
+        class="text-bigger text-semibold text-primary row q-px-md q-pt-lg items-center"
+      >
+        <div class="icon-chip q-mr-sm">
+          <q-icon name="mmm-movie" size="xs" />
+        </div>
         <div class="col">
           {{ t('add-video-jw-org') }}
         </div>
         <div class="col-shrink">
-          <q-spinner v-if="videosAreLoading" color="primary" />
-          <q-icon v-else color="accent-400" name="mmm-cloud-done" />
+          <q-btn
+            :aria-label="t('click-to-refresh-list')"
+            color="primary"
+            flat
+            icon="mmm-cloud-done"
+            :loading="videosAreLoading"
+            round
+            @click="refreshVideos"
+          >
+            <q-tooltip :delay="500">
+              {{ t('click-to-refresh-list') }}
+            </q-tooltip>
+          </q-btn>
         </div>
       </div>
       <div class="row q-px-md q-pt-md">
@@ -119,12 +135,7 @@
           />
         </div>
         <div class="col text-right">
-          <q-btn
-            color="negative"
-            flat
-            :label="t('cancel')"
-            @click="cancelDialog"
-          />
+          <q-btn flat :label="t('cancel')" @click="cancelDialog" />
         </div>
       </div>
     </div>
@@ -287,10 +298,17 @@ const getJwVideos = async () => {
         b.firstPublished.localeCompare(a.firstPublished),
       );
     }
-    videosAreLoading.value = false;
   } catch (error) {
     errorCatcher(error);
+  } finally {
+    videosAreLoading.value = false;
   }
+};
+
+const refreshVideos = async () => {
+  if (videosAreLoading.value) return;
+  remoteVideos.value = [];
+  await getJwVideos();
 };
 
 const addVideo = async (video: MediaItemsMediatorItem) => {

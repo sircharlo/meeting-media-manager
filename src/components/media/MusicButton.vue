@@ -9,6 +9,7 @@
           ? 'white-transparent'
           : 'negative'
     "
+    data-wizard-target="music-button"
     no-caps
     rounded
     :text-color="

@@ -1,7 +1,6 @@
 <template>
   <q-header
-    bordered
-    class="bg-primary text-white text-bigger text-weight-medium"
+    class="header-elevated bg-primary text-white text-bigger text-weight-medium"
   >
     <DialogAbout
       ref="aboutInfo"
@@ -58,10 +57,7 @@
               {{ t(route.meta.title.toString()) }}
             </div>
           </div>
-          <div
-            v-if="!route.fullPath.includes('congregation-selector')"
-            class="row text-congregation"
-          >
+          <div class="row text-congregation">
             <div class="ellipsis">
               {{
                 congregationSettings?.congregations?.[currentCongregation]
@@ -72,12 +68,7 @@
         </div>
       </div>
       <div class="col-shrink q-gutter-x-sm">
-        <HeaderCongregation
-          v-if="route.fullPath.includes('congregation-selector')"
-        />
-        <HeaderCalendar
-          v-else-if="route.fullPath.includes('/media-calendar')"
-        />
+        <HeaderCalendar v-if="route.fullPath.includes('/media-calendar')" />
         <HeaderSettings v-else-if="route.fullPath.includes('/settings')" />
         <HeaderWebsite
           v-else-if="route.fullPath.includes('/present-website')"
@@ -97,7 +88,6 @@ import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 
 import HeaderCalendar from './HeaderCalendar.vue';
-import HeaderCongregation from './HeaderCongregation.vue';
 import HeaderSettings from './HeaderSettings.vue';
 import HeaderWebsite from './HeaderWebsite.vue';
 
@@ -132,3 +122,17 @@ watch(
   },
 );
 </script>
+
+<style lang="scss" scoped>
+// A subtle gradient + shadow instead of a flat fill and a hard bottom
+// border, so the bar reads as sitting above the content rather than just
+// being a different-colored block next to it.
+.header-elevated {
+  background-image: linear-gradient(
+    180deg,
+    color-mix(in srgb, white 8%, transparent),
+    transparent
+  ) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+</style>

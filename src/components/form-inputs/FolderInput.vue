@@ -1,17 +1,35 @@
 <template>
-  <q-btn
-    color="primary"
+  <q-input
+    class="bg-accent-100 cursor-pointer"
+    dense
     hide-bottom-space
-    icon="mmm-folder-multiple-image"
-    :no-caps="!!model"
-    outline
+    :label="displayFolderName || t('browse')"
+    :model-value="null"
+    outlined
+    readonly
     style="max-width: 240px"
     @click="showFolderPicker"
-    ><div class="ellipsis q-ml-sm">
-      {{ displayFolderName || t('choose-a-folder') }}
-    </div>
+    @keyup.enter="showFolderPicker"
+  >
+    <template #prepend>
+      <q-icon name="mmm-folder-multiple-image" />
+    </template>
+    <template #append>
+      <q-btn
+        v-if="model"
+        :aria-label="t('clear')"
+        dense
+        flat
+        icon="mmm-clear"
+        round
+        size="sm"
+        @click.stop.prevent="clearFolder"
+      >
+        <q-tooltip :delay="1000">{{ t('clear') }}</q-tooltip>
+      </q-btn>
+    </template>
     <q-tooltip v-if="!!model" :delay="1000">{{ model }}</q-tooltip>
-  </q-btn>
+  </q-input>
 </template>
 
 <script setup lang="ts">
@@ -35,14 +53,19 @@ const showFolderPicker = async () => {
       .catch((error) => {
         errorCatcher(error);
       });
-    if (!result || !result.filePaths || result.canceled) {
-      model.value = null;
-    } else if (result.filePaths.length > 0) {
+    // Canceling the native picker (or it failing to return anything) should
+    // leave an already-configured folder untouched - clearing it is now an
+    // explicit, separate action (the "clear" icon below) rather than a
+    // side effect of backing out of the picker.
+    if (result && !result.canceled && result.filePaths.length > 0) {
       model.value = result.filePaths[0] ?? null;
     }
   } catch (error) {
     errorCatcher(error);
-    model.value = null;
   }
+};
+
+const clearFolder = () => {
+  model.value = null;
 };
 </script>

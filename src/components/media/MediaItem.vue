@@ -706,15 +706,17 @@
           <template v-else>
             <q-btn
               ref="playButton"
-              color="primary"
+              :color="fileIsAvailable || streamIsAvailable ? 'primary' : 'grey'"
               :disable="
-                mediaPlaying.url !== '' &&
-                (isVideo(mediaPlaying.url) || isAudio(mediaPlaying.url))
+                (mediaPlaying.url !== '' &&
+                  (isVideo(mediaPlaying.url) || isAudio(mediaPlaying.url))) ||
+                (!fileIsAvailable && !streamIsAvailable)
               "
               icon="mmm-play-sign-language"
               :outline="markersPanelOpen"
               push
               rounded
+              :unelevated="!fileIsAvailable && !streamIsAvailable"
               @click="markersPanelOpen = !markersPanelOpen"
             >
               <q-tooltip :delay="500">
@@ -1233,6 +1235,7 @@
     :dialog-id="'media-stop-pending-' + props.media.uniqueId"
     icon="mmm-stop"
     :message="t('sureStopVideo')"
+    persistent
     :title="t('stop-media')"
     @cancel="mediaToStop = ''"
     @confirm="stopMedia()"
@@ -1249,6 +1252,7 @@
           (props.media.fileUrl ? getBasename(props.media.fileUrl) : ''),
       })
     "
+    persistent
     :title="t('delete-media')"
     @cancel="mediaToDelete = ''"
     @confirm="deleteMedia()"
@@ -1260,6 +1264,7 @@
     icon="mmm-play"
     icon-color="primary"
     :message="t('play-only-this-clip-question')"
+    persistent
     :title="t('confirm')"
     @cancel="pendingReplayMarker = null"
     @confirm="confirmReplayMarker"
@@ -1271,6 +1276,7 @@
     icon="mmm-play"
     icon-color="primary"
     :message="t('entireFile-question')"
+    persistent
     :title="t('confirm')"
     @cancel="entireFileConfirmPending = false"
     @confirm="confirmPlayEntireFile"
@@ -1285,6 +1291,7 @@
         count: deletableSelectedMediaItems?.length || 0,
       })
     "
+    persistent
     :title="t('confirm')"
     @cancel="deleteSelectedMediaConfirmPending = false"
     @confirm="doDeleteSelectedMedia"

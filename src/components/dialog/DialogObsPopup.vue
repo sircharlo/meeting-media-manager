@@ -39,8 +39,8 @@
                         : scene === currentSettings?.obsImageScene
                           ? t('picture-in-picture')
                           : isUUID(scene)
-                            ? scenes.find((s) => s.sceneUuid === scene)
-                                ?.sceneName
+                            ? (scenes.find((s) => s.sceneUuid === scene)
+                                ?.sceneName ?? t('unknown-scene'))
                             : scene
                   }}
                 </div>
@@ -178,7 +178,7 @@ const resolvedScene = computed(() => {
     }
     return currentSettings.value.obsCameraScene;
   }
-  return currentSettings.value.obsCameraScene;
+  return currentScene.value;
 });
 
 const ensureObsConnected = async () => {
@@ -291,6 +291,15 @@ const baseScenesLength = computed(
 );
 
 const getSceneIcon = (scene: null | string | undefined) => {
+  // A scene that no longer resolves to anything (e.g. a saved UUID for a
+  // scene that was renamed/deleted in OBS) already turns the button red via
+  // `sceneExists` below - but with icons hidden, that used to leave a
+  // completely blank clickable rectangle with no indication of what's
+  // wrong. Always surface a warning icon for that case, overriding the
+  // hide-icons preference just for this one broken state.
+  if (scene && !sceneExists(scene)) {
+    return 'mmm-warning';
+  }
   if (currentSettings.value?.obsHideIcons) {
     return undefined;
   }
