@@ -24,6 +24,7 @@ import {
   fetchMemorials,
   fetchPubMediaLinks,
   fetchRaw,
+  fetchReleaseNotes,
   fetchYeartext,
 } from '../api';
 import * as dateUtils from '../date';
@@ -327,6 +328,38 @@ describe('fetchMemorials', () => {
     const memorials = await fetchMemorials();
 
     expect(memorials).toBeNull();
+  });
+});
+
+describe('fetchReleaseNotes', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    clearFetchCache();
+  });
+
+  it('should not report a plain network failure', async () => {
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(
+      new TypeError('Failed to fetch'),
+    );
+
+    const result = await fetchReleaseNotes('en');
+
+    expect(result).toBeNull();
+    expect(errorCatcher).not.toHaveBeenCalled();
+  });
+
+  it('should still report a non-network failure', async () => {
+    const error = new Error('boom');
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(error);
+
+    const result = await fetchReleaseNotes('en');
+
+    expect(result).toBeNull();
+    expect(errorCatcher).toHaveBeenCalledWith(error);
   });
 });
 

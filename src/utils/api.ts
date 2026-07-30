@@ -376,7 +376,7 @@ export const fetchReleaseNotes = async (
     if (!res.ok) return null;
     return await res.text();
   } catch (e) {
-    errorCatcher(e);
+    if (!isFetchNetworkError(e)) errorCatcher(e);
     return null;
   }
 };
