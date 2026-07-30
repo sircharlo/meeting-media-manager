@@ -220,11 +220,13 @@ export const isMeetingDay = (lookupDate?: Date) => {
 };
 
 export function updateLookupPeriod({
-  allCongregations,
+  congregationIds,
+  multipleCongregations,
   onlyForWeekIncluding,
   reset,
 }: {
-  allCongregations?: boolean;
+  congregationIds?: string[];
+  multipleCongregations?: boolean;
   onlyForWeekIncluding?: string;
   reset?: boolean;
 } = {}) {
@@ -233,8 +235,8 @@ export function updateLookupPeriod({
 
     if (!lookupPeriod || typeof lookupPeriod !== 'object') return;
 
-    if (reset && allCongregations) {
-      resetAllCongregations(lookupPeriod);
+    if (reset && multipleCongregations) {
+      resetAllCongregations(lookupPeriod, congregationIds);
       return;
     }
 
@@ -313,18 +315,22 @@ function getDaysForWeek(days: DateInfo[], dateStr: string) {
 
 function resetAllCongregations(
   lookupPeriod: Partial<Record<string, (DateInfo | undefined)[]>>,
+  congregationIds?: string[],
 ) {
-  const congregationIds = Object.keys(lookupPeriod).filter(
-    (id) => id && Array.isArray(lookupPeriod[id]),
+  const targetCongregationIds = Object.keys(lookupPeriod).filter(
+    (id) =>
+      id &&
+      Array.isArray(lookupPeriod[id]) &&
+      (!congregationIds || congregationIds.includes(id)),
   );
 
   log(
-    `🔄 [updateLookupPeriod] Resetting dynamic media for ${congregationIds.length} congregations`,
+    `🔄 [updateLookupPeriod] Resetting dynamic media for ${targetCongregationIds.length} congregations`,
     'dateHelpers',
     'log',
   );
 
-  for (const congId of congregationIds) {
+  for (const congId of targetCongregationIds) {
     try {
       const days = lookupPeriod[congId];
       if (!Array.isArray(days)) continue;

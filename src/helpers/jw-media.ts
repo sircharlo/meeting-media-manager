@@ -103,6 +103,7 @@ import {
   getMediaVideoMarkers,
   getMepsLanguagesByMediaItem,
   getPublicationInfoFromDb,
+  type MepsLanguageByMediaItem,
   registerSqliteProviders,
   tableExists,
 } from 'src/utils/sqlite';
@@ -1660,8 +1661,23 @@ const getMeetingDayRefreshCandidate = async (
     logIncompleteMeeting(day, index, meetingType);
   }
 
-  const allMedia = Object.values(day.mediaSections ?? {}).flatMap(
-    (section) => section.items || [],
+  // dynamicMediaMapper groups media sharing an extractCaption (e.g. every
+  // reference-publication citation) under a synthetic parent wrapper, with
+  // the actual playable items nested in that parent's `children` - a flat
+  // section.items pass alone never reaches them, so a missing file inside a
+  // group (checkMissingDynamicMediaFile itself already skips the wrapper via
+  // its own children-length guard) would never get detected, leaving the day
+  // marked complete indefinitely even though the UI still shows it missing.
+  const flattenMediaItems = (items: MediaItem[]): MediaItem[] =>
+    items.flatMap((item) => [
+      item,
+      ...(item.children?.length ? flattenMediaItems(item.children) : []),
+    ]);
+
+  const allMedia = flattenMediaItems(
+    Object.values(day.mediaSections ?? {}).flatMap(
+      (section) => section.items || [],
+    ),
   );
   const missingMediaCheckResults = await Promise.all(
     allMedia.map((media, mediaIndex) =>
@@ -3604,9 +3620,18 @@ const applyMepsLanguageOverrides = (
     docId: number;
     includeVideoMarkers?: boolean;
   },
+  // Language data sourced from databases other than `options.db` — e.g. the
+  // per-item databases opened while resolving nested extract media (see
+  // getDocumentExtractItems) — so media embedded inside a referenced
+  // publication can still be verified against the database it actually
+  // came from, not just the outer meeting document's own database.
+  extraMepsLanguagesByMediaItem: MepsLanguageByMediaItem[] = [],
 ) => {
   const currentStateStore = useCurrentStateStore();
-  const mepsLanguagesByMediaItem = getMepsLanguagesByMediaItem(options);
+  const mepsLanguagesByMediaItem = [
+    ...getMepsLanguagesByMediaItem(options),
+    ...extraMepsLanguagesByMediaItem,
+  ];
 
   for (const media of allMedia) {
     applyMepsLanguageOverride(media, mepsLanguagesByMediaItem);
@@ -3620,12 +3645,7 @@ const applyMepsLanguageOverrides = (
 
   function applyMepsLanguageOverride(
     media: MultimediaItem,
-    mepsLanguages: {
-      IssueTagNumber: number;
-      KeySymbol: null | string;
-      MepsLanguageIndex: number;
-      Track: null | number;
-    }[],
+    mepsLanguages: MepsLanguageByMediaItem[],
   ) {
     const mediaKeySymbol =
       media.KeySymbol === 'sjjm'
@@ -4216,7 +4236,10 @@ export const getMwMedia = async (
     //   },
     // );
 
-    const extracts = await getDocumentExtractItems(
+    const {
+      items: extracts,
+      mepsLanguagesByMediaItem: extractMepsLanguagesByMediaItem,
+    } = await getDocumentExtractItems(
       db,
       docId,
       formatDate(lookupDate, 'YYYYMMDD'),
@@ -4226,10 +4249,11 @@ export const getMwMedia = async (
       .concat(extracts)
       .sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal);
 
-    const mepsLanguagesByMediaItem = applyMepsLanguageOverrides(allMedia, {
-      db,
-      docId,
-    });
+    const mepsLanguagesByMediaItem = applyMepsLanguageOverrides(
+      allMedia,
+      { db, docId },
+      extractMepsLanguagesByMediaItem,
+    );
     const errors =
       (await processMissingMediaInfo({
         allMedia,
@@ -4285,14 +4309,7 @@ const mediaHasMepsLanguage = (
   effectiveMediaKeySymbol: null | string | undefined,
   mepsLanguageIndex: number | undefined,
   isSignLanguage: boolean,
-  mepsLanguagesByMediaItem:
-    | undefined
-    | {
-        IssueTagNumber: number;
-        KeySymbol: null | string;
-        MepsLanguageIndex: number;
-        Track: null | number;
-      }[],
+  mepsLanguagesByMediaItem: MepsLanguageByMediaItem[] | undefined,
 ) => {
   if (mepsLanguageIndex === undefined) return false;
   if (!isSignLanguage) return true;
@@ -4308,14 +4325,7 @@ const getMediaLanguageCandidates = (
   media: MultimediaItem,
   effectiveMediaKeySymbol: null | string | undefined,
   isSignLanguage: boolean,
-  mepsLanguagesByMediaItem:
-    | undefined
-    | {
-        IssueTagNumber: number;
-        KeySymbol: null | string;
-        MepsLanguageIndex: number;
-        Track: null | number;
-      }[],
+  mepsLanguagesByMediaItem: MepsLanguageByMediaItem[] | undefined,
 ) => {
   const currentStateStore = useCurrentStateStore();
   const mediaMepsLanguage =
@@ -4484,12 +4494,7 @@ export async function processMissingMediaInfo({
   isDynamicMedia?: boolean;
   keepMediaLabels?: boolean;
   meetingDate?: null | string;
-  mepsLanguagesByMediaItem?: {
-    IssueTagNumber: number;
-    KeySymbol: null | string;
-    MepsLanguageIndex: number;
-    Track: null | number;
-  }[];
+  mepsLanguagesByMediaItem?: MepsLanguageByMediaItem[];
 }) {
   try {
     const currentStateStore = useCurrentStateStore();
@@ -4702,11 +4707,30 @@ const findExistingPublicationFile = async (
   if (!(await pathExists(pubDir))) return { FilePath: '' };
 
   const dirItems = await readdir(pubDir);
+
+  // JW media filenames drop the trailing "00" day placeholder some issue
+  // tags carry (e.g. issue 20241000 downloads as "..._202410_...", never
+  // "..._20241000_..."), so match on that truncated form instead of the
+  // raw value.
+  const issueStr = publication.issue?.toString();
+  const issueParam =
+    issueStr?.endsWith('00') && issueStr.length > 2
+      ? issueStr.slice(0, -2)
+      : issueStr;
+
+  // Mirrors fetchPubMediaLinks' own docid-vs-pub priority (see api.ts): a
+  // real download only ever encodes ONE of the two in its filename - docid
+  // alone, or pub+issue+track, never both. createMissingMediaPublicationFetcher
+  // sets both on the same object regardless of which one the download
+  // actually ends up using, so requiring every one of them to match (as
+  // this used to) could never find a file that was actually fetched via
+  // the pub+issue+track fallback (e.g. sign-language media, see the docid
+  // priority fix in fetchPubMediaLinks).
   const params = [
-    publication.issue,
+    issueParam,
     publication.track,
     publication.pub,
-    publication.docid,
+    publication.pub ? undefined : publication.docid,
   ]
     .filter((item) => item !== undefined && item !== null)
     .map((item) => item.toString());

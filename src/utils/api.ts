@@ -408,17 +408,19 @@ export const fetchPubMediaLinks = async (
   try {
     const videoExtensions: (keyof PublicationFiles)[] = ['MP4', 'M4V'];
     const docid = publication.docid?.toString() || '';
-    const shouldUseDocId = !!docid;
-    const shouldUsePub = !!publication.pub && !shouldUseDocId;
+    const hasPub = !!publication.pub;
 
-    const pubToUse = shouldUsePub ? publication.pub || '' : '';
-    const docidToUse = shouldUseDocId ? docid : '';
-    const params = {
+    // docid is normally preferred over pub/issue/track when available, but
+    // some media (e.g. sign-language magazine videos, which carry both a
+    // MepsDocumentId and a KeySymbol/IssueTagNumber/Track) 404 when docid is
+    // sent alongside issue/track. Fall back to pub/issue/track in that case
+    // rather than failing the lookup outright.
+    const buildParams = (useDocId: boolean) => ({
       alllangs: '0',
       ...(publication.booknum
         ? { booknum: publication.booknum.toString() }
         : {}),
-      docid: docidToUse,
+      docid: useDocId ? docid : '',
       fileformat:
         publication.fileformat &&
         videoExtensions.includes(publication.fileformat)
@@ -427,15 +429,24 @@ export const fetchPubMediaLinks = async (
       issue: publication.issue?.toString() || '',
       langwritten: publication.langwritten || '',
       output: 'json',
-      pub: pubToUse,
+      pub: useDocId ? '' : publication.pub || '',
       track: publication.track?.toString() || '',
       txtCMSLang: 'E',
-    };
-    const response = await fetchJson<Publication>(
+    });
+
+    let response = await fetchJson<Publication>(
       base,
-      new URLSearchParams(params),
+      new URLSearchParams(buildParams(!!docid)),
       online,
     );
+
+    if (!response && docid && hasPub) {
+      response = await fetchJson<Publication>(
+        base,
+        new URLSearchParams(buildParams(false)),
+        online,
+      );
+    }
 
     if (
       response &&

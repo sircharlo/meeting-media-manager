@@ -234,15 +234,19 @@ export const getPublicationInfoFromDb = (db: string): PublicationFetcher => {
   }
 };
 
-export const getMepsLanguagesByMediaItem = (source: MultimediaItemsFetcher) => {
+export interface MepsLanguageByMediaItem {
+  IssueTagNumber: number;
+  KeySymbol: null | string;
+  MepsLanguageIndex: number;
+  Track: null | number;
+}
+
+export const getMepsLanguagesByMediaItem = (
+  source: MultimediaItemsFetcher,
+): MepsLanguageByMediaItem[] => {
   try {
     if (!source.db) return [];
-    const mepsLanguagesByMediaItem: {
-      IssueTagNumber: number;
-      KeySymbol: null | string;
-      MepsLanguageIndex: number;
-      Track: null | number;
-    }[] = [];
+    const mepsLanguagesByMediaItem: MepsLanguageByMediaItem[] = [];
     for (const table of [
       'Multimedia',
       'DocumentMultimedia',
@@ -273,12 +277,7 @@ export const getMepsLanguagesByMediaItem = (source: MultimediaItemsFetcher) => {
 
       if (columnKSExists && columnMLIExists)
         mepsLanguagesByMediaItem.push(
-          ...executeQuery<{
-            IssueTagNumber: number;
-            KeySymbol: null | string;
-            MepsLanguageIndex: number;
-            Track: null | number;
-          }>(
+          ...executeQuery<MepsLanguageByMediaItem>(
             source.db,
             `SELECT DISTINCT IssueTagNumber, KeySymbol, MepsLanguageIndex, Track from ${table} ORDER by KeySymbol, IssueTagNumber, Track`,
           ),
@@ -786,14 +785,19 @@ const getExtractMultimedia = async (
   defaultLang: JwLangCode,
   settings: ReturnType<typeof useCurrentStateStore>['currentSettings'],
   isSignLanguage: boolean | undefined,
-): Promise<MultimediaItem[]> => {
+): Promise<{
+  items: MultimediaItem[];
+  mepsLanguagesByMediaItem: MepsLanguageByMediaItem[];
+}> => {
   const extractLangOrig = getExtractLanguage(extract, defaultLang);
   const symbol = getExtractSymbol(
     extract.UniqueEnglishSymbol,
     extract.IssueTagNumber,
   );
 
-  if (['it', 'snnw'].includes(symbol)) return [];
+  const empty = { items: [], mepsLanguagesByMediaItem: [] };
+
+  if (['it', 'snnw'].includes(symbol)) return empty;
 
   let extractLang = extractLangOrig;
   let extractDb = await getDbFromJWPUB(
@@ -817,7 +821,18 @@ const getExtractMultimedia = async (
     );
   }
 
-  if (!extractDb) return [];
+  if (!extractDb) return empty;
+
+  // The extract's own database is the authoritative source for what
+  // languages its embedded media actually exist in (e.g. a video nested
+  // inside this referenced document that isn't available in the
+  // congregation's language may carry a different, but valid, MepsLanguageIndex
+  // of its own — such as a sign language other than the congregation's).
+  // Surface this alongside the items so callers can verify against it
+  // instead of only the outer meeting document's database.
+  const mepsLanguagesByMediaItem = getMepsLanguagesByMediaItem({
+    db: extractDb,
+  });
 
   const requestParams = getMultimediaRequestParams(
     symbol,
@@ -865,14 +880,17 @@ const getExtractMultimedia = async (
     });
   }
 
-  return extractItems;
+  return { items: extractItems, mepsLanguagesByMediaItem };
 };
 
 export const getDocumentExtractItems = async (
   db: string,
   docId: number,
   meetingDate: string,
-) => {
+): Promise<{
+  items: MultimediaItem[];
+  mepsLanguagesByMediaItem: MepsLanguageByMediaItem[];
+}> => {
   try {
     const currentStateStore = useCurrentStateStore();
     const settings = currentStateStore.currentSettings;
@@ -896,20 +914,25 @@ export const getDocumentExtractItems = async (
     );
 
     const allExtractItems: MultimediaItem[] = [];
+    const allMepsLanguagesByMediaItem: MepsLanguageByMediaItem[] = [];
 
     for (const extract of extracts) {
-      const extractItems = await getExtractMultimedia(
+      const { items, mepsLanguagesByMediaItem } = await getExtractMultimedia(
         extract,
         meetingDate,
         defaultLang,
         settings,
         currentStateStore.currentLangObject?.isSignLanguage,
       );
-      allExtractItems.push(...extractItems);
+      allExtractItems.push(...items);
+      allMepsLanguagesByMediaItem.push(...mepsLanguagesByMediaItem);
     }
-    return allExtractItems;
+    return {
+      items: allExtractItems,
+      mepsLanguagesByMediaItem: allMepsLanguagesByMediaItem,
+    };
   } catch (e: unknown) {
     errorCatcher(e);
-    return [];
+    return { items: [], mepsLanguagesByMediaItem: [] };
   }
 };

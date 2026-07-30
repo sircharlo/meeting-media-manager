@@ -10,6 +10,7 @@ import { moveAdditionalMediaMaps } from './move-additional-media';
 import { moveCacheToMachineWide } from './move-cache-to-machine-wide';
 import { newMediaSections } from './new-media-sections';
 import { refreshDynamicMedia } from './refresh-dynamic-media';
+import { refreshDynamicMediaSignLanguage } from './refresh-dynamic-media-sign-language';
 import { resetYeartextPreview2026 } from './reset-yeartext-preview-2026';
 
 // In the migration registry, the version is the one that was live when the migration was added
@@ -29,6 +30,7 @@ export const MIGRATION_REGISTRY: Record<string, MigrationFunction> = {
   '26.1.7 refreshDynamicMedia': refreshDynamicMedia,
   '26.4.6 emptyFontsFolder': emptyFontsFolder,
   '26.7.5 refreshDynamicMedia': refreshDynamicMedia,
+  '26.7.9 refreshDynamicMediaSignLanguage': refreshDynamicMediaSignLanguage,
   addBaseUrlToAllCongregations,
   firstRun,
   localStorageToPiniaPersist,
