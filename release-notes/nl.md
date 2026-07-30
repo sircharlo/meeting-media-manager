@@ -8,71 +8,71 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 
 ### ✨ Nieuwe functies
 
-- ✨ **Media Preview Quality**: Media preview geeft nu video frames via canvas met kwalitatieve downscaling, fixing op gedroogde / vervaging previews (vooral op tekst zware inhoud zoals nummers). Het voorbeeld schakelt zichzelf ook automatisch uit als het herhaaldelijk het afspeel-drift op één video moet corrigeren met één klik om het weer aan te zetten.
+- ✨ **Media Preview Quality**: Media preview now renders video frames via canvas with high-quality downscaling, fixing jagged/blurry previews (especially on text-heavy content like songs). The preview also auto-disables itself if it has to repeatedly correct playback drift on a single video, with a one-click way to turn it back on.
 
 ## v26.7.6
 
 ### ✨ Nieuwe functies
 
-- ✨ **CBS Video Exclusie**: Voeg een instelling toe om Congregation Bible Study video's uit te sluiten van specifieke publicaties (standaard ingesteld op de **Walk Couragewijze met God** boek), met een doorzoekbare publicatie-kiezer.
-- ✨ **Document Pagina Numbers**: Publicatie Media en JWPUB import lijsten tonen nu het paginanummer van elk document (of nummers wanneer er meerdere pagina's zijn) na de titel. Dit kan u helpen om snel specifieke media te vinden wanneer u het paginanummer kent waarop het is gevonden.
+- ✨ **CBS Video Exclusion**: Added a setting to exclude Congregation Bible Study videos from specific publications (defaults to the **Walk Courageously With God** book), with a searchable publication picker.
+- ✨ **Document Page Numbers**: Publication Media and JWPUB import listings now show each document's page number (or numbers when there are multiple pages) after its title. This can help you to quickly find specific media when you know the page number on which it is found.
 
 ## v26.7.4
 
 ### ✨ Nieuwe functies
 
-- ✨ \*\*Ontbrekende Media Herstel \*\*: Media items waarvan het lokale bestand ontbrak (bijv. Toon nu een uitgeschakelde afspeelknop verwijdert door de cache automatisch te wissen of handmatig te verwijderen. een "ontbreekt"-bijschrift waarin het te zoeken bestand wordt genoemd en een nieuwe "Lokaliseer bestand" actie om het item opnieuw te koppelen aan een bestand op de schijf.
-- ✨ **Compatibiliteitswaarschuwing**: Heeft een verwijderbare banner waarschuwingsgebruikers toegevoegd in soon-to-be-niet-ondersteunde OS/architecture combos (macOS 12 Monterey en Windows 32-bit) om te upgraden voordat toekomstige app updates een nieuwere systeem ondersteuning vereisen.
+- ✨ **Missing Media Recovery**: Media items whose local file went missing (e.g. deleted by the cache auto-clear, or removed manually) now show a disabled play button, a "missing" caption naming the file to look for, and a new "Locate file" action to relink the item to a file on disk.
+- ✨ **Compatibility Warning**: Added a dismissible banner warning users on soon-to-be-unsupported OS/architecture combos (macOS 12 Monterey and Windows 32-bit) to upgrade before future app updates require newer system support.
 
 ## v26.7.0
 
 ### ✨ Nieuwe functies
 
-- ✨ **Gelinkte Audio Playback**: Ondersteuning toegevoegd voor het afspelen van audio vanuit één bestand samen met video uit een ander bestand. Dit kan handig zijn voor het afspelen van video diavoorstellingen met begeleidende muziek.
-- ✨ **Bekeken Media Layouts**: Behoud toegevoegd voor bekeken media items en sectie in de bekeken mappen. Dit zorgt ervoor dat de medialijst op dezelfde manier wordt weergegeven, zelfs wanneer de bekeken map op verschillende apparaten wordt gesynchroniseerd.
+- ✨ **Linked Audio Playback**: Added support for playing audio from one file together with video from another file. This can be useful for playing video slideshows with accompanying music.
+- ✨ **Watched Media Layouts**: Added persistence for watched media items and section order across watched folders. This ensures that the media list is displayed the same way even when the watched folder is synced across devices.
 
 ## v26.6.1
 
 ### ✨ Nieuwe functies
 
-- ✨ **Media Preview**: Voegt een live media preview overlay toe die in- of uitgeschakeld kan worden via de instellingen of de weergave popup.
-- ✨ **Zoek media**: Een snelle zoekfunctie toegevoegd in de medialijst waarmee je snel media kunt vinden op titel. Om het te gebruiken, gebruik de standaard sneltoets voor zoeken (Ctrl+F of Cmd+F).
-- ✨ **Filter instellingen**: Voegt een filter toe aan de instellingen pagina waarmee u instellingen kunt vinden op trefwoord of categorie. Om het te gebruiken, klik je op de zoek knop in de rechterbovenhoek van de instellingen pagina of gebruik de standaard sneltoets voor zoeken (Ctrl+F of Cmd+F).
-- ✨ **Achtergrond Muziek Overlap Waarschuwing**: Voeg een waarschuwing toe wanneer media wordt gestart terwijl achtergrond muziek wordt afgespeeld. Gebruikers kunnen ervoor kiezen om achtergrondmuziek uit de melding te stoppen.
+- ✨ **Media Preview**: Added a live media preview overlay that can be toggled on or off from the settings or from the display popup.
+- ✨ **Search media**: Added a quick search box in the media list that allows you to quickly find media by title. To use it, simply use the standard keyboard shortcut for search (Ctrl+F or Cmd+F).
+- ✨ **Filter settings**: Added a filter box to the settings page that allows you to find settings by keyword or category. To use it, simply click on the Search button in the top right corner of the settings page, or use the standard keyboard shortcut for search (Ctrl+F or Cmd+F).
+- ✨ **Background Music Overlap Warning**: Added a warning notification when media is started while background music is playing. Users can choose to stop the background music from the notification.
 
 ## v26.6.0
 
 ### ✨ Nieuwe functies
 
-- ✨ **Timer**: analoge weergave modus en status van timing rapport toegevoegd.
-- ✨ **Profielen**: Profielinstellingen importeren en exporteren in de Geavanceerde instellingen en de Setup Wizard.
-- ✨ **Media Window**: Ondersteuning toegevoegd voor het automatisch verbergen van het media-venster na het afspelen toen het oorspronkelijk verborgen was. Dat is praktisch wanneer een externe spreker bijvoorbeeld afbeeldingen wil laten zien.
+- ✨ **Timer**: Added analog display modes and timing report status.
+- ✨ **Profiles**: Added profile settings import and export in Advanced settings and the Setup Wizard.
+- ✨ **Media Window**: Added support for automatically hiding the media window after playback when it was initially hidden. This is practical when a remote speaker wants to display images, for example.
 
 ## v26.5.0
 
 ### ✨ Nieuwe functies
 
-- ✨ **PDF Importeren**: Een nieuwe PDF import stroom toegevoegd aan het dialoogvenster voor de publicatie media, staat toe dat de PDF-versie van een publicatie automatisch wordt geïmporteerd als individuele afbeeldingen indien gewenst.
+- ✨ **PDF Import**: Added a new PDF import flow to the Publication Media dialog, allowing the PDF version of a publication to be automatically imported as individual images when desired.
 
 ## v26.4.8
 
 ### ✨ Nieuwe functies
 
-- ✨ **JW Stream**: voegde JW Stream toe aan de lijst van websites die gespiegeld kunnen worden.
+- ✨ **JW Stream**: Added JW Stream to the list of websites that can be mirrored.
 
-## v26,4.0
-
-### ✨ Nieuwe functies
-
-- ✨ **Meeting Timer**: Er is een nieuwe timer-functie voor vergadering toegevoegd. Het is optioneel en kan desgewenst worden ingeschakeld in de geavanceerde instellingen. De timer kan worden gebruikt om de media-operator te laten bijhouden van de tijd besteed aan vergaderonderdelen, of om de tijd besteed aan het huidige vergadergedeelte weer te geven op een specifiek scherm dat alleen zichtbaar is voor de spreker.
-
-## v26,3.0
+## v26.4.0
 
 ### ✨ Nieuwe functies
 
-- ✨ **Memorial Media**: Automatische Memorial media ophalen is nu buiten werk! De app downloadt automatisch de Memorial Welcome Video en afbeelding om weer te geven tijdens Memorial, indien beschikbaar in de geconfigureerde taal.
-- ✨ **Afspeelsnelheid**: Snelheidsregeling voor afspelen met visuele indicator en handmatige reset toegevoegd. Deze functie is alleen zichtbaar als deze is ingeschakeld in de geavanceerde instellingen.
-- ✨ **Pinyin Songs**: Voeg een mogelijkheid toe voor vervanging van pinyin nummer voor bijeenkomsten die in het Chinees worden gehouden.
+- ✨ **Meeting Timer**: A new meeting timer feature has been added. It is optional and can be enabled in the advanced settings, if desired. The timer can be used to allow the media operator to keep track of the time spent on meeting parts, or to display the time spent on the current meeting part on a dedicated screen visible only to the speaker.
+
+## v26.3.0
+
+### ✨ Nieuwe functies
+
+- ✨ **Memorial Media**: Automatic Memorial media retrieval is now out of beta! The app will automatically download the Memorial Welcome Video and image to display during the Memorial, when available in the configured language.
+- ✨ **Playback Speed**: Added playback speed control with visual indicator, and manual reset. This feature is only visible if enabled in the advanced settings.
+- ✨ **Pinyin Songs**: Added a toggle for pinyin song substitution for meetings held in Chinese.
 
 ## v26.2.0
 
@@ -122,13 +122,13 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 
 - ✨ **JWPUB-mediaselectie**: Mogelijkheid toegevoegd om individuele media uit JWPUB-bestanden te selecteren.
 - ✨ **Automatische focus op mediavenster**: Optionele instelling toegevoegd om het mediavenster automatisch te focussen na Zoom-schermdeling.
-- ✨ **Cursorweergave voor TV-schermen**: Cursorweergave in het websitevenster verbeterd voor een betere zichtbaarheid van de muisaanwijzer op TV-schermen.
+- ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
 - ✨ **Vergaderopname**: Nieuwe functie toegevoegd om een externe opname-app te bedienen.
 - ✨ **Zoeken op website**: Mogelijkheid toegevoegd om met slim zoeken media of publicaties op de website te vinden.
 - ✨ **Eenvoudige handmatige publicatie-import**: Functionaliteit toegevoegd om publicaties van JW.org eenvoudig te importeren, zoals tijdschriften, boeken, programma's en uitnodigingen.
 - ✨ **Verbeteringen voor gebarentaal**: Bevestiging toegevoegd vóór het afspelen van volledige bestanden in gebarentaal en ondersteuning voor het selecteren van meerdere clips, bijvoorbeeld wanneer meerdere alinea's achter elkaar gelezen moeten worden.
 - ✨ **Clipnavigatie**: Weergave van duur toegevoegd aan clips in de lijst en de clipnavigatie verbeterd.
-- 🛠️ **Mediaweergave**: Zorgt ervoor dat het mediavenster zichtbaar wordt zodra het afspelen begint, zelfs als het eerder verborgen was.
+- 🛠️ **Media Display**: Ensured media display becomes visible when playback starts, even if it was hidden before.
 
 ## v25.10.1
 
@@ -153,7 +153,7 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 - ✨ **Mediavenster Altijd Boven & Volledig Scherm Gedrag**: Het altijd-boven-gedrag voor het mediavenster is opgelost en verbeterd, met dynamische aanpassingen gebaseerd op de volledig-scherm-status.
 - ✨ **Datumweergave Indelingsinstelling**: Er is een gebruikersinstelling toegevoegd om een datumweergave-indeling te configureren.
 - ✨ **Media Overvloeien**: Er zijn overvloei-overgangen geïmplementeerd voor mediaweergave, in plaats van de meer abrupte vervagen-naar-zwart overgang die eerder aanwezig was.
-- ✨ **Muziek Auto-Stop**: Het gedrag van de achtergrondmuziek auto-stop is geoptimaliseerd om zich hetzelfde te gedragen of de muziek automatisch werd gestart of niet
+- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not
 - ✨ **macOS Klikken Door op Inactieve Vensters**: Muisklikken doorgang ingeschakeld op het hoofdvenster voor macOS, wat het eenvoudiger moet maken om de app te bedienen zelfs wanneer het niet gefocust is.
 
 ## v25.9.0
@@ -183,7 +183,7 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 
 ### ✨ Nieuwe functies
 
-- Geen nieuwe functies voor deze release!
+- No new features for this release!
 
 ## 25.6.0
 
@@ -225,48 +225,48 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 
 ### ✨ Nieuwe functies
 
-- 🔄 **Toestaan OBS Reconnection Potempts**: Introduceer de mogelijkheid om de OBS handmatig te dwingen opnieuw verbinding te maken wanneer nodig.
-- 🗑️ **Maak de Oude Export Datummappen automatisch op**: Verwijder automatisch verouderde export datummappen om de opslag georganiseerd te houden.
+- 🔄 **Allow OBS Reconnection Attempts**: Introduce the possibility to manually force OBS to reconnect when needed.
+- 🗑 **Auto Cleanup Old Export Date Folders**: Automatically remove outdated export date folders to keep storage organized.
 
 ## 25.2.0
 
 ### ✨ Nieuwe functies
 
-- :globe_showing_Europe-Afrika: **Gebruik standaard Systeem Lokalisatie gebruiken**: Automatisch de lokalisatie van het systeem detecteren en gebruiken voor een meer gepersonaliseerde ervaring.
-- 🏷️ **Tag ondersteuning voor geëxporteerde Media**: Voeg metadata tags toe aan geëxporteerde media bestanden voor een betere organisatie.
-- 🔄 **Automatisch Beta naar Stable Downgrade** : Sta automatische downgrades van beta versies toe tot stabiele releases indien nodig.
-- 🌐 **Extract Nieuwste leden van het Europees Parlement Taal Indexen**: Haal de meest recente indexen van leden van het Europees Parlement rechtstreeks op via de officiële website, wat zorgt voor actuele taalondersteuning.
+- 🌍 **Use System Locale by Default**: Automatically detect and use the system's locale for a more personalized experience.
+- 🏷 **Tag Support for Exported Media**: Add metadata tags to exported media files for better organization.
+- 🔄 **Automatic Beta to Stable Downgrade**: Allow automatic downgrades from beta versions to stable releases when necessary.
+- 🌐 **Extract Latest MEPS Language Indexes**: Fetch the most recent MEPS language indexes directly from the official website, ensuring up-to-date language support.
 
 ## 25.1.0
 
 ### ✨ Nieuwe functies
 
-- 📅 **Open Vorige dates**: Sta het openen van vorige datums van de huidige week toe, wat handig is wanneer de vergaderdag later in de week wordt verplaatst.
-- 🛑 **Error Banner voor OBS Studio**: Voeg een foutmelding toe wanneer OBS Studio niet is aangesloten op een vergaderdag, waardoor gebruikers worden gewaarschuwd.
-- 📚 **Group Media by Publication**: Group Media from the same referred publication for a cleaner and more organised media overview.
-- 🎵 **Dupliceer Songwaarschuwing**: Toon een waarschuwing als nummers meer dan één keer in de medialijst staan voor weekendvergaderingen.
-- 🔄 **Toekomstige Schedule Planning**: Activeer de planning van toekomstige vergaderschema wijzigingen. die handig is voor wijzigingen in een jaarlijks schema of voor het bezoek van een overpartij aan een buurland.
+- 📅 **Open Previous Dates**: Allow opening previous dates of the current week, which is useful when the meeting day is moved later in the week.
+- 🛑 **Error Banner for OBS Studio**: Add an error banner when OBS Studio is not connected on a meeting day, ensuring users are alerted.
+- 📚 **Group Media by Publication**: Group media from the same referred publication for a cleaner and more organized media overview.
+- 🎵 **Duplicate Song Warning**: Show a warning if songs are listed more than once in the media list for weekend meetings.
+- 🔄 **Future Schedule Planning**: Enable the planning of future meeting schedule changes, which is useful for yearly schedule changes or for the circuit overseer's visit to a neighboring congregation.
 
 ## 24.11.0
 
 ### ✨ Nieuwe functies
 
-- **functie**: Presenteren van de website wordt nu ondersteund op macOS 🚀
-- **functie**: Introduceerde sneltoetsen voor het stoppen, pauzeren en hervatten van het afspelen van media 🚀
-- **feat**: Heeft ondersteuning toegevoegd voor het instellen van het webadres waaruit media :rocket moeten worden gedownload: rocket:
-- **feat**: OBS Studio instant scène kiezer toegevoegd en de vernieuwde scène kiezer functionaliteit toegevoegd in instellingen
-- **feat**: Uitgebreide documentatiewebsite om meer talen te ondersteunen
+- **feat**: Presenting the website is now supported on macOS 🚀
+- **feat**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
+- **feat**: Added support for setting the web address from which media should be downloaded 🚀
+- **feat**: Added OBS Studio instant scene picker and overhauled scene picker functionality in settings
+- **feat**: Expanded documentation website to support more languages
 
 ## 24.10.10
 
 ### ✨ Nieuwe functies
 
-- **nieuw**: Sneltoetsen toegevoegd om naar het volgende/vorige media-item te navigeren
-- **nieuw**: Een menu met de rechtermuisknop toegevoegd aan media om media items te verbergen en de naam te wijzigen
-- **nieuw**: Bijsnijden van video tijden zijn nu gerespecteerd in geïmporteerde JWL afspeellijsten
+- **new**: Added keyboard shortcuts to navigate to the next/previous media item
+- **new**: Added a right-click menu to media items to hide media items and rename them
+- **new**: Trimmed video times are now respected in imported JWL playlists
 
 ## 24.10.9
 
 ### ✨ Nieuwe functies
 
-- **feat**: Een optie toegevoegd om alle extra mediabestanden voor de huidige geselecteerde dag te verwijderen
+- **feat**: Added an option to delete all extra media files for the currently selected day
