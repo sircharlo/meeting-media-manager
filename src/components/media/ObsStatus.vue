@@ -100,11 +100,15 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
     } catch (error) {
       attempts++;
       const { OBSWebSocketError } = await import('obs-websocket-js');
-      if (
-        attempts < maxRetries &&
-        error instanceof OBSWebSocketError &&
-        error.message.includes('OBS is not ready')
-      ) {
+      // Both mean OBS isn't ready to answer yet, not a real failure: "OBS
+      // is not ready" during the handshake, or "Not connected" when the
+      // socket drops between the 'Identified' event firing and this call
+      // going out.
+      const isTransient =
+        (error instanceof OBSWebSocketError &&
+          error.message.includes('OBS is not ready')) ||
+        (error instanceof Error && error.message === 'Not connected');
+      if (attempts < maxRetries && isTransient) {
         log(`Retrying... (${attempts}/${maxRetries})`, 'obs', 'log');
         await new Promise((resolve) => {
           setTimeout(resolve, retryInterval);
