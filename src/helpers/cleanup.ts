@@ -398,6 +398,14 @@ export const removeCongregationCache = async (
   }
 };
 
+/**
+ * Matches the two date-folder name shapes this app creates:
+ * `YYYYMMDD` (Additional Media, per-congregation) and `YYYY-MM-DD`
+ * (folderToWatch, mediaAutoExportFolder) - see dateFromString's
+ * parseStringToDate for the same pair of formats.
+ */
+const DATE_FOLDER_NAME = /^(?:\d{8}|\d{4}-\d{2}-\d{2})$/;
+
 const cleanDateFolders = async (root?: string) => {
   if (!root || !(await pathExists(root))) return;
 
@@ -407,7 +415,7 @@ const cleanDateFolders = async (root?: string) => {
     folders
       .filter((f) => f.isDirectory)
       .filter((f) => !f.name.includes('.jwlplaylist'))
-      .filter((f) => /^\d{8}$/.test(f.name))
+      .filter((f) => DATE_FOLDER_NAME.test(f.name))
       .filter((f) => isInPast(getSpecificWeekday(f.name, 6)))
       .map((f) => remove(join(root, f.name))),
   );
@@ -840,17 +848,32 @@ export const deleteCacheFiles = async (
 };
 
 export const cleanCache = async () => {
+  let ok = true;
+
+  // Isolated from the settings-based branches below: a failure resolving
+  // additionalMediaPath (e.g. the base-path IPC call not being ready yet
+  // right after window creation - see getCachePath's own fallback handling)
+  // used to abort the whole function, silently skipping mediaAutoExportFolder
+  // and folderToWatch cleanup too, even though neither depends on it.
   try {
     const congregationStore = useCongregationSettingsStore();
     const congIds = new Set(Object.keys(congregationStore.congregations));
-
-    const settings = useCurrentStateStore().currentSettings;
-
     const additionalMediaPath = await getAdditionalMediaPath();
 
     congIds.forEach((congId) => {
       cleanDateFolders(join(additionalMediaPath, congId));
     });
+  } catch (error) {
+    ok = false;
+    errorCatcher(error, {
+      contexts: {
+        fn: { name: 'cleanCache (additional media)' },
+      },
+    });
+  }
+
+  try {
+    const settings = useCurrentStateStore().currentSettings;
 
     if (settings?.enableMediaAutoExport && settings?.mediaAutoExportFolder) {
       cleanDateFolders(settings.mediaAutoExportFolder);
@@ -859,16 +882,16 @@ export const cleanCache = async () => {
     if (settings?.enableFolderWatcher && settings?.folderToWatch) {
       cleanDateFolders(settings.folderToWatch);
     }
-
-    return true;
   } catch (error) {
+    ok = false;
     errorCatcher(error, {
       contexts: {
-        fn: { name: 'cleanCache' },
+        fn: { name: 'cleanCache (watched/export folders)' },
       },
     });
-    return false;
   }
+
+  return ok;
 };
 
 let startupTempPathCleaned = false;
