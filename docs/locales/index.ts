@@ -46,13 +46,13 @@ import de from './de.json' with { type: 'json' };
 // 91.6% translated as of 2026-07-30
 import hu from './hu.json' with { type: 'json' };
 
-// 67.1% translated as of 2026-07-30
+// 67.3% translated as of 2026-07-30
 import uk from './uk.json' with { type: 'json' };
 
 // 64.6% translated as of 2026-07-30
 import ko from './ko.json' with { type: 'json' };
 
-// 4.5% translated as of 2026-07-30
+// 4.6% translated as of 2026-07-30
 // import bzs from './bzs.json' with { type: 'json' };
 
 const messages: Partial<Record<LanguageValue, Partial<typeof en>>> = {
