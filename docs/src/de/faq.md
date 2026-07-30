@@ -25,7 +25,7 @@ Der Quellcode dieser Anwendung ist für jedermann einsehbar, um zu überprüfen,
 M³ unterstützt Windows, macOS und Linux:
 
 - **Windows**: Windows 10 und neuer (64-Bit- und 32-Bit-Versionen verfügbar)
-- **macOS**: macOS 10.15 (Catalina) und neuer (Universal-Build)
+- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
 - **Linux**: Die meisten modernen Linux-Distrubutionen (AppImage-Format)
 
 ### :globe_with_meridians: Funktioniert M³ in meiner Sprache? {#language-support}
@@ -81,8 +81,8 @@ Sie können benutzerdefinierte Medien auf verschiedene Arten importieren:
 - **Drag & Drop**: Ziehen Sie Dateien direkt in M³
 - **Ordnerüberwachung**: Richten Sie einen überwachten Ordner für automatische Importe ein
 - **JWPUB-Dateien und Wiedergabelisten**: Importieren Sie Publikationen und Wiedergabelisten
-- **Public Talk Media**: Importiere S-34 oder S-34mp JWPUB Dateien für öffentliche Talk-Medien
-- **Bibel- und Lernbiblen-Tools**: Füge Audio-Bibelaufnahmen, Studiobibel Medien oder signatursprachige Bibelmedien hinzu
+- **Public Talk Media**: Import S-34 or S-34mp JWPUB files for public talk media
+- **Bible and Study Bible Tools**: Add audio Bible recordings, Study Bible media, or sign-language Bible media
 
 ### :speaker: Kann ich Audio-Bibelaufnahmen importieren? {#audio-bible}
 
@@ -126,11 +126,11 @@ Die Hintergrundmusikfunktionen umfassen:
 - Unabhängige Lautstärkeregelung
 - Konfigurierbare Stopp-Pufferzeit
 
-### :stopwatch: Enthält M3 einen Meetingtimer? {#faq-Meeting-Timer}
+### :stopwatch: Does M³ include a meeting timer? {#faq-meeting-timer}
 
-Yes. Wenn aktiviert, kann M3 ein separates Timer-Fenster für Teilnehmer-Timer anzeigen. Es kann nach oben oder unten zählen, die aktuelle Zeit anzeigen, einen Countdown vor dem Meeting anzeigen und wahlweise Überstunden angeben, oder ob das Treffen vor oder hinter dem Zeitplan liegt.
+Yes. When enabled, M³ can show a separate timer window for participant timing. It can count up or down, show the current time, show a pre-meeting countdown, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
 
-Der Timer ist eine Beta-Funktion und sollte nur aktiviert werden, wenn er lokal genehmigt wird.
+The timer is a beta feature and should only be enabled if approved locally.
 
 ### :video_camera: Wie richte ich die Zoom-Integration ein? {#zoom-setup}
 
@@ -169,12 +169,12 @@ Diese Funktion verzögert das Teilen von Bildern mit OBS, bis Sie sie manuell au
 - Mehr Kontrolle über das Timing
 - Vermeidung vorzeitiger Szenenwechsel
 
-### :record_button: Kann M3 Meetings aufnehmen? {#faq-Aufnahmen}
+### :record_button: Can M³ record meetings? {#faq-recordings}
 
-M3 enthält keinen eingebauten Rekorder aber es kann dabei helfen, die Aufnahme auf zwei Arten zu steuern:
+M³ does not include a built-in recorder, but it can help control recording in two ways:
 
-- Wenn Sie OBS Studio verwenden, aktivieren Sie die OBS Aufnahme-Steuerelemente und starten oder stoppen Sie die OBS Aufnahme im OBS Popup
-- Wenn Sie eine andere Aufzeichnungs-App verwenden, konfigurieren Sie Tastaturkürzele, damit M3 den Start senden und Befehle aus dem Popup für Besprechungen stoppen kann
+- If you use OBS Studio, enable OBS recording controls and start or stop OBS recording from the OBS popup
+- If you use another recording app, configure keyboard shortcuts so M³ can send the start and stop commands from the meeting recordings popup
 
 ## Erweiterte Funktionen {#faq-advanced-features}
 
@@ -203,7 +203,7 @@ Ja! M³ unterstützt mehrere Profile für:
 - Verschiedene Gruppen
 - Separate Einstellungen und Medien für jede
 
-Profile können auch in eine JSON-Datei exportiert und auf einem anderen Computer oder in ein anderes Profil importiert werden. Das Importieren ersetzt die Einstellungen des aktuellen Profils.
+Profiles can also be exported to a JSON file and imported on another computer or into another profile. Importing replaces the current profile's settings.
 
 ## Fehlerbehebung {#faq-troubleshooting}
 
@@ -309,7 +309,7 @@ Vielen Dank für Ihr Interesse, das Projekt zu unterstützen! Im Geiste von Matt
 M³ ist so konzipiert, dass es auf einer Vielzahl von Betriebssystemen funktioniert:
 
 - **Windows**: Windows 10 und neuer (64-Bit- und 32-Bit-Versionen verfügbar)
-- **macOS**: macOS 10.15 (Catalina) und neuer (Universal-Build)
+- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
 - **Linux**: Die meisten modernen Linux-Distrubutionen (AppImage-Format)
 
 M³ hat die folgenden Hardwareanforderungen:
