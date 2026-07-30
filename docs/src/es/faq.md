@@ -73,7 +73,7 @@ Yes! M³ allows you to:
 - Download media for upcoming meetings automatically
 - Import custom media for any date
 
-### :file_folder: What is media auto-export? {#import-media}
+### :open_file_folder: How do I import my own media files? {#import-media}
 
 You can import custom media in several ways:
 
@@ -81,8 +81,8 @@ You can import custom media in several ways:
 - **Drag and Drop**: Drag files directly into M³
 - **Folder Monitoring**: Set up a watched folder for automatic imports
 - **JWPUB Files and Playlists**: Import publications and playlists
-- **Medios públicos de comunicación**: Importar archivos JWPUB S-34 o S-34mp para medios de comunicación públicos
-- **Herramientas bíblicas y de estudio**: Añadir grabaciones bíblicas en audio, medios bíblicos de estudio o medios bíblicos de firma
+- **Public Talk Media**: Import S-34 or S-34mp JWPUB files for public talk media
+- **Bible and Study Bible Tools**: Add audio Bible recordings, Study Bible media, or sign-language Bible media
 
 ### :speaker: Can I import audio Bible recordings? {#audio-bible}
 
@@ -126,11 +126,11 @@ Background music features include:
 - Independent volume control
 - Configurable stop buffer time
 
-### :stopwatch: ¿Incluye M3 un temporizador de reuniones? {#faq-meeting-timer}
+### :stopwatch: Does M³ include a meeting timer? {#faq-meeting-timer}
 
-Yes. Cuando está activado, M3 puede mostrar una ventana de temporizador separada para la temporización del participante. Puede contar hacia arriba o hacia abajo, mostrar la hora actual, mostrar una cuenta regresiva de la prereunión, y opcionalmente indicar las horas extraordinarias o si la reunión está por delante o por detrás del horario.
+Yes. When enabled, M³ can show a separate timer window for participant timing. It can count up or down, show the current time, show a pre-meeting countdown, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
 
-El temporizador es una función beta y sólo debería ser activado si se aprueba localmente.
+The timer is a beta feature and should only be enabled if approved locally.
 
 ### :video_camera: How do I set up the Zoom integration? {#zoom-setup}
 
@@ -169,12 +169,12 @@ This feature delays sharing images to OBS until you manually trigger them. This 
 - Having more control over timing
 - Avoiding premature scene changes
 
-### :record_button: ¿Pueden las reuniones sin precedentes de M3? {#faq-recordings}
+### :record_button: Can M³ record meetings? {#faq-recordings}
 
-M3 no incluye una grabadora integrada, pero puede ayudar a controlar la grabación de dos maneras:
+M³ does not include a built-in recorder, but it can help control recording in two ways:
 
-- Si utiliza OBS Studio, habilite los controles de grabación OBS e inicie o detenga la grabación OBS desde la ventana emergente OBS
-- Si utiliza otra aplicación de grabación, configure los atajos de teclado para que M3 pueda enviar los comandos de inicio y detener desde la ventana emergente de grabaciones de reuniones
+- If you use OBS Studio, enable OBS recording controls and start or stop OBS recording from the OBS popup
+- If you use another recording app, configure keyboard shortcuts so M³ can send the start and stop commands from the meeting recordings popup
 
 ## Advanced Features {#faq-advanced-features}
 
@@ -185,7 +185,7 @@ Folder monitoring allows you to:
 1. Select a folder to watch for new files
 2. Automatically import new media files that are synced with cloud storage like Dropbox or OneDrive
 
-### :open_file_folder: How do I import my own media files? {#faq-media-export}
+### :file_folder: What is media auto-export? {#faq-media-export}
 
 Media auto-export automatically:
 
@@ -203,7 +203,7 @@ Yes! M³ supports multiple profiles for:
 - Different groups
 - Separate settings and media for each
 
-Los perfiles también pueden ser exportados a un archivo JSON e importados en otro equipo o en otro perfil. La importación reemplaza la configuración del perfil actual.
+Profiles can also be exported to a JSON file and imported on another computer or into another profile. Importing replaces the current profile's settings.
 
 ## Troubleshooting {#faq-troubleshooting}
 

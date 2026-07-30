@@ -50,7 +50,7 @@ Für **hybride** oder **persönliche** Zusammenkünfte umfasst der integrierte M
 - **Erweiterte Mediensteuerung**: Medien-Vorschaubilder mit Zoom- und Schwenkfunktionen
 - **Benutzerdefinierte Zeitsteuerung**: Legen Sie benutzerdefinierte Start- und Endzeiten für die Medienwiedergabe fest
 - **Wiedergabesteuerung**: Einfach zu bedienende Pause/Wiedergabe/Stopp-Tasten mit Tastenkürzeln
-- **Live-Vorschau und Geschwindigkeitskontrolle**: Vorschau der Zuschaueranzeige und optional die Geschwindigkeit der Audio- oder Videowiedergabe anpassen
+- **Live preview and speed control**: Preview the audience display and optionally adjust audio or video playback speed
 - **Unterstützung mehrerer Monitore**: Automatische Erkennung und Verwaltung externer Monitore
 - **Saubere Präsentation**: Ablenkungsfreie Medienpräsentationsoberfläche
 
@@ -68,14 +68,14 @@ Für **hybride** oder **persönliche** Zusammenkünfte umfasst der integrierte M
 
 - **Automatischer Szenenwechsel**: Nahtlose Integration mit OBS Studio für hybride Zusammenkünfte
 - **Szenenverwaltung**: Automatisches Wechseln zwischen Kamera, Medien und anderen Szenen
-- **Aufnahme-Steuerelemente**: OBS-Aufnahmen von M3 starten und stoppen, wenn aktiviert
+- **Recording controls**: Start and stop OBS recordings from M³ when enabled
 
 ### Medienimport und -verwaltung {#about-media-import}
 
 - **JWPUB-Dateien**: Importieren und verwalten Sie JWPUB-Dateien mit Leichtigkeit
 - **JWLPLAYLIST-Dateien**: Unterstützung für JW Library-Wiedergabelistendateien
 - **Benutzerdefinierte Medien**: Importieren Sie benutzerdefinierte Videos, Bilder, Audiodateien und PDF-Dateien
-- **Bibelmedien**: Importiere Lernbiblenmedien, signatursprachige Bibelmedien und Audioaufnahmen der Übersetzung der Neuen Welt
+- **Bible media**: Import Study Bible media, sign-language Bible media, and audio recordings of the New World Translation
 - **Öffentliche Vorträge**: Haben Sie mit dem S-34-Importeur immer eine Übersicht über die Medien für öffentliche Vorträge parat
 
 ### Erweiterte Funktionen {#about-advanced-features}
@@ -83,10 +83,10 @@ Für **hybride** oder **persönliche** Zusammenkünfte umfasst der integrierte M
 - **Ordnerüberwachung**: Synchronisieren Sie Medien automatisch aus überwachten Ordnern (Dropbox, OneDrive usw.)
 - **Medienexport**: Exportieren Sie Medien automatisch in Ordner, organisiert nach Datum
 - **Webseiten-Präsentation**: Präsentieren Sie die offizielle Website auf externen Monitoren
-- **Meeting-Timer**: Optionales Timer-Fenster für das Timing von Meetingteilen
-- **Meeting Recording Helfer**: Steuerung OBS Recording oder eine externe Aufzeichnungsanwendung
+- **Meeting timer**: Optional timer window for timing meeting parts
+- **Meeting recording helpers**: Control OBS recording or an external recording application
 - **Tastenkürzel**: Anpassbare Tastenkürzel für viele Funktionen
-- **Mehrere Profilen**: Verwalten Sie verschiedene Kongregationen oder Gruppen mit separaten Profilen, einschließlich Profileinstellungen Import und Export
+- **Multiple profiles**: Manage different congregations or groups with separate profiles, including profile settings import and export
 
 ## Funktioniert M³ in meiner Sprache? {#does-m3-work-in-my-language}
 

@@ -1,55 +1,55 @@
-# Felhasználói útmutató {#user-guide}
+# User Guide {#user-guide}
 
-Ez az átfogó felhasználói útmutató segít elsajátítani az M³ összes funkcióját, az alapvető beállításoktól a fejlett médiaprezentációs módszerekig.
+This comprehensive user guide will help you master all the features of M³, from basic setup to advanced media presentation techniques.
 
-## Első lépések {#getting-started}
+## Getting Started {#getting-started}
 
-### Letöltés és telepítés {#download-and-install}
+### Download and Install {#download-and-install}
 
-A legújabb verziót a [Letöltési oldalról](download) szerezheti be. A legjobb verziót javasolja az adott eszközhöz, és mutatja a legújabb verziót.
+Get the latest version from the [Download page](download). It recommends the best build for your device and shows the latest version.
 
-### Első indítás {#first-launch}
+### First Launch {#first-launch}
 
-Amikor először indítja el az M³ programot, egy beállítási varázsló végigvezeti Önt a gyülekezetéhez szükséges alapvető beállítások konfigurálásán:
+When you first launch M³, you'll be guided through a setup wizard that will configure the essential settings for your congregation:
 
-1. **Válassza ki a felület nyelvét** - Ez határozza meg, hogy az M³ menüi és gombjai milyen nyelven jelennek meg
+1. **Choose your interface language** - This determines what language M³'s menus and buttons will be displayed in
 2. **Profil típus kiválasztása** - Normál gyülekezeti használatra válassza a „Normál” lehetőséget, különleges eseményekre pedig az „Egyéb” lehetőséget
-3. **Gyülekezeti adatok beállítása** - Adja meg a gyülekezeti adatokat, vagy használja az automatikus keresési funkciót
-4. **Összejövetelek ütemezésének beállítása** - Állítsa be a hétközbeni és hétvégi összejövetelek időpontjait
-5. **Opcionális funkciók** - Az OBS integráció, a háttérzene és egyéb fejlett funkciók konfigurálása
+3. **Configure congregation information** - Enter your congregation details or use the automatic lookup feature
+4. **Set up meeting schedule** - Configure your midweek and weekend meeting times
+5. **Optional features** - Configure OBS integration, background music, and other advanced features
 
 :::tip Tipp
 
-A beállítás során ne spóroljon az idővel – később ezeket a beállításokat bármikor megváltoztathatja a Beállítások menüben.
+Take your time during setup - but you can always change these settings later in the Settings menu.
 
 :::
 
-### Fő Felület Áttekintése {#main-interface}
+### Main Interface Overview {#main-interface}
 
-A fő M³ felület több kulcsfontosságú területből áll:
+The main M³ interface consists of several key areas:
 
-- **Navigációs menü** - Hozzáférés a különböző menüpontokhoz és beállításokhoz
-- **Naptár nézet** - Média böngészése dátum szerint
-- **Médialista** – A kiválasztott dátumokhoz tartozó média megtekintése és kezelése
-- **Eszköztár** - Gyors hozzáférés a gyakori funkciókhoz
-- **Állapotjelző sáv** – Megjeleníti a letöltés előrehaladását, a háttérzenét és az OBS Studio kapcsolat állapotát
+- **Navigation Drawer** - Access different sections and settings
+- **Calendar View** - Browse media by date
+- **Media List** - View and manage media for selected dates
+- **Toolbar** - Quick access to common functions
+- **Status Bar** - Shows download progress, and background music and OBS Studio connection status
 
-## Médiakezelés {#user-guide-media-management}
+## Media Management {#user-guide-media-management}
 
 ### A Naptárnézet megértése {#calendar-view}
 
 A naptárnézetben látható az összejövetelek ütemezése és a rendelkezésre álló média:
 
-- **Összejövetelek napjai** – A kiemelt napok jelzik, hogy mikorra vannak beütemezve az összejövetelek
-- **Médiajelzők** – Az ikonok jelzik, hogy milyen típusú média áll rendelkezésre
-- **Dátum navigáció** - A nyílgombokkal lehet a hónapok között lapozni
+- **Meeting Days** - Highlighted days show when meetings are scheduled
+- **Media Indicators** - Icons show what types of media are available
+- **Date Navigation** - Use arrow keys to navigate between months
 
-### Média szervezése {#organizing-media}
+### Organizing Media {#organizing-media}
 
-Az M³ automatikusan rendezi a médiát az összejövetel típusa és részei szerint:
+M³ automatically organizes media by meeting type and section:
 
-- **Összejövetel szakaszok** – A média az összejövetel részei szerint van csoportosítva (Nyilvános Előadás, Szellemi Kicsek, stb.)
-- **Egyéni szakaszok** – Ha az adott napon nincs tervezett összejövetel, egyéni szakaszokat hozhat létre további médiaelemek számára
+- **Meeting Sections** - Media is grouped by meeting parts (Public Talk, Treasures from God's Word, etc.)
+- **Custom Sections** - You can create custom sections for additional media if no meeting is scheduled on that particular day
 - **Manual Sorting** - Drag media items into the order you need, or reset the order when needed
 - **Repeated Playback** - Loop a single media item or repeat every item in a section until playback is stopped manually
 
@@ -59,74 +59,74 @@ Media can be hidden from the meeting list without deleting the automatically dow
 
 If M³ reports missing media, first check whether the item is expected to become available closer to the meeting date. You can also add the missing item manually with the **Add media** menu or by dragging it into the media list.
 
-## Médiaprezentáció {#media-presentation}
+## Media Presentation {#media-presentation}
 
-### A Médialejátszó megnyitása {#opening-media-player}
+### Opening the Media Player {#opening-media-player}
 
-A média bemutatása egy összejövetelen:
+To present media during a meeting:
 
-1. Válassza ki a dátumot és a bemutatni kívánt médiaelemet
-2. Kattintson a lejátszás gombra, vagy használja a gyorsbillentyűt
-3. A média lejátszása megkezdődik a képernyőn
-4. A vezérlőkkel lejátszhat, szüneteltethet vagy navigálhat a médiatartalmak között
+1. Select the date and media item you want to present
+2. Click the play button or use the keyboard shortcut
+3. The media will start playing on the media display
+4. Use the controls to play, pause, or navigate through media
 
-### Médialejátszó vezérlők {#media-player-controls}
+### Media Player Controls {#media-player-controls}
 
-A médialejátszó többféle vezérlést biztosít:
+The media player provides comprehensive controls:
 
-- **Lejátszás/Szünet** - A média lejátszásának elindítása vagy szüneteltetése
-- **Stop** - Leállítja a lejátszást
+- **Play/Pause** - Start or pause media playback
+- **Stop** - Stop playback
 
 <!-- - **Previous/Next** - Navigate between media items
 - **Volume** - Adjust playback volume -->
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- Kattintson a videó időtartamára a miniatűr bal felső sarkában
+- **Zoom/Pan** - Use mouse wheel to zoom, drag to pan (for images)
 - **Live Preview** - When enabled, show a preview of the audience media window in the main app
 - **Playback Speed** - When enabled in settings, adjust audio and video speed from the media item context menu
 
-### Haladó Prezentációs Funkciók {#advanced-presentation}
+### Advanced Presentation Features {#advanced-presentation}
 
 #### Egyéni időzítés {#custom-timing}
 
-**Beépített Média Vezérlők** (amikor a főablak aktív és a médialista látható):
+Set custom start and end times for media:
 
 <!-- 1. Right-click on a media item
 2. Select "Edit Timing" -->
 
-1. Kattintson a videó időtartamára a miniatűr bal felső sarkában
-2. Állítsa be a kezdési és befejezési időpontokat
-3. Mentse el a változtatásokat
+1. Click on the duration of a video on the top left of its thumbnail
+2. Set start and end times
+3. Save your changes
 
-#### Nagyítás és pásztázás {#zoom-pan}
+#### Zoom and Pan {#zoom-pan}
 
-**_Megjegyzés (_):** Globális gyorsbillentyű – akkor is elérhető, ha az alkalmazás nincs fókuszban
+For images and videos:
 
-- **Tab/Shift+Tab** - Navigálás a médiaelemek között
-- **Fel/le nyíl** - Navigálás a médiaelemek között
-- **Szóköz** - Média lejátszása/szüneteltetése
+- **Zoom In/Out** - Use mouse wheel or zoom controls on the thumbnail
+- **Pan** - Click and drag the thumbnail to move the image around
+- **Reset Zoom** - Click to return to original zoom
 
-#### Billentyűparancsok {#user-guide-keyboard-shortcuts}
+#### Keyboard Shortcuts {#user-guide-keyboard-shortcuts}
 
-Konfiguráljon egyéni billentyűparancsokat a gyors hozzáféréshez. Ne feledje, hogy alapértelmezés szerint nincsenek beállítva billentyűparancsok.
+Configure custom keyboard shortcuts for quick access. Note that no keyboard shortcuts are set by default.
 
-**_Megjegyzés (_):** Globális gyorsbillentyű – akkor is elérhető, ha az alkalmazás nincs fókuszban
+**Built-in Media Controls** (when main window is focused and showing the media list):
 
-- **Tab/Shift+Tab** - Navigálás a médiaelemek között
-- **Fel/le nyíl** - Navigálás a médiaelemek között
-- **Szóköz** - Média lejátszása/szüneteltetése
-- **Escape** - Média leállítása
+- **Tab/Shift+Tab** - Navigate between media items
+- **Up/Down Arrow** - Navigate between media items
+- **Space** - Play/Pause media
+- **Escape** - Stop media
 
-A háttérzene automatikusan elindul az összejövetel előtt és a megfelelő időben leáll:
+**Customizable Shortcuts** (when enabled in settings):
 
-- **Zene engedélyezése** - A háttérzene engedélyezése a beállításokban
-- **Automatikus indítás** – A zene automatikusan elindul, amikor az M³ elindul, ha ez szükséges
-- **Összejövetel leállítás** – A zene automatikusan leáll az összejövetel megkezdése előtt
-- **Kézi vezérlés** – Az állapotjelző sávon található zene gombbal indíthatja el/állíthatja le kézzel a lejátszást
-- **Újraindítás** – Egy kattintással folytathatja a zene lejátszását az összejövetel után
+- **Media Window** - Open/close media window
+- **Previous/Next Media** - Navigate between media items
+- **Pause/Resume** - Control media playback
+- **Stop Media** - Stop media playback
+- **Music Toggle** - Control background music
 
-**_Megjegyzés (_):** Globális gyorsbillentyű – akkor is elérhető, ha az alkalmazás nincs fókuszban
+**Note (\*):** Global shortcut - available even when the app is not focused
 
 ## Display Tools {#display-tools}
 
@@ -151,143 +151,142 @@ The timer is a beta feature and should only be used when approved locally.
 
 ## Háttérzene {#user-guide-background-music}
 
-### Háttérzene beállítása {#background-music-setup}
+### Setting Up Background Music {#background-music-setup}
 
-A háttérzene automatikusan elindul az összejövetel előtt és a megfelelő időben leáll:
+Background music automatically plays before meetings and stops at the appropriate time:
 
-1. **Zene engedélyezése** - A háttérzene engedélyezése a beállításokban
-2. **Automatikus indítás** – A zene automatikusan elindul, amikor az M³ elindul, ha ez szükséges
-3. **Összejövetel leállítás** – A zene automatikusan leáll az összejövetel megkezdése előtt
-4. **Kézi vezérlés** – Az állapotjelző sávon található zene gombbal indíthatja el/állíthatja le kézzel a lejátszást
-5. **Újraindítás** – Egy kattintással folytathatja a zene lejátszását az összejövetel után
+1. **Enable Music** - Turn on background music in settings
+2. **Auto-Start** - Music will start automatically when M³ launches, if appropriate
+3. **Meeting Stop** - Music stops automatically before meeting start time
+4. **Manual Control** - Use the music button in the status bar to start/stop manually
+5. **Restart** - Resume music after meetings with one click
 
 ## Zoom integráció {#user-guide-zoom-integration}
 
-Az M³ integrálható a Zoom alkalmazással az automatikus képernyőmegosztás érdekében:
+M³ can integrate with Zoom for automatic screen sharing:
 
-1. **Integráció engedélyezése** – Engedélyezze a Zoom-integrációt a beállításokban
+1. **Enable Integration** - Turn on Zoom integration in settings
 2. **Gyorsbillentyű beállítása** – Állítsa be a Zoom-ban beállított képernyőmegosztási gyorsbillentyűt. Győződjön meg arról, hogy a Zoom alkalmazásban be van jelölve a "global" jelölőnégyzet.
 3. **Automatikus vezérlés** – Az M³ szükség szerint automatikusan be- és kikapcsolja a képernyőmegosztást a Zoom alkalmazásban
 4. **Kézi vezérlés** – Szükség esetén továbbra is kézzel vezérelheti a képernyőmegosztást a Zoom segítségével
 
 ## OBS Studio integráció {#user-guide-obs-integration}
 
-### OBS integráció beállítása {#user-guide-obs-setup}
+### Setting Up OBS Integration {#user-guide-obs-setup}
 
-Az M³ használata az OBS Studio programmal hibrid összejövetelekhez:
+To use M³ with OBS Studio for hybrid meetings:
 
-1. **OBS Studio telepítése** - Töltse le és telepítse az OBS Studio programot
-2. **WebSocket engedélyezése** - Telepítse a WebSocket bővítményt az OBS programban
-3. **M³ konfigurálása** - Adja meg az OBS portot és jelszót az M³ beállításaiban
-4. **Jelenetek beállítása** – Jelenetek létrehozása kamerához, médiához és egyéb tartalmakhoz
-5. **Teszt** - Ellenőrizze, hogy a lejátszás megfelelően működik-e
+1. **Install OBS Studio** - Download and install OBS Studio
+2. **Enable WebSocket** - Install the WebSocket plugin in OBS
+3. **Configure M³** - Enter OBS port and password in M³ settings
+4. **Set Up Scenes** - Create scenes for camera, media, and other content
+5. **Test** - Verify playback works properly
 
 ### OBS jelenetkezelés {#obs-scene-management}
 
-Engedélyezze ezt az opciót, ha késleltetni szeretné a képek OBS-hez való továbbítását, amíg azt manuálisan el nem indítja:
+M³ automatically switches OBS scenes during presentations:
 
-- Engedélyezze a „Képmegjelenítés késleltetése” opciót az OBS beállításaiban
-- **Médiajelenet** - A média tartalom megjelenítése
-- **Képjelenet** - Képek megjelenítése (késleltethető, ha engedélyezve van)
-- **Automatikus váltás** – A jelenetek a médiatípus és a beállítások alapján cserélődnek
+- **Camera Scene** - Shows the lectern/camera view
+- **Media Scene** - Displays media content
+- **Image Scene** - Shows images (can be postponed if enabled)
+- **Automatic Switching** - Scenes change based on media type and settings
 - **Recording Controls** - If enabled, M³ can start and stop OBS recording from the OBS popup
 
 ### Haladó OBS funkciók {#advanced-obs}
 
-#### Képek késleltetése {#user-guide-postpone-images}
+#### Postpone Images {#user-guide-postpone-images}
 
-Engedélyezze ezt az opciót, ha késleltetni szeretné a képek OBS-hez való továbbítását, amíg azt manuálisan el nem indítja:
+Enable this option to delay sharing images to OBS until manually triggered:
 
-1. Engedélyezze a „Képmegjelenítés késleltetése” opciót az OBS beállításaiban
-2. A képek csak akkor kerülnek megosztásra, ha rákattint a gombra, hogy bemutassa őket az OBS Studio segítségével. Ez akkor hasznos, ha a képeket először a személyesen jelen lévőknek szeretné megmutatni.
+1. Enable "Postpone Images" in OBS settings
+2. Images will only be shared when you click the button to show them using OBS Studio. This is useful for showing images to in-person audience first.
 
 #### Jelenetváltási viselkedés {#user-guide-scene-switching}
 
-**Legjobb alternatíva**: Fontolja meg az OBS Studio helyett az M³ Zoom integrációjának használatát, mivel ez a Zoom natív képernyőmegosztását használja, amely zökkenőmentesebben kezeli az audiót, és nem igényel bonyolult audio konfigurációt.
+Configure how M³ handles scene changes:
 
-- **Nyissa meg a Zoomot**, és lépjen a Beállítások (Settings) menübe
-- **Navigáljon az Audio** → **Advanced** menüpontra
+- **Switch After Media** - Automatically return to previous scene
+- **Remember Previous Scene** - Restore the scene that was active before media
 
-### Hibrid összejövetelek audio konfigurációja {#audio-configuration}
+### Audio Configuration for Hybrid Meetings {#audio-configuration}
 
-**Alternatíva: Számítógép hangjának megosztása**
-Ha az Original Audio beállítás nem működik jól a rendszerben:
+When using M³ with OBS Studio for hybrid meetings (in-person + Zoom), you need to configure audio settings to ensure meeting participants can hear the media:
 
-#### Zoom hangbeállítások {#zoom-audio-settings}
+#### Zoom Audio Settings {#zoom-audio-settings}
 
-**Alternatív megoldás**: Fontolja meg a Zoom integráció használatát, mivel ez a Zoom natív képernyő- és hangmegosztását használja, amely zökkenőmentesebben kezeli az audiót.
+**Before every meeting, you must enable Original Audio in Zoom:**
 
-1. **Nyissa meg a Zoomot**, és lépjen a Beállítások (Settings) menübe
-2. **Navigáljon az Audio** → **Advanced** menüpontra
-3. **Engedélyezze a „Show in-meeting” opciót, hogy engedélyezze az „Original Sound” funkciót**
-4. **Jelölje be a „Disable echo cancellation” (Visszhang-csökkentés letiltása) opciót** (első jelölőnégyzet)
-5. **Jelölje be a „Disable noise suppression”** (zajszűrés letiltása) opciót (második jelölőnégyzet)
-6. **Törölje a jelölést a „Disable high-fidelity music mode” (magas minőségű zenei mód letiltása) mezőből** (harmadik jelölőnégyzet)
-7. **Minden összejövetel megkezdése előtt** kattintson a meeting controls-ban található „Original Audio” (Eredeti hang) gombra
+1. **Open Zoom** and go to Settings
+2. **Navigate to Audio** → **Advanced**
+3. **Enable "Show in-meeting option to 'Enable Original Sound'"**
+4. **Check "Disable echo cancellation"** (first checkbox)
+5. **Check "Disable noise suppression"** (second checkbox)
+6. **Uncheck "Disable high-fidelity music mode"** (third checkbox)
+7. **Before starting each meeting**, click the "Original Audio" button in the meeting controls
 
-**Alternatíva: Számítógép hangjának megosztása**
-Ha az Original Audio beállítás nem működik jól a rendszerben:
+**Alternative: Share Computer Sound**
+If Original Audio doesn't work well in your setup:
 
-1. **A média lejátszása előtt** lépjen a Zoom screen sharing options (Zoom képernyőmegosztási beállítások) **Advanced** (Speciális) fülére
-2. **Jelölje be a „Share computer sound” (Számítógép hangjának megosztása) jelölőnégyzetet**
-3. **Megjegyzés**: Ezt az opciót minden új Zoom-munkamenet indításakor engedélyezni kell
+1. **Before playing media**, go to **Advanced** tab in Zoom screen sharing options
+2. **Check "Share computer sound"**
+3. **Note**: This option must be enabled every time you start a new Zoom session
 
-**Bevált gyakorlatok:**
+**Best Alternative**: Consider using M³'s Zoom integration instead of OBS Studio, as it uses Zoom's native screen sharing which handles audio more seamlessly and doesn't require complex audio configuration.
 
 #### Miért szükséges az audio konfiguráció {#why-audio-config}
 
-Az M³ lejátsza a hanggal ellátott médiát a számítógépén, de ez az audio **nem kerül automatikusan továbbításra** a videó streamen keresztül az OBS Studio-ba. Hasonló viselkedést tapasztalhat bármely más médialejátszóval is.
+M³ plays media with sound on your computer, but this audio is **not automatically transmitted** through the video stream to OBS Studio. This is the same behavior you would experience with any other media player.
 
-**Az audio probléma nem az M³-hoz kapcsolódik** – ez az OBS Studio videó streaming és a Zoom együttműködésének korlátozottságából adódik. A videó stream úgy működik, mint egy virtuális kamera hang nélkül, akárcsak egy webkamera, ezért külön be kell állítani a Zoomot, hogy rögzítse a számítógép hangját. Ebből következik, hogy a számítógépben két hangkártya van, ellenkező esetben valószínűleg nem fogja tudni sikeresen használni az OBS Studio integrációt.
+**The audio issue is not related to M³** - it's a limitation of how OBS Studio video streaming works with Zoom. The video stream acts like a virtual camera without sound, just like a webcam, so you must explicitly configure Zoom to capture the computer's audio. This implies that your computer has two sound cards, and if this isn't the case, you probably won't be able to use the OBS Studio integration successfully.
 
-Adja hozzá saját médiafájljait az M³-hoz:
+**Alternative Solution**: Consider using the Zoom integration instead, as it uses Zoom's native screen and audio sharing, which handles audio more seamlessly.
 
 #### Hangproblémák elhárítása {#audio-troubleshooting}
 
-**Gyakori problémák:**
+**Common Problems:**
 
-- **Nincs hang a Zoomban**: Ellenőrizze, hogy az Original Audio (Eredeti hang) funkció engedélyezve van, és megfelelően be van állítva
-- **Rossz hangminőség**: Ellenőrizze, hogy a három Original Audio (Eredeti hang) jelölőnégyzet megfelelően van-e beállítva
-- **A hang nem működik a Zoom újraindítása után**: Az Original Audio (Eredeti hang) funkciót minden új Zoom-munkamenetnél újra engedélyezni kell
+- **No audio in Zoom**: Check if Original Audio is enabled and properly configured
+- **Poor audio quality**: Verify the three Original Audio checkboxes are set correctly
+- **Audio not working after Zoom restart**: Original Audio settings must be re-enabled for each new Zoom session
 
-Adja hozzá saját médiafájljait az M³-hoz:
+**Best Practices:**
 
-- **Fájl importálása** - Az importálás gombbal videókat, képeket vagy hangfájlokat adhat hozzá
-- **Húzás és elhelyezés** - Húzza a fájlokat közvetlenül az M³-ba
-- **Mappafigyelés** – Állítson be egy figyelt mappát az automatikus importáláshoz
-- **JWPUB fájlok és lejátszási listák** - Kiadványok és lejátszási listák importálása
-- **Nyilvános előadások médiafájlja (S-34 / S-34mp)** – Nyilvános előadások médiafájljainak importálása S‑34 vagy S‑34mp JWPUB fájlok segítségével
+- Test audio configuration and sharing before meetings
+- Create a checklist for audio setup
+- Consider using "Share Computer Sound" as a backup option
+- **Consider using Zoom integration instead of OBS Studio** for simpler audio handling
+- Ensure all AV operators are familiar with these settings
 
 ## Média importálása és kezelése {#media-import}
 
 ### Egyéni média importálása {#importing-custom-media}
 
-Figyelje a mappát az új médiafájlokért:
+Add your own media files to M³:
 
-1. **Mappafigyelő engedélyezése** - Kapcsolja be a mappafigyelést a beállításokban
-2. **Mappa kiválasztása** - Válassza ki a figyelni kívánt mappát
-3. Kiválasszon konkrét verseket vagy szakaszokat
-4. **Szervezés** - A fájlok dátum szerint vannak rendezve, a mappaszerkezet alapján
-5. Használja őket
+1. **File Import** - Use the import button to add videos, images, or audio files
+2. **Drag and Drop** - Drag files directly into M³
+3. **Folder Monitoring** - Set up a watched folder for automatic imports
+4. **JWPUB Files and Playlists** - Import publications and playlists
+5. **Public Talk Media (S-34 / S-34mp)** - Import public talk media using S‑34 or S‑34mp JWPUB files
 6. **Videos from the official website** - Search for videos and add them to the selected date
 7. **Study Bible and sign-language Bible media** - Add images, videos, maps, historical references, or sign-language Bible videos for selected passages
 
 ### Importált média kezelése {#managing-imported-media}
 
-- **Dátum szerint rendezés** - Az importált médiafájlok hozzárendelése meghatározott dátumokhoz
-- **Egyéni szakaszok** - Egyéni szakaszok létrehozása a szervezéshez
-- **Tulajdonságok szerkesztése** – Címek, leírások és időzítés módosítása
-- **Média eltávolítása** - A nem kívánt médiaelemek törlése
+- **Organize by Date** - Assign imported media to specific dates
+- **Custom Sections** - Create custom sections for organization
+- **Edit Properties** - Modify titles, descriptions, and timing
+- **Remove Media** - Delete unwanted media items
 
 ### Hangos Biblia importálása {#audio-bible-import}
 
-Figyelje a mappát az új médiafájlokért:
+Import audio recordings of Bible verses:
 
-1. **Mappafigyelő engedélyezése** - Kapcsolja be a mappafigyelést a beállításokban
-2. **Mappa kiválasztása** - Válassza ki a figyelni kívánt mappát
-3. Kiválasszon konkrét verseket vagy szakaszokat
-4. **Szervezés** - A fájlok dátum szerint vannak rendezve, a mappaszerkezet alapján
-5. Használja őket
+1. Click the "Audio Bible" button
+2. Select the Bible book and chapter
+3. Choose specific verses or verse ranges
+4. Download the audio files
+5. Use them
 
 ### Profile Settings Import and Export {#profile-settings-import-export}
 
@@ -295,45 +294,45 @@ Each profile's settings can be exported to a JSON file from Settings. Importing 
 
 ## Mappafigyelés és exportálás {#user-guide-folder-monitoring}
 
-### Mappafigyelés beállítása {#folder-monitoring-setup}
+### Setting Up Folder Monitoring {#folder-monitoring-setup}
 
-Figyelje a mappát az új médiafájlokért:
+Monitor a folder for new media files:
 
-1. **Mappafigyelő engedélyezése** - Kapcsolja be a mappafigyelést a beállításokban
-2. **Mappa kiválasztása** - Válassza ki a figyelni kívánt mappát
-3. **Automatikus importálás** – Az új fájlok automatikusan hozzáadódnak az M³-hoz
-4. **Szervezés** - A fájlok dátum szerint vannak rendezve, a mappaszerkezet alapján
+1. **Enable Folder Watcher** - Turn on folder monitoring in settings
+2. **Select Folder** - Choose the folder to monitor
+3. **Automatic Import** - New files are automatically added to M³
+4. **Organization** - Files are organized by date based on folder structure
 
 ### Médiaexport {#user-guide-media-export}
 
-Ossza meg a hivatalos weboldalt külső kijelzőkön:
+Automatically export media to organized folders:
 
-1. **Weboldal mód** - Kattintson a weboldal megjelenítése gombra
-2. **Külső kijelző** - A weboldal új ablakban nyílik meg
-3. **Navigáció** - A böngésző vezérlőivel navigálhat
-4. **Formátumbeállítások** - Konvertálja a fájlokat MP4 formátumba a jobb kompatibilitás érdekében
+1. **Enable Auto-Export** - Turn on media export in settings
+2. **Select Export Folder** - Choose where to save exported files
+3. **Automatic Organization** - Files are organized by date and section
+4. **Format Options** - Convert files to MP4 for better compatibility
 
 ## Weboldal Prezentációja {#website-presentation}
 
 ### A hivatalos weboldal bemutatása {#presenting-the-website}
 
-Ossza meg a hivatalos weboldalt külső kijelzőkön:
+Share the official website on external displays:
 
-1. **Weboldal mód** - Kattintson a weboldal megjelenítése gombra
-2. **Külső kijelző** - A weboldal új ablakban nyílik meg
-3. **Navigáció** - A böngésző vezérlőivel navigálhat
+1. **Open Website Mode** - Click the website presentation button
+2. **External Display** - The website opens in a new window
+3. **Navigation** - Use the browser controls to navigate
 
-### Webhelyvezérlők {#website-controls}
+### Website Controls {#website-controls}
 
 - **Open Website** - Open a separate website window
 - **Start Mirroring** - Show the website window in the media display for the audience
 - **Stop Mirroring** - Stop showing the website and return to the yeartext or media display background
-- **Profilok létrehozása** - Külön profilok beállítása a különböző gyülekezetek számára
-- **Profilok váltása** - A gyülekezetválasztóval válthat a profilok között
-- **Külön beállítások** – Minden profilnak saját beállításai és médiatartalmai vannak
+- **Navigation** - Standard browser navigation controls
+- **Refresh** - Reload the current page
+- **Close** - Exit website presentation mode
 - **Auto Return** - Optionally return to the media list automatically after stopping website mirroring
 
-## Összejövetel Felvételek {#meeting-recordings}
+## Meeting Recordings {#meeting-recordings}
 
 M³ can help control meeting recording, but it does not include a built-in recorder.
 
@@ -343,23 +342,23 @@ M³ can help control meeting recording, but it does not include a built-in recor
 
 ## Haladó funkciók {#user-guide-advanced-features}
 
-### Több Gyülekezet {#user-guide-multiple-congregations}
+### Multiple Congregations {#user-guide-multiple-congregations}
 
-Kezeljen több gyülekezetet vagy csoportot:
+Manage multiple congregations or groups:
 
-1. **Profilok létrehozása** - Külön profilok beállítása a különböző gyülekezetek számára
-2. **Profilok váltása** - A gyülekezetválasztóval válthat a profilok között
-3. **Külön beállítások** – Minden profilnak saját beállításai és médiatartalmai vannak
-4. **Megosztott erőforrások** – A médiafájlok lehetőség szerint megosztásra kerülnek a profilok között
+1. **Create Profiles** - Set up separate profiles for different congregations
+2. **Switch Profiles** - Use the congregation selector to switch between profiles
+3. **Separate Settings** - Each profile has its own settings and media
+4. **Shared Resources** - Media files are shared between profiles whenever possible
 
 ### Billentyűparancsok {#keyboard-shortcuts-guide}
 
-Konfiguráljon egyéni billentyűparancsokat a hatékony működés érdekében:
+Configure custom keyboard shortcuts for efficient operation:
 
-1. **Nincs hang a Zoomban**: Engedélyezze az Original Audio (Eredeti hang) opciót a Zoom beállításaiban és minden összejövetel előtti
-2. **Rossz hangminőség**: Jelölje be a három Original Audio jelölőnégyzetet (az első kettő engedélyezve, a harmadik letiltva)
-3. **Az audio nem működik újraindítás után**: Az Original Audio-t minden új Zoom-munkamenetnél vissza kell kapcsolni
-4. **Testreszabás** - A gyorsbillentyűket az Ön igényeihez igazíthatja
+1. **Enable Shortcuts** - Turn on keyboard shortcuts in settings
+2. **Configure Shortcuts** - Set up shortcuts for common actions
+3. **Practice** - Learn your shortcuts for faster operation
+4. **Customize** - Adjust shortcuts to match your preferences
 
 ## Hibaelhárítás {#troubleshooting-guide}
 
@@ -367,71 +366,71 @@ Konfiguráljon egyéni billentyűparancsokat a hatékony működés érdekében:
 
 #### A média nem töltődik le {#user-guide-media-not-downloading}
 
-- Ellenőrizze a média nyelvi beállításai
-- Győződjön meg arról, hogy a nyelv elérhető a JW.org oldalon
-- Próbáljon ki egy tartalék nyelvet
+- Check your meeting schedule settings
+- Verify internet connection
+- Check if media is available in your selected language
 
 #### Az OBS integráció nem működik {#user-guide-obs-not-working}
 
-- Engedélyezze az extra gyorsítótárat
-- Csökkentse a maximális felbontást
-- Törölje a régi gyorsítótár-fájlokat
+- Verify OBS WebSocket plugin is installed
+- Check port and password settings
+- Ensure OBS is running
 
 #### Hangproblémák a Zoom/OBS alkalmazásban {#audio-issues}
 
-- Ellenőrizze a média nyelvi beállításai
-- Győződjön meg arról, hogy a nyelv elérhető a JW.org oldalon
-- Próbáljon ki egy tartalék nyelvet
-- Ellenőrizze a kezelőfelület nyelvi beállítását
+- **No audio in Zoom**: Enable Original Audio in Zoom settings and before each meeting
+- **Poor audio quality**: Check the three Original Audio checkboxes (first two enabled, third disabled)
+- **Audio not working after restart**: Original Audio must be re-enabled for each new Zoom session
+- **Alternative solution**: Use "Share Computer Sound" option in Zoom screen sharing
 
 #### Teljesítményproblémák {#user-guide-performance-issues}
 
-- **Ellenőrizze a dokumentációt** - Olvassa el ezt az útmutatót és az egyéb rendelkezésre álló dokumentációt
-- **Keressen problémákat** - Keressen hasonló problémákat a GitHubon
-- **Problémák jelentése** - Hozzon létre egy új problémát (New Issue) részletes leírással
-- Ellenőrizze a rendelkezésre álló lemezterületet
+- Enable extra cache
+- Reduce maximum resolution
+- Clear old cached files
+- Check available disk space
 - If the app shows graphical glitches or crashes, try disabling hardware acceleration and restart M³
 
 #### Nyelvi problémák {#user-guide-language-issues}
 
-- Ellenőrizze a média nyelvi beállításai
-- Győződjön meg arról, hogy a nyelv elérhető a JW.org oldalon
-- Próbáljon ki egy tartalék nyelvet
-- Ellenőrizze a kezelőfelület nyelvi beállítását
+- Check media language setting
+- Ensure language is available on JW.org
+- Try a fallback language
+- Verify interface language setting
 
 ### Segítségkérés {#getting-help}
 
-Ha problémákba ütközik:
+If you encounter issues:
 
-1. **M³ frissítése** - Tartsa naprakészen az alkalmazást
-2. **Gyorsítótár törlése** - Rendszeresen törölje a régi gyorsítótár fájlokat
-3. **Beállítások ellenőrzése** - A beállítások áttekintése és szükség szerinti frissítése
+1. **Check Documentation** - Review this guide and other available documentation
+2. **Search Issues** - Look for similar issues on GitHub
+3. **Report Problems** - Create a new issue with detailed information
 
 ## Bevált Gyakorlatok {#best-practices}
 
 ### Összejövetelek Előtt {#before-meetings}
 
-1. **Háttérzene indítása** - Indítsa el a háttérzene lejátszását
-2. **Tervezzen előre** - Készüljön fel a következő összejövetelre úgy, hogy minden készen álljon
-3. **Takarítás** - Zárja be a médialejátszót, amikor végzett
-4. **Audio beállítása** – Hibrid összejövetelek eseténél engedélyezze az Original Audio funkciót a Zoomban, vagy állítsa be a „Share Computer Sound” (Számítógép hangjának megosztása) funkciót
+1. **Check Downloads** - Ensure all media is downloaded
+2. **Test Equipment** - Verify displays and audio work
+3. **Prepare Media** - Review and organize media for the meeting; make sure no media files are missing
+4. **Configure Audio** - For hybrid meetings, enable Original Audio in Zoom or set up "Share Computer Sound"
 
 ### Összejövetelek alatt {#during-meetings}
 
-1. **M³ frissítése** - Tartsa naprakészen az alkalmazást
-2. **Gyorsítótár törlése** - Rendszeresen törölje a régi gyorsítótár fájlokat
-3. **Beállítások ellenőrzése** - A beállítások áttekintése és szükség szerinti frissítése
-4. **Álljon készen** - Készítse elő a következő médiaelemet
-5. **Hang ellenőrzése** – Hibrid értekezletek esetén győződjön meg arról, hogy a Zoom résztvevői hallják a médiát
+1. **Stay Focused** - Use the clean and distraction-free interface
+2. **Use Shortcuts** - Master keyboard shortcuts for smooth operation
+3. **Monitor Audio** - Keep an eye on volume levels, if that's part of your responsibilities
+4. **Be Prepared** - Have the next media item ready
+5. **Verify Audio** - For hybrid meetings, ensure Zoom participants can hear the media
 
-### Összejövetelek után {#after-meetings}
+### After Meetings {#after-meetings}
 
-1. **Háttérzene indítása** - Indítsa el a háttérzene lejátszását
-2. **Tervezzen előre** - Készüljön fel a következő összejövetelre úgy, hogy minden készen álljon
-3. **Takarítás** - Zárja be a médialejátszót, amikor végzett
+1. **Start Background Music** - Start the playback of background music
+2. **Plan Ahead** - Prepare for the next meeting by making sure everything is in place
+3. **Clean Up** - Close media player when you're ready to leave
 
-### Rendszeres Karbantartás {#regular-maintenance}
+### Regular Maintenance {#regular-maintenance}
 
-1. **M³ frissítése** - Tartsa naprakészen az alkalmazást
-2. **Gyorsítótár törlése** - Rendszeresen törölje a régi gyorsítótár fájlokat
-3. **Beállítások ellenőrzése** - A beállítások áttekintése és szükség szerinti frissítése
+1. **Update M³** - Keep the application updated
+2. **Clear Cache** - Periodically clear old cached files
+3. **Check Settings** - Review and update settings as needed

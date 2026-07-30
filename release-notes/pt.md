@@ -8,71 +8,71 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 
 ### ✨ Novos Recursos
 
-- ✨ **Qualidade de Pré-visualização de Mídia**: Visualização de mídia agora renderiza quadros de vídeo via tela com downscaling, correção de pré-visualizações jagged/blurry (especialmente sobre conteúdo pesado de texto como músicas). A pré-visualização também se desabilita automaticamente se tiver que corrigir repetidamente a derivação de reprodução em um único vídeo, com um clique para reativá-lo.
+- ✨ **Media Preview Quality**: Media preview now renders video frames via canvas with high-quality downscaling, fixing jagged/blurry previews (especially on text-heavy content like songs). The preview also auto-disables itself if it has to repeatedly correct playback drift on a single video, with a one-click way to turn it back on.
 
 ## v26.7.6
 
 ### ✨ Novos Recursos
 
-- ✨ **Exclusão de Vídeo CBS**: Adicionada uma configuração para excluir vídeos de estudos de Bíblia de Congregação de publicações específicas (o padrão é **Walk corajosamente com o livro Deus**), com um seletor de publicação pesquisável
-- ✨ **Número de Página do documento**: Mídia de Publicação e listagens de importação do JWPUB agora mostram o número da página de cada documento (ou os números quando há várias páginas) após o título. Isso pode ajudá-lo a encontrar rapidamente uma mídia específica quando você souber o número da página em que ela é encontrada.
+- ✨ **CBS Video Exclusion**: Added a setting to exclude Congregation Bible Study videos from specific publications (defaults to the **Walk Courageously With God** book), with a searchable publication picker.
+- ✨ **Document Page Numbers**: Publication Media and JWPUB import listings now show each document's page number (or numbers when there are multiple pages) after its title. This can help you to quickly find specific media when you know the page number on which it is found.
 
 ## v26.7.4
 
 ### ✨ Novos Recursos
 
-- ✨ **Recuperação de mídia faltando**: itens de mídia cujo arquivo local não apareceu (por exemplo, apagado pelo cache automaticamente limpo, ou removido manualmente) agora mostra um botão desativado para reproduzir, uma legenda "faltando" nomeando o arquivo para procurar, e uma nova ação "Localizar arquivo" para converter o item para um arquivo no disco.
-- ✨ **Aviso de Compatibilidade**: Adicionado um aviso descartado de banners em breve para be/combos de arquitetura não suportados (macOS 12 Monterey e Windows 32-bit) para atualizar antes de atualizações futuras do app requerem suporte ao sistema mais recente.
+- ✨ **Missing Media Recovery**: Media items whose local file went missing (e.g. deleted by the cache auto-clear, or removed manually) now show a disabled play button, a "missing" caption naming the file to look for, and a new "Locate file" action to relink the item to a file on disk.
+- ✨ **Compatibility Warning**: Added a dismissible banner warning users on soon-to-be-unsupported OS/architecture combos (macOS 12 Monterey and Windows 32-bit) to upgrade before future app updates require newer system support.
 
 ## v26.7.0
 
 ### ✨ Novos Recursos
 
-- ✨ **Reprodução de áudio vinculada**: Adicionado suporte para reproduzir áudio de um arquivo junto com vídeo de outro arquivo. Isso pode ser útil para reproduzir slideshows de vídeo com a música acompanhada.
-- ✨ **Layouts de Mídia assistidos**: Adicionada persistência de itens de mídia assistidos e ordem de seção nas pastas assistidas. Isso garante que a lista de mídia é exibida da mesma forma, mesmo quando a pasta assistida é sincronizada entre os dispositivos.
+- ✨ **Linked Audio Playback**: Added support for playing audio from one file together with video from another file. This can be useful for playing video slideshows with accompanying music.
+- ✨ **Watched Media Layouts**: Added persistence for watched media items and section order across watched folders. This ensures that the media list is displayed the same way even when the watched folder is synced across devices.
 
 ## v26.6.1
 
 ### ✨ Novos Recursos
 
-- ✨ **Visualização de Mídia**: Adicionado uma sobreposição de visualização de mídia ao vivo que pode ser ligado ou desligado nas configurações ou pelo pop-up de exibição.
-- ✨ **Mídia de pesquisa**: Adicionada uma caixa de pesquisa rápida na lista de mídia que permite a você encontrar rapidamente a mídia por título. Para usá-lo, basta usar o atalho de teclado padrão para pesquisar (Ctrl+F ou Cmd+F).
-- ✨ **Configurações de filtro**: Adicionado uma caixa de filtro na página de configurações que permite encontrar as configurações por palavra-chave ou categoria. Para usá-lo, basta clicar no botão Pesquisar no canto superior direito da página de configurações, ou use o atalho de teclado padrão para pesquisa (Ctrl+F ou Cmd+F).
-- ✨ **Aviso de sobreposição de música de fundo**: Adicionado uma notificação de aviso quando a mídia é iniciada enquanto a música de fundo está tocando. Os usuários podem optar por parar a música de fundo da notificação.
+- ✨ **Media Preview**: Added a live media preview overlay that can be toggled on or off from the settings or from the display popup.
+- ✨ **Search media**: Added a quick search box in the media list that allows you to quickly find media by title. To use it, simply use the standard keyboard shortcut for search (Ctrl+F or Cmd+F).
+- ✨ **Filter settings**: Added a filter box to the settings page that allows you to find settings by keyword or category. To use it, simply click on the Search button in the top right corner of the settings page, or use the standard keyboard shortcut for search (Ctrl+F or Cmd+F).
+- ✨ **Background Music Overlap Warning**: Added a warning notification when media is started while background music is playing. Users can choose to stop the background music from the notification.
 
 ## v26.6.0
 
 ### ✨ Novos Recursos
 
-- ✨ **Timer**: Adicionado modo de exibição analógica e status do relatório de tempo.
-- ✨ **Perfis**: Configurações de perfil adicionadas e exportação em Configurações Avançadas e no assistente de instalação.
-- ✨ **Janela de Mídia**: Adicionado suporte para esconder automaticamente a janela de mídia após a reprodução quando ela foi inicialmente ocultada. Isto é prático quando um alto-falante remoto quer exibir imagens, por exemplo.
+- ✨ **Timer**: Added analog display modes and timing report status.
+- ✨ **Profiles**: Added profile settings import and export in Advanced settings and the Setup Wizard.
+- ✨ **Media Window**: Added support for automatically hiding the media window after playback when it was initially hidden. This is practical when a remote speaker wants to display images, for example.
 
 ## v26.5.0
 
 ### ✨ Novos Recursos
 
-- ✨ **Importação de PDF**: Adicionado um novo fluxo de importação de PDF à caixa de diálogo Publicação de Mídia, permitir que a versão em PDF de uma publicação seja importada automaticamente como imagens individuais quando desejado.
+- ✨ **PDF Import**: Added a new PDF import flow to the Publication Media dialog, allowing the PDF version of a publication to be automatically imported as individual images when desired.
 
 ## v26.4.8
 
 ### ✨ Novos Recursos
 
-- ✨ **JW Stream**: Adicionado JW Stream à lista de sites que podem ser espelhados.
+- ✨ **JW Stream**: Added JW Stream to the list of websites that can be mirrored.
 
 ## v26.4.0
 
 ### ✨ Novos Recursos
 
-- ✨ **Timer da Reunião**: Foi adicionado um novo recurso de temporizador de reunião. É opcional e pode ser ativado nas configurações avançadas, se desejar. O temporizador pode ser usado para permitir que o operador de mídia mantenha o controle do tempo gasto nas partes de reunião, ou para exibir o tempo gasto na parte da reunião atual em uma tela dedicada visível somente para o palestrante.
+- ✨ **Meeting Timer**: A new meeting timer feature has been added. It is optional and can be enabled in the advanced settings, if desired. The timer can be used to allow the media operator to keep track of the time spent on meeting parts, or to display the time spent on the current meeting part on a dedicated screen visible only to the speaker.
 
 ## v26.3.0
 
 ### ✨ Novos Recursos
 
-- ✨ **Medida Memorial**: Recuperação automática de mídia Memorial está fora de uso! O app irá baixar automaticamente o Vídeo e a imagem Memorial de Boas Vindas durante o Memorial, quando disponíveis no idioma configurado.
-- ✨ **Velocidade de Reproduzir**: Controle de velocidade de reprodução adicionado com indicador visual e redefinição manual. Este recurso só é visível se ativado nas configurações avançadas.
-- ✨ **Pinyin Songs**: Adicionado uma alternância para a substituição de música pinyin para reuniões realizadas em chinês.
+- ✨ **Memorial Media**: Automatic Memorial media retrieval is now out of beta! The app will automatically download the Memorial Welcome Video and image to display during the Memorial, when available in the configured language.
+- ✨ **Playback Speed**: Added playback speed control with visual indicator, and manual reset. This feature is only visible if enabled in the advanced settings.
+- ✨ **Pinyin Songs**: Added a toggle for pinyin song substitution for meetings held in Chinese.
 
 ## v26.2.0
 
@@ -142,19 +142,19 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 
 ### ✨ Novos Recursos
 
-- ✨ **Iniciar Reprodução Pausada**: Adicionada uma nova configuração para permitir a reprodução para começar em pausa, que pode ser útil para operadores de AV prepararem suas configurações (como o compartilhamento de Zoom Inicial) antes que a mídia comece a jogar na janela de mídia.
-- ✨ **Atualizar Notificações**: Os usuários agora serão notificados sobre atualizações através de um banner no aplicativo, o que também permitirá ao usuário instalar atualizações imediatamente, ao invés de esperar pelo próximo app reiniciar.
-- ✨ **Eventos personalizados**: Adicionados hooks de eventos opcionais que podem acionar atalhos de teclado quando certos eventos são detectados. Isso pode ser útil para os operadores AV executarem automaticamente ações fora do aplicativo. Por exemplo, as luzes inteligentes poderiam ser acesas e apagadas antes e depois de as mídias tocarem em auditórios onde são utilizados projetores; ou um script pode ser chamado depois que a última música de uma reunião tiver sido tocada para automatizar várias ações em uma reunião do Zoom.
+- ✨ **Begin Playback Paused**: Added a new setting to allow playback to begin paused, which can be useful for AV operators to prepare their setup (such as starting Zoom sharing) before the media starts playing in the media window.
+- ✨ **Update Notifications**: Users will now be notified of updates through an in-app banner, which will also allow the user to install updates immediately, instead of waiting for the next app restart.
+- ✨ **Custom Events**: Added optional events hooks that can trigger keyboard shortcuts when certain events are detected. This can be useful for AV operators to execute actions automatically outside of the app. For example, smart lights could be turned on and off before and after media plays in auditoriums where projectors are used; or a script can be called after a meeting's last song has been played to automate various actions in a Zoom meeting.
 
 ## v25.9.1
 
 ### ✨ Novos Recursos
 
-- ✨ **Janela de Mídia sempre na parte superior e comportamento Fullscreen**: Corrigido e melhorado sempre no topo da janela de mídia, ajustando dinamicamente com base no estado em tela cheia.
-- ✨ \*\*Configuração de Formato de Data \*\*: Adicionado uma configuração de usuário para configurar um formato de exibição de data.
-- ✨ **Mídia Crossfade**: transições de crossfade implementadas para a exibição de mídia, em vez da transição mais brusca para preta que estava presente antes.
-- ✨ **Música AutoStop**: Otimizou o comportamento da música de fundo para auto-parar para se comportar da mesma maneira que a música foi auto-iniciada ou não
-- ✨ **macOS Click-Through no Windows Inativo**: Habilitado clique no mouse sobre a janela principal para macOS, o que deve facilitar o controle do aplicativo, mesmo quando ele não está focado.
+- ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
+- ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
+- ✨ **Media Crossfade**: Implemented crossfade transitions for media display, instead of the more abrupt fade-to-black transition that was present before.
+- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not
+- ✨ **macOS Click-Through on Inactive Windows**: Enabled mouse click passthrough on the main window for macOS, which should make it easier to control the app even when it's not focused.
 
 ## v25.9.0
 
@@ -167,23 +167,23 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 
 ### ✨ Novos Recursos
 
-- ✨ **Transições de Fade da Janela de Mídia**: Adicionada uma nova configuração avançada para fazer a janela de mídia desaparecer e para fora, fornecendo transições visuais mais fáceis.
-- ✨ **Controle de Duração da Imagem e Progresso**: Adicionado controle de duração da imagem e capacidade de acompanhamento do progresso para seções repetidas.
+- ✨ **Media Window Fade Transitions**: Added a new advanced setting to make the media window fade in and out, providing smoother visual transitions.
+- ✨ **Image Duration Control and Progress Tracking**: Added image duration control and progress tracking capabilities for repeated sections.
 
 ## v25.8.1
 
 ### ✨ Novos Recursos
 
-- ✨ **Seções Personalizadas de Mídia**: Sistema completo para criar, editar e gerenciar seções de mídia personalizadas com personalização de cor e reordenação de arrastar e soltar.
-- ✨ **Divisores de Mídia**: Adicione divisores titulares dentro das listas de mídia para uma melhor organização com opções de posicionamento de topo/inferior.
-- ✨ **Modo repita a seção**: Ativar reprodução contínua em seções específicas para loops de mídia perfeitos.
-- ✨ **Zoom Integração**: Iniciar/Parar automaticamente o compartilhamento de tela com a reprodução de mídia.
+- ✨ **Custom Media Sections**: Complete system for creating, editing, and managing custom media sections with color customization and drag-and-drop reordering.
+- ✨ **Media Dividers**: Add titled dividers within media lists for better organization with top/bottom positioning options.
+- ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
+- ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
 
 ## v25.7.0
 
 ### ✨ Novos Recursos
 
-- Não há novos recursos para esta versão!
+- No new features for this release!
 
 ## 25.6.0
 
@@ -225,48 +225,48 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 
 ### ✨ Novos Recursos
 
-- 🔄 **Permitir tentativas de reconexão do OBS**: Introduza a possibilidade de forçar manualmente o OBS a se reconectar quando necessário.
-- 🗑️ **Limpeza automática de pastas de datas antigas de exportação**: Remover pastas de data de exportação desatualizadas automaticamente para manter o armazenamento organizado.
+- 🔄 **Allow OBS Reconnection Attempts**: Introduce the possibility to manually force OBS to reconnect when needed.
+- 🗑 **Auto Cleanup Old Export Date Folders**: Automatically remove outdated export date folders to keep storage organized.
 
 ## 25.2.0
 
 ### ✨ Novos Recursos
 
-- :globe_showing_Europe-África: **Use o Sistema Local por Padrão**: Detectar automaticamente e usar a localidade do sistema para uma experiência mais personalizada.
-- 🏷️ **Suporte a Tag para mídia exportada**: Adicionar tags de metadados aos arquivos de mídia exportados para melhor organização.
-- 🔄 **Beta Automático para Downgrade Estável**: Permite downgrades automáticos de versões beta para versões estáveis quando necessário.
-- 🌐 \*\*Extrair os índices de idioma de MEPS \*\*: buscar os índices de idiomas mais recentes dos eurodeputados diretamente do site oficial, garantindo o suporte a linguagem atualizada.
+- 🌍 **Use System Locale by Default**: Automatically detect and use the system's locale for a more personalized experience.
+- 🏷 **Tag Support for Exported Media**: Add metadata tags to exported media files for better organization.
+- 🔄 **Automatic Beta to Stable Downgrade**: Allow automatic downgrades from beta versions to stable releases when necessary.
+- 🌐 **Extract Latest MEPS Language Indexes**: Fetch the most recent MEPS language indexes directly from the official website, ensuring up-to-date language support.
 
 ## 25.1.0
 
 ### ✨ Novos Recursos
 
-- 📅 **Abrir Dados Anteriores**: Permitir abrir datas anteriores da semana atual, o que é útil quando o dia da reunião é movido mais tarde da semana.
-- 🛑 **Banner de erro para o OBS Studio**: Adicionar um banner de erro quando o OBS Studio não estiver conectado em um dia de reunião, garantindo que os usuários sejam alertados.
-- 📚 **Grupo de Mídia por Publicação**: Agrupar mídia na mesma publicação referenciada para uma visão mais limpa e mais organizada da mídia.
-- 🎵 **Aviso de música duplicado**: Mostrar um aviso se as músicas estiverem listadas mais de uma vez na lista de mídia das reuniões do fim de semana.
-- 🔄 **Planejamento futuro de programação**: Habilite o planejamento de futuras mudanças na programação de reuniões, que é útil para o agendamento de alterações anuais ou para a visita do circuito externo a uma congregação vizinha.
+- 📅 **Open Previous Dates**: Allow opening previous dates of the current week, which is useful when the meeting day is moved later in the week.
+- 🛑 **Error Banner for OBS Studio**: Add an error banner when OBS Studio is not connected on a meeting day, ensuring users are alerted.
+- 📚 **Group Media by Publication**: Group media from the same referred publication for a cleaner and more organized media overview.
+- 🎵 **Duplicate Song Warning**: Show a warning if songs are listed more than once in the media list for weekend meetings.
+- 🔄 **Future Schedule Planning**: Enable the planning of future meeting schedule changes, which is useful for yearly schedule changes or for the circuit overseer's visit to a neighboring congregation.
 
 ## 24.11.0
 
 ### ✨ Novos Recursos
 
-- **feat**: a apresentação do site agora é suportada no macOS 🚀
-- **feat**: Atalhos do teclado introduzidos para parar, pausar e retomar a reprodução de mídia 🚀
-- **feat**: Suporte adicionado para definir o endereço da web de qual mídia deve ser baixada 🚀
-- **feat**: Adicionado OBS Studio instantâneo seletor de cena e reformulação da funcionalidade do seletor de cena em configurações
-- **feat**: Site de documentação expandido para oferecer suporte a mais idiomas
+- **feat**: Presenting the website is now supported on macOS 🚀
+- **feat**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
+- **feat**: Added support for setting the web address from which media should be downloaded 🚀
+- **feat**: Added OBS Studio instant scene picker and overhauled scene picker functionality in settings
+- **feat**: Expanded documentation website to support more languages
 
 ## 24.10.10
 
 ### ✨ Novos Recursos
 
-- **novo**: Atalhos de teclado adicionados para navegar no item de mídia seguinte/anterior
-- **novo**: Adicionado um menu de clique direito à itens de mídia para ocultar itens de mídia e renomeá-los
-- **novo**: Os tempos de vídeo aparados agora são respeitados nas playlists importadas do JWL
+- **new**: Added keyboard shortcuts to navigate to the next/previous media item
+- **new**: Added a right-click menu to media items to hide media items and rename them
+- **new**: Trimmed video times are now respected in imported JWL playlists
 
 ## 24.10.9
 
 ### ✨ Novos Recursos
 
-- **feat**: Adicionada uma opção para excluir todos os arquivos de mídia extras para o dia selecionado
+- **feat**: Added an option to delete all extra media files for the currently selected day

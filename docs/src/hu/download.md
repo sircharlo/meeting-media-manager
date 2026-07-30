@@ -1,12 +1,12 @@
 ---
-title: Letöltések
+title: Downloads
 ---
 
 <!-- markdownlint-disable MD025 MD033 -->
 
-# Letöltések
+# Downloads
 
-Az alábbi linkek segítségével töltse le az operációs rendszeréhez legmegfelelőbb Meeting Media Manager változatot. Ezek a linkek mindig a legújabb stabil kiadásra mutatnak.
+Use the links below to download the latest version of Meeting Media Manager for your operating system. These links always point to the newest stable release.
 
 <script setup lang="ts">
 import { data as downloads } from '../../data/version.data.mts'
@@ -75,26 +75,26 @@ onMounted(() => {
 })
 </script>
 
-## Legújabb kiadás
+## Latest release
 
-- **Verzió**: {{ downloads.version }} <span v-if="daysAgoText">({{ daysAgoText }})</span>
+- **Version**: {{ downloads.version }} <span v-if="daysAgoText">({{ daysAgoText }})</span>
 
 <div v-if="recommended" style="margin: 1rem 0; padding: 1rem; border: 1px solid var(--vp-c-brand-1); border-radius: 8px; background: var(--vp-c-brand-soft);"><strong>{{ msg.recommendedFor }} {{ recommended.label }}</strong>
   <div style="margin-top: .5rem;"><a :href="recommended.href" style="display:inline-block; padding:.5rem 1rem; border-radius:6px; background: var(--vp-c-brand-1); color: white; text-decoration:none;">{{ msg.download }}</a>
   </div>
-  <div style="margin-top:.5rem; font-size: .9em; opacity:.8;">Ha ez nem felel meg a rendszerének, válasszon az alábbi lehetőségek közül.</div>
+  <div style="margin-top:.5rem; font-size: .9em; opacity:.8;">If this doesn’t match your system, pick from the options below.</div>
 </div>
 
 ## Windows
 
-- **Windows 64 bites (.exe)**: <a :href="downloads.win64">Letöltés</a>
-- **Windows 32 bites (.exe)**: <a :href="downloads.win32">Letöltés</a>
-- **Windows hordozható (exe)**: <a :href="downloads.winPortable">Letöltés</a>
+- **Windows 64-bit (.exe)**: <a :href="downloads.win64">Download</a>
+- **Windows 32-bit (.exe)**: <a :href="downloads.win32">Download</a>
+- **Windows Portable (.exe)**: <a :href="downloads.winPortable">Download</a>
 
 ## macOS
 
-- **macOS (Univerzális) (.dmg)**: <a :href="downloads.macUniversal">Letöltés</a>
+- **macOS (Universal) (.dmg)**: <a :href="downloads.macUniversal">Download</a>
 
 ## Linux
 
-- **x86_64 (AppImage)**: <a :href="downloads.linux">Letöltés</a>
+- **x86_64 (AppImage)**: <a :href="downloads.linux">Download</a>

@@ -1,436 +1,436 @@
 # User Guide {#user-guide}
 
-Deze uitgebreide gebruikershandleiding helpt je om alle functies van M³ onder de knie te krijgen, van de basisinstallatie tot geavanceerde technieken voor mediapresentatie.
+This comprehensive user guide will help you master all the features of M³, from basic setup to advanced media presentation techniques.
 
 ## Getting Started {#getting-started}
 
-### Downloaden en installeren {#download-and-install}
+### Download and Install {#download-and-install}
 
-Download de nieuwste versie van de [downloadpagina](download). Deze beveelt de beste build aan voor jouw apparaat en toont de laatste versie.
+Get the latest version from the [Download page](download). It recommends the best build for your device and shows the latest version.
 
-### De eerste keer opstarten {#first-launch}
+### First Launch {#first-launch}
 
-Wanneer je M³ voor de eerste keer opstart, word je door een installatiewizard geleid die de essentiële instellingen voor je gemeente configureert:
+When you first launch M³, you'll be guided through a setup wizard that will configure the essential settings for your congregation:
 
-1. **Kies de taal van de interface** — Dit bepaalt in welke taal de menu's en knoppen van M³ worden weergegeven
-2. **Selecteer het profieltype** — Kies "Regulier" voor normaal gemeentegebruik of "Overig" voor speciale evenementen
-3. **Configureer de gemeentegegevens** — Voer je gemeentegegevens in of gebruik de automatische zoekfunctie
-4. **Stel het vergaderschema in** — Configureer de tijden van je doordeweekse en weekendvergaderingen
-5. **Optionele functies** — Configureer de OBS-integratie, achtergrondmuziek en andere geavanceerde functies
+1. **Choose your interface language** - This determines what language M³'s menus and buttons will be displayed in
+2. **Select profile type** - Choose "Regular" for normal congregation use or "Other" for special events
+3. **Configure congregation information** - Enter your congregation details or use the automatic lookup feature
+4. **Set up meeting schedule** - Configure your midweek and weekend meeting times
+5. **Optional features** - Configure OBS integration, background music, and other advanced features
 
 :::tip Tip
 
-Neem de tijd tijdens de installatie — je kunt deze instellingen later altijd wijzigen in het menu Instellingen.
+Take your time during setup - but you can always change these settings later in the Settings menu.
 
 :::
 
-### Overzicht van de hoofdinterface {#main-interface}
+### Main Interface Overview {#main-interface}
 
-De hoofdinterface van M³ bestaat uit een aantal belangrijke onderdelen:
+The main M³ interface consists of several key areas:
 
-- **Navigatiemenu** — Toegang tot verschillende secties en instellingen
-- **Kalenderweergave** — Doorzoek media op datum
-- **Medialijst** — Bekijk en beheer media voor geselecteerde datums
-- **Werkbalk** — Sneltoegang tot veelgebruikte functies
-- **Statusbalk** — Toont de voortgang van downloads, en de status van achtergrondmuziek en de verbinding met OBS Studio
+- **Navigation Drawer** - Access different sections and settings
+- **Calendar View** - Browse media by date
+- **Media List** - View and manage media for selected dates
+- **Toolbar** - Quick access to common functions
+- **Status Bar** - Shows download progress, and background music and OBS Studio connection status
 
 ## Media Management {#user-guide-media-management}
 
-### De kalenderweergave begrijpen {#calendar-view}
+### Understanding the Calendar View {#calendar-view}
 
-De kalenderweergave toont je vergaderschema en de beschikbare media:
+The calendar view shows your meeting schedule and available media:
 
-- **Vergaderdagen** — Gemarkeerde dagen laten zien wanneer er vergaderingen gepland zijn
-- **Media-indicatoren** — Pictogrammen laten zien welke soorten media beschikbaar zijn
-- **Datumnavigatie** — Gebruik de pijltjestoetsen om tussen maanden te navigeren
+- **Meeting Days** - Highlighted days show when meetings are scheduled
+- **Media Indicators** - Icons show what types of media are available
+- **Date Navigation** - Use arrow keys to navigate between months
 
-### Media organiseren {#organizing-media}
+### Organizing Media {#organizing-media}
 
-M³ organiseert media automatisch per vergadertype en sectie:
+M³ automatically organizes media by meeting type and section:
 
-- **Vergadersecties** — Media is gegroepeerd per vergaderonderdeel (Openbare toespraak, Schatten uit Gods Woord, enz.)
-- **Aangepaste secties** — Je kunt aangepaste secties maken voor extra media als er op die specifieke dag geen vergadering gepland is
-- **Handmatig sorteren** - Sleep mediaitems naar de gewenste volgorde, of zet de volgorde opnieuw in indien nodig
-- **Herhaal Afspelen** - Herhaal een enkel media-item of herhaal elk item in een sectie totdat het afspelen handmatig is gestopt
+- **Meeting Sections** - Media is grouped by meeting parts (Public Talk, Treasures from God's Word, etc.)
+- **Custom Sections** - You can create custom sections for additional media if no meeting is scheduled on that particular day
+- **Manual Sorting** - Drag media items into the order you need, or reset the order when needed
+- **Repeated Playback** - Loop a single media item or repeat every item in a section until playback is stopped manually
 
-### Verborgen en ontbrekende media {#hidden-and-missing-media}
+### Hidden and Missing Media {#hidden-and-missing-media}
 
-Media kan verborgen worden van de vergaderlijst zonder de automatisch gedownloade bestanden te verwijderen. Als media per ongeluk verborgen is, gebruik dan **Toon verborgen media** voor de geselecteerde dag.
+Media can be hidden from the meeting list without deleting the automatically downloaded files. If media is hidden by mistake, use **Show hidden media** for the selected day.
 
-Als M3 ontbrekende media meldt, controleer dan eerst of het artikel naar verwachting dichter bij de vergaderdatum beschikbaar zal zijn. Je kunt ook het ontbrekende item handmatig toevoegen met het **Media toevoegen** menu of door het naar de medialijst te slepen.
+If M³ reports missing media, first check whether the item is expected to become available closer to the meeting date. You can also add the missing item manually with the **Add media** menu or by dragging it into the media list.
 
 ## Media Presentation {#media-presentation}
 
-### De mediaspeler openen {#opening-media-player}
+### Opening the Media Player {#opening-media-player}
 
-Om media te presenteren tijdens een vergadering:
+To present media during a meeting:
 
-1. Selecteer de datum en het media-item dat je wilt presenteren
-2. Klik op de afspeelknop of gebruik de sneltoets
-3. De media wordt afgespeeld in het mediavenster
-4. Gebruik de knoppen om media af te spelen, te pauzeren of te navigeren door de media
+1. Select the date and media item you want to present
+2. Click the play button or use the keyboard shortcut
+3. The media will start playing on the media display
+4. Use the controls to play, pause, or navigate through media
 
-### Bedieningselementen van de mediaspeler {#media-player-controls}
+### Media Player Controls {#media-player-controls}
 
-De mediaspeler biedt uitgebreide bedieningselementen:
+The media player provides comprehensive controls:
 
-- **Afspelen/Pauzeren** - Start of pauzeer het afspelen van media
-- **Stop** - Stop het afspelen
+- **Play/Pause** - Start or pause media playback
+- **Stop** - Stop playback
 
 <!-- - **Previous/Next** - Navigate between media items
 - **Volume** - Adjust playback volume -->
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **Zoomen/Verschuiven** - Gebruik het muiswiel om te zoomen, sleep om te verschuiven (voor afbeeldingen)
-- **Live-voorbeeld** - Wanneer ingeschakeld, toon een voorbeeld van het publiek medialevenster in de hoofdapp
-- **Afspelsnelheid** - Indien ingeschakeld in instellingen, pas audio en video snelheid aan vanuit het contextmenu van het media-item
+- **Zoom/Pan** - Use mouse wheel to zoom, drag to pan (for images)
+- **Live Preview** - When enabled, show a preview of the audience media window in the main app
+- **Playback Speed** - When enabled in settings, adjust audio and video speed from the media item context menu
 
-### Probeer een reservetaal
+### Advanced Presentation Features {#advanced-presentation}
 
-#### Aangepaste timing {#custom-timing}
+#### Custom Timing {#custom-timing}
 
-Stel aangepaste start- en eindtijden in voor media:
+Set custom start and end times for media:
 
 <!-- 1. Right-click on a media item
 2. Select "Edit Timing" -->
 
-1. Klik op de tijdsduur van een video linksboven op de miniatuur
-2. Stel start- en eindtijden in
-3. Sla je wijzigingen op
+1. Click on the duration of a video on the top left of its thumbnail
+2. Set start and end times
+3. Save your changes
 
-#### Zoomen en verschuiven {#zoom-pan}
+#### Zoom and Pan {#zoom-pan}
 
-Voor afbeeldingen en video's:
+For images and videos:
 
-- **In-/uitzoomen** — Gebruik het muiswiel of de zoomknoppen op de miniatuur
-- **Verschuiven (Pan)** — Klik op de miniatuur en sleep om de afbeelding te verplaatsen
-- **Zoom herstellen** — Klik om terug te keren naar de oorspronkelijke grootte
+- **Zoom In/Out** - Use mouse wheel or zoom controls on the thumbnail
+- **Pan** - Click and drag the thumbnail to move the image around
+- **Reset Zoom** - Click to return to original zoom
 
-#### Sneltoetsen {#user-guide-keyboard-shortcuts}
+#### Keyboard Shortcuts {#user-guide-keyboard-shortcuts}
 
-Configureer aangepaste sneltoetsen voor snelle toegang. Merk op dat er standaard geen sneltoetsen zijn ingesteld.
+Configure custom keyboard shortcuts for quick access. Note that no keyboard shortcuts are set by default.
 
-**Ingebouwde mediabediening** (wanneer het hoofdvenster actief is en de medialijst getoond wordt):
+**Built-in Media Controls** (when main window is focused and showing the media list):
 
-- **Tab/Shift+Tab** — Navigeren tussen media-items
-- **Pijl omhoog/omlaag** — Navigeren tussen media-items
-- **Spatiebalk** — Media afspelen/pauzeren
-- **Escape** — Media stoppen
+- **Tab/Shift+Tab** - Navigate between media items
+- **Up/Down Arrow** - Navigate between media items
+- **Space** - Play/Pause media
+- **Escape** - Stop media
 
-**Aanpasbare sneltoetsen** (indien ingeschakeld in de instellingen):
+**Customizable Shortcuts** (when enabled in settings):
 
-- **Mediavenster** — Mediavenster openen/sluiten
-- **Vorige/Volgende media** — Navigeren tussen media-items
-- **Pauzeren/Hervatten** — Het afspelen van media regelen
-- **Media stoppen** — Het afspelen van media stoppen
-- **Muziek in-/uitschakelen** — Achtergrondmuziek regelen
+- **Media Window** - Open/close media window
+- **Previous/Next Media** - Navigate between media items
+- **Pause/Resume** - Control media playback
+- **Stop Media** - Stop media playback
+- **Music Toggle** - Control background music
 
-**Opmerking (\*):** Globale sneltoets - beschikbaar zelfs als de app niet gefocust is
+**Note (\*):** Global shortcut - available even when the app is not focused
 
-## Toon Gereedschappen {#display-tools}
+## Display Tools {#display-tools}
 
-### Media Display Venster {#media-display-window}
+### Media Display Window {#media-display-window}
 
-Het media-weergavevenster is het auditie-gerichte venster. Het kan worden geplaatst op een extern scherm of gebruikt in een raam instelling, afhankelijk van je uitrusting.
+The media display window is the audience-facing window. It can be placed on an external screen or used in a windowed setup depending on your equipment.
 
-Gebruik de weergave popup om:
+Use the display popup to:
 
-- Toon of verberg de mediaweergave
-- Kies het weergave- of venstertype
-- Selecteer een tijdelijke aangepaste achtergrond in plaats van het jaar
-- Gebruik een beschikbare camera als achtergrond. Dit wordt meestal gebruikt in sign-language congregations.
+- Show or hide the media display
+- Choose the display or window type
+- Select a temporary custom background instead of the yeartext
+- Use an available camera as the background. This is mostly used in sign-language congregations.
 
-Houd er rekening mee dat aangepaste achtergronden tijdelijk zijn en niet worden opgeslagen na M3 quites.
+Please note that custom backgrounds are temporary and are not saved after M³ quits.
 
 ### Meeting Timer {#user-guide-meeting-timer}
 
-Wanneer de vergadertimer is ingeschakeld, kan M3 een apart timer venster tonen voor timing deelnemers delen. De timer kan optellen of omlaag, de huidige tijd tonen, een aftellen van de vergadering tonen voor geplande vergaderingen, en optioneel geef je overuren aan of de vergadering voor of achter op schema ligt.
+When the meeting timer is enabled, M³ can show a separate timer window for timing participant parts. The timer can count up or down, show the current time, show a meeting countdown before scheduled meetings, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
 
-De timer is een bèta-functie en moet alleen worden gebruikt wanneer deze lokaal wordt goedgekeurd.
+The timer is a beta feature and should only be used when approved locally.
 
-## Achtergrondmuziek {#user-guide-background-music}
+## Background Music {#user-guide-background-music}
 
-### Achtergrondmuziek instellen {#background-music-setup}
+### Setting Up Background Music {#background-music-setup}
 
-Achtergrondmuziek wordt automatisch afgespeeld vóór vergaderingen en stopt op het juiste moment:
+Background music automatically plays before meetings and stops at the appropriate time:
 
-1. **Muziek inschakelen** — Zet achtergrondmuziek aan in de instellingen
-2. **Automatisch starten** — Muziek start automatisch wanneer M³ wordt opgestart, indien van toepassing
-3. **Stoppen voor vergadering** — Muziek stopt automatisch vóór de begintijd van de vergadering
-4. **Handmatige bediening** — Gebruik de muziekknop in de statusbalk om handmatig te starten/stoppen
-5. **Herstarten** — Hervat de muziek na de vergadering met één klik
+1. **Enable Music** - Turn on background music in settings
+2. **Auto-Start** - Music will start automatically when M³ launches, if appropriate
+3. **Meeting Stop** - Music stops automatically before meeting start time
+4. **Manual Control** - Use the music button in the status bar to start/stop manually
+5. **Restart** - Resume music after meetings with one click
 
-## Zoom-integratie {#user-guide-zoom-integration}
+## Zoom Integration {#user-guide-zoom-integration}
 
-M³ kan worden geïntegreerd met Zoom voor automatisch schermdelen:
+M³ can integrate with Zoom for automatic screen sharing:
 
-1. **Integratie inschakelen** — Zet Zoom-integratie aan in de instellingen
-2. **Sneltoets configureren** — Stel de sneltoets voor schermdelen in die in Zoom is geconfigureerd. Zorg ervoor dat het selectievakje "globaal" is aangevinkt in Zoom.
-3. **Automatische bediening** — M³ zal Zoom-schermdelen automatisch aan- of uitzetten wanneer dat nodig is
-4. **Handmatig overrulen** — Je kunt schermdelen nog steeds handmatig bedienen in Zoom indien nodig
+1. **Enable Integration** - Turn on Zoom integration in settings
+2. **Configure Shortcut** - Set up the screen sharing keyboard shortcut that is configured in Zoom. Make sure that the "global" checkbox is checked in Zoom.
+3. **Automatic Control** - M³ will automatically toggle screen sharing in Zoom as needed
+4. **Manual Override** - You can still manually control screen sharing using Zoom if needed
 
-## OBS Studio-integratie {#user-guide-obs-integration}
+## OBS Studio Integration {#user-guide-obs-integration}
 
-### OBS-integratie instellen {#user-guide-obs-setup}
+### Setting Up OBS Integration {#user-guide-obs-setup}
 
-Om M³ met OBS Studio te gebruiken voor hybride vergaderingen:
+To use M³ with OBS Studio for hybrid meetings:
 
-1. **Installeer OBS Studio** - Download en installeer OBS Studio
-2. **WebSocket inschakelen** - Installeer de WebSocket-plugin in OBS
-3. **Configureer M³** - Voer de OBS-poort en het wachtwoord in de instellingen van M³ in
-4. **Scènes instellen** - Maak scènes voor camera, media en andere inhoud
-5. **Testen** - Controleer of het afspelen goed werkt
+1. **Install OBS Studio** - Download and install OBS Studio
+2. **Enable WebSocket** - Install the WebSocket plugin in OBS
+3. **Configure M³** - Enter OBS port and password in M³ settings
+4. **Set Up Scenes** - Create scenes for camera, media, and other content
+5. **Test** - Verify playback works properly
 
-### Beheer van OBS-scènes {#obs-scene-management}
+### OBS Scene Management {#obs-scene-management}
 
-M³ schakelt automatisch tussen OBS-scènes tijdens presentaties:
+M³ automatically switches OBS scenes during presentations:
 
-- **Camerascène** - Toont het spreekgestoelte/camera-aanzicht
-- **Mediascène** - Toont media-inhoud
-- **Afbeeldingsscène** - Toont afbeeldingen (kan worden uitgesteld indien ingeschakeld)
-- **Automatisch schakelen** - Scènes veranderen op basis van mediatype en instellingen
-- **Opnames** - Indien ingeschakeld, kan M3 OBS opname starten en stoppen vanuit de OBS popup
+- **Camera Scene** - Shows the lectern/camera view
+- **Media Scene** - Displays media content
+- **Image Scene** - Shows images (can be postponed if enabled)
+- **Automatic Switching** - Scenes change based on media type and settings
+- **Recording Controls** - If enabled, M³ can start and stop OBS recording from the OBS popup
 
 ### Advanced OBS Features {#advanced-obs}
 
-#### Afbeeldingen uitstellen {#user-guide-postpone-images}
+#### Postpone Images {#user-guide-postpone-images}
 
-Schakel deze optie in om het delen van afbeeldingen naar OBS uit te stellen tot het handmatig wordt geactiveerd:
+Enable this option to delay sharing images to OBS until manually triggered:
 
-1. Schakel "Afbeeldingen uitstellen" in bij de OBS-instellingen
-2. Afbeeldingen worden pas gedeeld wanneer je op de knop klikt om ze te tonen met OBS Studio. Dit is handig om afbeeldingen eerst aan het aanwezige publiek te tonen.
+1. Enable "Postpone Images" in OBS settings
+2. Images will only be shared when you click the button to show them using OBS Studio. This is useful for showing images to in-person audience first.
 
-#### Gedrag bij scènewisselingen {#user-guide-scene-switching}
+#### Scene Switching Behavior {#user-guide-scene-switching}
 
-Configureer hoe M³ scènewisselingen afhandelt:
+Configure how M³ handles scene changes:
 
-- **Omschakelen na media** - Keer automatisch terug naar de vorige scène
-- **Vorige scène onthouden** - Herstel de scène die actief was voor de media
+- **Switch After Media** - Automatically return to previous scene
+- **Remember Previous Scene** - Restore the scene that was active before media
 
-### Audioconfiguratie voor hybride vergaderingen {#audio-configuration}
+### Audio Configuration for Hybrid Meetings {#audio-configuration}
 
-Wanneer je M³ met OBS Studio gebruikt voor hybride vergaderingen (fysiek + Zoom), moet je de audio-instellingen configureren om ervoor te zorgen dat de deelnemers de media kunnen horen:
+When using M³ with OBS Studio for hybrid meetings (in-person + Zoom), you need to configure audio settings to ensure meeting participants can hear the media:
 
-#### Zoom Audio-instellingen {#zoom-audio-settings}
+#### Zoom Audio Settings {#zoom-audio-settings}
 
-**Vóór elke vergadering moet je "Origineel geluid" inschakelen in Zoom:**
+**Before every meeting, you must enable Original Audio in Zoom:**
 
-1. **Open Zoom** en ga naar Instellingen
-2. **Navigeer naar Audio** → **Geavanceerd**
-3. **Schakel "Optie in vergadering weergeven om 'Origineel geluid' in te schakelen" in**
-4. **Vink "Ruispanonderdrukking uitschakelen" aan** (tweede selectievakje)
-5. **Vink "Echonderdrukking uitschakelen" aan** (eerste selectievakje)
-6. **Vink "Muziekmodus met hoge getrouwheid uitschakelen" uit** (derde selectievakje)
-7. **Voordat je elke vergadering begint**, klik op de knop "Origineel geluid" in de bedieningselementen van de vergadering
+1. **Open Zoom** and go to Settings
+2. **Navigate to Audio** → **Advanced**
+3. **Enable "Show in-meeting option to 'Enable Original Sound'"**
+4. **Check "Disable echo cancellation"** (first checkbox)
+5. **Check "Disable noise suppression"** (second checkbox)
+6. **Uncheck "Disable high-fidelity music mode"** (third checkbox)
+7. **Before starting each meeting**, click the "Original Audio" button in the meeting controls
 
-**Alternatief: Computergeluid delen**
-Als Origineel geluid niet goed werkt in jouw opstelling:
+**Alternative: Share Computer Sound**
+If Original Audio doesn't work well in your setup:
 
-1. **Voordat je media afspeelt**, ga naar het tabblad **Geavanceerd** in de opties voor het delen van het Zoom-scherm
-2. **Vink "Computergeluid delen" aan**
-3. **Opmerking**: Deze optie moet elke keer dat je een nieuwe Zoom-sessie start worden ingeschakeld
+1. **Before playing media**, go to **Advanced** tab in Zoom screen sharing options
+2. **Check "Share computer sound"**
+3. **Note**: This option must be enabled every time you start a new Zoom session
 
-**Beste alternatief**: Overweeg om de Zoom-integratie van M³ te gebruiken in plaats van OBS Studio, omdat deze de systeemeigen schermdeling van Zoom gebruikt die audio naadloos afhandelt en geen complexe audioconfiguratie vereist.
+**Best Alternative**: Consider using M³'s Zoom integration instead of OBS Studio, as it uses Zoom's native screen sharing which handles audio more seamlessly and doesn't require complex audio configuration.
 
-#### Waarom audioconfiguratie nodig is {#why-audio-config}
+#### Why Audio Configuration is Necessary {#why-audio-config}
 
-M³ speelt media af met geluid op je computer, maar deze audio wordt **niet automatisch verzonden** via de videostream naar OBS Studio. Dit is hetzelfde gedrag dat je zou ervaren met elke andere mediaspeler.
+M³ plays media with sound on your computer, but this audio is **not automatically transmitted** through the video stream to OBS Studio. This is the same behavior you would experience with any other media player.
 
-**Het audioprobleem is niet gerelateerd aan M³** - het is een beperking van hoe OBS Studio videostreaming werkt met Zoom. De videostream fungeert als een virtuele camera zonder geluid, net als een webcam, dus je moet Zoom expliciet configureren om de audio van de computer vast te leggen. Dit impliceert dat uw computer twee geluidskaarten heeft, en als dit niet het geval is, zult u waarschijnlijk de OBS Studio-integratie niet succesvol kunnen gebruiken.
+**The audio issue is not related to M³** - it's a limitation of how OBS Studio video streaming works with Zoom. The video stream acts like a virtual camera without sound, just like a webcam, so you must explicitly configure Zoom to capture the computer's audio. This implies that your computer has two sound cards, and if this isn't the case, you probably won't be able to use the OBS Studio integration successfully.
 
-**Alternatieve oplossing**: Overweeg in plaats daarvan de Zoom-integratie te gebruiken, omdat deze de systeemeigen scherm- en audiodeling van Zoom gebruikt, die audio naadloos afhandelt.
+**Alternative Solution**: Consider using the Zoom integration instead, as it uses Zoom's native screen and audio sharing, which handles audio more seamlessly.
 
-#### Problemen met audio oplossen {#audio-troubleshooting}
+#### Troubleshooting Audio Issues {#audio-troubleshooting}
 
-**Veelvoorkomende problemen:**
+**Common Problems:**
 
-- **Geen audio in Zoom**: Controleer of Origineel geluid is ingeschakeld en correct is geconfigureerd
-- **Slechte audiokwaliteit**: Controleer of de drie selectievakjes voor Origineel geluid correct zijn ingesteld
-- **Audio werkt niet na herstart van Zoom**: Instellingen voor Origineel geluid moeten voor elke nieuwe Zoom-sessie opnieuw worden ingeschakeld
+- **No audio in Zoom**: Check if Original Audio is enabled and properly configured
+- **Poor audio quality**: Verify the three Original Audio checkboxes are set correctly
+- **Audio not working after Zoom restart**: Original Audio settings must be re-enabled for each new Zoom session
 
-**Best practices:**
+**Best Practices:**
 
-- Test de audioconfiguratie en het delen vóór de vergaderingen
-- Maak een checklist voor de audio-installatie
-- Overweeg om "Computergeluid delen" als reserveoptie te gebruiken
-- **Overweeg om de Zoom-integratie te gebruiken in plaats van OBS Studio** voor een eenvoudigere audio-afhandeling
-- Zorg ervoor dat alle AV-operators bekend zijn met deze instellingen
+- Test audio configuration and sharing before meetings
+- Create a checklist for audio setup
+- Consider using "Share Computer Sound" as a backup option
+- **Consider using Zoom integration instead of OBS Studio** for simpler audio handling
+- Ensure all AV operators are familiar with these settings
 
-## Media-import en beheer {#media-import}
+## Media Import and Management {#media-import}
 
-### Aangepaste media importeren {#importing-custom-media}
+### Importing Custom Media {#importing-custom-media}
 
-Voeg je eigen mediabestanden toe aan M³:
+Add your own media files to M³:
 
-1. **Bestandsimport** - Gebruik de importknop om video's, afbeeldingen of audiobestanden toe te voegen
-2. **Slepen en neerzetten** - Sleep bestanden rechtstreeks naar M³
-3. **Mapbewaking** - Stel een gecontroleerde map in voor automatische imports
-4. **JWPUB-bestanden en afspeellijsten** - Importeer publicaties en afspeellijsten
-5. **Media voor openbare lezingen (S-34 / S-34mp)** - Importeer media voor openbare lezingen met behulp van S-34 of S-34mp JWPUB-bestanden
-6. **Video's van de officiële website** - Zoek naar video's en voeg ze toe aan de geselecteerde datum
-7. **Studie Bijbel en Bijbel voor borden en Bijbel media** - Voeg afbeeldingen, video's, kaarten, historische referenties of ondertekentaal bijbel toe voor geselecteerde passages
+1. **File Import** - Use the import button to add videos, images, or audio files
+2. **Drag and Drop** - Drag files directly into M³
+3. **Folder Monitoring** - Set up a watched folder for automatic imports
+4. **JWPUB Files and Playlists** - Import publications and playlists
+5. **Public Talk Media (S-34 / S-34mp)** - Import public talk media using S‑34 or S‑34mp JWPUB files
+6. **Videos from the official website** - Search for videos and add them to the selected date
+7. **Study Bible and sign-language Bible media** - Add images, videos, maps, historical references, or sign-language Bible videos for selected passages
 
-### Geïmporteerde media beheren {#managing-imported-media}
+### Managing Imported Media {#managing-imported-media}
 
-- **Organiseren op datum** - Wijs geïmporteerde media toe aan specifieke datums
-- **Aangepaste secties** - Maak aangepaste secties voor organisatie
-- **Eigenschappen bewerken** - Wijzig titels, beschrijvingen en timing
-- **Media verwijderen** - Verwijder ongewenste media-items
+- **Organize by Date** - Assign imported media to specific dates
+- **Custom Sections** - Create custom sections for organization
+- **Edit Properties** - Modify titles, descriptions, and timing
+- **Remove Media** - Delete unwanted media items
 
-### Audiobijbel importeren {#audio-bible-import}
+### Audio Bible Import {#audio-bible-import}
 
-Importeer audio-opnames van Bijbelverzen:
+Import audio recordings of Bible verses:
 
-1. Klik op de knop "Audiobijbel"
-2. Selecteer het Bijbelboek en hoofdstuk
-3. Specifieke verzen of versreeksen kunt kiezen
-4. Download de audiobestanden
-5. Gebruik ze
+1. Click the "Audio Bible" button
+2. Select the Bible book and chapter
+3. Choose specific verses or verse ranges
+4. Download the audio files
+5. Use them
 
-### Profielinstellingen importeren en exporteren {#profile-settings-import-export}
+### Profile Settings Import and Export {#profile-settings-import-export}
 
-De instellingen van elk profiel kunnen worden geëxporteerd naar een JSON-bestand vanuit instellingen. Importeren van een profielinstellingenbestand vervangt de instellingen van het huidige profiel, wat handig is bij het verplaatsen van de instellingen naar een andere computer of bij het herstellen van een bekende configuratie.
+Each profile's settings can be exported to a JSON file from Settings. Importing a profile settings file replaces the current profile's settings, which is useful when moving a setup to another computer or restoring a known configuration.
 
-## Mapbewaking en export {#user-guide-folder-monitoring}
+## Folder Monitoring and Export {#user-guide-folder-monitoring}
 
-### Mapbewaking instellen {#folder-monitoring-setup}
+### Setting Up Folder Monitoring {#folder-monitoring-setup}
 
-Controleer een map op nieuwe mediabestanden:
+Monitor a folder for new media files:
 
-1. **Mapbewaking inschakelen** - Zet mapbewaking aan in de instellingen
-2. **Map selecteren** - Kies de map die je wilt bewaken
-3. **Automatische import** - Nieuwe bestanden worden automatisch toegevoegd aan M³
-4. **Organisatie** - Bestanden worden op datum georganiseerd op basis van de mappenstructuur
+1. **Enable Folder Watcher** - Turn on folder monitoring in settings
+2. **Select Folder** - Choose the folder to monitor
+3. **Automatic Import** - New files are automatically added to M³
+4. **Organization** - Files are organized by date based on folder structure
 
-### Media-export {#user-guide-media-export}
+### Media Export {#user-guide-media-export}
 
-Exporteer media automatisch naar georganiseerde mappen:
+Automatically export media to organized folders:
 
-1. **Automatisch exporteren inschakelen** - Zet media-export aan in de instellingen
-2. **Exportmap selecteren** - Kies waar je geëxporteerde bestanden wilt opslaan
-3. **Automatische organisatie** - Bestanden worden georganiseerd op datum en sectie
-4. **Formaatopties** - Converteer bestanden naar MP4 voor betere compatibiliteit
+1. **Enable Auto-Export** - Turn on media export in settings
+2. **Select Export Folder** - Choose where to save exported files
+3. **Automatic Organization** - Files are organized by date and section
+4. **Format Options** - Convert files to MP4 for better compatibility
 
-## Website-presentatie {#website-presentation}
+## Website Presentation {#website-presentation}
 
-### De officiële website presenteren {#presenting-the-website}
+### Presenting the Official Website {#presenting-the-website}
 
-Deel de officiële website op externe schermen:
+Share the official website on external displays:
 
-1. **Website-modus openen** - Klik op de knop voor website-presentatie
-2. **Extern scherm** - De website wordt geopend in een nieuw venster
-3. **Navigatie** - Gebruik de browserknoppen om te navigeren
+1. **Open Website Mode** - Click the website presentation button
+2. **External Display** - The website opens in a new window
+3. **Navigation** - Use the browser controls to navigate
 
-### Website-bedieningselementen {#website-controls}
+### Website Controls {#website-controls}
 
-- **Open Website** - Open een apart website venster
-- **Start Mirroring** - Toon het website venster in de media display voor het publiek
-- **Stop Mirroring** - Stop met het tonen van de website en keer terug naar de jaartekst of de achtergrond van de media
-- **Navigatie** - Standaardbrowsernavigatieknoppen
-- **Vernieuwen** - Laad de huidige pagina opnieuw
-- **Sluiten** - Sluit de website-presentatiemodus af
-- **Auto Retourn** - Optioneel automatisch terugkeren naar de medialijst na het stoppen van website spiegeling
+- **Open Website** - Open a separate website window
+- **Start Mirroring** - Show the website window in the media display for the audience
+- **Stop Mirroring** - Stop showing the website and return to the yeartext or media display background
+- **Navigation** - Standard browser navigation controls
+- **Refresh** - Reload the current page
+- **Close** - Exit website presentation mode
+- **Auto Return** - Optionally return to the media list automatically after stopping website mirroring
 
-## Afspraak Opnames {#meeting-recordings}
+## Meeting Recordings {#meeting-recordings}
 
-M3 kan helpen om het controleren van het opnemen van vergaderingen, maar bevat geen ingebouwde recorder.
+M³ can help control meeting recording, but it does not include a built-in recorder.
 
-- **OBS Opname** - Als OBS opname bediening is ingeschakeld, gebruik dan de OBS popup om OBS opname te starten en te stoppen
-- **Externe opname App** - Configureer toetsenbord snelkoppelingen voor een aparte opname app, gebruik daarna de meetingopnames popup om deze snelkoppelingen te verzenden
-- **Opnamemap** - Configureer een opnamemap om een snelle knop weer te geven die de map opent waar opnamen worden opgeslagen
+- **OBS Recording** - If OBS recording controls are enabled, use the OBS popup to start and stop OBS recording
+- **External Recording App** - Configure keyboard shortcuts for a separate recording app, then use the meeting recordings popup to send those shortcuts
+- **Recording Folder** - Configure a recording folder to show a quick button that opens the folder where recordings are saved
 
-## Geavanceerde functies {#user-guide-advanced-features}
+## Advanced Features {#user-guide-advanced-features}
 
-### Meerdere gemeenten {#user-guide-multiple-congregations}
+### Multiple Congregations {#user-guide-multiple-congregations}
 
-Beheer meerdere gemeenten of groepen:
+Manage multiple congregations or groups:
 
-1. **Profielen aanmaken** - Maak afzonderlijke profielen voor verschillende gemeenten
-2. **Wisselen van profiel** - Gebruik de gemeenteselector om tussen profielen te wisselen
-3. **Afzonderlijke instellingen** - Elk profiel heeft zijn eigen instellingen en media
-4. **Gedeelde bronnen** - Mediabestanden worden waar mogelijk gedeeld tussen profielen
+1. **Create Profiles** - Set up separate profiles for different congregations
+2. **Switch Profiles** - Use the congregation selector to switch between profiles
+3. **Separate Settings** - Each profile has its own settings and media
+4. **Shared Resources** - Media files are shared between profiles whenever possible
 
-### Sneltoetsen {#keyboard-shortcuts-guide}
+### Keyboard Shortcuts {#keyboard-shortcuts-guide}
 
-Configureer aangepaste sneltoetsen voor een efficiënte werking:
+Configure custom keyboard shortcuts for efficient operation:
 
-1. **Sneltoetsen inschakelen** - Zet sneltoetsen aan in de instellingen
-2. **Sneltoetsen configureren** - Stel sneltoetsen in voor veelvoorkomende acties
-3. **Oefenen** - Leer je sneltoetsen voor een snellere bediening
-4. **Aanpassen** - Pas sneltoetsen aan je eigen voorkeuren aan
+1. **Enable Shortcuts** - Turn on keyboard shortcuts in settings
+2. **Configure Shortcuts** - Set up shortcuts for common actions
+3. **Practice** - Learn your shortcuts for faster operation
+4. **Customize** - Adjust shortcuts to match your preferences
 
-## Problemen oplossen {#troubleshooting-guide}
+## Troubleshooting {#troubleshooting-guide}
 
-### Veelvoorkomende problemen {#common-issues}
+### Common Issues {#common-issues}
 
-#### Media wordt niet gedownload {#user-guide-media-not-downloading}
+#### Media Not Downloading {#user-guide-media-not-downloading}
 
-- Controleer de instellingen van je vergaderschema
-- Verifieer de internetverbinding
-- Controleer of media beschikbaar is in de geselecteerde taal
+- Check your meeting schedule settings
+- Verify internet connection
+- Check if media is available in your selected language
 
-#### OBS-integratie werkt niet {#user-guide-obs-not-working}
+#### OBS Integration Not Working {#user-guide-obs-not-working}
 
-- Controleer of de OBS WebSocket-plugin is geïnstalleerd
-- Controleer de poort- en wachtwoordinstellingen
-- Zorg ervoor dat OBS actief is
+- Verify OBS WebSocket plugin is installed
+- Check port and password settings
+- Ensure OBS is running
 
-#### Audioproblemen in Zoom/OBS {#audio-issues}
+#### Audio Issues in Zoom/OBS {#audio-issues}
 
-- **Geen audio in Zoom**: Schakel Origineel geluid in bij de Zoom-instellingen en vóór elke vergadering
-- **Slechte audiokwaliteit**: Controleer de drie selectievakjes voor Origineel geluid (eerste twee ingeschakeld, derde uitgeschakeld)
-- **Audio werkt niet na herstart**: Origineel geluid moet voor elke nieuwe Zoom-sessie opnieuw worden ingeschakeld
-- **Alternatieve oplossing**: Gebruik de optie "Computergeluid delen" bij het delen van het Zoom-scherm
+- **No audio in Zoom**: Enable Original Audio in Zoom settings and before each meeting
+- **Poor audio quality**: Check the three Original Audio checkboxes (first two enabled, third disabled)
+- **Audio not working after restart**: Original Audio must be re-enabled for each new Zoom session
+- **Alternative solution**: Use "Share Computer Sound" option in Zoom screen sharing
 
-#### Prestatieproblemen {#user-guide-performance-issues}
+#### Performance Issues {#user-guide-performance-issues}
 
-- Schakel extra cache in
-- Verlaag de maximale resolutie
-- Wis oude gecachete bestanden
-- Controleer de beschikbare schijfruimte
-- Als de app grafische storingen laat zien of crasht, probeer dan de hardware-versnelling uit te schakelen en herstart M3
+- Enable extra cache
+- Reduce maximum resolution
+- Clear old cached files
+- Check available disk space
+- If the app shows graphical glitches or crashes, try disabling hardware acceleration and restart M³
 
-#### Taalproblemen {#user-guide-language-issues}
+#### Language Issues {#user-guide-language-issues}
 
-- Controleer de instelling voor de mediataal
-- Zorg ervoor dat de taal beschikbaar is op JW.org
+- Check media language setting
+- Ensure language is available on JW.org
 - Try a fallback language
-- Controleer de instelling voor de interfacetaal
+- Verify interface language setting
 
-### Hulp krijgen {#getting-help}
+### Getting Help {#getting-help}
 
-Als je problemen ondervindt:
+If you encounter issues:
 
-1. **Documentatie raadplegen** - Lees deze handleiding en andere beschikbare documentatie
-2. **Zoeken naar issues** - Zoek naar soortgelijke problemen op GitHub
-3. **Problemen melden** - Maak een nieuwe issue aan met gedetailleerde informatie
+1. **Check Documentation** - Review this guide and other available documentation
+2. **Search Issues** - Look for similar issues on GitHub
+3. **Report Problems** - Create a new issue with detailed information
 
-## Best practices {#best-practices}
+## Best Practices {#best-practices}
 
-### Vóór vergaderingen {#before-meetings}
+### Before Meetings {#before-meetings}
 
-1. **Downloads controleren** - Zorg ervoor dat alle media is gedownload
-2. **Apparatuur testen** - Controleer of schermen en audio werken
-3. **Media voorbereiden** - Bekijk en organiseer de media voor de vergadering; zorg ervoor dat er geen mediabestanden ontbreken
-4. **Audio configureren** - Schakel voor hybride vergaderingen Origineel geluid in in Zoom of stel "Computergeluid delen" in
+1. **Check Downloads** - Ensure all media is downloaded
+2. **Test Equipment** - Verify displays and audio work
+3. **Prepare Media** - Review and organize media for the meeting; make sure no media files are missing
+4. **Configure Audio** - For hybrid meetings, enable Original Audio in Zoom or set up "Share Computer Sound"
 
-### Tijdens vergaderingen {#during-meetings}
+### During Meetings {#during-meetings}
 
-1. **Focus houden** - Gebruik de schone en afleidingsvrije interface
-2. **Sneltoetsen gebruiken** - Beheers sneltoetsen voor een soepele werking
-3. **Audio controleren** - Houd de volumeniveaus in de gaten, als dat deel uitmaakt van je verantwoordelijkheden
-4. **Voorbereid zijn** - Houd het volgende media-item gereed
-5. **Audio verifiëren** - Zorg er bij hybride vergaderingen voor dat Zoom-deelnemers de media kunnen horen
+1. **Stay Focused** - Use the clean and distraction-free interface
+2. **Use Shortcuts** - Master keyboard shortcuts for smooth operation
+3. **Monitor Audio** - Keep an eye on volume levels, if that's part of your responsibilities
+4. **Be Prepared** - Have the next media item ready
+5. **Verify Audio** - For hybrid meetings, ensure Zoom participants can hear the media
 
-### Na vergaderingen {#after-meetings}
+### After Meetings {#after-meetings}
 
-1. **Achtergrondmuziek starten** - Start het afspelen van de achtergrondmuziek
-2. **Vooruitplannen** - Bereid je voor op de volgende vergadering door ervoor te zorgen dat alles op zijn plek staat
-3. **Afsluiten** - Sluit de mediaspeler af wanneer je klaar bent om te vertrekken
+1. **Start Background Music** - Start the playback of background music
+2. **Plan Ahead** - Prepare for the next meeting by making sure everything is in place
+3. **Clean Up** - Close media player when you're ready to leave
 
-### Regelmatig onderhoud {#regular-maintenance}
+### Regular Maintenance {#regular-maintenance}
 
-1. **M³ bijwerken** - Houd de applicatie up-to-date
-2. **Cache wissen** - Wis regelmatig oude gecachete bestanden
-3. **Instellingen controleren** - Bekijk en werk de instellingen bij indien nodig
+1. **Update M³** - Keep the application updated
+2. **Clear Cache** - Periodically clear old cached files
+3. **Check Settings** - Review and update settings as needed

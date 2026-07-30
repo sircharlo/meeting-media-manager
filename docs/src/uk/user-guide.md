@@ -50,14 +50,14 @@ M³ automatically organizes media by meeting type and section:
 
 - **Meeting Sections** - Media is grouped by meeting parts (Public Talk, Treasures from God's Word, etc.)
 - **Custom Sections** - You can create custom sections for additional media if no meeting is scheduled on that particular day
-- **Впорядкування вручну** - Перетягніть медіа елементи до необхідного для замовлення або виконайте скидання порядку
-- **Повторити Відтворення** - Повторювати кожен елемент у розділі до тих пір, поки відтворення не зупиниться вручну
+- **Manual Sorting** - Drag media items into the order you need, or reset the order when needed
+- **Repeated Playback** - Loop a single media item or repeat every item in a section until playback is stopped manually
 
-### Приховані та відсутні медіа {#hidden-and-missing-media}
+### Hidden and Missing Media {#hidden-and-missing-media}
 
-Медіа може бути приховано зі списку зустрічей, не видаляючи автоматично завантажені файли. Якщо медіа приховані помилкою, використовуйте **Показати приховані медіа** для вибраного дня.
+Media can be hidden from the meeting list without deleting the automatically downloaded files. If media is hidden by mistake, use **Show hidden media** for the selected day.
 
-Якщо M3 повідомляє про відсутні медіа, спочатку перевірте, чи очікувався товар стане доступним до дати зустрічі. Ви також можете додати відсутній елемент вручну меню **Додати медіа** або перетягуючи його в медіа список.
+If M³ reports missing media, first check whether the item is expected to become available closer to the meeting date. You can also add the missing item manually with the **Add media** menu or by dragging it into the media list.
 
 ## Media Presentation {#media-presentation}
 
@@ -83,8 +83,8 @@ The media player provides comprehensive controls:
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
 - **Zoom/Pan** - Use mouse wheel to zoom, drag to pan (for images)
-- **Живий перегляд** - При включенні, показати попередній перегляд медіа вікна аудиторії в головному додатку
-- **Відтворення швидкість** - Коли увімкнено в налаштуваннях, відрегулюйте швидкість аудіо та відео з контекстного меню медіа
+- **Live Preview** - When enabled, show a preview of the audience media window in the main app
+- **Playback Speed** - When enabled in settings, adjust audio and video speed from the media item context menu
 
 ### Advanced Presentation Features {#advanced-presentation}
 
@@ -109,7 +109,7 @@ For images and videos:
 
 #### Keyboard Shortcuts {#user-guide-keyboard-shortcuts}
 
-Настроювання гарячих клавіш для швидкого доступу. Зверніть увагу, що за замовчуванням не встановлено комбінації клавіш.
+Configure custom keyboard shortcuts for quick access. Note that no keyboard shortcuts are set by default.
 
 **Built-in Media Controls** (when main window is focused and showing the media list):
 
@@ -120,34 +120,34 @@ For images and videos:
 
 **Customizable Shortcuts** (when enabled in settings):
 
-- **Медіа Window** - Відкрити/закрити вікно медіа
-- **Попередній/Наступна Медія** - Навігація між медіаелементами
-- **Пауза/Продовжити** - Відтворення медіа
-- **Зупинити Media** - Зупинити відтворення медіа
-- **Музичний перемикач** - Музика керування фоном
+- **Media Window** - Open/close media window
+- **Previous/Next Media** - Navigate between media items
+- **Pause/Resume** - Control media playback
+- **Stop Media** - Stop media playback
+- **Music Toggle** - Control background music
 
 **Note (\*):** Global shortcut - available even when the app is not focused
 
-## Дисплей Інструменти {#display-tools}
+## Display Tools {#display-tools}
 
-### Вікно Media Display {#media-display-window}
+### Media Display Window {#media-display-window}
 
-Вікно дисплею медіа - це вікно аудиторії, перед тим як вікно. Він може розміщуватися на зовнішньому екрані або використовуватися в налаштуваннях вікна в залежності від вашого обладнання.
+The media display window is the audience-facing window. It can be placed on an external screen or used in a windowed setup depending on your equipment.
 
-Використовувати спливаюче вікно на:
+Use the display popup to:
 
-- Показати або приховати медіа дисплей
-- Виберіть тип відображення або вікна
-- Виберіть тимчасове користувацьке тло замість року
-- Використовувати доступну камеру в якості фону. Це здебільшого використовується в мовних зборах.
+- Show or hide the media display
+- Choose the display or window type
+- Select a temporary custom background instead of the yeartext
+- Use an available camera as the background. This is mostly used in sign-language congregations.
 
-Будь ласка, зверніть увагу, що користувацькі тло тимчасові і і не зберігаються після M3 квот.
+Please note that custom backgrounds are temporary and are not saved after M³ quits.
 
-### Таймер зустрічі {#user-guide-meeting-timer}
+### Meeting Timer {#user-guide-meeting-timer}
 
-Коли увімкнуто таймер зустрічі, M3 може показати окреме вікно таймера для частки учасників. Таймер може розраховувати або знижити, показати поточний час, покажіть зворотний відлік зустрічі до запланованих зустрічей, і необов’язково вказують на постійні чи попереду зустрічі або за графіком.
+When the meeting timer is enabled, M³ can show a separate timer window for timing participant parts. The timer can count up or down, show the current time, show a meeting countdown before scheduled meetings, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
 
-Таймер - це бета-функція і повинен використовуватися лише коли він затверджений локально.
+The timer is a beta feature and should only be used when approved locally.
 
 ## Background Music {#user-guide-background-music}
 
@@ -166,7 +166,7 @@ Background music automatically plays before meetings and stops at the appropriat
 M³ can integrate with Zoom for automatic screen sharing:
 
 1. **Enable Integration** - Turn on Zoom integration in settings
-2. **Налаштування Shortcut** - Вказати комбінацію клавіш для демонстрації екрану, яку налаштовано в Zoom. Переконайтеся, що "глобальна" галочка перевіряється в Zoom.
+2. **Configure Shortcut** - Set up the screen sharing keyboard shortcut that is configured in Zoom. Make sure that the "global" checkbox is checked in Zoom.
 3. **Automatic Control** - M³ will automatically toggle screen sharing in Zoom as needed
 4. **Manual Override** - You can still manually control screen sharing using Zoom if needed
 
@@ -190,7 +190,7 @@ M³ automatically switches OBS scenes during presentations:
 - **Media Scene** - Displays media content
 - **Image Scene** - Shows images (can be postponed if enabled)
 - **Automatic Switching** - Scenes change based on media type and settings
-- **Керування записом** - Якщо увімкнено, M3 зможе розпочати і зупинити OBS запис з OBS виринаючого вікна
+- **Recording Controls** - If enabled, M³ can start and stop OBS recording from the OBS popup
 
 ### Advanced OBS Features {#advanced-obs}
 
@@ -199,7 +199,7 @@ M³ automatically switches OBS scenes during presentations:
 Enable this option to delay sharing images to OBS until manually triggered:
 
 1. Enable "Postpone Images" in OBS settings
-2. Зображення буде поширюватись лише тоді, коли ви натиснете кнопку показати їх за допомогою OBS Studio. Це корисно для першого показу зображень окремою аудиторією.
+2. Images will only be shared when you click the button to show them using OBS Studio. This is useful for showing images to in-person audience first.
 
 #### Scene Switching Behavior {#user-guide-scene-switching}
 
@@ -235,9 +235,9 @@ If Original Audio doesn't work well in your setup:
 
 #### Why Audio Configuration is Necessary {#why-audio-config}
 
-M3 відтворює медіа зі звуком на вашому комп'ютері, але цей звук **не передається автоматично** через відео потік до OBS Studio. Так само поводишся як будь-який інший медіа-плеєр.
+M³ plays media with sound on your computer, but this audio is **not automatically transmitted** through the video stream to OBS Studio. This is the same behavior you would experience with any other media player.
 
-**Проблема з аудіосупроводом не пов'язана з М3** - це обмеження передачі відео до OBS Studio через Zoom. Відеопотік виконує такі як віртуальна камера без звуку, як і веб-камера, тому потрібно явно налаштувати Zoom для захоплення звуку комп'ютера. Це означає, що ваш комп'ютер має дві звукові картки, а якщо це так, ви, мабуть, не зможете використовувати інтеграцію з OBS Studio успішно.
+**The audio issue is not related to M³** - it's a limitation of how OBS Studio video streaming works with Zoom. The video stream acts like a virtual camera without sound, just like a webcam, so you must explicitly configure Zoom to capture the computer's audio. This implies that your computer has two sound cards, and if this isn't the case, you probably won't be able to use the OBS Studio integration successfully.
 
 **Alternative Solution**: Consider using the Zoom integration instead, as it uses Zoom's native screen and audio sharing, which handles audio more seamlessly.
 
@@ -268,8 +268,8 @@ Add your own media files to M³:
 3. **Folder Monitoring** - Set up a watched folder for automatic imports
 4. **JWPUB Files and Playlists** - Import publications and playlists
 5. **Публічні Talk Media (S-34 / S-34mp)** - Імпорт публічних розмов медіа з використанням S-34 або S-34mp JWPUB файлів
-6. **Відео з офіційного сайту** - Шукати відео та додати їх до обраної дати
-7. **Вивчайте Біблію та біблійні засоби масової інформації** - Додавання зображень, відео, карт, історичні посилання або відео про мову підпису Біблії для обраних уривок
+6. **Videos from the official website** - Search for videos and add them to the selected date
+7. **Study Bible and sign-language Bible media** - Add images, videos, maps, historical references, or sign-language Bible videos for selected passages
 
 ### Managing Imported Media {#managing-imported-media}
 
@@ -288,9 +288,9 @@ Import audio recordings of Bible verses:
 4. Download the audio files
 5. Use them
 
-### Налаштування профілю імпортуються та експортують {#profile-settings-import-export}
+### Profile Settings Import and Export {#profile-settings-import-export}
 
-Налаштування кожного профілю можуть бути експортовані у файл JSON в Налаштуваннях. Імпорт файлу налаштувань профілю замінює налаштування поточного профілю, що може бути корисним при переміщенні інсталяції на інший комп'ютер або відновленні відомої конфігурації.
+Each profile's settings can be exported to a JSON file from Settings. Importing a profile settings file replaces the current profile's settings, which is useful when moving a setup to another computer or restoring a known configuration.
 
 ## Folder Monitoring and Export {#user-guide-folder-monitoring}
 
@@ -324,21 +324,21 @@ Share the official website on external displays:
 
 ### Website Controls {#website-controls}
 
-- **Відкрити сайт** - Відкрити окреме вікно сайту
-- **Відображення дзеркала** - Показати вікно веб-сайту в медіа вікні публічного інтерфейсу
-- **Зупинити дзеркалювання** - Зупинити відображення сайту і повернення до фону при відображенні відео або мультимедіа
+- **Open Website** - Open a separate website window
+- **Start Mirroring** - Show the website window in the media display for the audience
+- **Stop Mirroring** - Stop showing the website and return to the yeartext or media display background
 - **Navigation** - Standard browser navigation controls
 - **Refresh** - Reload the current page
 - **Close** - Exit website presentation mode
-- **Автоповернення** - При бажанні повернення до медіа-списку автоматично після зупинки віддзеркалення сайтів
+- **Auto Return** - Optionally return to the media list automatically after stopping website mirroring
 
-## Записи зустрічей {#meeting-recordings}
+## Meeting Recordings {#meeting-recordings}
 
-M3 може допомогти контролювати запис зібрань, але не включає вбудовані записи.
+M³ can help control meeting recording, but it does not include a built-in recorder.
 
-- **OBS запис** - Якщо OBS керування записами увімкнуто, використовуйте спливаюче вікно OBS для запуску і зупинення OBS запису
-- **Зовнішня програма записування** - Налаштувати гарячі клавіші для окремого запису, а потім використовувати спливаючі вікна записів зустрічей, щоб відправити ці ярлики
-- **Тека з записами** - Налаштувати папку запису, щоб показати швидку кнопку, яка відкриває папку, де зберігаються записи
+- **OBS Recording** - If OBS recording controls are enabled, use the OBS popup to start and stop OBS recording
+- **External Recording App** - Configure keyboard shortcuts for a separate recording app, then use the meeting recordings popup to send those shortcuts
+- **Recording Folder** - Configure a recording folder to show a quick button that opens the folder where recordings are saved
 
 ## Advanced Features {#user-guide-advanced-features}
 
@@ -389,7 +389,7 @@ Configure custom keyboard shortcuts for efficient operation:
 - Reduce maximum resolution
 - Clear old cached files
 - Check available disk space
-- Якщо програма показує графічні збії або аварійні збої, спробуйте вимкнути апаратне прискорення та перезапустити M3
+- If the app shows graphical glitches or crashes, try disabling hardware acceleration and restart M³
 
 #### Language Issues {#user-guide-language-issues}
 

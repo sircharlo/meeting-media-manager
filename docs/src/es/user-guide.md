@@ -50,14 +50,14 @@ M³ automatically organizes media by meeting type and section:
 
 - **Meeting Sections** - Media is grouped by meeting parts (Public Talk, Treasures from God's Word, etc.)
 - **Custom Sections** - You can create custom sections for additional media if no meeting is scheduled on that particular day
-- **Ordenación manual** - Arrastra los elementos multimedia al orden que necesitas, o reinicia el pedido cuando sea necesario
-- **Reproducción repetida** - Bucle un elemento multimedia o repita cada elemento en una sección hasta que la reproducción se detenga manualmente
+- **Manual Sorting** - Drag media items into the order you need, or reset the order when needed
+- **Repeated Playback** - Loop a single media item or repeat every item in a section until playback is stopped manually
 
-### Medios ocultos y perdidos {#hidden-and-missing-media}
+### Hidden and Missing Media {#hidden-and-missing-media}
 
-Los medios pueden ocultarse de la lista de reuniones sin eliminar los archivos descargados automáticamente. Si el medio está oculto por error, utilice **Mostrar medios ocultos** para el día seleccionado.
+Media can be hidden from the meeting list without deleting the automatically downloaded files. If media is hidden by mistake, use **Show hidden media** for the selected day.
 
-Si M3 reporta que faltan medios de comunicación, primero compruebe si se espera que el elemento esté disponible más cerca de la fecha de la reunión. También puedes añadir el elemento que falta manualmente con el menú **Añadir media** o arrastrándolo en la lista de medios.
+If M³ reports missing media, first check whether the item is expected to become available closer to the meeting date. You can also add the missing item manually with the **Add media** menu or by dragging it into the media list.
 
 ## Media Presentation {#media-presentation}
 
@@ -83,8 +83,8 @@ The media player provides comprehensive controls:
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
 - **Zoom/Pan** - Use mouse wheel to zoom, drag to pan (for images)
-- **Vista previa en vivo** - Cuando está habilitado, muestra una vista previa de la ventana de medios de audiencia en la aplicación principal
-- **Velocidad de reproducción** - Cuando está habilitado en ajustes, ajusta la velocidad de audio y vídeo desde el menú contextual del elemento multimedia
+- **Live Preview** - When enabled, show a preview of the audience media window in the main app
+- **Playback Speed** - When enabled in settings, adjust audio and video speed from the media item context menu
 
 ### Advanced Presentation Features {#advanced-presentation}
 
@@ -120,34 +120,34 @@ Configure custom keyboard shortcuts for quick access. Note that no keyboard shor
 
 **Customizable Shortcuts** (when enabled in settings):
 
-- **Ventana de medios** - Abrir/cerrar ventana de medios
-- **Anterior/Próximos Medios** - Navegar entre elementos multimedia
-- **Pausar/Reiniciar** - Controla la reproducción de medios
-- **Detener Media** - Detener la reproducción multimedia
-- **Alteración de música** - Controla la música de fondo
+- **Media Window** - Open/close media window
+- **Previous/Next Media** - Navigate between media items
+- **Pause/Resume** - Control media playback
+- **Stop Media** - Stop media playback
+- **Music Toggle** - Control background music
 
 **Note (\*):** Global shortcut - available even when the app is not focused
 
-## Mostrar Herramientas {#display-tools}
+## Display Tools {#display-tools}
 
-### Ventana de pantalla multimedia {#media-display-window}
+### Media Display Window {#media-display-window}
 
-La ventana de visualización de medios es la ventana que mira a la audiencia. Puede colocarse en una pantalla externa o utilizarse en una configuración de ventana dependiendo de su equipo.
+The media display window is the audience-facing window. It can be placed on an external screen or used in a windowed setup depending on your equipment.
 
-Usar la ventana emergente para:
+Use the display popup to:
 
-- Mostrar u ocultar la pantalla de medios
-- Elija el tipo de pantalla o ventana
-- Seleccione un fondo personalizado temporal en lugar del texto del año
-- Usar una cámara disponible como fondo. Esto se utiliza principalmente en congestiones de signos.
+- Show or hide the media display
+- Choose the display or window type
+- Select a temporary custom background instead of the yeartext
+- Use an available camera as the background. This is mostly used in sign-language congregations.
 
-Tenga en cuenta que los fondos personalizados son temporales y no se guardan después de que M3 salga.
+Please note that custom backgrounds are temporary and are not saved after M³ quits.
 
-### Temporizador {#user-guide-meeting-timer}
+### Meeting Timer {#user-guide-meeting-timer}
 
-Cuando el temporizador de la reunión está activado, M3 puede mostrar una ventana de temporizador separada para las partes del participante. El temporizador puede contar hacia arriba o hacia abajo, mostrar la hora actual, mostrar la cuenta atrás de una reunión antes de las reuniones programadas, y opcionalmente indicar las horas extraordinarias o si la reunión está por delante o por detrás del horario.
+When the meeting timer is enabled, M³ can show a separate timer window for timing participant parts. The timer can count up or down, show the current time, show a meeting countdown before scheduled meetings, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
 
-El temporizador es una función beta y sólo debe ser utilizado cuando se apruebe localmente.
+The timer is a beta feature and should only be used when approved locally.
 
 ## Background Music {#user-guide-background-music}
 
@@ -190,7 +190,7 @@ M³ automatically switches OBS scenes during presentations:
 - **Media Scene** - Displays media content
 - **Image Scene** - Shows images (can be postponed if enabled)
 - **Automatic Switching** - Scenes change based on media type and settings
-- **Control de grabación** - Si está activado, M3 puede iniciar y detener la grabación de OBS desde la ventana emergente de OBS
+- **Recording Controls** - If enabled, M³ can start and stop OBS recording from the OBS popup
 
 ### Advanced OBS Features {#advanced-obs}
 
@@ -267,9 +267,9 @@ Add your own media files to M³:
 2. **Drag and Drop** - Drag files directly into M³
 3. **Folder Monitoring** - Set up a watched folder for automatic imports
 4. **JWPUB Files and Playlists** - Import publications and playlists
-5. **Medios Públicos de Talk (S-34 / S-34mp)** - Importar medios de comunicación públicos usando archivos JWPUB de Sí34 o Sí34mp
-6. **Vídeos del sitio web oficial** - Buscar vídeos y agregarlos a la fecha seleccionada
-7. **Biblia de estudio y medios bíblicos** - Añade imágenes, vídeos, mapas, referencias históricas o vídeos bíblicos de firma para pasajes seleccionados
+5. **Public Talk Media (S-34 / S-34mp)** - Import public talk media using S‑34 or S‑34mp JWPUB files
+6. **Videos from the official website** - Search for videos and add them to the selected date
+7. **Study Bible and sign-language Bible media** - Add images, videos, maps, historical references, or sign-language Bible videos for selected passages
 
 ### Managing Imported Media {#managing-imported-media}
 
@@ -288,9 +288,9 @@ Import audio recordings of Bible verses:
 4. Download the audio files
 5. Use them
 
-### Ajustes de Perfil Importar y Exportar {#profile-settings-import-export}
+### Profile Settings Import and Export {#profile-settings-import-export}
 
-La configuración de cada perfil se puede exportar a un archivo JSON desde Configuración. La importación de un archivo de configuración de perfil reemplaza la configuración actual del perfil, lo que es útil cuando se mueve una configuración a otro equipo o se restaura una configuración conocida.
+Each profile's settings can be exported to a JSON file from Settings. Importing a profile settings file replaces the current profile's settings, which is useful when moving a setup to another computer or restoring a known configuration.
 
 ## Folder Monitoring and Export {#user-guide-folder-monitoring}
 
@@ -324,21 +324,21 @@ Share the official website on external displays:
 
 ### Website Controls {#website-controls}
 
-- **Abrir sitio web** - Abre una ventana de sitio web separada
-- **Empezar a girar** - Mostrar la ventana del sitio web en la pantalla de medios para la audiencia
-- **Detener la manipulación** - Dejar de mostrar el sitio web y volver al fondo de pantalla de texto de año o medios
+- **Open Website** - Open a separate website window
+- **Start Mirroring** - Show the website window in the media display for the audience
+- **Stop Mirroring** - Stop showing the website and return to the yeartext or media display background
 - **Navigation** - Standard browser navigation controls
 - **Refresh** - Reload the current page
 - **Close** - Exit website presentation mode
-- **Auto retorno** - Opcionalmente volver a la lista de medios automáticamente después de detener la reproducción del sitio web
+- **Auto Return** - Optionally return to the media list automatically after stopping website mirroring
 
-## Grabaciones de reunión {#grabaciones de reuniones} {#meeting-recordings}
+## Meeting Recordings {#meeting-recordings}
 
-M3 puede ayudar a controlar la grabación de reuniones, pero no incluye una grabadora integrada.
+M³ can help control meeting recording, but it does not include a built-in recorder.
 
-- **Grabación OBS** - Si los controles de grabación OBS están habilitados, utilice la ventana emergente OBS para iniciar y detener la grabación OBS
-- **Aplicación de grabación externa** - Configura los accesos directos del teclado para una aplicación de grabación separada, y luego usa la ventana emergente de grabaciones de reuniones para enviar esos atajos
-- **Carpeta de grabación** - Configura una carpeta de grabación para mostrar un botón rápido que abre la carpeta donde se guardan las grabaciones
+- **OBS Recording** - If OBS recording controls are enabled, use the OBS popup to start and stop OBS recording
+- **External Recording App** - Configure keyboard shortcuts for a separate recording app, then use the meeting recordings popup to send those shortcuts
+- **Recording Folder** - Configure a recording folder to show a quick button that opens the folder where recordings are saved
 
 ## Advanced Features {#user-guide-advanced-features}
 
@@ -389,7 +389,7 @@ Configure custom keyboard shortcuts for efficient operation:
 - Reduce maximum resolution
 - Clear old cached files
 - Check available disk space
-- Si la aplicación muestra fallos o fallos gráficos, intente desactivar la aceleración de hardware y reinicie M3
+- If the app shows graphical glitches or crashes, try disabling hardware acceleration and restart M³
 
 #### Language Issues {#user-guide-language-issues}
 

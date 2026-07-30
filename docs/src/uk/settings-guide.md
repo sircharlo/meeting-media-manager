@@ -140,7 +140,7 @@ The week of the next circuit overseer's visit.
 
 <!-- **Setting**: `memorialDate` -->
 
-Дата наступного святкування Меморіалу.
+The date of the next Memorial celebration.
 
 **Format**: MM/DD/YYYY
 
@@ -157,19 +157,19 @@ These settings allow you to configure temporary changes to your meeting schedule
 - **New Weekend Day**: New day for weekend meeting
 - **New Weekend Time**: New time for weekend meeting
 
-### Автоматичні оновлення Зустрічей {#automatic-meeting-schedule-updates}
+### Automatic Meeting Schedule Updates {#automatic-meeting-schedule-updates}
 
 <!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
 
-Коли відмічено, M3 періодично перевіряє офіційний сайт Свідок Єгови на зустріч і час змін у часі та оновлює поточний профіль автоматично.
+When enabled, M³ periodically checks the official website of Jehovah's Witnesses for meeting day and time changes and updates the current profile automatically.
 
-Це працює лише для профілів, які були додані до перегляду зборів і назва збори яких не було змінено вручну. Якщо синхронізацію було вимкнено через зміну назви збірок - використовуйте **Увімкнути синхронізацію розкладу**, щоб зв'язати профіль знову.
+This only works for profiles that were added with congregation lookup and whose congregation name has not been manually changed. If synchronization was disabled because the congregation name changed, use **Enable schedule sync** to link the profile again.
 
-#### Оновити Розклад Зустрічей {#refresh-meeting-schedule}
+#### Refresh Meeting Schedule {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
-Синхронізуйте поточний і майбутній графік зустрічі з інформацією з офіційного веб-сайту.
+Manually synchronize the current and future meeting schedule with the information from the official website.
 
 ## Media Retrieval and Playback {#media-retrieval-and-playback}
 
@@ -189,11 +189,11 @@ Enable the media display functionality. This is required to present media on a s
 
 **Default**: `false`
 
-#### Увімкнути Media Preview {#enable-media-preview}
+#### Enable Media Preview {#enable-media-preview}
 
 <!-- **Setting**: `enableMediaPreview` -->
 
-Показувати прев'ю вікна в реальному часі, коли відображається зображення або відео.
+Show a live preview of the media window while an image or video is being displayed.
 
 **Default**: `true`
 
@@ -354,7 +354,7 @@ Configure which OBS scenes to use for different purposes:
 - **Switch Scene After Media**: Automatically return to previous scene after media
 - **Remember Previous Scene**: Remember and restore the previous scene
 - **Hide Icons**: Hide OBS-related icons in the interface
-- **Керування записом**: Показати управління, що починаються і припиняють OBS запис з M3
+- **Recording Controls**: Show controls that start and stop OBS recording from M³
 
 :::warning Important Note
 
@@ -408,57 +408,57 @@ Shortcut that is triggered when the last song is played during a meeting.
 
 **Default**: None
 
-### Записи зустрічей {#meeting-recordings}
+### Meeting Recordings {#meeting-recordings}
 
-#### Увімкнути інтеграцію з зовнішніми записами {#enable-external-recording-app-integration}
+#### Enable External Recording App Integration {#enable-external-recording-app-integration}
 
 <!-- **Setting**: `recordingEnable` -->
 
-Дозвольте M3 керувати окремим записуванням застосунком за допомогою гарячих клавіш. Це не записується всередині M3 ; він надсилає налаштовані ярлики при натисканні **Почати запис** або **Зупинити запис** в спливаючому вікні наради записів.
+Let M³ control a separate recording application with keyboard shortcuts. This does not record inside M³; it sends the configured shortcuts when you press **Start Recording** or **Stop Recording** in the meeting recordings popup.
 
-Ця опція прихована, коли активовано керування OBS записом. Якщо ви використовуєте OBS Studio, використовуйте кнопки запису OBS в інтеграції з OBS.
+This option is hidden when OBS recording controls are enabled. If you use OBS Studio, use the OBS recording controls in the OBS integration instead.
 
 **Default**: `false`
 
-#### Комбінації записів ярликів і теки {#recording-shortcuts-and-folder}
+#### Recording Shortcuts and Folder {#recording-shortcuts-and-folder}
 
 <!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
 
-Налаштуйте комбінацію клавіатури, що починають записувати, необов'язковий ярлик, який зупиняє запис і папку, де зовнішня програма зберігає записи. Якщо не надано ярлик зупинки, M3 повторно використовує ярлик запуску. Коли папка налаштована, M3 показує кнопку для відкриття.
+Configure the keyboard shortcut that starts recording, the optional shortcut that stops recording, and the folder where the external app saves recordings. If no stop shortcut is provided, M³ reuses the start shortcut. When a folder is configured, M³ shows a button to open it.
 
-### Таймер зустрічі {#meeting-timer}
+### Meeting Timer {#meeting-timer}
 
-#### Увімкнути таймер зустрічі {#enable-meeting-timer}
+#### Enable Meeting Timer {#enable-meeting-timer}
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
-Увімкніть окреме вікно таймера для розділів зустрічей. Це є бета-функція і має бути увімкнена лише за умови затвердження локально.
+Enable a separate timer window for timing meeting parts. This is a beta feature and should only be enabled if approved locally.
 
 **Default**: `false`
 
-#### Поведінка Вікна Таймера {#timer-window-behavior}
+#### Timer Window Behavior {#timer-window-behavior}
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
-Налаштуйте чи вікно таймера відкривається автоматично, чи рахуються таймери учасників за замовчуванням чи використовує годинник 12-годинний або 24-годинний час, і чи відображається поточний таймер значення таймера на таймері на острові дії.
+Configure whether the timer window opens automatically, whether participant timers count up or down by default, whether the clock uses 12-hour or 24-hour time, and whether the current timer value is shown on the action island timer button.
 
-#### Формат відображення таймера {#timer-display-formats}
+#### Timer Display Formats {#timer-display-formats}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
-Вибір аналогового або цифрового форматів для часу доби і зворотного відліку. Індикатор попередження зворотного відліку може змістити аналоговий відлік до кольору попередження протягом останньої хвилини.
+Choose analog or digital display formats for the time of day and countdown timers. The countdown warning indicator can shift the analog countdown ring toward a warning color during the final minute.
 
-#### Зворотний відлік зустрічі та запланований статус {#meeting-countdown-and-schedule-status}
+#### Meeting Countdown and Schedule Status {#meeting-countdown-and-schedule-status}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
-Показати зворотний відлік до запланованих зустрічей і навмисно позначати чи нараду випереджав за розкладом. Зворотний відлік зустрічі з'являється лише на дисплеї таймера, а не на головному медіадисплеї.
+Show a countdown before scheduled meetings and optionally display whether the meeting is ahead of or behind schedule. The meeting countdown appears only on the timer display, not on the main media display.
 
-#### Вигляд таймера і протягом наступного часу {#таймер-зовнішній і оверчас} {#timer-appearance-and-overtime}
+#### Timer Appearance and Overtime {#timer-appearance-and-overtime}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
-Налаштуйте розмір і кольори таймера, і налаштуйте накладні індикатори часу, такі як альтернативні кольори, блимання і відображення лише минулу загальну кількість часу у режимі реального часу.
+Customize the timer text size and colors, and configure overtime indicators such as alternate colors, blinking, and showing only the elapsed overtime amount in count-up mode.
 
 ## Advanced Settings {#advanced-settings}
 
@@ -493,11 +493,11 @@ Enable fade-in/out transitions when showing or hiding the media window.
 
 **Default**: `true`
 
-#### Ввімкнути контроль швидкості Playback {#enable-playback-speed-control}
+#### Enable Playback Speed Control {#enable-playback-speed-control}
 
 <!-- **Setting**: `enablePlaybackSpeedControl` -->
 
-Дозволити змінювати швидкість відтворення аудіо і відео з контекстного меню медіа-елемента.
+Allow audio and video playback speed to be adjusted from the media item's context menu.
 
 **Default**: `false`
 
@@ -515,7 +515,7 @@ Hide the logo in the media window.
 
 Maximum resolution for downloaded media files.
 
-**Додатки**: 240p, 360p, 480p, 720p, 1080p
+**Options**: 240p, 360p, 480p, 720p, 1080p
 
 **Default**: 720p
 
@@ -535,11 +535,11 @@ Exclude footnote images from media downloads when possible.
 
 **Default**: `false`
 
-#### Виключати додаткові навчальні відео для спостереження спостереження {#exclude-additional-watchtower-study-videos}
+#### Exclude Additional Watchtower Study Videos {#exclude-additional-watchtower-study-videos}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 
-Не включати додаткові відео, на які посилаються у Сторожовій Вежі для вивчення абзац.
+Exclude additional videos that are referenced in Watchtower Study paragraphs.
 
 **Default**: `false`
 
@@ -597,9 +597,9 @@ Convert exported media files to MP4 format for better compatibility.
 
 **Default**: `false`
 
-### Налаштування профілю передачі {#profile-settings-transfer}
+### Profile Settings Transfer {#profile-settings-transfer}
 
-Експортувати поточні налаштування профілю в JSON файл або імпортувати раніше експортований файл профілю. Імпорт замінює параметри поточного профілю.
+Export the current profile's settings to a JSON file or import a previously exported profile settings file. Importing replaces the current profile's settings.
 
 ### Danger Zone {#danger-zone}
 
@@ -617,19 +617,19 @@ Base domain used to download publications and media.
 
 **Default**: `jw.org`
 
-#### Вимкнути апаратне прискорення {#disable-hardware-acceleration}
+#### Disable Hardware Acceleration {#disable-hardware-acceleration}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
-Вимкнути апаратне прискорення після перезапуску M3. Це може допомогти з графічними збоями або збоями в деяких системах, але в іншому випадку не рекомендується.
+Disable hardware acceleration after restarting M³. This may help with graphical glitches or crashes on some systems, but is not otherwise recommended.
 
 **Default**: `false`
 
-#### Ігнорувати апаратне прискорення {#suppress-hardware-acceleration-reminder}
+#### Suppress Hardware Acceleration Reminder {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
-Сховати нагадування про повторне увімкнення апаратного прискорення після того, як це було вручну вимкнено.
+Hide the reminder to re-enable hardware acceleration after it has been manually disabled.
 
 **Default**: `false`
 

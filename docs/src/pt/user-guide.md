@@ -1,46 +1,46 @@
-# Guia do Usuário {#user-guide}
+# User Guide {#user-guide}
 
-Este guia completo do usuário irá ajudá-lo a dominar todos os recursos do M³, desde a configuração básica até técnicas avançadas de apresentação de mídia.
+This comprehensive user guide will help you master all the features of M³, from basic setup to advanced media presentation techniques.
 
-## Primeiros passos {#getting-started}
+## Getting Started {#getting-started}
 
 ### Baixar e instalar {#download-and-install}
 
 Obtenha a versão mais recente na [página de Download](download). Ela recomenda a melhor versão para o seu dispositivo e mostra a versão mais recente.
 
-### Primeira inicialização {#first-launch}
+### First Launch {#first-launch}
 
-Quando você iniciar o M³, você será guiado por um assistente de configuração que irá configurar as configurações essenciais para sua congregação:
+When you first launch M³, you'll be guided through a setup wizard that will configure the essential settings for your congregation:
 
-1. **Escolha o idioma da sua interface** - Determina em que idioma os menus e botões do M³ serão exibidos
-2. **Selecione o tipo de perfil** - Escolha "Regular" para uso normal de congregação ou "Outro" para eventos especiais
-3. **Configurar informações de congregação** - Digite os detalhes da sua congregação ou use o recurso de pesquisa automática
-4. **Defina a programação de reuniões** - Configure os seus horários de reuniões de meio de semana e de fim de semana
-5. **Recursos opcionais** - Configure a integração do OBS, cântico de fundo e outros recursos avançados
+1. **Choose your interface language** - This determines what language M³'s menus and buttons will be displayed in
+2. **Select profile type** - Choose "Regular" for normal congregation use or "Other" for special events
+3. **Configure congregation information** - Enter your congregation details or use the automatic lookup feature
+4. **Set up meeting schedule** - Configure your midweek and weekend meeting times
+5. **Optional features** - Configure OBS integration, background music, and other advanced features
 
 :::tip Dica
 
-Reserve um tempo para essa configuração - mas você sempre poderá alterar essas configurações mais tarde no menu Configurações.
+Take your time during setup - but you can always change these settings later in the Settings menu.
 
 :::
 
-### Visão Geral da Interface Principal {#main-interface}
+### Main Interface Overview {#main-interface}
 
-A interface M³ principal consiste em várias áreas principais:
+The main M³ interface consists of several key areas:
 
-- **Gaveta de navegação** - Acesse diferentes seções e configurações
-- **Visão do calendário** - Procurar mídia por data
-- **Lista de mídia** - Ver e gerenciar mídia para datas selecionadas
-- **Barra de Ferramentas** - Acesso rápido a funções comuns
-- **Barra de Status** - Mostra o progresso do download, e cântico de fundo e status da conexão do OBS Studio
+- **Navigation Drawer** - Access different sections and settings
+- **Calendar View** - Browse media by date
+- **Media List** - View and manage media for selected dates
+- **Toolbar** - Quick access to common functions
+- **Status Bar** - Shows download progress, and background music and OBS Studio connection status
 
-## Gerenciamento de Mídia {#user-guide-media-management}
+## Media Management {#user-guide-media-management}
 
-### Entendendo a Visualização do Calendário {#calendar-view}
+### Understanding the Calendar View {#calendar-view}
 
-A visualização do calendário mostra sua programação de reunião e as mídias disponíveis:
+The calendar view shows your meeting schedule and available media:
 
-- **Dias da Reunião** - Dias em destaque quando as reuniões são programadas
+- **Meeting Days** - Highlighted days show when meetings are scheduled
 - **Indicadores de mídia** - Ícones mostram quais tipos de mídia estão disponíveis
 - **Navegação de data** - Use as teclas de seta para navegar entre os meses
 
@@ -50,14 +50,14 @@ M³ automatically organizes media by meeting type and section:
 
 - **Meeting Sections** - Media is grouped by meeting parts (Public Talk, Treasures from God's Word, etc.)
 - **Custom Sections** - You can create custom sections for additional media if no meeting is scheduled on that particular day
-- **Classificação manual** - Arraste os itens de mídia para a ordem que você precisa, ou redefina a ordem quando necessário
-- **Reprodução repetida** - Repita um único item de mídia ou repita cada item em uma seção até que a reprodução seja parada manualmente
+- **Manual Sorting** - Drag media items into the order you need, or reset the order when needed
+- **Repeated Playback** - Loop a single media item or repeat every item in a section until playback is stopped manually
 
-### Mídia oculta e ausente {#hidden-and-missing-media}
+### Hidden and Missing Media {#hidden-and-missing-media}
 
-A mídia pode ser ocultada da lista de reuniões sem excluir os arquivos baixados automaticamente. Se a mídia estiver oculta por engano, use **Mostrar mídias ocultas** para o dia selecionado.
+Media can be hidden from the meeting list without deleting the automatically downloaded files. If media is hidden by mistake, use **Show hidden media** for the selected day.
 
-Se o M3 relatar mídia em falta, primeiro verifique se é esperado que o item fique disponível mais perto da data da reunião. Você também pode adicionar o item que falta manualmente usando o menu **Adicionar mídia** ou arrastando-o para a lista de mídia.
+If M³ reports missing media, first check whether the item is expected to become available closer to the meeting date. You can also add the missing item manually with the **Add media** menu or by dragging it into the media list.
 
 ## Media Presentation {#media-presentation}
 
@@ -83,8 +83,8 @@ The media player provides comprehensive controls:
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
 - **Zoom/Pan** - Use mouse wheel to zoom, drag to pan (for images)
-- **Visualização ao vivo** - Quando ativado, mostra uma visualização da janela de mídia do público no aplicativo principal
-- **Velocidade de reprodução** - Quando ativado nas configurações, ajuste a velocidade de áudio e vídeo do menu do item de mídia
+- **Live Preview** - When enabled, show a preview of the audience media window in the main app
+- **Playback Speed** - When enabled in settings, adjust audio and video speed from the media item context menu
 
 ### Advanced Presentation Features {#advanced-presentation}
 
@@ -107,7 +107,7 @@ For images and videos:
 - **Pan** - Click and drag the thumbnail to move the image around
 - **Reset Zoom** - Click to return to original zoom
 
-#### Atalhos de teclado {#user-guide-keyboard-shortcuts}
+#### Keyboard Shortcuts {#user-guide-keyboard-shortcuts}
 
 Configure custom keyboard shortcuts for quick access. Note that no keyboard shortcuts are set by default.
 
@@ -120,36 +120,36 @@ Configure custom keyboard shortcuts for quick access. Note that no keyboard shor
 
 **Customizable Shortcuts** (when enabled in settings):
 
-- **Janela de Mídia** - Abrir/fechar janela de mídia
-- **Mídia Anterior/Próxima** - Navegar entre itens de mídia
-- **Pausar/Reproduzir** - Controlar a reprodução de mídia
-- **Parar Mídia** - Parar reprodução de mídia
-- **Alternância de Música** - Controlar música de fundo
+- **Media Window** - Open/close media window
+- **Previous/Next Media** - Navigate between media items
+- **Pause/Resume** - Control media playback
+- **Stop Media** - Stop media playback
+- **Music Toggle** - Control background music
 
 **Note (\*):** Global shortcut - available even when the app is not focused
 
-## Exibir Ferramentas {#display-tools}
+## Display Tools {#display-tools}
 
-### Janela de Exibição de Mídia {#media-display-window}
+### Media Display Window {#media-display-window}
 
-A janela de exibição de mídia é a janela voltada para o público. Ele pode ser colocado em um ecrã externo ou usado em uma configuração de janela dependendo do seu equipamento.
+The media display window is the audience-facing window. It can be placed on an external screen or used in a windowed setup depending on your equipment.
 
-Use o popup de exibição para:
+Use the display popup to:
 
-- Exibir ou ocultar a exibição de mídia
-- Escolha o tipo de exibição ou janela
-- Selecionar um fundo personalizado temporário ao invés do anotext
-- Use uma câmera disponível como plano de fundo. Isso é usado principalmente em congregações com linguagem de sinal.
+- Show or hide the media display
+- Choose the display or window type
+- Select a temporary custom background instead of the yeartext
+- Use an available camera as the background. This is mostly used in sign-language congregations.
 
-Por favor, note que fundos personalizados são temporários e não são salvos após M3 sair.
+Please note that custom backgrounds are temporary and are not saved after M³ quits.
 
-### Tempo da reunião {#user-guide-meeting-timer}
+### Meeting Timer {#user-guide-meeting-timer}
 
-Quando o temporizador da reunião estiver ativado, o M3 pode mostrar uma janela separada de temporizador para as partes dos participantes. O temporizador pode contar para cima ou para baixo, mostrar a hora atual, mostrar a contagem regressiva de reunião antes das reuniões agendadas, e, opcionalmente, indique horas extraordinárias ou se a reunião está à frente ou atrasada.
+When the meeting timer is enabled, M³ can show a separate timer window for timing participant parts. The timer can count up or down, show the current time, show a meeting countdown before scheduled meetings, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
 
-O temporizador é um recurso beta e só deve ser usado quando aprovado localmente.
+The timer is a beta feature and should only be used when approved locally.
 
-## Música de Fundo {#user-guide-background-music}
+## Background Music {#user-guide-background-music}
 
 ### Setting Up Background Music {#background-music-setup}
 
@@ -161,7 +161,7 @@ Background music automatically plays before meetings and stops at the appropriat
 4. **Manual Control** - Use the music button in the status bar to start/stop manually
 5. **Restart** - Resume music after meetings with one click
 
-## Integração com Zoom {#user-guide-zoom-integration}
+## Zoom Integration {#user-guide-zoom-integration}
 
 M³ can integrate with Zoom for automatic screen sharing:
 
@@ -170,7 +170,7 @@ M³ can integrate with Zoom for automatic screen sharing:
 3. **Automatic Control** - M³ will automatically toggle screen sharing in Zoom as needed
 4. **Manual Override** - You can still manually control screen sharing using Zoom if needed
 
-## Integração OBS Studio {#user-guide-obs-integration}
+## OBS Studio Integration {#user-guide-obs-integration}
 
 ### Setting Up OBS Integration {#user-guide-obs-setup}
 
@@ -190,7 +190,7 @@ M³ automatically switches OBS scenes during presentations:
 - **Media Scene** - Displays media content
 - **Image Scene** - Shows images (can be postponed if enabled)
 - **Automatic Switching** - Scenes change based on media type and settings
-- **Controles de Gravação** - Se ativado, M3 pode iniciar e parar a gravação do OBS do OBS
+- **Recording Controls** - If enabled, M³ can start and stop OBS recording from the OBS popup
 
 ### Advanced OBS Features {#advanced-obs}
 
@@ -267,9 +267,9 @@ Add your own media files to M³:
 2. **Drag and Drop** - Drag files directly into M³
 3. **Folder Monitoring** - Set up a watched folder for automatic imports
 4. **JWPUB Files and Playlists** - Import publications and playlists
-5. **Mídia de Conversa Pública (S-34 / S-34mp)** - Importe a mídia de palestra pública usando arquivos S├34 ou S├34mp JWPUB
-6. **Vídeos do site oficial** - Procure por vídeos e adicione-os à data selecionada
-7. **Bíblia de Estudo e mídia da linguagem de sinal** - Adicionar imagens, vídeos, mapas, referências históricas ou vídeos da Bíblia de linguagem de sinais para passagens selecionadas
+5. **Public Talk Media (S-34 / S-34mp)** - Import public talk media using S‑34 or S‑34mp JWPUB files
+6. **Videos from the official website** - Search for videos and add them to the selected date
+7. **Study Bible and sign-language Bible media** - Add images, videos, maps, historical references, or sign-language Bible videos for selected passages
 
 ### Managing Imported Media {#managing-imported-media}
 
@@ -288,9 +288,9 @@ Import audio recordings of Bible verses:
 4. Download the audio files
 5. Use them
 
-### Importar Configurações de Perfil e Exportar {#profile-settings-import-export}
+### Profile Settings Import and Export {#profile-settings-import-export}
 
-As configurações de cada perfil podem ser exportadas para um arquivo JSON nas configurações. Importar um arquivo de configurações de perfil substitui as configurações do perfil atual, o que é útil ao mover uma configuração para outro computador ou restaurar uma configuração conhecida.
+Each profile's settings can be exported to a JSON file from Settings. Importing a profile settings file replaces the current profile's settings, which is useful when moving a setup to another computer or restoring a known configuration.
 
 ## Folder Monitoring and Export {#user-guide-folder-monitoring}
 
@@ -303,7 +303,7 @@ Monitor a folder for new media files:
 3. **Automatic Import** - New files are automatically added to M³
 4. **Organization** - Files are organized by date based on folder structure
 
-### Exportação de Mídia {#user-guide-media-export}
+### Media Export {#user-guide-media-export}
 
 Automatically export media to organized folders:
 
@@ -324,23 +324,23 @@ Share the official website on external displays:
 
 ### Website Controls {#website-controls}
 
-- **Abrir Site** - Abrir uma janela separada do site
-- **Iniciar espelhamento** - Mostrar a janela do site no display de mídia para o público
-- **Parar espelhamento** - Parar de mostrar o site e retornar para o texto anual ou para o fundo de exibição de mídia
+- **Open Website** - Open a separate website window
+- **Start Mirroring** - Show the website window in the media display for the audience
+- **Stop Mirroring** - Stop showing the website and return to the yeartext or media display background
 - **Navigation** - Standard browser navigation controls
 - **Refresh** - Reload the current page
 - **Close** - Exit website presentation mode
-- **Retorno Automático** - Opcionalmente retornar para a lista de mídia automaticamente após parar espelhamento do site
+- **Auto Return** - Optionally return to the media list automatically after stopping website mirroring
 
-## Gravações das Reuniões {#gravações de reuniões} {#meeting-recordings}
+## Meeting Recordings {#meeting-recordings}
 
-O M3 pode ajudar a controlar a gravação da reunião, mas não inclui um gravador embutido.
+M³ can help control meeting recording, but it does not include a built-in recorder.
 
-- **Gravação do OBS** - Se os controles de gravação do OBS estiverem ativados, use a janela do OBS para começar e parar a gravação do OBS
-- **App de Gravação Externa** - Configure atalhos de teclado para um aplicativo de gravação separado, e então use a janela de gravações de reunião para enviar esses atalhos
-- **Pasta de gravação** - Configure uma pasta de gravação para mostrar um botão rápido que abre a pasta onde as gravações são salvas
+- **OBS Recording** - If OBS recording controls are enabled, use the OBS popup to start and stop OBS recording
+- **External Recording App** - Configure keyboard shortcuts for a separate recording app, then use the meeting recordings popup to send those shortcuts
+- **Recording Folder** - Configure a recording folder to show a quick button that opens the folder where recordings are saved
 
-## Recursos Avançados {#user-guide-advanced-features}
+## Advanced Features {#user-guide-advanced-features}
 
 ### Multiple Congregations {#user-guide-multiple-congregations}
 
@@ -389,7 +389,7 @@ Configure custom keyboard shortcuts for efficient operation:
 - Reduce maximum resolution
 - Clear old cached files
 - Check available disk space
-- Se o aplicativo mostrar falhas gráficas ou falhas, tente desativar a aceleração de hardware e reiniciar o M3
+- If the app shows graphical glitches or crashes, try disabling hardware acceleration and restart M³
 
 #### Language Issues {#user-guide-language-issues}
 
