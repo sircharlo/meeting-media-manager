@@ -48,7 +48,17 @@ export const errorCatcher = async (error: unknown, context?: CaptureCtx) => {
       ? (error as { cause: unknown }).cause
       : undefined);
 
-  if (cause) {
+  // Only recurse into a cause that's itself an Error (a real report) or an
+  // Event (dropped by the check above, same as a top-level one). Other DOM
+  // objects attached as a cause - e.g. a <video>/<audio> MediaError, which
+  // has no useful own message/stack - would otherwise reach captureException
+  // raw and get stringified to something like "[object MediaError]". Fall
+  // through and report the outer wrapper instead, which already has a real
+  // message assembled from the cause where one was available.
+  if (
+    cause instanceof Error ||
+    (typeof Event !== 'undefined' && cause instanceof Event)
+  ) {
     // The cause is the actual failure; the outer error is just a wrapper
     // adding context, so only the cause needs its own Sentry report.
     errorCatcher(cause, context);

@@ -52,6 +52,20 @@ describe('errorCatcher', () => {
     expect(captureExceptionMock).not.toHaveBeenCalled();
   });
 
+  it('reports the outer wrapper instead of a non-Error DOM cause like MediaError', async () => {
+    const { errorCatcher } = await import('../error-catcher');
+    // MediaError isn't defined in the test environment - approximate the
+    // real shape (a plain object with code/message, not an Error/Event) that
+    // <video>/<audio> 'error' events attach.
+    const mediaError = { code: 4, message: '' };
+    const wrapper = new Error('Unknown VideoRef Error', { cause: mediaError });
+
+    await errorCatcher(wrapper);
+
+    expect(captureExceptionMock).toHaveBeenCalledTimes(1);
+    expect(captureExceptionMock).toHaveBeenCalledWith(wrapper, undefined);
+  });
+
   it('groups node fs errors by code/syscall/function instead of the dynamic path in the message', async () => {
     const { errorCatcher } = await import('../error-catcher');
     const error = Object.assign(
