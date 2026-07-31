@@ -277,6 +277,20 @@ describe('fetchJson network errors', () => {
     expect(result).toBeNull();
     expect(errorCatcher).not.toHaveBeenCalled();
   });
+
+  it('should not report a 400 for pub=ewt, confirmed to have no media', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(null, { status: 400 }),
+    );
+
+    const result = await fetchJson(
+      handledUrl,
+      new URLSearchParams({ pub: 'ewt' }),
+    );
+
+    expect(result).toBeNull();
+    expect(errorCatcher).not.toHaveBeenCalled();
+  });
 });
 
 describe('fetchMemorials', () => {

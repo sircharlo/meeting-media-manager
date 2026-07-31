@@ -152,9 +152,18 @@ function buildUrl(url: string, params?: URLSearchParams) {
   return `${url}?${params.toString()}`;
 }
 
+// Publication symbols confirmed to have no media in any format via the
+// JW.org mediator API (empty result, not a fetch/parse issue) - a 400 from
+// GETPUBMEDIALINKS for these is the server correctly reporting "nothing to
+// return", not a client bug. 'ewt' showed up once (MMM-V2-3FK) with no
+// local jwpub referencing it to explain what it is; add symbols here
+// individually rather than guessing at a broader pattern.
+const IGNORED_400_PUB_SYMBOLS = new Set(['ewt']);
+
 function isIgnored400ForPub(params?: URLSearchParams) {
   const pub = params?.get('pub');
   if (!pub) return false;
+  if (IGNORED_400_PUB_SYMBOLS.has(pub)) return true;
   return ['S', 'CO'].some((p) => pub.startsWith(`${p}-`));
 }
 
