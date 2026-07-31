@@ -54,6 +54,7 @@ import { updateLastUsedDate } from 'src/helpers/usage';
 import {
   getFilesystemErrorCode,
   isCloudStoragePath,
+  isExpectedNetworkPathAccessError,
   isPossiblyNetworkFolderPath,
 } from 'src/shared/filesystem-errors';
 import { NETWORK_ERROR_CODES } from 'src/shared/network-errors';
@@ -153,10 +154,16 @@ const mediaItemIsDynamic = (item?: MediaItem): boolean => {
 };
 
 export const ensureWatchedMeetingDayFolders = async () => {
+  // Tracked outside the try block so the catch below can both report which
+  // folder failed and check whether the failure is expected flakiness on a
+  // network/cloud-sync drive (e.g. a virtual drive letter briefly
+  // unmounted).
+  let watchFolder: string | undefined;
+
   try {
     const currentStateStore = useCurrentStateStore();
     const { currentCongregation, currentSettings } = currentStateStore;
-    const watchFolder = currentSettings?.folderToWatch;
+    watchFolder = currentSettings?.folderToWatch;
     if (
       !currentCongregation ||
       !currentSettings?.enableFolderWatcher ||
@@ -189,10 +196,22 @@ export const ensureWatchedMeetingDayFolders = async () => {
       await ensureDir(join(watchFolder, folderName));
     }
   } catch (error) {
+    if (
+      watchFolder &&
+      isExpectedNetworkPathAccessError(
+        error,
+        watchFolder,
+        getRendererPlatform(),
+      )
+    ) {
+      return;
+    }
+
     errorCatcher(error, {
       contexts: {
         fn: {
           name: 'ensureWatchedMeetingDayFolders',
+          watchFolder,
         },
       },
     });

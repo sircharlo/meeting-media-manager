@@ -424,6 +424,39 @@ describe('jw-media helpers', () => {
     expect(errorCatcherMock).not.toHaveBeenCalled();
   });
 
+  it('tolerates a mapped-drive EINVAL when creating a watched folder', async () => {
+    const meetingDate = new Date('2026-06-14T12:00:00.000Z');
+    currentStateStore.currentCongregation = 'abc';
+    currentStateStore.currentSettings = {
+      enableFolderWatcher: true,
+      // A Google Drive Stream-style virtual drive letter can briefly
+      // unmount, making even the drive root fail recursive mkdir.
+      folderToWatch: String.raw`H:\Meu Drive\MIDIAS Cong Leste`,
+    };
+    currentStateStore.getMeetingType.mockReturnValue('we');
+    formatDateMock.mockReturnValue('2026-06-14');
+    jwStore.lookupPeriod = {
+      abc: [
+        {
+          date: meetingDate,
+          mediaSections: [{ items: [{ source: 'dynamic' }] }],
+        },
+      ],
+    };
+    ensureDirMock.mockRejectedValueOnce(
+      Object.assign(new Error("EINVAL: invalid argument, mkdir 'H:'"), {
+        code: 'EINVAL',
+        syscall: 'mkdir',
+      }),
+    );
+
+    const { ensureWatchedMeetingDayFolders } = await import('../jw-media');
+
+    await ensureWatchedMeetingDayFolders();
+
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+  });
+
   it('updates the lookup period before fetching meeting media', async () => {
     currentStateStore.currentCongregation = 'abc';
     currentStateStore.currentSettings = {};
