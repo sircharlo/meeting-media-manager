@@ -60,6 +60,24 @@ describe('filesystem error helpers', () => {
     expect(isCloudStoragePath('C:/Users/test/cache')).toBe(false);
   });
 
+  it('recognizes a Google Drive desktop "Mirror files" account folder by its "(email)" suffix, regardless of locale', () => {
+    expect(
+      getCloudStorageProvider(
+        String.raw`C:\Users\PC\Meu Drive (suporteavjw@gmail.com)\Outras midias`,
+      ),
+    ).toBe('Google Drive');
+    expect(
+      isPossiblyNetworkFolderPath(
+        String.raw`C:\Users\PC\Meu Drive (suporteavjw@gmail.com)\Outras midias`,
+        'win32',
+      ),
+    ).toBe(true);
+    // A parenthesized suffix that isn't email-shaped shouldn't match.
+    expect(isCloudStoragePath(String.raw`C:\Users\PC\Documents (backup)`)).toBe(
+      false,
+    );
+  });
+
   it('normalizes unmapped raw OS error codes to UNKNOWN', () => {
     // Node falls back to `Unknown system error <errno>` (via
     // util.getSystemErrorName) as both `code` and `message` when libuv can't
@@ -125,6 +143,16 @@ describe('filesystem error helpers', () => {
         'win32',
       ),
     ).toBe(false);
+    // Real-world case: chokidar's fs.watch() hitting a file a Google Drive
+    // desktop "Mirror files" folder (localized "My Drive (email)" naming,
+    // not the /google drive/ marker) is transiently locking mid-sync.
+    expect(
+      shouldIgnoreWatchFolderError(
+        String.raw`C:\Users\PC\Meu Drive (suporteavjw@gmail.com)\Outras midias`,
+        { code: 'EBUSY', syscall: 'watch' },
+        'win32',
+      ),
+    ).toBe(true);
   });
 
   it('ignores transient scandir errors on cloud-sync/network paths', () => {

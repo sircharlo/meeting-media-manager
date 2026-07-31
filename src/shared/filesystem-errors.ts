@@ -10,7 +10,10 @@ const TRANSIENT_NETWORK_ACCESS_ERROR_CODES = new Set([
 ]);
 
 const WATCH_FOLDER_STAT_ERROR_CODES = new Set(['EINVAL', 'UNKNOWN']);
-const NETWORK_WATCH_ERROR_CODES = new Set(['EISDIR', 'UNKNOWN']);
+// EBUSY: chokidar's underlying fs.watch() call can hit a file mid-sync that
+// a cloud client (observed with Google Drive) is holding a transient lock
+// on, e.g. a freshly-written conflict copy.
+const NETWORK_WATCH_ERROR_CODES = new Set(['EBUSY', 'EISDIR', 'UNKNOWN']);
 
 // Node's fallback for a raw OS error libuv can't translate is the literal
 // string `util.getSystemErrorName()` returns, e.g. "Unknown system error
@@ -27,6 +30,16 @@ const CLOUD_STORAGE_PROVIDERS: [marker: string, provider: string][] = [
   ['/google drive/', 'Google Drive'],
   ['/nextcloud', 'Nextcloud'],
 ];
+
+// Google Drive for desktop's "Mirror files" mode (as opposed to the virtual
+// drive-letter "Stream files" mode already covered by the non-C: drive
+// heuristic below) creates a folder directly under the user's home
+// directory named "<locale's 'My Drive'> (<account email>)", e.g. "Meu
+// Drive (user@gmail.com)" in Portuguese. The localized folder name varies
+// per language, but the " (<email>)" suffix Google always appends doesn't,
+// so match on that structurally instead of enumerating every translation.
+const GOOGLE_DRIVE_ACCOUNT_FOLDER_PATTERN =
+  /\([a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}\)(\/|$)/i;
 
 // Errors thrown by fs functions Electron exposes straight through
 // contextBridge (rather than through an ipcRenderer.invoke channel) lose
@@ -71,9 +84,14 @@ export const normalizeFilesystemPath = (path: string) =>
 
 export const getCloudStorageProvider = (filePath: string) => {
   const normalizedPath = normalizeFilesystemPath(filePath).toLowerCase();
-  return CLOUD_STORAGE_PROVIDERS.find(([marker]) =>
+  const knownProvider = CLOUD_STORAGE_PROVIDERS.find(([marker]) =>
     normalizedPath.includes(marker),
   )?.[1];
+  if (knownProvider) return knownProvider;
+
+  return GOOGLE_DRIVE_ACCOUNT_FOLDER_PATTERN.test(normalizedPath)
+    ? 'Google Drive'
+    : undefined;
 };
 
 export const isCloudStoragePath = (filePath: string) =>
