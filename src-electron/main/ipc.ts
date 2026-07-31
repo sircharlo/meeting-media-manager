@@ -48,6 +48,7 @@ import {
   openFolderDialog,
   saveFileDialog,
   setPathProbeNotificationPaths,
+  startSecurityScopedAccess,
   unwatchFolders,
   unzipFile,
   watchFolder,
@@ -449,6 +450,10 @@ handleIpcInvoke(
   'ensureMacosFolderPermission',
   async (_e, folderPath: string, prompt?: boolean) =>
     ensureMacosFolderPermission(folderPath, prompt),
+);
+
+handleIpcInvoke('startSecurityScopedAccess', async (_e, filePath: string) =>
+  startSecurityScopedAccess(filePath),
 );
 
 handleIpcInvoke(

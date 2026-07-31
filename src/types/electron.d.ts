@@ -383,6 +383,7 @@ export type ElectronIpcInvokeKey =
   | 'registerShortcut'
   | 'saveFileDialog'
   | 'set-hardware-acceleration'
+  | 'startSecurityScopedAccess'
   | 'unwatchFolders'
   | 'unzip'
   | 'watchFolder';

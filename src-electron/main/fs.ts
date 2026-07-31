@@ -454,7 +454,7 @@ const getNearestSecurityScopedBookmark = async (filePath: string) => {
   return nearest;
 };
 
-const startSecurityScopedAccess = async (filePath: string) => {
+export const startSecurityScopedAccess = async (filePath: string) => {
   if (process.platform !== 'darwin') return false;
 
   const nearest = await getNearestSecurityScopedBookmark(filePath);

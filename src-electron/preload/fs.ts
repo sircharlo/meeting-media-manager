@@ -9,14 +9,33 @@ import { PLATFORM } from 'src-electron/constants';
 import { capturePreloadError } from 'src-electron/preload/log';
 import { join, normalize } from 'upath';
 
+// Lazily imported (like the media-parsing libraries below) rather than at
+// module scope - a test mock re-exports pure path helpers from this file
+// without going through Electron, and a static import of the ipcRenderer
+// wrapper would drag in an unresolvable 'electron/renderer' for it.
+const startSecurityScopedAccess = async (filePath: string) => {
+  const { invoke } = await import('src-electron/preload/ipc');
+  await invoke('startSecurityScopedAccess', filePath);
+};
+
+// Unlike the jwpub zip-read funnel (getZipFileStats/decompress in
+// src-electron/main/fs.ts), these read arbitrary media files directly in
+// the preload/renderer process rather than the main process. A macOS
+// security-scoped bookmark activated via startAccessingSecurityScopedResource
+// in the main process doesn't extend across that process boundary, so a
+// custom (e.g. Documents-folder) cache/watch location can still EPERM here
+// even after the main-process fix. No-op on non-macOS and when access is
+// already active (see startSecurityScopedAccess in src-electron/main/fs.ts).
 export const getVideoDuration = async (
   filePath: string,
 ): Promise<VideoDuration> => {
+  await startSecurityScopedAccess(filePath);
   const { videoDuration } = await import('@numairawan/video-duration');
   return videoDuration(filePath);
 };
 
 export const parseMediaFile = async (filePath: string, options?: IOptions) => {
+  await startSecurityScopedAccess(filePath);
   const musicMetadata = await import('music-metadata');
   return musicMetadata.parseFile(filePath, options);
 };
