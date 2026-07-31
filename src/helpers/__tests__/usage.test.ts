@@ -60,8 +60,8 @@ describe('usage', () => {
       const { updateLastUsedDate } = await import('../usage');
       await updateLastUsedDate('/cache/pub', '2026-07-20');
 
-      // Initial attempt + 2 retries = 3 calls
-      expect(ensureFileMock).toHaveBeenCalledTimes(3);
+      // Initial attempt + 4 retries = 5 calls
+      expect(ensureFileMock).toHaveBeenCalledTimes(5);
       expect(writeFileMock).not.toHaveBeenCalled();
       expect(errorCatcherMock).toHaveBeenCalledTimes(1);
     });
