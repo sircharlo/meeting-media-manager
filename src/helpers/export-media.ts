@@ -11,6 +11,7 @@ import { getMeetingSections } from 'src/constants/media';
 import { isCoWeek, isMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { setupFFmpeg } from 'src/helpers/fs';
+import { withLockRetry } from 'src/helpers/fs-retry';
 import { sanitizeFilename } from 'src/shared/vanilla';
 import { datesAreSame, formatDate, getSpecificWeekday } from 'src/utils/date';
 import { getTempPath, trimFilepathAsNeeded } from 'src/utils/fs';
@@ -149,7 +150,10 @@ const ensureDestinationFolder = async (
   destFolder: string,
 ): Promise<boolean> => {
   try {
-    await ensureDir(destFolder);
+    // The auto-export destination is commonly a cloud-synced folder
+    // (OneDrive, Dropbox, ...) whose sync client can hold a transient lock
+    // on a just-created/renamed path (MMM-V2-3FW: EPERM on mkdir).
+    await withLockRetry(() => ensureDir(destFolder));
     return true;
   } catch (error) {
     errorCatcher(error, {
