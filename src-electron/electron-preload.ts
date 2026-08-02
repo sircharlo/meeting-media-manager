@@ -1,26 +1,12 @@
-import type { ElectronApi, ElectronFsApi } from 'src/types/electron';
+import type { ElectronApi } from 'src/types/electron';
 
 import { contextBridge, webUtils } from 'electron/renderer';
-import {
-  copy,
-  copyFile,
-  emptyDir,
-  ensureDir,
-  ensureFile,
-  move,
-  pathExists,
-  readFile,
-  readJSON,
-  remove,
-  rename,
-  stat,
-  writeFile,
-} from 'fs-extra';
 import { IS_DEMO_MODE, PLATFORM } from 'src-electron/constants';
 import { initCloseListeners } from 'src-electron/preload/close';
 import { convertHeic } from 'src-electron/preload/converters';
 import {
   fileUrlToPath,
+  fs,
   getVideoDuration,
   hideFileOnWindows,
   inferExtension,
@@ -60,22 +46,6 @@ import {
 initCloseListeners();
 initScreenListeners();
 initWebsiteListeners();
-
-const fs: ElectronFsApi = {
-  copy,
-  copyFile,
-  emptyDir,
-  ensureDir,
-  ensureFile,
-  move,
-  pathExists,
-  readFile: readFile as unknown as ElectronFsApi['readFile'],
-  readJSON: readJSON as unknown as ElectronFsApi['readJSON'],
-  remove,
-  rename,
-  stat,
-  writeFile: writeFile as unknown as ElectronFsApi['writeFile'],
-};
 
 const getPathFromFileObject = (fo?: File | string) => {
   if (!fo) {
