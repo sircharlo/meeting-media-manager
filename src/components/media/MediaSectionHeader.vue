@@ -26,8 +26,10 @@
 
     <q-item-section
       ref="sectionHeader"
-      class="col-grow"
-      :class="{ 'cursor-pointer': isHovered && isCustom }"
+      :class="{
+        'cursor-pointer': isHovered && isCustom,
+        'section-title': !isRenaming,
+      }"
       @click.stop="isCustom && !canCollapse ? undefined : () => {}"
       @dblclick="isCustom ? handleDoubleClick() : undefined"
     >
@@ -42,15 +44,13 @@
         @keyup.esc="handleRename(false)"
       />
       <template v-else>
-        <div class="section-title row justify-between">
-          {{
-            !mediaList.config?.label &&
-            (mediaList.config?.uniqueId === 'imported-media' ||
-              mediaList.config?.uniqueId.startsWith('custom-'))
-              ? t('imported-media')
-              : mediaList.config?.label || t(mediaList.config?.uniqueId)
-          }}
-        </div>
+        {{
+          !mediaList.config?.label &&
+          (mediaList.config?.uniqueId === 'imported-media' ||
+            mediaList.config?.uniqueId.startsWith('custom-'))
+            ? t('imported-media')
+            : mediaList.config?.label || t(mediaList.config?.uniqueId)
+        }}
         <div v-if="mediaList.config?.documentTitle" class="section-subtitle">
           {{ mediaList.config.documentTitle }}
         </div>
@@ -433,6 +433,20 @@ defineExpose({
 .add-media-shortcut {
   max-width: 100%;
   border-radius: 4px;
+}
+
+// Overrides the global .section-title (src/css/app.scss) just for this
+// component's instances. The template also puts Quasar's "row" (flex)
+// class on this div; flex wraps the raw text in an anonymous flex item
+// that has its own implicit min-width: auto, which defeats text-overflow
+// no matter what's set here. Forcing block layout removes that anonymous
+// flex item so the ellipsis rules below actually apply.
+.section-title {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 // Sits below the section title as a quieter second line, so the specific
