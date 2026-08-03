@@ -1046,6 +1046,13 @@ const { post: postHideMediaLogo } = useBroadcastChannel<
   name: 'hide-media-logo',
 }); // Send hideMediaLogo to the media player page using useBroadcastChannel
 
+const { post: postObsEnabled } = useBroadcastChannel<
+  boolean | undefined,
+  boolean | undefined
+>({
+  name: 'obs-enabled',
+}); // Send obsEnable to the media player page using useBroadcastChannel
+
 onMounted(() => {
   void cleanTempPathOnStartup();
   congregationSettings.updateCongregationsWithMissingSettings();
@@ -1099,6 +1106,13 @@ watchImmediate(
   () => currentSettings.value?.hideMediaLogo,
   (newHideMediaLogo) => {
     postHideMediaLogo(newHideMediaLogo);
+  },
+);
+
+watchImmediate(
+  () => currentSettings.value?.obsEnable,
+  (newObsEnable) => {
+    postObsEnabled(newObsEnable);
   },
 );
 
@@ -1175,6 +1189,7 @@ watchImmediate(
     });
     postOnline(online.value);
     postHideMediaLogo(currentSettings.value?.hideMediaLogo);
+    postObsEnabled(currentSettings.value?.obsEnable);
     if (!yeartextWatcherPaused.value) {
       postYeartext(yeartext.value);
     }

@@ -737,6 +737,13 @@ const handleVideoCanPlay = () => {
 const fadeOutDurationInSeconds = MEDIA_STOP_FADE_DURATION_SECONDS;
 const fadeOutDurationInMilliseconds = fadeOutDurationInSeconds * 1000;
 
+// When OBS integration is on, keep the yeartext layer blanked for this long
+// after media stops before revealing it again, so it doesn't flash through
+// while OBS is still mid-transition away from the media scene. Mirrors the
+// 600ms delay MediaCalendarPage.vue uses for the opposite (media-starting)
+// case.
+const OBS_CAMERA_SCENE_REVEAL_DELAY_MS = 600;
+
 const playMedia = () => {
   log(
     '🔄 [playMedia] Playing media',
@@ -900,6 +907,17 @@ const clearCurrentMedia = () => {
     const clearingUrl = currentLiveLayer.value.url;
     const clearingToken = ++currentLiveLayer.value.token;
 
+    // When OBS is enabled, hide the yeartext layer for a beat so it doesn't
+    // flash through while OBS is still transitioning away from the media
+    // scene (mirrors the entry-side delay in MediaCalendarPage.vue). Without
+    // OBS, there's no scene transition to hide behind, so leave behavior as-is.
+    if (obsEnabled.value && !isAudio(clearingUrl)) {
+      isTransitioning.value = true;
+      setTimeout(() => {
+        isTransitioning.value = false;
+      }, OBS_CAMERA_SCENE_REVEAL_DELAY_MS);
+    }
+
     // Skip zoom/pan animation when clearing media
     if (isImage(clearingUrl)) {
       skipZoomPanAnimation.value = true;
@@ -966,6 +984,10 @@ const { data: online } = useBroadcastChannel<boolean, boolean>({
 
 const { data: hideMediaLogo } = useBroadcastChannel<boolean, boolean>({
   name: 'hide-media-logo',
+});
+
+const { data: obsEnabled } = useBroadcastChannel<boolean, boolean>({
+  name: 'obs-enabled',
 });
 
 const { post: postMediaPlayingAction } = useBroadcastChannel<string, string>({
