@@ -652,7 +652,21 @@ async function playMusic(reason = 'manual') {
 
     const playStartedAt = performance.now();
     logMusicStartTiming('audio play requested');
-    await musicPlayer.value?.play();
+    try {
+      await musicPlayer.value?.play();
+    } catch (error) {
+      // Same benign interruption handleMusicEnded already filters below -
+      // something else (stopMusic, another playMusic call) legitimately
+      // paused/reloaded the element while this play() was still pending, so
+      // aborting quietly here is correct, not a failure to report or retry.
+      if (
+        isIgnorablePlaybackError(error instanceof Error ? error.message : '')
+      ) {
+        logMusicStartTiming('audio play interrupted (ignorable)', 'debug');
+        return;
+      }
+      throw error;
+    }
     logMusicStartStep('audio play promise resolved', playStartedAt);
     log(`🎵 Music started at ${startTime} seconds`, 'backgroundMusic', 'info');
 
