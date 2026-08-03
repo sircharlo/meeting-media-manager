@@ -1337,9 +1337,19 @@ export const createMediaItemFromPath = async (
       basename(additionalFilePath).replace(extname(additionalFilePath), '');
 
     if (!uniqueId) {
+      // Two clips trimmed from the same underlying file (e.g. different
+      // verse ranges from the same Bible chapter video) would otherwise
+      // collide on the same uniqueId and get silently dropped as a
+      // duplicate by addUniqueByIdAt - so fold the trim range in, matching
+      // the durationPart approach in mapDynamicMediaItem.
+      const durationPart =
+        customDuration?.min || customDuration?.max
+          ? `${customDuration.min ?? ''}_${customDuration.max ?? ''}-`
+          : '';
       uniqueId = sanitizeId(
         formatDate(currentStateStore.selectedDate, 'YYYYMMDD') +
           '-' +
+          durationPart +
           pathToFileURL(additionalFilePath),
       );
     }

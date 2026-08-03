@@ -2214,15 +2214,7 @@ const setMediaPlaying = async (
   }
   if (signLanguage) {
     if (marker) {
-      updateMediaCustomDuration({
-        max:
-          (marker.StartTimeTicks +
-            marker.DurationTicks -
-            marker.EndTransitionDurationTicks) /
-          10000 /
-          1000,
-        min: marker.StartTimeTicks / 10000 / 1000,
-      });
+      updateMediaCustomDuration(getMarkerTimes(marker));
     } else if (!skipCustomDurationUpdateOnce.value) {
       updateMediaCustomDuration();
     }
@@ -2295,7 +2287,7 @@ const playSlideshowVideo = async () => {
 
 const getMarkerTimes = (m: VideoMarker) => {
   const max =
-    (m.StartTimeTicks + m.DurationTicks - m.EndTransitionDurationTicks) /
+    (m.StartTimeTicks + m.DurationTicks - (m.EndTransitionDurationTicks || 0)) /
     10000 /
     1000;
   const min = m.StartTimeTicks / 10000 / 1000;
