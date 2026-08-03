@@ -40,7 +40,7 @@
               :pan="mediaPan"
               :pan-enabled="false"
               :selector="'#' + randomId"
-              style="width: 150px; height: 84px"
+              :style="{ width: thumbnailWidth, height: thumbnailHeight }"
               :wheel-zoom-step="0.1"
               :zoom="mediaZoom"
               :zoom-enabled="control || shift"
@@ -72,7 +72,7 @@
                   spinner-color="white"
                   spinner-size="1em"
                   :src="mediaThumbnailUrl"
-                  width="150px"
+                  :width="thumbnailWidth"
                   @error="imageLoadingError"
                 >
                   <q-badge
@@ -225,7 +225,11 @@
             </transition>
           </template>
 
-          <div v-else class="media-thumbnail-container relative-position">
+          <div
+            v-else
+            class="media-thumbnail-container relative-position"
+            :style="{ width: thumbnailWidth }"
+          >
             <q-img
               v-if="!showAudioThumbnailFallback"
               ref="mediaImage"
@@ -235,10 +239,14 @@
               spinner-color="white"
               spinner-size="1em"
               :src="mediaThumbnailUrl"
-              width="150px"
+              :width="thumbnailWidth"
               @error="imageLoadingError"
             />
-            <div v-else class="media-audio-thumbnail-fallback">
+            <div
+              v-else
+              class="media-audio-thumbnail-fallback"
+              :style="{ width: thumbnailWidth }"
+            >
               <q-icon color="white" name="mmm-music-note" size="2.5rem" />
             </div>
             <q-badge
@@ -450,6 +458,14 @@
               @keyup.esc="handleTitleEdit(false)"
             />
             <div
+              v-else-if="isTiny"
+              class="text-chip ellipsis"
+              @dblclick="handleTitleEdit(true)"
+            >
+              {{ displayMediaTitle }}
+              <q-tooltip :delay="500">{{ displayMediaTitle }}</q-tooltip>
+            </div>
+            <div
               v-else
               :class="
                 ($q.screen.gt.xs || !media.tag) &&
@@ -498,6 +514,7 @@
                 </q-tooltip>
               </q-icon>
               <q-btn
+                v-if="!isTiny || hoveringMediaItem || contextMenu"
                 ref="moreButton"
                 :aria-label="t('more-options')"
                 color="accent-400"
@@ -1316,6 +1333,7 @@ import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import { storeToRefs } from 'pinia';
 import { type QBtn, type QImg, type QInput, QItem, useQuasar } from 'quasar';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
+import { TINY_SCREEN_WIDTH } from 'src/constants/general';
 import { FOOTNOTE_TARGET_PARAGRAPH } from 'src/constants/jw';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getRendererPlatform, getThumbnailUrl } from 'src/helpers/fs';
@@ -1747,17 +1765,17 @@ const tagTypes = [
 ];
 
 const $q = useQuasar();
-const mediaTagClasses = computed(() => {
-  return {
-    'col-12': !$q.screen.gt.xs,
-    'col-shrink': $q.screen.gt.xs,
-    flex: !$q.screen.gt.xs,
-    'justify-center': !$q.screen.gt.xs,
-    'q-pl-md': $q.screen.gt.xs,
-    'q-pr-none': $q.screen.gt.xs,
-    'q-px-md': !$q.screen.gt.xs,
-  };
-});
+const isTiny = computed(() => $q.screen.width < TINY_SCREEN_WIDTH);
+const thumbnailWidth = computed(() => (isTiny.value ? '100px' : '150px'));
+const thumbnailHeight = computed(() => (isTiny.value ? '56px' : '84px'));
+// Always left-aligned/vertically-centered, same as on wide screens - no
+// longer stacks full-width+centered below the `xs` breakpoint, so the tag
+// stays consistent at every width instead of jumping to a different layout.
+const mediaTagClasses = {
+  'col-shrink': true,
+  'q-pl-md': true,
+  'q-pr-none': true,
+};
 
 const tagVariant = computed(() => {
   if (props.media.tag?.type === 'song') {

@@ -497,27 +497,19 @@ body.body--dark {
   font-size: 0.9em;
 }
 
-// Always dark-on-light (independent of body--light/body--dark) so a tooltip
-// reads the same, obviously-elevated way over any background — a small
-// cousin of .action-island's glow, but a rounded card rather than a pill so
-// it stays distinct from that fully-rounded chip.
+// Always light-on-dark (independent of body--light/body--dark), like native
+// OS/app tooltips (VSCode, Chrome, Slack) — a solid inverse chip reads the
+// same, unambiguously-elevated way over any background, without needing a
+// border or glow to separate it from the content underneath.
 .q-tooltip.q-tooltip--style {
-  padding: 0.65em 1em;
-  font-size: 0.9em;
-  font-weight: 600;
+  padding: 0.45em 0.75em;
+  font-size: 0.85em;
+  font-weight: 500;
   letter-spacing: 0.01em;
-  color: $secondary;
-  background: linear-gradient(
-    155deg,
-    color-mix(in srgb, white 97%, $primary 30%),
-    $accent-100
-  );
-  border: 0.25em solid color-mix(in srgb, $primary 40%, transparent);
-  border-radius: $generic-border-radius;
-  box-shadow:
-    0px 2px 8px 0px rgba(0, 0, 0, 0.12),
-    0px 6px 24px 0px color-mix(in srgb, $primary 30%, transparent);
-  backdrop-filter: blur(12px);
+  color: $secondary-contrast;
+  background: $secondary;
+  border-radius: $button-border-radius;
+  box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.2);
 }
 
 .super-rounded {
@@ -725,6 +717,20 @@ a {
   height: 2em;
   justify-content: center;
   width: 2em;
+}
+
+// Same tint idiom as .icon-chip, but for a single line of truncating text
+// instead of a fixed-size icon - fills whatever width its flex parent gives
+// it (block, not shrink-to-fit) and expects an `.ellipsis` sibling class for
+// the actual overflow/text-overflow/white-space truncation. Pair with a
+// `q-tooltip` carrying the untruncated text.
+.text-chip {
+  background: color-mix(in srgb, currentColor 10%, transparent);
+  border-radius: 0.75em;
+  display: block;
+  min-width: 0;
+  padding: 0.35em 0.75em;
+  width: 100%;
 }
 
 // Hidden until its .hover-reveal-group ancestor is hovered (or focused, for

@@ -1,7 +1,14 @@
 <template>
   <q-item v-if="compact">
     <q-item-section class="align-center text-dark-grey text-subtitle2">
-      <div class="row items-center">
+      <div v-if="isTiny" class="text-chip">
+        <div class="row items-center no-wrap">
+          <q-icon class="q-mr-xs" name="mmm-info" size="xs" />
+          <span class="col ellipsis">{{ compactMessage }}</span>
+        </div>
+        <q-tooltip :delay="500">{{ compactMessage }}</q-tooltip>
+      </div>
+      <div v-else class="row items-center">
         <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
         <span>{{ compactMessage }}</span>
       </div>
@@ -154,13 +161,17 @@
 import type { DateInfo, MediaSectionIdentifier } from 'src/types';
 
 import { storeToRefs } from 'pinia';
+import { useQuasar } from 'quasar';
+import { TINY_SCREEN_WIDTH } from 'src/constants/general';
 import { isWeMeetingDay } from 'src/helpers/date';
 import { formatDate, getDateDiff } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+const $q = useQuasar();
 const { t } = useI18n();
+const isTiny = computed(() => $q.screen.width < TINY_SCREEN_WIDTH);
 
 const props = defineProps<{
   // compact mode
