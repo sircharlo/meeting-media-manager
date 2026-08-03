@@ -1245,9 +1245,15 @@ export const copyToDatedAdditionalMedia = async (
     currentStateStore.selectedDate,
   );
 
+  // Tracked outside the try block so the catch below can check whether a
+  // copy failure is expected flakiness on a cloud-synced source/destination
+  // (same EINVAL/ENOENT/UNKNOWN-on-network-path pattern already tolerated
+  // for jwpub reads - see isJwpubFileUnavailableError above).
+  let datedAdditionalMediaPath: string | undefined;
+
   try {
     if (!filepathToCopy || !(await pathExists(filepathToCopy))) return '';
-    let datedAdditionalMediaPath = join(
+    datedAdditionalMediaPath = join(
       datedAdditionalMediaDir,
       basename(filepathToCopy),
     );
@@ -1283,6 +1289,18 @@ export const copyToDatedAdditionalMedia = async (
     }
     return datedAdditionalMediaPath;
   } catch (error) {
+    const platform = getRendererPlatform();
+    if (
+      isExpectedNetworkPathAccessError(error, filepathToCopy, platform) ||
+      (datedAdditionalMediaPath &&
+        isExpectedNetworkPathAccessError(
+          error,
+          datedAdditionalMediaPath,
+          platform,
+        ))
+    ) {
+      return '';
+    }
     errorCatcher(error);
     return '';
   }

@@ -334,6 +334,39 @@ describe('jw-media helpers', () => {
     expect(errorCatcherMock).not.toHaveBeenCalled();
   });
 
+  it('does not report a copy failure that is expected flakiness on a cloud-synced additional-media destination', async () => {
+    const { trimFilepathAsNeeded } = await import('src/utils/fs');
+    const { sanitizeId } = await import('src/utils/general');
+
+    vi.mocked(trimFilepathAsNeeded).mockImplementation((p: string) => p);
+    vi.mocked(sanitizeId).mockImplementation((value: string) => value);
+    (
+      currentStateStore as unknown as {
+        getDatedAdditionalMediaDirectory: () => Promise<string>;
+      }
+    ).getDatedAdditionalMediaDirectory = vi.fn(
+      async () =>
+        String.raw`C:\Users\test\OneDrive\Pictures\Additional Media\cong\20260801`,
+    );
+    pathExistsMock.mockResolvedValueOnce(true).mockResolvedValueOnce(false);
+    copyMock.mockRejectedValue(
+      Object.assign(new Error('UNKNOWN: unknown error, copyfile'), {
+        code: 'UNKNOWN',
+      }),
+    );
+
+    const { copyToDatedAdditionalMedia } = await import('../jw-media');
+
+    await expect(
+      copyToDatedAdditionalMedia(
+        String.raw`C:\Users\test\OneDrive\Desktop\photo.jpeg`,
+        undefined,
+      ),
+    ).resolves.toBe('');
+
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+  });
+
   it('creates watched folders for meeting days with dynamic media', async () => {
     const meetingDate = new Date('2026-06-14T12:00:00.000Z');
     const childDynamicDate = new Date('2026-06-21T12:00:00.000Z');
