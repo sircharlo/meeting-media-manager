@@ -194,7 +194,11 @@
           <q-btn
             :aria-label="!buttonLabel ? tooltipText : undefined"
             class="add-media-shortcut btn-tonal"
-            :class="!buttonLabel ? 'custom-text-color' : undefined"
+            :class="
+              isCustom && selectedDayMeetingType !== 'we'
+                ? 'custom-text-color'
+                : undefined
+            "
             :color="
               !isCustom || (isCustom && selectedDayMeetingType === 'we')
                 ? mediaList.config?.uniqueId
@@ -275,7 +279,7 @@ const emit = defineEmits<{
 const $q = useQuasar();
 const { t } = useI18n();
 const currentState = useCurrentStateStore();
-const { selectedDayMeetingType } = storeToRefs(currentState);
+const { currentSettings, selectedDayMeetingType } = storeToRefs(currentState);
 
 // Section repeat functionality
 const { isSectionRepeating, toggleSectionRepeat } = useMediaSectionRepeat();
@@ -293,6 +297,10 @@ const moreOptionsMenuActive = ref(false);
 
 // Computed properties
 const buttonLabel = computed(() => {
+  if (currentSettings.value?.compactAddMediaButton !== false) {
+    return undefined;
+  }
+
   if (!$q.screen.gt.xs) return undefined;
 
   if (props.isSongButton) {

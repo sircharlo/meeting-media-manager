@@ -1,6 +1,9 @@
 import type { MediaSectionIdentifier, MediaSectionWithConfig } from 'src/types';
 
-import { standardSections } from 'src/constants/media';
+import {
+  CUSTOM_MEDIA_SECTIONS_ID,
+  standardSections,
+} from 'src/constants/media';
 import {
   findMediaSection,
   getOrCreateMediaSection,
@@ -51,13 +54,18 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   });
 
   const hasAddMediaButton = computed(() => {
-    return (
-      mediaList.config?.uniqueId === 'imported-media' ||
-      mediaList.config?.uniqueId.startsWith('custom-') ||
-      mediaList.config?.uniqueId === 'pt' ||
-      mediaList.config?.uniqueId === 'circuit-overseer' ||
-      mediaList.config?.uniqueId === 'lac'
-    );
+    const uniqueId = mediaList.config?.uniqueId;
+    if (!uniqueId) return false;
+
+    const configuredSections =
+      currentStateStore.currentSettings?.addMediaButtonSections;
+    if (!configuredSections) return false;
+
+    if (uniqueId === 'imported-media' || uniqueId.startsWith('custom-')) {
+      return configuredSections.includes(CUSTOM_MEDIA_SECTIONS_ID);
+    }
+
+    return configuredSections.includes(uniqueId);
   });
 
   // Check if this is a song button section

@@ -3,6 +3,7 @@ import type { LanguageValue } from 'src/constants/locales';
 import type { RESOLUTIONS } from 'src/constants/settings';
 
 import type { JwLangCode } from './jw/lang';
+import type { MediaSectionIdentifier } from './media';
 
 export type MaxRes = (typeof RESOLUTIONS)[number];
 
@@ -166,6 +167,7 @@ export type SettingsItemRule = 'notEmpty' | 'portNumber' | 'regular';
 export type SettingsItems = Record<keyof SettingsValues, SettingsItem>;
 
 export type SettingsItemSubgroup =
+  | 'addMediaButton'
   | 'cache'
   | 'customEvents'
   | 'dangerZone'
@@ -187,6 +189,7 @@ export type SettingsItemType =
   | 'color'
   | 'date'
   | 'list'
+  | 'mediaSections'
   | 'path'
   | 'pubSymbols'
   | 'shortcut'
@@ -196,11 +199,13 @@ export type SettingsItemType =
   | 'toggle';
 
 export interface SettingsValues {
+  addMediaButtonSections: MediaSectionIdentifier[];
   autoStartAtLogin: boolean;
   autoStartMusic: boolean;
   baseUrl: string;
   beginPlaybackPaused: boolean;
   cacheFolder: null | string;
+  compactAddMediaButton: boolean;
   congregationName: null | string;
   congregationNameModified: boolean;
   convertFilesToMp4: boolean;

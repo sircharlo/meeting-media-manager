@@ -1,5 +1,7 @@
 import type { SettingsGroups, SettingsItems, SettingsValues } from 'src/types';
 
+import { CUSTOM_MEDIA_SECTIONS_ID } from 'src/constants/media';
+
 // Enum Types
 export const RESOLUTIONS = ['240p', '360p', '480p', '720p', '1080p'] as const;
 
@@ -585,6 +587,16 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'keyboardShortcuts',
     type: 'shortcut',
   },
+  addMediaButtonSections: {
+    group: 'advanced',
+    subgroup: 'addMediaButton',
+    type: 'mediaSections',
+  },
+  compactAddMediaButton: {
+    group: 'advanced',
+    subgroup: 'addMediaButton',
+    type: 'toggle',
+  },
   enableMediaWindowFadeTransitions: {
     depends: 'enableMediaDisplayButton',
     group: 'advanced',
@@ -738,11 +750,18 @@ export const settingsDefinitions: SettingsItems = {
 /* eslint-enable perfectionist/sort-objects */
 
 export const defaultSettings: SettingsValues = {
+  addMediaButtonSections: [
+    'pt',
+    'lac',
+    'circuit-overseer',
+    CUSTOM_MEDIA_SECTIONS_ID,
+  ],
   autoStartAtLogin: false,
   autoStartMusic: true,
   baseUrl: 'jw.org',
   beginPlaybackPaused: false,
   cacheFolder: null,
+  compactAddMediaButton: true,
   congregationName: null,
   congregationNameModified: true,
   convertFilesToMp4: false,

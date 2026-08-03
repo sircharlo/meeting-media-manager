@@ -58,6 +58,12 @@ export const MW_MEETING_SECTIONS: MediaSectionIdentifier[] = [
 export const CO_WEEK_ADDITIONAL_SECTION: MediaSectionIdentifier =
   'circuit-overseer';
 
+// Synthetic identifier standing in for all custom/imported sections
+// (imported-media, custom-*), whose real uniqueId is generated per section
+// and can't be enumerated ahead of time in a settings picker.
+export const CUSTOM_MEDIA_SECTIONS_ID: MediaSectionIdentifier =
+  'custom-sections';
+
 // Helper function to get sections for a meeting type
 export function getMeetingSections(
   meeting: 'mw' | 'we' | null,
