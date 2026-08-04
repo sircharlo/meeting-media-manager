@@ -267,8 +267,8 @@ Lisa oma meediafailid M³-sse:
 3. **Kausta jälgimine** - Sea jälgitav kaust automaatseks impordiks
 4. **JWPUB failid ja esitusloendid** - Impordi väljaanded ja esitusloendid
 5. **Avaliku kõne meedia (S-34 / S-34mp)** – Impordi avaliku kõne meedia S‑34 või S‑34mp JWPUB-failidega
-6. **Videos from the official website** - Search for videos and add them to the selected date
-7. **Study Bible and sign-language Bible media** - Add images, videos, maps, historical references, or sign-language Bible videos for selected passages
+6. **Videod ametlikult veebilehelt** – Otsi videoid ja lisa need valitud kuupäevale
+7. **Õppepiibel ja viipekeelne piiblimaterjal** – Lisa valitud lõikudele pilte, videoid, kaarte, ajaloolisi viiteid või viipekeelseid piiblivideoid
 
 ### Imporditud meedia haldamine {#managing-imported-media}
 
@@ -287,9 +287,9 @@ Impordi Piibli salmide helisalvestised:
 4. Laadi helifailid alla
 5. Kasuta neid
 
-### Profile Settings Import and Export {#profile-settings-import-export}
+### Profiili seadete import ja eksport {#profile-settings-import-export}
 
-Each profile's settings can be exported to a JSON file from Settings. Importing a profile settings file replaces the current profile's settings, which is useful when moving a setup to another computer or restoring a known configuration.
+Iga profiili seaded saab menüüst „Seaded” eksportida JSON-failina. Profiili seadete faili importimine asendab praeguse profiili seaded, mis on kasulik seadistuse teisele arvutile üleviimisel või teadaoleva konfiguratsiooni taastamisel.
 
 ## Kausta jälgimine ja eksport {#user-guide-folder-monitoring}
 
@@ -323,21 +323,21 @@ Ametliku veebisaidi näitamine välistel ekraanidel:
 
 ### Brauseri juhtnupud {#website-controls}
 
-- **Open Website** - Open a separate website window
-- **Start Mirroring** - Show the website window in the media display for the audience
-- **Stop Mirroring** - Stop showing the website and return to the yeartext or media display background
+- **Ava veebileht** – ava eraldi veebilehe aken
+- **Peegeldamise alustamine** – veebilehe akna kuvamine publikule meediaekraanil
+- **Peegeldamise lõpetamine** – Lõpeta veebilehe kuvamine ja naase aastateksti või meedia taustapildi juurde
 - **Navigeerimine** - Tavalised brauseri liikumisnupud
 - \*\*Värskenda \*\* - Laadi praegune leht uuesti
 - \*\*Sulge \*\* - Välju veebiesitluse režiimist
-- **Auto Return** - Optionally return to the media list automatically after stopping website mirroring
+- **Automaatne tagasipöördumine** – soovi korral naaseb pärast veebilehe peegeldamise lõpetamist automaatselt meedianimekirja
 
 ## Koosolekute salvestused {#meeting-recordings}
 
-M³ can help control meeting recording, but it does not include a built-in recorder.
+M³ aitab koosolekute salvestamist hallata, kuid sellel puudub sisseehitatud salvestusseade.
 
-- **OBS Recording** - If OBS recording controls are enabled, use the OBS popup to start and stop OBS recording
-- **External Recording App** - Configure keyboard shortcuts for a separate recording app, then use the meeting recordings popup to send those shortcuts
-- **Recording Folder** - Configure a recording folder to show a quick button that opens the folder where recordings are saved
+- **OBS-salvestus** – Kui OBS-salvestuse juhtnupud on sisse lülitatud, kasuta OBS-i hüpikakent, et OBS-salvestust alustada ja lõpetada
+- **Väline salvestusrakendus** – seadista klaviatuurikombinatsioonid eraldi salvestusrakendusele ja kasuta seejärel koosoleku salvestuste hüpikakent, et need klaviatuurikombinatsioonid edastada
+- **Salvestuskaust** – Määra salvestuskaust, et kuvada kiirnupp, mis avab kausta, kuhu salvestised salvestatakse
 
 ## Lisasätted {#user-guide-advanced-features}
 
@@ -388,7 +388,7 @@ Loo endale sobivad kiirklahvid sujuvaks kasutuseks:
 - Vähenda maksimaalset eraldusvõimet
 - Puhasta vanad vahemälufailid
 - Veendu kettaruumi olemasolus
-- If the app shows graphical glitches or crashes, try disabling hardware acceleration and restart M³
+- Kui rakenduses esineb graafilisi häireid või see jookseb kokku, proovi riistvarakiirendust välja lülitada ja M³ uuesti käivitada
 
 #### Keeleprobleemid {#user-guide-language-issues}
 
