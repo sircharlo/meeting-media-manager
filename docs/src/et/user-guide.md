@@ -50,14 +50,14 @@ M³ korraldab meedia automaatselt koosoleku tüübi ja sektsiooni järgi:
 
 - **Koosoleku osad** – Meedia on rühmitatud koosoleku osade järgi (avalik kõne, Aarded Jumala sõnast jne)
 - **Kohandatud osad** – võid luua kohandatud osad täiendavate meediafailide jaoks, kui sellel konkreetsel päeval ei ole ühtegi koosolekut plaanis
-- **Manual Sorting** - Drag media items into the order you need, or reset the order when needed
-- **Repeated Playback** - Loop a single media item or repeat every item in a section until playback is stopped manually
+- **Käsitsi sorteerimine** – lohista meediaelemendid soovitud järjekorda või taasta vajaduse korral algne järjekord
+- **Kordus** – ühe meediaelemendi kordamine või jaotises olevate elementide kordamine, kuni taasesitus käsitsi peatatakse
 
-### Hidden and Missing Media {#hidden-and-missing-media}
+### Peidetud ja puuduvad meediaelemendid {#hidden-and-missing-media}
 
-Media can be hidden from the meeting list without deleting the automatically downloaded files. If media is hidden by mistake, use **Show hidden media** for the selected day.
+Meediafailid saab koosolekute nimekirjast peita, ilma et automaatselt alla laaditud faile kustutataks. Kui meedia on kogemata peidetud, kasuta valitud päeva puhul funktsiooni **Näita peidetud meediat**.
 
-If M³ reports missing media, first check whether the item is expected to become available closer to the meeting date. You can also add the missing item manually with the **Add media** menu or by dragging it into the media list.
+Kui M³ teatab puuduvatest materjalidest, kontrollige esmalt, kas need peaksid saadaval olema lähemalt koosoleku kuupäevale. Võid puuduva elemendi lisada ka käsitsi menüüvaliku **Lisa meedia** kaudu või lohistades selle meedianimekirja.
 
 ## Meedia esitlemine {#media-presentation}
 
@@ -83,8 +83,8 @@ Meediamängija pakub põhjalikke juhtnuppe:
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
 - **Suurenda/Liiguta** – Kasuta hiirerulli suurendamiseks, lohista pildi liigutamiseks
-- **Live Preview** - When enabled, show a preview of the audience media window in the main app
-- **Playback Speed** - When enabled in settings, adjust audio and video speed from the media item context menu
+- **Reaalajas eelvaade** – Kui see on sisse lülitatud, kuvatakse peaaknas vaatajaskonna meediaakna eelvaade
+- **Taasesituskiirus** – Kui see on seadetes sisse lülitatud, saad meediaelemendi kontekstimenüüst reguleerida heli ja video taasesituskiirust
 
 ### Täiustatud esitlusfunktsioonid {#advanced-presentation}
 
@@ -128,26 +128,26 @@ Määra endale sobivad klaviatuuri otseteed. Pane tähele, et vaikimisi otseteed
 
 **Märge (\*)**: Globaalne kiirklahv – saadaval ka rakenduse fookuseta
 
-## Display Tools {#display-tools}
+## Kuvamisvahendid {#display-tools}
 
-### Media Display Window {#media-display-window}
+### Meedia kuvamisaken {#media-display-window}
 
-The media display window is the audience-facing window. It can be placed on an external screen or used in a windowed setup depending on your equipment.
+Meediaekraani aken on vaatajale suunatud aken. Sõltuvalt teie seadmetest saab seda kuvada välisel ekraanil või kasutada akna režiimis.
 
-Use the display popup to:
+Kasuta ekraanil kuvatavat hüpikakent, et:
 
-- Show or hide the media display
-- Choose the display or window type
-- Select a temporary custom background instead of the yeartext
-- Use an available camera as the background. This is mostly used in sign-language congregations.
+- Meediaekraani kuvamiseks või peitmiseks
+- Ekraani või akna tüübi valimiseks
+- Aasta teksti asemel ajutise kohandatud tausta valimiseks
+- Olemasoleva kaamera kasutamiseks taustana. Seda kasutatakse peamiselt viipekeele kogudustes.
 
-Please note that custom backgrounds are temporary and are not saved after M³ quits.
+Pane tähele, et kohandatud taustapildid on ajutised ja neid ei salvestata pärast M³ sulgemist.
 
-### Meeting Timer {#user-guide-meeting-timer}
+### Koosoleku taimer {#user-guide-meeting-timer}
 
-When the meeting timer is enabled, M³ can show a separate timer window for timing participant parts. The timer can count up or down, show the current time, show a meeting countdown before scheduled meetings, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+Kui koosoleku taimer on sisse lülitatud, võib M³ kuvada eraldi taimeri akent osalejate kommentaaride ajastamiseks. See suudab aega üles- või allapoole loendada, näidata praegust kellaaega, kuvada koosoleku alguseni jäänud aega ning vajaduse korral näidata, kas koosolek kestab üle aja või on ajakavast ees.
 
-The timer is a beta feature and should only be used when approved locally.
+Taimer on beetafunktsioon ja seda tuleks lubada ainult heakskiidu korral.
 
 ## Taustamuusika {#user-guide-background-music}
 
@@ -190,7 +190,7 @@ M³ vahetab ettekannete ajal OBS-i stseene automaatselt:
 - **Meediastseen** – Kuvab meediasisu
 - **Pildistseen** – Kuvab pilte (saab soovi korral edasi lükata)
 - **Automaatne lülitumine** – Stseenid vahetuvad meediatüübi ja seadete järgi
-- **Recording Controls** - If enabled, M³ can start and stop OBS recording from the OBS popup
+- **Salvestamise juhtimisfunktsioonid** – Kui see on sisse lülitatud, saab M³ OBS-i hüpikaknas OBS-i salvestamist alustada ja lõpetada
 
 ### OBS täiendavad võimalused {#advanced-obs}
 
