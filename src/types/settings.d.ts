@@ -118,7 +118,9 @@ export type SettingsGroupKey =
   | 'app'
   | 'congregationMeetings'
   | 'integrations'
-  | 'mediaRetrievalPlayback';
+  | 'interfaceShortcuts'
+  | 'mediaRetrievalPlayback'
+  | 'meetingTimer';
 
 export type SettingsGroups = Record<SettingsGroupKey, SettingsGroup>;
 
@@ -178,10 +180,13 @@ export type SettingsItemSubgroup =
   | 'meetingRecording'
   | 'meetingScheduleChange'
   | 'obsStudio'
+  | 'pinyin'
   | 'setupWizard'
   | 'setupWizard.backgroundMusic'
   | 'subtitles'
-  | 'timer'
+  | 'timerColors'
+  | 'timerCountdown'
+  | 'timerDisplay'
   | 'zoomIntegration';
 
 export type SettingsItemType =

@@ -74,6 +74,14 @@ export interface Songbook {
 }
 
 interface Store {
+  /**
+   * Which Settings-page category (rail item) is active, per congregation
+   * profile. Deliberately session-only (not in this store's `persist.pick`
+   * allowlist below) - it only needs to survive navigating away from and
+   * back to the Settings page within a running session, not an app
+   * restart.
+   */
+  activeSettingsGroup: Partial<Record<string, SettingsGroupKey>>;
   autoReturnFromWebsite: boolean;
   /**
    * Whether the congregation switcher opened as part of the app's initial
@@ -100,16 +108,6 @@ interface Store {
   onlyShowInvalidSettings: boolean;
   pinyinActive: boolean;
   selectedDate: string;
-  /**
-   * Which Settings-page groups are expanded, per congregation profile.
-   * Deliberately session-only (not in this store's `persist.pick`
-   * allowlist below) - it only needs to survive navigating away from and
-   * back to the Settings page within a running session, not an app
-   * restart.
-   */
-  settingsExpansionState: Partial<
-    Record<string, Partial<Record<SettingsGroupKey, boolean>>>
-  >;
   timerWindowVisible: boolean;
   websiteSelection: JwSite;
 }
@@ -535,6 +533,7 @@ export const useCurrentStateStore = defineStore('current-state', {
   },
   state: (): Store => {
     return {
+      activeSettingsGroup: {},
       autoReturnFromWebsite: false,
       congregationSwitcherBootstrap: false,
       congregationSwitcherOpen: false,
@@ -569,7 +568,6 @@ export const useCurrentStateStore = defineStore('current-state', {
       onlyShowInvalidSettings: false,
       pinyinActive: false,
       selectedDate: formatDate(new Date(), 'YYYY/MM/DD'),
-      settingsExpansionState: {},
       timerWindowVisible: false,
       websiteSelection: undefined,
     };

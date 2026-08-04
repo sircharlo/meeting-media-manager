@@ -230,6 +230,7 @@ updateJwLanguages(online.value);
 const hasActiveDownloads = () => currentState.hasActiveMediaWork;
 
 let cacheClearTriggered = false;
+let dismissUpdatesDisabledNotification: (() => void) | undefined;
 const macosFolderPermissionPrompts = new Set<string>();
 
 type MacosFolderPermissionSetting = Extract<
@@ -1053,6 +1054,12 @@ const { post: postObsEnabled } = useBroadcastChannel<
   name: 'obs-enabled',
 }); // Send obsEnable to the media player page using useBroadcastChannel
 
+const handleAutoUpdatesToggled = (event: Event) => {
+  if (!(event as CustomEvent<boolean>).detail) return;
+  dismissUpdatesDisabledNotification?.();
+  dismissUpdatesDisabledNotification = undefined;
+};
+
 onMounted(() => {
   void cleanTempPathOnStartup();
   congregationSettings.updateCongregationsWithMissingSettings();
@@ -1063,10 +1070,15 @@ onMounted(() => {
     showCongregationSwitcher();
   }
   initListeners();
+  globalThis.addEventListener('autoUpdatesToggled', handleAutoUpdatesToggled);
 });
 
 onBeforeUnmount(() => {
   removeListenersLocal();
+  globalThis.removeEventListener(
+    'autoUpdatesToggled',
+    handleAutoUpdatesToggled,
+  );
 });
 
 watchImmediate(
@@ -1297,7 +1309,16 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
         type: 'warning',
       });
     } else if (areUpdatesDisabled) {
-      createTemporaryNotification({
+      dismissUpdatesDisabledNotification = createTemporaryNotification({
+        actions: [
+          {
+            color: 'white',
+            handler: () => {
+              router.push('/settings/autoUpdateApp');
+            },
+            label: t('go-to-settings'),
+          },
+        ],
         deferWhileDialogOpen: true,
         message: t('updates-disabled-warning'),
         timeout: 10000,
@@ -1642,6 +1663,8 @@ watch(
   },
 );
 
+let dismissHardwareAccelerationDisabledNotification: (() => void) | undefined;
+
 watchImmediate(
   () => currentSettings.value?.disableHardwareAcceleration,
   (newDisableHardwareAcceleration) => {
@@ -1652,21 +1675,27 @@ watchImmediate(
         newDisableHardwareAcceleration &&
         !currentSettings.value?.suppressHardwareAccelerationReminder
       ) {
-        createTemporaryNotification({
-          actions: [
-            {
-              color: 'white',
-              handler: () => {
-                router.push('/settings/disableHardwareAcceleration');
+        dismissHardwareAccelerationDisabledNotification =
+          createTemporaryNotification({
+            actions: [
+              {
+                color: 'white',
+                handler: () => {
+                  router.push('/settings/disableHardwareAcceleration');
+                },
+                label: t('go-to-settings'),
               },
-              label: t('go-to-settings'),
-            },
-          ],
-          caption: t('hardwareAccelerationDisabledExplain'),
-          message: t('hardwareAccelerationDisabled'),
-          timeout: 10000,
-          type: 'info',
-        });
+            ],
+            caption: t('hardwareAccelerationDisabledExplain'),
+            message: t('hardwareAccelerationDisabled'),
+            timeout: 10000,
+            type: 'info',
+          });
+      } else {
+        // The user re-enabled hardware acceleration; the reminder no longer
+        // applies, so dismiss it instead of leaving it to expire on its own.
+        dismissHardwareAccelerationDisabledNotification?.();
+        dismissHardwareAccelerationDisabledNotification = undefined;
       }
     }
   },

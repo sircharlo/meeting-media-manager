@@ -674,8 +674,10 @@ function setHwAccelDisabled(disabled: boolean, temporary = false) {
       disabled,
       temporary,
     });
-    if (disabled) {
-      // Notify user that a restart is recommended
+    if (disabled && temporary) {
+      // Only notify about a crash when hardware acceleration was disabled
+      // because of an actual crash, not when the user disabled it manually
+      // via settings.
       if (
         mainWindowInfo.mainWindow &&
         !mainWindowInfo.mainWindow.isDestroyed()

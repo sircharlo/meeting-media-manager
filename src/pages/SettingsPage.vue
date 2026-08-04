@@ -47,168 +47,324 @@
       no-error-focus
       novalidate
     >
-      <template
-        v-for="[groupId, { name, description, icon }] in settingsGroupsEntries"
-        :key="groupId"
+      <div
+        class="settings-two-pane"
+        :class="{ 'settings-two-pane--drilled': drilledIn }"
       >
-        <q-expansion-item
-          v-if="hasVisibleSettings(groupId)"
-          :caption="t(description)"
-          class="media-section text-subtitle2 text-weight-medium q-pr-md"
-          :icon="icon"
-          :label="t(name)"
-          :model-value="isGroupExpanded(groupId)"
-          @update:model-value="updateGroupExpansion(groupId, $event)"
-        >
-          <div>
-            <q-separator
-              v-if="groupId === 'advanced'"
-              class="bg-accent-200"
-              spaced
-            />
-            <q-item
-              v-if="groupId === 'advanced'"
-              class="q-mt-sm rounded-borders"
-              :inset-level="1"
-              :style="$q.screen.lt.sm ? 'flex-direction: column' : ''"
+        <div class="settings-rail">
+          <template
+            v-for="[groupId, group] in settingsGroupsEntries"
+            :key="groupId"
+          >
+            <button
+              v-if="hasVisibleSettings(groupId)"
+              class="settings-rail-item"
+              :class="{
+                'settings-rail-item--active':
+                  !filterActive && activeGroup === groupId,
+              }"
+              type="button"
+              @click="selectGroup(groupId)"
             >
-              <q-item-section>
-                <q-item-label>{{
-                  t('profile-settings-transfer')
-                }}</q-item-label>
-                <q-item-label caption :class="{ 'q-pb-sm': $q.screen.lt.sm }">
-                  {{ t('profile-settings-transfer-explain') }}
+              <span class="icon-chip settings-rail-item__icon text-primary">
+                <q-icon :name="group.icon" size="17px" />
+              </span>
+              <span class="settings-rail-item__label">{{ t(group.name) }}</span>
+              <q-badge
+                v-if="invalidSettingsByGroup[groupId]"
+                class="settings-rail-item__badge"
+                color="negative"
+                rounded
+              >
+                {{ invalidSettingsByGroup[groupId] }}
+              </q-badge>
+            </button>
+          </template>
+        </div>
+
+        <div class="settings-detail">
+          <button
+            class="settings-back-btn"
+            type="button"
+            @click="drilledIn = false"
+          >
+            <q-icon name="mmm-left" size="16px" />
+            {{ t('back') }}
+          </button>
+
+          <div
+            v-if="!filterActive && activeGroupData"
+            class="settings-detail-header"
+          >
+            <span class="icon-chip settings-detail-header__icon text-primary">
+              <q-icon :name="activeGroupData.icon" size="22px" />
+            </span>
+            <div>
+              <div class="settings-detail-header__title">
+                {{ t(activeGroupData.name) }}
+              </div>
+              <div class="settings-detail-header__desc">
+                {{ t(activeGroupData.description) }}
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-detail-body">
+            <template v-for="[groupId, group] in groupsToRender" :key="groupId">
+              <div v-if="filterActive" class="settings-detail-group-header">
+                <span
+                  class="icon-chip settings-detail-group-header__icon text-primary"
+                >
+                  <q-icon :name="group.icon" size="15px" />
+                </span>
+                <span>{{ t(group.name) }}</span>
+              </div>
+
+              <div v-if="groupId === 'advanced'" class="subgroup-card">
+                <q-item-label class="settings-subgroup-label" header>
+                  {{ t('profile-settings') }}
                 </q-item-label>
-              </q-item-section>
-              <q-item-section
-                side
-                :style="
-                  ($q.screen.lt.sm ? 'padding-left: 0' : '') +
-                  ';align-items: end'
-                "
+                <q-item
+                  class="rounded-borders"
+                  :style="$q.screen.lt.sm ? 'flex-direction: column' : ''"
+                >
+                  <q-item-section>
+                    <q-item-label>{{
+                      t('profile-settings-export')
+                    }}</q-item-label>
+                    <q-item-label
+                      caption
+                      :class="{ 'q-pb-sm': $q.screen.lt.sm }"
+                    >
+                      {{ t('profile-settings-export-explain') }}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section
+                    side
+                    :style="
+                      ($q.screen.lt.sm ? 'padding-left: 0' : '') +
+                      ';align-items: end'
+                    "
+                  >
+                    <q-btn
+                      class="btn-tonal"
+                      color="primary"
+                      flat
+                      :label="t('export-profile-settings')"
+                      @click="exportCurrentProfileSettings"
+                    />
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  class="rounded-borders"
+                  :style="$q.screen.lt.sm ? 'flex-direction: column' : ''"
+                >
+                  <q-item-section>
+                    <q-item-label>{{
+                      t('profile-settings-import')
+                    }}</q-item-label>
+                    <q-item-label
+                      caption
+                      :class="{ 'q-pb-sm': $q.screen.lt.sm }"
+                    >
+                      {{ t('profile-settings-import-explain') }}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section
+                    side
+                    :style="
+                      ($q.screen.lt.sm ? 'padding-left: 0' : '') +
+                      ';align-items: end'
+                    "
+                  >
+                    <q-btn
+                      class="btn-tonal"
+                      color="primary"
+                      flat
+                      :label="t('import-profile-settings')"
+                      @click="importCurrentProfileSettings"
+                    />
+                  </q-item-section>
+                </q-item>
+              </div>
+
+              <div
+                v-if="groupId === 'advanced'"
+                class="subgroup-card subgroup-card--global"
               >
-                <div class="q-gutter-sm row justify-end">
-                  <q-btn
-                    class="btn-tonal"
-                    color="primary"
-                    flat
-                    :label="t('export-profile-settings')"
-                    @click="exportCurrentProfileSettings"
-                  />
-                  <q-btn
-                    class="btn-tonal"
-                    color="primary"
-                    flat
-                    :label="t('import-profile-settings')"
-                    @click="importCurrentProfileSettings"
-                  />
+                <q-item-label class="settings-subgroup-label" header>
+                  <q-icon class="q-mr-xs" name="mmm-groups" size="14px" />
+                  {{ t('global-preferences') }}
+                </q-item-label>
+                <div class="settings-global-note">
+                  {{ t('global-preferences-explain') }}
                 </div>
-              </q-item-section>
-            </q-item>
-            <template
-              v-for="([settingId, item], index) in filteredSettingsByGroup[
-                groupId
-              ] || []"
-              :key="`${settingId}-${index}`"
-            >
-              <template
-                v-if="item.subgroup && isFirstInSubgroup(index, groupId)"
+                <q-item
+                  id="autoUpdateApp"
+                  class="rounded-borders"
+                  :style="$q.screen.lt.sm ? 'flex-direction: column' : ''"
+                  tag="label"
+                >
+                  <q-item-section>
+                    <q-item-label>{{ t('auto-update-app') }}</q-item-label>
+                    <q-item-label
+                      caption
+                      :class="{ 'q-pb-sm': $q.screen.lt.sm }"
+                    >
+                      {{ t('auto-update-app-explain') }}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section
+                    side
+                    :style="
+                      ($q.screen.lt.sm ? 'padding-left: 0' : '') +
+                      ';align-items: end'
+                    "
+                  >
+                    <q-toggle
+                      v-model="autoUpdateEnabled"
+                      checked-icon="mmm-check"
+                      :color="autoUpdateEnabled ? 'primary' : 'negative'"
+                      keep-color
+                    />
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  v-if="autoUpdateEnabled"
+                  id="receiveBetaUpdates"
+                  class="rounded-borders"
+                  :style="$q.screen.lt.sm ? 'flex-direction: column' : ''"
+                  tag="label"
+                >
+                  <q-item-section>
+                    <q-item-label>{{ t('receive-beta-updates') }}</q-item-label>
+                    <q-item-label
+                      caption
+                      :class="{ 'q-pb-sm': $q.screen.lt.sm }"
+                    >
+                      {{ t('receive-beta-updates-explain') }}
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section
+                    side
+                    :style="
+                      ($q.screen.lt.sm ? 'padding-left: 0' : '') +
+                      ';align-items: end'
+                    "
+                  >
+                    <q-toggle
+                      v-model="betaUpdatesEnabled"
+                      checked-icon="mmm-check"
+                      color="negative"
+                    />
+                  </q-item-section>
+                </q-item>
+              </div>
+
+              <div
+                v-for="run in getGroupRuns(groupId)"
+                :key="`${groupId}-${run.subgroup ?? 'none'}-${run.items[0]?.[0]}`"
+                class="subgroup-card"
               >
-                <q-separator class="bg-accent-200" spaced />
                 <q-item-label
-                  class="q-pl-xl q-ml-lg text-dark-grey settings-subgroup-label"
+                  v-if="run.subgroup"
+                  class="settings-subgroup-label"
                   header
                 >
-                  {{ t(item.subgroup) }}
+                  {{ t(run.subgroup) }}
                 </q-item-label>
-              </template>
-              <q-separator
-                v-if="index === 0 && !item.subgroup"
-                class="bg-accent-200"
-                spaced
-              />
-              <q-item
-                :id="settingId"
-                :class="{
-                  'bg-error': invalidSettings.includes(settingId),
-                  'bg-accent-300': settingParam === settingId,
-                  'q-mt-sm': index === 0,
-                  'rounded-borders': true,
-                }"
-                :inset-level="1"
-                :style="
-                  $q.screen.lt.sm && item.type !== 'toggle'
-                    ? 'flex-direction: column'
-                    : ''
-                "
-                tag="label"
-              >
-                <q-item-section>
-                  <q-item-label>
-                    <template
-                      v-for="part in highlightSearchParts(t(settingId))"
-                      :key="`${settingId}-label-${part.index}`"
-                    >
-                      <mark
-                        v-if="part.highlight"
-                        class="settings-filter__highlight"
-                      >
-                        {{ part.text }}
-                      </mark>
-                      <span v-else>{{ part.text }}</span>
-                    </template>
-                    <q-badge v-if="item.beta" align="top" class="q-ml-sm">
-                      <q-tooltip>{{ t('beta-tooltip') }}</q-tooltip>
-                      {{ t('beta') }}
-                    </q-badge>
-                  </q-item-label>
-                  <q-item-label caption :class="{ 'q-pb-sm': $q.screen.lt.sm }">
-                    <template
-                      v-for="part in highlightSearchParts(
-                        t(settingId + '-explain'),
-                      )"
-                      :key="`${settingId}-caption-${part.index}`"
-                    >
-                      <mark
-                        v-if="part.highlight"
-                        class="settings-filter__highlight"
-                      >
-                        {{ part.text }}
-                      </mark>
-                      <span v-else>{{ part.text }}</span>
-                    </template>
-                  </q-item-label>
-                </q-item-section>
-                <q-item-section
-                  side
-                  :style="
-                    ($q.screen.lt.sm ? 'padding-left: 0' : '') +
-                    ';align-items: end'
-                  "
+                <template
+                  v-for="[settingId, item] in run.items"
+                  :key="settingId"
                 >
-                  <BaseInput
-                    v-model="currentSettings[settingId]"
-                    :item="item"
-                    :setting-id="settingId"
-                    :style="$q.screen.lt.sm ? 'width: 100%;max-width:100%' : ''"
-                    v-bind="$attrs"
-                  />
-                </q-item-section>
-              </q-item>
+                  <q-item
+                    :id="settingId"
+                    :class="{
+                      'bg-error': invalidSettings.includes(settingId),
+                      'bg-accent-300': settingParam === settingId,
+                      'rounded-borders': true,
+                    }"
+                    :style="
+                      $q.screen.lt.sm && item.type !== 'toggle'
+                        ? 'flex-direction: column'
+                        : ''
+                    "
+                    tag="label"
+                  >
+                    <q-item-section>
+                      <q-item-label>
+                        <template
+                          v-for="part in highlightSearchParts(t(settingId))"
+                          :key="`${settingId}-label-${part.index}`"
+                        >
+                          <mark
+                            v-if="part.highlight"
+                            class="settings-filter__highlight"
+                          >
+                            {{ part.text }}
+                          </mark>
+                          <span v-else>{{ part.text }}</span>
+                        </template>
+                        <q-badge v-if="item.beta" align="top" class="q-ml-sm">
+                          <q-tooltip>{{ t('beta-tooltip') }}</q-tooltip>
+                          {{ t('beta') }}
+                        </q-badge>
+                      </q-item-label>
+                      <q-item-label
+                        caption
+                        :class="{ 'q-pb-sm': $q.screen.lt.sm }"
+                      >
+                        <template
+                          v-for="part in highlightSearchParts(
+                            t(settingId + '-explain'),
+                          )"
+                          :key="`${settingId}-caption-${part.index}`"
+                        >
+                          <mark
+                            v-if="part.highlight"
+                            class="settings-filter__highlight"
+                          >
+                            {{ part.text }}
+                          </mark>
+                          <span v-else>{{ part.text }}</span>
+                        </template>
+                      </q-item-label>
+                    </q-item-section>
+                    <q-item-section
+                      side
+                      :style="
+                        ($q.screen.lt.sm ? 'padding-left: 0' : '') +
+                        ';align-items: end'
+                      "
+                    >
+                      <BaseInput
+                        v-model="currentSettings[settingId]"
+                        :item="item"
+                        :setting-id="settingId"
+                        :style="
+                          $q.screen.lt.sm ? 'width: 100%;max-width:100%' : ''
+                        "
+                        v-bind="$attrs"
+                      />
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </div>
             </template>
+
+            <q-item
+              v-if="settingsFilter && !hasAnyVisibleSettings"
+              class="settings-filter-empty-state q-mt-xl"
+            >
+              <q-item-section>
+                <q-item-label class="text-accent-400">
+                  {{ t('settings-filter-empty') }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
           </div>
-        </q-expansion-item>
-      </template>
-      <q-item
-        v-if="settingsFilter && !hasAnyVisibleSettings"
-        class="settings-filter-empty-state q-mt-xl"
-      >
-        <q-item-section>
-          <q-item-label class="text-accent-400">
-            {{ t('settings-filter-empty') }}
-          </q-item-label>
-        </q-item-section>
-      </q-item>
+        </div>
+      </div>
     </q-form>
   </q-page>
   <DialogCongregationLookup
@@ -241,6 +397,12 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
 import {
+  betaUpdatesDisabled,
+  toggleAutoUpdates,
+  toggleBetaUpdates,
+  updatesDisabled,
+} from 'src/utils/fs';
+import {
   exportProfileSettingsToFile,
   importProfileSettingsFromFile,
 } from 'src/utils/profile-settings';
@@ -268,6 +430,26 @@ const settingsFilter = ref<null | string | undefined>('');
 const settingsFilterInput = useTemplateRef<QInput>('settingsFilterInput');
 const settingsFilterVisible = ref(false);
 let settingsFilterClosedAt = 0;
+
+// Global preferences (auto-update / beta updates) are app-wide, not part of
+// any congregation profile - they live as filesystem marker files read via
+// IPC (src/utils/fs.ts), not in currentSettings, so they can't be driven by
+// the normal settingsDefinitions/BaseInput v-model pattern.
+const autoUpdateEnabled = ref(true);
+const betaUpdatesEnabled = ref(false);
+
+// Set while loadGlobalPreferences() syncs the refs above from disk, so the
+// watch(betaUpdatesEnabled, ...) below can tell a user-initiated toggle
+// apart from that initial sync and only warn on the former.
+let isSyncingGlobalPreferences = false;
+
+const loadGlobalPreferences = async () => {
+  isSyncingGlobalPreferences = true;
+  autoUpdateEnabled.value = !(await updatesDisabled());
+  betaUpdatesEnabled.value = !(await betaUpdatesDisabled());
+  await nextTick();
+  isSyncingGlobalPreferences = false;
+};
 
 const openCongregationLookup = () => {
   showCongregationLookup.value = true;
@@ -307,6 +489,7 @@ const toggleSettingsFilter = () => {
 
 onMounted(() => {
   globalThis.addEventListener('openCongregationLookup', openCongregationLookup);
+  void loadGlobalPreferences();
 });
 
 onBeforeUnmount(() => {
@@ -334,12 +517,12 @@ useEventListener(globalThis, 'toggleSettingsFilter', toggleSettingsFilter);
 // Store initializations
 const currentState = useCurrentStateStore();
 const {
+  activeSettingsGroup,
   currentCongregation,
   currentLangObject,
   currentSettings,
   online,
   onlyShowInvalidSettings,
-  settingsExpansionState,
 } = storeToRefs(currentState);
 const { getInvalidSettings } = currentState;
 
@@ -369,6 +552,8 @@ const getSettingsFilterValue = (): string => settingsFilter.value?.trim() ?? '';
 const normalizedSettingsFilter = computed(() =>
   getSettingsFilterValue().toLocaleLowerCase(),
 );
+
+const filterActive = computed(() => !!normalizedSettingsFilter.value);
 
 const addFilteredSettingToGroup = (
   result: Record<string, [keyof SettingsItems, SettingsItem][]>,
@@ -408,26 +593,79 @@ const hasVisibleSettings = (groupId: SettingsGroupKey): boolean => {
   return (filteredSettingsByGroup.value[groupId]?.length ?? 0) > 0;
 };
 
-const isGroupExpanded = (groupId: SettingsGroupKey): boolean => {
-  return (
-    !!normalizedSettingsFilter.value ||
-    !!settingsExpansionState.value[currentCongregation.value]?.[groupId]
-  );
+const visibleGroupKeys = computed(() =>
+  settingsGroupsEntries
+    .map(([groupId]) => groupId)
+    .filter((groupId) => hasVisibleSettings(groupId)),
+);
+
+// Two-pane layout state: which category (rail item) is currently active,
+// remembered per congregation profile (session-only, see current-state.ts).
+const activeGroup = ref<SettingsGroupKey>(
+  (currentCongregation.value &&
+    activeSettingsGroup.value[currentCongregation.value]) ||
+    (settingsGroupsEntries[0]?.[0] as SettingsGroupKey),
+);
+
+// Whether the mobile drill-down view is showing the detail pane instead of
+// the category list. Irrelevant above the narrow-window breakpoint (CSS
+// shows both panes side by side there regardless of this flag).
+const drilledIn = ref(false);
+
+const activeGroupData = computed<SettingsGroup | undefined>(
+  () => settingsGroups[activeGroup.value],
+);
+
+// When searching, every category with a match is shown flattened in the
+// detail pane (grouped under its own header); otherwise, only the active
+// category's settings are shown.
+const groupsToRender = computed<[SettingsGroupKey, SettingsGroup][]>(() =>
+  filterActive.value
+    ? settingsGroupsEntries.filter(([groupId]) => hasVisibleSettings(groupId))
+    : settingsGroupsEntries.filter(
+        ([groupId]) => groupId === activeGroup.value,
+      ),
+);
+
+const invalidSettingsByGroup = computed(() => {
+  const result: Partial<Record<SettingsGroupKey, number>> = {};
+  for (const settingId of invalidSettings.value) {
+    const groupId = settingsDefinitions[settingId].group;
+    result[groupId] = (result[groupId] ?? 0) + 1;
+  }
+  return result;
+});
+
+interface SettingRun {
+  items: [keyof SettingsItems, SettingsItem][];
+  subgroup?: SettingsItem['subgroup'];
+}
+
+// Groups a category's settings into contiguous runs sharing the same
+// subgroup, so each run can be rendered as its own card - a setting with no
+// subgroup still gets its own run(s) whenever it's not adjacent to another
+// setting sharing the same (undefined) subgroup value.
+const getGroupRuns = (groupId: SettingsGroupKey): SettingRun[] => {
+  const runs: SettingRun[] = [];
+  for (const entry of filteredSettingsByGroup.value[groupId] || []) {
+    const subgroup = entry[1].subgroup;
+    const lastRun = runs.at(-1);
+    if (lastRun && lastRun.subgroup === subgroup) {
+      lastRun.items.push(entry);
+    } else {
+      runs.push({ items: [entry], subgroup });
+    }
+  }
+  return runs;
 };
 
-const updateGroupExpansion = (groupId: SettingsGroupKey, expanded: boolean) => {
-  if (normalizedSettingsFilter.value || !currentCongregation.value) return;
-  const congId = currentCongregation.value;
-  const group = (settingsExpansionState.value[congId] ??= {});
-  group[groupId] = expanded;
-};
-
-// Helper method to check if this is the first item in a subgroup
-const isFirstInSubgroup = (index: number, groupId: string) => {
-  if (index === 0) return true;
-  const groupSettings = filteredSettingsByGroup.value[groupId] || [];
-  const prevItem = groupSettings[index - 1]?.[1];
-  return prevItem && prevItem.subgroup !== groupSettings[index]?.[1].subgroup;
+const selectGroup = (groupId: SettingsGroupKey) => {
+  activeGroup.value = groupId;
+  settingsFilter.value = undefined;
+  if (currentCongregation.value) {
+    activeSettingsGroup.value[currentCongregation.value] = groupId;
+  }
+  drilledIn.value = true;
 };
 
 const escapeRegExp = (value: string): string =>
@@ -597,13 +835,6 @@ const validateSettingsLocal = () => {
           settingsValid.value = false;
         });
     }
-    for (const invalidSetting of getInvalidSettings()) {
-      if (currentCongregation.value) {
-        (settingsExpansionState.value[currentCongregation.value] ??= {})[
-          settingsDefinitions[invalidSetting].group
-        ] = true;
-      }
-    }
   } catch (error) {
     errorCatcher(error);
   }
@@ -667,6 +898,15 @@ const settingParam = useRouteParams<keyof SettingsValues | undefined>(
   'setting',
 );
 
+// Global preferences (see loadGlobalPreferences below) aren't part of
+// settingsDefinitions, so the /settings/:setting deep-link below can't
+// resolve their group from there - map their ids (which match the elements'
+// DOM ids in the template) to the group that hosts them instead.
+const GLOBAL_PREFERENCE_GROUPS: Partial<Record<string, SettingsGroupKey>> = {
+  autoUpdateApp: 'advanced',
+  receiveBetaUpdates: 'advanced',
+};
+
 const invalidSettings = computed(() => getInvalidSettings());
 const invalidSettingsLength = computed(() => invalidSettings.value?.length > 0);
 
@@ -675,21 +915,30 @@ onMounted(() => {
   updateJwLanguages(online.value);
   validateSettingsLocal();
 
-  if (invalidSettings.value.length === 1) {
+  const onlyInvalidId = invalidSettings.value[0];
+  if (invalidSettings.value.length === 1 && onlyInvalidId) {
+    selectGroup(settingsDefinitions[onlyInvalidId].group);
     setTimeout(() => {
-      const el = document.getElementById(invalidSettings.value[0] ?? '');
+      const el = document.getElementById(onlyInvalidId);
       el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 500);
+  }
+});
+
+watch(visibleGroupKeys, (keys) => {
+  if (keys.length && !keys.includes(activeGroup.value)) {
+    activeGroup.value = keys[0] as SettingsGroupKey;
   }
 });
 
 whenever(
   settingParam,
   (setting) => {
-    if (currentCongregation.value) {
-      (settingsExpansionState.value[currentCongregation.value] ??= {})[
-        settingsDefinitions[setting].group
-      ] = true;
+    if (setting) {
+      const group =
+        settingsDefinitions[setting]?.group ??
+        GLOBAL_PREFERENCE_GROUPS[setting];
+      if (group) selectGroup(group);
     }
     setTimeout(() => {
       if (!setting) return;
@@ -713,6 +962,45 @@ watch(
       online: online.value,
     }),
 );
+
+let dismissUpdatesDisabledWarning: (() => void) | undefined;
+
+watch(autoUpdateEnabled, (enabled) => {
+  void toggleAutoUpdates(enabled);
+
+  if (isSyncingGlobalPreferences) return;
+
+  if (enabled) {
+    dismissUpdatesDisabledWarning?.();
+    dismissUpdatesDisabledWarning = undefined;
+  } else {
+    dismissUpdatesDisabledWarning = createTemporaryNotification({
+      message: t('updates-disabled-warning'),
+      timeout: 10000,
+      type: 'info',
+    });
+  }
+});
+
+let dismissBetaUpdatesWarning: (() => void) | undefined;
+
+watch(betaUpdatesEnabled, (enabled) => {
+  void toggleBetaUpdates(enabled);
+
+  if (isSyncingGlobalPreferences) return;
+
+  if (enabled) {
+    dismissBetaUpdatesWarning = createTemporaryNotification({
+      caption: t('receive-beta-updates-explain'),
+      message: t('beta-updates-are-dangerous'),
+      timeout: 10000,
+      type: 'warning',
+    });
+  } else {
+    dismissBetaUpdatesWarning?.();
+    dismissBetaUpdatesWarning = undefined;
+  }
+});
 </script>
 
 <style scoped>
@@ -723,6 +1011,7 @@ watch(
 .settings-subgroup-label {
   font-weight: 650;
   letter-spacing: 0.02em;
+  padding: 0.75rem 1rem 0.25rem;
 }
 
 .settings-filter-overlay {
@@ -788,6 +1077,252 @@ body.body--dark
 
   100% {
     transform: scale(1);
+  }
+}
+
+/* Two-pane master-detail layout */
+.settings-two-pane {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.settings-rail {
+  border: 1px solid color-mix(in srgb, rgb(170, 188, 227) 45%, transparent);
+  border-radius: 14px;
+  box-shadow:
+    0px 2px 12px 0px rgba(35, 60, 120, 0.06),
+    0px 6px 20px 0px rgba(35, 60, 120, 0.05);
+  background: white;
+  flex: 0 0 240px;
+  padding: 0.6rem;
+  position: sticky;
+  top: 1rem;
+}
+
+body.body--dark .settings-rail {
+  background: #1d1d1d;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 2px 10px rgba(0, 0, 0, 0.35),
+    0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.settings-rail-item {
+  align-items: center;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  gap: 0.65rem;
+  margin-bottom: 2px;
+  padding: 0.55rem 0.6rem;
+  position: relative;
+  text-align: left;
+  width: 100%;
+}
+
+.settings-rail-item:hover {
+  background: rgb(237, 243, 255);
+}
+
+body.body--dark .settings-rail-item:hover {
+  background: rgb(60, 67, 90);
+}
+
+.settings-rail-item--active {
+  background: rgb(218, 229, 251);
+  color: var(--q-primary);
+}
+
+body.body--dark .settings-rail-item--active {
+  background: rgb(60, 67, 90);
+}
+
+.settings-rail-item--active::before {
+  background: var(--q-primary);
+  border-radius: 3px;
+  bottom: 8px;
+  content: '';
+  left: -0.35rem;
+  position: absolute;
+  top: 8px;
+  width: 3px;
+}
+
+.settings-rail-item__label {
+  flex: 1;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.settings-rail-item__badge {
+  flex-shrink: 0;
+}
+
+.settings-detail {
+  flex: 1;
+  min-width: 0;
+}
+
+.settings-back-btn {
+  align-items: center;
+  background: none;
+  border: none;
+  color: var(--q-primary);
+  cursor: pointer;
+  display: none;
+  font-weight: 700;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+  padding: 0;
+}
+
+.settings-detail-header {
+  align-items: center;
+  display: flex;
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.settings-detail-header__icon {
+  flex-shrink: 0;
+  height: 42px;
+  width: 42px;
+}
+
+.settings-detail-header__title {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.settings-detail-header__desc {
+  color: rgba(77, 77, 77, 1);
+  font-size: 0.82rem;
+  margin-top: 0.15rem;
+}
+
+body.body--dark .settings-detail-header__desc {
+  color: rgba(170, 170, 170, 1);
+}
+
+.settings-detail-group-header {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+  margin: 1.1rem 0 0.4rem;
+}
+
+.settings-detail-group-header:first-child {
+  margin-top: 0;
+}
+
+.settings-detail-group-header__icon {
+  flex-shrink: 0;
+  height: 26px;
+  width: 26px;
+}
+
+.settings-detail-group-header span:last-child {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.subgroup-card {
+  border: 1px solid color-mix(in srgb, rgb(170, 188, 227) 45%, transparent);
+  border-radius: 14px;
+  box-shadow:
+    0px 2px 12px 0px rgba(35, 60, 120, 0.06),
+    0px 6px 20px 0px rgba(35, 60, 120, 0.05);
+  background: white;
+  margin-bottom: 0.85rem;
+  overflow: hidden;
+  padding-bottom: 0.35rem;
+}
+
+body.body--dark .subgroup-card {
+  background: #1d1d1d;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 2px 10px rgba(0, 0, 0, 0.35),
+    0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* Distinguishes settings that apply to the whole app (all profiles) from
+   the rest of this page's per-congregation-profile settings - a tinted
+   background plus a colored left rail, rather than reusing $primary/
+   $negative (which already mean "active"/"dangerous" elsewhere on this
+   page) so this reads as "different kind of setting", not "risky". */
+.subgroup-card--global {
+  background: color-mix(in srgb, #9c27b0 6%, white);
+  border-left: 3px solid #9c27b0;
+}
+
+body.body--dark .subgroup-card--global {
+  background: color-mix(in srgb, #9c27b0 14%, #1d1d1d);
+  border-left: 3px solid #9c27b0;
+}
+
+.settings-global-note {
+  color: rgba(77, 77, 77, 1);
+  font-size: 0.76rem;
+  font-style: italic;
+  padding: 0 1rem 0.5rem;
+}
+
+body.body--dark .settings-global-note {
+  color: rgba(170, 170, 170, 1);
+}
+
+@media (max-width: 900px) {
+  .settings-rail {
+    flex-basis: 64px;
+  }
+
+  .settings-rail-item {
+    justify-content: center;
+  }
+
+  .settings-rail-item__label,
+  .settings-rail-item__badge {
+    display: none;
+  }
+
+  .settings-rail-item--active::before {
+    left: -0.6rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .settings-two-pane:not(.settings-two-pane--drilled) .settings-detail {
+    display: none;
+  }
+
+  .settings-two-pane.settings-two-pane--drilled .settings-rail {
+    display: none;
+  }
+
+  .settings-two-pane.settings-two-pane--drilled .settings-back-btn {
+    display: flex;
+  }
+
+  .settings-two-pane:not(.settings-two-pane--drilled) .settings-rail {
+    flex-basis: auto;
+    position: static;
+    width: 100%;
+  }
+
+  .settings-two-pane:not(.settings-two-pane--drilled) .settings-rail-item {
+    justify-content: flex-start;
+  }
+
+  .settings-two-pane:not(.settings-two-pane--drilled)
+    .settings-rail-item__label,
+  .settings-two-pane:not(.settings-two-pane--drilled)
+    .settings-rail-item__badge {
+    display: initial;
   }
 }
 </style>

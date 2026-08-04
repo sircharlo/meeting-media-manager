@@ -3,7 +3,6 @@
     class="header-elevated bg-primary text-white text-bigger text-weight-medium"
   >
     <DialogAbout
-      ref="aboutInfo"
       v-model="aboutModal"
       :dialog-id="dialogId"
       @hide="aboutModal = false"
@@ -17,6 +16,13 @@
       >
         <q-avatar>
           <q-img
+            v-if="isBetaVersion && !isDemoMode"
+            loading="lazy"
+            src="~assets/img/beta-logo-no-background.svg"
+            width="40px"
+          />
+          <q-img
+            v-else
             loading="lazy"
             src="~assets/img/logo-no-background.svg"
             width="40px"
@@ -29,13 +35,6 @@
           >
             <q-icon name="mmm-updates-disabled" size="small" />
           </q-badge>
-          <q-badge
-            v-else-if="isBetaVersion && !isDemoMode"
-            color="negative"
-            floating
-            label="β"
-            style="top: -1px; right: 0px; text-transform: none"
-          />
         </q-avatar>
         <q-tooltip anchor="center right" :delay="1000" self="center left">
           {{ t('about') }}
@@ -83,7 +82,7 @@ import { storeToRefs } from 'pinia';
 import { updatesDisabled } from 'src/utils/fs';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
-import { onMounted, ref, watch } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 
@@ -105,22 +104,23 @@ const currentState = useCurrentStateStore();
 const { currentCongregation } = storeToRefs(currentState);
 
 const aboutModal = ref(false);
-const aboutInfo = ref<InstanceType<typeof DialogAbout> | null>(null);
 const dialogId = 'about-dialog';
+
+const handleAutoUpdatesToggled = (event: Event) => {
+  updatesAreDisabled.value = !(event as CustomEvent<boolean>).detail;
+};
 
 onMounted(async () => {
   updatesAreDisabled.value = await updatesDisabled();
+  globalThis.addEventListener('autoUpdatesToggled', handleAutoUpdatesToggled);
 });
 
-// Watch for changes to updatesEnabled from the DialogAbout component
-watch(
-  () => aboutInfo.value?.updatesEnabled,
-  (enabled) => {
-    if (enabled !== undefined) {
-      updatesAreDisabled.value = !enabled;
-    }
-  },
-);
+onBeforeUnmount(() => {
+  globalThis.removeEventListener(
+    'autoUpdatesToggled',
+    handleAutoUpdatesToggled,
+  );
+});
 </script>
 
 <style lang="scss" scoped>
