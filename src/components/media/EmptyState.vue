@@ -20,8 +20,14 @@
       :class="[
         'col',
         {
-          'content-center': !(shouldShowSpinner && selectedDayMeetingType),
-          'q-py-xl': !(shouldShowSpinner && selectedDayMeetingType),
+          'content-center': !(
+            (shouldShowSpinner && selectedDayMeetingType) ||
+            noCongregationSelected
+          ),
+          'q-py-xl': !(
+            (shouldShowSpinner && selectedDayMeetingType) ||
+            noCongregationSelected
+          ),
         },
       ]"
     >
@@ -37,8 +43,14 @@
       >
         <div class="col-6 text-center full-width">
           <div
-            v-if="shouldShowSpinner && selectedDayMeetingType"
-            class="q-my-lg"
+            v-if="
+              (shouldShowSpinner && selectedDayMeetingType) ||
+              noCongregationSelected
+            "
+            :class="[
+              'q-my-lg',
+              { 'no-congregation-blur': noCongregationSelected },
+            ]"
           >
             <!-- Skeleton for media sections -->
             <div
@@ -101,15 +113,22 @@
             </div>
           </div>
           <div
-            v-if="!(shouldShowSpinner && selectedDayMeetingType)"
+            v-if="
+              !(
+                (shouldShowSpinner && selectedDayMeetingType) ||
+                noCongregationSelected
+              )
+            "
             class="row items-center justify-center text-subtitle1 text-semibold"
           >
             {{ primaryEmptyStateMessage }}
           </div>
           <div
             v-if="
-              !(shouldShowSpinner && selectedDayMeetingType) &&
-              secondaryEmptyStateMessage
+              !(
+                (shouldShowSpinner && selectedDayMeetingType) ||
+                noCongregationSelected
+              ) && secondaryEmptyStateMessage
             "
             class="row items-center justify-center text-center"
           >
@@ -117,9 +136,10 @@
           </div>
           <div
             v-if="
-              currentSettings?.disableMediaFetching ||
-              !selectedDayMeetingType ||
-              isErrorState
+              !noCongregationSelected &&
+              (currentSettings?.disableMediaFetching ||
+                !selectedDayMeetingType ||
+                isErrorState)
             "
             class="row items-center justify-center q-mt-lg q-gutter-md"
           >
@@ -192,6 +212,7 @@ const currentState = useCurrentStateStore();
 // component's own `selectedDate` prop (the compact-mode day-info object) -
 // they're unrelated values that happen to share a name.
 const {
+  currentCongregation,
   currentSettings,
   mediaRefreshPending,
   meetingCheckStatus,
@@ -199,6 +220,17 @@ const {
   selectedDateObject,
   selectedDayMeetingType,
 } = storeToRefs(currentState);
+
+// On app launch there's a brief window where a date is already selected
+// (selectedDate defaults to today) but no congregation profile has been
+// picked yet - selectedDateObject/selectedDayMeetingType are both still
+// null at that point purely because there's nothing to look them up
+// against, not because the selected date genuinely has no media. Without
+// this, that startup gap would render "there are no media items for the
+// selected date" for a congregation that hasn't even loaded its schedule
+// yet. Routed to the same skeleton treatment as an in-flight fetch below
+// rather than a distinct message, since there's nothing true to say yet.
+const noCongregationSelected = computed(() => !currentCongregation.value);
 
 // ---- compact-mode message selection (from the former SectionEmptyState) ----
 const compactMessage = computed(() => {
@@ -411,5 +443,19 @@ body.body--dark .no-media-illustration-frame {
 .empty-state-error-icon {
   height: 4em;
   width: 4em;
+}
+
+// Before a congregation profile is chosen, the skeleton above has nothing
+// real to report yet - not "loading this day's media" (that requires a
+// congregation's schedule to look the date up against in the first place),
+// just "the app itself is still settling". Blurring it (rather than
+// rendering it sharp, or showing a text message) reads as an inert
+// placeholder instead of a claim about the selected date, and matches the
+// backdrop-filter blur DialogCongregationSwitcher.vue applies once its own
+// picker actually appears a moment later.
+.no-congregation-blur {
+  filter: blur(3px);
+  opacity: 0.6;
+  pointer-events: none;
 }
 </style>
