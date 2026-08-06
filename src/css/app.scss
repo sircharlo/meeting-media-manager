@@ -752,6 +752,55 @@ a {
   transition-delay: 400ms;
 }
 
+// Cursor affordance for anything using @formkit/drag-and-drop's dragHandle
+// selector (see useMediaDragAndDrop.ts) - shared by media rows, group
+// headers and dividers, so it lives here instead of being copy-pasted into
+// each of their scoped styles.
+.media-drag-handle {
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+// Fades the row's own real background out from under a small icon/button
+// cluster - opaque right behind the icons, transparent by the time it
+// reaches whatever text it's overlapping - instead of reserving permanent
+// flex width for controls that are only relevant on hover (drag-to-reorder,
+// more-options). --row-bg is the one thing that changes between contexts;
+// the gradient shape itself doesn't. Pair with .hover-reveal (fades the
+// icons in) on the same element, .hover-reveal-group on the hover-tracked
+// ancestor, and a `position: relative` ancestor sized to whatever this
+// should overlap.
+.hover-actions-overlay {
+  --row-bg: white;
+
+  background: linear-gradient(to left, var(--row-bg) 60%, transparent 100%);
+  padding: 2px 2px 2px 28px;
+  // Invisible (opacity: 0, via .hover-reveal) still means "present in the
+  // DOM" - without this, invisible icons sit in front of whatever's
+  // underneath (e.g. a title's dblclick-to-rename) and eat its clicks.
+  pointer-events: none;
+}
+
+body.body--dark .hover-actions-overlay {
+  --row-bg: #{$dark};
+}
+
+.sortable-selected .hover-actions-overlay {
+  --row-bg: #{$sorting-bg};
+}
+
+body.body--dark .sortable-selected .hover-actions-overlay {
+  --row-bg: #{$sorting-bg-dark};
+}
+
+.hover-reveal-group:hover .hover-actions-overlay,
+.hover-reveal-group:focus-within .hover-actions-overlay {
+  pointer-events: auto;
+}
+
 // A solid, opaque selection badge for grid/thumbnail multiselect UIs (photo-
 // picker style: click a thumbnail to toggle it, selected ones get this
 // corner checkmark) - deliberately not .icon-chip's translucent currentColor

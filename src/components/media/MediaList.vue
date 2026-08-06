@@ -56,6 +56,7 @@
           <MediaDivider
             v-if="element.type === 'divider'"
             :divider="element as any"
+            :is-dragging="isDragging"
             @delete="handleDeleteDivider"
             @update:color="
               (bgColor, textColor) =>
@@ -70,6 +71,7 @@
             v-else-if="element.children"
             :element="element"
             :expanded="expandedGroups[element.uniqueId] ?? false"
+            :is-dragging="isDragging"
             :media-filter-terms="mediaFilterTerms"
             :selected="selectedMediaItems?.includes(element.uniqueId)"
             :selected-media-items="selectedMediaItems"
@@ -89,6 +91,7 @@
                 if (child) child.hidden = !!hidden;
               }
             "
+            @update:children-order="element.children = $event"
             @update:expanded="expandedGroups[element.uniqueId] = $event"
             @update:hidden="element.hidden = !!$event"
           />
@@ -96,6 +99,7 @@
           <MediaItem
             v-else
             v-model:repeat="element.repeat"
+            :is-dragging="isDragging"
             :media="element"
             :media-filter-terms="mediaFilterTerms"
             :selected="selectedMediaItems?.includes(element.uniqueId)"

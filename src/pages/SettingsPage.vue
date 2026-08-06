@@ -226,6 +226,7 @@
                       checked-icon="mmm-check"
                       :color="autoUpdateEnabled ? 'primary' : 'negative'"
                       keep-color
+                      name="autoUpdateApp"
                     />
                   </q-item-section>
                 </q-item>
@@ -256,6 +257,7 @@
                       v-model="betaUpdatesEnabled"
                       checked-icon="mmm-check"
                       color="negative"
+                      name="receiveBetaUpdates"
                     />
                   </q-item-section>
                 </q-item>

@@ -57,6 +57,22 @@ export const backfillQuickStartTourSeen = (
   return quickStartTourSeen;
 };
 
+/**
+ * Values used instead of `defaultSettings` when backfilling a setting that's
+ * missing from a pre-existing congregation (see
+ * `updateCongregationsWithMissingSettings`) - for a setting introduced after
+ * that congregation was created, backfilling the normal default can silently
+ * change behavior a user never opted into. `createCongregation` isn't
+ * affected: a genuinely new congregation still gets the real default from
+ * `defaultSettings` for every key, including these.
+ */
+export const missingSettingsBackfillOverrides: Partial<SettingsValues> = {
+  // Existing installs already relied on the whole row being draggable, with
+  // no handle at all - keep that exact behavior instead of introducing new
+  // UI chrome unasked for. New congregations get the real default (true).
+  showMediaDragHandle: false,
+};
+
 export const deserializeCongregationSettings = (data: string): Store =>
   transformObsPasswords(JSON.parse(data) as Store, (value) =>
     globalThis.electronApi.decryptSecretSync(value),
@@ -128,6 +144,7 @@ export const useCongregationSettingsStore = defineStore(
 
               const updatedCongregation = {
                 ...defaultSettings,
+                ...missingSettingsBackfillOverrides,
                 ...congregation,
               };
 
