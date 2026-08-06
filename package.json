@@ -117,7 +117,7 @@
     "eslint-plugin-perfectionist": "^5.10.0",
     "eslint-plugin-vue": "^10.10.0",
     "fantasticon": "patch:fantasticon@npm%3A4.1.0#~/.yarn/patches/fantasticon-npm-4.1.0-3af043d076.patch",
-    "globals": "^17.8.0",
+    "globals": "^17.9.0",
     "happy-dom": "^20.11.1",
     "husky": "^9.1.7",
     "lint-staged": "^17.3.0",
