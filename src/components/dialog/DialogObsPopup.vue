@@ -242,7 +242,7 @@ const setObsScene = async (sceneType?: ObsSceneType, desiredScene?: string) => {
     if (!newProgramScene) return;
 
     if (sceneExists(newProgramScene)) {
-      obsWebSocketInfo.obsWebSocket?.call(
+      await obsWebSocketInfo.obsWebSocket?.call(
         'SetCurrentProgramScene',
         getSetSceneArguments(newProgramScene),
       );
@@ -250,7 +250,11 @@ const setObsScene = async (sceneType?: ObsSceneType, desiredScene?: string) => {
       notifySceneNotFound();
     }
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: {
+        fn: { desiredScene, name: 'setObsScene', sceneType },
+      },
+    });
   }
 };
 
