@@ -1,4 +1,8 @@
-import type { MediaSectionIdentifier, MediaSectionWithConfig } from 'src/types';
+import type {
+  MediaItem,
+  MediaSectionIdentifier,
+  MediaSectionWithConfig,
+} from 'src/types';
 
 import {
   CUSTOM_MEDIA_SECTIONS_ID,
@@ -39,13 +43,21 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     return sectionData.value?.items?.filter((item) => !item.hidden) || [];
   });
 
+  // A group with children renders nothing (see MediaGroup's root v-if) once
+  // every one of its children is hidden, even though the group item itself
+  // was never marked hidden - so it must count as hidden here too, or the
+  // section-level indicators below go stale the moment that happens.
+  const isItemEffectivelyHidden = (item: MediaItem) =>
+    item.hidden ||
+    (!!item.children?.length && item.children.every((child) => child.hidden));
+
   const someItemsAreHidden = computed(() => {
-    return sectionData.value?.items?.some((item) => item.hidden) || false;
+    return sectionData.value?.items?.some(isItemEffectivelyHidden) || false;
   });
 
   const allItemsAreHidden = computed(() => {
     const items = sectionData.value?.items;
-    return !!items?.length && items.every((item) => item.hidden);
+    return !!items?.length && items.every(isItemEffectivelyHidden);
   });
 
   // Check if section is empty
