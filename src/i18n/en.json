@@ -329,6 +329,7 @@
   "invalid-settings": "Invalid settings",
   "item-names": "Item names",
   "items": "No items | One item | {count} items",
+  "items-hidden": "No items | One item ({hidden} hidden) | {count} items ({hidden} hidden)",
   "jw-playlist": "JW Library playlist",
   "jw-playlist-explain": "Playlist file exported from JW Library",
   "jw-playlist-import": "JW playlist import",

@@ -43,11 +43,20 @@
             <q-badge
               class="q-ml-sm bg-primary-semi-transparent"
               :label="
-                t(
-                  'items',
-                  { count: element.children?.length ?? 0 },
-                  element.children?.length ?? 0,
-                )
+                hiddenChildrenCount > 0
+                  ? t(
+                      'items-hidden',
+                      {
+                        count: element.children?.length ?? 0,
+                        hidden: hiddenChildrenCount,
+                      },
+                      element.children?.length ?? 0,
+                    )
+                  : t(
+                      'items',
+                      { count: element.children?.length ?? 0 },
+                      element.children?.length ?? 0,
+                    )
               "
               rounded
               text-color="white"
@@ -139,6 +148,10 @@ const { t } = useI18n();
 
 const hasMediaFilterTerms = computed(
   () => (props.mediaFilterTerms?.length ?? 0) > 0,
+);
+
+const hiddenChildrenCount = computed(
+  () => props.element.children?.filter((m) => m.hidden).length ?? 0,
 );
 
 const isExpanded = computed({
