@@ -15,7 +15,7 @@
     >
       <q-icon
         :class="{ 'q-mr-sm': $q.screen.gt.md }"
-        name="mmm-order-numeric-ascending"
+        name="mmm-reset-order"
         size="xs"
       />
       {{ $q.screen.gt.md ? t('reset-sort-order') : '' }}
