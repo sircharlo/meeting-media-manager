@@ -1,6 +1,7 @@
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mkdirMock = vi.fn();
+const openMock = vi.fn();
 const readdirMock = vi.fn();
 const readFileMock = vi.fn();
 const rmMock = vi.fn();
@@ -46,6 +47,7 @@ vi.mock('node:fs', () => ({
 
 vi.mock('node:fs/promises', () => ({
   mkdir: mkdirMock,
+  open: openMock,
   readdir: readdirMock,
   readFile: readFileMock,
   rm: rmMock,
@@ -366,6 +368,55 @@ describe('isUsablePath', () => {
       'pathProbeNetworkWarning',
     );
   });
+
+  it('also probes an existing file for real readability on macOS', async () => {
+    setPlatform('darwin');
+    readdirMock.mockResolvedValue([makeDirent('cached.jwpub')]);
+    const readMock = vi.fn().mockResolvedValue(undefined);
+    const closeMock = vi.fn().mockResolvedValue(undefined);
+    openMock.mockResolvedValue({ close: closeMock, read: readMock });
+
+    const { isUsablePath } = await import('../fs');
+
+    await expect(isUsablePath('/tmp/cache')).resolves.toBe(true);
+
+    expect(openMock).toHaveBeenCalledWith('/tmp/cache/cached.jwpub', 'r');
+    expect(readMock).toHaveBeenCalled();
+    expect(closeMock).toHaveBeenCalled();
+  });
+
+  it("reports a folder unusable when an existing file cannot actually be read on macOS (e.g. a stale TCC grant that a create-and-delete probe can't detect)", async () => {
+    setPlatform('darwin');
+    readdirMock.mockResolvedValue([makeDirent('cached.jwpub')]);
+    const permissionError = new Error('operation not permitted');
+    (permissionError as Error & { code?: string }).code = 'EPERM';
+    openMock.mockRejectedValue(permissionError);
+
+    const { isUsablePath } = await import('../fs');
+
+    await expect(isUsablePath('/tmp/cache')).resolves.toBe(false);
+
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ probeStage: 'read-existing' }),
+        message: '[isUsablePath] Probe failed',
+      }),
+    );
+    // EPERM/EACCES are expected, handleable outcomes here (the caller
+    // re-prompts for folder access) - not unexpected failures to report.
+    expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
+
+  it('skips the existing-file read probe when the folder has no pre-existing files yet', async () => {
+    setPlatform('darwin');
+    readdirMock.mockResolvedValue([]);
+
+    const { isUsablePath } = await import('../fs');
+
+    await expect(isUsablePath('/tmp/cache')).resolves.toBe(true);
+
+    expect(openMock).not.toHaveBeenCalled();
+  });
 });
 
 describe('getAppDataPath', () => {
@@ -441,6 +492,7 @@ describe('macOS folder permissions', () => {
     mkdirMock.mockResolvedValue(undefined);
     writeFileMock.mockResolvedValue(undefined);
     rmMock.mockResolvedValue(undefined);
+    readdirMock.mockResolvedValue([]);
     setPlatform('darwin');
   });
 
