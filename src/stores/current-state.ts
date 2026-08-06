@@ -5,6 +5,7 @@ import type {
   JwSite,
   MediaItem,
   MediaLink,
+  MediaSectionIdentifier,
   MeetingCheckStatuses,
   SettingsGroupKey,
   SettingsItem,
@@ -106,6 +107,15 @@ interface Store {
   meetingDay: boolean;
   online: boolean;
   onlyShowInvalidSettings: boolean;
+  /**
+   * Section identifiers with an add-media operation in flight (song/video/
+   * publication import, etc). One entry per concurrent operation targeting
+   * that section, so a section can appear more than once. Lets MediaList
+   * show a skeleton placeholder for the gap between picking media and it
+   * landing in the store, since that step can involve a network fetch
+   * (thumbnail download) before the item exists to render.
+   */
+  pendingSectionImports: MediaSectionIdentifier[];
   pinyinActive: boolean;
   selectedDate: string;
   timerWindowVisible: boolean;
@@ -566,6 +576,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       meetingDay: false,
       online: true,
       onlyShowInvalidSettings: false,
+      pendingSectionImports: [],
       pinyinActive: false,
       selectedDate: formatDate(new Date(), 'YYYY/MM/DD'),
       timerWindowVisible: false,

@@ -734,13 +734,33 @@ const addSelectedItems = async () => {
 
     isProcessing.value = true;
 
-    // Process all items in playlist order, keeping them all in one array
+    // Process all items in playlist order, keeping them all in one array.
+    // Each item gets its own try/catch: one item's network/file failure
+    // (e.g. a video that fails to download) shouldn't discard every other
+    // item that already processed successfully - the whole batch used to
+    // abort silently on the first failure.
     const processedMediaItems: DialogImportPayload['items'] = [];
 
     for (const [idx, item] of selectedPlaylistItems.entries()) {
-      const result = await processSingleItem(item, idx, outputPath);
-      if (result?.mappedItems?.length) {
-        processedMediaItems.push(...result.mappedItems);
+      try {
+        const result = await processSingleItem(item, idx, outputPath);
+        if (result?.mappedItems?.length) {
+          processedMediaItems.push(...result.mappedItems);
+        }
+      } catch (error) {
+        createTemporaryNotification({
+          caption: getItemLabel(idx, item),
+          message: t('fileProcessError'),
+          type: 'negative',
+        });
+        errorCatcher(error, {
+          contexts: {
+            fn: {
+              args: { item },
+              name: 'addSelectedItems (processSingleItem)',
+            },
+          },
+        });
       }
     }
 

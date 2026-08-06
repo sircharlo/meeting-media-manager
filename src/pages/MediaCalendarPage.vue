@@ -284,6 +284,7 @@ import {
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { triggerMediaWindowAutoHide } from 'src/helpers/mediaWindowAutoHide';
 import { createTemporaryNotification } from 'src/helpers/notifications';
+import { withPendingSectionImport } from 'src/helpers/pending-section-imports';
 import { updateLastUsedDate } from 'src/helpers/usage';
 import { triggerZoomScreenShare } from 'src/helpers/zoom';
 import { log, uuid } from 'src/shared/vanilla';
@@ -539,6 +540,12 @@ const showSectionPicker = ref(false);
 const showMediaPicker = ref(false);
 const selectedDocument = ref<DocumentItem | undefined>();
 const pendingFiles = ref<(File | string)[]>([]);
+// Holds a jwpub document waiting on a section choice before its media
+// picker can open - see the openJwpubMediaPicker listener and
+// handleSectionSelected below.
+const pendingJwpubMediaPicker = ref<
+  undefined | { dbPath: string; document: DocumentItem }
+>();
 
 // Banner visibility state for transitions
 const bannerColumnVisible = ref(false);
@@ -1167,17 +1174,45 @@ useEventListener<
   globalThis,
   'localFiles-browsed',
   (event) => {
-    // Show section picker if more than one section exists
-    if (
+    const files = event.detail?.files ?? [];
+
+    // Give immediate feedback the moment files are received - otherwise
+    // DialogFileImport just sits on its static "drag and drop" prompt for
+    // however long it takes the section picker (or jwpub processing below)
+    // to appear, which reads as nothing having happened.
+    totalFiles.value = files.length;
+    currentFile.value = 0;
+
+    const needsSectionChoice =
       (selectedDateObject.value?.mediaSections?.length || 0) > 1 &&
-      !event.detail?.section
-    ) {
-      pendingFiles.value = event.detail?.files ?? [];
+      !event.detail?.section;
+
+    if (needsSectionChoice) {
+      // A lone jwpub file might turn out to have no importable media at all
+      // (see loadJwpubImportDocuments' jwpubNoMultimedia notification) -
+      // that can only be known after unzipping and reading it. Asking the
+      // user to pick a section before that check would mean asking them to
+      // choose a destination for media that may not exist. So for this one
+      // case, defer the section choice: let processing start now, and only
+      // prompt for a section once openJwpubMediaPicker confirms there's
+      // something to add.
+      const soleFile = files.length === 1 ? files[0] : undefined;
+      const isSoleJwpubFile =
+        !!soleFile && isJwpub(getLocalPathFromFileObject(soleFile));
+
+      if (isSoleJwpubFile) {
+        addToFiles(files).catch((error) => {
+          errorCatcher(error);
+        });
+        return;
+      }
+
+      pendingFiles.value = files;
       showSectionPicker.value = true;
     } else {
       sectionToAddTo.value = event.detail?.section;
       // For non-WE meetings or when section is already specified, process files directly
-      addToFiles(event.detail?.files ?? []).catch((error) => {
+      addToFiles(files).catch((error) => {
         errorCatcher(error);
       });
     }
@@ -1230,6 +1265,26 @@ useEventListener<
       'log',
       e.detail,
     );
+
+    // The jwpub file is now confirmed to have media worth adding (this
+    // only fires once loadJwpubImportDocuments found at least one
+    // document). If a section still isn't known - the lone-jwpub-file
+    // branch in the localFiles-browsed listener above deliberately skips
+    // asking up front - ask for it now, and reopen this once it's picked.
+    if (
+      !sectionToAddTo.value &&
+      e.detail?.dbPath &&
+      e.detail?.document &&
+      (selectedDateObject.value?.mediaSections?.length || 0) > 1
+    ) {
+      pendingJwpubMediaPicker.value = {
+        dbPath: e.detail.dbPath,
+        document: e.detail.document,
+      };
+      showSectionPicker.value = true;
+      return;
+    }
+
     jwpubImportDb.value = e.detail?.dbPath;
     selectedDocument.value = e.detail?.document;
     showMediaPicker.value = true;
@@ -1755,34 +1810,49 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
   setDefaultSectionForImport();
   selectedFiles = pickPreferredSingleImportFile(selectedFiles);
   const mediaItemsToAdd: MediaItem[] = [];
+  const targetSection = sectionToAddTo.value || 'imported-media';
 
-  for (let i = 0; i < selectedFiles.length; i++) {
-    const file = selectedFiles[i];
-    if (!file) continue;
-    try {
-      const convertedImages = await processImportFile(file, mediaItemsToAdd);
-      if (convertedImages?.length) {
-        selectedFiles.splice(i + 1, 0, ...convertedImages);
-        totalFiles.value = selectedFiles.length;
+  // All of mediaItemsToAdd lands in the store in one shot via
+  // finishImportedMediaItems below, so the skeleton count is fixed up front
+  // (matching the files entering the loop) and cleared once the whole batch
+  // is through - not per file, since no file's item is actually visible
+  // until every file has finished processing.
+  await withPendingSectionImport(
+    targetSection,
+    selectedFiles.length,
+    async () => {
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i];
+        if (!file) continue;
+        try {
+          const convertedImages = await processImportFile(
+            file,
+            mediaItemsToAdd,
+          );
+          if (convertedImages?.length) {
+            selectedFiles.splice(i + 1, 0, ...convertedImages);
+            totalFiles.value = selectedFiles.length;
+          }
+        } catch (error) {
+          const filepath = getLocalPathFromFileObject(file);
+          createTemporaryNotification({
+            caption: filepath ? basename(filepath) : filepath,
+            message: t('fileProcessError'),
+            type: 'negative',
+          });
+          errorCatcher(error, {
+            contexts: {
+              fn: {
+                args: { filepath },
+                name: 'addToFiles',
+              },
+            },
+          });
+        }
+        currentFile.value++;
       }
-    } catch (error) {
-      const filepath = getLocalPathFromFileObject(file);
-      createTemporaryNotification({
-        caption: filepath ? basename(filepath) : filepath,
-        message: t('fileProcessError'),
-        type: 'negative',
-      });
-      errorCatcher(error, {
-        contexts: {
-          fn: {
-            args: { filepath },
-            name: 'addToFiles',
-          },
-        },
-      });
-    }
-    currentFile.value++;
-  }
+    },
+  );
 
   // A dropped/imported file can relink an existing "missing" media item in
   // place (findMatchingMissingMedia above) rather than going through
@@ -1814,6 +1884,15 @@ const openImportMenu = (section: MediaSectionIdentifier | undefined) => {
 
 const handleSectionSelected = (section: MediaSectionIdentifier) => {
   sectionToAddTo.value = section;
+
+  if (pendingJwpubMediaPicker.value) {
+    jwpubImportDb.value = pendingJwpubMediaPicker.value.dbPath;
+    selectedDocument.value = pendingJwpubMediaPicker.value.document;
+    showMediaPicker.value = true;
+    pendingJwpubMediaPicker.value = undefined;
+    return;
+  }
+
   addToFiles(pendingFiles.value).catch((error) => {
     errorCatcher(error);
   });

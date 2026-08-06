@@ -419,6 +419,7 @@ import {
   getJwMediaInfo,
   getPubMediaLinks,
 } from 'src/helpers/jw-media';
+import { withPendingSectionImport } from 'src/helpers/pending-section-imports';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import {
   datesAreSame,
@@ -997,15 +998,39 @@ const handleImport = async (
   }
 };
 
+// How many MediaItems this import is expected to add once it resolves, so
+// the number of skeletons shown matches reality for multi-item imports
+// (study Bible selections, JW Playlist files) instead of always just one.
+const getPendingImportCount = (importItem: PendingImport): number => {
+  switch (importItem.type) {
+    case 'jw-playlist':
+      return importItem.data.items.length || 1;
+    case 'study-bible':
+      return importItem.data.items.length || 1;
+    default:
+      return 1;
+  }
+};
+
 const processPendingImport = async (targetSection: MediaSectionIdentifier) => {
   if (!pendingImport.value) return;
   const importItem = pendingImport.value;
 
-  try {
-    await importPendingMediaItem(importItem, targetSection);
-  } catch (error) {
-    errorCatcher(error);
-  }
+  // Tracks this section as having add-media operation(s) in flight, so
+  // MediaList can show skeleton placeholders for the gap between picking
+  // media and it actually landing in the store (which can involve a network
+  // fetch, e.g. downloading a thumbnail, before the item exists to render).
+  await withPendingSectionImport(
+    targetSection,
+    getPendingImportCount(importItem),
+    async () => {
+      try {
+        await importPendingMediaItem(importItem, targetSection);
+      } catch (error) {
+        errorCatcher(error);
+      }
+    },
+  );
 };
 
 const addImportedMediaItems = (

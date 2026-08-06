@@ -30,7 +30,7 @@
     />
     <!-- Empty State -->
     <EmptyState
-      v-if="isEmpty || someItemsAreHidden"
+      v-if="(isEmpty || someItemsAreHidden) && !pendingImportCount"
       :all-items-are-hidden="allItemsAreHidden"
       compact
       :is-dragging="isDragging"
@@ -46,6 +46,11 @@
         :class="{ 'drop-here': isDragging }"
         :data-list="mediaList.config?.uniqueId"
       >
+        <!-- Skeleton placeholders for add-media operations still in flight -->
+        <MediaItemSkeleton
+          v-for="n in pendingImportCount"
+          :key="`pending-import-skeleton-${n}`"
+        />
         <template v-for="element in sortableItems" :key="element.uniqueId">
           <!-- Render dividers -->
           <MediaDivider
@@ -144,6 +149,7 @@ import EmptyState from './EmptyState.vue';
 import MediaDivider from './MediaDivider.vue';
 import MediaGroup from './MediaGroup.vue';
 import MediaItem from './MediaItem.vue';
+import MediaItemSkeleton from './MediaItemSkeleton.vue';
 import MediaSectionHeader from './MediaSectionHeader.vue';
 
 const props = defineProps<{
@@ -154,7 +160,18 @@ const props = defineProps<{
 }>();
 
 const currentState = useCurrentStateStore();
-const { selectedDateObject } = storeToRefs(currentState);
+const { pendingSectionImports, selectedDateObject } = storeToRefs(currentState);
+
+// Number of add-media operations currently in flight for this section - see
+// the `pendingSectionImports` doc comment in the current-state store. Shown
+// as skeleton placeholders below to bridge the gap before the real item
+// appears.
+const pendingImportCount = computed(
+  () =>
+    pendingSectionImports.value.filter(
+      (sectionId) => sectionId === props.mediaList.config?.uniqueId,
+    ).length,
+);
 
 // Ref to the section header
 const sectionHeaderRef = ref<InstanceType<typeof MediaSectionHeader> | null>(
