@@ -4,6 +4,15 @@
 
 버전별 전체 변경 사항은, GitHub 의 CHANGELOG.md 파일을 확인해주세요.
 
+## v26.7.9
+
+### ✨ 새로운 기능
+
+- ✨ **App-Wide Redesign**: A broad visual and interaction refresh across dialogs, the media list/header, Settings, and the Setup Wizard. The Setup Wizard is now a one-question-per-screen flow with a progress bar. All prompts were replaced with a consistent branded dialog, and PDF page-range selection (for publication and drag-and-drop imports) now uses a thumbnail-grid picker instead of a free-text prompt. Added a new Quick Start Guide tour after the Setup Wizard completes. Also includes refreshed card/header styling with dark-mode-aware shadows and several dark-mode contrast fixes (focused field labels, download-progress percentages).
+- ✨ **Settings Page**: Reworked into a two-pane layout, with a new global Preferences section for auto-update/beta-update toggles moved out of the About dialog (which is now purely informational).
+- ✨ **Add More Media Button**: Added a setting to choose exactly which meeting sections show the "add more media" shortcut button, along with a setting for a compact (icon-only) mode.
+- ✨ **Media List**: Items now show loading skeletons while being added instead of appearing empty, media groups show a hidden-item count in their badge (e.g. "9 items (2 hidden)"), children within a group can be reordered via drag-and-drop, and at very narrow window widths items collapse into compact, tooltip-carrying chips instead of crowding the row.
+
 ## v26.7.7
 
 ### ✨ 새로운 기능
