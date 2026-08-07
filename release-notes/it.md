@@ -4,6 +4,15 @@
 
 Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGELOG.md su GitHub.
 
+## v26.7.9
+
+### ✨ Nuove Funzionalità
+
+- ✨ **App-Wide Redesign**: A broad visual and interaction refresh across dialogs, the media list/header, Settings, and the Setup Wizard. The Setup Wizard is now a one-question-per-screen flow with a progress bar. All prompts were replaced with a consistent branded dialog, and PDF page-range selection (for publication and drag-and-drop imports) now uses a thumbnail-grid picker instead of a free-text prompt. Added a new Quick Start Guide tour after the Setup Wizard completes. Also includes refreshed card/header styling with dark-mode-aware shadows and several dark-mode contrast fixes (focused field labels, download-progress percentages).
+- ✨ **Settings Page**: Reworked into a two-pane layout, with a new global Preferences section for auto-update/beta-update toggles moved out of the About dialog (which is now purely informational).
+- ✨ **Add More Media Button**: Added a setting to choose exactly which meeting sections show the "add more media" shortcut button, along with a setting for a compact (icon-only) mode.
+- ✨ **Media List**: Items now show loading skeletons while being added instead of appearing empty, media groups show a hidden-item count in their badge (e.g. "9 items (2 hidden)"), children within a group can be reordered via drag-and-drop, and at very narrow window widths items collapse into compact, tooltip-carrying chips instead of crowding the row.
+
 ## v26.7.7
 
 ### ✨ Nuove Funzionalità
@@ -12,14 +21,14 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.7.6
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Esclusione Video CBS**: Aggiunta un'impostazione per escludere i video di Studio Biblico di Congregazione da pubblicazioni specifiche (default per il **Camminare coraggiosamente con Dio** libro), con un selettore di pubblicazione ricercabile.
 - ✨ **Numeri di pagina del documento**: Pubblicazione Media e JWPUB importati ora mostra il numero di pagina di ogni documento (o i numeri quando ci sono più pagine) dopo il suo titolo. Questo può aiutare a trovare rapidamente i media specifici quando si conosce il numero di pagina su cui è trovato.
 
 ## v26.7.4
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Recupero dei media mancanti**: gli elementi multimediali il cui file locale è andato perso (ad es. eliminato dalla cancellazione automatica della cache, o rimosso manualmente) mostrano ora un pulsante di riproduzione disabilitato, una didascalia «mancante» che indica il file da cercare e una nuova azione «Individua file» per ricollegare l'elemento a un file sul disco.
 - ✨ **Avviso di compatibilità**: aggiunto un banner ignorabile che avvisa gli utenti con combinazioni di sistema operativo/architettura presto non più supportate (macOS 12 Monterey e Windows a 32 bit) di aggiornare prima che i futuri aggiornamenti dell'app richiedano un sistema più recente.
@@ -33,7 +42,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.6.1
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Anteprima dei media**: aggiunto un overlay di anteprima dei media dal vivo che può essere attivato o disattivato dalle impostazioni o dal popup di visualizzazione.
 - ✨ **Cerca media**: aggiunta una casella di ricerca rapida nell'elenco dei media che consente di trovare rapidamente i media per titolo. Per usarla, basta usare la scorciatoia da tastiera standard per la ricerca (Ctrl+F o Cmd+F).
@@ -42,7 +51,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.6.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Timer**: aggiunte modalità di visualizzazione analogica e lo stato del resoconto dei tempi.
 - ✨ **Profili**: aggiunte l'importazione e l'esportazione delle impostazioni del profilo nelle impostazioni Avanzate e nella Configurazione guidata.
@@ -50,13 +59,13 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.5.0
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Importazione PDF**: aggiunto un nuovo flusso di importazione PDF alla finestra Media delle pubblicazioni, che consente di importare automaticamente la versione PDF di una pubblicazione come singole immagini quando desiderato.
 
 ## v26.4.8
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **JW Stream**: Aggiunto JW Stream alla lista dei siti web che possono essere mirrored.
 
@@ -68,7 +77,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.3.0
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Memorial Media**: Il recupero automatico dei media commemorativi è ora fuori dalla beta! L'app scaricherà automaticamente il Memorial Welcome Video e l'immagine da visualizzare durante il Memoriale, quando disponibile nella lingua configurata.
 - ✨ **Velocità di riproduzione**: Aggiunto controllo della velocità di riproduzione con indicatore visivo, e ripristino manuale. Questa funzione è visibile solo se abilitata nelle impostazioni avanzate.
@@ -140,7 +149,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v25.10.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Avvia la riproduzione in pausa**: aggiunta una nuova impostazione per consentire alla riproduzione di iniziare in pausa, utile agli operatori audio/video per preparare la loro configurazione (come avviare la condivisione su Zoom) prima che il media inizi a essere riprodotto nella finestra multimediale.
 - ✨ **Notifiche di aggiornamento**: gli utenti verranno ora avvisati degli aggiornamenti tramite un banner nell'app, che permetterà anche di installare gli aggiornamenti immediatamente, invece di aspettare il successivo riavvio dell'app.
@@ -148,7 +157,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v25.9.1
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Finestra multimediale sempre in primo piano e comportamento a schermo intero**: corretto e migliorato il comportamento sempre-in-primo-piano della finestra multimediale, adattandolo dinamicamente in base allo stato a schermo intero.
 - ✨ **Impostazione del formato di visualizzazione della data**: aggiunta un'impostazione utente per configurare un formato di visualizzazione della data.
@@ -181,13 +190,13 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v25.7.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - Nessuna nuova funzionalità per questa versione!
 
 ## 25.6.0
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Impostazione di connessione a consumo**: Aggiunta una nuova impostazione per ridurre l'utilizzo della banda di download sulle connessioni a consumo.
 - ✨ **Migliorata la gestione dei media in streaming**: Migliore supporto per i media in streaming, riducendo i problemi legati alla latenza.
@@ -208,7 +217,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## 25.3.1
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - 🌏 **Nuova lingua: coreano**: aggiunge il supporto per la lingua coreana, ampliando l'accessibilità per più utenti.
 
@@ -230,7 +239,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## 25.2.0
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - 🌍 **Use System Locale by Default**: Rilevare e utilizzare automaticamente il locale del sistema per un'esperienza più personalizzata.
 - 🏷️ **Tag Support for Exported Media**: Aggiungi tag di metadati ai file multimediali esportati per una migliore organizzazione.
@@ -249,7 +258,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## 24.11.0
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - **funzione**: La presentazione del sito web è ora supportata su macOS 🚀
 - **funzione**: Introduce le scorciatoie da tastiera per arrestare, mettere in pausa e riprendere la riproduzione multimediale 🚀
