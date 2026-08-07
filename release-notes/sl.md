@@ -4,6 +4,15 @@
 
 Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.md na GitHubu.
 
+## v26.7.9
+
+### ✨ Nove funkcije
+
+- ✨ **Celostna prenova aplikacije**: Obsežna vizualna in interakcijska osvežitev pogovornih oken, seznama multimedijske vsebine/glave, nastavitev in čarovnika za začetno nastavitev. Čarovnik za začetno nastavitev je zdaj zasnovan kot potek z enim vprašanjem na zaslon in s prikazom napredka. Vsa pozivna okna so bila zamenjana z enotnim, označenim pogovornim oknom, izbira obsega strani PDF (pri publikacijah in uvozu s povleci‑in‑spusti) pa zdaj uporablja izbirnik s predoglednimi sličicami namesto prostega vnosa besedila. Dodan je nov vodnik za hitri začetek po zaključku čarovnika. Vključuje tudi osvežen slog kartic/glav s sencami, prilagojenimi temnemu načinu, ter več popravkov kontrasta v temnem načinu (oznake aktivnih polj, odstotki napredka pri prenosu).
+- ✨ **Stran z nastavitvami**: Preoblikovana v dvopanelno postavitev z novim razdelkom za globalne nastavitve za stikala samodejnih/beta posodobitev, ki so bila premaknjena iz pogovornega okna »O programu« (to je zdaj izključno informativno).
+- ✨ **Gumb »Dodaj več multimedijske vsebine«**: Dodana nastavitev za izbiro tega, kateri razdelki shodov prikazujejo gumb »Dodaj več multimedijske vsebine«, skupaj z nastavitvijo za kompaktni način (samo ikona).
+- ✨ **Seznam multimedijske vsebine**: Postavke zdaj med dodajanjem prikazujejo okostja nalaganja namesto praznih mest. Skupine multimedijske vsebine prikazujejo število skritih postavk v znački (npr. »9 postavk (2 skriti)«). Podrejene postavke v skupini je mogoče razvrščati s povleci‑in‑spusti. Pri zelo ozkih širinah okna se postavke skrčijo v kompaktne oznake z namigi (tooltipi), da se vrstica ne preobremeni.
+
 ## v26.7.7
 
 ### ✨ Nove funkcije
