@@ -71,6 +71,7 @@ const {
   pathToFileURL,
   readdir,
   resolve,
+  setExecutable,
   unwatchFolders,
   unzip,
   watchFolder,
@@ -420,18 +421,31 @@ export const setupFFmpeg = async (): Promise<string> => {
     const ffmpegDir = await getFFmpegDirectory();
     const ffmpegZipPath = join(ffmpegDir, version.name);
 
+    let ffmpegPath: string;
     if (await validateExistingFile(ffmpegZipPath, version.size, ffmpegDir)) {
-      return currentState.ffmpegPath;
+      ffmpegPath = currentState.ffmpegPath;
+    } else {
+      const resolvedFfmpegDir = await downloadFfmpeg(
+        version.browser_download_url,
+        ffmpegDir,
+      );
+      ffmpegPath = await unzipAndFindFFmpeg(
+        join(resolvedFfmpegDir, version.name),
+        resolvedFfmpegDir,
+      );
     }
 
-    const resolvedFfmpegDir = await downloadFfmpeg(
-      version.browser_download_url,
-      ffmpegDir,
-    );
-    const ffmpegPath = await unzipAndFindFFmpeg(
-      join(resolvedFfmpegDir, version.name),
-      resolvedFfmpegDir,
-    );
+    // Unzipping does not carry permissions across, so the binary arrives without
+    // its executable bit and cannot be spawned on macOS or Linux. Both branches
+    // above funnel through here, including the one that reuses an
+    // already-downloaded copy, so an install left broken by an earlier version
+    // repairs itself on the next run rather than needing a fresh download.
+    if (!(await setExecutable(ffmpegPath))) {
+      // Leaving the path in the store would have the early return above hand out
+      // an unusable binary for the rest of the session.
+      currentState.ffmpegPath = '';
+      return '';
+    }
 
     currentState.ffmpegPath = ffmpegPath;
     return ffmpegPath;
