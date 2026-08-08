@@ -227,6 +227,9 @@ export const electronApi: ElectronApi = {
   setElectronUrlVariables: function (variables) {
     throw new Error('Function not implemented.');
   },
+  setExecutable: function (path) {
+    throw new Error('Function not implemented.');
+  },
   setHardwareAcceleration: function (disabled) {
     throw new Error('Function not implemented.');
   },

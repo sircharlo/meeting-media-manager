@@ -47,6 +47,7 @@ import {
   openFileDialog,
   openFolderDialog,
   saveFileDialog,
+  setExecutable,
   setPathProbeNotificationPaths,
   startSecurityScopedAccess,
   unwatchFolders,
@@ -425,6 +426,10 @@ handleIpcInvoke(
   'createVideoFromNonVideo',
   async (_e, path: string, ffmpegPath: string, outputDir?: string) =>
     createVideoFromNonVideo(path, ffmpegPath, outputDir),
+);
+
+handleIpcInvoke('setExecutable', async (_e, path: string) =>
+  setExecutable(path),
 );
 
 handleIpcInvoke(
