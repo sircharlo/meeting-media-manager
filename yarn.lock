@@ -2284,15 +2284,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/app-vite@npm:^3.3.1":
-  version: 3.3.1
-  resolution: "@quasar/app-vite@npm:3.3.1"
+"@quasar/app-vite@npm:^3.5.0":
+  version: 3.5.0
+  resolution: "@quasar/app-vite@npm:3.5.0"
   dependencies:
     "@clack/prompts": "npm:^1.7.0"
     "@quasar/art": "npm:^1.0.0"
     "@quasar/render-ssr-error": "npm:^2.2.4"
     "@quasar/ssl-certificate": "npm:^2.1.0"
-    "@quasar/vite-plugin": "npm:^1.12.0"
+    "@quasar/vite-plugin": "npm:^2.0.0"
     "@types/chrome": "npm:^0.2.2"
     "@types/cordova": "npm:^11.0.3"
     "@vitejs/plugin-vue": "npm:^6.0.8"
@@ -2311,7 +2311,7 @@ __metadata:
     mlly: "npm:^1.8.2"
     open: "npm:^11.0.0"
     picomatch: "npm:^4.0.5"
-    rolldown: "npm:^1.2.1"
+    rolldown: "npm:^1.2.2"
     sass-embedded: "npm:^1.100.0"
     semver: "npm:^7.8.5"
     serialize-javascript: "npm:^7.0.7"
@@ -2326,7 +2326,7 @@ __metadata:
     builder-util: ">= 26"
     electron-builder: ">= 22"
     pinia: ^2.0.0 || ^3.0.0 || ^4.0.0
-    quasar: ^2.21.3
+    quasar: ^2.24.0
     typescript: ">= 5"
     vite-plugin-vue-devtools: ">= 8"
     vue: ^3.2.29
@@ -2351,7 +2351,7 @@ __metadata:
       optional: true
   bin:
     quasar: ./bin/quasar.js
-  checksum: 10c0/b8331f2d76a466d1d303cc9d34c956b881d36a2bf9bbab67897fa277091698f5eeddd662a70b3914ae1f48d8fd55e39bf78af9e5e551e6e2d0347ee06b92c3fa
+  checksum: 10c0/be69ebcf22a823694a47937b208d3c6f168fed8ba598863672f575986fa48bad9c860904579750e9f4b008debf13bec8faad98481f5c1c0c637a39aebd5b7000
   languageName: node
   linkType: hard
 
@@ -2397,6 +2397,18 @@ __metadata:
     vite: ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
     vue: ^3.0.0
   checksum: 10c0/68ff6d02e40145561737b2e7e3db6f48378ea30e9e0d32a88fa65ea929999ac38fab8e465d9cc6cd1f578f8f64c2aae84892bb1e2cec18e4402595432cfcbd69
+  languageName: node
+  linkType: hard
+
+"@quasar/vite-plugin@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@quasar/vite-plugin@npm:2.0.0"
+  peerDependencies:
+    "@vitejs/plugin-vue": ^6.0.5
+    quasar: ^2.24.0
+    vite: ^8.0.0
+    vue: ^3.0.0
+  checksum: 10c0/51e19da0c0c228059da0e5018c9d8b5f1ed7763bf06776250b254302f0f9745d998006150326165d3630f55dd371afbfa3306a334ee10dd3b04efba9ce75d64e
   languageName: node
   linkType: hard
 
@@ -8690,7 +8702,7 @@ __metadata:
     "@numairawan/video-duration": "npm:^1.0.0"
     "@opentelemetry/api-logs": "npm:^0.221.0"
     "@pinia/testing": "npm:^2.0.1"
-    "@quasar/app-vite": "npm:^3.3.1"
+    "@quasar/app-vite": "npm:^3.5.0"
     "@quasar/extras": "npm:^2.0.2"
     "@quasar/vite-plugin": "npm:^1.12.0"
     "@sentry/core": "npm:^10.69.0"
@@ -10558,7 +10570,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rolldown@npm:^1.2.1":
+"rolldown@npm:^1.2.2":
   version: 1.2.3
   resolution: "rolldown@npm:1.2.3"
   dependencies:
