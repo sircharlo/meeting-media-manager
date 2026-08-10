@@ -46,28 +46,47 @@
           ref="carousel"
           v-model="spotlitFeature"
           animated
-          autoplay
+          :autoplay="autoplayDelay"
           class="bg-accent-100 full-width rounded-borders"
           infinite
           padding
-          style="height: 200px"
+          style="height: 220px"
           vertical
+          @mouseenter="autoplayDelay = false"
+          @mouseleave="autoplayDelay = 5000"
         >
           <q-carousel-slide
             v-for="(feature, index) in parsedFeatures"
             :key="index"
-            class="column no-wrap flex-center q-gutter-md q-pa-lg position-relative"
+            class="column no-wrap q-pa-md"
             :name="index + 1"
           >
-            <div class="text-subtitle2 text-center">
+            <div class="row items-center no-wrap q-mb-sm q-gutter-x-sm">
+              <q-icon
+                v-if="feature.title"
+                color="primary"
+                name="mmm-shimmer"
+                size="18px"
+              />
+              <div
+                v-if="feature.title"
+                class="col text-subtitle2 text-weight-bold text-primary ellipsis-2-lines"
+              >
+                {{ feature.title }}
+              </div>
+              <q-space v-else />
+              <q-badge
+                class="text-weight-medium"
+                color="accent-400"
+                :label="feature.version"
+                text-color="white"
+              />
+            </div>
+            <div
+              class="col feature-carousel__scroll scroll full-width text-body2"
+            >
               {{ feature.text }}
             </div>
-            <q-badge
-              class="absolute-bottom-left q-mb-md text-caption"
-              color="accent-400"
-              :label="feature.version"
-              text-color="white"
-            />
           </q-carousel-slide>
           <template #control>
             <q-carousel-control
@@ -82,7 +101,7 @@
                 round
                 size="sm"
                 text-color="white"
-                @click="carousel.previous()"
+                @click="carousel?.previous()"
               >
                 <q-tooltip :delay="500">
                   {{ t('previous') }}
@@ -95,7 +114,7 @@
                 round
                 size="sm"
                 text-color="white"
-                @click="carousel.next()"
+                @click="carousel?.next()"
               >
                 <q-tooltip :delay="500">
                   {{ t('next') }}
@@ -161,6 +180,7 @@
 import { watchImmediate, whenever } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
+import { QCarousel } from 'quasar';
 import { fetchReleaseNotes } from 'src/utils/api';
 import { wasUpdateInstalled } from 'src/utils/fs';
 import { camelToKebabCase, sleep } from 'src/utils/general';
@@ -209,10 +229,18 @@ const { currentCongregation } = storeToRefs(useCurrentStateStore());
 
 const releaseNotes = ref('');
 const releaseNotesExpansionItem = ref(false);
-const parsedFeatures = ref<{ text: string; version: string }[]>([]);
+const parsedFeatures = ref<{ text: string; title: string; version: string }[]>(
+  [],
+);
 const spotlitFeature = ref(1);
+const autoplayDelay = ref<false | number>(5000);
 
-const carousel = ref();
+const carousel = ref<QCarousel>();
+
+// Older release notes prefix bullets with a variety of emoji (flags, tools, etc.),
+// not just ✨, before the bold title - strip any of them so the title still parses.
+const LEADING_EMOJI =
+  /^(?:\p{Extended_Pictographic}\uFE0F?|\p{Regional_Indicator})+\s*/u;
 
 const parseReleaseNotes = () => {
   const md = releaseNotes.value;
@@ -230,8 +258,11 @@ const parseReleaseNotes = () => {
         currentVersion = `v${currentVersion}`;
       }
     } else if (line.startsWith('- ')) {
+      const raw = line.replace(/^-\s*/, '').replace(LEADING_EMOJI, '');
+      const titleMatch = raw.match(/^\*\*(.+?)\*\*:?\s*(.*)$/);
       parsedFeatures.value.push({
-        text: line.replace(/^- ✨?\s*/, '').replace(/\*\*(.*?)\*\*/, '$1'),
+        text: (titleMatch ? (titleMatch[2] ?? '') : raw).trim(),
+        title: (titleMatch?.[1] ?? '').trim(),
         version: currentVersion,
       });
     }
@@ -256,3 +287,17 @@ watchImmediate(locale, () => {
   loadReleaseNotes();
 });
 </script>
+
+<style scoped>
+/* Hints that the feature description keeps going below the fold instead of
+   hard-clipping the last visible line when it overflows the fixed-height slide. */
+.feature-carousel__scroll {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 calc(100% - 18px),
+    transparent
+  );
+  line-height: 1.4;
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 18px), transparent);
+}
+</style>

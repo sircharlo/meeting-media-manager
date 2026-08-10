@@ -14,7 +14,8 @@
 }
 
 .app-main-scroll,
-.action-popup__scroll {
+.action-popup__scroll,
+.feature-carousel__scroll {
   scrollbar-width: thin;
 
   &::-webkit-scrollbar {
@@ -40,8 +41,13 @@
   padding-top: 0 !important;
 }
 
+.feature-carousel__scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
 body.body--light .app-main-scroll,
-body.body--light .action-popup__scroll {
+body.body--light .action-popup__scroll,
+body.body--light .feature-carousel__scroll {
   scrollbar-color: rgba($primary, 0.45) transparent;
 
   &::-webkit-scrollbar-thumb {
@@ -54,7 +60,8 @@ body.body--light .action-popup__scroll {
 }
 
 body.body--dark .app-main-scroll,
-body.body--dark .action-popup__scroll {
+body.body--dark .action-popup__scroll,
+body.body--dark .feature-carousel__scroll {
   scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
 
   &::-webkit-scrollbar-thumb {
