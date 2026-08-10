@@ -4,7 +4,7 @@
 
 Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGELOG.md su GitHub.
 
-## v26.7.9
+## v26.8.0
 
 ### ✨ Nuove Funzionalità
 
