@@ -4,7 +4,7 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
-## v26.7.9
+## v26.8.0
 
 ### ✨ New Features
 
