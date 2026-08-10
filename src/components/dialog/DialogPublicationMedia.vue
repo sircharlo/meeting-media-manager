@@ -1314,14 +1314,16 @@ async function performSearch() {
   }
 }
 
-async function refreshPdfAvailability() {
+async function refreshPdfAvailability(issueOverride?: string) {
   try {
     pdfImportAvailable.value = false;
     if (step.value !== 'article' || !selection.publication) return;
     const lang = (currentSettings.value?.lang || 'E') as JwLangCode;
-    const issue = selection.month
-      ? buildIssue(selection.year, selection.month, selection.publication)
-      : '0';
+    const issue =
+      issueOverride ??
+      (selection.month
+        ? buildIssue(selection.year, selection.month, selection.publication)
+        : '0');
     const info = await fetchPubMediaLinks(
       {
         fileformat: 'PDF',
@@ -1596,7 +1598,7 @@ async function selectSearchResult(result: SearchResultItem) {
 
     if (jwpubFileArray?.length) {
       await handleJwpubResult(publication, issue, lang);
-      await refreshPdfAvailability();
+      await refreshPdfAvailability(issue);
     } else {
       await handleMediaResult(
         pubMediaLinks,
