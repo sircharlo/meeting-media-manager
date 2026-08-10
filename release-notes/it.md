@@ -260,22 +260,22 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ### ✨ Nuove Funzionalità
 
-- **funzione**: La presentazione del sito web è ora supportata su macOS 🚀
-- **funzione**: Introduce le scorciatoie da tastiera per arrestare, mettere in pausa e riprendere la riproduzione multimediale 🚀
-- **funzione**: Aggiunto il supporto per impostare l'indirizzo web da cui i media dovrebbero essere scaricati 🚀
-- **caratteristica**: Aggiunta la scena-selettore istantaneo di OBS Studio e la funzionalità di selezione della scena revisionata nelle impostazioni
-- **funzione**: sito web di documentazione esteso per supportare più lingue
+- 🖥️ **Website Presentation on macOS**: Presenting the website is now supported on macOS 🚀
+- ⌨️ **Playback Keyboard Shortcuts**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
+- 🌐 **Custom Media Download Address**: Added support for setting the web address from which media should be downloaded 🚀
+- 🎬 **OBS Instant Scene Picker**: Added OBS Studio instant scene picker and overhauled scene picker functionality in settings
+- 📖 **More Documentation Languages**: Expanded documentation website to support more languages
 
 ## 24.10.10
 
 ### ✨ Nuove Funzionalità
 
-- **nuovo**: Aggiunte scorciatoie da tastiera per navigare all'elemento multimediale successivo/precedente
-- **nuovo**: Aggiunto un menu con il tasto destro del mouse agli elementi multimediali per nascondere gli elementi multimediali e rinominarli
-- **nuovo**: I tempi video tagliati sono ora rispettati nelle playlist JWL importate
+- ⌨️ **Media Navigation Shortcuts**: Added keyboard shortcuts to navigate to the next/previous media item
+- 🖱️ **Media Item Right-Click Menu**: Added a right-click menu to media items to hide media items and rename them
+- ✂️ **Trimmed JWL Playlist Import**: Trimmed video times are now respected in imported JWL playlists
 
 ## 24.10.9
 
 ### ✨ Nuove Funzionalità
 
-- **funzione**: Aggiunta un'opzione per eliminare tutti i file multimediali aggiuntivi per il giorno attualmente selezionato
+- 🗑️ **Delete Extra Media for a Day**: Added an option to delete all extra media files for the currently selected day

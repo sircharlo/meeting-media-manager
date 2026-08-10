@@ -261,22 +261,22 @@ No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera 
 
 ### ✨ Te mau rave’a ‘āpī
 
-- 🚀 Fa’a’itera’a: Ua fariihia i teie nei te fa’a’itera’a i te tahua iteneta i ni’a i te matini macOS.
-- 🚀 Mau tāvirira’a papatāpuni: Ua tu’uhia mai te mau tāvirira’a papatāpuni nō te fa’a’ore, te fa’ata’a, e te fa’ahiti-fa’ahou-ra’a i te harura’a mēdia.
-- Mā’itira’a i te vāhi uta-mai-ra’a mēdia: Ua tu’uhia mai te rāve’a nō te fa’ata’a i te vāhi iteneta e uta-mai-hia ai te mau mēdia 🚀
-- 🚀 Mā’itira’a ta’o-rā’i no te OBS Studio: Ua tu’uhia mai te rāve’a mā’itira’a ta’o-rā’i vitiviti no te OBS Studio, e ua fa’a’āpī-roa-hia te fa’anahora’a o te mā’itira’a ta’o-rā’i i roto i te mau fa’anahora’a
-- 🚀 Ha’a’amura’a i te tahua iteneta nō te mau ha’amāramaramara’a: Ua fa’a’ā’ano-hia te tahua iteneta nō te mau ha’amāramaramara’a ’ia farii i te tahi atu mau reo
+- 🖥️ **Website Presentation on macOS**: Presenting the website is now supported on macOS 🚀
+- ⌨️ **Playback Keyboard Shortcuts**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
+- 🌐 **Custom Media Download Address**: Added support for setting the web address from which media should be downloaded 🚀
+- 🎬 **OBS Instant Scene Picker**: Added OBS Studio instant scene picker and overhauled scene picker functionality in settings
+- 📖 **More Documentation Languages**: Expanded documentation website to support more languages
 
 ## 24.10.10
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ✨ Mau tāvirira’a papatāpuni nō te tere i roto i te mau mēdia: Ua tu’uhia mai te mau tāvirira’a papatāpuni nō te haere i te mēdia i muri mai ’aore rā i te mēdia i mua nei
-- ✨ Tāpura i te pae’au atau: Ua tu’uhia mai te hō’ē tāpura i te pae’au atau i ni’a i te mau mēdia, nō te huna i te mau mēdia ’aore rā nō te taui i tō rātou i’oa
-- ✨ Fa’a’ohipa-’aunoa-ra’a i te mau tau ’i’iri video: Ua fa’a’ohipahia i teie nei te mau tau ’i’iri (trimmed times) o te mau video i roto i te mau tapura (playlists) JWL i uta-mai-hia mai
+- ⌨️ **Media Navigation Shortcuts**: Added keyboard shortcuts to navigate to the next/previous media item
+- 🖱️ **Media Item Right-Click Menu**: Added a right-click menu to media items to hide media items and rename them
+- ✂️ **Trimmed JWL Playlist Import**: Trimmed video times are now respected in imported JWL playlists
 
 ## 24.10.9
 
 ### ✨ Te mau rave’a ‘āpī
 
-- 🚀 Mā’itira’a nō te ’iriti i te mau mēdia hau: Ua tu’uhia mai te hō’ē rāve’a nō te ’iriti i te mau mēdia hau ato’a nō te mahana i mā’itihia i teie nei
+- 🗑️ **Delete Extra Media for a Day**: Added an option to delete all extra media files for the currently selected day
