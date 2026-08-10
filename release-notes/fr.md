@@ -8,10 +8,10 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 ### ✨ Nouvelles fonctionnalités
 
-- ✨ **App-Wide Redesign**: A broad visual and interaction refresh across dialogs, the media list/header, Settings, and the Setup Wizard. The Setup Wizard is now a one-question-per-screen flow with a progress bar. All prompts were replaced with a consistent branded dialog, and PDF page-range selection (for publication and drag-and-drop imports) now uses a thumbnail-grid picker instead of a free-text prompt. Added a new Quick Start Guide tour after the Setup Wizard completes. Also includes refreshed card/header styling with dark-mode-aware shadows and several dark-mode contrast fixes (focused field labels, download-progress percentages).
-- ✨ **Settings Page**: Reworked into a two-pane layout, with a new global Preferences section for auto-update/beta-update toggles moved out of the About dialog (which is now purely informational).
-- ✨ **Add More Media Button**: Added a setting to choose exactly which meeting sections show the "add more media" shortcut button, along with a setting for a compact (icon-only) mode.
-- ✨ **Media List**: Items now show loading skeletons while being added instead of appearing empty, media groups show a hidden-item count in their badge (e.g. "9 items (2 hidden)"), children within a group can be reordered via drag-and-drop, and at very narrow window widths items collapse into compact, tooltip-carrying chips instead of crowding the row.
+- ✨ **Refonte complète de l'application** : Une mise à jour visuelle et fonctionnelle à grande échelle touchant les boîtes de dialogue, l'en-tête et la liste des médias, les paramètres et l'assistant de configuration. L'assistant de configuration se présente désormais sous la forme d'un parcours comportant une question par écran, accompagné d'une barre de progression. Toutes les invites ont été remplacées par une boîte de dialogue cohérente avec l'identité visuelle de l'application, et la sélection d'une plage de pages dans un PDF (pour les publications et les importations par glisser-déposer) s'effectue désormais à l'aide d'un sélecteur sous forme de grille de vignettes, au lieu d'une invite de saisie libre. Ajout d'un nouveau guide de démarrage rapide à la fin de l'assistant d'installation. Comprend également un nouveau style pour les fiches et les en-têtes, avec des ombres adaptées au mode sombre, ainsi que plusieurs corrections de contraste en mode sombre (libellés des champs actifs, pourcentages de progression des téléchargements).
+- ✨ **Page des paramètres** : Réorganisée en une mise en page à deux volets, avec une nouvelle section « Préférences globales » permettant d'activer ou de désactiver les mises à jour automatiques et les mises à jour bêta, qui a été déplacée hors de la boîte de dialogue « À propos » (qui est désormais purement informationnelle).
+- ✨ **Bouton « Ajouter d'autres éléments multimédias »** : Ajout d'un paramètre permettant de choisir précisément les sections de la réunion pour lesquelles le bouton de raccourci « Ajouter d'autres éléments multimédias » doit s'afficher, ainsi qu'un paramètre pour un mode compact qui n'affiche que les icônes.
+- ✨ **Liste des médias** : Les éléments s'affichent désormais sous forme de silhouettes de chargement pendant leur ajout, au lieu de ne pas apparaître du tout ; les groupes de médias indiquent le nombre d'éléments masqués dans leur badge (par exemple « 9 éléments (2 masq.) ») ; les éléments secondaires d'un groupe peuvent être réorganisés par glisser-déposer ; et lorsque la largeur de la fenêtre est très réduite, les éléments se replient en petites icônes compactes accompagnées d'une info-bulle, au lieu d'encombrer la ligne.
 
 ## v26.7.7
 
@@ -260,22 +260,22 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 ### ✨ Nouvelles fonctionnalités
 
-- 🖥️ **Website Presentation on macOS**: Presenting the website is now supported on macOS 🚀
-- ⌨️ **Playback Keyboard Shortcuts**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
-- 🌐 **Custom Media Download Address**: Added support for setting the web address from which media should be downloaded 🚀
-- 🎬 **OBS Instant Scene Picker**: Added OBS Studio instant scene picker and overhauled scene picker functionality in settings
-- 📖 **More Documentation Languages**: Expanded documentation website to support more languages
+- 🖥️ **Présentation du site web sous macOS** : La rediffusion du site web est désormais prise en charge sous macOS 🚀
+- ⌨️ **Raccourcis clavier pour la lecture** : Ajout de raccourcis clavier pour arrêter, mettre en pause et reprendre la lecture des fichiers multimédias 🚀
+- 🌐 **Adresse de téléchargement personnalisée des fichiers multimédias** : Ajout de la prise en charge de la configuration de l'adresse Web à partir de laquelle les fichiers multimédias doivent être téléchargés 🚀
+- 🎬 **Sélecteur de scènes instantané OBS** : Ajout d'un sélecteur de scènes instantané pour OBS Studio et refonte de la fonctionnalité du sélecteur de scènes dans les paramètres
+- 📖 **Plus de langues pour la documentation** : Le site web de documentation a été enrichi pour prendre en charge davantage de langues
 
 ## 24.10.10
 
 ### ✨ Nouvelles fonctionnalités
 
-- ⌨️ **Media Navigation Shortcuts**: Added keyboard shortcuts to navigate to the next/previous media item
-- 🖱️ **Media Item Right-Click Menu**: Added a right-click menu to media items to hide media items and rename them
-- ✂️ **Trimmed JWL Playlist Import**: Trimmed video times are now respected in imported JWL playlists
+- ⌨️ **Raccourcis de navigation entre les fichiers multimédias** : Ajout de raccourcis clavier pour passer au fichier multimédia suivant ou précédent
+- 🖱️ **Menu contextuel des éléments multimédias** : Ajout d'un menu contextuel permettant de masquer et de renommer les éléments multimédias
+- ✂️ **Importation de playlists JWL avec durées raccourcies** : Les durées raccourcies des vidéos sont désormais prises en compte dans les playlists JWL importées
 
 ## 24.10.9
 
 ### ✨ Nouvelles fonctionnalités
 
-- 🗑️ **Delete Extra Media for a Day**: Added an option to delete all extra media files for the currently selected day
+- 🗑️ **Supprimer les fichiers multimédias supplémentaires pour une journée** : Ajout d'une option permettant de supprimer tous les fichiers multimédias supplémentaires correspondant à la journée actuellement sélectionnée
