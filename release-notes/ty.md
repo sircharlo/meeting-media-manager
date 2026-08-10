@@ -4,7 +4,7 @@
 
 No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera parau, a hi’o i ta māua pu’e parau CHANGELOG.md i ni’a i GitHub.
 
-## v26.7.9
+## v26.8.0
 
 ### ✨ Te mau rave’a ‘āpī
 
