@@ -261,22 +261,22 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- **feat**: Predvajanje spletnega mesta je zdaj podprto tudi v macOS 🚀
-- **feat**: Dodane so bližnjice na tipkovnici za ustavitev, premor in nadaljevanje predvajanja multimedijske vsebine 🚀
-- **feat**: Dodana podpora za nastavitev spletnega naslova, s katerega naj se prenaša multimedijska vsebina 🚀
-- **feat**: Dodan je takojšnji izbirnik prizorov za OBS Studio in prenovljena funkcionalnost izbirnika prizorov v nastavitvah
-- **feat**: Razširjeno spletno mesto z dokumentacijo, ki zdaj podpira več jezikov
+- 🖥️ **Website Presentation on macOS**: Presenting the website is now supported on macOS 🚀
+- ⌨️ **Playback Keyboard Shortcuts**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
+- 🌐 **Custom Media Download Address**: Added support for setting the web address from which media should be downloaded 🚀
+- 🎬 **OBS Instant Scene Picker**: Added OBS Studio instant scene picker and overhauled scene picker functionality in settings
+- 📖 **More Documentation Languages**: Expanded documentation website to support more languages
 
 ## 24.10.10
 
 ### ✨ Nove funkcije
 
-- **novo**: Dodane bližnjice na tipkovnici za premikanje na naslednji oziroma prejšnji element multimedijske vsebine
-- **novo**: Dodan desni klik meni na elemente multimedijske vsebine za skrivanje elementov in preimenovanje
-- **novo**: Obrezani časi videov se zdaj pravilno upoštevajo pri uvoženih JWL seznamih predvajanja
+- ⌨️ **Media Navigation Shortcuts**: Added keyboard shortcuts to navigate to the next/previous media item
+- 🖱️ **Media Item Right-Click Menu**: Added a right-click menu to media items to hide media items and rename them
+- ✂️ **Trimmed JWL Playlist Import**: Trimmed video times are now respected in imported JWL playlists
 
 ## 24.10.9
 
 ### ✨ Nove funkcije
 
-- **feat**: Dodana možnost za brisanje vseh dodatnih multimedijskih datotek za trenutno izbrani dan
+- 🗑️ **Delete Extra Media for a Day**: Added an option to delete all extra media files for the currently selected day
