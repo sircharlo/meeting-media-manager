@@ -54,7 +54,7 @@
     "check-disk-space": "^3.4.0",
     "cheerio": "^1.2.0",
     "chokidar": "^5.0.0",
-    "countries-and-timezones": "^3.9.0",
+    "countries-and-timezones": "^3.10.0",
     "dompurify": "^3.4.13",
     "electron-dl-manager": "^4.2.3",
     "electron-updater": "^6.8.9",
