@@ -8776,7 +8776,7 @@ __metadata:
     type-fest: "npm:^5.8.0"
     typescript: "npm:6.0.3"
     upath: "npm:^3.0.8"
-    vite: "npm:^8.2.0"
+    vite: "npm:^8.2.1"
     vitepress: "npm:^2.0.0-alpha.19"
     vitest: "npm:^4.1.10"
     vue: "npm:^3.5.40"
@@ -10570,7 +10570,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rolldown@npm:^1.2.2":
+"rolldown@npm:^1.2.2, rolldown@npm:~1.2.1":
   version: 1.2.3
   resolution: "rolldown@npm:1.2.3"
   dependencies:
@@ -12571,6 +12571,63 @@ __metadata:
   bin:
     vite: bin/vite.js
   checksum: 10c0/bd6a5e7b28973bac06f0e8e54833800e16d1bf38a8aef2acbfea5bbaed6d8fc715fd7cc9b0ec75ef1adbde149bb9167b085c17fe7edcd3a190b4eda16d474e5c
+  languageName: node
+  linkType: hard
+
+"vite@npm:^8.2.1":
+  version: 8.2.1
+  resolution: "vite@npm:8.2.1"
+  dependencies:
+    fsevents: "npm:~2.3.3"
+    lightningcss: "npm:^1.33.0"
+    picomatch: "npm:^4.0.5"
+    postcss: "npm:^8.5.25"
+    rolldown: "npm:~1.2.1"
+    tinyglobby: "npm:^0.2.17"
+  peerDependencies:
+    "@types/node": ^20.19.0 || >=22.12.0
+    "@vitejs/devtools": ^0.4.0
+    esbuild: ^0.27.0 || ^0.28.0
+    jiti: ">=1.21.0"
+    less: ^4.0.0
+    sass: ^1.70.0
+    sass-embedded: ^1.70.0
+    stylus: ">=0.54.8"
+    sugarss: ^5.0.0
+    terser: ^5.16.0
+    tsx: ^4.8.1
+    yaml: ^2.4.2
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+    "@vitejs/devtools":
+      optional: true
+    esbuild:
+      optional: true
+    jiti:
+      optional: true
+    less:
+      optional: true
+    sass:
+      optional: true
+    sass-embedded:
+      optional: true
+    stylus:
+      optional: true
+    sugarss:
+      optional: true
+    terser:
+      optional: true
+    tsx:
+      optional: true
+    yaml:
+      optional: true
+  bin:
+    vite: bin/vite.js
+  checksum: 10c0/e958dd07502deeb552f04dba59418ff1eb63183add416fd7a3e3badabf5d36edc6834b94c916f9f9233f976bb1671e3e9989d90e869059af07b0d43f7fc078c2
   languageName: node
   linkType: hard
 
