@@ -3297,6 +3297,10 @@ export const dynamicMediaMapper = async (
           cbs: item.cbs,
           children: [],
           extractCaption: item.extractCaption,
+          // Captured from this first child before it's overwritten below -
+          // this is the group's own paragraph-ordinal position among its
+          // siblings/other top-level items, used by the .sort() right after
+          // this reduce() and unrelated to the overwrite that follows.
           sortOrderOriginal: item.sortOrderOriginal,
           source: item.source,
           title: item.extractCaption,
@@ -3304,7 +3308,21 @@ export const dynamicMediaMapper = async (
           uniqueId: `group-${item.extractCaption}`,
         };
 
-        acc[item.extractCaption]?.children?.push(item);
+        // Every child sharing this extractCaption typically also shares the
+        // same BeginParagraphOrdinal (that's the granularity of the API
+        // field - it identifies a paragraph, not a specific piece of media
+        // within it), which is exactly why they got grouped together here
+        // in the first place. Left as-is, every child in a group would
+        // carry an identical (or otherwise non-distinguishing)
+        // sortOrderOriginal, making it useless for detecting/restoring this
+        // group's own child order (see HeaderCalendar's mediaSortCanBeReset/
+        // resetSort). Overwriting it with the child's position within this
+        // group is safe: once an item has an extractCaption it only ever
+        // exists as a child from here on, so nothing downstream expects its
+        // original paragraph-ordinal value.
+        const group = acc[item.extractCaption];
+        item.sortOrderOriginal = group?.children?.length ?? 0;
+        group?.children?.push(item);
         return acc;
       }, {}),
     ).sort((a, b) => {

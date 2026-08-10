@@ -138,7 +138,7 @@ export interface SettingsItem {
   order?: number;
   rules?: SettingsItemRule[];
   step?: number;
-  subgroup?: SettingsItemSubgroup;
+  subgroup: SettingsItemSubgroup;
   type: SettingsItemType;
   unless?: (keyof SettingsValues)[] | keyof SettingsValues;
 }
@@ -171,18 +171,26 @@ export type SettingsItems = Record<keyof SettingsValues, SettingsItem>;
 export type SettingsItemSubgroup =
   | 'addMediaButton'
   | 'cache'
+  | 'congregationIdentity'
   | 'customEvents'
   | 'dangerZone'
+  | 'display'
+  | 'dragAndDrop'
   | 'folderWatcher'
   | 'keyboardShortcuts'
+  | 'language'
   | 'media-display'
   | 'mediaExport'
   | 'meetingRecording'
+  | 'meetingSchedule'
   | 'meetingScheduleChange'
   | 'obsStudio'
   | 'pinyin'
+  | 'playback'
   | 'setupWizard'
   | 'setupWizard.backgroundMusic'
+  | 'specialDates'
+  | 'startup'
   | 'subtitles'
   | 'timerColors'
   | 'timerCountdown'
@@ -289,6 +297,7 @@ export interface SettingsValues {
   shortcutMediaStop: null | string;
   shortcutMediaWindow: null | string;
   shortcutMusic: null | string;
+  showMediaDragHandle: boolean;
   suppressHardwareAccelerationReminder: boolean;
   timerAutoOpen: boolean;
   timerBackgroundColor: string;

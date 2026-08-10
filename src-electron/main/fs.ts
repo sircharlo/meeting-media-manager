@@ -12,6 +12,7 @@ import { createReadStream, createWriteStream } from 'node:fs';
 import {
   copyFile,
   mkdir,
+  open,
   readdir,
   readFile,
   rm,
@@ -592,6 +593,58 @@ const getProbePathContext = (basePath: string) => {
   return { resolvedBase, testDir, testFile };
 };
 
+const PROBE_EXISTING_FILE_MAX_DEPTH = 4;
+const PROBE_EXISTING_FILE_SCAN_LIMIT = 200;
+
+/**
+ * Finds a pre-existing regular file under basePath (bounded depth/breadth,
+ * so this stays cheap even for a large cache folder). Returns undefined if
+ * the folder is empty/unreadable - there's nothing pre-existing to probe
+ * yet, which is expected on first-ever setup.
+ */
+const findExistingProbeFile = async (
+  basePath: string,
+  depth = 0,
+): Promise<string | undefined> => {
+  if (depth > PROBE_EXISTING_FILE_MAX_DEPTH) return undefined;
+
+  const dirents = await readdir(basePath, { withFileTypes: true }).catch(
+    () => [],
+  );
+
+  const subdirs: string[] = [];
+  for (const dirent of dirents.slice(0, PROBE_EXISTING_FILE_SCAN_LIMIT)) {
+    const fullPath = join(basePath, dirent.name);
+    if (dirent.isFile()) return fullPath;
+    if (dirent.isDirectory()) subdirs.push(fullPath);
+  }
+
+  for (const subdir of subdirs) {
+    const found = await findExistingProbeFile(subdir, depth + 1);
+    if (found) return found;
+  }
+
+  return undefined;
+};
+
+/**
+ * Opens and reads a byte of an existing file to confirm it's actually
+ * readable. macOS's per-app Documents/Desktop/Downloads protection (TCC)
+ * only gates reading files the app didn't just create itself - a brand-new
+ * probe file (create, write, delete) is always readable regardless of
+ * whether the user has actually granted folder access, so it can't detect a
+ * missing/stale grant. Probing a file that already existed before this
+ * process touched the folder exercises the real read path instead.
+ */
+const verifyExistingFileReadable = async (filePath: string) => {
+  const handle = await open(filePath, 'r');
+  try {
+    await handle.read(Buffer.alloc(1), 0, 1, 0);
+  } finally {
+    await handle.close();
+  }
+};
+
 const isInvalidWindowsResolvedPath = (resolvedBase: string) => {
   if (process.platform !== 'win32') return false;
 
@@ -771,6 +824,8 @@ export function isUsablePath(basePath?: string): Promise<boolean> {
         process.platform,
       );
 
+      let probeStage: 'cleanup' | 'read-existing' | 'write' = 'write';
+
       try {
         if (isInvalidWindowsResolvedPath(resolvedBase)) {
           throw new Error('Invalid Windows path resolved for filesystem probe');
@@ -781,7 +836,16 @@ export function isUsablePath(basePath?: string): Promise<boolean> {
         await writeFile(testFile, 'ok');
         await delay(PATH_PROBE_SETTLE_DELAY_MS);
 
+        probeStage = 'cleanup';
         await cleanupProbe(basePath, testDir, testFile);
+
+        if (process.platform === 'darwin') {
+          probeStage = 'read-existing';
+          const existingFile = await findExistingProbeFile(resolvedBase);
+          if (existingFile) {
+            await verifyExistingFileReadable(existingFile);
+          }
+        }
 
         return true;
       } catch (e) {
@@ -804,6 +868,7 @@ export function isUsablePath(basePath?: string): Promise<boolean> {
             hasConfiguredNetworkPath:
               hasPossibleNetworkPathInNotificationSettings(),
             likelyNetworkPath,
+            probeStage,
             resolvedBase,
             testDir,
           },
@@ -814,7 +879,13 @@ export function isUsablePath(basePath?: string): Promise<boolean> {
           captureElectronError(e, {
             contexts: {
               fn: {
-                args: { basePath, likelyNetworkPath, resolvedBase, testDir },
+                args: {
+                  basePath,
+                  likelyNetworkPath,
+                  probeStage,
+                  resolvedBase,
+                  testDir,
+                },
                 name: 'isUsablePath',
               },
             },

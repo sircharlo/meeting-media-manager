@@ -226,6 +226,7 @@
                       checked-icon="mmm-check"
                       :color="autoUpdateEnabled ? 'primary' : 'negative'"
                       keep-color
+                      name="autoUpdateApp"
                     />
                   </q-item-section>
                 </q-item>
@@ -256,6 +257,7 @@
                       v-model="betaUpdatesEnabled"
                       checked-icon="mmm-check"
                       color="negative"
+                      name="receiveBetaUpdates"
                     />
                   </q-item-section>
                 </q-item>
@@ -290,6 +292,8 @@
                         : ''
                     "
                     tag="label"
+                    @keydown.capture="stopSpaceForEditableTarget"
+                    @keyup.capture="stopSpaceForEditableTarget"
                   >
                     <q-item-section>
                       <q-item-label>
@@ -485,6 +489,24 @@ const toggleSettingsFilter = () => {
   }
 
   openSettingsFilter();
+};
+
+const EDITABLE_TAGS = new Set(['INPUT', 'SELECT', 'TEXTAREA']);
+
+// Every settings row is a QItem rendered with tag="label", which makes Quasar
+// treat it as clickable and swallow the Space key at the row level (so Space
+// can activate the row, e.g. for toggle settings) before it ever reaches a
+// focused control nested inside it. That breaks typing a literal space into
+// text/select inputs, so stop it from bubbling past the control that's
+// actually focused.
+const stopSpaceForEditableTarget = (event: KeyboardEvent) => {
+  if (
+    event.code === 'Space' &&
+    event.target instanceof HTMLElement &&
+    (EDITABLE_TAGS.has(event.target.tagName) || event.target.isContentEditable)
+  ) {
+    event.stopPropagation();
+  }
 };
 
 onMounted(() => {

@@ -13,6 +13,7 @@ import { Buffer } from 'buffer'; // NOSONAR: this is not nodejs Buffer, it's the
 import { Platform } from 'quasar';
 import { FULL_HD } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { getFilesystemErrorCode } from 'src/shared/filesystem-errors';
 import { fetchJson } from 'src/utils/api';
 import { getCachedUserDataPath, getPublicationDirectory } from 'src/utils/fs';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
@@ -75,6 +76,46 @@ const {
   watchFolder,
 } = globalThis.electronApi;
 const { pathExists, stat, writeFile } = fs;
+
+const THUMBNAIL_WRITE_RETRY_COUNT = 3;
+const THUMBNAIL_WRITE_RETRY_DELAY_MS = 250;
+const THUMBNAIL_WRITE_RETRYABLE_CODES = new Set(['EBUSY', 'EPERM']);
+
+const delay = (ms: number) =>
+  new Promise<void>((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
+/**
+ * Writes a freshly-captured video-frame thumbnail next to its source video,
+ * retrying a few times on EBUSY/EPERM. On Windows those codes commonly show
+ * up as a transient lock on a file that just landed in the folder (AV
+ * real-time scan, search indexer, ...) rather than a real permission
+ * problem - a short retry gives that lock a chance to clear before we give
+ * up and report it.
+ */
+const writeThumbnailFile = async (thumbnailPath: string, imageData: Buffer) => {
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt <= THUMBNAIL_WRITE_RETRY_COUNT; attempt++) {
+    try {
+      await writeFile(thumbnailPath, imageData);
+      return;
+    } catch (error) {
+      lastError = error;
+      const code = getFilesystemErrorCode(error);
+      if (
+        attempt === THUMBNAIL_WRITE_RETRY_COUNT ||
+        !THUMBNAIL_WRITE_RETRYABLE_CODES.has(code ?? '')
+      ) {
+        throw error;
+      }
+      await delay(THUMBNAIL_WRITE_RETRY_DELAY_MS * (attempt + 1));
+    }
+  }
+
+  throw lastError;
+};
 
 const withCacheBust = (url: string, forceRefresh?: boolean) => {
   if (!url || !forceRefresh) return url;
@@ -233,7 +274,7 @@ const getThumbnailFromVideoPath = async (
       !watchDir ||
       !dirname(thumbnailPath).startsWith(watchDir)
     ) {
-      await writeFile(thumbnailPath, imageData);
+      await writeThumbnailFile(thumbnailPath, imageData);
       return thumbnailPath;
     } else {
       return blobUrl;

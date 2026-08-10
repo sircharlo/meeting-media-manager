@@ -50,59 +50,70 @@ export const settingsDefinitions: SettingsItems = {
     group: 'app',
     list: 'appLanguages',
     rules: ['notEmpty'],
+    subgroup: 'display',
     type: 'list',
   },
   localDateFormat: {
     group: 'app',
+    subgroup: 'display',
     type: 'text',
   },
   darkMode: {
     group: 'app',
     list: 'darkModes',
     rules: ['notEmpty'],
+    subgroup: 'display',
     type: 'list',
   },
   firstDayOfWeek: {
     group: 'app',
     list: 'days',
+    subgroup: 'display',
     type: 'list',
   },
   autoStartAtLogin: {
     group: 'app',
+    subgroup: 'startup',
     type: 'toggle',
   },
   // Congregation Meetings
   congregationName: {
     group: 'congregationMeetings',
     rules: ['notEmpty'],
+    subgroup: 'congregationIdentity',
     type: 'text',
   },
   congregationNameModified: {
     group: 'congregationMeetings',
     hidden: true,
+    subgroup: 'congregationIdentity',
     type: 'toggle',
   },
   relinkCongregationButton: {
     actions: ['openCongregationLookup'],
     depends: 'congregationNameModified',
     group: 'congregationMeetings',
+    subgroup: 'congregationIdentity',
     type: 'button',
   },
   lang: {
     group: 'congregationMeetings',
     list: 'jwLanguages',
     rules: ['notEmpty'],
+    subgroup: 'language',
     type: 'list',
   },
   langFallback: {
     group: 'congregationMeetings',
     list: 'jwLanguages',
+    subgroup: 'language',
     type: 'list',
   },
   mwDay: {
     group: 'congregationMeetings',
     list: 'days',
     rules: ['notEmpty', 'regular'],
+    subgroup: 'meetingSchedule',
     type: 'list',
     unless: 'disableMediaFetching',
   },
@@ -110,6 +121,7 @@ export const settingsDefinitions: SettingsItems = {
     group: 'congregationMeetings',
     options: ['meetingTime'],
     rules: ['notEmpty', 'regular'],
+    subgroup: 'meetingSchedule',
     type: 'time',
     unless: 'disableMediaFetching',
   },
@@ -117,6 +129,7 @@ export const settingsDefinitions: SettingsItems = {
     group: 'congregationMeetings',
     list: 'days',
     rules: ['notEmpty', 'regular'],
+    subgroup: 'meetingSchedule',
     type: 'list',
     unless: 'disableMediaFetching',
   },
@@ -124,12 +137,14 @@ export const settingsDefinitions: SettingsItems = {
     group: 'congregationMeetings',
     options: ['meetingTime'],
     rules: ['notEmpty', 'regular'],
+    subgroup: 'meetingSchedule',
     type: 'time',
     unless: 'disableMediaFetching',
   },
   coWeek: {
     group: 'congregationMeetings',
     options: ['coTuesdays'],
+    subgroup: 'specialDates',
     type: 'date',
     unless: 'disableMediaFetching',
   },
@@ -138,6 +153,7 @@ export const settingsDefinitions: SettingsItems = {
     type: 'date',
     beta: false,
     options: ['futureDate'],
+    subgroup: 'specialDates',
     unless: 'disableMediaFetching',
   },
   meetingScheduleChangeDate: {
@@ -207,20 +223,24 @@ export const settingsDefinitions: SettingsItems = {
   // Media Retrieval and Playback
   meteredConnection: {
     group: 'mediaRetrievalPlayback',
+    subgroup: 'playback',
     type: 'toggle',
   },
   enableMediaDisplayButton: {
     group: 'mediaRetrievalPlayback',
+    subgroup: 'playback',
     type: 'toggle',
   },
   enableMediaPreview: {
     depends: 'enableMediaDisplayButton',
     group: 'mediaRetrievalPlayback',
+    subgroup: 'playback',
     type: 'toggle',
   },
   beginPlaybackPaused: {
     depends: 'enableMediaDisplayButton',
     group: 'mediaRetrievalPlayback',
+    subgroup: 'playback',
     type: 'toggle',
   },
   enableMediaWindowFadeTransitions: {
@@ -736,6 +756,11 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'addMediaButton',
     type: 'toggle',
   },
+  showMediaDragHandle: {
+    group: 'interfaceShortcuts',
+    subgroup: 'dragAndDrop',
+    type: 'toggle',
+  },
 
   // Advanced
   baseUrl: {
@@ -854,6 +879,7 @@ export const defaultSettings: SettingsValues = {
   shortcutMediaStop: null,
   shortcutMediaWindow: null,
   shortcutMusic: null,
+  showMediaDragHandle: true,
   suppressHardwareAccelerationReminder: false,
   timerAutoOpen: false,
   timerBackgroundColor: '#000000',

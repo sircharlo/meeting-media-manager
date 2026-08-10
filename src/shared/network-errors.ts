@@ -47,6 +47,21 @@ export function isFetchNetworkError(error: unknown): boolean {
     return true;
   }
 
+  // A 2xx response whose body is actually an HTML page (interstitial, error
+  // page, ...) instead of the JSON an API endpoint promised is the same
+  // upstream-misbehavior noise as the cases above, just caught by
+  // response.json() rather than the HTTP status. V8 has used two message
+  // formats for this across versions ("Unexpected token < in JSON at
+  // position 0" and "Unexpected token '<', "<!DOCTYPE "... is not valid
+  // JSON"), so match on the common "Unexpected token '<'" prefix rather
+  // than either exact string.
+  if (
+    error.name === 'SyntaxError' &&
+    /Unexpected token .?<.?/.test(error.message)
+  ) {
+    return true;
+  }
+
   if (!error.message.includes('fetch failed')) return false;
 
   const cause = error.cause as Record<string, unknown> | undefined;

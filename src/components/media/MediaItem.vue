@@ -3,6 +3,7 @@
     v-show="!media.hidden"
     ref="mediaItem"
     :class="{
+      'hover-reveal-group': true,
       'items-center': true,
       'justify-center': true,
       'media-filter-filename-match': filenameOnlyMatchesMediaFilter,
@@ -17,7 +18,13 @@
     }"
     @mouseup.left.passive="(evt: MouseEvent) => emit('click', evt)"
   >
-    <div class="row full-width items-center justify-center">
+    <div
+      class="row full-width items-center justify-center"
+      :class="{
+        'group-child-drag-handle': child,
+        'section-drag-handle': !child,
+      }"
+    >
       <div class="col-shrink">
         <div
           class="q-pr-none rounded-borders overflow-hidden relative-position bg-black media-thumbnail-frame"
@@ -445,6 +452,8 @@
             :class="{
               'q-px-md': true,
               col: true,
+              'relative-position': true,
+
               'text-grey': !fileIsAvailable && !streamIsAvailable,
             }"
           >
@@ -499,6 +508,46 @@
             >
               {{ t('media-item-missing-explain') }}
             </div>
+            <div
+              class="hover-actions-overlay hover-reveal absolute-right row items-center no-wrap"
+            >
+              <q-icon
+                v-if="currentSettings?.showMediaDragHandle"
+                :class="[
+                  'media-drag-handle',
+                  child ? 'group-child-drag-handle' : 'section-drag-handle',
+                  'q-mr-xs',
+                ]"
+                color="accent-400"
+                name="mmm-drag-n-drop"
+                size="sm"
+              >
+                <q-tooltip v-if="!isDragging" :delay="500">
+                  {{ t('drag-to-reorder') }}
+                </q-tooltip>
+              </q-icon>
+              <q-btn
+                ref="moreButton"
+                :aria-label="t('more-options')"
+                class="q-mr-xs"
+                color="accent-400"
+                dense
+                flat
+                icon="mmm-dots"
+                round
+                size="sm"
+                @click="
+                  () => {
+                    menuTarget = moreButton?.$el;
+                    contextMenu = true;
+                  }
+                "
+              >
+                <q-tooltip v-if="!contextMenu && !isDragging" :delay="500">
+                  {{ t('more-options') }}
+                </q-tooltip>
+              </q-btn>
+            </div>
           </div>
           <div class="col-shrink">
             <div class="row q-gutter-sm items-center q-mr-sm">
@@ -513,27 +562,6 @@
                   {{ t('this-song-is-duplicated') }}
                 </q-tooltip>
               </q-icon>
-              <q-btn
-                v-if="!isTiny || hoveringMediaItem || contextMenu"
-                ref="moreButton"
-                :aria-label="t('more-options')"
-                color="accent-400"
-                flat
-                icon="mmm-dots"
-                round
-                size="sm"
-                :style="`visibility: ${hoveringMediaItem || contextMenu ? 'visible' : 'hidden'}`"
-                @click="
-                  () => {
-                    menuTarget = moreButton?.$el;
-                    contextMenu = true;
-                  }
-                "
-              >
-                <q-tooltip v-if="!contextMenu" :delay="500">
-                  {{ t('more-options') }}
-                </q-tooltip>
-              </q-btn>
               <q-btn
                 v-if="
                   media.source === 'additional' &&
@@ -1539,6 +1567,7 @@ const imageStartTime = ref<null | number>(null);
 
 const props = defineProps<{
   child?: boolean;
+  isDragging?: boolean;
   media: MediaItem;
   mediaFilterTerms?: string[];
   selected?: boolean;

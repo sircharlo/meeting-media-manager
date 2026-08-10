@@ -804,6 +804,30 @@ const mediaSortCanBeReset = computed<boolean>(() => {
       return true; // Array is not sorted
     }
   }
+
+  // A group's children can now be reordered independently of their parent
+  // group (dragging within an expanded group) - none of the checks above
+  // look inside `children` at all, so that kind of change was invisible to
+  // this button. Every media source that populates `children` also gives
+  // each child its own `sortOrderOriginal`, same as top-level items.
+  const hasChildOrderChange =
+    selectedDateObject.value?.mediaSections?.some((section) =>
+      section.items?.some((item) => {
+        const children = item.children;
+        if (!children || children.length < 2) return false;
+        for (let i = 0; i < children.length - 1; i++) {
+          const firstOrder = children[i]?.sortOrderOriginal ?? 0;
+          const secondOrder = children[i + 1]?.sortOrderOriginal ?? 0;
+          if (firstOrder > secondOrder) return true;
+        }
+        return false;
+      }),
+    ) ?? false;
+
+  if (hasChildOrderChange) {
+    return true;
+  }
+
   return false; // Array is sorted
 });
 
@@ -902,6 +926,22 @@ const resetSort = () => {
       ),
     );
   });
+
+  // Also restore any group's children to their original order - dragging
+  // within an expanded group reorders `children` independently of its
+  // parent item, so resetting the top-level sections above doesn't touch it.
+  selectedDateObject.value?.mediaSections.forEach((sectionMedia) => {
+    sectionMedia.items?.forEach((item) => {
+      if (!item.children?.length) return;
+      item.children.sort((a, b) =>
+        SORTER.compare(
+          a?.sortOrderOriginal?.toString() ?? '0',
+          b?.sortOrderOriginal?.toString() ?? '0',
+        ),
+      );
+    });
+  });
+
   globalThis.dispatchEvent(new CustomEvent('reset-sort-order'));
 };
 

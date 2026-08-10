@@ -4,6 +4,15 @@
 
 No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera parau, a hi’o i ta māua pu’e parau CHANGELOG.md i ni’a i GitHub.
 
+## v26.7.9
+
+### ✨ Te mau rave’a ‘āpī
+
+- ✨ Fa’afa’amura’a rahi nō te tau’ira’a: Te mau tau’ira’a rahi i ni’a i te mau matira’a, te tabula/te upoo parau o te mau tauhaa, te mau Fa’anahora’a, me te Tauturu Ha’amatara’a. Te Tauturu Ha’amatara’a, o te hō’ē pūra’a hutira’a hō’ē u’ira’a nō te mau matira’a e te hō’ē ta’ata fa’ati’a. Ua tauihia te mau u’ira’a i te mau matira’a tapao, e nō te maiti i te mau api PDF (nō te mau tufa’a e te taviri-e-tape’a), te fa’aohipa nei oia i te hō’ē tāvira hi’ora’a hōho’a ri’i no te mono i te papa’ira’a noa. Ua tāpiritia mai te hō’ē arata’i Ha’amatara’a ’Ōfati i muri iho i te otira’a te Tauturu Ha’amatara’a. Te vai ato’a ra te hō’ē fa’ahutira’a nō te mau papa’i / upoo parau mā te mau ata i ni’a i te huru poupou e te mau fa’ati’ara’a i te huru poupou
+- ✨ Api Fa’anahora’a: Ua fa’ahutihia ei pa’e piti, ma te tuhaa nō te ao ato’a nō te mau fa’afā’anorora’a (fa’ahou-noa-ra’a e te beta) i iritihia mai roto mai i te parau nō ni’a (tei riro mai ei hi’ora’a ana’e).
+- ✨ Patara’a Apiti i te mau tauhaa: Ua tu’uhia mai te hō’ē fa’anahora’a nō te maiti i te mau tuhaa putuputura’a e fa’aite i te patara’a “apiti i te mau tauhaa”, e te hō’ē huru poto (hōho’a ana’e).
+- ✨ Tabula Tauhaa: E fa’aite te mau tauhaa i te mau tu’ati’a ha’amatara’a i te ta’ime e apitihia mai ai eiaha e vai rapaau, e fa’aite te mau pŭpŭ tauhaa i te faito o te mau tauhaa hunahia i roto i ta ratou tapa’o (e piti tauhaa hunahia), e nehenehe e taviri-e-tape’a i te mau tamarii i roto i te mau pŭpŭ, e i ni’a i te mau varou piri roa e ta’ahia te mau tauhaa ei mau tauhaa poto i ni’a i te poro’i eiaha e tu’ati i ni’a i te reni.
+
 ## v26.7.7
 
 ### ✨ Te mau rave’a ‘āpī

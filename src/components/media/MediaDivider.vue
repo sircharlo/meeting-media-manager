@@ -7,6 +7,19 @@
       '--divider-bg-color': divider.bgColor || 'var(--q-secondary)',
     }"
   >
+    <q-item-section avatar>
+      <q-icon
+        class="media-drag-handle section-drag-handle"
+        name="mmm-drag-n-drop"
+        size="sm"
+        :style="{ color: divider.textColor }"
+      >
+        <q-tooltip v-if="!isDragging" :delay="500">
+          {{ t('drag-to-reorder') }}
+        </q-tooltip>
+      </q-icon>
+    </q-item-section>
+
     <q-item-section>
       <q-input
         v-if="isEditing"
@@ -101,6 +114,7 @@ const { t } = useI18n();
 
 const props = defineProps<{
   divider: MediaDivider;
+  isDragging?: boolean;
 }>();
 
 const emit = defineEmits<{

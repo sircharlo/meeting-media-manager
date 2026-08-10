@@ -4,6 +4,32 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.7.9
+
+### ✨ New Features
+
+- ✨ **App-Wide Redesign**: A broad visual and interaction refresh across dialogs, the media list/header, Settings, and the Setup Wizard. The Setup Wizard is now a one-question-per-screen flow with a progress bar. All prompts were replaced with a consistent branded dialog, and PDF page-range selection (for publication and drag-and-drop imports) now uses a thumbnail-grid picker instead of a free-text prompt. Added a new Quick Start Guide tour after the Setup Wizard completes. Also includes refreshed card/header styling with dark-mode-aware shadows and several dark-mode contrast fixes (focused field labels, download-progress percentages).
+- ✨ **Settings Page**: Reworked into a two-pane layout, with a new global Preferences section for auto-update/beta-update toggles moved out of the About dialog (which is now purely informational).
+- ✨ **Add More Media Button**: Added a setting to choose exactly which meeting sections show the "add more media" shortcut button, along with a setting for a compact (icon-only) mode.
+- ✨ **Media List**: Items now show loading skeletons while being added instead of appearing empty, media groups show a hidden-item count in their badge (e.g. "9 items (2 hidden)"), children within a group can be reordered via drag-and-drop, and at very narrow window widths items collapse into compact, tooltip-carrying chips instead of crowding the row.
+
+### 🐞 Bug Fixes
+
+- 🐞 **macOS Permissions**: Fixed EPERM errors reading or writing custom cache, watch, or additional-media folders on macOS by activating the security-scoped bookmark before every filesystem call made from the preload/renderer process (not just main-process zip reads), and by detecting stale permission grants via a read probe against an existing file instead of a newly-created one, which Apple's Documents/Desktop protection doesn't gate.
+- 🐞 **Cache Cleanup**: Stopped cache cleanup from erroring on non-date folders (e.g. "Additional Media") inside user-configured watch/export folders, made it resilient to a failed additional-media path lookup instead of aborting entirely, and matched both `YYYYMMDD` and `YYYY-MM-DD` date-folder naming.
+- 🐞 **Cloud-Sync Folders**: Recognized localized Google Drive "Mirror files" folder names (not just the English default), widened the shared Windows lock retry with exponential backoff for slower Dropbox locks, tolerated expected network-path errors when watching meeting-day folders, copying additional media, or exporting media to a cloud-synced destination, and added a retry for transient locks when creating the dated auto-export folder or writing a captured video thumbnail.
+- 🐞 **OBS Integration**: Stopped OBS scene/recording calls from throwing when issued before the connection finished identifying, stopped an OBS websocket disconnect race and a scene-switch failure from being reported as bugs, and fixed a brief yeartext flash during OBS's own scene transition when media ends.
+- 🐞 **Background Music**: Added a cooldown before retrying auto-start after a failure, which previously could retry nonstop for as long as the auto-start window stayed open, and stopped benign playback interruptions from being treated as errors when starting music or advancing to the next track.
+- 🐞 **Error Reporting**: Stopped reporting transient font-load fallback recovery, benign teardown races when tearing down the media player, network errors from the What's New fetch, and HTML error pages returned where JSON was expected; fixed a raw error object losing its message when reported; and fixed a renderer-process crash from a platform check that only works in the main process.
+- 🐞 **Media List and Player**: Fixed hiding one child in a media group hiding the entire group, corrected video marker end-time trims and a duplicate-clip bug affecting separate trims of the same file, fixed a false "no media" message flashing before a congregation finishes loading, fixed being unable to type spaces in Settings text/search fields, and replaced the reset-order icon with a clearer custom glyph.
+- 🐞 **Sign-Language Media**: Corrected language resolution and file matching so valid nested/extract sign-language videos are no longer treated as unavailable.
+- 🐞 **Additional Media**: Fixed a migration that was silently dropping additional media dated with slash-separated (`YYYY/MM/DD`) dates instead of migrating them.
+- 🐞 **Localization**: Fixed a corrupted Dutch translation for "previous" that crashed rendering wherever it was used.
+
+### 🔧 Chores
+
+- 🔧 **Dependencies**: Updated Sentry (core, Vue, Electron), Quasar, Vite, ESLint, Playwright, vue-i18n, vue-tsc, and several other dependencies.
+
 ## v26.7.8
 
 ### 🛠️ Improvements and Tweaks

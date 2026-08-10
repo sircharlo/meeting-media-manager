@@ -64,6 +64,25 @@ describe('isFetchNetworkError', () => {
         Object.assign(new Error('Unexpected token < in JSON at position 0'), {
           name: 'SyntaxError',
         }),
+      expected: true,
+      name: 'a SyntaxError from an HTML response body (older V8 message format)',
+    },
+    {
+      error: () =>
+        Object.assign(
+          new Error(
+            "Failed to execute 'json' on 'Response': Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+          ),
+          { name: 'SyntaxError' },
+        ),
+      expected: true,
+      name: 'a SyntaxError from an HTML response body (newer V8 message format)',
+    },
+    {
+      error: () =>
+        Object.assign(new Error('Unexpected token } in JSON at position 12'), {
+          name: 'SyntaxError',
+        }),
       expected: false,
       name: 'a SyntaxError with an unrelated message',
     },

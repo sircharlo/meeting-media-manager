@@ -5,6 +5,7 @@
     :color="isDangerousToggle ? 'negative' : 'primary'"
     :disable="customDisabled"
     :disabled="customDisabled"
+    :name="settingId"
   />
 </template>
 
