@@ -260,22 +260,22 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 ### ✨ Nouvelles fonctionnalités
 
-- **fonctionnalité** : La présentation du site web est désormais prise en charge sur macOS 🚀
-- **fonctionnalité** : Ajout de raccourcis clavier pour arrêter, mettre en pause et reprendre la lecture multimédia 🚀
-- **fonctionnalité** : Possibilité de définir l'adresse Web à partir de laquelle les fichiers multimédias doivent être téléchargés 🚀
-- **fonctionnalité** : Ajout du sélecteur de scènes instantané pour OBS Studio et refonte de la fonctionnalité du sélecteur de scènes dans les paramètres
-- **fonctionnalité** : Amélioration du site web de documentation pour prendre en charge davantage de langues
+- 🖥️ **Website Presentation on macOS**: Presenting the website is now supported on macOS 🚀
+- ⌨️ **Playback Keyboard Shortcuts**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
+- 🌐 **Custom Media Download Address**: Added support for setting the web address from which media should be downloaded 🚀
+- 🎬 **OBS Instant Scene Picker**: Added OBS Studio instant scene picker and overhauled scene picker functionality in settings
+- 📖 **More Documentation Languages**: Expanded documentation website to support more languages
 
 ## 24.10.10
 
 ### ✨ Nouvelles fonctionnalités
 
-- **nouveau** : Ajout de raccourcis clavier pour accéder à l'élément média suivant/précédent
-- **nouveau** : Ajout d'un menu contextuel permettant de masquer et de renommer les éléments multimédias
-- **nouveau** : Les durées des vidéos découpées sont désormais prises en compte dans les listes de lecture JWL importées
+- ⌨️ **Media Navigation Shortcuts**: Added keyboard shortcuts to navigate to the next/previous media item
+- 🖱️ **Media Item Right-Click Menu**: Added a right-click menu to media items to hide media items and rename them
+- ✂️ **Trimmed JWL Playlist Import**: Trimmed video times are now respected in imported JWL playlists
 
 ## 24.10.9
 
 ### ✨ Nouvelles fonctionnalités
 
-- **fonctionnalité** : Ajout d'une option pour supprimer tous les fichiers multimédias supplémentaires pour le jour sélectionné
+- 🗑️ **Delete Extra Media for a Day**: Added an option to delete all extra media files for the currently selected day
