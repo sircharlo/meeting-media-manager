@@ -261,22 +261,22 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- 🖥️ **Website Presentation on macOS**: Presenting the website is now supported on macOS 🚀
-- ⌨️ **Playback Keyboard Shortcuts**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
-- 🌐 **Custom Media Download Address**: Added support for setting the web address from which media should be downloaded 🚀
-- 🎬 **OBS Instant Scene Picker**: Added OBS Studio instant scene picker and overhauled scene picker functionality in settings
-- 📖 **More Documentation Languages**: Expanded documentation website to support more languages
+- 🖥️ **Predvajanje spletnega mesta v macOS**: Predvajanje spletnega mesta je zdaj podprto tudi v macOS 🚀
+- ⌨️ **Bližnjice za predvajanje**: Dodane so tipkovne bližnjice za ustavitev, premor in nadaljevanje predvajanja multimedijske vsebine 🚀
+- 🌐 **Naslov za prenos multimedijske vsebine po meri**: Dodana je možnost nastavitve spletnega naslova, s katerega naj se prenaša multimedijska vsebina 🚀
+- 🎬 **Hitri izbirnik prizorov za OBS**: Dodan je takojšnji izbirnik prizorov za OBS Studio in prenovljena funkcionalnost izbirnika prizorov v nastavitvah
+- 📖 **Več jezikov dokumentacije**: Spletno mesto z dokumentacijo je razširjeno tako, da podpira več jezikov
 
 ## 24.10.10
 
 ### ✨ Nove funkcije
 
-- ⌨️ **Media Navigation Shortcuts**: Added keyboard shortcuts to navigate to the next/previous media item
-- 🖱️ **Media Item Right-Click Menu**: Added a right-click menu to media items to hide media items and rename them
-- ✂️ **Trimmed JWL Playlist Import**: Trimmed video times are now respected in imported JWL playlists
+- ⌨️ **Bližnjice za krmarjenje po multimedijski vsebini**: Dodane so tipkovne bližnjice za prehod na naslednjo/prejšnjo multimedijsko vsebino
+- 🖱️ **Meni ob desnem kliku na multimedijsko vsebino**: Dodan je meni ob desnem kliku na multimedijsko vsebino za skrivanje in preimenovanje multimedijske vsebine
+- ✂️ **Obrezan uvoz seznama predvajanja**: Obrezani časi videoposnetkov v seznamu predvajanj JW Library se zdaj upoštevajo pri uvozu
 
 ## 24.10.9
 
 ### ✨ Nove funkcije
 
-- 🗑️ **Delete Extra Media for a Day**: Added an option to delete all extra media files for the currently selected day
+- 🗑️ **Izbriši dodatno multimedijsko vsebino za dan**: Dodana je možnost za izbris vse dodatne multimedijske vsebine za trenutno izbrani dan
