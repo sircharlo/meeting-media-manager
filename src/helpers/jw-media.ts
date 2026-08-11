@@ -1542,13 +1542,21 @@ const resolveDownloadedFile = async (
 ) => {
   const maxAttempts = 10;
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    if (await pathExists(destinationPath)) {
-      const statistics = await stat(destinationPath);
-      const hasExpectedSize = remoteSize <= 0 || statistics.size === remoteSize;
-      if (statistics.size > 0 && hasExpectedSize) {
-        resolve({ new: true, path: destinationPath });
-        return;
+    try {
+      if (await pathExists(destinationPath)) {
+        const statistics = await stat(destinationPath);
+        const hasExpectedSize =
+          remoteSize <= 0 || statistics.size === remoteSize;
+        if (statistics.size > 0 && hasExpectedSize) {
+          resolve({ new: true, path: destinationPath });
+          return;
+        }
       }
+    } catch {
+      // The file can vanish between the pathExists() check and stat() if a
+      // concurrent cache-clear pass removes it (MMM-V2-3GB/3GA were
+      // unhandled rejections from this race). Treat it as not-ready-yet
+      // and let the retry loop below re-check.
     }
     await new Promise((settle) => {
       setTimeout(settle, 200);
