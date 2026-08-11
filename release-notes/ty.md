@@ -261,22 +261,22 @@ No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera 
 
 ### ✨ Te mau rave’a ‘āpī
 
-- 🖥️ **Website Presentation on macOS**: Presenting the website is now supported on macOS 🚀
-- ⌨️ **Playback Keyboard Shortcuts**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
-- 🌐 **Custom Media Download Address**: Added support for setting the web address from which media should be downloaded 🚀
-- 🎬 **OBS Instant Scene Picker**: Added OBS Studio instant scene picker and overhauled scene picker functionality in settings
-- 📖 **More Documentation Languages**: Expanded documentation website to support more languages
+- 🖥️ Fa’ahitiraa i te mau api reva (website) i nia i te macOS: Te vai ra teie tauturu i teie nei i nia i te macOS 🚀
+- ⌨️ Tapura taviri no te upaupa: Ua faaôhia mai te mau taviri no te tapea, faaea rii, e no te haamata faahou i te haruru upaupa 🚀
+- 🌐 **Tāura tauturu nō te tāviri parau nō te hōhoʻa**: Ua tuʻu-atoʻa-hia mai te raveʻa nō te tāpeʻa i te tāura parau i reira te mau hōhoʻa e rave-hia mai 🚀
+- 🎬 Mātārava rītia no te OBS: Ua tuʻu-atoʻa-hia mai te mātaʻrava rītia no te OBS Studio e ua faahouhia te raveʻa no te mātaʻrava i roto i te mau faahororaa
+- 📖 Te mau reo hau no te mau papai: Ua faararahia te api reva no te mau papai ia tia ia tauturu i te mau reo rau
 
 ## 24.10.10
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ⌨️ **Media Navigation Shortcuts**: Added keyboard shortcuts to navigate to the next/previous media item
-- 🖱️ **Media Item Right-Click Menu**: Added a right-click menu to media items to hide media items and rename them
-- ✂️ **Trimmed JWL Playlist Import**: Trimmed video times are now respected in imported JWL playlists
+- ⌨️ Mau taviri no te hororaa i nia i te upaupa: Ua faaôhia mai te mau taviri no te horo i nia i te mauhaa upaupa i muri mai / na mua atu
+- 🖱️ Faʻahororaa nō te hōhoʻa i te pae tauatini: Ua tuʻu-atoʻa-hia mai te faʻahororaa i te pae tauatini nō te mau hōhoʻa nō te huna i te mau hōhoʻa e nō te faʻahuru i tō rātou iʻoa
+- ✂️ Faʻaʻoti-māramahia-hia te tāpaʻuraʻa JWL: Te haapaʻo-māite-hia nei te taime tano o te mau hōhoʻa i roto i te mau tāpaʻuraʻa JWL i faaōhia mai
 
 ## 24.10.9
 
 ### ✨ Te mau rave’a ‘āpī
 
-- 🗑️ **Delete Extra Media for a Day**: Added an option to delete all extra media files for the currently selected day
+- 🗑️ Faʻaʻore i te mau hōhoʻa hau no te hoê mahana: Ua tuʻu-atoʻa-hia mai te raveʻa no te faʻaʻore i te mau hōhoʻa hau atoa no te mahana i maʻitihia i teie nei
