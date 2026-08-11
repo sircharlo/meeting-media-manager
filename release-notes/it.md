@@ -8,10 +8,10 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ### ✨ Nuove Funzionalità
 
-- ✨ **App-Wide Redesign**: A broad visual and interaction refresh across dialogs, the media list/header, Settings, and the Setup Wizard. The Setup Wizard is now a one-question-per-screen flow with a progress bar. All prompts were replaced with a consistent branded dialog, and PDF page-range selection (for publication and drag-and-drop imports) now uses a thumbnail-grid picker instead of a free-text prompt. Added a new Quick Start Guide tour after the Setup Wizard completes. Also includes refreshed card/header styling with dark-mode-aware shadows and several dark-mode contrast fixes (focused field labels, download-progress percentages).
-- ✨ **Settings Page**: Reworked into a two-pane layout, with a new global Preferences section for auto-update/beta-update toggles moved out of the About dialog (which is now purely informational).
-- ✨ **Add More Media Button**: Added a setting to choose exactly which meeting sections show the "add more media" shortcut button, along with a setting for a compact (icon-only) mode.
-- ✨ **Media List**: Items now show loading skeletons while being added instead of appearing empty, media groups show a hidden-item count in their badge (e.g. "9 items (2 hidden)"), children within a group can be reordered via drag-and-drop, and at very narrow window widths items collapse into compact, tooltip-carrying chips instead of crowding the row.
+- ✨ **App-Wide Redesign**: un ampio aggiornamento visivo e di interazione attraverso le finestre di dialogo, la lista dei supporti/intestazione, le impostazioni e la procedura guidata di configurazione. La procedura guidata di configurazione è ora un flusso di una domanda per schermo con una barra di avanzamento. Tutti i prompt sono stati sostituiti con una finestra di dialogo marchiata coerente, e la selezione dell'intervallo di pagine PDF (per le importazioni di pubblicazione e trascinamento) ora utilizza un selettore di griglie-miniature invece di un prompt di testo libero. Aggiunto un nuovo tour della Guida di Avvio Rapido dopo il completamento dell'Installazione Guidata. Include anche lo styling ricaricato della carta/intestazione con ombre oscure e diverse correzioni di contrasto della modalità scura (etichette di campo focalizzate, percentuali di scarico-avanzamento).
+- ✨ **Pagina delle impostazioni**: Rielaborato in un layout a due pannelli, con una nuova sezione globale di Preferenze per l'aggiornamento automatico/aggiornamento beta-commuta fuori dalla finestra di dialogo Informazioni (che ora è puramente informativa).
+- ✨ **Aggiungi più tasto multimediale**: Aggiunta un'impostazione per scegliere esattamente quali sezioni delle adunanze mostrano il pulsante scorciatoia "aggiungi più media", insieme a una impostazione per una modalità compatta (solo icone).
+- ✨ **Media List**: Gli elementi mostrano ora gli scheletri di caricamento mentre vengono aggiunti invece di apparire vuoti, i gruppi multimediali mostrano un conteggio di elementi nascosti nel loro distintivo (es. "9 elementi (2 nascosti)"), i bambini all'interno di un gruppo possono essere riordinati tramite drag-and-drop, e a larghezze della finestra molto strette gli oggetti crollano in chip compatti, porta-punta degli strumenti invece di affollare la fila.
 
 ## v26.7.7
 
@@ -260,22 +260,22 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ### ✨ Nuove Funzionalità
 
-- 🖥️ **Website Presentation on macOS**: Presenting the website is now supported on macOS 🚀
-- ⌨️ **Playback Keyboard Shortcuts**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
-- 🌐 **Custom Media Download Address**: Added support for setting the web address from which media should be downloaded 🚀
-- 🎬 **OBS Instant Scene Picker**: Added OBS Studio instant scene picker and overhauled scene picker functionality in settings
-- 📖 **More Documentation Languages**: Expanded documentation website to support more languages
+- 🖥️ **Presentazione del sito web su macOS**: La presentazione del sito web è ora supportata su macOS 🚀
+- ⌨️ **funzione**: Introduce le scorciatoie da tastiera per arrestare, mettere in pausa e riprendere la riproduzione multimediale 🚀
+- 🌐 **funzione**: Aggiunto il supporto per impostare l'indirizzo web da cui i media dovrebbero essere scaricati 🚀
+- 🎬 **caratteristica**: Aggiunta la scena-selettore istantaneo di OBS Studio e la funzionalità di selezione della scena revisionata nelle impostazioni
+- 📖 **funzione**: sito web di documentazione esteso per supportare più lingue
 
 ## 24.10.10
 
 ### ✨ Nuove Funzionalità
 
-- ⌨️ **Media Navigation Shortcuts**: Added keyboard shortcuts to navigate to the next/previous media item
-- 🖱️ **Media Item Right-Click Menu**: Added a right-click menu to media items to hide media items and rename them
-- ✂️ **Trimmed JWL Playlist Import**: Trimmed video times are now respected in imported JWL playlists
+- ⌨️ **nuovo**: Aggiunte scorciatoie da tastiera per navigare all'elemento multimediale successivo/precedente
+- 🖱️ **nuovo**: Aggiunto un menu con il tasto destro del mouse agli elementi multimediali per nascondere gli elementi multimediali e rinominarli
+- ✂️ **nuovo**: I tempi video tagliati sono ora rispettati nelle playlist JWL importate
 
 ## 24.10.9
 
 ### ✨ Nuove Funzionalità
 
-- 🗑️ **Delete Extra Media for a Day**: Added an option to delete all extra media files for the currently selected day
+- 🗑️ **funzione**: Aggiunta un'opzione per eliminare tutti i file multimediali aggiuntivi per il giorno attualmente selezionato
