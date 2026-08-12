@@ -1,161 +1,161 @@
-# 设置指南
+# Settings Guide {#settings-guide}
 
-本综合指南按类别解释了所有可用设置。 了解这些设置将有助于配置M3来完全满足您会众的需要。
+This comprehensive guide explains all the settings available in M³, organized by category. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
 
-## 应用程序配置
+## Application Configuration {#application-configuration}
 
-### 显示语言
+### Display Language {#display-language}
 
 <!-- **Setting**: `localAppLang` -->
 
-选择 M3 界面语言。 这只适用于媒体下载的语言。
+Choose the language for M³'s interface. This is independent of the language used for media downloads.
 
-**选项**：所有可用的界面语言（英语、西班牙语、法语等）
+**Options**: All available interface languages (English, Spanish, French, etc.)
 
-**默认**：英语 (English)
+**Default**: English
 
-### 暗色模式
+### Dark Mode {#dark-mode}
 
 <!-- **Setting**: `darkMode` -->
 
-控制 M3 的外观主题。
+Control the appearance theme of M³.
 
-**选项**：
+**Options**:
 
-- **自动**：根据系统偏好自动切换
-- **深色**：始终使用暗色模式
-- 始终使用浅色模式
+- Automatically switch based on system preference
+- Always use dark mode
+- Always use light mode
 
-**默认**：自动
+**Default**: Auto
 
-### 一周的第一天
+### First Day of Week {#first-day-of-week}
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-设置在日历视图中一周的起始日。
+Set which day should be considered the first day of the week in the calendar view.
 
-**选项**：星期日至星期六
+**Options**: Sunday through Saturday
 
-**默认**：星期日
+**Default**: Sunday
 
-### 日期格式
+### Date Format {#date-format}
 
 <!-- **Setting**: `localDateFormat` -->
 
-应用程序中显示日期的格式。
+Format used to display dates in the app.
 
-**示例**：D MMMM YYYY
+**Example**: D MMMM YYYY
 
-**默认**：D MMMM YYYY
+**Default**: D MMMM YYYY
 
-### 登录时自动启动
+### Auto-Start at Login {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
 
-计算机启动时自动启动 M³。
+Automatically start M³ when the computer boots up.
 
-**默认**: `false`
+**Default**: `false`
 
-## 会众聚会 {#congregation-meetings}
+## Congregation Meetings {#congregation-meetings}
 
-### 会众名称 {#congregation-name}
+### Congregation Name {#congregation-name}
 
 <!-- **Setting**: `congregationName` -->
 
-你的会众名称。 用来安排和显示。
+The name of your congregation. This is used for organization and display purposes.
 
-**默认**：空（必须在设置期间设置）
+**Default**: Empty (must be set during setup)
 
-### 聚会语言
+### Meeting Language {#meeting-language}
 
 <!-- **Setting**: `lang` -->
 
-媒体下载的主要语言。 这应与您的会众聚会所使用的语言相匹配。
+The primary language for media downloads. This should match the language used in your congregation's meetings.
 
-**选项**：耶和华见证人官方网站上提供的所有语言
+**Options**: All available languages from the official website of Jehovah's Witnesses
 
-**默认**：英语
+**Default**: English (E)
 
-### 后备语言 {#fallback-language}
+### Fallback Language {#fallback-language}
 
 <!-- **Setting**: `langFallback` -->
 
-当媒体在主要语言中不可用时使用的第二语言。
+A secondary language to use when media isn't available in the primary language.
 
-**选项**：耶和华见证人官方网站上提供的所有语言
+**Options**: All available languages from the official website of Jehovah's Witnesses
 
-**默认**：无
+**Default**: None
 
-### 周中聚会 {#midweek-meeting-day}
+### Midweek Meeting Day {#midweek-meeting-day}
 
 <!-- **Setting**: `mwDay` -->
 
-周中聚会举行的星期几。
+The day of the week when your midweek meeting is held.
 
-**选项**：星期日至星期六
+**Options**: Sunday through Saturday
 
-**默认**：无（需在设置向导中设置）
+**Default**: None (must be set during setup)
 
-### 周中聚会时间 {#midweek-meeting-time}
+### Midweek Meeting Time {#midweek-meeting-time}
 
 <!-- **Setting**: `mwStartTime` -->
 
-周中聚会的开始时间。
+The start time of your midweek meeting.
 
-**Format**: HH:MM（24小时制）
+**Format**: HH:MM (24-hour format)
 
-**Default**: 无（需在设置向导中设定）
+**Default**: None (must be set during setup)
 
-### 周末聚会（星期几）{#weekend-meeting-day}
+### Weekend Meeting Day {#weekend-meeting-day}
 
 <!-- **Setting**: `weDay` -->
 
-周末聚会举行的星期几。
+The day of the week when your weekend meeting is held.
 
-**选项**：星期日至星期六
+**Options**: Sunday through Saturday
 
-**默认**：无（需在设置向导中设置）
+**Default**: None (must be set during setup)
 
-### 周末聚会开始时间
+### Weekend Meeting Time {#weekend-meeting-time}
 
 <!-- **Setting**: `weStartTime` -->
 
-周末聚会的开始时间。
+The start time of your weekend meeting.
 
-**Format**: HH:MM（24小时制）
+**Format**: HH:MM (24-hour format)
 
-**Default**: 无（需在设置向导中设定）
+**Default**: None (must be set during setup)
 
-### 分区监督探访周 {#circuit-overseer-week}
+### Circuit Overseer Week {#circuit-overseer-week}
 
 <!-- **Setting**: `coWeek` -->
 
-下次分区监督探访的周。
+The week of the next circuit overseer's visit.
 
-**格式**：MM/DD/YYYY
+**Format**: MM/DD/YYYY
 
-**默认**：无
+**Default**: None
 
-### 纪念晚餐日期
+### Memorial Date {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 
-下一个纪念聚会的日期
+The date of the next Memorial celebration.
 
-**格式**：MM/DD/YYYY
+**Format**: MM/DD/YYYY
 
-**默认**：定期自动获取
+**Default**: Automatically retrieved periodically
 
-### 聚会议程变更
+### Meeting Schedule Changes {#meeting-schedule-changes}
 
-这些设置允许您配置聚会日程的临时更改：
+These settings allow you to configure temporary changes to your meeting schedule:
 
-- **更改日期**：更改生效的日期
-- **一次性更改**：这是永久性还是临时性的更改
-- **新的周中聚会日**：新的周中聚会日期
-- **新的周中聚会时间**：新的周中聚会时间
-- **新的周末聚会日**：新的周末聚会日期
-- **新的周末聚会时间**：新的周末聚会时间
+- **Change Date**: When the change takes effect
+- **One-time Change**: Whether this is a permanent or temporary change
+- **New Midweek Day**: New day for midweek meeting
+- **New Midweek Time**: New time for midweek meeting
+- **New Weekend Day**: New day for weekend meeting
+- **New Weekend Time**: New time for weekend meeting
 
 ### Automatic Meeting Schedule Updates {#automatic-meeting-schedule-updates}
 
@@ -171,17 +171,17 @@ This only works for profiles that were added with congregation lookup and whose 
 
 Manually synchronize the current and future meeting schedule with the information from the official website.
 
-## 媒体检索与播放
+## Media Retrieval and Playback {#media-retrieval-and-playback}
 
-### 计量连接
+### Metered Connection {#metered-connection}
 
 <!-- **Setting**: `meteredConnection` -->
 
-如果您处于有限数据连接，请启用此项以减少带宽使用。
+Enable this if you're on a limited data connection to reduce bandwidth usage.
 
 **Default**: `false`
 
-### 启用媒体显示功能。这是在第二个显示器上演示媒体所必需的。
+### Media Display {#media-display-button}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
@@ -195,85 +195,85 @@ Enable the media display functionality. This is required to present media on a s
 
 Show a live preview of the media window while an image or video is being displayed.
 
-**默认**：`true`
+**Default**: `true`
 
-#### 开始播放时暂停
+#### Begin Playback Paused {#begin-playback-paused}
 
 <!-- **Setting**: `beginPlaybackPaused` -->
 
-在播放开始时以暂停状态启动视频。
+Start videos in a paused state when playback begins.
 
 **Default**: `false`
 
-### 背景音乐
+### Background Music {#settings-guide-background-music}
 
-#### 启用音乐
+#### Enable Music {#enable-music-button}
 
 <!-- **Setting**: `enableMusicButton` -->
 
 Enable background music functionality.
 
-**默认**：`true`
+**Default**: `true`
 
-#### 自动启动音乐
+#### Auto-Start Music {#auto-start-music}
 
 <!-- **Setting**: `autoStartMusic` -->
 
-在适当的情况下，M³ 启动时自动开始播放背景音乐。
+Automatically start background music when M³ launches if appropriate.
 
-**默认**：`true`
+**Default**: `true`
 
-#### 聚会停止缓冲
+#### Meeting Stop Buffer {#meeting-stop-buffer}
 
 <!-- **Setting**: `meetingStopBufferSeconds` -->
 
-聚会开始前多少秒停止背景音乐。
+How many seconds before meeting start time to stop background music.
 
-**范围**：0-300 秒
+**Range**: 0-300 seconds
 
-**默认**：100%
+**Default**: 60 seconds
 
-#### 音乐音量
+#### Music Volume {#music-volume}
 
 <!-- **Setting**: `musicVolume` -->
 
-背景音乐音量（1-100%）。
+Volume level for background music (1-100%).
 
-**默认**：`false`
+**Default**: 100%
 
-### 缓存管理
+### Cache Management {#cache-management}
 
-#### 启用额外缓存
+#### Enable Extra Cache {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-启用额外缓存以获得更好的性能。
+Enable additional caching for better performance.
 
 **Default**: `false`
 
-#### 缓存文件夹
+#### Cache Folder {#cache-folder}
 
 <!-- **Setting**: `cacheFolder` -->
 
-存储缓存媒体文件的自定义位置。
+Custom location for storing cached media files.
 
-**默认**：`true`
+**Default**: System default location
 
-#### 启用缓存自动清除
+#### Enable Cache Auto-Clear {#enable-cache-auto-clear}
 
 <!-- **Setting**: `enableCacheAutoClear` -->
 
-自动清除旧的缓存文件以节省磁盘空间。
+Automatically clear old cached files to save disk space.
 
-**默认**：`true`
+**Default**: `true`
 
-### 监控文件夹
+### Folder Monitoring {#settings-guide-folder-monitoring}
 
-#### 启用文件夹监控
+#### Enable Folder Watcher {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-监控文件夹中的新媒体文件并自动将其添加到 M³。
+Monitor a folder for new media files and automatically add them to M³.
 
 **Default**: `false`
 
@@ -281,15 +281,15 @@ Enable background music functionality.
 
 <!-- **Setting**: `folderToWatch` -->
 
-要监控新媒体文件的文件夹路径。
+The folder path to monitor for new media files.
 
-**默认**：空
+**Default**: Empty
 
-## 集成
+## Integrations {#integrations}
 
-### Zoom 集成
+### Zoom Integration {#settings-guide-zoom-integration}
 
-#### 启用 Zoom
+#### Enable Zoom {#enable-zoom}
 
 <!-- **Setting**: `zoomEnable` -->
 
@@ -297,116 +297,116 @@ Enable Zoom meeting integration features.
 
 **Default**: `false`
 
-#### Screen Share Shortcut
+#### Screen Share Shortcut {#screen-share-shortcut}
 
 <!-- **Setting**: `zoomScreenShareShortcut` -->
 
-触发 Zoom 屏幕共享的键盘快捷键。
+Keyboard shortcut to trigger Zoom screen sharing.
 
-**默认**：无
+**Default**: None
 
-### OBS Studio 集成
+### OBS Studio Integration {#settings-guide-obs-integration}
 
-#### 启用 OBS
+#### Enable OBS {#enable-obs}
 
 <!-- **Setting**: `obsEnable` -->
 
-启用 OBS Studio 集成，实现自动场景切换。
+Enable OBS Studio integration for automatic scene switching.
 
 **Default**: `false`
 
-:::warning 新手提示
+:::warning Important Note
 
-**需要配置音频**：OBS Studio 集成仅处理屏幕共享。使用 OBS Studio 时，M³ 媒体的音频**不会自动传输**给 Zoom 与会者。您必须配置 Zoom 的“原始音频 (Original Audio)”设置或使用“共享电脑声音”以确保与会者能听到媒体。有关详细的音频设置说明，请参阅[用户指南](/user-guide#audio-configuration)。 **需要配置音频**：OBS Studio 集成仅处理视频/场景切换。M³ 媒体的音频**不会自动传输**给 Zoom 或 OBS。视频流就像一个没有声音的虚拟摄像头，因此您必须明确配置 Zoom 以捕获计算机的音频。有关详细的音频设置说明，请参阅[用户指南](/user-guide#audio-configuration)。 您必须配置 Zoom 原始音频设置或使用 “共享计算机声音” 以确保聚会参与者能够听到媒体。 详情请参阅 [用户指南](/user-guide#audio-configuration) 语音设置说明。
+**Audio Configuration Required**: The OBS Studio integration only handles screen sharing. Audio from M³ media is **not automatically transmitted** to Zoom participants when using OBS Studio. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
 
-**提示**：Zoom 集成使用 Zoom 的原生屏幕共享，处理音频比 OBS Studio 集成更无缝。
+**Note**: The Zoom integration uses Zoom's native screen sharing which handles audio more seamlessly than OBS Studio integration.
 
 :::
 
-#### OBS 端口
+#### OBS Port {#obs-port}
 
 <!-- **Setting**: `obsPort` -->
 
-OBS Studio WebSocket 连接密码。
+The port number for connecting to OBS Studio WebSocket.
 
-**默认**：无
+**Default**: None
 
-#### OBS 密码
+#### OBS Password {#obs-password}
 
 <!-- **Setting**: `obsPassword` -->
 
-连接 OBS Studio WebSocket 的端口号。
+The password for OBS Studio WebSocket connection.
 
-**默认**：无
+**Default**: None
 
-#### OBS 场景
+#### OBS Scenes {#obs-scenes}
 
-配置不同用途的 OBS 场景：
+Configure which OBS scenes to use for different purposes:
 
-- **摄像头场景**：显示摄像头/讲台的场景
-- **媒体场景**：显示媒体的场景
-- **图像场景**：显示图像的场景（例如显示媒体和发言人的画中画场景）
+- **Camera Scene**: Scene showing the camera/lectern
+- **Media Scene**: Scene for displaying media
+- **Image Scene**: Scene for displaying images (for example, a PIP scene showing both media and the speaker)
 
-#### OBS 高级选项
+#### OBS Advanced Options {#obs-advanced-options}
 
-- **延迟图像 (Postpone Images)**：延迟将图像共享到 OBS，直到手动触发
-- **快速切换**：在界面中启用 OBS 集成的快速开启/关闭切换
-- **媒体后切换场景**：媒体结束后自动返回之前的场景
-- **记住上一个场景**：记住并恢复上一个场景
-- **隐藏图标**：在界面中隐藏与 OBS 相关的图标
+- **Postpone Images**: Delay sharing images to OBS until manually triggered
+- **Quick Toggle**: Enable quick on/off toggle for OBS integration
+- **Switch Scene After Media**: Automatically return to previous scene after media
+- **Remember Previous Scene**: Remember and restore the previous scene
+- **Hide Icons**: Hide OBS-related icons in the interface
 - **Recording Controls**: Show controls that start and stop OBS recording from M³
 
 :::warning Important Note
 
-**需要音频配置**：OBS Studio 集成只处理视频/场景切换。 来自 M3 媒体的音频**不会自动传输**到 Zoom 或 OBS。 视频流像一个没有声音的虚拟摄像头，类似于摄像头一样。 您必须配置 Zoom 原始音频设置或使用 “共享计算机声音” 以确保聚会参与者能够听到媒体。 详情请参阅 [用户指南](/user-guide#audio-configuration) 语音设置说明。
+**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
 
-**替代方案**：考虑改用 Zoom 集成，因为它使用 Zoom 的原生屏幕共享，处理音频更无缝。
+**Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
 
 :::
 
-### 自定义事件快捷键
+### Custom Events {#custom-events}
 
-#### 启用自定义事件
+#### Enable Custom Events {#enable-custom-events}
 
 <!-- **Setting**: `enableCustomEvents` -->
 
-启用自定义快捷键，当检测到特定事件（例如媒体播放、暂停或停止）时，将会触发这些快捷键。
+Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
 
 **Default**: `false`
 
-#### 自定义事件
+#### Custom Event Shortcuts {#custom-event-shortcuts}
 
-##### Play Media Shortcut
+##### Play Media Shortcut {#custom-event-media-play-shortcut}
 
 <!-- **Setting**: `customEventMediaPlayShortcut` -->
 
-媒体播放时触发的快捷键。
+Shortcut that is triggered when media is played.
 
-**默认**：无
+**Default**: None
 
-##### Pause Media Shortcut
+##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
 
 <!-- **Setting**: `customEventMediaPauseShortcut` -->
 
-媒体暂停时触发的快捷键。
+Shortcut that is triggered when media is paused.
 
-**默认**：无
+**Default**: None
 
-##### Stop Media Shortcut
+##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
 
 <!-- **Setting**: `customEventMediaStopShortcut` -->
 
-媒体停止时触发的快捷键。
+Shortcut that is triggered when media is stopped.
 
-**默认**：无
+**Default**: None
 
-##### Last Song Shortcut
+##### Last Song Shortcut {#custom-event-last-song-shortcut}
 
 <!-- **Setting**: `customEventLastSongShortcut` -->
 
-聚会期间播放最后一首歌曲时触发的快捷键。
+Shortcut that is triggered when the last song is played during a meeting.
 
-**默认**：无
+**Default**: None
 
 ### Meeting Recordings {#meeting-recordings}
 
@@ -460,38 +460,38 @@ Show a countdown before scheduled meetings and optionally display whether the me
 
 Customize the timer text size and colors, and configure overtime indicators such as alternate colors, blinking, and showing only the elapsed overtime amount in count-up mode.
 
-## 高级设置
+## Advanced Settings {#advanced-settings}
 
-### 键盘快捷键
+### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
 
-#### 启用键盘快捷键
+#### Enable Keyboard Shortcuts {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
-启用媒体控制的可自定义键盘快捷键。
+Enable customizable keyboard shortcuts for media control.
 
 **Default**: `false`
 
-#### Media Control Shortcuts
+#### Media Control Shortcuts {#media-control-shortcuts}
 
-配置媒体播放快捷键：
+Configure shortcuts for media playback:
 
-- **媒体窗口**：打开/关闭媒体窗口
-- **上一个媒体**：转到上一个媒体项
-- **下一个媒体**：转到下一个媒体项
-- **暂停/恢复**：暂停或恢复媒体播放
-- **停止播放**：停止播放媒体
-- **背景音乐开关**：切换背景音乐状态
+- **Media Window**: Open/close media window
+- **Previous Media**: Go to previous media item
+- **Next Media**: Go to next media item
+- **Pause/Resume**: Pause or resume media playback
+- **Stop Media**: Stop media playback
+- **Music Toggle**: Toggle background music
 
-### 媒体显示
+### Media Display {#media-display}
 
-#### 启用媒体窗口淡入淡出过渡
+#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
-在显示或隐藏媒体窗口时启用淡入/淡出过渡效果。
+Enable fade-in/out transitions when showing or hiding the media window.
 
-**默认**：`true`
+**Default**: `true`
 
 #### Enable Playback Speed Control {#enable-playback-speed-control}
 
@@ -501,37 +501,37 @@ Allow audio and video playback speed to be adjusted from the media item's contex
 
 **Default**: `false`
 
-#### Hide Media Logo
+#### Hide Media Logo {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
-在媒体窗口中隐藏徽标。
+Hide the logo in the media window.
 
 **Default**: `false`
 
-#### Maximum Resolution
+#### Maximum Resolution {#maximum-resolution}
 
 <!-- **Setting**: `maxRes` -->
 
-下载媒体文件的最高分辨率。
+Maximum resolution for downloaded media files.
 
 **Options**: 240p, 360p, 480p, 720p, 1080p
 
-**默认**：720p
+**Default**: 720p
 
-#### Include Printed Media
+#### Include Printed Media {#include-printed-media}
 
 <!-- **Setting**: `includePrinted` -->
 
-在媒体下载中包含纸本出版物的媒体。
+Include media from the printed publications in media downloads.
 
-**默认**：`true`
+**Default**: `true`
 
-#### Exclude Footnotes
+#### Exclude Footnotes {#exclude-footnotes}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
-尽可能在媒体下载中排除脚注图像。
+Exclude footnote images from media downloads when possible.
 
 **Default**: `false`
 
@@ -543,79 +543,79 @@ Exclude additional videos that are referenced in Watchtower Study paragraphs.
 
 **Default**: `false`
 
-#### Exclude media from the Teaching brochure
+#### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
 
 <!-- **Setting**: `excludeTh` -->
 
-在媒体下载中排除《致力于教导》（th）手册的媒体。
+Exclude media from the Teaching (th) brochure from media downloads.
 
-**默认**：`true`
+**Default**: `true`
 
-### 字幕语言
+### Subtitles {#subtitles}
 
-#### 启用字幕
+#### Enable Subtitles {#enable-subtitles}
 
 <!-- **Setting**: `enableSubtitles` -->
 
-启用媒体播放的字幕支持。
+Enable subtitle support for media playback.
 
-**默认**: `false`
+**Default**: `false`
 
-#### 字幕
+#### Subtitle Language {#subtitle-language}
 
 <!-- **Setting**: `langSubtitles` -->
 
-Language for s字幕语言（可以与媒体语言不同）。
+Language for subtitles (can be different from media language).
 
-**选项**：耶和华见证人官方网站上提供的所有语言
+**Options**: All available languages from the official website of Jehovah's Witnesses
 
-**默认**：无
+**Default**: None
 
-### 媒体导出文件夹
+### Media Export {#settings-guide-media-export}
 
-#### 启用媒体自动导出
+#### Enable Media Auto-Export {#enable-media-auto-export}
 
 <!-- **Setting**: `enableMediaAutoExport` -->
 
-将媒体文件自动导出到指定文件夹。
+Automatically export media files to a specified folder.
 
-**默认**: `false`
+**Default**: `false`
 
-#### 媒体导出
+#### Media Export Folder {#media-export-folder}
 
 <!-- **Setting**: `mediaAutoExportFolder` -->
 
-自动导出媒体文件夹的路径。
+Folder path where media files will be automatically exported.
 
-**默认**：空
+**Default**: Empty
 
 #### Convert Files to MP4 {#convert-files-to-mp4}
 
 **Setting**: `convertFilesToMp4`
 
-将导出的媒体文件转换为 MP4 格式以获得更好的兼容性。
+Convert exported media files to MP4 format for better compatibility.
 
-**默认**: `false`
+**Default**: `false`
 
 ### Profile Settings Transfer {#profile-settings-transfer}
 
 Export the current profile's settings to a JSON file or import a previously exported profile settings file. Importing replaces the current profile's settings.
 
-### 危险区域
+### Danger Zone {#danger-zone}
 
-:::warning 小贴士
+:::warning Warning
 
-只有在理解其后果的情况下才应更改这些设置。
+These settings should only be changed if you understand their implications.
 
 :::
 
-#### Base URL
+#### Base URL {#base-url}
 
 <!-- **Setting**: `baseUrl` -->
 
-用于下载出版物和媒体的基础域名。
+Base domain used to download publications and media.
 
-**默认**：`jw.org`
+**Default**: `jw.org`
 
 #### Disable Hardware Acceleration {#disable-hardware-acceleration}
 
@@ -623,7 +623,7 @@ Export the current profile's settings to a JSON file or import a previously expo
 
 Disable hardware acceleration after restarting M³. This may help with graphical glitches or crashes on some systems, but is not otherwise recommended.
 
-**默认**: `false`
+**Default**: `false`
 
 #### Suppress Hardware Acceleration Reminder {#suppress-hardware-acceleration-reminder}
 
@@ -631,44 +631,44 @@ Disable hardware acceleration after restarting M³. This may help with graphical
 
 Hide the reminder to re-enable hardware acceleration after it has been manually disabled.
 
-**默认**: `false`
+**Default**: `false`
 
-#### Disable Media Fetching
+#### Disable Media Fetching {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
-完全禁用自动媒体下载。仅用于特殊活动或其他自定义设置的配置文件。 完全禁用自动媒体下载。仅用于特殊活动或其他自定义设置的配置文件。 Use this only for profiles that will be used for special events or other custom setups.
+Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
 
-**默认**: `false`
+**Default**: `false`
 
-## 最佳配置提示
+## Tips for Optimal Configuration {#configuration-tips}
 
-### 新手提示 {#new-users}
+### For New Users {#new-users}
 
-1. 使用设置向导配置基本设置
-2. 启用“媒体显示按钮”以访问演示功能
-3. 准确配置您的聚会日程
-4. 如果您使用混合聚会，请设置 OBS 集成
+1. Start with the setup wizard to configure basic settings
+2. Enable "Media Display Button" to access presentation features
+3. Configure your meeting schedule accurately
+4. Set up OBS integration if you use hybrid meetings
 
-### 进阶提示 {#advanced-users}
+### For Advanced Users {#advanced-users}
 
-1. 使用文件夹监控从云存储同步媒体
-2. 启用媒体自动导出以进行备份
-3. 配置键盘快捷键以提高操作效率
-4. 配置 Zoom 集成以实现自动屏幕共享
+1. Use folder monitoring to sync media from cloud storage
+2. Enable media auto-export for backup purposes
+3. Configure keyboard shortcuts for efficient operation
+4. Configure Zoom integration for automatic screen sharing
 
-### 性能优化
+### Performance Optimization {#performance-optimization}
 
-1. 启用额外缓存以获得更好的性能
-2. 根据您的需求选择合适的最高分辨率
-3. 配置缓存自动清除以管理磁盘空间
-4. 如果带宽有限，请考虑计量连接设置
+1. Enable extra cache for better performance
+2. Use appropriate maximum resolution for your needs
+3. Configure cache auto-clear to manage disk space
+4. Consider metered connection setting if on limited bandwidth
 
-### 疑难解答 {#settings-guide-troubleshooting}
+### Troubleshooting {#settings-guide-troubleshooting}
 
-- 如果媒体未下载，请检查您的聚会日程设置
-- 如果 OBS 集成不起作用，请验证端口和密码设置
-- 如果性能缓慢，请尝试启用额外缓存或降低分辨率
-- 如果遇到语言问题，请检查界面和媒体语言设置
-- 如果 Zoom 与会者听不到媒体音频，请配置 Zoom 的“原始音频”设置或使用“共享电脑声音”
-- **提示**：考虑使用 Zoom 集成而不是 OBS Studio，以简化音频处理
+- If media isn't downloading, check your meeting schedule settings
+- If OBS integration isn't working, verify port and password settings
+- If performance is slow, try enabling extra cache or reducing resolution
+- If you're having language issues, check both interface and media language settings
+- If Zoom participants can't hear media audio, configure Zoom's Original Audio settings or use "Share Computer Sound"
+- **Tip**: Consider using Zoom integration instead of OBS Studio for simpler audio handling
