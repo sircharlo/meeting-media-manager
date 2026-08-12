@@ -1,12 +1,12 @@
 ---
-title: 下载
+title: Downloads
 ---
 
 <!-- markdownlint-disable MD025 MD033 -->
 
-# 下载
+# Downloads
 
-请根据您的操作系统从下方链接下载 Meeting Media Manager 的最新版本。这些链接始终指向最新的稳定版。 这些链接总是指最新的稳定版本。
+Use the links below to download the latest version of Meeting Media Manager for your operating system. These links always point to the newest stable release.
 
 <script setup lang="ts">
 import { data as downloads } from '../../data/version.data.mts'
@@ -75,26 +75,26 @@ onMounted(() => {
 })
 </script>
 
-## 最新版本
+## Latest release
 
-- **版本**: {{ downloads.version }} <span v-if="daysAgoText">（{{ daysAgoText }}）</span>
+- **Version**: {{ downloads.version }} <span v-if="daysAgoText">({{ daysAgoText }})</span>
 
 <div v-if="recommended" style="margin: 1rem 0; padding: 1rem; border: 1px solid var(--vp-c-brand-1); border-radius: 8px; background: var(--vp-c-brand-soft);"><strong>{{ msg.recommendedFor }} {{ recommended.label }}</strong>
   <div style="margin-top: .5rem;"><a :href="recommended.href" style="display:inline-block; padding:.5rem 1rem; border-radius:6px; background: var(--vp-c-brand-1); color: white; text-decoration:none;">{{ msg.download }}</a>
   </div>
-  <div style="margin-top:.5rem; font-size: .9em; opacity:.8;">如果与您的系统不符，请从下方选项中手动选择。</div>
+  <div style="margin-top:.5rem; font-size: .9em; opacity:.8;">If this doesn’t match your system, pick from the options below.</div>
 </div>
 
 ## Windows
 
-- **Windows 64位 (.exe)**：<a :href="downloads.win64">下载</a>
-- **Windows 32位 (.exe)**：<a :href="downloads.win32">下载</a>
-- **Windows 便携版 (.exe)**：<a :href="downloads.winPortable">下载</a>
+- **Windows 64-bit (.exe)**: <a :href="downloads.win64">Download</a>
+- **Windows 32-bit (.exe)**: <a :href="downloads.win32">Download</a>
+- **Windows Portable (.exe)**: <a :href="downloads.winPortable">Download</a>
 
 ## macOS
 
-- **macOS (Universal) (.dmg)**: <a :href="downloads.macUniversal">下载</a>
+- **macOS (Universal) (.dmg)**: <a :href="downloads.macUniversal">Download</a>
 
 ## Linux
 
-- **x86_64 (AppImage)**：<a :href="downloads.linux">下载</a>
+- **x86_64 (AppImage)**: <a :href="downloads.linux">Download</a>
