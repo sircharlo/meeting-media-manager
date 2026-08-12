@@ -152,6 +152,18 @@ const attachDirectoryDiagnostics = (
 const ensureDirPromises = new Map<string, Promise<string>>();
 const DOWNLOAD_FALLBACK_FINGERPRINT = ['download-directory-fallback-to-temp'];
 
+// Same-directory calls are already coalesced above, but a burst of *different*
+// publications downloading at once (e.g. rapidly browsing many weeks in the
+// media calendar) has no such coalescing - each still needs its own `mkdir`.
+// Capping how many of those run at once (independent of maxActiveDownloads,
+// which only throttles the download itself, not this earlier directory-setup
+// step) keeps the number of simultaneous `mkdir` calls hitting the shared
+// `Publications` parent low enough for the retry/backoff above to actually
+// win the race, instead of every caller in the burst contending at once.
+const ENSURE_DIR_MAX_CONCURRENT = 3;
+let ensureDirActiveCount = 0;
+const ensureDirWaitQueue: (() => void)[] = [];
+
 /**
  * Creates a directory with retry logic, falling back to a directory under
  * the OS temp folder if the requested directory remains unusable after all
@@ -162,7 +174,8 @@ const DOWNLOAD_FALLBACK_FINGERPRINT = ['download-directory-fallback-to-temp'];
  * Concurrent requests for the exact same directory (common when several
  * files for the same publication are queued at once) are coalesced into a
  * single attempt so parallel downloads don't pile more concurrent `mkdir`
- * calls onto an already-contended shared folder.
+ * calls onto an already-contended shared folder. Requests for *different*
+ * directories are still capped at ENSURE_DIR_MAX_CONCURRENT (see above).
  * @returns The directory that is actually usable (the requested one, or the
  * temp fallback).
  */
@@ -170,11 +183,36 @@ export function ensureDirWithRetry(dir: string): Promise<string> {
   const existing = ensureDirPromises.get(dir);
   if (existing) return existing;
 
-  const promise = createDirWithRetry(dir).finally(() => {
+  const promise = (async () => {
+    await acquireEnsureDirSlot();
+    try {
+      return await createDirWithRetry(dir);
+    } finally {
+      releaseEnsureDirSlot();
+    }
+  })().finally(() => {
     ensureDirPromises.delete(dir);
   });
   ensureDirPromises.set(dir, promise);
   return promise;
+}
+
+function acquireEnsureDirSlot(): Promise<void> {
+  if (ensureDirActiveCount < ENSURE_DIR_MAX_CONCURRENT) {
+    ensureDirActiveCount += 1;
+    return Promise.resolve();
+  }
+  return new Promise((resolve) => {
+    ensureDirWaitQueue.push(() => {
+      ensureDirActiveCount += 1;
+      resolve();
+    });
+  });
+}
+
+function releaseEnsureDirSlot(): void {
+  ensureDirActiveCount -= 1;
+  ensureDirWaitQueue.shift()?.();
 }
 
 async function tryCreateDir(

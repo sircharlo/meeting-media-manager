@@ -109,4 +109,47 @@ describe('downloads window lifetime', () => {
     expect(mocks.download).not.toHaveBeenCalled();
     expect(mocks.captureElectronError).not.toHaveBeenCalled();
   });
+
+  it('caps concurrent mkdir calls across different directories', async () => {
+    let activeMkdirCount = 0;
+    let maxObservedConcurrency = 0;
+    const pendingMkdirs: (() => void)[] = [];
+
+    mocks.mkdir.mockImplementation(() => {
+      activeMkdirCount += 1;
+      maxObservedConcurrency = Math.max(
+        maxObservedConcurrency,
+        activeMkdirCount,
+      );
+      return new Promise<void>((resolve) => {
+        pendingMkdirs.push(() => {
+          activeMkdirCount -= 1;
+          resolve();
+        });
+      });
+    });
+
+    const { ensureDirWithRetry } = await import('../downloads');
+    const dirs = ['/tmp/a', '/tmp/b', '/tmp/c', '/tmp/d', '/tmp/e'];
+    const resultsPromise = Promise.all(
+      dirs.map((dir) => ensureDirWithRetry(dir)),
+    );
+
+    // Let every call that's going to start this "wave" actually start.
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(maxObservedConcurrency).toBeLessThanOrEqual(3);
+    expect(mocks.mkdir).toHaveBeenCalledTimes(3);
+
+    // Release one at a time so queued directories can take the freed slot.
+    while (pendingMkdirs.length) {
+      pendingMkdirs.shift()?.();
+      await Promise.resolve();
+      await Promise.resolve();
+    }
+
+    await expect(resultsPromise).resolves.toEqual(dirs);
+    expect(maxObservedConcurrency).toBeLessThanOrEqual(3);
+  });
 });
