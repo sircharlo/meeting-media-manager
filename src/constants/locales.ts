@@ -17,7 +17,8 @@ export type LanguageValue =
   | 'ru'
   | 'sl'
   | 'ty'
-  | 'uk';
+  | 'uk'
+  | 'zh';
 
 // As a sort of rule, let's only enable a language once it's reached a threshold of 50% translated in Crowdin.
 // Modify this file along with src/i18n/index.ts to enable a language both on the docs website and in the app.
