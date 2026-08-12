@@ -3,49 +3,49 @@
 layout: home
 
 hero:
-  name: 'M³ 帮助文档'
-  text: 'Meeting Media Manager 设置与使用完整指南'
+  name: 'M³ Documentation'
+  text: 'Complete guide to setting up and using Meeting Media Manager'
   image: /logo.svg
   actions:
     - theme: brand
-      text: 下载
+      text: Download
       link: /download
     - theme: brand
-      text: 关于
+      text: About
       link: /about
     - theme: brand
-      text: 用户指南
+      text: User Guide
       link: /user-guide
     - theme: brand
-      text: 设置指南
+      text: Settings Guide
       link: /settings-guide
     - theme: brand
-      text: 常见问题 (FAQ)
+      text: FAQ
       link: /faq
 features:
   - icon: 🚀
-    title: 自动媒体管理
-    details: 自动下载并整理耶和华见证人官方网站上提供的任何语言的聚会图片和视频。
+    title: Automatic Media Management
+    details: Automatically downloads and organizes pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
   - icon: 🎦
-    title: 媒体演示
-    details: 在混合或现场聚会期间，通过高级控件、缩放/平移功能和自定义计时选项轻松演示媒体。
+    title: Media Presentation
+    details: Present media with ease during hybrid or in-person meetings with advanced controls, zoom/pan capabilities, and custom timing options.
   - icon: 🎵
-    title: 背景音乐系统
-    details: 智能背景音乐，在聚会开始前自动停止，聚会结束后可一键重新启动。
+    title: Background Music System
+    details: Intelligent background music that automatically stops before meetings start and can be restarted with one click after meetings.
   - icon: 🖥️
-    title: 多显示器支持
-    details: 自动检测并管理外部显示器，实现无缝的媒体展示和网站共享。
+    title: Multi-Monitor Support
+    details: Automatically detects and manages external monitors for seamless media presentations and website sharing.
   - icon: 🌐
-    title: 多语言支持
-    details: 下载数百种语言的聚会媒体，M³ 界面支持多种可用语言。
+    title: Multi-Language Support
+    details: Download meeting media in hundreds of languages and use M³'s interface in any of the many available languages.
   - icon: 🧩
-    title: 集成
-    details: 与 Zoom 或 OBS Studio 无缝集成，增强聚会期间的媒体管理和播放。
+    title: Integrations
+    details: Seamlessly integrates with Zoom or OBS Studio for enhanced media management and playback during meetings.
   - icon: 📁
-    title: 文件夹监控
-    details: 自动同步监控文件夹（如 Dropbox 或 OneDrive）中的媒体，并将媒体导出到指定文件夹。
+    title: Folder Monitoring
+    details: Automatically sync media from watched folders (like Dropbox or OneDrive) and export media to folders.
   - icon: 🎯
-    title: 高级功能
+    title: Advanced Features
     details: Import custom media, JWPUB files, playlists, audio Bible recordings, Study Bible media, public talk media, and manage multiple congregations.
   - icon: ⏱️
     title: Meeting Timer and Recording Controls
