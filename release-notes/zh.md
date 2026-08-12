@@ -1,12 +1,12 @@
 <!-- markdownlint-disable no-duplicate-heading -->
 
-# 更新内容
+# What's New
 
-关于不同版本之间更改的完整清单，请参阅我们在 GitHub 上的 CHANGELOG.md文件。
+For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
 
 ## v26.8.0
 
-### ✨ 新功能
+### ✨ New Features
 
 - ✨ **App-Wide Redesign**: A broad visual and interaction refresh across dialogs, the media list/header, Settings, and the Setup Wizard. The Setup Wizard is now a one-question-per-screen flow with a progress bar. All prompts were replaced with a consistent branded dialog, and PDF page-range selection (for publication and drag-and-drop imports) now uses a thumbnail-grid picker instead of a free-text prompt. Added a new Quick Start Guide tour after the Setup Wizard completes. Also includes refreshed card/header styling with dark-mode-aware shadows and several dark-mode contrast fixes (focused field labels, download-progress percentages).
 - ✨ **Settings Page**: Reworked into a two-pane layout, with a new global Preferences section for auto-update/beta-update toggles moved out of the About dialog (which is now purely informational).
@@ -15,34 +15,34 @@
 
 ## v26.7.7
 
-### ✨ 新功能
+### ✨ New Features
 
 - ✨ **Media Preview Quality**: Media preview now renders video frames via canvas with high-quality downscaling, fixing jagged/blurry previews (especially on text-heavy content like songs). The preview also auto-disables itself if it has to repeatedly correct playback drift on a single video, with a one-click way to turn it back on.
 
 ## v26.7.6
 
-### ✨ 新功能
+### ✨ New Features
 
 - ✨ **CBS Video Exclusion**: Added a setting to exclude Congregation Bible Study videos from specific publications (defaults to the **Walk Courageously With God** book), with a searchable publication picker.
 - ✨ **Document Page Numbers**: Publication Media and JWPUB import listings now show each document's page number (or numbers when there are multiple pages) after its title. This can help you to quickly find specific media when you know the page number on which it is found.
 
 ## v26.7.4
 
-### ✨ 新功能
+### ✨ New Features
 
 - ✨ **Missing Media Recovery**: Media items whose local file went missing (e.g. deleted by the cache auto-clear, or removed manually) now show a disabled play button, a "missing" caption naming the file to look for, and a new "Locate file" action to relink the item to a file on disk.
 - ✨ **Compatibility Warning**: Added a dismissible banner warning users on soon-to-be-unsupported OS/architecture combos (macOS 12 Monterey and Windows 32-bit) to upgrade before future app updates require newer system support.
 
 ## v26.7.0
 
-### ✨ 新功能
+### ✨ New Features
 
 - ✨ **Linked Audio Playback**: Added support for playing audio from one file together with video from another file. This can be useful for playing video slideshows with accompanying music.
 - ✨ **Watched Media Layouts**: Added persistence for watched media items and section order across watched folders. This ensures that the media list is displayed the same way even when the watched folder is synced across devices.
 
 ## v26.6.1
 
-### ✨ 新功能
+### ✨ New Features
 
 - ✨ **Media Preview**: Added a live media preview overlay that can be toggled on or off from the settings or from the display popup.
 - ✨ **Search media**: Added a quick search box in the media list that allows you to quickly find media by title. To use it, simply use the standard keyboard shortcut for search (Ctrl+F or Cmd+F).
@@ -51,7 +51,7 @@
 
 ## v26.6.0
 
-### ✨ 新功能
+### ✨ New Features
 
 - ✨ **Timer**: Added analog display modes and timing report status.
 - ✨ **Profiles**: Added profile settings import and export in Advanced settings and the Setup Wizard.
@@ -59,196 +59,196 @@
 
 ## v26.5.0
 
-### ✨ 新功能
+### ✨ New Features
 
 - ✨ **PDF Import**: Added a new PDF import flow to the Publication Media dialog, allowing the PDF version of a publication to be automatically imported as individual images when desired.
 
 ## v26.4.8
 
-### ✨ 新功能
+### ✨ New Features
 
 - ✨ **JW Stream**: Added JW Stream to the list of websites that can be mirrored.
 
 ## v26.4.0
 
-### ✨ 新功能
+### ✨ New Features
 
 - ✨ **Meeting Timer**: A new meeting timer feature has been added. It is optional and can be enabled in the advanced settings, if desired. The timer can be used to allow the media operator to keep track of the time spent on meeting parts, or to display the time spent on the current meeting part on a dedicated screen visible only to the speaker.
 
 ## v26.3.0
 
-### ✨ 新功能
+### ✨ New Features
 
-- ✨ **纪念聚会的媒体**: 自动纪念聚会媒体检索已经不再需要测试！ 应用将自动下载纪念聚会欢迎视频和图像，在使用配置语言时显示。
-- ✨ **播放速度**：新增播放速度控制，并提供可视化指示器，支持手动重置。该功能仅在启用高级设置时可见。 此功能仅在高级设置启用时可见。
-- ✨ **拼音歌曲**：新增一个开关，可使用拼音歌曲替代中文会议歌曲。
+- ✨ **Memorial Media**: Automatic Memorial media retrieval is now out of beta! The app will automatically download the Memorial Welcome Video and image to display during the Memorial, when available in the configured language.
+- ✨ **Playback Speed**: Added playback speed control with visual indicator, and manual reset. This feature is only visible if enabled in the advanced settings.
+- ✨ **Pinyin Songs**: Added a toggle for pinyin song substitution for meetings held in Chinese.
 
 ## v26.2.0
 
-### ✨ 新功能
+### ✨ New Features
 
-- ✨ **磁盘空间检测**：新增功能，用于监控磁盘空间并在空间不足时发出通知。
+- ✨ **Disk Space Check**: Added functionality to monitor and notify when disk space is low.
 
 ## v26.1.5
 
-### ✨ 新功能
+### ✨ New Features
 
-- ✨ **纪念聚会媒体**：选择纪念聚会日期时，会自动获取支持语言的纪念聚会横幅和开场视频。
+- ✨ **Memorial Media**: Automatically fetch Memorial banner and intro video in supported languages when the Memorial date is selected.
 
 ## v26.1.0
 
-### ✨ 新功能
+### ✨ New Features
 
-- ✨ **聚会自动同步**：新增自动与官方网站同步会议日期和时间的功能。该功能默认启用，也可在高级设置中手动触发或关闭。 此功能默认启用，可以在高级设置中手动触发或禁用。
-- ✨ **未来时间的变更**：当通过网站查找创建会众时，如有可用信息，应用现在会包含未来的日程变更。
-- ✨ **整机安装共享缓存**：整机安装现在默认共享同一个数据文件夹，从而优化同一台电脑多个用户之间的存储和带宽使用。
+- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
+- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
+- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
 
 ## v25.12.2
 
-### ✨ 新功能
+### ✨ New Features
 
-- ✨ **缩放/平移按钮**：新增支持按住缩放和平移按钮以进行连续调整。
+- ✨ **Zoom/Pan buttons**: Added the ability to press and hold zoom and pan buttons for continuous adjustment.
 
 ## v25.12.0
 
-### ✨ 新功能
+### ✨ New Features
 
-- ✨ **多选右键菜单**：当选择多个媒体项目时，新增支持右键菜单操作。
-- ✨ **键盘快捷键**：新增 `Ctrl/Cmd+A` 全选媒体，`H` 隐藏选中媒体，`Shift+Up/Down` 用于键盘选择导航。
-- ✨ **守望台研究班视频设置**: 添加了一个设置以排除额外的守望台研究班的视频。
-- ✨ **可折叠分区**：在非聚会日新增分区折叠功能，使界面更加整洁。
-- ✨ **JW Events 网站**：新增除了主官方网站外，还可以展示 JW Events 网站的功能。
-- ✨ **播放列表导入自定义**：新增在导入 JW 播放列表时，自定义添加到媒体项前缀的功能。
-- ✨ **网站镜像导航**：新增切换开关，在停止网站镜像后自动跳转到媒体列表。
-- ✨ **OBS 录制控制**：新增控制 OBS 录制的功能。
-- ✨ **年度经文预览**：新增每年 12 月可预览下一年度经文的功能。
-- ✨ **更新通知**：新增在运行测试版或禁用更新时的警告通知，并优化更新下载进度显示。
-- ✨ **硬件加速设置**：新增在需要时永久禁用硬件加速的选项。
+- ✨ **Multi-Select Context Menu**: Added support for right-click menu actions when multiple media items are selected.
+- ✨ **Keyboard Shortcuts**: Added `Ctrl/Cmd+A` to select all media, `H` to hide selected media, and `Shift+Up/Down` for keyboard selection navigation.
+- ✨ **Watchtower Study Video Settings**: Added a setting to exclude extra Watchtower study videos.
+- ✨ **Collapsible Sections**: Added ability to collapse sections on non-meeting days for a cleaner view.
+- ✨ **JW Events Website**: Added the ability to present the JW Events website in addition to the main official website.
+- ✨ **Playlist Import Customization**: Allowed ability to customize the prefix that is added to media items when importing JW playlists.
+- ✨ **Website Mirroring Navigation**: Added a toggle to automatically navigate to the media list after website mirroring is stopped.
+- ✨ **OBS Recording Controls**: Added the ability to control OBS recordings.
+- ✨ **Yeartext Preview**: Added the ability to preview next year's yeartext as of December of every year.
+- ✨ **Update Notifications**: Added warning notifications if running a beta version or if updates are disabled, and improved update download progress display.
+- ✨ **Hardware Acceleration Settings**: Added an option to permanently disable hardware acceleration if needed.
 
 ## v25.11.0
 
-### ✨ 新功能
+### ✨ New Features
 
-- ✨ **JWPUB 媒体选择**：新增可从 JWPUB 文件中选择单个媒体的功能。
-- ✨ **媒体窗口自动聚焦**：新增可选设置，在 Zoom 屏幕共享后自动聚焦媒体窗口。
-- ✨ **电视显示鼠标覆盖层**：优化网站窗口中的鼠标覆盖层，使电视显示时鼠标指针更清晰可见。
-- ✨ **会议录制**：新增会议录制功能，用于控制外部录制应用。
-- ✨ **站内搜索**：新增智能搜索功能，可在网站中搜索媒体或出版物。
-- ✨ **便捷手动导入出版物**：新增功能，可轻松从 JW.org 导入出版物，例如杂志、书籍、节目和邀请函。
-- ✨ **手语改进**：新增在播放完整手语文件前进行确认，并支持选择多个片段（例如连续朗读多个段落）。
-- ✨ **片段导航**：在片段列表中新增时长显示，并优化片段导航。
-- 🛠️ **媒体显示**：确保在开始播放时媒体显示自动可见，即使之前被隐藏。
+- ✨ **JWPUB Media Selection**: Added a way to select individual media from JWPUB files.
+- ✨ **Auto-Focus Media Window**: Added an optional setting to automatically focus the media window after Zoom screen sharing.
+- ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
+- ✨ **Meeting Recording**: Added a new meeting recording feature, to control an external recording app.
+- ✨ **Site Search**: Added ability to search for media or publications on the site using smart search.
+- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from JW.org, such as magazine, books, programs and invitations.
+- ✨ **Sign Language Improvements**: Added confirmation before playing entire files for sign languages and support for selecting multiple clips, such as for when multiple paragraphs are to be read consecutively.
+- ✨ **Clip Navigation**: Added duration display to clip list items and improved clip navigation.
+- 🛠️ **Media Display**: Ensured media display becomes visible when playback starts, even if it was hidden before.
 
 ## v25.10.1
 
-### ✨ 新功能
+### ✨ New Features
 
-- ✨ **设置向导 – Zoom 步骤**：在设置向导中新增 Zoom 集成步骤，方便初始配置。
-- ✨ **屏幕选择器增强**：在显示弹窗中展示所有屏幕的准确视觉表示，以及主窗口的当前大小和位置，使选择媒体窗口显示的屏幕更加容易。 这就更容易选择显示媒体窗口的正确屏幕。
-- ✨ **媒体窗口偏好**：应用现在会记住用户指定的媒体窗口显示屏幕偏好。
+- ✨ **Setup Wizard – Zoom Step**: Added a Zoom integration step to the setup wizard for easier initial configuration.
+- ✨ **Screen Picker Enhancements**: Show an accurate visual representation of all screens, as well as the main window’s current size and location, in the display popup. This makes it easier to choose the correct screen on which the media window should be displayed.
+- ✨ **Media Window Preference**: The app will now remember the preferred screen on which the media window should be displayed, if specified by the user.
 
 ## v25.10.0
 
-### ✨ 新功能
+### ✨ New Features
 
-- ✨ **开始播放停止**：添加了一个新的设置，允许播放开始暂停。这可能有助于AV操作员在媒体窗口开始播放之前准备他们的其他程序(例如开始Zoom共享)。
-- ✨ **更新通知**：用户现在将通过应用内横幅通知更新， 这也将允许用户立即安装更新，而不是等待下一个应用程序重启。
-- ✨ **自定义事件**：在检测到某些事件时添加了可触发键盘快捷键的可选事件。 这可能有助于AV操作员自动在应用之外执行操作。 例如，在媒体在使用投影仪的讲堂聚会之前和之后可以打开和关闭智能灯； 或者一个脚本可以在聚会最后一首歌曲播放后自动在Zoom会议上调用。
+- ✨ **Begin Playback Paused**: Added a new setting to allow playback to begin paused, which can be useful for AV operators to prepare their setup (such as starting Zoom sharing) before the media starts playing in the media window.
+- ✨ **Update Notifications**: Users will now be notified of updates through an in-app banner, which will also allow the user to install updates immediately, instead of waiting for the next app restart.
+- ✨ **Custom Events**: Added optional events hooks that can trigger keyboard shortcuts when certain events are detected. This can be useful for AV operators to execute actions automatically outside of the app. For example, smart lights could be turned on and off before and after media plays in auditoriums where projectors are used; or a script can be called after a meeting's last song has been played to automate various actions in a Zoom meeting.
 
 ## v25.9.1
 
-### ✨ 新功能
+### ✨ New Features
 
-- ✨ **媒体窗口总是在顶部 & 全屏行为**：修复并改进媒体窗口的顶部行为，并根据全屏状态动态调整。
-- ✨ **日期显示格式设置**: 添加了一个用户设置来配置日期显示格式。
-- ✨ **媒体相互淡入淡出** : 实现媒体显示的交叉淡入淡出的过渡，而不是以前存在的更突然淡出到黑色的过渡。
-- ✨ **音乐自动停止**：优化后台音乐自动停止的行为，不论音乐是否是自动启动的行为
-- ✨ **macOS点击不活跃窗口**: 启用鼠标单击主窗口的 macOS, 这将使它更容易控制应用程序，即使它没有对准。
+- ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
+- ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
+- ✨ **Media Crossfade**: Implemented crossfade transitions for media display, instead of the more abrupt fade-to-black transition that was present before.
+- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not
+- ✨ **macOS Click-Through on Inactive Windows**: Enabled mouse click passthrough on the main window for macOS, which should make it easier to control the app even when it's not focused.
 
 ## v25.9.0
 
-### ✨ 新功能
+### ✨ New Features
 
-- ✨ **下载弹出增强功能**：添加刷新按钮并在下载弹出窗口中按日期分组。
-- ✨ **观看媒体顺序**: 添加了观看媒体项目的部分顺序存储。
+- ✨ **Download Popup Enhancements**: Added refresh button and download grouping by date in the download popup.
+- ✨ **Watched Media Order Memory**: Added section order memory for watched media items.
 
 ## v25.8.3
 
-### ✨ 新功能
+### ✨ New Features
 
-- ✨ **媒体窗口淡入淡出**: 添加了一个新的高级设置，使媒体窗口淡入淡出, 提供更安全的视觉过渡.
-- ✨ **图像持续时间控制和进度跟踪**：为重复的章节增加图像持续时间控制和进度跟踪能力。
+- ✨ **Media Window Fade Transitions**: Added a new advanced setting to make the media window fade in and out, providing smoother visual transitions.
+- ✨ **Image Duration Control and Progress Tracking**: Added image duration control and progress tracking capabilities for repeated sections.
 
 ## v25.8.1
 
-### ✨ 新功能
+### ✨ New Features
 
-- ✨ **自定义媒体部分**: 创建、编辑和管理自定义媒体部分的完整系统，包括颜色定制和拖放重排序。
-- ✨ **媒体分割线**: 在媒体列表中添加标题分隔符, 以便更好地组织顶部/底部定位选项。
-- ✨ **部分循环播放**: 启用针对无缝媒体循环的特定部分内连续播放。
-- ✨ **Zoom集成**: 自动分享屏幕开始/停止与媒体播放的协调。
+- ✨ **Custom Media Sections**: Complete system for creating, editing, and managing custom media sections with color customization and drag-and-drop reordering.
+- ✨ **Media Dividers**: Add titled dividers within media lists for better organization with top/bottom positioning options.
+- ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
+- ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
 
 ## v25.7.0
 
-### ✨ 新功能
+### ✨ New Features
 
-- 没有此版本的新功能 ！
+- No new features for this release!
 
 ## 25.6.0
 
-### ✨ 新功能
+### ✨ New Features
 
-- ✨ **计量连接设置**：添加了新设置，以减少计量连接上的下载带宽使用量。
-- ✨ **改进了流媒体处理**：更好地支持流媒体，减少与延迟相关的问题。
+- ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
+- ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
 
 ## 25.5.0
 
-### ✨ 新功能
+### ✨ New Features
 
-- 🖼️ **OBS 延迟选项用于图像**: 添加 OBS Studio 设置以在显示图像时延迟场景更改, 改进离子对。
-- 🔊 **支持 `.m4a` 音频格式**: 增加`.m4a`音频文件的兼容性以扩展支持的媒体类型。
+- 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
+- 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
 
 ## 25.4.0
 
-### ✨ 新功能
+### ✨ New Features
 
-- 🇵🇭 **新语言: Tagalog** : 添加对 Tagalog的支持，扩展应用程序的多语言功能。
-- 🎞 **支持`.m4v`视频格式**：现在支持播放`.m4v`文件，以提高媒体兼容性。
+- 🇵🇭 **New Language: Tagalog**: Added support for Tagalog, expanding the app's multilingual capabilities.
+- 🎞 **Support for `.m4v` Video Format**: Now supports playback of `.m4v` files to improve media compatibility.
 
 ## 25.3.1
 
-### ✨ 新功能
+### ✨ New Features
 
-- 🌏 **支持新语言：韩语**: 添加对韩语的支持, 扩大更多用户的访问。
+- 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
 
 ## 25.3.0
 
-### ✨ 新功能
+### ✨ New Features
 
-- 🎵 **用视频播放背景音乐** : 允许背景音乐在视频被查看时继续播放。
-- 🎥 **手语媒体的视频**: 添加在媒体窗口中显示专为手语用户提供视频源的能力。
-- 📅 **自动纪念聚会的日期和背景**: 自动检测和设置纪念聚会的日期并准备纪念背景图像。
-- 📜 **在应用程序中显示发布笔记** : 在应用程序中直接显示发布笔记, 以便用户在更新后可以轻松地查看更改。
+- 🎵 **Play Background Music with Videos**: Allow background music to continue playing while videos are being viewed.
+- 🎥 **Camera Feed for Sign Language Media**: Add the ability to display a camera feed on the media window specifically for sign language users.
+- 📅 **Automatic Memorial Date & Background**: Automatically detect and set the Memorial date and prepare the Memorial background image.
+- 📜 **Show Release Notes In-App**: Display release notes directly in the application so users can easily review changes after an update.
 
 ## 25.2.1
 
-### ✨ 新功能
+### ✨ New Features
 
-- 🔄 **允许 OBS 重连尝试**: 引入手动强制OBS 在需要时重新连接的可能性。
-- 🗑 **自动清理旧的导出日期文件夹**: 自动移除过时的导出日期文件夹以便保存存储。
+- 🔄 **Allow OBS Reconnection Attempts**: Introduce the possibility to manually force OBS to reconnect when needed.
+- 🗑 **Auto Cleanup Old Export Date Folders**: Automatically remove outdated export date folders to keep storage organized.
 
 ## 25.2.0
 
-### ✨ 新功能
+### ✨ New Features
 
-- 🌍 **使用系统区域设置**: 自动检测和使用系统区域设置以获得更个性化的体验。
-- 🏷️ **导出媒体的标签** : 添加元数据标签到导出的媒体文件以便更好地组织组织。
-- 🔄 **Automatic Beta to Stable Downgrade** : 允许在必要时从测试版自动降级到稳定发布版本。
-- 🌐 \***摘录最新MEPS 语言索引**: 直接从官方网站获取最新MEPS 语言索引，确保最新语言支持。
+- 🌍 **Use System Locale by Default**: Automatically detect and use the system's locale for a more personalized experience.
+- 🏷 **Tag Support for Exported Media**: Add metadata tags to exported media files for better organization.
+- 🔄 **Automatic Beta to Stable Downgrade**: Allow automatic downgrades from beta versions to stable releases when necessary.
+- 🌐 **Extract Latest MEPS Language Indexes**: Fetch the most recent MEPS language indexes directly from the official website, ensuring up-to-date language support.
 
 ## 25.1.0
 
-### ✨ 新功能
+### ✨ New Features
 
 - 📅 **Open Previous Dates**: Allow opening previous dates of the current week, which is useful when the meeting day is moved later in the week.
 - 🛑 **Error Banner for OBS Studio**: Add an error banner when OBS Studio is not connected on a meeting day, ensuring users are alerted.
@@ -258,7 +258,7 @@
 
 ## 24.11.0
 
-### ✨ 新功能
+### ✨ New Features
 
 - 🖥️ **Website Presentation on macOS**: Presenting the website is now supported on macOS 🚀
 - ⌨️ **Playback Keyboard Shortcuts**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
@@ -268,7 +268,7 @@
 
 ## 24.10.10
 
-### ✨ 新功能
+### ✨ New Features
 
 - ⌨️ **Media Navigation Shortcuts**: Added keyboard shortcuts to navigate to the next/previous media item
 - 🖱️ **Media Item Right-Click Menu**: Added a right-click menu to media items to hide media items and rename them
@@ -276,6 +276,6 @@
 
 ## 24.10.9
 
-### ✨ 新功能
+### ✨ New Features
 
 - 🗑️ **Delete Extra Media for a Day**: Added an option to delete all extra media files for the currently selected day
