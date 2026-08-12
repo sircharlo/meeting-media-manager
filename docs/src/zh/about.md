@@ -1,109 +1,109 @@
-# 关于 Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
+# About Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
 
-![M³ 横幅](./../assets/m3-banner.png)
+![M³ banner](./../assets/m3-banner.png)
 
-## 这个应用程序是什么？ 这个应用程序是什么？ {#what-is-this-app}
+## What is this app? {#what-is-this-app}
 
-**Meeting Media Manager**，简称 **M³**，是一个适用于 Windows、macOS 和 Linux 的综合性跨平台应用程序，可自动下载、组织和播放耶和华见证人会众聚会的图片和视频。 它支持耶和华见证人官方网站上的任何语言，并为混合聚会和线下聚会期间管理媒体，提供强有力的工具。
+**Meeting Media Manager**, or **M³** for short, is a comprehensive cross-platform application for Windows, macOS and Linux that automatically downloads, organizes, and presents pictures and videos for congregation meetings of Jehovah's Witnesses. It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
 
-M³具有管理常规和自定义聚会媒体的功能，支持使用同一计算机账户的多个会众和/或小组，以及使媒体共享变得轻松的高级演示功能。
+M³ features support for managing regular and custom meeting media, multiple congregations and/or groups using the same computer account, and advanced presentation capabilities that make media sharing effortless.
 
-:::info 备注
+:::info Note
 
-此应用程序以前被称为JWMMF（JW Meeting Media Fetcher），但在2022年5月更名为Meeting Media Manager。
+This app used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed to Meeting Media Manager in May 2022.
 
 :::
 
-## 为什么选择 M³？ {#why-choose-m3} {#why-choose-m3}
+## Why choose M³? {#why-choose-m3}
 
-M³ 是管理聚会媒体的理想工具，为各平台提供无缝、可靠且功能丰富的体验。 它是专门为了满足聚会的需要而设计的，并为有效的媒体播放提供了一切必要的手段。
+M³ is the ultimate tool for managing meeting media, offering a seamless, reliable, and feature-rich experience across platforms. It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation.
 
-### 主要功能 {#key-benefits}
+### Key benefits {#key-benefits}
 
-- **轻松进行媒体演示**：以最佳方式演示媒体——只需打开 M³，一切都会顺利运行。 不需要复杂的设置或额外的步骤。
+- **Effortless media presentation**: Presenting media at its finest — just open M³ and everything works. No complex setup or extra steps required.
 
-- **多会众操作支持**：在单个应用程序内轻松管理多个会众或小组的设置。
+- **Multi-congregation support**: Manage settings for multiple congregations or groups easily within a single application.
 
-- **高级功能**: 轻松添加额外媒体，导入自定义内容，并自动与 Zoom 上的参与者共享王国聚会所中发生的事情。
+- **Advanced features**: Easily add extra media, import custom content, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
 
-- **优化的跨平台性能**：即使在资源有限的旧系统或计算机上，也能在 Windows、macOS 和 Linux 上享受顺畅且响应迅速的体验。
+- **Optimized cross-platform performance**: Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
 
-- \*\*可靠和稳定：\*\*非常可靠和稳定，选择它就不会有错。 遇到了问题吗？ 请报告，问题将迅速予以处理。
+- **Reliable and stable**: Built to perform when you need it most. Encounter a bug? Report it, and it will be addressed promptly.
 
-- **高级演示工具**: 高级媒体控制、缩放/平移功能、自定义计时以及无缝的 Zoom 和 OBS Studio 集成。
+- **Advanced presentation tools**: Advanced media controls, zoom/pan capabilities, custom timing, and seamless Zoom and OBS Studio integration.
 
-## M³ 能做什么？ {#what-can-m3-do} {#what-can-m3-do}
+## What can M³ do? {#what-can-m3-do}
 
-M³ 是一个综合性媒体 management 解决方案，让您能够轻松自动地下载、同步、共享和演示所有聚会媒体。 以下是M³的强大之处：
+M³ is a comprehensive media management solution that allows you to easily and automatically download, synchronize, share, and present all meeting media. Here's what makes M³ powerful:
 
-### 核心媒体管理
+### Core Media Management {#core-media-management}
 
-- **自动媒体下载**: 自动获取并下载即将举行的聚会所需的所有媒体
-- **多语言支持**: 下载数百种可用语言中任何一种的媒体
-- **智能缓存**: 智能缓存系统，保持媒体的组织性和时效性
-- **媒体管理**: 按日期和聚会部分自动组织媒体
+- **Automatic media downloads**: Automatically fetches and downloads all media needed for upcoming meetings
+- **Multi-language support**: Download media in any of hundreds of available languages
+- **Smart caching**: Intelligent caching system that keeps media organized and up-to-date
+- **Media organization**: Automatically organizes media by date and meeting section
 
-### 媒体播放功能 {#about-presentation-features}
+### Media Presentation Features {#about-presentation-features}
 
-对于**混合**或**现场**的会众聚会，集成的媒体演示模式包括：
+For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode includes:
 
-- **高级媒体控制**: 带有缩放和平移功能的媒体缩略图
-- **自定义计时**: 设置媒体播放的自定义开始和结束时间
-- **播放控制**: 易于使用的暂停/播放/停止按钮，带有键盘快捷键
+- **Advanced media controls**: Media thumbnails with zoom and pan capabilities
+- **Custom timing**: Set custom start and end times for media playback
+- **Playback controls**: Easy-to-use pause/play/stop buttons with keyboard shortcuts
 - **Live preview and speed control**: Preview the audience display and optionally adjust audio or video playback speed
-- **多显示器支持**: 自动外部显示器检测和管理
-- **干净的播放**: 无干扰的媒体演示界面
+- **Multi-monitor support**: Automatic external monitor detection and management
+- **Clean presentation**: Distraction-free media presentation interface
 
-### 背景音乐
+### Background Music {#about-background-music}
 
-- **智能播放**：背景音乐在聚会开始前自动停止
-- **一键重启**：聚会结束后一键恢复背景音乐
-- **音量控制**：可调节的背景音乐音量，带淡出功能
+- **Intelligent playback**: Background music that automatically stops before meetings start
+- **One-click restart**: Resume background music with a single click after meetings
+- **Volume control**: Adjustable background music volume with fade-out capabilities
 
-### Zoom集成
+### Zoom Integration {#about-zoom-integration}
 
-- **自动屏幕共享**：当您播放或停止媒体时，自动开始和停止Zoom屏幕共享
+- **Automatic screen sharing**: Start and stop Zoom screen sharing automatically when you play or stop media
 
-### OBS Studio集成
+### OBS Studio Integration {#about-obs-integration}
 
-- **自动场景切换**：与OBS Studio无缝集成，用于混合聚会
-- **场景管理**：在摄像头、媒体和其他场景之间自动切换
+- **Automatic scene switching**: Seamless integration with OBS Studio for hybrid meetings
+- **Scene management**: Automatic switching between camera, media, and other scenes
 - **Recording controls**: Start and stop OBS recordings from M³ when enabled
 
-### 媒体导入和管理
+### Media Import and Management {#about-media-import}
 
-- **JWPUB文件**：轻松导入和管理JWPUB文件
-- **JWLPLAYLIST文件**：支持JW Library播放列表文件
-- **自定义媒体**：导入自定义视频、图片、音频文件和PDF文件
+- **JWPUB files**: Import and manage JWPUB files with ease
+- **JWLPLAYLIST files**: Support for JW Library playlist files
+- **Custom media**: Import custom videos, pictures, audio files, and PDF files
 - **Bible media**: Import Study Bible media, sign-language Bible media, and audio recordings of the New World Translation
-- **公众演讲**：通过S-34导入器，始终准备好公众演讲媒体概览以供使用
+- **Public talks**: Always have public talk media overview ready to use with the S-34 importer
 
-### 高级功能
+### Advanced Features {#about-advanced-features}
 
-- **文件夹监控**：自动从监控的文件夹（Dropbox、OneDrive等）同步媒体
-- **媒体导出**：自动将媒体导出到文件夹，按日期组织
-- **网站演示**：在外部显示器上演示官方网站
+- **Folder monitoring**: Automatically sync media from watched folders (Dropbox, OneDrive, etc.)
+- **Media export**: Automatically export media to folders, organized by date
+- **Website presentation**: Present the official website on external monitors
 - **Meeting timer**: Optional timer window for timing meeting parts
 - **Meeting recording helpers**: Control OBS recording or an external recording application
-- **键盘快捷键**：许多功能的可自定义键盘快捷键
+- **Keyboard shortcuts**: Customizable keyboard shortcuts for many functions
 - **Multiple profiles**: Manage different congregations or groups with separate profiles, including profile settings import and export
 
-## M³ 支持我的语言吗？ {#does-m3-work-in-my-language} {#does-m3-work-in-my-language}
+## Does M³ work in my language? {#does-m3-work-in-my-language}
 
-**是的！** M³ 提供全面的多语言支持：
+**Yes!** M³ provides comprehensive multi-language support:
 
-耶和华见证人聚会的媒体可以自动下载官方网站上提供的数百种语言中的任何一种。 可用语言列表会动态更新；您只需在设置期间选择所需的语言即可。
+Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of languages available on the official website of Jehovah's Witnesses. The list of available languages is dynamically updated; all you need to do is select which one you need during setup.
 
-### 界面语言
+### Interface Languages {#interface-languages}
 
-M³本身已被志愿者翻译成多种语言。 您可以配置希望在M³界面中显示的语言，独立于用于媒体下载的语言。 这意味着您可以使用首选语言操作 M³，同时下载任何其他支持语言的媒体。
+M³ itself has been translated into many languages by volunteers. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. This means you can use M³ in your preferred language while downloading media in any other supported language.
 
-关于后退语言和字幕的详细信息，请参阅 [FAQ](faq#language-support)。
+For details about fallback languages and subtitles, see the [FAQ](faq#language-support).
 
-## 系统要求
+## System Requirements {#system-requirements}
 
-关于支持的操作系统和要求，请参阅 [FAQ](faq#technical-questions)中的答案。
+For supported operating systems and requirements, see the answers in the [FAQ](faq#technical-questions).
 
-**今天给M³一次尝试，看看它能做些什么！在会众聚会上播放媒体的工作从来没有那么容易。 在会众聚会上播放媒体的工作从来没有那么容易。**
+**Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
 
-![M³ 预览](./../assets/m3-preview.png)
+![M³ preview](./../assets/m3-preview.png)
