@@ -1,130 +1,130 @@
-# 常见问题
+# Frequently Asked Questions {#frequently-asked-questions}
 
-## 常规问题
+## General Questions {#general-questions}
 
-### :earth_americas: 此应用是否依赖外部站点、源或“管理员”下载出版物和聚会媒体或其他文档？ {#external-dependencies}
+### :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content? {#external-dependencies}
 
-**不。** 此应用程序的运转方式酷似 JW Library 应用。它直接从耶和华见证人的官方网站及其内容提供网络下载出版物、媒体和其他内容。应用程序自动决定需要下载的内容以及先前下载的内容不再是最新的，应该重新下载。 它直接从耶和华见证人的官方网站及其内容提供网络下载出版物、媒体和其他内容。 应用程序自动决定需要下载的内容以及先前下载的内容不再是最新的，应该重新下载。
+**No.** The app behaves similarly to JW Library. It downloads publications, media and other content directly from the official website of Jehovah's Witnesses and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
 
-:::info 备注
+:::info Note
 
-此应用程序的源代码可供所有人检查和验证应用里发生的事情。
+The source code for this app is available for all to examine and verify what goes on under the hood.
 
 :::
 
-### :thinking: 本应用是否违反了耶和华见证人官方网站的使用条款？ {#terms-of-use}
+### :thinking: Does this app infringe the Terms of Use of the official website of Jehovah's Witnesses? {#terms-of-use}
 
-**不**。[耶和华见证人官方网站使用条款](https://www.jw.org/finder?docid=1011511&prefer=content)明确允许我们正在做的用法。以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）：
+**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content) of the official website of Jehovah's Witnesses explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
 
-> 你不得：
+> You may not:
 >
-> 从本网站收集、翻印、下载、撷取或采集数据、HTML、图像或文字，并制作应用程序、工具或技术，向公众分发 （**不限**本网站设计的非营利应用程序，提供大众免费下载电子档，如EPUB、PDF、MP3和MP4）。
+> Create for distribution purposes, any software applications, tools, or techniques that are specifically made to collect, copy, download, extract, harvest, or scrape data, HTML, images, or text from this site. (This does **not** prohibit the distribution of free, non-commercial applications designed to download electronic files such as EPUB, PDF, MP3, and MP4 files from public areas of this site.)
 
-### :question: M³ 支持哪些操作系统？ {#operating-systems}
+### :question: What operating systems does M³ support? {#operating-systems}
 
-M³ 支持 Windows、macOS 和 Linux：
+M³ supports Windows, macOS, and Linux:
 
-- **Windows**：Windows 10 及更高版本（提供 64 位和 32 位版本）
-- **macOS**: macOS 10.15(Catalina) 及以后的 (Universal build)
-- **Linux**：大多数现代 Linux 发行版（AppImage 格式）
+- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
+- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
+- **Linux**: Most modern Linux distributions (AppImage format)
 
-### :globe_with_meridians: M³ 支持我的语言吗？ {#language-support}
+### :globe_with_meridians: Does M³ work in my language? {#language-support}
 
-**是的！** M³ 提供全面的多语言支持：
+**Yes!** M³ provides comprehensive multi-language support:
 
-- **媒体**：可下载耶和华见证人官方网站上提供的数百种语言的媒体
-- **应用界面**：M³ 界面提供多种语言可选
-- **独立设置**：可在使用某种界面的同时下载另一种语言的媒体
-- **后备语言**：当主要语言暂无媒体时可配置后备语言
-- **字幕支持**：可下载并显示多语种字幕
+- **Media**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
+- **App Interface**: Use M³'s interface in many different languages
+- **Independent Settings**: You can use the interface in one language while downloading media in another
+- **Fallback languages**: Configure fallback languages for when media isn't available in the primary language
+- **Subtitle support**: Download and display subtitles in various languages
 
-## 安装与设置
+## Installation and Setup {#installation-setup}
 
-### :computer: 如何下载并安装 M³？ {#installation}
+### :computer: How do I download and install M³? {#installation}
 
-请前往[下载页面](download)获取适用于您系统的版本，并参照[用户指南](user-guide)完成安装。
+Download the appropriate version from the [Download page](download) and follow the steps in the [User Guide](user-guide).
 
-### :gear: 第一次如何进行设置？ {#first-time-setup}
+### :gear: How do I set up M³ for the first time? {#first-time-setup}
 
-M³ 提供向导，帮助完成关键配置：
+M³ includes a setup wizard that guides you through the essential configuration:
 
-1. 选择界面语言
-2. 选择配置文件类型（常规或其他）
-3. 配置会众信息
-4. 设置聚会日程
-5. 可选功能（如 OBS 集成）设置
+1. Choose your interface language
+2. Select profile type (Regular or Other)
+3. Configure congregation information
+4. Set up meeting schedule
+5. Configure optional features like OBS integration
 
-## 媒体管理
+## Media Management {#faq-media-management}
 
-### :desktop_computer: M³ 如何下载媒体？ {#media-download}
+### :desktop_computer: How does M³ download media? {#media-download}
 
-M³ 会自动为即将到来的聚会下载媒体：
+M³ automatically downloads media for upcoming meetings by:
 
-1. 检查您的聚会日程
-2. 判断所需媒体
-3. 按所选语言从耶和华见证人官方网站下载
-4. 以日期与聚会类型组织媒体
-5. 缓存文件以便离线使用
+1. Checking your meeting schedule
+2. Determining what media is needed
+3. Downloading from the official website of Jehovah's Witnesses in your selected language
+4. Organizing media by date and meeting type
+5. Caching files for offline use
 
-### :calendar: 可以为特定日期下载媒体吗？ {#specific-dates}
+### :calendar: Can I download media for specific dates? {#specific-dates}
 
-是! 是的！M³ 允许您：
+Yes! M³ allows you to:
 
-- 自动为即将到来的聚会下载媒体
-- 为任何日期导入自定义媒体
+- Download media for upcoming meetings automatically
+- Import custom media for any date
 
-### :open_file_folder: 如何导入我自己的媒体文件？ {#import-media}
+### :open_file_folder: How do I import my own media files? {#import-media}
 
-可通过多种方式导入：
+You can import custom media in several ways:
 
-- **文件导入**：使用导入按钮添加视频、图像或音频
-- **拖放**：将文件直接拖入 M³
-- **文件夹监控**：监控文件夹以自动导入
-- **JWPUB/播放列表**：导入出版物与播放列表
+- **File Import**: Use the import button to add videos, images, or audio files
+- **Drag and Drop**: Drag files directly into M³
+- **Folder Monitoring**: Set up a watched folder for automatic imports
+- **JWPUB Files and Playlists**: Import publications and playlists
 - **Public Talk Media**: Import S-34 or S-34mp JWPUB files for public talk media
 - **Bible and Study Bible Tools**: Add audio Bible recordings, Study Bible media, or sign-language Bible media
 
-### :speaker: 可以导入“音频圣经”吗？ {#audio-bible}
+### :speaker: Can I import audio Bible recordings? {#audio-bible}
 
-是! 是的！M³ 包含一个音频圣经功能，允许您：
+Yes! M³ includes an Audio Bible feature that allows you to:
 
-1. 选择圣经书卷与章节
-2. 选择具体经文或经文范围
-3. 下载音频录音
-4. 在聚会中使用
+1. Select Bible books and chapters
+2. Choose specific verses or verse ranges
+3. Download audio recordings
+4. Use them at the meetings
 
-## 演示功能
+## Presentation Features {#faq-presentation-features}
 
-### :tv: 聚会中如何演示媒体？ {#present-media}
+### :tv: How do I present media during meetings? {#present-media}
 
-播放媒体：
+To present media:
 
-1. 选择日期
-2. 点击要演示的媒体项上的播放按钮（或使用快捷键）
-3. 使用播放器控制暂停、跳转或停止
-4. 对图片使用缩放/平移
-5. 必要时设置自定义起止时间
+1. Select the date
+2. Click the play button on the media item you want to present or use keyboard shortcuts
+3. Use the media player controls to pause, navigate, or stop playback
+4. Use zoom/pan features for images
+5. Set custom timing if needed
 
-### :keyboard: 有哪些键盘快捷键？ {#faq-keyboard-shortcuts}
+### :keyboard: What keyboard shortcuts are available? {#faq-keyboard-shortcuts}
 
-M³ 支持自定义以下快捷键：
+M³ supports customizable keyboard shortcuts for:
 
-- 打开/关闭媒体窗口
-- 上一项/下一项导航
-- 播放/暂停/停止
-- 背景音乐开关
+- Opening/closing media window
+- Previous/next media navigation
+- Play/pause/stop controls
+- Background music toggle
 
 <!-- - Fullscreen mode -->
 
-### :notes: 背景音乐如何工作？ {#faq-background-music}
+### :notes: How does background music work? {#faq-background-music}
 
-背景音乐功能包括：
+Background music features include:
 
-- 应用启动后、聚会开始前自动播放
-- 聚会开始前自动停止
-- 聚会后可一键重新播放
-- 独立音量控制
-- 可配置提前停止缓冲时间
+- Automatic playback when M³ starts, before the meeting begins
+- Automatic stop before meetings begin
+- One-click restart after meetings
+- Independent volume control
+- Configurable stop buffer time
 
 ### :stopwatch: Does M³ include a meeting timer? {#faq-meeting-timer}
 
@@ -132,42 +132,42 @@ Yes. When enabled, M³ can show a separate timer window for participant timing. 
 
 The timer is a beta feature and should only be enabled if approved locally.
 
-### :video_camera: 如何设置 Zoom 集成？ {#zoom-setup}
+### :video_camera: How do I set up the Zoom integration? {#zoom-setup}
 
-在设置中启用 Zoom 集成：
+To integrate with Zoom:
 
-1. 在 M³ 设置中启用 Zoom 集成
-2. 在 Zoom 中配置屏幕共享快捷键并确保其设置为“全局”。 确保缩放设置中的快捷方式为“全局”。
-3. 演示媒体时，M³ 会自动开始/停止 Zoom 屏幕共享
+1. Enable Zoom integration in M³ settings
+2. Configure the screen sharing shortcut that is set up in Zoom. Ensure that shortcut is "global" in Zoom's settings.
+3. M³ will automatically start and stop Zoom screen sharing during media presentations
 
-## OBS Studio 集成
+## OBS Studio Integration {#faq-obs-integration}
 
-### :video_camera: 如何设置 OBS Studio 集成？ {#faq-obs-setup}
+### :video_camera: How do I set up the OBS Studio integration? {#faq-obs-setup}
 
-若要与 OBS Studio 集成：
+To integrate with OBS Studio:
 
-1. 安装 OBS Studio 与 WebSocket 插件
-2. 在 M³ 设置中启用 OBS 集成
-3. 填写 OBS 端口与密码
-4. 分别配置摄像机、媒体与图片场景
-5. 测试播放
+1. Install OBS Studio and the WebSocket plugin
+2. Enable OBS integration in M³ settings
+3. Enter the OBS port and password
+4. Configure scenes for camera, media, and images
+5. Test playback
 
-### :arrows_counterclockwise: 自动切换场景如何工作？ {#faq-scene-switching}
+### :arrows_counterclockwise: How does automatic scene switching work? {#faq-scene-switching}
 
-M³ 根据以下因素自动切换 OBS 场景：
+M³ automatically switches OBS scenes based on:
 
-- 媒体类型（视频、图片等）
-- 您的场景配置
-- 诸如“延迟显示图像（Postpone Images）”的设置
-- 是否在媒体播放后返回先前场景
+- Media type (video, image, etc.)
+- Your scene configuration
+- Settings like "Postpone Images"
+- Whether to return to previous scene after media
 
-### :pause_button: 什么是“延迟显示图像（Postpone Images）”功能？ {#faq-postpone-images}
+### :pause_button: What is the "Postpone Images" feature? {#faq-postpone-images}
 
-该功能会在您手动触发前，延迟把图片共享到 OBS。这对于以下情况很有用： 好处:
+This feature delays sharing images to OBS until you manually trigger them. This is useful for:
 
-- 先向现场观众展示图片
-- 更灵活地控制演示时机
-- 避免过早切换场景
+- Showing images to in-person audience first
+- Having more control over timing
+- Avoiding premature scene changes
 
 ### :record_button: Can M³ record meetings? {#faq-recordings}
 
@@ -176,177 +176,177 @@ M³ does not include a built-in recorder, but it can help control recording in t
 - If you use OBS Studio, enable OBS recording controls and start or stop OBS recording from the OBS popup
 - If you use another recording app, configure keyboard shortcuts so M³ can send the start and stop commands from the meeting recordings popup
 
-## 高级功能
+## Advanced Features {#faq-advanced-features}
 
-### :cloud: 文件夹监控如何工作？ {#faq-folder-monitoring}
+### :cloud: How does folder monitoring work? {#faq-folder-monitoring}
 
-文件夹监控允许您：
+Folder monitoring allows you to:
 
-1. 选择要监控的文件夹
-2. 自动导入与 Dropbox、OneDrive 等云存储同步的新媒体文件
+1. Select a folder to watch for new files
+2. Automatically import new media files that are synced with cloud storage like Dropbox or OneDrive
 
-### :file_folder: 什么是媒体自动导出？ {#faq-media-export}
+### :file_folder: What is media auto-export? {#faq-media-export}
 
-媒体自动导出将自动：
+Media auto-export automatically:
 
-1. 把媒体文件导出到指定文件夹
-2. 按日期与分区整理文件
-3. 可选将文件转换为 MP4 格式
-4. 保持聚会媒体文件的有序备份
+1. Exports media files to a specified folder
+2. Organizes files by date and section
+3. Converts files to MP4 format (optional)
+4. Maintains an organized backup of meeting media files
 
-### :family: 可以管理多个会众吗？ {#faq-multiple-congregations}
+### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
 
-是! 是的！M³ 支持多个配置文件，用于：
+Yes! M³ supports multiple profiles for:
 
-- 不同会众
-- 特别聚会/活动
-- 不同小组
-- 各自独立的设置与媒体
+- Different congregations
+- Special events
+- Different groups
+- Separate settings and media for each
 
 Profiles can also be exported to a JSON file and imported on another computer or into another profile. Importing replaces the current profile's settings.
 
-## 疑难解答 {#faq-troubleshooting}
+## Troubleshooting {#faq-troubleshooting}
 
-### :warning: 媒体无法下载，我该检查什么？ What should I check? {#faq-media-not-downloading}
+### :warning: Media isn't downloading. What should I check? {#faq-media-not-downloading}
 
-检查以下常见问题：
+Check these common issues:
 
-1. **聚会日程**：验证日期和时间是否正确
-2. **语言设置**：确保媒体语言设置正确
-3. **网络连接**：检查您的互联网连接
-4. **语言可用性**：确认所选语言确有媒体可用
+1. **Meeting Schedule**: Verify your meeting days and times are correct
+2. **Language Settings**: Ensure your media language is set correctly
+3. **Internet Connection**: Check your internet connection
+4. **Language Availability**: Verify media is available in your selected language
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: OBS 集成无法工作，我该核对什么？ 我应该进行什么验证？ {#faq-obs-not-working}
+### :video_camera: The OBS integration isn't working. What should I verify? {#faq-obs-not-working}
 
-检查这些 OBS 相关问题：
+Check these OBS-related issues:
 
-1. **OBS 安装**：确保已安装 OBS Studio 并在运行
-2. **WebSocket 插件**：验证插件已安装
-3. **端口与密码**：核对您的 OBS 端口与密码设置
-4. **防火墙**：确保防火墙未拦截连接
+1. **OBS Installation**: Ensure OBS Studio is installed and running
+2. **WebSocket Plugin**: Verify the WebSocket plugin is installed
+3. **Port and Password**: Check your OBS port and password settings
+4. **Firewall**: Ensure the firewall isn't blocking the connection
 
-### :speaker: 使用 OBS Studio 时，M³ 会自动把媒体声音发送到 Zoom 吗？ {#audio-to-zoom}
+### :speaker: Does Meeting Media Manager automatically send the media audio to Zoom when using OBS Studio? {#audio-to-zoom}
 
-**不会。** M³ 不会自动把媒体音频发送到 Zoom 或 OBS Studio。 视频流像虚拟摄像头一样是无声的，就像摄像头一样。 若要让 Zoom 自动“听到”电脑播放的音频，您需要确保 Zoom 能接收到电脑发出的音频信号，并在 Zoom 中启用 **原始音频（Original Audio）**。
+**No.** M³ does not automatically send media audio to Zoom or OBS Studio. The video stream works like a virtual camera with no sound, just like a webcam. To have the music/video sound available in Zoom automatically, you need to ensure that Zoom 'hears' the audio feed coming from the computer, and then you should enable the **Original Audio** setting in Zoom.
 
-**重要提示：**
+**Important Notes:**
 
-- 每次开始 Zoom 会议前都需要启用“原始音频”
-- 此设置与 M³ 无关——如果不使用 Zoom 的屏幕和音频共享功能，使用任何其他播放器都会遇到同样的音频问题
-- “原始音频”设置有三个子选项——通常开启前两个，关闭第三个效果最佳
-- 如果仍有音频问题，您可能需要改用 Zoom 的“共享电脑声音”功能
-- 或者，考虑使用 Zoom 集成功能，因为它使用 Zoom 的原生屏幕共享。
+- You must enable Original Audio **every time** before starting a Zoom meeting
+- This setting is not related to M³ - you would face the same audio issue when using any other media player and not using Zoom's screen and audio sharing features
+- The Original Audio setting has three sub-options - typically the first two should be enabled and the third disabled for optimal audio quality
+- If you're still experiencing audio issues, you may need to use Zoom's "Share Computer Sound" option instead
+- Alternatively, look into using the Zoom integration instead, as it uses Zoom's native screen sharing.
 
-**为什么需要这样做？**
-M³ 在您的电脑上播放带有声音的媒体，但当使用 OBS Studio 时，此音频不会通过视频流自动传输到 Zoom。 “原始音频”设置允许 Zoom 在屏幕共享期间捕捉电脑上播放的音频（如果您的电脑配置正确，例如：电脑有第二个声卡用于媒体播放，Zoom 将其作为麦克风收听）。
+**Why is this necessary?**
+M³ plays media with sound on your computer, but this audio is not automatically transmitted through the video stream to Zoom when using OBS Studio. The Original Audio setting allows Zoom to capture the audio playing on your computer during screen sharing, if your computer is configured properly (for example: the computer has a second sound card that is used for media playback which Zoom listens to as a microphone.)
 
-### :snail: M³ 运行缓慢 ，如何改善？ {#performance-issues}
+### :snail: M³ is running slowly. How can I improve performance? {#performance-issues}
 
-尝试以下性能优化：
+Try these performance optimizations:
 
-1. **启用额外缓存**：在设置中开启额外的缓存
-2. **关闭无关程序**：关闭不必要的应用程序
-3. **检查磁盘空间**：确保有足够的可用磁盘空间
-4. **降低分辨率**：降低最高分辨率设置
+1. **Enable Extra Cache**: Turn on additional caching in settings
+2. **Close Other Apps**: Close unnecessary applications
+3. **Check Disk Space**: Ensure you have sufficient free disk space
+4. **Reduce Resolution**: Lower the maximum resolution setting
 
-### :speech_balloon: 碰到语言相关问题，该检查什么？ What should I check? {#faq-language-issues}
+### :speech_balloon: I'm having language issues. What should I check? {#faq-language-issues}
 
-核对以下语言设置：
+Verify these language settings:
 
-1. **界面语言**：检查您的显示语言设置
-2. **媒体语言**：核对您的媒体下载语言
-3. **语言可用性**：确保该语言在耶和华见证人官方网站上可用
-4. **后备语言**：尝试设置后备语言
+1. **Interface Language**: Check your display language setting
+2. **Media Language**: Verify your media download language
+3. **Language Availability**: Ensure the media language is available on the official website of Jehovah's Witnesses
+4. **Fallback Language**: Try setting a fallback language
 
-## 支持与社区
+## Support and Community {#support-community}
 
-### :radioactive: 如何反馈问题？ {#how-do-i-report-an-issue}
+### :radioactive: How do I report an issue? {#how-do-i-report-an-issue}
 
-请在官方 GitHub 仓库[提交 issue](https://github.com/sircharlo/meeting-media-manager/issues)。 请附上：
+Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository. Include:
 
-- 问题的详细描述
-- 复现步骤
-- 您的操作系统与 M³ 版本
-- 任何错误信息、日志和截图
+- Detailed description of the problem
+- Steps to reproduce the issue
+- Your operating system and M³ version
+- Any error messages, logs and screenshots
 
-### :new: 如何提出新功能建议？ :new: 如何提出新功能建议？ {#how-can-i-request-a-new-feature-or-enhancement}
+### :new: How can I request a new feature or enhancement? {#how-can-i-request-a-new-feature-or-enhancement}
 
-请在官方 GitHub 仓库[发起讨论](https://github.com/sircharlo/meeting-media-manager/discussions)。 请说明：
+Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository. Describe:
 
-- 您希望看到的功能
-- 它将如何使普通用户受益
-- 任何具体的要求或偏好
+- The feature you'd like to see
+- How it would benefit users
+- Any specific requirements or preferences
 
-### :handshake: 我想贡献代码，该怎么做？ {#how-can-i-contribute-some-code}
+### :handshake: How can I contribute some code? {#how-can-i-contribute-some-code}
 
-请阅读官方 GitHub 仓库的[贡献指南](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md)。 我们欢迎代码贡献和 Pull Request！
+Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository. We welcome code contributions and Pull Requests!
 
-### :globe_with_meridians: 我可以帮助翻译吗？ {#translations}
+### :globe_with_meridians: How can I help with translations? {#translations}
 
-M³ 使用 Crowdin 管理翻译。 您可以通过以下方式参与：
+M³ uses Crowdin for translation management. You can contribute translations by:
 
-1. 访问 [Crowdin 项目](https://crowdin.com/project/meeting-media-manager)
-2. 选择您的语言
-3. 翻译需要处理的字符串
-4. 审核现有翻译
+1. Visiting the [Crowdin project](https://crowdin.com/project/meeting-media-manager)
+2. Selecting your language
+3. Translating strings that need work
+4. Reviewing existing translations
 
-### :x: 可以向项目捐款吗？ {#can-i-make-a-donation-to-the-project}
+### :x: Can I make a donation to the project? {#can-i-make-a-donation-to-the-project}
 
 Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
 
-:::tip :book: 马太福音 10:8
+:::tip :book: Matthew 10:8
 
-“你们免费得来，也要无偿施与。”
+"You received free, give free."
 
 :::
 
-## 技术问题
+## Technical Questions {#technical-questions}
 
-### :computer: M³ 的硬件和软件要求是什么？ {#hardware-and-software-requirements}
+### :computer: What hardware and software requirements does M³ have? {#hardware-and-software-requirements}
 
-M³ 设计用于在多种操作系统上运行：
+M³ is designed to work on a wide range of operating systems:
 
-- **Windows**：Windows 10及更高版本（提供64位和32位版本）
-- **macOS**: macOS 10.15(Catalina) 及以后的 (Universal build)
-- **Linux**：大多数现代Linux发行版（AppImage格式）
+- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
+- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
+- **Linux**: Most modern Linux distributions (AppImage format)
 
-M³ 的硬件要求如下：
+M³ has the following hardware requirements:
 
-- **最低**：4GB 内存，6GB 可用磁盘空间
-- **推荐**：8GB 内存，建议提供 15GB 可用空间用于媒体缓存
-- **网络**：下载媒体需要互联网连接
+- **Minimum**: 4GB RAM, 6GB free disk space
+- **Recommended**: 8GB RAM, 15GB free disk space for media caching
+- **Network**: Internet connection for media downloads
 
-根据您使用的功能，M³ 可能还需要以下额外软件：
+Depending on the features you use, M³ also requires the following additional software:
 
-- **Zoom**：仅在使用 Zoom 集成功能时需要
-- **OBS Studio**：仅在使用 OBS 集成功能时需要
+- **Zoom**: Required only if using Zoom integration features
+- **OBS Studio**: Required only if using OBS integration features
 
-### :floppy_disk: M³ 占用多少磁盘空间？ {#disk-space}
+### :floppy_disk: How much disk space does M³ use? {#disk-space}
 
-磁盘空间占用取决于：
+Disk space usage depends on:
 
-- **媒体分辨率**：分辨率越高占用的空间越多
-- **缓存内容**：媒体文件会缓存在本地
-- **额外缓存**：开启额外的缓存会增加占用
-- **导出媒体**：自动导出功能会占用额外空间
+- **Media Resolution**: Higher resolutions use more space
+- **Cached Content**: Media files are cached locally
+- **Extra Cache**: Additional caching can increase usage
+- **Exported Media**: Auto-export features use additional space
 
-典型占用量在 2-10GB 之间，具体取决于设置和使用习惯。
+Typical usage ranges from 2-10GB depending on settings and usage.
 
-### :shield: M³ 是否安全且重视隐私？ {#security-privacy}
+### :shield: Is M³ secure and private? {#security-privacy}
 
-是! 是的！M³ 在设计时充分考虑了安全与隐私：
+Yes! M³ is designed with security and privacy in mind:
 
-- **本地存储**：所有聚会数据都存储在您的电脑本地
-- **直接下载**：媒体直接从耶和华见证人官方网站下载
-- **开源**：代码公开，任何人都可以审阅和验证
-- **错误报告**：仅为报告错误之目的收集有限的数据
+- **Local Storage**: All meeting data is stored locally on your computer
+- **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses
+- **Open Source**: The code is open for review and verification
+- **Bug Reports**: Limited data may be collected for bug reporting purposes
 
-### :arrows_clockwise: M³ 多久检查一次更新？ {#update-frequency}
+### :arrows_clockwise: How often does M³ check for updates? {#update-frequency}
 
-M³ 检查更新的频率：
+M³ checks for updates:
 
-- **应用更新**：每次打开应用时自动检查新版本
-- **媒体更新**：每次打开应用时自动检查新的聚会媒体
-- **语言更新**：根据需要动态检测新语言
+- **Application Updates**: Automatically checks for new versions every time the app is opened
+- **Media Updates**: Automatically checks for new meeting media every time the app is opened
+- **Language Updates**: Dynamic detection of new languages as needed
