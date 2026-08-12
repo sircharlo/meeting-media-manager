@@ -407,10 +407,11 @@ def update_locales_type(stats: dict[str, tuple[str, float]], path: Path) -> None
     added_as_placeholder = []
 
     for key in active_keys:
+        stem = stats[key][0]
         if key in existing_by_value:
             new_entries.append(existing_by_value[key])
-        elif key in jw_cache:
-            cached = jw_cache[key]
+        elif stem in jw_cache:
+            cached = jw_cache[stem]
             new_entries.append({
                 "value": key,
                 "englishName": cached["name"],
