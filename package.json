@@ -17,7 +17,7 @@
     "url": "https://github.com/sircharlo/meeting-media-manager.git"
   },
   "scripts": {
-    "electron-rebuild": "./node_modules/.bin/electron-rebuild.cmd -f -m ./node_modules/@jitsi/robotjs",
+    "electron-rebuild": "electron-rebuild -f -m ./node_modules/@jitsi/robotjs",
     "generate:icons": "node ./build/svg2font.js",
     "generate:jw-icons-fallbacks": "node ./scripts/update-jw-icons-fallbacks.mjs",
     "generate:logos": "node ./build/generate-logos.js",
