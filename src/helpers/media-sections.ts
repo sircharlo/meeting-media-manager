@@ -593,35 +593,30 @@ export const removeWatchedMediaSectionInfo = async (
   filename: string,
 ): Promise<void> => {
   try {
-    // Access electron API functions
-    const { fs, hideFileOnWindows, join, showFileOnWindows } =
-      globalThis.electronApi;
-    const { pathExists, readJSON, writeFile } = fs;
-
+    const { join } = globalThis.electronApi;
     const sectionOrderFilePath = join(datedFolderPath, '.section-order.json');
 
-    if (!(await pathExists(sectionOrderFilePath))) {
-      return;
-    }
+    // Goes through the same read/write helpers (and lock) as
+    // saveWatchedMediaLayout, rather than reading/writing this file
+    // directly: a direct in-place write here was exactly the kind of
+    // non-atomic write that a cloud sync client (iCloud, OneDrive, ...) can
+    // interleave with and leave truncated for the next reader - see the
+    // comment on writeWatchedMediaSectionOrder.
+    await withSectionOrderLock(sectionOrderFilePath, async () => {
+      const sectionOrderData =
+        await readWatchedMediaSectionOrder(sectionOrderFilePath);
 
-    const sectionOrderData: Record<
-      string,
-      { order: number; section: MediaSectionIdentifier }
-    > = await readJSON(sectionOrderFilePath);
+      if (!sectionOrderData[filename]) return;
 
-    if (sectionOrderData[filename]) {
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete sectionOrderData[filename];
 
-      await showFileOnWindows(sectionOrderFilePath);
-      await writeFile(
+      await writeWatchedMediaSectionOrder(
         sectionOrderFilePath,
-        JSON.stringify(sectionOrderData, null, 2),
-        'utf-8',
+        sectionOrderData,
       );
-      await hideFileOnWindows(sectionOrderFilePath);
       log(`✅ Removed section info for ${filename}`, 'mediaSections', 'log');
-    }
+    });
   } catch (error) {
     errorCatcher(error, {
       contexts: {

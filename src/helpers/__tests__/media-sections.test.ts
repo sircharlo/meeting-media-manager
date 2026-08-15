@@ -271,4 +271,57 @@ describe('watched media layout persistence', () => {
       hideFileOnWindowsMock.mock.invocationCallOrder[1] ?? 0,
     );
   });
+
+  it('removes a watched item via the same atomic temp-then-rename write as saveWatchedMediaLayout', async () => {
+    const sectionOrderFilePath = '/watched/2026-06-11/.section-order.json';
+    files.set(
+      sectionOrderFilePath,
+      JSON.stringify({
+        'local-video.mp4': { order: 0, section: 'tgw' },
+        'other.png': { order: 1, section: 'pt' },
+      }),
+    );
+
+    const { removeWatchedMediaSectionInfo } = await import('../media-sections');
+    await removeWatchedMediaSectionInfo(
+      '/watched/2026-06-11',
+      'local-video.mp4',
+    );
+
+    // A direct in-place write is what let a cloud sync client (iCloud,
+    // OneDrive, ...) interleave with it and leave the next reader a
+    // truncated file - see MMM-V2-3GP. This must go through a temp path
+    // and rename, same as saveWatchedMediaLayout.
+    expect(writeFileMock).toHaveBeenCalledWith(
+      expect.stringMatching(
+        /^\/watched\/2026-06-11\/\.section-order\.json\.\d+\.tmp$/,
+      ),
+      expect.any(String),
+      'utf-8',
+    );
+    expect(renameMock).toHaveBeenCalledWith(
+      writeFileMock.mock.calls[0]?.[0],
+      sectionOrderFilePath,
+    );
+
+    const saved = JSON.parse(writes.get(sectionOrderFilePath) ?? '{}');
+    expect(saved).toEqual({ 'other.png': { order: 1, section: 'pt' } });
+  });
+
+  it('does nothing when the section order file has no entry for the removed item', async () => {
+    const sectionOrderFilePath = '/watched/2026-06-11/.section-order.json';
+    files.set(
+      sectionOrderFilePath,
+      JSON.stringify({ 'other.png': { order: 1, section: 'pt' } }),
+    );
+
+    const { removeWatchedMediaSectionInfo } = await import('../media-sections');
+    await removeWatchedMediaSectionInfo(
+      '/watched/2026-06-11',
+      'not-tracked.mp4',
+    );
+
+    expect(writeFileMock).not.toHaveBeenCalled();
+    expect(renameMock).not.toHaveBeenCalled();
+  });
 });
