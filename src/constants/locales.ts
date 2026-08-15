@@ -4,6 +4,8 @@ import type { JwLangCode } from 'src/types/jw/lang.d.ts';
 
 export type LanguageValue =
   | 'bzs'
+  | 'cmnHans'
+  | 'cmnHant'
   | 'de'
   | 'en'
   | 'es'
@@ -24,6 +26,7 @@ export type LanguageValue =
 // Modify this file along with src/i18n/index.ts to enable a language both on the docs website and in the app.
 
 export const enabled: LanguageValue[] = [
+  'cmnHans',
   'de',
   'en',
   'es',
@@ -49,6 +52,12 @@ export const locales: {
   signLangCodes?: JwLangCode[];
   value: LanguageValue;
 }[] = [
+  {
+    englishName: 'Chinese Mandarin (Simplified)',
+    label: '中文简体（普通话）',
+    langcode: 'CHS',
+    value: 'cmnHans',
+  },
   {
     englishName: 'German',
     label: 'Deutsch',
