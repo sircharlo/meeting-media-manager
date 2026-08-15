@@ -327,3 +327,88 @@ describe('EEXIST directory race tolerance', () => {
     );
   });
 });
+
+describe('transient Windows write-lock retry', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // The previous describe block leaves a persistent (non-Once) rejection
+    // on ensureDirMock from its last test; clearAllMocks() doesn't remove
+    // mockImplementation/mockRejectedValue, only call history.
+    ensureDirMock.mockReset();
+    statMock.mockResolvedValue({ size: 1024 });
+  });
+
+  const makeEpermError = (path: string) => {
+    const error = new Error(`EPERM: operation not permitted, open '${path}'`);
+    (error as Error & { code?: string }).code = 'EPERM';
+    return error;
+  };
+
+  it('retries a transient EPERM writing a zip entry instead of reporting it as a bug (matches JWLibrary.exe.config lock)', async () => {
+    const fileEntry = {
+      compressedSize: 5,
+      fileName: 'JWLibrary.exe.config',
+      uncompressedSize: 5,
+    };
+    const zipfile = {
+      close: vi.fn(),
+      eachEntry: async function* () {
+        yield fileEntry;
+      },
+      openReadStreamPromise: vi.fn().mockResolvedValue(createFakeStream('ok')),
+    };
+    yauzlOpenMock.mockResolvedValue(zipfile);
+
+    pipelineMock
+      .mockRejectedValueOnce(makeEpermError('/tmp/out/JWLibrary.exe.config'))
+      .mockResolvedValueOnce(undefined);
+
+    const { unzipFile } = await import('../fs');
+
+    await expect(unzipFile('/tmp/locked.jwpub', '/tmp/out')).resolves.toEqual([
+      { path: 'JWLibrary.exe.config' },
+    ]);
+
+    // This retry loop uses the global setTimeout directly rather than the
+    // 'node:timers/promises' delay mocked as delayMock elsewhere in this
+    // file, so there's nothing to assert on the wait itself here.
+    expect(pipelineMock).toHaveBeenCalledTimes(2);
+    expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
+
+  it('still reports a non-transient write error immediately', async () => {
+    const fileEntry = {
+      compressedSize: 5,
+      fileName: 'file.txt',
+      uncompressedSize: 5,
+    };
+    const zipfile = {
+      close: vi.fn(),
+      eachEntry: async function* () {
+        yield fileEntry;
+      },
+      openReadStreamPromise: vi.fn().mockResolvedValue(createFakeStream('ok')),
+    };
+    yauzlOpenMock.mockResolvedValue(zipfile);
+
+    const diskFullError = new Error('ENOSPC: no space left on device, write');
+    (diskFullError as Error & { code?: string }).code = 'ENOSPC';
+    pipelineMock.mockRejectedValueOnce(diskFullError);
+
+    const { unzipFile } = await import('../fs');
+
+    await expect(unzipFile('/tmp/full.jwpub', '/tmp/out')).rejects.toBe(
+      diskFullError,
+    );
+
+    expect(pipelineMock).toHaveBeenCalledTimes(1);
+    expect(captureElectronErrorMock).toHaveBeenCalledWith(
+      diskFullError,
+      expect.objectContaining({
+        contexts: expect.objectContaining({
+          fn: expect.objectContaining({ name: 'unzipFile pipeline' }),
+        }),
+      }),
+    );
+  });
+});

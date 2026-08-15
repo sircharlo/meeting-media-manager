@@ -1098,32 +1098,28 @@ const processFileEntry = async (
       await ensureDirTolerant(dirname(fullPath));
       const writeStream = createWriteStream(fullPath);
 
-      writeStream.on('error', (e) => {
-        captureElectronError(e, {
-          contexts: {
-            fn: {
-              args: {
-                attempt,
-                fullPath,
-                input: context.input,
-                output: context.output,
-              },
-              name: 'unzipFile writeStream error',
-            },
-          },
-        });
-      });
+      // pipeline() below already surfaces this same error via its rejected
+      // promise, handled in the catch block with the real retry-then-report
+      // logic - this listener only exists so an unhandled 'error' event on
+      // the stream can't crash the process ahead of that.
+      writeStream.on('error', () => undefined);
 
       await pipeline(readStream, writeStream);
       state.extractedFiles.push({ path: entry.fileName });
     } catch (e) {
-      if (
-        attempt < 3 &&
-        e instanceof Error &&
-        (e as { code?: string }).code === 'ENOENT'
-      ) {
+      const code = getErrorCode(e);
+      // ENOENT during pipeline is a directory-not-ready race. EBUSY/EPERM
+      // on Windows are the same transient file-lock class already retried
+      // elsewhere in this file (WINDOWS_RETRYABLE_PROBE_CODES) - e.g. AV
+      // real-time scanning briefly holding the just-created file open.
+      const isRetryable =
+        code === 'ENOENT' ||
+        (process.platform === 'win32' &&
+          WINDOWS_RETRYABLE_PROBE_CODES.has(code ?? ''));
+
+      if (attempt < 3 && isRetryable) {
         log(
-          `[unzipFile] ENOENT during pipeline, retrying (${attempt}/3): ${fullPath}`,
+          `[unzipFile] ${code} during pipeline, retrying (${attempt}/3): ${fullPath}`,
           'electronFilesystem',
           'warn',
         );
