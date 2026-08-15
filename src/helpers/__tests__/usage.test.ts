@@ -96,6 +96,48 @@ describe('usage', () => {
       expect(ensureFileMock).toHaveBeenCalledTimes(1);
       expect(errorCatcherMock).toHaveBeenCalledTimes(1);
     });
+
+    it('coalesces concurrent calls for the same folder into a single attempt', async () => {
+      // Matches MMM-V2-3EX: a bulk prefetch calling this once per date for a
+      // shared publication folder (e.g. background music) produced dozens of
+      // duplicate reports for what was really one persistently locked drive.
+      ensureFileMock.mockRejectedValue(lockError('EPERM'));
+
+      const { updateLastUsedDate } = await import('../usage');
+      await Promise.all([
+        updateLastUsedDate('/cache/pub', '2026-07-20'),
+        updateLastUsedDate('/cache/pub', '2026-07-20'),
+        updateLastUsedDate('/cache/pub', '2026-07-20'),
+      ]);
+
+      // Initial attempt + 4 retries = 5 calls, once, not once per caller.
+      expect(ensureFileMock).toHaveBeenCalledTimes(5);
+      expect(errorCatcherMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not coalesce calls for different folders', async () => {
+      ensureFileMock.mockRejectedValue(lockError('EPERM'));
+
+      const { updateLastUsedDate } = await import('../usage');
+      await Promise.all([
+        updateLastUsedDate('/cache/pub-a', '2026-07-20'),
+        updateLastUsedDate('/cache/pub-b', '2026-07-20'),
+      ]);
+
+      expect(ensureFileMock).toHaveBeenCalledTimes(10);
+      expect(errorCatcherMock).toHaveBeenCalledTimes(2);
+    });
+
+    it('runs a later call again once the in-flight one for the same folder has settled', async () => {
+      ensureFileMock.mockRejectedValue(lockError('EPERM'));
+
+      const { updateLastUsedDate } = await import('../usage');
+      await updateLastUsedDate('/cache/pub', '2026-07-20');
+      await updateLastUsedDate('/cache/pub', '2026-07-21');
+
+      expect(ensureFileMock).toHaveBeenCalledTimes(10);
+      expect(errorCatcherMock).toHaveBeenCalledTimes(2);
+    });
   });
 
   describe('getLastUsedDate', () => {

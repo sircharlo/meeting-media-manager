@@ -7,13 +7,36 @@ const { ensureFile, readFile, writeFile } = fs;
 
 export const LAST_USED_FILENAME = '.last-used';
 
+// A bulk prefetch (e.g. several upcoming weeks) can call this many times in
+// quick succession for the same shared publication folder (background music
+// reused across every week, for instance). Coalescing concurrent calls per
+// folder avoids hammering - and, when the write genuinely can't succeed
+// (e.g. a persistently locked/inaccessible drive), over-reporting - the same
+// failure many times over for what's ultimately one "was this folder used"
+// signal.
+const inFlightUpdates = new Map<string, Promise<void>>();
+
 export const updateLastUsedDate = async (
+  folderPath: string,
+  date: Date | string,
+): Promise<void> => {
+  if (!folderPath) return;
+
+  const existing = inFlightUpdates.get(folderPath);
+  if (existing) return existing;
+
+  const attempt = performLastUsedUpdate(folderPath, date).finally(() => {
+    inFlightUpdates.delete(folderPath);
+  });
+  inFlightUpdates.set(folderPath, attempt);
+  return attempt;
+};
+
+const performLastUsedUpdate = async (
   folderPath: string,
   date: Date | string,
 ) => {
   try {
-    if (!folderPath) return;
-
     const { hideFileOnWindows, showFileOnWindows } = globalThis.electronApi;
 
     const dateStr =
