@@ -255,6 +255,17 @@ describe('fetchJson network errors', () => {
     expect(errorCatcher).not.toHaveBeenCalled();
   });
 
+  it('should not report a 503 Service Unavailable status', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(null, { status: 503 }),
+    );
+
+    const result = await fetchJson(handledUrl);
+
+    expect(result).toBeNull();
+    expect(errorCatcher).not.toHaveBeenCalled();
+  });
+
   it('should not report a 504 Gateway Timeout status', async () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(null, { status: 504 }),
