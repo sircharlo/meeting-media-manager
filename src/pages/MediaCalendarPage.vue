@@ -529,7 +529,7 @@ const {
   someItemsHiddenForSelectedDate,
 } = storeToRefs(currentState);
 const obsState = useObsStateStore();
-const { obsConnectionState } = storeToRefs(obsState);
+const { obsConnectionState, obsSceneListError } = storeToRefs(obsState);
 const congregationSettingsStore = useCongregationSettingsStore();
 
 const totalFiles = ref(0);
@@ -643,6 +643,15 @@ const pageBanners = computed(() => {
       icon: 'mmm-obs-studio',
       key: 'obs',
       textKey: 'obs-studio-disconnected-banner',
+    });
+  }
+
+  if (showObsSceneListErrorBanner.value) {
+    banners.push({
+      className: 'bg-warning text-white full-width',
+      icon: 'mmm-obs-studio',
+      key: 'obs-scene-list-error',
+      textKey: 'obs-studio-scene-list-error-banner',
     });
   }
 
@@ -2315,6 +2324,17 @@ const showObsBanner = computed(
     isSelectedDayToday.value,
 );
 
+// Distinct from showObsBanner: the socket is connected and usable (e.g. for
+// recording/scene switching), but OBS kept failing to return its scene list
+// after retries - a different, narrower problem than "can't connect".
+const showObsSceneListErrorBanner = computed(
+  () =>
+    currentSettings.value?.obsEnable &&
+    obsConnectionState.value === 'connected' &&
+    obsSceneListError.value &&
+    isSelectedDayToday.value,
+);
+
 const showEmptyState = computed(() => {
   if (!selectedDateObject.value) return true;
 
@@ -2360,6 +2380,7 @@ const showEmptyState = computed(() => {
 const shouldShowBannerColumn = computed(
   () =>
     showObsBanner.value ||
+    showObsSceneListErrorBanner.value ||
     someItemsHiddenForSelectedDate.value ||
     duplicateSongsForWeMeeting.value ||
     showEmptyState.value,

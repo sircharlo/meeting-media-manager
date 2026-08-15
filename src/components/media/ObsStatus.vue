@@ -5,9 +5,9 @@
     :color="
       obsPopup
         ? 'white'
-        : obsConnectionState === 'connected'
+        : obsStatusVariant === 'connected'
           ? 'white-transparent'
-          : obsConnectionState === 'disconnected'
+          : obsStatusVariant === 'disconnected'
             ? 'negative'
             : 'warning'
     "
@@ -15,9 +15,9 @@
     rounded
     :text-color="
       obsPopup
-        ? obsConnectionState === 'connected'
+        ? obsStatusVariant === 'connected'
           ? 'primary'
-          : obsConnectionState === 'disconnected'
+          : obsStatusVariant === 'disconnected'
             ? 'negative'
             : 'warning'
         : ''
@@ -34,7 +34,7 @@
     <template v-else>
       <q-icon name="mmm-obs-studio" />
       <q-tooltip v-if="!obsPopup" :delay="1000" :offset="[14, 22]">
-        {{ t(obsMessage ?? 'scene-selection') }}
+        {{ t(tooltipMessageKey) }}
       </q-tooltip>
     </template>
   </q-btn>
@@ -49,7 +49,7 @@ import { log } from 'src/shared/vanilla';
 import { initObsWebSocket, obsWebSocketInfo } from 'src/utils/obs';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useObsStateStore } from 'stores/obs-state';
-import { onMounted, onUnmounted, watch } from 'vue';
+import { computed, onMounted, onUnmounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
@@ -57,11 +57,33 @@ const { configuredScenesAreAllUUIDs, currentSettings } =
   storeToRefs(currentState);
 
 const obsState = useObsStateStore();
-const { currentScene, obsConnectionState, obsMessage, previousScene, scenes } =
-  storeToRefs(obsState);
+const {
+  currentScene,
+  obsConnectionState,
+  obsMessage,
+  obsSceneListError,
+  previousScene,
+  scenes,
+} = storeToRefs(obsState);
 const { obsCloseHandler, obsErrorHandler, sceneExists } = obsState;
 
 const obsPopup = defineModel<boolean>({ required: true });
+
+// Scene list fetch failures don't mean the socket is disconnected (it's
+// still identified and usable for recording/scene switching), so they get
+// their own warning state instead of overriding obsConnectionState.
+const obsStatusVariant = computed(() => {
+  if (obsConnectionState.value === 'disconnected') return 'disconnected';
+  if (obsConnectionState.value === 'connected')
+    return obsSceneListError.value ? 'warning' : 'connected';
+  return 'warning';
+});
+
+const tooltipMessageKey = computed(() =>
+  obsConnectionState.value === 'connected' && obsSceneListError.value
+    ? 'obs.scene-list-error'
+    : (obsMessage.value ?? 'scene-selection'),
+);
 
 const onClick = () => {
   if (obsConnectionState.value === 'connected') {
@@ -78,6 +100,7 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
       const sceneList =
         await obsWebSocketInfo.obsWebSocket?.call('GetSceneList');
       if (sceneList) {
+        obsSceneListError.value = false;
         scenes.value = sceneList.scenes.reverse();
         const current =
           configuredScenesAreAllUUIDs.value && sceneList.currentProgramSceneUuid
@@ -114,6 +137,7 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
           setTimeout(resolve, retryInterval);
         });
       } else {
+        obsSceneListError.value = true;
         errorCatcher(error);
       }
     }
