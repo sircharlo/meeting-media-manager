@@ -263,6 +263,11 @@ export const useJwStore = defineStore('jw-store', {
           };
           this.lookupPeriod[currentCongregation].push(period);
         }
+        // An existing period found above can predate mediaSections being
+        // populated (e.g. a stub created elsewhere before the schedule
+        // fetch filled it in) - date.ts's own helpers guard the same field
+        // with `?.` for this reason; getOrCreateMediaSection below doesn't.
+        period.mediaSections ??= [];
 
         // Determine the target section
         let targetSection: MediaSectionIdentifier = 'imported-media';

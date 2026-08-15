@@ -1,4 +1,7 @@
+import type { DateInfo } from 'src/types';
+
 import { createPinia, setActivePinia } from 'pinia';
+import { errorCatcher } from 'src/helpers/error-catcher';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
@@ -279,6 +282,47 @@ describe('JW Store', () => {
       expect(store.fontUrls['jw-icons-all']).toBe(
         'https://wol.jw.org/assets/fonts/jw-icons.woff2',
       );
+    });
+  });
+
+  describe('addToAdditionMediaMap', () => {
+    it('does not crash when an existing lookup period predates mediaSections being populated', async () => {
+      const dateUtils = await import('src/utils/date');
+      vi.mocked(dateUtils.datesAreSame).mockReturnValue(true);
+
+      const store = useJwStore();
+      const selectedDate = new Date('2026-08-14');
+      // Matches the shape behind MMM-V2-3GK: an existing period object in
+      // lookupPeriod whose mediaSections was never populated.
+      store.lookupPeriod['cong-1'] = [
+        {
+          date: selectedDate,
+          status: null,
+        } as unknown as DateInfo,
+      ];
+
+      const mediaItem = {
+        title: 'Test media',
+        type: 'media',
+        uniqueId: 'm1',
+      };
+
+      store.addToAdditionMediaMap(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        [mediaItem as any],
+        'imported-media',
+        'cong-1',
+        { date: selectedDate, mediaSections: [], status: null },
+        false,
+      );
+
+      expect(errorCatcher).not.toHaveBeenCalled();
+      expect(store.lookupPeriod['cong-1']?.[0]?.mediaSections).toEqual([
+        expect.objectContaining({
+          config: expect.objectContaining({ uniqueId: 'imported-media' }),
+          items: [mediaItem],
+        }),
+      ]);
     });
   });
 });
