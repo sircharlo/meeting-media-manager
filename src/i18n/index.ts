@@ -28,6 +28,9 @@ import it from './it.json' with { type: 'json' };
 // 78.5% translated as of 2026-08-15
 import pt from './pt.json' with { type: 'json' };
 
+// 77.8% translated as of 2026-08-15
+import cmnHans from './cmn-hans.json' with { type: 'json' };
+
 // 65.0% translated as of 2026-08-15
 import de from './de.json' with { type: 'json' };
 
@@ -53,9 +56,13 @@ import uk from './uk.json' with { type: 'json' };
 // import bzs from './bzs.json' with { type: 'json' };
 
 // 0.0% translated as of 2026-08-15
+// import cmnHant from './cmn-hant.json' with { type: 'json' };
+
+// 0.0% translated as of 2026-08-15
 // import zh from './zh.json' with { type: 'json' };
 
 export default {
+  cmnHans,
   de,
   en,
   es,
