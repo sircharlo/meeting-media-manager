@@ -2,6 +2,7 @@ import type { PublicationFetcher } from 'src/types';
 
 import { Buffer } from 'buffer'; // NOSONAR: this is not nodejs Buffer, it's the browser one
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { isExpectedNetworkPathAccessError } from 'src/shared/filesystem-errors';
 import { log } from 'src/shared/vanilla';
 import { getPubId } from 'src/utils/jw';
 
@@ -459,6 +460,22 @@ export const wasUpdateInstalled = async (congId: string, newCong = false) => {
       return true;
     }
   } catch (error) {
+    // A cong preferences folder living in a cloud-synced location (iCloud,
+    // OneDrive, ...) can transiently fail this read/write with an
+    // unclassified error (surfaces as 'UNKNOWN' on Windows) while the sync
+    // client holds the file - not an app bug, just the same class of
+    // network-path flakiness other cloud-path reads already tolerate.
+    if (
+      lastVersionFile &&
+      isExpectedNetworkPathAccessError(
+        error,
+        lastVersionFile,
+        globalThis.electronApi.PLATFORM as NodeJS.Platform,
+      )
+    ) {
+      return false;
+    }
+
     errorCatcher(error, {
       contexts: {
         fn: {
