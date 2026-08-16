@@ -678,7 +678,16 @@ async function playMusic(reason = 'manual') {
   } catch (error) {
     musicState.value = 'music.error';
     logMusicStartTiming('start failed', 'warn');
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          lang: currentSettings.value?.lang,
+          name: 'playMusic',
+          pub: currentState.currentSongbook?.pub,
+          reason,
+        },
+      },
+    });
     scheduleAutoStartRetry();
   }
 }
