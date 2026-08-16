@@ -10,10 +10,10 @@ const TRANSIENT_NETWORK_ACCESS_ERROR_CODES = new Set([
 ]);
 
 const WATCH_FOLDER_STAT_ERROR_CODES = new Set(['EINVAL', 'UNKNOWN']);
-// EBUSY: chokidar's underlying fs.watch() call can hit a file mid-sync that
-// a cloud client (observed with Google Drive) is holding a transient lock
-// on, e.g. a freshly-written conflict copy.
-const NETWORK_WATCH_ERROR_CODES = new Set(['EBUSY', 'EISDIR', 'UNKNOWN']);
+// EISDIR/UNKNOWN here are cloud-sync-specific artifacts (a placeholder
+// swapped for a directory mid-sync, a raw OS error a sync driver surfaced) -
+// scoped to network/cloud paths only.
+const NETWORK_WATCH_ERROR_CODES = new Set(['EISDIR', 'UNKNOWN']);
 
 // Node's fallback for a raw OS error libuv can't translate is the literal
 // string `util.getSystemErrorName()` returns, e.g. "Unknown system error
@@ -145,6 +145,14 @@ export const shouldIgnoreWatchFolderError = (
   ) {
     return true;
   }
+
+  // EBUSY on a watch syscall is chokidar's fs.watch() call hitting a file
+  // another process (AV real-time scan, search indexer, a cloud client)
+  // holds a transient lock on, e.g. a file that just landed in the folder.
+  // Not specific to network/cloud-sync paths - the same race happens on a
+  // plain local drive - so this one is checked before the network gate
+  // below, unlike EISDIR/UNKNOWN which are cloud-sync-specific artifacts.
+  if (error.syscall === 'watch' && error.code === 'EBUSY') return true;
 
   if (!isPossiblyNetworkFolderPath(folderPath, platform)) return false;
 

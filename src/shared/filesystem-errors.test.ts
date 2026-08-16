@@ -153,6 +153,24 @@ describe('filesystem error helpers', () => {
         'win32',
       ),
     ).toBe(true);
+    // Real-world case (MMM-V2-3FH): the same transient lock (AV real-time
+    // scan, search indexer) also hits a plain local Documents folder with
+    // no cloud sync involved, so EBUSY-on-watch isn't gated on the
+    // network-path heuristic like EISDIR/UNKNOWN are.
+    expect(
+      shouldIgnoreWatchFolderError(
+        String.raw`C:\Users\PC\Documents\M3 - Arquivos recorrentes`,
+        { code: 'EBUSY', syscall: 'watch' },
+        'win32',
+      ),
+    ).toBe(true);
+    expect(
+      shouldIgnoreWatchFolderError(
+        'C:/Users/test/cache',
+        { code: 'EISDIR', syscall: 'watch' },
+        'win32',
+      ),
+    ).toBe(false);
   });
 
   it('ignores transient scandir errors on cloud-sync/network paths', () => {
