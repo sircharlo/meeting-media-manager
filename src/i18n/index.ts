@@ -22,7 +22,7 @@ import et from './et.json' with { type: 'json' };
 // 98.6% translated as of 2026-08-16
 import ty from './ty.json' with { type: 'json' };
 
-// 98.0% translated as of 2026-08-16
+// 98.3% translated as of 2026-08-16
 import it from './it.json' with { type: 'json' };
 
 // 78.5% translated as of 2026-08-16
