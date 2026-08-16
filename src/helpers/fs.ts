@@ -409,8 +409,8 @@ export const watchExternalFolder = async (folder?: string) => {
  * @returns The path to the FFmpeg executable, or an empty string if the setup failed.
  */
 export const setupFFmpeg = async (): Promise<string> => {
+  const currentState = useCurrentStateStore();
   try {
-    const currentState = useCurrentStateStore();
     if (currentState.ffmpegPath) return currentState.ffmpegPath;
 
     const ffmpegReleases = await fetchLatestRelease();
@@ -450,7 +450,11 @@ export const setupFFmpeg = async (): Promise<string> => {
     currentState.ffmpegPath = ffmpegPath;
     return ffmpegPath;
   } catch (e: unknown) {
-    errorCatcher(e);
+    // Being offline is already known and already the reason the FFmpeg
+    // fetch below failed - reporting it here too would just be a second
+    // (or third, once convertIfNeeded's own catch is counted) Sentry entry
+    // for the same non-actionable condition.
+    if (currentState.online) errorCatcher(e);
     return '';
   }
 };
@@ -482,13 +486,20 @@ async function downloadFfmpeg(url: string, dir: string): Promise<string> {
 
 // Fetch the latest FFmpeg release
 async function fetchLatestRelease(): Promise<Release> {
+  const currentState = useCurrentStateStore();
   const ffmpegReleases = await fetchJson<Release>(
     'https://api.github.com/repos/vot/ffbinaries-prebuilt/releases/latest',
+    undefined,
+    currentState.online,
   );
   if (!ffmpegReleases?.assets?.length) {
-    errorCatcher('No FFmpeg releases found', {
-      contexts: { fn: { ffmpegReleases, name: 'fetchLatestRelease' } },
-    });
+    // Only report when we're actually online - offline is the expected,
+    // already-known reason for an empty response, not a bug.
+    if (currentState.online) {
+      errorCatcher('No FFmpeg releases found', {
+        contexts: { fn: { ffmpegReleases, name: 'fetchLatestRelease' } },
+      });
+    }
     throw new Error('Could not determine FFmpeg version.');
   }
   return ffmpegReleases;

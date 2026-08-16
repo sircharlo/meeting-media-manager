@@ -417,6 +417,11 @@ const convertIfNeeded = async (
 
   try {
     const ffmpegPath = await setupFFmpeg();
+    // setupFFmpeg() already reported (or deliberately suppressed, e.g. while
+    // offline) whatever went wrong and returns '' rather than throwing -
+    // asking the main process to convert with no binary would just add a
+    // second, uglier "Refusing to use non-FFmpeg path" error on top.
+    if (!ffmpegPath) return null;
     return await createVideoFromNonVideo(
       sourceFilePath,
       ffmpegPath,
