@@ -212,16 +212,33 @@ const addSong = async (songTrack: number) => {
         getJwMediaInfo(songTrackItem),
       ]);
 
-      const files =
+      let files =
         songTrackFiles?.files?.[currentSettings.value?.lang || 'E']?.['MP4'] ||
         [];
+      let resolvedTitle = title;
+
+      // The live fetch can fail/return nothing on a flaky connection even
+      // though this exact song was already downloaded in a previous
+      // session - currentSongs is the same persisted list that populated
+      // this picker's buttons, so a match here is a real local file
+      // candidate (downloadFileIfNeeded short-circuits to it once
+      // filesize matches, no network needed).
+      if (!files.length) {
+        const cachedSong = currentSongs.value?.find(
+          (s) => s.track === songTrack,
+        );
+        if (cachedSong) {
+          files = [cachedSong];
+          resolvedTitle ||= cachedSong.title;
+        }
+      }
 
       // ✅ Always emit - parent handles section assignment
       emit('import', {
         files,
         songTrack,
         thumbnail,
-        title: title.replace(/^\d+\.\s*/, ''),
+        title: resolvedTitle.replace(/^\d+\.\s*/, ''),
       });
       resetDialogState();
       dialogValue.value = false;
