@@ -259,4 +259,31 @@ describe('window-media placement helpers', () => {
     expect(getDisplayMatching).toHaveBeenCalled();
     expect(result).toBe(1);
   });
+
+  it('skips the preferred-screen lookup when saved prefs have invalid bounds', async () => {
+    mockLoadWindowPrefs.mockResolvedValue({
+      height: 0,
+      width: 0,
+      x: 0,
+      y: 0,
+    });
+
+    const { __testables } = await import('../window/window-media');
+
+    const result = await __testables.getPreferredScreenFromPrefs([
+      {
+        bounds: { height: 1080, width: 1920, x: 0, y: 0 },
+        id: 1,
+        mainWindow: true,
+      },
+      {
+        bounds: { height: 1080, width: 1920, x: 1920, y: 0 },
+        id: 2,
+        mainWindow: false,
+      },
+    ] as never);
+
+    expect(getDisplayMatching).not.toHaveBeenCalled();
+    expect(result).toBe(-1);
+  });
 });

@@ -96,4 +96,41 @@ describe('StatefulBrowserWindow', () => {
       closedHandler,
     );
   });
+
+  it('resolves the display once per state update instead of twice', async () => {
+    const { StatefulBrowserWindow } =
+      await import('src-electron/main/window/window-state');
+
+    new StatefulBrowserWindow({
+      configFileName: 'main-window-state.json',
+      configFilePath: 'C:/Users/Test/AppData/Roaming/M3',
+    });
+
+    const closeHandler = browserWindowHandlers.get('close');
+    closeHandler?.();
+
+    expect(getDisplayMatching).toHaveBeenCalledTimes(1);
+  });
+
+  it('skips the display lookup when the window reports invalid bounds', async () => {
+    const { StatefulBrowserWindow } =
+      await import('src-electron/main/window/window-state');
+
+    const statefulWindow = new StatefulBrowserWindow({
+      configFileName: 'main-window-state.json',
+      configFilePath: 'C:/Users/Test/AppData/Roaming/M3',
+    });
+
+    statefulWindow.win.getBounds = vi.fn(() => ({
+      height: 0,
+      width: 0,
+      x: 0,
+      y: 0,
+    }));
+
+    const closeHandler = browserWindowHandlers.get('close');
+    closeHandler?.();
+
+    expect(getDisplayMatching).not.toHaveBeenCalled();
+  });
 });

@@ -10,6 +10,7 @@ import {
   readJsonResilientSync,
   writeJsonResilient,
 } from 'src-electron/main/resilient-storage';
+import { getDisplayMatchingSafe } from 'src-electron/main/screen-utils';
 import { captureElectronError } from 'src-electron/main/utils';
 import { debounce, log } from 'src/shared/vanilla';
 import { join } from 'upath';
@@ -82,13 +83,17 @@ export class StatefulBrowserWindow {
 
       // Save the maximized state if the window is maximized or in full screen
       this.state.isMaximized = this.win.isMaximized();
+
+      // Resolve the display once; skip the (synchronous, native) screen lookup
+      // when the window is mid-transition and reporting invalid bounds.
+      const display = getDisplayMatchingSafe(winBounds);
+      if (!display) return;
+
       this.state.isFullScreen = this.isEffectivelyFullScreen(
         this.win.isFullScreen(),
         winBounds,
-        screen.getDisplayMatching(winBounds).bounds,
+        display.bounds,
       );
-
-      const display = screen.getDisplayMatching(winBounds);
       this.state.displayBounds = display.bounds;
       this.state.displayScaleFactor = display.scaleFactor;
     } catch (e) {
@@ -317,12 +322,14 @@ function validateState(state: null | WindowState) {
 
   if (hasBounds(state) && state.displayBounds) {
     // for multi monitor support and scaling (devicePixelRatio)
-    const display = screen.getDisplayMatching({
+    const display = getDisplayMatchingSafe({
       height: state.displayBounds?.height || 0,
       width: state.displayBounds?.width || 0,
       x: state.x || 0,
       y: state.y || 0,
     });
+
+    if (!display) return state;
 
     const scaleFactorRatio = state.displayScaleFactor
       ? state.displayScaleFactor / display.scaleFactor

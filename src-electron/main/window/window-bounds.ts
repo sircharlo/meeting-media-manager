@@ -7,6 +7,12 @@ const MIN_WINDOW_SIZE = 1;
  *
  * Chromium stores gfx::Size area in a checked signed 32-bit integer. Passing an
  * extreme surface size can trip a fatal compositor CHECK in gfx::Size::GetArea.
+ *
+ * Intentionally stricter than `hasValidScreenBounds` in
+ * `src-electron/main/screen-utils.ts`: that predicate only rejects
+ * missing/NaN/zero-sized rectangles before a synchronous `screen` lookup,
+ * while this one additionally clamps against the INT32 area/coordinate limits
+ * required for bounds Chromium will actually use.
  */
 export function normalizeWindowBounds(
   bounds: Partial<Electron.Rectangle>,

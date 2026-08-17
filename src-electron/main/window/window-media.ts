@@ -1,10 +1,12 @@
-import { type BrowserWindow, screen } from 'electron';
+import type { BrowserWindow } from 'electron';
+
 import {
   HD_RESOLUTION,
   PLATFORM,
   WINDOW_MOVE_THROTTLE_MS,
 } from 'src-electron/constants';
 import { getAllScreens, getWindowScreen } from 'src-electron/main/screen';
+import { getDisplayMatchingSafe } from 'src-electron/main/screen-utils';
 import { captureElectronError, getIconPath } from 'src-electron/main/utils';
 import {
   createWindow,
@@ -239,7 +241,7 @@ async function getPreferredScreenFromPrefs(
   const mediaWindowPrefs = await loadWindowPrefs('media');
   if (!mediaWindowPrefs) return -1;
 
-  const preferredScreen = screen.getDisplayMatching({
+  const preferredScreen = getDisplayMatchingSafe({
     height: mediaWindowPrefs.height,
     width: mediaWindowPrefs.width,
     x: mediaWindowPrefs.x || 0,
