@@ -1,9 +1,14 @@
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
+import { basePath } from 'app/test/vitest/mocks/electronApi';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
+import { ensureFile, writeFile } from 'fs-extra';
+import { defaultSettings } from 'src/constants/settings';
+import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
-import { afterEach, describe, expect, it } from 'vitest';
+import { join } from 'upath';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import MediaItem from '../media/MediaItem.vue';
 
@@ -199,5 +204,129 @@ describe('MediaItem component resilience - edge cases', () => {
     });
 
     expect(wrapper.text()).toContain('Play video with alternate audio');
+  });
+});
+
+describe('MediaItem playback resilience while offline', () => {
+  const CONGREGATION_ID = 'offline-test-cong';
+
+  const enableMediaDisplayButton = () => {
+    const congregationSettingsStore = useCongregationSettingsStore();
+    congregationSettingsStore.congregations = {
+      [CONGREGATION_ID]: {
+        ...defaultSettings,
+        enableMediaDisplayButton: true,
+      },
+    };
+    useCurrentStateStore().currentCongregation = CONGREGATION_ID;
+  };
+
+  // mediaPlaying is global store state (one "currently playing" item
+  // app-wide) shared across every test in this file via the same testing
+  // Pinia instance - reset it so a previous test's resolved url can't leak
+  // into the next one's assertions.
+  beforeEach(() => {
+    useCurrentStateStore().mediaPlaying = {
+      action: '',
+      currentPosition: 0,
+      currentPositionUpdatedAt: 0,
+      pan: { x: 0, y: 0 },
+      playbackConfirmedToken: 0,
+      playbackRate: 1,
+      playToken: 0,
+      seekTo: 0,
+      shouldLoop: false,
+      slideshowAudioUrl: '',
+      subtitlesUrl: '',
+      uniqueId: '',
+      url: '',
+      zoom: 1,
+    } as ReturnType<typeof useCurrentStateStore>['mediaPlaying'];
+  });
+
+  it('resolves playback to the local file, not the remote stream, while offline', async () => {
+    enableMediaDisplayButton();
+    const currentState = useCurrentStateStore();
+    currentState.online = false;
+
+    const filePath = join(basePath, 'media-item-edge', 'local-video.mp4');
+    const contents = Buffer.from('x'.repeat(2048));
+    await ensureFile(filePath);
+    await writeFile(filePath, contents);
+
+    const media = {
+      filesize: contents.byteLength,
+      fileUrl: `file://${filePath.replaceAll('\\', '/')}`,
+      isVideo: true,
+      streamUrl: 'https://cdn.example.com/should-not-be-used.mp4',
+      title: 'Locally cached video',
+      type: 'media' as const,
+      uniqueId: 'offline-local-video-1',
+    };
+
+    const wrapper = mount(MediaItem, { props: { media, repeat: false } });
+    // onMounted's updateLocalFile() confirms the file is local before the
+    // play button becomes clickable.
+    await flushPromises();
+
+    const playButton = wrapper.find('button.bg-primary');
+    expect(playButton.exists()).toBe(true);
+    await playButton.trigger('click');
+
+    // setMediaPlaying's own updateLocalFile() re-check involves real disk
+    // I/O (fs-extra against the test sandbox), which can take more than one
+    // flushPromises() tick to settle - poll instead of guessing a fixed
+    // number of flushes.
+    await vi.waitFor(() => {
+      expect(currentState.mediaPlaying.url).toBe(media.fileUrl);
+    });
+    expect(currentState.mediaPlaying.url).not.toBe(media.streamUrl);
+
+    // Left mounted, this instance's background local-file poll keeps
+    // running and can interfere with later tests sharing the same Pinia
+    // state (mediaPlaying is global, one "currently playing" item app-wide).
+    wrapper.unmount();
+  });
+
+  it('does not change the resolved playback url when connectivity flips mid-playback', async () => {
+    enableMediaDisplayButton();
+    const currentState = useCurrentStateStore();
+    currentState.online = true;
+
+    const filePath = join(basePath, 'media-item-edge', 'stable-video.mp4');
+    const contents = Buffer.from('y'.repeat(4096));
+    await ensureFile(filePath);
+    await writeFile(filePath, contents);
+
+    const media = {
+      filesize: contents.byteLength,
+      fileUrl: `file://${filePath.replaceAll('\\', '/')}`,
+      isVideo: true,
+      streamUrl: 'https://cdn.example.com/should-not-be-used.mp4',
+      title: 'Locally cached video',
+      type: 'media' as const,
+      uniqueId: 'offline-stable-video-1',
+    };
+
+    const wrapper = mount(MediaItem, { props: { media, repeat: false } });
+    await flushPromises();
+
+    const playButton = wrapper.find('button.bg-primary');
+    await playButton.trigger('click');
+    await vi.waitFor(() => {
+      expect(currentState.mediaPlaying.url).toBe(media.fileUrl);
+    });
+
+    const resolvedUrl = currentState.mediaPlaying.url;
+
+    // No online/navigator.onLine watcher touches the already-resolved
+    // playback url - flipping connectivity mid-playback must not change it.
+    currentState.online = false;
+    await flushPromises();
+    currentState.online = true;
+    await flushPromises();
+
+    expect(currentState.mediaPlaying.url).toBe(resolvedUrl);
+    wrapper.unmount();
   });
 });
