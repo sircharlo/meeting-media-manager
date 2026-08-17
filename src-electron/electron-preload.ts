@@ -3,7 +3,6 @@ import type { ElectronApi } from 'src/types/electron';
 import { contextBridge, webUtils } from 'electron/renderer';
 import { IS_DEMO_MODE, PLATFORM } from 'src-electron/constants';
 import { initCloseListeners } from 'src-electron/preload/close';
-import { convertHeic } from 'src-electron/preload/converters';
 import {
   fileUrlToPath,
   fs,
@@ -66,7 +65,7 @@ const electronApi: ElectronApi = {
     invoke('closeSqliteConnection', dbPath),
   closeSqliteConnections: () => invoke('closeSqliteConnections'),
   closeWebsiteWindow,
-  convertHeic,
+  convertHeic: (image) => invoke('convertHeic', image),
   createVideoFromNonVideo: (f, fP, oD) =>
     invoke('createVideoFromNonVideo', f, fP, oD),
   decryptSecretSync: (cipherText) => sendSync('decryptSecretSync', cipherText),

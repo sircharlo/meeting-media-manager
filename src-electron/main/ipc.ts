@@ -1,4 +1,5 @@
 import type {
+  ConversionOptions,
   DiscussionCategory,
   ElectronIpcInvokeKey,
   ElectronIpcSendKey,
@@ -54,6 +55,7 @@ import {
   unzipFile,
   watchFolder,
 } from 'src-electron/main/fs';
+import { convertHeic } from 'src-electron/main/heic';
 import { getAllScreens } from 'src-electron/main/screen';
 import { decryptSecret, encryptSecret } from 'src-electron/main/secrets';
 import { quitStatus, setElectronUrlVariables } from 'src-electron/main/session';
@@ -438,6 +440,10 @@ handleIpcInvoke(
   'registerShortcut',
   async (_e, name: keyof SettingsValues, keySequence: string) =>
     registerShortcut(name, keySequence),
+);
+
+handleIpcInvoke('convertHeic', async (_e, image: ConversionOptions) =>
+  convertHeic(image),
 );
 
 handleIpcInvoke(

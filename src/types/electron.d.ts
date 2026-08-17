@@ -370,6 +370,7 @@ export type ElectronFsApi = Pick<
 export type ElectronIpcInvokeKey =
   | 'closeSqliteConnection'
   | 'closeSqliteConnections'
+  | 'convertHeic'
   | 'createVideoFromNonVideo'
   | 'downloadFile'
   | 'ensureMacosFolderPermission'

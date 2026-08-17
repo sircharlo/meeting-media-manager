@@ -20,6 +20,7 @@ import {
   SENTRY_ENVIRONMENT,
 } from 'src-electron/constants';
 import { cancelAllDownloads } from 'src-electron/main/downloads';
+import { cleanupHeicWorker } from 'src-electron/main/heic';
 import {
   pruneStaleFallbackEntries,
   readJsonResilient,
@@ -576,6 +577,10 @@ if (gotTheLock) {
       setShouldQuit(true);
       sendToWindow(mainWindowInfo.mainWindow, 'attemptedClose');
     }
+  });
+
+  app.on('will-quit', () => {
+    cleanupHeicWorker();
   });
 
   app.on('activate', () => {
