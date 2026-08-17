@@ -8319,7 +8319,7 @@ __metadata:
     obs-websocket-js: "npm:^5.0.8"
     p-queue: "npm:^9.3.3"
     pdf-parse: "npm:^2.4.5"
-    pinia: "npm:^4.0.2"
+    pinia: "npm:^4.0.3"
     pinia-plugin-persistedstate: "npm:^4.7.1"
     playwright: "npm:^1.62.1"
     png2icons: "npm:^2.0.1"
@@ -9486,9 +9486,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pinia@npm:^4.0.2":
-  version: 4.0.2
-  resolution: "pinia@npm:4.0.2"
+"pinia@npm:^4.0.3":
+  version: 4.0.3
+  resolution: "pinia@npm:4.0.3"
   dependencies:
     nostics: "npm:^1.1.4"
   peerDependencies:
@@ -9500,7 +9500,7 @@ __metadata:
       optional: false
     typescript:
       optional: true
-  checksum: 10c0/210f76c147cadf379437abc0150763add506e0328204f4f42adb14e74967bd60f3036eae5e06b572ee6666047bbfb9158db2f0cf9b9016c1f94c724eba4b30d4
+  checksum: 10c0/6c06c872dd555cb8095a7a9cf3271449b8e88a9908d2cbc9ec6df328ace0d3256848e523c5d30653f7eff2eba7c91dd16f4a9f1cd0a78ff881c7a9dc11096464
   languageName: node
   linkType: hard
 
