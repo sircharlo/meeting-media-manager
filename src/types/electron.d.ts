@@ -52,6 +52,8 @@ export interface ElectronApi {
   cancelAllDownloads: () => void;
   changeExt: typeof changeExt;
   checkForUpdates: () => void;
+  closeSqliteConnection: (dbPath: string) => Promise<void>;
+  closeSqliteConnections: () => Promise<void>;
   closeWebsiteWindow: () => void;
   convertHeic: (image: ConversionOptions) => Promise<ArrayBuffer>;
   /**
@@ -92,7 +94,7 @@ export interface ElectronApi {
     dbPath: string,
     query: string,
     params?: (null | number | string)[],
-  ) => T[];
+  ) => Promise<T[]>;
   extname: typeof extname;
   extractNestedZipEntry: (
     input: string,
@@ -366,9 +368,12 @@ export type ElectronFsApi = Pick<
 
 // ipcMain.handle / ipcRenderer.invoke channels
 export type ElectronIpcInvokeKey =
+  | 'closeSqliteConnection'
+  | 'closeSqliteConnections'
   | 'createVideoFromNonVideo'
   | 'downloadFile'
   | 'ensureMacosFolderPermission'
+  | 'executeQuery'
   | 'extractNestedZipEntry'
   | 'getAllScreens'
   | 'getAppDataPath'

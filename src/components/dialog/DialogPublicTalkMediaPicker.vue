@@ -165,11 +165,11 @@ const { ensureDir } = fs;
 const populatePublicTalks = async () => {
   s34Db.value = await findDb(s34Dir.value);
   if (!s34Db.value) return;
-  publicTalks.value = executeQuery<DocumentItem>(
+  publicTalks.value = await executeQuery<DocumentItem>(
     s34Db.value,
     'SELECT DISTINCT Document.DocumentId, Title FROM Document INNER JOIN DocumentMultimedia ON Document.DocumentId = DocumentMultimedia.DocumentId',
   );
-  const PublicationInfos = executeQuery<PublicationInfo>(
+  const PublicationInfos = await executeQuery<PublicationInfo>(
     s34Db.value,
     'SELECT DISTINCT VersionNumber, Year FROM Publication',
   );

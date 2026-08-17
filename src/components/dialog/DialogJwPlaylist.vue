@@ -320,7 +320,7 @@ const loadPlaylistItems = async () => {
 
     // ---- Get Playlist Name ----
     try {
-      const [tag] = executeQuery<PlaylistTagItem>(
+      const [tag] = await executeQuery<PlaylistTagItem>(
         dbFile,
         'SELECT Name FROM Tag ORDER BY TagId ASC LIMIT 1;',
       );
@@ -331,7 +331,7 @@ const loadPlaylistItems = async () => {
     }
 
     // ---- Get Playlist Items ----
-    const rawItems = executeQuery<
+    const rawItems = await executeQuery<
       JwPlaylistItem & {
         ResolvedPreviewPath?: string;
         ThumbnailFilePath: string;
@@ -442,7 +442,7 @@ const loadPlaylistItems = async () => {
         }
 
         // Extract verse numbers (parameterized query to avoid SQL injection)
-        const verseRows = executeQuery<{ Label: string }>(
+        const verseRows = await executeQuery<{ Label: string }>(
           dbFile,
           `SELECT Label FROM PlaylistItemMarker WHERE PlaylistItemId = ?`,
           [item.PlaylistItemId],

@@ -63,6 +63,11 @@ import {
   unregisterShortcut,
 } from 'src-electron/main/shortcuts';
 import {
+  closeAllConnections,
+  closeConnection,
+  executeQuery,
+} from 'src-electron/main/sqlite';
+import {
   getBetaUpdatesPath,
   getUpdatesDisabledPath,
   quitAndInstallUpdate,
@@ -409,6 +414,19 @@ handleIpcInvoke(
 );
 
 handleIpcInvoke('getAllScreens', async () => getAllScreens());
+handleIpcInvoke('closeSqliteConnection', async (_e, dbPath: string) =>
+  closeConnection(dbPath),
+);
+handleIpcInvoke('closeSqliteConnections', async () => closeAllConnections());
+handleIpcInvoke(
+  'executeQuery',
+  async (
+    _e,
+    dbPath: string,
+    query: string,
+    params?: (null | number | string)[],
+  ) => executeQuery(dbPath, query, params),
+);
 handleIpcInvoke('isDownloadComplete', async (_e, downloadId: string) =>
   isDownloadComplete(downloadId),
 );

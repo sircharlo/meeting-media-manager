@@ -24,7 +24,6 @@ import {
 } from 'src-electron/preload/ipc';
 import { sendKeyTap } from 'src-electron/preload/robot';
 import { initScreenListeners } from 'src-electron/preload/screen';
-import { executeQuery } from 'src-electron/preload/sqlite';
 import {
   closeWebsiteWindow,
   initWebsiteListeners,
@@ -63,6 +62,9 @@ const electronApi: ElectronApi = {
   cancelAllDownloads: () => send('cancelAllDownloads'),
   changeExt,
   checkForUpdates: () => send('checkForUpdates'),
+  closeSqliteConnection: (dbPath: string) =>
+    invoke('closeSqliteConnection', dbPath),
+  closeSqliteConnections: () => invoke('closeSqliteConnections'),
   closeWebsiteWindow,
   convertHeic,
   createVideoFromNonVideo: (f, fP, oD) =>
@@ -73,7 +75,8 @@ const electronApi: ElectronApi = {
   encryptSecretSync: (plainText) => sendSync('encryptSecretSync', plainText),
   ensureMacosFolderPermission: (folderPath, prompt) =>
     invoke('ensureMacosFolderPermission', folderPath, prompt),
-  executeQuery,
+  executeQuery: (db, query, params) =>
+    invoke('executeQuery', db, query, params),
   extname,
   extractNestedZipEntry: (i, e, o, op) =>
     invoke('extractNestedZipEntry', i, e, o, op),

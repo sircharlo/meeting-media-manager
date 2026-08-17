@@ -4,6 +4,7 @@ const errorCatcherMock = vi.fn();
 const readdirMock = vi.fn();
 const removeMock = vi.fn();
 const pathExistsMock = vi.fn(async () => true);
+const closeSqliteConnectionsMock = vi.fn(async () => undefined);
 const getAdditionalMediaPathMock = vi.fn(async () => '/additional-media');
 
 const congregationSettingsStore = {
@@ -11,6 +12,7 @@ const congregationSettingsStore = {
 };
 const currentStateStore = {
   currentSettings: undefined as Record<string, unknown> | undefined,
+  currentSongbook: { pub: 'sjj' } as { pub?: string },
 };
 
 vi.mock('src/helpers/date', () => ({
@@ -197,5 +199,40 @@ describe('cleanCache', () => {
         }),
       }),
     );
+  });
+});
+
+describe('deleteCacheFiles', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.resetModules();
+
+    congregationSettingsStore.congregations = { congA: {} };
+    currentStateStore.currentSettings = {};
+    currentStateStore.currentSongbook = { pub: 'sjj' };
+
+    pathExistsMock.mockResolvedValue(true);
+    removeMock.mockResolvedValue(undefined);
+    getAdditionalMediaPathMock.mockResolvedValue('/additional-media');
+    readdirMock.mockResolvedValue([]);
+
+    vi.stubGlobal('electronApi', {
+      closeSqliteConnections: closeSqliteConnectionsMock,
+      fs: {
+        pathExists: pathExistsMock,
+        remove: removeMock,
+      },
+      join: (...parts: string[]) => parts.join('/'),
+      normalize: (p: string) => p,
+      readdir: readdirMock,
+    });
+  });
+
+  it('closes sqlite connections before deleting cache files', async () => {
+    const { deleteCacheFiles } = await import('../cleanup');
+
+    await deleteCacheFiles('all');
+
+    expect(closeSqliteConnectionsMock).toHaveBeenCalledOnce();
   });
 });

@@ -538,10 +538,9 @@ const processJwpubBackground = async (filepath: string) => {
 
   const query =
     "SELECT FilePath FROM Multimedia WHERE CategoryType >= 0 AND CategoryType <> 9 AND FilePath <> '';";
-  const results = globalThis.electronApi.executeQuery<Partial<MultimediaItem>>(
-    db,
-    query,
-  );
+  const results = await globalThis.electronApi.executeQuery<
+    Partial<MultimediaItem>
+  >(db, query);
 
   jwpubImages.value = results.map((multimediaItem) => ({
     FilePath: join(unzipDir, multimediaItem.FilePath || ''),

@@ -657,26 +657,26 @@ const breadcrumbs = computed(() => {
 
 async function buildDocumentHasMedia(db: string) {
   try {
-    const hasDocMM = !!executeQuery<{ name: string }>(
-      db,
-      "SELECT name FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'",
+    const hasDocMM = !!(
+      await executeQuery<{ name: string }>(
+        db,
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'",
+      )
     )?.length;
 
     let ids: { DocumentId: number }[] = [];
     if (hasDocMM) {
-      ids =
-        executeQuery<{ DocumentId: number }>(
-          db,
-          `SELECT DISTINCT DocumentMultimedia.DocumentId as DocumentId
-           FROM DocumentMultimedia
-           JOIN Multimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId`,
-        ) || [];
+      ids = await executeQuery<{ DocumentId: number }>(
+        db,
+        `SELECT DISTINCT DocumentMultimedia.DocumentId as DocumentId
+         FROM DocumentMultimedia
+         JOIN Multimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId`,
+      );
     } else {
-      ids =
-        executeQuery<{ DocumentId: number }>(
-          db,
-          `SELECT DISTINCT DocumentId FROM Multimedia WHERE DocumentId IS NOT NULL`,
-        ) || [];
+      ids = await executeQuery<{ DocumentId: number }>(
+        db,
+        `SELECT DISTINCT DocumentId FROM Multimedia WHERE DocumentId IS NOT NULL`,
+      );
     }
     docHasMedia.value = new Set(ids.map((r) => r.DocumentId));
   } catch (e) {
@@ -692,9 +692,9 @@ async function buildDocumentPreviews(db: string) {
     if (!db || !documents.value?.length) return;
 
     const baseDir = dirname(db);
-    const hasDocMM = tableExists(db, 'DocumentMultimedia');
+    const hasDocMM = await tableExists(db, 'DocumentMultimedia');
 
-    const getFirstLinkedImage = (docId: number) => {
+    const getFirstLinkedImage = async (docId: number) => {
       if (!hasDocMM) return null;
 
       const sql = `
@@ -707,10 +707,10 @@ async function buildDocumentPreviews(db: string) {
         LIMIT 1
       `;
 
-      return executeQuery<{ FilePath: string }>(db, sql)?.[0]?.FilePath;
+      return (await executeQuery<{ FilePath: string }>(db, sql))?.[0]?.FilePath;
     };
 
-    const getFallbackImage = (docId: number) => {
+    const getFallbackImage = async (docId: number) => {
       const join = hasDocMM
         ? 'INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId'
         : '';
@@ -729,25 +729,28 @@ async function buildDocumentPreviews(db: string) {
         LIMIT 1
       `;
 
-      return executeQuery<{ FilePath: string }>(db, sql)?.[0]?.FilePath;
+      return (await executeQuery<{ FilePath: string }>(db, sql))?.[0]?.FilePath;
     };
 
-    for (const doc of documents.value) {
-      const docId = doc?.DocumentId;
-      if (!docId) continue;
+    await Promise.all(
+      documents.value.map(async (doc) => {
+        const docId = doc?.DocumentId;
+        if (!docId) return;
 
-      const previewPath = getFirstLinkedImage(docId) || getFallbackImage(docId);
+        const previewPath =
+          (await getFirstLinkedImage(docId)) || (await getFallbackImage(docId));
 
-      if (!previewPath) continue;
+        if (!previewPath) return;
 
-      try {
-        const abs = join(baseDir, previewPath);
-        const url = pathToFileURL(abs)?.toString();
-        if (url) docPreviews.value[docId] = url;
-      } catch (err) {
-        errorCatcher(err);
-      }
-    }
+        try {
+          const abs = join(baseDir, previewPath);
+          const url = pathToFileURL(abs)?.toString();
+          if (url) docPreviews.value[docId] = url;
+        } catch (err) {
+          errorCatcher(err);
+        }
+      }),
+    );
   } catch (err) {
     errorCatcher(err);
   }
@@ -908,8 +911,10 @@ async function fetchJwtToken(): Promise<boolean> {
   }
 }
 
-function getPublicationDocuments(dbPath: string): DocumentItem[] {
-  const pageColumns = getExistingColumns(dbPath, 'Document', [
+async function getPublicationDocuments(
+  dbPath: string,
+): Promise<DocumentItem[]> {
+  const pageColumns = await getExistingColumns(dbPath, 'Document', [
     'FirstPageNumber',
     'LastPageNumber',
   ]);
@@ -1009,7 +1014,7 @@ async function handleJwpubResult(
   if (!dbPath) return false;
 
   selection.dbPath = dbPath;
-  documents.value = getPublicationDocuments(dbPath);
+  documents.value = await getPublicationDocuments(dbPath);
   await buildDocumentHasMedia(dbPath);
   await buildDocumentPreviews(dbPath);
   step.value = 'article';
@@ -1521,7 +1526,7 @@ async function selectMonth(m: number) {
     }
     selection.dbPath = db;
     // Load articles (documents)
-    documents.value = getPublicationDocuments(db);
+    documents.value = await getPublicationDocuments(db);
     await buildDocumentHasMedia(db);
     await buildDocumentPreviews(db);
     step.value = 'article';
@@ -1555,7 +1560,7 @@ async function selectPublication(choice: FilterChoice) {
       return;
     }
     selection.dbPath = db;
-    documents.value = getPublicationDocuments(db);
+    documents.value = await getPublicationDocuments(db);
     await buildDocumentHasMedia(db);
     await buildDocumentPreviews(db);
     step.value = 'article';

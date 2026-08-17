@@ -38,6 +38,8 @@ export const electronApi: ElectronApi = {
   },
   changeExt,
   checkForUpdates: () => void 0,
+  closeSqliteConnection: async () => undefined,
+  closeSqliteConnections: async () => undefined,
 
   closeWebsiteWindow: function () {
     throw new Error('Function not implemented.');
@@ -58,7 +60,7 @@ export const electronApi: ElectronApi = {
     path: folderPath,
     status: 'not-needed',
   }),
-  executeQuery: function (dbPath, query) {
+  executeQuery: async function (dbPath, query) {
     throw new Error('Function not implemented.');
   },
   extname,

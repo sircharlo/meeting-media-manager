@@ -25,7 +25,8 @@ import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
-const { fs, join, normalize, readdir } = globalThis.electronApi;
+const { closeSqliteConnections, fs, join, normalize, readdir } =
+  globalThis.electronApi;
 const { pathExists, remove } = fs;
 
 /**
@@ -806,6 +807,11 @@ export const deleteCacheFiles = async (
         : analysis.cacheFiles.map((f) => f.path);
 
     log('[Cache] Filepaths to delete:', 'cleanup', 'log', filepathsToDelete);
+
+    // Release any open read-only SQLite handles (and their cached results)
+    // before deleting, so a publication .db being removed/replaced doesn't
+    // fail with EBUSY/EPERM on Windows or leave stale query results behind.
+    await closeSqliteConnections();
 
     // Delete cache files/directories
     const deletionResult =

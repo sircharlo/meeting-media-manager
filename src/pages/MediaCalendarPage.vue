@@ -1587,11 +1587,13 @@ const resetJwpubImportState = () => {
   showFileImport.value = false;
 };
 
-const loadJwpubImportDocuments = (db: string, filepath: string) => {
+const loadJwpubImportDocuments = async (db: string, filepath: string) => {
   const multimediaCount =
-    executeQuery<{ count: number }>(
-      db,
-      'SELECT COUNT(*) as count FROM Multimedia;',
+    (
+      await executeQuery<{ count: number }>(
+        db,
+        'SELECT COUNT(*) as count FROM Multimedia;',
+      )
     )?.[0]?.count ?? 0;
 
   if (multimediaCount === 0) {
@@ -1605,15 +1607,17 @@ const loadJwpubImportDocuments = (db: string, filepath: string) => {
     return;
   }
 
-  const mmTable = tableExists(db, 'DocumentMultimedia')
+  const mmTable = (await tableExists(db, 'DocumentMultimedia'))
     ? 'DocumentMultimedia'
     : 'Multimedia';
-  const pageColumns = getExistingColumns(db, 'Document', [
-    'FirstPageNumber',
-    'LastPageNumber',
-  ]).map((column) => `Document.${column}`);
+  const pageColumns = (
+    await getExistingColumns(db, 'Document', [
+      'FirstPageNumber',
+      'LastPageNumber',
+    ])
+  ).map((column) => `Document.${column}`);
   const columns = ['Document.DocumentId', 'Title', ...pageColumns].join(', ');
-  jwpubImportDocuments.value = executeQuery<DocumentItem>(
+  jwpubImportDocuments.value = await executeQuery<DocumentItem>(
     db,
     `SELECT DISTINCT ${columns} FROM Document JOIN ${mmTable} ON Document.DocumentId = ${mmTable}.DocumentId;`,
   );
@@ -1692,8 +1696,8 @@ const processJwpubFile = async (filepath: string) => {
   }
 
   jwpubImportDb.value = db;
-  jwpubImportTitle.value = getPublicationTitleFromDb(db);
-  loadJwpubImportDocuments(db, filepath);
+  jwpubImportTitle.value = await getPublicationTitleFromDb(db);
+  await loadJwpubImportDocuments(db, filepath);
 };
 
 const processJwPlaylistFile = async (filepath: string) => {

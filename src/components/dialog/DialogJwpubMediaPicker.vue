@@ -207,7 +207,7 @@ const loadMediaItems = async () => {
     loading.value = true;
     if (!props.dbPath || !props.document) return;
 
-    const items = getDocumentMultimediaItems(
+    const items = await getDocumentMultimediaItems(
       {
         db: props.dbPath,
         docId: props.document.DocumentId,
@@ -216,7 +216,7 @@ const loadMediaItems = async () => {
     );
 
     // Get publication info to resolve full file paths
-    const publication = getPublicationInfoFromDb(props.dbPath);
+    const publication = await getPublicationInfoFromDb(props.dbPath);
 
     // Resolve full file paths for all multimedia items
     const resolvedItems = await Promise.all(

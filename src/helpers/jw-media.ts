@@ -126,6 +126,8 @@ import {
 const {
   basename,
   changeExt,
+  closeSqliteConnection,
+  closeSqliteConnections,
   dirname,
   downloadFile,
   executeQuery,
@@ -642,7 +644,7 @@ const getMediaFromJwPlaylist = async (
     if (!dbFile) return [];
     let playlistName = '';
     try {
-      const playlistNameQuery = executeQuery<PlaylistTagItem>(
+      const playlistNameQuery = await executeQuery<PlaylistTagItem>(
         dbFile,
         'SELECT Name FROM Tag ORDER BY TagId ASC LIMIT 1;',
       );
@@ -663,7 +665,7 @@ const getMediaFromJwPlaylist = async (
         },
       });
     }
-    const playlistItems = executeQuery<JwPlaylistItem>(
+    const playlistItems = await executeQuery<JwPlaylistItem>(
       dbFile,
       `SELECT
         pi.PlaylistItemId,
@@ -760,8 +762,8 @@ const getMediaFromJwPlaylist = async (
             ? item.StartTrimOffsetTicks / 10000 / 1000
             : null;
 
-        const VerseNumbers = globalThis.electronApi
-          .executeQuery<{
+        const VerseNumbers = (
+          await globalThis.electronApi.executeQuery<{
             Label: string;
           }>(
             dbFile,
@@ -773,14 +775,14 @@ const getMediaFromJwPlaylist = async (
             PlaylistItemId = ?`,
             [item.PlaylistItemId],
           )
-          .map((v) =>
-            Number.parseInt(
-              Array.from(
-                v.Label.matchAll(VERSE_NUMBER_PATTERN),
-                (m) => m[1],
-              )[0] ?? '0',
-            ),
-          );
+        ).map((v) =>
+          Number.parseInt(
+            Array.from(
+              v.Label.matchAll(VERSE_NUMBER_PATTERN),
+              (m) => m[1],
+            )[0] ?? '0',
+          ),
+        );
 
         const playlistItemName = `${i + 1} - ${item.Label}`;
 
@@ -916,6 +918,9 @@ export async function identifyJwpub(jwpubPath: string) {
 
   const extractionId = uuid();
   const tempExplodePath = join(tempDir, `identify-${extractionId}`);
+  // Hoisted so the finally block can release the throwaway identification db
+  // even when extraction fails before reaching the query below.
+  let dbPath: string | undefined;
 
   try {
     // 1. Peek at JWPUB to find 'contents'
@@ -937,7 +942,7 @@ export async function identifyJwpub(jwpubPath: string) {
 
     // 2. For small publications, read 'contents' in memory and write only the inner .db file to temp.
     // Huge publications fall back to streamed disk extraction to avoid RAM spikes.
-    const dbPath = await extractIdentificationDb(
+    dbPath = await extractIdentificationDb(
       jwpubPath,
       tempExplodePath,
       jwpubEntries.contents,
@@ -945,7 +950,7 @@ export async function identifyJwpub(jwpubPath: string) {
     if (!dbPath) return;
 
     // 3. Get publication info
-    return getPublicationInfoFromDb(dbPath);
+    return await getPublicationInfoFromDb(dbPath);
   } catch (error) {
     if (isPermissionError(error)) invalidateCustomCachePath(error);
 
@@ -959,7 +964,10 @@ export async function identifyJwpub(jwpubPath: string) {
     });
     return undefined;
   } finally {
-    // Cleanup
+    // Cleanup. Release the throwaway identification db's connection/cache
+    // first so removing its temp dir doesn't fail with EBUSY on Windows and
+    // the worker doesn't pin an open handle + cached result per call.
+    if (dbPath) await closeSqliteConnection(dbPath).catch(() => undefined);
     await remove(tempExplodePath).catch(() => undefined);
   }
 }
@@ -1088,6 +1096,9 @@ const extractDbFromContents = async (outputPath: string, jwpubPath: string) => {
       );
     }
     try {
+      // Release any open read-only SQLite handle on the existing .db before
+      // re-extracting over it (the old file is about to be replaced).
+      await closeSqliteConnections();
       await unzip(contentsPath, outputPath);
       const dbFileAfterUnzip = await findDb(outputPath);
       if (!dbFileAfterUnzip) throw new Error('DB still not found after unzip');
@@ -1135,6 +1146,9 @@ const jwpubExtractor = async (jwpubPath: string, outputPath: string) => {
 
     // If anything fails, clean up the output directory to avoid partial extractions
     try {
+      // Release any open read-only SQLite handle on the partially-extracted
+      // .db before removing it.
+      await closeSqliteConnections();
       await remove(outputPath);
     } catch (removeError) {
       await errorCatcher(removeError, {
@@ -1192,6 +1206,9 @@ export const unzipJwpub = async (
 
     // If force, clear the output directory before filling it
     if (force) {
+      // Release any open read-only SQLite handle on the old .db before
+      // removing it, so the delete doesn't fail with EBUSY/EPERM on Windows.
+      await closeSqliteConnections();
       try {
         await remove(outputPath);
       } catch (e) {
@@ -1482,8 +1499,8 @@ export const addJwpubDocumentMediaToFiles = async (
   const currentStateStore = useCurrentStateStore();
   try {
     if (!dbPath) return;
-    const publication = getPublicationInfoFromDb(dbPath);
-    const multimediaItems = getDocumentMultimediaItems(
+    const publication = await getPublicationInfoFromDb(dbPath);
+    const multimediaItems = await getDocumentMultimediaItems(
       {
         db: dbPath,
         docId: document.DocumentId,
@@ -2450,13 +2467,13 @@ const getStudyBibleBooksUncached: () => Promise<
           Document.Type = 2;
     `;
 
-    const bibleBookItems = executeQuery<MultimediaItem>(
+    const bibleBookItems = await executeQuery<MultimediaItem>(
       nwtStyDb,
       bibleBooksQuery,
     );
 
     if (nwtStyDb_E && nwtStyDb_E !== nwtStyDb) {
-      const englishBookItems = executeQuery<MultimediaItem>(
+      const englishBookItems = await executeQuery<MultimediaItem>(
         nwtStyDb_E,
         bibleBooksQuery,
       );
@@ -2481,7 +2498,7 @@ const getStudyBibleBooksUncached: () => Promise<
           Class = 1
     `;
 
-      const bibleBookLocalNames = executeQuery<{
+      const bibleBookLocalNames = await executeQuery<{
         ChapterNumber: number;
         Title: string;
       }>(nwtDb, bibleBooksSimpleQuery);
@@ -2512,13 +2529,13 @@ const getStudyBibleBooksUncached: () => Promise<
       FROM BibleChapter 
       GROUP BY BookNumber
     `;
-    const chapterCounts = executeQuery<{
+    const chapterCounts = await executeQuery<{
       BookNumber: number;
       ChapterCount: number;
     }>(nwtStyDb, chapterCountsQuery);
 
     if (nwtDb) {
-      const chapterCountsNwt = executeQuery<{
+      const chapterCountsNwt = await executeQuery<{
         BookNumber: number;
         ChapterCount: number;
       }>(nwtDb, chapterCountsQuery);
@@ -2592,7 +2609,7 @@ const getStudyBibleCategoriesUncached = async () => {
         and ParentPublicationViewItemId < 0
     `;
 
-    const bibleMediaCategories = executeQuery<{ Title: string }>(
+    const bibleMediaCategories = await executeQuery<{ Title: string }>(
       nwtStyDb,
       bibleMediaCategoriesQuery,
     );
@@ -2675,7 +2692,7 @@ const getStudyBibleMediaUncached = async (
     const bibleBookMediaItemsParams = [bookNumber, chapterNumber].filter(
       (v) => v !== undefined,
     );
-    const bibleBookMediaItems = executeQuery<MultimediaItem>(
+    const bibleBookMediaItems = await executeQuery<MultimediaItem>(
       nwtStyDb,
       bibleBookMediaItemsQuery,
       bibleBookMediaItemsParams,
@@ -2709,7 +2726,7 @@ const getStudyBibleMediaUncached = async (
 
     const bibleBookRelatedMediaItemsParams =
       bookNumber === undefined ? [] : [bookNumber];
-    const bibleBookRelatedMediaItems = executeQuery<MultimediaItem>(
+    const bibleBookRelatedMediaItems = await executeQuery<MultimediaItem>(
       nwtStyDb,
       bibleBookRelatedMediaItemsQuery,
       bibleBookRelatedMediaItemsParams,
@@ -2723,17 +2740,18 @@ const getStudyBibleMediaUncached = async (
 
     // Fallback to English
     if (nwtStyDb_E && nwtStyDb_E !== nwtStyDb) {
-      const englishBibleBookMediaItems = executeQuery<MultimediaItem>(
+      const englishBibleBookMediaItems = await executeQuery<MultimediaItem>(
         nwtStyDb_E,
         bibleBookMediaItemsQuery,
         bibleBookMediaItemsParams,
       );
 
-      const englishBibleBookRelatedMediaItems = executeQuery<MultimediaItem>(
-        nwtStyDb_E,
-        bibleBookRelatedMediaItemsQuery,
-        bibleBookRelatedMediaItemsParams,
-      );
+      const englishBibleBookRelatedMediaItems =
+        await executeQuery<MultimediaItem>(
+          nwtStyDb_E,
+          bibleBookRelatedMediaItemsQuery,
+          bibleBookRelatedMediaItemsParams,
+        );
 
       mergeEnglishStudyBibleItems(
         filteredMediaItems,
@@ -2885,7 +2903,9 @@ const applyBibleBookBackupNames = async (
   const { nwtDb, nwtStyDb } = await getStudyBible();
   if (!(nwtStyDb || nwtDb)) return;
 
-  const bibleBookLocalNames = getLocalBibleBookNames(nwtStyDb || nwtDb || '');
+  const bibleBookLocalNames = await getLocalBibleBookNames(
+    nwtStyDb || nwtDb || '',
+  );
   for (const booknum of backupNameNeeded) {
     const pubName = bibleBookLocalNames.find(
       (item) => item.ChapterNumber === booknum,
@@ -2954,7 +2974,7 @@ const getBibleMediaLanguages = (langwritten?: JwLangCode) => {
   ].filter((l): l is JwLangCode => !!l);
 };
 
-const getLocalBibleBookNames = (db: string) =>
+const getLocalBibleBookNames = async (db: string) =>
   executeQuery<{
     ChapterNumber: number;
     Title: string;
@@ -3010,17 +3030,17 @@ export const getMemorialMedia = async (
 
           if (!db) return undefined;
 
-          const hasDocMM = tableExists(db, 'DocumentMultimedia');
+          const hasDocMM = await tableExists(db, 'DocumentMultimedia');
           const joinDocMM = hasDocMM
             ? 'INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId '
             : '';
 
-          const bgItems = executeQuery<MultimediaItem>(
+          const bgItems = await executeQuery<MultimediaItem>(
             db,
             `SELECT * FROM Multimedia ${joinDocMM} WHERE Multimedia.CategoryType = 26`,
           );
 
-          const videoItems = executeQuery<MultimediaItem>(
+          const videoItems = await executeQuery<MultimediaItem>(
             db,
             `SELECT * FROM Multimedia ${joinDocMM} WHERE Multimedia.CategoryType = -1` +
               (hasDocMM
@@ -3130,7 +3150,7 @@ const getWtIssue = async (
       formatDate(lookupDate ?? monday, 'YYYYMMDD'),
     );
     if (!db) throw new Error('No db file found: ' + issueString);
-    const datedTexts = executeQuery<{ FirstDateOffset: number }>(
+    const datedTexts = await executeQuery<{ FirstDateOffset: number }>(
       db,
       'SELECT FirstDateOffset FROM DatedText',
     );
@@ -3145,9 +3165,11 @@ const getWtIssue = async (
     if (weekNr === -1) {
       return defaultResult;
     }
-    const wtDocument = executeQuery<{ DocumentId: number; Title: string }>(
-      db,
-      `SELECT Document.DocumentId, Document.Title FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET ${weekNr}`,
+    const wtDocument = (
+      await executeQuery<{ DocumentId: number; Title: string }>(
+        db,
+        `SELECT Document.DocumentId, Document.Title FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET ${weekNr}`,
+      )
     )[0];
     const docId = wtDocument?.DocumentId ?? -1;
     const title = wtDocument?.Title ?? '';
@@ -3760,7 +3782,7 @@ const addFullPathsToMultimediaItems = async (
   }
 };
 
-const applyMepsLanguageOverrides = (
+const applyMepsLanguageOverrides = async (
   allMedia: MultimediaItem[],
   options: {
     db: string;
@@ -3776,14 +3798,17 @@ const applyMepsLanguageOverrides = (
 ) => {
   const currentStateStore = useCurrentStateStore();
   const mepsLanguagesByMediaItem = [
-    ...getMepsLanguagesByMediaItem(options),
+    ...(await getMepsLanguagesByMediaItem(options)),
     ...extraMepsLanguagesByMediaItem,
   ];
 
   for (const media of allMedia) {
     applyMepsLanguageOverride(media, mepsLanguagesByMediaItem);
     if (options.includeVideoMarkers) {
-      const videoMarkers = getMediaVideoMarkers(options, media.MultimediaId);
+      const videoMarkers = await getMediaVideoMarkers(
+        options,
+        media.MultimediaId,
+      );
       if (videoMarkers) media.VideoMarkers = videoMarkers;
     }
   }
@@ -3886,7 +3911,7 @@ const getEmptyWeekendIssue = () => ({
   weekNr: -1,
 });
 
-const getWeekendSongs = (
+const getWeekendSongs = async (
   options: {
     db: string;
     docId: number;
@@ -3922,13 +3947,15 @@ const getWeekendSongs = (
   return songs.length > 2 ? sortedVideos.slice(0, 2).filter(Boolean) : songs;
 };
 
-const getMidweekDocumentId = (db: string, monday: Date) =>
-  executeQuery<{ DocumentId: number }>(
-    db,
-    `SELECT DocumentId FROM DatedText WHERE FirstDateOffset = ${formatDate(
-      monday,
-      'YYYYMMDD',
-    )}`,
+const getMidweekDocumentId = async (db: string, monday: Date) =>
+  (
+    await executeQuery<{ DocumentId: number }>(
+      db,
+      `SELECT DocumentId FROM DatedText WHERE FirstDateOffset = ${formatDate(
+        monday,
+        'YYYYMMDD',
+      )}`,
+    )
   )[0]?.DocumentId ?? -1;
 
 const getMidweekIssueDb = async (
@@ -4157,7 +4184,7 @@ export const getWeMedia = async (
         media: {} as Record<string, MediaItem[]>,
       };
     }
-    const videos = executeQuery<MultimediaItem>(
+    const videos = await executeQuery<MultimediaItem>(
       db,
       `SELECT m.*, dm.*, dp.*, q.*,
          CASE
@@ -4229,7 +4256,7 @@ export const getWeMedia = async (
         ELSE ${firstLabel} || '-' || ${lastLabel}
       END`;
 
-    const mediaWithoutVideos = executeQuery<MultimediaItem>(
+    const mediaWithoutVideos = await executeQuery<MultimediaItem>(
       db,
       `SELECT *,
          COALESCE(Question.TargetParagraphNumberLabel, ${rangeLabel}) AS TargetParagraphNumberLabel
@@ -4259,7 +4286,7 @@ export const getWeMedia = async (
       currentStateStore,
     );
 
-    const songs = getWeekendSongs(
+    const songs = await getWeekendSongs(
       {
         db,
         docId,
@@ -4268,19 +4295,18 @@ export const getWeMedia = async (
       videosNotInParagraphs,
     );
 
-    const songMultimediaExtractItems: MultimediaExtractItem[] =
-      globalThis.electronApi
-        .executeQuery<MultimediaExtractItem>(
-          db,
-          `SELECT Extract.ExtractId, Extract.Link, DocumentExtract.BeginParagraphOrdinal
-           FROM Extract
-           INNER JOIN DocumentExtract ON Extract.ExtractId = DocumentExtract.ExtractId
-           WHERE Extract.RefMepsDocumentClass = 31
-             AND DocumentExtract.DocumentId = ${docId}
-           ORDER BY Extract.ExtractId
-           LIMIT 2`,
-        )
-        .sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal);
+    const songMultimediaExtractItems: MultimediaExtractItem[] = (
+      await globalThis.electronApi.executeQuery<MultimediaExtractItem>(
+        db,
+        `SELECT Extract.ExtractId, Extract.Link, DocumentExtract.BeginParagraphOrdinal
+         FROM Extract
+         INNER JOIN DocumentExtract ON Extract.ExtractId = DocumentExtract.ExtractId
+         WHERE Extract.RefMepsDocumentClass = 31
+           AND DocumentExtract.DocumentId = ${docId}
+         ORDER BY Extract.ExtractId
+         LIMIT 2`,
+      )
+    ).sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal);
 
     const allMedia = mergeWeekendSongs(
       finalMedia,
@@ -4289,11 +4315,14 @@ export const getWeMedia = async (
       currentStateStore,
     );
 
-    const mepsLanguagesByMediaItem = applyMepsLanguageOverrides(allMedia, {
-      db,
-      docId,
-      includeVideoMarkers: true,
-    });
+    const mepsLanguagesByMediaItem = await applyMepsLanguageOverrides(
+      allMedia,
+      {
+        db,
+        docId,
+        includeVideoMarkers: true,
+      },
+    );
     await processMissingMediaInfo({
       allMedia,
       isDynamicMedia: true,
@@ -4358,7 +4387,7 @@ export const getMwMedia = async (
 
     if (!db) return { error: true, media: {} as Record<string, MediaItem[]> };
 
-    const docId = getMidweekDocumentId(db, monday);
+    const docId = await getMidweekDocumentId(db, monday);
 
     if (docId < 0)
       throw new Error(
@@ -4370,7 +4399,7 @@ export const getMwMedia = async (
           db.split('/').pop(),
       );
 
-    const mms = getDocumentMultimediaItems(
+    const mms = await getDocumentMultimediaItems(
       { db, docId },
       currentStateStore.currentSettings?.includePrinted,
     );
@@ -4396,7 +4425,7 @@ export const getMwMedia = async (
       .concat(extracts)
       .sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal);
 
-    const mepsLanguagesByMediaItem = applyMepsLanguageOverrides(
+    const mepsLanguagesByMediaItem = await applyMepsLanguageOverrides(
       allMedia,
       { db, docId },
       extractMepsLanguagesByMediaItem,
@@ -4821,15 +4850,15 @@ export const getJwMepsInfo = (): Promise<void> => {
       await unzip(msix, dir);
       const mepsunit = await findFile(join(dir, 'Data'), '.db');
       if (!mepsunit) return;
-      const dynamicMepsLangs = globalThis.electronApi
-        .executeQuery<JwMepsLanguage>(
+      const dynamicMepsLangs = (
+        await globalThis.electronApi.executeQuery<JwMepsLanguage>(
           mepsunit,
           'SELECT LanguageId, PrimaryIetfCode, Symbol FROM Language',
         )
-        .map((l) => ({
-          ...l,
-          PrimaryIetfCode: l.PrimaryIetfCode.toLowerCase() as JwLangSymbol,
-        }));
+      ).map((l) => ({
+        ...l,
+        PrimaryIetfCode: l.PrimaryIetfCode.toLowerCase() as JwLangSymbol,
+      }));
       if (dynamicMepsLangs.length < jwStore.jwMepsLanguages.list.length) {
         return;
       }

@@ -9,6 +9,8 @@ const logMock = vi.fn();
 const updateLookupPeriodMock = vi.fn();
 const extractNestedZipEntryMock = vi.fn();
 const getZipEntriesMock = vi.fn();
+const closeSqliteConnectionMock = vi.fn(async () => undefined);
+const closeSqliteConnectionsMock = vi.fn(async () => undefined);
 const unzipMock = vi.fn();
 const statMock = vi.fn();
 const removeMock = vi.fn();
@@ -204,6 +206,8 @@ describe('jw-media helpers', () => {
     vi.stubGlobal('electronApi', {
       basename: basenameMock,
       changeExt: vi.fn(),
+      closeSqliteConnection: closeSqliteConnectionMock,
+      closeSqliteConnections: closeSqliteConnectionsMock,
       dirname: vi.fn(),
       downloadFile: vi.fn(),
       executeQuery: vi.fn(),
@@ -227,6 +231,41 @@ describe('jw-media helpers', () => {
       setElectronUrlVariables: vi.fn(),
       unzip: unzipMock,
     });
+  });
+
+  it('closes sqlite connections before removing files when force-unzipping', async () => {
+    const { unzipJwpub } = await import('../jw-media');
+
+    await expect(
+      unzipJwpub('/tmp/publication.jwpub', '/tmp/out', true),
+    ).rejects.toThrow('JWPUB does not contain contents entry');
+
+    expect(closeSqliteConnectionsMock).toHaveBeenCalled();
+
+    const sqliteCallOrder =
+      closeSqliteConnectionsMock.mock.invocationCallOrder[0];
+    const removeCallOrder = removeMock.mock.invocationCallOrder[0];
+
+    expect(sqliteCallOrder).toBeDefined();
+    expect(removeCallOrder).toBeDefined();
+    expect(sqliteCallOrder ?? 0).toBeLessThan(removeCallOrder ?? 0);
+  });
+
+  it('closes the identification db connection before removing its temp dir', async () => {
+    getZipEntriesMock.mockResolvedValue({ contents: 100 });
+    const { identifyJwpub } = await import('../jw-media');
+
+    await identifyJwpub('/tmp/publication.jwpub');
+
+    expect(closeSqliteConnectionMock).toHaveBeenCalledWith('/tmp/db.db');
+
+    const closeCallOrder =
+      closeSqliteConnectionMock.mock.invocationCallOrder[0];
+    const removeCallOrder = removeMock.mock.invocationCallOrder[0];
+
+    expect(closeCallOrder).toBeDefined();
+    expect(removeCallOrder).toBeDefined();
+    expect(closeCallOrder ?? 0).toBeLessThan(removeCallOrder ?? 0);
   });
 
   it('captures diagnostics when a jwpub is missing the contents entry', async () => {
