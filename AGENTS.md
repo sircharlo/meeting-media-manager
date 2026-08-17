@@ -309,6 +309,13 @@ When adding or changing an Electron API:
   checks such as `yarn test:unit` or `yarn lint` when the change warrants it.
 - `import.meta.env.VITEST` is set under test; `fetchRaw` skips some logging and
   demo-mode network blocking is real, so tests mock fetch via msw.
+- In Pinia v4, plugins registered via `pinia.use()` only take effect once the
+  pinia is installed into an app (`app.use(pinia)`). A bare
+  `createPinia()` + `pinia.use()` in a test silently no-ops the plugin. Use
+  `createPersistedPinia()` from `app/test/vitest/mocks/pinia` (which registers
+  `pinia-plugin-persistedstate` _and_ installs the pinia) or
+  `createTestingPinia()`. The `local/no-bare-pinia-use` ESLint rule enforces
+  this in test files.
 
 ## Localization and Crowdin
 

@@ -43,9 +43,24 @@ import {
   getDateDiff,
   isInPast,
 } from 'src/utils/date';
+import { createDebouncedStorage } from 'src/utils/debounced-storage';
 import { findBestResolution, isMediaLink } from 'src/utils/jw';
 
 const oldDate = new Date(0);
+
+// Debounce the jw store's persistence so bursts of mutations (e.g. the
+// day-by-day schedule population during a media refresh) collapse into a
+// single synchronous localStorage write instead of one per mutation. The
+// write is flushed on window close so a clean shutdown never loses the last
+// mutation.
+const JW_STORE_PERSIST_DEBOUNCE_MS = 500;
+const jwStoreStorage = createDebouncedStorage(
+  window.localStorage,
+  JW_STORE_PERSIST_DEBOUNCE_MS,
+);
+
+window.addEventListener('beforeunload', jwStoreStorage.flush);
+window.addEventListener('pagehide', jwStoreStorage.flush);
 
 /**
  * Checks if a caches list should be updated
@@ -802,6 +817,8 @@ export const useJwStore = defineStore('jw-store', {
         });
       });
     },
+    omit: ['jwBibleFiles', 'jwMepsLanguages'],
+    storage: jwStoreStorage,
   },
   state: (): Store => {
     return {

@@ -113,7 +113,13 @@ export default defineConfigWithVueTs([
   {
     files: ['test/vitest/**', '**/__tests__/**'],
     plugins: { vitest },
-    rules: { ...vitest.configs.recommended.rules },
+    rules: {
+      // Pinia v4 defers plugins registered via pinia.use() until the pinia
+      // is installed into an app, so a bare createPinia() + pinia.use() in a
+      // unit test silently no-ops the plugin and masks persistence bugs.
+      'local/no-bare-pinia-use': 'error',
+      ...vitest.configs.recommended.rules,
+    },
   },
 
   {
@@ -218,6 +224,76 @@ export default defineConfigWithVueTs([
     plugins: {
       local: {
         rules: {
+          'no-bare-pinia-use': {
+            create(context) {
+              const installed = new Set();
+              const piniaDeclarations = new Map();
+              const registeredPlugins = new Set();
+
+              return {
+                CallExpression(node) {
+                  if (
+                    node.callee.type !== 'MemberExpression' ||
+                    node.callee.property.type !== 'Identifier' ||
+                    node.callee.property.name !== 'use'
+                  ) {
+                    return;
+                  }
+
+                  const object = node.callee.object;
+
+                  // pinia.use(plugin) - registers a plugin on the pinia.
+                  if (
+                    object.type === 'Identifier' &&
+                    piniaDeclarations.has(object.name)
+                  ) {
+                    registeredPlugins.add(object.name);
+                  }
+
+                  // app.use(pinia) / createApp({}).use(pinia) - installs the
+                  // pinia into an app, flushing the deferred plugins.
+                  for (const argument of node.arguments) {
+                    if (
+                      argument.type === 'Identifier' &&
+                      piniaDeclarations.has(argument.name)
+                    ) {
+                      installed.add(argument.name);
+                    }
+                  }
+                },
+                'Program:exit'() {
+                  for (const name of registeredPlugins) {
+                    if (!installed.has(name)) {
+                      context.report({
+                        message:
+                          'Pinia v4 defers plugins registered via pinia.use() until the pinia is installed into an app. Install it with createApp({}).use(pinia) (or app.use(pinia)), or use createTestingPinia().',
+                        node: piniaDeclarations.get(name),
+                      });
+                    }
+                  }
+                },
+                VariableDeclarator(node) {
+                  if (
+                    node.init &&
+                    node.init.type === 'CallExpression' &&
+                    node.init.callee.type === 'Identifier' &&
+                    node.init.callee.name === 'createPinia' &&
+                    node.id.type === 'Identifier'
+                  ) {
+                    piniaDeclarations.set(node.id.name, node);
+                  }
+                },
+              };
+            },
+            meta: {
+              docs: {
+                description:
+                  'require createPinia() + pinia.use() to install the pinia into an app in tests',
+              },
+              schema: [],
+              type: 'problem',
+            },
+          },
           'no-watch-before-const': {
             create(context) {
               let watcherSeen = false;
