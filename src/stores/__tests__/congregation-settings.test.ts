@@ -1,11 +1,14 @@
+import { createPinia, setActivePinia } from 'pinia';
 import { defaultSettings } from 'src/constants/settings';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   backfillQuickStartTourSeen,
+  clearObsPasswordEncryptionCache,
   deserializeCongregationSettings,
   serializeCongregationSettings,
   transformObsPasswords,
+  useCongregationSettingsStore,
 } from '../congregation-settings';
 
 describe('backfillQuickStartTourSeen', () => {
@@ -80,6 +83,7 @@ describe('transformObsPasswords', () => {
 
 describe('serializeCongregationSettings / deserializeCongregationSettings', () => {
   afterEach(() => {
+    clearObsPasswordEncryptionCache();
     vi.restoreAllMocks();
   });
 
@@ -126,5 +130,122 @@ describe('serializeCongregationSettings / deserializeCongregationSettings', () =
 
     const deserialized = deserializeCongregationSettings(serialized);
     expect(deserialized.congregations.abc?.obsPassword).toBe('');
+  });
+});
+
+describe('obsPassword encryption caching', () => {
+  const makeStore = (obsPassword: string) => ({
+    announcements: {},
+    congregations: { abc: { ...defaultSettings, obsPassword } },
+    quickStartTourSeen: {},
+  });
+
+  beforeEach(() => {
+    clearObsPasswordEncryptionCache();
+  });
+
+  afterEach(() => {
+    clearObsPasswordEncryptionCache();
+    vi.restoreAllMocks();
+  });
+
+  it('encrypts an unchanged obsPassword only once across repeated saves', () => {
+    const encryptSecretSync = vi
+      .spyOn(globalThis.electronApi, 'encryptSecretSync')
+      .mockImplementation((value: string) => `enc:${value}`);
+
+    const state = makeStore('hunter2');
+
+    const first = serializeCongregationSettings(state);
+    const second = serializeCongregationSettings(state);
+
+    expect(encryptSecretSync).toHaveBeenCalledTimes(1);
+    expect(encryptSecretSync).toHaveBeenCalledWith('hunter2');
+    expect(first).toBe(second);
+    expect(second).toContain('"obsPassword":"enc:hunter2"');
+  });
+
+  it('re-encrypts when the obsPassword value changes', () => {
+    const encryptSecretSync = vi
+      .spyOn(globalThis.electronApi, 'encryptSecretSync')
+      .mockImplementation((value: string) => `enc:${value}`);
+
+    serializeCongregationSettings(makeStore('hunter2'));
+    const second = serializeCongregationSettings(makeStore('newpwd'));
+
+    expect(encryptSecretSync).toHaveBeenCalledTimes(2);
+    expect(encryptSecretSync).toHaveBeenCalledWith('hunter2');
+    expect(encryptSecretSync).toHaveBeenCalledWith('newpwd');
+    expect(second).toContain('"obsPassword":"enc:newpwd"');
+  });
+
+  it('clears the cached ciphertext when a congregation is deleted', () => {
+    setActivePinia(createPinia());
+    const store = useCongregationSettingsStore();
+    const encryptSecretSync = vi
+      .spyOn(globalThis.electronApi, 'encryptSecretSync')
+      .mockImplementation((value: string) => `enc:${value}`);
+
+    store.congregations['abc'] = { ...defaultSettings, obsPassword: 'hunter2' };
+    serializeCongregationSettings(store.$state);
+    expect(encryptSecretSync).toHaveBeenCalledTimes(1);
+
+    store.deleteCongregation('abc');
+
+    store.congregations['def'] = { ...defaultSettings, obsPassword: 'hunter2' };
+    serializeCongregationSettings(store.$state);
+    expect(encryptSecretSync).toHaveBeenCalledTimes(2);
+  });
+
+  it('keeps the cached ciphertext when another congregation still shares the obsPassword', () => {
+    setActivePinia(createPinia());
+    const store = useCongregationSettingsStore();
+    const encryptSecretSync = vi
+      .spyOn(globalThis.electronApi, 'encryptSecretSync')
+      .mockImplementation((value: string) => `enc:${value}`);
+
+    store.congregations['abc'] = { ...defaultSettings, obsPassword: 'hunter2' };
+    store.congregations['def'] = { ...defaultSettings, obsPassword: 'hunter2' };
+    serializeCongregationSettings(store.$state);
+    expect(encryptSecretSync).toHaveBeenCalledTimes(1);
+
+    store.deleteCongregation('abc');
+
+    serializeCongregationSettings(store.$state);
+    expect(encryptSecretSync).toHaveBeenCalledTimes(1);
+  });
+
+  it('round-trips decrypt then encrypt without re-encrypting across hydrate + save', () => {
+    const encryptSecretSync = vi
+      .spyOn(globalThis.electronApi, 'encryptSecretSync')
+      .mockImplementation((value: string) => `enc:${value}`);
+    const decryptSecretSync = vi
+      .spyOn(globalThis.electronApi, 'decryptSecretSync')
+      .mockImplementation((value: string) => value.replace(/^enc:/, ''));
+
+    // The ciphertext already persisted to disk from a previous session.
+    const onDisk = JSON.stringify({
+      announcements: {},
+      congregations: {
+        abc: { ...defaultSettings, obsPassword: 'enc:hunter2' },
+      },
+      quickStartTourSeen: {},
+    });
+
+    // Hydrate: decrypt the persisted ciphertext back to plaintext in memory.
+    const hydrated = deserializeCongregationSettings(onDisk);
+    expect(decryptSecretSync).toHaveBeenCalledWith('enc:hunter2');
+    expect(hydrated.congregations.abc?.obsPassword).toBe('hunter2');
+
+    // First save of the session encrypts once (the in-memory cache is cold).
+    const firstSave = serializeCongregationSettings(hydrated);
+    expect(encryptSecretSync).toHaveBeenCalledTimes(1);
+    expect(encryptSecretSync).toHaveBeenCalledWith('hunter2');
+    expect(firstSave).toContain('"obsPassword":"enc:hunter2"');
+
+    // A later save reuses the cached ciphertext instead of re-encrypting.
+    const secondSave = serializeCongregationSettings(hydrated);
+    expect(encryptSecretSync).toHaveBeenCalledTimes(1);
+    expect(secondSave).toBe(firstSave);
   });
 });

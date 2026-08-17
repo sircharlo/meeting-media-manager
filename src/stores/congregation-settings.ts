@@ -78,12 +78,36 @@ export const deserializeCongregationSettings = (data: string): Store =>
     globalThis.electronApi.decryptSecretSync(value),
   );
 
+// Re-encrypting obsPassword on every serialize would run a blocking
+// encryptSecretSync IPC call (plus an OS keychain round trip) once per
+// congregation per save, even though the password almost never changes.
+// Cache each plaintext's encrypted form so a password is only encrypted the
+// first time its value is seen; every subsequent save reuses the cached
+// ciphertext.
+const obsPasswordEncryptionCache = new Map<string, string>();
+
+/**
+ * Clears the in-memory obsPassword encryption cache. Exposed for tests and
+ * for anything that needs to force a fresh encryption pass.
+ */
+export const clearObsPasswordEncryptionCache = () => {
+  obsPasswordEncryptionCache.clear();
+};
+
+const encryptObsPassword = (value: string): string => {
+  const cached = obsPasswordEncryptionCache.get(value);
+  if (cached !== undefined) return cached;
+  const encrypted = globalThis.electronApi.encryptSecretSync(value);
+  obsPasswordEncryptionCache.set(value, encrypted);
+  return encrypted;
+};
+
+const removeObsPasswordFromCache = (value: string) => {
+  obsPasswordEncryptionCache.delete(value);
+};
+
 export const serializeCongregationSettings = (state: Store): string =>
-  JSON.stringify(
-    transformObsPasswords(state, (value) =>
-      globalThis.electronApi.encryptSecretSync(value),
-    ),
-  );
+  JSON.stringify(transformObsPasswords(state, encryptObsPassword));
 
 export const useCongregationSettingsStore = defineStore(
   'congregation-settings',
@@ -97,6 +121,22 @@ export const useCongregationSettingsStore = defineStore(
       },
       deleteCongregation(id: number | string) {
         if (!id) return;
+
+        // Drop the deleted congregation's cached ciphertext so a stale
+        // entry doesn't outlive the profile (or get reused by a future
+        // profile that happens to pick the same password). If another
+        // congregation still shares the same plaintext password, keep the
+        // entry for it - otherwise deleting one of them would force a
+        // redundant blocking encryptSecretSync on the survivor's next save.
+        const congregation = this.congregations[id];
+        if (congregation?.obsPassword) {
+          const stillUsed = Object.entries(this.congregations).some(
+            ([otherId, other]) =>
+              otherId !== String(id) &&
+              other?.obsPassword === congregation.obsPassword,
+          );
+          if (!stillUsed) removeObsPasswordFromCache(congregation.obsPassword);
+        }
 
         delete this.congregations[id];
       },
