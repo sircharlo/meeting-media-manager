@@ -14,7 +14,7 @@ import {
 } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
-import { log } from 'src/shared/vanilla';
+import { log, throttleWithTrailing } from 'src/shared/vanilla';
 import { basename, dirname, join } from 'upath';
 
 const ENSURE_DIR_RETRYABLE_CODES = new Set([
@@ -509,6 +509,17 @@ const downloadQueue: DownloadQueueItem[] = [];
 const lowPriorityQueue: DownloadQueueItem[] = [];
 const ongoingDownloads = new Map<string, OngoingDownload>();
 const maxActiveDownloads = 3;
+
+// `electron-dl-manager` fires `onDownloadProgress` on every native
+// `DownloadItem 'updated'` event with no internal throttling. With up to
+// `maxActiveDownloads` downloads running at once that can drive a near-
+// continuous stream of progress IPC into the renderer, where each message
+// mutates the Pinia `current-state` store (invalidating every bound
+// getter/component). Sending at most one progress update per throttle
+// window per download (with a trailing update carrying the latest byte
+// count) keeps that reactivity churn bounded while the progress bar still
+// advances smoothly.
+export const DOWNLOAD_PROGRESS_THROTTLE_MS = 200;
 let cancelAll = false;
 const QUEUE_BREADCRUMB_MIN_INTERVAL_MS = 5000;
 let lastQueueBreadcrumbAt = 0;
@@ -1224,6 +1235,21 @@ async function startDownload(
 
   try {
     log('Starting download via manager:', 'electronDownloads', 'log', url);
+
+    // Each download gets its own throttle instance, so concurrent downloads
+    // never suppress or delay each other's progress updates. One-shot events
+    // (started/completed/cancelled/error) intentionally bypass it.
+    const sendProgress = throttleWithTrailing(
+      (data: {
+        bytesReceived: number;
+        id: string;
+        percentCompleted: number;
+      }) => {
+        sendToWindow(downloadWindow, 'downloadProgress', data);
+      },
+      DOWNLOAD_PROGRESS_THROTTLE_MS,
+    );
+
     const downloadId = await manager.download({
       callbacks: {
         onDownloadCancelled: async () => {
@@ -1246,7 +1272,7 @@ async function startDownload(
           processQueue();
         },
         onDownloadProgress: async ({ item, percentCompleted }) => {
-          sendToWindow(downloadWindow, 'downloadProgress', {
+          sendProgress({
             bytesReceived: item.getReceivedBytes(),
             id: key,
             percentCompleted,
