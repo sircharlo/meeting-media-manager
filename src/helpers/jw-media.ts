@@ -252,6 +252,19 @@ const getBestPublicationMediaLinks = (
   );
 };
 
+// Falls back to whatever this songbook's picker list last had cached
+// (persisted in jw-store, survives restarts) when the live media-links
+// fetch fails or comes back empty - without this, a cold start with no
+// connection yields an empty song library even though the actual song
+// files may already be sitting on disk from a previous session.
+const getCachedPublicationMediaLinksFallback = (
+  publication: PublicationFetcher,
+): MediaLink[] => {
+  if (!publication.langwritten) return [];
+  const cachedList = useJwStore().jwSongs[publication.langwritten]?.list ?? [];
+  return getBestPublicationMediaLinks(cachedList, publication);
+};
+
 const getPublicationMediaLinks = async (
   publication: PublicationFetcher,
 ): Promise<MediaLink[]> => {
@@ -262,7 +275,11 @@ const getPublicationMediaLinks = async (
       cacheKey,
       (async () => {
         const publicationInfo = await getPubMediaLinks(publication);
-        if (!publication.fileformat || !publicationInfo?.files) return [];
+        if (!publication.fileformat || !publicationInfo?.files) {
+          const fallback = getCachedPublicationMediaLinksFallback(publication);
+          if (!fallback.length) publicationMediaLinksCache.delete(cacheKey);
+          return fallback;
+        }
 
         const mediaLinks = (
           publication.langwritten
@@ -278,11 +295,12 @@ const getPublicationMediaLinks = async (
           );
 
         const bestLinks = getBestPublicationMediaLinks(mediaLinks, publication);
-        if (!bestLinks.length) {
-          publicationMediaLinksCache.delete(cacheKey);
-        }
+        if (bestLinks.length) return bestLinks;
 
-        return bestLinks;
+        publicationMediaLinksCache.delete(cacheKey);
+        const fallback = getCachedPublicationMediaLinksFallback(publication);
+        if (!fallback.length) publicationMediaLinksCache.delete(cacheKey);
+        return fallback;
       })().catch((error: unknown) => {
         publicationMediaLinksCache.delete(cacheKey);
         throw error;
@@ -1516,6 +1534,13 @@ interface DownloadProgress {
   total?: number;
 }
 
+// No new bytes for this long is treated as a stalled transfer rather than
+// a merely slow one - large media files legitimately take a long time on
+// slow-but-working connections (this app explicitly serves congregations
+// with poor connectivity), so this only fires on genuinely zero forward
+// progress, never on a connection that's just slow.
+const DOWNLOAD_STALL_TIMEOUT_MS = 45000;
+
 const pollUntilDownloaded = (
   downloadId: string,
   destinationPath: string,
@@ -1523,15 +1548,31 @@ const pollUntilDownloaded = (
   currentStateStore: ReturnType<typeof useCurrentStateStore>,
 ): Promise<DownloadedFile> =>
   new Promise<DownloadedFile>((resolve) => {
+    let lastLoaded =
+      currentStateStore.downloadProgress[downloadId]?.loaded ?? 0;
+    let lastProgressAt = Date.now();
     const interval = setInterval(() => {
       if (currentStateStore.downloadProgress[downloadId]?.error) {
         clearInterval(interval);
         resolve({ error: true, path: destinationPath });
         return;
       }
-      if (!currentStateStore.downloadProgress[downloadId]?.complete) return;
-      clearInterval(interval);
-      void resolveDownloadedFile(destinationPath, remoteSize, resolve);
+      if (currentStateStore.downloadProgress[downloadId]?.complete) {
+        clearInterval(interval);
+        void resolveDownloadedFile(destinationPath, remoteSize, resolve);
+        return;
+      }
+      const loaded =
+        currentStateStore.downloadProgress[downloadId]?.loaded ?? 0;
+      if (loaded > lastLoaded) {
+        lastLoaded = loaded;
+        lastProgressAt = Date.now();
+        return;
+      }
+      if (Date.now() - lastProgressAt > DOWNLOAD_STALL_TIMEOUT_MS) {
+        clearInterval(interval);
+        resolve({ error: true, path: destinationPath });
+      }
     }, 500);
   });
 
@@ -1938,6 +1979,12 @@ export const fetchMedia = async () => {
   // available, and gets shown as if it were current.
   const currentStateStore = useCurrentStateStore();
   currentStateStore.mediaRefreshPending = true;
+  // Swept in the finally below: if anything throws after a day is flagged
+  // 'checking' but before its own per-day .finally() gets a chance to
+  // settle it (e.g. formatDate throwing on a malformed date mid-batch),
+  // that day would otherwise sit under a skeleton until the next refresh
+  // cycle instead of resolving to a real status right away.
+  const checkingDateKeys = new Set<string>();
   try {
     if (isDemoMode) return;
 
@@ -2026,8 +2073,9 @@ export const fetchMedia = async () => {
 
     meetingsToFetch.forEach((day) => {
       day.status = null;
-      currentStateStore.meetingCheckStatus[formatDate(day.date, 'YYYYMMDD')] =
-        'checking';
+      const dateKey = formatDate(day.date, 'YYYYMMDD');
+      currentStateStore.meetingCheckStatus[dateKey] = 'checking';
+      checkingDateKeys.add(dateKey);
     });
     // Every day's fate is now determined: candidates are flagged 'checking'
     // above, everything else was left exactly as it was. From here on,
@@ -2085,6 +2133,11 @@ export const fetchMedia = async () => {
     errorCatcher(error);
   } finally {
     currentStateStore.mediaRefreshPending = false;
+    checkingDateKeys.forEach((dateKey) => {
+      if (currentStateStore.meetingCheckStatus[dateKey] === 'checking') {
+        currentStateStore.meetingCheckStatus[dateKey] = 'error';
+      }
+    });
   }
 };
 
