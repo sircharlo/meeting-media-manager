@@ -289,6 +289,68 @@ describe('fetchJson network errors', () => {
     expect(errorCatcher).not.toHaveBeenCalled();
   });
 
+  it('retries a transient network error and returns the eventual result', async () => {
+    const error = Object.assign(new Error('connect ECONNRESET'), {
+      code: 'ECONNRESET',
+    });
+    vi.spyOn(globalThis, 'fetch')
+      .mockRejectedValueOnce(error)
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ ok: true }), { status: 200 }),
+      );
+
+    const result = await fetchJson(handledUrl);
+
+    expect(result).toEqual({ ok: true });
+    expect(globalThis.fetch).toHaveBeenCalledTimes(2);
+    expect(errorCatcher).not.toHaveBeenCalled();
+  });
+
+  it('retries once the per-attempt timeout aborts a hung request', async () => {
+    // AbortSignal.timeout()'s internal timer isn't controlled by
+    // vi.useFakeTimers(), so drive the abort directly instead of waiting
+    // out the real 15s timeout.
+    const controllers: AbortController[] = [];
+    vi.spyOn(AbortSignal, 'timeout').mockImplementation(() => {
+      const controller = new AbortController();
+      controllers.push(controller);
+      return controller.signal;
+    });
+
+    let callCount = 0;
+    vi.spyOn(globalThis, 'fetch').mockImplementation(
+      (_url, init) =>
+        new Promise((resolve, reject) => {
+          callCount++;
+          if (callCount === 1) {
+            // Simulates a connection that's up but never completes - never
+            // resolves on its own, only reacts to the abort signal fetchJson
+            // passes in, same as a real fetch() would.
+            (init as RequestInit | undefined)?.signal?.addEventListener(
+              'abort',
+              () => {
+                reject(
+                  new DOMException('The operation was aborted', 'AbortError'),
+                );
+              },
+            );
+          } else {
+            resolve(
+              new Response(JSON.stringify({ ok: true }), { status: 200 }),
+            );
+          }
+        }),
+    );
+
+    const promise = fetchJson(handledUrl);
+    await vi.waitFor(() => expect(controllers).toHaveLength(1));
+    controllers[0]?.abort();
+
+    await expect(promise).resolves.toEqual({ ok: true });
+    expect(callCount).toBe(2);
+    expect(errorCatcher).not.toHaveBeenCalled();
+  });
+
   it('should not report a 400 for pub=ewt, confirmed to have no media', async () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(null, { status: 400 }),
@@ -333,7 +395,10 @@ describe('fetchMemorials', () => {
 
     const memorials = await fetchMemorials();
 
-    expect(globalThis.fetch).toHaveBeenCalledWith(memorialsUrl, undefined);
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      memorialsUrl,
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
     expect(memorials).toEqual({ 2025: '2025/04/12' });
   });
 

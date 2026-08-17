@@ -13,6 +13,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { isFetchNetworkError } from 'src/shared/network-errors';
 import { log } from 'src/shared/vanilla';
 import { addToDate, dateFromString, isInPast } from 'src/utils/date';
+import { withFetchRetry } from 'src/utils/fetch-retry';
 import { betaUpdatesDisabled } from 'src/utils/fs';
 
 const MAX_CACHED_RESPONSE_BYTES = 1024 * 1024;
@@ -230,6 +231,12 @@ function shouldReportStatus(response: Response, params?: URLSearchParams) {
 
 // ----------------------
 
+// Per-attempt bound so a connection that's up but never completes the
+// request doesn't hang fetchJson indefinitely - ties into withFetchRetry
+// below for free, since a timeout abort is already classified as a
+// network error by isFetchNetworkError.
+const FETCH_JSON_TIMEOUT_MS = 15000;
+
 export const fetchJson = async <T>(
   url: string,
   params?: URLSearchParams,
@@ -238,16 +245,23 @@ export const fetchJson = async <T>(
   if (!url) return null;
 
   try {
-    const fullUrl = buildUrl(url, params);
-    const response = await fetchRaw(fullUrl, undefined, true);
+    return await withFetchRetry(async () => {
+      const fullUrl = buildUrl(url, params);
+      const response = await fetchRaw(
+        fullUrl,
+        { signal: AbortSignal.timeout(FETCH_JSON_TIMEOUT_MS) },
+        true,
+      );
 
-    if (isOkResponse(response)) {
-      return await response.json();
-    }
+      if (isOkResponse(response)) {
+        return await response.json();
+      }
 
-    if (shouldReportStatus(response, params)) {
-      reportFetchJsonMainError(response, url, params);
-    }
+      if (shouldReportStatus(response, params)) {
+        reportFetchJsonMainError(response, url, params);
+      }
+      return null;
+    });
   } catch (e) {
     if (await shouldReportCaughtError(e, online)) {
       reportFetchJsonCatchError(e, url, params);
