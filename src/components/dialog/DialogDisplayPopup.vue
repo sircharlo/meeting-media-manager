@@ -391,6 +391,7 @@ import { createTemporaryNotification } from 'src/helpers/notifications';
 import { log } from 'src/shared/vanilla';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import { getTempPath } from 'src/utils/fs';
+import { withTimeout } from 'src/utils/general';
 import { isImage, isJwpub } from 'src/utils/media';
 import { findDb } from 'src/utils/sqlite';
 import { useAppSettingsStore } from 'stores/app-settings';
@@ -644,11 +645,27 @@ const chooseCustomBackground = async (reset?: boolean) => {
   }
 };
 
+const SCREEN_FETCH_TIMEOUT_MS = 5000;
+
+// Guards against piling up overlapping getAllScreens() IPC round-trips -
+// e.g. several 'screen-trigger-update' events landing while the popup is
+// open and a previous fetch is still in flight - and against ever leaving
+// the popup waiting forever if the main process is slow to reply.
+let fetchingScreens = false;
+
 const fetchScreens = async () => {
+  if (fetchingScreens) return;
+  fetchingScreens = true;
   try {
-    screenList.value = await getAllScreens();
+    screenList.value = await withTimeout(
+      getAllScreens(),
+      SCREEN_FETCH_TIMEOUT_MS,
+      'getAllScreens timed out',
+    );
   } catch (error) {
     errorCatcher(error);
+  } finally {
+    fetchingScreens = false;
   }
 };
 
@@ -668,7 +685,16 @@ const getCameras = async () => {
 
   try {
     log('🎬 [getCameras] Enumerating video input devices', 'display', 'log');
-    cameras.value = (await navigator.mediaDevices.enumerateDevices())
+    // enumerateDevices() has been known to hang indefinitely on some systems
+    // (misbehaving virtual-camera drivers, privacy/AV software intercepting
+    // device access) - bound it so the popup doesn't wait on it forever.
+    cameras.value = (
+      await withTimeout(
+        navigator.mediaDevices.enumerateDevices(),
+        4000,
+        'enumerateDevices timed out',
+      )
+    )
       .filter((d) => d.kind === 'videoinput')
       .map((d) => ({ label: d.label, value: d.deviceId }));
   } catch (error) {

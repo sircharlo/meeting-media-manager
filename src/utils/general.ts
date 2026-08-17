@@ -55,6 +55,36 @@ export const capitalize = (str: string) =>
   str.charAt(0).toUpperCase() + str.slice(1);
 
 /**
+ * Rejects if the given promise doesn't settle within the given time, so a
+ * stalled IPC call or browser API (e.g. a main-process invoke blocked behind
+ * a slow native call, or a device-enumeration API that never resolves)
+ * can't leave callers awaiting it forever.
+ * @param promise The promise to race against the timeout.
+ * @param ms The timeout in milliseconds.
+ * @param message The error message to reject with on timeout.
+ * @returns The original promise's value, or a rejection if it times out.
+ */
+export const withTimeout = <T>(
+  promise: Promise<T>,
+  ms: number,
+  message = 'Timed out',
+): Promise<T> => {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(message)), ms);
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (error: unknown) => {
+        clearTimeout(timer);
+        reject(error as Error);
+      },
+    );
+  });
+};
+
+/**
  * Checks if a value is empty.
  * @param val The value to check.
  * @returns Whether the value is empty.

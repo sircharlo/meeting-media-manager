@@ -595,6 +595,7 @@ import {
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useAppSettingsStore } from 'src/stores/app-settings';
+import { withTimeout } from 'src/utils/general';
 import { getTimerReportStatus } from 'src/utils/timer-report';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
@@ -835,13 +836,29 @@ const { data: timerPageReady } = useBroadcastChannel<string, string>({
   name: 'timer-page-ready',
 });
 
+const SCREEN_FETCH_TIMEOUT_MS = 5000;
+
+// Guards against piling up overlapping getAllScreens() IPC round-trips -
+// this listener stays mounted for the component's whole lifetime (not just
+// while the popup is open), so a burst of 'screen-trigger-update' events
+// must not stack up concurrent calls or wait forever on a slow reply.
+let fetchingScreens = false;
+
 const fetchScreens = async () => {
+  if (fetchingScreens) return;
+  fetchingScreens = true;
   try {
-    screenList.value = await getAllScreens();
+    screenList.value = await withTimeout(
+      getAllScreens(),
+      SCREEN_FETCH_TIMEOUT_MS,
+      'getAllScreens timed out',
+    );
   } catch (error) {
     void errorCatcher(error, {
       contexts: { timer: { action: 'fetchScreens' } },
     });
+  } finally {
+    fetchingScreens = false;
   }
 };
 
