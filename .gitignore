@@ -6,6 +6,7 @@ node_modules
 /qa-checklist.html
 /design-audit-notes.md
 /settings-mockup.html
+/AGENTS.local.md
 
 # Quasar core related directories
 .quasar

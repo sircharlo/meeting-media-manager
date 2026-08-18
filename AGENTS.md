@@ -9,6 +9,10 @@ nearly every feature crosses the renderer ⇄ main-process boundary.
 Use this file as the first stop for agent-specific project rules. It complements
 `CONTRIBUTING.md`; it does not replace it.
 
+If `AGENTS.local.md` exists in this repo root, read it too — it holds
+personal/local workflow notes (not committed, not required reading for the
+project itself).
+
 ## Feature Surface (what the app actually does)
 
 - **Media calendar** (`MediaCalendarPage`): fetches the JW.org meeting schedule
