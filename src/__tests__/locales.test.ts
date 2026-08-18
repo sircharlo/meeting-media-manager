@@ -1,7 +1,7 @@
 import { readdir, readFile } from 'fs-extra';
 import { enabled, locales as localeOptions } from 'src/constants/locales';
 import appMessages from 'src/i18n';
-import { camelToKebabCase } from 'src/utils/general';
+import { camelToKebabCase, kebabToCamelCase } from 'src/utils/general';
 import { normalize, resolve } from 'upath';
 import { describe, expect, it } from 'vitest';
 
@@ -25,8 +25,10 @@ describe('Locales', () => {
       .map((f) => f.replace('.json', ''))
       .sort((a, b) => a.localeCompare(b));
 
+    // Filenames on disk are kebab-case (e.g. cmn-hans.json), while message
+    // keys are camelCase (e.g. cmnHans), so convert before comparing.
     const enabledLocaleFiles = allLocaleFiles.filter((f) =>
-      messages.includes(f),
+      messages.includes(kebabToCamelCase(f)),
     );
 
     const inactiveLocaleFiles = enabledLocaleFiles.filter(
