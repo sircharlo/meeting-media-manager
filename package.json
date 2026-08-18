@@ -134,7 +134,7 @@
     "vitepress": "^2.0.0-alpha.19",
     "vitest": "^4.1.10",
     "vue-eslint-parser": "^10.4.1",
-    "vue-tsc": "^3.3.9"
+    "vue-tsc": "^3.3.10"
   },
   "browserslist": [
     "Electron >= 37"
