@@ -26,6 +26,11 @@ ignores:
   # ../quasar.config.ts (consumed by the Quasar/electron-builder CLI
   # itself), never imported from our code.
   - electron-builder
+  # Loaded dynamically in src-electron/main/heic.ts via
+  # `createRequire(import.meta.url).resolve('heic-convert')` - the worker
+  # child process receives the resolved path as an argv and requires it
+  # there, so depcheck never sees a static import for it.
+  - heic-convert
   # Electron main/preload code is tested by root's vitest config
   # (`vitest --project electron`, see ../package.json), so vitest itself
   # only needs to live in root's node_modules, not here.
