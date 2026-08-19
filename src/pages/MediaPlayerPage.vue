@@ -73,7 +73,7 @@
         fit="contain"
         no-spinner
         :src="displayLayer1.url"
-        @load="handleImageLoad()"
+        @load="handleImageLoad(1)"
       />
       <video
         v-else-if="
@@ -102,6 +102,7 @@
         v-else-if="isAudio(displayLayer1.url) && !videoStreaming"
         ref="mediaElement1"
         style="display: none"
+        @ended="endOrLoop()"
         @loadedmetadata="playMedia()"
       >
         <source :src="displayLayer1.url" />
@@ -123,7 +124,7 @@
         fit="contain"
         no-spinner
         :src="displayLayer2.url"
-        @load="handleImageLoad()"
+        @load="handleImageLoad(2)"
       />
       <video
         v-else-if="isVideo(displayLayer2.url)"
@@ -150,6 +151,7 @@
         v-else-if="isAudio(displayLayer2.url)"
         ref="mediaElement2"
         style="display: none"
+        @ended="endOrLoop()"
         @loadedmetadata="playMedia()"
       >
         <source :src="displayLayer2.url" />
@@ -225,6 +227,18 @@ $q.iconMapFn = (iconName) => {
 };
 
 /**
+ * Stops every track of a live camera/screen-capture MediaStream. Detaching
+ * an element's srcObject alone does NOT stop capture - the camera/screen
+ * keeps recording (OS privacy indicator stays lit) until each track is
+ * explicitly stopped.
+ */
+const stopMediaStreamTracks = (srcObject: MediaProvider | null | undefined) => {
+  if (srcObject instanceof MediaStream) {
+    srcObject.getTracks().forEach((track) => track.stop());
+  }
+};
+
+/**
  * Robustly cleans up a media element to prevent renderer crashes.
  * @param element The HTMLAudioElement or HTMLVideoElement to clean up.
  */
@@ -240,6 +254,8 @@ const cleanupMediaElement = (element: HTMLMediaElement | null | undefined) => {
   try {
     // Stop playback
     element.pause();
+
+    stopMediaStreamTracks(element.srcObject);
 
     // Clear sources to free up internal buffers/decoders
     element.src = '';
@@ -381,13 +397,24 @@ const { data: mediaAction } = useBroadcastChannel<string, string>({
   name: 'main-window-media-action',
 });
 
-const handleImageLoad = () => {
+const handleImageLoad = (layer: 1 | 2) => {
   // Image loaded - apply current zoom/pan state if available
   if (zoomPanState.value && Object.keys(zoomPanState.value).length > 0) {
     // Skip animation on initial load
     skipZoomPanAnimation.value = true;
     applyZoomPanState(zoomPanState.value);
+    return;
   }
+
+  // No active zoom/pan for this item. The image element (mediaImage1/2) is
+  // reused across different images - only its `src` changes - so without an
+  // explicit reset here, a transform left over from a previous image can
+  // stay visually applied to this brand-new one until the next real
+  // zoom/pan broadcast arrives.
+  const imageElem = document.getElementById(`mediaImage${layer}`);
+  if (!imageElem) return;
+  imageElem.style.transition = 'none';
+  imageElem.style.transform = '';
 };
 
 let lastZoomPanTime = 0;
@@ -685,6 +712,12 @@ const endOrLoop = () => {
       currentMediaElement.value.currentTime = customMin.value;
       playMediaElement();
       triggerSlideshowAudioPlay();
+      // Re-arm the custom-duration boundary check: updateTime's rAF loop
+      // bails out immediately while isEnding is true, and without this
+      // reset the trim would only be honored on the very first loop -
+      // subsequent iterations would play past customMax to the source's
+      // natural end (or native `ended`) instead of looping within it.
+      isEnding.value = false;
     }
   } else {
     log('🎬 [endOrLoop] Posting ended state', 'mediaPlayer', 'log');
@@ -794,6 +827,12 @@ const playMedia = () => {
         isEnding.value = true;
         endOrLoop();
         cancelAnimationFrame(rafId);
+        // Reset so the ontimeupdate handler below is able to restart this
+        // loop on the next native timeupdate event - needed for looped
+        // (repeat) playback, where endOrLoop seeks back and keeps playing
+        // instead of ending for good. cancelAnimationFrame() alone doesn't
+        // clear this, so it would otherwise stay a stale truthy id forever.
+        rafId = 0;
         return;
       }
 
@@ -1134,6 +1173,7 @@ const loadFonts = async () => {
 const clearWebsiteStream = () => {
   if (currentMediaElement.value) {
     currentMediaElement.value.pause();
+    stopMediaStreamTracks(currentMediaElement.value.srcObject);
     currentMediaElement.value.srcObject = null;
   }
   postMediaPlayingAction('');
@@ -1150,10 +1190,16 @@ const resetFailedWebsiteStream = (
       contexts: { fn: { name: 'streamDisplay' } },
     });
   }
+  // stream is the freshly-created stream that never made it onto
+  // currentMediaElement (ready/element check failed) - it's otherwise fully
+  // orphaned and live, so it needs its own explicit stop, separate from
+  // whatever's currently attached to the element below.
+  stopMediaStreamTracks(stream);
   videoStreaming.value = false;
   postMediaPlayingAction('');
   currentMediaElement.value?.pause();
   if (currentMediaElement.value?.srcObject) {
+    stopMediaStreamTracks(currentMediaElement.value.srcObject);
     currentMediaElement.value.srcObject = null;
   }
 };
@@ -1397,6 +1443,7 @@ watchImmediate(
     if (!deviceId) {
       if (cameraElement.value) {
         cameraElement.value.pause();
+        stopMediaStreamTracks(cameraElement.value.srcObject);
         cameraElement.value.srcObject = null;
       }
       return;
@@ -1427,8 +1474,13 @@ watchImmediate(
         'mediaPlayer',
         'warn',
       );
+      // stream is the freshly-requested camera stream that never made it
+      // onto cameraElement (ready/element check failed) - fully orphaned
+      // and live otherwise.
+      stopMediaStreamTracks(stream);
       cameraElement.value?.pause();
       if (cameraElement.value?.srcObject) {
+        stopMediaStreamTracks(cameraElement.value.srcObject);
         cameraElement.value.srcObject = null;
       }
       return;
@@ -1539,7 +1591,11 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 100%;
   background-color: black;
-  z-index: 1.5;
+  /* z-index must be an integer - 1.5 is invalid and gets dropped (auto) by
+     Chromium. Above .base-layer (1) and tied with .display-layer (2), which
+     resolves in .display-layer's favor via DOM order (it comes later in the
+     template), matching the intended base < camera < display stacking. */
+  z-index: 2;
 }
 
 .display-layer.is-audio {
