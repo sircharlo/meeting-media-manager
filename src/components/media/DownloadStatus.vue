@@ -35,6 +35,7 @@
 <script setup lang="ts">
 import type { DownloadProgressItem } from 'src/types';
 
+import { useIntervalFn } from '@vueuse/core';
 import isOnline from 'is-online';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -57,7 +58,11 @@ const updateOnline = async () => {
   }
 };
 
-setInterval(() => {
+// useIntervalFn auto-clears on unmount - this component remounts whenever
+// the footer that hosts it does (e.g. toggling media-display/music-button
+// settings, or switching to a congregation with different values for them),
+// so a bare setInterval here would accumulate a new timer on every remount.
+useIntervalFn(() => {
   updateOnline();
 }, 10000);
 

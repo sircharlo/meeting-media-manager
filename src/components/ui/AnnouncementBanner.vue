@@ -1,11 +1,9 @@
 <template>
-  <q-slide-transition>
-    <q-banner
-      v-for="announcement in activeAnnouncements"
-      :key="announcement.id"
-      :class="`q-ma-md ${bgColor(announcement.type)}`"
-      rounded
-    >
+  <q-slide-transition
+    v-for="announcement in activeAnnouncements"
+    :key="announcement.id"
+  >
+    <q-banner :class="`q-ma-md ${bgColor(announcement.type)}`" rounded>
       {{ t(announcement.message) }}
       <template #avatar>
         <q-icon

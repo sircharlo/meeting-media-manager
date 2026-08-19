@@ -30,8 +30,7 @@
       v-ripple
       :class="route.path.startsWith('/media-calendar') ? navActiveClass : ''"
       clickable
-      :disable="!currentSettings || invalidSettings()"
-      :disabled="mediaIsPlaying || undefined"
+      :disable="!currentSettings || invalidSettings() || mediaIsPlaying"
       :to="mediaIsPlaying ? undefined : { path: '/media-calendar' }"
       @click="stopPlayingMediaFirst()"
     >
@@ -56,8 +55,7 @@
       v-ripple
       :class="route.path.startsWith('/present-website') ? navActiveClass : ''"
       clickable
-      :disable="!currentSettings || invalidSettings()"
-      :disabled="mediaIsPlaying || undefined"
+      :disable="!currentSettings || invalidSettings() || mediaIsPlaying"
       :to="mediaIsPlaying ? undefined : { path: '/present-website' }"
       @click="stopPlayingMediaFirst()"
     >
@@ -79,7 +77,7 @@
       v-ripple
       :class="congregationSwitcherOpen ? navActiveClass : ''"
       clickable
-      :disabled="mediaIsPlaying || undefined"
+      :disable="mediaIsPlaying"
       @click="
         stopPlayingMediaFirst();
         !mediaIsPlaying && currentState.openCongregationSwitcher();
@@ -104,8 +102,9 @@
       v-ripple
       :class="route.path.startsWith('/settings') ? navActiveClass : ''"
       clickable
-      :disable="!currentSettings || route.fullPath.includes('wizard')"
-      :disabled="mediaIsPlaying || undefined"
+      :disable="
+        !currentSettings || route.fullPath.includes('wizard') || mediaIsPlaying
+      "
       :to="mediaIsPlaying ? undefined : { path: '/settings' }"
       @click="stopPlayingMediaFirst()"
     >
