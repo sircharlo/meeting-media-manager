@@ -29,34 +29,61 @@ export function getFallbackDir(): string {
   return cachedFallbackDir;
 }
 
+/**
+ * In-memory write-through cache for the small, fixed set of files this
+ * module manages (window-state, crash-count, hw-accel-flag — a handful of
+ * keys, never per-item/dynamic). Lets readJsonResilientSync avoid a real
+ * synchronous disk hit — which blocks the whole main-process event loop —
+ * on every repeat read of a file already read or written once this session
+ * (e.g. the media/timer window being recreated repeatedly as it's toggled
+ * closed and reopened).
+ */
+const jsonCache = new Map<string, { data: unknown }>();
+const cacheKey = (dir: string, fileName: string) => `${dir}::${fileName}`;
+
 export async function readJsonResilient(
   primaryDir: string,
   fileName: string,
 ): Promise<unknown> {
+  const key = cacheKey(primaryDir, fileName);
   const primaryPath = join(primaryDir, fileName);
   if (await pathExists(primaryPath)) {
     const data: unknown = await readJson(primaryPath, { throws: false });
-    if (data !== null) return data;
+    if (data !== null) {
+      jsonCache.set(key, { data });
+      return data;
+    }
   }
   const fallbackPath = join(getFallbackDir(), fileName);
-  return (await pathExists(fallbackPath))
-    ? readJson(fallbackPath, { throws: false })
+  const data = (await pathExists(fallbackPath))
+    ? await readJson(fallbackPath, { throws: false })
     : null;
+  jsonCache.set(key, { data });
+  return data;
 }
 
 export function readJsonResilientSync(
   primaryDir: string,
   fileName: string,
 ): unknown {
+  const key = cacheKey(primaryDir, fileName);
+  const cached = jsonCache.get(key);
+  if (cached) return cached.data;
+
   const primaryPath = join(primaryDir, fileName);
   if (pathExistsSync(primaryPath)) {
     const data: unknown = readJsonSync(primaryPath, { throws: false });
-    if (data !== null) return data;
+    if (data !== null) {
+      jsonCache.set(key, { data });
+      return data;
+    }
   }
   const fallbackPath = join(getFallbackDir(), fileName);
-  return pathExistsSync(fallbackPath)
+  const data = pathExistsSync(fallbackPath)
     ? readJsonSync(fallbackPath, { throws: false })
     : null;
+  jsonCache.set(key, { data });
+  return data;
 }
 
 export async function writeJsonResilient(
@@ -64,14 +91,17 @@ export async function writeJsonResilient(
   fileName: string,
   data: unknown,
 ): Promise<void> {
+  const key = cacheKey(primaryDir, fileName);
   try {
     await ensureDir(primaryDir);
     await writeJson(join(primaryDir, fileName), data, { spaces: 2 });
+    jsonCache.set(key, { data });
   } catch (primaryError) {
     try {
       const fallbackDir = getFallbackDir();
       await ensureDir(fallbackDir);
       await writeJson(join(fallbackDir, fileName), data, { spaces: 2 });
+      jsonCache.set(key, { data });
     } catch {
       throw primaryError;
     }
@@ -83,14 +113,17 @@ export function writeJsonResilientSync(
   fileName: string,
   data: unknown,
 ): void {
+  const key = cacheKey(primaryDir, fileName);
   try {
     ensureDirSync(primaryDir);
     writeJsonSync(join(primaryDir, fileName), data, { spaces: 2 });
+    jsonCache.set(key, { data });
   } catch (primaryError) {
     try {
       const fallbackDir = getFallbackDir();
       ensureDirSync(fallbackDir);
       writeJsonSync(join(fallbackDir, fileName), data, { spaces: 2 });
+      jsonCache.set(key, { data });
     } catch {
       throw primaryError;
     }

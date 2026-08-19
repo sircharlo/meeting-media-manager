@@ -792,10 +792,27 @@ export function createMediaWindow() {
  * @param direction Fade direction ('in' or 'out')
  * @param duration Transition duration in milliseconds (default: 300ms)
  */
+/**
+ * Tracks the currently in-flight fade (if any) so a new fadeMediaWindow call
+ * can cancel it instead of racing it — two overlapping fades otherwise both
+ * call win.setOpacity() on interleaved ticks, flickering or settling on the
+ * opposite of the last requested visibility state.
+ */
+let activeMediaWindowFade: null | {
+  interval: ReturnType<typeof setInterval>;
+  timeout: ReturnType<typeof setTimeout>;
+} = null;
+
 export function fadeMediaWindow(direction: 'in' | 'out', duration = 300): void {
   const win = mediaWindowInfo.mediaWindow;
 
   if (!win || win.isDestroyed()) return;
+
+  if (activeMediaWindowFade) {
+    clearInterval(activeMediaWindowFade.interval);
+    clearTimeout(activeMediaWindowFade.timeout);
+    activeMediaWindowFade = null;
+  }
 
   const targetOpacity = direction === 'in' ? 1 : 0;
 
@@ -832,6 +849,7 @@ export function fadeMediaWindow(direction: 'in' | 'out', duration = 300): void {
         if (!win || win.isDestroyed()) {
           clearInterval(fadeInterval);
           clearTimeout(fallbackTimeout);
+          activeMediaWindowFade = null;
           return;
         }
 
@@ -840,20 +858,29 @@ export function fadeMediaWindow(direction: 'in' | 'out', duration = 300): void {
         if (currentStep >= steps) {
           clearInterval(fadeInterval);
           clearTimeout(fallbackTimeout);
+          activeMediaWindowFade = null;
           completeMediaWindowFade(win, direction, targetOpacity);
         }
       } catch {
         clearInterval(fadeInterval);
         clearTimeout(fallbackTimeout);
+        activeMediaWindowFade = null;
         completeMediaWindowFade(win, direction, targetOpacity);
       }
     }, stepDuration);
 
     const fallbackTimeout = setTimeout(() => {
       clearInterval(fadeInterval);
+      activeMediaWindowFade = null;
       completeMediaWindowFade(win, direction, targetOpacity);
     }, duration + WINDOW_MOVE_THROTTLE_MS);
+
+    activeMediaWindowFade = {
+      interval: fadeInterval,
+      timeout: fallbackTimeout,
+    };
   } catch {
+    activeMediaWindowFade = null;
     completeMediaWindowFade(win, direction, targetOpacity);
   }
 }
@@ -1008,7 +1035,8 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
       // Wait for the fullscreen animation to complete on ALL platforms.
       // On Windows the event fires synchronously (effectively), on macOS it is
       // genuinely async — using the event means we're safe on both.
-      mediaWindowInfo.mediaWindow.once('enter-full-screen', () => {
+      const enterFullScreenHandler = () => {
+        clearTimeout(fullscreenFallbackTimeout);
         log(
           '[applyFullscreen] enter-full-screen received — transition complete',
           'electronWindow',
@@ -1017,7 +1045,33 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
         );
         isMovingWindow = false;
         focusMediaWindow();
-      });
+      };
+      mediaWindowInfo.mediaWindow.once(
+        'enter-full-screen',
+        enterFullScreenHandler,
+      );
+
+      // Safety net: some window managers can silently ignore a fullscreen
+      // request without destroying the window, in which case enter-full-screen
+      // never fires and isMovingWindow would otherwise stay locked forever.
+      const fullscreenFallbackTimeout = setTimeout(() => {
+        if (
+          !mediaWindowInfo.mediaWindow ||
+          mediaWindowInfo.mediaWindow.isDestroyed()
+        ) {
+          return;
+        }
+        mediaWindowInfo.mediaWindow.removeListener(
+          'enter-full-screen',
+          enterFullScreenHandler,
+        );
+        log(
+          '[applyFullscreen] Timed out waiting for enter-full-screen — releasing lock',
+          'electronWindow',
+          'warn',
+        );
+        isMovingWindow = false;
+      }, 5000);
 
       log(
         '[applyFullscreen] Calling setFullScreen(true)',
