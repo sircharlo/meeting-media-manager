@@ -249,7 +249,7 @@ import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { getJwIconFromKeyword } from 'src/helpers/fonts';
 import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, nextTick, ref } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const props = defineProps<{
@@ -414,6 +414,18 @@ const updateSectionRepeatState = (newState: boolean) => {
     toggleSectionRepeat(props.mediaList.config?.uniqueId);
   }
 };
+
+// props.mediaList.config is a shared reactive object that DialogCustomSectionEdit's
+// bulk "Edit sections" dialog can also mutate directly - hexValue is only a
+// local staging copy (kept separate from the prop so the picker can update
+// live while dragging, only committing via handleColorChange's @change), so
+// without this it could keep showing a stale color from before an edit made
+// elsewhere. Resync it every time the popup opens, not continuously, so it
+// doesn't fight the user's own in-progress drag.
+watch(showColorPicker, (open) => {
+  if (!open) return;
+  hexValue.value = props.mediaList.config?.bgColor || '#ffffff';
+});
 
 // Expose the method for parent components
 defineExpose({
