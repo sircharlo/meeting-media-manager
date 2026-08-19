@@ -172,6 +172,7 @@ export const electronApi: ElectronApi = {
   },
   onWebsiteWindowClosed: function (callback) {
     console.log('onWebsiteWindowClosed called but not implemented');
+    return () => undefined;
   },
   openDiscussion: function (category, title, params) {
     throw new Error('Function not implemented.');

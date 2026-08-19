@@ -38,6 +38,13 @@ export const sendSync = <T = unknown>(
   return ipcRenderer.sendSync(channel, ...args) as T;
 };
 
+/**
+ * Subscribes to a main-process IPC broadcast. Returns an unsubscribe
+ * function so callers whose listener can be registered more than once per
+ * app lifetime (e.g. a component that mounts/unmounts with route changes)
+ * can remove it on cleanup instead of accumulating a new ipcRenderer
+ * listener on every mount.
+ */
 export const listen = (
   channel: ElectronIpcListenKey,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -46,7 +53,10 @@ export const listen = (
   if (import.meta.env.QUASAR_DEBUG) {
     log('[preload] listen', 'electronIpc', 'debug', { channel });
   }
-  ipcRenderer.on(channel, (_e, args) => callback(args));
+  const wrappedCallback = (_e: Electron.IpcRendererEvent, args: unknown) =>
+    callback(args);
+  ipcRenderer.on(channel, wrappedCallback);
+  return () => ipcRenderer.off(channel, wrappedCallback);
 };
 
 export const removeAllIpcListeners = ipcRenderer.removeAllListeners;

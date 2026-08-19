@@ -212,7 +212,7 @@ export interface ElectronApi {
       event: string;
     }) => void,
   ) => void;
-  onWebsiteWindowClosed: (callback: () => void) => void;
+  onWebsiteWindowClosed: (callback: () => void) => () => void;
   openDiscussion: (
     category: DiscussionCategory,
     title: string,

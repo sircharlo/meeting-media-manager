@@ -70,6 +70,7 @@ import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { sendObsSceneEvent } from 'src/utils/obs';
 import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
+import { onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
@@ -145,9 +146,15 @@ const { post: postWebStream } = useBroadcastChannel<
   name: 'web-stream',
 });
 
-// Listen for window close IPC event
-onWebsiteWindowClosed(() => {
+// Listen for window close IPC event. This component mounts/unmounts on
+// every visit to/away from the Present Website page, and the underlying
+// ipcRenderer listener has no dedup - without unsubscribing here, closing
+// the website window after N visits would fire stopStreaming() N times.
+const unsubscribeWebsiteWindowClosed = onWebsiteWindowClosed(() => {
   stopStreaming();
+});
+onUnmounted(() => {
+  unsubscribeWebsiteWindowClosed();
 });
 
 const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
