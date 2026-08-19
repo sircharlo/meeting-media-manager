@@ -58,7 +58,7 @@ import { getRules } from 'src/utils/settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 const jwStore = useJwStore();
 const { jwLanguages } = storeToRefs(jwStore);
@@ -86,36 +86,46 @@ const model = defineModel<boolean | null | number | string>({
 
 const obsState = useObsStateStore();
 const { obsConnectionState, scenes } = storeToRefs(obsState);
-const { dateLocale, t } = useLocale();
+const { dateLocale, localeObject, t } = useLocale();
+
+// Built as functions (not inline literals) so both the initial ref value and
+// the locale-change watcher below can rebuild them with fresh t() calls -
+// a plain ref([...]) built once at setup time would otherwise keep showing
+// stale labels (including the closed select's own selected-value label)
+// after the app language changes, until the dropdown was reopened.
+const buildDays = () =>
+  Array.from({ length: 7 }, (_, i) => ({
+    label: dateLocale.value.days[i === 6 ? 0 : i + 1] ?? '',
+    value: String(i),
+  }));
+const buildDarkModes = () => [
+  { label: t('automatic'), value: 'auto' as boolean | string },
+  { label: t('dark'), value: true },
+  { label: t('light'), value: false },
+];
+const buildTimerModes = () => [
+  { label: t('count-up'), value: 'countup' },
+  { label: t('count-down'), value: 'countdown' },
+];
+const buildTimerDisplayFormats = () => [
+  { label: t('digital'), value: 'digital' },
+  { label: t('analog'), value: 'analog' },
+  { label: t('analog-digital'), value: 'analog-digital' },
+];
+const buildTimerHourFormats = () => [
+  { label: t('24-hour'), value: '24h' },
+  { label: t('12-hour'), value: '12h' },
+];
 
 const filteredJwLanguages = ref([...(jwLanguages.value?.list || [])]);
 const filteredLocaleAppLang = ref([...localeOptions]);
 const filteredResolutions = ref<string[]>([...RESOLUTIONS]);
-const filteredDays = ref(
-  Array.from({ length: 7 }, (_, i) => ({
-    label: dateLocale.value.days[i === 6 ? 0 : i + 1] ?? '',
-    value: String(i),
-  })),
-);
-const filteredDarkModes = ref([
-  { label: t('automatic'), value: 'auto' },
-  { label: t('dark'), value: true },
-  { label: t('light'), value: false },
-]);
+const filteredDays = ref(buildDays());
+const filteredDarkModes = ref(buildDarkModes());
 const filteredObsScenes = ref<JsonObject[]>([...scenes.value]);
-const filteredTimerModes = ref([
-  { label: t('count-up'), value: 'countup' },
-  { label: t('count-down'), value: 'countdown' },
-]);
-const filteredTimerDisplayFormats = ref([
-  { label: t('digital'), value: 'digital' },
-  { label: t('analog'), value: 'analog' },
-  { label: t('analog-digital'), value: 'analog-digital' },
-]);
-const filteredTimerHourFormats = ref([
-  { label: t('24-hour'), value: '24h' },
-  { label: t('12-hour'), value: '12h' },
-]);
+const filteredTimerModes = ref(buildTimerModes());
+const filteredTimerDisplayFormats = ref(buildTimerDisplayFormats());
+const filteredTimerHourFormats = ref(buildTimerHourFormats());
 
 const customDisabled = computed(() => {
   return (
@@ -134,29 +144,12 @@ const filterFn = (
       filteredJwLanguages.value = jwLanguages.value?.list || [];
       filteredLocaleAppLang.value = localeOptions;
       filteredResolutions.value = [...RESOLUTIONS];
-      filteredDays.value = Array.from({ length: 7 }, (_, i) => ({
-        label: dateLocale.value.days[i === 6 ? 0 : i + 1] ?? '',
-        value: String(i),
-      }));
-      filteredDarkModes.value = [
-        { label: t('automatic'), value: 'auto' },
-        { label: t('dark'), value: true },
-        { label: t('light'), value: false },
-      ];
+      filteredDays.value = buildDays();
+      filteredDarkModes.value = buildDarkModes();
       filteredObsScenes.value = scenes.value ?? [];
-      filteredTimerModes.value = [
-        { label: t('count-up'), value: 'countup' },
-        { label: t('count-down'), value: 'countdown' },
-      ];
-      filteredTimerDisplayFormats.value = [
-        { label: t('digital'), value: 'digital' },
-        { label: t('analog'), value: 'analog' },
-        { label: t('analog-digital'), value: 'analog-digital' },
-      ];
-      filteredTimerHourFormats.value = [
-        { label: t('24-hour'), value: '24h' },
-        { label: t('12-hour'), value: '12h' },
-      ];
+      filteredTimerModes.value = buildTimerModes();
+      filteredTimerDisplayFormats.value = buildTimerDisplayFormats();
+      filteredTimerHourFormats.value = buildTimerHourFormats();
     });
   };
 
@@ -181,36 +174,29 @@ const filterFn = (
           r.toLowerCase().includes(needle),
         );
 
-        filteredDays.value = Array.from({ length: 7 }, (_, i) => ({
-          label: dateLocale.value.days[i === 6 ? 0 : i + 1] ?? '',
-          value: String(i),
-        })).filter((d) => d.label.toLowerCase().includes(needle));
+        filteredDays.value = buildDays().filter((d) =>
+          d.label.toLowerCase().includes(needle),
+        );
 
-        filteredDarkModes.value = [
-          { label: t('automatic'), value: 'auto' },
-          { label: t('dark'), value: true },
-          { label: t('light'), value: false },
-        ].filter((mode) => mode.label.toLowerCase().includes(needle));
+        filteredDarkModes.value = buildDarkModes().filter((mode) =>
+          mode.label.toLowerCase().includes(needle),
+        );
 
         filteredObsScenes.value =
           scenes.value?.filter((scene) =>
             scene.sceneName?.toString().toLowerCase().includes(needle),
           ) ?? [];
-        filteredTimerModes.value = [
-          { label: t('count-up'), value: 'countup' },
-          { label: t('count-down'), value: 'countdown' },
-        ].filter((mode) => mode.label.toLowerCase().includes(needle));
+        filteredTimerModes.value = buildTimerModes().filter((mode) =>
+          mode.label.toLowerCase().includes(needle),
+        );
 
-        filteredTimerDisplayFormats.value = [
-          { label: t('digital'), value: 'digital' },
-          { label: t('analog'), value: 'analog' },
-          { label: t('analog-digital'), value: 'analog-digital' },
-        ].filter((mode) => mode.label.toLowerCase().includes(needle));
+        filteredTimerDisplayFormats.value = buildTimerDisplayFormats().filter(
+          (mode) => mode.label.toLowerCase().includes(needle),
+        );
 
-        filteredTimerHourFormats.value = [
-          { label: t('24-hour'), value: '24h' },
-          { label: t('12-hour'), value: '12h' },
-        ].filter((mode) => mode.label.toLowerCase().includes(needle));
+        filteredTimerHourFormats.value = buildTimerHourFormats().filter(
+          (mode) => mode.label.toLowerCase().includes(needle),
+        );
       });
     } else {
       noFilter();
@@ -280,4 +266,17 @@ const listOptions = computed(
     }
   },
 );
+
+// Keep the closed select's own displayed label (and any currently-open,
+// unfiltered dropdown) in sync when the app language changes - @filter only
+// fires from user interaction with the dropdown, not on a locale change
+// happening elsewhere (e.g. switching to a congregation with a different
+// configured language).
+watch(localeObject, () => {
+  filteredDays.value = buildDays();
+  filteredDarkModes.value = buildDarkModes();
+  filteredTimerModes.value = buildTimerModes();
+  filteredTimerDisplayFormats.value = buildTimerDisplayFormats();
+  filteredTimerHourFormats.value = buildTimerHourFormats();
+});
 </script>

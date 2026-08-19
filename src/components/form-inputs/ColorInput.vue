@@ -12,12 +12,14 @@
     style="width: 240px"
   >
     <template #append>
-      <q-icon class="cursor-pointer" name="mmm-palette">
-        <q-popup-proxy cover transition-hide="scale" transition-show="scale">
-          <q-color v-model="model" />
-        </q-popup-proxy>
-      </q-icon>
+      <q-icon class="cursor-pointer" name="mmm-palette" />
     </template>
+    <!-- Anchored on the whole q-input (like DateInput/TimeInput) rather than
+    the append icon alone, so the popup has a keyboard-focusable path to open
+    it - an icon with no tabindex/role has none. -->
+    <q-popup-proxy cover transition-hide="scale" transition-show="scale">
+      <q-color v-model="model" />
+    </q-popup-proxy>
   </q-input>
 </template>
 

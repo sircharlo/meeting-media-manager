@@ -398,39 +398,12 @@ const useTimer = () => {
     toggleTimerWindow(visible);
     currentState.setTimerWindowVisible(visible);
     if (visible) {
-      // Broadcast initial timer settings
-      safePostTimerData({
-        aheadBehindMinutes: calculateAheadBehindMinutes(),
-        mode: 'countup',
-        mwDay: currentSettings.value?.mwDay,
-        mwStartTime: currentSettings.value?.mwStartTime,
-        paused: false,
-        running: false,
-        time: '',
-        timerBackgroundColor: currentSettings.value?.timerBackgroundColor,
-        timerCountdownDisplay: currentSettings.value?.timerCountdownDisplay,
-        timerCountdownTargetSeconds: countdownTarget.value,
-        timerCountdownWarningIndicator:
-          currentSettings.value?.timerCountdownWarningIndicator,
-        timerElapsedSeconds: elapsedSeconds.value,
-        timerEnableMeetingCountdown:
-          currentSettings.value?.timerEnableMeetingCountdown,
-        timerHourFormat: currentSettings.value?.timerHourFormat,
-        timerMeetingCountdownMinutes:
-          currentSettings.value?.timerMeetingCountdownMinutes,
-        timerOvertimeAnimation: currentSettings.value?.timerOvertimeAnimation,
-        timerOvertimeBackgroundColor:
-          currentSettings.value?.timerOvertimeBackgroundColor,
-        timerOvertimeIndicator: currentSettings.value?.timerOvertimeIndicator,
-        timerOvertimeShowAmountOnly:
-          currentSettings.value?.timerOvertimeShowAmountOnly,
-        timerOvertimeTextColor: currentSettings.value?.timerOvertimeTextColor,
-        timerTextColor: currentSettings.value?.timerTextColor,
-        timerTextSize: currentSettings.value?.timerTextSize,
-        timerTimeOfDayDisplay: currentSettings.value?.timerTimeOfDayDisplay,
-        weDay: currentSettings.value?.weDay,
-        weStartTime: currentSettings.value?.weStartTime,
-      });
+      // Broadcast the actual current state (updateTimerWindow, defined
+      // below) rather than a hardcoded idle snapshot - showing/hiding the
+      // timer window while a timer is already running previously flashed
+      // the plain clock for one tick before the next 500ms update
+      // self-corrected it.
+      updateTimerWindow();
     }
   };
 
@@ -991,8 +964,14 @@ const useTimer = () => {
       return (
         (endTime >= minTime && endTime <= maxTime) ||
         t('time-must-be-between', {
-          maxTime: maxTime.getHours() + ':' + maxTime.getMinutes(),
-          minTime: minTime.getHours() + ':' + minTime.getMinutes(),
+          maxTime:
+            maxTime.getHours().toString().padStart(2, '0') +
+            ':' +
+            maxTime.getMinutes().toString().padStart(2, '0'),
+          minTime:
+            minTime.getHours().toString().padStart(2, '0') +
+            ':' +
+            minTime.getMinutes().toString().padStart(2, '0'),
         })
       );
     },

@@ -10,7 +10,7 @@
 <script setup lang="ts">
 import { useMeta } from 'quasar';
 import { initializeElectronApi } from 'src/helpers/electron-api-manager';
-import { onMounted } from 'vue';
+import { onMounted, onUnmounted } from 'vue';
 
 initializeElectronApi('TimerLayout');
 
@@ -21,5 +21,9 @@ useMeta({
 
 onMounted(() => {
   document.body.style.overflow = 'hidden';
+});
+
+onUnmounted(() => {
+  document.body.style.overflow = '';
 });
 </script>
