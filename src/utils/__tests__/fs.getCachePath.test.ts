@@ -40,4 +40,43 @@ describe('getCachePath falsy base path guard', () => {
 
     vi.stubGlobal('electronApi', realElectronApi);
   });
+
+  it('invalidates the custom cache folder instead of reporting the raw error when ensureDir fails with a permission error on it', async () => {
+    const realElectronApi = globalThis.electronApi;
+    const customPath = 'C:/custom-cache';
+
+    const ensureDirMock = vi.fn(async (dir: string) => {
+      if (dir.startsWith(customPath)) {
+        // Simulate an fs error that crossed the context bridge: only the
+        // message survives, no `code`/`syscall` properties.
+        throw new Error(`EACCES: permission denied, mkdir '${customPath}'`);
+      }
+    });
+
+    vi.stubGlobal('electronApi', {
+      ...realElectronApi,
+      fs: { ...realElectronApi.fs, ensureDir: ensureDirMock },
+      isUsablePath: vi.fn(async () => true),
+    });
+
+    const { getPublicationDirectory, registerCachePathProvider } =
+      await import('../fs');
+    registerCachePathProvider(() => customPath);
+
+    const result = await getPublicationDirectory({
+      langwritten: 'E',
+      pub: 'w',
+    });
+
+    expect(result).toContain('app'); // fell back to the default app data path
+    expect(ensureDirMock).toHaveBeenCalled();
+    expect(errorCatcherMock).toHaveBeenCalledTimes(1);
+    const [reportedError] = errorCatcherMock.mock.calls[0] ?? [];
+    expect(reportedError).toBeInstanceOf(Error);
+    expect((reportedError as Error).message).toContain(
+      'Custom cache folder became inaccessible',
+    );
+
+    vi.stubGlobal('electronApi', realElectronApi);
+  });
 });

@@ -2,7 +2,10 @@ import type { PublicationFetcher } from 'src/types';
 
 import { Buffer } from 'buffer'; // NOSONAR: this is not nodejs Buffer, it's the browser one
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { isExpectedNetworkPathAccessError } from 'src/shared/filesystem-errors';
+import {
+  getFilesystemErrorCode,
+  isExpectedNetworkPathAccessError,
+} from 'src/shared/filesystem-errors';
 import { log } from 'src/shared/vanilla';
 import { getPubId } from 'src/utils/jw';
 
@@ -97,6 +100,13 @@ export const invalidateCustomCachePath = (error: unknown) => {
   );
 };
 
+const PERMISSION_ERROR_CODES = new Set(['EACCES', 'EPERM']);
+
+const isPermissionError = (error: unknown) => {
+  const code = getFilesystemErrorCode(error);
+  return !!code && PERMISSION_ERROR_CODES.has(code);
+};
+
 export const getCachedUserDataPath = async (): Promise<string> => {
   const customPath = customCachePathDisabledForSession
     ? undefined
@@ -170,8 +180,9 @@ const getCachePath = async (
     return dir;
   };
 
+  let basePath: string | undefined;
   try {
-    const basePath = bypassCustomPath
+    basePath = bypassCustomPath
       ? await getAppDataPath()
       : await getCachedUserDataPath();
     if (!basePath) {
@@ -190,17 +201,34 @@ const getCachePath = async (
   } catch (error) {
     defaultDataPath = await getAppDataPath();
     const fallbackPath = await buildPath(defaultDataPath);
-    errorCatcher(error, {
-      contexts: {
-        fn: {
-          create,
-          fallbackPath,
-          name: 'getCachePath',
-          newDefaultDataPath: defaultDataPath,
-          paths,
+
+    // A permission-class failure against the custom cache folder (e.g. an
+    // external SSD that got unmounted mid-session, leaving its /Volumes
+    // mount point uncreatable) is an expected environmental condition, not
+    // an app bug. Disable the custom folder for the rest of the session and
+    // let invalidateCustomCachePath emit its one clean, fingerprinted report
+    // instead of a raw EACCES/EPERM per path.
+    const customPath = getCacheFolderProvider?.();
+    if (
+      !bypassCustomPath &&
+      customPath &&
+      basePath === customPath &&
+      isPermissionError(error)
+    ) {
+      invalidateCustomCachePath(error);
+    } else {
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            create,
+            fallbackPath,
+            name: 'getCachePath',
+            newDefaultDataPath: defaultDataPath,
+            paths,
+          },
         },
-      },
-    });
+      });
+    }
     return fallbackPath;
   }
 };
