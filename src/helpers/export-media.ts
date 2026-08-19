@@ -422,13 +422,19 @@ const convertIfNeeded = async (
     // asking the main process to convert with no binary would just add a
     // second, uglier "Refusing to use non-FFmpeg path" error on top.
     if (!ffmpegPath) return null;
+    // The source file can vanish between the copy phase and conversion
+    // (deleted by the user, unplugged volume, etc.) - ffmpeg would then fail
+    // in the main process with a raw ENOENT. Skip quietly instead.
+    if (!(await pathExists(sourceFilePath))) return null;
     return await createVideoFromNonVideo(
       sourceFilePath,
       ffmpegPath,
       await getTempPath(),
     );
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: { fn: { name: 'convertIfNeeded', sourceFilePath } },
+    });
     return null;
   }
 };
