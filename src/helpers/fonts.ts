@@ -404,6 +404,14 @@ const setFallbackFont = async (
   fontName: FontName,
   url: string,
 ): Promise<boolean> => {
+  // 'jw-icons-all' has no baked-in CDN URL: it's discovered dynamically via
+  // updateJwIconsUrl(), so fontUrls['jw-icons-all'] is legitimately '' until
+  // discovery succeeds (offline, first run, or a failed discovery fetch).
+  // Loading a FontFace from a blank URL always rejects with a misleading
+  // NetworkError; the underlying download failure is already reported by
+  // getLocalFontPath(), so give up quietly instead of double-reporting.
+  if (!url) return false;
+
   try {
     const fontFace = new FontFace(fontName, 'url("' + url + '")');
     await fontFace.load();
