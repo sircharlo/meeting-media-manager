@@ -476,7 +476,9 @@ const resolveFontRequest = async (
 
   if (!response?.ok) {
     throw new Error(
-      `Failed to download font: ${response?.statusText || response?.status}`,
+      response
+        ? `Failed to download font: ${response.statusText || response.status}`
+        : `Could not resolve font URL for ${fontName}`,
     );
   }
 
