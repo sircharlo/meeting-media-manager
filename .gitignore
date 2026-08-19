@@ -7,6 +7,9 @@ node_modules
 /design-audit-notes.md
 /settings-mockup.html
 
+# Freebuff thread-local metadata and scratch files
+/.freebuff/
+
 # Quasar core related directories
 .quasar
 /dist
