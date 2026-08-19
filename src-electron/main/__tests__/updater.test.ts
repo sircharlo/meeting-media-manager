@@ -103,6 +103,49 @@ describe('updater install flow', () => {
     expect(quitAndInstallMock).toHaveBeenCalledTimes(2);
   });
 
+  it('tracks updater lifecycle state for renderer catch-up', async () => {
+    const { getUpdaterState, initUpdater } = await import('../updater');
+
+    expect(getUpdaterState()).toEqual({ phase: null, progress: null });
+
+    await initUpdater();
+    handlers.get('update-available')?.({ version: '26.6.2' });
+    expect(getUpdaterState()).toEqual({
+      phase: 'downloading',
+      progress: null,
+    });
+
+    const progress = {
+      bytesPerSecond: 1000,
+      delta: 5,
+      percent: 50,
+      total: 100,
+      transferred: 50,
+    };
+    handlers.get('download-progress')?.(progress);
+    expect(getUpdaterState()).toEqual({ phase: 'downloading', progress });
+
+    handlers.get('update-downloaded')?.({ version: '26.6.2' });
+    expect(getUpdaterState()).toEqual({ phase: 'downloaded', progress });
+  });
+
+  it('resets tracked updater state when the updater errors', async () => {
+    const { getUpdaterState, initUpdater } = await import('../updater');
+
+    await initUpdater();
+    handlers.get('update-available')?.({ version: '26.6.2' });
+    expect(getUpdaterState()).toEqual({
+      phase: 'downloading',
+      progress: null,
+    });
+
+    handlers.get('error')?.(new Error('network error'), 'network error');
+
+    // A future renderer mount's catch-up must not see a stale 'downloading'
+    // phase for an update that actually failed.
+    expect(getUpdaterState()).toEqual({ phase: null, progress: null });
+  });
+
   it('logs update download progress as readable text', async () => {
     const { sendToWindow } =
       await import('src-electron/main/window/window-base');

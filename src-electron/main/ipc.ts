@@ -71,6 +71,7 @@ import {
 } from 'src-electron/main/sqlite';
 import {
   getBetaUpdatesPath,
+  getUpdaterState,
   getUpdatesDisabledPath,
   quitAndInstallUpdate,
   triggerUpdateCheck,
@@ -380,6 +381,7 @@ handleIpcInvoke('getAppDataPath', async () => getAppDataPath());
 handleIpcInvoke('getBetaUpdatesPath', async () => getBetaUpdatesPath());
 handleIpcInvoke('getLowDiskSpaceStatus', async () => getLowDiskSpaceStatus());
 handleIpcInvoke('getUpdatesDisabledPath', async () => getUpdatesDisabledPath());
+handleIpcInvoke('getUpdaterState', async () => getUpdaterState());
 handleIpcInvoke('getSharedDataPath', async () => getSharedDataPath());
 handleIpcInvoke('getUserDataPath', async () => app.getPath('userData'));
 handleIpcInvoke('getLocales', async () => app.getPreferredSystemLanguages());

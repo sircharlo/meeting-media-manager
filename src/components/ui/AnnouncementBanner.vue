@@ -28,6 +28,7 @@ import type {
   Announcement,
   AnnouncementAction,
   OsSupportWarning,
+  UpdaterProgressInfo,
 } from 'src/types';
 
 import prettyBytes from 'pretty-bytes';
@@ -50,6 +51,7 @@ const congregationStore = useCongregationSettingsStore();
 
 const {
   getOsSupportWarning,
+  getUpdaterState,
   onUpdateAvailable,
   onUpdateDownloaded,
   onUpdateDownloadProgress,
@@ -109,23 +111,17 @@ let updateNotify: ((props?: QNotifyUpdateOptions) => void) | undefined;
 // language) without losing or resetting the notification itself.
 type UpdatePhase = 'downloaded' | 'downloading' | null;
 let updatePhase: UpdatePhase = null;
-let lastProgressInfo:
-  | undefined
-  | {
-      bytesPerSecond: number;
-      delta: number;
-      percent: number;
-      total: number;
-      transferred: number;
-    };
+let lastProgressInfo: undefined | UpdaterProgressInfo;
 
-const downloadProgressCaption = (info: {
-  bytesPerSecond: number;
-  delta: number;
-  percent: number;
-  total: number;
-  transferred: number;
-}) => {
+// True once any updater event has been received over IPC. The main process
+// runs the update check at startup, concurrently with the renderer booting,
+// so update-available/download-progress/update-downloaded can fire before
+// these listeners are registered and get silently dropped. When that
+// happens we catch up via getUpdaterState() on mount instead; this flag
+// prevents double-showing when the events did arrive normally.
+let updateEventReceived = false;
+
+const downloadProgressCaption = (info: UpdaterProgressInfo) => {
   const parts: string[] = [];
 
   if (info.percent != null) {
@@ -144,6 +140,7 @@ const downloadProgressCaption = (info: {
 };
 
 const handleUpdateAvailable = () => {
+  updateEventReceived = true;
   updateNotify?.();
   updatePhase = 'downloading';
   lastProgressInfo = undefined;
@@ -157,35 +154,92 @@ const handleUpdateAvailable = () => {
   });
 };
 
-const handleUpdateDownloadProgress = (info: {
-  bytesPerSecond: number;
-  delta: number;
-  percent: number;
-  total: number;
-  transferred: number;
-}) => {
+const handleUpdateDownloadProgress = (info: UpdaterProgressInfo) => {
+  updateEventReceived = true;
   lastProgressInfo = info;
   updateNotify?.({ caption: downloadProgressCaption(info) });
 };
 
 const handleUpdateDownloaded = () => {
+  updateEventReceived = true;
+
+  // Already in downloaded state — avoid re-creating or re-updating the
+  // notification when the same event fires more than once (e.g. the IPC
+  // event arriving after catchUpUpdaterState already handled it).
+  if (updatePhase === 'downloaded') return;
+
   updatePhase = 'downloaded';
-  updateNotify?.({
-    actions: [
-      {
-        color: 'white',
-        handler: () => quitAndInstall(),
-        label: t('quit-and-install'),
-      },
-      { color: 'white', icon: 'close', round: true },
-    ],
-    caption: undefined,
-    icon: 'mmm-check',
-    message: t('update-downloaded'),
-    spinner: false,
-    timeout: 0,
-    type: 'positive',
-  });
+
+  // When an update was already downloaded in a previous session,
+  // electron-updater may fire update-downloaded directly without a
+  // preceding update-available, so updateNotify may not exist yet.
+  if (updateNotify) {
+    updateNotify({
+      actions: [
+        {
+          color: 'white',
+          handler: () => quitAndInstall(),
+          label: t('quit-and-install'),
+        },
+        { color: 'white', icon: 'close', round: true },
+      ],
+      caption: undefined,
+      icon: 'mmm-check',
+      message: t('update-downloaded'),
+      spinner: false,
+      timeout: 0,
+      type: 'positive',
+    });
+  } else {
+    updateNotify = createTemporaryNotification({
+      actions: [
+        {
+          color: 'white',
+          handler: () => quitAndInstall(),
+          label: t('quit-and-install'),
+        },
+        { color: 'white', icon: 'close', round: true },
+      ],
+      icon: 'mmm-check',
+      message: t('update-downloaded'),
+      protect: true,
+      timeout: 0,
+      type: 'positive',
+    });
+  }
+};
+
+// The updater check runs at startup, concurrently with the renderer booting,
+// so its push events can arrive before these listeners are registered and be
+// silently dropped - the download would still proceed and install on quit,
+// but no notification would ever appear. Re-query the main process's tracked
+// state on mount so a missed update is still announced.
+const catchUpUpdaterState = async () => {
+  if (updateEventReceived) return;
+
+  try {
+    const state = await getUpdaterState();
+    // Re-check after the await: a real update-available/downloaded event
+    // may have arrived over IPC while this round-trip was in flight, and
+    // its handler already set updateEventReceived - acting on the
+    // now-stale catch-up snapshot here would redundantly replay
+    // handleUpdateAvailable() and reset the notification it just built.
+    if (updateEventReceived) return;
+    if (!state || !state.phase) return;
+
+    // Build the base notification first (it may not exist yet if the
+    // update-available event was also missed), then apply the current step.
+    handleUpdateAvailable();
+    if (state.phase === 'downloading') {
+      if (state.progress) handleUpdateDownloadProgress(state.progress);
+    } else if (state.phase === 'downloaded') {
+      handleUpdateDownloaded();
+    }
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: { fn: { name: 'getUpdaterState' } },
+    });
+  }
 };
 
 onMounted(() => {
@@ -233,6 +287,8 @@ onMounted(() => {
       contexts: { fn: { name: 'onUpdateListeners' } },
     });
   }
+
+  void catchUpUpdaterState();
 });
 
 // Dev-only: lets a developer preview the whole updater notification

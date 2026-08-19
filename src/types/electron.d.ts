@@ -8,7 +8,7 @@ import type {
   SettingsValues,
   VideoDuration,
 } from 'src/types/electron';
-import type { OsSupportWarning } from 'src/types/general';
+import type { OsSupportWarning, UpdaterState } from 'src/types/general';
 import type {
   basename,
   changeExt,
@@ -124,6 +124,12 @@ export interface ElectronApi {
   getOsSupportWarning: () => Promise<null | OsSupportWarning>;
   getScreenAccessStatus: () => Promise<MediaAccessStatus>;
   getSharedDataPath: () => Promise<null | string>;
+  /**
+   * Returns the auto-updater's current lifecycle state (downloading /
+   * downloaded) so the renderer can catch up on an update that started
+   * before it mounted and missed the push events.
+   */
+  getUpdaterState: () => Promise<UpdaterState>;
   getUpdatesDisabledPath: () => Promise<string>;
   getUserDataPath: () => Promise<string>;
   /**
@@ -384,6 +390,7 @@ export type ElectronIpcInvokeKey =
   | 'getOsSupportWarning'
   | 'getScreenAccessStatus'
   | 'getSharedDataPath'
+  | 'getUpdaterState'
   | 'getUpdatesDisabledPath'
   | 'getUserDataPath'
   | 'getZipEntries'

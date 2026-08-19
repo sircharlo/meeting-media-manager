@@ -1,3 +1,5 @@
+import type { UpdaterProgressInfo, UpdaterState } from 'src/types';
+
 import electronUpdater from 'electron-updater';
 const { autoUpdater } = electronUpdater;
 import { pathExists } from 'fs-extra/esm';
@@ -52,17 +54,20 @@ const updaterLogger = {
 let updateDownloaded = false;
 let updateInstallStarted = false;
 
+// Current updater lifecycle state, kept so the renderer can catch up on an
+// update that started before it mounted and missed the push events (the
+// update check runs at startup, concurrently with window/renderer boot).
+let updatePhase: UpdaterState['phase'] = null;
+let lastUpdaterProgress: null | UpdaterProgressInfo = null;
+
+export const getUpdaterState = (): UpdaterState => ({
+  phase: updatePhase,
+  progress: lastUpdaterProgress,
+});
+
 export const isUpdateInstallInProgress = () => updateInstallStarted;
 
-interface UpdateDownloadProgressInfo {
-  bytesPerSecond?: number;
-  delta?: number;
-  percent?: number;
-  total?: number;
-  transferred?: number;
-}
-
-const formatUpdateDownloadProgress = (info: UpdateDownloadProgressInfo) => {
+const formatUpdateDownloadProgress = (info: UpdaterProgressInfo) => {
   const details: string[] = [];
 
   if (typeof info.percent === 'number' && Number.isFinite(info.percent)) {
@@ -110,6 +115,15 @@ export async function initUpdater() {
   autoUpdater.logger = updaterLogger;
 
   autoUpdater.on('error', async (error, message) => {
+    // Whatever was in progress is no longer verifiably progressing - reset
+    // regardless of whether this specific error gets reported/ignored below,
+    // so a stale 'downloading' phase doesn't stick around forever and
+    // mislead a future renderer mount's catch-up (getUpdaterState()) into
+    // showing a "downloading" notification for an update that actually
+    // failed.
+    updatePhase = null;
+    lastUpdaterProgress = null;
+
     if (IS_TEST) return;
 
     if (await isDownloadErrorExpected()) return;
@@ -137,6 +151,8 @@ export async function initUpdater() {
     log('Update available:', 'electronUpdater', 'log', info);
     updateDownloaded = false;
     updateInstallStarted = false;
+    updatePhase = 'downloading';
+    lastUpdaterProgress = null;
     sendToWindow(mainWindowInfo.mainWindow, 'update-available');
   });
 
@@ -146,12 +162,14 @@ export async function initUpdater() {
       'electronUpdater',
       'log',
     );
+    lastUpdaterProgress = info;
     sendToWindow(mainWindowInfo.mainWindow, 'update-download-progress', info);
   });
 
   autoUpdater.on('update-downloaded', (info) => {
     log('Update downloaded:', 'electronUpdater', 'log', info);
     updateDownloaded = true;
+    updatePhase = 'downloaded';
     sendToWindow(mainWindowInfo.mainWindow, 'update-downloaded');
   });
 

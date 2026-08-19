@@ -91,6 +91,7 @@ const electronApi: ElectronApi = {
   getOsSupportWarning: () => invoke('getOsSupportWarning'),
   getScreenAccessStatus: () => invoke('getScreenAccessStatus'),
   getSharedDataPath: () => invoke('getSharedDataPath'),
+  getUpdaterState: () => invoke('getUpdaterState'),
   getUpdatesDisabledPath: () => invoke('getUpdatesDisabledPath'),
   getUserDataPath: () => invoke('getUserDataPath'),
   getVideoDuration,

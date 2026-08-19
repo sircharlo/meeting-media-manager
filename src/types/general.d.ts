@@ -56,6 +56,28 @@ export type FontName =
  */
 export type OsSupportWarning = 'mac-legacy' | 'win32-ia32';
 
+/**
+ * Progress data emitted by electron-updater's `download-progress` event.
+ * All fields are optional because they are relayed as-is over IPC.
+ */
+export interface UpdaterProgressInfo {
+  bytesPerSecond?: number;
+  delta?: number;
+  percent?: number;
+  total?: number;
+  transferred?: number;
+}
+
+/**
+ * The auto-updater lifecycle state, as tracked by the main process.
+ * Lets the renderer catch up on an in-flight update (e.g. after the
+ * window mounts late and missed the `update-available` event).
+ */
+export interface UpdaterState {
+  phase: 'downloaded' | 'downloading' | null;
+  progress: null | UpdaterProgressInfo;
+}
+
 export interface UrlVariables {
   base: string;
   mediator: string;
