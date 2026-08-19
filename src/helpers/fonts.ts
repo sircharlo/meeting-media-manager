@@ -526,6 +526,12 @@ export const getLocalFontPath = async (fontName: FontName) => {
       });
 
       if (!fallbackPath) {
+        // Don't leave a rejected promise cached forever - a transient
+        // failure (network blip during startup) would otherwise permanently
+        // break this font for the rest of the session, since every later
+        // call would keep returning this same rejection even after
+        // connectivity is restored. Mirrors fontFacePromises's reset above.
+        localFontPathPromises[fontName] = undefined;
         throw new Error(
           `Failed to download font ${fontName} and no local copy exists`,
           { cause: error },

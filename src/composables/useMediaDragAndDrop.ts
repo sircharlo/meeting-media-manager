@@ -25,6 +25,27 @@ interface UseMediaDragAndDropOptions {
   multiDrag?: boolean;
 }
 
+// @formkit/drag-and-drop's `state` is a single object shared by every
+// drag-and-drop instance on the page (there's only ever one active native
+// drag at a time), and its `.on()` has no matching `.off()`/unsubscribe —
+// every listener added is kept forever in a shared internal Map. Since this
+// composable used to call `state.on(...)` once per call (i.e. once per
+// mounted MediaList/MediaGroup instance), every remount — e.g. every
+// calendar-day switch — permanently added another pair of listeners closing
+// over that instance's stale refs. Because all of those listeners already
+// fired for the exact same global drag events regardless of which
+// list/group triggered them, every instance's own isDragging ref was always
+// in lock-step anyway — so registering the listeners exactly once here,
+// against one shared ref, removes the leak with no observable behavior
+// change.
+const isDraggingGlobal = ref(false);
+state.on('dragStarted', () => {
+  isDraggingGlobal.value = true;
+});
+state.on('dragEnded', () => {
+  isDraggingGlobal.value = false;
+});
+
 export function useMediaDragAndDrop(
   items: MediaItem[],
   options: UseMediaDragAndDropOptions = {},
@@ -35,8 +56,6 @@ export function useMediaDragAndDrop(
     multiDrag = true,
   } = options;
 
-  const isDragging = ref(false);
-
   const [dragDropContainer, reactiveItems] = useDragAndDrop<MediaItem>(items, {
     dragHandle,
     group,
@@ -46,18 +65,9 @@ export function useMediaDragAndDrop(
     selectedClass: undefined,
   });
 
-  // Handle drag state
-  state.on('dragStarted', () => {
-    isDragging.value = true;
-  });
-
-  state.on('dragEnded', () => {
-    isDragging.value = false;
-  });
-
   return {
     dragDropContainer,
-    isDragging,
+    isDragging: isDraggingGlobal,
     sortableItems: reactiveItems,
   };
 }

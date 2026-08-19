@@ -2126,7 +2126,9 @@ export const fetchMedia = async () => {
           .catch((error) => {
             log('❌ Error during media processing:', 'mediaFetching', 'error');
             day.status = isInPast(day.date) ? 'complete' : 'error';
-            throw error;
+            errorCatcher(error, {
+              contexts: { fn: { dateKey, name: 'fetchMedia' } },
+            });
           })
           .finally(() => {
             currentStateStore.meetingCheckStatus[dateKey] =
