@@ -42,7 +42,7 @@ yarn-error.log*
 
 # Yarn files
 .pnp.*
-.yarn/*
+.yarn/
 
 # VitePress
 docs/.vitepress/dist
