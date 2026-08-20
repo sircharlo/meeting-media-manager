@@ -325,4 +325,30 @@ describe('JW Store', () => {
       ]);
     });
   });
+
+  describe('updateYeartextFontUrls', () => {
+    it('does not report transient network failures to Sentry', async () => {
+      const store = useJwStore();
+      const api = await import('src/utils/api');
+      vi.mocked(api.fetchRaw).mockRejectedValue(
+        new TypeError('Failed to fetch (wol.jw.org)'),
+      );
+
+      await store.updateYeartextFontUrls();
+
+      expect(errorCatcher).not.toHaveBeenCalled();
+    });
+
+    it('reports non-network failures to Sentry', async () => {
+      const store = useJwStore();
+      const api = await import('src/utils/api');
+      vi.mocked(api.fetchRaw).mockRejectedValue(
+        new Error('Unexpected parse failure'),
+      );
+
+      await store.updateYeartextFontUrls();
+
+      expect(errorCatcher).toHaveBeenCalledTimes(1);
+    });
+  });
 });
