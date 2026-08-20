@@ -24,6 +24,7 @@ import {
   findMediaSection,
   getOrCreateMediaSection,
 } from 'src/helpers/media-sections';
+import { isFetchNetworkError } from 'src/shared/network-errors';
 import {
   extractCssUrls,
   findIconUrlInCss,
@@ -689,6 +690,7 @@ export const useJwStore = defineStore('jw-store', {
               ...getYeartextFontUrlsFromCss(cssText),
             };
           } catch (e) {
+            if (isFetchNetworkError(e)) continue;
             errorCatcher(e, {
               contexts: {
                 fn: { args: { cssUrl }, name: 'updateYeartextFontUrls' },
@@ -697,6 +699,7 @@ export const useJwStore = defineStore('jw-store', {
           }
         }
       } catch (e) {
+        if (isFetchNetworkError(e)) return;
         errorCatcher(e, {
           contexts: { fn: { name: 'updateYeartextFontUrls - main' } },
         });
