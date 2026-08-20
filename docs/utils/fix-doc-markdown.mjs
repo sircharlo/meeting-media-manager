@@ -13,6 +13,43 @@ const args = new Set(process.argv.slice(2));
 const checkOnly = args.has('--check');
 const verbose = args.has('--verbose');
 
+/**
+ * Rename duplicate trailing heading anchors so every anchor in a file is
+ * unique. The first occurrence of each anchor is kept; later ones get a
+ * numeric suffix (e.g. `{#foo-2}`), mirroring how markdown-it-anchor
+ * disambiguates auto-generated slugs.
+ */
+function dedupeHeadingAnchors(lines) {
+  const counts = new Map();
+  const headings = [];
+
+  lines.forEach((line, index) => {
+    if (!/^(#{1,6})[ \t]+\S/.test(line)) return;
+    const anchor = getHeadingAnchors(line).at(-1);
+    if (!anchor) return;
+    headings.push({ anchor, index });
+    counts.set(anchor, (counts.get(anchor) ?? 0) + 1);
+  });
+
+  const seen = new Map();
+  const updatedLines = [...lines];
+  let changes = 0;
+
+  for (const { anchor, index } of headings) {
+    if ((counts.get(anchor) ?? 0) < 2) continue;
+    const seenCount = seen.get(anchor) ?? 0;
+    seen.set(anchor, seenCount + 1);
+    if (seenCount === 0) continue; // keep the first occurrence
+    updatedLines[index] = replaceHeadingAnchor(
+      lines[index],
+      `${anchor}-${seenCount + 1}`,
+    );
+    changes += 1;
+  }
+
+  return { changed: changes > 0, changes, lines: updatedLines };
+}
+
 async function fixIndexLinks(locale, totals) {
   const indexPath = resolve(DOCS_SRC_DIR, locale, 'index.md');
   if (!(await pathExists(indexPath))) return;
@@ -82,7 +119,7 @@ async function fixMarkdownAnchors(locale, markdownFile, totals) {
       .map((heading, index) => [heading.anchor, index])
       .filter(([anchor]) => anchor),
   );
-  const lines = localeContent.split('\n');
+  let lines = localeContent.split('\n');
   const state = {
     cursor: 0,
     usedAnchors: new Set(),
@@ -119,6 +156,25 @@ async function fixMarkdownAnchors(locale, markdownFile, totals) {
     changed = true;
     lines[localeHeading.index] = updatedLine;
     logAnchorReplacement(localePath, localeHeading, expectedAnchor, lines);
+  }
+
+  // VitePress fails the build when two headings in a file define the same
+  // explicit anchor ("User defined id attribute ... is not unique"). Crowdin
+  // content can diverge from English (extra or missing headings), which makes
+  // the alignment above assign an anchor that a later heading already carries.
+  // Rename later duplicates with numeric suffixes to guarantee uniqueness.
+  const {
+    changed: dedupeChanged,
+    changes,
+    lines: dedupedLines,
+  } = dedupeHeadingAnchors(lines);
+  if (dedupeChanged) {
+    changed = true;
+    totals.anchorChanges += changes;
+    lines = dedupedLines;
+    console.log(
+      `[anchor] ${getRelativePath(localePath)}: fixed ${changes} duplicate anchor${changes === 1 ? '' : 's'}`,
+    );
   }
 
   if (changed && !checkOnly) {
