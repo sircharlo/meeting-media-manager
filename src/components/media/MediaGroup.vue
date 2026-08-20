@@ -5,7 +5,7 @@
     class="q-mx-sm q-my-sm media-children rounded-borders overflow-hidden"
   >
     <q-menu context-menu style="overflow-x: hidden" touch-position>
-      <q-list>
+      <q-list role="menu">
         <q-item
           v-close-popup
           clickable

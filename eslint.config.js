@@ -20,7 +20,7 @@ const gitignorePath = resolve(__dirname, '.gitignore');
 export default defineConfigWithVueTs([
   includeIgnoreFile(gitignorePath),
   {
-    ignores: ['docs/.vitepress/dist/**/*', 'LICENSE.md'],
+    ignores: ['docs/.vitepress/dist/**/*', 'LICENSE.md', '.yarn/**/*'],
   },
 
   ...pluginQuasar.configs.recommended(),

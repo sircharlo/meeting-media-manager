@@ -153,7 +153,7 @@
                   }
                 "
               >
-                <q-list style="min-width: 150px">
+                <q-list role="menu" style="min-width: 150px">
                   <q-item
                     v-if="currentCongregation !== id"
                     v-close-popup

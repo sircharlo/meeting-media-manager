@@ -74,7 +74,7 @@
               {{ t('more-options') }}
             </q-tooltip>
             <q-menu v-model="moreOptionsMenuActive">
-              <q-list style="min-width: 150px">
+              <q-list role="menu" style="min-width: 150px">
                 <!-- Color Picker -->
                 <q-item clickable @click="showColorPicker = true">
                   <q-item-section avatar>

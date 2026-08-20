@@ -22,7 +22,7 @@
       :offset="[0, 11]"
       @before-show="calculateCacheSize()"
     >
-      <q-list>
+      <q-list role="menu">
         <template v-if="invalidSettings()">
           <q-item-label header>{{ t('invalid-settings') }}</q-item-label>
           <q-item
