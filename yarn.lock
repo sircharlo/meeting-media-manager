@@ -1855,6 +1855,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@oxc-project/types@npm:=0.144.0":
+  version: 0.144.0
+  resolution: "@oxc-project/types@npm:0.144.0"
+  checksum: 10c0/997c6c33f09706af604ece0e99c698965757887aca4b42c5fb5ddcb11c39876c1e824b188b1e6582276355468a9b13f955d3b822d3b532cd6bedbeb64b603ff0
+  languageName: node
+  linkType: hard
+
 "@parcel/watcher-android-arm64@npm:2.6.0":
   version: 2.6.0
   resolution: "@parcel/watcher-android-arm64@npm:2.6.0"
@@ -2190,13 +2197,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/app-vite@npm:^3.5.0":
-  version: 3.5.0
-  resolution: "@quasar/app-vite@npm:3.5.0"
+"@quasar/app-vite@npm:^3.6.0":
+  version: 3.6.0
+  resolution: "@quasar/app-vite@npm:3.6.0"
   dependencies:
     "@clack/prompts": "npm:^1.7.0"
     "@quasar/art": "npm:^1.0.0"
-    "@quasar/render-ssr-error": "npm:^2.2.4"
+    "@quasar/render-ssr-error": "npm:^2.2.6"
     "@quasar/ssl-certificate": "npm:^2.1.0"
     "@quasar/vite-plugin": "npm:^2.0.0"
     "@types/chrome": "npm:^0.2.2"
@@ -2217,14 +2224,14 @@ __metadata:
     mlly: "npm:^1.8.2"
     open: "npm:^11.0.0"
     picomatch: "npm:^4.0.5"
-    rolldown: "npm:^1.2.2"
+    rolldown: "npm:^1.2.3"
     sass-embedded: "npm:^1.100.0"
     semver: "npm:^7.8.5"
     serialize-javascript: "npm:^7.0.7"
     serve-static: "npm:^2.2.1"
     tinyglobby: "npm:^0.2.17"
     ts-essentials: "npm:^10.2.0"
-    vite: "npm:^8.2.0"
+    vite: "npm:^8.2.1"
     webpack-merge: "npm:^6.0.1"
   peerDependencies:
     "@capacitor/cli": ">= 5"
@@ -2257,7 +2264,7 @@ __metadata:
       optional: true
   bin:
     quasar: ./bin/quasar.js
-  checksum: 10c0/be69ebcf22a823694a47937b208d3c6f168fed8ba598863672f575986fa48bad9c860904579750e9f4b008debf13bec8faad98481f5c1c0c637a39aebd5b7000
+  checksum: 10c0/be9ecfa35f5942190f8b1770584c685bc17f8302c0da2445ff5f7c9cc368efe04ff23dfb4e49fe956cdc91d8994a4600a5b8221a1dab7afa0ec6977e8428d748
   languageName: node
   linkType: hard
 
@@ -2275,12 +2282,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/render-ssr-error@npm:^2.2.4":
-  version: 2.2.5
-  resolution: "@quasar/render-ssr-error@npm:2.2.5"
+"@quasar/render-ssr-error@npm:^2.2.6":
+  version: 2.2.6
+  resolution: "@quasar/render-ssr-error@npm:2.2.6"
   dependencies:
     stack-trace: "npm:^1.0.0"
-  checksum: 10c0/42afc07e02a6f5200d76f05e441aca910d820f19b027a883a63f72fe83ace3427d9ee7cb0cb79401804bb414181013f23ba537f06cd6cce67e365541725821cb
+  checksum: 10c0/3c9c55a0f417a9b042727955d74dd6a57875720b83d8849685b7e2d285ce43629c63f34e9ae0b0dc38271e28ad601d737bf191e1dc76d8cd0244b7563afa2861
   languageName: node
   linkType: hard
 
@@ -2313,9 +2320,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@rolldown/binding-android-arm64@npm:1.2.4":
+  version: 1.2.4
+  resolution: "@rolldown/binding-android-arm64@npm:1.2.4"
+  conditions: os=android & cpu=arm64
+  languageName: node
+  linkType: hard
+
 "@rolldown/binding-darwin-arm64@npm:1.2.3":
   version: 1.2.3
   resolution: "@rolldown/binding-darwin-arm64@npm:1.2.3"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@rolldown/binding-darwin-arm64@npm:1.2.4":
+  version: 1.2.4
+  resolution: "@rolldown/binding-darwin-arm64@npm:1.2.4"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
@@ -2327,9 +2348,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@rolldown/binding-darwin-x64@npm:1.2.4":
+  version: 1.2.4
+  resolution: "@rolldown/binding-darwin-x64@npm:1.2.4"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
 "@rolldown/binding-freebsd-x64@npm:1.2.3":
   version: 1.2.3
   resolution: "@rolldown/binding-freebsd-x64@npm:1.2.3"
+  conditions: os=freebsd & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@rolldown/binding-freebsd-x64@npm:1.2.4":
+  version: 1.2.4
+  resolution: "@rolldown/binding-freebsd-x64@npm:1.2.4"
   conditions: os=freebsd & cpu=x64
   languageName: node
   linkType: hard
@@ -2341,9 +2376,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@rolldown/binding-linux-arm-gnueabihf@npm:1.2.4":
+  version: 1.2.4
+  resolution: "@rolldown/binding-linux-arm-gnueabihf@npm:1.2.4"
+  conditions: os=linux & cpu=arm
+  languageName: node
+  linkType: hard
+
 "@rolldown/binding-linux-arm64-gnu@npm:1.2.3":
   version: 1.2.3
   resolution: "@rolldown/binding-linux-arm64-gnu@npm:1.2.3"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@rolldown/binding-linux-arm64-gnu@npm:1.2.4":
+  version: 1.2.4
+  resolution: "@rolldown/binding-linux-arm64-gnu@npm:1.2.4"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
@@ -2355,9 +2404,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@rolldown/binding-linux-arm64-musl@npm:1.2.4":
+  version: 1.2.4
+  resolution: "@rolldown/binding-linux-arm64-musl@npm:1.2.4"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
 "@rolldown/binding-linux-ppc64-gnu@npm:1.2.3":
   version: 1.2.3
   resolution: "@rolldown/binding-linux-ppc64-gnu@npm:1.2.3"
+  conditions: os=linux & cpu=ppc64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@rolldown/binding-linux-ppc64-gnu@npm:1.2.4":
+  version: 1.2.4
+  resolution: "@rolldown/binding-linux-ppc64-gnu@npm:1.2.4"
   conditions: os=linux & cpu=ppc64 & libc=glibc
   languageName: node
   linkType: hard
@@ -2369,9 +2432,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@rolldown/binding-linux-s390x-gnu@npm:1.2.4":
+  version: 1.2.4
+  resolution: "@rolldown/binding-linux-s390x-gnu@npm:1.2.4"
+  conditions: os=linux & cpu=s390x & libc=glibc
+  languageName: node
+  linkType: hard
+
 "@rolldown/binding-linux-x64-gnu@npm:1.2.3":
   version: 1.2.3
   resolution: "@rolldown/binding-linux-x64-gnu@npm:1.2.3"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@rolldown/binding-linux-x64-gnu@npm:1.2.4":
+  version: 1.2.4
+  resolution: "@rolldown/binding-linux-x64-gnu@npm:1.2.4"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
@@ -2383,9 +2460,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@rolldown/binding-linux-x64-musl@npm:1.2.4":
+  version: 1.2.4
+  resolution: "@rolldown/binding-linux-x64-musl@npm:1.2.4"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
 "@rolldown/binding-openharmony-arm64@npm:1.2.3":
   version: 1.2.3
   resolution: "@rolldown/binding-openharmony-arm64@npm:1.2.3"
+  conditions: os=openharmony & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@rolldown/binding-openharmony-arm64@npm:1.2.4":
+  version: 1.2.4
+  resolution: "@rolldown/binding-openharmony-arm64@npm:1.2.4"
   conditions: os=openharmony & cpu=arm64
   languageName: node
   linkType: hard
@@ -2397,9 +2488,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@rolldown/binding-win32-arm64-msvc@npm:1.2.4":
+  version: 1.2.4
+  resolution: "@rolldown/binding-win32-arm64-msvc@npm:1.2.4"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
 "@rolldown/binding-win32-x64-msvc@npm:1.2.3":
   version: 1.2.3
   resolution: "@rolldown/binding-win32-x64-msvc@npm:1.2.3"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@rolldown/binding-win32-x64-msvc@npm:1.2.4":
+  version: 1.2.4
+  resolution: "@rolldown/binding-win32-x64-msvc@npm:1.2.4"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -8258,7 +8363,7 @@ __metadata:
     "@numairawan/video-duration": "npm:^1.0.0"
     "@opentelemetry/api-logs": "npm:^0.221.0"
     "@pinia/testing": "npm:^2.0.1"
-    "@quasar/app-vite": "npm:^3.5.0"
+    "@quasar/app-vite": "npm:^3.6.0"
     "@quasar/extras": "npm:^2.0.3"
     "@quasar/vite-plugin": "npm:^2.0.0"
     "@sentry/core": "npm:^10.70.0"
@@ -10115,7 +10220,62 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rolldown@npm:^1.2.2, rolldown@npm:~1.2.1":
+"rolldown@npm:^1.2.3":
+  version: 1.2.4
+  resolution: "rolldown@npm:1.2.4"
+  dependencies:
+    "@oxc-project/types": "npm:=0.144.0"
+    "@rolldown/binding-android-arm64": "npm:1.2.4"
+    "@rolldown/binding-darwin-arm64": "npm:1.2.4"
+    "@rolldown/binding-darwin-x64": "npm:1.2.4"
+    "@rolldown/binding-freebsd-x64": "npm:1.2.4"
+    "@rolldown/binding-linux-arm-gnueabihf": "npm:1.2.4"
+    "@rolldown/binding-linux-arm64-gnu": "npm:1.2.4"
+    "@rolldown/binding-linux-arm64-musl": "npm:1.2.4"
+    "@rolldown/binding-linux-ppc64-gnu": "npm:1.2.4"
+    "@rolldown/binding-linux-s390x-gnu": "npm:1.2.4"
+    "@rolldown/binding-linux-x64-gnu": "npm:1.2.4"
+    "@rolldown/binding-linux-x64-musl": "npm:1.2.4"
+    "@rolldown/binding-openharmony-arm64": "npm:1.2.4"
+    "@rolldown/binding-win32-arm64-msvc": "npm:1.2.4"
+    "@rolldown/binding-win32-x64-msvc": "npm:1.2.4"
+    "@rolldown/pluginutils": "npm:^1.0.0"
+  dependenciesMeta:
+    "@rolldown/binding-android-arm64":
+      optional: true
+    "@rolldown/binding-darwin-arm64":
+      optional: true
+    "@rolldown/binding-darwin-x64":
+      optional: true
+    "@rolldown/binding-freebsd-x64":
+      optional: true
+    "@rolldown/binding-linux-arm-gnueabihf":
+      optional: true
+    "@rolldown/binding-linux-arm64-gnu":
+      optional: true
+    "@rolldown/binding-linux-arm64-musl":
+      optional: true
+    "@rolldown/binding-linux-ppc64-gnu":
+      optional: true
+    "@rolldown/binding-linux-s390x-gnu":
+      optional: true
+    "@rolldown/binding-linux-x64-gnu":
+      optional: true
+    "@rolldown/binding-linux-x64-musl":
+      optional: true
+    "@rolldown/binding-openharmony-arm64":
+      optional: true
+    "@rolldown/binding-win32-arm64-msvc":
+      optional: true
+    "@rolldown/binding-win32-x64-msvc":
+      optional: true
+  bin:
+    rolldown: ./bin/cli.mjs
+  checksum: 10c0/438c2222db940fab6e2db1f1cf84ab27c83310959e056fa389d7e2208bcbf58929f970f4dca5bd9c255f319bf657ef1a4a7ea6725213491d28764d867e5407a4
+  languageName: node
+  linkType: hard
+
+"rolldown@npm:~1.2.1":
   version: 1.2.3
   resolution: "rolldown@npm:1.2.3"
   dependencies:
