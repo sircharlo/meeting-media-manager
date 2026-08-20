@@ -57,7 +57,7 @@
       :offset="[0, 11]"
       @before-show="handleImportMenuBeforeShow"
     >
-      <q-list class="list-primary">
+      <q-list class="list-primary" role="menu">
         <q-item-label header>{{ t('from-jw-org') }}</q-item-label>
         <q-item
           v-close-popup

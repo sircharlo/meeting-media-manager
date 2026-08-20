@@ -862,7 +862,7 @@
         :target="menuTarget"
         touch-position
       >
-        <q-list>
+        <q-list role="menu">
           <template v-if="selectedMediaItems && multipleMediaItemsSelected">
             <q-item-label header>
               {{ t('selected-media-items') }} ({{
