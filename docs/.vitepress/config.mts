@@ -153,7 +153,7 @@ export default defineConfig({
         );
       };
     },
-    image: { lazyLoading: true },
+    image: { lazyLoad: true },
   },
   rewrites: { 'en/:rest*': ':rest*' },
   srcDir: './src',
