@@ -32,7 +32,7 @@
           v-if="musicPlaying || musicState === 'music.starting'"
           class="music-button__status q-ml-sm"
         >
-          {{ musicButtonStatusText }}
+          {{ displayStatusText }}
         </div>
       </div>
     </div>
@@ -46,6 +46,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useMusicStore } from 'stores/music';
 import { onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -53,12 +54,8 @@ const { t } = useI18n();
 const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);
 
-defineProps<{
-  musicButtonStatusText?: string;
-  musicPlaying?: boolean;
-  musicState?:
-    '' | 'music.error' | 'music.playing' | 'music.starting' | 'music.stopping';
-}>();
+const music = useMusicStore();
+const { displayStatusText, musicPlaying, musicState } = storeToRefs(music);
 
 const musicPopup = defineModel<boolean>({ required: true });
 

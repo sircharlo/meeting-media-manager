@@ -5,6 +5,7 @@ import { defineStore } from 'pinia';
 import { defaultSettings } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { log, uuid } from 'src/shared/vanilla';
+import { cloneMeetingQuickActionSettings } from 'src/utils/clone-settings';
 import { wasUpdateInstalled } from 'src/utils/fs';
 
 interface Store {
@@ -116,7 +117,9 @@ export const useCongregationSettingsStore = defineStore(
       createCongregation() {
         const newId = uuid();
         wasUpdateInstalled(newId, true);
-        this.congregations[newId] = { ...defaultSettings };
+        this.congregations[newId] = cloneMeetingQuickActionSettings({
+          ...defaultSettings,
+        });
         return newId;
       },
       deleteCongregation(id: number | string) {
@@ -182,18 +185,17 @@ export const useCongregationSettingsStore = defineStore(
                 return;
               }
 
-              const updatedCongregation = {
-                ...defaultSettings,
-                ...missingSettingsBackfillOverrides,
-                ...congregation,
-              };
-
               // Find which keys were missing and thus updated
               const updatedKeys = Object.keys(defaultSettings).filter(
                 (key) => !(key in congregation),
               ) as (keyof SettingsValues)[];
 
               if (updatedKeys.length > 0) {
+                const updatedCongregation = cloneMeetingQuickActionSettings({
+                  ...defaultSettings,
+                  ...missingSettingsBackfillOverrides,
+                  ...congregation,
+                });
                 this.congregations[congId] = updatedCongregation;
                 updatedCount++;
 

@@ -761,6 +761,41 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'dragAndDrop',
     type: 'toggle',
   },
+  // The toggle and the checklist/category arrays are all rendered by
+  // SettingsMeetingChecklists.vue (a hand-written editor, not BaseInput) so
+  // they read as one consistently-styled settings card instead of the
+  // toggle getting its own separate auto-rendered card - hidden here purely
+  // to satisfy the SettingsValues → SettingsItems type constraint.
+  enableMeetingQuickActions: {
+    group: 'interfaceShortcuts',
+    hidden: true,
+    subgroup: 'quickActions',
+    type: 'toggle',
+  },
+  meetingQuickActionsCategoriesAfter: {
+    group: 'interfaceShortcuts',
+    hidden: true,
+    subgroup: 'quickActions',
+    type: 'text',
+  },
+  meetingQuickActionsCategoriesBefore: {
+    group: 'interfaceShortcuts',
+    hidden: true,
+    subgroup: 'quickActions',
+    type: 'text',
+  },
+  meetingQuickActionsChecklistAfter: {
+    group: 'interfaceShortcuts',
+    hidden: true,
+    subgroup: 'quickActions',
+    type: 'text',
+  },
+  meetingQuickActionsChecklistBefore: {
+    group: 'interfaceShortcuts',
+    hidden: true,
+    subgroup: 'quickActions',
+    type: 'text',
+  },
 
   // Advanced
   baseUrl: {
@@ -822,6 +857,7 @@ export const defaultSettings: SettingsValues = {
   enableMediaDisplayButton: false,
   enableMediaPreview: true,
   enableMediaWindowFadeTransitions: true,
+  enableMeetingQuickActions: true,
   enableMusicButton: true,
   enablePinyinSongs: false,
   enablePlaybackSpeedControl: false,
@@ -842,6 +878,97 @@ export const defaultSettings: SettingsValues = {
   localDateFormat: 'D MMMM YYYY',
   maxRes: '720p',
   mediaAutoExportFolder: '',
+  meetingQuickActionsCategoriesAfter: [
+    {
+      enabled: true,
+      id: 'quick-actions-category-zoom-participants',
+      isDefault: true,
+    },
+    {
+      enabled: true,
+      id: 'quick-actions-category-kh-av',
+      isDefault: true,
+    },
+  ],
+  meetingQuickActionsCategoriesBefore: [
+    {
+      enabled: true,
+      id: 'quick-actions-category-zoom-participants',
+      isDefault: true,
+    },
+    {
+      enabled: true,
+      id: 'quick-actions-category-kh-av',
+      isDefault: true,
+    },
+  ],
+  meetingQuickActionsChecklistAfter: [
+    {
+      categoryId: 'quick-actions-category-kh-av',
+      enabled: true,
+      id: 'quick-actions-checklist-disconnect-zoom-audio',
+      isDefault: true,
+      label: undefined,
+    },
+    {
+      categoryId: 'quick-actions-category-zoom-participants',
+      enabled: true,
+      id: 'quick-actions-checklist-unmute-zoom-participants',
+      isDefault: true,
+      label: undefined,
+    },
+    {
+      categoryId: 'quick-actions-category-zoom-participants',
+      enabled: true,
+      id: 'quick-actions-checklist-allow-unmute-zoom-participants',
+      isDefault: true,
+      label: undefined,
+    },
+    {
+      categoryId: 'quick-actions-category-kh-av',
+      enabled: true,
+      id: 'quick-actions-checklist-mute-kh-audio',
+      isDefault: true,
+      label: undefined,
+    },
+    {
+      categoryId: 'quick-actions-category-kh-av',
+      enabled: true,
+      id: 'quick-actions-checklist-deactivate-kh-video',
+      isDefault: true,
+      label: undefined,
+    },
+  ],
+  meetingQuickActionsChecklistBefore: [
+    {
+      categoryId: 'quick-actions-category-zoom-participants',
+      enabled: true,
+      id: 'quick-actions-checklist-mute-zoom-participants',
+      isDefault: true,
+      label: undefined,
+    },
+    {
+      categoryId: 'quick-actions-category-zoom-participants',
+      enabled: true,
+      id: 'quick-actions-checklist-disallow-unmute-zoom-participants',
+      isDefault: true,
+      label: undefined,
+    },
+    {
+      categoryId: 'quick-actions-category-kh-av',
+      enabled: true,
+      id: 'quick-actions-checklist-unmute-kh-audio',
+      isDefault: true,
+      label: undefined,
+    },
+    {
+      categoryId: 'quick-actions-category-kh-av',
+      enabled: true,
+      id: 'quick-actions-checklist-activate-kh-video-zoom',
+      isDefault: true,
+      label: undefined,
+    },
+  ],
   meetingScheduleChangeDate: null,
   meetingScheduleChangeMwDay: null,
   meetingScheduleChangeMwStartTime: null,

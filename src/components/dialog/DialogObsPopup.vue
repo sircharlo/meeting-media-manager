@@ -62,7 +62,7 @@
               :icon="isRecording ? 'mmm-stop' : 'mmm-record'"
               :label="isRecording ? t('stop-recording') : t('start-recording')"
               unelevated
-              @click="toggleObsRecording"
+              @click="toggleRecording()"
             />
           </div>
           <div v-if="obsRecordingFolder" class="col-12">
@@ -93,8 +93,6 @@ import {
   obsConnect,
   obsGetRecordingDirectory,
   obsGetRecordingState,
-  obsStartRecording,
-  obsStopRecording,
 } from 'src/helpers/obs';
 import { log } from 'src/shared/vanilla';
 import { isUUID } from 'src/utils/general';
@@ -102,6 +100,7 @@ import { isImage } from 'src/utils/media';
 import { obsWebSocketInfo } from 'src/utils/obs';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useObsStateStore } from 'stores/obs-state';
+import { useRecordingStore } from 'stores/recording-state';
 import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -129,10 +128,13 @@ const {
 const { sceneExists } = obsState;
 const obsSettingsConnect = () => obsConnect(true);
 
+const recording = useRecordingStore();
+const { isRecording } = storeToRefs(recording);
+const { syncObsRecordingState, toggleRecording } = recording;
+
 const { t } = useI18n();
 
-// Recording state for OBS controls
-const isRecording = ref(false);
+// OBS-specific recording folder (not in the store since it's OBS-only)
 const obsRecordingFolder = ref<null | string>(null);
 
 const { openFolder } = globalThis.electronApi;
@@ -146,23 +148,6 @@ const notifySceneNotFound = () =>
     timeout: 10000,
     type: 'negative',
   });
-
-// OBS Recording functions
-const toggleObsRecording = async () => {
-  if (isRecording.value) {
-    // Stop recording
-    const success = await obsStopRecording();
-    if (success) {
-      isRecording.value = false;
-    }
-  } else {
-    // Start recording
-    const success = await obsStartRecording();
-    if (success) {
-      isRecording.value = true;
-    }
-  }
-};
 
 const openObsRecordingFolder = async () => {
   if (obsRecordingFolder.value) {
@@ -295,12 +280,6 @@ const baseScenesLength = computed(
 );
 
 const getSceneIcon = (scene: null | string | undefined) => {
-  // A scene that no longer resolves to anything (e.g. a saved UUID for a
-  // scene that was renamed/deleted in OBS) already turns the button red via
-  // `sceneExists` below - but with icons hidden, that used to leave a
-  // completely blank clickable rectangle with no indication of what's
-  // wrong. Always surface a warning icon for that case, overriding the
-  // hide-icons preference just for this one broken state.
   if (scene && !sceneExists(scene)) {
     return 'mmm-warning';
   }
@@ -350,23 +329,18 @@ watchImmediate(
     recordingControls: currentSettings.value?.obsEnableRecordingControls,
   }),
   async ({ enabled, recordingControls }, _, onCleanup) => {
-    // If OBS not enabled or no websocket → stop everything
     if (!enabled || !obsWebSocketInfo.obsWebSocket) return;
-
-    // If recording controls disabled → stop everything
     if (!recordingControls) return;
 
-    // --- 1. Setup event listener ---
     const handleRecordStateChanged = (data: { outputActive: boolean }) => {
       log('RecordStateChanged', 'obs', 'log', data);
-      isRecording.value = data.outputActive;
+      syncObsRecordingState(data.outputActive);
     };
     obsWebSocketInfo.obsWebSocket.on(
       'RecordStateChanged',
       handleRecordStateChanged,
     );
 
-    // Cleanup when settings change or component unmounts
     onCleanup(() => {
       obsWebSocketInfo.obsWebSocket?.off(
         'RecordStateChanged',
@@ -374,22 +348,17 @@ watchImmediate(
       );
     });
 
-    // --- 2. Initial recording state ---
     const status = await obsGetRecordingState();
     if (status !== null) {
-      isRecording.value = status;
+      syncObsRecordingState(status);
     }
 
-    // --- 3. Recording directory ---
     const folder = await obsGetRecordingDirectory();
     obsRecordingFolder.value = folder;
   },
 );
 
-// Anchored bottom-up (self="bottom middle") so it visually grows out of the
-// action island. A ResizeObserver repositions it whenever its rendered size
-// actually changes - scene list length, recording controls toggling, etc. -
-// instead of guessing which reactive values might affect height.
+// Anchored bottom-up
 watch(popupContent, (el) => {
   popupResizeObserver?.disconnect();
   popupResizeObserver = undefined;

@@ -110,6 +110,7 @@
         :retry-fetch="() => fetchMedia()"
       />
     </div>
+    <MeetingQuickActionsPanel v-if="!showEmptyState" location="before" />
     <template v-if="!showEmptyState">
       <template
         v-for="mediaList in mediaLists"
@@ -133,6 +134,7 @@
         />
       </template>
     </template>
+    <MeetingQuickActionsPanel v-if="!showEmptyState" location="after" />
     <q-btn
       v-if="selectedDateObject && !selectedDayMeetingType && !showEmptyState"
       :class="{
@@ -225,6 +227,7 @@ import type {
   MediaSectionWithConfig,
   PublicationFetcher,
 } from 'src/types';
+import type { BackgroundMusicAction, BackgroundMusicState } from 'stores/music';
 
 import {
   useBroadcastChannel,
@@ -239,6 +242,7 @@ import DialogPdfPageSelection from 'components/dialog/DialogPdfPageSelection.vue
 import DialogSectionPicker from 'components/dialog/DialogSectionPicker.vue';
 import EmptyState from 'components/media/EmptyState.vue';
 import MediaList from 'components/media/MediaList.vue';
+import MeetingQuickActionsPanel from 'components/media/MeetingQuickActionsPanel.vue';
 import QuickStartGuide from 'components/ui/QuickStartGuide.vue';
 import DOMPurify from 'dompurify';
 import Mousetrap from 'mousetrap';
@@ -304,6 +308,7 @@ import {
 } from 'src/utils/fs';
 import {
   getMetadataFromMediaPath,
+  getVisibleMeetingItems,
   isArchive,
   isAudio,
   isImage,
@@ -328,6 +333,7 @@ import {
   useCurrentStateStore,
 } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
+import { useMeetingQuickActionsStore } from 'stores/meeting-quick-actions';
 import { useObsStateStore } from 'stores/obs-state';
 import {
   computed,
@@ -485,18 +491,6 @@ useEventListener(globalThis, 'keydown', (event: KeyboardEvent) => {
   openMediaFilter();
 });
 
-interface BackgroundMusicAction {
-  action: 'stop';
-  fadeSeconds?: number;
-  requestedAt: number;
-}
-
-interface BackgroundMusicState {
-  playing: boolean;
-  state:
-    '' | 'music.error' | 'music.playing' | 'music.starting' | 'music.stopping';
-}
-
 const route = useRoute();
 const router = useRouter();
 
@@ -530,6 +524,8 @@ const {
 } = storeToRefs(currentState);
 const obsState = useObsStateStore();
 const { obsConnectionState, obsSceneListError } = storeToRefs(obsState);
+const meetingQuickActions = useMeetingQuickActionsStore();
+const { recordLastSongEnded } = meetingQuickActions;
 const congregationSettingsStore = useCongregationSettingsStore();
 
 const totalFiles = ref(0);
@@ -2804,19 +2800,15 @@ const sendConfiguredCustomShortcut = (
   sendKeyboardShortcut(shortcut, 'CustomEvents');
 };
 
-const getVisibleMeetingSongs = () => {
-  return (selectedDateObject.value?.mediaSections ?? []).flatMap((section) =>
-    (section.items ?? []).filter(
-      (item) => item.tag?.type === 'song' && !item.hidden,
-    ),
-  );
-};
+const getVisibleMeetingSongs = () =>
+  getVisibleMeetingItems(selectedDateObject.value, { songsOnly: true });
 
-const maybeSendLastSongShortcut = (oldMediaPlayingUrl: unknown) => {
+const maybeSendLastSongShortcut = (
+  oldMediaPlayingUrl: unknown,
+  sendShortcut = true,
+) => {
   const shortcut = currentSettings.value?.customEventLastSongShortcut;
-  if (!shortcut || !selectedDateObject.value || !selectedDayMeetingType.value) {
-    return;
-  }
+  if (!selectedDateObject.value || !selectedDayMeetingType.value) return;
 
   log(
     '🔄 [CustomEvents Verbose] Checking if the last played media item was the last song in the meeting',
@@ -2842,6 +2834,9 @@ const maybeSendLastSongShortcut = (oldMediaPlayingUrl: unknown) => {
   );
 
   if (!stoppedWasLastSong) return;
+
+  recordLastSongEnded();
+  if (!sendShortcut || !shortcut) return;
 
   sendConfiguredCustomShortcut(
     shortcut,
@@ -2880,7 +2875,6 @@ const handleCustomMediaEvents = (
       currentSettings.value?.customEventMediaStopShortcut,
       '🔄 [CustomEvents] Sending media stop event shortcut:',
     );
-    maybeSendLastSongShortcut(oldMediaPlayingUrl);
   }
 };
 
@@ -3328,6 +3322,13 @@ watch(
       )
     ) {
       notifyBackgroundMusicStillPlaying();
+    }
+
+    if (!newMediaPlaying && oldMediaPlayingUrl) {
+      maybeSendLastSongShortcut(
+        oldMediaPlayingUrl,
+        !!currentSettings.value?.enableCustomEvents,
+      );
     }
 
     handleCustomMediaEvents(

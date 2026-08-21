@@ -1,5 +1,5 @@
 import type { IAudioMetadata } from 'music-metadata';
-import type { MultimediaItem } from 'src/types';
+import type { DateInfo, MediaItem, MultimediaItem } from 'src/types';
 
 import {
   AUDIO_EXTENSIONS,
@@ -215,6 +215,21 @@ export const getFileNameMaskFromPubMediaId = (
   return pubMediaId.includes('_')
     ? `${pubMediaId.replace(/_[^_]*$/, '_')}*`
     : `${pubMediaId}*`;
+};
+
+/**
+ * Gets visible meeting items from a DateInfo, optionally filtered to songs
+ * only. Extracted from MediaCalendarPage.vue's `getVisibleMeetingSongs()`.
+ */
+export const getVisibleMeetingItems = (
+  dateInfo: DateInfo | null | undefined,
+  opts?: { songsOnly?: boolean },
+): MediaItem[] => {
+  return (dateInfo?.mediaSections ?? []).flatMap((section) =>
+    (section.items ?? []).filter(
+      (item) => !item.hidden && (!opts?.songsOnly || item.tag?.type === 'song'),
+    ),
+  );
 };
 
 /**

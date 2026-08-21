@@ -20,6 +20,11 @@ import {
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getJwIconFromKeyword } from 'src/helpers/fonts';
+import {
+  defaultPartDurations,
+  getMeetingPartOffsetMinutes,
+  getMeetingPartSequence,
+} from 'src/helpers/meeting-parts';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -315,26 +320,7 @@ const useTimer = () => {
 
   // Part durations in minutes (reactive)
   const partDurations = ref<Record<MeetingPart, number>>({
-    'abbreviated-wt': 30,
-    'ayfm-1': 14, // 15 minutes total, minus 1 minute for counsel
-    'ayfm-2': 0,
-    'ayfm-3': 0,
-    'ayfm-4': 0,
-    'ayfm-5': 0,
-    'bible-reading': 4,
-    cbs: 30,
-    'co-final-talk': 30,
-    'co-service-talk': 30,
-    'concluding-comments': 3,
-    gems: 10,
-    introduction: 1,
-    'lac-1': 15, // 15 minutes total
-    'lac-2': 0,
-    'lac-3': 0,
-    'public-talk': 30,
-    'song-and-optional-prayer': 5,
-    treasures: 10,
-    wt: 60,
+    ...defaultPartDurations,
   });
 
   const { toggleTimerWindow } = globalThis.electronApi;
@@ -732,55 +718,9 @@ const useTimer = () => {
     safePostTimerData(timerData);
   };
 
-  const sequence = computed(() => {
-    const date = selectedDateObject.value?.date;
-
-    let sequence: MeetingPart[];
-    if (isWeMeetingDay(date)) {
-      const isCo = isCoWeek(date);
-      sequence = isCo
-        ? [
-            'song-and-optional-prayer',
-            'public-talk',
-            'song-and-optional-prayer',
-            'abbreviated-wt',
-            'co-final-talk',
-            'song-and-optional-prayer',
-          ]
-        : [
-            'song-and-optional-prayer',
-            'public-talk',
-            'song-and-optional-prayer',
-            'wt',
-            'song-and-optional-prayer',
-          ];
-    } else if (isMwMeetingDay(date)) {
-      sequence = [
-        'song-and-optional-prayer',
-        'introduction',
-        'treasures',
-        'gems',
-        'bible-reading',
-        'ayfm-1',
-        'ayfm-2',
-        'ayfm-3',
-        'ayfm-4',
-        'ayfm-5',
-        'song-and-optional-prayer',
-        'lac-1',
-        'lac-2',
-        'lac-3',
-        ...(isCoWeek(date)
-          ? (['concluding-comments', 'co-service-talk'] as MeetingPart[])
-          : (['cbs', 'concluding-comments'] as MeetingPart[])),
-        'song-and-optional-prayer',
-      ];
-    } else {
-      sequence = [];
-    }
-
-    return sequence;
-  });
+  const sequence = computed(() =>
+    getMeetingPartSequence(selectedDateObject.value?.date),
+  );
 
   // Calculate ahead/behind minutes
   const calculateAheadBehindMinutes = (): null | number => {
@@ -848,22 +788,8 @@ const useTimer = () => {
     return anchorStartTime - offsetMinutes * 60 * 1000;
   };
 
-  const getMeetingPartOffsetMinutes = (partIndex: number) => {
-    let offset = 0;
-    for (let i = 0; i < partIndex; i++) {
-      const prevPart = sequence.value[i];
-      if (!prevPart) continue;
-      const dur = partDurations.value[prevPart] ?? 0;
-      offset += dur;
-      if (hasCounselAfterPart(prevPart, dur)) {
-        offset += 1;
-      }
-    }
-    return offset;
-  };
-
-  const hasCounselAfterPart = (part: MeetingPart, duration: number) =>
-    (part === 'bible-reading' || part.startsWith('ayfm-')) && duration > 0;
+  const meetingPartOffsetMinutes = (partIndex: number) =>
+    getMeetingPartOffsetMinutes(partIndex, sequence.value, partDurations.value);
 
   // Get planned start time for a meeting part
   const getPlannedStartTime = (part: MeetingPart): null | number => {
@@ -880,7 +806,7 @@ const useTimer = () => {
     const index = sequence.value.indexOf(part);
     if (index === -1) return null;
 
-    return meetingStart + getMeetingPartOffsetMinutes(index) * 60 * 1000;
+    return meetingStart + meetingPartOffsetMinutes(index) * 60 * 1000;
   };
 
   const meetingStartTime = computed(() => {

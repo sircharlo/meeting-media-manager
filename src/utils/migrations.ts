@@ -3,6 +3,7 @@ import type { OldAppConfig, SettingsValues } from 'src/types';
 
 import { defaultSettings } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { cloneMeetingQuickActionSettings } from 'src/utils/clone-settings';
 import { kebabToCamelCase } from 'src/utils/general';
 
 const { basename, fs, join, readdir } = globalThis.electronApi;
@@ -124,6 +125,6 @@ export const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
     return newPrefsObject;
   } catch (error) {
     errorCatcher(error);
-    return { ...defaultSettings };
+    return cloneMeetingQuickActionSettings({ ...defaultSettings });
   }
 };

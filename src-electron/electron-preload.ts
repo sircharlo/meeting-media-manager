@@ -1,7 +1,7 @@
 import type { ElectronApi } from 'src/types/electron';
 
 import { contextBridge, webUtils } from 'electron/renderer';
-import { IS_DEMO_MODE, PLATFORM } from 'src-electron/constants';
+import { IS_DEMO_MODE, IS_DEV, PLATFORM } from 'src-electron/constants';
 import { initCloseListeners } from 'src-electron/preload/close';
 import {
   fileUrlToPath,
@@ -100,6 +100,7 @@ const electronApi: ElectronApi = {
   inferExtension,
   isArchitectureMismatch: () => invoke('isArchitectureMismatch'),
   isDemoMode: IS_DEMO_MODE,
+  isDev: IS_DEV,
   isDownloadComplete: (downloadId: string) =>
     invoke('isDownloadComplete', downloadId),
   isDownloadErrorExpected: () => invoke('isDownloadErrorExpected'),

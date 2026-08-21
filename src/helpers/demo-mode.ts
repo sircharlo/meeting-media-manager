@@ -1,4 +1,10 @@
-import type { DateInfo, MediaItem, SettingsValues, Tag } from 'src/types';
+import type {
+  DateInfo,
+  MediaItem,
+  SettingsValues,
+  SongItem,
+  Tag,
+} from 'src/types';
 
 import { createMeetingSections } from 'src/helpers/media-sections';
 import { uuid } from 'src/shared/vanilla';
@@ -161,3 +167,49 @@ export const seedDemoData = () => {
   currentStateStore.currentCongregation = demoId;
   buildDemoDateInfo(jwStore, demoId);
 };
+
+let demoAudioUrl: string | undefined;
+
+const getDemoAudioUrl = () => {
+  if (demoAudioUrl) return demoAudioUrl;
+
+  const sampleRate = 4000;
+  const sampleCount = sampleRate * 35;
+  const bytes = new Uint8Array(44 + sampleCount);
+  const view = new DataView(bytes.buffer);
+  const writeText = (offset: number, value: string) => {
+    for (let index = 0; index < value.length; index++) {
+      view.setUint8(offset + index, value.charCodeAt(index));
+    }
+  };
+  writeText(0, 'RIFF');
+  view.setUint32(4, 36 + sampleCount, true);
+  writeText(8, 'WAVE');
+  writeText(12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, 1, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate, true);
+  view.setUint16(32, 1, true);
+  view.setUint16(34, 8, true);
+  writeText(36, 'data');
+  view.setUint32(40, sampleCount, true);
+  bytes.fill(128, 44);
+
+  let binary = '';
+  for (let index = 0; index < bytes.length; index += 8192) {
+    binary += String.fromCharCode(...bytes.subarray(index, index + 8192));
+  }
+  demoAudioUrl = `data:audio/wav;base64,${globalThis.btoa(binary)}`;
+  return demoAudioUrl;
+};
+
+export const getDemoSongLibrary = (): SongItem[] => [
+  {
+    duration: 35,
+    path: 'demo-background-music.wav',
+    remoteUrl: getDemoAudioUrl(),
+    title: 'Demo background music',
+  },
+];

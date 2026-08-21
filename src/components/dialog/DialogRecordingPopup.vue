@@ -18,13 +18,13 @@
       </div>
 
       <div class="action-popup__scroll full-width">
-        <template v-if="props.isRecording">
+        <template v-if="isRecording">
           <p class="card-section-title text-dark-grey row q-px-md">
             {{ t('recording-duration') }}
           </p>
           <div class="row q-px-md q-pt-xs q-pb-sm">
             <div class="recording-popup__duration col text-weight-medium">
-              {{ props.recordingDuration }}
+              {{ formattedDuration }}
             </div>
           </div>
         </template>
@@ -51,7 +51,7 @@
             :icon="isRecording ? 'mmm-stop' : 'mmm-record'"
             :label="isRecording ? t('stop-recording') : t('start-recording')"
             unelevated
-            @click="toggleRecording"
+            @click="toggleRecording()"
           />
         </div>
       </div>
@@ -63,24 +63,20 @@
 import type { QMenu } from 'quasar';
 
 import { storeToRefs } from 'pinia';
-import { sendKeyboardShortcut } from 'src/helpers/keyboard-shortcuts';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useRecordingStore } from 'stores/recording-state';
 import { onBeforeUnmount, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);
 
+const recording = useRecordingStore();
+const { formattedDuration, isRecording } = storeToRefs(recording);
+const { toggleRecording } = recording;
 const { openFolder } = globalThis.electronApi;
 
 const open = defineModel<boolean>({ default: false });
-const props = defineProps<{
-  isRecording: boolean;
-  recordingDuration: string;
-}>();
-const emit = defineEmits<{
-  'update:isRecording': [value: boolean];
-}>();
 
 const { t } = useI18n();
 
@@ -88,37 +84,11 @@ const recordingPopup = useTemplateRef<QMenu>('recordingPopup');
 const popupContent = useTemplateRef<HTMLElement>('popupContent');
 let popupResizeObserver: ResizeObserver | undefined;
 
-const toggleRecording = () => {
-  if (!currentSettings.value) return;
-
-  if (props.isRecording) {
-    // Stop recording
-    const stopShortcut =
-      currentSettings.value.recordingStopShortcut ||
-      currentSettings.value.recordingStartShortcut;
-    if (stopShortcut) {
-      sendKeyboardShortcut(stopShortcut, 'Recording');
-      emit('update:isRecording', false);
-    }
-  } else {
-    // Start recording
-    const startShortcut = currentSettings.value.recordingStartShortcut;
-    if (startShortcut) {
-      sendKeyboardShortcut(startShortcut, 'Recording');
-      emit('update:isRecording', true);
-    }
-  }
-};
-
 const openRecordingFolder = () => {
   if (!currentSettings.value?.recordingFolder) return;
   openFolder(currentSettings.value.recordingFolder);
 };
 
-// Anchored bottom-up (self="bottom middle") so it visually grows out of the
-// action island. A ResizeObserver repositions it whenever its rendered size
-// actually changes, instead of guessing which reactive values might affect
-// height.
 watch(popupContent, (el) => {
   popupResizeObserver?.disconnect();
   popupResizeObserver = undefined;

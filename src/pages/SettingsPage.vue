@@ -354,6 +354,9 @@
                   </q-item>
                 </template>
               </div>
+              <SettingsMeetingChecklists
+                v-if="groupId === 'interfaceShortcuts' && !filterActive"
+              />
             </template>
 
             <q-item
@@ -389,6 +392,7 @@ import type {
 import { useEventListener, whenever } from '@vueuse/core';
 import { useRouteParams } from '@vueuse/router';
 import BaseInput from 'components/form-inputs/BaseInput.vue';
+import SettingsMeetingChecklists from 'components/settings/SettingsMeetingChecklists.vue';
 import { storeToRefs } from 'pinia';
 import { type QForm, type QInput, useMeta, useQuasar } from 'quasar';
 import DialogCongregationLookup from 'src/components/dialog/DialogCongregationLookup.vue';
@@ -1135,6 +1139,13 @@ body.body--dark .settings-rail {
   background: transparent;
   border: none;
   border-radius: 8px;
+  /* Native <button> elements don't inherit the page's text color by
+     default - they fall back to the browser's own default button text
+     color (dark, regardless of app theme) unless told otherwise. Every
+     other custom button on this page (e.g. .settings-back-btn) already
+     sets one explicitly; this one was missed, which is why inactive rail
+     items rendered black-on-dark in dark mode. */
+  color: inherit;
   cursor: pointer;
   display: flex;
   font: inherit;

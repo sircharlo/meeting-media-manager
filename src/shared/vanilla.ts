@@ -177,6 +177,7 @@ const logPrefixes = {
   mwMedia: '🌅 Midweek Meeting Media',
   obs: '📡 OBS',
   publicationMedia: '📰 Publication Media',
+  recording: '🔴 Recording',
   sentry: '🐛 Sentry',
   shortcutInput: '🎹 Shortcut Input',
   sqlite: '🗄️ SQLite',

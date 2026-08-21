@@ -446,6 +446,14 @@ export const useCurrentStateStore = defineStore('current-state', {
         return false;
       }
     },
+    // Narrower than mediaIsPlaying, which is really "a media item is loaded
+    // /selected" (url !== '') and stays true long after that item finishes
+    // playing, until something else is selected or explicitly stopped. Use
+    // this one specifically for "is audio/video actively playing right now"
+    // checks (e.g. gating background music) - mediaIsPlaying would otherwise
+    // keep background music blocked for the rest of the day after the last
+    // meeting item finishes.
+    mediaIsActivelyPlaying: (state) => state.mediaPlaying.action === 'play',
     // Direct access to media sections - no need for getter methods anymore
     // Use selectedDateObject.mediaSections directly for all media
     // Use selectedDateObject.mediaSections.find(s => s.config.uniqueId === section)?.items.filter(item => !item.hidden) for visible media

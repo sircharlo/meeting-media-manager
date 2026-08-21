@@ -4,6 +4,10 @@ import type { RESOLUTIONS } from 'src/constants/settings';
 
 import type { JwLangCode } from './jw/lang';
 import type { MediaSectionIdentifier } from './media';
+import type {
+  MeetingChecklistCategory,
+  MeetingChecklistItem,
+} from './meeting-quick-actions';
 
 export type MaxRes = (typeof RESOLUTIONS)[number];
 
@@ -187,6 +191,7 @@ export type SettingsItemSubgroup =
   | 'obsStudio'
   | 'pinyin'
   | 'playback'
+  | 'quickActions'
   | 'setupWizard'
   | 'setupWizard.backgroundMusic'
   | 'specialDates'
@@ -240,6 +245,7 @@ export interface SettingsValues {
   enableMediaDisplayButton: boolean;
   enableMediaPreview: boolean;
   enableMediaWindowFadeTransitions: boolean;
+  enableMeetingQuickActions: boolean;
   enableMusicButton: boolean;
   enablePinyinSongs: boolean;
   enablePlaybackSpeedControl: boolean;
@@ -260,6 +266,10 @@ export interface SettingsValues {
   localDateFormat: string;
   maxRes: MaxRes;
   mediaAutoExportFolder: string;
+  meetingQuickActionsCategoriesAfter: MeetingChecklistCategory[];
+  meetingQuickActionsCategoriesBefore: MeetingChecklistCategory[];
+  meetingQuickActionsChecklistAfter: MeetingChecklistItem[];
+  meetingQuickActionsChecklistBefore: MeetingChecklistItem[];
   meetingScheduleChangeDate: `${number}/${number}/${number}` | null;
   meetingScheduleChangeMwDay: `${number}` | null;
   meetingScheduleChangeMwStartTime: `${number}:${number}` | null;

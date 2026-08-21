@@ -436,7 +436,9 @@ function updateMeetingScheduleIfNeeded(settings: SettingsValues) {
 // meeting day or no start time is configured. Shared by
 // remainingTimeBeforeMeetingStart() and anything that needs to display the
 // planned start time itself, not just a countdown to it.
-export const getTodaysMeetingStartDateTime = (): Date | null => {
+export const getTodaysMeetingStartDateTime = (
+  referenceDate = new Date(),
+): Date | null => {
   try {
     const currentState = useCurrentStateStore();
     const meetingDay =
@@ -444,7 +446,7 @@ export const getTodaysMeetingStartDateTime = (): Date | null => {
       !!currentState.selectedDayMeetingType;
     if (!meetingDay) return null;
 
-    const now = new Date();
+    const now = new Date(referenceDate);
     const weMeeting = currentState.selectedDayMeetingType === 'we';
     const meetingStartTimes = shouldUseChangedMeetingSchedule(now)
       ? {
@@ -472,11 +474,11 @@ export const getTodaysMeetingStartDateTime = (): Date | null => {
   }
 };
 
-export const remainingTimeBeforeMeetingStart = () => {
+export const remainingTimeBeforeMeetingStart = (referenceDate = new Date()) => {
   try {
-    const meetingStartDateTime = getTodaysMeetingStartDateTime();
+    const meetingStartDateTime = getTodaysMeetingStartDateTime(referenceDate);
     if (!meetingStartDateTime) return 0;
-    return getDateDiff(meetingStartDateTime, new Date(), 'seconds');
+    return getDateDiff(meetingStartDateTime, referenceDate, 'seconds');
   } catch (error) {
     errorCatcher(error);
     return 0;

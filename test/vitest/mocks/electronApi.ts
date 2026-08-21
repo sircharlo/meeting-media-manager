@@ -104,6 +104,7 @@ export const electronApi: ElectronApi = {
   },
   isArchitectureMismatch: async () => false,
   isDemoMode: false,
+  isDev: false,
   isDownloadComplete: async () => null,
   isDownloadErrorExpected: async () => false,
   isUsablePath: async function (path) {
