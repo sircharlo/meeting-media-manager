@@ -34,5 +34,6 @@ export const TRUSTED_DOMAINS: string[] = JW_DOMAINS.concat([
 ]);
 
 // General
+export const FULL_HD_RESOLUTION = [1920, 1080] as const;
 export const HD_RESOLUTION = [1280, 720] as const;
 export const WINDOW_MOVE_THROTTLE_MS = 100;

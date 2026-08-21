@@ -1,6 +1,7 @@
 import type { BrowserWindow } from 'electron';
 
 import {
+  FULL_HD_RESOLUTION,
   HD_RESOLUTION,
   PLATFORM,
   WINDOW_MOVE_THROTTLE_MS,
@@ -606,6 +607,7 @@ export const moveMediaWindow = async (
     await setWindowPosition(
       targetInfo.targetDisplayNr,
       targetInfo.targetFullscreen,
+      hasExplicitTarget,
     );
   } catch (e) {
     captureElectronError(e, {
@@ -708,71 +710,14 @@ export function createMediaWindow() {
         'log',
       );
 
-      // Set windowed bounds to HD resolution
-      const maxWidth = screenBounds.width * 0.5; // 50% of screen width
-      const maxHeight = screenBounds.height * 0.5; // 50% of screen height
-
-      // Calculate scale to fit HD resolution within screen bounds
-      const scaleX = maxWidth / HD_RESOLUTION[0];
-      const scaleY = maxHeight / HD_RESOLUTION[1];
-
-      // Don't scale up, only down
-      const scale = Math.min(scaleX, scaleY, 1);
-
-      const windowedWidth = Math.floor(HD_RESOLUTION[0] * scale);
-      const windowedHeight = Math.floor(HD_RESOLUTION[1] * scale);
-
-      // Center the window on the screen
-      const x =
-        screenBounds.x + Math.floor((screenBounds.width - windowedWidth) / 2);
-      const y =
-        screenBounds.y + Math.floor((screenBounds.height - windowedHeight) / 2);
-
-      const applyWindowedBounds = () => {
-        // Check if window is still valid
-        if (
-          !mediaWindowInfo.mediaWindow ||
-          mediaWindowInfo.mediaWindow.isDestroyed()
-        ) {
-          isMovingWindow = false;
-          return;
-        }
-
-        log(
-          '[createMediaWindow] Applying windowed bounds',
-          'electronWindow',
-          'debug',
-          { height: windowedHeight, width: windowedWidth, x, y },
-        );
-
-        mediaWindowInfo.mediaWindow.setBounds({
-          height: windowedHeight,
-          width: windowedWidth,
-          x,
-          y,
-        });
-        isMovingWindow = false;
-      };
-
-      isMovingWindow = true;
-
-      // On all platforms, if fullscreen, wait for leave-full-screen before
-      // applying bounds fullscreen exit is async on macOS and the event
-      // is emitted on all platforms, so this is safe everywhere.
-      if (mediaWindowInfo.mediaWindow.isFullScreen()) {
-        log(
-          '[createMediaWindow] Window is fullscreen, waiting for leave-full-screen before repositioning',
-          'electronWindow',
-          'debug',
-        );
-        mediaWindowInfo.mediaWindow.once(
-          'leave-full-screen',
-          applyWindowedBounds,
-        );
-        mediaWindowInfo.mediaWindow.setFullScreen(false);
-      } else {
-        applyWindowedBounds();
-      }
+      // Reuse the same serialized/lock-aware path explicit Windowed requests
+      // go through (identical bounds formula) instead of duplicating the
+      // sizing math and manipulating isMovingWindow directly - the latter
+      // bypassed releaseLock()'s queue-draining entirely, which could lose a
+      // request queued by another caller while this ran, or leave a caller's
+      // promise (and the popup's screen/mode refresh) hanging forever if the
+      // window was destroyed mid-transition.
+      void setWindowPosition(0, false);
     } else {
       log(
         '[createMediaWindow] Window already properly positioned, keeping current bounds',
@@ -784,6 +729,11 @@ export function createMediaWindow() {
 
   mediaWindowInfo.mediaWindow.on('closed', () => {
     isMovingWindow = false;
+    // A queued request has nothing left to apply to once the window is
+    // gone; clearing it also prevents it from being misapplied to whatever
+    // new media window gets created next (this module-level state persists
+    // across the window's lifecycle).
+    pendingWindowPosition = null;
     mediaWindowInfo.mediaWindow = null;
   });
 
@@ -936,25 +886,49 @@ const notifyMainWindowAboutScreenOrWindowChange = throttleWithTrailing(() => {
  *     a macOS fullscreen animation was still running.
  */
 let isMovingWindow = false;
+let pendingWindowPosition: null | {
+  displayNr?: number;
+  explicit: boolean;
+  fullscreen: boolean;
+} = null;
 
 const setWindowPosition = (
   displayNr?: number,
   fullscreen = true,
+  // Explicit requests (the user clicking Full Screen/Windowed, or the screen
+  // map) must win over automatic ones (main-window move, display-change
+  // resync) when both land while a transition is already in flight - an
+  // explicit request already queued must NOT be silently clobbered by an
+  // auto-trigger that arrives before it's drained, even though "last write
+  // wins" is otherwise the right coalescing rule for same-priority requests.
+  explicit = false,
 ): Promise<void> => {
   return new Promise<void>((resolve) => {
     log('[setWindowPosition] Requested', 'electronWindow', 'debug', {
       displayNr,
+      explicit,
       fullscreen,
       isMovingWindow,
       platform: PLATFORM,
     });
 
-    // Guard: if a transition is already in flight, drop this request.
-    // moveMediaWindowThrottled will re-fire once the throttle window passes,
-    // and by then isMovingWindow will have been cleared by the terminal callback.
+    // Guard: if a transition is already in flight, queue this request (the
+    // most recent one wins, except an explicit request already queued is
+    // never overwritten by a later automatic one - see the `explicit` note
+    // above). It's applied once the in-flight transition's terminal
+    // callback releases the lock.
     if (isMovingWindow) {
+      if (!pendingWindowPosition?.explicit || explicit) {
+        pendingWindowPosition = { displayNr, explicit, fullscreen };
+      } else {
+        log(
+          '[setWindowPosition] Dropping automatic request in favor of already-queued explicit request',
+          'electronWindow',
+          'log',
+        );
+      }
       log(
-        '[setWindowPosition] Already moving window, skipping',
+        '[setWindowPosition] Already moving window, queueing latest request',
         'electronWindow',
         'log',
       );
@@ -965,9 +939,27 @@ const setWindowPosition = (
     // Acquire the lock immediately, before any async work.
     isMovingWindow = true;
 
+    let lockReleased = false;
     const releaseLock = () => {
+      if (lockReleased) return;
+      lockReleased = true;
       isMovingWindow = false;
       resolve();
+      // Covers the queued/drained path too, not just direct moveMediaWindow
+      // calls (whose own `finally` already does this) - without this, a
+      // request that got queued here and applied later would never tell the
+      // display popup its screen/mode state is now stale.
+      notifyMainWindowAboutScreenOrWindowChange();
+
+      const nextRequest = pendingWindowPosition;
+      pendingWindowPosition = null;
+      if (nextRequest) {
+        void setWindowPosition(
+          nextRequest.displayNr,
+          nextRequest.fullscreen,
+          nextRequest.explicit,
+        );
+      }
     };
 
     try {
@@ -1048,7 +1040,10 @@ const setWindowPosition = (
         // Wait for the fullscreen animation to complete on ALL platforms.
         // On Windows the event fires synchronously (effectively), on macOS it
         // is genuinely async — using the event means we're safe on both.
-        const enterFullScreenHandler = () => {
+        // Create the fallback timer before invoking setFullScreen below so the
+        // handler can safely clear it even if the event is emitted
+        // synchronously by a platform implementation.
+        function enterFullScreenHandler() {
           clearTimeout(fullscreenFallbackTimeout);
           log(
             '[applyFullscreen] enter-full-screen received — transition complete',
@@ -1058,11 +1053,7 @@ const setWindowPosition = (
           );
           releaseLock();
           focusMediaWindow();
-        };
-        mediaWindowInfo.mediaWindow.once(
-          'enter-full-screen',
-          enterFullScreenHandler,
-        );
+        }
 
         // Safety net: some window managers can silently ignore a fullscreen
         // request without destroying the window, in which case
@@ -1086,6 +1077,11 @@ const setWindowPosition = (
           );
           releaseLock();
         }, 5000);
+
+        mediaWindowInfo.mediaWindow.once(
+          'enter-full-screen',
+          enterFullScreenHandler,
+        );
 
         log(
           '[applyFullscreen] Calling setFullScreen(true)',
@@ -1119,20 +1115,20 @@ const setWindowPosition = (
         // Windowed size: the smaller of HD_RESOLUTION or a 16:9 box fitting
         // within 75% of the current media screen, centered.
         const maxWidth = Math.min(
-          HD_RESOLUTION[0],
+          FULL_HD_RESOLUTION[0],
           Math.floor(targetScreenBounds.width * 0.75),
         );
         const maxHeight = Math.min(
-          HD_RESOLUTION[1],
+          FULL_HD_RESOLUTION[1],
           Math.floor(targetScreenBounds.height * 0.75),
         );
 
-        const scaleX = maxWidth / HD_RESOLUTION[0];
-        const scaleY = maxHeight / HD_RESOLUTION[1];
+        const scaleX = maxWidth / FULL_HD_RESOLUTION[0];
+        const scaleY = maxHeight / FULL_HD_RESOLUTION[1];
         const scale = Math.min(scaleX, scaleY, 1);
 
-        const width = Math.floor(HD_RESOLUTION[0] * scale);
-        const height = Math.floor(HD_RESOLUTION[1] * scale);
+        const width = Math.floor(FULL_HD_RESOLUTION[0] * scale);
+        const height = Math.floor(FULL_HD_RESOLUTION[1] * scale);
         const newBounds = {
           height,
           width,
@@ -1202,12 +1198,7 @@ const setWindowPosition = (
           return;
         }
 
-        const currentlyFullscreen =
-          mediaWindowInfo.mediaWindow.isFullScreen() ||
-          isWindowEffectivelyFullscreen(
-            mediaWindowInfo.mediaWindow.getBounds(),
-            screens[getWindowScreen(mediaWindowInfo.mediaWindow)]?.bounds,
-          );
+        const currentlyFullscreen = mediaWindowInfo.mediaWindow.isFullScreen();
 
         if (currentlyFullscreen) {
           log(
@@ -1223,9 +1214,11 @@ const setWindowPosition = (
             },
           );
 
-          // NOTE: isMovingWindow stays true through this async gap.
-          // Any concurrent moveMediaWindow call will be dropped by the guard.
-          mediaWindowInfo.mediaWindow.once('leave-full-screen', () => {
+          // NOTE: isMovingWindow stays true through this async gap. Any
+          // concurrent moveMediaWindow call is queued (see pendingWindowPosition)
+          // and applied once this transition's terminal callback releases the lock.
+          function leaveFullScreenHandler() {
+            clearTimeout(leaveFullscreenFallbackTimeout);
             if (
               !mediaWindowInfo.mediaWindow ||
               mediaWindowInfo.mediaWindow.isDestroyed()
@@ -1246,7 +1239,39 @@ const setWindowPosition = (
               { bounds: mediaWindowInfo.mediaWindow.getBounds() },
             );
             callback();
-          });
+          }
+
+          // Safety net mirroring applyFullscreen's: some window managers can
+          // silently ignore a fullscreen-exit request without destroying the
+          // window, in which case leave-full-screen never fires and
+          // isMovingWindow would otherwise stay locked forever - exactly the
+          // "clicking windowed repeatedly does nothing" failure mode. On
+          // timeout we just release the lock without invoking callback; the
+          // next request (the user's retry, or the queued one) re-checks
+          // isFullScreen() fresh and proceeds correctly either way.
+          const leaveFullscreenFallbackTimeout = setTimeout(() => {
+            if (
+              !mediaWindowInfo.mediaWindow ||
+              mediaWindowInfo.mediaWindow.isDestroyed()
+            ) {
+              return;
+            }
+            mediaWindowInfo.mediaWindow.removeListener(
+              'leave-full-screen',
+              leaveFullScreenHandler,
+            );
+            log(
+              '[leaveFullscreen] Timed out waiting for leave-full-screen — releasing lock',
+              'electronWindow',
+              'warn',
+            );
+            releaseLock();
+          }, 5000);
+
+          mediaWindowInfo.mediaWindow.once(
+            'leave-full-screen',
+            leaveFullScreenHandler,
+          );
 
           log(
             '[leaveFullscreen] Calling setFullScreen(false)',
