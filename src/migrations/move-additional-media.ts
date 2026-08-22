@@ -140,7 +140,13 @@ const getValidAdditionalItems = (
     );
   });
 
-  if (!validItems.length) {
+  // Only worth reporting when there was actually something to migrate and
+  // all of it turned out invalid (each invalid item already reported its
+  // own error above, right where it happened). An additionalItems array
+  // that was already empty is a normal "nothing stored for this date" case
+  // - see MMM-V2-3HA, where this fired for an empty array with no
+  // accompanying invalid-item errors.
+  if (additionalItems.length && !validItems.length) {
     reportMoveAdditionalMediaError(
       'No valid items found for targetDate in moveAdditionalMediaMaps',
       { congId, targetDate },
