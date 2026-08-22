@@ -22,10 +22,10 @@
     "generate:jw-icons-fallbacks": "node ./scripts/update-jw-icons-fallbacks.mjs",
     "generate:logos": "node ./build/generate-logos.js",
     "refresh:jw-icons-fallbacks": "node ./scripts/refresh-jw-icons-fallbacks.mjs",
-    "dev": "quasar dev -m electron",
-    "build": "quasar build -m electron",
-    "build:debug": "quasar build -m electron --debug",
-    "build:unpacked": "quasar build -m electron --skip-pkg",
+    "dev": "node scripts/fix-i18n-locales.mjs && quasar dev -m electron",
+    "build": "node scripts/fix-i18n-locales.mjs && quasar build -m electron",
+    "build:debug": "node scripts/fix-i18n-locales.mjs && quasar build -m electron --debug",
+    "build:unpacked": "node scripts/fix-i18n-locales.mjs && quasar build -m electron --skip-pkg",
     "docs:build": "node docs/utils/fix-doc-markdown.mjs && vitepress build docs",
     "docs:dev": "node docs/utils/fix-doc-markdown.mjs && vitepress dev docs",
     "docs:preview": "vitepress preview docs",
@@ -34,7 +34,7 @@
     "format": "prettier \"**/*\" --ignore-unknown --write",
     "lint": "eslint -c ./eslint.config.js './src/**/*.{js,ts,cjs,mjs,mts,vue}' './src-electron/**/*.{js,ts,cjs,mjs,mts}' && vue-tsc --noEmit -p tsconfig.json",
     "depcheck": "depcheck --skip-missing && depcheck src-electron --skip-missing",
-    "test:unit": "vitest --project quasar --project electron",
+    "test:unit": "node scripts/fix-i18n-locales.mjs && vitest --project quasar --project electron",
     "screenshot:refresh": "node test/playwright/run.mjs"
   },
   "dependencies": {

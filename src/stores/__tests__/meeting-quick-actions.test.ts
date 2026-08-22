@@ -1,11 +1,17 @@
 import { createPinia, setActivePinia } from 'pinia';
 import { useCurrentStateStore } from 'stores/current-state';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useMeetingQuickActionsStore } from '../meeting-quick-actions';
 
 beforeEach(() => {
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date('2026-08-21T12:00:00'));
   setActivePinia(createPinia());
+});
+
+afterEach(() => {
+  vi.useRealTimers();
 });
 
 describe('meeting quick-actions store', () => {
