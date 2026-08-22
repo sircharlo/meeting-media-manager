@@ -10,6 +10,9 @@ export const localeOptions = locales.filter((locale) =>
 // 100.0% translated as of 2026-08-22
 import en from './en.json' with { type: 'json' };
 
+// 99.2% translated as of 2026-08-22
+import sl from './sl.json' with { type: 'json' };
+
 // 99.1% translated as of 2026-08-22
 import fr from './fr.json' with { type: 'json' };
 
@@ -18,9 +21,6 @@ import ty from './ty.json' with { type: 'json' };
 
 // 94.6% translated as of 2026-08-22
 import cmnHans from './cmn-hans.json' with { type: 'json' };
-
-// 94.2% translated as of 2026-08-22
-import sl from './sl.json' with { type: 'json' };
 
 // 93.6% translated as of 2026-08-22
 import et from './et.json' with { type: 'json' };
