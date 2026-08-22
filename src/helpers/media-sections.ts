@@ -424,10 +424,25 @@ export const getExportedFilenamePlacement = (
   };
 };
 
+// Guards every section-order read/write against a corrupted or stale
+// watched-item fileUrl pointing outside the folder the user actually
+// configured (e.g. one that ended up resolving to C:\Windows\System32 -
+// see MMM-V2-3H7). Without this, a single bad fileUrl persisted in a
+// user's layout would make every subsequent save retry a doomed write
+// against an arbitrary filesystem location forever.
+const isWithinWatchedFolder = (path: string): boolean => {
+  const folderToWatch = useCurrentStateStore().currentSettings?.folderToWatch;
+  if (!path || !folderToWatch) return false;
+
+  return path.startsWith(globalThis.electronApi.resolve(folderToWatch));
+};
+
 const readWatchedMediaSectionOrder = async (
   sectionOrderFilePath: string,
 ): Promise<WatchedMediaSectionOrder> => {
   try {
+    if (!isWithinWatchedFolder(sectionOrderFilePath)) return {};
+
     const { fs, hideFileOnWindows, showFileOnWindows } = globalThis.electronApi;
     const { pathExists, readJSON } = fs;
 
@@ -477,6 +492,15 @@ const writeWatchedMediaSectionOrder = async (
   sectionOrderFilePath: string,
   data: WatchedMediaSectionOrder,
 ) => {
+  if (!isWithinWatchedFolder(sectionOrderFilePath)) {
+    log(
+      `Refused to write section-order file outside the watched folder: ${sectionOrderFilePath}`,
+      'mediaSections',
+      'warn',
+    );
+    return;
+  }
+
   const { fs, hideFileOnWindows } = globalThis.electronApi;
   const { rename, writeFile } = fs;
 

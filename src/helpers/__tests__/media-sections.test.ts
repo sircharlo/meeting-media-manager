@@ -13,6 +13,14 @@ const writeFileMock = vi.fn();
 
 const toPath = (fileUrl: string) => fileUrl.replace('file://', '');
 
+const currentStateStore = {
+  currentSettings: { folderToWatch: '/watched' } as Record<string, unknown>,
+};
+
+vi.mock('src/stores/current-state', () => ({
+  useCurrentStateStore: () => currentStateStore,
+}));
+
 vi.mock('boot/i18n', () => ({
   i18n: {
     global: {
@@ -95,6 +103,7 @@ describe('watched media layout persistence', () => {
       hideFileOnWindows: hideFileOnWindowsMock,
       join: (...parts: string[]) => parts.join('/'),
       PLATFORM: 'linux',
+      resolve: (value: string) => value,
       showFileOnWindows: showFileOnWindowsMock,
     });
   });
@@ -321,6 +330,35 @@ describe('watched media layout persistence', () => {
       'not-tracked.mp4',
     );
 
+    expect(writeFileMock).not.toHaveBeenCalled();
+    expect(renameMock).not.toHaveBeenCalled();
+  });
+
+  it('refuses to read or write a section-order file outside the configured watch folder', async () => {
+    // Regression test for MMM-V2-3H7: a corrupted/stale watched-item fileUrl
+    // resolved to a folder outside the user's configured watch folder
+    // (there, C:\Windows\System32), and every save kept retrying a doomed
+    // write against it.
+    const { saveWatchedMediaLayout } = await import('../media-sections');
+    const mediaSections: MediaSectionWithConfig[] = [
+      {
+        config: { uniqueId: 'tgw' },
+        items: [
+          {
+            fileUrl: 'file:///etc/2026-06-11/local-video.mp4',
+            sortOrderOriginal: Number.MAX_SAFE_INTEGER,
+            source: 'watched',
+            title: 'Local video',
+            type: 'media',
+            uniqueId: 'watched-1',
+          },
+        ],
+      },
+    ];
+
+    await saveWatchedMediaLayout(mediaSections);
+
+    expect(pathExistsMock).not.toHaveBeenCalled();
     expect(writeFileMock).not.toHaveBeenCalled();
     expect(renameMock).not.toHaveBeenCalled();
   });
