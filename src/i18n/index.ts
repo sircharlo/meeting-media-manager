@@ -7,59 +7,59 @@ export const localeOptions = locales.filter((locale) =>
 
 // ! This file will be updated by the update-langs script.
 
-// 100.0% translated as of 2026-08-21
+// 100.0% translated as of 2026-08-22
 import en from './en.json' with { type: 'json' };
 
-// 94.7% translated as of 2026-08-21
+// 94.6% translated as of 2026-08-22
 import cmnHans from './cmn-hans.json' with { type: 'json' };
 
-// 94.3% translated as of 2026-08-21
+// 94.2% translated as of 2026-08-22
 import sl from './sl.json' with { type: 'json' };
 
-// 93.9% translated as of 2026-08-21
+// 93.8% translated as of 2026-08-22
 import fr from './fr.json' with { type: 'json' };
 
-// 93.7% translated as of 2026-08-21
+// 93.6% translated as of 2026-08-22
 import et from './et.json' with { type: 'json' };
 
-// 93.7% translated as of 2026-08-21
+// 93.6% translated as of 2026-08-22
 import ty from './ty.json' with { type: 'json' };
 
-// 93.4% translated as of 2026-08-21
+// 93.3% translated as of 2026-08-22
 import it from './it.json' with { type: 'json' };
 
-// 74.7% translated as of 2026-08-21
+// 74.6% translated as of 2026-08-22
 import pt from './pt.json' with { type: 'json' };
 
-// 61.9% translated as of 2026-08-21
+// 61.8% translated as of 2026-08-22
 import de from './de.json' with { type: 'json' };
 
-// 58.0% translated as of 2026-08-21
+// 57.9% translated as of 2026-08-22
 import ko from './ko.json' with { type: 'json' };
 
-// 55.1% translated as of 2026-08-21
+// 55.0% translated as of 2026-08-22
 import ru from './ru.json' with { type: 'json' };
 
-// 51.9% translated as of 2026-08-21
+// 51.8% translated as of 2026-08-22
 import nl from './nl.json' with { type: 'json' };
 
-// 46.6% translated as of 2026-08-21
+// 46.5% translated as of 2026-08-22
 import es from './es.json' with { type: 'json' };
 
-// 43.6% translated as of 2026-08-21
+// 43.5% translated as of 2026-08-22
 import hu from './hu.json' with { type: 'json' };
 
-// 37.0% translated as of 2026-08-21
+// 36.9% translated as of 2026-08-22
 import uk from './uk.json' with { type: 'json' };
 
-// 0.6% translated as of 2026-08-21
+// 0.4% translated as of 2026-08-22
 // import bzs from './bzs.json' with { type: 'json' };
 
-// 0.1% translated as of 2026-08-21
-// import cmnHant from './cmn-hant.json' with { type: 'json' };
-
-// 0.1% translated as of 2026-08-21
+// 0.1% translated as of 2026-08-22
 // import zh from './zh.json' with { type: 'json' };
+
+// 0.0% translated as of 2026-08-22
+// import cmnHant from './cmn-hant.json' with { type: 'json' };
 
 export default {
   cmnHans,
