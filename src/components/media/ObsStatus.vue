@@ -192,7 +192,7 @@ const initObsListeners = async () => {
       fetchSceneList();
     });
     obsWebSocketInfo.obsWebSocket.on('SceneListChanged', (data) => {
-      scenes.value = data.scenes;
+      scenes.value = data.scenes.reverse();
     });
     obsConnect();
   } catch (error) {

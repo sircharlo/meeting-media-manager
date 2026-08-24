@@ -200,6 +200,20 @@ const getSetSceneArguments = (newProgramScene: string) => {
   const hasSceneUuid = scenes.value?.every((scene) => 'sceneUuid' in scene);
   const useUuid = hasSceneUuid && configuredScenesAreAllUUIDs.value;
 
+  if (isUUID(newProgramScene) && !useUuid) {
+    log('OBS scene UUID would be sent as sceneName', 'obs', 'warn', {
+      configuredScenesAreAllUUIDs: configuredScenesAreAllUUIDs.value,
+      hasSceneUuid,
+      newProgramScene,
+      obsCameraScene: currentSettings.value?.obsCameraScene,
+      obsImageScene: currentSettings.value?.obsImageScene,
+      obsMediaScene: currentSettings.value?.obsMediaScene,
+      sampleScenes: scenes.value?.slice(0, 3),
+      scenesCount: scenes.value?.length,
+      useUuid,
+    });
+  }
+
   return {
     ...(useUuid
       ? { sceneUuid: newProgramScene }
@@ -227,10 +241,23 @@ const setObsScene = async (sceneType?: ObsSceneType, desiredScene?: string) => {
     if (!newProgramScene) return;
 
     if (sceneExists(newProgramScene)) {
-      await obsWebSocketInfo.obsWebSocket?.call(
-        'SetCurrentProgramScene',
-        getSetSceneArguments(newProgramScene),
-      );
+      const args = getSetSceneArguments(newProgramScene);
+
+      // A UUID value must always be sent as sceneUuid, never sceneName.
+      // If configuredScenesAreAllUUIDs was momentarily false (e.g. during
+      // store rehydration, congregation switch, or settings save),
+      // getSetSceneArguments could incorrectly return { sceneName: uuid }.
+      // Force the correct key when the value is unmistakably a UUID.
+      if (isUUID(newProgramScene) && 'sceneName' in args) {
+        await obsWebSocketInfo.obsWebSocket?.call('SetCurrentProgramScene', {
+          sceneUuid: newProgramScene,
+        });
+      } else {
+        await obsWebSocketInfo.obsWebSocket?.call(
+          'SetCurrentProgramScene',
+          args,
+        );
+      }
     } else {
       notifySceneNotFound();
     }
