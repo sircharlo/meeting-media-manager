@@ -2306,6 +2306,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@quasar/vite-plugin@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "@quasar/vite-plugin@npm:2.0.1"
+  peerDependencies:
+    "@vitejs/plugin-vue": ^6.0.5
+    quasar: ^2.24.0
+    vite: ^8.0.0
+    vue: ^3.0.0
+  checksum: 10c0/474b7be5a2fe571a46b8d2448752c28c5bd4cfeca95f2d3b76c59fbcc22b270c2b7d93a0d0f6bf578a009da09f604ccf151ba4b7d28bbccbc1c1200a18ec6992
+  languageName: node
+  linkType: hard
+
 "@rolldown/binding-android-arm-eabi@npm:1.2.5":
   version: 1.2.5
   resolution: "@rolldown/binding-android-arm-eabi@npm:1.2.5"
@@ -3714,9 +3726,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/language-core@npm:3.3.10":
-  version: 3.3.10
-  resolution: "@vue/language-core@npm:3.3.10"
+"@vue/language-core@npm:3.3.11":
+  version: 3.3.11
+  resolution: "@vue/language-core@npm:3.3.11"
   dependencies:
     "@volar/language-core": "npm:2.4.28"
     "@vue/compiler-dom": "npm:^3.5.0"
@@ -3725,7 +3737,7 @@ __metadata:
     muggle-string: "npm:^0.4.1"
     path-browserify: "npm:^1.0.1"
     picomatch: "npm:^4.0.4"
-  checksum: 10c0/4ce3f64d9c549a7e96023594cbe5a3b5b883e7af0660e8db347c877968a829889aca6a59537192c3b307b2e0e778d66aadd71675d713f750395f24affe78e869
+  checksum: 10c0/d05c0a9983cb92f03e283729450d21da81848eecf4328020c2047b7cf1318b74597455b21740a32f56552d267d8b14fb834ae7939c4f5ff24bd4dc7a3a2fbbc7
   languageName: node
   linkType: hard
 
@@ -6002,9 +6014,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^10.8.1":
-  version: 10.8.1
-  resolution: "eslint@npm:10.8.1"
+"eslint@npm:^10.9.0":
+  version: 10.9.0
+  resolution: "eslint@npm:10.9.0"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.8.0"
     "@eslint-community/regexpp": "npm:^4.12.2"
@@ -6043,7 +6055,7 @@ __metadata:
       optional: true
   bin:
     eslint: bin/eslint.js
-  checksum: 10c0/0c4720a43ef2052829db18e37aa79adb5f0a62137bdf4a4f8e9507bbbbf888ba0669fc03e4b7139d8f27b59b051bbbcd0a3988b068c30fa934a766d60a81f599
+  checksum: 10c0/bc6c9f4a5c0b97e37ab1aa1753ae30ad5b0cf43a25ca3dcfff937f2b47243654c3ca34e37f71006474a3c1b95d6d4e046149facc6d66af4af6e993a619c23509
   languageName: node
   linkType: hard
 
@@ -8207,7 +8219,7 @@ __metadata:
     "@pinia/testing": "npm:^2.0.1"
     "@quasar/app-vite": "npm:^3.7.0"
     "@quasar/extras": "npm:^2.0.4"
-    "@quasar/vite-plugin": "npm:^2.0.0"
+    "@quasar/vite-plugin": "npm:^2.0.1"
     "@sentry/core": "npm:^10.70.0"
     "@sentry/electron": "npm:^7.16.0"
     "@sentry/rollup-plugin": "npm:^5.4.0"
@@ -8242,7 +8254,7 @@ __metadata:
     electron-builder: "npm:26.15.3"
     electron-dl-manager: "npm:^4.2.3"
     electron-updater: "npm:^6.8.9"
-    eslint: "npm:^10.8.1"
+    eslint: "npm:^10.9.0"
     eslint-plugin-perfectionist: "npm:^5.10.1"
     eslint-plugin-vue: "npm:^10.10.0"
     fantasticon: "patch:fantasticon@npm%3A4.1.0#~/.yarn/patches/fantasticon-npm-4.1.0-3af043d076.patch"
@@ -8273,7 +8285,7 @@ __metadata:
     postcss: "npm:^8.5.26"
     prettier: "npm:^3.9.6"
     pretty-bytes: "npm:^7.1.1"
-    quasar: "npm:^2.25.1"
+    quasar: "npm:^2.26.0"
     rollup-plugin-visualizer: "npm:^7.1.1"
     sharp: "npm:^0.35.3"
     type-fest: "npm:^5.8.0"
@@ -8286,7 +8298,7 @@ __metadata:
     vue-eslint-parser: "npm:^10.4.1"
     vue-i18n: "npm:^11.4.8"
     vue-router: "npm:^5.2.0"
-    vue-tsc: "npm:^3.3.10"
+    vue-tsc: "npm:^3.3.11"
     vue-zoomable: "npm:^1.2.8"
     yauzl: "npm:^3.4.0"
   languageName: unknown
@@ -9767,10 +9779,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"quasar@npm:^2.25.1":
-  version: 2.25.1
-  resolution: "quasar@npm:2.25.1"
-  checksum: 10c0/287e4c6aaf8d3e3f37adb6ee169d5adf0b8fb18976e300ff4275fc26aa68853c5839766d5a7c7c18d34cbf5d1df98b95ae4608438e90042592e1ba965c2f3517
+"quasar@npm:^2.26.0":
+  version: 2.26.0
+  resolution: "quasar@npm:2.26.0"
+  checksum: 10c0/a49cae4a53ae6150906cb3ce73876071d8ccc2d77880fe80b3c6c9494b2ae4d003be95cbd85cf31101f39573d2b5095ec716d1d381fdbe9cfcfffffa1d21004c
   languageName: node
   linkType: hard
 
@@ -12106,17 +12118,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-tsc@npm:^3.3.10":
-  version: 3.3.10
-  resolution: "vue-tsc@npm:3.3.10"
+"vue-tsc@npm:^3.3.11":
+  version: 3.3.11
+  resolution: "vue-tsc@npm:3.3.11"
   dependencies:
     "@volar/typescript": "npm:2.4.28"
-    "@vue/language-core": "npm:3.3.10"
+    "@vue/language-core": "npm:3.3.11"
   peerDependencies:
     typescript: ">=5.0.0"
   bin:
     vue-tsc: bin/vue-tsc.js
-  checksum: 10c0/313136a9866b2b3ae14a0871343632f933c9dbb45acc96c9916c31e498babf5a831b791cf69fe5aadae9aebad33f492c0946d384d849187d01ab0b4860aec259
+  checksum: 10c0/b1995cf9519754e9974d051668d1b6d4e3bb3bd1adc507350689bf2e128cc57c0c21c58952c247a97f12cf008c1b5235f4bcf5882f6784d6a8286019f439d3cf
   languageName: node
   linkType: hard
 
