@@ -310,6 +310,8 @@ export const useMusicStore = defineStore('music', () => {
       case 'music.error':
         return t('background-music-error');
       case 'music.playing':
+        if (isMeetingStartTimeInPast.value)
+          return t('background-music-playing');
         return musicStopDateTime.value
           ? t('background-music-stops-at', {
               time: formatClockTime(musicStopDateTime.value),

@@ -17,17 +17,27 @@
     </q-card-section>
 
     <q-card-section class="meeting-quick-actions-panel__countdown">
-      <div class="text-caption">
-        {{ t('quick-actions-meeting-starts-at', { time: startTime }) }}
-      </div>
-      <div class="meeting-quick-actions-panel__time">{{ countdown }}</div>
+      <template v-if="isMeetingStartTimeInPast">
+        <div class="meeting-quick-actions-panel__time">
+          {{ t('quick-actions-meeting-started-at', { time: startTime }) }}
+        </div>
+      </template>
+      <template v-else>
+        <div class="text-caption">
+          {{ t('quick-actions-meeting-starts-at', { time: startTime }) }}
+        </div>
+        <div class="meeting-quick-actions-panel__time">
+          {{ countdown }}
+        </div>
+      </template>
     </q-card-section>
 
     <q-card-section class="meeting-quick-actions-panel__actions">
       <q-btn
         v-if="
           currentSettings?.enableMusicButton &&
-          (musicPlaying || !isInFinalProtectedWindow)
+          (musicPlaying ||
+            (!isInFinalProtectedWindow && !isMeetingStartTimeInPast))
         "
         class="big-button quick-actions-music-button"
         color="primary"
@@ -115,6 +125,10 @@ const { toggleRecording } = recording;
 const meetingStart = computed(() =>
   getTodaysMeetingStartDateTime(new Date(props.now)),
 );
+const isMeetingStartTimeInPast = computed(() => {
+  const start = meetingStart.value;
+  return start ? start.getTime() <= props.now : false;
+});
 const startTime = computed(() =>
   meetingStart.value ? formatClockTime(meetingStart.value) : '',
 );
