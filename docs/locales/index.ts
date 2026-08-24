@@ -19,7 +19,7 @@ import sl from './sl.json' with { type: 'json' };
 // 98.4% translated as of 2026-08-24
 import fr from './fr.json' with { type: 'json' };
 
-// 97.9% translated as of 2026-08-24
+// 98.0% translated as of 2026-08-24
 import ty from './ty.json' with { type: 'json' };
 
 // 97.6% translated as of 2026-08-24
