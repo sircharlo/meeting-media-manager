@@ -68,7 +68,7 @@ import {
 import { useDemoModeStore } from 'stores/demo-mode';
 import { useMeetingQuickActionsStore } from 'stores/meeting-quick-actions';
 import { AUTO_START_WINDOW_HOURS, useMusicStore } from 'stores/music';
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 // How long the before-panel stays visible past the meeting's start time
@@ -258,6 +258,23 @@ const finishLastSong = () => {
   updateNow();
 };
 
+// After the before-meeting panel is dismissed and its slide-out transition
+// completes, scroll to the first visible media item so the operator can
+// immediately start working through the meeting media.
+watch(
+  () => dismissedBeforePanel.value,
+  async (dismissed) => {
+    if (props.location !== 'before' || !dismissed) return;
+    await new Promise<void>((resolve) => {
+      void setTimeout(resolve, 350);
+    });
+    const firstMediaItem = document.querySelector(
+      '.media-section .sortable-media [data-id]',
+    );
+    firstMediaItem?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  },
+);
+
 watch(
   [meetingStart, () => now.value, allBeforeChecklistItemsChecked],
   ([start, currentNow, allChecked]) => {
@@ -310,7 +327,11 @@ watch(
     ) {
       return;
     }
-    await nextTick();
+    // Wait for the q-slide-transition to finish expanding the panel
+    // before scrolling, otherwise scrollIntoView targets the collapsed height.
+    await new Promise<void>((resolve) => {
+      void setTimeout(resolve, 350);
+    });
     afterPanel.value?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     hasScrolledToAfterPanel.value = true;
   },

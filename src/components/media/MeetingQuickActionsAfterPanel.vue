@@ -21,9 +21,14 @@
       <div class="meeting-quick-actions-panel__time">{{ countdown }}</div>
     </q-card-section>
 
-    <q-card-section class="meeting-quick-actions-panel__actions">
+    <q-card-section
+      v-if="currentSettings?.enableMusicButton"
+      class="meeting-quick-actions-panel__actions"
+    >
+      <div class="text-caption text-weight-bold q-mb-xs">
+        {{ t('quick-actions-after-concluding-prayer') }}
+      </div>
       <q-btn
-        v-if="currentSettings?.enableMusicButton"
         class="big-button quick-actions-music-button"
         color="primary"
         :disable="
@@ -42,8 +47,12 @@
         />
         <span>{{ musicButtonLabel }}</span>
       </q-btn>
+    </q-card-section>
+    <q-card-section
+      v-if="recordingEnabled && isRecording"
+      class="meeting-quick-actions-panel__actions"
+    >
       <q-btn
-        v-if="recordingEnabled && isRecording"
         class="big-button"
         color="negative"
         :disable="!canStopRecording"
@@ -143,11 +152,11 @@ const musicButtonLabel = computed(() => {
 // the last song has actually finished and the meeting isn't still scheduled
 // to be going - otherwise it's likely a mis-click, so confirm first rather
 // than starting playback over a meeting that may still be in progress.
-const shouldConfirmStartMusic = computed(
-  () =>
-    lastSongEndedAt.value === null ||
-    (scheduledEnd.value !== null && scheduledEnd.value.getTime() > props.now),
-);
+const shouldConfirmStartMusic = computed(() => {
+  if (lastSongEndedAt.value === null) return true;
+  const oneMinuteAfterSongEnd = lastSongEndedAt.value + 60 * 1000;
+  return props.now < oneMinuteAfterSongEnd;
+});
 const startMusicConfirmPending = ref(false);
 const confirmStartMusic = () => {
   startMusicConfirmPending.value = false;
@@ -189,7 +198,7 @@ const statusText = computed(() => {
 });
 const countdown = computed(() => {
   if (phase.value === 'ended' && lastSongEndedAt.value !== null) {
-    return formatTime(Math.max(0, (props.now - lastSongEndedAt.value) / 1000));
+    return formatClockTime(new Date(lastSongEndedAt.value));
   }
   if (!targetEnd.value) return '00:00';
   return formatTime(
