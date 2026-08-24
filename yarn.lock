@@ -2190,15 +2190,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/app-vite@npm:^3.7.0":
-  version: 3.7.0
-  resolution: "@quasar/app-vite@npm:3.7.0"
+"@quasar/app-vite@npm:^3.8.0":
+  version: 3.8.0
+  resolution: "@quasar/app-vite@npm:3.8.0"
   dependencies:
     "@clack/prompts": "npm:^1.7.0"
     "@quasar/art": "npm:^1.0.0"
     "@quasar/render-ssr-error": "npm:^2.2.6"
     "@quasar/ssl-certificate": "npm:^2.1.0"
-    "@quasar/vite-plugin": "npm:^2.0.0"
+    "@quasar/vite-plugin": "npm:^2.0.1"
     "@types/chrome": "npm:^0.2.2"
     "@types/cordova": "npm:^11.0.3"
     "@vitejs/plugin-vue": "npm:^6.0.8"
@@ -2257,7 +2257,7 @@ __metadata:
       optional: true
   bin:
     quasar: ./bin/quasar.js
-  checksum: 10c0/1abad45a822144c3cd52f2d428496d5e29dc4ad7b9fbe70dcd756239749b5e6805d5b2206b6e47b2ca18fba06351aa60f1e359681ec53a3c752a2b73cb5e8217
+  checksum: 10c0/df6974405cafd733f382860ff979821e8ff07c7297922c34ce9582e33a1d4aa7a32e1908488456182f8077ae8eeb787beaedd3dac351e9f8c12a67eec444f32b
   languageName: node
   linkType: hard
 
@@ -2291,18 +2291,6 @@ __metadata:
     fs-extra: "npm:^11.4.0"
     selfsigned: "npm:^5.5.0"
   checksum: 10c0/2d993249c9d7bab7afc62cc3a3493669e91fe08d4695438d6f976c843ea02220db46d32508ed15c1a7b97db909b8eb9428773331797d9c27acc9c2a9c55331ad
-  languageName: node
-  linkType: hard
-
-"@quasar/vite-plugin@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@quasar/vite-plugin@npm:2.0.0"
-  peerDependencies:
-    "@vitejs/plugin-vue": ^6.0.5
-    quasar: ^2.24.0
-    vite: ^8.0.0
-    vue: ^3.0.0
-  checksum: 10c0/51e19da0c0c228059da0e5018c9d8b5f1ed7763bf06776250b254302f0f9745d998006150326165d3630f55dd371afbfa3306a334ee10dd3b04efba9ce75d64e
   languageName: node
   linkType: hard
 
@@ -8217,7 +8205,7 @@ __metadata:
     "@numairawan/video-duration": "npm:^1.0.0"
     "@opentelemetry/api-logs": "npm:^0.221.0"
     "@pinia/testing": "npm:^2.0.1"
-    "@quasar/app-vite": "npm:^3.7.0"
+    "@quasar/app-vite": "npm:^3.8.0"
     "@quasar/extras": "npm:^2.0.4"
     "@quasar/vite-plugin": "npm:^2.0.1"
     "@sentry/core": "npm:^10.70.0"
