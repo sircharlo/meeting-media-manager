@@ -23,13 +23,13 @@
 
     <q-card-section
       v-if="currentSettings?.enableMusicButton"
-      class="meeting-quick-actions-panel__actions"
+      class="meeting-quick-actions-panel__actions meeting-quick-actions-panel__actions--music"
     >
-      <div class="text-caption text-weight-bold q-mb-xs">
+      <div class="quick-actions-after-prayer-title">
         {{ t('quick-actions-after-concluding-prayer') }}
       </div>
       <q-btn
-        class="big-button quick-actions-music-button"
+        class="big-button full-width quick-actions-music-button"
         color="primary"
         :disable="
           musicPlaying
@@ -183,9 +183,7 @@ const targetEnd = computed(() =>
 );
 const statusText = computed(() => {
   if (phase.value === 'ended' && lastSongEndedAt.value !== null) {
-    return t('quick-actions-song-ended-at', {
-      time: formatClockTime(new Date(lastSongEndedAt.value)),
-    });
+    return t('quick-actions-song-ended-at');
   }
   if (phase.value === 'last-song' && predictedEnd.value) {
     return t('quick-actions-last-song-ends-at', {
@@ -263,6 +261,17 @@ const recordingEnabled = computed(
   display: grid;
   gap: 0.65rem;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.meeting-quick-actions-panel__actions--music {
+  grid-template-columns: 1fr;
+}
+
+.quick-actions-after-prayer-title {
+  color: var(--q-primary);
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding-bottom: 0.25rem;
 }
 
 .quick-actions-music-button :deep(.q-btn__content) {

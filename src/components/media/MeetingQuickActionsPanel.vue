@@ -36,7 +36,7 @@
         @click="finishLastSong"
       />
     </div>
-    <q-slide-transition>
+    <q-slide-transition @after-leave="handleBeforePanelHidden">
       <div v-if="location === 'before' && showBefore">
         <MeetingQuickActionsBeforePanel :now="now" />
       </div>
@@ -258,22 +258,13 @@ const finishLastSong = () => {
   updateNow();
 };
 
-// After the before-meeting panel is dismissed and its slide-out transition
-// completes, scroll to the first visible media item so the operator can
-// immediately start working through the meeting media.
-watch(
-  () => dismissedBeforePanel.value,
-  async (dismissed) => {
-    if (props.location !== 'before' || !dismissed) return;
-    await new Promise<void>((resolve) => {
-      void setTimeout(resolve, 350);
-    });
-    const firstMediaItem = document.querySelector(
-      '.media-section .sortable-media [data-id]',
-    );
-    firstMediaItem?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  },
-);
+const handleBeforePanelHidden = () => {
+  if (props.location !== 'before' || !dismissedBeforePanel.value) return;
+  document.querySelector<HTMLElement>('.app-main-scroll')?.scrollTo({
+    behavior: 'smooth',
+    top: 0,
+  });
+};
 
 watch(
   [meetingStart, () => now.value, allBeforeChecklistItemsChecked],

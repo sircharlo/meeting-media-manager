@@ -43,37 +43,41 @@
             {{ currentSongRemainingTime }}
           </div>
         </div>
-        <q-separator class="bg-accent-200" />
-        <p class="row card-section-title text-dark-grey q-px-md q-pt-sm">
-          {{ t('upcoming-songs') }}
-        </p>
-        <div class="action-popup__scroll">
-          <template v-for="(song, i) in songList" :key="i">
-            <div
-              class="row items-center q-my-sm q-pl-md action-popup__song-row"
-              :class="{ 'action-popup__song-row--meeting': song.isMeetingSong }"
-            >
-              <div class="col row items-center no-wrap text-weight-medium">
-                <q-icon
-                  v-if="song.isMeetingSong"
-                  class="q-mr-xs"
-                  color="primary"
-                  name="mmm-calendar-month"
-                  size="xs"
-                >
-                  <q-tooltip>{{
-                    t('background-music-meeting-song')
-                  }}</q-tooltip>
-                </q-icon>
-                <div class="ellipsis">{{ song.title }}</div>
+        <template v-if="songList.length">
+          <q-separator class="bg-accent-200" />
+          <p class="row card-section-title text-dark-grey q-px-md q-pt-sm">
+            {{ t('upcoming-songs') }}
+          </p>
+          <div class="action-popup__scroll">
+            <template v-for="(song, i) in songList" :key="i">
+              <div
+                class="row items-center q-my-sm q-pl-md action-popup__song-row"
+                :class="{
+                  'action-popup__song-row--meeting': song.isMeetingSong,
+                }"
+              >
+                <div class="col row items-center no-wrap text-weight-medium">
+                  <q-icon
+                    v-if="song.isMeetingSong"
+                    class="q-mr-xs"
+                    color="primary"
+                    name="mmm-calendar-month"
+                    size="xs"
+                  >
+                    <q-tooltip>{{
+                      t('background-music-meeting-song')
+                    }}</q-tooltip>
+                  </q-icon>
+                  <div class="ellipsis">{{ song.title }}</div>
+                </div>
+                <div class="action-popup__duration row text-grey">
+                  {{ formatTime(song.duration ?? 0) }}
+                </div>
               </div>
-              <div class="action-popup__duration row text-grey">
-                {{ formatTime(song.duration ?? 0) }}
-              </div>
-            </div>
-          </template>
-        </div>
-        <q-separator class="bg-accent-200" />
+            </template>
+          </div>
+          <q-separator class="bg-accent-200" />
+        </template>
       </template>
       <div class="action-popup__footer row q-px-md q-pt-md">
         <div class="col">
