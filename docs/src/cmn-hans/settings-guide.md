@@ -163,7 +163,7 @@
 
 启用后，M³ 会定期检查耶和华见证人官方网站，查看会众当前和未来的聚会日期或时间是否有变化，并自动更新当前配置。
 
-This only works for profiles that were added with congregation lookup and whose congregation name has not been manually changed. If synchronization was disabled because the congregation name changed, use **Enable schedule sync** to link the profile again.
+此功能仅适用于通过会众搜索添加、且会众名称未被手动更改的配置。 如果因聚合名称被更改而同步被禁用，请使用 **启用聚会时间同步** 重新链接配置文件。
 
 #### 刷新聚会时间安排 {#refresh-meeting-schedule}
 
@@ -293,7 +293,7 @@ This only works for profiles that were added with congregation lookup and whose 
 
 <!-- **Setting**: `zoomEnable` -->
 
-Enable Zoom meeting integration features.
+启用 Zoom 聚会集成功能。
 
 **Default**: `false`
 
@@ -414,9 +414,9 @@ OBS Studio WebSocket 连接所使用的密码。
 
 <!-- **Setting**: `recordingEnable` -->
 
-允许 M³ 通过键盘快捷键控制另一个录制应用程序。M³ 本身不会进行录制；当你在“聚会录制”窗口中点击**开始录制**或**停止录制**时，M³ 会向外部应用程序发送设置好的快捷键。 This does not record inside M³; it sends the configured shortcuts when you press **Start Recording** or **Stop Recording** in the meeting recordings popup.
+允许 M³ 通过键盘快捷键控制另一个录制应用程序。键。 M³ 本身不会进行录制；当你在“聚会录制”窗口中点击**开始录制**或**停止录制**时，M³ 会向外部应用程序发送设置好的快捷
 
-启用 OBS 录制控制后，此选项会被隐藏。如果使用 OBS Studio，请改用 OBS 集成中的录制控制。 If you use OBS Studio, use the OBS recording controls in the OBS integration instead.
+启用 OBS 录制控制后，此选项会被隐藏。 如果使用 OBS Studio，请改用 OBS 集成中的录制控制。
 
 **Default**: `false`
 
@@ -424,7 +424,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 <!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
 
-设置开始录制所使用的快捷键、可选的停止录制快捷键，以及外部应用程序保存录制文件的文件夹。 If no stop shortcut is provided, M³ reuses the start shortcut. When a folder is configured, M³ shows a button to open it.
+设置开始录制所使用的快捷键、可选的停止录制快捷键，以及外部应用程序保存录制文件的文件夹。 如果未设置停止快捷键，M³ 会继续使用开始录制的快捷键。 设置文件夹后，M³ 会显示用于打开该文件夹的按钮。
 
 ### 聚会计时器 {#meeting-timer}
 
@@ -432,7 +432,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
-启用一个单独的计时器窗口，用于为聚会节目计时。这是一项测试功能，只有得到当地批准后才应启用。 This is a beta feature and should only be enabled if approved locally.
+启用一个单独的计时器窗口，用于为聚会节目计时。 这是一项测试功能，只有得到当地批准后才应启用。
 
 **Default**: `false`
 
@@ -446,13 +446,13 @@ OBS Studio WebSocket 连接所使用的密码。
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
-可以为当前时间和倒计时选择模拟或数字显示方式。 The countdown warning indicator can shift the analog countdown ring toward a warning color during the final minute.
+可以为当前时间和倒计时选择模拟或数字显示方式。 倒计时警告指示器可以在最后一分钟内使模拟倒计时圆环逐渐变为警告颜色。
 
 #### 聚会倒计时和时间安排状态 {#meeting-countdown-and-schedule-status}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
-Show a countdown before scheduled meetings and optionally display whether the meeting is ahead of or behind schedule. 聚会倒计时只显示在计时器窗口，不会显示在主媒体屏幕上。
+在预定的聚会开始前显示倒计时，并可选择显示聚会整体是提前还是超时。 聚会倒计时只显示在计时器窗口，不会显示在主媒体屏幕上。
 
 #### 计时器外观和超时显示 {#timer-appearance-and-overtime}
 
@@ -621,7 +621,7 @@ Show a countdown before scheduled meetings and optionally display whether the me
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
-重新启动 M³ 后禁用硬件加速。这可能有助于解决某些系统上的图形异常或崩溃问题，但通常不建议禁用。 This may help with graphical glitches or crashes on some systems, but is not otherwise recommended.
+重新启动 M³ 后禁用硬件加速。 这可能有助于解决某些系统上的图形异常或崩溃问题，但通常不建议禁用。
 
 **默认**：`false`
 
@@ -637,7 +637,7 @@ Show a countdown before scheduled meetings and optionally display whether the me
 
 <!-- **Setting**: `disableMediaFetching` -->
 
-完全禁用自动媒体下载。仅用于特殊活动或其他自定义设置的配置文件。 完全禁用自动媒体下载。仅用于特殊活动或其他自定义设置的配置文件。 Use this only for profiles that will be used for special events or other custom setups.
+完全禁用自动媒体下载。 仅用于特殊活动或其他自定义设置的配置文件。
 
 **默认**：`false`
 
