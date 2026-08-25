@@ -55,9 +55,9 @@ M³ 会按聚会类型和节目部分自动整理媒体：
 
 ### 隐藏和缺失的媒体 {#hidden-and-missing-media}
 
-可以把媒体从聚会媒体列表中隐藏，而不会删除自动下载的文件。如果误将媒体隐藏，可以在所选日期使用**显示隐藏的媒体**功能恢复显示。 If media is hidden by mistake, use **Show hidden media** for the selected day.
+可以把媒体从聚会媒体列表中隐藏，而不会删除自动下载的文件。 如果误将媒体隐藏，可以在所选日期使用**显示隐藏的媒体**功能恢复显示。
 
-If M³ reports missing media, first check whether the item is expected to become available closer to the meeting date. You can also add the missing item manually with the **Add media** menu or by dragging it into the media list.
+如果 M³ 提示缺少媒体，请先确认该媒体是否预计会在临近聚会日期时提供。 你也可以通过添加媒体菜单手动添加缺少的项目，或将其拖入媒体列表。
 
 ## 媒体显示 {#media-presentation}
 
@@ -132,20 +132,20 @@ If M³ reports missing media, first check whether the item is expected to become
 
 ### 媒体显示窗口 {#media-display-window}
 
-媒体显示窗口是观众看到的窗口。根据设备配置，可以放在外部显示器上，也可以使用窗口模式。 It can be placed on an external screen or used in a windowed setup depending on your equipment.
+媒体显示窗口是观众看到的窗口。 根据设备配置，可以放在外部显示器上，也可以使用窗口模式。
 
-Use the display popup to:
+使用显示弹出菜单可以：
 
 - 显示或隐藏媒体窗口
 - 选择显示器或窗口类型
 - 临时使用自定义背景代替全年经文
-- 使用可用的摄像头画面作为背景，这主要用于手语会众 This is mostly used in sign-language congregations.
+- 使用可用的摄像头画面作为背景。 这主要用于手语会众。
 
 请注意，自定义背景只是临时设置，退出 M³ 后不会保留。
 
 ### 聚会计时器 {#user-guide-meeting-timer}
 
-启用聚会计时器后，M³ 可以显示一个单独的计时器窗口，为聚会节目参与者计时。计时器可以正计时或倒计时，也可以显示当前时间、聚会开始前的倒计时，并根据设置显示超时情况，或者显示聚会整体是提前还是超时。 The timer can count up or down, show the current time, show a meeting countdown before scheduled meetings, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+启用聚会计时器后，M³ 可以显示一个单独的计时器窗口，为聚会节目参与者计时。 计时器可以正计时或倒计时，也可以显示当前时间、聚会开始前的倒计时，并根据设置显示超时情况，或者显示聚会整体是提前还是超时。
 
 计时器目前属于测试功能，只有得到当地批准后才应使用。
 
@@ -289,7 +289,7 @@ M³ 会在计算机上正常播放带声音的媒体，但 OBS Studio 的视频�
 
 ### 配置设置导入和导出 {#profile-settings-import-export}
 
-可以从“设置”中将每个配置的设置导出为 JSON 文件。导入配置设置文件会替换当前配置的设置，适合把现有设置转移到另一台计算机，或恢复之前保存的配置。 Importing a profile settings file replaces the current profile's settings, which is useful when moving a setup to another computer or restoring a known configuration.
+可以从“设置”中将每个配置的设置导出为 JSON 文件。 导入配置设置文件会替换当前配置的设置，适合把现有设置转移到另一台计算机，或恢复之前保存的配置。
 
 ## 设置文件夹监视 {#folder-monitoring-setup}
 
