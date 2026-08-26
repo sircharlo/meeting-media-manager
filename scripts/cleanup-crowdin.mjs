@@ -27,17 +27,13 @@
  *   ... --language et --language fr ...                                   # limit languages
  *   ... --verbose                                                         # per-change logging
  *   node scripts/cleanup-crowdin.mjs --selftest                           # test the repair logic
- *   ... --setup-webhook --repo owner/name                                 # register the auto-repair webhook
  *
- * Webhook pipeline (fixes land in Crowdin the moment a translator saves):
- *   1. A Crowdin webhook (translation.updated) POSTs to the GitHub
- *      repository_dispatch API. Registered with --setup-webhook, which needs
- *      GITHUB_PERSONAL_TOKEN (a PAT with repo scope, or fine-grained
- *      Contents read+write, for the target repository).
- *   2. .github/workflows/crowdin-autorepair.yml runs on that dispatch and
- *      executes this script with --apply.
- *   3. If the webhook payload carries client_payload.languageId, the sweep is
- *      scoped to that language; otherwise everything is repaired.
+ * Automation: .github/workflows/crowdin-autorepair.yml runs this script with
+ * --apply on a schedule (hourly) and on demand (workflow_dispatch, with an
+ * optional --language). Note: a Crowdin webhook cannot drive it directly -
+ * Crowdin's custom webhook payload only accepts its own event variables as
+ * keys, so it cannot emit the event_type that GitHub's repository_dispatch
+ * API requires (API error "Events [client_payload, event_type] don't exist").
  *
  * Config comes from env: CROWDIN_PERSONAL_TOKEN (required),
  * CROWDIN_PROJECT_ID (falls back to crowdin.yml), CROWDIN_BASE_URL
@@ -254,9 +250,7 @@ function parseArgs(argv) {
     apply: false,
     help: false,
     languages: new Set(),
-    repo: null,
     selftest: false,
-    setupWebhook: false,
     verbose: false,
   };
 
@@ -268,15 +262,6 @@ function parseArgs(argv) {
       args.help = true;
     } else if (arg === '--selftest') {
       args.selftest = true;
-    } else if (arg === '--setup-webhook') {
-      args.setupWebhook = true;
-    } else if (arg === '--repo') {
-      const value = argv[i + 1];
-      if (!value) {
-        throw new Error('--repo requires a value (e.g. --repo owner/name)');
-      }
-      args.repo = value;
-      i += 1;
     } else if (arg === '--verbose' || arg === '-v') {
       args.verbose = true;
     } else if (arg === '--language') {
@@ -321,18 +306,16 @@ future Crowdin PRs come out clean:
   2. Docs heading anchors ({#slug}) drifted away from the English source.
   3. Translated link: frontmatter values in each locale's docs index.md.
 
-Webhook pipeline:
-  A Crowdin webhook (translation.updated event) POSTs to the GitHub
-  repository_dispatch API, which triggers .github/workflows/
-  crowdin-autorepair.yml to run this script with --apply. Register the
-  webhook with --setup-webhook (idempotent - creates or updates).
+Automation:
+  .github/workflows/crowdin-autorepair.yml runs this script with --apply
+  hourly and on demand (workflow_dispatch). A Crowdin webhook cannot drive
+  it directly: custom webhook payloads only accept Crowdin event variables
+  as keys, so they cannot emit the event_type that GitHub's
+  repository_dispatch API requires.
 
 Options:
   --apply              Commit the fixes to Crowdin (default is a dry run).
   --language <id>      Only process this language (repeatable; default all).
-  --setup-webhook      Register/update the translation.updated webhook that
-                       triggers the auto-repair GitHub Actions workflow.
-  --repo owner/name    Target GitHub repository for --setup-webhook.
   --verbose            Log every individual change.
   --selftest           Unit-test the repair logic and exit.
   --help               Show this help.
@@ -341,9 +324,6 @@ Environment:
   CROWDIN_PERSONAL_TOKEN  API token with project.settings scope (required).
   CROWDIN_PROJECT_ID      Project id (falls back to project_id in crowdin.yml).
   CROWDIN_BASE_URL        API base URL (Enterprise only).
-  GITHUB_PERSONAL_TOKEN   GitHub PAT (repo scope or fine-grained Contents
-                          read+write) used only by --setup-webhook. Also
-                          accepts REPO_DISPATCH_TOKEN as an alias.
 `);
 }
 
@@ -511,12 +491,6 @@ async function run() {
     totals: { anchors: 0, linked: 0, links: 0, segments: 0 },
     verbose: args.verbose,
   };
-
-  if (args.setupWebhook) {
-    ctx.log(`[crowdin] project ${projectId} - registering auto-repair webhook`);
-    await setupWebhook(ctx, args.repo);
-    return ctx.failures.length > 0 ? 1 : 0;
-  }
 
   const project = (
     await crowdinRequest(baseUrl, token, `/projects/${projectId}`)
@@ -697,87 +671,6 @@ function runSelfTest() {
     `\n${cases.length - failed}/${cases.length} self-test cases passed.`,
   );
   return failed === 0;
-}
-
-// ── Self-test ────────────────────────────────────────────────────────────────
-
-async function setupWebhook(ctx, repo) {
-  const githubToken =
-    process.env.GITHUB_PERSONAL_TOKEN ?? process.env.REPO_DISPATCH_TOKEN;
-  if (!githubToken) {
-    throw new Error(
-      '--setup-webhook needs GITHUB_PERSONAL_TOKEN (or REPO_DISPATCH_TOKEN): a GitHub PAT with repo scope, or fine-grained Contents read+write, for the target repository.',
-    );
-  }
-  if (!repo || !/^[\w.-]+\/[\w.-]+$/.test(repo)) {
-    throw new Error(
-      '--setup-webhook needs --repo owner/name (e.g. --repo sircharlo/meeting-media-manager)',
-    );
-  }
-
-  const url = `https://api.github.com/repos/${repo}/dispatches`;
-  const name = 'GitHub auto-repair (translation.updated)';
-  const headers = {
-    Accept: 'application/vnd.github+json',
-    Authorization: `Bearer ${githubToken}`,
-  };
-  const body = {
-    batchingEnabled: false,
-    contentType: 'application/json',
-    events: ['translation.updated'],
-    headers,
-    isActive: true,
-    name,
-    payload: {
-      client_payload: {},
-      event_type: 'crowdin-translation-updated',
-    },
-    requestType: 'POST',
-    url,
-  };
-
-  const existing = await listAll(
-    ctx.baseUrl,
-    ctx.token,
-    `/projects/${ctx.projectId}/webhooks`,
-  );
-  const webhook = existing.find((item) => item.name === name);
-
-  if (webhook) {
-    await crowdinRequest(
-      ctx.baseUrl,
-      ctx.token,
-      `/projects/${ctx.projectId}/webhooks/${webhook.id}`,
-      {
-        body: [
-          { op: 'replace', path: '/url', value: url },
-          { op: 'replace', path: '/events', value: body.events },
-          { op: 'replace', path: '/headers', value: headers },
-          { op: 'replace', path: '/payload', value: body.payload },
-          { op: 'replace', path: '/isActive', value: true },
-        ],
-        method: 'PATCH',
-      },
-    );
-    ctx.log(`[webhook] updated webhook #${webhook.id} (${name})`);
-  } else {
-    await crowdinRequest(
-      ctx.baseUrl,
-      ctx.token,
-      `/projects/${ctx.projectId}/webhooks`,
-      { body, method: 'POST' },
-    );
-    ctx.log(`[webhook] created webhook (${name})`);
-  }
-
-  ctx.log(`[webhook]   event:        translation.updated`);
-  ctx.log(`[webhook]   posts to:     ${url}`);
-  ctx.log(
-    '[webhook]   event_type:   crowdin-translation-updated (must match .github/workflows/crowdin-autorepair.yml)',
-  );
-  ctx.log(
-    '[webhook] every saved translation now triggers scripts/cleanup-crowdin.mjs --apply via repository_dispatch',
-  );
 }
 
 // ── Main ─────────────────────────────────────────────────────────────────────

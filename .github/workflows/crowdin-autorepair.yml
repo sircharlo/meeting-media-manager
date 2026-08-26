@@ -1,21 +1,34 @@
 name: Crowdin auto-repair
 
-# Triggered by a Crowdin project webhook (translation.updated) that POSTs to
-# the GitHub repository_dispatch API. Register the webhook once with:
+# Repairs Crowdin corruption at the source on a schedule and on demand, by
+# running scripts/cleanup-crowdin.mjs --apply. That repairs the stored
+# translations (vue-i18n linked-message syntax, docs heading anchors, docs
+# link: frontmatter) and purges the corrupted translation-memory segments, so
+# the Crowdin GitHub App's PRs come out clean.
 #
-#   CROWDIN_PERSONAL_TOKEN=... GITHUB_PERSONAL_TOKEN=... \
-#     node scripts/cleanup-crowdin.mjs --setup-webhook --repo sircharlo/meeting-media-manager
-#
-# Every time a translator saves a string in Crowdin, this workflow runs
-# scripts/cleanup-crowdin.mjs --apply, which repairs the stored translations
-# at the source (vue-i18n linked-message syntax, docs heading anchors, docs
-# link: frontmatter) and purges the corrupted translation-memory segments -
-# so the Crowdin GitHub App's PRs always come out clean.
+# A Crowdin webhook was considered for near-instant repair, but Crowdin's
+# custom webhook payload only accepts its own event variables as keys, so it
+# cannot emit the event_type that GitHub's repository_dispatch API requires
+# (API error "Events [client_payload, event_type] don't exist"). The hourly
+# schedule is the zero-infrastructure equivalent; the local --check guards in
+# dev/build/test still catch any broken output the moment it lands.
 
 on:
-  repository_dispatch:
-    types:
-      - crowdin-translation-updated
+  schedule:
+    # Hourly; repairs anything saved since the last run. The cleanup is
+    # idempotent, so overlapping/quick runs are harmless.
+    - cron: '0 * * * *'
+  workflow_dispatch:
+    inputs:
+      language:
+        description: 'Only repair this language (e.g. et, fr); empty repairs all'
+        required: false
+        type: string
+      apply:
+        description: 'Commit the fixes to Crowdin (uncheck for a dry-run report)'
+        required: false
+        default: true
+        type: boolean
 
 concurrency:
   group: crowdin-autorepair
@@ -33,27 +46,32 @@ jobs:
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: 24
+          cache: 'yarn'
 
       - name: Install dependencies
-        run: |
-          corepack enable
-          yarn install --immutable
+        run: yarn install
 
       - name: Repair Crowdin translations at the source
         env:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
         run: |
-          # Forward-compatible: if the webhook payload ever carries a
-          # languageId in client_payload, scope the sweep to that language;
-          # otherwise repair everything. The glob whitelist guards against
-          # malformed or injected values.
-          LANGUAGE_ID="${{ github.event.client_payload.languageId }}"
-          case "$LANGUAGE_ID" in
-            ''|*[!a-zA-Z0-9_-]*) LANGUAGE_ID='' ;;
-          esac
-          if [ -n "$LANGUAGE_ID" ]; then
-            node scripts/cleanup-crowdin.mjs --apply --language "$LANGUAGE_ID"
-          else
+          # Scheduled runs always apply a full sweep. Manual runs respect the
+          # language/apply inputs.
+          if [ "${{ github.event_name }}" = "schedule" ]; then
             node scripts/cleanup-crowdin.mjs --apply
+            exit $?
           fi
+          LANGUAGE="${{ inputs.language }}"
+          # Guard against malformed or injected language ids.
+          case "$LANGUAGE" in
+            ''|*[!a-zA-Z0-9_-]*) LANGUAGE='' ;;
+          esac
+          ARGS=""
+          if [ "${{ inputs.apply }}" = "true" ]; then
+            ARGS="$ARGS --apply"
+          fi
+          if [ -n "$LANGUAGE" ]; then
+            ARGS="$ARGS --language $LANGUAGE"
+          fi
+          node scripts/cleanup-crowdin.mjs $ARGS
