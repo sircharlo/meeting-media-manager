@@ -65,6 +65,60 @@ describe('executeQuery', () => {
     expect(result).toEqual([{ title: 'Opening Song' }]);
   });
 
+  it('strips Content only when the query result schema has it', async () => {
+    tempDirs.push(await mkdtemp(join(tmpdir(), 'mmm-sqlite-')));
+
+    // Same table shape as createTestDb, but with a second table lacking
+    // the heavy Content column (the common case: PRAGMA, sqlite_master,
+    // targeted column lists).
+    const dbPath = join(tempDirs.at(-1) ?? tmpdir(), 'readonly.sqlite');
+    const db = new DatabaseSync(dbPath);
+    try {
+      db.exec(`
+        CREATE TABLE media (
+          id INTEGER PRIMARY KEY,
+          title TEXT NOT NULL,
+          Content BLOB
+        );
+        CREATE TABLE meta (
+          id INTEGER PRIMARY KEY,
+          name TEXT NOT NULL
+        );
+        INSERT INTO media (title, Content) VALUES ('With Content', x'010203');
+        INSERT INTO media (title) VALUES ('No Content');
+        INSERT INTO meta (name) VALUES ('just meta');
+      `);
+    } finally {
+      db.close();
+    }
+
+    // Column present: Content is stripped from every row.
+    const withContent = await executeQuery<{
+      Content?: Uint8Array;
+      title: string;
+    }>(dbPath, 'SELECT title, Content FROM media');
+    expect(withContent).toEqual([
+      { title: 'With Content' },
+      { title: 'No Content' },
+    ]);
+    expect(withContent[0]?.Content).toBeUndefined();
+
+    // Column absent: rows pass through untouched, no Content key added.
+    const withoutContent = await executeQuery<{ name: string }>(
+      dbPath,
+      'SELECT name FROM meta',
+    );
+    expect(withoutContent).toEqual([{ name: 'just meta' }]);
+    expect(Object.hasOwn(withoutContent[0] ?? {}, 'Content')).toBe(false);
+
+    // Empty result set: schema check still applies, nothing to strip.
+    const empty = await executeQuery<{ title: string }>(
+      dbPath,
+      'SELECT title FROM media WHERE id = 999',
+    );
+    expect(empty).toEqual([]);
+  });
+
   it('does not allow writes through the read-only connection', async () => {
     tempDirs.push(await mkdtemp(join(tmpdir(), 'mmm-sqlite-')));
     const dbPath = createTestDb();

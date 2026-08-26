@@ -82,11 +82,18 @@ const runQuery = (dbPath, query, params) => {
   }
 
   try {
-    const result = db.prepare(query).all(...params);
+    const stmt = db.prepare(query);
 
-    // Remove unused and heavy Content property only if it exists in any row
-    for (const item of result) {
-      if ('Content' in item) delete item.Content;
+    // The heavy Content BLOB column (raw media payloads) must not cross
+    // IPC. Its presence is fixed by the query's result schema, so check the
+    // prepared statement's columns once instead of probing every row -
+    // most queries (PRAGMA, sqlite_master, targeted column lists) never
+    // select it, and the schema check works even for empty result sets.
+    const hasContent = stmt.columns().some((c) => c.name === 'Content');
+    const result = stmt.all(...params);
+
+    if (hasContent) {
+      for (const item of result) delete item.Content;
     }
 
     queryCache.set(cacheKey, result);
