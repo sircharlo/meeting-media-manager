@@ -9,7 +9,7 @@ hero:
   actions:
     - theme: brand
       text: Download
-      link: /uk/""
+      link: /uk/download
     - theme: brand
       text: Про програму
       link: /uk/about

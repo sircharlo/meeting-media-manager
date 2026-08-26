@@ -9,7 +9,7 @@ hero:
   actions:
     - theme: brand
       text: Download
-      link: /nl/""
+      link: /nl/download
     - theme: brand
       text: Over M³
       link: /nl/about

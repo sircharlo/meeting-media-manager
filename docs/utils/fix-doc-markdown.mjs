@@ -12,6 +12,7 @@ const EN_LOCALE = 'en';
 const args = new Set(process.argv.slice(2));
 const checkOnly = args.has('--check');
 const verbose = args.has('--verbose');
+const LINK_LINE_RE = /^([ \t]*)link:[ \t]*(\S[^\n]*\S|\S)/gm;
 
 /**
  * Rename duplicate trailing heading anchors so every anchor in a file is
@@ -56,23 +57,36 @@ async function fixIndexLinks(locale, totals) {
 
   const original = await readFile(indexPath, 'utf-8');
 
-  const updated = original.replaceAll(
-    /^([ \t]*)link:[ \t]*(\S[^\n]*\S|\S)/gm,
-    (m, indent, linkValue) => {
-      const fixed = fixLink(locale, linkValue);
-      if (fixed !== linkValue) {
-        // no need to .trim() anymore
-        totals.linkChanges += 1;
-        if (verbose) {
-          console.log(
-            `[link] ${getRelativePath(indexPath)}: ${linkValue} -> ${fixed}`,
-          );
-        }
-        return `${indent}link: ${fixed}`;
+  // English source links, in document order. Used to recover the slug when a
+  // translator mangled a link: value (e.g. `link: ""`), which has no slug of
+  // its own to localize.
+  const enPath = resolve(DOCS_SRC_DIR, EN_LOCALE, 'index.md');
+  const enLinks = (await pathExists(enPath))
+    ? [...(await readFile(enPath, 'utf-8')).matchAll(LINK_LINE_RE)].map(
+        (match) => match[2],
+      )
+    : [];
+
+  let linkIndex = 0;
+  const updated = original.replaceAll(LINK_LINE_RE, (m, indent, linkValue) => {
+    const enLink = enLinks[linkIndex];
+    linkIndex += 1;
+    let fixed = fixLink(locale, linkValue);
+    if (fixed === linkValue && isCorruptLinkValue(linkValue) && enLink) {
+      fixed = fixLink(locale, enLink);
+    }
+    if (fixed !== linkValue) {
+      // no need to .trim() anymore
+      totals.linkChanges += 1;
+      if (verbose) {
+        console.log(
+          `[link] ${getRelativePath(indexPath)}: ${linkValue} -> ${fixed}`,
+        );
       }
-      return m;
-    },
-  );
+      return `${indent}link: ${fixed}`;
+    }
+    return m;
+  });
 
   if (updated !== original && !checkOnly) {
     await writeFile(indexPath, updated, 'utf-8');
@@ -95,6 +109,10 @@ async function fixIndexLinks(locale, totals) {
 function fixLink(locale, link) {
   const trimmed = (link || '').trim();
   if (trimmed.startsWith('https://')) return trimmed;
+
+  // Not a local path (e.g. a mangled `""`) - leave it alone; fixIndexLinks
+  // recovers the correct slug from the English source in that case.
+  if (!trimmed.startsWith('/')) return trimmed;
 
   // Extract just the slug - last non-empty segment.
   const slug = trimmed.replace(/^\/+/, '').split('/').findLast(Boolean);
@@ -278,6 +296,18 @@ function getTrailingHeadingAnchors(line) {
 
   const start = anchors.length > 0 ? cursor : line.length;
   return { anchors, start };
+}
+
+/**
+ * A link: value with no localizable slug: empty, non-path, or containing
+ * quote characters (translators have mangled slugs into `""`).
+ */
+function isCorruptLinkValue(value) {
+  const trimmed = (value || '').trim();
+  if (trimmed === '') return true;
+  if (/^https?:\/\//i.test(trimmed)) return false;
+  if (!trimmed.startsWith('/')) return true;
+  return /["']/.test(trimmed);
 }
 
 function isValidAnchor(anchor) {

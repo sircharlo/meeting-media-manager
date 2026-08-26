@@ -75,6 +75,35 @@ function computeAnchorFix(enText, translationText, usedAnchors) {
   return fixed === translationText ? null : { kind: 'anchor', text: fixed };
 }
 
+/**
+ * Docs locale folder for a Crowdin target language id, i.e. the directory
+ * docs/src/{locale}/ that crowdin.yml's %two_letters_code% resolves to and
+ * the VitePress site serves. This is NOT always the part before the hyphen:
+ * zh-CN/zh-TW export as cmn-hans/cmn-hant (the project's custom export codes
+ * since Aug 2026), so `zh-CN -> zh` would point at the orphaned English-only
+ * docs/src/zh/ folder that the site never serves. Regional ids like pt-BR
+ * and es-ES do use their prefix (pt, es). Unknown ids fall back to the
+ * prefix, matching Crowdin's default two-letters code.
+ */
+const DOCS_LOCALE_BY_LANGUAGE = {
+  bzs: 'bzs',
+  de: 'de',
+  'es-ES': 'es',
+  et: 'et',
+  fr: 'fr',
+  hu: 'hu',
+  it: 'it',
+  ko: 'ko',
+  nl: 'nl',
+  'pt-BR': 'pt',
+  ru: 'ru',
+  sl: 'sl',
+  ty: 'ty',
+  uk: 'uk',
+  'zh-CN': 'cmn-hans',
+  'zh-TW': 'cmn-hant',
+};
+
 function computeLinkFix(enText, localeFolder) {
   const match = /^([ \t]*link:[ \t]*)(\/[^\s]+)\s*$/i.exec(enText);
   if (!match) return null;
@@ -88,6 +117,10 @@ function computeLinkFix(enText, localeFolder) {
   if (!lastSegment) return null;
 
   return `${prefix}/${localeFolder}/${lastSegment}`;
+}
+
+function getDocsLocale(language) {
+  return DOCS_LOCALE_BY_LANGUAGE[language] ?? language.split('-')[0];
 }
 
 function getTrailingHeadingAnchors(line) {
@@ -505,9 +538,10 @@ async function repairDocsFile(ctx, file) {
     );
 
     // The docs locale folder (docs/src/{locale}/...) is the canonical link
-    // prefix. It follows %two_letters_code%, which for regional Crowdin ids
-    // is the part before the hyphen (es-ES -> es, pt-BR -> pt, zh-CN -> zh).
-    const localeFolder = language.split('-')[0];
+    // prefix. It follows the project's %two_letters_code% export codes: for
+    // regional ids that's usually the prefix (es-ES -> es, pt-BR -> pt) but
+    // Chinese exports as cmn-hans/cmn-hant, not zh.
+    const localeFolder = getDocsLocale(language);
     const ops = [];
 
     // Class 3: link: frontmatter. The source values are usually untranslated
@@ -803,6 +837,11 @@ function runSelfTest() {
     // Docs link: frontmatter. computeLinkFix(enText, localeFolder) returns
     // the expected link text; repairDocsFile compares it against the
     // existing translation (or missing) and builds replace/add ops.
+    ['docs locale for pt-BR is pt', getDocsLocale('pt-BR'), 'pt'],
+    ['docs locale for zh-CN is cmn-hans', getDocsLocale('zh-CN'), 'cmn-hans'],
+    ['docs locale for zh-TW is cmn-hant', getDocsLocale('zh-TW'), 'cmn-hant'],
+    ['docs locale for plain id is itself', getDocsLocale('fr'), 'fr'],
+    ['unknown regional id falls back to prefix', getDocsLocale('xx-YY'), 'xx'],
     [
       'regional language folder (es-ES -> es)',
       computeLinkFix('link: /download', 'es'),
