@@ -1,0 +1,65 @@
+name: Crowdin cleanup
+
+# Manual, on-demand repair of Crowdin corruption at the source. Runs
+# scripts/cleanup-crowdin.mjs --apply (or a dry-run report if apply is
+# unchecked), which repairs the stored translations (vue-i18n linked-message
+# syntax, docs heading anchors, docs link: frontmatter) and purges the
+# corrupted translation-memory segments - so the Crowdin GitHub App's PRs
+# come out clean. This is the fallback for the automatic
+# crowdin-autorepair.yml webhook pipeline.
+#
+# Trigger it from the Actions tab. In a dry run, the job reports a non-zero
+# exit when fixes are pending - that is expected, not an error.
+
+on:
+  workflow_dispatch:
+    inputs:
+      language:
+        description: 'Only repair this language (e.g. et, fr); empty repairs all'
+        required: false
+        type: string
+      apply:
+        description: 'Commit the fixes to Crowdin (uncheck for a dry-run report)'
+        required: false
+        default: true
+        type: boolean
+
+concurrency:
+  group: crowdin-cleanup
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    if: github.repository == 'sircharlo/meeting-media-manager'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Repair Crowdin translations at the source
+        env:
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+        run: |
+          LANGUAGE="${{ inputs.language }}"
+          # Guard against malformed or injected language ids.
+          case "$LANGUAGE" in
+            ''|*[!a-zA-Z0-9_-]*) LANGUAGE='' ;;
+          esac
+          ARGS=""
+          if [ "${{ inputs.apply }}" = "true" ]; then
+            ARGS="$ARGS --apply"
+          fi
+          if [ -n "$LANGUAGE" ]; then
+            ARGS="$ARGS --language $LANGUAGE"
+          fi
+          node scripts/cleanup-crowdin.mjs $ARGS

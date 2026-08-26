@@ -1,10 +1,10 @@
-# 设置指南
+# 设置指南 {#settings-guide}
 
 本综合指南按类别说明所有可用设置。了解这些设置，可以帮助你根据会众的实际需要配置 M³。 了解这些设置将有助于配置M3来完全满足您会众的需要。
 
-## 应用程序配置
+## 应用程序配置 {#application-configuration}
 
-### 显示语言
+### 显示语言 {#display-language}
 
 <!-- **Setting**: `localAppLang` -->
 
@@ -14,7 +14,7 @@
 
 **默认**：英语（English）
 
-### 暗色模式
+### 暗色模式 {#dark-mode}
 
 <!-- **Setting**: `darkMode` -->
 
@@ -28,7 +28,7 @@
 
 **默认**：自动
 
-### 每周的第一天
+### 每周的第一天 {#first-day-of-week}
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
@@ -38,7 +38,7 @@
 
 **默认**：星期日
 
-### 日期格式
+### 日期格式 {#date-format}
 
 <!-- **Setting**: `localDateFormat` -->
 
@@ -48,7 +48,7 @@
 
 **默认**：D MMMM YYYY
 
-### 登录时自动启动
+### 登录时自动启动 {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
 
@@ -66,7 +66,7 @@
 
 **默认**：空（需要在初始设置期间设置）
 
-### 聚会语言
+### 聚会语言 {#meeting-language}
 
 <!-- **Setting**: `lang` -->
 
@@ -116,7 +116,7 @@
 
 **默认**：无（需在设置向导中设置）
 
-### 周末聚会时间
+### 周末聚会时间 {#weekend-meeting-time}
 
 <!-- **Setting**: `weStartTime` -->
 
@@ -136,7 +136,7 @@
 
 **默认**：无
 
-### 纪念聚会日期
+### 纪念聚会日期 {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 
@@ -146,7 +146,7 @@
 
 **默认**：通常会自动获取
 
-### 聚会时间安排变更
+### 聚会时间安排变更 {#meeting-schedule-changes}
 
 这些设置用于配置聚会时间安排的临时或长期变更：
 
@@ -171,9 +171,9 @@
 
 手动将当前和未来的聚会时间安排与官方网站提供的信息同步。
 
-## 媒体和播放
+## 媒体和播放 {#media-retrieval-and-playback}
 
-### 计量连接
+### 计量连接 {#metered-connection}
 
 <!-- **Setting**: `meteredConnection` -->
 
@@ -181,7 +181,7 @@
 
 **Default**: `false`
 
-### 启用媒体显示
+### 启用媒体显示 {#media-display-button}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
@@ -197,7 +197,7 @@
 
 **默认**：`true`
 
-#### 以暂停状态开始播放
+#### 以暂停状态开始播放 {#begin-playback-paused}
 
 <!-- **Setting**: `beginPlaybackPaused` -->
 
@@ -205,9 +205,9 @@
 
 **Default**: `false`
 
-### 背景音乐
+### 背景音乐 {#settings-guide-background-music}
 
-#### 启用背景音乐
+#### 启用背景音乐 {#enable-music-button}
 
 <!-- **Setting**: `enableMusicButton` -->
 
@@ -215,7 +215,7 @@
 
 **默认**：`true`
 
-#### 自动开始播放背景音乐
+#### 自动开始播放背景音乐 {#auto-start-music}
 
 <!-- **Setting**: `autoStartMusic` -->
 
@@ -223,7 +223,7 @@
 
 **默认**：`true`
 
-#### 聚会停止缓冲
+#### 聚会停止缓冲 {#meeting-stop-buffer}
 
 <!-- **Setting**: `meetingStopBufferSeconds` -->
 
@@ -233,7 +233,7 @@
 
 **默认**：100 秒
 
-#### 背景音乐音量
+#### 背景音乐音量 {#music-volume}
 
 <!-- **Setting**: `musicVolume` -->
 
@@ -241,9 +241,9 @@
 
 **默认**：100%
 
-### 缓存管理
+### 缓存管理 {#cache-management}
 
-#### 启用额外缓存
+#### 启用额外缓存 {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
@@ -251,7 +251,7 @@
 
 **Default**: `false`
 
-#### 缓存文件夹
+#### 缓存文件夹 {#cache-folder}
 
 <!-- **Setting**: `cacheFolder` -->
 
@@ -259,7 +259,7 @@
 
 **默认**：自动设置
 
-#### 启用缓存自动清理
+#### 启用缓存自动清理 {#enable-cache-auto-clear}
 
 <!-- **Setting**: `enableCacheAutoClear` -->
 
@@ -267,9 +267,9 @@
 
 **默认**：`true`
 
-### 监视文件夹
+### 监视文件夹 {#settings-guide-folder-monitoring}
 
-#### 启用文件夹监视
+#### 启用文件夹监视 {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
@@ -285,11 +285,11 @@
 
 **默认**：空
 
-## 集成
+## 集成 {#integrations}
 
-### Zoom 集成
+### Zoom 集成 {#settings-guide-zoom-integration}
 
-#### 启用 Zoom
+#### 启用 Zoom {#enable-zoom}
 
 <!-- **Setting**: `zoomEnable` -->
 
@@ -297,7 +297,7 @@
 
 **Default**: `false`
 
-#### 屏幕共享快捷键
+#### 屏幕共享快捷键 {#screen-share-shortcut}
 
 <!-- **Setting**: `zoomScreenShareShortcut` -->
 
@@ -305,9 +305,9 @@
 
 **默认**：无
 
-### OBS Studio 集成
+### OBS Studio 集成 {#settings-guide-obs-integration}
 
-#### 启用 OBS Studio
+#### 启用 OBS Studio {#enable-obs}
 
 <!-- **Setting**: `obsEnable` -->
 
@@ -323,7 +323,7 @@
 
 :::
 
-#### OBS 端口
+#### OBS 端口 {#obs-port}
 
 <!-- **Setting**: `obsPort` -->
 
@@ -331,7 +331,7 @@ OBS Studio WebSocket 连接所使用的端口号。
 
 **默认**：无
 
-#### OBS 密码
+#### OBS 密码 {#obs-password}
 
 <!-- **Setting**: `obsPassword` -->
 
@@ -339,7 +339,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：无
 
-#### OBS 场景
+#### OBS 场景 {#obs-scenes}
 
 可以为不同用途设置 OBS 场景：
 
@@ -347,7 +347,7 @@ OBS Studio WebSocket 连接所使用的密码。
 - **媒体场景**：显示媒体窗口的场景
 - **图片场景**：专门用于显示图片的场景，例如同时显示媒体和发言人的画中画场景
 
-#### OBS 高级选项
+#### OBS 高级选项 {#obs-advanced-options}
 
 - **延迟图片（Postpone Images）**：在手动触发前，不向 Zoom 参与者显示图片
 - **快速场景切换器**：在界面中快速打开场景切换器
@@ -364,9 +364,9 @@ OBS Studio WebSocket 连接所使用的密码。
 
 :::
 
-### 自定义事件
+### 自定义事件 {#custom-events}
 
-#### 自定义事件快捷键
+#### 自定义事件快捷键 {#enable-custom-events}
 
 <!-- **Setting**: `enableCustomEvents` -->
 
@@ -374,9 +374,9 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **Default**: `false`
 
-#### 启用自定义事件
+#### 启用自定义事件 {#custom-event-shortcuts}
 
-##### 媒体播放快捷键
+##### 媒体播放快捷键 {#custom-event-media-play-shortcut}
 
 <!-- **Setting**: `customEventMediaPlayShortcut` -->
 
@@ -384,7 +384,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：无
 
-##### 媒体停止快捷键
+##### 媒体停止快捷键 {#custom-event-media-pause-shortcut}
 
 <!-- **Setting**: `customEventMediaPauseShortcut` -->
 
@@ -392,7 +392,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：无
 
-##### 媒体暂停快捷键
+##### 媒体暂停快捷键 {#custom-event-media-stop-shortcut}
 
 <!-- **Setting**: `customEventMediaStopShortcut` -->
 
@@ -400,7 +400,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：无
 
-##### Last Song Shortcut
+##### Last Song Shortcut {#custom-event-last-song-shortcut}
 
 <!-- **Setting**: `customEventLastSongShortcut` -->
 
@@ -460,11 +460,11 @@ OBS Studio WebSocket 连接所使用的密码。
 
 可以自定义计时器的文字大小和颜色，并设置超时提示，例如不同的背景和文字颜色、闪烁效果，以及在正计时模式下只显示超出的时间。
 
-## 高级设置
+## 高级设置 {#advanced-settings}
 
-### 键盘快捷键
+### 键盘快捷键 {#settings-guide-keyboard-shortcuts}
 
-#### 启用键盘快捷键
+#### 启用键盘快捷键 {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
@@ -472,7 +472,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **Default**: `false`
 
-#### 媒体控制快捷键
+#### 媒体控制快捷键 {#media-control-shortcuts}
 
 可以设置以下快捷键：
 
@@ -483,9 +483,9 @@ OBS Studio WebSocket 连接所使用的密码。
 - **停止媒体**：停止当前媒体
 - **背景音乐**：开始或停止播放背景音乐
 
-### 媒体显示
+### 媒体显示 {#media-display}
 
-#### 启用媒体窗口淡入淡出效果
+#### 启用媒体窗口淡入淡出效果 {#enable-media-window-fade-transitions}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
@@ -501,7 +501,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **Default**: `false`
 
-#### 隐藏媒体标志
+#### 隐藏媒体标志 {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
@@ -509,7 +509,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **Default**: `false`
 
-#### 最高分辨率
+#### 最高分辨率 {#maximum-resolution}
 
 <!-- **Setting**: `maxRes` -->
 
@@ -519,7 +519,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：`false`
 
-#### 包括印刷版媒体
+#### 包括印刷版媒体 {#include-printed-media}
 
 <!-- **Setting**: `includePrinted` -->
 
@@ -527,7 +527,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：`true`
 
-#### Exclude Footnotes
+#### Exclude Footnotes {#exclude-footnotes}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
@@ -543,7 +543,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **Default**: `false`
 
-#### 排除《教导》中的媒体
+#### 排除《教导》中的媒体 {#exclude-theocratic-ministry-school}
 
 <!-- **Setting**: `excludeTh` -->
 
@@ -551,9 +551,9 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：`true`
 
-### 字幕语言
+### 字幕语言 {#subtitles}
 
-#### 启用字幕
+#### 启用字幕 {#enable-subtitles}
 
 <!-- **Setting**: `enableSubtitles` -->
 
@@ -561,7 +561,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：`false`
 
-#### 启用字幕
+#### 启用字幕 {#subtitle-language}
 
 <!-- **Setting**: `langSubtitles` -->
 
@@ -571,9 +571,9 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：无
 
-### 媒体导出文件夹
+### 媒体导出文件夹 {#settings-guide-media-export}
 
-#### 媒体自动导出
+#### 媒体自动导出 {#enable-media-auto-export}
 
 <!-- **Setting**: `enableMediaAutoExport` -->
 
@@ -581,7 +581,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：`false`
 
-#### 启用媒体自动导出
+#### 启用媒体自动导出 {#media-export-folder}
 
 <!-- **Setting**: `mediaAutoExportFolder` -->
 
@@ -601,7 +601,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 可以将当前配置的设置导出为 JSON 文件，也可以导入之前导出的配置设置文件。导入后会替换当前配置的设置。 导入替换当前配置文件的设置。
 
-### 危险区域
+### 危险区域 {#danger-zone}
 
 :::warning 小贴士
 
@@ -609,7 +609,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 :::
 
-#### Base URL
+#### Base URL {#base-url}
 
 <!-- **Setting**: `baseUrl` -->
 
@@ -625,7 +625,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：`false`
 
-#### 禁用硬件加速 {#disable-hardware-acceleration}
+#### 禁用硬件加速 {#disable-media-fetching}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
@@ -633,7 +633,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：`false`
 
-#### 禁用媒体获取
+#### 禁用媒体获取 {#configuration-tips}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
@@ -641,30 +641,30 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：`false`
 
-## 最佳配置提示
+## 最佳配置提示 {#new-users}
 
-### 新用户 {#new-users}
+### 新用户 {#advanced-users}
 
 1. 使用初始设置完成基本配置
 2. 启用“媒体显示”，以便在外部屏幕上显示媒体
 3. 正确设置聚会日期和时间
 4. 如果使用混合聚会，可以根据实际需要配置 Zoom 或 OBS Studio 集成
 
-### 高级用户 {#advanced-users}
+### 高级用户 {#performance-optimization}
 
 1. 使用文件夹监控从云存储同步媒体
 2. 使用媒体自动导出功能将媒体保存到指定位置
 3. 配置键盘快捷键，提高媒体操作效率
 4. 配置 Zoom 集成，以便在媒体开始和停止时触发屏幕共享
 
-### 性能优化
+### 性能优化 {#settings-guide-troubleshooting}
 
 1. 根据需要启用额外缓存
 2. 根据需要选择合适的最高分辨率
 3. 启用缓存自动清理，控制磁盘空间占用
 4. 如果网络流量有限，可以启用按流量计费的网络连接设置
 
-### 疑难解答 {#settings-guide-troubleshooting}
+### 疑难解答 {#settings-guide-troubleshooting-2}
 
 - 如果媒体没有下载，请检查聚会日期和时间设置
 - 如果 OBS Studio 集成无法使用，请检查 WebSocket 端口、密码和场景设置

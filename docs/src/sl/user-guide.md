@@ -376,7 +376,7 @@ Nastavi lastne bližnjice na tipkovnici za učinkovitejše upravljanje:
 - Preveri nastavitve vrat (port) in gesla
 - Prepričaj se, da je OBS zagnan
 
-#### Težave z zvokom v Zoomu/OBSu
+#### Težave z zvokom v Zoomu/OBSu {#audio-issues}
 
 - **Ni zvoka v Zoomu** - omogoči Original Audio v Zoom nastavitvah in pred vsakim shodom
 - **Slaba kakovost zvoka** - preveri tri možnosti pri Original Audio (prvi dve omogočeni, tretja onemogočena)

@@ -73,7 +73,7 @@ Sì! M³ ti permette di:
 - Scaricare automaticamente i media per le adunanze imminenti
 - Importare media personalizzati per qualsiasi data
 
-### :file_folder: What is media auto-export? {#faq-media-export} :file_folder: What is media auto-export?
+### :file_folder: What is media auto-export? {#faq-media-export} :file_folder: What is media auto-export? {#import-media}
 
 Puoi importare media personalizzati in diversi modi:
 
@@ -185,7 +185,7 @@ Il monitoraggio delle cartelle ti permette di:
 1. Selezionare una cartella da monitorare per i nuovi file
 2. Importare automaticamente i nuovi file multimediali sincronizzati con archivi cloud come Dropbox o OneDrive
 
-### :open_file_folder: How do I import my own media files? {#import-media}
+### :open_file_folder: How do I import my own media files? {#faq-media-export}
 
 L'esportazione automatica dei media:
 

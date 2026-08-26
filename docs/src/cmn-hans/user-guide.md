@@ -258,7 +258,7 @@ M³ 会在计算机上正常播放带声音的媒体，但 OBS Studio 的视频�
 
 ## 导入自定义媒体 {#importing-custom-media}
 
-### 媒体导入和管理 {#media-import}
+### 媒体导入和管理 {#managing-imported-media}
 
 向 M³ 添加自己的媒体文件：
 
@@ -270,14 +270,14 @@ M³ 会在计算机上正常播放带声音的媒体，但 OBS Studio 的视频�
 6. **官方网站视频** —— 搜索视频，并将其添加到所选日期
 7. **研读本圣经和手语圣经媒体** —— 为所选经文添加图片、视频、地图、历史资料或手语圣经视频
 
-### 管理已导入媒体 {#managing-imported-media}
+### 管理已导入媒体 {#audio-bible-import}
 
 - **按日期整理** —— 将媒体分配到特定日期
 - **自定义部分** —— 建立自定义部分，以便进一步分类
 - **编辑属性** —— 修改标题和播放时间等设置
 - **移除媒体** —— 删除不再需要的项目
 
-### 圣经录音导入 {#audio-bible-import}
+### 圣经录音导入 {#profile-settings-import-export}
 
 添加圣经经文录音：
 
@@ -287,13 +287,13 @@ M³ 会在计算机上正常播放带声音的媒体，但 OBS Studio 的视频�
 4. 下载录音
 5. 开始使用
 
-### 配置设置导入和导出 {#profile-settings-import-export}
+### 配置设置导入和导出 {#user-guide-folder-monitoring}
 
 可以从“设置”中将每个配置的设置导出为 JSON 文件。 导入配置设置文件会替换当前配置的设置，适合把现有设置转移到另一台计算机，或恢复之前保存的配置。
 
 ## 设置文件夹监视 {#folder-monitoring-setup}
 
-### 文件夹监视与导出 {#user-guide-folder-monitoring}
+### 文件夹监视与导出 {#user-guide-media-export}
 
 监视指定文件夹，自动导入新媒体：
 
@@ -302,7 +302,7 @@ M³ 会在计算机上正常播放带声音的媒体，但 OBS Studio 的视频�
 3. **自动导入** —— 新文件会自动加入 M³
 4. **自动整理** —— 可以按照日期文件夹结构整理
 
-### 媒体导出 {#user-guide-media-export}
+### 媒体导出 {#website-presentation}
 
 自动将媒体导出到整理好的文件夹：
 
@@ -313,7 +313,7 @@ M³ 会在计算机上正常播放带声音的媒体，但 OBS Studio 的视频�
 
 ## 展示官方网站 {#presenting-the-website}
 
-### 网站展示 {#website-presentation}
+### 网站展示 {#website-controls}
 
 在外部显示器上展示官方网站：
 
@@ -321,7 +321,7 @@ M³ 会在计算机上正常播放带声音的媒体，但 OBS Studio 的视频�
 2. **新窗口** —— 官方网站会在单独的窗口中打开
 3. **导航** —— 使用前进和后退功能浏览网页
 
-### 网站控制 {#website-controls}
+### 网站控制 {#meeting-recordings}
 
 - **打开网站** —— 打开单独的网站窗口
 - **开始镜像** —— 将网站窗口显示在媒体窗口中，让观众看到
@@ -331,7 +331,7 @@ M³ 会在计算机上正常播放带声音的媒体，但 OBS Studio 的视频�
 - **关闭** —— 关闭网站窗口
 - **自动返回** —— 可以设置在停止网站镜像后自动返回媒体列表
 
-## 聚会录制 {#meeting-recordings}
+## 聚会录制 {#user-guide-advanced-features}
 
 M³ 可以帮助控制聚会录制，但本身没有内置录制功能。
 
@@ -339,9 +339,9 @@ M³ 可以帮助控制聚会录制，但本身没有内置录制功能。
 - **外部录制应用程序** —— 为其他录制应用程序设置快捷键，然后通过 M³ 的“聚会录制”窗口发送这些快捷键
 - **录制文件夹** —— 设置录制文件夹后，M³ 会显示一个快捷按钮，用于打开保存录制文件的位置
 
-## 高级功能 {#user-guide-advanced-features}
+## 高级功能 {#user-guide-multiple-congregations}
 
-### 多个会众 {#user-guide-multiple-congregations}
+### 多个会众 {#keyboard-shortcuts-guide}
 
 管理多个会众或小组：
 
@@ -350,7 +350,7 @@ M³ 可以帮助控制聚会录制，但本身没有内置录制功能。
 3. **独立设置** —— 每个配置都有独立的设置和媒体
 4. **共享资源** —— 在可以的情况下共用媒体文件，以节省磁盘空间
 
-### 键盘快捷键 {#keyboard-shortcuts-guide}
+### 键盘快捷键 {#troubleshooting-guide}
 
 设置快捷键以提高操作效率：
 
@@ -359,30 +359,30 @@ M³ 可以帮助控制聚会录制，但本身没有内置录制功能。
 3. **反复练习** —— 熟悉操作流程，减少聚会期间的操作失误
 4. **个性化设置** —— 根据实际操作需要进行调整
 
-## 疑难解答 {#troubleshooting-guide}
+## 疑难解答 {#common-issues}
 
-### 常见问题 {#common-issues}
+### 常见问题 {#user-guide-media-not-downloading}
 
-#### 无法下载媒体 {#user-guide-media-not-downloading}
+#### 无法下载媒体 {#user-guide-obs-not-working}
 
 - 检查聚会时间安排是否正确
 - 确认网络连接正常
 - 确认所选语言有相应媒体
 
-#### OBS Studio 集成无法使用 {#user-guide-obs-not-working}
+#### OBS Studio 集成无法使用 {#audio-issues}
 
 - 检查 WebSocket 功能是否已经正确配置
 - 检查端口和密码设置
 - 确保 OBS Studio 正在运行
 
-#### Zoom/OBS Studio 音频问题 {#audio-issues}
+#### Zoom/OBS Studio 音频问题 {#user-guide-performance-issues}
 
 - 如果使用 Zoom 的\*\*原始音频（Original Audio）\*\*功能，请先在 Zoom 的音频设置中启用相关选项，并在聚会开始后确认原始音频已经开启。
 - **Zoom 没有声音**：检查 Zoom 是否能够接收到计算机播放的媒体声音
 - **重新开始 Zoom 聚会后没有声音**：确认新聚会中的音频设置是否仍然正确
 - 如果当前设备配置适合使用 Zoom 的原生共享功能，也可以使用**共享计算机声音**，让 Zoom 直接共享计算机播放的音频。
 
-#### 性能问题 {#user-guide-performance-issues}
+#### 性能问题 {#user-guide-language-issues}
 
 - 启用额外缓存
 - 降低最高视频分辨率
@@ -390,14 +390,14 @@ M³ 可以帮助控制聚会录制，但本身没有内置录制功能。
 - 检查可用磁盘空间
 - 如果出现图形异常或崩溃，可以尝试禁用硬件加速，然后重新启动 M³
 
-#### 语言问题 {#user-guide-language-issues}
+#### 语言问题 {#getting-help}
 
 - 检查媒体语言设置
 - 确认该语言在耶和华见证人官方网站有相应内容
 - 尝试设置后备语言
 - 检查界面语言
 
-### 获取帮助 {#getting-help}
+### 获取帮助 {#best-practices}
 
 如果遇到问题：
 
@@ -405,16 +405,16 @@ M³ 可以帮助控制聚会录制，但本身没有内置录制功能。
 2. **搜索问题** —— 在 GitHub 上查找类似问题
 3. **报告问题** —— 创建新的 Issue，并提供详细信息
 
-## 最佳做法 {#best-practices}
+## 最佳做法 {#before-meetings}
 
-### 聚会前 {#before-meetings}
+### 聚会前 {#during-meetings}
 
 1. **检查下载** —— 确认所有需要的媒体都已经下载完成
 2. **测试设备** —— 检查显示和音频是否正常
 3. **准备媒体** —— 查看并整理本次聚会所需的媒体，确认没有缺失
 4. **替代方案**：根据设备配置使用 Zoom 的“共享计算机声音”
 
-### 聚会期间 {#during-meetings}
+### 聚会期间 {#after-meetings}
 
 1. **专注操作** —— 使用简洁的界面，减少不必要的干扰
 2. **熟悉快捷键** —— 练习并熟悉常用快捷键
@@ -422,13 +422,13 @@ M³ 可以帮助控制聚会录制，但本身没有内置录制功能。
 4. **准备下一项** —— 提前确认下一个要播放的媒体
 5. **确认线上音频** —— 确认 Zoom 参与者能够听到媒体声音
 
-### 聚会后 {#after-meetings}
+### 聚会后 {#regular-maintenance}
 
 1. **恢复背景音乐** —— 如有需要，重新开始播放
 2. **准备下次聚会** —— 检查下一次聚会的媒体
 3. **整理收尾** —— 在适当的时候关闭媒体窗口和其他相关窗口
 
-### 日常维护 {#regular-maintenance}
+### 日常维护 {#regular-maintenance-2}
 
 1. **更新 M³** —— 及时安装最新版本
 2. **清理缓存** —— 定期清理不再需要的缓存文件

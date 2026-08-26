@@ -1,0 +1,59 @@
+name: Crowdin auto-repair
+
+# Triggered by a Crowdin project webhook (translation.updated) that POSTs to
+# the GitHub repository_dispatch API. Register the webhook once with:
+#
+#   CROWDIN_PERSONAL_TOKEN=... GITHUB_PERSONAL_TOKEN=... \
+#     node scripts/cleanup-crowdin.mjs --setup-webhook --repo sircharlo/meeting-media-manager
+#
+# Every time a translator saves a string in Crowdin, this workflow runs
+# scripts/cleanup-crowdin.mjs --apply, which repairs the stored translations
+# at the source (vue-i18n linked-message syntax, docs heading anchors, docs
+# link: frontmatter) and purges the corrupted translation-memory segments -
+# so the Crowdin GitHub App's PRs always come out clean.
+
+on:
+  repository_dispatch:
+    types:
+      - crowdin-translation-updated
+
+concurrency:
+  group: crowdin-autorepair
+  cancel-in-progress: true
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    if: github.repository == 'sircharlo/meeting-media-manager'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: |
+          corepack enable
+          yarn install --immutable
+
+      - name: Repair Crowdin translations at the source
+        env:
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+        run: |
+          # Forward-compatible: if the webhook payload ever carries a
+          # languageId in client_payload, scope the sweep to that language;
+          # otherwise repair everything. The glob whitelist guards against
+          # malformed or injected values.
+          LANGUAGE_ID="${{ github.event.client_payload.languageId }}"
+          case "$LANGUAGE_ID" in
+            ''|*[!a-zA-Z0-9_-]*) LANGUAGE_ID='' ;;
+          esac
+          if [ -n "$LANGUAGE_ID" ]; then
+            node scripts/cleanup-crowdin.mjs --apply --language "$LANGUAGE_ID"
+          else
+            node scripts/cleanup-crowdin.mjs --apply
+          fi
