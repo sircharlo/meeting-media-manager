@@ -182,7 +182,7 @@ async function deleteTmSegment(ctx, tmId, segmentId, label) {
     await crowdinRequest(
       ctx.baseUrl,
       ctx.token,
-      `/projects/${ctx.projectId}/tms/${tmId}/segments/${segmentId}`,
+      `/tms/${tmId}/segments/${segmentId}`,
       { method: 'DELETE' },
     );
   } catch (error) {
@@ -239,6 +239,16 @@ async function listAll(baseUrl, token, path) {
   }
 
   return items;
+}
+
+function logUnmatchedPaths(ctx, files, max = 15) {
+  const sample = files
+    .slice(0, max)
+    .map((file) => file.normalizedPath || file.name || `id ${file.id}`)
+    .join('\n  ');
+  ctx.log(
+    `[crowdin] DEBUG: sample of ${files.length} file paths in project:\n  ${sample}`,
+  );
 }
 
 function normalizePath(filePath) {
@@ -331,11 +341,9 @@ async function purgeCorruptedTmSegments(ctx) {
   let tmId = ctx.defaultTmId;
 
   if (!tmId) {
-    const tms = await listAll(
-      ctx.baseUrl,
-      ctx.token,
-      `/projects/${ctx.projectId}/tms`,
-    );
+    // TMs are global resources, not project-scoped (that's why the
+    // project-scoped path 404s).
+    const tms = await listAll(ctx.baseUrl, ctx.token, `/tms`);
     if (tms.length === 0) {
       ctx.log('[tm] no translation memory found; skipping segment purge');
       return;
@@ -346,7 +354,7 @@ async function purgeCorruptedTmSegments(ctx) {
   const segments = await listAll(
     ctx.baseUrl,
     ctx.token,
-    `/projects/${ctx.projectId}/tms/${tmId}/segments`,
+    `/tms/${tmId}/segments`,
   );
 
   for (const segment of segments) {
@@ -378,6 +386,10 @@ async function repairDocsFile(ctx, file) {
     strings.map((string, index) => [string.id, index]),
   );
   const isIndex = file.normalizedPath.endsWith('/index.md');
+  // The docs locale folder (e.g. `docs/src/fr/index.md` -> `fr`) is the
+  // canonical link prefix - it matches the %two_letters_code% translation
+  // paths, not the Crowdin languageId (which may be regional, e.g. pt-BR).
+  const localeFolder = file.normalizedPath.split('/')[2];
 
   for (const language of ctx.languages) {
     const translations = await listAll(
@@ -401,7 +413,7 @@ async function repairDocsFile(ctx, file) {
       const source = sources.get(item.stringId) ?? '';
 
       const linkFix = isIndex
-        ? computeLinkFix(source, item.text, language)
+        ? computeLinkFix(source, item.text, localeFolder ?? language)
         : null;
       const fix = linkFix ?? computeAnchorFix(source, item.text, usedAnchors);
       if (!fix) continue;
@@ -517,8 +529,8 @@ async function run() {
     normalizedPath: normalizePath(file.path ?? file.name ?? ''),
   }));
 
-  const i18nFile = normalizedFiles.find(
-    (file) => file.normalizedPath === I18N_SOURCE_PATH,
+  const i18nFile = normalizedFiles.find((file) =>
+    file.normalizedPath.endsWith(I18N_SOURCE_PATH),
   );
   if (i18nFile) {
     ctx.log(
@@ -529,11 +541,12 @@ async function run() {
     ctx.log(
       `[crowdin] WARN: source file ${I18N_SOURCE_PATH} not found in project; skipping class 1`,
     );
+    logUnmatchedPaths(ctx, normalizedFiles, 15);
   }
 
   const docsFiles = normalizedFiles.filter(
     (file) =>
-      file.normalizedPath.startsWith(DOCS_SOURCE_PREFIX) &&
+      file.normalizedPath.includes(DOCS_SOURCE_PREFIX) &&
       file.normalizedPath.endsWith('.md'),
   );
   if (docsFiles.length > 0) {
@@ -547,10 +560,15 @@ async function run() {
     ctx.log(
       `[crowdin] WARN: no ${DOCS_SOURCE_PREFIX}**/*.md files found; skipping classes 2+3`,
     );
+    logUnmatchedPaths(ctx, normalizedFiles, 15);
   }
 
   ctx.log('[crowdin] class 4: purging corrupted translation-memory segments');
-  await purgeCorruptedTmSegments(ctx);
+  try {
+    await purgeCorruptedTmSegments(ctx);
+  } catch (error) {
+    ctx.failures.push(`translation-memory purge: ${error.message}`);
+  }
 
   const { anchors, linked, links, segments } = ctx.totals;
   const total = anchors + linked + links + segments;
