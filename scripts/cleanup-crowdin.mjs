@@ -12,12 +12,11 @@
  *   2. Docs heading anchors (`{#slug}`) drifting away from the English
  *      source, which breaks cross-language links and fails the VitePress
  *      build on duplicate explicit anchors.
- *   3. `link:` frontmatter values in each locale's docs index.md. Crowdin
- *      exposes these as (usually untranslated) source strings, so the
- *      expected `/{locale}/{slug}` value is created when missing and
- *      corrected when mangled. If Crowdin's parser excludes URL-like
- *      front matter instead, no strings exist and the sweep says so,
- *      leaving links to docs/utils/fix-doc-markdown.mjs.
+ *   3. `link:` frontmatter values in each locale's docs index.md. Live
+ *      sweeps confirmed Crowdin's markdown parser never exposes these as
+ *      translatable strings (URL-like front matter is excluded), so there
+ *      is nothing to repair via the API - the sweep logs that and leaves
+ *      links to docs/utils/fix-doc-markdown.mjs.
  *
  * The same corruption lives in Crowdin's translation memory, so every
  * exported PR re-delivers it. This script repairs the stored translations in
@@ -75,54 +74,6 @@ function computeAnchorFix(enText, translationText, usedAnchors) {
   return fixed === translationText ? null : { kind: 'anchor', text: fixed };
 }
 
-/**
- * Docs locale folder for a Crowdin target language id, i.e. the directory
- * docs/src/{locale}/ that crowdin.yml's %two_letters_code% resolves to and
- * the VitePress site serves. This is NOT always the part before the hyphen:
- * zh-CN/zh-TW export as cmn-hans/cmn-hant (the project's custom export codes
- * since Aug 2026), so `zh-CN -> zh` would point at the orphaned English-only
- * docs/src/zh/ folder that the site never serves. Regional ids like pt-BR
- * and es-ES do use their prefix (pt, es). Unknown ids fall back to the
- * prefix, matching Crowdin's default two-letters code.
- */
-const DOCS_LOCALE_BY_LANGUAGE = {
-  bzs: 'bzs',
-  de: 'de',
-  'es-ES': 'es',
-  et: 'et',
-  fr: 'fr',
-  hu: 'hu',
-  it: 'it',
-  ko: 'ko',
-  nl: 'nl',
-  'pt-BR': 'pt',
-  ru: 'ru',
-  sl: 'sl',
-  ty: 'ty',
-  uk: 'uk',
-  'zh-CN': 'cmn-hans',
-  'zh-TW': 'cmn-hant',
-};
-
-function computeLinkFix(enText, localeFolder) {
-  const match = /^([ \t]*link:[ \t]*)(\/[^\s]+)\s*$/i.exec(enText);
-  if (!match) return null;
-
-  const [, prefix, slug] = match;
-  const lastSegment = slug
-    .replace(/^\/+/, '')
-    .split('/')
-    .filter(Boolean)
-    .at(-1);
-  if (!lastSegment) return null;
-
-  return `${prefix}/${localeFolder}/${lastSegment}`;
-}
-
-function getDocsLocale(language) {
-  return DOCS_LOCALE_BY_LANGUAGE[language] ?? language.split('-')[0];
-}
-
 function getTrailingHeadingAnchors(line) {
   const anchors = [];
   let cursor = trimEndIndex(line);
@@ -142,15 +93,20 @@ function getTrailingHeadingAnchors(line) {
   return { anchors, start };
 }
 
+/**
+ * Docs index.md (the only file with `link:` frontmatter). Kept purely so the
+ * sweep can log the class-3 diagnostic; Crowdin never exposes these values
+ * as translatable strings.
+ */
+function isDocsIndexFile(filePath) {
+  return filePath.endsWith('/index.md');
+}
+
 function isHeadingString(text) {
   return (
     /^[ \t]*#{1,6}[ \t]+\S/.test(text) ||
     getTrailingHeadingAnchors(text).anchors.length > 0
   );
-}
-
-function isLinkString(text) {
-  return typeof text === 'string' && /^[ \t]*link:[ \t]*\/\S+/.test(text);
 }
 
 function isValidAnchor(anchor) {
@@ -428,9 +384,9 @@ future Crowdin PRs come out clean:
   1. vue-i18n linked-message syntax (@:{'key'}) mangled by typographic
      quotes or stray whitespace - in src/i18n/*.json translations.
   2. Docs heading anchors ({#slug}) drifted away from the English source.
-  3. link: frontmatter values in each locale's docs index.md (created or
-     corrected per language; skipped with a note when Crowdin doesn't
-     expose them).
+  3. Docs link: frontmatter is not exposed by Crowdin as translatable
+     strings (confirmed against the live project), so the sweep logs that
+     and leaves links to docs/utils/fix-doc-markdown.mjs.
 
 Automation:
   .github/workflows/crowdin-autorepair.yml runs this script with --apply
@@ -489,9 +445,7 @@ async function purgeCorruptedTmSegments(ctx) {
       await deleteTmSegment(ctx, tmId, segment.id, `tm segment ${segment.id}`);
     }
   }
-}
-
-// ── i18n linked-message repair ───────────────────────────────────────────────
+} // ── docs repair ──────────────────────────────────────────────────────────────
 
 async function repairDocsFile(ctx, file) {
   const strings = await listAll(
@@ -505,19 +459,15 @@ async function repairDocsFile(ctx, file) {
   const stringOrder = new Map(
     strings.map((string, index) => [string.id, index]),
   );
-  const isIndex = file.normalizedPath.endsWith('/index.md');
 
-  // Crowdin exposes index.md's `link:` frontmatter values as (usually
-  // untranslated) source strings, so repairs work per-language below. When
-  // the parser excludes them entirely (URL-like front matter), no strings
-  // exist and class 3 can't fire - say so explicitly instead of silently
-  // reporting 0.
-  const linkStrings = isIndex
-    ? strings.filter((string) => isLinkString(string.text))
-    : [];
-  if (isIndex && linkStrings.length === 0) {
+  // Class 3 (docs link: frontmatter) is a diagnostic only: live sweeps
+  // confirmed Crowdin's markdown parser never exposes `link:` values as
+  // translatable strings (URL-like front matter is excluded), so there is
+  // nothing to repair via the API. Links are rewritten by
+  // docs/utils/fix-doc-markdown.mjs instead.
+  if (isDocsIndexFile(file.normalizedPath)) {
     ctx.log(
-      `[docs] ${file.normalizedPath}: no link: frontmatter strings exposed by Crowdin - links are rewritten by docs/utils/fix-doc-markdown.mjs instead`,
+      `[docs] ${file.normalizedPath}: link: frontmatter is not exposed by Crowdin as translatable strings - links are rewritten by docs/utils/fix-doc-markdown.mjs`,
     );
   }
 
@@ -527,7 +477,7 @@ async function repairDocsFile(ctx, file) {
       ctx.token,
       `/projects/${ctx.projectId}/languages/${encodeURIComponent(language)}/translations?fileId=${file.id}`,
     );
-    if (translations.length === 0 && linkStrings.length === 0) continue;
+    if (translations.length === 0) continue;
 
     // File order matters for duplicate-anchor suffixing, so sort translations
     // back into the order the strings appear in the file.
@@ -537,50 +487,7 @@ async function repairDocsFile(ctx, file) {
         (stringOrder.get(b.stringId) ?? -1),
     );
 
-    // The docs locale folder (docs/src/{locale}/...) is the canonical link
-    // prefix. It follows the project's %two_letters_code% export codes: for
-    // regional ids that's usually the prefix (es-ES -> es, pt-BR -> pt) but
-    // Chinese exports as cmn-hans/cmn-hant, not zh.
-    const localeFolder = getDocsLocale(language);
     const ops = [];
-
-    // Class 3: link: frontmatter. The source values are usually untranslated
-    // (Crowdin treats them as URL-like), so the expected localized value is
-    // created when missing and corrected when mangled.
-    for (const linkString of linkStrings) {
-      const expected = computeLinkFix(linkString.text, localeFolder);
-      if (!expected) continue;
-      const existing = translations.find(
-        (item) => item.stringId === linkString.id,
-      );
-      if (existing?.text === expected) continue;
-
-      ctx.totals.links += 1;
-      const label = `${file.normalizedPath} (${language}, string ${linkString.id})`;
-      if (ctx.verbose) {
-        ctx.log(
-          `[link] ${label}: ${JSON.stringify(existing?.text ?? '(missing)')} -> ${JSON.stringify(expected)}`,
-        );
-      }
-      if (existing) {
-        ops.push({
-          op: 'replace',
-          path: `/${existing.translationId}`,
-          value: { text: expected },
-        });
-      } else {
-        ops.push({
-          op: 'add',
-          path: '/-',
-          value: {
-            addToTm: false,
-            languageId: language,
-            stringId: linkString.id,
-            text: expected,
-          },
-        });
-      }
-    }
 
     // Class 2: heading anchors.
     const usedAnchors = new Map();
@@ -683,7 +590,7 @@ async function run() {
     log: (message) => console.log(message),
     projectId,
     token,
-    totals: { anchors: 0, linked: 0, links: 0, segments: 0 },
+    totals: { anchors: 0, linked: 0, segments: 0 },
     verbose: args.verbose,
   };
 
@@ -753,15 +660,14 @@ async function run() {
     ctx.failures.push(`translation-memory purge: ${error.message}`);
   }
 
-  const { anchors, linked, links, segments } = ctx.totals;
-  const total = anchors + linked + links + segments;
+  const { anchors, linked, segments } = ctx.totals;
+  const total = anchors + linked + segments;
   ctx.log('');
   ctx.log(
     `Done. ${ctx.apply ? 'Applied' : 'Found (dry run - rerun with --apply to commit)'}:`,
   );
   ctx.log(`  linked-syntax repairs:   ${linked}`);
   ctx.log(`  heading-anchor fixes:    ${anchors}`);
-  ctx.log(`  link-frontmatter fixes:  ${links}`);
   ctx.log(`  corrupted TM segments:   ${segments}`);
 
   if (ctx.failures.length > 0) {
@@ -834,33 +740,22 @@ function runSelfTest() {
       null,
     ],
 
-    // Docs link: frontmatter. computeLinkFix(enText, localeFolder) returns
-    // the expected link text; repairDocsFile compares it against the
-    // existing translation (or missing) and builds replace/add ops.
-    ['docs locale for pt-BR is pt', getDocsLocale('pt-BR'), 'pt'],
-    ['docs locale for zh-CN is cmn-hans', getDocsLocale('zh-CN'), 'cmn-hans'],
-    ['docs locale for zh-TW is cmn-hant', getDocsLocale('zh-TW'), 'cmn-hant'],
-    ['docs locale for plain id is itself', getDocsLocale('fr'), 'fr'],
-    ['unknown regional id falls back to prefix', getDocsLocale('xx-YY'), 'xx'],
+    // Docs index.md detection drives the class-3 diagnostic note.
     [
-      'regional language folder (es-ES -> es)',
-      computeLinkFix('link: /download', 'es'),
-      'link: /es/download',
+      'docs index detected',
+      isDocsIndexFile('master/docs/src/en/index.md'),
+      true,
     ],
     [
-      'link localized to locale folder',
-      computeLinkFix('link: /download', 'fr'),
-      'link: /fr/download',
+      'non-index docs file ignored',
+      isDocsIndexFile('master/docs/src/en/faq.md'),
+      false,
     ],
     [
-      'indented link kept',
-      computeLinkFix('      link: /user-guide', 'fr'),
-      '      link: /fr/user-guide',
+      'non-docs path ignored',
+      isDocsIndexFile('master/src/i18n/en.json'),
+      false,
     ],
-    ['image value untouched', computeLinkFix('image: /logo.svg', 'fr'), null],
-    ['prose untouched', computeLinkFix('Download', 'fr'), null],
-    ['link string detected', isLinkString('      link: /download'), true],
-    ['non-link not detected', isLinkString('image: /logo.svg'), false],
 
     // TM segment corruption signatures.
     ['tm typographic quotes', isCorruptedSegment('Viide @:{‚cbs‘}'), true],
