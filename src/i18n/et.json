@@ -643,7 +643,7 @@
   "quick-actions-new-category": "Lisa kategooria",
   "quick-actions-new-item": "Lisa ülesanne",
   "quick-actions-play-music": "Mängi taustamuusikat",
-  "quick-actions-song-ended-at": "Laul lõppes kell {time}",
+  "quick-actions-song-ended-at": "Song ended at",
   "quick-actions-start-music-confirm-message": "Koosolek ei pruugi veel lõppenud olla. Kas oled kindel, et soovid taustamuusikat just praegu sisse lülitada?",
   "quick-actions-start-music-confirm-title": "Mängi taustamuusikat?",
   "quick-actions-start-recording": "Alusta salvestamist",
