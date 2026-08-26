@@ -35,9 +35,10 @@
  * keys, so it cannot emit the event_type that GitHub's repository_dispatch
  * API requires (API error "Events [client_payload, event_type] don't exist").
  *
- * Config comes from env: CROWDIN_PERSONAL_TOKEN (required),
- * CROWDIN_PROJECT_ID (falls back to crowdin.yml), CROWDIN_BASE_URL
- * (Enterprise only; defaults to https://api.crowdin.com).
+ * Config comes from env: CROWDIN_PERSONAL_TOKEN (required - needs the
+ * project.translation and tm scopes at Read and Write level), CROWDIN_PROJECT_ID
+ * (falls back to crowdin.yml), CROWDIN_BASE_URL (Enterprise only; defaults to
+ * https://api.crowdin.com).
  *
  * Dry-run by default; exits 1 when fixes would be made but --apply was not
  * passed (so CI can use it as a check).
@@ -304,6 +305,30 @@ function parseProjectIdFromCrowdinYml() {
   }
 }
 
+async function patchTranslations(ctx, ops, label) {
+  try {
+    // Editing translation text is a JSON Patch on the batch endpoint
+    // (PATCH /projects/{id}/translations) - the per-id PUT is "Restore
+    // Translation" and takes no body. Errors are per-op ({index, errors}),
+    // so a failed batch stays attributable.
+    await crowdinRequest(
+      ctx.baseUrl,
+      ctx.token,
+      `/projects/${ctx.projectId}/translations`,
+      {
+        body: ops.map(({ path, text }) => ({
+          op: 'replace',
+          path,
+          value: { text },
+        })),
+        method: 'PATCH',
+      },
+    );
+  } catch (error) {
+    ctx.failures.push(`${label}: ${error.message}`);
+  }
+}
+
 function printHelp() {
   console.log(`Clean Crowdin corruption at the source, via the Crowdin API.
 
@@ -331,7 +356,9 @@ Options:
   --help               Show this help.
 
 Environment:
-  CROWDIN_PERSONAL_TOKEN  API token with project.settings scope (required).
+  CROWDIN_PERSONAL_TOKEN  API token (required). Must have the project.translation
+                         and tm scopes set to Read and Write (create at
+                         https://crowdin.com/settings#api, pick scopes there).
   CROWDIN_PROJECT_ID      Project id (falls back to project_id in crowdin.yml).
   CROWDIN_BASE_URL        API base URL (Enterprise only).
 `);
@@ -373,6 +400,8 @@ async function purgeCorruptedTmSegments(ctx) {
   }
 }
 
+// ── i18n linked-message repair ───────────────────────────────────────────────
+
 async function repairDocsFile(ctx, file) {
   const strings = await listAll(
     ctx.baseUrl,
@@ -408,6 +437,7 @@ async function repairDocsFile(ctx, file) {
     );
 
     const usedAnchors = new Map();
+    const ops = [];
     for (const item of translations) {
       if (typeof item.text !== 'string') continue;
       const source = sources.get(item.stringId) ?? '';
@@ -425,14 +455,15 @@ async function repairDocsFile(ctx, file) {
           `[${fix.kind}] ${label}: ${JSON.stringify(item.text)} -> ${JSON.stringify(fix.text)}`,
         );
       }
-      if (ctx.apply) {
-        await updateTranslation(ctx, item.translationId, fix.text, label);
-      }
+      ops.push({ path: `/${item.translationId}`, text: fix.text });
+    }
+    if (ctx.apply && ops.length > 0) {
+      await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`);
     }
   }
 }
 
-// ── Webhook setup ────────────────────────────────────────────────────────────
+// ── CLI ──────────────────────────────────────────────────────────────────────
 
 async function repairI18nLinkedSyntax(ctx, file) {
   const strings = await listAll(
@@ -457,6 +488,7 @@ async function repairI18nLinkedSyntax(ctx, file) {
       `/projects/${ctx.projectId}/languages/${encodeURIComponent(language)}/translations?fileId=${file.id}`,
     );
 
+    const ops = [];
     for (const item of translations) {
       if (typeof item.text !== 'string' || !candidateIds.has(item.stringId))
         continue;
@@ -471,14 +503,13 @@ async function repairI18nLinkedSyntax(ctx, file) {
           `[linked] ${label}: ${JSON.stringify(item.text)} -> ${JSON.stringify(fixed)}`,
         );
       }
-      if (ctx.apply) {
-        await updateTranslation(ctx, item.translationId, fixed, label);
-      }
+      ops.push({ path: `/${item.translationId}`, text: fixed });
+    }
+    if (ctx.apply && ops.length > 0) {
+      await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`);
     }
   }
 }
-
-// ── CLI ──────────────────────────────────────────────────────────────────────
 
 async function run() {
   const args = parseArgs(process.argv.slice(2));
@@ -595,6 +626,8 @@ async function run() {
   return ctx.failures.length > 0 ? 1 : 0;
 }
 
+// ── Main ─────────────────────────────────────────────────────────────────────
+
 function runSelfTest() {
   const cases = [
     // Linked-message repairs (real samples from commit 535970092).
@@ -689,24 +722,6 @@ function runSelfTest() {
     `\n${cases.length - failed}/${cases.length} self-test cases passed.`,
   );
   return failed === 0;
-}
-
-// ── Main ─────────────────────────────────────────────────────────────────────
-
-async function updateTranslation(ctx, translationId, text, label) {
-  try {
-    await crowdinRequest(
-      ctx.baseUrl,
-      ctx.token,
-      `/projects/${ctx.projectId}/translations/${translationId}`,
-      {
-        body: { text },
-        method: 'PUT',
-      },
-    );
-  } catch (error) {
-    ctx.failures.push(`${label}: ${error.message}`);
-  }
 }
 
 try {
