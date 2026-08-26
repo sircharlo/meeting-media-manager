@@ -12,8 +12,12 @@
  *   2. Docs heading anchors (`{#slug}`) drifting away from the English
  *      source, which breaks cross-language links and fails the VitePress
  *      build on duplicate explicit anchors.
- *   3. Translated `link:` frontmatter values in each locale's index.md
- *      (slugs like `/download` being localized).
+ *   3. `link:` frontmatter values in each locale's docs index.md. Crowdin
+ *      exposes these as (usually untranslated) source strings, so the
+ *      expected `/{locale}/{slug}` value is created when missing and
+ *      corrected when mangled. If Crowdin's parser excludes URL-like
+ *      front matter instead, no strings exist and the sweep says so,
+ *      leaving links to docs/utils/fix-doc-markdown.mjs.
  *
  * The same corruption lives in Crowdin's translation memory, so every
  * exported PR re-delivers it. This script repairs the stored translations in
@@ -71,7 +75,7 @@ function computeAnchorFix(enText, translationText, usedAnchors) {
   return fixed === translationText ? null : { kind: 'anchor', text: fixed };
 }
 
-function computeLinkFix(enText, translationText, locale) {
+function computeLinkFix(enText, localeFolder) {
   const match = /^([ \t]*link:[ \t]*)(\/[^\s]+)\s*$/i.exec(enText);
   if (!match) return null;
 
@@ -83,8 +87,7 @@ function computeLinkFix(enText, translationText, locale) {
     .at(-1);
   if (!lastSegment) return null;
 
-  const fixed = `${prefix}/${locale}/${lastSegment}`;
-  return fixed === translationText ? null : { kind: 'link', text: fixed };
+  return `${prefix}/${localeFolder}/${lastSegment}`;
 }
 
 function getTrailingHeadingAnchors(line) {
@@ -111,6 +114,10 @@ function isHeadingString(text) {
     /^[ \t]*#{1,6}[ \t]+\S/.test(text) ||
     getTrailingHeadingAnchors(text).anchors.length > 0
   );
+}
+
+function isLinkString(text) {
+  return typeof text === 'string' && /^[ \t]*link:[ \t]*\/\S+/.test(text);
 }
 
 function isValidAnchor(anchor) {
@@ -335,18 +342,17 @@ function parseProjectIdFromCrowdinYml() {
 async function patchTranslations(ctx, ops, label) {
   // Editing translation text is a JSON Patch on the batch endpoint
   // (PATCH /projects/{id}/translations) - the per-id PUT is "Restore
-  // Translation" and takes no body. A batch can partially fail: the 400 body
-  // is an ErrorPatchCollectionResource listing the indices that failed, so
-  // retry those one-by-one instead of dropping the whole file's fixes.
-  const toPatchBody = (batch) =>
-    batch.map(({ path, text }) => ({ op: 'replace', path, value: { text } }));
-
+  // Translation" and takes no body. Ops are full RFC 6902 operations
+  // ({op, path, value}) so a batch can mix 'replace' and 'add'. A batch can
+  // partially fail: the 400 body is an ErrorPatchCollectionResource listing
+  // the indices that failed, so retry those one-by-one instead of dropping
+  // the whole file's fixes.
   try {
     await crowdinRequest(
       ctx.baseUrl,
       ctx.token,
       `/projects/${ctx.projectId}/translations`,
-      { body: toPatchBody(ops), method: 'PATCH' },
+      { body: ops, method: 'PATCH' },
     );
     return;
   } catch (error) {
@@ -370,7 +376,7 @@ async function patchTranslations(ctx, ops, label) {
           ctx.baseUrl,
           ctx.token,
           `/projects/${ctx.projectId}/translations`,
-          { body: toPatchBody([op]), method: 'PATCH' },
+          { body: [op], method: 'PATCH' },
         );
       } catch (opError) {
         ctx.failures.push(`${label} (op ${index}): ${opError.message}`);
@@ -389,7 +395,9 @@ future Crowdin PRs come out clean:
   1. vue-i18n linked-message syntax (@:{'key'}) mangled by typographic
      quotes or stray whitespace - in src/i18n/*.json translations.
   2. Docs heading anchors ({#slug}) drifted away from the English source.
-  3. Translated link: frontmatter values in each locale's docs index.md.
+  3. link: frontmatter values in each locale's docs index.md (created or
+     corrected per language; skipped with a note when Crowdin doesn't
+     expose them).
 
 Automation:
   .github/workflows/crowdin-autorepair.yml runs this script with --apply
@@ -465,10 +473,20 @@ async function repairDocsFile(ctx, file) {
     strings.map((string, index) => [string.id, index]),
   );
   const isIndex = file.normalizedPath.endsWith('/index.md');
-  // The docs locale folder (e.g. `docs/src/fr/index.md` -> `fr`) is the
-  // canonical link prefix - it matches the %two_letters_code% translation
-  // paths, not the Crowdin languageId (which may be regional, e.g. pt-BR).
-  const localeFolder = file.normalizedPath.split('/')[2];
+
+  // Crowdin exposes index.md's `link:` frontmatter values as (usually
+  // untranslated) source strings, so repairs work per-language below. When
+  // the parser excludes them entirely (URL-like front matter), no strings
+  // exist and class 3 can't fire - say so explicitly instead of silently
+  // reporting 0.
+  const linkStrings = isIndex
+    ? strings.filter((string) => isLinkString(string.text))
+    : [];
+  if (isIndex && linkStrings.length === 0) {
+    ctx.log(
+      `[docs] ${file.normalizedPath}: no link: frontmatter strings exposed by Crowdin - links are rewritten by docs/utils/fix-doc-markdown.mjs instead`,
+    );
+  }
 
   for (const language of ctx.languages) {
     const translations = await listAll(
@@ -476,7 +494,7 @@ async function repairDocsFile(ctx, file) {
       ctx.token,
       `/projects/${ctx.projectId}/languages/${encodeURIComponent(language)}/translations?fileId=${file.id}`,
     );
-    if (translations.length === 0) continue;
+    if (translations.length === 0 && linkStrings.length === 0) continue;
 
     // File order matters for duplicate-anchor suffixing, so sort translations
     // back into the order the strings appear in the file.
@@ -486,27 +504,73 @@ async function repairDocsFile(ctx, file) {
         (stringOrder.get(b.stringId) ?? -1),
     );
 
-    const usedAnchors = new Map();
+    // The docs locale folder (docs/src/{locale}/...) is the canonical link
+    // prefix. It follows %two_letters_code%, which for regional Crowdin ids
+    // is the part before the hyphen (es-ES -> es, pt-BR -> pt, zh-CN -> zh).
+    const localeFolder = language.split('-')[0];
     const ops = [];
+
+    // Class 3: link: frontmatter. The source values are usually untranslated
+    // (Crowdin treats them as URL-like), so the expected localized value is
+    // created when missing and corrected when mangled.
+    for (const linkString of linkStrings) {
+      const expected = computeLinkFix(linkString.text, localeFolder);
+      if (!expected) continue;
+      const existing = translations.find(
+        (item) => item.stringId === linkString.id,
+      );
+      if (existing?.text === expected) continue;
+
+      ctx.totals.links += 1;
+      const label = `${file.normalizedPath} (${language}, string ${linkString.id})`;
+      if (ctx.verbose) {
+        ctx.log(
+          `[link] ${label}: ${JSON.stringify(existing?.text ?? '(missing)')} -> ${JSON.stringify(expected)}`,
+        );
+      }
+      if (existing) {
+        ops.push({
+          op: 'replace',
+          path: `/${existing.translationId}`,
+          value: { text: expected },
+        });
+      } else {
+        ops.push({
+          op: 'add',
+          path: '/-',
+          value: {
+            addToTm: false,
+            languageId: language,
+            stringId: linkString.id,
+            text: expected,
+          },
+        });
+      }
+    }
+
+    // Class 2: heading anchors.
+    const usedAnchors = new Map();
     for (const item of translations) {
       if (typeof item.text !== 'string') continue;
       const source = sources.get(item.stringId) ?? '';
 
-      const linkFix = isIndex
-        ? computeLinkFix(source, item.text, localeFolder ?? language)
-        : null;
-      const fix = linkFix ?? computeAnchorFix(source, item.text, usedAnchors);
+      const fix = computeAnchorFix(source, item.text, usedAnchors);
       if (!fix) continue;
 
-      ctx.totals[fix.kind === 'link' ? 'links' : 'anchors'] += 1;
+      ctx.totals.anchors += 1;
       const label = `${file.normalizedPath} (${language}, string ${item.stringId})`;
       if (ctx.verbose) {
         ctx.log(
-          `[${fix.kind}] ${label}: ${JSON.stringify(item.text)} -> ${JSON.stringify(fix.text)}`,
+          `[anchor] ${label}: ${JSON.stringify(item.text)} -> ${JSON.stringify(fix.text)}`,
         );
       }
-      ops.push({ path: `/${item.translationId}`, text: fix.text });
+      ops.push({
+        op: 'replace',
+        path: `/${item.translationId}`,
+        value: { text: fix.text },
+      });
     }
+
     if (ctx.apply && ops.length > 0) {
       await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`);
     }
@@ -553,7 +617,11 @@ async function repairI18nLinkedSyntax(ctx, file) {
           `[linked] ${label}: ${JSON.stringify(item.text)} -> ${JSON.stringify(fixed)}`,
         );
       }
-      ops.push({ path: `/${item.translationId}`, text: fixed });
+      ops.push({
+        op: 'replace',
+        path: `/${item.translationId}`,
+        value: { text: fixed },
+      });
     }
     if (ctx.apply && ops.length > 0) {
       await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`);
@@ -732,23 +800,28 @@ function runSelfTest() {
       null,
     ],
 
-    // Docs link: frontmatter.
+    // Docs link: frontmatter. computeLinkFix(enText, localeFolder) returns
+    // the expected link text; repairDocsFile compares it against the
+    // existing translation (or missing) and builds replace/add ops.
     [
-      'translated link realigned',
-      computeLinkFix('link: /download', 'link: /télécharger', 'fr'),
-      { kind: 'link', text: 'link: /fr/download' },
+      'regional language folder (es-ES -> es)',
+      computeLinkFix('link: /download', 'es'),
+      'link: /es/download',
     ],
     [
-      'clean link left alone',
-      computeLinkFix('link: /download', 'link: /fr/download', 'fr'),
-      null,
+      'link localized to locale folder',
+      computeLinkFix('link: /download', 'fr'),
+      'link: /fr/download',
     ],
     [
-      'image value untouched',
-      computeLinkFix('image: /logo.svg', 'image: /logo.svg', 'fr'),
-      null,
+      'indented link kept',
+      computeLinkFix('      link: /user-guide', 'fr'),
+      '      link: /fr/user-guide',
     ],
-    ['prose untouched', computeLinkFix('Download', 'Télécharger', 'fr'), null],
+    ['image value untouched', computeLinkFix('image: /logo.svg', 'fr'), null],
+    ['prose untouched', computeLinkFix('Download', 'fr'), null],
+    ['link string detected', isLinkString('      link: /download'), true],
+    ['non-link not detected', isLinkString('image: /logo.svg'), false],
 
     // TM segment corruption signatures.
     ['tm typographic quotes', isCorruptedSegment('Viide @:{‚cbs‘}'), true],
