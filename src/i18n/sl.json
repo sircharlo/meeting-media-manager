@@ -643,7 +643,7 @@
   "quick-actions-new-category": "Dodaj kategorijo",
   "quick-actions-new-item": "Dodaj opravilo",
   "quick-actions-play-music": "Predvajaj glasbo v ozadju",
-  "quick-actions-song-ended-at": "Pesem se je končala ob {time}",
+  "quick-actions-song-ended-at": "Song ended at",
   "quick-actions-start-music-confirm-message": "Shod morda še ni končan. Ali res želiš začeti predvajati glasbo v ozadju?",
   "quick-actions-start-music-confirm-title": "Ali začnem predvajati glasbo v ozadju?",
   "quick-actions-start-recording": "Začni snemanje",

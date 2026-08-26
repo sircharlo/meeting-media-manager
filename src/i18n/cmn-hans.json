@@ -643,7 +643,7 @@
   "quick-actions-new-category": "添加类别",
   "quick-actions-new-item": "添加任务",
   "quick-actions-play-music": "播放背景音乐",
-  "quick-actions-song-ended-at": "诗歌在{time}结束",
+  "quick-actions-song-ended-at": "Song ended at",
   "quick-actions-start-music-confirm-message": "聚会可能还没有结束。你确定现在要开始播放背景音乐吗？",
   "quick-actions-start-music-confirm-title": "开始播放背景音乐？",
   "quick-actions-start-recording": "开始录制",

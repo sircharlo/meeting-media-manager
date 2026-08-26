@@ -643,7 +643,7 @@
   "quick-actions-new-category": "Add a category",
   "quick-actions-new-item": "Add a task",
   "quick-actions-play-music": "Play background music",
-  "quick-actions-song-ended-at": "Song ended at {time}",
+  "quick-actions-song-ended-at": "Song ended at",
   "quick-actions-start-music-confirm-message": "The meeting may not be over yet. Are you sure you want to start background music now?",
   "quick-actions-start-music-confirm-title": "Start background music?",
   "quick-actions-start-recording": "Start recording",
