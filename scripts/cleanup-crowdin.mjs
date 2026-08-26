@@ -167,16 +167,18 @@ async function crowdinRequest(
   if (!response.ok) {
     const detail = await response.text().catch(() => '');
     const suffix = detail ? `: ${detail.slice(0, 400)}` : '';
-    throw new Error(
+    const error = new Error(
       `Crowdin API ${method} ${path} -> ${response.status} ${response.statusText}${suffix}`,
     );
+    // Keep the raw body so callers can inspect structured error payloads
+    // (e.g. per-op indices in ErrorPatchCollectionResource).
+    error.body = detail;
+    throw error;
   }
 
   if (response.status === 204) return null;
   return response.json();
 }
-
-// ── Config ───────────────────────────────────────────────────────────────────
 
 async function deleteTmSegment(ctx, tmId, segmentId, label) {
   try {
@@ -190,6 +192,8 @@ async function deleteTmSegment(ctx, tmId, segmentId, label) {
     ctx.failures.push(`${label}: ${error.message}`);
   }
 }
+
+// ── Config ───────────────────────────────────────────────────────────────────
 
 function getConfig() {
   const token = process.env.CROWDIN_PERSONAL_TOKEN;
@@ -212,6 +216,29 @@ function getConfig() {
     projectId,
     token,
   };
+}
+
+function getFailedPatchIndices(body) {
+  // Parse the ErrorPatchCollectionResource body from a failed batch PATCH
+  // ({errors: [{index, errors}]}) and return the indices of the ops that
+  // failed. Returns null when the body isn't that shape (e.g. a 403 scope
+  // error or a plain validation error), in which case the whole batch failed.
+  if (typeof body !== 'string' || body.length === 0) return null;
+
+  let parsed;
+  try {
+    parsed = JSON.parse(body);
+  } catch {
+    return null;
+  }
+
+  const errors = parsed?.errors;
+  if (!Array.isArray(errors)) return null;
+
+  const indices = errors
+    .map((entry) => entry?.index)
+    .filter((index) => typeof index === 'number');
+  return indices.length > 0 ? indices : null;
 }
 
 // ── Crowdin API layer ────────────────────────────────────────────────────────
@@ -306,26 +333,49 @@ function parseProjectIdFromCrowdinYml() {
 }
 
 async function patchTranslations(ctx, ops, label) {
+  // Editing translation text is a JSON Patch on the batch endpoint
+  // (PATCH /projects/{id}/translations) - the per-id PUT is "Restore
+  // Translation" and takes no body. A batch can partially fail: the 400 body
+  // is an ErrorPatchCollectionResource listing the indices that failed, so
+  // retry those one-by-one instead of dropping the whole file's fixes.
+  const toPatchBody = (batch) =>
+    batch.map(({ path, text }) => ({ op: 'replace', path, value: { text } }));
+
   try {
-    // Editing translation text is a JSON Patch on the batch endpoint
-    // (PATCH /projects/{id}/translations) - the per-id PUT is "Restore
-    // Translation" and takes no body. Errors are per-op ({index, errors}),
-    // so a failed batch stays attributable.
     await crowdinRequest(
       ctx.baseUrl,
       ctx.token,
       `/projects/${ctx.projectId}/translations`,
-      {
-        body: ops.map(({ path, text }) => ({
-          op: 'replace',
-          path,
-          value: { text },
-        })),
-        method: 'PATCH',
-      },
+      { body: toPatchBody(ops), method: 'PATCH' },
     );
+    return;
   } catch (error) {
-    ctx.failures.push(`${label}: ${error.message}`);
+    const failedIndices = getFailedPatchIndices(error.body);
+    if (failedIndices === null) {
+      // Not a per-op failure (scope error, rate limit, etc.) - whole batch
+      // failed.
+      ctx.failures.push(`${label}: ${error.message}`);
+      return;
+    }
+    if (ctx.verbose) {
+      ctx.log(
+        `[patch] ${label}: batch failed for ${failedIndices.length} of ${ops.length} op(s) - retrying individually`,
+      );
+    }
+    for (const index of failedIndices) {
+      const op = ops[index];
+      if (!op) continue;
+      try {
+        await crowdinRequest(
+          ctx.baseUrl,
+          ctx.token,
+          `/projects/${ctx.projectId}/translations`,
+          { body: toPatchBody([op]), method: 'PATCH' },
+        );
+      } catch (opError) {
+        ctx.failures.push(`${label} (op ${index}): ${opError.message}`);
+      }
+    }
   }
 }
 
@@ -705,6 +755,38 @@ function runSelfTest() {
     ['tm stray whitespace', isCorruptedSegment('... @: cbs ajal'), true],
     ['tm doubled anchor', isCorruptedSegment('## Foo {#foo} {#foo}'), true],
     ['tm clean segment', isCorruptedSegment("Viide @:{'cbs'} juurde"), false],
+
+    // Batch PATCH per-op error parsing.
+    [
+      'patch indices parsed from error body',
+      getFailedPatchIndices(
+        JSON.stringify({
+          errors: [
+            { errors: [], index: 1 },
+            { errors: [], index: 3 },
+          ],
+        }),
+      ),
+      [1, 3],
+    ],
+    [
+      'patch empty indices array returns null',
+      getFailedPatchIndices(JSON.stringify({ errors: [] })),
+      null,
+    ],
+    [
+      'non-patch error body returns null',
+      getFailedPatchIndices(
+        JSON.stringify({ error: { code: 403, message: 'Forbidden' } }),
+      ),
+      null,
+    ],
+    [
+      'unparseable body returns null',
+      getFailedPatchIndices('<html>oops'),
+      null,
+    ],
+    ['empty body returns null', getFailedPatchIndices(''), null],
   ];
 
   let failed = 0;
