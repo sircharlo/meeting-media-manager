@@ -19,14 +19,14 @@ import fr from './fr.json' with { type: 'json' };
 // 98.9% translated as of 2026-08-26
 import cmnHans from './cmn-hans.json' with { type: 'json' };
 
+// 98.7% translated as of 2026-08-26
+import ty from './ty.json' with { type: 'json' };
+
 // 98.5% translated as of 2026-08-26
 import sl from './sl.json' with { type: 'json' };
 
 // 98.1% translated as of 2026-08-26
 import et from './et.json' with { type: 'json' };
-
-// 97.9% translated as of 2026-08-26
-import ty from './ty.json' with { type: 'json' };
 
 // 97.6% translated as of 2026-08-26
 import it from './it.json' with { type: 'json' };
