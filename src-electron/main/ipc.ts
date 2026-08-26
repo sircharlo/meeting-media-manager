@@ -1,5 +1,6 @@
 import type {
   ConversionOptions,
+  DevMenuState,
   DiscussionCategory,
   ElectronIpcInvokeKey,
   ElectronIpcSendKey,
@@ -29,6 +30,7 @@ import { pathExists } from 'fs-extra/esm';
 import { stat } from 'node:fs/promises';
 import { arch, platform } from 'node:os';
 import { PLATFORM } from 'src-electron/constants';
+import { updateDevMenuState } from 'src-electron/main/dev-menu';
 import { getLowDiskSpaceStatus } from 'src-electron/main/disk-space';
 import {
   cancelAllDownloads,
@@ -208,6 +210,13 @@ handleIpcSend('pauseAllDownloads', () => {
 });
 
 handleIpcSend('checkForUpdates', () => triggerUpdateCheck());
+
+// Renderer → main state sync for the dev-only Demo menu (checkboxes and
+// enabled/disabled states). updateDevMenuState() no-ops unless the dev menu
+// was actually built, so this is harmless in production.
+handleIpcSend('dev-menu-state', (_e, state: DevMenuState) => {
+  updateDevMenuState(state);
+});
 
 handleIpcSend('setElectronUrlVariables', (_e, variables: string) => {
   try {

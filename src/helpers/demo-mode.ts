@@ -6,11 +6,20 @@ import type {
   Tag,
 } from 'src/types';
 
+import { removeCongregationCache } from 'src/helpers/cleanup';
+import { getTodaysMeetingStartDateTime } from 'src/helpers/date';
 import { createMeetingSections } from 'src/helpers/media-sections';
 import { uuid } from 'src/shared/vanilla';
+import { getVisibleMeetingItems } from 'src/utils/media';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
-import { useCurrentStateStore } from 'stores/current-state';
+import {
+  type MediaPlayingState,
+  useCurrentStateStore,
+} from 'stores/current-state';
+import { useDemoModeStore } from 'stores/demo-mode';
 import { useJwStore } from 'stores/jw';
+import { useMeetingQuickActionsStore } from 'stores/meeting-quick-actions';
+import { useMusicStore } from 'stores/music';
 
 // Generic, non-JW-content placeholder thumbnails (inline SVGs, not bundled
 // files) so demo mode never ships or displays real website media.
@@ -138,9 +147,18 @@ const buildDemoDateInfo = (
  * Seeds a fake congregation with placeholder (non-JW-content) meeting media,
  * so the app can be launched and screenshotted without a real congregation
  * or any network access. Only runs when `M3_DEMO_MODE` is set (see
- * `src/boot/demo-mode.ts`). Resets any previously seeded demo state first,
- * so repeated launches (e.g. during local testing) stay idempotent.
+ * `src/boot/demo-mode.ts`) or when a developer enables demo mode from the
+ * dev-only Demo menu. Resets any previously seeded demo state first, so
+ * repeated launches (e.g. during local testing) stay idempotent.
  */
+// Id of the congregation created by the most recent seedDemoData() call, so
+// disabling demo mode at runtime can offer to remove exactly that profile
+// and its cached media (a dev may have other congregations around it).
+let seededCongregationId = '';
+
+/** The congregation id created by the most recent seedDemoData() call. */
+export const getSeededDemoCongregationId = () => seededCongregationId;
+
 export const seedDemoData = () => {
   const congregationSettingsStore = useCongregationSettingsStore();
   const currentStateStore = useCurrentStateStore();
@@ -150,6 +168,7 @@ export const seedDemoData = () => {
   jwStore.lookupPeriod = {};
 
   const demoId = congregationSettingsStore.createCongregation();
+  seededCongregationId = demoId;
   const settings = congregationSettingsStore.congregations[demoId];
   if (!settings) return;
 
@@ -213,3 +232,133 @@ export const getDemoSongLibrary = (): SongItem[] => [
     title: 'Demo background music',
   },
 ];
+
+// ─── Demo meeting-stage transitions ─────────────────────────────────────────
+// Shared by the meeting quick-actions demo controls (MeetingQuickActionsPanel
+// .vue) and the dev-only Demo menu (src/boot/dev-menu.ts), so the simulated
+// meeting state moves identically no matter which surface triggers it.
+
+const getDemoLastSong = () => {
+  const items = getVisibleMeetingItems(
+    useCurrentStateStore().selectedDateObject,
+  );
+  for (let index = items.length - 1; index >= 0; index--) {
+    const item = items[index];
+    if (item?.tag?.type === 'song') return item;
+  }
+  return null;
+};
+
+/**
+ * Stops any demo audio, resets the quick-actions scope and simulated
+ * meeting state. No-op for the stage/clock parts unless demo mode is
+ * enabled (setVirtualTime/reset guard on `enabled`).
+ */
+export const resetDemo = () => {
+  const currentState = useCurrentStateStore();
+  const demoMode = useDemoModeStore();
+  // A reset must cancel an in-flight/playing demo track as well as resetting
+  // the simulated meeting state; otherwise the next demo run inherits the
+  // previous audio operation and cannot auto-start cleanly.
+  useMusicStore().stopMusic(false, 0);
+  useMeetingQuickActionsStore().resetCurrentScope();
+  currentState.mediaPlaying = {
+    ...currentState.mediaPlaying,
+    action: '',
+    currentPosition: 0,
+    currentPositionUpdatedAt: 0,
+    uniqueId: '',
+    url: '',
+  };
+  demoMode.reset();
+};
+
+/**
+ * Turns demo mode off entirely: resets the simulated meeting state, stops
+ * any demo audio, and flips the store's `enabled` flag back off (the quick
+ * actions' Reset button only resets the stage — it keeps demo mode on).
+ */
+export const disableDemoMode = () => {
+  resetDemo();
+  useDemoModeStore().deactivate();
+};
+
+/** Jumps the simulated clock to 4 minutes before the meeting start. */
+export const jumpToPreMeeting = () => {
+  const demoMode = useDemoModeStore();
+  const start = getTodaysMeetingStartDateTime(new Date(demoMode.now));
+  if (!start) return;
+  demoMode.setVirtualTime(start.getTime() - 4 * 60 * 1000, 'pre-meeting');
+};
+
+/**
+ * Jumps the simulated clock to the start of the meeting's last song (35
+ * seconds in) and starts playing it, so the after-meeting panel trigger can
+ * be exercised.
+ */
+export const jumpToLastSong = () => {
+  const demoMode = useDemoModeStore();
+  const currentState = useCurrentStateStore();
+  const start = getTodaysMeetingStartDateTime(new Date(demoMode.now));
+  const lastSong = getDemoLastSong();
+  if (!start || !lastSong?.duration) return;
+  const virtualNow = start.getTime() + 105 * 60 * 1000 - 35 * 1000;
+  demoMode.setVirtualTime(virtualNow, 'last-song');
+  currentState.mediaPlaying = {
+    ...currentState.mediaPlaying,
+    action: 'play',
+    currentPosition: Math.max(0, lastSong.duration - 35),
+    currentPositionUpdatedAt: virtualNow,
+    playbackConfirmedToken: currentState.mediaPlaying.playToken + 1,
+    playToken: currentState.mediaPlaying.playToken + 1,
+    uniqueId: lastSong.uniqueId,
+    url: lastSong.fileUrl || lastSong.streamUrl || 'demo://last-song',
+  } satisfies MediaPlayingState;
+};
+
+/** Records the last song as ended and moves to the after-meeting stage. */
+export const finishLastSong = () => {
+  const demoMode = useDemoModeStore();
+  const currentState = useCurrentStateStore();
+  useMeetingQuickActionsStore().recordLastSongEnded(demoMode.now);
+  currentState.mediaPlaying = {
+    ...currentState.mediaPlaying,
+    action: '',
+    currentPosition: 0,
+    currentPositionUpdatedAt: 0,
+    uniqueId: '',
+    url: '',
+  };
+  demoMode.setVirtualTime(demoMode.now, 'after-song');
+};
+
+/**
+ * Removes the seeded demo congregation: its profile, its session caches
+ * (lookup period, quick-start tour flag, announcements), and its
+ * per-congregation cached folders on disk — mirroring the app's canonical
+ * congregation deletion in DialogCongregationSwitcher. No-op when nothing
+ * was seeded this session.
+ */
+export const removeDemoCongregationData = async () => {
+  const demoId = seededCongregationId;
+  if (!demoId) return;
+
+  const congregationSettingsStore = useCongregationSettingsStore();
+  const currentStateStore = useCurrentStateStore();
+  const jwStore = useJwStore();
+
+  congregationSettingsStore.deleteCongregation(demoId);
+  // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+  delete congregationSettingsStore.quickStartTourSeen[demoId];
+  // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+  delete congregationSettingsStore.announcements[demoId];
+  // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+  delete jwStore.lookupPeriod[demoId];
+  if (currentStateStore.currentCongregation === demoId) {
+    // Triggers MainLayout's currentCongregation watcher, which shows the
+    // congregation switcher — the pristine, demo-free starting state.
+    currentStateStore.currentCongregation = '';
+  }
+  seededCongregationId = '';
+  await removeCongregationCache(demoId);
+};

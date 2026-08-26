@@ -332,6 +332,7 @@ import {
   type MediaPlayingState,
   useCurrentStateStore,
 } from 'stores/current-state';
+import { isDemoModeActive } from 'stores/demo-mode';
 import { useJwStore } from 'stores/jw';
 import { useMeetingQuickActionsStore } from 'stores/meeting-quick-actions';
 import { useObsStateStore } from 'stores/obs-state';
@@ -1079,7 +1080,7 @@ const checkCoDate = () => {
     !currentSettings.value ||
     currentSettings.value?.disableMediaFetching ||
     route.params?.typeOfLoad !== 'initial' ||
-    globalThis.electronApi?.isDemoMode ||
+    isDemoModeActive() ||
     // A congregation with no meeting days set yet hasn't been through the
     // setup wizard at all - this is its first launch. The currentCongregation
     // watcher below can invoke this while the route param above is still

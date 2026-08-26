@@ -13,12 +13,14 @@ import {
 import {
   APP_ID,
   IS_DEMO_MODE,
+  IS_DEV,
   IS_TEST,
   PLATFORM,
   PRODUCT_NAME,
   SENTRY_DSN,
   SENTRY_ENVIRONMENT,
 } from 'src-electron/constants';
+import { createDevMenu } from 'src-electron/main/dev-menu';
 import { cancelAllDownloads } from 'src-electron/main/downloads';
 import { cleanupHeicWorker } from 'src-electron/main/heic';
 import {
@@ -211,6 +213,10 @@ function createApplicationMenu() {
     ...(PLATFORM === 'darwin' ? [appMenu] : []),
     { role: 'fileMenu' },
     { role: 'editMenu' },
+    // Dev-only: a Demo menu for runtime demo mode + manual-testing toggles.
+    // Never included in packaged/prod builds (IS_DEV is a compile-time flag
+    // that is false for every `quasar build`).
+    ...(IS_DEV && !IS_TEST ? [createDevMenu()] : []),
     {
       label: 'View',
       submenu: [

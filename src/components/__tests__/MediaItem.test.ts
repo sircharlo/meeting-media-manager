@@ -1,7 +1,9 @@
 import { mount } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
+import { useDemoModeStore } from 'stores/demo-mode';
 import { describe, expect, it } from 'vitest';
+import { nextTick } from 'vue';
 
 import MediaItem from '../media/MediaItem.vue';
 
@@ -139,5 +141,29 @@ describe('MediaItem Component', () => {
 
     // The component should display the label somewhere in the text
     expect(wrapper.text()).toContain('Test Media Item');
+  });
+
+  it('hides thumbnail spinners reactively when demo mode is toggled at runtime', async () => {
+    const demoMode = useDemoModeStore();
+    const wrapper = mount(MediaItem, {
+      props: {
+        media: mockMediaItem,
+        repeat: false,
+      },
+    });
+
+    const thumbnail = wrapper.findComponent({ name: 'QImg' });
+    // Launched without M3_DEMO_MODE and demo store untouched: not demo mode.
+    expect(thumbnail.props('noSpinner')).toBe(false);
+
+    // Runtime enable (e.g. via the dev-only Demo menu) flips the UI tweak.
+    demoMode.enabled = true;
+    await nextTick();
+    expect(thumbnail.props('noSpinner')).toBe(true);
+
+    // And back off again when demo mode is disabled.
+    demoMode.enabled = false;
+    await nextTick();
+    expect(thumbnail.props('noSpinner')).toBe(false);
   });
 });

@@ -46,6 +46,7 @@ import {
 } from 'src/utils/date';
 import { createDebouncedStorage } from 'src/utils/debounced-storage';
 import { findBestResolution, isMediaLink } from 'src/utils/jw';
+import { isDemoModeActive } from 'stores/demo-mode';
 
 const oldDate = new Date(0);
 
@@ -627,13 +628,7 @@ export const useJwStore = defineStore('jw-store', {
       online: boolean;
     }) {
       try {
-        if (
-          !online ||
-          !lang ||
-          isSignLanguage ||
-          globalThis.electronApi.isDemoMode
-        )
-          return;
+        if (!online || !lang || isSignLanguage || isDemoModeActive()) return;
 
         const year = new Date().getFullYear();
         const promises: Promise<{ wtlocale: JwLangCode; yeartext?: string }>[] =

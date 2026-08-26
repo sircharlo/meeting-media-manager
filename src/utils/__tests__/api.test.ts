@@ -5,6 +5,7 @@ import {
 } from 'app/test/vitest/mocks/github';
 import { jwLangs, jwYeartext } from 'app/test/vitest/mocks/jw';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
+import { useDemoModeStore } from 'stores/demo-mode';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 installPinia();
@@ -215,6 +216,40 @@ describe('fetchRaw caching', () => {
     await fetchRaw(handledUrl, { headers: { 'X-Test': '2' } }, true);
 
     expect(fetchSpy).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('fetchRaw demo mode', () => {
+  beforeEach(() => {
+    // The fetchRaw caching describe above leaves a fetch spy installed.
+    vi.restoreAllMocks();
+    clearFetchCache();
+  });
+
+  afterEach(() => {
+    // The demo store is shared across the whole test file via installPinia.
+    useDemoModeStore().enabled = false;
+    vi.restoreAllMocks();
+    clearFetchCache();
+  });
+
+  it('blocks the network while demo mode is enabled at runtime, and unblocks when disabled', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
+    const demoMode = useDemoModeStore();
+    expect(demoMode.enabled).toBe(false);
+
+    demoMode.enabled = true;
+    await expect(
+      fetchRaw('https://example.com/', undefined, false),
+    ).rejects.toThrow();
+    expect(fetchSpy).not.toHaveBeenCalled();
+
+    demoMode.enabled = false;
+    fetchSpy.mockResolvedValue(new Response('{}', { status: 200 }));
+    await expect(
+      fetchRaw('https://example.com/', undefined, false),
+    ).resolves.toBeDefined();
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 });
 

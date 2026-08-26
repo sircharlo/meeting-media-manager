@@ -51,10 +51,26 @@
           />
         </div>
         <div class="col items-center">
-          <div class="row text-current-page">
+          <div class="row items-center text-current-page">
             <div v-if="route.meta.title" class="ellipsis">
               {{ t(route.meta.title.toString()) }}
             </div>
+            <q-badge
+              v-if="showDemoBadge"
+              class="q-ml-sm"
+              color="warning"
+              outline
+            >
+              <q-icon class="q-mr-xs" name="mmm-warning" size="xs" />
+              <span class="no-wrap">{{ t('demo-mode-active') }}</span>
+              <span v-if="stageLabel" class="no-wrap">· {{ stageLabel }}</span>
+              <span v-if="virtualClock" class="no-wrap">
+                · {{ virtualClock }}
+              </span>
+              <q-tooltip :delay="500">
+                {{ t('demo-mode-active-tooltip') }}
+              </q-tooltip>
+            </q-badge>
           </div>
           <div class="row text-congregation">
             <div class="ellipsis">
@@ -77,12 +93,14 @@
   </q-header>
 </template>
 <script setup lang="ts">
+import { useIntervalFn } from '@vueuse/core';
 import DialogAbout from 'components/dialog/DialogAbout.vue';
 import { storeToRefs } from 'pinia';
 import { updatesDisabled } from 'src/utils/fs';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { type DemoMeetingStage, useDemoModeStore } from 'stores/demo-mode';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 
@@ -91,11 +109,41 @@ import HeaderSettings from './HeaderSettings.vue';
 import HeaderWebsite from './HeaderWebsite.vue';
 
 const isBetaVersion = import.meta.env.IS_BETA;
-const isDemoMode = !!globalThis.electronApi?.isDemoMode;
+const { t } = useI18n();
+// Live demo-mode flag (M3_DEMO_MODE launch or runtime Demo-menu enable), so
+// the beta logo swaps back in the moment demo mode is turned off.
+const demoMode = useDemoModeStore();
+const isDemoMode = computed(() => demoMode.enabled);
+// Demo-mode badge: dev builds only, so packaged-build screenshots (launched
+// with M3_DEMO_MODE) stay clean; tracks the live store so the badge appears
+// and disappears the moment demo mode is toggled at runtime.
+const showDemoBadge = computed(() => import.meta.env.DEV && isDemoMode.value);
+// The badge doubles as a status chip: it shows the current simulated meeting
+// stage and the virtual clock time (only meaningful while demo mode is on).
+const stageLabels: Record<DemoMeetingStage, string> = {
+  'after-song': t('demo-mode-stage-after-song'),
+  'last-song': t('demo-mode-stage-last-song'),
+  'pre-meeting': t('demo-mode-stage-pre-meeting'),
+  reset: t('demo-mode-stage-reset'),
+};
+const stageLabel = computed(() =>
+  isDemoMode.value ? stageLabels[demoMode.stage] : '',
+);
+const virtualClock = ref('');
+const updateVirtualClock = () => {
+  virtualClock.value = isDemoMode.value
+    ? new Date(demoMode.now).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : '';
+};
+const { pause, resume } = useIntervalFn(updateVirtualClock, 1000, {
+  immediate: false,
+});
 
 const updatesAreDisabled = ref(false);
 
-const { t } = useI18n();
 const route = useRoute();
 
 const congregationSettings = useCongregationSettingsStore();
@@ -109,6 +157,20 @@ const dialogId = 'about-dialog';
 const handleAutoUpdatesToggled = (event: Event) => {
   updatesAreDisabled.value = !(event as CustomEvent<boolean>).detail;
 };
+
+// Only tick the clock while demo mode is on (nothing to show otherwise).
+watch(
+  isDemoMode,
+  (enabled) => {
+    if (enabled) {
+      updateVirtualClock();
+      resume();
+    } else {
+      pause();
+    }
+  },
+  { immediate: true },
+);
 
 onMounted(async () => {
   updatesAreDisabled.value = await updatesDisabled();

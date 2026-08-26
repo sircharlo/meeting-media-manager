@@ -121,6 +121,9 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   normalize,
+  onDevMenuCommand: function () {
+    return () => undefined;
+  },
   onDownloadCancelled: function (callback) {
     throw new Error('Function not implemented.');
   },
@@ -222,6 +225,9 @@ export const electronApi: ElectronApi = {
   },
   saveFileDialog: function (defaultPath, filter) {
     throw new Error('Function not implemented.');
+  },
+  sendDevMenuState: function () {
+    // no-op in tests
   },
   sendKeyTap: function (key, modifiers) {
     // no-op in tests

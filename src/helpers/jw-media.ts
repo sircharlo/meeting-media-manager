@@ -110,6 +110,7 @@ import {
 } from 'src/utils/sqlite';
 import { timeToSeconds } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
+import { isDemoModeActive } from 'stores/demo-mode';
 import {
   replaceMissingMediaByPubMediaId,
   shouldUpdateList,
@@ -136,7 +137,6 @@ const {
   fileUrlToPath,
   fs,
   getZipEntries,
-  isDemoMode,
   isUsablePath: isUsablePathRaw,
   join,
   pathToFileURL,
@@ -2003,7 +2003,9 @@ export const fetchMedia = async () => {
   // cycle instead of resolving to a real status right away.
   const checkingDateKeys = new Set<string>();
   try {
-    if (isDemoMode) return;
+    // Live demo-mode gate: also returns early while a dev has demo mode
+    // enabled at runtime, so a refresh can't overwrite the seeded demo media.
+    if (isDemoModeActive()) return;
 
     if (
       !currentStateStore.currentCongregation ||
@@ -4826,7 +4828,7 @@ let jwMepsInfoPromise: null | Promise<void> = null;
 
 export const getJwMepsInfo = (): Promise<void> => {
   if (jwMepsInfoPromise) return jwMepsInfoPromise;
-  if (isDemoMode) return Promise.resolve();
+  if (isDemoModeActive()) return Promise.resolve();
 
   jwMepsInfoPromise = (async () => {
     try {

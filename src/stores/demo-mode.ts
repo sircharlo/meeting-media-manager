@@ -19,6 +19,12 @@ export const useDemoModeStore = defineStore('demo-mode', () => {
     enabled.value = true;
   };
 
+  const deactivate = () => {
+    enabled.value = false;
+    clockOffsetMs.value = 0;
+    stage.value = 'reset';
+  };
+
   const setVirtualTime = (timestamp: number, nextStage: DemoMeetingStage) => {
     if (!enabled.value) return;
     clockOffsetMs.value = timestamp - Date.now();
@@ -33,6 +39,7 @@ export const useDemoModeStore = defineStore('demo-mode', () => {
 
   return {
     activate,
+    deactivate,
     enabled,
     now,
     reset,
@@ -40,3 +47,18 @@ export const useDemoModeStore = defineStore('demo-mode', () => {
     stage,
   };
 });
+
+/**
+ * Effective demo-mode flag for behavior gates (network blocking, fetch skips)
+ * that run outside components. Reads the runtime store so toggling demo mode
+ * via the dev-only Demo menu changes these behaviors live, and falls back to
+ * the launch flag when no Pinia is active yet (early init / unit tests), so
+ * env-launched demo mode still blocks the network before the store exists.
+ */
+export const isDemoModeActive = (): boolean => {
+  try {
+    return useDemoModeStore().enabled;
+  } catch {
+    return !!globalThis.electronApi?.isDemoMode;
+  }
+};

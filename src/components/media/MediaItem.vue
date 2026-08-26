@@ -1391,6 +1391,7 @@ import {
 import { sendObsSceneEvent } from 'src/utils/obs';
 import { formatTime, timeToSeconds } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useDemoModeStore } from 'stores/demo-mode';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
 import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue';
@@ -1574,7 +1575,11 @@ const props = defineProps<{
   selectedMediaItems?: string[];
 }>();
 
-const isDemoMode = !!globalThis.electronApi?.isDemoMode;
+const demoMode = useDemoModeStore();
+// Live demo-mode flag: true when launched with M3_DEMO_MODE or when a dev
+// enables demo mode at runtime via the Demo menu. The UI tweaks below
+// (spinner hiding, play icons, synthetic-file availability) react to it.
+const isDemoMode = computed(() => demoMode.enabled);
 
 const repeat = defineModel<boolean | undefined>('repeat', { required: true });
 
@@ -1856,7 +1861,7 @@ const showSourceTag = computed(() => {
     return false;
   }
   if (!sourceTagFetchOk.value) return false;
-  if (isDemoMode && !props.media.tag?.type) return false;
+  if (isDemoMode.value && !props.media.tag?.type) return false;
   return true;
 });
 
@@ -1876,7 +1881,7 @@ const sourceTooltipText = computed(() => {
 // tag doesn't get a second, redundant badge next to the thumbnail.
 const showContentTag = computed(() => {
   if (props.media.tag?.type) return true;
-  if (isDemoMode || showSourceTag.value) return false;
+  if (isDemoMode.value || showSourceTag.value) return false;
   return sourceTagFetchOk.value;
 });
 
@@ -2703,7 +2708,7 @@ const repeatTooltip = computed(() => {
 
 const playButtonIcon = computed(() => {
   if (isSlideshowLinkedAudio.value) return 'mmm-link';
-  if (isDemoMode) return 'mmm-play';
+  if (isDemoMode.value) return 'mmm-play';
   return localFile.value ? 'mmm-play' : 'mmm-stream-play';
 });
 
@@ -2975,7 +2980,7 @@ const fileIsAvailable = computed(() => {
   // Demo mode's placeholder items have no real file on disk by design —
   // treat them as available so the play button and "missing" messaging
   // don't make a synthetic screenshot look broken.
-  if (isDemoMode) return true;
+  if (isDemoMode.value) return true;
   return isFileUrl(props.media.fileUrl) && localFile.value;
 });
 

@@ -15,6 +15,7 @@ import { log } from 'src/shared/vanilla';
 import { addToDate, dateFromString, isInPast } from 'src/utils/date';
 import { withFetchRetry } from 'src/utils/fetch-retry';
 import { betaUpdatesDisabled } from 'src/utils/fs';
+import { isDemoModeActive } from 'stores/demo-mode';
 
 const MAX_CACHED_RESPONSE_BYTES = 1024 * 1024;
 
@@ -114,8 +115,9 @@ export const fetchRaw = async (
   // Demo mode must never reach the network (no real congregation, no real
   // website content) — fail the same way a real offline device would, so the
   // app's existing offline handling takes over rather than needing bespoke
-  // handling at every call site.
-  if (globalThis.electronApi?.isDemoMode) {
+  // handling at every call site. Live: also applies while a dev has demo
+  // mode enabled at runtime via the Demo menu.
+  if (isDemoModeActive()) {
     throw new TypeError('fetch failed', { cause: { code: 'ENOTFOUND' } });
   }
 

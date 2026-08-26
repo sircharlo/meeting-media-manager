@@ -9,7 +9,7 @@
         dense
         :label="t('quick-actions-demo-reset')"
         outline
-        @click="resetDemo"
+        @click="handleResetDemo"
       />
       <q-btn
         v-if="demoMode.stage === 'reset' || demoMode.stage === 'pre-meeting'"
@@ -17,7 +17,7 @@
         dense
         :label="t('quick-actions-demo-jump-pre-meeting')"
         outline
-        @click="jumpToPreMeeting"
+        @click="handleJumpToPreMeeting"
       />
       <q-btn
         v-if="demoMode.stage === 'pre-meeting'"
@@ -25,7 +25,7 @@
         dense
         :label="t('quick-actions-demo-jump-last-song')"
         outline
-        @click="jumpToLastSong"
+        @click="handleJumpToLastSong"
       />
       <q-btn
         v-if="demoMode.stage === 'last-song'"
@@ -33,7 +33,7 @@
         dense
         :label="t('quick-actions-demo-finish-song')"
         outline
-        @click="finishLastSong"
+        @click="handleFinishLastSong"
       />
     </div>
     <q-slide-transition @after-leave="handleBeforePanelHidden">
@@ -56,18 +56,20 @@ import MeetingQuickActionsBeforePanel from 'components/media/MeetingQuickActions
 import { storeToRefs } from 'pinia';
 import { getTodaysMeetingStartDateTime } from 'src/helpers/date';
 import {
+  finishLastSong,
+  jumpToLastSong,
+  jumpToPreMeeting,
+  resetDemo,
+} from 'src/helpers/demo-mode';
+import {
   getTodaysScheduledMeetingEndDateTime,
   getVisibleChecklistItemIds,
   predictLastSongEndDateTime,
 } from 'src/helpers/meeting-quick-actions';
-import { getVisibleMeetingItems } from 'src/utils/media';
-import {
-  type MediaPlayingState,
-  useCurrentStateStore,
-} from 'stores/current-state';
+import { useCurrentStateStore } from 'stores/current-state';
 import { useDemoModeStore } from 'stores/demo-mode';
 import { useMeetingQuickActionsStore } from 'stores/meeting-quick-actions';
-import { AUTO_START_WINDOW_HOURS, useMusicStore } from 'stores/music';
+import { AUTO_START_WINDOW_HOURS } from 'stores/music';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -96,10 +98,7 @@ const {
   dismissedBeforePanel,
   lastSongEndedAt,
 } = storeToRefs(quickActions);
-const { dismissBefore, recordLastSongEnded, resetCurrentScope } = quickActions;
-
-const music = useMusicStore();
-const { stopMusic } = music;
+const { dismissBefore } = quickActions;
 
 const now = ref(Date.now());
 const updateNow = () => {
@@ -191,70 +190,27 @@ const allBeforeChecklistItemsChecked = computed(() => {
   return ids.every((id) => !!checkedItemIds.value[id]);
 });
 
-const getDemoLastSong = () => {
-  const items = getVisibleMeetingItems(selectedDateObject.value);
-  for (let index = items.length - 1; index >= 0; index--) {
-    const item = items[index];
-    if (item?.tag?.type === 'song') return item;
-  }
-  return null;
-};
-
-const resetDemo = () => {
-  // A reset must cancel an in-flight/playing demo track as well as resetting
-  // the simulated meeting state; otherwise the next demo run inherits the
-  // previous audio operation and cannot auto-start cleanly.
-  stopMusic(false, 0);
-  resetCurrentScope();
-  currentState.mediaPlaying = {
-    ...currentState.mediaPlaying,
-    action: '',
-    currentPosition: 0,
-    currentPositionUpdatedAt: 0,
-    uniqueId: '',
-    url: '',
-  };
-  demoMode.reset();
+// The demo-stage transitions live in src/helpers/demo-mode.ts (shared with
+// the dev-only Demo menu); these wrappers just refresh this component's
+// local clock ref immediately so the UI updates without waiting for the
+// next interval tick.
+const handleResetDemo = () => {
+  resetDemo();
   updateNow();
 };
 
-const jumpToPreMeeting = () => {
-  const start = meetingStart.value;
-  if (!start) return;
-  demoMode.setVirtualTime(start.getTime() - 4 * 60 * 1000, 'pre-meeting');
+const handleJumpToPreMeeting = () => {
+  jumpToPreMeeting();
   updateNow();
 };
 
-const jumpToLastSong = () => {
-  const start = meetingStart.value;
-  const lastSong = getDemoLastSong();
-  if (!start || !lastSong?.duration) return;
-  const virtualNow = start.getTime() + 105 * 60 * 1000 - 35 * 1000;
-  demoMode.setVirtualTime(virtualNow, 'last-song');
-  currentState.mediaPlaying = {
-    ...currentState.mediaPlaying,
-    action: 'play',
-    currentPosition: Math.max(0, lastSong.duration - 35),
-    currentPositionUpdatedAt: virtualNow,
-    playbackConfirmedToken: currentState.mediaPlaying.playToken + 1,
-    playToken: currentState.mediaPlaying.playToken + 1,
-    uniqueId: lastSong.uniqueId,
-    url: lastSong.fileUrl || lastSong.streamUrl || 'demo://last-song',
-  } satisfies MediaPlayingState;
+const handleJumpToLastSong = () => {
+  jumpToLastSong();
   updateNow();
 };
 
-const finishLastSong = () => {
-  recordLastSongEnded(demoMode.now);
-  currentState.mediaPlaying = {
-    ...currentState.mediaPlaying,
-    action: '',
-    currentPosition: 0,
-    currentPositionUpdatedAt: 0,
-    uniqueId: '',
-    url: '',
-  };
-  demoMode.setVirtualTime(demoMode.now, 'after-song');
+const handleFinishLastSong = () => {
+  finishLastSong();
   updateNow();
 };
 

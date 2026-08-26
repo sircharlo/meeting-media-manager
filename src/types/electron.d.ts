@@ -36,6 +36,38 @@ export interface ConversionOptions {
   quality?: number;
 }
 
+/**
+ * Dev-only commands sent from the main process's Demo menu to the main
+ * window. The menu only exists in dev builds and the renderer listener
+ * (src/boot/dev-menu.ts) no-ops unless `electronApi.isDev`, so these never
+ * fire in production.
+ */
+export type DevMenuCommand =
+  | { enabled: boolean; type: 'set-demo-enabled' }
+  | { offline: boolean; type: 'set-offline' }
+  | { type: 'dismiss-after-panel' }
+  | { type: 'dismiss-before-panel' }
+  | { type: 'finish-last-song' }
+  | { type: 'jump-last-song' }
+  | { type: 'jump-pre-meeting' }
+  | { type: 'play-music' }
+  | { type: 'reseed-demo' }
+  | { type: 'reset-demo' }
+  | { type: 'reshow-panels' }
+  | { type: 'stop-music' }
+  | { type: 'toggle-media-window' }
+  | { type: 'toggle-timer-window' };
+
+/**
+ * Toggle state the renderer reports back so the Demo menu's checkbox and
+ * enabled/disabled states reflect the current runtime state.
+ */
+export interface DevMenuState {
+  demoEnabled: boolean;
+  /** Whether the app is simulating an offline connection. */
+  offline: boolean;
+}
+
 export type DiscussionCategory =
   'general' | 'ideas' | 'polls' | 'q-a' | 'translations';
 
@@ -162,6 +194,11 @@ export interface ElectronApi {
   ) => void;
   navigateWebsiteWindow: (action: NavigateWebsiteAction) => void;
   normalize: typeof normalize;
+  /**
+   * Subscribes to dev-only commands from the main process's Demo menu
+   * (present only in dev builds). Returns an unsubscribe function.
+   */
+  onDevMenuCommand: (callback: (command: DevMenuCommand) => void) => () => void;
   onDownloadCancelled: (callback: (args: { id: string }) => void) => void;
   onDownloadCompleted: (
     callback: (args: { filePath: string; id: string }) => void,
@@ -268,6 +305,12 @@ export interface ElectronApi {
     defaultPath: string,
     filter?: FileDialogFilter,
   ) => Promise<Electron.SaveDialogReturnValue | undefined>;
+  /**
+   * Reports the current dev-only toggle state (demo mode, offline
+   * simulation) back to the main process so the Demo menu's checkboxes and
+   * enabled/disabled states stay in sync. No-op outside dev builds.
+   */
+  sendDevMenuState: (state: DevMenuState) => void;
   /**
    * Taps a key, optionally with modifier keys held down.
    * @param key The key to tap.
@@ -415,6 +458,7 @@ export type ElectronIpcInvokeKey =
 // BrowserWindow.webContents.send / ipcRenderer.on channels
 export type ElectronIpcListenKey =
   | 'attemptedClose'
+  | 'dev-menu-command'
   | 'downloadCancelled'
   | 'downloadCompleted'
   | 'downloadError'
@@ -442,6 +486,7 @@ export type ElectronIpcSendKey =
   | 'authorizedClose'
   | 'cancelAllDownloads'
   | 'checkForUpdates'
+  | 'dev-menu-state'
   | 'focusMediaWindow'
   | 'moveMediaWindow'
   | 'moveTimerWindow'

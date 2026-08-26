@@ -431,6 +431,7 @@ import {
   getMinDate,
 } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useDemoModeStore } from 'stores/demo-mode';
 import { useJwStore } from 'stores/jw';
 import { computed, ref, useTemplateRef } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -449,6 +450,7 @@ const { dateLocale } = useLocale();
 
 const currentState = useCurrentStateStore();
 const { getMeetingType } = currentState;
+const demoMode = useDemoModeStore();
 const {
   currentCongregation,
   currentLangObject,
@@ -467,9 +469,10 @@ const datePickerActive = ref(false);
 // Screenshot reproducibility: the demo congregation's meeting day is always
 // "today" (see src/helpers/demo-mode.ts), so the label would differ on
 // every run — freeze only the displayed text, leaving selectedDate and the
-// rest of the calendar logic untouched.
+// rest of the calendar logic untouched. Live so it also applies when a dev
+// enables demo mode at runtime via the Demo menu.
 const calendarDateLabel = computed(() => {
-  if (globalThis.electronApi?.isDemoMode) return 'September 1, 1914';
+  if (demoMode.enabled) return 'September 1, 1914';
   return (
     getLocalDate(
       selectedDate.value,
