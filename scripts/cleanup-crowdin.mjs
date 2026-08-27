@@ -30,6 +30,7 @@
  *   ... --language et --language fr ...                                   # limit languages
  *   ... --verbose                                                         # per-change logging
  *   node scripts/cleanup-crowdin.mjs --selftest                           # test the repair logic
+ *   node scripts/cleanup-crowdin.mjs --help                               # show this help
  *
  * Automation: .github/workflows/crowdin-autorepair.yml runs this script with
  * --apply on a schedule (hourly) and on demand (workflow_dispatch, with an
@@ -445,7 +446,9 @@ async function purgeCorruptedTmSegments(ctx) {
       await deleteTmSegment(ctx, tmId, segment.id, `tm segment ${segment.id}`);
     }
   }
-} // ── docs repair ──────────────────────────────────────────────────────────────
+}
+
+// ── docs repair ───────────────────────────────────────────────────────────────
 
 async function repairDocsFile(ctx, file) {
   const strings = await listAll(
@@ -518,7 +521,7 @@ async function repairDocsFile(ctx, file) {
   }
 }
 
-// ── CLI ──────────────────────────────────────────────────────────────────────
+// ── i18n linked-message repair ─────────────────────────────────────────────────
 
 async function repairI18nLinkedSyntax(ctx, file) {
   const strings = await listAll(
@@ -641,7 +644,7 @@ async function run() {
   );
   if (docsFiles.length > 0) {
     ctx.log(
-      `[crowdin] classes 2+3: docs heading anchors and link: frontmatter (${docsFiles.length} files)`,
+      `[crowdin] classes 2+3: heading anchors + link: frontmatter diagnostic (${docsFiles.length} files)`,
     );
     for (const file of docsFiles) {
       await repairDocsFile(ctx, file);

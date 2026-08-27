@@ -2,9 +2,11 @@ name: Crowdin auto-repair
 
 # Repairs Crowdin corruption at the source on a schedule and on demand, by
 # running scripts/cleanup-crowdin.mjs --apply. That repairs the stored
-# translations (vue-i18n linked-message syntax, docs heading anchors, docs
-# link: frontmatter) and purges the corrupted translation-memory segments, so
-# the Crowdin GitHub App's PRs come out clean.
+# translations (vue-i18n linked-message syntax, docs heading anchors) and
+# purges the corrupted translation-memory segments, so the Crowdin GitHub
+# App's PRs come out clean. Docs link: frontmatter is not exposed by Crowdin
+# as translatable strings, so the sweep only logs a diagnostic for it and
+# docs/utils/fix-doc-markdown.mjs rewrites links locally.
 #
 # A Crowdin webhook was considered for near-instant repair, but Crowdin's
 # custom webhook payload only accepts its own event variables as keys, so it
