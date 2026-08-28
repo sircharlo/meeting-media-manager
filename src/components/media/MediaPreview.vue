@@ -319,6 +319,25 @@ const getExpectedPosition = () => {
   return base + elapsedSeconds * playbackRate;
 };
 
+// The expected position is extrapolated from the last current-time report
+// (base + elapsed * rate), assuming the media window advanced at exactly
+// `rate` the whole time since that report. The extrapolation error is
+// bounded by the report's age times the playback rate: at 10x speed a
+// single stale 300ms report represents ~3s of media time, so a preview
+// that is perfectly in sync would read as seconds of drift on every check
+// if the tolerance only had the flat allowance (MMM-V2-3EY: playbackRate
+// 10.5 events). The tolerance therefore grows with the report's age -
+// fresh reports stay tight, stale ones stay forgiving - plus the flat
+// 0.2s allowance scaled by rate.
+const getAcceptableDrift = () => {
+  const playbackRate = mediaPlaying.value.playbackRate || 1;
+  const updatedAt = mediaPlaying.value.currentPositionUpdatedAt;
+  const reportAgeSeconds = updatedAt
+    ? Math.max(0, (Date.now() - updatedAt) / 1000)
+    : 0;
+  return 0.2 * playbackRate + reportAgeSeconds * playbackRate;
+};
+
 const syncVideoTime = (element: HTMLVideoElement, acceptableDrift: number) => {
   const expectedPosition = getExpectedPosition();
   const currentDrift = Math.abs(element.currentTime - expectedPosition);
@@ -352,8 +371,38 @@ const DRIFT_CORRECTIONS_BEFORE_AUTO_DISABLE = 5;
 const DRIFT_CORRECTION_WINDOW_SECONDS = 60;
 const recentDriftCorrections = ref<number[]>([]);
 
+// Canvas mode draws every video frame to a downscaled canvas with
+// high-quality smoothing, which is expensive enough on mid-range machines
+// to make the preview fall behind and pile up drift corrections
+// (MMM-V2-3EY). The first time that happens, drop back to the plain video
+// element - the cheap path used before canvas mode - and keep the preview
+// on. Only disable it entirely if drift keeps piling up even in video
+// mode.
+const fallBackPreviewToVideoMode = () => {
+  canvasRenderMode.value = 'video';
+
+  log(
+    `Falling back to video-element preview after ${recentDriftCorrections.value.length} drift corrections within ${DRIFT_CORRECTION_WINDOW_SECONDS}s`,
+    'mediaPreview',
+    'warn',
+  );
+
+  createTemporaryNotification({
+    caption: t('media-preview-fallback-explain'),
+    group: 'media-preview-fallback',
+    message: t('media-preview-fallback'),
+    timeout: 15000,
+    type: 'warning',
+  });
+};
+
 const disablePreviewForPerformance = () => {
   if (currentSettings.value?.enableMediaPreview === false) return;
+
+  if (isCanvasMode.value) {
+    fallBackPreviewToVideoMode();
+    return;
+  }
 
   log(
     `Disabling media preview after ${recentDriftCorrections.value.length} drift corrections within ${DRIFT_CORRECTION_WINDOW_SECONDS}s`,
@@ -492,8 +541,7 @@ const syncVideos = async () => {
       });
     }
 
-    const acceptableDrift = 0.2 * playbackRate;
-    if (syncVideoTime(element, acceptableDrift)) registerDriftCorrection();
+    if (syncVideoTime(element, getAcceptableDrift())) registerDriftCorrection();
     if (isCanvasMode.value) drawCurrentFrame();
   } catch (error) {
     reportPreviewError(error, 'MediaPreview.syncVideos');
