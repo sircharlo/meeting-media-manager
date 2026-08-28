@@ -403,6 +403,8 @@
   "media-playback": "Predvajanje multimedijske vsebine",
   "media-preview-auto-disabled": "Predogled multimedijske vsebine je izklopljen",
   "media-preview-auto-disabled-explain": "Predogled multimedijske vsebine se je večkrat zaustavil in ga je bilo treba nenehno popravljati, zato je bil samodejno izklopljen, da ne bi upočasnjeval tega računalnika. V nastavitvah multimedijskega zalona ga lahko znova vklopiš.",
+  "media-preview-fallback": "Media preview switched to a lighter mode",
+  "media-preview-fallback-explain": "The media preview kept falling behind, so it switched to a lighter mode to keep this computer running smoothly. The preview stays on and works the same way.",
   "media-sync": "Sinhronizacija multimedijske vsebine",
   "media-window-auto-hidden-caption": "Multimedijsko okno lahko ročno prikažeš v zaslonskem meniju ali s klikom gumba v tem obvestilu.",
   "media-window-auto-hidden-message": "Multimedijsko okno je samodejno skrito",

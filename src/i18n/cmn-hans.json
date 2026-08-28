@@ -403,6 +403,8 @@
   "media-playback": "媒体播放",
   "media-preview-auto-disabled": "已关闭媒体预览",
   "media-preview-auto-disabled-explain": "媒体预览持续出现延迟，并需要反复校正，因此系统已自动将其关闭，以免拖慢这台计算机。你可以在“显示”设置中重新启用。",
+  "media-preview-fallback": "Media preview switched to a lighter mode",
+  "media-preview-fallback-explain": "The media preview kept falling behind, so it switched to a lighter mode to keep this computer running smoothly. The preview stays on and works the same way.",
   "media-sync": "媒体同步",
   "media-window-auto-hidden-caption": "你可以从“显示”菜单手动显示媒体窗口，或点击此通知中的按钮。",
   "media-window-auto-hidden-message": "媒体窗口已自动隐藏",

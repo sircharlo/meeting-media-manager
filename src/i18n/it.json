@@ -403,6 +403,8 @@
   "media-playback": "Riproduzione multimediale",
   "media-preview-auto-disabled": "Anteprima multimediale disattivata",
   "media-preview-auto-disabled-explain": "L'anteprima dei media ha continuato a rimanere indietro e ha dovuto essere corretta ripetutamente, quindi è stato disattivato automaticamente per evitare di rallentare questo computer. Puoi riattivarlo nelle impostazioni del display.",
+  "media-preview-fallback": "Media preview switched to a lighter mode",
+  "media-preview-fallback-explain": "The media preview kept falling behind, so it switched to a lighter mode to keep this computer running smoothly. The preview stays on and works the same way.",
   "media-sync": "Sincronizzazione multimediale",
   "media-window-auto-hidden-caption": "Puoi mostrare manualmente la finestra multimediale dal menu Visualizza o facendo clic sul pulsante in questa notifica.",
   "media-window-auto-hidden-message": "Finestra multimediale nascosta automaticamente",
