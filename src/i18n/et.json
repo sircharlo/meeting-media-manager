@@ -403,6 +403,8 @@
   "media-playback": "Meedia taasesitus",
   "media-preview-auto-disabled": "Meedia eelvaade on välja lülitatud",
   "media-preview-auto-disabled-explain": "Meediaeelvaade jäi pidevalt maha ja seda tuli korduvalt parandada, mistõttu lülitati see automaatselt välja, et vältida selle arvuti aeglustumist. Saad selle uuesti sisse lülitada ekraani seadetest.",
+  "media-preview-fallback": "Media preview switched to a lighter mode",
+  "media-preview-fallback-explain": "The media preview kept falling behind, so it switched to a lighter mode to keep this computer running smoothly. The preview stays on and works the same way.",
   "media-sync": "Meediafailide sünkroniseerimine",
   "media-window-auto-hidden-caption": "Sa võid meediaakna avada käsitsi menüüst „Kuva” või klõpsates selle teate nuppu.",
   "media-window-auto-hidden-message": "Meediaaken peidetakse automaatselt",
