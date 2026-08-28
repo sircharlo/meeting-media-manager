@@ -144,6 +144,48 @@ describe('MediaPreview drift handling', () => {
     expect(wrapper.find('canvas').exists()).toBe(true);
   });
 
+  it('does not jump the preview on a paused scrub when the reported position moved less than the high-rate tolerance', async () => {
+    // Canvas mode is the production default; in dev/test builds the
+    // component starts in video mode unless localStorage opts into canvas.
+    localStorage.setItem('mediaPreviewRenderMode', 'canvas');
+    const currentState = seedStores();
+    currentState.mediaPlaying = {
+      ...currentState.mediaPlaying,
+      action: 'pause',
+      // ~300ms-old report, matching the media window's real-time cadence.
+      currentPositionUpdatedAt: Date.now() - 300,
+      playbackRate: 10.5,
+    };
+
+    const wrapper = mount(MediaPreview);
+    await nextTick();
+
+    const videoElement = wrapper.get('video').element as HTMLVideoElement;
+    videoElement.currentTime = 100;
+
+    // A scrub 2.6s away: over the old zero tolerance (any difference
+    // re-seeked the preview) but under the rate-aware one
+    // (0.2 * 10.5 + 0.3 * 10.5 = 5.25s), so the preview should not jump.
+    currentState.mediaPlaying = {
+      ...currentState.mediaPlaying,
+      currentPosition: 102.6,
+    };
+    await nextTick();
+    await nextTick();
+
+    expect(videoElement.currentTime).toBe(100);
+
+    // A real scrub farther than the tolerance still follows immediately.
+    currentState.mediaPlaying = {
+      ...currentState.mediaPlaying,
+      currentPosition: 130,
+    };
+    await nextTick();
+    await nextTick();
+
+    expect(videoElement.currentTime).toBe(130);
+  });
+
   it('disables the preview entirely when drift repeats in video mode', async () => {
     // Dev/test default is video mode - no localStorage opt-in needed.
     const currentState = seedStores();

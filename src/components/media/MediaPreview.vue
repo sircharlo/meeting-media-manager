@@ -487,8 +487,14 @@ const syncVideos = async () => {
         element.pause();
       }
 
-      // Sync the video time to the media window position
-      syncVideoTime(element, 0);
+      // Sync the video time to the media window position. Uses the same
+      // rate- and report-age-aware tolerance as live playback: the media
+      // window reports a frame-quantized position, and at high playback
+      // speeds the preview's own seek rounding alone would otherwise
+      // re-trigger a visible jump on every report even when the scrub
+      // position hasn't meaningfully moved. (The return value is ignored
+      // here, so this never feeds the drift auto-disable counter.)
+      syncVideoTime(element, getAcceptableDrift());
       if (isCanvasMode.value) drawCurrentFrame();
       return;
     }
