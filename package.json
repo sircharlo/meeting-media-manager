@@ -93,7 +93,7 @@
     "@intlify/unplugin-vue-i18n": "^11.2.5",
     "@pinia/testing": "^2.0.1",
     "@quasar/app-vite": "^3.8.1",
-    "@quasar/vite-plugin": "^2.0.1",
+    "@quasar/vite-plugin": "^2.0.2",
     "@sentry/rollup-plugin": "^5.4.0",
     "@sentry/vite-plugin": "^5.4.0",
     "@types/fluent-ffmpeg": "^2.1.28",
