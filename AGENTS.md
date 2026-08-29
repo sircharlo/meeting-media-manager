@@ -365,6 +365,15 @@ update-langs script` unless intentionally changing language availability.
 - Mergify + `chore:` commits drive the changelog; the recent history shows a
   convention of detailed, context-rich commit messages — match that style.
 
+- **Changelog**: every user-facing change (new feature, bug fix, tweak, or
+  notable chore) also gets a relevant line in the `## vPENDING` section at
+  the top of `CHANGELOG.md`, written in the existing curated, categorized
+  style (✨ New Features / 🛠️ Improvements and Tweaks / 🐞 Bug Fixes /
+  🔧 Chores). Create the `## vPENDING` section if it's missing (e.g. right
+  after a release). The manual-release version-bump script renames `vPENDING`
+  to the actual version when a real release is cut, so keeping it current is
+  what produces accurate release notes.
+
 ## Common Task Cheat-Sheet (where to look first)
 
 - **Add/change a setting**: `src/constants/settings.ts` (`settingsDefinitions`,

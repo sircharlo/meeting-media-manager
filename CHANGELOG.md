@@ -4,6 +4,41 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## vPENDING
+
+### ✨ New Features
+
+- ✨ **Before/After Meeting Quick Actions**: A new big-button panel assists with the run-up to and immediately after each meeting — a live countdown, one-tap background music start/stop, start/stop recording, and a per-congregation checklist grouped into categories and editable from Settings. The before-meeting panel auto-dismisses once the meeting starts and the checklist is complete (or after a short grace period), and can always be dismissed manually.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Media Window**: The windowed media window can now reach Full HD (1920×1080) on large enough screens, move requests arriving mid-transition are queued instead of dropped, and a watchdog keeps the window responsive when a fullscreen-exit request is ignored.
+- 🛠️ **Performance**: SQLite queries now run in a main-process worker thread, HEIC photos are decoded in a separate utility process (importing iPhone photos no longer stutters the interface), download-progress updates are throttled, display snapshots and OBS-password encryption are cached, and store persistence is debounced.
+- 🛠️ **Update Lifecycle**: The app now lets the main window catch up on a missed update-lifecycle event, so update banners and prompts stay accurate.
+- 🛠️ **Memorial**: Added the 2029 Memorial date.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Media Preview**: The preview no longer disables itself when it repeatedly drifts from the media window — it falls back to lighter video rendering first, and only turns off if drift persists even then. False drift detection at high playback speeds and during paused scrubbing was also fixed.
+- 🐞 **Localization**: Fixed corrupted Estonian translations that crashed the Settings page, and added automated Crowdin repair so corrupted source strings can't break the app again.
+- 🐞 **OBS Integration**: Stopped UUID scene IDs from being sent as scene names (which made OBS report "No source was found by the name of"), and scene-list fetch failures are now surfaced in the interface instead of failing silently.
+- 🐞 **Watched Folders**: Refused to read or write watched-media section-order files outside the watch folder, made section-order removal atomic, and retried transient Windows file locks during writes and unzip.
+- 🐞 **Media Player**: Stopped camera capture when playback is cleaned up, and fixed audio auto-advance and loop-trim behavior.
+- 🐞 **Timer**: Fixed display flashes when stopping or showing the timer window, unpadded times in validation messages, and option lists not refreshing after an app-language change.
+- 🐞 **Reliability**: Fixed broadcast-channel, drag-listener, and font-cache leaks, stopped accumulating website-window IPC listeners, and guarded display/timer popups against screen-lookup hangs and IPC pile-up.
+- 🐞 **Fonts**: Clarified the error when the JW icon font URL can't be resolved, and skipped font fallback when the CDN URL is empty.
+- 🐞 **Cache Folder**: Invalid custom cache folders are now flagged on permission errors instead of surfacing raw access errors.
+- 🐞 **Offline Resilience**: The song picker and background music library now fall back to cached data when offline, and background-music refresh and download were hardened.
+- 🐞 **Downloads**: Handled files that vanish mid-poll, capped concurrent directory creation, and retried metadata fetches on transient network errors.
+- 🐞 **Error Reporting**: Stopped reporting a batch of transient or benign errors (503 responses, yeartext network noise, empty additional items, FFmpeg offline failures, duplicate preload causes).
+- 🐞 **Media List and UI**: The section color picker no longer shows a stale value after reopening, and announcement banners no longer get dropped or leak intervals.
+
+### 🔧 Chores
+
+- 🔧 **Dependencies**: Updated Quasar, Electron, Vue i18n, ESLint, Sentry, and several other dependencies.
+- 🔧 **Docs**: Fixed the renamed VitePress image option and deduplicated heading anchors to unblock the docs build.
+- 🔧 **Dev Tooling**: Added dev-only demo-mode tooling and made the Electron rebuild script cross-platform.
+
 ## v26.8.0
 
 ### ✨ New Features

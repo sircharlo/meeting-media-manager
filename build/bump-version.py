@@ -3,6 +3,7 @@ import json
 import os
 import subprocess
 import sys
+from pathlib import Path
 
 def get_latest_tag():
     try:
@@ -58,6 +59,54 @@ def check_release_exists(version):
     except subprocess.CalledProcessError:
         return False
 
+CHANGELOG_PATH = Path("CHANGELOG.md")
+PENDING_HEADER = "## vPENDING"
+
+
+def apply_pending_changelog(new_version: str) -> bool:
+    """Rename the vPENDING changelog section to the real release version.
+
+    The vPENDING section at the top of CHANGELOG.md accumulates every
+    user-facing change since the last release (see AGENTS.md). When a real
+    (non-beta) release is cut, this renames its header to the version being
+    released, so the Manual Release workflow can extract it as the GitHub
+    release body. Returns True when the rename was applied.
+    """
+    if not CHANGELOG_PATH.exists():
+        print(f"Warning: {CHANGELOG_PATH} not found; cannot apply vPENDING changelog.")
+        return False
+
+    lines = CHANGELOG_PATH.read_text(encoding="utf-8").splitlines()
+    version_header = f"## v{new_version}"
+
+    if version_header in lines:
+        print(f"{version_header} already present in CHANGELOG.md; skipping.")
+        return False
+
+    try:
+        index = lines.index(PENDING_HEADER)
+    except ValueError:
+        print(
+            f"Warning: {PENDING_HEADER} section not found in CHANGELOG.md. "
+            "Every user-facing change should have a vPENDING changelog entry; "
+            "add or re-create the section before cutting the release."
+        )
+        return False
+
+    lines[index] = version_header
+    CHANGELOG_PATH.write_text(
+        "\n".join(lines) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    print(
+        f"Renamed {PENDING_HEADER} to {version_header} in CHANGELOG.md. "
+        "Open a fresh vPENDING section for the next cycle when you next "
+        "touch the changelog."
+    )
+    return True
+
+
 if __name__ == "__main__":
     latest_tag = get_latest_tag()
     if latest_tag.startswith("v"):
@@ -71,6 +120,7 @@ if __name__ == "__main__":
         print(f"Draft release for v{new_version} already exists. Skipping local version bump.")
     else:
         update_package_json(new_version)
+        apply_pending_changelog(new_version)
     
     # Export for GitHub Actions
     if "GITHUB_OUTPUT" in os.environ:
