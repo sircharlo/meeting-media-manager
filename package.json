@@ -102,7 +102,7 @@
     "@types/heic-convert": "^2.1.1",
     "@types/lodash-es": "^4.17.12",
     "@types/mousetrap": "^1.6.15",
-    "@types/node": "^26.3.0",
+    "@types/node": "^26.4.0",
     "@types/pretty-bytes": "^5.2.0",
     "@types/yauzl": "^3.4.0",
     "@vitejs/plugin-vue": "^6.0.8",
