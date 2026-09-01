@@ -4,6 +4,12 @@
 
 Pour la liste complète des changements entre les versions, consultez notre fichier CHANGELOG.md sur GitHub.
 
+## VERSION À VENIR
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **Actions rapides avant et après les réunions** : Un nouveau panneau doté de boutons bien visibles facilite la mise en route et la fin de chaque réunion : un compte à rebours en temps réel, la possibilité de lancer et d'arrêter la musique de fond d'un simple clic, de démarrer et d'arrêter l'enregistrement, ainsi qu'une liste de contrôle spécifique à chaque assemblée locale, regroupée par catégories et modifiable à partir des paramètres. Le panneau « Avant la réunion » se ferme automatiquement dès que la réunion commence et que la liste de contrôle est complétée (ou bien, après un court délai prédéterminé), et peut également être fermé manuellement à tout moment.
+
 ## v26.8.0
 
 ### ✨ Nouvelles fonctionnalités
