@@ -30,7 +30,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **Cache Folder**: Invalid custom cache folders are now flagged on permission errors instead of surfacing raw access errors.
 - 🐞 **Offline Resilience**: The song picker and background music library now fall back to cached data when offline, and background-music refresh and download were hardened.
 - 🐞 **Downloads**: Handled files that vanish mid-poll, capped concurrent directory creation, and retried metadata fetches on transient network errors.
-- 🐞 **Error Reporting**: Stopped reporting a batch of transient or benign errors (503 responses, yeartext network noise, empty additional items, FFmpeg offline failures, duplicate preload causes).
+- 🐞 **Error Reporting**: Stopped reporting a batch of transient or benign errors (503 responses, yeartext network noise, empty additional items, FFmpeg offline failures, duplicate preload causes, and transient auto-updater network errors (ERR_NETWORK_IO_SUSPENDED)).
 - 🐞 **Media List and UI**: The section color picker no longer shows a stale value after reopening, and announcement banners no longer get dropped or leak intervals.
 
 ### 🔧 Chores

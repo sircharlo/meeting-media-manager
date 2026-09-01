@@ -100,6 +100,7 @@ describe('isIgnoredUpdateError', () => {
     expect(isIgnoredUpdateError('net::ERR_NAME_NOT_RESOLVED')).toBe(true);
     expect(isIgnoredUpdateError('net::ERR_TIMED_OUT')).toBe(true);
     expect(isIgnoredUpdateError('net::ERR_INTERNET_DISCONNECTED')).toBe(true);
+    expect(isIgnoredUpdateError('net::ERR_NETWORK_IO_SUSPENDED')).toBe(true);
     expect(isIgnoredUpdateError('net::ERR_PROXY_CONNECTION_FAILED')).toBe(true);
     expect(isIgnoredUpdateError('net::ERR_HTTP2_SERVER_REFUSED_STREAM')).toBe(
       true,
