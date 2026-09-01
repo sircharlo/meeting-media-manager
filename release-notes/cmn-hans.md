@@ -4,6 +4,12 @@
 
 关于各版本之间完整的更改清单，请参阅 GitHub 上的 CHANGELOG.md 文件。
 
+## UPCOMING VERSION
+
+### ✨ 新功能
+
+- ✨ **Before/After Meeting Quick Actions**: A new big-button panel assists with the run-up to and immediately after each meeting — a live countdown, one-tap background music start/stop, start/stop recording, and a per-congregation checklist grouped into categories and editable from Settings. The before-meeting panel auto-dismisses once the meeting starts and the checklist is complete (or after a short grace period), and can always be dismissed manually.
+
 ## v26.8.0
 
 ### ✨ 新功能
