@@ -4,6 +4,12 @@
 
 Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGELOG.md su GitHub.
 
+## UPCOMING VERSION
+
+### ✨ Nuove Funzionalità
+
+- ✨ **Before/After Meeting Quick Actions**: A new big-button panel assists with the run-up to and immediately after each meeting — a live countdown, one-tap background music start/stop, start/stop recording, and a per-congregation checklist grouped into categories and editable from Settings. The before-meeting panel auto-dismisses once the meeting starts and the checklist is complete (or after a short grace period), and can always be dismissed manually.
+
 ## v26.8.0
 
 ### ✨ Nuove Funzionalità
@@ -15,13 +21,13 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.7.7
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Media Preview Quality**: Ora l'anteprima dei media rende i fotogrammi video tramite tela con downscaling di alta qualità, fissando anteprime jagged/blurry (soprattutto su contenuti testo-pesanti come le canzoni). L'anteprima si disattiva automaticamente anche se deve correggere ripetutamente la deriva di riproduzione su un singolo video, con un clic per riaccenderlo.
 
 ## v26.7.6
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Esclusione Video CBS**: Aggiunta un'impostazione per escludere i video di Studio Biblico di Congregazione da pubblicazioni specifiche (default per il **Camminare coraggiosamente con Dio** libro), con un selettore di pubblicazione ricercabile.
 - ✨ **Numeri di pagina del documento**: Pubblicazione Media e JWPUB importati ora mostra il numero di pagina di ogni documento (o i numeri quando ci sono più pagine) dopo il suo titolo. Questo può aiutare a trovare rapidamente i media specifici quando si conosce il numero di pagina su cui è trovato.
@@ -42,7 +48,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.6.1
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Anteprima dei media**: aggiunto un overlay di anteprima dei media dal vivo che può essere attivato o disattivato dalle impostazioni o dal popup di visualizzazione.
 - ✨ **Cerca media**: aggiunta una casella di ricerca rapida nell'elenco dei media che consente di trovare rapidamente i media per titolo. Per usarla, basta usare la scorciatoia da tastiera standard per la ricerca (Ctrl+F o Cmd+F).
@@ -51,7 +57,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.6.0
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Timer**: aggiunte modalità di visualizzazione analogica e lo stato del resoconto dei tempi.
 - ✨ **Profili**: aggiunte l'importazione e l'esportazione delle impostazioni del profilo nelle impostazioni Avanzate e nella Configurazione guidata.
@@ -59,7 +65,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.5.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Importazione PDF**: aggiunto un nuovo flusso di importazione PDF alla finestra Media delle pubblicazioni, che consente di importare automaticamente la versione PDF di una pubblicazione come singole immagini quando desiderato.
 
@@ -71,7 +77,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.4.0
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Timer di riunione**: È stata aggiunta una nuova funzione di timer di riunione. È facoltativo e può essere abilitato nelle impostazioni avanzate, se lo si desidera. Il timer può essere utilizzato per consentire all'operatore multimediale di tenere traccia del tempo dedicato alle parti di riunione, o per visualizzare il tempo trascorso sulla parte di riunione corrente su uno schermo dedicato visibile solo all'altoparlante.
 
@@ -141,7 +147,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v25.10.1
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Configurazione guidata – Passaggio Zoom**: aggiunto un passaggio di integrazione con Zoom alla configurazione guidata per una configurazione iniziale più semplice.
 - ✨ **Miglioramenti al selettore di schermi**: mostra una rappresentazione visiva accurata di tutti gli schermi, oltre alla dimensione e posizione attuali della finestra principale, nel popup di visualizzazione. Questo rende più facile scegliere lo schermo corretto su cui mostrare la finestra multimediale.
@@ -149,7 +155,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v25.10.0
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Avvia la riproduzione in pausa**: aggiunta una nuova impostazione per consentire alla riproduzione di iniziare in pausa, utile agli operatori audio/video per preparare la loro configurazione (come avviare la condivisione su Zoom) prima che il media inizi a essere riprodotto nella finestra multimediale.
 - ✨ **Notifiche di aggiornamento**: gli utenti verranno ora avvisati degli aggiornamenti tramite un banner nell'app, che permetterà anche di installare gli aggiornamenti immediatamente, invece di aspettare il successivo riavvio dell'app.
@@ -181,7 +187,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v25.8.1
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Sezioni Media personalizzate**: Sistema completo per creare, modificare e gestire sezioni multimediali personalizzate con personalizzazione del colore e riordinamento trascina-e-rilascia.
 - ✨ **Separatori dei media**: aggiunge separatori con titolo negli elenchi dei media per una migliore organizzazione, con opzioni di posizionamento in alto/in basso.
@@ -190,7 +196,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v25.7.0
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - Nessuna nuova funzionalità per questa versione!
 
@@ -210,7 +216,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## 25.4.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - 🇵🇭 **Nuova lingua: tagalog**: aggiunto il supporto per il tagalog, ampliando le capacità multilingue dell'app.
 - 🎞 **Supporto per il formato video `.m4v`**: ora supporta la riproduzione dei file `.m4v` per migliorare la compatibilità dei media.
@@ -232,14 +238,14 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## 25.2.1
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - 🔄 **Consenti tentativi di ricostruzione OBS**: Introdurre la possibilità di forzare manualmente OBS a riconnettersi quando necessario.
 - 🗑️ **Auto Cleanup Old Export Date Folders**: Rimuovere automaticamente le cartelle di data di esportazione obsolete per mantenere lo storage organizzato.
 
 ## 25.2.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - 🌍 **Use System Locale by Default**: Rilevare e utilizzare automaticamente il locale del sistema per un'esperienza più personalizzata.
 - 🏷️ **Tag Support for Exported Media**: Aggiungi tag di metadati ai file multimediali esportati per una migliore organizzazione.
@@ -248,7 +254,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## 25.1.0
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - 📅 **Apri date precedenti**: Consenti l'apertura delle date precedenti della settimana corrente, che è utile quando il giorno della riunione viene spostato più tardi nella settimana.
 - 🛑 **Banner di errore per OBS Studio**: Aggiungi un banner di errore quando OBS Studio non è connesso in un giorno di riunione, assicurando che gli utenti siano avvisati.
