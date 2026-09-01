@@ -10,58 +10,58 @@ export const enabled: LanguageValue[] = baseEnabled.filter((l) => l !== 'en');
 
 // ! This file will be updated by the update-langs script.
 
-// 100.0% translated as of 2026-08-30
+// 100.0% translated as of 2026-09-01
 import en from './en.json' with { type: 'json' };
 
-// 99.2% translated as of 2026-08-30
+// 99.2% translated as of 2026-09-01
 import sl from './sl.json' with { type: 'json' };
 
-// 99.1% translated as of 2026-08-30
+// 99.1% translated as of 2026-09-01
 import fr from './fr.json' with { type: 'json' };
 
-// 98.7% translated as of 2026-08-30
+// 98.7% translated as of 2026-09-01
 import cmnHans from './cmn-hans.json' with { type: 'json' };
 
-// 98.7% translated as of 2026-08-30
+// 98.7% translated as of 2026-09-01
 import ty from './ty.json' with { type: 'json' };
 
-// 98.0% translated as of 2026-08-30
+// 98.4% translated as of 2026-09-01
 import it from './it.json' with { type: 'json' };
 
-// 97.9% translated as of 2026-08-30
+// 97.9% translated as of 2026-09-01
 import et from './et.json' with { type: 'json' };
 
-// 73.8% translated as of 2026-08-30
+// 73.8% translated as of 2026-09-01
 import pt from './pt.json' with { type: 'json' };
 
-// 61.2% translated as of 2026-08-30
+// 61.2% translated as of 2026-09-01
 import de from './de.json' with { type: 'json' };
 
-// 57.2% translated as of 2026-08-30
+// 57.2% translated as of 2026-09-01
 import ko from './ko.json' with { type: 'json' };
 
-// 54.4% translated as of 2026-08-30
+// 54.4% translated as of 2026-09-01
 import ru from './ru.json' with { type: 'json' };
 
-// 51.3% translated as of 2026-08-30
+// 51.3% translated as of 2026-09-01
 import nl from './nl.json' with { type: 'json' };
 
-// 46.0% translated as of 2026-08-30
+// 46.0% translated as of 2026-09-01
 import es from './es.json' with { type: 'json' };
 
-// 43.0% translated as of 2026-08-30
+// 43.0% translated as of 2026-09-01
 import hu from './hu.json' with { type: 'json' };
 
-// 36.5% translated as of 2026-08-30
+// 36.5% translated as of 2026-09-01
 import uk from './uk.json' with { type: 'json' };
 
-// 0.4% translated as of 2026-08-30
+// 0.4% translated as of 2026-09-01
 // import bzs from './bzs.json' with { type: 'json' };
 
-// 0.1% translated as of 2026-08-30
+// 0.1% translated as of 2026-09-01
 // import zh from './zh.json' with { type: 'json' };
 
-// 0.0% translated as of 2026-08-30
+// 0.0% translated as of 2026-09-01
 // import cmnHant from './cmn-hant.json' with { type: 'json' };
 
 const messages: Partial<Record<LanguageValue, Partial<typeof en>>> = {
