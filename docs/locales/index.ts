@@ -31,37 +31,37 @@ import it from './it.json' with { type: 'json' };
 // 97.9% translated as of 2026-09-01
 import et from './et.json' with { type: 'json' };
 
-// 73.8% translated as of 2026-09-01
+// 74.0% translated as of 2026-09-01
 import pt from './pt.json' with { type: 'json' };
 
-// 61.2% translated as of 2026-09-01
+// 61.4% translated as of 2026-09-01
 import de from './de.json' with { type: 'json' };
 
-// 57.2% translated as of 2026-09-01
+// 57.5% translated as of 2026-09-01
 import ko from './ko.json' with { type: 'json' };
 
-// 54.4% translated as of 2026-09-01
+// 54.7% translated as of 2026-09-01
 import ru from './ru.json' with { type: 'json' };
 
-// 51.3% translated as of 2026-09-01
+// 51.5% translated as of 2026-09-01
 import nl from './nl.json' with { type: 'json' };
 
-// 46.0% translated as of 2026-09-01
+// 46.4% translated as of 2026-09-01
 import es from './es.json' with { type: 'json' };
 
-// 43.0% translated as of 2026-09-01
+// 43.3% translated as of 2026-09-01
 import hu from './hu.json' with { type: 'json' };
 
-// 36.5% translated as of 2026-09-01
+// 36.8% translated as of 2026-09-01
 import uk from './uk.json' with { type: 'json' };
 
-// 0.4% translated as of 2026-09-01
+// 0.8% translated as of 2026-09-01
 // import bzs from './bzs.json' with { type: 'json' };
 
-// 0.1% translated as of 2026-09-01
+// 0.4% translated as of 2026-09-01
 // import zh from './zh.json' with { type: 'json' };
 
-// 0.0% translated as of 2026-09-01
+// 0.3% translated as of 2026-09-01
 // import cmnHant from './cmn-hant.json' with { type: 'json' };
 
 const messages: Partial<Record<LanguageValue, Partial<typeof en>>> = {
