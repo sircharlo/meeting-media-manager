@@ -28,8 +28,12 @@ def extract_new_features():
 
     content = CHANGELOG_PATH.read_text(encoding="utf-8")
     
-    # Split by version headers (## vX.Y.Z)
-    version_blocks = re.split(r'\n(## v?\d+\.\d+\.\d+.*)\n', content)
+    # Split by version headers (## vX.Y.Z), plus the UPCOMING VERSION section
+    # so upcoming features get synced to Crowdin for early translation.
+    version_blocks = re.split(
+        r'\n(## (?:UPCOMING VERSION|v?\d+\.\d+\.\d+.*))\n',
+        content,
+    )
     
     output = [HEADER]
     

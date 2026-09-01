@@ -242,6 +242,12 @@ const carousel = ref<QCarousel>();
 const LEADING_EMOJI =
   /^(?:\p{Extended_Pictographic}\uFE0F?|\p{Regional_Indicator})+\s*/u;
 
+// The release-notes file also contains a "## UPCOMING VERSION" section
+// (synced from the changelog for early Crowdin translation). Skip it and any
+// other non-version header (e.g. its translated heading in other locales) so
+// unreleased changes aren't shown in the About dialog.
+const VERSION_HEADER_PATTERN = /^v?\d+\.\d+\.\d+/;
+
 const parseReleaseNotes = () => {
   const md = releaseNotes.value;
   if (!md) return;
@@ -254,10 +260,12 @@ const parseReleaseNotes = () => {
     const versionMatch = line.match(/^## (.+)$/);
     if (versionMatch) {
       currentVersion = versionMatch[1] || '';
-      if (!currentVersion.startsWith('v')) {
+      if (!VERSION_HEADER_PATTERN.test(currentVersion)) {
+        currentVersion = '';
+      } else if (!currentVersion.startsWith('v')) {
         currentVersion = `v${currentVersion}`;
       }
-    } else if (line.startsWith('- ')) {
+    } else if (currentVersion && line.startsWith('- ')) {
       const raw = line.replace(/^-\s*/, '').replace(LEADING_EMOJI, '');
       const titleMatch = raw.match(/^\*\*(.+?)\*\*:?\s*(.*)$/);
       parsedFeatures.value.push({

@@ -4,7 +4,7 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
-## vPENDING
+## UPCOMING VERSION
 
 ### ✨ New Features
 
@@ -38,6 +38,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🔧 **Dependencies**: Updated Quasar, Electron, Vue i18n, ESLint, Sentry, and several other dependencies.
 - 🔧 **Docs**: Fixed the renamed VitePress image option and deduplicated heading anchors to unblock the docs build.
 - 🔧 **Dev Tooling**: Added dev-only demo-mode tooling and made the Electron rebuild script cross-platform.
+- 🔧 **Release Process**: Renamed the in-progress changelog section from `vPENDING` to `UPCOMING VERSION` and now syncs it into the release notes for early translation.
 
 ## v26.8.0
 

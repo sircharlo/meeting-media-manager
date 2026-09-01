@@ -60,20 +60,22 @@ def check_release_exists(version):
         return False
 
 CHANGELOG_PATH = Path("CHANGELOG.md")
-PENDING_HEADER = "## vPENDING"
+PENDING_HEADER = "## UPCOMING VERSION"
 
 
 def apply_pending_changelog(new_version: str) -> bool:
-    """Rename the vPENDING changelog section to the real release version.
+    """Rename the UPCOMING VERSION changelog section to the real release version.
 
-    The vPENDING section at the top of CHANGELOG.md accumulates every
+    The UPCOMING VERSION section at the top of CHANGELOG.md accumulates every
     user-facing change since the last release (see AGENTS.md). When a real
     (non-beta) release is cut, this renames its header to the version being
     released, so the Manual Release workflow can extract it as the GitHub
     release body. Returns True when the rename was applied.
     """
     if not CHANGELOG_PATH.exists():
-        print(f"Warning: {CHANGELOG_PATH} not found; cannot apply vPENDING changelog.")
+        print(
+            f"Warning: {CHANGELOG_PATH} not found; cannot apply UPCOMING VERSION changelog."
+        )
         return False
 
     lines = CHANGELOG_PATH.read_text(encoding="utf-8").splitlines()
@@ -88,8 +90,8 @@ def apply_pending_changelog(new_version: str) -> bool:
     except ValueError:
         print(
             f"Warning: {PENDING_HEADER} section not found in CHANGELOG.md. "
-            "Every user-facing change should have a vPENDING changelog entry; "
-            "add or re-create the section before cutting the release."
+            "Every user-facing change should have an UPCOMING VERSION changelog "
+            "entry; add or re-create the section before cutting the release."
         )
         return False
 
@@ -101,8 +103,8 @@ def apply_pending_changelog(new_version: str) -> bool:
     )
     print(
         f"Renamed {PENDING_HEADER} to {version_header} in CHANGELOG.md. "
-        "Open a fresh vPENDING section for the next cycle when you next "
-        "touch the changelog."
+        "Open a fresh UPCOMING VERSION section for the next cycle when you "
+        "next touch the changelog."
     )
     return True
 
