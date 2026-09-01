@@ -4,11 +4,11 @@
 
 No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera parau, a hi’o i ta māua pu’e parau CHANGELOG.md i ni’a i GitHub.
 
-## UPCOMING VERSION
+## FAAOHIPARAA API TA MURI MAI
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ✨ **Before/After Meeting Quick Actions**: A new big-button panel assists with the run-up to and immediately after each meeting — a live countdown, one-tap background music start/stop, start/stop recording, and a per-congregation checklist grouped into categories and editable from Settings. The before-meeting panel auto-dismisses once the meeting starts and the checklist is complete (or after a short grace period), and can always be dismissed manually.
+- ✨ Ohipa vitiviti na mua'tu/i muri iho i te putuputuraa: Te vai ra te hoê api api faahiahia e tauturu i te tiai-ru-raa i mua e i muri iho i te putuputuraa taitahi — te tatauraa mata i te mata, te haamata/faaea i te puhipuhi upaupa i muri mai i te hoê noa patia, te haamata/faaea i te ta, e te hoê tabula hiˈopoaraa no te amuiraa taitahi tei tuuhia i roto i te mau pǔpǔ e te nehenehe e faahuru-ê-hia mai roto mai i te mau Tavini-raa. E mou taue te api no mua i te putuputuraa ia haamata anaˈe te putuputuraa e ia oti te tabula hiˈopoaraa (aore ra i muri iti noa aˈe i te taime faataa-ê-hia), e e nehenehe â e iriti noa ma te rima.
 
 ## v26.8.0
 
