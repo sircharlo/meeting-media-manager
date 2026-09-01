@@ -6,6 +6,7 @@ import { pathExists } from 'fs-extra/esm';
 import { IS_TEST } from 'src-electron/constants';
 import { isDownloadErrorExpected } from 'src-electron/main/downloads';
 import { getAppDataPath } from 'src-electron/main/fs';
+import { getOsSupportWarning } from 'src-electron/main/os-support';
 import {
   captureElectronError,
   isIgnoredUpdateError,
@@ -178,6 +179,20 @@ export async function initUpdater() {
 
 export const triggerUpdateCheck = async (attempt = 1) => {
   if (await pathExists(await getUpdatesDisabledPath())) {
+    return;
+  }
+
+  // This release is the last one supporting 32-bit Windows and macOS 12, so
+  // builds on those platforms must stop checking for updates: future releases
+  // won't ship artifacts they can run, and attempting the update anyway would
+  // download an incompatible installer (the Windows updater doesn't filter by
+  // architecture) or fail after download on macOS.
+  if (getOsSupportWarning()) {
+    log(
+      'Skipping update check: this platform is no longer supported by future releases.',
+      'electronUpdater',
+      'info',
+    );
     return;
   }
 

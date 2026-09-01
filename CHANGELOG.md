@@ -12,6 +12,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🛠️ Improvements and Tweaks
 
+- 🛠️ **Platform Support**: This is the last version of M³ that supports 32-bit Windows and macOS 12 (Monterey). Future releases will require a 64-bit version of Windows and macOS 13 (Ventura) or later; users on these systems are warned in-app and will no longer be offered app updates after this version.
 - 🛠️ **Media Window**: The windowed media window can now reach Full HD (1920×1080) on large enough screens, move requests arriving mid-transition are queued instead of dropped, and a watchdog keeps the window responsive when a fullscreen-exit request is ignored.
 - 🛠️ **Performance**: SQLite queries now run in a main-process worker thread, HEIC photos are decoded in a separate utility process (importing iPhone photos no longer stutters the interface), download-progress updates are throttled, display snapshots and OBS-password encryption are cached, and store persistence is debounced.
 - 🛠️ **Update Lifecycle**: The app now lets the main window catch up on a missed update-lifecycle event, so update banners and prompts stay accurate.
