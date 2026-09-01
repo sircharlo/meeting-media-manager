@@ -196,6 +196,9 @@ describe('demo meeting-stage transitions', () => {
 
     expect(demoId).not.toBe('');
     expect(Object.keys(congregationSettings.congregations)).toEqual([demoId]);
+    // The demo congregation must never show the post-setup quick-start tour
+    // (it would overlay the README screenshot).
+    expect(congregationSettings.quickStartTourSeen[demoId]).toBe(true);
     expect(jwStore.lookupPeriod[demoId]).toBeDefined();
     expect(currentState.currentCongregation).toBe(demoId);
 

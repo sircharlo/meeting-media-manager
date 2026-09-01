@@ -169,6 +169,9 @@ export const seedDemoData = () => {
 
   const demoId = congregationSettingsStore.createCongregation();
   seededCongregationId = demoId;
+  // Demo mode exists for automated screenshots and dev testing — never
+  // overlay the post-setup quick-start tour on the demo congregation.
+  congregationSettingsStore.markQuickStartTourSeen(demoId);
   const settings = congregationSettingsStore.congregations[demoId];
   if (!settings) return;
 

@@ -1,7 +1,7 @@
 <template>
   <div v-if="demoMode.enabled || isMeetingToday" class="meeting-quick-actions">
     <div
-      v-if="demoMode.enabled && location === 'before'"
+      v-if="isDev && demoMode.enabled && location === 'before'"
       class="meeting-quick-actions__demo-controls"
     >
       <q-btn
@@ -81,6 +81,10 @@ const BEFORE_PANEL_GRACE_MS = 5 * 60 * 1000;
 const props = defineProps<{ location: 'after' | 'before' }>();
 
 const { t } = useI18n();
+// The demo-stage buttons are developer tooling - keep them out of production
+// builds (e.g. the M3_DEMO_MODE README screenshot, which must look like the
+// real app).
+const isDev = import.meta.env.DEV;
 const demoMode = useDemoModeStore();
 const currentState = useCurrentStateStore();
 const {

@@ -9,6 +9,13 @@ export const targets = [
       await window
         .getByText('Sample TGW song')
         .waitFor({ state: 'visible', timeout: 60000 });
+      // Start background music (demo-mode audio, no network) so the footer
+      // music button is captured in its playing state, then give playback a
+      // moment to settle before the final capture.
+      await window.evaluate(() =>
+        globalThis.dispatchEvent(new CustomEvent('toggleMusic')),
+      );
+      await window.waitForTimeout(3000);
     },
   },
 ];

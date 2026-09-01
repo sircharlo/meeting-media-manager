@@ -70,13 +70,21 @@ async function addDropShadow(buffer) {
 // `if (name === 'media') return;` skips its .show()), so it never paints and
 // every wait against it just times out. Identify the main window by URL
 // instead of trusting "first".
-const NON_MAIN_WINDOW_URL_PATTERN = /#\/(?:media-player|timer)\b/;
+//
+// Media/timer windows load with a `?page=media-player`/`?page=timer` hash
+// param (see window-base.ts) that the router later rewrites to
+// `#/media-player`/`#/timer`. Before that rewrite lands the URL already
+// contains `#/` (e.g. `#/?page=media-player`), so match both forms or the
+// hidden media window gets mistaken for the main one during startup.
+const NON_MAIN_WINDOW_URL_PATTERN = /#(?:\/|\?page=)(?:media-player|timer)\b/;
 
-// Matches src/constants/media.ts's FULL_HD — kept as a plain local constant
-// since this script runs under plain Node (not bundled through Quasar/Vite),
-// so the `app/...` alias and TypeScript imports don't resolve here.
-const CAPTURE_WIDTH = 1920;
-const CAPTURE_HEIGHT = 1080;
+// A typical laptop-window viewport for the calendar rather than full HD
+// (1920x1080) — full-HD made the README preview unnecessarily huge and the
+// layout stretched. Kept as plain local constants since this script runs
+// under plain Node (not bundled through Quasar/Vite), so the `app/...` alias
+// and TypeScript imports don't resolve here.
+const CAPTURE_WIDTH = 1280;
+const CAPTURE_HEIGHT = 800;
 
 /**
  * Screenshots just the app's content (`#q-app`), excluding OS window chrome,

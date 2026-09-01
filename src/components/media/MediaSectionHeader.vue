@@ -16,7 +16,7 @@
         { 'jw-icon': mediaList.config?.jwIconKeyword },
       ]"
     >
-      <template v-if="mediaList.config?.jwIconKeyword">
+      <template v-if="mediaList.config?.jwIconKeyword && !isDemoMode">
         {{ getJwIconFromKeyword(mediaList.config?.jwIconKeyword) }}
       </template>
       <template v-else>
@@ -249,6 +249,7 @@ import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { getJwIconFromKeyword } from 'src/helpers/fonts';
 import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useDemoModeStore } from 'stores/demo-mode';
 import { computed, nextTick, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -280,6 +281,11 @@ const $q = useQuasar();
 const { t } = useI18n();
 const currentState = useCurrentStateStore();
 const { currentSettings, selectedDayMeetingType } = storeToRefs(currentState);
+
+// The jw-icons glyph font can't load in demo mode (no network), so the
+// section header would show an empty square — render a bundled placeholder
+// icon instead.
+const isDemoMode = computed(() => useDemoModeStore().enabled);
 
 // Section repeat functionality
 const { isSectionRepeating, toggleSectionRepeat } = useMediaSectionRepeat();
