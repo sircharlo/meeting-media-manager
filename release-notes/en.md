@@ -10,10 +10,6 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 
 - ✨ **Before/After Meeting Quick Actions**: A new big-button panel assists with the run-up to and immediately after each meeting — a live countdown, one-tap background music start/stop, start/stop recording, and a per-congregation checklist grouped into categories and editable from Settings. The before-meeting panel auto-dismisses once the meeting starts and the checklist is complete (or after a short grace period), and can always be dismissed manually.
 
-### 🛠️ Improvements and Tweaks
-
-- 🛠️ **Platform Support**: This is the last version of M³ that supports 32-bit Windows and macOS 12 (Monterey). Future releases will require a 64-bit version of Windows and macOS 13 (Ventura) or later; users on these systems are warned in-app and will no longer be offered app updates after this version.
-
 ## v26.8.0
 
 ### ✨ New Features
