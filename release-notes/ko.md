@@ -2,286 +2,286 @@
 
 # 업데이트 내역
 
-버전별 전체 변경 사항은, GitHub 의 CHANGELOG.md 파일을 확인해주세요.
+버전별 전체 변경 사항은 GitHub의 CHANGELOG.md 파일을 확인해 주세요.
 
-## UPCOMING VERSION
+## 출시 예정 버전
 
 ### ✨ 새로운 기능
 
-- ✨ **Before/After Meeting Quick Actions**: A new big-button panel assists with the run-up to and immediately after each meeting — a live countdown, one-tap background music start/stop, start/stop recording, and a per-congregation checklist grouped into categories and editable from Settings. The before-meeting panel auto-dismisses once the meeting starts and the checklist is complete (or after a short grace period), and can always be dismissed manually.
+- ✨ **집회 전/후 빠른 작업**: 각 집회 전후의 작업을 돕는 새로운 큰 버튼 패널이 추가되었습니다. 실시간 카운트다운, 한 번의 클릭으로 배경 음악 시작/중지, 녹화 시작/중지 기능을 사용할 수 있으며, 회중별 체크리스트를 범주별로 구성하고 설정에서 편집할 수 있습니다. 집회 전 패널은 집회가 시작되고 체크리스트가 완료되면 자동으로 닫히며, 완료되지 않은 경우에도 잠시 후 자동으로 닫힙니다. 필요하면 언제든지 직접 닫을 수도 있습니다.
 
 ## v26.8.0
 
 ### ✨ 새로운 기능
 
-- ✨ **App-Wide Redesign**: A broad visual and interaction refresh across dialogs, the media list/header, Settings, and the Setup Wizard. The Setup Wizard is now a one-question-per-screen flow with a progress bar. All prompts were replaced with a consistent branded dialog, and PDF page-range selection (for publication and drag-and-drop imports) now uses a thumbnail-grid picker instead of a free-text prompt. Added a new Quick Start Guide tour after the Setup Wizard completes. Also includes refreshed card/header styling with dark-mode-aware shadows and several dark-mode contrast fixes (focused field labels, download-progress percentages).
-- ✨ **Settings Page**: Reworked into a two-pane layout, with a new global Preferences section for auto-update/beta-update toggles moved out of the About dialog (which is now purely informational).
-- ✨ **Add More Media Button**: Added a setting to choose exactly which meeting sections show the "add more media" shortcut button, along with a setting for a compact (icon-only) mode.
-- ✨ **Media List**: Items now show loading skeletons while being added instead of appearing empty, media groups show a hidden-item count in their badge (e.g. "9 items (2 hidden)"), children within a group can be reordered via drag-and-drop, and at very narrow window widths items collapse into compact, tooltip-carrying chips instead of crowding the row.
+- ✨ **애플리케이션 전반적인 디자인 개편**: 대화 상자, 미디어 목록과 헤더, 설정, 초기 설정 화면 전반의 디자인과 사용 방식을 새롭게 개편했습니다. 이제 초기 설정에서는 한 화면에 하나의 질문만 표시되며 진행률 표시줄을 통해 진행 상황을 확인할 수 있습니다. 모든 확인 메시지를 일관된 M³ 디자인의 대화 상자로 변경했으며, 출판물 및 드래그 앤 드롭으로 PDF를 가져올 때 페이지 범위를 직접 입력하는 대신 페이지 미리 보기 격자에서 선택할 수 있게 되었습니다. 초기 설정이 완료된 후 표시되는 새로운 빠른 시작 가이드도 추가했습니다. 또한 카드와 헤더 디자인을 새롭게 바꾸고 다크 모드에 맞는 그림자 효과를 적용했으며, 선택된 입력란의 라벨과 다운로드 진행률 등 다크 모드에서 대비가 부족했던 여러 부분도 개선했습니다.
+- ✨ **설정 페이지**: 설정 페이지를 두 개의 패널로 구성된 레이아웃으로 개편했습니다. 새로운 전체 설정 섹션을 추가하고, 애플리케이션 자동 업데이트 및 베타 업데이트 설정을 기존 애플리케이션 정보 대화 상자에서 이곳으로 옮겼습니다.
+- ✨ **미디어 더 추가 버튼**: ‘미디어 더 추가’ 바로 가기 버튼을 표시할 집회 섹션을 직접 선택할 수 있는 설정을 추가했습니다. 버튼을 아이콘만 표시하는 간소화 모드 설정도 추가했습니다.
+- ✨ **미디어 목록**: 미디어 항목을 추가하는 동안 빈 항목 대신 로딩 표시가 나타납니다. 미디어 그룹의 배지에는 숨겨진 항목 수도 표시됩니다(예: “항목 9개 (2개 숨김)”). 그룹 내의 항목은 드래그 앤 드롭으로 순서를 변경할 수 있습니다. 또한 창 너비가 매우 좁아지면 항목이 한 줄에 빽빽하게 표시되는 대신 툴팁이 있는 간소화된 칩 형태로 표시됩니다.
 
 ## v26.7.7
 
 ### ✨ 새로운 기능
 
-- ✨ **Media Preview Quality**: Media preview now renders video frames via canvas with high-quality downscaling, fixing jagged/blurry previews (especially on text-heavy content like songs). The preview also auto-disables itself if it has to repeatedly correct playback drift on a single video, with a one-click way to turn it back on.
+- ✨ **미디어 미리 보기 품질**: 이제 미디어 미리 보기에서 캔버스를 사용해 동영상 프레임을 고품질로 축소하여 표시하므로, 특히 노래처럼 글자가 많은 미디어에서 미리 보기가 울퉁불퉁하거나 흐릿하게 보이던 문제가 해결되었습니다. 또한 하나의 동영상에서 재생 위치 차이를 반복적으로 보정해야 하는 경우 미리 보기 기능이 자동으로 비활성화되며, 클릭 한 번으로 다시 활성화할 수 있습니다.
 
 ## v26.7.6
 
 ### ✨ 새로운 기능
 
-- ✨ **CBS Video Exclusion**: Added a setting to exclude Congregation Bible Study videos from specific publications (defaults to the **Walk Courageously With God** book), with a searchable publication picker.
-- ✨ **Document Page Numbers**: Publication Media and JWPUB import listings now show each document's page number (or numbers when there are multiple pages) after its title. This can help you to quickly find specific media when you know the page number on which it is found.
+- ✨ **회중 성서 연구 동영상 제외**: 특정 출판물의 회중 성서 연구 동영상을 제외할 수 있는 설정을 추가했습니다. 기본적으로 **「용기를 내어 하느님과 함께 걸으십시오」** 책이 지정되어 있으며, 검색 기능을 사용해 출판물을 선택할 수 있습니다.
+- ✨ **문서 페이지 번호**: 이제 출판물 미디어와 JWPUB 가져오기 목록에서 각 문서 제목 뒤에 해당 페이지 번호가 표시됩니다. 여러 페이지에 걸쳐 있는 경우 여러 페이지 번호가 표시됩니다. 페이지 번호를 알고 있다면 원하는 미디어를 빠르게 찾는 데 도움이 됩니다.
 
 ## v26.7.4
 
 ### ✨ 새로운 기능
 
-- ✨ **Missing Media Recovery**: Media items whose local file went missing (e.g. deleted by the cache auto-clear, or removed manually) now show a disabled play button, a "missing" caption naming the file to look for, and a new "Locate file" action to relink the item to a file on disk.
-- ✨ **Compatibility Warning**: Added a dismissible banner warning users on soon-to-be-unsupported OS/architecture combos (macOS 12 Monterey and Windows 32-bit) to upgrade before future app updates require newer system support.
+- ✨ **누락된 미디어 복구**: 로컬 파일이 없어진 미디어 항목(예: 자동 캐시 정리로 삭제되었거나 직접 삭제된 경우)은 이제 재생 버튼이 비활성화되고, 찾아야 할 파일 이름과 함께 ‘누락됨’ 표시가 나타납니다. 또한 새로운 ‘파일 찾기’ 기능을 사용해 디스크의 파일과 해당 항목을 다시 연결할 수 있습니다.
+- ✨ **호환성 경고**: 곧 지원이 종료될 운영 체제 및 아키텍처 조합(macOS 12 Monterey 및 32비트 Windows)을 사용하는 경우 경고 배너가 표시됩니다. 배너는 닫을 수 있으며, 향후 애플리케이션 업데이트에서 더 새로운 시스템이 필요하게 되기 전에 업그레이드하도록 안내합니다.
 
 ## v26.7.0
 
 ### ✨ 새로운 기능
 
-- ✨ **Linked Audio Playback**: Added support for playing audio from one file together with video from another file. This can be useful for playing video slideshows with accompanying music.
-- ✨ **Watched Media Layouts**: Added persistence for watched media items and section order across watched folders. This ensures that the media list is displayed the same way even when the watched folder is synced across devices.
+- ✨ **오디오 연결 재생**: 한 파일의 오디오를 다른 파일의 동영상과 함께 재생할 수 있는 기능을 추가했습니다. 음악을 들으면서 동영상 슬라이드 쇼를 재생하는 경우 등에 유용합니다.
+- ✨ **모니터링 미디어 레이아웃**: 모니터링 폴더의 미디어 항목 및 섹션 순서를 기억하는 기능을 추가했습니다. 따라서 모니터링 폴더를 여러 기기에서 동기화해도 미디어 목록이 동일한 방식으로 표시됩니다.
 
 ## v26.6.1
 
 ### ✨ 새로운 기능
 
-- ✨ **Media Preview**: Added a live media preview overlay that can be toggled on or off from the settings or from the display popup.
-- ✨ **Search media**: Added a quick search box in the media list that allows you to quickly find media by title. To use it, simply use the standard keyboard shortcut for search (Ctrl+F or Cmd+F).
-- ✨ **Filter settings**: Added a filter box to the settings page that allows you to find settings by keyword or category. To use it, simply click on the Search button in the top right corner of the settings page, or use the standard keyboard shortcut for search (Ctrl+F or Cmd+F).
-- ✨ **Background Music Overlap Warning**: Added a warning notification when media is started while background music is playing. Users can choose to stop the background music from the notification.
+- ✨ **미디어 미리 보기**: 현재 표시되는 미디어를 실시간으로 미리 볼 수 있는 기능을 추가했습니다. 설정이나 디스플레이 팝업에서 켜거나 끌 수 있습니다.
+- ✨ **미디어 검색**: 미디어 목록에 제목으로 미디어를 빠르게 찾을 수 있는 검색창을 추가했습니다. 일반적인 검색 단축키(Ctrl+F 또는 Cmd+F)를 사용하면 됩니다.
+- ✨ **설정 검색**: 설정 페이지에 키워드나 범주로 설정을 찾을 수 있는 검색창을 추가했습니다. 설정 페이지 오른쪽 위의 검색 버튼을 누르거나 일반적인 검색 단축키(Ctrl+F 또는 Cmd+F)를 사용하면 됩니다.
+- ✨ **배경 음악 중복 재생 경고**: 배경 음악이 재생 중일 때 다른 미디어를 재생하면 경고 알림이 표시됩니다. 알림에서 배경 음악을 중지할 수 있습니다.
 
 ## v26.6.0
 
 ### ✨ 새로운 기능
 
-- ✨ **Timer**: Added analog display modes and timing report status.
-- ✨ **Profiles**: Added profile settings import and export in Advanced settings and the Setup Wizard.
-- ✨ **Media Window**: Added support for automatically hiding the media window after playback when it was initially hidden. This is practical when a remote speaker wants to display images, for example.
+- ✨ **타이머**: 아날로그 표시 모드와 시간 기록 상태 표시 기능을 추가했습니다.
+- ✨ **프로필**: 추가 설정 및 초기 설정에서 프로필 설정을 가져오거나 내보낼 수 있는 기능을 추가했습니다.
+- ✨ **미디어 창**: 처음에 미디어 창이 숨겨져 있었던 경우 미디어 재생이 끝나면 자동으로 다시 숨기는 기능을 추가했습니다. 예를 들어 원격 연사가 이미지를 표시하는 경우에 유용합니다.
 
 ## v26.5.0
 
 ### ✨ 새로운 기능
 
-- ✨ **PDF Import**: Added a new PDF import flow to the Publication Media dialog, allowing the PDF version of a publication to be automatically imported as individual images when desired.
+- ✨ **PDF 가져오기**: 출판물 미디어 대화 상자에 새로운 PDF 가져오기 기능을 추가했습니다. 원하는 경우 출판물의 PDF 버전을 페이지별 이미지로 자동으로 가져올 수 있습니다.
 
 ## v26.4.8
 
 ### ✨ 새로운 기능
 
-- ✨ **JW Stream**: Added JW Stream to the list of websites that can be mirrored.
+- ✨ **JW Stream**: 미러링할 수 있는 웹사이트 목록에 JW Stream을 추가했습니다.
 
 ## v26.4.0
 
 ### ✨ 새로운 기능
 
-- ✨ **Meeting Timer**: A new meeting timer feature has been added. It is optional and can be enabled in the advanced settings, if desired. The timer can be used to allow the media operator to keep track of the time spent on meeting parts, or to display the time spent on the current meeting part on a dedicated screen visible only to the speaker.
+- ✨ **집회 타이머**: 새로운 집회 타이머 기능을 추가했습니다. 선택 사항이며 필요한 경우 추가 설정에서 활성화할 수 있습니다. 미디어 담당자가 각 집회 부분에 사용된 시간을 확인하거나, 현재 집회 부분에 사용된 시간을 연사만 볼 수 있는 별도의 화면에 표시할 수 있습니다.
 
 ## v26.3.0
 
 ### ✨ 새로운 기능
 
-- ✨ **Memorial Media**: Automatic Memorial media retrieval is now out of beta! The app will automatically download the Memorial Welcome Video and image to display during the Memorial, when available in the configured language.
-- ✨ **Playback Speed**: Added playback speed control with visual indicator, and manual reset. This feature is only visible if enabled in the advanced settings.
-- ✨ **Pinyin Songs**: Added a toggle for pinyin song substitution for meetings held in Chinese.
+- ✨ **기념식 미디어**: 기념식 미디어 자동 다운로드 기능이 베타 테스트를 마쳤습니다! 설정된 언어로 제공되는 경우 애플리케이션에서 기념식 환영 영상과 기념식 중 표시할 이미지를 자동으로 다운로드합니다.
+- ✨ **재생 속도**: 재생 속도를 조절하고 현재 속도를 시각적으로 표시하며 직접 기본 속도로 되돌릴 수 있는 기능을 추가했습니다. 이 기능은 추가 설정에서 활성화한 경우에만 표시됩니다.
+- ✨ **병음 노래**: 중국어로 집회를 진행하는 경우 병음 노래로 대체할 수 있는 설정을 추가했습니다.
 
 ## v26.2.0
 
 ### ✨ 새로운 기능
 
-- ✨ **Disk Space Check**: Added functionality to monitor and notify when disk space is low.
+- ✨ **디스크 공간 확인**: 디스크 공간이 부족한 경우 이를 감지하고 알리는 기능을 추가했습니다.
 
 ## v26.1.5
 
 ### ✨ 새로운 기능
 
-- ✨ **Memorial Media**: Automatically fetch Memorial banner and intro video in supported languages when the Memorial date is selected.
+- ✨ **기념식 미디어**: 기념식 날짜를 선택하면 지원되는 언어의 기념식 배너와 소개 영상을 자동으로 가져옵니다.
 
 ## v26.1.0
 
 ### ✨ 새로운 기능
 
-- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
-- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
-- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+- ✨ **집회 일정 자동 동기화**: 공식 웹사이트의 정보와 집회 날짜 및 시간을 자동 동기화하는 기능을 추가했습니다. 이 기능은 기본적으로 활성화되며, 추가 설정에서 직접 실행하거나 비활성화할 수 있습니다.
+- ✨ **향후 일정 변경 반영**: 웹사이트에서 회중을 검색하여 프로필을 생성할 때 가능한 경우 향후 일정 변경 사항도 포함됩니다.
+- ✨ **시스템 전체 설치용 공유 캐시**: 시스템 전체 설치에서는 기본적으로 공통 데이터 폴더를 공유하여 같은 컴퓨터의 여러 사용자 간 저장 공간과 대역폭 사용을 최적화합니다.
 
 ## v25.12.2
 
 ### ✨ 새로운 기능
 
-- ✨ **Zoom/Pan buttons**: Added the ability to press and hold zoom and pan buttons for continuous adjustment.
+- ✨ **확대/축소 및 이동 버튼**: 확대/축소 및 이동 버튼을 길게 눌러 연속으로 조정할 수 있는 기능을 추가했습니다.
 
 ## v25.12.0
 
 ### ✨ 새로운 기능
 
-- ✨ **Multi-Select Context Menu**: Added support for right-click menu actions when multiple media items are selected.
-- ✨ **Keyboard Shortcuts**: Added `Ctrl/Cmd+A` to select all media, `H` to hide selected media, and `Shift+Up/Down` for keyboard selection navigation.
-- ✨ **Watchtower Study Video Settings**: Added a setting to exclude extra Watchtower study videos.
-- ✨ **Collapsible Sections**: Added ability to collapse sections on non-meeting days for a cleaner view.
-- ✨ **JW Events Website**: Added the ability to present the JW Events website in addition to the main official website.
-- ✨ **Playlist Import Customization**: Allowed ability to customize the prefix that is added to media items when importing JW playlists.
-- ✨ **Website Mirroring Navigation**: Added a toggle to automatically navigate to the media list after website mirroring is stopped.
-- ✨ **OBS Recording Controls**: Added the ability to control OBS recordings.
-- ✨ **Yeartext Preview**: Added the ability to preview next year's yeartext as of December of every year.
-- ✨ **Update Notifications**: Added warning notifications if running a beta version or if updates are disabled, and improved update download progress display.
-- ✨ **Hardware Acceleration Settings**: Added an option to permanently disable hardware acceleration if needed.
+- ✨ **다중 선택 컨텍스트 메뉴**: 여러 미디어 항목을 선택한 상태에서도 오른쪽 클릭 메뉴의 작업을 사용할 수 있습니다.
+- ✨ **키보드 단축키**: 모든 미디어를 선택하는 `Ctrl/Cmd+A`, 선택한 미디어를 숨기는 `H`, 키보드로 선택 항목을 이동하는 `Shift+Up/Down` 단축키를 추가했습니다.
+- ✨ **「파수대」 연구 동영상 설정**: 추가 「파수대」 연구 동영상을 제외하는 설정을 추가했습니다.
+- ✨ **섹션 접기 기능**: 집회가 없는 날에는 섹션을 접어 더 깔끔하게 볼 수 있습니다.
+- ✨ **JW Events 웹사이트**: 기본 공식 웹사이트 외에 JW Events 웹사이트도 표시할 수 있습니다.
+- ✨ **재생 목록 가져오기 설정**: JW 재생 목록을 가져올 때 미디어 항목에 추가되는 접두사를 직접 설정할 수 있게 되었습니다.
+- ✨ **웹사이트 미러링 탐색**: 웹사이트 미러링을 중지한 뒤 자동으로 미디어 목록으로 이동하는 설정을 추가했습니다.
+- ✨ **OBS 녹화 제어**: OBS 녹화를 제어하는 기능을 추가했습니다.
+- ✨ **연표어 미리 보기**: 매년 12월부터 다음 해 연표어를 미리 볼 수 있는 기능을 추가했습니다.
+- ✨ **업데이트 알림**: 베타 버전 사용 중이거나 업데이트가 비활성화된 경우 경고 알림을 추가하고, 업데이트 다운로드 진행 표시를 개선했습니다.
+- ✨ **하드웨어 가속 설정**: 필요할 때 하드웨어 가속을 영구적으로 비활성화하는 옵션을 추가했습니다.
 
 ## v25.11.0
 
 ### ✨ 새로운 기능
 
-- ✨ **JWPUB Media Selection**: Added a way to select individual media from JWPUB files.
-- ✨ **Auto-Focus Media Window**: Added an optional setting to automatically focus the media window after Zoom screen sharing.
-- ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
-- ✨ **Meeting Recording**: Added a new meeting recording feature, to control an external recording app.
-- ✨ **Site Search**: Added ability to search for media or publications on the site using smart search.
-- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from JW.org, such as magazine, books, programs and invitations.
-- ✨ **Sign Language Improvements**: Added confirmation before playing entire files for sign languages and support for selecting multiple clips, such as for when multiple paragraphs are to be read consecutively.
-- ✨ **Clip Navigation**: Added duration display to clip list items and improved clip navigation.
-- 🛠️ **Media Display**: Ensured media display becomes visible when playback starts, even if it was hidden before.
+- ✨ **JWPUB 미디어 선택**: JWPUB 파일에서 개별 미디어를 선택할 수 있는 기능을 추가했습니다.
+- ✨ **미디어 창 자동 포커스**: Zoom 화면 공유 후 미디어 창에 자동으로 포커스를 맞추는 선택 설정을 추가했습니다.
+- ✨ **TV 화면용 커서 표시 개선**: 웹사이트 창의 커서 표시를 개선하여 TV 화면에서도 마우스 커서를 더 쉽게 볼 수 있게 했습니다.
+- ✨ **집회 녹화**: 외부 녹화 애플리케이션을 제어하는 새로운 집회 녹화 기능을 추가했습니다.
+- ✨ **사이트 검색**: 스마트 검색을 사용해 사이트에서 미디어나 출판물을 찾는 기능을 추가했습니다.
+- ✨ **간편 수동 출판물 가져오기**: 잡지, 서적, 집회 프로, 초대장 등 공식 웹사이트의 출판물을 쉽게 가져오는 기능을 추가했습니다.
+- ✨ **수어 개선**: 수어 파일 전체를 재생하기 전에 확인하도록 변경하고, 여러 항을 연속으로 읽을 때와 같이 여러 클립을 선택하는 기능을 추가했습니다.
+- ✨ **클립 탐색**: 클립 목록에 재생 시간을 표시하고 클립 탐색 기능을 개선했습니다.
+- 🛠️ **미디어 표시**: 이전에 미디어 창이 숨겨져 있었더라도 재생이 시작되면 미디어 창이 표시되도록 개선했습니다.
 
 ## v25.10.1
 
 ### ✨ 새로운 기능
 
-- ✨ **Setup Wizard – Zoom Step**: Added a Zoom integration step to the setup wizard for easier initial configuration.
-- ✨ **Screen Picker Enhancements**: Show an accurate visual representation of all screens, as well as the main window’s current size and location, in the display popup. This makes it easier to choose the correct screen on which the media window should be displayed.
-- ✨ **Media Window Preference**: The app will now remember the preferred screen on which the media window should be displayed, if specified by the user.
+- ✨ **초기 설정—Zoom 단계**: 초기 설정에 Zoom 연동 단계를 추가하여 처음 설정할 때 더 쉽게 구성할 수 있게 했습니다.
+- ✨ **화면 선택 기능 개선**: 디스플레이 팝업에서 모든 화면의 실제 배치를 시각적으로 표시하고 기본 창의 현재 크기와 위치도 함께 보여 줍니다. 따라서 미디어 창을 표시할 화면을 더 쉽게 선택할 수 있습니다.
+- ✨ **미디어 창 화면 설정 기억**: 사용자가 미디어 창을 표시할 화면을 지정하면 이제 애플리케이션에서 해당 설정을 기억합니다.
 
 ## v25.10.0
 
 ### ✨ 새로운 기능
 
-- ✨ **Begin Playback Paused**: Added a new setting to allow playback to begin paused, which can be useful for AV operators to prepare their setup (such as starting Zoom sharing) before the media starts playing in the media window.
-- ✨ **Update Notifications**: Users will now be notified of updates through an in-app banner, which will also allow the user to install updates immediately, instead of waiting for the next app restart.
-- ✨ **Custom Events**: Added optional events hooks that can trigger keyboard shortcuts when certain events are detected. This can be useful for AV operators to execute actions automatically outside of the app. For example, smart lights could be turned on and off before and after media plays in auditoriums where projectors are used; or a script can be called after a meeting's last song has been played to automate various actions in a Zoom meeting.
+- ✨ **일시 정지 상태로 재생 시작**: 미디어 창에서 실제 재생을 시작하기 전에 Zoom 화면 공유 등 필요한 준비를 할 수 있도록, 미디어를 일시 정지 상태로 시작하는 설정을 추가했습니다.
+- ✨ **업데이트 알림**: 이제 애플리케이션 내 배너를 통해 업데이트를 알려 주며, 다음에 애플리케이션을 다시 시작할 때까지 기다리지 않고 즉시 업데이트를 설치할 수도 있습니다.
+- ✨ **사용자 지정 이벤트**: 특정 이벤트가 감지될 때 키보드 단축키를 자동으로 입력할 수 있는 선택적 이벤트 기능을 추가했습니다. 미디어 담당자가 애플리케이션 외부의 작업을 자동화할 때 사용할 수 있습니다. 예를 들어 프로젝터를 사용하는 회관에서는 미디어 재생 전후에 스마트 조명을 자동으로 켜고 끌 수 있습니다. 또한 집회의 마지막 노래가 끝난 후 스크립트를 실행하여 Zoom 집회의 여러 작업을 자동화할 수도 있습니다.
 
 ## v25.9.1
 
 ### ✨ 새로운 기능
 
-- ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
-- ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
-- ✨ **Media Crossfade**: Implemented crossfade transitions for media display, instead of the more abrupt fade-to-black transition that was present before.
-- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not
-- ✨ **macOS Click-Through on Inactive Windows**: Enabled mouse click passthrough on the main window for macOS, which should make it easier to control the app even when it's not focused.
+- ✨ **미디어 창 항상 위 및 전체 화면 동작 개선**: 미디어 창의 ‘항상 위’ 동작을 수정하고 개선하여 전체 화면 상태에 따라 자동으로 적절하게 작동하도록 했습니다.
+- ✨ **날짜 표시 형식 설정**: 날짜 표시 형식을 직접 설정할 수 있는 기능을 추가했습니다.
+- ✨ **미디어 크로스페이드**: 기존의 갑작스러운 검은 화면 전환 대신 미디어 간에 부드러운 크로스페이드 효과가 적용되도록 변경했습니다.
+- ✨ **배경 음악 자동 중지**: 배경 음악이 자동으로 시작되었는지 여부와 관계없이 자동 중지 기능이 동일하게 작동하도록 개선했습니다.
+- ✨ **macOS 비활성 창 클릭 처리**: macOS에서 포커스되지 않은 기본 창도 바로 클릭하여 조작할 수 있도록 개선했습니다.
 
 ## v25.9.0
 
 ### ✨ 새로운 기능
 
-- ✨ **Download Popup Enhancements**: Added refresh button and download grouping by date in the download popup.
-- ✨ **Watched Media Order Memory**: Added section order memory for watched media items.
+- ✨ **다운로드 팝업 개선**: 다운로드 팝업에 새로 고침 버튼을 추가하고 다운로드 항목을 날짜별로 그룹화했습니다.
+- ✨ **모니터링 미디어 순서 기억**: 모니터링 폴더에서 추가된 미디어 항목의 섹션 순서를 기억하는 기능을 추가했습니다.
 
 ## v25.8.3
 
 ### ✨ 새로운 기능
 
-- ✨ **Media Window Fade Transitions**: Added a new advanced setting to make the media window fade in and out, providing smoother visual transitions.
-- ✨ **Image Duration Control and Progress Tracking**: Added image duration control and progress tracking capabilities for repeated sections.
+- ✨ **미디어 창 페이드 전환**: 미디어 창이 부드럽게 페이드 인/아웃되도록 하는 새로운 추가 설정을 추가했습니다.
+- ✨ **이미지 표시 시간 및 진행 상황**: 반복 재생되는 섹션에서 이미지 표시 시간을 설정하고 진행 상황을 확인할 수 있는 기능을 추가했습니다.
 
 ## v25.8.1
 
 ### ✨ 새로운 기능
 
-- ✨ **Custom Media Sections**: Complete system for creating, editing, and managing custom media sections with color customization and drag-and-drop reordering.
-- ✨ **Media Dividers**: Add titled dividers within media lists for better organization with top/bottom positioning options.
-- ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
-- ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
+- ✨ **사용자 지정 미디어 섹션**: 사용자 지정 미디어 섹션을 만들고 편집하고 관리할 수 있는 기능을 추가했습니다. 색상을 지정하고 드래그 앤 드롭으로 순서를 변경할 수도 있습니다.
+- ✨ **미디어 구분선**: 미디어 목록을 더 쉽게 정리할 수 있도록 제목이 있는 구분선을 추가할 수 있습니다. 구분선은 위쪽이나 아래쪽에 배치할 수 있습니다.
+- ✨ **섹션 반복 재생**: 특정 섹션의 미디어를 끊김 없이 연속으로 반복 재생할 수 있습니다.
+- ✨ **Zoom 연동**: 미디어 재생에 맞춰 Zoom 화면 공유를 자동으로 시작하거나 중지할 수 있습니다.
 
 ## v25.7.0
 
 ### ✨ 새로운 기능
 
-- No new features for this release!
+- 이 버전에는 새로운 기능이 없습니다.
 
 ## 25.6.0
 
 ### ✨ 새로운 기능
 
-- ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
-- ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
+- ✨ **데이터 사용 제한 설정**: 데이터 사용량이 제한된 인터넷 연결에서 다운로드 대역폭 사용을 줄이는 새로운 설정을 추가했습니다.
+- ✨ **스트리밍 미디어 처리 개선**: 스트리밍 미디어 지원을 개선하여 지연으로 인해 발생하는 문제를 줄였습니다.
 
 ## 25.5.0
 
 ### ✨ 새로운 기능
 
-- 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
-- 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
+- 🖼️ **이미지용 OBS 장면 전환 지연 옵션**: 이미지를 표시할 때 OBS Studio의 장면 전환을 지연하는 설정을 추가하여 화면 전환을 개선했습니다.
+- 🔊 **`.m4a` 오디오 형식 지원**: 지원하는 미디어 형식을 확대하기 위해 `.m4a` 오디오 파일을 지원합니다.
 
 ## 25.4.0
 
 ### ✨ 새로운 기능
 
-- 🇵🇭 **New Language: Tagalog**: Added support for Tagalog, expanding the app's multilingual capabilities.
-- 🎞 **Support for `.m4v` Video Format**: Now supports playback of `.m4v` files to improve media compatibility.
+- 🇵🇭 **새 언어 지원: 타갈로그어**: 더 많은 언어로 애플리케이션을 사용할 수 있도록 타갈로그어 지원을 추가했습니다.
+- 🎞 **`.m4v` 동영상 형식 지원**: 미디어 호환성을 높이기 위해 `.m4v` 파일 재생을 지원합니다.
 
 ## 25.3.1
 
 ### ✨ 새로운 기능
 
-- 🌏 **새 언어 지원: 한국어**: 안녕하세요! 더 많은 사용자가 쉽게 사용할 수 있도록 한국어 지원을 추가하였습니다.
+- 🌏 **새 언어 지원: 한국어**: 안녕하세요! 더 많은 사용자가 쉽게 사용할 수 있도록 한국어 지원을 추가했습니다.
 
 ## 25.3.0
 
 ### ✨ 새로운 기능
 
-- 🎵 **동영상 재생 중 배경 음악 재생**: 동영상을 재생중일 때에도 배경 음악을 계속 재생하도록 하였습니다.
-- 🎥 **수어 미디어를 위한 카메라 화면 표시**: 수어 사용자를 위해 미디어가 재생중일 때에도 카메라 화면을 표시할 수 있는 기능을 추가하였습니다.
-- 📅 **기념식 배경 화면 자동 적용**: 기념식 일자를 자동으로 확인해 당일 기념식 배경 화면을 자동 적용하도록 하였습니다.
-- 📜 **애플리케이션 내 업데이트 내역 표시**: 애플리케이션 내에 업데이트 내역을 바로 표시하여 사용자가 변경사항을 쉽게 확인할 수 있도록 하였습니다.
+- 🎵 **동영상 재생 중 배경 음악 재생**: 동영상이 재생 중일 때에도 배경 음악을 계속 재생할 수 있도록 했습니다.
+- 🎥 **수어 미디어를 위한 카메라 화면 표시**: 수어 사용자를 위해 미디어가 재생 중일 때에도 카메라 화면을 표시할 수 있는 기능을 추가했습니다.
+- 📅 **기념식 배경 화면 자동 적용**: 기념식 날짜를 자동으로 확인하여 당일 기념식 배경 화면을 자동으로 적용하도록 했습니다.
+- 📜 **애플리케이션 내 업데이트 내역 표시**: 애플리케이션 내에서 업데이트 내역을 바로 표시하여 사용자가 변경 사항을 쉽게 확인할 수 있도록 했습니다.
 
 ## 25.2.1
 
 ### ✨ 새로운 기능
 
-- 🔄 **Allow OBS Reconnection Attempts**: Introduce the possibility to manually force OBS to reconnect when needed.
-- 🗑 **Auto Cleanup Old Export Date Folders**: Automatically remove outdated export date folders to keep storage organized.
+- 🔄 **OBS 재연결**: 필요한 경우 OBS에 직접 재연결을 시도할 수 있는 기능을 추가했습니다.
+- 🗑 **오래된 내보내기 폴더 자동 정리**: 저장 공간을 깔끔하게 관리할 수 있도록 오래된 날짜별 내보내기 폴더를 자동으로 삭제합니다.
 
 ## 25.2.0
 
 ### ✨ 새로운 기능
 
-- 🌍 **Use System Locale by Default**: Automatically detect and use the system's locale for a more personalized experience.
-- 🏷 **Tag Support for Exported Media**: Add metadata tags to exported media files for better organization.
-- 🔄 **Automatic Beta to Stable Downgrade**: Allow automatic downgrades from beta versions to stable releases when necessary.
-- 🌐 **Extract Latest MEPS Language Indexes**: Fetch the most recent MEPS language indexes directly from the official website, ensuring up-to-date language support.
+- 🌍 **시스템 언어 및 지역 설정 자동 사용**: 기본적으로 시스템의 언어 및 지역 설정을 자동으로 감지하여 사용하도록 했습니다.
+- 🏷 **내보낸 미디어 태그 지원**: 내보낸 미디어 파일에 메타데이터 태그를 추가하여 더 쉽게 정리할 수 있도록 했습니다.
+- 🔄 **베타 버전에서 안정 버전으로 자동 전환**: 필요한 경우 베타 버전에서 안정 버전으로 자동으로 다운그레이드할 수 있도록 했습니다.
+- 🌐 **최신 MEPS 언어 인덱스 가져오기**: 공식 웹사이트에서 최신 MEPS 언어 인덱스를 가져와 최신 언어 지원 정보를 사용할 수 있도록 했습니다.
 
 ## 25.1.0
 
 ### ✨ 새로운 기능
 
-- 📅 **Open Previous Dates**: Allow opening previous dates of the current week, which is useful when the meeting day is moved later in the week.
-- 🛑 **Error Banner for OBS Studio**: Add an error banner when OBS Studio is not connected on a meeting day, ensuring users are alerted.
-- 📚 **Group Media by Publication**: Group media from the same referred publication for a cleaner and more organized media overview.
-- 🎵 **Duplicate Song Warning**: Show a warning if songs are listed more than once in the media list for weekend meetings.
-- 🔄 **Future Schedule Planning**: Enable the planning of future meeting schedule changes, which is useful for yearly schedule changes or for the circuit overseer's visit to a neighboring congregation.
+- 📅 **이전 날짜 열기**: 이번 주의 이전 날짜도 열 수 있도록 했습니다. 집회 요일이 평소보다 늦은 요일로 변경된 경우 유용합니다.
+- 🛑 **OBS Studio 오류 배너**: 집회가 있는 날 OBS Studio가 연결되어 있지 않으면 사용자에게 알리는 오류 배너를 표시합니다.
+- 📚 **출판물별 미디어 그룹화**: 같은 출판물에서 참조된 미디어를 하나로 묶어 미디어 목록을 더 깔끔하게 표시합니다.
+- 🎵 **중복 노래 경고**: 주말 집회의 미디어 목록에 같은 노래가 두 번 이상 포함되어 있으면 경고를 표시합니다.
+- 🔄 **향후 집회 일정 변경 계획**: 향후 집회 일정 변경을 미리 설정할 수 있습니다. 매년 집회 일정이 변경되거나 이웃 회중을 순회 감독자가 방문하여 집회 일정이 일시적으로 변경되는 경우 등에 유용합니다.
 
 ## 24.11.0
 
 ### ✨ 새로운 기능
 
-- 🖥️ **Website Presentation on macOS**: Presenting the website is now supported on macOS 🚀
-- ⌨️ **Playback Keyboard Shortcuts**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
-- 🌐 **Custom Media Download Address**: Added support for setting the web address from which media should be downloaded 🚀
-- 🎬 **OBS Instant Scene Picker**: Added OBS Studio instant scene picker and overhauled scene picker functionality in settings
-- 📖 **More Documentation Languages**: Expanded documentation website to support more languages
+- 🖥️ **macOS 웹사이트 표시**: 이제 macOS에서도 웹사이트를 표시할 수 있습니다. 🚀
+- ⌨️ **재생 키보드 단축키**: 미디어 재생을 중지하거나 일시 정지하거나 다시 시작하는 키보드 단축키를 추가했습니다. 🚀
+- 🌐 **사용자 지정 미디어 다운로드 주소**: 미디어를 다운로드할 웹 주소를 직접 지정할 수 있습니다. 🚀
+- 🎬 **OBS 즉시 장면 선택기**: OBS Studio 장면을 빠르게 선택할 수 있는 기능을 추가하고 설정의 장면 선택 기능을 전반적으로 개편했습니다.
+- 📖 **문서 언어 추가**: 가이드 웹사이트에서 지원하는 언어를 확대했습니다.
 
 ## 24.10.10
 
 ### ✨ 새로운 기능
 
-- ⌨️ **Media Navigation Shortcuts**: Added keyboard shortcuts to navigate to the next/previous media item
-- 🖱️ **Media Item Right-Click Menu**: Added a right-click menu to media items to hide media items and rename them
-- ✂️ **Trimmed JWL Playlist Import**: Trimmed video times are now respected in imported JWL playlists
+- ⌨️ **미디어 탐색 단축키**: 다음 또는 이전 미디어 항목으로 이동하는 키보드 단축키를 추가했습니다.
+- 🖱️ **미디어 항목 오른쪽 클릭 메뉴**: 미디어 항목을 숨기거나 이름을 변경할 수 있는 오른쪽 클릭 메뉴를 추가했습니다.
+- ✂️ **JWL 재생 목록 구간 가져오기**: JWL 재생 목록을 가져올 때 지정된 동영상 시작 및 종료 시간이 적용됩니다.
 
 ## 24.10.9
 
 ### ✨ 새로운 기능
 
-- 🗑️ **Delete Extra Media for a Day**: Added an option to delete all extra media files for the currently selected day
+- 🗑️ **해당 날짜의 추가 미디어 전체 삭제**: 현재 선택한 날짜에 추가한 모든 미디어 파일을 삭제할 수 있는 옵션을 추가했습니다.
