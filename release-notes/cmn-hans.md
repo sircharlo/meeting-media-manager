@@ -4,11 +4,11 @@
 
 关于各版本之间完整的更改清单，请参阅 GitHub 上的 CHANGELOG.md 文件。
 
-## UPCOMING VERSION
+## 即将发布的版本
 
 ### ✨ 新功能
 
-- ✨ **Before/After Meeting Quick Actions**: A new big-button panel assists with the run-up to and immediately after each meeting — a live countdown, one-tap background music start/stop, start/stop recording, and a per-congregation checklist grouped into categories and editable from Settings. The before-meeting panel auto-dismisses once the meeting starts and the checklist is complete (or after a short grace period), and can always be dismissed manually.
+- ✨ 会前/会后快捷操作：新增大按钮操作面板，方便在聚会开始前和刚结束后快速完成常用操作，包括实时倒计时、一键开始或停止背景音乐、开始或停止录制，以及按类别整理的会众专用检查清单。每个会众都可以使用独立的检查清单，并可在“设置”中编辑。 会前操作面板会在聚会开始且检查清单全部完成后自动关闭；如果仍有未完成的项目，也会在短暂的宽限时间后自动关闭。用户也可以随时手动关闭该面板。
 
 ## v26.8.0
 
