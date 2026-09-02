@@ -8,6 +8,7 @@ import {
   watchImmediate,
   whenever,
 } from '@vueuse/core';
+import { i18n } from 'boot/i18n';
 import { defineStore, storeToRefs } from 'pinia';
 import { MEDIA_STOP_FADE_DURATION_SECONDS } from 'src/constants/media';
 import {
@@ -30,7 +31,6 @@ import { formatTime } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useDemoModeStore } from 'stores/demo-mode';
 import { computed, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
 
 export interface BackgroundMusicAction {
   action: 'start' | 'stop';
@@ -64,7 +64,10 @@ const isIgnorablePlaybackError = (message?: null | string) =>
 export const AUTO_START_WINDOW_HOURS = 1.25;
 
 export const useMusicStore = defineStore('music', () => {
-  const { t } = useI18n();
+  // The store can be instantiated outside component setup (e.g. the dev-menu
+  // boot file and demo-mode helpers), where `useI18n()` would throw. Use the
+  // global i18n composer instead, like other non-component code.
+  const t = i18n.global.t;
   const currentState = useCurrentStateStore();
   const demoMode = useDemoModeStore();
   const {
