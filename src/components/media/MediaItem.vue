@@ -421,7 +421,7 @@
                 <q-icon :name="tagIconName" />
               </div>
               <div
-                v-if="tagValueText"
+                v-if="showTagValue"
                 class="media-tag__value"
                 :class="
                   tagVariant === 'warn'
@@ -1916,16 +1916,29 @@ const contentTagTooltipText = computed(() => {
   return null;
 });
 
+// Footnote tags drop the "Footnote" text section and keep only the `*`
+// marker: the translated label varies a lot in length across locales and
+// says little beyond what the icon already conveys, so the icon section
+// stretches to the full tag height instead (its flex centering keeps the
+// marker vertically centered).
+const isFootnoteTag = computed(
+  () =>
+    props.media.tag?.type === 'paragraph' &&
+    props.media.tag.value === FOOTNOTE_TARGET_PARAGRAPH,
+);
+
 const tagValueText = computed(() => {
   if (!props.media.tag?.type) return null;
-  if (
-    props.media.tag.type === 'paragraph' &&
-    props.media.tag.value === FOOTNOTE_TARGET_PARAGRAPH
-  ) {
-    return t('footnote');
-  }
+  if (isFootnoteTag.value) return t('footnote');
   return props.media.tag.value?.toString() ?? null;
 });
+
+// Only the footnote tag hides its value at full size (unlike
+// media-tag--icon-only, which shrinks the whole chip); everything else
+// keeps its text section.
+const showTagValue = computed(
+  () => !isFootnoteTag.value && !!tagValueText.value,
+);
 
 // Song/paragraph numbers are usually 1-2 digits, but paragraph ranges
 // ("88-93") or translated footnote labels can run longer than the fixed-width

@@ -17,6 +17,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🛠️ **Performance**: SQLite queries now run in a main-process worker thread, HEIC photos are decoded in a separate utility process (importing iPhone photos no longer stutters the interface), download-progress updates are throttled, display snapshots and OBS-password encryption are cached, and store persistence is debounced.
 - 🛠️ **Update Lifecycle**: The app now lets the main window catch up on a missed update-lifecycle event, so update banners and prompts stay accurate.
 - 🛠️ **Memorial**: Added the 2029 Memorial date.
+- 🛠️ **Media List**: Watchtower footnote tags now show only the asterisk marker, stretched across the full tag height with the icon vertically centered.
 
 ### 🐞 Bug Fixes
 
