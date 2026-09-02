@@ -37,6 +37,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🔧 Chores
 
+- 🔧 **CI**: Pull requests that touch the docs site now run a `docs:lint` gate, so corrupted Crowdin translations are rejected before they can merge and break the docs deploy.
 - 🔧 **Dependencies**: Updated Quasar, Electron, Vue i18n, ESLint, Sentry, and several other dependencies.
 - 🔧 **Docs**: Fixed the renamed VitePress image option and deduplicated heading anchors to unblock the docs build.
 - 🔧 **Dev Tooling**: Added dev-only demo-mode tooling and made the Electron rebuild script cross-platform.
