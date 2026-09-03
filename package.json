@@ -116,7 +116,7 @@
     "electron": "^43.4.0",
     "electron-builder": "26.15.3",
     "eslint": "^10.9.1",
-    "eslint-plugin-perfectionist": "^5.10.1",
+    "eslint-plugin-perfectionist": "^5.11.0",
     "eslint-plugin-vue": "^10.10.0",
     "fantasticon": "patch:fantasticon@npm%3A4.1.0#~/.yarn/patches/fantasticon-npm-4.1.0-3af043d076.patch",
     "globals": "^17.11.0",
