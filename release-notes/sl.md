@@ -4,11 +4,11 @@
 
 Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.md na GitHubu.
 
-## UPCOMING VERSION
+## PRIHAJAJOČA RAZLIČICA
 
 ### ✨ Nove funkcije
 
-- ✨ **Before/After Meeting Quick Actions**: A new big-button panel assists with the run-up to and immediately after each meeting — a live countdown, one-tap background music start/stop, start/stop recording, and a per-congregation checklist grouped into categories and editable from Settings. The before-meeting panel auto-dismisses once the meeting starts and the checklist is complete (or after a short grace period), and can always be dismissed manually.
+- ✨ **Hitri koraki pred in po shodu**: Nova plošča z velikimi gumbi pomaga pri pripravi na shod in takoj po njem — vključno z živim odštevanjem, enotnim gumbom za začetek/ustavitev glasbe v ozadju, začetkom/ustavitvijo snemanja ter kontrolnim seznamom, razdeljenim v kategorije, ki ga je mogoče urejati v Nastavitvah. Plošča pred shodom se samodejno zapre, ko se shod začne in je kontrolni seznam dokončan (ali po kratkem odlogu), vedno pa jo je mogoče zapreti tudi ročno.
 
 ## v26.8.0
 
