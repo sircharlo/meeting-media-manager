@@ -21,6 +21,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🐞 Bug Fixes
 
+- 🐞 **Paragraph Tags**: Ignored incidental numbers in media captions unless the caption has a structural paragraph-reference pattern, while preserving paragraph references across languages.
 - 🐞 **Media Preview**: The preview no longer disables itself when it repeatedly drifts from the media window — it falls back to lighter video rendering first, and only turns off if drift persists even then. False drift detection at high playback speeds and during paused scrubbing was also fixed.
 - 🐞 **Localization**: Fixed corrupted Estonian translations that crashed the Settings page, and added automated Crowdin repair so corrupted source strings can't break the app again.
 - 🐞 **OBS Integration**: Stopped UUID scene IDs from being sent as scene names (which made OBS report "No source was found by the name of"), and scene-list fetch failures are now surfaced in the interface instead of failing silently.

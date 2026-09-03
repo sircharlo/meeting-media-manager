@@ -3184,40 +3184,119 @@ const getWtIssue = async (
   }
 };
 
-const getParagraphNumbers = (
+const CAPTION_NUMBER_PATTERN =
+  /\d+(?:(?:\s*[-–—,;]\s*|\s+\p{L}{1,20}\s+)\d+)?/gu;
+const REFERENCE_SYMBOL_PATTERN = /(?:[^\p{L}\p{N}\s]|\p{L}\.)\s*$/u;
+const TRAILING_PUNCTUATION_PATTERN = /^[\s.!?,;:，。！？；：)\]}»”'’…]*$/u;
+
+interface CaptionNumberCandidate {
+  end: number;
+  start: number;
+  text: string;
+}
+
+const getCaptionNumberCandidates = (caption: string) =>
+  Array.from(caption.matchAll(CAPTION_NUMBER_PATTERN), (match) => ({
+    end: (match.index ?? 0) + match[0].length,
+    start: match.index ?? 0,
+    text: match[0].trim(),
+  }));
+
+const getCandidateNumbers = (candidate: CaptionNumberCandidate) =>
+  Array.from(candidate.text.matchAll(/\d+/g), (match) =>
+    Number.parseInt(match[0], 10),
+  );
+
+const getParagraphLabelNumbers = (paragraphLabel: number | string) =>
+  String(paragraphLabel)
+    .match(/\d+/g)
+    ?.map((value) => Number.parseInt(value, 10)) ?? [];
+
+const isCandidateCompatibleWithParagraphLabel = (
+  paragraphLabel: number | string,
+  candidate: CaptionNumberCandidate,
+) => {
+  const labelNumbers = getParagraphLabelNumbers(paragraphLabel).filter(
+    (number) => number > 0,
+  );
+  if (labelNumbers.length === 0) return false;
+
+  // Media can be attached to the paragraph immediately before a referenced
+  // paragraph, so accept the adjacent label as well as an exact match.
+  return getCandidateNumbers(candidate).some((candidateNumber) =>
+    labelNumbers.some(
+      (labelNumber) => Math.abs(candidateNumber - labelNumber) <= 1,
+    ),
+  );
+};
+
+const getTrailingParenthetical = (caption: string) => {
+  const match = /\([^()]*\)\s*[.!?,;:，。！？；：]*$/u.exec(caption);
+  if (!match || match.index === undefined) return undefined;
+
+  return {
+    content: match[0].slice(1, match[0].lastIndexOf(')')),
+    end: match.index + match[0].lastIndexOf(')'),
+    start: match.index,
+  };
+};
+
+const isParagraphReference = (
+  paragraphLabel: number | string,
+  caption: string,
+  candidate: CaptionNumberCandidate,
+) => {
+  const candidateNumbers = getCandidateNumbers(candidate);
+  const numberBeforeCandidate = caption[candidate.start - 1] ?? '';
+  const numberAfterCandidate = caption[candidate.end] ?? '';
+  if (
+    candidateNumbers.some((number) => number < 1 || number >= 100) ||
+    /[:：]/u.test(numberBeforeCandidate) ||
+    /[:：]/u.test(numberAfterCandidate)
+  ) {
+    return false;
+  }
+
+  const hasReferenceSymbol = REFERENCE_SYMBOL_PATTERN.test(
+    caption.slice(0, candidate.start).trimEnd(),
+  );
+  const isCompatibleWithLabel = isCandidateCompatibleWithParagraphLabel(
+    paragraphLabel,
+    candidate,
+  );
+  const parenthetical = getTrailingParenthetical(caption);
+  if (parenthetical) {
+    const hasReferenceText = /\p{L}/u.test(parenthetical.content);
+    return (
+      candidate.start > parenthetical.start &&
+      candidate.end <= parenthetical.end &&
+      hasReferenceText &&
+      (hasReferenceSymbol || isCompatibleWithLabel)
+    );
+  }
+
+  return (
+    TRAILING_PUNCTUATION_PATTERN.test(caption.slice(candidate.end)) &&
+    (hasReferenceSymbol || isCompatibleWithLabel)
+  );
+};
+
+export const getParagraphNumbers = (
   paragraphLabel: number | string,
   caption: string,
 ) => {
   try {
     if (!caption) return paragraphLabel || '';
 
-    const numbers = [...caption.matchAll(/\d+/g)]
-      .map((m) => Number.parseInt(m[0]))
-      .filter((n) => n > 0 && n < 100);
-
-    if (numbers.length === 0) return paragraphLabel || '';
-    if (numbers.length === 1) return numbers[0];
-
-    // If paragraphLabel exists but isn't in caption, return it
-    if (paragraphLabel && !numbers.includes(Number(paragraphLabel))) {
-      return paragraphLabel;
-    }
-
-    const first = numbers[0];
-    const last = numbers.at(-1);
-
-    // Check if it's a simple range (no numbers between first and last that break the sequence)
-    const between = numbers.slice(1, -1);
-    if (first && last && between.some((n) => n > last || n < first))
-      return last;
-
-    // Try to extract the range string
-    const rangeMatch = new RegExp(`${first}.*?${last}`).exec(caption);
-    if (rangeMatch && rangeMatch[0]?.length <= 15) return rangeMatch[0];
-
-    return paragraphLabel || '';
-  } catch (e) {
-    errorCatcher(e);
+    const candidate = getCaptionNumberCandidates(caption)
+      .reverse()
+      .find((item) => isParagraphReference(paragraphLabel, caption, item));
+    if (!candidate) return '';
+    return /^\d+$/u.test(candidate.text)
+      ? Number.parseInt(candidate.text, 10)
+      : candidate.text;
+  } catch (error) {
+    errorCatcher(error);
     return paragraphLabel || '';
   }
 };

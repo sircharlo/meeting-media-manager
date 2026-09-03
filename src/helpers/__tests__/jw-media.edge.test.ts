@@ -193,6 +193,44 @@ vi.mock('../media-sections', () => ({
 }));
 
 describe('jw-media edge cases', () => {
+  describe('paragraph number detection', () => {
+    it.each([
+      ['Korean-shaped reference', '(11항 참조)', '11'],
+      ['Spanish-shaped reference', '(Vea el párrafo 7)', '7'],
+      ['Russian-shaped reference', '(Смотрите абзац 6.)', '6'],
+    ])(
+      '%s uses the numeric reference fragment',
+      async (_name, caption, expected) => {
+        const { getParagraphNumbers } = await import('../jw-media');
+
+        expect(getParagraphNumbers(Number(expected), caption)).toBe(
+          Number(expected),
+        );
+      },
+    );
+
+    it('returns no tag value for a stray multilingual caption number', async () => {
+      const { getParagraphNumbers } = await import('../jw-media');
+
+      expect(getParagraphNumbers('', '삽화 가: 40개 이상의 셈어식 이름')).toBe(
+        '',
+      );
+      expect(getParagraphNumbers('', 'Picture A: about 1500 B.C.E.')).toBe('');
+      expect(
+        getParagraphNumbers('', 'Picture B: about 80 kilometers to Jogbehah'),
+      ).toBe('');
+    });
+
+    it('supports explicit paragraph symbols and ranges without translated words', async () => {
+      const { getParagraphNumbers } = await import('../jw-media');
+
+      expect(getParagraphNumbers('', '¶ 11-12')).toBe('11-12');
+      expect(getParagraphNumbers('', 'P. 3')).toBe(3);
+      expect(getParagraphNumbers(4, 'Vea los párrafos 4 y 5')).toBe('4 y 5');
+      expect(getParagraphNumbers(4, 'Смотрите абзацы 4, 5.')).toBe('4, 5');
+    });
+  });
+
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();

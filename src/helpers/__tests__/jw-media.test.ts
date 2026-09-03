@@ -183,6 +183,33 @@ vi.mock('../media-sections', () => ({
 }));
 
 describe('jw-media helpers', () => {
+  describe('paragraph number detection', () => {
+    it('uses only a reference-shaped caption fragment', async () => {
+      const { getParagraphNumbers } = await import('../jw-media');
+
+      expect(
+        getParagraphNumbers(
+          '',
+          'Picture A: Part of an ancient Egyptian list of slaves that features more than 40 Semitic names, indicating the presence of Israelite slaves in Egypt',
+        ),
+      ).toBe('');
+      expect(getParagraphNumbers(1, 'See paragraph 2')).toBe(2);
+      expect(getParagraphNumbers(11, 'See paragraphs 11-12')).toBe('11-12');
+      expect(getParagraphNumbers('', '¶ 7')).toBe(7);
+    });
+
+    it('retains the paragraph label for captions without a reference', async () => {
+      const { getParagraphNumbers } = await import('../jw-media');
+
+      expect(getParagraphNumbers(4, '')).toBe(4);
+      expect(getParagraphNumbers(4, 'A list containing 40 names')).toBe('');
+      expect(getParagraphNumbers(4, 'John 4:6-9')).toBe('');
+      expect(
+        getParagraphNumbers(4, 'Choose what is valuable (Compare page 46.)'),
+      ).toBe('');
+    });
+  });
+
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
