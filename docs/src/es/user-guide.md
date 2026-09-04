@@ -284,7 +284,7 @@ Import audio recordings of Bible verses:
 
 1. Click the "Audio Bible" button
 2. Select the Bible book and chapter
-3. Choose specific verses or verse ranges
+3. Elegir versículos específicos o rangos de versículos
 4. Download the audio files
 5. Use them
 
@@ -332,7 +332,7 @@ Share the official website on external displays:
 - **Close** - Exit website presentation mode
 - **Auto Return** - Optionally return to the media list automatically after stopping website mirroring
 
-## Meeting Recordings {#meeting-recordings}
+## Grabaciones de las reuniones {#meeting-recordings}
 
 M³ can help control meeting recording, but it does not include a built-in recorder.
 
