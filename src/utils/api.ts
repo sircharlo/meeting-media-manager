@@ -19,8 +19,20 @@ import { isDemoModeActive } from 'stores/demo-mode';
 
 const MAX_CACHED_RESPONSE_BYTES = 1024 * 1024;
 
+// Without a TTL, a JW.org response fetched once stays cached for the rest of
+// the renderer process's life - and M³ is designed to run for long,
+// continuous sessions (a presentation computer left open for days/weeks). A
+// mid-week JW.org content correction (a fixed outline, a swapped video) would
+// otherwise never reach an already-running session. This is deliberately
+// short relative to that session length, not a long-term cache: it only
+// exists to avoid redundant re-fetches of the same URL in quick succession
+// (e.g. multiple components reading the same media-items response), not to
+// serve data indefinitely.
+const FETCH_CACHE_TTL_MS = 15 * 60 * 1000;
+
 interface CachedFetchResponse {
   body: ArrayBuffer | null;
+  cachedAt: number;
   headers: [string, string][];
   status: number;
   statusText: string;
@@ -52,6 +64,7 @@ async function createCachedResponse(response: Response) {
   if (!response.body) {
     const cached = {
       body: null,
+      cachedAt: Date.now(),
       headers: Array.from(response.headers.entries()),
       status: response.status,
       statusText: response.statusText,
@@ -83,6 +96,7 @@ async function createCachedResponse(response: Response) {
 
   const cached = {
     body,
+    cachedAt: Date.now(),
     headers: Array.from(response.headers.entries()),
     status: response.status,
     statusText: response.statusText,
@@ -128,10 +142,13 @@ export const fetchRaw = async (
   if (isCacheable) {
     const cachedResponse = fetchCache.get(cacheKey);
     if (cachedResponse) {
-      if (!import.meta.env.VITEST) {
-        log('fetchRaw (cached)', 'api', 'debug', { cache, init, url });
+      if (Date.now() - cachedResponse.cachedAt < FETCH_CACHE_TTL_MS) {
+        if (!import.meta.env.VITEST) {
+          log('fetchRaw (cached)', 'api', 'debug', { cache, init, url });
+        }
+        return buildCachedResponse(cachedResponse);
       }
-      return buildCachedResponse(cachedResponse);
+      fetchCache.delete(cacheKey);
     }
   }
 

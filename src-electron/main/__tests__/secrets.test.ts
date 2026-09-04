@@ -94,3 +94,25 @@ describe('decryptSecret', () => {
     expect(decryptSecret(cipherText)).toBe('');
   });
 });
+
+// SEC-5 (full-audit-2026-09-04.md): the renderer needs this to warn the user
+// when a secret like the OBS password can't actually be encrypted at rest.
+describe('isSecretEncryptionAvailable', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('reflects safeStorage.isEncryptionAvailable() when true', async () => {
+    isEncryptionAvailableMock.mockReturnValue(true);
+    const { isSecretEncryptionAvailable } = await import('../secrets');
+
+    expect(isSecretEncryptionAvailable()).toBe(true);
+  });
+
+  it('reflects safeStorage.isEncryptionAvailable() when false', async () => {
+    isEncryptionAvailableMock.mockReturnValue(false);
+    const { isSecretEncryptionAvailable } = await import('../secrets');
+
+    expect(isSecretEncryptionAvailable()).toBe(false);
+  });
+});

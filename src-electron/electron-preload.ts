@@ -104,6 +104,8 @@ const electronApi: ElectronApi = {
   isDownloadComplete: (downloadId: string) =>
     invoke('isDownloadComplete', downloadId),
   isDownloadErrorExpected: () => invoke('isDownloadErrorExpected'),
+  isSecretEncryptionAvailableSync: () =>
+    sendSync('isSecretEncryptionAvailableSync'),
   isUsablePath: (p) => invoke('isUsablePath', p),
   join,
   moveMediaWindow: (t, w) => send('moveMediaWindow', t, w),

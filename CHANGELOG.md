@@ -18,6 +18,8 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🛠️ **Update Lifecycle**: The app now lets the main window catch up on a missed update-lifecycle event, so update banners and prompts stay accurate.
 - 🛠️ **Memorial**: Added the 2029 Memorial date.
 - 🛠️ **Media List**: Watchtower footnote tags now show only the asterisk marker, stretched across the full tag height with the icon vertically centered.
+- 🛠️ **Advanced Settings**: Changing the "Website address" setting now shows a confirmation explaining what trusting the new address means before it takes effect, since it controls where M³ downloads media from.
+- 🛠️ **Accessibility**: Media items in the calendar can now be selected and multi-selected with the keyboard (Enter/Space, plus Ctrl/Shift for multi-select), not just the mouse.
 
 ### 🐞 Bug Fixes
 
@@ -28,14 +30,17 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **Watched Folders**: Refused to read or write watched-media section-order files outside the watch folder, made section-order removal atomic, and retried transient Windows file locks during writes and unzip.
 - 🐞 **Media Player**: Stopped camera capture when playback is cleaned up, and fixed audio auto-advance and loop-trim behavior.
 - 🐞 **Timer**: Fixed display flashes when stopping or showing the timer window, unpadded times in validation messages, and option lists not refreshing after an app-language change.
-- 🐞 **Reliability**: Fixed broadcast-channel, drag-listener, and font-cache leaks, stopped accumulating website-window IPC listeners, and guarded display/timer popups against screen-lookup hangs and IPC pile-up.
+- 🐞 **Reliability**: Fixed broadcast-channel, drag-listener, and font-cache leaks, stopped accumulating website-window IPC listeners, guarded display/timer popups against screen-lookup hangs and IPC pile-up, added a main-process safety net so an unexpected error in a background task (like queueing a download or repositioning the media window) is reported instead of silently going unnoticed, moved image-dimension reading (used when converting a photo for the media window) into its own process with a timeout so a malformed image file can no longer freeze the whole app, and stopped a failed photo/audio-to-video conversion from leaving a broken file behind that a later attempt could mistake for a finished one.
 - 🐞 **Fonts**: Clarified the error when the JW icon font URL can't be resolved, and skipped font fallback when the CDN URL is empty.
 - 🐞 **Cache Folder**: Invalid custom cache folders are now flagged on permission errors instead of surfacing raw access errors.
 - 🐞 **Offline Resilience**: The song picker and background music library now fall back to cached data when offline, and background-music refresh and download were hardened.
 - 🐞 **Background Music**: Fixed a boot crash ("Must be called at the top of a setup function") when the music store was created before any component mounted; it now translates through the global i18n composer.
-- 🐞 **Downloads**: Handled files that vanish mid-poll, capped concurrent directory creation, and retried metadata fetches on transient network errors.
+- 🐞 **Downloads**: Handled files that vanish mid-poll, capped concurrent directory creation, retried metadata fetches on transient network errors, and made "cancel all" actually stop a download that was still starting up instead of letting it keep running in the background.
 - 🐞 **Error Reporting**: Stopped reporting a batch of transient or benign errors (503 responses, yeartext network noise, empty additional items, FFmpeg offline failures, duplicate preload causes, and transient auto-updater network errors (ERR_NETWORK_IO_SUSPENDED)).
 - 🐞 **Media List and UI**: The section color picker no longer shows a stale value after reopening, and announcement banners no longer get dropped or leak intervals.
+- 🐞 **Quick Start Guide**: The tour is now marked as seen only once it's actually been shown and dismissed, rather than the moment it's requested — a guide that didn't appear on its first attempt is no longer permanently skipped for that congregation.
+- 🐞 **Meeting Schedule**: The "Refresh meeting schedule" settings button now always shows a result — updated, already up to date, or couldn't check — instead of staying silent unless something actually changed.
+- 🐞 **Meeting Media Freshness**: JW.org responses are no longer cached indefinitely for the life of a running session, and a corrected video, audio recording, or caption for a day already loaded is now picked up automatically instead of requiring a restart — while still keeping any hidden/reordered items exactly as the user left them.
 
 ### 🔧 Chores
 

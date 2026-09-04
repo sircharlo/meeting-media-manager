@@ -11,11 +11,13 @@
       'q-px-sm': child,
       'sortable-selected': props.selected,
     }"
+    clickable
     :data-id="media.uniqueId"
     :style="{
       'padding: 8px 6px': child,
       'flex-direction': 'column',
     }"
+    @keydown.enter.space.prevent="(evt: KeyboardEvent) => emit('click', evt)"
     @mouseup.left.passive="(evt: MouseEvent) => emit('click', evt)"
   >
     <div

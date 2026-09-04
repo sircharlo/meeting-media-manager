@@ -105,6 +105,7 @@ interface GeoInfo {
 }
 
 interface OngoingDownload {
+  cancelRequested?: boolean;
   item: DownloadQueueItem;
   lowPriority: boolean;
   pauseRequested?: boolean;
@@ -639,10 +640,10 @@ export async function cancelAllDownloads() {
   downloadQueue.length = 0;
   lowPriorityQueue.length = 0;
 
-  ongoingDownloads.forEach((download) => {
+  for (const [key, download] of ongoingDownloads) {
     if (download.uuid) {
       try {
-        manager?.cancelDownload(download.uuid);
+        manager.cancelDownload(download.uuid);
       } catch (error) {
         captureElectronError(error, {
           contexts: {
@@ -653,10 +654,16 @@ export async function cancelAllDownloads() {
           },
         });
       }
+      ongoingDownloads.delete(key);
+    } else {
+      // Still initializing: manager.download() hasn't resolved a uuid yet,
+      // so there's nothing to hand to manager.cancelDownload() right now.
+      // Flag it so startDownload's post-await continuation cancels it the
+      // moment the uuid arrives, instead of losing track of it here and
+      // letting it keep downloading in the background after "cancel all."
+      download.cancelRequested = true;
     }
-  });
-
-  ongoingDownloads.clear();
+  }
 }
 
 /**
@@ -1123,69 +1130,78 @@ async function processNormalPausedDownload(
  * It will start downloading as many files as possible, up to the maximum limit.
  */
 async function processQueue() {
-  const loadedManager = await loadElectronDownloadManager();
-  if (!getDownloadWindow() || cancelAll || !loadedManager) return;
+  try {
+    const loadedManager = await loadElectronDownloadManager();
+    if (!getDownloadWindow() || cancelAll || !loadedManager) return;
 
-  const activeCount = getActiveDownloadCount();
+    const activeCount = getActiveDownloadCount();
 
-  // Exit early if max active downloads reached
-  if (!hasAvailableSlots(activeCount, maxActiveDownloads)) {
-    log(
-      'Queue full. Active:',
-      'electronDownloads',
-      'log',
-      activeCount,
-      'Max:',
-      maxActiveDownloads,
-    );
-    return;
-  }
-
-  // Determine what to process next
-  const activeDownloads = getActiveDownloads();
-  const pausedDownloads = getPausedDownloads();
-  const highPriorityActive = hasHighPriorityActive(activeDownloads);
-
-  const nextItemType = getNextQueueItemType(
-    downloadQueue,
-    lowPriorityQueue,
-    pausedDownloads,
-    highPriorityActive,
-  );
-
-  // Log blocking reasons for debugging
-  logQueueBlockReason(nextItemType, highPriorityActive);
-
-  // Nothing to process
-  if (nextItemType === null) {
-    if (activeCount === 0 && pausedDownloads.size > 0) {
+    // Exit early if max active downloads reached
+    if (!hasAvailableSlots(activeCount, maxActiveDownloads)) {
       log(
-        'Queue is stalled: no active downloads but paused downloads exist. Triggering auto-resume.',
+        'Queue full. Active:',
         'electronDownloads',
-        'warn',
+        'log',
+        activeCount,
+        'Max:',
+        maxActiveDownloads,
       );
-      logPausedDownloadsContext('auto-resume-stalled-queue');
-      logDownloadQueueDebugState('auto-resume-stalled-queue');
-      await resumeAllDownloads('auto-stalled-queue');
+      return;
     }
-    return;
+
+    // Determine what to process next
+    const activeDownloads = getActiveDownloads();
+    const pausedDownloads = getPausedDownloads();
+    const highPriorityActive = hasHighPriorityActive(activeDownloads);
+
+    const nextItemType = getNextQueueItemType(
+      downloadQueue,
+      lowPriorityQueue,
+      pausedDownloads,
+      highPriorityActive,
+    );
+
+    // Log blocking reasons for debugging
+    logQueueBlockReason(nextItemType, highPriorityActive);
+
+    // Nothing to process
+    if (nextItemType === null) {
+      if (activeCount === 0 && pausedDownloads.size > 0) {
+        log(
+          'Queue is stalled: no active downloads but paused downloads exist. Triggering auto-resume.',
+          'electronDownloads',
+          'warn',
+        );
+        logPausedDownloadsContext('auto-resume-stalled-queue');
+        logDownloadQueueDebugState('auto-resume-stalled-queue');
+        await resumeAllDownloads('auto-stalled-queue');
+      }
+      return;
+    }
+
+    // Process the next item
+    const success = await processQueueItem(
+      nextItemType,
+      loadedManager,
+      pausedDownloads,
+    );
+
+    // If processing failed (e.g., resume failed), try again
+    if (!success) {
+      processQueue();
+      return;
+    }
+
+    // Continue processing if slots available
+    continueProcessingIfAvailable();
+  } catch (error) {
+    // Every call site invokes processQueue() fire-and-forget; without this,
+    // a failure here (e.g. loadElectronDownloadManager's dynamic import
+    // failing) is an unobserved rejection with no Sentry visibility.
+    captureElectronError(error, {
+      contexts: { fn: { name: 'processQueue' } },
+    });
   }
-
-  // Process the next item
-  const success = await processQueueItem(
-    nextItemType,
-    loadedManager,
-    pausedDownloads,
-  );
-
-  // If processing failed (e.g., resume failed), try again
-  if (!success) {
-    processQueue();
-    return;
-  }
-
-  // Continue processing if slots available
-  continueProcessingIfAvailable();
 }
 
 /**
@@ -1328,6 +1344,24 @@ async function startDownload(
     const current = ongoingDownloads.get(key);
     if (current) {
       current.uuid = downloadId;
+
+      // If cancel-all was requested while initializing (race condition),
+      // cancel now instead of letting an untracked download keep running in
+      // the background. manager.cancelDownload() triggers the same
+      // onDownloadCancelled callback registered above, which handles
+      // cleanup/notification/queue-processing consistently with a normal
+      // cancel - no need to duplicate that here.
+      if (current.cancelRequested) {
+        manager.cancelDownload(downloadId);
+        log(
+          'Applied deferred cancel to initializing download',
+          'electronDownloads',
+          'warn',
+          key,
+          url,
+        );
+        return;
+      }
 
       // If pause was requested while initializing (race condition), pause now
       if (current.pauseRequested) {

@@ -135,13 +135,28 @@ export const applyScheduleToSettings = (
   return { currentChanged, futureChanged };
 };
 
-export const syncMeetingSchedule = async (force = false) => {
+/**
+ * Outcome of a sync attempt, granular enough for a manually-triggered sync
+ * (see {@link syncMeetingScheduleManually}) to give the user feedback
+ * covering every case, not just "something changed". `unavailable` covers
+ * every reason the sync couldn't run to completion (offline, congregation
+ * name not set/not matched, no online meeting found, or a thrown error) -
+ * these aren't distinguished further since the user-facing message is the
+ * same actionable "check your connection and congregation name" either way.
+ */
+type MeetingScheduleSyncOutcome = 'unavailable' | 'unchanged' | 'updated';
+
+const runMeetingScheduleSync = async (
+  force: boolean,
+): Promise<MeetingScheduleSyncOutcome> => {
   try {
     const currentState = useCurrentStateStore();
     const { currentSettings, online } = storeToRefs(currentState);
     const settings = currentSettings.value;
 
-    if (!canSyncMeetingSchedule(settings, online.value, force)) return false;
+    if (!canSyncMeetingSchedule(settings, online.value, force)) {
+      return 'unavailable';
+    }
 
     const suggestions = await fetchCongregationSuggestions(
       settings.congregationName,
@@ -150,26 +165,59 @@ export const syncMeetingSchedule = async (force = false) => {
       suggestions,
       settings.congregationName,
     );
-    if (!exactMatch) return false;
+    if (!exactMatch) return 'unavailable';
 
     const response = await fetchMeetingLocations(exactMatch.congregationGuid);
     const selectedMeeting = findOnlineCongregationMeeting(
       response,
       settings.congregationName,
     );
-    if (!selectedMeeting) return false;
+    if (!selectedMeeting) return 'unavailable';
 
     const normalized = normalizeOnlineMeetingSchedule(selectedMeeting);
     const changes = applyScheduleToSettings(settings, normalized);
     await handleScheduleSyncChanges(changes);
 
-    return changes.currentChanged || changes.futureChanged;
+    return changes.currentChanged || changes.futureChanged
+      ? 'updated'
+      : 'unchanged';
   } catch (error) {
     errorCatcher(error, {
       contexts: { fn: { name: 'syncMeetingSchedule' } },
     });
-    return false;
+    return 'unavailable';
   }
+};
+
+export const syncMeetingSchedule = async (force = false): Promise<boolean> =>
+  (await runMeetingScheduleSync(force)) === 'updated';
+
+/**
+ * Same sync as {@link syncMeetingSchedule}, but for the user-initiated
+ * "Refresh meeting schedule" settings button - always shows a notification
+ * covering every outcome, not just "something changed" (see UX-2 in
+ * full-audit-2026-09-04.md: a volunteer clicking this to check for a stale
+ * schedule before a meeting previously got no feedback at all unless the
+ * schedule actually changed). The automatic background sync
+ * (`syncMeetingSchedule`, called from `MainLayout.vue` on launch/congregation
+ * switch) intentionally stays silent on `unavailable`/`unchanged` - being
+ * offline or not-yet-configured at launch is normal and shouldn't nag.
+ */
+export const syncMeetingScheduleManually = async (): Promise<void> => {
+  const outcome = await runMeetingScheduleSync(true);
+
+  if (outcome === 'updated') return; // already notified by handleScheduleSyncChanges
+
+  createTemporaryNotification({
+    deferWhileDialogOpen: true,
+    message: i18n.global.t(
+      outcome === 'unchanged'
+        ? 'meeting-schedule-already-up-to-date'
+        : 'meeting-schedule-sync-unavailable',
+    ),
+    timeout: outcome === 'unchanged' ? 6000 : 10000,
+    type: outcome === 'unchanged' ? 'info' : 'warning',
+  });
 };
 
 const canSyncMeetingSchedule = (
