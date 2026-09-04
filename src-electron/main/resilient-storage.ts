@@ -7,11 +7,72 @@ import {
   readJson,
   readJsonSync,
   remove,
+  removeSync,
   writeJson,
   writeJsonSync,
 } from 'fs-extra/esm';
-import { readdir, stat } from 'node:fs/promises';
+import { renameSync } from 'node:fs';
+import { readdir, rename, stat } from 'node:fs/promises';
+import { addElectronBreadcrumb } from 'src-electron/main/utils';
 import { join } from 'upath';
+
+/**
+ * Writes to a temp file in the same directory, then renames it over the
+ * destination (atomic on the same filesystem/volume) instead of writing the
+ * destination file directly. Without this, a process kill/crash/power loss
+ * mid-write (see BE-5 in full-audit-2026-09-04.md) can leave truncated,
+ * unparsable JSON at the destination - readJsonResilient(Sync) then treats
+ * that identically to "file doesn't exist", which for crash-count.json
+ * silently resets crash-loop detection instead of surfacing the corruption.
+ */
+const getTempWritePath = (dir: string, fileName: string) =>
+  join(
+    dir,
+    `${fileName}.${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}.tmp`,
+  );
+
+async function writeJsonAtomic(
+  dir: string,
+  fileName: string,
+  data: unknown,
+): Promise<void> {
+  const tempPath = getTempWritePath(dir, fileName);
+  try {
+    await writeJson(tempPath, data, { spaces: 2 });
+    await rename(tempPath, join(dir, fileName));
+  } catch (error) {
+    // A plain `.catch()` chain only guards against remove() *rejecting* -
+    // if it throws synchronously instead, that exception would replace and
+    // discard the original (more diagnostically important) write/rename
+    // error entirely, before the .catch() ever runs. A nested try/catch
+    // guards both cases, matching writeJsonAtomicSync below.
+    try {
+      await remove(tempPath);
+    } catch {
+      // Best-effort cleanup; the write/rename error above is what matters.
+    }
+    throw error;
+  }
+}
+
+function writeJsonAtomicSync(
+  dir: string,
+  fileName: string,
+  data: unknown,
+): void {
+  const tempPath = getTempWritePath(dir, fileName);
+  try {
+    writeJsonSync(tempPath, data, { spaces: 2 });
+    renameSync(tempPath, join(dir, fileName));
+  } catch (error) {
+    try {
+      removeSync(tempPath);
+    } catch {
+      // Best-effort cleanup; the write error above is what matters.
+    }
+    throw error;
+  }
+}
 
 /**
  * Fallback directory for small operational/preference files (window bounds,
@@ -53,6 +114,17 @@ export async function readJsonResilient(
       jsonCache.set(key, { data });
       return data;
     }
+    // The file exists but didn't parse - a real corruption (e.g. a mid-write
+    // crash before atomic writes were introduced, or a hand edit), not the
+    // same thing as a missing file. Without this, it's silently treated the
+    // same as absent, which for crash-count.json quietly resets crash-loop
+    // detection instead of surfacing the corruption.
+    addElectronBreadcrumb({
+      category: 'resilient-storage',
+      data: { fileName, path: primaryPath },
+      level: 'warning',
+      message: 'Existing JSON file failed to parse; falling back',
+    });
   }
   const fallbackPath = join(getFallbackDir(), fileName);
   const data = (await pathExists(fallbackPath))
@@ -77,6 +149,13 @@ export function readJsonResilientSync(
       jsonCache.set(key, { data });
       return data;
     }
+    // See the comment in readJsonResilient above.
+    addElectronBreadcrumb({
+      category: 'resilient-storage',
+      data: { fileName, path: primaryPath },
+      level: 'warning',
+      message: 'Existing JSON file failed to parse; falling back',
+    });
   }
   const fallbackPath = join(getFallbackDir(), fileName);
   const data = pathExistsSync(fallbackPath)
@@ -94,13 +173,13 @@ export async function writeJsonResilient(
   const key = cacheKey(primaryDir, fileName);
   try {
     await ensureDir(primaryDir);
-    await writeJson(join(primaryDir, fileName), data, { spaces: 2 });
+    await writeJsonAtomic(primaryDir, fileName, data);
     jsonCache.set(key, { data });
   } catch (primaryError) {
     try {
       const fallbackDir = getFallbackDir();
       await ensureDir(fallbackDir);
-      await writeJson(join(fallbackDir, fileName), data, { spaces: 2 });
+      await writeJsonAtomic(fallbackDir, fileName, data);
       jsonCache.set(key, { data });
     } catch {
       throw primaryError;
@@ -116,13 +195,13 @@ export function writeJsonResilientSync(
   const key = cacheKey(primaryDir, fileName);
   try {
     ensureDirSync(primaryDir);
-    writeJsonSync(join(primaryDir, fileName), data, { spaces: 2 });
+    writeJsonAtomicSync(primaryDir, fileName, data);
     jsonCache.set(key, { data });
   } catch (primaryError) {
     try {
       const fallbackDir = getFallbackDir();
       ensureDirSync(fallbackDir);
-      writeJsonSync(join(fallbackDir, fileName), data, { spaces: 2 });
+      writeJsonAtomicSync(fallbackDir, fileName, data);
       jsonCache.set(key, { data });
     } catch {
       throw primaryError;

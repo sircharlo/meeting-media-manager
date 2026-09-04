@@ -337,10 +337,11 @@ export const finishLastSong = () => {
 
 /**
  * Removes the seeded demo congregation: its profile, its session caches
- * (lookup period, quick-start tour flag, announcements), and its
- * per-congregation cached folders on disk — mirroring the app's canonical
- * congregation deletion in DialogCongregationSwitcher. No-op when nothing
- * was seeded this session.
+ * (lookup period, quick-start tour flag, announcements — cleaned up by
+ * deleteCongregation() itself, see FE-3/FE-4 in full-audit-2026-09-04.md),
+ * and its per-congregation cached folders on disk — mirroring the app's
+ * canonical congregation deletion in DialogCongregationSwitcher. No-op when
+ * nothing was seeded this session.
  */
 export const removeDemoCongregationData = async () => {
   const demoId = seededCongregationId;
@@ -348,15 +349,8 @@ export const removeDemoCongregationData = async () => {
 
   const congregationSettingsStore = useCongregationSettingsStore();
   const currentStateStore = useCurrentStateStore();
-  const jwStore = useJwStore();
 
   congregationSettingsStore.deleteCongregation(demoId);
-  // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-  delete congregationSettingsStore.quickStartTourSeen[demoId];
-  // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-  delete congregationSettingsStore.announcements[demoId];
-  // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-  delete jwStore.lookupPeriod[demoId];
   if (currentStateStore.currentCongregation === demoId) {
     // Triggers MainLayout's currentCongregation watcher, which shows the
     // congregation switcher — the pristine, demo-free starting state.

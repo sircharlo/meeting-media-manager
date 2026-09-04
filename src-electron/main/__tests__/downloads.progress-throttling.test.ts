@@ -90,6 +90,10 @@ vi.mock('electron', () => ({
   app: { getLocaleCountryCode: vi.fn(() => 'US') },
 }));
 
+vi.mock('src-electron/main/disk-space', () => ({
+  getLowDiskSpaceStatus: vi.fn(async () => false),
+}));
+
 // Avoid real network probes inside `isDownloadErrorExpected` (invoked from
 // `onError`); MSW would intercept them and log noisy warnings.
 vi.mock('is-online', () => ({

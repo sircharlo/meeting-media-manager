@@ -10,6 +10,7 @@ import {
   transformObsPasswords,
   useCongregationSettingsStore,
 } from '../congregation-settings';
+import { useJwStore } from '../jw';
 
 describe('backfillQuickStartTourSeen', () => {
   it('marks a pre-existing congregation missing from quickStartTourSeen as seen', () => {
@@ -247,5 +248,49 @@ describe('obsPassword encryption caching', () => {
     const secondSave = serializeCongregationSettings(hydrated);
     expect(encryptSecretSync).toHaveBeenCalledTimes(1);
     expect(secondSave).toBe(firstSave);
+  });
+});
+
+// FE-3/FE-4 (full-audit-2026-09-04.md): deleteCongregation() previously only
+// removed the congregations map entry - announcements, quickStartTourSeen,
+// and the jw store's lookupPeriod entry all persisted indefinitely.
+describe('deleteCongregation sibling-record cleanup', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
+  it('removes announcements, quickStartTourSeen, and lookupPeriod for the deleted congregation', () => {
+    const store = useCongregationSettingsStore();
+    const jwStore = useJwStore();
+
+    store.congregations['abc'] = { ...defaultSettings };
+    store.announcements['abc'] = ['announcement-1'];
+    store.quickStartTourSeen['abc'] = true;
+    jwStore.lookupPeriod['abc'] = [];
+
+    store.deleteCongregation('abc');
+
+    expect(store.congregations['abc']).toBeUndefined();
+    expect(store.announcements['abc']).toBeUndefined();
+    expect(store.quickStartTourSeen['abc']).toBeUndefined();
+    expect(jwStore.lookupPeriod['abc']).toBeUndefined();
+  });
+
+  it('leaves other congregations untouched', () => {
+    const store = useCongregationSettingsStore();
+    const jwStore = useJwStore();
+
+    store.congregations['abc'] = { ...defaultSettings };
+    store.congregations['def'] = { ...defaultSettings };
+    store.announcements['def'] = ['announcement-2'];
+    store.quickStartTourSeen['def'] = true;
+    jwStore.lookupPeriod['def'] = [];
+
+    store.deleteCongregation('abc');
+
+    expect(store.congregations['def']).toBeDefined();
+    expect(store.announcements['def']).toEqual(['announcement-2']);
+    expect(store.quickStartTourSeen['def']).toBe(true);
+    expect(jwStore.lookupPeriod['def']).toEqual([]);
   });
 });

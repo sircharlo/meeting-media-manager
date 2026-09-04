@@ -740,8 +740,17 @@ export const useJwStore = defineStore('jw-store', {
   },
   getters: {
     fontUrls: (state): Record<FontName, string> => {
+      // SEC-3 (full-audit-2026-09-04.md): pinned rather than `@latest` -
+      // static font bytes are lower risk than the pdf-parse worker script
+      // above, but an unpinned CDN reference still means an unreviewed
+      // future version gets served automatically. Fontsource publishes every
+      // font package under one synchronized version number (confirmed via
+      // `npm view`, matching this project's own pinned
+      // `@fontsource-variable/inter`/`noto-serif` dependencies), so a single
+      // constant covers all of them - bump it when those dependencies bump.
+      const FONTSOURCE_VERSION = '5.3.0';
       const jsdelivr = (font: string, file: string) =>
-        `https://cdn.jsdelivr.net/fontsource/fonts/${font}@latest/${file}`;
+        `https://cdn.jsdelivr.net/fontsource/fonts/${font}@${FONTSOURCE_VERSION}/${file}`;
 
       return {
         AbyssinicaSIL: jsdelivr('abyssinica-sil', 'latin-400-normal.woff2'),

@@ -82,6 +82,7 @@ import type {
 
 import {
   useBroadcastChannel,
+  useIntervalFn,
   watchDebounced,
   watchImmediate,
   whenever,
@@ -131,7 +132,10 @@ import {
   removeWatchedMediaSectionInfo,
 } from 'src/helpers/media-sections';
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
-import { createTemporaryNotification } from 'src/helpers/notifications';
+import {
+  checkLowDiskSpaceAndNotify,
+  createTemporaryNotification,
+} from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
 import { log, type LogPrefix } from 'src/shared/vanilla';
 import { useAppSettingsStore } from 'src/stores/app-settings';
@@ -1798,5 +1802,19 @@ watchImmediate(
       unregisterAllCustomShortcuts();
     }
   },
+);
+
+// BE-8 (full-audit-2026-09-04.md): the only other low-disk-space check fires
+// once, at the moment a congregation is chosen - a long download session
+// (e.g. an initial multi-week sync for a newly added congregation) can keep
+// consuming space for a long time afterward with no further warning. Poll
+// periodically, but only while a download is actually in progress, so this
+// doesn't add a recurring background disk check for a user who isn't
+// downloading anything.
+useIntervalFn(
+  () => {
+    if (currentState.hasActiveDownloads) void checkLowDiskSpaceAndNotify();
+  },
+  2 * 60 * 1000,
 );
 </script>

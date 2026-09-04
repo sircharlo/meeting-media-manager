@@ -154,6 +154,7 @@ const logPrefixes = {
   electronFilesystem: '📁 Electron Filesystem',
   electronIpc: '🔌 Electron IPC',
   electronScreen: '🖥️ Electron Screen',
+  electronShortcuts: '⌨️ Electron Shortcuts',
   electronUpdater: '🆕 Electron Updater',
   electronWindow: '🪟 Electron Window',
   errorHandling: '🚨 Error Handling',

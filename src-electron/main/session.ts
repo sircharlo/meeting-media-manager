@@ -56,6 +56,52 @@ const getSentryReportUri = (): string | undefined => {
   }
 };
 
+/**
+ * The renderer's own Sentry SDK reports events straight from the renderer
+ * process, so its ingest host needs to be allowed in `connect-src` - not
+ * just the derived report-uri above, which is a separate CSP-violation
+ * reporting channel.
+ * @returns The Sentry ingest origin, or undefined if no DSN is set
+ */
+const getSentryIngestOrigin = (): string | undefined => {
+  if (!SENTRY_DSN) return undefined;
+  try {
+    return new URL(SENTRY_DSN).origin;
+  } catch {
+    return undefined;
+  }
+};
+
+/**
+ * Fixed, non-JW hosts the renderer genuinely fetches from (confirmed by
+ * reading every `fetchRaw`/`fetchJson` call site): GitHub for release
+ * checks/announcements/memorials/release notes, jsdelivr for the many
+ * fontsource font downloads (see the `jw` store's `fontUrls` getter - not
+ * just the `script-src`/`worker-src` usage), and JW's own meeting-lookup
+ * API (a fixed host, unlike the per-congregation mediator/pubMedia hosts
+ * already covered by `trustedOrigins`).
+ */
+const FIXED_CONNECT_SRC_HOSTS = [
+  'https://api.github.com',
+  'https://raw.githubusercontent.com',
+  'https://cdn.jsdelivr.net',
+  'https://hub.jw.org',
+];
+
+const getConnectSrc = (trustedOrigins: string) => {
+  const sentryOrigin = getSentryIngestOrigin();
+  return [
+    "'self'",
+    trustedOrigins,
+    ...FIXED_CONNECT_SRC_HOSTS,
+    ...(sentryOrigin ? [sentryOrigin] : []),
+    // OBS Studio's websocket port is user-configured (see src/helpers/obs.ts),
+    // hence the `:*` wildcard; the host itself is always localhost.
+    'ws://127.0.0.1:*',
+    'devtools:',
+  ].join(' ');
+};
+
 const getCSP = (trustedHostnames: string[]) => {
   const sanitizedHostnames = trustedHostnames
     .map((hostname) => hostname.trim().toLowerCase())
@@ -81,7 +127,7 @@ const getCSP = (trustedHostnames: string[]) => {
 
   const csp: Record<string, string> = {
     'base-uri': "'none'",
-    'connect-src': "'self' https: ws: devtools:",
+    'connect-src': getConnectSrc(trustedOrigins),
     'default-src': "'self'",
     'font-src': "'self' https: https://fonts.gstatic.com file:",
     'frame-src': "'self'",

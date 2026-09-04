@@ -46,6 +46,10 @@ vi.mock('electron', () => ({
   },
 }));
 
+vi.mock('src-electron/main/disk-space', () => ({
+  getLowDiskSpaceStatus: vi.fn(async () => false),
+}));
+
 interface ErrorWithDirectoryDiagnostics extends Error {
   code: string;
   downloadDirDiagnostics?: unknown[];

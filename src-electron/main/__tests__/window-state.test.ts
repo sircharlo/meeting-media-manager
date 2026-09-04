@@ -2,11 +2,18 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const appGetPath = vi.fn();
 const browserWindowHandlers = new Map<string, () => void>();
+const addElectronBreadcrumb = vi.fn();
 const captureElectronError = vi.fn();
 const ensureDir = vi.fn();
 const getDisplayMatching = vi.fn();
 const pathExistsSync = vi.fn();
 const readJsonSync = vi.fn();
+// resilient-storage.ts's atomic-write helper (BE-5, full-audit-2026-09-04.md)
+// writes to a temp path then renames it over the destination instead of
+// writing the destination directly, and best-effort removes the temp file
+// if that fails - both now needed here alongside the pre-existing mocks.
+const remove = vi.fn().mockResolvedValue(undefined);
+const rename = vi.fn().mockResolvedValue(undefined);
 const writeJson = vi.fn();
 
 class MockBrowserWindow {
@@ -38,10 +45,16 @@ vi.mock('fs-extra/esm', () => ({
   ensureDir,
   pathExistsSync,
   readJsonSync,
+  remove,
   writeJson,
 }));
 
+vi.mock('node:fs/promises', () => ({
+  rename,
+}));
+
 vi.mock('src-electron/main/utils', () => ({
+  addElectronBreadcrumb,
   captureElectronError,
 }));
 

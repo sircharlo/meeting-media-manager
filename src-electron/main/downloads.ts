@@ -5,6 +5,7 @@ import { app, type BrowserWindow } from 'electron';
 import { mkdir, stat } from 'node:fs/promises';
 import { setTimeout as delay } from 'node:timers/promises';
 import { IS_DEMO_MODE } from 'src-electron/constants';
+import { getLowDiskSpaceStatus } from 'src-electron/main/disk-space';
 import { getFallbackDir } from 'src-electron/main/resilient-storage';
 import { quitStatus } from 'src-electron/main/session';
 import {
@@ -714,6 +715,34 @@ export async function downloadFile(
       return { key, saveDir: resolvedSaveDir };
     }
 
+    // Check if already queued but not yet started (ongoingDownloads only
+    // gains an entry once startDownload actually runs - see BE-4 in
+    // full-audit-2026-09-04.md). Without this, two rapid calls for the same
+    // URL/directory while the queue is saturated could both miss each other
+    // here and enqueue the same download twice, racing to write the same
+    // destination file once both are eventually dequeued.
+    const isSameKey = (item: DownloadQueueItem) =>
+      item.url + item.saveDir === key;
+    const queuedLowPriorityIndex = lowPriorityQueue.findIndex(isSameKey);
+    const alreadyQueued =
+      downloadQueue.some(isSameKey) || queuedLowPriorityIndex !== -1;
+
+    if (alreadyQueued) {
+      // Promote a still-queued low-priority item the same way an
+      // already-ongoing one is promoted above.
+      if (!lowPriority && queuedLowPriorityIndex !== -1) {
+        const [promoted] = lowPriorityQueue.splice(queuedLowPriorityIndex, 1);
+        if (promoted) {
+          stopLowPriorityDownloads();
+          downloadQueue.push(promoted);
+          addQueueBreadcrumb('priority-promoted-queued-download', {
+            force: true,
+          });
+        }
+      }
+      return { key, saveDir: resolvedSaveDir };
+    }
+
     // New Download
     if (lowPriority) {
       lowPriorityQueue.push(fileToDownload);
@@ -1124,6 +1153,29 @@ async function processNormalPausedDownload(
   return success;
 }
 
+// BE-8 (full-audit-2026-09-04.md): the only prior low-disk-space check fired
+// once, at congregation-switch time, and never gated downloads themselves -
+// a long download session (e.g. an initial multi-week sync) could keep
+// consuming space with no further check. Throttled since getLowDiskSpaceStatus
+// does real disk I/O and processQueue can run very frequently.
+const DISK_SPACE_CHECK_INTERVAL_MS = 2 * 60 * 1000;
+let lastDiskSpaceCheckAt = 0;
+
+async function isDiskSpaceCriticallyLow(): Promise<boolean> {
+  const now = Date.now();
+  if (now - lastDiskSpaceCheckAt < DISK_SPACE_CHECK_INTERVAL_MS) return false;
+  lastDiskSpaceCheckAt = now;
+
+  try {
+    return await getLowDiskSpaceStatus();
+  } catch (error) {
+    captureElectronError(error, {
+      contexts: { fn: { name: 'processQueue isDiskSpaceCriticallyLow' } },
+    });
+    return false;
+  }
+}
+
 /**
  * Processes the download queue.
  * This function is called when a new download is added to the queue.
@@ -1176,6 +1228,16 @@ async function processQueue() {
         logDownloadQueueDebugState('auto-resume-stalled-queue');
         await resumeAllDownloads('auto-stalled-queue');
       }
+      return;
+    }
+
+    if (await isDiskSpaceCriticallyLow()) {
+      log(
+        'Pausing downloads: disk space is critically low.',
+        'electronDownloads',
+        'warn',
+      );
+      await pauseAllDownloads('low-disk-space');
       return;
     }
 

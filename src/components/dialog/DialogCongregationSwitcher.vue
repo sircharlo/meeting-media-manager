@@ -252,7 +252,10 @@ import { removeCongregationCache } from 'src/helpers/cleanup';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadSongbookVideos } from 'src/helpers/jw-media';
 import { getTextColorForBgColor } from 'src/helpers/media-sections';
-import { createTemporaryNotification } from 'src/helpers/notifications';
+import {
+  checkLowDiskSpaceAndNotify,
+  createTemporaryNotification,
+} from 'src/helpers/notifications';
 import { exportProfileSettingsToFile } from 'src/utils/profile-settings';
 import { useAppSettingsStore } from 'stores/app-settings';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
@@ -387,21 +390,7 @@ async function chooseCongregation(
   try {
     const invalidSettingsConfigured = await setCongregation(congregation);
     if (congregation) {
-      if (globalThis?.electronApi) {
-        globalThis.electronApi
-          .getLowDiskSpaceStatus()
-          .then((isLowDiskSpace) => {
-            if (isLowDiskSpace) {
-              createTemporaryNotification({
-                caption: t('low-disk-space-warning'),
-                deferWhileDialogOpen: true,
-                message: t('disk-space-is-running-low'),
-                timeout: 10000,
-                type: 'warning',
-              });
-            }
-          });
-      }
+      void checkLowDiskSpaceAndNotify();
 
       updateYeartext({
         isSignLanguage: currentLangObject.value?.isSignLanguage,

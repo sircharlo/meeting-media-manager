@@ -268,4 +268,55 @@ describe('session listeners', () => {
     expect(scriptSrc).not.toContain("'unsafe-inline'");
     expect(scriptSrc).not.toContain("'unsafe-eval'");
   });
+
+  // SEC-2 (full-audit-2026-09-04.md): connect-src used to be a bare "https:
+  // ws: devtools:" wildcard, letting the renderer fetch/connect to any host
+  // whatsoever - defeating CSP's exfiltration protection.
+  it("scopes connect-src to the app's actual network destinations, not a bare https:/ws: wildcard", async () => {
+    const { initSessionListeners } = await import('../session');
+    const utilsModule = await import('src-electron/main/utils');
+
+    vi.mocked(utilsModule.isSelf).mockReturnValue(true);
+
+    initSessionListeners();
+    readyCallbacks[0]?.();
+
+    const handler = onHeadersReceivedMock.mock.calls[0]?.[0] as (
+      details: { responseHeaders?: Record<string, string[]>; url: string },
+      callback: (result: {
+        responseHeaders?: Record<string, string[]>;
+      }) => void,
+    ) => void;
+
+    const callback = vi.fn();
+    handler(
+      {
+        responseHeaders: {},
+        url: 'file:///index.html',
+      },
+      callback,
+    );
+
+    const csp =
+      callback.mock.calls[0]?.[0]?.responseHeaders?.[
+        'Content-Security-Policy'
+      ]?.[0];
+
+    const connectSrc = csp
+      ?.split(';')
+      .map((directive: string) => directive.trim())
+      .find((directive: string) => directive.startsWith('connect-src'));
+    const connectSrcTokens = connectSrc?.split(/\s+/) ?? [];
+
+    // Bare scheme wildcards, not a specific host - would defeat scoping.
+    expect(connectSrcTokens).not.toContain('https:');
+    expect(connectSrcTokens).not.toContain('ws:');
+    expect(connectSrc).toContain("'self'");
+    expect(connectSrc).toContain('https://hub.jw.org');
+    expect(connectSrc).toContain('https://cdn.jsdelivr.net');
+    expect(connectSrc).toContain('https://api.github.com');
+    expect(connectSrc).toContain('https://raw.githubusercontent.com');
+    expect(connectSrc).toContain('https://fake.ingest.sentry.io');
+    expect(connectSrc).toContain('ws://127.0.0.1:*');
+  });
 });

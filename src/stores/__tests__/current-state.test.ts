@@ -50,3 +50,59 @@ describe('getDatedAdditionalMediaDirectory', () => {
     expect(dir).not.toContain(formatDate(new Date('2026-01-01'), 'YYYYMMDD'));
   });
 });
+
+// BE-8 (full-audit-2026-09-04.md): extracted from hasActiveMediaWork so
+// MainLayout.vue's periodic low-disk-space check can gate on "downloads
+// specifically" rather than firing during a plain meeting-schedule check
+// (no disk writes involved).
+describe('hasActiveDownloads / hasActiveMediaWork', () => {
+  it('is false with no download progress entries', () => {
+    const store = useCurrentStateStore();
+    store.downloadProgress = {};
+
+    expect(store.hasActiveDownloads).toBe(false);
+    expect(store.hasActiveMediaWork).toBe(false);
+  });
+
+  it('is true while a download is still in progress', () => {
+    const store = useCurrentStateStore();
+    store.downloadProgress = {
+      'file.mp4': { filename: 'file.mp4', loaded: 1, total: 10 },
+    };
+
+    expect(store.hasActiveDownloads).toBe(true);
+    expect(store.hasActiveMediaWork).toBe(true);
+  });
+
+  it('is false once every download is complete', () => {
+    const store = useCurrentStateStore();
+    store.downloadProgress = {
+      'file.mp4': {
+        complete: true,
+        filename: 'file.mp4',
+        loaded: 10,
+        total: 10,
+      },
+    };
+
+    expect(store.hasActiveDownloads).toBe(false);
+  });
+
+  it('is false for a download that ended in error, not just completion', () => {
+    const store = useCurrentStateStore();
+    store.downloadProgress = {
+      'file.mp4': { error: true, filename: 'file.mp4' },
+    };
+
+    expect(store.hasActiveDownloads).toBe(false);
+  });
+
+  it('hasActiveMediaWork is true while a meeting check is running, even with no downloads', () => {
+    const store = useCurrentStateStore();
+    store.downloadProgress = {};
+    store.meetingCheckStatus = { 'test-cong': 'checking' };
+
+    expect(store.hasActiveDownloads).toBe(false);
+    expect(store.hasActiveMediaWork).toBe(true);
+  });
+});

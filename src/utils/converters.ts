@@ -7,10 +7,21 @@ import { isHeic, isPdf, isSvg } from 'src/utils/media';
 const { convertHeic, fs, parse, pathToFileURL } = globalThis.electronApi;
 const { readFile, writeFile } = fs;
 
+import { dependencies as appDependencies } from 'app/package.json';
 import { PDFParse } from 'pdf-parse';
 
+// SEC-3 (full-audit-2026-09-04.md): pinned to the pdf-parse version declared
+// in package.json (pdf-parse's own package.json isn't importable - its
+// `exports` map doesn't expose it) rather than `@latest` - this loads and
+// executes a JS worker script, so an unpinned `@latest` would auto-run
+// whatever the newest published pdf-parse version is on every launch, with
+// no version bump, review, or app release on this project's side involved
+// if that package (or jsdelivr) were ever compromised. Bump this alongside
+// any future `pdf-parse` version change in package.json.
+const pdfParseVersion = appDependencies['pdf-parse'].replace(/^[\^~]/, '');
+
 PDFParse.setWorker(
-  'https://cdn.jsdelivr.net/npm/pdf-parse@latest/dist/pdf-parse/web/pdf.worker.mjs',
+  `https://cdn.jsdelivr.net/npm/pdf-parse@${pdfParseVersion}/dist/pdf-parse/web/pdf.worker.mjs`,
 );
 
 export const getNrOfPdfPages = async (pdfPath: string): Promise<number> => {

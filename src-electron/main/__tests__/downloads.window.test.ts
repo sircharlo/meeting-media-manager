@@ -68,6 +68,10 @@ vi.mock('electron', () => ({
   app: { getLocaleCountryCode: vi.fn(() => 'US') },
 }));
 
+vi.mock('src-electron/main/disk-space', () => ({
+  getLowDiskSpaceStatus: vi.fn(async () => false),
+}));
+
 vi.mock('src/shared/vanilla', () => ({
   log: vi.fn(),
 }));

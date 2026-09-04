@@ -403,6 +403,20 @@ describe('JW Store', () => {
         'https://wol.jw.org/assets/fonts/jw-icons.woff2',
       );
     });
+
+    // SEC-3 (full-audit-2026-09-04.md): these URLs load real font files from
+    // a third-party CDN - pinned to a specific version rather than `@latest`
+    // so a future fontsource release can't be served automatically with no
+    // review on this project's side.
+    it('pins jsdelivr fontsource URLs to a specific version, not @latest', () => {
+      const store = useJwStore();
+
+      expect(store.fontUrls.NotoSans).not.toContain('@latest');
+      expect(store.fontUrls.NotoSans).toMatch(
+        /^https:\/\/cdn\.jsdelivr\.net\/fontsource\/fonts\/noto-sans:vf@\d+\.\d+\.\d+\//,
+      );
+      expect(store.fontUrls.AbyssinicaSIL).not.toContain('@latest');
+    });
   });
 
   describe('addToAdditionMediaMap', () => {

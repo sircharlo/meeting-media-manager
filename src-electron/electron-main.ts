@@ -20,6 +20,10 @@ import {
   SENTRY_DSN,
   SENTRY_ENVIRONMENT,
 } from 'src-electron/constants';
+import {
+  markCleanExit,
+  recordStartupCrashCount,
+} from 'src-electron/main/crash-loop';
 import { createDevMenu } from 'src-electron/main/dev-menu';
 import { cancelAllDownloads } from 'src-electron/main/downloads';
 import { cleanupFfmpegConversions } from 'src-electron/main/ffmpeg';
@@ -61,7 +65,6 @@ import { join, resolve } from 'upath';
 
 import { registerQuasarRuntime } from '#q-app/electron/main';
 
-const CRASH_COUNT_FILE = 'crash-count.json';
 const GPU_DIAGNOSTICS_FILE = 'gpu-diagnostics.json';
 const HW_ACCEL_FILE = 'hw-accel-disabled.json';
 
@@ -410,8 +413,10 @@ async function writeGpuDiagnosticSnapshot(
 if (gotTheLock) {
   configureAppDataPaths();
 
-  // Check for crash loop on startup
-  const crashCount = incrementCrashCount();
+  // Check for crash loop on startup (see crash-loop.ts for why this is
+  // gated on the previous session's clean-exit flag rather than just
+  // incrementing on every launch)
+  const crashCount = recordStartupCrashCount();
   log(`Startup crash count: ${crashCount}`, 'electron', 'log');
 
   if (crashCount >= 3) {
@@ -424,11 +429,6 @@ if (gotTheLock) {
       setHwAccelDisabled(true, true);
     }
   }
-
-  // If we survive for 10 seconds, reset the crash count
-  setTimeout(() => {
-    void resetCrashCount();
-  }, 10000);
 
   // Check if hardware acceleration should be disabled
   if (isHwAccelDisabled()) {
@@ -609,6 +609,11 @@ if (gotTheLock) {
     cleanupHeicWorker();
     cleanupImageSizeWorker();
     cleanupFfmpegConversions();
+    // will-quit (unlike before-quit) isn't reached until any interactive
+    // "confirm quit" prompt is resolved and the app is actually about to
+    // exit - see crash-loop.ts's markCleanExit doc comment for why that
+    // matters.
+    markCleanExit();
   });
 
   app.on('activate', () => {
@@ -651,32 +656,6 @@ function createWindowAndCaptureErrors() {
     );
 }
 
-function getCrashCount() {
-  try {
-    const data = readJsonResilientSync(
-      app.getPath('userData'),
-      CRASH_COUNT_FILE,
-    ) as null | { count?: number };
-    return typeof data?.count === 'number' ? data.count : 0;
-  } catch (error) {
-    log('Failed to read crash count:', 'electron', 'warn', error);
-  }
-  return 0;
-}
-
-function incrementCrashCount() {
-  try {
-    const count = getCrashCount() + 1;
-    writeJsonResilientSync(app.getPath('userData'), CRASH_COUNT_FILE, {
-      count,
-    });
-    return count;
-  } catch (error) {
-    log('Failed to write crash count:', 'electron', 'warn', error);
-    return 0;
-  }
-}
-
 function isHwAccelDisabled() {
   try {
     const data = readJsonResilientSync(
@@ -688,17 +667,6 @@ function isHwAccelDisabled() {
     log('Failed to read hw accel setting:', 'electron', 'warn', error);
   }
   return false;
-}
-
-async function resetCrashCount() {
-  try {
-    await writeJsonResilient(app.getPath('userData'), CRASH_COUNT_FILE, {
-      count: 0,
-    });
-    log('Crash count reset to 0', 'electron', 'log');
-  } catch (error) {
-    log('Failed to reset crash count:', 'electron', 'warn', error);
-  }
 }
 
 function setHwAccelDisabled(disabled: boolean, temporary = false) {

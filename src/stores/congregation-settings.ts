@@ -7,6 +7,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { log, uuid } from 'src/shared/vanilla';
 import { cloneMeetingQuickActionSettings } from 'src/utils/clone-settings';
 import { wasUpdateInstalled } from 'src/utils/fs';
+import { useJwStore } from 'stores/jw';
 
 interface Store {
   announcements: Partial<Record<string, string[]>>;
@@ -142,6 +143,17 @@ export const useCongregationSettingsStore = defineStore(
         }
 
         delete this.congregations[id];
+
+        // FE-3/FE-4 (full-audit-2026-09-04.md): these otherwise persist
+        // indefinitely (announcements/quickStartTourSeen re-saved on every
+        // subsequent debounced write; lookupPeriod only ever swept once, at
+        // next app launch, by cleanPersistedStores()). Centralized here so
+        // every caller gets it for free instead of each deletion flow having
+        // to remember to duplicate it.
+        const congId = String(id);
+        delete this.announcements[congId];
+        delete this.quickStartTourSeen[congId];
+        delete useJwStore().lookupPeriod[congId];
       },
       dismissAnnouncement(congId: string, id: string) {
         if (!id || !congId) return;

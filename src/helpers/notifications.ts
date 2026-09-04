@@ -1,3 +1,4 @@
+import { i18n } from 'boot/i18n';
 import { Notify, type QNotifyCreateOptions } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useDialogStateStore } from 'stores/dialog-state';
@@ -159,6 +160,34 @@ export const createTemporaryNotification = (
     return dismiss;
   } catch (error) {
     errorCatcher(error);
+  }
+};
+
+/**
+ * Checks disk space and warns the user if it's running low. Shared so both
+ * the one-time congregation-switch check (DialogCongregationSwitcher.vue)
+ * and the periodic during-downloads check (MainLayout.vue, added for BE-8 in
+ * full-audit-2026-09-04.md - a user switching congregations with just-enough
+ * free space got no further warning even as a long download session kept
+ * consuming it) show the exact same warning.
+ */
+export const checkLowDiskSpaceAndNotify = async (): Promise<void> => {
+  if (!globalThis.electronApi) return;
+  try {
+    const isLowDiskSpace = await globalThis.electronApi.getLowDiskSpaceStatus();
+    if (!isLowDiskSpace) return;
+
+    createTemporaryNotification({
+      caption: i18n.global.t('low-disk-space-warning'),
+      deferWhileDialogOpen: true,
+      message: i18n.global.t('disk-space-is-running-low'),
+      timeout: 10000,
+      type: 'warning',
+    });
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: { fn: { name: 'checkLowDiskSpaceAndNotify' } },
+    });
   }
 };
 

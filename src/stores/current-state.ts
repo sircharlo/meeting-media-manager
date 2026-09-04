@@ -421,6 +421,17 @@ export const useCurrentStateStore = defineStore('current-state', {
       if (!currentLanguage) return [];
       return jwStore.jwSongs[currentLanguage]?.list || [];
     },
+    // Extracted so BE-8's periodic low-disk-space check (MainLayout.vue) can
+    // gate on "downloads specifically" without also polling while only a
+    // meeting-schedule check (no disk writes) is in progress.
+    hasActiveDownloads(): boolean {
+      return Object.values(this.downloadProgress).some(
+        (item) =>
+          !item.complete &&
+          !item.error &&
+          (!item.loaded || !item.total || item.loaded < item.total),
+      );
+    },
     // Single source of truth for "is a meeting refresh doing anything right
     // now" - covers checking meeting dates and downloading files, so the
     // island button, the popup, and the cache auto-clear guard can never
@@ -429,12 +440,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       if (Object.values(this.meetingCheckStatus).includes('checking')) {
         return true;
       }
-      return Object.values(this.downloadProgress).some(
-        (item) =>
-          !item.complete &&
-          !item.error &&
-          (!item.loaded || !item.total || item.loaded < item.total),
-      );
+      return this.hasActiveDownloads;
     },
     isSelectedDayToday(): boolean {
       try {
