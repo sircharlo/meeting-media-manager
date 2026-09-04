@@ -12,6 +12,7 @@ import { isCoWeek, isMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { setupFFmpeg } from 'src/helpers/fs';
 import { withLockRetry } from 'src/helpers/fs-retry';
+import { createTemporaryNotification } from 'src/helpers/notifications';
 import { sanitizeFilename } from 'src/shared/vanilla';
 import { datesAreSame, formatDate, getSpecificWeekday } from 'src/utils/date';
 import { getTempPath, trimFilepathAsNeeded } from 'src/utils/fs';
@@ -95,9 +96,28 @@ const exportDayToFolder = async (targetDate?: Date) => {
       return;
     }
 
-    const expectedFiles = await processAllSections(day, destFolder);
+    const { conversionFailures, expectedFiles } = await processAllSections(
+      day,
+      destFolder,
+    );
 
     await cleanupUnexpectedFiles(destFolder, expectedFiles);
+
+    // FE-9 (full-audit-2026-09-04.md): a conversion failure previously only
+    // went to errorCatcher (Sentry/log) - the user found out only by later
+    // noticing the file missing from the export folder. Grouped into one
+    // notification per day (not per file) since a single ffmpeg/codec
+    // problem often fails every non-video item in the same export run.
+    if (conversionFailures.size > 0) {
+      createTemporaryNotification({
+        message: i18n.global.t(
+          'media-export-conversion-failed',
+          { count: conversionFailures.size },
+          conversionFailures.size,
+        ),
+        type: 'negative',
+      });
+    }
   } catch (error) {
     errorCatcher(error, {
       contexts: {
@@ -171,8 +191,9 @@ const ensureDestinationFolder = async (
 const processAllSections = async (
   day: DateInfo,
   destFolder: string,
-): Promise<Set<string>> => {
+): Promise<{ conversionFailures: Set<string>; expectedFiles: Set<string> }> => {
   const expectedFiles = new Set<string>();
+  const conversionFailures = new Set<string>();
 
   const sortedSections = getSortedSections(day);
   let sectionIndex = 1;
@@ -193,10 +214,11 @@ const processAllSections = async (
       sectionPrefix,
       sanitizedSectionName,
       expectedFiles,
+      conversionFailures,
     );
   }
 
-  return expectedFiles;
+  return { conversionFailures, expectedFiles };
 };
 
 const getSortedSections = (day: DateInfo) => {
@@ -270,6 +292,7 @@ const processSectionItems = async (
   sectionPrefix: string,
   sanitizedSectionName: string,
   expectedFiles: Set<string>,
+  conversionFailures: Set<string>,
 ) => {
   for (let i = 0; i < visibleItems.length; i++) {
     try {
@@ -277,6 +300,7 @@ const processSectionItems = async (
       if (!mediaItem) continue;
 
       await processMediaItem({
+        conversionFailures,
         destFolder,
         expectedFiles,
         index: i,
@@ -292,6 +316,7 @@ const processSectionItems = async (
 };
 
 const processMediaItem = async ({
+  conversionFailures,
   destFolder,
   expectedFiles,
   index,
@@ -300,6 +325,7 @@ const processMediaItem = async ({
   sectionPrefix,
   totalItems,
 }: {
+  conversionFailures: Set<string>;
   destFolder: string;
   expectedFiles: Set<string>;
   index: number;
@@ -328,7 +354,10 @@ const processMediaItem = async ({
     return;
   }
 
-  const finalSourcePath = await convertIfNeeded(sourceFilePath);
+  const finalSourcePath = await convertIfNeeded(
+    sourceFilePath,
+    conversionFailures,
+  );
   if (!finalSourcePath) return;
 
   expectedFiles.add(fileBaseName);
@@ -403,6 +432,7 @@ const canSkipFile = async (
 
 const convertIfNeeded = async (
   sourceFilePath: string,
+  conversionFailures: Set<string>,
 ): Promise<null | string> => {
   const currentStateStore = useCurrentStateStore();
 
@@ -432,6 +462,13 @@ const convertIfNeeded = async (
       await getTempPath(),
     );
   } catch (error) {
+    // FE-9 (full-audit-2026-09-04.md): a genuine conversion failure (as
+    // opposed to the two quiet cases above) previously only went to
+    // errorCatcher - the user found out only by later noticing the file
+    // missing from the export folder. Collected here (not notified
+    // directly) so the caller can show one grouped notification per day
+    // instead of one per failed file.
+    conversionFailures.add(sourceFilePath);
     errorCatcher(error, {
       contexts: { fn: { name: 'convertIfNeeded', sourceFilePath } },
     });

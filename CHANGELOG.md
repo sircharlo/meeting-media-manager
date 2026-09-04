@@ -48,6 +48,8 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **Keyboard Shortcuts**: Picking a key combination already assigned to another shortcut is now rejected with an explanation, instead of appearing to work while silently never taking effect.
 - 🐞 **OBS Integration**: M³ now automatically attempts to reconnect if OBS closes, crashes, or restarts while it's running, instead of requiring a manual retry click; a stalled connection attempt also no longer gets stuck in a "connecting" state that blocked both automatic and manual retries.
 - 🐞 **Settings Validation**: A free-text setting (like the OBS port) that's left in an invalid state when you click away is now reverted to its last valid value with an explanation, instead of silently saving exactly as typed.
+- 🐞 **Media Auto-Export**: A file that fails to convert during automatic export now shows a warning naming how many files were affected, instead of silently vanishing from the export folder with no explanation.
+- 🐞 **Timer**: A backward system clock change (daylight saving, time sync, manual adjustment) while the timer is running or paused no longer garbles the displayed time or makes it briefly count in the wrong direction.
 
 ### 🔧 Chores
 

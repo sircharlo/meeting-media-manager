@@ -399,6 +399,7 @@
   "maxRes-explain": "Choose the maximum resolution for videos. Videos above this resolution will not be downloaded.",
   "media-display": "Media display",
   "media-display-settings": "Media display settings",
+  "media-export-conversion-failed": "No files failed to convert during export | 1 file failed to convert during export | {count} files failed to convert during export",
   "media-from-s34mp": "Media from public talk outlines",
   "media-item-missing-explain": "This media item is missing. To play it, add it using the @:extra-media menu or by dragging it into the media list from your computer.",
   "media-only": "Media only",

@@ -29,6 +29,21 @@ import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+// FE-8 (full-audit-2026-09-04.md): both wall-clock diffs below could
+// otherwise go negative on a backward system-clock jump (DST fallback, NTP
+// correction, manual time change) - garbling formattedTime (negative
+// minutes/seconds in count-up mode, remaining time appearing to jump
+// upward in countdown mode) or pushing timerStartTime into the future.
+// Clamping to 0 means the display holds rather than skipping ahead once
+// real time catches back up to the last anchor - exported as pure
+// functions so they're testable without instantiating the full composable
+// (broadcast channel, i18n, Pinia store, useIntervalFn).
+export const computeElapsedSeconds = (now: number, startTime: number): number =>
+  Math.max(0, Math.floor((now - startTime) / 1000));
+
+export const computePauseDuration = (now: number, pausedTime: number): number =>
+  Math.max(0, now - pausedTime);
+
 const useTimer = () => {
   const createCustomPartId = (): `custom-${string}` =>
     `custom-${Math.random().toString(36).slice(2, 10)}`;
@@ -552,7 +567,10 @@ const useTimer = () => {
   };
 
   const resumeTimer = () => {
-    const pauseDuration = Date.now() - (timerPausedTime.value || 0);
+    const pauseDuration = computePauseDuration(
+      Date.now(),
+      timerPausedTime.value || 0,
+    );
     if (timerStartTime.value !== null) {
       timerStartTime.value += pauseDuration;
     }
@@ -659,7 +677,7 @@ const useTimer = () => {
       const now = Date.now();
       const startTime = timerStartTime.value;
       if (startTime) {
-        elapsedSeconds.value = Math.floor((now - startTime) / 1000);
+        elapsedSeconds.value = computeElapsedSeconds(now, startTime);
         updateTimerWindow(); // Update the timer window with new time
       }
     }
