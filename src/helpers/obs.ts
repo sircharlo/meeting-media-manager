@@ -83,6 +83,16 @@ const runObsConnect = async (setup?: boolean) => {
         await sleep(5000);
       }
     }
+
+    // FE-6 (full-audit-2026-09-04.md): without this, exhausting every retry
+    // left obsConnectionState stuck at 'connecting' - which, since
+    // ObsStatus.vue disables its button while connecting, made both the
+    // manual retry button and any future automatic reconnect attempt
+    // permanently unreachable until the app was restarted.
+    // @ts-expect-error connecting and connected have no overlap
+    if (obsState.obsConnectionState !== 'connected') {
+      obsState.obsCloseHandler();
+    }
   } catch (error) {
     errorCatcher(error);
   }

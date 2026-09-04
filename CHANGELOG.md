@@ -45,6 +45,9 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **Crash-Loop Detection**: Quitting and quickly relaunching M³ no longer counts toward the crash-loop threshold that disables hardware acceleration — only a launch following a session that never shut down normally (an actual crash, forced quit, or power loss) does now.
 - 🐞 **Meeting Media Freshness**: JW.org responses are no longer cached indefinitely for the life of a running session, and a corrected video, audio recording, or caption for a day already loaded is now picked up automatically instead of requiring a restart — while still keeping any hidden/reordered items exactly as the user left them.
 - 🐞 **Congregation Deletion**: Deleting a congregation now also clears its dismissed announcements, quick-start-tour, and cached meeting-schedule data immediately, instead of leaving them behind indefinitely (or until the next app restart).
+- 🐞 **Keyboard Shortcuts**: Picking a key combination already assigned to another shortcut is now rejected with an explanation, instead of appearing to work while silently never taking effect.
+- 🐞 **OBS Integration**: M³ now automatically attempts to reconnect if OBS closes, crashes, or restarts while it's running, instead of requiring a manual retry click; a stalled connection attempt also no longer gets stuck in a "connecting" state that blocked both automatic and manual retries.
+- 🐞 **Settings Validation**: A free-text setting (like the OBS port) that's left in an invalid state when you click away is now reverted to its last valid value with an explanation, instead of silently saving exactly as typed.
 
 ### 🔧 Chores
 

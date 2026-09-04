@@ -1,36 +1,46 @@
 <template>
-  <q-input
-    v-model="model"
-    class="q-pb-none bg-accent-100 error"
-    :class="settingId === 'localDateFormat' ? 'q-mb-xs' : ''"
-    :clearable="settingId === 'localDateFormat'"
-    dense
-    :error="customError"
-    hide-bottom-space
-    v-bind="{
-      ...$attrs,
-      label:
-        (settingId === 'localDateFormat'
-          ? model
-            ? getLocalDate(exampleDate, dateLocale, model)
-            : undefined
-          : label) || undefined,
-    }"
-    outlined
-    :rules="getRules(rules, currentSettings?.disableMediaFetching)"
-    spellcheck="false"
-    style="width: 240px"
-  >
-    <template v-if="settingId === 'baseUrl'" #prepend>
-      <div class="text-subtitle2 text-accent-300">https://www.</div>
-    </template>
-    <template v-if="customSuccess || customFailure" #append>
-      <q-icon
-        :color="customSuccess ? 'positive' : 'negative'"
-        :name="customSuccess ? 'mmm-check' : 'mmm-clear'"
-      />
-    </template>
-  </q-input>
+  <!--
+    q-input's own onEvents unconditionally overwrites a plain `@blur` (or
+    `@focus`, see TimeInput.vue's now-apparently-nonfunctional focusHandler)
+    listener with its own internal onFinishEditing handler - it never
+    reaches ours. `focusout` bubbles (unlike `blur`), so a plain wrapping
+    element with no styling impact (`display: contents`) catches it instead,
+    entirely outside q-input's own event wiring.
+  -->
+  <div style="display: contents" @focusout="revertIfInvalid">
+    <q-input
+      v-model="model"
+      class="q-pb-none bg-accent-100 error"
+      :class="settingId === 'localDateFormat' ? 'q-mb-xs' : ''"
+      :clearable="settingId === 'localDateFormat'"
+      dense
+      :error="customError"
+      hide-bottom-space
+      v-bind="{
+        ...$attrs,
+        label:
+          (settingId === 'localDateFormat'
+            ? model
+              ? getLocalDate(exampleDate, dateLocale, model)
+              : undefined
+            : label) || undefined,
+      }"
+      outlined
+      :rules="getRules(rules, currentSettings?.disableMediaFetching)"
+      spellcheck="false"
+      style="width: 240px"
+    >
+      <template v-if="settingId === 'baseUrl'" #prepend>
+        <div class="text-subtitle2 text-accent-300">https://www.</div>
+      </template>
+      <template v-if="customSuccess || customFailure" #append>
+        <q-icon
+          :color="customSuccess ? 'positive' : 'negative'"
+          :name="customSuccess ? 'mmm-check' : 'mmm-clear'"
+        />
+      </template>
+    </q-input>
+  </div>
   <q-expansion-item
     v-if="settingId === 'localDateFormat'"
     dense
@@ -66,12 +76,13 @@ import type {
 
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
+import { createTemporaryNotification } from 'src/helpers/notifications';
 import { getLocalDate } from 'src/utils/date';
 import { getRules, performActions } from 'src/utils/settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
-import { computed, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -152,6 +163,48 @@ const props = defineProps<{
 }>();
 
 const model = defineModel<null | string>({ required: true });
+
+// FE-7 (full-audit-2026-09-04.md): this v-model writes straight through to
+// the persisted settings object on every keystroke, with nothing stopping
+// an out-of-range port or an emptied required field from being saved
+// exactly as typed. Reverting on blur (rather than per-keystroke) leaves
+// the user free to type through an intermediate invalid state, only
+// correcting once they've actually moved on from the field. The other
+// concrete settings inputs (list/date/color/time) weren't given the same
+// treatment - their values come from constrained pickers/dropdowns that
+// can't produce a genuinely invalid value the same way free text can, and
+// their one real failure mode (nothing selected) is already caught by
+// SettingsPage.vue's existing invalidSettings highlighting.
+const lastValidValue = ref(model.value);
+
+const revertIfInvalid = () => {
+  if (model.value === lastValidValue.value) return;
+
+  const activeRules = getRules(
+    props.rules,
+    currentSettings.value?.disableMediaFetching,
+  );
+  // getRules() only ever builds actual functions (requiredRule,
+  // portNumberRule), never one of Quasar's named-string rules (e.g. 'date')
+  // or its optional embedded-rules second argument - the cast/guard here is
+  // purely to satisfy ValidationRule's wider type.
+  const isInvalid = activeRules?.some((rule) => {
+    if (typeof rule !== 'function') return false;
+    const validate = rule as (value: null | string) => boolean | string;
+    return validate(model.value) !== true;
+  });
+
+  if (isInvalid) {
+    model.value = lastValidValue.value;
+    createTemporaryNotification({
+      message: t('settings-value-reverted-invalid'),
+      type: 'negative',
+    });
+    return;
+  }
+
+  lastValidValue.value = model.value;
+};
 
 watch(model, () => {
   performActions(props.actions);

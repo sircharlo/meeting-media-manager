@@ -15,6 +15,10 @@ const currentStateStore = {
 };
 
 const obsStateStore = {
+  obsCloseHandler: vi.fn(() => {
+    obsStateStore.obsConnectionState = 'disconnected';
+    obsStateStore.obsMessage = 'obs.disconnected';
+  }),
   obsConnectionState: 'notConnected',
   obsErrorHandler: obsErrorHandlerMock,
   obsMessage: '',
@@ -90,6 +94,29 @@ describe('obsConnect', () => {
 
     expect(connectMock).not.toHaveBeenCalled();
     expect(disconnectMock).toHaveBeenCalled();
+  });
+
+  it('does not report an error on a successful connection attempt', async () => {
+    const { obsConnect } = await import('../obs');
+
+    await obsConnect();
+
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+  });
+
+  // FE-6 (full-audit-2026-09-04.md): previously left obsConnectionState
+  // stuck at 'connecting' forever once every retry was exhausted without
+  // ever reaching 'connected' - disabling both the manual retry button and
+  // any future automatic reconnect attempt (both gated on not being
+  // 'connecting') until the app was restarted.
+  it('resets state to disconnected (not stuck at connecting) once every retry attempt fails', async () => {
+    connectMock.mockRejectedValue(new Error('ECONNREFUSED'));
+    const { obsConnect } = await import('../obs');
+
+    await obsConnect(true);
+
+    expect(obsStateStore.obsCloseHandler).toHaveBeenCalled();
+    expect(obsStateStore.obsConnectionState).toBe('disconnected');
   });
 });
 

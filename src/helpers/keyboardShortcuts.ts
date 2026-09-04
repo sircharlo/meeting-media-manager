@@ -111,6 +111,36 @@ export const getCurrentShortcuts = () => {
   }
 };
 
+/**
+ * FE-5 (full-audit-2026-09-04.md): finds which *other* shortcut already owns
+ * `keySequence`, so a picker can reject a conflicting combination instead of
+ * silently keeping it displayed while never actually registering it. Returns
+ * `undefined` for an unused combination, or when it's only "used" by
+ * `excludeShortcutName` itself (re-picking the same combo currently assigned
+ * to the one being edited is not a conflict).
+ */
+export const getConflictingShortcutName = (
+  keySequence: string,
+  excludeShortcutName: keyof SettingsValues,
+): keyof SettingsValues | undefined => {
+  try {
+    const currentState = useCurrentStateStore();
+    if (!currentState.currentSettings) return undefined;
+    for (const shortcutName of Object.keys(shortcutCallbacks)) {
+      if (shortcutName === excludeShortcutName) continue;
+      const shortcutVal =
+        currentState.currentSettings[shortcutName as keyof SettingsValues];
+      if (shortcutVal === keySequence) {
+        return shortcutName as keyof SettingsValues;
+      }
+    }
+    return undefined;
+  } catch (error) {
+    errorCatcher(error);
+    return undefined;
+  }
+};
+
 // See: https://www.electronjs.org/docs/latest/api/accelerator#available-key-codes
 const SINGLE_KEY = /^[0-9A-Z)!@#%^&*(:+<_>?~{|}";=,\-./`[\]\\']$/;
 const F_KEY = /^F([1-9]|1\d|2[0-4])$/;

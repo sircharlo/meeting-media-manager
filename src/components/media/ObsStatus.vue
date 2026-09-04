@@ -234,6 +234,19 @@ watch(
   },
 );
 
+// FE-6 (full-audit-2026-09-04.md): obsCloseHandler only flipped the state to
+// 'disconnected' - if OBS closed/crashed/restarted while M³ was running,
+// nothing ever attempted to reconnect again on its own. obsConnect() already
+// retries with backoff internally (and is a no-op while disabled, invalid,
+// or already connecting/connected), so a single call here is enough; it's
+// gated on obsEnable so a deliberate disable (which removes listeners before
+// this could ever see a close) can't retrigger it.
+watch(obsConnectionState, (newState) => {
+  if (newState === 'disconnected' && currentSettings.value?.obsEnable) {
+    obsConnect();
+  }
+});
+
 onUnmounted(() => {
   removeObsListeners();
 });

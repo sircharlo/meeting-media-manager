@@ -115,3 +115,59 @@ describe('ObsStatus - scene list retry', () => {
     expect(errorCatcherMock).toHaveBeenCalledWith(error);
   });
 });
+
+// FE-6 (full-audit-2026-09-04.md): obsCloseHandler previously only flipped
+// obsConnectionState to 'disconnected' - nothing ever attempted to
+// reconnect on its own after OBS closed/crashed/restarted while M³ was
+// running.
+describe('ObsStatus - auto-reconnect on unexpected disconnect', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    document.body.innerHTML = '';
+  });
+
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('calls obsConnect again once the connection drops while OBS integration is still enabled', async () => {
+    const obsState = setupObsSettings();
+    const { obsConnect } = await import('src/helpers/obs');
+
+    const { default: ObsStatus } = await import('../ObsStatus.vue');
+    mount(ObsStatus, { props: { modelValue: false } });
+    await wait(50);
+    // Mount already triggers an initial obsConnect() via initObsListeners() -
+    // clear it so only the reconnect-on-drop call below is being asserted.
+    vi.mocked(obsConnect).mockClear();
+
+    // createTestingPinia stubs actions by default (obsCloseHandler becomes a
+    // no-op spy) - set the state it would have set directly, since what's
+    // under test here is ObsStatus.vue's own reaction to that state change,
+    // not obsCloseHandler's own implementation.
+    obsState.obsConnectionState = 'disconnected';
+    await wait(10);
+
+    expect(obsConnect).toHaveBeenCalled();
+  });
+
+  it('does not reconnect once OBS integration has been disabled', async () => {
+    const obsState = setupObsSettings();
+    const { obsConnect } = await import('src/helpers/obs');
+
+    const { default: ObsStatus } = await import('../ObsStatus.vue');
+    mount(ObsStatus, { props: { modelValue: false } });
+    await wait(50);
+    vi.mocked(obsConnect).mockClear();
+
+    const congregationSettingsStore = useCongregationSettingsStore();
+    congregationSettingsStore.congregations[CONGREGATION_ID] = {
+      ...defaultSettings,
+      obsEnable: false,
+    };
+    obsState.obsConnectionState = 'disconnected';
+    await wait(10);
+
+    expect(obsConnect).not.toHaveBeenCalled();
+  });
+});

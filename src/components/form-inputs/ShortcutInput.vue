@@ -78,10 +78,12 @@ import type { SettingsValues } from 'src/types';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
+  getConflictingShortcutName,
   getCurrentShortcuts,
   isKeyCode,
   registerCustomShortcut,
 } from 'src/helpers/keyboardShortcuts';
+import { createTemporaryNotification } from 'src/helpers/notifications';
 import { log } from 'src/shared/vanilla';
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -134,14 +136,29 @@ const handleKeyPress = (event: KeyboardEvent) => {
 
     // Allow single key presses or key combinations
     if (isKeyCode(pressed)) {
-      if (keys.length > 0) {
-        // Key combination
-        keys.push(pressed);
-        localValue.value = keys.join('+');
-      } else {
-        // Single key press
-        localValue.value = pressed;
+      const candidate =
+        keys.length > 0 ? [...keys, pressed].join('+') : pressed;
+
+      // FE-5 (full-audit-2026-09-04.md): the commit watcher below silently
+      // skipped a combination already assigned elsewhere, but had already
+      // been shown here as if it were accepted - reopening the dialog later
+      // wouldn't reset it either, since the underlying prop never changed.
+      // Reject it here instead, before it's ever displayed as picked.
+      const conflictingShortcut = getConflictingShortcutName(
+        candidate,
+        props.shortcutName,
+      );
+      if (conflictingShortcut) {
+        createTemporaryNotification({
+          message: t('shortcut-already-assigned', {
+            action: t(conflictingShortcut),
+          }),
+          type: 'negative',
+        });
+        return;
       }
+
+      localValue.value = candidate;
     }
   } catch (e) {
     errorCatcher(e);
