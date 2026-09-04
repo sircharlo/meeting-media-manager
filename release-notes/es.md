@@ -1,6 +1,6 @@
 <!-- markdownlint-disable no-duplicate-heading -->
 
-# What's New
+# Lo nuevo
 
 For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
 
