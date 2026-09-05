@@ -427,6 +427,26 @@
             :actions="['obsConnect']"
             :label="t('obsPassword')"
           />
+          <q-banner
+            v-if="obsMessage"
+            class="q-mt-md"
+            :class="obsConnectionBannerClass"
+            rounded
+          >
+            {{ t(obsConnectionBannerTextKey) }}
+            <template #avatar>
+              <q-spinner
+                v-if="obsConnectionState === 'connecting'"
+                color="white"
+              />
+              <q-icon
+                v-else
+                :name="
+                  obsConnectionState === 'connected' ? 'mmm-check' : 'mmm-clear'
+                "
+              />
+            </template>
+          </q-banner>
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn flat :label="t('back')" @click="step--" />
             <q-btn
@@ -560,6 +580,7 @@ import { importProfileSettingsFromFile } from 'src/utils/profile-settings';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
+import { useObsStateStore } from 'stores/obs-state';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
@@ -570,6 +591,29 @@ useMeta({ title: t('setup-wizard') });
 const currentState = useCurrentStateStore();
 const { currentCongregation, currentLangObject, currentSettings, online } =
   storeToRefs(currentState);
+
+// UX-7 (full-audit-2026-09-04.md): the port/password step previously gated
+// "Continue" only on both fields being non-empty, not on an actual
+// successful connection - the only feedback was ObsStatus.vue's small
+// color-coded footer button, easy to miss on first-time setup. Gated on
+// obsMessage (not just obsConnectionState) being set, since it starts empty
+// until a connection attempt has actually happened - a user who's typed
+// nothing yet shouldn't see an alarming red banner.
+const { obsConnectionState, obsMessage } = storeToRefs(useObsStateStore());
+const obsConnectionBannerClass = computed(() =>
+  obsConnectionState.value === 'connected'
+    ? 'bg-positive text-white'
+    : obsConnectionState.value === 'connecting'
+      ? 'bg-warning text-white'
+      : 'bg-negative text-white',
+);
+const obsConnectionBannerTextKey = computed(() =>
+  obsConnectionState.value === 'connected'
+    ? 'obs.connected'
+    : obsConnectionState.value === 'connecting'
+      ? 'obs.connecting'
+      : 'obs-studio-setup-connection-failed',
+);
 
 const congregationSettings = useCongregationSettingsStore();
 const { deleteCongregation } = congregationSettings;

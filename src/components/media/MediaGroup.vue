@@ -73,8 +73,40 @@
             />
           </div>
           <div
-            class="icon-chip hover-reveal absolute-right text-accent-400 q-pa-md"
+            class="icon-chip hover-reveal absolute-right text-accent-400 q-pa-md row items-center no-wrap"
           >
+            <!--
+              UX-6 (full-audit-2026-09-04.md): keyboard/screen-reader
+              equivalent to the drag handle - it has no tabindex/keyboard
+              handler of its own. @click.stop keeps these from also
+              toggling the expansion panel they sit inside.
+            -->
+            <q-btn
+              :aria-label="t('move-up')"
+              color="accent-400"
+              dense
+              :disable="!canMoveUp"
+              flat
+              icon="mmm-up"
+              round
+              size="sm"
+              @click.stop="emit('move', -1)"
+            >
+              <q-tooltip :delay="500">{{ t('move-up') }}</q-tooltip>
+            </q-btn>
+            <q-btn
+              :aria-label="t('move-down')"
+              color="accent-400"
+              dense
+              :disable="!canMoveDown"
+              flat
+              icon="mmm-down"
+              round
+              size="sm"
+              @click.stop="emit('move', 1)"
+            >
+              <q-tooltip :delay="500">{{ t('move-down') }}</q-tooltip>
+            </q-btn>
             <q-icon
               class="media-drag-handle section-drag-handle"
               color="accent-400"
@@ -147,6 +179,8 @@ const currentState = useCurrentStateStore();
 const { mediaPlaying } = storeToRefs(currentState);
 
 const props = defineProps<{
+  canMoveDown?: boolean;
+  canMoveUp?: boolean;
   element: MediaItemType;
   expanded: boolean;
   isDragging?: boolean;
@@ -164,6 +198,7 @@ const emit = defineEmits<{
       sectionId: string | undefined;
     },
   ];
+  move: [delta: number];
   'update:child-hidden': [value: boolean, uniqueId: string];
   'update:children-order': [children: MediaItemType[]];
   'update:custom-duration': [value: string, uniqueId: string];

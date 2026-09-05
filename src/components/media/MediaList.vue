@@ -51,13 +51,19 @@
           v-for="n in pendingImportCount"
           :key="`pending-import-skeleton-${n}`"
         />
-        <template v-for="element in sortableItems" :key="element.uniqueId">
+        <template
+          v-for="(element, index) in sortableItems"
+          :key="element.uniqueId"
+        >
           <!-- Render dividers -->
           <MediaDivider
             v-if="element.type === 'divider'"
+            :can-move-down="index < sortableItems.length - 1"
+            :can-move-up="index > 0"
             :divider="element as any"
             :is-dragging="isDragging"
             @delete="handleDeleteDivider"
+            @move="(delta) => moveTopLevelItem(index, delta)"
             @update:color="
               (bgColor, textColor) =>
                 handleUpdateDividerColor(element.uniqueId, bgColor, textColor)
@@ -69,6 +75,8 @@
           <!-- Render media groups -->
           <MediaGroup
             v-else-if="element.children"
+            :can-move-down="index < sortableItems.length - 1"
+            :can-move-up="index > 0"
             :element="element"
             :expanded="expandedGroups[element.uniqueId] ?? false"
             :is-dragging="isDragging"
@@ -83,6 +91,7 @@
                   sectionId: element.uniqueId,
                 })
             "
+            @move="(delta) => moveTopLevelItem(index, delta)"
             @update:child-hidden="
               (hidden, childUniqueId) => {
                 const child = element.children?.find(
@@ -99,6 +108,8 @@
           <MediaItem
             v-else
             v-model:repeat="element.repeat"
+            :can-move-down="index < sortableItems.length - 1"
+            :can-move-up="index > 0"
             :is-dragging="isDragging"
             :media="element"
             :media-filter-terms="mediaFilterTerms"
@@ -112,6 +123,7 @@
                   sectionId: props.mediaList.config?.uniqueId,
                 })
             "
+            @move="(delta) => moveTopLevelItem(index, delta)"
             @update:custom-duration="
               element.customDuration = JSON.parse($event) || undefined
             "
@@ -258,6 +270,24 @@ function handleWatchedMediaPersistence() {
  * Updates the section data in the Pinia store to match the sorted order.
  */
 let watchedMediaPersistenceQueued = false;
+
+// UX-6 (full-audit-2026-09-04.md): keyboard-accessible alternative to
+// @formkit/drag-and-drop's pointer-only handle, which has no
+// tabindex/keyboard handler and no fallback anywhere. Reassigning
+// sortableItems (rather than mutating in place) is what the existing watch
+// below picks up to persist the new order, the same as a real drag does.
+function moveTopLevelItem(index: number, delta: number) {
+  if (!sortableItems.value) return;
+
+  const targetIndex = index + delta;
+  if (targetIndex < 0 || targetIndex >= sortableItems.value.length) return;
+
+  const items = [...sortableItems.value];
+  const [moved] = items.splice(index, 1);
+  if (!moved) return;
+  items.splice(targetIndex, 0, moved);
+  sortableItems.value = items;
+}
 
 function queueWatchedMediaPersistence() {
   if (watchedMediaPersistenceQueued) return;

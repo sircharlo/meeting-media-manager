@@ -20,6 +20,40 @@
       </q-icon>
     </q-item-section>
 
+    <!--
+      UX-6 (full-audit-2026-09-04.md): the drag handle above has no
+      keyboard/screen-reader equivalent - these buttons are the accessible
+      alternative activation path.
+    -->
+    <q-item-section avatar>
+      <div class="row items-center no-wrap">
+        <q-btn
+          :aria-label="t('move-up')"
+          dense
+          :disable="!canMoveUp"
+          flat
+          icon="mmm-up"
+          round
+          :style="{ color: divider.textColor }"
+          @click="emit('move', -1)"
+        >
+          <q-tooltip :delay="500">{{ t('move-up') }}</q-tooltip>
+        </q-btn>
+        <q-btn
+          :aria-label="t('move-down')"
+          dense
+          :disable="!canMoveDown"
+          flat
+          icon="mmm-down"
+          round
+          :style="{ color: divider.textColor }"
+          @click="emit('move', 1)"
+        >
+          <q-tooltip :delay="500">{{ t('move-down') }}</q-tooltip>
+        </q-btn>
+      </div>
+    </q-item-section>
+
     <q-item-section>
       <q-input
         v-if="isEditing"
@@ -113,12 +147,15 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
 const props = defineProps<{
+  canMoveDown?: boolean;
+  canMoveUp?: boolean;
   divider: MediaDivider;
   isDragging?: boolean;
 }>();
 
 const emit = defineEmits<{
   delete: [dividerId: string];
+  move: [delta: number];
   'update:color': [bgColor: string, textColor: string];
   'update:title': [title: string];
 }>();

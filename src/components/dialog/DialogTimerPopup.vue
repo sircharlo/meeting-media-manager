@@ -274,6 +274,7 @@
               <div class="col-auto">
                 <div class="row q-gutter-xs">
                   <q-btn
+                    :aria-label="t('move-up')"
                     dense
                     :disable="timerRunning || index === 0"
                     flat
@@ -284,6 +285,7 @@
                     <q-tooltip>{{ t('move-up') }}</q-tooltip>
                   </q-btn>
                   <q-btn
+                    :aria-label="t('move-down')"
                     dense
                     :disable="
                       timerRunning || index === customTimerParts.length - 1
@@ -296,6 +298,7 @@
                     <q-tooltip>{{ t('move-down') }}</q-tooltip>
                   </q-btn>
                   <q-btn
+                    :aria-label="t('delete')"
                     color="negative"
                     dense
                     :disable="timerRunning || customTimerParts.length <= 1"
@@ -352,7 +355,19 @@
                   {{ part.icon }}
                 </q-item-section>
                 <q-item-section>
-                  <q-item-label>{{ part.label }}</q-item-label>
+                  <q-item-label>
+                    {{ part.label }}
+                    <q-icon
+                      v-if="part.warning"
+                      color="warning"
+                      name="mmm-warning"
+                      size="xs"
+                    >
+                      <q-tooltip>{{
+                        t('part-duration-mismatch-warning')
+                      }}</q-tooltip>
+                    </q-icon>
+                  </q-item-label>
                   <q-item-label caption>
                     {{ getPartStatusText(part.value) }}
                   </q-item-label>
@@ -360,6 +375,7 @@
                 <q-item-section side>
                   <div class="row q-gutter-xs">
                     <q-btn
+                      :aria-label="t('decrease-duration')"
                       class="btn-tonal"
                       color="primary"
                       dense
@@ -372,6 +388,7 @@
                       <q-tooltip>{{ t('decrease-duration') }}</q-tooltip>
                     </q-btn>
                     <q-btn
+                      :aria-label="t('increase-duration')"
                       class="btn-tonal"
                       color="primary"
                       dense
@@ -388,22 +405,14 @@
                           partTimings[part.value]?.endTime) &&
                         !timerRunning
                       "
+                      :aria-label="t('reset')"
                       class="btn-tonal"
                       color="warning"
                       dense
                       flat
                       icon="mmm-reset"
                       size="sm"
-                      @click.stop="
-                        () => {
-                          partTimings[part.value] ??= {
-                            endTime: null,
-                            startTime: null,
-                          };
-                          partTimings[part.value]!.startTime = null;
-                          partTimings[part.value]!.endTime = null;
-                        }
-                      "
+                      @click.stop="openResetConfirm(part.value)"
                     >
                       <q-tooltip>{{ t('reset') }}</q-tooltip>
                     </q-btn>
@@ -411,6 +420,7 @@
                       v-if="
                         !timerRunning && !partTimings[part.value]?.startTime
                       "
+                      :aria-label="t('start-timer')"
                       class="btn-tonal"
                       color="positive"
                       dense
@@ -423,6 +433,7 @@
                     </q-btn>
                     <q-btn
                       v-if="currentPart === part.value && timerRunning"
+                      :aria-label="t('stop-timer')"
                       color="negative"
                       dense
                       icon="mmm-stop"
@@ -570,6 +581,21 @@
       />
     </q-card-section>
   </ConfirmDialog>
+
+  <!-- Reset Part Timing Confirmation -->
+  <ConfirmDialog
+    v-model="resetConfirmOpen"
+    confirm-color="warning"
+    :confirm-label="t('reset')"
+    dialog-id="timer-reset-part"
+    icon="mmm-reset"
+    icon-color="warning"
+    :message="t('reset-part-timing-confirmation')"
+    persistent
+    :title="t('reset')"
+    @cancel="cancelResetPart"
+    @confirm="confirmResetPart"
+  />
 </template>
 
 <script setup lang="ts">
@@ -666,6 +692,13 @@ const editDialogOpen = ref(false);
 const editPart = ref<null | { label: string; value: MeetingPart }>(null);
 const editDuration = ref(0);
 
+// Reset-part-timing confirmation (UX-3, full-audit-2026-09-04.md): clearing
+// a part's recorded start/end time fed into the exported timing report was
+// previously a single click with no confirmation, unlike every other
+// destructive action in the app.
+const resetConfirmOpen = ref(false);
+const resetPartValue = ref<MeetingPart | null>(null);
+
 const rebalancePartDurations = (
   prefix: 'ayfm' | 'lac',
   editedPartValue: MeetingPart,
@@ -748,6 +781,24 @@ const saveEdit = () => {
 // Cancel edit
 const cancelEdit = () => {
   editDialogOpen.value = false;
+};
+
+const openResetConfirm = (partValue: MeetingPart) => {
+  resetPartValue.value = partValue;
+  resetConfirmOpen.value = true;
+};
+
+const confirmResetPart = () => {
+  const partValue = resetPartValue.value;
+  if (!partValue) return;
+
+  partTimings.value[partValue] = { endTime: null, startTime: null };
+
+  resetConfirmOpen.value = false;
+};
+
+const cancelResetPart = () => {
+  resetConfirmOpen.value = false;
 };
 
 const getReportStatusText = (

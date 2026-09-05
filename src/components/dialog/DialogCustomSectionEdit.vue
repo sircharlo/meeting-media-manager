@@ -24,7 +24,7 @@
         >
           <div ref="listContainer">
             <q-item
-              v-for="element in sortableItems"
+              v-for="(element, index) in sortableItems"
               :key="element.config?.uniqueId"
               :data-unique-id="element.config?.uniqueId"
               :style="{
@@ -40,6 +40,37 @@
                     size="sm"
                     style="cursor: grab"
                   />
+                </div>
+              </q-item-section>
+              <!--
+                UX-6 (full-audit-2026-09-04.md): the drag handle above has no
+                keyboard/screen-reader equivalent - these buttons are the
+                accessible alternative activation path.
+              -->
+              <q-item-section side>
+                <div class="row">
+                  <q-btn
+                    :aria-label="t('move-up')"
+                    dense
+                    :disable="index === 0"
+                    flat
+                    icon="mmm-up"
+                    round
+                    @click="moveCustomSection(index, -1)"
+                  >
+                    <q-tooltip :delay="500">{{ t('move-up') }}</q-tooltip>
+                  </q-btn>
+                  <q-btn
+                    :aria-label="t('move-down')"
+                    dense
+                    :disable="index === sortableItems.length - 1"
+                    flat
+                    icon="mmm-down"
+                    round
+                    @click="moveCustomSection(index, 1)"
+                  >
+                    <q-tooltip :delay="500">{{ t('move-down') }}</q-tooltip>
+                  </q-btn>
                 </div>
               </q-item-section>
               <q-item-section>
@@ -243,6 +274,20 @@ const [listContainer, sortableItems] = useDragAndDrop<MediaSectionWithConfig>(
     onDragend: handleOrderChange,
   },
 );
+
+// UX-6 (full-audit-2026-09-04.md): keyboard-accessible alternative to the
+// drag handle above, which has no keyboard/screen-reader equivalent.
+const moveCustomSection = (index: number, delta: number) => {
+  const targetIndex = index + delta;
+  if (targetIndex < 0 || targetIndex >= sortableItems.value.length) return;
+
+  const items = [...sortableItems.value];
+  const [moved] = items.splice(index, 1);
+  if (!moved) return;
+  items.splice(targetIndex, 0, moved);
+  sortableItems.value = items;
+  handleOrderChange();
+};
 
 const closeDialog = () => {
   emit('update:modelValue', false);
