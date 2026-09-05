@@ -36,6 +36,13 @@ project itself).
   fallback when the cache directory becomes unusable.
 - **Background music**: plays music before/after the meeting, stopping N seconds
   before start time; configurable volume and folders.
+- **Before/After Meeting Quick Actions** (`stores/meeting-quick-actions.ts`,
+  `stores/music.ts`, `stores/recording-state.ts`): a big-button panel that
+  assists with the run-up to and immediately after each meeting — a live
+  countdown, one-tap background music start/stop, start/stop recording, and
+  a per-congregation checklist grouped into categories and editable from
+  Settings. Auto-dismisses once the meeting starts and the checklist is
+  complete (or after a grace period), or can be dismissed manually.
 - **Watched folder**: a local folder is watched (chokidar) and media dropped into
   it is auto-imported into the right calendar day's sections.
 - **Settings & setup wizard**: per-congregation profiles (multiple congregations),
@@ -107,7 +114,10 @@ src/                         Renderer (Vue 3 + Quasar). Must NOT import src-elec
                              keyboard-shortcuts.ts (robotjs key-tap sender),
                              error-catcher.ts, notifications.ts, fonts.ts, zoom.ts,
                              mediaWindowAutoHide.ts, pending-section-imports.ts,
-                             demo-mode.ts, usage.ts, date.ts, fs.ts, fs-retry.ts.
+                             demo-mode.ts, usage.ts, date.ts, fs.ts, fs-retry.ts,
+                             electron-api-manager.ts (initializeElectronApi -
+                             per-page renderer bootstrap), media-sections.ts
+                             (add/find/delete media sections, color helpers).
   i18n/                      Locale JSON. ONLY en.json is hand-edited.
   layouts/                   MainLayout, MediaPlayerLayout, TimerLayout, RouteHelper.
   migrations/                Store-data migrations (MIGRATION_REGISTRY map).
@@ -121,23 +131,38 @@ src/                         Renderer (Vue 3 + Quasar). Must NOT import src-elec
                              (fs error classification for cloud/network paths),
                              network-errors.ts (isFetchNetworkError). Do not put
                              renderer-only or Electron-only code here.
-  stores/                    Pinia stores (all persisted): app-settings, congregation-
-                             settings (congregations map + encrypted obsPassword),
-                             current-state (active congregation, mediaPlaying,
-                             downloadProgress, selection), dialog-state, jw (cached
-                             JW data: languages, songs, yeartexts, lookupPeriod),
-                             obs-state.
+  stores/                    Pinia stores (most persisted - check each file's
+                             `persist` option; dialog-state, obs-state, demo-mode,
+                             meeting-quick-actions, music, and recording-state are
+                             not): app-settings, congregation-settings (congregations
+                             map + encrypted obsPassword), current-state (active
+                             congregation, mediaPlaying, downloadProgress,
+                             selection), dialog-state, jw (cached JW data: languages,
+                             songs, yeartexts, lookupPeriod), obs-state, demo-mode
+                             (seeded demo congregation state), meeting-quick-actions
+                             (Before/After Meeting Quick Actions panel state),
+                             music (background-music playback), recording-state
+                             (meeting-recording start/stop tracking).
   types/                     Shared TS types, barrel-exported via index.d.ts:
                              electron.d.ts (ElectronApi + IPC channel unions),
                              settings.d.ts, media.d.ts, jw/, obs.d.ts, timer.d.ts,
-                             fs.d.ts, general.d.ts, search.d.ts, dates.d.ts.
+                             fs.d.ts, general.d.ts, search.d.ts, dates.d.ts,
+                             congregation-lookups.d.ts, github.d.ts,
+                             meeting-quick-actions.d.ts, video-duration.d.ts.
   utils/                     Logic: api.ts (fetchRaw/fetchJson + in-memory cache +
                              retry), fs.ts (cache path resolution, publication dirs),
                              jw.ts (pub id / resolution helpers), obs.ts (websocket
                              connection state), sqlite.ts (executeQuery via preload),
                              settings.ts (validators), media.ts, converters.ts,
                              queue.ts, fetch-retry.ts, dialog-plugin.ts,
-                             timer-report.ts, migrations.ts, profile-settings.ts.
+                             timer-report.ts, migrations.ts, profile-settings.ts,
+                             clone-settings.ts (deep-clones Meeting Quick Actions
+                             checklist settings), date.ts (formatDate/dateFromString/
+                             getDateDiff and other generic date-math helpers,
+                             distinct from helpers/date.ts's meeting-day logic),
+                             debounced-storage.ts (Pinia persistence adapter),
+                             general.ts (camelToKebabCase, sleep, misc), time.ts
+                             (formatTime/timeToSeconds).
 
 src-electron/                Electron main + preload. May import only src/types,
                              src/constants, src/shared from src/.
@@ -148,7 +173,8 @@ src-electron/                Electron main + preload. May import only src/types,
   electron-preload.ts        contextBridge exposure — builds window.electronApi
                              (typed in src/types/electron.d.ts).
   main/                      Main-process modules:
-    ipc.ts                   ALL ipcMain handlers are registered here (single file).
+    ipc.ts                   Nearly all ipcMain handlers are registered here
+                             (see Process Boundaries & IPC for the one exception).
     downloads.ts             Download queue, priorities, pause/resume, retries.
     session.ts               CSP, trusted-domain/CORS header rewriting, user agent.
     fs.ts                    File dialogs, watch folders, zip/unzip, HEIC, paths.
@@ -162,6 +188,18 @@ src-electron/                Electron main + preload. May import only src/types,
     utils.ts                 captureElectronError, isSelf/isTrustedDomain,
                              fetchJsonFromMainProcess, scrubUserPathsDeep usage.
     resilient-storage.ts     JSON read/write with fallback to temp dir.
+    crash-loop.ts            Crash-loop detection gated on the previous
+                             session's clean-exit flag (markCleanExit/
+                             recordStartupCrashCount).
+    dev-menu.ts              Dev-only "Demo" application menu.
+    heic.ts                  HEIC→JPEG conversion in a utility process.
+    image-size.ts            Image-dimension reading in a utility process
+                             (sandboxes unpatched image-size CVEs).
+    os-support.ts            Warns on unsupported OS versions (32-bit
+                             Windows, old macOS).
+    screen-utils.ts          Display-bounds validation/matching helpers.
+    sqlite.ts                executeQuery (backs the preload sqlite.ts
+                             bridge) and connection lifecycle.
     window/                  window-base.ts (sendToWindow/logToWindow),
                              window-main.ts, window-media.ts, window-timer.ts,
                              window-website.ts, window-bounds.ts, window-state.ts.
@@ -224,10 +262,14 @@ Import aliases available everywhere: `src/`, `src-electron/`, `stores/`,
 - The renderer talks to Electron exclusively through the typed
   `window.electronApi` object (interface `ElectronApi` in
   `src/types/electron.d.ts`), exposed by `src-electron/electron-preload.ts`.
-- All `ipcMain` handlers are registered in `src-electron/main/ipc.ts`. Channels
-  are typed as unions: `ElectronIpcInvokeKey` (invoke/handle), `ElectronIpcSendKey`
-  (send/on), `ElectronIpcSendSyncKey` (sendSync), `ElectronIpcListenKey`
-  (webContents.send → renderer `on*` listeners).
+- Nearly all `ipcMain` handlers are registered in `src-electron/main/ipc.ts` —
+  the one exception is `set-hardware-acceleration`, registered directly in
+  `electron-main.ts` because it's tied to that file's own pre-`app.whenReady()`
+  hardware-acceleration/crash-loop state, which can't be delegated without
+  restructuring startup. Channels are typed as unions: `ElectronIpcInvokeKey`
+  (invoke/handle), `ElectronIpcSendKey` (send/on), `ElectronIpcSendSyncKey`
+  (sendSync), `ElectronIpcListenKey` (webContents.send → renderer `on*`
+  listeners).
 - IPC inputs must be serializable; filesystem/network-sensitive values are
   validated in the main process (e.g. `openFolder` refuses non-directories,
   `setElectronUrlVariables` ignores malformed domains, sender URL is checked via
@@ -358,10 +400,14 @@ update-langs script` unless intentionally changing language availability.
 
 - Conventional Commits everywhere: branch `type/description`, commit
   `type(scope?): description`, PRs are squash-merged using the PR title.
-- Version bumps are committed as `chore(release): vx.x.x`; CI auto-builds and
-  publishes the draft GitHub release (see `CONTRIBUTING.md` for the full
-  procedure). Never bump versions or touch release metadata unless the task
-  explicitly requires it.
+- Releases are triggered by running the `Manual Release` workflow
+  (`workflow_dispatch`; beta releases also run nightly via `Release Beta
+Version`) — not by hand-editing `package.json`. The workflow bumps the
+  version itself and commits `chore: bump version to vX.Y.Z [skip ci]`
+  (see `CONTRIBUTING.md` for the full procedure), then auto-builds and
+  publishes the draft GitHub release. Never bump versions, touch release
+  metadata, or hand-craft a `chore: bump version to ...` commit unless the
+  task explicitly requires it.
 - Mergify + `chore:` commits drive the changelog; the recent history shows a
   convention of detailed, context-rich commit messages — match that style.
 
