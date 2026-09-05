@@ -31,6 +31,11 @@ ignores:
   # child process receives the resolved path as an argv and requires it
   # there, so depcheck never sees a static import for it.
   - heic-convert
+  # Same pattern as heic-convert above, in src-electron/main/image-size.ts
+  # (SEC-1, full-audit-2026-09-04.md: isolated into its own utility-process
+  # worker for the same reason HEIC decoding is - a hung/malicious parse
+  # can't freeze the main process).
+  - image-size
   # Electron main/preload code is tested by root's vitest config
   # (`vitest --project electron`, see ../package.json), so vitest itself
   # only needs to live in root's node_modules, not here.
