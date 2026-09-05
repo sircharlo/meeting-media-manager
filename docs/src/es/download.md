@@ -1,12 +1,12 @@
 ---
-title: Downloads
+title: Descargas
 ---
 
 <!-- markdownlint-disable MD025 MD033 -->
 
-# Downloads
+# Descargas
 
-Use the links below to download the latest version of Meeting Media Manager for your operating system. These links always point to the newest stable release.
+Usa los enlaces de abajo para descargar la última versión de Meeting Media Manager para tu sistema operativo. Estos enlaces siempre apuntan a la versión estable más reciente.
 
 <script setup lang="ts">
 import { data as downloads } from '../../data/version.data.mts'
@@ -75,26 +75,26 @@ onMounted(() => {
 })
 </script>
 
-## Latest release
+## Última versión
 
-- **Version**: {{ downloads.version }} <span v-if="daysAgoText">({{ daysAgoText }})</span>
+- **Versión**: {{ downloads.version }} <span v-if="daysAgoText">({{ daysAgoText }})</span>
 
 <div v-if="recommended" style="margin: 1rem 0; padding: 1rem; border: 1px solid var(--vp-c-brand-1); border-radius: 8px; background: var(--vp-c-brand-soft);"><strong>{{ msg.recommendedFor }} {{ recommended.label }}</strong>
   <div style="margin-top: .5rem;"><a :href="recommended.href" style="display:inline-block; padding:.5rem 1rem; border-radius:6px; background: var(--vp-c-brand-1); color: white; text-decoration:none;">{{ msg.download }}</a>
   </div>
-  <div style="margin-top:.5rem; font-size: .9em; opacity:.8;">If this doesn’t match your system, pick from the options below.</div>
+  <div style="margin-top:.5rem; font-size: .9em; opacity:.8;">Si esto no coincide con tu sistema, elige entre las opciones de abajo.</div>
 </div>
 
 ## Windows
 
-- **Windows 64-bit (.exe)**: <a :href="downloads.win64">Download</a>
-- **Windows 32-bit (.exe)**: <a :href="downloads.win32">Download</a>
-- **Windows Portable (.exe)**: <a :href="downloads.winPortable">Download</a>
+- **Windows de 64 bits (.exe)**: <a :href="downloads.win64">Descargar</a>
+- **Windows de 32 bits (.exe)**: <a :href="downloads.win32">Descargar</a>
+- **Windows Portable (.exe)**: <a :href="downloads.winPortable">Descargar</a>
 
 ## macOS
 
-- **macOS (Universal) (.dmg)**: <a :href="downloads.macUniversal">Download</a>
+- **macOS (Universal) (.dmg)**: <a :href="downloads.macUniversal">Descargar</a>
 
 ## Linux
 
-- **x86_64 (AppImage)**: <a :href="downloads.linux">Download</a>
+- **x86_64 (AppImage)**: <a :href="downloads.linux">Descargar</a>
