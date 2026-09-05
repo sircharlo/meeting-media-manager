@@ -67,8 +67,8 @@ project itself).
 - **Docs**: VitePress site in `docs/` with per-language folders.
 - **Tests**: Vitest with three projects (`quasar`, `electron`, `docs`) +
   Playwright screenshot tests.
-- **Package manager**: Yarn 4 (`packageManager: yarn@4.17.0`), Node `^24.14.0`.
-  Never use npm/pnpm.
+- **Package manager**: Yarn 4 (see `packageManager` in `package.json` for the
+  exact pinned version), Node `^24.14.0`. Never use npm/pnpm.
 
 ## Commands
 
