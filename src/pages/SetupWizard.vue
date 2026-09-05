@@ -1,10 +1,27 @@
 <template>
   <q-page padding>
     <template v-if="currentSettings">
-      <div class="wizard-progress-track">
-        <div
-          class="wizard-progress-fill"
-          :style="{ width: stepProgress * 100 + '%' }"
+      <div class="wizard-header row items-center q-gutter-sm">
+        <div class="wizard-progress-track col">
+          <div
+            class="wizard-progress-fill"
+            :style="{ width: stepProgress * 100 + '%' }"
+          />
+        </div>
+        <!-- UX-8 (full-audit-2026-09-04.md): previously only step 1 offered
+             a way to cancel setup - from step 2 onward, backing all the way
+             out required repeated "Back" clicks, and navigating away
+             directly (nav drawer/header stay clickable throughout) skipped
+             cancelSetup()'s cleanup entirely. Placed here, outside the
+             q-stepper, so it stays visible across every step without
+             needing its own button in every q-stepper-navigation block. -->
+        <q-btn
+          dense
+          flat
+          icon="mmm-clear"
+          :label="t('cancel')"
+          size="sm"
+          @click="cancelSetup"
         />
       </div>
       <q-stepper v-model="step" color="primary" vertical>
@@ -20,13 +37,16 @@
             v-model="currentSettings.localAppLang"
             list="appLanguages"
           />
+          <!-- UX-9 (full-audit-2026-09-04.md): the Continue button below is
+               disabled until localAppLang is set, but previously gave no
+               indication why - just a greyed-out button. -->
+          <p
+            v-if="!currentSettings.localAppLang"
+            class="text-caption text-dark-grey"
+          >
+            {{ t('setupWizard.completeRequiredFields') }}
+          </p>
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn
-              color="negative"
-              flat
-              :label="t('cancel')"
-              @click="cancelSetup"
-            />
             <q-btn
               class="btn-tonal"
               color="primary"
@@ -99,6 +119,13 @@
               @click="openCongregationLookup"
             />
           </div>
+          <!-- UX-9 (full-audit-2026-09-04.md) -->
+          <p
+            v-if="!currentSettings?.congregationName"
+            class="text-caption text-dark-grey"
+          >
+            {{ t('setupWizard.completeRequiredFields') }}
+          </p>
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn flat :label="t('back')" @click="step--" />
             <q-btn
@@ -122,6 +149,10 @@
             list="jwLanguages"
             use-input
           />
+          <!-- UX-9 (full-audit-2026-09-04.md) -->
+          <p v-if="!currentSettings.lang" class="text-caption text-dark-grey">
+            {{ t('setupWizard.completeRequiredFields') }}
+          </p>
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn flat :label="t('back')" @click="step = 3" />
             <q-btn
@@ -195,6 +226,18 @@
               v-model="currentSettings.weStartTime"
               :options="['meetingTime']"
             />
+          </p>
+          <!-- UX-9 (full-audit-2026-09-04.md) -->
+          <p
+            v-if="
+              !currentSettings.mwDay ||
+              !currentSettings.mwStartTime ||
+              !currentSettings.weDay ||
+              !currentSettings.weStartTime
+            "
+            class="text-caption text-dark-grey"
+          >
+            {{ t('setupWizard.completeRequiredFields') }}
           </p>
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn flat :label="t('back')" @click="step--" />
@@ -346,6 +389,13 @@
             :dialog-id="'setup-wizard-zoom-shortcut'"
             shortcut-name="zoomScreenShareShortcut"
           />
+          <!-- UX-9 (full-audit-2026-09-04.md) -->
+          <p
+            v-if="!currentSettings?.zoomScreenShareShortcut"
+            class="text-caption text-dark-grey"
+          >
+            {{ t('setupWizard.completeRequiredFields') }}
+          </p>
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn flat :label="t('back')" @click="step = 200" />
             <q-btn
@@ -447,6 +497,13 @@
               />
             </template>
           </q-banner>
+          <!-- UX-9 (full-audit-2026-09-04.md) -->
+          <p
+            v-if="!currentSettings.obsPort || !currentSettings.obsPassword"
+            class="text-caption text-dark-grey"
+          >
+            {{ t('setupWizard.completeRequiredFields') }}
+          </p>
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn flat :label="t('back')" @click="step--" />
             <q-btn
@@ -475,6 +532,13 @@
             v-model="currentSettings.obsCameraScene"
             list="obsScenes"
           />
+          <!-- UX-9 (full-audit-2026-09-04.md) -->
+          <p
+            v-if="!currentSettings.obsCameraScene"
+            class="text-caption text-dark-grey"
+          >
+            {{ t('setupWizard.completeRequiredFields') }}
+          </p>
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn flat :label="t('back')" @click="step--" />
             <q-btn
@@ -503,6 +567,13 @@
             v-model="currentSettings.obsMediaScene"
             list="obsAllScenes"
           />
+          <!-- UX-9 (full-audit-2026-09-04.md) -->
+          <p
+            v-if="!currentSettings.obsMediaScene"
+            class="text-caption text-dark-grey"
+          >
+            {{ t('setupWizard.completeRequiredFields') }}
+          </p>
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn flat :label="t('back')" @click="step--" />
             <q-btn

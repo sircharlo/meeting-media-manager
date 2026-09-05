@@ -21,7 +21,8 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🛠️ **Advanced Settings**: Changing the "Website address" setting now shows a confirmation explaining what trusting the new address means before it takes effect, since it controls where M³ downloads media from.
 - 🛠️ **Accessibility**: Media items in the calendar can now be selected and multi-selected with the keyboard (Enter/Space, plus Ctrl/Shift for multi-select), not just the mouse; media items, dividers, groups, and custom sections can now be reordered with keyboard-operable move-up/move-down controls in addition to drag-and-drop; and icon-only buttons in the timer popup now have proper screen-reader labels.
 - 🛠️ **Meeting Timer**: A mismatched AYFM/LAC part duration is now flagged with a warning icon and explanation, not just a color change; resetting a part's recorded timing now asks for confirmation first, since it's used in the exported timing report and can't be undone.
-- 🛠️ **Initial Setup**: The OBS Studio port/password step now shows an inline "Connected" / "Could not connect" banner as you type, instead of the only feedback being a small footer button.
+- 🛠️ **Initial Setup**: The OBS Studio port/password step now shows an inline "Connected" / "Could not connect" banner as you type, instead of the only feedback being a small footer button; a "Cancel" action is now available on every step instead of only the first; and steps with a required field now show a short hint when "Continue" is disabled, instead of just a greyed-out button with no explanation.
+- 🛠️ **Cache Location**: The Settings explanation for the cache location folder now clarifies that changing it doesn't move already-cached files — content not yet present in the new location is simply re-downloaded or re-extracted there.
 
 ### 🐞 Bug Fixes
 
