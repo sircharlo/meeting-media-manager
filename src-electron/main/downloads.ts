@@ -42,6 +42,25 @@ const getEnsureDirRetryDelay = (attempt: number) => {
   return Math.random() * cappedDelay;
 };
 
+// BE-9 (full-audit-2026-09-04.md): a download that failed at the
+// network/HTTP level was previously removed from tracking and reported
+// immediately, with no automatic retry - every transient blip required the
+// user to manually resubmit. Bounded (not indefinite) so a genuinely
+// permanent failure (e.g. a 404) still gives up promptly rather than
+// hammering the same URL forever.
+const DOWNLOAD_ERROR_RETRY_COUNT = 2;
+const DOWNLOAD_ERROR_RETRY_BASE_DELAY_MS = 1000;
+const DOWNLOAD_ERROR_RETRY_MAX_DELAY_MS = 8000;
+
+const getDownloadErrorRetryDelay = (attempt: number) => {
+  const exponentialDelay = DOWNLOAD_ERROR_RETRY_BASE_DELAY_MS * 2 ** attempt;
+  const cappedDelay = Math.min(
+    exponentialDelay,
+    DOWNLOAD_ERROR_RETRY_MAX_DELAY_MS,
+  );
+  return Math.random() * cappedDelay;
+};
+
 interface EnsureDirAttemptDiagnostics {
   attempt: number;
   code?: string;
@@ -1303,6 +1322,7 @@ async function processQueueItem(
 async function startDownload(
   download: DownloadQueueItem,
   isLowPriority: boolean,
+  errorRetryAttempt = 0,
 ) {
   const { destFilename, saveDir, url } = download;
   const key = url + saveDir;
@@ -1378,6 +1398,38 @@ async function startDownload(
             return;
           }
           if (quitStatus.isAppQuitting) return;
+
+          // BE-9: only retry a download that's both still tracked as
+          // ongoing (an already-completed/cancelled/removed entry has
+          // nothing left to retry - e.g. onDownloadCompleted already ran)
+          // and wasn't deliberately cancelled or paused.
+          const current = ongoingDownloads.get(key);
+          const shouldRetry =
+            !!current &&
+            !current.cancelRequested &&
+            current.state !== DownloadState.PAUSED &&
+            errorRetryAttempt < DOWNLOAD_ERROR_RETRY_COUNT;
+
+          if (shouldRetry) {
+            const nextAttempt = errorRetryAttempt + 1;
+            log(
+              `Download error, retrying (attempt ${nextAttempt}/${DOWNLOAD_ERROR_RETRY_COUNT}):`,
+              'electronDownloads',
+              'warn',
+              url,
+            );
+            addElectronBreadcrumb({
+              category: 'downloads.network',
+              data: { attempt: nextAttempt, url },
+              level: 'warning',
+              message: 'download-error-retry',
+            });
+            await delay(getDownloadErrorRetryDelay(errorRetryAttempt));
+            if (cancelAll || quitStatus.isAppQuitting) return;
+            void startDownload(download, isLowPriority, nextAttempt);
+            return;
+          }
+
           log('Download error:', 'electronDownloads', 'log', url);
           captureElectronError(err, {
             contexts: {
@@ -1387,6 +1439,7 @@ async function startDownload(
                 params: {
                   destFilename,
                   directory: saveDir,
+                  retryAttempts: errorRetryAttempt,
                   window: mainWindowInfo.mainWindow?.id,
                 },
                 url,
