@@ -198,11 +198,28 @@ const postToWorker = (
     getWorker().postMessage({ ...request, id });
   });
 
+// SEC-7 (full-audit-2026-09-04.md): the renderer's query string is run
+// verbatim (only params are bound) against a read-only-opened connection -
+// not exploitable today (gated by isSelf() and every current call site in
+// src/utils/sqlite.ts only ever passes a hardcoded SELECT/PRAGMA), but a
+// defense-in-depth backstop against, say, a crafted ATTACH DATABASE
+// statement reaching a file this dbPath check never sees. All real query
+// shapes in use were confirmed to start with SELECT or PRAGMA before adding
+// this.
+const ALLOWED_QUERY_PREFIX = /^\s*\(?\s*(pragma|select)\b/i;
+
 export const executeQuery = async <T extends object = QueryResponseItem>(
   dbPath: string,
   query: string,
   params: QueryParams = [],
 ): Promise<T[]> => {
+  if (!ALLOWED_QUERY_PREFIX.test(query)) {
+    captureElectronError(new Error('Rejected non-SELECT/PRAGMA query'), {
+      contexts: { fn: { name: 'executeQuery', path: dbPath, query } },
+    });
+    return [];
+  }
+
   try {
     const response = await postToWorker({
       dbPath,

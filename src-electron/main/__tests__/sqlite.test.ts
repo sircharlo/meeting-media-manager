@@ -12,6 +12,7 @@ vi.mock('src/shared/vanilla', () => ({
   log: vi.fn(),
 }));
 
+import { captureElectronError } from 'src-electron/main/utils';
 import { log } from 'src/shared/vanilla';
 
 import { closeAllConnections, closeConnection, executeQuery } from '../sqlite';
@@ -135,6 +136,51 @@ describe('executeQuery', () => {
 
     expect(writeResult).toEqual([]);
     expect(rows).toEqual([{ count: 1 }]);
+  });
+
+  // SEC-7 (full-audit-2026-09-04.md): defense-in-depth backstop, on top of
+  // the read-only connection above - rejects a query before it ever reaches
+  // the database if it isn't shaped like the SELECT/PRAGMA queries every
+  // real call site uses. The INSERT case above is now caught by this filter
+  // before it would even reach the read-only connection; these tests cover
+  // the filter itself directly.
+  it('rejects a non-SELECT/PRAGMA query without touching the database', async () => {
+    tempDirs.push(await mkdtemp(join(tmpdir(), 'mmm-sqlite-')));
+    const dbPath = createTestDb();
+
+    const result = await executeQuery<{ id: number }>(
+      dbPath,
+      "INSERT INTO media (title) VALUES ('Closing Song') RETURNING id",
+    );
+
+    expect(result).toEqual([]);
+    expect(captureElectronError).toHaveBeenCalledWith(
+      expect.any(Error),
+      expect.objectContaining({
+        contexts: expect.objectContaining({
+          fn: expect.objectContaining({ name: 'executeQuery' }),
+        }),
+      }),
+    );
+
+    const rows = await executeQuery<{ count: number }>(
+      dbPath,
+      'SELECT COUNT(*) AS count FROM media',
+    );
+    expect(rows).toEqual([{ count: 1 }]);
+  });
+
+  it('allows SELECT and PRAGMA queries, case-insensitively and with leading whitespace', async () => {
+    tempDirs.push(await mkdtemp(join(tmpdir(), 'mmm-sqlite-')));
+    const dbPath = createTestDb();
+
+    await expect(
+      executeQuery<{ title: string }>(dbPath, '  select title FROM media'),
+    ).resolves.toEqual([{ title: 'Opening Song' }]);
+
+    await expect(
+      executeQuery<{ name: string }>(dbPath, 'pragma table_info(media)'),
+    ).resolves.not.toEqual([]);
   });
 
   it('closeConnection evicts only the given path connection and cache', async () => {

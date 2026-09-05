@@ -110,6 +110,15 @@ export async function initUpdater() {
   if (await pathExists(await getUpdatesDisabledPath())) return; // Skip updater if updates are disabled by user
   if (isPortable()) return; // Skip updater for portable version
 
+  // SEC-6 (full-audit-2026-09-04.md): load-bearing for the beta<->stable
+  // channel switch below (allowPrerelease toggled by getBetaUpdatesPath()) -
+  // a user turning beta updates back off needs the updater willing to
+  // install the latest stable release even when its version number is
+  // lower than their currently-installed beta build, which electron-updater
+  // would otherwise refuse as a "downgrade". Code-signature verification
+  // still applies regardless of this flag, so it's not a path to unsigned
+  // code - its real effect is allowing a version rollback, which relies on
+  // the GitHub releases feed/assets themselves staying trustworthy.
   autoUpdater.allowDowngrade = true;
   autoUpdater.autoDownload = !IS_TEST;
   autoUpdater.autoInstallOnAppQuit = !IS_TEST;

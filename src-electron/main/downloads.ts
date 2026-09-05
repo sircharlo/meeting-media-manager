@@ -688,7 +688,13 @@ export async function downloadFile(
 
     const resolvedSaveDir = await ensureDirWithRetry(saveDir);
 
-    if (!destFilename) destFilename = basename(url);
+    // SEC-7 (full-audit-2026-09-04.md): basename() strips any directory
+    // components (../, absolute paths) regardless of platform separator, so
+    // a crafted destFilename can no longer escape resolvedSaveDir - not
+    // reachable today (gated by isSelf(), and every current renderer call
+    // site only ever passes a plain filename), but a defense-in-depth
+    // backstop against a future caller passing something untrusted through.
+    destFilename = basename(destFilename || url);
 
     const fileToDownload = { destFilename, saveDir: resolvedSaveDir, url };
     const key = url + resolvedSaveDir;

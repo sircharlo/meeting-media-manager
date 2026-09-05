@@ -81,4 +81,47 @@ describe('scrubUserPathsDeep', () => {
       scrubUserPathsDeep({ count: 3, enabled: true, missing: null }),
     ).toEqual({ count: 3, enabled: true, missing: null });
   });
+
+  // SEC-8 (full-audit-2026-09-04.md): a deny-list on the key name, not an
+  // exact field list, so a future password/secret/token-shaped field is
+  // redacted without this test (or the pattern) needing to know its name.
+  it('redacts values whose key looks like a secret, regardless of nesting depth', () => {
+    expect(
+      scrubUserPathsDeep({
+        contexts: {
+          settings: {
+            apiKey: 'sk-abc123',
+            congregationName: 'Kingdom Hall',
+            obsPassword: 'hunter2',
+            userToken: 'xyz',
+          },
+        },
+      }),
+    ).toEqual({
+      contexts: {
+        settings: {
+          apiKey: '<redacted>',
+          congregationName: 'Kingdom Hall',
+          obsPassword: '<redacted>',
+          userToken: '<redacted>',
+        },
+      },
+    });
+  });
+
+  it('leaves genuinely unrelated keys untouched (only redacts a password/secret/token/apiKey substring match)', () => {
+    expect(
+      scrubUserPathsDeep({
+        congregationName: 'Kingdom Hall',
+        // Over-matches "password" as a substring - an accepted trade-off:
+        // a false positive here just redacts a non-sensitive value, while
+        // the alternative (an exact field-name list) is what let a real
+        // secret slip through undetected in the first place.
+        password_hint: 'wrong on purpose',
+      }),
+    ).toEqual({
+      congregationName: 'Kingdom Hall',
+      password_hint: '<redacted>',
+    });
+  });
 });

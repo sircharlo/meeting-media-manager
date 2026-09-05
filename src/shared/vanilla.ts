@@ -112,12 +112,25 @@ export const scrubUserPaths = (value: string): string =>
     value,
   );
 
+// SEC-8 (full-audit-2026-09-04.md): no current call site attaches
+// obsPassword (or a full SettingsValues object) to a Sentry error context,
+// so this isn't a confirmed leak today - but nothing previously caught one
+// if a future PR did, the way it already would for a stray home-directory
+// path. Matches by key name (not an exact field list) so it also covers any
+// future password/secret/token-shaped field without needing this list kept
+// in sync.
+const SENSITIVE_KEY_PATTERN = /api[-_]?key|password|secret|token/i;
+const REDACTED_VALUE = '<redacted>';
+
 /**
  * Recursively applies {@link scrubUserPaths} to every string value in an
  * object/array tree, e.g. a Sentry event (exception messages, stack frame
- * paths, breadcrumbs, extra/context data, etc).
+ * paths, breadcrumbs, extra/context data, etc). Any object key matching
+ * {@link SENSITIVE_KEY_PATTERN} (e.g. `obsPassword`) has its value replaced
+ * outright instead of being recursed into.
  * @param value The value to scrub
- * @returns A deep copy of `value` with home-directory usernames redacted
+ * @returns A deep copy of `value` with home-directory usernames and
+ * secret-bearing fields redacted
  */
 export const scrubUserPathsDeep = <T>(value: T): T => {
   if (typeof value === 'string') return scrubUserPaths(value) as T;
@@ -126,7 +139,9 @@ export const scrubUserPathsDeep = <T>(value: T): T => {
     return Object.fromEntries(
       Object.entries(value as Record<string, unknown>).map(([key, val]) => [
         key,
-        scrubUserPathsDeep(val),
+        SENSITIVE_KEY_PATTERN.test(key)
+          ? REDACTED_VALUE
+          : scrubUserPathsDeep(val),
       ]),
     ) as T;
   }
