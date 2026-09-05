@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
-import { createVideoFromNonVideo } from '../ffmpeg';
+import { cleanupFfmpegConversions, createVideoFromNonVideo } from '../ffmpeg';
 
 vi.mock('fs-extra/esm', () => ({
   pathExists: vi.fn(async () => false),
+  remove: vi.fn(async () => undefined),
 }));
 
 vi.mock('node:fs/promises', () => ({
@@ -15,8 +16,12 @@ vi.mock('node:fs/promises', () => ({
   }),
 }));
 
-const ffmpegOnMap: Record<string, (...args: unknown[]) => void> = {};
+let ffmpegOnMap: Record<string, (...args: unknown[]) => void> = {};
 const ffmpegChain = {
+  inputFormat: vi.fn().mockReturnThis(),
+  inputOptions: vi.fn().mockReturnThis(),
+  kill: vi.fn(),
+  loop: vi.fn().mockReturnThis(),
   noVideo: vi.fn().mockReturnThis(),
   on: vi
     .fn()
@@ -24,7 +29,10 @@ const ffmpegChain = {
       ffmpegOnMap[event] = cb;
       return ffmpegChain;
     }),
+  outputOptions: vi.fn().mockReturnThis(),
   save: vi.fn().mockReturnThis(),
+  size: vi.fn().mockReturnThis(),
+  videoCodec: vi.fn().mockReturnThis(),
 };
 
 vi.mock('fluent-ffmpeg', () => ({
@@ -38,13 +46,32 @@ vi.mock('fluent-ffmpeg', () => ({
   ),
 }));
 
-vi.mock('image-size/fromFile', () => ({
-  imageSizeFromFile: vi.fn(async () => ({ height: 3000, width: 4000 })),
+vi.mock('src-electron/main/image-size', () => ({
+  getImageDimensions: vi.fn(async () => ({ height: 3000, width: 4000 })),
 }));
+
+// Reaching ffmpeg(...).on(...) goes through several chained awaits
+// (assertValidFfmpegPath, shouldUseExistingConversion, a real dynamic
+// import() of the mocked 'fluent-ffmpeg' module), which can take more than a
+// couple of microtask ticks to settle under Vitest's module loader. Poll
+// instead of assuming a fixed number of ticks.
+const waitUntil = async (
+  condition: () => boolean,
+  maxAttempts = 50,
+): Promise<void> => {
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    if (condition()) return;
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 0);
+    });
+  }
+  throw new Error('waitUntil: condition was never met');
+};
 
 describe('ffmpeg.createVideoFromNonVideo', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    ffmpegOnMap = {};
   });
 
   it('short-circuits if output already exists', async () => {
@@ -81,15 +108,16 @@ describe('ffmpeg.createVideoFromNonVideo', () => {
       (p: string) => Promise<boolean>
     >;
     pathExistsMock.mockResolvedValue(false);
-    const size = await import('image-size/fromFile');
-    const imageSizeFromFileMock = size.imageSizeFromFile as unknown as Mock<
-      (p: string) => Promise<{
-        height?: number;
-        orientation?: number;
-        width?: number;
-      }>
-    >;
-    imageSizeFromFileMock.mockResolvedValue({
+    const imageSize = await import('src-electron/main/image-size');
+    const getImageDimensionsMock =
+      imageSize.getImageDimensions as unknown as Mock<
+        (p: string) => Promise<{
+          height?: number;
+          orientation?: number;
+          width?: number;
+        }>
+      >;
+    getImageDimensionsMock.mockResolvedValue({
       height: undefined,
       orientation: undefined,
       width: undefined,
@@ -115,5 +143,65 @@ describe('ffmpeg.createVideoFromNonVideo', () => {
     await expect(
       createVideoFromNonVideo('/tmp/a.mp3', '/bin/ffmpeg-directory'),
     ).rejects.toThrow('FFmpeg path is not a file');
+  });
+
+  // BE-3 (full-audit-2026-09-04.md): a failed conversion previously left its
+  // partial output file in place, which shouldUseExistingConversion could
+  // later mistake for a valid cached conversion.
+  it('deletes the partial output file when the ffmpeg process reports an error', async () => {
+    const { pathExists, remove } = await import('fs-extra/esm');
+    (
+      pathExists as unknown as Mock<(p: string) => Promise<boolean>>
+    ).mockResolvedValue(false);
+
+    const conversionPromise = createVideoFromNonVideo(
+      '/tmp/be3-error.mp3',
+      '/bin/ffmpeg',
+    );
+    // Let the async chain reach ffmpeg(...).save(...), registering onError.
+    await waitUntil(() => typeof ffmpegOnMap.error === 'function');
+
+    ffmpegOnMap.error?.(new Error('ffmpeg exploded'));
+
+    await expect(conversionPromise).rejects.toThrow('ffmpeg exploded');
+    expect(remove).toHaveBeenCalledWith('/tmp/be3-error.mp4');
+  });
+
+  it('resolves once the ffmpeg process reports completion', async () => {
+    const { pathExists } = await import('fs-extra/esm');
+    (
+      pathExists as unknown as Mock<(p: string) => Promise<boolean>>
+    ).mockResolvedValue(false);
+
+    const conversionPromise = createVideoFromNonVideo(
+      '/tmp/be3-success.mp3',
+      '/bin/ffmpeg',
+    );
+    await waitUntil(() => typeof ffmpegOnMap.end === 'function');
+
+    ffmpegOnMap.end?.();
+
+    await expect(conversionPromise).resolves.toBe('/tmp/be3-success.mp4');
+  });
+
+  it('kills every in-progress ffmpeg command on cleanupFfmpegConversions', async () => {
+    const { pathExists } = await import('fs-extra/esm');
+    (
+      pathExists as unknown as Mock<(p: string) => Promise<boolean>>
+    ).mockResolvedValue(false);
+
+    const conversionPromise = createVideoFromNonVideo(
+      '/tmp/be3-cleanup.mp3',
+      '/bin/ffmpeg',
+    );
+    await waitUntil(() => typeof ffmpegOnMap.error === 'function');
+
+    cleanupFfmpegConversions();
+
+    expect(ffmpegChain.kill).toHaveBeenCalledWith('SIGKILL');
+
+    // Settle the still-pending conversion so it doesn't leak into other tests.
+    ffmpegOnMap.error?.(new Error('killed'));
+    await expect(conversionPromise).rejects.toThrow('killed');
   });
 });

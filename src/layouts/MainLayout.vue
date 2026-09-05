@@ -47,6 +47,23 @@
       @cancel="cancelMacosPermission"
       @confirm="confirmMacosPermission"
     />
+
+    <ConfirmDialog
+      v-model="baseUrlChangeConfirmOpen"
+      dialog-id="base-url-change-confirm"
+      icon="mmm-warning"
+      icon-color="warning"
+      :message="
+        t('base-url-change-confirm-message', {
+          newBaseUrl: baseUrlChangeConfirmDetails?.newBaseUrl,
+          oldBaseUrl: baseUrlChangeConfirmDetails?.oldBaseUrl,
+        })
+      "
+      persistent
+      :title="t('base-url-change-confirm-title')"
+      @cancel="rejectBaseUrlChange"
+      @confirm="acceptBaseUrlChange"
+    />
   </q-layout>
 </template>
 
@@ -335,6 +352,40 @@ const cancelMacosPermission = () => {
   macosPermissionPromptOpen.value = false;
   resolveMacosPermissionPrompt?.(false);
   resolveMacosPermissionPrompt = null;
+};
+
+// SEC-4 (full-audit-2026-09-04.md): baseUrl is a free-text "danger zone"
+// setting - the app trusts whatever mediator/CDN URLs the resulting
+// domain's homepage declares (CSP, CORS, navigation, media permissions), so
+// an edit here widens the app's trust boundary to a new domain. Free text is
+// kept (rather than an allowlist) so users in regions where jw.org is
+// blocked/mirrored can still point at a legitimate alternate address, but a
+// real edit now requires explicit confirmation instead of applying silently.
+const baseUrlChangeConfirmOpen = ref(false);
+const baseUrlChangeConfirmDetails = ref<null | {
+  newBaseUrl: string;
+  oldBaseUrl: string;
+}>(null);
+let resolveBaseUrlChangeConfirm: ((value: boolean) => void) | null = null;
+
+const confirmBaseUrlChange = (newBaseUrl: string, oldBaseUrl: string) => {
+  baseUrlChangeConfirmDetails.value = { newBaseUrl, oldBaseUrl };
+  baseUrlChangeConfirmOpen.value = true;
+  return new Promise<boolean>((resolve) => {
+    resolveBaseUrlChangeConfirm = resolve;
+  });
+};
+
+const acceptBaseUrlChange = () => {
+  baseUrlChangeConfirmOpen.value = false;
+  resolveBaseUrlChangeConfirm?.(true);
+  resolveBaseUrlChangeConfirm = null;
+};
+
+const rejectBaseUrlChange = () => {
+  baseUrlChangeConfirmOpen.value = false;
+  resolveBaseUrlChangeConfirm?.(false);
+  resolveBaseUrlChangeConfirm = null;
 };
 
 const checkMacosFolderPermission = async (
@@ -1503,10 +1554,26 @@ whenever(
 
 watchDebounced(
   () => [currentSettings.value?.baseUrl, currentCongregation.value],
-  async ([newBaseUrl, newCongregation], [oldBaseUrl]) => {
-    if (!!newCongregation && newBaseUrl !== oldBaseUrl) {
-      await setUrlVariables(newBaseUrl);
+  async ([newBaseUrl, newCongregation], [oldBaseUrl, oldCongregation]) => {
+    if (!newCongregation || newBaseUrl === oldBaseUrl) return;
+
+    // Only confirm when the currently-active congregation's own baseUrl was
+    // actually edited by the user - not when switching to a different,
+    // already-configured congregation profile that happens to have a
+    // different (already-trusted-when-it-was-set) baseUrl.
+    const isUserEdit = newCongregation === oldCongregation && !!oldBaseUrl;
+    if (isUserEdit) {
+      const confirmed = await confirmBaseUrlChange(
+        newBaseUrl ?? '',
+        oldBaseUrl,
+      );
+      if (!confirmed) {
+        if (currentSettings.value) currentSettings.value.baseUrl = oldBaseUrl;
+        return;
+      }
     }
+
+    await setUrlVariables(newBaseUrl);
   },
   { debounce: 500 },
 );

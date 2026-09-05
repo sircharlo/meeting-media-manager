@@ -533,6 +533,11 @@ const totalFiles = ref(0);
 const currentFile = ref(0);
 const showFileImport = ref(false);
 const showQuickStartGuide = ref(false);
+// The congregation the guide was actually opened for (see UX-0 in
+// full-audit-2026-09-04.md) - captured so the eventual "mark as seen" below
+// can't misattribute to whichever congregation happens to be active if the
+// user switches congregations while the guide dialog is open.
+const quickStartGuideCongId = ref<string | undefined>(undefined);
 const showSectionPicker = ref(false);
 const showMediaPicker = ref(false);
 const selectedDocument = ref<DocumentItem | undefined>();
@@ -1153,7 +1158,14 @@ const maybeShowQuickStartGuide = () => {
   )
     return;
 
-  congregationSettingsStore.markQuickStartTourSeen(congId);
+  // Marking "seen" happens once the guide is actually dismissed (see the
+  // showQuickStartGuide watcher below), not here. Marking it up front meant
+  // a guide that failed to render on its very first attempt - for any of the
+  // usual transient reasons (HMR timing, a layout-timing edge case, a user
+  // blinking past it) - was permanently suppressed for that congregation
+  // with no way to bring it back, since nothing ever set the flag to false
+  // again.
+  quickStartGuideCongId.value = congId;
   showQuickStartGuide.value = true;
 };
 
@@ -3587,6 +3599,20 @@ watch(
     fetchMedia();
   },
 );
+
+// Marks the quick-start tour as seen only once it's actually been shown and
+// dismissed (see UX-0 in full-audit-2026-09-04.md), not at the moment it's
+// requested to open - so a guide that never becomes visible simply gets
+// retried on the next opportunity (next mount/congregation switch) instead
+// of being permanently and silently suppressed for that congregation.
+watch(showQuickStartGuide, (isShowing, wasShowing) => {
+  if (wasShowing && !isShowing && quickStartGuideCongId.value) {
+    congregationSettingsStore.markQuickStartTourSeen(
+      quickStartGuideCongId.value,
+    );
+    quickStartGuideCongId.value = undefined;
+  }
+});
 
 watchImmediate(
   () => getCurrentMediaWindowVariables.value,

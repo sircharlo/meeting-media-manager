@@ -131,6 +131,41 @@ describe('MediaItem Component', () => {
     expect(wrapper.exists()).toBe(true);
   });
 
+  // UX-1 (full-audit-2026-09-04.md): selecting a media item was previously
+  // mouse-only (bound to @mouseup, with no tabindex/keyboard handler),
+  // blocking the bulk delete/hide workflow entirely from the keyboard.
+  it('is keyboard-focusable and emits click on Enter/Space', async () => {
+    const wrapper = mount(MediaItem, {
+      props: {
+        media: mockMediaItem,
+        repeat: false,
+      },
+    });
+
+    const mediaItem = wrapper.find('.q-item');
+    expect(mediaItem.attributes('tabindex')).toBe('0');
+
+    await mediaItem.trigger('keydown', { key: 'Enter' });
+    expect(wrapper.emitted('click')).toHaveLength(1);
+
+    await mediaItem.trigger('keydown', { key: ' ' });
+    expect(wrapper.emitted('click')).toHaveLength(2);
+  });
+
+  it('emits click on mouseup, matching the keyboard activation path', async () => {
+    const wrapper = mount(MediaItem, {
+      props: {
+        media: mockMediaItem,
+        repeat: false,
+      },
+    });
+
+    const mediaItem = wrapper.find('.q-item');
+    await mediaItem.trigger('mouseup', { button: 0 });
+
+    expect(wrapper.emitted('click')).toHaveLength(1);
+  });
+
   it('should display resolution label for video files', () => {
     const wrapper = mount(MediaItem, {
       props: {

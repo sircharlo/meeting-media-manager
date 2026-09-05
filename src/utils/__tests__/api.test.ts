@@ -217,6 +217,51 @@ describe('fetchRaw caching', () => {
 
     expect(fetchSpy).toHaveBeenCalledTimes(2);
   });
+
+  // FE-1 (full-audit-2026-09-04.md): a JW.org response cached with no TTL
+  // could never be re-fetched for the rest of a long-running session, even
+  // after a genuine mid-week content correction upstream.
+  it('should re-fetch once a cached entry is older than the cache TTL', async () => {
+    vi.useFakeTimers();
+    try {
+      const fetchSpy = vi
+        .spyOn(globalThis, 'fetch')
+        .mockImplementation(() =>
+          Promise.resolve(
+            new Response(JSON.stringify(jwLangs), { status: 200 }),
+          ),
+        );
+
+      await fetchRaw(handledUrl, { method: 'GET' }, true);
+      await vi.advanceTimersByTimeAsync(15 * 60 * 1000 + 1);
+      await fetchRaw(handledUrl, { method: 'GET' }, true);
+
+      expect(fetchSpy).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('should keep serving a cached entry that has not exceeded the cache TTL', async () => {
+    vi.useFakeTimers();
+    try {
+      const fetchSpy = vi
+        .spyOn(globalThis, 'fetch')
+        .mockImplementation(() =>
+          Promise.resolve(
+            new Response(JSON.stringify(jwLangs), { status: 200 }),
+          ),
+        );
+
+      await fetchRaw(handledUrl, { method: 'GET' }, true);
+      await vi.advanceTimersByTimeAsync(60 * 1000);
+      await fetchRaw(handledUrl, { method: 'GET' }, true);
+
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });
 
 describe('fetchRaw demo mode', () => {

@@ -22,7 +22,9 @@ import {
 } from 'src-electron/constants';
 import { createDevMenu } from 'src-electron/main/dev-menu';
 import { cancelAllDownloads } from 'src-electron/main/downloads';
+import { cleanupFfmpegConversions } from 'src-electron/main/ffmpeg';
 import { cleanupHeicWorker } from 'src-electron/main/heic';
+import { cleanupImageSizeWorker } from 'src-electron/main/image-size';
 import {
   pruneStaleFallbackEntries,
   readJsonResilient,
@@ -145,6 +147,24 @@ if (SENTRY_DSN) {
     { SENTRY_DSN },
   );
 }
+
+// Without these, an unguarded async error anywhere in the main process (e.g.
+// a fire-and-forget IPC listener throwing after an await, or a dynamic
+// import() failing) is invisible to Sentry and can terminate the whole app
+// via Node's default unhandled-rejection/uncaught-exception behavior. Capture
+// and continue instead, mirroring the process.stdout/stderr error handling
+// below.
+process.on('unhandledRejection', (reason) => {
+  captureElectronError(reason, {
+    contexts: { fn: { name: 'process.on(unhandledRejection)' } },
+  });
+});
+
+process.on('uncaughtException', (error) => {
+  captureElectronError(error, {
+    contexts: { fn: { name: 'process.on(uncaughtException)' } },
+  });
+});
 
 const gotTheLock = app.requestSingleInstanceLock();
 
@@ -587,6 +607,8 @@ if (gotTheLock) {
 
   app.on('will-quit', () => {
     cleanupHeicWorker();
+    cleanupImageSizeWorker();
+    cleanupFfmpegConversions();
   });
 
   app.on('activate', () => {

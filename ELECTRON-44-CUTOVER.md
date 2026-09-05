@@ -4,7 +4,7 @@ Working document for the plan approved on 2026-09-01. Delete this file once Phas
 
 ## Context
 
-- Open PR [#8913](https://github.com/sircharlo/meeting-media-manager/pull/8913) bumps `electron` 43.4.1 → 44.0.0.
+- Dependabot keeps opening the electron-44 bump PR on its own schedule — the original [#8913](https://github.com/sircharlo/meeting-media-manager/pull/8913) (43.4.1 → 44.0.0) was closed 2026-09-03 and superseded by [#9031](https://github.com/sircharlo/meeting-media-manager/pull/9031) (43.4.1 → 44.1.0), currently open. **Before starting Phase 2, re-check for the latest open Dependabot PR bumping `electron` to 44.x** (`gh pr list --search "electron in:title" --state open`) rather than trusting a PR number/version pinned in this doc — treat "44.0.0" below as illustrative, use whatever version the live PR actually targets.
 - Electron 44 **removes 32-bit prebuilt binaries** (Windows `ia32`, Linux `armv7l`) and **drops macOS 12** (macOS 13+ required).
 - Electron 43 is explicitly the **last release line** with 32-bit builds, so parallel support is not possible from one tree: ia32 installers cannot be produced and the app cannot run on Monterey once we're on 44.
 
@@ -16,14 +16,14 @@ Why the updater gate matters: electron-updater serves one "latest" per app and t
 
 ## Phase 1 — DONE ✅ (current working tree)
 
-| File | Change |
-|---|---|
-| `src-electron/main/os-support.ts` | **New.** `getOsSupportWarning()` extracted from `ipc.ts`: returns `'mac-legacy'` (macOS < 13) or `'win32-ia32'` (32-bit Windows), else `null`. |
-| `src-electron/main/ipc.ts` | Imports the helper; the `getOsSupportWarning` IPC surface is unchanged. |
-| `src-electron/main/updater.ts` | `triggerUpdateCheck()` returns early on legacy platforms (logs `'Skipping update check…'`, prefix `electronUpdater`). |
-| `src-electron/main/__tests__/updater.test.ts` | 2 new tests: check runs on supported platforms; skipped on legacy. |
-| `src/i18n/en.json` | Final copy for `os-support-warning-mac`, `os-support-warning-win32-ia32`, `architecture-mismatch-explain` ("…is the last version…"). |
-| `CHANGELOG.md` + `release-notes/en.md` | UPCOMING VERSION entry: "This is the last version of M³ that supports 32-bit Windows and macOS 12 (Monterey)." |
+| File                                          | Change                                                                                                                                         |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src-electron/main/os-support.ts`             | **New.** `getOsSupportWarning()` extracted from `ipc.ts`: returns `'mac-legacy'` (macOS < 13) or `'win32-ia32'` (32-bit Windows), else `null`. |
+| `src-electron/main/ipc.ts`                    | Imports the helper; the `getOsSupportWarning` IPC surface is unchanged.                                                                        |
+| `src-electron/main/updater.ts`                | `triggerUpdateCheck()` returns early on legacy platforms (logs `'Skipping update check…'`, prefix `electronUpdater`).                          |
+| `src-electron/main/__tests__/updater.test.ts` | 2 new tests: check runs on supported platforms; skipped on legacy.                                                                             |
+| `src/i18n/en.json`                            | Final copy for `os-support-warning-mac`, `os-support-warning-win32-ia32`, `architecture-mismatch-explain` ("…is the last version…").           |
+| `CHANGELOG.md` + `release-notes/en.md`        | UPCOMING VERSION entry: "This is the last version of M³ that supports 32-bit Windows and macOS 12 (Monterey)."                                 |
 
 **Verified:** `yarn lint` clean (ESLint + vue-tsc); electron test project 24 files / 159 tests pass.
 
@@ -34,15 +34,18 @@ Cut the **final-43 release from this Phase 1 state** — the updater gate must s
 ## Phase 2 — REMAINING ⏳ (initiate after this month)
 
 ### 1. Bump Electron to 44
-- Root `package.json`: `"electron": "^43.4.0"` → `"^44.0.0"` — or merge PR #8913 (it covers root `package.json` + `yarn.lock` only).
-- `src-electron/package.json`: `"electron": "^43.0.0"` → `"^44.0.0"` (PR #8913 does **not** touch this — must be done manually).
+
+- Root `package.json`: `"electron": "^43.4.0"` → `"^44.x.0"` — or merge the current open Dependabot electron-44 PR (it covers root `package.json` + `yarn.lock` only; find it fresh, don't assume #8913/#9031 are still current by the time this runs).
+- `src-electron/package.json`: `"electron": "^43.0.0"` → matching `"^44.x.0"` (the Dependabot PR does **not** touch this — must be done manually, same as it didn't for #8913).
 - Sync lockfile: `yarn install --mode=update-lockfile` (or `yarn install`).
 
 ### 2. Build config — `quasar.config.ts`
+
 - Windows: `{ arch: ctx.debug ? 'x64' : ['x64', 'ia32'], target: 'nsis' }` → `{ arch: 'x64', target: 'nsis' }`.
 - macOS: `minimumSystemVersion: '10.15'` → `'13.0'` (real floor for Electron 44; `10.15` was already below Electron 43's actual floor of 12).
 
 ### 3. Remove legacy-platform machinery (dead code on 44 — no 44 build can run on those systems)
+
 - Delete `src-electron/main/os-support.ts`.
 - `src-electron/main/updater.ts`: remove the gate + the `getOsSupportWarning` import.
 - `src-electron/main/ipc.ts`: remove `handleIpcInvoke('getOsSupportWarning', …)` + the import.
@@ -56,18 +59,22 @@ Cut the **final-43 release from this Phase 1 state** — the updater gate must s
 - Leave `isArchitectureMismatch` IPC in place (harmless — always false on 44).
 
 ### 4. Docs (English only — other locales come from Crowdin)
+
 - `docs/data/version.data.mts`: remove the `win32` field + `downloadUrl('ia32', 'exe')`.
 - `docs/src/en/download.md`: remove the `isIa32` UA detection, the `downloads.win32` branch, and the "Windows 32-bit (.exe)" link line.
 - `docs/src/en/faq.md` (2 places): Windows → "Windows 10 and later (64-bit only)"; macOS → "macOS 13 (Ventura) and later (Universal build)".
 - `docs/locales/en.json`: remove the `windows32Bit` string.
 
 ### 5. Changelog
+
 Reword the Platform Support entry for the 44 release, e.g.:
+
 > 🛠️ **Platform Support**: M³ no longer supports 32-bit Windows or macOS 12 (Monterey); the previous release is the last one that runs on those systems. New releases require a 64-bit version of Windows and macOS 13 (Ventura) or later.
 
 (Also mirror into `release-notes/en.md`.)
 
 ### 6. Verify
+
 - `yarn lint`
 - `yarn test:unit`
 - `yarn build:unpacked` sanity check: no `ia32` artifacts produced; mac bundle carries `LSMinimumSystemVersion` 13.0.
