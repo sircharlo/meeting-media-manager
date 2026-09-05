@@ -1,4 +1,4 @@
-import type { DateInfo } from 'src/types';
+import type { DateInfo, MediaItem } from 'src/types';
 
 import { createPinia, setActivePinia } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -7,6 +7,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   addUniqueByIdAt,
   deduplicateById,
+  replaceMissingMediaByPubMediaId,
   shouldUpdateList,
   useJwStore,
 } from '../jw';
@@ -138,6 +139,125 @@ describe('JW Store', () => {
 
       expect(array).toHaveLength(2);
       expect(array[0]?.name).toBe('First Item 1');
+    });
+  });
+
+  describe('replaceMissingMediaByPubMediaId (FE-2)', () => {
+    const buildDay = (existingItem: Partial<MediaItem>): DateInfo =>
+      ({
+        date: new Date(),
+        mediaSections: [
+          {
+            config: { uniqueId: 'tgw' },
+            items: [
+              {
+                source: 'dynamic',
+                title: 'Original title',
+                type: 'media',
+                uniqueId: 'existing-1',
+                ...existingItem,
+              },
+            ],
+          },
+        ],
+        status: 'complete',
+      }) as DateInfo;
+
+    it('replaces a placeholder item unconditionally', () => {
+      const day = buildDay({
+        fileUrl: 'pub-media-1',
+        pubMediaId: 'pub-media-1',
+      });
+      const incoming = {
+        duration: 120,
+        fileUrl: 'file:///cache/new.mp4',
+        hidden: false,
+        pubMediaId: 'pub-media-1',
+        sortOrderOriginal: 5,
+        source: 'dynamic',
+        title: 'Fetched title',
+        type: 'media',
+        uniqueId: 'existing-1',
+      } as MediaItem;
+
+      replaceMissingMediaByPubMediaId(day, { tgw: [incoming] });
+
+      expect(day.mediaSections[0]?.items?.[0]).toEqual(incoming);
+    });
+
+    it('does not replace an already-resolved item when duration and title are unchanged', () => {
+      const day = buildDay({
+        duration: 120,
+        fileUrl: 'file:///cache/existing.mp4',
+        hidden: true,
+        pubMediaId: 'pub-media-1',
+        sortOrderOriginal: 3,
+      });
+      const incoming = {
+        duration: 120,
+        fileUrl: 'file:///cache/different-path-same-content.mp4',
+        pubMediaId: 'pub-media-1',
+        source: 'dynamic',
+        title: 'Original title',
+        type: 'media',
+        uniqueId: 'existing-1',
+      } as MediaItem;
+
+      replaceMissingMediaByPubMediaId(day, { tgw: [incoming] });
+
+      const stored = day.mediaSections[0]?.items?.[0];
+      expect(stored?.fileUrl).toBe('file:///cache/existing.mp4');
+      expect(stored?.hidden).toBe(true);
+      expect(stored?.sortOrderOriginal).toBe(3);
+    });
+
+    it('replaces an already-resolved item when JW.org content (duration) has genuinely changed, preserving hidden/sortOrderOriginal', () => {
+      const day = buildDay({
+        duration: 120,
+        fileUrl: 'file:///cache/existing.mp4',
+        hidden: true,
+        pubMediaId: 'pub-media-1',
+        sortOrderOriginal: 3,
+      });
+      const incoming = {
+        duration: 180,
+        fileUrl: 'file:///cache/corrected.mp4',
+        pubMediaId: 'pub-media-1',
+        source: 'dynamic',
+        title: 'Original title',
+        type: 'media',
+        uniqueId: 'existing-1',
+      } as MediaItem;
+
+      replaceMissingMediaByPubMediaId(day, { tgw: [incoming] });
+
+      const stored = day.mediaSections[0]?.items?.[0];
+      expect(stored?.duration).toBe(180);
+      expect(stored?.fileUrl).toBe('file:///cache/corrected.mp4');
+      // User customizations survive the content swap.
+      expect(stored?.hidden).toBe(true);
+      expect(stored?.sortOrderOriginal).toBe(3);
+    });
+
+    it('replaces an already-resolved item when the title (e.g. a caption correction) has changed', () => {
+      const day = buildDay({
+        duration: 120,
+        fileUrl: 'file:///cache/existing.mp4',
+        pubMediaId: 'pub-media-1',
+      });
+      const incoming = {
+        duration: 120,
+        fileUrl: 'file:///cache/existing.mp4',
+        pubMediaId: 'pub-media-1',
+        source: 'dynamic',
+        title: 'Corrected caption',
+        type: 'media',
+        uniqueId: 'existing-1',
+      } as MediaItem;
+
+      replaceMissingMediaByPubMediaId(day, { tgw: [incoming] });
+
+      expect(day.mediaSections[0]?.items?.[0]?.title).toBe('Corrected caption');
     });
   });
 

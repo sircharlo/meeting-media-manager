@@ -152,7 +152,10 @@ export function deduplicateById<T extends { uniqueId: string }>(
 
 /**
  * Replaces existing media items across all sections in the target day with matching items
- * from the newMediaItems, if the existing item is a placeholder (has no fileUrl).
+ * from the newMediaItems, if the existing item is a placeholder (has no fileUrl) or if the
+ * incoming item's own content has changed (see hasDynamicMediaContentChanged) - preserving
+ * the existing item's `hidden`/`sortOrderOriginal` state in the latter case, since those are
+ * user customizations rather than JW.org-sourced content.
  * If there is no match at all, the item from the source array will be added to
  * the appropriate section.
  * @param targetDay The day object containing mediaSections to search and modify
@@ -221,12 +224,24 @@ export function replaceMissingMediaByPubMediaId(
         targetSection.items.push(item);
       } else {
         const existing = targetSection.items[index];
-        // Replace only if it's a placeholder (fileUrl is the same as pubMediaId) and has no children
+        if (!existing) return;
+
+        // Replace unconditionally if it's still a placeholder (fileUrl is the
+        // same as pubMediaId) and has no children.
         if (
-          existing?.fileUrl === existing?.pubMediaId &&
-          !existing?.children?.length
+          existing.fileUrl === existing.pubMediaId &&
+          !existing.children?.length
         ) {
           targetSection.items[index] = item;
+        } else if (hasDynamicMediaContentChanged(existing, item)) {
+          // Already resolved (e.g. downloaded), but JW.org's own data for
+          // this pubMediaId has genuinely changed - adopt the new content
+          // while keeping the user's hidden/sort-order state.
+          targetSection.items[index] = {
+            ...item,
+            hidden: existing.hidden,
+            sortOrderOriginal: existing.sortOrderOriginal,
+          };
         }
       }
     });
@@ -244,6 +259,28 @@ export function replaceMissingMediaByPubMediaId(
       });
     }
   });
+}
+
+/**
+ * Whether a freshly-fetched dynamic media item's own content looks different
+ * from the already-stored item it matched by pubMediaId. `duration` and
+ * `title` are populated directly from JW.org's own source data (not
+ * user-editable), so a difference here is a real upstream change - e.g. a
+ * corrected video/caption for the same pubMediaId slot - not routine
+ * per-fetch noise. This is intentionally conservative: it only compares
+ * fields the app already treats as content identity elsewhere, rather than a
+ * full field-by-field diff, so it can't misfire on user customizations like
+ * `hidden`/`sortOrderOriginal`.
+ * @param existing The already-stored media item
+ * @param incoming The newly-fetched media item matched to it by pubMediaId
+ */
+function hasDynamicMediaContentChanged(
+  existing: MediaItem,
+  incoming: MediaItem,
+): boolean {
+  return (
+    existing.duration !== incoming.duration || existing.title !== incoming.title
+  );
 }
 
 export const useJwStore = defineStore('jw-store', {

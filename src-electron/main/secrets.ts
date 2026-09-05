@@ -5,6 +5,18 @@ import { safeStorage } from 'electron';
 const ENCRYPTED_PREFIX = 'enc:v1:';
 
 /**
+ * Whether {@link encryptSecret} can actually encrypt on this machine. `false`
+ * on Linux without a compatible keyring/secret-service backend (headless
+ * setups, minimal window managers, some kiosk-style deployments) - a
+ * plausible real-world case for an always-on congregation media PC. The
+ * renderer surfaces this so the user knows a secret like the OBS password is
+ * sitting on disk as plain text, instead of that happening silently.
+ * @returns Whether OS-backed secret encryption is available
+ */
+export const isSecretEncryptionAvailable = (): boolean =>
+  safeStorage.isEncryptionAvailable();
+
+/**
  * Encrypts a secret (e.g. the OBS websocket password) using the OS
  * keychain via Electron's safeStorage, so it is not stored at rest as
  * plain text. Falls back to returning the plain text unchanged if

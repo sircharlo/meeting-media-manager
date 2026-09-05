@@ -27,13 +27,19 @@ vi.mock('node:fs/promises', () => ({
 }));
 
 vi.mock('electron-dl-manager', () => ({
-  ElectronDownloadManager: vi.fn(() => ({
-    cancelDownload: vi.fn(),
-    download: mocks.download,
-    getDownloadData: vi.fn(),
-    pauseDownload: vi.fn(),
-    resumeDownload: vi.fn(),
-  })),
+  // A real `function` (not an arrow function) is required: downloads.ts
+  // calls `new ElectronDownloadManager()`, and an arrow-function mock
+  // implementation throws "is not a constructor" if actually invoked via
+  // `new` (see downloads.cancel-race.test.ts, which hit this).
+  ElectronDownloadManager: vi.fn(function () {
+    return {
+      cancelDownload: vi.fn(),
+      download: mocks.download,
+      getDownloadData: vi.fn(),
+      pauseDownload: vi.fn(),
+      resumeDownload: vi.fn(),
+    };
+  }),
 }));
 
 vi.mock('src-electron/main/session', () => ({

@@ -1,10 +1,79 @@
-import { pathExists } from 'fs-extra/esm';
+import { pathExists, remove } from 'fs-extra/esm';
 import { createHash } from 'node:crypto';
 import { stat } from 'node:fs/promises';
+import { getImageDimensions } from 'src-electron/main/image-size';
 import { FULL_HD } from 'src/constants/media';
 import { basename, changeExt, extname, join } from 'upath';
 
 const conversionQueue = new Map<string, Promise<string>>();
+
+/**
+ * The minimal shape this module needs from a fluent-ffmpeg command.
+ * Deliberately not the full (heavily overloaded) `FfmpegCommand` type, since
+ * `fluent-ffmpeg` is only ever loaded dynamically here (see
+ * `convertAudioToVideo`/`convertImageToVideo`) - callers cast their command
+ * to this narrower shape.
+ */
+interface RunnableFfmpegCommand {
+  kill: (signal: string) => unknown;
+  on: (event: string, listener: (...args: unknown[]) => void) => unknown;
+  save: (output: string) => unknown;
+}
+
+// Tracks in-progress ffmpeg conversions, keyed by their output path, so they
+// can be killed on app quit (see cleanupFfmpegConversions) instead of being
+// left as orphaned child processes - nothing previously kept a reference to
+// the process fluent-ffmpeg spawns internally.
+const activeFfmpegCommands = new Map<string, RunnableFfmpegCommand>();
+
+/**
+ * Runs an already-configured fluent-ffmpeg command to completion, tracking
+ * it (see activeFfmpegCommands) and, on failure, deleting whatever partial
+ * output it wrote. Without that cleanup, a failed/killed conversion can
+ * leave a truncated but non-empty file at `convertedFilePath` that
+ * `shouldUseExistingConversion` would later mistake for a valid cached
+ * conversion and serve as-is.
+ * @param command An `FfmpegCommand` with its inputs/options already set, not yet saved/run
+ * @param convertedFilePath The output path to save to
+ */
+const runFfmpegCommand = (
+  command: RunnableFfmpegCommand,
+  convertedFilePath: string,
+): Promise<void> => {
+  activeFfmpegCommands.set(convertedFilePath, command);
+
+  return new Promise<void>((resolve, reject) => {
+    command.on('end', () => {
+      activeFfmpegCommands.delete(convertedFilePath);
+      resolve();
+    });
+    command.on('error', (err) => {
+      activeFfmpegCommands.delete(convertedFilePath);
+      remove(convertedFilePath)
+        .catch(() => {
+          // Best-effort: if this also fails, the original ffmpeg error is
+          // still what matters and is reported below.
+        })
+        .finally(() => reject(err));
+    });
+    command.save(convertedFilePath);
+  });
+};
+
+/**
+ * Kills every in-progress ffmpeg conversion. Call on app quit so a spawned
+ * ffmpeg child process is never left running after the app exits.
+ */
+export const cleanupFfmpegConversions = () => {
+  for (const command of activeFfmpegCommands.values()) {
+    try {
+      command.kill('SIGKILL');
+    } catch {
+      // Best-effort: the app is quitting either way.
+    }
+  }
+  activeFfmpegCommands.clear();
+};
 
 /**
  * Sanity-checks that `ffmpegPath` actually looks like the app's own
@@ -48,13 +117,11 @@ const convertAudioToVideo = async (
   const { default: ffmpeg } = await import('fluent-ffmpeg');
   ffmpeg.setFfmpegPath(ffmpegPath);
 
-  await new Promise<void>((resolve, reject) => {
-    ffmpeg(originalFile)
-      .noVideo()
-      .save(convertedFilePath)
-      .on('end', () => resolve())
-      .on('error', (err) => reject(err));
-  });
+  const command = ffmpeg(originalFile).noVideo();
+  await runFfmpegCommand(
+    command as unknown as RunnableFfmpegCommand,
+    convertedFilePath,
+  );
 };
 
 const convertImageToVideo = async (
@@ -65,8 +132,7 @@ const convertImageToVideo = async (
   const { default: ffmpeg } = await import('fluent-ffmpeg');
   ffmpeg.setFfmpegPath(ffmpegPath);
 
-  const { imageSizeFromFile } = await import('image-size/fromFile');
-  const { height, orientation, width } = await imageSizeFromFile(originalFile);
+  const { height, orientation, width } = await getImageDimensions(originalFile);
 
   const adjustedDimensions = getAdjustedDimensions(width, height, orientation);
   const convertedDimensions = resize(
@@ -80,19 +146,18 @@ const convertImageToVideo = async (
     throw new Error('Could not determine dimensions of image.');
   }
 
-  await new Promise<void>((resolve, reject) => {
-    ffmpeg(originalFile)
-      .inputOptions('-loop 1')
-      .inputFormat('image2')
-      .videoCodec('libx264')
-      .size(`${convertedDimensions.width}x${convertedDimensions.height}`)
-      .loop(5)
-      .outputOptions('-pix_fmt', 'yuv420p')
-      .outputOptions('-r', '30')
-      .save(convertedFilePath)
-      .on('end', () => resolve())
-      .on('error', (err) => reject(err));
-  });
+  const command = ffmpeg(originalFile)
+    .inputOptions('-loop 1')
+    .inputFormat('image2')
+    .videoCodec('libx264')
+    .size(`${convertedDimensions.width}x${convertedDimensions.height}`)
+    .loop(5)
+    .outputOptions('-pix_fmt', 'yuv420p')
+    .outputOptions('-r', '30');
+  await runFfmpegCommand(
+    command as unknown as RunnableFfmpegCommand,
+    convertedFilePath,
+  );
 };
 
 const getAdjustedDimensions = (

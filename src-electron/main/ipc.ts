@@ -59,7 +59,11 @@ import {
 import { convertHeic } from 'src-electron/main/heic';
 import { getOsSupportWarning } from 'src-electron/main/os-support';
 import { getAllScreens } from 'src-electron/main/screen';
-import { decryptSecret, encryptSecret } from 'src-electron/main/secrets';
+import {
+  decryptSecret,
+  encryptSecret,
+  isSecretEncryptionAvailable,
+} from 'src-electron/main/secrets';
 import { quitStatus, setElectronUrlVariables } from 'src-electron/main/session';
 import {
   registerShortcut,
@@ -129,7 +133,22 @@ function handleIpcSend(
       );
       return;
     }
-    listener(e, ...args);
+    // `listener` is fire-and-forget from ipcMain.on's perspective: an async
+    // listener's rejection (e.g. a window destroyed mid-await) would
+    // otherwise be unobserved by anything. Catch both sync throws and async
+    // rejections here once, for every handleIpcSend consumer, rather than
+    // requiring each listener to guard itself.
+    try {
+      Promise.resolve(listener(e, ...args)).catch((error: unknown) => {
+        captureElectronError(error, {
+          contexts: { fn: { channel, name: 'handleIpcSend' } },
+        });
+      });
+    } catch (error) {
+      captureElectronError(error, {
+        contexts: { fn: { channel, name: 'handleIpcSend' } },
+      });
+    }
   });
 }
 
@@ -161,6 +180,10 @@ handleIpcSendSync('encryptSecretSync', (_e, plainText: string) =>
 
 handleIpcSendSync('decryptSecretSync', (_e, cipherText: string) =>
   decryptSecret(cipherText),
+);
+
+handleIpcSendSync('isSecretEncryptionAvailableSync', () =>
+  isSecretEncryptionAvailable(),
 );
 
 handleIpcSend(

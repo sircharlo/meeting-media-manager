@@ -333,6 +333,17 @@
                           <span v-else>{{ part.text }}</span>
                         </template>
                       </q-item-label>
+                      <q-item-label
+                        v-if="
+                          settingId === 'obsPassword' &&
+                          !isSecretEncryptionAvailable
+                        "
+                        caption
+                        class="text-warning"
+                      >
+                        <q-icon name="mmm-warning" size="xs" />
+                        {{ t('obs-password-not-encrypted-warning') }}
+                      </q-item-label>
                     </q-item-section>
                     <q-item-section
                       side
@@ -432,6 +443,14 @@ const { t } = useI18n();
 useMeta({ title: t('settings') });
 
 const $q = useQuasar();
+
+// SEC-5 (full-audit-2026-09-04.md): a fixed, OS-level capability that can't
+// change during the app's lifetime, so a plain constant (not a ref) is
+// enough - used to warn next to the obsPassword field below when it's
+// false, since the password is then stored as plain text rather than
+// OS-keychain-encrypted, with no other indication of that to the user.
+const isSecretEncryptionAvailable =
+  globalThis.electronApi.isSecretEncryptionAvailableSync();
 
 const showCongregationLookup = ref(false);
 const settingsFilter = ref<null | string | undefined>('');

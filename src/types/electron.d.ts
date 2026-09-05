@@ -182,6 +182,13 @@ export interface ElectronApi {
   isDev: boolean;
   isDownloadComplete: (downloadId: string) => Promise<boolean | null>;
   isDownloadErrorExpected: () => Promise<boolean>;
+  /**
+   * Whether {@link encryptSecretSync} can actually encrypt (the OS
+   * keychain/secret-service is available). When `false`, secrets like the
+   * OBS password are stored as plain text - the renderer should warn the
+   * user rather than silently accepting that.
+   */
+  isSecretEncryptionAvailableSync: () => boolean;
   isUsablePath: (path: string) => Promise<boolean>;
   join: typeof join;
   moveMediaWindow: (
@@ -509,7 +516,8 @@ export type ElectronIpcSendKey =
   | 'zoomWebsiteWindow';
 
 // ipcMain.on with event.returnValue / ipcRenderer.sendSync channels
-export type ElectronIpcSendSyncKey = 'decryptSecretSync' | 'encryptSecretSync';
+export type ElectronIpcSendSyncKey =
+  'decryptSecretSync' | 'encryptSecretSync' | 'isSecretEncryptionAvailableSync';
 
 export type ExternalWebsite = 'docs' | 'latestRelease' | 'repo';
 
