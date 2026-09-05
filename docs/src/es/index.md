@@ -3,51 +3,51 @@
 layout: home
 
 hero:
-  name: 'M³ Documentation'
-  text: 'Complete guide to setting up and using Meeting Media Manager'
+  name: 'Documentación de M³'
+  text: 'Guía completa para la configuración y el uso de Meeting Media Manager'
   image: /logo.svg
   actions:
     - theme: brand
-      text: Download
+      text: Descargar
       link: /es/download
     - theme: brand
       text: Acerca de
       link: /es/about
     - theme: brand
-      text: User Guide
+      text: Guía del usuario
       link: /es/user-guide
     - theme: brand
-      text: Settings Guide
+      text: Guía de configuración
       link: /es/settings-guide
     - theme: brand
-      text: Preguntas Frecuentes
+      text: Preguntas frecuentes
       link: /es/faq
 features:
   - icon: 🚀
-    title: Automatic Media Management
-    details: Automatically downloads and organizes pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
+    title: Administración automática de archivos multimedia
+    details: Descarga y organiza de forma automática las imágenes y los videos para las reuniones de la congregación en cualquier idioma disponible en el sitio web oficial de los testigos de Jehová.
   - icon: 🎦
-    title: Media Presentation
-    details: Present media with ease during hybrid or in-person meetings with advanced controls, zoom/pan capabilities, and custom timing options.
+    title: Presentación multimedia
+    details: Presenta archivos multimedia con facilidad durante las reuniones híbridas o presenciales con controles avanzados, capacidades de acercamiento/desplazamiento y opciones de tiempo personalizadas.
   - icon: 🎵
-    title: Background Music System
-    details: Intelligent background music that automatically stops before meetings start and can be restarted with one click after meetings.
+    title: Sistema de música de fondo
+    details: Música de fondo inteligente que se detiene de forma automática antes de que empiecen las reuniones y que puedes reiniciar con un clic después de las reuniones.
   - icon: 🖥️
-    title: Multi-Monitor Support
-    details: Automatically detects and manages external monitors for seamless media presentations and website sharing.
+    title: Compatibilidad con varios monitores
+    details: Detecta y administra automáticamente los monitores externos para que puedas presentar los archivos multimedia y compartir sitios web sin problemas.
   - icon: 🌐
-    title: Multi-Language Support
-    details: Descargue multimedia para la reunión en cientos de idiomas y utilice la interfaz de M3³en cualquiera de los muchos idiomas disponibles.
+    title: Compatibilidad con varios idiomas
+    details: Descarga archivos multimedia para la reunión en cientos de idiomas y usa la interfaz de M³ en cualquiera de los muchos idiomas disponibles.
   - icon: 🧩
     title: Integraciones
-    details: Seamlessly integrates with Zoom or OBS Studio for enhanced media management and playback during meetings.
+    details: Se integra sin problemas con Zoom o con OBS Studio para una mejor administración de archivos multimedia y su reproducción durante las reuniones.
   - icon: 📁
-    title: Folder Monitoring
-    details: Automatically sync media from watched folders (like Dropbox or OneDrive) and export media to folders.
+    title: Supervisión de carpetas
+    details: Sincroniza automáticamente los archivos multimedia desde las carpetas vigiladas (como Dropbox o OneDrive) y los exporta a las carpetas.
   - icon: 🎯
-    title: Advanced Features
-    details: Import custom media, JWPUB files, playlists, audio Bible recordings, Study Bible media, public talk media, and manage multiple congregations.
+    title: Características avanzadas
+    details: Importa archivos multimedia personalizados, archivos JWPUB, listas de reproducción, grabaciones en audio de la Biblia, archivos multimedia de la Biblia de estudio, archivos multimedia para discursos públicos y administra múltiples congregaciones.
   - icon: ⏱️
-    title: Meeting Timer and Recording Controls
-    details: Use an optional timer display for participant timing and control OBS or external recording apps from M³.
+    title: Cronómetro de la reunión y controles de grabación
+    details: Usa una pantalla de cronómetro opcional para controlar el tiempo del participante y para controlar OBS o aplicaciones de grabación externas desde M³.
 ---
