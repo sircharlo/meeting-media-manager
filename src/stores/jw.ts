@@ -55,6 +55,19 @@ const oldDate = new Date(0);
 // single synchronous localStorage write instead of one per mutation. The
 // write is flushed on window close so a clean shutdown never loses the last
 // mutation.
+//
+// FE-10 (full-audit-2026-09-04.md): a forced-quit/OS-shutdown/main-process
+// crash can skip both `beforeunload` and `pagehide`, discarding up to
+// JW_STORE_PERSIST_DEBOUNCE_MS of the latest mutation - accepted
+// intentionally, not overlooked. An Electron `before-quit`/`will-quit`
+// main-process hook can't close this gap either: those are graceful-exit
+// hooks too, and don't fire for the exact scenarios this risk describes
+// (a force-kill, OS shutdown, or crash bypasses them the same way it
+// bypasses the DOM events above). The only way to fully close this window
+// is a synchronous write on every mutation, which is the performance
+// problem this debounce exists to solve. Impact is bounded to re-fetchable
+// JW.org cache data (meeting schedule, songs, yeartexts), not irreplaceable
+// user input, so the tradeoff is accepted as-is.
 const JW_STORE_PERSIST_DEBOUNCE_MS = 500;
 const jwStoreStorage = createDebouncedStorage(
   window.localStorage,

@@ -46,6 +46,16 @@ const shortcutCallbacks: Partial<Record<keyof SettingsValues, () => void>> = {
   },
 };
 
+// FE-11 (full-audit-2026-09-04.md): byte-identical to executeLocalShortcut
+// below - verified this is the intentional split, not leftover duplication.
+// This one is called from MainLayout.vue in response to a *global*
+// Electron `globalShortcut` event (fires regardless of which window/page
+// has focus); executeLocalShortcut is called directly from in-page keydown
+// handlers (e.g. MediaCalendarPage.vue's arrow-key media navigation) that
+// only fire while that page is focused. Kept separate (rather than
+// collapsed to one function) specifically so global vs. local shortcut
+// handling can diverge later without first having to split a merged
+// function - if that divergence never happens, revisit collapsing them.
 export const executeShortcut = (shortcutName: keyof SettingsValues) => {
   // Don't execute shortcuts if any dialog is open
   if (isAnyDialogOpen()) {
@@ -70,6 +80,9 @@ export const executeShortcut = (shortcutName: keyof SettingsValues) => {
     });
 };
 
+// See executeShortcut's comment above - called from in-page keydown
+// handlers (local to the focused page), as opposed to a global
+// Electron `globalShortcut` event.
 export const executeLocalShortcut = (shortcutName: keyof SettingsValues) => {
   // Don't execute shortcuts if any dialog is open
   if (isAnyDialogOpen()) {
