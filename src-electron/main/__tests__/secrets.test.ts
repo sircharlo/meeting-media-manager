@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const isEncryptionAvailableMock = vi.fn();
 const encryptStringMock = vi.fn();
 const decryptStringMock = vi.fn();
+const addElectronBreadcrumbMock = vi.fn();
 
 vi.mock('electron', () => ({
   safeStorage: {
@@ -12,9 +13,17 @@ vi.mock('electron', () => ({
   },
 }));
 
+vi.mock('src-electron/main/utils', () => ({
+  addElectronBreadcrumb: addElectronBreadcrumbMock,
+}));
+
 describe('encryptSecret', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // hasReportedMissingSecretEncryption is a module-level, one-time-per-
+    // session latch by design (SEC-5) - reset the module so each test's
+    // "unavailable" case starts from a clean, unreported state.
+    vi.resetModules();
   });
 
   it('returns an empty string for an empty input', async () => {
@@ -29,6 +38,33 @@ describe('encryptSecret', () => {
 
     expect(encryptSecret('hunter2')).toBe('hunter2');
     expect(encryptStringMock).not.toHaveBeenCalled();
+  });
+
+  // SEC-5 (full-audit-2026-09-04.md)
+  it('adds a breadcrumb only once per session when encryption is unavailable', async () => {
+    isEncryptionAvailableMock.mockReturnValue(false);
+    const { encryptSecret } = await import('../secrets');
+
+    encryptSecret('hunter2');
+    encryptSecret('hunter3');
+
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledTimes(1);
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: 'secrets',
+        message: 'secret-encryption-unavailable',
+      }),
+    );
+  });
+
+  it('does not add a breadcrumb when encryption is available', async () => {
+    isEncryptionAvailableMock.mockReturnValue(true);
+    encryptStringMock.mockReturnValue(Buffer.from('cipher-bytes'));
+    const { encryptSecret } = await import('../secrets');
+
+    encryptSecret('hunter2');
+
+    expect(addElectronBreadcrumbMock).not.toHaveBeenCalled();
   });
 
   it('returns a prefixed, base64-encoded value when encryption succeeds', async () => {

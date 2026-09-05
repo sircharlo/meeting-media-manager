@@ -1,8 +1,15 @@
 import { safeStorage } from 'electron';
+import { addElectronBreadcrumb } from 'src-electron/main/utils';
 
 // Bumping this prefix would let a future format change tell old and new
 // values apart; keep it stable otherwise.
 const ENCRYPTED_PREFIX = 'enc:v1:';
+
+// SEC-5 (full-audit-2026-09-04.md): a one-time (per app session, not per
+// call) breadcrumb when a secret is actually written to disk as plain text,
+// so real-world prevalence of this fallback is visible in Sentry without
+// ever logging the secret itself.
+let hasReportedMissingSecretEncryption = false;
 
 /**
  * Whether {@link encryptSecret} can actually encrypt on this machine. `false`
@@ -21,14 +28,26 @@ export const isSecretEncryptionAvailable = (): boolean =>
  * keychain via Electron's safeStorage, so it is not stored at rest as
  * plain text. Falls back to returning the plain text unchanged if
  * encryption isn't available on this platform, matching Electron's own
- * guidance for safeStorage.
+ * guidance for safeStorage - the first time this happens in a session, it
+ * also adds a Sentry breadcrumb (never the secret itself) to gauge how
+ * often real users hit this fallback.
  * @param plainText The secret to encrypt
  * @returns The encrypted, prefixed value, or the original text if
  * encryption isn't available
  */
 export const encryptSecret = (plainText: string): string => {
   if (!plainText) return '';
-  if (!safeStorage.isEncryptionAvailable()) return plainText;
+  if (!safeStorage.isEncryptionAvailable()) {
+    if (!hasReportedMissingSecretEncryption) {
+      hasReportedMissingSecretEncryption = true;
+      addElectronBreadcrumb({
+        category: 'secrets',
+        level: 'warning',
+        message: 'secret-encryption-unavailable',
+      });
+    }
+    return plainText;
+  }
 
   try {
     const encrypted = safeStorage.encryptString(plainText);
