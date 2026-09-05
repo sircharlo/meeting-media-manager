@@ -1,436 +1,436 @@
-# User Guide {#user-guide}
+# Guía del usuario {#user-guide}
 
-This comprehensive user guide will help you master all the features of M³, from basic setup to advanced media presentation techniques.
+Esta completa guía del usuario te ayudará a dominar todas las características de M³, desde la configuración básica hasta las técnicas avanzadas de presentación multimedia.
 
-## Getting Started {#getting-started}
+## Para empezar {#getting-started}
 
-### Download and Install {#download-and-install}
+### Descargar e instalar {#download-and-install}
 
-Get the latest version from the [Download page](download). It recommends the best build for your device and shows the latest version.
+Consigue la última versión en la [Página de descarga](download). Te recomienda la mejor versión para tu dispositivo y muestra la versión más reciente.
 
-### First Launch {#first-launch}
+### Primer inicio {#first-launch}
 
-When you first launch M³, you'll be guided through a setup wizard that will configure the essential settings for your congregation:
+Cuando inicies M³ por primera vez, un asistente de configuración te guiará para que configures los ajustes esenciales para tu congregación:
 
-1. **Choose your interface language** - This determines what language M³'s menus and buttons will be displayed in
-2. **Select profile type** - Choose "Regular" for normal congregation use or "Other" for special events
-3. **Configure congregation information** - Enter your congregation details or use the automatic lookup feature
-4. **Set up meeting schedule** - Configure your midweek and weekend meeting times
-5. **Optional features** - Configure OBS integration, background music, and other advanced features
+1. **Elige el idioma de la interfaz** - Esto determina en qué idioma se mostrarán los menús y botones de M³
+2. **Selecciona el tipo de perfil** - Elige "Regular" para el uso normal de la congregación u "Otro" para eventos especiales
+3. **Configura la información de la congregación** - Introduce los datos de tu congregación o usa la característica de búsqueda automática
+4. **Configura el programa de reuniones** - Configura los horarios de tu reunión de entre semana y tu reunión del fin de semana
+5. **Características opcionales** - Configura la integración con OBS, la música de fondo y otras características avanzadas
 
 :::tip Consejo
 
-Take your time during setup - but you can always change these settings later in the Settings menu.
+Tómate tu tiempo durante la configuración, aunque siempre puedes cambiar estos ajustes más adelante en el menú de Ajustes.
 
 :::
 
-### Main Interface Overview {#main-interface}
+### Descripción de la interfaz principal {#main-interface}
 
-The main M³ interface consists of several key areas:
+La interfaz principal de M³ consta de varias áreas clave:
 
-- **Navigation Drawer** - Access different sections and settings
-- **Calendar View** - Browse media by date
-- **Media List** - View and manage media for selected dates
-- **Toolbar** - Quick access to common functions
-- **Status Bar** - Shows download progress, and background music and OBS Studio connection status
+- **Panel de navegación** - Accede a diferentes secciones y ajustes
+- **Vista de calendario** - Explora el contenido multimedia por fecha
+- **Lista multimedia** - Ve y administra el contenido multimedia de las fechas seleccionadas
+- **Barra de herramientas** - Acceso rápido a funciones comunes
+- **Barra de estado** - Muestra el progreso de las descargas, la música de fondo y el estado de la conexión con OBS Studio
 
-## Media Management {#user-guide-media-management}
+## Administración multimedia {#user-guide-media-management}
 
-### Understanding the Calendar View {#calendar-view}
+### Entiende la vista de calendario {#calendar-view}
 
-The calendar view shows your meeting schedule and available media:
+La vista de calendario muestra tu programa de reuniones y el contenido multimedia disponible:
 
-- **Meeting Days** - Highlighted days show when meetings are scheduled
-- **Media Indicators** - Icons show what types of media are available
-- **Date Navigation** - Use arrow keys to navigate between months
+- **Días de reunión** - Los días resaltados muestran cuándo hay reuniones programadas
+- **Indicadores multimedia** - Los iconos muestran qué tipos de contenido multimedia están disponibles
+- **Navegación por fechas** - Usa las teclas de flecha para navegar entre meses
 
-### Organizing Media {#organizing-media}
+### Organización del contenido multimedia {#organizing-media}
 
-M³ automatically organizes media by meeting type and section:
+M³ organiza automáticamente el contenido multimedia según el tipo y sección de reunión:
 
-- **Meeting Sections** - Media is grouped by meeting parts (Public Talk, Treasures from God's Word, etc.)
-- **Custom Sections** - You can create custom sections for additional media if no meeting is scheduled on that particular day
-- **Manual Sorting** - Drag media items into the order you need, or reset the order when needed
-- **Repeated Playback** - Loop a single media item or repeat every item in a section until playback is stopped manually
+- **Secciones de la reunión** - El contenido multimedia se agrupa por las secciones de la reunión (Discurso público, Tesoros de la Palabra de Dios, etc.)
+- **Secciones personalizadas** - Puedes crear secciones personalizadas para añadir contenido multimedia extra si no hay ninguna reunión programada ese día
+- **Orden manual** - Arrastra los elementos multimedia para ponerlos en el orden que necesites, o restablece el orden cuando haga falta
+- **Reproducción repetida** - Pon un solo elemento en bucle o repite todos los elementos de una sección hasta que detengas la reproducción manualmente
 
-### Hidden and Missing Media {#hidden-and-missing-media}
+### Contenido multimedia oculto y faltante {#hidden-and-missing-media}
 
-Media can be hidden from the meeting list without deleting the automatically downloaded files. If media is hidden by mistake, use **Show hidden media** for the selected day.
+El contenido multimedia puede ocultarse de la lista de la reunión sin eliminar los archivos descargados automáticamente. Si ocultaste algún contenido multimedia por error, usa **Mostrar multimedia oculta** en el día seleccionado.
 
-If M³ reports missing media, first check whether the item is expected to become available closer to the meeting date. You can also add the missing item manually with the **Add media** menu or by dragging it into the media list.
+Si M³ te avisa que falta contenido multimedia, comprueba primero si se espera que el elemento esté disponible cuando se acerque la fecha de la reunión. También puedes añadir manualmente el elemento que falta con el menú **Añadir multimedia** o arrastrándolo a la lista multimedia.
 
-## Media Presentation {#media-presentation}
+## Presentación multimedia {#media-presentation}
 
-### Opening the Media Player {#opening-media-player}
+### Abrir el reproductor multimedia {#opening-media-player}
 
-To present media during a meeting:
+Para presentar contenido multimedia durante una reunión:
 
-1. Select the date and media item you want to present
-2. Click the play button or use the keyboard shortcut
-3. The media will start playing on the media display
-4. Use the controls to play, pause, or navigate through media
+1. Selecciona la fecha y el elemento multimedia que quieres presentar
+2. Haz clic en el botón de reproducción o usa el atajo de teclado
+3. El contenido multimedia empezará a reproducirse en la pantalla multimedia
+4. Usa los controles para reproducir, pausar o navegar por el contenido multimedia
 
-### Media Player Controls {#media-player-controls}
+### Controles del reproductor multimedia {#media-player-controls}
 
-The media player provides comprehensive controls:
+El reproductor multimedia ofrece controles completos:
 
-- **Play/Pause** - Start or pause media playback
-- **Stop** - Stop playback
+- **Reproducir/Pausar** - Inicia o pausa la reproducción multimedia
+- **Detener** - Detiene la reproducción
 
 <!-- - **Previous/Next** - Navigate between media items
 - **Volume** - Adjust playback volume -->
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **Zoom/Pan** - Use mouse wheel to zoom, drag to pan (for images)
-- **Live Preview** - When enabled, show a preview of the audience media window in the main app
-- **Playback Speed** - When enabled in settings, adjust audio and video speed from the media item context menu
+- **Zoom/Desplazar** - Usa la rueda del ratón para hacer zoom, haz clic y arrastra para desplazar (en imágenes)
+- **Vista previa en vivo** - Cuando está habilitado, muestra una vista previa de la ventana multimedia del auditorio en la aplicación principal
+- **Velocidad de reproducción** - Cuando está habilitado en los ajustes, ajusta la velocidad de audio y video desde el menú contextual del elemento multimedia
 
-### Advanced Presentation Features {#advanced-presentation}
+### Características avanzadas de presentación {#advanced-presentation}
 
-#### Custom Timing {#custom-timing}
+#### Tiempos personalizados {#custom-timing}
 
-Set custom start and end times for media:
+Pon tiempos de inicio y final personalizados para el contenido multimedia:
 
 <!-- 1. Right-click on a media item
 2. Select "Edit Timing" -->
 
-1. Click on the duration of a video on the top left of its thumbnail
-2. Set start and end times
-3. Save your changes
+1. Haz clic en la duración de un video en la parte superior izquierda de su miniatura
+2. Establece los tiempos de inicio y final
+3. Guarda los cambios
 
-#### Zoom and Pan {#zoom-pan}
+#### Zoom y desplazamiento {#zoom-pan}
 
-For images and videos:
+Para imágenes y videos:
 
-- **Zoom In/Out** - Use mouse wheel or zoom controls on the thumbnail
-- **Pan** - Click and drag the thumbnail to move the image around
-- **Reset Zoom** - Click to return to original zoom
+- **Acercar/Alejar** - Usa la rueda del ratón o los controles de zoom en la miniatura
+- **Desplazar** - Haz clic y arrastra la miniatura para mover la imagen
+- **Restablecer zoom** - Haz clic para volver al zoom original
 
-#### Keyboard Shortcuts {#user-guide-keyboard-shortcuts}
+#### Atajos de teclado {#user-guide-keyboard-shortcuts}
 
-Configure custom keyboard shortcuts for quick access. Note that no keyboard shortcuts are set by default.
+Configura atajos de teclado personalizados para un acceso rápido. Ten en cuenta que no hay atajos de teclado configurados por defecto.
 
-**Built-in Media Controls** (when main window is focused and showing the media list):
+**Controles multimedia integrados** (cuando la ventana principal está enfocada y mostrando la lista multimedia):
 
-- **Tab/Shift+Tab** - Navigate between media items
-- **Up/Down Arrow** - Navigate between media items
-- **Space** - Play/Pause media
-- **Escape** - Stop media
+- **Tab/Mayús+Tab** - Navega entre los elementos multimedia
+- **Flecha arriba/abajo** - Navega entre los elementos multimedia
+- **Espacio** - Reproducir/Pausar contenido multimedia
+- **Escape** - Detener contenido multimedia
 
-**Customizable Shortcuts** (when enabled in settings):
+**Atajos personalizables** (cuando están habilitados en los ajustes):
 
-- **Media Window** - Open/close media window
-- **Previous/Next Media** - Navigate between media items
-- **Pause/Resume** - Control media playback
-- **Stop Media** - Stop media playback
-- **Music Toggle** - Control background music
+- **Ventana multimedia** - Abrir/cerrar ventana multimedia
+- **Multimedia anterior/siguiente** - Navega entre los elementos multimedia
+- **Pausar/Reanudar** - Controla la reproducción multimedia
+- **Detener multimedia** - Detiene la reproducción multimedia
+- **Activar/Desactivar música** - Controla la música de fondo
 
-**Note (\*):** Global shortcut - available even when the app is not focused
+**Nota (\*):** Atajo global - disponible incluso cuando la aplicación no está enfocada
 
-## Display Tools {#display-tools}
+## Herramientas de pantalla {#display-tools}
 
-### Media Display Window {#media-display-window}
+### Ventana de pantalla multimedia {#media-display-window}
 
-The media display window is the audience-facing window. It can be placed on an external screen or used in a windowed setup depending on your equipment.
+La ventana de pantalla multimedia es la ventana que ve el auditorio. Puede colocarse en una pantalla externa o usarse en modo ventana dependiendo de tu equipo.
 
-Use the display popup to:
+Usa el menú emergente de pantalla para:
 
-- Show or hide the media display
-- Choose the display or window type
-- Select a temporary custom background instead of the yeartext
-- Use an available camera as the background. This is mostly used in sign-language congregations.
+- Mostrar u ocultar la pantalla multimedia
+- Elegir el tipo de pantalla o ventana
+- Seleccionar un fondo personalizado temporal en lugar del texto del año
+- Usar una cámara disponible como fondo. Esto se usa sobre todo en congregaciones de lenguaje de señas.
 
-Please note that custom backgrounds are temporary and are not saved after M³ quits.
+Ten en cuenta que los fondos personalizados son temporales y no se guardan después de salir de M³.
 
-### Meeting Timer {#user-guide-meeting-timer}
+### Cronómetro de la reunión {#user-guide-meeting-timer}
 
-When the meeting timer is enabled, M³ can show a separate timer window for timing participant parts. The timer can count up or down, show the current time, show a meeting countdown before scheduled meetings, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+Cuando el cronómetro de la reunión está habilitado, M³ puede mostrar una ventana de cronómetro separada para medir el tiempo de las partes de los participantes. El cronómetro puede contar hacia adelante o hacia atrás, mostrar la hora actual, mostrar una cuenta regresiva antes de las reuniones del programa, y opcionalmente indicar el tiempo extra o si la reunión va adelantada o atrasada según el programa.
 
-The timer is a beta feature and should only be used when approved locally.
+El cronómetro es una característica en fase beta y solo se debe usar cuando se apruebe localmente.
 
-## Background Music {#user-guide-background-music}
+## Música de fondo {#user-guide-background-music}
 
-### Setting Up Background Music {#background-music-setup}
+### Configuración de la música de fondo {#background-music-setup}
 
-Background music automatically plays before meetings and stops at the appropriate time:
+La música de fondo se reproduce automáticamente antes de las reuniones y se detiene en el momento adecuado:
 
-1. **Enable Music** - Turn on background music in settings
-2. **Auto-Start** - Music will start automatically when M³ launches, if appropriate
-3. **Meeting Stop** - Music stops automatically before meeting start time
-4. **Manual Control** - Use the music button in the status bar to start/stop manually
-5. **Restart** - Resume music after meetings with one click
+1. **Activar música** - Enciende la música de fondo en los ajustes
+2. **Inicio automático** - La música empezará automáticamente al abrir M³, si corresponde
+3. **Detener en reunión** - La música se detiene automáticamente antes de la hora de inicio de la reunión
+4. **Control manual** - Usa el botón de música en la barra de estado para iniciar/detener manualmente
+5. **Reiniciar** - Reanuda la música después de las reuniones con un clic
 
-## Zoom Integration {#user-guide-zoom-integration}
+## Integración con Zoom {#user-guide-zoom-integration}
 
-M³ can integrate with Zoom for automatic screen sharing:
+M³ puede integrarse con Zoom para compartir pantalla automáticamente:
 
-1. **Enable Integration** - Turn on Zoom integration in settings
-2. **Configure Shortcut** - Set up the screen sharing keyboard shortcut that is configured in Zoom. Make sure that the "global" checkbox is checked in Zoom.
-3. **Automatic Control** - M³ will automatically toggle screen sharing in Zoom as needed
-4. **Manual Override** - You can still manually control screen sharing using Zoom if needed
+1. **Habilitar integración** - Activa la integración con Zoom en los ajustes
+2. **Configurar atajo** - Configura el atajo de teclado para compartir pantalla que tienes configurado en Zoom. Asegúrate de que la casilla "global" esté marcada en Zoom.
+3. **Control automático** - M³ activará o desactivará automáticamente el uso compartido de pantalla en Zoom según se necesite
+4. **Control manual** - Aún puedes controlar manualmente la opción de compartir pantalla desde Zoom si lo necesitas
 
-## OBS Studio Integration {#user-guide-obs-integration}
+## Integración con OBS Studio {#user-guide-obs-integration}
 
-### Setting Up OBS Integration {#user-guide-obs-setup}
+### Configuración de la integración con OBS {#user-guide-obs-setup}
 
-To use M³ with OBS Studio for hybrid meetings:
+Para usar M³ con OBS Studio en reuniones híbridas:
 
-1. **Install OBS Studio** - Download and install OBS Studio
-2. **Enable WebSocket** - Install the WebSocket plugin in OBS
-3. **Configure M³** - Enter OBS port and password in M³ settings
-4. **Set Up Scenes** - Create scenes for camera, media, and other content
-5. **Test** - Verify playback works properly
+1. **Instalar OBS Studio** - Descarga e instala OBS Studio
+2. **Habilitar WebSocket** - Instala el plugin de WebSocket en OBS
+3. **Configurar M³** - Introduce el puerto y la contraseña de OBS en los ajustes de M³
+4. **Configurar escenas** - Crea escenas para la cámara, multimedia y otros contenidos
+5. **Probar** - Comprueba que la reproducción funciona correctamente
 
-### OBS Scene Management {#obs-scene-management}
+### Gestión de escenas de OBS {#obs-scene-management}
 
-M³ automatically switches OBS scenes during presentations:
+M³ cambia automáticamente las escenas de OBS durante las presentaciones:
 
-- **Camera Scene** - Shows the lectern/camera view
-- **Media Scene** - Displays media content
-- **Image Scene** - Shows images (can be postponed if enabled)
-- **Automatic Switching** - Scenes change based on media type and settings
-- **Recording Controls** - If enabled, M³ can start and stop OBS recording from the OBS popup
+- **Escena de cámara** - Muestra la vista del atril/cámara
+- **Escena multimedia** - Muestra el contenido multimedia
+- **Escena de imagen** - Muestra imágenes (se puede posponer si se habilita)
+- **Cambio automático** - Las escenas cambian según el tipo de multimedia y los ajustes
+- **Controles de grabación** - Si está habilitado, M³ puede iniciar y detener la grabación en OBS desde la ventana emergente de OBS
 
-### Advanced OBS Features {#advanced-obs}
+### Características avanzadas de OBS {#advanced-obs}
 
-#### Postpone Images {#user-guide-postpone-images}
+#### Posponer imágenes {#user-guide-postpone-images}
 
-Enable this option to delay sharing images to OBS until manually triggered:
+Habilita esta opción para retrasar la compartición de imágenes a OBS hasta que se active manualmente:
 
-1. Enable "Postpone Images" in OBS settings
-2. Images will only be shared when you click the button to show them using OBS Studio. This is useful for showing images to in-person audience first.
+1. Habilita "Posponer imágenes" en los ajustes de OBS
+2. Las imágenes solo se compartirán cuando hagas clic en el botón para mostrarlas mediante OBS Studio. Esto es útil para mostrar las imágenes primero al auditorio presencial.
 
-#### Scene Switching Behavior {#user-guide-scene-switching}
+#### Comportamiento del cambio de escena {#user-guide-scene-switching}
 
-Configure how M³ handles scene changes:
+Configura cómo M³ maneja los cambios de escena:
 
-- **Switch After Media** - Automatically return to previous scene
-- **Remember Previous Scene** - Restore the scene that was active before media
+- **Cambiar después de multimedia** - Vuelve automáticamente a la escena anterior
+- **Recordar escena anterior** - Restaura la escena que estaba activa antes del multimedia
 
-### Audio Configuration for Hybrid Meetings {#audio-configuration}
+### Configuración de audio para reuniones híbridas {#audio-configuration}
 
-When using M³ with OBS Studio for hybrid meetings (in-person + Zoom), you need to configure audio settings to ensure meeting participants can hear the media:
+Cuando uses M³ con OBS Studio para reuniones híbridas (presenciales y Zoom), necesitas configurar los ajustes de audio para asegurarte de que los asistentes a la reunión puedan escuchar el contenido multimedia:
 
-#### Zoom Audio Settings {#zoom-audio-settings}
+#### Ajustes de audio de Zoom {#zoom-audio-settings}
 
-**Before every meeting, you must enable Original Audio in Zoom:**
+**Antes de cada reunión, debes habilitar Sonido original en Zoom:**
 
-1. **Open Zoom** and go to Settings
-2. **Navigate to Audio** → **Advanced**
-3. **Enable "Show in-meeting option to 'Enable Original Sound'"**
-4. **Check "Disable echo cancellation"** (first checkbox)
-5. **Check "Disable noise suppression"** (second checkbox)
-6. **Uncheck "Disable high-fidelity music mode"** (third checkbox)
-7. **Before starting each meeting**, click the "Original Audio" button in the meeting controls
+1. **Abre Zoom** y ve a Configuración
+2. **Ve a Audio** → **Avanzado**
+3. **Activa "Mostrar opción en la reunión para 'Habilitar sonido original'"**
+4. **Marca "Desactivar cancelación de eco"** (primera casilla)
+5. **Marca "Desactivar supresión de ruido"** (segunda casilla)
+6. **Desmarca "Desactivar modo de música de alta fidelidad"** (tercera casilla)
+7. **Antes de iniciar cada reunión**, haz clic en el botón "Sonido original" en los controles de la reunión
 
-**Alternative: Share Computer Sound**
-If Original Audio doesn't work well in your setup:
+**Alternativa: Compartir sonido de la computadora**
+Si el Sonido original no funciona bien en tu configuración:
 
-1. **Before playing media**, go to **Advanced** tab in Zoom screen sharing options
-2. **Check "Share computer sound"**
-3. **Note**: This option must be enabled every time you start a new Zoom session
+1. **Antes de reproducir multimedia**, ve a la pestaña **Avanzado** en las opciones para compartir pantalla de Zoom
+2. **Marca "Compartir sonido de la computadora"**
+3. **Nota**: Esta opción debe habilitarse cada vez que inicies una nueva sesión de Zoom
 
-**Best Alternative**: Consider using M³'s Zoom integration instead of OBS Studio, as it uses Zoom's native screen sharing which handles audio more seamlessly and doesn't require complex audio configuration.
+**La mejor alternativa**: Considera usar la integración con Zoom de M³ en lugar de OBS Studio, ya que utiliza la función nativa de compartir pantalla de Zoom, la cual maneja el audio de manera más fluida y no requiere una configuración de audio compleja.
 
-#### Why Audio Configuration is Necessary {#why-audio-config}
+#### Por qué es necesaria la configuración de audio {#why-audio-config}
 
-M³ plays media with sound on your computer, but this audio is **not automatically transmitted** through the video stream to OBS Studio. This is the same behavior you would experience with any other media player.
+M³ reproduce el multimedia con sonido en tu computadora, pero este audio **no se transmite automáticamente** a través del flujo de video hacia OBS Studio. Este es el mismo comportamiento que experimentarías con cualquier otro reproductor multimedia.
 
-**The audio issue is not related to M³** - it's a limitation of how OBS Studio video streaming works with Zoom. The video stream acts like a virtual camera without sound, just like a webcam, so you must explicitly configure Zoom to capture the computer's audio. This implies that your computer has two sound cards, and if this isn't the case, you probably won't be able to use the OBS Studio integration successfully.
+**El problema de audio no está relacionado con M³** - es una limitación de cómo funciona el flujo de video de OBS Studio con Zoom. El flujo de video actúa como una cámara virtual sin sonido, al igual que una cámara web, por lo que debes configurar Zoom explícitamente para que capture el audio de la computadora. Esto implica que tu computadora tiene dos tarjetas de sonido, y si no es el caso, probablemente no podrás usar la integración con OBS Studio de manera exitosa.
 
-**Alternative Solution**: Consider using the Zoom integration instead, as it uses Zoom's native screen and audio sharing, which handles audio more seamlessly.
+**Solución alternativa**: Considera usar la integración con Zoom en su lugar, ya que utiliza la función nativa de compartir pantalla y audio de Zoom, la cual maneja el audio de manera más fluida.
 
-#### Troubleshooting Audio Issues {#audio-troubleshooting}
+#### Solución de problemas de audio {#audio-troubleshooting}
 
-**Common Problems:**
+**Problemas comunes:**
 
-- **No audio in Zoom**: Check if Original Audio is enabled and properly configured
-- **Poor audio quality**: Verify the three Original Audio checkboxes are set correctly
-- **Audio not working after Zoom restart**: Original Audio settings must be re-enabled for each new Zoom session
+- **No hay audio en Zoom**: Comprueba si el Sonido original está habilitado y bien configurado
+- **Mala calidad de audio**: Comprueba que las tres casillas de Sonido original estén bien ajustadas
+- **El audio no funciona tras reiniciar Zoom**: Debes volver a habilitar los ajustes de Sonido original para cada nueva sesión de Zoom
 
-**Best Practices:**
+**Mejores prácticas:**
 
-- Test audio configuration and sharing before meetings
-- Create a checklist for audio setup
-- Consider using "Share Computer Sound" as a backup option
-- **Consider using Zoom integration instead of OBS Studio** for simpler audio handling
-- Ensure all AV operators are familiar with these settings
+- Prueba la configuración de audio y la compartición de pantalla antes de las reuniones
+- Crea una lista de verificación para configurar el audio
+- Considera usar "Compartir sonido de la computadora" como opción de respaldo
+- **Considera usar la integración con Zoom en lugar de OBS Studio** para un manejo de audio más sencillo
+- Asegúrate de que todos los operadores de audio y video conozcan bien estos ajustes
 
-## Media Import and Management {#media-import}
+## Importación y administración multimedia {#media-import}
 
-### Importing Custom Media {#importing-custom-media}
+### Importar multimedia personalizada {#importing-custom-media}
 
-Add your own media files to M³:
+Añade tus propios archivos multimedia a M³:
 
-1. **File Import** - Use the import button to add videos, images, or audio files
-2. **Drag and Drop** - Drag files directly into M³
-3. **Folder Monitoring** - Set up a watched folder for automatic imports
-4. **JWPUB Files and Playlists** - Import publications and playlists
-5. **Public Talk Media (S-34 / S-34mp)** - Import public talk media using S‑34 or S‑34mp JWPUB files
-6. **Videos from the official website** - Search for videos and add them to the selected date
-7. **Study Bible and sign-language Bible media** - Add images, videos, maps, historical references, or sign-language Bible videos for selected passages
+1. **Importar archivo** - Usa el botón de importación para añadir videos, imágenes o archivos de audio
+2. **Arrastrar y soltar** - Arrastra los archivos directamente a M³
+3. **Supervisión de carpetas** - Configura una carpeta vigilada para importaciones automáticas
+4. **Archivos JWPUB y Listas de reproducción** - Importa publicaciones y listas de reproducción
+5. **Multimedia para discursos públicos (S-34 / S-34mp)** - Importa contenido multimedia de discursos públicos usando archivos JWPUB S‑34 o S‑34mp
+6. **Videos del sitio web oficial** - Busca videos y añádelos a la fecha seleccionada
+7. **Multimedia de la Biblia de estudio y en lenguaje de señas** - Añade imágenes, videos, mapas, referencias históricas o videos de la Biblia en lenguaje de señas para los pasajes seleccionados
 
-### Managing Imported Media {#managing-imported-media}
+### Administración de multimedia importada {#managing-imported-media}
 
-- **Organize by Date** - Assign imported media to specific dates
-- **Custom Sections** - Create custom sections for organization
-- **Edit Properties** - Modify titles, descriptions, and timing
-- **Remove Media** - Delete unwanted media items
+- **Organizar por fecha** - Asigna la multimedia importada a fechas específicas
+- **Secciones personalizadas** - Crea secciones personalizadas para organizarte
+- **Editar propiedades** - Modifica títulos, descripciones y tiempos
+- **Quitar multimedia** - Elimina los elementos multimedia que no desees
 
-### Audio Bible Import {#audio-bible-import}
+### Importación de audio de la Biblia {#audio-bible-import}
 
-Import audio recordings of Bible verses:
+Importa las grabaciones de audio de los versículos bíblicos:
 
-1. Click the "Audio Bible" button
-2. Select the Bible book and chapter
-3. Choose specific verses or verse ranges
-4. Download the audio files
-5. Use them
+1. Haz clic en el botón "Audio de la Biblia"
+2. Selecciona el libro de la Biblia y el capítulo
+3. Elegir versículos específicos o rangos de versículos
+4. Descarga los archivos de audio
+5. Úsalos
 
-### Profile Settings Import and Export {#profile-settings-import-export}
+### Importación y exportación de ajustes de perfil {#profile-settings-import-export}
 
-Each profile's settings can be exported to a JSON file from Settings. Importing a profile settings file replaces the current profile's settings, which is useful when moving a setup to another computer or restoring a known configuration.
+Los ajustes de cada perfil se pueden exportar a un archivo JSON desde Ajustes. Importar un archivo de ajustes de perfil reemplaza los ajustes del perfil actual, lo cual es muy útil para pasar tu configuración a otra computadora o para restaurar una configuración conocida.
 
-## Folder Monitoring and Export {#user-guide-folder-monitoring}
+## Supervisión de carpetas y exportación {#user-guide-folder-monitoring}
 
-### Setting Up Folder Monitoring {#folder-monitoring-setup}
+### Configurar la supervisión de carpetas {#folder-monitoring-setup}
 
-Monitor a folder for new media files:
+Supervisa una carpeta en busca de nuevos archivos multimedia:
 
-1. **Enable Folder Watcher** - Turn on folder monitoring in settings
-2. **Select Folder** - Choose the folder to monitor
-3. **Automatic Import** - New files are automatically added to M³
-4. **Organization** - Files are organized by date based on folder structure
+1. **Habilitar vigilante de carpetas** - Activa la supervisión de carpetas en los ajustes
+2. **Seleccionar carpeta** - Elige la carpeta que quieras supervisar
+3. **Importación automática** - Los nuevos archivos se añaden automáticamente a M³
+4. **Organización** - Los archivos se organizan por fecha según la estructura de la carpeta
 
-### Media Export {#user-guide-media-export}
+### Exportación multimedia {#user-guide-media-export}
 
-Automatically export media to organized folders:
+Exporta el contenido multimedia automáticamente a carpetas organizadas:
 
-1. **Enable Auto-Export** - Turn on media export in settings
-2. **Select Export Folder** - Choose where to save exported files
-3. **Automatic Organization** - Files are organized by date and section
-4. **Format Options** - Convert files to MP4 for better compatibility
+1. **Habilitar auto-exportación** - Activa la exportación de multimedia en los ajustes
+2. **Seleccionar carpeta de exportación** - Elige dónde guardar los archivos exportados
+3. **Organización automática** - Los archivos se organizan por fecha y sección
+4. **Opciones de formato** - Convierte los archivos a MP4 para una mejor compatibilidad
 
-## Website Presentation {#website-presentation}
+## Presentación del sitio web {#website-presentation}
 
-### Presenting the Official Website {#presenting-the-website}
+### Presentación del sitio web oficial {#presenting-the-website}
 
-Share the official website on external displays:
+Comparte el sitio web oficial en pantallas externas:
 
-1. **Open Website Mode** - Click the website presentation button
-2. **External Display** - The website opens in a new window
-3. **Navigation** - Use the browser controls to navigate
+1. **Abrir modo sitio web** - Haz clic en el botón de presentación del sitio web
+2. **Pantalla externa** - El sitio web se abre en una ventana nueva
+3. **Navegación** - Usa los controles del navegador para navegar
 
-### Website Controls {#website-controls}
+### Controles del sitio web {#website-controls}
 
-- **Open Website** - Open a separate website window
-- **Start Mirroring** - Show the website window in the media display for the audience
-- **Stop Mirroring** - Stop showing the website and return to the yeartext or media display background
-- **Navigation** - Standard browser navigation controls
-- **Refresh** - Reload the current page
-- **Close** - Exit website presentation mode
-- **Auto Return** - Optionally return to the media list automatically after stopping website mirroring
+- **Abrir sitio web** - Abre una ventana independiente para el sitio web
+- **Iniciar transmisión** - Muestra la ventana del sitio web en la pantalla multimedia para el auditorio
+- **Detener transmisión** - Deja de mostrar el sitio web y vuelve al texto del año o al fondo de la pantalla multimedia
+- **Navegación** - Controles de navegación estándar del navegador
+- **Actualizar** - Vuelve a cargar la página actual
+- **Cerrar** - Sal del modo de presentación del sitio web
+- **Retorno automático** - Tienes la opción de volver a la lista multimedia automáticamente tras detener la transmisión del sitio web
 
-## Meeting Recordings {#meeting-recordings}
+## Grabaciones de las reuniones {#meeting-recordings}
 
-M³ can help control meeting recording, but it does not include a built-in recorder.
+M³ te puede ayudar a controlar la grabación de la reunión, pero no incluye una grabadora integrada.
 
-- **OBS Recording** - If OBS recording controls are enabled, use the OBS popup to start and stop OBS recording
-- **External Recording App** - Configure keyboard shortcuts for a separate recording app, then use the meeting recordings popup to send those shortcuts
-- **Recording Folder** - Configure a recording folder to show a quick button that opens the folder where recordings are saved
+- **Grabación con OBS** - Si los controles de grabación de OBS están habilitados, usa la ventana emergente de OBS para iniciar y detener la grabación de OBS
+- **App de grabación externa** - Configura atajos de teclado para una app de grabación independiente y luego usa la ventana emergente de grabaciones de reuniones para enviar dichos atajos
+- **Carpeta de grabación** - Configura una carpeta de grabación para mostrar un botón rápido que abre la carpeta donde se guardan las grabaciones
 
-## Advanced Features {#user-guide-advanced-features}
+## Características avanzadas {#user-guide-advanced-features}
 
-### Multiple Congregations {#user-guide-multiple-congregations}
+### Múltiples congregaciones {#user-guide-multiple-congregations}
 
-Manage multiple congregations or groups:
+Administra varias congregaciones o grupos:
 
-1. **Create Profiles** - Set up separate profiles for different congregations
-2. **Switch Profiles** - Use the congregation selector to switch between profiles
-3. **Separate Settings** - Each profile has its own settings and media
-4. **Shared Resources** - Media files are shared between profiles whenever possible
+1. **Crear perfiles** - Configura perfiles separados para congregaciones diferentes
+2. **Cambiar de perfil** - Usa el selector de congregación para cambiar entre los perfiles
+3. **Ajustes separados** - Cada perfil tiene sus propios ajustes y contenido multimedia
+4. **Recursos compartidos** - Los archivos multimedia se comparten entre perfiles siempre que sea posible
 
-### Keyboard Shortcuts {#keyboard-shortcuts-guide}
+### Atajos de teclado {#keyboard-shortcuts-guide}
 
-Configure custom keyboard shortcuts for efficient operation:
+Configura atajos de teclado personalizados para que todo funcione más rápido:
 
-1. **Enable Shortcuts** - Turn on keyboard shortcuts in settings
-2. **Configure Shortcuts** - Set up shortcuts for common actions
-3. **Practice** - Learn your shortcuts for faster operation
-4. **Customize** - Adjust shortcuts to match your preferences
+1. **Habilitar atajos** - Activa los atajos de teclado en los ajustes
+2. **Configurar atajos** - Establece atajos para las acciones comunes
+3. **Práctica** - Apréndete los atajos para operar más rápido
+4. **Personalizar** - Ajusta los atajos a tu gusto
 
-## Troubleshooting {#troubleshooting-guide}
+## Solución de problemas {#troubleshooting-guide}
 
-### Common Issues {#common-issues}
+### Problemas frecuentes {#common-issues}
 
-#### Media Not Downloading {#user-guide-media-not-downloading}
+#### El multimedia no se descarga {#user-guide-media-not-downloading}
 
-- Check your meeting schedule settings
-- Verify internet connection
-- Check if media is available in your selected language
+- Comprueba los ajustes del programa de reuniones
+- Comprueba la conexión a internet
+- Comprueba si el contenido multimedia está disponible en el idioma seleccionado
 
-#### OBS Integration Not Working {#user-guide-obs-not-working}
+#### La integración con OBS no funciona {#user-guide-obs-not-working}
 
-- Verify OBS WebSocket plugin is installed
-- Check port and password settings
-- Ensure OBS is running
+- Comprueba que el plugin OBS WebSocket esté instalado
+- Comprueba los ajustes del puerto y contraseña
+- Asegúrate de que OBS se esté ejecutando
 
-#### Audio Issues in Zoom/OBS {#audio-issues}
+#### Problemas de audio en Zoom/OBS {#audio-issues}
 
-- **No audio in Zoom**: Enable Original Audio in Zoom settings and before each meeting
-- **Poor audio quality**: Check the three Original Audio checkboxes (first two enabled, third disabled)
-- **Audio not working after restart**: Original Audio must be re-enabled for each new Zoom session
-- **Alternative solution**: Use "Share Computer Sound" option in Zoom screen sharing
+- **No hay audio en Zoom**: Habilita el Sonido original en los ajustes de Zoom y antes de cada reunión
+- **Mala calidad de audio**: Comprueba las tres casillas de Sonido original (las dos primeras marcadas, la tercera desmarcada)
+- **El audio no funciona tras reiniciar**: El Sonido original debe volver a habilitarse en cada nueva sesión de Zoom
+- **Solución alternativa**: Usa la opción "Compartir sonido de la computadora" al compartir pantalla en Zoom
 
-#### Performance Issues {#user-guide-performance-issues}
+#### Problemas de rendimiento {#user-guide-performance-issues}
 
-- Enable extra cache
-- Reduce maximum resolution
-- Clear old cached files
-- Check available disk space
-- If the app shows graphical glitches or crashes, try disabling hardware acceleration and restart M³
+- Habilitar caché extra
+- Reducir la resolución máxima
+- Borrar archivos antiguos de la caché
+- Comprobar el espacio disponible en el disco
+- Si la aplicación muestra fallos gráficos o se cierra sola, prueba a deshabilitar la aceleración por hardware y reiniciar M³
 
-#### Language Issues {#user-guide-language-issues}
+#### Problemas de idioma {#user-guide-language-issues}
 
-- Check media language setting
-- Ensure language is available on JW.org
-- Try a fallback language
-- Verify interface language setting
+- Comprueba los ajustes de idioma multimedia
+- Asegúrate de que el idioma esté disponible en jw.org
+- Prueba con un idioma de respaldo
+- Comprueba el ajuste del idioma de la interfaz
 
-### Getting Help {#getting-help}
+### Cómo conseguir ayuda {#getting-help}
 
-If you encounter issues:
+Si te encuentras con problemas:
 
-1. **Check Documentation** - Review this guide and other available documentation
-2. **Search Issues** - Look for similar issues on GitHub
-3. **Report Problems** - Create a new issue with detailed information
+1. **Comprobar la documentación** - Revisa esta guía y otra documentación disponible
+2. **Buscar problemas** - Busca problemas similares en GitHub
+3. **Informar de problemas** - Crea un nuevo issue detallando la información
 
-## Best Practices {#best-practices}
+## Mejores prácticas {#best-practices}
 
-### Before Meetings {#before-meetings}
+### Antes de las reuniones {#before-meetings}
 
-1. **Check Downloads** - Ensure all media is downloaded
-2. **Test Equipment** - Verify displays and audio work
-3. **Prepare Media** - Review and organize media for the meeting; make sure no media files are missing
-4. **Configure Audio** - For hybrid meetings, enable Original Audio in Zoom or set up "Share Computer Sound"
+1. **Comprobar descargas** - Asegúrate de que todo el multimedia se haya descargado
+2. **Probar equipo** - Comprueba que las pantallas y el audio funcionen bien
+3. **Preparar multimedia** - Revisa y organiza el contenido multimedia de la reunión; asegúrate de que no falte ningún archivo multimedia
+4. **Configurar audio** - Para reuniones híbridas, habilita Sonido original en Zoom o configura "Compartir sonido de la computadora"
 
-### During Meetings {#during-meetings}
+### Durante las reuniones {#during-meetings}
 
-1. **Stay Focused** - Use the clean and distraction-free interface
-2. **Use Shortcuts** - Master keyboard shortcuts for smooth operation
-3. **Monitor Audio** - Keep an eye on volume levels, if that's part of your responsibilities
-4. **Be Prepared** - Have the next media item ready
-5. **Verify Audio** - For hybrid meetings, ensure Zoom participants can hear the media
+1. **Concéntrate** - Usa la interfaz limpia y sin distracciones
+2. **Usar atajos** - Domina los atajos de teclado para funcionar más rápido
+3. **Controlar audio** - Vigila los niveles de volumen, si es parte de tus tareas
+4. **Estar preparado** - Ten listo el siguiente elemento multimedia
+5. **Comprobar audio** - Para reuniones híbridas, asegúrate de que los participantes de Zoom puedan escuchar el contenido multimedia
 
-### After Meetings {#after-meetings}
+### Después de las reuniones {#after-meetings}
 
-1. **Start Background Music** - Start the playback of background music
-2. **Plan Ahead** - Prepare for the next meeting by making sure everything is in place
-3. **Clean Up** - Close media player when you're ready to leave
+1. **Poner música de fondo** - Inicia la reproducción de la música de fondo
+2. **Planificar por adelantado** - Prepárate para la próxima reunión asegurándote de que todo esté listo
+3. **Limpiar** - Cierra el reproductor multimedia cuando ya te vayas a ir
 
-### Regular Maintenance {#regular-maintenance}
+### Mantenimiento periódico {#regular-maintenance}
 
-1. **Update M³** - Keep the application updated
-2. **Clear Cache** - Periodically clear old cached files
-3. **Check Settings** - Review and update settings as needed
+1. **Actualizar M³** - Mantén actualizada la aplicación
+2. **Borrar caché** - Borra de vez en cuando los archivos antiguos guardados en caché
+3. **Revisar ajustes** - Revisa y actualiza los ajustes cuando sea necesario
