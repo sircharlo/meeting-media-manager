@@ -227,17 +227,45 @@
         </q-tab-panels>
       </div>
     </template>
+
+    <ConfirmDialog
+      v-model="showCategoryDeleteConfirm"
+      :confirm-label="t('delete')"
+      dialog-id="quick-actions-delete-category-confirm"
+      icon="mmm-delete"
+      :message="
+        t('quick-actions-delete-category-confirmation', {
+          count: pendingCategoryItemCount,
+        })
+      "
+      persistent
+      :title="t('confirm')"
+      @cancel="pendingCategoryDeletion = null"
+      @confirm="confirmRemoveCategory"
+    />
+    <ConfirmDialog
+      v-model="showItemDeleteConfirm"
+      :confirm-label="t('delete')"
+      dialog-id="quick-actions-delete-item-confirm"
+      icon="mmm-delete"
+      :message="t('quick-actions-delete-item-confirmation')"
+      persistent
+      :title="t('confirm')"
+      @cancel="pendingItemDeletion = null"
+      @confirm="confirmRemoveItem"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import type { MeetingChecklistCategory, MeetingChecklistItem } from 'src/types';
 
+import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { uuid } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 type ChecklistMode = 'after' | 'before';
@@ -286,15 +314,41 @@ const addCategory = (mode: ChecklistMode) => {
   newCategoryLabels.value[mode] = '';
 };
 
+// UX-14 (full-audit-2026-09-05.md): both deletions used to happen
+// immediately on click, with no confirmation - inconsistent with the
+// app-wide convention that any destructive/data-losing click goes through a
+// ConfirmDialog, and doubly risky for a category since it silently cascades
+// into deleting every item assigned to it too.
+const pendingCategoryDeletion = ref<null | {
+  categoryId: string;
+  mode: ChecklistMode;
+}>(null);
+
+const pendingCategoryItemCount = computed(() => {
+  const pending = pendingCategoryDeletion.value;
+  if (!pending) return 0;
+  return getCategoryItems(pending.mode, pending.categoryId).length;
+});
+
 const removeCategory = (mode: ChecklistMode, categoryId: string) => {
-  const categories = getCategories(mode);
+  pendingCategoryDeletion.value = { categoryId, mode };
+};
+
+const confirmRemoveCategory = () => {
+  const pending = pendingCategoryDeletion.value;
+  pendingCategoryDeletion.value = null;
+  if (!pending) return;
+
+  const categories = getCategories(pending.mode);
   const categoryIndex = categories.findIndex(
-    (category) => category.id === categoryId,
+    (category) => category.id === pending.categoryId,
   );
   if (categoryIndex >= 0) categories.splice(categoryIndex, 1);
-  const items = getItems(mode);
+  const items = getItems(pending.mode);
   for (let index = items.length - 1; index >= 0; index--) {
-    if (items[index]?.categoryId === categoryId) items.splice(index, 1);
+    if (items[index]?.categoryId === pending.categoryId) {
+      items.splice(index, 1);
+    }
   }
 };
 
@@ -312,11 +366,43 @@ const addItem = (mode: ChecklistMode, categoryId: string) => {
   newItemLabels.value[key] = '';
 };
 
+const pendingItemDeletion = ref<null | {
+  itemId: string;
+  mode: ChecklistMode;
+}>(null);
+
 const removeItem = (mode: ChecklistMode, itemId: string) => {
-  const items = getItems(mode);
-  const index = items.findIndex((item) => item.id === itemId);
+  pendingItemDeletion.value = { itemId, mode };
+};
+
+const confirmRemoveItem = () => {
+  const pending = pendingItemDeletion.value;
+  pendingItemDeletion.value = null;
+  if (!pending) return;
+
+  const items = getItems(pending.mode);
+  const index = items.findIndex((item) => item.id === pending.itemId);
   if (index >= 0) items.splice(index, 1);
 };
+
+// ConfirmDialog's v-model needs a plain boolean; both confirm dialogs here
+// are `persistent` (no backdrop-click/Esc close), so the setter is only
+// ever reached via the @cancel/@confirm handlers above, which already clear
+// the underlying pending-state ref directly - it's wired up regardless, to
+// honor the v-model contract if that ever changes.
+const showCategoryDeleteConfirm = computed({
+  get: () => pendingCategoryDeletion.value !== null,
+  set: (value) => {
+    if (!value) pendingCategoryDeletion.value = null;
+  },
+});
+
+const showItemDeleteConfirm = computed({
+  get: () => pendingItemDeletion.value !== null,
+  set: (value) => {
+    if (!value) pendingItemDeletion.value = null;
+  },
+});
 
 const moveCategory = (
   mode: ChecklistMode,

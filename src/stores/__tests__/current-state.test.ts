@@ -1,7 +1,9 @@
 import { basePath } from 'app/test/vitest/mocks/electronApi';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
+import { defaultSettings } from 'src/constants/settings';
 import { formatDate } from 'src/utils/date';
 import { registerCachePathProvider } from 'src/utils/fs';
+import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { describe, expect, it } from 'vitest';
 
 import { useCurrentStateStore } from '../current-state';
@@ -104,5 +106,42 @@ describe('hasActiveDownloads / hasActiveMediaWork', () => {
 
     expect(store.hasActiveDownloads).toBe(false);
     expect(store.hasActiveMediaWork).toBe(true);
+  });
+});
+
+// UX-12 (full-audit-2026-09-05.md): getInvalidSettings() previously only
+// checked `depends`, not `unless` - a setting hidden by `unless` (so there's
+// no visible row anywhere for the user to fix it on) could still be counted
+// invalid, driving a red badge on a Settings category with nothing to click.
+describe('getInvalidSettings / isHiddenByUnless', () => {
+  const CONGREGATION_ID = 'unless-test-cong';
+
+  it('does not count a setting as invalid once it is hidden by an effective `unless`', () => {
+    const congregationSettingsStore = useCongregationSettingsStore();
+    const settings = {
+      ...defaultSettings,
+      disableMediaFetching: false,
+      enableMediaAutoExport: true,
+      enableMediaDisplayButton: true,
+      mediaAutoExportFolder: '', // empty - rules: ['notEmpty'] makes this invalid
+    };
+    congregationSettingsStore.congregations = { [CONGREGATION_ID]: settings };
+
+    const store = useCurrentStateStore();
+
+    // Before disableMediaFetching is on: mediaAutoExportFolder is visible
+    // and correctly flagged invalid.
+    expect(store.getInvalidSettings(CONGREGATION_ID)).toContain(
+      'mediaAutoExportFolder',
+    );
+
+    // disableMediaFetching's `unless` now hides mediaAutoExportFolder
+    // entirely (per SettingsPage.vue's shouldShowSetting) - it must stop
+    // counting as invalid, since there's no row left to fix it on.
+    settings.disableMediaFetching = true;
+
+    expect(store.getInvalidSettings(CONGREGATION_ID)).not.toContain(
+      'mediaAutoExportFolder',
+    );
   });
 });

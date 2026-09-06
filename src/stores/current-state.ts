@@ -191,6 +191,10 @@ export const useCurrentStateStore = defineStore('current-state', {
               settingsDefinition,
               congregation as string,
             ) &&
+            !this.isHiddenByUnless(
+              settingsDefinition,
+              congregation as string,
+            ) &&
             this.isSettingInvalid(
               settingsDefinitionId,
               settingsDefinition,
@@ -230,6 +234,39 @@ export const useCurrentStateStore = defineStore('current-state', {
       if (!congregation) congregation = this.currentCongregation;
       if (!congregation) return false;
       return this.getInvalidSettings(congregation).length > 0;
+    },
+    // UX-12 (full-audit-2026-09-05.md): mirrors SettingsPage.vue's
+    // shouldShowSetting()/checkUnlessEffective() unless-evaluation exactly,
+    // but against the given congregation's own settings object rather than
+    // the reactive currentSettings computed (this action is called for
+    // arbitrary congregations, not just the currently active one). A
+    // setting hidden by `unless` must never count as invalid - there would
+    // be no visible row for the user to fix it on.
+    isHiddenByUnless(
+      settingsDefinition: SettingsItem,
+      congregation: string,
+    ): boolean {
+      if (!settingsDefinition.unless) return false;
+      const congregationSettingsStore = useCongregationSettingsStore();
+      const settings = congregationSettingsStore.congregations[congregation];
+
+      const checkUnlessEffective = (unlessKey: keyof SettingsValues) => {
+        const unlessSetting = settingsDefinitions[unlessKey];
+        if (!settings?.[unlessKey]) return false; // disabled, so not effective
+        return (
+          !unlessSetting?.depends ||
+          (Array.isArray(unlessSetting.depends)
+            ? unlessSetting.depends.every((dep) => settings?.[dep])
+            : !!settings?.[unlessSetting.depends])
+        );
+      };
+
+      if (Array.isArray(settingsDefinition.unless)) {
+        return settingsDefinition.unless.some((dep) =>
+          checkUnlessEffective(dep),
+        );
+      }
+      return checkUnlessEffective(settingsDefinition.unless);
     },
     isSettingInvalid(
       settingsDefinitionId: keyof SettingsItems,

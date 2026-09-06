@@ -88,6 +88,7 @@
         :src="displayLayer1.url"
         @canplay="handleVideoCanPlay()"
         @ended="endOrLoop()"
+        @error="handleMediaError(1)"
         @loadedmetadata="playMedia()"
         @pause="handleVideoPause()"
       >
@@ -103,6 +104,7 @@
         ref="mediaElement1"
         style="display: none"
         @ended="endOrLoop()"
+        @error="handleMediaError(1)"
         @loadedmetadata="playMedia()"
       >
         <source :src="displayLayer1.url" />
@@ -137,6 +139,7 @@
         :src="displayLayer2.url"
         @canplay="handleVideoCanPlay()"
         @ended="endOrLoop()"
+        @error="handleMediaError(2)"
         @loadedmetadata="playMedia()"
         @pause="handleVideoPause()"
       >
@@ -152,6 +155,7 @@
         ref="mediaElement2"
         style="display: none"
         @ended="endOrLoop()"
+        @error="handleMediaError(2)"
         @loadedmetadata="playMedia()"
       >
         <source :src="displayLayer2.url" />
@@ -238,12 +242,21 @@ const stopMediaStreamTracks = (srcObject: MediaProvider | null | undefined) => {
   }
 };
 
+// UX-11 (full-audit-2026-09-05.md): clearing an element's src as part of
+// deliberate teardown below can fire a spurious `error` event on some
+// engines, even though nothing actually failed to play. Tracked in a
+// WeakSet (no manual removal needed - entries fall out once the element
+// itself is garbage-collected) so handleMediaError can tell that apart from
+// a genuine mid-playback failure.
+const elementsBeingCleanedUp = new WeakSet<HTMLMediaElement>();
+
 /**
  * Robustly cleans up a media element to prevent renderer crashes.
  * @param element The HTMLAudioElement or HTMLVideoElement to clean up.
  */
 const cleanupMediaElement = (element: HTMLMediaElement | null | undefined) => {
   if (!element) return;
+  elementsBeingCleanedUp.add(element);
 
   log(
     '🎬 [cleanupMediaElement] Cleaning up media element',
@@ -725,6 +738,36 @@ const endOrLoop = () => {
     // Don't clear mediaCustomDuration immediately to avoid race condition
     // It will be cleared when the media state is handled by the main window
   }
+};
+
+// UX-11 (full-audit-2026-09-05.md): a corrupted file, an unsupported codec,
+// or a cache-path change invalidating the source used to fire the native
+// `error` event straight into the void - no auto-advance, no notification,
+// no visual fallback, so a live meeting could sit on a stalled/blank screen
+// indefinitely with no operator-visible signal anything had gone wrong.
+const handleMediaError = (layer: 1 | 2) => {
+  const element = layer === 1 ? mediaElement1.value : mediaElement2.value;
+  if (!element || elementsBeingCleanedUp.has(element)) return;
+
+  const layerRef = layer === 1 ? displayLayer1 : displayLayer2;
+
+  errorCatcher(new Error(element.error?.message || 'Media playback error'), {
+    contexts: {
+      fn: {
+        code: element.error?.code,
+        layer,
+        name: 'handleMediaError',
+        url: layerRef.value.url,
+      },
+    },
+  });
+
+  // Never loop back into whatever just failed, even if repeat is on - treat
+  // any playback error as an end-of-media signal so the main window's
+  // existing end-of-media handling (MediaCalendarPage.vue's
+  // lastEndTimestamp watcher) takes over instead of the display staying
+  // stuck expecting content that will never arrive.
+  postLastEndTimestamp(Date.now());
 };
 
 const handleVideoPause = () => {

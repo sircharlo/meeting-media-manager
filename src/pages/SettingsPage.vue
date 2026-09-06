@@ -366,7 +366,10 @@
                 </template>
               </div>
               <SettingsMeetingChecklists
-                v-if="groupId === 'interfaceShortcuts' && !filterActive"
+                v-if="
+                  groupId === 'interfaceShortcuts' &&
+                  (!filterActive || quickActionsMatchesFilter)
+                "
               />
             </template>
 
@@ -628,13 +631,21 @@ const filteredSettingsByGroup = computed(() => {
   return result;
 });
 
-const hasAnyVisibleSettings = computed(() =>
-  Object.values(filteredSettingsByGroup.value).some(
-    (settings) => settings.length > 0,
-  ),
+const hasAnyVisibleSettings = computed(
+  () =>
+    // Only relevant while a search filter is active (see this computed's
+    // one use site) - quickActionsMatchesFilter.value is unconditionally
+    // true with no filter, which would be wrong to OR in outside of search.
+    (filterActive.value && quickActionsMatchesFilter.value) ||
+    Object.values(filteredSettingsByGroup.value).some(
+      (settings) => settings.length > 0,
+    ),
 );
 
 const hasVisibleSettings = (groupId: SettingsGroupKey): boolean => {
+  if (groupId === 'interfaceShortcuts' && quickActionsMatchesFilter.value) {
+    return true;
+  }
   return (filteredSettingsByGroup.value[groupId]?.length ?? 0) > 0;
 };
 
@@ -823,6 +834,28 @@ const settingMatchesFilter = (
 
   return haystack.some((value) => value.toLocaleLowerCase().includes(needle));
 };
+
+// UX-13 (full-audit-2026-09-05.md): SettingsMeetingChecklists.vue is the
+// *only* UI for the Meeting Quick Actions feature, but its 5 backing
+// settings are all `hidden: true` (rendered by this dedicated component,
+// not the generic BaseInput path), so shouldShowSetting's `if (item.hidden)
+// return false` short-circuit means settingMatchesFilter above never even
+// runs for them - a search for "quick action" or "checklist" found nothing,
+// even though the feature is real and configurable. Matched separately,
+// against the one hidden setting whose label actually names the feature,
+// rather than un-hiding all 5 (which would risk them being picked up by the
+// generic renderer somewhere else).
+const quickActionsMatchesFilter = computed(() => {
+  const needle = normalizedSettingsFilter.value;
+  if (!needle) return true;
+
+  const haystack = [
+    t('enableMeetingQuickActions'),
+    t('enableMeetingQuickActions-explain'),
+  ];
+
+  return haystack.some((value) => value.toLocaleLowerCase().includes(needle));
+});
 
 const exportCurrentProfileSettings = async () => {
   try {
