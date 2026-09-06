@@ -648,6 +648,8 @@
   "quick-actions-checklist-unmute-zoom-participants": "A faa‘ara i te reo o te feia apiti i roto i te Zoom",
   "quick-actions-custom-category": "Tuhaa taa ê",
   "quick-actions-custom-item": "Ohipa taa ê",
+  "quick-actions-delete-category-confirmation": "Are you sure you want to delete this category? {count} task(s) in it will also be deleted. This action cannot be undone.",
+  "quick-actions-delete-item-confirmation": "Are you sure you want to delete this task? This action cannot be undone.",
   "quick-actions-dismiss": "A faaore i te afata",
   "quick-actions-enabled": "Tu‘ati-hia",
   "quick-actions-item-name": "I‘oa no te ohipa",
