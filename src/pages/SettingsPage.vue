@@ -58,6 +58,7 @@
           >
             <button
               v-if="hasVisibleSettings(groupId)"
+              :aria-label="t(group.name)"
               class="settings-rail-item"
               :class="{
                 'settings-rail-item--active':
@@ -78,6 +79,7 @@
               >
                 {{ invalidSettingsByGroup[groupId] }}
               </q-badge>
+              <q-tooltip :delay="500">{{ t(group.name) }}</q-tooltip>
             </button>
           </template>
         </div>
