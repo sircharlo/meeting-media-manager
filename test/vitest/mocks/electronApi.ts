@@ -33,9 +33,7 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   basename,
-  cancelAllDownloads: function () {
-    throw new Error('Function not implemented.');
-  },
+  cancelAllDownloads: () => void 0,
   changeExt,
   checkForUpdates: () => void 0,
   closeSqliteConnection: async () => undefined,

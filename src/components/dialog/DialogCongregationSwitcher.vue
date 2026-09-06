@@ -35,7 +35,10 @@
             :key="id"
             v-ripple
             class="media-section congregation cursor-pointer"
-            :class="{ active: currentCongregation === id }"
+            :class="{
+              active: currentCongregation === id,
+              'congregation--switching': isSwitchingCongregation,
+            }"
             role="button"
             tabindex="0"
             @click="chooseCongregation(id)"
@@ -383,10 +386,22 @@ const sortedCongregations = computed(() =>
     ),
 );
 
+// FE-17 (full-audit-2026-09-05.md): nothing previously stopped a second
+// chooseCongregation call from starting while an earlier one was still
+// mid-flight (network-bound: getCachedUserDataPath, then
+// updateYeartext/downloadSongbookVideos/router.push) - two overlapping
+// calls raced on the shared currentCongregation/currentSettings state and
+// could each push their own (now-wrong) destination route. Guarding here,
+// not just in the template's click handler, also covers the
+// createNewCongregation/autoSelectCongregation call sites below.
+const isSwitchingCongregation = ref(false);
+
 async function chooseCongregation(
   congregation: number | string,
   initialLoad?: boolean,
 ) {
+  if (isSwitchingCongregation.value) return;
+  isSwitchingCongregation.value = true;
   try {
     const invalidSettingsConfigured = await setCongregation(congregation);
     if (congregation) {
@@ -419,6 +434,8 @@ async function chooseCongregation(
     congregationSwitcherOpen.value = false;
     congregationIdPendingNavigation.value = undefined;
     router.push('/media-calendar');
+  } finally {
+    isSwitchingCongregation.value = false;
   }
 }
 
@@ -613,6 +630,16 @@ $congregation-switcher-z-notify: $congregation-switcher-z-confirm + 1; // a noti
 // settings pages.
 .congregation-switcher .media-section.congregation {
   padding-right: 1.25em;
+}
+
+// FE-17 (full-audit-2026-09-05.md): pointer-events is the actual guard
+// against a second click queuing up on any row (not just the one already
+// clicked) while chooseCongregation is in flight - isSwitchingCongregation
+// in the click handler covers keyboard activation, this covers the mouse.
+// The dimming is just visible feedback that the whole list is briefly busy.
+.media-section.congregation.congregation--switching {
+  opacity: 0.6;
+  pointer-events: none;
 }
 
 .congregation-avatar {

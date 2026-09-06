@@ -145,3 +145,44 @@ describe('getInvalidSettings / isHiddenByUnless', () => {
     );
   });
 });
+
+// FE-17 (full-audit-2026-09-05.md): setCongregation used to re-read
+// this.currentCongregation (after its internal await) to compute its
+// return value, instead of using the value it was actually called with -
+// a second, later setCongregation call overwriting currentCongregation in
+// between made an earlier call's result reflect the wrong congregation.
+describe('setCongregation', () => {
+  it('resolves against the congregation it was called with, not whichever is current once it wakes up', async () => {
+    const congregationSettingsStore = useCongregationSettingsStore();
+    congregationSettingsStore.congregations = {
+      // disableMediaFetching hides every meeting-schedule field (mwDay,
+      // weStartTime, etc.) via their `unless` - the only way for a
+      // congregation with otherwise-untouched defaultSettings to have zero
+      // invalid settings.
+      'cong-a': {
+        ...defaultSettings,
+        congregationName: 'Cong A',
+        disableMediaFetching: true,
+      },
+      'cong-b': {
+        ...defaultSettings,
+        congregationName: 'Cong B',
+        disableMediaFetching: false,
+        enableMediaAutoExport: true,
+        enableMediaDisplayButton: true,
+        mediaAutoExportFolder: '', // invalid: rules include ['notEmpty']
+      },
+    };
+
+    const store = useCurrentStateStore();
+
+    // Deliberately not awaited yet - simulates a second switch starting
+    // while the first is still mid-flight.
+    const pendingA = store.setCongregation('cong-a');
+    const invalidB = await store.setCongregation('cong-b');
+    const invalidA = await pendingA;
+
+    expect(invalidA).toBe(false);
+    expect(invalidB).toBe(true);
+  });
+});

@@ -326,9 +326,17 @@ export const useCurrentStateStore = defineStore('current-state', {
       // Dismiss all active notifications when changing congregation
       dismissAllTemporaryNotifications();
 
-      this.currentCongregation = value.toString();
+      // FE-17 (full-audit-2026-09-05.md): captured locally rather than
+      // re-read from this.currentCongregation after the await below - a
+      // second overlapping setCongregation call (e.g. a rapid double
+      // switch) can reassign currentCongregation in between, which would
+      // otherwise make this call resolve invalid-settings for whichever
+      // congregation happens to be current when it wakes up, not the one
+      // it was actually asked to switch to.
+      const newCongregation = value.toString();
+      this.currentCongregation = newCongregation;
       await getCachedUserDataPath();
-      return this.getInvalidSettings(this.currentCongregation).length > 0;
+      return this.getInvalidSettings(newCongregation).length > 0;
     },
     setTimerWindowVisible(visible: boolean) {
       this.timerWindowVisible = visible;
