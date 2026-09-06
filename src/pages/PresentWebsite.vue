@@ -22,6 +22,13 @@
             <p class="q-mb-sm">
               {{ t('you-can-navigate-the-website-before-presenting-it') }}
             </p>
+            <p class="q-mb-sm">
+              {{
+                t(
+                  'while-the-website-window-is-open-zoom-and-navigation-buttons-are-available-in-the-top-right-corner-of-this-window',
+                )
+              }}
+            </p>
             <p class="q-mb-none">
               {{
                 t(
