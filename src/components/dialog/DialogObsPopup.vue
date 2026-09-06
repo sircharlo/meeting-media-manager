@@ -350,14 +350,25 @@ useEventListener(globalThis, 'obsSceneEvent', setObsSceneListener, {
   passive: true,
 });
 
+// FE-15 (full-audit-2026-09-05.md): keyed on obsConnectionState too (not
+// just the settings values) so every transition to 'connected' - including
+// FE-6's auto-reconnect after OBS crashes/closes/restarts, not just the
+// very first successful connection - re-attaches the RecordStateChanged
+// listener and re-queries the actual recording state. obsWebSocketInfo's
+// OBSWebSocket instance persists across reconnects (reused, not recreated -
+// see FE-6), so checking only its truthiness never re-triggered this on a
+// reconnect; without this, isRecording could keep showing a stale
+// "recording in progress" (or vice versa) after OBS reconnects mid-session.
 watchImmediate(
   () => ({
+    connectionState: obsConnectionState.value,
     enabled: currentSettings.value?.obsEnable,
     recordingControls: currentSettings.value?.obsEnableRecordingControls,
   }),
-  async ({ enabled, recordingControls }, _, onCleanup) => {
+  async ({ connectionState, enabled, recordingControls }, _, onCleanup) => {
     if (!enabled || !obsWebSocketInfo.obsWebSocket) return;
     if (!recordingControls) return;
+    if (connectionState !== 'connected') return;
 
     const handleRecordStateChanged = (data: { outputActive: boolean }) => {
       log('RecordStateChanged', 'obs', 'log', data);

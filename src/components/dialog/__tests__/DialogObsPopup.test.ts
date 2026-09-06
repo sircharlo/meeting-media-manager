@@ -5,6 +5,7 @@ import { defaultSettings } from 'src/constants/settings';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useObsStateStore } from 'stores/obs-state';
+import { useRecordingStore } from 'stores/recording-state';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import DialogObsPopup from '../DialogObsPopup.vue';
@@ -18,6 +19,10 @@ const { callMock, errorCatcherMock, fakeObsWebSocket } = vi.hoisted(() => {
   };
 });
 
+const obsGetRecordingStateMock = vi.hoisted(() =>
+  vi.fn<() => Promise<boolean>>(async () => false),
+);
+
 vi.mock('src/helpers/error-catcher', () => ({
   errorCatcher: errorCatcherMock,
 }));
@@ -25,7 +30,7 @@ vi.mock('src/helpers/error-catcher', () => ({
 vi.mock('src/helpers/obs', () => ({
   obsConnect: vi.fn(),
   obsGetRecordingDirectory: vi.fn(async () => null),
-  obsGetRecordingState: vi.fn(async () => null),
+  obsGetRecordingState: obsGetRecordingStateMock,
   obsStartRecording: vi.fn(),
   obsStopRecording: vi.fn(),
 }));
@@ -166,5 +171,49 @@ describe('DialogObsPopup - scene switch error handling', () => {
         },
       }),
     );
+  });
+});
+
+// FE-15 (full-audit-2026-09-05.md): isRecording was only ever reconciled
+// against OBS's actual state once, on the first successful connection - a
+// later disconnect/reconnect cycle (e.g. OBS crashing mid-meeting, then
+// FE-6's auto-reconnect succeeding) never re-queried the real state, so a
+// stale isRecording could keep showing "recording" (or not) after OBS came
+// back with a different actual state.
+describe('DialogObsPopup - recording-state resync on reconnect', () => {
+  it('re-queries the real recording state on every transition to connected, not just the first', async () => {
+    // The watcher's object-literal getter source makes Vue re-run its
+    // callback on every dependency re-evaluation (a new object reference
+    // each time), not just on a genuine value change - so obsGetRecordingState
+    // can legitimately be called more than once per transition. Rather than
+    // asserting an exact call count, have every call consistently reflect
+    // the current "real OBS" truth via a plain closure variable, so the
+    // assertion holds regardless of how many times it fires.
+    let obsIsActuallyRecording = false;
+    obsGetRecordingStateMock.mockImplementation(
+      async () => obsIsActuallyRecording,
+    );
+
+    const obsState = setupObsSettings({ obsEnableRecordingControls: true });
+    obsState.obsConnectionState = 'connected';
+
+    mount(DialogObsPopup, {
+      props: { modelValue: true },
+    });
+    await flushPromises();
+
+    const recording = useRecordingStore();
+    expect(recording.isRecording).toBe(false);
+
+    // OBS crashes/closes, then FE-6's auto-reconnect succeeds - this time
+    // OBS itself was actually recording (e.g. started from a different
+    // control surface while M³ was disconnected).
+    obsState.obsConnectionState = 'disconnected';
+    await flushPromises();
+    obsIsActuallyRecording = true;
+    obsState.obsConnectionState = 'connected';
+    await flushPromises();
+
+    expect(recording.isRecording).toBe(true);
   });
 });

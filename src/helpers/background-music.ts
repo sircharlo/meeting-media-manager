@@ -105,14 +105,48 @@ export function calculateOptimalSongQueue(
     let totalDuration = 0;
     const queue: SongItem[] = [];
 
+    // FE-16 (full-audit-2026-09-05.md): songLibrary.length never decreases
+    // (shift-then-push just cycles the same songs), so if every song's
+    // duration is 0/undefined (e.g. a malformed/incomplete JW.org API
+    // response for the songbook publication), totalDuration would never
+    // advance and this loop would spin forever with no `await` inside it,
+    // pinning the renderer's JS thread. No realistic library/available-time
+    // combination comes anywhere close to this many iterations, so the cap
+    // is a pure safety net, not a real constraint on normal queue building.
+    const MAX_QUEUE_BUILD_ITERATIONS = 10_000;
+    let iterations = 0;
+
     // Build the queue by cycling through songs until we exceed the available time
-    while (totalDuration < timeBeforeMeetingStart && songLibrary.length) {
+    while (
+      totalDuration < timeBeforeMeetingStart &&
+      songLibrary.length &&
+      iterations < MAX_QUEUE_BUILD_ITERATIONS
+    ) {
+      iterations += 1;
       const song = songLibrary.shift();
       if (!song) break;
 
       queue.unshift(song); // Add to beginning to maintain order
       songLibrary.push(song); // Add back to end for cycling
       totalDuration += song.duration ?? 0;
+    }
+
+    if (iterations >= MAX_QUEUE_BUILD_ITERATIONS) {
+      errorCatcher(
+        new Error(
+          'calculateOptimalSongQueue hit its iteration safety cap - songs may have a zero/invalid duration',
+        ),
+        {
+          contexts: {
+            fn: {
+              name: 'calculateOptimalSongQueue',
+              songLibraryLength: songLibrary.length,
+              timeBeforeMeetingStart,
+              totalDuration,
+            },
+          },
+        },
+      );
     }
 
     // Calculate how far into the first song we should start
