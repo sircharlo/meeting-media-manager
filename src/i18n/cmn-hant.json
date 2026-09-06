@@ -648,6 +648,8 @@
   "quick-actions-checklist-unmute-zoom-participants": "Unmute the Zoom participants",
   "quick-actions-custom-category": "Custom category",
   "quick-actions-custom-item": "Custom task",
+  "quick-actions-delete-category-confirmation": "Are you sure you want to delete this category? {count} task(s) in it will also be deleted. This action cannot be undone.",
+  "quick-actions-delete-item-confirmation": "Are you sure you want to delete this task? This action cannot be undone.",
   "quick-actions-dismiss": "Dismiss panel",
   "quick-actions-enabled": "Enabled",
   "quick-actions-item-name": "Task name",
