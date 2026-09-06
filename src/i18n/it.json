@@ -648,6 +648,8 @@
   "quick-actions-checklist-unmute-zoom-participants": "Riattiva gli Zoom dei partecipanti",
   "quick-actions-custom-category": "Categoria personalizzata",
   "quick-actions-custom-item": "Attività personalizzata",
+  "quick-actions-delete-category-confirmation": "Are you sure you want to delete this category? {count} task(s) in it will also be deleted. This action cannot be undone.",
+  "quick-actions-delete-item-confirmation": "Are you sure you want to delete this task? This action cannot be undone.",
   "quick-actions-dismiss": "Ignora pannello",
   "quick-actions-enabled": "Abilitato",
   "quick-actions-item-name": "Nome attività",
