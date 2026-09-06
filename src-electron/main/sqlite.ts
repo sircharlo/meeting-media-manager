@@ -189,14 +189,44 @@ const getWorker = () => {
   return worker;
 };
 
-const postToWorker = (
+// BE-14 (full-audit-2026-09-05.md): lower-confidence sibling of the same gap
+// found in heic.ts/image-size.ts - node:sqlite is far less likely than a
+// third-party binary-format parser to infinite-loop on malformed input (more
+// likely to throw a corruption error), so this is defensive rather than a
+// confirmed exploitable hang, but a plain request/response promise with no
+// timeout would still wait forever if the worker ever did get stuck.
+const SQLITE_TIMEOUT_MS = 8000;
+
+const postToWorkerWithTimeout = (
   request: Omit<SqliteWorkerRequest, 'id'>,
-): Promise<SqliteWorkerResponse> =>
-  new Promise((resolve, reject) => {
-    const id = nextRequestId++;
-    pendingRequests.set(id, { reject, resolve });
+): Promise<SqliteWorkerResponse> => {
+  const id = nextRequestId++;
+
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      const timeoutError = new Error(
+        `Timed out waiting for SQLite worker after ${SQLITE_TIMEOUT_MS}ms`,
+      );
+      const hungWorker = worker;
+      worker = undefined;
+      hungWorker?.terminate();
+      rejectAllPending(timeoutError);
+    }, SQLITE_TIMEOUT_MS);
+
+    pendingRequests.set(id, {
+      reject: (error) => {
+        clearTimeout(timeout);
+        reject(error);
+      },
+      resolve: (value) => {
+        clearTimeout(timeout);
+        resolve(value);
+      },
+    });
+
     getWorker().postMessage({ ...request, id });
   });
+};
 
 // SEC-7 (full-audit-2026-09-04.md): the renderer's query string is run
 // verbatim (only params are bound) against a read-only-opened connection -
@@ -221,7 +251,7 @@ export const executeQuery = async <T extends object = QueryResponseItem>(
   }
 
   try {
-    const response = await postToWorker({
+    const response = await postToWorkerWithTimeout({
       dbPath,
       params,
       query,
@@ -265,7 +295,7 @@ export const executeQuery = async <T extends object = QueryResponseItem>(
  */
 export const closeAllConnections = async () => {
   if (!worker) return;
-  await postToWorker({ type: 'closeAll' });
+  await postToWorkerWithTimeout({ type: 'closeAll' });
 };
 
 /**
@@ -279,5 +309,5 @@ export const closeAllConnections = async () => {
  */
 export const closeConnection = async (dbPath: string) => {
   if (!worker) return;
-  await postToWorker({ dbPath, type: 'closeOne' });
+  await postToWorkerWithTimeout({ dbPath, type: 'closeOne' });
 };

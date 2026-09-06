@@ -260,6 +260,89 @@ describe('window-media placement helpers', () => {
     expect(result).toBe(1);
   });
 
+  // BE-16 (full-audit-2026-09-05.md): a bare `screens.length === 1` check
+  // also blocked calculateAutoTarget's own recovery for a monitor unplugged
+  // mid-presentation while the media window was fullscreen on it.
+  describe('shouldSkipSingleScreenReposition', () => {
+    const fullscreenBounds = {
+      currentBounds: { height: 1080, width: 1920, x: 0, y: 0 },
+      currentDisplayNr: 0,
+      isEffectivelyFullscreen: true,
+      screenBounds: { height: 1080, width: 1920, x: 0, y: 0 },
+    };
+    const windowedBounds = {
+      ...fullscreenBounds,
+      isEffectivelyFullscreen: false,
+    };
+    const fullscreenWindow = {
+      isFullScreen: () => true,
+      isMaximized: () => false,
+    } as never;
+    const windowedWindow = {
+      isFullScreen: () => false,
+      isMaximized: () => false,
+    } as never;
+    const oneScreen = [
+      { bounds: { height: 1080, width: 1920, x: 0, y: 0 }, id: 1 },
+    ] as never;
+
+    it('allows repositioning when a topology change just left a fullscreen window stranded on one screen', async () => {
+      const { __testables } = await import('../window/window-media');
+
+      expect(
+        __testables.shouldSkipSingleScreenReposition(
+          oneScreen,
+          true,
+          true, // screenConfigChanged: a monitor was just removed
+          fullscreenBounds,
+          fullscreenWindow,
+        ),
+      ).toBe(false);
+    });
+
+    it('keeps skipping repositioning for an ordinary single-screen fullscreen user once settled (no topology change)', async () => {
+      const { __testables } = await import('../window/window-media');
+
+      expect(
+        __testables.shouldSkipSingleScreenReposition(
+          oneScreen,
+          true,
+          false, // screenConfigChanged: nothing changed since last check
+          fullscreenBounds,
+          fullscreenWindow,
+        ),
+      ).toBe(true);
+    });
+
+    it('keeps skipping repositioning for a windowed single-screen user even right after a topology change', async () => {
+      const { __testables } = await import('../window/window-media');
+
+      expect(
+        __testables.shouldSkipSingleScreenReposition(
+          oneScreen,
+          true,
+          true,
+          windowedBounds,
+          windowedWindow,
+        ),
+      ).toBe(true);
+    });
+
+    it('never skips before the initial positioning has happened', async () => {
+      const { __testables } = await import('../window/window-media');
+
+      expect(
+        __testables.shouldSkipSingleScreenReposition(
+          oneScreen,
+          false,
+          false,
+          windowedBounds,
+          windowedWindow,
+        ),
+      ).toBe(false);
+    });
+  });
+
   it('skips the preferred-screen lookup when saved prefs have invalid bounds', async () => {
     mockLoadWindowPrefs.mockResolvedValue({
       height: 0,

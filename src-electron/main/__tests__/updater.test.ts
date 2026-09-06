@@ -6,7 +6,10 @@ const checkForUpdatesAndNotifyMock = vi.fn(async () => undefined);
 const handlers = new Map<string, (...args: unknown[]) => void>();
 const pathExistsMock = vi.fn(async () => false);
 const quitAndInstallMock = vi.fn();
-const getOsSupportWarningMock = vi.fn<() => null | OsSupportWarning>(() => null);
+const toggleAuthorizedCloseMock = vi.fn();
+const getOsSupportWarningMock = vi.fn<() => null | OsSupportWarning>(
+  () => null,
+);
 
 vi.mock('electron-updater', () => ({
   default: {
@@ -58,6 +61,7 @@ vi.mock('src-electron/main/window/window-base', () => ({
 
 vi.mock('src-electron/main/window/window-main', () => ({
   mainWindowInfo: { mainWindow: null },
+  toggleAuthorizedClose: toggleAuthorizedCloseMock,
 }));
 
 vi.mock('src/shared/vanilla', () => ({
@@ -125,6 +129,42 @@ describe('updater install flow', () => {
     expect(isUpdateInstallInProgress()).toBe(true);
     expect(quitAndInstallMock).toHaveBeenCalledTimes(1);
     expect(quitAndInstallMock).toHaveBeenCalledWith(false, true);
+  });
+
+  // BE-15 (full-audit-2026-09-05.md): on macOS, Electron's native
+  // quitAndInstall() closes every window BEFORE firing 'before-quit' -
+  // authorizedClose.authorized must already be true by then, or the main
+  // window's own close handler intercepts with its confirm-quit prompt and
+  // silently aborts the whole install.
+  it('authorizes the close before calling quitAndInstall, matching relaunchApp', async () => {
+    const { initUpdater, quitAndInstallUpdate } = await import('../updater');
+
+    await initUpdater();
+    handlers.get('update-downloaded')?.({ version: '26.6.2' });
+    quitAndInstallUpdate();
+
+    expect(toggleAuthorizedCloseMock).toHaveBeenCalledWith(true);
+    const authorizeOrder =
+      toggleAuthorizedCloseMock.mock.invocationCallOrder[0];
+    const installOrder = quitAndInstallMock.mock.invocationCallOrder[0];
+    expect(authorizeOrder).toBeDefined();
+    expect(installOrder).toBeDefined();
+    expect(authorizeOrder as number).toBeLessThan(installOrder as number);
+  });
+
+  it('revokes the close authorization if quitAndInstall throws', async () => {
+    const { initUpdater, quitAndInstallUpdate } = await import('../updater');
+
+    await initUpdater();
+    handlers.get('update-downloaded')?.({ version: '26.6.2' });
+    quitAndInstallMock.mockImplementationOnce(() => {
+      throw new Error('quitAndInstall failed');
+    });
+
+    quitAndInstallUpdate();
+
+    expect(toggleAuthorizedCloseMock).toHaveBeenCalledWith(true);
+    expect(toggleAuthorizedCloseMock).toHaveBeenLastCalledWith(false);
   });
 
   it('resets install state when a new update becomes available', async () => {

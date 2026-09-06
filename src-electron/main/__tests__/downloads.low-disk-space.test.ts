@@ -152,4 +152,35 @@ describe('processQueue low-disk-space gate', () => {
     // check.
     expect(mocks.getLowDiskSpaceStatus.mock.calls.length).toBe(callsAfterFirst);
   });
+
+  // BE-12 (full-audit-2026-09-05.md): a throttled call used to unconditionally
+  // report "not low" regardless of what the last real check found, so any
+  // processQueue() run within the 2-minute throttle window after a real
+  // critically-low reading would incorrectly let downloads proceed again.
+  it('keeps refusing new downloads within the throttle window after a real low-disk reading, instead of assuming space is fine', async () => {
+    mocks.getLowDiskSpaceStatus.mockResolvedValue(true);
+
+    const { downloadFile } = await import('src-electron/main/downloads');
+
+    // First call: a real (non-throttled) check correctly detects low disk space.
+    await downloadFile('https://example.test/file-1.mp4', '/tmp/media');
+    await waitUntil(() => mocks.getLowDiskSpaceStatus.mock.calls.length > 0);
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 0);
+    });
+    expect(mocks.download).not.toHaveBeenCalled();
+
+    const callsAfterFirst = mocks.getLowDiskSpaceStatus.mock.calls.length;
+
+    // Second call, well within the throttle window: the buggy version's
+    // throttled check unconditionally returned false ("not low"), letting
+    // this one start despite disk space never having actually freed up.
+    await downloadFile('https://example.test/file-2.mp4', '/tmp/media');
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 0);
+    });
+
+    expect(mocks.getLowDiskSpaceStatus.mock.calls.length).toBe(callsAfterFirst);
+    expect(mocks.download).not.toHaveBeenCalled();
+  });
 });

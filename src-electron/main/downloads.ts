@@ -1185,20 +1185,34 @@ async function processNormalPausedDownload(
 // does real disk I/O and processQueue can run very frequently.
 const DISK_SPACE_CHECK_INTERVAL_MS = 2 * 60 * 1000;
 let lastDiskSpaceCheckAt = 0;
+// BE-12 (full-audit-2026-09-05.md): a throttled call used to unconditionally
+// report "not low" regardless of the last real check's result - so once
+// pauseAllDownloads('low-disk-space') actually paused a download for a real
+// low-disk reading, any processQueue() run within the next throttle window
+// (triggered by so much as a single new downloadFile() call) would see this
+// return false, letting getNextQueueItemType()'s paused-download branch
+// resume it before the disk had actually freed up. Caching the last real
+// result and returning that instead means a throttled call reflects reality
+// until the next real check runs, not just "assume fine."
+let lastDiskSpaceCheckResult = false;
 
 async function isDiskSpaceCriticallyLow(): Promise<boolean> {
   const now = Date.now();
-  if (now - lastDiskSpaceCheckAt < DISK_SPACE_CHECK_INTERVAL_MS) return false;
+  if (now - lastDiskSpaceCheckAt < DISK_SPACE_CHECK_INTERVAL_MS) {
+    return lastDiskSpaceCheckResult;
+  }
   lastDiskSpaceCheckAt = now;
 
   try {
-    return await getLowDiskSpaceStatus();
+    lastDiskSpaceCheckResult = await getLowDiskSpaceStatus();
   } catch (error) {
     captureElectronError(error, {
       contexts: { fn: { name: 'processQueue isDiskSpaceCriticallyLow' } },
     });
-    return false;
+    lastDiskSpaceCheckResult = false;
   }
+
+  return lastDiskSpaceCheckResult;
 }
 
 /**
@@ -1323,8 +1337,17 @@ async function startDownload(
   download: DownloadQueueItem,
   isLowPriority: boolean,
   errorRetryAttempt = 0,
+  // BE-13 (full-audit-2026-09-05.md): only ever set on a retry, once
+  // ensureDirWithRetry has re-confirmed (or re-resolved, e.g. to the temp
+  // fallback) where the file should actually land. Deliberately kept
+  // separate from `saveDir`/`key` below rather than mutating `download`
+  // itself - the tracking key must stay stable across retries (cancel/pause
+  // lookups key on the *original* url+saveDir), while the directory
+  // actually handed to the download manager can legitimately change.
+  retrySaveDir?: string,
 ) {
   const { destFilename, saveDir, url } = download;
+  const effectiveSaveDir = retrySaveDir ?? saveDir;
   const key = url + saveDir;
   const downloadWindow = getDownloadWindow();
 
@@ -1426,7 +1449,23 @@ async function startDownload(
             });
             await delay(getDownloadErrorRetryDelay(errorRetryAttempt));
             if (cancelAll || quitStatus.isAppQuitting) return;
-            void startDownload(download, isLowPriority, nextAttempt);
+            // The original destination may have disappeared mid-download
+            // (network-share disconnect, USB drive removed, OneDrive
+            // folder unlinked) - re-validate (or re-fall-back) before
+            // retrying instead of retrying against the same now-missing
+            // directory every time. If re-validation itself throws (every
+            // fallback also failed), retry with the original directory
+            // anyway; the next attempt will fail fast and get reported
+            // once retries are exhausted, same as before this fix.
+            const retrySaveDir = await ensureDirWithRetry(saveDir).catch(
+              () => saveDir,
+            );
+            void startDownload(
+              download,
+              isLowPriority,
+              nextAttempt,
+              retrySaveDir,
+            );
             return;
           }
 
@@ -1438,7 +1477,7 @@ async function startDownload(
                 name: 'src-electron/downloads startDownload onError',
                 params: {
                   destFilename,
-                  directory: saveDir,
+                  directory: effectiveSaveDir,
                   retryAttempts: errorRetryAttempt,
                   window: mainWindowInfo.mainWindow?.id,
                 },
@@ -1456,7 +1495,7 @@ async function startDownload(
           processQueue();
         },
       },
-      directory: saveDir,
+      directory: effectiveSaveDir,
       saveAsFilename: destFilename,
       url,
       window: downloadWindow,
@@ -1513,7 +1552,7 @@ async function startDownload(
           name: 'src-electron/downloads startDownload catch',
           params: {
             destFilename,
-            directory: saveDir,
+            directory: effectiveSaveDir,
             window: mainWindowInfo.mainWindow?.id,
           },
           url,

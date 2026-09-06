@@ -14,7 +14,10 @@ import {
   markUpdaterFullDownloadFallback,
 } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
-import { mainWindowInfo } from 'src-electron/main/window/window-main';
+import {
+  mainWindowInfo,
+  toggleAuthorizedClose,
+} from 'src-electron/main/window/window-main';
 import { log } from 'src/shared/vanilla';
 import { join } from 'upath';
 
@@ -246,11 +249,29 @@ export function quitAndInstallUpdate() {
   }
 
   updateInstallStarted = true;
+  // BE-15 (full-audit-2026-09-05.md): on macOS, autoRunAppAfterInstall
+  // defaults to true (never overridden here), so MacUpdater calls Electron's
+  // own native autoUpdater.quitAndInstall() - which, per Electron's own
+  // documentation, closes every window FIRST and only fires the app-level
+  // 'before-quit' event after that. Without this, the main window's own
+  // close handler (window-main.ts) would still see
+  // authorizedClose.authorized === false at that point and intercept the
+  // close with its confirm-quit prompt, silently aborting the whole install
+  // - and since updateInstallStarted latches true above, every later click
+  // of "Quit & Install" would then do nothing for the rest of the session.
+  // On Windows/Linux, electron-updater's own quitAndInstall() just calls
+  // plain app.quit(), where 'before-quit' already fires before any window's
+  // 'close' event - so this is a no-op timing-wise there, matching
+  // relaunchApp's identical call one IPC handler below.
+  toggleAuthorizedClose(true);
 
   try {
     autoUpdater.quitAndInstall(false, true);
   } catch (error) {
     updateInstallStarted = false;
+    // A failed call never actually quit, so don't leave the main window
+    // permanently closable-without-confirmation behind it.
+    toggleAuthorizedClose(false);
     captureElectronError(error, {
       contexts: { fn: { name: 'quitAndInstallUpdate' } },
     });

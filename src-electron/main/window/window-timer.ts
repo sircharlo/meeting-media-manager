@@ -7,7 +7,7 @@ import {
   WINDOW_MOVE_THROTTLE_MS,
 } from 'src-electron/constants';
 import { getAllScreens, getWindowScreen } from 'src-electron/main/screen';
-import { getIconPath } from 'src-electron/main/utils';
+import { captureElectronError, getIconPath } from 'src-electron/main/utils';
 import {
   createWindow,
   loadWindowPrefs,
@@ -222,7 +222,7 @@ export const moveTimerWindow = async (
       targetScreen: targetScreen.bounds,
     });
 
-    setTimerWindowPosition(finalTarget.displayNr, finalTarget.fullscreen);
+    await setTimerWindowPosition(finalTarget.displayNr, finalTarget.fullscreen);
 
     log('[moveTimerWindow] END - Changes applied', 'timer', 'log');
   } catch (e) {
@@ -537,119 +537,283 @@ const logPreferredTimerScreenUse = (
   );
 };
 
-const setTimerWindowPosition = (displayNr?: number, fullscreen = false) => {
-  log('[setTimerWindowPosition] START - Called with:', 'timer', 'log', {
-    displayNr,
-    fullscreen,
-  });
+// Calculates windowed bounds - timer window should be smaller than media
+// window, positioned in the bottom-right corner of the target screen.
+const getWindowedTimerBounds = (targetScreenBounds: Electron.Rectangle) => {
+  const timerWidth = Math.min(400, Math.floor(targetScreenBounds.width * 0.3)); // 30% of screen width, max 400px
+  const timerHeight = Math.min(
+    200,
+    Math.floor(targetScreenBounds.height * 0.2),
+  ); // 20% of screen height, max 200px
 
-  try {
-    if (!timerWindowInfo.timerWindow) {
+  return {
+    height: timerHeight,
+    width: timerWidth,
+    x: targetScreenBounds.x + targetScreenBounds.width - timerWidth - 20, // 20px margin
+    y: targetScreenBounds.y + targetScreenBounds.height - timerHeight - 60, // 60px margin from bottom
+  };
+};
+
+// BE-17 (full-audit-2026-09-05.md): mirrors window-media.ts's isMovingWindow
+// mutex + event-driven wait for the fullscreen transition to actually
+// complete before releasing the lock - without it, a second call arriving
+// while a macOS fullscreen animation (300-500ms+) is still running could
+// apply bounds/fullscreen mid-transition. Deliberately simplified relative
+// to the media window's mechanism: no "preferred screen"/explicit-vs-
+// automatic request priority, just last-request-wins queueing - enough to
+// stop two overlapping transitions from corrupting each other, which is the
+// actual bug class here; the media window's fuller mechanism exists for
+// reasons (multi-screen preference, explicit user action winning over an
+// automatic resync) that don't have an equivalent on this simpler window.
+let isMovingTimerWindow = false;
+let pendingTimerWindowPosition: null | {
+  displayNr?: number;
+  fullscreen: boolean;
+} = null;
+const TIMER_FULLSCREEN_TRANSITION_TIMEOUT_MS = 5000;
+
+const setTimerWindowPosition = (
+  displayNr?: number,
+  fullscreen = false,
+): Promise<void> => {
+  return new Promise<void>((resolve) => {
+    log('[setTimerWindowPosition] START - Called with:', 'timer', 'log', {
+      displayNr,
+      fullscreen,
+      isMovingTimerWindow,
+    });
+
+    if (isMovingTimerWindow) {
+      pendingTimerWindowPosition = { displayNr, fullscreen };
       log(
-        '[setTimerWindowPosition] No timerWindowInfo.timerWindow, returning',
+        '[setTimerWindowPosition] Already moving window, queueing latest request',
         'timer',
-        'error',
+        'log',
       );
+      resolve();
       return;
     }
 
-    const screens = getAllScreens();
-    const targetDisplay = screens[displayNr ?? 0];
-    if (!targetDisplay) {
-      log(
-        '[setTimerWindowPosition] Target display not found:',
-        'timer',
-        'error',
-        displayNr,
-      );
-      return;
-    }
+    isMovingTimerWindow = true;
+    let lockReleased = false;
+    const releaseLock = () => {
+      if (lockReleased) return;
+      lockReleased = true;
+      isMovingTimerWindow = false;
+      resolve();
 
-    const targetScreenBounds = targetDisplay.bounds;
-    log(
-      '[setTimerWindowPosition] Target screen bounds:',
-      'timer',
-      'log',
-      targetScreenBounds,
-    );
-
-    if (fullscreen) {
-      log('[setTimerWindowPosition] Going fullscreen', 'timer', 'log');
-      const normalizedBounds = normalizeWindowBounds(targetScreenBounds);
-      if (!normalizedBounds) {
-        log(
-          '[setTimerWindowPosition] Unsafe target screen bounds, skipping fullscreen transition',
-          'timer',
-          'warn',
-          targetScreenBounds,
+      const nextRequest = pendingTimerWindowPosition;
+      pendingTimerWindowPosition = null;
+      if (nextRequest) {
+        void setTimerWindowPosition(
+          nextRequest.displayNr,
+          nextRequest.fullscreen,
         );
+      }
+    };
+
+    try {
+      if (!timerWindowInfo.timerWindow) {
+        log(
+          '[setTimerWindowPosition] No timerWindowInfo.timerWindow, returning',
+          'timer',
+          'error',
+        );
+        releaseLock();
         return;
       }
 
-      timerWindowInfo.timerWindow.setBounds(normalizedBounds);
-      timerWindowInfo.timerWindow.setFullScreen(true);
-    } else {
-      log('[setTimerWindowPosition] Going windowed', 'timer', 'log');
+      const screens = getAllScreens();
+      const targetDisplay = screens[displayNr ?? 0];
+      if (!targetDisplay) {
+        log(
+          '[setTimerWindowPosition] Target display not found:',
+          'timer',
+          'error',
+          displayNr,
+        );
+        releaseLock();
+        return;
+      }
 
-      // Calculate windowed bounds - timer window should be smaller than media window
-      const timerWidth = Math.min(
-        400,
-        Math.floor(targetScreenBounds.width * 0.3),
-      ); // 30% of screen width, max 400px
-      const timerHeight = Math.min(
-        200,
-        Math.floor(targetScreenBounds.height * 0.2),
-      ); // 20% of screen height, max 200px
+      const targetScreenBounds = targetDisplay.bounds;
+      log(
+        '[setTimerWindowPosition] Target screen bounds:',
+        'timer',
+        'log',
+        targetScreenBounds,
+      );
 
-      // Position timer window in bottom right corner of the target screen
-      const x =
-        targetScreenBounds.x + targetScreenBounds.width - timerWidth - 20; // 20px margin
-      const y =
-        targetScreenBounds.y + targetScreenBounds.height - timerHeight - 60; // 60px margin from bottom
-
-      const bounds = {
-        height: timerHeight,
-        width: timerWidth,
-        x,
-        y,
+      const showInactiveIfVisible = () => {
+        if (timerWindowInfo.timerWindow?.isVisible()) {
+          log(
+            '[setTimerWindowPosition] Refreshing visible timer window without stealing focus',
+            'timer',
+            'log',
+          );
+          timerWindowInfo.timerWindow.showInactive();
+        }
       };
 
-      log(
-        '[setTimerWindowPosition] Calculated windowed bounds:',
-        'timer',
-        'log',
-        {
-          bounds,
-        },
-      );
+      const applyFullscreenTimer = () => {
+        if (!timerWindowInfo.timerWindow) {
+          releaseLock();
+          return;
+        }
 
-      const normalizedBounds = normalizeWindowBounds(bounds);
-      if (!normalizedBounds) {
-        log(
-          '[setTimerWindowPosition] Unsafe windowed bounds, skipping setBounds',
-          'timer',
-          'warn',
-          bounds,
+        log('[setTimerWindowPosition] Going fullscreen', 'timer', 'log');
+        const normalizedBounds = normalizeWindowBounds(targetScreenBounds);
+        if (!normalizedBounds) {
+          log(
+            '[setTimerWindowPosition] Unsafe target screen bounds, skipping fullscreen transition',
+            'timer',
+            'warn',
+            targetScreenBounds,
+          );
+          releaseLock();
+          return;
+        }
+
+        timerWindowInfo.timerWindow.setBounds(normalizedBounds);
+
+        function enterFullScreenHandler() {
+          clearTimeout(fallbackTimeout);
+          log(
+            '[setTimerWindowPosition] enter-full-screen received - transition complete',
+            'timer',
+            'log',
+          );
+          showInactiveIfVisible();
+          releaseLock();
+        }
+
+        // Safety net: some window managers can silently ignore a fullscreen
+        // request without destroying the window, in which case
+        // enter-full-screen never fires and isMovingTimerWindow would
+        // otherwise stay locked forever.
+        const fallbackTimeout = setTimeout(() => {
+          if (!timerWindowInfo.timerWindow) return;
+          timerWindowInfo.timerWindow.removeListener(
+            'enter-full-screen',
+            enterFullScreenHandler,
+          );
+          log(
+            '[setTimerWindowPosition] Timed out waiting for enter-full-screen - releasing lock',
+            'timer',
+            'warn',
+          );
+          releaseLock();
+        }, TIMER_FULLSCREEN_TRANSITION_TIMEOUT_MS);
+
+        timerWindowInfo.timerWindow.once(
+          'enter-full-screen',
+          enterFullScreenHandler,
         );
-        return;
+        timerWindowInfo.timerWindow.setFullScreen(true);
+      };
+
+      const applyWindowedTimer = () => {
+        if (!timerWindowInfo.timerWindow) {
+          releaseLock();
+          return;
+        }
+
+        log('[setTimerWindowPosition] Going windowed', 'timer', 'log');
+        const bounds = getWindowedTimerBounds(targetScreenBounds);
+        log(
+          '[setTimerWindowPosition] Calculated windowed bounds:',
+          'timer',
+          'log',
+          { bounds },
+        );
+
+        const normalizedBounds = normalizeWindowBounds(bounds);
+        if (!normalizedBounds) {
+          log(
+            '[setTimerWindowPosition] Unsafe windowed bounds, skipping setBounds',
+            'timer',
+            'warn',
+            bounds,
+          );
+          releaseLock();
+          return;
+        }
+
+        timerWindowInfo.timerWindow.setBounds(normalizedBounds);
+        showInactiveIfVisible();
+        releaseLock();
+      };
+
+      // Must exit any existing fullscreen before moving to a (potentially
+      // different) screen and re-entering fullscreen, or applying windowed
+      // bounds - setting bounds mid-fullscreen-transition is exactly the
+      // race this fix closes.
+      const leaveFullscreenTimer = (callback: () => void) => {
+        if (!timerWindowInfo.timerWindow) {
+          releaseLock();
+          return;
+        }
+
+        if (!timerWindowInfo.timerWindow.isFullScreen()) {
+          callback();
+          return;
+        }
+
+        log(
+          '[setTimerWindowPosition] Window is fullscreen - waiting for leave-full-screen before proceeding',
+          'timer',
+          'log',
+        );
+
+        function leaveFullScreenHandler() {
+          clearTimeout(fallbackTimeout);
+          if (!timerWindowInfo.timerWindow) {
+            releaseLock();
+            return;
+          }
+          callback();
+        }
+
+        // Safety net mirroring applyFullscreenTimer's: some window managers
+        // can silently ignore a fullscreen-exit request without destroying
+        // the window, in which case leave-full-screen never fires and
+        // isMovingTimerWindow would otherwise stay locked forever.
+        const fallbackTimeout = setTimeout(() => {
+          if (!timerWindowInfo.timerWindow) return;
+          timerWindowInfo.timerWindow.removeListener(
+            'leave-full-screen',
+            leaveFullScreenHandler,
+          );
+          log(
+            '[setTimerWindowPosition] Timed out waiting for leave-full-screen - releasing lock',
+            'timer',
+            'warn',
+          );
+          releaseLock();
+        }, TIMER_FULLSCREEN_TRANSITION_TIMEOUT_MS);
+
+        timerWindowInfo.timerWindow.once(
+          'leave-full-screen',
+          leaveFullScreenHandler,
+        );
+        timerWindowInfo.timerWindow.setFullScreen(false);
+      };
+
+      if (fullscreen) {
+        leaveFullscreenTimer(applyFullscreenTimer);
+      } else {
+        leaveFullscreenTimer(applyWindowedTimer);
       }
-
-      timerWindowInfo.timerWindow.setFullScreen(false);
-      timerWindowInfo.timerWindow.setBounds(normalizedBounds);
+    } catch (err) {
+      releaseLock();
+      captureElectronError(err, {
+        contexts: { fn: { name: 'setTimerWindowPosition' } },
+      });
+      log('[setTimerWindowPosition] Error:', 'timer', 'error', err);
     }
+  });
+};
 
-    // Bring timer window to front if it's visible
-    if (timerWindowInfo.timerWindow.isVisible()) {
-      log(
-        '[setTimerWindowPosition] Refreshing visible timer window without stealing focus',
-        'timer',
-        'log',
-      );
-      timerWindowInfo.timerWindow.showInactive();
-    }
-
-    log('[setTimerWindowPosition] END - All changes queued', 'timer', 'log');
-  } catch (err) {
-    log('[setTimerWindowPosition] Error:', 'timer', 'error', err);
-  }
+export const __testables = {
+  getWindowedTimerBounds,
 };

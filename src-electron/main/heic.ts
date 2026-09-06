@@ -26,6 +26,15 @@ import { captureElectronError } from 'src-electron/main/utils';
 // tiny and self-contained: it just loads `heic-convert` from the absolute path
 // we resolve here and answers decode requests.
 
+// HEIC/HEIF is exactly the kind of complex binary-format decode that
+// image-size.ts's ICNS/JXL/HEIF parsers were found vulnerable for (see that
+// file's own comment) - a crafted/corrupted .heic file can hang
+// heic-convert's decode forever, and since getChild() below reuses the same
+// child process across calls, one hung file would wedge every subsequent
+// HEIC conversion for the rest of the session behind it. Timeout-and-kill
+// the same way image-size.ts does.
+const HEIC_TIMEOUT_MS = 8000;
+
 const heicConvertPath = createRequire(import.meta.url).resolve('heic-convert');
 
 const workerSource = `'use strict';
@@ -121,20 +130,48 @@ const getChild = () => {
   return child;
 };
 
-const postToWorker = (
+/**
+ * A hung decode never posts a response, so a plain request/response promise
+ * would wait forever. On timeout, the whole child is killed (not just this
+ * request) since a worker stuck decoding a malformed file can't process any
+ * other pending message either; the next call spins up a fresh child.
+ */
+const postToWorkerWithTimeout = (
   request: Omit<HeicWorkerRequest, 'id'>,
-): Promise<HeicWorkerResponse> =>
-  new Promise((resolve, reject) => {
-    const id = nextRequestId++;
-    pendingRequests.set(id, { reject, resolve });
+): Promise<HeicWorkerResponse> => {
+  const id = nextRequestId++;
+
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      const timeoutError = new Error(
+        `Timed out decoding HEIC image after ${HEIC_TIMEOUT_MS}ms`,
+      );
+      const hungChild = child;
+      child = null;
+      hungChild?.kill();
+      rejectAllPending(timeoutError);
+    }, HEIC_TIMEOUT_MS);
+
+    pendingRequests.set(id, {
+      reject: (error) => {
+        clearTimeout(timeout);
+        reject(error);
+      },
+      resolve: (value) => {
+        clearTimeout(timeout);
+        resolve(value);
+      },
+    });
+
     getChild().postMessage({ ...request, id });
   });
+};
 
 export const convertHeic = async (
   image: ConversionOptions,
 ): Promise<ArrayBuffer> => {
   try {
-    const response = await postToWorker({ image });
+    const response = await postToWorkerWithTimeout({ image });
     return response.buffer ?? new ArrayBuffer(0);
   } catch (e) {
     captureElectronError(e, {

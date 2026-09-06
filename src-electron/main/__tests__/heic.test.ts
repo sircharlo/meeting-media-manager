@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const childState = vi.hoisted(() => ({
   handlers: new Map<string, (value: unknown) => void>(),
@@ -86,6 +86,64 @@ describe('convertHeic', () => {
 
     await expect(promise).resolves.toEqual(new ArrayBuffer(0));
     expect(captureElectronError).toHaveBeenCalled();
+  });
+
+  // BE-14 (full-audit-2026-09-05.md): the worker previously had no timeout
+  // at all, unlike image-size.ts's near-identical isolation - a hung decode
+  // (a crafted/corrupted .heic file) would wedge the single cached child
+  // forever, silently stalling every subsequent conversion that session.
+  describe('with fake timers', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('kills the hung child and returns an empty buffer on timeout instead of hanging forever', async () => {
+      const { convertHeic } = await import('../heic');
+
+      const promise = convertHeic({
+        buffer: new Uint8Array([1, 2, 3]),
+        format: 'JPEG',
+      });
+
+      await Promise.all([
+        expect(promise).resolves.toEqual(new ArrayBuffer(0)),
+        vi.advanceTimersByTimeAsync(8000),
+      ]);
+
+      expect(killMock).toHaveBeenCalledOnce();
+      expect(captureElectronError).toHaveBeenCalled();
+    });
+
+    it('spins up a fresh child for the next call after a timeout', async () => {
+      const { convertHeic } = await import('../heic');
+
+      const first = convertHeic({
+        buffer: new Uint8Array([1, 2, 3]),
+        format: 'JPEG',
+      });
+      await Promise.all([
+        expect(first).resolves.toEqual(new ArrayBuffer(0)),
+        vi.advanceTimersByTimeAsync(8000),
+      ]);
+
+      const second = convertHeic({
+        buffer: new Uint8Array([4, 5, 6]),
+        format: 'JPEG',
+      });
+      const secondBuffer = new Uint8Array([0xff]).buffer;
+      const secondMessage = childState.lastMessage;
+      expect(secondMessage).toBeDefined();
+      childState.handlers.get('message')?.({
+        buffer: secondBuffer,
+        id: secondMessage?.id,
+      });
+
+      await expect(second).resolves.toBe(secondBuffer);
+    });
   });
 });
 

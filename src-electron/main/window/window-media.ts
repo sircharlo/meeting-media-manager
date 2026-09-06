@@ -60,6 +60,32 @@ const isFullscreenOrMaximized = (
 };
 
 /**
+ * Whether moveMediaWindow can safely skip repositioning because the media
+ * window is already correctly settled on a single screen.
+ *
+ * BE-16 (full-audit-2026-09-05.md): a bare `screens.length === 1` check
+ * here also blocked calculateAutoTarget's own "single screen + fullscreen ->
+ * go windowed" recovery (step 4) for the one case it exists for - a second
+ * monitor being unplugged while the media window is fullscreen on it.
+ * Narrowed to only allow that recovery to run on the specific call reacting
+ * to a real topology change (`screenConfigChanged`) while the window is
+ * stuck fullscreen/maximized - every later steady-state call for an
+ * ordinary single-screen user (windowed or fullscreen, topology unchanged)
+ * still skips repositioning, so this can't reintroduce the aggressive-
+ * repositioning behavior the original guard was added to stop.
+ */
+const shouldSkipSingleScreenReposition = (
+  screens: ReturnType<typeof getAllScreens>,
+  hasInitialPositioningHappened: boolean,
+  screenConfigChanged: boolean,
+  boundsInfo: WindowBoundsInfo,
+  mediaWindow: BrowserWindow,
+): boolean =>
+  screens.length === 1 &&
+  hasInitialPositioningHappened &&
+  !(screenConfigChanged && isFullscreenOrMaximized(boundsInfo, mediaWindow));
+
+/**
  * Calculates target display info for automatic positioning
  */
 async function calculateAutoTarget(
@@ -457,10 +483,12 @@ export const __testables = {
   getMediaWindowState,
   getPreferredScreenFromPrefs,
   getTargetWhenOnMainScreen,
+  isFullscreenOrMaximized,
   isWindowEffectivelyFullscreen,
   normalizeWindowBounds,
   shouldKeepWindowedWithoutExplicitTarget,
   shouldMoveWindowedToFullscreen,
+  shouldSkipSingleScreenReposition,
   validateAndAdjustTarget,
 };
 
@@ -519,7 +547,15 @@ export const moveMediaWindow = async (
       lastStateRef,
     );
 
-    if (screens.length === 1 && hasInitialPositioningHappened) {
+    if (
+      shouldSkipSingleScreenReposition(
+        screens,
+        hasInitialPositioningHappened,
+        screenConfigChanged,
+        boundsInfo,
+        mediaWindowInfo.mediaWindow,
+      )
+    ) {
       return; // Already positioned on single screen
     }
 

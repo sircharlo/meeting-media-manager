@@ -17,6 +17,12 @@ const capturedCallbacksByUrl = vi.hoisted(
   () => new Map<string, DownloadCallbacks>(),
 );
 
+// BE-13 (full-audit-2026-09-05.md): tracks which `directory` each successive
+// download() call for the same URL actually targeted, so a retry can be
+// asserted to have re-resolved it instead of blindly reusing the first
+// attempt's (possibly now-missing) directory.
+const capturedDirectories = vi.hoisted(() => [] as string[]);
+
 interface TestWindowState {
   mainWindow: null | {
     id: number;
@@ -50,8 +56,13 @@ vi.mock('electron-dl-manager', () => ({
     return {
       cancelDownload: vi.fn(),
       download: vi.fn(
-        (options: { callbacks: DownloadCallbacks; url: string }) => {
+        (options: {
+          callbacks: DownloadCallbacks;
+          directory: string;
+          url: string;
+        }) => {
           capturedCallbacksByUrl.set(options.url, options.callbacks);
+          capturedDirectories.push(options.directory);
           return mocks.download();
         },
       ),
@@ -85,7 +96,10 @@ vi.mock('countries-and-timezones', () => ({
 }));
 
 vi.mock('electron', () => ({
-  app: { getLocaleCountryCode: vi.fn(() => 'US') },
+  app: {
+    getLocaleCountryCode: vi.fn(() => 'US'),
+    getPath: vi.fn(() => '/tmp'),
+  },
 }));
 
 vi.mock('src-electron/main/disk-space', () => ({
@@ -125,6 +139,7 @@ describe('downloadFile onError retry (BE-9)', () => {
     vi.resetModules();
     vi.clearAllMocks();
     capturedCallbacksByUrl.clear();
+    capturedDirectories.length = 0;
     mocks.mkdir.mockResolvedValue(undefined);
     mocks.stat.mockResolvedValue({ isDirectory: () => true });
     windowState.mainWindow = {
@@ -180,6 +195,44 @@ describe('downloadFile onError retry (BE-9)', () => {
       'downloadError',
       expect.objectContaining({}),
     );
+  });
+
+  // BE-13 (full-audit-2026-09-05.md): the original directory can disappear
+  // mid-download (network-share disconnect, USB drive removed, OneDrive
+  // folder unlinked) - a retry that blindly reuses it fails immediately
+  // every time instead of falling back the way a fresh download already
+  // would.
+  it('re-resolves the destination directory before retrying, instead of reusing a now-missing one', async () => {
+    const originalDir = '/tmp/media';
+    let originalDirIsGone = false;
+    mocks.mkdir.mockImplementation(async (dir: string) => {
+      if (dir === originalDir && originalDirIsGone) {
+        const error = new Error('ENOENT: no such file or directory');
+        (error as NodeJS.ErrnoException).code = 'ENOENT';
+        throw error;
+      }
+    });
+
+    const { downloadFile } = await import('src-electron/main/downloads');
+
+    await downloadFile(URL, originalDir);
+    await waitUntil(() => mocks.download.mock.calls.length === 1);
+    expect(capturedDirectories[0]).toBe(originalDir);
+
+    // The original directory vanishes between the first attempt and the
+    // retry - exactly the scenario ensureDirWithRetry's fallback exists for.
+    originalDirIsGone = true;
+
+    await capturedCallbacksByUrl
+      .get(URL)
+      ?.onError(new Error('ECONNRESET'), { failed: true });
+    await waitUntil(() => mocks.download.mock.calls.length === 2);
+
+    // The retry must have re-resolved the directory (to the temp fallback,
+    // since the original now fails every mkdir attempt) rather than
+    // reusing the first attempt's now-missing directory.
+    expect(capturedDirectories[1]).not.toBe(originalDir);
+    expect(capturedDirectories[1]).toContain('Downloads');
   });
 
   it('does not retry once already removed from tracking (e.g. completed first)', async () => {
