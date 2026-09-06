@@ -648,6 +648,8 @@
   "quick-actions-checklist-unmute-zoom-participants": "Lülita Zoom-osalejate heli sisse",
   "quick-actions-custom-category": "Kohandatud kategooria",
   "quick-actions-custom-item": "Kohandatud ülesanne",
+  "quick-actions-delete-category-confirmation": "Are you sure you want to delete this category? {count} task(s) in it will also be deleted. This action cannot be undone.",
+  "quick-actions-delete-item-confirmation": "Are you sure you want to delete this task? This action cannot be undone.",
   "quick-actions-dismiss": "Sulge paneel",
   "quick-actions-enabled": "Lubatud",
   "quick-actions-item-name": "Ülesande nimi",

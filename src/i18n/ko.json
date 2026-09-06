@@ -648,6 +648,8 @@
   "quick-actions-checklist-unmute-zoom-participants": "Zoom 참여자 음소거 해제",
   "quick-actions-custom-category": "사용자 지정 범주",
   "quick-actions-custom-item": "사용자 지정 작업",
+  "quick-actions-delete-category-confirmation": "Are you sure you want to delete this category? {count} task(s) in it will also be deleted. This action cannot be undone.",
+  "quick-actions-delete-item-confirmation": "Are you sure you want to delete this task? This action cannot be undone.",
   "quick-actions-dismiss": "패널 닫기",
   "quick-actions-enabled": "활성화",
   "quick-actions-item-name": "작업 이름",

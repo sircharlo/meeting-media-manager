@@ -648,6 +648,8 @@
   "quick-actions-checklist-unmute-zoom-participants": "解除Zoom参与者的静音",
   "quick-actions-custom-category": "自定义类别",
   "quick-actions-custom-item": "自定义任务",
+  "quick-actions-delete-category-confirmation": "Are you sure you want to delete this category? {count} task(s) in it will also be deleted. This action cannot be undone.",
+  "quick-actions-delete-item-confirmation": "Are you sure you want to delete this task? This action cannot be undone.",
   "quick-actions-dismiss": "关闭面板",
   "quick-actions-enabled": "已启用",
   "quick-actions-item-name": "任务名称",

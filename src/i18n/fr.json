@@ -648,6 +648,8 @@
   "quick-actions-checklist-unmute-zoom-participants": "Réactiver le son des participants sur Zoom",
   "quick-actions-custom-category": "Catégorie personnalisée",
   "quick-actions-custom-item": "Tâche personnalisée",
+  "quick-actions-delete-category-confirmation": "Are you sure you want to delete this category? {count} task(s) in it will also be deleted. This action cannot be undone.",
+  "quick-actions-delete-item-confirmation": "Are you sure you want to delete this task? This action cannot be undone.",
   "quick-actions-dismiss": "Fermer le panneau",
   "quick-actions-enabled": "Activé",
   "quick-actions-item-name": "Nom de la tâche",

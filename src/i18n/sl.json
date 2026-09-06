@@ -648,6 +648,8 @@
   "quick-actions-checklist-unmute-zoom-participants": "Udeležencem na Zoomu vklopi mikrofon",
   "quick-actions-custom-category": "Kategorija po meri",
   "quick-actions-custom-item": "Naloga po meri",
+  "quick-actions-delete-category-confirmation": "Are you sure you want to delete this category? {count} task(s) in it will also be deleted. This action cannot be undone.",
+  "quick-actions-delete-item-confirmation": "Are you sure you want to delete this task? This action cannot be undone.",
   "quick-actions-dismiss": "Zapri ploščo",
   "quick-actions-enabled": "Omogočeno",
   "quick-actions-item-name": "Ime naloge",
