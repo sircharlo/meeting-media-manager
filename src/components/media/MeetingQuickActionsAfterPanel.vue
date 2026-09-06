@@ -67,7 +67,11 @@
       <MeetingQuickActionsChecklist mode="after" />
     </q-card-section>
     <q-card-actions align="right">
-      <q-btn flat :label="t('quick-actions-dismiss')" @click="dismissAfter" />
+      <q-btn
+        flat
+        :label="t('quick-actions-dismiss')"
+        @click="dismissConfirmPending = true"
+      />
     </q-card-actions>
 
     <ConfirmDialog
@@ -81,6 +85,17 @@
       :title="t('quick-actions-start-music-confirm-title')"
       @cancel="startMusicConfirmPending = false"
       @confirm="confirmStartMusic"
+    />
+    <ConfirmDialog
+      v-model="dismissConfirmPending"
+      :confirm-label="t('quick-actions-dismiss')"
+      dialog-id="quick-actions-dismiss-after-confirm"
+      icon="mmm-clear"
+      :message="t('quick-actions-dismiss-after-confirmation')"
+      persistent
+      :title="t('confirm')"
+      @cancel="dismissConfirmPending = false"
+      @confirm="confirmDismissAfter"
     />
   </q-card>
 </template>
@@ -111,6 +126,14 @@ const { currentSettings, mediaPlaying, selectedDateObject } =
 const quickActions = useMeetingQuickActionsStore();
 const { lastSongEndedAt } = storeToRefs(quickActions);
 const { dismissAfter } = quickActions;
+
+// UX-15 (full-audit-2026-09-05.md): see MeetingQuickActionsBeforePanel.vue's
+// matching guard - dismissing here has the same one-click, no-undo shape.
+const dismissConfirmPending = ref(false);
+const confirmDismissAfter = () => {
+  dismissConfirmPending.value = false;
+  dismissAfter();
+};
 
 const music = useMusicStore();
 const { mediaIsActivelyPlaying, musicPlaying, musicState } = storeToRefs(music);

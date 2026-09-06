@@ -651,6 +651,8 @@
   "quick-actions-delete-category-confirmation": "Are you sure you want to delete this category? {count} task(s) in it will also be deleted. This action cannot be undone.",
   "quick-actions-delete-item-confirmation": "Are you sure you want to delete this task? This action cannot be undone.",
   "quick-actions-dismiss": "Dismiss panel",
+  "quick-actions-dismiss-after-confirmation": "Are you sure you want to dismiss this panel? It won't come back for this meeting unless you restart M³.",
+  "quick-actions-dismiss-before-confirmation": "Are you sure you want to dismiss this panel? The pre-meeting checklist won't be shown again for this meeting unless you restart M³.",
   "quick-actions-enabled": "Enabled",
   "quick-actions-item-name": "Task name",
   "quick-actions-last-song-ends-at": "Last song ends at {time}",

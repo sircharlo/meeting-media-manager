@@ -87,12 +87,29 @@
       <MeetingQuickActionsChecklist mode="before" />
     </q-card-section>
     <q-card-actions align="right">
-      <q-btn flat :label="t('quick-actions-dismiss')" @click="dismissBefore" />
+      <q-btn
+        flat
+        :label="t('quick-actions-dismiss')"
+        @click="dismissConfirmPending = true"
+      />
     </q-card-actions>
+
+    <ConfirmDialog
+      v-model="dismissConfirmPending"
+      :confirm-label="t('quick-actions-dismiss')"
+      dialog-id="quick-actions-dismiss-before-confirm"
+      icon="mmm-clear"
+      :message="t('quick-actions-dismiss-before-confirmation')"
+      persistent
+      :title="t('confirm')"
+      @cancel="dismissConfirmPending = false"
+      @confirm="confirmDismissBefore"
+    />
   </q-card>
 </template>
 
 <script setup lang="ts">
+import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import MeetingQuickActionsChecklist from 'components/media/MeetingQuickActionsChecklist.vue';
 import { storeToRefs } from 'pinia';
 import { getTodaysMeetingStartDateTime } from 'src/helpers/date';
@@ -101,7 +118,7 @@ import { useCurrentStateStore } from 'stores/current-state';
 import { useMeetingQuickActionsStore } from 'stores/meeting-quick-actions';
 import { useMusicStore } from 'stores/music';
 import { useRecordingStore } from 'stores/recording-state';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const props = defineProps<{ now: number }>();
@@ -112,6 +129,17 @@ const { currentSettings, mediaIsActivelyPlaying } = storeToRefs(currentState);
 
 const quickActions = useMeetingQuickActionsStore();
 const { dismissBefore } = quickActions;
+
+// UX-15 (full-audit-2026-09-05.md): dismissing used to be a single
+// irreversible click, with no production way to bring the panel back for
+// the rest of the day/session - a mis-click permanently lost the
+// pre-meeting checklist reminder. Confirming first at least prevents that
+// accidental loss.
+const dismissConfirmPending = ref(false);
+const confirmDismissBefore = () => {
+  dismissConfirmPending.value = false;
+  dismissBefore();
+};
 
 const music = useMusicStore();
 const { musicPlaying, musicState, timeUntilMusicStops } = storeToRefs(music);
