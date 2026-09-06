@@ -7,7 +7,10 @@ import {
   type WebContents,
 } from 'electron';
 import { HD_RESOLUTION, PLATFORM } from 'src-electron/constants';
-import { captureElectronError, isTrustedDomain } from 'src-electron/main/utils';
+import {
+  captureElectronError,
+  isTrustedNavigationTarget,
+} from 'src-electron/main/utils';
 import {
   createWindow,
   logToWindow,
@@ -84,7 +87,7 @@ export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
   // handler overrides the app-wide trust check registered in security.ts.
   websiteWindowInfo.websiteWindow?.webContents.setWindowOpenHandler(
     (details) => {
-      if (isTrustedDomain(details.url)) {
+      if (isTrustedNavigationTarget(details.url)) {
         websiteWindowInfo.websiteWindow?.loadURL(details.url);
       } else {
         logToWindow(

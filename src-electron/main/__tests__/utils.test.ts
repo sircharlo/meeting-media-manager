@@ -1,7 +1,12 @@
+import { pathToFileURL } from 'node:url';
+import { resolve } from 'upath';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+const mockAppPath = '/mock/app/resources/app';
 
 vi.mock('electron', () => ({
   app: {
+    getAppPath: vi.fn(() => mockAppPath),
     getPath: vi.fn(),
     getVersion: vi.fn(),
     once: vi.fn(),
@@ -35,11 +40,43 @@ import {
   isIgnoredUnhandledNetworkEvent,
   isIgnoredUpdateError,
   isJwDomain,
+  isSelf,
   isTrustedDomain,
+  isTrustedNavigationTarget,
   isUpdaterFullDownloadFallbackError,
   markUpdaterFullDownloadFallback,
   utils,
 } from '../utils';
+
+// SEC-10 (full-audit-2026-09-05.md): previously matched any local file
+// merely ending in the literal substring "index.html" - not anchored to the
+// app's actual bundled index.html path at all. Both the "expected" and
+// "actual" paths below go through the same resolve()/pathToFileURL()
+// transformation as the real code, so the assertions hold regardless of
+// which OS runs the test.
+describe('isSelf', () => {
+  it("accepts the app's real, resolved index.html path", () => {
+    const realIndexPath = resolve(mockAppPath, 'index.html');
+    expect(isSelf(pathToFileURL(realIndexPath).href)).toBe(true);
+  });
+
+  it('rejects a different local file that merely ends in "index.html"', () => {
+    const lookalikePath = resolve(mockAppPath, 'foo', 'myindex.html');
+    expect(isSelf(pathToFileURL(lookalikePath).href)).toBe(false);
+  });
+
+  it('accepts the app: protocol unconditionally', () => {
+    expect(isSelf('app://anything')).toBe(true);
+  });
+
+  it('rejects non-file/app protocols', () => {
+    expect(isSelf('https://jw.org/')).toBe(false);
+  });
+
+  it('rejects an undefined url', () => {
+    expect(isSelf(undefined)).toBe(false);
+  });
+});
 
 describe('isJwDomain', () => {
   it('accepts jw.org and its subdomains', () => {
@@ -75,6 +112,34 @@ describe('isTrustedDomain', () => {
 
   it('rejects an undefined url', () => {
     expect(isTrustedDomain(undefined)).toBe(false);
+  });
+});
+
+// SEC-9 (full-audit-2026-09-05.md): akamaihd.net/cloudfront.net are
+// self-service, multi-tenant CDN platforms - fine to trust for loading a
+// media asset (isTrustedDomain, above), but an attacker-provisioned
+// subdomain on either should never be treated as safe to navigate to, open
+// as a webview/new window, or grant a permission request from.
+describe('isTrustedNavigationTarget', () => {
+  it('accepts JW domains and their subdomains', () => {
+    expect(isTrustedNavigationTarget('https://jw.org/')).toBe(true);
+    expect(isTrustedNavigationTarget('https://cdn.jw-cdn.org/')).toBe(true);
+    expect(isTrustedNavigationTarget('https://stream.jw.org/')).toBe(true);
+  });
+
+  it('rejects the multi-tenant CDN hosts isTrustedDomain accepts', () => {
+    expect(isTrustedNavigationTarget('https://d1.cloudfront.net/')).toBe(false);
+    expect(
+      isTrustedNavigationTarget('https://assetsnffrgf-a.akamaihd.net/'),
+    ).toBe(false);
+  });
+
+  it('rejects look-alike domains that merely end with a trusted suffix', () => {
+    expect(isTrustedNavigationTarget('https://evil-jw-cdn.org/')).toBe(false);
+  });
+
+  it('rejects an undefined url', () => {
+    expect(isTrustedNavigationTarget(undefined)).toBe(false);
   });
 });
 

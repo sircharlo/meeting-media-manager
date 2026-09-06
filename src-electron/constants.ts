@@ -27,8 +27,26 @@ export const SENTRY_ENVIRONMENT = getSentryEnvironment();
 
 // Domains
 export const JW_DOMAINS: string[] = ['jw.org', 'jwevent.org', 'stream.jw.org'];
-export const TRUSTED_DOMAINS: string[] = JW_DOMAINS.concat([
+// SEC-9 (full-audit-2026-09-05.md): `akamaihd.net`/`cloudfront.net` are
+// real, load-bearing hosts for JW media assets (e.g. thumbnail/poster
+// images - confirmed by a real, historically-hardcoded example URL on
+// `assetsnffrgf-a.akamaihd.net`), but they're also self-service, multi-
+// tenant CDN platforms: anyone can provision their own subdomain under
+// either in minutes, and `isHostnameOrSubdomain`'s `.`-boundary check can't
+// tell an attacker's `<random>.cloudfront.net` apart from a legitimate one.
+// That's an acceptable, necessary risk for *loading media assets*
+// (img-src/media-src/connect-src, CORS header rewriting - see
+// `TRUSTED_DOMAINS`/`getTrustedHostnames()` in session.ts) since a static
+// asset host is never itself the source of a navigation, webview, or
+// permission request in real usage - so `NAVIGABLE_TRUSTED_DOMAINS`
+// deliberately excludes them, and gates the honestly dangerous
+// decisions (camera/mic/notification grants, `will-navigate`, webview
+// creation, `setWindowOpenHandler`'s auto-open-external) on the narrower
+// list instead. See `isTrustedNavigationTarget` in utils.ts.
+export const NAVIGABLE_TRUSTED_DOMAINS: string[] = JW_DOMAINS.concat([
   'jw-cdn.org',
+]);
+export const TRUSTED_DOMAINS: string[] = NAVIGABLE_TRUSTED_DOMAINS.concat([
   'akamaihd.net',
   'cloudfront.net',
 ]);

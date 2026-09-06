@@ -1,9 +1,11 @@
 import { addBreadcrumb, captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
 import { app } from 'electron';
+import { fileURLToPath } from 'node:url';
 import {
   IS_DEV,
   JW_DOMAINS,
+  NAVIGABLE_TRUSTED_DOMAINS,
   PLATFORM,
   PRODUCT_NAME,
   TRUSTED_DOMAINS,
@@ -15,7 +17,7 @@ import {
   NETWORK_ERROR_CODES,
 } from 'src/shared/network-errors';
 import { log } from 'src/shared/vanilla';
-import { join } from 'upath';
+import { join, resolve } from 'upath';
 
 import { resolveElectronAssetsPath } from '#q-app/electron/main';
 
@@ -173,6 +175,15 @@ export function isMachineWideInstallation(): boolean {
   }
 }
 
+// SEC-10 (full-audit-2026-09-05.md): memoized rather than computed at
+// module-load time - app.getAppPath() doesn't require app.whenReady(), but
+// there's no need to call it before isSelf() is first actually invoked.
+let cachedAppIndexPath: null | string = null;
+const getAppIndexPath = (): string => {
+  cachedAppIndexPath ??= resolve(app.getAppPath(), 'index.html');
+  return cachedAppIndexPath;
+};
+
 /**
  * Checks if a given url is the same as the current app url
  * @param url The url to check
@@ -187,38 +198,80 @@ export function isSelf(url?: string): boolean {
       return parsedUrl.origin === import.meta.env.QUASAR_APP_URL;
     }
 
-    return (
-      (parsedUrl.protocol === 'file:' &&
-        parsedUrl.pathname.toLowerCase().endsWith('index.html')) ||
-      parsedUrl.protocol === 'app:'
-    );
+    if (parsedUrl.protocol === 'app:') return true;
+    if (parsedUrl.protocol !== 'file:') return false;
+
+    // SEC-10: previously matched any local file merely ending in the
+    // literal substring "index.html" (e.g. "/foo/myindex.html" also
+    // matched), with no check that it was actually the app's own bundled
+    // index.html - this is the single trust-boundary check gating every IPC
+    // handler, so it's worth comparing against the real resolved path
+    // instead. fileURLToPath handles the file: URL's platform-specific
+    // encoding (Windows drive-letter form, %20 escapes, etc.) correctly;
+    // resolve() (upath) then normalizes both sides to the same
+    // forward-slash form for comparison.
+    const requestedPath = resolve(fileURLToPath(parsedUrl));
+    return PLATFORM === 'win32' || PLATFORM === 'darwin'
+      ? requestedPath.toLowerCase() === getAppIndexPath().toLowerCase()
+      : requestedPath === getAppIndexPath();
   } catch {
     return false;
   }
 }
 
+// The congregation-configured mediator/pubMedia/base endpoints are real,
+// user-confirmed JW infrastructure (base changes are gated behind SEC-4's
+// confirmation dialog) - legitimate to trust regardless of which domain
+// list (broad or navigation-only) is being checked against.
+const getDynamicTrustedHostnames = (): string[] =>
+  [
+    urlVariables?.mediator,
+    urlVariables?.pubMedia,
+    urlVariables?.base ? `https://${urlVariables.base}/` : undefined,
+  ]
+    .filter((d): d is string => !!d)
+    .map((d) => new URL(d).hostname);
+
+const matchesTrustedDomain = (url: string, domains: string[]): boolean => {
+  try {
+    const parsedUrl = new URL(url);
+    if (parsedUrl.protocol !== 'https:') return false;
+    return domains
+      .concat(getDynamicTrustedHostnames())
+      .some((domain) => isHostnameOrSubdomain(parsedUrl.hostname, domain));
+  } catch {
+    return false;
+  }
+};
+
 /**
- * Check if a given url is a trusted domain
+ * Check if a given url is a trusted domain for loading a media asset
+ * (img-src/media-src/connect-src, CORS header rewriting) - includes
+ * multi-tenant CDN hosts (`akamaihd.net`/`cloudfront.net`) that JW media
+ * assets are genuinely served from. Do not use this to decide whether a URL
+ * may be navigated to, granted a permission, or opened as a webview/new
+ * window - use {@link isTrustedNavigationTarget} for those.
  * @param url The url to check
  * @returns Whether the url is a trusted domain
  */
 export function isTrustedDomain(url?: string): boolean {
   if (!url) return false;
-  try {
-    const parsedUrl = new URL(url);
-    if (parsedUrl.protocol !== 'https:') return false;
-    return TRUSTED_DOMAINS.concat(
-      [
-        urlVariables?.mediator,
-        urlVariables?.pubMedia,
-        urlVariables?.base ? `https://${urlVariables.base}/` : undefined,
-      ]
-        .filter((d): d is string => !!d)
-        .map((d) => new URL(d).hostname),
-    ).some((domain) => isHostnameOrSubdomain(parsedUrl.hostname, domain));
-  } catch {
-    return false;
-  }
+  return matchesTrustedDomain(url, TRUSTED_DOMAINS);
+}
+
+/**
+ * Check if a given url is safe to navigate to, open as a webview/new
+ * window, or grant a permission request from. Deliberately narrower than
+ * {@link isTrustedDomain}: excludes the self-service multi-tenant CDN hosts
+ * that list also trusts for loading media assets, since anyone can
+ * provision a subdomain on either one - fine for treating it as a source of
+ * an image/video, not fine for treating it as a navigable origin.
+ * @param url The url to check
+ * @returns Whether the url is safe to navigate to
+ */
+export function isTrustedNavigationTarget(url?: string): boolean {
+  if (!url) return false;
+  return matchesTrustedDomain(url, NAVIGABLE_TRUSTED_DOMAINS);
 }
 
 /**
