@@ -92,6 +92,7 @@
   "cbs": "Estudo bíblico de congregação",
   "cbs-custom-end-time": "@:cbs hora de término",
   "change-color": "Alterar cor",
+  "change-key-combination": "Change shortcut: {shortcut}",
   "change-tag": "Alterar etiqueta",
   "change-tag-explain": "Alterar o tipo de etiqueta e rótulo para esta mídia.",
   "chapter": "Capítulo",

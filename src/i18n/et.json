@@ -92,6 +92,7 @@
   "cbs": "Koguduse piibliuurimine",
   "cbs-custom-end-time": "PU lõpu aeg",
   "change-color": "Muuda värvi",
+  "change-key-combination": "Change shortcut: {shortcut}",
   "change-tag": "Muuda silti",
   "change-tag-explain": "Selle meediaelemendi sildi tüübi ja sildi muutmine.",
   "chapter": "Peatükk",
