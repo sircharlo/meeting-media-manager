@@ -34,7 +34,7 @@ interface CrashState {
  * mark a session "clean" before it's actually quitting).
  */
 export function markCleanExit(): void {
-  writeCrashState({ cleanExit: true, count: getCrashCount() });
+  writeCrashState({ cleanExit: true, count: getCrashCount(readCrashState()) });
 }
 
 /**
@@ -47,16 +47,27 @@ export function markCleanExit(): void {
  * `wasLastExitClean()` instead only increments when the previous session
  * never reached its own shutdown path at all - the actual signal for "this
  * probably crashed," not just "this session was short."
- * @returns This launch's crash count (0 if the previous exit was clean)
+ *
+ * BE-18 (full-audit-2026-09-05.md): a truly first-ever launch (no
+ * crash-state file yet - `readCrashState()` returns `null`) used to look
+ * just like a genuine prior crash, since both made the old
+ * `wasLastExitClean()` return `false`, counting a fresh install's first
+ * launch as crash #1. Checking for `state === null` explicitly (rather than
+ * folding it into the same `cleanExit !== true` fallback `wasLastExitClean`
+ * used) treats "no prior session at all" the same as a clean one.
+ * @returns This launch's crash count (0 if the previous exit was clean, or
+ * there was no previous session at all)
  */
 export function recordStartupCrashCount(): number {
-  const crashCount = wasLastExitClean() ? 0 : getCrashCount() + 1;
+  const state = readCrashState();
+  const crashCount =
+    state === null || state.cleanExit === true ? 0 : getCrashCount(state) + 1;
   markSessionStartedUncleanly(crashCount);
   return crashCount;
 }
 
-function getCrashCount(): number {
-  const count = readCrashState()?.count;
+function getCrashCount(state: CrashState | null): number {
+  const count = state?.count;
   return typeof count === 'number' ? count : 0;
 }
 
@@ -64,7 +75,7 @@ function getCrashCount(): number {
  * Marks the current, just-started session as not yet cleanly exited -
  * called once at startup, immediately after computing this launch's crash
  * count, so that if this session ends up crashing, the *next* launch's
- * wasLastExitClean() check correctly reports `false`.
+ * `readCrashState()` check correctly reports `cleanExit: false`.
  * @param count The crash count to persist alongside the flag
  */
 function markSessionStartedUncleanly(count: number): void {
@@ -81,14 +92,6 @@ function readCrashState(): CrashState | null {
     log('Failed to read crash count:', 'electron', 'warn', error);
     return null;
   }
-}
-
-/**
- * Whether the previous session that held this file reached its own clean
- * shutdown (see the CrashState.cleanExit doc comment).
- */
-function wasLastExitClean(): boolean {
-  return readCrashState()?.cleanExit === true;
 }
 
 function writeCrashState(state: CrashState): void {

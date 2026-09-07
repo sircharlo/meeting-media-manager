@@ -36,11 +36,15 @@ describe('recordStartupCrashCount', () => {
     storedState = null;
   });
 
-  it('starts at 1 on a fresh install (no prior state)', async () => {
+  // BE-18 (full-audit-2026-09-05.md): a truly first-ever launch (no
+  // crash-state file yet) used to be indistinguishable from "the previous
+  // session crashed" - both made the old wasLastExitClean() check return
+  // false, counting a fresh install's first launch as crash #1 instead of 0.
+  it('starts at 0 on a fresh install (no prior state), not miscounted as a crash', async () => {
     const { recordStartupCrashCount } = await import('../crash-loop');
 
-    expect(recordStartupCrashCount()).toBe(1);
-    expect(storedState).toEqual({ cleanExit: false, count: 1 });
+    expect(recordStartupCrashCount()).toBe(0);
+    expect(storedState).toEqual({ cleanExit: false, count: 0 });
   });
 
   it('increments when the previous session never reached a clean exit', async () => {
