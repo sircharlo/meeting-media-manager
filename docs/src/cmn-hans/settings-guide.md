@@ -2,7 +2,7 @@
 
 本综合指南按类别说明所有可用设置。了解这些设置，可以帮助你根据会众的实际需要配置 M³。 了解这些设置将有助于配置M3来完全满足您会众的需要。
 
-## 应用程序配置 {#application-configuration}
+## General {#application-configuration}
 
 ### 显示语言 {#display-language}
 
@@ -165,13 +165,19 @@
 
 此功能仅适用于通过会众搜索添加、且会众名称未被手动更改的配置。 如果因聚合名称被更改而同步被禁用，请使用 **启用聚会时间同步** 重新链接配置文件。
 
+#### Enable Schedule Sync {#relink-congregation}
+
+<!-- **Setting**: `relinkCongregationButton` -->
+
+Re-links the current profile to congregation lookup so automatic meeting day and time updates can resume. Only shown once the congregation name has been changed manually, since that's what breaks the link in the first place.
+
 #### 刷新聚会时间安排 {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
 手动将当前和未来的聚会时间安排与官方网站提供的信息同步。
 
-## 媒体和播放 {#media-retrieval-and-playback}
+## Media & Playback {#media-retrieval-and-playback}
 
 ### 计量连接 {#metered-connection}
 
@@ -241,6 +247,107 @@
 
 **默认**：100%
 
+### Playback and Download Options {#media-display}
+
+<!-- This section covers mediaRetrievalPlayback's `media-display` settings subgroup -
+these control the media window's playback behavior and which downloaded media is
+filtered out, as distinct from the "Media Display" section above (which is about
+whether the media window feature is enabled at all). -->
+
+#### 启用媒体窗口淡入淡出效果 {#enable-media-window-fade-transitions}
+
+<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+
+显示或隐藏媒体窗口时使用淡入淡出效果。
+
+**默认**：`true`
+
+#### 启用播放速度控制 {#enable-playback-speed-control}
+
+<!-- **Setting**: `enablePlaybackSpeedControl` -->
+
+允许从媒体项目的菜单中调整音频和视频的播放速度。
+
+**Default**: `false`
+
+#### 隐藏媒体标志 {#hide-media-logo}
+
+<!-- **Setting**: `hideMediaLogo` -->
+
+在媒体窗口中隐藏 JW 标志。
+
+**Default**: `false`
+
+#### 最高分辨率 {#maximum-resolution}
+
+<!-- **Setting**: `maxRes` -->
+
+设置下载媒体文件时使用的最高分辨率。
+
+**选项**：240p、360p、480p、720p、1080p
+
+**默认**：`false`
+
+#### 包括印刷版媒体 {#include-printed-media}
+
+<!-- **Setting**: `includePrinted` -->
+
+如果印刷版出版物中有电子版没有的媒体，也包括这些媒体。
+
+**默认**：`true`
+
+#### Exclude Footnotes {#exclude-footnotes}
+
+<!-- **Setting**: `excludeFootnotes` -->
+
+尽可能在媒体下载中排除脚注图像。
+
+**Default**: `false`
+
+#### 排除《守望台》研究班段落中额外提到的视频 {#exclude-additional-watchtower-study-videos}
+
+<!-- **Setting**: `excludeWtParagraphVideos` -->
+
+不包括《守望台》研究班文章段落中额外提到的视频。
+
+**Default**: `false`
+
+#### Exclude Congregation Bible Study Videos {#exclude-cbs-pubs}
+
+<!-- **Setting**: `excludeCbsPubs` -->
+
+Choose publications whose referenced videos should not be shown during the Congregation Bible Study. Search by publication title or symbol.
+
+**Default**: Congregation Bible Study Guide (`wcg`)
+
+#### 排除《教导》中的媒体 {#exclude-theocratic-ministry-school}
+
+<!-- **Setting**: `excludeTh` -->
+
+不包括《教导》中的媒体。
+
+**默认**：`true`
+
+### 字幕语言 {#subtitles}
+
+#### 启用字幕 {#enable-subtitles}
+
+<!-- **Setting**: `enableSubtitles` -->
+
+启用媒体播放的字幕支持。
+
+**Default**: `false`
+
+#### 启用字幕 {#subtitle-language}
+
+<!-- **Setting**: `langSubtitles` -->
+
+设置字幕的语言，可以与媒体语言不同。
+
+**选项**：耶和华见证人官方网站上提供的所有语言
+
+**默认**：无
+
 ### 缓存管理 {#cache-management}
 
 #### 启用额外缓存 {#enable-extra-cache}
@@ -267,6 +374,50 @@
 
 **默认**：`true`
 
+### Pinyin Song Titles {#pinyin-song-titles}
+
+#### Prefer Pinyin Songs {#enable-pinyin-songs}
+
+<!-- **Setting**: `enablePinyinSongs` -->
+
+When a pinyin version of a meeting song is found in the pinyin song folder, use it instead of the standard song.
+
+**Default**: `false`
+
+#### Pinyin Song Folder {#pinyin-song-folder}
+
+<!-- **Setting**: `pinyinSongFolder` -->
+
+Folder containing pinyin video songs (e.g. `sjjm_s-Pi_CHS_066_r720P.mp4`). When a pinyin file matching the meeting song number is found, it will be played instead of the standard song.
+
+**默认**：空
+
+### 媒体导出文件夹 {#settings-guide-media-export}
+
+#### 媒体自动导出 {#enable-media-auto-export}
+
+<!-- **Setting**: `enableMediaAutoExport` -->
+
+设置自动导出媒体文件的目标文件夹。
+
+**Default**: `false`
+
+#### 启用媒体自动导出 {#media-export-folder}
+
+<!-- **Setting**: `mediaAutoExportFolder` -->
+
+自动将媒体文件导出到指定文件夹。
+
+**默认**：空
+
+#### 将文件转换为 MP4 {#convert-files-to-mp4}
+
+**Setting**: `convertFilesToMp4`
+
+将导出的非视频媒体转换为 MP4，以提高兼容性。
+
+**Default**: `false`
+
 ### 监视文件夹 {#settings-guide-folder-monitoring}
 
 #### 启用文件夹监视 {#enable-folder-watcher}
@@ -285,6 +436,40 @@
 
 **默认**：空
 
+## 聚会计时器 {#meeting-timer}
+
+### 启用聚会计时器 {#enable-meeting-timer}
+
+<!-- **Setting**: `enableTimerDisplay` -->
+
+启用一个单独的计时器窗口，用于为聚会节目计时。 这是一项测试功能，只有得到当地批准后才应启用。
+
+**Default**: `false`
+
+### 计时器窗口行为 {#timer-window-behavior}
+
+<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
+
+可以设置计时器窗口是否自动打开、节目参与者计时默认使用正计时还是倒计时、时钟使用 12 小时制还是 24 小时制，以及是否在操作区域的计时器按钮上显示当前计时值。
+
+### 计时器显示格式 {#timer-display-formats}
+
+<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
+
+可以为当前时间和倒计时选择模拟或数字显示方式。 倒计时警告指示器可以在最后一分钟内使模拟倒计时圆环逐渐变为警告颜色。
+
+### 聚会倒计时和时间安排状态 {#meeting-countdown-and-schedule-status}
+
+<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
+
+在预定的聚会开始前显示倒计时，并可选择显示聚会整体是提前还是超时。 聚会倒计时只显示在计时器窗口，不会显示在主媒体屏幕上。
+
+### 计时器外观和超时显示 {#timer-appearance-and-overtime}
+
+<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
+
+可以自定义计时器的文字大小和颜色，并设置超时提示，例如不同的背景和文字颜色、闪烁效果，以及在正计时模式下只显示超出的时间。
+
 ## 集成 {#integrations}
 
 ### Zoom 集成 {#settings-guide-zoom-integration}
@@ -295,7 +480,7 @@
 
 启用 Zoom 聚会集成功能。
 
-**Default**: `false`
+**默认**：`false`
 
 #### 屏幕共享快捷键 {#screen-share-shortcut}
 
@@ -305,6 +490,14 @@
 
 **默认**：无
 
+#### Auto-Focus Media Window {#zoom-auto-focus-media-window}
+
+<!-- **Setting**: `zoomAutoFocusMediaWindow` -->
+
+Automatically focus the media window after Zoom screen sharing starts. This is usually not required, but can help on some systems if the media window regularly loses focus after screen sharing starts.
+
+**默认**：`false`
+
 ### OBS Studio 集成 {#settings-guide-obs-integration}
 
 #### 启用 OBS Studio {#enable-obs}
@@ -313,7 +506,7 @@
 
 启用 OBS Studio 集成，以便自动切换场景。
 
-**Default**: `false`
+**默认**：`false`
 
 :::warning 重要提示
 
@@ -372,7 +565,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 启用自定义快捷键，当检测到特定事件（例如媒体播放、暂停或停止）时，将会触发这些快捷键。
 
-**Default**: `false`
+**默认**：`false`
 
 #### 启用自定义事件 {#custom-event-shortcuts}
 
@@ -418,7 +611,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 启用 OBS 录制控制后，此选项会被隐藏。 如果使用 OBS Studio，请改用 OBS 集成中的录制控制。
 
-**Default**: `false`
+**默认**：`false`
 
 #### 录制快捷键和文件夹 {#recording-shortcuts-and-folder}
 
@@ -426,53 +619,19 @@ OBS Studio WebSocket 连接所使用的密码。
 
 设置开始录制所使用的快捷键、可选的停止录制快捷键，以及外部应用程序保存录制文件的文件夹。 如果未设置停止快捷键，M³ 会继续使用开始录制的快捷键。 设置文件夹后，M³ 会显示用于打开该文件夹的按钮。
 
-### 聚会计时器 {#interface-shortcuts}
+## Interface & Shortcuts {#interface-shortcuts}
 
-#### 启用聚会计时器 {#settings-guide-keyboard-shortcuts}
+### 键盘快捷键 {#settings-guide-keyboard-shortcuts}
 
-<!-- **Setting**: `enableTimerDisplay` -->
-
-启用一个单独的计时器窗口，用于为聚会节目计时。 这是一项测试功能，只有得到当地批准后才应启用。
-
-**Default**: `false`
-
-#### 计时器窗口行为 {#enable-keyboard-shortcuts}
-
-<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
-
-可以设置计时器窗口是否自动打开、节目参与者计时默认使用正计时还是倒计时、时钟使用 12 小时制还是 24 小时制，以及是否在操作区域的计时器按钮上显示当前计时值。
-
-#### 计时器显示格式 {#media-control-shortcuts}
-
-<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
-
-可以为当前时间和倒计时选择模拟或数字显示方式。 倒计时警告指示器可以在最后一分钟内使模拟倒计时圆环逐渐变为警告颜色。
-
-#### 聚会倒计时和时间安排状态 {#add-more-media-button}
-
-<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
-
-在预定的聚会开始前显示倒计时，并可选择显示聚会整体是提前还是超时。 聚会倒计时只显示在计时器窗口，不会显示在主媒体屏幕上。
-
-#### 计时器外观和超时显示 {#add-media-button-sections}
-
-<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
-
-可以自定义计时器的文字大小和颜色，并设置超时提示，例如不同的背景和文字颜色、闪烁效果，以及在正计时模式下只显示超出的时间。
-
-## 高级设置 {#advanced-settings}
-
-### 键盘快捷键 {#profile-settings-transfer}
-
-#### 启用键盘快捷键 {#danger-zone}
+#### 启用键盘快捷键 {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
 启用可自定义的媒体控制键盘快捷键。
 
-**Default**: `false`
+**默认**：`false`
 
-#### 媒体控制快捷键 {#base-url}
+#### 媒体控制快捷键 {#media-control-shortcuts}
 
 可以设置以下快捷键：
 
@@ -483,125 +642,53 @@ OBS Studio WebSocket 连接所使用的密码。
 - **停止媒体**：停止当前媒体
 - **背景音乐**：开始或停止播放背景音乐
 
-### 媒体显示 {#disable-hardware-acceleration}
+### Add More Media Button {#add-more-media-button}
 
-#### 启用媒体窗口淡入淡出效果 {#suppress-hardware-acceleration-reminder}
+#### Sections with an Add Media Button {#add-media-button-sections}
 
-<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+<!-- **Setting**: `addMediaButtonSections` -->
 
-显示或隐藏媒体窗口时使用淡入淡出效果。
+Choose which meeting sections show their own button for adding your own media, in addition to the "Add media" button in the top toolbar, which always works for every section.
 
-**默认**：`true`
+**Default**: Public Talk, Living as Christians, Circuit Overseer's Visit, and Custom sections
 
-#### 启用播放速度控制 {#disable-media-fetching}
+#### Compact Add Media Button {#compact-add-media-button}
 
-<!-- **Setting**: `enablePlaybackSpeedControl` -->
+<!-- **Setting**: `compactAddMediaButton` -->
 
-允许从媒体项目的菜单中调整音频和视频的播放速度。
-
-**Default**: `false`
-
-#### 隐藏媒体标志 {#configuration-tips}
-
-<!-- **Setting**: `hideMediaLogo` -->
-
-在媒体窗口中隐藏 JW 标志。
-
-**Default**: `false`
-
-#### 最高分辨率 {#new-users}
-
-<!-- **Setting**: `maxRes` -->
-
-设置下载媒体文件时使用的最高分辨率。
-
-**选项**：240p、360p、480p、720p、1080p
-
-**默认**：`false`
-
-#### 包括印刷版媒体 {#advanced-users}
-
-<!-- **Setting**: `includePrinted` -->
-
-如果印刷版出版物中有电子版没有的媒体，也包括这些媒体。
+Only show an icon for the "Add more media"/"Add a song" button in section headers. When disabled, the button also shows text alongside the icon when there's enough room.
 
 **默认**：`true`
 
-#### Exclude Footnotes {#performance-optimization}
+### Media Drag Handle {#media-drag-handle}
 
-<!-- **Setting**: `excludeFootnotes` -->
+#### Show Drag Handle {#show-media-drag-handle}
 
-尽可能在媒体下载中排除脚注图像。
+<!-- **Setting**: `showMediaDragHandle` -->
 
-**Default**: `false`
-
-#### 排除《守望台》研究班段落中额外提到的视频 {#settings-guide-troubleshooting}
-
-<!-- **Setting**: `excludeWtParagraphVideos` -->
-
-不包括《守望台》研究班文章段落中额外提到的视频。
-
-**Default**: `false`
-
-#### 排除《教导》中的媒体 {#exclude-theocratic-ministry-school}
-
-<!-- **Setting**: `excludeTh` -->
-
-不包括《教导》中的媒体。
+Show a small handle on each media item for dragging it to reorder. Media items can always be reordered by dragging anywhere on them; this only affects whether the handle icon itself is shown.
 
 **默认**：`true`
 
-### 字幕语言 {#subtitles}
+### Before/After Meeting Quick Actions {#before-after-meeting-quick-actions}
 
-#### 启用字幕 {#enable-subtitles}
+#### Show Meeting Quick Actions {#enable-meeting-quick-actions}
 
-<!-- **Setting**: `enableSubtitles` -->
+<!-- **Setting**: `enableMeetingQuickActions` -->
 
-启用媒体播放的字幕支持。
+Show a before-meeting panel and an after-meeting panel with useful controls (background music, recording) and a customizable checklist for each.
 
-**默认**：`false`
+**默认**：`true`
 
-#### 启用字幕 {#subtitle-language}
+The checklist categories and tasks for both the before-meeting and after-meeting panels are managed from this same settings section: add, rename, reorder, or delete categories and tasks as needed for your congregation.
 
-<!-- **Setting**: `langSubtitles` -->
+## Advanced {#advanced-settings}
 
-设置字幕的语言，可以与媒体语言不同。
-
-**选项**：耶和华见证人官方网站上提供的所有语言
-
-**默认**：无
-
-### 媒体导出文件夹 {#settings-guide-media-export}
-
-#### 媒体自动导出 {#enable-media-auto-export}
-
-<!-- **Setting**: `enableMediaAutoExport` -->
-
-设置自动导出媒体文件的目标文件夹。
-
-**默认**：`false`
-
-#### 启用媒体自动导出 {#media-export-folder}
-
-<!-- **Setting**: `mediaAutoExportFolder` -->
-
-自动将媒体文件导出到指定文件夹。
-
-**默认**：空
-
-#### 将文件转换为 MP4 {#convert-files-to-mp4}
-
-**Setting**: `convertFilesToMp4`
-
-将导出的非视频媒体转换为 MP4，以提高兼容性。
-
-**默认**：`false`
-
-### 配置设置导入和导出 {#profile-settings-transfer-2}
+### 配置设置导入和导出 {#profile-settings-transfer}
 
 可以将当前配置的设置导出为 JSON 文件，也可以导入之前导出的配置设置文件。导入后会替换当前配置的设置。 导入替换当前配置文件的设置。
 
-### 危险区域 {#danger-zone-2}
+### 危险区域 {#danger-zone}
 
 :::warning 小贴士
 
@@ -609,7 +696,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 :::
 
-#### Base URL {#base-url-2}
+#### Base URL {#base-url}
 
 <!-- **Setting**: `baseUrl` -->
 
@@ -617,7 +704,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：`false`
 
-#### 关闭硬件加速提醒 {#suppress-hardware-acceleration-reminder-2}
+#### 关闭硬件加速提醒 {#disable-hardware-acceleration}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
@@ -625,7 +712,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：`false`
 
-#### 禁用硬件加速 {#disable-media-fetching-2}
+#### 禁用硬件加速 {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
@@ -633,7 +720,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：`false`
 
-#### 禁用媒体获取 {#configuration-tips-2}
+#### 禁用媒体获取 {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
@@ -641,30 +728,30 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：`false`
 
-## 最佳配置提示 {#new-users-2}
+## 最佳配置提示 {#configuration-tips}
 
-### 新用户 {#advanced-users-2}
+### 新用户 {#new-users}
 
 1. 使用初始设置完成基本配置
 2. 启用“媒体显示”，以便在外部屏幕上显示媒体
 3. 正确设置聚会日期和时间
 4. 如果使用混合聚会，可以根据实际需要配置 Zoom 或 OBS Studio 集成
 
-### 高级用户 {#performance-optimization-2}
+### 高级用户 {#advanced-users}
 
 1. 使用文件夹监控从云存储同步媒体
 2. 使用媒体自动导出功能将媒体保存到指定位置
 3. 配置键盘快捷键，提高媒体操作效率
 4. 配置 Zoom 集成，以便在媒体开始和停止时触发屏幕共享
 
-### 性能优化 {#settings-guide-troubleshooting-2}
+### 性能优化 {#performance-optimization}
 
 1. 根据需要启用额外缓存
 2. 根据需要选择合适的最高分辨率
 3. 启用缓存自动清理，控制磁盘空间占用
 4. 如果网络流量有限，可以启用按流量计费的网络连接设置
 
-### 疑难解答 {#settings-guide-troubleshooting-2-2}
+### 疑难解答 {#settings-guide-troubleshooting}
 
 - 如果媒体没有下载，请检查聚会日期和时间设置
 - 如果 OBS Studio 集成无法使用，请检查 WebSocket 端口、密码和场景设置
