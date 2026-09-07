@@ -92,6 +92,7 @@
   "cbs": "Étude biblique de l'assemblée",
   "cbs-custom-end-time": "Heure de fin - @:cbs",
   "change-color": "Changer la couleur",
+  "change-key-combination": "Change shortcut: {shortcut}",
   "change-tag": "Changer le tag",
   "change-tag-explain": "Modifier le type de tag et son libellé pour cet élément média.",
   "chapter": "Chapitre",

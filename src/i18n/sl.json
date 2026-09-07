@@ -92,6 +92,7 @@
   "cbs": "Občinsko preučevanje Biblije",
   "cbs-custom-end-time": "Končni čas @:cbs",
   "change-color": "Spremeni barvo",
+  "change-key-combination": "Change shortcut: {shortcut}",
   "change-tag": "Spremeni oznako",
   "change-tag-explain": "Spremeni vrsto oznake in napis za to multimedijsko datoteko.",
   "chapter": "Poglavje",

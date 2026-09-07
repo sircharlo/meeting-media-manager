@@ -92,6 +92,7 @@
   "cbs": "Congregation Bible Study",
   "cbs-custom-end-time": "@:cbs end time",
   "change-color": "Изменить цвет",
+  "change-key-combination": "Change shortcut: {shortcut}",
   "change-tag": "Изменить тег",
   "change-tag-explain": "Изменить тип и метку тега для этого медиа файла.",
   "chapter": "Глава",

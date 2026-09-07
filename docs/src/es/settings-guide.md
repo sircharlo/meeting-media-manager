@@ -2,7 +2,7 @@
 
 Esta guía completa te explica todos los ajustes disponibles en M³, organizados por categoría. Entender estos ajustes te ayudará a configurar M³ para que funcione perfectamente según las necesidades de tu congregación.
 
-## Configuración de la aplicación {#application-configuration}
+## General {#application-configuration}
 
 ### Idioma de visualización {#display-language}
 
@@ -165,13 +165,19 @@ Cuando lo activas, M³ comprueba periódicamente en el sitio web oficial de los 
 
 Esto solo funciona en los perfiles que añadiste usando la búsqueda de congregaciones y a los que no les has cambiado el nombre de la congregación manualmente. Si la sincronización se desactivó porque cambiaste el nombre de la congregación, usa **Activar sincronización del programa** para volver a vincular el perfil.
 
+#### Enable Schedule Sync {#relink-congregation}
+
+<!-- **Setting**: `relinkCongregationButton` -->
+
+Re-links the current profile to congregation lookup so automatic meeting day and time updates can resume. Only shown once the congregation name has been changed manually, since that's what breaks the link in the first place.
+
 #### Actualizar el programa de las reuniones {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
 Sincroniza manualmente el programa de las reuniones actual y futuro con la información del sitio web oficial.
 
-## Obtención y reproducción de archivos multimedia {#media-retrieval-and-playback}
+## Media & Playback {#media-retrieval-and-playback}
 
 ### Conexión de uso medido {#metered-connection}
 
@@ -241,6 +247,107 @@ Nivel de volumen para la música de fondo (1-100%).
 
 **Por defecto**: 100%
 
+### Playback and Download Options {#media-display}
+
+<!-- This section covers mediaRetrievalPlayback's `media-display` settings subgroup -
+these control the media window's playback behavior and which downloaded media is
+filtered out, as distinct from the "Media Display" section above (which is about
+whether the media window feature is enabled at all). -->
+
+#### Activar las transiciones de fundido de la ventana multimedia {#enable-media-window-fade-transitions}
+
+<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+
+Activa las transiciones de aparición/desaparición (fundido) cuando muestres u ocultes la ventana multimedia.
+
+**Por defecto**: `true`
+
+#### Activar el control de la velocidad de reproducción {#enable-playback-speed-control}
+
+<!-- **Setting**: `enablePlaybackSpeedControl` -->
+
+Permite que ajustes la velocidad de reproducción del audio y del video desde el menú contextual del archivo multimedia.
+
+**Por defecto**: `false`
+
+#### Ocultar el logo multimedia {#hide-media-logo}
+
+<!-- **Setting**: `hideMediaLogo` -->
+
+Oculta el logo en la ventana multimedia.
+
+**Por defecto**: `false`
+
+#### Resolución máxima {#maximum-resolution}
+
+<!-- **Setting**: `maxRes` -->
+
+La resolución máxima para los archivos multimedia descargados.
+
+**Opciones**: 240p, 360p, 480p, 720p, 1080p
+
+**Por defecto**: 720p
+
+#### Incluir archivos multimedia impresos {#include-printed-media}
+
+<!-- **Setting**: `includePrinted` -->
+
+Incluye archivos multimedia de las publicaciones impresas en las descargas de archivos multimedia.
+
+**Por defecto**: `true`
+
+#### Excluir notas {#exclude-footnotes}
+
+<!-- **Setting**: `excludeFootnotes` -->
+
+Excluye las imágenes de las notas en las descargas de archivos multimedia cuando sea posible.
+
+**Por defecto**: `false`
+
+#### Excluir los videos adicionales del Estudio de La Atalaya {#exclude-additional-watchtower-study-videos}
+
+<!-- **Setting**: `excludeWtParagraphVideos` -->
+
+Excluye los videos adicionales a los que se hace referencia en los párrafos del Estudio de La Atalaya.
+
+**Por defecto**: `false`
+
+#### Exclude Congregation Bible Study Videos {#exclude-cbs-pubs}
+
+<!-- **Setting**: `excludeCbsPubs` -->
+
+Choose publications whose referenced videos should not be shown during the Congregation Bible Study. Search by publication title or symbol.
+
+**Default**: Congregation Bible Study Guide (`wcg`)
+
+#### Excluir los archivos multimedia del folleto Maestros {#exclude-theocratic-ministry-school}
+
+<!-- **Setting**: `excludeTh` -->
+
+Excluye los archivos multimedia del folleto Maestros (th) en las descargas de archivos multimedia.
+
+**Por defecto**: `true`
+
+### Subtítulos {#subtitles}
+
+#### Activar subtítulos {#enable-subtitles}
+
+<!-- **Setting**: `enableSubtitles` -->
+
+Activa la compatibilidad de subtítulos para la reproducción multimedia.
+
+**Por defecto**: `false`
+
+#### Idioma de los subtítulos {#subtitle-language}
+
+<!-- **Setting**: `langSubtitles` -->
+
+El idioma de los subtítulos (puede ser diferente al idioma del archivo multimedia).
+
+**Opciones**: Todos los idiomas disponibles en el sitio web oficial de los testigos de Jehová
+
+**Por defecto**: Ninguno
+
 ### Administración de la caché {#cache-management}
 
 #### Activar caché adicional {#enable-extra-cache}
@@ -267,6 +374,50 @@ Borra automáticamente los archivos antiguos en caché para que ahorres espacio 
 
 **Por defecto**: `true`
 
+### Pinyin Song Titles {#pinyin-song-titles}
+
+#### Prefer Pinyin Songs {#enable-pinyin-songs}
+
+<!-- **Setting**: `enablePinyinSongs` -->
+
+When a pinyin version of a meeting song is found in the pinyin song folder, use it instead of the standard song.
+
+**Por defecto**: `false`
+
+#### Pinyin Song Folder {#pinyin-song-folder}
+
+<!-- **Setting**: `pinyinSongFolder` -->
+
+Folder containing pinyin video songs (e.g. `sjjm_s-Pi_CHS_066_r720P.mp4`). When a pinyin file matching the meeting song number is found, it will be played instead of the standard song.
+
+**Por defecto**: Vacío
+
+### Exportación de archivos multimedia {#settings-guide-media-export}
+
+#### Activar la exportación automática de archivos multimedia {#enable-media-auto-export}
+
+<!-- **Setting**: `enableMediaAutoExport` -->
+
+Exporta automáticamente los archivos multimedia a una carpeta que especifiques.
+
+**Por defecto**: `false`
+
+#### Carpeta de exportación de archivos multimedia {#media-export-folder}
+
+<!-- **Setting**: `mediaAutoExportFolder` -->
+
+La ruta de la carpeta donde se exportarán automáticamente los archivos multimedia.
+
+**Por defecto**: Vacío
+
+#### Convertir archivos a MP4 {#convert-files-to-mp4}
+
+**Ajuste**: `convertFilesToMp4`
+
+Convierte los archivos multimedia que exportaste al formato MP4 para que tengan una mejor compatibilidad.
+
+**Por defecto**: `false`
+
 ### Supervisión de carpetas {#settings-guide-folder-monitoring}
 
 #### Activar supervisor de carpetas {#enable-folder-watcher}
@@ -284,6 +435,40 @@ Vigila una carpeta para ver si hay nuevos archivos multimedia y los añade autom
 La ruta de la carpeta que quieres vigilar por si hay nuevos archivos multimedia.
 
 **Por defecto**: Vacío
+
+## Cronómetro de la reunión {#meeting-timer}
+
+### Activar cronómetro de la reunión {#enable-meeting-timer}
+
+<!-- **Setting**: `enableTimerDisplay` -->
+
+Activa una ventana separada con un cronómetro para medir el tiempo de las partes de la reunión. Esta es una característica en fase beta y solo la deberías activar si se aprobó localmente.
+
+**Por defecto**: `false`
+
+### Comportamiento de la ventana del cronómetro {#timer-window-behavior}
+
+<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
+
+Configura si la ventana del cronómetro se abre automáticamente, si los cronómetros de los participantes cuentan hacia arriba o hacia abajo por defecto, si el reloj usa el formato de 12 horas o de 24 horas, y si el valor actual del cronómetro se muestra en el botón del cronómetro de la isla de acciones.
+
+### Formatos de visualización del cronómetro {#timer-display-formats}
+
+<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
+
+Elige los formatos de visualización analógica o digital para la hora del día y para la cuenta regresiva de los cronómetros. El indicador de advertencia de la cuenta regresiva puede hacer que el anillo analógico de la cuenta regresiva cambie a un color de advertencia durante el último minuto.
+
+### Cuenta regresiva de la reunión y estado del programa {#meeting-countdown-and-schedule-status}
+
+<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
+
+Muestra una cuenta regresiva antes de las reuniones programadas y, opcionalmente, muestra si la reunión va adelantada o atrasada con respecto al programa. La cuenta regresiva de la reunión solo aparece en la pantalla del cronómetro, no en la pantalla principal de visualización multimedia.
+
+### Apariencia del cronómetro y tiempo extra {#timer-appearance-and-overtime}
+
+<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
+
+Personaliza el tamaño del texto y los colores del cronómetro, y configura los indicadores de tiempo extra como los colores alternos, el parpadeo y la visualización solo del tiempo extra transcurrido en el modo de conteo hacia arriba.
 
 ## Integraciones {#integrations}
 
@@ -304,6 +489,14 @@ Activa las características de integración de las reuniones en Zoom.
 Atajo de teclado para iniciar la opción de compartir pantalla en Zoom.
 
 **Por defecto**: Ninguno
+
+#### Auto-Focus Media Window {#zoom-auto-focus-media-window}
+
+<!-- **Setting**: `zoomAutoFocusMediaWindow` -->
+
+Automatically focus the media window after Zoom screen sharing starts. This is usually not required, but can help on some systems if the media window regularly loses focus after screen sharing starts.
+
+**Por defecto**: `false`
 
 ### Integración con OBS Studio {#settings-guide-obs-integration}
 
@@ -426,45 +619,11 @@ Esta opción se oculta cuando activas los controles de grabación de OBS. Si usa
 
 Configura el atajo de teclado que empieza la grabación, el atajo opcional que detiene la grabación y la carpeta donde la aplicación externa guarda las grabaciones. Si no le indicas un atajo de detención, M³ vuelve a usar el atajo de inicio. Cuando configuras una carpeta, M³ muestra un botón para abrirla.
 
-### Cronómetro de la reunión {#interface-shortcuts}
+## Interface & Shortcuts {#interface-shortcuts}
 
-#### Activar cronómetro de la reunión {#settings-guide-keyboard-shortcuts}
+### Atajos de teclado {#settings-guide-keyboard-shortcuts}
 
-<!-- **Setting**: `enableTimerDisplay` -->
-
-Activa una ventana separada con un cronómetro para medir el tiempo de las partes de la reunión. Esta es una característica en fase beta y solo la deberías activar si se aprobó localmente.
-
-**Por defecto**: `false`
-
-#### Comportamiento de la ventana del cronómetro {#enable-keyboard-shortcuts}
-
-<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
-
-Configura si la ventana del cronómetro se abre automáticamente, si los cronómetros de los participantes cuentan hacia arriba o hacia abajo por defecto, si el reloj usa el formato de 12 horas o de 24 horas, y si el valor actual del cronómetro se muestra en el botón del cronómetro de la isla de acciones.
-
-#### Formatos de visualización del cronómetro {#media-control-shortcuts}
-
-<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
-
-Elige los formatos de visualización analógica o digital para la hora del día y para la cuenta regresiva de los cronómetros. El indicador de advertencia de la cuenta regresiva puede hacer que el anillo analógico de la cuenta regresiva cambie a un color de advertencia durante el último minuto.
-
-#### Cuenta regresiva de la reunión y estado del programa {#add-more-media-button}
-
-<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
-
-Muestra una cuenta regresiva antes de las reuniones programadas y, opcionalmente, muestra si la reunión va adelantada o atrasada con respecto al programa. La cuenta regresiva de la reunión solo aparece en la pantalla del cronómetro, no en la pantalla principal de visualización multimedia.
-
-#### Apariencia del cronómetro y tiempo extra {#add-media-button-sections}
-
-<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
-
-Personaliza el tamaño del texto y los colores del cronómetro, y configura los indicadores de tiempo extra como los colores alternos, el parpadeo y la visualización solo del tiempo extra transcurrido en el modo de conteo hacia arriba.
-
-## Configuración avanzada {#advanced-settings}
-
-### Atajos de teclado {#profile-settings-transfer}
-
-#### Activar atajos de teclado {#danger-zone}
+#### Activar atajos de teclado {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
@@ -472,7 +631,7 @@ Activa los atajos de teclado personalizables para el control multimedia.
 
 **Por defecto**: `false`
 
-#### Atajos de control multimedia {#base-url}
+#### Atajos de control multimedia {#media-control-shortcuts}
 
 Configura atajos para la reproducción multimedia:
 
@@ -483,125 +642,53 @@ Configura atajos para la reproducción multimedia:
 - **Detener archivo multimedia**: Detiene la reproducción multimedia.
 - **Interruptor de música**: Activa o desactiva la música de fondo.
 
-### Visualización multimedia {#disable-hardware-acceleration}
+### Add More Media Button {#add-more-media-button}
 
-#### Activar las transiciones de fundido de la ventana multimedia {#suppress-hardware-acceleration-reminder}
+#### Sections with an Add Media Button {#add-media-button-sections}
 
-<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+<!-- **Setting**: `addMediaButtonSections` -->
 
-Activa las transiciones de aparición/desaparición (fundido) cuando muestres u ocultes la ventana multimedia.
+Choose which meeting sections show their own button for adding your own media, in addition to the "Add media" button in the top toolbar, which always works for every section.
 
-**Por defecto**: `true`
+**Default**: Public Talk, Living as Christians, Circuit Overseer's Visit, and Custom sections
 
-#### Activar el control de la velocidad de reproducción {#disable-media-fetching}
+#### Compact Add Media Button {#compact-add-media-button}
 
-<!-- **Setting**: `enablePlaybackSpeedControl` -->
+<!-- **Setting**: `compactAddMediaButton` -->
 
-Permite que ajustes la velocidad de reproducción del audio y del video desde el menú contextual del archivo multimedia.
-
-**Por defecto**: `false`
-
-#### Ocultar el logo multimedia {#configuration-tips}
-
-<!-- **Setting**: `hideMediaLogo` -->
-
-Oculta el logo en la ventana multimedia.
-
-**Por defecto**: `false`
-
-#### Resolución máxima {#new-users}
-
-<!-- **Setting**: `maxRes` -->
-
-La resolución máxima para los archivos multimedia descargados.
-
-**Opciones**: 240p, 360p, 480p, 720p, 1080p
-
-**Por defecto**: 720p
-
-#### Incluir archivos multimedia impresos {#advanced-users}
-
-<!-- **Setting**: `includePrinted` -->
-
-Incluye archivos multimedia de las publicaciones impresas en las descargas de archivos multimedia.
+Only show an icon for the "Add more media"/"Add a song" button in section headers. When disabled, the button also shows text alongside the icon when there's enough room.
 
 **Por defecto**: `true`
 
-#### Excluir notas {#performance-optimization}
+### Media Drag Handle {#media-drag-handle}
 
-<!-- **Setting**: `excludeFootnotes` -->
+#### Show Drag Handle {#show-media-drag-handle}
 
-Excluye las imágenes de las notas en las descargas de archivos multimedia cuando sea posible.
+<!-- **Setting**: `showMediaDragHandle` -->
 
-**Por defecto**: `false`
-
-#### Excluir los videos adicionales del Estudio de La Atalaya {#settings-guide-troubleshooting}
-
-<!-- **Setting**: `excludeWtParagraphVideos` -->
-
-Excluye los videos adicionales a los que se hace referencia en los párrafos del Estudio de La Atalaya.
-
-**Por defecto**: `false`
-
-#### Excluir los archivos multimedia del folleto Maestros {#exclude-theocratic-ministry-school}
-
-<!-- **Setting**: `excludeTh` -->
-
-Excluye los archivos multimedia del folleto Maestros (th) en las descargas de archivos multimedia.
+Show a small handle on each media item for dragging it to reorder. Media items can always be reordered by dragging anywhere on them; this only affects whether the handle icon itself is shown.
 
 **Por defecto**: `true`
 
-### Subtítulos {#subtitles}
+### Before/After Meeting Quick Actions {#before-after-meeting-quick-actions}
 
-#### Activar subtítulos {#enable-subtitles}
+#### Show Meeting Quick Actions {#enable-meeting-quick-actions}
 
-<!-- **Setting**: `enableSubtitles` -->
+<!-- **Setting**: `enableMeetingQuickActions` -->
 
-Activa la compatibilidad de subtítulos para la reproducción multimedia.
+Show a before-meeting panel and an after-meeting panel with useful controls (background music, recording) and a customizable checklist for each.
 
-**Por defecto**: `false`
+**Por defecto**: `true`
 
-#### Idioma de los subtítulos {#subtitle-language}
+The checklist categories and tasks for both the before-meeting and after-meeting panels are managed from this same settings section: add, rename, reorder, or delete categories and tasks as needed for your congregation.
 
-<!-- **Setting**: `langSubtitles` -->
+## Advanced {#advanced-settings}
 
-El idioma de los subtítulos (puede ser diferente al idioma del archivo multimedia).
-
-**Opciones**: Todos los idiomas disponibles en el sitio web oficial de los testigos de Jehová
-
-**Por defecto**: Ninguno
-
-### Exportación de archivos multimedia {#settings-guide-media-export}
-
-#### Activar la exportación automática de archivos multimedia {#enable-media-auto-export}
-
-<!-- **Setting**: `enableMediaAutoExport` -->
-
-Exporta automáticamente los archivos multimedia a una carpeta que especifiques.
-
-**Por defecto**: `false`
-
-#### Carpeta de exportación de archivos multimedia {#media-export-folder}
-
-<!-- **Setting**: `mediaAutoExportFolder` -->
-
-La ruta de la carpeta donde se exportarán automáticamente los archivos multimedia.
-
-**Por defecto**: Vacío
-
-#### Convertir archivos a MP4 {#convert-files-to-mp4}
-
-**Ajuste**: `convertFilesToMp4`
-
-Convierte los archivos multimedia que exportaste al formato MP4 para que tengan una mejor compatibilidad.
-
-**Por defecto**: `false`
-
-### Transferencia de ajustes del perfil {#profile-settings-transfer-2}
+### Transferencia de ajustes del perfil {#profile-settings-transfer}
 
 Exporta los ajustes del perfil actual a un archivo JSON o importa un archivo con los ajustes del perfil que hayas exportado anteriormente. Al importar, se sustituye la configuración del perfil actual.
 
-### Zona de peligro {#danger-zone-2}
+### Zona de peligro {#danger-zone}
 
 :::warning Advertencia
 
@@ -609,7 +696,7 @@ Solo deberías cambiar estos ajustes si entiendes lo que implican.
 
 :::
 
-#### URL base {#base-url-2}
+#### URL base {#base-url}
 
 <!-- **Setting**: `baseUrl` -->
 
@@ -617,7 +704,7 @@ El dominio base que se usa para descargar publicaciones y archivos multimedia.
 
 **Por defecto**: `jw.org`
 
-#### Desactivar la aceleración de hardware {#disable-hardware-acceleration-2}
+#### Desactivar la aceleración de hardware {#disable-hardware-acceleration}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
@@ -625,7 +712,7 @@ Desactiva la aceleración de hardware después de reiniciar M³. Esto te puede a
 
 **Por defecto**: `false`
 
-#### Ocultar el recordatorio de la aceleración de hardware {#suppress-hardware-acceleration-reminder-2}
+#### Ocultar el recordatorio de la aceleración de hardware {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
@@ -633,7 +720,7 @@ Oculta el recordatorio de volver a activar la aceleración de hardware después 
 
 **Por defecto**: `false`
 
-#### Desactivar la obtención de archivos multimedia {#disable-media-fetching-2}
+#### Desactivar la obtención de archivos multimedia {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
@@ -641,30 +728,30 @@ Desactiva por completo las descargas automáticas de los archivos multimedia. Us
 
 **Por defecto**: `false`
 
-## Consejos para una configuración óptima {#configuration-tips-2}
+## Consejos para una configuración óptima {#configuration-tips}
 
-### Para los usuarios nuevos {#new-users-2}
+### Para los usuarios nuevos {#new-users}
 
 1. Comienza con el asistente de configuración para configurar los ajustes básicos.
 2. Activa el "Botón de visualización multimedia" para acceder a las características de presentación.
 3. Configura el programa de las reuniones de forma exacta.
 4. Configura la integración con OBS si usas reuniones híbridas.
 
-### Para usuarios avanzados {#advanced-users-2}
+### Para usuarios avanzados {#advanced-users}
 
 1. Usa la supervisión de carpetas para sincronizar los archivos multimedia desde el almacenamiento en la nube.
 2. Activa la exportación automática de archivos multimedia para que tengas copias de seguridad.
 3. Configura atajos de teclado para que trabajes de forma eficiente.
 4. Configura la integración con Zoom para compartir pantalla de forma automática.
 
-### Optimización del rendimiento {#performance-optimization-2}
+### Optimización del rendimiento {#performance-optimization}
 
 1. Activa la caché adicional para tener un mejor rendimiento.
 2. Usa la resolución máxima que sea adecuada a tus necesidades.
 3. Configura la limpieza automática de la caché para administrar tu espacio en disco.
 4. Considera activar el ajuste de conexión de uso medido si tienes un ancho de banda limitado.
 
-### Solución de problemas {#settings-guide-troubleshooting-2}
+### Solución de problemas {#settings-guide-troubleshooting}
 
 - Si los archivos multimedia no se descargan, comprueba la configuración del programa de las reuniones.
 - Si la integración con OBS no funciona, verifica la configuración del puerto y la contraseña.
