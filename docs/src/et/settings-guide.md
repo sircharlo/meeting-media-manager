@@ -2,7 +2,7 @@
 
 See põhjalik juhend selgitab kõiki M³-s saadaval olevaid sätteid, mis on järjestatud kategooriate kaupa. Nende sättete mõistmine aitab sul M³ seadistada nii, et see vastaks täielikult teie koguduse vajadustele.
 
-## Rakenduse seadistamine {#application-configuration}
+## General {#application-configuration}
 
 ### Rakenduse keel {#display-language}
 
@@ -165,13 +165,19 @@ Kui see funktsioon on sisse lülitatud, kontrollib M³ regulaarselt Jehoova tunn
 
 See toimib ainult nende profiilide puhul, mis on lisatud koguduse otsingu abil ja mille koguduse nime ei ole käsitsi muudetud. Kui sünkroniseerimine lülitati välja koguduse nime muutumise tõttu, kasuta valikut **Luba ajakava sünkroniseerimine**, et profiil uuesti ühendada.
 
+#### Enable Schedule Sync {#relink-congregation}
+
+<!-- **Setting**: `relinkCongregationButton` -->
+
+Re-links the current profile to congregation lookup so automatic meeting day and time updates can resume. Only shown once the congregation name has been changed manually, since that's what breaks the link in the first place.
+
 #### Värskenda koosolekute ajakava {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
 Sünkroniseeri praegune ja tulevane koosolekute ajakava käsitsi ametliku veebisaidi andmetega.
 
-## Meediafailide allalaadimine ja esitamine {#media-retrieval-and-playback}
+## Media & Playback {#media-retrieval-and-playback}
 
 ### Mõõdetav ühendus {#metered-connection}
 
@@ -241,6 +247,107 @@ Taustamuusika helitugevus (1–100%).
 
 **Vaikimisi**: 100%
 
+### Playback and Download Options {#media-display}
+
+<!-- This section covers mediaRetrievalPlayback's `media-display` settings subgroup -
+these control the media window's playback behavior and which downloaded media is
+filtered out, as distinct from the "Media Display" section above (which is about
+whether the media window feature is enabled at all). -->
+
+#### Luba meediaakna üleminekud {#enable-media-window-fade-transitions}
+
+<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+
+Luba üleminekuga varjamine või näitamine meediaaknas.
+
+**Vaikimisi**: `lubatud`
+
+#### Luba taasesituse kiiruse reguleerimine {#enable-playback-speed-control}
+
+<!-- **Setting**: `enablePlaybackSpeedControl` -->
+
+Võimaldab heli- ja videomaterjali taasesituskiiruse reguleerimist meediaelemendi kontekstimenüüst.
+
+**Vaikimisi**: `väljas`
+
+#### Peida meedia logo {#hide-media-logo}
+
+<!-- **Setting**: `hideMediaLogo` -->
+
+Peida logo meediaaknas.
+
+**Vaikimisi**: `väljas`
+
+#### Maksimaalne resolutsioon {#maximum-resolution}
+
+<!-- **Setting**: `maxRes` -->
+
+Allalaaditud meediafailide maksimaalne resolutsioon.
+
+**Valikud**: 240p, 360p, 480p, 720p, 1080p
+
+**Vaikimisi**: 720p
+
+#### Kaasa trükitud meediafialid {#include-printed-media}
+
+<!-- **Setting**: `includePrinted` -->
+
+Kaasa trükitud väljaannete meedia allalaadimiste hulka.
+
+**Vaikimisi**: `lubatud`
+
+#### Ära kaasa allmärkusi {#exclude-footnotes}
+
+<!-- **Setting**: `excludeFootnotes` -->
+
+Võimaluse korral jäta allmärkuste pildid meedia allalaadimistest välja.
+
+**Vaikimisi**: `väljas`
+
+#### Jäta välja täiendavad Vahitorni õppevideod {#exclude-additional-watchtower-study-videos}
+
+<!-- **Setting**: `excludeWtParagraphVideos` -->
+
+Ära lisa videoid, millele viidatakse Vahitorni uurimise lõikudes.
+
+**Vaikimisi**: `väljas`
+
+#### Exclude Congregation Bible Study Videos {#exclude-cbs-pubs}
+
+<!-- **Setting**: `excludeCbsPubs` -->
+
+Choose publications whose referenced videos should not be shown during the Congregation Bible Study. Search by publication title or symbol.
+
+**Default**: Congregation Bible Study Guide (`wcg`)
+
+#### Ära kaasa meediat "Õpeta armastusega" brošüürist {#exclude-theocratic-ministry-school}
+
+<!-- **Setting**: `excludeTh` -->
+
+Ära kaasa meediafaile "Õpeta armastusega" (th) brošüürist allalaadimiste hulka.
+
+**Vaikimisi**: `lubatud`
+
+### Subtiitrid {#subtitles}
+
+#### Luba subtiitrid {#enable-subtitles}
+
+<!-- **Setting**: `enableSubtitles` -->
+
+Luba subtiitrid meedia taasesitamisel.
+
+**Vaikimisi**: `väljas`
+
+#### Subtiitrite keel {#subtitle-language}
+
+<!-- **Setting**: `langSubtitles` -->
+
+Subtiitrite keel (võib erineda meedia keelest).
+
+**Valikud**: Kõik Jehoova tunnistajate ametlikul veebisaidil kättesaadavad keeled
+
+**Vaikimisi**: Tühi
+
 ### Vahemälu haldamine {#cache-management}
 
 #### Lisavahemälu lubamine {#enable-extra-cache}
@@ -267,6 +374,50 @@ Kustuta automaatselt vanad vahemällu salvestatud failid, et säästa kettaruumi
 
 **Vaikimisi**: `lubatud`
 
+### Pinyin Song Titles {#pinyin-song-titles}
+
+#### Prefer Pinyin Songs {#enable-pinyin-songs}
+
+<!-- **Setting**: `enablePinyinSongs` -->
+
+When a pinyin version of a meeting song is found in the pinyin song folder, use it instead of the standard song.
+
+**Vaikimisi**: `väljas`
+
+#### Pinyin Song Folder {#pinyin-song-folder}
+
+<!-- **Setting**: `pinyinSongFolder` -->
+
+Folder containing pinyin video songs (e.g. `sjjm_s-Pi_CHS_066_r720P.mp4`). When a pinyin file matching the meeting song number is found, it will be played instead of the standard song.
+
+**Vaikimisi**: Tühi
+
+### Media Export {#settings-guide-media-export}
+
+#### Luba meedia automaatne eksportimine {#enable-media-auto-export}
+
+<!-- **Setting**: `enableMediaAutoExport` -->
+
+Ekspordi meediafailid automaatselt määratud kausta.
+
+**Vaikimisi**: `väljas`
+
+#### Meedia ekspordi kaust {#media-export-folder}
+
+<!-- **Setting**: `mediaAutoExportFolder` -->
+
+Kaust, kuhu meediumifailid automaatselt eksporditakse.
+
+**Vaikimisi**: Tühi
+
+#### Salvesta failid MP4-vormingus {#convert-files-to-mp4}
+
+**Sätted**: `convertFilesToMp4`
+
+Salvesta eksporditud meediafailid MP4-vormingusse, et saavutada parem ühilduvus.
+
+**Vaikimisi**: `väljas`
+
 ### Kausta jälgimine {#settings-guide-folder-monitoring}
 
 #### Luba kausta jälgimine {#enable-folder-watcher}
@@ -284,6 +435,40 @@ Jälgi kausta uute meediafailide lisandumist ja lisa need automaatselt M³-e.
 Kausta tee, mida jälgida uute meediafailide jaoks.
 
 **Vaikimisi**: Tühi
+
+## Koosoleku taimer {#meeting-timer}
+
+### Luba koosoleku taimer {#enable-meeting-timer}
+
+<!-- **Setting**: `enableTimerDisplay` -->
+
+Luba eraldi taimeri akna kasutamine koosoleku osade ajastamiseks. Taimer on beetafunktsioon ja seda tuleks lubada ainult heakskiidu korral.
+
+**Vaikimisi**: `väljas`
+
+### Taimeriakna käitumine {#timer-window-behavior}
+
+<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
+
+Määrake, kas ajastuse aken avatakse automaatselt, kas osalejate taimerid loevad vaikimisi üles või alla, kas kell kasutab 12- või 24-tunnist ajavormingut ning kas ajastuse hetkeväärtus kuvatakse tegevusala ajastuse nupul.
+
+### Taimeri kuvamisvormingud {#timer-display-formats}
+
+<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
+
+Vali kellaaja ja tagasilugemistimeri jaoks analoog- või digitaalne kuvamisviis. Tagasilugemise hoiatusnäidik võib viimasel minutil muuta analoogse tagasilugemise ringi hoiatusvärviks.
+
+### Koosoleku taimer ja ajakava staatus {#meeting-countdown-and-schedule-status}
+
+<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
+
+Näita enne planeeritud koosolekuid tagasiarvestust ja vajaduse korral ka seda, kas koosolek on graafikust ees või maha jäänud. Koosoleku alguseni jäänud aeg kuvatakse ainult taimeriekraanil, mitte peamisel meediaekraanil.
+
+### Taimeri välimus ja üle aja minek {#timer-appearance-and-overtime}
+
+<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
+
+Saate kohandada taimeri teksti suurust ja värve ning seadistada üle aja näitajaid, nagu näiteks vahelduvad värvid, vilkumine ja ainult möödunud üle aja kuvamine loendamisrežiimis.
 
 ## Koostöö {#integrations}
 
@@ -304,6 +489,14 @@ Luba Zoom-koosolekute koostöö funktsioonid.
 Klaviatuuri kiirklahv Zoom ekraani jagamise käivitamiseks.
 
 **Vaikimisi**: Tühi
+
+#### Auto-Focus Media Window {#zoom-auto-focus-media-window}
+
+<!-- **Setting**: `zoomAutoFocusMediaWindow` -->
+
+Automatically focus the media window after Zoom screen sharing starts. This is usually not required, but can help on some systems if the media window regularly loses focus after screen sharing starts.
+
+**Vaikimisi**: `väljas`
 
 ### Koostöö OBS Studioga {#settings-guide-obs-integration}
 
@@ -426,45 +619,11 @@ See valik on peidetud, kui OBS-i salvestusfunktsioonid on sisse lülitatud. Kui 
 
 Määra salvestamise alustamiseks vajalik klahvikombinatsioon, salvestamise lõpetamiseks vajalik valikuline klahvikombinatsioon ning kaust, kuhu välisrakendus salvestused salvestab. Kui peatamise kiirklahvi pole määratud, kasutab M³ uuesti käivitamise kiirklahvi. Kui kaust on seadistatud, kuvab M³ selle avamiseks nuppu.
 
-### Koosoleku taimer {#interface-shortcuts}
+## Interface & Shortcuts {#interface-shortcuts}
 
-#### Luba koosoleku taimer {#settings-guide-keyboard-shortcuts}
+### Kiirklahvid {#settings-guide-keyboard-shortcuts}
 
-<!-- **Setting**: `enableTimerDisplay` -->
-
-Luba eraldi taimeri akna kasutamine koosoleku osade ajastamiseks. Taimer on beetafunktsioon ja seda tuleks lubada ainult heakskiidu korral.
-
-**Vaikimisi**: `väljas`
-
-#### Taimeriakna käitumine {#enable-keyboard-shortcuts}
-
-<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
-
-Määrake, kas ajastuse aken avatakse automaatselt, kas osalejate taimerid loevad vaikimisi üles või alla, kas kell kasutab 12- või 24-tunnist ajavormingut ning kas ajastuse hetkeväärtus kuvatakse tegevusala ajastuse nupul.
-
-#### Taimeri kuvamisvormingud {#media-control-shortcuts}
-
-<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
-
-Vali kellaaja ja tagasilugemistimeri jaoks analoog- või digitaalne kuvamisviis. Tagasilugemise hoiatusnäidik võib viimasel minutil muuta analoogse tagasilugemise ringi hoiatusvärviks.
-
-#### Koosoleku taimer ja ajakava staatus {#add-more-media-button}
-
-<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
-
-Näita enne planeeritud koosolekuid tagasiarvestust ja vajaduse korral ka seda, kas koosolek on graafikust ees või maha jäänud. Koosoleku alguseni jäänud aeg kuvatakse ainult taimeriekraanil, mitte peamisel meediaekraanil.
-
-#### Taimeri välimus ja üle aja minek {#add-media-button-sections}
-
-<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
-
-Saate kohandada taimeri teksti suurust ja värve ning seadistada üle aja näitajaid, nagu näiteks vahelduvad värvid, vilkumine ja ainult möödunud üle aja kuvamine loendamisrežiimis.
-
-## Lisasätted {#advanced-settings}
-
-### Kiirklahvid {#profile-settings-transfer}
-
-#### Luba kiirklahvid {#danger-zone}
+#### Luba kiirklahvid {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
@@ -472,7 +631,7 @@ Luba meedia juhtimiseks kohandatavad kiirklahvid.
 
 **Vaikimisi**: `väljas`
 
-#### Meedia esitamise kiirklahvid {#base-url}
+#### Meedia esitamise kiirklahvid {#media-control-shortcuts}
 
 Meedia esitamise kiirklahvide seadistamine:
 
@@ -483,125 +642,53 @@ Meedia esitamise kiirklahvide seadistamine:
 - **Stop Media**: Peata meedia taasesitus
 - **Taustamuusika lüliti**: Lülita taustamuusika sisse või välja
 
-### Meedia ekraan {#disable-hardware-acceleration}
+### Add More Media Button {#add-more-media-button}
 
-#### Luba meediaakna üleminekud {#suppress-hardware-acceleration-reminder}
+#### Sections with an Add Media Button {#add-media-button-sections}
 
-<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+<!-- **Setting**: `addMediaButtonSections` -->
 
-Luba üleminekuga varjamine või näitamine meediaaknas.
+Choose which meeting sections show their own button for adding your own media, in addition to the "Add media" button in the top toolbar, which always works for every section.
 
-**Vaikimisi**: `lubatud`
+**Default**: Public Talk, Living as Christians, Circuit Overseer's Visit, and Custom sections
 
-#### Luba taasesituse kiiruse reguleerimine {#disable-media-fetching}
+#### Compact Add Media Button {#compact-add-media-button}
 
-<!-- **Setting**: `enablePlaybackSpeedControl` -->
+<!-- **Setting**: `compactAddMediaButton` -->
 
-Võimaldab heli- ja videomaterjali taasesituskiiruse reguleerimist meediaelemendi kontekstimenüüst.
-
-**Vaikimisi**: `väljas`
-
-#### Peida meedia logo {#configuration-tips}
-
-<!-- **Setting**: `hideMediaLogo` -->
-
-Peida logo meediaaknas.
-
-**Vaikimisi**: `väljas`
-
-#### Maksimaalne resolutsioon {#new-users}
-
-<!-- **Setting**: `maxRes` -->
-
-Allalaaditud meediafailide maksimaalne resolutsioon.
-
-**Valikud**: 240p, 360p, 480p, 720p, 1080p
-
-**Vaikimisi**: 720p
-
-#### Kaasa trükitud meediafialid {#advanced-users}
-
-<!-- **Setting**: `includePrinted` -->
-
-Kaasa trükitud väljaannete meedia allalaadimiste hulka.
+Only show an icon for the "Add more media"/"Add a song" button in section headers. When disabled, the button also shows text alongside the icon when there's enough room.
 
 **Vaikimisi**: `lubatud`
 
-#### Ära kaasa allmärkusi {#performance-optimization}
+### Media Drag Handle {#media-drag-handle}
 
-<!-- **Setting**: `excludeFootnotes` -->
+#### Show Drag Handle {#show-media-drag-handle}
 
-Võimaluse korral jäta allmärkuste pildid meedia allalaadimistest välja.
+<!-- **Setting**: `showMediaDragHandle` -->
 
-**Vaikimisi**: `väljas`
-
-#### Jäta välja täiendavad Vahitorni õppevideod {#settings-guide-troubleshooting}
-
-<!-- **Setting**: `excludeWtParagraphVideos` -->
-
-Ära lisa videoid, millele viidatakse Vahitorni uurimise lõikudes.
-
-**Vaikimisi**: `väljas`
-
-#### Ära kaasa meediat "Õpeta armastusega" brošüürist {#exclude-theocratic-ministry-school}
-
-<!-- **Setting**: `excludeTh` -->
-
-Ära kaasa meediafaile "Õpeta armastusega" (th) brošüürist allalaadimiste hulka.
+Show a small handle on each media item for dragging it to reorder. Media items can always be reordered by dragging anywhere on them; this only affects whether the handle icon itself is shown.
 
 **Vaikimisi**: `lubatud`
 
-### Subtiitrid {#subtitles}
+### Before/After Meeting Quick Actions {#before-after-meeting-quick-actions}
 
-#### Luba subtiitrid {#enable-subtitles}
+#### Show Meeting Quick Actions {#enable-meeting-quick-actions}
 
-<!-- **Setting**: `enableSubtitles` -->
+<!-- **Setting**: `enableMeetingQuickActions` -->
 
-Luba subtiitrid meedia taasesitamisel.
+Show a before-meeting panel and an after-meeting panel with useful controls (background music, recording) and a customizable checklist for each.
 
-**Vaikimisi**: `väljas`
+**Vaikimisi**: `lubatud`
 
-#### Subtiitrite keel {#subtitle-language}
+The checklist categories and tasks for both the before-meeting and after-meeting panels are managed from this same settings section: add, rename, reorder, or delete categories and tasks as needed for your congregation.
 
-<!-- **Setting**: `langSubtitles` -->
+## Advanced {#advanced-settings}
 
-Subtiitrite keel (võib erineda meedia keelest).
-
-**Valikud**: Kõik Jehoova tunnistajate ametlikul veebisaidil kättesaadavad keeled
-
-**Vaikimisi**: Tühi
-
-### Media Export {#settings-guide-media-export}
-
-#### Luba meedia automaatne eksportimine {#enable-media-auto-export}
-
-<!-- **Setting**: `enableMediaAutoExport` -->
-
-Ekspordi meediafailid automaatselt määratud kausta.
-
-**Vaikimisi**: `väljas`
-
-#### Meedia ekspordi kaust {#media-export-folder}
-
-<!-- **Setting**: `mediaAutoExportFolder` -->
-
-Kaust, kuhu meediumifailid automaatselt eksporditakse.
-
-**Vaikimisi**: Tühi
-
-#### Salvesta failid MP4-vormingus {#convert-files-to-mp4}
-
-**Sätted**: `convertFilesToMp4`
-
-Salvesta eksporditud meediafailid MP4-vormingusse, et saavutada parem ühilduvus.
-
-**Vaikimisi**: `väljas`
-
-### Profiili seaded – ülekandmine {#profile-settings-transfer-2}
+### Profiili seaded – ülekandmine {#profile-settings-transfer}
 
 Ekspordi praeguse profiili seaded JSON-failina või impordi varem eksporditud profiili seadefail. Importimine asendab praeguse profiili seaded.
 
-### Ohutsoon {#danger-zone-2}
+### Ohutsoon {#danger-zone}
 
 :::warning Hoiatus
 
@@ -609,7 +696,7 @@ Neid seadeid tuleks muuta ainult juhul, kui mõistad nende mõju.
 
 :::
 
-#### Baas-URL {#base-url-2}
+#### Baas-URL {#base-url}
 
 <!-- **Setting**: `baseUrl` -->
 
@@ -617,7 +704,7 @@ Põhidomeen, mida kasutatakse väljaannete ja meedia allalaadimiseks.
 
 **Vaikimisi**: `jw.org`
 
-#### Lülita riistvarakiirendus välja {#disable-hardware-acceleration-2}
+#### Lülita riistvarakiirendus välja {#disable-hardware-acceleration}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
@@ -625,7 +712,7 @@ Lülita riistvarakiirendus pärast M³ taaskäivitamist välja. See võib aidata
 
 **Vaikimisi**: `väljas`
 
-#### Riistvarakiirenduse meeldetuletuse väljalülitamine {#suppress-hardware-acceleration-reminder-2}
+#### Riistvarakiirenduse meeldetuletuse väljalülitamine {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
@@ -633,7 +720,7 @@ Peida meeldetuletus riistvarakiirenduse taaskäivitamise kohta pärast selle kä
 
 **Vaikimisi**: `väljas`
 
-#### Meedia allalaadimise keelamine {#disable-media-fetching-2}
+#### Meedia allalaadimise keelamine {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
@@ -641,30 +728,30 @@ Lülita automaatne meedia allalaadimine täielikult välja. Kasuta seda ainult p
 
 **Vaikimisi**: `väljas`
 
-## Nõuanded optimaalseks seadistamiseks {#configuration-tips-2}
+## Nõuanded optimaalseks seadistamiseks {#configuration-tips}
 
-### Uutele kasutajatele {#new-users-2}
+### Uutele kasutajatele {#new-users}
 
 1. Alusta määramiste abil, et seadistada põhilised sätted
 2. Lülita sisse „Meedia kuvamise nupp“, et pääseda juurde nende esitluse funktsioonidele
 3. Seadista koosolekute ajakava
 4. Kui sa kasutad hübriidkoosolekuid, siis seadista OBS Studio koostöö
 
-### Edasijõudnud kasutajatele {#advanced-users-2}
+### Edasijõudnud kasutajatele {#advanced-users}
 
 1. Kasuta kausta jälgimist, et sünkroonida meediat pilvesalvestusest
 2. Luba meedia automaatne eksportimine varundamise eesmärgil
 3. Seadista kiirklahvid tõhusaks tööks
 4. Zoom-koostöö seadistamine automaatseks ekraani jagamiseks
 
-### Jõudluse parandamise nipid {#performance-optimization-2}
+### Jõudluse parandamise nipid {#performance-optimization}
 
 1. Luba lisavahemälu rakenduse paremaks toimimiseks
 2. Kasuta oma vajadustele vastavat maksimaalset resolutsiooni
 3. Seadista vahemälu automaatne tühjendamine, et hallata kettaruumi
 4. Kui andmemaht on piiratud, kaalu mõõdetud ühenduse seadistamist
 
-### Probleemide lahendamine {#settings-guide-troubleshooting-2}
+### Probleemide lahendamine {#settings-guide-troubleshooting}
 
 - Kui meedia ei lae alla, kontrolli koosoleku ajakava seadeid
 - Kui OBS Studio koostöö ei tööta, kontrolli porti ja parooli seadeid

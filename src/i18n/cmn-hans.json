@@ -92,6 +92,7 @@
   "cbs": "会众研经班",
   "cbs-custom-end-time": "@:cbs结束时间",
   "change-color": "更改颜色",
+  "change-key-combination": "Change shortcut: {shortcut}",
   "change-tag": "更改标签",
   "change-tag-explain": "更改此媒体项目的标签类型和标签。",
   "chapter": "章",

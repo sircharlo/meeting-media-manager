@@ -2,7 +2,7 @@
 
 Questa guida completa spiega tutte le impostazioni disponibili in M³, organizzate per categoria. Capire queste impostazioni ti aiuterà a configurare M³ in modo che funzioni perfettamente per le esigenze della tua congregazione.
 
-## Configurazione dell'applicazione {#application-configuration}
+## General {#application-configuration}
 
 ### Lingua di visualizzazione {#display-language}
 
@@ -165,13 +165,19 @@ Quando abilitato, M³ controlla periodicamente sul sito ufficiale dei Testimoni 
 
 Funziona solo per i profili aggiunti con la ricerca della congregazione e il cui nome della congregazione non è stato modificato manualmente. Se la sincronizzazione è stata disabilitata perché il nome della congregazione è cambiato, usa **Abilita sincronizzazione programma** per ricollegare il profilo.
 
+#### Enable Schedule Sync {#relink-congregation}
+
+<!-- **Setting**: `relinkCongregationButton` -->
+
+Re-links the current profile to congregation lookup so automatic meeting day and time updates can resume. Only shown once the congregation name has been changed manually, since that's what breaks the link in the first place.
+
 #### Aggiorna il programma delle adunanze {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
 Sincronizza manualmente il programma delle adunanze attuale e futuro con le informazioni del sito ufficiale.
 
-## Recupero e riproduzione dei media {#media-retrieval-and-playback}
+## Media & Playback {#media-retrieval-and-playback}
 
 ### Connessione a consumo {#metered-connection}
 
@@ -241,6 +247,107 @@ Livello del volume della musica di sottofondo (1-100%).
 
 **Predefinito**: 100%
 
+### Playback and Download Options {#media-display}
+
+<!-- This section covers mediaRetrievalPlayback's `media-display` settings subgroup -
+these control the media window's playback behavior and which downloaded media is
+filtered out, as distinct from the "Media Display" section above (which is about
+whether the media window feature is enabled at all). -->
+
+#### Abilita le transizioni in dissolvenza della finestra multimediale {#enable-media-window-fade-transitions}
+
+<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+
+Abilita le transizioni in dissolvenza in entrata/uscita quando si mostra o si nasconde la finestra multimediale.
+
+**Predefinito**: `true`
+
+#### Abilita il controllo della velocità di riproduzione {#enable-playback-speed-control}
+
+<!-- **Setting**: `enablePlaybackSpeedControl` -->
+
+Consente di regolare la velocità di riproduzione di audio e video dal menu contestuale dell'elemento multimediale.
+
+**Predefinito**: `false`
+
+#### Nascondi il logo nei media {#hide-media-logo}
+
+<!-- **Setting**: `hideMediaLogo` -->
+
+Nasconde il logo nella finestra multimediale.
+
+**Predefinito**: `false`
+
+#### Risoluzione massima {#maximum-resolution}
+
+<!-- **Setting**: `maxRes` -->
+
+Risoluzione massima per i file multimediali scaricati.
+
+**Opzioni**: 240p, 360p, 480p, 720p, 1080p
+
+**Predefinito**: 720p
+
+#### Includi i media stampati {#include-printed-media}
+
+<!-- **Setting**: `includePrinted` -->
+
+Includi i media delle pubblicazioni stampate nei download dei media.
+
+**Predefinito**: `true`
+
+#### Escludi le note in calce {#exclude-footnotes}
+
+<!-- **Setting**: `excludeFootnotes` -->
+
+Escludi le immagini delle note in calce dai download dei media quando possibile.
+
+**Predefinito**: `false`
+
+#### Escludi i video aggiuntivi dello Studio Torre di Guardia {#exclude-additional-watchtower-study-videos}
+
+<!-- **Setting**: `excludeWtParagraphVideos` -->
+
+Escludi i video aggiuntivi a cui si fa riferimento nei paragrafi dello Studio Torre di Guardia.
+
+**Predefinito**: `false`
+
+#### Exclude Congregation Bible Study Videos {#exclude-cbs-pubs}
+
+<!-- **Setting**: `excludeCbsPubs` -->
+
+Choose publications whose referenced videos should not be shown during the Congregation Bible Study. Search by publication title or symbol.
+
+**Default**: Congregation Bible Study Guide (`wcg`)
+
+#### Escludi i media dell'opuscolo Insegna {#exclude-theocratic-ministry-school}
+
+<!-- **Setting**: `excludeTh` -->
+
+Escludi dai download dei media i media dell'opuscolo Insegna (th).
+
+**Predefinito**: `true`
+
+### Sottotitoli {#subtitles}
+
+#### Abilita i sottotitoli {#enable-subtitles}
+
+<!-- **Setting**: `enableSubtitles` -->
+
+Abilita il supporto dei sottotitoli per la riproduzione dei media.
+
+**Predefinito**: `false`
+
+#### Lingua dei sottotitoli {#subtitle-language}
+
+<!-- **Setting**: `langSubtitles` -->
+
+Lingua dei sottotitoli (può essere diversa dalla lingua dei media).
+
+**Opzioni**: tutte le lingue disponibili sul sito ufficiale dei Testimoni di Geova
+
+**Predefinito**: Nessuna
+
 ### Gestione della cache {#cache-management}
 
 #### Abilita la cache extra {#enable-extra-cache}
@@ -267,6 +374,50 @@ Cancella automaticamente i vecchi file nella cache per risparmiare spazio su dis
 
 **Predefinito**: `true`
 
+### Pinyin Song Titles {#pinyin-song-titles}
+
+#### Prefer Pinyin Songs {#enable-pinyin-songs}
+
+<!-- **Setting**: `enablePinyinSongs` -->
+
+When a pinyin version of a meeting song is found in the pinyin song folder, use it instead of the standard song.
+
+**Predefinito**: `false`
+
+#### Pinyin Song Folder {#pinyin-song-folder}
+
+<!-- **Setting**: `pinyinSongFolder` -->
+
+Folder containing pinyin video songs (e.g. `sjjm_s-Pi_CHS_066_r720P.mp4`). When a pinyin file matching the meeting song number is found, it will be played instead of the standard song.
+
+**Predefinito**: vuoto
+
+### Esportazione Media {#settings-guide-media-export}
+
+#### Abilita l'esportazione automatica dei media {#enable-media-auto-export}
+
+<!-- **Setting**: `enableMediaAutoExport` -->
+
+Esporta automaticamente i file multimediali in una cartella specificata.
+
+**Predefinito**: `false`
+
+#### Cartella di esportazione dei media {#media-export-folder}
+
+<!-- **Setting**: `mediaAutoExportFolder` -->
+
+Percorso della cartella in cui i file multimediali verranno esportati automaticamente.
+
+**Predefinito**: vuoto
+
+#### Converti i file in MP4 {#convert-files-to-mp4}
+
+**Impostazione**: `convertFilesToMp4`
+
+Converte i file multimediali esportati in formato MP4 per una migliore compatibilità.
+
+**Predefinito**: `false`
+
 ### Monitoraggio Cartelle {#settings-guide-folder-monitoring}
 
 #### Abilita il monitoraggio delle cartelle {#enable-folder-watcher}
@@ -284,6 +435,40 @@ Monitora una cartella per nuovi file multimediali e aggiungili automaticamente a
 Il percorso della cartella da monitorare per i nuovi file multimediali.
 
 **Predefinito**: vuoto
+
+## Timer dell'adunanza {#meeting-timer}
+
+### Abilita il timer dell'adunanza {#enable-meeting-timer}
+
+<!-- **Setting**: `enableTimerDisplay` -->
+
+Abilita una finestra timer separata per cronometrare le parti dell'adunanza. Questa è una funzione beta e dovrebbe essere abilitata solo se approvata localmente.
+
+**Predefinito**: `false`
+
+### Comportamento della finestra del timer {#timer-window-behavior}
+
+<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
+
+Configura se la finestra del timer si apre automaticamente, se i timer dei partecipanti contano in avanti o alla rovescia per impostazione predefinita, se l'orologio usa il formato a 12 o 24 ore, e se il valore corrente del timer è mostrato sul pulsante del timer nell'isola delle azioni.
+
+### Formati di visualizzazione del timer {#timer-display-formats}
+
+<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
+
+Scegli formati di visualizzazione analogici o digitali per l'ora del giorno e i timer del conto alla rovescia. L'indicatore di avviso del conto alla rovescia può spostare l'anello analogico del conto alla rovescia verso un colore di avviso durante l'ultimo minuto.
+
+### Conto alla rovescia dell'adunanza e stato del programma {#meeting-countdown-and-schedule-status}
+
+<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
+
+Mostra un conto alla rovescia prima delle adunanze programmate e, se vuoi, indica se l'adunanza è in anticipo o in ritardo sul programma. Il conto alla rovescia dell'adunanza appare solo sul display del timer, non sulla visualizzazione principale dei media.
+
+### Aspetto del timer e tempo superato {#timer-appearance-and-overtime}
+
+<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
+
+Personalizza la dimensione e i colori del testo del timer e configura gli indicatori di tempo superato, come colori alternati, lampeggiamento e la visualizzazione del solo tempo superato trascorso in modalità conteggio in avanti.
 
 ## Integrazioni {#integrations}
 
@@ -304,6 +489,14 @@ Abilita le funzioni di integrazione con le riunioni Zoom.
 Scorciatoia da tastiera per attivare la condivisione dello schermo di Zoom.
 
 **Predefinito**: Nessuna
+
+#### Auto-Focus Media Window {#zoom-auto-focus-media-window}
+
+<!-- **Setting**: `zoomAutoFocusMediaWindow` -->
+
+Automatically focus the media window after Zoom screen sharing starts. This is usually not required, but can help on some systems if the media window regularly loses focus after screen sharing starts.
+
+**Predefinito**: `false`
 
 ### Integrazione di OBS Studio {#settings-guide-obs-integration}
 
@@ -426,45 +619,11 @@ Questa opzione è nascosta quando i controlli di registrazione OBS sono abilitat
 
 Configura la scorciatoia da tastiera che avvia la registrazione, la scorciatoia facoltativa che la ferma e la cartella in cui l'app esterna salva le registrazioni. Se non viene fornita una scorciatoia di arresto, M³ riutilizza la scorciatoia di avvio. Quando è configurata una cartella, M³ mostra un pulsante per aprirla.
 
-### Timer dell'adunanza {#interface-shortcuts}
+## Interface & Shortcuts {#interface-shortcuts}
 
-#### Abilita il timer dell'adunanza {#settings-guide-keyboard-shortcuts}
+### Scorciatoie da Tastiera {#settings-guide-keyboard-shortcuts}
 
-<!-- **Setting**: `enableTimerDisplay` -->
-
-Abilita una finestra timer separata per cronometrare le parti dell'adunanza. Questa è una funzione beta e dovrebbe essere abilitata solo se approvata localmente.
-
-**Predefinito**: `false`
-
-#### Comportamento della finestra del timer {#enable-keyboard-shortcuts}
-
-<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
-
-Configura se la finestra del timer si apre automaticamente, se i timer dei partecipanti contano in avanti o alla rovescia per impostazione predefinita, se l'orologio usa il formato a 12 o 24 ore, e se il valore corrente del timer è mostrato sul pulsante del timer nell'isola delle azioni.
-
-#### Formati di visualizzazione del timer {#media-control-shortcuts}
-
-<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
-
-Scegli formati di visualizzazione analogici o digitali per l'ora del giorno e i timer del conto alla rovescia. L'indicatore di avviso del conto alla rovescia può spostare l'anello analogico del conto alla rovescia verso un colore di avviso durante l'ultimo minuto.
-
-#### Conto alla rovescia dell'adunanza e stato del programma {#add-more-media-button}
-
-<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
-
-Mostra un conto alla rovescia prima delle adunanze programmate e, se vuoi, indica se l'adunanza è in anticipo o in ritardo sul programma. Il conto alla rovescia dell'adunanza appare solo sul display del timer, non sulla visualizzazione principale dei media.
-
-#### Aspetto del timer e tempo superato {#add-media-button-sections}
-
-<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
-
-Personalizza la dimensione e i colori del testo del timer e configura gli indicatori di tempo superato, come colori alternati, lampeggiamento e la visualizzazione del solo tempo superato trascorso in modalità conteggio in avanti.
-
-## Impostazioni avanzate {#advanced-settings}
-
-### Scorciatoie da Tastiera {#profile-settings-transfer}
-
-#### Abilita le scorciatoie da tastiera {#danger-zone}
+#### Abilita le scorciatoie da tastiera {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
@@ -472,7 +631,7 @@ Abilita scorciatoie da tastiera personalizzabili per il controllo dei media.
 
 **Predefinito**: `false`
 
-#### Scorciatoie per il controllo dei media {#base-url}
+#### Scorciatoie per il controllo dei media {#media-control-shortcuts}
 
 Configura le scorciatoie per la riproduzione dei media:
 
@@ -483,125 +642,53 @@ Configura le scorciatoie per la riproduzione dei media:
 - **Ferma il media**: ferma la riproduzione dei media
 - **Attiva/disattiva musica**: attiva o disattiva la musica di sottofondo
 
-### Visualizzazione dei media {#disable-hardware-acceleration}
+### Add More Media Button {#add-more-media-button}
 
-#### Abilita le transizioni in dissolvenza della finestra multimediale {#suppress-hardware-acceleration-reminder}
+#### Sections with an Add Media Button {#add-media-button-sections}
 
-<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+<!-- **Setting**: `addMediaButtonSections` -->
 
-Abilita le transizioni in dissolvenza in entrata/uscita quando si mostra o si nasconde la finestra multimediale.
+Choose which meeting sections show their own button for adding your own media, in addition to the "Add media" button in the top toolbar, which always works for every section.
 
-**Predefinito**: `true`
+**Default**: Public Talk, Living as Christians, Circuit Overseer's Visit, and Custom sections
 
-#### Abilita il controllo della velocità di riproduzione {#disable-media-fetching}
+#### Compact Add Media Button {#compact-add-media-button}
 
-<!-- **Setting**: `enablePlaybackSpeedControl` -->
+<!-- **Setting**: `compactAddMediaButton` -->
 
-Consente di regolare la velocità di riproduzione di audio e video dal menu contestuale dell'elemento multimediale.
-
-**Predefinito**: `false`
-
-#### Nascondi il logo nei media {#configuration-tips}
-
-<!-- **Setting**: `hideMediaLogo` -->
-
-Nasconde il logo nella finestra multimediale.
-
-**Predefinito**: `false`
-
-#### Risoluzione massima {#new-users}
-
-<!-- **Setting**: `maxRes` -->
-
-Risoluzione massima per i file multimediali scaricati.
-
-**Opzioni**: 240p, 360p, 480p, 720p, 1080p
-
-**Predefinito**: 720p
-
-#### Includi i media stampati {#advanced-users}
-
-<!-- **Setting**: `includePrinted` -->
-
-Includi i media delle pubblicazioni stampate nei download dei media.
+Only show an icon for the "Add more media"/"Add a song" button in section headers. When disabled, the button also shows text alongside the icon when there's enough room.
 
 **Predefinito**: `true`
 
-#### Escludi le note in calce {#performance-optimization}
+### Media Drag Handle {#media-drag-handle}
 
-<!-- **Setting**: `excludeFootnotes` -->
+#### Show Drag Handle {#show-media-drag-handle}
 
-Escludi le immagini delle note in calce dai download dei media quando possibile.
+<!-- **Setting**: `showMediaDragHandle` -->
 
-**Predefinito**: `false`
-
-#### Escludi i video aggiuntivi dello Studio Torre di Guardia {#settings-guide-troubleshooting}
-
-<!-- **Setting**: `excludeWtParagraphVideos` -->
-
-Escludi i video aggiuntivi a cui si fa riferimento nei paragrafi dello Studio Torre di Guardia.
-
-**Predefinito**: `false`
-
-#### Escludi i media dell'opuscolo Insegna {#exclude-theocratic-ministry-school}
-
-<!-- **Setting**: `excludeTh` -->
-
-Escludi dai download dei media i media dell'opuscolo Insegna (th).
+Show a small handle on each media item for dragging it to reorder. Media items can always be reordered by dragging anywhere on them; this only affects whether the handle icon itself is shown.
 
 **Predefinito**: `true`
 
-### Sottotitoli {#subtitles}
+### Before/After Meeting Quick Actions {#before-after-meeting-quick-actions}
 
-#### Abilita i sottotitoli {#enable-subtitles}
+#### Show Meeting Quick Actions {#enable-meeting-quick-actions}
 
-<!-- **Setting**: `enableSubtitles` -->
+<!-- **Setting**: `enableMeetingQuickActions` -->
 
-Abilita il supporto dei sottotitoli per la riproduzione dei media.
+Show a before-meeting panel and an after-meeting panel with useful controls (background music, recording) and a customizable checklist for each.
 
-**Predefinito**: `false`
+**Predefinito**: `true`
 
-#### Lingua dei sottotitoli {#subtitle-language}
+The checklist categories and tasks for both the before-meeting and after-meeting panels are managed from this same settings section: add, rename, reorder, or delete categories and tasks as needed for your congregation.
 
-<!-- **Setting**: `langSubtitles` -->
+## Advanced {#advanced-settings}
 
-Lingua dei sottotitoli (può essere diversa dalla lingua dei media).
-
-**Opzioni**: tutte le lingue disponibili sul sito ufficiale dei Testimoni di Geova
-
-**Predefinito**: Nessuna
-
-### Esportazione Media {#settings-guide-media-export}
-
-#### Abilita l'esportazione automatica dei media {#enable-media-auto-export}
-
-<!-- **Setting**: `enableMediaAutoExport` -->
-
-Esporta automaticamente i file multimediali in una cartella specificata.
-
-**Predefinito**: `false`
-
-#### Cartella di esportazione dei media {#media-export-folder}
-
-<!-- **Setting**: `mediaAutoExportFolder` -->
-
-Percorso della cartella in cui i file multimediali verranno esportati automaticamente.
-
-**Predefinito**: vuoto
-
-#### Converti i file in MP4 {#convert-files-to-mp4}
-
-**Impostazione**: `convertFilesToMp4`
-
-Converte i file multimediali esportati in formato MP4 per una migliore compatibilità.
-
-**Predefinito**: `false`
-
-### Trasferimento delle impostazioni del profilo {#profile-settings-transfer-2}
+### Trasferimento delle impostazioni del profilo {#profile-settings-transfer}
 
 Esporta le impostazioni del profilo corrente in un file JSON o importa un file di impostazioni del profilo esportato in precedenza. L'importazione sostituisce le impostazioni del profilo corrente.
 
-### Zona pericolosa {#danger-zone-2}
+### Zona pericolosa {#danger-zone}
 
 :::warning Attenzione
 
@@ -609,7 +696,7 @@ Queste impostazioni dovrebbero essere modificate solo se ne comprendi le implica
 
 :::
 
-#### URL di base {#base-url-2}
+#### URL di base {#base-url}
 
 <!-- **Setting**: `baseUrl` -->
 
@@ -617,7 +704,7 @@ Dominio di base usato per scaricare pubblicazioni e media.
 
 **Predefinito**: `jw.org`
 
-#### Disabilita l'accelerazione hardware {#disable-hardware-acceleration-2}
+#### Disabilita l'accelerazione hardware {#disable-hardware-acceleration}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
@@ -625,7 +712,7 @@ Disabilita l'accelerazione hardware dopo aver riavviato M³. Può aiutare con pr
 
 **Predefinito**: `false`
 
-#### Nascondi il promemoria dell'accelerazione hardware {#suppress-hardware-acceleration-reminder-2}
+#### Nascondi il promemoria dell'accelerazione hardware {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
@@ -633,7 +720,7 @@ Nascondi il promemoria per riattivare l'accelerazione hardware dopo che è stata
 
 **Predefinito**: `false`
 
-#### Disabilita il recupero dei media {#disable-media-fetching-2}
+#### Disabilita il recupero dei media {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
@@ -641,30 +728,30 @@ Disabilita completamente i download automatici dei media. Usa questa opzione sol
 
 **Predefinito**: `false`
 
-## Consigli per una configurazione ottimale {#configuration-tips-2}
+## Consigli per una configurazione ottimale {#configuration-tips}
 
-### Per i nuovi utenti {#new-users-2}
+### Per i nuovi utenti {#new-users}
 
 1. Inizia con la configurazione guidata per impostare le impostazioni di base
 2. Abilita «Pulsante di visualizzazione dei media» per accedere alle funzioni di presentazione
 3. Configura con precisione il programma delle adunanze
 4. Configura l'integrazione con OBS se fai adunanze ibride
 
-### Per gli utenti esperti {#advanced-users-2}
+### Per gli utenti esperti {#advanced-users}
 
 1. Usa il monitoraggio delle cartelle per sincronizzare i media da un archivio cloud
 2. Abilita l'esportazione automatica dei media a scopo di backup
 3. Configura le scorciatoie da tastiera per un uso efficiente
 4. Configura l'integrazione con Zoom per la condivisione automatica dello schermo
 
-### Ottimizzazione delle prestazioni {#performance-optimization-2}
+### Ottimizzazione delle prestazioni {#performance-optimization}
 
 1. Abilita la cache extra per prestazioni migliori
 2. Usa una risoluzione massima adeguata alle tue esigenze
 3. Configura la cancellazione automatica della cache per gestire lo spazio su disco
 4. Valuta l'impostazione della connessione a consumo se hai una banda limitata
 
-### Risoluzione Problemi {#settings-guide-troubleshooting-2}
+### Risoluzione Problemi {#settings-guide-troubleshooting}
 
 - Se i media non si scaricano, controlla le impostazioni del programma delle adunanze
 - Se l'integrazione con OBS non funziona, verifica le impostazioni della porta e della password
