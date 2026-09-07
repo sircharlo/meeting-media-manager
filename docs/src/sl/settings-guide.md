@@ -2,7 +2,7 @@
 
 Ta izčrpen vodnik pojasnjuje vse nastavitve, ki so na voljo v M³, razvrščene po kategorijah. Razumevanje teh nastavitev vam bo pomagalo nastaviti M³ tako, da bo popolnoma ustrezal potrebam vaše občine.
 
-## General {#application-configuration}
+## Splošno {#application-configuration}
 
 ### Jezik uporabniškega vmesnika {#display-language}
 
@@ -165,11 +165,11 @@ Ko je ta funkcija omogočena, M³ občasno preveri uradno spletno mesto Jehovovi
 
 To deluje samo za profile, ki so bili dodani z iskanjem občine in katerih imena občin niso bila ročno spremenjena. Če je bila sinhronizacija onemogočena, ker je bilo ime občine spremenjeno, uporabi možnost **Omogoči sinhronizacijo urnika**, da profil znova povežeš.
 
-#### Enable Schedule Sync {#relink-congregation}
+#### Omogoči sinhronizacijo urnika {#relink-congregation}
 
 <!-- **Setting**: `relinkCongregationButton` -->
 
-Re-links the current profile to congregation lookup so automatic meeting day and time updates can resume. Only shown once the congregation name has been changed manually, since that's what breaks the link in the first place.
+Trenutni profil znova poveže z iskanjem občine, da se lahko nadaljuje samodejno posodabljanje dneva in časa shodov. Prikazano je samo, ko je ime občine ročno spremenjeno, saj se s tem prekine povezava.
 
 #### Osveži urnik shodov {#refresh-meeting-schedule}
 
@@ -177,7 +177,7 @@ Re-links the current profile to congregation lookup so automatic meeting day and
 
 Ročno sinhroniziraj trenutni in prihodnji urnik shodov s podatki z uradnega spletnega mesta.
 
-## Media & Playback {#media-retrieval-and-playback}
+## Predogled in predvajanje {#media-retrieval-and-playback}
 
 ### Merjena povezava {#metered-connection}
 
@@ -247,7 +247,7 @@ Nastavitev glasnosti za glasbo v ozadju (1–100 %).
 
 **Privzeto**: 100 %
 
-### Playback and Download Options {#media-display}
+### Možnosti predvajanja in prenosa {#media-display}
 
 <!-- This section covers mediaRetrievalPlayback's `media-display` settings subgroup -
 these control the media window's playback behavior and which downloaded media is
@@ -312,13 +312,13 @@ Izključi dodatne videe, ki so omenjeni v odstavkih za Preučevanje Stražnega s
 
 **Privzeto**: `false`
 
-#### Exclude Congregation Bible Study Videos {#exclude-cbs-pubs}
+#### Izključi videoposnetke za Občinsko preučevanje Biblije {#exclude-cbs-pubs}
 
 <!-- **Setting**: `excludeCbsPubs` -->
 
-Choose publications whose referenced videos should not be shown during the Congregation Bible Study. Search by publication title or symbol.
+Izberi publikacije, katerih navedeni videoposnetki naj se med Občinskim preučevanjem Biblije ne prikazujejo. Išči po naslovu publikacije ali simbolu.
 
-**Default**: Congregation Bible Study Guide (`wcg`)
+**Privzeto**: Pogumno hodi z Bogom (`wcg`)
 
 #### Izključi multimedijsko vsebino iz brošure Branje in poučevanje {#exclude-theocratic-ministry-school}
 
@@ -374,21 +374,21 @@ Samodejno odstranjevanje stare multimedijske vsebine iz predpomnilnika za prihra
 
 **Privzeto**: `true`
 
-### Pinyin Song Titles {#pinyin-song-titles}
+### Naslovi pesmi v pinjinu {#pinyin-song-titles}
 
-#### Prefer Pinyin Songs {#enable-pinyin-songs}
+#### Prednost imajo pesmi v pinjinu {#enable-pinyin-songs}
 
 <!-- **Setting**: `enablePinyinSongs` -->
 
-When a pinyin version of a meeting song is found in the pinyin song folder, use it instead of the standard song.
+Ko je v mapi s pesmimi v pinjinu najdena pinjin različica pesmi za shod, se ta uporabi namesto standardne pesmi.
 
 **Privzeto**: `false`
 
-#### Pinyin Song Folder {#pinyin-song-folder}
+#### Mapa s pesmimi v pinjinu {#pinyin-song-folder}
 
 <!-- **Setting**: `pinyinSongFolder` -->
 
-Folder containing pinyin video songs (e.g. `sjjm_s-Pi_CHS_066_r720P.mp4`). When a pinyin file matching the meeting song number is found, it will be played instead of the standard song.
+Mapa, ki vsebuje videoposnetke pesmi v pinjinu (npr. sjjm_s-Pi_CHS_066_r720P.mp4). Ko je najden videoposnetek v  pinjinu, ki ustreza številki pesmi za shod, se predvaja ta namesto standardne pesmi.
 
 **Privzeto**: Prazno
 
@@ -490,11 +490,11 @@ Bližnjica na tipkovnici za sprožitev deljenja zaslona prek Zooma.
 
 **Privzeto**: Prazno
 
-#### Auto-Focus Media Window {#zoom-auto-focus-media-window}
+#### Samodejno postavi v ospredje okno z multimedijsko vsebino {#zoom-auto-focus-media-window}
 
 <!-- **Setting**: `zoomAutoFocusMediaWindow` -->
 
-Automatically focus the media window after Zoom screen sharing starts. This is usually not required, but can help on some systems if the media window regularly loses focus after screen sharing starts.
+Ko se začne deljenje zaslona v Zoomu, se okno z multimedijsko vsebino samodejno postavi v ospredje. To običajno ni potrebno, lahko pa pomaga na nekaterih sistemih, če se pogosto zgodi, da okno z multimedijsko vsebino po začetku deljenja zaslona ni v ospredju.
 
 **Privzeto**: `false`
 
@@ -619,7 +619,7 @@ Ta možnost je skrita, kadar je omogočen OBS nadzor snemanja. Če uporabljaš O
 
 Nastavi tipkovno bližnjico za začetek snemanja, izbirno bližnjico za ustavitev snemanja ter mapo, v katero zunanja aplikacija shranjuje posnetke. Če bližnjica za ustavitev ni določena, M³ ponovno uporabi bližnjico za začetek snemanja. Ko je mapa nastavljena, M³ prikaže gumb za njen odprtje.
 
-## Interface & Shortcuts {#interface-shortcuts}
+## Vmesnik in bližnjice {#interface-shortcuts}
 
 ### Bližnjice na tipkovnici {#settings-guide-keyboard-shortcuts}
 
