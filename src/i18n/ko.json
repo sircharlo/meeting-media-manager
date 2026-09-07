@@ -92,6 +92,7 @@
   "cbs": "회중 성서 연구",
   "cbs-custom-end-time": "@:cbs 종료 시간",
   "change-color": "색상 변경",
+  "change-key-combination": "Change shortcut: {shortcut}",
   "change-tag": "태그 변경",
   "change-tag-explain": "선택한 미디어의 태그 유형과 라벨을 변경합니다.",
   "chapter": "장",
