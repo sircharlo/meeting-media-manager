@@ -145,7 +145,9 @@ export const moveCacheToMachineWide: MigrationFunction = async () => {
 
     return true;
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: { fn: { name: 'moveCacheToMachineWide' } },
+    });
     return false;
   }
 };

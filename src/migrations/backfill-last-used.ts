@@ -86,7 +86,7 @@ export const backfillLastUsed: MigrationFunction = async () => {
 
     return true;
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, { contexts: { fn: { name: 'backfillLastUsed' } } });
     return false;
   }
 };

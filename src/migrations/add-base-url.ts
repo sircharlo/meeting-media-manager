@@ -64,7 +64,9 @@ export const addBaseUrlToAllCongregations: MigrationFunction = async () => {
     congregationStore.congregations = updatedCongregations;
     return true;
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: { fn: { name: 'addBaseUrlToAllCongregations' } },
+    });
     return false;
   }
 };

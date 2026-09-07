@@ -2,6 +2,7 @@ import type { DateInfo } from 'src/types';
 import type { MediaPlayingState } from 'stores/current-state';
 
 import { getTodaysMeetingStartDateTime } from 'src/helpers/date';
+import { errorCatcher } from 'src/helpers/error-catcher';
 import { describe, expect, it, vi } from 'vitest';
 
 import type * as DateHelpers from '../date';
@@ -18,6 +19,10 @@ vi.mock('src/helpers/date', async (importOriginal) => {
     getTodaysMeetingStartDateTime: vi.fn(),
   };
 });
+
+vi.mock('src/helpers/error-catcher', () => ({
+  errorCatcher: vi.fn(),
+}));
 
 const createDateInfoWithSong = (duration?: number): DateInfo =>
   ({
@@ -106,4 +111,27 @@ describe('getTodaysScheduledMeetingEndDateTime', () => {
       expect(result?.getTime()).toBe(start.getTime() + 105 * 60 * 1000);
     },
   );
+
+  // FE-19 (full-audit-2026-09-05.md): this outer catch used to call
+  // errorCatcher(error) bare, with no Sentry grouping context, unlike every
+  // inner catch in the migration files this pass also fixed.
+  it('reports a thrown error with its own function name as Sentry grouping context', () => {
+    vi.mocked(getTodaysMeetingStartDateTime).mockImplementationOnce(() => {
+      throw new Error('boom');
+    });
+
+    const result = getTodaysScheduledMeetingEndDateTime();
+
+    expect(result).toBeNull();
+    expect(errorCatcher).toHaveBeenCalledExactlyOnceWith(
+      expect.any(Error),
+      expect.objectContaining({
+        contexts: expect.objectContaining({
+          fn: expect.objectContaining({
+            name: 'getTodaysScheduledMeetingEndDateTime',
+          }),
+        }),
+      }),
+    );
+  });
 });

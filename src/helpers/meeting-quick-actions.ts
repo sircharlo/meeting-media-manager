@@ -133,7 +133,9 @@ export const getTodaysScheduledMeetingEndDateTime = (
       start.getTime() + MEETING_SCHEDULED_DURATION_MINUTES * 60 * 1000,
     );
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: { fn: { name: 'getTodaysScheduledMeetingEndDateTime' } },
+    });
     return null;
   }
 };

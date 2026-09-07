@@ -124,7 +124,7 @@ export const firstRun: MigrationFunction = async () => {
     }
     return successfulMigration;
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, { contexts: { fn: { name: 'firstRun' } } });
     return false;
   }
 };
