@@ -92,6 +92,7 @@
   "cbs": "Congregation Bible Study",
   "cbs-custom-end-time": "@:cbs end time",
   "change-color": "Szín módosítása",
+  "change-key-combination": "Change shortcut: {shortcut}",
   "change-tag": "Change tag",
   "change-tag-explain": "Megváltoztatod a médiaelem címkéjének típusát és jelölését.",
   "chapter": "Fejezet",
