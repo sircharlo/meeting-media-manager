@@ -127,7 +127,7 @@
     "msw": "^2.15.0",
     "playwright": "^1.62.1",
     "png2icons": "^2.0.1",
-    "postcss": "^8.5.26",
+    "postcss": "^8.5.28",
     "prettier": "^3.9.6",
     "rollup-plugin-visualizer": "^7.1.1",
     "sharp": "^0.35.4",
