@@ -1,5 +1,6 @@
 import { createPinia, setActivePinia } from 'pinia';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useDemoModeStore } from 'stores/demo-mode';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useMeetingQuickActionsStore } from '../meeting-quick-actions';
@@ -63,6 +64,42 @@ describe('meeting quick-actions store', () => {
 
     expect(quickActions.isItemChecked('task-1')).toBe(false);
     expect(quickActions.lastSongEndedAt).toBeNull();
+  });
+
+  // FE-18 (full-audit-2026-09-05.md): the real (non-demo-button) call site
+  // calls recordLastSongEnded() with no argument - its default used to
+  // ignore demo mode's virtual clock entirely, unlike every other timing
+  // computation in this feature.
+  it('defaults to the real wall clock when demo mode is disabled', () => {
+    const currentState = useCurrentStateStore();
+    const quickActions = useMeetingQuickActionsStore();
+    currentState.currentCongregation = 'congregation-a';
+    currentState.selectedDate = '2026/08/21';
+
+    quickActions.recordLastSongEnded();
+
+    expect(quickActions.lastSongEndedAt).toBe(
+      new Date('2026-08-21T12:00:00').getTime(),
+    );
+  });
+
+  it('defaults to the demo virtual clock when demo mode is enabled, not the real wall clock', () => {
+    const currentState = useCurrentStateStore();
+    const quickActions = useMeetingQuickActionsStore();
+    currentState.currentCongregation = 'congregation-a';
+    currentState.selectedDate = '2026/08/21';
+
+    const demoMode = useDemoModeStore();
+    demoMode.enabled = true;
+    const virtualTime = new Date('2026-08-21T19:00:00').getTime();
+    demoMode.setVirtualTime(virtualTime, 'after-song');
+
+    quickActions.recordLastSongEnded();
+
+    expect(quickActions.lastSongEndedAt).toBe(virtualTime);
+    expect(quickActions.lastSongEndedAt).not.toBe(
+      new Date('2026-08-21T12:00:00').getTime(),
+    );
   });
 
   it('resets naturally when a new Pinia session is created', () => {

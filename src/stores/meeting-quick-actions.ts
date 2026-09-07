@@ -1,6 +1,7 @@
 import { defineStore, storeToRefs } from 'pinia';
 import { formatDate } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useDemoModeStore } from 'stores/demo-mode';
 import { computed, reactive } from 'vue';
 
 interface ScopeState {
@@ -23,6 +24,7 @@ export const useMeetingQuickActionsStore = defineStore(
     const currentState = useCurrentStateStore();
     const { currentCongregation, selectedDate, selectedDateObject } =
       storeToRefs(currentState);
+    const demoMode = useDemoModeStore();
     const scopes = reactive<Record<string, ScopeState>>({});
 
     const getScopeKey = (congregationId?: string, date?: Date | string) => {
@@ -88,7 +90,14 @@ export const useMeetingQuickActionsStore = defineStore(
       if (scope) Object.assign(scope, createScopeState());
     };
 
-    const recordLastSongEnded = (endedAt = Date.now()) => {
+    // FE-18 (full-audit-2026-09-05.md): the real (non-demo-button) call site
+    // in MediaCalendarPage.vue calls this with no argument, so it used to
+    // fall back to the real wall clock even while an automated demo session
+    // (virtual clock) is active - unlike every other timing computation in
+    // this feature, which reads music.ts's getClockDate()-equivalent pattern.
+    const recordLastSongEnded = (
+      endedAt = demoMode.enabled ? demoMode.now : Date.now(),
+    ) => {
       // Always scoped to today, not whatever date is currently browsed in
       // the calendar - this event fires off the actual media player state,
       // so if the operator navigates away from today while the last song
