@@ -426,9 +426,9 @@ This option is hidden when OBS recording controls are enabled. If you use OBS St
 
 Configure the keyboard shortcut that starts recording, the optional shortcut that stops recording, and the folder where the external app saves recordings. If no stop shortcut is provided, M³ reuses the start shortcut. When a folder is configured, M³ shows a button to open it.
 
-### Meeting Timer {#meeting-timer}
+### Meeting Timer {#interface-shortcuts}
 
-#### Enable Meeting Timer {#enable-meeting-timer}
+#### Enable Meeting Timer {#settings-guide-keyboard-shortcuts}
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
@@ -436,25 +436,25 @@ Enable a separate timer window for timing meeting parts. This is a beta feature 
 
 **Standaard**: `false`
 
-#### Timer Window Behavior {#timer-window-behavior}
+#### Timer Window Behavior {#enable-keyboard-shortcuts}
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
 Configure whether the timer window opens automatically, whether participant timers count up or down by default, whether the clock uses 12-hour or 24-hour time, and whether the current timer value is shown on the action island timer button.
 
-#### Timer Display Formats {#timer-display-formats}
+#### Timer Display Formats {#media-control-shortcuts}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
 Choose analog or digital display formats for the time of day and countdown timers. The countdown warning indicator can shift the analog countdown ring toward a warning color during the final minute.
 
-#### Meeting Countdown and Schedule Status {#meeting-countdown-and-schedule-status}
+#### Meeting Countdown and Schedule Status {#add-more-media-button}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
 Show a countdown before scheduled meetings and optionally display whether the meeting is ahead of or behind schedule. The meeting countdown appears only on the timer display, not on the main media display.
 
-#### Timer Appearance and Overtime {#timer-appearance-and-overtime}
+#### Timer Appearance and Overtime {#add-media-button-sections}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
@@ -462,9 +462,9 @@ Customize the timer text size and colors, and configure overtime indicators such
 
 ## Geavanceerde instellingen {#advanced-settings}
 
-### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
+### Keyboard Shortcuts {#profile-settings-transfer}
 
-#### Sneltoetsen inschakelen {#enable-keyboard-shortcuts}
+#### Sneltoetsen inschakelen {#danger-zone}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
@@ -472,7 +472,7 @@ Schakel aanpasbare sneltoetsen in voor mediabediening.
 
 **Standaard**: `false`
 
-#### Media Control Shortcuts {#media-control-shortcuts}
+#### Media Control Shortcuts {#base-url}
 
 Configure shortcuts for media playback:
 
@@ -483,9 +483,9 @@ Configure shortcuts for media playback:
 - **Stop Media**: Stop media playback
 - **Music Toggle**: Toggle background music
 
-### Media Display {#media-display}
+### Media Display {#disable-hardware-acceleration}
 
-#### Fade-overgangen voor mediavenster inschakelen {#enable-media-window-fade-transitions}
+#### Fade-overgangen voor mediavenster inschakelen {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
@@ -493,7 +493,7 @@ Schakel fade-in/out-overgangen in bij het tonen of verbergen van het mediavenste
 
 **Standaard**: `true`
 
-#### Enable Playback Speed Control {#enable-playback-speed-control}
+#### Enable Playback Speed Control {#disable-media-fetching}
 
 <!-- **Setting**: `enablePlaybackSpeedControl` -->
 
@@ -501,7 +501,7 @@ Allow audio and video playback speed to be adjusted from the media item's contex
 
 **Standaard**: `false`
 
-#### Hide Media Logo {#hide-media-logo}
+#### Hide Media Logo {#configuration-tips}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
@@ -509,7 +509,7 @@ Hide the logo in the media window.
 
 **Standaard**: `false`
 
-#### Maximum Resolution {#maximum-resolution}
+#### Maximum Resolution {#new-users}
 
 <!-- **Setting**: `maxRes` -->
 
@@ -519,7 +519,7 @@ Maximum resolution for downloaded media files.
 
 **Standaard**: 720p
 
-#### Include Printed Media {#include-printed-media}
+#### Include Printed Media {#advanced-users}
 
 <!-- **Setting**: `includePrinted` -->
 
@@ -527,7 +527,7 @@ Include media from the printed publications in media downloads.
 
 **Standaard**: `true`
 
-#### Exclude Footnotes {#exclude-footnotes}
+#### Exclude Footnotes {#performance-optimization}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
@@ -535,7 +535,7 @@ Exclude footnote images from media downloads when possible.
 
 **Standaard**: `false`
 
-#### Exclude Additional Watchtower Study Videos {#exclude-additional-watchtower-study-videos}
+#### Exclude Additional Watchtower Study Videos {#settings-guide-troubleshooting}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 
@@ -597,11 +597,11 @@ Convert exported media files to MP4 format for better compatibility.
 
 **Standaard**: `false`
 
-### Profile Settings Transfer {#profile-settings-transfer}
+### Profile Settings Transfer {#profile-settings-transfer-2}
 
 Export the current profile's settings to a JSON file or import a previously exported profile settings file. Importing replaces the current profile's settings.
 
-### Danger Zone {#danger-zone}
+### Danger Zone {#danger-zone-2}
 
 :::warning Waarschuwing
 
@@ -609,7 +609,7 @@ Wijzig deze instellingen alleen als je de gevolgen ervan begrijpt.
 
 :::
 
-#### Base URL {#base-url}
+#### Base URL {#base-url-2}
 
 <!-- **Setting**: `baseUrl` -->
 
@@ -617,7 +617,7 @@ Base domain used to download publications and media.
 
 **Standaard**: `jw.org`
 
-#### Disable Hardware Acceleration {#disable-hardware-acceleration}
+#### Disable Hardware Acceleration {#disable-hardware-acceleration-2}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
@@ -625,7 +625,7 @@ Disable hardware acceleration after restarting M³. This may help with graphical
 
 **Standaard**: `false`
 
-#### Suppress Hardware Acceleration Reminder {#suppress-hardware-acceleration-reminder}
+#### Suppress Hardware Acceleration Reminder {#suppress-hardware-acceleration-reminder-2}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
@@ -633,7 +633,7 @@ Hide the reminder to re-enable hardware acceleration after it has been manually 
 
 **Standaard**: `false`
 
-#### Disable Media Fetching {#disable-media-fetching}
+#### Disable Media Fetching {#disable-media-fetching-2}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
@@ -641,30 +641,30 @@ Completely disable automatic media downloads. Use this only for profiles that wi
 
 **Standaard**: `false`
 
-## Tips for Optimal Configuration {#configuration-tips}
+## Tips for Optimal Configuration {#configuration-tips-2}
 
-### Voor nieuwe gebruikers {#new-users}
+### Voor nieuwe gebruikers {#new-users-2}
 
 1. Start with the setup wizard to configure basic settings
 2. Schakel "Mediaweergaveknop" in om presentatieopties te gebruiken
 3. Configure your meeting schedule accurately
 4. Set up OBS integration if you use hybrid meetings
 
-### Voor gevorderde gebruikers {#advanced-users}
+### Voor gevorderde gebruikers {#advanced-users-2}
 
 1. Use folder monitoring to sync media from cloud storage
 2. Schakel automatische media-export in voor back-updoeleinden
 3. Configure keyboard shortcuts for efficient operation
 4. Configure Zoom integration for automatic screen sharing
 
-### Prestatie-optimalisatie {#performance-optimization}
+### Prestatie-optimalisatie {#performance-optimization-2}
 
 1. Schakel extra cache in voor betere prestaties
 2. Use appropriate maximum resolution for your needs
 3. Configure cache auto-clear to manage disk space
 4. Consider metered connection setting if on limited bandwidth
 
-### Problemen oplossen {#settings-guide-troubleshooting}
+### Problemen oplossen {#settings-guide-troubleshooting-2}
 
 - If media isn't downloading, check your meeting schedule settings
 - If OBS integration isn't working, verify port and password settings

@@ -426,9 +426,9 @@ OBS Studio WebSocket 连接所使用的密码。
 
 设置开始录制所使用的快捷键、可选的停止录制快捷键，以及外部应用程序保存录制文件的文件夹。 如果未设置停止快捷键，M³ 会继续使用开始录制的快捷键。 设置文件夹后，M³ 会显示用于打开该文件夹的按钮。
 
-### 聚会计时器 {#meeting-timer}
+### 聚会计时器 {#interface-shortcuts}
 
-#### 启用聚会计时器 {#enable-meeting-timer}
+#### 启用聚会计时器 {#settings-guide-keyboard-shortcuts}
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
@@ -436,25 +436,25 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **Default**: `false`
 
-#### 计时器窗口行为 {#timer-window-behavior}
+#### 计时器窗口行为 {#enable-keyboard-shortcuts}
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
 可以设置计时器窗口是否自动打开、节目参与者计时默认使用正计时还是倒计时、时钟使用 12 小时制还是 24 小时制，以及是否在操作区域的计时器按钮上显示当前计时值。
 
-#### 计时器显示格式 {#timer-display-formats}
+#### 计时器显示格式 {#media-control-shortcuts}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
 可以为当前时间和倒计时选择模拟或数字显示方式。 倒计时警告指示器可以在最后一分钟内使模拟倒计时圆环逐渐变为警告颜色。
 
-#### 聚会倒计时和时间安排状态 {#meeting-countdown-and-schedule-status}
+#### 聚会倒计时和时间安排状态 {#add-more-media-button}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
 在预定的聚会开始前显示倒计时，并可选择显示聚会整体是提前还是超时。 聚会倒计时只显示在计时器窗口，不会显示在主媒体屏幕上。
 
-#### 计时器外观和超时显示 {#timer-appearance-and-overtime}
+#### 计时器外观和超时显示 {#add-media-button-sections}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
@@ -462,9 +462,9 @@ OBS Studio WebSocket 连接所使用的密码。
 
 ## 高级设置 {#advanced-settings}
 
-### 键盘快捷键 {#settings-guide-keyboard-shortcuts}
+### 键盘快捷键 {#profile-settings-transfer}
 
-#### 启用键盘快捷键 {#enable-keyboard-shortcuts}
+#### 启用键盘快捷键 {#danger-zone}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
@@ -472,7 +472,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **Default**: `false`
 
-#### 媒体控制快捷键 {#media-control-shortcuts}
+#### 媒体控制快捷键 {#base-url}
 
 可以设置以下快捷键：
 
@@ -483,9 +483,9 @@ OBS Studio WebSocket 连接所使用的密码。
 - **停止媒体**：停止当前媒体
 - **背景音乐**：开始或停止播放背景音乐
 
-### 媒体显示 {#media-display}
+### 媒体显示 {#disable-hardware-acceleration}
 
-#### 启用媒体窗口淡入淡出效果 {#enable-media-window-fade-transitions}
+#### 启用媒体窗口淡入淡出效果 {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
@@ -493,7 +493,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：`true`
 
-#### 启用播放速度控制 {#enable-playback-speed-control}
+#### 启用播放速度控制 {#disable-media-fetching}
 
 <!-- **Setting**: `enablePlaybackSpeedControl` -->
 
@@ -501,7 +501,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **Default**: `false`
 
-#### 隐藏媒体标志 {#hide-media-logo}
+#### 隐藏媒体标志 {#configuration-tips}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
@@ -509,7 +509,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **Default**: `false`
 
-#### 最高分辨率 {#maximum-resolution}
+#### 最高分辨率 {#new-users}
 
 <!-- **Setting**: `maxRes` -->
 
@@ -519,7 +519,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：`false`
 
-#### 包括印刷版媒体 {#include-printed-media}
+#### 包括印刷版媒体 {#advanced-users}
 
 <!-- **Setting**: `includePrinted` -->
 
@@ -527,7 +527,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：`true`
 
-#### Exclude Footnotes {#exclude-footnotes}
+#### Exclude Footnotes {#performance-optimization}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
@@ -535,7 +535,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **Default**: `false`
 
-#### 排除《守望台》研究班段落中额外提到的视频 {#exclude-additional-watchtower-study-videos}
+#### 排除《守望台》研究班段落中额外提到的视频 {#settings-guide-troubleshooting}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 
@@ -597,11 +597,11 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：`false`
 
-### 配置设置导入和导出 {#profile-settings-transfer}
+### 配置设置导入和导出 {#profile-settings-transfer-2}
 
 可以将当前配置的设置导出为 JSON 文件，也可以导入之前导出的配置设置文件。导入后会替换当前配置的设置。 导入替换当前配置文件的设置。
 
-### 危险区域 {#danger-zone}
+### 危险区域 {#danger-zone-2}
 
 :::warning 小贴士
 
@@ -609,7 +609,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 :::
 
-#### Base URL {#base-url}
+#### Base URL {#base-url-2}
 
 <!-- **Setting**: `baseUrl` -->
 
@@ -617,7 +617,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：`false`
 
-#### 关闭硬件加速提醒 {#suppress-hardware-acceleration-reminder}
+#### 关闭硬件加速提醒 {#suppress-hardware-acceleration-reminder-2}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
@@ -625,7 +625,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：`false`
 
-#### 禁用硬件加速 {#disable-media-fetching}
+#### 禁用硬件加速 {#disable-media-fetching-2}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
@@ -633,7 +633,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：`false`
 
-#### 禁用媒体获取 {#configuration-tips}
+#### 禁用媒体获取 {#configuration-tips-2}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
@@ -641,30 +641,30 @@ OBS Studio WebSocket 连接所使用的密码。
 
 **默认**：`false`
 
-## 最佳配置提示 {#new-users}
+## 最佳配置提示 {#new-users-2}
 
-### 新用户 {#advanced-users}
+### 新用户 {#advanced-users-2}
 
 1. 使用初始设置完成基本配置
 2. 启用“媒体显示”，以便在外部屏幕上显示媒体
 3. 正确设置聚会日期和时间
 4. 如果使用混合聚会，可以根据实际需要配置 Zoom 或 OBS Studio 集成
 
-### 高级用户 {#performance-optimization}
+### 高级用户 {#performance-optimization-2}
 
 1. 使用文件夹监控从云存储同步媒体
 2. 使用媒体自动导出功能将媒体保存到指定位置
 3. 配置键盘快捷键，提高媒体操作效率
 4. 配置 Zoom 集成，以便在媒体开始和停止时触发屏幕共享
 
-### 性能优化 {#settings-guide-troubleshooting}
+### 性能优化 {#settings-guide-troubleshooting-2}
 
 1. 根据需要启用额外缓存
 2. 根据需要选择合适的最高分辨率
 3. 启用缓存自动清理，控制磁盘空间占用
 4. 如果网络流量有限，可以启用按流量计费的网络连接设置
 
-### 疑难解答 {#settings-guide-troubleshooting-2}
+### 疑难解答 {#settings-guide-troubleshooting-2-2}
 
 - 如果媒体没有下载，请检查聚会日期和时间设置
 - 如果 OBS Studio 集成无法使用，请检查 WebSocket 端口、密码和场景设置

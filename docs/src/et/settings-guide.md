@@ -426,9 +426,9 @@ See valik on peidetud, kui OBS-i salvestusfunktsioonid on sisse lülitatud. Kui 
 
 Määra salvestamise alustamiseks vajalik klahvikombinatsioon, salvestamise lõpetamiseks vajalik valikuline klahvikombinatsioon ning kaust, kuhu välisrakendus salvestused salvestab. Kui peatamise kiirklahvi pole määratud, kasutab M³ uuesti käivitamise kiirklahvi. Kui kaust on seadistatud, kuvab M³ selle avamiseks nuppu.
 
-### Koosoleku taimer {#meeting-timer}
+### Koosoleku taimer {#interface-shortcuts}
 
-#### Luba koosoleku taimer {#enable-meeting-timer}
+#### Luba koosoleku taimer {#settings-guide-keyboard-shortcuts}
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
@@ -436,25 +436,25 @@ Luba eraldi taimeri akna kasutamine koosoleku osade ajastamiseks. Taimer on beet
 
 **Vaikimisi**: `väljas`
 
-#### Taimeriakna käitumine {#timer-window-behavior}
+#### Taimeriakna käitumine {#enable-keyboard-shortcuts}
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
 Määrake, kas ajastuse aken avatakse automaatselt, kas osalejate taimerid loevad vaikimisi üles või alla, kas kell kasutab 12- või 24-tunnist ajavormingut ning kas ajastuse hetkeväärtus kuvatakse tegevusala ajastuse nupul.
 
-#### Taimeri kuvamisvormingud {#timer-display-formats}
+#### Taimeri kuvamisvormingud {#media-control-shortcuts}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
 Vali kellaaja ja tagasilugemistimeri jaoks analoog- või digitaalne kuvamisviis. Tagasilugemise hoiatusnäidik võib viimasel minutil muuta analoogse tagasilugemise ringi hoiatusvärviks.
 
-#### Koosoleku taimer ja ajakava staatus {#meeting-countdown-and-schedule-status}
+#### Koosoleku taimer ja ajakava staatus {#add-more-media-button}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
 Näita enne planeeritud koosolekuid tagasiarvestust ja vajaduse korral ka seda, kas koosolek on graafikust ees või maha jäänud. Koosoleku alguseni jäänud aeg kuvatakse ainult taimeriekraanil, mitte peamisel meediaekraanil.
 
-#### Taimeri välimus ja üle aja minek {#timer-appearance-and-overtime}
+#### Taimeri välimus ja üle aja minek {#add-media-button-sections}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
@@ -462,9 +462,9 @@ Saate kohandada taimeri teksti suurust ja värve ning seadistada üle aja näita
 
 ## Lisasätted {#advanced-settings}
 
-### Kiirklahvid {#settings-guide-keyboard-shortcuts}
+### Kiirklahvid {#profile-settings-transfer}
 
-#### Luba kiirklahvid {#enable-keyboard-shortcuts}
+#### Luba kiirklahvid {#danger-zone}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
@@ -472,7 +472,7 @@ Luba meedia juhtimiseks kohandatavad kiirklahvid.
 
 **Vaikimisi**: `väljas`
 
-#### Meedia esitamise kiirklahvid {#media-control-shortcuts}
+#### Meedia esitamise kiirklahvid {#base-url}
 
 Meedia esitamise kiirklahvide seadistamine:
 
@@ -483,9 +483,9 @@ Meedia esitamise kiirklahvide seadistamine:
 - **Stop Media**: Peata meedia taasesitus
 - **Taustamuusika lüliti**: Lülita taustamuusika sisse või välja
 
-### Meedia ekraan {#media-display}
+### Meedia ekraan {#disable-hardware-acceleration}
 
-#### Luba meediaakna üleminekud {#enable-media-window-fade-transitions}
+#### Luba meediaakna üleminekud {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
@@ -493,7 +493,7 @@ Luba üleminekuga varjamine või näitamine meediaaknas.
 
 **Vaikimisi**: `lubatud`
 
-#### Luba taasesituse kiiruse reguleerimine {#enable-playback-speed-control}
+#### Luba taasesituse kiiruse reguleerimine {#disable-media-fetching}
 
 <!-- **Setting**: `enablePlaybackSpeedControl` -->
 
@@ -501,7 +501,7 @@ Võimaldab heli- ja videomaterjali taasesituskiiruse reguleerimist meediaelemend
 
 **Vaikimisi**: `väljas`
 
-#### Peida meedia logo {#hide-media-logo}
+#### Peida meedia logo {#configuration-tips}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
@@ -509,7 +509,7 @@ Peida logo meediaaknas.
 
 **Vaikimisi**: `väljas`
 
-#### Maksimaalne resolutsioon {#maximum-resolution}
+#### Maksimaalne resolutsioon {#new-users}
 
 <!-- **Setting**: `maxRes` -->
 
@@ -519,7 +519,7 @@ Allalaaditud meediafailide maksimaalne resolutsioon.
 
 **Vaikimisi**: 720p
 
-#### Kaasa trükitud meediafialid {#include-printed-media}
+#### Kaasa trükitud meediafialid {#advanced-users}
 
 <!-- **Setting**: `includePrinted` -->
 
@@ -527,7 +527,7 @@ Kaasa trükitud väljaannete meedia allalaadimiste hulka.
 
 **Vaikimisi**: `lubatud`
 
-#### Ära kaasa allmärkusi {#exclude-footnotes}
+#### Ära kaasa allmärkusi {#performance-optimization}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
@@ -535,7 +535,7 @@ Võimaluse korral jäta allmärkuste pildid meedia allalaadimistest välja.
 
 **Vaikimisi**: `väljas`
 
-#### Jäta välja täiendavad Vahitorni õppevideod {#exclude-additional-watchtower-study-videos}
+#### Jäta välja täiendavad Vahitorni õppevideod {#settings-guide-troubleshooting}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 
@@ -597,11 +597,11 @@ Salvesta eksporditud meediafailid MP4-vormingusse, et saavutada parem ühilduvus
 
 **Vaikimisi**: `väljas`
 
-### Profiili seaded – ülekandmine {#profile-settings-transfer}
+### Profiili seaded – ülekandmine {#profile-settings-transfer-2}
 
 Ekspordi praeguse profiili seaded JSON-failina või impordi varem eksporditud profiili seadefail. Importimine asendab praeguse profiili seaded.
 
-### Ohutsoon {#danger-zone}
+### Ohutsoon {#danger-zone-2}
 
 :::warning Hoiatus
 
@@ -609,7 +609,7 @@ Neid seadeid tuleks muuta ainult juhul, kui mõistad nende mõju.
 
 :::
 
-#### Baas-URL {#base-url}
+#### Baas-URL {#base-url-2}
 
 <!-- **Setting**: `baseUrl` -->
 
@@ -617,7 +617,7 @@ Põhidomeen, mida kasutatakse väljaannete ja meedia allalaadimiseks.
 
 **Vaikimisi**: `jw.org`
 
-#### Lülita riistvarakiirendus välja {#disable-hardware-acceleration}
+#### Lülita riistvarakiirendus välja {#disable-hardware-acceleration-2}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
@@ -625,7 +625,7 @@ Lülita riistvarakiirendus pärast M³ taaskäivitamist välja. See võib aidata
 
 **Vaikimisi**: `väljas`
 
-#### Riistvarakiirenduse meeldetuletuse väljalülitamine {#suppress-hardware-acceleration-reminder}
+#### Riistvarakiirenduse meeldetuletuse väljalülitamine {#suppress-hardware-acceleration-reminder-2}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
@@ -633,7 +633,7 @@ Peida meeldetuletus riistvarakiirenduse taaskäivitamise kohta pärast selle kä
 
 **Vaikimisi**: `väljas`
 
-#### Meedia allalaadimise keelamine {#disable-media-fetching}
+#### Meedia allalaadimise keelamine {#disable-media-fetching-2}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
@@ -641,30 +641,30 @@ Lülita automaatne meedia allalaadimine täielikult välja. Kasuta seda ainult p
 
 **Vaikimisi**: `väljas`
 
-## Nõuanded optimaalseks seadistamiseks {#configuration-tips}
+## Nõuanded optimaalseks seadistamiseks {#configuration-tips-2}
 
-### Uutele kasutajatele {#new-users}
+### Uutele kasutajatele {#new-users-2}
 
 1. Alusta määramiste abil, et seadistada põhilised sätted
 2. Lülita sisse „Meedia kuvamise nupp“, et pääseda juurde nende esitluse funktsioonidele
 3. Seadista koosolekute ajakava
 4. Kui sa kasutad hübriidkoosolekuid, siis seadista OBS Studio koostöö
 
-### Edasijõudnud kasutajatele {#advanced-users}
+### Edasijõudnud kasutajatele {#advanced-users-2}
 
 1. Kasuta kausta jälgimist, et sünkroonida meediat pilvesalvestusest
 2. Luba meedia automaatne eksportimine varundamise eesmärgil
 3. Seadista kiirklahvid tõhusaks tööks
 4. Zoom-koostöö seadistamine automaatseks ekraani jagamiseks
 
-### Jõudluse parandamise nipid {#performance-optimization}
+### Jõudluse parandamise nipid {#performance-optimization-2}
 
 1. Luba lisavahemälu rakenduse paremaks toimimiseks
 2. Kasuta oma vajadustele vastavat maksimaalset resolutsiooni
 3. Seadista vahemälu automaatne tühjendamine, et hallata kettaruumi
 4. Kui andmemaht on piiratud, kaalu mõõdetud ühenduse seadistamist
 
-### Probleemide lahendamine {#settings-guide-troubleshooting}
+### Probleemide lahendamine {#settings-guide-troubleshooting-2}
 
 - Kui meedia ei lae alla, kontrolli koosoleku ajakava seadeid
 - Kui OBS Studio koostöö ei tööta, kontrolli porti ja parooli seadeid

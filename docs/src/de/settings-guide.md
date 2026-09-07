@@ -426,9 +426,9 @@ This option is hidden when OBS recording controls are enabled. If you use OBS St
 
 Configure the keyboard shortcut that starts recording, the optional shortcut that stops recording, and the folder where the external app saves recordings. If no stop shortcut is provided, M³ reuses the start shortcut. When a folder is configured, M³ shows a button to open it.
 
-### Meeting Timer {#meeting-timer}
+### Meeting Timer {#interface-shortcuts}
 
-#### Enable Meeting Timer {#enable-meeting-timer}
+#### Enable Meeting Timer {#settings-guide-keyboard-shortcuts}
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
@@ -436,25 +436,25 @@ Enable a separate timer window for timing meeting parts. This is a beta feature 
 
 **Standard**: `false`
 
-#### Timer Window Behavior {#timer-window-behavior}
+#### Timer Window Behavior {#enable-keyboard-shortcuts}
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
 Configure whether the timer window opens automatically, whether participant timers count up or down by default, whether the clock uses 12-hour or 24-hour time, and whether the current timer value is shown on the action island timer button.
 
-#### Timer Display Formats {#timer-display-formats}
+#### Timer Display Formats {#media-control-shortcuts}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
 Choose analog or digital display formats for the time of day and countdown timers. The countdown warning indicator can shift the analog countdown ring toward a warning color during the final minute.
 
-#### Meeting Countdown and Schedule Status {#meeting-countdown-and-schedule-status}
+#### Meeting Countdown and Schedule Status {#add-more-media-button}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
 Show a countdown before scheduled meetings and optionally display whether the meeting is ahead of or behind schedule. The meeting countdown appears only on the timer display, not on the main media display.
 
-#### Timer Appearance and Overtime {#timer-appearance-and-overtime}
+#### Timer Appearance and Overtime {#add-media-button-sections}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
@@ -462,9 +462,9 @@ Customize the timer text size and colors, and configure overtime indicators such
 
 ## Erweiterte Einstellungen {#advanced-settings}
 
-### Tastenkürzel {#settings-guide-keyboard-shortcuts}
+### Tastenkürzel {#profile-settings-transfer}
 
-#### Tastenkürzel aktivieren {#enable-keyboard-shortcuts}
+#### Tastenkürzel aktivieren {#danger-zone}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
@@ -472,7 +472,7 @@ Aktivieren Sie anpassbare Tastenkürzel für die Mediensteuerung.
 
 **Standard**: `false`
 
-#### Mediensteuerungs-Tastenkürzel {#media-control-shortcuts}
+#### Mediensteuerungs-Tastenkürzel {#base-url}
 
 Konfigurieren Sie Kürzel für die Medienwiedergabe:
 
@@ -483,9 +483,9 @@ Konfigurieren Sie Kürzel für die Medienwiedergabe:
 - **Medien stoppen**: Medienwiedergabe stoppen
 - **Musik umschalten**: Hintergrundmusik umschalten
 
-### Medienanzeige {#media-display}
+### Medienanzeige {#disable-hardware-acceleration}
 
-#### Überblendungen für Medienfenster aktivieren {#enable-media-window-fade-transitions}
+#### Überblendungen für Medienfenster aktivieren {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
@@ -493,7 +493,7 @@ Aktivieren Sie Ein-/Ausblendübergänge beim Anzeigen oder Ausblenden des Medien
 
 **Standard**: `true`
 
-#### Enable Playback Speed Control {#enable-playback-speed-control}
+#### Enable Playback Speed Control {#disable-media-fetching}
 
 <!-- **Setting**: `enablePlaybackSpeedControl` -->
 
@@ -501,7 +501,7 @@ Allow audio and video playback speed to be adjusted from the media item's contex
 
 **Standard**: `false`
 
-#### Medienlogo ausblenden {#hide-media-logo}
+#### Medienlogo ausblenden {#configuration-tips}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
@@ -509,7 +509,7 @@ Blenden Sie das Logo im Medienfenster aus.
 
 **Standard**: `false`
 
-#### Maximale Auflösung {#maximum-resolution}
+#### Maximale Auflösung {#new-users}
 
 <!-- **Setting**: `maxRes` -->
 
@@ -519,7 +519,7 @@ Maximale Auflösung für heruntergeladene Mediendateien.
 
 **Standard**: 720p
 
-#### Gedruckte Medien einbeziehen {#include-printed-media}
+#### Gedruckte Medien einbeziehen {#advanced-users}
 
 <!-- **Setting**: `includePrinted` -->
 
@@ -527,7 +527,7 @@ Schließen Sie Medien aus den gedruckten Publikationen in Medien-Downloads ein.
 
 **Standard**: `true`
 
-#### Fußnoten ausschließen {#exclude-footnotes}
+#### Fußnoten ausschließen {#performance-optimization}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
@@ -535,7 +535,7 @@ Schließen Sie Fußnotenbilder nach Möglichkeit aus Medien-Downloads aus.
 
 **Standard**: `false`
 
-#### Exclude Additional Watchtower Study Videos {#exclude-additional-watchtower-study-videos}
+#### Exclude Additional Watchtower Study Videos {#settings-guide-troubleshooting}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 
@@ -597,11 +597,11 @@ Konvertieren Sie exportierte Mediendateien in das MP4-Format für eine bessere K
 
 **Standard**: `false`
 
-### Profile Settings Transfer {#profile-settings-transfer}
+### Profile Settings Transfer {#profile-settings-transfer-2}
 
 Export the current profile's settings to a JSON file or import a previously exported profile settings file. Importing replaces the current profile's settings.
 
-### Gefahrenzone {#danger-zone}
+### Gefahrenzone {#danger-zone-2}
 
 :::warning Warnung
 
@@ -609,7 +609,7 @@ Diese Einstellungen sollten nur geändert werden, wenn Sie ihre Auswirkungen ver
 
 :::
 
-#### Basis-URL {#base-url}
+#### Basis-URL {#base-url-2}
 
 <!-- **Setting**: `baseUrl` -->
 
@@ -617,7 +617,7 @@ Basisdomäne, die zum Herunterladen von Publikationen und Medien verwendet wird.
 
 **Standard**: `jw.org`
 
-#### Disable Hardware Acceleration {#disable-hardware-acceleration}
+#### Disable Hardware Acceleration {#disable-hardware-acceleration-2}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
@@ -625,7 +625,7 @@ Disable hardware acceleration after restarting M³. This may help with graphical
 
 **Standard**: `false`
 
-#### Suppress Hardware Acceleration Reminder {#suppress-hardware-acceleration-reminder}
+#### Suppress Hardware Acceleration Reminder {#suppress-hardware-acceleration-reminder-2}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
@@ -633,7 +633,7 @@ Hide the reminder to re-enable hardware acceleration after it has been manually 
 
 **Standard**: `false`
 
-#### Medienabruf deaktivieren {#disable-media-fetching}
+#### Medienabruf deaktivieren {#disable-media-fetching-2}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
@@ -641,30 +641,30 @@ Deaktivieren Sie automatische Medien-Downloads vollständig. Verwenden Sie dies 
 
 **Standard**: `false`
 
-## Tipps für eine optimale Konfiguration {#configuration-tips}
+## Tipps für eine optimale Konfiguration {#configuration-tips-2}
 
-### Für neue Benutzer {#new-users}
+### Für neue Benutzer {#new-users-2}
 
 1. Beginnen Sie mit dem Einrichtungsassistenten, um grundlegende Einstellungen zu konfigurieren
 2. Aktivieren Sie die "Medienanzeige-Taste", um auf Präsentationsfunktionen zuzugreifen
 3. Konfigurieren Sie Ihren Zusammenkunftsplan genau
 4. Richten Sie die OBS-Integration ein, wenn Sie hybride Zusammenkünfte nutzen
 
-### Für fortgeschrittene Benutzer {#advanced-users}
+### Für fortgeschrittene Benutzer {#advanced-users-2}
 
 1. Verwenden Sie die Ordnerüberwachung, um Medien aus dem Cloud-Speicher zu synchronisieren
 2. Aktivieren Sie den automatischen Medienexport für Sicherungszwecke
 3. Konfigurieren Sie Tastenkürzel für einen effizienten Betrieb
 4. Konfigurieren Sie die Zoom-Integration für automatische Bildschirmfreigabe
 
-### Leistungsoptimierung {#performance-optimization}
+### Leistungsoptimierung {#performance-optimization-2}
 
 1. Aktivieren Sie Extra-Cache für eine bessere Leistung
 2. Verwenden Sie die für Ihre Bedürfnisse geeignete maximale Auflösung
 3. Konfigurieren Sie das automatische Löschen des Caches, um Speicherplatz zu verwalten
 4. Ziehen Sie die Einstellung für getaktete Verbindungen in Betracht, wenn die Bandbreite begrenzt ist
 
-### Fehlerbehebung {#settings-guide-troubleshooting}
+### Fehlerbehebung {#settings-guide-troubleshooting-2}
 
 - Wenn Medien nicht heruntergeladen werden, überprüfen Sie Ihre Zusammenkunftsplan-Einstellungen
 - Wenn die OBS-Integration nicht funktioniert, überprüfen Sie die Port- und Passworteinstellungen

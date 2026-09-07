@@ -426,9 +426,9 @@ Questa opzione è nascosta quando i controlli di registrazione OBS sono abilitat
 
 Configura la scorciatoia da tastiera che avvia la registrazione, la scorciatoia facoltativa che la ferma e la cartella in cui l'app esterna salva le registrazioni. Se non viene fornita una scorciatoia di arresto, M³ riutilizza la scorciatoia di avvio. Quando è configurata una cartella, M³ mostra un pulsante per aprirla.
 
-### Timer dell'adunanza {#meeting-timer}
+### Timer dell'adunanza {#interface-shortcuts}
 
-#### Abilita il timer dell'adunanza {#enable-meeting-timer}
+#### Abilita il timer dell'adunanza {#settings-guide-keyboard-shortcuts}
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
@@ -436,25 +436,25 @@ Abilita una finestra timer separata per cronometrare le parti dell'adunanza. Que
 
 **Predefinito**: `false`
 
-#### Comportamento della finestra del timer {#timer-window-behavior}
+#### Comportamento della finestra del timer {#enable-keyboard-shortcuts}
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
 Configura se la finestra del timer si apre automaticamente, se i timer dei partecipanti contano in avanti o alla rovescia per impostazione predefinita, se l'orologio usa il formato a 12 o 24 ore, e se il valore corrente del timer è mostrato sul pulsante del timer nell'isola delle azioni.
 
-#### Formati di visualizzazione del timer {#timer-display-formats}
+#### Formati di visualizzazione del timer {#media-control-shortcuts}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
 Scegli formati di visualizzazione analogici o digitali per l'ora del giorno e i timer del conto alla rovescia. L'indicatore di avviso del conto alla rovescia può spostare l'anello analogico del conto alla rovescia verso un colore di avviso durante l'ultimo minuto.
 
-#### Conto alla rovescia dell'adunanza e stato del programma {#meeting-countdown-and-schedule-status}
+#### Conto alla rovescia dell'adunanza e stato del programma {#add-more-media-button}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
 Mostra un conto alla rovescia prima delle adunanze programmate e, se vuoi, indica se l'adunanza è in anticipo o in ritardo sul programma. Il conto alla rovescia dell'adunanza appare solo sul display del timer, non sulla visualizzazione principale dei media.
 
-#### Aspetto del timer e tempo superato {#timer-appearance-and-overtime}
+#### Aspetto del timer e tempo superato {#add-media-button-sections}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
@@ -462,9 +462,9 @@ Personalizza la dimensione e i colori del testo del timer e configura gli indica
 
 ## Impostazioni avanzate {#advanced-settings}
 
-### Scorciatoie da Tastiera {#settings-guide-keyboard-shortcuts}
+### Scorciatoie da Tastiera {#profile-settings-transfer}
 
-#### Abilita le scorciatoie da tastiera {#enable-keyboard-shortcuts}
+#### Abilita le scorciatoie da tastiera {#danger-zone}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
@@ -472,7 +472,7 @@ Abilita scorciatoie da tastiera personalizzabili per il controllo dei media.
 
 **Predefinito**: `false`
 
-#### Scorciatoie per il controllo dei media {#media-control-shortcuts}
+#### Scorciatoie per il controllo dei media {#base-url}
 
 Configura le scorciatoie per la riproduzione dei media:
 
@@ -483,9 +483,9 @@ Configura le scorciatoie per la riproduzione dei media:
 - **Ferma il media**: ferma la riproduzione dei media
 - **Attiva/disattiva musica**: attiva o disattiva la musica di sottofondo
 
-### Visualizzazione dei media {#media-display}
+### Visualizzazione dei media {#disable-hardware-acceleration}
 
-#### Abilita le transizioni in dissolvenza della finestra multimediale {#enable-media-window-fade-transitions}
+#### Abilita le transizioni in dissolvenza della finestra multimediale {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
@@ -493,7 +493,7 @@ Abilita le transizioni in dissolvenza in entrata/uscita quando si mostra o si na
 
 **Predefinito**: `true`
 
-#### Abilita il controllo della velocità di riproduzione {#enable-playback-speed-control}
+#### Abilita il controllo della velocità di riproduzione {#disable-media-fetching}
 
 <!-- **Setting**: `enablePlaybackSpeedControl` -->
 
@@ -501,7 +501,7 @@ Consente di regolare la velocità di riproduzione di audio e video dal menu cont
 
 **Predefinito**: `false`
 
-#### Nascondi il logo nei media {#hide-media-logo}
+#### Nascondi il logo nei media {#configuration-tips}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
@@ -509,7 +509,7 @@ Nasconde il logo nella finestra multimediale.
 
 **Predefinito**: `false`
 
-#### Risoluzione massima {#maximum-resolution}
+#### Risoluzione massima {#new-users}
 
 <!-- **Setting**: `maxRes` -->
 
@@ -519,7 +519,7 @@ Risoluzione massima per i file multimediali scaricati.
 
 **Predefinito**: 720p
 
-#### Includi i media stampati {#include-printed-media}
+#### Includi i media stampati {#advanced-users}
 
 <!-- **Setting**: `includePrinted` -->
 
@@ -527,7 +527,7 @@ Includi i media delle pubblicazioni stampate nei download dei media.
 
 **Predefinito**: `true`
 
-#### Escludi le note in calce {#exclude-footnotes}
+#### Escludi le note in calce {#performance-optimization}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
@@ -535,7 +535,7 @@ Escludi le immagini delle note in calce dai download dei media quando possibile.
 
 **Predefinito**: `false`
 
-#### Escludi i video aggiuntivi dello Studio Torre di Guardia {#exclude-additional-watchtower-study-videos}
+#### Escludi i video aggiuntivi dello Studio Torre di Guardia {#settings-guide-troubleshooting}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 
@@ -597,11 +597,11 @@ Converte i file multimediali esportati in formato MP4 per una migliore compatibi
 
 **Predefinito**: `false`
 
-### Trasferimento delle impostazioni del profilo {#profile-settings-transfer}
+### Trasferimento delle impostazioni del profilo {#profile-settings-transfer-2}
 
 Esporta le impostazioni del profilo corrente in un file JSON o importa un file di impostazioni del profilo esportato in precedenza. L'importazione sostituisce le impostazioni del profilo corrente.
 
-### Zona pericolosa {#danger-zone}
+### Zona pericolosa {#danger-zone-2}
 
 :::warning Attenzione
 
@@ -609,7 +609,7 @@ Queste impostazioni dovrebbero essere modificate solo se ne comprendi le implica
 
 :::
 
-#### URL di base {#base-url}
+#### URL di base {#base-url-2}
 
 <!-- **Setting**: `baseUrl` -->
 
@@ -617,7 +617,7 @@ Dominio di base usato per scaricare pubblicazioni e media.
 
 **Predefinito**: `jw.org`
 
-#### Disabilita l'accelerazione hardware {#disable-hardware-acceleration}
+#### Disabilita l'accelerazione hardware {#disable-hardware-acceleration-2}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
@@ -625,7 +625,7 @@ Disabilita l'accelerazione hardware dopo aver riavviato M³. Può aiutare con pr
 
 **Predefinito**: `false`
 
-#### Nascondi il promemoria dell'accelerazione hardware {#suppress-hardware-acceleration-reminder}
+#### Nascondi il promemoria dell'accelerazione hardware {#suppress-hardware-acceleration-reminder-2}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
@@ -633,7 +633,7 @@ Nascondi il promemoria per riattivare l'accelerazione hardware dopo che è stata
 
 **Predefinito**: `false`
 
-#### Disabilita il recupero dei media {#disable-media-fetching}
+#### Disabilita il recupero dei media {#disable-media-fetching-2}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
@@ -641,30 +641,30 @@ Disabilita completamente i download automatici dei media. Usa questa opzione sol
 
 **Predefinito**: `false`
 
-## Consigli per una configurazione ottimale {#configuration-tips}
+## Consigli per una configurazione ottimale {#configuration-tips-2}
 
-### Per i nuovi utenti {#new-users}
+### Per i nuovi utenti {#new-users-2}
 
 1. Inizia con la configurazione guidata per impostare le impostazioni di base
 2. Abilita «Pulsante di visualizzazione dei media» per accedere alle funzioni di presentazione
 3. Configura con precisione il programma delle adunanze
 4. Configura l'integrazione con OBS se fai adunanze ibride
 
-### Per gli utenti esperti {#advanced-users}
+### Per gli utenti esperti {#advanced-users-2}
 
 1. Usa il monitoraggio delle cartelle per sincronizzare i media da un archivio cloud
 2. Abilita l'esportazione automatica dei media a scopo di backup
 3. Configura le scorciatoie da tastiera per un uso efficiente
 4. Configura l'integrazione con Zoom per la condivisione automatica dello schermo
 
-### Ottimizzazione delle prestazioni {#performance-optimization}
+### Ottimizzazione delle prestazioni {#performance-optimization-2}
 
 1. Abilita la cache extra per prestazioni migliori
 2. Usa una risoluzione massima adeguata alle tue esigenze
 3. Configura la cancellazione automatica della cache per gestire lo spazio su disco
 4. Valuta l'impostazione della connessione a consumo se hai una banda limitata
 
-### Risoluzione Problemi {#settings-guide-troubleshooting}
+### Risoluzione Problemi {#settings-guide-troubleshooting-2}
 
 - Se i media non si scaricano, controlla le impostazioni del programma delle adunanze
 - Se l'integrazione con OBS non funziona, verifica le impostazioni della porta e della password

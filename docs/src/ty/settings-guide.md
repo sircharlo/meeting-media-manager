@@ -426,9 +426,9 @@ Fa'anahora'a tumu: `Hape`
 
 A fa’anahora’a i te tāpa’o pāpere pātō-pātē no te ha’amata i te haruharu, te tāpa’o pāpere pātō-pātē nō te fa’ata’a i te haruharu, e te pātura i reira te fa’anahora’a nō rāpae e vaiiho ai i te mau haruharu-reo. Mai te peu e aita e tāpa’o pāpere pātō-pātē nō te fa’ata’a i te haruharu i fa’anahohia, e fa’a’ohipa fa’ahou te M³ i te tāpa’o pāpere pātō-pātē nō te ha’amata. I te taime a fa’anahohia ai te ho’ē pātura, e fa’a’ite te M³ i te ho’ē piti’o nō te iriti i te reira.
 
-### Taime nō te Putuputura’a {#meeting-timer}
+### Taime nō te Putuputura’a {#interface-shortcuts}
 
-#### Ha’amatinata i te tāime o te putuputura’a {#enable-meeting-timer}
+#### Ha’amatinata i te tāime o te putuputura’a {#settings-guide-keyboard-shortcuts}
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
@@ -436,25 +436,25 @@ Ha’amatinata i te ho’e ha’amāramarama tāime ta’a ’ē nō te faito i 
 
 Fa'anahora'a tumu: `Hape`
 
-#### Te huru o te ha’amāramarama tāime {#timer-window-behavior}
+#### Te huru o te ha’amāramarama tāime {#enable-keyboard-shortcuts}
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
 A fa’anaho i te huru o te ha’amāramarama tāime: ia ’īrava ’ōpani-’ore-hia anei te reira, ia faito i ni’a a’e aore rā i raro te tāime o te mau ta’ata ’orero, ia fa’a’ohipa i te hora 12 aore rā 24, e ia fa’a’ite-hia anei te tāime i ni’a i te tuha’a fa’a’itera’a o te tāime.
 
-#### Te mau huru fa’a’itera’a o te tāime {#timer-display-formats}
+#### Te mau huru fa’a’itera’a o te tāime {#media-control-shortcuts}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
 A mā’iti i te huru fa’a’itera’a, ’aiguille’ aore rā ’digital’, nō te hora o te mahana e nō te mau tāime tāta’u ha’amau. E nehenehe te tā’u ha’amau fa’aara e fa’ahuri i te rōpī ’analog’ o te tā’u i ni’a i te ho’e hoho’a fa’aara i te roara’a o te minuti hope’a.
 
-#### Tāime tāta’u o te putuputura’a e te huru o te porotarama {#meeting-countdown-and-schedule-status}
+#### Tāime tāta’u o te putuputura’a e te huru o te porotarama {#add-more-media-button}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
 A fa’a’ite i te tāime tāta’u hou te mau putuputura’a i fa’anahohia, e a fa’a’ite atu (mai te mea e hina’aro-hia) e te ’ōhie ra anei aore rā te tāere ra anei te porotarama. E fa’a’ite-noa-hia te tāime tāta’u o te putuputura’a i ni’a i te ha’amāramarama tāime, eiaha râ i ni’a i te ha’amāramarama fa’a’itera’a matamua.
 
-#### Te huru o te tāime e te tāime hau {#timer-appearance-and-overtime}
+#### Te huru o te tāime e te tāime hau {#add-media-button-sections}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
@@ -462,9 +462,9 @@ A fa’anaho i te rahi e te mau fa’a’ine’ine o te tāreta tāime, e a fa�
 
 ## Te mau fa’anahora’a ta’a ’ē {#advanced-settings}
 
-### Te mau rāve’a ha’apotora’a i ni’a i te tāhitō pereo {#settings-guide-keyboard-shortcuts}
+### Te mau rāve’a ha’apotora’a i ni’a i te tāhitō pereo {#profile-settings-transfer}
 
-#### Fa’ati’a i te mau rāve’a ha’apotora’a i ni’a i te tāhitō pereo {#enable-keyboard-shortcuts}
+#### Fa’ati’a i te mau rāve’a ha’apotora’a i ni’a i te tāhitō pereo {#danger-zone}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
@@ -472,7 +472,7 @@ Fa’ati’a i te mau rāve’a ha’apotora’a i ni’a i te tāhitō pereo n�
 
 Fa'anahora'a tumu: `Hape`
 
-#### Te mau rāve’a ha’apotora’a nō te fa’aterera’a i te rorouira {#media-control-shortcuts}
+#### Te mau rāve’a ha’apotora’a nō te fa’aterera’a i te rorouira {#base-url}
 
 Fa’anaho i te mau rāve’a ha’apotora’a nō te fa’ata’i-fa’ahou-ra’a i te rorouira:
 
@@ -483,9 +483,9 @@ Fa’anaho i te mau rāve’a ha’apotora’a nō te fa’ata’i-fa’ahou-ra�
 - Fa’a’ore i te Rorouira: ’A fa’a’ore i te fa’ata’i-ra’a rorouira
 - Fa’afariu i te pehe: Fa’afariu i te pehe ha’amata
 
-### Fa’a’ite’itera’a i te mau rāve’a ha’amāramaramara’a {#media-display}
+### Fa’a’ite’itera’a i te mau rāve’a ha’amāramaramara’a {#disable-hardware-acceleration}
 
-#### ’Ia ’ohie te fa’aho’ora’a i te mau taui’ura’a o te matapihi rāve’a ha’amāramaramara’a. {#enable-media-window-fade-transitions}
+#### ’Ia ’ohie te fa’aho’ora’a i te mau taui’ura’a o te matapihi rāve’a ha’amāramaramara’a. {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
@@ -493,7 +493,7 @@ Fa’anaho i te mau rāve’a ha’apotora’a nō te fa’ata’i-fa’ahou-ra�
 
 Fa’anahora’a tumu: `’oia`
 
-#### Ha’amatinata i te fa’anahora’a vitiviti o te rāve’a ha’ata’i {#enable-playback-speed-control}
+#### Ha’amatinata i te fa’anahora’a vitiviti o te rāve’a ha’ata’i {#disable-media-fetching}
 
 <!-- **Setting**: `enablePlaybackSpeedControl` -->
 
@@ -501,7 +501,7 @@ E nehenehe e fa’aau i te vitiviti o te rāve’a ha’ata’i, na roto i te t�
 
 Fa'anahora'a tumu: `Hape`
 
-#### Fa’atapuni i te tapao rāve’a ha’amāramaramara’a {#hide-media-logo}
+#### Fa’atapuni i te tapao rāve’a ha’amāramaramara’a {#configuration-tips}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
@@ -509,7 +509,7 @@ Fa’atapuni i te tapao i roto i te matapihi rāve’a ha’amāramaramara’a.
 
 Fa'anahora'a tumu: `Hape`
 
-#### Te faito teitei roa a’e nō te hoho’a {#maximum-resolution}
+#### Te faito teitei roa a’e nō te hoho’a {#new-users}
 
 <!-- **Setting**: `maxRes` -->
 
@@ -519,7 +519,7 @@ Te mau mā’itira’a: 240p, 360p, 480p, 720p, 1080p
 
 Fa'anahora'a tumu: 720p
 
-#### ’Ia amui-ato’a-hia te mau rāve’a ha’amāramaramara’a i nīnihia. {#include-printed-media}
+#### ’Ia amui-ato’a-hia te mau rāve’a ha’amāramaramara’a i nīnihia. {#advanced-users}
 
 <!-- **Setting**: `includePrinted` -->
 
@@ -527,7 +527,7 @@ Fa'anahora'a tumu: 720p
 
 Fa’anahora’a tumu: `’oia`
 
-#### Fa’ata’a i te mau nota i raro i te ’api {#exclude-footnotes}
+#### Fa’ata’a i te mau nota i raro i te ’api {#performance-optimization}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
@@ -535,7 +535,7 @@ Fa’ata’a i te mau hoho’a o te mau nota i raro i te ’api i roto i te mau 
 
 Fa'anahora'a tumu: `Hape`
 
-#### Fa’ata’a ’ē i te mau video ha’api’ira’a nō te Pare Tia’ira’a hau {#exclude-additional-watchtower-study-videos}
+#### Fa’ata’a ’ē i te mau video ha’api’ira’a nō te Pare Tia’ira’a hau {#settings-guide-troubleshooting}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 
@@ -597,11 +597,11 @@ Fa’ahuru-ē-ra’a i te mau rāve’a ha’amāramaramara’a i roto i te huru
 
 Fa'anahora'a tumu: `Hape`
 
-### Te huru o te fa’ahaere-ra’a-hia o te mau fa’anahora’a o te hōho’a ta’ata {#profile-settings-transfer}
+### Te huru o te fa’ahaere-ra’a-hia o te mau fa’anahora’a o te hōho’a ta’ata {#profile-settings-transfer-2}
 
 A hōro’a i te mau fa’anahora’a o te hōho’a ta’ata i teie nei i roto i te ho’e reni JSON, aore rā a tu’u mai i te ho’e reni fa’anahora’a i fa’ahaere-’ē-hia na. E mono te tāvaha-ra’a i te mau fa’anahora’a o te hoho’a-taata o tei fa’a’ohipa-hia i teie taime.
 
-### Vāhi ’ati {#danger-zone}
+### Vāhi ’ati {#danger-zone-2}
 
 :::warning Fa’aarara’a
 
@@ -609,7 +609,7 @@ A hōro’a i te mau fa’anahora’a o te hōho’a ta’ata i teie nei i roto 
 
 :::
 
-#### Vāhi ha’amatara’a o te upe’a rāve’a {#base-url}
+#### Vāhi ha’amatara’a o te upe’a rāve’a {#base-url-2}
 
 <!-- **Setting**: `baseUrl` -->
 
@@ -617,7 +617,7 @@ Te vāhi ha’amatara’a o te upe’a rāve’a tei fa’a’ohipahia nō te �
 
 Fa'anahora'a tumu: `jw.org`
 
-#### Fa’aore i te fa’anahora’a fa’a’ohie i te ’ohipa o te mātini {#disable-hardware-acceleration}
+#### Fa’aore i te fa’anahora’a fa’a’ohie i te ’ohipa o te mātini {#disable-hardware-acceleration-2}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
@@ -625,7 +625,7 @@ A fa’aore i te fa’anahora’a fa’a’ohie i te ’ohipa o te mātini i mur
 
 Fa'anahora'a tumu: `Hape`
 
-#### Fa’aore i te fa’aara nō ni’a i te fa’anahora’a fa’a’ohie i te ’ohipa o te mātini {#suppress-hardware-acceleration-reminder}
+#### Fa’aore i te fa’aara nō ni’a i te fa’anahora’a fa’a’ohie i te ’ohipa o te mātini {#suppress-hardware-acceleration-reminder-2}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
@@ -633,7 +633,7 @@ A huna i te fa’aara nō te ha’amata-fa’ahou-ra’a i te fa’anahora’a f
 
 Fa'anahora'a tumu: `Hape`
 
-#### ’Ia fa’ata’a i te ’ohira’a i te mau rāve’a ha’amāramaramara’a. {#disable-media-fetching}
+#### ’Ia fa’ata’a i te ’ohira’a i te mau rāve’a ha’amāramaramara’a. {#disable-media-fetching-2}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
@@ -641,30 +641,30 @@ Fa'anahora'a tumu: `Hape`
 
 Fa'anahora'a tumu: `Hape`
 
-## Te mau mana’o nō te hō’ē fa’anahora’a maita’i a’e {#configuration-tips}
+## Te mau mana’o nō te hō’ē fa’anahora’a maita’i a’e {#configuration-tips-2}
 
-### Nō te feiā ’āpī e fa’a’ohipa ra {#new-users}
+### Nō te feiā ’āpī e fa’a’ohipa ra {#new-users-2}
 
 1. ’Ia ha’amata i te rāve’a fa’anahora’a mātāmua nō te fa’atano i te mau fa’anahora’a tumu
 2. ’Ia ha’amaita’i i te « Pātene fa’a’itera’a i te mau rāve’a ha’amāramaramara’a » nō te tomo i te rāve’a fa’a’itera’a
 3. ’Ia fa’atano maita’i i tō ’oe tāpura putuputura’a
 4. ’Ia fa’anahohia te fa’a’ohipara’a o te OBS mai te mea e fa’a’ohipa ’oe i te mau putuputura’a hō’ēra’a (hybrid)
 
-### Nō te feiā ’aravihi i te fa’a’ohipa {#advanced-users}
+### Nō te feiā ’aravihi i te fa’a’ohipa {#advanced-users-2}
 
 1. ’Ia fa’a’ohipa i te mata’ita’ira’a i te mau pu’e parau nō te tu’ati i te mau rāve’a ha’amāramaramara’a mai roto mai i te ro’i parau
 2. ’Ia fa’ati’a i te tu’ura’a-’otometi-ra’a i te mau rāve’a ha’amāramaramara’a nō te mau ho’o-parau-ra’a
 3. ’Ia fa’atano i te mau tāpura rāve’a poto nō te tāpapa-matini nō te hō’ē fa’a’ohipara’a ’oi’oi
 4. ’Ia fa’atano i te fa’a’ohipara’a i te Zoom nō te tu’ura’a-’otometi-ra’a i te fa’a’itera’a i te ’ata-matini
 
-### Te fa’a’au maita’i-ra’a i te puai o te mātini {#performance-optimization}
+### Te fa’a’au maita’i-ra’a i te puai o te mātini {#performance-optimization-2}
 
 1. ’Ia fa’ati’a i te pu’e-parau-tāpuni (cache) hau nō te hō’ē fa’a’ohipara’a maita’i a’e
 2. ’A fa’a’ohipa i te nūmera nō te fa’ahotura’a teitei roa a’e i au i tō ’oe mau hina’aro
 3. Fa’anaho i te fa’a’ore-’ōhie-ra’a i te tahi’o nō te ha’amaita’i i te vāhi teimaha i ni’a i te matini
 4. ’A hi’o i te fa’anahora’a nō te hō’ē ta’amura’a ta’ohia mai te mea e iti te terera’a o te ’uterete
 
-### Te fa’a’orara’a i te fifi {#settings-guide-troubleshooting}
+### Te fa’a’orara’a i te fifi {#settings-guide-troubleshooting-2}
 
 - Mai te mea ’aita te rorouira e tu’u-haere-hia ra, ’a hi’o i te mau fa’anahora’a nō te porotarama o tā ’oe mau putuputura’a
 - Mai te mea ’aita te fa’a’ohipara’a i te OBS e rave ra, ’a pāruru i te mau fa’anahora’a nō te ’ūpā e te parau huna

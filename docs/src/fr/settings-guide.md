@@ -426,9 +426,9 @@ Cette option est masquée lorsque le contrôle des enregistrements pour OBS Stud
 
 Configurez le raccourci clavier qui lance l'enregistrement, un raccourci facultatif qui interrompt l'enregistrement, ainsi que le dossier dans lequel l'application externe enregistre les fichiers. Si aucun raccourci d'arrêt n'est défini, M³ réutilisera le raccourci de démarrage. Lorsqu'un dossier est configuré, M³ affichera un bouton pour l'ouvrir.
 
-### Minuteur de réunion {#meeting-timer}
+### Minuteur de réunion {#interface-shortcuts}
 
-#### Activer le minuteur de réunion {#enable-meeting-timer}
+#### Activer le minuteur de réunion {#settings-guide-keyboard-shortcuts}
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
@@ -436,25 +436,25 @@ Activer une fenêtre de minuterie séparée pour chronométrer les parties d'une
 
 **Par défaut** : `faux`
 
-#### Comportement de la fenêtre de minuterie {#timer-window-behavior}
+#### Comportement de la fenêtre de minuterie {#enable-keyboard-shortcuts}
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
 Configurer si la fenêtre de minuterie s'ouvre automatiquement, si le minuteur compte en montant ou bien à rebours, si l'horloge utilise 12 heures ou 24 heures, et si la valeur actuelle du minuteur devrait être affichée sur le bouton de minuterie dans l'île d'action.
 
-#### Formats d'affichage du minuteur {#timer-display-formats}
+#### Formats d'affichage du minuteur {#media-control-shortcuts}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
 Choisissez des formats d’affichage analogique ou numérique pour l’heure et les minuteurs à rebours. L'indicateur d'alerte du compte à rebours peut faire passer l'anneau de compte à rebours analogique à une couleur d'alerte pendant la dernière minute.
 
-#### Compte à rebours et horaire des réunions {#meeting-countdown-and-schedule-status}
+#### Compte à rebours et horaire des réunions {#add-more-media-button}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
 Afficher un compte à rebours avant les réunions et, si désiré, indiquer si la réunion est en avance ou en retard par rapport à l'horaire prévu. Le minuteur de la réunion apparaît uniquement sur l'affichage du minuteur, et non sur la fenêtre d'affichage des médias.
 
-#### Apparence du minuteur et du surtemps {#timer-appearance-and-overtime}
+#### Apparence du minuteur et du surtemps {#add-media-button-sections}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
@@ -462,9 +462,9 @@ Personnalisez la taille et les couleurs du texte du chronomètre, et configurez 
 
 ## Paramètres avancés {#advanced-settings}
 
-### Raccourcis clavier {#settings-guide-keyboard-shortcuts}
+### Raccourcis clavier {#profile-settings-transfer}
 
-#### Activer les raccourcis clavier {#enable-keyboard-shortcuts}
+#### Activer les raccourcis clavier {#danger-zone}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
@@ -472,7 +472,7 @@ Activez les raccourcis clavier personnalisables pour le contrôle des médias.
 
 **Par défaut** : `faux`
 
-#### Raccourcis de contrôle des médias {#media-control-shortcuts}
+#### Raccourcis de contrôle des médias {#base-url}
 
 Configurez les raccourcis pour la lecture des médias :
 
@@ -483,9 +483,9 @@ Configurez les raccourcis pour la lecture des médias :
 - **Arrêter les médias** : Arrêter la lecture des médias
 - **Basculement de la musique** : Basculer la musique de fond
 
-### Affichage des médias {#media-display}
+### Affichage des médias {#disable-hardware-acceleration}
 
-#### Activer la transition en fondu lors du masquage ou de l'affichage de la fenêtre des médias {#enable-media-window-fade-transitions}
+#### Activer la transition en fondu lors du masquage ou de l'affichage de la fenêtre des médias {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
@@ -493,7 +493,7 @@ Lorsque activé, la fenêtre des médias se cachera et apparaîtra en douceur au
 
 **Par défaut** : `vrai`
 
-#### Activer le contrôle de vitesse de lecture {#enable-playback-speed-control}
+#### Activer le contrôle de vitesse de lecture {#disable-media-fetching}
 
 <!-- **Setting**: `enablePlaybackSpeedControl` -->
 
@@ -501,7 +501,7 @@ Permettre de régler la vitesse de lecture audio et vidéo à partir du menu con
 
 **Par défaut** : `faux`
 
-#### Masquer le logo des médias {#hide-media-logo}
+#### Masquer le logo des médias {#configuration-tips}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
@@ -509,7 +509,7 @@ Masquer le logo dans la fenêtre multimédia.
 
 **Par défaut** : `faux`
 
-#### Résolution maximale {#maximum-resolution}
+#### Résolution maximale {#new-users}
 
 <!-- **Setting**: `maxRes` -->
 
@@ -519,7 +519,7 @@ Résolution maximale pour les fichiers multimédias téléchargés.
 
 **Par défaut** : 720p
 
-#### Inclure les médias imprimés {#include-printed-media}
+#### Inclure les médias imprimés {#advanced-users}
 
 <!-- **Setting**: `includePrinted` -->
 
@@ -527,7 +527,7 @@ Inclure les médias des publications imprimées dans les téléchargements de m�
 
 **Par défaut** : `vrai`
 
-#### Exclure les notes de bas de page {#exclude-footnotes}
+#### Exclure les notes de bas de page {#performance-optimization}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
@@ -535,7 +535,7 @@ Exclure les images de notes de bas de page des téléchargements de médias quan
 
 **Par défaut** : `faux`
 
-#### Exclure les vidéos supplémentaires de La Tour de Garde {#exclude-additional-watchtower-study-videos}
+#### Exclure les vidéos supplémentaires de La Tour de Garde {#settings-guide-troubleshooting}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 
@@ -597,11 +597,11 @@ Convertir les fichiers multimédias exportés au format MP4 pour une meilleure c
 
 **Par défaut** : `faux`
 
-### Transfert des paramètres du profil {#profile-settings-transfer}
+### Transfert des paramètres du profil {#profile-settings-transfer-2}
 
 Exporter les paramètres du profil actuel vers un fichier JSON, ou importer un fichier de paramètres de profil précédemment exporté. L'importation remplace les paramètres du profil actuel.
 
-### Zone de danger {#danger-zone}
+### Zone de danger {#danger-zone-2}
 
 :::warning Avertissement
 
@@ -609,7 +609,7 @@ Ces paramètres ne doivent être modifiés que si vous comprenez leurs implicati
 
 :::
 
-#### Adresse du site Web {#base-url}
+#### Adresse du site Web {#base-url-2}
 
 <!-- **Setting**: `baseUrl` -->
 
@@ -617,7 +617,7 @@ Entrez l'adresse utilisée pour accéder au site officiel des Témoins de Jéhov
 
 **Par défaut** : `jw.org`
 
-#### Désactiver l'accélération matérielle {#disable-hardware-acceleration}
+#### Désactiver l'accélération matérielle {#disable-hardware-acceleration-2}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
@@ -625,7 +625,7 @@ Désactiver l'accélération matérielle au redémarrage de M³. Cela peut aider
 
 **Par défaut** : `faux`
 
-#### Masquer le rappel concernant l'accélération matérielle {#suppress-hardware-acceleration-reminder}
+#### Masquer le rappel concernant l'accélération matérielle {#suppress-hardware-acceleration-reminder-2}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
@@ -633,7 +633,7 @@ Masquer le rappel invitant à réactiver l'accélération matérielle après sa 
 
 **Par défaut** : `faux`
 
-#### Désactiver le téléchargement des médias {#disable-media-fetching}
+#### Désactiver le téléchargement des médias {#disable-media-fetching-2}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
@@ -641,30 +641,30 @@ Désactiver complètement le téléchargement automatique des médias. Utilisez 
 
 **Par défaut** : `faux`
 
-## Conseils pour une configuration optimale {#configuration-tips}
+## Conseils pour une configuration optimale {#configuration-tips-2}
 
-### Pour les nouveaux utilisateurs {#new-users}
+### Pour les nouveaux utilisateurs {#new-users-2}
 
 1. Démarrez avec l'assistant d'installation pour configurer les paramètres de base
 2. Activer "Bouton d'affichage des médias" pour accéder aux fonctionnalités de présentation
 3. Configurez votre horaire de réunion avec précision
 4. Configurez l'intégration OBS si vous utilisez des réunions hybrides
 
-### Pour les utilisateurs avancés {#advanced-users}
+### Pour les utilisateurs avancés {#advanced-users-2}
 
 1. Utilisez le monitoring des dossiers pour synchroniser les médias depuis le stockage cloud
 2. Activer l'exportation automatique des médias à des fins de sauvegarde
 3. Configurez les raccourcis clavier pour une opération efficace
 4. Configurez l'intégration Zoom pour le partage d'écran automatique
 
-### Optimisation des performances {#performance-optimization}
+### Optimisation des performances {#performance-optimization-2}
 
 1. Activer le cache supplémentaire pour de meilleures performances
 2. Utilisez la résolution maximale appropriée pour vos besoins
 3. Configurer l'effacement automatique du cache pour gérer l'espace disque
 4. Considérez le paramètre de connexion limitée si sur une bande passante limitée
 
-### Résolution des problèmes {#settings-guide-troubleshooting}
+### Résolution des problèmes {#settings-guide-troubleshooting-2}
 
 - Si les médias ne téléchargent pas, vérifiez les paramètres de votre horaire de réunion
 - Si l'intégration OBS ne fonctionne pas, vérifiez les paramètres du port et du mot de passe

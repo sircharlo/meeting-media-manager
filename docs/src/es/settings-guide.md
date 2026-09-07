@@ -426,9 +426,9 @@ Esta opción se oculta cuando activas los controles de grabación de OBS. Si usa
 
 Configura el atajo de teclado que empieza la grabación, el atajo opcional que detiene la grabación y la carpeta donde la aplicación externa guarda las grabaciones. Si no le indicas un atajo de detención, M³ vuelve a usar el atajo de inicio. Cuando configuras una carpeta, M³ muestra un botón para abrirla.
 
-### Cronómetro de la reunión {#meeting-timer}
+### Cronómetro de la reunión {#interface-shortcuts}
 
-#### Activar cronómetro de la reunión {#enable-meeting-timer}
+#### Activar cronómetro de la reunión {#settings-guide-keyboard-shortcuts}
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
@@ -436,25 +436,25 @@ Activa una ventana separada con un cronómetro para medir el tiempo de las parte
 
 **Por defecto**: `false`
 
-#### Comportamiento de la ventana del cronómetro {#timer-window-behavior}
+#### Comportamiento de la ventana del cronómetro {#enable-keyboard-shortcuts}
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
 Configura si la ventana del cronómetro se abre automáticamente, si los cronómetros de los participantes cuentan hacia arriba o hacia abajo por defecto, si el reloj usa el formato de 12 horas o de 24 horas, y si el valor actual del cronómetro se muestra en el botón del cronómetro de la isla de acciones.
 
-#### Formatos de visualización del cronómetro {#timer-display-formats}
+#### Formatos de visualización del cronómetro {#media-control-shortcuts}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
 Elige los formatos de visualización analógica o digital para la hora del día y para la cuenta regresiva de los cronómetros. El indicador de advertencia de la cuenta regresiva puede hacer que el anillo analógico de la cuenta regresiva cambie a un color de advertencia durante el último minuto.
 
-#### Cuenta regresiva de la reunión y estado del programa {#meeting-countdown-and-schedule-status}
+#### Cuenta regresiva de la reunión y estado del programa {#add-more-media-button}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
 Muestra una cuenta regresiva antes de las reuniones programadas y, opcionalmente, muestra si la reunión va adelantada o atrasada con respecto al programa. La cuenta regresiva de la reunión solo aparece en la pantalla del cronómetro, no en la pantalla principal de visualización multimedia.
 
-#### Apariencia del cronómetro y tiempo extra {#timer-appearance-and-overtime}
+#### Apariencia del cronómetro y tiempo extra {#add-media-button-sections}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
@@ -462,9 +462,9 @@ Personaliza el tamaño del texto y los colores del cronómetro, y configura los 
 
 ## Configuración avanzada {#advanced-settings}
 
-### Atajos de teclado {#settings-guide-keyboard-shortcuts}
+### Atajos de teclado {#profile-settings-transfer}
 
-#### Activar atajos de teclado {#enable-keyboard-shortcuts}
+#### Activar atajos de teclado {#danger-zone}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
@@ -472,7 +472,7 @@ Activa los atajos de teclado personalizables para el control multimedia.
 
 **Por defecto**: `false`
 
-#### Atajos de control multimedia {#media-control-shortcuts}
+#### Atajos de control multimedia {#base-url}
 
 Configura atajos para la reproducción multimedia:
 
@@ -483,9 +483,9 @@ Configura atajos para la reproducción multimedia:
 - **Detener archivo multimedia**: Detiene la reproducción multimedia.
 - **Interruptor de música**: Activa o desactiva la música de fondo.
 
-### Visualización multimedia {#media-display}
+### Visualización multimedia {#disable-hardware-acceleration}
 
-#### Activar las transiciones de fundido de la ventana multimedia {#enable-media-window-fade-transitions}
+#### Activar las transiciones de fundido de la ventana multimedia {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
@@ -493,7 +493,7 @@ Activa las transiciones de aparición/desaparición (fundido) cuando muestres u 
 
 **Por defecto**: `true`
 
-#### Activar el control de la velocidad de reproducción {#enable-playback-speed-control}
+#### Activar el control de la velocidad de reproducción {#disable-media-fetching}
 
 <!-- **Setting**: `enablePlaybackSpeedControl` -->
 
@@ -501,7 +501,7 @@ Permite que ajustes la velocidad de reproducción del audio y del video desde el
 
 **Por defecto**: `false`
 
-#### Ocultar el logo multimedia {#hide-media-logo}
+#### Ocultar el logo multimedia {#configuration-tips}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
@@ -509,7 +509,7 @@ Oculta el logo en la ventana multimedia.
 
 **Por defecto**: `false`
 
-#### Resolución máxima {#maximum-resolution}
+#### Resolución máxima {#new-users}
 
 <!-- **Setting**: `maxRes` -->
 
@@ -519,7 +519,7 @@ La resolución máxima para los archivos multimedia descargados.
 
 **Por defecto**: 720p
 
-#### Incluir archivos multimedia impresos {#include-printed-media}
+#### Incluir archivos multimedia impresos {#advanced-users}
 
 <!-- **Setting**: `includePrinted` -->
 
@@ -527,7 +527,7 @@ Incluye archivos multimedia de las publicaciones impresas en las descargas de ar
 
 **Por defecto**: `true`
 
-#### Excluir notas {#exclude-footnotes}
+#### Excluir notas {#performance-optimization}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
@@ -535,7 +535,7 @@ Excluye las imágenes de las notas en las descargas de archivos multimedia cuand
 
 **Por defecto**: `false`
 
-#### Excluir los videos adicionales del Estudio de La Atalaya {#exclude-additional-watchtower-study-videos}
+#### Excluir los videos adicionales del Estudio de La Atalaya {#settings-guide-troubleshooting}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 
@@ -597,11 +597,11 @@ Convierte los archivos multimedia que exportaste al formato MP4 para que tengan 
 
 **Por defecto**: `false`
 
-### Transferencia de ajustes del perfil {#profile-settings-transfer}
+### Transferencia de ajustes del perfil {#profile-settings-transfer-2}
 
 Exporta los ajustes del perfil actual a un archivo JSON o importa un archivo con los ajustes del perfil que hayas exportado anteriormente. Al importar, se sustituye la configuración del perfil actual.
 
-### Zona de peligro {#danger-zone}
+### Zona de peligro {#danger-zone-2}
 
 :::warning Advertencia
 
@@ -609,7 +609,7 @@ Solo deberías cambiar estos ajustes si entiendes lo que implican.
 
 :::
 
-#### URL base {#base-url}
+#### URL base {#base-url-2}
 
 <!-- **Setting**: `baseUrl` -->
 
@@ -617,7 +617,7 @@ El dominio base que se usa para descargar publicaciones y archivos multimedia.
 
 **Por defecto**: `jw.org`
 
-#### Desactivar la aceleración de hardware {#disable-hardware-acceleration}
+#### Desactivar la aceleración de hardware {#disable-hardware-acceleration-2}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
@@ -625,7 +625,7 @@ Desactiva la aceleración de hardware después de reiniciar M³. Esto te puede a
 
 **Por defecto**: `false`
 
-#### Ocultar el recordatorio de la aceleración de hardware {#suppress-hardware-acceleration-reminder}
+#### Ocultar el recordatorio de la aceleración de hardware {#suppress-hardware-acceleration-reminder-2}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
@@ -633,7 +633,7 @@ Oculta el recordatorio de volver a activar la aceleración de hardware después 
 
 **Por defecto**: `false`
 
-#### Desactivar la obtención de archivos multimedia {#disable-media-fetching}
+#### Desactivar la obtención de archivos multimedia {#disable-media-fetching-2}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
@@ -641,30 +641,30 @@ Desactiva por completo las descargas automáticas de los archivos multimedia. Us
 
 **Por defecto**: `false`
 
-## Consejos para una configuración óptima {#configuration-tips}
+## Consejos para una configuración óptima {#configuration-tips-2}
 
-### Para los usuarios nuevos {#new-users}
+### Para los usuarios nuevos {#new-users-2}
 
 1. Comienza con el asistente de configuración para configurar los ajustes básicos.
 2. Activa el "Botón de visualización multimedia" para acceder a las características de presentación.
 3. Configura el programa de las reuniones de forma exacta.
 4. Configura la integración con OBS si usas reuniones híbridas.
 
-### Para usuarios avanzados {#advanced-users}
+### Para usuarios avanzados {#advanced-users-2}
 
 1. Usa la supervisión de carpetas para sincronizar los archivos multimedia desde el almacenamiento en la nube.
 2. Activa la exportación automática de archivos multimedia para que tengas copias de seguridad.
 3. Configura atajos de teclado para que trabajes de forma eficiente.
 4. Configura la integración con Zoom para compartir pantalla de forma automática.
 
-### Optimización del rendimiento {#performance-optimization}
+### Optimización del rendimiento {#performance-optimization-2}
 
 1. Activa la caché adicional para tener un mejor rendimiento.
 2. Usa la resolución máxima que sea adecuada a tus necesidades.
 3. Configura la limpieza automática de la caché para administrar tu espacio en disco.
 4. Considera activar el ajuste de conexión de uso medido si tienes un ancho de banda limitado.
 
-### Solución de problemas {#settings-guide-troubleshooting}
+### Solución de problemas {#settings-guide-troubleshooting-2}
 
 - Si los archivos multimedia no se descargan, comprueba la configuración del programa de las reuniones.
 - Si la integración con OBS no funciona, verifica la configuración del puerto y la contraseña.

@@ -426,9 +426,9 @@ Ta možnost je skrita, kadar je omogočen OBS nadzor snemanja. Če uporabljaš O
 
 Nastavi tipkovno bližnjico za začetek snemanja, izbirno bližnjico za ustavitev snemanja ter mapo, v katero zunanja aplikacija shranjuje posnetke. Če bližnjica za ustavitev ni določena, M³ ponovno uporabi bližnjico za začetek snemanja. Ko je mapa nastavljena, M³ prikaže gumb za njen odprtje.
 
-### Časovnik shodov {#meeting-timer}
+### Časovnik shodov {#interface-shortcuts}
 
-#### Omogoči časovnik shodov {#enable-meeting-timer}
+#### Omogoči časovnik shodov {#settings-guide-keyboard-shortcuts}
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
@@ -436,25 +436,25 @@ Omogoči ločeno okno časovnika za merjenje posameznih delov shoda. To je funkc
 
 **Privzeto**: `false`
 
-#### Obnašanje okna časovnika {#timer-window-behavior}
+#### Obnašanje okna časovnika {#enable-keyboard-shortcuts}
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
 Nastavi, ali se okno časovnika odpre samodejno, ali časovniki za udeležence privzeto štejejo navzgor ali navzdol, ali ura uporablja 12‑urni ali 24‑urni format ter ali je trenutna vrednost časovnika prikazana na gumbu časovnika v orodni vrstici.
 
-#### Prikazi časovnika {#timer-display-formats}
+#### Prikazi časovnika {#media-control-shortcuts}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
 Izberi analogni ali digitalni prikaz za prikaz trenutnega časa in odštevalne časovnike. Opozorilni indikator odštevanja lahko med zadnjo minuto postopoma obarva analogni odštevalni krog v opozorilno barvo.
 
-#### Odštevalnik do shoda in stanje urnika {#meeting-countdown-and-schedule-status}
+#### Odštevalnik do shoda in stanje urnika {#add-more-media-button}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
 Prikaži odštevalnik pred načrtovanimi shodi in po želji prikazuj, ali program shoda prehiteva ali zaostaja. Odštevalnik shoda je prikazan samo na prikazu časovnika, ne pa na glavnem multimedijskem zaslonu.
 
-#### Videz časovnika in prekoračitev časa {#timer-appearance-and-overtime}
+#### Videz časovnika in prekoračitev časa {#add-media-button-sections}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
@@ -462,9 +462,9 @@ Prilagodi velikost besedila časovnika in barve ter nastavi indikatorje prekora�
 
 ## Napredne nastavitve {#advanced-settings}
 
-### Bližnjice na tipkovnici {#settings-guide-keyboard-shortcuts}
+### Bližnjice na tipkovnici {#profile-settings-transfer}
 
-#### Omogoči bližnjice na tipkovnici {#enable-keyboard-shortcuts}
+#### Omogoči bližnjice na tipkovnici {#danger-zone}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
@@ -472,7 +472,7 @@ Omogoči prilagodljive bližnjice na tipkovnici za nadzor multimedijske vsebine.
 
 **Privzeto**: `false`
 
-#### Bližnjice za upravljanje multimedijske vsebine {#media-control-shortcuts}
+#### Bližnjice za upravljanje multimedijske vsebine {#base-url}
 
 Nastavite bližnjice za predvajanje multimedijske vsebine:
 
@@ -483,9 +483,9 @@ Nastavite bližnjice za predvajanje multimedijske vsebine:
 - **Ustavi predvajanje**: Ustavi predvajanje multimedijske vsebine
 - **Vklop/izklop glasbe**: Vklopi/izklopi glasbo v ozadju
 
-### Multimedijski zaslon {#media-display}
+### Multimedijski zaslon {#disable-hardware-acceleration}
 
-#### Omogoči prehode z zatemnitvijo {#enable-media-window-fade-transitions}
+#### Omogoči prehode z zatemnitvijo {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
@@ -493,7 +493,7 @@ Omogoči postopne prehode (fade-in/fade-out) pri prikazu ali skrivanju okna za m
 
 **Privzeto**: `true`
 
-#### Omogoči nadzor hitrosti predvajanja {#enable-playback-speed-control}
+#### Omogoči nadzor hitrosti predvajanja {#disable-media-fetching}
 
 <!-- **Setting**: `enablePlaybackSpeedControl` -->
 
@@ -501,7 +501,7 @@ Dovoli prilagajanje hitrosti predvajanja zvoka in videa iz kontekstnega menija m
 
 **Privzeto**: `false`
 
-#### Skrij logotip multimedijske vsebine {#hide-media-logo}
+#### Skrij logotip multimedijske vsebine {#configuration-tips}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
@@ -509,7 +509,7 @@ Skrij logotip v oknu z multimedijsko vsebino.
 
 **Privzeto**: `false`
 
-#### Največja ločljivost {#maximum-resolution}
+#### Največja ločljivost {#new-users}
 
 <!-- **Setting**: `maxRes` -->
 
@@ -519,7 +519,7 @@ Največja ločljivost za preneseno multimedijsko vsebino.
 
 **Privzeto**: 720p
 
-#### Vključi tiskane medije {#include-printed-media}
+#### Vključi tiskane medije {#advanced-users}
 
 <!-- **Setting**: `includePrinted` -->
 
@@ -527,7 +527,7 @@ Vključi multimedijsko vsebino iz tiskanih publikacij v prenose.
 
 **Privzeto**: `true`
 
-#### Izključi podčrtne opombe {#exclude-footnotes}
+#### Izključi podčrtne opombe {#performance-optimization}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
@@ -535,7 +535,7 @@ Iz prenosov izključi slike v podčrtnih opombah, kadar je to mogoče.
 
 **Privzeto**: `false`
 
-#### Izključi dodatne videe za Preučevanje Stražnega stolpa {#exclude-additional-watchtower-study-videos}
+#### Izključi dodatne videe za Preučevanje Stražnega stolpa {#settings-guide-troubleshooting}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 
@@ -597,11 +597,11 @@ Pretvori izvoženo multimedijsko vsebino v format MP4 za boljšo združljivost.
 
 **Privzeto**: `false`
 
-### Prenos nastavitev profila {#profile-settings-transfer}
+### Prenos nastavitev profila {#profile-settings-transfer-2}
 
 Izvozi nastavitve trenutnega profila v datoteko JSON ali uvozi predhodno izvoženo datoteko z nastavitvami profila. Uvoz zamenja trenutne nastavitve profila.
 
-### Nevarno območje {#danger-zone}
+### Nevarno območje {#danger-zone-2}
 
 :::warning Opozorilo
 
@@ -609,7 +609,7 @@ Te nastavitve spreminjajte le, če razumete njihove posledice.
 
 :::
 
-#### Osnovni URL {#base-url}
+#### Osnovni URL {#base-url-2}
 
 <!-- **Setting**: `baseUrl` -->
 
@@ -617,7 +617,7 @@ Osnovna domena, ki se uporablja za prenos publikacij in multimedijske vsebine.
 
 **Privzeto**: `jw.org`
 
-#### Onemogoči strojno pospeševanje {#disable-hardware-acceleration}
+#### Onemogoči strojno pospeševanje {#disable-hardware-acceleration-2}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
@@ -625,7 +625,7 @@ Onemogoči strojno pospeševanje po ponovnem zagonu M³. To lahko pomaga pri gra
 
 **Privzeto**: `false`
 
-#### Skrij opomnik za strojno pospeševanje {#suppress-hardware-acceleration-reminder}
+#### Skrij opomnik za strojno pospeševanje {#suppress-hardware-acceleration-reminder-2}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
@@ -633,7 +633,7 @@ Skrij opomnik za ponovno omogočanje strojnega pospeševanja, potem ko je bilo r
 
 **Privzeto**: `false`
 
-#### Onemogoči pridobivanje vsebine {#disable-media-fetching}
+#### Onemogoči pridobivanje vsebine {#disable-media-fetching-2}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
@@ -641,30 +641,30 @@ Popolnoma onemogoči samodejni prenos multimedijske vsebine. To možnost uporabi
 
 **Privzeto**: `false`
 
-## Nasveti za optimalno nastavitev {#configuration-tips}
+## Nasveti za optimalno nastavitev {#configuration-tips-2}
 
-### Za nove uporabnike {#new-users}
+### Za nove uporabnike {#new-users-2}
 
 1. Da bi nastavili osnovne nastavitve, začnite z nastavitvenim čarovnikom
 2. Omogočite gumb za »Multimedijski zaslon«
 3. Natančno nastavite urnik shodov
 4. Nastavite združevanje s programom OBS, če uporabljate hibridne shode
 
-### Za napredne uporabnike {#advanced-users}
+### Za napredne uporabnike {#advanced-users-2}
 
 1. Uporabite spremljanje map za sinhronizacijo multimedijske vsebine iz oblačne shrambe
 2. Omogočite samodejni izvoz multimedijske vsebine zaradi varnostnega kopiranja
 3. Nastavite bližnjice na tipkovnici za učinkovito upravljanje
 4. Nastavite združevanje z Zoomom za samodejno deljenje zaslona
 
-### Optimizacija zmogljivosti {#performance-optimization}
+### Optimizacija zmogljivosti {#performance-optimization-2}
 
 1. Omogočite dodatni predpomnilnik za boljše delovanje
 2. Uporabite ustrezno največjo ločljivost glede na vaše potrebe
 3. Nastavite samodejno čiščenje predpomnilnika, da varčujete s prostorom na disku
 4. Razmislite o omejeni povezavi, če imate omejeno pasovno širino
 
-### Odpravljanje težav {#settings-guide-troubleshooting}
+### Odpravljanje težav {#settings-guide-troubleshooting-2}
 
 - Če se multimedijska vsebina ne prenaša, preverite nastavitve urnika shodov
 - Če združevanje z OBS ne deluje, preverite nastavitve vrat in gesla
