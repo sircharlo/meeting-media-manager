@@ -1,12 +1,12 @@
 ---
-title: Downloads
+title: 다운로드
 ---
 
 <!-- markdownlint-disable MD025 MD033 -->
 
-# Downloads
+# 다운로드
 
-Use the links below to download the latest version of Meeting Media Manager for your operating system. These links always point to the newest stable release.
+Meeting Media Manager 최신 버전을 다운로드 받으려면 다음 링크를 사용하십시오. 다음 링크를 클릭해 최신 안정 버전을 다운로드할 수 있습니다.
 
 <script setup lang="ts">
 import { data as downloads } from '../../data/version.data.mts'
@@ -75,26 +75,26 @@ onMounted(() => {
 })
 </script>
 
-## Latest release
+## 최신 버전
 
-- **Version**: {{ downloads.version }} <span v-if="daysAgoText">({{ daysAgoText }})</span>
+- **버전**: {{ downloads.version }} <span v-if="daysAgoText">({{ daysAgoText }})</span>
 
 <div v-if="recommended" style="margin: 1rem 0; padding: 1rem; border: 1px solid var(--vp-c-brand-1); border-radius: 8px; background: var(--vp-c-brand-soft);"><strong>{{ msg.recommendedFor }} {{ recommended.label }}</strong>
   <div style="margin-top: .5rem;"><a :href="recommended.href" style="display:inline-block; padding:.5rem 1rem; border-radius:6px; background: var(--vp-c-brand-1); color: white; text-decoration:none;">{{ msg.download }}</a>
   </div>
-  <div style="margin-top:.5rem; font-size: .9em; opacity:.8;">If this doesn’t match your system, pick from the options below.</div>
+  <div style="margin-top:.5rem; font-size: .9em; opacity:.8;">사용 중인 시스템과 일치하지 않을 경우 아래 옵션에서 선택하십시오.</div>
 </div>
 
 ## Windows
 
-- **Windows 64-bit (.exe)**: <a :href="downloads.win64">Download</a>
-- **Windows 32-bit (.exe)**: <a :href="downloads.win32">Download</a>
-- **Windows Portable (.exe)**: <a :href="downloads.winPortable">Download</a>
+- **Windows 64비트 (.exe)**: <a :href="downloads.win64">다운로드</a>
+- **Windows 32비트 (.exe)**: <a :href="downloads.win32">다운로드</a>
+- **Windows 포터블 (.exe)**: <a :href="downloads.winPortable">다운로드</a>
 
 ## macOS
 
-- **macOS (Universal) (.dmg)**: <a :href="downloads.macUniversal">Download</a>
+- **macOS (유니버설) (.dmg)**: <a :href="downloads.macUniversal">다운로드</a>
 
 ## Linux
 
-- **x86_64 (AppImage)**: <a :href="downloads.linux">Download</a>
+- **x86_64 (AppImage)**: <a :href="downloads.linux">다운로드</a>
