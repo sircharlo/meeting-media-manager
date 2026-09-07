@@ -170,7 +170,19 @@ function handleIpcSendSync<T>(
       e.returnValue = undefined;
       return;
     }
-    e.returnValue = listener(e, ...args);
+    // BE-20 (full-audit-2026-09-05.md): mirrors handleIpcSend's guard - a
+    // synchronous throw here would otherwise propagate unguarded and
+    // e.returnValue would never be set, leaving the renderer's blocking
+    // sendSync() call waiting forever (a worse failure mode than an
+    // unobserved async rejection).
+    try {
+      e.returnValue = listener(e, ...args);
+    } catch (error) {
+      captureElectronError(error, {
+        contexts: { fn: { channel, name: 'handleIpcSendSync' } },
+      });
+      e.returnValue = undefined;
+    }
   });
 }
 
