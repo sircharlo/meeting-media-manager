@@ -75,20 +75,21 @@
           :key="video.guid"
         >
           <div class="col col-xs-6 col-sm-4 col-md-3 col-lg-2">
-            <div
-              v-ripple
+            <q-item
               :class="{
-                'cursor-pointer': !isProcessing,
+                'q-pa-none': true,
                 'rounded-borders-lg': true,
                 'full-height': true,
                 'bg-accent-100': hoveredRemoteVideo === video.guid,
-                disabled: isProcessing,
               }"
-              @click="!isProcessing && addVideo(video)"
+              clickable
+              :disable="isProcessing"
+              style="min-height: 0"
+              @click="addVideo(video)"
               @mouseout="hoveredRemoteVideo = ''"
               @mouseover="hoveredRemoteVideo = video.guid"
             >
-              <q-card-section class="q-pa-sm">
+              <q-card-section class="q-pa-sm full-width">
                 <q-img
                   class="rounded-borders"
                   :src="getBestImageUrl(video.images, 'md', true)"
@@ -110,7 +111,7 @@
                   </q-tooltip>
                 </q-img>
               </q-card-section>
-            </div>
+            </q-item>
           </div>
         </template>
       </div>

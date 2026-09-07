@@ -28,9 +28,13 @@
           >
             <div
               v-ripple
+              :aria-pressed="selectedPages.has(page)"
               class="pdf-page-thumb cursor-pointer rounded-borders-lg relative-position"
               :class="{ 'pdf-page-thumb--selected': selectedPages.has(page) }"
+              role="button"
+              tabindex="0"
               @click="togglePage(page)"
+              @keydown.enter.space.prevent="togglePage(page)"
             >
               <q-img
                 v-if="thumbnails[page]"
