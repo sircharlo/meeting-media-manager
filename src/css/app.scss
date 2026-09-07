@@ -771,19 +771,19 @@ a {
   }
 }
 
-// Fades the row's own real background out from under a small icon/button
-// cluster - opaque right behind the icons, transparent by the time it
-// reaches whatever text it's overlapping - instead of reserving permanent
-// flex width for controls that are only relevant on hover (drag-to-reorder,
-// more-options). --row-bg is the one thing that changes between contexts;
-// the gradient shape itself doesn't. Pair with .hover-reveal (fades the
-// icons in) on the same element, .hover-reveal-group on the hover-tracked
-// ancestor, and a `position: relative` ancestor sized to whatever this
-// should overlap.
+// UX-21 (full-audit-2026-09-05.md): this used to repaint an opaque swatch
+// (`--row-bg`, four hardcoded values) behind the icon cluster to fake a soft
+// edge against the text it overlaps - but Quasar's own hover/focus/ripple
+// feedback on the clickable row is a separate rendered layer, not a
+// background-color change, so no fixed swatch value could ever track it: the
+// exact moment the overlay fades in (hover/focus) is also the exact moment
+// the real backdrop shifts away from whatever flat color this last painted,
+// producing a visibly mismatched patch (confirmed against a user-reported
+// screenshot). Fixed by not faking a background at all - the overlay itself
+// is fully transparent now, and .fades-under-hover-actions (below) masks
+// the *text* it overlaps instead, so whatever's really behind the row
+// (hover tint, ripple, selection color) shows through naturally.
 .hover-actions-overlay {
-  --row-bg: white;
-
-  background: linear-gradient(to left, var(--row-bg) 60%, transparent 100%);
   padding: 2px 2px 2px 28px;
   // Invisible (opacity: 0, via .hover-reveal) still means "present in the
   // DOM" - without this, invisible icons sit in front of whatever's
@@ -791,21 +791,23 @@ a {
   pointer-events: none;
 }
 
-body.body--dark .hover-actions-overlay {
-  --row-bg: #{$dark};
-}
-
-.sortable-selected .hover-actions-overlay {
-  --row-bg: #{$sorting-bg};
-}
-
-body.body--dark .sortable-selected .hover-actions-overlay {
-  --row-bg: #{$sorting-bg-dark};
-}
-
 .hover-reveal-group:hover .hover-actions-overlay,
 .hover-reveal-group:focus-within .hover-actions-overlay {
   pointer-events: auto;
+}
+
+// Fades a text element's own right edge to transparent over the last 56px -
+// wide enough to clear .hover-actions-overlay's icon cluster (drag handle +
+// "..." button) - instead of that overlay faking a background to hide a hard
+// clip edge. Apply to whatever text sits underneath the overlay (a
+// `position: relative` ancestor shared with it, sized to overlap).
+.fades-under-hover-actions {
+  -webkit-mask-image: linear-gradient(
+    to left,
+    #000 calc(100% - 56px),
+    transparent
+  );
+  mask-image: linear-gradient(to left, #000 calc(100% - 56px), transparent);
 }
 
 // A solid, opaque selection badge for grid/thumbnail multiselect UIs (photo-

@@ -470,7 +470,7 @@
             />
             <div
               v-else-if="isTiny"
-              class="text-chip ellipsis"
+              class="text-chip ellipsis fades-under-hover-actions"
               @dblclick="handleTitleEdit(true)"
             >
               {{ displayMediaTitle }}
@@ -478,12 +478,13 @@
             </div>
             <div
               v-else
-              :class="
+              :class="[
+                'fades-under-hover-actions',
                 ($q.screen.gt.xs || !media.tag) &&
                 (displayMediaTitle.match(/\s/g) || []).length
                   ? 'ellipsis-3-lines'
-                  : 'ellipsis'
-              "
+                  : 'ellipsis',
+              ]"
               @dblclick="handleTitleEdit(true)"
             >
               <q-badge
@@ -506,7 +507,7 @@
             </div>
             <div
               v-if="!fileIsAvailable && !streamIsAvailable"
-              class="text-caption"
+              class="text-caption fades-under-hover-actions"
             >
               {{ t('media-item-missing-explain') }}
             </div>
