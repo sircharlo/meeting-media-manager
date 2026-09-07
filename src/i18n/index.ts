@@ -13,11 +13,11 @@ import en from './en.json' with { type: 'json' };
 // 99.5% translated as of 2026-09-07
 import ko from './ko.json' with { type: 'json' };
 
+// 98.4% translated as of 2026-09-07
+import sl from './sl.json' with { type: 'json' };
+
 // 98.1% translated as of 2026-09-07
 import ty from './ty.json' with { type: 'json' };
-
-// 97.8% translated as of 2026-09-07
-import sl from './sl.json' with { type: 'json' };
 
 // 97.7% translated as of 2026-09-07
 import cmnHans from './cmn-hans.json' with { type: 'json' };
