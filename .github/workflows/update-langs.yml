@@ -44,7 +44,7 @@ jobs:
       - name: Format generated files with Prettier
         run: |
           corepack enable
-          yarn dlx prettier@3.9.4 --write src/i18n/index.ts docs/locales/index.ts src/constants/locales.ts
+          yarn dlx prettier@3.9.6 --write src/i18n/index.ts docs/locales/index.ts src/constants/locales.ts
 
       - name: Commit and push update branch
         id: commit
