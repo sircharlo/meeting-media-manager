@@ -172,6 +172,7 @@ const stopPlayingMediaFirst = () => {
       group: 'stop-playing-media',
       icon: 'mmm-media',
       message: ref(t('stop-playing-media-first-explain')).value,
+      type: 'warning',
     });
   }
 };
