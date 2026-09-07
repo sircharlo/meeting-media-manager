@@ -2,7 +2,7 @@
 
 Ta izčrpen vodnik pojasnjuje vse nastavitve, ki so na voljo v M³, razvrščene po kategorijah. Razumevanje teh nastavitev vam bo pomagalo nastaviti M³ tako, da bo popolnoma ustrezal potrebam vaše občine.
 
-## Nastavitev aplikacije {#application-configuration}
+## General {#application-configuration}
 
 ### Jezik uporabniškega vmesnika {#display-language}
 
@@ -165,13 +165,19 @@ Ko je ta funkcija omogočena, M³ občasno preveri uradno spletno mesto Jehovovi
 
 To deluje samo za profile, ki so bili dodani z iskanjem občine in katerih imena občin niso bila ročno spremenjena. Če je bila sinhronizacija onemogočena, ker je bilo ime občine spremenjeno, uporabi možnost **Omogoči sinhronizacijo urnika**, da profil znova povežeš.
 
+#### Enable Schedule Sync {#relink-congregation}
+
+<!-- **Setting**: `relinkCongregationButton` -->
+
+Re-links the current profile to congregation lookup so automatic meeting day and time updates can resume. Only shown once the congregation name has been changed manually, since that's what breaks the link in the first place.
+
 #### Osveži urnik shodov {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
 Ročno sinhroniziraj trenutni in prihodnji urnik shodov s podatki z uradnega spletnega mesta.
 
-## Pridobivanje in predvajanje multimedijske vsebine {#media-retrieval-and-playback}
+## Media & Playback {#media-retrieval-and-playback}
 
 ### Merjena povezava {#metered-connection}
 
@@ -241,6 +247,107 @@ Nastavitev glasnosti za glasbo v ozadju (1–100 %).
 
 **Privzeto**: 100 %
 
+### Playback and Download Options {#media-display}
+
+<!-- This section covers mediaRetrievalPlayback's `media-display` settings subgroup -
+these control the media window's playback behavior and which downloaded media is
+filtered out, as distinct from the "Media Display" section above (which is about
+whether the media window feature is enabled at all). -->
+
+#### Omogoči prehode z zatemnitvijo {#enable-media-window-fade-transitions}
+
+<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+
+Omogoči postopne prehode (fade-in/fade-out) pri prikazu ali skrivanju okna za multimedijsko vsebino.
+
+**Privzeto**: `true`
+
+#### Omogoči nadzor hitrosti predvajanja {#enable-playback-speed-control}
+
+<!-- **Setting**: `enablePlaybackSpeedControl` -->
+
+Dovoli prilagajanje hitrosti predvajanja zvoka in videa iz kontekstnega menija multimedijskega elementa.
+
+**Privzeto**: `false`
+
+#### Skrij logotip multimedijske vsebine {#hide-media-logo}
+
+<!-- **Setting**: `hideMediaLogo` -->
+
+Skrij logotip v oknu z multimedijsko vsebino.
+
+**Privzeto**: `false`
+
+#### Največja ločljivost {#maximum-resolution}
+
+<!-- **Setting**: `maxRes` -->
+
+Največja ločljivost za preneseno multimedijsko vsebino.
+
+**Možnosti**: 240p, 360p, 480p, 720p, 1080p
+
+**Privzeto**: 720p
+
+#### Vključi tiskane medije {#include-printed-media}
+
+<!-- **Setting**: `includePrinted` -->
+
+Vključi multimedijsko vsebino iz tiskanih publikacij v prenose.
+
+**Privzeto**: `true`
+
+#### Izključi podčrtne opombe {#exclude-footnotes}
+
+<!-- **Setting**: `excludeFootnotes` -->
+
+Iz prenosov izključi slike v podčrtnih opombah, kadar je to mogoče.
+
+**Privzeto**: `false`
+
+#### Izključi dodatne videe za Preučevanje Stražnega stolpa {#exclude-additional-watchtower-study-videos}
+
+<!-- **Setting**: `excludeWtParagraphVideos` -->
+
+Izključi dodatne videe, ki so omenjeni v odstavkih za Preučevanje Stražnega stolpa.
+
+**Privzeto**: `false`
+
+#### Exclude Congregation Bible Study Videos {#exclude-cbs-pubs}
+
+<!-- **Setting**: `excludeCbsPubs` -->
+
+Choose publications whose referenced videos should not be shown during the Congregation Bible Study. Search by publication title or symbol.
+
+**Default**: Congregation Bible Study Guide (`wcg`)
+
+#### Izključi multimedijsko vsebino iz brošure Branje in poučevanje {#exclude-theocratic-ministry-school}
+
+<!-- **Setting**: `excludeTh` -->
+
+Iz prenosov izključi multimedijsko vsebino iz brošure Branje in poučevanje (th).
+
+**Privzeto**: `true`
+
+### Podnapisi {#subtitles}
+
+#### Omogoči podnapise {#enable-subtitles}
+
+<!-- **Setting**: `enableSubtitles` -->
+
+Omogoči podporo za podnapise med predvajanjem multimedijske vsebine.
+
+**Privzeto**: `false`
+
+#### Jezik podnapisov {#subtitle-language}
+
+<!-- **Setting**: `langSubtitles` -->
+
+Jezik podnapisov (lahko se razlikuje od jezika multimedijske vsebine).
+
+**Možnosti**: Vsi jeziki, ki so na voljo na uradnem spletnem mestu Jehovovih prič.
+
+**Privzeto**: Prazno
+
 ### Upravljanje predpomnilnika {#cache-management}
 
 #### Omogoči dodatni predpomnilnik {#enable-extra-cache}
@@ -267,6 +374,50 @@ Samodejno odstranjevanje stare multimedijske vsebine iz predpomnilnika za prihra
 
 **Privzeto**: `true`
 
+### Pinyin Song Titles {#pinyin-song-titles}
+
+#### Prefer Pinyin Songs {#enable-pinyin-songs}
+
+<!-- **Setting**: `enablePinyinSongs` -->
+
+When a pinyin version of a meeting song is found in the pinyin song folder, use it instead of the standard song.
+
+**Privzeto**: `false`
+
+#### Pinyin Song Folder {#pinyin-song-folder}
+
+<!-- **Setting**: `pinyinSongFolder` -->
+
+Folder containing pinyin video songs (e.g. `sjjm_s-Pi_CHS_066_r720P.mp4`). When a pinyin file matching the meeting song number is found, it will be played instead of the standard song.
+
+**Privzeto**: Prazno
+
+### Izvoz multimedijske vsebine {#settings-guide-media-export}
+
+#### Omogoči samodejni izvoz multimedijske vsebine {#enable-media-auto-export}
+
+<!-- **Setting**: `enableMediaAutoExport` -->
+
+Samodejno izvozi multimedijsko vsebino v izbrano mapo.
+
+**Privzeto**: `false`
+
+#### Mapa za izvoz multimedijske vsebine {#media-export-folder}
+
+<!-- **Setting**: `mediaAutoExportFolder` -->
+
+Pot do mape, kamor se multimedijska vsebina samodejno izvozi.
+
+**Privzeto**: Prazno
+
+#### Pretvori datoteke v MP4 {#convert-files-to-mp4}
+
+**Nastavitve**: `convertFilesToMp4`
+
+Pretvori izvoženo multimedijsko vsebino v format MP4 za boljšo združljivost.
+
+**Privzeto**: `false`
+
 ### Spremljanje map {#settings-guide-folder-monitoring}
 
 #### Omogoči spremljanje mape {#enable-folder-watcher}
@@ -284,6 +435,40 @@ Spremlja mapo glede nove multimedijske vsebine in jo samodejno doda v M³.
 Pot do mape, ki jo je treba spremljati za novo multimedijsko vsebino.
 
 **Privzeto**: Prazno
+
+## Časovnik shodov {#meeting-timer}
+
+### Omogoči časovnik shodov {#enable-meeting-timer}
+
+<!-- **Setting**: `enableTimerDisplay` -->
+
+Omogoči ločeno okno časovnika za merjenje posameznih delov shoda. To je funkcija v beta fazi in jo je treba omogočiti samo, če je lokalno odobrena.
+
+**Privzeto**: `false`
+
+### Obnašanje okna časovnika {#timer-window-behavior}
+
+<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
+
+Nastavi, ali se okno časovnika odpre samodejno, ali časovniki za udeležence privzeto štejejo navzgor ali navzdol, ali ura uporablja 12‑urni ali 24‑urni format ter ali je trenutna vrednost časovnika prikazana na gumbu časovnika v orodni vrstici.
+
+### Prikazi časovnika {#timer-display-formats}
+
+<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
+
+Izberi analogni ali digitalni prikaz za prikaz trenutnega časa in odštevalne časovnike. Opozorilni indikator odštevanja lahko med zadnjo minuto postopoma obarva analogni odštevalni krog v opozorilno barvo.
+
+### Odštevalnik do shoda in stanje urnika {#meeting-countdown-and-schedule-status}
+
+<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
+
+Prikaži odštevalnik pred načrtovanimi shodi in po želji prikazuj, ali program shoda prehiteva ali zaostaja. Odštevalnik shoda je prikazan samo na prikazu časovnika, ne pa na glavnem multimedijskem zaslonu.
+
+### Videz časovnika in prekoračitev časa {#timer-appearance-and-overtime}
+
+<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
+
+Prilagodi velikost besedila časovnika in barve ter nastavi indikatorje prekoračitve časa, kot so alternativne barve, utripanje ali prikaz samo prekoračenega časa v načinu štetja navzgor.
 
 ## Povezovanje {#integrations}
 
@@ -304,6 +489,14 @@ Omogoči združevanje funkcij za shode po Zoomu.
 Bližnjica na tipkovnici za sprožitev deljenja zaslona prek Zooma.
 
 **Privzeto**: Prazno
+
+#### Auto-Focus Media Window {#zoom-auto-focus-media-window}
+
+<!-- **Setting**: `zoomAutoFocusMediaWindow` -->
+
+Automatically focus the media window after Zoom screen sharing starts. This is usually not required, but can help on some systems if the media window regularly loses focus after screen sharing starts.
+
+**Privzeto**: `false`
 
 ### Združevanje s programom OBS Studio {#settings-guide-obs-integration}
 
@@ -426,45 +619,11 @@ Ta možnost je skrita, kadar je omogočen OBS nadzor snemanja. Če uporabljaš O
 
 Nastavi tipkovno bližnjico za začetek snemanja, izbirno bližnjico za ustavitev snemanja ter mapo, v katero zunanja aplikacija shranjuje posnetke. Če bližnjica za ustavitev ni določena, M³ ponovno uporabi bližnjico za začetek snemanja. Ko je mapa nastavljena, M³ prikaže gumb za njen odprtje.
 
-### Časovnik shodov {#interface-shortcuts}
+## Interface & Shortcuts {#interface-shortcuts}
 
-#### Omogoči časovnik shodov {#settings-guide-keyboard-shortcuts}
+### Bližnjice na tipkovnici {#settings-guide-keyboard-shortcuts}
 
-<!-- **Setting**: `enableTimerDisplay` -->
-
-Omogoči ločeno okno časovnika za merjenje posameznih delov shoda. To je funkcija v beta fazi in jo je treba omogočiti samo, če je lokalno odobrena.
-
-**Privzeto**: `false`
-
-#### Obnašanje okna časovnika {#enable-keyboard-shortcuts}
-
-<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
-
-Nastavi, ali se okno časovnika odpre samodejno, ali časovniki za udeležence privzeto štejejo navzgor ali navzdol, ali ura uporablja 12‑urni ali 24‑urni format ter ali je trenutna vrednost časovnika prikazana na gumbu časovnika v orodni vrstici.
-
-#### Prikazi časovnika {#media-control-shortcuts}
-
-<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
-
-Izberi analogni ali digitalni prikaz za prikaz trenutnega časa in odštevalne časovnike. Opozorilni indikator odštevanja lahko med zadnjo minuto postopoma obarva analogni odštevalni krog v opozorilno barvo.
-
-#### Odštevalnik do shoda in stanje urnika {#add-more-media-button}
-
-<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
-
-Prikaži odštevalnik pred načrtovanimi shodi in po želji prikazuj, ali program shoda prehiteva ali zaostaja. Odštevalnik shoda je prikazan samo na prikazu časovnika, ne pa na glavnem multimedijskem zaslonu.
-
-#### Videz časovnika in prekoračitev časa {#add-media-button-sections}
-
-<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
-
-Prilagodi velikost besedila časovnika in barve ter nastavi indikatorje prekoračitve časa, kot so alternativne barve, utripanje ali prikaz samo prekoračenega časa v načinu štetja navzgor.
-
-## Napredne nastavitve {#advanced-settings}
-
-### Bližnjice na tipkovnici {#profile-settings-transfer}
-
-#### Omogoči bližnjice na tipkovnici {#danger-zone}
+#### Omogoči bližnjice na tipkovnici {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
@@ -472,7 +631,7 @@ Omogoči prilagodljive bližnjice na tipkovnici za nadzor multimedijske vsebine.
 
 **Privzeto**: `false`
 
-#### Bližnjice za upravljanje multimedijske vsebine {#base-url}
+#### Bližnjice za upravljanje multimedijske vsebine {#media-control-shortcuts}
 
 Nastavite bližnjice za predvajanje multimedijske vsebine:
 
@@ -483,125 +642,53 @@ Nastavite bližnjice za predvajanje multimedijske vsebine:
 - **Ustavi predvajanje**: Ustavi predvajanje multimedijske vsebine
 - **Vklop/izklop glasbe**: Vklopi/izklopi glasbo v ozadju
 
-### Multimedijski zaslon {#disable-hardware-acceleration}
+### Add More Media Button {#add-more-media-button}
 
-#### Omogoči prehode z zatemnitvijo {#suppress-hardware-acceleration-reminder}
+#### Sections with an Add Media Button {#add-media-button-sections}
 
-<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+<!-- **Setting**: `addMediaButtonSections` -->
 
-Omogoči postopne prehode (fade-in/fade-out) pri prikazu ali skrivanju okna za multimedijsko vsebino.
+Choose which meeting sections show their own button for adding your own media, in addition to the "Add media" button in the top toolbar, which always works for every section.
 
-**Privzeto**: `true`
+**Default**: Public Talk, Living as Christians, Circuit Overseer's Visit, and Custom sections
 
-#### Omogoči nadzor hitrosti predvajanja {#disable-media-fetching}
+#### Compact Add Media Button {#compact-add-media-button}
 
-<!-- **Setting**: `enablePlaybackSpeedControl` -->
+<!-- **Setting**: `compactAddMediaButton` -->
 
-Dovoli prilagajanje hitrosti predvajanja zvoka in videa iz kontekstnega menija multimedijskega elementa.
-
-**Privzeto**: `false`
-
-#### Skrij logotip multimedijske vsebine {#configuration-tips}
-
-<!-- **Setting**: `hideMediaLogo` -->
-
-Skrij logotip v oknu z multimedijsko vsebino.
-
-**Privzeto**: `false`
-
-#### Največja ločljivost {#new-users}
-
-<!-- **Setting**: `maxRes` -->
-
-Največja ločljivost za preneseno multimedijsko vsebino.
-
-**Možnosti**: 240p, 360p, 480p, 720p, 1080p
-
-**Privzeto**: 720p
-
-#### Vključi tiskane medije {#advanced-users}
-
-<!-- **Setting**: `includePrinted` -->
-
-Vključi multimedijsko vsebino iz tiskanih publikacij v prenose.
+Only show an icon for the "Add more media"/"Add a song" button in section headers. When disabled, the button also shows text alongside the icon when there's enough room.
 
 **Privzeto**: `true`
 
-#### Izključi podčrtne opombe {#performance-optimization}
+### Media Drag Handle {#media-drag-handle}
 
-<!-- **Setting**: `excludeFootnotes` -->
+#### Show Drag Handle {#show-media-drag-handle}
 
-Iz prenosov izključi slike v podčrtnih opombah, kadar je to mogoče.
+<!-- **Setting**: `showMediaDragHandle` -->
 
-**Privzeto**: `false`
-
-#### Izključi dodatne videe za Preučevanje Stražnega stolpa {#settings-guide-troubleshooting}
-
-<!-- **Setting**: `excludeWtParagraphVideos` -->
-
-Izključi dodatne videe, ki so omenjeni v odstavkih za Preučevanje Stražnega stolpa.
-
-**Privzeto**: `false`
-
-#### Izključi multimedijsko vsebino iz brošure Branje in poučevanje {#exclude-theocratic-ministry-school}
-
-<!-- **Setting**: `excludeTh` -->
-
-Iz prenosov izključi multimedijsko vsebino iz brošure Branje in poučevanje (th).
+Show a small handle on each media item for dragging it to reorder. Media items can always be reordered by dragging anywhere on them; this only affects whether the handle icon itself is shown.
 
 **Privzeto**: `true`
 
-### Podnapisi {#subtitles}
+### Before/After Meeting Quick Actions {#before-after-meeting-quick-actions}
 
-#### Omogoči podnapise {#enable-subtitles}
+#### Show Meeting Quick Actions {#enable-meeting-quick-actions}
 
-<!-- **Setting**: `enableSubtitles` -->
+<!-- **Setting**: `enableMeetingQuickActions` -->
 
-Omogoči podporo za podnapise med predvajanjem multimedijske vsebine.
+Show a before-meeting panel and an after-meeting panel with useful controls (background music, recording) and a customizable checklist for each.
 
-**Privzeto**: `false`
+**Privzeto**: `true`
 
-#### Jezik podnapisov {#subtitle-language}
+The checklist categories and tasks for both the before-meeting and after-meeting panels are managed from this same settings section: add, rename, reorder, or delete categories and tasks as needed for your congregation.
 
-<!-- **Setting**: `langSubtitles` -->
+## Advanced {#advanced-settings}
 
-Jezik podnapisov (lahko se razlikuje od jezika multimedijske vsebine).
-
-**Možnosti**: Vsi jeziki, ki so na voljo na uradnem spletnem mestu Jehovovih prič.
-
-**Privzeto**: Prazno
-
-### Izvoz multimedijske vsebine {#settings-guide-media-export}
-
-#### Omogoči samodejni izvoz multimedijske vsebine {#enable-media-auto-export}
-
-<!-- **Setting**: `enableMediaAutoExport` -->
-
-Samodejno izvozi multimedijsko vsebino v izbrano mapo.
-
-**Privzeto**: `false`
-
-#### Mapa za izvoz multimedijske vsebine {#media-export-folder}
-
-<!-- **Setting**: `mediaAutoExportFolder` -->
-
-Pot do mape, kamor se multimedijska vsebina samodejno izvozi.
-
-**Privzeto**: Prazno
-
-#### Pretvori datoteke v MP4 {#convert-files-to-mp4}
-
-**Nastavitve**: `convertFilesToMp4`
-
-Pretvori izvoženo multimedijsko vsebino v format MP4 za boljšo združljivost.
-
-**Privzeto**: `false`
-
-### Prenos nastavitev profila {#profile-settings-transfer-2}
+### Prenos nastavitev profila {#profile-settings-transfer}
 
 Izvozi nastavitve trenutnega profila v datoteko JSON ali uvozi predhodno izvoženo datoteko z nastavitvami profila. Uvoz zamenja trenutne nastavitve profila.
 
-### Nevarno območje {#danger-zone-2}
+### Nevarno območje {#danger-zone}
 
 :::warning Opozorilo
 
@@ -609,7 +696,7 @@ Te nastavitve spreminjajte le, če razumete njihove posledice.
 
 :::
 
-#### Osnovni URL {#base-url-2}
+#### Osnovni URL {#base-url}
 
 <!-- **Setting**: `baseUrl` -->
 
@@ -617,7 +704,7 @@ Osnovna domena, ki se uporablja za prenos publikacij in multimedijske vsebine.
 
 **Privzeto**: `jw.org`
 
-#### Onemogoči strojno pospeševanje {#disable-hardware-acceleration-2}
+#### Onemogoči strojno pospeševanje {#disable-hardware-acceleration}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
@@ -625,7 +712,7 @@ Onemogoči strojno pospeševanje po ponovnem zagonu M³. To lahko pomaga pri gra
 
 **Privzeto**: `false`
 
-#### Skrij opomnik za strojno pospeševanje {#suppress-hardware-acceleration-reminder-2}
+#### Skrij opomnik za strojno pospeševanje {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
@@ -633,7 +720,7 @@ Skrij opomnik za ponovno omogočanje strojnega pospeševanja, potem ko je bilo r
 
 **Privzeto**: `false`
 
-#### Onemogoči pridobivanje vsebine {#disable-media-fetching-2}
+#### Onemogoči pridobivanje vsebine {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
@@ -641,30 +728,30 @@ Popolnoma onemogoči samodejni prenos multimedijske vsebine. To možnost uporabi
 
 **Privzeto**: `false`
 
-## Nasveti za optimalno nastavitev {#configuration-tips-2}
+## Nasveti za optimalno nastavitev {#configuration-tips}
 
-### Za nove uporabnike {#new-users-2}
+### Za nove uporabnike {#new-users}
 
 1. Da bi nastavili osnovne nastavitve, začnite z nastavitvenim čarovnikom
 2. Omogočite gumb za »Multimedijski zaslon«
 3. Natančno nastavite urnik shodov
 4. Nastavite združevanje s programom OBS, če uporabljate hibridne shode
 
-### Za napredne uporabnike {#advanced-users-2}
+### Za napredne uporabnike {#advanced-users}
 
 1. Uporabite spremljanje map za sinhronizacijo multimedijske vsebine iz oblačne shrambe
 2. Omogočite samodejni izvoz multimedijske vsebine zaradi varnostnega kopiranja
 3. Nastavite bližnjice na tipkovnici za učinkovito upravljanje
 4. Nastavite združevanje z Zoomom za samodejno deljenje zaslona
 
-### Optimizacija zmogljivosti {#performance-optimization-2}
+### Optimizacija zmogljivosti {#performance-optimization}
 
 1. Omogočite dodatni predpomnilnik za boljše delovanje
 2. Uporabite ustrezno največjo ločljivost glede na vaše potrebe
 3. Nastavite samodejno čiščenje predpomnilnika, da varčujete s prostorom na disku
 4. Razmislite o omejeni povezavi, če imate omejeno pasovno širino
 
-### Odpravljanje težav {#settings-guide-troubleshooting-2}
+### Odpravljanje težav {#settings-guide-troubleshooting}
 
 - Če se multimedijska vsebina ne prenaša, preverite nastavitve urnika shodov
 - Če združevanje z OBS ne deluje, preverite nastavitve vrat in gesla
