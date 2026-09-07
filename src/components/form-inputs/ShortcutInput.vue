@@ -1,18 +1,36 @@
 <template>
-  <div class="row" style="width: 240px" @click="shortcutPicker = true">
+  <div
+    :aria-label="
+      localValue
+        ? t('change-key-combination', { shortcut: localValue })
+        : undefined
+    "
+    :class="{ row: true, 'cursor-pointer': !!localValue }"
+    :role="localValue ? 'button' : undefined"
+    style="width: 240px"
+    :tabindex="localValue ? 0 : undefined"
+    @click="shortcutPicker = true"
+    @keydown.enter.space.prevent="localValue && (shortcutPicker = true)"
+  >
     <template v-if="localValue">
       <template
         v-for="(keyboardKey, index) in localValue.split('+')"
         :key="keyboardKey"
       >
         <div :class="'col ' + (index > 0 ? 'q-ml-sm' : '')">
-          <q-btn
-            :key="keyboardKey"
-            class="full-width text-smaller"
-            color="primary"
-            :label="keyboardKey"
-            unelevated
-          />
+          <!-- UX-20 (full-audit-2026-09-05.md): these used to be q-btns -
+          real, independently focusable/keyboard-activatable buttons with no
+          click handler of their own, relying only on their activation click
+          bubbling up to this wrapper. A keyboard user tabbing through hit
+          one redundant, purpose-less stop per key segment. Plain styled divs
+          (matching the picker dialog's own key-segment display just below,
+          which was already display-only) keep the same look with none of
+          that - the wrapper above is now the single real, labeled control. -->
+          <div
+            class="full-width text-smaller text-center bg-primary text-white q-pa-sm rounded-borders"
+          >
+            {{ keyboardKey }}
+          </div>
         </div>
       </template>
     </template>
