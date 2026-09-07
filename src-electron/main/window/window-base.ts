@@ -114,17 +114,7 @@ export function createWindow(
       page = 'timer';
       break;
     case 'website':
-      if (websiteParams?.site) {
-        const siteUrlBySelection = {
-          jwevent: 'https://www.jwevent.org/',
-          stream: 'https://stream.jw.org/',
-        } as const;
-
-        const selectedSiteUrl = siteUrlBySelection[websiteParams.site];
-        page = `${selectedSiteUrl}?lang=${websiteParams?.langSymbol || ''}`;
-      } else {
-        page = `https://www.${urlVariables?.base || 'jw.org'}/${websiteParams?.langSymbol || ''}`;
-      }
+      page = buildWebsitePage(websiteParams, urlVariables?.base);
       break;
   }
   if (page.startsWith('https://')) {
@@ -205,3 +195,31 @@ export function sendToWindow(
   if (!win || win.isDestroyed() || win.webContents.isDestroyed()) return;
   win.webContents.send(channel, ...args);
 }
+
+/**
+ * Builds the URL/page string for the `website` window from its site
+ * selection and language symbol.
+ *
+ * SEC-13 (full-audit-2026-09-05.md): `langSymbol` normally comes from the
+ * app's own enabled-language list, but reaches here over the raw IPC
+ * channel - encoded rather than trusted to already be URL-safe.
+ */
+function buildWebsitePage(
+  websiteParams: JwSiteParams | undefined,
+  base: string | undefined,
+) {
+  const langSymbol = encodeURIComponent(websiteParams?.langSymbol || '');
+  if (websiteParams?.site) {
+    const siteUrlBySelection = {
+      jwevent: 'https://www.jwevent.org/',
+      stream: 'https://stream.jw.org/',
+    } as const;
+
+    return `${siteUrlBySelection[websiteParams.site]}?lang=${langSymbol}`;
+  }
+  return `https://www.${base || 'jw.org'}/${langSymbol}`;
+}
+
+export const __testables = {
+  buildWebsitePage,
+};
