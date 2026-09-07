@@ -642,47 +642,47 @@ Nastavite bližnjice za predvajanje multimedijske vsebine:
 - **Ustavi predvajanje**: Ustavi predvajanje multimedijske vsebine
 - **Vklop/izklop glasbe**: Vklopi/izklopi glasbo v ozadju
 
-### Add More Media Button {#add-more-media-button}
+### Gumb Dodaj več multimedijske vsebine {#add-more-media-button}
 
-#### Sections with an Add Media Button {#add-media-button-sections}
+#### Razdelki z gumbom »Dodaj več multimedijske vsebine« {#add-media-button-sections}
 
 <!-- **Setting**: `addMediaButtonSections` -->
 
-Choose which meeting sections show their own button for adding your own media, in addition to the "Add media" button in the top toolbar, which always works for every section.
+Izberi, kateri razdelki naj imajo svoj gumb za dodajanje lastne multimedijske vsebine, poleg gumba »Dodaj multimedijo« v zgornji orodni vrstici, ki vedno deluje za vse razdelke.
 
-**Default**: Public Talk, Living as Christians, Circuit Overseer's Visit, and Custom sections
+**Privzeto**: Javni govor, Krščansko življenje, Okrajni nadzornik in Razdelki po meri
 
-#### Compact Add Media Button {#compact-add-media-button}
+#### Kompaktni gumb »Dodaj več multimedijske vsebine« {#compact-add-media-button}
 
 <!-- **Setting**: `compactAddMediaButton` -->
 
-Only show an icon for the "Add more media"/"Add a song" button in section headers. When disabled, the button also shows text alongside the icon when there's enough room.
+V glavi razdelka prikaži samo ikono gumba »Dodaj več multimedijske vsebine«/»Dodaj pesem«. Ko je to onemogočeno, se poleg ikone prikaže tudi besedilo, kadar je na voljo dovolj prostora.
 
 **Privzeto**: `true`
 
-### Media Drag Handle {#media-drag-handle}
+### Ročica za premikanje multimedijske vsebine {#media-drag-handle}
 
-#### Show Drag Handle {#show-media-drag-handle}
+#### Prikaži ročico za premikanje {#show-media-drag-handle}
 
 <!-- **Setting**: `showMediaDragHandle` -->
 
-Show a small handle on each media item for dragging it to reorder. Media items can always be reordered by dragging anywhere on them; this only affects whether the handle icon itself is shown.
+Pri vsaki multimedijski datoteki prikaži majhno ročico za preurejanje. Multimedijske datoteke je vedno mogoče preurediti tako, da klikneš kjer koli na datoteko in jo prestaviš; ta nastavitev vpliva le na to, ali je ikona ročice prikazana ali ne.
 
 **Privzeto**: `true`
 
-### Before/After Meeting Quick Actions {#before-after-meeting-quick-actions}
+### Hitri koraki pred in po shodu {#before-after-meeting-quick-actions}
 
-#### Show Meeting Quick Actions {#enable-meeting-quick-actions}
+#### Prikaži hitre korake za shod {#enable-meeting-quick-actions}
 
 <!-- **Setting**: `enableMeetingQuickActions` -->
 
-Show a before-meeting panel and an after-meeting panel with useful controls (background music, recording) and a customizable checklist for each.
+Prikaži ploščo pred shodom in ploščo po shodu z uporabnimi kontrolami (glasba v ozadju, snemanje) ter prilagodljivim kontrolnim seznamom za vsak shod.
 
 **Privzeto**: `true`
 
-The checklist categories and tasks for both the before-meeting and after-meeting panels are managed from this same settings section: add, rename, reorder, or delete categories and tasks as needed for your congregation.
+Kategorije in naloge kontrolnega seznama za ploščo pred shodom in ploščo po shodu se upravljajo v tem istem razdelku v nastavitvah: dodaj, preimenuj, prerazporedi ali izbriši kategorije in naloge glede na potrebe tvoje občine.
 
-## Advanced {#advanced-settings}
+## Napredno {#advanced-settings}
 
 ### Prenos nastavitev profila {#profile-settings-transfer}
 
