@@ -104,6 +104,7 @@ const electronApi: ElectronApi = {
   isDownloadComplete: (downloadId: string) =>
     invoke('isDownloadComplete', downloadId),
   isDownloadErrorExpected: () => invoke('isDownloadErrorExpected'),
+  isOnline: () => invoke('isOnline'),
   isSecretEncryptionAvailableSync: () =>
     sendSync('isSecretEncryptionAvailableSync'),
   isUsablePath: (p) => invoke('isUsablePath', p),

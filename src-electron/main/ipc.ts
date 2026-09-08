@@ -436,6 +436,11 @@ handleIpcInvoke(
   async () => process.arch === 'ia32' && (await isOS64Bit()),
 );
 
+handleIpcInvoke('isOnline', async () => {
+  const { default: isOnline } = await import('is-online');
+  return isOnline();
+});
+
 handleIpcInvoke('getOsSupportWarning', async () => getOsSupportWarning());
 
 handleIpcInvoke(

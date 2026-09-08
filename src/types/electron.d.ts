@@ -183,6 +183,13 @@ export interface ElectronApi {
   isDownloadComplete: (downloadId: string) => Promise<boolean | null>;
   isDownloadErrorExpected: () => Promise<boolean>;
   /**
+   * Checks internet connectivity from the main process, where the
+   * `is-online` package's outbound IP-lookup requests (icanhazip.com,
+   * ipify.org, etc.) aren't subject to the renderer's locked-down
+   * `connect-src` CSP.
+   */
+  isOnline: () => Promise<boolean>;
+  /**
    * Whether {@link encryptSecretSync} can actually encrypt (the OS
    * keychain/secret-service is available). When `false`, secrets like the
    * OBS password are stored as plain text - the renderer should warn the
@@ -449,6 +456,7 @@ export type ElectronIpcInvokeKey =
   | 'isArchitectureMismatch'
   | 'isDownloadComplete'
   | 'isDownloadErrorExpected'
+  | 'isOnline'
   | 'isUsablePath'
   | 'openFileDialog'
   | 'openFolder'

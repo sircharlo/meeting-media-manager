@@ -105,6 +105,7 @@ export const electronApi: ElectronApi = {
   isDev: false,
   isDownloadComplete: async () => null,
   isDownloadErrorExpected: async () => false,
+  isOnline: async () => true,
   isSecretEncryptionAvailableSync: () => true,
   isUsablePath: async function (path) {
     return true;

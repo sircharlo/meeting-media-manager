@@ -36,13 +36,14 @@
 import type { DownloadProgressItem } from 'src/types';
 
 import { useIntervalFn } from '@vueuse/core';
-import isOnline from 'is-online';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getDateDiff } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+
+const { isOnline } = globalThis.electronApi;
 
 const { t } = useI18n();
 const currentState = useCurrentStateStore();
