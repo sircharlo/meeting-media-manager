@@ -2,7 +2,7 @@
 
 E fa’ata’a teie arata’i a’ano i te mau fa’anahora’a ato’a i roto i te M³, ma te tufa-’a’ano-hia ’ia au i te mau tuha’a. E tauturu te māramarama-maita’i-ra’a i teie mau fa’anahora’a ia ’oe i te fa’anaho maita’i i te M³ ’ia au i te mau hina’aro o tō ’oe amuira’a.
 
-## General {#application-configuration}
+## Te mau mea matauhia {#application-configuration}
 
 ### Reo fa’a’ite {#display-language}
 
@@ -165,11 +165,11 @@ Ia ha’amā-hia, e hi’o-tamau-hia e te M³ te tahua iteneti a te mau Ite nō 
 
 E ohipa noa teie nō te mau hoho’a-taata i tāpirihia nā roto i te imi-ra’a i te amuira’a, e ’aita te i’oa o te amuira’a i tauihia e te rima. Mai te peu e ua fa’aore-hia te fa’aaura’a nō te mea e ua taui te i’oa o te amuira’a, a fa’a’ohipa i te Enable schedule sync nō te tu’ati fa’ahou i te hoho’a-taata.
 
-#### Enable Schedule Sync {#relink-congregation}
+#### Faahuru ê i te faanahoraa o te taime {#relink-congregation}
 
 <!-- **Setting**: `relinkCongregationButton` -->
 
-Re-links the current profile to congregation lookup so automatic meeting day and time updates can resume. Only shown once the congregation name has been changed manually, since that's what breaks the link in the first place.
+Te taati faahou ra i teie parau tuatï i nia i te imiraa amuiraa ia tia ia hoʻi mai te faahou-raa no te mahana e te hora o te putuputuraa. E faahite-noa-hia te reira ia taui-noa-hia te iʻa amuiraa ma te rima, no te mea o te ravea ïa e motu ai te taatiraa.
 
 #### Fa’aapī i te Tāpura Taime nō te Putuputura’a {#refresh-meeting-schedule}
 
@@ -177,7 +177,7 @@ Re-links the current profile to congregation lookup so automatic meeting day and
 
 A fa’aaura’a ma te rima i te tāpura taime nō te putuputura’a i teie taime e i te mau taime e tupu mai, ma te fa’a’ohipa i te mau ha’amāramaramara’a nō roto mai i te tahua iteneti mana.
 
-## Media & Playback {#media-retrieval-and-playback}
+## Te mau mauhaa roro uira e te poro'i {#media-retrieval-and-playback}
 
 ### Tapura-’ohipa-raa {#metered-connection}
 
@@ -247,7 +247,7 @@ Te faito o te puai nō te pehe ha’amata (1-100%).
 
 Fa'anahora'a tumu: 100%
 
-### Playback and Download Options {#media-display}
+### Te mau maitiraa no te poro'i e te taʻuraa i raro {#media-display}
 
 <!-- This section covers mediaRetrievalPlayback's `media-display` settings subgroup -
 these control the media window's playback behavior and which downloaded media is
@@ -312,13 +312,13 @@ Fa’ata’a ’ē i te mau video hau i fa’ahitihia i roto i te mau parataraph
 
 Fa'anahora'a tumu: `Hape`
 
-#### Exclude Congregation Bible Study Videos {#exclude-cbs-pubs}
+#### E taotia i te mau ata no te Haapiiraa Bibilia a te Amuiraa {#exclude-cbs-pubs}
 
 <!-- **Setting**: `excludeCbsPubs` -->
 
-Choose publications whose referenced videos should not be shown during the Congregation Bible Study. Search by publication title or symbol.
+A maiti i te mau papai o te ore e tia ia faaitehia ta ratou mau ata i te Haapiiraa Bibilia a te Amuiraa. A imi ma te faahiti i te iˈa o te papai aore ra te tapura.
 
-**Default**: Congregation Bible Study Guide (`wcg`)
+**Tei matauhia:** Te Arataʻi no te Haapiiraa Bibilia a te Amuiraa (`wcg`)
 
 #### Fa’ata’a i te mau rāve’a ha’amāramaramara’a nō roto mai i te buka ra ’Ia fana’o i te orara’a oaoa e a muri noa atu! {#exclude-theocratic-ministry-school}
 
@@ -374,21 +374,21 @@ Ha’amāua-’ōtohe-ra’a i te mau tairura’a tahito nō te fa’aherehere i
 
 Fa’anahora’a tumu: `’oia`
 
-### Pinyin Song Titles {#pinyin-song-titles}
+### Te mau upoo parau o te mau hiti no Pinyin {#pinyin-song-titles}
 
-#### Prefer Pinyin Songs {#enable-pinyin-songs}
+#### A na mua i te maiti i te mau pehe Pinyin {#enable-pinyin-songs}
 
 <!-- **Setting**: `enablePinyinSongs` -->
 
-When a pinyin version of a meeting song is found in the pinyin song folder, use it instead of the standard song.
+Ia itehia te hoê pehe Pinyin i roto i te putuputuraa pehe Pinyin, a faaohipa i te reira ei mono no te pehe matauhia.
 
 Fa'anahora'a tumu: `Hape`
 
-#### Pinyin Song Folder {#pinyin-song-folder}
+#### Te pueraa pehe Pinyin {#pinyin-song-folder}
 
 <!-- **Setting**: `pinyinSongFolder` -->
 
-Folder containing pinyin video songs (e.g. `sjjm_s-Pi_CHS_066_r720P.mp4`). When a pinyin file matching the meeting song number is found, it will be played instead of the standard song.
+Te pueraa o te mau pehe video Pinyin (ei hiʻoraa, `sjjm_s-Pi_CHS_066_r720P.mp4`). Ia itehia te hoê matini Pinyin e tau e te numera pehe no te putuputuraa, e faahoro-roa-hia ïa te reira ei mono no te pehe matauhia.
 
 Fa’anahora’a tumu: ’Aita
 
@@ -490,11 +490,11 @@ Pāotira’a nō ni’a i te tāhitohito nō te fa’a’ite i te vairaa o te ro
 
 Fa’anahora’a tumu: ’Aita
 
-#### Auto-Focus Media Window {#zoom-auto-focus-media-window}
+#### Faahoro-taue-hia i nia i te matapihi video {#zoom-auto-focus-media-window}
 
 <!-- **Setting**: `zoomAutoFocusMediaWindow` -->
 
-Automatically focus the media window after Zoom screen sharing starts. This is usually not required, but can help on some systems if the media window regularly loses focus after screen sharing starts.
+A faahoro taue i nia i te matapihi video i muri aˈe i te haamataraa te tuhaa tufaaraaata i nia i te Zoom. Eita paha e titauhia ia na reira, tera ra e tauturu i nia i vetahi mau matini ia erehia te matapihi video i te mana i muri aˈe i te haamataraa te tufaaraaata.
 
 Fa'anahora'a tumu: `Hape`
 
@@ -619,7 +619,7 @@ Fa'anahora'a tumu: `Hape`
 
 A fa’anahora’a i te tāpa’o pāpere pātō-pātē no te ha’amata i te haruharu, te tāpa’o pāpere pātō-pātē nō te fa’ata’a i te haruharu, e te pātura i reira te fa’anahora’a nō rāpae e vaiiho ai i te mau haruharu-reo. Mai te peu e aita e tāpa’o pāpere pātō-pātē nō te fa’ata’a i te haruharu i fa’anahohia, e fa’a’ohipa fa’ahou te M³ i te tāpa’o pāpere pātō-pātē nō te ha’amata. I te taime a fa’anahohia ai te ho’ē pātura, e fa’a’ite te M³ i te ho’ē piti’o nō te iriti i te reira.
 
-## Interface & Shortcuts {#interface-shortcuts}
+## Te Tahua e te mau Tapura ˈOhipa {#interface-shortcuts}
 
 ### Te mau rāve’a ha’apotora’a i ni’a i te tāhitō pereo {#settings-guide-keyboard-shortcuts}
 
@@ -642,47 +642,47 @@ Fa’anaho i te mau rāve’a ha’apotora’a nō te fa’ata’i-fa’ahou-ra�
 - Fa’a’ore i te Rorouira: ’A fa’a’ore i te fa’ata’i-ra’a rorouira
 - Fa’afariu i te pehe: Fa’afariu i te pehe ha’amata
 
-### Add More Media Button {#add-more-media-button}
+### Faahuahuaraa no te tuʻti Haaputupeturaa Atâ Ata {#add-more-media-button}
 
-#### Sections with an Add Media Button {#add-media-button-sections}
+#### Te mau tuhaa e vai ra te hoê tuʻti Apiti Ata {#add-media-button-sections}
 
 <!-- **Setting**: `addMediaButtonSections` -->
 
-Choose which meeting sections show their own button for adding your own media, in addition to the "Add media" button in the top toolbar, which always works for every section.
+A maiti e inaha tuhaa o te faaite i ta ratou iho tuʻti no te apiti i ta oe iho ata, hau atu i te tuʻti 'Apiti ata' i nia roa, o te rave tamau no te mau tuhaa atoa.
 
-**Default**: Public Talk, Living as Christians, Circuit Overseer's Visit, and Custom sections
+**Tei matauhia**: Orerora'a Parau, Ora no te Mesia, Haere-matau-raa a te Tiaau Haaati, e te mau Tuhaa Taa ê
 
-#### Compact Add Media Button {#compact-add-media-button}
+#### Tuʻti Apiti Ata Faufaa Ore / Poto {#compact-add-media-button}
 
 <!-- **Setting**: `compactAddMediaButton` -->
 
-Only show an icon for the "Add more media"/"Add a song" button in section headers. When disabled, the button also shows text alongside the icon when there's enough room.
+A faaite noa i te tapao no te tuʻti 'Apiti i te mau ata hau' / 'Apiti i te hoê pehe' i nia i te mau pane o te tuhaa. Ia tapurahia, e faaite atoa te tuʻti i te parau i pihai iho i te tapao mai te peu e navai te vahi.
 
 Fa’anahora’a tumu: `’oia`
 
-### Media Drag Handle {#media-drag-handle}
+### Tapearaa iriti no teuri i te mau ata {#media-drag-handle}
 
-#### Show Drag Handle {#show-media-drag-handle}
+#### A faaite i te Tapearaa no teuri {#show-media-drag-handle}
 
 <!-- **Setting**: `showMediaDragHandle` -->
 
-Show a small handle on each media item for dragging it to reorder. Media items can always be reordered by dragging anywhere on them; this only affects whether the handle icon itself is shown.
+A faaite i te hoê tapearaa rii i nia i te mau tauihaaata tataˈe no te tuuri e no te faahotu faahou i te mau faturaa. E nehenehe noa e faahotu faahou i te mau tauihaaata ma te tuuri i te mau vahi atoa i nia ia ratou; e tano noa teie i nia i te mea e faaitehia anei te tapao tapearaa.
 
 Fa’anahora’a tumu: `’oia`
 
-### Before/After Meeting Quick Actions {#before-after-meeting-quick-actions}
+### Mau Ohipa Ru no te Mau Putuputuraa Hou/I muri aˈe {#before-after-meeting-quick-actions}
 
-#### Show Meeting Quick Actions {#enable-meeting-quick-actions}
+#### A faaite i te mau Ohipa Ru no te Putuputuraa {#enable-meeting-quick-actions}
 
 <!-- **Setting**: `enableMeetingQuickActions` -->
 
-Show a before-meeting panel and an after-meeting panel with useful controls (background music, recording) and a customizable checklist for each.
+A faaite i te hoê pane hou putuputuraa e te hoê pane i muri aˈe i te putuputuraa e te mau taviri maitatai (pehe muri, nenei raa) e te hoê tapura hiˈopoaraa tia ia taui no te mau tuhaa tataˈe.
 
 Fa’anahora’a tumu: `’oia`
 
-The checklist categories and tasks for both the before-meeting and after-meeting panels are managed from this same settings section: add, rename, reorder, or delete categories and tasks as needed for your congregation.
+Te mau tuhaa e te mau ohipa no te tapura hiˈopoaraa no te mau pane hou putuputuraa e i muri aˈe i te putuputuraa, e faaterehia ïa no roto mai i teie tuhaa faanahoraa hoê o te faatia i te apiti, te huri i te iˈoa, te tuuri aore ra te tatara i te mau tuhaa e te mau ohipa ia au i te titau-hia-raa no ta outou amuiraa.
 
-## Advanced {#advanced-settings}
+## Te mau mea hohonu {#advanced-settings}
 
 ### Te huru o te fa’ahaere-ra’a-hia o te mau fa’anahora’a o te hōho’a ta’ata {#profile-settings-transfer}
 
