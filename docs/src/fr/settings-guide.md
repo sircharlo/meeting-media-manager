@@ -2,7 +2,7 @@
 
 Ce guide complet explique tous les paramètres disponibles dans M³, organisés par catégorie. Comprendre ces paramètres vous aidera à configurer M³ pour qu'il fonctionne parfaitement selon les besoins de votre assemblée locale.
 
-## General {#application-configuration}
+## Général {#application-configuration}
 
 ### Langue d'affichage {#display-language}
 
@@ -165,11 +165,11 @@ Lorsque cette fonction est activée, M³ consulte régulièrement le site offici
 
 Cela ne fonctionne que pour les profils qui ont été ajoutés via la recherche d'assemblées locales et dont le nom de l'assemblée locale n'a pas été modifié manuellement. Si la synchronisation a été désactivée en raison d'un changement de nom de l'assemblée locale, utilisez l'option **Activer la synchronisation des horaires** pour reconnecter le profil.
 
-#### Enable Schedule Sync {#relink-congregation}
+#### Activer la synchronisation des horaires {#relink-congregation}
 
 <!-- **Setting**: `relinkCongregationButton` -->
 
-Re-links the current profile to congregation lookup so automatic meeting day and time updates can resume. Only shown once the congregation name has been changed manually, since that's what breaks the link in the first place.
+Réassocie le profil actuel à la recherche d'assemblée locale afin que les mises à jour automatiques des jours et heures de réunion puissent reprendre. Cette option n'apparaît qu'une fois que le nom de l'assemblée a été modifié manuellement, car c'est précisément cette modification qui provoque la rupture du lien.
 
 #### Rafraîchir l'horaire de la réunion {#refresh-meeting-schedule}
 
@@ -177,7 +177,7 @@ Re-links the current profile to congregation lookup so automatic meeting day and
 
 Synchronisez manuellement l'horaire actuel des réunions et celui à venir avec les informations disponibles sur le site officiel.
 
-## Media & Playback {#media-retrieval-and-playback}
+## Médias et lecture {#media-retrieval-and-playback}
 
 ### Connexion limitée {#metered-connection}
 
@@ -247,7 +247,7 @@ Niveau de volume pour la musique de fond (1-100%).
 
 **Par défaut** : 100%
 
-### Playback and Download Options {#media-display}
+### Options de lecture et de téléchargement {#media-display}
 
 <!-- This section covers mediaRetrievalPlayback's `media-display` settings subgroup -
 these control the media window's playback behavior and which downloaded media is
@@ -312,11 +312,11 @@ Exclure les vidéos supplémentaires mentionnées dans les paragraphes de l'étu
 
 **Par défaut** : `faux`
 
-#### Exclude Congregation Bible Study Videos {#exclude-cbs-pubs}
+#### Exclure les vidéos de l'étude biblique de l'assemblée {#exclude-cbs-pubs}
 
 <!-- **Setting**: `excludeCbsPubs` -->
 
-Choose publications whose referenced videos should not be shown during the Congregation Bible Study. Search by publication title or symbol.
+Choisissez les publications dont les vidéos référencées ne sont pas normalement diffusées pendant l'étude biblique de l'assemblée. Recherche par titre ou symbole de publication.
 
 **Default**: Congregation Bible Study Guide (`wcg`)
 
@@ -374,21 +374,21 @@ Effacez automatiquement les anciens fichiers mis en cache pour économiser l'esp
 
 **Par défaut** : `vrai`
 
-### Pinyin Song Titles {#pinyin-song-titles}
+### Titres de cantiques Pinyin {#pinyin-song-titles}
 
-#### Prefer Pinyin Songs {#enable-pinyin-songs}
+#### Préférer les cantiques en pinyin {#enable-pinyin-songs}
 
 <!-- **Setting**: `enablePinyinSongs` -->
 
-When a pinyin version of a meeting song is found in the pinyin song folder, use it instead of the standard song.
+Lorsqu'une version en pinyin d'un cantique de réunion se trouve dans le dossier des cantiques en pinyin, utiliser celle-ci à la place du cantique standard.
 
 **Par défaut** : `faux`
 
-#### Pinyin Song Folder {#pinyin-song-folder}
+#### Dossier de cantiques pinyin {#pinyin-song-folder}
 
 <!-- **Setting**: `pinyinSongFolder` -->
 
-Folder containing pinyin video songs (e.g. `sjjm_s-Pi_CHS_066_r720P.mp4`). When a pinyin file matching the meeting song number is found, it will be played instead of the standard song.
+Dossier contenant des vidéos de cantiques en pinyin (par exemple : `sjjm_s-Pi_CHS_066_r720P.mp4`). Lorsqu'un fichier en pinyin correspondant au numéro du cantique est trouvé, celui-ci sera lu à la place du cantique standard.
 
 **Par défaut** : Vide
 
@@ -490,11 +490,11 @@ Raccourci clavier pour déclencher le partage d'écran Zoom.
 
 **Par défaut** : Aucune
 
-#### Auto-Focus Media Window {#zoom-auto-focus-media-window}
+#### Mise en évidence automatique de la fenêtre multimédia {#zoom-auto-focus-media-window}
 
 <!-- **Setting**: `zoomAutoFocusMediaWindow` -->
 
-Automatically focus the media window after Zoom screen sharing starts. This is usually not required, but can help on some systems if the media window regularly loses focus after screen sharing starts.
+Mettre automatiquement au premier plan la fenêtre multimédia dès le démarrage du partage d'écran sur Zoom. Ceci n'est généralement pas nécessaire, mais peut s'avérer utile sur certains systèmes si la fenêtre multimédia perd régulièrement le focus une fois le partage d'écran lancé.
 
 **Par défaut** : `faux`
 
@@ -660,13 +660,13 @@ Only show an icon for the "Add more media"/"Add a song" button in section header
 
 **Par défaut** : `vrai`
 
-### Media Drag Handle {#media-drag-handle}
+### Poignée de glissement des médias {#media-drag-handle}
 
-#### Show Drag Handle {#show-media-drag-handle}
+#### Afficher la poignée de glissement {#show-media-drag-handle}
 
 <!-- **Setting**: `showMediaDragHandle` -->
 
-Show a small handle on each media item for dragging it to reorder. Media items can always be reordered by dragging anywhere on them; this only affects whether the handle icon itself is shown.
+Afficher une petite poignée sur chaque élément multimédia pour pouvoir le faire glisser et le réorganiser. Il est toujours possible de réorganiser les éléments multimédias en les faisant glisser en cliquant n'importe où sur ceux-ci ; cette option n'a pour seul effet que d'afficher ou de masquer l'icône de poignée.
 
 **Par défaut** : `vrai`
 
@@ -676,13 +676,13 @@ Show a small handle on each media item for dragging it to reorder. Media items c
 
 <!-- **Setting**: `enableMeetingQuickActions` -->
 
-Show a before-meeting panel and an after-meeting panel with useful controls (background music, recording) and a customizable checklist for each.
+Afficher un panneau d'avant-réunion et d'après-réunion comprenant des commandes utiles (musique de fond, enregistrement) ainsi qu'une liste de contrôle personnalisable pour chacun d'entre eux.
 
 **Par défaut** : `vrai`
 
-The checklist categories and tasks for both the before-meeting and after-meeting panels are managed from this same settings section: add, rename, reorder, or delete categories and tasks as needed for your congregation.
+Les catégories et les tâches des listes de contrôle, tant pour les rubriques d'avant-réunion que d'après-réunion, sont gérées à partir de cette même section de paramètres : vous pouvez ajouter, renommer, réorganiser ou supprimer des catégories et des tâches selon les besoins de votre assemblée.
 
-## Advanced {#advanced-settings}
+## Paramètres avancés {#advanced-settings}
 
 ### Transfert des paramètres du profil {#profile-settings-transfer}
 
