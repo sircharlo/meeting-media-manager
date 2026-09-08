@@ -44,6 +44,14 @@ export interface MediaPlayingState {
    * treating `currentPosition` as still accurate by the time they read it.
    */
   currentPositionUpdatedAt: number;
+  /**
+   * The playing item's total duration in seconds, as read from the media
+   * window's own decoded element (`loadedmetadata`) - 0 until reported.
+   * Lets consumers that never locally decode the file (e.g. the media
+   * preview's capture mode, which mirrors the media window's rendered
+   * output instead) still show accurate playback progress.
+   */
+  duration: number;
   pan: Partial<{ x: number; y: number }>;
   /**
    * Set to the current `playToken` once `currentPosition` (driven by the
@@ -616,6 +624,7 @@ export const useCurrentStateStore = defineStore('current-state', {
         action: '',
         currentPosition: 0,
         currentPositionUpdatedAt: 0,
+        duration: 0,
         pan: { x: 0, y: 0 },
         playbackConfirmedToken: 0,
         playbackRate: 1,

@@ -706,6 +706,10 @@ const { data: currentTimeData } = useBroadcastChannel<number, number>({
   name: 'current-time',
 });
 
+const { data: durationData } = useBroadcastChannel<number, number>({
+  name: 'media-duration',
+});
+
 const changeDelay = 600; // 600ms delay: "--animate-duration" = 300ms, "slow" = "--animate-duration" * 2
 let mediaSceneTimeout: NodeJS.Timeout | null = null;
 const seenErrors = new Set<string>();
@@ -2462,6 +2466,7 @@ const atRest: MediaPlayingState = {
   action: '',
   currentPosition: 0,
   currentPositionUpdatedAt: 0,
+  duration: 0,
   pan: {
     x: 0,
     y: 0,
@@ -3276,6 +3281,16 @@ watch(
         lastConfirmingPosition = newCurrentTime;
       }
     }
+  },
+);
+
+watch(
+  () => durationData.value,
+  (newDuration) => {
+    if (typeof newDuration !== 'number') return;
+    mediaPlaying.value.duration = Number.isFinite(newDuration)
+      ? newDuration
+      : 0;
   },
 );
 

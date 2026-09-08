@@ -29,30 +29,50 @@
         <q-tooltip :delay="1000">{{ t('close') }}</q-tooltip>
       </span>
       <div class="media-preview-surface">
-        <img
-          v-if="imagePreview && !imageLoadError"
-          alt=""
+        <!--
+          Capture mode mirrors literally whatever the media window is
+          showing, so it applies regardless of content type - takes priority
+          over the image/video split below, which only matters for the
+          canvas/video fallback modes (each of which does re-decode the
+          specific file, so they need to know what kind of file it is).
+        -->
+        <video
+          v-if="isCaptureMode"
+          ref="captureVideo"
+          autoplay
           class="media-preview-content"
+          :class="{ 'media-preview-content--source': showCanvasOverlay }"
+          disableRemotePlayback
           draggable="false"
-          :src="currentUrl"
-          :style="imageStyle"
+          muted
+          playsinline
           @dragstart.prevent.stop
-          @error="imageLoadError = true"
         />
-        <div
-          v-else-if="imagePreview && imageLoadError"
-          class="media-preview-content media-preview-broken column items-center justify-center"
-        >
-          <q-icon color="grey" name="mmm-image-broken" size="2em" />
-          <div class="text-caption q-mt-sm">
-            {{ t('unable-to-load-image') }}
-          </div>
-        </div>
         <template v-else>
+          <img
+            v-if="imagePreview && !imageLoadError"
+            alt=""
+            class="media-preview-content"
+            draggable="false"
+            :src="currentUrl"
+            :style="imageStyle"
+            @dragstart.prevent.stop
+            @error="imageLoadError = true"
+          />
+          <div
+            v-else-if="imagePreview && imageLoadError"
+            class="media-preview-content media-preview-broken column items-center justify-center"
+          >
+            <q-icon color="grey" name="mmm-image-broken" size="2em" />
+            <div class="text-caption q-mt-sm">
+              {{ t('unable-to-load-image') }}
+            </div>
+          </div>
           <video
+            v-else
             ref="previewVideo"
             class="media-preview-content"
-            :class="{ 'media-preview-content--source': isCanvasMode }"
+            :class="{ 'media-preview-content--source': showCanvasOverlay }"
             disableRemotePlayback
             draggable="false"
             muted
@@ -63,14 +83,21 @@
             @dragstart.prevent.stop
             @loadedmetadata="syncVideos()"
           />
-          <canvas
-            v-if="isCanvasMode"
-            ref="previewCanvas"
-            class="media-preview-content"
-            draggable="false"
-            @dragstart.prevent.stop
-          />
         </template>
+        <!--
+          Shared between capture and canvas modes - whichever source video is
+          currently active (captureVideo or previewVideo, see
+          activeVideoElement) feeds this same canvas. Kept as a single
+          sibling element outside both branches above so switching between
+          capture and canvas/video doesn't need its own remount logic.
+        -->
+        <canvas
+          v-if="showCanvasOverlay"
+          ref="previewCanvas"
+          class="media-preview-content"
+          draggable="false"
+          @dragstart.prevent.stop
+        />
         <div v-if="showProgress" class="media-preview-progress">
           <div class="media-preview-progress__rail">
             <div class="media-preview-progress__bar" :style="progressStyle" />
@@ -78,14 +105,14 @@
         </div>
       </div>
       <button
-        v-if="isDev && videoPreview && !modalOpen"
+        v-if="isDev && !modalOpen"
         class="media-preview-mode-toggle"
         type="button"
         @click.stop="toggleRenderMode"
         @dragstart.prevent.stop
         @pointerdown.stop
       >
-        {{ canvasRenderMode }}
+        {{ previewMode }}
       </button>
       <template v-if="!modalOpen">
         <span
@@ -111,11 +138,12 @@ import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { log } from 'src/shared/vanilla';
-import { isImage, isVideo } from 'src/utils/media';
+import { isImage, isVideo, stopMediaStreamTracks } from 'src/utils/media';
 import { useCurrentStateStore } from 'stores/current-state';
 import {
   computed,
   nextTick,
+  onMounted,
   onUnmounted,
   ref,
   useTemplateRef,
@@ -130,20 +158,54 @@ const modalOpen = ref(false);
 const previewButton = useTemplateRef<HTMLButtonElement>('previewButton');
 const previewVideo = useTemplateRef<HTMLVideoElement>('previewVideo');
 const previewCanvas = useTemplateRef<HTMLCanvasElement>('previewCanvas');
+const captureVideo = useTemplateRef<HTMLVideoElement>('captureVideo');
 const isDev = import.meta.env.DEV;
-// Canvas mode is the default for real users. Dev builds still
-// default to video and can flip the mode via the on-screen toggle (persisted
-// in localStorage) to keep comparing the two.
-const storedRenderMode =
+type PreviewMode = 'canvas' | 'capture' | 'video';
+const NEXT_PREVIEW_MODE: Record<PreviewMode, PreviewMode> = {
+  canvas: 'video',
+  capture: 'canvas',
+  video: 'capture',
+};
+const isValidPreviewMode = (value: null | string): value is PreviewMode =>
+  value === 'capture' || value === 'canvas' || value === 'video';
+
+// Capture mode mirrors the media window's actual composited output (via
+// Electron's getMediaSourceId + getUserMedia) instead of re-decoding the
+// same file a second time - since it mirrors whatever's on screen, it
+// applies to images as well as video (see the template). It's attempted
+// automatically in production builds, falling back to canvas (the default
+// fallback) then video (the cheaper second fallback) if it's unavailable -
+// those two fallbacks remain video-only (re-decoding the file, so they need
+// to know its type), same as before. Dev builds are manual-only (no
+// auto-attempt) so the on-screen toggle below can force-compare all three:
+// default to video like before, or whatever was last explicitly picked via
+// the toggle, persisted in localStorage.
+const storedPreviewMode =
   isDev && typeof localStorage !== 'undefined'
     ? localStorage.getItem('mediaPreviewRenderMode')
     : null;
-let initialRenderMode: 'canvas' | 'video' = 'canvas';
+let initialPreviewMode: PreviewMode = 'canvas';
 if (isDev) {
-  initialRenderMode = storedRenderMode === 'canvas' ? 'canvas' : 'video';
+  initialPreviewMode = isValidPreviewMode(storedPreviewMode)
+    ? storedPreviewMode
+    : 'video';
 }
-const canvasRenderMode = ref<'canvas' | 'video'>(initialRenderMode);
-const isCanvasMode = computed(() => canvasRenderMode.value === 'canvas');
+const previewMode = ref<PreviewMode>(initialPreviewMode);
+const isCaptureMode = computed(() => previewMode.value === 'capture');
+const isCanvasMode = computed(() => previewMode.value === 'canvas');
+// Capture mode draws through the canvas too (with the same high-quality
+// smoothing as canvas mode) rather than showing its raw <video> directly -
+// a live capture stream scaled way down by the compositor otherwise looks
+// noticeably more aliased than an explicit smoothed downscale. 'video' mode
+// stays the one truly raw, unsmoothed path - the cheapest possible fallback
+// for a machine where even the smoothing pass is too much.
+const showCanvasOverlay = computed(
+  () =>
+    (isCaptureMode.value && !captureCanvasDisabled.value) || isCanvasMode.value,
+);
+const activeVideoElement = computed(() =>
+  isCaptureMode.value ? captureVideo.value : previewVideo.value,
+);
 const collapsedBottom = ref<number | undefined>();
 const collapsedRight = ref<number | undefined>();
 const collapsedWidth = ref<number | undefined>();
@@ -218,17 +280,180 @@ const reportPreviewError = (error: unknown, name: string) => {
   });
 };
 
+let activeCaptureStream: MediaStream | undefined;
+let captureAttempted = false;
+let captureUnavailable = false;
+
+const stopCaptureStream = () => {
+  stopMediaStreamTracks(activeCaptureStream);
+  activeCaptureStream = undefined;
+  if (captureVideo.value) captureVideo.value.srcObject = null;
+};
+
+// Electron's window-capture constraint form predates the standard
+// MediaStreamConstraints shape (no mandatory/chromeMediaSource* in DOM lib
+// types) - this is the exact shape Electron's own docs use for
+// getUserMedia({chromeMediaSource: 'tab', ...}). chromeMediaSource must be
+// 'tab' specifically here, not 'window'/'desktop' - per
+// WebContents.getMediaSourceId's own docs, the id it returns is only valid
+// with a 'tab' source and only for 10 seconds, so it must be redeemed
+// immediately (never cached/reused across attempts).
+const acquireCaptureStream = async (): Promise<boolean> => {
+  try {
+    const sourceId =
+      await globalThis.electronApi.getMediaWindowCaptureSourceId();
+    if (!sourceId) return false;
+
+    const stream = await navigator.mediaDevices.getUserMedia({
+      // No audio - the preview is muted regardless (matches the canvas/video
+      // fallback modes), and requesting it would just be one more thing
+      // that can fail/need permission for no benefit.
+      audio: false,
+      video: {
+        mandatory: {
+          chromeMediaSource: 'tab',
+          chromeMediaSourceId: sourceId,
+        },
+      },
+    } as unknown as MediaStreamConstraints);
+
+    stopCaptureStream();
+    activeCaptureStream = stream;
+    if (captureVideo.value) captureVideo.value.srcObject = stream;
+    // Give smoothing a fresh chance on every newly-acquired stream, rather
+    // than carrying a disable decision forward from a previous stream/mode.
+    captureCanvasDisabled.value = false;
+    recentSlowCaptureDraws.value = [];
+
+    const track = stream.getVideoTracks()[0];
+    if (track) {
+      // Fires if the media window is destroyed and recreated (e.g. macOS
+      // "all windows closed, then reactivated") - not a permission problem,
+      // so retry rather than permanently falling back.
+      track.onended = () => {
+        log(
+          'Media window capture stream ended, retrying',
+          'mediaPreview',
+          'warn',
+        );
+        stopCaptureStream();
+        if (previewMode.value === 'capture' && !isDev) {
+          previewMode.value = 'canvas';
+        }
+        captureAttempted = false;
+        if (!isDev) maybeAttemptCapture();
+      };
+    }
+
+    return true;
+  } catch (error) {
+    log(
+      'Media window capture unavailable, falling back',
+      'mediaPreview',
+      'warn',
+    );
+    errorCatcher(error, {
+      contexts: { fn: { name: 'MediaPreview.acquireCaptureStream' } },
+    });
+    return false;
+  }
+};
+
+// Automatic (production-only) capture attempt. Runs once per session unless
+// the capture stream later ends and needs retrying (see acquireCaptureStream's
+// track.onended above) - once obtained, the same stream mirrors whatever the
+// media window shows next, so there's no need to re-attempt per media item.
+const maybeAttemptCapture = () => {
+  if (
+    isDev ||
+    captureAttempted ||
+    captureUnavailable ||
+    !previewEnabled.value
+  ) {
+    return;
+  }
+  captureAttempted = true;
+  void acquireCaptureStream().then((ok) => {
+    if (ok) {
+      previewMode.value = 'capture';
+    } else {
+      captureUnavailable = true;
+    }
+  });
+};
+
 const toggleRenderMode = () => {
-  canvasRenderMode.value = isCanvasMode.value ? 'video' : 'canvas';
-  localStorage?.setItem('mediaPreviewRenderMode', canvasRenderMode.value);
+  const nextMode = NEXT_PREVIEW_MODE[previewMode.value];
+  previewMode.value = nextMode;
+  localStorage?.setItem('mediaPreviewRenderMode', nextMode);
+
+  if (nextMode === 'capture') {
+    // Dev-only manual path bypasses the automatic-attempt gating entirely -
+    // best-effort; a failure just leaves the capture <video> element black,
+    // which is itself useful signal while comparing modes locally.
+    void acquireCaptureStream();
+  } else {
+    stopCaptureStream();
+  }
 };
 
 let videoFrameCallbackHandle: number | undefined;
 let animationFrameHandle: number | undefined;
 let canvasResizeObserver: ResizeObserver | undefined;
+// The element a scheduled frame loop is actually bound to - tracked
+// separately from activeVideoElement (which can change reactively the
+// instant previewMode changes) so cancelFrameLoop always cancels against the
+// element that actually registered the callback, not whichever element mode
+// switching has made "current" by the time cleanup runs.
+let frameLoopSourceElement: HTMLVideoElement | undefined;
+
+// Capture mode's canvas-smoothing safety net. Canvas mode's own drift-based
+// downgrade (disablePreviewForPerformance below) doesn't apply here - there's
+// no seek/sync concept for a live mirror - so this measures the actual
+// drawImage() cost directly instead. Only disables the smoothing pass, not
+// capture mode itself: capture without smoothing is still strictly cheaper
+// than falling back to canvas/video (both of which re-decode the file), so
+// there's never a reason to abandon capture over this specifically.
+const CAPTURE_DRAW_BUDGET_MS = 8;
+const CAPTURE_SLOW_DRAWS_BEFORE_DISABLE = 5;
+const CAPTURE_SLOW_DRAW_WINDOW_SECONDS = 10;
+const recentSlowCaptureDraws = ref<number[]>([]);
+const captureCanvasDisabled = ref(false);
+
+const registerSlowCaptureDraw = () => {
+  const now = Date.now();
+  const windowStart = now - CAPTURE_SLOW_DRAW_WINDOW_SECONDS * 1000;
+  recentSlowCaptureDraws.value = [
+    ...recentSlowCaptureDraws.value.filter(
+      (timestamp) => timestamp > windowStart,
+    ),
+    now,
+  ];
+
+  if (
+    recentSlowCaptureDraws.value.length >= CAPTURE_SLOW_DRAWS_BEFORE_DISABLE
+  ) {
+    captureCanvasDisabled.value = true;
+    recentSlowCaptureDraws.value = [];
+
+    log(
+      `Disabling capture-mode canvas smoothing after ${CAPTURE_SLOW_DRAWS_BEFORE_DISABLE} slow draws within ${CAPTURE_SLOW_DRAW_WINDOW_SECONDS}s`,
+      'mediaPreview',
+      'warn',
+    );
+    errorCatcher(
+      new Error(
+        'Capture-mode canvas smoothing disabled after repeated slow draws',
+      ),
+      {
+        contexts: { fn: { name: 'MediaPreview.registerSlowCaptureDraw' } },
+      },
+    );
+  }
+};
 
 const cancelFrameLoop = () => {
-  const element = previewVideo.value;
+  const element = frameLoopSourceElement;
   if (
     videoFrameCallbackHandle !== undefined &&
     element &&
@@ -237,6 +462,7 @@ const cancelFrameLoop = () => {
     element.cancelVideoFrameCallback(videoFrameCallbackHandle);
   }
   videoFrameCallbackHandle = undefined;
+  frameLoopSourceElement = undefined;
 
   if (animationFrameHandle !== undefined) {
     cancelAnimationFrame(animationFrameHandle);
@@ -263,7 +489,7 @@ const resizeCanvasToDisplaySize = () => {
 };
 
 const drawCurrentFrame = () => {
-  const element = previewVideo.value;
+  const element = frameLoopSourceElement ?? activeVideoElement.value;
   const canvas = previewCanvas.value;
   if (!element || !canvas || !element.videoWidth || !element.videoHeight) {
     return;
@@ -276,13 +502,23 @@ const drawCurrentFrame = () => {
 
   context.imageSmoothingEnabled = true;
   context.imageSmoothingQuality = 'high';
-  context.drawImage(element, 0, 0, canvas.width, canvas.height);
+
+  if (isCaptureMode.value) {
+    const drawStart = performance.now();
+    context.drawImage(element, 0, 0, canvas.width, canvas.height);
+    if (performance.now() - drawStart > CAPTURE_DRAW_BUDGET_MS) {
+      registerSlowCaptureDraw();
+    }
+  } else {
+    context.drawImage(element, 0, 0, canvas.width, canvas.height);
+  }
 };
 
 const scheduleFrameLoop = () => {
-  const element = previewVideo.value;
-  if (!isCanvasMode.value || !element) return;
+  const element = activeVideoElement.value;
+  if (!showCanvasOverlay.value || !element) return;
 
+  frameLoopSourceElement = element;
   if ('requestVideoFrameCallback' in element) {
     videoFrameCallbackHandle = element.requestVideoFrameCallback(() => {
       drawCurrentFrame();
@@ -299,6 +535,7 @@ const scheduleFrameLoop = () => {
 onUnmounted(() => {
   cancelFrameLoop();
   canvasResizeObserver?.disconnect();
+  stopCaptureStream();
 });
 
 // mediaPlaying.currentPosition is only as fresh as the last throttled
@@ -379,7 +616,7 @@ const recentDriftCorrections = ref<number[]>([]);
 // on. Only disable it entirely if drift keeps piling up even in video
 // mode.
 const fallBackPreviewToVideoMode = () => {
-  canvasRenderMode.value = 'video';
+  previewMode.value = 'video';
 
   log(
     `Falling back to video-element preview after ${recentDriftCorrections.value.length} drift corrections within ${DRIFT_CORRECTION_WINDOW_SECONDS}s`,
@@ -466,6 +703,8 @@ const registerDriftCorrection = () => {
 
 const syncVideos = async () => {
   try {
+    if (isCaptureMode.value) return;
+
     await nextTick();
 
     const element = previewVideo.value;
@@ -923,9 +1162,15 @@ const imageStyle = computed(() => {
   };
 });
 
+// mediaPlaying.duration comes from the media window's own decoded element
+// (broadcast over 'media-duration'), not a locally-decoded element - unlike
+// currentPosition's local previewVideo/previewCanvas machinery, capture mode
+// has no local decode to read a duration from (and a live capture stream's
+// own .duration isn't the file's actual length), so this is the one value
+// every preview mode needs the same external source for.
 const progressStyle = computed(() => {
   const currentPosition = mediaPlaying.value.currentPosition || 0;
-  const duration = previewVideo.value?.duration;
+  const duration = mediaPlaying.value.duration || 0;
   const progress = duration ? Math.min(currentPosition / duration, 1) : 0;
 
   return {
@@ -979,13 +1224,18 @@ watch(currentUrl, () => {
 });
 
 watch(
-  () => [isCanvasMode.value, previewVideo.value, previewCanvas.value] as const,
-  ([canvasMode, element, canvas]) => {
+  () =>
+    [
+      showCanvasOverlay.value,
+      activeVideoElement.value,
+      previewCanvas.value,
+    ] as const,
+  ([overlayActive, element, canvas]) => {
     cancelFrameLoop();
     canvasResizeObserver?.disconnect();
     canvasResizeObserver = undefined;
 
-    if (canvasMode && element && canvas) {
+    if (overlayActive && element && canvas) {
       canvasResizeObserver = new ResizeObserver(() => drawCurrentFrame());
       canvasResizeObserver.observe(canvas);
       scheduleFrameLoop();
@@ -993,6 +1243,37 @@ watch(
   },
   { immediate: true },
 );
+
+// Re-attach the already-live capture stream whenever its <video> element
+// (re)mounts - it unmounts/remounts when previewMode leaves 'capture' and
+// comes back (e.g. the dev toggle cycling through canvas/video and back),
+// but the underlying MediaStream itself stays alive and doesn't need
+// re-acquiring.
+watch(captureVideo, (element) => {
+  if (element && activeCaptureStream) {
+    element.srcObject = activeCaptureStream;
+  }
+});
+
+// Production builds only - dev builds are manual-only via the on-screen
+// toggle (see toggleRenderMode/onMounted below).
+watch(
+  () => previewEnabled.value,
+  (enabled) => {
+    if (enabled) maybeAttemptCapture();
+  },
+  { immediate: true },
+);
+
+onMounted(() => {
+  // Covers a dev session that starts already opted into capture mode from a
+  // previous run's localStorage value - the automatic-attempt watch above
+  // deliberately skips dev entirely, so this is the only path that acquires
+  // the stream in that case.
+  if (isDev && previewMode.value === 'capture') {
+    void acquireCaptureStream();
+  }
+});
 </script>
 
 <style scoped>

@@ -452,6 +452,19 @@ handleIpcInvoke(
 );
 
 handleIpcInvoke('getAllScreens', async () => getAllScreens());
+
+// Media-preview capture mode: lets MediaPreview.vue mirror the media
+// window's actual composited pixels via getUserMedia({chromeMediaSource})
+// instead of re-decoding the same file a second time. Deliberately not
+// reusing window-website.ts's setDisplayMediaRequestHandler pattern - that's
+// registered once per session, and since all windows share the default
+// session, a second registration here would silently replace the existing
+// website-mirror handler and break OBS/Zoom screen-share.
+handleIpcInvoke('getMediaWindowCaptureSourceId', async (e) => {
+  const media = mediaWindowInfo.mediaWindow;
+  if (!media || media.isDestroyed()) return null;
+  return media.webContents.getMediaSourceId(e.sender);
+});
 handleIpcInvoke('closeSqliteConnection', async (_e, dbPath: string) =>
   closeConnection(dbPath),
 );

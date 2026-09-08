@@ -88,6 +88,7 @@ const electronApi: ElectronApi = {
   getLocales: () => invoke('getLocales'),
   getLocalPathFromFileObject: (fo) => getPathFromFileObject(fo),
   getLowDiskSpaceStatus: () => invoke('getLowDiskSpaceStatus'),
+  getMediaWindowCaptureSourceId: () => invoke('getMediaWindowCaptureSourceId'),
   getOsSupportWarning: () => invoke('getOsSupportWarning'),
   getScreenAccessStatus: () => invoke('getScreenAccessStatus'),
   getSharedDataPath: () => invoke('getSharedDataPath'),

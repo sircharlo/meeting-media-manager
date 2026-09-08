@@ -146,6 +146,28 @@ export const isJwPlaylist = (filepath: string) => {
 };
 
 /**
+ * Stops every track of a live camera/screen-capture MediaStream. Detaching
+ * an element's srcObject alone does NOT stop capture - the camera/screen
+ * keeps recording (OS privacy indicator stays lit) until each track is
+ * explicitly stopped.
+ */
+export const stopMediaStreamTracks = (
+  srcObject: MediaProvider | null | undefined,
+) => {
+  if (srcObject instanceof MediaStream) {
+    // getAudioTracks()/getVideoTracks() rather than the getTracks()
+    // combinator - functionally identical per spec (getTracks() is defined
+    // as exactly their union), but some MediaStream implementations (e.g.
+    // happy-dom, used in this project's component tests) only implement the
+    // two more specific accessors.
+    srcObject
+      .getAudioTracks()
+      .concat(srcObject.getVideoTracks())
+      .forEach((track) => track.stop());
+  }
+};
+
+/**
  * Checks if a media item is a song.
  * @param multimediaItem The multimedia item to check.
  * @returns False if the multimedia item is not a song, otherwise the track number.

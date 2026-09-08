@@ -226,6 +226,7 @@ export function useMediaSectionRepeat() {
       action: 'play',
       currentPosition: 0,
       currentPositionUpdatedAt: 0,
+      duration: 0,
       pan: {
         x: 0,
         y: 0,

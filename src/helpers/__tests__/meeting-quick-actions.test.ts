@@ -49,6 +49,7 @@ const createPlayingState = (
     action: 'play',
     currentPosition: 0,
     currentPositionUpdatedAt: Date.now(),
+    duration: 0,
     pan: {},
     playbackConfirmedToken: 1,
     playbackRate: 1,

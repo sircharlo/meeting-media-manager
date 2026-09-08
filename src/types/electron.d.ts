@@ -153,6 +153,13 @@ export interface ElectronApi {
   getLocales: () => Promise<string[]>;
   getLocalPathFromFileObject: (fileObject: File | string | undefined) => string;
   getLowDiskSpaceStatus: () => Promise<boolean>;
+  /**
+   * Returns a capture-source id (via webContents.getMediaSourceId) scoped to
+   * the calling renderer, for mirroring the media window's live composited
+   * output into a preview instead of re-decoding the same file a second
+   * time. Null if there's no media window (or it's been destroyed).
+   */
+  getMediaWindowCaptureSourceId: () => Promise<null | string>;
   getOsSupportWarning: () => Promise<null | OsSupportWarning>;
   getScreenAccessStatus: () => Promise<MediaAccessStatus>;
   getSharedDataPath: () => Promise<null | string>;
@@ -446,6 +453,7 @@ export type ElectronIpcInvokeKey =
   | 'getBetaUpdatesPath'
   | 'getLocales'
   | 'getLowDiskSpaceStatus'
+  | 'getMediaWindowCaptureSourceId'
   | 'getOsSupportWarning'
   | 'getScreenAccessStatus'
   | 'getSharedDataPath'

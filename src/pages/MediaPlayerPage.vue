@@ -191,7 +191,12 @@ import {
 } from 'src/helpers/fonts';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { log } from 'src/shared/vanilla';
-import { isAudio, isImage, isVideo } from 'src/utils/media';
+import {
+  isAudio,
+  isImage,
+  isVideo,
+  stopMediaStreamTracks,
+} from 'src/utils/media';
 import { useJwStore } from 'stores/jw';
 import {
   computed,
@@ -228,18 +233,6 @@ $q.iconMapFn = (iconName) => {
   return {
     cls: iconName,
   };
-};
-
-/**
- * Stops every track of a live camera/screen-capture MediaStream. Detaching
- * an element's srcObject alone does NOT stop capture - the camera/screen
- * keeps recording (OS privacy indicator stays lit) until each track is
- * explicitly stopped.
- */
-const stopMediaStreamTracks = (srcObject: MediaProvider | null | undefined) => {
-  if (srcObject instanceof MediaStream) {
-    srcObject.getTracks().forEach((track) => track.stop());
-  }
 };
 
 // UX-11 (full-audit-2026-09-05.md): clearing an element's src as part of
@@ -404,6 +397,10 @@ const { data: slideshowAudioUrl } = useBroadcastChannel<string, string>({
 
 const { post: postCurrentTime } = useBroadcastChannel<number, number>({
   name: 'current-time',
+});
+
+const { post: postDuration } = useBroadcastChannel<number, number>({
+  name: 'media-duration',
 });
 
 const { data: mediaAction } = useBroadcastChannel<string, string>({
@@ -832,6 +829,13 @@ const playMedia = () => {
     if (!currentMediaElement.value) {
       return;
     }
+
+    // playMedia() runs on @loadedmetadata, so duration is already known here.
+    // Guard against Infinity/NaN (e.g. a live/streaming source, or a file
+    // that fails to report a real duration) - consumers (the media preview's
+    // progress bar) treat 0 as "unknown" already.
+    const { duration } = currentMediaElement.value;
+    postDuration(Number.isFinite(duration) ? duration : 0);
 
     let lastUpdate = 0;
     const updateInterval = fadeOutDurationInMilliseconds;

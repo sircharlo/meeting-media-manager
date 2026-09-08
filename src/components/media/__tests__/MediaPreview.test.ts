@@ -1,4 +1,4 @@
-import { mount, type VueWrapper } from '@vue/test-utils';
+import { flushPromises, mount, type VueWrapper } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { defaultSettings } from 'src/constants/settings';
@@ -14,6 +14,7 @@ installPinia();
 
 const CONG_ID = '00000000-0000-4000-8000-000000000001';
 const VIDEO_URL = 'file:///tmp/preview-test.mp4';
+const IMAGE_URL = 'file:///tmp/preview-test.jpg';
 
 const seedStores = () => {
   const currentState = useCurrentStateStore();
@@ -30,6 +31,7 @@ const seedStores = () => {
     action: 'play',
     currentPosition: 100,
     currentPositionUpdatedAt: 0,
+    duration: 400,
     pan: {},
     playbackConfirmedToken: 1,
     playbackRate: 1,
@@ -198,5 +200,185 @@ describe('MediaPreview drift handling', () => {
     }
 
     expect(currentState.currentSettings?.enableMediaPreview).toBe(false);
+  });
+});
+
+// The dev/test build always runs with import.meta.env.DEV === true, where
+// capture mode is manual-only (via the on-screen toggle) - the production
+// auto-attempt/auto-fallback-to-canvas path (maybeAttemptCapture) is gated
+// behind !isDev and isn't reachable from this harness. These tests cover the
+// underlying capture-acquisition mechanics (acquireCaptureStream) through
+// that manual toggle, which is the same code the automatic path calls.
+describe('MediaPreview capture mode (dev toggle)', () => {
+  // happy-dom's HTMLMediaElement.srcObject setter throws unless the value is
+  // a real `instanceof MediaStream` - a plain fake object won't do. Canvas
+  // captureStream() is happy-dom's own public way to obtain a genuine
+  // MediaStream with a real MediaStreamTrack (whose constructor is otherwise
+  // gated behind an unexported "illegal constructor" symbol).
+  const createCaptureStream = () =>
+    document.createElement('canvas').captureStream();
+
+  const mockCaptureSuccess = () => {
+    const stream = createCaptureStream();
+    vi.spyOn(
+      globalThis.electronApi,
+      'getMediaWindowCaptureSourceId',
+    ).mockResolvedValue('media-window-source-1');
+    const getUserMedia = vi.fn().mockResolvedValue(stream);
+    Object.defineProperty(navigator, 'mediaDevices', {
+      configurable: true,
+      value: { getUserMedia },
+    });
+    return { getUserMedia, stream };
+  };
+
+  beforeEach(() => {
+    localStorage.removeItem('mediaPreviewRenderMode');
+    vi.restoreAllMocks();
+  });
+
+  afterEach(() => {
+    Reflect.deleteProperty(navigator, 'mediaDevices');
+  });
+
+  it('cycles the toggle through video, capture, canvas, and back to video', async () => {
+    localStorage.setItem('mediaPreviewRenderMode', 'video');
+    mockCaptureSuccess();
+    seedStores();
+
+    const wrapper = mount(MediaPreview);
+    await nextTick();
+    const toggle = wrapper.get('.media-preview-mode-toggle');
+    expect(toggle.text()).toBe('video');
+
+    await toggle.trigger('click');
+    await flushPromises();
+    expect(wrapper.get('.media-preview-mode-toggle').text()).toBe('capture');
+
+    await wrapper.get('.media-preview-mode-toggle').trigger('click');
+    await flushPromises();
+    expect(wrapper.get('.media-preview-mode-toggle').text()).toBe('canvas');
+
+    await wrapper.get('.media-preview-mode-toggle').trigger('click');
+    await flushPromises();
+    expect(wrapper.get('.media-preview-mode-toggle').text()).toBe('video');
+  });
+
+  it('attaches the captured stream to the hidden source video and draws it through the smoothed canvas', async () => {
+    localStorage.setItem('mediaPreviewRenderMode', 'video');
+    const { getUserMedia, stream } = mockCaptureSuccess();
+    seedStores();
+
+    const wrapper = mount(MediaPreview);
+    await nextTick();
+    await wrapper.get('.media-preview-mode-toggle').trigger('click');
+    await flushPromises();
+
+    expect(getUserMedia).toHaveBeenCalledWith(
+      expect.objectContaining({
+        video: expect.objectContaining({
+          mandatory: expect.objectContaining({
+            chromeMediaSource: 'tab',
+            chromeMediaSourceId: 'media-window-source-1',
+          }),
+        }),
+      }),
+    );
+    const captureVideo = wrapper.get('video').element as HTMLVideoElement;
+    expect(captureVideo.srcObject).toBe(stream);
+    // The raw capture <video> is the hidden frame source; the canvas is what's
+    // actually shown, matching canvas mode's existing antialiasing.
+    expect(
+      captureVideo.classList.contains('media-preview-content--source'),
+    ).toBe(true);
+    expect(wrapper.find('canvas').exists()).toBe(true);
+  });
+
+  it('shows progress in capture mode from mediaPlaying.duration, not a local video element', async () => {
+    localStorage.setItem('mediaPreviewRenderMode', 'video');
+    mockCaptureSuccess();
+    seedStores();
+
+    const wrapper = mount(MediaPreview);
+    await nextTick();
+    await wrapper.get('.media-preview-mode-toggle').trigger('click');
+    await flushPromises();
+    // Progress only renders in the fullscreen modal view.
+    await wrapper.get('.media-preview').trigger('click');
+    await nextTick();
+
+    // seedStores() sets currentPosition: 100, duration: 400 -> 25%.
+    const bar = wrapper.get('.media-preview-progress__bar')
+      .element as HTMLElement;
+    expect(bar.style.transform).toBe('scaleX(0.25)');
+  });
+
+  it('mirrors an image item in capture mode too, instead of the plain <img> fallback', async () => {
+    localStorage.setItem('mediaPreviewRenderMode', 'video');
+    const { stream } = mockCaptureSuccess();
+    const currentState = seedStores();
+    currentState.mediaPlaying = {
+      ...currentState.mediaPlaying,
+      url: IMAGE_URL,
+    };
+
+    const wrapper = mount(MediaPreview);
+    await nextTick();
+    await wrapper.get('.media-preview-mode-toggle').trigger('click');
+    await flushPromises();
+
+    expect(wrapper.find('img').exists()).toBe(false);
+    const captureVideo = wrapper.get('video').element as HTMLVideoElement;
+    expect(captureVideo.srcObject).toBe(stream);
+  });
+
+  it('handles a failed capture acquisition without crashing, leaving no stream attached', async () => {
+    localStorage.setItem('mediaPreviewRenderMode', 'video');
+    vi.spyOn(
+      globalThis.electronApi,
+      'getMediaWindowCaptureSourceId',
+    ).mockResolvedValue(null);
+    const getUserMedia = vi.fn();
+    Object.defineProperty(navigator, 'mediaDevices', {
+      configurable: true,
+      value: { getUserMedia },
+    });
+    seedStores();
+
+    const wrapper = mount(MediaPreview);
+    await nextTick();
+    await wrapper.get('.media-preview-mode-toggle').trigger('click');
+    await flushPromises();
+
+    // Dev's manual toggle sets the mode unconditionally (best-effort) -
+    // unlike the production auto-attempt path, it doesn't fall back to
+    // canvas on failure, since the developer explicitly asked for this mode.
+    expect(wrapper.get('.media-preview-mode-toggle').text()).toBe('capture');
+    expect(getUserMedia).not.toHaveBeenCalled();
+    const captureVideo = wrapper.get('video').element as HTMLVideoElement;
+    expect(captureVideo.srcObject).toBeNull();
+  });
+
+  it('tears down the stream when its track ends, without auto-switching modes in dev', async () => {
+    localStorage.setItem('mediaPreviewRenderMode', 'video');
+    const { stream } = mockCaptureSuccess();
+    seedStores();
+
+    const wrapper = mount(MediaPreview);
+    await nextTick();
+    await wrapper.get('.media-preview-mode-toggle').trigger('click');
+    await flushPromises();
+
+    const captureVideo = wrapper.get('video').element as HTMLVideoElement;
+    expect(captureVideo.srcObject).toBe(stream);
+
+    stream.getVideoTracks()[0]?.onended?.(new Event('ended'));
+    await nextTick();
+
+    expect(captureVideo.srcObject).toBeNull();
+    // Dev is manual-only - the mode label stays on 'capture' rather than
+    // silently reverting, so the developer sees the black frame and knows
+    // to re-toggle rather than being auto-switched without any signal.
+    expect(wrapper.get('.media-preview-mode-toggle').text()).toBe('capture');
   });
 });

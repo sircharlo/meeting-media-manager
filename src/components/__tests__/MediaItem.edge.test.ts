@@ -230,6 +230,7 @@ describe('MediaItem playback resilience while offline', () => {
       action: '',
       currentPosition: 0,
       currentPositionUpdatedAt: 0,
+      duration: 0,
       pan: { x: 0, y: 0 },
       playbackConfirmedToken: 0,
       playbackRate: 1,
