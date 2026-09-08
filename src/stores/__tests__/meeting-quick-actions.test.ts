@@ -52,6 +52,30 @@ describe('meeting quick-actions store', () => {
     expect(quickActions.lastSongEndedAt).toBeNull();
   });
 
+  it('can undismiss a panel, scoped to the current congregation/date only', () => {
+    const currentState = useCurrentStateStore();
+    const quickActions = useMeetingQuickActionsStore();
+    currentState.currentCongregation = 'congregation-a';
+    currentState.selectedDate = '2026/08/21';
+
+    quickActions.dismissBefore();
+    quickActions.dismissAfter();
+    expect(quickActions.dismissedBeforePanel).toBe(true);
+    expect(quickActions.dismissedAfterPanel).toBe(true);
+
+    quickActions.undismissBefore();
+    expect(quickActions.dismissedBeforePanel).toBe(false);
+    expect(quickActions.dismissedAfterPanel).toBe(true);
+
+    quickActions.undismissAfter();
+    expect(quickActions.dismissedAfterPanel).toBe(false);
+
+    currentState.selectedDate = '2026/08/22';
+    quickActions.dismissBefore();
+    currentState.selectedDate = '2026/08/21';
+    expect(quickActions.dismissedBeforePanel).toBe(false);
+  });
+
   it('can reset the current demo scope without affecting another scope', () => {
     const currentState = useCurrentStateStore();
     const quickActions = useMeetingQuickActionsStore();

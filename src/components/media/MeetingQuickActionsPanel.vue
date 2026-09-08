@@ -41,11 +41,55 @@
         <MeetingQuickActionsBeforePanel :now="now" />
       </div>
     </q-slide-transition>
+    <q-banner
+      v-if="
+        location === 'before' && beforePanelWindowActive && dismissedBeforePanel
+      "
+      class="meeting-quick-actions__dismissed-banner"
+      dense
+      rounded
+    >
+      <template #avatar>
+        <q-icon color="primary" name="mmm-timer" />
+      </template>
+      {{ t('quick-actions-before-dismissed') }}
+      <template #action>
+        <q-btn
+          color="primary"
+          dense
+          flat
+          :label="t('quick-actions-show-panel')"
+          @click="undismissBefore"
+        />
+      </template>
+    </q-banner>
     <q-slide-transition>
       <div v-if="location === 'after' && showAfter" ref="afterPanel">
         <MeetingQuickActionsAfterPanel :now="now" />
       </div>
     </q-slide-transition>
+    <q-banner
+      v-if="
+        location === 'after' && afterPanelWindowActive && dismissedAfterPanel
+      "
+      class="meeting-quick-actions__dismissed-banner"
+      dense
+      rounded
+    >
+      <template #avatar>
+        <q-icon color="positive" name="mmm-check" />
+      </template>
+      {{ t('quick-actions-after-dismissed') }}
+      <template #action>
+        <q-btn
+          color="positive"
+          dense
+          flat
+          :label="t('quick-actions-show-panel')"
+          @click="undismissAfter"
+        />
+      </template>
+    </q-banner>
   </div>
 </template>
 
@@ -102,7 +146,7 @@ const {
   dismissedBeforePanel,
   lastSongEndedAt,
 } = storeToRefs(quickActions);
-const { dismissBefore } = quickActions;
+const { dismissBefore, undismissAfter, undismissBefore } = quickActions;
 
 const now = ref(Date.now());
 const updateNow = () => {
@@ -152,21 +196,26 @@ const afterTrigger = computed(() => {
 const lastSongScrollThreshold = computed(() =>
   predictedEnd.value ? predictedEnd.value.getTime() - 30 * 1000 : null,
 );
-const showAfter = computed(
+// UX-15 follow-up: split out from showAfter/showBefore so the "dismissed"
+// banner can tell "this panel's time window is active, but it was
+// dismissed" apart from "this panel's window isn't relevant right now" -
+// only the former should offer a Show button.
+const afterPanelWindowActive = computed(
   () =>
     isMeetingToday.value &&
-    !dismissedAfterPanel.value &&
     (lastSongEndedAt.value !== null ||
       (afterTrigger.value !== null && now.value >= afterTrigger.value)),
 );
-const showBefore = computed(() => {
+const showAfter = computed(
+  () => afterPanelWindowActive.value && !dismissedAfterPanel.value,
+);
+const beforePanelWindowActive = computed(() => {
   const start = meetingStart.value;
-  if (
-    !isMeetingToday.value ||
-    !start ||
-    showAfter.value ||
-    dismissedBeforePanel.value
-  ) {
+  // Deliberately checked against showAfter (not afterPanelWindowActive) -
+  // preserves the original behavior where a dismissed after-panel doesn't
+  // suppress the before-panel from reappearing, even though the after
+  // panel's own window is technically active.
+  if (!isMeetingToday.value || !start || showAfter.value) {
     return false;
   }
   const startTime = start.getTime();
@@ -183,6 +232,9 @@ const showBefore = computed(() => {
     now.value < startTime + BEFORE_PANEL_GRACE_MS
   );
 });
+const showBefore = computed(
+  () => beforePanelWindowActive.value && !dismissedBeforePanel.value,
+);
 const allBeforeChecklistItemsChecked = computed(() => {
   const settings = currentSettings.value;
   if (!settings) return false;
@@ -294,5 +346,9 @@ watch(
 .meeting-quick-actions {
   margin: 0 auto 1rem;
   max-width: 900px;
+}
+
+.meeting-quick-actions__dismissed-banner {
+  background: color-mix(in srgb, currentColor 6%, transparent);
 }
 </style>

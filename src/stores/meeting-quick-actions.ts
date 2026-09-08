@@ -90,6 +90,23 @@ export const useMeetingQuickActionsStore = defineStore(
       if (scope) Object.assign(scope, createScopeState());
     };
 
+    // UX-15 (full-audit-2026-09-05.md follow-up): dismissing used to have no
+    // production way back short of restarting M³. These give the "dismissed
+    // panel" banner's Show button somewhere to call - MeetingQuickActionsPanel.vue
+    // re-checks its own visibility window afterwards, so restoring a panel
+    // whose window has already closed (e.g. the before-panel's checklist all
+    // checked, or its grace period elapsed) can still auto-dismiss again
+    // shortly after.
+    const undismissAfter = () => {
+      const scope = currentScope.value;
+      if (scope) scope.dismissedAfterPanel = false;
+    };
+
+    const undismissBefore = () => {
+      const scope = currentScope.value;
+      if (scope) scope.dismissedBeforePanel = false;
+    };
+
     // FE-18 (full-audit-2026-09-05.md): the real (non-demo-button) call site
     // in MediaCalendarPage.vue calls this with no argument, so it used to
     // fall back to the real wall clock even while an automated demo session
@@ -119,6 +136,8 @@ export const useMeetingQuickActionsStore = defineStore(
       resetCurrentScope,
       setItemChecked,
       toggleItemChecked,
+      undismissAfter,
+      undismissBefore,
     };
   },
 );
