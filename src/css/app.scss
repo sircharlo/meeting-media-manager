@@ -801,7 +801,17 @@ a {
 // "..." button) - instead of that overlay faking a background to hide a hard
 // clip edge. Apply to whatever text sits underneath the overlay (a
 // `position: relative` ancestor shared with it, sized to overlap).
+// Only fades while the row's hover actions are actually visible, so the text
+// reads at full opacity at rest and only softens underneath the "..." cluster
+// on hover/focus (previous version faded permanently, looking like a shadow
+// across the whole row).
 .fades-under-hover-actions {
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.hover-reveal-group:hover .fades-under-hover-actions,
+.hover-reveal-group:focus-within .fades-under-hover-actions {
   -webkit-mask-image: linear-gradient(
     to left,
     #000 calc(100% - 56px),
