@@ -750,13 +750,11 @@ a {
 // time.
 .hover-reveal {
   opacity: 0;
-  transition: opacity 0.15s ease;
 }
 
 .hover-reveal-group:hover .hover-reveal,
 .hover-reveal-group:focus-within .hover-reveal {
   opacity: 1;
-  transition-delay: 400ms;
 }
 
 // Cursor affordance for anything using @formkit/drag-and-drop's dragHandle
@@ -800,24 +798,37 @@ a {
 // wide enough to clear .hover-actions-overlay's icon cluster (drag handle +
 // "..." button) - instead of that overlay faking a background to hide a hard
 // clip edge. Apply to whatever text sits underneath the overlay (a
-// `position: relative` ancestor shared with it, sized to overlap).
-// Only fades while the row's hover actions are actually visible, so the text
-// reads at full opacity at rest and only softens underneath the "..." cluster
-// on hover/focus (previous version faded permanently, looking like a shadow
-// across the whole row).
+// `position: relative` ancestor shared with it, sized to overlap). Covers
+// the element's *full* height deliberately (not just the icon cluster's own
+// line) - .hover-actions-overlay is `.absolute-right` (top/right/bottom: 0),
+// stretching its hit area the full height of that shared ancestor, so a
+// wrapped multi-line title can bring any of its lines under the cluster and
+// all of them need to be safe to overlap.
+//
+// `to right` is deliberate, not `to left`: a linear-gradient's percentage
+// stops run from the *start* side (opposite the `to` keyword) to the `to`
+// side, so `to left` would put the `calc(100% - 56px)` stop 56px from the
+// *left* edge and fade that side instead - confirmed against a
+// user-reported screenshot showing the fade on the wrong (left) side of the
+// title, nowhere near the "..." cluster on the right.
+//
+// Both states share one gradient shape (`to right`, opaque then transparent)
+// and only differ in the opaque stop's position, so `mask-image` itself can
+// transition smoothly between them - snapping straight from "no mask" to
+// "masked" wouldn't. The transition-delay is only set on the hover/focus
+// rule (mirroring .hover-reveal below) so leaving reverts instantly on the
+// base rule's un-delayed transition, but entering waits the same 400ms as
+// the icon cluster's own fade-in before softening the text, so the two
+// appear in sync instead of the text dimming before the icons are visible.
 .fades-under-hover-actions {
-  -webkit-mask-image: none;
-  mask-image: none;
+  mask-image: linear-gradient(to right, #000 100%, transparent);
 }
 
 .hover-reveal-group:hover .fades-under-hover-actions,
 .hover-reveal-group:focus-within .fades-under-hover-actions {
-  -webkit-mask-image: linear-gradient(
-    to left,
-    #000 calc(100% - 56px),
-    transparent
-  );
-  mask-image: linear-gradient(to left, #000 calc(100% - 56px), transparent);
+  // Electron-only (browserslist: "Electron >= 37") - no -webkit- prefix
+  // needed for mask-image at that Chromium baseline.
+  mask-image: linear-gradient(to right, #000 calc(100% - 104px), transparent);
 }
 
 // A solid, opaque selection badge for grid/thumbnail multiselect UIs (photo-

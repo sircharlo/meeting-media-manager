@@ -73,7 +73,7 @@
             />
           </div>
           <div
-            class="icon-chip hover-reveal absolute-right text-accent-400 q-pa-md row items-center no-wrap"
+            class="hover-reveal absolute-right text-accent-400 q-pa-md row q-gutter-md items-center no-wrap"
           >
             <!--
               UX-6 (full-audit-2026-09-04.md): keyboard/screen-reader

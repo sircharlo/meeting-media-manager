@@ -512,7 +512,7 @@
               {{ t('media-item-missing-explain') }}
             </div>
             <div
-              class="hover-actions-overlay hover-reveal absolute-right row items-center no-wrap"
+              class="hover-actions-overlay hover-reveal absolute-right row items-center no-wrap q-mr-sm"
             >
               <q-icon
                 v-if="currentSettings?.showMediaDragHandle"
