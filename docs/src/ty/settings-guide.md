@@ -177,7 +177,7 @@ Te taati faahou ra i teie parau tuatï i nia i te imiraa amuiraa ia tia ia hoʻi
 
 A fa’aaura’a ma te rima i te tāpura taime nō te putuputura’a i teie taime e i te mau taime e tupu mai, ma te fa’a’ohipa i te mau ha’amāramaramara’a nō roto mai i te tahua iteneti mana.
 
-## Te mau mauhaa roro uira e te poro'i{#media-retrieval-and-playback}
+## Te mau mauhaa roro uira e te poro'i {#media-retrieval-and-playback}
 
 ### Tapura-’ohipa-raa {#metered-connection}
 
