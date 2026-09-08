@@ -940,43 +940,43 @@
           <template v-else>
             <q-item-label header>{{ displayMediaTitle }}</q-item-label>
             <!--
-              UX-6 (full-audit-2026-09-04.md): keyboard/screen-reader
-              equivalent to the pointer-only drag handle - placed here
-              (rather than as always-visible row buttons, unlike
+              UX-6 (full-audit-2026-09-04.md / full-audit backlog): keyboard/
+              screen-reader equivalent to the pointer-only drag handle -
+              placed here (rather than as always-visible row buttons, unlike
               MediaDivider.vue/MediaGroup.vue) since this menu is already a
               keyboard-focusable trigger and a media list can be dense
               enough that two more always-visible icons per row would add
-              real clutter. Only offered at the top level (not for a
-              group's own children, out of scope here - see the audit).
+              real clutter. Covers both top-level items and a group's own
+              children (MediaGroup.vue passes the same can-move-up/
+              can-move-down/@move contract for its children, reordering
+              only within the group - see moveChildItem there).
             -->
-            <template v-if="!child">
-              <q-item
-                v-close-popup
-                clickable
-                :disable="!canMoveUp"
-                @click="emit('move', -1)"
-              >
-                <q-item-section avatar>
-                  <q-icon name="mmm-up" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>{{ t('move-up') }}</q-item-label>
-                </q-item-section>
-              </q-item>
-              <q-item
-                v-close-popup
-                clickable
-                :disable="!canMoveDown"
-                @click="emit('move', 1)"
-              >
-                <q-item-section avatar>
-                  <q-icon name="mmm-down" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>{{ t('move-down') }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </template>
+            <q-item
+              v-close-popup
+              clickable
+              :disable="!canMoveUp"
+              @click="emit('move', -1)"
+            >
+              <q-item-section avatar>
+                <q-icon name="mmm-up" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('move-up') }}</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              v-close-popup
+              clickable
+              :disable="!canMoveDown"
+              @click="emit('move', 1)"
+            >
+              <q-item-section avatar>
+                <q-icon name="mmm-down" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('move-down') }}</q-item-label>
+              </q-item-section>
+            </q-item>
             <q-item
               v-close-popup
               clickable

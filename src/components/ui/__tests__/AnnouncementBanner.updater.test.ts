@@ -1,4 +1,5 @@
 import type * as NotificationsModule from 'src/helpers/notifications';
+import type { UpdateVersionInfo } from 'src/types/general';
 
 import { flushPromises, mount } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
@@ -45,6 +46,7 @@ describe('AnnouncementBanner - updater catch-up', () => {
     vi.spyOn(globalThis.electronApi, 'getUpdaterState').mockResolvedValue({
       phase: 'downloaded',
       progress: null,
+      versionInfo: { isDowngrade: false, version: '1.2.3' },
     });
     const dismiss = vi.fn();
     vi.mocked(createTemporaryNotification).mockReturnValue(dismiss);
@@ -70,6 +72,7 @@ describe('AnnouncementBanner - updater catch-up', () => {
         total: 100,
         transferred: 42,
       },
+      versionInfo: { isDowngrade: false, version: '1.2.3' },
     });
     const dismiss = vi.fn();
     vi.mocked(createTemporaryNotification).mockReturnValue(dismiss);
@@ -92,6 +95,7 @@ describe('AnnouncementBanner - updater catch-up', () => {
     vi.spyOn(globalThis.electronApi, 'getUpdaterState').mockResolvedValue({
       phase: null,
       progress: null,
+      versionInfo: null,
     });
     const dismiss = vi.fn();
     vi.mocked(createTemporaryNotification).mockReturnValue(dismiss);
@@ -99,10 +103,10 @@ describe('AnnouncementBanner - updater catch-up', () => {
     // Capture the callback registered by the banner so we can invoke it
     // directly, simulating electron-updater firing update-downloaded
     // without a preceding update-available.
-    let downloadedCallback: (() => void) | undefined;
+    let downloadedCallback: ((args: UpdateVersionInfo) => void) | undefined;
     vi.spyOn(globalThis.electronApi, 'onUpdateDownloaded').mockImplementation(
       (cb) => {
-        downloadedCallback = cb as () => void;
+        downloadedCallback = cb;
       },
     );
 
@@ -111,7 +115,7 @@ describe('AnnouncementBanner - updater catch-up', () => {
 
     // Invoke the callback the banner registered.
     expect(downloadedCallback).toBeDefined();
-    downloadedCallback?.();
+    downloadedCallback?.({ isDowngrade: false, version: '1.2.3' });
     await flushPromises();
 
     // Should have created a new notification (not tried to update a
@@ -127,6 +131,7 @@ describe('AnnouncementBanner - updater catch-up', () => {
     vi.spyOn(globalThis.electronApi, 'getUpdaterState').mockResolvedValue({
       phase: null,
       progress: null,
+      versionInfo: null,
     });
 
     await mountBanner();

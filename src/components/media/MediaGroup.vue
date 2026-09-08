@@ -124,12 +124,14 @@
 
       <div v-if="element.children" ref="childrenDragDropContainer">
         <div
-          v-for="childElement in sortableChildren"
+          v-for="(childElement, childIndex) in sortableChildren"
           :key="childElement.uniqueId"
         >
           <MediaItem
             :key="childElement.uniqueId"
             v-model:repeat="childElement.repeat"
+            :can-move-down="childIndex < sortableChildren.length - 1"
+            :can-move-up="childIndex > 0"
             child
             :is-dragging="isDragging || isChildDragging"
             :media="childElement"
@@ -144,6 +146,7 @@
                   sectionId: element.uniqueId,
                 })
             "
+            @move="(delta) => moveChildItem(childIndex, delta)"
             @update:custom-duration="
               emit('update:custom-duration', $event, childElement.uniqueId)
             "
@@ -268,6 +271,25 @@ useEventListener(globalThis, 'reset-sort-order', () => {
     return;
   sortableChildren.value = props.element.children;
 });
+
+// UX-6 follow-up (full-audit backlog): keyboard alternative to the
+// group-child drag handle, mirroring MediaList.vue's moveTopLevelItem -
+// reassigning sortableChildren (rather than mutating in place) is what the
+// watch above picks up to persist the new order, the same as a real drag
+// does. Scoped to within this group only, matching the drag zone above
+// (group: `group-children-${element.uniqueId}`) - never moves a child out.
+function moveChildItem(index: number, delta: number) {
+  if (!sortableChildren.value) return;
+
+  const targetIndex = index + delta;
+  if (targetIndex < 0 || targetIndex >= sortableChildren.value.length) return;
+
+  const children = [...sortableChildren.value];
+  const [moved] = children.splice(index, 1);
+  if (!moved) return;
+  children.splice(targetIndex, 0, moved);
+  sortableChildren.value = children;
+}
 </script>
 
 <style lang="scss" scoped>

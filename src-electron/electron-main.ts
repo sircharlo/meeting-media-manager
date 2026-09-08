@@ -6,6 +6,7 @@ import {
   Menu,
   type MenuItem,
   type MenuItemConstructorOptions,
+  powerMonitor,
   protocol,
   screen,
   shell,
@@ -25,7 +26,10 @@ import {
   recordStartupCrashCount,
 } from 'src-electron/main/crash-loop';
 import { createDevMenu } from 'src-electron/main/dev-menu';
-import { cancelAllDownloads } from 'src-electron/main/downloads';
+import {
+  cancelAllDownloads,
+  resumeAllDownloads,
+} from 'src-electron/main/downloads';
 import { cleanupFfmpegConversions } from 'src-electron/main/ffmpeg';
 import { cleanupHeicWorker } from 'src-electron/main/heic';
 import { cleanupImageSizeWorker } from 'src-electron/main/image-size';
@@ -466,6 +470,21 @@ if (gotTheLock) {
   initScreenListeners();
   createApplicationMenu();
   initSessionListeners();
+
+  // BE-19 (full-audit backlog): resume any downloads that were paused going
+  // into sleep - e.g. the existing auto-stalled-queue pause below, or the
+  // low-disk-space pause - so they don't just sit paused indefinitely after
+  // wake. Window repositioning is already covered without this: the screen
+  // module's own display-added/-removed/-metrics-changed events (wired in
+  // initScreenListeners) fire natively on wake whenever the OS-reported
+  // display config actually changed, so no separate handling is needed here.
+  // A download that was still ACTIVE (not yet paused) going into sleep and
+  // comes back with a dead socket isn't covered - that needs a "last
+  // progress" staleness signal this app doesn't track today, deliberately
+  // left as a separate, more speculative piece of work.
+  powerMonitor.on('resume', () => {
+    void resumeAllDownloads('power-resume');
+  });
 
   let videoCaptureCrashCount = 0;
   let gpuCrashCount = 0;

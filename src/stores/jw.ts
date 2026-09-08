@@ -14,7 +14,6 @@ import type {
   PublicationFiles,
   UrlVariables,
 } from 'src/types';
-import type { Songbook } from 'stores/current-state';
 
 import { defineStore } from 'pinia';
 import { MAX_SONGS } from 'src/constants/jw';
@@ -46,6 +45,7 @@ import {
 } from 'src/utils/date';
 import { createDebouncedStorage } from 'src/utils/debounced-storage';
 import { findBestResolution, isMediaLink } from 'src/utils/jw';
+import { type Songbook, useCurrentStateStore } from 'stores/current-state';
 import { isDemoModeActive } from 'stores/demo-mode';
 
 const oldDate = new Date(0);
@@ -178,11 +178,41 @@ export function replaceMissingMediaByPubMediaId(
   targetDay: DateInfo,
   newMediaItems: Record<string, MediaItem[]> | undefined,
 ): void {
+  // FE-2 follow-up (full-audit backlog): tracks, per actual target section
+  // (resolved via each item's own originalSection - not necessarily the
+  // outer sectionId key below), which pubMediaIds this fetch actually
+  // returned, so a removal pass afterwards can drop dynamic items that have
+  // fallen out of the upstream data entirely (previously: only ever added/
+  // updated, so a removed pubMediaId lingered on the schedule forever).
+  const seenPubMediaIdsByTargetSection = new Map<
+    NonNullable<DateInfo['mediaSections']>[number],
+    Set<string>
+  >();
+
   // Iterate through all new media items from all sections
   if (!newMediaItems) return;
   for (const sectionId in newMediaItems) {
     const sectionItems = newMediaItems[sectionId];
     if (!sectionItems || !targetDay.mediaSections) continue;
+
+    // FE-2 follow-up: register this section as touched by the fetch even if
+    // it returned zero items (e.g. bonus content removed for this section
+    // entirely) - sectionId here is the outer grouping key, which matches a
+    // section's own config.uniqueId directly (see the `{ tgw: [...] }` test
+    // fixtures), independent of any item's own originalSection below. Without
+    // this, a section going from "has dynamic items" to "fetch returned none
+    // at all" would never be visited by the removal pass, since nothing
+    // would resolve into it via the per-item path.
+    const outerTargetSection = findMediaSection(
+      targetDay.mediaSections,
+      sectionId,
+    );
+    if (
+      outerTargetSection &&
+      !seenPubMediaIdsByTargetSection.has(outerTargetSection)
+    ) {
+      seenPubMediaIdsByTargetSection.set(outerTargetSection, new Set());
+    }
 
     // Process each item in the section
     sectionItems.forEach((item) => {
@@ -228,6 +258,13 @@ export function replaceMissingMediaByPubMediaId(
       }
 
       // Handle items with pubMediaId
+      let seenPubMediaIds = seenPubMediaIdsByTargetSection.get(targetSection);
+      if (!seenPubMediaIds) {
+        seenPubMediaIds = new Set();
+        seenPubMediaIdsByTargetSection.set(targetSection, seenPubMediaIds);
+      }
+      seenPubMediaIds.add(item.pubMediaId);
+
       const index = targetSection.items.findIndex(
         (obj) => obj?.pubMediaId === item?.pubMediaId,
       );
@@ -257,6 +294,38 @@ export function replaceMissingMediaByPubMediaId(
           };
         }
       }
+    });
+  }
+
+  // FE-2 follow-up: drop dynamic items whose pubMediaId this fetch no longer
+  // returned for their section - list-only removal (matches the existing
+  // deleteMediaItems/removeFromAdditionMediaMap precedent, never touches
+  // already-downloaded cache files). Only ever removes items that were
+  // actually candidates in this fetch's target sections, so a section this
+  // fetch didn't touch at all is left alone. Skips the currently-playing
+  // item specifically - upstream data disappearing mid-meeting shouldn't
+  // yank something off the schedule while it's on screen.
+  const currentlyPlayingUrl = (() => {
+    try {
+      return useCurrentStateStore().mediaPlaying.url;
+    } catch {
+      return '';
+    }
+  })();
+  for (const [
+    targetSection,
+    seenPubMediaIds,
+  ] of seenPubMediaIdsByTargetSection) {
+    if (!targetSection.items) continue;
+    targetSection.items = targetSection.items.filter((existingItem) => {
+      if (existingItem.source !== 'dynamic' || !existingItem.pubMediaId) {
+        return true;
+      }
+      if (seenPubMediaIds.has(existingItem.pubMediaId)) return true;
+      if (currentlyPlayingUrl && existingItem.fileUrl === currentlyPlayingUrl) {
+        return true;
+      }
+      return false;
     });
   }
 

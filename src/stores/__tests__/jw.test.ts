@@ -27,6 +27,11 @@ vi.mock('src/utils/api', () => ({
 vi.mock('src/utils/date', () => ({
   dateFromString: vi.fn((value) => new Date(value)),
   datesAreSame: vi.fn(),
+  // current-state.ts's own default state calls this - needed as soon as
+  // any test instantiates useCurrentStateStore() (see the FE-2 follow-up
+  // "currently-playing" removal-skip test below), not just tests that
+  // exercise it directly.
+  formatDate: vi.fn(() => '2026/01/01'),
   getDateDiff: vi.fn(),
   isInPast: vi.fn(),
 }));
@@ -258,6 +263,71 @@ describe('JW Store', () => {
       replaceMissingMediaByPubMediaId(day, { tgw: [incoming] });
 
       expect(day.mediaSections[0]?.items?.[0]?.title).toBe('Corrected caption');
+    });
+
+    // FE-2 follow-up (full-audit backlog): the original fix only ever
+    // added/updated - a dynamic item whose pubMediaId genuinely disappeared
+    // from JW.org's data lingered on the schedule forever.
+    it('removes a dynamic item whose pubMediaId is no longer present, replaced by a different one in the same section', () => {
+      const day = buildDay({
+        fileUrl: 'file:///cache/stale.mp4',
+        pubMediaId: 'pub-media-stale',
+      });
+      const incoming = {
+        duration: 60,
+        fileUrl: 'pub-media-new',
+        pubMediaId: 'pub-media-new',
+        source: 'dynamic',
+        title: 'A different item entirely',
+        type: 'media',
+        uniqueId: 'existing-2',
+      } as MediaItem;
+
+      replaceMissingMediaByPubMediaId(day, { tgw: [incoming] });
+
+      const items = day.mediaSections[0]?.items ?? [];
+      expect(items.map((i) => i.pubMediaId)).toEqual(['pub-media-new']);
+    });
+
+    it('removes every dynamic item in a section when the fetch returns none for it at all', () => {
+      const day = buildDay({
+        fileUrl: 'file:///cache/stale.mp4',
+        pubMediaId: 'pub-media-stale',
+      });
+
+      replaceMissingMediaByPubMediaId(day, { tgw: [] });
+
+      expect(day.mediaSections[0]?.items).toEqual([]);
+    });
+
+    it('does not remove a non-dynamic item even if its pubMediaId is absent from the fetch', () => {
+      const day = buildDay({
+        fileUrl: 'file:///cache/permanent.mp4',
+        pubMediaId: 'pub-media-permanent',
+        source: 'watched',
+      });
+
+      replaceMissingMediaByPubMediaId(day, { tgw: [] });
+
+      expect(day.mediaSections[0]?.items?.[0]?.pubMediaId).toBe(
+        'pub-media-permanent',
+      );
+    });
+
+    it('does not remove the currently-playing item even if its pubMediaId is absent from the fetch', async () => {
+      const { useCurrentStateStore } = await import('stores/current-state');
+      useCurrentStateStore().mediaPlaying.url = 'file:///cache/stale.mp4';
+
+      const day = buildDay({
+        fileUrl: 'file:///cache/stale.mp4',
+        pubMediaId: 'pub-media-stale',
+      });
+
+      replaceMissingMediaByPubMediaId(day, { tgw: [] });
+
+      expect(day.mediaSections[0]?.items?.[0]?.pubMediaId).toBe(
+        'pub-media-stale',
+      );
     });
   });
 

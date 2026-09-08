@@ -40,9 +40,22 @@ jobs:
         with:
           fetch-depth: 0
       - name: SonarQube Scan
+        id: scan
         uses: SonarSource/sonarqube-scan-action@22918119ff8e1ca75a623e15c8296b6ea4fbe28f
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      # CI-2: the job-level continue-on-error above means a broken SonarQube
+      # integration (e.g. an expired SONAR_TOKEN) would otherwise leave the
+      # workflow run looking fully green with no signal anyone would notice
+      # without deliberately drilling into this job. This makes a failure
+      # loud (a workflow annotation, visible on the PR's Checks summary)
+      # without removing continue-on-error itself - this job isn't a
+      # dependency of anything else, so a real Sonar-side outage still
+      # shouldn't be able to block merges.
+      - name: Surface a failed SonarQube scan
+        if: failure()
+        run: |
+          echo "::error::SonarQube scan failed - check that SONAR_TOKEN is still valid and review the Sonar dashboard. This job is non-blocking (continue-on-error), so merges aren't affected, but the integration itself needs attention."
 
   quality:
     name: Lint and test
@@ -146,7 +159,8 @@ jobs:
         run: |
           yarn generate:icons
           yarn generate:logos
-          yarn build --publish=${{ inputs.publish-release && 'always' || 'never' }}
+          set -o pipefail
+          yarn build --publish=${{ inputs.publish-release && 'always' || 'never' }} 2>&1 | tee build-output.log
         continue-on-error: ${{ runner.os == 'macOS' }}
         env:
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
@@ -157,8 +171,26 @@ jobs:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           TEST_VERSION: ${{ !inputs.publish-release }}
 
-      - name: Retry build without notarization (macOS agreement expired)
+      # CI-3: continue-on-error above swallows ANY macOS build failure, not
+      # just notarization - a real compile error looked identical to an
+      # expired notarization agreement, misdirecting triage and burning a
+      # full extra build cycle every time. "Failed to notarize via
+      # notarytool"/"Failed to staple" are @electron/notarize's own actual
+      # thrown-error text (node_modules/@electron/notarize/lib/notarytool.js,
+      # staple.js) - not a guess, read directly from the installed version -
+      # so this narrows the retry to genuine notarization failures only.
+      - name: Check whether the macOS failure was notarization-specific
+        id: notarization-check
         if: runner.os == 'macOS' && steps.build.outcome == 'failure'
+        run: |
+          if grep -qE "Failed to notarize via notarytool|Failed to staple" build-output.log; then
+            echo "was-notarization=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "was-notarization=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Retry build without notarization (macOS agreement expired)
+        if: runner.os == 'macOS' && steps.build.outcome == 'failure' && steps.notarization-check.outputs.was-notarization == 'true'
         run: |
           echo "::warning::macOS notarization failed — likely an expired agreement. Producing unsigned build."
           yarn build --publish=${{ inputs.publish-release && 'always' || 'never' }}
@@ -167,6 +199,12 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           TEST_VERSION: ${{ !inputs.publish-release }}
+
+      - name: Fail fast on a non-notarization macOS build failure
+        if: runner.os == 'macOS' && steps.build.outcome == 'failure' && steps.notarization-check.outputs.was-notarization == 'false'
+        run: |
+          echo "::error::macOS build failed for a reason unrelated to notarization - see the 'Build Electron App' step's log above. Not retrying (that would just fail again while masking the real cause)."
+          exit 1
       - name: Clean up keychain and provisioning profile
         if: always() && runner.os == 'macOS' && github.actor != 'dependabot[bot]'
         run: |

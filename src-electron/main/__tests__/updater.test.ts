@@ -10,6 +10,17 @@ const toggleAuthorizedCloseMock = vi.fn();
 const getOsSupportWarningMock = vi.fn<() => null | OsSupportWarning>(
   () => null,
 );
+// SEC-6 (full-audit backlog): the currently-installed version downgrade
+// detection compares against - lower than every hardcoded update version
+// used by the other tests below ('26.6.2', '26.6.3'), so they stay ordinary
+// upgrades (isDowngrade: false) and aren't affected by this addition.
+const getVersionMock = vi.fn(() => '26.6.0');
+
+vi.mock('electron', () => ({
+  app: {
+    getVersion: getVersionMock,
+  },
+}));
 
 vi.mock('electron-updater', () => ({
   default: {
@@ -73,6 +84,10 @@ describe('updater install flow', () => {
     handlers.clear();
     vi.resetModules();
     vi.clearAllMocks();
+    // clearAllMocks() doesn't undo a mockReturnValue override from a
+    // previous test - reset explicitly so each test starts from the same
+    // "installed version" baseline unless it deliberately overrides it.
+    getVersionMock.mockReturnValue('26.6.0');
     pathExistsMock.mockResolvedValue(false);
     getOsSupportWarningMock.mockReturnValue(null);
   });
@@ -183,13 +198,18 @@ describe('updater install flow', () => {
   it('tracks updater lifecycle state for renderer catch-up', async () => {
     const { getUpdaterState, initUpdater } = await import('../updater');
 
-    expect(getUpdaterState()).toEqual({ phase: null, progress: null });
+    expect(getUpdaterState()).toEqual({
+      phase: null,
+      progress: null,
+      versionInfo: null,
+    });
 
     await initUpdater();
     handlers.get('update-available')?.({ version: '26.6.2' });
     expect(getUpdaterState()).toEqual({
       phase: 'downloading',
       progress: null,
+      versionInfo: { isDowngrade: false, version: '26.6.2' },
     });
 
     const progress = {
@@ -200,10 +220,18 @@ describe('updater install flow', () => {
       transferred: 50,
     };
     handlers.get('download-progress')?.(progress);
-    expect(getUpdaterState()).toEqual({ phase: 'downloading', progress });
+    expect(getUpdaterState()).toEqual({
+      phase: 'downloading',
+      progress,
+      versionInfo: { isDowngrade: false, version: '26.6.2' },
+    });
 
     handlers.get('update-downloaded')?.({ version: '26.6.2' });
-    expect(getUpdaterState()).toEqual({ phase: 'downloaded', progress });
+    expect(getUpdaterState()).toEqual({
+      phase: 'downloaded',
+      progress,
+      versionInfo: { isDowngrade: false, version: '26.6.2' },
+    });
   });
 
   it('resets tracked updater state when the updater errors', async () => {
@@ -214,13 +242,95 @@ describe('updater install flow', () => {
     expect(getUpdaterState()).toEqual({
       phase: 'downloading',
       progress: null,
+      versionInfo: { isDowngrade: false, version: '26.6.2' },
     });
 
     handlers.get('error')?.(new Error('network error'), 'network error');
 
     // A future renderer mount's catch-up must not see a stale 'downloading'
     // phase for an update that actually failed.
-    expect(getUpdaterState()).toEqual({ phase: null, progress: null });
+    expect(getUpdaterState()).toEqual({
+      phase: null,
+      progress: null,
+      versionInfo: null,
+    });
+  });
+
+  // SEC-6 (full-audit backlog): allowDowngrade is always on (needed for the
+  // beta->stable channel switch), but a downgrade previously installed with
+  // the exact same one-click wording as any other update, no indication
+  // given at all.
+  describe('downgrade detection', () => {
+    it('flags update-available as a downgrade when the version is lower than the installed one', async () => {
+      const { getUpdaterState, initUpdater } = await import('../updater');
+
+      await initUpdater();
+      handlers.get('update-available')?.({ version: '26.5.9' });
+
+      expect(getUpdaterState().versionInfo).toEqual({
+        isDowngrade: true,
+        version: '26.5.9',
+      });
+    });
+
+    it('flags update-downloaded as a downgrade independently, even without a preceding update-available', async () => {
+      const { getUpdaterState, initUpdater } = await import('../updater');
+
+      await initUpdater();
+      handlers.get('update-downloaded')?.({ version: '26.5.9' });
+
+      expect(getUpdaterState().versionInfo).toEqual({
+        isDowngrade: true,
+        version: '26.5.9',
+      });
+    });
+
+    it('does not flag a beta->stable channel switch to a numerically-lower-looking version as a downgrade when it is not one', async () => {
+      // The exact scenario allowDowngrade exists for: switching a beta
+      // build back to the latest matching stable release is a promotion,
+      // not a downgrade, even though the beta's own prerelease suffix makes
+      // the installed version string "26.6.0-beta.9" look larger at a
+      // glance than the plain "26.6.0" it's switching to.
+      getVersionMock.mockReturnValue('26.6.0-beta.9');
+      const { getUpdaterState, initUpdater } = await import('../updater');
+
+      await initUpdater();
+      handlers.get('update-available')?.({ version: '26.6.0' });
+
+      expect(getUpdaterState().versionInfo).toEqual({
+        isDowngrade: false,
+        version: '26.6.0',
+      });
+    });
+
+    it('does flag a genuine downgrade away from an in-progress beta cycle', async () => {
+      // The actual motivating case from the code comment: a beta tester on
+      // 26.6.1-beta.24 (already past 26.6.0) turns beta updates off and
+      // rolls back to the last real stable release, 26.6.0.
+      getVersionMock.mockReturnValue('26.6.1-beta.24');
+      const { getUpdaterState, initUpdater } = await import('../updater');
+
+      await initUpdater();
+      handlers.get('update-available')?.({ version: '26.6.0' });
+
+      expect(getUpdaterState().versionInfo).toEqual({
+        isDowngrade: true,
+        version: '26.6.0',
+      });
+    });
+
+    it('treats an identical version as not a downgrade', async () => {
+      getVersionMock.mockReturnValue('26.6.0');
+      const { getUpdaterState, initUpdater } = await import('../updater');
+
+      await initUpdater();
+      handlers.get('update-available')?.({ version: '26.6.0' });
+
+      expect(getUpdaterState().versionInfo).toEqual({
+        isDowngrade: false,
+        version: '26.6.0',
+      });
+    });
   });
 
   it('logs update download progress as readable text', async () => {

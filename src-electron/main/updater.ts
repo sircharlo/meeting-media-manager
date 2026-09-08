@@ -1,5 +1,10 @@
-import type { UpdaterProgressInfo, UpdaterState } from 'src/types';
+import type {
+  UpdaterProgressInfo,
+  UpdaterState,
+  UpdateVersionInfo,
+} from 'src/types';
 
+import { app } from 'electron';
 import electronUpdater from 'electron-updater';
 const { autoUpdater } = electronUpdater;
 import { pathExists } from 'fs-extra/esm';
@@ -63,10 +68,61 @@ let updateInstallStarted = false;
 // update check runs at startup, concurrently with window/renderer boot).
 let updatePhase: UpdaterState['phase'] = null;
 let lastUpdaterProgress: null | UpdaterProgressInfo = null;
+let lastUpdateVersionInfo: null | UpdateVersionInfo = null;
 
 export const getUpdaterState = (): UpdaterState => ({
   phase: updatePhase,
   progress: lastUpdaterProgress,
+  versionInfo: lastUpdateVersionInfo,
+});
+
+/**
+ * Compares two version strings using semver precedence (release outranks a
+ * prerelease of the same X.Y.Z; prerelease identifiers compared
+ * numerically-then-lexicographically per dot-segment) - just enough to
+ * correctly detect a downgrade for this app's own version scheme
+ * (`X.Y.Z` or `X.Y.Z-beta.N`), without pulling in the full semver package
+ * for one comparison (it's only a transitive dependency here).
+ * @returns negative if a < b, positive if a > b, 0 if equal
+ */
+function compareVersions(a: string, b: string): number {
+  const [aRelease, aPre] = a.split('-', 2);
+  const [bRelease, bPre] = b.split('-', 2);
+
+  const aParts = (aRelease || '').split('.').map(Number);
+  const bParts = (bRelease || '').split('.').map(Number);
+  for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+    const diff = (aParts[i] ?? 0) - (bParts[i] ?? 0);
+    if (diff !== 0) return diff;
+  }
+
+  // Same release version - a release (no prerelease tag) outranks any
+  // prerelease of that same version.
+  if (!aPre && !bPre) return 0;
+  if (!aPre) return 1;
+  if (!bPre) return -1;
+
+  const aPreParts = aPre.split('.');
+  const bPreParts = bPre.split('.');
+  for (let i = 0; i < Math.max(aPreParts.length, bPreParts.length); i++) {
+    const aSeg = aPreParts[i];
+    const bSeg = bPreParts[i];
+    if (aSeg === undefined) return -1;
+    if (bSeg === undefined) return 1;
+    const aNum = Number(aSeg);
+    const bNum = Number(bSeg);
+    if (!Number.isNaN(aNum) && !Number.isNaN(bNum)) {
+      if (aNum !== bNum) return aNum - bNum;
+    } else if (aSeg !== bSeg) {
+      return aSeg < bSeg ? -1 : 1;
+    }
+  }
+  return 0;
+}
+
+const buildUpdateVersionInfo = (version: string): UpdateVersionInfo => ({
+  isDowngrade: compareVersions(version, app.getVersion()) < 0,
+  version,
 });
 
 export const isUpdateInstallInProgress = () => updateInstallStarted;
@@ -136,6 +192,7 @@ export async function initUpdater() {
     // failed.
     updatePhase = null;
     lastUpdaterProgress = null;
+    lastUpdateVersionInfo = null;
 
     if (IS_TEST) return;
 
@@ -166,7 +223,12 @@ export async function initUpdater() {
     updateInstallStarted = false;
     updatePhase = 'downloading';
     lastUpdaterProgress = null;
-    sendToWindow(mainWindowInfo.mainWindow, 'update-available');
+    lastUpdateVersionInfo = buildUpdateVersionInfo(info.version);
+    sendToWindow(
+      mainWindowInfo.mainWindow,
+      'update-available',
+      lastUpdateVersionInfo,
+    );
   });
 
   autoUpdater.on('download-progress', (info) => {
@@ -183,7 +245,17 @@ export async function initUpdater() {
     log('Update downloaded:', 'electronUpdater', 'log', info);
     updateDownloaded = true;
     updatePhase = 'downloaded';
-    sendToWindow(mainWindowInfo.mainWindow, 'update-downloaded');
+    // SEC-6 (full-audit backlog): re-derive rather than trust the
+    // lastUpdateVersionInfo an earlier update-available event may have set -
+    // that event isn't guaranteed to have fired first in every code path
+    // (e.g. an update already downloaded in a previous session can surface
+    // here directly).
+    lastUpdateVersionInfo = buildUpdateVersionInfo(info.version);
+    sendToWindow(
+      mainWindowInfo.mainWindow,
+      'update-downloaded',
+      lastUpdateVersionInfo,
+    );
   });
 
   triggerUpdateCheck();

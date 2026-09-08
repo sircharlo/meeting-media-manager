@@ -76,6 +76,19 @@ export interface UpdaterProgressInfo {
 export interface UpdaterState {
   phase: 'downloaded' | 'downloading' | null;
   progress: null | UpdaterProgressInfo;
+  versionInfo: null | UpdateVersionInfo;
+}
+
+/**
+ * SEC-6 (full-audit backlog): whether a pending update's version is
+ * numerically lower than the currently-installed one - expected/legitimate
+ * when switching off beta updates (allowDowngrade is always on for exactly
+ * that reason), but previously surfaced with no indication to the user at
+ * all. Purely informational - never blocks or gates the install.
+ */
+export interface UpdateVersionInfo {
+  isDowngrade: boolean;
+  version: string;
 }
 
 export interface UrlVariables {

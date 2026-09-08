@@ -90,7 +90,11 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   getSharedDataPath: async () => fakePath('/app/shared'),
-  getUpdaterState: async () => ({ phase: null, progress: null }),
+  getUpdaterState: async () => ({
+    phase: null,
+    progress: null,
+    versionInfo: null,
+  }),
   getUpdatesDisabledPath: async () => fakePath('app/updates-disabled', false),
   getUserDataPath: async () => fakePath('app/meeting-media-manager'),
   getVideoDuration: function (filePath) {

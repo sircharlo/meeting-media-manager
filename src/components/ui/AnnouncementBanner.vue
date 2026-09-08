@@ -29,6 +29,7 @@ import type {
   AnnouncementAction,
   OsSupportWarning,
   UpdaterProgressInfo,
+  UpdateVersionInfo,
 } from 'src/types';
 
 import prettyBytes from 'pretty-bytes';
@@ -160,7 +161,16 @@ const handleUpdateDownloadProgress = (info: UpdaterProgressInfo) => {
   updateNotify?.({ caption: downloadProgressCaption(info) });
 };
 
-const handleUpdateDownloaded = () => {
+// SEC-6 (full-audit backlog): a pending downgrade (expected when switching
+// off beta updates - allowDowngrade is always on) previously installed with
+// the exact same one-click wording as a normal update, no indication given.
+// Purely informational - still a single "Quit & Install" click either way.
+const updateDownloadedMessage = (versionInfo?: UpdateVersionInfo) =>
+  versionInfo?.isDowngrade
+    ? t('update-downloaded-downgrade', { version: versionInfo.version })
+    : t('update-downloaded');
+
+const handleUpdateDownloaded = (versionInfo?: UpdateVersionInfo) => {
   updateEventReceived = true;
 
   // Already in downloaded state — avoid re-creating or re-updating the
@@ -169,6 +179,8 @@ const handleUpdateDownloaded = () => {
   if (updatePhase === 'downloaded') return;
 
   updatePhase = 'downloaded';
+
+  const message = updateDownloadedMessage(versionInfo);
 
   // When an update was already downloaded in a previous session,
   // electron-updater may fire update-downloaded directly without a
@@ -185,7 +197,7 @@ const handleUpdateDownloaded = () => {
       ],
       caption: undefined,
       icon: 'mmm-check',
-      message: t('update-downloaded'),
+      message,
       spinner: false,
       timeout: 0,
       type: 'positive',
@@ -201,7 +213,7 @@ const handleUpdateDownloaded = () => {
         { color: 'white', icon: 'close', round: true },
       ],
       icon: 'mmm-check',
-      message: t('update-downloaded'),
+      message,
       protect: true,
       timeout: 0,
       type: 'positive',
@@ -233,7 +245,7 @@ const catchUpUpdaterState = async () => {
     if (state.phase === 'downloading') {
       if (state.progress) handleUpdateDownloadProgress(state.progress);
     } else if (state.phase === 'downloaded') {
-      handleUpdateDownloaded();
+      handleUpdateDownloaded(state.versionInfo ?? undefined);
     }
   } catch (error) {
     errorCatcher(error, {
@@ -264,9 +276,9 @@ onMounted(() => {
       }
     });
 
-    onUpdateDownloaded(() => {
+    onUpdateDownloaded((versionInfo) => {
       try {
-        handleUpdateDownloaded();
+        handleUpdateDownloaded(versionInfo);
       } catch (error) {
         errorCatcher(error, {
           contexts: { fn: { name: 'onUpdateDownloaded' } },

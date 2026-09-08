@@ -8,7 +8,11 @@ import type {
   SettingsValues,
   VideoDuration,
 } from 'src/types/electron';
-import type { OsSupportWarning, UpdaterState } from 'src/types/general';
+import type {
+  OsSupportWarning,
+  UpdaterState,
+  UpdateVersionInfo,
+} from 'src/types/general';
 import type {
   basename,
   changeExt,
@@ -252,8 +256,8 @@ export interface ElectronApi {
   onShortcut: (
     callback: (args: { shortcut: keyof SettingsValues }) => void,
   ) => void;
-  onUpdateAvailable: (callback: () => void) => void;
-  onUpdateDownloaded: (callback: () => void) => void;
+  onUpdateAvailable: (callback: (args: UpdateVersionInfo) => void) => void;
+  onUpdateDownloaded: (callback: (args: UpdateVersionInfo) => void) => void;
   onUpdateDownloadProgress: (
     callback: (args: {
       bytesPerSecond: number;

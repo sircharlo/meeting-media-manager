@@ -223,10 +223,18 @@ describe('MediaItem Component', () => {
     wrapper.unmount();
   });
 
-  it('does not show move-up/move-down items for a group child', async () => {
+  // UX-6 follow-up (full-audit backlog): a group's own children were left
+  // drag-only when the top-level move-up/move-down entries were added -
+  // MediaGroup.vue now passes the same can-move-up/can-move-down/@move
+  // contract for its children (see moveChildItem there), so the entries
+  // show for a child exactly like a top-level item, scoped to reordering
+  // within the group by whatever canMoveUp/canMoveDown values it's given.
+  it('shows and wires move-up/move-down for a group child too', async () => {
     const wrapper = mount(MediaItem, {
       attachTo: document.body,
       props: {
+        canMoveDown: true,
+        canMoveUp: false,
         child: true,
         media: mockMediaItem,
         repeat: false,
@@ -236,8 +244,21 @@ describe('MediaItem Component', () => {
     await wrapper.get('button[aria-label="More options"]').trigger('click');
     await nextTick();
 
-    expect(document.body.textContent).not.toContain('Move up');
-    expect(document.body.textContent).not.toContain('Move down');
+    const findMenuItem = (label: string) =>
+      [...document.body.querySelectorAll<HTMLElement>('.q-item__label')]
+        .find((el) => el.textContent === label)
+        ?.closest<HTMLElement>('[role="menuitem"]');
+
+    const moveUpItem = findMenuItem('Move up');
+    const moveDownItem = findMenuItem('Move down');
+
+    expect(moveUpItem?.getAttribute('aria-disabled')).toBe('true');
+    expect(moveDownItem?.getAttribute('aria-disabled')).toBeNull();
+
+    moveDownItem?.click();
+    await nextTick();
+
+    expect(wrapper.emitted('move')).toEqual([[1]]);
 
     wrapper.unmount();
   });

@@ -627,6 +627,18 @@
       :dialog-id="'setup-wizard-congregation-lookup'"
       @applied="scheduleAppliedViaLookup = true"
     />
+
+    <ConfirmDialog
+      v-model="abandonSetupConfirmOpen"
+      dialog-id="setup-wizard-abandon-confirm"
+      icon="mmm-warning"
+      icon-color="warning"
+      :message="t('setup-wizard-abandon-confirm-message')"
+      persistent
+      :title="t('confirm')"
+      @cancel="cancelAbandonSetup"
+      @confirm="confirmAbandonSetup"
+    />
   </q-page>
 </template>
 
@@ -634,6 +646,7 @@
 import type { LanguageValue } from 'src/constants/locales';
 
 import { watchImmediate } from '@vueuse/core';
+import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import DialogCongregationLookup from 'components/dialog/DialogCongregationLookup.vue';
 import SelectInput from 'components/form-inputs/SelectInput.vue';
 import ShortcutInput from 'components/form-inputs/ShortcutInput.vue';
@@ -654,7 +667,7 @@ import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
+import { onBeforeRouteLeave, useRouter } from 'vue-router';
 
 const { t } = useI18n();
 useMeta({ title: t('setup-wizard') });
@@ -772,14 +785,75 @@ const goToPage = (path: string) => {
   }
 };
 
-const cancelSetup = async () => {
-  const congId = currentCongregation.value;
+// Shared by the explicit Cancel button and the route-leave guard below -
+// each caller handles navigation/cache-removal timing itself (the button
+// fires goToPage before awaiting cache removal; the guard needs to let the
+// already-in-flight navigation proceed via next() at the same point).
+const resetAfterCancelingSetup = (congId: string) => {
   deleteCongregation(congId);
   currentCongregation.value = '';
   currentState.openCongregationSwitcher();
+};
+
+// UX-8 follow-up (full-audit backlog): guards against the route-leave
+// handler below re-prompting for a cancellation the user already just
+// confirmed by clicking the Cancel button itself.
+let isPerformingCancelCleanup = false;
+
+const cancelSetup = async () => {
+  isPerformingCancelCleanup = true;
+  const congId = currentCongregation.value;
+  resetAfterCancelingSetup(congId);
   goToPage('/media-calendar');
   await removeCongregationCache(congId);
+  isPerformingCancelCleanup = false;
 };
+
+// UX-8 follow-up (full-audit backlog): the Cancel button (above) only
+// covered clicking it directly - the nav drawer/header stay clickable
+// throughout the wizard, so navigating away that way skipped cancelSetup()'s
+// cleanup entirely and could leave a half-configured congregation profile
+// indefinitely. This intercepts any route change away from the wizard.
+const abandonSetupConfirmOpen = ref(false);
+let resolveAbandonSetupConfirm: ((confirmed: boolean) => void) | null = null;
+
+const confirmAbandonSetup = () => {
+  abandonSetupConfirmOpen.value = false;
+  resolveAbandonSetupConfirm?.(true);
+  resolveAbandonSetupConfirm = null;
+};
+
+const cancelAbandonSetup = () => {
+  abandonSetupConfirmOpen.value = false;
+  resolveAbandonSetupConfirm?.(false);
+  resolveAbandonSetupConfirm = null;
+};
+
+onBeforeRouteLeave(async (_to, _from, next) => {
+  // Already handled by the explicit Cancel button's own cleanup - don't
+  // re-prompt for the navigation that button itself triggers. Also skip
+  // once setup has essentially completed (the final "congratulations" step)
+  // - leaving from there is finishing, not abandoning.
+  if (isPerformingCancelCleanup || step.value === 300) {
+    next();
+    return;
+  }
+
+  abandonSetupConfirmOpen.value = true;
+  const confirmed = await new Promise<boolean>((resolve) => {
+    resolveAbandonSetupConfirm = resolve;
+  });
+
+  if (!confirmed) {
+    next(false);
+    return;
+  }
+
+  const congId = currentCongregation.value;
+  resetAfterCancelingSetup(congId);
+  next();
+  await removeCongregationCache(congId);
+});
 
 const step = ref(1);
 
