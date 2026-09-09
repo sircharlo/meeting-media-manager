@@ -165,11 +165,11 @@ Cuando lo activas, M³ comprueba periódicamente en el sitio web oficial de los 
 
 Esto solo funciona en los perfiles que añadiste usando la búsqueda de congregaciones y a los que no les has cambiado el nombre de la congregación manualmente. Si la sincronización se desactivó porque cambiaste el nombre de la congregación, usa **Activar sincronización del programa** para volver a vincular el perfil.
 
-#### Enable Schedule Sync {#relink-congregation}
+#### Activar sincronización de programa {#relink-congregation}
 
 <!-- **Setting**: `relinkCongregationButton` -->
 
-Re-links the current profile to congregation lookup so automatic meeting day and time updates can resume. Only shown once the congregation name has been changed manually, since that's what breaks the link in the first place.
+Vuelve a vincular el perfil actual con la búsqueda de congregaciones para que se reanuden las actualizaciones automáticas del día y la hora de las reuniones. Solo se muestra una vez que el nombre de la congregación se ha cambiado manualmente, ya que eso es lo que rompe el enlace en primer lugar.
 
 #### Actualizar el programa de las reuniones {#refresh-meeting-schedule}
 
@@ -177,7 +177,7 @@ Re-links the current profile to congregation lookup so automatic meeting day and
 
 Sincroniza manualmente el programa de las reuniones actual y futuro con la información del sitio web oficial.
 
-## Media & Playback {#media-retrieval-and-playback}
+## Multimedia y reproducción {#media-retrieval-and-playback}
 
 ### Conexión de uso medido {#metered-connection}
 
@@ -247,7 +247,7 @@ Nivel de volumen para la música de fondo (1-100%).
 
 **Por defecto**: 100%
 
-### Playback and Download Options {#media-display}
+### Opciones de reproducción y descarga {#media-display}
 
 <!-- This section covers mediaRetrievalPlayback's `media-display` settings subgroup -
 these control the media window's playback behavior and which downloaded media is
@@ -312,13 +312,13 @@ Excluye los videos adicionales a los que se hace referencia en los párrafos del
 
 **Por defecto**: `false`
 
-#### Exclude Congregation Bible Study Videos {#exclude-cbs-pubs}
+#### Excluir videos del Estudio bíblico de la congregación {#exclude-cbs-pubs}
 
 <!-- **Setting**: `excludeCbsPubs` -->
 
-Choose publications whose referenced videos should not be shown during the Congregation Bible Study. Search by publication title or symbol.
+Elige las publicaciones cuyos videos de referencia no deberían mostrarse durante el Estudio bíblico de la congregación. Busca por título de la publicación o símbolo.
 
-**Default**: Congregation Bible Study Guide (`wcg`)
+**Predeterminado**: Guía de estudio para el Estudio bíblico de la congregación (`wcg`)
 
 #### Excluir los archivos multimedia del folleto Maestros {#exclude-theocratic-ministry-school}
 
@@ -374,21 +374,21 @@ Borra automáticamente los archivos antiguos en caché para que ahorres espacio 
 
 **Por defecto**: `true`
 
-### Pinyin Song Titles {#pinyin-song-titles}
+### Títulos de canciones en pinyin {#pinyin-song-titles}
 
-#### Prefer Pinyin Songs {#enable-pinyin-songs}
+#### Preferir canciones en pinyin {#enable-pinyin-songs}
 
 <!-- **Setting**: `enablePinyinSongs` -->
 
-When a pinyin version of a meeting song is found in the pinyin song folder, use it instead of the standard song.
+Cuando se encuentre una versión en pinyin de una canción de la reunión en la carpeta de canciones en pinyin, úsala en lugar de la canción estándar.
 
 **Por defecto**: `false`
 
-#### Pinyin Song Folder {#pinyin-song-folder}
+#### Carpeta de canciones en pinyin {#pinyin-song-folder}
 
 <!-- **Setting**: `pinyinSongFolder` -->
 
-Folder containing pinyin video songs (e.g. `sjjm_s-Pi_CHS_066_r720P.mp4`). When a pinyin file matching the meeting song number is found, it will be played instead of the standard song.
+Carpeta con los videos de canciones en pinyin (por ejemplo, `sjjm_s-Pi_CHS_066_r720P.mp4`). Cuando se encuentre un archivo en pinyin que coincida con el número de la cancion de la reunión, se reproducirá en lugar de la cancion estándar.
 
 **Por defecto**: Vacío
 
