@@ -318,7 +318,7 @@ whether the media window feature is enabled at all). -->
 
 Choose publications whose referenced videos should not be shown during the Congregation Bible Study. Search by publication title or symbol.
 
-**Default**: Congregation Bible Study Guide (`wcg`)
+**Default**: Walk Courageously With God (`wcg`)
 
 #### 排除《教导》中的媒体 {#exclude-theocratic-ministry-school}
 

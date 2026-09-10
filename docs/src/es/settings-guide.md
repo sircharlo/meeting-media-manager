@@ -318,7 +318,7 @@ Excluye los videos adicionales a los que se hace referencia en los párrafos del
 
 Elige las publicaciones cuyos videos de referencia no deberían mostrarse durante el Estudio bíblico de la congregación. Busca por título de la publicación o símbolo.
 
-**Predeterminado**: Guía de estudio para el Estudio bíblico de la congregación (`wcg`)
+**Default**: Walk Courageously With God (`wcg`)
 
 #### Excluir los archivos multimedia del folleto Maestros {#exclude-theocratic-ministry-school}
 
