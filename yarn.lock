@@ -7149,15 +7149,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"image-size@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "image-size@npm:2.0.2"
-  bin:
-    image-size: bin/image-size.js
-  checksum: 10c0/f09dd0f7cf8511cd20e4f756bdb5a7cb6d2240de3323f41bde266bed8373392a293892bf12e907e2995f52833fd88dd27cf6b1a52ab93968afc716cb78cd7b79
-  languageName: node
-  linkType: hard
-
 "immutable@npm:^5.1.5":
   version: 5.1.9
   resolution: "immutable@npm:5.1.9"
@@ -8154,7 +8145,6 @@ __metadata:
     happy-dom: "npm:^20.14.0"
     heic-convert: "npm:^2.1.0"
     husky: "npm:^9.1.7"
-    image-size: "npm:^2.0.2"
     is-online: "npm:^12.0.2"
     jspdf: "npm:^4.2.1"
     jspdf-autotable: "npm:^5.0.8"

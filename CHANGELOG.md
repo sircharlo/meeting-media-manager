@@ -75,6 +75,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🔧 **Dev Tooling**: Added dev-only demo-mode tooling and made the Electron rebuild script cross-platform.
 - 🔧 **Release Process**: Renamed the in-progress changelog section from `vPENDING` to `UPCOMING VERSION` and now syncs it into the release notes for early translation.
 - 🔧 **Dependencies**: Pinned `plist` to `3.1.1` in both dependency trees so the packaging toolchain picks up the patched `@xmldom/xmldom` — the pinned `plist@3.1.0` otherwise keeps the vulnerable `0.8.x` line installed (and can't simply be paired with the fixed `0.9.x`, whose stricter parser it doesn't support), which Dependabot cannot resolve on its own.
+- 🔧 **Dependencies**: Replaced `image-size` with the actively maintained, pure-JavaScript `probe-image-size` for reading photo dimensions, after `image-size` gained infinite-loop DoS advisories with no fixed release published; reported dimensions and EXIF orientation behavior are pinned by contract tests, and the isolated worker process with its timeout is unchanged.
 
 ## v26.8.0
 

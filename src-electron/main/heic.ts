@@ -27,12 +27,11 @@ import { captureElectronError } from 'src-electron/main/utils';
 // we resolve here and answers decode requests.
 
 // HEIC/HEIF is exactly the kind of complex binary-format decode that
-// image-size.ts's ICNS/JXL/HEIF parsers were found vulnerable for (see that
-// file's own comment) - a crafted/corrupted .heic file can hang
-// heic-convert's decode forever, and since getChild() below reuses the same
-// child process across calls, one hung file would wedge every subsequent
-// HEIC conversion for the rest of the session behind it. Timeout-and-kill
-// the same way image-size.ts does.
+// image-size.ts was isolated for (see that file's own comment) - a
+// crafted/corrupted .heic file can hang heic-convert's decode forever, and
+// since getChild() below reuses the same child process across calls, one hung
+// file would wedge every subsequent HEIC conversion for the rest of the
+// session behind it. Timeout-and-kill the same way image-size.ts does.
 const HEIC_TIMEOUT_MS = 8000;
 
 const heicConvertPath = createRequire(import.meta.url).resolve('heic-convert');

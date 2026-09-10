@@ -5,15 +5,16 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { captureElectronError } from 'src-electron/main/utils';
 
-// image-size's ICNS/JXL/HEIF parsers have known, currently-unpatched DoS
-// advisories (GHSA-w3rx-r6r6-pgpr, GHSA-5p2g-fcmc-qvqq): a crafted file with
-// a zero-length entry/box field makes the parser loop forever. It sniffs the
-// real format from file content, not the extension, so any file a user adds
-// as an image (file picker, watched folder, "Additional Media") can reach a
-// vulnerable parser regardless of its name. Reading dimensions therefore
-// runs in a separate process, with a hard timeout, so a hung parse can only
-// ever burn one disposable child process instead of freezing the main
-// process's event loop (every window, every IPC reply) until the app is
+// Image dimensions are read with `probe-image-size` (pure JavaScript, no
+// native dependencies, actively maintained), which replaced `image-size`
+// after its ICNS/JXL/HEIF parsers gained infinite-loop DoS advisories
+// (GHSA-w3rx-r6r6-pgpr, GHSA-5p2g-fcmc-qvqq) with no fixed release published.
+// `probe-image-size` sniffs the real format from file content the same way,
+// so any file a user adds as an image (file picker, watched folder,
+// "Additional Media") is parsed regardless of its name. Reading dimensions
+// therefore runs in a separate process, with a hard timeout, so a hung parse
+// can only ever burn one disposable child process instead of freezing the
+// main process's event loop (every window, every IPC reply) until the app is
 // force-killed. This is the same isolation strategy as heic.ts's worker,
 // including the throwaway-temp-script trick for the same reason (a
 // `worker_threads` worker can't resolve an npm package from inside `app.asar`
@@ -22,16 +23,31 @@ import { captureElectronError } from 'src-electron/main/utils';
 
 const IMAGE_SIZE_TIMEOUT_MS = 8000;
 
-const imageSizeFromFilePath = createRequire(import.meta.url).resolve(
-  'image-size/fromFile',
+const probeSyncPath = createRequire(import.meta.url).resolve(
+  'probe-image-size/sync',
 );
 
-const workerSource = `'use strict';
-const { imageSizeFromFile } = require(process.argv[2]);
+// Exported for the behavior-contract test (`__tests__/image-dimensions.test.ts`),
+// which executes this exact source in a `node:vm` sandbox against real image
+// fixtures - the only feasible way to run the worker logic under vitest,
+// where Electron's `utilityProcess` is unavailable.
+export const workerSource = `'use strict';
+const { readFileSync } = require('node:fs');
+const probe = require(process.argv[2]);
 
 process.parentPort.on('message', async (message) => {
   try {
-    const result = await imageSizeFromFile(message.filePath);
+    // probe-image-size returns null (rather than throwing like image-size
+    // did) for unrecognized input, so normalize both cases into the posted
+    // error the main-process side already handles.
+    const probed = probe(readFileSync(message.filePath));
+    if (!probed || !probed.width || !probed.height) {
+      throw new Error(
+        'Could not determine dimensions of image: ' + message.filePath,
+      );
+    }
+    const result = { height: probed.height, width: probed.width };
+    if (probed.orientation) result.orientation = probed.orientation;
     process.parentPort.postMessage({ id: message.id, result });
   } catch (error) {
     process.parentPort.postMessage({
@@ -86,14 +102,10 @@ const rejectAllPending = (error: Error) => {
 const getChild = () => {
   if (child) return child;
 
-  const newChild = utilityProcess.fork(
-    getWorkerScriptPath(),
-    [imageSizeFromFilePath],
-    {
-      serviceName: 'M3 image size reader',
-      stdio: 'ignore',
-    },
-  );
+  const newChild = utilityProcess.fork(getWorkerScriptPath(), [probeSyncPath], {
+    serviceName: 'M3 image size reader',
+    stdio: 'ignore',
+  });
 
   newChild.on('message', (message: ImageSizeWorkerResponse) => {
     const pending = pendingRequests.get(message.id);
@@ -162,7 +174,7 @@ const postToWorkerWithTimeout = (
  * Reads an image's dimensions/orientation in an isolated, timed-out child
  * process. Throws (never hangs) on a parse failure, a worker crash, or a
  * timeout, mirroring the exception behavior callers already handle for the
- * un-isolated `imageSizeFromFile` call this replaces.
+ * un-isolated dimension-reading call this replaces.
  * @param filePath The image file to read
  */
 export const getImageDimensions = async (
