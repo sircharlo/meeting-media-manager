@@ -19,6 +19,9 @@ import fr from './fr.json' with { type: 'json' };
 // 98.7% translated as of 2026-09-10
 import ko from './ko.json' with { type: 'json' };
 
+// 98.3% translated as of 2026-09-10
+import es from './es.json' with { type: 'json' };
+
 // 98.0% translated as of 2026-09-10
 import ty from './ty.json' with { type: 'json' };
 
@@ -42,9 +45,6 @@ import ru from './ru.json' with { type: 'json' };
 
 // 49.8% translated as of 2026-09-10
 import nl from './nl.json' with { type: 'json' };
-
-// 45.8% translated as of 2026-09-10
-import es from './es.json' with { type: 'json' };
 
 // 41.8% translated as of 2026-09-10
 import hu from './hu.json' with { type: 'json' };
