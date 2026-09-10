@@ -318,7 +318,7 @@ Exclude additional videos that are referenced in Watchtower Study paragraphs.
 
 Choose publications whose referenced videos should not be shown during the Congregation Bible Study. Search by publication title or symbol.
 
-**Default**: Congregation Bible Study Guide (`wcg`)
+**Default**: Walk Courageously With God (`wcg`)
 
 #### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
 

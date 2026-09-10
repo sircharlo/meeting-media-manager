@@ -318,7 +318,7 @@ Võimaluse korral jäta allmärkuste pildid meedia allalaadimistest välja.
 
 Choose publications whose referenced videos should not be shown during the Congregation Bible Study. Search by publication title or symbol.
 
-**Default**: Congregation Bible Study Guide (`wcg`)
+**Default**: Walk Courageously With God (`wcg`)
 
 #### Ära kaasa meediat "Õpeta armastusega" brošüürist {#exclude-theocratic-ministry-school}
 

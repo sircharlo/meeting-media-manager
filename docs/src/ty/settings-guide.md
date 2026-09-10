@@ -318,7 +318,7 @@ Fa'anahora'a tumu: `Hape`
 
 A maiti i te mau papai o te ore e tia ia faaitehia ta ratou mau ata i te Haapiiraa Bibilia a te Amuiraa. A imi ma te faahiti i te iˈa o te papai aore ra te tapura.
 
-**Tei matauhia:** Te Arataʻi no te Haapiiraa Bibilia a te Amuiraa (`wcg`)
+**Default**: Walk Courageously With God (`wcg`)
 
 #### Fa’ata’a i te mau rāve’a ha’amāramaramara’a nō roto mai i te buka ra ’Ia fana’o i te orara’a oaoa e a muri noa atu! {#exclude-theocratic-ministry-school}
 

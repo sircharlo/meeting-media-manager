@@ -318,7 +318,7 @@ Exclure les vidéos supplémentaires mentionnées dans les paragraphes de l'étu
 
 Choisissez les publications dont les vidéos référencées ne sont pas normalement diffusées pendant l'étude biblique de l'assemblée. Recherche par titre ou symbole de publication.
 
-**Default**: Congregation Bible Study Guide (`wcg`)
+**Par défaut** : Marche courageusement avec Dieu (`wcg`)
 
 #### Exclure les médias de la brochure Enseignement {#exclude-theocratic-ministry-school}
 
@@ -619,7 +619,7 @@ Cette option est masquée lorsque le contrôle des enregistrements pour OBS Stud
 
 Configurez le raccourci clavier qui lance l'enregistrement, un raccourci facultatif qui interrompt l'enregistrement, ainsi que le dossier dans lequel l'application externe enregistre les fichiers. Si aucun raccourci d'arrêt n'est défini, M³ réutilisera le raccourci de démarrage. Lorsqu'un dossier est configuré, M³ affichera un bouton pour l'ouvrir.
 
-## Interface & Shortcuts {#interface-shortcuts}
+## Interface et raccourcis {#interface-raccourcis clavier } {#interface-shortcuts}
 
 ### Raccourcis clavier {#settings-guide-keyboard-shortcuts}
 
@@ -642,21 +642,21 @@ Configurez les raccourcis pour la lecture des médias :
 - **Arrêter les médias** : Arrêter la lecture des médias
 - **Basculement de la musique** : Basculer la musique de fond
 
-### Add More Media Button {#add-more-media-button}
+### Bouton "Ajouter des médias" {#add-more-media-button}
 
-#### Sections with an Add Media Button {#add-media-button-sections}
+#### Sections avec un bouton Ajouter des médias {#add-media-button-sections}
 
 <!-- **Setting**: `addMediaButtonSections` -->
 
-Choose which meeting sections show their own button for adding your own media, in addition to the "Add media" button in the top toolbar, which always works for every section.
+Choisissez les sections de la réunion qui afficheront leur propre bouton permettant d'ajouter vos propres fichiers multimédias, en plus du bouton « Ajouter des médias » situé dans la barre d'outils supérieure, qui fonctionne toujours pour toutes les sections.
 
-**Default**: Public Talk, Living as Christians, Circuit Overseer's Visit, and Custom sections
+**Par défaut** : « Discours public », « Vie chrétienne », « Visite du responsable de circonscription » et « Personnalisé »
 
 #### Compact Add Media Button {#compact-add-media-button}
 
 <!-- **Setting**: `compactAddMediaButton` -->
 
-Only show an icon for the "Add more media"/"Add a song" button in section headers. When disabled, the button also shows text alongside the icon when there's enough room.
+N'afficher qu'une icône pour le bouton « Ajouter des médias » / « Ajouter un cantique » dans les en-têtes de section. Lorsque cette option est désactivée, le bouton affiche également du texte à côté de l'icône s'il y a suffisamment d'espace.
 
 **Par défaut** : `vrai`
 
@@ -672,7 +672,7 @@ Afficher une petite poignée sur chaque élément multimédia pour pouvoir le fa
 
 ### Before/After Meeting Quick Actions {#before-after-meeting-quick-actions}
 
-#### Show Meeting Quick Actions {#enable-meeting-quick-actions}
+#### Afficher les actions rapides de réunion {#enable-meeting-quick-actions}
 
 <!-- **Setting**: `enableMeetingQuickActions` -->
 
