@@ -7,7 +7,9 @@
   "resolutions": {
     "plist": "3.1.1",
     "js-yaml@^4.1.0": "4.3.2",
-    "undici@^7.24.4": "7.29.1"
+    "undici@^7.24.4": "7.29.1",
+    "brace-expansion@^2.0.1": "2.1.2",
+    "brace-expansion@^2.0.2": "2.1.2"
   },
   "dependencies": {
     "@jitsi/robotjs": "^0.6.24",
