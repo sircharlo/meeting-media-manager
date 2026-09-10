@@ -4,6 +4,9 @@
   "description": "Meeting Media Manager Electron main/preload folder",
   "private": true,
   "type": "module",
+  "resolutions": {
+    "@xmldom/xmldom": "0.9.12"
+  },
   "dependencies": {
     "@jitsi/robotjs": "^0.6.24",
     "@numairawan/video-duration": "^1.0.0",

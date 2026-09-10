@@ -155,6 +155,9 @@
   ],
   "private": true,
   "type": "module",
+  "resolutions": {
+    "@xmldom/xmldom": "0.9.12"
+  },
   "packageManager": "yarn@4.18.0",
   "productName": "Meeting Media Manager"
 }

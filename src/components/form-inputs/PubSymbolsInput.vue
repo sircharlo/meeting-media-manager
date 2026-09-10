@@ -118,10 +118,7 @@ onMounted(async () => {
   }
 });
 
-const filterFn = (
-  val: string,
-  update: (arg0: { (): void; (): void }) => void,
-) => {
+const filterFn = (val: string, update: (fn: () => void) => void) => {
   update(() => {
     if (!val) {
       filteredOptions.value = allOptions.value;
