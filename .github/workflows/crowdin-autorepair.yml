@@ -6,17 +6,28 @@ name: Crowdin auto-repair
 # release-notes version headers, i18n link/param targets) and purges the
 # corrupted translation-memory segments, so the Crowdin GitHub App's PRs
 # come out clean. Docs link: frontmatter is not exposed by Crowdin as
-# translatable strings, so the sweep only logs a diagnostic for it and
-# docs/utils/fix-doc-markdown.mjs rewrites links locally.
+# translatable strings, so the sweep only logs a diagnostic for it -
+# docs:lint no longer fails a PR over it (VitePress recomputes the correct
+# locale-prefixed link at build time regardless of what's stored there), and
+# docs/utils/fix-doc-markdown.mjs remains available to tidy it up locally.
 #
 # A Crowdin webhook was considered for near-instant repair, but Crowdin's
 # custom webhook payload only accepts its own event variables as keys, so it
 # cannot emit the event_type that GitHub's repository_dispatch API requires
-# (API error "Events [client_payload, event_type] don't exist"). The hourly
-# schedule is the zero-infrastructure equivalent; the local --check guards in
-# dev/build/test still catch any broken output the moment it lands.
+# (API error "Events [client_payload, event_type] don't exist"). The push
+# trigger below is the next best thing: every time Crowdin's GitHub App
+# exports translations to l10n_master, this sweep runs within seconds and
+# patches any corruption in Crowdin's stored translations before it can be
+# leveraged into other strings. It can't force Crowdin to re-export an
+# already-open PR though (no API for that), so an in-flight PR can still
+# occasionally need a one-off local fix (docs/utils/fix-doc-markdown.mjs,
+# scripts/fix-i18n-locales.mjs) - the hourly schedule below is kept as a
+# project-wide backstop for corruption introduced between pushes.
 
 on:
+  push:
+    branches:
+      - l10n_master
   schedule:
     # Hourly; repairs anything saved since the last run. The cleanup is
     # idempotent, so overlapping/quick runs are harmless.
@@ -59,9 +70,10 @@ jobs:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
         run: |
-          # Scheduled runs always apply a full sweep. Manual runs respect the
-          # language/apply inputs.
-          if [ "${{ github.event_name }}" = "schedule" ]; then
+          # Scheduled and push-triggered runs always apply a full sweep (push
+          # events carry no workflow_dispatch inputs to read). Manual runs
+          # respect the language/apply inputs.
+          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ github.event_name }}" = "push" ]; then
             node scripts/cleanup-crowdin.mjs --apply
             exit $?
           fi

@@ -360,7 +360,6 @@ async function main() {
       }
     }
 
-    const changeCount = totals.linkChanges + totals.anchorChanges;
     console.log(
       `Done. ${checkOnly ? 'Found' : 'Fixed'} ${totals.linkChanges} link${totals.linkChanges === 1 ? '' : 's'} and ${totals.anchorChanges} anchor${totals.anchorChanges === 1 ? '' : 's'}.`,
     );
@@ -371,7 +370,15 @@ async function main() {
       );
     }
 
-    if (checkOnly && changeCount > 0) {
+    // link: frontmatter isn't exposed by Crowdin as a translatable string
+    // (URL-like values are excluded from translation - confirmed against the
+    // live project), so it can never come back from Crowdin correctly
+    // prefixed, and there's nothing "wrong" for a human to fix. It's also
+    // harmless: config.mts's transformPageData hook re-derives every hero
+    // action link from its slug at build time regardless of what's stored
+    // here. So --check only fails the build on anchor drift, which is a
+    // real, human-fixable-in-Crowdin defect.
+    if (checkOnly && totals.anchorChanges > 0) {
       process.exit(1);
     }
   } catch (error) {
