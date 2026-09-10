@@ -4,7 +4,7 @@
  *
  * The app's i18n JSON, docs markdown, and docs locale files go through
  * Crowdin, and translators editing strings in the Crowdin web editor keep
- * re-introducing the same three classes of corruption:
+ * re-introducing the same four classes of corruption:
  *
  *   1. Mangling of vue-i18n linked-message syntax (`@:{'key'}`) - typographic
  *      quotes (`@:{‚key‘}`) or stray whitespace (`@: key`), which the message
@@ -17,6 +17,14 @@
  *      translatable strings (URL-like front matter is excluded), so there
  *      is nothing to repair via the API - the sweep logs that and leaves
  *      links to docs/utils/fix-doc-markdown.mjs.
+ *   4. Release-notes version headers (`## v26.7.0` in release-notes/en.md).
+ *      These must stay byte-identical to the source, but translators keep
+ *      localizing them - French scrambles (`## 7.0 v26.0`), Spanish drops
+ *      separators (`## v26 6.1`) or truncates (`## v26.6`), Finnish swaps in
+ *      decimal commas (`## v26,3.0`). The app's About dialog skips any
+ *      header that isn't a clean version, so those releases silently vanish
+ *      from the "What's New" carousel. (The translated `## UPCOMING
+ *      VERSION` heading is legitimate localization and is left alone.)
  *
  * The same corruption lives in Crowdin's translation memory, so every
  * exported PR re-delivers it. This script repairs the stored translations in
@@ -55,8 +63,14 @@ import { compiles, fixLinkedMessageSyntax } from './fix-i18n-locales.mjs';
 const API_VERSION = '/api/v2';
 const I18N_SOURCE_PATH = 'src/i18n/en.json';
 const DOCS_SOURCE_PREFIX = 'docs/src/en/';
+const RELEASE_NOTES_SOURCE_PATH = 'release-notes/en.md';
 const PAGE_SIZE = 500;
 const TYPOGRAPHIC_QUOTES = '‚‘’‛“”„‟';
+
+// Matches a release-notes version header exactly as it appears in the source
+// (`## v26.7.0`, including the legacy separator-less `## 25.6.0` form). The
+// `(?!#)` keeps `### ...` subsection headers out.
+const VERSION_HEADER_PATTERN = /^##(?!#)\s+v?\d+\.\d+\.\d+/;
 
 // ── Pure repair logic (mirrors scripts/fix-i18n-locales.mjs and
 //    docs/utils/fix-doc-markdown.mjs) ─────────────────────────────────────────
@@ -73,6 +87,21 @@ function computeAnchorFix(enText, translationText, usedAnchors) {
 
   const fixed = replaceHeadingAnchor(translationText, anchor);
   return fixed === translationText ? null : { kind: 'anchor', text: fixed };
+}
+
+/**
+ * Release-notes version headers must stay byte-identical to the English
+ * source - they are machine-read version tags, not prose. Returns a fix
+ * resetting the translation to the source, or null when there is nothing to
+ * repair (not a version-header string, already identical, or untranslated).
+ * The translated `## UPCOMING VERSION` heading is legitimate localization
+ * and never matches VERSION_HEADER_PATTERN, so it is left alone.
+ */
+function computeVersionHeaderFix(source, translation) {
+  if (!VERSION_HEADER_PATTERN.test(source)) return null;
+  if (typeof translation !== 'string' || translation.length === 0) return null;
+  if (translation === source) return null;
+  return { kind: 'version', text: source };
 }
 
 function getTrailingHeadingAnchors(line) {
@@ -143,6 +172,10 @@ const CORRUPTION_SIGNATURES = [
   /@:[ \t]+(?=[\p{L}\p{N}_-])/u,
   // Doubled heading anchors left over from mangled {#a} {#a} runs.
   /\{#[\w-]+\}\s*\{#/,
+  // Scrambled release-notes version headers (e.g. `7.0 v26.0` for `v26.7.0`).
+  /^(?:##\s*)?\d+\.\d+\s+v\d+\.\d+\s*$/,
+  // Localized separators in release-notes versions (`v26,3.0`, `v26 6.1`).
+  /^(?:##\s*)?v\d+[ ,]\d+[,.]?\d*\s*$/,
 ];
 
 async function crowdinRequest(
@@ -378,7 +411,7 @@ async function patchTranslations(ctx, ops, label) {
 function printHelp() {
   console.log(`Clean Crowdin corruption at the source, via the Crowdin API.
 
-Repairs the three recurring classes of Crowdin corruption in the stored
+Repairs the four recurring classes of Crowdin corruption in the stored
 translations (and purges the corrupted translation-memory segments), so
 future Crowdin PRs come out clean:
 
@@ -388,6 +421,9 @@ future Crowdin PRs come out clean:
   3. Docs link: frontmatter is not exposed by Crowdin as translatable
      strings (confirmed against the live project), so the sweep logs that
      and leaves links to docs/utils/fix-doc-markdown.mjs.
+  4. Release-notes version headers (## v26.7.0) localized by translators
+     (scrambled, truncated, or re-punctuated) - reset to the English source
+     so the About dialog's "What's New" carousel keeps those releases.
 
 Automation:
   .github/workflows/crowdin-autorepair.yml runs this script with --apply
@@ -573,6 +609,59 @@ async function repairI18nLinkedSyntax(ctx, file) {
   }
 }
 
+// ── release-notes version-header repair ────────────────────────────────────────
+
+async function repairReleaseNotesVersions(ctx, file) {
+  const strings = await listAll(
+    ctx.baseUrl,
+    ctx.token,
+    `/projects/${ctx.projectId}/strings?fileId=${file.id}`,
+  );
+  const sources = new Map(
+    strings
+      .filter(
+        (string) =>
+          typeof string.text === 'string' &&
+          VERSION_HEADER_PATTERN.test(string.text),
+      )
+      .map((string) => [string.id, string.text]),
+  );
+  if (sources.size === 0) return;
+
+  for (const language of ctx.languages) {
+    const translations = await listAll(
+      ctx.baseUrl,
+      ctx.token,
+      `/projects/${ctx.projectId}/languages/${encodeURIComponent(language)}/translations?fileId=${file.id}`,
+    );
+
+    const ops = [];
+    for (const item of translations) {
+      const source = sources.get(item.stringId);
+      if (source === undefined) continue;
+
+      const fix = computeVersionHeaderFix(source, item.text);
+      if (!fix) continue;
+
+      ctx.totals.versions += 1;
+      const label = `${file.normalizedPath} (${language}, string ${item.stringId})`;
+      if (ctx.verbose) {
+        ctx.log(
+          `[version] ${label}: ${JSON.stringify(item.text)} -> ${JSON.stringify(fix.text)}`,
+        );
+      }
+      ops.push({
+        op: 'replace',
+        path: `/${item.translationId}`,
+        value: { text: fix.text },
+      });
+    }
+    if (ctx.apply && ops.length > 0) {
+      await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`);
+    }
+  }
+}
+
 async function run() {
   const args = parseArgs(process.argv.slice(2));
   if (args.help) {
@@ -593,7 +682,7 @@ async function run() {
     log: (message) => console.log(message),
     projectId,
     token,
-    totals: { anchors: 0, linked: 0, segments: 0 },
+    totals: { anchors: 0, linked: 0, segments: 0, versions: 0 },
     verbose: args.verbose,
   };
 
@@ -656,21 +745,37 @@ async function run() {
     logUnmatchedPaths(ctx, normalizedFiles, 15);
   }
 
-  ctx.log('[crowdin] class 4: purging corrupted translation-memory segments');
+  const releaseNotesFile = normalizedFiles.find((file) =>
+    file.normalizedPath.endsWith(RELEASE_NOTES_SOURCE_PATH),
+  );
+  if (releaseNotesFile) {
+    ctx.log(
+      `[crowdin] class 4: release-notes version headers in ${releaseNotesFile.normalizedPath}`,
+    );
+    await repairReleaseNotesVersions(ctx, releaseNotesFile);
+  } else {
+    ctx.log(
+      `[crowdin] WARN: source file ${RELEASE_NOTES_SOURCE_PATH} not found in project; skipping class 4`,
+    );
+    logUnmatchedPaths(ctx, normalizedFiles, 15);
+  }
+
+  ctx.log('[crowdin] class 5: purging corrupted translation-memory segments');
   try {
     await purgeCorruptedTmSegments(ctx);
   } catch (error) {
     ctx.failures.push(`translation-memory purge: ${error.message}`);
   }
 
-  const { anchors, linked, segments } = ctx.totals;
-  const total = anchors + linked + segments;
+  const { anchors, linked, segments, versions } = ctx.totals;
+  const total = anchors + linked + segments + versions;
   ctx.log('');
   ctx.log(
     `Done. ${ctx.apply ? 'Applied' : 'Found (dry run - rerun with --apply to commit)'}:`,
   );
   ctx.log(`  linked-syntax repairs:   ${linked}`);
   ctx.log(`  heading-anchor fixes:    ${anchors}`);
+  ctx.log(`  version-header repairs:  ${versions}`);
   ctx.log(`  corrupted TM segments:   ${segments}`);
 
   if (ctx.failures.length > 0) {
@@ -765,6 +870,53 @@ function runSelfTest() {
     ['tm stray whitespace', isCorruptedSegment('... @: cbs ajal'), true],
     ['tm doubled anchor', isCorruptedSegment('## Foo {#foo} {#foo}'), true],
     ['tm clean segment', isCorruptedSegment("Viide @:{'cbs'} juurde"), false],
+    ['tm scrambled version header', isCorruptedSegment('## 7.0 v26.0'), true],
+    ['tm localized version separators', isCorruptedSegment('## v26,3.0'), true],
+    [
+      'tm clean version header left alone',
+      isCorruptedSegment('## v26.7.0'),
+      false,
+    ],
+
+    // Release-notes version headers (real samples from fr/es/fi exports).
+    [
+      'version scrambled french header reset to source',
+      computeVersionHeaderFix('## v26.7.0', '## 7.0 v26.0'),
+      { kind: 'version', text: '## v26.7.0' },
+    ],
+    [
+      'version localized separators reset to source',
+      computeVersionHeaderFix('## v26.3.0', '## v26,3.0'),
+      { kind: 'version', text: '## v26.3.0' },
+    ],
+    [
+      'version truncated spanish header reset to source',
+      computeVersionHeaderFix('## v26.6.0', '## v26.6'),
+      { kind: 'version', text: '## v26.6.0' },
+    ],
+    [
+      'version identical translation left alone',
+      computeVersionHeaderFix('## v26.7.0', '## v26.7.0'),
+      null,
+    ],
+    [
+      'version untranslated string left alone',
+      computeVersionHeaderFix('## v26.7.0', ''),
+      null,
+    ],
+    [
+      'version upcoming heading is translatable',
+      computeVersionHeaderFix('## UPCOMING VERSION', '## VERSION À VENIR'),
+      null,
+    ],
+    [
+      'version subsection header ignored',
+      computeVersionHeaderFix(
+        '### ✨ New Features',
+        '### ✨ Nouvelles fonctionnalités',
+      ),
+      null,
+    ],
 
     // Batch PATCH per-op error parsing.
     [

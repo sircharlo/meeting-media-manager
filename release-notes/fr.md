@@ -39,7 +39,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 - ✨ **Récupération des médias manquants** : Les éléments multimédias dont le fichier local a disparu (par exemple, supprimé lors de l'effacement automatique du cache ou supprimé manuellement) affichent désormais un bouton de lecture désactivé, une légende « manquant » indiquant le nom du fichier à rechercher, ainsi qu'une nouvelle action « Localiser le fichier » permettant de relier à nouveau l'élément à un fichier sur le disque.
 - ✨ **Avertissement de compatibilité** : Ajout d'une bannière (qui peut être masquée) avertissant les utilisateurs que certaines combinaisons de systèmes d'exploitation et d'architectures (macOS 12 Monterey et Windows 32 bits) ne seront bientôt plus prises en charge, afin qu'ils procèdent à une mise à niveau avant que les futures mises à jour de l'application n'exigent un système plus récent.
 
-## 7.0 v26.0
+## v26.7.0
 
 ### ✨ Nouvelles fonctionnalités
 
@@ -55,7 +55,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 - ✨ **Filtrage des paramètres** : Ajout d'une zone de recherche sur la page des paramètres qui vous permet de trouver des paramètres par mot-clé ou par catégorie. Pour l'utiliser, il suffit de cliquer sur le bouton de recherche en haut à droite de la page des paramètres, ou bien utilisez le raccourci clavier standard pour rechercher (Ctrl+F ou Cmd+F).
 - ✨ **Avertissement concernant le chevauchement de la musique de fond** : Ajout d'une notification d'avertissement lorsqu'un fichier multimédia est lancé alors que la musique de fond est en cours de lecture. Les utilisateurs peuvent choisir d'arrêter la musique de fond depuis la notification.
 
-## 6.0 v26.6
+## v26.6.0
 
 ### ✨ Nouvelles fonctionnalités
 
