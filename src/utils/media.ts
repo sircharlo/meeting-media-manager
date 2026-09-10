@@ -255,6 +255,20 @@ export const getVisibleMeetingItems = (
 };
 
 /**
+ * Whether a metadata-parse failure signals a partial/truncated media file
+ * rather than a real bug. music-metadata (via strtok3) throws an
+ * "End-Of-Stream" error when it runs out of bytes mid-parse - the normal
+ * outcome when a file that is still downloading (or was copied incompletely)
+ * is read before it finished, so it should not be reported to Sentry. The
+ * same message string is produced by every strtok3 tokenizer, so matching
+ * the message (which survives the contextBridge crossing) is more reliable
+ * than matching the class instance.
+ */
+const isEndOfStreamError = (error: unknown) =>
+  (error as null | undefined | { message?: string })?.message ===
+  'End-Of-Stream';
+
+/**
  * Gets the metadata of a media file.
  * @param mediaPath The path to the media file.
  * @returns The metadata of the media file.
@@ -327,7 +341,9 @@ export const getMetadataFromMediaPath = async (
     }
     return metadata;
   } catch (error) {
-    if (error instanceof Event) return defaultMetadata;
+    if (error instanceof Event || isEndOfStreamError(error)) {
+      return defaultMetadata;
+    }
     errorCatcher(error, {
       contexts: { fn: { mediaPath, name: 'getMetadataFromMediaPath' } },
     });
