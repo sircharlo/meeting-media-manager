@@ -74,7 +74,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🔧 **Docs**: Fixed the renamed VitePress image option and deduplicated heading anchors to unblock the docs build.
 - 🔧 **Dev Tooling**: Added dev-only demo-mode tooling and made the Electron rebuild script cross-platform.
 - 🔧 **Release Process**: Renamed the in-progress changelog section from `vPENDING` to `UPCOMING VERSION` and now syncs it into the release notes for early translation.
-- 🔧 **Dependencies**: Pinned `@xmldom/xmldom` to the patched `0.9.12` in both dependency trees, since the packaging toolchain's pinned `plist` otherwise keeps the vulnerable `0.8.x` line installed and Dependabot cannot resolve the update on its own.
+- 🔧 **Dependencies**: Pinned `plist` to `3.1.1` in both dependency trees so the packaging toolchain picks up the patched `@xmldom/xmldom` — the pinned `plist@3.1.0` otherwise keeps the vulnerable `0.8.x` line installed (and can't simply be paired with the fixed `0.9.x`, whose stricter parser it doesn't support), which Dependabot cannot resolve on its own.
 
 ## v26.8.0
 
