@@ -65,5 +65,10 @@ ignores:
   - heic-convert
   - is-online
   - mime
+  # Loaded dynamically by the image-size.ts worker (via the resolved
+  # `probe-image-size/sync` path passed as an argv) and resolved the same way
+  # by the worker behavior-contract test - no static import exists for
+  # depcheck to see, in either project.
+  - probe-image-size
   - upath
   - yauzl
