@@ -164,6 +164,21 @@ async function main() {
     `[apply] project target languages: ${[...targetLanguageIds].join(', ')}`,
   );
 
+  // Our repo's LanguageValue codes (src/i18n/<code>.json) don't always match
+  // Crowdin's own language id (e.g. our "pt" is Crowdin's "pt-BR", "es" is
+  // "es-ES") - resolve via each target language's own twoLettersCode rather
+  // than assuming the codes are identical.
+  const languageIdByTwoLetters = new Map(
+    (project.targetLanguages ?? []).map((lang) => [
+      lang.twoLettersCode,
+      lang.id,
+    ]),
+  );
+  function resolveLanguageId(code) {
+    if (targetLanguageIds.has(code)) return code;
+    return languageIdByTwoLetters.get(code) ?? null;
+  }
+
   const files = await listAll(baseUrl, token, `/projects/${projectId}/files`);
   const normalizedFiles = files.map((file) => ({
     ...file,
@@ -213,22 +228,25 @@ async function main() {
 
     const byLanguage = new Map();
     for (const decision of decisions) {
-      if (!targetLanguageIds.has(decision.language)) {
-        console.warn(
-          `[apply] language "${decision.language}" is not in this project's targetLanguageIds - ` +
-            `check whether Crowdin uses a different code for it (e.g. es-ES, zh-CN, pt-BR) before re-running.`,
-        );
+      const resolvedLanguageId = resolveLanguageId(decision.language);
+      if (!resolvedLanguageId) {
+        unresolved.push({
+          decision,
+          reason: `language "${decision.language}" does not match any target language id or twoLettersCode in this Crowdin project`,
+          status: 'unresolved',
+        });
+        continue;
       }
-      const list = byLanguage.get(decision.language) ?? [];
+      const list = byLanguage.get(resolvedLanguageId) ?? [];
       list.push(decision);
-      byLanguage.set(decision.language, list);
+      byLanguage.set(resolvedLanguageId, list);
     }
 
-    for (const [language, languageDecisions] of byLanguage) {
+    for (const [crowdinLanguageId, languageDecisions] of byLanguage) {
       const translations = await listAll(
         baseUrl,
         token,
-        `/projects/${projectId}/languages/${encodeURIComponent(language)}/translations?fileId=${file.id}`,
+        `/projects/${projectId}/languages/${encodeURIComponent(crowdinLanguageId)}/translations?fileId=${file.id}`,
       );
       const translationsByStringId = new Map(
         translations.map((t) => [t.stringId, t]),
