@@ -16,7 +16,10 @@
  *      sweeps confirmed Crowdin's markdown parser never exposes these as
  *      translatable strings (URL-like front matter is excluded), so there
  *      is nothing to repair via the API - the sweep logs that and leaves
- *      links to docs/utils/fix-doc-markdown.mjs.
+ *      links to docs/utils/fix-doc-markdown.mjs. docs:lint no longer fails
+ *      on this class: config.mts's transformPageData hook recomputes every
+ *      hero action link from its slug at build time, so a stale prefix here
+ *      never reaches production regardless of what Crowdin exports.
  *   4. Release-notes version headers (`## v26.7.0` in release-notes/en.md).
  *      These must stay byte-identical to the source, but translators keep
  *      localizing them - French scrambles (`## 7.0 v26.0`), Spanish drops
