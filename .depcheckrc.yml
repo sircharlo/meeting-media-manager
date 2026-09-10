@@ -64,6 +64,7 @@ ignores:
   - fluent-ffmpeg
   - heic-convert
   - image-size
+  - is-online
   - mime
   - upath
   - yauzl
