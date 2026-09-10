@@ -318,7 +318,7 @@ Izključi dodatne videe, ki so omenjeni v odstavkih za Preučevanje Stražnega s
 
 Izberi publikacije, katerih navedeni videoposnetki naj se med Občinskim preučevanjem Biblije ne prikazujejo. Išči po naslovu publikacije ali simbolu.
 
-**Default**: Walk Courageously With God (`wcg`)
+**Privzeto**: Pogumno hodi z Bogom (`wcg`)
 
 #### Izključi multimedijsko vsebino iz brošure Branje in poučevanje {#exclude-theocratic-ministry-school}
 
