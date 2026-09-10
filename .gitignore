@@ -10,6 +10,10 @@ node_modules
 # Freebuff thread-local metadata and scratch files
 /.freebuff/
 
+# Per-run output of scripts/i18n-quality (proposed edits, reports) - the
+# committed glossaries under scripts/i18n-quality/glossaries/ are NOT here
+/reports/translation-quality/
+
 # Quasar core related directories
 .quasar
 /dist
