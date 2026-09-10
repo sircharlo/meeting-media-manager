@@ -6,7 +6,7 @@ title: Descargas
 
 # Descargas
 
-Usa los enlaces de abajo para descargar la última versión de Meeting Media Manager para tu sistema operativo. Estos enlaces siempre apuntan a la versión estable más reciente.
+Usa los enlaces de abajo para descargar la versión más reciente de Meeting Media Manager para tu sistema operativo. Estos enlaces siempre apuntan a la versión estable más reciente.
 
 <script setup lang="ts">
 import { data as downloads } from '../../data/version.data.mts'
@@ -75,7 +75,7 @@ onMounted(() => {
 })
 </script>
 
-## Última versión
+## Versión más reciente
 
 - **Versión**: {{ downloads.version }} <span v-if="daysAgoText">({{ daysAgoText }})</span>
 
@@ -89,7 +89,7 @@ onMounted(() => {
 
 - **Windows de 64 bits (.exe)**: <a :href="downloads.win64">Descargar</a>
 - **Windows de 32 bits (.exe)**: <a :href="downloads.win32">Descargar</a>
-- **Windows Portable (.exe)**: <a :href="downloads.winPortable">Descargar</a>
+- **Windows portátil (.exe)**: <a :href="downloads.winPortable">Descargar</a>
 
 ## macOS
 
