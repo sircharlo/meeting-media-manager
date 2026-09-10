@@ -31,6 +31,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 - 🐞 **About Dialog**: Fixed "What's New" feature descriptions showing a stray leading colon in languages that put a space before the colon (e.g. French) or use a full-width colon.
 - 🐞 **Localization**: Fixed corrupted release-notes version headers (French, Spanish, Finnish) that hid those releases from the About dialog's "What's New" carousel, and added hourly Crowdin auto-repair so localized version numbers are reset to the English source.
+- 🐞 **Localization**: Crowdin auto-repair now also resets dangling publication/OBS links, mangled link casing, and localized parameter names in translations (e.g. Italian, Slovenian, Estonian), which previously rendered as raw key fragments.
 - 🐞 **Paragraph Tags**: Ignored incidental numbers in media captions unless the caption has a structural paragraph-reference pattern, while preserving paragraph references across languages.
 - 🐞 **Media Preview**: The preview no longer disables itself when it repeatedly drifts from the media window — it falls back to lighter video rendering first, and only turns off if drift persists even then. False drift detection at high playback speeds and during paused scrubbing was also fixed.
 - 🐞 **Meeting Quick Actions**: Dismissing the before- or after-meeting panel is no longer permanent for the rest of the session — an inobtrusive banner with a "Show" button appears in its place while it would otherwise still be relevant.

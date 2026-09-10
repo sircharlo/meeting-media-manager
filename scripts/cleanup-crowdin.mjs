@@ -4,7 +4,7 @@
  *
  * The app's i18n JSON, docs markdown, and docs locale files go through
  * Crowdin, and translators editing strings in the Crowdin web editor keep
- * re-introducing the same four classes of corruption:
+ * re-introducing the same six classes of corruption:
  *
  *   1. Mangling of vue-i18n linked-message syntax (`@:{'key'}`) - typographic
  *      quotes (`@:{‚key‘}`) or stray whitespace (`@: key`), which the message
@@ -25,6 +25,25 @@
  *      header that isn't a clean version, so those releases silently vanish
  *      from the "What's New" carousel. (The translated `## UPCOMING
  *      VERSION` heading is legitimate localization and is left alone.)
+ *   5. i18n link/param targets in `src/i18n/*.json` translations, in three
+ *      flavors, all invisible to the message compiler (which only checks
+ *      syntax) but broken at runtime, where a missing linked key echoes as
+ *      a raw `key` fragment:
+ *      (a) Dangling `@:` targets from truncated autocompletions - Italian
+ *          `@:official-of-jw` (for `official-website-of-jw`), `@:study-`
+ *          and `@:studio` (for `study-bible`).
+ *      (b) Case-mangled `@:` targets - Slovenian `@:oBS` (for `obsStudio`).
+ *      (c) Localized `{param}` names - Estonian `{aasta}` (for `{year}`),
+ *          which never interpolates because the app passes `{year}`.
+ *      Repair is strictly one-to-one: a single dangling translation target
+ *      is replaced with the single source key missing from the translation
+ *      (same for params). Anything ambiguous is left for translators -
+ *      notably deliberate rewordings that drop a link, and German/Dutch
+ *      compounds (`@:obsWebSocket-Plugin`). The compounds cannot be fixed
+ *      automatically: vue-i18n parses the whole `obsWebSocket-Plugin` token
+ *      as one key (`readLinkedRefer` stops only at whitespace/`{@/()/`),
+ *      so they echo raw at runtime, yet rewriting them would mangle the
+ *      translators' grammar - they need human rewording instead.
  *
  * The same corruption lives in Crowdin's translation memory, so every
  * exported PR re-delivers it. This script repairs the stored translations in
@@ -89,6 +108,82 @@ function computeAnchorFix(enText, translationText, usedAnchors) {
   return fixed === translationText ? null : { kind: 'anchor', text: fixed };
 }
 
+// Matches one vue-i18n linked construct and captures its key, covering the
+// `@:key`, `@:{key}` and `@:{'key'}` spellings. Deliberately unicode-safe
+// (`[\w-]` would stop at ü/ö/ä and slice German compounds in half).
+const LINK_TARGET_RE = /@:\{?'?([^'}\s]+)'?\}?/g;
+const PARAM_NAME_RE = /\{([\w]+)\}/g;
+
+/**
+ * Repair dangling i18n link/param targets (class 5) by aligning them with
+ * the English source. Only unambiguous one-to-one cases are repaired:
+ * exactly one translation target that resolves nowhere, and exactly one
+ * source key/param missing from the translation. Everything else is left
+ * for translators:
+ * - deliberate rewordings that drop a link (nothing dangling to repair),
+ * - reordered `{params}` (set-equal, so nothing is missing),
+ * - German/Dutch compounds (`@:obsWebSocket-Plugin`): the dangling token
+ *   extends a source key with `-Suffix`, i.e. an intentional (if broken)
+ *   grammatical construction that automation must not rewrite.
+ * `validKeys` is the English key set (link targets must exist as keys);
+ * params are code too, so they are matched against the source's own params.
+ */
+function computeLinkTargetFix(source, translation, validKeys) {
+  if (typeof source !== 'string' || typeof translation !== 'string') {
+    return null;
+  }
+  if (translation === source) return null;
+
+  let fixed = translation;
+
+  const sourceLinks = linkTargetMatches(source).map((match) => match.key);
+  const translationLinks = linkTargetMatches(fixed);
+  const missingLinks = [
+    ...new Set(
+      sourceLinks.filter(
+        (key) => !translationLinks.some((match) => match.key === key),
+      ),
+    ),
+  ];
+  const danglingLinks = translationLinks.filter(
+    (match) => !validKeys.has(match.key),
+  );
+  const isCompound = danglingLinks.some((match) =>
+    sourceLinks.some(
+      (key) => match.key !== key && match.key.startsWith(`${key}-`),
+    ),
+  );
+  if (!isCompound && danglingLinks.length === 1 && missingLinks.length === 1) {
+    const match = danglingLinks[0];
+    fixed =
+      fixed.slice(0, match.index) +
+      match.full.replace(match.key, missingLinks[0]) +
+      fixed.slice(match.index + match.full.length);
+  }
+
+  const sourceParams = paramNameMatches(source).map((match) => match.name);
+  const translationParams = paramNameMatches(fixed);
+  const missingParams = [
+    ...new Set(
+      sourceParams.filter(
+        (name) => !translationParams.some((match) => match.name === name),
+      ),
+    ),
+  ];
+  const danglingParams = translationParams.filter(
+    (match) => !sourceParams.includes(match.name),
+  );
+  if (danglingParams.length === 1 && missingParams.length === 1) {
+    const match = danglingParams[0];
+    fixed =
+      fixed.slice(0, match.index) +
+      `{${missingParams[0]}}` +
+      fixed.slice(match.index + match.full.length);
+  }
+
+  return fixed === translation ? null : { kind: 'links', text: fixed };
+}
+
 /**
  * Release-notes version headers must stay byte-identical to the English
  * source - they are machine-read version tags, not prose. Returns a fix
@@ -146,6 +241,22 @@ function isValidAnchor(anchor) {
   );
 }
 
+function linkTargetMatches(text) {
+  return [...text.matchAll(LINK_TARGET_RE)].map((match) => ({
+    full: match[0],
+    index: match.index ?? 0,
+    key: match[1],
+  }));
+}
+
+function paramNameMatches(text) {
+  return [...text.matchAll(PARAM_NAME_RE)].map((match) => ({
+    full: match[0],
+    index: match.index ?? 0,
+    name: match[1],
+  }));
+}
+
 function repairLinkedMessage(translation) {
   if (!translation.includes('@:') || compiles(translation)) return null;
   const fixed = fixLinkedMessageSyntax(translation);
@@ -176,6 +287,9 @@ const CORRUPTION_SIGNATURES = [
   /^(?:##\s*)?\d+\.\d+\s+v\d+\.\d+\s*$/,
   // Localized separators in release-notes versions (`v26,3.0`, `v26 6.1`).
   /^(?:##\s*)?v\d+[ ,]\d+[,.]?\d*\s*$/,
+  // Truncated vue-i18n linked keys (`@:study- ` for `@:study-bible`): a link
+  // token ending in a hyphen is never valid.
+  /@:[^\s]*-(?=[\s.,;:!?]|$)/,
 ];
 
 async function crowdinRequest(
@@ -299,6 +413,24 @@ async function listAll(baseUrl, token, path) {
   return items;
 }
 
+/**
+ * English key set for validating `@:` link targets. Read from the repo
+ * checkout rather than the Crowdin API so the repair never depends on how
+ * Crowdin names string identifiers - link targets must exist as keys in
+ * `src/i18n/en.json`, full stop.
+ */
+function loadEnKeys() {
+  try {
+    const content = readFileSync(
+      resolve(process.cwd(), I18N_SOURCE_PATH),
+      'utf-8',
+    );
+    return new Set(Object.keys(JSON.parse(content)));
+  } catch {
+    return new Set();
+  }
+}
+
 function logUnmatchedPaths(ctx, files, max = 15) {
   const sample = files
     .slice(0, max)
@@ -312,6 +444,8 @@ function logUnmatchedPaths(ctx, files, max = 15) {
 function normalizePath(filePath) {
   return filePath.replaceAll('\\', '/').replace(/^\/+/, '');
 }
+
+// ── Repair passes ────────────────────────────────────────────────────────────
 
 function parseArgs(argv) {
   const args = {
@@ -346,8 +480,6 @@ function parseArgs(argv) {
 
   return args;
 }
-
-// ── Repair passes ────────────────────────────────────────────────────────────
 
 function parseProjectIdFromCrowdinYml() {
   try {
@@ -411,7 +543,7 @@ async function patchTranslations(ctx, ops, label) {
 function printHelp() {
   console.log(`Clean Crowdin corruption at the source, via the Crowdin API.
 
-Repairs the four recurring classes of Crowdin corruption in the stored
+Repairs the six recurring classes of Crowdin corruption in the stored
 translations (and purges the corrupted translation-memory segments), so
 future Crowdin PRs come out clean:
 
@@ -424,6 +556,12 @@ future Crowdin PRs come out clean:
   4. Release-notes version headers (## v26.7.0) localized by translators
      (scrambled, truncated, or re-punctuated) - reset to the English source
      so the About dialog's "What's New" carousel keeps those releases.
+  5. i18n link/param targets in src/i18n/*.json translations: dangling
+     @:keys (truncated autocompletions), case-mangled @:keys, and
+     localized {params} - each reset to the English source key/param when
+     the mapping is unambiguous (one dangling target, one missing source
+     key). Deliberate rewordings and German/Dutch compounds are left for
+     translators.
 
 Automation:
   .github/workflows/crowdin-autorepair.yml runs this script with --apply
@@ -611,6 +749,66 @@ async function repairI18nLinkedSyntax(ctx, file) {
 
 // ── release-notes version-header repair ────────────────────────────────────────
 
+async function repairI18nLinkTargets(ctx, file) {
+  if (ctx.enKeys.size === 0) {
+    ctx.log(
+      `[crowdin] WARN: could not load English keys from ${I18N_SOURCE_PATH}; skipping class 5`,
+    );
+    return;
+  }
+
+  const strings = await listAll(
+    ctx.baseUrl,
+    ctx.token,
+    `/projects/${ctx.projectId}/strings?fileId=${file.id}`,
+  );
+  const sources = new Map(
+    strings
+      .filter(
+        (string) =>
+          typeof string.text === 'string' &&
+          (string.text.includes('@:') || /\{[\w]+\}/.test(string.text)),
+      )
+      .map((string) => [string.id, string.text]),
+  );
+  if (sources.size === 0) return;
+
+  for (const language of ctx.languages) {
+    const translations = await listAll(
+      ctx.baseUrl,
+      ctx.token,
+      `/projects/${ctx.projectId}/languages/${encodeURIComponent(language)}/translations?fileId=${file.id}`,
+    );
+
+    const ops = [];
+    for (const item of translations) {
+      const source = sources.get(item.stringId);
+      if (source === undefined || typeof item.text !== 'string') continue;
+
+      const fix = computeLinkTargetFix(source, item.text, ctx.enKeys);
+      if (!fix) continue;
+
+      ctx.totals.links += 1;
+      const label = `${file.normalizedPath} (${language}, string ${item.stringId})`;
+      if (ctx.verbose) {
+        ctx.log(
+          `[links] ${label}: ${JSON.stringify(item.text)} -> ${JSON.stringify(fix.text)}`,
+        );
+      }
+      ops.push({
+        op: 'replace',
+        path: `/${item.translationId}`,
+        value: { text: fix.text },
+      });
+    }
+    if (ctx.apply && ops.length > 0) {
+      await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`);
+    }
+  }
+}
+
+// ── i18n link/param target repair ──────────────────────────────────────────────
+
 async function repairReleaseNotesVersions(ctx, file) {
   const strings = await listAll(
     ctx.baseUrl,
@@ -677,12 +875,13 @@ async function run() {
     apply: args.apply,
     baseUrl,
     defaultTmId: undefined,
+    enKeys: loadEnKeys(),
     failures: [],
     languages: [],
     log: (message) => console.log(message),
     projectId,
     token,
-    totals: { anchors: 0, linked: 0, segments: 0, versions: 0 },
+    totals: { anchors: 0, linked: 0, links: 0, segments: 0, versions: 0 },
     verbose: args.verbose,
   };
 
@@ -760,15 +959,24 @@ async function run() {
     logUnmatchedPaths(ctx, normalizedFiles, 15);
   }
 
-  ctx.log('[crowdin] class 5: purging corrupted translation-memory segments');
+  ctx.log('[crowdin] class 5: i18n link/param targets');
+  if (i18nFile) {
+    await repairI18nLinkTargets(ctx, i18nFile);
+  } else {
+    ctx.log(
+      `[crowdin] WARN: source file ${I18N_SOURCE_PATH} not found in project; skipping class 5`,
+    );
+  }
+
+  ctx.log('[crowdin] class 6: purging corrupted translation-memory segments');
   try {
     await purgeCorruptedTmSegments(ctx);
   } catch (error) {
     ctx.failures.push(`translation-memory purge: ${error.message}`);
   }
 
-  const { anchors, linked, segments, versions } = ctx.totals;
-  const total = anchors + linked + segments + versions;
+  const { anchors, linked, links, segments, versions } = ctx.totals;
+  const total = anchors + linked + links + segments + versions;
   ctx.log('');
   ctx.log(
     `Done. ${ctx.apply ? 'Applied' : 'Found (dry run - rerun with --apply to commit)'}:`,
@@ -776,6 +984,7 @@ async function run() {
   ctx.log(`  linked-syntax repairs:   ${linked}`);
   ctx.log(`  heading-anchor fixes:    ${anchors}`);
   ctx.log(`  version-header repairs:  ${versions}`);
+  ctx.log(`  link/param target fixes: ${links}`);
   ctx.log(`  corrupted TM segments:   ${segments}`);
 
   if (ctx.failures.length > 0) {
@@ -870,6 +1079,16 @@ function runSelfTest() {
     ['tm stray whitespace', isCorruptedSegment('... @: cbs ajal'), true],
     ['tm doubled anchor', isCorruptedSegment('## Foo {#foo} {#foo}'), true],
     ['tm clean segment', isCorruptedSegment("Viide @:{'cbs'} juurde"), false],
+    [
+      'tm truncated link target',
+      isCorruptedSegment('Aggiungi media dalla Bibbia @:study- alla lista'),
+      true,
+    ],
+    [
+      'tm compound link left alone',
+      isCorruptedSegment('Konfiguriere das @:obsWebSocket-Plugin in OBS.'),
+      false,
+    ],
     ['tm scrambled version header', isCorruptedSegment('## 7.0 v26.0'), true],
     ['tm localized version separators', isCorruptedSegment('## v26,3.0'), true],
     [
@@ -917,6 +1136,122 @@ function runSelfTest() {
       ),
       null,
     ],
+
+    // i18n link/param targets (real samples from the it/sl/et exports).
+    // Valid keys mirror src/i18n/en.json for these samples.
+    ...(() => {
+      const keys = new Set([
+        'cbs',
+        'obsStudio',
+        'obsWebSocket',
+        'official-website-of-jw',
+        'study-bible',
+      ]);
+      const linkCases = [
+        [
+          'link truncated autocompletion expanded',
+          computeLinkTargetFix(
+            'Add one of the videos from the @:official-website-of-jw to the media list.',
+            'Aggiungi uno dei video dal sito web @:official-of-jw alla lista.',
+            keys,
+          ),
+          {
+            kind: 'links',
+            text: 'Aggiungi uno dei video dal sito web @:official-website-of-jw alla lista.',
+          },
+        ],
+        [
+          'link trailing-hyphen truncation expanded',
+          computeLinkTargetFix(
+            'Add media from the @:study-bible',
+            'Aggiungi media dalla Bibbia @:study-',
+            keys,
+          ),
+          {
+            kind: 'links',
+            text: 'Aggiungi media dalla Bibbia @:study-bible',
+          },
+        ],
+        [
+          'link case-mangled key restored',
+          computeLinkTargetFix(
+            '@:obsStudio is a free app used to manage feeds in many Kingdom Halls.',
+            '@:oBS Studio je brezplačen program.',
+            keys,
+          ),
+          {
+            kind: 'links',
+            text: '@:obsStudio Studio je brezplačen program.',
+          },
+        ],
+        [
+          'link braced key preserved through replacement',
+          computeLinkTargetFix(
+            "If entered, M³ will skip media for the @:{'cbs'}.",
+            'Če vnešeno, bo M³ izpustil medije za @:{cbsx}.',
+            keys,
+          ),
+          {
+            kind: 'links',
+            text: 'Če vnešeno, bo M³ izpustil medije za @:{cbs}.',
+          },
+        ],
+        [
+          'link deliberate rewording left alone',
+          computeLinkTargetFix(
+            "If entered, M³ will skip media for the @:{'cbs'}.",
+            'Če vnešeno, bo M³ izpustil medije med Občinskim preučevanjem Biblije.',
+            keys,
+          ),
+          null,
+        ],
+        [
+          'link german compound left alone',
+          computeLinkTargetFix(
+            '@:obsStudio port and password',
+            '@:obsStudio-Port und Passwort',
+            keys,
+          ),
+          null,
+        ],
+        [
+          'link valid-but-different key left alone',
+          computeLinkTargetFix(
+            'Add media from the @:study-bible',
+            'Ajouter des médias à partir de @:cbs',
+            keys,
+          ),
+          null,
+        ],
+        [
+          'param localized name restored',
+          computeLinkTargetFix(
+            'Would you like to preview the yeartext for {year}?',
+            'Kas soovid vaadata {aasta} a. aastateksti eelvaadet?',
+            keys,
+          ),
+          {
+            kind: 'links',
+            text: 'Kas soovid vaadata {year} a. aastateksti eelvaadet?',
+          },
+        ],
+        [
+          'param reordered translation left alone',
+          computeLinkTargetFix('From {from} to {to}', 'De {to} à {from}', keys),
+          null,
+        ],
+        [
+          'param dropped by translator left alone',
+          computeLinkTargetFix(
+            'Are you sure you want to delete {count} items?',
+            'Ali si prepričan, da želiš izbrisati elemente?',
+            keys,
+          ),
+          null,
+        ],
+      ];
+      return linkCases;
+    })(),
 
     // Batch PATCH per-op error parsing.
     [
