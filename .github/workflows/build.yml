@@ -156,6 +156,12 @@ jobs:
         run: security find-identity -v
       - name: Build Electron App
         id: build
+        # `set -o pipefail` and `tee` are bash-isms: the default shell on
+        # Windows runners is pwsh, where `set -o pipefail` fails (it parses
+        # as Set-Variable -Option). Pin bash so this step behaves the same
+        # on all three OSes and build-output.log is always produced for the
+        # notarization check below.
+        shell: bash
         run: |
           yarn generate:icons
           yarn generate:logos
