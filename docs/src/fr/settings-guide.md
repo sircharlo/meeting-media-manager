@@ -670,7 +670,7 @@ Afficher une petite poignée sur chaque élément multimédia pour pouvoir le fa
 
 **Par défaut** : `vrai`
 
-### Before/After Meeting Quick Actions {#before-after-meeting-quick-actions}
+### Actions rapides pour avant et après les réunions {#before-after-meeting-quick-actions}
 
 #### Afficher les actions rapides de réunion {#enable-meeting-quick-actions}
 
