@@ -1,287 +1,287 @@
 <!-- markdownlint-disable no-duplicate-heading -->
 
-# Lo nuevo
+# Novedades
 
-Para ver la lista completa de cambios entre versiones, mira nuestro archivo CHANGELOG.md en GitHub.
+Para ver la lista completa de cambios entre versiones, consulta nuestro archivo CHANGELOG.md en GitHub.
 
 ## PRÓXIMA VERSIÓN
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Acciones rápidas antes y después de la reunión**: Un nuevo panel de botones grandes te ayuda con los preparativos previos y justo después de cada reunión: una cuenta regresiva en vivo, iniciar/detener música de fondo con un solo toque, iniciar/detener la grabación, y una lista de verificación por congregación agrupada en categorías y que puedes editar desde la Configuración. El panel anterior a la reunión se cierra automáticamente cuando esta comienza y la lista de verificación está completa (o después de un corto período de gracia), y siempre lo puedes cerrar de forma manual.
+- ✨ **Acciones rápidas antes/después de la reunión**: Un nuevo panel con botones grandes ayuda durante los preparativos y justo después de cada reunión: cuenta regresiva en vivo, inicio/detención de música de fondo con un toque, inicio/detención de grabación y una lista de tareas por congregación agrupada en categorías y editable desde Configuración. El panel de antes de la reunión se cierra automáticamente cuando empieza la reunión y se completa la lista de tareas (o después de un breve periodo de gracia), y siempre se puede cerrar manualmente.
 
 ## v26.8.0
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Rediseño en toda la aplicación**: Una amplia renovación visual y de interacción en los diálogos, la lista y el encabezado de los archivos multimedia, la Configuración y el Asistente de configuración. El Asistente de configuración ahora es un flujo de una pregunta por pantalla con una barra de progreso. Todos los mensajes emergentes se cambiaron por un diálogo uniforme, y la selección del rango de páginas en PDF (para importaciones de publicaciones y de arrastrar y soltar) ahora usa un selector de cuadrícula de miniaturas en lugar de un cuadro de texto libre. Añadimos un nuevo recorrido de la Guía de inicio rápido después de que termina el Asistente de configuración. También incluye un nuevo estilo de tarjetas y encabezados con sombras adaptadas al modo oscuro y varias correcciones de contraste en el modo oscuro (etiquetas de campos enfocados, porcentajes del progreso de descarga).
-- ✨ **Página de configuración**: Reestructurada en un diseño de dos paneles, con una nueva sección global de Preferencias para los interruptores de actualización automática y de versiones beta que se movió fuera del diálogo "Acerca de" (el cual ahora es puramente informativo).
-- ✨ **Botón para añadir más multimedia**: Añadimos un ajuste para que elijas exactamente qué partes de la reunión muestran el botón de atajo para añadir más archivos multimedia, además de un ajuste para un modo compacto (solo con icono).
-- ✨ **Lista de archivos multimedia**: Los elementos ahora muestran esqueletos de carga mientras se añaden en lugar de aparecer vacíos, los grupos de archivos multimedia muestran un recuento de elementos ocultos en su insignia (por ejemplo, "9 elementos [2 ocultos]"), los elementos secundarios dentro de un grupo se pueden reordenar al arrastrar y soltar, y en anchos de ventana muy reducidos los elementos se colapsan en fichas compactas con información sobre herramientas en lugar de amontonarse en la fila.
+- ✨ **Rediseño de toda la aplicación**: Una amplia actualización visual y de interacción en cuadros de diálogo, lista/encabezado de archivos multimedia, Configuración y Asistente de configuración. El Asistente de configuración ahora muestra una pregunta por pantalla con una barra de progreso. Todos los avisos se reemplazaron por un cuadro de diálogo de marca uniforme, y la selección de intervalos de páginas PDF (para importaciones de publicaciones y mediante arrastrar y soltar) ahora usa un selector con cuadrícula de miniaturas en lugar de un aviso de texto libre. Se añadió un nuevo recorrido de Guía de inicio rápido al terminar el Asistente de configuración. También incluye estilos renovados de tarjetas y encabezados con sombras adaptadas al modo oscuro y varias correcciones de contraste en modo oscuro (etiquetas de campos con foco, porcentajes de progreso de descarga).
+- ✨ **Página de Configuración**: Se reorganizó en un diseño de dos paneles, con una nueva sección de Preferencias generales para los controles de actualización automática/beta, que se movieron fuera del cuadro Acerca de (que ahora es solo informativo).
+- ✨ **Botón Añadir más archivos multimedia**: Se añadió una opción para elegir exactamente qué secciones de la reunión muestran el botón de acceso rápido "añadir más archivos multimedia", junto con una opción para el modo compacto (solo icono).
+- ✨ **Lista de archivos multimedia**: Ahora los elementos muestran esqueletos de carga mientras se añaden en vez de aparecer vacíos; los grupos de archivos multimedia muestran en su insignia la cantidad de elementos ocultos (p. ej., "9 elementos (2 ocultos)"); los elementos secundarios dentro de un grupo se pueden reordenar arrastrando y soltando; y con ventanas muy estrechas los elementos se contraen en fichas compactas con información emergente en vez de saturar la fila.
 
 ## v26.7.7
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Calidad de vista previa de los archivos multimedia**: La vista previa de los archivos multimedia ahora renderiza los fotogramas de video a través de un lienzo con reducción de alta calidad, corrigiendo las previsualizaciones dentadas o borrosas (especialmente en contenido con mucho texto como las canciones). La vista previa también se desactiva automáticamente si tiene que corregir repetidamente el desfase de reproducción en un solo video, con una forma de volver a activarla con un solo clic.
+- ✨ **Calidad de la vista previa de archivos multimedia**: La vista previa ahora renderiza los fotogramas de video mediante canvas con reducción de escala de alta calidad, corrigiendo vistas previas dentadas o borrosas (sobre todo en contenido con mucho texto, como las canciones). La vista previa también se desactiva automáticamente si tiene que corregir repetidamente el desfase de reproducción en un solo video, con una opción de un clic para volver a activarla.
 
 ## v26.7.6
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Exclusión de videos del Estudio bíblico de la congregación**: Añadimos un ajuste para excluir los videos del Estudio bíblico de la congregación de publicaciones específicas (por defecto el libro **Anda con valor con Dios**), con un selector de publicaciones en el que puedes buscar.
-- ✨ **Números de página de los documentos**: Las listas de importación de archivos multimedia de publicaciones y JWPUB ahora muestran el número de página de cada documento (o números cuando hay varias páginas) después de su título. Esto te puede ayudar a encontrar rápidamente un archivo multimedia específico cuando sabes el número de página en el que se encuentra.
+- ✨ **Exclusión de videos del EBC**: Se añadió una opción para excluir videos del Estudio bíblico de la congregación de publicaciones específicas (de forma predeterminada, el libro **Seamos valientes al andar con Dios**), con un selector de publicaciones con búsqueda.
+- ✨ **Números de página de documentos**: Los listados de importación de Archivos multimedia de publicaciones y JWPUB ahora muestran el número de página de cada documento (o números cuando hay varias páginas) después de su título. Esto puede ayudarte a encontrar rápidamente archivos multimedia específicos cuando sabes el número de página en el que aparecen.
 
 ## v26.7.4
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Recuperación de archivos multimedia faltantes**: Los archivos multimedia cuyo archivo local desapareció (por ejemplo, al eliminarse por la limpieza automática de la caché, o al eliminarse manualmente) ahora muestran un botón de reproducción desactivado, una leyenda que dice "falta" nombrando el archivo a buscar, y una nueva acción de "Localizar archivo" para que vuelvas a vincular el elemento a un archivo en tu disco.
-- ✨ **Advertencia de compatibilidad**: Añadimos un aviso que puedes descartar para advertir a los usuarios sobre las combinaciones de sistema operativo y arquitectura que pronto dejarán de ser compatibles (macOS 12 Monterey y Windows de 32 bits) para que actualices antes de que las futuras actualizaciones de Meeting Media Manager requieran compatibilidad con sistemas más nuevos.
+- ✨ **Recuperación de archivos multimedia faltantes**: Los elementos multimedia cuyo archivo local desapareció (p. ej., eliminado por el borrado automático de caché o quitado manualmente) ahora muestran un botón de reproducción desactivado, la etiqueta "faltante" con el nombre del archivo que hay que buscar y una nueva acción "Localizar archivo" para volver a vincular el elemento con un archivo del disco.
+- ✨ **Advertencia de compatibilidad**: Se añadió un aviso que se puede descartar para advertir a los usuarios de combinaciones de sistema operativo/arquitectura que pronto dejarán de ser compatibles (macOS 12 Monterey y Windows de 32 bits), para que actualicen antes de que las futuras actualizaciones de la aplicación requieran sistemas más recientes.
 
 ## v26.7.0
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Reproducción de audio vinculado**: Añadimos compatibilidad para que reproduzcas el audio de un archivo junto con el video de otro archivo. Esto te puede ser útil para reproducir presentaciones de video con música de acompañamiento.
-- ✨ **Diseños de archivos multimedia vistos**: Añadimos persistencia para los elementos multimedia vistos y el orden de las secciones en las carpetas vigiladas. Esto asegura que la lista de archivos multimedia se muestre de la misma manera incluso cuando la carpeta vigilada se sincroniza en varios dispositivos.
+- ✨ **Reproducción de audio vinculado**: Se añadió compatibilidad para reproducir el audio de un archivo junto con el video de otro archivo. Esto puede ser útil para reproducir presentaciones de video con música de acompañamiento.
+- ✨ **Diseños de archivos multimedia supervisados**: Se añadió persistencia para los elementos multimedia supervisados y el orden de las secciones entre carpetas supervisadas. Esto garantiza que la lista de archivos multimedia se muestre de la misma manera incluso cuando la carpeta supervisada se sincroniza entre dispositivos.
 
 ## v26 6.1
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Vista previa de los archivos multimedia**: Añadimos una superposición de vista previa multimedia en vivo que puedes activar o desactivar desde la configuración o desde la ventana emergente de visualización.
-- ✨ **Buscar archivos multimedia**: Añadimos un cuadro de búsqueda rápida en la lista de archivos multimedia que te permite encontrar rápidamente los archivos por su título. Para usarlo, simplemente usa el atajo de teclado estándar para buscar (Ctrl+F o Cmd+F).
-- ✨ **Filtrar configuración**: Añadimos un cuadro de filtro a la página de configuración que te permite encontrar los ajustes por palabra clave o categoría. Para usarlo, simplemente haz clic en el botón de Buscar en la esquina superior derecha de la página de configuración, o usa el atajo de teclado estándar para buscar (Ctrl+F o Cmd+F).
-- ✨ **Advertencia de superposición de música de fondo**: Añadimos una notificación de advertencia cuando se inicia un archivo multimedia mientras se está reproduciendo música de fondo. Puedes elegir detener la música de fondo desde la notificación.
+- ✨ **Vista previa de archivos multimedia**: Se añadió una vista previa en vivo superpuesta de los archivos multimedia que se puede activar o desactivar desde la configuración o desde la ventana emergente de pantalla.
+- ✨ **Buscar archivos multimedia**: Se añadió un cuadro de búsqueda rápida en la lista de archivos multimedia que te permite encontrar rápidamente archivos por título. Para usarlo, simplemente usa el atajo de teclado estándar para buscar (Ctrl+F o Cmd+F).
+- ✨ **Filtrar configuración**: Se añadió un cuadro de filtro a la página de configuración que te permite encontrar opciones por palabra clave o categoría. Para usarlo, simplemente haz clic en el botón Buscar de la esquina superior derecha de la página de configuración o usa el atajo de teclado estándar para buscar (Ctrl+F o Cmd+F).
+- ✨ **Advertencia por superposición de música de fondo**: Se añadió una notificación de advertencia cuando se inician archivos multimedia mientras se reproduce música de fondo. Los usuarios pueden elegir detener la música de fondo desde la notificación.
 
 ## v26.6
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Cronómetro**: Añadimos modos de visualización analógica y el estado del informe de tiempo.
-- ✨ **Perfiles**: Añadimos la importación y exportación de la configuración de perfiles en la Configuración avanzada y en el Asistente de configuración.
-- ✨ **Ventana multimedia**: Añadimos compatibilidad para ocultar automáticamente la ventana multimedia después de la reproducción si estaba oculta inicialmente. Esto es práctico cuando un orador remoto quiere mostrar imágenes, por ejemplo.
+- ✨ **Cronómetro**: Se añadieron modos de visualización analógica y estado del informe de tiempos.
+- ✨ **Perfiles**: Se añadió la importación y exportación de la configuración de perfiles en la configuración avanzada y el Asistente de configuración.
+- ✨ **Ventana de archivos multimedia**: Se añadió compatibilidad para ocultar automáticamente la ventana de archivos multimedia después de la reproducción cuando estaba oculta al principio. Esto resulta práctico, por ejemplo, cuando un orador a distancia quiere mostrar imágenes.
 
 ## v26.5.0
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Importación de PDF**: Añadimos un nuevo flujo de importación de PDF al diálogo de Archivos multimedia de publicaciones, lo que permite que la versión en PDF de una publicación se importe automáticamente como imágenes individuales cuando lo desees.
+- ✨ **Importación de PDF**: Se añadió un nuevo flujo de importación de PDF al cuadro de diálogo Archivos multimedia de publicaciones, que permite importar automáticamente la versión PDF de una publicación como imágenes individuales cuando se quiera.
 
 ## v26.4.8
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **JW Stream**: Añadimos JW Stream a la lista de sitios web que se pueden reflejar.
+- ✨ **JW Stream**: Se añadió JW Stream a la lista de sitios web que se pueden duplicar.
 
 ## v26.4.0
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Cronómetro de la reunión**: Se ha añadido una nueva característica de cronómetro para la reunión. Es opcional y lo puedes activar en la configuración avanzada, si lo deseas. El cronómetro se puede usar para permitir que el operador de audio y video lleve un registro del tiempo dedicado a las partes de la reunión, o para mostrar el tiempo dedicado a la parte actual de la reunión en una pantalla dedicada visible solo para el discursante.
+- ✨ **Cronómetro de la reunión**: Se añadió una nueva función de cronómetro de la reunión. Es opcional y, si se desea, se puede activar en la configuración avanzada. El cronómetro se puede usar para que el operador de archivos multimedia controle el tiempo empleado en las partes de la reunión o para mostrar el tiempo empleado en la parte actual en una pantalla exclusiva visible solo para el orador.
 
 ## v26.3.0
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Archivos multimedia para la Conmemoración**: ¡La descarga automática de los archivos multimedia para la Conmemoración ya no está en fase beta! La aplicación descargará automáticamente el video de bienvenida y la imagen que se mostrará durante la Conmemoración, cuando estén disponibles en el idioma configurado.
-- ✨ **Velocidad de reproducción**: Añadimos control de velocidad de reproducción con indicador visual, y restablecimiento manual. Esta característica solo es visible si la activas en la configuración avanzada.
-- ✨ **Canciones en pinyin**: Añadimos un interruptor para sustituir las canciones por versiones en pinyin para las reuniones que se hacen en chino.
+- ✨ **Archivos multimedia de la Conmemoración**: ¡La obtención automática de archivos multimedia de la Conmemoración ya salió de la fase beta! La aplicación descargará automáticamente el video de bienvenida y la imagen de la Conmemoración para mostrarlos durante la Conmemoración, cuando estén disponibles en el idioma configurado.
+- ✨ **Velocidad de reproducción**: Se añadió control de velocidad de reproducción con indicador visual y restablecimiento manual. Esta función solo se ve si se activa en la configuración avanzada.
+- ✨ **Canciones en pinyin**: Se añadió un control para sustituir canciones por versiones en pinyin en reuniones celebradas en chino.
 
 ## v26.2.0
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Comprobación de espacio en disco**: Añadimos la función de supervisar y notificar cuando el espacio en disco es bajo.
+- ✨ **Comprobación del espacio en disco**: Se añadió una función para supervisar y avisar cuando queda poco espacio en disco.
 
 ## v26.1.5
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Archivos multimedia para la Conmemoración**: Descarga automáticamente el cartel y el video de introducción de la Conmemoración en los idiomas compatibles cuando seleccionas la fecha de la Conmemoración.
+- ✨ **Archivos multimedia de la Conmemoración**: Obtiene automáticamente la imagen de la Conmemoración y el video de introducción en los idiomas compatibles cuando se selecciona la fecha de la Conmemoración.
 
 ## v26.1.0
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Sincronización automática del programa de las reuniones**: Añadimos la capacidad de sincronizar automáticamente las fechas y horas de las reuniones con el sitio web oficial. Esta característica viene activada por defecto y la puedes iniciar de forma manual o desactivar en la configuración avanzada.
-- ✨ **Cambios futuros en el programa**: La aplicación ahora incluye los cambios futuros en el programa al crear una congregación usando la búsqueda en el sitio web, si están disponibles.
-- ✨ **Caché compartida para instalaciones en todo el equipo**: Las instalaciones en todo el equipo ahora comparten una carpeta de datos común por defecto, lo que optimiza el almacenamiento y el uso del ancho de banda entre varios usuarios en la misma computadora.
+- ✨ **Sincronización automática del programa de reuniones**: Se añadió la posibilidad de sincronizar automáticamente las fechas y horas de las reuniones con el sitio web oficial. Esta función está activada de forma predeterminada y puede iniciarse manualmente o desactivarse en la configuración avanzada.
+- ✨ **Cambios futuros del programa**: La aplicación ahora incluye cambios futuros del programa al crear una congregación mediante la búsqueda del sitio web, si están disponibles.
+- ✨ **Caché compartida para instalaciones en todo el equipo**: Las instalaciones para todo el equipo ahora comparten de forma predeterminada una carpeta de datos común, optimizando el uso de almacenamiento y ancho de banda entre varios usuarios de la misma computadora.
 
 ## v25.12.2
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Botones de acercar/desplazar**: Añadimos la capacidad de mantener presionados los botones de acercar y desplazar para un ajuste continuo.
+- ✨ **Botones de zoom/desplazamiento**: Se añadió la posibilidad de mantener presionados los botones de zoom y desplazamiento para un ajuste continuo.
 
 ## v25.12.0
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Menú contextual de selección múltiple**: Añadimos compatibilidad para las acciones del menú al hacer clic derecho cuando seleccionas varios archivos multimedia.
-- ✨ **Atajos de teclado**: Añadimos `Ctrl/Cmd+A` para seleccionar todos los archivos multimedia, `H` para ocultar los archivos multimedia seleccionados, y `Shift+Up/Down` para navegar por la selección con el teclado.
-- ✨ **Configuración de los videos del Estudio de La Atalaya**: Añadimos un ajuste para excluir los videos adicionales del Estudio de La Atalaya.
-- ✨ **Secciones contraíbles**: Añadimos la capacidad de contraer secciones en los días que no hay reunión para tener una vista más limpia.
-- ✨ **Sitio web de JW Events**: Añadimos la capacidad de presentar el sitio web de JW Events además del sitio web oficial principal.
-- ✨ **Personalización de la importación de listas de reproducción**: Añadimos la capacidad de personalizar el prefijo que se añade a los archivos multimedia al importar listas de reproducción de JW.
-- ✨ **Navegación reflejada del sitio web**: Añadimos un interruptor para navegar automáticamente a la lista de archivos multimedia después de detener el reflejo del sitio web.
-- ✨ **Controles de grabación de OBS**: Añadimos la capacidad de controlar las grabaciones de OBS.
-- ✨ **Vista previa del texto del año**: Añadimos la capacidad de ver una vista previa del texto del año próximo a partir de diciembre de cada año.
-- ✨ **Notificaciones de actualización**: Añadimos notificaciones de advertencia si estás usando una versión beta o si las actualizaciones están desactivadas, y mejoramos cómo se ve el progreso de descarga de las actualizaciones.
-- ✨ **Configuración de aceleración de hardware**: Añadimos una opción para desactivar permanentemente la aceleración de hardware si lo necesitas.
+- ✨ **Menú contextual de selección múltiple**: Se añadió compatibilidad con acciones del menú de clic derecho cuando hay varios archivos multimedia seleccionados.
+- ✨ **Atajos de teclado**: Se añadió `Ctrl/Cmd+A` para seleccionar todos los archivos multimedia, `H` para ocultar los seleccionados y `Shift+Up/Down` para navegar por la selección con el teclado.
+- ✨ **Configuración de videos del Estudio de La Atalaya**: Se añadió una opción para excluir videos adicionales del Estudio de La Atalaya.
+- ✨ **Secciones contraíbles**: Se añadió la posibilidad de contraer secciones en días sin reunión para tener una vista más limpia.
+- ✨ **Sitio web JW Events**: Se añadió la posibilidad de presentar el sitio web JW Events además del sitio web oficial principal.
+- ✨ **Personalización de la importación de listas de reproducción**: Se añadió la posibilidad de personalizar el prefijo que se añade a los archivos multimedia al importar listas de reproducción de JW.
+- ✨ **Navegación al duplicar el sitio web**: Se añadió un control para ir automáticamente a la lista de archivos multimedia después de detener la duplicación del sitio web.
+- ✨ **Controles de grabación de OBS**: Se añadió la posibilidad de controlar las grabaciones de OBS.
+- ✨ **Vista previa del texto del año**: Se añadió la posibilidad de previsualizar el texto del año siguiente a partir de diciembre de cada año.
+- ✨ **Notificaciones de actualización**: Se añadieron notificaciones de advertencia si se ejecuta una versión beta o si las actualizaciones están desactivadas, y se mejoró la visualización del progreso de descarga de actualizaciones.
+- ✨ **Configuración de aceleración por hardware**: Se añadió una opción para desactivar permanentemente la aceleración por hardware si hace falta.
 
 ## v25.11.0
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Selección de archivos multimedia JWPUB**: Añadimos una forma de seleccionar archivos multimedia individuales desde archivos JWPUB.
-- ✨ **Autoenfoque de la ventana multimedia**: Añadimos un ajuste opcional para enfocar automáticamente la ventana multimedia después de compartir pantalla en Zoom.
-- ✨ **Superposición de cursor para pantalla de televisión**: Mejoramos la superposición del cursor de la ventana del sitio web para que el cursor del ratón se vea mejor en las pantallas de televisión.
-- ✨ **Grabación de la reunión**: Añadimos una nueva característica de grabación de la reunión para controlar una aplicación de grabación externa.
-- ✨ **Búsqueda en el sitio**: Añadimos la capacidad de buscar archivos multimedia o publicaciones en el sitio usando búsqueda inteligente.
-- ✨ **Importación manual sencilla de publicaciones**: Añadimos la característica para importar fácilmente publicaciones de JW.org, como revistas, libros, programas e invitaciones.
-- ✨ **Mejoras para el lenguaje de señas**: Añadimos una confirmación antes de reproducir archivos completos para los lenguajes de señas y compatibilidad para seleccionar varios fragmentos, como por ejemplo cuando se van a leer varios párrafos seguidos.
-- ✨ **Navegación de fragmentos**: Añadimos la visualización de la duración en los elementos de la lista de fragmentos y mejoramos la navegación de los mismos.
-- 🛠️ **Visualización multimedia**: Nos aseguramos de que la visualización multimedia aparezca cuando empiece la reproducción, aunque estuviera oculta antes.
+- ✨ **Selección de archivos multimedia JWPUB**: Se añadió una forma de seleccionar archivos multimedia individuales de archivos JWPUB.
+- ✨ **Enfoque automático de la ventana de archivos multimedia**: Se añadió una opción para enfocar automáticamente la ventana de archivos multimedia después de compartir pantalla en Zoom.
+- ✨ **Superposición del cursor para la pantalla de TV**: Se mejoró la superposición del cursor en la ventana del sitio web para que el puntero del mouse se vea mejor en las pantallas de TV.
+- ✨ **Grabación de reuniones**: Se añadió una nueva función de grabación de reuniones para controlar una aplicación de grabación externa.
+- ✨ **Búsqueda en el sitio**: Se añadió la posibilidad de buscar archivos multimedia o publicaciones en el sitio mediante búsqueda inteligente.
+- ✨ **Importación manual sencilla de publicaciones**: Se añadió una función para importar fácilmente publicaciones de JW.org, como revistas, libros, programas e invitaciones.
+- ✨ **Mejoras para lenguaje de señas**: Se añadió confirmación antes de reproducir archivos completos para lenguajes de señas y compatibilidad para seleccionar varios clips, por ejemplo, cuando se deben leer varios párrafos consecutivamente.
+- ✨ **Navegación entre clips**: Se añadió la duración a los elementos de la lista de clips y se mejoró la navegación entre clips.
+- 🛠️ **Presentación de archivos multimedia**: Se aseguró que la presentación de archivos multimedia se haga visible al iniciar la reproducción, incluso si antes estaba oculta.
 
 ## v25.10.1
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Asistente de configuración – Paso de Zoom**: Añadimos un paso de integración con Zoom al asistente de configuración para que la configuración inicial sea más fácil.
-- ✨ **Mejoras en el selector de pantalla**: Mostramos una representación visual precisa de todas las pantallas, así como el tamaño y la ubicación actuales de la ventana principal, en la ventana emergente de visualización. Esto hace que sea más fácil elegir la pantalla correcta en la que se debe mostrar la ventana multimedia.
-- ✨ **Preferencia de la ventana multimedia**: La aplicación ahora recordará la pantalla preferida en la que se debe mostrar la ventana multimedia, si así lo especificas.
+- ✨ **Asistente de configuración – Paso de Zoom**: Se añadió un paso de integración con Zoom al asistente de configuración para facilitar la configuración inicial.
+- ✨ **Mejoras del selector de pantalla**: La ventana emergente de pantalla ahora muestra una representación visual precisa de todas las pantallas, además del tamaño y la ubicación actuales de la ventana principal. Esto facilita elegir la pantalla correcta en la que se debe mostrar la ventana de archivos multimedia.
+- ✨ **Preferencia de la ventana de archivos multimedia**: La aplicación ahora recordará la pantalla preferida en la que debe mostrarse la ventana de archivos multimedia, si el usuario la especifica.
 
 ## v25.10.0
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Comenzar con la reproducción en pausa**: Añadimos un nuevo ajuste para permitir que la reproducción comience en pausa, lo cual te puede ser útil como operador de audio y video para preparar tu configuración (como iniciar la transmisión en Zoom) antes de que el archivo multimedia comience a reproducirse en la ventana multimedia.
-- ✨ **Notificaciones de actualización**: Ahora te avisaremos sobre las actualizaciones mediante un cartel dentro de la aplicación, el cual también te permitirá instalar las actualizaciones de inmediato, en vez de esperar a que reinicies la aplicación.
-- ✨ **Eventos personalizados**: Añadimos enlaces de eventos opcionales que pueden activar atajos de teclado cuando se detectan ciertos eventos. Esto te puede ser útil como operador de audio y video para ejecutar acciones automáticamente fuera de la aplicación. Por ejemplo, las luces inteligentes se pueden encender y apagar antes y después de que los archivos multimedia se reproduzcan en auditorios donde se usan proyectores; o se puede ejecutar un script después de que se haya reproducido la última cancion de una reunión para automatizar varias acciones en una reunión de Zoom.
+- ✨ **Iniciar reproducción en pausa**: Se añadió una nueva opción para permitir que la reproducción empiece en pausa, lo que puede ser útil para que los operadores de audio y video preparen su configuración (por ejemplo, iniciar la pantalla compartida de Zoom) antes de que empiecen a reproducirse los archivos multimedia en la ventana.
+- ✨ **Notificaciones de actualización**: Ahora se avisará a los usuarios de las actualizaciones mediante un banner dentro de la aplicación, que también permitirá instalarlas de inmediato en vez de esperar al siguiente reinicio de la aplicación.
+- ✨ **Eventos personalizados**: Se añadieron eventos opcionales que pueden activar atajos de teclado cuando se detectan determinados eventos. Esto puede ser útil para que los operadores de audio y video ejecuten automáticamente acciones fuera de la aplicación. Por ejemplo, se podrían encender y apagar luces inteligentes antes y después de reproducir archivos multimedia en auditorios donde se usan proyectores; o se podría ejecutar un script después de reproducir la última canción de una reunión para automatizar diversas acciones en una reunión de Zoom.
 
 ## v25.9.1
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Ventana multimedia siempre visible y comportamiento en pantalla completa**: Corregimos y mejoramos el comportamiento de mantener siempre visible la ventana multimedia, ajustándose dinámicamente según el estado de la pantalla completa.
-- ✨ **Ajuste del formato de visualización de fecha**: Añadimos un ajuste para que puedas configurar el formato en el que se muestran las fechas.
-- ✨ **Fundido cruzado multimedia**: Implementamos transiciones de fundido cruzado para la visualización multimedia, en vez de la transición de fundido a negro más brusca que había antes.
-- ✨ **Detención automática de la música**: Optimizamos el comportamiento de la detención automática de la música de fondo para que se comporte igual sin importar si la música se inició de forma automática o no.
-- ✨ **Paso de clics en macOS en ventanas inactivas**: Activamos el paso de clics del ratón en la ventana principal para macOS, lo que te facilitará el control de Meeting Media Manager incluso cuando no esté seleccionada.
+- ✨ **Ventana de archivos multimedia siempre encima y comportamiento de pantalla completa**: Se corrigió y mejoró el comportamiento de mantener siempre encima la ventana de archivos multimedia, ajustándolo dinámicamente según el estado de pantalla completa.
+- ✨ **Configuración del formato de fecha**: Se añadió una opción para que el usuario configure el formato de visualización de la fecha.
+- ✨ **Fundido cruzado de archivos multimedia**: Se implementaron transiciones de fundido cruzado para la presentación de archivos multimedia en lugar de la transición más brusca de fundido a negro que había antes.
+- ✨ **Detención automática de música**: Se optimizó el comportamiento de la detención automática de la música de fondo para que sea el mismo tanto si la música se inició automáticamente como si no
+- ✨ **Clic en ventanas inactivas de macOS**: Se habilitó el paso de clics del mouse a la ventana principal en macOS, lo que debería facilitar controlar la aplicación incluso cuando no tiene el foco.
 
 ## v25.9.0
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Mejoras en la ventana emergente de descargas**: Añadimos un botón para actualizar y agrupamos las descargas por fecha en la ventana emergente de descargas.
-- ✨ **Memoria del orden de los archivos multimedia vistos**: Añadimos memoria para el orden de las secciones en los archivos multimedia que ya viste.
+- ✨ **Mejoras de la ventana emergente de descargas**: Se añadió un botón de actualización y agrupación de descargas por fecha en la ventana emergente de descargas.
+- ✨ **Memoria del orden de archivos multimedia supervisados**: Se añadió memoria del orden de las secciones para elementos multimedia supervisados.
 
 ## v25.8.3
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Transiciones de fundido de la ventana multimedia**: Añadimos un nuevo ajuste avanzado para que la ventana multimedia aparezca y desaparezca con un fundido, logrando transiciones visuales más suaves.
-- ✨ **Control de la duración de las imágenes y seguimiento del progreso**: Añadimos control de duración para las imágenes y funciones para seguir el progreso de las secciones repetidas.
+- ✨ **Transiciones de fundido de la ventana de archivos multimedia**: Se añadió una nueva opción avanzada para que la ventana de archivos multimedia aparezca y desaparezca gradualmente, ofreciendo transiciones visuales más suaves.
+- ✨ **Control de duración de imágenes y seguimiento del progreso**: Se añadieron funciones para controlar la duración de imágenes y seguir el progreso en secciones repetidas.
 
 ## v25.8.1
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Secciones multimedia personalizadas**: Un sistema completo para que crees, edites y administres secciones multimedia personalizadas, con personalización de colores y reordenamiento con arrastrar y soltar.
-- ✨ **Separadores de archivos multimedia**: Añade separadores con título dentro de las listas de archivos multimedia para que te organices mejor, con opciones para colocarlos arriba o abajo.
-- ✨ **Modo de repetición de sección**: Activa la reproducción continua dentro de secciones específicas para lograr bucles multimedia sin interrupciones.
-- ✨ **Integración con Zoom**: Coordinación automática para iniciar y detener la función de compartir pantalla junto con la reproducción multimedia.
+- ✨ **Secciones personalizadas de archivos multimedia**: Sistema completo para crear, editar y administrar secciones personalizadas de archivos multimedia con personalización de color y reordenación mediante arrastrar y soltar.
+- ✨ **Separadores de archivos multimedia**: Añade separadores con título dentro de las listas de archivos multimedia para organizarlas mejor, con opciones de colocación arriba/abajo.
+- ✨ **Modo de repetición de sección**: Activa la reproducción continua dentro de secciones específicas para repetir archivos multimedia sin interrupciones.
+- ✨ **Integración con Zoom**: Coordinación automática del inicio y detención de la pantalla compartida con la reproducción de archivos multimedia.
 
 ## v25.7.0
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ¡No hay nuevas características en esta versión!
+- ¡No hay funciones nuevas en esta versión!
 
 ## 25.6.0
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ✨ **Ajuste de conexión de uso medido**: Añadimos un nuevo ajuste para que reduzcas el uso del ancho de banda en las descargas cuando uses conexiones de uso medido.
-- ✨ **Manejo mejorado de la transmisión de archivos multimedia**: Mejor compatibilidad para la transmisión de archivos multimedia, reduciendo los problemas relacionados con la latencia.
+- ✨ **Configuración de conexión de uso medido**: Se añadió una nueva opción para reducir el uso de ancho de banda de descarga en conexiones de uso medido.
+- ✨ **Mejor manejo de archivos multimedia transmitidos**: Mejor compatibilidad con archivos multimedia transmitidos, reduciendo problemas relacionados con la latencia.
 
 ## 25.5.0
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- 🖼️ **Opción de retraso en OBS para las imágenes**: Añadimos un ajuste en OBS Studio para retrasar los cambios de escena al mostrar imágenes, mejorando las transiciones.
-- 🔊 **Compatibilidad con el formato de audio `.m4a`**: Añadimos compatibilidad para los archivos de audio `.m4a` para ampliar los tipos de archivos multimedia admitidos.
+- 🖼️ **Opción de retraso de OBS para imágenes**: Añadir una opción de OBS Studio para retrasar los cambios de escena al mostrar imágenes y mejorar las transiciones.
+- 🔊 **Compatibilidad con el formato de audio `.m4a`**: Añadir compatibilidad con archivos de audio `.m4a` para ampliar los tipos de archivos multimedia admitidos.
 
 ## 25.4.0
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- 🇵🇭 **Nuevo idioma: tagalo**: Añadimos compatibilidad con el tagalo, ampliando las capacidades multilingües de la aplicación.
-- 🎞 **Compatibilidad con el formato de video `.m4v`**: Ahora es compatible con la reproducción de archivos `.m4v` para mejorar la compatibilidad multimedia.
+- 🇵🇭 **Nuevo idioma: tagalo**: Se añadió compatibilidad con el tagalo, ampliando las capacidades multilingües de la aplicación.
+- 🎞 **Compatibilidad con el formato de video `.m4v`**: Ahora se admite la reproducción de archivos `.m4v` para mejorar la compatibilidad multimedia.
 
 ## 25.3.1
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- 🌏 **Nuevo idioma: coreano**: Añadimos compatibilidad con el idioma coreano, ampliando la accesibilidad para más usuarios.
+- 🌏 **Nuevo idioma: coreano**: Añadir compatibilidad con el idioma coreano para que la aplicación sea accesible a más usuarios.
 
 ## 25.3.0
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- 🎵 **Reproducir música de fondo con los videos**: Permite que la música de fondo se siga reproduciendo mientras ves videos.
-- 🎥 **Transmisión de cámara para archivos multimedia en lenguaje de señas**: Añadimos la capacidad de mostrar la transmisión de una cámara en la ventana multimedia específicamente para quienes usan el lenguaje de señas.
-- 📅 **Fecha y fondo automáticos para la Conmemoración**: Detecta y establece automáticamente la fecha de la Conmemoración y prepara la imagen de fondo para la Conmemoración.
-- 📜 **Mostrar notas de la versión en la aplicación**: Muestra las notas de la versión directamente en la aplicación para que puedas revisar fácilmente los cambios después de una actualización.
+- 🎵 **Reproducir música de fondo con videos**: Permitir que la música de fondo siga reproduciéndose mientras se muestran videos.
+- 🎥 **Señal de cámara para archivos multimedia en lenguaje de señas**: Añadir la posibilidad de mostrar una señal de cámara en la ventana de archivos multimedia específicamente para usuarios de lenguaje de señas.
+- 📅 **Fecha y fondo automáticos de la Conmemoración**: Detectar y establecer automáticamente la fecha de la Conmemoración y preparar la imagen de fondo de la Conmemoración.
+- 📜 **Mostrar notas de la versión en la aplicación**: Mostrar las notas de la versión directamente en la aplicación para que los usuarios puedan revisar fácilmente los cambios después de una actualización.
 
 ## 25.2.1
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- 🔄 **Permitir intentos de reconexión de OBS**: Introducimos la posibilidad de forzar a OBS a reconectarse de forma manual cuando sea necesario.
-- 🗑 **Eliminar automáticamente las carpetas de fechas de exportación antiguas**: Elimina de forma automática las carpetas de fechas de exportación antiguas para que mantengas tu almacenamiento organizado.
+- 🔄 **Permitir intentos de reconexión con OBS**: Introducir la posibilidad de forzar manualmente la reconexión de OBS cuando haga falta.
+- 🗑 **Limpieza automática de carpetas de exportación antiguas por fecha**: Quitar automáticamente las carpetas de exportación antiguas por fecha para mantener organizado el almacenamiento.
 
 ## 25.2.0
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- 🌍 **Usar la configuración regional del sistema por defecto**: Detecta y usa automáticamente la configuración regional de tu sistema para darte una experiencia más personalizada.
-- 🏷 **Compatibilidad de etiquetas para los archivos multimedia exportados**: Añade etiquetas de metadatos a los archivos multimedia que exportes para una mejor organización.
-- 🔄 **Cambio automático de versión beta a estable**: Permite cambiar de forma automática de las versiones beta a las versiones estables cuando sea necesario.
-- 🌐 **Extraer los últimos índices de idiomas del sistema MEPS**: Obtén los índices de idiomas más recientes del sistema MEPS directamente desde el sitio web oficial, garantizando que tengas los idiomas actualizados.
+- 🌍 **Usar de forma predeterminada la configuración regional del sistema**: Detectar y usar automáticamente la configuración regional del sistema para ofrecer una experiencia más personalizada.
+- 🏷 **Compatibilidad con etiquetas para archivos multimedia exportados**: Añadir etiquetas de metadatos a los archivos multimedia exportados para organizarlos mejor.
+- 🔄 **Cambio automático de beta a estable**: Permitir el cambio automático de versiones beta a versiones estables cuando sea necesario.
+- 🌐 **Obtener los índices de idioma MEPS más recientes**: Obtener los índices de idioma MEPS más recientes directamente del sitio web oficial para mantener actualizada la compatibilidad con idiomas.
 
 ## 25.1.0
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- 📅 **Abrir fechas anteriores**: Permite abrir fechas anteriores de la semana actual, lo cual te es útil cuando el día de la reunión se pasa para más adelante en la semana.
-- 🛑 **Aviso de error para OBS Studio**: Añade un cartel de error cuando OBS Studio no está conectado en un día de reunión, garantizando que recibas la alerta.
-- 📚 **Agrupar archivos multimedia por publicación**: Agrupa los archivos multimedia de la misma publicación referenciada para que tengas una vista general más limpia y organizada.
-- 🎵 **Advertencia de cancion duplicada**: Muestra una advertencia si las canciones aparecen más de una vez en la lista de archivos multimedia para la reunion del fin de semana.
-- 🔄 **Planificación de cambios futuros en el programa**: Permite planificar los cambios futuros en el programa de la reunión, lo cual te es útil para los cambios anuales en el programa o para la visita del superintendente de circuito a una congregación vecina.
+- 📅 **Abrir fechas anteriores**: Permitir abrir fechas anteriores de la semana actual, lo que resulta útil cuando el día de la reunión se mueve a una fecha posterior de la semana.
+- 🛑 **Banner de error para OBS Studio**: Añadir un banner de error cuando OBS Studio no esté conectado en un día de reunión, para asegurarse de que los usuarios reciban el aviso.
+- 📚 **Agrupar archivos multimedia por publicación**: Agrupar los archivos multimedia de la misma publicación citada para tener un resumen más limpio y organizado.
+- 🎵 **Advertencia de canción duplicada**: Mostrar una advertencia si hay canciones más de una vez en la lista de archivos multimedia de las reuniones del fin de semana.
+- 🔄 **Planificación de futuros cambios de programa**: Permitir planificar cambios futuros en el programa de reuniones, lo que resulta útil para cambios anuales de programa o para la visita del superintendente de circuito a una congregación vecina.
 
 ## 24.11.0
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- 🖥️ **Presentación de sitios web en macOS**: Ahora puedes presentar el sitio web en macOS 🚀
-- ⌨️ **Atajos de teclado para la reproducción**: Introducimos atajos de teclado para que puedas detener, pausar y reanudar la reproducción multimedia 🚀
-- 🌐 **Dirección de descarga de archivos multimedia personalizada**: Añadimos compatibilidad para que configures la dirección web desde donde se deben descargar los archivos multimedia 🚀
-- 🎬 **Selector instantáneo de escenas de OBS**: Añadimos el selector instantáneo de escenas de OBS Studio y renovamos la función del selector de escenas en la configuración.
-- 📖 **Más idiomas en la documentación**: Ampliamos el sitio web de documentación para que sea compatible con más idiomas.
+- 🖥️ **Presentación del sitio web en macOS**: Ahora se puede presentar el sitio web en macOS 🚀
+- ⌨️ **Atajos de teclado de reproducción**: Se añadieron atajos de teclado para detener, pausar y reanudar la reproducción de archivos multimedia 🚀
+- 🌐 **Dirección personalizada de descarga de archivos multimedia**: Se añadió compatibilidad para establecer la dirección web desde la que se deben descargar los archivos multimedia 🚀
+- 🎬 **Selector instantáneo de escenas de OBS**: Se añadió un selector instantáneo de escenas de OBS Studio y se renovó por completo la función de selección de escenas en la configuración
+- 📖 **Más idiomas de documentación**: Se amplió el sitio web de documentación para admitir más idiomas
 
 ## 24.10.10
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- ⌨️ **Atajos de navegación multimedia**: Añadimos atajos de teclado para que navegues al archivo multimedia siguiente o anterior.
-- 🖱️ **Menú de clic derecho en el archivo multimedia**: Añadimos un menú que aparece al hacer clic derecho en los archivos multimedia para que puedas ocultarlos y cambiarles el nombre.
-- ✂️ **Importación de listas de reproducción de JWL recortadas**: Ahora se respetan los tiempos de los videos recortados en las listas de reproducción de JWL que importes.
+- ⌨️ **Atajos para navegar por archivos multimedia**: Se añadieron atajos de teclado para ir al archivo multimedia siguiente/anterior
+- 🖱️ **Menú de clic derecho de archivos multimedia**: Se añadió un menú de clic derecho a los archivos multimedia para ocultarlos y cambiarles el nombre
+- ✂️ **Importación recortada de listas JWL**: Ahora se respetan los tiempos recortados de los videos en las listas de reproducción JWL importadas
 
 ## 24.10.9
 
-### ✨ Nuevas características
+### ✨ Nuevas funciones
 
-- 🗑️ **Eliminar archivos multimedia adicionales por día**: Añadimos una opción para que puedas eliminar todos los archivos multimedia adicionales del día que tienes seleccionado actualmente.
+- 🗑️ **Eliminar archivos multimedia adicionales de un día**: Se añadió una opción para eliminar todos los archivos multimedia adicionales del día seleccionado actualmente
