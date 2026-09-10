@@ -158,9 +158,31 @@ function computeLinkTargetFix(source, translation, validKeys) {
   );
   if (!isCompound && danglingLinks.length === 1 && missingLinks.length === 1) {
     const match = danglingLinks[0];
+    const correctKey = missingLinks[0];
+    // vue-i18n's `@:key` grammar has no punctuation stop character (only
+    // whitespace/{@/()/ ends a bare link target), so a *bare* key
+    // immediately followed by punctuation with no space - e.g. Russian
+    // "@:obsStudio," - genuinely parses with the punctuation attached,
+    // making LINK_TARGET_RE capture it as part of `key` too. Naively
+    // replacing that whole captured key with the correct one would delete
+    // the punctuation outright (e.g. "@:obsStudio, которая" ->
+    // "@:obsStudio которая", dropping a grammatically required comma). Only
+    // for that bare-form case - not an already-braced `@:{cbsx}` style
+    // corruption, where the braces already bound the key correctly and a
+    // plain substring swap is the right fix - switch to the explicit braced
+    // form (`@:{'key'}`), which unambiguously bounds the key and lets
+    // vue-i18n parse the trailing punctuation as ordinary text instead.
+    const wasBareForm = !match.full.includes('{');
+    const trailingJunk =
+      wasBareForm && match.key.startsWith(correctKey)
+        ? match.key.slice(correctKey.length)
+        : '';
+    const replacement = trailingJunk
+      ? `@:{'${correctKey}'}${trailingJunk}`
+      : match.full.replace(match.key, correctKey);
     fixed =
       fixed.slice(0, match.index) +
-      match.full.replace(match.key, missingLinks[0]) +
+      replacement +
       fixed.slice(match.index + match.full.length);
   }
 
@@ -1197,6 +1219,30 @@ function runSelfTest() {
           {
             kind: 'links',
             text: 'Če vnešeno, bo M³ izpustil medije za @:{cbs}.',
+          },
+        ],
+        [
+          'link bare key glued to trailing punctuation isolated with braces',
+          computeLinkTargetFix(
+            'The scene in @:obsStudio that will be used as the default stage view.',
+            'Сцена в @:obsStudio, которая будет использоваться по умолчанию.',
+            keys,
+          ),
+          {
+            kind: 'links',
+            text: "Сцена в @:{'obsStudio'}, которая будет использоваться по умолчанию.",
+          },
+        ],
+        [
+          'link bare key glued to trailing punctuation (period) isolated with braces',
+          computeLinkTargetFix(
+            '@:obsStudio is a free app.',
+            '@:obsStudio.',
+            keys,
+          ),
+          {
+            kind: 'links',
+            text: "@:{'obsStudio'}.",
           },
         ],
         [
