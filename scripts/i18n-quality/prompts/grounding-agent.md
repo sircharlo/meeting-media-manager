@@ -22,6 +22,15 @@ URL of the target language's version directly (don't guess a URL by pattern
   a version of this page, treat it as your primary source and cite it for
   every seed term it covers.
 
+**If WebFetch can't find the `hreflang` tags or gives you a lossy/summarized
+read of a page** (its markdown conversion sometimes drops `<head>` content
+entirely, and its summarization model can mangle non-Latin scripts when
+extracting quotes verbatim): fall back to a raw fetch via the Bash tool,
+e.g. `curl -s <url>`, and grep/read the raw HTML or text yourself instead of
+relying on WebFetch's summary. This matters most for the exact `official`
+term string and its surrounding quoted definition — get those from raw text,
+not a paraphrase.
+
 For any seed term the terminology guide doesn't cover, fall back to
 searching **only jw.org / www.jw.org** (via WebSearch with
 `allowed_domains: ["jw.org", "www.jw.org"]`, and WebFetch on the resulting
