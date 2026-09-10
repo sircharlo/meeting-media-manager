@@ -318,7 +318,7 @@ Exclure les vidéos supplémentaires mentionnées dans les paragraphes de l'étu
 
 Choisissez les publications dont les vidéos référencées ne sont pas normalement diffusées pendant l'étude biblique de l'assemblée. Recherche par titre ou symbole de publication.
 
-**Default**: Walk Courageously With God (`wcg`)
+**Par défaut** : Marche courageusement avec Dieu (`wcg`)
 
 #### Exclure les médias de la brochure Enseignement {#exclude-theocratic-ministry-school}
 
@@ -619,7 +619,7 @@ Cette option est masquée lorsque le contrôle des enregistrements pour OBS Stud
 
 Configurez le raccourci clavier qui lance l'enregistrement, un raccourci facultatif qui interrompt l'enregistrement, ainsi que le dossier dans lequel l'application externe enregistre les fichiers. Si aucun raccourci d'arrêt n'est défini, M³ réutilisera le raccourci de démarrage. Lorsqu'un dossier est configuré, M³ affichera un bouton pour l'ouvrir.
 
-## Interface et raccourcis {#interface-raccourcis clavier }
+## Interface et raccourcis {#interface-raccourcis clavier } {#interface-shortcuts}
 
 ### Raccourcis clavier {#settings-guide-keyboard-shortcuts}
 
@@ -672,7 +672,7 @@ Afficher une petite poignée sur chaque élément multimédia pour pouvoir le fa
 
 ### Before/After Meeting Quick Actions {#before-after-meeting-quick-actions}
 
-#### Show Meeting Quick Actions {#enable-meeting-quick-actions}
+#### Afficher les actions rapides de réunion {#enable-meeting-quick-actions}
 
 <!-- **Setting**: `enableMeetingQuickActions` -->
 
