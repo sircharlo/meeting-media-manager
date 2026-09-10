@@ -1,130 +1,130 @@
 # Guía de configuración {#settings-guide}
 
-Esta guía completa te explica todos los ajustes disponibles en M³, organizados por categoría. Entender estos ajustes te ayudará a configurar M³ para que funcione perfectamente según las necesidades de tu congregación.
+Esta guía completa explica toda la configuración disponible en M³, organizada por categorías. Entender estas opciones te ayudará a configurar M³ para que se adapte perfectamente a las necesidades de tu congregación.
 
 ## General {#application-configuration}
 
-### Idioma de visualización {#display-language}
+### Idioma de la interfaz {#display-language}
 
 <!-- **Setting**: `localAppLang` -->
 
-Elige el idioma para la interfaz de M³. Esto es independiente del idioma que uses para descargar archivos multimedia.
+Elige el idioma de la interfaz de M³. Es independiente del idioma que se usa para descargar archivos multimedia.
 
 **Opciones**: Todos los idiomas de interfaz disponibles (inglés, español, francés, etc.)
 
-**Por defecto**: Inglés
+**Predeterminado**: Inglés
 
 ### Modo oscuro {#dark-mode}
 
 <!-- **Setting**: `darkMode` -->
 
-Controla el tema visual de M³.
+Controla el tema de apariencia de M³.
 
 **Opciones**:
 
-- Cambiar automáticamente según las preferencias de tu sistema
+- Cambiar automáticamente según la preferencia del sistema
 - Usar siempre el modo oscuro
 - Usar siempre el modo claro
 
-**Por defecto**: Automático
+**Predeterminado**: Automático
 
 ### Primer día de la semana {#first-day-of-week}
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Configura qué día se debe considerar como el primer día de la semana en la vista del calendario.
+Establece qué día debe considerarse el primero de la semana en la vista de calendario.
 
 **Opciones**: De domingo a sábado
 
-**Por defecto**: Domingo
+**Predeterminado**: Domingo
 
 ### Formato de fecha {#date-format}
 
 <!-- **Setting**: `localDateFormat` -->
 
-El formato que se usa para mostrar las fechas en la aplicación.
+Formato que se usa para mostrar las fechas en la aplicación.
 
 **Ejemplo**: D MMMM YYYY
 
-**Por defecto**: D MMMM YYYY
+**Predeterminado**: D MMMM YYYY
 
 ### Inicio automático al iniciar sesión {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
 
-Iniciar M³ de forma automática cuando enciendas la computadora.
+Inicia M³ automáticamente cuando arranca la computadora.
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
-## Reuniones de la congregación {#congregation-meetings}
+## Reuniones de congregación {#congregation-meetings}
 
 ### Nombre de la congregación {#congregation-name}
 
 <!-- **Setting**: `congregationName` -->
 
-El nombre de tu congregación. Esto se usa para organizarte y mostrarlo en la pantalla.
+El nombre de tu congregación. Se usa para organizar y mostrar la información.
 
-**Por defecto**: Vacío (lo tienes que configurar durante la instalación)
+**Predeterminado**: Vacío (debe establecerse durante la configuración)
 
-### Idioma de la reunión {#meeting-language}
+### Idioma de las reuniones {#meeting-language}
 
 <!-- **Setting**: `lang` -->
 
-El idioma principal para descargar archivos multimedia. Esto debería coincidir con el idioma que se usa en las reuniones de tu congregación.
+El idioma principal para descargar archivos multimedia. Debería coincidir con el idioma que se usa en las reuniones de tu congregación.
 
 **Opciones**: Todos los idiomas disponibles en el sitio web oficial de los testigos de Jehová
 
-**Por defecto**: Inglés (E)
+**Predeterminado**: Inglés (E)
 
-### Idioma de reserva {#fallback-language}
+### Idioma alternativo {#fallback-language}
 
 <!-- **Setting**: `langFallback` -->
 
-Un idioma secundario que puedes usar cuando los archivos multimedia no están disponibles en el idioma principal.
+Un idioma secundario que se usa cuando los archivos multimedia no están disponibles en el idioma principal.
 
 **Opciones**: Todos los idiomas disponibles en el sitio web oficial de los testigos de Jehová
 
-**Por defecto**: Ninguno
+**Predeterminado**: Ninguno
 
 ### Día de la reunión de entre semana {#midweek-meeting-day}
 
 <!-- **Setting**: `mwDay` -->
 
-El día de la semana en que tienen su reunión de entre semana.
+El día de la semana en que se celebra tu reunión de entre semana.
 
 **Opciones**: De domingo a sábado
 
-**Por defecto**: Ninguno (lo tienes que configurar durante la instalación)
+**Predeterminado**: Ninguno (debe establecerse durante la configuración)
 
 ### Hora de la reunión de entre semana {#midweek-meeting-time}
 
 <!-- **Setting**: `mwStartTime` -->
 
-La hora de inicio de su reunión de entre semana.
+La hora de inicio de tu reunión de entre semana.
 
 **Formato**: HH:MM (formato de 24 horas)
 
-**Por defecto**: Ninguno (lo tienes que configurar durante la instalación)
+**Predeterminado**: Ninguno (debe establecerse durante la configuración)
 
 ### Día de la reunión del fin de semana {#weekend-meeting-day}
 
 <!-- **Setting**: `weDay` -->
 
-El día de la semana en que tienen su reunión del fin de semana.
+El día de la semana en que se celebra tu reunión del fin de semana.
 
 **Opciones**: De domingo a sábado
 
-**Por defecto**: Ninguno (lo tienes que configurar durante la instalación)
+**Predeterminado**: Ninguno (debe establecerse durante la configuración)
 
 ### Hora de la reunión del fin de semana {#weekend-meeting-time}
 
 <!-- **Setting**: `weStartTime` -->
 
-La hora de inicio de su reunión del fin de semana.
+La hora de inicio de tu reunión del fin de semana.
 
 **Formato**: HH:MM (formato de 24 horas)
 
-**Por defecto**: Ninguno (lo tienes que configurar durante la instalación)
+**Predeterminado**: Ninguno (debe establecerse durante la configuración)
 
 ### Semana del superintendente de circuito {#circuit-overseer-week}
 
@@ -134,7 +134,7 @@ La semana de la próxima visita del superintendente de circuito.
 
 **Formato**: MM/DD/YYYY
 
-**Por defecto**: Ninguno
+**Predeterminado**: Ninguno
 
 ### Fecha de la Conmemoración {#memorial-date}
 
@@ -144,72 +144,72 @@ La fecha de la próxima celebración de la Conmemoración.
 
 **Formato**: MM/DD/YYYY
 
-**Por defecto**: Se obtiene de forma automática periódicamente
+**Predeterminado**: Se obtiene automáticamente de forma periódica
 
-### Cambios en el programa de las reuniones {#meeting-schedule-changes}
+### Cambios del programa de reuniones {#meeting-schedule-changes}
 
-Estos ajustes te permiten configurar cambios temporales en el programa de tus reuniones:
+Estas opciones te permiten configurar cambios temporales en tu programa de reuniones:
 
-- **Fecha del cambio**: Cuándo se aplica el cambio
-- **Cambio de una sola vez**: Si es un cambio permanente o temporal
-- **Nuevo día para la reunión de entre semana**: Un nuevo día para la reunión de entre semana
-- **Nueva hora para la reunión de entre semana**: Una nueva hora para la reunión de entre semana
-- **Nuevo día para la reunión del fin de semana**: Un nuevo día para la reunión del fin de semana
-- **Nueva hora para la reunión del fin de semana**: Una nueva hora para la reunión del fin de semana
+- **Fecha del cambio**: Cuándo entra en vigor el cambio
+- **Cambio de una sola vez**: Si se trata de un cambio permanente o temporal
+- **Nuevo día entre semana**: Nuevo día de la reunión de entre semana
+- **Nueva hora entre semana**: Nueva hora de la reunión de entre semana
+- **Nuevo día del fin de semana**: Nuevo día de la reunión del fin de semana
+- **Nueva hora del fin de semana**: Nueva hora de la reunión del fin de semana
 
-### Actualizaciones automáticas del programa de las reuniones {#automatic-meeting-schedule-updates}
+### Actualizaciones automáticas del programa de reuniones {#automatic-meeting-schedule-updates}
 
 <!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
 
-Cuando lo activas, M³ comprueba periódicamente en el sitio web oficial de los testigos de Jehová si hay cambios en los días y las horas de las reuniones, y actualiza el perfil actual de forma automática.
+Si está activado, M³ consulta periódicamente el sitio web oficial de los testigos de Jehová para ver si cambiaron los días y las horas de las reuniones y actualiza automáticamente el perfil actual.
 
-Esto solo funciona en los perfiles que añadiste usando la búsqueda de congregaciones y a los que no les has cambiado el nombre de la congregación manualmente. Si la sincronización se desactivó porque cambiaste el nombre de la congregación, usa **Activar sincronización del programa** para volver a vincular el perfil.
+Esto solo funciona con perfiles que se añadieron mediante la búsqueda de congregación y cuyo nombre de congregación no se ha cambiado manualmente. Si la sincronización se desactivó porque cambió el nombre de la congregación, usa **Activar sincronización del programa** para volver a vincular el perfil.
 
-#### Activar sincronización de programa {#relink-congregation}
+#### Activar sincronización del programa {#relink-congregation}
 
 <!-- **Setting**: `relinkCongregationButton` -->
 
-Vuelve a vincular el perfil actual con la búsqueda de congregaciones para que se reanuden las actualizaciones automáticas del día y la hora de las reuniones. Solo se muestra una vez que el nombre de la congregación se ha cambiado manualmente, ya que eso es lo que rompe el enlace en primer lugar.
+Vuelve a vincular el perfil actual con la búsqueda de congregación para que puedan reanudarse las actualizaciones automáticas del día y la hora de las reuniones. Solo se muestra después de cambiar manualmente el nombre de la congregación, ya que eso es lo que rompe el vínculo.
 
-#### Actualizar el programa de las reuniones {#refresh-meeting-schedule}
+#### Actualizar programa de reuniones {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
-Sincroniza manualmente el programa de las reuniones actual y futuro con la información del sitio web oficial.
+Sincroniza manualmente el programa de reuniones actual y futuro con la información del sitio web oficial.
 
-## Multimedia y reproducción {#media-retrieval-and-playback}
+## Archivos multimedia y reproducción {#media-retrieval-and-playback}
 
 ### Conexión de uso medido {#metered-connection}
 
 <!-- **Setting**: `meteredConnection` -->
 
-Activa esto si tienes una conexión de datos limitada para reducir el uso del ancho de banda.
+Activa esta opción si tienes una conexión de datos limitada para reducir el uso de ancho de banda.
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
-### Visualización multimedia {#media-display-button}
+### Presentación de archivos multimedia {#media-display-button}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
-Activa la característica de visualización multimedia. Esto es necesario para que presentes archivos multimedia en un segundo monitor.
+Activa la función de presentación de archivos multimedia. Esto es necesario para presentar archivos multimedia en un segundo monitor.
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
-#### Activar la vista previa multimedia {#enable-media-preview}
+#### Activar vista previa de archivos multimedia {#enable-media-preview}
 
 <!-- **Setting**: `enableMediaPreview` -->
 
-Muestra una vista previa en vivo de la ventana multimedia mientras se está mostrando una imagen o un video.
+Muestra una vista previa en vivo de la ventana de archivos multimedia mientras se muestra una imagen o un video.
 
-**Por defecto**: `true`
+**Predeterminado**: `true`
 
-#### Comenzar con la reproducción en pausa {#begin-playback-paused}
+#### Iniciar reproducción en pausa {#begin-playback-paused}
 
 <!-- **Setting**: `beginPlaybackPaused` -->
 
 Inicia los videos en pausa cuando comienza la reproducción.
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
 ### Música de fondo {#settings-guide-background-music}
 
@@ -217,35 +217,35 @@ Inicia los videos en pausa cuando comienza la reproducción.
 
 <!-- **Setting**: `enableMusicButton` -->
 
-Activa la característica de música de fondo.
+Activa la función de música de fondo.
 
-**Por defecto**: `true`
+**Predeterminado**: `true`
 
 #### Iniciar música automáticamente {#auto-start-music}
 
 <!-- **Setting**: `autoStartMusic` -->
 
-Inicia automáticamente la música de fondo cuando abres M³, si corresponde.
+Inicia automáticamente la música de fondo cuando se abre M³ si corresponde.
 
-**Por defecto**: `true`
+**Predeterminado**: `true`
 
-#### Tiempo de margen para detenerla {#meeting-stop-buffer}
+#### Margen de detención antes de la reunión {#meeting-stop-buffer}
 
 <!-- **Setting**: `meetingStopBufferSeconds` -->
 
-Cuántos segundos antes de la hora de inicio de la reunión se detendrá la música de fondo.
+Cuántos segundos antes de la hora de inicio de la reunión se debe detener la música de fondo.
 
-**Rango**: 0-300 segundos
+**Intervalo**: 0-300 segundos
 
-**Por defecto**: 60 segundos
+**Predeterminado**: 60 segundos
 
 #### Volumen de la música {#music-volume}
 
 <!-- **Setting**: `musicVolume` -->
 
-Nivel de volumen para la música de fondo (1-100%).
+Nivel de volumen de la música de fondo (1-100 %).
 
-**Por defecto**: 100%
+**Predeterminado**: 100 %
 
 ### Opciones de reproducción y descarga {#media-display}
 
@@ -254,79 +254,79 @@ these control the media window's playback behavior and which downloaded media is
 filtered out, as distinct from the "Media Display" section above (which is about
 whether the media window feature is enabled at all). -->
 
-#### Activar las transiciones de fundido de la ventana multimedia {#enable-media-window-fade-transitions}
+#### Activar transiciones de fundido de la ventana de archivos multimedia {#enable-media-window-fade-transitions}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
-Activa las transiciones de aparición/desaparición (fundido) cuando muestres u ocultes la ventana multimedia.
+Activa transiciones de aparición y desaparición gradual al mostrar u ocultar la ventana de archivos multimedia.
 
-**Por defecto**: `true`
+**Predeterminado**: `true`
 
-#### Activar el control de la velocidad de reproducción {#enable-playback-speed-control}
+#### Activar control de velocidad de reproducción {#enable-playback-speed-control}
 
 <!-- **Setting**: `enablePlaybackSpeedControl` -->
 
-Permite que ajustes la velocidad de reproducción del audio y del video desde el menú contextual del archivo multimedia.
+Permite ajustar la velocidad de reproducción de audio y video desde el menú contextual del archivo multimedia.
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
-#### Ocultar el logo multimedia {#hide-media-logo}
+#### Ocultar logotipo de archivos multimedia {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
-Oculta el logo en la ventana multimedia.
+Oculta el logotipo de la ventana de archivos multimedia.
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
 #### Resolución máxima {#maximum-resolution}
 
 <!-- **Setting**: `maxRes` -->
 
-La resolución máxima para los archivos multimedia descargados.
+Resolución máxima de los archivos multimedia descargados.
 
 **Opciones**: 240p, 360p, 480p, 720p, 1080p
 
-**Por defecto**: 720p
+**Predeterminado**: 720p
 
 #### Incluir archivos multimedia impresos {#include-printed-media}
 
 <!-- **Setting**: `includePrinted` -->
 
-Incluye archivos multimedia de las publicaciones impresas en las descargas de archivos multimedia.
+Incluye en las descargas los archivos multimedia de las publicaciones impresas.
 
-**Por defecto**: `true`
+**Predeterminado**: `true`
 
-#### Excluir notas {#exclude-footnotes}
+#### Excluir notas al pie {#exclude-footnotes}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
-Excluye las imágenes de las notas en las descargas de archivos multimedia cuando sea posible.
+Excluye de las descargas las imágenes de notas al pie cuando sea posible.
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
-#### Excluir los videos adicionales del Estudio de La Atalaya {#exclude-additional-watchtower-study-videos}
+#### Excluir videos adicionales del Estudio de La Atalaya {#exclude-additional-watchtower-study-videos}
 
 <!-- **Setting**: `excludeWtParagraphVideos` -->
 
-Excluye los videos adicionales a los que se hace referencia en los párrafos del Estudio de La Atalaya.
+Excluye videos adicionales a los que se haga referencia en los párrafos del Estudio de La Atalaya.
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
 #### Excluir videos del Estudio bíblico de la congregación {#exclude-cbs-pubs}
 
 <!-- **Setting**: `excludeCbsPubs` -->
 
-Elige las publicaciones cuyos videos de referencia no deberían mostrarse durante el Estudio bíblico de la congregación. Busca por título de la publicación o símbolo.
+Elige las publicaciones cuyos videos mencionados no deben mostrarse durante el Estudio bíblico de la congregación. Busca por título o símbolo de la publicación.
 
-**Default**: Walk Courageously With God (`wcg`)
+**Predeterminado**: Seamos valientes al andar con Dios (`wcg`)
 
-#### Excluir los archivos multimedia del folleto Maestros {#exclude-theocratic-ministry-school}
+#### Excluir archivos multimedia del folleto Seamos mejores lectores y maestros {#exclude-theocratic-ministry-school}
 
 <!-- **Setting**: `excludeTh` -->
 
-Excluye los archivos multimedia del folleto Maestros (th) en las descargas de archivos multimedia.
+Excluye de las descargas los archivos multimedia del folleto Seamos mejores lectores y maestros (th).
 
-**Por defecto**: `true`
+**Predeterminado**: `true`
 
 ### Subtítulos {#subtitles}
 
@@ -334,45 +334,45 @@ Excluye los archivos multimedia del folleto Maestros (th) en las descargas de ar
 
 <!-- **Setting**: `enableSubtitles` -->
 
-Activa la compatibilidad de subtítulos para la reproducción multimedia.
+Activa la compatibilidad con subtítulos para la reproducción de archivos multimedia.
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
 #### Idioma de los subtítulos {#subtitle-language}
 
 <!-- **Setting**: `langSubtitles` -->
 
-El idioma de los subtítulos (puede ser diferente al idioma del archivo multimedia).
+Idioma de los subtítulos (puede ser distinto del idioma de los archivos multimedia).
 
 **Opciones**: Todos los idiomas disponibles en el sitio web oficial de los testigos de Jehová
 
-**Por defecto**: Ninguno
+**Predeterminado**: Ninguno
 
-### Administración de la caché {#cache-management}
+### Administración de caché {#cache-management}
 
 #### Activar caché adicional {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Activa el almacenamiento en caché adicional para que tengas un mejor rendimiento.
+Activa almacenamiento adicional en caché para mejorar el rendimiento.
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
-#### Carpeta de la caché {#cache-folder}
+#### Carpeta de caché {#cache-folder}
 
 <!-- **Setting**: `cacheFolder` -->
 
-Una ubicación personalizada para guardar los archivos multimedia en caché.
+Ubicación personalizada para guardar archivos multimedia en caché.
 
-**Por defecto**: La ubicación predeterminada del sistema
+**Predeterminado**: Ubicación predeterminada del sistema
 
-#### Activar la limpieza automática de la caché {#enable-cache-auto-clear}
+#### Activar borrado automático de caché {#enable-cache-auto-clear}
 
 <!-- **Setting**: `enableCacheAutoClear` -->
 
-Borra automáticamente los archivos antiguos en caché para que ahorres espacio en el disco.
+Borra automáticamente archivos antiguos de la caché para ahorrar espacio en disco.
 
-**Por defecto**: `true`
+**Predeterminado**: `true`
 
 ### Títulos de canciones en pinyin {#pinyin-song-titles}
 
@@ -380,61 +380,61 @@ Borra automáticamente los archivos antiguos en caché para que ahorres espacio 
 
 <!-- **Setting**: `enablePinyinSongs` -->
 
-Cuando se encuentre una versión en pinyin de una canción de la reunión en la carpeta de canciones en pinyin, úsala en lugar de la canción estándar.
+Cuando se encuentre una versión en pinyin de una canción de la reunión en la carpeta de canciones en pinyin, úsala en lugar de la canción normal.
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
 #### Carpeta de canciones en pinyin {#pinyin-song-folder}
 
 <!-- **Setting**: `pinyinSongFolder` -->
 
-Carpeta con los videos de canciones en pinyin (por ejemplo, `sjjm_s-Pi_CHS_066_r720P.mp4`). Cuando se encuentre un archivo en pinyin que coincida con el número de la cancion de la reunión, se reproducirá en lugar de la cancion estándar.
+Carpeta que contiene canciones en video en pinyin (p. ej., `sjjm_s-Pi_CHS_066_r720P.mp4`). Cuando se encuentre un archivo en pinyin que coincida con el número de la canción de la reunión, se reproducirá en lugar de la canción normal.
 
-**Por defecto**: Vacío
+**Predeterminado**: Vacío
 
 ### Exportación de archivos multimedia {#settings-guide-media-export}
 
-#### Activar la exportación automática de archivos multimedia {#enable-media-auto-export}
+#### Activar exportación automática de archivos multimedia {#enable-media-auto-export}
 
 <!-- **Setting**: `enableMediaAutoExport` -->
 
-Exporta automáticamente los archivos multimedia a una carpeta que especifiques.
+Exporta automáticamente archivos multimedia a una carpeta específica.
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
 #### Carpeta de exportación de archivos multimedia {#media-export-folder}
 
 <!-- **Setting**: `mediaAutoExportFolder` -->
 
-La ruta de la carpeta donde se exportarán automáticamente los archivos multimedia.
+Ruta de la carpeta donde se exportarán automáticamente los archivos multimedia.
 
-**Por defecto**: Vacío
+**Predeterminado**: Vacío
 
 #### Convertir archivos a MP4 {#convert-files-to-mp4}
 
-**Ajuste**: `convertFilesToMp4`
+**Opción**: `convertFilesToMp4`
 
-Convierte los archivos multimedia que exportaste al formato MP4 para que tengan una mejor compatibilidad.
+Convierte los archivos multimedia exportados al formato MP4 para mejorar la compatibilidad.
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
 ### Supervisión de carpetas {#settings-guide-folder-monitoring}
 
-#### Activar supervisor de carpetas {#enable-folder-watcher}
+#### Activar supervisión de carpetas {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Vigila una carpeta para ver si hay nuevos archivos multimedia y los añade automáticamente a M³.
+Supervisa una carpeta en busca de nuevos archivos multimedia y los añade automáticamente a M³.
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
-#### Carpeta para vigilar {#folder-to-watch}
+#### Carpeta que se supervisará {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-La ruta de la carpeta que quieres vigilar por si hay nuevos archivos multimedia.
+La ruta de la carpeta que se supervisará en busca de nuevos archivos multimedia.
 
-**Por defecto**: Vacío
+**Predeterminado**: Vacío
 
 ## Cronómetro de la reunión {#meeting-timer}
 
@@ -442,33 +442,33 @@ La ruta de la carpeta que quieres vigilar por si hay nuevos archivos multimedia.
 
 <!-- **Setting**: `enableTimerDisplay` -->
 
-Activa una ventana separada con un cronómetro para medir el tiempo de las partes de la reunión. Esta es una característica en fase beta y solo la deberías activar si se aprobó localmente.
+Activa una ventana independiente del cronómetro para controlar el tiempo de las partes de la reunión. Esta es una función beta y solo debería activarse si se ha aprobado localmente.
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
 ### Comportamiento de la ventana del cronómetro {#timer-window-behavior}
 
 <!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
 
-Configura si la ventana del cronómetro se abre automáticamente, si los cronómetros de los participantes cuentan hacia arriba o hacia abajo por defecto, si el reloj usa el formato de 12 horas o de 24 horas, y si el valor actual del cronómetro se muestra en el botón del cronómetro de la isla de acciones.
+Configura si la ventana del cronómetro se abre automáticamente, si los cronómetros de los participantes cuentan de forma progresiva o regresiva de manera predeterminada, si el reloj usa el formato de 12 o 24 horas y si el valor actual del cronómetro se muestra en el botón del cronómetro de la isla de acciones.
 
 ### Formatos de visualización del cronómetro {#timer-display-formats}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
-Elige los formatos de visualización analógica o digital para la hora del día y para la cuenta regresiva de los cronómetros. El indicador de advertencia de la cuenta regresiva puede hacer que el anillo analógico de la cuenta regresiva cambie a un color de advertencia durante el último minuto.
+Elige formatos de visualización analógicos o digitales para la hora y los cronómetros de cuenta regresiva. El indicador de advertencia de la cuenta regresiva puede cambiar el anillo analógico de cuenta regresiva hacia un color de advertencia durante el último minuto.
 
 ### Cuenta regresiva de la reunión y estado del programa {#meeting-countdown-and-schedule-status}
 
 <!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
 
-Muestra una cuenta regresiva antes de las reuniones programadas y, opcionalmente, muestra si la reunión va adelantada o atrasada con respecto al programa. La cuenta regresiva de la reunión solo aparece en la pantalla del cronómetro, no en la pantalla principal de visualización multimedia.
+Muestra una cuenta regresiva antes de las reuniones programadas y, si quieres, indica si la reunión va adelantada o atrasada con respecto al programa. La cuenta regresiva de la reunión aparece solo en la pantalla del cronómetro, no en la pantalla principal de archivos multimedia.
 
-### Apariencia del cronómetro y tiempo extra {#timer-appearance-and-overtime}
+### Apariencia del cronómetro y tiempo excedido {#timer-appearance-and-overtime}
 
 <!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
 
-Personaliza el tamaño del texto y los colores del cronómetro, y configura los indicadores de tiempo extra como los colores alternos, el parpadeo y la visualización solo del tiempo extra transcurrido en el modo de conteo hacia arriba.
+Personaliza el tamaño y los colores del texto del cronómetro, y configura indicadores de tiempo excedido, como colores alternativos, parpadeo y mostrar solo el tiempo excedido en modo de cuenta progresiva.
 
 ## Integraciones {#integrations}
 
@@ -478,25 +478,25 @@ Personaliza el tamaño del texto y los colores del cronómetro, y configura los 
 
 <!-- **Setting**: `zoomEnable` -->
 
-Activa las características de integración de las reuniones en Zoom.
+Activa las funciones de integración con reuniones de Zoom.
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
 #### Atajo para compartir pantalla {#screen-share-shortcut}
 
 <!-- **Setting**: `zoomScreenShareShortcut` -->
 
-Atajo de teclado para iniciar la opción de compartir pantalla en Zoom.
+Atajo de teclado para activar la pantalla compartida de Zoom.
 
-**Por defecto**: Ninguno
+**Predeterminado**: Ninguno
 
-#### Auto-Focus Media Window {#zoom-auto-focus-media-window}
+#### Enfocar automáticamente la ventana de archivos multimedia {#zoom-auto-focus-media-window}
 
 <!-- **Setting**: `zoomAutoFocusMediaWindow` -->
 
-Automatically focus the media window after Zoom screen sharing starts. This is usually not required, but can help on some systems if the media window regularly loses focus after screen sharing starts.
+Enfoca automáticamente la ventana de archivos multimedia después de iniciar la pantalla compartida de Zoom. Normalmente esto no hace falta, pero puede ayudar en algunos sistemas si la ventana de archivos multimedia pierde el foco con frecuencia después de empezar a compartir pantalla.
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
 ### Integración con OBS Studio {#settings-guide-obs-integration}
 
@@ -504,15 +504,15 @@ Automatically focus the media window after Zoom screen sharing starts. This is u
 
 <!-- **Setting**: `obsEnable` -->
 
-Activa la integración con OBS Studio para el cambio automático de escenas.
+Activa la integración con OBS Studio para cambiar escenas automáticamente.
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
 :::warning Nota importante
 
-**Se requiere configurar el audio**: La integración con OBS Studio solo se encarga de compartir la pantalla. El audio de los archivos multimedia de M³ **no se transmite automáticamente** a los participantes de Zoom cuando usas OBS Studio. Tienes que configurar los ajustes del Audio original para músicos de Zoom o usar "Compartir sonido de la computadora" para asegurarte de que los participantes de la reunión puedan escuchar los archivos multimedia. Mira la [Guía del usuario](/user-guide#audio-configuration) si quieres ver las instrucciones detalladas sobre cómo configurar el audio.
+**Se necesita configurar el audio**: La integración con OBS Studio solo se encarga de compartir la pantalla. El audio de los archivos multimedia de M³ **no se transmite automáticamente** a los participantes de Zoom cuando se usa OBS Studio. Debes configurar las opciones de Audio original de Zoom o usar "Compartir sonido de la computadora" para que los participantes de la reunión puedan oír los archivos multimedia. Consulta la [Guía del usuario](/user-guide#audio-configuration) para ver instrucciones detalladas de configuración del audio.
 
-**Nota**: La integración con Zoom usa la función para compartir pantalla nativa de Zoom, la cual maneja el audio de forma más fluida que la integración con OBS Studio.
+**Nota**: La integración con Zoom usa la función nativa de Zoom para compartir pantalla, que gestiona el audio de forma más fluida que la integración con OBS Studio.
 
 :::
 
@@ -520,40 +520,40 @@ Activa la integración con OBS Studio para el cambio automático de escenas.
 
 <!-- **Setting**: `obsPort` -->
 
-El número de puerto para conectarte al WebSocket de OBS Studio.
+El número de puerto para conectarse a WebSocket de OBS Studio.
 
-**Por defecto**: Ninguno
+**Predeterminado**: Ninguno
 
 #### Contraseña de OBS {#obs-password}
 
 <!-- **Setting**: `obsPassword` -->
 
-La contraseña para conectarte al WebSocket de OBS Studio.
+La contraseña para la conexión WebSocket de OBS Studio.
 
-**Por defecto**: Ninguno
+**Predeterminado**: Ninguno
 
 #### Escenas de OBS {#obs-scenes}
 
-Configura qué escenas de OBS quieres usar para diferentes propósitos:
+Configura qué escenas de OBS se usarán para distintos fines:
 
-- **Escena de la cámara**: La escena que muestra la cámara o el atril
-- **Escena multimedia**: La escena para mostrar los archivos multimedia
-- **Escena de imágenes**: La escena para mostrar imágenes (por ejemplo, una escena PIP que muestre tanto el archivo multimedia como al discursante)
+- **Escena de cámara**: Escena que muestra la cámara/atril
+- **Escena de archivos multimedia**: Escena para mostrar archivos multimedia
+- **Escena de imagen**: Escena para mostrar imágenes (por ejemplo, una escena PiP que muestre tanto los archivos multimedia como al orador)
 
 #### Opciones avanzadas de OBS {#obs-advanced-options}
 
-- **Posponer las imágenes**: Retrasa el envío de imágenes a OBS hasta que las inicies manualmente.
-- **Interruptor rápido**: Activa el interruptor para encender o apagar rápidamente la integración con OBS.
-- **Cambiar de escena después del archivo multimedia**: Vuelve automáticamente a la escena anterior después del archivo multimedia.
-- **Recordar la escena anterior**: Recuerda y restaura la escena anterior.
-- **Ocultar iconos**: Oculta los iconos relacionados con OBS en la interfaz.
-- **Controles de grabación**: Muestra los controles que inician y detienen la grabación de OBS desde M³.
+- **Posponer imágenes**: Retrasa el envío de imágenes a OBS hasta que se active manualmente
+- **Activación rápida**: Activa un control rápido para activar o desactivar la integración con OBS
+- **Cambiar escena después de los archivos multimedia**: Vuelve automáticamente a la escena anterior después de reproducir archivos multimedia
+- **Recordar escena anterior**: Recuerda y restaura la escena anterior
+- **Ocultar iconos**: Oculta los iconos relacionados con OBS en la interfaz
+- **Controles de grabación**: Muestra controles para iniciar y detener la grabación de OBS desde M³
 
 :::warning Nota importante
 
-**Se requiere configurar el audio**: La integración con OBS Studio solo se encarga del video y de cambiar las escenas. El audio de los archivos multimedia de M³ **no se transmite automáticamente** a Zoom ni a OBS. La transmisión de video funciona como una cámara virtual sin sonido, igual que una cámara web. Tienes que configurar los ajustes del Audio original para músicos de Zoom o usar "Compartir sonido de la computadora" para asegurarte de que los participantes de la reunión puedan escuchar los archivos multimedia. Mira la [Guía del usuario](/user-guide#audio-configuration) si quieres ver las instrucciones detalladas sobre cómo configurar el audio.
+**Se necesita configurar el audio**: La integración con OBS Studio solo se encarga del video y del cambio de escenas. El audio de los archivos multimedia de M³ **no se transmite automáticamente** a Zoom ni a OBS. La transmisión de video funciona como una cámara virtual sin sonido, igual que una webcam. Debes configurar las opciones de Audio original de Zoom o usar "Compartir sonido de la computadora" para que los participantes de la reunión puedan oír los archivos multimedia. Consulta la [Guía del usuario](/user-guide#audio-configuration) para ver instrucciones detalladas de configuración del audio.
 
-**Alternativa**: Considera usar la integración con Zoom en su lugar, ya que usa la función nativa de compartir pantalla de Zoom, la cual maneja el audio de forma más fluida.
+**Alternativa**: Considera usar la integración con Zoom, ya que utiliza la función nativa de Zoom para compartir pantalla y gestiona el audio de forma más fluida.
 
 :::
 
@@ -563,63 +563,63 @@ Configura qué escenas de OBS quieres usar para diferentes propósitos:
 
 <!-- **Setting**: `enableCustomEvents` -->
 
-Activa atajos personalizados que se ejecutarán cuando se detecte un evento específico (por ejemplo, cuando se reproduce, se pausa o se detiene un archivo multimedia).
+Activa atajos personalizados que se ejecutarán cuando se detecte un evento específico (p. ej., cuando se reproduzcan, pausen o detengan archivos multimedia).
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
 #### Atajos de eventos personalizados {#custom-event-shortcuts}
 
-##### Atajo para reproducir un archivo multimedia {#custom-event-media-play-shortcut}
+##### Atajo al reproducir archivos multimedia {#custom-event-media-play-shortcut}
 
 <!-- **Setting**: `customEventMediaPlayShortcut` -->
 
-El atajo que se ejecuta cuando se reproduce un archivo multimedia.
+Atajo que se activa cuando se reproducen archivos multimedia.
 
-**Por defecto**: Ninguno
+**Predeterminado**: Ninguno
 
-##### Atajo para pausar un archivo multimedia {#custom-event-media-pause-shortcut}
+##### Atajo al pausar archivos multimedia {#custom-event-media-pause-shortcut}
 
 <!-- **Setting**: `customEventMediaPauseShortcut` -->
 
-El atajo que se ejecuta cuando se pausa un archivo multimedia.
+Atajo que se activa cuando se pausan archivos multimedia.
 
-**Por defecto**: Ninguno
+**Predeterminado**: Ninguno
 
-##### Atajo para detener un archivo multimedia {#custom-event-media-stop-shortcut}
+##### Atajo al detener archivos multimedia {#custom-event-media-stop-shortcut}
 
 <!-- **Setting**: `customEventMediaStopShortcut` -->
 
-El atajo que se ejecuta cuando se detiene un archivo multimedia.
+Atajo que se activa cuando se detienen archivos multimedia.
 
-**Por defecto**: Ninguno
+**Predeterminado**: Ninguno
 
 ##### Atajo de la última canción {#custom-event-last-song-shortcut}
 
 <!-- **Setting**: `customEventLastSongShortcut` -->
 
-El atajo que se ejecuta cuando se reproduce la última canción durante una reunión.
+Atajo que se activa cuando se reproduce la última canción de una reunión.
 
-**Por defecto**: Ninguno
+**Predeterminado**: Ninguno
 
-### Grabaciones de las reuniones {#meeting-recordings}
+### Grabaciones de reuniones {#meeting-recordings}
 
-#### Activar la integración con una aplicación de grabación externa {#enable-external-recording-app-integration}
+#### Activar integración con aplicación de grabación externa {#enable-external-recording-app-integration}
 
 <!-- **Setting**: `recordingEnable` -->
 
-Deja que M³ controle una aplicación de grabación independiente mediante atajos de teclado. Esto no graba desde adentro de M³; envía los atajos configurados cuando presionas **Empezar grabación** o **Detener grabación** en la ventana emergente de grabaciones de las reuniones.
+Permite que M³ controle una aplicación de grabación independiente mediante atajos de teclado. Esto no graba dentro de M³; envía los atajos configurados cuando presionas **Iniciar grabación** o **Detener grabación** en la ventana emergente de grabaciones de la reunión.
 
-Esta opción se oculta cuando activas los controles de grabación de OBS. Si usas OBS Studio, usa en su lugar los controles de grabación de OBS en la integración con OBS.
+Esta opción se oculta cuando están activados los controles de grabación de OBS. Si usas OBS Studio, usa en su lugar los controles de grabación de OBS de la integración con OBS.
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
 #### Atajos y carpeta de grabación {#recording-shortcuts-and-folder}
 
 <!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
 
-Configura el atajo de teclado que empieza la grabación, el atajo opcional que detiene la grabación y la carpeta donde la aplicación externa guarda las grabaciones. Si no le indicas un atajo de detención, M³ vuelve a usar el atajo de inicio. Cuando configuras una carpeta, M³ muestra un botón para abrirla.
+Configura el atajo de teclado que inicia la grabación, el atajo opcional que la detiene y la carpeta donde la aplicación externa guarda las grabaciones. Si no se indica un atajo para detener, M³ vuelve a usar el atajo de inicio. Cuando se configura una carpeta, M³ muestra un botón para abrirla.
 
-## Interface & Shortcuts {#interface-shortcuts}
+## Interfaz y atajos {#interface-shortcuts}
 
 ### Atajos de teclado {#settings-guide-keyboard-shortcuts}
 
@@ -627,72 +627,72 @@ Configura el atajo de teclado que empieza la grabación, el atajo opcional que d
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
-Activa los atajos de teclado personalizables para el control multimedia.
+Activa atajos de teclado personalizables para controlar archivos multimedia.
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
-#### Atajos de control multimedia {#media-control-shortcuts}
+#### Atajos de control de archivos multimedia {#media-control-shortcuts}
 
-Configura atajos para la reproducción multimedia:
+Configura atajos para la reproducción de archivos multimedia:
 
-- **Ventana multimedia**: Abre o cierra la ventana multimedia.
-- **Archivo multimedia anterior**: Pasa al archivo multimedia anterior.
-- **Siguiente archivo multimedia**: Pasa al siguiente archivo multimedia.
-- **Pausar/Reanudar**: Pausa o reanuda la reproducción multimedia.
-- **Detener archivo multimedia**: Detiene la reproducción multimedia.
-- **Interruptor de música**: Activa o desactiva la música de fondo.
+- **Ventana de archivos multimedia**: Abre/cierra la ventana de archivos multimedia
+- **Archivo multimedia anterior**: Va al archivo multimedia anterior
+- **Siguiente archivo multimedia**: Va al siguiente archivo multimedia
+- **Pausar/Reanudar**: Pausa o reanuda la reproducción de archivos multimedia
+- **Detener archivos multimedia**: Detiene la reproducción de archivos multimedia
+- **Activar/desactivar música**: Activa o desactiva la música de fondo
 
-### Add More Media Button {#add-more-media-button}
+### Botón Añadir más archivos multimedia {#add-more-media-button}
 
-#### Sections with an Add Media Button {#add-media-button-sections}
+#### Secciones con un botón Añadir archivos multimedia {#add-media-button-sections}
 
 <!-- **Setting**: `addMediaButtonSections` -->
 
-Choose which meeting sections show their own button for adding your own media, in addition to the "Add media" button in the top toolbar, which always works for every section.
+Elige qué secciones de la reunión muestran su propio botón para añadir tus archivos multimedia, además del botón "Añadir archivos multimedia" de la barra de herramientas superior, que siempre funciona en todas las secciones.
 
-**Default**: Public Talk, Living as Christians, Circuit Overseer's Visit, and Custom sections
+**Predeterminado**: Discurso público, Nuestra vida cristiana, Visita del superintendente de circuito y secciones personalizadas
 
-#### Compact Add Media Button {#compact-add-media-button}
+#### Botón compacto Añadir archivos multimedia {#compact-add-media-button}
 
 <!-- **Setting**: `compactAddMediaButton` -->
 
-Only show an icon for the "Add more media"/"Add a song" button in section headers. When disabled, the button also shows text alongside the icon when there's enough room.
+Mostrar solo un icono para el botón "Añadir más archivos multimedia"/"Añadir una canción" en los encabezados de las secciones. Si se desactiva, el botón también muestra texto junto al icono cuando hay suficiente espacio.
 
-**Por defecto**: `true`
+**Predeterminado**: `true`
 
-### Media Drag Handle {#media-drag-handle}
+### Control de arrastre de archivos multimedia {#media-drag-handle}
 
-#### Show Drag Handle {#show-media-drag-handle}
+#### Mostrar control de arrastre {#show-media-drag-handle}
 
 <!-- **Setting**: `showMediaDragHandle` -->
 
-Show a small handle on each media item for dragging it to reorder. Media items can always be reordered by dragging anywhere on them; this only affects whether the handle icon itself is shown.
+Muestra un pequeño control en cada archivo multimedia para arrastrarlo y cambiar su orden. Los archivos multimedia siempre se pueden reordenar arrastrándolos desde cualquier parte; esto solo determina si se muestra el icono del control.
 
-**Por defecto**: `true`
+**Predeterminado**: `true`
 
-### Before/After Meeting Quick Actions {#before-after-meeting-quick-actions}
+### Acciones rápidas antes/después de la reunión {#before-after-meeting-quick-actions}
 
-#### Show Meeting Quick Actions {#enable-meeting-quick-actions}
+#### Mostrar acciones rápidas de la reunión {#enable-meeting-quick-actions}
 
 <!-- **Setting**: `enableMeetingQuickActions` -->
 
-Show a before-meeting panel and an after-meeting panel with useful controls (background music, recording) and a customizable checklist for each.
+Muestra un panel antes de la reunión y otro después de la reunión con controles útiles (música de fondo, grabación) y una lista de tareas personalizable para cada uno.
 
-**Por defecto**: `true`
+**Predeterminado**: `true`
 
-The checklist categories and tasks for both the before-meeting and after-meeting panels are managed from this same settings section: add, rename, reorder, or delete categories and tasks as needed for your congregation.
+Las categorías y tareas de las listas de los paneles de antes y después de la reunión se administran desde esta misma sección de configuración: añade, cambia el nombre, reordena o elimina categorías y tareas según las necesidades de tu congregación.
 
-## Advanced {#advanced-settings}
+## Avanzado {#advanced-settings}
 
-### Transferencia de ajustes del perfil {#profile-settings-transfer}
+### Transferencia de configuración del perfil {#profile-settings-transfer}
 
-Exporta los ajustes del perfil actual a un archivo JSON o importa un archivo con los ajustes del perfil que hayas exportado anteriormente. Al importar, se sustituye la configuración del perfil actual.
+Exporta la configuración del perfil actual a un archivo JSON o importa un archivo de configuración de perfil exportado anteriormente. La importación reemplaza la configuración del perfil actual.
 
 ### Zona de peligro {#danger-zone}
 
 :::warning Advertencia
 
-Solo deberías cambiar estos ajustes si entiendes lo que implican.
+Estas opciones solo deberían cambiarse si entiendes sus implicaciones.
 
 :::
 
@@ -700,62 +700,62 @@ Solo deberías cambiar estos ajustes si entiendes lo que implican.
 
 <!-- **Setting**: `baseUrl` -->
 
-El dominio base que se usa para descargar publicaciones y archivos multimedia.
+Dominio base que se usa para descargar publicaciones y archivos multimedia.
 
-**Por defecto**: `jw.org`
+**Predeterminado**: `jw.org`
 
-#### Desactivar la aceleración de hardware {#disable-hardware-acceleration}
+#### Desactivar aceleración por hardware {#disable-hardware-acceleration}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
-Desactiva la aceleración de hardware después de reiniciar M³. Esto te puede ayudar con problemas gráficos o fallos en algunos sistemas, pero por lo general no se recomienda.
+Desactiva la aceleración por hardware después de reiniciar M³. Esto puede ayudar con fallos gráficos o bloqueos en algunos sistemas, pero por lo demás no se recomienda.
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
-#### Ocultar el recordatorio de la aceleración de hardware {#suppress-hardware-acceleration-reminder}
+#### Ocultar recordatorio de aceleración por hardware {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
-Oculta el recordatorio de volver a activar la aceleración de hardware después de haberla desactivado manualmente.
+Oculta el recordatorio para volver a activar la aceleración por hardware después de desactivarla manualmente.
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
-#### Desactivar la obtención de archivos multimedia {#disable-media-fetching}
+#### Desactivar descarga de archivos multimedia {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
-Desactiva por completo las descargas automáticas de los archivos multimedia. Usa esto solo para perfiles que vayas a usar en eventos especiales o en otras configuraciones personalizadas.
+Desactiva por completo las descargas automáticas de archivos multimedia. Usa esto solo para perfiles que se usarán en eventos especiales u otras configuraciones personalizadas.
 
-**Por defecto**: `false`
+**Predeterminado**: `false`
 
 ## Consejos para una configuración óptima {#configuration-tips}
 
-### Para los usuarios nuevos {#new-users}
+### Para usuarios nuevos {#new-users}
 
-1. Comienza con el asistente de configuración para configurar los ajustes básicos.
-2. Activa el "Botón de visualización multimedia" para acceder a las características de presentación.
-3. Configura el programa de las reuniones de forma exacta.
-4. Configura la integración con OBS si usas reuniones híbridas.
+1. Empieza con el asistente de configuración para configurar las opciones básicas
+2. Activa "Presentación de archivos multimedia" para acceder a las funciones de presentación
+3. Configura correctamente tu programa de reuniones
+4. Configura la integración con OBS si tienes reuniones híbridas
 
 ### Para usuarios avanzados {#advanced-users}
 
-1. Usa la supervisión de carpetas para sincronizar los archivos multimedia desde el almacenamiento en la nube.
-2. Activa la exportación automática de archivos multimedia para que tengas copias de seguridad.
-3. Configura atajos de teclado para que trabajes de forma eficiente.
-4. Configura la integración con Zoom para compartir pantalla de forma automática.
+1. Usa la supervisión de carpetas para sincronizar archivos multimedia desde almacenamiento en la nube
+2. Activa la exportación automática de archivos multimedia para tener copias de seguridad
+3. Configura atajos de teclado para trabajar con eficiencia
+4. Configura la integración con Zoom para compartir pantalla automáticamente
 
 ### Optimización del rendimiento {#performance-optimization}
 
-1. Activa la caché adicional para tener un mejor rendimiento.
-2. Usa la resolución máxima que sea adecuada a tus necesidades.
-3. Configura la limpieza automática de la caché para administrar tu espacio en disco.
-4. Considera activar el ajuste de conexión de uso medido si tienes un ancho de banda limitado.
+1. Activa la caché adicional para mejorar el rendimiento
+2. Usa una resolución máxima adecuada para tus necesidades
+3. Configura el borrado automático de caché para administrar el espacio en disco
+4. Considera usar la opción de conexión de uso medido si tienes un ancho de banda limitado
 
 ### Solución de problemas {#settings-guide-troubleshooting}
 
-- Si los archivos multimedia no se descargan, comprueba la configuración del programa de las reuniones.
-- Si la integración con OBS no funciona, verifica la configuración del puerto y la contraseña.
-- Si notas que el rendimiento es lento, prueba a activar la caché adicional o a reducir la resolución.
-- Si tienes problemas con el idioma, comprueba los ajustes del idioma de la interfaz y también los de los archivos multimedia.
-- Si los participantes de Zoom no pueden escuchar el audio del archivo multimedia, configura los ajustes del Audio original para músicos de Zoom o usa "Compartir sonido de la computadora".
-- **Consejo**: Considera usar la integración con Zoom en vez de OBS Studio para que manejar el audio te sea más sencillo.
+- Si los archivos multimedia no se descargan, revisa la configuración de tu programa de reuniones
+- Si la integración con OBS no funciona, revisa la configuración del puerto y la contraseña
+- Si el rendimiento es lento, prueba a activar la caché adicional o reducir la resolución
+- Si tienes problemas con el idioma, revisa tanto el idioma de la interfaz como el de los archivos multimedia
+- Si los participantes de Zoom no oyen el audio de los archivos multimedia, configura las opciones de Audio original de Zoom o usa "Compartir sonido de la computadora"
+- **Consejo**: Considera usar la integración con Zoom en vez de OBS Studio para gestionar el audio de forma más sencilla
