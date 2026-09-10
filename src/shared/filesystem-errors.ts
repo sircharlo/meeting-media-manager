@@ -139,8 +139,11 @@ export const shouldIgnoreWatchFolderError = (
   error: FilesystemErrorLike,
   platform: NodeJS.Platform,
 ) => {
+  // chokidar's internal path checks use both fs.stat() and fs.lstat(); a
+  // cloud-sync/web drive (e.g. Google Drive "My Drive") can transiently fail
+  // either with EINVAL/UNKNOWN while it swaps placeholders mid-sync.
   if (
-    error.syscall === 'stat' &&
+    (error.syscall === 'stat' || error.syscall === 'lstat') &&
     WATCH_FOLDER_STAT_ERROR_CODES.has(error.code ?? '')
   ) {
     return true;

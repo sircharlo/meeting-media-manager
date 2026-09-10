@@ -171,6 +171,22 @@ describe('filesystem error helpers', () => {
         'win32',
       ),
     ).toBe(false);
+    // Real-world case (MMM-V2-3HQ): chokidar's own lstat check on a Google
+    // Drive "My Drive" folder (G:) transiently failing with EINVAL mid-sync.
+    expect(
+      shouldIgnoreWatchFolderError(
+        String.raw`G:\My Drive\Meeting Media`,
+        { code: 'EINVAL', syscall: 'lstat' },
+        'win32',
+      ),
+    ).toBe(true);
+    expect(
+      shouldIgnoreWatchFolderError(
+        String.raw`G:\My Drive\Meeting Media`,
+        { code: 'UNKNOWN', syscall: 'lstat' },
+        'win32',
+      ),
+    ).toBe(true);
   });
 
   it('ignores transient scandir errors on cloud-sync/network paths', () => {
