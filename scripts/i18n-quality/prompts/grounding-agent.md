@@ -39,6 +39,15 @@ structure / "who we are" pages, Bible-terms glossary pages, JW Library help
 pages — not forums, not third-party sites, not machine-translated
 aggregators.
 
+**wol.jw.org glossary/index entries share numeric IDs across languages** -
+a page at `wol.jw.org/en/wol/d/r1/lp-e/<id>` has the identical entry at
+`wol.jw.org/<lang>/wol/d/r<region>/lp-<lang-code>/<id>` in another language.
+When you find an English WOL page defining a term you need, try substituting
+just the language segment (and its `lp-` code) into the same numeric ID
+rather than searching for the target-language page separately - this found
+several otherwise-hard-to-locate terms (Congregation Bible Study, public
+talk, songbook, yeartext, etc.) directly.
+
 **Batch your research.** Don't do one search per term — find a small number
 of dense reference pages (e.g. the language's own "About Us" / organizational
 page, a Bible-terms glossary page) that between them cover most of the seed

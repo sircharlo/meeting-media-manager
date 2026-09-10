@@ -210,8 +210,21 @@ async function validateOne(record, corpusIndex) {
     return reject(record, 'stale-current-translation-changed');
   }
 
-  const actualTokens = extractTokens(record.proposedTranslation);
-  if (!tokensMatch(corpusRecord.protectedTokens, actualTokens)) {
+  // Compare tokens against the CURRENT translation (same language, same
+  // regex, same punctuation-adjacency behavior), not the corpus record's
+  // English-derived protectedTokens: vue-i18n's actual `@:key` grammar has
+  // no stop character before punctuation, so a bare link immediately
+  // followed by e.g. a comma (common in Russian, rare in English "@:key ")
+  // genuinely includes that punctuation in the parsed key. Comparing against
+  // English's differently-punctuated boundary produces false rejections;
+  // what matters is whether the *edit* changed the token, not whether it
+  // matches English's incidental trailing character.
+  if (
+    !tokensMatch(
+      extractTokens(record.currentTranslation),
+      extractTokens(record.proposedTranslation),
+    )
+  ) {
     return reject(record, 'protected-token-mismatch');
   }
 
