@@ -318,7 +318,7 @@ Escludi i video aggiuntivi a cui si fa riferimento nei paragrafi dello Studio To
 
 Choose publications whose referenced videos should not be shown during the Congregation Bible Study. Search by publication title or symbol.
 
-**Default**: Congregation Bible Study Guide (`wcg`)
+**Default**: Walk Courageously With God (`wcg`)
 
 #### Escludi i media dell'opuscolo Insegna {#exclude-theocratic-ministry-school}
 
