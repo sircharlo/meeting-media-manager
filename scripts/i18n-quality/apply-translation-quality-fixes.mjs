@@ -385,8 +385,13 @@ async function resolveDecision(
     decision,
     matchedBy,
     status: 'resolved',
-    translationId: translation.id,
+    translationId: translation.translationId,
   };
 }
 
-await main();
+try {
+  await main();
+} catch (error) {
+  console.error(`[apply] ${error.message}`);
+  process.exitCode = 1;
+}
