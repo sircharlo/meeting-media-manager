@@ -2,7 +2,7 @@
 
 This comprehensive guide explains all the settings available in M³, organized by category. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
 
-## Application Configuration {#application-configuration}
+## General {#application-configuration}
 
 ### Display Language {#display-language}
 
@@ -165,13 +165,19 @@ When enabled, M³ periodically checks the official website of Jehovah's Witnesse
 
 This only works for profiles that were added with congregation lookup and whose congregation name has not been manually changed. If synchronization was disabled because the congregation name changed, use **Enable schedule sync** to link the profile again.
 
+#### Enable Schedule Sync {#relink-congregation}
+
+<!-- **Setting**: `relinkCongregationButton` -->
+
+Re-links the current profile to congregation lookup so automatic meeting day and time updates can resume. Only shown once the congregation name has been changed manually, since that's what breaks the link in the first place.
+
 #### Refresh Meeting Schedule {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
 Manually synchronize the current and future meeting schedule with the information from the official website.
 
-## Media Retrieval and Playback {#media-retrieval-and-playback}
+## Media & Playback {#media-retrieval-and-playback}
 
 ### Metered Connection {#metered-connection}
 
@@ -241,6 +247,107 @@ Volume level for background music (1-100%).
 
 **Default**: 100%
 
+### Playback and Download Options {#media-display}
+
+<!-- This section covers mediaRetrievalPlayback's `media-display` settings subgroup -
+these control the media window's playback behavior and which downloaded media is
+filtered out, as distinct from the "Media Display" section above (which is about
+whether the media window feature is enabled at all). -->
+
+#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+
+<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+
+Enable fade-in/out transitions when showing or hiding the media window.
+
+**Default**: `true`
+
+#### Enable Playback Speed Control {#enable-playback-speed-control}
+
+<!-- **Setting**: `enablePlaybackSpeedControl` -->
+
+Allow audio and video playback speed to be adjusted from the media item's context menu.
+
+**Default**: `false`
+
+#### Hide Media Logo {#hide-media-logo}
+
+<!-- **Setting**: `hideMediaLogo` -->
+
+Hide the logo in the media window.
+
+**Default**: `false`
+
+#### Maximum Resolution {#maximum-resolution}
+
+<!-- **Setting**: `maxRes` -->
+
+Maximum resolution for downloaded media files.
+
+**Options**: 240p, 360p, 480p, 720p, 1080p
+
+**Default**: 720p
+
+#### Include Printed Media {#include-printed-media}
+
+<!-- **Setting**: `includePrinted` -->
+
+Include media from the printed publications in media downloads.
+
+**Default**: `true`
+
+#### Exclude Footnotes {#exclude-footnotes}
+
+<!-- **Setting**: `excludeFootnotes` -->
+
+Exclude footnote images from media downloads when possible.
+
+**Default**: `false`
+
+#### Exclude Additional Watchtower Study Videos {#exclude-additional-watchtower-study-videos}
+
+<!-- **Setting**: `excludeWtParagraphVideos` -->
+
+Exclude additional videos that are referenced in Watchtower Study paragraphs.
+
+**Default**: `false`
+
+#### Exclude Congregation Bible Study Videos {#exclude-cbs-pubs}
+
+<!-- **Setting**: `excludeCbsPubs` -->
+
+Choose publications whose referenced videos should not be shown during the Congregation Bible Study. Search by publication title or symbol.
+
+**Default**: Walk Courageously With God (`wcg`)
+
+#### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
+
+<!-- **Setting**: `excludeTh` -->
+
+Exclude media from the Teaching (th) brochure from media downloads.
+
+**Default**: `true`
+
+### Subtitles {#subtitles}
+
+#### Enable Subtitles {#enable-subtitles}
+
+<!-- **Setting**: `enableSubtitles` -->
+
+Enable subtitle support for media playback.
+
+**Default**: `false`
+
+#### Subtitle Language {#subtitle-language}
+
+<!-- **Setting**: `langSubtitles` -->
+
+Language for subtitles (can be different from media language).
+
+**Options**: All available languages from the official website of Jehovah's Witnesses
+
+**Default**: None
+
 ### Cache Management {#cache-management}
 
 #### Enable Extra Cache {#enable-extra-cache}
@@ -267,6 +374,50 @@ Automatically clear old cached files to save disk space.
 
 **Default**: `true`
 
+### Pinyin Song Titles {#pinyin-song-titles}
+
+#### Prefer Pinyin Songs {#enable-pinyin-songs}
+
+<!-- **Setting**: `enablePinyinSongs` -->
+
+When a pinyin version of a meeting song is found in the pinyin song folder, use it instead of the standard song.
+
+**Default**: `false`
+
+#### Pinyin Song Folder {#pinyin-song-folder}
+
+<!-- **Setting**: `pinyinSongFolder` -->
+
+Folder containing pinyin video songs (e.g. `sjjm_s-Pi_CHS_066_r720P.mp4`). When a pinyin file matching the meeting song number is found, it will be played instead of the standard song.
+
+**Default**: Empty
+
+### Media Export {#settings-guide-media-export}
+
+#### Enable Media Auto-Export {#enable-media-auto-export}
+
+<!-- **Setting**: `enableMediaAutoExport` -->
+
+Automatically export media files to a specified folder.
+
+**Default**: `false`
+
+#### Media Export Folder {#media-export-folder}
+
+<!-- **Setting**: `mediaAutoExportFolder` -->
+
+Folder path where media files will be automatically exported.
+
+**Default**: Empty
+
+#### Convert Files to MP4 {#convert-files-to-mp4}
+
+**Setting**: `convertFilesToMp4`
+
+Convert exported media files to MP4 format for better compatibility.
+
+**Default**: `false`
+
 ### Folder Monitoring {#settings-guide-folder-monitoring}
 
 #### Enable Folder Watcher {#enable-folder-watcher}
@@ -284,6 +435,40 @@ Monitor a folder for new media files and automatically add them to M³.
 The folder path to monitor for new media files.
 
 **Default**: Empty
+
+## Meeting Timer {#meeting-timer}
+
+### Enable Meeting Timer {#enable-meeting-timer}
+
+<!-- **Setting**: `enableTimerDisplay` -->
+
+Enable a separate timer window for timing meeting parts. This is a beta feature and should only be enabled if approved locally.
+
+**Default**: `false`
+
+### Timer Window Behavior {#timer-window-behavior}
+
+<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
+
+Configure whether the timer window opens automatically, whether participant timers count up or down by default, whether the clock uses 12-hour or 24-hour time, and whether the current timer value is shown on the action island timer button.
+
+### Timer Display Formats {#timer-display-formats}
+
+<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
+
+Choose analog or digital display formats for the time of day and countdown timers. The countdown warning indicator can shift the analog countdown ring toward a warning color during the final minute.
+
+### Meeting Countdown and Schedule Status {#meeting-countdown-and-schedule-status}
+
+<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
+
+Show a countdown before scheduled meetings and optionally display whether the meeting is ahead of or behind schedule. The meeting countdown appears only on the timer display, not on the main media display.
+
+### Timer Appearance and Overtime {#timer-appearance-and-overtime}
+
+<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
+
+Customize the timer text size and colors, and configure overtime indicators such as alternate colors, blinking, and showing only the elapsed overtime amount in count-up mode.
 
 ## Integrations {#integrations}
 
@@ -305,6 +490,14 @@ Keyboard shortcut to trigger Zoom screen sharing.
 
 **Default**: None
 
+#### Auto-Focus Media Window {#zoom-auto-focus-media-window}
+
+<!-- **Setting**: `zoomAutoFocusMediaWindow` -->
+
+Automatically focus the media window after Zoom screen sharing starts. This is usually not required, but can help on some systems if the media window regularly loses focus after screen sharing starts.
+
+**Default**: `false`
+
 ### OBS Studio Integration {#settings-guide-obs-integration}
 
 #### Enable OBS {#enable-obs}
@@ -315,7 +508,7 @@ Enable OBS Studio integration for automatic scene switching.
 
 **Default**: `false`
 
-:::warning Important Note
+::: warning Important Note
 
 **Audio Configuration Required**: The OBS Studio integration only handles screen sharing. Audio from M³ media is **not automatically transmitted** to Zoom participants when using OBS Studio. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
 
@@ -356,7 +549,7 @@ Configure which OBS scenes to use for different purposes:
 - **Hide Icons**: Hide OBS-related icons in the interface
 - **Recording Controls**: Show controls that start and stop OBS recording from M³
 
-:::warning Important Note
+::: warning Important Note
 
 **Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
 
@@ -426,45 +619,11 @@ This option is hidden when OBS recording controls are enabled. If you use OBS St
 
 Configure the keyboard shortcut that starts recording, the optional shortcut that stops recording, and the folder where the external app saves recordings. If no stop shortcut is provided, M³ reuses the start shortcut. When a folder is configured, M³ shows a button to open it.
 
-### Meeting Timer {#interface-shortcuts}
+## Interface & Shortcuts {#interface-shortcuts}
 
-#### Enable Meeting Timer {#settings-guide-keyboard-shortcuts}
+### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
 
-<!-- **Setting**: `enableTimerDisplay` -->
-
-Enable a separate timer window for timing meeting parts. This is a beta feature and should only be enabled if approved locally.
-
-**Default**: `false`
-
-#### Timer Window Behavior {#enable-keyboard-shortcuts}
-
-<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
-
-Configure whether the timer window opens automatically, whether participant timers count up or down by default, whether the clock uses 12-hour or 24-hour time, and whether the current timer value is shown on the action island timer button.
-
-#### Timer Display Formats {#media-control-shortcuts}
-
-<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
-
-Choose analog or digital display formats for the time of day and countdown timers. The countdown warning indicator can shift the analog countdown ring toward a warning color during the final minute.
-
-#### Meeting Countdown and Schedule Status {#add-more-media-button}
-
-<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
-
-Show a countdown before scheduled meetings and optionally display whether the meeting is ahead of or behind schedule. The meeting countdown appears only on the timer display, not on the main media display.
-
-#### Timer Appearance and Overtime {#add-media-button-sections}
-
-<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
-
-Customize the timer text size and colors, and configure overtime indicators such as alternate colors, blinking, and showing only the elapsed overtime amount in count-up mode.
-
-## Advanced Settings {#advanced-settings}
-
-### Keyboard Shortcuts {#profile-settings-transfer}
-
-#### Enable Keyboard Shortcuts {#danger-zone}
+#### Enable Keyboard Shortcuts {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
@@ -472,7 +631,7 @@ Enable customizable keyboard shortcuts for media control.
 
 **Default**: `false`
 
-#### Media Control Shortcuts {#base-url}
+#### Media Control Shortcuts {#media-control-shortcuts}
 
 Configure shortcuts for media playback:
 
@@ -483,133 +642,61 @@ Configure shortcuts for media playback:
 - **Stop Media**: Stop media playback
 - **Music Toggle**: Toggle background music
 
-### Media Display {#disable-hardware-acceleration}
+### Add More Media Button {#add-more-media-button}
 
-#### Enable Media Window Fade Transitions {#suppress-hardware-acceleration-reminder}
+#### Sections with an Add Media Button {#add-media-button-sections}
 
-<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+<!-- **Setting**: `addMediaButtonSections` -->
 
-Enable fade-in/out transitions when showing or hiding the media window.
+Choose which meeting sections show their own button for adding your own media, in addition to the "Add media" button in the top toolbar, which always works for every section.
 
-**Default**: `true`
+**Default**: Public Talk, Living as Christians, Circuit Overseer's Visit, and Custom sections
 
-#### Enable Playback Speed Control {#disable-media-fetching}
+#### Compact Add Media Button {#compact-add-media-button}
 
-<!-- **Setting**: `enablePlaybackSpeedControl` -->
+<!-- **Setting**: `compactAddMediaButton` -->
 
-Allow audio and video playback speed to be adjusted from the media item's context menu.
-
-**Default**: `false`
-
-#### Hide Media Logo {#configuration-tips}
-
-<!-- **Setting**: `hideMediaLogo` -->
-
-Hide the logo in the media window.
-
-**Default**: `false`
-
-#### Maximum Resolution {#new-users}
-
-<!-- **Setting**: `maxRes` -->
-
-Maximum resolution for downloaded media files.
-
-**Options**: 240p, 360p, 480p, 720p, 1080p
-
-**Default**: 720p
-
-#### Include Printed Media {#advanced-users}
-
-<!-- **Setting**: `includePrinted` -->
-
-Include media from the printed publications in media downloads.
+Only show an icon for the "Add more media"/"Add a song" button in section headers. When disabled, the button also shows text alongside the icon when there's enough room.
 
 **Default**: `true`
 
-#### Exclude Footnotes {#performance-optimization}
+### Media Drag Handle {#media-drag-handle}
 
-<!-- **Setting**: `excludeFootnotes` -->
+#### Show Drag Handle {#show-media-drag-handle}
 
-Exclude footnote images from media downloads when possible.
+<!-- **Setting**: `showMediaDragHandle` -->
 
-**Default**: `false`
-
-#### Exclude Additional Watchtower Study Videos {#settings-guide-troubleshooting}
-
-<!-- **Setting**: `excludeWtParagraphVideos` -->
-
-Exclude additional videos that are referenced in Watchtower Study paragraphs.
-
-**Default**: `false`
-
-#### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
-
-<!-- **Setting**: `excludeTh` -->
-
-Exclude media from the Teaching (th) brochure from media downloads.
+Show a small handle on each media item for dragging it to reorder. Media items can always be reordered by dragging anywhere on them; this only affects whether the handle icon itself is shown.
 
 **Default**: `true`
 
-### Subtitles {#subtitles}
+### Before/After Meeting Quick Actions {#before-after-meeting-quick-actions}
 
-#### Enable Subtitles {#enable-subtitles}
+#### Show Meeting Quick Actions {#enable-meeting-quick-actions}
 
-<!-- **Setting**: `enableSubtitles` -->
+<!-- **Setting**: `enableMeetingQuickActions` -->
 
-Enable subtitle support for media playback.
+Show a before-meeting panel and an after-meeting panel with useful controls (background music, recording) and a customizable checklist for each.
 
-**Default**: `false`
+**Default**: `true`
 
-#### Subtitle Language {#subtitle-language}
+The checklist categories and tasks for both the before-meeting and after-meeting panels are managed from this same settings section: add, rename, reorder, or delete categories and tasks as needed for your congregation.
 
-<!-- **Setting**: `langSubtitles` -->
+## Advanced {#advanced-settings}
 
-Language for subtitles (can be different from media language).
-
-**Options**: All available languages from the official website of Jehovah's Witnesses
-
-**Default**: None
-
-### Media Export {#settings-guide-media-export}
-
-#### Enable Media Auto-Export {#enable-media-auto-export}
-
-<!-- **Setting**: `enableMediaAutoExport` -->
-
-Automatically export media files to a specified folder.
-
-**Default**: `false`
-
-#### Media Export Folder {#media-export-folder}
-
-<!-- **Setting**: `mediaAutoExportFolder` -->
-
-Folder path where media files will be automatically exported.
-
-**Default**: Empty
-
-#### Convert Files to MP4 {#convert-files-to-mp4}
-
-**Setting**: `convertFilesToMp4`
-
-Convert exported media files to MP4 format for better compatibility.
-
-**Default**: `false`
-
-### Profile Settings Transfer {#profile-settings-transfer-2}
+### Profile Settings Transfer {#profile-settings-transfer}
 
 Export the current profile's settings to a JSON file or import a previously exported profile settings file. Importing replaces the current profile's settings.
 
-### Danger Zone {#danger-zone-2}
+### Danger Zone {#danger-zone}
 
-:::warning Warning
+::: warning Warning
 
 These settings should only be changed if you understand their implications.
 
 :::
 
-#### Base URL {#base-url-2}
+#### Base URL {#base-url}
 
 <!-- **Setting**: `baseUrl` -->
 
@@ -617,7 +704,7 @@ Base domain used to download publications and media.
 
 **Default**: `jw.org`
 
-#### Disable Hardware Acceleration {#disable-hardware-acceleration-2}
+#### Disable Hardware Acceleration {#disable-hardware-acceleration}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
@@ -625,7 +712,7 @@ Disable hardware acceleration after restarting M³. This may help with graphical
 
 **Default**: `false`
 
-#### Suppress Hardware Acceleration Reminder {#suppress-hardware-acceleration-reminder-2}
+#### Suppress Hardware Acceleration Reminder {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
@@ -633,7 +720,7 @@ Hide the reminder to re-enable hardware acceleration after it has been manually 
 
 **Default**: `false`
 
-#### Disable Media Fetching {#disable-media-fetching-2}
+#### Disable Media Fetching {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
@@ -641,30 +728,30 @@ Completely disable automatic media downloads. Use this only for profiles that wi
 
 **Default**: `false`
 
-## Tips for Optimal Configuration {#configuration-tips-2}
+## Tips for Optimal Configuration {#configuration-tips}
 
-### For New Users {#new-users-2}
+### For New Users {#new-users}
 
 1. Start with the setup wizard to configure basic settings
 2. Enable "Media Display Button" to access presentation features
 3. Configure your meeting schedule accurately
 4. Set up OBS integration if you use hybrid meetings
 
-### For Advanced Users {#advanced-users-2}
+### For Advanced Users {#advanced-users}
 
 1. Use folder monitoring to sync media from cloud storage
 2. Enable media auto-export for backup purposes
 3. Configure keyboard shortcuts for efficient operation
 4. Configure Zoom integration for automatic screen sharing
 
-### Performance Optimization {#performance-optimization-2}
+### Performance Optimization {#performance-optimization}
 
 1. Enable extra cache for better performance
 2. Use appropriate maximum resolution for your needs
 3. Configure cache auto-clear to manage disk space
 4. Consider metered connection setting if on limited bandwidth
 
-### Troubleshooting {#settings-guide-troubleshooting-2}
+### Troubleshooting {#settings-guide-troubleshooting}
 
 - If media isn't downloading, check your meeting schedule settings
 - If OBS integration isn't working, verify port and password settings
