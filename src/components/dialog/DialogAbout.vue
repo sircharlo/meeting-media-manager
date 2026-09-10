@@ -267,7 +267,10 @@ const parseReleaseNotes = () => {
       }
     } else if (currentVersion && line.startsWith('- ')) {
       const raw = line.replace(/^-\s*/, '').replace(LEADING_EMOJI, '');
-      const titleMatch = raw.match(/^\*\*(.+?)\*\*:?\s*(.*)$/);
+      // French typography puts a (narrow) non-breaking space before the colon
+      // ("**Title** : text"), and CJK locales use a full-width colon ("**Title**：text"),
+      // so allow optional whitespace before an ASCII or full-width colon.
+      const titleMatch = raw.match(/^\*\*(.+?)\*\*\s*[:：]?\s*(.*)$/u);
       parsedFeatures.value.push({
         text: (titleMatch ? (titleMatch[2] ?? '') : raw).trim(),
         title: (titleMatch?.[1] ?? '').trim(),
