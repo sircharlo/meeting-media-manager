@@ -46,7 +46,7 @@ Para ver la lista completa de cambios entre versiones, mira nuestro archivo CHAN
 - ✨ **Reproducción de audio vinculado**: Añadimos compatibilidad para que reproduzcas el audio de un archivo junto con el video de otro archivo. Esto te puede ser útil para reproducir presentaciones de video con música de acompañamiento.
 - ✨ **Diseños de archivos multimedia vistos**: Añadimos persistencia para los elementos multimedia vistos y el orden de las secciones en las carpetas vigiladas. Esto asegura que la lista de archivos multimedia se muestre de la misma manera incluso cuando la carpeta vigilada se sincroniza en varios dispositivos.
 
-## v26.6.1
+## v26 6.1
 
 ### ✨ Nuevas características
 
@@ -55,7 +55,7 @@ Para ver la lista completa de cambios entre versiones, mira nuestro archivo CHAN
 - ✨ **Filtrar configuración**: Añadimos un cuadro de filtro a la página de configuración que te permite encontrar los ajustes por palabra clave o categoría. Para usarlo, simplemente haz clic en el botón de Buscar en la esquina superior derecha de la página de configuración, o usa el atajo de teclado estándar para buscar (Ctrl+F o Cmd+F).
 - ✨ **Advertencia de superposición de música de fondo**: Añadimos una notificación de advertencia cuando se inicia un archivo multimedia mientras se está reproduciendo música de fondo. Puedes elegir detener la música de fondo desde la notificación.
 
-## v26.6.0
+## v26.6
 
 ### ✨ Nuevas características
 
