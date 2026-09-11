@@ -12,14 +12,25 @@
  *   2. Docs heading anchors (`{#slug}`) drifting away from the English
  *      source, which breaks cross-language links and fails the VitePress
  *      build on duplicate explicit anchors.
- *   3. `link:` frontmatter values in each locale's docs index.md. Live
- *      sweeps confirmed Crowdin's markdown parser never exposes these as
- *      translatable strings (URL-like front matter is excluded), so there
- *      is nothing to repair via the API - the sweep logs that and leaves
- *      links to docs/utils/fix-doc-markdown.mjs. docs:lint no longer fails
- *      on this class: config.mts's transformPageData hook recomputes every
- *      hero action link from its slug at build time, so a stale prefix here
- *      never reaches production regardless of what Crowdin exports.
+ *   3. `link:` frontmatter values in each locale's docs index.md (the
+ *      `hero.actions[].link` fields - Download/About/User Guide/Settings
+ *      Guide/FAQ). These *are* real, individually addressable Crowdin
+ *      strings (confirmed live via the API), but no language has ever had
+ *      an actual translation set for them, so every export falls back to
+ *      the literal English path (`/download` instead of `/fr/download`).
+ *      A repo file can look correct by accident (someone ran
+ *      docs/utils/fix-doc-markdown.mjs by hand once) right up until the
+ *      next export touches that file and quietly resets it. This sweep
+ *      sets the real, permanent fix: a Crowdin translation of
+ *      `/${localeFolder}${englishPath}` for each active docs locale
+ *      (src/constants/locales.ts's list, minus the orphaned bzs/cmn-hant/zh
+ *      folders that the app no longer ships), creating the translation via
+ *      POST when none exists yet and patching it via PATCH when a stale one
+ *      does. docs:lint still doesn't gate on this class (config.mts's
+ *      transformPageData hook recomputes the link at build time regardless
+ *      of frontmatter), but docs/utils/__tests__/locales.test.ts's
+ *      "should have correct links" test reads the raw frontmatter directly
+ *      and does fail on it - that's the CI check this class actually fixes.
  *   4. Release-notes version headers (`## v26.7.0` in release-notes/en.md).
  *      These must stay byte-identical to the source, but translators keep
  *      localizing them - French scrambles (`## 7.0 v26.0`), Spanish drops
@@ -77,7 +88,7 @@
  * Dry-run by default; exits 1 when fixes would be made but --apply was not
  * passed (so CI can use it as a check).
  */
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 import { compiles, fixLinkedMessageSyntax } from './fix-i18n-locales.mjs';
@@ -85,9 +96,27 @@ import { compiles, fixLinkedMessageSyntax } from './fix-i18n-locales.mjs';
 const API_VERSION = '/api/v2';
 const I18N_SOURCE_PATH = 'src/i18n/en.json';
 const DOCS_SOURCE_PREFIX = 'docs/src/en/';
+const DOCS_SRC_DIR = 'docs/src';
 const RELEASE_NOTES_SOURCE_PATH = 'release-notes/en.md';
 const PAGE_SIZE = 500;
 const TYPOGRAPHIC_QUOTES = '‚‘’‛“”„‟';
+
+// Matches a hero-action link string's Crowdin context, e.g.
+// "CXPath: //yaml/hero/actions[0]/link" - identifies the 5 docs/src/en/
+// index.md link: fields (Download/About/User Guide/Settings Guide/FAQ).
+const HERO_ACTION_LINK_CONTEXT = /^CXPath: \/\/yaml\/hero\/actions\[\d+\]\/link$/;
+
+// docs/src folders that exist in the repo but aren't part of the app's
+// active language list (src/constants/locales.ts) - leftovers from past
+// language-code changes that the current crowdin.yml export no longer
+// writes to. Excluded so class 3 never guesses a folder name for a
+// language Crowdin isn't actually exporting there.
+const DOCS_ORPHAN_LOCALE_FOLDERS = new Set(['bzs', 'cmn-hant', 'zh']);
+
+// A few docs locale folders don't match Crowdin's own language id even via
+// twoLettersCode (mirrors apply-translation-quality-fixes.mjs's override of
+// the same name, confirmed live against the project rather than guessed).
+const DOCS_LANGUAGE_ID_OVERRIDES = { 'cmn-hans': 'zh-CN' };
 
 // Matches a release-notes version header exactly as it appears in the source
 // (`## v26.7.0`, including the legacy separator-less `## 25.6.0` form). The
@@ -131,6 +160,24 @@ const PARAM_NAME_RE = /\{([\w]+)\}/g;
  * `validKeys` is the English key set (link targets must exist as keys);
  * params are code too, so they are matched against the source's own params.
  */
+/**
+ * The correct value for a docs hero-action `link:` field: the English
+ * source path, prefixed with the target language's docs folder (e.g.
+ * `/download` + `fr` -> `/fr/download`). `currentText` is `undefined` when
+ * no translation exists yet at all (untranslated - the caller must POST a
+ * new translation rather than PATCH one), which naturally differs from any
+ * real `expected` string, so the "needs a fix" check works the same either
+ * way; the caller decides create vs. patch based on whether a translation
+ * object already existed.
+ */
+function computeDocsLinkFix(sourceText, currentText, localeFolder) {
+  if (typeof sourceText !== 'string' || !sourceText.startsWith('/')) {
+    return null;
+  }
+  const expected = `/${localeFolder}${sourceText}`;
+  return currentText === expected ? null : expected;
+}
+
 function computeLinkTargetFix(source, translation, validKeys) {
   if (typeof source !== 'string' || typeof translation !== 'string') {
     return null;
@@ -244,9 +291,8 @@ function getTrailingHeadingAnchors(line) {
 }
 
 /**
- * Docs index.md (the only file with `link:` frontmatter). Kept purely so the
- * sweep can log the class-3 diagnostic; Crowdin never exposes these values
- * as translatable strings.
+ * Docs index.md - the only file with hero-action `link:` frontmatter, which
+ * class 3 repairs directly via the API (see computeDocsLinkFix).
  */
 function isDocsIndexFile(filePath) {
   return filePath.endsWith('/index.md');
@@ -293,6 +339,24 @@ function replaceHeadingAnchor(line, anchor) {
   return `${withoutAnchors.trimEnd()} {#${anchor}}`;
 }
 
+/**
+ * A docs locale folder's Crowdin language id. Most folders match a target
+ * language id directly (`fr` -> `fr`) or via its twoLettersCode (`es` ->
+ * `es-ES`, `pt` -> `pt-BR`); `cmn-hans` matches neither and needs the
+ * explicit override (confirmed live: `zh-CN`'s own twoLettersCode is `zh`,
+ * which belongs to the separate, orphaned `zh` folder, not `cmn-hans`).
+ */
+function resolveDocsLanguageId(folder, targetLanguageIds, languageIdByTwoLetters) {
+  if (targetLanguageIds.has(folder)) return folder;
+  if (
+    DOCS_LANGUAGE_ID_OVERRIDES[folder] &&
+    targetLanguageIds.has(DOCS_LANGUAGE_ID_OVERRIDES[folder])
+  ) {
+    return DOCS_LANGUAGE_ID_OVERRIDES[folder];
+  }
+  return languageIdByTwoLetters.get(folder) ?? null;
+}
+
 function trimEndIndex(value, end = value.length) {
   let cursor = end;
   while (cursor > 0 && value[cursor - 1].trim() === '') {
@@ -316,6 +380,27 @@ const CORRUPTION_SIGNATURES = [
   // token ending in a hyphen is never valid.
   /@:[^\s]*-(?=[\s.,;:!?]|$)/,
 ];
+
+async function createTranslations(ctx, creates, label) {
+  // Unlike editing, adding a brand-new translation has no batch endpoint
+  // (POST /projects/{id}/translations takes one {stringId, languageId,
+  // text} object per call) - so these go one at a time, same failure
+  // handling as patchTranslations' per-op retry path.
+  for (const create of creates) {
+    try {
+      await crowdinRequest(
+        ctx.baseUrl,
+        ctx.token,
+        `/projects/${ctx.projectId}/translations`,
+        { body: create, method: 'POST' },
+      );
+    } catch (error) {
+      ctx.failures.push(
+        `${label} (string ${create.stringId}): ${error.message}`,
+      );
+    }
+  }
+}
 
 async function crowdinRequest(
   baseUrl,
@@ -436,6 +521,36 @@ async function listAll(baseUrl, token, path) {
   }
 
   return items;
+}
+
+/**
+ * The docs locale folders class 3 should manage: every docs/src/<folder>
+ * directory except the English source and the app's non-locale folders,
+ * minus the orphaned bzs/cmn-hant/zh folders (see
+ * DOCS_ORPHAN_LOCALE_FOLDERS). Read from the repo checkout - same source of
+ * truth docs/utils/__tests__/locales.test.ts uses - rather than Crowdin's
+ * full target-language list, which still includes languages the app no
+ * longer ships docs for.
+ */
+function loadActiveDocsLocales() {
+  let entries;
+  try {
+    entries = readdirSync(resolve(process.cwd(), DOCS_SRC_DIR), {
+      withFileTypes: true,
+    });
+  } catch {
+    return [];
+  }
+  return entries
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+    .filter(
+      (name) =>
+        name !== 'en' &&
+        name !== 'assets' &&
+        name !== 'public' &&
+        !DOCS_ORPHAN_LOCALE_FOLDERS.has(name),
+    );
 }
 
 /**
@@ -575,9 +690,12 @@ future Crowdin PRs come out clean:
   1. vue-i18n linked-message syntax (@:{'key'}) mangled by typographic
      quotes or stray whitespace - in src/i18n/*.json translations.
   2. Docs heading anchors ({#slug}) drifted away from the English source.
-  3. Docs link: frontmatter is not exposed by Crowdin as translatable
-     strings (confirmed against the live project), so the sweep logs that
-     and leaves links to docs/utils/fix-doc-markdown.mjs.
+  3. Docs hero-action link: frontmatter (docs/src/en/index.md's Download/
+     About/User Guide/Settings Guide/FAQ buttons) - these are real Crowdin
+     strings that no language has ever had an actual translation for, so
+     every export falls back to the literal English path. Sets the real
+     /{locale}/{slug} translation for each active docs locale, creating it
+     when missing and patching it when stale.
   4. Release-notes version headers (## v26.7.0) localized by translators
      (scrambled, truncated, or re-punctuated) - reset to the English source
      so the About dialog's "What's New" carousel keeps those releases.
@@ -662,24 +780,26 @@ async function repairDocsFile(ctx, file) {
     strings.map((string, index) => [string.id, index]),
   );
 
-  // Class 3 (docs link: frontmatter) is a diagnostic only: live sweeps
-  // confirmed Crowdin's markdown parser never exposes `link:` values as
-  // translatable strings (URL-like front matter is excluded), so there is
-  // nothing to repair via the API. Links are rewritten by
-  // docs/utils/fix-doc-markdown.mjs instead.
-  if (isDocsIndexFile(file.normalizedPath)) {
-    ctx.log(
-      `[docs] ${file.normalizedPath}: link: frontmatter is not exposed by Crowdin as translatable strings - links are rewritten by docs/utils/fix-doc-markdown.mjs`,
-    );
-  }
+  // Class 3: docs hero-action link: frontmatter (see computeDocsLinkFix).
+  const heroLinkStrings = isDocsIndexFile(file.normalizedPath)
+    ? strings.filter((string) =>
+        HERO_ACTION_LINK_CONTEXT.test(string.context ?? ''),
+      )
+    : [];
 
   for (const language of ctx.languages) {
+    const localeFolder = ctx.docsLocaleFolderByLanguage.get(language);
     const translations = await listAll(
       ctx.baseUrl,
       ctx.token,
       `/projects/${ctx.projectId}/languages/${encodeURIComponent(language)}/translations?fileId=${file.id}`,
     );
-    if (translations.length === 0) continue;
+    // A language with no translations at all in this file still needs class
+    // 3 (every hero link is untranslated, which is exactly what needs
+    // fixing), so only skip outright when there's neither an existing
+    // translation to check for class 2 nor a locale folder to fix class 3
+    // against.
+    if (translations.length === 0 && !localeFolder) continue;
 
     // File order matters for duplicate-anchor suffixing, so sort translations
     // back into the order the strings appear in the file.
@@ -688,8 +808,12 @@ async function repairDocsFile(ctx, file) {
         (stringOrder.get(a.stringId) ?? -1) -
         (stringOrder.get(b.stringId) ?? -1),
     );
+    const translationByStringId = new Map(
+      translations.map((t) => [t.stringId, t]),
+    );
 
     const ops = [];
+    const creates = [];
 
     // Class 2: heading anchors.
     const usedAnchors = new Map();
@@ -714,8 +838,45 @@ async function repairDocsFile(ctx, file) {
       });
     }
 
+    // Class 3: docs hero-action link: frontmatter. Only runs for languages
+    // that resolved to an active docs locale folder (see
+    // loadActiveDocsLocales/resolveDocsLanguageId) - anything else (an
+    // orphaned or docs-less target language) is left alone.
+    if (localeFolder) {
+      for (const heroString of heroLinkStrings) {
+        const sourceText = sources.get(heroString.id);
+        const existing = translationByStringId.get(heroString.id);
+        const fix = computeDocsLinkFix(sourceText, existing?.text, localeFolder);
+        if (fix === null) continue;
+
+        ctx.totals.docsLinks += 1;
+        const label = `${file.normalizedPath} (${language}, string ${heroString.id})`;
+        if (ctx.verbose) {
+          ctx.log(
+            `[docs-link] ${label}: ${JSON.stringify(existing?.text ?? '(untranslated)')} -> ${JSON.stringify(fix)}`,
+          );
+        }
+        if (existing) {
+          ops.push({
+            op: 'replace',
+            path: `/${existing.translationId}`,
+            value: { text: fix },
+          });
+        } else {
+          creates.push({ languageId: language, stringId: heroString.id, text: fix });
+        }
+      }
+    }
+
     if (ctx.apply && ops.length > 0) {
       await patchTranslations(ctx, ops, `${file.normalizedPath} (${language})`);
+    }
+    if (ctx.apply && creates.length > 0) {
+      await createTranslations(
+        ctx,
+        creates,
+        `${file.normalizedPath} (${language})`,
+      );
     }
   }
 }
@@ -900,13 +1061,21 @@ async function run() {
     apply: args.apply,
     baseUrl,
     defaultTmId: undefined,
+    docsLocaleFolderByLanguage: new Map(),
     enKeys: loadEnKeys(),
     failures: [],
     languages: [],
     log: (message) => console.log(message),
     projectId,
     token,
-    totals: { anchors: 0, linked: 0, links: 0, segments: 0, versions: 0 },
+    totals: {
+      anchors: 0,
+      docsLinks: 0,
+      linked: 0,
+      links: 0,
+      segments: 0,
+      versions: 0,
+    },
     verbose: args.verbose,
   };
 
@@ -917,6 +1086,24 @@ async function run() {
   ctx.languages = (project.targetLanguageIds ?? []).filter(
     (language) => args.languages.size === 0 || args.languages.has(language),
   );
+
+  // Class 3's language -> docs-folder mapping (e.g. `es-ES` -> `es`,
+  // `zh-CN` -> `cmn-hans`), scoped to the app's active docs locales only.
+  const targetLanguageIdSet = new Set(project.targetLanguageIds ?? []);
+  const languageIdByTwoLetters = new Map(
+    (project.targetLanguages ?? []).map((lang) => [
+      lang.twoLettersCode,
+      lang.id,
+    ]),
+  );
+  for (const folder of loadActiveDocsLocales()) {
+    const languageId = resolveDocsLanguageId(
+      folder,
+      targetLanguageIdSet,
+      languageIdByTwoLetters,
+    );
+    if (languageId) ctx.docsLocaleFolderByLanguage.set(languageId, folder);
+  }
 
   ctx.log(
     `[crowdin] project ${projectId} - ${ctx.apply ? 'APPLYING fixes' : 'dry run (use --apply to commit)'}`,
@@ -957,7 +1144,7 @@ async function run() {
   );
   if (docsFiles.length > 0) {
     ctx.log(
-      `[crowdin] classes 2+3: heading anchors + link: frontmatter diagnostic (${docsFiles.length} files)`,
+      `[crowdin] classes 2+3: heading anchors + hero-action link: frontmatter (${docsFiles.length} files, ${ctx.docsLocaleFolderByLanguage.size} active docs locales)`,
     );
     for (const file of docsFiles) {
       await repairDocsFile(ctx, file);
@@ -1000,14 +1187,16 @@ async function run() {
     ctx.failures.push(`translation-memory purge: ${error.message}`);
   }
 
-  const { anchors, linked, links, segments, versions } = ctx.totals;
-  const total = anchors + linked + links + segments + versions;
+  const { anchors, docsLinks, linked, links, segments, versions } =
+    ctx.totals;
+  const total = anchors + docsLinks + linked + links + segments + versions;
   ctx.log('');
   ctx.log(
     `Done. ${ctx.apply ? 'Applied' : 'Found (dry run - rerun with --apply to commit)'}:`,
   );
   ctx.log(`  linked-syntax repairs:   ${linked}`);
   ctx.log(`  heading-anchor fixes:    ${anchors}`);
+  ctx.log(`  docs link: fixes:        ${docsLinks}`);
   ctx.log(`  version-header repairs:  ${versions}`);
   ctx.log(`  link/param target fixes: ${links}`);
   ctx.log(`  corrupted TM segments:   ${segments}`);
@@ -1082,7 +1271,7 @@ function runSelfTest() {
       null,
     ],
 
-    // Docs index.md detection drives the class-3 diagnostic note.
+    // Docs index.md detection drives the class-3 hero-link repair.
     [
       'docs index detected',
       isDocsIndexFile('master/docs/src/en/index.md'),
@@ -1097,6 +1286,58 @@ function runSelfTest() {
       'non-docs path ignored',
       isDocsIndexFile('master/src/i18n/en.json'),
       false,
+    ],
+
+    // Docs hero-action link: frontmatter (class 3).
+    [
+      'docs link untranslated gets locale prefix',
+      computeDocsLinkFix('/download', undefined, 'es'),
+      '/es/download',
+    ],
+    [
+      'docs link stale prefix corrected',
+      computeDocsLinkFix('/about', '/about', 'fr'),
+      '/fr/about',
+    ],
+    [
+      'docs link already correct left alone',
+      computeDocsLinkFix('/faq', '/de/faq', 'de'),
+      null,
+    ],
+    [
+      'docs link non-path source ignored',
+      computeDocsLinkFix('Download', undefined, 'es'),
+      null,
+    ],
+
+    // Docs locale folder -> Crowdin language id resolution (class 3).
+    [
+      'docs language id direct match',
+      resolveDocsLanguageId('fr', new Set(['de', 'fr']), new Map()),
+      'fr',
+    ],
+    [
+      'docs language id via twoLettersCode',
+      resolveDocsLanguageId(
+        'es',
+        new Set(['es-ES']),
+        new Map([['es', 'es-ES']]),
+      ),
+      'es-ES',
+    ],
+    [
+      'docs language id via explicit override',
+      resolveDocsLanguageId(
+        'cmn-hans',
+        new Set(['zh-CN']),
+        new Map([['zh', 'zh-CN']]),
+      ),
+      'zh-CN',
+    ],
+    [
+      'docs language id unresolvable returns null',
+      resolveDocsLanguageId('xx', new Set(['fr']), new Map()),
+      null,
     ],
 
     // TM segment corruption signatures.
