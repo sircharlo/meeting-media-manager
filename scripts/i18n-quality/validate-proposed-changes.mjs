@@ -5,9 +5,11 @@
  * before a human ever sees it.
  *
  * Rejects (moves to rejected-by-guardrail/, never silently drops):
- *  - a proposal whose `@:key`/`{param}` token multiset doesn't exactly
- *    match the source's (a review agent must never touch these tokens -
- *    this is the mechanical re-verification, not just trusting the prompt).
+ *  - a proposal that drops an `@:key`/`{param}` token the current
+ *    translation already had, or introduces one that isn't a legitimate
+ *    restoration of something present in the English source (see
+ *    protectedTokensOk) - a review agent must never touch these tokens,
+ *    this is the mechanical re-verification, not just trusting the prompt.
  *  - a proposal whose recorded `currentTranslation` no longer matches what
  *    is actually checked out in the repo right now (stale - something else
  *    changed it since extraction).
@@ -37,12 +39,11 @@ const REPO_ROOT = resolve(__dirname, '../..');
 const FLAG_RATE_WARNING_THRESHOLD = 0.4;
 const VALID_CATEGORIES = new Set(['phrasing', 'terminology']);
 
-const LINK_TARGET_RE = /@:\{?'?([^'}\s]+)'?\}?/g;
+// See extract-review-corpus.mjs's matching constant for why this excludes
+// trailing sentence punctuation, unlike cleanup-crowdin.mjs's same-purpose
+// regex.
+const LINK_TARGET_RE = /@:\{?'?([^'}\s,.;:!?)]+)'?\}?/g;
 const PARAM_NAME_RE = /\{([\w]+)\}/g;
-
-function arraysEqual(a, b) {
-  return a.length === b.length && a.every((value, index) => value === b[index]);
-}
 
 function extractTokens(text) {
   return {
@@ -158,6 +159,32 @@ async function main() {
   console.log(`\nWrote ${resolve(runDir, 'SUMMARY.md')}`);
 }
 
+/** Does `superset` (as a multiset) contain at least as many of each item as `subset`? */
+function multisetContainsAll(superset, subset) {
+  const superCounts = toMultiset(superset);
+  const subCounts = toMultiset(subset);
+  for (const [item, count] of subCounts) {
+    if ((superCounts.get(item) ?? 0) < count) return false;
+  }
+  return true;
+}
+
+/** Items in `items` beyond what's already accounted for by `baseline` (multiset difference). */
+function multisetExtra(items, baseline) {
+  const baseCounts = toMultiset(baseline);
+  const used = new Map();
+  const extra = [];
+  for (const item of items) {
+    const usedCount = used.get(item) ?? 0;
+    if (usedCount < (baseCounts.get(item) ?? 0)) {
+      used.set(item, usedCount + 1);
+    } else {
+      extra.push(item);
+    }
+  }
+  return extra;
+}
+
 function parseArgs(argv) {
   const args = { language: null, runId: null };
   for (let i = 0; i < argv.length; i += 1) {
@@ -172,15 +199,34 @@ function parseArgs(argv) {
   return args;
 }
 
+/**
+ * A proposal may never *remove* a link/param token the current translation
+ * already had, but *may* restore one the current translation was missing
+ * relative to source (e.g. a dropped {count} or @:key) - and a pre-existing
+ * gap between current and source that the edit doesn't touch (e.g. a link
+ * already inlined as literal text in the current translation) must not be
+ * treated as something this proposal broke.
+ */
+function protectedTokensOk(sourceTokens, currentTokens, proposedTokens) {
+  return ['links', 'params'].every((dimension) => {
+    const source = sourceTokens[dimension];
+    const current = currentTokens[dimension];
+    const proposed = proposedTokens[dimension];
+    if (!multisetContainsAll(proposed, current)) return false;
+    const proposedExtra = multisetExtra(proposed, current);
+    const restorableFromSource = multisetExtra(source, current);
+    return multisetContainsAll(restorableFromSource, proposedExtra);
+  });
+}
+
 function reject(record, reasonCode) {
   return { ...record, _rejectionReason: reasonCode };
 }
 
-function tokensMatch(expected, actual) {
-  return (
-    arraysEqual([...expected.links].sort(), actual.links) &&
-    arraysEqual([...expected.params].sort(), actual.params)
-  );
+function toMultiset(items) {
+  const counts = new Map();
+  for (const item of items) counts.set(item, (counts.get(item) ?? 0) + 1);
+  return counts;
 }
 
 async function validateOne(record, corpusIndex) {
@@ -210,17 +256,14 @@ async function validateOne(record, corpusIndex) {
     return reject(record, 'stale-current-translation-changed');
   }
 
-  // Compare tokens against the CURRENT translation (same language, same
-  // regex, same punctuation-adjacency behavior), not the corpus record's
-  // English-derived protectedTokens: vue-i18n's actual `@:key` grammar has
-  // no stop character before punctuation, so a bare link immediately
-  // followed by e.g. a comma (common in Russian, rare in English "@:key ")
-  // genuinely includes that punctuation in the parsed key. Comparing against
-  // English's differently-punctuated boundary produces false rejections;
-  // what matters is whether the *edit* changed the token, not whether it
-  // matches English's incidental trailing character.
+  // Three-way check against source/current/proposed (see protectedTokensOk):
+  // a proposal may never drop a token the current translation already had,
+  // may restore one current was missing relative to source, but a
+  // pre-existing current-vs-source gap the edit doesn't touch (e.g. a link
+  // already inlined as literal text) is not this proposal's fault.
   if (
-    !tokensMatch(
+    !protectedTokensOk(
+      corpusRecord.protectedTokens,
       extractTokens(record.currentTranslation),
       extractTokens(record.proposedTranslation),
     )

@@ -48,7 +48,15 @@ const REPO_ROOT = resolve(__dirname, '../..');
 
 const TYPOGRAPHIC_QUOTES = '‚‘’‛“”„‟';
 const VERSION_HEADER_PATTERN = /^##(?!#)\s+v?\d+\.\d+\.\d+/;
-const LINK_TARGET_RE = /@:\{?'?([^'}\s]+)'?\}?/g;
+// Excludes trailing sentence punctuation (,.;:!?)) from the captured
+// identifier, unlike cleanup-crowdin.mjs's same-purpose regex: that script
+// must mirror vue-i18n's actual (punctuation-inclusive) @:key grammar to
+// detect genuinely dangling runtime links, but this pipeline only needs the
+// referenced identifier itself, and a bare link immediately followed by
+// punctuation with no space (rare in English "@:key ", common in e.g.
+// Russian "@:key,") would otherwise extract a different token shape per
+// language purely from incidental trailing characters.
+const LINK_TARGET_RE = /@:\{?'?([^'}\s,.;:!?)]+)'?\}?/g;
 const PARAM_NAME_RE = /\{([\w]+)\}/g;
 const CORRUPTION_SIGNATURES = [
   new RegExp(`@:\\{[^{}]*[${TYPOGRAPHIC_QUOTES}][^{}]*\\}`),
