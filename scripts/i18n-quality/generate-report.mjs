@@ -65,7 +65,7 @@ async function main() {
     ];
 
     records.forEach((record, index) => {
-      lines.push(renderRecord(record, index));
+      lines.push(renderRecord(record, index, language));
     });
 
     if (records.length === 0) {
@@ -92,7 +92,7 @@ function parseArgs(argv) {
   return args;
 }
 
-function renderRecord(record, index) {
+function renderRecord(record, index, language) {
   const lines = [
     `### ${index + 1}. \`${record.key}\` (${record.category}, confidence: ${record.confidence ?? 'unspecified'})`,
     '',
@@ -101,8 +101,8 @@ function renderRecord(record, index) {
     '| | Text |',
     '| --- | --- |',
     `| English source | ${escapeCell(record.sourceEn)} |`,
-    `| Current French | ${escapeCell(record.currentTranslation)} |`,
-    `| Proposed French | ${escapeCell(record.proposedTranslation)} |`,
+    `| Current ${language} | ${escapeCell(record.currentTranslation)} |`,
+    `| Proposed ${language} | ${escapeCell(record.proposedTranslation)} |`,
   ];
   if (record.glossaryRefs?.length > 0) {
     lines.push('', '**Glossary references**:');
