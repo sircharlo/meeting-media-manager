@@ -168,6 +168,114 @@ export const stopMediaStreamTracks = (
 };
 
 /**
+ * Largest rectangle with `sourceWidth`:`sourceHeight` proportions that fits
+ * inside a `targetWidth` x `targetHeight` box, centered - the same geometry
+ * as CSS `object-fit: contain`. Meant as the destination rect for a canvas
+ * drawImage() call, which otherwise stretches the source to whatever box it
+ * is handed. Falls back to the full target box when any size is unusable.
+ */
+export const getContainFitRect = (
+  sourceWidth: number,
+  sourceHeight: number,
+  targetWidth: number,
+  targetHeight: number,
+) => {
+  if (!(
+    sourceWidth > 0 &&
+    sourceHeight > 0 &&
+    targetWidth > 0 &&
+    targetHeight > 0
+  )) {
+    return { height: targetHeight, width: targetWidth, x: 0, y: 0 };
+  }
+
+  const scale = Math.min(
+    targetWidth / sourceWidth,
+    targetHeight / sourceHeight,
+  );
+  const width = Math.round(sourceWidth * scale);
+  const height = Math.round(sourceHeight * scale);
+
+  return {
+    height,
+    width,
+    x: Math.round((targetWidth - width) / 2),
+    y: Math.round((targetHeight - height) / 2),
+  };
+};
+
+export interface CaptureSizeBounds {
+  maxHeight: number;
+  maxWidth: number;
+  minHeight: number;
+  minWidth: number;
+}
+
+const CAPTURE_MIN_DIMENSION = 2;
+const CAPTURE_FLOOR = { height: 180, width: 320 };
+const CAPTURE_CEILING = { height: 2160, width: 3840 };
+
+/**
+ * Legacy (`mandatory`) size bounds for a Chromium `chromeMediaSource: 'tab'`
+ * capture of the media window, sized to the viewport that will display the
+ * captured frames (CSS px, scaled by `devicePixelRatio`).
+ *
+ * Two things ride on these bounds:
+ *
+ * 1. Cost. Chromium scales the source down to fit inside the max, aspect
+ *    preserved, at the source (GPU-side, before frames cross to the
+ *    renderer), and delivers it as-is when it already fits. Capping at the
+ *    displaying viewport means a 1080p/4K media window isn't captured,
+ *    transferred and redrawn at full size for a preview that can never show
+ *    more than that viewport.
+ * 2. Shape. For 'tab' sources specifically, Chromium's legacy-constraint
+ *    parser (media_stream_constraints_util_video_content.cc) defaults to a
+ *    FIXED_RESOLUTION policy whose fixed frame is the largest width and the
+ *    largest height across *all* connected displays, combined - a shape that
+ *    matches no window on a mixed-aspect setup - and letterboxes the source
+ *    into it with black bars baked into every frame. That parser only
+ *    considers explicit bounds when every min is > 1, and only picks the
+ *    size-following ANY_WITHIN_LIMIT policy when they are neither a fixed
+ *    size (min == max) nor a fixed aspect ratio (its check: floor(100*w/h)
+ *    equal for min and max). The 2x2 min and the square-viewport nudge
+ *    below keep both conditions true for any viewport.
+ */
+export const getCaptureSizeBounds = (
+  viewportWidth: number,
+  viewportHeight: number,
+  devicePixelRatio = 1,
+): CaptureSizeBounds => {
+  const dpr = devicePixelRatio > 0 ? devicePixelRatio : 1;
+  const scale = (value: number, floor: number, ceiling: number) =>
+    Math.min(ceiling, Math.max(floor, Math.round((value || 0) * dpr)));
+
+  let maxWidth = scale(
+    viewportWidth,
+    CAPTURE_FLOOR.width,
+    CAPTURE_CEILING.width,
+  );
+  const maxHeight = scale(
+    viewportHeight,
+    CAPTURE_FLOOR.height,
+    CAPTURE_CEILING.height,
+  );
+
+  // A (near-)square viewport would give the max the same approximate aspect
+  // as the 2x2 min, which Chromium reads as a fixed-aspect request (and
+  // letterboxes accordingly). Widen it by 1% - a cap, so harmless.
+  if (Math.floor((100 * maxWidth) / maxHeight) === 100) {
+    maxWidth = Math.ceil(maxHeight * 1.01);
+  }
+
+  return {
+    maxHeight,
+    maxWidth,
+    minHeight: CAPTURE_MIN_DIMENSION,
+    minWidth: CAPTURE_MIN_DIMENSION,
+  };
+};
+
+/**
  * Checks if a media item is a song.
  * @param multimediaItem The multimedia item to check.
  * @returns False if the multimedia item is not a song, otherwise the track number.

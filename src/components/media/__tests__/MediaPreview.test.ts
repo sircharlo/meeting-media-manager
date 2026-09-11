@@ -2,6 +2,7 @@ import { flushPromises, mount, type VueWrapper } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { defaultSettings } from 'src/constants/settings';
+import { getCaptureSizeBounds } from 'src/utils/media';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -15,6 +16,20 @@ installPinia();
 const CONG_ID = '00000000-0000-4000-8000-000000000001';
 const VIDEO_URL = 'file:///tmp/preview-test.mp4';
 const IMAGE_URL = 'file:///tmp/preview-test.jpg';
+
+// Every instance registers window-level listeners (resize, pointer, keydown)
+// and may hold a live capture stream; left mounted, instances from earlier
+// tests keep reacting to later tests' events (e.g. a resize re-acquiring
+// their own streams through the current test's getUserMedia mock).
+const mounted: VueWrapper[] = [];
+const mountPreview = () => {
+  const wrapper = mount(MediaPreview);
+  mounted.push(wrapper);
+  return wrapper;
+};
+afterEach(() => {
+  while (mounted.length) mounted.pop()?.unmount();
+});
 
 const seedStores = () => {
   const currentState = useCurrentStateStore();
@@ -81,7 +96,7 @@ describe('MediaPreview drift handling', () => {
     localStorage.setItem('mediaPreviewRenderMode', 'canvas');
     const currentState = seedStores();
 
-    const wrapper = mount(MediaPreview);
+    const wrapper = mountPreview();
     await nextTick();
 
     expect(wrapper.find('canvas').exists()).toBe(true);
@@ -121,7 +136,7 @@ describe('MediaPreview drift handling', () => {
       playbackRate: 10.5,
     };
 
-    const wrapper = mount(MediaPreview);
+    const wrapper = mountPreview();
     await nextTick();
 
     const videoElement = wrapper.get('video').element as HTMLVideoElement;
@@ -159,7 +174,7 @@ describe('MediaPreview drift handling', () => {
       playbackRate: 10.5,
     };
 
-    const wrapper = mount(MediaPreview);
+    const wrapper = mountPreview();
     await nextTick();
 
     const videoElement = wrapper.get('video').element as HTMLVideoElement;
@@ -192,7 +207,7 @@ describe('MediaPreview drift handling', () => {
     // Dev/test default is video mode - no localStorage opt-in needed.
     const currentState = seedStores();
 
-    const wrapper = mount(MediaPreview);
+    const wrapper = mountPreview();
     await nextTick();
 
     for (let i = 0; i < 6; i++) {
@@ -246,7 +261,7 @@ describe('MediaPreview capture mode (dev toggle)', () => {
     mockCaptureSuccess();
     seedStores();
 
-    const wrapper = mount(MediaPreview);
+    const wrapper = mountPreview();
     await nextTick();
     const toggle = wrapper.get('.media-preview-mode-toggle');
     expect(toggle.text()).toBe('video');
@@ -269,7 +284,7 @@ describe('MediaPreview capture mode (dev toggle)', () => {
     const { getUserMedia, stream } = mockCaptureSuccess();
     seedStores();
 
-    const wrapper = mount(MediaPreview);
+    const wrapper = mountPreview();
     await nextTick();
     await wrapper.get('.media-preview-mode-toggle').trigger('click');
     await flushPromises();
@@ -281,6 +296,26 @@ describe('MediaPreview capture mode (dev toggle)', () => {
             chromeMediaSource: 'tab',
             chromeMediaSourceId: 'media-window-source-1',
           }),
+        }),
+      }),
+    );
+    // The size bounds cap the captured frames at the main window's viewport
+    // (the most the preview can ever show) and keep Chromium off its
+    // tab-capture default of a fixed frame sized from the largest dimensions
+    // across all displays, which letterboxes the media window with black
+    // bars baked into every frame. The bounds' own invariants are covered
+    // by getCaptureSizeBounds' unit tests; here, just that the request
+    // carries them, derived from this window.
+    expect(getUserMedia.mock.calls[0]?.[0]).toEqual(
+      expect.objectContaining({
+        video: expect.objectContaining({
+          mandatory: expect.objectContaining(
+            getCaptureSizeBounds(
+              globalThis.innerWidth,
+              globalThis.innerHeight,
+              globalThis.devicePixelRatio || 1,
+            ),
+          ),
         }),
       }),
     );
@@ -299,7 +334,7 @@ describe('MediaPreview capture mode (dev toggle)', () => {
     mockCaptureSuccess();
     seedStores();
 
-    const wrapper = mount(MediaPreview);
+    const wrapper = mountPreview();
     await nextTick();
     await wrapper.get('.media-preview-mode-toggle').trigger('click');
     await flushPromises();
@@ -322,7 +357,7 @@ describe('MediaPreview capture mode (dev toggle)', () => {
       url: IMAGE_URL,
     };
 
-    const wrapper = mount(MediaPreview);
+    const wrapper = mountPreview();
     await nextTick();
     await wrapper.get('.media-preview-mode-toggle').trigger('click');
     await flushPromises();
@@ -345,7 +380,7 @@ describe('MediaPreview capture mode (dev toggle)', () => {
     });
     seedStores();
 
-    const wrapper = mount(MediaPreview);
+    const wrapper = mountPreview();
     await nextTick();
     await wrapper.get('.media-preview-mode-toggle').trigger('click');
     await flushPromises();
@@ -364,7 +399,7 @@ describe('MediaPreview capture mode (dev toggle)', () => {
     const { stream } = mockCaptureSuccess();
     seedStores();
 
-    const wrapper = mount(MediaPreview);
+    const wrapper = mountPreview();
     await nextTick();
     await wrapper.get('.media-preview-mode-toggle').trigger('click');
     await flushPromises();
@@ -380,5 +415,130 @@ describe('MediaPreview capture mode (dev toggle)', () => {
     // silently reverting, so the developer sees the black frame and knows
     // to re-toggle rather than being auto-switched without any signal.
     expect(wrapper.get('.media-preview-mode-toggle').text()).toBe('capture');
+  });
+
+  it('re-acquires the stream with a new size cap only after the main window changes size substantially', async () => {
+    vi.useFakeTimers();
+    const original = {
+      height: globalThis.innerHeight,
+      width: globalThis.innerWidth,
+    };
+    const setViewport = (width: number, height: number) => {
+      Object.defineProperty(globalThis, 'innerWidth', {
+        configurable: true,
+        value: width,
+      });
+      Object.defineProperty(globalThis, 'innerHeight', {
+        configurable: true,
+        value: height,
+      });
+    };
+    const resize = async () => {
+      globalThis.dispatchEvent(new Event('resize'));
+      // Past the re-acquire debounce.
+      await vi.advanceTimersByTimeAsync(1000);
+      await flushPromises();
+    };
+
+    try {
+      localStorage.setItem('mediaPreviewRenderMode', 'video');
+      const { getUserMedia } = mockCaptureSuccess();
+      seedStores();
+
+      const wrapper = mountPreview();
+      await nextTick();
+      await wrapper.get('.media-preview-mode-toggle').trigger('click');
+      await flushPromises();
+      expect(getUserMedia).toHaveBeenCalledTimes(1);
+
+      // A small nudge isn't worth a new stream...
+      setViewport(
+        Math.round(original.width * 1.1),
+        Math.round(original.height * 1.1),
+      );
+      await resize();
+      expect(getUserMedia).toHaveBeenCalledTimes(1);
+
+      // ...doubling is, and the new request is capped at the new viewport.
+      setViewport(original.width * 2, original.height * 2);
+      await resize();
+      expect(getUserMedia).toHaveBeenCalledTimes(2);
+      expect(getUserMedia.mock.calls[1]?.[0]).toEqual(
+        expect.objectContaining({
+          video: expect.objectContaining({
+            mandatory: expect.objectContaining(
+              getCaptureSizeBounds(
+                original.width * 2,
+                original.height * 2,
+                globalThis.devicePixelRatio || 1,
+              ),
+            ),
+          }),
+        }),
+      );
+    } finally {
+      setViewport(original.width, original.height);
+      vi.useRealTimers();
+    }
+  });
+});
+
+describe('MediaPreview canvas frame geometry', () => {
+  beforeEach(() => {
+    localStorage.removeItem('mediaPreviewRenderMode');
+    vi.restoreAllMocks();
+  });
+
+  // Shared by canvas and capture modes (both draw through drawCurrentFrame);
+  // canvas mode while paused is the one path that draws synchronously from a
+  // template event, so it's the one driven here.
+  it('draws a frame whose shape differs from the canvas centered with its aspect ratio kept, not stretched', async () => {
+    localStorage.setItem('mediaPreviewRenderMode', 'canvas');
+    const context = {
+      clearRect: vi.fn(),
+      drawImage: vi.fn(),
+      imageSmoothingEnabled: false,
+      imageSmoothingQuality: 'low',
+    };
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(
+      context as unknown as CanvasRenderingContext2D,
+    );
+    const currentState = seedStores();
+    currentState.mediaPlaying.action = 'pause';
+
+    const wrapper = mountPreview();
+    await nextTick();
+
+    const video = wrapper.get('video').element as HTMLVideoElement;
+    // A 4:3 source frame...
+    Object.defineProperty(video, 'videoWidth', {
+      configurable: true,
+      value: 1440,
+    });
+    Object.defineProperty(video, 'videoHeight', {
+      configurable: true,
+      value: 1080,
+    });
+    // ...into a 16:9 canvas box (happy-dom lays nothing out, so the CSS box
+    // size has to be provided; devicePixelRatio is 1 here).
+    const canvas = wrapper.get('canvas').element as HTMLCanvasElement;
+    Object.defineProperty(canvas, 'clientWidth', {
+      configurable: true,
+      value: 320,
+    });
+    Object.defineProperty(canvas, 'clientHeight', {
+      configurable: true,
+      value: 180,
+    });
+
+    await wrapper.get('video').trigger('canplay');
+    await flushPromises();
+
+    expect(canvas.width).toBe(320);
+    expect(canvas.height).toBe(180);
+    expect(context.drawImage).toHaveBeenLastCalledWith(video, 40, 0, 240, 180);
+    // The pillarbox bars aren't overdrawn, so the canvas must be cleared
+    // first rather than keeping whatever an earlier frame left there.
+    expect(context.clearRect).toHaveBeenCalledWith(0, 0, 320, 180);
   });
 });

@@ -138,7 +138,14 @@ import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { log } from 'src/shared/vanilla';
-import { isImage, isVideo, stopMediaStreamTracks } from 'src/utils/media';
+import {
+  type CaptureSizeBounds,
+  getCaptureSizeBounds,
+  getContainFitRect,
+  isImage,
+  isVideo,
+  stopMediaStreamTracks,
+} from 'src/utils/media';
 import { useCurrentStateStore } from 'stores/current-state';
 import {
   computed,
@@ -281,14 +288,28 @@ const reportPreviewError = (error: unknown, name: string) => {
 };
 
 let activeCaptureStream: MediaStream | undefined;
+// The size cap the active stream was acquired with - see
+// getCaptureSizeBounds and reacquireCaptureForViewport.
+let activeCaptureBounds: CaptureSizeBounds | undefined;
 let captureAttempted = false;
 let captureUnavailable = false;
 
 const stopCaptureStream = () => {
   stopMediaStreamTracks(activeCaptureStream);
   activeCaptureStream = undefined;
+  activeCaptureBounds = undefined;
   if (captureVideo.value) captureVideo.value.srcObject = null;
 };
+
+// The preview (collapsed or in its zoomed modal) never shows more than the
+// main window's own viewport, so that's the most the captured frames ever
+// need to be - in device pixels, so a HiDPI preview stays sharp.
+const getViewportCaptureSizeBounds = () =>
+  getCaptureSizeBounds(
+    globalThis.innerWidth,
+    globalThis.innerHeight,
+    globalThis.devicePixelRatio || 1,
+  );
 
 // Electron's window-capture constraint form predates the standard
 // MediaStreamConstraints shape (no mandatory/chromeMediaSource* in DOM lib
@@ -304,6 +325,7 @@ const acquireCaptureStream = async (): Promise<boolean> => {
       await globalThis.electronApi.getMediaWindowCaptureSourceId();
     if (!sourceId) return false;
 
+    const bounds = getViewportCaptureSizeBounds();
     const stream = await navigator.mediaDevices.getUserMedia({
       // No audio - the preview is muted regardless (matches the canvas/video
       // fallback modes), and requesting it would just be one more thing
@@ -313,12 +335,20 @@ const acquireCaptureStream = async (): Promise<boolean> => {
         mandatory: {
           chromeMediaSource: 'tab',
           chromeMediaSourceId: sourceId,
+          // Size bounds do two jobs: cap the captured frames at what the
+          // preview can actually show (Chromium scales them down at the
+          // source, before they reach this renderer), and keep Chromium off
+          // its 'tab'-capture default of a fixed-size frame with the media
+          // window letterboxed inside it, black bars and all. Both are
+          // explained on getCaptureSizeBounds.
+          ...bounds,
         },
       },
     } as unknown as MediaStreamConstraints);
 
     stopCaptureStream();
     activeCaptureStream = stream;
+    activeCaptureBounds = bounds;
     if (captureVideo.value) captureVideo.value.srcObject = stream;
     // Give smoothing a fresh chance on every newly-acquired stream, rather
     // than carrying a disable decision forward from a previous stream/mode.
@@ -488,6 +518,50 @@ const resizeCanvasToDisplaySize = () => {
   }
 };
 
+// Fit the frame into the canvas the way object-fit: contain would, rather
+// than stretching it over the canvas' full 16:9 box - the source's shape
+// isn't guaranteed to match it (a 4:3 video file in canvas mode; in capture
+// mode, whatever shape the media window currently has, e.g. fullscreen on a
+// 16:10 display). A mismatch then shows up as the same letterboxing the
+// media window itself does, not as a squashed picture.
+//
+// Memoized on its only inputs: the arithmetic is nothing next to drawImage
+// itself, but those inputs only change on a resize or a media swap, so
+// there's no reason to redo it (or re-clear the bars) 30-60 times a second.
+let lastFrameFit:
+  | undefined
+  | {
+      canvasHeight: number;
+      canvasWidth: number;
+      rect: ReturnType<typeof getContainFitRect>;
+      sourceHeight: number;
+      sourceWidth: number;
+    };
+
+const getFrameFit = (element: HTMLVideoElement, canvas: HTMLCanvasElement) => {
+  const { videoHeight: sourceHeight, videoWidth: sourceWidth } = element;
+  const { height: canvasHeight, width: canvasWidth } = canvas;
+
+  if (
+    lastFrameFit &&
+    lastFrameFit.sourceWidth === sourceWidth &&
+    lastFrameFit.sourceHeight === sourceHeight &&
+    lastFrameFit.canvasWidth === canvasWidth &&
+    lastFrameFit.canvasHeight === canvasHeight
+  ) {
+    return { changed: false, rect: lastFrameFit.rect };
+  }
+
+  const rect = getContainFitRect(
+    sourceWidth,
+    sourceHeight,
+    canvasWidth,
+    canvasHeight,
+  );
+  lastFrameFit = { canvasHeight, canvasWidth, rect, sourceHeight, sourceWidth };
+  return { changed: true, rect };
+};
+
 const drawCurrentFrame = () => {
   const element = frameLoopSourceElement ?? activeVideoElement.value;
   const canvas = previewCanvas.value;
@@ -503,14 +577,23 @@ const drawCurrentFrame = () => {
   context.imageSmoothingEnabled = true;
   context.imageSmoothingQuality = 'high';
 
-  if (isCaptureMode.value) {
-    const drawStart = performance.now();
-    context.drawImage(element, 0, 0, canvas.width, canvas.height);
-    if (performance.now() - drawStart > CAPTURE_DRAW_BUDGET_MS) {
-      registerSlowCaptureDraw();
-    }
-  } else {
-    context.drawImage(element, 0, 0, canvas.width, canvas.height);
+  const { changed, rect } = getFrameFit(element, canvas);
+  if (changed && (rect.width < canvas.width || rect.height < canvas.height)) {
+    // The bars around a newly-fitted frame aren't overdrawn, so clear
+    // whatever the previous, differently-shaped fit left there. Once
+    // cleared they stay clear - nothing else draws into them - so this
+    // doesn't need repeating per frame. The canvas is transparent and the
+    // surface behind it is black, which is all the bars need to be.
+    context.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  const drawStart = performance.now();
+  context.drawImage(element, rect.x, rect.y, rect.width, rect.height);
+  if (
+    isCaptureMode.value &&
+    performance.now() - drawStart > CAPTURE_DRAW_BUDGET_MS
+  ) {
+    registerSlowCaptureDraw();
   }
 };
 
@@ -1132,8 +1215,40 @@ useEventListener(globalThis, 'pointerup', () => {
   dragStart.value = undefined;
 });
 
+// The capture size cap is derived from the main window's viewport at
+// acquisition time (see getViewportCaptureSizeBounds). A window that has
+// since grown a lot would show a soft, upscaled preview - and one that
+// shrank keeps paying for pixels it can't show - so re-acquire after a
+// substantial change. Not on every resize tick: a new stream isn't free, and
+// the current one keeps running until its replacement is in hand, so nothing
+// goes black in between.
+const CAPTURE_REACQUIRE_RATIO = 1.25;
+const reacquireCaptureForViewport = () => {
+  if (!activeCaptureStream || !activeCaptureBounds || !isCaptureMode.value) {
+    return;
+  }
+
+  const next = getViewportCaptureSizeBounds();
+  const ratio = (a: number, b: number) => Math.max(a, b) / Math.min(a, b);
+  if (
+    ratio(next.maxWidth, activeCaptureBounds.maxWidth) <
+      CAPTURE_REACQUIRE_RATIO &&
+    ratio(next.maxHeight, activeCaptureBounds.maxHeight) <
+      CAPTURE_REACQUIRE_RATIO
+  ) {
+    return;
+  }
+
+  void acquireCaptureStream();
+};
+const debouncedReacquireCaptureForViewport = useDebounceFn(
+  reacquireCaptureForViewport,
+  500,
+);
+
 useEventListener(globalThis, 'resize', () => {
   debouncedNormalizeCollapsedPreviewAfterResize();
+  debouncedReacquireCaptureForViewport();
 });
 
 useEventListener(
