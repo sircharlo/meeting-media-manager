@@ -1,0 +1,222 @@
+{
+  "_comment": "Grounded JW terminology for it, cross-checked against official jw.org pages. Reusable beyond translation-quality review. Regenerate via scripts/i18n-quality/prompts/grounding-agent.md.",
+  "_fetchedAt": "2026-09-10",
+  "_language": "it",
+  "terms": [
+    {
+      "termEn": "Jehovah's Witnesses",
+      "official": "Testimoni di Geova",
+      "sourceUrls": ["https://www.jw.org/it/area-istituzionale/glossario/"],
+      "confidence": "high",
+      "notes": "Glossario defines it as \"gruppo religioso cristiano i cui aderenti adorano Geova Dio...\". The guide asks that the full name \"Testimoni di Geova\" be used on first occurrence; \"Testimoni\" alone is an acceptable shortened alternative. Forms like \"geovisti\"/\"geoviti\" are explicitly flagged as incorrect."
+    },
+    {
+      "termEn": "Kingdom Hall",
+      "official": "Sala del Regno",
+      "sourceUrls": ["https://www.jw.org/it/area-istituzionale/glossario/"],
+      "confidence": "high",
+      "notes": "Official/media-facing glossary gives the full form \"Sala del Regno dei Testimoni di Geova\", shortened in everyday use to \"Sala del Regno\". The guide explicitly asks that the term \"chiesa\" (church) not be used for it."
+    },
+    {
+      "termEn": "circuit overseer",
+      "official": "sorvegliante di circoscrizione",
+      "sourceUrls": ["https://www.jw.org/it/area-istituzionale/glossario/"],
+      "confidence": "high",
+      "notes": "Glossario: \"anziano di esperienza che, sotto la guida della filiale, visita... ogni congregazione all'interno di una circoscrizione, di solito due volte l'anno.\" Not used as an honorific title."
+    },
+    {
+      "termEn": "congregation",
+      "official": "congregazione",
+      "sourceUrls": ["https://www.jw.org/it/area-istituzionale/glossario/"],
+      "confidence": "high",
+      "notes": "Glossario: \"gruppo organizzato di Testimoni che si riunisce regolarmente per il culto.\""
+    },
+    {
+      "termEn": "elder",
+      "official": "anziano",
+      "sourceUrls": ["https://www.jw.org/it/area-istituzionale/glossario/"],
+      "confidence": "high",
+      "notes": "Glossario: \"Testimone di sesso maschile, spiritualmente maturo, che viene incaricato di insegnare...\". Not capitalized, not an honorific."
+    },
+    {
+      "termEn": "presiding overseer",
+      "official": "coordinatore del corpo degli anziani",
+      "sourceUrls": ["https://wol.jw.org/it/wol/d/r6/lp-i/1200276968"],
+      "confidence": "high",
+      "notes": "IMPORTANT terminology shift: the role formerly called \"sorvegliante presiedente\"/\"sorvegliante che presiede\" (presiding overseer) was renamed \"coordinatore del corpo degli anziani\" (coordinator of the body of elders) in the 2023 restructuring, per the dedicated WOL topic page, which explicitly cross-references the old title. The jw.org institutional glossary itself does not carry an entry for this role (it's congregation-internal, not media-facing), so this is grounded on WOL rather than the Glossario page. A translation still using \"sorvegliante presiedente\" would be stale."
+    },
+    {
+      "termEn": "ministerial servant",
+      "official": "servitore di ministero",
+      "sourceUrls": ["https://www.jw.org/it/area-istituzionale/glossario/"],
+      "confidence": "high",
+      "notes": "Glossario: \"Testimone di sesso maschile, spiritualmente maturo, che viene incaricato di aiutare gli anziani a prendersi cura della congregazione.\" Not an honorific title."
+    },
+    {
+      "termEn": "pioneer",
+      "official": "pioniere",
+      "sourceUrls": ["https://www.jw.org/it/area-istituzionale/glossario/"],
+      "confidence": "high",
+      "notes": "Glossario covers \"pioniere regolare\" (regular pioneer, 600 h/year) and \"pioniere ausiliario\" (auxiliary pioneer, 15-30 h/month). Not an honorific title."
+    },
+    {
+      "termEn": "field service",
+      "official": "ministero di campo",
+      "sourceUrls": ["https://www.jw.org/it/area-istituzionale/glossario/"],
+      "confidence": "high",
+      "notes": "Glossario: \"ministero pubblico svolto dai Testimoni in ubbidienza al comando di Gesù...\". The same page cross-references \"predicazione\" (preaching) to this entry, so \"predicazione\" is used interchangeably in less formal contexts."
+    },
+    {
+      "termEn": "Memorial",
+      "official": "Commemorazione della morte di Cristo",
+      "sourceUrls": ["https://www.jw.org/it/area-istituzionale/glossario/"],
+      "confidence": "high",
+      "notes": "Glossario gives the full form and notes it is also called \"Cena del Signore\", \"Pasto Serale del Signore\", \"Ultima Cena\", or simply \"Commemorazione\" / \"Commemorazione della morte di Gesù\". App-facing UI would most likely use the short form \"Commemorazione\"."
+    },
+    {
+      "termEn": "Congregation Bible Study",
+      "official": "Studio biblico di congregazione",
+      "sourceUrls": ["https://wol.jw.org/it/wol/d/r6/lp-i/1200276966"],
+      "confidence": "high",
+      "notes": "Confirmed via a dedicated WOL topic page (heading and index both use this exact term). The same topic page notes this activity previously had other names (\"Studio di libro di congregazione\", etc.) before reaching its current form. Not covered on the jw.org institutional Glossario page."
+    },
+    {
+      "termEn": "midweek meeting",
+      "official": "adunanza infrasettimanale",
+      "sourceUrls": ["https://www.jw.org/it/area-istituzionale/glossario/"],
+      "confidence": "high",
+      "notes": "Glossario: \"riunione, o adunanza, di solito tenuta in una sera infrasettimanale\" - the meeting whose program is \"Vita cristiana e ministero\"."
+    },
+    {
+      "termEn": "weekend meeting",
+      "official": "adunanza pubblica",
+      "sourceUrls": ["https://www.jw.org/it/area-istituzionale/glossario/"],
+      "confidence": "high",
+      "notes": "Glossario: \"riunione, o adunanza, di solito tenuta nel fine settimana\", consisting of a public talk followed by the Watchtower Study."
+    },
+    {
+      "termEn": "public talk",
+      "official": "discorso pubblico",
+      "sourceUrls": [
+        "https://wol.jw.org/it/wol/d/r6/lp-i/1200274680",
+        "https://wol.jw.org/it/wol/d/r6/lp-i/1102001061"
+      ],
+      "confidence": "high",
+      "notes": "Confirmed via WOL topic index \"Discorsi pubblici\" and the article \"Come preparare un discorso pubblico\". The jw.org Glossario page describes the same 30-45 minute Bible talk under \"adunanza pubblica\" but without using this exact two-word phrase as a standalone heading."
+    },
+    {
+      "termEn": "Watchtower Study",
+      "official": "studio della Torre di Guardia",
+      "sourceUrls": ["https://www.jw.org/it/area-istituzionale/glossario/"],
+      "confidence": "high",
+      "notes": "Glossario (under \"La Torre di Guardia\" entry): \"L'edizione per lo studio della Torre di Guardia... viene esaminata ogni settimana dalle congregazioni di tutto il mondo durante una trattazione con domande e risposte.\""
+    },
+    {
+      "termEn": "The Watchtower",
+      "official": "La Torre di Guardia",
+      "sourceUrls": ["https://www.jw.org/it/area-istituzionale/glossario/"],
+      "confidence": "high",
+      "notes": "Glossario gives the full historical title \"La Torre di Guardia annunciante il Regno di Geova\", commonly shortened to \"La Torre di Guardia\". Published continuously since 1879."
+    },
+    {
+      "termEn": "Awake!",
+      "official": "Svegliatevi!",
+      "sourceUrls": ["https://www.jw.org/it/area-istituzionale/glossario/"],
+      "confidence": "high",
+      "notes": "Glossario: current name adopted from the 22 August 1946 issue; earlier names were \"L'Età d'Oro\" (from 1919) and \"Consolazione\" (from 1937). Exclamation mark is part of the proper name."
+    },
+    {
+      "termEn": "New World Translation",
+      "official": "Traduzione del Nuovo Mondo delle Sacre Scritture",
+      "sourceUrls": ["https://www.jw.org/it/area-istituzionale/glossario/"],
+      "confidence": "high",
+      "notes": "Glossario gives the full title and notes it is also called simply \"Traduzione del Nuovo Mondo\"."
+    },
+    {
+      "termEn": "JW Library",
+      "official": "JW Library",
+      "sourceUrls": ["https://www.jw.org/it/area-istituzionale/glossario/"],
+      "confidence": "high",
+      "notes": "App/proper-noun name is not translated; used verbatim (with ® mark) in the Italian jw.org site navigation, matching seed context that this should not be translated."
+    },
+    {
+      "termEn": "jw.org",
+      "official": "jw.org",
+      "sourceUrls": ["https://www.jw.org/it/area-istituzionale/glossario/"],
+      "confidence": "high",
+      "notes": "Domain name is never translated. The Italian site's own footer renders it \"JW.ORG® / SITO UFFICIALE DEI TESTIMONI DI GEOVA\" (official website of Jehovah's Witnesses), matching the app's in-app phrasing \"the official website of jw.org\"."
+    },
+    {
+      "termEn": "songbook",
+      "official": "libretto dei cantici",
+      "sourceUrls": [
+        "https://wol.jw.org/it/wol/d/r6/lp-i/1966365",
+        "https://wol.jw.org/it/wol/d/r6/lp-i/1200275422"
+      ],
+      "confidence": "high",
+      "notes": "Confirmed via WOL announcement \"Nuovo libretto dei cantici!\" and the WOL topic index \"Libri dei cantici\". The current official songbook itself is also referred to by title (\"Cantiamo di cuore a Geova\" / \"Sing Out Joyfully to Jehovah\"), but \"libretto dei cantici\" is the generic term matching the seed's generic usage."
+    },
+    {
+      "termEn": "convention",
+      "official": "congresso",
+      "sourceUrls": ["https://www.jw.org/it/area-istituzionale/glossario/"],
+      "confidence": "high",
+      "notes": "Glossario distinguishes \"congresso di zona\" (regional/zone convention, 3 days, yearly) and \"congresso internazionale\" (international convention, 3 days) from the shorter \"assemblea\" (see separate entry). \"Congresso\" alone redirects to these two entries."
+    },
+    {
+      "termEn": "assembly",
+      "official": "assemblea",
+      "sourceUrls": ["https://www.jw.org/it/area-istituzionale/glossario/"],
+      "confidence": "high",
+      "notes": "Glossario: \"assemblea\" redirects to \"assemblea di circoscrizione\" - a one-day gathering of several congregations held twice a year, smaller than a \"congresso\" (convention), exactly matching the seed's contrast between the two terms."
+    },
+    {
+      "termEn": "theocratic school",
+      "official": "scuola teocratica",
+      "sourceUrls": ["https://wol.jw.org/it/wol/d/r6/lp-i/1200277115"],
+      "confidence": "medium",
+      "notes": "\"Scuole teocratiche\" (plural) is a WOL topic-index umbrella covering Gilead (\"Scuola biblica di Galaad\"), the Pioneer Service School (\"Scuola del servizio di pioniere\"), and Kingdom Ministry School, among others. The original congregation-level \"Scuola di Ministero Teocratico\" (weekly Theocratic Ministry School) that ran 1943-2016 is now marked \"non più in vigore\" (discontinued) on WOL - it was folded into the \"Vita cristiana e ministero\" midweek meeting. Not on the jw.org Glossario page; medium confidence because it's unclear which specific program the app's seed context (\"training programs mentioned alongside assemblies/conventions\") refers to."
+    },
+    {
+      "termEn": "sign language",
+      "official": "lingua dei segni",
+      "sourceUrls": [
+        "https://www.jw.org/it/area-istituzionale/glossario/",
+        "https://www.jw.org/en/jehovahs-witnesses/activities/publishing/sign-language-translation/"
+      ],
+      "confidence": "high",
+      "notes": "The Italian jw.org site's own language picker uses \"Visualizza solo le lingue dei segni\" (Show only sign languages). Plural \"lingue dei segni\" used when referring to multiple sign languages generally (the jw.org publishing page cites translation into \"oltre 90 lingue dei segni\"); singular \"lingua dei segni\" for one, e.g. LIS (Lingua dei Segni Italiana)."
+    },
+    {
+      "termEn": "meeting workbook",
+      "official": "Guida alle attività per l'adunanza Vita cristiana e ministero",
+      "sourceUrls": [
+        "https://www.jw.org/en/library/jw-meeting-workbook/",
+        "https://wol.jw.org/it/wol/d/r6/lp-i/202024400"
+      ],
+      "confidence": "high",
+      "notes": "Full title confirmed consistently across many bi-monthly WOL editions (2016-2024+). Note: a shorter variant \"Guida per l'adunanza Vita e ministero\" also appears in at least one jw.org library listing (July-August 2023 edition) - jw.org itself is not fully consistent between the long and short forms."
+    },
+    {
+      "termEn": "yeartext",
+      "official": "Scrittura dell'anno",
+      "sourceUrls": ["https://wol.jw.org/it/wol/d/r6/lp-i/1200276311"],
+      "confidence": "medium",
+      "notes": "\"Scrittura dell'anno\" is the current WOL topic-index heading for the annual scriptural theme (confirmed for the 2025 text, Psalm 96:8, \"Date a Geova la gloria che spetta al suo nome\"). Older/historical jw.org material instead used \"testo dell'anno\" for the same concept - medium confidence because both forms appear depending on era, and neither appears on the institutional Glossario page."
+    },
+    {
+      "termEn": "branch office",
+      "official": "filiale",
+      "sourceUrls": ["https://www.jw.org/it/area-istituzionale/glossario/"],
+      "confidence": "high",
+      "notes": "Glossario: \"centro amministrativo locale utilizzato da un Comitato di Filiale per gestire e monitorare le attività religiose... in uno o più paesi.\" The overseeing body of elders is the \"Comitato di Filiale\" (Branch Committee)."
+    },
+    {
+      "termEn": "Governing Body",
+      "official": "Corpo Direttivo",
+      "sourceUrls": ["https://www.jw.org/it/area-istituzionale/glossario/"],
+      "confidence": "high",
+      "notes": "Glossario gives the full form \"Corpo Direttivo dei Testimoni di Geova\", \"spesso chiamato semplicemente ‘Corpo Direttivo’\" (often called simply \"Governing Body\"). Headquartered in Warwick, New York."
+    }
+  ]
+}

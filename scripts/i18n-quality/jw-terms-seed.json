@@ -1,0 +1,97 @@
+{
+  "_comment": "Curated list of JW-organizational terms that actually appear in this app's content (grepped from src/i18n/en.json and docs/src/en/**), for grounding-agent.md to look up official per-language renderings on jw.org. Not every translated string touches these terms - most i18n keys are generic UI words (Cancel, Settings, Download) that never need terminology grounding. `sourceUrls` are intentionally empty here: the grounding agent finds and cites its own jw.org sources per language rather than being handed unverified links.",
+  "terms": [
+    { "termEn": "Jehovah's Witnesses", "context": "the organization's name" },
+    { "termEn": "Kingdom Hall", "context": "the local meeting place" },
+    {
+      "termEn": "circuit overseer",
+      "context": "a traveling minister who oversees a circuit of congregations"
+    },
+    {
+      "termEn": "congregation",
+      "context": "a local group of Jehovah's Witnesses"
+    },
+    { "termEn": "elder", "context": "a congregation overseer" },
+    {
+      "termEn": "presiding overseer",
+      "context": "the elder who chairs congregation meetings"
+    },
+    {
+      "termEn": "ministerial servant",
+      "context": "an appointed congregation helper"
+    },
+    { "termEn": "pioneer", "context": "a full-time volunteer minister" },
+    { "termEn": "field service", "context": "the ministry/preaching work" },
+    {
+      "termEn": "Memorial",
+      "context": "the annual commemoration of Christ's death"
+    },
+    {
+      "termEn": "Congregation Bible Study",
+      "context": "abbreviated CBS in the app"
+    },
+    {
+      "termEn": "midweek meeting",
+      "context": "one of the two weekly congregation meetings"
+    },
+    {
+      "termEn": "weekend meeting",
+      "context": "the other weekly congregation meeting"
+    },
+    {
+      "termEn": "public talk",
+      "context": "the weekend meeting's opening talk"
+    },
+    {
+      "termEn": "Watchtower Study",
+      "context": "a Bible study article discussed at meetings; abbreviated WT in the app"
+    },
+    {
+      "termEn": "The Watchtower",
+      "context": "the magazine, Public and Study editions"
+    },
+    {
+      "termEn": "Awake!",
+      "context": "a JW magazine title - proper noun, includes the exclamation mark"
+    },
+    {
+      "termEn": "New World Translation",
+      "context": "the Bible translation JWs use"
+    },
+    {
+      "termEn": "JW Library",
+      "context": "the official JW mobile app - proper noun, do not translate the app name itself"
+    },
+    {
+      "termEn": "jw.org",
+      "context": "the official website - referred to in-app as \"the official website of jw.org\""
+    },
+    { "termEn": "songbook", "context": "the JW songbook used at meetings" },
+    {
+      "termEn": "convention",
+      "context": "a larger JW gathering (circuit assembly / regional convention)"
+    },
+    {
+      "termEn": "assembly",
+      "context": "a larger JW gathering, smaller than a convention"
+    },
+    {
+      "termEn": "theocratic school",
+      "context": "training programs mentioned alongside assemblies/conventions"
+    },
+    {
+      "termEn": "sign language",
+      "context": "sign-language congregations/media"
+    },
+    {
+      "termEn": "meeting workbook",
+      "context": "the Our Christian Life and Ministry workbook"
+    },
+    { "termEn": "yeartext", "context": "the annual scriptural theme" },
+    {
+      "termEn": "branch office",
+      "context": "a regional JW administrative office"
+    },
+    { "termEn": "Governing Body", "context": "the organization's leading body" }
+  ]
+}

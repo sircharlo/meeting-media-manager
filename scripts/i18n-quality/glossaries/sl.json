@@ -1,0 +1,260 @@
+{
+  "_comment": "Grounded JW terminology for sl, cross-checked against official jw.org pages. Reusable beyond translation-quality review. Regenerate via scripts/i18n-quality/prompts/grounding-agent.md.",
+  "_fetchedAt": "2026-09-10",
+  "_language": "sl",
+  "terms": [
+    {
+      "termEn": "Jehovah's Witnesses",
+      "official": "Jehovove priče",
+      "sourceUrls": [
+        "https://www.jw.org/sl/informacije-za-javne-uslu%C5%BEbence-in-medije/terminologija-jehovovih-pric/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology guide (found via the English guide's hreflang=\"sl\" link): \"Jehovove priče so krščanska verska skupnost.\" Guide asks that the full name \"Jehovove priče\" be used on first mention; \"Priče\" may be used afterward."
+    },
+    {
+      "termEn": "Kingdom Hall",
+      "official": "kraljestvena dvorana Jehovovih prič",
+      "sourceUrls": [
+        "https://www.jw.org/sl/informacije-za-javne-uslu%C5%BEbence-in-medije/terminologija-jehovovih-pric/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology guide gives the full media-facing form; notes it is often shortened to just \"kraljestvena dvorana\" or \"dvorana\". Guide explicitly asks not to use \"cerkev\" (church)."
+    },
+    {
+      "termEn": "circuit overseer",
+      "official": "okrajni nadzornik",
+      "sourceUrls": [
+        "https://www.jw.org/sl/informacije-za-javne-uslu%C5%BEbence-in-medije/terminologija-jehovovih-pric/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology guide: experienced elder (with wife if married) who regularly visits each congregation in an \"okraj\" (circuit), usually twice a year. Guide notes the term is not used as an honorific title."
+    },
+    {
+      "termEn": "congregation",
+      "official": "občina",
+      "sourceUrls": [
+        "https://www.jw.org/sl/informacije-za-javne-uslu%C5%BEbence-in-medije/terminologija-jehovovih-pric/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology guide: \"organizirana skupina Jehovovih prič, ki se redno zbira k bogočastju.\""
+    },
+    {
+      "termEn": "elder",
+      "official": "starešina",
+      "sourceUrls": [
+        "https://www.jw.org/sl/informacije-za-javne-uslu%C5%BEbence-in-medije/terminologija-jehovovih-pric/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology guide notes the term is not used as an honorific title."
+    },
+    {
+      "termEn": "presiding overseer",
+      "official": "koordinator starešinstva",
+      "sourceUrls": ["https://wol.jw.org/sl/wol/d/r64/lp-sv/1102014935"],
+      "confidence": "high",
+      "notes": "Worldwide, \"presiding overseer\" was renamed \"coordinator of the body of elders\" effective Jan 1, 2009 (a change well before 2023, but still the reason this role no longer appears under the old name). This Slovenian-language wol.jw.org page (\"Nadzorniki so postavljeni, da pasejo čredo\", found by reusing the numeric ID 1102014935 from the identical English WOL page \"Overseers to Shepherd the Flock\") states plainly: \"Koordinator starešinstva služi na sestankih starešin kot predsedujoči.\" (The coordinator of the eldership serves as chairman at elders' meetings.) Not present under either name in the general-audience terminology guide, which is scoped to media-facing terms."
+    },
+    {
+      "termEn": "ministerial servant",
+      "official": "strežni služabnik",
+      "sourceUrls": [
+        "https://www.jw.org/sl/informacije-za-javne-uslu%C5%BEbence-in-medije/terminologija-jehovovih-pric/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology guide notes the term is not used as an honorific title."
+    },
+    {
+      "termEn": "pioneer",
+      "official": "pionir",
+      "sourceUrls": [
+        "https://www.jw.org/sl/informacije-za-javne-uslu%C5%BEbence-in-medije/terminologija-jehovovih-pric/"
+      ],
+      "confidence": "high",
+      "notes": "Covers both \"redni pionir\" (regular pioneer, 600 hrs/yr) and \"pomožni pionir\" (auxiliary pioneer). Guide notes the term is not used as an honorific title."
+    },
+    {
+      "termEn": "field service",
+      "official": "oznanjevanje",
+      "sourceUrls": [
+        "https://www.jw.org/sl/informacije-za-javne-uslu%C5%BEbence-in-medije/terminologija-jehovovih-pric/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology guide's \"oznanjevanje\" entry mirrors the English guide's \"field service\" entry word-for-word, down to the same citation of Matthew 24:14 and 28:19. The more literal phrase \"terenska služba\" (\"shod za tersko službo\" = meeting for field service) is also used in congregation-organization material (e.g. wol.jw.org/sl/wol/d/r64/lp-sv/1102014935) for the specific activity/meeting, but \"oznanjevanje\" is the term the official public-facing guide uses."
+    },
+    {
+      "termEn": "Memorial",
+      "official": "spominska slovesnost",
+      "sourceUrls": [
+        "https://www.jw.org/sl/informacije-za-javne-uslu%C5%BEbence-in-medije/terminologija-jehovovih-pric/"
+      ],
+      "confidence": "high",
+      "notes": "Full heading in the terminology guide is \"slovesnost v spomin na Kristusovo smrt\" (\"solemn observance in memory of Christ's death\"), which the guide says is also called \"Gospodova večerja\" (Lord's Evening Meal), \"zadnja večerja\" (Last Supper), or, in short, \"spominska slovesnost\" (the Memorial). It is a literal, transparent rendering - not a cognate of a discontinued Christian holiday and not an obsolete phrase; verified directly against the official page, per the special attention this term needs."
+    },
+    {
+      "termEn": "Congregation Bible Study",
+      "official": "Občinsko preučevanje Biblije",
+      "sourceUrls": [
+        "https://www.jw.org/sl/knjiznica/jehovove-price-delovni-zvezek/januar-februar-2022-mwb/Razpored-za-shod-%C5%BDivljenje-in-oznanjevanje-za-24-30-januar-2022/"
+      ],
+      "confidence": "high",
+      "notes": "Not covered by the terminology guide; found as the actual meeting-part heading on an official jw.org \"Naše krščansko življenje in oznanjevanje\" (Our Christian Life and Ministry) workbook schedule page."
+    },
+    {
+      "termEn": "midweek meeting",
+      "official": "shod med tednom",
+      "sourceUrls": [
+        "https://www.jw.org/sl/informacije-za-javne-uslu%C5%BEbence-in-medije/terminologija-jehovovih-pric/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology guide: weekly meeting held on a weeknight, program titled \"Naše krščansko življenje in oznanjevanje\" (Our Christian Life and Ministry)."
+    },
+    {
+      "termEn": "weekend meeting",
+      "official": "javni shod",
+      "sourceUrls": [
+        "https://www.jw.org/sl/informacije-za-javne-uslu%C5%BEbence-in-medije/terminologija-jehovovih-pric/"
+      ],
+      "confidence": "high",
+      "notes": "The English terminology guide's parallel heading is \"Public Meeting\", not \"weekend meeting\" - the Slovenian entry \"Javni shod\" (\"vsakotedenski shod, ki ga ima občina običajno ob koncu tedna\") is its exact, verified counterpart. Comprises the public talk plus the Watchtower Study."
+    },
+    {
+      "termEn": "public talk",
+      "official": "javni govor",
+      "sourceUrls": [
+        "https://www.jw.org/sl/informacije-za-javne-uslu%C5%BEbence-in-medije/terminologija-jehovovih-pric/"
+      ],
+      "confidence": "high",
+      "notes": "Embedded within the \"Javni shod\" (weekend/public meeting) entry: a 30-minute \"javni govor\" opens the meeting."
+    },
+    {
+      "termEn": "Watchtower Study",
+      "official": "Preučevanje Stražnega stolpa",
+      "sourceUrls": [
+        "https://www.jw.org/sl/informacije-za-javne-uslu%C5%BEbence-in-medije/terminologija-jehovovih-pric/"
+      ],
+      "confidence": "high",
+      "notes": "One-hour question-and-answer discussion of the study-edition Watchtower article, per the \"Javni shod\" entry."
+    },
+    {
+      "termEn": "The Watchtower",
+      "official": "Stražni stolp",
+      "sourceUrls": [
+        "https://www.jw.org/sl/informacije-za-javne-uslu%C5%BEbence-in-medije/terminologija-jehovovih-pric/"
+      ],
+      "confidence": "high",
+      "notes": "Full title given by the guide is \"Stražni stolp oznanja Jehovovo kraljestvo\"; \"Stražni stolp\" is confirmed as the standard short form, published in Public and Study editions."
+    },
+    {
+      "termEn": "Awake!",
+      "official": "Prebudite se!",
+      "sourceUrls": [
+        "https://www.jw.org/sl/informacije-za-javne-uslu%C5%BEbence-in-medije/terminologija-jehovovih-pric/"
+      ],
+      "confidence": "high",
+      "notes": "Includes the exclamation mark per the terminology guide, which also gives the magazine's history (previously \"Zlati vek\", then \"Tolažba\")."
+    },
+    {
+      "termEn": "New World Translation",
+      "official": "Prevod novi svet",
+      "sourceUrls": [
+        "https://www.jw.org/sl/informacije-za-javne-uslu%C5%BEbence-in-medije/terminologija-jehovovih-pric/"
+      ],
+      "confidence": "high",
+      "notes": "Full title per the guide is \"Sveto pismo – prevod novi svet\"; \"Prevod novi svet\" is given explicitly as the shorter designation."
+    },
+    {
+      "termEn": "JW Library",
+      "official": "JW Library",
+      "sourceUrls": [
+        "https://www.jw.org/sl/informacije-za-javne-uslu%C5%BEbence-in-medije/terminologija-jehovovih-pric/"
+      ],
+      "confidence": "high",
+      "notes": "App name kept untranslated on the Slovenian jw.org site (footer: \"JW Library®\"), consistent with the seed's do-not-translate instruction."
+    },
+    {
+      "termEn": "jw.org",
+      "official": "JW.ORG",
+      "sourceUrls": [
+        "https://www.jw.org/sl/informacije-za-javne-uslu%C5%BEbence-in-medije/terminologija-jehovovih-pric/"
+      ],
+      "confidence": "high",
+      "notes": "Rendered as the brand \"JW.ORG\" throughout the Slovenian site, unchanged from English."
+    },
+    {
+      "termEn": "songbook",
+      "official": "Pojmo hvalnice Jehovu",
+      "sourceUrls": ["https://wol.jw.org/sl/wol/d/r64/lp-sv/1101984246"],
+      "confidence": "high",
+      "notes": "Not covered by the terminology guide; confirmed as the current Slovenian songbook's title (\"Seznam pesmi\" / song list page on wol.jw.org) - the Slovenian counterpart of \"Sing Out Joyfully to Jehovah\"."
+    },
+    {
+      "termEn": "convention",
+      "official": "zborovanje",
+      "sourceUrls": [
+        "https://www.jw.org/sl/informacije-za-javne-uslu%C5%BEbence-in-medije/terminologija-jehovovih-pric/"
+      ],
+      "confidence": "high",
+      "notes": "General term covering both \"mednarodno zborovanje\" (international convention) and \"regionalno zborovanje\" (regional convention) per the terminology guide; both are multi-day (three-day) gatherings, distinct from the one-day \"okrajni zbor\" (circuit assembly, see \"assembly\")."
+    },
+    {
+      "termEn": "assembly",
+      "official": "okrajni zbor",
+      "sourceUrls": [
+        "https://www.jw.org/sl/informacije-za-javne-uslu%C5%BEbence-in-medije/terminologija-jehovovih-pric/"
+      ],
+      "confidence": "high",
+      "notes": "Matches the English guide's \"circuit assembly\": a one-day gathering of several congregations, held about twice a year - explicitly smaller than the multi-day \"zborovanje\" (convention)."
+    },
+    {
+      "termEn": "theocratic school",
+      "official": "Teokratična strežbena šola",
+      "sourceUrls": ["https://wol.jw.org/sl/wol/d/r64/lp-sv/1102001051"],
+      "confidence": "medium",
+      "notes": "This is the historical Slovenian name for the \"Theocratic Ministry School\" meeting part (discontinued worldwide in 2009, merged into other meeting parts); not covered by the current terminology guide, and a generic glossary entry for present-day specialized \"theocratic schools\" (e.g. Pioneer Service School, Kingdom Ministry School) could not be found with a Slovenian translation. Recorded as medium confidence since it's a verified official rendering but may be outdated depending on which \"theocratic school\" the app text refers to."
+    },
+    {
+      "termEn": "sign language",
+      "official": "znakovni jezik",
+      "sourceUrls": [
+        "https://www.jw.org/sl/informacije-za-javne-uslu%C5%BEbence-in-medije/terminologija-jehovovih-pric/"
+      ],
+      "confidence": "high",
+      "notes": "Confirmed via the site's own language-selector UI text on the terminology guide page: \"Prikaži samo znakovne jezike\" (Show only sign languages)."
+    },
+    {
+      "termEn": "meeting workbook",
+      "official": "delovni zvezek",
+      "sourceUrls": [
+        "https://www.jw.org/sl/knjiznica/jehovove-price-delovni-zvezek/januar-februar-2022-mwb/Razpored-za-shod-%C5%BDivljenje-in-oznanjevanje-za-24-30-januar-2022/"
+      ],
+      "confidence": "high",
+      "notes": "Full publication title is \"Naše krščansko življenje in oznanjevanje – delovni zvezek\" (Our Christian Life and Ministry - Meeting Workbook), confirmed from the URL/breadcrumb of the official jw.org workbook page."
+    },
+    {
+      "termEn": "yeartext",
+      "official": "letni stavek",
+      "sourceUrls": ["https://wol.jw.org/sl/wol/d/r64/lp-sv/302016030"],
+      "confidence": "high",
+      "notes": "Not covered by the terminology guide; found by reusing the numeric ID 302016030 from the English WOL page \"2016 Yeartext\" - the Slovenian page's title is \"Letni stavek za 2016\"."
+    },
+    {
+      "termEn": "branch office",
+      "official": "podružnični urad",
+      "sourceUrls": [
+        "https://www.jw.org/sl/informacije-za-javne-uslu%C5%BEbence-in-medije/terminologija-jehovovih-pric/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology guide notes the shorter form \"podružnica\" is also used; the related oversight body is \"podružnični odbor\" (branch committee)."
+    },
+    {
+      "termEn": "Governing Body",
+      "official": "Vodstveni organ Jehovovih prič",
+      "sourceUrls": [
+        "https://www.jw.org/sl/informacije-za-javne-uslu%C5%BEbence-in-medije/terminologija-jehovovih-pric/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology guide gives the full form; commonly shortened to \"Vodstveni organ\"."
+    }
+  ]
+}

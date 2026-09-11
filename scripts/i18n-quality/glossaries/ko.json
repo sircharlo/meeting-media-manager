@@ -1,0 +1,267 @@
+{
+  "_comment": "Grounded JW terminology for ko, cross-checked against official jw.org pages. Reusable beyond translation-quality review. Regenerate via scripts/i18n-quality/prompts/grounding-agent.md.",
+  "_fetchedAt": "2026-09-10",
+  "_language": "ko",
+  "terms": [
+    {
+      "termEn": "Jehovah's Witnesses",
+      "official": "여호와의 증인",
+      "sourceUrls": [
+        "https://www.jw.org/ko/%EB%8C%80%EC%99%B8-%EC%86%8C%ED%86%B5-%EC%9E%90%EB%A3%8C/%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85/"
+      ],
+      "confidence": "high",
+      "notes": "Formal name to use on first mention per jw.org's own style note; may be shortened to 증인 (\"Witness(es)\") thereafter."
+    },
+    {
+      "termEn": "Kingdom Hall",
+      "official": "왕국회관",
+      "sourceUrls": [
+        "https://www.jw.org/ko/%EB%8C%80%EC%99%B8-%EC%86%8C%ED%86%B5-%EC%9E%90%EB%A3%8C/%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85/"
+      ],
+      "confidence": "high",
+      "notes": "Full official form is 여호와의 증인 왕국회관, commonly shortened to 왕국회관. jw.org's guide explicitly asks that '교회' (church) not be used for this."
+    },
+    {
+      "termEn": "circuit overseer",
+      "official": "순회 감독자",
+      "sourceUrls": [
+        "https://www.jw.org/ko/%EB%8C%80%EC%99%B8-%EC%86%8C%ED%86%B5-%EC%9E%90%EB%A3%8C/%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85/"
+      ],
+      "confidence": "high",
+      "notes": "Per jw.org's style note, this is not used as an honorific title before a person's name."
+    },
+    {
+      "termEn": "congregation",
+      "official": "회중",
+      "sourceUrls": [
+        "https://www.jw.org/ko/%EB%8C%80%EC%99%B8-%EC%86%8C%ED%86%B5-%EC%9E%90%EB%A3%8C/%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85/"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "termEn": "elder",
+      "official": "장로",
+      "sourceUrls": [
+        "https://www.jw.org/ko/%EB%8C%80%EC%99%B8-%EC%86%8C%ED%86%B5-%EC%9E%90%EB%A3%8C/%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85/"
+      ],
+      "confidence": "high",
+      "notes": "Per jw.org's style note, this is not used as an honorific title before a person's name."
+    },
+    {
+      "termEn": "presiding overseer",
+      "official": "",
+      "sourceUrls": [],
+      "confidence": "low",
+      "notes": "Not listed as a distinct role in jw.org's current (2026) Korean terminology guide, which suggests this specific title is no longer maintained as separate organizational terminology (congregation-meeting chairmanship rotates among elders without a distinct external title today). A related but non-equivalent role, 장로의 회 조정자 (Coordinator of the Body of Elders), was found, but it denotes chairing the body of elders' own meetings, not congregation meetings generally, so it was not recorded as a mapping to avoid inventing one."
+    },
+    {
+      "termEn": "ministerial servant",
+      "official": "봉사의 종",
+      "sourceUrls": [
+        "https://www.jw.org/ko/%EB%8C%80%EC%99%B8-%EC%86%8C%ED%86%B5-%EC%9E%90%EB%A3%8C/%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85/"
+      ],
+      "confidence": "high",
+      "notes": "Per jw.org's style note, this is not used as an honorific title before a person's name."
+    },
+    {
+      "termEn": "pioneer",
+      "official": "파이오니아",
+      "sourceUrls": [
+        "https://www.jw.org/ko/%EB%8C%80%EC%99%B8-%EC%86%8C%ED%86%B5-%EC%9E%90%EB%A3%8C/%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85/"
+      ],
+      "confidence": "high",
+      "notes": "Transliteration used as-is (not translated). Regular pioneer = 정규 파이오니아; auxiliary pioneer = 보조 파이오니아."
+    },
+    {
+      "termEn": "field service",
+      "official": "야외 봉사",
+      "sourceUrls": [
+        "https://www.jw.org/ko/%EB%8C%80%EC%99%B8-%EC%86%8C%ED%86%B5-%EC%9E%90%EB%A3%8C/%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85/"
+      ],
+      "confidence": "high",
+      "notes": "Also referred to generally as 전도 (\"preaching\"); the guide cross-references the two entries."
+    },
+    {
+      "termEn": "Memorial",
+      "official": "그리스도의 죽음의 기념식",
+      "sourceUrls": [
+        "https://www.jw.org/ko/%EB%8C%80%EC%99%B8-%EC%86%8C%ED%86%B5-%EC%9E%90%EB%A3%8C/%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85/"
+      ],
+      "confidence": "high",
+      "notes": "Also called 주의 만찬, 기념식, or 예수의 죽음의 기념식. The short form 기념식 is common in site navigation and general UI contexts."
+    },
+    {
+      "termEn": "Congregation Bible Study",
+      "official": "회중 성서 연구",
+      "sourceUrls": [
+        "https://wol.jw.org/ko/wol/d/r8/lp-ko/202023086",
+        "https://wol.jw.org/ko/wol/dt/r8/lp-ko/2023/12/20"
+      ],
+      "confidence": "high",
+      "notes": "The 30-minute Bible study segment of the midweek meeting. Long-attested and stable across weekly wol.jw.org meeting schedules, though it is not a headline entry in the general terminology guide."
+    },
+    {
+      "termEn": "midweek meeting",
+      "official": "평일 집회",
+      "sourceUrls": [
+        "https://www.jw.org/ko/%EB%8C%80%EC%99%B8-%EC%86%8C%ED%86%B5-%EC%9E%90%EB%A3%8C/%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85/"
+      ],
+      "confidence": "high",
+      "notes": "Officially the '그리스도인 생활과 봉사 집회' (Christian Life and Ministry Meeting); 평일 집회 is jw.org's own descriptive label for it in the terminology guide."
+    },
+    {
+      "termEn": "weekend meeting",
+      "official": "공개 집회",
+      "sourceUrls": [
+        "https://www.jw.org/ko/%EB%8C%80%EC%99%B8-%EC%86%8C%ED%86%B5-%EC%9E%90%EB%A3%8C/%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85/"
+      ],
+      "confidence": "high",
+      "notes": "Comprises the public talk (공개 강연) followed by the Watchtower Study (「파수대」 연구)."
+    },
+    {
+      "termEn": "public talk",
+      "official": "공개 강연",
+      "sourceUrls": ["https://wol.jw.org/ko/wol/d/r8/lp-ko/1200274680"],
+      "confidence": "high",
+      "notes": "Watchtower Publications Index entry (title matches verbatim). Older publications used 공개 집회/공개 연설, per the index's own cross-reference."
+    },
+    {
+      "termEn": "Watchtower Study",
+      "official": "「파수대」 연구",
+      "sourceUrls": [
+        "https://www.jw.org/ko/%EB%8C%80%EC%99%B8-%EC%86%8C%ED%86%B5-%EC%9E%90%EB%A3%8C/%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85/"
+      ],
+      "confidence": "high",
+      "notes": "The weekly one-hour question-and-answer study of the study edition of The Watchtower."
+    },
+    {
+      "termEn": "The Watchtower",
+      "official": "「파수대—여호와의 왕국 선포」",
+      "sourceUrls": [
+        "https://www.jw.org/ko/%EB%8C%80%EC%99%B8-%EC%86%8C%ED%86%B5-%EC%9E%90%EB%A3%8C/%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85/"
+      ],
+      "confidence": "high",
+      "notes": "Commonly shortened to 「파수대」. Public edition = 배부용 「파수대」; study edition = 연구용 「파수대」."
+    },
+    {
+      "termEn": "Awake!",
+      "official": "「깨어라!」",
+      "sourceUrls": [
+        "https://www.jw.org/ko/%EB%8C%80%EC%99%B8-%EC%86%8C%ED%86%B5-%EC%9E%90%EB%A3%8C/%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85/"
+      ],
+      "confidence": "high",
+      "notes": "Includes the exclamation mark, per jw.org's own styling."
+    },
+    {
+      "termEn": "New World Translation",
+      "official": "「신세계역 성경」",
+      "sourceUrls": [
+        "https://www.jw.org/ko/%EB%8C%80%EC%99%B8-%EC%86%8C%ED%86%B5-%EC%9E%90%EB%A3%8C/%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85/"
+      ],
+      "confidence": "high",
+      "notes": "Commonly shortened to 「신세계역」."
+    },
+    {
+      "termEn": "JW Library",
+      "official": "JW 라이브러리",
+      "sourceUrls": [
+        "https://www.jw.org/en/online-help/jw-library/",
+        "https://wol.jw.org/ko/wol/d/r8/lp-ko/1200277277"
+      ],
+      "confidence": "high",
+      "notes": "App name: the 'JW' brand element is kept untranslated; '라이브러리' is the Korean rendering of 'Library'. Do not alter the JW portion."
+    },
+    {
+      "termEn": "jw.org",
+      "official": "JW.ORG",
+      "sourceUrls": [
+        "https://www.jw.org/ko/%EB%8C%80%EC%99%B8-%EC%86%8C%ED%86%B5-%EC%9E%90%EB%A3%8C/%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85/"
+      ],
+      "confidence": "high",
+      "notes": "jw.org always renders its own name in caps as 'JW.ORG' (the domain itself is not translated), paired on-site with the descriptor 여호와의 증인 공식 웹사이트 (\"official website of Jehovah's Witnesses\")."
+    },
+    {
+      "termEn": "songbook",
+      "official": "노래책",
+      "sourceUrls": ["https://wol.jw.org/ko/wol/d/r8/lp-ko/1200275422"],
+      "confidence": "high",
+      "notes": "Watchtower Publications Index entry (title matches verbatim). The current songbook is titled 「여호와께 노래하라」 (Sing to Jehovah)."
+    },
+    {
+      "termEn": "convention",
+      "official": "대회",
+      "sourceUrls": [
+        "https://www.jw.org/ko/%EB%8C%80%EC%99%B8-%EC%86%8C%ED%86%B5-%EC%9E%90%EB%A3%8C/%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85/"
+      ],
+      "confidence": "high",
+      "notes": "Umbrella term covering 순회 대회 (circuit convention), 지역 대회 (regional convention), and 국제 대회 (international convention)."
+    },
+    {
+      "termEn": "assembly",
+      "official": "순회 대회",
+      "sourceUrls": [
+        "https://www.jw.org/ko/%EB%8C%80%EC%99%B8-%EC%86%8C%ED%86%B5-%EC%9E%90%EB%A3%8C/%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85/"
+      ],
+      "confidence": "medium",
+      "notes": "Inferred: jw.org's current terminology guide has no term distinct from the 대회 family (no separate word for 'assembly' vs. 'convention'). 순회 대회, a one-day gathering held twice yearly, is the closest match to the app's description of a gathering smaller than a (multi-day, regional/international) convention. Cross-check against actual app usage/context before treating as authoritative."
+    },
+    {
+      "termEn": "theocratic school",
+      "official": "신권 학교",
+      "sourceUrls": [
+        "https://wol.jw.org/ko/wol/d/r8/lp-ko/201976404",
+        "https://www.jw.org/en/library/magazines/w20120915/theocratic-schools/"
+      ],
+      "confidence": "medium",
+      "notes": "신권 학교 is jw.org's general term for organizational training schools, but it is not a distinct entry in the current terminology guide, and its exact present-day association with assembly/convention programs (as the app's seed context implies) could not be independently confirmed on a live ko-language page."
+    },
+    {
+      "termEn": "sign language",
+      "official": "수어",
+      "sourceUrls": [
+        "https://www.jw.org/ko/%EB%8C%80%EC%99%B8-%EC%86%8C%ED%86%B5-%EC%9E%90%EB%A3%8C/%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85/"
+      ],
+      "confidence": "high",
+      "notes": "Confirmed via the terminology guide page's own site navigation (language filter option '수어만 표시하기' = \"show sign language only\")."
+    },
+    {
+      "termEn": "meeting workbook",
+      "official": "그리스도인 생활과 봉사—집회 교재",
+      "sourceUrls": [
+        "https://www.jw.org/ko/%EB%8C%80%EC%99%B8-%EC%86%8C%ED%86%B5-%EC%9E%90%EB%A3%8C/%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85/",
+        "https://wol.jw.org/ko/wol/d/r8/lp-ko/202021320"
+      ],
+      "confidence": "high",
+      "notes": "Commonly shortened to 집회 교재 in navigation/UI contexts (confirmed in the terminology guide page's own publications menu)."
+    },
+    {
+      "termEn": "yeartext",
+      "official": "올해의 성구",
+      "sourceUrls": [
+        "https://wol.jw.org/ko/wol/d/r8/lp-ko/2018242",
+        "https://wol.jw.org/ko/wol/d/r8/lp-ko/2022240"
+      ],
+      "confidence": "high",
+      "notes": "Confirmed via multiple wol.jw.org articles labeling a given year's scriptural theme, e.g. \"2018년 올해의 성구\", \"2022년 올해의 성구\"."
+    },
+    {
+      "termEn": "branch office",
+      "official": "지부 사무실",
+      "sourceUrls": [
+        "https://www.jw.org/ko/%EB%8C%80%EC%99%B8-%EC%86%8C%ED%86%B5-%EC%9E%90%EB%A3%8C/%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85/"
+      ],
+      "confidence": "high",
+      "notes": "Commonly shortened to 지부."
+    },
+    {
+      "termEn": "Governing Body",
+      "official": "중앙장로회",
+      "sourceUrls": [
+        "https://www.jw.org/ko/%EB%8C%80%EC%99%B8-%EC%86%8C%ED%86%B5-%EC%9E%90%EB%A3%8C/%EC%9A%A9%EC%96%B4-%EC%84%A4%EB%AA%85/"
+      ],
+      "confidence": "high",
+      "notes": "Full official form is 여호와의 증인 중앙장로회, commonly shortened to 중앙장로회."
+    }
+  ]
+}

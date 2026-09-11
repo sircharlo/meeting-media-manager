@@ -1,0 +1,258 @@
+{
+  "_comment": "Grounded JW terminology for es, cross-checked against official jw.org pages. Reusable beyond translation-quality review. Regenerate via scripts/i18n-quality/prompts/grounding-agent.md.",
+  "_fetchedAt": "2026-09-11",
+  "_language": "es",
+  "terms": [
+    {
+      "termEn": "Jehovah's Witnesses",
+      "official": "testigos de Jehová",
+      "sourceUrls": [
+        "https://www.jw.org/es/comunicados-internacionales/terminolog%C3%ADa-estilo/"
+      ],
+      "confidence": "high",
+      "notes": "Terminología y estilo (jw.org's own style/terminology guide) consistently renders this lowercase in running text: \"El nombre testigos de Jehová los distingue de otras religiones...\". The abbreviated form used after first mention is capitalized: \"los Testigos\" / \"un Testigo\". Do not flag lowercase \"testigos de Jehová\" as a casing error - it is jw.org's own preferred style, unlike the English capitalized \"Jehovah's Witnesses\"."
+    },
+    {
+      "termEn": "Kingdom Hall",
+      "official": "Salón del Reino",
+      "sourceUrls": [
+        "https://www.jw.org/es/comunicados-internacionales/terminolog%C3%ADa-estilo/"
+      ],
+      "confidence": "high",
+      "notes": "Full official form per the guide is \"Salón del Reino de los Testigos de Jehová\", explicitly shortened in the same entry to \"Salón del Reino\". The guide also notes to avoid the term \"iglesia\" (church) for it."
+    },
+    {
+      "termEn": "circuit overseer",
+      "official": "superintendente de circuito",
+      "sourceUrls": [
+        "https://www.jw.org/es/comunicados-internacionales/terminolog%C3%ADa-estilo/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Anciano de experiencia que sirve bajo la dirección de una sucursal y que visita todas las congregaciones de un circuito, normalmente dos veces al año.\" The guide also explicitly says this expression is not used as an honorific title."
+    },
+    {
+      "termEn": "congregation",
+      "official": "congregación",
+      "sourceUrls": [
+        "https://www.jw.org/es/comunicados-internacionales/terminolog%C3%ADa-estilo/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Grupo organizado de Testigos que se reúne regularmente para adorar a Dios.\" Unlike French, there is no false-friend risk here - Spanish \"congregación\" is the plain, unambiguous everyday term."
+    },
+    {
+      "termEn": "elder",
+      "official": "anciano",
+      "sourceUrls": [
+        "https://www.jw.org/es/comunicados-internacionales/terminolog%C3%ADa-estilo/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Testigo varón maduro en sentido espiritual a quien se le nombra para enseñar y cuidar a quienes forman parte de la congregación.\" Guide notes elders receive no salary and the term is not used as an honorific title."
+    },
+    {
+      "termEn": "presiding overseer",
+      "official": "superintendente presidente",
+      "sourceUrls": ["https://wol.jw.org/es/wol/d/r4/lp-s/1200274607"],
+      "confidence": "medium",
+      "notes": "Not covered by jw.org's public Terminología y estilo guide (an internal congregation role, not explained to media). Confirmed via a Watch Tower Publications Index entry, but that entry's own heading is \"Superintendente presidente (descontinuado)\" - i.e. jw.org itself now marks this role/title as discontinued, with predecessor names \"superintendente de congregación\", \"siervo de congregación\", \"director de servicio\", and successor \"coordinador del cuerpo de ancianos\" (coordinator of the body of elders). If the app's context is current rather than historical, \"coordinador del cuerpo de ancianos\" is likely the more accurate present-day equivalent - flag for reviewer judgment based on surrounding context."
+    },
+    {
+      "termEn": "ministerial servant",
+      "official": "siervo ministerial",
+      "sourceUrls": [
+        "https://www.jw.org/es/comunicados-internacionales/terminolog%C3%ADa-estilo/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Testigo varón maduro en sentido espiritual a quien se le nombra para ayudar a los ancianos en algunas tareas del cuidado de la congregación.\" Not used as an honorific title, per the guide."
+    },
+    {
+      "termEn": "pioneer",
+      "official": "precursor, precursora",
+      "sourceUrls": [
+        "https://www.jw.org/es/comunicados-internacionales/terminolog%C3%ADa-estilo/"
+      ],
+      "confidence": "high",
+      "notes": "Guide distinguishes \"precursor regular\" (600 hours/year, 50/month) from \"precursor auxiliar\" (15 or 30 hours in a given month). Feminine form \"precursora\" given explicitly. Not used as an honorific title."
+    },
+    {
+      "termEn": "field service",
+      "official": "predicación",
+      "sourceUrls": [
+        "https://www.jw.org/es/comunicados-internacionales/terminolog%C3%ADa-estilo/"
+      ],
+      "confidence": "high",
+      "notes": "IMPORTANT: the guide's own \"ministerio del campo\" entry is a redirect stub: \"ministerio del campo. Ver la entrada predicar, predicación.\" - i.e. jw.org now steers away from the older literal calque \"ministerio del campo\" (field ministry) in favor of \"predicar, predicación\" (to preach, preaching). If the app currently uses \"ministerio del campo\" for this seed term, that is likely a stale/older rendering rather than an outright error - it was jw.org's own earlier term."
+    },
+    {
+      "termEn": "Memorial",
+      "official": "Conmemoración de la muerte de Cristo",
+      "sourceUrls": [
+        "https://www.jw.org/es/comunicados-internacionales/terminolog%C3%ADa-estilo/"
+      ],
+      "confidence": "high",
+      "notes": "Guide gives the full form plus several accepted synonyms in the same entry: \"Cena del Señor, última cena, Conmemoración, Conmemoración de la muerte de Jesús.\" Congregation-facing content very commonly shortens this to just \"la Conmemoración\", matching the seed's short English form \"Memorial\"."
+    },
+    {
+      "termEn": "Congregation Bible Study",
+      "official": "Estudio Bíblico de la Congregación",
+      "sourceUrls": ["https://wol.jw.org/es/wol/d/r4/lp-s/1200276966"],
+      "confidence": "high",
+      "notes": "Not in the public Terminología y estilo guide (internal meeting-part name). Confirmed verbatim as a Watch Tower Publications Index heading, found by substituting the language segment into the equivalent English wol.jw.org numeric-ID URL (https://wol.jw.org/en/wol/d/r1/lp-e/1200276966). Historical predecessor names listed on the same page: \"Estudio de Libro de Congregación\", \"Círculos Bereanos para Estudios Bíblicos\", \"Círculos de la Aurora para Estudios Bíblicos\"."
+    },
+    {
+      "termEn": "midweek meeting",
+      "official": "reunión de entre semana",
+      "sourceUrls": [
+        "https://www.jw.org/es/comunicados-internacionales/terminolog%C3%ADa-estilo/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Reunión semanal de la congregación que generalmente se celebra por la noche un día entre semana. La reunión se llama Vida y Ministerio Cristianos y se divide en tres partes.\""
+    },
+    {
+      "termEn": "weekend meeting",
+      "official": "reunión de fin de semana",
+      "sourceUrls": [
+        "https://www.jw.org/es/comunicados-internacionales/terminolog%C3%ADa-estilo/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Reunión semanal de la congregación que generalmente se celebra un día de fin de semana. Normalmente tiene dos partes\" - a 30-minute public talk followed by the hour-long Watchtower Study."
+    },
+    {
+      "termEn": "public talk",
+      "official": "discurso público",
+      "sourceUrls": [
+        "https://wol.jw.org/es/wol/d/r4/lp-s/1200274680",
+        "https://www.jw.org/es/biblioteca/revistas/g20010522/Venga-y-escuche-el-discurso-p%C3%BAblico/"
+      ],
+      "confidence": "high",
+      "notes": "Not a separate headword in the Terminología y estilo guide (folded into the \"reunión de fin de semana\" entry as \"un discurso bíblico de 30 minutos\"). \"Discurso público\" (plural index heading: \"Discursos públicos\") is the well-attested standing term across wol.jw.org and jw.org magazine content; the WOL index page itself notes the meeting segment was formerly called \"Reunión Pública\"."
+    },
+    {
+      "termEn": "Watchtower Study",
+      "official": "Estudio de La Atalaya",
+      "sourceUrls": [
+        "https://www.jw.org/es/comunicados-internacionales/terminolog%C3%ADa-estilo/"
+      ],
+      "confidence": "high",
+      "notes": "Guide (within the \"reunión de fin de semana\" entry), quoted verbatim: \"la segunda parte, que se llama Estudio de La Atalaya y dura una hora, se analiza un tema de la Biblia mediante preguntas y respuestas usando un artículo de la edición de estudio de la revista La Atalaya.\""
+    },
+    {
+      "termEn": "The Watchtower",
+      "official": "La Atalaya. Anunciando el Reino de Jehová",
+      "sourceUrls": [
+        "https://www.jw.org/es/comunicados-internacionales/terminolog%C3%ADa-estilo/"
+      ],
+      "confidence": "high",
+      "notes": "Full official title per the guide, punctuated with a period as shown. Congregation-facing and everyday usage overwhelmingly shortens this to just \"La Atalaya\" (also confirmed used bare throughout the same guide entry)."
+    },
+    {
+      "termEn": "Awake!",
+      "official": "¡Despertad!",
+      "sourceUrls": [
+        "https://www.jw.org/es/comunicados-internacionales/terminolog%C3%ADa-estilo/"
+      ],
+      "confidence": "high",
+      "notes": "Confirmed verbatim on the guide, including both the opening inverted and closing exclamation marks (Spanish orthography). Guide notes the magazine's earlier English names: The Golden Age (1919), Consolation (1937), before becoming Awake! in 1946."
+    },
+    {
+      "termEn": "New World Translation",
+      "official": "Traducción del Nuevo Mundo",
+      "sourceUrls": [
+        "https://www.jw.org/es/comunicados-internacionales/terminolog%C3%ADa-estilo/"
+      ],
+      "confidence": "high",
+      "notes": "Full official title per the guide is \"La Biblia. Traducción del Nuevo Mundo\" (punctuated with a period); the guide itself notes this is \"muchas veces\" shortened to just \"Traducción del Nuevo Mundo\"."
+    },
+    {
+      "termEn": "JW Library",
+      "official": "JW Library",
+      "sourceUrls": [
+        "https://www.jw.org/es/comunicados-internacionales/terminolog%C3%ADa-estilo/"
+      ],
+      "confidence": "high",
+      "notes": "Confirmed not translated - \"JW Library\" appears verbatim (with ® mark) in the Spanish jw.org site's own footer navigation, consistent with the seed's own instruction not to translate the app name."
+    },
+    {
+      "termEn": "jw.org",
+      "official": "jw.org",
+      "sourceUrls": [
+        "https://www.jw.org/es/comunicados-internacionales/terminolog%C3%ADa-estilo/"
+      ],
+      "confidence": "high",
+      "notes": "Domain/proper noun kept as-is. The Spanish jw.org site's own footer branding reads \"JW.ORG® / SITIO OFICIAL DE LOS TESTIGOS DE JEHOVÁ\", matching the app's in-context phrase \"the official website of jw.org\" -> \"el sitio oficial de jw.org\"."
+    },
+    {
+      "termEn": "songbook",
+      "official": "cancionero",
+      "sourceUrls": ["https://wol.jw.org/es/wol/d/r4/lp-s/1200275422"],
+      "confidence": "high",
+      "notes": "Confirmed as the generic category label via a Watch Tower Publications Index heading (\"Cancioneros\", plural). The current active songbook title is \"Cantemos a Jehová\" (a book, not itself called a \"cancionero\" in its title); older editions cross-referenced on the same index page include \"Canten alabanzas a Jehová\", \"Cantemos con gozo a Jehová\", and \"Cánticos de alabanza a Jehová\" (1928/1950)."
+    },
+    {
+      "termEn": "convention",
+      "official": "asamblea regional / asamblea internacional",
+      "sourceUrls": [
+        "https://www.jw.org/es/comunicados-internacionales/terminolog%C3%ADa-estilo/"
+      ],
+      "confidence": "medium",
+      "notes": "IMPORTANT: Spanish has no standalone word equivalent to English \"convention\" in this sense - jw.org always uses \"asamblea\" plus a qualifier. Per the guide: \"asamblea regional\" = annual 3-day gathering of several congregations in one region (large rented venues, e.g. stadiums); \"asamblea internacional\" = annual 3-day gathering in various world cities with international attendance. Either may be the intended match depending on scale - do not flag a translation using \"asamblea\" instead of a literal \"convención\" as wrong (\"convención\" is not jw.org's own usage for its own events)."
+    },
+    {
+      "termEn": "assembly",
+      "official": "asamblea de circuito",
+      "sourceUrls": [
+        "https://www.jw.org/es/comunicados-internacionales/terminolog%C3%ADa-estilo/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"asamblea de circuito. Reunión de un día de varias congregaciones de los testigos de Jehová. Se celebran dos veces al año\" - matches the seed's description of a gathering smaller than a convention. The guide's umbrella entry \"asamblea\" (see also \"convention\" entry) covers all three sub-types: de circuito, internacional, regional."
+    },
+    {
+      "termEn": "theocratic school",
+      "official": "escuela teocrática",
+      "sourceUrls": [
+        "https://wol.jw.org/es/wol/d/r4/lp-s/1200275768",
+        "https://wol.jw.org/es/wol/d/r4/lp-s/2012686"
+      ],
+      "confidence": "medium",
+      "notes": "Not in the Terminología y estilo guide. \"Escuela teocrática\" (plural \"escuelas teocráticas\") is well attested as a generic descriptor across decades of jw.org/WOL content for the organization's various specialized training courses (e.g. \"Las escuelas teocráticas: una demostración del amor de Jehová\"). The specific weekly congregation program formerly named \"Escuela del Ministerio Teocrático\" is itself now marked \"(descontinuada)\" in the Watch Tower Publications Index, having been folded into the midweek meeting restructuring. Given the app's own context (\"special events such as theocratic schools, assemblies, or conventions\"), the generic lowercase \"escuela teocrática\" is the more likely intended sense rather than the discontinued proper-noun program."
+    },
+    {
+      "termEn": "sign language",
+      "official": "lengua de señas",
+      "sourceUrls": ["https://wol.jw.org/es/wol/d/r4/lp-s/1200275321"],
+      "confidence": "high",
+      "notes": "Confirmed as a Watch Tower Publications Index heading (\"Lengua de señas\"), found via the wol.jw.org numeric-ID cross-language trick. \"Lenguaje de señas\" is also used interchangeably in some jw.org body text/page titles, but \"lengua de señas\" is the index/glossary-preferred form."
+    },
+    {
+      "termEn": "meeting workbook",
+      "official": "Guía de actividades para la reunión Vida y Ministerio Cristianos",
+      "sourceUrls": ["https://wol.jw.org/es/wol/d/r4/lp-s/1200277262"],
+      "confidence": "high",
+      "notes": "Confirmed verbatim as a Watch Tower Publications Index heading. The same index cross-references a shortened generic form, \"Guía de actividades\", which is what appears in monthly issue titles (e.g. \"Guía de actividades para la reunión Vida y Ministerio Cristianos (enero y febrero de 2024)\") - either full or short form should be acceptable in-app."
+    },
+    {
+      "termEn": "yeartext",
+      "official": "texto del año",
+      "sourceUrls": ["https://wol.jw.org/es/wol/d/r4/lp-s/1200276311"],
+      "confidence": "high",
+      "notes": "Confirmed via a Watch Tower Publications Index heading (\"Texto del año\") listing every year's text back to 1915. Example: the 2025 yeartext is rendered \"Denle a Jehová la gloria que su nombre merece\" (Salmo 96:8)."
+    },
+    {
+      "termEn": "branch office",
+      "official": "sucursal",
+      "sourceUrls": [
+        "https://www.jw.org/es/comunicados-internacionales/terminolog%C3%ADa-estilo/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Sede administrativa local de un Comité de Sucursal, desde donde se coordinan y supervisan las actividades religiosas de los testigos de Jehová en uno o más países.\" The guide's separate \"Betel\" entry notes this is also a common informal synonym for the branch facility/staff."
+    },
+    {
+      "termEn": "Governing Body",
+      "official": "Cuerpo Gobernante de los Testigos de Jehová",
+      "sourceUrls": [
+        "https://www.jw.org/es/comunicados-internacionales/terminolog%C3%ADa-estilo/"
+      ],
+      "confidence": "high",
+      "notes": "Guide gives the full form and notes it is \"con frecuencia\" shortened to just \"Cuerpo Gobernante\". Defined as \"Pequeño grupo de ancianos nombrados para atender en sentido espiritual a los testigos de Jehová de todo el mundo\", based at the world headquarters in Warwick, New York."
+    }
+  ]
+}
