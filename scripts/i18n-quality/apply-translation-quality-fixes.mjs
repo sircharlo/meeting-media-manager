@@ -174,8 +174,17 @@ async function main() {
       lang.id,
     ]),
   );
+  // A few repo codes don't match Crowdin's id even by twoLettersCode -
+  // confirmed live against the project rather than guessed.
+  const LANGUAGE_ID_OVERRIDES = { 'cmn-hans': 'zh-CN' };
   function resolveLanguageId(code) {
     if (targetLanguageIds.has(code)) return code;
+    if (
+      LANGUAGE_ID_OVERRIDES[code] &&
+      targetLanguageIds.has(LANGUAGE_ID_OVERRIDES[code])
+    ) {
+      return LANGUAGE_ID_OVERRIDES[code];
+    }
     return languageIdByTwoLetters.get(code) ?? null;
   }
 
