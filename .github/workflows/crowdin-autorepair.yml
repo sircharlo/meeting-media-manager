@@ -2,14 +2,16 @@ name: Crowdin auto-repair
 
 # Repairs Crowdin corruption at the source on a schedule and on demand, by
 # running scripts/cleanup-crowdin.mjs --apply. That repairs the stored
-# translations (vue-i18n linked-message syntax, docs heading anchors,
-# release-notes version headers, i18n link/param targets) and purges the
-# corrupted translation-memory segments, so the Crowdin GitHub App's PRs
-# come out clean. Docs link: frontmatter is not exposed by Crowdin as
-# translatable strings, so the sweep only logs a diagnostic for it -
-# docs:lint no longer fails a PR over it (VitePress recomputes the correct
-# locale-prefixed link at build time regardless of what's stored there), and
-# docs/utils/fix-doc-markdown.mjs remains available to tidy it up locally.
+# translations (vue-i18n linked-message syntax, docs heading anchors, docs
+# hero-action link: frontmatter, release-notes version headers, i18n
+# link/param targets) and purges the corrupted translation-memory segments,
+# so the Crowdin GitHub App's PRs come out clean. The docs link: fields
+# (Download/About/User Guide/Settings Guide/FAQ) are real Crowdin strings
+# that simply never had a translation set for any language, so every export
+# fell back to the literal English path - this sweep sets the real
+# /{locale}/{slug} translation directly. docs/utils/fix-doc-markdown.mjs
+# remains available as a local safety net for an already-open PR this sweep
+# hasn't reached yet (see the residual-gap note below).
 #
 # A Crowdin webhook was considered for near-instant repair, but Crowdin's
 # custom webhook payload only accepts its own event variables as keys, so it
