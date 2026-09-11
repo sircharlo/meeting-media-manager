@@ -652,7 +652,7 @@ Choisissez les sections de la réunion qui afficheront leur propre bouton permet
 
 **Par défaut** : « Discours public », « Vie chrétienne », « Visite du responsable de circonscription » et « Personnalisé »
 
-#### Compact Add Media Button {#compact-add-media-button}
+#### Bouton "Ajouter des médias" compact {#compact-add-media-button}
 
 <!-- **Setting**: `compactAddMediaButton` -->
 
