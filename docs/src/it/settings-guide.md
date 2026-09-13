@@ -2,7 +2,7 @@
 
 Questa guida completa spiega tutte le impostazioni disponibili in M³, organizzate per categoria. Capire queste impostazioni ti aiuterà a configurare M³ in modo che funzioni perfettamente per le esigenze della tua congregazione.
 
-## General {#application-configuration}
+## Generale {#application-configuration}
 
 ### Lingua di visualizzazione {#display-language}
 
@@ -165,11 +165,11 @@ Quando abilitato, M³ controlla periodicamente sul sito ufficiale dei Testimoni 
 
 Funziona solo per i profili aggiunti con la ricerca della congregazione e il cui nome della congregazione non è stato modificato manualmente. Se la sincronizzazione è stata disabilitata perché il nome della congregazione è cambiato, usa **Abilita sincronizzazione programma** per ricollegare il profilo.
 
-#### Enable Schedule Sync {#relink-congregation}
+#### Abilita Schedule Sync {#relink-congregation}
 
 <!-- **Setting**: `relinkCongregationButton` -->
 
-Re-links the current profile to congregation lookup so automatic meeting day and time updates can resume. Only shown once the congregation name has been changed manually, since that's what breaks the link in the first place.
+Ri-collega il profilo corrente alla ricerca della congregazione, così gli aggiornamenti automatici del giorno e dell'ora della riunione possono riprendere. Viene mostrato solo una volta che il nome della congregazione è stato cambiato manualmente, poiché questo è ciò che rompe il link in primo luogo.
 
 #### Aggiorna il programma delle adunanze {#refresh-meeting-schedule}
 
@@ -177,7 +177,7 @@ Re-links the current profile to congregation lookup so automatic meeting day and
 
 Sincronizza manualmente il programma delle adunanze attuale e futuro con le informazioni del sito ufficiale.
 
-## Media & Playback {#media-retrieval-and-playback}
+## Media & Riproduzione {#media-retrieval-and-playback}
 
 ### Connessione a consumo {#metered-connection}
 
@@ -247,7 +247,7 @@ Livello del volume della musica di sottofondo (1-100%).
 
 **Predefinito**: 100%
 
-### Playback and Download Options {#media-display}
+### Opzioni di riproduzione e download {#media-display}
 
 <!-- This section covers mediaRetrievalPlayback's `media-display` settings subgroup -
 these control the media window's playback behavior and which downloaded media is
@@ -312,13 +312,13 @@ Escludi i video aggiuntivi a cui si fa riferimento nei paragrafi dello Studio To
 
 **Predefinito**: `false`
 
-#### Exclude Congregation Bible Study Videos {#exclude-cbs-pubs}
+#### Escludi Video Di Studio Biblico Della Congregazione {#exclude-cbs-pubs}
 
 <!-- **Setting**: `excludeCbsPubs` -->
 
-Choose publications whose referenced videos should not be shown during the Congregation Bible Study. Search by publication title or symbol.
+Scegli le pubblicazioni i cui video di riferimento non devono essere mostrati durante lo studio biblico della Congregazione. Cerca per titolo o simbolo di pubblicazione.
 
-**Default**: Walk Courageously With God (`wcg`)
+**Predefinito**: Cammina Coraggiosamente Con Dio (`wcg`)
 
 #### Escludi i media dell'opuscolo Insegna {#exclude-theocratic-ministry-school}
 
@@ -374,21 +374,21 @@ Cancella automaticamente i vecchi file nella cache per risparmiare spazio su dis
 
 **Predefinito**: `true`
 
-### Pinyin Song Titles {#pinyin-song-titles}
+### Titoli Canzoni Pinyin {#pinyin-song-titles}
 
-#### Prefer Pinyin Songs {#enable-pinyin-songs}
+#### Preferisci Canzoni Pinyin {#enable-pinyin-songs}
 
 <!-- **Setting**: `enablePinyinSongs` -->
 
-When a pinyin version of a meeting song is found in the pinyin song folder, use it instead of the standard song.
+Quando una versione pinyin di un cantico dell'adunanza si trova nella cartella dei brani pinyin, verrà usata al posto del cantico standard.
 
 **Predefinito**: `false`
 
-#### Pinyin Song Folder {#pinyin-song-folder}
+#### Cartella Canzone Pinyin {#pinyin-song-folder}
 
 <!-- **Setting**: `pinyinSongFolder` -->
 
-Folder containing pinyin video songs (e.g. `sjjm_s-Pi_CHS_066_r720P.mp4`). When a pinyin file matching the meeting song number is found, it will be played instead of the standard song.
+Cartella contenente canzoni video pinyin (ad es. `sjjm_s-Pi_CHS_066_r720P.mp4`). Quando viene trovato un file pinyin che corrisponde al numero della canzone della riunione, verrà riprodotto al posto della canzone standard.
 
 **Predefinito**: vuoto
 
@@ -490,11 +490,11 @@ Scorciatoia da tastiera per attivare la condivisione dello schermo di Zoom.
 
 **Predefinito**: Nessuna
 
-#### Auto-Focus Media Window {#zoom-auto-focus-media-window}
+#### Finestra Media Auto-Focus {#zoom-auto-focus-media-window}
 
 <!-- **Setting**: `zoomAutoFocusMediaWindow` -->
 
-Automatically focus the media window after Zoom screen sharing starts. This is usually not required, but can help on some systems if the media window regularly loses focus after screen sharing starts.
+Metti in primo piano automaticamente la finestra multimediale dopo l'avvio della condivisione dello schermo Zoom. Questo di solito non è necessario, ma potrebbe essere utile su alcuni sistemi se la finestra multimediale regolarmente perde il primo piano dopo l'avvio della condivisione dello schermo di zoom.
 
 **Predefinito**: `false`
 
@@ -619,7 +619,7 @@ Questa opzione è nascosta quando i controlli di registrazione OBS sono abilitat
 
 Configura la scorciatoia da tastiera che avvia la registrazione, la scorciatoia facoltativa che la ferma e la cartella in cui l'app esterna salva le registrazioni. Se non viene fornita una scorciatoia di arresto, M³ riutilizza la scorciatoia di avvio. Quando è configurata una cartella, M³ mostra un pulsante per aprirla.
 
-## Interface & Shortcuts {#interface-shortcuts}
+## Interfaccia E Scorciatoie {#interface-shortcuts}
 
 ### Scorciatoie da Tastiera {#settings-guide-keyboard-shortcuts}
 
@@ -642,47 +642,47 @@ Configura le scorciatoie per la riproduzione dei media:
 - **Ferma il media**: ferma la riproduzione dei media
 - **Attiva/disattiva musica**: attiva o disattiva la musica di sottofondo
 
-### Add More Media Button {#add-more-media-button}
+### Aggiungi Più Pulsante Media {#add-more-media-button}
 
-#### Sections with an Add Media Button {#add-media-button-sections}
+#### Sezioni con un pulsante Aggiungi file multimediali {#add-media-button-sections}
 
 <!-- **Setting**: `addMediaButtonSections` -->
 
-Choose which meeting sections show their own button for adding your own media, in addition to the "Add media" button in the top toolbar, which always works for every section.
+Scegli quali sezioni dell'adunanza visualizzare un pulsante per aggiungere i tuoi contenuti multimediali, oltre al pulsante "Aggiungi contenuti multimediali" nella barra degli strumenti in alto, che funziona sempre per tutte le sezioni.
 
-**Default**: Public Talk, Living as Christians, Circuit Overseer's Visit, and Custom sections
+**Default**: Discorso Pubblico, Vita Cristiana, Visita del Sorvegliante, e Sezioni Personalizzate
 
-#### Compact Add Media Button {#compact-add-media-button}
+#### Pulsante compatto Aggiungi Media {#compact-add-media-button}
 
 <!-- **Setting**: `compactAddMediaButton` -->
 
-Only show an icon for the "Add more media"/"Add a song" button in section headers. When disabled, the button also shows text alongside the icon when there's enough room.
+Mostra solo un'icona per il pulsante "Aggiungi più media"/"Aggiungi una canzone" nelle intestazioni di sezione. Quando disabilitato, il pulsante mostra anche il testo accanto all'icona quando c'è abbastanza spazio.
 
 **Predefinito**: `true`
 
-### Media Drag Handle {#media-drag-handle}
+### Maniglia Di Trascinamento Media {#media-drag-handle}
 
-#### Show Drag Handle {#show-media-drag-handle}
+#### Mostra Maniglia Di Trascinamento {#show-media-drag-handle}
 
 <!-- **Setting**: `showMediaDragHandle` -->
 
-Show a small handle on each media item for dragging it to reorder. Media items can always be reordered by dragging anywhere on them; this only affects whether the handle icon itself is shown.
+Mostra una piccola maniglia su ogni elemento multimediale per trascinarlo per riordinarlo. Gli elementi multimediali possono sempre essere riordinati trascinandoli ovunque su di essi; questo influenza solo se l'icona della maniglia stessa è mostrata.
 
 **Predefinito**: `true`
 
-### Before/After Meeting Quick Actions {#before-after-meeting-quick-actions}
+### Prima/Dopo Riunione Azioni Rapide {#before-after-meeting-quick-actions}
 
-#### Show Meeting Quick Actions {#enable-meeting-quick-actions}
+#### Mostra Riunione Azioni Rapide {#enable-meeting-quick-actions}
 
 <!-- **Setting**: `enableMeetingQuickActions` -->
 
-Show a before-meeting panel and an after-meeting panel with useful controls (background music, recording) and a customizable checklist for each.
+Mostra un pannello di pre-riunione e un pannello post-riunione con controlli utili e liste di controllo personalizzabili.
 
 **Predefinito**: `true`
 
-The checklist categories and tasks for both the before-meeting and after-meeting panels are managed from this same settings section: add, rename, reorder, or delete categories and tasks as needed for your congregation.
+Le categorie e le attività della lista di controllo sia per le riunioni preliminari che per quelle successive sono gestite dalla stessa sezione impostazioni: aggiungere, rinomina, riordina o elimina categorie e attività come necessario per la tua congregazione.
 
-## Advanced {#advanced-settings}
+## Impostazioni avanzate {#advanced-settings}
 
 ### Trasferimento delle impostazioni del profilo {#profile-settings-transfer}
 
