@@ -4,11 +4,11 @@
 
 Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGELOG.md su GitHub.
 
-## UPCOMING VERSION
+## VERSIONE AGGIUNTIVA
 
 ### ✨ Nuove Funzionalità
 
-- ✨ **Before/After Meeting Quick Actions**: A new big-button panel assists with the run-up to and immediately after each meeting — a live countdown, one-tap background music start/stop, start/stop recording, and a per-congregation checklist grouped into categories and editable from Settings. The before-meeting panel auto-dismisses once the meeting starts and the checklist is complete (or after a short grace period), and can always be dismissed manually.
+- ✨ **Before/After Meeting Quick Actions**: Un nuovo pannello grande pulsante assiste con la preparazione e immediatamente dopo ogni riunione — un conto alla rovescia dal vivo, avvio/arresto di musica di sottofondo con un solo tocco, registrazione start/stop e una checklist per congregazione raggruppata in categorie e modificabile dalle Impostazioni. Il pannello di pre-riunione elimina automaticamente una volta che la riunione inizia e la lista di controllo è completa (o dopo un breve periodo di grazia) e può sempre essere respinta manualmente.
 
 ## v26.8.0
 
