@@ -312,7 +312,7 @@ Escludi i video aggiuntivi a cui si fa riferimento nei paragrafi dello Studio To
 
 **Predefinito**: `false`
 
-#### Escludi Video Di Studio Biblico Della Congregazione {#Esclusde-cbs-pubs}
+#### Escludi Video Di Studio Biblico Della Congregazione {#exclude-cbs-pubs}
 
 <!-- **Setting**: `excludeCbsPubs` -->
 
@@ -619,7 +619,7 @@ Questa opzione è nascosta quando i controlli di registrazione OBS sono abilitat
 
 Configura la scorciatoia da tastiera che avvia la registrazione, la scorciatoia facoltativa che la ferma e la cartella in cui l'app esterna salva le registrazioni. Se non viene fornita una scorciatoia di arresto, M³ riutilizza la scorciatoia di avvio. Quando è configurata una cartella, M³ mostra un pulsante per aprirla.
 
-## Interfaccia E Scorciatoie {#interface-scorciatoie}
+## Interfaccia E Scorciatoie {#interface-shortcuts}
 
 ### Scorciatoie da Tastiera {#settings-guide-keyboard-shortcuts}
 
@@ -660,7 +660,7 @@ Mostra solo un'icona per il pulsante "Aggiungi più media"/"Aggiungi una canzone
 
 **Predefinito**: `true`
 
-### Maniglia Di Trascinamento Media {#Media-drag-handle}
+### Maniglia Di Trascinamento Media {#media-drag-handle}
 
 #### Mostra Maniglia Di Trascinamento {#show-media-drag-handle}
 
