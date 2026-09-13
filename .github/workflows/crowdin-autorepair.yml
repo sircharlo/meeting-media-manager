@@ -9,9 +9,7 @@ name: Crowdin auto-repair
 # (Download/About/User Guide/Settings Guide/FAQ) are real Crowdin strings
 # that simply never had a translation set for any language, so every export
 # fell back to the literal English path - this sweep sets the real
-# /{locale}/{slug} translation directly. docs/utils/fix-doc-markdown.mjs
-# remains available as a local safety net for an already-open PR this sweep
-# hasn't reached yet (see the residual-gap note below).
+# /{locale}/{slug} translation directly.
 #
 # A Crowdin webhook was considered for near-instant repair, but Crowdin's
 # custom webhook payload only accepts its own event variables as keys, so it
@@ -20,11 +18,21 @@ name: Crowdin auto-repair
 # trigger below is the next best thing: every time Crowdin's GitHub App
 # exports translations to l10n_master, this sweep runs within seconds and
 # patches any corruption in Crowdin's stored translations before it can be
-# leveraged into other strings. It can't force Crowdin to re-export an
-# already-open PR though (no API for that), so an in-flight PR can still
-# occasionally need a one-off local fix (docs/utils/fix-doc-markdown.mjs,
-# scripts/fix-i18n-locales.mjs) - the hourly schedule below is kept as a
+# leveraged into other strings. The hourly schedule below is kept as a
 # project-wide backstop for corruption introduced between pushes.
+#
+# Repairing the source can't force Crowdin to re-export an already-open PR
+# though (no API for that): an export that landed corrupted stays corrupted
+# on l10n_master - and keeps failing the PR's docs:lint check - until Crowdin
+# happens to export that file again. The repair-branch job closes that gap.
+# After the sweep it applies the same repairs to the exported files on
+# l10n_master itself (docs/utils/fix-doc-markdown.mjs and
+# scripts/fix-i18n-locales.mjs, the local safety nets) and pushes the
+# result. That push uses the PERSONAL_TOKEN secret (a fine-grained GitHub
+# PAT with read/write Contents access on this repository) instead of the
+# built-in GITHUB_TOKEN, because pushes made with GITHUB_TOKEN never trigger
+# workflows - the PR's docs:lint check, which mergify's translations queue
+# requires, would never re-run on the repaired commit.
 
 on:
   push:
@@ -37,23 +45,31 @@ on:
   workflow_dispatch:
     inputs:
       language:
-        description: 'Only repair this language (e.g. et, fr); empty repairs all'
+        description: 'Only repair this language in Crowdin (e.g. et, fr); empty repairs all. The l10n_master branch repair always covers every language.'
         required: false
         type: string
       apply:
-        description: 'Commit the fixes to Crowdin (uncheck for a dry-run report)'
+        description: 'Commit the fixes to Crowdin and push the l10n_master repairs (uncheck for a dry-run report)'
         required: false
         default: true
         type: boolean
 
 concurrency:
-  group: crowdin-autorepair
+  # The repair-branch job's own push re-triggers this workflow. Both jobs
+  # skip themselves on that run (see their conditions), but a queued run
+  # would still cancel the in-flight one that made the push, so keep the
+  # no-op run out of the group.
+  group: crowdin-autorepair${{ github.event_name == 'push' && github.event.head_commit.author.name == 'github-actions[bot]' && '-self' || '' }}
   cancel-in-progress: true
 
 jobs:
   repair:
     runs-on: ubuntu-latest
-    if: github.repository == 'sircharlo/meeting-media-manager'
+    # Skip the push made by the repair-branch job below: that commit changes
+    # nothing in Crowdin, and the sweep that preceded it already ran.
+    if: >-
+      github.repository == 'sircharlo/meeting-media-manager' &&
+      (github.event_name != 'push' || github.event.head_commit.author.name != 'github-actions[bot]')
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -92,3 +108,107 @@ jobs:
             ARGS="$ARGS --language $LANGUAGE"
           fi
           node scripts/cleanup-crowdin.mjs $ARGS
+
+  repair-branch:
+    name: Repair the l10n_master export
+    # Runs after the sweep rather than alongside it: its push re-triggers
+    # this workflow, and a sweep still in flight would otherwise be
+    # cancelled by the concurrency group. !cancelled() keeps it running when
+    # the sweep failed - the branch repair doesn't touch the Crowdin API.
+    # Not needed on the schedule: the branch only changes through pushes,
+    # and every push gets its own run.
+    needs: repair
+    if: >-
+      ${{ !cancelled() &&
+      github.repository == 'sircharlo/meeting-media-manager' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      (github.event_name != 'push' || github.event.head_commit.author.name != 'github-actions[bot]') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      # Push events always apply; manual runs respect the apply input (a
+      # dry run only reports what the branch would need).
+      APPLY: ${{ github.event_name == 'push' || inputs.apply == true }}
+    steps:
+      - name: Require the PERSONAL_TOKEN secret
+        env:
+          HAS_TOKEN: ${{ secrets.PERSONAL_TOKEN != '' }}
+        run: |
+          if [ "$HAS_TOKEN" != "true" ]; then
+            echo "::error::The PERSONAL_TOKEN repository secret is missing or empty. Store a fine-grained GitHub PAT with read/write Contents access on this repository under that name; the built-in GITHUB_TOKEN can't be used here because its pushes never re-run the PR's checks."
+            exit 1
+          fi
+
+      - name: Check out l10n_master
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: l10n_master
+          token: ${{ secrets.PERSONAL_TOKEN }}
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Repair the exported files
+        run: |
+          if [ "$APPLY" = "true" ]; then
+            node docs/utils/fix-doc-markdown.mjs --verbose
+            node scripts/fix-i18n-locales.mjs --verbose
+          else
+            # Dry run: report only, and don't fail on what's found.
+            node docs/utils/fix-doc-markdown.mjs --check --verbose || true
+            node scripts/fix-i18n-locales.mjs --check --verbose || true
+          fi
+
+      # Anything still reported here can't be repaired by the scripts and
+      # needs a human fix in Crowdin. Reported as a warning rather than a
+      # failure so it never blocks pushing the repairs that did succeed.
+      - name: Report what could not be repaired
+        if: env.APPLY == 'true'
+        continue-on-error: true
+        run: |
+          node docs/utils/fix-doc-markdown.mjs --check
+          node scripts/fix-i18n-locales.mjs --check
+
+      - name: Commit and push the repairs
+        if: env.APPLY == 'true'
+        run: |
+          git add -u -- docs/src src/i18n
+          if git diff --staged --quiet; then
+            echo "The export on l10n_master is clean; nothing to push."
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit --quiet -F - <<EOF
+          fix(i18n): repair the Crowdin export on l10n_master
+
+          Automated by the Crowdin auto-repair workflow. Crowdin's stored
+          translations were already repaired at the source, but this export
+          predates the fix and Crowdin doesn't refresh an already-open PR.
+
+          $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
+          EOF
+          git show --stat --format='%h %s' HEAD
+          # Crowdin's exports come in bursts, so the branch can move while
+          # this job runs: rebase onto the new tip and retry before giving up.
+          for attempt in 1 2 3; do
+            if git push origin HEAD:l10n_master; then
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/3); rebasing onto the current l10n_master..."
+            git fetch origin l10n_master
+            if ! git rebase origin/l10n_master; then
+              git rebase --abort
+              echo "::error::The repairs conflict with a newer push to l10n_master; the run triggered by that push repairs the branch instead."
+              exit 1
+            fi
+          done
+          echo "::error::Could not push the repairs to l10n_master after 3 attempts."
+          exit 1
