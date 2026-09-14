@@ -4259,9 +4259,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"autoprefixer@npm:^10.5.5":
-  version: 10.5.5
-  resolution: "autoprefixer@npm:10.5.5"
+"autoprefixer@npm:^10.5.6":
+  version: 10.5.6
+  resolution: "autoprefixer@npm:10.5.6"
   dependencies:
     browserslist: "npm:^4.28.9"
     caniuse-lite: "npm:^1.0.30001810"
@@ -4272,7 +4272,7 @@ __metadata:
     postcss: ^8.1.0
   bin:
     autoprefixer: bin/autoprefixer
-  checksum: 10c0/269ba905d0dbdb4f9014744b779e6f42ae15ccdda54acea15e4d5802d043f15979f7871a279bbb4fc5fc5a5f4a2889bafd5a972904f156ad6bf816ab4d4c69ce
+  checksum: 10c0/fd678f01dd18f03bab2e491207a68ed9d04d73d89b0ae255dc9910474d525e03e66e13be0cd7319729075429ae281b2a52c46c67155a8aa20f7b8234d107260e
   languageName: node
   linkType: hard
 
@@ -8339,7 +8339,7 @@ __metadata:
     "@vue/test-utils": "npm:^2.5.0"
     "@vueuse/core": "npm:^14.4.0"
     "@vueuse/router": "npm:^14.4.0"
-    autoprefixer: "npm:^10.5.5"
+    autoprefixer: "npm:^10.5.6"
     buffer: "npm:^6.0.3"
     check-disk-space: "npm:^3.4.0"
     cheerio: "npm:^1.2.0"
