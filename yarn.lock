@@ -8199,7 +8199,7 @@ __metadata:
     prettier: "npm:^3.9.6"
     pretty-bytes: "npm:^7.1.3"
     probe-image-size: "npm:^7.4.0"
-    quasar: "npm:^2.29.0"
+    quasar: "npm:^2.32.2"
     rollup-plugin-visualizer: "npm:^7.1.1"
     sharp: "npm:^0.35.4"
     type-fest: "npm:^5.9.0"
@@ -9702,10 +9702,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"quasar@npm:^2.29.0":
-  version: 2.30.1
-  resolution: "quasar@npm:2.30.1"
-  checksum: 10c0/a96c47e45337e6df88d2c430efd71674dd57cca809be3070b7fb0fd05a0571eac23528a3f42f003c924a61302eaabd9c5800f3d1cb37dc6bd38a116a947c16cc
+"quasar@npm:^2.32.2":
+  version: 2.32.2
+  resolution: "quasar@npm:2.32.2"
+  checksum: 10c0/312e0e37e9ebd6f6e6c6cd909eb4f04d06915ca58d1e7a29f7cace24092a08c218857ac24067479cb15aff2be03ebc1adede28f6fd27e5f65c57439ae15c5cc3
   languageName: node
   linkType: hard
 
