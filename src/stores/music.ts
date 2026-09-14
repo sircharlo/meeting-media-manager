@@ -97,11 +97,13 @@ export const useMusicStore = defineStore('music', () => {
     }
     musicState.value = 'music.error';
     scheduleAutoStartRetry();
-    if (
-      event.target.error?.message &&
-      !isIgnorablePlaybackError(event.target.error.message)
-    ) {
-      errorCatcher(event.target.error);
+    const mediaError = event.target.error;
+    if (mediaError?.message && !isIgnorablePlaybackError(mediaError.message)) {
+      errorCatcher(new Error(mediaError.message), {
+        contexts: {
+          fn: { code: mediaError.code, name: 'handleMusicPlayerError' },
+        },
+      });
     }
   };
   const ensureMusicPlayer = (): HTMLAudioElement => {

@@ -90,6 +90,6 @@ const minNavigationDate = computed(() => {
 });
 
 const focusHandler = (evt: Event) => {
-  (evt.target as HTMLInputElement)?.blur();
+  if (evt.target instanceof HTMLElement) evt.target.blur();
 };
 </script>
