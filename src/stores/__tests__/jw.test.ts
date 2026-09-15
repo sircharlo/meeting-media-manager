@@ -1,4 +1,5 @@
 import type { DateInfo, MediaItem } from 'src/types';
+import type * as ApiModule from 'src/utils/api';
 
 import { createPinia, setActivePinia } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -16,13 +17,21 @@ vi.mock('src/helpers/error-catcher', () => ({
   errorCatcher: vi.fn(),
 }));
 
-vi.mock('src/utils/api', () => ({
-  fetchJwLanguages: vi.fn(),
-  fetchMemorials: vi.fn(),
-  fetchPubMediaLinks: vi.fn(),
-  fetchRaw: vi.fn(),
-  fetchYeartext: vi.fn(),
-}));
+vi.mock('src/utils/api', async (importOriginal) => {
+  const actual = await importOriginal<typeof ApiModule>();
+  return {
+    fetchJwLanguages: vi.fn(),
+    fetchMemorials: vi.fn(),
+    fetchPubMediaLinks: vi.fn(),
+    fetchRaw: vi.fn(),
+    fetchYeartext: vi.fn(),
+    // Real implementation: without a mocked globalThis.electronApi, its
+    // isDownloadErrorExpected() branch resolves to undefined/false, so this
+    // still boils down to the same isFetchNetworkError-driven classification
+    // these tests exercise, no extra setup needed.
+    shouldReportCaughtError: actual.shouldReportCaughtError,
+  };
+});
 
 vi.mock('src/utils/date', () => ({
   dateFromString: vi.fn((value) => new Date(value)),
