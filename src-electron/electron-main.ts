@@ -32,7 +32,6 @@ import {
 } from 'src-electron/main/downloads';
 import { cleanupFfmpegConversions } from 'src-electron/main/ffmpeg';
 import { cleanupHeicWorker } from 'src-electron/main/heic';
-import { cleanupImageSizeWorker } from 'src-electron/main/image-size';
 import {
   pruneStaleFallbackEntries,
   readJsonResilient,
@@ -626,7 +625,6 @@ if (gotTheLock) {
 
   app.on('will-quit', () => {
     cleanupHeicWorker();
-    cleanupImageSizeWorker();
     cleanupFfmpegConversions();
     // will-quit (unlike before-quit) isn't reached until any interactive
     // "confirm quit" prompt is resolved and the app is actually about to

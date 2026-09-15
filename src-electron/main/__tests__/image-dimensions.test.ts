@@ -1,42 +1,27 @@
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import vm from 'node:vm';
 import { describe, expect, it, vi } from 'vitest';
-
-vi.mock('electron', () => ({ utilityProcess: { fork: vi.fn() } }));
 
 vi.mock('src-electron/main/utils', () => ({
   captureElectronError: vi.fn(),
 }));
 
-import { workerSource } from '../image-size';
+import { getImageDimensions } from '../image-size';
 
-// Behavior contract for the dimension-reader worker: real fixture files in,
-// `{ width, height, orientation? }` out (or a posted error for unrecognized
-// input). These expectations were recorded against `image-size` and verified
-// unchanged against its `probe-image-size` replacement - only the specifier
-// below changes with the implementation; everything under it is the pinned
-// contract. See `../image-size.ts` for the worker source under test.
-const LIB_SPEC = 'probe-image-size/sync';
-
+// Behavior contract for `getImageDimensions`: real fixture files in,
+// `{ width, height, orientation? }` out (or a rejection for unrecognized
+// input), run against the real `@carboneio/image-size` dependency (not
+// mocked). These expectations were recorded against `image-size`, then
+// pinned unchanged across the `probe-image-size` and `@carboneio/image-size`
+// replacements that followed it - only the dependency changes; everything
+// below is the contract callers rely on. See `../image-size.ts`.
 interface ValidFixture {
   base64: string;
   expected: {
     height: number;
     orientation?: number;
     width: number;
-  };
-}
-
-interface WorkerResponse {
-  error?: { message: string };
-  id: number;
-  result?: {
-    height?: number;
-    orientation?: number;
-    width?: number;
   };
 }
 
@@ -85,62 +70,14 @@ const VALID_FIXTURES: Record<string, ValidFixture> = {
   },
 };
 
-// Bytes no image parser recognizes: the worker must post an error (which the
-// main-process side rejects with) rather than hanging or resolving garbage.
+// Bytes no image parser recognizes: the caller must reject (which
+// getImageDimensions also reports via captureElectronError) rather than
+// hanging or resolving garbage.
 const ERROR_FIXTURES: Record<string, string> = {
   'garbage.bin': 'AAECAwQFBgcICQ==',
 };
 
-const runRealWorkerOnce = async (filePath: string): Promise<WorkerResponse> => {
-  const posted: WorkerResponse[] = [];
-  // Container (not a bare `let`): assignments made inside the sandbox's `on`
-  // callback are invisible to control-flow analysis, so a plain variable
-  // would narrow to its `null` initializer here and the call below wouldn't
-  // type-check. Property reads reset narrowing after the `vm` call above.
-  const subscription: {
-    handler: ((message: { filePath: string; id: number }) => unknown) | null;
-  } = { handler: null };
-  const sandbox = {
-    process: {
-      // Mirrors a real fork: [execPath, scriptPath, libPath] - the worker
-      // requires its parsing library from argv[2].
-      argv: [
-        process.execPath,
-        'image-size-worker.cjs',
-        createRequire(import.meta.url).resolve(LIB_SPEC),
-      ],
-      parentPort: {
-        on: (
-          event: string,
-          callback: (message: { filePath: string; id: number }) => unknown,
-        ) => {
-          if (event === 'message') subscription.handler = callback;
-        },
-        postMessage: (message: WorkerResponse) => {
-          posted.push(message);
-        },
-      },
-    },
-    require: createRequire(import.meta.url),
-  };
-  vm.createContext(sandbox);
-  vm.runInContext(workerSource, sandbox);
-  const activeHandler = subscription.handler;
-  if (!activeHandler) throw new Error('worker did not subscribe to messages');
-  await activeHandler({ filePath, id: 1 });
-  await new Promise<void>((resolve) => {
-    setImmediate(resolve);
-  });
-  await new Promise<void>((resolve) => {
-    setImmediate(resolve);
-  });
-  expect(posted).toHaveLength(1);
-  const response = posted[0];
-  if (!response) throw new Error('worker posted no response');
-  return response;
-};
-
-describe('image worker behavior contract', () => {
+describe('image dimension reading behavior contract', () => {
   it.each(Object.entries(VALID_FIXTURES))(
     'reads %s with identical dimensions',
     async (fileName, fixture) => {
@@ -148,24 +85,22 @@ describe('image worker behavior contract', () => {
       try {
         const filePath = join(dir, fileName);
         writeFileSync(filePath, Buffer.from(fixture.base64, 'base64'));
-        const response = await runRealWorkerOnce(filePath);
-        expect(response.error).toBeUndefined();
-        expect(response.result).toMatchObject(fixture.expected);
+        await expect(getImageDimensions(filePath)).resolves.toMatchObject(
+          fixture.expected,
+        );
       } finally {
         rmSync(dir, { force: true, recursive: true });
       }
     },
   );
   it.each(Object.entries(ERROR_FIXTURES))(
-    'reports an error for unrecognized %s instead of hanging',
+    'rejects for unrecognized %s instead of hanging',
     async (fileName, base64) => {
       const dir = mkdtempSync(join(tmpdir(), 'mmm-imgdim-contract-'));
       try {
         const filePath = join(dir, fileName);
         writeFileSync(filePath, Buffer.from(base64, 'base64'));
-        const response = await runRealWorkerOnce(filePath);
-        expect(response.result).toBeUndefined();
-        expect(response.error?.message).toBeTruthy();
+        await expect(getImageDimensions(filePath)).rejects.toThrow();
       } finally {
         rmSync(dir, { force: true, recursive: true });
       }
