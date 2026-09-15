@@ -202,6 +202,8 @@
   "doing-so-will-greatly-simplify-and-facilitate-sharing-media-during-hybrid-meetings": "’Ia nā-reira-hia, e māmā-roa-hia ’e e fā’ofie-roa-hia te tuha’ra’a media i roto i te mau tūru’ira’a ’āpiti.",
   "dont-forget-add-missing-media": "’Apa’i, ’eiaha e mo’ehia ’ia fa’a’ō mai i te mau hīmene ’aore rā te mau media i toe.",
   "dont-forget-to-add-circuit-overseer-date": "No te mau faahopeara'a maitai roa, a tu'u i te taime o te farereira'a a te tiaau haaati i roto i te tuhaa \"@:{'congregationMeetings'}\" i roto i te mau Tauira'a.",
+  "download-issues-warning": "Download issues detected",
+  "download-issues-warning-explain": "M³ is having trouble downloading media from the official website. Check that your internet connection is stable, and confirm the website address in Settings is correct for your location.",
   "download-status": "Tupura’a o te tōtautāra’a",
   "downloading-files": "Aita e putu’i e ta’i-mai-hia nei | Te ta’i-mai-hia nei e 1 putu’i | Te ta’i-mai-hia nei e {count} putu’i",
   "drag-and-drop-or-click-to-browse": "E pāte’e ’e e tu’u i te mau pu’era’a parau i’onei ’aore rā e tāmā’iti nō te ’imi.",
