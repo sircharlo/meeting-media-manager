@@ -9,6 +9,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 ### 🐞 Bug Fixes
 
 - 🐞 **Settings**: Fixed a rare crash (`blur is not a function`) that could occur when a date or time field's picker popup opened via certain interactions.
+- 🐞 **Sign Language Videos**: Fixed the background sign-language list update failing with a file-not-found error after its download had to fall back to a temporary folder (e.g. a temporary permissions issue with the usual one).
 
 ### 🔧 Chores
 
