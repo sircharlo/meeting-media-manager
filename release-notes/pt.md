@@ -4,7 +4,7 @@
 
 Para obter a lista completa das mudanças entre versões, consulte nosso arquivo CHANGELOG.md no GitHub.
 
-## UPCOMING VERSION
+## v26.9.0
 
 ### ✨ Novos Recursos
 
