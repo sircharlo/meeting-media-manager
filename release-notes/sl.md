@@ -4,7 +4,7 @@
 
 Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.md na GitHubu.
 
-## PRIHAJAJOČA RAZLIČICA
+## v26.9.0
 
 ### ✨ Nove funkcije
 

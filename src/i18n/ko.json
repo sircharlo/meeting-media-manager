@@ -202,6 +202,8 @@
   "doing-so-will-greatly-simplify-and-facilitate-sharing-media-during-hybrid-meetings": "이 기능을 설정하면 혼합형 집회에서 미디어를 공유하는 작업이 크게 간소화되고 편리해집니다.",
   "dont-forget-add-missing-media": "누락된 노래나 미디어가 없는지 확인하십시오.",
   "dont-forget-to-add-circuit-overseer-date": "올바른 작동을 위해 설정의 \"@:{'congregationMeetings'}\" 섹션에 순회 감독자 방문 날짜를 추가하십시오.",
+  "download-issues-warning": "Download issues detected",
+  "download-issues-warning-explain": "M³ is having trouble downloading media from the official website. Check that your internet connection is stable, and confirm the website address in Settings is correct for your location.",
   "download-status": "다운로드 상태",
   "downloading-files": "다운로드 중인 파일 없음 | 파일 1개 다운로드 중 | 파일 {count}개 다운로드 중",
   "drag-and-drop-or-click-to-browse": "파일을 여기로 끌어오거나, 파일을 선택하려면 누르십시오.",
