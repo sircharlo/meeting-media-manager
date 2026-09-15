@@ -191,6 +191,36 @@ export const checkLowDiskSpaceAndNotify = async (): Promise<void> => {
   }
 };
 
+const EXPECTED_DOWNLOAD_ISSUE_WARNING_THROTTLE_MS = 5 * 60 * 1000;
+let lastExpectedDownloadIssueWarningAt = 0;
+
+/**
+ * Gently nudges an affected user (see the main process's
+ * isDownloadErrorExpected) toward the two things most likely to help - a
+ * stable connection and a correct website address. Throttled since this
+ * can be triggered from many independent caught fetch errors in quick
+ * succession (a single sync pass can touch several endpoints), and
+ * repeating the same toast for each one would just be noise.
+ */
+export const maybeWarnAboutExpectedDownloadIssue = (): void => {
+  const now = Date.now();
+  if (
+    now - lastExpectedDownloadIssueWarningAt <
+    EXPECTED_DOWNLOAD_ISSUE_WARNING_THROTTLE_MS
+  ) {
+    return;
+  }
+  lastExpectedDownloadIssueWarningAt = now;
+
+  createTemporaryNotification({
+    caption: i18n.global.t('download-issues-warning'),
+    deferWhileDialogOpen: true,
+    message: i18n.global.t('download-issues-warning-explain'),
+    timeout: 10000,
+    type: 'warning',
+  });
+};
+
 /**
  * Dismisses all active temporary notifications
  */

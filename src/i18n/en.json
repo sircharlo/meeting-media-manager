@@ -202,6 +202,8 @@
   "doing-so-will-greatly-simplify-and-facilitate-sharing-media-during-hybrid-meetings": "Doing so will greatly simplify and facilitate sharing media during hybrid meetings.",
   "dont-forget-add-missing-media": "Don't forget to add any missing songs or media.",
   "dont-forget-to-add-circuit-overseer-date": "For best results, add the date of the circuit overseer's visit to the \"@:{'congregationMeetings'}\" section in the Settings.",
+  "download-issues-warning": "Download issues detected",
+  "download-issues-warning-explain": "M³ is having trouble downloading media from the official website. Check that your internet connection is stable, and confirm the website address in Settings is correct for your location.",
   "download-status": "Download status",
   "downloading-files": "No files downloading | Downloading 1 file | Downloading {count} files",
   "drag-and-drop-or-click-to-browse": "Drag and drop files here or click to browse.",

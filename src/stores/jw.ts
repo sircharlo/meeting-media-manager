@@ -23,7 +23,6 @@ import {
   findMediaSection,
   getOrCreateMediaSection,
 } from 'src/helpers/media-sections';
-import { isFetchNetworkError } from 'src/shared/network-errors';
 import {
   extractCssUrls,
   findIconUrlInCss,
@@ -36,6 +35,7 @@ import {
   fetchPubMediaLinks,
   fetchRaw,
   fetchYeartext,
+  shouldReportCaughtError,
 } from 'src/utils/api';
 import {
   dateFromString,
@@ -786,6 +786,7 @@ export const useJwStore = defineStore('jw-store', {
       }
     },
     async updateYeartextFontUrls() {
+      const online = useCurrentStateStore().online;
       try {
         const wolUrl = `https://wol.${this.urlVariables.base}/en/wol/h/r1/lp-e`;
         const response = await fetchRaw(wolUrl, undefined, true);
@@ -804,7 +805,7 @@ export const useJwStore = defineStore('jw-store', {
               ...getYeartextFontUrlsFromCss(cssText),
             };
           } catch (e) {
-            if (isFetchNetworkError(e)) continue;
+            if (!(await shouldReportCaughtError(e, online))) continue;
             errorCatcher(e, {
               contexts: {
                 fn: { args: { cssUrl }, name: 'updateYeartextFontUrls' },
@@ -813,7 +814,7 @@ export const useJwStore = defineStore('jw-store', {
           }
         }
       } catch (e) {
-        if (isFetchNetworkError(e)) return;
+        if (!(await shouldReportCaughtError(e, online))) return;
         errorCatcher(e, {
           contexts: { fn: { name: 'updateYeartextFontUrls - main' } },
         });

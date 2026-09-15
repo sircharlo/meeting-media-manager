@@ -8,9 +8,9 @@ import {
 } from 'src/constants/jw-icons';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getFilesystemErrorCode } from 'src/shared/filesystem-errors';
-import { isFetchNetworkError } from 'src/shared/network-errors';
-import { fetchRaw } from 'src/utils/api';
+import { fetchRaw, shouldReportCaughtError } from 'src/utils/api';
 import { getFontsPath } from 'src/utils/fs';
+import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { ref } from 'vue';
 
@@ -514,7 +514,8 @@ export const getLocalFontPath = async (fontName: FontName) => {
       return await downloadFont(fontsDir, fontName);
     } catch (error) {
       const fallbackPath = await getExistingLocalFontPath(fontsDir, fontName);
-      if (!isFetchNetworkError(error)) {
+      const online = useCurrentStateStore().online;
+      if (await shouldReportCaughtError(error, online)) {
         errorCatcher(error, {
           contexts: {
             fn: {

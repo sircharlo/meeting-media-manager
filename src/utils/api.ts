@@ -10,6 +10,7 @@ import type {
 } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { maybeWarnAboutExpectedDownloadIssue } from 'src/helpers/notifications';
 import { isFetchNetworkError } from 'src/shared/network-errors';
 import { log } from 'src/shared/vanilla';
 import { addToDate, dateFromString, isInPast } from 'src/utils/date';
@@ -180,6 +181,21 @@ function buildUrl(url: string, params?: URLSearchParams) {
 // individually rather than guessing at a broader pattern.
 const IGNORED_400_PUB_SYMBOLS = new Set(['ewt']);
 
+export async function shouldReportCaughtError(error: unknown, online: boolean) {
+  if (!online) return false;
+
+  // Checked unconditionally (not just as a fallback when the error's shape
+  // isn't recognized) so an affected user gets the heads-up below on any
+  // caught fetch failure, not only the ones isFetchNetworkError already
+  // explains.
+  const isExpected =
+    !!(await globalThis.electronApi?.isDownloadErrorExpected());
+  if (isExpected) maybeWarnAboutExpectedDownloadIssue();
+
+  if (isFetchNetworkError(error)) return false;
+  return !isExpected;
+}
+
 function isIgnored400ForPub(params?: URLSearchParams) {
   const pub = params?.get('pub');
   if (!pub) return false;
@@ -234,12 +250,6 @@ function reportFetchJsonMainError(
       },
     },
   });
-}
-
-async function shouldReportCaughtError(error: unknown, online: boolean) {
-  if (isFetchNetworkError(error)) return false;
-  if (!online) return false;
-  return !(await globalThis.electronApi?.isDownloadErrorExpected());
 }
 
 function shouldReportStatus(response: Response, params?: URLSearchParams) {

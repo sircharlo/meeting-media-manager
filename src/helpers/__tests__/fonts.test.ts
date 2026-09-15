@@ -1,4 +1,7 @@
+import type * as ApiModule from 'src/utils/api';
+
 import { createPinia, setActivePinia } from 'pinia';
+import { errorCatcher } from 'src/helpers/error-catcher';
 import { useJwStore } from 'src/stores/jw';
 import { registerCachePathProvider } from 'src/utils/fs';
 import { join } from 'upath';
@@ -11,9 +14,17 @@ vi.mock('src/helpers/error-catcher', () => ({
   errorCatcher: vi.fn(),
 }));
 
-vi.mock('src/utils/api', () => ({
-  fetchRaw: vi.fn(),
-}));
+vi.mock('src/utils/api', async (importOriginal) => {
+  const actual = await importOriginal<typeof ApiModule>();
+  return {
+    fetchRaw: vi.fn(),
+    // Real implementation: without a mocked globalThis.electronApi, its
+    // isDownloadErrorExpected() branch resolves to undefined/false, so this
+    // still boils down to the same isFetchNetworkError-driven classification
+    // the tests below exercise, no extra setup needed.
+    shouldReportCaughtError: actual.shouldReportCaughtError,
+  };
+});
 
 describe('getLocalFontPath', () => {
   let appDataPath = '';
@@ -140,5 +151,39 @@ describe('getLocalFontPath', () => {
     );
     expect(await pathExists(fontPath)).toBe(true);
     expect(await readFile(fontPath)).toEqual(Buffer.from(downloadedFont));
+  });
+
+  it('does not report a transient network failure to Sentry', async () => {
+    const fontsDir = join(appDataPath, 'Fonts');
+    await emptyDir(fontsDir);
+
+    const { fetchRaw } = await import('src/utils/api');
+    vi.mocked(fetchRaw).mockRejectedValue(
+      new TypeError('Failed to fetch (cdn.jsdelivr.net)'),
+    );
+
+    const { getLocalFontPath } = await import('../fonts');
+
+    await expect(getLocalFontPath('NotoSans')).rejects.toThrow(
+      'Failed to download font NotoSans and no local copy exists',
+    );
+    expect(errorCatcher).not.toHaveBeenCalled();
+  });
+
+  it('reports a non-network failure to Sentry', async () => {
+    const fontsDir = join(appDataPath, 'Fonts');
+    await emptyDir(fontsDir);
+
+    const { fetchRaw } = await import('src/utils/api');
+    vi.mocked(fetchRaw).mockRejectedValue(
+      new Error('Unexpected parse failure'),
+    );
+
+    const { getLocalFontPath } = await import('../fonts');
+
+    await expect(getLocalFontPath('NotoSans')).rejects.toThrow(
+      'Failed to download font NotoSans and no local copy exists',
+    );
+    expect(errorCatcher).toHaveBeenCalledTimes(1);
   });
 });
