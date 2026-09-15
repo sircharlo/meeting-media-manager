@@ -5167,7 +5167,7 @@ const downloadMissingMedia = async (
       pubDir,
     });
     return {
-      FilePath: join(pubDir, basename(bestItem.file.url)),
+      FilePath: downloadedFile.path,
       Label: bestItem.title,
       StreamDuration: bestItem.duration,
       StreamThumbnailUrl: jwMediaInfo.thumbnail,
