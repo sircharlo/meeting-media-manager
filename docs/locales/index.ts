@@ -37,7 +37,7 @@ import cmnHans from './cmn-hans.json' with { type: 'json' };
 // 94.9% translated as of 2026-09-15
 import et from './et.json' with { type: 'json' };
 
-// 71.6% translated as of 2026-09-15
+// 71.5% translated as of 2026-09-15
 import pt from './pt.json' with { type: 'json' };
 
 // 59.3% translated as of 2026-09-15
