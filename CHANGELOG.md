@@ -12,7 +12,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🔧 Chores
 
-- 🔧 **Error Reporting**: A failed Watchtower Study Edition download and a failed camera/screen-share stream teardown could each be misreported — the former masked as a generic "no database file found" instead of the real cause, the latter generating a second, misleading error alongside the real one. Both now report accurately.
+- 🔧 **Error Reporting**: A failed Watchtower Study Edition download and a failed camera/screen-share stream teardown could each be misreported — the former masked as a generic "no database file found" instead of the real cause, the latter generating a second, misleading error alongside the real one. Both now report accurately. A transient network hiccup while fetching a font is also no longer reported as a hard error, matching the same handling already used elsewhere for flaky connections.
 
 ## v26.9.0
 
