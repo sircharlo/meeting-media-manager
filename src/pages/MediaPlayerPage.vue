@@ -1218,11 +1218,11 @@ const loadFonts = async () => {
 };
 
 const clearWebsiteStream = () => {
-  if (currentMediaElement.value) {
-    currentMediaElement.value.pause();
-    stopMediaStreamTracks(currentMediaElement.value.srcObject);
-    currentMediaElement.value.srcObject = null;
-  }
+  // cleanupMediaElement (not a manual pause/srcObject reset) so the
+  // resulting `error` event on currentMediaElement is recognized as
+  // deliberate teardown instead of reported as a real playback failure -
+  // see the UX-11 note above elementsBeingCleanedUp.
+  cleanupMediaElement(currentMediaElement.value);
   postMediaPlayingAction('');
   displayLayer1.value.isLive = false;
   displayLayer1.value.url = '';
@@ -1244,11 +1244,7 @@ const resetFailedWebsiteStream = (
   stopMediaStreamTracks(stream);
   videoStreaming.value = false;
   postMediaPlayingAction('');
-  currentMediaElement.value?.pause();
-  if (currentMediaElement.value?.srcObject) {
-    stopMediaStreamTracks(currentMediaElement.value.srcObject);
-    currentMediaElement.value.srcObject = null;
-  }
+  cleanupMediaElement(currentMediaElement.value);
 };
 
 const shouldClearWebsiteStream = (

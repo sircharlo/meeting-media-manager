@@ -5155,6 +5155,9 @@ const downloadMissingMedia = async (
       size: bestItem.filesize,
       url: bestItem.file.url,
     });
+    if (downloadedFile.error) {
+      return { FilePath: '' };
+    }
     await downloadRelatedMediaAssets({
       bestItem,
       downloadedFile,
@@ -5774,7 +5777,7 @@ const downloadJwpub = async (
       };
       const cachedJwpub = await getExistingJwpub(publicationDir);
       if (cachedJwpub.path) return cachedJwpub;
-      return { new: false, path: '' };
+      return { error: true, new: false, path: '' };
     };
     const publicationInfo = await getPubMediaLinks(publication, meetingDate);
     if (!publicationInfo?.files) {
