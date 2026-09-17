@@ -2237,10 +2237,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/extras@npm:^2.0.4":
-  version: 2.0.4
-  resolution: "@quasar/extras@npm:2.0.4"
-  checksum: 10c0/f0ed699f7892fd25bd248f78cb208e9db368751a4fb54e2de7c06893888bee1f65d182069ab41e786c571a92d91e79c14719e334c3f2ca955ca5480766a55e08
+"@quasar/extras@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@quasar/extras@npm:2.1.0"
+  checksum: 10c0/e3c3ea00a6136f947ed093e7c2eadbce2c8209cfdb101d69353c668ea3905b22dfae42c7d492b3ee04a4658fa3d644d54af8453e06793221f5a8bbd60ab042da
   languageName: node
   linkType: hard
 
@@ -8303,7 +8303,7 @@ __metadata:
     "@opentelemetry/api-logs": "npm:^0.222.0"
     "@pinia/testing": "npm:^2.0.1"
     "@quasar/app-vite": "npm:^3.8.4"
-    "@quasar/extras": "npm:^2.0.4"
+    "@quasar/extras": "npm:^2.1.0"
     "@quasar/vite-plugin": "npm:^2.0.2"
     "@sentry/core": "npm:^10.74.0"
     "@sentry/electron": "npm:^7.18.0"
