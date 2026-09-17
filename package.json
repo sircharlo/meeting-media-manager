@@ -47,7 +47,7 @@
     "@jitsi/robotjs": "^0.6.24",
     "@numairawan/video-duration": "^1.0.0",
     "@opentelemetry/api-logs": "^0.222.0",
-    "@quasar/extras": "^2.0.4",
+    "@quasar/extras": "^2.1.0",
     "@sentry/core": "^10.74.0",
     "@sentry/electron": "^7.18.0",
     "@sentry/vue": "^10.74.0",
