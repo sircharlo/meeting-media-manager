@@ -3574,6 +3574,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vitejs/plugin-vue@npm:^6.0.9":
+  version: 6.0.9
+  resolution: "@vitejs/plugin-vue@npm:6.0.9"
+  dependencies:
+    "@rolldown/pluginutils": "npm:^1.0.1"
+  peerDependencies:
+    vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
+    vue: ^3.2.25
+  checksum: 10c0/0e9308788f7ff4f6e0b44cd1135cb780c6bb1791fd513fc11b0f1153e131243993df950397e0b342c4522ba181cd35a621e0c5163327e4b3e225c2902b2a56e2
+  languageName: node
+  linkType: hard
+
 "@vitest/eslint-plugin@npm:^1.6.27":
   version: 1.6.27
   resolution: "@vitest/eslint-plugin@npm:1.6.27"
@@ -8307,7 +8319,7 @@ __metadata:
     "@types/node": "npm:^26.5.1"
     "@types/pretty-bytes": "npm:^5.2.0"
     "@types/yauzl": "npm:^3.4.0"
-    "@vitejs/plugin-vue": "npm:^6.0.8"
+    "@vitejs/plugin-vue": "npm:^6.0.9"
     "@vitest/eslint-plugin": "npm:^1.6.27"
     "@vue/compiler-dom": "npm:^3.5.42"
     "@vue/eslint-config-prettier": "npm:^10.2.0"
