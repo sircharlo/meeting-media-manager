@@ -134,7 +134,7 @@
     "typescript": "6.0.3",
     "vite": "^8.3.0",
     "vitepress": "^2.0.0-alpha.20",
-    "vitest": "^5.0.0",
+    "vitest": "^5.0.1",
     "vue-eslint-parser": "^10.4.1",
     "vue-tsc": "^3.3.11"
   },
