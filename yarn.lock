@@ -3926,9 +3926,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/test-utils@npm:^2.5.0":
-  version: 2.5.0
-  resolution: "@vue/test-utils@npm:2.5.0"
+"@vue/test-utils@npm:^2.5.1":
+  version: 2.5.1
+  resolution: "@vue/test-utils@npm:2.5.1"
   dependencies:
     js-beautify: "npm:^2.0.0"
     vue-component-type-helpers: "npm:^3.0.0"
@@ -3939,7 +3939,7 @@ __metadata:
   peerDependenciesMeta:
     "@vue/server-renderer":
       optional: true
-  checksum: 10c0/e131aecc7aef29b8953d5fac51bf2dd85dfad2f428deb376978505aea7e2e954bf9f24af18f2279862af63c5148db60ed0ee44b91a0be29f49d56df08c192daf
+  checksum: 10c0/f44597b0db0689f4d30e32d1f8d367bf2ab040e80431b46cb9ce423fae5485bc56c03c15c530fa29c6a824868355cc59c33ed4704304215d17bc75ac3565e385
   languageName: node
   linkType: hard
 
@@ -8416,7 +8416,7 @@ __metadata:
     "@vue/compiler-dom": "npm:^3.5.43"
     "@vue/eslint-config-prettier": "npm:^10.2.0"
     "@vue/eslint-config-typescript": "npm:^14.9.0"
-    "@vue/test-utils": "npm:^2.5.0"
+    "@vue/test-utils": "npm:^2.5.1"
     "@vueuse/core": "npm:^15.0.0"
     "@vueuse/router": "npm:^15.0.0"
     autoprefixer: "npm:^10.6.1"
