@@ -6,7 +6,7 @@ title: 下载
 
 # 下载
 
-请根据您的操作系统，从下方链接下载最新版 Meeting Media Manager。这些链接始终指向最新的稳定版本。 这些链接总是指最新的稳定版本。
+请根据您的操作系统，从下方链接下载最新版 Meeting Media Manager。这些链接始终指向最新的稳定版本。这些链接总是指最新的稳定版本。
 
 <script setup lang="ts">
 import { data as downloads } from '../../data/version.data.mts'
