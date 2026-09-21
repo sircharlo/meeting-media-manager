@@ -8319,7 +8319,7 @@ __metadata:
     quasar: "npm:^2.32.3"
     rollup-plugin-visualizer: "npm:^7.1.1"
     sharp: "npm:^0.35.4"
-    type-fest: "npm:^5.9.0"
+    type-fest: "npm:^5.10.0"
     typescript: "npm:6.0.3"
     upath: "npm:^3.0.8"
     vite: "npm:^8.3.0"
@@ -11551,12 +11551,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-fest@npm:^5.0.0, type-fest@npm:^5.5.0, type-fest@npm:^5.9.0":
+"type-fest@npm:^5.0.0, type-fest@npm:^5.5.0":
   version: 5.9.0
   resolution: "type-fest@npm:5.9.0"
   dependencies:
     tagged-tag: "npm:^1.0.0"
   checksum: 10c0/9bf14a49454b9b40d9fe85e563a4cf90990bbe7c75958665b72660b4197a905f247be682a7757cac7c8fa60fc0eae32cc8cf51f80a88e15f0a3d4a8ec07eb5b6
+  languageName: node
+  linkType: hard
+
+"type-fest@npm:^5.10.0":
+  version: 5.10.0
+  resolution: "type-fest@npm:5.10.0"
+  dependencies:
+    tagged-tag: "npm:^1.0.0"
+  checksum: 10c0/313c5d0e37a3f1cc82e942f3228f897623c8b54a63a8a95532d0c2c21ab200793caa70bd8904a83fd713eb28d87ba32468b09b345ef6efa25cecb345b467226f
   languageName: node
   linkType: hard
 
