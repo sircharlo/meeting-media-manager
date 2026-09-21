@@ -242,7 +242,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@clack/prompts@npm:^1.8.0":
+"@clack/prompts@npm:^1.8.1":
   version: 1.8.1
   resolution: "@clack/prompts@npm:1.8.1"
   dependencies:
@@ -2159,18 +2159,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/app-vite@npm:^3.8.4":
-  version: 3.8.4
-  resolution: "@quasar/app-vite@npm:3.8.4"
+"@quasar/app-vite@npm:^3.9.0":
+  version: 3.9.0
+  resolution: "@quasar/app-vite@npm:3.9.0"
   dependencies:
-    "@clack/prompts": "npm:^1.8.0"
+    "@clack/prompts": "npm:^1.8.1"
     "@quasar/art": "npm:^1.0.0"
     "@quasar/render-ssr-error": "npm:^2.2.6"
     "@quasar/ssl-certificate": "npm:^2.1.0"
     "@quasar/vite-plugin": "npm:^2.0.2"
-    "@types/chrome": "npm:^0.2.9"
+    "@types/chrome": "npm:^0.3.0"
     "@types/cordova": "npm:^11.0.3"
-    "@vitejs/plugin-vue": "npm:^6.0.8"
+    "@vitejs/plugin-vue": "npm:^6.0.9"
     chokidar: "npm:^5.0.0"
     ci-info: "npm:^4.4.0"
     confbox: "npm:^0.3.1"
@@ -2184,7 +2184,7 @@ __metadata:
     jiti: "npm:^2.7.0"
     kolorist: "npm:^1.8.0"
     mlly: "npm:^1.8.2"
-    open: "npm:^11.0.3"
+    open: "npm:^11.0.4"
     picomatch: "npm:^4.0.7"
     rolldown: "npm:^1.2.8"
     sass-embedded: "npm:^1.104.1"
@@ -2226,7 +2226,7 @@ __metadata:
       optional: true
   bin:
     quasar: ./bin/quasar.js
-  checksum: 10c0/fca40b057c0ed0babbb552284ca3fdb91bfb637e9f08d2967bde74edeee74feeb5117d7517e0133278ac4b195226884e83bb7669dd239e50d8e78e4aab23e5d3
+  checksum: 10c0/0527e5007394bfcf35d5b74792f04b3e4f964578e5d27018e80a404e084eb582af792be31156466668372b779c3e9ac7bec30fe1b0912aa46a76ca5dc95f6cbe
   languageName: node
   linkType: hard
 
@@ -3005,13 +3005,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/chrome@npm:^0.2.9":
-  version: 0.2.9
-  resolution: "@types/chrome@npm:0.2.9"
+"@types/chrome@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "@types/chrome@npm:0.3.0"
   dependencies:
     "@types/filesystem": "npm:*"
     "@types/har-format": "npm:*"
-  checksum: 10c0/6d952f2c993478afa000a75a3422dc97b5041c1a692f8225762650eafe3aff7597b0e76519297b60055c82e575d5edcc1f03118870981da99ac71351fddd1d4f
+  checksum: 10c0/b7b9a8e692cdbb10bb1334637e6d8ad2b02be8aeea749bc5218169379430ae93fe18cfead81a7af716a0270c258dcb8c5813690085b1f8255cdf54b8467817f2
   languageName: node
   linkType: hard
 
@@ -8377,7 +8377,7 @@ __metadata:
     "@numairawan/video-duration": "npm:^1.0.0"
     "@opentelemetry/api-logs": "npm:^0.222.0"
     "@pinia/testing": "npm:^2.0.1"
-    "@quasar/app-vite": "npm:^3.8.4"
+    "@quasar/app-vite": "npm:^3.9.0"
     "@quasar/extras": "npm:^2.1.0"
     "@quasar/vite-plugin": "npm:^2.0.2"
     "@sentry/core": "npm:^10.74.0"
@@ -9204,9 +9204,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"open@npm:^11.0.3":
-  version: 11.0.3
-  resolution: "open@npm:11.0.3"
+"open@npm:^11.0.4":
+  version: 11.0.4
+  resolution: "open@npm:11.0.4"
   dependencies:
     default-browser: "npm:^5.5.1"
     define-lazy-prop: "npm:^3.0.0"
@@ -9214,7 +9214,7 @@ __metadata:
     is-inside-container: "npm:^1.0.0"
     powershell-utils: "npm:^0.2.1"
     wsl-utils: "npm:^1.0.0"
-  checksum: 10c0/46e628edc5fddd52ad925899915fdfda8b2388e205be0682884d06d3ba3813a161f42f7c8e9ca4cce9ec378efa04450836c98440c78d083625b0b46cd4e56d7d
+  checksum: 10c0/5be0a902323ea9266cf7323edf8d714b516f739519485e98b2508e38e1ffe6f98e3426aeb182fc88239bf98777258b27abbfe5cb1938bff8dbccec2fd603aca5
   languageName: node
   linkType: hard
 
