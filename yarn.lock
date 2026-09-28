@@ -6949,6 +6949,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fs-extra@npm:^11.4.1":
+  version: 11.4.1
+  resolution: "fs-extra@npm:11.4.1"
+  dependencies:
+    graceful-fs: "npm:^4.2.0"
+    jsonfile: "npm:^6.0.1"
+    universalify: "npm:^2.0.0"
+  checksum: 10c0/15fafc34e0b6c1b59f0f92aae90b5fab44129ad7ebc1362cc593f2dec1d8a765b7b70b40e2bc779ee146f6ff13a736a065ddb991e5b597e294919ccb0c8ff834
+  languageName: node
+  linkType: hard
+
 "fs-extra@npm:^8.1.0":
   version: 8.1.0
   resolution: "fs-extra@npm:8.1.0"
@@ -8612,7 +8623,7 @@ __metadata:
     fantasticon: "patch:fantasticon@npm%3A4.1.0#~/.yarn/patches/fantasticon-npm-4.1.0-3af043d076.patch"
     fluent-ffmpeg: "npm:^2.1.3"
     fontkit: "npm:^2.0.4"
-    fs-extra: "npm:^11.4.0"
+    fs-extra: "npm:^11.4.1"
     globals: "npm:^17.12.0"
     happy-dom: "npm:^20.14.5"
     heic-convert: "npm:^2.1.0"
