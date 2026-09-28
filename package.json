@@ -132,7 +132,7 @@
     "rollup-plugin-visualizer": "^7.1.1",
     "sharp": "^0.35.4",
     "typescript": "6.0.3",
-    "vite": "^8.3.0",
+    "vite": "^8.3.1",
     "vitepress": "^2.0.0-alpha.20",
     "vitest": "^5.0.2",
     "vue-eslint-parser": "^10.4.1",
