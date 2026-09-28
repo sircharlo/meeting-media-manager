@@ -6392,16 +6392,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-perfectionist@npm:^5.12.0":
-  version: 5.12.0
-  resolution: "eslint-plugin-perfectionist@npm:5.12.0"
+"eslint-plugin-perfectionist@npm:^5.12.1":
+  version: 5.12.1
+  resolution: "eslint-plugin-perfectionist@npm:5.12.1"
   dependencies:
     "@typescript-eslint/types": "npm:^8.70.0"
     "@typescript-eslint/utils": "npm:^8.70.0"
     natural-orderby: "npm:^5.0.0"
   peerDependencies:
     eslint: ^8.45.0 || ^9.0.0 || ^10.0.0
-  checksum: 10c0/a0123f372deebe0e3ef18e1b8279fe9bd1991d7e0ebe4bea4a34fda9cbb3485b0c7a860e89f125a5a857aa3c70442cb7a2b519a116591cbd875267800b291cd6
+  peerDependenciesMeta:
+    eslint:
+      optional: true
+  checksum: 10c0/66812bf7f7998bfdc83f8e2cf818ecc848daf629f60f26f4994a0ec48d798a7bd6a9d52d2ded66fbad10c50456bd2413cd0ec82dc5e983f2d96b43b4e39d08ea
   languageName: node
   linkType: hard
 
@@ -8742,7 +8745,7 @@ __metadata:
     electron-dl-manager: "npm:^4.2.3"
     electron-updater: "npm:^6.8.9"
     eslint: "npm:^10.11.0"
-    eslint-plugin-perfectionist: "npm:^5.12.0"
+    eslint-plugin-perfectionist: "npm:^5.12.1"
     eslint-plugin-vue: "npm:^10.11.1"
     fantasticon: "patch:fantasticon@npm%3A4.1.0#~/.yarn/patches/fantasticon-npm-4.1.0-3af043d076.patch"
     fluent-ffmpeg: "npm:^2.1.3"
