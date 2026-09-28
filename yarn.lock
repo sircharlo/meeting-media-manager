@@ -5692,7 +5692,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:^3.3.1, dompurify@npm:^3.4.13":
+"dompurify@npm:^3.3.1":
   version: 3.4.15
   resolution: "dompurify@npm:3.4.15"
   dependencies:
@@ -5701,6 +5701,18 @@ __metadata:
     "@types/trusted-types":
       optional: true
   checksum: 10c0/406b5f0f9c9dcbc80016367d33e73585b6a6f440815228d7e9cbe8abe71058183b1f4cb4207b79b8473637de4a106fc055eb6da271ef9db353d29679b891ecbc
+  languageName: node
+  linkType: hard
+
+"dompurify@npm:^3.4.16":
+  version: 3.4.16
+  resolution: "dompurify@npm:3.4.16"
+  dependencies:
+    "@types/trusted-types": "npm:^2.0.7"
+  dependenciesMeta:
+    "@types/trusted-types":
+      optional: true
+  checksum: 10c0/65a901c6b6d489d3e898f67223d81dac66d613cda48f5785f0ed52a4ae320c4b2745490a58c14161e29f0273080fea0a0cb234a9ef892650e1a9b2a7befa07a5
   languageName: node
   linkType: hard
 
@@ -8601,7 +8613,7 @@ __metadata:
     chokidar: "npm:^5.0.0"
     countries-and-timezones: "npm:^3.10.0"
     depcheck: "npm:^1.4.7"
-    dompurify: "npm:^3.4.13"
+    dompurify: "npm:^3.4.16"
     electron: "npm:^43.4.0"
     electron-builder: "npm:26.15.3"
     electron-dl-manager: "npm:^4.2.3"
