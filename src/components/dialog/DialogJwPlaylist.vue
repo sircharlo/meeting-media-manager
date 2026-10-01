@@ -219,7 +219,7 @@ import {
 } from 'src/helpers/jw-media';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { getFilesystemErrorCode } from 'src/shared/filesystem-errors';
-import { log } from 'src/shared/vanilla';
+import { log, uuid } from 'src/shared/vanilla';
 import { getTempPath } from 'src/utils/fs';
 import { isImage } from 'src/utils/media';
 import { findDb } from 'src/utils/sqlite';
@@ -260,6 +260,8 @@ const playlistItems = ref<
 >([]);
 const selectedItems = ref<number[]>([]);
 const playlistName = ref<string>('');
+// Where the currently loaded playlist was extracted to (see loadPlaylistItems).
+const extractedPlaylistPath = ref('');
 
 const includePrefix = ref(true);
 const customPrefix = ref('');
@@ -270,6 +272,7 @@ const { selectedDate, selectedDateObject } = storeToRefs(currentState);
 
 const {
   basename,
+  closeSqliteConnection,
   dirname,
   executeQuery,
   extname,
@@ -293,20 +296,39 @@ const loadPlaylistItems = async () => {
   }
   loadingPlaylistPath = props.jwPlaylistPath;
   loading.value = true;
+  let outputPath = '';
+  let openedDbFile: string | undefined;
 
   try {
-    // Extract package
-    const tempDir = await getTempPath();
-    const outputPath = join(tempDir, basename(props.jwPlaylistPath));
+    // Extract package into a folder unique to this import. Re-importing a
+    // playlist with the same filename used to extract over the previous
+    // import's folder, whose userData.db was still held open (WAL mode
+    // memory-maps userData.db-shm, which Windows then refuses to overwrite:
+    // MMM-V2-3K5/3JT/3JY) - and could serve the previous version's cached
+    // query results against the new files (MMM-V2-3JK).
+    outputPath = join(
+      await getTempPath(),
+      `${basename(props.jwPlaylistPath)}-${uuid()}`,
+    );
+    extractedPlaylistPath.value = outputPath;
 
     try {
       await unzip(props.jwPlaylistPath, outputPath);
     } catch (err) {
+      // The main process already reports unzip failures it can act on
+      // (with full context); a corrupt or truncated file picked by the user
+      // isn't a bug. Just tell the user.
+      log(
+        `Could not extract JW playlist ${props.jwPlaylistPath}`,
+        'jwPlaylist',
+        'warn',
+        err,
+      );
       createTemporaryNotification({
         message: t('error-reading-playlist-file'),
         type: 'negative',
       });
-      throw err;
+      return;
     }
 
     const dbFile = await findDb(outputPath);
@@ -317,6 +339,7 @@ const loadPlaylistItems = async () => {
       });
       return;
     }
+    openedDbFile = dbFile;
 
     // ---- Get Playlist Name ----
     try {
@@ -327,7 +350,9 @@ const loadPlaylistItems = async () => {
       playlistName.value = tag?.Name ?? '';
       customPrefix.value = playlistName.value;
     } catch (err) {
-      errorCatcher(err);
+      errorCatcher(err, {
+        contexts: { fn: { dbFile, name: 'loadPlaylistItems playlist name' } },
+      });
     }
 
     // ---- Get Playlist Items ----
@@ -474,8 +499,28 @@ const loadPlaylistItems = async () => {
 
     playlistItems.value = processedItems;
   } catch (err) {
-    errorCatcher(err);
+    errorCatcher(err, {
+      contexts: {
+        fn: {
+          jwPlaylistPath: props.jwPlaylistPath,
+          name: 'loadPlaylistItems',
+          outputPath,
+        },
+      },
+    });
   } finally {
+    // Everything needed from the playlist db has been read; don't keep the
+    // handle (and its cached results) open for the rest of the session.
+    if (openedDbFile) {
+      await closeSqliteConnection(openedDbFile).catch((err) =>
+        log(
+          `Could not close playlist db ${openedDbFile}`,
+          'jwPlaylist',
+          'warn',
+          err,
+        ),
+      );
+    }
     loadingPlaylistPath = undefined;
     loading.value = false;
   }
@@ -727,10 +772,7 @@ const addSelectedItems = async () => {
       .map((i) => playlistItems.value[i])
       .filter((item): item is NonNullable<typeof item> => !!item);
 
-    const outputPath = join(
-      await getTempPath(),
-      basename(props.jwPlaylistPath),
-    );
+    const outputPath = extractedPlaylistPath.value;
 
     isProcessing.value = true;
 
