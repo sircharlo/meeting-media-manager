@@ -148,6 +148,7 @@ const pendingRequests = new Map<
 >();
 
 const rejectAllPending = (error: Error) => {
+  stallWatchdog.stop();
   for (const { reject } of pendingRequests.values()) reject(error);
   pendingRequests.clear();
 };
@@ -164,6 +165,15 @@ const getWorker = () => {
     if (!pending) return;
     pendingRequests.delete(message.id);
 
+    // The worker just finished a request, so it isn't stuck: give whatever
+    // is still queued behind it a fresh window instead of counting the time
+    // it spent waiting in line.
+    if (pendingRequests.size > 0) {
+      stallWatchdog.touch();
+    } else {
+      stallWatchdog.stop();
+    }
+
     if (message.error) {
       const error = new Error(message.error.message);
       error.stack = message.error.stack;
@@ -173,12 +183,18 @@ const getWorker = () => {
     }
   });
 
+  // A worker terminated by the stall watchdog below still emits 'exit'
+  // (asynchronously, after a replacement worker may already be serving new
+  // requests), so only react to events from the current worker - otherwise
+  // the late 'exit' would reject the replacement's requests and orphan it.
   newWorker.on('error', (error) => {
+    if (worker !== newWorker) return;
     rejectAllPending(error instanceof Error ? error : new Error(String(error)));
     worker = undefined;
   });
 
   newWorker.on('exit', (code) => {
+    if (worker !== newWorker) return;
     if (code !== 0) {
       rejectAllPending(new Error(`SQLite worker exited with code ${code}`));
     }
@@ -195,7 +211,69 @@ const getWorker = () => {
 // likely to throw a corruption error), so this is defensive rather than a
 // confirmed exploitable hang, but a plain request/response promise with no
 // timeout would still wait forever if the worker ever did get stuck.
+//
+// The timeout is a *progress* watchdog, not a per-request deadline: the
+// worker handles requests one at a time, and callers fire whole batches of
+// queries at once (Promise.all), so a per-request timer started at post time
+// also counted the time spent queued behind other queries. Under load (large
+// jwpub extraction, many downloads) that tripped on trivial queries, tore
+// down a perfectly healthy worker and silently turned every queued query
+// into an empty result (MMM-V2-3JR, and the bogus "No document id found"
+// in MMM-V2-3K7). The watchdog only fires if the worker completes nothing at
+// all for SQLITE_TIMEOUT_MS while requests are outstanding.
 const SQLITE_TIMEOUT_MS = 8000;
+
+export class SqliteWorkerStallError extends Error {
+  constructor(
+    readonly timeoutMs: number,
+    readonly outstandingRequests: number,
+  ) {
+    super(`Timed out waiting for SQLite worker after ${timeoutMs}ms`);
+    this.name = 'SqliteWorkerStallError';
+  }
+}
+
+/**
+ * A resettable inactivity timer: `onStall` runs only if `touch()` isn't
+ * called again within `timeoutMs`. `touch()` (re)arms it, `stop()` disarms it.
+ * @param timeoutMs How long without progress counts as a stall
+ * @param onStall Called once when the timer elapses
+ * @returns The watchdog controls
+ */
+export const createProgressWatchdog = (
+  timeoutMs: number,
+  onStall: () => void,
+) => {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+
+  const stop = () => {
+    if (timer) clearTimeout(timer);
+    timer = undefined;
+  };
+
+  return {
+    isArmed: () => !!timer,
+    stop,
+    touch: () => {
+      stop();
+      timer = setTimeout(() => {
+        timer = undefined;
+        onStall();
+      }, timeoutMs);
+    },
+  };
+};
+
+const stallWatchdog = createProgressWatchdog(SQLITE_TIMEOUT_MS, () => {
+  const stallError = new SqliteWorkerStallError(
+    SQLITE_TIMEOUT_MS,
+    pendingRequests.size,
+  );
+  const hungWorker = worker;
+  worker = undefined;
+  hungWorker?.terminate();
+  rejectAllPending(stallError);
+});
 
 const postToWorkerWithTimeout = (
   request: Omit<SqliteWorkerRequest, 'id'>,
@@ -203,26 +281,11 @@ const postToWorkerWithTimeout = (
   const id = nextRequestId++;
 
   return new Promise((resolve, reject) => {
-    const timeout = setTimeout(() => {
-      const timeoutError = new Error(
-        `Timed out waiting for SQLite worker after ${SQLITE_TIMEOUT_MS}ms`,
-      );
-      const hungWorker = worker;
-      worker = undefined;
-      hungWorker?.terminate();
-      rejectAllPending(timeoutError);
-    }, SQLITE_TIMEOUT_MS);
+    pendingRequests.set(id, { reject, resolve });
 
-    pendingRequests.set(id, {
-      reject: (error) => {
-        clearTimeout(timeout);
-        reject(error);
-      },
-      resolve: (value) => {
-        clearTimeout(timeout);
-        resolve(value);
-      },
-    });
+    // Arm only when the worker goes from idle to busy; while it's already
+    // working through a queue, each completed request re-arms it instead.
+    if (!stallWatchdog.isArmed()) stallWatchdog.touch();
 
     getWorker().postMessage({ ...request, id });
   });
@@ -279,7 +342,17 @@ export const executeQuery = async <T extends object = QueryResponseItem>(
     // The worker dropped the connection it used when a query fails, so a
     // later query reopens it fresh.
     captureElectronError(e, {
-      contexts: { fn: { name: 'executeQuery', path: dbPath, query } },
+      contexts: {
+        fn: {
+          name: 'executeQuery',
+          outstandingRequests:
+            e instanceof SqliteWorkerStallError
+              ? e.outstandingRequests
+              : undefined,
+          path: dbPath,
+          query,
+        },
+      },
     });
     return [];
   }

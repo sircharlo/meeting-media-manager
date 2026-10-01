@@ -13,6 +13,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 ### 🐞 Bug Fixes
 
 - 🐞 **Media Fetching**: Fixed meeting media failing to load for some congregations, depending on their Website setting — a security tightening in v26.9.1 accidentally blocked some legitimate media servers.
+- 🐞 **Media Fetching**: Fixed meeting parts occasionally coming up empty (or reporting a missing document) while M³ was busy — for example while extracting a large publication or downloading many songs at once — because publication lookups waiting in line were mistaken for a frozen database reader.
 - 🐞 **Downloads**: Fixed media downloads that could stay paused, or never start at all, until M³ was restarted. A download interrupted by a connection problem is now retried (and shown as failed if it keeps failing) instead of silently holding up every download queued behind it, and a download that stops receiving data is restarted automatically. Downloads are also no longer held back whenever free disk space drops below 10 GB — only once it is critically low (under 1 GB) — and they resume on their own once space frees up.
 
 ## v26.9.1

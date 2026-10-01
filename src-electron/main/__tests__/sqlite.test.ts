@@ -15,7 +15,12 @@ vi.mock('src/shared/vanilla', () => ({
 import { captureElectronError } from 'src-electron/main/utils';
 import { log } from 'src/shared/vanilla';
 
-import { closeAllConnections, closeConnection, executeQuery } from '../sqlite';
+import {
+  closeAllConnections,
+  closeConnection,
+  createProgressWatchdog,
+  executeQuery,
+} from '../sqlite';
 
 const tempDirs: string[] = [];
 
@@ -277,5 +282,88 @@ describe('executeQuery', () => {
         [1],
       ),
     ).toEqual([{ title: 'Second Song' }]);
+  });
+});
+
+describe('createProgressWatchdog', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  // MMM-V2-3JR: the old per-request timer started at post time, so a long
+  // queue of fast queries could exceed it even though the worker was making
+  // steady progress. Each completed request now re-arms the watchdog.
+  it('does not fire while progress keeps being reported', () => {
+    vi.useFakeTimers();
+    const onStall = vi.fn();
+    const watchdog = createProgressWatchdog(1000, onStall);
+
+    watchdog.touch();
+    for (let i = 0; i < 10; i++) {
+      vi.advanceTimersByTime(900);
+      watchdog.touch();
+    }
+
+    expect(onStall).not.toHaveBeenCalled();
+    expect(watchdog.isArmed()).toBe(true);
+  });
+
+  it('fires once after the timeout elapses without progress', () => {
+    vi.useFakeTimers();
+    const onStall = vi.fn();
+    const watchdog = createProgressWatchdog(1000, onStall);
+
+    watchdog.touch();
+    vi.advanceTimersByTime(1000);
+
+    expect(onStall).toHaveBeenCalledTimes(1);
+    expect(watchdog.isArmed()).toBe(false);
+  });
+
+  it('never fires once stopped', () => {
+    vi.useFakeTimers();
+    const onStall = vi.fn();
+    const watchdog = createProgressWatchdog(1000, onStall);
+
+    watchdog.touch();
+    watchdog.stop();
+    vi.advanceTimersByTime(5000);
+
+    expect(onStall).not.toHaveBeenCalled();
+  });
+});
+
+describe('executeQuery batches', () => {
+  afterEach(async () => {
+    await closeAllConnections();
+    await Promise.all(
+      tempDirs.splice(0).map((dir) =>
+        rm(dir, {
+          force: true,
+          recursive: true,
+        }),
+      ),
+    );
+  });
+
+  it('resolves a large parallel batch of queries without errors', async () => {
+    tempDirs.push(await mkdtemp(join(tmpdir(), 'mmm-sqlite-')));
+    const dbPath = createTestDb();
+    vi.mocked(captureElectronError).mockClear();
+
+    const results = await Promise.all(
+      Array.from({ length: 200 }, (_, i) =>
+        executeQuery<{ title: string }>(
+          dbPath,
+          'SELECT title FROM media WHERE id = ? OR ? < 0',
+          [1, i],
+        ),
+      ),
+    );
+
+    expect(results.every((rows) => rows[0]?.title === 'Opening Song')).toBe(
+      true,
+    );
+    expect(captureElectronError).not.toHaveBeenCalled();
   });
 });
