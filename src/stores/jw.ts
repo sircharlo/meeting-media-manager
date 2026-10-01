@@ -582,8 +582,15 @@ export const useJwStore = defineStore('jw-store', {
         });
       });
     },
-    async updateJwIconsUrl() {
+    /**
+     * Discovers the current jw-icons font URL from WOL's CSS.
+     * @returns The network error that prevented discovery, if any (already
+     * classified as not worth reporting), so font loading can tell
+     * "couldn't reach WOL" apart from "WOL no longer exposes the font".
+     */
+    async updateJwIconsUrl(): Promise<unknown> {
       const online = useCurrentStateStore().online;
+      let unreportedError: unknown;
       // This whole method exists to get the *current* truth after a
       // cached/default URL just failed - fetchRaw's cache has no TTL, so
       // reusing it here could wedge the session on an already-dead URL
@@ -609,7 +616,10 @@ export const useJwStore = defineStore('jw-store', {
           } catch (e) {
             // Same network classification as updateYeartextFontUrls: a
             // flaky connection to WOL is not a bug (MMM-V2-3H4).
-            if (!(await shouldReportCaughtError(e, online))) continue;
+            if (!(await shouldReportCaughtError(e, online))) {
+              unreportedError = e;
+              continue;
+            }
             errorCatcher(e, {
               contexts: {
                 fn: {
@@ -621,7 +631,7 @@ export const useJwStore = defineStore('jw-store', {
           }
         }
       } catch (e) {
-        if (!(await shouldReportCaughtError(e, online))) return;
+        if (!(await shouldReportCaughtError(e, online))) return e;
         errorCatcher(e, {
           contexts: {
             fn: {
@@ -631,6 +641,7 @@ export const useJwStore = defineStore('jw-store', {
           },
         });
       }
+      return unreportedError;
     },
     async updateJwLanguages(online: boolean) {
       if (!online) return;
@@ -790,8 +801,14 @@ export const useJwStore = defineStore('jw-store', {
         errorCatcher(error);
       }
     },
-    async updateYeartextFontUrls() {
+    /**
+     * Discovers the yeartext font URLs from WOL's CSS.
+     * @returns The network error that prevented discovery, if any (already
+     * classified as not worth reporting) - see updateJwIconsUrl.
+     */
+    async updateYeartextFontUrls(): Promise<unknown> {
       const online = useCurrentStateStore().online;
+      let unreportedError: unknown;
       try {
         const wolUrl = `https://wol.${this.urlVariables.base}/en/wol/h/r1/lp-e`;
         const response = await fetchRaw(wolUrl, undefined, true);
@@ -810,7 +827,10 @@ export const useJwStore = defineStore('jw-store', {
               ...getYeartextFontUrlsFromCss(cssText),
             };
           } catch (e) {
-            if (!(await shouldReportCaughtError(e, online))) continue;
+            if (!(await shouldReportCaughtError(e, online))) {
+              unreportedError = e;
+              continue;
+            }
             errorCatcher(e, {
               contexts: {
                 fn: { args: { cssUrl }, name: 'updateYeartextFontUrls' },
@@ -819,11 +839,12 @@ export const useJwStore = defineStore('jw-store', {
           }
         }
       } catch (e) {
-        if (!(await shouldReportCaughtError(e, online))) return;
+        if (!(await shouldReportCaughtError(e, online))) return e;
         errorCatcher(e, {
           contexts: { fn: { name: 'updateYeartextFontUrls - main' } },
         });
       }
+      return unreportedError;
     },
   },
   getters: {

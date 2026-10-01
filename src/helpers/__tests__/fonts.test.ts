@@ -170,6 +170,42 @@ describe('getLocalFontPath', () => {
     expect(errorCatcher).not.toHaveBeenCalled();
   });
 
+  // MMM-V2-3H3: when a font's URL has to be discovered from WOL and WOL
+  // couldn't be reached, that's not a bug either.
+  it('does not report a font whose URL could not be discovered because WOL was unreachable', async () => {
+    const fontsDir = join(appDataPath, 'Fonts');
+    await emptyDir(fontsDir);
+
+    const store = useJwStore();
+    store.urlVariables.base = 'example.org';
+    store.updateJwIconsUrl = vi.fn(
+      async () => new TypeError('Failed to fetch (wol.example.org)'),
+    );
+
+    const { getLocalFontPath } = await import('../fonts');
+
+    await expect(getLocalFontPath('jw-icons-all')).rejects.toThrow(
+      'Failed to download font jw-icons-all and no local copy exists',
+    );
+    expect(errorCatcher).not.toHaveBeenCalled();
+  });
+
+  it('still reports a font WOL no longer exposes', async () => {
+    const fontsDir = join(appDataPath, 'Fonts');
+    await emptyDir(fontsDir);
+
+    const store = useJwStore();
+    store.urlVariables.base = 'example.org';
+    store.updateJwIconsUrl = vi.fn(async () => undefined);
+
+    const { getLocalFontPath } = await import('../fonts');
+
+    await expect(getLocalFontPath('jw-icons-all')).rejects.toThrow(
+      'Failed to download font jw-icons-all and no local copy exists',
+    );
+    expect(errorCatcher).toHaveBeenCalledTimes(1);
+  });
+
   it('reports a non-network failure to Sentry', async () => {
     const fontsDir = join(appDataPath, 'Fonts');
     await emptyDir(fontsDir);

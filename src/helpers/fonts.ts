@@ -439,6 +439,16 @@ const withTimeout = async <T>(
   }
 };
 
+// The font's URL has to be discovered from WOL's CSS, and WOL couldn't be
+// reached (offline, flaky connection, blocked) - an environmental failure,
+// not a bug (MMM-V2-3H3).
+class FontSourceUnreachableError extends Error {
+  constructor(fontName: FontName, cause: unknown) {
+    super(`Could not reach the source of font ${fontName}`, { cause });
+    this.name = 'FontSourceUnreachableError';
+  }
+}
+
 const resolveFontRequest = async (
   fontName: FontName,
   method: 'GET' | 'HEAD',
@@ -462,12 +472,11 @@ const resolveFontRequest = async (
   const isDynamicYeartextFont =
     fontName === 'Wt-BaeumMyungjo' || fontName === 'Wt-ClearText-Bold';
 
+  let discoveryError: unknown;
   if (!response?.ok && (isJwIcons || isDynamicYeartextFont)) {
-    if (isJwIcons) {
-      await store.updateJwIconsUrl();
-    } else {
-      await store.updateYeartextFontUrls();
-    }
+    discoveryError = isJwIcons
+      ? await store.updateJwIconsUrl()
+      : await store.updateYeartextFontUrls();
     const fallbackUrl = store.fontUrls[fontName];
     if (fallbackUrl && fallbackUrl !== originalUrl) {
       resolvedUrl = fallbackUrl;
@@ -475,6 +484,9 @@ const resolveFontRequest = async (
     }
   }
 
+  if (!response && discoveryError !== undefined) {
+    throw new FontSourceUnreachableError(fontName, discoveryError);
+  }
   if (!response?.ok) {
     throw new Error(
       response
@@ -515,7 +527,10 @@ export const getLocalFontPath = async (fontName: FontName) => {
     } catch (error) {
       const fallbackPath = await getExistingLocalFontPath(fontsDir, fontName);
       const online = useCurrentStateStore().online;
-      if (await shouldReportCaughtError(error, online)) {
+      if (
+        !(error instanceof FontSourceUnreachableError) &&
+        (await shouldReportCaughtError(error, online))
+      ) {
         errorCatcher(error, {
           contexts: {
             fn: {
