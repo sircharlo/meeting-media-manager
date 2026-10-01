@@ -431,19 +431,19 @@ describe('fetchJson network errors', () => {
     expect(errorCatcher).not.toHaveBeenCalled();
   });
 
-  it('should not report a 400 for pub=ewt, confirmed to have no media', async () => {
-    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response(null, { status: 400 }),
-    );
+  it.each(['ewt', 'cew'])(
+    'should not report a 400 for pub=%s, confirmed to have no media',
+    async (pub) => {
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+        new Response(null, { status: 400 }),
+      );
 
-    const result = await fetchJson(
-      handledUrl,
-      new URLSearchParams({ pub: 'ewt' }),
-    );
+      const result = await fetchJson(handledUrl, new URLSearchParams({ pub }));
 
-    expect(result).toBeNull();
-    expect(errorCatcher).not.toHaveBeenCalled();
-  });
+      expect(result).toBeNull();
+      expect(errorCatcher).not.toHaveBeenCalled();
+    },
+  );
 });
 
 describe('fetchMemorials', () => {
