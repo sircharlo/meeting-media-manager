@@ -26,6 +26,27 @@ declare module 'pinia' {
  * with the Store instance.
  */
 
+// Read-only query actions the settings UI and media calendar call many times
+// per render. Each call used to add a "pinia.action" breadcrumb, filling
+// Sentry's 100-breadcrumb buffer within seconds and pushing out the
+// breadcrumbs that actually explain an error (e.g. MMM-V2-3JK, 3K0).
+const QUIET_ACTIONS = new Set([
+  'areDependenciesSatisfied',
+  'getInvalidSettings',
+  'getMeetingType',
+  'isHiddenByUnless',
+  'isSettingInvalid',
+  'sceneExists',
+]);
+
+/**
+ * Drops breadcrumbs for read-only query actions (see QUIET_ACTIONS).
+ * @param action The action name
+ * @returns The name to record, or null to skip the breadcrumb
+ */
+export const piniaBreadcrumbActionTransformer = (action: string) =>
+  QUIET_ACTIONS.has(action) ? null : action;
+
 export default defineStore(() => {
   const pinia = createPinia();
 
@@ -33,6 +54,7 @@ export default defineStore(() => {
 
   pinia.use(
     createSentryPiniaPlugin({
+      actionTransformer: piniaBreadcrumbActionTransformer,
       attachPiniaState: false,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       stateTransformer: (state: Record<string, any>) => {
