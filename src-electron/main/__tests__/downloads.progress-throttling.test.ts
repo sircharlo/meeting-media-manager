@@ -4,13 +4,21 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { DOWNLOAD_PROGRESS_THROTTLE_MS } from '../downloads';
 
+interface CapturedTransfer {
+  options: {
+    onProgress: (receivedBytes: number, totalBytes: number) => void;
+    onStarted: (totalBytes: number) => void;
+  };
+  resolve: (result: { filePath: string; kind: 'completed' }) => void;
+}
+
 const mocks = vi.hoisted(() => ({
   addElectronBreadcrumb: vi.fn(),
   captureElectronError: vi.fn(),
-  download: vi.fn(),
   mkdir: vi.fn(),
   sendToWindow: vi.fn(),
   stat: vi.fn(),
+  transfers: [] as CapturedTransfer[],
 }));
 
 interface TestWindowState {
@@ -25,43 +33,17 @@ const windowState = vi.hoisted((): TestWindowState => ({
   mainWindow: null,
 }));
 
-interface ProgressCallbacks {
-  onDownloadCancelled: () => Promise<void>;
-  onDownloadCompleted: (args: {
-    item: { getSavePath: () => string };
-  }) => Promise<void>;
-  onDownloadProgress: (args: {
-    item: { getReceivedBytes: () => number };
-    percentCompleted: number;
-  }) => Promise<void>;
-  onDownloadStarted: (args: {
-    item: { getTotalBytes: () => number };
-    resolvedFilename: string;
-  }) => Promise<void>;
-  onError: (error: Error, downloadData?: unknown) => Promise<void>;
-}
-
-const callbacksState = vi.hoisted(() => ({
-  captured: [] as ProgressCallbacks[],
-}));
-
 vi.mock('node:fs/promises', () => ({
   mkdir: mocks.mkdir,
   stat: mocks.stat,
 }));
 
-vi.mock('electron-dl-manager', () => ({
-  // A regular `function` (not an arrow) so the mock is constructable when
-  // downloads.ts does `new ElectronDownloadManager()`.
-  ElectronDownloadManager: vi.fn(function () {
-    return {
-      cancelDownload: vi.fn(),
-      download: mocks.download,
-      getDownloadData: vi.fn(),
-      pauseDownload: vi.fn(),
-      resumeDownload: vi.fn(),
-    };
-  }),
+vi.mock('src-electron/main/download-transfer', () => ({
+  discardPartialDownload: vi.fn(async () => undefined),
+  runTransfer: (options: CapturedTransfer['options']) =>
+    new Promise((resolve) => {
+      mocks.transfers.push({ options, resolve });
+    }),
 }));
 
 vi.mock('src-electron/main/session', () => ({
@@ -94,12 +76,6 @@ vi.mock('src-electron/main/disk-space', () => ({
   getLowDiskSpaceStatus: vi.fn(async () => false),
 }));
 
-// Avoid real network probes inside `isDownloadErrorExpected` (invoked from
-// `onError`); MSW would intercept them and log noisy warnings.
-vi.mock('is-online', () => ({
-  default: vi.fn(() => Promise.resolve(false)),
-}));
-
 // Keep the real `throttleWithTrailing` (that is what is under test) but silence
 // `log`, matching the other downloads tests.
 vi.mock('src/shared/vanilla', async () => {
@@ -124,23 +100,18 @@ const startDownloadViaQueue = async (url: string) => {
   const { downloadFile } = await import('../downloads');
   await downloadFile(url, '/tmp/media');
   await flushAsync();
-  const callbacks = callbacksState.captured.at(-1);
-  if (!callbacks) throw new Error('manager.download was never called');
-  return callbacks;
+  const transfer = mocks.transfers.at(-1);
+  if (!transfer) throw new Error('runTransfer was never called');
+  return transfer;
 };
 
 describe('download progress IPC throttling', () => {
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
+    mocks.transfers.length = 0;
     mocks.mkdir.mockResolvedValue(undefined);
     mocks.stat.mockResolvedValue({ isDirectory: () => true });
-    mocks.download.mockImplementation(
-      async ({ callbacks }: { callbacks: ProgressCallbacks }) => {
-        callbacksState.captured.push(callbacks);
-        return 'download-id';
-      },
-    );
     // Start from a non-zero clock: `throttleWithTrailing` seeds its last-exec
     // time at 0, so a fake clock starting at epoch 0 would wrongly treat the
     // very first call as inside the throttle window.
@@ -149,21 +120,16 @@ describe('download progress IPC throttling', () => {
 
   afterEach(() => {
     vi.useRealTimers();
-    callbacksState.captured = [];
   });
 
   it('throttles progress messages but delivers the latest value as a trailing update', async () => {
     makeMainWindow();
-    const callbacks = await startDownloadViaQueue('https://example.test/a.mp4');
+    const { options } = await startDownloadViaQueue(
+      'https://example.test/a.mp4',
+    );
 
-    let bytesReceived = 0;
-    const item = { getReceivedBytes: () => bytesReceived };
-    for (let i = 0; i < 12; i++) {
-      bytesReceived += 512;
-      await callbacks.onDownloadProgress({
-        item,
-        percentCompleted: i + 1,
-      });
+    for (let i = 1; i <= 12; i++) {
+      options.onProgress(i * 512, 100 * 512);
     }
 
     // Only the first burst tick went out immediately; the rest are collapsed
@@ -202,14 +168,12 @@ describe('download progress IPC throttling', () => {
 
   it('keeps progress flowing when events keep arriving across windows', async () => {
     makeMainWindow();
-    const callbacks = await startDownloadViaQueue('https://example.test/a.mp4');
+    const { options } = await startDownloadViaQueue(
+      'https://example.test/a.mp4',
+    );
 
-    const item = { getReceivedBytes: () => 1024 };
-    for (let i = 0; i < 5; i++) {
-      await callbacks.onDownloadProgress({
-        item,
-        percentCompleted: i + 1,
-      });
+    for (let i = 1; i <= 5; i++) {
+      options.onProgress(i * 1024, 0);
     }
     expect(mocks.sendToWindow).toHaveBeenCalledTimes(1);
 
@@ -218,21 +182,17 @@ describe('download progress IPC throttling', () => {
 
     // A new burst after the window has passed sends immediately again.
     vi.advanceTimersByTime(250);
-    await callbacks.onDownloadProgress({
-      item,
-      percentCompleted: 6,
-    });
+    options.onProgress(6 * 1024, 0);
     expect(mocks.sendToWindow).toHaveBeenCalledTimes(3);
   });
 
   it('sends one-shot events immediately, even while a progress update is pending', async () => {
     makeMainWindow();
-    const callbacks = await startDownloadViaQueue('https://example.test/a.mp4');
+    const { options, resolve } = await startDownloadViaQueue(
+      'https://example.test/a.mp4',
+    );
 
-    await callbacks.onDownloadStarted({
-      item: { getTotalBytes: () => 999 },
-      resolvedFilename: 'a.mp4',
-    });
+    options.onStarted(999);
     expect(mocks.sendToWindow).toHaveBeenLastCalledWith(
       windowState.mainWindow,
       'downloadStarted',
@@ -244,56 +204,31 @@ describe('download progress IPC throttling', () => {
     );
 
     // Leave a trailing progress update pending (the first call sends
-    // immediately, the second schedules the trailing tick), then send two
-    // more one-shot events. (An error reported after completion no longer
-    // reaches the renderer - it would mark the finished file as failed - so
-    // a cancellation stands in as the second one-shot event.)
-    const item = { getReceivedBytes: () => 100 };
-    await callbacks.onDownloadProgress({
-      item,
-      percentCompleted: 10,
-    });
-    await callbacks.onDownloadProgress({
-      item,
-      percentCompleted: 20,
-    });
-    await callbacks.onDownloadCompleted({
-      item: { getSavePath: () => '/tmp/media/a.mp4' },
-    });
-    await callbacks.onDownloadCancelled();
+    // immediately, the second schedules the trailing tick), then complete.
+    options.onProgress(100, 999);
+    options.onProgress(200, 999);
+    resolve({ filePath: '/tmp/media/a.mp4', kind: 'completed' });
+    await flushAsync();
 
     const channels = mocks.sendToWindow.mock.calls.map((call) => call[1]);
     expect(channels).toContain('downloadCompleted');
-    expect(channels).toContain('downloadCancelled');
     expect(channels.filter((c) => c === 'downloadProgress')).toHaveLength(1);
 
     // The pending trailing progress tick still fires later; the final state
     // is unaffected because completion set it, not the last progress tick.
     vi.advanceTimersByTime(DOWNLOAD_PROGRESS_THROTTLE_MS);
-    expect(mocks.sendToWindow).toHaveBeenCalledTimes(5);
+    expect(mocks.sendToWindow).toHaveBeenCalledTimes(4);
   });
 
   it('throttles concurrent downloads independently', async () => {
     makeMainWindow();
-    const callbacksA = await startDownloadViaQueue(
-      'https://example.test/a.mp4',
-    );
-    const callbacksB = await startDownloadViaQueue(
-      'https://example.test/b.mp4',
-    );
-    expect(callbacksA).not.toBe(callbacksB);
+    const transferA = await startDownloadViaQueue('https://example.test/a.mp4');
+    const transferB = await startDownloadViaQueue('https://example.test/b.mp4');
+    expect(transferA).not.toBe(transferB);
 
-    const itemA = { getReceivedBytes: () => 100 };
-    const itemB = { getReceivedBytes: () => 200 };
-    for (let i = 0; i < 10; i++) {
-      await callbacksA.onDownloadProgress({
-        item: itemA,
-        percentCompleted: i + 1,
-      });
-      await callbacksB.onDownloadProgress({
-        item: itemB,
-        percentCompleted: i + 1,
-      });
+    for (let i = 1; i <= 10; i++) {
+      transferA.options.onProgress(i * 100, 100 * 100);
+      transferB.options.onProgress(i * 200, 100 * 200);
     }
 
     // Each download's first tick was sent immediately - one shared throttle
@@ -318,12 +253,12 @@ describe('download progress IPC throttling', () => {
         percentCompleted: 1,
       },
       {
-        bytesReceived: 100,
+        bytesReceived: 1000,
         id: 'https://example.test/a.mp4/tmp/media',
         percentCompleted: 10,
       },
       {
-        bytesReceived: 200,
+        bytesReceived: 2000,
         id: 'https://example.test/b.mp4/tmp/media',
         percentCompleted: 10,
       },

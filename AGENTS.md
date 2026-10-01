@@ -33,7 +33,9 @@ project itself).
   control the media window presentation.
 - **Download manager** (`src-electron/main/downloads.ts`): queued downloads with
   priorities (normal vs low/background), pause/resume, cancel-all, and temp-folder
-  fallback when the cache directory becomes unusable.
+  fallback when the cache directory becomes unusable. Each file is transferred by
+  our own downloader (`src-electron/main/download-transfer.ts`, Electron
+  `net.fetch`), which resumes interrupted downloads with HTTP range requests.
 - **Background music**: plays music before/after the meeting, stopping N seconds
   before start time; configurable volume and folders.
 - **Before/After Meeting Quick Actions** (`stores/meeting-quick-actions.ts`,
@@ -183,6 +185,8 @@ src-electron/                Electron main + preload. May import only src/types,
     ipc.ts                   Nearly all ipcMain handlers are registered here
                              (see Process Boundaries & IPC for the one exception).
     downloads.ts             Download queue, priorities, pause/resume, retries.
+    download-transfer.ts     One file's HTTP transfer: net.fetch into a .part
+                             file, range-request resume, stall timeout.
     session.ts               CSP, trusted-domain/CORS header rewriting, user agent.
     fs.ts                    File dialogs, watch folders, zip/unzip, HEIC, paths.
     ffmpeg.ts                Video conversion (createVideoFromNonVideo).
@@ -434,7 +438,8 @@ Version`) — not by hand-editing `package.json`. The workflow bumps the
 - **Add/change a setting**: `src/constants/settings.ts` (`settingsDefinitions`,
   `defaultSettings`) + `src/types/settings.d.ts` + `src/i18n/en.json` keys.
 - **New Electron API**: follow the IPC checklist above (4-5 files).
-- **Bug in downloads**: `src-electron/main/downloads.ts` (queue) → IPC events →
+- **Bug in downloads**: `src-electron/main/download-transfer.ts` (one file's
+  transfer) → `src-electron/main/downloads.ts` (queue) → IPC events →
   `src/stores/current-state.ts` `downloadProgress` → `DownloadStatus.vue`.
 - **Bug in media display window**: `src-electron/main/window/window-media.ts`
   (window mgmt) + `src/helpers/mediaPlayback.ts` + `MediaPlayerPage.vue` +
