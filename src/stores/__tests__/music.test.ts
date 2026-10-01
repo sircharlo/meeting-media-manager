@@ -2,7 +2,7 @@ import { i18n } from 'boot/i18n';
 import { createPinia, setActivePinia } from 'pinia';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { useMusicStore } from '../music';
+import { isIgnorablePlaybackError, useMusicStore } from '../music';
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -25,5 +25,22 @@ describe('music store', () => {
     const music = useMusicStore();
     expect(music.displayStatusText).toBe(i18n.global.t('music.not-playing'));
     expect(music.summaryText).toBe(i18n.global.t('background-music-idle'));
+  });
+});
+
+describe('isIgnorablePlaybackError', () => {
+  // MMM-V2-3K2: the audio output device going away mid-song is environmental.
+  it('ignores an audio renderer (output device) failure', () => {
+    expect(
+      isIgnorablePlaybackError(
+        'PipelineStatus::AUDIO_RENDERER_ERROR: audio render error',
+      ),
+    ).toBe(true);
+  });
+
+  it('still reports a real decode failure', () => {
+    expect(
+      isIgnorablePlaybackError('PIPELINE_ERROR_DECODE: audio decode error'),
+    ).toBe(false);
   });
 });

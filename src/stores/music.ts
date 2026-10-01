@@ -51,8 +51,12 @@ const IGNORABLE_PLAYBACK_ERROR_MESSAGES = [
   'removed from the document',
   'new load request',
   'interrupted by a call to pause',
+  // Chromium's audio output failing mid-playback, typically because the
+  // output device changed or disappeared - the file itself is fine, and the
+  // store already retries (MMM-V2-3K2).
+  'AUDIO_RENDERER_ERROR',
 ];
-const isIgnorablePlaybackError = (message?: null | string) =>
+export const isIgnorablePlaybackError = (message?: null | string) =>
   !!message &&
   IGNORABLE_PLAYBACK_ERROR_MESSAGES.some((msg) => message.includes(msg));
 
