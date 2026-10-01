@@ -14,6 +14,7 @@ import { Platform } from 'quasar';
 import { FULL_HD } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getFilesystemErrorCode } from 'src/shared/filesystem-errors';
+import { log } from 'src/shared/vanilla';
 import { fetchJson } from 'src/utils/api';
 import { getCachedUserDataPath, getPublicationDirectory } from 'src/utils/fs';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
@@ -412,7 +413,30 @@ export const watchExternalFolder = async (folder?: string) => {
  *
  * @returns The path to the FFmpeg executable, or an empty string if the setup failed.
  */
+// Thrown by fetchLatestRelease once the failure has already been reported
+// (or deliberately not reported), so setupFFmpeg doesn't report it again.
+class FfmpegReleaseUnavailableError extends Error {
+  constructor() {
+    super('Could not determine FFmpeg version.');
+    this.name = 'FfmpegReleaseUnavailableError';
+  }
+}
+
+// Concurrent exports each call setupFFmpeg; share one in-flight setup so a
+// single failure isn't fetched (and reported) once per caller.
+let ffmpegSetupInFlight: null | Promise<string> = null;
+
 export const setupFFmpeg = async (): Promise<string> => {
+  const currentState = useCurrentStateStore();
+  if (currentState.ffmpegPath) return currentState.ffmpegPath;
+
+  ffmpegSetupInFlight ??= runFFmpegSetup().finally(() => {
+    ffmpegSetupInFlight = null;
+  });
+  return ffmpegSetupInFlight;
+};
+
+const runFFmpegSetup = async (): Promise<string> => {
   const currentState = useCurrentStateStore();
   try {
     if (currentState.ffmpegPath) return currentState.ffmpegPath;
@@ -458,7 +482,11 @@ export const setupFFmpeg = async (): Promise<string> => {
     // fetch below failed - reporting it here too would just be a second
     // (or third, once convertIfNeeded's own catch is counted) Sentry entry
     // for the same non-actionable condition.
-    if (currentState.online) errorCatcher(e);
+    if (e instanceof FfmpegReleaseUnavailableError) {
+      log('FFmpeg release info unavailable', 'mediaProcessing', 'warn', e);
+    } else if (currentState.online) {
+      errorCatcher(e, { contexts: { fn: { name: 'setupFFmpeg' } } });
+    }
     return '';
   }
 };
@@ -492,19 +520,20 @@ async function downloadFfmpeg(url: string, dir: string): Promise<string> {
 async function fetchLatestRelease(): Promise<Release> {
   const currentState = useCurrentStateStore();
   const ffmpegReleases = await fetchJson<Release>(
-    'https://api.github.com/repos/vot/ffbinaries-prebuilt/releases/latest',
+    'https://api.github.com/repos/ffbinaries/ffbinaries-prebuilt/releases/latest',
     undefined,
     currentState.online,
   );
-  if (!ffmpegReleases?.assets?.length) {
-    // Only report when we're actually online - offline is the expected,
-    // already-known reason for an empty response, not a bug.
-    if (currentState.online) {
-      errorCatcher('No FFmpeg releases found', {
-        contexts: { fn: { ffmpegReleases, name: 'fetchLatestRelease' } },
-      });
-    }
-    throw new Error('Could not determine FFmpeg version.');
+  // null means the request itself failed: fetchJson already reports real
+  // HTTP errors, and a network-level failure (offline, GitHub unreachable
+  // from the user's network - MMM-V2-3GS/3JC) isn't a bug.
+  if (!ffmpegReleases) throw new FfmpegReleaseUnavailableError();
+  if (!ffmpegReleases.assets?.length) {
+    // A response with no assets is unexpected - report that one, once.
+    errorCatcher('No FFmpeg releases found', {
+      contexts: { fn: { ffmpegReleases, name: 'fetchLatestRelease' } },
+    });
+    throw new FfmpegReleaseUnavailableError();
   }
   return ffmpegReleases;
 }
