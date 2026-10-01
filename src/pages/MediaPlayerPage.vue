@@ -193,6 +193,7 @@ import { createTemporaryNotification } from 'src/helpers/notifications';
 import { log } from 'src/shared/vanilla';
 import {
   isAudio,
+  isExpectedMediaAccessError,
   isImage,
   isVideo,
   stopMediaStreamTracks,
@@ -1171,13 +1172,21 @@ const requestStream = async (isCamera: boolean, deviceId?: string) => {
         const temp = await getMedia();
         temp.getTracks().forEach((track) => track.stop());
       } catch (e) {
-        errorCatcher(e, {
-          contexts: {
-            fn: {
-              name: isCamera ? 'requestCameraAccess' : 'requestDisplayAccess',
+        // This probe exists only to make the OS show its permission prompt;
+        // it failing with a denied/unavailable source is an expected
+        // outcome, and the checkAccess() below tells the user
+        // (MMM-V2-3J5).
+        if (isExpectedMediaAccessError(e)) {
+          log('Media access probe failed', 'mediaPlayer', 'warn', e);
+        } else {
+          errorCatcher(e, {
+            contexts: {
+              fn: {
+                name: isCamera ? 'requestCameraAccess' : 'requestDisplayAccess',
+              },
             },
-          },
-        });
+          });
+        }
       }
 
       if (!(await checkAccess())) {
@@ -1188,9 +1197,15 @@ const requestStream = async (isCamera: boolean, deviceId?: string) => {
 
     return await getMedia();
   } catch (e) {
-    errorCatcher(e, {
-      contexts: { fn: { name: isCamera ? 'streamCamera' : 'streamDisplay' } },
-    });
+    // The camera path tells the user below; a busy/denied camera is
+    // environmental, not a bug.
+    if (!(isCamera && isExpectedMediaAccessError(e))) {
+      errorCatcher(e, {
+        contexts: {
+          fn: { name: isCamera ? 'streamCamera' : 'streamDisplay' },
+        },
+      });
+    }
     if (isCamera) notifyAccessDenied(isCamera);
     return null;
   }

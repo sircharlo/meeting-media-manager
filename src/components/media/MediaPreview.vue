@@ -142,6 +142,7 @@ import {
   type CaptureSizeBounds,
   getCaptureSizeBounds,
   getContainFitRect,
+  isExpectedMediaAccessError,
   isImage,
   isVideo,
   stopMediaStreamTracks,
@@ -381,10 +382,16 @@ const acquireCaptureStream = async (): Promise<boolean> => {
       'Media window capture unavailable, falling back',
       'mediaPreview',
       'warn',
+      error,
     );
-    errorCatcher(error, {
-      contexts: { fn: { name: 'MediaPreview.acquireCaptureStream' } },
-    });
+    // The preview silently falls back to its canvas mode, so a capture
+    // that's denied, times out or can't start is invisible to the user and
+    // not a bug (MMM-V2-3K6/3JW/3JN). Anything else is still reported.
+    if (!isExpectedMediaAccessError(error)) {
+      errorCatcher(error, {
+        contexts: { fn: { name: 'MediaPreview.acquireCaptureStream' } },
+      });
+    }
     return false;
   }
 };

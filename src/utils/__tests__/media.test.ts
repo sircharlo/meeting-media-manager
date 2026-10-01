@@ -5,6 +5,7 @@ import {
   getContainFitRect,
   getFileNameMaskFromPubMediaId,
   isAudio,
+  isExpectedMediaAccessError,
   isHeic,
   isImage,
   isJwPlaylist,
@@ -19,6 +20,42 @@ import {
 vi.mock('src/helpers/error-catcher', () => ({
   errorCatcher: vi.fn(),
 }));
+
+// MMM-V2-3J5/3K6/3JW/3JN: camera/screen/tab capture failures caused by the
+// environment, which the app already handles (notification or fallback).
+describe('isExpectedMediaAccessError', () => {
+  it.each([
+    ['NotReadableError', 'Could not start video source'],
+    ['AbortError', 'Timeout starting video source'],
+    ['AbortError', 'Error starting tab capture'],
+    ['NotAllowedError', 'Permission denied'],
+    ['NotFoundError', 'Requested device not found'],
+  ])('treats a %s as expected', (name, message) => {
+    expect(isExpectedMediaAccessError(new DOMException(message, name))).toBe(
+      true,
+    );
+  });
+
+  it('recognizes the name when it only survives in the message', () => {
+    expect(
+      isExpectedMediaAccessError(
+        new Error('NotReadableError: Could not start video source'),
+      ),
+    ).toBe(true);
+  });
+
+  it('does not treat other failures as expected', () => {
+    expect(isExpectedMediaAccessError(new TypeError('x is undefined'))).toBe(
+      false,
+    );
+    expect(
+      isExpectedMediaAccessError(
+        new DOMException('bad', 'OverconstrainedError'),
+      ),
+    ).toBe(false);
+    expect(isExpectedMediaAccessError('NotAllowedError')).toBe(false);
+  });
+});
 
 describe('Media Utilities', () => {
   describe('getFileNameMaskFromPubMediaId', () => {

@@ -151,6 +151,33 @@ export const isJwPlaylist = (filepath: string) => {
  * keeps recording (OS privacy indicator stays lit) until each track is
  * explicitly stopped.
  */
+// getUserMedia/getDisplayMedia rejections caused by the environment rather
+// than by the app: the OS or user denying access (NotAllowedError), another
+// app holding the device (NotReadableError), the capture source timing out
+// or going away (AbortError), or no such device (NotFoundError).
+const EXPECTED_MEDIA_ACCESS_ERROR_NAMES = [
+  'AbortError',
+  'NotAllowedError',
+  'NotFoundError',
+  'NotReadableError',
+];
+
+/**
+ * Whether a camera/screen/tab capture request failed for an environmental
+ * reason the user is (or should be) told about, rather than an app bug.
+ * @param error The rejection from getUserMedia/getDisplayMedia
+ * @returns Whether the failure is expected
+ */
+export const isExpectedMediaAccessError = (error: unknown) => {
+  if (typeof error !== 'object' || error === null) return false;
+  const { message, name } = error as { message?: unknown; name?: unknown };
+  return EXPECTED_MEDIA_ACCESS_ERROR_NAMES.some(
+    (expected) =>
+      name === expected ||
+      (typeof message === 'string' && message.startsWith(`${expected}:`)),
+  );
+};
+
 export const stopMediaStreamTracks = (
   srcObject: MediaProvider | null | undefined,
 ) => {
