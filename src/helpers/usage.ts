@@ -3,7 +3,7 @@ import { withLockRetry } from 'src/helpers/fs-retry';
 import { formatDate } from 'src/utils/date';
 
 const { fs, join } = globalThis.electronApi;
-const { ensureFile, readFile, writeFile } = fs;
+const { ensureFile, pathExists, readFile, writeFile } = fs;
 
 export const LAST_USED_FILENAME = '.last-used';
 
@@ -37,6 +37,14 @@ const performLastUsedUpdate = async (
   date: Date | string,
 ) => {
   try {
+    // Only mark folders that exist - never (re)create one. Callers that
+    // need the folder create it first; the media calendar also marks the
+    // parent folders of persisted media, which can point at a drive that's
+    // gone (a custom cache folder on an unplugged/renamed drive), and
+    // ensureFile there used to fail with `mkdir '\?'` on every startup
+    // (MMM-V2-3GD).
+    if (!(await pathExists(folderPath))) return;
+
     const { hideFileOnWindows, showFileOnWindows } = globalThis.electronApi;
 
     const dateStr =
@@ -60,7 +68,9 @@ const performLastUsedUpdate = async (
     }
     await hideFileOnWindows(filePath);
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: { fn: { folderPath, name: 'updateLastUsedDate' } },
+    });
   }
 };
 

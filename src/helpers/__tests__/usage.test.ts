@@ -7,6 +7,7 @@ vi.mock('src/helpers/error-catcher', () => ({
 }));
 
 const ensureFileMock = vi.fn();
+const pathExistsMock = vi.fn();
 const readFileMock = vi.fn();
 const writeFileMock = vi.fn();
 const hideFileOnWindowsMock = vi.fn();
@@ -19,11 +20,13 @@ describe('usage', () => {
     vi.clearAllMocks();
     vi.resetModules();
     hideFileOnWindowsMock.mockResolvedValue(undefined);
+    pathExistsMock.mockResolvedValue(true);
     showFileOnWindowsMock.mockResolvedValue(undefined);
 
     vi.stubGlobal('electronApi', {
       fs: {
         ensureFile: ensureFileMock,
+        pathExists: pathExistsMock,
         readFile: readFileMock,
         writeFile: writeFileMock,
       },
@@ -80,6 +83,7 @@ describe('usage', () => {
       vi.stubGlobal('electronApi', {
         fs: {
           ensureFile: ensureFileMock,
+          pathExists: pathExistsMock,
           readFile: readFileMock,
           writeFile: writeFileMock,
         },
@@ -95,6 +99,19 @@ describe('usage', () => {
 
       expect(ensureFileMock).toHaveBeenCalledTimes(1);
       expect(errorCatcherMock).toHaveBeenCalledTimes(1);
+    });
+
+    // MMM-V2-3GD: persisted media can point at a folder on a drive that no
+    // longer exists; marking it must not try to recreate it.
+    it('does nothing for a folder that does not exist', async () => {
+      pathExistsMock.mockResolvedValue(false);
+
+      const { updateLastUsedDate } = await import('../usage');
+      await updateLastUsedDate('E:/M3/Publications/pub', '2026-07-20');
+
+      expect(ensureFileMock).not.toHaveBeenCalled();
+      expect(writeFileMock).not.toHaveBeenCalled();
+      expect(errorCatcherMock).not.toHaveBeenCalled();
     });
 
     it('coalesces concurrent calls for the same folder into a single attempt', async () => {

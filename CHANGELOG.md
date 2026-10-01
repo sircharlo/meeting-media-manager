@@ -22,7 +22,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🔧 Chores
 
-- 🔧 **Error Reporting**: Cut down on noise from expected, harmless errors so real problems stand out: temporary read errors and timeouts from cloud-synced folders (iCloud Drive, OneDrive, Dropbox, etc.) — including when importing files from them — are no longer reported as failures.
+- 🔧 **Error Reporting**: Cut down on noise from expected, harmless errors so real problems stand out: temporary read errors and timeouts from cloud-synced folders (iCloud Drive, OneDrive, Dropbox, etc.) — including when importing files from them — are no longer reported as failures, and M³ no longer tries to recreate folders on a drive that has been unplugged or renamed when a custom media folder lived there.
 
 ## v26.9.1
 

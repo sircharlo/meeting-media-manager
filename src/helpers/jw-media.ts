@@ -5202,7 +5202,16 @@ const downloadMissingMedia = async (
       StreamUrl: bestItem.file.url,
     };
   } catch (e) {
-    errorCatcher(e);
+    errorCatcher(e, {
+      contexts: {
+        fn: {
+          isDynamicMedia,
+          meetingDate,
+          name: 'downloadMissingMedia',
+          publication,
+        },
+      },
+    });
     return { FilePath: '' };
   }
 };
