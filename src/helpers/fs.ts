@@ -61,6 +61,7 @@ const getJwMediaInfo = (publication: PublicationFetcher) => {
 
 const {
   basename,
+  changeExt,
   dirname,
   downloadFile,
   extname,
@@ -299,7 +300,10 @@ export const getThumbnailUrl = async (
     } else if (isAudio(filepath)) {
       thumbnailUrl = await getThumbnailFromMetadata(filepath);
     } else if (isVideo(filepath)) {
-      const thumbnailPath = filepath.split('.')[0] + '.jpg';
+      // changeExt only touches the extension; splitting on the first '.'
+      // anywhere in the path turned C:/Users/first.last/... into
+      // C:/Users/first.jpg (MMM-V2-3G1).
+      const thumbnailPath = changeExt(filepath, '.jpg');
       if (await pathExists(thumbnailPath)) {
         thumbnailUrl = pathToFileURL(thumbnailPath);
       } else {
@@ -336,7 +340,7 @@ export const getSubtitlesUrl = async (
         multimediaItem.KeySymbol &&
         multimediaItem.Track
       ) {
-        let subtitlesPath = multimediaItem.FilePath.split('.')[0] + '.vtt';
+        let subtitlesPath = changeExt(multimediaItem.FilePath, '.vtt');
         const subtitleLang = currentState.currentSettings?.langSubtitles;
         const subtitleFetcher: PublicationFetcher = {
           fileformat: 'MP4',
