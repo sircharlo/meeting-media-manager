@@ -1,3 +1,5 @@
+import type * as ObsHelpers from 'src/helpers/obs';
+
 import { mount } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
@@ -24,7 +26,9 @@ vi.mock('src/helpers/error-catcher', () => ({
   errorCatcher: errorCatcherMock,
 }));
 
-vi.mock('src/helpers/obs', () => ({
+vi.mock('src/helpers/obs', async (importOriginal) => ({
+  isTransientObsError: (await importOriginal<typeof ObsHelpers>())
+    .isTransientObsError,
   obsConnect: vi.fn(),
 }));
 
@@ -112,7 +116,12 @@ describe('ObsStatus - scene list retry', () => {
     await triggerObsEvent('Identified');
     await wait(50);
 
-    expect(errorCatcherMock).toHaveBeenCalledWith(error);
+    expect(errorCatcherMock).toHaveBeenCalledWith(
+      error,
+      expect.objectContaining({
+        contexts: { fn: { name: 'fetchSceneList' } },
+      }),
+    );
   });
 });
 

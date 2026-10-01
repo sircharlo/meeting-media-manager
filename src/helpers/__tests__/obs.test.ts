@@ -153,3 +153,56 @@ describe('OBS RPC calls before the socket is identified', () => {
     expect(callMock).toHaveBeenCalledWith('GetRecordStatus');
   });
 });
+
+// MMM-V2-3JD/3JE: OBS accepts connections before it has finished loading and
+// answers requests with "OBS is not ready to perform the request." until
+// then - that's not a bug worth reporting.
+describe('OBS recording queries while OBS is still loading', () => {
+  const callMock = vi.fn();
+  const notReady = () => new Error('OBS is not ready to perform the request.');
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    obsStateStore.obsConnectionState = 'connected';
+    const obsUtils = await import('src/utils/obs');
+    obsUtils.obsWebSocketInfo.obsWebSocket = { call: callMock } as never;
+  });
+
+  it('retries until OBS is ready', async () => {
+    callMock
+      .mockRejectedValueOnce(notReady())
+      .mockRejectedValueOnce(notReady())
+      .mockResolvedValueOnce({ outputActive: true });
+    const { obsGetRecordingState } = await import('../obs');
+
+    await expect(obsGetRecordingState()).resolves.toBe(true);
+    expect(callMock).toHaveBeenCalledTimes(3);
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+  });
+
+  it('gives up quietly when OBS stays not-ready', async () => {
+    callMock.mockRejectedValue(notReady());
+    const { obsGetRecordingDirectory } = await import('../obs');
+
+    await expect(obsGetRecordingDirectory()).resolves.toBeNull();
+    expect(callMock).toHaveBeenCalledTimes(5);
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+  });
+
+  it('does not retry or report a dropped socket', async () => {
+    callMock.mockRejectedValue(new Error('Not connected'));
+    const { obsGetRecordingState } = await import('../obs');
+
+    await expect(obsGetRecordingState()).resolves.toBe(false);
+    expect(callMock).toHaveBeenCalledTimes(1);
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+  });
+
+  it('still reports a genuine failure', async () => {
+    callMock.mockRejectedValue(new Error('Something unexpected'));
+    const { obsGetRecordingState } = await import('../obs');
+
+    await expect(obsGetRecordingState()).resolves.toBe(false);
+    expect(errorCatcherMock).toHaveBeenCalledTimes(1);
+  });
+});

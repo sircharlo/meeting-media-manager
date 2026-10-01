@@ -16,6 +16,53 @@ const isObsWebSocketReady = () =>
   !!obsWebSocketInfo.obsWebSocket &&
   useObsStateStore().obsConnectionState === 'connected';
 
+/**
+ * Whether an obs-websocket request failed only because OBS can't answer
+ * yet, rather than for a real reason: "OBS is not ready to perform the
+ * request." (error 207 NotReady, returned until OBS has finished loading
+ * its scene collection/plugins after start-up) or "Not connected" (the
+ * socket dropped between 'Identified' and the request - the reconnect flow
+ * re-runs whatever asked).
+ * @param error The error thrown by an obs-websocket `call()`
+ * @returns Whether the failure is transient
+ */
+export const isTransientObsError = (error: unknown) =>
+  error instanceof Error &&
+  (error.message.includes('OBS is not ready') ||
+    error.message === 'Not connected');
+
+const OBS_NOT_READY_RETRIES = 5;
+const OBS_NOT_READY_RETRY_MS = 2000;
+
+/**
+ * Runs an obs-websocket request, retrying for a while if OBS answers that
+ * it isn't ready yet (it accepts connections before it has finished
+ * loading). Any other failure - including the socket dropping - is thrown
+ * immediately.
+ * @param request The request to run
+ * @returns The request's result
+ */
+const callWhenObsReady = async <T>(request: () => Promise<T>): Promise<T> => {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await request();
+    } catch (error) {
+      const notReadyYet =
+        error instanceof Error && error.message.includes('OBS is not ready');
+      if (!notReadyYet || attempt >= OBS_NOT_READY_RETRIES) throw error;
+      await sleep(OBS_NOT_READY_RETRY_MS);
+    }
+  }
+};
+
+const reportObsCallError = (error: unknown, name: string) => {
+  if (isTransientObsError(error)) {
+    log(`${name}: OBS not ready, giving up for now`, 'obs', 'warn', error);
+    return;
+  }
+  errorCatcher(error, { contexts: { fn: { name } } });
+};
+
 const getObsConnectionSettings = () => {
   const currentState = useCurrentStateStore();
   if (!currentState.currentSettings?.obsEnable) return 'disabled';
@@ -152,11 +199,12 @@ export const obsGetRecordingDirectory = async (): Promise<null | string> => {
       return null;
     }
 
-    const response =
-      await obsWebSocketInfo.obsWebSocket?.call('GetRecordDirectory');
+    const response = await callWhenObsReady(async () =>
+      obsWebSocketInfo.obsWebSocket?.call('GetRecordDirectory'),
+    );
     return response?.recordDirectory || null;
   } catch (error) {
-    errorCatcher(error);
+    reportObsCallError(error, 'obsGetRecordingDirectory');
     return null;
   }
 };
@@ -168,11 +216,12 @@ export const obsGetRecordingState = async (): Promise<boolean> => {
       return false;
     }
 
-    const response =
-      await obsWebSocketInfo.obsWebSocket?.call('GetRecordStatus');
+    const response = await callWhenObsReady(async () =>
+      obsWebSocketInfo.obsWebSocket?.call('GetRecordStatus'),
+    );
     return response?.outputActive || false;
   } catch (error) {
-    errorCatcher(error);
+    reportObsCallError(error, 'obsGetRecordingState');
     return false;
   }
 };

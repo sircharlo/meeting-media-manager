@@ -44,7 +44,7 @@
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { obsConnect } from 'src/helpers/obs';
+import { isTransientObsError, obsConnect } from 'src/helpers/obs';
 import { log } from 'src/shared/vanilla';
 import { initObsWebSocket, obsWebSocketInfo } from 'src/utils/obs';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -122,15 +122,7 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
       }
     } catch (error) {
       attempts++;
-      const { OBSWebSocketError } = await import('obs-websocket-js');
-      // Both mean OBS isn't ready to answer yet, not a real failure: "OBS
-      // is not ready" during the handshake, or "Not connected" when the
-      // socket drops between the 'Identified' event firing and this call
-      // going out.
-      const isTransient =
-        (error instanceof OBSWebSocketError &&
-          error.message.includes('OBS is not ready')) ||
-        (error instanceof Error && error.message === 'Not connected');
+      const isTransient = isTransientObsError(error);
       if (attempts < maxRetries && isTransient) {
         log(`Retrying... (${attempts}/${maxRetries})`, 'obs', 'log');
         await new Promise((resolve) => {
@@ -138,7 +130,16 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
         });
       } else {
         obsSceneListError.value = true;
-        errorCatcher(error);
+        // OBS still loading after every retry (big scene collections or
+        // plugins can take longer), or the socket closing mid-way (the
+        // reconnect flow fetches the list again): the scene-list warning
+        // state above already tells the user, and neither is a bug
+        // (MMM-V2-3FG).
+        if (isTransient) {
+          log('Could not fetch the OBS scene list yet', 'obs', 'warn', error);
+        } else {
+          errorCatcher(error, { contexts: { fn: { name: 'fetchSceneList' } } });
+        }
       }
     }
   }
