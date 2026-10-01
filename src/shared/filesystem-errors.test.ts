@@ -116,6 +116,25 @@ describe('filesystem error helpers', () => {
     ).toBe(true);
   });
 
+  it('treats a timed-out read of a cloud-only placeholder as expected', () => {
+    const iCloudPath =
+      '/Users/test/Library/Mobile Documents/com~apple~CloudDocs/MMM/video.mp4';
+    const timeout = new Error(
+      `ETIMEDOUT: connection timed out, copyfile '${iCloudPath}' -> '/tmp/x'`,
+    );
+
+    expect(
+      isExpectedNetworkPathAccessError(timeout, iCloudPath, 'darwin'),
+    ).toBe(true);
+    expect(
+      isExpectedNetworkPathAccessError(
+        timeout,
+        '/Users/test/local.mp4',
+        'darwin',
+      ),
+    ).toBe(false);
+  });
+
   it('classifies transient access errors only for likely network paths', () => {
     expect(
       isExpectedNetworkPathAccessError(

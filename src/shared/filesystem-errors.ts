@@ -6,6 +6,10 @@ export interface FilesystemErrorLike {
 const TRANSIENT_NETWORK_ACCESS_ERROR_CODES = new Set([
   'EINVAL',
   'ENOENT',
+  // A cloud-only placeholder (e.g. an iCloud Drive file not downloaded
+  // locally) can block a read for minutes while it hydrates, then give up
+  // with ETIMEDOUT (MMM-V2-3K8); a network share can do the same.
+  'ETIMEDOUT',
   'UNKNOWN',
 ]);
 
