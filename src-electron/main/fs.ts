@@ -83,10 +83,16 @@ const SHARED_PATH_HEALTH_FOLDERS = [
   'Publications',
 ];
 
+// A just-downloaded file can be briefly locked by an antivirus/quarantine
+// scan right after the download completes: opening it fails with EPERM for
+// well under a second, then the same file reads fine (MMM-V2-3KB..3KF).
+const ZIP_TRANSIENT_LOCK_ERROR_CODES = new Set(['EACCES', 'EBUSY', 'EPERM']);
+
 const isRetryableZipError = (error: unknown, zipPath?: string) => {
   const errorCode = getErrorCode(error);
   if (errorCode && NETWORK_ERROR_CODES.has(errorCode)) return true;
   if (errorCode === 'ENOENT') return true;
+  if (errorCode && ZIP_TRANSIENT_LOCK_ERROR_CODES.has(errorCode)) return true;
 
   const message = error instanceof Error ? error.message : String(error);
   if (isIncompleteZipReadError(message)) return true;

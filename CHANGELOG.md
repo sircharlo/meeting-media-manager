@@ -14,7 +14,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 - 🐞 **Media Fetching**: Fixed meeting media failing to load for some congregations, depending on their Website setting — a security tightening in v26.9.1 accidentally blocked some legitimate media servers.
 - 🐞 **Media Fetching**: Fixed meeting parts occasionally coming up empty (or reporting a missing document) while M³ was busy — for example while extracting a large publication or downloading many songs at once — because publication lookups waiting in line were mistaken for a frozen database reader.
-- 🐞 **Publications**: Fixed a perfectly good publication file occasionally being deleted (and re-downloaded) when M³ was briefly too busy to release its database before re-extracting it.
+- 🐞 **Publications**: Fixed a perfectly good publication file occasionally being deleted (and re-downloaded) when M³ was briefly too busy to release its database before re-extracting it, and a just-downloaded publication failing to open when antivirus software briefly locked it for scanning.
 - 🐞 **JW Library Playlists**: Fixed importing the same `.jwlplaylist` file a second time (for example after updating it in JW Library) failing with an error until M³ was restarted, or showing the previous version's items.
 - 🐞 **Media Window**: Fixed a rare error when the media window was closed at the exact moment M³ was repositioning it (for example right after startup).
 - 🐞 **OBS Studio**: Turning the OBS integration off now properly resets its connection status, so turning it back on reconnects cleanly instead of briefly acting on the old, closed connection.

@@ -811,6 +811,34 @@ describe('getZipEntries', () => {
     expect(captureElectronErrorMock).not.toHaveBeenCalled();
   });
 
+  // MMM-V2-3KB..3KF: opening a jwpub a fraction of a second after its
+  // download finished failed with EPERM (post-download AV/quarantine scan),
+  // while the same file read fine a moment later.
+  it('retries a zip that is briefly locked right after download', async () => {
+    const error = new Error(
+      "EPERM: operation not permitted, open 'E:/MeetingMM/Publications/w_E_202507.jwpub'",
+    );
+    (error as Error & { code?: string }).code = 'EPERM';
+    const zipfile = {
+      close: vi.fn(),
+      eachEntry: async function* () {
+        yield* [];
+      },
+    };
+
+    yauzlOpenMock.mockRejectedValueOnce(error).mockResolvedValueOnce(zipfile);
+
+    const { unzipFile } = await import('../fs');
+
+    await expect(unzipFile('/tmp/locked.jwpub', '/tmp/out')).resolves.toEqual(
+      [],
+    );
+
+    expect(yauzlOpenMock).toHaveBeenCalledTimes(2);
+    expect(delayMock).toHaveBeenCalledWith(1000);
+    expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
+
   it('reads entries from a JWPUB that was already extracted into a directory', async () => {
     statMock.mockImplementation(async (path: string) => {
       if (path === '/tmp/parent-dir.jwpub') {
