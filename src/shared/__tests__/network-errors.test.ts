@@ -18,6 +18,19 @@ describe('isFetchNetworkError', () => {
     expect(isFetchNetworkError(timeout)).toBe(true);
   });
 
+  // MMM-V2-3JQ: fetchJson bounds each attempt with AbortSignal.timeout(),
+  // whose rejection is a DOMException named TimeoutError, not AbortError.
+  it('returns true for the TimeoutError an AbortSignal.timeout() rejects with', async () => {
+    const signal = AbortSignal.timeout(0);
+    await new Promise((resolve) => {
+      setTimeout(resolve, 5);
+    });
+
+    expect(signal.reason).toBeInstanceOf(Error);
+    expect((signal.reason as Error).name).toBe('TimeoutError');
+    expect(isFetchNetworkError(signal.reason)).toBe(true);
+  });
+
   it('returns true for known network error codes', () => {
     const error = Object.assign(new Error('connect ECONNREFUSED'), {
       code: 'ECONNREFUSED',

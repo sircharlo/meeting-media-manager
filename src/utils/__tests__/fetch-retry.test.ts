@@ -25,6 +25,21 @@ describe('withFetchRetry', () => {
     expect(fn).toHaveBeenCalledTimes(3);
   });
 
+  // MMM-V2-3JQ: the per-attempt timeout used to escape retries entirely.
+  it('retries an AbortSignal.timeout() TimeoutError', async () => {
+    const timeoutError = new DOMException(
+      'The operation was aborted due to timeout',
+      'TimeoutError',
+    );
+    const fn = vi
+      .fn()
+      .mockRejectedValueOnce(timeoutError)
+      .mockResolvedValueOnce('ok');
+
+    await expect(withFetchRetry(fn)).resolves.toBe('ok');
+    expect(fn).toHaveBeenCalledTimes(2);
+  });
+
   it('does not retry a non-network error', async () => {
     const error = nonNetworkError();
     const fn = vi.fn().mockRejectedValue(error);

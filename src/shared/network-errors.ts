@@ -16,7 +16,14 @@ export const NETWORK_ERROR_CODES = new Set([
 export function isFetchNetworkError(error: unknown): boolean {
   if (!(error instanceof Error)) return false;
 
-  if (error.name === 'AbortError' || error.name === 'ConnectTimeoutError') {
+  // `AbortSignal.timeout()` (fetchJson's per-attempt bound) rejects with a
+  // DOMException named 'TimeoutError', not 'AbortError' - missing it meant
+  // timeouts were reported as errors and never retried (MMM-V2-3JQ).
+  if (
+    error.name === 'AbortError' ||
+    error.name === 'TimeoutError' ||
+    error.name === 'ConnectTimeoutError'
+  ) {
     return true;
   }
 
