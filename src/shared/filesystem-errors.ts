@@ -89,6 +89,39 @@ export const getFilesystemErrorSyscall = (error: unknown) => {
     ?.syscall;
 };
 
+/**
+ * Node fs errors (ENOENT, EPERM, EBUSY, ...) embed the full dynamic file
+ * path in their message. Sentry's default grouping picks that up, so what's
+ * really one recurring failure fragments into a separate issue per unique
+ * path. Group by the stable parts instead — error code, syscall, and the
+ * originating function (from the `contexts.fn.name` callers already pass).
+ * Shared by the renderer's errorCatcher and the main process's
+ * captureElectronError.
+ * @param error The error being reported
+ * @param context The Sentry capture context passed alongside it
+ * @returns A Sentry fingerprint, or undefined for non-fs errors
+ */
+export const getNodeFsErrorFingerprint = (
+  error: unknown,
+  context?: unknown,
+): string[] | undefined => {
+  const code = getFilesystemErrorCode(error);
+  const syscall = getFilesystemErrorSyscall(error);
+  if (!code || !syscall) return undefined;
+
+  const fnName =
+    context && typeof context === 'object' && 'contexts' in context
+      ? (context.contexts as undefined | { fn?: { name?: unknown } })?.fn?.name
+      : undefined;
+
+  return [
+    'node-fs-error',
+    code,
+    syscall,
+    typeof fnName === 'string' ? fnName : 'unknown',
+  ];
+};
+
 export const normalizeFilesystemPath = (path: string) =>
   (path || '').replaceAll('\\', '/');
 

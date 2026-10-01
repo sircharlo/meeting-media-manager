@@ -12,6 +12,7 @@ import {
 } from 'src-electron/constants';
 import { isUsablePath } from 'src-electron/main/fs';
 import { urlVariables } from 'src-electron/main/session';
+import { getNodeFsErrorFingerprint } from 'src/shared/filesystem-errors';
 import {
   isFetchNetworkError,
   NETWORK_ERROR_CODES,
@@ -550,7 +551,16 @@ export function captureElectronError(error: unknown, context?: CaptureCtx) {
     log(error, 'electron', 'error');
     log('context', 'electron', 'warn', context);
   } else {
-    captureException(error, context);
+    // Same path-independent grouping the renderer's errorCatcher applies -
+    // without it, one recurring main-process fs failure split into a
+    // separate Sentry issue per file path (e.g. MMM-V2-3KB..3KF).
+    const fingerprint = getNodeFsErrorFingerprint(error, context);
+    captureException(
+      error,
+      fingerprint && typeof context !== 'function'
+        ? ({ ...context, fingerprint } as CaptureCtx)
+        : context,
+    );
   }
 }
 
