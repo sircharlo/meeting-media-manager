@@ -3,8 +3,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const mocks = vi.hoisted(() => ({
   addElectronBreadcrumb: vi.fn(),
   captureElectronError: vi.fn(),
-  download: vi.fn(async () => 'download-id'),
+  getLowDiskSpaceStatus: vi.fn(),
   mkdir: vi.fn(),
+  // Never settles: these tests only care whether a transfer starts.
+  runTransfer: vi.fn(
+    () =>
+      new Promise(() => {
+        // Intentionally left pending.
+      }),
+  ),
   sendToWindow: vi.fn(),
   stat: vi.fn(),
 }));
@@ -26,20 +33,9 @@ vi.mock('node:fs/promises', () => ({
   stat: mocks.stat,
 }));
 
-vi.mock('electron-dl-manager', () => ({
-  // A real `function` (not an arrow function) is required: downloads.ts
-  // calls `new ElectronDownloadManager()`, and an arrow-function mock
-  // implementation throws "is not a constructor" if actually invoked via
-  // `new` (see downloads.cancel-race.test.ts, which hit this).
-  ElectronDownloadManager: vi.fn(function () {
-    return {
-      cancelDownload: vi.fn(),
-      download: mocks.download,
-      getDownloadData: vi.fn(),
-      pauseDownload: vi.fn(),
-      resumeDownload: vi.fn(),
-    };
-  }),
+vi.mock('src-electron/main/download-transfer', () => ({
+  discardPartialDownload: vi.fn(async () => undefined),
+  runTransfer: mocks.runTransfer,
 }));
 
 vi.mock('src-electron/main/session', () => ({
@@ -69,22 +65,24 @@ vi.mock('electron', () => ({
 }));
 
 vi.mock('src-electron/main/disk-space', () => ({
-  getLowDiskSpaceStatus: vi.fn(async () => false),
+  getLowDiskSpaceStatus: mocks.getLowDiskSpaceStatus,
 }));
 
 vi.mock('src/shared/vanilla', () => ({
   log: vi.fn(),
+  throttleWithTrailing: (fn: (...args: unknown[]) => unknown) => fn,
 }));
 
 describe('downloads window lifetime', () => {
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
+    mocks.getLowDiskSpaceStatus.mockResolvedValue(false);
     mocks.mkdir.mockResolvedValue(undefined);
     mocks.stat.mockResolvedValue({ isDirectory: () => true });
   });
 
-  it('does not start a download when the window webContents is destroyed before queue processing', async () => {
+  it('does not start a download when the window webContents is destroyed while the queue decides what to start', async () => {
     let webContentsDestroyed = false;
     windowState.mainWindow = {
       id: 1,
@@ -93,18 +91,11 @@ describe('downloads window lifetime', () => {
         isDestroyed: () => webContentsDestroyed,
       },
     };
-
-    const { ElectronDownloadManager } = await import('electron-dl-manager');
-    vi.mocked(ElectronDownloadManager).mockImplementationOnce(function () {
+    // The disk-space check is the one await between the queue deciding
+    // there's a free slot and starting a download in it.
+    mocks.getLowDiskSpaceStatus.mockImplementation(async () => {
       webContentsDestroyed = true;
-
-      return {
-        cancelDownload: vi.fn(),
-        download: mocks.download,
-        getDownloadData: vi.fn(),
-        pauseDownload: vi.fn(),
-        resumeDownload: vi.fn(),
-      } as unknown as InstanceType<typeof ElectronDownloadManager>;
+      return false;
     });
 
     const { downloadFile } = await import('../downloads');
@@ -114,9 +105,14 @@ describe('downloads window lifetime', () => {
       key: 'https://example.test/file.mp4/tmp/media',
       saveDir: '/tmp/media',
     });
-    await Promise.resolve();
+    for (let i = 0; i < 5; i++) {
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, 0);
+      });
+    }
 
-    expect(mocks.download).not.toHaveBeenCalled();
+    expect(mocks.getLowDiskSpaceStatus).toHaveBeenCalled();
+    expect(mocks.runTransfer).not.toHaveBeenCalled();
     expect(mocks.captureElectronError).not.toHaveBeenCalled();
   });
 

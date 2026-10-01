@@ -6,6 +6,10 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ## UPCOMING VERSION
 
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Downloads**: Media downloads now pick up where they left off after a dropped connection, instead of starting over — a big help on slow or unreliable connections. Under the hood, M³ now uses its own download engine, which also lets it tell a file that's missing on the server apart from a network problem.
+
 ### 🐞 Bug Fixes
 
 - 🐞 **Downloads**: Fixed media downloads that could stay paused, or never start at all, until M³ was restarted. A download interrupted by a connection problem is now retried (and shown as failed if it keeps failing) instead of silently holding up every download queued behind it, and a download that stops receiving data is restarted automatically. Downloads are also no longer held back whenever free disk space drops below 10 GB — only once it is critically low (under 1 GB) — and they resume on their own once space frees up.

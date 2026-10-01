@@ -1,13 +1,18 @@
-import type { ElectronDownloadManager as EDMType } from 'electron-dl-manager';
-
 import { getCountriesForTimezone } from 'countries-and-timezones';
 import { app, type BrowserWindow } from 'electron';
+import { randomUUID } from 'node:crypto';
 import { mkdir, stat } from 'node:fs/promises';
 import { setTimeout as delay } from 'node:timers/promises';
 import { IS_DEMO_MODE } from 'src-electron/constants';
 import { getLowDiskSpaceStatus } from 'src-electron/main/disk-space';
+import {
+  discardPartialDownload,
+  type ResumeInfo,
+  runTransfer,
+  type TransferFailure,
+  type TransferResult,
+} from 'src-electron/main/download-transfer';
 import { getFallbackDir } from 'src-electron/main/resilient-storage';
-import { quitStatus } from 'src-electron/main/session';
 import {
   addElectronBreadcrumb,
   captureElectronError,
@@ -15,6 +20,11 @@ import {
 } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
+import {
+  getFilesystemErrorCode,
+  getFilesystemErrorSyscall,
+  isExpectedNetworkPathAccessError,
+} from 'src/shared/filesystem-errors';
 import { log, throttleWithTrailing } from 'src/shared/vanilla';
 import { basename, dirname, join } from 'upath';
 
@@ -42,12 +52,12 @@ const getEnsureDirRetryDelay = (attempt: number) => {
   return Math.random() * cappedDelay;
 };
 
-// BE-9 (full-audit-2026-09-04.md): a download that failed at the
-// network/HTTP level was previously removed from tracking and reported
-// immediately, with no automatic retry - every transient blip required the
-// user to manually resubmit. Bounded (not indefinite) so a genuinely
-// permanent failure (e.g. a 404) still gives up promptly rather than
-// hammering the same URL forever.
+// BE-9 (full-audit-2026-09-04.md): a failed download is retried
+// automatically instead of needing the user to resubmit it. Bounded so a
+// download that keeps failing still gives up promptly rather than hammering
+// the same URL forever - but only failures that made no progress count
+// towards the bound: a retry resumes where the last attempt stopped, so a
+// large file on a flaky connection that keeps advancing is never given up on.
 const DOWNLOAD_ERROR_RETRY_COUNT = 2;
 const DOWNLOAD_ERROR_RETRY_BASE_DELAY_MS = 1000;
 const DOWNLOAD_ERROR_RETRY_MAX_DELAY_MS = 8000;
@@ -60,28 +70,6 @@ const getDownloadErrorRetryDelay = (attempt: number) => {
   );
   return Math.random() * cappedDelay;
 };
-
-// The queue is otherwise purely event-driven: a download only frees its slot
-// (and lets the next queued or paused one run) when the download manager
-// reports it completed, cancelled or failed. A download that silently stops -
-// one Chromium leaves interrupted without ever reporting it done, or a
-// connection that hangs without erroring - used to keep its slot forever, and
-// every lower-priority download stayed paused behind it until the app was
-// restarted. The watchdog below restarts (or fails) such downloads and keeps
-// re-running the queue for as long as there is work pending.
-const QUEUE_WATCHDOG_INTERVAL_MS = 15000;
-// Zero bytes received for this long is a stuck download, not a slow one -
-// the same judgment as the renderer's own DOWNLOAD_STALL_TIMEOUT_MS
-// (src/helpers/jw-media.ts), since many users have slow connections.
-const DOWNLOAD_STALL_TIMEOUT_MS = 45000;
-// Chromium resumes many transient interruptions on its own, right away. One
-// it hasn't picked back up after this long won't be, so it's restarted.
-const DOWNLOAD_INTERRUPTED_GRACE_MS = 10000;
-// A download waits for the one started before it to be handed over by
-// Chromium (electron-dl-manager starts them strictly one after another), which
-// normally takes well under a second. Waiting this long means that chain is
-// wedged, which nothing here can recover from short of an app restart.
-const DOWNLOAD_INITIALIZATION_STUCK_MS = 2 * 60 * 1000;
 
 interface EnsureDirAttemptDiagnostics {
   attempt: number;
@@ -146,24 +134,39 @@ interface GeoInfo {
   countryCode: string;
 }
 
+/**
+ * A download that has been started. It stays tracked - holding its slot
+ * while ACTIVE - until it completes, fails for good, or is cancelled.
+ */
 interface OngoingDownload {
-  cancelRequested?: boolean;
-  /** When Chromium reported a resumable interruption it hasn't recovered from. */
-  interruptedAt?: number;
-  item: DownloadQueueItem;
-  /** When this attempt last started, resumed or received bytes. */
-  lastActivityAt: number;
-  lowPriority: boolean;
-  pauseRequested?: boolean;
-  /** How many automatic retries came before this attempt. */
-  retryAttempt: number;
-  state: DownloadState;
   /**
-   * Set once this attempt has been given up on (it is being retried, or has
-   * failed), so its late callbacks and the queue watchdog leave it alone.
+   * Stops the running transfer. Absent while no transfer is running: while
+   * paused, and while waiting to retry (which still holds the slot).
    */
-  superseded?: boolean;
-  uuid: string;
+  controller?: AbortController;
+  /**
+   * Consecutive failed attempts that got no further into the file than an
+   * earlier attempt already had.
+   */
+  failedAttempts: number;
+  item: DownloadQueueItem;
+  lowPriority: boolean;
+  /**
+   * Makes this download's `.part` file its own: two downloads of different
+   * URLs can be saved under the same name, and must not write into, or clean
+   * up, each other's unfinished file.
+   */
+  partialId: string;
+  /** The furthest any attempt has got into the file, in bytes. */
+  reachedBytes: number;
+  /** How to resume the unfinished `.part` file, if it can be. */
+  resume: null | ResumeInfo;
+  /**
+   * Where the file is actually written: `item.saveDir`, unless a retry had
+   * to fall back to another directory (BE-13).
+   */
+  saveDir: string;
+  state: DownloadState;
 }
 
 const getDirectoryFailureDiagnostics = async (
@@ -365,13 +368,20 @@ async function createDirWithRetry(dir: string): Promise<string> {
 }
 
 /**
+ * A paused download can resume once its transfer has finished winding down:
+ * until then, that transfer may still be writing to the `.part` file a
+ * resumed transfer would append to.
+ */
+const canResume = (download: OngoingDownload) => !download.controller;
+
+/**
  * Finds the next low priority paused download to resume
  */
 function findLowPriorityPausedDownload(
   pausedDownloads: Map<string, OngoingDownload>,
 ): null | { download: OngoingDownload; key: string } {
   for (const [key, download] of pausedDownloads.entries()) {
-    if (download.lowPriority && download.uuid) {
+    if (download.lowPriority && canResume(download)) {
       return { download, key };
     }
   }
@@ -385,7 +395,7 @@ function findNormalPriorityPausedDownload(
   pausedDownloads: Map<string, OngoingDownload>,
 ): null | { download: OngoingDownload; key: string } {
   for (const [key, download] of pausedDownloads.entries()) {
-    if (!download.lowPriority && download.uuid) {
+    if (!download.lowPriority && canResume(download)) {
       return { download, key };
     }
   }
@@ -452,111 +462,28 @@ function hasHighPriorityActive(
 }
 
 function logDownloadQueueDebugState(reason: string): void {
-  const activeDownloads = getActiveDownloads();
-  const pausedDownloads = getPausedDownloads();
-  const activeDetails = Array.from(activeDownloads.entries()).map(
-    ([key, download]) => ({
-      hasUuid: !!download.uuid,
-      key,
-      lowPriority: download.lowPriority,
-      pauseRequested: !!download.pauseRequested,
-      state: download.state,
-      url: download.item.url,
-    }),
-  );
-  const pausedDetails = Array.from(pausedDownloads.entries()).map(
-    ([key, download]) => ({
-      hasUuid: !!download.uuid,
-      key,
-      lowPriority: download.lowPriority,
-      pauseRequested: !!download.pauseRequested,
-      state: download.state,
-      url: download.item.url,
-    }),
-  );
+  const describe = ([key, download]: [string, OngoingDownload]) => ({
+    failedAttempts: download.failedAttempts,
+    isTransferring: !!download.controller,
+    key,
+    lowPriority: download.lowPriority,
+    state: download.state,
+    url: download.item.url,
+  });
 
   log(
     `Download queue debug snapshot (${reason})`,
     'electronDownloads',
     'warn',
     {
-      activeCount: activeDownloads.size,
-      activeDownloads: activeDetails,
+      activeDownloads: Array.from(getActiveDownloads().entries(), describe),
       lowPriorityQueueLength: lowPriorityQueue.length,
       lowPriorityQueueTop: lowPriorityQueue[0]?.url,
       normalQueueLength: downloadQueue.length,
       normalQueueTop: downloadQueue[0]?.url,
-      pausedCount: pausedDownloads.size,
-      pausedDownloads: pausedDetails,
+      pausedDownloads: Array.from(getPausedDownloads().entries(), describe),
     },
   );
-}
-
-function logPausedDownloadsContext(reason: string): void {
-  const pausedDownloads = getPausedDownloads();
-  if (pausedDownloads.size === 0) return;
-
-  const pausedDetails = Array.from(pausedDownloads.entries()).map(
-    ([key, download]) => ({
-      hasUuid: !!download.uuid,
-      key,
-      lowPriority: download.lowPriority,
-      pauseRequested: !!download.pauseRequested,
-      url: download.item.url,
-    }),
-  );
-
-  log(
-    `Paused downloads snapshot (${reason})`,
-    'electronDownloads',
-    'warn',
-    pausedDetails,
-  );
-}
-
-/**
- * Logs queue blocking reasons for debugging
- */
-function logQueueBlockReason(
-  itemType: null | QueueItemType,
-  hasHighPriorityActiveDownload: boolean,
-): void {
-  if (itemType === null && hasHighPriorityActiveDownload) {
-    log(
-      'High priority active. Not processing low priority items.',
-      'electronDownloads',
-      'log',
-    );
-  }
-}
-
-/**
- * Attempts to resume a paused download
- */
-async function resumeDownload(
-  manager: EDMType,
-  download: OngoingDownload,
-  key: string,
-  ongoingDownloads: Map<string, OngoingDownload>,
-): Promise<boolean> {
-  try {
-    markDownloadActive(download);
-    manager.resumeDownload(download.uuid);
-    return true;
-  } catch (error) {
-    // Failed to resume, remove from ongoing
-    ongoingDownloads.delete(key);
-    captureElectronError(error, {
-      contexts: {
-        fn: {
-          download,
-          key,
-          name: 'download-queue-helpers.ts resumeDownload',
-        },
-      },
-    });
-    return false;
-  }
 }
 
 const downloadQueue: DownloadQueueItem[] = [];
@@ -564,8 +491,7 @@ const lowPriorityQueue: DownloadQueueItem[] = [];
 const ongoingDownloads = new Map<string, OngoingDownload>();
 const maxActiveDownloads = 3;
 
-// `electron-dl-manager` fires `onDownloadProgress` on every native
-// `DownloadItem 'updated'` event with no internal throttling. With up to
+// A transfer reports progress on every chunk it receives. With up to
 // `maxActiveDownloads` downloads running at once that can drive a near-
 // continuous stream of progress IPC into the renderer, where each message
 // mutates the Pinia `current-state` store (invalidating every bound
@@ -575,36 +501,16 @@ const maxActiveDownloads = 3;
 // advances smoothly.
 export const DOWNLOAD_PROGRESS_THROTTLE_MS = 200;
 let cancelAll = false;
+// Set by pauseAllDownloads(): nothing starts or resumes until
+// resumeAllDownloads() is called.
+let downloadsHeld = false;
 const QUEUE_BREADCRUMB_MIN_INTERVAL_MS = 5000;
 let lastQueueBreadcrumbAt = 0;
 let lastQueueSnapshot = '';
 
-let manager: EDMType | null = null;
-let queueWatchdog: null | ReturnType<typeof setInterval> = null;
-let reportedStuckInitialization = false;
-
-/**
- * Stops tracking `download`, unless a newer attempt for the same key has
- * already replaced it (e.g. a retry).
- */
-const releaseDownload = (key: string, download: OngoingDownload) => {
-  if (ongoingDownloads.get(key) === download) ongoingDownloads.delete(key);
-};
-
-const isCurrentAttempt = (key: string, download: OngoingDownload) =>
-  !download.superseded && ongoingDownloads.get(key) === download;
-
-/** Marks a download as running again, restarting its stall clock. */
-const markDownloadActive = (download: OngoingDownload) => {
-  download.state = DownloadState.ACTIVE;
-  download.lastActivityAt = Date.now();
-  download.interruptedAt = undefined;
-};
-
-const hasPendingDownloadWork = () =>
-  ongoingDownloads.size > 0 ||
-  downloadQueue.length > 0 ||
-  lowPriorityQueue.length > 0;
+let isProcessingQueue = false;
+let queueRerunRequested = false;
+let diskSpaceRecheckTimer: null | ReturnType<typeof setTimeout> = null;
 
 // Helper getters for filtered views
 const getActiveDownloads = () => {
@@ -684,16 +590,23 @@ const addQueueBreadcrumb = (
   });
 };
 
-const loadElectronDownloadManager: () => Promise<EDMType | null> = async () => {
-  if (!getDownloadWindow()) return null; // window is closed
+/**
+ * Stops tracking `download`, unless something else has already replaced it
+ * under the same key.
+ */
+const releaseDownload = (key: string, download: OngoingDownload) => {
+  if (ongoingDownloads.get(key) === download) ongoingDownloads.delete(key);
+};
 
-  if (manager) return manager; // already initialized
+const getDestPath = (download: OngoingDownload) =>
+  join(download.saveDir, download.item.destFilename);
 
-  const { ElectronDownloadManager } = await import('electron-dl-manager');
+const getPartialPath = (download: OngoingDownload) =>
+  `${getDestPath(download)}.${download.partialId}.part`;
 
-  // instantiate once and reuse
-  manager = new ElectronDownloadManager();
-  return manager;
+const getPercentCompleted = (receivedBytes: number, totalBytes: number) => {
+  if (totalBytes <= 0) return 0;
+  return Math.min(Number(((receivedBytes / totalBytes) * 100).toFixed(2)), 100);
 };
 
 export interface DownloadFileResult {
@@ -711,36 +624,21 @@ export interface DownloadFileResult {
  * Cancels all downloads.
  */
 export async function cancelAllDownloads() {
-  const manager = await loadElectronDownloadManager();
-  if (!manager) return;
-
   cancelAll = true;
   downloadQueue.length = 0;
   lowPriorityQueue.length = 0;
+  clearDiskSpaceRecheck();
 
   for (const [key, download] of ongoingDownloads) {
-    if (download.uuid) {
-      try {
-        manager.cancelDownload(download.uuid);
-      } catch (error) {
-        captureElectronError(error, {
-          contexts: {
-            fn: {
-              download,
-              name: 'downloads.ts cancelAllDownloads',
-            },
-          },
-        });
-      }
-      ongoingDownloads.delete(key);
-    } else {
-      // Still initializing: manager.download() hasn't resolved a uuid yet,
-      // so there's nothing to hand to manager.cancelDownload() right now.
-      // Flag it so startDownload's post-await continuation cancels it the
-      // moment the uuid arrives, instead of losing track of it here and
-      // letting it keep downloading in the background after "cancel all."
-      download.cancelRequested = true;
+    ongoingDownloads.delete(key);
+    if (download.controller) {
+      // Its transfer removes the `.part` file and reports the cancellation.
+      download.controller.abort('cancel');
+      continue;
     }
+    // Paused, or waiting to retry: nothing is running, so clean up here.
+    discardPartialDownload(getPartialPath(download)).catch(() => undefined);
+    sendToWindow(getDownloadWindow(), 'downloadCancelled', { id: key });
   }
 }
 
@@ -799,7 +697,7 @@ export async function downloadFile(
     }
 
     // Check if already queued but not yet started (ongoingDownloads only
-    // gains an entry once startDownload actually runs - see BE-4 in
+    // gains an entry once a download actually starts - see BE-4 in
     // full-audit-2026-09-04.md). Without this, two rapid calls for the same
     // URL/directory while the queue is saturated could both miss each other
     // here and enqueue the same download twice, racing to write the same
@@ -818,6 +716,7 @@ export async function downloadFile(
         if (promoted) {
           stopLowPriorityDownloads();
           downloadQueue.push(promoted);
+          processQueue();
           addQueueBreadcrumb('priority-promoted-queued-download', {
             force: true,
           });
@@ -846,7 +745,6 @@ export async function downloadFile(
     );
 
     // Trigger queue processing
-    ensureQueueWatchdog();
     processQueue();
 
     return { key, saveDir: resolvedSaveDir };
@@ -869,167 +767,65 @@ export async function downloadFile(
 }
 
 export async function isDownloadComplete(downloadId: string) {
-  const manager = await loadElectronDownloadManager();
-  if (!manager) return null;
+  if (!getDownloadWindow()) return null;
 
-  // Check if it's in progress
-  const ongoing = ongoingDownloads.get(downloadId);
-  if (ongoing) {
-    if (ongoing.uuid) {
-      return (
-        manager.getDownloadData(ongoing.uuid)?.isDownloadCompleted() || false
-      );
-    }
-    // If it's in ongoing but has no uuid yet, it's still initializing/queued
-    return false;
-  }
+  // Started but not finished yet (running, paused, or waiting to retry)
+  if (ongoingDownloads.has(downloadId)) return false;
 
   // Check if it's still in one of the queues
   const isInQueue =
     downloadQueue.some((d) => d.url + d.saveDir === downloadId) ||
     lowPriorityQueue.some((d) => d.url + d.saveDir === downloadId);
 
-  if (isInQueue) {
-    return false;
-  }
-
   // If it's not ongoing and not in queue, it must have finished (or failed and been removed)
-  return true;
+  return !isInQueue;
 }
 
 /**
- * Pause all active downloads.
+ * Pauses every running download, and holds the queue - nothing starts or
+ * resumes - until resumeAllDownloads() is called.
  */
 export async function pauseAllDownloads(reason = 'manual') {
-  const loadedManager = await loadElectronDownloadManager();
-  if (!loadedManager) return;
+  downloadsHeld = true;
+  pauseActiveDownloads(reason);
+}
 
+/**
+ * Releases a pauseAllDownloads() hold and lets paused downloads resume, as
+ * many as there are free slots for, by priority.
+ */
+export async function resumeAllDownloads(reason = 'manual') {
+  downloadsHeld = false;
+  log(
+    `Resuming ${getPausedDownloads().size} paused downloads as slots allow (${reason})`,
+    'electronDownloads',
+    'log',
+  );
+  addQueueBreadcrumb(`resume-all-${reason}`, { force: true });
+  processQueue();
+}
+
+function pauseActiveDownloads(reason: string) {
   const activeDownloads = getActiveDownloads();
-  if (activeDownloads.size === 0) {
-    log(
-      `pauseAllDownloads called (${reason}) but there were no active downloads`,
-      'electronDownloads',
-      'log',
-    );
-    return;
-  }
+  if (activeDownloads.size === 0) return;
 
   log(
     `Pausing ${activeDownloads.size} active downloads (${reason})`,
     'electronDownloads',
     'warn',
   );
-  logDownloadQueueDebugState(`before pause-all (${reason})`);
-
-  activeDownloads.forEach((download, key) => {
-    if (!download.uuid) {
-      download.pauseRequested = true;
-      download.state = DownloadState.PAUSED;
-      log(
-        `Pause requested before uuid assignment (${reason})`,
-        'electronDownloads',
-        'warn',
-        key,
-        download.item.url,
-      );
-      return;
-    }
-
-    try {
-      download.state = DownloadState.PAUSED;
-      loadedManager.pauseDownload(download.uuid);
-      log(
-        `Paused download (${reason})`,
-        'electronDownloads',
-        'warn',
-        key,
-        download.item.url,
-      );
-    } catch (error) {
-      captureElectronError(error, {
-        contexts: {
-          fn: {
-            download,
-            key,
-            name: 'downloads.ts pauseAllDownloads',
-            reason,
-          },
-        },
-      });
-    }
-  });
-
+  activeDownloads.forEach((download) => pauseDownload(download));
   logDownloadQueueDebugState(`after pause-all (${reason})`);
   addQueueBreadcrumb(`pause-all-${reason}`, { force: true });
 }
 
 /**
- * Attempts to resume every paused download and kick queue processing.
+ * Pauses a download, keeping what it has received so far so it can resume
+ * from there.
  */
-export async function resumeAllDownloads(reason = 'manual') {
-  const loadedManager = await loadElectronDownloadManager();
-  if (!loadedManager) return;
-
-  const pausedDownloads = getPausedDownloads();
-  if (pausedDownloads.size === 0) {
-    log(
-      `resumeAllDownloads called (${reason}) but there were no paused downloads`,
-      'electronDownloads',
-      'log',
-    );
-    processQueue();
-    return;
-  }
-
-  log(
-    `Resuming ${pausedDownloads.size} paused downloads (${reason})`,
-    'electronDownloads',
-    'warn',
-  );
-  logPausedDownloadsContext(`before resume-all (${reason})`);
-
-  pausedDownloads.forEach((download, key) => {
-    // If pause was requested before uuid assignment, clear the request.
-    if (download.pauseRequested) {
-      download.pauseRequested = false;
-    }
-
-    if (!download.uuid) {
-      // Still initializing, so there's nothing to resume yet - but with its
-      // pause request cleared above, it simply runs once it has a uuid, so
-      // count it as active again. Left PAUSED, processQueue()'s stalled-queue
-      // check would call straight back into this function for it, in a loop
-      // of microtasks that starves the very event that delivers its uuid.
-      markDownloadActive(download);
-      log(
-        `Paused download is still initializing; it will start once ready (${reason})`,
-        'electronDownloads',
-        'warn',
-        key,
-        download.item.url,
-      );
-      return;
-    }
-
-    try {
-      markDownloadActive(download);
-      loadedManager.resumeDownload(download.uuid);
-    } catch (error) {
-      captureElectronError(error, {
-        contexts: {
-          fn: {
-            download,
-            key,
-            name: 'downloads.ts resumeAllDownloads',
-            reason,
-          },
-        },
-      });
-    }
-  });
-
-  addQueueBreadcrumb(`resume-all-${reason}`, { force: true });
-  processQueue();
+function pauseDownload(download: OngoingDownload) {
+  download.state = DownloadState.PAUSED;
+  download.controller?.abort('pause');
 }
 
 /**
@@ -1037,45 +833,16 @@ export async function resumeAllDownloads(reason = 'manual') {
  */
 function stopLowPriorityDownloads(reason = 'high-priority-enqueued') {
   const activeLowPriority = getActiveLowPriorityDownloads();
-  let pausedAny = false;
-  activeLowPriority.forEach((download, key) => {
-    log(
-      'Pausing download to free slot:',
-      'electronDownloads',
-      'log',
-      download.uuid || 'no-uuid',
-      key,
-    );
-    if (!manager) return;
+  if (activeLowPriority.size === 0) return;
 
-    if (download.uuid) {
-      try {
-        download.state = DownloadState.PAUSED;
-        manager.pauseDownload(download.uuid);
-        pausedAny = true;
-      } catch (error) {
-        captureElectronError(error, {
-          contexts: {
-            fn: {
-              download,
-              key,
-              name: 'downloads.ts stopLowPriorityDownloads',
-            },
-          },
-        });
-      }
-    } else {
-      // UUID is not available yet; request pause once the manager returns it
-      download.pauseRequested = true;
-    }
+  activeLowPriority.forEach((download, key) => {
+    log('Pausing download to free slot:', 'electronDownloads', 'log', key);
+    pauseDownload(download);
   });
-  if (pausedAny) {
-    logPausedDownloadsContext(`stopLowPriorityDownloads (${reason})`);
-    logDownloadQueueDebugState(`stopLowPriorityDownloads (${reason})`);
-    addQueueBreadcrumb('low-priority-paused-for-high-priority', {
-      force: true,
-    });
-  }
+  logDownloadQueueDebugState(`stopLowPriorityDownloads (${reason})`);
+  addQueueBreadcrumb('low-priority-paused-for-high-priority', {
+    force: true,
+  });
 }
 
 // Cache for the download error check result
@@ -1176,73 +943,6 @@ export function resetDownloadErrorCache() {
   downloadErrorCheckPromise = null;
 }
 
-/**
- * Continues processing if slots are available
- */
-function continueProcessingIfAvailable(): void {
-  if (hasAvailableSlots(getActiveDownloadCount(), maxActiveDownloads)) {
-    processQueue(); // Don't await - let it run async
-  }
-}
-
-/**
- * Processes a low priority new download
- */
-async function processLowNewDownload(): Promise<void> {
-  const download = lowPriorityQueue.shift();
-  if (!download) return;
-  await startDownload(download, true);
-}
-
-/**
- * Processes a low priority paused download (resume)
- */
-async function processLowPausedDownload(
-  loadedManager: EDMType,
-  pausedDownloads: Map<string, OngoingDownload>,
-): Promise<boolean> {
-  const found = findLowPriorityPausedDownload(pausedDownloads);
-  if (!found) return false;
-
-  const { download, key } = found;
-  const success = await resumeDownload(
-    loadedManager,
-    download,
-    key,
-    ongoingDownloads,
-  );
-  return success;
-}
-
-/**
- * Processes a normal priority new download
- */
-async function processNormalNewDownload(): Promise<void> {
-  const download = downloadQueue.shift();
-  if (!download) return;
-  await startDownload(download, false);
-}
-
-/**
- * Processes a normal priority paused download (resume)
- */
-async function processNormalPausedDownload(
-  loadedManager: EDMType,
-  pausedDownloads: Map<string, OngoingDownload>,
-): Promise<boolean> {
-  const found = findNormalPriorityPausedDownload(pausedDownloads);
-  if (!found) return false;
-
-  const { download, key } = found;
-  const success = await resumeDownload(
-    loadedManager,
-    download,
-    key,
-    ongoingDownloads,
-  );
-  return success;
-}
-
 // BE-8 (full-audit-2026-09-04.md): the only prior low-disk-space check fired
 // once, at congregation-switch time, and never gated downloads themselves -
 // a long download session (e.g. an initial multi-week sync) could keep
@@ -1252,13 +952,11 @@ const DISK_SPACE_CHECK_INTERVAL_MS = 2 * 60 * 1000;
 let lastDiskSpaceCheckAt = 0;
 // BE-12 (full-audit-2026-09-05.md): a throttled call used to unconditionally
 // report "not low" regardless of the last real check's result - so once
-// pauseAllDownloads('low-disk-space') actually paused a download for a real
-// low-disk reading, any processQueue() run within the next throttle window
-// (triggered by so much as a single new downloadFile() call) would see this
-// return false, letting getNextQueueItemType()'s paused-download branch
-// resume it before the disk had actually freed up. Caching the last real
-// result and returning that instead means a throttled call reflects reality
-// until the next real check runs, not just "assume fine."
+// downloads were actually paused for a real low-disk reading, any
+// processQueue() run within the next throttle window would see this return
+// false and resume them before the disk had actually freed up. Caching the
+// last real result and returning that instead means a throttled call
+// reflects reality until the next real check runs, not just "assume fine."
 let lastDiskSpaceCheckResult = false;
 // This gate originally reused getLowDiskSpaceStatus()'s 10 GB *warning*
 // threshold, which stopped every download outright for anyone with less
@@ -1267,67 +965,9 @@ let lastDiskSpaceCheckResult = false;
 // the 10 GB warning is still shown to the user separately.
 const CRITICAL_FREE_DISK_SPACE_GB = 1;
 
-/**
- * Gives up on one attempt at a download - one that errored, was interrupted,
- * or stopped making progress. The attempt's download item is cancelled, so
- * nothing keeps downloading in the background untracked, then the download is
- * either retried (bounded by DOWNLOAD_ERROR_RETRY_COUNT) or reported as
- * failed, which frees its slot for the next queued or paused download.
- * Callers must only pass the attempt currently tracked for `key`.
- * @returns Whether a retry was scheduled.
- */
-function abandonDownloadAttempt(
-  key: string,
-  download: OngoingDownload,
-  reason: string,
-  notifyRenderer: boolean,
-): boolean {
-  download.superseded = true;
-  if (download.uuid) {
-    try {
-      manager?.cancelDownload(download.uuid);
-    } catch (error) {
-      captureElectronError(error, {
-        contexts: {
-          fn: { key, name: 'downloads.ts abandonDownloadAttempt', reason },
-        },
-      });
-    }
-  }
-
-  const shouldRetry =
-    !download.cancelRequested &&
-    download.state !== DownloadState.PAUSED &&
-    download.retryAttempt < DOWNLOAD_ERROR_RETRY_COUNT;
-
-  if (shouldRetry) {
-    retryDownload(key, download, reason).catch((error: unknown) => {
-      captureElectronError(error, {
-        contexts: { fn: { key, name: 'downloads.ts retryDownload', reason } },
-      });
-    });
-    return true;
-  }
-
-  log(
-    `Download failed (${reason}):`,
-    'electronDownloads',
-    'warn',
-    download.item.url,
-  );
-  const downloadWindow = getDownloadWindow();
-  if (notifyRenderer && downloadWindow) {
-    sendToWindow(downloadWindow, 'downloadError', { id: key });
-  }
-  releaseDownload(key, download);
-  addQueueBreadcrumb('download-error', { force: true });
-  processQueue();
-  return false;
-}
-
-function ensureQueueWatchdog(): void {
-  if (queueWatchdog) return;
-  queueWatchdog = setInterval(runQueueWatchdog, QUEUE_WATCHDOG_INTERVAL_MS);
+function clearDiskSpaceRecheck() {
+  if (diskSpaceRecheckTimer) clearTimeout(diskSpaceRecheckTimer);
+  diskSpaceRecheckTimer = null;
 }
 
 async function isDiskSpaceCriticallyLow(): Promise<boolean> {
@@ -1352,462 +992,399 @@ async function isDiskSpaceCriticallyLow(): Promise<boolean> {
 }
 
 /**
- * Processes the download queue.
- * This function is called when a new download is added to the queue.
- * It will start downloading as many files as possible, up to the maximum limit.
+ * Downloads held back for low disk space get no further event to resume
+ * them on, so the queue re-runs on a timer until space frees up.
  */
-async function processQueue() {
+function scheduleDiskSpaceRecheck() {
+  if (diskSpaceRecheckTimer) return;
+  diskSpaceRecheckTimer = setTimeout(() => {
+    diskSpaceRecheckTimer = null;
+    processQueue();
+  }, DISK_SPACE_CHECK_INTERVAL_MS);
+}
+
+// Deliberately not gated on quitStatus.isAppQuitting: on macOS that is set
+// before the "press again to quit" prompt, and stays set if the user then
+// doesn't quit after all. An actual quit cancels all downloads instead.
+const canStartDownloads = () =>
+  !cancelAll &&
+  !downloadsHeld &&
+  !!getDownloadWindow() &&
+  hasAvailableSlots(getActiveDownloadCount(), maxActiveDownloads);
+
+const pickNextQueueItemType = () =>
+  getNextQueueItemType(
+    downloadQueue,
+    lowPriorityQueue,
+    getPausedDownloads(),
+    hasHighPriorityActive(getActiveDownloads()),
+  );
+
+async function drainQueue() {
   try {
-    const loadedManager = await loadElectronDownloadManager();
-    if (!getDownloadWindow() || cancelAll || !loadedManager) return;
-
-    const activeCount = getActiveDownloadCount();
-
-    // Exit early if max active downloads reached
-    if (!hasAvailableSlots(activeCount, maxActiveDownloads)) {
-      log(
-        'Queue full. Active:',
-        'electronDownloads',
-        'log',
-        activeCount,
-        'Max:',
-        maxActiveDownloads,
-      );
-      return;
+    while (queueRerunRequested) {
+      queueRerunRequested = false;
+      await fillFreeSlots();
     }
+  } catch (error) {
+    // Every call site fires processQueue() and forgets it, so report here
+    // rather than leave an unobserved rejection.
+    captureElectronError(error, {
+      contexts: { fn: { name: 'processQueue' } },
+    });
+  } finally {
+    // Cleared in the same tick as the loop's last check, so no
+    // processQueue() call can slip in between and be lost.
+    isProcessingQueue = false;
+  }
+  // A run requested while this one was failing.
+  if (queueRerunRequested) processQueue();
+}
 
-    // Determine what to process next
-    const activeDownloads = getActiveDownloads();
-    const pausedDownloads = getPausedDownloads();
-    const highPriorityActive = hasHighPriorityActive(activeDownloads);
-
-    const nextItemType = getNextQueueItemType(
-      downloadQueue,
-      lowPriorityQueue,
-      pausedDownloads,
-      highPriorityActive,
-    );
-
-    // Log blocking reasons for debugging
-    logQueueBlockReason(nextItemType, highPriorityActive);
-
-    // Nothing to process
-    if (nextItemType === null) {
-      if (activeCount === 0 && pausedDownloads.size > 0) {
-        log(
-          'Queue is stalled: no active downloads but paused downloads exist. Triggering auto-resume.',
-          'electronDownloads',
-          'warn',
-        );
-        logPausedDownloadsContext('auto-resume-stalled-queue');
-        logDownloadQueueDebugState('auto-resume-stalled-queue');
-        await resumeAllDownloads('auto-stalled-queue');
-      }
-      return;
-    }
-
+async function fillFreeSlots() {
+  while (canStartDownloads() && pickNextQueueItemType() !== null) {
     if (await isDiskSpaceCriticallyLow()) {
       log(
         'Pausing downloads: disk space is critically low.',
         'electronDownloads',
         'warn',
       );
-      await pauseAllDownloads('low-disk-space');
+      pauseActiveDownloads('low-disk-space');
+      scheduleDiskSpaceRecheck();
       return;
     }
 
-    // Process the next item
-    const success = await processQueueItem(
-      nextItemType,
-      loadedManager,
-      pausedDownloads,
-    );
-
-    // If processing failed (e.g., resume failed), try again
-    if (!success) {
-      processQueue();
-      return;
-    }
-
-    // Continue processing if slots available
-    continueProcessingIfAvailable();
-  } catch (error) {
-    // Every call site invokes processQueue() fire-and-forget; without this,
-    // a failure here (e.g. loadElectronDownloadManager's dynamic import
-    // failing) is an unobserved rejection with no Sentry visibility.
-    captureElectronError(error, {
-      contexts: { fn: { name: 'processQueue' } },
-    });
+    // Decided afresh after the await, and synchronously from here on, so
+    // what gets started can't be based on stale state.
+    const nextItemType = canStartDownloads() ? pickNextQueueItemType() : null;
+    if (nextItemType === null) return;
+    startQueueItem(nextItemType);
   }
 }
 
-/**
- * Processes the next item in the queue based on type
- */
-async function processQueueItem(
-  itemType: QueueItemType,
-  loadedManager: EDMType,
-  pausedDownloads: Map<string, OngoingDownload>,
-): Promise<boolean> {
-  switch (itemType) {
-    case QueueItemType.LOW_NEW:
-      await processLowNewDownload();
-      return true;
-
-    case QueueItemType.LOW_PAUSED:
-      return await processLowPausedDownload(loadedManager, pausedDownloads);
-
-    case QueueItemType.NORMAL_NEW:
-      await processNormalNewDownload();
-      return true;
-
-    case QueueItemType.NORMAL_PAUSED:
-      return await processNormalPausedDownload(loadedManager, pausedDownloads);
-
-    default:
-      return false;
-  }
-}
-
-/**
- * Starts a fresh attempt at a download after a backoff delay. The abandoned
- * attempt stays tracked (and keeps its slot) until then.
- */
-async function retryDownload(
+async function handleTransferResult(
   key: string,
   download: OngoingDownload,
-  reason: string,
+  controller: AbortController,
+  result: TransferResult,
 ) {
-  const nextAttempt = download.retryAttempt + 1;
-  const { saveDir, url } = download.item;
+  if (download.controller === controller) download.controller = undefined;
+  const { url } = download.item;
+
+  // No longer tracked, yet not completed or cancelled: cancelAllDownloads()
+  // ran while this transfer was already stopping for a pause, or failing.
+  const wasCancelledMeanwhile =
+    ongoingDownloads.get(key) !== download &&
+    (result.kind === 'failed' || result.kind === 'paused');
+  if (wasCancelledMeanwhile) {
+    discardPartialDownload(getPartialPath(download)).catch(() => undefined);
+    sendToWindow(getDownloadWindow(), 'downloadCancelled', { id: key });
+    return;
+  }
+
+  switch (result.kind) {
+    case 'cancelled':
+      log('Download cancelled:', 'electronDownloads', 'log', url);
+      sendToWindow(getDownloadWindow(), 'downloadCancelled', { id: key });
+      releaseDownload(key, download);
+      addQueueBreadcrumb('download-cancelled', { force: true });
+      processQueue();
+      return;
+    case 'completed':
+      log('Download completed:', 'electronDownloads', 'log', url);
+      sendToWindow(getDownloadWindow(), 'downloadCompleted', {
+        filePath: result.filePath,
+        id: key,
+      });
+      releaseDownload(key, download);
+      addQueueBreadcrumb('download-completed', { force: true });
+      processQueue();
+      return;
+    case 'failed':
+      await handleFailedTransfer(key, download, result);
+      return;
+    case 'paused':
+      download.resume = result.resume;
+      // Now that its transfer has wound down, it may resume (if nothing
+      // with a higher priority, or a pauseAllDownloads() hold, is in the way).
+      processQueue();
+      return;
+  }
+}
+
+/**
+ * Starts (or resumes) downloads until every slot is taken or nothing more
+ * may run. Safe to call any number of times, from anywhere: a call made
+ * while the queue is already being processed just makes it go round once
+ * more, so two runs can never both claim the same free slot.
+ */
+function processQueue(): void {
+  queueRerunRequested = true;
+  if (isProcessingQueue) return;
+  isProcessingQueue = true;
+  void drainQueue();
+}
+
+function resumePausedDownload(
+  found: null | { download: OngoingDownload; key: string },
+) {
+  if (!found) return;
+  log('Resuming download:', 'electronDownloads', 'log', found.key);
+  startTransfer(found.key, found.download);
+}
+
+function startNewDownload(
+  item: DownloadQueueItem | undefined,
+  lowPriority: boolean,
+) {
+  if (!item) return;
+  const key = item.url + item.saveDir;
+  const download: OngoingDownload = {
+    failedAttempts: 0,
+    item,
+    lowPriority,
+    partialId: randomUUID().slice(0, 8),
+    reachedBytes: 0,
+    resume: null,
+    saveDir: item.saveDir,
+    state: DownloadState.ACTIVE,
+  };
+  ongoingDownloads.set(key, download);
+  startTransfer(key, download);
+}
+
+function startQueueItem(itemType: QueueItemType): void {
+  switch (itemType) {
+    case QueueItemType.LOW_NEW:
+      startNewDownload(lowPriorityQueue.shift(), true);
+      return;
+    case QueueItemType.LOW_PAUSED:
+      resumePausedDownload(findLowPriorityPausedDownload(getPausedDownloads()));
+      return;
+    case QueueItemType.NORMAL_NEW:
+      startNewDownload(downloadQueue.shift(), false);
+      return;
+    case QueueItemType.NORMAL_PAUSED:
+      resumePausedDownload(
+        findNormalPriorityPausedDownload(getPausedDownloads()),
+      );
+      return;
+  }
+}
+
+function startTransfer(key: string, download: OngoingDownload): void {
+  const controller = new AbortController();
+  download.controller = controller;
+  download.state = DownloadState.ACTIVE;
+  const { destFilename, url } = download.item;
+  log('Starting download:', 'electronDownloads', 'log', url);
+
+  // Each transfer gets its own throttle instance, so concurrent downloads
+  // never suppress or delay each other's progress updates. One-shot events
+  // (started/completed/cancelled/error) intentionally bypass it.
+  const sendProgress = throttleWithTrailing(
+    (data: { bytesReceived: number; id: string; percentCompleted: number }) => {
+      sendToWindow(getDownloadWindow(), 'downloadProgress', data);
+    },
+    DOWNLOAD_PROGRESS_THROTTLE_MS,
+  );
+
+  runTransfer({
+    destPath: getDestPath(download),
+    onProgress: (receivedBytes, totalBytes) => {
+      sendProgress({
+        bytesReceived: receivedBytes,
+        id: key,
+        percentCompleted: getPercentCompleted(receivedBytes, totalBytes),
+      });
+    },
+    onStarted: (totalBytes) => {
+      log('Download started:', 'electronDownloads', 'log', url);
+      sendToWindow(getDownloadWindow(), 'downloadStarted', {
+        filename: destFilename,
+        id: key,
+        totalBytes,
+      });
+    },
+    partialPath: getPartialPath(download),
+    resume: download.resume,
+    signal: controller.signal,
+    url,
+  })
+    .then((result) => handleTransferResult(key, download, controller, result))
+    .catch((error: unknown) => {
+      // runTransfer() never rejects, so this is a bug in handling its result.
+      captureElectronError(error, {
+        contexts: { fn: { key, name: 'downloads.ts startTransfer', url } },
+      });
+      releaseDownload(key, download);
+      processQueue();
+    });
+}
+
+const isAwaitingRetry = (key: string, download: OngoingDownload) =>
+  !cancelAll &&
+  ongoingDownloads.get(key) === download &&
+  download.state === DownloadState.ACTIVE &&
+  !download.controller;
+
+function failDownload(
+  key: string,
+  download: OngoingDownload,
+  failure: TransferFailure,
+) {
+  const { url } = download.item;
   log(
-    `Download ${reason}, retrying (attempt ${nextAttempt}/${DOWNLOAD_ERROR_RETRY_COUNT}):`,
+    `Download failed (${failure.reason}):`,
+    'electronDownloads',
+    'warn',
+    url,
+    failure.status ?? failure.error.message,
+  );
+  addElectronBreadcrumb({
+    category: 'downloads.network',
+    data: { reason: failure.reason, status: failure.status, url },
+    level: 'warning',
+    message: 'download-failed',
+  });
+  reportUnexpectedDownloadFailure(download, failure);
+
+  sendToWindow(getDownloadWindow(), 'downloadError', { id: key });
+  releaseDownload(key, download);
+  discardPartialDownload(getPartialPath(download)).catch(() => undefined);
+  addQueueBreadcrumb('download-error', { force: true });
+  processQueue();
+}
+
+/**
+ * Retries a failed transfer after a backoff delay - resuming its `.part`
+ * file where possible - or gives up on the download once retrying can't
+ * help. While waiting to retry it keeps its slot.
+ */
+async function handleFailedTransfer(
+  key: string,
+  download: OngoingDownload,
+  failure: TransferFailure,
+) {
+  if (ongoingDownloads.get(key) !== download) return;
+  download.resume = failure.resume;
+  // Only getting further into the file than ever before counts as progress.
+  // An attempt that had to start over from scratch, or that downloaded it
+  // all again only to fail the final rename again, still counts towards
+  // giving up - otherwise such a download could keep retrying forever.
+  if (failure.reachedBytes > download.reachedBytes) {
+    download.reachedBytes = failure.reachedBytes;
+    download.failedAttempts = 0;
+  }
+
+  // Paused just as it failed: it resumes when its turn comes.
+  if (download.state === DownloadState.PAUSED) {
+    processQueue();
+    return;
+  }
+
+  if (
+    !failure.retryable ||
+    download.failedAttempts >= DOWNLOAD_ERROR_RETRY_COUNT
+  ) {
+    failDownload(key, download, failure);
+    return;
+  }
+
+  download.failedAttempts += 1;
+  const { url } = download.item;
+  log(
+    `Download ${failure.reason}, retrying (attempt ${download.failedAttempts}/${DOWNLOAD_ERROR_RETRY_COUNT}):`,
     'electronDownloads',
     'warn',
     url,
   );
   addElectronBreadcrumb({
     category: 'downloads.network',
-    data: { attempt: nextAttempt, reason, url },
+    data: {
+      attempt: download.failedAttempts,
+      reason: failure.reason,
+      status: failure.status,
+      url,
+    },
     level: 'warning',
     message: 'download-error-retry',
   });
-  await delay(getDownloadErrorRetryDelay(download.retryAttempt));
-  // Cancelled (or completed after all) while waiting: nothing left to retry.
-  if (
-    cancelAll ||
-    quitStatus.isAppQuitting ||
-    ongoingDownloads.get(key) !== download
-  ) {
-    return;
-  }
-  // The original destination may have disappeared mid-download (network-share
-  // disconnect, USB drive removed, OneDrive folder unlinked) - re-validate (or
-  // re-fall-back) before retrying instead of retrying against the same
-  // now-missing directory every time (BE-13). If re-validation itself throws
-  // (every fallback also failed), retry with the original directory anyway;
-  // the next attempt will fail fast and get reported once retries are
-  // exhausted.
+
+  await delay(getDownloadErrorRetryDelay(download.failedAttempts - 1));
+  if (!isAwaitingRetry(key, download)) return;
+
+  // BE-13 (full-audit-2026-09-05.md): the original destination may have
+  // disappeared mid-download (network-share disconnect, USB drive removed,
+  // OneDrive folder unlinked) - re-validate (or re-fall-back) before
+  // retrying instead of retrying against the same now-missing directory
+  // every time. If re-validation itself throws (every fallback also failed),
+  // retry with the original directory anyway; the next attempt will fail
+  // fast and get reported once retries are exhausted.
+  const { saveDir } = download.item;
   const retrySaveDir = await ensureDirWithRetry(saveDir).catch(() => saveDir);
-  await startDownload(
-    download.item,
-    download.lowPriority,
-    nextAttempt,
-    retrySaveDir,
-  );
+  if (!isAwaitingRetry(key, download)) return;
+  if (retrySaveDir !== download.saveDir) {
+    // The `.part` file is in the other directory: start over in this one.
+    download.saveDir = retrySaveDir;
+    download.resume = null;
+  }
+
+  startTransfer(key, download);
 }
 
-const isAttemptStalled = (download: OngoingDownload, now: number) => {
-  if (download.interruptedAt !== undefined) {
-    return now - download.interruptedAt >= DOWNLOAD_INTERRUPTED_GRACE_MS;
-  }
-  return now - download.lastActivityAt >= DOWNLOAD_STALL_TIMEOUT_MS;
-};
+const EXPECTED_FILESYSTEM_FAILURE_CODES = new Set(['EDQUOT', 'ENOSPC']);
 
 /**
- * A download without a uuid hasn't been handed over by Chromium yet, so there
- * is nothing to cancel or restart. Reported once per session so a wedged
- * download manager shows up in Sentry instead of looking like a slow queue.
+ * Network and HTTP failures (stalls included) are connectivity or upstream
+ * problems - expected for many users, and not something M³ can fix - so
+ * they're only logged and left as breadcrumbs. Filesystem failures can point
+ * at something M³ could handle better, unless the disk is full or a network
+ * folder dropped away; and an unexpected failure is most likely a bug.
  */
-function reportStuckInitialization(
+function reportUnexpectedDownloadFailure(
   download: OngoingDownload,
-  now: number,
-): void {
-  const waitedMs = now - download.lastActivityAt;
-  if (
-    reportedStuckInitialization ||
-    waitedMs < DOWNLOAD_INITIALIZATION_STUCK_MS
-  ) {
-    return;
-  }
-  reportedStuckInitialization = true;
-  logDownloadQueueDebugState('download-initialization-stuck');
-  captureElectronError(new Error('Download never finished initializing'), {
-    contexts: {
-      fn: {
-        name: 'downloads.ts runQueueWatchdog',
-        url: download.item.url,
-        waitedMs,
-      },
-    },
-    fingerprint: ['download-initialization-stuck'],
-  });
-}
-
-/**
- * Safety net for the event-driven queue (see QUEUE_WATCHDOG_INTERVAL_MS):
- * restarts or fails every running download that stopped making progress,
- * then re-runs processQueue() so free slots get refilled with queued or
- * paused downloads - including ones held back for low disk space, once space
- * frees up. Stops itself once there is no download work left.
- */
-function runQueueWatchdog(): void {
-  if (!hasPendingDownloadWork()) {
-    if (queueWatchdog) clearInterval(queueWatchdog);
-    queueWatchdog = null;
-    return;
-  }
-  if (cancelAll || quitStatus.isAppQuitting || !getDownloadWindow()) return;
-
-  const now = Date.now();
-  ongoingDownloads.forEach((download, key) => {
-    if (download.superseded || download.state !== DownloadState.ACTIVE) {
-      return;
-    }
-    if (!download.uuid) {
-      reportStuckInitialization(download, now);
-      return;
-    }
-    if (!isAttemptStalled(download, now)) return;
-
-    const reason =
-      download.interruptedAt === undefined ? 'stalled' : 'interrupted';
-    log(
-      `Restarting ${reason} download:`,
-      'electronDownloads',
-      'warn',
-      key,
-      download.item.url,
-    );
-    abandonDownloadAttempt(key, download, reason, true);
-  });
-
-  processQueue();
-}
-
-async function startDownload(
-  download: DownloadQueueItem,
-  isLowPriority: boolean,
-  errorRetryAttempt = 0,
-  // BE-13 (full-audit-2026-09-05.md): only ever set on a retry, once
-  // ensureDirWithRetry has re-confirmed (or re-resolved, e.g. to the temp
-  // fallback) where the file should actually land. Deliberately kept
-  // separate from `saveDir`/`key` below rather than mutating `download`
-  // itself - the tracking key must stay stable across retries (cancel/pause
-  // lookups key on the *original* url+saveDir), while the directory
-  // actually handed to the download manager can legitimately change.
-  retrySaveDir?: string,
+  failure: TransferFailure,
 ) {
-  const { destFilename, saveDir, url } = download;
-  const effectiveSaveDir = retrySaveDir ?? saveDir;
-  const key = url + saveDir;
-  const downloadWindow = getDownloadWindow();
-
-  if (!downloadWindow || !manager || cancelAll) return;
-
-  // Callbacks below only act on this exact attempt: a retry tracks a fresh
-  // object under the same key, and the abandoned attempt's late callbacks
-  // must not report on, or stop tracking, its replacement.
-  const attempt: OngoingDownload = {
-    item: download,
-    lastActivityAt: Date.now(),
-    lowPriority: isLowPriority,
-    retryAttempt: errorRetryAttempt,
-    state: DownloadState.ACTIVE,
-    uuid: '',
-  };
-  ongoingDownloads.set(key, attempt);
-  ensureQueueWatchdog();
-
-  try {
-    log('Starting download via manager:', 'electronDownloads', 'log', url);
-
-    // Each download gets its own throttle instance, so concurrent downloads
-    // never suppress or delay each other's progress updates. One-shot events
-    // (started/completed/cancelled/error) intentionally bypass it.
-    const sendProgress = throttleWithTrailing(
-      (data: {
-        bytesReceived: number;
-        id: string;
-        percentCompleted: number;
-      }) => {
-        sendToWindow(downloadWindow, 'downloadProgress', data);
-      },
-      DOWNLOAD_PROGRESS_THROTTLE_MS,
-    );
-
-    const downloadId = await manager.download({
-      callbacks: {
-        onDownloadCancelled: async () => {
-          // Cancelled by abandonDownloadAttempt(), which handles the rest.
-          if (attempt.superseded) return;
-          log('Download cancelled:', 'electronDownloads', 'log', url);
-          sendToWindow(downloadWindow, 'downloadCancelled', {
-            id: key,
-          });
-          releaseDownload(key, attempt);
-          addQueueBreadcrumb('download-cancelled', { force: true });
-          processQueue();
-        },
-        onDownloadCompleted: async ({ item }) => {
-          log('Download completed:', 'electronDownloads', 'log', url);
-          sendToWindow(downloadWindow, 'downloadCompleted', {
-            filePath: item.getSavePath(),
-            id: key,
-          });
-          releaseDownload(key, attempt);
-          addQueueBreadcrumb('download-completed', { force: true });
-          processQueue();
-        },
-        // Without this, an interrupted download was never noticed at all:
-        // onError only fires when one of these callbacks throws, so the
-        // interrupted download stayed tracked as active forever.
-        onDownloadInterrupted: async ({ interruptedVia }) => {
-          if (!isCurrentAttempt(key, attempt) || quitStatus.isAppQuitting) {
-            return;
-          }
-          if (interruptedVia === 'in-progress') {
-            // Resumable, and Chromium often resumes it on its own. If it
-            // hasn't within DOWNLOAD_INTERRUPTED_GRACE_MS, the queue watchdog
-            // restarts it.
-            attempt.interruptedAt ??= Date.now();
-            log('Download interrupted:', 'electronDownloads', 'warn', url);
-            return;
-          }
-          // Interrupted for good: this attempt's download item is finished.
-          abandonDownloadAttempt(key, attempt, 'interrupted', true);
-        },
-        onDownloadProgress: async ({ item, percentCompleted }) => {
-          attempt.lastActivityAt = Date.now();
-          attempt.interruptedAt = undefined;
-          sendProgress({
-            bytesReceived: item.getReceivedBytes(),
-            id: key,
-            percentCompleted,
-          });
-        },
-        onDownloadStarted: async ({ item, resolvedFilename }) => {
-          log('Download started:', 'electronDownloads', 'log', url);
-          sendToWindow(downloadWindow, 'downloadStarted', {
-            filename: resolvedFilename,
-            id: key,
-            totalBytes: item.getTotalBytes(),
-          });
-        },
-        onError: async (err, downloadData) => {
-          if (isDestroyedObjectError(err)) {
-            releaseDownload(key, attempt);
-            addQueueBreadcrumb('download-window-destroyed', { force: true });
-            processQueue();
-            return;
-          }
-          if (quitStatus.isAppQuitting) return;
-
-          // BE-9: retry (or fail) the download if this attempt is still the
-          // tracked one and wasn't deliberately cancelled or paused. One
-          // that's no longer tracked (e.g. onDownloadCompleted already ran)
-          // has nothing left to retry, but the error is still reported.
-          if (
-            isCurrentAttempt(key, attempt) &&
-            abandonDownloadAttempt(key, attempt, 'error', !!downloadData)
-          ) {
-            return;
-          }
-
-          log('Download error:', 'electronDownloads', 'log', url);
-          captureElectronError(err, {
-            contexts: {
-              fn: {
-                isDownloadErrorExpected: await isDownloadErrorExpected(),
-                name: 'src-electron/downloads startDownload onError',
-                params: {
-                  destFilename,
-                  directory: effectiveSaveDir,
-                  retryAttempts: errorRetryAttempt,
-                  window: mainWindowInfo.mainWindow?.id,
-                },
-                url,
-              },
-            },
-          });
-        },
-      },
-      directory: effectiveSaveDir,
-      saveAsFilename: destFilename,
-      url,
-      window: downloadWindow,
-    });
-
-    const current = ongoingDownloads.get(key);
-    if (current === attempt) {
-      current.uuid = downloadId;
-      current.lastActivityAt = Date.now();
-
-      // If cancel-all was requested while initializing (race condition),
-      // cancel now instead of letting an untracked download keep running in
-      // the background. manager.cancelDownload() triggers the same
-      // onDownloadCancelled callback registered above, which handles
-      // cleanup/notification/queue-processing consistently with a normal
-      // cancel - no need to duplicate that here.
-      if (current.cancelRequested) {
-        manager.cancelDownload(downloadId);
-        log(
-          'Applied deferred cancel to initializing download',
-          'electronDownloads',
-          'warn',
-          key,
-          url,
-        );
-        return;
-      }
-
-      // If pause was requested while initializing (race condition), pause now
-      if (current.pauseRequested) {
-        current.pauseRequested = false;
-        current.state = DownloadState.PAUSED;
-        manager.pauseDownload(downloadId);
-        log(
-          'Applied deferred pause to initializing download',
-          'electronDownloads',
-          'warn',
-          key,
-          url,
-        );
-        processQueue();
-      }
-    }
-  } catch (error) {
-    if (isDestroyedObjectError(error) || cancelAll) {
-      releaseDownload(key, attempt);
-      addQueueBreadcrumb('download-window-destroyed', { force: true });
-      processQueue();
-      return;
-    }
-    if (quitStatus.isAppQuitting) return;
+  const { error } = failure;
+  if (failure.reason === 'unexpected') {
     captureElectronError(error, {
       contexts: {
         fn: {
-          name: 'src-electron/downloads startDownload catch',
-          params: {
-            destFilename,
-            directory: effectiveSaveDir,
-            window: mainWindowInfo.mainWindow?.id,
-          },
-          url,
+          directory: download.saveDir,
+          name: 'downloads.ts failDownload',
+          url: download.item.url,
         },
       },
+      fingerprint: ['download-unexpected-error', error.name],
     });
-    releaseDownload(key, attempt);
-    processQueue();
+    return;
   }
+  if (failure.reason !== 'filesystem') return;
+
+  const code = getFilesystemErrorCode(error);
+  if (
+    EXPECTED_FILESYSTEM_FAILURE_CODES.has(code ?? '') ||
+    isExpectedNetworkPathAccessError(error, download.saveDir, process.platform)
+  ) {
+    return;
+  }
+
+  const syscall = getFilesystemErrorSyscall(error);
+  captureElectronError(error, {
+    contexts: {
+      fn: {
+        code,
+        directory: download.saveDir,
+        name: 'downloads.ts failDownload',
+        syscall,
+        url: download.item.url,
+      },
+    },
+    fingerprint: [
+      'download-filesystem-error',
+      code ?? 'unknown',
+      syscall ?? 'unknown',
+    ],
+  });
 }

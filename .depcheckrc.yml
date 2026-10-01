@@ -60,7 +60,6 @@ ignores:
   - check-disk-space
   - chokidar
   - countries-and-timezones
-  - electron-dl-manager
   - electron-updater
   - fluent-ffmpeg
   - heic-convert
