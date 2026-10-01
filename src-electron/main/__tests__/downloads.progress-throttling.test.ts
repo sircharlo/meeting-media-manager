@@ -244,8 +244,10 @@ describe('download progress IPC throttling', () => {
     );
 
     // Leave a trailing progress update pending (the first call sends
-    // immediately, the second schedules the trailing tick), then complete and
-    // error out.
+    // immediately, the second schedules the trailing tick), then send two
+    // more one-shot events. (An error reported after completion no longer
+    // reaches the renderer - it would mark the finished file as failed - so
+    // a cancellation stands in as the second one-shot event.)
     const item = { getReceivedBytes: () => 100 };
     await callbacks.onDownloadProgress({
       item,
@@ -258,11 +260,11 @@ describe('download progress IPC throttling', () => {
     await callbacks.onDownloadCompleted({
       item: { getSavePath: () => '/tmp/media/a.mp4' },
     });
-    await callbacks.onError(new Error('boom'), { failed: true });
+    await callbacks.onDownloadCancelled();
 
     const channels = mocks.sendToWindow.mock.calls.map((call) => call[1]);
     expect(channels).toContain('downloadCompleted');
-    expect(channels).toContain('downloadError');
+    expect(channels).toContain('downloadCancelled');
     expect(channels.filter((c) => c === 'downloadProgress')).toHaveLength(1);
 
     // The pending trailing progress tick still fires later; the final state

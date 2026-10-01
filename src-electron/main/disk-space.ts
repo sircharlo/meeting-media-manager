@@ -2,21 +2,33 @@ import { app } from 'electron';
 import { statfs } from 'node:fs/promises';
 import { log } from 'src/shared/vanilla';
 
-const bytesToGB = (bytes: number) => Math.round(bytes / (1024 * 1024 * 1024));
+const BYTES_PER_GB = 1024 * 1024 * 1024;
+const bytesToGB = (bytes: number) => Math.round(bytes / BYTES_PER_GB);
 const PERMISSION_ERRORS = new Set(['EACCES', 'EPERM']);
 const getErrorCode = (error: unknown) => (error as { code?: string })?.code;
+
+/** Below this much free space, the user is warned that disk space is low. */
+export const LOW_DISK_SPACE_WARNING_GB = 10;
 
 const getFreeBytesFromStatfs = async (path: string): Promise<number> => {
   const info = await statfs(path, { bigint: true });
   return Number(info.bavail * info.bsize);
 };
 
-export async function getLowDiskSpaceStatus() {
+/**
+ * @param minFreeGB Free space below which the disk counts as low. Defaults to
+ * the user-facing warning threshold; callers that need to know whether space
+ * is genuinely critical pass a lower one.
+ */
+export async function getLowDiskSpaceStatus(
+  minFreeGB = LOW_DISK_SPACE_WARNING_GB,
+) {
   const userDataPath = app.getPath('userData');
+  const minFreeBytes = minFreeGB * BYTES_PER_GB;
   try {
     const freeBytes = await getFreeBytesFromStatfs(userDataPath);
     const freeSpaceGB = bytesToGB(freeBytes);
-    if (freeSpaceGB < 10) {
+    if (freeBytes < minFreeBytes) {
       log(
         `Low disk space warning: ${freeSpaceGB} GB free.`,
         'electronFilesystem',
@@ -45,7 +57,7 @@ export async function getLowDiskSpaceStatus() {
     const checkDiskSpace = (await import('check-disk-space')).default;
     const diskSpace = await checkDiskSpace(userDataPath);
     const freeSpaceGB = bytesToGB(diskSpace.free);
-    if (freeSpaceGB < 10) {
+    if (diskSpace.free < minFreeBytes) {
       log(
         `Low disk space warning: ${freeSpaceGB} GB free.`,
         'electronFilesystem',

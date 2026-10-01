@@ -4,6 +4,12 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## UPCOMING VERSION
+
+### 🐞 Bug Fixes
+
+- 🐞 **Downloads**: Fixed media downloads that could stay paused, or never start at all, until M³ was restarted. A download interrupted by a connection problem is now retried (and shown as failed if it keeps failing) instead of silently holding up every download queued behind it, and a download that stops receiving data is restarted automatically. Downloads are also no longer held back whenever free disk space drops below 10 GB — only once it is critically low (under 1 GB) — and they resume on their own once space frees up.
+
 ## v26.9.1
 
 ### 🐞 Bug Fixes
