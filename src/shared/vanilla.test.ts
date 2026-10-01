@@ -124,4 +124,20 @@ describe('scrubUserPathsDeep', () => {
       password_hint: '<redacted>',
     });
   });
+
+  it('scrubs home-directory usernames out of object keys too', () => {
+    expect(
+      scrubUserPathsDeep({
+        downloadProgress: {
+          'https://cdn.example.org/a.mp4C:/Users/first.last/OneDrive/Documents/M3/Publications/a_0':
+            { complete: true },
+        },
+      }),
+    ).toEqual({
+      downloadProgress: {
+        'https://cdn.example.org/a.mp4C:/Users/<user>/OneDrive/Documents/M3/Publications/a_0':
+          { complete: true },
+      },
+    });
+  });
 });

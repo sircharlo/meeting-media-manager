@@ -123,8 +123,8 @@ const SENSITIVE_KEY_PATTERN = /api[-_]?key|password|secret|token/i;
 const REDACTED_VALUE = '<redacted>';
 
 /**
- * Recursively applies {@link scrubUserPaths} to every string value in an
- * object/array tree, e.g. a Sentry event (exception messages, stack frame
+ * Recursively applies {@link scrubUserPaths} to every string value (and
+ * object key) in an object/array tree, e.g. a Sentry event (exception messages, stack frame
  * paths, breadcrumbs, extra/context data, etc). Any object key matching
  * {@link SENSITIVE_KEY_PATTERN} (e.g. `obsPassword`) has its value replaced
  * outright instead of being recursed into.
@@ -138,7 +138,10 @@ export const scrubUserPathsDeep = <T>(value: T): T => {
   if (value && typeof value === 'object') {
     return Object.fromEntries(
       Object.entries(value as Record<string, unknown>).map(([key, val]) => [
-        key,
+        // Keys can be paths too, e.g. current-state's downloadProgress map
+        // is keyed by url + save directory, which leaked home-directory
+        // usernames in the Pinia state attached to events.
+        scrubUserPaths(key),
         SENSITIVE_KEY_PATTERN.test(key)
           ? REDACTED_VALUE
           : scrubUserPathsDeep(val),
