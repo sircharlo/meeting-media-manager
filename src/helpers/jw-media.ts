@@ -2190,24 +2190,33 @@ export const fetchMedia = async () => {
   }
 };
 
-export const getDbFromJWPUB = async (
+/**
+ * Like {@link getDbFromJWPUB}, but also says why no db was returned:
+ * 'download' (the jwpub download failed - already surfaced as a download
+ * error), 'error' (extraction failed - already reported here), or
+ * 'missing' (extracted fine, but no .db inside).
+ */
+const loadDbFromJWPUB = async (
   publication: PublicationFetcher,
   meetingDate?: string,
   progressCategory?: FileDownloader['progressCategory'],
-) => {
+): Promise<{
+  db: null | string;
+  failure?: 'download' | 'error' | 'missing';
+}> => {
   try {
     const jwpub = await downloadJwpub(
       publication,
       meetingDate,
       progressCategory,
     );
-    if (jwpub.error) return null;
+    if (jwpub.error) return { db: null, failure: 'download' };
     const publicationDirectory = await getPublicationDirectory(publication);
     if (jwpub.new || !(await findDb(publicationDirectory))) {
       await unzipJwpub(jwpub.path, publicationDirectory);
     }
     const dbFile = await findDb(publicationDirectory);
-    return dbFile ?? null;
+    return dbFile ? { db: dbFile } : { db: null, failure: 'missing' };
   } catch (error) {
     errorCatcher(error, {
       contexts: {
@@ -2217,9 +2226,15 @@ export const getDbFromJWPUB = async (
         },
       },
     });
-    return null;
+    return { db: null, failure: 'error' };
   }
 };
+
+export const getDbFromJWPUB = async (
+  publication: PublicationFetcher,
+  meetingDate?: string,
+  progressCategory?: FileDownloader['progressCategory'],
+) => (await loadDbFromJWPUB(publication, meetingDate, progressCategory)).db;
 
 export const resolveFilePath = async (
   targetPath: string,
@@ -3177,11 +3192,25 @@ const getWtIssue = async (
       langwritten,
       pub: 'w',
     };
-    const db = await getDbFromJWPUB(
+    const { db, failure } = await loadDbFromJWPUB(
       publication,
       formatDate(lookupDate ?? monday, 'YYYYMMDD'),
     );
-    if (!db) throw new Error('No db file found: ' + issueString);
+    if (!db) {
+      // A failed download is already shown as a download error, and a
+      // failed extraction was already reported by loadDbFromJWPUB - a
+      // second "No db file found" report for the same failure adds nothing
+      // (MMM-V2-3J4: the jwpub download had never even started).
+      if (failure !== 'missing') {
+        log(
+          `[getWtIssue] No Watchtower db for ${issueString} (${failure})`,
+          'mediaFetching',
+          'warn',
+        );
+        return defaultResult;
+      }
+      throw new Error('No db file found: ' + issueString);
+    }
     const datedTexts = await executeQuery<{ FirstDateOffset: number }>(
       db,
       'SELECT FirstDateOffset FROM DatedText',
