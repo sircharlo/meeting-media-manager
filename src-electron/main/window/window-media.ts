@@ -48,8 +48,8 @@ const isFullscreenOrMaximized = (
   boundsInfo: WindowBoundsInfo,
   mediaWindow: BrowserWindow,
 ) => {
-  // If there's no bounds info or media window, return false
-  if (!(boundsInfo || mediaWindow)) return false;
+  // If there's no bounds info or (live) media window, return false
+  if (!boundsInfo || !mediaWindow || mediaWindow.isDestroyed()) return false;
 
   // Return true if the media window is fullscreen or maximized
   return (
@@ -95,6 +95,11 @@ async function calculateAutoTarget(
 ): Promise<null | TargetDisplayInfo> {
   const mainWindowScreen = screens.findIndex((s) => s.mainWindow);
   const preferredIndex = await getPreferredScreenFromPrefs(screens);
+
+  // The prefs lookup above awaits disk I/O, and the media window can be
+  // closed in the meantime - every check below touches it, and a destroyed
+  // BrowserWindow throws "Object has been destroyed" (MMM-V2-3KG).
+  if (mediaWindow.isDestroyed()) return null;
 
   // 1. Preferred Screen Strategy
   // Use preferred screen if applicable (and we have >= 3 screens)
@@ -507,7 +512,11 @@ export const moveMediaWindow = async (
 ) => {
   try {
     // Early exit validation
-    if (!mediaWindowInfo.mediaWindow || !mainWindowInfo.mainWindow) {
+    if (
+      !mediaWindowInfo.mediaWindow ||
+      mediaWindowInfo.mediaWindow.isDestroyed() ||
+      !mainWindowInfo.mainWindow
+    ) {
       log(
         '[moveMediaWindow] No mediaWindow or mainWindow, returning',
         'electronWindow',

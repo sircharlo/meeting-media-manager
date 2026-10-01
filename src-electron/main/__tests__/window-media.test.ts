@@ -114,6 +114,7 @@ describe('window-media placement helpers', () => {
         screenBounds: { height: 1080, width: 1920, x: 0, y: 0 },
       },
       {
+        isDestroyed: () => false,
         isFullScreen: () => false,
         isMaximized: () => false,
       } as never,
@@ -260,6 +261,73 @@ describe('window-media placement helpers', () => {
     expect(result).toBe(1);
   });
 
+  // MMM-V2-3KG: the media window can be closed while calculateAutoTarget
+  // awaits the saved-prefs disk read; touching it afterwards threw "Object
+  // has been destroyed".
+  it('stops calculating a target when the media window is destroyed during the prefs lookup', async () => {
+    let destroyed = false;
+    const isFullScreen = vi.fn(() => {
+      if (destroyed) throw new TypeError('Object has been destroyed');
+      return false;
+    });
+    const mediaWindow = {
+      isDestroyed: () => destroyed,
+      isFullScreen,
+      isMaximized: isFullScreen,
+    };
+    mockLoadWindowPrefs.mockImplementation(async () => {
+      destroyed = true;
+      return undefined;
+    });
+
+    const { __testables } = await import('../window/window-media');
+
+    const result = await __testables.calculateAutoTarget(
+      {
+        currentBounds: { height: 720, width: 1280, x: 0, y: 0 },
+        currentDisplayNr: 0,
+        isEffectivelyFullscreen: false,
+        screenBounds: { height: 1080, width: 1920, x: 0, y: 0 },
+      },
+      mediaWindow as never,
+      [
+        {
+          bounds: { height: 1080, width: 1920, x: 0, y: 0 },
+          id: 1,
+          mainWindow: true,
+        },
+        {
+          bounds: { height: 1080, width: 1920, x: 1920, y: 0 },
+          id: 2,
+          mainWindow: false,
+        },
+      ] as never,
+    );
+
+    expect(result).toBeNull();
+    expect(isFullScreen).not.toHaveBeenCalled();
+  });
+
+  it('treats a destroyed media window as neither fullscreen nor maximized', async () => {
+    const { __testables } = await import('../window/window-media');
+    const isFullScreen = vi.fn(() => {
+      throw new TypeError('Object has been destroyed');
+    });
+
+    expect(
+      __testables.isFullscreenOrMaximized(
+        {
+          currentBounds: { height: 720, width: 1280, x: 0, y: 0 },
+          currentDisplayNr: 0,
+          isEffectivelyFullscreen: false,
+          screenBounds: undefined,
+        },
+        { isDestroyed: () => true, isFullScreen } as never,
+      ),
+    ).toBe(false);
+    expect(isFullScreen).not.toHaveBeenCalled();
+  });
+
   // BE-16 (full-audit-2026-09-05.md): a bare `screens.length === 1` check
   // also blocked calculateAutoTarget's own recovery for a monitor unplugged
   // mid-presentation while the media window was fullscreen on it.
@@ -275,10 +343,12 @@ describe('window-media placement helpers', () => {
       isEffectivelyFullscreen: false,
     };
     const fullscreenWindow = {
+      isDestroyed: () => false,
       isFullScreen: () => true,
       isMaximized: () => false,
     } as never;
     const windowedWindow = {
+      isDestroyed: () => false,
       isFullScreen: () => false,
       isMaximized: () => false,
     } as never;
