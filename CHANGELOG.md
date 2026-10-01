@@ -18,6 +18,10 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **JW Library Playlists**: Fixed importing the same `.jwlplaylist` file a second time (for example after updating it in JW Library) failing with an error until M³ was restarted, or showing the previous version's items.
 - 🐞 **Downloads**: Fixed media downloads that could stay paused, or never start at all, until M³ was restarted. A download interrupted by a connection problem is now retried (and shown as failed if it keeps failing) instead of silently holding up every download queued behind it, and a download that stops receiving data is restarted automatically. Downloads are also no longer held back whenever free disk space drops below 10 GB — only once it is critically low (under 1 GB) — and they resume on their own once space frees up.
 
+### 🔧 Chores
+
+- 🔧 **Error Reporting**: Cut down on noise from expected, harmless errors so real problems stand out: temporary read errors from cloud-synced folders (OneDrive, Dropbox, etc.) are no longer reported as failures.
+
 ## v26.9.1
 
 ### 🐞 Bug Fixes

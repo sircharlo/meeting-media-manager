@@ -46,8 +46,14 @@ const GOOGLE_DRIVE_ACCOUNT_FOLDER_PATTERN =
 // non-standard properties like `code`/`syscall` by the time they reach the
 // renderer - only `name`/`message`/`stack` survive the crossing. The code
 // and syscall are still in the message text Node generated them from, e.g.
-// "ENOENT: no such file or directory, rename 'a' -> 'b'".
-const NODE_FS_ERROR_MESSAGE_PATTERN = /^(E[A-Z]+): .+?, (\w+)/;
+// "ENOENT: no such file or directory, rename 'a' -> 'b'". Codes that don't
+// start with "E" must be matched too: libuv's UV_UNKNOWN ("UNKNOWN: unknown
+// error, read") and Node's fallback for untranslatable OS errors ("Unknown
+// system error -118: ...") are exactly what cloud-sync drivers surface, and
+// missing them meant every cloud-path UNKNOWN crossing the bridge was
+// reported as a hard error (MMM-V2-3AK/3K3/3K1).
+const NODE_FS_ERROR_MESSAGE_PATTERN =
+  /^(E[A-Z0-9_]+|UNKNOWN|Unknown system error -?\d+): .+?, (\w+)/;
 
 const parseNodeFsErrorMessage = (message: unknown) => {
   if (typeof message !== 'string') return undefined;

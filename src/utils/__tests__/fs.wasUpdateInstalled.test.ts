@@ -25,10 +25,11 @@ describe('wasUpdateInstalled - cloud-synced cong preferences path', () => {
   it('does not report a transient UNKNOWN read error from a cloud-synced path', async () => {
     const { fs } = globalThis.electronApi;
     vi.spyOn(fs, 'pathExists').mockImplementation(async () => true);
+    // The real error crosses the contextBridge with only its message - the
+    // previous version of this test set `code`, which production never
+    // delivers, so it passed while MMM-V2-3AK kept firing.
     vi.spyOn(fs, 'readFile').mockRejectedValue(
-      Object.assign(new Error('UNKNOWN: unknown error, read'), {
-        code: 'UNKNOWN',
-      }),
+      new Error('UNKNOWN: unknown error, read'),
     );
 
     const { registerCachePathProvider, wasUpdateInstalled } =
@@ -46,9 +47,7 @@ describe('wasUpdateInstalled - cloud-synced cong preferences path', () => {
     const { fs } = globalThis.electronApi;
     vi.spyOn(fs, 'pathExists').mockImplementation(async () => true);
     vi.spyOn(fs, 'readFile').mockRejectedValue(
-      Object.assign(new Error('EACCES: permission denied, read'), {
-        code: 'EACCES',
-      }),
+      new Error('EACCES: permission denied, read'),
     );
 
     const { registerCachePathProvider, wasUpdateInstalled } =

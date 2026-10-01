@@ -88,6 +88,34 @@ describe('filesystem error helpers', () => {
     expect(getFilesystemErrorCode({ code: 'EACCES' })).toBe('EACCES');
   });
 
+  // Errors from fs functions exposed straight through contextBridge reach
+  // the renderer with only name/message/stack - no `code`.
+  it('parses the code from a bridged error message, including non-E codes', () => {
+    expect(
+      getFilesystemErrorCode(new Error('UNKNOWN: unknown error, read')),
+    ).toBe('UNKNOWN');
+    expect(
+      getFilesystemErrorCode(
+        new Error(
+          "Unknown system error -118: Unknown system error -118, open 'C:/x'",
+        ),
+      ),
+    ).toBe('UNKNOWN');
+    expect(
+      getFilesystemErrorCode(
+        new Error("ENOENT: no such file or directory, open 'C:/x'"),
+      ),
+    ).toBe('ENOENT');
+    expect(getFilesystemErrorCode(new Error('Something else'))).toBe(undefined);
+    expect(
+      isExpectedNetworkPathAccessError(
+        new Error("UNKNOWN: unknown error, copyfile 'a' -> 'b'"),
+        'C:/Users/test/OneDrive/Documents/photo.jpg',
+        'win32',
+      ),
+    ).toBe(true);
+  });
+
   it('classifies transient access errors only for likely network paths', () => {
     expect(
       isExpectedNetworkPathAccessError(
