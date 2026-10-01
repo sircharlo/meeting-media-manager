@@ -85,7 +85,7 @@
         disableRemotePlayback
         :muted="isSlideshowDisplayVideo(displayLayer1.url)"
         preload="metadata"
-        :src="displayLayer1.url"
+        :src="displayLayer1.url || undefined"
         @canplay="handleVideoCanPlay()"
         @ended="endOrLoop()"
         @error="handleMediaError(1)"
@@ -747,6 +747,14 @@ const handleMediaError = (layer: 1 | 2) => {
   if (!element || elementsBeingCleanedUp.has(element)) return;
 
   const layerRef = layer === 1 ? displayLayer1 : displayLayer2;
+
+  // A live stream (website mirroring) renders this <video> with no url
+  // while its srcObject is still being requested; an empty src attribute
+  // makes Chromium fail resource selection with "Empty src attribute"
+  // before the stream is even attached (MMM-V2-3J0). No file can have
+  // failed without a url, so this is never a real playback error - and
+  // it must not be treated as end-of-media either.
+  if (!layerRef.value.url) return;
 
   errorCatcher(new Error(element.error?.message || 'Media playback error'), {
     contexts: {
