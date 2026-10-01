@@ -483,6 +483,41 @@ describe('JW Store', () => {
       );
     });
 
+    // MMM-V2-3H4: a flaky connection to WOL used to be reported verbatim.
+    it('does not report transient network failures to Sentry', async () => {
+      const store = useJwStore();
+      const api = await import('src/utils/api');
+      vi.mocked(api.fetchRaw).mockRejectedValue(
+        new TypeError('Failed to fetch (wol.jw.org)'),
+      );
+
+      await store.updateJwIconsUrl();
+
+      expect(errorCatcher).not.toHaveBeenCalled();
+    });
+
+    it('reports non-network failures with the url it was fetching', async () => {
+      const store = useJwStore();
+      const api = await import('src/utils/api');
+      vi.mocked(api.fetchRaw).mockRejectedValue(
+        new Error('Unexpected parse failure'),
+      );
+
+      await store.updateJwIconsUrl();
+
+      expect(errorCatcher).toHaveBeenCalledWith(
+        expect.any(Error),
+        expect.objectContaining({
+          contexts: {
+            fn: {
+              args: { wolUrl: 'https://wol.jw.org/en/wol/h/r1/lp-e' },
+              name: 'updateJwIconsUrl - main',
+            },
+          },
+        }),
+      );
+    });
+
     // SEC-3 (full-audit-2026-09-04.md): these URLs load real font files from
     // a third-party CDN - pinned to a specific version rather than `@latest`
     // so a future fontsource release can't be served automatically with no

@@ -583,12 +583,13 @@ export const useJwStore = defineStore('jw-store', {
       });
     },
     async updateJwIconsUrl() {
+      const online = useCurrentStateStore().online;
+      // This whole method exists to get the *current* truth after a
+      // cached/default URL just failed - fetchRaw's cache has no TTL, so
+      // reusing it here could wedge the session on an already-dead URL
+      // (from an earlier call) until restart. Always fetch fresh.
+      const wolUrl = `https://wol.${this.urlVariables.base}/en/wol/h/r1/lp-e`;
       try {
-        // This whole method exists to get the *current* truth after a
-        // cached/default URL just failed - fetchRaw's cache has no TTL, so
-        // reusing it here could wedge the session on an already-dead URL
-        // (from an earlier call) until restart. Always fetch fresh.
-        const wolUrl = `https://wol.${this.urlVariables.base}/en/wol/h/r1/lp-e`;
         const response = await fetchRaw(wolUrl);
         if (!response.ok) return;
 
@@ -606,6 +607,9 @@ export const useJwStore = defineStore('jw-store', {
               return; // Found it, we can stop
             }
           } catch (e) {
+            // Same network classification as updateYeartextFontUrls: a
+            // flaky connection to WOL is not a bug (MMM-V2-3H4).
+            if (!(await shouldReportCaughtError(e, online))) continue;
             errorCatcher(e, {
               contexts: {
                 fn: {
@@ -617,10 +621,11 @@ export const useJwStore = defineStore('jw-store', {
           }
         }
       } catch (e) {
+        if (!(await shouldReportCaughtError(e, online))) return;
         errorCatcher(e, {
           contexts: {
             fn: {
-              args: {},
+              args: { wolUrl },
               name: 'updateJwIconsUrl - main',
             },
           },
