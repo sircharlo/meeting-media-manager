@@ -35,12 +35,18 @@ const UPDATE_IGNORE_ERRORS: (string | string[])[] = [
   'ERR_CONNECTION_CLOSED',
   'ERR_CONNECTION_RESET',
   'ERR_CONNECTION_TIMED_OUT',
+  // A mid-download HTTP/2 stream reset, seen as an unhandled rejection
+  // from the updater's download (MMM-V2-AN).
+  'ERR_HTTP2_PROTOCOL_ERROR',
   'ERR_HTTP2_SERVER_REFUSED_STREAM',
   'ERR_INTERNET_DISCONNECTED',
   'ERR_NAME_NOT_RESOLVED',
   'ERR_NETWORK_CHANGED',
   'ERR_NETWORK_IO_SUSPENDED',
   'ERR_PROXY_CONNECTION_FAILED',
+  // Sibling of ERR_PROXY_CONNECTION_FAILED: a proxy that refuses or can't
+  // complete the HTTPS CONNECT tunnel to the update server (MMM-V2-AN).
+  'ERR_TUNNEL_CONNECTION_FAILED',
   'ERR_TIMED_OUT',
   'SELF_SIGNED_CERT_IN_CHAIN',
   'YAMLException',

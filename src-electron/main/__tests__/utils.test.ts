@@ -167,6 +167,10 @@ describe('isIgnoredUpdateError', () => {
     expect(isIgnoredUpdateError('net::ERR_INTERNET_DISCONNECTED')).toBe(true);
     expect(isIgnoredUpdateError('net::ERR_NETWORK_IO_SUSPENDED')).toBe(true);
     expect(isIgnoredUpdateError('net::ERR_PROXY_CONNECTION_FAILED')).toBe(true);
+    expect(isIgnoredUpdateError('net::ERR_TUNNEL_CONNECTION_FAILED')).toBe(
+      true,
+    );
+    expect(isIgnoredUpdateError('net::ERR_HTTP2_PROTOCOL_ERROR')).toBe(true);
     expect(isIgnoredUpdateError('net::ERR_HTTP2_SERVER_REFUSED_STREAM')).toBe(
       true,
     );
