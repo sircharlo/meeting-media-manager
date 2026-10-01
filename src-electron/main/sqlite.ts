@@ -2,6 +2,7 @@ import type { QueryResponseItem } from 'src/types';
 
 import { Worker } from 'node:worker_threads';
 import { captureElectronError } from 'src-electron/main/utils';
+import { getCloudStorageProvider } from 'src/shared/filesystem-errors';
 import { log } from 'src/shared/vanilla';
 
 // These lookups run in the main process (via the `executeQuery` IPC handler in
@@ -33,7 +34,12 @@ interface SqliteWorkerRequest {
 
 interface SqliteWorkerResponse {
   cached?: boolean;
-  error?: { message: string; stack?: string };
+  error?: {
+    errcode?: number;
+    errstr?: string;
+    message: string;
+    stack?: string;
+  };
   id: number;
   result?: unknown[];
 }
@@ -128,6 +134,8 @@ parentPort.on('message', (message) => {
   } catch (error) {
     parentPort.postMessage({
       error: {
+        errcode: error ? error.errcode : undefined,
+        errstr: error ? error.errstr : undefined,
         message: error && error.message ? error.message : String(error),
         stack: error && error.stack ? error.stack : undefined,
       },
@@ -175,7 +183,12 @@ const getWorker = () => {
     }
 
     if (message.error) {
-      const error = new Error(message.error.message);
+      // Keep node:sqlite's errcode/errstr: "disk I/O error" alone doesn't
+      // say which I/O failed (MMM-V2-3JJ).
+      const error = Object.assign(new Error(message.error.message), {
+        errcode: message.error.errcode,
+        errstr: message.error.errstr,
+      });
       error.stack = message.error.stack;
       pending.reject(error);
     } else {
@@ -305,6 +318,16 @@ const postToWorkerWithTimeout = (
 // this.
 const ALLOWED_QUERY_PREFIX = /^\s*\(?\s*(pragma|select)\b/i;
 
+// SQLite's primary result code for an OS-level read/write failure (the
+// extended codes, e.g. 266 SQLITE_IOERR_READ, share it in their low byte).
+const SQLITE_IOERR = 10;
+const reportedIoErrorPaths = new Set<string>();
+
+const getSqliteErrcode = (error: unknown) => {
+  const errcode = (error as undefined | { errcode?: unknown })?.errcode;
+  return typeof errcode === 'number' ? errcode : undefined;
+};
+
 export const executeQuery = async <T extends object = QueryResponseItem>(
   dbPath: string,
   query: string,
@@ -345,9 +368,31 @@ export const executeQuery = async <T extends object = QueryResponseItem>(
   } catch (e) {
     // The worker dropped the connection it used when a query fails, so a
     // later query reopens it fresh.
+    const errcode = getSqliteErrcode(e);
+    const cloudProvider = getCloudStorageProvider(dbPath);
+    const isIoError =
+      errcode !== undefined && (errcode & 0xff) === SQLITE_IOERR;
+
+    // A cloud-sync client (OneDrive, ...) locking or hydrating the file
+    // makes opening/reading it fail with SQLITE_IOERR - environmental, not
+    // a bug (MMM-V2-3JJ). Elsewhere, report an I/O error once per db per
+    // session instead of once per query in the same burst.
+    if (isIoError && (cloudProvider || reportedIoErrorPaths.has(dbPath))) {
+      log('SQLite I/O error', 'sqlite', 'warn', {
+        cloudProvider,
+        errcode,
+        path: dbPath,
+      });
+      return [];
+    }
+    if (isIoError) reportedIoErrorPaths.add(dbPath);
+
     captureElectronError(e, {
       contexts: {
         fn: {
+          cloudProvider,
+          errcode,
+          errstr: (e as { errstr?: unknown }).errstr,
           name: 'executeQuery',
           outstandingRequests:
             e instanceof SqliteWorkerStallError
