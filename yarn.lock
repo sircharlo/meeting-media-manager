@@ -2587,7 +2587,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:10.75.3, @sentry/core@npm:^10.75.2":
+"@sentry/core@npm:10.75.3":
   version: 10.75.3
   resolution: "@sentry/core@npm:10.75.3"
   dependencies:
@@ -2596,7 +2596,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:11.1.0":
+"@sentry/core@npm:11.1.0, @sentry/core@npm:^11.1.0":
   version: 11.1.0
   resolution: "@sentry/core@npm:11.1.0"
   dependencies:
@@ -8191,7 +8191,7 @@ __metadata:
     "@quasar/app-vite": "npm:^3.10.0"
     "@quasar/extras": "npm:^2.1.0"
     "@quasar/vite-plugin": "npm:^2.0.2"
-    "@sentry/core": "npm:^10.75.2"
+    "@sentry/core": "npm:^11.1.0"
     "@sentry/electron": "npm:^7.20.0"
     "@sentry/rollup-plugin": "npm:^5.4.0"
     "@sentry/vite-plugin": "npm:^5.4.0"
