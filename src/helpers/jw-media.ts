@@ -1095,10 +1095,23 @@ const extractDbFromContents = async (outputPath: string, jwpubPath: string) => {
         'warn',
       );
     }
+    // Release any open read-only SQLite handle on the existing .db before
+    // re-extracting over it (the old file is about to be replaced). Kept
+    // outside the try below: a failure to close says nothing about the
+    // extracted files, so it must never reach the delete-as-corrupt path
+    // (MMM-V2-3K9). If a handle really is still open, the unzip itself fails
+    // with a permission error, which that path already leaves alone.
+    await closeSqliteConnections().catch((closeError) =>
+      errorCatcher(closeError, {
+        contexts: {
+          fn: {
+            args: { jwpubPath, outputPath },
+            name: 'jwpubExtractor closeSqliteConnections',
+          },
+        },
+      }),
+    );
     try {
-      // Release any open read-only SQLite handle on the existing .db before
-      // re-extracting over it (the old file is about to be replaced).
-      await closeSqliteConnections();
       await unzip(contentsPath, outputPath);
       const dbFileAfterUnzip = await findDb(outputPath);
       if (!dbFileAfterUnzip) throw new Error('DB still not found after unzip');

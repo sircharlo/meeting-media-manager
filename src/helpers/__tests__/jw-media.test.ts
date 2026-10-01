@@ -278,6 +278,43 @@ describe('jw-media helpers', () => {
     expect(sqliteCallOrder ?? 0).toBeLessThan(removeCallOrder ?? 0);
   });
 
+  // MMM-V2-3K9: a closeSqliteConnections() failure used to sit inside the
+  // try whose catch treats the extraction as corrupt and deletes the jwpub.
+  it('does not delete the jwpub when closing sqlite connections fails before re-extracting the db', async () => {
+    const { findDb } = await import('src/utils/sqlite');
+    vi.mocked(findDb)
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce('/tmp/out/pub.db');
+    getZipEntriesMock
+      .mockResolvedValueOnce({ contents: 100 })
+      .mockResolvedValueOnce({ 'pub.db': 50 });
+    statMock.mockImplementation(async (path: string) => {
+      if (path === '/tmp/out/contents') return { size: 100 };
+      throw Object.assign(new Error('missing'), { code: 'ENOENT' });
+    });
+    closeSqliteConnectionsMock.mockRejectedValueOnce(
+      new Error('Timed out waiting for SQLite worker after 8000ms'),
+    );
+    const { unzipJwpub } = await import('../jw-media');
+
+    await expect(
+      unzipJwpub('/tmp/publication.jwpub', '/tmp/out'),
+    ).resolves.toBe('/tmp/out');
+
+    expect(unzipMock).toHaveBeenCalledWith('/tmp/out/contents', '/tmp/out');
+    expect(removeMock).not.toHaveBeenCalledWith('/tmp/publication.jwpub');
+    expect(errorCatcherMock).toHaveBeenCalledWith(
+      expect.any(Error),
+      expect.objectContaining({
+        contexts: expect.objectContaining({
+          fn: expect.objectContaining({
+            name: 'jwpubExtractor closeSqliteConnections',
+          }),
+        }),
+      }),
+    );
+  });
+
   it('closes the identification db connection before removing its temp dir', async () => {
     getZipEntriesMock.mockResolvedValue({ contents: 100 });
     const { identifyJwpub } = await import('../jw-media');

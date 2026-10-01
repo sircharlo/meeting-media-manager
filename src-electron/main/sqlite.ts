@@ -264,6 +264,10 @@ export const createProgressWatchdog = (
   };
 };
 
+// Settles once the most recently stalled worker has actually exited (and
+// with it, released every database handle it held).
+let lastStallTermination: Promise<unknown> = Promise.resolve();
+
 const stallWatchdog = createProgressWatchdog(SQLITE_TIMEOUT_MS, () => {
   const stallError = new SqliteWorkerStallError(
     SQLITE_TIMEOUT_MS,
@@ -271,7 +275,7 @@ const stallWatchdog = createProgressWatchdog(SQLITE_TIMEOUT_MS, () => {
   );
   const hungWorker = worker;
   worker = undefined;
-  hungWorker?.terminate();
+  lastStallTermination = hungWorker?.terminate() ?? Promise.resolve();
   rejectAllPending(stallError);
 });
 
@@ -359,6 +363,25 @@ export const executeQuery = async <T extends object = QueryResponseItem>(
 };
 
 /**
+ * Sends a close request to the worker. If the worker stalls before getting
+ * to it, the stall watchdog terminates the worker - which releases every
+ * handle and drops both caches, i.e. exactly what the close was asking for -
+ * so that counts as success once the termination has completed. Callers
+ * close connections right before deleting/overwriting .db files, and a
+ * rejected close there used to fall into "the extraction must be corrupt"
+ * cleanup that deleted a perfectly good .jwpub (MMM-V2-3K9).
+ * @param request The close request
+ */
+const closeViaWorker = async (request: Omit<SqliteWorkerRequest, 'id'>) => {
+  try {
+    await postToWorkerWithTimeout(request);
+  } catch (error) {
+    if (!(error instanceof SqliteWorkerStallError)) throw error;
+    await lastStallTermination;
+  }
+};
+
+/**
  * Closes every cached read-only connection and drops the result cache.
  *
  * Must be called before any cache cleanup or publication re-extraction that
@@ -368,7 +391,7 @@ export const executeQuery = async <T extends object = QueryResponseItem>(
  */
 export const closeAllConnections = async () => {
   if (!worker) return;
-  await postToWorkerWithTimeout({ type: 'closeAll' });
+  await closeViaWorker({ type: 'closeAll' });
 };
 
 /**
@@ -382,5 +405,5 @@ export const closeAllConnections = async () => {
  */
 export const closeConnection = async (dbPath: string) => {
   if (!worker) return;
-  await postToWorkerWithTimeout({ dbPath, type: 'closeOne' });
+  await closeViaWorker({ dbPath, type: 'closeOne' });
 };
