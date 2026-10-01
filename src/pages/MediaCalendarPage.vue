@@ -263,6 +263,7 @@ import {
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addDayToExportQueue } from 'src/helpers/export-media';
+import { getRendererPlatform } from 'src/helpers/fs';
 import {
   copyToDatedAdditionalMedia,
   createMediaItemFromPath,
@@ -291,6 +292,7 @@ import { createTemporaryNotification } from 'src/helpers/notifications';
 import { withPendingSectionImport } from 'src/helpers/pending-section-imports';
 import { updateLastUsedDate } from 'src/helpers/usage';
 import { triggerZoomScreenShare } from 'src/helpers/zoom';
+import { isExpectedNetworkPathAccessError } from 'src/shared/filesystem-errors';
 import { log, uuid } from 'src/shared/vanilla';
 import { convertImageIfNeeded, convertPdfToImages } from 'src/utils/converters';
 import {
@@ -1866,14 +1868,33 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
             message: t('fileProcessError'),
             type: 'negative',
           });
-          errorCatcher(error, {
-            contexts: {
-              fn: {
-                args: { filepath },
-                name: 'addToFiles',
+          // A cloud-synced source (Dropbox, OneDrive, ...) can transiently
+          // fail to read while its sync client holds or hydrates the file
+          // (MMM-V2-3KA) - the user is told above; it isn't an app bug.
+          if (
+            filepath &&
+            isExpectedNetworkPathAccessError(
+              error,
+              filepath,
+              getRendererPlatform(),
+            )
+          ) {
+            log(
+              `Could not import ${filepath} from a cloud/network path`,
+              'mediaCalendar',
+              'warn',
+              error,
+            );
+          } else {
+            errorCatcher(error, {
+              contexts: {
+                fn: {
+                  args: { filepath },
+                  name: 'addToFiles',
+                },
               },
-            },
-          });
+            });
+          }
         }
         currentFile.value++;
       }

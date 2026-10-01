@@ -1316,7 +1316,14 @@ export const copyToDatedAdditionalMedia = async (
         try {
           await remove(datedAdditionalMediaPath);
         } catch (e) {
-          errorCatcher(e);
+          errorCatcher(e, {
+            contexts: {
+              fn: {
+                datedAdditionalMediaPath,
+                name: 'copyToDatedAdditionalMedia remove existing',
+              },
+            },
+          });
         }
         jwStore.removeFromAdditionMediaMap(
           uniqueId,
@@ -1349,7 +1356,15 @@ export const copyToDatedAdditionalMedia = async (
     ) {
       return '';
     }
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          datedAdditionalMediaPath,
+          filepathToCopy,
+          name: 'copyToDatedAdditionalMedia',
+        },
+      },
+    });
     return '';
   }
 };
