@@ -22,6 +22,7 @@ const obsStateStore = {
   obsConnectionState: 'notConnected',
   obsErrorHandler: obsErrorHandlerMock,
   obsMessage: '',
+  scenes: [] as unknown[],
 };
 
 vi.mock('src/helpers/error-catcher', () => ({
@@ -94,6 +95,20 @@ describe('obsConnect', () => {
 
     expect(connectMock).not.toHaveBeenCalled();
     expect(disconnectMock).toHaveBeenCalled();
+  });
+
+  // MMM-V2-3FC: the ConnectionClosed listener is already gone by the time
+  // a disable disconnects, so nothing else resets the state.
+  it('resets the connection state and scene list when OBS integration is turned off', async () => {
+    obsStateStore.obsConnectionState = 'connected';
+    obsStateStore.scenes = [{ sceneName: 'Camera' }];
+    currentStateStore.currentSettings = { obsEnable: false };
+    const { obsConnect } = await import('../obs');
+
+    await obsConnect();
+
+    expect(obsStateStore.obsConnectionState).toBe('disconnected');
+    expect(obsStateStore.scenes).toEqual([]);
   });
 
   it('does not report an error on a successful connection attempt', async () => {

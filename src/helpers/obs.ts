@@ -106,6 +106,15 @@ const runObsConnect = async (setup?: boolean) => {
     const settings = getObsConnectionSettings();
     if (settings === 'disabled') {
       await obsWebSocketInfo.obsWebSocket?.disconnect();
+      // ObsStatus removes its ConnectionClosed listener as soon as OBS is
+      // disabled, so obsCloseHandler never ran for this disconnect and the
+      // state stayed 'connected' with the old scene list. Re-enabling OBS
+      // then sent requests over the dead socket ("Not connected",
+      // MMM-V2-3FC) before the new connection attempt began.
+      if (obsState.obsConnectionState !== 'notConnected') {
+        obsState.obsCloseHandler();
+        obsState.scenes = [];
+      }
       return;
     }
     if (settings === 'invalid') return;
