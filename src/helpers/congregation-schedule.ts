@@ -15,30 +15,47 @@ import { log } from 'src/shared/vanilla';
 import { fetchJson } from 'src/utils/api';
 import { isInPast } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useJwStore } from 'stores/jw';
 
 import { updateLookupPeriod } from './date';
 import { errorCatcher } from './error-catcher';
 import { fetchMedia } from './jw-media';
 
-let meetingLanguagesPromise: null | Promise<Map<string, string>> = null;
+// The configured Website's own meetings API - never jw.org's when a
+// different Website is set. No base, no URL (fetchJson('') returns null).
+const getMeetingsApiUrl = (endpoint: string) => {
+  const { base } = useJwStore().urlVariables;
+  return base ? `https://hub.${base}/meetings/api/${endpoint}` : '';
+};
+
+// Keyed by URL, so switching Website doesn't reuse another host's answer.
+const meetingLanguagesPromises = new Map<
+  string,
+  Promise<Map<string, string>>
+>();
 
 type SyncableScheduleSettings = SettingsValues & {
   congregationName: string;
 };
 
 export const getMeetingLanguageMap = async () => {
-  meetingLanguagesPromise ??= (async () => {
-    const languages =
-      (await fetchJson<MeetingLanguage[]>(
-        'https://hub.jw.org/meetings/api/languages',
-        undefined,
-        useCurrentStateStore().online,
-      )) || [];
-    return new Map(
-      languages.map((language) => [language.languageGuid, language.code]),
-    );
-  })();
-  return meetingLanguagesPromise;
+  const url = getMeetingsApiUrl('languages');
+  let promise = meetingLanguagesPromises.get(url);
+  if (!promise) {
+    promise = (async () => {
+      const languages =
+        (await fetchJson<MeetingLanguage[]>(
+          url,
+          undefined,
+          useCurrentStateStore().online,
+        )) || [];
+      return new Map(
+        languages.map((language) => [language.languageGuid, language.code]),
+      );
+    })();
+    meetingLanguagesPromises.set(url, promise);
+  }
+  return promise;
 };
 
 export const normalizeSchedule = (
@@ -330,7 +347,7 @@ const notifyScheduleSyncChanges = (changes: {
 
 export const fetchCongregationSuggestions = async (keywords: string) =>
   (await fetchJson<CongregationSearchResult[]>(
-    'https://hub.jw.org/meetings/api/congregations',
+    getMeetingsApiUrl('congregations'),
     new URLSearchParams({
       congregationName: keywords,
     }),
@@ -344,7 +361,7 @@ export const fetchMeetingLocations = async (
     return { hasResultsOutsideViewport: false, items: [] };
 
   const details = await fetchJson<MeetingSearchResponse>(
-    'https://hub.jw.org/meetings/api/meeting-search',
+    getMeetingsApiUrl('meeting-search'),
     new URLSearchParams({
       first: '20',
       meetingLocationEventGuid,

@@ -515,7 +515,11 @@ import {
   getPubMediaLinks,
 } from 'src/helpers/jw-media';
 import { log } from 'src/shared/vanilla';
-import { fetchJson, fetchPubMediaLinks } from 'src/utils/api';
+import {
+  fetchJson,
+  fetchPubMediaLinks,
+  getLibraryFilterUrl,
+} from 'src/utils/api';
 import { convertPdfToImages } from 'src/utils/converters';
 import { getLocalDate } from 'src/utils/date';
 import {
@@ -756,13 +760,22 @@ async function buildDocumentPreviews(db: string) {
   }
 }
 
+// The search API and its token live on the configured Website's media API
+// host - never jw.org's when a different Website is set. No host, no
+// search (an endpoint without a url is skipped).
+const mediaApiOrigin = computed(
+  () => URL.parse(urlVariables.value.mediator)?.origin,
+);
+
 // Search endpoints configuration
 const searchEndpoints = computed(() => [
   {
     enabled: true,
     name: 'Publications',
     queryParam: 'q',
-    url: `https://b.jw-cdn.org/apis/search/results/${currentSettings.value?.lang || 'E'}/publications`,
+    url: mediaApiOrigin.value
+      ? `${mediaApiOrigin.value}/apis/search/results/${currentSettings.value?.lang || 'E'}/publications`
+      : '',
   },
 ]);
 
@@ -882,7 +895,9 @@ async function fetchJwtToken(): Promise<boolean> {
       return true;
     }
 
-    const response = await fetch('https://b.jw-cdn.org/tokens/jworg.jwt', {
+    if (!mediaApiOrigin.value) return false;
+
+    const response = await fetch(`${mediaApiOrigin.value}/tokens/jworg.jwt`, {
       headers: {
         Accept: 'text/plain',
       },
@@ -1402,7 +1417,11 @@ async function selectCategory(key: string) {
       step.value = 'year';
       loading.value = true;
       // Fetch years for Meeting Workbook
-      const url = `https://www.jw.org/en/library/jw-meeting-workbook/json/filters/IssueYearViewsFilter/`;
+      const url = getLibraryFilterUrl(
+        urlVariables.value.base,
+        'jw-meeting-workbook',
+        'IssueYearViewsFilter',
+      );
       const result = await fetchJson<{ choices: FilterChoice[]; id: string }>(
         url,
         new URLSearchParams({
@@ -1418,7 +1437,11 @@ async function selectCategory(key: string) {
       // Fetch brochure/booklet list
       step.value = 'publicationListing';
       loading.value = true;
-      const url = `https://www.jw.org/en/library/brochures/json/filters/PseudoSearchViewsFilter/`;
+      const url = getLibraryFilterUrl(
+        urlVariables.value.base,
+        'brochures',
+        'PseudoSearchViewsFilter',
+      );
       const result = await fetchJson<{ choices: FilterChoice[]; id: string }>(
         url,
         new URLSearchParams({
@@ -1436,7 +1459,11 @@ async function selectCategory(key: string) {
       // Fetch tracts and invitations list
       step.value = 'publicationListing';
       loading.value = true;
-      const url = `https://www.jw.org/en/library/tracts/json/filters/PseudoSearchViewsFilter/`;
+      const url = getLibraryFilterUrl(
+        urlVariables.value.base,
+        'tracts',
+        'PseudoSearchViewsFilter',
+      );
       const result = await fetchJson<{ choices: FilterChoice[]; id: string }>(
         url,
         new URLSearchParams({
@@ -1454,7 +1481,11 @@ async function selectCategory(key: string) {
       // Fetch programs list
       step.value = 'publicationListing';
       loading.value = true;
-      const url = `https://www.jw.org/en/library/programs/json/filters/PseudoSearchViewsFilter/`;
+      const url = getLibraryFilterUrl(
+        urlVariables.value.base,
+        'programs',
+        'PseudoSearchViewsFilter',
+      );
       const result = await fetchJson<{ choices: FilterChoice[]; id: string }>(
         url,
         new URLSearchParams({
@@ -1482,7 +1513,11 @@ async function selectMagazine(choice: FilterChoice) {
     step.value = 'year';
     loading.value = true;
     // Fetch year list for selected magazine
-    const url = `https://www.jw.org/en/library/magazines/json/filters/IssueYearViewsFilter/`;
+    const url = getLibraryFilterUrl(
+      urlVariables.value.base,
+      'magazines',
+      'IssueYearViewsFilter',
+    );
     const result = await fetchJson<{ choices: FilterChoice[]; id: string }>(
       url,
       new URLSearchParams({

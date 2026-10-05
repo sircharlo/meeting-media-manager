@@ -117,7 +117,7 @@ export function createWindow(
       page = buildWebsitePage(websiteParams, urlVariables?.base);
       break;
   }
-  if (page.startsWith('https://')) {
+  if (page.startsWith('https://') || page === 'about:blank') {
     win.loadURL(page);
   } else if (import.meta.env.QUASAR_DEV) {
     win.loadURL(import.meta.env.QUASAR_APP_URL + `?page=${page}`);
@@ -217,7 +217,10 @@ function buildWebsitePage(
 
     return `${siteUrlBySelection[websiteParams.site]}?lang=${langSymbol}`;
   }
-  return `https://www.${base || 'jw.org'}/${langSymbol}`;
+  // Never jw.org in place of a different Website: without a known base
+  // (not sent yet, or the configured one was invalid) show nothing.
+  if (!base) return 'about:blank';
+  return `https://www.${base}/${langSymbol}`;
 }
 
 export const __testables = {

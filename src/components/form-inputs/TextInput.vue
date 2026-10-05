@@ -12,7 +12,7 @@
       v-model="model"
       class="q-pb-none bg-accent-100 error"
       :class="settingId === 'localDateFormat' ? 'q-mb-xs' : ''"
-      :clearable="settingId === 'localDateFormat'"
+      :clearable="settingId === 'localDateFormat' || settingId === 'baseUrl'"
       dense
       :error="customError"
       hide-bottom-space
@@ -29,6 +29,7 @@
       :rules="getRules(rules, currentSettings?.disableMediaFetching)"
       spellcheck="false"
       style="width: 240px"
+      @clear="onClear"
     >
       <template v-if="settingId === 'baseUrl'" #prepend>
         <div class="text-subtitle2 text-accent-300">https://www.</div>
@@ -126,6 +127,13 @@ const currentYear = new Date().getFullYear();
 const currentMonth = new Date().getMonth();
 
 const exampleDate = new Date(currentYear, currentMonth, 1);
+
+// Clearing the Website is the way back to jw.org: it's never used as a
+// fallback for a different Website, so it's set explicitly here, and
+// MainLayout's change confirmation tells the user before it applies.
+const onClear = () => {
+  if (props.settingId === 'baseUrl') model.value = 'jw.org';
+};
 
 const addToModel = (value: string) => {
   model.value = (model.value || '') + value;

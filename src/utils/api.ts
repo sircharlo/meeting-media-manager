@@ -477,6 +477,24 @@ export const fetchLatestVersion = async () => {
 };
 
 /**
+ * Builds a library filter endpoint on the configured Website. Never falls
+ * back to jw.org when a different Website is set: no base, no URL (and
+ * fetchJson('') returns null).
+ * @param base The configured base domain (e.g. `jw.org`)
+ * @param category The library category (e.g. `brochures`)
+ * @param filter The filter endpoint
+ * @returns The endpoint URL, or '' without a base
+ */
+export const getLibraryFilterUrl = (
+  base: string,
+  category: string,
+  filter: 'IssueYearViewsFilter' | 'PseudoSearchViewsFilter',
+) =>
+  base
+    ? `https://www.${base}/en/library/${category}/json/filters/${filter}/`
+    : '';
+
+/**
  * Fetches the media links for the given publication.
  * @param publication The publication to fetch the media links for.
  * @param base The base domain to fetch the media links from.

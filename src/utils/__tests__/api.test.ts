@@ -27,6 +27,7 @@ import {
   fetchRaw,
   fetchReleaseNotes,
   fetchYeartext,
+  getLibraryFilterUrl,
 } from '../api';
 import * as dateUtils from '../date';
 
@@ -729,5 +730,26 @@ describe('fetchRaw bot challenge', () => {
     await fetchRaw(finderUrl);
 
     expect(passSpy).not.toHaveBeenCalled();
+  });
+});
+
+// A different Website must never fall back to jw.org.
+describe('getLibraryFilterUrl', () => {
+  it("builds the endpoint on the configured Website's own host", () => {
+    expect(
+      getLibraryFilterUrl(
+        'example.test',
+        'brochures',
+        'PseudoSearchViewsFilter',
+      ),
+    ).toBe(
+      'https://www.example.test/en/library/brochures/json/filters/PseudoSearchViewsFilter/',
+    );
+  });
+
+  it('returns no URL at all without a Website', () => {
+    expect(getLibraryFilterUrl('', 'magazines', 'IssueYearViewsFilter')).toBe(
+      '',
+    );
   });
 });

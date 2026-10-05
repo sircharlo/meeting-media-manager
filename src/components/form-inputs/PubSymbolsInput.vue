@@ -41,8 +41,9 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { fetchJson } from 'src/utils/api';
+import { fetchJson, getLibraryFilterUrl } from 'src/utils/api';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useJwStore } from 'stores/jw';
 import { onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -66,6 +67,7 @@ const model = defineModel<string[]>({ required: true });
 const { t } = useI18n();
 
 const { currentLangObject } = storeToRefs(useCurrentStateStore());
+const { urlVariables } = storeToRefs(useJwStore());
 
 const loading = ref(false);
 const allOptions = ref<PubOption[]>([]);
@@ -81,7 +83,11 @@ const toOption = (choice: FilterChoice): PubOption => {
 };
 
 async function fetchPubList(category: string) {
-  const url = `https://www.jw.org/en/library/${category}/json/filters/PseudoSearchViewsFilter/`;
+  const url = getLibraryFilterUrl(
+    urlVariables.value.base,
+    category,
+    'PseudoSearchViewsFilter',
+  );
   const result = await fetchJson<{ choices: FilterChoice[]; id: string }>(
     url,
     new URLSearchParams({

@@ -53,6 +53,22 @@ describe('buildWebsitePage', () => {
     );
   });
 
+  it("uses the configured Website's own host", () => {
+    expect(
+      buildWebsitePage(siteParams({ langSymbol: 'E' }), 'example.test'),
+    ).toBe('https://www.example.test/E');
+  });
+
+  // A different Website must never fall back to jw.org.
+  it('shows a blank page rather than jw.org without a known Website', () => {
+    expect(buildWebsitePage(siteParams({ langSymbol: 'E' }), undefined)).toBe(
+      'about:blank',
+    );
+    expect(buildWebsitePage(siteParams({ langSymbol: 'E' }), '')).toBe(
+      'about:blank',
+    );
+  });
+
   it('builds a site-specific URL with a lang query param', () => {
     expect(
       buildWebsitePage(

@@ -110,3 +110,23 @@ describe('TextInput - revert on invalid focusout', () => {
     expect(createTemporaryNotificationMock).not.toHaveBeenCalled();
   });
 });
+
+// A different Website never falls back to jw.org: clearing the field is
+// the explicit way back (MainLayout's change confirmation then asks).
+describe('TextInput - Website field', () => {
+  it('resets the Website to jw.org when cleared', async () => {
+    const wrapper = mount(TextInput, {
+      props: {
+        modelValue: 'example.test',
+        'onUpdate:modelValue': (value: null | string) => {
+          void wrapper.setProps({ modelValue: value });
+        },
+        settingId: 'baseUrl',
+      },
+    });
+
+    await wrapper.findComponent({ name: 'QInput' }).vm.$emit('clear');
+
+    expect(wrapper.props('modelValue')).toBe('jw.org');
+  });
+});

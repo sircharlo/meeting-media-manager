@@ -68,6 +68,12 @@ vi.mock('stores/current-state', () => ({
   useCurrentStateStore: () => currentStateStore,
 }));
 
+const jwStore = { urlVariables: { base: 'jw.org' } };
+
+vi.mock('stores/jw', () => ({
+  useJwStore: () => jwStore,
+}));
+
 const congregationName = 'Test Congregation';
 
 const suggestion: CongregationSearchResult = {
@@ -249,5 +255,40 @@ describe('syncMeetingSchedule (automatic sync, boolean contract preserved)', () 
 
     await expect(syncMeetingSchedule()).resolves.toBe(false);
     expect(createTemporaryNotificationMock).not.toHaveBeenCalled();
+  });
+});
+
+// A congregation whose Website is set to something other than jw.org must
+// never have its schedule looked up on jw.org.
+describe('meetings API host', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    currentStateStore.online = true;
+    vi.mocked(fetchJson).mockResolvedValue(null);
+  });
+
+  it("uses the configured Website's own hub host", async () => {
+    jwStore.urlVariables.base = 'example.test';
+    const { fetchCongregationSuggestions } =
+      await import('../congregation-schedule');
+
+    await fetchCongregationSuggestions('test');
+
+    expect(fetchJson).toHaveBeenCalledWith(
+      'https://hub.example.test/meetings/api/congregations',
+      expect.any(URLSearchParams),
+      true,
+    );
+  });
+
+  it('makes no request to any host without a Website', async () => {
+    jwStore.urlVariables.base = '';
+    const { fetchCongregationSuggestions } =
+      await import('../congregation-schedule');
+
+    await fetchCongregationSuggestions('test');
+
+    expect(fetchJson).toHaveBeenCalledWith('', expect.anything(), true);
+    jwStore.urlVariables.base = 'jw.org';
   });
 });
