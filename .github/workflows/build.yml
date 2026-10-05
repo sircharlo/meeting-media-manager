@@ -87,27 +87,12 @@ jobs:
         include:
           - artifact: robotjs-darwin-arm64
             arch: arm64
-            install-node-architecture: arm64
-            node-architecture: arm64
-            node-version: 24
             os: macos-latest
           - artifact: robotjs-darwin-x64
             arch: x64
-            install-node-architecture: x64
-            node-architecture: x64
-            node-version: 24
             os: macos-15-intel
-          - artifact: robotjs-win32-ia32
-            arch: ia32
-            install-node-architecture: x64
-            node-architecture: x86
-            node-version: 22 # Last version of Node that supports ia32
-            os: windows-latest
           - artifact: robotjs-win32-x64
             arch: x64
-            install-node-architecture: x64
-            node-architecture: x64
-            node-version: 24
             os: windows-latest
     steps:
       - name: Check out master branch
@@ -122,23 +107,17 @@ jobs:
         if: ${{ !inputs.publish-release }}
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
-          architecture: ${{ matrix.install-node-architecture }}
+          architecture: ${{ matrix.arch }}
           cache: 'yarn'
-          node-version: ${{ matrix.node-version }}
+          node-version: 24
       - name: Setup Node without cache for release publishing
         if: ${{ inputs.publish-release }}
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
-          architecture: ${{ matrix.install-node-architecture }}
-          node-version: ${{ matrix.node-version }}
+          architecture: ${{ matrix.arch }}
+          node-version: 24
       - name: Install dependencies
         run: yarn install
-      - name: Setup target Node architecture
-        if: ${{ matrix.install-node-architecture != matrix.node-architecture }}
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
-        with:
-          architecture: ${{ matrix.node-architecture }}
-          node-version: ${{ matrix.node-version }}
       - name: Rebuild robotjs for Electron
         run: yarn exec electron-rebuild -f -m ./node_modules/robotjs --arch=${{ matrix.arch }}
         env:
@@ -209,7 +188,6 @@ jobs:
           $prepared = Join-Path $artifactRoot 'prepared'
           New-Item -ItemType Directory -Force $prepared | Out-Null
           Copy-Item (Join-Path $artifactRoot 'robotjs-win32-x64\robotjs.node') (Join-Path $prepared 'robotjs-win32-x64.node')
-          Copy-Item (Join-Path $artifactRoot 'robotjs-win32-ia32\robotjs.node') (Join-Path $prepared 'robotjs-win32-ia32.node')
       - name: Install Apple certificate
         if: runner.os == 'macOS' && github.actor != 'dependabot[bot]'
         env:
