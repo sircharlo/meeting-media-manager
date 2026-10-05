@@ -140,7 +140,7 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 - ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
 - ✨ **Vergaderopname**: Nieuwe functie toegevoegd om een externe opname-app te bedienen.
 - ✨ **Zoeken op website**: Mogelijkheid toegevoegd om met slim zoeken media of publicaties op de website te vinden.
-- ✨ **Eenvoudige handmatige publicatie-import**: Functionaliteit toegevoegd om publicaties van JW.org eenvoudig te importeren, zoals tijdschriften, boeken, programma's en uitnodigingen.
+- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from the official website, such as magazine, books, programs and invitations.
 - ✨ **Verbeteringen voor gebarentaal**: Bevestiging toegevoegd vóór het afspelen van volledige bestanden in gebarentaal en ondersteuning voor het selecteren van meerdere clips, bijvoorbeeld wanneer meerdere alinea's achter elkaar gelezen moeten worden.
 - ✨ **Clipnavigatie**: Weergave van duur toegevoegd aan clips in de lijst en de clipnavigatie verbeterd.
 - 🛠️ **Media Display**: Ensured media display becomes visible when playback starts, even if it was hidden before.
