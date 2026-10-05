@@ -234,7 +234,12 @@ const getWorker = () => {
 // into an empty result (MMM-V2-3JR, and the bogus "No document id found"
 // in MMM-V2-3K7). The watchdog only fires if the worker completes nothing at
 // all for SQLITE_TIMEOUT_MS while requests are outstanding.
-const SQLITE_TIMEOUT_MS = 8000;
+//
+// Generous on purpose: it's there to catch a hung worker, not a slow disk.
+// On old hardware during startup (many downloads and extractions at once)
+// a single millisecond-scale query was still unanswered after 8s, and the
+// stall threw away every queued query as an empty result (MMM-V2-3KT).
+export const SQLITE_TIMEOUT_MS = 30000;
 
 export class SqliteWorkerStallError extends Error {
   constructor(

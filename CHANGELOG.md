@@ -12,6 +12,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **Media Playback**: Fixed videos and audio that hadn't finished downloading yet failing to play for some congregations, depending on their Website setting.
 - 🐞 **Media List**: Fixed an error when dropping something onto the media list right after it had changed (for example just after importing a publication's media).
 - 🐞 **Cache**: Fixed M³ failing to record when a publication folder was last used (with a burst of "operation not permitted" errors) on Windows computers where its small tracking files had been marked as system or read-only files, which could make the automatic cache cleanup misjudge which media was still in use.
+- 🐞 **Media Fetching**: Fixed meeting parts occasionally coming up empty on older or slower computers right after starting M³, while it was busy downloading and extracting publications.
 
 ### 🔧 Chores
 

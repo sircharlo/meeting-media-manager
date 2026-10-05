@@ -45,6 +45,7 @@ import { captureElectronError } from 'src-electron/main/utils';
 import {
   closeAllConnections,
   executeQuery,
+  SQLITE_TIMEOUT_MS,
   SqliteWorkerStallError,
 } from '../sqlite';
 
@@ -63,7 +64,7 @@ describe('SQLite worker stall', () => {
     // cleanup.
     const close = closeAllConnections();
 
-    await vi.advanceTimersByTimeAsync(8000);
+    await vi.advanceTimersByTimeAsync(SQLITE_TIMEOUT_MS);
 
     await expect(close).resolves.toBeUndefined();
     await expect(query).resolves.toEqual([]);
@@ -79,5 +80,25 @@ describe('SQLite worker stall', () => {
         },
       }),
     );
+  });
+
+  // MMM-V2-3KT: on old hardware during startup, a cheap query was still
+  // unanswered after 8s - slow, not hung.
+  it('still resolves a query the worker answers after 10 seconds', async () => {
+    vi.useFakeTimers();
+    vi.mocked(captureElectronError).mockClear();
+
+    const query = executeQuery('/tmp/pub.db', 'SELECT 1');
+    const slowWorker = StuckWorker.instances.at(-1);
+    const request = slowWorker?.postMessage.mock.calls.at(-1)?.[0] as {
+      id: number;
+    };
+
+    await vi.advanceTimersByTimeAsync(10_000);
+    slowWorker?.emit('message', { id: request.id, result: [{ value: 1 }] });
+
+    await expect(query).resolves.toEqual([{ value: 1 }]);
+    expect(slowWorker?.terminate).not.toHaveBeenCalled();
+    expect(captureElectronError).not.toHaveBeenCalled();
   });
 });
