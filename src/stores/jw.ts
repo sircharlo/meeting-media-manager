@@ -344,6 +344,76 @@ export function replaceMissingMediaByPubMediaId(
 }
 
 /**
+ * Feeds the stylesheets of the configured site's pages to `onCss` until one
+ * page yields a match. WOL's own page comes first; the main site's home page
+ * declares the same @font-face rules and is tried next, because WOL can
+ * answer non-browser requests with an empty bot-challenge page (a 2xx with
+ * no body, MMM-V2-3H3) that leaves nothing to discover.
+ * @param base The configured base domain (e.g. `jw.org`)
+ * @param fnName The calling action's name, for error contexts
+ * @param onCss Called with each stylesheet; returns whether it found a match
+ * @param options.cache Whether to reuse cached responses
+ * @param options.firstMatchOnly Stop at the first matching stylesheet instead
+ * of scanning the rest of that page's stylesheets
+ * @returns The network error that prevented discovery, if any (already
+ * classified as not worth reporting), so font loading can tell "couldn't
+ * reach the site" apart from "the site no longer exposes the font".
+ */
+async function discoverFromSiteCss(
+  base: string,
+  fnName: string,
+  onCss: (cssText: string, cssUrl: string) => boolean,
+  options: { cache: boolean; firstMatchOnly: boolean },
+): Promise<unknown> {
+  const online = useCurrentStateStore().online;
+  const pageUrls = [
+    `https://wol.${base}/en/wol/h/r1/lp-e`,
+    `https://www.${base}/en/`,
+  ];
+  let unreportedError: unknown;
+
+  for (const pageUrl of pageUrls) {
+    let found = false;
+    try {
+      const response = await fetchRaw(pageUrl, undefined, options.cache);
+      if (!response.ok) continue;
+      const cssUrls = extractCssUrls(await response.text(), pageUrl);
+
+      for (const cssUrl of cssUrls) {
+        try {
+          const cssResponse = await fetchRaw(cssUrl, undefined, options.cache);
+          if (!cssResponse.ok) continue;
+          if (onCss(await cssResponse.text(), cssUrl)) {
+            found = true;
+            if (options.firstMatchOnly) return;
+          }
+        } catch (e) {
+          // A flaky connection to the site is not a bug (MMM-V2-3H4).
+          if (!(await shouldReportCaughtError(e, online))) {
+            unreportedError = e;
+            continue;
+          }
+          errorCatcher(e, {
+            contexts: { fn: { args: { cssUrl }, name: `${fnName} - cssUrl` } },
+          });
+        }
+      }
+    } catch (e) {
+      if (!(await shouldReportCaughtError(e, online))) {
+        unreportedError = e;
+        continue;
+      }
+      errorCatcher(e, {
+        contexts: { fn: { args: { pageUrl }, name: `${fnName} - main` } },
+      });
+      return;
+    }
+    if (found) return;
+  }
+  return unreportedError;
+}
+
+/**
  * Whether a freshly-fetched dynamic media item's own content looks different
  * from the already-stored item it matched by pubMediaId. `duration` and
  * `title` are populated directly from JW.org's own source data (not
@@ -583,65 +653,25 @@ export const useJwStore = defineStore('jw-store', {
       });
     },
     /**
-     * Discovers the current jw-icons font URL from WOL's CSS.
-     * @returns The network error that prevented discovery, if any (already
-     * classified as not worth reporting), so font loading can tell
-     * "couldn't reach WOL" apart from "WOL no longer exposes the font".
+     * Discovers the current jw-icons font URL from the site's CSS.
+     * @returns The network error that prevented discovery, if any - see
+     * discoverFromSiteCss.
      */
     async updateJwIconsUrl(): Promise<unknown> {
-      const online = useCurrentStateStore().online;
-      let unreportedError: unknown;
       // This whole method exists to get the *current* truth after a
       // cached/default URL just failed - fetchRaw's cache has no TTL, so
       // reusing it here could wedge the session on an already-dead URL
       // (from an earlier call) until restart. Always fetch fresh.
-      const wolUrl = `https://wol.${this.urlVariables.base}/en/wol/h/r1/lp-e`;
-      try {
-        const response = await fetchRaw(wolUrl);
-        if (!response.ok) return;
-
-        const html = await response.text();
-        const cssUrls = extractCssUrls(html, this.urlVariables.base);
-
-        for (const cssUrl of cssUrls) {
-          try {
-            const cssResponse = await fetchRaw(cssUrl);
-            if (!cssResponse.ok) continue;
-            const cssText = await cssResponse.text();
-            const fontUrl = findIconUrlInCss(cssText, cssUrl);
-            if (fontUrl) {
-              this.jwIconsUrl = fontUrl;
-              return; // Found it, we can stop
-            }
-          } catch (e) {
-            // Same network classification as updateYeartextFontUrls: a
-            // flaky connection to WOL is not a bug (MMM-V2-3H4).
-            if (!(await shouldReportCaughtError(e, online))) {
-              unreportedError = e;
-              continue;
-            }
-            errorCatcher(e, {
-              contexts: {
-                fn: {
-                  args: { cssUrl },
-                  name: 'updateJwIconsUrl - cssUrl',
-                },
-              },
-            });
-          }
-        }
-      } catch (e) {
-        if (!(await shouldReportCaughtError(e, online))) return e;
-        errorCatcher(e, {
-          contexts: {
-            fn: {
-              args: { wolUrl },
-              name: 'updateJwIconsUrl - main',
-            },
-          },
-        });
-      }
-      return unreportedError;
+      return discoverFromSiteCss(
+        this.urlVariables.base,
+        'updateJwIconsUrl',
+        (cssText, cssUrl) => {
+          const fontUrl = findIconUrlInCss(cssText, cssUrl);
+          if (fontUrl) this.jwIconsUrl = fontUrl;
+          return !!fontUrl;
+        },
+        { cache: false, firstMatchOnly: true },
+      );
     },
     async updateJwLanguages(online: boolean) {
       if (!online) return;
@@ -802,49 +832,21 @@ export const useJwStore = defineStore('jw-store', {
       }
     },
     /**
-     * Discovers the yeartext font URLs from WOL's CSS.
-     * @returns The network error that prevented discovery, if any (already
-     * classified as not worth reporting) - see updateJwIconsUrl.
+     * Discovers the yeartext font URLs from the site's CSS.
+     * @returns The network error that prevented discovery, if any - see
+     * discoverFromSiteCss.
      */
     async updateYeartextFontUrls(): Promise<unknown> {
-      const online = useCurrentStateStore().online;
-      let unreportedError: unknown;
-      try {
-        const wolUrl = `https://wol.${this.urlVariables.base}/en/wol/h/r1/lp-e`;
-        const response = await fetchRaw(wolUrl, undefined, true);
-        if (!response.ok) return;
-
-        const html = await response.text();
-        const cssUrls = extractCssUrls(html, this.urlVariables.base);
-
-        for (const cssUrl of cssUrls) {
-          try {
-            const cssResponse = await fetchRaw(cssUrl, undefined, true);
-            if (!cssResponse.ok) continue;
-            const cssText = await cssResponse.text();
-            this.yeartextFontUrls = {
-              ...this.yeartextFontUrls,
-              ...getYeartextFontUrlsFromCss(cssText),
-            };
-          } catch (e) {
-            if (!(await shouldReportCaughtError(e, online))) {
-              unreportedError = e;
-              continue;
-            }
-            errorCatcher(e, {
-              contexts: {
-                fn: { args: { cssUrl }, name: 'updateYeartextFontUrls' },
-              },
-            });
-          }
-        }
-      } catch (e) {
-        if (!(await shouldReportCaughtError(e, online))) return e;
-        errorCatcher(e, {
-          contexts: { fn: { name: 'updateYeartextFontUrls - main' } },
-        });
-      }
-      return unreportedError;
+      return discoverFromSiteCss(
+        this.urlVariables.base,
+        'updateYeartextFontUrls',
+        (cssText) => {
+          const fontUrls = getYeartextFontUrlsFromCss(cssText);
+          this.yeartextFontUrls = { ...this.yeartextFontUrls, ...fontUrls };
+          return Object.keys(fontUrls).length > 0;
+        },
+        { cache: true, firstMatchOnly: false },
+      );
     },
   },
   getters: {

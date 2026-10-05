@@ -30,7 +30,7 @@ const discoverJwIconsFontUrl = async () => {
   }
 
   const html = await response.text();
-  const cssUrls = extractCssUrls(html, BASE_URL);
+  const cssUrls = extractCssUrls(html, wolUrl);
 
   for (const cssUrl of cssUrls) {
     try {

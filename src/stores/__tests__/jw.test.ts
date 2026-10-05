@@ -50,6 +50,21 @@ vi.mock('src/utils/jw', () => ({
   isMediaLink: vi.fn(),
 }));
 
+const WOL_PAGE = 'https://wol.jw.org/en/wol/h/r1/lp-e';
+const WWW_PAGE = 'https://www.jw.org/en/';
+
+// Routes fetchRaw by URL; anything unrouted is a 404.
+const mockSite = async (routes: Record<string, () => Response>) => {
+  const api = await import('src/utils/api');
+  vi.mocked(api.fetchRaw).mockImplementation(async (url) =>
+    (routes[url] ?? (() => new Response(null, { status: 404 })))(),
+  );
+  return api;
+};
+
+// What WOL serves non-browser clients from behind a bot challenge.
+const challengePage = () => new Response(null, { status: 202 });
+
 describe('JW Store', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -435,43 +450,36 @@ describe('JW Store', () => {
       // No hardcoded fallback: The website rotates this asset's hash
       // periodically, so a baked-in URL would just go stale and 404.
       const store = useJwStore();
-      const api = await import('src/utils/api');
-      vi.mocked(api.fetchRaw)
-        .mockResolvedValueOnce(
-          new Response(
-            '<html><head><link href="/styles/site.css"></head></html>',
-            { status: 200 },
-          ),
-        )
-        .mockResolvedValueOnce(
+      await mockSite({
+        'https://wol.jw.org/styles/site.css': () =>
           new Response(
             '@font-face { font-family: "other-font"; src: url("https://cdn.example.com/other.woff2") format("woff2"); }',
-            { status: 200 },
           ),
-        );
+        [WOL_PAGE]: () =>
+          new Response(
+            '<html><head><link href="/styles/site.css"></head></html>',
+          ),
+      });
 
       await store.updateJwIconsUrl();
 
       expect(store.jwIconsUrl).toBe('');
       expect(store.fontUrls['jw-icons-all']).toBe('');
+      expect(errorCatcher).not.toHaveBeenCalled();
     });
 
     it('stores the discovered jw-icons font url when css is available', async () => {
       const store = useJwStore();
-      const api = await import('src/utils/api');
-      vi.mocked(api.fetchRaw)
-        .mockResolvedValueOnce(
-          new Response(
-            '<html><head><link href="/styles/site.css"></head></html>',
-            { status: 200 },
-          ),
-        )
-        .mockResolvedValueOnce(
+      const api = await mockSite({
+        'https://wol.jw.org/styles/site.css': () =>
           new Response(
             '@font-face { font-family: "jw-icons"; src: url("/assets/fonts/jw-icons.woff2") format("woff2"); }',
-            { status: 200 },
           ),
-        );
+        [WOL_PAGE]: () =>
+          new Response(
+            '<html><head><link href="/styles/site.css"></head></html>',
+          ),
+      });
 
       await store.updateJwIconsUrl();
 
@@ -480,6 +488,29 @@ describe('JW Store', () => {
       );
       expect(store.fontUrls['jw-icons-all']).toBe(
         'https://wol.jw.org/assets/fonts/jw-icons.woff2',
+      );
+      expect(api.fetchRaw).not.toHaveBeenCalledWith(WWW_PAGE, undefined, false);
+    });
+
+    // MMM-V2-3H3: WOL can answer with an empty bot-challenge page, which
+    // used to leave nothing to discover and the font unresolvable.
+    it("falls back to the main site's css when WOL serves a challenge page", async () => {
+      const store = useJwStore();
+      await mockSite({
+        'https://www.jw.org/assets/ct/abc/collector.css': () =>
+          new Response(
+            '@font-face{font-family:"jw-icons-all";src:url("fonts/jw-icons-all-1.woff") format("woff")}',
+          ),
+        [WOL_PAGE]: challengePage,
+        [WWW_PAGE]: () =>
+          new Response('<link href="/assets/ct/abc/collector.css">'),
+      });
+
+      const error = await store.updateJwIconsUrl();
+
+      expect(error).toBeUndefined();
+      expect(store.jwIconsUrl).toBe(
+        'https://www.jw.org/assets/ct/abc/fonts/jw-icons-all-1.woff',
       );
     });
 
@@ -510,7 +541,7 @@ describe('JW Store', () => {
         expect.objectContaining({
           contexts: {
             fn: {
-              args: { wolUrl: 'https://wol.jw.org/en/wol/h/r1/lp-e' },
+              args: { pageUrl: WOL_PAGE },
               name: 'updateJwIconsUrl - main',
             },
           },
@@ -597,6 +628,58 @@ describe('JW Store', () => {
       await store.updateYeartextFontUrls();
 
       expect(errorCatcher).toHaveBeenCalledTimes(1);
+    });
+
+    // MMM-V2-3H3: see the matching updateJwIconsUrl test.
+    it("falls back to the main site's css when WOL serves a challenge page", async () => {
+      const store = useJwStore();
+      await mockSite({
+        'https://www.jw.org/assets/ct/abc/collector.css': () =>
+          new Response(
+            '@font-face{font-family:WTClearText;src:url("https://cdn.example.com/Wt-ClearText-Bold.woff2") format("woff2");font-weight:700;font-style:normal}',
+          ),
+        [WOL_PAGE]: challengePage,
+        [WWW_PAGE]: () =>
+          new Response('<link href="/assets/ct/abc/collector.css">'),
+      });
+
+      const error = await store.updateYeartextFontUrls();
+
+      expect(error).toBeUndefined();
+      expect(store.fontUrls['Wt-ClearText-Bold']).toBe(
+        'https://cdn.example.com/Wt-ClearText-Bold.woff2',
+      );
+    });
+
+    it('does not fetch the main site when WOL exposes the fonts', async () => {
+      const store = useJwStore();
+      const api = await mockSite({
+        'https://wol.jw.org/assets/css/a.css': () =>
+          new Response(
+            '@font-face{font-family:WTClearText;src:url("https://cdn.example.com/Wt-ClearText-Bold.woff2") format("woff2")}',
+          ),
+        [WOL_PAGE]: () => new Response('<link href="/assets/css/a.css">'),
+      });
+
+      await store.updateYeartextFontUrls();
+
+      expect(store.fontUrls['Wt-ClearText-Bold']).toBe(
+        'https://cdn.example.com/Wt-ClearText-Bold.woff2',
+      );
+      expect(api.fetchRaw).not.toHaveBeenCalledWith(WWW_PAGE, undefined, true);
+    });
+
+    it('returns the network error when neither page can be reached', async () => {
+      const store = useJwStore();
+      const api = await import('src/utils/api');
+      vi.mocked(api.fetchRaw).mockRejectedValue(
+        new TypeError('Failed to fetch'),
+      );
+
+      const error = await store.updateYeartextFontUrls();
+
+      expect(error).toBeInstanceOf(TypeError);
+      expect(api.fetchRaw).toHaveBeenCalledWith(WWW_PAGE, undefined, true);
     });
   });
 });

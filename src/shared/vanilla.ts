@@ -295,24 +295,21 @@ export const sanitizeFilename = (input: string, replacement = ''): string => {
 
 /**
  * Extracts .css stylesheet URLs referenced via `<link href="...">` tags in
- * HTML, resolving any origin-relative ones against the WOL (wol.<baseUrl>)
- * domain. Framework-agnostic so it can also run outside the app (e.g. the
+ * HTML, resolving any relative ones against the page they were found on.
+ * Framework-agnostic so it can also run outside the app (e.g. the
  * scripts/refresh-jw-icons-fallbacks.mjs CI script).
  * @param html The HTML to scan
- * @param baseUrl The congregation's base domain (e.g. `jw.org`)
+ * @param pageUrl The URL `html` was fetched from
  * @returns The list of discovered, fully-qualified CSS URLs
  */
-export const extractCssUrls = (html: string, baseUrl: string): string[] => {
+export const extractCssUrls = (html: string, pageUrl: string): string[] => {
   const cssRegex = /href=["']([^"']+\.css)["']/g;
   const cssUrls: string[] = [];
   let match;
   while ((match = cssRegex.exec(html)) !== null) {
-    let url = match[1];
+    const url = match[1];
     if (!url) continue;
-    if (url.startsWith('/')) {
-      url = `https://wol.${baseUrl}${url}`;
-    }
-    cssUrls.push(url);
+    cssUrls.push(new URL(url, pageUrl).href);
   }
   return cssUrls;
 };
