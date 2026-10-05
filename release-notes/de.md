@@ -140,7 +140,7 @@ Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in uns
 - ✨ **Cursor-Overlay für TV-Anzeige**: Verbessertes Cursor-Overlay im Website-Fenster für bessere Sichtbarkeit des Mauszeigers auf TV-Bildschirmen.
 - ✨ **Zusammenkunftsaufnahme**: Neue Funktion zur Aufnahme von Zusammenkünften hinzugefügt, um eine externe Aufnahme-App zu steuern.
 - ✨ **Website-Suche**: Möglichkeit hinzugefügt, mithilfe der intelligenten Suche auf der Website nach Medien oder Publikationen zu suchen.
-- ✨ **Einfacher manueller Publikationsimport**: Funktion hinzugefügt, um Publikationen wie Zeitschriften, Bücher, Programme und Einladungen einfach von JW.org zu importieren.
+- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from the official website, such as magazine, books, programs and invitations.
 - ✨ **Verbesserungen für Gebärdensprache**: Bestätigung vor dem Abspielen ganzer Dateien für Gebärdensprachen und Unterstützung für die Auswahl mehrerer Clips hinzugefügt, z. B.
 - ✨ **Clip-Navigation**: Daueranzeige zu Clip-Listenelementen hinzugefügt und Clip-Navigation verbessert.
 - 🛠️ **Medienanzeige**: Sichergestellt, dass die Medienanzeige sichtbar wird, wenn die Wiedergabe beginnt, auch wenn sie zuvor ausgeblendet war.
