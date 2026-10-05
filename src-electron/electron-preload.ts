@@ -143,6 +143,7 @@ const electronApi: ElectronApi = {
   openWebsiteWindow,
   parse,
   parseMediaFile,
+  passWafChallenge: (url) => invoke('passWafChallenge', url),
   pathToFileURL,
   pauseAllDownloads: () => send('pauseAllDownloads'),
   PLATFORM,

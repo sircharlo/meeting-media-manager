@@ -64,7 +64,11 @@ import {
   encryptSecret,
   isSecretEncryptionAvailable,
 } from 'src-electron/main/secrets';
-import { quitStatus, setElectronUrlVariables } from 'src-electron/main/session';
+import {
+  quitStatus,
+  setElectronUrlVariables,
+  urlVariables,
+} from 'src-electron/main/session';
 import {
   registerShortcut,
   unregisterAllShortcuts,
@@ -87,6 +91,10 @@ import {
   getSharedDataPath,
   isSelf,
 } from 'src-electron/main/utils';
+import {
+  getChallengeHost,
+  passWafChallenge,
+} from 'src-electron/main/waf-challenge';
 import { logToWindow } from 'src-electron/main/window/window-base';
 import {
   mainWindowInfo,
@@ -484,6 +492,11 @@ handleIpcInvoke('isDownloadComplete', async (_e, downloadId: string) =>
 handleIpcInvoke('isDownloadErrorExpected', async () =>
   isDownloadErrorExpected(),
 );
+
+handleIpcInvoke('passWafChallenge', async (_e, url: string) => {
+  const host = getChallengeHost(url, urlVariables.base);
+  return host ? passWafChallenge(host) : false;
+});
 
 handleIpcInvoke(
   'registerShortcut',

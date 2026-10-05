@@ -9,6 +9,7 @@ import {
   isTrustedDomain,
   isValidUrl,
 } from 'src-electron/main/utils';
+import { attachWafToken } from 'src-electron/main/waf-challenge';
 
 export const urlVariables: UrlVariables = {
   base: '',
@@ -144,6 +145,11 @@ const registerSessionHeadersListeners = () => {
         const baseUrl = `${url.protocol}//${url.hostname}`;
         details.requestHeaders['Referer'] = baseUrl;
         details.requestHeaders['Origin'] = baseUrl;
+        attachWafToken(
+          details.url,
+          details.webContentsId,
+          details.requestHeaders,
+        );
       }
       callback({ requestHeaders: details.requestHeaders });
     },

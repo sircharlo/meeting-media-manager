@@ -208,6 +208,7 @@ export const electronApi: ElectronApi = {
   parseMediaFile: function (filePath, options) {
     throw new Error('Function not implemented.');
   },
+  passWafChallenge: async () => false,
   pathToFileURL,
   pauseAllDownloads: function () {
     throw new Error('Function not implemented.');

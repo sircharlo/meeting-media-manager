@@ -303,6 +303,13 @@ export interface ElectronApi {
     options?: IOptions,
   ) => Promise<IAudioMetadata>;
   /**
+   * Clears a bot challenge on the configured Website's WOL host so requests
+   * to it can be retried.
+   * @param url The URL whose request was challenged
+   * @returns Whether the challenge was cleared
+   */
+  passWafChallenge: (url: string) => Promise<boolean>;
+  /**
    * Converts a file path to a file url.
    *
    * @param path File path
@@ -473,6 +480,7 @@ export type ElectronIpcInvokeKey =
   | 'openFileDialog'
   | 'openFolder'
   | 'openFolderDialog'
+  | 'passWafChallenge'
   | 'registerShortcut'
   | 'saveFileDialog'
   | 'set-hardware-acceleration'

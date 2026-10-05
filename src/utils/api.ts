@@ -115,6 +115,11 @@ async function createCachedResponse(response: Response) {
  */
 export const clearFetchCache = () => fetchCache.clear();
 
+// An AWS WAF bot challenge: a 2xx with no content, so `ok` alone can't
+// tell it apart from a real answer.
+const isWafChallengeResponse = (response: Response) =>
+  response.headers.get('x-amzn-waf-action') === 'challenge';
+
 /**
  * Fetches data from the given url.
  * @param url The url to fetch data from.
@@ -156,9 +161,19 @@ export const fetchRaw = async (
   if (!import.meta.env.VITEST)
     log('fetchRaw', 'api', 'debug', { cache, init, url });
 
-  const response = await fetch(url, init);
+  let response = await fetch(url, init);
 
-  if (isCacheable && response.ok) {
+  // Some configured Website hosts answer with an empty bot-challenge page
+  // until a real browser has passed it once; the main process can, after
+  // which the same request goes through.
+  if (
+    isWafChallengeResponse(response) &&
+    (await globalThis.electronApi?.passWafChallenge?.(url))
+  ) {
+    response = await fetch(url, init);
+  }
+
+  if (isCacheable && response.ok && !isWafChallengeResponse(response)) {
     const cachedResponse = await createCachedResponse(response);
     if (cachedResponse.cached) {
       fetchCache.set(cacheKey, cachedResponse.cached);

@@ -656,3 +656,78 @@ describe('fetchPubMediaLinks docid/pub fallback', () => {
     expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 });
+
+// Some configured Website hosts put WOL behind a bot challenge that answers
+// with an empty 202 until a real browser has passed it once.
+describe('fetchRaw bot challenge', () => {
+  const finderUrl = 'https://wol.example.test/wol/finder';
+  const challenge = () =>
+    new Response(null, {
+      headers: { 'x-amzn-waf-action': 'challenge' },
+      status: 202,
+    });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    clearFetchCache();
+  });
+
+  it('retries once after the main process clears the challenge', async () => {
+    const passSpy = vi
+      .spyOn(globalThis.electronApi, 'passWafChallenge')
+      .mockResolvedValue(true);
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(challenge())
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify(jwYeartext), { status: 200 }),
+      );
+
+    const result = await fetchYeartext('E', 'example.test');
+
+    expect(passSpy).toHaveBeenCalledWith(
+      expect.stringContaining(`${finderUrl}?`),
+    );
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+    expect(result.yeartext).toBe(jwYeartext.content);
+  });
+
+  it('returns the challenge as-is when it could not be cleared', async () => {
+    vi.spyOn(globalThis.electronApi, 'passWafChallenge').mockResolvedValue(
+      false,
+    );
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(challenge());
+
+    const response = await fetchRaw(finderUrl);
+
+    expect(response.status).toBe(202);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('never caches a challenge response', async () => {
+    vi.spyOn(globalThis.electronApi, 'passWafChallenge').mockResolvedValue(
+      false,
+    );
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockImplementation(async () => challenge());
+
+    await fetchRaw(finderUrl, undefined, true);
+    await fetchRaw(finderUrl, undefined, true);
+
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not involve the main process for a normal response', async () => {
+    const passSpy = vi.spyOn(globalThis.electronApi, 'passWafChallenge');
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response('{}', { status: 200 }),
+    );
+
+    await fetchRaw(finderUrl);
+
+    expect(passSpy).not.toHaveBeenCalled();
+  });
+});
