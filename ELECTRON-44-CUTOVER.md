@@ -33,7 +33,7 @@ Cut the **final-43 release from this Phase 1 state** — the updater gate must s
 
 ## Phase 2 — IN PROGRESS 🚧 (started 2026-10-05)
 
-Steps 1–5 are done on branch `chore/electron-44-cutover` (built on Dependabot PR #9468, Electron 44.5.1, rebased onto `master`); step 6 verified; step 7 still to do. **Not merged** — see "Hold the 44 release" below.
+Steps 1–5 are done on branch `chore/electron-44-cutover` (built on Dependabot PR #9468, Electron 44.5.1, rebased onto `master`); step 6 verified; step 7 done except its rebase (2026-10-05); breaking changes audited (see below). **Not merged** — see "Hold the 44 release" below.
 
 **Hold the 44 release.** v26.9.0/v26.9.1 (the first releases carrying the Phase 1 updater gate) were pulled early, so the gate effectively only reached users through v26.10.0 (2026-10-02). On 2026-10-05, Sentry still showed many v26.8.0 events (no gate). Don't publish a 44 build — and don't merge the branch to `master`, where the nightly beta would pick it up — until v26.8.x and older have mostly disappeared from Sentry, so 32-bit Windows / macOS 12 installs have picked up the gate first.
 
@@ -92,18 +92,36 @@ Reword the Platform Support entry for the 44 release, e.g.:
 
 Done 2026-10-05: `yarn lint` + `yarn test:unit` (866 tests) pass; a full Windows `yarn build` packages Electron 44.5.1 with x64-only NSIS + portable (no `ia32` artifacts). The macOS 13.0 floor is set in `quasar.config.ts` but can only be confirmed from a macOS build.
 
-### 7. Update the robotjs PR (#7921) — TODO
+### 7. Update the robotjs PR (#7921) — DONE ✅ (except the rebase)
 
 Draft PR #7921 ("replace jitsi robotjs with robotjs", branch `codex/test-robotjs-prebuilds`) still builds and ships 32-bit Windows binaries. Remove the 32-bit parts:
 
 - `.github/workflows/build.yml`: drop **Windows ia32** from the native-module matrix (keep macOS arm64, macOS Intel, Windows x64).
 - The `beforePack` hook: stop swapping in an ia32 `robotjs.node`; only x64 remains on Windows.
 - PR description: remove the ia32 mentions (matrix list, and "swap the x64 or ia32 native module").
-- Rebase it onto the Electron 44 work once that lands.
+- Rebase it onto the Electron 44 work once that lands. ⏳
+
+Done 2026-10-05 in `99a2d4583` on `codex/test-robotjs-prebuilds`: ia32 matrix entry, ia32 copy and the x64-install/x86-build Node setup removed (setup-node now uses `matrix.arch` on Node 24); the `beforePack` hook needed no change (it picks `robotjs-${platform}-${arch}.node` generically); PR description updated. Still needs the rebase above.
+
+### Electron 44 breaking changes — audited ✅
+
+Checked all nine 44.0 items in Electron's `docs/breaking-changes.md` against this branch (2026-10-05). **No code changes needed:**
+
+- **Removed macOS 12 / Windows ia32 / Linux armv7l:** handled by steps 2–3 (Linux builds x64 only).
+- **`clipboard` out of the renderer + async W3C rewrite:** the app doesn't use `clipboard` anywhere.
+- **`net.request` rejects frame `Sec-Fetch-Dest` without navigate mode:** nothing sets `Sec-Fetch-*` (download-transfer only sets `Range`/`If-Range`; session.ts only `Referer`/`Origin`/the WAF cookie; electron-updater and @sentry/electron don't either).
+- **Pre-macOS 13 login item attributes removed:** only `setLoginItemSettings({ openAtLogin })` is used.
+- **Unity removed on Linux:** no badge count / progress bar / `isUnityRunning` use.
+- **`webContents` may be `null` in `select-client-certificate`:** no handler.
+- **ANGLE statically linked:** nothing ships or references `libEGL`/`libGLESv2`. Runtime-only risk, worth a manual pass in `yarn dev` and a packaged build: media window playback on a second screen, toggling hardware acceleration (and the crash-loop fallback), a run with `M3_ENABLE_GPU_DIAGNOSTICS=1`, HEIC + large-image imports (their utility processes have 8 s timeouts); after release, watch Sentry for new GPU `child-process-gone` events.
+
+Dependencies need no bump for 44 (@sentry/electron, electron-updater, electron-builder have no electron peer range; robotjs is N-API and rebuilt fine).
+
+**Heads-up for Electron 45 (not 44):** screen-capture permission requests arrive as `display-capture`, but `security.ts`'s permission handler only allows `media` + `notifications`, so media preview capture and website mirroring would be denied until it's added; and `safeStorage`'s sync methods (used in `secrets.ts`) are deprecated in 45, removed in 46.
 
 ## Notes & known consequences
 
 - **Old clients after cutover:** stay on whichever gated Electron 43 release they have (v26.9.0, v26.9.1 or v26.10.0) permanently; their updater is gated off; they see the "last supported release" banner. The docs point them to v26.10.0 for manual installs.
 - **i18n:** non-English locale files still hold the old copy of the edited/removed strings until Crowdin syncs from `en.json` — do not hand-edit them.
 - **No parallel legacy track:** keeping an Electron-43 branch + second update feed was considered and rejected in the plan (permanent second branch/CI/backports, and Electron 43 loses security support ~1 year after 44).
-- **Electron 44 upgrade itself:** watch for other 44 breaking changes (ANGLE static linking, clipboard module moved out of renderer, `Sec-Fetch-Dest` restrictions on `net.request`) if anything touches those areas.
+- **Electron 44 upgrade itself:** breaking changes audited above; only ANGLE needs a manual runtime check. See the Electron 45 heads-up there too.
