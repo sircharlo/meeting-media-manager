@@ -140,7 +140,7 @@ Para ver la lista completa de cambios entre versiones, consulta nuestro archivo 
 - ✨ **Superposición del cursor para la pantalla de TV**: Se mejoró la superposición del cursor en la ventana del sitio web para que el puntero del mouse se vea mejor en las pantallas de TV.
 - ✨ **Grabación de reuniones**: Se añadió una nueva función de grabación de reuniones para controlar una aplicación de grabación externa.
 - ✨ **Búsqueda en el sitio**: Se añadió la posibilidad de buscar archivos multimedia o publicaciones en el sitio mediante búsqueda inteligente.
-- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from the official website, such as magazine, books, programs and invitations.
+- ✨ **Fácil importación manual de publicaciones**: Se añadió una función para importar fácilmente publicaciones del sitio web oficial, como revistas, libros, programas e invitaciones.
 - ✨ **Mejoras para lenguaje de señas**: Se añadió confirmación antes de reproducir archivos completos para lenguajes de señas y compatibilidad para seleccionar varios clips, por ejemplo, cuando se deben leer varios párrafos consecutivamente.
 - ✨ **Navegación entre clips**: Se añadió la duración a los elementos de la lista de clips y se mejoró la navegación entre clips.
 - 🛠️ **Presentación de archivos multimedia**: Se aseguró que la presentación de archivos multimedia se haga visible al iniciar la reproducción, incluso si antes estaba oculta.
