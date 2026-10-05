@@ -140,7 +140,7 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 - ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
 - ✨ **Meeting Recording**: Added a new meeting recording feature, to control an external recording app.
 - ✨ **Site Search**: Added ability to search for media or publications on the site using smart search.
-- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from JW.org, such as magazine, books, programs and invitations.
+- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from the official website, such as magazine, books, programs and invitations.
 - ✨ **Sign Language Improvements**: Added confirmation before playing entire files for sign languages and support for selecting multiple clips, such as for when multiple paragraphs are to be read consecutively.
 - ✨ **Clip Navigation**: Added duration display to clip list items and improved clip navigation.
 - 🛠️ **Media Display**: Ensured media display becomes visible when playback starts, even if it was hidden before.

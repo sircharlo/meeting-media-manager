@@ -140,7 +140,7 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 - ✨ **Sobreposição de cursor para exibição em TV**: Aprimorada a sobreposição do cursor da janela do site para melhor visibilidade do cursor do mouse em exibições de TV.
 - ✨ **Gravação de reunião**: Adicionado um novo recurso de gravação de reunião, para controlar um aplicativo de gravação externo.
 - ✨ **Pesquisa no site**: Adicionada a capacidade de pesquisar mídias ou publicações no site usando pesquisa inteligente.
-- ✨ **Importação manual fácil de publicações**: Adicionada funcionalidade para importar facilmente publicações de JW.org, como revistas, livros, programas e convites.
+- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from the official website, such as magazine, books, programs and invitations.
 - ✨ **Melhorias em língua de sinais**: Adicionada confirmação antes de reproduzir arquivos inteiros para línguas de sinais e suporte para selecionar vários clipes, como para quando vários parágrafos devem ser lidos consecutivamente.
 - ✨ **Navegação de clipes**: Adicionada exibição de duração aos itens da lista de clipes e melhorada a navegação de clipes.
 - 🛠️ **Exibição de mídia**: Garantido que a exibição de mídia se torne visível quando a reprodução iniciar, mesmo que estivesse oculta antes.

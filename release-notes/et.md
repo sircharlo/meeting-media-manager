@@ -140,7 +140,7 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 - ✨ **Kursori ülekanne teleriekraanile**: täiustatud veebisaidi akna kursori ülekanne, mis tagab hiirekursori parema nähtavuse teleriekraanil.
 - ✨ **Koosoleku salvestamine**: Lisatud uus koosoleku salvestamise funktsioon, millega saab juhtida välist salvestusrakendust.
 - ✨ **Saidi otsing**: Lisatud võimalus otsida saidil meediat või väljaandeid nutika otsingu abil.
-- ✨ **Lihtne käsitsi väljaannete importimine**: Lisatud funktsioon, mis võimaldab hõlpsasti importida JW.org-ist väljaandeid, nagu ajakirjad, raamatud, kokkutuleku kavalehed ja kutsed.
+- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from the official website, such as magazine, books, programs and invitations.
 - ✨ **Viipekeele parandused**: Lisatud kinnitus enne viipekeele failide terviklikku esitamist ja tugi mitme klippi valimiseks, näiteks kui mitu lõiku tuleb järjest lugeda.
 - ✨ **Klipi navigeerimine**: Lisati klippide loendi elementidele kestuse kuvamine ja parandati klippide navigeerimist.
 - 🛠️ **Meedia kuvamine**: tagab, et meedia kuvatakse taasesituse alguses, isegi kui see oli varem peidetud.
