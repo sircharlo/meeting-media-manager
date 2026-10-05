@@ -6,7 +6,6 @@ vi.mock('src/helpers/error-catcher', () => ({
   errorCatcher: (...args: unknown[]) => errorCatcherMock(...args),
 }));
 
-const ensureFileMock = vi.fn();
 const pathExistsMock = vi.fn();
 const readFileMock = vi.fn();
 const writeFileMock = vi.fn();
@@ -25,7 +24,6 @@ describe('usage', () => {
 
     vi.stubGlobal('electronApi', {
       fs: {
-        ensureFile: ensureFileMock,
         pathExists: pathExistsMock,
         readFile: readFileMock,
         writeFile: writeFileMock,
@@ -38,17 +36,16 @@ describe('usage', () => {
   });
 
   describe('updateLastUsedDate', () => {
-    it('retries an EPERM on ensureFile and succeeds on Windows', async () => {
-      ensureFileMock
+    it('retries an EPERM on writeFile and succeeds on Windows', async () => {
+      readFileMock.mockResolvedValue('');
+      writeFileMock
         .mockRejectedValueOnce(lockError('EPERM'))
         .mockResolvedValueOnce(undefined);
-      readFileMock.mockResolvedValue('');
-      writeFileMock.mockResolvedValue(undefined);
 
       const { updateLastUsedDate } = await import('../usage');
       await updateLastUsedDate('/cache/pub', '2026-07-20');
 
-      expect(ensureFileMock).toHaveBeenCalledTimes(2);
+      expect(writeFileMock).toHaveBeenCalledTimes(2);
       expect(writeFileMock).toHaveBeenCalledWith(
         '/cache/pub/.last-used',
         '2026-07-20',
@@ -58,31 +55,30 @@ describe('usage', () => {
     });
 
     it('gives up after exhausting retries and reports the error', async () => {
-      ensureFileMock.mockRejectedValue(lockError('EPERM'));
+      writeFileMock.mockRejectedValue(lockError('EPERM'));
 
       const { updateLastUsedDate } = await import('../usage');
       await updateLastUsedDate('/cache/pub', '2026-07-20');
 
       // Initial attempt + 4 retries = 5 calls
-      expect(ensureFileMock).toHaveBeenCalledTimes(5);
-      expect(writeFileMock).not.toHaveBeenCalled();
+      expect(writeFileMock).toHaveBeenCalledTimes(5);
+      expect(hideFileOnWindowsMock).not.toHaveBeenCalled();
       expect(errorCatcherMock).toHaveBeenCalledTimes(1);
     });
 
     it('does not retry a non-lock error', async () => {
-      ensureFileMock.mockRejectedValue(lockError('ENOSPC'));
+      writeFileMock.mockRejectedValue(lockError('ENOSPC'));
 
       const { updateLastUsedDate } = await import('../usage');
       await updateLastUsedDate('/cache/pub', '2026-07-20');
 
-      expect(ensureFileMock).toHaveBeenCalledTimes(1);
+      expect(writeFileMock).toHaveBeenCalledTimes(1);
       expect(errorCatcherMock).toHaveBeenCalledTimes(1);
     });
 
     it('does not retry EPERM on non-Windows platforms', async () => {
       vi.stubGlobal('electronApi', {
         fs: {
-          ensureFile: ensureFileMock,
           pathExists: pathExistsMock,
           readFile: readFileMock,
           writeFile: writeFileMock,
@@ -92,12 +88,12 @@ describe('usage', () => {
         PLATFORM: 'darwin',
         showFileOnWindows: showFileOnWindowsMock,
       });
-      ensureFileMock.mockRejectedValue(lockError('EPERM'));
+      writeFileMock.mockRejectedValue(lockError('EPERM'));
 
       const { updateLastUsedDate } = await import('../usage');
       await updateLastUsedDate('/cache/pub', '2026-07-20');
 
-      expect(ensureFileMock).toHaveBeenCalledTimes(1);
+      expect(writeFileMock).toHaveBeenCalledTimes(1);
       expect(errorCatcherMock).toHaveBeenCalledTimes(1);
     });
 
@@ -109,8 +105,41 @@ describe('usage', () => {
       const { updateLastUsedDate } = await import('../usage');
       await updateLastUsedDate('E:/M3/Publications/pub', '2026-07-20');
 
-      expect(ensureFileMock).not.toHaveBeenCalled();
       expect(writeFileMock).not.toHaveBeenCalled();
+      expect(errorCatcherMock).not.toHaveBeenCalled();
+    });
+
+    it('creates a missing marker without un-hiding or reading it first', async () => {
+      pathExistsMock.mockImplementation(
+        async (path: string) => !path.endsWith('.last-used'),
+      );
+      writeFileMock.mockResolvedValue(undefined);
+
+      const { updateLastUsedDate } = await import('../usage');
+      await updateLastUsedDate('/cache/pub', '2026-07-20');
+
+      expect(showFileOnWindowsMock).not.toHaveBeenCalled();
+      expect(readFileMock).not.toHaveBeenCalled();
+      expect(writeFileMock).toHaveBeenCalledWith(
+        '/cache/pub/.last-used',
+        '2026-07-20',
+        'utf-8',
+      );
+      expect(hideFileOnWindowsMock).toHaveBeenCalledWith(
+        '/cache/pub/.last-used',
+      );
+    });
+
+    // MMM-V2-3KK: the folder existed when checked, then vanished; marking
+    // it used to try to recreate it and reported the failed mkdir.
+    it('treats a folder that vanishes mid-update as nothing to mark', async () => {
+      readFileMock.mockResolvedValue('');
+      writeFileMock.mockRejectedValue(lockError('ENOENT'));
+
+      const { updateLastUsedDate } = await import('../usage');
+      await updateLastUsedDate('/cache/pub', '2026-07-20');
+
+      expect(writeFileMock).toHaveBeenCalledTimes(1);
       expect(errorCatcherMock).not.toHaveBeenCalled();
     });
 
@@ -118,7 +147,7 @@ describe('usage', () => {
       // Matches MMM-V2-3EX: a bulk prefetch calling this once per date for a
       // shared publication folder (e.g. background music) produced dozens of
       // duplicate reports for what was really one persistently locked drive.
-      ensureFileMock.mockRejectedValue(lockError('EPERM'));
+      writeFileMock.mockRejectedValue(lockError('EPERM'));
 
       const { updateLastUsedDate } = await import('../usage');
       await Promise.all([
@@ -128,12 +157,12 @@ describe('usage', () => {
       ]);
 
       // Initial attempt + 4 retries = 5 calls, once, not once per caller.
-      expect(ensureFileMock).toHaveBeenCalledTimes(5);
+      expect(writeFileMock).toHaveBeenCalledTimes(5);
       expect(errorCatcherMock).toHaveBeenCalledTimes(1);
     });
 
     it('does not coalesce calls for different folders', async () => {
-      ensureFileMock.mockRejectedValue(lockError('EPERM'));
+      writeFileMock.mockRejectedValue(lockError('EPERM'));
 
       const { updateLastUsedDate } = await import('../usage');
       await Promise.all([
@@ -141,18 +170,18 @@ describe('usage', () => {
         updateLastUsedDate('/cache/pub-b', '2026-07-20'),
       ]);
 
-      expect(ensureFileMock).toHaveBeenCalledTimes(10);
+      expect(writeFileMock).toHaveBeenCalledTimes(10);
       expect(errorCatcherMock).toHaveBeenCalledTimes(2);
     });
 
     it('runs a later call again once the in-flight one for the same folder has settled', async () => {
-      ensureFileMock.mockRejectedValue(lockError('EPERM'));
+      writeFileMock.mockRejectedValue(lockError('EPERM'));
 
       const { updateLastUsedDate } = await import('../usage');
       await updateLastUsedDate('/cache/pub', '2026-07-20');
       await updateLastUsedDate('/cache/pub', '2026-07-21');
 
-      expect(ensureFileMock).toHaveBeenCalledTimes(10);
+      expect(writeFileMock).toHaveBeenCalledTimes(10);
       expect(errorCatcherMock).toHaveBeenCalledTimes(2);
     });
   });

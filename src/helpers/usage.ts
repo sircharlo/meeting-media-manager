@@ -1,9 +1,10 @@
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { withLockRetry } from 'src/helpers/fs-retry';
+import { getFilesystemErrorCode } from 'src/shared/filesystem-errors';
 import { formatDate } from 'src/utils/date';
 
 const { fs, join } = globalThis.electronApi;
-const { ensureFile, pathExists, readFile, writeFile } = fs;
+const { pathExists, readFile, writeFile } = fs;
 
 export const LAST_USED_FILENAME = '.last-used';
 
@@ -51,14 +52,22 @@ const performLastUsedUpdate = async (
       typeof date === 'string' ? date : formatDate(date, 'YYYY-MM-DD');
     const filePath = join(folderPath, LAST_USED_FILENAME);
 
-    await withLockRetry(() => ensureFile(filePath));
-    await showFileOnWindows(filePath);
+    // A plain writeFile below creates the marker if it's missing, but -
+    // unlike ensureFile - never the folder: the folder can still vanish
+    // after the check above, and ensureFile would then try to recreate it
+    // (MMM-V2-3KK).
+    const markerExists = await pathExists(filePath);
 
     let existingDateStr = '';
-    try {
-      existingDateStr = await withLockRetry(() => readFile(filePath, 'utf-8'));
-    } catch {
-      // ignore read error
+    if (markerExists) {
+      await showFileOnWindows(filePath);
+      try {
+        existingDateStr = await withLockRetry(() =>
+          readFile(filePath, 'utf-8'),
+        );
+      } catch {
+        // ignore read error
+      }
     }
 
     // Always update if new date is newer or if file is empty
@@ -68,6 +77,9 @@ const performLastUsedUpdate = async (
     }
     await hideFileOnWindows(filePath);
   } catch (error) {
+    // The folder disappeared mid-update (e.g. deleted by cache cleanup or
+    // another process): there's nothing left to mark.
+    if (getFilesystemErrorCode(error) === 'ENOENT') return;
     errorCatcher(error, {
       contexts: { fn: { folderPath, name: 'updateLastUsedDate' } },
     });

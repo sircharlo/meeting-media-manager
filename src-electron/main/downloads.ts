@@ -1,7 +1,7 @@
 import { getCountriesForTimezone } from 'countries-and-timezones';
 import { app, type BrowserWindow } from 'electron';
 import { randomUUID } from 'node:crypto';
-import { mkdir, stat } from 'node:fs/promises';
+import { lstat, mkdir, stat } from 'node:fs/promises';
 import { setTimeout as delay } from 'node:timers/promises';
 import { IS_DEMO_MODE } from 'src-electron/constants';
 import { getLowDiskSpaceStatus } from 'src-electron/main/disk-space';
@@ -75,6 +75,10 @@ interface EnsureDirAttemptDiagnostics {
   attempt: number;
   code?: string;
   dir: string;
+  // Whether the directory itself is (or isn't, and why) a symlink/junction:
+  // a folder that "exists" yet can't be created or opened (MMM-V2-3KM).
+  dirIsSymlink?: boolean;
+  dirLstatCode?: string;
   message: string;
   parentCode?: string;
   parentExists?: boolean;
@@ -85,7 +89,22 @@ interface EnsureDirAttemptDiagnostics {
 
 interface ErrorWithDirectoryDiagnostics {
   downloadDirDiagnostics?: EnsureDirAttemptDiagnostics[];
+  downloadDirFallbackError?: { code?: string; dir: string; message: string };
 }
+
+// Sentry flattens context values nested this deep to "[Object]", which hid
+// every per-attempt detail (MMM-V2-3KM) - send each attempt as a string.
+const formatDirectoryDiagnostics = (error: unknown) => {
+  const { downloadDirDiagnostics, downloadDirFallbackError } =
+    error as ErrorWithDirectoryDiagnostics;
+  return {
+    directoryDiagnostics: downloadDirDiagnostics?.map((attempt) =>
+      JSON.stringify(attempt),
+    ),
+    fallbackDirError:
+      downloadDirFallbackError && JSON.stringify(downloadDirFallbackError),
+  };
+};
 
 const getErrorCode = (error: unknown) => (error as { code?: string })?.code;
 const getErrorMessage = (error: unknown) =>
@@ -184,6 +203,12 @@ const getDirectoryFailureDiagnostics = async (
   };
 
   try {
+    diagnostics.dirIsSymlink = (await lstat(dir)).isSymbolicLink();
+  } catch (dirError) {
+    diagnostics.dirLstatCode = getErrorCode(dirError);
+  }
+
+  try {
     const parentStats = await stat(parentPath);
     diagnostics.parentExists = true;
     diagnostics.parentIsDirectory = parentStats.isDirectory();
@@ -200,10 +225,17 @@ const getDirectoryFailureDiagnostics = async (
 const attachDirectoryDiagnostics = (
   error: unknown,
   diagnostics: EnsureDirAttemptDiagnostics[],
+  fallbackDir: string,
+  fallbackError: unknown,
 ) => {
   if (typeof error !== 'object' || error === null) return;
 
   (error as ErrorWithDirectoryDiagnostics).downloadDirDiagnostics = diagnostics;
+  (error as ErrorWithDirectoryDiagnostics).downloadDirFallbackError = {
+    code: getErrorCode(fallbackError),
+    dir: fallbackDir,
+    message: getErrorMessage(fallbackError),
+  };
 };
 
 const ensureDirPromises = new Map<string, Promise<string>>();
@@ -363,7 +395,12 @@ async function createDirWithRetry(dir: string): Promise<string> {
     return fallbackDir;
   }
 
-  attachDirectoryDiagnostics(lastError, diagnostics);
+  attachDirectoryDiagnostics(
+    lastError,
+    diagnostics,
+    fallbackDir,
+    fallbackResult.error,
+  );
   throw lastError;
 }
 
@@ -754,8 +791,7 @@ export async function downloadFile(
         fn: {
           destFilename,
           directory: saveDir,
-          directoryDiagnostics: (error as ErrorWithDirectoryDiagnostics)
-            .downloadDirDiagnostics,
+          ...formatDirectoryDiagnostics(error),
           lowPriority,
           name: 'downloads.ts downloadFile',
           url,
