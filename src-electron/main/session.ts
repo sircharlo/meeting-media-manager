@@ -1,11 +1,7 @@
 import type { UrlVariables } from 'src/types';
 
 import { app, session } from 'electron';
-import {
-  SENTRY_DSN,
-  SENTRY_ENVIRONMENT,
-  TRUSTED_DOMAINS,
-} from 'src-electron/constants';
+import { SENTRY_DSN, SENTRY_ENVIRONMENT } from 'src-electron/constants';
 import {
   getAppVersion,
   isJwDomain,
@@ -22,18 +18,6 @@ export const urlVariables: UrlVariables = {
 
 let sessionListenersInitialized = false;
 let webRequestHandlersRegistered = false;
-
-const getTrustedHostnames = () => {
-  return TRUSTED_DOMAINS.concat(
-    [
-      urlVariables?.mediator,
-      urlVariables?.pubMedia,
-      urlVariables?.base ? `https://${urlVariables.base}/` : undefined,
-    ]
-      .filter((d): d is string => !!d && isValidUrl(d))
-      .map((d) => new URL(d).hostname),
-  );
-};
 
 /**
  * Derives the Sentry security-report endpoint from the DSN, so the CSP
@@ -74,27 +58,7 @@ const CONNECT_SRC = ["'self'", 'https:', 'ws://127.0.0.1:*', 'devtools:'].join(
   ' ',
 );
 
-const getCSP = (trustedHostnames: string[]) => {
-  const sanitizedHostnames = trustedHostnames
-    .map((hostname) => hostname.trim().toLowerCase())
-    .filter((hostname) => /^[a-z0-9.-]+$/i.test(hostname));
-
-  const trustedOrigins = Array.from(
-    new Set(
-      sanitizedHostnames.flatMap((hostname) => {
-        const parentHostname = hostname.split('.').slice(1).join('.');
-
-        return [
-          `https://${hostname}`,
-          `https://*.${hostname}`,
-          ...(parentHostname.includes('.')
-            ? [`https://*.${parentHostname}`]
-            : []),
-        ];
-      }),
-    ),
-  ).join(' ');
-
+const getCSP = () => {
   const sentryReportUri = getSentryReportUri();
 
   const csp: Record<string, string> = {
@@ -103,8 +67,12 @@ const getCSP = (trustedHostnames: string[]) => {
     'default-src': "'self'",
     'font-src': "'self' https: https://fonts.gstatic.com file:",
     'frame-src': "'self'",
-    'img-src': `'self' ${trustedOrigins} file: data: blob:`,
-    'media-src': `'self' ${trustedOrigins} file: data:`,
+    // Any HTTPS host, for the same reason as connect-src: images and media
+    // load from the configured Website's CDN (e.g. a media item streaming
+    // before its local copy exists), and that host is only known after this
+    // CSP was built (MMM-V2-3KV). Neither can execute script.
+    'img-src': "'self' https: file: data: blob:",
+    'media-src': "'self' https: file: data:",
     'object-src': "'none'",
     ...(sentryReportUri ? { 'report-uri': sentryReportUri } : {}),
     'script-src': "'self' https://cdn.jsdelivr.net",
@@ -247,11 +215,8 @@ export const initSessionListeners = () => {
 
     session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
       if (isSelf(details.url)) {
-        const trustedHostnames = getTrustedHostnames();
         details.responseHeaders ??= {};
-        details.responseHeaders['Content-Security-Policy'] = [
-          getCSP(trustedHostnames),
-        ];
+        details.responseHeaders['Content-Security-Policy'] = [getCSP()];
       }
 
       if (!details.responseHeaders || !isTrustedDomain(details.url)) {

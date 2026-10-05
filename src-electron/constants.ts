@@ -35,9 +35,8 @@ export const JW_DOMAINS: string[] = ['jw.org', 'jwevent.org', 'stream.jw.org'];
 // either in minutes, and `isHostnameOrSubdomain`'s `.`-boundary check can't
 // tell an attacker's `<random>.cloudfront.net` apart from a legitimate one.
 // That's an acceptable, necessary risk for *loading media assets*
-// (img-src/media-src/connect-src, CORS header rewriting - see
-// `TRUSTED_DOMAINS`/`getTrustedHostnames()` in session.ts) since a static
-// asset host is never itself the source of a navigation, webview, or
+// (CORS header rewriting - see `isTrustedDomain` in utils.ts) since a
+// static asset host is never itself the source of a navigation, webview, or
 // permission request in real usage - so `NAVIGABLE_TRUSTED_DOMAINS`
 // deliberately excludes them, and gates the honestly dangerous
 // decisions (camera/mic/notification grants, `will-navigate`, webview
