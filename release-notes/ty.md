@@ -141,7 +141,7 @@ No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera 
 - ✨ Tāpo’i rorouira nō te fa’a’ite’itera’a i ni’a i te matini teata: Tāpo’i rorouira fa’a’āmuhia nō te ha’amaita’i i te ’itera’a i te niuniu tō’o i ni’a i te mau fa’a’ite’itera’a teata.
 - ✨ Pāhonora’a i te putuputura’a: Ua fa’a’āpīhia te hō’ē rāve’a pāhonora’a ’āpī nō te putuputura’a, nō te ha’avī i te hō’ē tauihaa pāhonora’a i rāpae.
 - ✨ ’Imi-’āura’a i ni’a i te reni: Ua tāpiri-’āpī-hia te rāve’a nō te ’imi i te mau rorouira aore rā te mau nene’ira’a i ni’a i te reni nā roto i te ’imi-’āura’a pa’ari.
-- ✨ Tāpiri-’ōhie-ra’a i te mau nene’ira’a: Ua tāpiri-’āpī-hia te rāve’a nō te tāpiri-’ōhie i te mau nene’ira’a nō roto mai i te JW.org, mai te mau vea, te mau buka, te mau porotarama e te mau titau-manihini-ra’a.
+- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from the official website, such as magazine, books, programs and invitations.
 - ✨ Te mau ha’amaita’ira’a nō te reo tapa’o: Ua tāpiri-’āpī-hia te hō’ē fa’a’itera’a ha’apāpū-ra’a hou te ha’amatara’a i te ta’o-’ā’oa-ra’a o te mau rorouira reo tapa’o, e te rāve’a nō te mā’iti i te mau tuha’a rorouira e rave rahi, mai te peu e e tai’o-’ā’oa-hia te mau paratarapha e rave rahi.
 - ✨ Te terera’a o te mau tuha’a rorouira: Ua tāpiri-’āpī-hia te faito taime i ni’a i te tāpura o te mau tuha’a rorouira e ua ha’amaitai-hia te terera’a o te mau tuha’a rorouira.
 - 🛠️ Fa’a’itera’a rorouira: Ua ha’apāpū-hia e e ’itehia te fa’a’itera’a rorouira ia ha’amata te ta’o-’ā’oa-ra’a, noa atu e ua hunahia te reira na mua a’e.
