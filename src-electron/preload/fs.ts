@@ -184,7 +184,12 @@ export const showFileOnWindows = async (filePath: string) => {
     const { promisify } = await import('node:util');
     const execFileAsync = promisify(execFile);
 
-    await execFileAsync('attrib', ['-h', filePath]);
+    // Not just -h: on a file that's also System, `attrib -h` leaves it
+    // hidden ("Not resetting system file") yet still exits 0, and Windows
+    // refuses to overwrite a Hidden, System or Read-only file in place -
+    // so the caller's write failed with `EPERM ... open` (MMM-V2-3KQ).
+    // Only ever called on this app's own marker files.
+    await execFileAsync('attrib', ['-h', '-s', '-r', filePath]);
   } catch (error) {
     capturePreloadError(error, {
       contexts: {
