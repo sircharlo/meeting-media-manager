@@ -31,7 +31,18 @@ Why the updater gate matters: electron-updater serves one "latest" per app and t
 
 Cut the **final-43 release from this Phase 1 state** — the updater gate must ship in it. Do **not** apply Phase 2 until that release is out; once the first 44 release publishes, the update feed no longer contains ia32 / macOS-12 artifacts.
 
-## Phase 2 — REMAINING ⏳ (initiate after this month)
+## Phase 2 — IN PROGRESS 🚧 (started 2026-10-05)
+
+Steps 1–5 are done on branch `chore/electron-44-cutover` (built on Dependabot PR #9468, Electron 44.5.1, rebased onto `master`); step 6 verified; step 7 still to do. **Not merged** — see "Hold the 44 release" below.
+
+**Hold the 44 release.** v26.9.0/v26.9.1 (the first releases carrying the Phase 1 updater gate) were pulled early, so the gate effectively only reached users through v26.10.0 (2026-10-02). On 2026-10-05, Sentry still showed many v26.8.0 events (no gate). Don't publish a 44 build — and don't merge the branch to `master`, where the nightly beta would pick it up — until v26.8.x and older have mostly disappeared from Sentry, so 32-bit Windows / macOS 12 installs have picked up the gate first.
+
+Where Phase 2 differs from the plan below:
+
+- **`isArchitectureMismatch` was removed too** (step 3): with no ia32 builds it's always false. Removed with `isOS64Bit`, the MainLayout notification, and the `architecture-mismatch*` strings.
+- **Docs keep the legacy downloads** (step 4): instead of deleting the 32-bit link, `docs/data/version.data.mts` pins `win32` + a new `macLegacy` link to `LEGACY_VERSION = 'v26.10.0'`, labelled as the last version for 32-bit Windows / macOS 12 (download page + FAQ). The `win32` / `windows32Bit` names were kept so translated download pages keep working. The v26.10.0 GitHub release carries a "Do not delete this release" note at the top.
+- **Not mirrored into `release-notes/en.md`** (step 5): that file is regenerated from `CHANGELOG.md` and only carries ✨ New Features sections.
+- **Local build gotcha** (step 6): `src-electron` has its own `node_modules`; after bumping it, run a real `yarn install` there, or local packaging silently uses the old Electron.
 
 ### 1. Bump Electron to 44
 
@@ -79,9 +90,20 @@ Reword the Platform Support entry for the 44 release, e.g.:
 - `yarn test:unit`
 - `yarn build:unpacked` sanity check: no `ia32` artifacts produced; mac bundle carries `LSMinimumSystemVersion` 13.0.
 
+Done 2026-10-05: `yarn lint` + `yarn test:unit` (866 tests) pass; a full Windows `yarn build` packages Electron 44.5.1 with x64-only NSIS + portable (no `ia32` artifacts). The macOS 13.0 floor is set in `quasar.config.ts` but can only be confirmed from a macOS build.
+
+### 7. Update the robotjs PR (#7921) — TODO
+
+Draft PR #7921 ("replace jitsi robotjs with robotjs", branch `codex/test-robotjs-prebuilds`) still builds and ships 32-bit Windows binaries. Remove the 32-bit parts:
+
+- `.github/workflows/build.yml`: drop **Windows ia32** from the native-module matrix (keep macOS arm64, macOS Intel, Windows x64).
+- The `beforePack` hook: stop swapping in an ia32 `robotjs.node`; only x64 remains on Windows.
+- PR description: remove the ia32 mentions (matrix list, and "swap the x64 or ia32 native module").
+- Rebase it onto the Electron 44 work once that lands.
+
 ## Notes & known consequences
 
-- **Old clients after cutover:** stay on the final-43 release permanently; their updater is gated off; they see the "last supported release" banner. ia32-on-64-bit users are nudged to the 64-bit build (existing `isArchitectureMismatch` notification + new copy).
+- **Old clients after cutover:** stay on whichever gated Electron 43 release they have (v26.9.0, v26.9.1 or v26.10.0) permanently; their updater is gated off; they see the "last supported release" banner. The docs point them to v26.10.0 for manual installs.
 - **i18n:** non-English locale files still hold the old copy of the edited/removed strings until Crowdin syncs from `en.json` — do not hand-edit them.
 - **No parallel legacy track:** keeping an Electron-43 branch + second update feed was considered and rejected in the plan (permanent second branch/CI/backports, and Electron 43 loses security support ~1 year after 44).
 - **Electron 44 upgrade itself:** watch for other 44 breaking changes (ANGLE static linking, clipboard module moved out of renderer, `Sec-Fetch-Dest` restrictions on `net.request`) if anything touches those areas.
