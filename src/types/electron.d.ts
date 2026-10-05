@@ -8,11 +8,7 @@ import type {
   SettingsValues,
   VideoDuration,
 } from 'src/types/electron';
-import type {
-  OsSupportWarning,
-  UpdaterState,
-  UpdateVersionInfo,
-} from 'src/types/general';
+import type { UpdaterState, UpdateVersionInfo } from 'src/types/general';
 import type {
   basename,
   changeExt,
@@ -164,7 +160,6 @@ export interface ElectronApi {
    * time. Null if there's no media window (or it's been destroyed).
    */
   getMediaWindowCaptureSourceId: () => Promise<null | string>;
-  getOsSupportWarning: () => Promise<null | OsSupportWarning>;
   getScreenAccessStatus: () => Promise<MediaAccessStatus>;
   getSharedDataPath: () => Promise<null | string>;
   /**
@@ -186,7 +181,6 @@ export interface ElectronApi {
   getZipEntries: (zipPath: string) => Promise<Record<string, number>>;
   hideFileOnWindows: (filePath: string) => Promise<void>;
   inferExtension: (filename: string, filetype?: string) => Promise<string>;
-  isArchitectureMismatch: () => Promise<boolean>;
   /** `true` when the app was launched with `M3_DEMO_MODE` set, for automated screenshotting. */
   isDemoMode: boolean;
   /** `true` for a local dev build (`quasar dev`), `false` for packaged/prod/test builds. */
@@ -465,14 +459,12 @@ export type ElectronIpcInvokeKey =
   | 'getLocales'
   | 'getLowDiskSpaceStatus'
   | 'getMediaWindowCaptureSourceId'
-  | 'getOsSupportWarning'
   | 'getScreenAccessStatus'
   | 'getSharedDataPath'
   | 'getUpdaterState'
   | 'getUpdatesDisabledPath'
   | 'getUserDataPath'
   | 'getZipEntries'
-  | 'isArchitectureMismatch'
   | 'isDownloadComplete'
   | 'isDownloadErrorExpected'
   | 'isOnline'
