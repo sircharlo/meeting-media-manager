@@ -10,6 +10,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 - 🐞 **Yeartext & Icons**: Fixed the yeartext font and media icons failing to load for some congregations, depending on their Website setting.
 - 🐞 **Media Playback**: Fixed videos and audio that hadn't finished downloading yet failing to play for some congregations, depending on their Website setting.
+- 🐞 **Media List**: Fixed an error when dropping something onto the media list right after it had changed (for example just after importing a publication's media).
 
 ## v26.10.0
 

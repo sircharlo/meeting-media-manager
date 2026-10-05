@@ -1,6 +1,6 @@
 import type { MediaItem } from 'src/types';
 
-import { state } from '@formkit/drag-and-drop';
+import { resetState, state } from '@formkit/drag-and-drop';
 import { mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { defineComponent, h, nextTick, ref } from 'vue';
@@ -30,10 +30,17 @@ function dispatchDrop(target: Element) {
   target.dispatchEvent(new Event('drop', { bubbles: true, cancelable: true }));
 }
 
+// What formkit's own dragstart handler leaves behind for a drag it started.
+function startFormkitDrag() {
+  Object.assign(state, { draggedNode: { el: document.createElement('div') } });
+  state.emit('dragStarted', state);
+}
+
 describe('useMediaDragAndDrop - foreign drop suppression (MMM-V2-3BG)', () => {
   afterEach(() => {
-    // isDraggingGlobal is module-level state shared across tests - reset it
-    // the same way a real drag end would.
+    // formkit's drag state and isDraggingGlobal are module-level state
+    // shared across tests - reset both the way a real drag end would.
+    resetState();
     state.emit('dragEnded', state);
   });
 
@@ -55,7 +62,7 @@ describe('useMediaDragAndDrop - foreign drop suppression (MMM-V2-3BG)', () => {
     const wrapper = mount(TestHost, { attachTo: document.body });
     await nextTick();
     const child = wrapper.element.querySelector('.child') as HTMLElement;
-    state.emit('dragStarted', state);
+    startFormkitDrag();
 
     const ancestorListener = vi.fn();
     document.body.addEventListener('drop', ancestorListener);
@@ -71,7 +78,8 @@ describe('useMediaDragAndDrop - foreign drop suppression (MMM-V2-3BG)', () => {
     const wrapper = mount(TestHost, { attachTo: document.body });
     await nextTick();
     const child = wrapper.element.querySelector('.child') as HTMLElement;
-    state.emit('dragStarted', state);
+    startFormkitDrag();
+    resetState();
     state.emit('dragEnded', state);
 
     const ancestorListener = vi.fn();
@@ -81,6 +89,41 @@ describe('useMediaDragAndDrop - foreign drop suppression (MMM-V2-3BG)', () => {
     expect(ancestorListener).not.toHaveBeenCalled();
 
     document.body.removeEventListener('drop', ancestorListener);
+    wrapper.unmount();
+  });
+
+  // formkit's tearDown() (a list unmounting or re-initialising mid-drag)
+  // resets its drag state without emitting dragEnded - the guard used to
+  // trust a flag mirrored from those events and let the next drop crash.
+  it('suppresses a drop after formkit resets its drag state without dragEnded', async () => {
+    const wrapper = mount(TestHost, { attachTo: document.body });
+    await nextTick();
+    const child = wrapper.element.querySelector('.child') as HTMLElement;
+    startFormkitDrag();
+    resetState();
+
+    const ancestorListener = vi.fn();
+    document.body.addEventListener('drop', ancestorListener);
+
+    dispatchDrop(child);
+    expect(ancestorListener).not.toHaveBeenCalled();
+
+    document.body.removeEventListener('drop', ancestorListener);
+    wrapper.unmount();
+  });
+
+  // Asserted on the event itself: happy-dom also skips a target's remaining
+  // listeners on plain stopPropagation(), but Chromium (per the DOM spec)
+  // doesn't - so formkit's own listener on the container would still run.
+  it('stops a foreign drop on the container itself from reaching its other listeners', async () => {
+    const wrapper = mount(TestHost, { attachTo: document.body });
+    await nextTick();
+    const event = new Event('drop', { bubbles: true, cancelable: true });
+    const stopImmediate = vi.spyOn(event, 'stopImmediatePropagation');
+
+    wrapper.element.dispatchEvent(event);
+    expect(stopImmediate).toHaveBeenCalled();
+
     wrapper.unmount();
   });
 

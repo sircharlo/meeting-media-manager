@@ -1,6 +1,6 @@
 import type { MediaItem } from 'src/types';
 
-import { animations, state } from '@formkit/drag-and-drop';
+import { animations, isDragState, state } from '@formkit/drag-and-drop';
 import { useDragAndDrop } from '@formkit/drag-and-drop/vue';
 import { onScopeDispose, ref, watch } from 'vue';
 
@@ -66,10 +66,10 @@ export function useMediaDragAndDrop(
   });
 
   // formkit's own per-node/per-parent drop handlers assume a drag it
-  // validated itself (see isDraggingGlobal above) - dropping something it
-  // never saw start (an OS file drag, a drag from another window) leaves its
-  // internal drag state absent and crashes inside its own handler ("Cannot
-  // read properties of undefined (reading 'map')", Sentry MMM-V2-3BG).
+  // validated itself - dropping something it never saw start (an OS file
+  // drag, a drag from another window) leaves its internal drag state absent
+  // and crashes inside its own handler ("Cannot read properties of
+  // undefined (reading 'map')", Sentry MMM-V2-3BG).
   // formkit's root-level `document` listener guards against this correctly,
   // but the listeners it registers directly on the sortable container and
   // its children don't. Intercept in the capture phase - which, for an
@@ -80,9 +80,17 @@ export function useMediaDragAndDrop(
   // the crash case, but a foreign file dropped anywhere else (in particular
   // MediaCalendarPage.vue's own drag-and-drop-to-import feature, which
   // shows a separate dialog to receive the drop) must be left alone.
+  //
+  // This reads formkit's live drag state rather than isDraggingGlobal:
+  // formkit can reset that state without emitting dragEnded (its tearDown(),
+  // when a list unmounts or re-initialises mid-drag, e.g. as imported items
+  // land in it), which left the mirrored flag stuck on and let the next drop
+  // through to crash. And stopImmediatePropagation, not stopPropagation: a
+  // drop directly on the container must not reach formkit's own listener on
+  // that same element either.
   const suppressForeignDrop = (event: DragEvent) => {
-    if (!isDraggingGlobal.value) {
-      event.stopPropagation();
+    if (!isDragState(state)) {
+      event.stopImmediatePropagation();
     }
   };
 
