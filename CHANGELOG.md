@@ -15,7 +15,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🔧 Chores
 
-- 🔧 **Error Reporting**: A watched folder on a cloud-synced or network drive (Google Drive, OneDrive, a mapped drive, etc.) that briefly can't be read mid-sync is no longer reported as an error.
+- 🔧 **Error Reporting**: A watched folder on a cloud-synced or network drive (Google Drive, OneDrive, a mapped drive, etc.) that briefly can't be read mid-sync is no longer reported as an error, and neither is a brief outage on GitHub's side while checking for updates.
 
 ## v26.10.0
 

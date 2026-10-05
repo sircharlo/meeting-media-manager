@@ -346,6 +346,30 @@ describe('fetchJson network errors', () => {
     expect(errorCatcher).not.toHaveBeenCalled();
   });
 
+  // MMM-V2-3D2: GitHub's API briefly served 500s during its own outage.
+  it('should not report a 500 from the GitHub API', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(null, { status: 500 }),
+    );
+
+    const result = await fetchJson(
+      'https://api.github.com/repos/sircharlo/meeting-media-manager/releases',
+    );
+
+    expect(result).toBeNull();
+    expect(errorCatcher).not.toHaveBeenCalled();
+  });
+
+  it('should still report a 500 from other hosts', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(null, { status: 500 }),
+    );
+
+    await fetchJson(handledUrl);
+
+    expect(errorCatcher).toHaveBeenCalled();
+  });
+
   it('should not report a 504 Gateway Timeout status', async () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(null, { status: 504 }),

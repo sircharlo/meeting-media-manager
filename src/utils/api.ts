@@ -198,6 +198,15 @@ export async function shouldReportCaughtError(error: unknown, online: boolean) {
   return !isExpected;
 }
 
+// GitHub's API has brief 500 outages of its own (MMM-V2-3D2) - nothing the
+// app can act on. Kept to GitHub: a 500 from the JW.org APIs can point at a
+// bad request this app made.
+function isGitHubServerError(response: Response, url: string) {
+  return (
+    response.status === 500 && URL.parse(url)?.hostname === 'api.github.com'
+  );
+}
+
 function isIgnored400ForPub(params?: URLSearchParams) {
   const pub = params?.get('pub');
   if (!pub) return false;
@@ -254,8 +263,13 @@ function reportFetchJsonMainError(
   });
 }
 
-function shouldReportStatus(response: Response, params?: URLSearchParams) {
+function shouldReportStatus(
+  response: Response,
+  url: string,
+  params?: URLSearchParams,
+) {
   if (isIgnoredStatus(response.status)) return false;
+  if (isGitHubServerError(response, url)) return false;
   if (response.status === 400 && isIgnored400ForPub(params)) return false;
   return true;
 }
@@ -288,7 +302,7 @@ export const fetchJson = async <T>(
         return await response.json();
       }
 
-      if (shouldReportStatus(response, params)) {
+      if (shouldReportStatus(response, url, params)) {
         reportFetchJsonMainError(response, url, params);
       }
       return null;

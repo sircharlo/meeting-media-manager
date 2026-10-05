@@ -160,6 +160,17 @@ describe('isIgnoredUpdateError', () => {
   it('should return true for other ignored errors', () => {
     expect(isIgnoredUpdateError('ECONNRESET')).toBe(true);
     expect(isIgnoredUpdateError('HttpError: 404')).toBe(true);
+    // MMM-V2-3KS: GitHub's edge served the releases feed as a 500.
+    expect(
+      isIgnoredUpdateError(
+        Object.assign(
+          new Error(
+            '500 \n"method: GET url: https://github.com/sircharlo/meeting-media-manager/releases.atom',
+          ),
+          { name: 'HttpError' },
+        ),
+      ),
+    ).toBe(true);
     expect(isIgnoredUpdateError('504 Gateway Time-out')).toBe(true);
     expect(isIgnoredUpdateError('net::ERR_CONNECTION_CLOSED')).toBe(true);
     expect(isIgnoredUpdateError('net::ERR_NAME_NOT_RESOLVED')).toBe(true);

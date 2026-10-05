@@ -52,6 +52,9 @@ const UPDATE_IGNORE_ERRORS: (string | string[])[] = [
   'YAMLException',
   'releases feed',
   ['404', 'HttpError'],
+  // GitHub's own brief edge outages serve the releases feed as a 500
+  // (MMM-V2-3KS); the next scheduled check retries.
+  ['500', 'HttpError'],
   ['502', 'HttpError'],
   ['503', 'HttpError'],
   ['504', 'Gateway'],
