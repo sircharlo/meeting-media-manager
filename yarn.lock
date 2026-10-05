@@ -2578,6 +2578,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/conventions@npm:^0.25.0":
+  version: 0.25.0
+  resolution: "@sentry/conventions@npm:0.25.0"
+  checksum: 10c0/6caaaa077eb1045e3cfba9a016bfe8f75e7c012d98ada6c1f96a9e5dbb1599df302184983a10d713db82f119bb3100d066d57a449fd015d6defce696b55edaea
+  languageName: node
+  linkType: hard
+
 "@sentry/core@npm:10.75.0":
   version: 10.75.0
   resolution: "@sentry/core@npm:10.75.0"
@@ -2596,12 +2603,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:11.1.0, @sentry/core@npm:^11.1.0":
+"@sentry/core@npm:11.1.0":
   version: 11.1.0
   resolution: "@sentry/core@npm:11.1.0"
   dependencies:
     "@sentry/conventions": "npm:^0.24.0"
   checksum: 10c0/e765f94aae89a7011cef19d774364178e905f2383264898dd202d1fdafee5c1e161d11abd5be35898a80d4653db1cabcc2c9b3a29d6e9c1ffe29f9535478c221
+  languageName: node
+  linkType: hard
+
+"@sentry/core@npm:^11.3.0":
+  version: 11.3.0
+  resolution: "@sentry/core@npm:11.3.0"
+  dependencies:
+    "@sentry/conventions": "npm:^0.25.0"
+  checksum: 10c0/67bb3d1a0493e5d6cfc99f9cb529fea5e164d78e0cf7d63f5bd14791321f585fe844ed9fea6cb07adae54c23bb27974ee65e2b16b01298fe03b17e9d64cc23a6
   languageName: node
   linkType: hard
 
@@ -8191,7 +8207,7 @@ __metadata:
     "@quasar/app-vite": "npm:^3.10.0"
     "@quasar/extras": "npm:^2.1.0"
     "@quasar/vite-plugin": "npm:^2.0.2"
-    "@sentry/core": "npm:^11.1.0"
+    "@sentry/core": "npm:^11.3.0"
     "@sentry/electron": "npm:^7.20.0"
     "@sentry/rollup-plugin": "npm:^5.4.0"
     "@sentry/vite-plugin": "npm:^5.4.0"
