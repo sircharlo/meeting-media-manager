@@ -140,7 +140,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 - ✨ **Overlay del cursore per la visualizzazione su TV**: migliorato l'overlay del cursore nella finestra del sito web per una migliore visibilità del puntatore del mouse sugli schermi TV.
 - ✨ **Registrazione dell'adunanza**: aggiunta una nuova funzione di registrazione dell'adunanza, per controllare un'app di registrazione esterna.
 - ✨ **Ricerca sul sito**: aggiunta la possibilità di cercare media o pubblicazioni sul sito usando la ricerca intelligente.
-- ✨ **Importazione manuale semplice delle pubblicazioni**: aggiunta la funzione per importare facilmente pubblicazioni da JW.org, come riviste, libri, programmi e inviti.
+- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from the official website, such as magazine, books, programs and invitations.
 - ✨ **Miglioramenti per la lingua dei segni**: aggiunta una conferma prima di riprodurre interi file per le lingue dei segni e il supporto per selezionare più clip, ad esempio quando più paragrafi devono essere letti consecutivamente.
 - ✨ **Navigazione delle clip**: aggiunta la visualizzazione della durata agli elementi dell'elenco delle clip e migliorata la navigazione delle clip.
 - 🛠️ **Visualizzazione dei media**: garantito che la visualizzazione dei media diventi visibile quando inizia la riproduzione, anche se era nascosta prima.
