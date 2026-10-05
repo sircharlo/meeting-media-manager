@@ -84,26 +84,38 @@
   </q-page>
 </template>
 <script setup lang="ts">
+import { watchImmediate } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
+import { isSiteAvailable } from 'src/utils/website';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const currentState = useCurrentStateStore();
-const { autoReturnFromWebsite, mediaPlaying, websiteSelection } =
-  storeToRefs(currentState);
+const {
+  autoReturnFromWebsite,
+  currentSettings,
+  mediaPlaying,
+  websiteSelection,
+} = storeToRefs(currentState);
 
 const websiteIsVisible = computed(() => {
   return (mediaPlaying.value?.action || '').toLowerCase().includes('website');
 });
 
-const websiteOptions = [
-  { label: t('mainOfficialWebsite'), value: undefined },
-  { label: t('jweventSite'), value: 'jwevent' },
-  { label: t('jwStreamSite'), value: 'stream' },
-];
+// JW Stream and the conventions site are jw.org's own: only offered when
+// the Website is jw.org.
+const websiteOptions = computed(() =>
+  (
+    [
+      { label: t('mainOfficialWebsite'), value: undefined },
+      { label: t('jweventSite'), value: 'jwevent' },
+      { label: t('jwStreamSite'), value: 'stream' },
+    ] as const
+  ).filter((option) => isSiteAvailable(option.value, currentSettings.value)),
+);
 
 useMeta({ title: t('titles.presentWebsite') });
 
@@ -112,4 +124,15 @@ const { askForMediaAccess } = globalThis.electronApi;
 onMounted(() => {
   askForMediaAccess();
 });
+
+// A Stream/Conventions choice made under jw.org falls back to the main site
+// once the Website changes.
+watchImmediate(
+  () => currentSettings.value?.baseUrl,
+  () => {
+    if (!isSiteAvailable(websiteSelection.value, currentSettings.value)) {
+      websiteSelection.value = undefined;
+    }
+  },
+);
 </script>

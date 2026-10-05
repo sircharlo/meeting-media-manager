@@ -210,6 +210,10 @@ function buildWebsitePage(
 ) {
   const langSymbol = encodeURIComponent(websiteParams?.langSymbol || '');
   if (websiteParams?.site) {
+    // JW Stream and the conventions site are jw.org's own: never opened for
+    // a different Website.
+    if (base !== 'jw.org') return 'about:blank';
+
     const siteUrlBySelection = {
       jwevent: 'https://www.jwevent.org/',
       stream: 'https://stream.jw.org/',

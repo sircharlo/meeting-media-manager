@@ -69,6 +69,16 @@ describe('buildWebsitePage', () => {
     );
   });
 
+  // A different Website never gets jw.org's own Stream/Conventions sites.
+  it('never opens JW Stream or the conventions site for a different Website', () => {
+    expect(
+      buildWebsitePage(siteParams({ site: 'stream' }), 'example.test'),
+    ).toBe('about:blank');
+    expect(
+      buildWebsitePage(siteParams({ site: 'jwevent' }), 'example.test'),
+    ).toBe('about:blank');
+  });
+
   it('builds a site-specific URL with a lang query param', () => {
     expect(
       buildWebsitePage(
