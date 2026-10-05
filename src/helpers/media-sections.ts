@@ -11,6 +11,7 @@ import { i18n } from 'boot/i18n';
 import { getMeetingSections, standardSections } from 'src/constants/media';
 import { isCoWeek } from 'src/helpers/date';
 import { withLockRetry } from 'src/helpers/fs-retry';
+import { isExpectedNetworkPathAccessError } from 'src/shared/filesystem-errors';
 import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'src/stores/current-state';
 
@@ -454,6 +455,24 @@ const readWatchedMediaSectionOrder = async (
 
     return result;
   } catch (error) {
+    // A cloud-sync or network drive can briefly fail a read while it swaps
+    // placeholders mid-sync (e.g. Google Drive's `EINVAL ... fstat`,
+    // MMM-V2-3KR); the next refresh reads it again.
+    if (
+      isExpectedNetworkPathAccessError(
+        error,
+        sectionOrderFilePath,
+        globalThis.electronApi.PLATFORM as NodeJS.Platform,
+      )
+    ) {
+      log(
+        `Section-order file temporarily unreadable: ${sectionOrderFilePath}`,
+        'mediaSections',
+        'warn',
+        error,
+      );
+      return {};
+    }
     errorCatcher(error, {
       contexts: {
         fn: {

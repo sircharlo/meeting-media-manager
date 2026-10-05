@@ -13,6 +13,10 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **Media List**: Fixed an error when dropping something onto the media list right after it had changed (for example just after importing a publication's media).
 - 🐞 **Cache**: Fixed M³ failing to record when a publication folder was last used (with a burst of "operation not permitted" errors) on Windows computers where its small tracking files had been marked as system or read-only files, which could make the automatic cache cleanup misjudge which media was still in use.
 
+### 🔧 Chores
+
+- 🔧 **Error Reporting**: A watched folder on a cloud-synced or network drive (Google Drive, OneDrive, a mapped drive, etc.) that briefly can't be read mid-sync is no longer reported as an error.
+
 ## v26.10.0
 
 ### 🛠️ Improvements and Tweaks

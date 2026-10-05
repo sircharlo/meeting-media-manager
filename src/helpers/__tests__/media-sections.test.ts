@@ -11,6 +11,10 @@ const renameMock = vi.fn();
 const showFileOnWindowsMock = vi.fn();
 const writeFileMock = vi.fn();
 
+const { errorCatcherMock } = vi.hoisted(() => ({ errorCatcherMock: vi.fn() }));
+
+vi.mock('../error-catcher', () => ({ errorCatcher: errorCatcherMock }));
+
 const toPath = (fileUrl: string) => fileUrl.replace('file://', '');
 
 const currentStateStore = {
@@ -72,6 +76,7 @@ describe('watched media layout persistence', () => {
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
+    currentStateStore.currentSettings.folderToWatch = '/watched';
     files.clear();
     writes.clear();
     pathExistsMock.mockImplementation(async (path: string) => files.has(path));
@@ -362,4 +367,31 @@ describe('watched media layout persistence', () => {
     expect(writeFileMock).not.toHaveBeenCalled();
     expect(renameMock).not.toHaveBeenCalled();
   });
+
+  // MMM-V2-3KR: a Google Drive watch folder briefly failed a section-order
+  // read with `EINVAL ... fstat` while syncing.
+  it.each([
+    ['G:/watched', 'win32', false],
+    ['C:/watched', 'win32', true],
+  ])(
+    'treats a transient EINVAL read in %s (%s) as reportable: %s',
+    async (folderToWatch, platform, reported) => {
+      currentStateStore.currentSettings.folderToWatch = folderToWatch;
+      globalThis.electronApi.PLATFORM = platform;
+      const datedFolder = `${folderToWatch}/2026-10-03`;
+      files.set(`${datedFolder}/.section-order.json`, '{}');
+      readJsonMock.mockRejectedValue(
+        Object.assign(new Error('EINVAL: invalid argument, fstat'), {
+          code: 'EINVAL',
+          syscall: 'fstat',
+        }),
+      );
+
+      const { getWatchedMediaSectionInfo } = await import('../media-sections');
+      const info = await getWatchedMediaSectionInfo(datedFolder, 'video.mp4');
+
+      expect(info).toBeNull();
+      expect(errorCatcherMock).toHaveBeenCalledTimes(reported ? 1 : 0);
+    },
+  );
 });
