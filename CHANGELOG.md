@@ -17,6 +17,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **Media Fetching**: Fixed meeting parts occasionally coming up empty on older or slower computers right after starting M³, while it was busy downloading and extracting publications.
 - 🐞 **Custom Background**: The image picker shown after choosing a publication as the media display's custom background can now be closed with Esc or by clicking outside it, like other dialogs.
 - 🐞 **JW Library Playlists**: Fixed item previews not showing when importing a `.jwlplaylist` file whose name contains a `#`.
+- 🐞 **Publications**: Fixed a publication's media going missing on every start after its extracted database was damaged, for example by a crash or power cut while M³ was extracting it. M³ now detects a damaged database and extracts it again from the downloaded publication.
 
 ### 🔧 Chores
 
