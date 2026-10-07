@@ -1,4 +1,4 @@
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
@@ -20,6 +20,7 @@ import {
   closeConnection,
   createProgressWatchdog,
   executeQuery,
+  isDbCorrupt,
 } from '../sqlite';
 
 const tempDirs: string[] = [];
@@ -282,6 +283,126 @@ describe('executeQuery', () => {
         [1],
       ),
     ).toEqual([{ title: 'Second Song' }]);
+  });
+});
+
+// MMM-V2-3JJ: extracted publication databases that a crash or power loss left
+// unreadable ("file is not a database" / "database disk image is malformed")
+// were reused on every launch, silently emptying every query against them.
+describe('isDbCorrupt', () => {
+  afterEach(async () => {
+    await closeAllConnections();
+    await Promise.all(
+      tempDirs.splice(0).map((dir) =>
+        rm(dir, {
+          force: true,
+          recursive: true,
+        }),
+      ),
+    );
+  });
+
+  // A table spanning many pages, so damage can sit outside page 1, which
+  // holds the whole schema.
+  const createMultiPageDb = async () => {
+    tempDirs.push(await mkdtemp(join(tmpdir(), 'mmm-sqlite-corrupt-')));
+    const dbPath = join(tempDirs.at(-1) ?? tmpdir(), 'publication.db');
+    const db = new DatabaseSync(dbPath);
+    try {
+      db.exec(
+        'CREATE TABLE media (id INTEGER PRIMARY KEY, title TEXT NOT NULL)',
+      );
+      const insert = db.prepare('INSERT INTO media (title) VALUES (?)');
+      for (let i = 0; i < 200; i++) insert.run('x'.repeat(500));
+    } finally {
+      db.close();
+    }
+    return dbPath;
+  };
+
+  const damage = async (
+    dbPath: string,
+    corrupt: (bytes: Buffer, pageSize: number) => Buffer,
+  ) => {
+    const bytes = await readFile(dbPath);
+    await writeFile(dbPath, corrupt(bytes, bytes.readUInt16BE(16)));
+  };
+
+  it('is false for a readable database', async () => {
+    const dbPath = await createMultiPageDb();
+
+    await expect(isDbCorrupt(dbPath)).resolves.toBe(false);
+  });
+
+  it('detects a zero-filled file of the right size (SQLITE_NOTADB)', async () => {
+    const dbPath = await createMultiPageDb();
+    await damage(dbPath, (bytes) => Buffer.alloc(bytes.length));
+
+    await expect(isDbCorrupt(dbPath)).resolves.toBe(true);
+  });
+
+  it('detects a damaged schema page (SQLITE_CORRUPT)', async () => {
+    const dbPath = await createMultiPageDb();
+    await damage(dbPath, (bytes) => {
+      const damaged = Buffer.from(bytes);
+      // Page 1's b-tree page type.
+      damaged[100] = 0;
+      return damaged;
+    });
+
+    await expect(isDbCorrupt(dbPath)).resolves.toBe(true);
+  });
+
+  it('is false for a missing file, which is not corruption', async () => {
+    tempDirs.push(await mkdtemp(join(tmpdir(), 'mmm-sqlite-corrupt-')));
+
+    await expect(
+      isDbCorrupt(join(tempDirs.at(-1) ?? tmpdir(), 'missing.db')),
+    ).resolves.toBe(false);
+  });
+
+  it('remembers damage only a real query found, until the connection is closed', async () => {
+    const dbPath = await createMultiPageDb();
+    await damage(dbPath, (bytes, pageSize) =>
+      Buffer.concat([
+        bytes.subarray(0, pageSize),
+        Buffer.alloc(bytes.length - pageSize),
+      ]),
+    );
+
+    // The schema on page 1 is intact, so the cheap probe can't see this.
+    await expect(isDbCorrupt(dbPath)).resolves.toBe(false);
+
+    await expect(
+      executeQuery(dbPath, 'SELECT count(*) AS n FROM media'),
+    ).resolves.toEqual([]);
+    await expect(isDbCorrupt(dbPath)).resolves.toBe(true);
+
+    // Closing the connection means the file is about to be replaced.
+    await closeConnection(dbPath);
+    await expect(isDbCorrupt(dbPath)).resolves.toBe(false);
+  });
+
+  it('reports a corrupt database once, not once per query', async () => {
+    vi.mocked(captureElectronError).mockClear();
+    const dbPath = await createMultiPageDb();
+    await damage(dbPath, (bytes) => Buffer.alloc(bytes.length));
+
+    await Promise.all([
+      executeQuery(dbPath, 'SELECT 1'),
+      executeQuery(dbPath, 'SELECT 2'),
+      executeQuery(dbPath, 'SELECT 3'),
+    ]);
+
+    expect(captureElectronError).toHaveBeenCalledTimes(1);
+    expect(captureElectronError).toHaveBeenCalledWith(
+      expect.objectContaining({ errcode: 26 }),
+      expect.objectContaining({
+        contexts: {
+          fn: expect.objectContaining({ errcode: 26, path: dbPath }),
+        },
+      }),
+    );
   });
 });
 

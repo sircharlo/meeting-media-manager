@@ -114,6 +114,7 @@ export const electronApi: ElectronApi = {
   isDownloadErrorExpected: async () => false,
   isOnline: async () => true,
   isSecretEncryptionAvailableSync: () => true,
+  isSqliteDbCorrupt: async () => false,
   isUsablePath: async function (path) {
     return true;
   },

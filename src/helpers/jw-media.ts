@@ -137,6 +137,7 @@ const {
   fileUrlToPath,
   fs,
   getZipEntries,
+  isSqliteDbCorrupt,
   isUsablePath: isUsablePathRaw,
   join,
   pathToFileURL,
@@ -2190,6 +2191,83 @@ export const fetchMedia = async () => {
   }
 };
 
+// Database checks in flight, keyed by publication directory, so concurrent
+// lookups of one publication share a single probe - and, if the file turns
+// out to be damaged, a single re-extraction instead of deleting each other's
+// freshly extracted copy.
+const ongoingDbChecks = new Map<string, Promise<string | undefined>>();
+
+/**
+ * Re-extracts a publication's damaged .db from its JWPUB. If even the fresh
+ * copy is unreadable, the JWPUB itself is suspect, so everything extracted
+ * from it is removed and the next lookup downloads and extracts it anew.
+ * @param dbFile The damaged database file
+ * @param jwpubPath The JWPUB it was extracted from
+ * @param publicationDirectory The directory both live in
+ * @returns The path of the readable, re-extracted database
+ */
+const reextractCorruptDb = async (
+  dbFile: string,
+  jwpubPath: string,
+  publicationDirectory: string,
+) => {
+  const currentState = useCurrentStateStore();
+  log(
+    `[getDbFromJWPUB] ${dbFile} is corrupt, re-extracting it from ${jwpubPath}`,
+    'mediaFetching',
+    'warn',
+  );
+
+  // Releases the worker's handle on the file (and its corrupt mark) first,
+  // so the delete doesn't fail with EBUSY/EPERM on Windows.
+  await closeSqliteConnection(dbFile);
+  await remove(dbFile);
+  // unzipJwpub skips a directory it already extracted this session.
+  currentState.extractedFiles[publicationDirectory] = undefined;
+  await unzipJwpub(jwpubPath, publicationDirectory);
+
+  const reextractedDb = await findDb(publicationDirectory);
+  if (reextractedDb && !(await isSqliteDbCorrupt(reextractedDb))) {
+    return reextractedDb;
+  }
+
+  if (reextractedDb) await closeSqliteConnection(reextractedDb);
+  await Promise.all(
+    [reextractedDb, join(publicationDirectory, 'contents'), jwpubPath]
+      .filter((path): path is string => !!path)
+      .map((path) => remove(path).catch(() => undefined)),
+  );
+  currentState.extractedFiles[publicationDirectory] = undefined;
+  throw new Error('Publication database still corrupt after re-extraction');
+};
+
+/**
+ * Returns the publication's extracted .db once it is readable, re-extracting
+ * it if the existing copy is damaged. A crash or power loss mid-extraction
+ * can leave a .db SQLite can't read ("file is not a database", "database
+ * disk image is malformed"), and since extraction only runs when the .db is
+ * missing or the JWPUB is new, that copy used to be reused on every launch,
+ * silently emptying every query against it (MMM-V2-3JJ).
+ * @param jwpubPath The JWPUB the database is extracted from
+ * @param publicationDirectory The directory it is extracted to
+ * @returns The readable database's path, or `undefined` if there is none
+ */
+export const getReadableDb = (
+  jwpubPath: string,
+  publicationDirectory: string,
+) => {
+  let check = ongoingDbChecks.get(publicationDirectory);
+  if (!check) {
+    check = (async () => {
+      const dbFile = await findDb(publicationDirectory);
+      if (!dbFile || !(await isSqliteDbCorrupt(dbFile))) return dbFile;
+      return reextractCorruptDb(dbFile, jwpubPath, publicationDirectory);
+    })().finally(() => ongoingDbChecks.delete(publicationDirectory));
+    ongoingDbChecks.set(publicationDirectory, check);
+  }
+  return check;
+};
+
 /**
  * Like {@link getDbFromJWPUB}, but also says why no db was returned:
  * 'download' (the jwpub download failed - already surfaced as a download
@@ -2204,6 +2282,8 @@ const loadDbFromJWPUB = async (
   db: null | string;
   failure?: 'download' | 'error' | 'missing';
 }> => {
+  let jwpubPath: string | undefined;
+  let publicationDirectory: string | undefined;
   try {
     const jwpub = await downloadJwpub(
       publication,
@@ -2211,17 +2291,18 @@ const loadDbFromJWPUB = async (
       progressCategory,
     );
     if (jwpub.error) return { db: null, failure: 'download' };
-    const publicationDirectory = await getPublicationDirectory(publication);
+    jwpubPath = jwpub.path;
+    publicationDirectory = await getPublicationDirectory(publication);
     if (jwpub.new || !(await findDb(publicationDirectory))) {
       await unzipJwpub(jwpub.path, publicationDirectory);
     }
-    const dbFile = await findDb(publicationDirectory);
+    const dbFile = await getReadableDb(jwpub.path, publicationDirectory);
     return dbFile ? { db: dbFile } : { db: null, failure: 'missing' };
   } catch (error) {
     errorCatcher(error, {
       contexts: {
         fn: {
-          args: { meetingDate, publication },
+          args: { jwpubPath, meetingDate, publication, publicationDirectory },
           name: 'getDbFromJWPUB',
         },
       },
