@@ -18,7 +18,7 @@
     "@carboneio/image-size": "3.0.0",
     "@jitsi/robotjs": "^0.6.24",
     "@numairawan/video-duration": "^1.0.0",
-    "@sentry/electron": "^7.15.0",
+    "@sentry/electron": "^8.1.0",
     "check-disk-space": "^3.4.0",
     "chokidar": "^5.0.0",
     "countries-and-timezones": "^3.9.0",

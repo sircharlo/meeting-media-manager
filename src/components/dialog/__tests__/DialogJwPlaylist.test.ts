@@ -1,14 +1,22 @@
+import type * as JwMediaHelpers from 'src/helpers/jw-media';
 import type * as FsUtils from 'src/utils/fs';
 import type * as SqliteUtils from 'src/utils/sqlite';
 
 import { flushPromises, mount } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
+import { QImg } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import DialogJwPlaylist from '../DialogJwPlaylist.vue';
+
+vi.mock('src/helpers/jw-media', async (importOriginal) => ({
+  ...(await importOriginal<typeof JwMediaHelpers>()),
+  // The extracted playlist files don't exist on disk in tests.
+  resolveFilePath: vi.fn(async (path: string) => path || undefined),
+}));
 
 vi.mock('src/helpers/notifications', () => ({
   createTemporaryNotification: vi.fn(),
@@ -101,5 +109,33 @@ describe('DialogJwPlaylist - loading a playlist', () => {
       expect.objectContaining({ type: 'negative' }),
     );
     expect(executeQueryMock).not.toHaveBeenCalled();
+  });
+
+  // The extraction folder is named after the playlist file, so a `#` in that
+  // name used to break the plain `'file://' + path` preview URL (everything
+  // after it was parsed as a URL fragment).
+  it('builds a valid file URL for item previews when the playlist name has URL-reserved characters', async () => {
+    const playlistQueryMock = vi.fn(async (_dbFile: string, query: string) => {
+      if (query.includes('FROM Tag')) return [{ Name: 'Talk' }];
+      if (query.includes('FROM PlaylistItem pi')) {
+        return [
+          {
+            Label: 'Picture',
+            PlaylistItemId: 1,
+            ThumbnailFilePath: 'thumb.jpg',
+          },
+        ];
+      }
+      return [];
+    });
+    globalThis.electronApi.executeQuery =
+      playlistQueryMock as unknown as typeof globalThis.electronApi.executeQuery;
+
+    await openWithPlaylist('/tmp/stage-d/Talk #3.jwlplaylist');
+
+    const previewSrc = wrapper?.findComponent(QImg).props('src');
+    expect(previewSrc).toMatch(
+      /^file:\/\/\/.*\/Talk%20%233\.jwlplaylist-[^/]+\/thumb\.jpg$/,
+    );
   });
 });

@@ -109,7 +109,7 @@
                     <q-img
                       v-if="item.ResolvedPreviewPath"
                       size="md"
-                      :src="'file://' + item.ResolvedPreviewPath"
+                      :src="pathToFileURL(item.ResolvedPreviewPath)"
                     />
                     <q-icon
                       v-else
