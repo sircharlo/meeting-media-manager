@@ -207,6 +207,13 @@ export interface ElectronApi {
    * user rather than silently accepting that.
    */
   isSecretEncryptionAvailableSync: () => boolean;
+  /**
+   * Whether the SQLite file at `dbPath` is damaged beyond reading ("file is
+   * not a database" / "database disk image is malformed"), so it has to be
+   * replaced. A locked, missing or otherwise unavailable file is not
+   * corruption and resolves `false`.
+   */
+  isSqliteDbCorrupt: (dbPath: string) => Promise<boolean>;
   isUsablePath: (path: string) => Promise<boolean>;
   join: typeof join;
   moveMediaWindow: (
@@ -476,6 +483,7 @@ export type ElectronIpcInvokeKey =
   | 'isDownloadComplete'
   | 'isDownloadErrorExpected'
   | 'isOnline'
+  | 'isSqliteDbCorrupt'
   | 'isUsablePath'
   | 'openFileDialog'
   | 'openFolder'

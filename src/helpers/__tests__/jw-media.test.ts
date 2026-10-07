@@ -11,6 +11,9 @@ const extractNestedZipEntryMock = vi.fn();
 const getZipEntriesMock = vi.fn();
 const closeSqliteConnectionMock = vi.fn(async () => undefined);
 const closeSqliteConnectionsMock = vi.fn(async () => undefined);
+const isSqliteDbCorruptMock = vi.fn<(dbPath: string) => Promise<boolean>>(
+  async () => false,
+);
 const unzipMock = vi.fn();
 const statMock = vi.fn();
 const removeMock = vi.fn();
@@ -251,6 +254,7 @@ describe('jw-media helpers', () => {
         stat: statMock,
       },
       getZipEntries: getZipEntriesMock,
+      isSqliteDbCorrupt: isSqliteDbCorruptMock,
       isUsablePath: isUsablePathMock,
       join: joinMock,
       pathToFileURL: vi.fn(),
@@ -313,6 +317,127 @@ describe('jw-media helpers', () => {
         }),
       }),
     );
+  });
+
+  // MMM-V2-3JJ: a .db left unreadable by an interrupted write was reused on
+  // every launch, since extraction only ran when it was missing.
+  describe('getReadableDb', () => {
+    const jwpubPath = '/tmp/out/publication.jwpub';
+    const dbPath = '/tmp/out/pub.db';
+
+    // What jwpubExtractor needs to re-extract only the .db: the jwpub's
+    // contents entry is already extracted at the right size.
+    const mockContentsAlreadyExtracted = () => {
+      getZipEntriesMock.mockImplementation(async (path: string) =>
+        path === jwpubPath ? { contents: 100 } : { 'pub.db': 50 },
+      );
+      statMock.mockImplementation(async (path: string) => {
+        if (path === '/tmp/out/contents') return { size: 100 };
+        throw Object.assign(new Error('missing'), { code: 'ENOENT' });
+      });
+    };
+
+    it('returns a readable db without touching it', async () => {
+      const { findDb } = await import('src/utils/sqlite');
+      vi.mocked(findDb).mockResolvedValueOnce(dbPath);
+      const { getReadableDb } = await import('../jw-media');
+
+      await expect(getReadableDb(jwpubPath, '/tmp/out')).resolves.toBe(dbPath);
+
+      expect(isSqliteDbCorruptMock).toHaveBeenCalledWith(dbPath);
+      expect(removeMock).not.toHaveBeenCalled();
+      expect(unzipMock).not.toHaveBeenCalled();
+    });
+
+    it('returns undefined without probing when there is no db', async () => {
+      const { getReadableDb } = await import('../jw-media');
+
+      await expect(getReadableDb(jwpubPath, '/tmp/out')).resolves.toBe(
+        undefined,
+      );
+
+      expect(isSqliteDbCorruptMock).not.toHaveBeenCalled();
+    });
+
+    it('re-extracts a corrupt db from the jwpub', async () => {
+      const { findDb } = await import('src/utils/sqlite');
+      vi.mocked(findDb)
+        .mockResolvedValueOnce(dbPath) // the corrupt copy
+        .mockResolvedValueOnce(undefined) // deleted, so extract it again
+        .mockResolvedValueOnce(dbPath) // extracted
+        .mockResolvedValueOnce(dbPath); // the fresh copy
+      isSqliteDbCorruptMock
+        .mockResolvedValueOnce(true)
+        .mockResolvedValueOnce(false);
+      mockContentsAlreadyExtracted();
+      // Already extracted earlier this session, which would make unzipJwpub
+      // skip the directory.
+      currentStateStore.extractedFiles['/tmp/out'] = '/tmp/out';
+      const { getReadableDb } = await import('../jw-media');
+
+      await expect(getReadableDb(jwpubPath, '/tmp/out')).resolves.toBe(dbPath);
+
+      expect(closeSqliteConnectionMock).toHaveBeenCalledWith(dbPath);
+      expect(removeMock).toHaveBeenCalledWith(dbPath);
+      expect(
+        closeSqliteConnectionMock.mock.invocationCallOrder[0] ?? 0,
+      ).toBeLessThan(removeMock.mock.invocationCallOrder[0] ?? 0);
+      expect(unzipMock).toHaveBeenCalledWith('/tmp/out/contents', '/tmp/out');
+      // The jwpub itself is fine and must be kept.
+      expect(removeMock).not.toHaveBeenCalledWith(jwpubPath);
+      expect(logMock).toHaveBeenCalledWith(
+        expect.stringContaining('is corrupt, re-extracting it'),
+        'mediaFetching',
+        'warn',
+      );
+    });
+
+    it('shares one re-extraction between concurrent lookups', async () => {
+      const { findDb } = await import('src/utils/sqlite');
+      vi.mocked(findDb)
+        .mockResolvedValueOnce(dbPath)
+        .mockResolvedValueOnce(undefined)
+        .mockResolvedValueOnce(dbPath)
+        .mockResolvedValueOnce(dbPath);
+      isSqliteDbCorruptMock
+        .mockResolvedValueOnce(true)
+        .mockResolvedValueOnce(false);
+      mockContentsAlreadyExtracted();
+      const { getReadableDb } = await import('../jw-media');
+
+      await expect(
+        Promise.all([
+          getReadableDb(jwpubPath, '/tmp/out'),
+          getReadableDb(jwpubPath, '/tmp/out'),
+        ]),
+      ).resolves.toEqual([dbPath, dbPath]);
+
+      expect(removeMock).toHaveBeenCalledTimes(1);
+      expect(unzipMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('removes the jwpub and its extraction when the fresh copy is still corrupt', async () => {
+      const { findDb } = await import('src/utils/sqlite');
+      vi.mocked(findDb)
+        .mockResolvedValueOnce(dbPath)
+        .mockResolvedValueOnce(undefined)
+        .mockResolvedValueOnce(dbPath)
+        .mockResolvedValueOnce(dbPath);
+      isSqliteDbCorruptMock
+        .mockResolvedValueOnce(true)
+        .mockResolvedValueOnce(true);
+      mockContentsAlreadyExtracted();
+      const { getReadableDb } = await import('../jw-media');
+
+      await expect(getReadableDb(jwpubPath, '/tmp/out')).rejects.toThrow(
+        'Publication database still corrupt after re-extraction',
+      );
+
+      expect(removeMock).toHaveBeenCalledWith(jwpubPath);
+      expect(removeMock).toHaveBeenCalledWith('/tmp/out/contents');
+      expect(removeMock).toHaveBeenCalledWith(dbPath);
+      expect(currentStateStore.extractedFiles['/tmp/out']).toBeUndefined();
+    });
   });
 
   it('closes the identification db connection before removing its temp dir', async () => {

@@ -328,9 +328,33 @@ const ALLOWED_QUERY_PREFIX = /^\s*\(?\s*(pragma|select)\b/i;
 const SQLITE_IOERR = 10;
 const reportedIoErrorPaths = new Set<string>();
 
+// SQLite's primary result codes for a damaged file: SQLITE_CORRUPT ("database
+// disk image is malformed") and SQLITE_NOTADB ("file is not a database").
+// An extracted publication .db ends up like this when a crash or power loss
+// interrupts its write - a zero-filled file of the right size is NOTADB, a
+// truncated one CORRUPT - and no retry can read it: the file has to be
+// replaced (MMM-V2-3JJ).
+const SQLITE_CORRUPT = 11;
+const SQLITE_NOTADB = 26;
+const reportedCorruptDbPaths = new Set<string>();
+
+// Databases a query found damaged since their connection was last closed.
+// isDbCorrupt() answers `true` for these without probing, so damage the
+// cheap probe can't see (deep inside a table) still gets the file replaced
+// on its next load. Closing a connection clears its mark: callers close it
+// right before deleting or replacing the file.
+const corruptDbPaths = new Set<string>();
+
 const getSqliteErrcode = (error: unknown) => {
   const errcode = (error as undefined | { errcode?: unknown })?.errcode;
   return typeof errcode === 'number' ? errcode : undefined;
+};
+
+const isCorruptionErrcode = (errcode: number | undefined) => {
+  if (errcode === undefined) return false;
+  // Extended result codes share the primary code in their low byte.
+  const primaryErrcode = errcode & 0xff;
+  return primaryErrcode === SQLITE_CORRUPT || primaryErrcode === SQLITE_NOTADB;
 };
 
 export const executeQuery = async <T extends object = QueryResponseItem>(
@@ -392,6 +416,21 @@ export const executeQuery = async <T extends object = QueryResponseItem>(
     }
     if (isIoError) reportedIoErrorPaths.add(dbPath);
 
+    // A damaged file fails every query against it the same way: mark it so
+    // the next isDbCorrupt() check gets it replaced, and report it once per
+    // db per session instead of once per query in the same burst.
+    if (isCorruptionErrcode(errcode)) {
+      corruptDbPaths.add(dbPath);
+      if (reportedCorruptDbPaths.has(dbPath)) {
+        log('SQLite database is corrupt', 'sqlite', 'warn', {
+          errcode,
+          path: dbPath,
+        });
+        return [];
+      }
+      reportedCorruptDbPaths.add(dbPath);
+    }
+
     captureElectronError(e, {
       contexts: {
         fn: {
@@ -409,6 +448,56 @@ export const executeQuery = async <T extends object = QueryResponseItem>(
       },
     });
     return [];
+  }
+};
+
+// Reads only the header page and the schema table: enough to catch the
+// damage an interrupted write leaves behind (a zero-filled or truncated file)
+// in a few milliseconds. PRAGMA quick_check would also catch damage deep
+// inside a table, but it reads the whole file - seconds for the larger
+// publications on a slow disk, once per database per session - so that case
+// relies on corruptDbPaths instead. The worker caches the successful result
+// until the connection is closed, so repeat checks are free.
+const CORRUPTION_PROBE_QUERY =
+  'SELECT count(*) AS tableCount FROM sqlite_master';
+
+/**
+ * Whether the database file at `dbPath` is damaged beyond reading: a cheap
+ * probe fails with SQLITE_CORRUPT/SQLITE_NOTADB, or an earlier query on it
+ * already did. Any other failure (a locked or missing file, a stalled worker)
+ * isn't corruption and returns `false`, so callers never delete a file that
+ * is only unavailable right now.
+ * @param dbPath The database file to check
+ * @returns Whether the file has to be replaced
+ */
+export const isDbCorrupt = async (dbPath: string): Promise<boolean> => {
+  if (corruptDbPaths.has(dbPath)) return true;
+
+  try {
+    await postToWorkerWithTimeout({
+      dbPath,
+      params: [],
+      query: CORRUPTION_PROBE_QUERY,
+      type: 'query',
+    });
+    return false;
+  } catch (e) {
+    const errcode = getSqliteErrcode(e);
+    if (!isCorruptionErrcode(errcode)) {
+      log('SQLite corruption probe failed', 'sqlite', 'warn', {
+        errcode,
+        message: e instanceof Error ? e.message : String(e),
+        path: dbPath,
+      });
+      return false;
+    }
+
+    log('SQLite database is corrupt', 'sqlite', 'warn', {
+      errcode,
+      path: dbPath,
+    });
+    corruptDbPaths.add(dbPath);
+    return true;
   }
 };
 
@@ -440,6 +529,7 @@ const closeViaWorker = async (request: Omit<SqliteWorkerRequest, 'id'>) => {
  * would otherwise be served after the file is replaced with new content.
  */
 export const closeAllConnections = async () => {
+  corruptDbPaths.clear();
   if (!worker) return;
   await closeViaWorker({ type: 'closeAll' });
 };
@@ -454,6 +544,7 @@ export const closeAllConnections = async () => {
  * are actively reusing, which is what {@link closeAllConnections} is for.
  */
 export const closeConnection = async (dbPath: string) => {
+  corruptDbPaths.delete(dbPath);
   if (!worker) return;
   await closeViaWorker({ dbPath, type: 'closeOne' });
 };
