@@ -7,7 +7,7 @@ export const initHttpHandlers = (handlers: HttpHandler[]) => {
   const server = setupServer(...handlers);
 
   // Start server before all tests
-  beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
+  beforeAll(() => server.listen({ onUnhandledFrame: 'error' }));
 
   //  Close server after all tests
   afterAll(() => server.close());
