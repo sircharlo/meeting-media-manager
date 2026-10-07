@@ -69,7 +69,7 @@
     "jspdf-autotable": "^5.0.8",
     "mime": "^4.1.0",
     "mousetrap": "^1.6.5",
-    "music-metadata": "^11.16.1",
+    "music-metadata": "^12.0.0",
     "obs-websocket-js": "^5.0.8",
     "p-queue": "^9.3.3",
     "pdf-parse": "^2.4.5",
