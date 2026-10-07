@@ -89,6 +89,7 @@ import {
 } from 'src-electron/main/updater';
 import {
   captureElectronError,
+  capturePreloadErrorReport,
   getSharedDataPath,
   isSelf,
 } from 'src-electron/main/utils';
@@ -254,6 +255,12 @@ handleIpcSend('pauseAllDownloads', () => {
 });
 
 handleIpcSend('checkForUpdates', () => triggerUpdateCheck());
+
+// The preload's isolated world has no Sentry client, so it forwards its
+// errors here to be reported (see capturePreloadError in preload/log.ts).
+handleIpcSend('capturePreloadError', (_e, report: unknown) => {
+  capturePreloadErrorReport(report);
+});
 
 // Renderer → main state sync for the dev-only Demo menu (checkboxes and
 // enabled/disabled states). updateDevMenuState() no-ops unless the dev menu
