@@ -140,9 +140,19 @@ if (SENTRY_DSN) {
       });
       return scrubbedEvent;
     },
+    // @sentry/electron v8 replaced sendDefaultPii with dataCollection, whose
+    // defaults now have Sentry record the user's IP address on events,
+    // sessions and native crash reports. Keep the v7 behavior of not
+    // collecting it.
+    dataCollection: { userInfo: false },
     dsn: SENTRY_DSN,
     environment: SENTRY_ENVIRONMENT,
     release: sentryRelease,
+    // v8 streams spans by default, which turns every main-process request
+    // (each media download, update check, etc.) into its own root span sent
+    // to Sentry. Keep the v7 transaction-based model, where requests only
+    // produce spans inside an active transaction.
+    traceLifecycle: 'static',
     tracesSampleRate: 1,
   });
 } else {
