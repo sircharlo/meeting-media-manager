@@ -78,6 +78,7 @@ import {
   closeAllConnections,
   closeConnection,
   executeQuery,
+  isDbCorrupt,
 } from 'src-electron/main/sqlite';
 import {
   getBetaUpdatesPath,
@@ -477,6 +478,9 @@ handleIpcInvoke('closeSqliteConnection', async (_e, dbPath: string) =>
   closeConnection(dbPath),
 );
 handleIpcInvoke('closeSqliteConnections', async () => closeAllConnections());
+handleIpcInvoke('isSqliteDbCorrupt', async (_e, dbPath: string) =>
+  isDbCorrupt(dbPath),
+);
 handleIpcInvoke(
   'executeQuery',
   async (

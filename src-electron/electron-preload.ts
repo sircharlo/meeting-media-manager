@@ -108,6 +108,7 @@ const electronApi: ElectronApi = {
   isOnline: () => invoke('isOnline'),
   isSecretEncryptionAvailableSync: () =>
     sendSync('isSecretEncryptionAvailableSync'),
+  isSqliteDbCorrupt: (dbPath: string) => invoke('isSqliteDbCorrupt', dbPath),
   isUsablePath: (p) => invoke('isUsablePath', p),
   join,
   moveMediaWindow: (t, w) => send('moveMediaWindow', t, w),
