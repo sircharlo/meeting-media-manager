@@ -353,14 +353,7 @@
         />
       </div>
       <div class="q-px-md q-py-md row justify-end">
-        <q-btn
-          flat
-          @click="
-            jwpubImportFilePath = '';
-            jwpubImages = [];
-            showCustomBackgroundPicker = false;
-          "
-        >
+        <q-btn flat @click="showCustomBackgroundPicker = false">
           {{ t('cancel') }}
         </q-btn>
       </div>
@@ -522,9 +515,18 @@ const isScreenSelected = (_index: number, screen: Display) => {
 const jwpubImportFilePath = ref('');
 const jwpubImages = ref<{ FilePath: string }[]>([]);
 
-const showCustomBackgroundPicker = computed(
-  () => !!jwpubImportFilePath.value || jwpubImages.value.length > 0,
-);
+// The picker's visibility is derived from the import state, so closing it
+// (Cancel, Esc or a backdrop click through BaseDialog's v-model) must clear
+// that state. A getter-only computed would silently ignore the write and
+// leave the dialog open.
+const showCustomBackgroundPicker = computed({
+  get: () => !!jwpubImportFilePath.value || jwpubImages.value.length > 0,
+  set: (value: boolean) => {
+    if (value) return;
+    jwpubImportFilePath.value = '';
+    jwpubImages.value = [];
+  },
+});
 
 const processJwpubBackground = async (filepath: string) => {
   jwpubImportFilePath.value = filepath;

@@ -3,8 +3,10 @@ import type { Display } from 'src/types';
 import { flushPromises, mount } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
+import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { nextTick } from 'vue';
 
 import DialogDisplayPopup from '../DialogDisplayPopup.vue';
 
@@ -116,5 +118,33 @@ describe('DialogDisplayPopup - getAllScreens freeze resilience', () => {
     await vi.advanceTimersByTimeAsync(0);
 
     expect(getAllScreensMock).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('DialogDisplayPopup - custom background picker', () => {
+  // The picker's visibility used to be a getter-only computed, so the
+  // v-model write from BaseDialog (Esc / backdrop click) was silently
+  // ignored and the picker could not be dismissed that way.
+  it('closes and clears the import state when BaseDialog requests closing', async () => {
+    getAllScreensMock.mockResolvedValue([]);
+    await openPopup();
+
+    const state = wrapper?.vm as unknown as {
+      jwpubImages: { FilePath: string }[];
+      jwpubImportFilePath: string;
+    };
+    state.jwpubImportFilePath = '/tmp/publication.jwpub';
+    state.jwpubImages = [{ FilePath: '/tmp/publication/image.jpg' }];
+    await nextTick();
+
+    const picker = wrapper?.findComponent(BaseDialog);
+    expect(picker?.props('modelValue')).toBe(true);
+
+    picker?.vm.$emit('update:modelValue', false);
+    await nextTick();
+
+    expect(picker?.props('modelValue')).toBe(false);
+    expect(state.jwpubImportFilePath).toBe('');
+    expect(state.jwpubImages).toEqual([]);
   });
 });
