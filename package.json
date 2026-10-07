@@ -1,6 +1,6 @@
 {
   "name": "meeting-media-manager",
-  "version": "26.10.1-beta.0",
+  "version": "26.10.1-beta.1",
   "description": "A cross platform app to download and present media for congregation meetings of Jehovah’s Witnesses.",
   "keywords": [
     "M³",
@@ -48,9 +48,9 @@
     "@numairawan/video-duration": "^1.0.0",
     "@opentelemetry/api-logs": "^0.222.0",
     "@quasar/extras": "^2.1.0",
-    "@sentry/core": "^11.3.0",
+    "@sentry/core": "^11.4.0",
     "@sentry/electron": "^7.20.0",
-    "@sentry/vue": "^11.3.0",
+    "@sentry/vue": "^11.4.0",
     "@vueuse/core": "^15.0.0",
     "@vueuse/router": "^15.0.0",
     "buffer": "^6.0.3",
@@ -114,7 +114,7 @@
     "depcheck": "^1.4.7",
     "electron": "^43.4.0",
     "electron-builder": "26.15.3",
-    "eslint": "^10.11.0",
+    "eslint": "^10.12.0",
     "eslint-plugin-perfectionist": "^5.12.1",
     "eslint-plugin-vue": "^10.11.1",
     "fantasticon": "patch:fantasticon@npm%3A4.1.0#~/.yarn/patches/fantasticon-npm-4.1.0-3af043d076.patch",
