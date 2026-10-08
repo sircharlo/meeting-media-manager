@@ -5,10 +5,10 @@ import {
 } from 'src-electron/main/resilient-storage';
 import { log } from 'src/shared/vanilla';
 
-// Extracted from electron-main.ts (BE-6, full-audit-2026-09-04.md) for the
-// same reason os-support.ts was: standalone, testable logic rather than code
-// buried inside electron-main.ts's module-level bootstrap sequence, which
-// has no test harness of its own.
+// Extracted from electron-main.ts (BE-6, full-audit-2026-09-04.md):
+// standalone, testable logic rather than code buried inside
+// electron-main.ts's module-level bootstrap sequence, which has no test
+// harness of its own.
 
 const CRASH_COUNT_FILE = 'crash-count.json';
 

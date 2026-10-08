@@ -54,7 +54,6 @@ export type FontName =
  * Identifies an OS/architecture combination that Electron is dropping
  * prebuilt support for in an upcoming major version.
  */
-export type OsSupportWarning = 'mac-legacy' | 'win32-ia32';
 
 /**
  * Progress data emitted by electron-updater's `download-progress` event.

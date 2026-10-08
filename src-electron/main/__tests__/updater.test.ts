@@ -1,5 +1,3 @@
-import type { OsSupportWarning } from 'src/types';
-
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const checkForUpdatesAndNotifyMock = vi.fn(async () => undefined);
@@ -7,9 +5,6 @@ const handlers = new Map<string, (...args: unknown[]) => void>();
 const pathExistsMock = vi.fn(async () => false);
 const quitAndInstallMock = vi.fn();
 const toggleAuthorizedCloseMock = vi.fn();
-const getOsSupportWarningMock = vi.fn<() => null | OsSupportWarning>(
-  () => null,
-);
 // SEC-6 (full-audit backlog): the currently-installed version downgrade
 // detection compares against - lower than every hardcoded update version
 // used by the other tests below ('26.6.2', '26.6.3'), so they stay ordinary
@@ -55,10 +50,6 @@ vi.mock('src-electron/main/fs', () => ({
   getAppDataPath: vi.fn(async () => '/app-data'),
 }));
 
-vi.mock('src-electron/main/os-support', () => ({
-  getOsSupportWarning: getOsSupportWarningMock,
-}));
-
 vi.mock('src-electron/main/utils', () => ({
   captureElectronError: vi.fn(),
   isIgnoredUpdateError: vi.fn(() => false),
@@ -89,10 +80,9 @@ describe('updater install flow', () => {
     // "installed version" baseline unless it deliberately overrides it.
     getVersionMock.mockReturnValue('26.6.0');
     pathExistsMock.mockResolvedValue(false);
-    getOsSupportWarningMock.mockReturnValue(null);
   });
 
-  it('checks for updates on supported platforms', async () => {
+  it('checks for updates', async () => {
     const { initUpdater } = await import('../updater');
 
     await initUpdater();
@@ -101,24 +91,6 @@ describe('updater install flow', () => {
     });
 
     expect(checkForUpdatesAndNotifyMock).toHaveBeenCalledTimes(1);
-  });
-
-  it('skips the update check on platforms future releases will not support', async () => {
-    const { log } = await import('src/shared/vanilla');
-    getOsSupportWarningMock.mockReturnValue('win32-ia32');
-    const { initUpdater } = await import('../updater');
-
-    await initUpdater();
-    await new Promise((resolve) => {
-      setTimeout(resolve, 0);
-    });
-
-    expect(checkForUpdatesAndNotifyMock).not.toHaveBeenCalled();
-    expect(log).toHaveBeenCalledWith(
-      'Skipping update check: this platform is no longer supported by future releases.',
-      'electronUpdater',
-      'info',
-    );
   });
 
   it('does not call quitAndInstall before an update is downloaded', async () => {
