@@ -1,352 +1,351 @@
-# 자주 묻는 질문들 {#frequently-asked-questions}
+# 자주 묻는 질문 {#frequently-asked-questions}
 
-## General Questions {#general-questions}
+## 일반적인 질문 {#general-questions}
 
-### :earth_americas: 이 애플리케이션은 집회 자료 혹은 기타 컨텐츠를 다운로드하기 위해 외부 사이트, 소스 혹은 "큐레이터"를 필요로 합니까? {#external-dependencies}
+### :earth_americas: 이 프로그램은 집회 자료나 기타 콘텐츠를 다운로드하기 위해 외부 웹사이트, 자료 제공처 또는 별도의 콘텐츠 관리자가 필요한가요? {#external-dependencies}
 
-**아니오.** 본 애플리케이션은 JW Library와 비슷한 방식으로 동작합니다. 본 애플리케이션은 여호와의 증인 공식 웹사이트 및 공식 콘텐츠 전송 네트워크를 통해 직접 출판물, 미디어 자료 및 기타 콘텐츠를 다운로드합니다. 본 애플레케이션은 다운로드해야 할 미디어 및 이전에 다운로드한 콘텐츠가 업데이트되어 다시 다운로드 해야 하는 경우를 자동으로 판별해 다운로드합니다.
+**아니요.** 이 프로그램은 JW Library와 비슷한 방식으로 작동합니다. 여호와의 증인 공식 웹사이트와 공식 콘텐츠 전송 네트워크에서 출판물, 미디어 자료 및 기타 콘텐츠를 직접 다운로드합니다. 또한 다운로드해야 할 미디어를 자동으로 확인하고, 이전에 다운로드한 콘텐츠가 업데이트된 경우에도 이를 감지하여 다시 다운로드합니다.
 
 :::info 참고
 
-본 애플리케이션의 소스 코드 전체가 공개되어 있으므로 누구나 애플리케이션의 동작 방식을 확인해 볼 수 있습니다.
+이 프로그램의 전체 소스 코드는 공개되어 있으므로 누구나 프로그램의 작동 방식을 확인할 수 있습니다.
 
 :::
 
-### :thinking: 이 애플리케이션은 여호와의 증인 공식 웹사이트의 이용 약관을 침해합니까? {#terms-of-use}
+### :thinking: 이 프로그램은 여호와의 증인 공식 웹사이트의 이용 약관을 위반하나요? {#terms-of-use}
 
-**아니오.** 여호와의 증인 공식 웹사이트 [이용 약관](https://www.jw.org/finder?docid=1011511&prefer=content) 은 본 애플리케이션이 제공하는 유형의 이용을 명시적으로 허용합니다. 다음은 해당 약관의 관련 발췌문(강조 추가)입니다.
+**아니요.** 여호와의 증인 공식 웹사이트의 [이용 약관](https://www.jw.org/finder?docid=1011511&prefer=content)은 이 프로그램과 같은 방식으로 웹사이트를 이용하는 것을 명시적으로 허용합니다. 다음은 관련 조항의 발췌문입니다. (강조 추가)
 
 > 사용자는 다음의 행위를 해서는 안 됩니다.
 >
-> 본 웹사이트에서 데이터, HTML, 이미지, 텍스트를 수집, 복사, 다운로드, 추출, 산출, 스크래핑하기 위한 소프트웨어 응용 프로그램, 도구, 기법을 배포 목적으로 만드는 행위. (본 웹사이트의 일반 자료에서 EPUB, PDF, MP3, MP4 파일과 같은 전자 파일을 다운로드할 목적으로 고안된 비상업적 무료 응용 프로그램을 배포해서는 안 된다는 뜻은 **아님** )
+> 본 웹사이트에서 데이터, HTML, 이미지, 텍스트를 수집, 복사, 다운로드, 추출, 산출, 스크래핑하기 위한 소프트웨어 응용 프로그램, 도구, 기법을 배포 목적으로 만드는 행위. (본 웹사이트의 일반 자료에서 EPUB, PDF, MP3, MP4 파일과 같은 전자 파일을 다운로드할 목적으로 고안된 비상업적 무료 응용 프로그램을 배포해서는 안 된다는 뜻은 **아님**)
 
-### :question: What operating systems does M³ support? {#operating-systems}
+### :question: M³는 어떤 운영 체제를 지원하나요? {#operating-systems}
 
-M³ supports Windows, macOS, and Linux:
+M³는 Windows, macOS, Linux를 지원합니다.
 
-- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
-- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**: Windows 10 이상(64비트 및 32비트 버전 제공)
+- **macOS**: macOS 10.15(Catalina) 이상(유니버설 빌드 제공)
+- **Linux**: 대부분의 최신 Linux 배포판(AppImage 형식)
 
-### :globe_with_meridians: Does M³ work in my language? {#language-support}
+### :globe_with_meridians: M³를 한국어로도 사용할 수 있나요? {#language-support}
 
-**Yes!** M³ provides comprehensive multi-language support:
+**물론입니다!** M³는 다양한 언어를 폭넓게 지원합니다.
 
-- **Media**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
-- **App Interface**: Use M³'s interface in many different languages
-- **Independent Settings**: You can use the interface in one language while downloading media in another
-- **Fallback languages**: Configure fallback languages for when media isn't available in the primary language
-- **Subtitle support**: Download and display subtitles in various languages
+- **미디어**: 여호와의 증인 공식 웹사이트에서 제공하는 수백 가지 언어로 미디어를 다운로드할 수 있습니다.
+- **프로그램 인터페이스**: M³의 인터페이스를 다양한 언어로 사용할 수 있습니다.
+- **독립적인 언어 설정**: 프로그램 인터페이스는 한 언어로 사용하면서 미디어는 다른 언어로 다운로드할 수 있습니다.
+- **대체 언어**: 기본 언어로 미디어가 제공되지 않을 경우 사용할 대체 언어를 설정할 수 있습니다.
+- **자막 지원**: 다양한 언어의 자막을 다운로드하고 표시할 수 있습니다.
 
-## Installation and Setup {#installation-setup}
+## 설치 및 초기 설정 {#installation-setup}
 
-### :computer: How do I download and install M³? {#installation}
+### :computer: M³를 어떻게 다운로드하고 설치하나요? {#installation}
 
-Download the appropriate version from the [Download page](download) and follow the steps in the [User Guide](user-guide).
+[다운로드 페이지](download)에서 운영 체제에 맞는 버전을 다운로드한 다음, [사용자 안내서](user-guide)의 설명에 따라 설치하세요.
 
-### :gear: How do I set up M³ for the first time? {#first-time-setup}
+### :gear: M³를 처음 사용할 때는 어떻게 설정하나요? {#first-time-setup}
 
-M³ includes a setup wizard that guides you through the essential configuration:
+M³에는 필수 설정을 단계별로 안내하는 초기 설정 마법사가 포함되어 있습니다.
 
-1. Choose your interface language
-2. Select profile type (Regular or Other)
-3. Configure congregation information
-4. Set up meeting schedule
-5. Configure optional features like OBS integration
+1. 인터페이스 언어를 선택합니다.
+2. 프로필 유형(일반 또는 기타)을 선택합니다.
+3. 회중 정보를 설정합니다.
+4. 집회 일정을 설정합니다.
+5. 필요에 따라 OBS 연동과 같은 추가 기능을 설정합니다.
 
-## Media Management {#faq-media-management}
+## 미디어 관리 {#faq-media-management}
 
-### :desktop_computer: How does M³ download media? {#media-download}
+### :desktop_computer: M³는 미디어를 어떻게 다운로드하나요? {#media-download}
 
-M³ automatically downloads media for upcoming meetings by:
+M³는 다음과 같은 과정을 통해 다가오는 집회에 필요한 미디어를 자동으로 다운로드합니다.
 
-1. Checking your meeting schedule
-2. Determining what media is needed
-3. Downloading from the official website of Jehovah's Witnesses in your selected language
-4. Organizing media by date and meeting type
-5. Caching files for offline use
+1. 설정된 집회 일정을 확인합니다.
+2. 집회에 필요한 미디어를 확인합니다.
+3. 선택한 언어로 여호와의 증인 공식 웹사이트에서 미디어를 다운로드합니다.
+4. 미디어를 날짜와 집회 유형에 따라 정리합니다.
+5. 오프라인 사용을 위해 파일을 미리 저장합니다.
 
-### :calendar: Can I download media for specific dates? {#specific-dates}
+### :calendar: 특정 날짜의 미디어를 다운로드할 수 있나요? {#specific-dates}
 
-Yes! M³ allows you to:
+네! M³에서는 다음과 같은 작업을 할 수 있습니다.
 
-- Download media for upcoming meetings automatically
-- Import custom media for any date
+- 다가오는 집회에 필요한 미디어를 자동으로 다운로드합니다.
+- 원하는 날짜에 사용자 지정 미디어를 가져올 수 있습니다.
 
-### :open_file_folder: How do I import my own media files? {#import-media}
+### :open_file_folder: 내 미디어 파일을 어떻게 가져오나요? {#import-media}
 
-You can import custom media in several ways:
+사용자 지정 미디어는 다음과 같은 방법으로 가져올 수 있습니다.
 
-- **File Import**: Use the import button to add videos, images, or audio files
-- **Drag and Drop**: Drag files directly into M³
-- **Folder Monitoring**: Set up a watched folder for automatic imports
-- **JWPUB Files and Playlists**: Import publications and playlists
-- **Public Talk Media**: Import S-34 or S-34mp JWPUB files for public talk media
-- **Bible and Study Bible Tools**: Add audio Bible recordings, Study Bible media, or sign-language Bible media
+- **파일 가져오기**: 가져오기 버튼을 사용하여 동영상, 이미지 또는 오디오 파일을 추가할 수 있습니다.
+- **드래그 앤 드롭**: 파일을 M³로 직접 끌어다 놓을 수 있습니다.
+- **폴더 감시**: 지정한 폴더를 감시하도록 설정하여 파일을 자동으로 가져올 수 있습니다.
+- **JWPUB 파일 및 재생 목록**: 출판물과 재생 목록을 가져올 수 있습니다.
+- **공개 강연 미디어**: S-34 또는 S-34mp JWPUB 파일을 가져와 공개 강연에 필요한 미디어를 사용할 수 있습니다.
+- **성경 및 연구용 성경 도구**: 성경 오디오 녹음 파일, 연구용 성경의 미디어 또는 수어 성경의 미디어를 추가할 수 있습니다.
 
-### :speaker: Can I import audio Bible recordings? {#audio-bible}
+### :speaker: 성경 오디오 녹음 파일도 가져올 수 있나요? {#audio-bible}
 
-Yes! M³ includes an Audio Bible feature that allows you to:
+네! **네!** M³의 성경 오디오 기능을 사용하면 다음과 같은 작업을 할 수 있습니다.
 
-1. Select Bible books and chapters
-2. Choose specific verses or verse ranges
-3. Download audio recordings
-4. Use them at the meetings
+1. 성경 책과 장을 선택합니다.
+2. 특정 성구나 성구 범위를 선택합니다.
+3. 오디오 녹음 파일을 다운로드합니다.
+4. 집회 때 사용합니다.
 
-## Presentation Features {#faq-presentation-features}
+## 미디어 표시 기능 {#faq-presentation-features}
 
-### :tv: How do I present media during meetings? {#present-media}
+### :tv: 집회 중에 미디어를 어떻게 표시하나요? {#present-media}
 
-To present media:
+미디어를 표시하려면 다음 단계를 따르세요.
 
-1. Select the date
-2. Click the play button on the media item you want to present or use keyboard shortcuts
-3. Use the media player controls to pause, navigate, or stop playback
-4. Use zoom/pan features for images
-5. Set custom timing if needed
+1. 집회 날짜를 선택합니다.
+2. 표시하려는 미디어의 재생 버튼을 클릭하거나 키보드 단축키를 사용합니다.
+3. 미디어 플레이어의 제어 버튼을 사용하여 재생을 일시 정지하거나, 다른 위치로 이동하거나, 재생을 중지합니다.
+4. 필요한 경우 이미지의 확대 및 이동 기능을 사용합니다.
+5. 필요에 따라 타이밍을 조절합니다.
 
-### :keyboard: What keyboard shortcuts are available? {#faq-keyboard-shortcuts}
+### :keyboard: 어떤 키보드 단축키를 사용할 수 있나요? {#faq-keyboard-shortcuts}
 
-M³ supports customizable keyboard shortcuts for:
+M³에서는 다음 기능의 키보드 단축키를 원하는 대로 설정할 수 있습니다.
 
-- Opening/closing media window
-- Previous/next media navigation
-- Play/pause/stop controls
-- Background music toggle
+- 미디어 창 열기 및 닫기
+- 이전 또는 다음 미디어로 이동
+- 재생, 일시 정지 및 정지
+- 배경 음악 켜기 및 끄기
 
 <!-- - Fullscreen mode -->
 
-### :notes: How does background music work? {#faq-background-music}
+### :notes: 배경 음악 기능은 어떻게 작동하나요? {#faq-background-music}
 
-Background music features include:
+배경 음악 기능에는 다음과 같은 옵션이 있습니다.
 
-- Automatic playback when M³ starts, before the meeting begins
-- Automatic stop before meetings begin
-- One-click restart after meetings
-- Independent volume control
-- Configurable stop buffer time
+- 집회 시작 전 M³를 실행하면 배경 음악 자동 재생
+- 집회 시작 전 배경 음악 자동 중지
+- 집회가 끝난 후 원클릭 다시 재생
+- 독립적인 음량 조절
+- 음악 자동 중지 시점 설정
 
-### :stopwatch: Does M³ include a meeting timer? {#faq-meeting-timer}
+### :stopwatch: M³에 집회 타이머 기능도 있나요? {#faq-meeting-timer}
 
-Yes. When enabled, M³ can show a separate timer window for participant timing. It can count up or down, show the current time, show a pre-meeting countdown, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+네. 이 기능을 활성화하면 M³에서 프로그램 참여자의 시간을 측정하는 별도의 타이머 창을 표시할 수 있습니다. 경과 시간이나 남은 시간을 표시하고, 현재 시각과 집회 시작까지 남은 시간을 확인할 수 있습니다. 또한 프로그램이 예정된 시간을 초과했는지, 집회가 예정보다 빠르게 또는 늦게 진행되고 있는지를 선택적으로 표시할 수 있습니다.
 
-The timer is a beta feature and should only be enabled if approved locally.
+타이머는 현재 베타 기능이므로, 현지에서 사용 승인을 받은 경우에만 활성화해야 합니다.
 
-### :video_camera: How do I set up the Zoom integration? {#zoom-setup}
+### :video_camera: Zoom 연동은 어떻게 설정하나요? {#zoom-setup}
 
-To integrate with Zoom:
+Zoom과 연동하려면:
 
-1. Enable Zoom integration in M³ settings
-2. Configure the screen sharing shortcut that is set up in Zoom. Ensure that shortcut is "global" in Zoom's settings.
-3. M³ will automatically start and stop Zoom screen sharing during media presentations
+1. M³ 설정에서 Zoom 연동 기능을 활성화합니다.
+2. Zoom에서 설정한 화면 공유 단축키를 M³에 입력합니다. Zoom 설정에서 해당 단축키가 '전역' 단축키로 지정되어 있는지 확인하세요.
+3. 설정을 완료하면 M³에서 미디어를 표시할 때 Zoom 화면 공유가 자동으로 시작되고 중지됩니다.
 
-## OBS Studio Integration {#faq-obs-integration}
+## OBS Studio 연동 {#faq-obs-integration}
 
-### :video_camera: How do I set up the OBS Studio integration? {#faq-obs-setup}
+### :video_camera: OBS Studio 연동은 어떻게 설정하나요? {#faq-obs-setup}
 
-To integrate with OBS Studio:
+OBS Studio와 연동하려면 다음 단계를 따르세요.
 
-1. Install OBS Studio and the WebSocket plugin
-2. Enable OBS integration in M³ settings
-3. Enter the OBS port and password
-4. Configure scenes for camera, media, and images
-5. Test playback
+1. OBS Studio와 WebSocket 플러그인을 설치합니다.
+2. M³ 설정에서 OBS 연동 기능을 활성화합니다.
+3. OBS의 포트 번호와 비밀번호를 입력합니다.
+4. 카메라, 미디어 및 이미지에 사용할 장면을 설정합니다.
+5. 작동을 테스트합니다.
 
-### :arrows_counterclockwise: How does automatic scene switching work? {#faq-scene-switching}
+### :arrows_counterclockwise: 자동 장면 전환은 어떻게 작동하나요? {#faq-scene-switching}
 
-M³ automatically switches OBS scenes based on:
+M³는 다음 조건에 따라 OBS 장면을 자동으로 전환합니다.
 
-- Media type (video, image, etc.)
-- Your scene configuration
-- Settings like "Postpone Images"
-- Whether to return to previous scene after media
+- 미디어 유형(동영상, 이미지 등)
+- 사용자가 설정한 장면 구성
+- '이미지 표시 지연'과 같은 설정
+- 미디어 표시가 끝난 후 이전 장면으로 돌아가도록 설정했는지 여부
 
-### :pause_button: What is the "Postpone Images" feature? {#faq-postpone-images}
+### :pause_button: '이미지 표시 지연' 기능이란 무엇인가요? {#faq-postpone-images}
 
-This feature delays sharing images to OBS until you manually trigger them. This is useful for:
+이 기능은 사용자가 직접 실행할 때까지 OBS에 이미지가 표시되지 않도록 지연시킵니다. 필요한 상황:
 
-- Showing images to in-person audience first
-- Having more control over timing
-- Avoiding premature scene changes
+- 왕국회관에 있는 청중에게 이미지를 먼저 보여 주려는 경우
+- 타이밍을 더 미세하게 조정
+- 장면이 너무 일찍 전환되는 것을 방지
 
-### :record_button: Can M³ record meetings? {#faq-recordings}
+### :record_button: M³로 집회를 녹화할 수 있나요? {#faq-recordings}
 
-M³ does not include a built-in recorder, but it can help control recording in two ways:
+M³에는 자체 녹화 기능이 없지만, 다음 두 가지 방법으로 외부 프로그램의 녹화를 제어할 수 있습니다.
 
-- If you use OBS Studio, enable OBS recording controls and start or stop OBS recording from the OBS popup
-- If you use another recording app, configure keyboard shortcuts so M³ can send the start and stop commands from the meeting recordings popup
+- **OBS Studio를 사용하는 경우**: OBS 녹화 제어 기능을 활성화하면 OBS 팝업 창에서 녹화를 시작하거나 중지할 수 있습니다.
+- **다른 녹화 프로그램을 사용하는 경우**: 키보드 단축키를 설정하면 M³의 집회 녹화 팝업 창에서 녹화 시작 및 중지 명령을 외부 프로그램으로 보낼 수 있습니다.
 
-## Advanced Features {#faq-advanced-features}
+## 고급 기능 {#faq-advanced-features}
 
-### :cloud: How does folder monitoring work? {#faq-folder-monitoring}
+### :cloud: 폴더 감시 기능은 어떻게 작동하나요? {#faq-folder-monitoring}
 
-Folder monitoring allows you to:
+폴더 감시 기능을 사용하면 다음과 같은 작업을 할 수 있습니다.
 
-1. Select a folder to watch for new files
-2. Automatically import new media files that are synced with cloud storage like Dropbox or OneDrive
+1. 새로운 파일이 추가되는지 감시할 폴더를 선택합니다.
+2. Dropbox나 OneDrive와 같은 클라우드 저장소를 통해 동기화된 새로운 미디어 파일을 자동으로 가져옵니다.
 
-### :file_folder: What is media auto-export? {#faq-media-export}
+### :file_folder: 미디어 자동 내보내기란 무엇인가요? {#faq-media-export}
 
-Media auto-export automatically:
+미디어 자동 내보내기 기능은 다음과 같은 작업을 자동으로 수행합니다.
 
-1. Exports media files to a specified folder
-2. Organizes files by date and section
-3. Converts files to MP4 format (optional)
-4. Maintains an organized backup of meeting media files
+1. 미디어 파일을 지정한 폴더로 내보냅니다.
+2. 파일을 날짜와 프로그램 순서에 따라 정리합니다.
+3. 필요한 경우 파일을 MP4 형식으로 변환합니다.
+4. 집회 미디어 파일을 체계적으로 정리하여 백업할 수 있도록 합니다.
 
-### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
+### :family: 여러 회중을 관리할 수 있나요? {#faq-multiple-congregations}
 
-Yes! M³ supports multiple profiles for:
+네! **네!** M³는 다음과 같은 용도로 여러 프로필을 사용할 수 있습니다.
 
-- Different congregations
-- Special events
-- Different groups
-- Separate settings and media for each
+- 서로 다른 회중
+- 특별 행사
+- 서로 다른 그룹
+- 각 회중이나 그룹의 설정 및 미디어를 별도로 관리
 
-Profiles can also be exported to a JSON file and imported on another computer or into another profile. Importing replaces the current profile's settings.
+프로필을 JSON 파일로 내보낸 다음 다른 컴퓨터나 다른 프로필로 가져올 수도 있습니다. 프로필을 가져오면 현재 프로필의 설정이 가져온 설정으로 대체됩니다.
 
-## Troubleshooting {#faq-troubleshooting}
+## 문제 해결 {#faq-troubleshooting}
 
-### :warning: Media isn't downloading. What should I check? {#faq-media-not-downloading}
+### :warning: 미디어가 다운로드되지 않습니다. 무엇을 확인해야 하나요? {#faq-media-not-downloading}
 
-Check these common issues:
+아래 사항을 점검해보세요:
 
-1. **Meeting Schedule**: Verify your meeting days and times are correct
-2. **Language Settings**: Ensure your media language is set correctly
-3. **Internet Connection**: Check your internet connection
-4. **Language Availability**: Verify media is available in your selected language
+1. **집회 일정**: 집회 요일과 시간이 올바르게 설정되어 있는지 확인합니다.
+2. **언어 설정**: 미디어 언어가 올바르게 설정되어 있는지 확인합니다.
+3. **인터넷 연결**: 인터넷에 정상적으로 연결되어 있는지 확인합니다.
+4. **미디어 제공 여부**: 선택한 언어로 해당 미디어가 제공되는지 확인합니다.
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: The OBS integration isn't working. What should I verify? {#faq-obs-not-working}
+### :video_camera: OBS 연동이 작동하지 않습니다. 무엇을 확인해야 하나요? {#faq-obs-not-working}
 
-Check these OBS-related issues:
+OBS 관련 문제가 있을 수 있습니다:
 
-1. **OBS Installation**: Ensure OBS Studio is installed and running
-2. **WebSocket Plugin**: Verify the WebSocket plugin is installed
-3. **Port and Password**: Check your OBS port and password settings
-4. **Firewall**: Ensure the firewall isn't blocking the connection
+1. **OBS 설치**: OBS Studio가 설치되어 있고 실행 중인지 확인합니다.
+2. **WebSocket 플러그인**: WebSocket 플러그인이 설치되어 있는지 확인합니다.
+3. **포트 및 비밀번호**: OBS의 포트 번호와 비밀번호가 올바르게 설정되어 있는지 확인합니다.
+4. **방화벽**: 방화벽이 연결을 차단하고 있지 않은지 확인합니다.
 
-### :speaker: Does Meeting Media Manager automatically send the media audio to Zoom when using OBS Studio? {#audio-to-zoom}
+### :speaker: OBS Studio를 사용할 때 Meeting Media Manager가 미디어의 소리를 Zoom으로 자동 전송하나요? {#audio-to-zoom}
 
-**No.** M³ does not automatically send media audio to Zoom or OBS Studio. The video stream works like a virtual camera with no sound, just like a webcam. To have the music/video sound available in Zoom automatically, you need to ensure that Zoom 'hears' the audio feed coming from the computer, and then you should enable the **Original Audio** setting in Zoom.
+**아니요.** M³는 미디어의 소리를 Zoom이나 OBS Studio로 자동 전송하지 않습니다. 동영상 스트림은 웹캠과 마찬가지로 소리가 없는 가상 카메라 방식으로 작동합니다. 음악이나 동영상의 소리가 Zoom 참석자들에게 자동으로 전달되도록 하려면 컴퓨터에서 재생되는 소리를 Zoom이 입력받을 수 있도록 설정해야 합니다. 그런 다음 Zoom에서 **원본 오디오** 설정을 활성화해야 합니다.
 
-**Important Notes:**
+**중요한 참고 사항:**
 
-- You must enable Original Audio **every time** before starting a Zoom meeting
-- This setting is not related to M³ - you would face the same audio issue when using any other media player and not using Zoom's screen and audio sharing features
-- The Original Audio setting has three sub-options - typically the first two should be enabled and the third disabled for optimal audio quality
-- If you're still experiencing audio issues, you may need to use Zoom's "Share Computer Sound" option instead
-- Alternatively, look into using the Zoom integration instead, as it uses Zoom's native screen sharing.
+- Zoom 집회를 시작하기 전에 **매번** 원본 오디오 기능을 활성화해야 합니다.
+- 이 설정은 M³ 자체와는 관련이 없습니다. Zoom의 화면 및 오디오 공유 기능을 사용하지 않는다면 다른 미디어 플레이어를 사용하더라도 동일한 오디오 문제가 발생할 수 있습니다.
+- 일반적으로 최적의 음질을 위해 처음 두 옵션은 활성화하고 세 번째 옵션은 비활성화하는 것이 좋습니다.
+- 오디오 문제가 계속 발생한다면 Zoom의 '컴퓨터 소리 공유' 기능을 사용해야 할 수도 있습니다.
+- 또는 Zoom의 기본 화면 공유 기능을 사용하는 M³의 Zoom 연동 기능을 활용할 수도 있습니다.
 
-**Why is this necessary?**
-M³ plays media with sound on your computer, but this audio is not automatically transmitted through the video stream to Zoom when using OBS Studio. The Original Audio setting allows Zoom to capture the audio playing on your computer during screen sharing, if your computer is configured properly (for example: the computer has a second sound card that is used for media playback which Zoom listens to as a microphone.)
+M³는 컴퓨터에서 소리와 함께 미디어를 재생하지만, OBS Studio를 사용할 경우 이 소리가 동영상 스트림을 통해 Zoom으로 자동 전송되지는 않습니다. 예를 들어, 컴퓨터에 두 번째 사운드 카드가 있고 이를 미디어 재생에 사용한다면, Zoom에서 해당 사운드 카드의 오디오를 마이크 입력으로 받아들이도록 설정할 수 있습니다.
 
-### :snail: M³ is running slowly. How can I improve performance? {#performance-issues}
+### :snail: M³의 실행 속도가 느립니다. 성능을 개선하려면 어떻게 해야 하나요? {#performance-issues}
 
-Try these performance optimizations:
+성능 최적화를 진행해보세요:
 
-1. **Enable Extra Cache**: Turn on additional caching in settings
-2. **Close Other Apps**: Close unnecessary applications
-3. **Check Disk Space**: Ensure you have sufficient free disk space
-4. **Reduce Resolution**: Lower the maximum resolution setting
+1. **추가 캐시 활성화**: 설정에서 추가 캐시 기능을 활성화합니다.
+2. **다른 프로그램 종료**: 사용하지 않는 프로그램을 종료합니다.
+3. **디스크 공간 확인**: 저장 장치에 충분한 여유 공간이 있는지 확인합니다.
+4. **해상도 낮추기**: 최대 해상도 설정을 낮춥니다.
 
-### :speech_balloon: I'm having language issues. What should I check? {#faq-language-issues}
+### :speech_balloon: 언어와 관련된 문제가 발생합니다. 무엇을 확인해야 하나요? {#faq-language-issues}
 
-Verify these language settings:
+다음 언어 설정을 확인해 보세요.
 
-1. **Interface Language**: Check your display language setting
-2. **Media Language**: Verify your media download language
-3. **Language Availability**: Ensure the media language is available on the official website of Jehovah's Witnesses
-4. **Fallback Language**: Try setting a fallback language
+1. **인터페이스 언어**: 프로그램의 표시 언어 설정을 확인합니다.
+2. **미디어 언어**: 미디어 다운로드 언어가 올바르게 설정되어 있는지 확인합니다.
+3. **언어 지원 여부**: 선택한 미디어 언어가 여호와의 증인 공식 웹사이트에서 제공되는지 확인합니다.
+4. **대체 언어**: 대체 언어를 설정해 보세요.
 
-## Support and Community {#support-community}
+## 지원 및 커뮤니티 {#support-community}
 
-### :radioactive: How do I report an issue? {#how-do-i-report-an-issue}
+### :radioactive: 문제를 어떻게 신고하나요? {#how-do-i-report-an-issue}
 
-Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository. Include:
+공식 GitHub 저장소에서 [문제를 신고](https://github.com/sircharlo/meeting-media-manager/issues)해 주세요. 다음 정보를 포함하면 문제를 해결하는 데 도움이 됩니다.
 
-- Detailed description of the problem
-- Steps to reproduce the issue
-- Your operating system and M³ version
-- Any error messages, logs and screenshots
+- 발생한 문제에 대한 자세한 설명
+- 문제를 재현하는 방법
+- 사용 중인 운영 체제와 M³ 버전
+- 오류 메시지, 로그 및 스크린샷
 
-### :new: How can I request a new feature or enhancement? {#how-can-i-request-a-new-feature-or-enhancement}
+### :new: 새로운 기능이나 개선 사항을 어떻게 제안하나요? {#how-can-i-request-a-new-feature-or-enhancement}
 
-Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository. Describe:
+공식 GitHub 저장소에서 [토론을 시작](https://github.com/sircharlo/meeting-media-manager/discussions)해 주세요. 다음 내용을 설명해 주시면 됩니다.
 
-- The feature you'd like to see
-- How it would benefit users
-- Any specific requirements or preferences
+- 추가하고 싶은 기능
+- 해당 기능이 사용자들에게 어떤 도움이 되는지
+- 구체적인 요구 사항이나 선호 사항
 
-### :handshake: How can I contribute some code? {#how-can-i-contribute-some-code}
+### :handshake: 프로그램 개발에 어떻게 기여할 수 있나요? {#how-can-i-contribute-some-code}
 
-Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository. We welcome code contributions and Pull Requests!
+공식 GitHub 저장소의 [기여 안내서](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md)를 참조해 주세요. 코드 기여와 풀 리퀘스트(Pull Request)는 언제나 환영합니다!
 
-### :globe_with_meridians: How can I help with translations? {#translations}
+### :globe_with_meridians: 번역 작업에 어떻게 참여할 수 있나요? {#translations}
 
-M³ uses Crowdin for translation management. You can contribute translations by:
+M³는 번역 관리를 위해 Crowdin을 사용합니다. 다음과 같은 방법으로 번역 작업에 참여할 수 있습니다.
 
-1. Visiting the [Crowdin project](https://crowdin.com/project/meeting-media-manager)
-2. Selecting your language
-3. Translating strings that need work
-4. Reviewing existing translations
+1. [Crowdin 프로젝트](https://crowdin.com/project/meeting-media-manager)에 접속합니다.
+2. 번역하려는 언어를 선택합니다.
+3. 번역이 필요한 문구를 번역합니다.
+4. 기존 번역을 검토합니다.
 
-### :x: Can I make a donation to the project? {#can-i-make-a-donation-to-the-project}
+### :x: 프로젝트에 기부할 수 있나요? {#can-i-make-a-donation-to-the-project}
 
-Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
+프로젝트를 지원해 주시려는 마음에 감사드립니다! 하지만 마태복음 10:8의 정신에 따라 기부는 **받지 않으며, 앞으로도 받지 않을 것입니다.** 이 프로그램은 애정과 약간의 여가 시간을 들여 만들었습니다. 사용해보세요! :tada:
 
-:::tip :book: Matthew 10:8
+:::tip :book: 마태복음 10:8
 
-"You received free, give free."
+"여러분은 거저 받았으니 거저 주십시오."
 
 :::
 
-## Technical Questions {#technical-questions}
+## 기술 관련 질문 {#technical-questions}
 
-### :computer: What hardware and software requirements does M³ have? {#hardware-and-software-requirements}
+### :computer: M³를 사용하려면 어떤 하드웨어와 소프트웨어가 필요한가요? {#hardware-and-software-requirements}
 
-M³ is designed to work on a wide range of operating systems:
+M³는 다양한 운영 체제에서 작동하도록 설계되었습니다.
 
-- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
-- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**: Windows 10 이상(64비트 및 32비트 버전 제공)
+- **macOS**: macOS 10.15(Catalina) 이상(유니버설 빌드 제공)
+- **Linux**: 대부분의 최신 Linux 배포판(AppImage 형식)
 
-M³ has the following hardware requirements:
+M³의 하드웨어 요구 사항은 다음과 같습니다.
 
-- **Minimum**: 4GB RAM, 6GB free disk space
-- **Recommended**: 8GB RAM, 15GB free disk space for media caching
-- **Network**: Internet connection for media downloads
+- **최소 사양**: RAM 4GB, 디스크 여유 공간 6GB
+- **권장 사양**: RAM 8GB, 미디어 캐시 저장을 위한 디스크 여유 공간 15GB
+- **네트워크**: 미디어 다운로드를 위한 인터넷 연결
 
-Depending on the features you use, M³ also requires the following additional software:
+사용하는 기능에 따라 다음과 같은 추가 프로그램이 필요할 수 있습니다.
 
-- **Zoom**: Required only if using Zoom integration features
-- **OBS Studio**: Required only if using OBS integration features
+- **Zoom**: Zoom 연동 기능을 사용하는 경우에만 필요합니다.
+- **OBS Studio**: OBS 연동 기능을 사용하는 경우에만 필요합니다.
 
-### :floppy_disk: How much disk space does M³ use? {#disk-space}
+### :floppy_disk: M³는 디스크 공간을 얼마나 사용하나요? {#disk-space}
 
-Disk space usage depends on:
+디스크 공간 사용량은 다음과 같은 요인에 따라 달라집니다.
 
-- **Media Resolution**: Higher resolutions use more space
-- **Cached Content**: Media files are cached locally
-- **Extra Cache**: Additional caching can increase usage
-- **Exported Media**: Auto-export features use additional space
+- **미디어 해상도**: 해상도가 높을수록 더 많은 저장 공간이 필요합니다.
+- **캐시된 콘텐츠**: 미디어 파일이 컴퓨터에 캐시로 저장됩니다.
+- **추가 캐시**: 추가 캐시 기능을 사용하면 저장 공간 사용량이 늘어날 수 있습니다.
+- **내보낸 미디어**: 미디어 자동 내보내기 기능을 사용하면 추가 저장 공간이 필요합니다.
 
-Typical usage ranges from 2-10GB depending on settings and usage.
+일반적으로 설정과 사용 방식에 따라 약 2~10GB의 저장 공간을 사용합니다.
 
-### :shield: Is M³ secure and private? {#security-privacy}
+### :shield: M³는 보안과 개인정보 보호 측면에서 안전한가요? {#security-privacy}
 
-Yes! M³ is designed with security and privacy in mind:
+네! **네!** M³는 보안과 개인정보 보호를 고려하여 설계되었습니다.
 
-- **Local Storage**: All meeting data is stored locally on your computer
-- **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses
-- **Open Source**: The code is open for review and verification
-- **Bug Reports**: Limited data may be collected for bug reporting purposes
+- **로컬 저장**: 모든 집회 데이터는 사용자의 컴퓨터에 저장됩니다.
+- **직접 다운로드**: 미디어는 여호와의 증인 공식 웹사이트에서 직접 다운로드됩니다.
+- **오픈 소스**: 소스 코드가 공개되어 있어 누구나 검토하고 확인할 수 있습니다.
+- **버그 신고**: 버그 신고를 위해 제한적인 데이터가 수집될 수 있습니다.
 
-### :arrows_clockwise: How often does M³ check for updates? {#update-frequency}
+### :arrows_clockwise: M³는 얼마나 자주 업데이트를 확인하나요? {#update-frequency}
 
-M³ checks for updates:
+M³는 다음과 같은 방식으로 업데이트를 확인합니다.
 
-- **Application Updates**: Automatically checks for new versions every time the app is opened
-- **Media Updates**: Automatically checks for new meeting media every time the app is opened
-- **Language Updates**: Dynamic detection of new languages as needed
+- **프로그램 업데이트**: 프로그램을 실행할 때마다 새로운 버전이 있는지 자동으로 확인합니다.
+- **미디어 업데이트**: 프로그램을 실행할 때마다 새로운 집회 미디어가 있는지 자동으로 확인합니다.
+- **언어 업데이트**: 필요에 따라 새롭게 추가된 언어를 동적으로 감지합니다.
