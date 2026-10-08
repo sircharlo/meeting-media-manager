@@ -600,6 +600,7 @@ export const settingsDefinitions: SettingsItems = {
   },
   zoomAudioMutedTitle: {
     actions: ['zoomCaptureAudioMutedTitle'],
+    depends: 'zoomMeetingManagerEnable',
     group: 'integrations',
     platforms: ['win32'],
     subgroup: 'zoomMeetingManager',
@@ -607,6 +608,7 @@ export const settingsDefinitions: SettingsItems = {
   },
   zoomAudioUnmutedTitle: {
     actions: ['zoomCaptureAudioUnmutedTitle'],
+    depends: 'zoomMeetingManagerEnable',
     group: 'integrations',
     platforms: ['win32'],
     subgroup: 'zoomMeetingManager',
@@ -614,6 +616,7 @@ export const settingsDefinitions: SettingsItems = {
   },
   zoomAudioNotJoinedTitle: {
     actions: ['zoomCaptureAudioNotJoinedTitle'],
+    depends: 'zoomMeetingManagerEnable',
     group: 'integrations',
     platforms: ['win32'],
     subgroup: 'zoomMeetingManager',
@@ -621,6 +624,7 @@ export const settingsDefinitions: SettingsItems = {
   },
   zoomVideoOffTitle: {
     actions: ['zoomCaptureVideoOffTitle'],
+    depends: 'zoomMeetingManagerEnable',
     group: 'integrations',
     platforms: ['win32'],
     subgroup: 'zoomMeetingManager',
@@ -628,6 +632,7 @@ export const settingsDefinitions: SettingsItems = {
   },
   zoomVideoOnTitle: {
     actions: ['zoomCaptureVideoOnTitle'],
+    depends: 'zoomMeetingManagerEnable',
     group: 'integrations',
     platforms: ['win32'],
     subgroup: 'zoomMeetingManager',
@@ -635,6 +640,7 @@ export const settingsDefinitions: SettingsItems = {
   },
   zoomParticipantsButtonTitle: {
     actions: ['zoomCaptureParticipantsButtonTitle'],
+    depends: 'zoomMeetingManagerEnable',
     group: 'integrations',
     platforms: ['win32'],
     subgroup: 'zoomMeetingManager',
@@ -642,6 +648,7 @@ export const settingsDefinitions: SettingsItems = {
   },
   zoomShareButtonTitle: {
     actions: ['zoomCaptureShareButtonTitle'],
+    depends: 'zoomMeetingManagerEnable',
     group: 'integrations',
     platforms: ['win32'],
     subgroup: 'zoomMeetingManager',
