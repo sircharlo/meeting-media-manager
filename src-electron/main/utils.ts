@@ -1,3 +1,5 @@
+import type { PreloadErrorContext, SerializedPreloadError } from 'src/types';
+
 import { addBreadcrumb, captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
 import { app } from 'electron';
@@ -571,6 +573,64 @@ export function captureElectronError(error: unknown, context?: CaptureCtx) {
         : context,
     );
   }
+}
+
+const optionalString = (value: unknown) =>
+  typeof value === 'string' ? value : undefined;
+
+const isPlainRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+/**
+ * Rebuilds an Error from a preload report so Sentry parses the preload's
+ * own stack frames, not this function's.
+ * @param serialized The error as the preload serialized it
+ * @returns An Error carrying the original name, message, stack, code and syscall
+ */
+const rebuildPreloadError = (serialized: SerializedPreloadError) => {
+  const error = new Error(serialized.message);
+  error.name = serialized.name;
+  error.stack = serialized.stack ?? `${serialized.name}: ${serialized.message}`;
+  if (serialized.code) Object.assign(error, { code: serialized.code });
+  if (serialized.syscall) Object.assign(error, { syscall: serialized.syscall });
+  return error;
+};
+
+/**
+ * Reports an error the preload forwarded over the `capturePreloadError`
+ * channel. The preload's isolated world has no Sentry client of its own (see
+ * capturePreloadError in src-electron/preload/log.ts), so its errors are
+ * reported from here, with the same grouping and path scrubbing as any other
+ * main-process error.
+ * @param report The forwarded report (validated here, as IPC input)
+ */
+export function capturePreloadErrorReport(report: unknown) {
+  const error = isPlainRecord(report) ? report.error : undefined;
+  if (!isPlainRecord(error) || typeof error.message !== 'string') {
+    log('Ignored a malformed preload error report', 'electron', 'warn');
+    return;
+  }
+
+  const contexts =
+    isPlainRecord(report) && isPlainRecord(report.context)
+      ? report.context.contexts
+      : undefined;
+  const rebuilt = rebuildPreloadError({
+    code: optionalString(error.code),
+    message: error.message,
+    name: optionalString(error.name) || 'Error',
+    stack: optionalString(error.stack),
+    syscall: optionalString(error.syscall),
+  });
+
+  captureElectronError(rebuilt, {
+    ...(isPlainRecord(contexts) && {
+      contexts: contexts as PreloadErrorContext['contexts'],
+    }),
+    // Overrides the SDK's 'browser' default so preload errors stay
+    // distinguishable from main-process ones in Sentry.
+    tags: { 'event.process': 'preload' },
+  });
 }
 
 /**

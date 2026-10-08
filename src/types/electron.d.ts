@@ -528,6 +528,7 @@ export type ElectronIpcSendKey =
   | 'askForMediaAccess'
   | 'authorizedClose'
   | 'cancelAllDownloads'
+  | 'capturePreloadError'
   | 'checkForUpdates'
   | 'dev-menu-state'
   | 'focusMediaWindow'
@@ -578,6 +579,30 @@ export type MediaAccessStatus =
   'denied' | 'granted' | 'not-determined' | 'restricted' | 'unknown';
 
 export type NavigateWebsiteAction = 'back' | 'forward' | 'refresh';
+
+/** Sentry capture context a preload error can carry to the main process. */
+export interface PreloadErrorContext {
+  contexts?: Record<string, Record<string, unknown>>;
+}
+
+/**
+ * A preload error forwarded to the main process over the
+ * `capturePreloadError` channel. The preload's isolated world has no Sentry
+ * client, so the main process reports it. Plain data only: a raw Error
+ * loses `code`/`syscall` (used for Sentry grouping) to structured clone.
+ */
+export interface PreloadErrorReport {
+  context?: PreloadErrorContext;
+  error: SerializedPreloadError;
+}
+
+export interface SerializedPreloadError {
+  code?: string;
+  message: string;
+  name: string;
+  stack?: string;
+  syscall?: string;
+}
 
 export interface UnzipOptions {
   includes?: string[];
