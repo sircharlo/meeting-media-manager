@@ -18,37 +18,72 @@ export type ZoomCommand =
       type: 'start-share';
       windowTitle: string;
     }
+  | {
+      shareButtonTitle: null | string;
+      type: 'test-share-picker';
+      windowTitle: string;
+    }
   | { type: 'ask-all-to-unmute' }
+  | { type: 'diagnose' }
   | { type: 'join-audio' }
+  | { type: 'leave-audio' }
   /**
    * `reveal` brings Zoom's auto-hidden toolbar back (moving the mouse over
    * the meeting) to read the audio and video states; without it, nothing
    * on screen changes.
    */
-  | { type: 'leave-audio' }
   | { type: 'participants' }
   | { type: 'share-entries' }
   | { type: 'stop-share' }
+  | { type: 'toggle-video' }
   | { type: 'video-title' };
 
 export interface ZoomCommandResult {
   admitted?: string[];
+  /** `toggle-video`: the camera button's name after switching. */
+  after?: string;
+  /** `toggle-video`: the camera button's name before switching. */
+  before?: string;
   /** Whether the action changed anything (false: already in that state). */
   changed?: boolean;
+  diagnosis?: ZoomDiagnosis;
   /** The `ping` command's echo, to check the helper's text encoding. */
   echo?: null | string;
-  /** Share entry candidates from the toolbar and its "More" menu. */
+  /** `share-entries`: Share candidates from Zoom's toolbar. */
   entries?: string[];
   /** A short machine-readable reason, e.g. `meeting-not-found`. */
   error?: string;
   meeting?: ZoomMeetingState;
+  /** `share-entries`: Share candidates from the toolbar's "More" menu. */
+  moreEntries?: string[];
   ok: boolean;
+  /** `test-share-picker`: whether Zoom's share picker opened. */
+  opened?: boolean;
   participants?: ZoomParticipantRow[];
   title?: null | string;
   version?: number;
+  /** `test-share-picker`: whether M³'s media window was offered. */
+  windowListed?: boolean;
+  /** `test-share-picker`: whether sharing would select M³'s media window. */
+  windowSelected?: boolean;
 }
 
 export type ZoomCommandType = ZoomCommand['type'];
+
+/** What the setup assistant checks in Zoom (the `diagnose` command). */
+export interface ZoomDiagnosis {
+  audioJoined?: boolean;
+  /** Whether the microphone shortcut is Zoom's default (null: unknown). */
+  audioShortcutDefault?: boolean | null;
+  /** The mute-everyone button: only for the meeting's host and co-hosts. */
+  hostControls?: boolean;
+  meeting: boolean;
+  participantsPanel?: boolean;
+  toolbar?: boolean;
+  videoButton?: boolean;
+  videoShortcutDefault?: boolean;
+  videoTitle?: null | string;
+}
 
 export interface ZoomHelperStartResult {
   /** Technical detail for logs, e.g. a compiler error. */

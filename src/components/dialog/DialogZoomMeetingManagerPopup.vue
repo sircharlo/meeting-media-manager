@@ -35,6 +35,24 @@
         </q-btn>
       </div>
 
+      <div
+        v-if="setupNeeded"
+        class="zoom-popup__setup row items-center no-wrap q-mx-md q-mb-sm q-pa-sm bg-accent-100"
+      >
+        <q-icon class="q-mr-sm" color="primary" name="mmm-guide" size="18px" />
+        <div class="col text-caption text-weight-medium">
+          {{ t('zoom-setup-banner') }}
+        </div>
+        <q-btn
+          color="primary"
+          dense
+          flat
+          :label="t('zoom-setup-open')"
+          no-caps
+          @click="openSetupAssistant"
+        />
+      </div>
+
       <div class="action-popup__scroll full-width">
         <template v-if="showMeetingSettingsSection">
           <p class="card-section-title text-dark-grey row q-px-md q-pt-sm">
@@ -135,14 +153,26 @@
             {{ t('zoom-meeting-manager-meeting-id-missing') }}
           </q-tooltip>
         </div>
-        <div class="col-12">
+        <div class="col-6">
           <q-btn
             class="full-width"
             color="secondary"
+            icon="mmm-guide"
+            :label="t('zoomMeetingManagerSetupAssistant')"
+            no-caps
+            unelevated
+            @click="openSetupAssistant"
+          />
+        </div>
+        <div class="col-6">
+          <q-btn
+            class="full-width btn-tonal"
+            color="secondary"
+            flat
             icon="mmm-reset"
             :label="t('zoom-helper-restart')"
             :loading="restartingHelper"
-            unelevated
+            no-caps
             @click="restartHelper"
           />
         </div>
@@ -159,6 +189,7 @@ import ZoomSelfTestPanel from 'components/dialog/ZoomSelfTestPanel.vue';
 import { storeToRefs } from 'pinia';
 import {
   getZoomMeetingState,
+  isZoomSetupNeeded,
   runZoomMeetingSequence,
   runZoomPostMeetingSequence,
 } from 'src/helpers/zoom';
@@ -177,6 +208,13 @@ const { t } = useI18n();
 const { launchZoomMeeting, restartZoomHelper } = globalThis.electronApi;
 
 const isDev = import.meta.env.DEV;
+
+const setupNeeded = computed(() => isZoomSetupNeeded());
+
+const openSetupAssistant = () => {
+  open.value = false;
+  globalThis.dispatchEvent(new CustomEvent('openZoomSetupAssistant'));
+};
 
 const currentState = useCurrentStateStore();
 const { currentSettings, zoomHelperLogs } = storeToRefs(currentState);
@@ -287,6 +325,10 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+.zoom-popup__setup {
+  border-radius: 10px;
+}
+
 .zoom-helper-logs {
   font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
   font-size: 0.8em;

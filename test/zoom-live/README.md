@@ -10,8 +10,12 @@ desktop app on your computer:
   participants' side.
 - `zoom-edge.live.test.ts` covers what real computers throw at it: Zoom's
   auto-hidden toolbar, a minimized Zoom window, every connected monitor,
-  actions with nothing to do, and side effects the helper must not have
-  (moving the mouse for good, keeping focus, changing a Zoom setting).
+  actions with nothing to do, a share picker so crowded that the media
+  window is out of sight in it and partly covered by an always-on-top
+  window (decoy windows, checking that the media window, and nothing else,
+  gets shared), and side effects the helper must
+  not have (moving the mouse for good, keeping focus, changing a Zoom
+  setting).
 
 It never runs in CI or in `yarn test:unit`. The same checks are available in
 development builds from the Zoom popup ("Test Zoom integration").

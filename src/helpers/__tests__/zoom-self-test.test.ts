@@ -89,6 +89,7 @@ vi.mock('src/helpers/zoom', () => ({
     world.sharing = false;
     return true;
   }),
+  withoutZoomNotifications: <T>(run: () => Promise<T>) => run(),
 }));
 
 const probe: ZoomTestParticipantsProbe = {

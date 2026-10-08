@@ -2,6 +2,7 @@ import type {
   SettingsValues,
   ZoomCommand,
   ZoomCommandResult,
+  ZoomDiagnosis,
   ZoomMeetingState,
 } from 'src/types';
 
@@ -37,6 +38,12 @@ export interface ZoomTitles {
 
 const getSettings = () => useCurrentStateStore().currentSettings;
 
+const saveSetting = (settingKey: keyof SettingsValues, value: string) => {
+  const settings = getSettings();
+  if (!settings) return;
+  (settings as Record<keyof SettingsValues, unknown>)[settingKey] = value;
+};
+
 export const getZoomTitlesFromSettings = (): ZoomTitles => {
   const settings = getSettings();
   return {
@@ -61,7 +68,23 @@ const runCommand = async (command: ZoomCommand): Promise<ZoomCommandResult> => {
   }
 };
 
+let notificationsMuted = 0;
+
+/**
+ * Runs Zoom actions without their per-action notifications, e.g. for a
+ * self-test, which reports its own results.
+ */
+export const withoutZoomNotifications = async <T>(run: () => Promise<T>) => {
+  notificationsMuted++;
+  try {
+    return await run();
+  } finally {
+    notificationsMuted--;
+  }
+};
+
 const notifyInfo = (group: string, messageKey: string) => {
+  if (notificationsMuted) return;
   createTemporaryNotification({
     group,
     icon: 'mmm-info',
@@ -71,6 +94,7 @@ const notifyInfo = (group: string, messageKey: string) => {
 };
 
 const notifyFailure = (group: string, messageKey: string) => {
+  if (notificationsMuted) return;
   createTemporaryNotification({
     group,
     icon: 'mmm-error',
@@ -295,13 +319,84 @@ export const stopSharingMediaInZoom = async () => {
   return result.ok;
 };
 
-// --- Capturing Zoom's translated names into Settings -----------------------
+// --- Setup assistant -------------------------------------------------------
 
-const saveSetting = (settingKey: keyof SettingsValues, value: string) => {
+/**
+ * Whether the Zoom Meeting Manager is turned on but hasn't been through the
+ * setup assistant (its camera button names are what the assistant learns).
+ */
+export const isZoomSetupNeeded = () => {
   const settings = getSettings();
-  if (!settings) return;
-  (settings as Record<keyof SettingsValues, unknown>)[settingKey] = value;
+  return (
+    !!settings?.zoomMeetingManagerEnable &&
+    !(settings.zoomVideoOnTitle && settings.zoomVideoOffTitle)
+  );
 };
+
+/** Everything the Zoom Meeting Manager relies on, as found in Zoom now. */
+export const diagnoseZoom = async (): Promise<null | ZoomDiagnosis> => {
+  const result = await runCommand({ type: 'diagnose' });
+  return result.ok ? (result.diagnosis ?? null) : null;
+};
+
+/**
+ * Learns the camera button's name in both states (Zoom only shows them in
+ * the user's language): switches the camera once, then back, and saves
+ * both names to Settings.
+ * @param cameraIsOn What the user says their camera is doing right now.
+ */
+export const learnZoomVideoTitles = async (
+  cameraIsOn: boolean,
+): Promise<{ error?: string; ok: boolean }> => {
+  const switched = await runCommand({ type: 'toggle-video' });
+  if (!switched.ok || !switched.before || !switched.after) {
+    return { error: switched.error ?? 'video-not-changed', ok: false };
+  }
+  const back = await runCommand({ type: 'toggle-video' });
+  if (!back.ok || back.after !== switched.before) {
+    return { error: back.error ?? 'video-not-restored', ok: false };
+  }
+  saveSetting(
+    'zoomVideoOnTitle',
+    cameraIsOn ? switched.before : switched.after,
+  );
+  saveSetting(
+    'zoomVideoOffTitle',
+    cameraIsOn ? switched.after : switched.before,
+  );
+  return { ok: true };
+};
+
+/**
+ * Checks that Zoom's share picker opens through the given Share entry (or
+ * Zoom's default shortcut, if none) and offers M³'s media window, without
+ * sharing anything.
+ */
+export const testZoomShareEntry = async (shareButtonTitle: null | string) => {
+  const result = await runCommand({
+    shareButtonTitle,
+    type: 'test-share-picker',
+    windowTitle: MEDIA_WINDOW_TITLE,
+  });
+  return {
+    error: result.error,
+    opened: !!result.opened,
+    windowListed: !!result.windowListed,
+    windowSelected: !!result.windowSelected,
+  };
+};
+
+/** Toolbar and "More" menu entries, to pick the Share entry from. */
+export const getZoomShareEntries = async (): Promise<{
+  more: string[];
+  toolbar: string[];
+}> => {
+  const result = await runCommand({ type: 'share-entries' });
+  if (!result.ok) return { more: [], toolbar: [] };
+  return { more: result.moreEntries ?? [], toolbar: result.entries ?? [] };
+};
+
+// --- Capturing Zoom's translated names into Settings -----------------------
 
 /**
  * Saves the video button's current name, which Zoom only exposes in the
@@ -320,9 +415,9 @@ export const captureZoomVideoTitle = async (
 
 /** Lets the user pick which toolbar or "More" entry is Share. */
 export const captureZoomShareButtonTitle = async () => {
-  const result = await runCommand({ type: 'share-entries' });
-  const entries = result.entries ?? [];
-  if (!result.ok || entries.length === 0) {
+  const { more, toolbar } = await getZoomShareEntries();
+  const entries = [...toolbar, ...more];
+  if (entries.length === 0) {
     notifyFailure('zoom-settings', 'zoom-capture-failed');
     return;
   }

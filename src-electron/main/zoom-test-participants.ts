@@ -5,6 +5,7 @@ import type {
 } from 'src/types';
 
 import { type ChildProcessWithoutNullStreams, spawn } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { IS_DEV } from 'src-electron/constants';
@@ -52,10 +53,13 @@ const fetchParticipants = async (atPort: number) => {
 const findRunningSession = async (): Promise<null | number> => {
   try {
     const session = JSON.parse(readFileSync(SESSION_FILE, 'utf8')) as {
-      meetingId: string;
+      meeting: string;
       port: number;
     };
-    if (session.meetingId !== readTestMeetingId()) return null;
+    const meetingId = readTestMeetingId();
+    if (!meetingId) return null;
+    const meetingHash = createHash('sha256').update(meetingId).digest('hex');
+    if (session.meeting !== meetingHash) return null;
     const list = (await fetchParticipants(session.port)) ?? [];
     return list.some((p) => p.phase !== 'left' && p.phase !== 'blocked')
       ? session.port

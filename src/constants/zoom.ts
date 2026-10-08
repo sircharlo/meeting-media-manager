@@ -3,6 +3,7 @@ export const MEDIA_WINDOW_TITLE = 'Media Player - M³';
 // What to tell the user when the Zoom helper (src-electron/zoom-helper)
 // can't start, by the reason it reports.
 const ZOOM_HELPER_ERROR_MESSAGE_KEYS: Record<string, string> = {
+  'helper-missing': 'zoom-helper-error-helper-missing',
   'powershell-not-found': 'zoom-helper-error-powershell-not-found',
   'powershell-restricted': 'zoom-helper-error-powershell-restricted',
   'windows-only': 'zoom-helper-error-windows-only',

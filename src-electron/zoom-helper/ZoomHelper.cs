@@ -73,7 +73,13 @@ namespace M3.ZoomHelper
         [DllImport("user32.dll")] public static extern bool SetProcessDpiAwarenessContext(IntPtr value);
         [DllImport("user32.dll")] public static extern bool EnumWindows(EnumWindowsProc callback, IntPtr lParam);
         [DllImport("user32.dll", CharSet = CharSet.Unicode)] public static extern int GetClassName(IntPtr hwnd, StringBuilder buffer, int max);
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)] public static extern int GetWindowText(IntPtr hwnd, StringBuilder buffer, int max);
+        [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr hwnd, out Rect rect);
         [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr hwnd);
+        [DllImport("user32.dll")] public static extern bool SetWindowPos(IntPtr hwnd, IntPtr after, int x, int y, int width, int height, uint flags);
+        [DllImport("user32.dll")] public static extern IntPtr WindowFromPoint(Point point);
+        [DllImport("user32.dll")] public static extern IntPtr GetAncestor(IntPtr hwnd, uint flags);
+        [DllImport("user32.dll")] public static extern int GetWindowLong(IntPtr hwnd, int index);
         [DllImport("user32.dll")] public static extern bool IsIconic(IntPtr hwnd);
         [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr hwnd, int command);
         [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
@@ -115,6 +121,15 @@ namespace M3.ZoomHelper
             public int X;
             public int Y;
         }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct Rect
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+        }
         [DllImport("user32.dll")] public static extern void mouse_event(uint flags, int dx, int dy, uint data, UIntPtr extra);
         [DllImport("user32.dll")] public static extern void keybd_event(byte vk, byte scan, uint flags, UIntPtr extra);
 
@@ -122,6 +137,16 @@ namespace M3.ZoomHelper
         public const int SwRestore = 9;
         public const uint MouseLeftDown = 0x0002;
         public const uint MouseLeftUp = 0x0004;
+        public const uint MouseWheel = 0x0800;
+        public const int WheelDelta = 120;
+        public static readonly IntPtr HwndTopmost = new IntPtr(-1);
+        public static readonly IntPtr HwndNoTopmost = new IntPtr(-2);
+        public const uint GaRoot = 2;
+        public const int GwlExStyle = -20;
+        public const int WsExTopmost = 0x0008;
+        public const uint SwpNoSize = 0x0001;
+        public const uint SwpNoMove = 0x0002;
+        public const uint SwpNoActivate = 0x0010;
         public const uint KeyUp = 0x0002;
         public const byte VkMenu = 0x12; // Alt
         public const byte VkEscape = 0x1B;
@@ -143,6 +168,7 @@ namespace M3.ZoomHelper
         public const int TextType = 50020;
         public const int SplitButtonType = 50031;
         public const int InvokePattern = 10000;
+        public const int SelectionItemPattern = 10010;
         public const int TogglePattern = 10015;
 
         public static readonly CUIAutomation8 Automation = new CUIAutomation8();
@@ -213,10 +239,15 @@ namespace M3.ZoomHelper
         const string MoreGridClass = "ZGridMultiLevelPopupWndClass";
         const string SharePickerClass = "ZPShareEntranceClass";
         const string ShareToolbarClass = "ZPFloatToolbarClass";
+        // Zoom's annotation layer, laid over whatever is being shared.
+        const string AnnotationLayerClass = "ZoomAnnoWindowWndClass";
 
         const string HotkeyAudio = "Alt+A";
         const string HotkeyVideo = "Alt+V";
         const string HotkeyMuteAll = "Alt+M";
+        // Toolbar buttons that are clearly not Share, and in two cases must
+        // never be pressed to find out: End (Alt+Q) and Record (Alt+R).
+        static readonly string[] NotShareHotkeys = { "Alt+Q", "Alt+R", "Alt+H", "Alt+U", "Alt+I" };
 
         // A trailing "(Ctrl+Alt+Shift+A)" style shortcut in a control name.
         // Key names are matched by shape only, since Zoom may translate them
@@ -227,6 +258,8 @@ namespace M3.ZoomHelper
         // "More" menu entries end with a translated "row R, column C N of M ..."
         static readonly Regex GridPositionSuffix = new Regex(@"^(.*?)\s+\S+\s+\d+,\s*\S+\s+\d+\s+\d+\s+\S+\s+\d+(?:\s.*)?$");
         static readonly Regex SectionHeader = new Regex(@"\(\d+\)");
+        // Any keyboard shortcut ("Alt+A", "Ctrl+Alt+Shift+A", "Strg+Umschalt+S").
+        static readonly Regex AnyHotkey = new Regex(@"(?<![\w+])[\p{L}]+(?:\+[\p{L}\p{N}]+)+(?![\w+])");
 
         // Buttons whose tops are this close (in pixels) count as one row.
         const int RowTolerance = 8;
@@ -271,6 +304,35 @@ namespace M3.ZoomHelper
                 return true;
             }, IntPtr.Zero);
             return found;
+        }
+
+        static List<IntPtr> TopWindowsTitled(string title)
+        {
+            var found = new List<IntPtr>();
+            Native.EnumWindows(delegate (IntPtr hwnd, IntPtr lParam)
+            {
+                if (!Native.IsWindowVisible(hwnd)) return true;
+                var buffer = new StringBuilder(512);
+                Native.GetWindowText(hwnd, buffer, buffer.Capacity);
+                if (buffer.ToString() == title) found.Add(hwnd);
+                return true;
+            }, IntPtr.Zero);
+            return found;
+        }
+
+        /// <summary>How much two windows cover the same area (intersection over
+        /// union, 0 to 1).</summary>
+        static double Overlap(IntPtr a, IntPtr b)
+        {
+            Native.Rect ra, rb;
+            if (!Native.GetWindowRect(a, out ra) || !Native.GetWindowRect(b, out rb)) return 0;
+            var width = Math.Min(ra.Right, rb.Right) - Math.Max(ra.Left, rb.Left);
+            var height = Math.Min(ra.Bottom, rb.Bottom) - Math.Max(ra.Top, rb.Top);
+            if (width <= 0 || height <= 0) return 0;
+            double shared = (double)width * height;
+            double areaA = (double)(ra.Right - ra.Left) * (ra.Bottom - ra.Top);
+            double areaB = (double)(rb.Right - rb.Left) * (rb.Bottom - rb.Top);
+            return shared / (areaA + areaB - shared);
         }
 
         static El WaitForWindow(string className, int timeoutMs)
@@ -325,12 +387,75 @@ namespace M3.ZoomHelper
             Thread.Sleep(200);
         }
 
-        static void Click(El element)
+        /// <summary>The top-level window an element belongs to.</summary>
+        static IntPtr TopWindowOf(El element)
         {
-            Native.SetCursorPos(element.CenterX, element.CenterY);
+            try
+            {
+                var walker = Uia.Automation.RawViewWalker;
+                var current = element.Raw;
+                for (int depth = 0; current != null && depth < 30; depth++)
+                {
+                    var handle = current.CurrentNativeWindowHandle;
+                    if (handle != IntPtr.Zero) return Native.GetAncestor(handle, Native.GaRoot);
+                    current = walker.GetParentElement(current);
+                }
+            }
+            catch (Exception) { }
+            return IntPtr.Zero;
+        }
+
+        /// <summary>Whether the window itself shows at the point, rather than
+        /// another window in front of it.</summary>
+        static bool ShowsAt(IntPtr window, int x, int y)
+        {
+            var hit = Native.WindowFromPoint(new Native.Point { X = x, Y = y });
+            return hit != IntPtr.Zero && Native.GetAncestor(hit, Native.GaRoot) == window;
+        }
+
+        /// <summary>Runs a mouse action with the window lifted above
+        /// always-on-top windows (such as M³'s own media window on a single
+        /// screen), which would otherwise take the mouse input meant for it,
+        /// then puts the window back as it was. Only ever around a single
+        /// action, so the window can't stay on top should anything go
+        /// wrong.</summary>
+        static T Lifted<T>(IntPtr window, Func<T> action)
+        {
+            const uint flags = Native.SwpNoMove | Native.SwpNoSize | Native.SwpNoActivate;
+            var wasTopmost = (Native.GetWindowLong(window, Native.GwlExStyle) & Native.WsExTopmost) != 0;
+            if (!wasTopmost) Native.SetWindowPos(window, Native.HwndTopmost, 0, 0, 0, 0, flags);
+            try
+            {
+                return action();
+            }
+            finally
+            {
+                if (!wasTopmost) Native.SetWindowPos(window, Native.HwndNoTopmost, 0, 0, 0, 0, flags);
+            }
+        }
+
+        static void ClickAt(int x, int y)
+        {
+            Native.SetCursorPos(x, y);
             Thread.Sleep(50);
             Native.mouse_event(Native.MouseLeftDown, 0, 0, 0, UIntPtr.Zero);
             Native.mouse_event(Native.MouseLeftUp, 0, 0, 0, UIntPtr.Zero);
+        }
+
+        static void Click(El element)
+        {
+            var window = TopWindowOf(element);
+            if (window == IntPtr.Zero || ShowsAt(window, element.CenterX, element.CenterY))
+            {
+                ClickAt(element.CenterX, element.CenterY);
+                return;
+            }
+            Lifted(window, () =>
+            {
+                ClickAt(element.CenterX, element.CenterY);
+                Thread.Sleep(100);
+                return true;
+            });
         }
 
         static void Hover(El element)
@@ -483,20 +608,50 @@ namespace M3.ZoomHelper
             var panel = Uia.FirstByClass(window, ControlPanelClass);
             if (panel != null) return panel;
             Focus(window);
-            panel = WaitFor(() =>
+            var handle = window.Raw.CurrentNativeWindowHandle;
+            Func<El> reveal = () => WaitFor(() =>
             {
                 // Read afresh: Focus may just have restored a minimized window,
                 // whose earlier position was off-screen.
-                var rect = window.Raw.CurrentBoundingRectangle;
-                var x = (rect.left + rect.right) / 2;
-                var y = (rect.top + rect.bottom) / 2;
-                Native.SetCursorPos(x, y);
+                Native.Point point;
+                VisiblePoint(handle, window.Raw.CurrentBoundingRectangle, out point);
+                Native.SetCursorPos(point.X, point.Y);
                 Thread.Sleep(50);
-                Native.SetCursorPos(x + 20, y + 20);
+                var nudge = ShowsAt(handle, point.X + 20, point.Y + 20) ? 20 : -20;
+                Native.SetCursorPos(point.X + nudge, point.Y + nudge);
                 return Uia.FirstByClass(window, ControlPanelClass);
             }, found => found != null, 3000);
+            Native.Point visible;
+            panel = VisiblePoint(handle, window.Raw.CurrentBoundingRectangle, out visible)
+                ? reveal()
+                : Lifted(handle, reveal);
             if (panel == null) throw new ZoomActionError("meeting-toolbar-not-found");
             return panel;
+        }
+
+        // Where to move the mouse to bring Zoom's toolbar back: the middle of
+        // the meeting, else just above the toolbar, else elsewhere in it.
+        static readonly double[][] RevealSpots =
+        {
+            new[] { 0.5, 0.5 }, new[] { 0.5, 0.85 }, new[] { 0.25, 0.85 }, new[] { 0.75, 0.85 },
+            new[] { 0.25, 0.5 }, new[] { 0.75, 0.5 }, new[] { 0.5, 0.2 }, new[] { 0.2, 0.2 }, new[] { 0.8, 0.2 },
+        };
+
+        /// <summary>A spot where the window shows, rather than another window
+        /// in front of it (an always-on-top one, such as M³'s own media window
+        /// on a single screen). False, with its middle, if it's covered all
+        /// over.</summary>
+        static bool VisiblePoint(IntPtr window, tagRECT rect, out Native.Point point)
+        {
+            var width = rect.right - rect.left;
+            var height = rect.bottom - rect.top;
+            foreach (var spot in RevealSpots)
+            {
+                point = new Native.Point { X = rect.left + (int)(width * spot[0]), Y = rect.top + (int)(height * spot[1]) };
+                if (ShowsAt(window, point.X, point.Y)) return true;
+            }
+            point = new Native.Point { X = rect.left + width / 2, Y = rect.top + height / 2 };
+            return false;
         }
 
         static List<El> ToolbarButtons(El window)
@@ -509,21 +664,24 @@ namespace M3.ZoomHelper
             return Uia.Descendants(ControlPanel(window), Uia.MenuItemType);
         }
 
-        /// <summary>Joined computer audio: the microphone button carries Zoom's
-        /// Alt+A shortcut. Not joined: the same spot is a "Join audio" button
-        /// without it.</summary>
+        /// <summary>The toolbar always starts with the microphone button. Joined to
+        /// computer audio, its name includes its keyboard shortcut (Alt+A, or
+        /// whatever the user chose instead); not joined, it's a "Join audio"
+        /// button without one.</summary>
         static bool AudioJoined(El window)
         {
-            foreach (var button in ToolbarButtons(window))
-                if (HasHotkey(button.Name, HotkeyAudio)) return true;
-            return false;
+            var buttons = ToolbarButtons(window);
+            return buttons.Count > 0 && AnyHotkey.IsMatch(buttons[0].Name);
         }
 
+        /// <summary>The camera button: the one with Zoom's Alt+V shortcut, or,
+        /// if the user changed that shortcut, the toolbar's second button.</summary>
         static El VideoButton(El window)
         {
-            foreach (var button in ToolbarButtons(window))
+            var buttons = ToolbarButtons(window);
+            foreach (var button in buttons)
                 if (HasHotkey(button.Name, HotkeyVideo)) return button;
-            return null;
+            return buttons.Count > 1 ? buttons[1] : null;
         }
 
         static bool IsSharing()
@@ -797,20 +955,29 @@ namespace M3.ZoomHelper
                 if (row.Section == "waiting" && (names.Count == 0 || names.Contains(row.Name)) && !waiting.Contains(row.Name))
                     waiting.Add(row.Name);
             var admitted = new List<object>();
+            var handle = window.Raw.CurrentNativeWindowHandle;
             foreach (var name in waiting)
             {
-                var row = WaitingRow(window, name);
+                var current = name;
+                var row = WaitingRow(window, current);
                 if (row == null) continue;
                 Focus(window);
-                Hover(row.Element);
-                Thread.Sleep(500);
-                row = WaitingRow(window, name);
-                if (row == null) continue;
-                var buttons = Named(Uia.Descendants(row.Element, Uia.ButtonType));
-                if (buttons.Count == 0) continue;
-                Press(buttons[0]);
-                var current = name;
-                if (WaitUntil(() => WaitingRow(window, current) == null, 5000)) admitted.Add(name);
+                Func<bool> pressAdmit = () =>
+                {
+                    Hover(row.Element);
+                    Thread.Sleep(500);
+                    var hovered = WaitingRow(window, current);
+                    if (hovered == null) return false;
+                    var buttons = Named(Uia.Descendants(hovered.Element, Uia.ButtonType));
+                    if (buttons.Count == 0) return false;
+                    Press(buttons[0]);
+                    return true;
+                };
+                // The row only shows its button while the mouse is over it.
+                var pressed = ShowsAt(handle, row.Element.CenterX, row.Element.CenterY)
+                    ? pressAdmit()
+                    : Lifted(handle, pressAdmit);
+                if (pressed && WaitUntil(() => WaitingRow(window, current) == null, 5000)) admitted.Add(name);
             }
             return new Dictionary<string, object> { { "admitted", admitted }, { "changed", admitted.Count > 0 } };
         }
@@ -833,15 +1000,24 @@ namespace M3.ZoomHelper
         }
 
         /// <summary>Toolbar buttons and "More" menu entries, for the user to pick
-        /// which one is Share (its name depends on their Zoom language).</summary>
+        /// which one is Share (its name depends on their Zoom language). They
+        /// are kept apart because "More" entries don't show their shortcuts,
+        /// so dangerous ones like Record can't be left out there.</summary>
         public static Dictionary<string, object> ShareEntries()
         {
             var window = RequireMeetingWindow();
             var entries = new List<object>();
-            foreach (var button in ToolbarButtons(window))
+            var moreEntries = new List<object>();
+            var toolbar = ToolbarButtons(window);
+            // The first two are always the microphone and the camera, and the
+            // last is always End: offering it would invite ending the meeting.
+            for (int i = 2; i < toolbar.Count - 1; i++)
             {
-                if (HasHotkey(button.Name, HotkeyAudio) || HasHotkey(button.Name, HotkeyVideo)) continue;
-                var name = FirstSegment(button.Name);
+                var isOther = false;
+                foreach (var hotkey in NotShareHotkeys)
+                    if (HasHotkey(toolbar[i].Name, hotkey)) isOther = true;
+                if (isOther) continue;
+                var name = FirstSegment(toolbar[i].Name);
                 if (name.Length > 0 && !entries.Contains(name)) entries.Add(name);
             }
             var grid = OpenMoreGrid(window);
@@ -850,12 +1026,12 @@ namespace M3.ZoomHelper
                 foreach (var item in Uia.Descendants(grid, Uia.TabItemType))
                 {
                     var name = GridEntryName(item);
-                    if (name.Length > 0 && !entries.Contains(name)) entries.Add(name);
+                    if (name.Length > 0 && !entries.Contains(name) && !moreEntries.Contains(name)) moreEntries.Add(name);
                 }
                 Focus(window);
                 Escape();
             }
-            return new Dictionary<string, object> { { "entries", entries } };
+            return new Dictionary<string, object> { { "entries", entries }, { "moreEntries", moreEntries } };
         }
 
         static void OpenSharePicker(El window, string shareTitle)
@@ -895,6 +1071,162 @@ namespace M3.ZoomHelper
             throw new ZoomActionError("share-button-not-found");
         }
 
+        // Zoom's share picker lists the screens, then the open windows (most
+        // recently used first, so the media window's spot changes), then
+        // browser tabs. It selects an entry only on a real click, and reports
+        // every entry as on screen, even one scrolled under its footer or past
+        // its edge, where a click would select or share something else. So the
+        // entry is found by its exact title, and its position is read afresh
+        // before every click.
+
+        static El ShareItem(El picker, string windowTitle)
+        {
+            foreach (var item in Uia.Descendants(picker, Uia.ListItemType))
+                if (item.Name == windowTitle) return item;
+            return null;
+        }
+
+        static string ShareItemsLayout(El picker)
+        {
+            var layout = new StringBuilder();
+            foreach (var item in Uia.Descendants(picker, Uia.ListItemType))
+                layout.Append(item.Name).Append('@').Append(item.Rect.left).Append(',').Append(item.Rect.top).Append(';');
+            return layout.ToString();
+        }
+
+        /// <summary>Waits for the window to be listed, then for the picker to
+        /// stop adding and moving entries.</summary>
+        static El WaitForShareItem(El picker, string windowTitle)
+        {
+            if (WaitFor(() => ShareItem(picker, windowTitle), found => found != null, 4000) == null) return null;
+            string previous = null;
+            WaitUntil(() =>
+            {
+                var layout = ShareItemsLayout(picker);
+                var settled = layout == previous;
+                previous = layout;
+                return settled;
+            }, 3000);
+            return ShareItem(picker, windowTitle);
+        }
+
+        /// <summary>Whether a click at the element's centre lands on it.</summary>
+        static bool IsClickable(El element)
+        {
+            try
+            {
+                var point = new tagPOINT { x = element.CenterX, y = element.CenterY };
+                var hit = Uia.Automation.ElementFromPoint(point);
+                var walker = Uia.Automation.ControlViewWalker;
+                for (int depth = 0; hit != null && depth < 4; depth++)
+                {
+                    if (Uia.Automation.CompareElements(hit, element.Raw) != 0) return true;
+                    hit = walker.GetParentElement(hit);
+                }
+            }
+            catch (Exception) { }
+            return false;
+        }
+
+        /// <summary>Scrolls the picker until its entry for the window can be
+        /// clicked. The picker can't be scrolled through UI Automation, so this
+        /// turns the mouse wheel over it.</summary>
+        static El ScrollShareItemIntoReach(El picker, string windowTitle)
+        {
+            var item = ShareItem(picker, windowTitle);
+            for (int i = 0; i < 12 && item != null; i++)
+            {
+                if (IsClickable(item)) return item;
+                var area = picker.Raw.CurrentBoundingRectangle;
+                var middle = (area.top + area.bottom) / 2;
+                Native.SetCursorPos(item.CenterX, middle);
+                Thread.Sleep(50);
+                var delta = item.CenterY > middle ? -Native.WheelDelta : Native.WheelDelta;
+                Native.mouse_event(Native.MouseWheel, 0, 0, unchecked((uint)delta), UIntPtr.Zero);
+                Thread.Sleep(300);
+                item = ShareItem(picker, windowTitle);
+            }
+            return item != null && IsClickable(item) ? item : null;
+        }
+
+        /// <summary>Whether the window is the picker's one selected entry. Zoom
+        /// versions that don't report selection are trusted with the click,
+        /// which was checked to land on the window's entry.</summary>
+        static bool IsOnlyShareSelection(El picker, string windowTitle)
+        {
+            var reported = false;
+            var selected = false;
+            foreach (var item in Uia.Descendants(picker, Uia.ListItemType))
+            {
+                try
+                {
+                    var pattern = item.Raw.GetCurrentPattern(Uia.SelectionItemPattern) as IUIAutomationSelectionItemPattern;
+                    if (pattern == null) continue;
+                    reported = true;
+                    if (pattern.CurrentIsSelected == 0) continue;
+                    if (item.Name != windowTitle) return false;
+                    selected = true;
+                }
+                catch (Exception) { }
+            }
+            return selected || !reported;
+        }
+
+        /// <summary>Selects the window in Zoom's share picker, and makes sure
+        /// it's the one selected. Returns the problem, or null.</summary>
+        static string SelectShareWindow(El picker, string windowTitle)
+        {
+            if (WaitForShareItem(picker, windowTitle) == null) return "window-to-share-not-found";
+            // Always-on-top windows can cover the picker, such as M³'s own
+            // media window on a single screen, or Zoom's notices; a click
+            // there would land on them. So the picker (which closes once
+            // done) goes above them.
+            Native.SetWindowPos(picker.Raw.CurrentNativeWindowHandle, Native.HwndTopmost, 0, 0, 0, 0,
+                Native.SwpNoMove | Native.SwpNoSize | Native.SwpNoActivate);
+            for (int attempt = 0; attempt < 3; attempt++)
+            {
+                var item = ScrollShareItemIntoReach(picker, windowTitle);
+                if (item == null) return "window-to-share-not-selected";
+                Click(item);
+                if (WaitUntil(() => IsOnlyShareSelection(picker, windowTitle), 1500)) return null;
+            }
+            return "window-to-share-not-selected";
+        }
+
+        /// <summary>Whether Zoom is sharing the window, judged by its annotation
+        /// layer covering it. Null if that can't be told (yet): the layer starts
+        /// out as a tiny placeholder and takes about a second to move over the
+        /// shared content, annotation can be turned off, and the window may not
+        /// be found.</summary>
+        static bool? IsSharingWindow(string windowTitle)
+        {
+            var layers = new List<IntPtr>();
+            foreach (var layer in TopWindows(AnnotationLayerClass, true))
+            {
+                Native.Rect rect;
+                if (Native.GetWindowRect(layer, out rect) && rect.Right - rect.Left > 50 && rect.Bottom - rect.Top > 50)
+                    layers.Add(layer);
+            }
+            var windows = TopWindowsTitled(windowTitle);
+            if (layers.Count == 0 || windows.Count == 0) return null;
+            foreach (var layer in layers)
+                foreach (var window in windows)
+                    if (Overlap(layer, window) > 0.6) return true;
+            return false;
+        }
+
+        static void CloseSharePicker(El picker)
+        {
+            Focus(picker);
+            Escape();
+            if (!WaitUntil(() => TopWindows(SharePickerClass, true).Count == 0, 3000))
+            {
+                // Its title bar's close button, as a fallback.
+                var buttons = Uia.Descendants(picker, Uia.ButtonType);
+                if (buttons.Count > 0) Press(buttons[0]);
+            }
+        }
+
         public static Dictionary<string, object> StartShare(string windowTitle, string shareTitle)
         {
             if (IsSharing()) return Changed(false);
@@ -902,26 +1234,33 @@ namespace M3.ZoomHelper
             OpenSharePicker(window, shareTitle);
             var picker = WaitForWindow(SharePickerClass, WaitTimeoutMs);
             if (picker == null) throw new ZoomActionError("share-picker-not-found");
-            var target = WaitFor(() =>
+            var problem = SelectShareWindow(picker, windowTitle);
+            if (problem != null)
             {
-                foreach (var item in Uia.Descendants(picker, Uia.ListItemType))
-                    if (item.Name == windowTitle) return item;
-                return null;
-            }, found => found != null, 4000);
-            if (target == null)
-            {
-                Escape();
-                throw new ZoomActionError("window-to-share-not-found");
+                CloseSharePicker(picker);
+                throw new ZoomActionError(problem);
             }
-            Click(target); // list items don't support selection through UI Automation
-            Thread.Sleep(300);
             // Share sound, then Optimize for video clips, in every language.
             var checkboxes = Uia.Descendants(picker, Uia.CheckBoxType);
             for (int i = 0; i < Math.Min(2, checkboxes.Count); i++) SetChecked(checkboxes[i], true);
             var buttons = Uia.Descendants(picker, Uia.ButtonType);
             if (buttons.Count == 0) throw new ZoomActionError("share-confirm-not-found");
+            // Never share anything but the window asked for.
+            if (!IsOnlyShareSelection(picker, windowTitle))
+            {
+                CloseSharePicker(picker);
+                throw new ZoomActionError("window-to-share-not-selected");
+            }
             Press(buttons[buttons.Count - 1]);
             if (!WaitUntil(IsSharing, WaitTimeoutMs)) throw new ZoomActionError("share-not-started");
+            // Should something else be shared after all, stop it at once.
+            bool? sharingWindow = null;
+            WaitUntil(() => (sharingWindow = IsSharingWindow(windowTitle)) == true, 4000);
+            if (sharingWindow == false)
+            {
+                StopShare();
+                throw new ZoomActionError("shared-wrong-window");
+            }
             return Changed(true);
         }
 
@@ -937,6 +1276,101 @@ namespace M3.ZoomHelper
             Press(stop);
             if (!WaitUntil(() => !IsSharing(), WaitTimeoutMs)) throw new ZoomActionError("share-not-stopped");
             return Changed(true);
+        }
+
+        // --- Setup assistant -------------------------------------------------------------
+
+        /// <summary>Whether everything the Zoom Meeting Manager relies on can be
+        /// found in this Zoom, for the setup assistant to report.</summary>
+        public static Dictionary<string, object> Diagnose()
+        {
+            var result = new Dictionary<string, object>();
+            var window = FindMeetingWindow();
+            result["meeting"] = window != null;
+            if (window == null) return result;
+
+            List<El> toolbar = null;
+            try
+            {
+                ControlPanel(window);
+                toolbar = ToolbarButtons(window);
+            }
+            catch (ZoomActionError) { }
+            result["toolbar"] = toolbar != null && toolbar.Count > 0;
+            if (toolbar == null || toolbar.Count == 0) return result;
+
+            var joined = AnyHotkey.IsMatch(toolbar[0].Name);
+            result["audioJoined"] = joined;
+            // Only knowable while joined: "Join audio" has no shortcut at all.
+            result["audioShortcutDefault"] = joined ? (object)HasHotkey(toolbar[0].Name, HotkeyAudio) : null;
+            var video = VideoButton(window);
+            result["videoButton"] = video != null;
+            result["videoShortcutDefault"] = video != null && HasHotkey(video.Name, HotkeyVideo);
+            result["videoTitle"] = video == null ? null : FirstSegment(video.Name);
+
+            El muteAll = null;
+            try
+            {
+                muteAll = OpenParticipantsPanel(window);
+            }
+            catch (ZoomActionError) { }
+            result["participantsPanel"] = muteAll != null || Uia.Descendants(window, Uia.ListType).Count > 0;
+            // Only the host and co-hosts can mute everyone.
+            result["hostControls"] = muteAll != null;
+            return result;
+        }
+
+        /// <summary>Switches the host's camera once and reports the camera
+        /// button's name before and after, so the setup assistant can learn
+        /// both names (they're only shown in the user's Zoom language).</summary>
+        public static Dictionary<string, object> ToggleVideo()
+        {
+            var window = RequireMeetingWindow();
+            ControlPanel(window);
+            var button = VideoButton(window);
+            if (button == null) throw new ZoomActionError("video-button-not-found");
+            var before = FirstSegment(button.Name);
+            Focus(window);
+            Press(button);
+            string after = null;
+            var changed = WaitUntil(() =>
+            {
+                var latest = VideoButton(window);
+                after = latest == null ? null : FirstSegment(latest.Name);
+                return after != null && after != before;
+            }, WaitTimeoutMs);
+            if (!changed) throw new ZoomActionError("video-not-changed");
+            return new Dictionary<string, object> { { "after", after }, { "before", before } };
+        }
+
+        /// <summary>Opens Zoom's share picker the way sharing would, checks that
+        /// the window to share is offered and that sharing would select it,
+        /// and closes it without sharing.</summary>
+        public static Dictionary<string, object> TestSharePicker(string windowTitle, string shareTitle)
+        {
+            if (IsSharing()) throw new ZoomActionError("already-sharing");
+            var window = RequireMeetingWindow();
+            try
+            {
+                OpenSharePicker(window, shareTitle);
+            }
+            catch (ZoomActionError)
+            {
+                return new Dictionary<string, object> { { "opened", false }, { "windowListed", false } };
+            }
+            var picker = WaitForWindow(SharePickerClass, 5000);
+            if (picker == null)
+            {
+                return new Dictionary<string, object> { { "opened", false }, { "windowListed", false } };
+            }
+            var problem = SelectShareWindow(picker, windowTitle);
+            CloseSharePicker(picker);
+            return new Dictionary<string, object>
+            {
+                { "opened", true },
+                { "windowListed", problem != "window-to-share-not-found" },
+                { "windowSelected", problem == null },
+            };
         }
 
         // --- Requests ------------------------------------------------------------------
@@ -1005,6 +1439,11 @@ namespace M3.ZoomHelper
                 case "start-share":
                     return StartShare(GetString(request, "windowTitle") ?? "", GetString(request, "shareButtonTitle"));
                 case "stop-share": return StopShare();
+                case "diagnose":
+                    return new Dictionary<string, object> { { "diagnosis", Diagnose() } };
+                case "toggle-video": return ToggleVideo();
+                case "test-share-picker":
+                    return TestSharePicker(GetString(request, "windowTitle") ?? "", GetString(request, "shareButtonTitle"));
                 default: throw new ZoomActionError("unknown-command");
             }
         }

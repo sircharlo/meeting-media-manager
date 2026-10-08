@@ -7,6 +7,7 @@
     <NavDrawer v-model="miniState" />
 
     <DialogCongregationSwitcher />
+    <DialogZoomSetupAssistant v-model="zoomSetupAssistantOpen" />
 
     <!-- Main content -->
     <q-page-container class="app-main-scroll main-bg">
@@ -82,6 +83,7 @@ import type {
 
 import {
   useBroadcastChannel,
+  useEventListener,
   useIntervalFn,
   watchDebounced,
   watchImmediate,
@@ -90,6 +92,7 @@ import {
 import { queues } from 'boot/globals';
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import DialogCongregationSwitcher from 'components/dialog/DialogCongregationSwitcher.vue';
+import DialogZoomSetupAssistant from 'components/dialog/DialogZoomSetupAssistant.vue';
 import HeaderBase from 'components/header/HeaderBase.vue';
 import MediaPreview from 'components/media/MediaPreview.vue';
 import ActionIsland from 'components/ui/ActionIsland.vue';
@@ -331,6 +334,13 @@ const getMacosFolderPermissionTargets = () => {
 };
 
 const macosPermissionPromptOpen = ref(false);
+
+// Opened from Settings, the Zoom popup, or by turning the Zoom Meeting
+// Manager on (see the openZoomSetupAssistant settings actions).
+const zoomSetupAssistantOpen = ref(false);
+useEventListener(globalThis, 'openZoomSetupAssistant', () => {
+  zoomSetupAssistantOpen.value = true;
+});
 const macosPermissionPromptTarget = ref<MacosFolderPermissionTarget | null>(
   null,
 );

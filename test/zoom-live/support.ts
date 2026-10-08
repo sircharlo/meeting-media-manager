@@ -1,5 +1,6 @@
 import { type ChildProcess, spawn } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { request } from 'node:http';
 import { join } from 'node:path';
 import { ZoomHelperProcess } from 'src-electron/main/zoom-helper-process';
 
@@ -70,9 +71,63 @@ export const ensureMeeting = async (helper: ZoomHelperProcess) => {
   }
 };
 
-/** Opens the stand-in "Media Player - M³" window for the share steps. */
-export const openFakeMediaWindow = (): ChildProcess =>
-  spawn(
+/**
+ * Calls the participants script's control server. Through node:http, not
+ * fetch: the tests run in happy-dom, whose fetch adds the Origin header the
+ * server turns away (so that no web page can drive the participants).
+ */
+export const callParticipants = <T>(
+  port: number,
+  path: string,
+  body?: unknown,
+): Promise<T> =>
+  new Promise((resolve, reject) => {
+    const payload = body === undefined ? undefined : JSON.stringify(body);
+    const req = request(
+      {
+        headers: payload ? { 'Content-Type': 'application/json' } : {},
+        host: '127.0.0.1',
+        method: payload ? 'POST' : 'GET',
+        path,
+        port,
+      },
+      (res) => {
+        let data = '';
+        res.setEncoding('utf8');
+        res.on('data', (chunk: string) => (data += chunk));
+        res.on('end', () => {
+          if ((res.statusCode ?? 500) >= 400) {
+            reject(new Error(`${path}: HTTP ${res.statusCode} ${data}`));
+            return;
+          }
+          try {
+            resolve(JSON.parse(data) as T);
+          } catch (error) {
+            reject(error as Error);
+          }
+        });
+      },
+    );
+    req.on('error', reject);
+    req.end(payload);
+  });
+
+/**
+ * Opens the stand-in "Media Player - M³" window for the share steps, or,
+ * with a title, a decoy window to crowd Zoom's share picker (or, always on
+ * top, to cover it).
+ */
+export const openFakeMediaWindow = (decoy?: {
+  title: string;
+  topMost?: boolean;
+  x: number;
+  y: number;
+}): ChildProcess => {
+  const decoyArgs = decoy
+    ? ['-Title', decoy.title, '-X', String(decoy.x), '-Y', String(decoy.y)]
+    : [];
+  if (decoy?.topMost) decoyArgs.push('-TopMost');
+  return spawn(
     'powershell.exe',
     [
       '-NoProfile',
@@ -80,9 +135,11 @@ export const openFakeMediaWindow = (): ChildProcess =>
       'Bypass',
       '-File',
       'scripts/zoom-live/fake-media-window.ps1',
+      ...decoyArgs,
     ],
     { cwd: ROOT },
   );
+};
 
 /** Turns the host's video on or off, using the titles from .env.zoom-test. */
 export const videoCommand = (on: boolean) => ({

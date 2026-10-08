@@ -67,7 +67,7 @@ const createHelper = (
 
 const startReady = async (helper: ZoomHelperProcess) => {
   const started = helper.start();
-  await vi.waitFor(() => expect(fakes.length).toBe(1));
+  await vi.waitFor(() => expect(fakes).toHaveLength(1));
   fakes[0]?.reply({ ready: true, version: 1 });
   return started;
 };
@@ -101,7 +101,7 @@ describe('ZoomHelperProcess', () => {
   it('reports why the helper could not start', async () => {
     const { helper } = createHelper();
     const started = helper.start();
-    await vi.waitFor(() => expect(fakes.length).toBe(1));
+    await vi.waitFor(() => expect(fakes).toHaveLength(1));
     fakes[0]?.reply({
       detail: 'ConstrainedLanguage',
       error: 'powershell-restricted',
@@ -119,7 +119,7 @@ describe('ZoomHelperProcess', () => {
   it('reports a missing PowerShell', async () => {
     const { helper } = createHelper();
     const started = helper.start();
-    await vi.waitFor(() => expect(fakes.length).toBe(1));
+    await vi.waitFor(() => expect(fakes).toHaveLength(1));
     fakes[0]?.emit('error', new Error('spawn powershell.exe ENOENT'));
 
     expect(await started).toMatchObject({
@@ -214,7 +214,7 @@ describe('ZoomHelperProcess', () => {
     const onLog = vi.fn();
     const { helper } = createHelper({ onLog, requestTimeoutMs: 5000 });
     const started = helper.start();
-    await vi.waitFor(() => expect(fakes.length).toBe(1));
+    await vi.waitFor(() => expect(fakes).toHaveLength(1));
     fakes[0]?.reply({ ready: true });
     await started;
 
@@ -228,7 +228,7 @@ describe('ZoomHelperProcess', () => {
 
     // The next command starts a fresh helper.
     const next = helper.request({ type: 'meeting' });
-    await vi.waitFor(() => expect(fakes.length).toBe(2));
+    await vi.waitFor(() => expect(fakes).toHaveLength(2));
     fakes[1]?.reply({ ready: true });
     await fakes[1]?.replyToLast({
       meeting: { found: true, sharing: false },
@@ -250,7 +250,7 @@ describe('ZoomHelperProcess', () => {
     expect(onExit).toHaveBeenCalledWith(3);
 
     const next = helper.request({ type: 'meeting' });
-    await vi.waitFor(() => expect(fakes.length).toBe(2));
+    await vi.waitFor(() => expect(fakes).toHaveLength(2));
     fakes[1]?.reply({ ready: true });
     await fakes[1]?.replyToLast({
       meeting: { found: false, sharing: false },
@@ -262,7 +262,7 @@ describe('ZoomHelperProcess', () => {
   it('returns the start failure to commands when the helper cannot start', async () => {
     const { helper } = createHelper();
     const result = helper.request({ type: 'meeting' });
-    await vi.waitFor(() => expect(fakes.length).toBe(1));
+    await vi.waitFor(() => expect(fakes).toHaveLength(1));
     fakes[0]?.reply({ error: 'helper-not-compiled', ready: false });
 
     expect(await result).toEqual({ error: 'helper-not-compiled', ok: false });
@@ -299,7 +299,7 @@ describe('ZoomHelperProcess', () => {
     const { helper, spawn } = createHelper();
     const first = helper.start();
     const second = helper.start();
-    await vi.waitFor(() => expect(fakes.length).toBe(1));
+    await vi.waitFor(() => expect(fakes).toHaveLength(1));
     fakes[0]?.reply({ ready: true });
 
     expect(await Promise.all([first, second])).toEqual([
@@ -314,6 +314,15 @@ describe('isZoomCommand', () => {
   it('accepts known commands and rejects anything else', () => {
     expect(isZoomCommand({ type: 'meeting' })).toBe(true);
     expect(isZoomCommand({ echo: 'x', type: 'ping' })).toBe(true);
+    expect(isZoomCommand({ type: 'diagnose' })).toBe(true);
+    expect(isZoomCommand({ type: 'toggle-video' })).toBe(true);
+    expect(
+      isZoomCommand({
+        shareButtonTitle: null,
+        type: 'test-share-picker',
+        windowTitle: 'Media Player - M³',
+      }),
+    ).toBe(true);
     expect(isZoomCommand({ allowSelfUnmute: true, type: 'mute-all' })).toBe(
       true,
     );

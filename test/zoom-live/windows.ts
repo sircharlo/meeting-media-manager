@@ -140,3 +140,40 @@ export const findWindowByTitle = (prefix: string) =>
       `$w = Get-Process | Where-Object { $_.MainWindowTitle.StartsWith('${prefix.replaceAll("'", "''")}') } | Select-Object -First 1; if ($w) { $w.MainWindowHandle.ToInt64() } else { 0 }`,
     ),
   );
+
+const ENUM_WINDOWS = `Add-Type -TypeDefinition '
+using System; using System.Text; using System.Collections.Generic; using System.Runtime.InteropServices;
+public static class M3Enum {
+  [StructLayout(LayoutKind.Sequential)] public struct RECT { public int L; public int T; public int R; public int B; }
+  public delegate bool Proc(IntPtr h, IntPtr l);
+  [DllImport("user32.dll")] static extern bool EnumWindows(Proc p, IntPtr l);
+  [DllImport("user32.dll")] static extern bool IsWindowVisible(IntPtr h);
+  [DllImport("user32.dll", CharSet = CharSet.Unicode)] static extern int GetClassName(IntPtr h, StringBuilder b, int m);
+  [DllImport("user32.dll")] static extern bool GetWindowRect(IntPtr h, out RECT r);
+  public static string[] Find(string cls) {
+    var found = new List<string>();
+    EnumWindows((h, l) => {
+      var name = new StringBuilder(256);
+      GetClassName(h, name, 256);
+      RECT r;
+      if (IsWindowVisible(h) && name.ToString() == cls && GetWindowRect(h, out r)) found.Add(r.L + "," + r.T + "," + r.R + "," + r.B);
+      return true;
+    }, IntPtr.Zero);
+    return found.ToArray();
+  }
+}'`;
+
+/** The positions of the visible top-level windows of a class, in physical pixels. */
+export const getVisibleWindowRects = (className: string) =>
+  run(`${ENUM_WINDOWS}; [M3Enum]::Find('${className.replaceAll("'", "''")}')`)
+    .split(/\r?\n/)
+    .filter(Boolean)
+    .map((line) => {
+      const [x, y, right, bottom] = line.split(',').map(Number);
+      return {
+        height: (bottom ?? 0) - (y ?? 0),
+        width: (right ?? 0) - (x ?? 0),
+        x: x ?? 0,
+        y: y ?? 0,
+      };
+    });

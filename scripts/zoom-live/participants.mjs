@@ -22,6 +22,7 @@
 //   POST /action          -> { action, index? } - see ACTIONS
 //   POST /quit            -> every participant leaves, then the script exits
 
+import { createHash } from 'node:crypto';
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
@@ -377,6 +378,13 @@ const shutdown = async () => {
 };
 
 const server = createServer(async (req, res) => {
+  // Browsers mark requests from web pages with an Origin header; M³ and the
+  // live tests (through node:http) don't send one. No web page gets to drive
+  // the participants.
+  if (req.headers.origin) {
+    sendJson(res, 403, { error: 'forbidden' });
+    return;
+  }
   try {
     const url = new URL(req.url, 'http://127.0.0.1');
     if (req.method === 'GET' && url.pathname === '/state') {
@@ -408,7 +416,9 @@ const server = createServer(async (req, res) => {
     }
     sendJson(res, 404, { error: 'Not found' });
   } catch (error) {
-    sendJson(res, 500, { error: String(error) });
+    // Details stay in this terminal rather than going back to the caller.
+    log('Request failed:', error);
+    sendJson(res, 500, { error: 'internal-error' });
   }
 });
 
@@ -417,7 +427,13 @@ server.listen(0, '127.0.0.1', () => {
   mkdirSync(join(SESSION_FILE, '..'), { recursive: true });
   writeFileSync(
     SESSION_FILE,
-    JSON.stringify({ count, meetingId, pid: process.pid, port }),
+    JSON.stringify({
+      count,
+      // Identifies the meeting without writing its ID to a temp file.
+      meeting: createHash('sha256').update(meetingId).digest('hex'),
+      pid: process.pid,
+      port,
+    }),
   );
   console.log(`ZOOM_PARTICIPANTS_PORT=${port}`);
 });
@@ -435,4 +451,4 @@ for (const [index, participant] of participants.entries()) {
   await joinParticipant(participant, index);
   if (index < count - 1) await sleep(JOIN_STAGGER_MS);
 }
-log(`${count} participant(s) launched for meeting ${meetingId}`);
+log(`${count} participant(s) launched for the test meeting`);

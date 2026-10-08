@@ -29,6 +29,7 @@ vi.mock('src/helpers/zoom', () => ({
     videoOffTitle: null,
     videoOnTitle: null,
   }),
+  isZoomSetupNeeded: () => false,
   runZoomMeetingSequence: meetingSequenceMock,
   runZoomPostMeetingSequence: postMeetingSequenceMock,
 }));

@@ -1,6 +1,7 @@
 import type { ChildProcess } from 'node:child_process';
 import type { ZoomMeetingState } from 'src/types';
 
+import { MEDIA_WINDOW_TITLE } from 'src/constants/zoom';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import {
@@ -19,6 +20,7 @@ import {
   getCursor,
   getForegroundWindow,
   getScreens,
+  getVisibleWindowRects,
   getWindowRect,
   isMinimized,
   minimizeWindow,
@@ -152,6 +154,85 @@ describe.skipIf(!canRunLive)('Zoom helper, live edge cases', () => {
     await helper.request({ reveal: true, type: 'meeting' });
 
     expect(await toolbarAutoHides(), 'the toolbar still auto-hides').toBe(true);
+  });
+
+  it('offers Share candidates from the toolbar and its "More" menu apart', async () => {
+    const result = await helper.request({ type: 'share-entries' });
+    expect(result.ok).toBe(true);
+    const toolbar = result.entries ?? [];
+    const more = result.moreEntries ?? [];
+    print(`    toolbar: ${toolbar.join(' | ')}`);
+    print(`    more: ${more.join(' | ')}`);
+
+    expect(toolbar.length).toBeGreaterThan(0);
+    expect(toolbar.filter((entry) => more.includes(entry))).toEqual([]);
+    if (titles.shareButtonTitle) {
+      expect([...toolbar, ...more]).toContain(titles.shareButtonTitle);
+    }
+    expect((await meeting()).sharing).toBe(false);
+  });
+
+  it('shares the media window wherever Zoom lists it, even out of sight or covered', async () => {
+    // Zoom's share picker lists the most recently used windows first: nine
+    // newer windows push the media window below what it shows without
+    // scrolling, where a click at its listed position lands elsewhere. They
+    // sit beside the media window, so it stays visible to share. An
+    // always-on-top window (like M³'s media window on a single screen)
+    // covers the middle of the screen, where Zoom opens its share picker.
+    const [screen] = getScreens();
+    const decoys = [
+      ...Array.from({ length: 9 }, (_, i) =>
+        openFakeMediaWindow({
+          title: `Decoy window ${i + 1}`,
+          x: 760 + i * 25,
+          y: 60 + i * 25,
+        }),
+      ),
+      openFakeMediaWindow({
+        title: 'Always-on-top decoy',
+        topMost: true,
+        x: Math.max(700, (screen?.x ?? 0) + (screen?.width ?? 1920) / 2 - 320),
+        y: (screen?.y ?? 0) + (screen?.height ?? 1080) / 2 - 180,
+      }),
+    ];
+    try {
+      await sleep(5000);
+      focusWindow(findWindowByTitle('Media Player - M'));
+      for (let i = 1; i <= 9; i++) {
+        focusWindow(findWindowByTitle(`Decoy window ${i}`));
+      }
+
+      expect(
+        await helper.request({
+          shareButtonTitle: titles.shareButtonTitle,
+          type: 'start-share',
+          windowTitle: MEDIA_WINDOW_TITLE,
+        }),
+      ).toEqual({ changed: true, ok: true });
+
+      // Checked apart from the helper: Zoom lays its annotation layer over
+      // whatever it shares.
+      const media = getWindowRect(findWindowByTitle('Media Player - M'));
+      let layers: ReturnType<typeof getVisibleWindowRects> = [];
+      for (let i = 0; i < 10 && !layers.some((l) => l.width > 50); i++) {
+        await sleep(500);
+        layers = getVisibleWindowRects('ZoomAnnoWindowWndClass');
+      }
+      const overMedia = layers.some(
+        (layer) =>
+          Math.abs(layer.x - media.x) < 20 &&
+          Math.abs(layer.y - media.y) < 20 &&
+          Math.abs(layer.width - media.width) < 30 &&
+          Math.abs(layer.height - media.height) < 30,
+      );
+      expect(
+        overMedia,
+        `shared ${JSON.stringify(layers)}, media ${JSON.stringify(media)}`,
+      ).toBe(true);
+    } finally {
+      await helper.request({ type: 'stop-share' });
+      decoys.forEach((decoy) => decoy.kill());
+    }
   });
 
   it('puts the mouse and the focused window back after acting', async () => {

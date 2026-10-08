@@ -197,3 +197,22 @@ describe('Zoom meeting auto-launch', () => {
     expect(launchZoomMeetingMock).not.toHaveBeenCalled();
   });
 });
+
+describe('Zoom setup assistant', () => {
+  it('is only needed once the Manager is on and the camera button is unknown', async () => {
+    const { isZoomSetupNeeded } = await import('../zoom');
+
+    currentSettings.zoomMeetingManagerEnable = true;
+    currentSettings.zoomVideoOnTitle = null;
+    expect(isZoomSetupNeeded()).toBe(true);
+
+    currentSettings.zoomVideoOnTitle = 'Stop Video';
+    currentSettings.zoomVideoOffTitle = 'Start Video';
+    expect(isZoomSetupNeeded()).toBe(false);
+
+    currentSettings.zoomMeetingManagerEnable = false;
+    currentSettings.zoomVideoOnTitle = null;
+    expect(isZoomSetupNeeded()).toBe(false);
+    currentSettings.zoomMeetingManagerEnable = true;
+  });
+});

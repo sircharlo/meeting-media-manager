@@ -16,6 +16,7 @@ import {
   setZoomHostVideo,
   startSharingMediaInZoom,
   stopSharingMediaInZoom,
+  withoutZoomNotifications,
   type ZoomTitles,
 } from 'src/helpers/zoom';
 
@@ -52,6 +53,8 @@ export interface ZoomSelfTestOptions {
    */
   prepareMediaWindow?: () => Promise<() => Promise<void> | void>;
   signal?: AbortSignal;
+  /** Only these steps (in the usual order); all of them by default. */
+  steps?: readonly ZoomSelfTestStepId[];
   timeouts?: Partial<typeof DEFAULT_TIMEOUTS>;
   titles: ZoomTitles;
 }
@@ -117,16 +120,21 @@ const expectOk = (result: ZoomCommandResult, what: string) => {
   return result;
 };
 
-export const runZoomSelfTest = async (
+/** Runs the self-test; it reports each step itself, without notifications. */
+export const runZoomSelfTest = (
+  options: ZoomSelfTestOptions,
+): Promise<ZoomSelfTestStep[]> =>
+  withoutZoomNotifications(() => runSteps(options));
+
+const runSteps = async (
   options: ZoomSelfTestOptions,
 ): Promise<ZoomSelfTestStep[]> => {
   const { onProgress, participants, prepareMediaWindow, signal, titles } =
     options;
   const timeouts = { ...DEFAULT_TIMEOUTS, ...options.timeouts };
-  const steps: ZoomSelfTestStep[] = ZOOM_SELF_TEST_STEPS.map((id) => ({
-    id,
-    status: 'pending',
-  }));
+  const steps: ZoomSelfTestStep[] = ZOOM_SELF_TEST_STEPS.filter(
+    (id) => !options.steps || options.steps.includes(id),
+  ).map((id) => ({ id, status: 'pending' }));
   const report = () => onProgress?.(steps.map((step) => ({ ...step })));
 
   const waitFor = async <T>(

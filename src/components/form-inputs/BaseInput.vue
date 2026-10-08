@@ -84,7 +84,7 @@
     v-else-if="item.type === 'button'"
     color="primary"
     :disable="disable"
-    :label="model || t('click-to-set')"
+    :label="item.buttonLabel ? t(item.buttonLabel) : model || t('click-to-set')"
     outline
     @click="performActions(item.actions)"
   />

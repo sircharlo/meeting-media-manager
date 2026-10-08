@@ -5,6 +5,7 @@ import type {
 } from 'src/types';
 
 import { app } from 'electron';
+import { existsSync } from 'node:fs';
 import { IS_DEV, PLATFORM } from 'src-electron/constants';
 import { logToWindow } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
@@ -53,6 +54,11 @@ const getHelper = () => {
 };
 
 const WINDOWS_ONLY = { error: 'windows-only', ok: false } as const;
+// The helper's files didn't ship with this build (or were removed, e.g. by
+// an antivirus), which PowerShell would only report as a failed start.
+const HELPER_MISSING = { error: 'helper-missing', ok: false } as const;
+
+const isHelperMissing = () => !existsSync(getZoomHelperScriptPath());
 
 export async function restartZoomHelper(): Promise<ZoomHelperStartResult> {
   stopZoomHelper();
@@ -60,16 +66,19 @@ export async function restartZoomHelper(): Promise<ZoomHelperStartResult> {
 }
 
 /** Runs one Zoom action, starting the helper first if needed. */
-export async function runZoomHelperCommand(
+export function runZoomHelperCommand(
   command: ZoomCommand,
 ): Promise<ZoomCommandResult> {
-  if (PLATFORM !== 'win32') return WINDOWS_ONLY;
+  if (PLATFORM !== 'win32') return Promise.resolve(WINDOWS_ONLY);
+  if (isHelperMissing()) return Promise.resolve(HELPER_MISSING);
   return getHelper().request(command);
 }
 
 export async function startZoomHelper(): Promise<ZoomHelperStartResult> {
   if (PLATFORM !== 'win32') return WINDOWS_ONLY;
-  const result = await getHelper().start();
+  const result: ZoomHelperStartResult = isHelperMissing()
+    ? HELPER_MISSING
+    : await getHelper().start();
   if (!result.ok) {
     logToWindow(
       mainWindowInfo.mainWindow,

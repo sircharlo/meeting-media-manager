@@ -22,6 +22,7 @@ import { createInterface } from 'node:readline';
 const COMMAND_TYPES = new Set<ZoomCommandType>([
   'admit',
   'ask-all-to-unmute',
+  'diagnose',
   'join-audio',
   'leave-audio',
   'meeting',
@@ -32,6 +33,8 @@ const COMMAND_TYPES = new Set<ZoomCommandType>([
   'share-entries',
   'start-share',
   'stop-share',
+  'test-share-picker',
+  'toggle-video',
   'video-title',
 ]);
 

@@ -2,6 +2,7 @@ import type { ZoomTestParticipant } from 'src/types';
 
 import { i18n } from 'boot/i18n';
 import { type ChildProcess, spawn } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -14,6 +15,7 @@ import {
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import {
+  callParticipants,
   canRunLive,
   createHelper,
   ensureMeeting,
@@ -61,18 +63,12 @@ const printProgress = (steps: ZoomSelfTestStep[]) => {
 };
 
 const participantsApi = (port: number) => {
-  const call = async (path: string, body?: unknown) => {
-    const response = await fetch(`http://127.0.0.1:${port}${path}`, {
-      ...(body === undefined
-        ? {}
-        : {
-            body: JSON.stringify(body),
-            headers: { 'Content-Type': 'application/json' },
-            method: 'POST',
-          }),
-    });
-    return (await response.json()) as { participants?: ZoomTestParticipant[] };
-  };
+  const call = (path: string, body?: unknown) =>
+    callParticipants<{ participants?: ZoomTestParticipant[] }>(
+      port,
+      path,
+      body,
+    );
   const probe: ZoomTestParticipantsProbe = {
     act: async (action) => {
       await call('/action', { action });
@@ -86,10 +82,11 @@ const participantsApi = (port: number) => {
 const findRunningSession = async () => {
   try {
     const session = JSON.parse(readFileSync(SESSION_FILE, 'utf8')) as {
-      meetingId: string;
+      meeting: string;
       port: number;
     };
-    if (session.meetingId !== meetingId) return null;
+    const meetingHash = createHash('sha256').update(meetingId).digest('hex');
+    if (session.meeting !== meetingHash) return null;
     const api = participantsApi(session.port);
     const list = await api.probe.list();
     return list.some((p) => p.phase !== 'left' && p.phase !== 'blocked')

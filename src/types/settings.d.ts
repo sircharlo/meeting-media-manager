@@ -132,6 +132,8 @@ export type SettingsGroups = Record<SettingsGroupKey, SettingsGroup>;
 export interface SettingsItem {
   actions?: SettingsItemAction[];
   beta?: boolean;
+  /** i18n key of an action button's label (otherwise its value is shown). */
+  buttonLabel?: keyof MessageSchema;
   depends?: (keyof SettingsValues)[] | keyof SettingsValues;
   disableWhen?: (keyof SettingsValues)[] | keyof SettingsValues;
   group: SettingsGroupKey;
@@ -153,6 +155,8 @@ export interface SettingsItem {
 export type SettingsItemAction =
   | 'obsConnect'
   | 'openCongregationLookup'
+  | 'openZoomSetupAssistant'
+  | 'openZoomSetupAssistantIfNeeded'
   | 'setBackgroundMusicVolume'
   | 'syncMeetingSchedule'
   | 'zoomCaptureShareButtonTitle'
@@ -344,6 +348,8 @@ export interface SettingsValues {
   zoomMeetingManagerAutomatePostMeetingAudioSettings: boolean;
   zoomMeetingManagerEnable: boolean;
   zoomMeetingManagerMeetingId: null | string;
+  /** No value: the setting is the button opening the setup assistant. */
+  zoomMeetingManagerSetupAssistant: null;
   zoomScreenShareShortcut: null | string;
   zoomShareButtonTitle: null | string;
   zoomVideoOffTitle: null | string;
