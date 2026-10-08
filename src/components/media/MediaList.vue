@@ -236,6 +236,7 @@ const { addDivider, deleteDivider, updateDividerColors, updateDividerTitle } =
 // Use the drag and drop composable - pass the reactive sectionData items directly
 const { dragDropContainer, isDragging, sortableItems } = useMediaDragAndDrop(
   sectionData.value?.items || [],
+  { getSelectedIds: () => props.selectedMediaItems },
 );
 
 /**

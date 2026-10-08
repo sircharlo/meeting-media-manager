@@ -1,6 +1,12 @@
 import type { MediaItem } from 'src/types';
 
-import { animations, isDragState, state } from '@formkit/drag-and-drop';
+import {
+  animations,
+  isDragState,
+  type NodeRecord,
+  type ParentRecord,
+  state,
+} from '@formkit/drag-and-drop';
 import { useDragAndDrop } from '@formkit/drag-and-drop/vue';
 import { onScopeDispose, ref, watch } from 'vue';
 
@@ -12,6 +18,10 @@ interface UseMediaDragAndDropOptions {
   // match its children's handles, and dragging a child would move the
   // whole group again (the exact bug the handle split was meant to fix).
   dragHandle?: string;
+  // Returns the uniqueIds of the media items currently selected (highlighted)
+  // in the calendar. When given, dragging a selected item carries every other
+  // highlighted item of the same list along with it - see getDraggedNodes.
+  getSelectedIds?: () => readonly string[] | undefined;
   // Cross-container group name - containers sharing the same name can drag
   // items between each other. Defaults to the shared top-level group name
   // so sections can still exchange items as before. A group's children list
@@ -52,13 +62,60 @@ export function useMediaDragAndDrop(
 ) {
   const {
     dragHandle = '.section-drag-handle',
+    getSelectedIds,
     group = 'mediaList',
     multiDrag = true,
   } = options;
 
+  // Which items a drag carries. formkit's default takes them from its own
+  // selection, which it builds only from the ctrl/shift pointerdowns it sees
+  // within one list - but what the user sees highlighted is the calendar's
+  // own selection (selectedMediaItems), which can also come from the
+  // keyboard (Ctrl+A, Shift+arrows) or a Shift-click range spanning
+  // sections, and the two drift apart easily (a plain click on an item
+  // formkit already has selected even clears formkit's selection outright).
+  // So derive the dragged set from the calendar's selection instead: just
+  // the pressed item if it isn't selected, otherwise every highlighted item
+  // of this same list, in list order. Hidden items and dividers can land in
+  // a Shift-click range without ever being highlighted, so they stay put,
+  // as do selected items in other lists - one drag only moves one list's
+  // items.
+  const getDraggedNodes = ({
+    node,
+    parent,
+  }: {
+    node: NodeRecord<MediaItem>;
+    parent: ParentRecord<MediaItem>;
+  }) => {
+    const selectedIds = getSelectedIds?.();
+    if (!selectedIds?.includes(node.data.value.uniqueId)) return [node];
+
+    return parent.data.enabledNodes.filter(
+      ({ data: { value }, el }) =>
+        el === node.el ||
+        (!value.hidden &&
+          value.type !== 'divider' &&
+          selectedIds.includes(value.uniqueId)),
+    );
+  };
+
   const [dragDropContainer, reactiveItems] = useDragAndDrop<MediaItem>(items, {
+    draggedNodes: getDraggedNodes,
     dragHandle,
     group,
+    // formkit's default blur handler, which it registers in the capture
+    // phase on every sortable node, resets the pressed node's `draggable`
+    // to `!dragHandle` - i.e. false, since we always use a handle -
+    // whenever anything inside ANY node loses focus. Quasar's clickable
+    // QItem moves focus into its own .q-focus-helper child on every click,
+    // so once an item has been clicked (which is exactly how a ctrl/shift
+    // multi-selection gets built), the next drag's mousedown blurs that
+    // helper and turns off the `draggable` formkit had just turned on in
+    // its pointerdown handler, so Chromium never starts the drag and
+    // nothing moves. With a drag handle, `draggable` is only ever enabled
+    // during a validated pointerdown and reset on pointerup anyway, so the
+    // blur "restore" has nothing legitimate left to do.
+    handleNodeBlur: () => undefined,
     multiDrag,
     plugins: [animations()],
     // Don't use a selected class since we're handling selection independently with click events
