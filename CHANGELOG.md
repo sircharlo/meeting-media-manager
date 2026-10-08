@@ -22,7 +22,8 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🔧 Chores
 
-- 🔧 **Error Reporting**: A watched folder or media auto-export folder on a cloud-synced or network drive (Google Drive, OneDrive, Nextcloud, a mapped drive, etc.) that briefly can't be read mid-sync is no longer reported as an error, and neither is a brief outage on GitHub's side while checking for updates.
+- 🔧 **Error Reporting**: A watched folder on a cloud-synced or network drive (Google Drive, OneDrive, a mapped drive, etc.) that briefly can't be read mid-sync is no longer reported as an error, and neither is a brief outage on GitHub's side while checking for updates.
+- 🔧 **Error Reporting**: A video or song that M³ reads before it has finished downloading or copying (so the file is still incomplete) is no longer reported as an error, as was already the case before a recent update to the library M³ uses to read media details.
 
 ## v26.10.0
 
