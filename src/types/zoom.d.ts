@@ -4,6 +4,7 @@
  */
 export type ZoomCommand =
   | { allowSelfUnmute: boolean; type: 'mute-all' }
+  | { echo?: string; type: 'ping' }
   | { names: string[]; type: 'admit' }
   | {
       offTitle: null | string;
@@ -11,6 +12,7 @@ export type ZoomCommand =
       onTitle: null | string;
       type: 'set-video';
     }
+  | { reveal?: boolean; type: 'meeting' }
   | {
       shareButtonTitle: null | string;
       type: 'start-share';
@@ -18,8 +20,12 @@ export type ZoomCommand =
     }
   | { type: 'ask-all-to-unmute' }
   | { type: 'join-audio' }
+  /**
+   * `reveal` brings Zoom's auto-hidden toolbar back (moving the mouse over
+   * the meeting) to read the audio and video states; without it, nothing
+   * on screen changes.
+   */
   | { type: 'leave-audio' }
-  | { type: 'meeting' }
   | { type: 'participants' }
   | { type: 'share-entries' }
   | { type: 'stop-share' }
@@ -29,6 +35,8 @@ export interface ZoomCommandResult {
   admitted?: string[];
   /** Whether the action changed anything (false: already in that state). */
   changed?: boolean;
+  /** The `ping` command's echo, to check the helper's text encoding. */
+  echo?: null | string;
   /** Share entry candidates from the toolbar and its "More" menu. */
   entries?: string[];
   /** A short machine-readable reason, e.g. `meeting-not-found`. */
@@ -37,17 +45,33 @@ export interface ZoomCommandResult {
   ok: boolean;
   participants?: ZoomParticipantRow[];
   title?: null | string;
+  version?: number;
 }
 
 export type ZoomCommandType = ZoomCommand['type'];
 
+export interface ZoomHelperStartResult {
+  /** Technical detail for logs, e.g. a compiler error. */
+  detail?: string;
+  /**
+   * Why the helper couldn't start: `windows-only`, `powershell-not-found`,
+   * `powershell-restricted`, `helper-not-compiled`, `helper-start-timeout`,
+   * `helper-exited`.
+   */
+  error?: string;
+  ok: boolean;
+}
+
 export interface ZoomMeetingState {
-  audioJoined?: boolean;
+  /** Unknown (null) while Zoom has its toolbar hidden. */
+  audioJoined?: boolean | null;
   found: boolean;
   handle?: number;
   participantsPanelOpen?: boolean;
   sharing: boolean;
   title?: string;
+  /** Zoom hides its toolbar a few seconds after the mouse leaves it. */
+  toolbarVisible?: boolean;
   /** The video button's name, in the user's Zoom language. */
   videoTitle?: null | string;
 }

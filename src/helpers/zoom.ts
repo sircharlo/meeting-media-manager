@@ -79,11 +79,17 @@ const notifyFailure = (group: string, messageKey: string) => {
   });
 };
 
-export const getZoomMeetingState =
-  async (): Promise<null | ZoomMeetingState> => {
-    const result = await runCommand({ type: 'meeting' });
-    return result.ok ? (result.meeting ?? null) : null;
-  };
+/**
+ * The Zoom meeting's state. With `reveal`, Zoom's auto-hidden toolbar is
+ * brought back (moving the mouse over the meeting) so the audio and video
+ * states can be read; without it, nothing on screen changes.
+ */
+export const getZoomMeetingState = async (
+  reveal = false,
+): Promise<null | ZoomMeetingState> => {
+  const result = await runCommand({ reveal, type: 'meeting' });
+  return result.ok ? (result.meeting ?? null) : null;
+};
 
 // --- Individual steps ------------------------------------------------------
 

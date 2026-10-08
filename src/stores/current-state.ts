@@ -17,6 +17,7 @@ import { defineStore } from 'pinia';
 import { i18n } from 'src/boot/i18n';
 import { LONG_MEDIA_DURATION } from 'src/constants/jw';
 import { settingsDefinitions } from 'src/constants/settings';
+import { getZoomHelperErrorMessageKey } from 'src/constants/zoom';
 import { isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getRendererPlatform } from 'src/helpers/fs';
@@ -371,72 +372,27 @@ export const useCurrentStateStore = defineStore('current-state', {
         return;
       }
 
-      const enabled = this.currentSettings?.zoomMeetingManagerEnable;
+      const { startZoomHelper, stopZoomHelper } = globalThis.electronApi;
 
-      const {
-        ensureZoomRequirements,
-        isZoomPythonInstalled,
-        startZoomHelper,
-        stopZoomHelper,
-      } = globalThis.electronApi;
-
-      if (!enabled) {
+      if (!this.currentSettings?.zoomMeetingManagerEnable) {
         stopZoomHelper();
         return;
       }
 
       zoomHelperSyncInProgress = true;
       try {
-        const { createTemporaryNotification } =
-          await import('src/helpers/notifications');
-        const pythonInstalled = await isZoomPythonInstalled();
-        if (!pythonInstalled) {
+        const result = await startZoomHelper();
+        if (!result.ok) {
+          log('Zoom helper did not start', 'zoom', 'error', result);
+          const { createTemporaryNotification } =
+            await import('src/helpers/notifications');
+          const t = i18n.global.t as (key: string) => string;
           createTemporaryNotification({
-            caption: (i18n.global.t as (key: string) => string)(
-              'zoom-meeting-manager-python-required-caption',
-            ),
-            message: (i18n.global.t as (key: string) => string)(
-              'zoom-meeting-manager-python-required-message',
-            ),
+            caption: t(getZoomHelperErrorMessageKey(result.error)),
+            message: t('zoom-helper-start-failed'),
             timeout: 0,
             type: 'negative',
           });
-
-          // Disable meeting manager
-          if (this.currentSettings) {
-            this.currentSettings.zoomMeetingManagerEnable = false;
-          }
-          stopZoomHelper();
-          return;
-        }
-
-        const requirementsInstalled = await ensureZoomRequirements();
-        if (!requirementsInstalled) {
-          log('Failed to install requirements', 'zoom', 'error');
-          createTemporaryNotification({
-            caption: (i18n.global.t as (key: string) => string)('failed'),
-            message: (i18n.global.t as (key: string) => string)(
-              'zoomMeetingManager',
-            ),
-            timeout: 0,
-            type: 'negative',
-          });
-          stopZoomHelper();
-          return;
-        }
-
-        const helperStarted = await startZoomHelper();
-        if (!helperStarted) {
-          log('Failed to start Zoom helper', 'zoom', 'error');
-          createTemporaryNotification({
-            caption: (i18n.global.t as (key: string) => string)('failed'),
-            message: (i18n.global.t as (key: string) => string)(
-              'zoomMeetingManager',
-            ),
-            timeout: 0,
-            type: 'negative',
-          });
-          stopZoomHelper();
         }
       } finally {
         zoomHelperSyncInProgress = false;

@@ -122,17 +122,12 @@ import {
   zoomWebsiteWindow,
 } from 'src-electron/main/window/window-website';
 import {
-  isZoomCommand,
-  runZoomCommand,
-} from 'src-electron/main/zoom-helper-client';
-import {
-  ensureRequirementsInstalled,
-  getZoomHelperConnection,
-  isPythonInstalled,
   restartZoomHelper,
+  runZoomHelperCommand,
   startZoomHelper,
   stopZoomHelper,
 } from 'src-electron/main/zoom-helper-manager';
+import { isZoomCommand } from 'src-electron/main/zoom-helper-process';
 import { handleZoomTestParticipants } from 'src-electron/main/zoom-test-participants';
 import { join } from 'upath';
 
@@ -467,10 +462,6 @@ handleIpcInvoke('getSharedDataPath', async () => getSharedDataPath());
 handleIpcInvoke('getUserDataPath', async () => app.getPath('userData'));
 handleIpcInvoke('getLocales', async () => app.getPreferredSystemLanguages());
 handleIpcInvoke('isUsablePath', async (_e, p: string) => isUsablePath(p));
-handleIpcInvoke('isZoomPythonInstalled', async () => isPythonInstalled());
-handleIpcInvoke('ensureZoomRequirements', async () =>
-  ensureRequirementsInstalled(),
-);
 handleIpcInvoke('startZoomHelper', async () => startZoomHelper());
 handleIpcSend('stopZoomHelper', () => stopZoomHelper());
 handleIpcInvoke('restartZoomHelper', async () => restartZoomHelper());
@@ -624,19 +615,7 @@ handleIpcInvoke('zoomCommand', async (_e, command: unknown) => {
   if (!isZoomCommand(command)) {
     return { error: 'invalid-command', ok: false };
   }
-  const connection = getZoomHelperConnection();
-  if (!connection) return { error: 'helper-not-running', ok: false };
-  try {
-    return await runZoomCommand(connection, command);
-  } catch (error) {
-    logToWindow(
-      mainWindowInfo.mainWindow,
-      'Zoom helper request failed',
-      { command: command.type, error: String(error) },
-      'error',
-    );
-    return { error: 'helper-unreachable', ok: false };
-  }
+  return runZoomHelperCommand(command);
 });
 
 handleIpcInvoke(

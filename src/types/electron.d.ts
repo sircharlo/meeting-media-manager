@@ -16,6 +16,7 @@ import type {
 import type {
   ZoomCommand,
   ZoomCommandResult,
+  ZoomHelperStartResult,
   ZoomTestParticipantsRequest,
   ZoomTestParticipantsResponse,
 } from 'src/types/zoom';
@@ -132,7 +133,6 @@ export interface ElectronApi {
     folderPath: string,
     prompt?: boolean,
   ) => Promise<MacosFolderPermissionResult>;
-  ensureZoomRequirements: () => Promise<boolean>;
   executeQuery: <T extends object = QueryResponseItem>(
     dbPath: string,
     query: string,
@@ -222,7 +222,6 @@ export interface ElectronApi {
    */
   isSqliteDbCorrupt: (dbPath: string) => Promise<boolean>;
   isUsablePath: (path: string) => Promise<boolean>;
-  isZoomPythonInstalled: () => Promise<boolean>;
   join: typeof join;
   launchZoomMeeting: (meetingId: string) => void;
   moveMediaWindow: (
@@ -348,7 +347,7 @@ export interface ElectronApi {
   relaunchApp: () => void;
   removeListeners: (channel: ElectronIpcListenKey) => void;
   resolve: typeof resolve;
-  restartZoomHelper: () => Promise<boolean>;
+  restartZoomHelper: () => Promise<ZoomHelperStartResult>;
   resumeAllDownloads: () => void;
   saveFileDialog: (
     defaultPath: string,
@@ -379,7 +378,7 @@ export interface ElectronApi {
   setHardwareAcceleration: (disabled: boolean) => void;
   setPathProbeNotificationPaths: (paths: string[]) => void;
   showFileOnWindows: (filePath: string) => Promise<void>;
-  startZoomHelper: () => Promise<boolean>;
+  startZoomHelper: () => Promise<ZoomHelperStartResult>;
   stopZoomHelper: () => void;
   toggleAuthorizedClose: (authorized: boolean) => void;
   toggleMediaWindow: (show: boolean, enableFadeTransitions?: boolean) => void;
@@ -486,7 +485,6 @@ export type ElectronIpcInvokeKey =
   | 'createVideoFromNonVideo'
   | 'downloadFile'
   | 'ensureMacosFolderPermission'
-  | 'ensureZoomRequirements'
   | 'executeQuery'
   | 'extractNestedZipEntry'
   | 'getAllScreens'
@@ -508,7 +506,6 @@ export type ElectronIpcInvokeKey =
   | 'isOnline'
   | 'isSqliteDbCorrupt'
   | 'isUsablePath'
-  | 'isZoomPythonInstalled'
   | 'openFileDialog'
   | 'openFolder'
   | 'openFolderDialog'

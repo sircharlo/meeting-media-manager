@@ -12,13 +12,17 @@
 //
 // Usage: node scripts/zoom-live/participants.mjs [count] [--exit-with-parent]
 //
+// Left running on its own (without --exit-with-parent), the participants stay
+// in the meeting, and later test runs reuse them; POST /quit or Ctrl+C makes
+// them leave.
+//
 // Prints `ZOOM_PARTICIPANTS_PORT=<port>` once its local control server is up:
 //   GET  /state           -> { participants: ParticipantState[] }
 //   GET  /dump?index=0    -> visible buttons and page text (debugging)
 //   POST /action          -> { action, index? } - see ACTIONS
 //   POST /quit            -> every participant leaves, then the script exits
 
-import { readFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -26,6 +30,15 @@ import { chromium } from 'playwright';
 
 const ENV_FILE = new URL('../../.env.zoom-test', import.meta.url);
 const PROFILE_ROOT = join(tmpdir(), 'm3-zoom-live-profiles');
+// Lets the live test and M³'s developer tool reuse participants that are
+// already in the meeting instead of joining new ones every run, which makes
+// Zoom far less likely to turn them away. Read by test/zoom-live and
+// src-electron/main/zoom-test-participants.ts.
+const SESSION_FILE = join(
+  tmpdir(),
+  'm3-zoom-live',
+  'participants-session.json',
+);
 const MAX_PARTICIPANTS = 5;
 const JOIN_STAGGER_MS = 5000;
 const JOIN_ATTEMPTS = 3;
@@ -145,6 +158,11 @@ const readPageInfo = async (page) => ({
 
 const detectPhase = ({ labels, text }, current) => {
   if (/Automated bots aren't allowed/i.test(text)) return 'blocked';
+  // The meeting ended (e.g. a free account's 40-minute limit) or the host
+  // removed them: they're no longer in it.
+  if (/meeting has (been )?ended|removed you from the meeting/i.test(text)) {
+    return 'left';
+  }
   if (/let them know you're here|host will let you in/i.test(text)) {
     return 'waiting-room';
   }
@@ -347,6 +365,7 @@ let shuttingDown = false;
 const shutdown = async () => {
   if (shuttingDown) return;
   shuttingDown = true;
+  rmSync(SESSION_FILE, { force: true });
   await Promise.all(
     participants
       .filter((participant) => participant.phase !== 'left')
@@ -394,7 +413,13 @@ const server = createServer(async (req, res) => {
 });
 
 server.listen(0, '127.0.0.1', () => {
-  console.log(`ZOOM_PARTICIPANTS_PORT=${server.address().port}`);
+  const { port } = server.address();
+  mkdirSync(join(SESSION_FILE, '..'), { recursive: true });
+  writeFileSync(
+    SESSION_FILE,
+    JSON.stringify({ count, meetingId, pid: process.pid, port }),
+  );
+  console.log(`ZOOM_PARTICIPANTS_PORT=${port}`);
 });
 
 process.on('SIGINT', shutdown);

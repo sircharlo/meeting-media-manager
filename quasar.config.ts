@@ -148,10 +148,6 @@ export default defineConfig((ctx) => {
         appId: APP_ID,
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: APP_NAME + '-${version}-${arch}.${ext}',
-        extraResources: [
-          { from: 'uia_helper.py', to: '.' },
-          { from: 'requirements.txt', to: '.' },
-        ],
         generateUpdatesFilesForAllChannels: true,
         linux: {
           category: 'Utility',
@@ -200,6 +196,15 @@ export default defineConfig((ctx) => {
         productName: PRODUCT_NAME,
         publish: ['github'],
         win: {
+          // The Zoom Meeting Manager's UI Automation helper, compiled at
+          // runtime by Windows PowerShell (src-electron/zoom-helper).
+          extraResources: [
+            {
+              filter: ['*.cs', '*.ps1'],
+              from: 'src-electron/zoom-helper',
+              to: 'zoom-helper',
+            },
+          ],
           icon: getIconPath('ico'),
           target: [
             { arch: ctx.debug ? 'x64' : ['x64', 'ia32'], target: 'nsis' },

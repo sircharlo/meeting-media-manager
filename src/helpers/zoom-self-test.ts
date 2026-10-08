@@ -144,7 +144,7 @@ export const runZoomSelfTest = async (
   };
 
   const meetingState = async () =>
-    (await getZoomMeetingState()) ?? fail('The Zoom helper did not answer');
+    (await getZoomMeetingState(true)) ?? fail('The Zoom helper did not answer');
 
   let participantsReady = false;
 
@@ -184,7 +184,7 @@ export const runZoomSelfTest = async (
   ) => participant.events.some((event) => event.type === type);
 
   let restoreMediaWindow: (() => Promise<void> | void) | undefined;
-  let initialAudioJoined: boolean | undefined;
+  let initialAudioJoined: boolean | null | undefined;
   let initialVideoTitle: null | string | undefined;
 
   const requireVideoTitles = () => {

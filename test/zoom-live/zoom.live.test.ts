@@ -2,10 +2,9 @@ import type { ZoomTestParticipant } from 'src/types';
 
 import { i18n } from 'boot/i18n';
 import { type ChildProcess, spawn } from 'node:child_process';
-import { randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
-import { runZoomCommand } from 'src-electron/main/zoom-helper-client';
-import { getZoomMeetingState } from 'src/helpers/zoom';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import {
   runZoomSelfTest,
   ZOOM_SELF_TEST_STEP_LABELS,
@@ -14,72 +13,30 @@ import {
 } from 'src/helpers/zoom-self-test';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-// Drives the real Zoom desktop app on this computer: see README.md.
+import {
+  canRunLive,
+  createHelper,
+  ensureMeeting,
+  env,
+  meetingId,
+  openFakeMediaWindow,
+  print,
+  ROOT,
+  sleep,
+  titles,
+} from './support';
 
-// Vitest runs from the repo root (`yarn test:zoom-live`).
-const ROOT = `${process.cwd()}/`;
-const MEETING_LAUNCH_TIMEOUT_MS = 90_000;
+// The full self-test against the real Zoom app, with test participants: see
+// README.md.
+
 const STARTUP_TIMEOUT_MS = 30_000;
-
-const readEnv = (): Record<string, string> => {
-  try {
-    return Object.fromEntries(
-      readFileSync(`${ROOT}.env.zoom-test`, 'utf8')
-        .split(/\r?\n/)
-        .filter((line) => line.includes('=') && !line.startsWith('#'))
-        .map((line) => {
-          const index = line.indexOf('=');
-          return [line.slice(0, index).trim(), line.slice(index + 1).trim()];
-        }),
-    );
-  } catch {
-    return {};
-  }
-};
-
-const env = { ...readEnv(), ...process.env } as Record<string, string>;
-const meetingId = (env.ZOOM_TEST_MEETING_ID ?? '').replaceAll(/\D/g, '');
-const passcode = env.ZOOM_TEST_PASSCODE ?? '';
+// Written by scripts/zoom-live/participants.mjs while it runs.
+const SESSION_FILE = join(
+  tmpdir(),
+  'm3-zoom-live',
+  'participants-session.json',
+);
 const participantCount = Number(env.ZOOM_TEST_PARTICIPANTS ?? 3);
-
-const sleep = (ms: number) =>
-  new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-
-/** Starts a child process and resolves with the port it announces. */
-const startWithPort = (
-  command: string,
-  args: string[],
-  pattern: RegExp,
-  extraEnv: Record<string, string> = {},
-) =>
-  new Promise<{ child: ChildProcess; port: number }>((resolve, reject) => {
-    const child = spawn(command, args, {
-      cwd: ROOT,
-      env: {
-        ...process.env,
-        PYTHONUNBUFFERED: '1',
-        PYTHONUTF8: '1',
-        ...extraEnv,
-      },
-    });
-    const timeout = setTimeout(
-      () => reject(new Error(`${args[0]} did not start`)),
-      STARTUP_TIMEOUT_MS,
-    );
-    child.stdout?.on('data', (data: Buffer) => {
-      const match = pattern.exec(data.toString());
-      if (match) {
-        clearTimeout(timeout);
-        resolve({ child, port: Number(match[1]) });
-      }
-    });
-    child.stderr?.on('data', (data: Buffer) => {
-      process.stderr.write(`    ${data.toString().trimEnd()}\n`);
-    });
-    child.on('error', reject);
-  });
 
 const icons: Record<ZoomSelfTestStep['status'], string> = {
   failed: '✗',
@@ -92,10 +49,6 @@ const icons: Record<ZoomSelfTestStep['status'], string> = {
 const label = (step: ZoomSelfTestStep) =>
   i18n.global.t(ZOOM_SELF_TEST_STEP_LABELS[step.id]);
 
-// Written straight to stdout: Vitest only shows the console output it
-// captures for failing tests, and this report matters when all pass too.
-const print = (line: string) => process.stdout.write(`${line}\n`);
-
 const printed = new Set<string>();
 const printProgress = (steps: ZoomSelfTestStep[]) => {
   for (const step of steps) {
@@ -107,104 +60,118 @@ const printProgress = (steps: ZoomSelfTestStep[]) => {
   }
 };
 
-describe.skipIf(!meetingId)('Zoom Meeting Manager, live', () => {
-  const children: ChildProcess[] = [];
-  let participantsPort = 0;
-
-  const participantsCall = async (path: string, body?: unknown) => {
-    const response = await fetch(
-      `http://127.0.0.1:${participantsPort}${path}`,
-      {
-        ...(body === undefined
-          ? {}
-          : {
-              body: JSON.stringify(body),
-              headers: { 'Content-Type': 'application/json' },
-              method: 'POST',
-            }),
-      },
-    );
+const participantsApi = (port: number) => {
+  const call = async (path: string, body?: unknown) => {
+    const response = await fetch(`http://127.0.0.1:${port}${path}`, {
+      ...(body === undefined
+        ? {}
+        : {
+            body: JSON.stringify(body),
+            headers: { 'Content-Type': 'application/json' },
+            method: 'POST',
+          }),
+    });
     return (await response.json()) as { participants?: ZoomTestParticipant[] };
   };
-
   const probe: ZoomTestParticipantsProbe = {
     act: async (action) => {
-      await participantsCall('/action', { action });
+      await call('/action', { action });
     },
-    list: async () => (await participantsCall('/state')).participants ?? [],
+    list: async () => (await call('/state')).participants ?? [],
   };
+  return { call, probe };
+};
+
+/** Participants already running for this meeting, if any are still in it. */
+const findRunningSession = async () => {
+  try {
+    const session = JSON.parse(readFileSync(SESSION_FILE, 'utf8')) as {
+      meetingId: string;
+      port: number;
+    };
+    if (session.meetingId !== meetingId) return null;
+    const api = participantsApi(session.port);
+    const list = await api.probe.list();
+    return list.some((p) => p.phase !== 'left' && p.phase !== 'blocked')
+      ? api
+      : null;
+  } catch {
+    return null;
+  }
+};
+
+const startParticipants = () =>
+  new Promise<{ child: ChildProcess; port: number }>((resolve, reject) => {
+    const child = spawn(
+      'node',
+      [
+        'scripts/zoom-live/participants.mjs',
+        String(participantCount),
+        '--exit-with-parent',
+      ],
+      { cwd: ROOT },
+    );
+    const timeout = setTimeout(
+      () => reject(new Error('The participants script did not start')),
+      STARTUP_TIMEOUT_MS,
+    );
+    child.stdout.on('data', (data: Buffer) => {
+      const match = /ZOOM_PARTICIPANTS_PORT=(\d+)/.exec(data.toString());
+      if (match) {
+        clearTimeout(timeout);
+        resolve({ child, port: Number(match[1]) });
+      }
+    });
+    child.stderr.on('data', (data: Buffer) => {
+      process.stderr.write(`    ${data.toString().trimEnd()}\n`);
+    });
+    child.on('error', reject);
+  });
+
+describe.skipIf(!canRunLive)('Zoom Meeting Manager, live', () => {
+  const children: ChildProcess[] = [];
+  const helper = createHelper();
+  let participants: null | ReturnType<typeof participantsApi> = null;
+  let ownParticipants = false;
 
   beforeAll(async () => {
-    const token = randomUUID();
-    const helper = await startWithPort(
-      'python',
-      ['uia_helper.py'],
-      /ZOOM_HELPER_PORT=(\d+)/,
-      { ZOOM_HELPER_TOKEN: token },
-    );
-    children.push(helper.child);
-    const connection = {
-      baseUrl: `http://127.0.0.1:${helper.port}`,
-      token,
-    };
-    globalThis.electronApi.zoomCommand = (command) =>
-      runZoomCommand(connection, command);
-
-    if (!(await getZoomMeetingState())?.found) {
-      print(`  Starting Zoom meeting ${meetingId}…`);
-      const query = new URLSearchParams({ confno: meetingId });
-      if (passcode) query.set('pwd', passcode);
-      spawn('rundll32', [
-        'url.dll,FileProtocolHandler',
-        `zoommtg://zoom.us/join?${query.toString()}`,
-      ]);
-      const deadline = Date.now() + MEETING_LAUNCH_TIMEOUT_MS;
-      while (!(await getZoomMeetingState())?.found && Date.now() < deadline) {
-        await sleep(2000);
-      }
+    const started = await helper.start();
+    if (!started.ok) {
+      throw new Error(`Zoom helper: ${started.error} ${started.detail ?? ''}`);
     }
-
-    children.push(
-      spawn('python', ['scripts/zoom-live/fake-media-window.py'], {
-        cwd: ROOT,
-        env: { ...process.env, PYTHONUTF8: '1' },
-      }),
-    );
+    globalThis.electronApi.zoomCommand = (command) => helper.request(command);
+    await ensureMeeting(helper);
+    children.push(openFakeMediaWindow());
 
     if (participantCount > 0) {
-      const participants = await startWithPort(
-        'node',
-        [
-          'scripts/zoom-live/participants.mjs',
-          String(participantCount),
-          '--exit-with-parent',
-        ],
-        /ZOOM_PARTICIPANTS_PORT=(\d+)/,
-      );
-      children.push(participants.child);
-      participantsPort = participants.port;
+      participants = await findRunningSession();
+      if (participants) {
+        print('  Reusing the test participants already in the meeting');
+      } else {
+        const launched = await startParticipants();
+        children.push(launched.child);
+        participants = participantsApi(launched.port);
+        ownParticipants = true;
+      }
     }
   });
 
   afterAll(async () => {
-    if (participantsPort) {
-      await participantsCall('/quit', {}).catch(() => undefined);
+    if (participants && ownParticipants) {
+      await participants.call('/quit', {}).catch(() => undefined);
       await sleep(3000);
     }
     children.forEach((child) => child.kill());
+    helper.stop();
   });
 
   it('performs and verifies every Zoom Meeting Manager action', async () => {
     print(`\n  Zoom Meeting Manager self-test (meeting ${meetingId})`);
     const steps = await runZoomSelfTest({
       onProgress: printProgress,
-      participants: participantCount > 0 ? probe : undefined,
+      participants: participants?.probe,
       prepareMediaWindow: async () => () => undefined,
-      titles: {
-        shareButtonTitle: env.ZOOM_TEST_SHARE_BUTTON_TITLE || null,
-        videoOffTitle: env.ZOOM_TEST_VIDEO_OFF_TITLE || null,
-        videoOnTitle: env.ZOOM_TEST_VIDEO_ON_TITLE || null,
-      },
+      titles,
     });
 
     const failed = steps.filter((step) => step.status === 'failed');

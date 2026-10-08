@@ -75,7 +75,6 @@ const electronApi: ElectronApi = {
   encryptSecretSync: (plainText) => sendSync('encryptSecretSync', plainText),
   ensureMacosFolderPermission: (folderPath, prompt) =>
     invoke('ensureMacosFolderPermission', folderPath, prompt),
-  ensureZoomRequirements: () => invoke('ensureZoomRequirements'),
   executeQuery: (db, query, params) =>
     invoke('executeQuery', db, query, params),
   extname,
@@ -112,7 +111,6 @@ const electronApi: ElectronApi = {
     sendSync('isSecretEncryptionAvailableSync'),
   isSqliteDbCorrupt: (dbPath: string) => invoke('isSqliteDbCorrupt', dbPath),
   isUsablePath: (p) => invoke('isUsablePath', p),
-  isZoomPythonInstalled: () => invoke('isZoomPythonInstalled'),
   join,
   launchZoomMeeting,
   moveMediaWindow: (t, w) => send('moveMediaWindow', t, w),

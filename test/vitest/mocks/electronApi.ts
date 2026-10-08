@@ -59,9 +59,6 @@ export const electronApi: ElectronApi = {
     path: folderPath,
     status: 'not-needed',
   }),
-  ensureZoomRequirements: function () {
-    throw new Error('Function not implemented.');
-  },
   executeQuery: async function (dbPath, query) {
     throw new Error('Function not implemented.');
   },
@@ -121,9 +118,6 @@ export const electronApi: ElectronApi = {
   isSqliteDbCorrupt: async () => false,
   isUsablePath: async function (path) {
     return true;
-  },
-  isZoomPythonInstalled: function () {
-    throw new Error('Function not implemented.');
   },
   join,
   launchZoomMeeting: function (meetingId) {
@@ -239,7 +233,7 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   resolve,
-  restartZoomHelper: async () => true,
+  restartZoomHelper: async () => ({ ok: true }),
   resumeAllDownloads: function () {
     throw new Error('Function not implemented.');
   },
@@ -268,7 +262,7 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   showFileOnWindows: async () => undefined,
-  startZoomHelper: async () => true,
+  startZoomHelper: async () => ({ ok: true }),
   stopZoomHelper: () => void 0,
   toggleAuthorizedClose: function () {
     throw new Error('Function not implemented.');

@@ -1,11 +1,17 @@
 # Live Zoom test (local only)
 
 `yarn test:zoom-live` checks the Zoom Meeting Manager against the real Zoom
-desktop app on your computer. It runs every action M³ performs (join/leave
-computer audio, host video on/off, mute everyone with and without
-self-unmute, ask everyone to unmute, both meeting sequences, sharing the media
-window) and verifies each one from the host's Zoom window and from the test
-participants' side.
+desktop app on your computer:
+
+- `zoom.live.test.ts` runs every action M³ performs (join/leave computer
+  audio, host video on/off, mute everyone with and without self-unmute, ask
+  everyone to unmute, both meeting sequences, sharing the media window) and
+  verifies each one from the host's Zoom window and from the test
+  participants' side.
+- `zoom-edge.live.test.ts` covers what real computers throw at it: Zoom's
+  auto-hidden toolbar, a minimized Zoom window, every connected monitor,
+  actions with nothing to do, and side effects the helper must not have
+  (moving the mouse for good, keeping focus, changing a Zoom setting).
 
 It never runs in CI or in `yarn test:unit`. The same checks are available in
 development builds from the Zoom popup ("Test Zoom integration").
@@ -17,7 +23,6 @@ development builds from the Zoom popup ("Test Zoom integration").
 
 - Windows, with the Zoom desktop app signed in as the host of the test
   meeting.
-- Python with the helper's packages: `python -m pip install -r requirements.txt`.
 - Google Chrome (the test participants run in it, through Playwright).
 
 ## Setup
@@ -50,17 +55,20 @@ menus. The test starts the meeting if it isn't open, opens a stand-in
 Pieces you can also run on their own:
 
 - `node scripts/zoom-live/participants.mjs [count]` keeps test participants
-  in the meeting and prints a local control port (see the script's header).
-- `python scripts/zoom-live/fake-media-window.py` opens the stand-in media
-  window.
+  in the meeting until you stop it (Ctrl+C). While it runs, the tests and the
+  in-app developer tool reuse those participants instead of joining new
+  ones, which keeps Zoom from turning them away as a bot.
+- `powershell -ExecutionPolicy Bypass -File scripts/zoom-live/fake-media-window.ps1`
+  opens the stand-in media window.
 
 ## Troubleshooting
 
 - **"Zoom turned the test participants away"**: Zoom's web client sometimes
   rejects automated browsers, more often after many joins in a short time.
-  The participants retry a few times; wait a while and run it again.
+  The participants retry a few times; wait a while and run it again, and
+  keep a participants session running between runs (see above).
 - **The meeting ends after 40 minutes**: a free Zoom account limits meetings
   with three or more people. Rerun the test; it starts a new meeting.
 - **A step fails after a Zoom update**: Zoom's window classes or the order of
-  its controls may have changed. `uia_helper.py` explains what each action
-  relies on.
+  its controls may have changed. `src-electron/zoom-helper/ZoomHelper.cs`
+  explains what each action relies on.
