@@ -1,11 +1,12 @@
 import { Buffer } from 'buffer'; // NOSONAR: this is not nodejs Buffer, it's the browser one
 import { FULL_HD } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { getFilesystemErrorCode } from 'src/shared/filesystem-errors';
 import { getTempPath } from 'src/utils/fs';
 import { isHeic, isPdf, isSvg } from 'src/utils/media';
 
 const { convertHeic, fs, parse, pathToFileURL } = globalThis.electronApi;
-const { readFile, writeFile } = fs;
+const { readFile, stat, writeFile } = fs;
 
 import { dependencies as appDependencies } from 'app/package.json';
 import { PDFParse } from 'pdf-parse';
@@ -165,6 +166,18 @@ const convertHeicToJpg = async (filepath: string) => {
   }
 };
 
+// An <img> error event carries no detail ({"isTrusted":true}), so stat the
+// file to tell a missing/empty/unreadable one (e.g. a cloud-sync placeholder)
+// apart from a file that is there but won't decode.
+const describeFileForDiagnostics = async (filepath: string) => {
+  try {
+    const { size } = await stat(filepath);
+    return { size };
+  } catch (error) {
+    return { statError: getFilesystemErrorCode(error) ?? String(error) };
+  }
+};
+
 const convertSvgToJpg = async (filepath: string): Promise<string> => {
   try {
     if (!isSvg(filepath)) return filepath;
@@ -178,7 +191,11 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
     const img = new Image();
     img.src = pathToFileURL(filepath);
 
-    return new Promise((resolve, reject) => {
+    // Never rejects: on failure it falls back to the original SVG, like the
+    // other converters. Callers map a whole meeting's media through
+    // Promise.all, so a rejection here emptied every item for that day, not
+    // just this one (MMM-V2-3KY).
+    return new Promise((resolve) => {
       img.onload = async function () {
         const canvasH = canvas.height,
           canvasW = canvas.width;
@@ -208,23 +225,27 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
           resolve(newPath);
         } catch (error) {
           canvas.remove();
-          reject(error);
+          errorCatcher(error, {
+            contexts: {
+              fn: { filepath, name: 'convertSvgToJpg write', newPath },
+            },
+          });
+          resolve(filepath);
         }
       };
 
-      img.onerror = function (event) {
-        const rejectionError = new Error(`Failed to load SVG: ${filepath}`);
+      img.onerror = async function () {
         canvas.remove();
-        errorCatcher(rejectionError, {
+        errorCatcher(new Error(`Failed to load SVG: ${filepath}`), {
           contexts: {
             fn: {
-              event: JSON.stringify(event, Object.getOwnPropertyNames(event)),
+              file: await describeFileForDiagnostics(filepath),
               filepath,
               name: 'convertSvgToJpg',
             },
           },
         });
-        reject(rejectionError);
+        resolve(filepath);
       };
     });
   } catch (error) {
