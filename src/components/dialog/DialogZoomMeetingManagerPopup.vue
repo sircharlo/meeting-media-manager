@@ -1,6 +1,6 @@
 <template>
   <q-menu
-    ref="zoomMeetingManagerPopupRef"
+    ref="zoomMeetingManagerPopup"
     v-model="open"
     anchor="top middle"
     no-parent-event
@@ -9,22 +9,126 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <div class="flex action-popup q-py-md" style="flex-flow: column">
-      <div class="card-title row q-px-md q-mb-none">
-        {{ t('zoomMeetingManagerControls') }}
+    <div
+      ref="popupContent"
+      class="action-popup action-popup--scroll-layout q-py-md"
+    >
+      <div class="card-title col-shrink full-width q-px-md q-mb-none">
+        {{ t('zoomMeetingManager') }}
       </div>
-      <div class="row q-px-md q-pt-sm q-col-gutter-sm">
-        <div class="col-12">
+
+      <div class="row items-center no-wrap q-px-md q-mb-sm q-gutter-x-sm">
+        <q-spinner v-if="searchingForWindow" color="primary" size="16px" />
+        <q-icon v-else :color="statusColor" :name="statusIcon" size="16px" />
+        <div class="col text-caption text-weight-medium ellipsis">
+          {{ statusText }}
+        </div>
+        <q-btn
+          dense
+          flat
+          icon="mmm-refresh"
+          round
+          size="sm"
+          @click="syncMainWindow"
+        >
+          <q-tooltip :delay="500">{{ t('refresh') }}</q-tooltip>
+        </q-btn>
+      </div>
+
+      <div class="action-popup__scroll full-width">
+        <template v-if="showMeetingSettingsSection">
+          <p class="card-section-title text-dark-grey row q-px-md q-pt-sm">
+            {{ t('zoom-meeting-settings') }}
+          </p>
+          <div class="row q-px-md q-col-gutter-xs">
+            <div
+              v-if="
+                currentSettings?.zoomMeetingManagerAutomateMeetingAudioSettings
+              "
+              class="col-12"
+            >
+              <q-btn
+                class="full-width"
+                color="primary"
+                :disable="!mainZoomWindow || !!runningAction"
+                icon="mmm-volume-off"
+                :label="t('zoom-apply-meeting-settings')"
+                :loading="runningAction === 'meeting'"
+                no-caps
+                outline
+                @click="runAction('meeting')"
+              >
+                <q-tooltip :delay="500">
+                  {{
+                    t('zoomMeetingManagerAutomateMeetingAudioSettings-explain')
+                  }}
+                </q-tooltip>
+              </q-btn>
+            </div>
+            <div
+              v-if="
+                currentSettings?.zoomMeetingManagerAutomatePostMeetingAudioSettings
+              "
+              class="col-12"
+            >
+              <q-btn
+                class="full-width"
+                color="primary"
+                :disable="!mainZoomWindow || !!runningAction"
+                icon="mmm-groups"
+                :label="t('zoom-apply-before-after-meeting-settings')"
+                :loading="runningAction === 'postMeeting'"
+                no-caps
+                outline
+                @click="runAction('postMeeting')"
+              >
+                <q-tooltip :delay="500">
+                  {{
+                    t(
+                      'zoomMeetingManagerAutomatePostMeetingAudioSettings-explain',
+                    )
+                  }}
+                </q-tooltip>
+              </q-btn>
+            </div>
+          </div>
+        </template>
+
+        <div v-if="zoomHelperLogs.length" class="q-px-md q-pt-md">
+          <q-expansion-item
+            v-model="logsExpanded"
+            class="bg-accent-100 rounded-borders"
+            dense
+            dense-toggle
+            :label="t('zoom-helper-logs')"
+          >
+            <div class="zoom-helper-logs">
+              <div
+                v-for="(logLine, index) in zoomHelperLogs"
+                :key="index"
+                class="zoom-helper-logs__line"
+              >
+                {{ logLine }}
+              </div>
+            </div>
+          </q-expansion-item>
+        </div>
+      </div>
+
+      <q-separator class="bg-accent-200 q-mt-sm" />
+      <div
+        class="action-popup__footer full-width q-px-md q-pt-md row q-col-gutter-xs"
+      >
+        <div class="col-12 q-mb-sm">
           <q-btn
             class="full-width"
             color="primary"
             :disable="!meetingId"
+            icon="mmm-arrow-outward"
+            :label="t('launch-zoom-meeting')"
             unelevated
             @click="launchZoomMeeting(meetingId)"
-          >
-            <q-icon class="q-mr-sm" name="mmm-open-web" size="xs" />
-            {{ t('launch-zoom-meeting') }}
-          </q-btn>
+          />
           <q-tooltip v-if="!meetingId" :delay="500">
             {{ t('zoom-meeting-manager-meeting-id-missing') }}
           </q-tooltip>
@@ -32,113 +136,39 @@
         <div class="col-12">
           <q-btn
             class="full-width"
-            color="primary"
-            outline
+            color="secondary"
+            icon="mmm-reset"
+            :label="t('zoom-helper-restart')"
+            :loading="restartingHelper"
             unelevated
-            @click="listMainZoomWindows"
-          >
-            <q-icon class="q-mr-sm" name="mmm-groups" size="xs" />
-            {{ t('list-zoom-windows') }}
-          </q-btn>
-        </div>
-        <div v-if="zoomWindows.length" class="col-12">
-          <q-select
-            v-model="selectedZoomWindow"
-            dense
-            :label="t('select-zoom-window')"
-            option-label="title"
-            :options="zoomWindows"
-            outlined
+            @click="restartHelper"
           />
         </div>
-      </div>
-
-      <div v-if="selectedZoomWindow" class="row q-px-md q-pt-sm q-gutter-x-sm">
-        <q-btn
-          v-if="currentSettings?.zoomMeetingManagerAutomateMeetingAudioSettings"
-          class="col"
-          color="primary"
-          no-caps
-          outline
-          @click="automateZoomMeetingSettings"
-        >
-          {{ t('zoomMeetingManagerAutomateMeetingAudioSettings') }}
-          <q-tooltip>{{
-            t('zoomMeetingManagerAutomateMeetingAudioSettings-explain')
-          }}</q-tooltip>
-        </q-btn>
-        <q-btn
-          v-if="
-            currentSettings?.zoomMeetingManagerAutomatePostMeetingAudioSettings
-          "
-          class="col"
-          color="primary"
-          no-caps
-          outline
-          @click="automateZoomPostMeetingSettings"
-        >
-          {{ t('zoomMeetingManagerAutomatePostMeetingAudioSettings') }}
-          <q-tooltip>{{
-            t('zoomMeetingManagerAutomatePostMeetingAudioSettings-explain')
-          }}</q-tooltip>
-        </q-btn>
-      </div>
-
-      <div class="row q-px-md q-pt-md q-gutter-x-sm">
-        <q-btn
-          class="col-12"
-          color="primary"
-          dense
-          no-caps
-          outline
-          @click="restartZoomHelper"
-        >
-          {{ t('restart') }}
-        </q-btn>
-      </div>
-
-      <div v-if="zoomHelperLogs.length" class="row q-px-md q-pt-md">
-        <q-expansion-item
-          v-model="logsExpanded"
-          class="col-12 bg-grey-2 rounded-borders"
-          dense
-          dense-toggle
-          expand-separator
-          :label="t('logs')"
-        >
-          <div
-            class="bg-dark text-white q-pa-sm rounded-borders scroll"
-            style="max-height: 200px; font-family: monospace; font-size: 10px"
-          >
-            <div v-for="(logLine, index) in zoomHelperLogs" :key="index">
-              {{ logLine }}
-            </div>
-          </div>
-        </q-expansion-item>
       </div>
     </div>
   </q-menu>
 </template>
 
 <script setup lang="ts">
-import type { ZoomUIElement } from 'src/types/electron';
+import type { QMenu } from 'quasar';
+import type { ZoomUIElement } from 'src/types';
 
 import { storeToRefs } from 'pinia';
-import { QMenu } from 'quasar';
 import {
   automateZoomMeetingSettings,
   automateZoomPostMeetingSettings,
 } from 'src/helpers/zoom';
-import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, onUnmounted, ref, useTemplateRef, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-const zoomMeetingManagerPopupRef = useTemplateRef<QMenu>(
-  'zoomMeetingManagerPopupRef',
-);
+type ZoomAction = 'meeting' | 'postMeeting';
 
-const open = defineModel<boolean>({ required: true });
+const MAIN_WINDOW_POLL_INTERVAL_MS = 5000;
+
+const open = defineModel<boolean>({ default: false });
+
+const { t } = useI18n();
 
 const { launchZoomMeeting, listZoomWindows, restartZoomHelper } =
   globalThis.electronApi;
@@ -146,76 +176,125 @@ const { launchZoomMeeting, listZoomWindows, restartZoomHelper } =
 const currentState = useCurrentStateStore();
 const { currentSettings, zoomHelperLogs } = storeToRefs(currentState);
 
+const zoomMeetingManagerPopup = useTemplateRef<QMenu>(
+  'zoomMeetingManagerPopup',
+);
+const popupContent = useTemplateRef<HTMLElement>('popupContent');
+let popupResizeObserver: ResizeObserver | undefined;
+let mainWindowPollingInterval: ReturnType<typeof setInterval> | undefined;
+
+// The automation helpers always act on the first main Zoom window, so that
+// is the one window this popup reports on.
+const mainZoomWindow = ref<null | ZoomUIElement>(null);
+const hasCheckedForWindow = ref(false);
+const runningAction = ref<null | ZoomAction>(null);
+const restartingHelper = ref(false);
+const logsExpanded = ref(false);
+
 const meetingId = computed(
   () => currentSettings.value?.zoomMeetingManagerMeetingId?.trim() || '',
 );
 
-const zoomWindows = ref<ZoomUIElement[]>([]);
-const selectedZoomWindow = ref<null | ZoomUIElement>(null);
-const logsExpanded = ref(false);
-let mainWindowPollingInterval: null | ReturnType<typeof setInterval> = null;
-
-const listMainZoomWindows = async () => {
-  selectedZoomWindow.value = null;
-  zoomWindows.value = await listZoomWindows(true);
-  if (zoomWindows.value?.[0]) {
-    selectedZoomWindow.value = zoomWindows.value[0];
-  }
-  log(zoomWindows.value, 'zoom', 'debug', zoomWindows.value);
-};
-
-const syncMainWindowSelection = async () => {
-  const windows = await listZoomWindows(true);
-  zoomWindows.value = windows;
-
-  const selectedHandle = selectedZoomWindow.value?.handle;
-  if (selectedHandle) {
-    const existingWindow = windows.find((w) => w.handle === selectedHandle);
-    if (existingWindow) {
-      selectedZoomWindow.value = existingWindow;
-      return;
-    }
-  }
-
-  selectedZoomWindow.value = windows[0] ?? null;
-};
-
-const { t } = useI18n();
-
-// UI update handler
-watch(
-  () => [zoomWindows.value.length, selectedZoomWindow.value],
-  () => {
-    setTimeout(() => {
-      if (zoomMeetingManagerPopupRef.value) {
-        zoomMeetingManagerPopupRef.value.updatePosition();
-      }
-    }, 10);
-  },
+const showMeetingSettingsSection = computed(
+  () =>
+    !!currentSettings.value?.zoomMeetingManagerAutomateMeetingAudioSettings ||
+    !!currentSettings.value?.zoomMeetingManagerAutomatePostMeetingAudioSettings,
 );
 
-watch(
-  () => open.value,
-  (isOpen) => {
-    if (mainWindowPollingInterval) {
-      clearInterval(mainWindowPollingInterval);
-      mainWindowPollingInterval = null;
-    }
+const searchingForWindow = computed(
+  () => !hasCheckedForWindow.value && !mainZoomWindow.value,
+);
 
+const statusText = computed(() => {
+  if (searchingForWindow.value) return t('zoom-meeting-window-searching');
+  return mainZoomWindow.value
+    ? t('zoom-meeting-window-found')
+    : t('zoom-meeting-window-not-found');
+});
+
+const statusIcon = computed(() =>
+  mainZoomWindow.value ? 'mmm-check' : 'mmm-info',
+);
+
+const statusColor = computed(() =>
+  mainZoomWindow.value ? 'positive' : 'grey',
+);
+
+const syncMainWindow = async () => {
+  const windows = await listZoomWindows(true);
+  mainZoomWindow.value = windows[0] ?? null;
+  hasCheckedForWindow.value = true;
+};
+
+const stopPolling = () => {
+  clearInterval(mainWindowPollingInterval);
+  mainWindowPollingInterval = undefined;
+};
+
+const runAction = async (action: ZoomAction) => {
+  runningAction.value = action;
+  try {
+    if (action === 'meeting') {
+      await automateZoomMeetingSettings();
+    } else {
+      await automateZoomPostMeetingSettings();
+    }
+  } finally {
+    runningAction.value = null;
+  }
+};
+
+const restartHelper = async () => {
+  restartingHelper.value = true;
+  try {
+    await restartZoomHelper();
+    await syncMainWindow();
+  } finally {
+    restartingHelper.value = false;
+  }
+};
+
+watch(popupContent, (el) => {
+  popupResizeObserver?.disconnect();
+  popupResizeObserver = undefined;
+  if (!el) return;
+  popupResizeObserver = new ResizeObserver(() => {
+    zoomMeetingManagerPopup.value?.updatePosition();
+  });
+  popupResizeObserver.observe(el);
+});
+
+watch(
+  open,
+  (isOpen) => {
+    stopPolling();
     if (!isOpen) return;
 
-    void syncMainWindowSelection();
+    void syncMainWindow();
     mainWindowPollingInterval = setInterval(() => {
-      void syncMainWindowSelection();
-    }, 5000);
+      void syncMainWindow();
+    }, MAIN_WINDOW_POLL_INTERVAL_MS);
   },
   { immediate: true },
 );
 
-onUnmounted(() => {
-  if (mainWindowPollingInterval) {
-    clearInterval(mainWindowPollingInterval);
-    mainWindowPollingInterval = null;
-  }
+onBeforeUnmount(() => {
+  stopPolling();
+  popupResizeObserver?.disconnect();
 });
 </script>
+
+<style scoped>
+.zoom-helper-logs {
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: 0.8em;
+  max-height: 200px;
+  overflow: auto;
+  padding: 0.25em 0.5em 0.5em;
+}
+
+.zoom-helper-logs__line {
+  overflow-wrap: anywhere;
+  padding: 0.1em 0;
+}
+</style>
