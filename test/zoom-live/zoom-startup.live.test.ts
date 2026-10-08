@@ -30,8 +30,11 @@ import {
 // the meeting if needed and tests everything when the host is alone, and
 // only looks, changing nothing, once others are in the meeting.
 
-// Every day is a meeting day here.
-vi.mock('src/helpers/date', () => ({ isMeetingDay: () => true }));
+// A meeting starts in 30 minutes, every day here: M³ may open it now.
+vi.mock('src/helpers/date', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  getTodaysMeetingStartDateTime: () => new Date(Date.now() + 30 * 60_000),
+}));
 
 // Set to stand in for others in the meeting, which Zoom's web client
 // doesn't always let the test participants become.

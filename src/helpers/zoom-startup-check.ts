@@ -2,7 +2,7 @@ import type { ZoomDiagnosis } from 'src/types';
 
 import { i18n } from 'boot/i18n';
 import { ZOOM_DIAGNOSIS_CHECKS } from 'src/constants/zoom';
-import { isMeetingDay } from 'src/helpers/date';
+import { getTodaysMeetingStartDateTime } from 'src/helpers/date';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import {
   countZoomMeetingParticipants,
@@ -21,16 +21,20 @@ import {
 } from 'src/helpers/zoom-self-test';
 import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
+import { AUTO_START_WINDOW_HOURS } from 'stores/music';
 import { useZoomStateStore } from 'stores/zoom-state';
 
 // The startup check: once per M³ session (per congregation), before any
-// automation relies on Zoom, M³ makes sure the meeting is open (opening it
-// on meeting days) and that everything it automates works, much like the
-// setup assistant's test. If anything fails, the user is told and the Zoom
-// automations are paused until M³ restarts or a new check passes, rather
-// than risking an automation going wrong in front of the congregation.
+// automation relies on Zoom, M³ makes sure the meeting is open and that
+// everything it automates works, much like the setup assistant's test. A
+// meeting already open is checked right away; otherwise, on meeting days,
+// M³ opens it in the same window background music can start in, before the
+// meeting. If anything fails, the user is told and the Zoom automations are
+// paused until M³ restarts or a new check passes, rather than risking an
+// automation going wrong in front of the congregation.
 
-export type ZoomStartupCheckOutcome = 'failed' | 'passed' | 'skipped';
+export type ZoomStartupCheckOutcome =
+  'failed' | 'passed' | 'scheduled' | 'skipped';
 
 const STARTUP_DELAY_MS = 10_000;
 const MEETING_OPEN_TIMEOUT_MS = 90_000;
@@ -136,6 +140,25 @@ const testEverything = async (): Promise<string[]> => {
   return problems;
 };
 
+/**
+ * When the meeting may be opened for the check: in the window background
+ * music can auto-start in (see the music store's shouldAutoStart), from
+ * AUTO_START_WINDOW_HOURS before the meeting until just before it starts.
+ * 'now', the seconds until the window opens, or null: no meeting today, or
+ * it's starting or under way.
+ */
+const getMeetingOpeningWindow = (): 'now' | null | number => {
+  const now = new Date();
+  const start = getTodaysMeetingStartDateTime(now);
+  if (!start) return null;
+  const secondsUntilStart = (start.getTime() - now.getTime()) / 1000;
+  const stopBufferSeconds =
+    useCurrentStateStore().currentSettings?.meetingStopBufferSeconds ?? 60;
+  if (secondsUntilStart <= stopBufferSeconds * 1.5) return null;
+  const opensIn = secondsUntilStart - AUTO_START_WINDOW_HOURS * 3600;
+  return opensIn > 0 ? opensIn : 'now';
+};
+
 const waitForMeeting = async () => {
   const deadline = Date.now() + MEETING_OPEN_TIMEOUT_MS;
   while (Date.now() < deadline) {
@@ -147,17 +170,24 @@ const waitForMeeting = async () => {
 };
 
 /**
- * What doesn't work in Zoom (i18n keys), or null if there was nothing to
- * check: no meeting open, and none to open today.
+ * What doesn't work in Zoom (i18n keys); null if there's nothing to check
+ * (no meeting open, and none to open now); or, before the meeting's window,
+ * when to check.
  */
-const findProblems = async (manual: boolean): Promise<null | string[]> => {
+const findProblems = async (
+  manual: boolean,
+): Promise<null | string[] | { checkInSeconds: number }> => {
   const meeting = await getZoomMeetingState();
   if (!meeting) return [HELPER_PROBLEM];
 
   if (!meeting.found) {
     const meetingId =
       useCurrentStateStore().currentSettings?.zoomMeetingManagerMeetingId?.trim();
-    if (!manual && (!meetingId || !isMeetingDay(new Date()))) return null;
+    if (!manual) {
+      const opening = getMeetingOpeningWindow();
+      if (!meetingId || opening === null) return null;
+      if (opening !== 'now') return { checkInSeconds: opening };
+    }
     if (!meetingId) return [MEETING_PROBLEM];
     log('Zoom check: opening the meeting', 'zoom', 'info');
     globalThis.electronApi.launchZoomMeeting(meetingId);
@@ -245,14 +275,23 @@ export const runZoomStartupCheck = async ({
   }
   try {
     log('Zoom check: starting', 'zoom', 'info', { manual });
-    const problems = await runWhileHoldingZoomAutomations(() =>
+    const found = await runWhileHoldingZoomAutomations(() =>
       findProblems(manual),
     );
-    if (problems === null) {
-      log('Zoom check: no meeting to check today', 'zoom', 'info');
+    if (found === null) {
+      log('Zoom check: no meeting to check now', 'zoom', 'info');
       return 'skipped';
     }
-    return report(congregationId, problems, manual);
+    if (!Array.isArray(found)) {
+      // Too early: check when the meeting's window opens, if M³ is still on.
+      zoomState.checkedCongregations = zoomState.checkedCongregations.filter(
+        (id) => id !== congregationId,
+      );
+      scheduleZoomStartupCheck(found.checkInSeconds * 1000);
+      log('Zoom check: waiting for the meeting', 'zoom', 'info', found);
+      return 'scheduled';
+    }
+    return report(congregationId, found, manual);
   } finally {
     zoomState.checkRunning = false;
   }
@@ -262,11 +301,11 @@ let startupTimer: ReturnType<typeof setTimeout> | undefined;
 
 /**
  * Runs the startup check shortly after M³ starts (or a congregation is
- * opened), once things have settled.
+ * opened), once things have settled, or after the given delay.
  */
-export const scheduleZoomStartupCheck = () => {
+export function scheduleZoomStartupCheck(delayMs = STARTUP_DELAY_MS) {
   clearTimeout(startupTimer);
   startupTimer = setTimeout(() => {
     void runZoomStartupCheck();
-  }, STARTUP_DELAY_MS);
-};
+  }, delayMs);
+}

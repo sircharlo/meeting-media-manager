@@ -22,8 +22,8 @@ const currentState = vi.hoisted(() => ({
 const zoom = vi.hoisted(() => ({
   countZoomMeetingParticipants: vi.fn<() => Promise<null | number>>(),
   diagnoseZoom: vi.fn<() => Promise<null | ZoomDiagnosis>>(),
+  getTodaysMeetingStartDateTime: vi.fn<() => Date | null>(),
   getZoomMeetingState: vi.fn<() => Promise<null | ZoomMeetingState>>(),
-  isMeetingDay: vi.fn(() => true),
   isZoomSetupNeeded: vi.fn(() => false),
   notify: vi.fn(),
   runZoomSelfTest: vi.fn<() => Promise<ZoomSelfTestStep[]>>(),
@@ -54,7 +54,35 @@ vi.mock('src/helpers/zoom-self-test', async (importOriginal) => ({
   runZoomSelfTest: zoom.runZoomSelfTest,
 }));
 
-vi.mock('src/helpers/date', () => ({ isMeetingDay: zoom.isMeetingDay }));
+vi.mock('src/helpers/date', () => ({
+  getTodaysMeetingStartDateTime: zoom.getTodaysMeetingStartDateTime,
+}));
+
+vi.mock('stores/music', () => ({ AUTO_START_WINDOW_HOURS: 1.25 }));
+
+const MINUTE = 60_000;
+
+/** Today's meeting starts this long from now (or there's none, with null). */
+const meetingStartsIn = (ms: null | number) => {
+  zoom.getTodaysMeetingStartDateTime.mockReturnValue(
+    ms === null ? null : new Date(Date.now() + ms),
+  );
+};
+
+/** No meeting open until M³ opens it. */
+const meetingClosedUntilLaunched = () => {
+  let launched = false;
+  const launch = vi
+    .spyOn(globalThis.electronApi, 'launchZoomMeeting')
+    .mockImplementation(() => {
+      launched = true;
+    });
+  zoom.getZoomMeetingState.mockImplementation(async () => ({
+    found: launched,
+    sharing: false,
+  }));
+  return launch;
+};
 
 vi.mock('src/helpers/notifications', () => ({
   createTemporaryNotification: zoom.notify,
@@ -72,9 +100,6 @@ const OPEN: ZoomMeetingState = { found: true, sharing: false };
 
 const passed = (...ids: ZoomSelfTestStep['id'][]): ZoomSelfTestStep[] =>
   ids.map((id) => ({ id, status: 'passed' }));
-
-const launchSpy = () =>
-  vi.spyOn(globalThis.electronApi, 'launchZoomMeeting').mockReturnValue();
 
 const notification = () =>
   zoom.notify.mock.lastCall?.[0] as
@@ -94,7 +119,8 @@ beforeEach(() => {
   zoom.getZoomMeetingState.mockResolvedValue(OPEN);
   zoom.countZoomMeetingParticipants.mockResolvedValue(1);
   zoom.diagnoseZoom.mockResolvedValue(ALL_FOUND);
-  zoom.isMeetingDay.mockReturnValue(true);
+  // Today's meeting, unless a test says otherwise.
+  meetingStartsIn(30 * MINUTE);
   zoom.isZoomSetupNeeded.mockReturnValue(false);
   zoom.runZoomSelfTest.mockImplementation(async () => passed('meeting'));
   zoom.testZoomShareEntry.mockResolvedValue({
@@ -128,26 +154,45 @@ describe('Zoom startup check', () => {
 
   it('leaves Zoom alone on days without a meeting', async () => {
     const { runZoomStartupCheck } = await import('../zoom-startup-check');
-    const launch = launchSpy();
-    zoom.getZoomMeetingState.mockResolvedValue({
-      found: false,
-      sharing: false,
-    });
-    zoom.isMeetingDay.mockReturnValue(false);
+    const launch = meetingClosedUntilLaunched();
+    meetingStartsIn(null);
 
     expect(await runZoomStartupCheck()).toBe('skipped');
     expect(launch).not.toHaveBeenCalled();
     expect(zoom.runZoomSelfTest).not.toHaveBeenCalled();
   });
 
-  it('opens the meeting on meeting days, then tests what is automated', async () => {
+  it("doesn't open the meeting once it's starting or under way", async () => {
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    const launch = meetingClosedUntilLaunched();
+    meetingStartsIn(-10 * MINUTE);
+
+    expect(await runZoomStartupCheck()).toBe('skipped');
+    expect(launch).not.toHaveBeenCalled();
+  });
+
+  it('waits until background music could start before opening the meeting', async () => {
     vi.useFakeTimers();
     const { runZoomStartupCheck } = await import('../zoom-startup-check');
-    const launch = launchSpy();
-    zoom.getZoomMeetingState
-      .mockResolvedValueOnce({ found: false, sharing: false })
-      .mockResolvedValueOnce({ found: false, sharing: false })
-      .mockResolvedValue(OPEN);
+    const launch = meetingClosedUntilLaunched();
+    meetingStartsIn(3 * 60 * MINUTE);
+
+    expect(await runZoomStartupCheck()).toBe('scheduled');
+    expect(launch).not.toHaveBeenCalled();
+
+    // 1 h 15 min before the meeting (1 h 45 min from now), M³ checks again.
+    await vi.advanceTimersByTimeAsync(104 * MINUTE);
+    expect(launch).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(2 * MINUTE);
+    expect(launch).toHaveBeenCalledWith('123 456 7890');
+    await vi.runAllTimersAsync();
+    expect(zoom.runZoomSelfTest).toHaveBeenCalledOnce();
+  });
+
+  it('opens the meeting before it starts, then tests what is automated', async () => {
+    vi.useFakeTimers();
+    const { runZoomStartupCheck } = await import('../zoom-startup-check');
+    const launch = meetingClosedUntilLaunched();
 
     const outcome = runZoomStartupCheck();
     await vi.runAllTimersAsync();
@@ -174,7 +219,7 @@ describe('Zoom startup check', () => {
   it('pauses the automations and says why when the meeting does not open', async () => {
     vi.useFakeTimers();
     const { runZoomStartupCheck } = await import('../zoom-startup-check');
-    launchSpy();
+    vi.spyOn(globalThis.electronApi, 'launchZoomMeeting').mockReturnValue();
     zoom.getZoomMeetingState.mockResolvedValue({
       found: false,
       sharing: false,

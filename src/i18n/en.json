@@ -1099,7 +1099,7 @@
   "zoomMeetingManagerMeetingId": "Zoom meeting ID",
   "zoomMeetingManagerMeetingId-explain": "Meeting ID that will be used when launching Zoom Meeting Manager.",
   "zoomMeetingManagerStartupCheck": "Check Zoom when M³ starts",
-  "zoomMeetingManagerStartupCheck-explain": "Each time M³ starts on a meeting day, it opens your congregation's Zoom meeting if needed and checks that everything it automates works. If something doesn't, M³ tells you and pauses its Zoom automations until it's restarted or a new check passes. When others are already in the meeting, it only looks for Zoom's controls, without pressing anything.",
+  "zoomMeetingManagerStartupCheck-explain": "When M³ starts, it checks that everything it automates in Zoom works. A Zoom meeting already open is checked right away; otherwise, on meeting days, M³ opens your congregation's meeting in the hour and a quarter before it starts (when background music can start on its own). If something doesn't work, M³ tells you and pauses its Zoom automations until it's restarted or a new check passes. When others are already in the meeting, it only looks for Zoom's controls, without pressing anything.",
   "zoomMeetingManagerSetupAssistant": "Setup assistant",
   "zoomMeetingManagerSetupAssistant-explain": "Walks you through connecting M³ to Zoom, checks that everything works, and lets you choose what M³ does for you.",
   "zoomScreenShareShortcut": "Zoom screen sharing shortcut",
