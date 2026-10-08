@@ -8,6 +8,9 @@ desktop app on your computer:
   everyone to unmute, both meeting sequences, sharing the media window) and
   verifies each one from the host's Zoom window and from the test
   participants' side.
+- `zoom-startup.live.test.ts` runs the check M³ makes when it starts: it
+  opens the meeting if needed and tests everything with the host alone, and
+  only looks (pressing nothing anyone would notice) once others are in.
 - `zoom-edge.live.test.ts` covers what real computers throw at it: Zoom's
   auto-hidden toolbar, a minimized Zoom window, every connected monitor,
   actions with nothing to do, a share picker so crowded that the media

@@ -20,6 +20,12 @@ vi.mock('stores/current-state', () => ({
   useCurrentStateStore: () => ({ currentSettings }),
 }));
 
+const zoomState = { automationsPaused: false };
+
+vi.mock('stores/zoom-state', () => ({
+  useZoomStateStore: () => zoomState,
+}));
+
 vi.mock('quasar', () => ({
   Dialog: { create: vi.fn(() => ({ onOk: vi.fn() })) },
 }));
@@ -47,6 +53,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   meetingFound = true;
   failing = {};
+  zoomState.automationsPaused = false;
   Object.assign(currentSettings, {
     zoomMeetingManagerAutoLaunchMeeting: false,
     zoomMeetingManagerAutomateMeetingAudioSettings: false,
@@ -195,6 +202,58 @@ describe('Zoom meeting auto-launch', () => {
     await autoLaunchZoomMeetingIfNeeded(600);
 
     expect(launchZoomMeetingMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('Zoom automations and the startup check', () => {
+  it('do nothing while a failed check has paused them', async () => {
+    const {
+      autoLaunchZoomMeetingIfNeeded,
+      automateZoomMediaSharing,
+      automateZoomMeetingSettings,
+    } = await import('../zoom');
+    Object.assign(currentSettings, {
+      zoomMeetingManagerAutoLaunchMeeting: true,
+      zoomMeetingManagerAutomateMeetingAudioSettings: true,
+    });
+    zoomState.automationsPaused = true;
+    meetingFound = false;
+
+    await automateZoomMeetingSettings();
+    expect(await automateZoomMediaSharing(true)).toBe(false);
+    await autoLaunchZoomMeetingIfNeeded(600);
+
+    expect(zoomCommandMock).not.toHaveBeenCalled();
+    expect(launchZoomMeetingMock).not.toHaveBeenCalled();
+  });
+
+  it('wait for a check in progress, which uses Zoom too', async () => {
+    const { automateZoomMeetingSettings, runWhileHoldingZoomAutomations } =
+      await import('../zoom');
+    currentSettings.zoomMeetingManagerAutomateMeetingAudioSettings = true;
+    let finishCheck: () => void = () => undefined;
+    const check = runWhileHoldingZoomAutomations(
+      () =>
+        new Promise<void>((resolve) => {
+          finishCheck = resolve;
+        }),
+    );
+
+    const automation = automateZoomMeetingSettings();
+    await new Promise((resolve) => {
+      setTimeout(resolve, 20);
+    });
+    expect(zoomCommandMock).not.toHaveBeenCalled();
+
+    finishCheck();
+    await check;
+    await automation;
+    expect(commandTypes()).toEqual([
+      'meeting',
+      'join-audio',
+      'set-video',
+      'mute-all',
+    ]);
   });
 });
 

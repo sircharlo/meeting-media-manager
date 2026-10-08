@@ -587,6 +587,13 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'zoomMeetingManager',
     type: 'text',
   },
+  zoomMeetingManagerStartupCheck: {
+    depends: 'zoomMeetingManagerEnable',
+    group: 'integrations',
+    platforms: ['win32'],
+    subgroup: 'zoomMeetingManager',
+    type: 'toggle',
+  },
   zoomMeetingManagerAutoLaunchMeeting: {
     depends: 'zoomMeetingManagerEnable',
     group: 'integrations',
@@ -1116,6 +1123,7 @@ export const defaultSettings: SettingsValues = {
   zoomMeetingManagerEnable: false,
   zoomMeetingManagerMeetingId: null,
   zoomMeetingManagerSetupAssistant: null,
+  zoomMeetingManagerStartupCheck: true,
   zoomScreenShareShortcut: null,
   zoomShareButtonTitle: null,
   zoomVideoOffTitle: null,

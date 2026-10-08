@@ -29,6 +29,7 @@ vi.mock('src/helpers/zoom', () => ({
     videoOnTitle: 'Stop Video',
   }),
   learnZoomVideoTitles: zoom.learnZoomVideoTitles,
+  prepareMediaWindowForZoomTest: async () => () => undefined,
   testZoomShareEntry: zoom.testZoomShareEntry,
 }));
 

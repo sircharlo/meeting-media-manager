@@ -139,6 +139,7 @@ import {
   checkLowDiskSpaceAndNotify,
   createTemporaryNotification,
 } from 'src/helpers/notifications';
+import { scheduleZoomStartupCheck } from 'src/helpers/zoom-startup-check';
 import { localeOptions } from 'src/i18n';
 import { log, type LogPrefix } from 'src/shared/vanilla';
 import { useAppSettingsStore } from 'src/stores/app-settings';
@@ -1721,6 +1722,15 @@ watch(
   ],
   () => {
     currentState.syncZoomHelper();
+  },
+);
+
+// Once M³ has started (or a congregation is opened), check its Zoom before
+// any automation relies on it. The check itself runs only once per session.
+watchImmediate(
+  () => currentCongregation.value,
+  (congregation) => {
+    if (congregation) scheduleZoomStartupCheck();
   },
 );
 

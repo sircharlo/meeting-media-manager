@@ -350,6 +350,7 @@ export interface SettingsValues {
   zoomMeetingManagerMeetingId: null | string;
   /** No value: the setting is the button opening the setup assistant. */
   zoomMeetingManagerSetupAssistant: null;
+  zoomMeetingManagerStartupCheck: boolean;
   zoomScreenShareShortcut: null | string;
   zoomShareButtonTitle: null | string;
   zoomVideoOffTitle: null | string;

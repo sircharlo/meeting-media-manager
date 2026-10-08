@@ -11,15 +11,18 @@ import { Dialog } from 'quasar';
 import { MEDIA_WINDOW_TITLE } from 'src/constants/zoom';
 import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useZoomStateStore } from 'stores/zoom-state';
 
 import { errorCatcher } from './error-catcher';
 import { sendKeyboardShortcut } from './keyboard-shortcuts';
+import { toggleMediaWindowVisibility } from './mediaPlayback';
 import { createTemporaryNotification } from './notifications';
 
 // The Zoom Meeting Manager drives the Zoom desktop app through a UI
-// Automation helper (uia_helper.py), which performs each action below in
-// one go. Every action resolves to a ZoomCommandResult rather than throwing,
-// so a missing Zoom window or a Zoom update never breaks M³'s own flows.
+// Automation helper (src-electron/zoom-helper), which performs each action
+// below in one go. Every action resolves to a ZoomCommandResult rather than
+// throwing, so a missing Zoom window or a Zoom update never breaks M³'s own
+// flows.
 
 const t = (key: string, named?: Record<string, unknown>) =>
   (i18n.global.t as (key: string, named?: Record<string, unknown>) => string)(
@@ -171,12 +174,53 @@ export const muteAllZoomParticipants = async (allowSelfUnmute: boolean) => {
 export const admitZoomParticipants = (names: string[]) =>
   runCommand({ names, type: 'admit' });
 
+/**
+ * How many people are in the meeting, the host included (not counting the
+ * waiting room), or null if Zoom's participants list couldn't be read.
+ */
+export const countZoomMeetingParticipants = async () => {
+  const result = await runCommand({ type: 'participants' });
+  if (!result.ok || !result.participants) return null;
+  return result.participants.filter((row) => row.section === 'meeting').length;
+};
+
 export const askAllZoomParticipantsToUnmute = async () => {
   const result = await runCommand({ type: 'ask-all-to-unmute' });
   if (result.ok) {
     notifyInfo('zoom-participants', 'zoom-participants-asked-to-unmute');
   }
   return result;
+};
+
+// --- Automations and the startup check ---------------------------------------
+
+let zoomCheckInProgress: null | Promise<unknown> = null;
+
+/**
+ * Runs a check of the Zoom Meeting Manager. The automations wait for it to
+ * finish, since it uses Zoom too (and may pause them).
+ */
+export const runWhileHoldingZoomAutomations = async <T>(
+  check: () => Promise<T>,
+): Promise<T> => {
+  const running = check();
+  zoomCheckInProgress = running;
+  try {
+    return await running;
+  } finally {
+    if (zoomCheckInProgress === running) zoomCheckInProgress = null;
+  }
+};
+
+/**
+ * Whether the automations may act now: once any check in progress is done,
+ * unless a failed check paused them.
+ */
+const zoomAutomationsAllowed = async (what: string) => {
+  if (zoomCheckInProgress) await zoomCheckInProgress.catch(() => undefined);
+  if (!useZoomStateStore().automationsPaused) return true;
+  log(`${what}: skipped, Zoom automations are paused`, 'zoom', 'warn');
+  return false;
 };
 
 // --- Sequences -------------------------------------------------------------
@@ -244,6 +288,7 @@ export const runZoomPostMeetingSequence = (
  */
 export const automateZoomMeetingSettings = async () => {
   if (!getSettings()?.zoomMeetingManagerAutomateMeetingAudioSettings) return;
+  if (!(await zoomAutomationsAllowed('Zoom meeting settings'))) return;
   await runZoomMeetingSequence();
 };
 
@@ -253,6 +298,9 @@ export const automateZoomMeetingSettings = async () => {
  */
 export const automateZoomPostMeetingSettings = async () => {
   if (!getSettings()?.zoomMeetingManagerAutomatePostMeetingAudioSettings) {
+    return;
+  }
+  if (!(await zoomAutomationsAllowed('Zoom before/after-meeting settings'))) {
     return;
   }
   await runZoomPostMeetingSequence();
@@ -275,6 +323,8 @@ export const autoLaunchZoomMeetingIfNeeded = async (
     return;
   }
 
+  if (!(await zoomAutomationsAllowed('Zoom meeting auto-launch'))) return;
+
   const meeting = await getZoomMeetingState();
   if (meeting?.found) return;
 
@@ -286,6 +336,25 @@ export const autoLaunchZoomMeetingIfNeeded = async (
 };
 
 // --- Screen sharing --------------------------------------------------------
+
+const MEDIA_WINDOW_SETTLE_MS = 1500;
+
+/**
+ * Shows M³'s media window, if hidden, so Zoom offers it for sharing in a
+ * test; resolves to how to put it back.
+ */
+export const prepareMediaWindowForZoomTest = async () => {
+  const wasVisible = useCurrentStateStore().mediaWindowVisible;
+  if (!wasVisible) {
+    toggleMediaWindowVisibility(true);
+    await new Promise((resolve) => {
+      setTimeout(resolve, MEDIA_WINDOW_SETTLE_MS);
+    });
+  }
+  return () => {
+    if (!wasVisible) toggleMediaWindowVisibility(false);
+  };
+};
 
 /**
  * Starts sharing M³'s media window in Zoom, with computer sound and the
@@ -317,6 +386,15 @@ export const stopSharingMediaInZoom = async () => {
     notifyFailure('zoom-sharing', 'zoom-sharing-stop-failed');
   }
   return result.ok;
+};
+
+/**
+ * Starts or stops sharing the media window in Zoom as media starts or
+ * stops, unless the Zoom automations are paused. Resolves to whether it did.
+ */
+export const automateZoomMediaSharing = async (start: boolean) => {
+  if (!(await zoomAutomationsAllowed('Zoom media sharing'))) return false;
+  return start ? startSharingMediaInZoom() : stopSharingMediaInZoom();
 };
 
 // --- Setup assistant -------------------------------------------------------

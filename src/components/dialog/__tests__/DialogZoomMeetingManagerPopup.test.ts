@@ -6,6 +6,7 @@ import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { defaultSettings } from 'src/constants/settings';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useZoomStateStore } from 'stores/zoom-state';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import DialogZoomMeetingManagerPopup from '../DialogZoomMeetingManagerPopup.vue';
@@ -15,11 +16,17 @@ const {
   meetingSequenceMock,
   postMeetingSequenceMock,
   runSelfTestMock,
+  startupCheckMock,
 } = vi.hoisted(() => ({
   getMeetingStateMock: vi.fn<() => Promise<null | ZoomMeetingState>>(),
   meetingSequenceMock: vi.fn(async () => ({ failedSteps: [], ok: true })),
   postMeetingSequenceMock: vi.fn(async () => ({ failedSteps: [], ok: true })),
   runSelfTestMock: vi.fn(),
+  startupCheckMock: vi.fn(async () => 'passed'),
+}));
+
+vi.mock('src/helpers/zoom-startup-check', () => ({
+  runZoomStartupCheck: startupCheckMock,
 }));
 
 vi.mock('src/helpers/zoom', () => ({
@@ -97,6 +104,21 @@ const isDisabled = (button: HTMLButtonElement) =>
   button.classList.contains('disabled') || button.disabled;
 
 describe('DialogZoomMeetingManagerPopup', () => {
+  it('says when a failed check paused the automations, and tests again', async () => {
+    await mountPopup({ meeting: MEETING });
+    useZoomStateStore().pauseAutomations(CONGREGATION_ID, [
+      'zoom-self-test-step-video-off',
+      'zoom-setup-check-host',
+    ]);
+    await flushPromises();
+
+    expect(document.body.textContent).toContain('Zoom automations paused');
+    expect(document.body.textContent).toContain('Turn the host video off');
+
+    findButton('Test again').click();
+    expect(startupCheckMock).toHaveBeenCalledWith({ manual: true });
+  });
+
   it('reports a missing Zoom window and disables the automation buttons', async () => {
     await mountPopup({
       settings: {

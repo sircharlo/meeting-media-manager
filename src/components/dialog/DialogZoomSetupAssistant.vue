@@ -423,14 +423,17 @@ import BaseDialog from 'components/dialog/BaseDialog.vue';
 import ZoomSelfTestSteps from 'components/dialog/ZoomSelfTestSteps.vue';
 import StatusRow from 'components/dialog/ZoomSetupStatusRow.vue';
 import { storeToRefs } from 'pinia';
-import { getZoomHelperErrorMessageKey } from 'src/constants/zoom';
-import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
+import {
+  getZoomHelperErrorMessageKey,
+  ZOOM_DIAGNOSIS_CHECKS,
+} from 'src/constants/zoom';
 import {
   diagnoseZoom,
   getZoomMeetingState,
   getZoomShareEntries,
   getZoomTitlesFromSettings,
   learnZoomVideoTitles,
+  prepareMediaWindowForZoomTest,
   testZoomShareEntry,
 } from 'src/helpers/zoom';
 import {
@@ -481,13 +484,12 @@ const USER_TEST_STEPS = [
 ] as const;
 
 const MEETING_POLL_MS = 2000;
-const MEDIA_WINDOW_SETTLE_MS = 1500;
 
 const open = defineModel<boolean>({ default: false });
 
 const { t } = useI18n();
 const currentState = useCurrentStateStore();
-const { currentSettings, mediaWindowVisible } = storeToRefs(currentState);
+const { currentSettings } = storeToRefs(currentState);
 
 const step = ref<Step>('welcome');
 const stepIndex = computed(() => STEPS.indexOf(step.value));
@@ -540,36 +542,8 @@ const openMeetingInZoom = () => {
 const checking = ref(false);
 const diagnosis = ref<null | ZoomDiagnosis>(null);
 
-const CHECKS = [
-  {
-    fix: 'zoom-setup-fix-meeting',
-    id: 'meeting',
-    label: 'zoom-setup-check-meeting',
-  },
-  {
-    fix: 'zoom-setup-fix-toolbar',
-    id: 'toolbar',
-    label: 'zoom-setup-check-toolbar',
-  },
-  {
-    fix: 'zoom-setup-fix-buttons',
-    id: 'videoButton',
-    label: 'zoom-setup-check-buttons',
-  },
-  {
-    fix: 'zoom-setup-fix-participants',
-    id: 'participantsPanel',
-    label: 'zoom-setup-check-participants',
-  },
-  {
-    fix: 'zoom-setup-fix-host',
-    id: 'hostControls',
-    label: 'zoom-setup-check-host',
-  },
-] as const;
-
 const checks = computed(() =>
-  CHECKS.map((check) => {
+  ZOOM_DIAGNOSIS_CHECKS.map((check) => {
     let status: Status = 'pending';
     if (checking.value) status = 'running';
     else if (diagnosis.value) {
@@ -667,17 +641,11 @@ const shareMessage = computed(() => {
 
 /** Shows the media window while Zoom's share window is checked. */
 const withMediaWindow = async <T,>(check: () => Promise<T>) => {
-  const wasVisible = mediaWindowVisible.value;
-  if (!wasVisible) {
-    toggleMediaWindowVisibility(true);
-    await new Promise((resolve) => {
-      setTimeout(resolve, MEDIA_WINDOW_SETTLE_MS);
-    });
-  }
+  const restore = await prepareMediaWindowForZoomTest();
   try {
     return await check();
   } finally {
-    if (!wasVisible) toggleMediaWindowVisibility(false);
+    restore();
   }
 };
 
@@ -761,18 +729,7 @@ const runTest = async () => {
       onProgress: (progress) => {
         testSteps.value = progress;
       },
-      prepareMediaWindow: async () => {
-        const wasVisible = mediaWindowVisible.value;
-        if (!wasVisible) {
-          toggleMediaWindowVisibility(true);
-          await new Promise((resolve) => {
-            setTimeout(resolve, MEDIA_WINDOW_SETTLE_MS);
-          });
-        }
-        return () => {
-          if (!wasVisible) toggleMediaWindowVisibility(false);
-        };
-      },
+      prepareMediaWindow: prepareMediaWindowForZoomTest,
       steps: USER_TEST_STEPS,
       titles: getZoomTitlesFromSettings(),
     });

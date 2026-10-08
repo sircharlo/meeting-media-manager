@@ -1420,8 +1420,7 @@ import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { triggerMediaWindowAutoHide } from 'src/helpers/mediaWindowAutoHide';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import {
-  startSharingMediaInZoom,
-  stopSharingMediaInZoom,
+  automateZoomMediaSharing,
   triggerZoomScreenShare,
 } from 'src/helpers/zoom';
 import { isExpectedNetworkPathAccessError } from 'src/shared/filesystem-errors';
@@ -2373,7 +2372,7 @@ const setMediaPlaying = async (
   });
 
   if (shouldStartZoomManagerSharing) {
-    const sharingStarted = await startSharingMediaInZoom();
+    const sharingStarted = await automateZoomMediaSharing(true);
     if (!sharingStarted) {
       log('Zoom media sharing did not start', 'zoom', 'warn', {
         mediaTitle: media.title,
@@ -2749,7 +2748,7 @@ function stopMedia(forOtherMediaItem = false) {
       currentSettings.value?.zoomMeetingManagerEnable &&
       currentSettings.value?.zoomMeetingManagerAutomateMediaSharing
     ) {
-      stopSharingMediaInZoom();
+      void automateZoomMediaSharing(false);
     } else {
       triggerZoomScreenShare(false);
     }

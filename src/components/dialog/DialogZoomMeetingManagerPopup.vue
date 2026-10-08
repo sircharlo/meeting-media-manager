@@ -37,7 +37,7 @@
 
       <div
         v-if="setupNeeded"
-        class="zoom-popup__setup row items-center no-wrap q-mx-md q-mb-sm q-pa-sm bg-accent-100"
+        class="zoom-popup__banner row items-center no-wrap q-mx-md q-mb-sm q-pa-sm bg-accent-100"
       >
         <q-icon class="q-mr-sm" color="primary" name="mmm-guide" size="18px" />
         <div class="col text-caption text-weight-medium">
@@ -50,6 +50,36 @@
           :label="t('zoom-setup-open')"
           no-caps
           @click="openSetupAssistant"
+        />
+      </div>
+
+      <div
+        v-if="checkRunning"
+        class="zoom-popup__banner row items-center no-wrap q-mx-md q-mb-sm q-pa-sm bg-accent-100"
+      >
+        <q-spinner class="q-mr-sm" color="primary" size="18px" />
+        <div class="col text-caption text-weight-medium">
+          {{ t('zoom-check-running') }}
+        </div>
+      </div>
+      <div
+        v-else-if="automationsPaused"
+        class="zoom-popup__banner row items-center no-wrap q-mx-md q-mb-sm q-pa-sm bg-accent-100"
+      >
+        <q-icon class="q-mr-sm" color="negative" name="mmm-error" size="18px" />
+        <div class="col text-caption">
+          <div class="text-weight-medium">
+            {{ t('zoom-automations-paused') }}
+          </div>
+          <div>{{ pausedProblems }}</div>
+        </div>
+        <q-btn
+          color="primary"
+          dense
+          flat
+          :label="t('zoom-check-test-again')"
+          no-caps
+          @click="testAgain"
         />
       </div>
 
@@ -193,7 +223,9 @@ import {
   runZoomMeetingSequence,
   runZoomPostMeetingSequence,
 } from 'src/helpers/zoom';
+import { runZoomStartupCheck } from 'src/helpers/zoom-startup-check';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useZoomStateStore } from 'stores/zoom-state';
 import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -218,6 +250,17 @@ const openSetupAssistant = () => {
 
 const currentState = useCurrentStateStore();
 const { currentSettings, zoomHelperLogs } = storeToRefs(currentState);
+
+const zoomState = useZoomStateStore();
+const { automationsPaused, checkRunning, pause } = storeToRefs(zoomState);
+
+const pausedProblems = computed(() =>
+  (pause.value?.problems ?? []).map((key) => t(key)).join(', '),
+);
+
+const testAgain = () => {
+  void runZoomStartupCheck({ manual: true });
+};
 
 const zoomMeetingManagerPopup = useTemplateRef<QMenu>(
   'zoomMeetingManagerPopup',
@@ -325,7 +368,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.zoom-popup__setup {
+.zoom-popup__banner {
   border-radius: 10px;
 }
 
