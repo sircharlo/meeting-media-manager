@@ -4,6 +4,7 @@ import {
   exec,
   spawn,
 } from 'node:child_process';
+import { randomUUID } from 'node:crypto';
 import { IS_DEV, PLATFORM } from 'src-electron/constants';
 import { logToWindow } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
@@ -16,6 +17,7 @@ const ZOOM_HELPER_READY_TIMEOUT_MS = 10_000;
 
 let pythonProcess: ChildProcessWithoutNullStreams | null = null;
 let zoomHelperPort: null | number = null;
+let zoomHelperToken = '';
 let zoomHelperReadyWaiters: ((ready: boolean) => void)[] = [];
 
 export async function ensureRequirementsInstalled(): Promise<boolean> {
@@ -43,9 +45,23 @@ export async function ensureRequirementsInstalled(): Promise<boolean> {
   });
 }
 
-export function getZoomHelperBaseUrl(): null | string {
-  if (!zoomHelperPort) return null;
-  return `http://127.0.0.1:${zoomHelperPort}`;
+export function getHelperPath(filename: string): string {
+  if (IS_DEV) {
+    return join(resolve(join(app.getAppPath(), '../../')), filename);
+  }
+  // Electron puts extraResources here at build time
+  return join(process.resourcesPath, filename);
+}
+
+export function getZoomHelperConnection(): null | {
+  baseUrl: string;
+  token: string;
+} {
+  if (!zoomHelperPort || !zoomHelperToken) return null;
+  return {
+    baseUrl: `http://127.0.0.1:${zoomHelperPort}`,
+    token: zoomHelperToken,
+  };
 }
 
 export async function isPythonInstalled(): Promise<boolean> {
@@ -66,13 +82,21 @@ export async function startZoomHelper(): Promise<boolean> {
   if (pythonProcess) return waitForZoomHelperReady();
 
   zoomHelperPort = null;
+  // A fresh secret for every run: the helper rejects requests without it,
+  // so other local software (or a web page) can't drive Zoom through it.
+  zoomHelperToken = randomUUID();
 
   const helperPath = getHelperPath('uia_helper.py');
 
   log(`Starting Zoom Helper`, 'zoom', 'info', helperPath);
   try {
     pythonProcess = spawn(getPythonCommand(), [helperPath], {
-      env: { ...process.env, PYTHONUNBUFFERED: '1' },
+      env: {
+        ...process.env,
+        PYTHONUNBUFFERED: '1',
+        PYTHONUTF8: '1',
+        ZOOM_HELPER_TOKEN: zoomHelperToken,
+      },
     });
   } catch (error) {
     logToWindow(
@@ -157,14 +181,6 @@ export function stopZoomHelper() {
 
   zoomHelperPort = null;
   resolveZoomHelperReady(false);
-}
-
-function getHelperPath(filename: string): string {
-  if (IS_DEV) {
-    return join(resolve(join(app.getAppPath(), '../../')), filename);
-  }
-  // Electron puts extraResources here at build time
-  return join(process.resourcesPath, filename);
 }
 
 function getPythonCommand(): string {

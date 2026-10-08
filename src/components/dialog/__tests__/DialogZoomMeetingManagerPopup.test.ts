@@ -1,4 +1,4 @@
-import type { ZoomUIElement } from 'src/types';
+import type { ZoomMeetingState } from 'src/types';
 
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils';
 import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
@@ -10,14 +10,32 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import DialogZoomMeetingManagerPopup from '../DialogZoomMeetingManagerPopup.vue';
 
-const { automateMeetingMock, automatePostMeetingMock } = vi.hoisted(() => ({
-  automateMeetingMock: vi.fn(async () => undefined),
-  automatePostMeetingMock: vi.fn(async () => undefined),
+const {
+  getMeetingStateMock,
+  meetingSequenceMock,
+  postMeetingSequenceMock,
+  runSelfTestMock,
+} = vi.hoisted(() => ({
+  getMeetingStateMock: vi.fn<() => Promise<null | ZoomMeetingState>>(),
+  meetingSequenceMock: vi.fn(async () => ({ failedSteps: [], ok: true })),
+  postMeetingSequenceMock: vi.fn(async () => ({ failedSteps: [], ok: true })),
+  runSelfTestMock: vi.fn(),
 }));
 
 vi.mock('src/helpers/zoom', () => ({
-  automateZoomMeetingSettings: automateMeetingMock,
-  automateZoomPostMeetingSettings: automatePostMeetingMock,
+  getZoomMeetingState: getMeetingStateMock,
+  getZoomTitlesFromSettings: () => ({
+    shareButtonTitle: null,
+    videoOffTitle: null,
+    videoOnTitle: null,
+  }),
+  runZoomMeetingSequence: meetingSequenceMock,
+  runZoomPostMeetingSequence: postMeetingSequenceMock,
+}));
+
+vi.mock('src/helpers/zoom-self-test', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  runZoomSelfTest: runSelfTestMock,
 }));
 
 installQuasarPlugin();
@@ -25,12 +43,12 @@ installPinia({ stubActions: false });
 
 const CONGREGATION_ID = 'test-cong';
 
-const MAIN_ZOOM_WINDOW = {
-  class_name: 'ConfMultiTabContentWndClass',
-  handle: 1234,
-  main_zoom_window: true,
+const MEETING: ZoomMeetingState = {
+  audioJoined: true,
+  found: true,
+  sharing: false,
   title: 'Zoom Meeting',
-} as unknown as ZoomUIElement;
+};
 
 let wrapper: undefined | VueWrapper;
 
@@ -43,11 +61,11 @@ afterEach(() => {
 });
 
 const mountPopup = async ({
+  meeting = null,
   settings = {},
-  windows = [],
 }: {
+  meeting?: null | ZoomMeetingState;
   settings?: Partial<typeof defaultSettings>;
-  windows?: ZoomUIElement[];
 } = {}) => {
   useCongregationSettingsStore().congregations = {
     [CONGREGATION_ID]: {
@@ -57,10 +75,7 @@ const mountPopup = async ({
     },
   };
   useCurrentStateStore().currentCongregation = CONGREGATION_ID;
-
-  vi.spyOn(globalThis.electronApi, 'listZoomWindows').mockResolvedValue(
-    windows,
-  );
+  getMeetingStateMock.mockResolvedValue(meeting);
 
   wrapper = mount(DialogZoomMeetingManagerPopup, {
     props: { modelValue: true },
@@ -100,8 +115,8 @@ describe('DialogZoomMeetingManagerPopup', () => {
 
   it('runs the meeting automation against a detected Zoom window', async () => {
     await mountPopup({
+      meeting: MEETING,
       settings: { zoomMeetingManagerAutomateMeetingAudioSettings: true },
-      windows: [MAIN_ZOOM_WINDOW],
     });
 
     expect(document.body.textContent).toContain('Zoom meeting window detected');
@@ -111,14 +126,13 @@ describe('DialogZoomMeetingManagerPopup', () => {
     button.click();
     await flushPromises();
 
-    expect(automateMeetingMock).toHaveBeenCalledOnce();
-    expect(automatePostMeetingMock).not.toHaveBeenCalled();
+    expect(meetingSequenceMock).toHaveBeenCalledOnce();
+    expect(postMeetingSequenceMock).not.toHaveBeenCalled();
   });
 
   it('only offers the automations that are turned on in settings', async () => {
-    await mountPopup({ windows: [MAIN_ZOOM_WINDOW] });
+    await mountPopup({ meeting: MEETING });
 
-    expect(document.body.textContent).not.toContain('Meeting settings');
     expect(() => findButton('Apply meeting settings')).toThrow();
     expect(() => findButton('Apply before/after-meeting settings')).toThrow();
   });
@@ -136,5 +150,36 @@ describe('DialogZoomMeetingManagerPopup', () => {
     findButton('Launch Zoom meeting').click();
 
     expect(launchSpy).toHaveBeenCalledWith('123');
+  });
+
+  it('runs the developer self-test with test participants, then lets them go', async () => {
+    const participantsSpy = vi
+      .spyOn(globalThis.electronApi, 'zoomTestParticipants')
+      .mockResolvedValue({ meetingId: '5550001', ok: true, participants: [] });
+    runSelfTestMock.mockImplementation(async ({ onProgress, participants }) => {
+      expect(participants).toBeDefined();
+      onProgress([
+        { id: 'meeting', status: 'passed' },
+        {
+          detail: 'Zoom turned them away',
+          id: 'participants-join',
+          status: 'failed',
+        },
+      ]);
+    });
+    await mountPopup({ meeting: MEETING });
+
+    findButton('Run test').click();
+    await flushPromises();
+
+    expect(participantsSpy).toHaveBeenCalledWith({ count: 3, type: 'start' });
+    expect(runSelfTestMock).toHaveBeenCalledOnce();
+    expect(participantsSpy).toHaveBeenLastCalledWith({ type: 'stop' });
+    expect(document.body.textContent).toContain('Find the Zoom meeting window');
+    expect(document.body.textContent).toContain('Zoom turned them away');
+    expect(document.body.textContent).toContain(
+      '1 passed, 1 failed, 0 skipped',
+    );
+    expect(document.body.textContent).toContain('meeting 5550001');
   });
 });

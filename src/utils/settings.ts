@@ -5,10 +5,12 @@ import type {
   SettingsItemRule,
 } from 'src/types';
 
-import { ZOOM_CONTROL_IDS } from 'src/constants/zoom';
 import { syncMeetingScheduleManually } from 'src/helpers/congregation-schedule';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { captureZoomButtonTitle, captureZoomTabTitle } from 'src/helpers/zoom';
+import {
+  captureZoomShareButtonTitle,
+  captureZoomVideoTitle,
+} from 'src/helpers/zoom';
 import { getDateDiff, getSpecificWeekday, isInPast } from 'src/utils/date';
 
 const requiredRule: ValidationRule = (val: boolean | string) =>
@@ -96,35 +98,12 @@ export const performActions = (actions: SettingsItemAction[] | undefined) => {
         globalThis.dispatchEvent(
           new CustomEvent<undefined>('openCongregationLookup'),
         );
-      } else if (action === 'zoomCaptureAudioMutedTitle') {
-        captureZoomButtonTitle(
-          'zoomAudioMutedTitle',
-          ZOOM_CONTROL_IDS.BTN_MUTE_AUDIO,
-        );
-      } else if (action === 'zoomCaptureAudioUnmutedTitle') {
-        captureZoomButtonTitle(
-          'zoomAudioUnmutedTitle',
-          ZOOM_CONTROL_IDS.BTN_MUTE_AUDIO,
-        );
-      } else if (action === 'zoomCaptureAudioNotJoinedTitle') {
-        captureZoomButtonTitle(
-          'zoomAudioNotJoinedTitle',
-          ZOOM_CONTROL_IDS.BTN_MUTE_AUDIO,
-        );
       } else if (action === 'zoomCaptureVideoOffTitle') {
-        captureZoomButtonTitle(
-          'zoomVideoOffTitle',
-          ZOOM_CONTROL_IDS.BTN_MUTE_VIDEO,
-        );
+        captureZoomVideoTitle('zoomVideoOffTitle');
       } else if (action === 'zoomCaptureVideoOnTitle') {
-        captureZoomButtonTitle(
-          'zoomVideoOnTitle',
-          ZOOM_CONTROL_IDS.BTN_MUTE_VIDEO,
-        );
-      } else if (action === 'zoomCaptureParticipantsButtonTitle') {
-        captureZoomTabTitle('zoomParticipantsButtonTitle');
+        captureZoomVideoTitle('zoomVideoOnTitle');
       } else if (action === 'zoomCaptureShareButtonTitle') {
-        captureZoomTabTitle('zoomShareButtonTitle');
+        captureZoomShareButtonTitle();
       }
     } catch (error) {
       errorCatcher(error);

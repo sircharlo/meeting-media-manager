@@ -14,7 +14,7 @@ import type {
   SettingsValues,
   UnzipOptions,
   UrlVariables,
-  ZoomUIElement,
+  ZoomTestParticipantsRequest,
 } from 'src/types';
 
 import { homepage, repository } from 'app/package.json';
@@ -29,7 +29,6 @@ import {
 import { pathExists } from 'fs-extra/esm';
 import { stat } from 'node:fs/promises';
 import { arch, platform } from 'node:os';
-import { setTimeout as delay } from 'node:timers/promises';
 import { PLATFORM } from 'src-electron/constants';
 import { updateDevMenuState } from 'src-electron/main/dev-menu';
 import { getLowDiskSpaceStatus } from 'src-electron/main/disk-space';
@@ -123,14 +122,18 @@ import {
   zoomWebsiteWindow,
 } from 'src-electron/main/window/window-website';
 import {
+  isZoomCommand,
+  runZoomCommand,
+} from 'src-electron/main/zoom-helper-client';
+import {
   ensureRequirementsInstalled,
-  getZoomHelperBaseUrl,
+  getZoomHelperConnection,
   isPythonInstalled,
   restartZoomHelper,
   startZoomHelper,
   stopZoomHelper,
 } from 'src-electron/main/zoom-helper-manager';
-import { log } from 'src/shared/vanilla';
+import { handleZoomTestParticipants } from 'src-electron/main/zoom-test-participants';
 import { join } from 'upath';
 
 const { openExternal, openPath } = shell;
@@ -617,159 +620,29 @@ handleIpcInvoke('watchFolder', async (_e, folderPath: string) =>
   watchFolder(folderPath),
 );
 
-function getZoomHelperUrl(pathname: string): URL {
-  const baseUrl = getZoomHelperBaseUrl();
-  if (!baseUrl) {
-    throw new Error('Zoom helper is not ready yet');
+handleIpcInvoke('zoomCommand', async (_e, command: unknown) => {
+  if (!isZoomCommand(command)) {
+    return { error: 'invalid-command', ok: false };
   }
-
-  return new URL(pathname, `${baseUrl}/`);
-}
-
-const getZoomWindows = async (className?: string) => {
+  const connection = getZoomHelperConnection();
+  if (!connection) return { error: 'helper-not-running', ok: false };
   try {
-    const url = getZoomHelperUrl('/windows');
-    if (className) {
-      url.searchParams.append('class_name', className);
-    }
-    const res = await fetch(url.toString());
-    const data = (await res.json()) as {
-      result: ZoomUIElement[];
-      success: boolean;
-    };
-
-    return data.result || [];
+    return await runZoomCommand(connection, command);
   } catch (error) {
     logToWindow(
       mainWindowInfo.mainWindow,
-      'Failed to list Zoom windows',
-      { error: String(error) },
+      'Zoom helper request failed',
+      { command: command.type, error: String(error) },
       'error',
     );
-    return [];
+    return { error: 'helper-unreachable', ok: false };
   }
-};
-
-const controlsVisibilityChecks = new Map<string, number>();
-const zoomWindowClassByHandle = new Map<null | number, string>();
+});
 
 handleIpcInvoke(
-  'listZoomWindows',
-  async (_e, mainOnly = false, className?: string) => {
-    const windows = await getZoomWindows(className);
-
-    let result = windows;
-
-    if (mainOnly) {
-      result = windows.filter((w) => w.main_zoom_window);
-    }
-
-    result.forEach((window) => {
-      zoomWindowClassByHandle.set(window.handle, window.class_name);
-    });
-
-    return result;
-  },
-);
-
-async function fetchZoomDialogChildren(
-  className: string,
-  parentHandle?: number,
-): Promise<ZoomUIElement[]> {
-  try {
-    const url = getZoomHelperUrl('/dialog_children');
-    url.searchParams.append('class_name', className);
-    if (parentHandle) {
-      url.searchParams.append('parent_handle', String(parentHandle));
-    }
-
-    const stringUrl = url.toString();
-    log('Zoom dialog children', 'zoom', 'log', stringUrl);
-
-    const res = await fetch(stringUrl);
-    const data = (await res.json()) as {
-      result: ZoomUIElement[];
-      success: boolean;
-    };
-    log('Zoom dialog children', 'zoom', 'log', data);
-
-    return data.success ? data.result || [] : [];
-  } catch (error) {
-    log('Zoom dialog children', 'zoom', 'error', error);
-    logToWindow(
-      mainWindowInfo.mainWindow,
-      'Failed to fetch Zoom dialog children',
-      { className, error: String(error), parentHandle },
-      'error',
-    );
-    return [];
-  }
-}
-
-async function sendZoomWindowKeysInternal(handle: number, keys: string) {
-  try {
-    const res = await fetch(getZoomHelperUrl('/send_keys').toString(), {
-      body: JSON.stringify({ keys, window_handle: handle }),
-      headers: { 'Content-Type': 'application/json' },
-      method: 'POST',
-    });
-    const data = (await res.json()) as {
-      success: boolean;
-    };
-    return data.success;
-  } catch (error) {
-    logToWindow(
-      mainWindowInfo.mainWindow,
-      'Failed to send keys to Zoom window',
-      { error: String(error), handle, keys },
-      'error',
-    );
-    return false;
-  }
-}
-
-async function showControlsIfHidden(handle: number) {
-  try {
-    const now = Date.now();
-    const checkKey = String(handle);
-    const lastCheckedAt = controlsVisibilityChecks.get(checkKey) ?? 0;
-    if (now - lastCheckedAt < 1500) {
-      return;
-    }
-    controlsVisibilityChecks.set(checkKey, now);
-
-    const className = zoomWindowClassByHandle.get(handle);
-    if (
-      className &&
-      className !== 'ConfMultiTabContentWndClass' &&
-      className !== 'ZPMeetingWndClass'
-    ) {
-      return;
-    }
-
-    const result = await fetchZoomDialogChildren('ZPControlPanelClass', handle);
-
-    if (!result.length) {
-      const success = await sendZoomWindowKeysInternal(handle, '%');
-      if (success) {
-        await delay(500);
-      }
-    }
-  } catch (error) {
-    logToWindow(
-      mainWindowInfo.mainWindow,
-      'Failed to check/show Zoom controls',
-      { error: String(error), handle },
-      'error',
-    );
-  }
-}
-
-handleIpcInvoke(
-  'getZoomDialogChildren',
-  async (_e, className: string, parentHandle?: number) => {
-    return fetchZoomDialogChildren(className, parentHandle);
-  },
+  'zoomTestParticipants',
+  async (_e, request: ZoomTestParticipantsRequest) =>
+    handleZoomTestParticipants(request),
 );
 
 handleIpcInvoke('getZipEntries', async (_e, zipPath: string) =>
@@ -796,100 +669,3 @@ handleIpcSend('relaunchApp', () => {
   app.relaunch();
   app.quit();
 });
-
-handleIpcInvoke(
-  'sendZoomWindowKeys',
-  async (_e, handle: number, keys: string) =>
-    sendZoomWindowKeysInternal(handle, keys),
-);
-
-handleIpcInvoke(
-  'clickZoomElement',
-  async (_e, handle: number, options: Partial<ZoomUIElement>) => {
-    try {
-      await showControlsIfHidden(handle);
-
-      const res = await fetch(getZoomHelperUrl('/click_button').toString(), {
-        body: JSON.stringify({
-          button: options.title,
-          control_id: options.control_id,
-          handle: options.handle,
-          window_handle: handle,
-        }),
-        headers: { 'Content-Type': 'application/json' },
-        method: 'POST',
-      });
-      const data = (await res.json()) as {
-        success: boolean;
-      };
-      log('Clicked Zoom element', 'zoom', 'log', { data, handle, options });
-      return data.success;
-    } catch (error) {
-      logToWindow(
-        mainWindowInfo.mainWindow,
-        'Failed to click Zoom element',
-        { error: String(error), handle, options },
-        'error',
-      );
-      return false;
-    }
-  },
-);
-
-handleIpcInvoke(
-  'getZoomElementTitle',
-  async (_e, handle: number, controlId: string) => {
-    try {
-      await showControlsIfHidden(handle);
-      const url = getZoomHelperUrl('/get_element_title');
-      url.searchParams.append('window_handle', String(handle));
-      url.searchParams.append('control_id', controlId);
-
-      const res = await fetch(url.toString());
-      const data = (await res.json()) as {
-        success: boolean;
-        title?: string;
-      };
-      return data.success ? data.title : null;
-    } catch (error) {
-      logToWindow(
-        mainWindowInfo.mainWindow,
-        'Failed to get Zoom element title',
-        { controlId, error: String(error), handle },
-        'error',
-      );
-      return null;
-    }
-  },
-);
-
-handleIpcInvoke(
-  'getZoomElementState',
-  async (_e, handle: number, controlId: string) => {
-    try {
-      await showControlsIfHidden(handle);
-      const url = getZoomHelperUrl('/get_element_state');
-      url.searchParams.append('window_handle', String(handle));
-      url.searchParams.append('control_id', controlId);
-
-      const res = await fetch(url.toString());
-      const data = (await res.json()) as {
-        state?: {
-          legacy_state?: number;
-          toggle_state?: number;
-          value?: string;
-        };
-        success: boolean;
-      };
-      return data.success ? data.state || null : null;
-    } catch (error) {
-      logToWindow(
-        mainWindowInfo.mainWindow,
-        'Failed to get Zoom element state',
-        { controlId, error: String(error), handle },
-        'error',
-      );
-      return null;
-    }
-  },
-);

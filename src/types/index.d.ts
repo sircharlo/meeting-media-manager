@@ -14,3 +14,4 @@ export * from './obs';
 export * from './search';
 export * from './settings';
 export * from './timer';
+export * from './zoom';

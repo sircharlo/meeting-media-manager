@@ -155,10 +155,6 @@ export type SettingsItemAction =
   | 'openCongregationLookup'
   | 'setBackgroundMusicVolume'
   | 'syncMeetingSchedule'
-  | 'zoomCaptureAudioMutedTitle'
-  | 'zoomCaptureAudioNotJoinedTitle'
-  | 'zoomCaptureAudioUnmutedTitle'
-  | 'zoomCaptureParticipantsButtonTitle'
   | 'zoomCaptureShareButtonTitle'
   | 'zoomCaptureVideoOffTitle'
   | 'zoomCaptureVideoOnTitle';
@@ -340,9 +336,6 @@ export interface SettingsValues {
   timerTimeOfDayDisplay: 'analog' | 'analog-digital' | 'digital';
   weDay: `${number}` | null;
   weStartTime: `${number}:${number}` | null;
-  zoomAudioMutedTitle: null | string;
-  zoomAudioNotJoinedTitle: null | string;
-  zoomAudioUnmutedTitle: null | string;
   zoomAutoFocusMediaWindow: boolean;
   zoomEnable: boolean;
   zoomMeetingManagerAutoLaunchMeeting: boolean;
@@ -351,7 +344,6 @@ export interface SettingsValues {
   zoomMeetingManagerAutomatePostMeetingAudioSettings: boolean;
   zoomMeetingManagerEnable: boolean;
   zoomMeetingManagerMeetingId: null | string;
-  zoomParticipantsButtonTitle: null | string;
   zoomScreenShareShortcut: null | string;
   zoomShareButtonTitle: null | string;
   zoomVideoOffTitle: null | string;

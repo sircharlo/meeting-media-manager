@@ -50,7 +50,7 @@
               <q-btn
                 class="full-width"
                 color="primary"
-                :disable="!mainZoomWindow || !!runningAction"
+                :disable="!meetingFound || !!runningAction"
                 icon="mmm-volume-off"
                 :label="t('zoom-apply-meeting-settings')"
                 :loading="runningAction === 'meeting'"
@@ -74,7 +74,7 @@
               <q-btn
                 class="full-width"
                 color="primary"
-                :disable="!mainZoomWindow || !!runningAction"
+                :disable="!meetingFound || !!runningAction"
                 icon="mmm-groups"
                 :label="t('zoom-apply-before-after-meeting-settings')"
                 :loading="runningAction === 'postMeeting'"
@@ -113,6 +113,8 @@
             </div>
           </q-expansion-item>
         </div>
+
+        <ZoomSelfTestPanel v-if="isDev" />
       </div>
 
       <q-separator class="bg-accent-200 q-mt-sm" />
@@ -151,12 +153,14 @@
 
 <script setup lang="ts">
 import type { QMenu } from 'quasar';
-import type { ZoomUIElement } from 'src/types';
+import type { ZoomMeetingState } from 'src/types';
 
+import ZoomSelfTestPanel from 'components/dialog/ZoomSelfTestPanel.vue';
 import { storeToRefs } from 'pinia';
 import {
-  automateZoomMeetingSettings,
-  automateZoomPostMeetingSettings,
+  getZoomMeetingState,
+  runZoomMeetingSequence,
+  runZoomPostMeetingSequence,
 } from 'src/helpers/zoom';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
@@ -170,8 +174,9 @@ const open = defineModel<boolean>({ default: false });
 
 const { t } = useI18n();
 
-const { launchZoomMeeting, listZoomWindows, restartZoomHelper } =
-  globalThis.electronApi;
+const { launchZoomMeeting, restartZoomHelper } = globalThis.electronApi;
+
+const isDev = import.meta.env.DEV;
 
 const currentState = useCurrentStateStore();
 const { currentSettings, zoomHelperLogs } = storeToRefs(currentState);
@@ -183,9 +188,7 @@ const popupContent = useTemplateRef<HTMLElement>('popupContent');
 let popupResizeObserver: ResizeObserver | undefined;
 let mainWindowPollingInterval: ReturnType<typeof setInterval> | undefined;
 
-// The automation helpers always act on the first main Zoom window, so that
-// is the one window this popup reports on.
-const mainZoomWindow = ref<null | ZoomUIElement>(null);
+const meeting = ref<null | ZoomMeetingState>(null);
 const hasCheckedForWindow = ref(false);
 const runningAction = ref<null | ZoomAction>(null);
 const restartingHelper = ref(false);
@@ -201,28 +204,27 @@ const showMeetingSettingsSection = computed(
     !!currentSettings.value?.zoomMeetingManagerAutomatePostMeetingAudioSettings,
 );
 
+const meetingFound = computed(() => !!meeting.value?.found);
+
 const searchingForWindow = computed(
-  () => !hasCheckedForWindow.value && !mainZoomWindow.value,
+  () => !hasCheckedForWindow.value && !meetingFound.value,
 );
 
 const statusText = computed(() => {
   if (searchingForWindow.value) return t('zoom-meeting-window-searching');
-  return mainZoomWindow.value
+  return meetingFound.value
     ? t('zoom-meeting-window-found')
     : t('zoom-meeting-window-not-found');
 });
 
 const statusIcon = computed(() =>
-  mainZoomWindow.value ? 'mmm-check' : 'mmm-info',
+  meetingFound.value ? 'mmm-check' : 'mmm-info',
 );
 
-const statusColor = computed(() =>
-  mainZoomWindow.value ? 'positive' : 'grey',
-);
+const statusColor = computed(() => (meetingFound.value ? 'positive' : 'grey'));
 
 const syncMainWindow = async () => {
-  const windows = await listZoomWindows(true);
-  mainZoomWindow.value = windows[0] ?? null;
+  meeting.value = await getZoomMeetingState();
   hasCheckedForWindow.value = true;
 };
 
@@ -235,9 +237,9 @@ const runAction = async (action: ZoomAction) => {
   runningAction.value = action;
   try {
     if (action === 'meeting') {
-      await automateZoomMeetingSettings();
+      await runZoomMeetingSequence();
     } else {
-      await automateZoomPostMeetingSettings();
+      await runZoomPostMeetingSequence();
     }
   } finally {
     runningAction.value = null;

@@ -62,7 +62,6 @@ const electronApi: ElectronApi = {
   cancelAllDownloads: () => send('cancelAllDownloads'),
   changeExt,
   checkForUpdates: () => send('checkForUpdates'),
-  clickZoomElement: (h, o) => invoke('clickZoomElement', h, o),
   closeSqliteConnection: (dbPath: string) =>
     invoke('closeSqliteConnection', dbPath),
   closeSqliteConnections: () => invoke('closeSqliteConnections'),
@@ -100,9 +99,6 @@ const electronApi: ElectronApi = {
   getUserDataPath: () => invoke('getUserDataPath'),
   getVideoDuration,
   getZipEntries: (p) => invoke('getZipEntries', p),
-  getZoomDialogChildren: (c, p) => invoke('getZoomDialogChildren', c, p),
-  getZoomElementState: (h, c) => invoke('getZoomElementState', h, c),
-  getZoomElementTitle: (h, c) => invoke('getZoomElementTitle', h, c),
   hideFileOnWindows,
   inferExtension,
   isArchitectureMismatch: () => invoke('isArchitectureMismatch'),
@@ -119,7 +115,6 @@ const electronApi: ElectronApi = {
   isZoomPythonInstalled: () => invoke('isZoomPythonInstalled'),
   join,
   launchZoomMeeting,
-  listZoomWindows: (m, c) => invoke('listZoomWindows', m, c),
   moveMediaWindow: (t, w) => send('moveMediaWindow', t, w),
   moveTimerWindow: (t, w) => send('moveTimerWindow', t, w),
   navigateWebsiteWindow,
@@ -168,7 +163,6 @@ const electronApi: ElectronApi = {
   saveFileDialog: (d, f) => invoke('saveFileDialog', d, f),
   sendDevMenuState: (state) => send('dev-menu-state', state),
   sendKeyTap: (k, m) => sendKeyTap(k, m),
-  sendZoomWindowKeys: (h, k) => invoke('sendZoomWindowKeys', h, k),
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),
   setElectronUrlVariables: (v) => send('setElectronUrlVariables', v),
   setExecutable: (p) => invoke('setExecutable', p),
@@ -186,6 +180,8 @@ const electronApi: ElectronApi = {
   unwatchFolders: () => invoke('unwatchFolders'),
   unzip: (i, o, op) => invoke('unzip', i, o, op),
   watchFolder: (p) => invoke('watchFolder', p),
+  zoomCommand: (c) => invoke('zoomCommand', c),
+  zoomTestParticipants: (r) => invoke('zoomTestParticipants', r),
   zoomWebsiteWindow,
 };
 

@@ -14,6 +14,12 @@ import type {
   UpdateVersionInfo,
 } from 'src/types/general';
 import type {
+  ZoomCommand,
+  ZoomCommandResult,
+  ZoomTestParticipantsRequest,
+  ZoomTestParticipantsResponse,
+} from 'src/types/zoom';
+import type {
   basename,
   changeExt,
   dirname,
@@ -88,10 +94,6 @@ export interface ElectronApi {
   cancelAllDownloads: () => void;
   changeExt: typeof changeExt;
   checkForUpdates: () => void;
-  clickZoomElement: (
-    handle: number,
-    options: Partial<ZoomUIElement>,
-  ) => Promise<boolean>;
   closeSqliteConnection: (dbPath: string) => Promise<void>;
   closeSqliteConnections: () => Promise<void>;
   closeWebsiteWindow: () => void;
@@ -189,22 +191,6 @@ export interface ElectronApi {
    */
   getVideoDuration: (filePath: string) => Promise<VideoDuration>;
   getZipEntries: (zipPath: string) => Promise<Record<string, number>>;
-  getZoomDialogChildren: (
-    className: string,
-    parentHandle?: number,
-  ) => Promise<ZoomUIElement[]>;
-  getZoomElementState: (
-    handle: number,
-    controlId: string,
-  ) => Promise<null | {
-    legacy_state?: number;
-    toggle_state?: number;
-    value?: string;
-  }>;
-  getZoomElementTitle: (
-    handle: number,
-    controlId: string,
-  ) => Promise<null | string>;
   hideFileOnWindows: (filePath: string) => Promise<void>;
   inferExtension: (filename: string, filetype?: string) => Promise<string>;
   isArchitectureMismatch: () => Promise<boolean>;
@@ -239,10 +225,6 @@ export interface ElectronApi {
   isZoomPythonInstalled: () => Promise<boolean>;
   join: typeof join;
   launchZoomMeeting: (meetingId: string) => void;
-  listZoomWindows: (
-    mainOnly?: boolean,
-    className?: string,
-  ) => Promise<ZoomUIElement[]>;
   moveMediaWindow: (
     targetScreenNumber?: number,
     windowedMode?: boolean,
@@ -384,7 +366,6 @@ export interface ElectronApi {
    * @param modifiers Modifier keys to hold while tapping.
    */
   sendKeyTap: (key: string, modifiers?: string[]) => void;
-  sendZoomWindowKeys: (handle: number, keys: string) => Promise<boolean>;
   setAutoStartAtLogin: (value: boolean) => void;
   setElectronUrlVariables: (variables: string) => void;
   /**
@@ -412,6 +393,15 @@ export interface ElectronApi {
     opts?: UnzipOptions,
   ) => Promise<UnzipResult[]>;
   watchFolder: (path: string) => Promise<void>;
+  /** Runs one complete Zoom action through the Zoom helper. */
+  zoomCommand: (command: ZoomCommand) => Promise<ZoomCommandResult>;
+  /**
+   * Development builds only: test participants joining the Zoom test
+   * meeting from .env.zoom-test (see scripts/zoom-live/participants.mjs).
+   */
+  zoomTestParticipants: (
+    request: ZoomTestParticipantsRequest,
+  ) => Promise<ZoomTestParticipantsResponse>;
   zoomWebsiteWindow: (direction: 'in' | 'out') => void;
 }
 
@@ -490,7 +480,6 @@ export type ElectronFsApi = Pick<
 
 // ipcMain.handle / ipcRenderer.invoke channels
 export type ElectronIpcInvokeKey =
-  | 'clickZoomElement'
   | 'closeSqliteConnection'
   | 'closeSqliteConnections'
   | 'convertHeic'
@@ -513,9 +502,6 @@ export type ElectronIpcInvokeKey =
   | 'getUpdatesDisabledPath'
   | 'getUserDataPath'
   | 'getZipEntries'
-  | 'getZoomDialogChildren'
-  | 'getZoomElementState'
-  | 'getZoomElementTitle'
   | 'isArchitectureMismatch'
   | 'isDownloadComplete'
   | 'isDownloadErrorExpected'
@@ -523,7 +509,6 @@ export type ElectronIpcInvokeKey =
   | 'isSqliteDbCorrupt'
   | 'isUsablePath'
   | 'isZoomPythonInstalled'
-  | 'listZoomWindows'
   | 'openFileDialog'
   | 'openFolder'
   | 'openFolderDialog'
@@ -531,14 +516,15 @@ export type ElectronIpcInvokeKey =
   | 'registerShortcut'
   | 'restartZoomHelper'
   | 'saveFileDialog'
-  | 'sendZoomWindowKeys'
   | 'set-hardware-acceleration'
   | 'setExecutable'
   | 'startSecurityScopedAccess'
   | 'startZoomHelper'
   | 'unwatchFolders'
   | 'unzip'
-  | 'watchFolder';
+  | 'watchFolder'
+  | 'zoomCommand'
+  | 'zoomTestParticipants';
 
 // BrowserWindow.webContents.send / ipcRenderer.on channels
 export type ElectronIpcListenKey =
@@ -656,16 +642,4 @@ export interface UnzipOptions {
 
 export interface UnzipResult {
   path: string;
-}
-
-export interface ZoomUIElement {
-  class_name: string;
-  control_id?: string;
-  control_type: string;
-  handle: null | number;
-  help_text?: string;
-  is_enabled?: boolean;
-  main_zoom_window?: boolean;
-  pid: number;
-  title: string;
 }
