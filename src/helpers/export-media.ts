@@ -10,10 +10,11 @@ import { i18n } from 'boot/i18n';
 import { getMeetingSections } from 'src/constants/media';
 import { isCoWeek, isMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { setupFFmpeg } from 'src/helpers/fs';
+import { getRendererPlatform, setupFFmpeg } from 'src/helpers/fs';
 import { withLockRetry } from 'src/helpers/fs-retry';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { sanitizeFilename } from 'src/shared/vanilla';
+import { isExpectedNetworkPathAccessError } from 'src/shared/filesystem-errors';
+import { log, sanitizeFilename } from 'src/shared/vanilla';
 import { datesAreSame, formatDate, getSpecificWeekday } from 'src/utils/date';
 import { getTempPath, trimFilepathAsNeeded } from 'src/utils/fs';
 import { pad } from 'src/utils/general';
@@ -310,7 +311,33 @@ const processSectionItems = async (
         totalItems: visibleItems.length,
       });
     } catch (error) {
-      errorCatcher(error);
+      // A cloud-synced export folder (Nextcloud, OneDrive, ...) can
+      // transiently fail a stat/copy while its sync client holds or swaps the
+      // file (MMM-V2-3KX). The next export run retries it; not an app bug.
+      if (
+        isExpectedNetworkPathAccessError(
+          error,
+          destFolder,
+          getRendererPlatform(),
+        )
+      ) {
+        log(
+          `Could not export to cloud/network folder ${destFolder}`,
+          'filesystem',
+          'warn',
+          error,
+        );
+        continue;
+      }
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            destFolder,
+            fileUrl: visibleItems[i]?.fileUrl,
+            name: 'processSectionItems',
+          },
+        },
+      });
     }
   }
 };
