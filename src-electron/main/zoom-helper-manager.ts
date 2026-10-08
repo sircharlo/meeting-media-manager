@@ -12,14 +12,34 @@ import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import { ZoomHelperProcess } from 'src-electron/main/zoom-helper-process';
 import upath from 'upath';
 
-const { join, resolve } = upath;
+const { dirname, join } = upath;
+
+let devRepoRoot: null | string = null;
+
+/**
+ * The repository, found by going up from the app's folder: `yarn dev` runs
+ * the app from a folder inside .quasar/, whose depth depends on the Quasar
+ * version (currently .quasar/dev-electron/electron).
+ */
+const findDevRepoRoot = () => {
+  let dir = app.getAppPath();
+  for (let depth = 0; depth < 8; depth++) {
+    if (existsSync(join(dir, 'src-electron'))) return dir;
+    const parent = dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  // Quasar starts the app from the repository's root.
+  return process.cwd();
+};
 
 /**
  * A path inside the repository, in development builds. (Packaged builds
  * only ship the Zoom helper, under resources/zoom-helper.)
  */
 export function getDevRepoPath(relativePath: string): string {
-  return join(resolve(join(app.getAppPath(), '../../')), relativePath);
+  devRepoRoot ??= findDevRepoRoot();
+  return join(devRepoRoot, relativePath);
 }
 
 const getZoomHelperScriptPath = () =>
