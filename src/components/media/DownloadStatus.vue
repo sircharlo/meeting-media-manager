@@ -35,13 +35,15 @@
 <script setup lang="ts">
 import type { DownloadProgressItem } from 'src/types';
 
-import isOnline from 'is-online';
+import { useIntervalFn } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getDateDiff } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+
+const { isOnline } = globalThis.electronApi;
 
 const { t } = useI18n();
 const currentState = useCurrentStateStore();
@@ -57,7 +59,11 @@ const updateOnline = async () => {
   }
 };
 
-setInterval(() => {
+// useIntervalFn auto-clears on unmount - this component remounts whenever
+// the footer that hosts it does (e.g. toggling media-display/music-button
+// settings, or switching to a congregation with different values for them),
+// so a bare setInterval here would accumulate a new timer on every remount.
+useIntervalFn(() => {
   updateOnline();
 }, 10000);
 
@@ -77,15 +83,5 @@ const someHaveError = computed(() => {
   );
 });
 
-const someAreLoading = computed(() => {
-  return (
-    currentState.fetchingMeetingsCount > 0 ||
-    Object.values(downloadProgress.value).some(
-      (item: DownloadProgressItem) =>
-        !item.complete &&
-        !item.error &&
-        (!item.loaded || !item.total || item.loaded < item.total),
-    )
-  );
-});
+const someAreLoading = computed(() => currentState.hasActiveMediaWork);
 </script>

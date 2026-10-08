@@ -35,32 +35,6 @@ const toUnicode = (codepoint) => `\\${codepoint.toString(16)}`;
 
 async function main() {
   try {
-    // HACK: Patch fantasticon behavior until PR 611 is merged
-    // This fixes the 'No SVGs found' error on Windows.
-    if (process.platform === 'win32') {
-      const distDir = join('.', 'node_modules', 'fantasticon', 'dist');
-      try {
-        const files = await fs.readdir(distDir);
-        const chunkFile = files.find(
-          (f) => f.startsWith('chunk-') && f.endsWith('.js'),
-        );
-        if (chunkFile) {
-          const chunkPath = join(distDir, chunkFile);
-          let chunkContent = await fs.readFile(chunkPath, 'utf8');
-          if (chunkContent.includes('await glob(globPath, {})')) {
-            chunkContent = chunkContent.replace(
-              'await glob(globPath, {})',
-              'await glob(globPath, { windowsPathsNoEscape: true, posix: true })',
-            );
-            await fs.writeFile(chunkPath, chunkContent, 'utf8');
-            console.log('Fantasticon patch applied successfully');
-          }
-        }
-      } catch (e) {
-        console.warn('Could not apply fantasticon patch:', e.message);
-      }
-    }
-
     const { generateFonts } = await import('fantasticon');
 
     const { codepoints } = await generateFonts({

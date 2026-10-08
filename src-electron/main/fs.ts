@@ -8,8 +8,18 @@ import type {
 import { watch as filesystemWatch, type FSWatcher } from 'chokidar';
 import { app, dialog } from 'electron';
 import { ensureDir, type Stats } from 'fs-extra';
-import { createWriteStream } from 'node:fs';
-import { mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { createReadStream, createWriteStream } from 'node:fs';
+import {
+  chmod,
+  copyFile,
+  mkdir,
+  open,
+  readdir,
+  readFile,
+  rm,
+  stat,
+  writeFile,
+} from 'node:fs/promises';
 import { pipeline } from 'node:stream/promises';
 import { setTimeout as delay } from 'node:timers/promises';
 import {
@@ -25,6 +35,7 @@ import {
   PDF_EXTENSIONS,
 } from 'src/constants/media';
 import {
+  getCloudStorageProvider,
   getFilesystemErrorCode,
   isExpectedNetworkPathAccessError,
   isPossiblyNetworkFolderPath,
@@ -44,7 +55,16 @@ const ongoingDecompressions = new Map<string, Promise<UnzipResult[]>>();
 
 const MAX_FILES = 10000;
 const MAX_SIZE = 2000000000; // 2 GB
-const THRESHOLD_RATIO = 100;
+// A single-pass DEFLATE stream can't exceed ~1032:1; legitimate archives
+// (sparse databases, repetitive JSON/text) can still land in the low
+// hundreds, so this stays close to the real ceiling to avoid false
+// positives while still catching genuinely crafted zip bombs.
+const THRESHOLD_RATIO = 1032;
+// Below this size, even a maximal-ratio entry can't meaningfully contribute
+// to resource exhaustion (already bounded separately by MAX_SIZE/MAX_FILES),
+// so skip the ratio check to avoid flagging small, highly-compressible
+// legitimate files.
+const MIN_RATIO_CHECK_SIZE = 10000000; // 10 MB
 const MAX_IN_MEMORY_ZIP_ENTRY_SIZE = 150000000; // 150 MB
 const MAX_IN_MEMORY_ZIP_TOTAL_SIZE = 250000000; // 250 MB
 const PATH_PROBE_SETTLE_DELAY_MS = 50;
@@ -56,34 +76,41 @@ const SHARED_PATH_HEALTH_FILENAME = 'shared-path-health.json';
 const PATH_PROBE_NETWORK_WARNING_THROTTLE_MS = 30000;
 const ZIP_OPEN_RETRY_COUNT = 3;
 const ZIP_OPEN_RETRY_DELAY_MS = 1000;
+const SECURITY_SCOPED_BOOKMARKS_FILENAME = 'security-scoped-bookmarks.json';
 const SHARED_PATH_HEALTH_FOLDERS = [
   'Additional Media',
   'Fonts',
   'Publications',
 ];
 
-const getCloudStorageProvider = (filePath: string) => {
-  const normalizedPath = toUnix(filePath).toLowerCase();
+// A just-downloaded file can be briefly locked by an antivirus/quarantine
+// scan right after the download completes: opening it fails with EPERM for
+// well under a second, then the same file reads fine (MMM-V2-3KB..3KF).
+const ZIP_TRANSIENT_LOCK_ERROR_CODES = new Set(['EACCES', 'EBUSY', 'EPERM']);
 
-  if (normalizedPath.includes('/library/mobile documents/')) return 'iCloud';
-  if (normalizedPath.includes('/icloud drive/')) return 'iCloud';
-  if (normalizedPath.includes('/dropbox/')) return 'Dropbox';
-  if (normalizedPath.includes('/onedrive')) return 'OneDrive';
-  if (normalizedPath.includes('/google drive/')) return 'Google Drive';
-
-  return undefined;
-};
-
-const isRetryableZipError = (error: unknown) => {
+const isRetryableZipError = (error: unknown, zipPath?: string) => {
   const errorCode = getErrorCode(error);
   if (errorCode && NETWORK_ERROR_CODES.has(errorCode)) return true;
   if (errorCode === 'ENOENT') return true;
+  if (errorCode && ZIP_TRANSIENT_LOCK_ERROR_CODES.has(errorCode)) return true;
 
   const message = error instanceof Error ? error.message : String(error);
   if (isIncompleteZipReadError(message)) return true;
 
-  return /connection timed out|resource busy|temporarily unavailable/i.test(
-    message,
+  if (
+    /connection timed out|resource busy|temporarily unavailable/i.test(message)
+  ) {
+    return true;
+  }
+
+  // Cloud-sync drivers (OneDrive, etc.) and network shares commonly surface
+  // opaque EINVAL/ENOENT/UNKNOWN errors while a file is still hydrating or
+  // briefly locked by the sync agent - worth a retry there even though
+  // those codes aren't retryable in general (e.g. a genuinely missing/
+  // invalid file on local disk).
+  return (
+    !!zipPath &&
+    isExpectedNetworkPathAccessError(error, dirname(zipPath), process.platform)
   );
 };
 
@@ -125,8 +152,17 @@ let sharedPathBackoffLoaded = false;
 let lastPathProbeNetworkWarningAt = 0;
 const pathProbeNotificationPaths = new Set<string>();
 
-type PathMode = 'shared' | 'user';
+export interface MacosFolderPermissionResult {
+  errorCode?: string;
+  path: string;
+  selectedPath?: string;
+  status: MacosFolderPermissionStatus;
+}
 
+type MacosFolderPermissionStatus =
+  'cancelled' | 'failed' | 'granted' | 'not-needed';
+
+type PathMode = 'shared' | 'user';
 type PathProbeResult = 'backoff' | 'failed' | 'not-machine-wide' | 'passed';
 
 interface UnzipContext {
@@ -134,6 +170,7 @@ interface UnzipContext {
   opts?: UnzipOptions;
   output: string;
 }
+
 interface ZipfileState {
   extractedFiles: UnzipResult[];
   fileCount: number;
@@ -145,8 +182,68 @@ interface ZipGuardState {
   totalUncompressedSize: number;
 }
 
+let securityScopedBookmarksLoaded = false;
+const securityScopedBookmarks = new Map<string, string>();
+const securityScopedAccessStops = new Map<string, () => void>();
+
+const stopSecurityScopedAccess = () => {
+  for (const [path, stopAccessing] of securityScopedAccessStops) {
+    try {
+      stopAccessing();
+    } catch (error) {
+      captureElectronError(error, {
+        contexts: {
+          fn: {
+            args: { path },
+            name: 'stopSecurityScopedAccess',
+          },
+        },
+      });
+    }
+  }
+
+  securityScopedAccessStops.clear();
+};
+
+app.once('will-quit', stopSecurityScopedAccess);
+
+/**
+ * Resolves a zip entry's target path and guards against "Zip Slip": a
+ * malicious entry name (e.g. containing `../` sequences) that would
+ * otherwise resolve outside of `output` and let a crafted archive write
+ * files anywhere on disk.
+ * @param output The directory the zip is being extracted into
+ * @param entryFileName The entry's file name, as read from the archive
+ * @returns The safe, fully-joined path for the entry
+ */
+const resolveZipEntryPath = (output: string, entryFileName: string) => {
+  const resolvedOutput = resolve(output);
+  const fullPath = join(output, entryFileName);
+  const resolvedFullPath = resolve(fullPath);
+
+  if (
+    resolvedFullPath !== resolvedOutput &&
+    !resolvedFullPath.startsWith(`${resolvedOutput}/`)
+  ) {
+    throw new Error(`Unsafe zip entry path: ${entryFileName}`);
+  }
+
+  return fullPath.replace(/\/+$/, '');
+};
+
+/**
+ * A zip entry, or a stand-in for one built from a plain file on disk (see
+ * collectDirectoryZipEntries). Real yauzl Entry objects satisfy this too, so
+ * the same guard/handling code works for both sources.
+ */
+interface ZipLikeEntry {
+  compressedSize?: number;
+  fileName: string;
+  uncompressedSize: number;
+}
+
 const getZipEntryGuardError = (
-  entry: Entry,
+  entry: ZipLikeEntry,
   state: ZipGuardState,
   limits: {
     maxEntrySize?: number;
@@ -174,7 +271,11 @@ const getZipEntryGuardError = (
     return new Error('Reached max. size (failsafe)');
   }
 
-  if (entry.compressedSize > 0) {
+  if (
+    entry.compressedSize !== undefined &&
+    entry.compressedSize > 0 &&
+    entry.uncompressedSize >= MIN_RATIO_CHECK_SIZE
+  ) {
     const compressionRatio = entry.uncompressedSize / entry.compressedSize;
     if (compressionRatio > THRESHOLD_RATIO) {
       return new Error('Reached max. compression ratio (failsafe)');
@@ -182,6 +283,40 @@ const getZipEntryGuardError = (
   }
 
   return undefined;
+};
+
+/**
+ * Walks a directory and reports each file/subdirectory as if it were a zip
+ * entry (POSIX-style relative paths, directories suffixed with `/`). Used to
+ * transparently support JWPUB/zip files that were already extracted into a
+ * folder before being handed to us (e.g. a JWPUB that macOS auto-expanded
+ * and the user then re-zipped as a folder rather than a file).
+ */
+const collectDirectoryZipEntries = async (
+  dirPath: string,
+): Promise<ZipLikeEntry[]> => {
+  const entries: ZipLikeEntry[] = [];
+
+  const walk = async (currentPath: string, prefix: string): Promise<void> => {
+    const dirents = await readdir(currentPath, { withFileTypes: true });
+    for (const dirent of dirents) {
+      const entryName = prefix ? `${prefix}/${dirent.name}` : dirent.name;
+      const fullPath = join(currentPath, dirent.name);
+      if (dirent.isDirectory()) {
+        entries.push({ fileName: `${entryName}/`, uncompressedSize: 0 });
+        await walk(fullPath, entryName);
+      } else if (dirent.isFile()) {
+        const fileStats = await stat(fullPath);
+        entries.push({
+          fileName: entryName,
+          uncompressedSize: fileStats.size,
+        });
+      }
+    }
+  };
+
+  await walk(dirPath, '');
+  return entries;
 };
 
 const getSharedPathHealthFile = () =>
@@ -250,13 +385,122 @@ const markSharedPathUnhealthy = async () => {
   await persistSharedPathBackoff(Date.now() + SHARED_PATH_BACKOFF_MS);
 };
 
+const getSecurityScopedBookmarksFile = () =>
+  join(app.getPath('userData'), SECURITY_SCOPED_BOOKMARKS_FILENAME);
+
+const normalizeBookmarkPath = (filePath: string) => toUnix(resolve(filePath));
+
+const isSameOrChildPath = (parentPath: string, childPath: string) =>
+  childPath === parentPath || childPath.startsWith(`${parentPath}/`);
+
+const loadSecurityScopedBookmarks = async () => {
+  if (securityScopedBookmarksLoaded) return;
+  securityScopedBookmarksLoaded = true;
+
+  try {
+    const raw = await readFile(getSecurityScopedBookmarksFile(), 'utf8');
+    const parsed = JSON.parse(raw) as unknown;
+    if (!parsed || typeof parsed !== 'object') return;
+
+    for (const [path, bookmark] of Object.entries(parsed)) {
+      if (typeof bookmark === 'string') {
+        securityScopedBookmarks.set(normalizeBookmarkPath(path), bookmark);
+      }
+    }
+  } catch {
+    securityScopedBookmarks.clear();
+  }
+};
+
+const persistSecurityScopedBookmarks = async () => {
+  try {
+    await writeFile(
+      getSecurityScopedBookmarksFile(),
+      JSON.stringify(Object.fromEntries(securityScopedBookmarks), null, 2),
+      'utf8',
+    );
+  } catch (error) {
+    captureElectronError(error, {
+      contexts: {
+        fn: {
+          name: 'persistSecurityScopedBookmarks',
+        },
+      },
+    });
+  }
+};
+
+const storeSecurityScopedBookmarks = async (
+  filePaths: string[],
+  bookmarks?: string[],
+) => {
+  if (process.platform !== 'darwin' || !bookmarks?.length) return;
+
+  await loadSecurityScopedBookmarks();
+
+  filePaths.forEach((filePath, index) => {
+    const bookmark = bookmarks[index];
+    if (!bookmark) return;
+    securityScopedBookmarks.set(normalizeBookmarkPath(filePath), bookmark);
+  });
+
+  await persistSecurityScopedBookmarks();
+};
+
+const getNearestSecurityScopedBookmark = async (filePath: string) => {
+  await loadSecurityScopedBookmarks();
+
+  const normalizedPath = normalizeBookmarkPath(filePath);
+  let nearest: null | { bookmark: string; path: string } = null;
+
+  for (const [bookmarkPath, bookmark] of securityScopedBookmarks) {
+    if (!isSameOrChildPath(bookmarkPath, normalizedPath)) continue;
+    if (nearest && bookmarkPath.length <= nearest.path.length) continue;
+    nearest = { bookmark, path: bookmarkPath };
+  }
+
+  return nearest;
+};
+
+export const startSecurityScopedAccess = async (filePath: string) => {
+  if (process.platform !== 'darwin') return false;
+
+  const nearest = await getNearestSecurityScopedBookmark(filePath);
+  if (!nearest) return false;
+  if (securityScopedAccessStops.has(nearest.path)) return true;
+
+  try {
+    securityScopedAccessStops.set(
+      nearest.path,
+      app.startAccessingSecurityScopedResource(nearest.bookmark) as () => void,
+    );
+    addElectronBreadcrumb({
+      category: 'filesystem',
+      data: { path: filePath, scopedPath: nearest.path },
+      message: 'Started security scoped folder access',
+    });
+    return true;
+  } catch (error) {
+    captureElectronError(error, {
+      contexts: {
+        fn: {
+          args: { filePath, scopedPath: nearest.path },
+          name: 'startSecurityScopedAccess',
+        },
+      },
+    });
+    return false;
+  }
+};
+
 const probeSharedSubfolders = async (sharedPath: string) => {
   for (const folder of SHARED_PATH_HEALTH_FOLDERS) {
     const dirPath = join(sharedPath, folder);
-    const testFile = join(dirPath, `.health-check-${uuid()}.tmp`);
-    await mkdir(dirPath, { recursive: true });
+    const testDir = join(dirPath, `.health-check-${uuid()}`);
+    const testFile = join(testDir, 'test.txt');
+    await mkdir(testDir, { recursive: true });
     await writeFile(testFile, 'ok', 'utf8');
-    await rm(testFile, { force: true });
+    await rm(testDir, { force: true, recursive: true });
   }
 };
 
@@ -356,11 +600,69 @@ const getProbePathContext = (basePath: string) => {
   return { resolvedBase, testDir, testFile };
 };
 
+const PROBE_EXISTING_FILE_MAX_DEPTH = 4;
+const PROBE_EXISTING_FILE_SCAN_LIMIT = 200;
+
+/**
+ * Finds a pre-existing regular file under basePath (bounded depth/breadth,
+ * so this stays cheap even for a large cache folder). Returns undefined if
+ * the folder is empty/unreadable - there's nothing pre-existing to probe
+ * yet, which is expected on first-ever setup.
+ */
+const findExistingProbeFile = async (
+  basePath: string,
+  depth = 0,
+): Promise<string | undefined> => {
+  if (depth > PROBE_EXISTING_FILE_MAX_DEPTH) return undefined;
+
+  const dirents = await readdir(basePath, { withFileTypes: true }).catch(
+    () => [],
+  );
+
+  const subdirs: string[] = [];
+  for (const dirent of dirents.slice(0, PROBE_EXISTING_FILE_SCAN_LIMIT)) {
+    const fullPath = join(basePath, dirent.name);
+    if (dirent.isFile()) return fullPath;
+    if (dirent.isDirectory()) subdirs.push(fullPath);
+  }
+
+  for (const subdir of subdirs) {
+    const found = await findExistingProbeFile(subdir, depth + 1);
+    if (found) return found;
+  }
+
+  return undefined;
+};
+
+/**
+ * Opens and reads a byte of an existing file to confirm it's actually
+ * readable. macOS's per-app Documents/Desktop/Downloads protection (TCC)
+ * only gates reading files the app didn't just create itself - a brand-new
+ * probe file (create, write, delete) is always readable regardless of
+ * whether the user has actually granted folder access, so it can't detect a
+ * missing/stale grant. Probing a file that already existed before this
+ * process touched the folder exercises the real read path instead.
+ */
+const verifyExistingFileReadable = async (filePath: string) => {
+  const handle = await open(filePath, 'r');
+  try {
+    await handle.read(Buffer.alloc(1), 0, 1, 0);
+  } finally {
+    await handle.close();
+  }
+};
+
 const isInvalidWindowsResolvedPath = (resolvedBase: string) => {
   if (process.platform !== 'win32') return false;
 
+  // A resolved path whose final segment is a bare '?' is never a real
+  // folder. Originally this only checked for '/?' and '//?' exactly, but
+  // the same malformed-resolution shape has shown up with a drive letter
+  // or UNC prefix still attached (e.g. a virtual/mapped drive resolving
+  // oddly) and slipped past that exact match - check the general shape
+  // instead of two hardcoded strings.
   const unixResolvedBase = toUnix(resolvedBase);
-  return unixResolvedBase === '/?' || unixResolvedBase === '//?';
+  return basename(unixResolvedBase) === '?';
 };
 
 const WINDOWS_RETRYABLE_PROBE_CODES = new Set(['EBUSY', 'EPERM']);
@@ -452,7 +754,7 @@ export const setPathProbeNotificationPaths = (paths: string[] = []) => {
 
 const hasPossibleNetworkPathInNotificationSettings = () => {
   return [...pathProbeNotificationPaths].some((path) =>
-    isPossiblyNetworkFolderPath(path),
+    isPossiblyNetworkFolderPath(path, process.platform),
   );
 };
 
@@ -468,13 +770,68 @@ const notifyPathProbeNetworkWarning = () => {
   sendToWindow(mainWindowInfo.mainWindow, 'pathProbeNetworkWarning');
 };
 
+export async function ensureMacosFolderPermission(
+  folderPath: string,
+  prompt = true,
+): Promise<MacosFolderPermissionResult> {
+  if (process.platform !== 'darwin') {
+    return { path: folderPath, status: 'not-needed' };
+  }
+
+  await startSecurityScopedAccess(folderPath);
+
+  if (await isUsablePath(folderPath)) {
+    return { path: folderPath, status: 'granted' };
+  }
+
+  addElectronBreadcrumb({
+    category: 'filesystem',
+    data: { folderPath },
+    level: 'warning',
+    message: 'Folder permission probe failed before reauthorization',
+  });
+
+  if (!prompt) {
+    return { path: folderPath, status: 'failed' };
+  }
+
+  if (!mainWindowInfo.mainWindow) {
+    return { path: folderPath, status: 'failed' };
+  }
+
+  const result = await dialog.showOpenDialog(mainWindowInfo.mainWindow, {
+    defaultPath: folderPath,
+    properties: ['openDirectory'],
+    securityScopedBookmarks: true,
+  });
+
+  if (result.canceled || !result.filePaths[0]) {
+    return { path: folderPath, status: 'cancelled' };
+  }
+
+  const selectedPath = result.filePaths[0];
+  await storeSecurityScopedBookmarks(result.filePaths, result.bookmarks);
+  await startSecurityScopedAccess(selectedPath);
+
+  if (await isUsablePath(selectedPath)) {
+    return { path: folderPath, selectedPath, status: 'granted' };
+  }
+
+  return { path: folderPath, selectedPath, status: 'failed' };
+}
+
 export function isUsablePath(basePath?: string): Promise<boolean> {
   if (!basePath) return Promise.resolve(false);
 
   if (!isUsablePathPromises.has(basePath)) {
     const promise = (async () => {
       const { resolvedBase, testDir, testFile } = getProbePathContext(basePath);
-      const likelyNetworkPath = isPossiblyNetworkFolderPath(basePath);
+      const likelyNetworkPath = isPossiblyNetworkFolderPath(
+        basePath,
+        process.platform,
+      );
+
+      let probeStage: 'cleanup' | 'read-existing' | 'write' = 'write';
 
       try {
         if (isInvalidWindowsResolvedPath(resolvedBase)) {
@@ -486,7 +843,16 @@ export function isUsablePath(basePath?: string): Promise<boolean> {
         await writeFile(testFile, 'ok');
         await delay(PATH_PROBE_SETTLE_DELAY_MS);
 
+        probeStage = 'cleanup';
         await cleanupProbe(basePath, testDir, testFile);
+
+        if (process.platform === 'darwin') {
+          probeStage = 'read-existing';
+          const existingFile = await findExistingProbeFile(resolvedBase);
+          if (existingFile) {
+            await verifyExistingFileReadable(existingFile);
+          }
+        }
 
         return true;
       } catch (e) {
@@ -495,6 +861,7 @@ export function isUsablePath(basePath?: string): Promise<boolean> {
         const transientNetworkError = isExpectedNetworkPathAccessError(
           e,
           basePath,
+          process.platform,
         );
         if (hasPossibleNetworkPathInNotificationSettings()) {
           notifyPathProbeNetworkWarning();
@@ -508,6 +875,7 @@ export function isUsablePath(basePath?: string): Promise<boolean> {
             hasConfiguredNetworkPath:
               hasPossibleNetworkPathInNotificationSettings(),
             likelyNetworkPath,
+            probeStage,
             resolvedBase,
             testDir,
           },
@@ -518,7 +886,13 @@ export function isUsablePath(basePath?: string): Promise<boolean> {
           captureElectronError(e, {
             contexts: {
               fn: {
-                args: { basePath, likelyNetworkPath, resolvedBase, testDir },
+                args: {
+                  basePath,
+                  likelyNetworkPath,
+                  probeStage,
+                  resolvedBase,
+                  testDir,
+                },
                 name: 'isUsablePath',
               },
             },
@@ -541,6 +915,7 @@ export function isUsablePath(basePath?: string): Promise<boolean> {
 export async function openFileDialog(
   single: boolean,
   filter: FileDialogFilter,
+  defaultPath?: string,
 ) {
   if (!mainWindowInfo.mainWindow) return;
 
@@ -576,17 +951,32 @@ export async function openFileDialog(
     filters.push({ extensions: ['json'], name: 'JSON' });
   }
 
-  return dialog.showOpenDialog(mainWindowInfo.mainWindow, {
+  const result = await dialog.showOpenDialog(mainWindowInfo.mainWindow, {
+    ...(defaultPath ? { defaultPath } : {}),
     filters,
     properties: single ? ['openFile'] : ['openFile', 'multiSelections'],
+    securityScopedBookmarks: process.platform === 'darwin',
   });
+
+  if (!result.canceled) {
+    await storeSecurityScopedBookmarks(result.filePaths, result.bookmarks);
+  }
+
+  return result;
 }
 
 export async function openFolderDialog() {
   if (!mainWindowInfo.mainWindow) return;
-  return dialog.showOpenDialog(mainWindowInfo.mainWindow, {
+  const result = await dialog.showOpenDialog(mainWindowInfo.mainWindow, {
     properties: ['openDirectory'],
+    securityScopedBookmarks: process.platform === 'darwin',
   });
+
+  if (!result.canceled) {
+    await storeSecurityScopedBookmarks(result.filePaths, result.bookmarks);
+  }
+
+  return result;
 }
 
 export async function saveFileDialog(
@@ -612,6 +1002,52 @@ export async function saveFileDialog(
 }
 
 /**
+ * Gives a file the executable bit, on the platforms that have one.
+ *
+ * Unzipping does not carry permissions across — yauzl reports an entry's mode
+ * but nothing here applies it, so every extracted file lands as 0644. That is
+ * harmless for publication content, but the FFmpeg binary the app downloads for
+ * itself is extracted the same way and then cannot be spawned at all.
+ *
+ * Windows decides executability by extension and has no bit to set, so there is
+ * nothing to do there.
+ *
+ * @param path The file to make executable
+ * @returns Whether the file can be executed afterwards
+ */
+export async function setExecutable(path: string): Promise<boolean> {
+  if (process.platform === 'win32') return true;
+  try {
+    await chmod(path, 0o755);
+    return true;
+  } catch (error) {
+    captureElectronError(error, {
+      contexts: { fn: { name: 'setExecutable', path } },
+    });
+    return false;
+  }
+}
+
+/**
+ * Creates a directory, tolerating the spurious EEXIST that Windows can throw
+ * from a recursive mkdir when another operation concurrently creates the
+ * same directory (a known race in Node's recursive mkdir on Windows, most
+ * visible under heavy concurrent disk I/O). Only swallows the error if the
+ * path genuinely is a directory; anything else (e.g. a file at that path)
+ * still throws.
+ */
+const ensureDirTolerant = async (dirPath: string): Promise<void> => {
+  try {
+    await ensureDir(dirPath);
+  } catch (e) {
+    if (getErrorCode(e) !== 'EEXIST') throw e;
+
+    const existingStat = await stat(dirPath).catch(() => undefined);
+    if (!existingStat?.isDirectory()) throw e;
+  }
+};
+
+/**
  * Creates a directory with retry logic
  */
 const createDirectory = async (
@@ -620,7 +1056,7 @@ const createDirectory = async (
 ): Promise<void> => {
   const attemptCreateDir = async (attempt = 1): Promise<void> => {
     try {
-      await ensureDir(fullPath);
+      await ensureDirTolerant(fullPath);
     } catch (e) {
       if (attempt < 3) {
         log(
@@ -657,7 +1093,7 @@ const createDirectory = async (
  * Processes a file entry with retry logic
  */
 const processFileEntry = async (
-  entry: Entry,
+  entry: ZipLikeEntry,
   readStream: NodeJS.ReadableStream,
   fullPath: string,
   context: UnzipContext,
@@ -665,35 +1101,31 @@ const processFileEntry = async (
 ): Promise<void> => {
   const attemptProcessFile = async (attempt = 1): Promise<void> => {
     try {
-      await ensureDir(dirname(fullPath));
+      await ensureDirTolerant(dirname(fullPath));
       const writeStream = createWriteStream(fullPath);
 
-      writeStream.on('error', (e) => {
-        captureElectronError(e, {
-          contexts: {
-            fn: {
-              args: {
-                attempt,
-                fullPath,
-                input: context.input,
-                output: context.output,
-              },
-              name: 'unzipFile writeStream error',
-            },
-          },
-        });
-      });
+      // pipeline() below already surfaces this same error via its rejected
+      // promise, handled in the catch block with the real retry-then-report
+      // logic - this listener only exists so an unhandled 'error' event on
+      // the stream can't crash the process ahead of that.
+      writeStream.on('error', () => undefined);
 
       await pipeline(readStream, writeStream);
       state.extractedFiles.push({ path: entry.fileName });
     } catch (e) {
-      if (
-        attempt < 3 &&
-        e instanceof Error &&
-        (e as { code?: string }).code === 'ENOENT'
-      ) {
+      const code = getErrorCode(e);
+      // ENOENT during pipeline is a directory-not-ready race. EBUSY/EPERM
+      // on Windows are the same transient file-lock class already retried
+      // elsewhere in this file (WINDOWS_RETRYABLE_PROBE_CODES) - e.g. AV
+      // real-time scanning briefly holding the just-created file open.
+      const isRetryable =
+        code === 'ENOENT' ||
+        (process.platform === 'win32' &&
+          WINDOWS_RETRYABLE_PROBE_CODES.has(code ?? ''));
+
+      if (attempt < 3 && isRetryable) {
         log(
-          `[unzipFile] ENOENT during pipeline, retrying (${attempt}/3): ${fullPath}`,
+          `[unzipFile] ${code} during pipeline, retrying (${attempt}/3): ${fullPath}`,
           'electronFilesystem',
           'warn',
         );
@@ -732,8 +1164,6 @@ const handleZipEntry = async (
   state: ZipfileState,
   zipfile: ZipFile,
 ): Promise<void> => {
-  const fullPath = join(context.output, entry.fileName);
-
   // Apply filter if provided
   if (
     context.opts?.includes?.length &&
@@ -741,6 +1171,8 @@ const handleZipEntry = async (
   ) {
     return;
   }
+
+  const fullPath = resolveZipEntryPath(context.output, entry.fileName);
 
   const guardError = getZipEntryGuardError(entry, state);
   if (guardError) {
@@ -776,6 +1208,42 @@ const handleZipEntry = async (
 };
 
 /**
+ * Handles a directory-sourced "zip" entry (see collectDirectoryZipEntries).
+ * Mirrors handleZipEntry, but reads the entry straight off disk instead of
+ * decompressing it from a zip file.
+ */
+const handleDirectoryZipEntry = async (
+  entry: ZipLikeEntry,
+  sourceDir: string,
+  context: UnzipContext,
+  state: ZipfileState,
+): Promise<void> => {
+  if (
+    context.opts?.includes?.length &&
+    !context.opts.includes.includes(entry.fileName)
+  ) {
+    return;
+  }
+
+  const fullPath = resolveZipEntryPath(context.output, entry.fileName);
+
+  const guardError = getZipEntryGuardError(entry, state);
+  if (guardError) {
+    throw guardError;
+  }
+
+  if (entry.fileName.endsWith('/')) {
+    // Directory
+    await createDirectory(fullPath, context);
+    return;
+  }
+
+  const sourcePath = resolveZipEntryPath(sourceDir, entry.fileName);
+  const readStream = createReadStream(sourcePath);
+  await processFileEntry(entry, readStream, fullPath, context, state);
+};
+
+/**
  * Decompresses a zip file
  */
 const decompress = async (
@@ -783,12 +1251,21 @@ const decompress = async (
   output: string,
   opts?: UnzipOptions,
 ): Promise<UnzipResult[]> => {
+  await startSecurityScopedAccess(input);
+
   const stats = await stat(input).catch(() => undefined);
   const fileSize = stats?.size ?? 0;
+  const isDirectorySource = !!stats?.isDirectory?.();
 
   addElectronBreadcrumb({
     category: 'unzip',
-    data: { fileSize, includes: opts?.includes, input, output },
+    data: {
+      fileSize,
+      includes: opts?.includes,
+      input,
+      isDirectorySource,
+      output,
+    },
     message: 'Starting unzip',
   });
 
@@ -799,20 +1276,37 @@ const decompress = async (
     fileCount: 0,
     totalUncompressedSize: 0,
   };
-  const zipfile = await openZipFileForUnzip(input, output, fileSize, opts);
 
-  try {
-    for await (const entry of zipfile.eachEntry()) {
-      await handleZipEntry(entry, context, state, zipfile);
+  if (isDirectorySource) {
+    try {
+      const dirEntries = await collectDirectoryZipEntries(input);
+      for (const entry of dirEntries) {
+        await handleDirectoryZipEntry(entry, input, context, state);
+      }
+    } catch (error) {
+      captureElectronError(error, {
+        contexts: {
+          fn: { args: { input, output }, name: 'unzipFile directory error' },
+        },
+      });
+      throw error;
     }
-  } catch (error) {
-    zipfile.close();
-    captureElectronError(error, {
-      contexts: {
-        fn: { args: { input, output }, name: 'unzipFile zipfile error' },
-      },
-    });
-    throw error;
+  } else {
+    const zipfile = await openZipFileForUnzip(input, output, fileSize, opts);
+
+    try {
+      for await (const entry of zipfile.eachEntry()) {
+        await handleZipEntry(entry, context, state, zipfile);
+      }
+    } catch (error) {
+      zipfile.close();
+      captureElectronError(error, {
+        contexts: {
+          fn: { args: { input, output }, name: 'unzipFile zipfile error' },
+        },
+      });
+      throw error;
+    }
   }
 
   addElectronBreadcrumb({
@@ -844,7 +1338,7 @@ const openZipFileForUnzip = async (
     } catch (error) {
       lastError = error;
       const errorCode = getErrorCode(error);
-      const shouldRetry = shouldRetryZipRead(error, attempt);
+      const shouldRetry = shouldRetryZipRead(error, attempt, input);
 
       addElectronBreadcrumb({
         category: 'unzip',
@@ -878,15 +1372,88 @@ const getZipDiagnostics = (zipPath: string, fileSize: number) => {
     cloudProvider,
     fileSize,
     isCloudStoragePath: !!cloudProvider,
-    isPossiblyNetworkPath: isPossiblyNetworkFolderPath(dirname(zipPath)),
+    isPossiblyNetworkPath: isPossiblyNetworkFolderPath(
+      dirname(zipPath),
+      process.platform,
+    ),
     zipPath,
   };
 };
 
-const shouldRetryZipRead = (error: unknown, attempt: number) =>
-  attempt < ZIP_OPEN_RETRY_COUNT && isRetryableZipError(error);
+const shouldRetryZipRead = (
+  error: unknown,
+  attempt: number,
+  zipPath?: string,
+) => attempt < ZIP_OPEN_RETRY_COUNT && isRetryableZipError(error, zipPath);
+
+const LOCAL_FALLBACK_SUBFOLDER = 'local-fallback-copy';
+
+/**
+ * Last-resort fallback for a zip read that keeps failing on a cloud-synced
+ * custom cache folder, a mapped network drive, or a UNC share: copies the
+ * source file onto the always-local userData path and lets the caller retry
+ * there once. In-place retries can't help when a cloud-sync agent has the
+ * file mid-hydration or transiently locked - a plain local copy sidesteps
+ * that class of failure entirely, at the cost of a one-off local disk copy.
+ * Returns the local copy's path, or undefined if this fallback isn't
+ * applicable (local source) or the copy itself failed.
+ */
+const attemptZipLocalFallbackCopy = async (
+  zipPath: string,
+  error: unknown,
+): Promise<string | undefined> => {
+  if (!isPossiblyNetworkFolderPath(dirname(zipPath), process.platform)) {
+    return undefined;
+  }
+
+  const userDataPath = app.getPath('userData');
+  if (isPossiblyNetworkFolderPath(userDataPath, process.platform)) {
+    return undefined;
+  }
+
+  const localDir = join(userDataPath, 'Temp', LOCAL_FALLBACK_SUBFOLDER, uuid());
+  const localPath = join(localDir, basename(zipPath));
+
+  try {
+    await mkdir(localDir, { recursive: true });
+    await copyFile(zipPath, localPath);
+  } catch (copyError) {
+    addElectronBreadcrumb({
+      category: 'zip',
+      data: {
+        ...getZipDiagnostics(zipPath, 0),
+        copyErrorCode: getErrorCode(copyError),
+        originalErrorCode: getErrorCode(error),
+      },
+      level: 'warning',
+      message: 'Local fallback copy failed',
+    });
+    await rm(localDir, { force: true, recursive: true }).catch(() => undefined);
+    return undefined;
+  }
+
+  addElectronBreadcrumb({
+    category: 'zip',
+    data: {
+      ...getZipDiagnostics(zipPath, 0),
+      localPath,
+      originalErrorCode: getErrorCode(error),
+    },
+    message: 'Retrying zip read against local userData fallback copy',
+  });
+
+  return localPath;
+};
+
+const cleanupZipLocalFallbackCopy = async (localPath: string) => {
+  await rm(dirname(localPath), { force: true, recursive: true }).catch(
+    () => undefined,
+  );
+};
 
 const getZipFileStats = async (zipPath: string) => {
+  await startSecurityScopedAccess(zipPath);
+
   let lastError: unknown;
 
   for (let attempt = 0; attempt <= ZIP_OPEN_RETRY_COUNT; attempt++) {
@@ -895,7 +1462,7 @@ const getZipFileStats = async (zipPath: string) => {
     } catch (error) {
       lastError = error;
       const errorCode = getErrorCode(error);
-      const shouldRetry = shouldRetryZipRead(error, attempt);
+      const shouldRetry = shouldRetryZipRead(error, attempt, zipPath);
 
       addElectronBreadcrumb({
         category: 'zip',
@@ -948,38 +1515,16 @@ const openZipFileForEntries = async (
     } catch (error) {
       lastError = error;
       const errorCode = getErrorCode(error);
-      const shouldRetry = shouldRetryZipRead(error, attempt);
+      const shouldRetry = shouldRetryZipRead(error, attempt, zipPath);
 
-      addElectronBreadcrumb({
-        category: 'zip',
-        data: {
-          ...getZipDiagnostics(zipPath, fileSize),
-          attempt: attempt + 1,
-          errorCode,
-          maxAttempts: ZIP_OPEN_RETRY_COUNT + 1,
-          retrying: shouldRetry,
-        },
-        level: errorCode === 'ENOENT' ? 'info' : 'error',
-        message: 'Error opening zip entries',
+      addZipEntryOpenBreadcrumb(zipPath, fileSize, {
+        attempt,
+        errorCode,
+        shouldRetry,
       });
 
       if (!shouldRetry) {
-        const message = error instanceof Error ? error.message : String(error);
-        if (errorCode !== 'ENOENT' && !isIncompleteZipReadError(message)) {
-          captureElectronError(error, {
-            contexts: {
-              cloud_resource: {
-                ...getZipDiagnostics(zipPath, fileSize),
-                retryAttempts: attempt,
-              },
-              fn: {
-                args: { fileSize, zipPath },
-                name: 'getZipEntries openPromise',
-              },
-            },
-          });
-        }
-
+        captureZipEntryOpenError(error, zipPath, fileSize, attempt);
         throw error;
       }
 
@@ -988,6 +1533,53 @@ const openZipFileForEntries = async (
   }
 
   throw lastError;
+};
+
+const addZipEntryOpenBreadcrumb = (
+  zipPath: string,
+  fileSize: number,
+  options: {
+    attempt: number;
+    errorCode?: string;
+    shouldRetry: boolean;
+  },
+) => {
+  addElectronBreadcrumb({
+    category: 'zip',
+    data: {
+      ...getZipDiagnostics(zipPath, fileSize),
+      attempt: options.attempt + 1,
+      errorCode: options.errorCode,
+      maxAttempts: ZIP_OPEN_RETRY_COUNT + 1,
+      retrying: options.shouldRetry,
+    },
+    level: options.errorCode === 'ENOENT' ? 'info' : 'error',
+    message: 'Error opening zip entries',
+  });
+};
+
+const captureZipEntryOpenError = (
+  error: unknown,
+  zipPath: string,
+  fileSize: number,
+  attempt: number,
+) => {
+  const errorCode = getErrorCode(error);
+  const message = error instanceof Error ? error.message : String(error);
+  if (errorCode === 'ENOENT' || isIncompleteZipReadError(message)) return;
+
+  captureElectronError(error, {
+    contexts: {
+      cloud_resource: {
+        ...getZipDiagnostics(zipPath, fileSize),
+        retryAttempts: attempt,
+      },
+      fn: {
+        args: { fileSize, zipPath },
+        name: 'getZipEntries openPromise',
+      },
+    },
+  });
 };
 
 const openZipBuffer = async (buffer: Buffer): Promise<ZipFile> =>
@@ -1077,6 +1669,61 @@ const readZipEntriesIntoMemory = async (
   return entries;
 };
 
+const readDirectoryEntriesIntoMemory = async (
+  dirPath: string,
+  includes: string[],
+  options: Pick<ExtractNestedZipEntryOptions, 'maxTotalSize'> &
+    Required<Pick<ExtractNestedZipEntryOptions, 'maxEntrySize'>>,
+) => {
+  const entries: { data: Buffer; path: string }[] = [];
+  const guardState: ZipGuardState = {
+    fileCount: 0,
+    totalUncompressedSize: 0,
+  };
+
+  try {
+    const dirEntries = await collectDirectoryZipEntries(dirPath);
+
+    for (const entry of dirEntries) {
+      try {
+        const guardError = getZipEntryGuardError(entry, guardState, {
+          maxEntrySize: options.maxEntrySize,
+          maxTotalSize: options.maxTotalSize ?? MAX_IN_MEMORY_ZIP_TOTAL_SIZE,
+        });
+        if (guardError) throw guardError;
+
+        if (
+          entry.fileName.endsWith('/') ||
+          !includes.includes(entry.fileName)
+        ) {
+          continue;
+        }
+
+        const sourcePath = resolveZipEntryPath(dirPath, entry.fileName);
+        entries.push({
+          data: await readFile(sourcePath),
+          path: entry.fileName,
+        });
+        if (entries.length === includes.length) break;
+      } catch (error) {
+        captureZipErrorOnce(error, {
+          args: { dirPath, entry: entry.fileName, includes },
+          name: 'readDirectoryEntriesIntoMemory entry',
+        });
+        throw error;
+      }
+    }
+  } catch (error) {
+    captureZipErrorOnce(error, {
+      args: { dirPath, includes },
+      name: 'readDirectoryEntriesIntoMemory',
+    });
+    throw error;
+  }
+
+  return entries;
+};
+
 export async function extractNestedZipEntry(
   input: string,
   outerEntryName: string,
@@ -1085,10 +1732,16 @@ export async function extractNestedZipEntry(
 ): Promise<UnzipResult> {
   const maxEntrySize = opts.maxEntrySize ?? MAX_IN_MEMORY_ZIP_ENTRY_SIZE;
   const maxTotalSize = opts.maxTotalSize ?? MAX_IN_MEMORY_ZIP_TOTAL_SIZE;
-  const [outerEntry] = await readZipEntriesIntoMemory(input, [outerEntryName], {
-    maxEntrySize,
-    maxTotalSize,
-  });
+  const inputStats = await stat(input).catch(() => undefined);
+  const [outerEntry] = inputStats?.isDirectory?.()
+    ? await readDirectoryEntriesIntoMemory(input, [outerEntryName], {
+        maxEntrySize,
+        maxTotalSize,
+      })
+    : await readZipEntriesIntoMemory(input, [outerEntryName], {
+        maxEntrySize,
+        maxTotalSize,
+      });
 
   if (!outerEntry) {
     throw new Error(`Zip entry not found: ${outerEntryName}`);
@@ -1121,8 +1774,8 @@ export async function extractNestedZipEntry(
         }
 
         const readStream = await innerZipfile.openReadStreamPromise(entry);
-        const fullPath = join(output, entry.fileName);
-        await ensureDir(dirname(fullPath));
+        const fullPath = resolveZipEntryPath(output, entry.fileName);
+        await ensureDirTolerant(dirname(fullPath));
         await pipeline(readStream, createWriteStream(fullPath));
         return { path: fullPath };
       } catch (error) {
@@ -1165,67 +1818,18 @@ export async function extractNestedZipEntry(
 export async function getZipEntries(
   zipPath: string,
 ): Promise<Record<string, number>> {
-  const stats = await getZipFileStats(zipPath);
-  const fileSize = stats.size;
-
-  addElectronBreadcrumb({
-    category: 'zip',
-    data: getZipDiagnostics(zipPath, fileSize),
-    message: 'Reading zip entries',
-  });
-
-  const entries: Record<string, number> = {};
-  const entryNamesSample: string[] = [];
-  const guardState: ZipGuardState = {
-    fileCount: 0,
-    totalUncompressedSize: 0,
-  };
-  const zipfile = await openZipFileForEntries(zipPath, fileSize);
-
   try {
-    for await (const entry of zipfile.eachEntry()) {
-      const guardError = getZipEntryGuardError(entry, guardState);
-      if (guardError) throw guardError;
-
-      entries[entry.fileName] = entry.uncompressedSize;
-      if (entryNamesSample.length < ZIP_ENTRY_DIAGNOSTIC_LIMIT) {
-        entryNamesSample.push(entry.fileName);
-      }
-    }
+    return await getZipEntriesInternal(zipPath);
   } catch (error) {
-    addElectronBreadcrumb({
-      category: 'zip',
-      data: getZipDiagnostics(zipPath, fileSize),
-      level: 'error',
-      message: 'Zip entry stream error',
-    });
-    captureElectronError(error, {
-      contexts: {
-        cloud_resource: getZipDiagnostics(zipPath, fileSize),
-        fn: {
-          args: { fileSize, zipPath },
-          name: 'getZipEntries zipfile error',
-        },
-      },
-    });
-    throw error;
-  } finally {
-    zipfile.close();
+    const localFallbackPath = await attemptZipLocalFallbackCopy(zipPath, error);
+    if (!localFallbackPath) throw error;
+
+    try {
+      return await getZipEntriesInternal(localFallbackPath);
+    } finally {
+      await cleanupZipLocalFallbackCopy(localFallbackPath);
+    }
   }
-
-  addElectronBreadcrumb({
-    category: 'zip',
-    data: {
-      ...getZipDiagnostics(zipPath, fileSize),
-      contentsSize: entries.contents,
-      entryCount: guardState.fileCount,
-      entryNamesSample,
-      totalUncompressedSize: guardState.totalUncompressedSize,
-    },
-    message: 'Finished reading zip entries',
-  });
-
-  return entries;
 }
 
 /**
@@ -1242,13 +1846,114 @@ export async function unzipFile(
   const existing = ongoingDecompressions.get(cacheKey);
   if (existing) return existing;
 
-  const decompressionPromise = decompress(input, output, opts).finally(() => {
+  const decompressionPromise = decompressWithLocalFallback(
+    input,
+    output,
+    opts,
+  ).finally(() => {
     ongoingDecompressions.delete(cacheKey);
   });
 
   ongoingDecompressions.set(cacheKey, decompressionPromise);
   return decompressionPromise;
 }
+
+async function getZipEntriesInternal(
+  zipPath: string,
+): Promise<Record<string, number>> {
+  const stats = await getZipFileStats(zipPath);
+  const fileSize = stats.size;
+  const isDirectorySource = !!stats.isDirectory?.();
+
+  addElectronBreadcrumb({
+    category: 'zip',
+    data: { ...getZipDiagnostics(zipPath, fileSize), isDirectorySource },
+    message: 'Reading zip entries',
+  });
+
+  const entries: Record<string, number> = {};
+  const entryNamesSample: string[] = [];
+  const guardState: ZipGuardState = {
+    fileCount: 0,
+    totalUncompressedSize: 0,
+  };
+  const zipfile = isDirectorySource
+    ? undefined
+    : await openZipFileForEntries(zipPath, fileSize);
+
+  try {
+    const zipEntries = zipfile
+      ? zipfile.eachEntry()
+      : await collectDirectoryZipEntries(zipPath);
+    for await (const entry of zipEntries) {
+      const guardError = getZipEntryGuardError(entry, guardState);
+      if (guardError) throw guardError;
+
+      entries[entry.fileName] = entry.uncompressedSize;
+      if (entryNamesSample.length < ZIP_ENTRY_DIAGNOSTIC_LIMIT) {
+        entryNamesSample.push(entry.fileName);
+      }
+    }
+  } catch (error) {
+    addElectronBreadcrumb({
+      category: 'zip',
+      data: { ...getZipDiagnostics(zipPath, fileSize), isDirectorySource },
+      level: 'error',
+      message: 'Zip entry stream error',
+    });
+    captureElectronError(error, {
+      contexts: {
+        cloud_resource: getZipDiagnostics(zipPath, fileSize),
+        fn: {
+          args: { fileSize, zipPath },
+          name: 'getZipEntries zipfile error',
+        },
+      },
+    });
+    throw error;
+  } finally {
+    zipfile?.close();
+  }
+
+  addElectronBreadcrumb({
+    category: 'zip',
+    data: {
+      ...getZipDiagnostics(zipPath, fileSize),
+      contentsSize: entries.contents,
+      entryCount: guardState.fileCount,
+      entryNamesSample,
+      isDirectorySource,
+      totalUncompressedSize: guardState.totalUncompressedSize,
+    },
+    message: 'Finished reading zip entries',
+  });
+
+  return entries;
+}
+
+/**
+ * Wraps {@link decompress} with the same local-copy fallback as
+ * {@link getZipEntries}: only the source `input` is copied, so extraction
+ * still writes to the caller's original `output` location unchanged.
+ */
+const decompressWithLocalFallback = async (
+  input: string,
+  output: string,
+  opts?: UnzipOptions,
+): Promise<UnzipResult[]> => {
+  try {
+    return await decompress(input, output, opts);
+  } catch (error) {
+    const localFallbackPath = await attemptZipLocalFallbackCopy(input, error);
+    if (!localFallbackPath) throw error;
+
+    try {
+      return await decompress(localFallbackPath, output, opts);
+    } finally {
+      await cleanupZipLocalFallbackCopy(localFallbackPath);
+    }
+  }
+};
 
 const watchers = new Set<FSWatcher>();
 const datePattern = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD
@@ -1268,7 +1973,10 @@ export async function unwatchFolders() {
 }
 
 export async function watchFolder(folderPath: string) {
-  const pathIsPossiblyNetwork = isPossiblyNetworkFolderPath(folderPath);
+  const pathIsPossiblyNetwork = isPossiblyNetworkFolderPath(
+    folderPath,
+    process.platform,
+  );
 
   watchers.add(
     filesystemWatch(folderPath, {
@@ -1307,7 +2015,9 @@ export async function watchFolder(folderPath: string) {
             isPossiblyNetwork: pathIsPossiblyNetwork,
           });
 
-          if (shouldIgnoreWatchFolderError(folderPath, e)) return;
+          if (shouldIgnoreWatchFolderError(folderPath, e, process.platform)) {
+            return;
+          }
           captureElectronError(error, context);
         } catch (err) {
           // Log the failure of the original try

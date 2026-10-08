@@ -1,18 +1,36 @@
 <template>
-  <div class="row" style="width: 240px" @click="shortcutPicker = true">
+  <div
+    :aria-label="
+      localValue
+        ? t('change-key-combination', { shortcut: localValue })
+        : undefined
+    "
+    :class="{ row: true, 'cursor-pointer': !!localValue }"
+    :role="localValue ? 'button' : undefined"
+    style="width: 240px"
+    :tabindex="localValue ? 0 : undefined"
+    @click="shortcutPicker = true"
+    @keydown.enter.space.prevent="localValue && (shortcutPicker = true)"
+  >
     <template v-if="localValue">
       <template
         v-for="(keyboardKey, index) in localValue.split('+')"
         :key="keyboardKey"
       >
         <div :class="'col ' + (index > 0 ? 'q-ml-sm' : '')">
-          <q-btn
-            :key="keyboardKey"
-            class="full-width text-smaller"
-            color="primary"
-            :label="keyboardKey"
-            unelevated
-          />
+          <!-- UX-20 (full-audit-2026-09-05.md): these used to be q-btns -
+          real, independently focusable/keyboard-activatable buttons with no
+          click handler of their own, relying only on their activation click
+          bubbling up to this wrapper. A keyboard user tabbing through hit
+          one redundant, purpose-less stop per key segment. Plain styled divs
+          (matching the picker dialog's own key-segment display just below,
+          which was already display-only) keep the same look with none of
+          that - the wrapper above is now the single real, labeled control. -->
+          <div
+            class="full-width text-smaller text-center bg-primary text-white q-pa-sm rounded-borders"
+          >
+            {{ keyboardKey }}
+          </div>
         </div>
       </template>
     </template>
@@ -30,10 +48,13 @@
       @hide="stopListening()"
       @show="startListening()"
     >
-      <q-card class="modal-confirm">
+      <q-card class="modal-confirm round-card">
         <q-card-section
-          class="row items-center text-bigger text-semibold q-pb-none"
+          class="row items-center no-wrap text-bigger text-semibold text-primary q-pb-none"
         >
+          <div class="icon-chip q-mr-sm">
+            <q-icon name="mmm-configuration" size="xs" />
+          </div>
           {{ t('enter-a-key-combination') }}
         </q-card-section>
         <q-card-section class="row items-center">
@@ -62,11 +83,7 @@
             :label="t('clear')"
             @click="localValue = ''"
           />
-          <q-btn
-            flat
-            :label="localValue ? t('confirm') : t('cancel')"
-            @click="shortcutPicker = false"
-          />
+          <q-btn flat :label="t('close')" @click="shortcutPicker = false" />
         </q-card-actions>
       </q-card>
     </BaseDialog>
@@ -79,10 +96,12 @@ import type { SettingsValues } from 'src/types';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
+  getConflictingShortcutName,
   getCurrentShortcuts,
   isKeyCode,
   registerCustomShortcut,
 } from 'src/helpers/keyboardShortcuts';
+import { createTemporaryNotification } from 'src/helpers/notifications';
 import { log } from 'src/shared/vanilla';
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -135,14 +154,29 @@ const handleKeyPress = (event: KeyboardEvent) => {
 
     // Allow single key presses or key combinations
     if (isKeyCode(pressed)) {
-      if (keys.length > 0) {
-        // Key combination
-        keys.push(pressed);
-        localValue.value = keys.join('+');
-      } else {
-        // Single key press
-        localValue.value = pressed;
+      const candidate =
+        keys.length > 0 ? [...keys, pressed].join('+') : pressed;
+
+      // FE-5 (full-audit-2026-09-04.md): the commit watcher below silently
+      // skipped a combination already assigned elsewhere, but had already
+      // been shown here as if it were accepted - reopening the dialog later
+      // wouldn't reset it either, since the underlying prop never changed.
+      // Reject it here instead, before it's ever displayed as picked.
+      const conflictingShortcut = getConflictingShortcutName(
+        candidate,
+        props.shortcutName,
+      );
+      if (conflictingShortcut) {
+        createTemporaryNotification({
+          message: t('shortcut-already-assigned', {
+            action: t(conflictingShortcut),
+          }),
+          type: 'negative',
+        });
+        return;
       }
+
+      localValue.value = candidate;
     }
   } catch (e) {
     errorCatcher(e);

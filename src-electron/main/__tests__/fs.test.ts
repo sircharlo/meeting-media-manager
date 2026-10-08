@@ -1,17 +1,25 @@
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mkdirMock = vi.fn();
+const openMock = vi.fn();
+const readdirMock = vi.fn();
+const readFileMock = vi.fn();
 const rmMock = vi.fn();
 const statMock = vi.fn();
 const writeFileMock = vi.fn();
 const delayMock = vi.fn(() => Promise.resolve());
 const captureElectronErrorMock = vi.fn();
 const addElectronBreadcrumbMock = vi.fn();
+const getSharedDataPathMock = vi.fn();
+const setTagMock = vi.fn();
 const uuidMock = vi.fn(() => 'test-uuid');
 const watchMock = vi.fn();
 const sendToWindowMock = vi.fn();
 const yauzlOpenMock = vi.fn();
 const yauzlFromBufferPromiseMock = vi.fn();
+const createReadStreamMock = vi.fn();
+const createWriteStreamMock = vi.fn(() => ({ on: vi.fn() }));
+const pipelineMock = vi.fn(() => Promise.resolve());
 
 vi.mock('chokidar', () => ({
   watch: watchMock,
@@ -20,6 +28,8 @@ vi.mock('chokidar', () => ({
 vi.mock('electron', () => ({
   app: {
     getPath: vi.fn(),
+    once: vi.fn(),
+    startAccessingSecurityScopedResource: vi.fn(() => vi.fn()),
   },
   dialog: {
     showOpenDialog: vi.fn(),
@@ -31,18 +41,22 @@ vi.mock('fs-extra', () => ({
 }));
 
 vi.mock('node:fs', () => ({
-  createWriteStream: vi.fn(),
+  createReadStream: createReadStreamMock,
+  createWriteStream: createWriteStreamMock,
 }));
 
 vi.mock('node:fs/promises', () => ({
   mkdir: mkdirMock,
+  open: openMock,
+  readdir: readdirMock,
+  readFile: readFileMock,
   rm: rmMock,
   stat: statMock,
   writeFile: writeFileMock,
 }));
 
 vi.mock('node:stream/promises', () => ({
-  pipeline: vi.fn(),
+  pipeline: pipelineMock,
 }));
 
 vi.mock('node:timers/promises', () => ({
@@ -52,7 +66,11 @@ vi.mock('node:timers/promises', () => ({
 vi.mock('src-electron/main/utils', () => ({
   addElectronBreadcrumb: addElectronBreadcrumbMock,
   captureElectronError: captureElectronErrorMock,
-  getSharedDataPath: vi.fn(),
+  getSharedDataPath: getSharedDataPathMock,
+}));
+
+vi.mock('@sentry/electron/main', () => ({
+  setTag: setTagMock,
 }));
 
 vi.mock('src-electron/main/window/window-base', () => ({
@@ -78,7 +96,7 @@ vi.mock('upath', () => {
   const join = vi.fn((...parts: string[]) => parts.join('/'));
   const resolve = vi.fn((value: string) => value);
   const toUnix = vi.fn((value: string) => value.replaceAll('\\', '/'));
-  const basename = vi.fn();
+  const basename = vi.fn((value: string) => value.split('/').pop() ?? value);
   const dirname = vi.fn();
 
   return {
@@ -105,6 +123,12 @@ vi.mock('yauzl', () => ({
   fromBufferPromise: yauzlFromBufferPromiseMock,
   openPromise: yauzlOpenMock,
 }));
+
+const makeDirent = (name: string, isDirectory = false) => ({
+  isDirectory: () => isDirectory,
+  isFile: () => !isDirectory,
+  name,
+});
 
 const originalPlatform = Object.getOwnPropertyDescriptor(process, 'platform');
 
@@ -305,6 +329,25 @@ describe('isUsablePath', () => {
     );
   });
 
+  it('also catches the extended-path marker with a drive letter or UNC prefix still attached', async () => {
+    setPlatform('win32');
+
+    const { isUsablePath } = await import('../fs');
+
+    // A drive letter (or UNC prefix) can survive resolution around this
+    // malformed shape - only the exact bare '\?'/'\\?' forms were checked
+    // before, missing this variant.
+    await expect(isUsablePath(String.raw`C:\?`)).resolves.toBe(false);
+
+    expect(mkdirMock).not.toHaveBeenCalled();
+    expect(captureElectronErrorMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Invalid Windows path resolved for filesystem probe',
+      }),
+      expect.anything(),
+    );
+  });
+
   it('notifies renderer on probe errors when one configured folder is likely network-based', async () => {
     setPlatform('win32');
     const error = new Error('unknown error');
@@ -324,6 +367,218 @@ describe('isUsablePath', () => {
       undefined,
       'pathProbeNetworkWarning',
     );
+  });
+
+  it('also probes an existing file for real readability on macOS', async () => {
+    setPlatform('darwin');
+    readdirMock.mockResolvedValue([makeDirent('cached.jwpub')]);
+    const readMock = vi.fn().mockResolvedValue(undefined);
+    const closeMock = vi.fn().mockResolvedValue(undefined);
+    openMock.mockResolvedValue({ close: closeMock, read: readMock });
+
+    const { isUsablePath } = await import('../fs');
+
+    await expect(isUsablePath('/tmp/cache')).resolves.toBe(true);
+
+    expect(openMock).toHaveBeenCalledWith('/tmp/cache/cached.jwpub', 'r');
+    expect(readMock).toHaveBeenCalled();
+    expect(closeMock).toHaveBeenCalled();
+  });
+
+  it("reports a folder unusable when an existing file cannot actually be read on macOS (e.g. a stale TCC grant that a create-and-delete probe can't detect)", async () => {
+    setPlatform('darwin');
+    readdirMock.mockResolvedValue([makeDirent('cached.jwpub')]);
+    const permissionError = new Error('operation not permitted');
+    (permissionError as Error & { code?: string }).code = 'EPERM';
+    openMock.mockRejectedValue(permissionError);
+
+    const { isUsablePath } = await import('../fs');
+
+    await expect(isUsablePath('/tmp/cache')).resolves.toBe(false);
+
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ probeStage: 'read-existing' }),
+        message: '[isUsablePath] Probe failed',
+      }),
+    );
+    // EPERM/EACCES are expected, handleable outcomes here (the caller
+    // re-prompts for folder access) - not unexpected failures to report.
+    expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
+
+  it('skips the existing-file read probe when the folder has no pre-existing files yet', async () => {
+    setPlatform('darwin');
+    readdirMock.mockResolvedValue([]);
+
+    const { isUsablePath } = await import('../fs');
+
+    await expect(isUsablePath('/tmp/cache')).resolves.toBe(true);
+
+    expect(openMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('getAppDataPath', () => {
+  beforeEach(async () => {
+    vi.resetModules();
+    vi.clearAllMocks();
+    const { app } = await import('electron');
+    vi.mocked(app.getPath).mockReturnValue('/user-data');
+    mkdirMock.mockResolvedValue(undefined);
+    writeFileMock.mockResolvedValue(undefined);
+    rmMock.mockResolvedValue(undefined);
+    getSharedDataPathMock.mockResolvedValue('/shared-data');
+    setPlatform('linux');
+  });
+
+  afterAll(() => {
+    if (originalPlatform) {
+      Object.defineProperty(process, 'platform', originalPlatform);
+    }
+  });
+
+  it('falls back when shared subfolders cannot create nested download directories', async () => {
+    const error = new Error('nested directory unavailable');
+    (error as Error & { code?: string }).code = 'ENOENT';
+    mkdirMock.mockImplementation(async (target: string) => {
+      if (target === '/shared-data/Publications/.health-check-test-uuid') {
+        throw error;
+      }
+    });
+
+    const { getAppDataPath } = await import('../fs');
+
+    await expect(getAppDataPath()).resolves.toBe('/user-data');
+
+    expect(mkdirMock).toHaveBeenCalledWith(
+      '/shared-data/Publications/.health-check-test-uuid',
+      { recursive: true },
+    );
+    expect(captureElectronErrorMock).toHaveBeenCalledWith(
+      error,
+      expect.objectContaining({
+        contexts: {
+          fn: {
+            name: 'getAppDataPath.probeSharedSubfolders',
+            sharedPath: '/shared-data',
+          },
+        },
+        tags: {
+          path_mode: 'shared',
+          path_probe_result: 'failed',
+        },
+      }),
+    );
+    expect(setTagMock).toHaveBeenCalledWith('path_mode', 'user');
+    expect(setTagMock).toHaveBeenCalledWith('path_probe_result', 'failed');
+  });
+});
+
+describe('macOS folder permissions', () => {
+  beforeEach(async () => {
+    vi.resetModules();
+    vi.clearAllMocks();
+    const { app } = await import('electron');
+    const { mainWindowInfo } =
+      await import('src-electron/main/window/window-main');
+    vi.mocked(app.getPath).mockReturnValue('/user-data');
+    (
+      mainWindowInfo as typeof mainWindowInfo & {
+        mainWindow: Electron.BrowserWindow;
+      }
+    ).mainWindow = {} as Electron.BrowserWindow;
+    readFileMock.mockRejectedValue(new Error('no stored bookmarks'));
+    mkdirMock.mockResolvedValue(undefined);
+    writeFileMock.mockResolvedValue(undefined);
+    rmMock.mockResolvedValue(undefined);
+    readdirMock.mockResolvedValue([]);
+    setPlatform('darwin');
+  });
+
+  afterAll(() => {
+    if (originalPlatform) {
+      Object.defineProperty(process, 'platform', originalPlatform);
+    }
+  });
+
+  it('stores security scoped bookmarks returned by the folder dialog', async () => {
+    const { dialog } = await import('electron');
+    vi.mocked(dialog.showOpenDialog).mockResolvedValue({
+      bookmarks: ['bookmark-data'],
+      canceled: false,
+      filePaths: ['/Users/test/Documents'],
+    });
+
+    const { openFolderDialog } = await import('../fs');
+
+    await expect(openFolderDialog()).resolves.toMatchObject({
+      canceled: false,
+      filePaths: ['/Users/test/Documents'],
+    });
+
+    expect(dialog.showOpenDialog).toHaveBeenCalledWith(
+      expect.objectContaining({}),
+      expect.objectContaining({
+        properties: ['openDirectory'],
+        securityScopedBookmarks: true,
+      }),
+    );
+    expect(writeFileMock).toHaveBeenCalledWith(
+      '/user-data/security-scoped-bookmarks.json',
+      JSON.stringify({ '/Users/test/Documents': 'bookmark-data' }, null, 2),
+      'utf8',
+    );
+  });
+
+  it('opens a folder picker when a macOS permission probe fails', async () => {
+    const { dialog } = await import('electron');
+    const permissionError = new Error('operation not permitted');
+    (permissionError as Error & { code?: string }).code = 'EPERM';
+    mkdirMock
+      .mockRejectedValueOnce(permissionError)
+      .mockResolvedValue(undefined);
+    vi.mocked(dialog.showOpenDialog).mockResolvedValue({
+      canceled: false,
+      filePaths: ['/Users/test/Documents/El Arroyo'],
+    });
+
+    const { ensureMacosFolderPermission } = await import('../fs');
+
+    await expect(
+      ensureMacosFolderPermission('/Users/test/Documents/El Arroyo'),
+    ).resolves.toEqual({
+      path: '/Users/test/Documents/El Arroyo',
+      selectedPath: '/Users/test/Documents/El Arroyo',
+      status: 'granted',
+    });
+
+    expect(dialog.showOpenDialog).toHaveBeenCalledWith(
+      expect.objectContaining({}),
+      expect.objectContaining({
+        defaultPath: '/Users/test/Documents/El Arroyo',
+        properties: ['openDirectory'],
+        securityScopedBookmarks: true,
+      }),
+    );
+  });
+
+  it('can probe macOS folder permissions without opening the picker', async () => {
+    const { dialog } = await import('electron');
+    const permissionError = new Error('operation not permitted');
+    (permissionError as Error & { code?: string }).code = 'EPERM';
+    mkdirMock.mockRejectedValue(permissionError);
+
+    const { ensureMacosFolderPermission } = await import('../fs');
+
+    await expect(
+      ensureMacosFolderPermission('/Users/test/Documents/El Arroyo', false),
+    ).resolves.toEqual({
+      path: '/Users/test/Documents/El Arroyo',
+      status: 'failed',
+    });
+
+    expect(dialog.showOpenDialog).not.toHaveBeenCalled();
   });
 });
 
@@ -554,6 +809,160 @@ describe('getZipEntries', () => {
       }),
     );
     expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
+
+  // MMM-V2-3KB..3KF: opening a jwpub a fraction of a second after its
+  // download finished failed with EPERM (post-download AV/quarantine scan),
+  // while the same file read fine a moment later.
+  it('retries a zip that is briefly locked right after download', async () => {
+    const error = new Error(
+      "EPERM: operation not permitted, open 'E:/MeetingMM/Publications/w_E_202507.jwpub'",
+    );
+    (error as Error & { code?: string }).code = 'EPERM';
+    const zipfile = {
+      close: vi.fn(),
+      eachEntry: async function* () {
+        yield* [];
+      },
+    };
+
+    yauzlOpenMock.mockRejectedValueOnce(error).mockResolvedValueOnce(zipfile);
+
+    const { unzipFile } = await import('../fs');
+
+    await expect(unzipFile('/tmp/locked.jwpub', '/tmp/out')).resolves.toEqual(
+      [],
+    );
+
+    expect(yauzlOpenMock).toHaveBeenCalledTimes(2);
+    expect(delayMock).toHaveBeenCalledWith(1000);
+    expect(captureElectronErrorMock).not.toHaveBeenCalled();
+  });
+
+  it('reads entries from a JWPUB that was already extracted into a directory', async () => {
+    statMock.mockImplementation(async (path: string) => {
+      if (path === '/tmp/parent-dir.jwpub') {
+        return { isDirectory: () => true, size: 0 };
+      }
+      if (path === '/tmp/parent-dir.jwpub/manifest.json') {
+        return { isDirectory: () => false, size: 75 };
+      }
+      if (path === '/tmp/parent-dir.jwpub/contents') {
+        return { isDirectory: () => false, size: 100 };
+      }
+      throw new Error(`unexpected stat: ${path}`);
+    });
+    readdirMock.mockResolvedValue([
+      makeDirent('manifest.json'),
+      makeDirent('contents'),
+    ]);
+
+    const { getZipEntries } = await import('../fs');
+
+    await expect(getZipEntries('/tmp/parent-dir.jwpub')).resolves.toEqual({
+      contents: 100,
+      'manifest.json': 75,
+    });
+
+    expect(yauzlOpenMock).not.toHaveBeenCalled();
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: 'zip',
+        data: expect.objectContaining({
+          isDirectorySource: true,
+          zipPath: '/tmp/parent-dir.jwpub',
+        }),
+        message: 'Finished reading zip entries',
+      }),
+    );
+  });
+
+  it('copies files straight from an already-extracted JWPUB directory instead of unzipping', async () => {
+    statMock.mockImplementation(async (path: string) => {
+      if (path === '/tmp/parent-dir.jwpub') {
+        return { isDirectory: () => true, size: 0 };
+      }
+      if (path === '/tmp/parent-dir.jwpub/contents') {
+        return { isDirectory: () => false, size: 4 };
+      }
+      throw new Error(`unexpected stat: ${path}`);
+    });
+    readdirMock.mockResolvedValue([makeDirent('contents')]);
+    createReadStreamMock.mockReturnValue({ readStream: true });
+    createWriteStreamMock.mockReturnValue({ on: vi.fn() });
+    pipelineMock.mockResolvedValue(undefined);
+
+    const { unzipFile } = await import('../fs');
+
+    await expect(
+      unzipFile('/tmp/parent-dir.jwpub', '/tmp/out', {
+        includes: ['contents'],
+      }),
+    ).resolves.toEqual([{ path: 'contents' }]);
+
+    expect(yauzlOpenMock).not.toHaveBeenCalled();
+    expect(createReadStreamMock).toHaveBeenCalledWith(
+      '/tmp/parent-dir.jwpub/contents',
+    );
+    expect(pipelineMock).toHaveBeenCalled();
+    expect(addElectronBreadcrumbMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: 'unzip',
+        data: expect.objectContaining({ isDirectorySource: true }),
+        message: 'Starting unzip',
+      }),
+    );
+  });
+});
+
+describe('extractNestedZipEntry', () => {
+  beforeEach(() => {
+    vi.resetModules();
+    vi.clearAllMocks();
+  });
+
+  it('reads the outer entry directly off disk when the JWPUB is a directory', async () => {
+    statMock.mockImplementation(async (path: string) => {
+      if (path === '/tmp/parent-dir.jwpub') {
+        return { isDirectory: () => true, size: 0 };
+      }
+      if (path === '/tmp/parent-dir.jwpub/contents') {
+        return { isDirectory: () => false, size: 4 };
+      }
+      throw new Error(`unexpected stat: ${path}`);
+    });
+    readdirMock.mockResolvedValue([makeDirent('contents')]);
+    readFileMock.mockResolvedValue(Buffer.from('data'));
+
+    const innerEntry = {
+      compressedSize: 4,
+      fileName: 'pub.db',
+      uncompressedSize: 4,
+    };
+    const innerZipfile = {
+      close: vi.fn(),
+      eachEntry: async function* () {
+        yield innerEntry;
+      },
+      openReadStreamPromise: vi.fn(async () => ({ on: vi.fn() })),
+    };
+    yauzlFromBufferPromiseMock.mockResolvedValue(innerZipfile);
+    createWriteStreamMock.mockReturnValue({ on: vi.fn() });
+    pipelineMock.mockResolvedValue(undefined);
+
+    const { extractNestedZipEntry } = await import('../fs');
+
+    await expect(
+      extractNestedZipEntry('/tmp/parent-dir.jwpub', 'contents', '/tmp/out', {
+        innerEntryNameSuffix: '.db',
+      }),
+    ).resolves.toEqual({ path: '/tmp/out/pub.db' });
+
+    expect(yauzlOpenMock).not.toHaveBeenCalled();
+    expect(readFileMock).toHaveBeenCalledWith('/tmp/parent-dir.jwpub/contents');
+    expect(yauzlFromBufferPromiseMock).toHaveBeenCalledWith(
+      Buffer.from('data'),
+    );
   });
 });
 

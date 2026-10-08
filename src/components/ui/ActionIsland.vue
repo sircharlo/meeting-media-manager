@@ -10,33 +10,19 @@
       <div class="flex q-gutter-x-md">
         <DownloadStatus v-model="downloadPopup" />
         <q-separator class="bg-semi-white-24" vertical />
-        <MusicButton
-          v-model="musicPopup"
-          :music-button-status-text="musicPopupRef?.musicButtonStatusText"
-          :music-playing="musicPopupRef?.musicPlaying"
-          :music-state="musicPopupRef?.musicState"
-        />
+        <MusicButton v-model="musicPopup" />
         <SubtitlesButton />
         <ObsStatus v-model="obsPopup" />
-        <RecordingStatus
-          v-model="recordingPopup"
-          :is-recording="isRecording"
-          :recording-duration="formattedRecordingDuration"
-        />
+        <RecordingStatus v-model="recordingPopup" />
         <TimerButton v-model="timerPopup" />
         <q-separator class="bg-semi-white-24" vertical />
         <MediaDisplayButton v-model="displayPopup" />
         <ZoomMeetingManagerButton v-model="zoomMeetingManagerPopup" />
       </div>
       <DialogDownloadsPopup v-model="downloadPopup" />
-      <DialogBackgroundMusicPopup ref="musicPopupRef" v-model="musicPopup" />
+      <DialogBackgroundMusicPopup v-model="musicPopup" />
       <DialogObsPopup v-model="obsPopup" />
-      <DialogRecordingPopup
-        v-model="recordingPopup"
-        :is-recording="isRecording"
-        :recording-duration="formattedRecordingDuration"
-        @update:is-recording="isRecording = $event"
-      />
+      <DialogRecordingPopup v-model="recordingPopup" />
       <DialogDisplayPopup v-model="displayPopup" dialog-id="display-popup" />
       <DialogZoomMeetingManagerPopup v-model="zoomMeetingManagerPopup" />
       <DialogTimerPopup v-model="timerPopup" dialog-id="timer-popup" />
@@ -45,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { useIntervalFn, whenever } from '@vueuse/core';
+import { whenever } from '@vueuse/core';
 import DownloadStatus from 'components/media/DownloadStatus.vue';
 import MediaDisplayButton from 'components/media/MediaDisplayButton.vue';
 import MusicButton from 'components/media/MusicButton.vue';
@@ -54,8 +40,7 @@ import RecordingStatus from 'components/media/RecordingStatus.vue';
 import SubtitlesButton from 'components/media/SubtitlesButton.vue';
 import TimerButton from 'components/media/TimerButton.vue';
 import ZoomMeetingManagerButton from 'components/media/ZoomMeetingManagerButton.vue';
-import { formatTime } from 'src/utils/time';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 
 import DialogBackgroundMusicPopup from '../dialog/DialogBackgroundMusicPopup.vue';
 import DialogDisplayPopup from '../dialog/DialogDisplayPopup.vue';
@@ -73,27 +58,6 @@ const recordingPopup = ref(false);
 const displayPopup = ref(false);
 const zoomMeetingManagerPopup = ref(false);
 const timerPopup = ref(false);
-
-// Recording variables
-const isRecording = ref(false);
-const recordingStartTime = ref<null | number>(null);
-const recordingDurationSeconds = ref(0);
-
-const { pause: pauseTimer, resume: resumeTimer } = useIntervalFn(() => {
-  if (recordingStartTime.value) {
-    recordingDurationSeconds.value = Math.floor(
-      (Date.now() - recordingStartTime.value) / 1000,
-    );
-  }
-}, 500);
-
-const formattedRecordingDuration = computed(() =>
-  isRecording.value ? formatTime(recordingDurationSeconds.value) : '',
-);
-
-const musicPopupRef = ref<InstanceType<
-  typeof DialogBackgroundMusicPopup
-> | null>(null);
 
 const popups = {
   displayPopup,
@@ -113,18 +77,6 @@ function setActivePopup(activePopup: PopupKey) {
     popups[key as PopupKey].value = key === activePopup;
   });
 }
-
-whenever(isRecording, (recording) => {
-  if (recording) {
-    recordingStartTime.value = Date.now();
-    recordingDurationSeconds.value = 0;
-    resumeTimer();
-  } else {
-    recordingStartTime.value = null;
-    recordingDurationSeconds.value = 0;
-    pauseTimer();
-  }
-});
 
 // Watch each popup and update the others when any one is set to true
 Object.keys(popups).forEach((popup) => {

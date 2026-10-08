@@ -1,5 +1,6 @@
 <template>
   <q-menu
+    ref="obsPopup"
     v-model="open"
     anchor="top middle"
     no-parent-event
@@ -8,7 +9,10 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <div class="action-popup action-popup--scroll-layout q-py-md">
+    <div
+      ref="popupContent"
+      class="action-popup action-popup--scroll-layout q-py-md"
+    >
       <div class="card-title col-shrink full-width q-px-md q-mb-none">
         {{ t('scene-selection') }}
       </div>
@@ -35,8 +39,8 @@
                         : scene === currentSettings?.obsImageScene
                           ? t('picture-in-picture')
                           : isUUID(scene)
-                            ? scenes.find((s) => s.sceneUuid === scene)
-                                ?.sceneName
+                            ? (scenes.find((s) => s.sceneUuid === scene)
+                                ?.sceneName ?? t('unknown-scene'))
                             : scene
                   }}
                 </div>
@@ -58,7 +62,7 @@
               :icon="isRecording ? 'mmm-stop' : 'mmm-record'"
               :label="isRecording ? t('stop-recording') : t('start-recording')"
               unelevated
-              @click="toggleObsRecording"
+              @click="toggleRecording()"
             />
           </div>
           <div v-if="obsRecordingFolder" class="col-12">
@@ -78,6 +82,7 @@
 </template>
 
 <script setup lang="ts">
+import type { QMenu } from 'quasar';
 import type { ObsSceneType } from 'src/types';
 
 import { useEventListener, watchImmediate } from '@vueuse/core';
@@ -88,8 +93,6 @@ import {
   obsConnect,
   obsGetRecordingDirectory,
   obsGetRecordingState,
-  obsStartRecording,
-  obsStopRecording,
 } from 'src/helpers/obs';
 import { log } from 'src/shared/vanilla';
 import { isUUID } from 'src/utils/general';
@@ -97,10 +100,15 @@ import { isImage } from 'src/utils/media';
 import { obsWebSocketInfo } from 'src/utils/obs';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useObsStateStore } from 'stores/obs-state';
-import { computed, ref } from 'vue';
+import { useRecordingStore } from 'stores/recording-state';
+import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const open = defineModel<boolean>({ default: false });
+
+const obsPopup = useTemplateRef<QMenu>('obsPopup');
+const popupContent = useTemplateRef<HTMLElement>('popupContent');
+let popupResizeObserver: ResizeObserver | undefined;
 
 const currentState = useCurrentStateStore();
 const {
@@ -120,10 +128,13 @@ const {
 const { sceneExists } = obsState;
 const obsSettingsConnect = () => obsConnect(true);
 
+const recording = useRecordingStore();
+const { isRecording } = storeToRefs(recording);
+const { syncObsRecordingState, toggleRecording } = recording;
+
 const { t } = useI18n();
 
-// Recording state for OBS controls
-const isRecording = ref(false);
+// OBS-specific recording folder (not in the store since it's OBS-only)
 const obsRecordingFolder = ref<null | string>(null);
 
 const { openFolder } = globalThis.electronApi;
@@ -137,23 +148,6 @@ const notifySceneNotFound = () =>
     timeout: 10000,
     type: 'negative',
   });
-
-// OBS Recording functions
-const toggleObsRecording = async () => {
-  if (isRecording.value) {
-    // Stop recording
-    const success = await obsStopRecording();
-    if (success) {
-      isRecording.value = false;
-    }
-  } else {
-    // Start recording
-    const success = await obsStartRecording();
-    if (success) {
-      isRecording.value = true;
-    }
-  }
-};
 
 const openObsRecordingFolder = async () => {
   if (obsRecordingFolder.value) {
@@ -169,7 +163,7 @@ const resolvedScene = computed(() => {
     }
     return currentSettings.value.obsCameraScene;
   }
-  return currentSettings.value.obsCameraScene;
+  return currentScene.value;
 });
 
 const ensureObsConnected = async () => {
@@ -206,6 +200,20 @@ const getSetSceneArguments = (newProgramScene: string) => {
   const hasSceneUuid = scenes.value?.every((scene) => 'sceneUuid' in scene);
   const useUuid = hasSceneUuid && configuredScenesAreAllUUIDs.value;
 
+  if (isUUID(newProgramScene) && !useUuid) {
+    log('OBS scene UUID would be sent as sceneName', 'obs', 'warn', {
+      configuredScenesAreAllUUIDs: configuredScenesAreAllUUIDs.value,
+      hasSceneUuid,
+      newProgramScene,
+      obsCameraScene: currentSettings.value?.obsCameraScene,
+      obsImageScene: currentSettings.value?.obsImageScene,
+      obsMediaScene: currentSettings.value?.obsMediaScene,
+      sampleScenes: scenes.value?.slice(0, 3),
+      scenesCount: scenes.value?.length,
+      useUuid,
+    });
+  }
+
   return {
     ...(useUuid
       ? { sceneUuid: newProgramScene }
@@ -233,15 +241,32 @@ const setObsScene = async (sceneType?: ObsSceneType, desiredScene?: string) => {
     if (!newProgramScene) return;
 
     if (sceneExists(newProgramScene)) {
-      obsWebSocketInfo.obsWebSocket?.call(
-        'SetCurrentProgramScene',
-        getSetSceneArguments(newProgramScene),
-      );
+      const args = getSetSceneArguments(newProgramScene);
+
+      // A UUID value must always be sent as sceneUuid, never sceneName.
+      // If configuredScenesAreAllUUIDs was momentarily false (e.g. during
+      // store rehydration, congregation switch, or settings save),
+      // getSetSceneArguments could incorrectly return { sceneName: uuid }.
+      // Force the correct key when the value is unmistakably a UUID.
+      if (isUUID(newProgramScene) && 'sceneName' in args) {
+        await obsWebSocketInfo.obsWebSocket?.call('SetCurrentProgramScene', {
+          sceneUuid: newProgramScene,
+        });
+      } else {
+        await obsWebSocketInfo.obsWebSocket?.call(
+          'SetCurrentProgramScene',
+          args,
+        );
+      }
     } else {
       notifySceneNotFound();
     }
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: {
+        fn: { desiredScene, name: 'setObsScene', sceneType },
+      },
+    });
   }
 };
 
@@ -282,6 +307,9 @@ const baseScenesLength = computed(
 );
 
 const getSceneIcon = (scene: null | string | undefined) => {
+  if (scene && !sceneExists(scene)) {
+    return 'mmm-warning';
+  }
   if (currentSettings.value?.obsHideIcons) {
     return undefined;
   }
@@ -322,29 +350,35 @@ useEventListener(globalThis, 'obsSceneEvent', setObsSceneListener, {
   passive: true,
 });
 
+// FE-15 (full-audit-2026-09-05.md): keyed on obsConnectionState too (not
+// just the settings values) so every transition to 'connected' - including
+// FE-6's auto-reconnect after OBS crashes/closes/restarts, not just the
+// very first successful connection - re-attaches the RecordStateChanged
+// listener and re-queries the actual recording state. obsWebSocketInfo's
+// OBSWebSocket instance persists across reconnects (reused, not recreated -
+// see FE-6), so checking only its truthiness never re-triggered this on a
+// reconnect; without this, isRecording could keep showing a stale
+// "recording in progress" (or vice versa) after OBS reconnects mid-session.
 watchImmediate(
   () => ({
+    connectionState: obsConnectionState.value,
     enabled: currentSettings.value?.obsEnable,
     recordingControls: currentSettings.value?.obsEnableRecordingControls,
   }),
-  async ({ enabled, recordingControls }, _, onCleanup) => {
-    // If OBS not enabled or no websocket → stop everything
+  async ({ connectionState, enabled, recordingControls }, _, onCleanup) => {
     if (!enabled || !obsWebSocketInfo.obsWebSocket) return;
-
-    // If recording controls disabled → stop everything
     if (!recordingControls) return;
+    if (connectionState !== 'connected') return;
 
-    // --- 1. Setup event listener ---
     const handleRecordStateChanged = (data: { outputActive: boolean }) => {
       log('RecordStateChanged', 'obs', 'log', data);
-      isRecording.value = data.outputActive;
+      syncObsRecordingState(data.outputActive);
     };
     obsWebSocketInfo.obsWebSocket.on(
       'RecordStateChanged',
       handleRecordStateChanged,
     );
 
-    // Cleanup when settings change or component unmounts
     onCleanup(() => {
       obsWebSocketInfo.obsWebSocket?.off(
         'RecordStateChanged',
@@ -352,15 +386,26 @@ watchImmediate(
       );
     });
 
-    // --- 2. Initial recording state ---
     const status = await obsGetRecordingState();
     if (status !== null) {
-      isRecording.value = status;
+      syncObsRecordingState(status);
     }
 
-    // --- 3. Recording directory ---
     const folder = await obsGetRecordingDirectory();
     obsRecordingFolder.value = folder;
   },
 );
+
+// Anchored bottom-up
+watch(popupContent, (el) => {
+  popupResizeObserver?.disconnect();
+  popupResizeObserver = undefined;
+  if (!el) return;
+  popupResizeObserver = new ResizeObserver(() => {
+    obsPopup.value?.updatePosition();
+  });
+  popupResizeObserver.observe(el);
+});
+
+onBeforeUnmount(() => popupResizeObserver?.disconnect());
 </script>

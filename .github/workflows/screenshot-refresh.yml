@@ -1,0 +1,76 @@
+name: Refresh README screenshot
+
+on:
+  schedule:
+    - cron: '0 6 1 * *'
+  workflow_dispatch:
+
+jobs:
+  screenshot:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24
+          cache: 'yarn'
+      - name: Install X11 and xvfb development libraries (Linux only)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libx11-dev libxtst-dev libxinerama-dev libx11-xcb-dev libxkbcommon-x11-dev libxss-dev libpng-dev libpng++-dev xvfb
+      - name: Install dependencies
+        run: yarn install
+      - name: Install Chromium runtime dependencies (Linux only)
+        run: npx playwright install-deps
+      - name: Verify Electron binary is installed
+        run: node -e "console.log(require('electron'))"
+      - name: Prepare Quasar
+        run: yarn quasar prepare
+      - name: Build unpacked Electron app
+        run: |
+          yarn generate:icons
+          yarn generate:logos
+          yarn build:unpacked
+      - name: Capture demo-mode screenshots
+        # Default Xvfb screen is smaller than the capture's target window
+        # size (2560x1440); without a bigger virtual screen Electron clamps
+        # the window to whatever the display's work area actually is.
+        run: xvfb-run -a --server-args="-screen 0 2560x1440x24" yarn screenshot:refresh
+      - name: Upload debug output on failure
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: screenshot-debug-output
+          path: test/playwright/debug-output/
+          if-no-files-found: ignore
+      - name: Check for screenshot changes
+        id: diff
+        run: |
+          # A raw byte/git diff always "changes" even when nothing meaningful
+          # did: demo-mode data is fully deterministic, but Chromium's
+          # rasterizer still introduces a pixel or two of ±1 AA jitter run to
+          # run. Compare pixels with a small tolerance instead.
+          changed=true
+          if git cat-file -e HEAD:docs/src/assets/m3-preview.png 2>/dev/null; then
+            git show HEAD:docs/src/assets/m3-preview.png > /tmp/previous-preview.png
+            if node test/playwright/compare-screenshot.mjs /tmp/previous-preview.png docs/src/assets/m3-preview.png; then
+              changed=false
+            fi
+          fi
+          echo "changed=$changed" >> "$GITHUB_OUTPUT"
+      - name: Open pull request with refreshed screenshot
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          add-paths: docs/src/assets/m3-preview.png
+          body: >
+            Automated monthly refresh of the README preview screenshot,
+            generated from placeholder demo data (see `src/helpers/demo-mode.ts`).
+          branch: chore/refresh-readme-screenshot
+          commit-message: 'chore: refresh README screenshot'
+          title: 'chore: refresh README screenshot'

@@ -1,0 +1,274 @@
+{
+  "_comment": "Grounded JW terminology for ru, cross-checked against official jw.org pages. Reusable beyond translation-quality review. Regenerate via scripts/i18n-quality/prompts/grounding-agent.md.",
+  "_fetchedAt": "2026-09-10",
+  "_language": "ru",
+  "terms": [
+    {
+      "termEn": "Jehovah's Witnesses",
+      "official": "Свидетели Иеговы",
+      "sourceUrls": [
+        "https://www.jw.org/ru/информация-для-мирового-профессионального-сообщества/лексика-и-терминология-свидетелей-иеговы/"
+      ],
+      "confidence": "high",
+      "notes": "Verbatim from jw.org's official Russian terminology guide (hreflang=\"ru\" version of the global terminology guide). jw.org/ru itself is fully accessible (HTTP 200, real content, not blocked/geofenced from our fetch location), as is wol.jw.org/ru."
+    },
+    {
+      "termEn": "Kingdom Hall",
+      "official": "Зал Царства",
+      "sourceUrls": [
+        "https://www.jw.org/ru/информация-для-мирового-профессионального-сообщества/лексика-и-терминология-свидетелей-иеговы/"
+      ],
+      "confidence": "high",
+      "notes": "Full heading term is \"Зал Царства Свидетелей Иеговы\"; guide notes it is often shortened to just \"Зал Царства.\""
+    },
+    {
+      "termEn": "circuit overseer",
+      "official": "районный старейшина",
+      "sourceUrls": [
+        "https://www.jw.org/ru/информация-для-мирового-профессионального-сообщества/лексика-и-терминология-свидетелей-иеговы/"
+      ],
+      "confidence": "high",
+      "notes": "Literally \"district/circuit elder,\" not a cognate of \"overseer.\" Definition matches English \"circuit overseer\" exactly (experienced elder under branch direction who regularly visits congregations in his circuit). Reflects the broader shift away from \"надзиратель\" (overseer) wording toward \"старейшина\" (elder) wording for this role; older Russian JW literature may use \"окружной/разъездной надзиратель.\""
+    },
+    {
+      "termEn": "congregation",
+      "official": "собрание",
+      "sourceUrls": [
+        "https://www.jw.org/ru/информация-для-мирового-профессионального-сообщества/лексика-и-терминология-свидетелей-иеговы/"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "termEn": "elder",
+      "official": "старейшина",
+      "sourceUrls": [
+        "https://www.jw.org/ru/информация-для-мирового-профессионального-сообщества/лексика-и-терминология-свидетелей-иеговы/"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "termEn": "presiding overseer",
+      "official": "координатор совета старейшин",
+      "sourceUrls": [
+        "https://wol.jw.org/ru/wol/d/r2/lp-u/1200276968",
+        "https://wol.jw.org/en/wol/d/r1/lp-e/1200276968",
+        "https://wol.jw.org/ru/wol/d/r2/lp-u/1200274607"
+      ],
+      "confidence": "high",
+      "notes": "Confirms the 2023 congregation-role restructuring: English \"Presiding Overseer\" is now a discontinued role, replaced by \"Coordinator of the Body of Elders.\" The Russian WOL page at the same glossary ID (1200276968) is titled \"Координатор совета старейшин.\" The old term is preserved at https://wol.jw.org/ru/wol/d/r2/lp-u/1200274607, titled \"Председательствующий надзиратель (упразднено)\" — literally \"Presiding overseer (abolished/discontinued).\" Do not use \"председательствующий надзиратель\" in new translations; it is explicitly marked obsolete by jw.org itself."
+    },
+    {
+      "termEn": "ministerial servant",
+      "official": "помощник собрания",
+      "sourceUrls": [
+        "https://www.jw.org/ru/информация-для-мирового-профессионального-сообщества/лексика-и-терминология-свидетелей-иеговы/",
+        "https://www.jw.org/ru/библиотека/брошюры/воля-иеговы/служебные-помощники/"
+      ],
+      "confidence": "high",
+      "notes": "IMPORTANT inconsistency on jw.org itself: the current, actively-maintained terminology guide (definition text matches the English \"ministerial servant\" entry almost word for word) uses \"помощник собрания\" (literally \"congregation helper/assistant\"), NOT the literal cognate \"служебный помощник.\" But older doctrinal content still online — e.g. the \"Organized to Do Jehovah's Will\" brochure page titled \"Для чего нужны служебные помощники?\" — uses \"служебный помощник\" exclusively (17 occurrences, zero of \"помощник собрания\"). Treat \"помощник собрания\" as the current standard for new/updated app strings; \"служебный помощник\" is a legacy variant still circulating on jw.org, not an error per se, but not the freshest official term."
+    },
+    {
+      "termEn": "pioneer",
+      "official": "пионер",
+      "sourceUrls": [
+        "https://www.jw.org/ru/информация-для-мирового-профессионального-сообщества/лексика-и-терминология-свидетелей-иеговы/"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "termEn": "field service",
+      "official": "проповедническое служение",
+      "sourceUrls": [
+        "https://www.jw.org/ru/информация-для-мирового-профессионального-сообщества/лексика-и-терминология-свидетелей-иеговы/"
+      ],
+      "confidence": "high",
+      "notes": "Guide's heading is \"проповедническое служение; проповедь\" — both \"the preaching ministry\" and simply \"preaching\" are used."
+    },
+    {
+      "termEn": "Memorial",
+      "official": "Ве́черя воспоминания смерти Христа",
+      "sourceUrls": [
+        "https://www.jw.org/ru/информация-для-мирового-профессионального-сообщества/лексика-и-терминология-свидетелей-иеговы/"
+      ],
+      "confidence": "high",
+      "notes": "NOT a cognate of \"Memorial\" — literally \"the Evening Meal of the commemoration of Christ's death.\" jw.org's own definition lists several accepted shorter alternates: Ужин Господа (the Lord's Supper), Вечеря Господня (the Lord's Evening Meal), Вечеря воспоминания (the Evening Meal of remembrance), and simply Вечеря (\"the Evening Meal/Supper\"). This mirrors the English guide, which itself leads with \"Memorial of Christ's death\" and lists \"Lord's Evening Meal\" etc. as alternates rather than a single fixed term — so some variation across app strings is expected and acceptable, but a translation using an unrelated word (e.g. a generic \"memorial/monument\" noun, or a discontinued Christendom holiday term) would be wrong."
+    },
+    {
+      "termEn": "Congregation Bible Study",
+      "official": "Изучение Библии в собрании",
+      "sourceUrls": [
+        "https://wol.jw.org/ru/wol/d/r2/lp-u/1200276966",
+        "https://wol.jw.org/en/wol/d/r1/lp-e/1200276966"
+      ],
+      "confidence": "high",
+      "notes": "Not covered by the main terminology guide; grounded via wol.jw.org's glossary/index, matching the English \"Congregation Bible Study\" entry at the same content ID."
+    },
+    {
+      "termEn": "midweek meeting",
+      "official": "встреча в будние дни",
+      "sourceUrls": [
+        "https://www.jw.org/ru/информация-для-мирового-профессионального-сообщества/лексика-и-терминология-свидетелей-иеговы/"
+      ],
+      "confidence": "high",
+      "notes": "Definition confirms this is the meeting built around \"Наша христианская жизнь и служение\" (Our Christian Life and Ministry)."
+    },
+    {
+      "termEn": "weekend meeting",
+      "official": "встреча в выходные дни",
+      "sourceUrls": [
+        "https://www.jw.org/ru/информация-для-мирового-профессионального-сообщества/лексика-и-терминология-свидетелей-иеговы/"
+      ],
+      "confidence": "high",
+      "notes": "Definition describes both parts: a 30-minute public talk, then roughly an hour of Q&A discussion of a Watchtower study article."
+    },
+    {
+      "termEn": "public talk",
+      "official": "публичная речь",
+      "sourceUrls": [
+        "https://wol.jw.org/ru/wol/d/r2/lp-u/1200274680",
+        "https://wol.jw.org/en/wol/d/r1/lp-e/1200274680"
+      ],
+      "confidence": "high",
+      "notes": "wol.jw.org index entry is titled \"Публичные речи\" (plural, \"Public Talks\", matching the English index page at the same ID) and itself notes the former name: \"(Прежнее название: Публичная встреча)\" — i.e. \"public talk\" was formerly called \"public meeting\" in English too."
+    },
+    {
+      "termEn": "Watchtower Study",
+      "official": "изучение «Сторожевой башни»",
+      "sourceUrls": [
+        "https://www.jw.org/ru/информация-для-мирового-профессионального-сообщества/лексика-и-терминология-свидетелей-иеговы/"
+      ],
+      "confidence": "medium",
+      "notes": "Not a fixed named term on jw.org — no dedicated glossary entry was found. The official terminology guide describes the concept periphrastically inside the \"weekend meeting\" definition (\"часовое обсуждение статьи из журнала «Сторожевая башня»\" — an hour-long discussion of a Watchtower article), and wol.jw.org search snippets consistently render the shorthand as \"изучение Сторожевой башни\" (compositional, mirroring \"Изучение Библии в собрании\" for Congregation Bible Study). Reasonably confident but not verbatim-sourced the way the other high-confidence terms are."
+    },
+    {
+      "termEn": "The Watchtower",
+      "official": "«Сторожевая башня»",
+      "sourceUrls": [
+        "https://www.jw.org/ru/информация-для-мирового-профессионального-сообщества/лексика-и-терминология-свидетелей-иеговы/"
+      ],
+      "confidence": "high",
+      "notes": "Full official title is «Сторожевая башня возвещает Царство Иеговы» (\"The Watchtower Announcing Jehovah's Kingdom\"); guide confirms the short form is «Сторожевая башня»."
+    },
+    {
+      "termEn": "Awake!",
+      "official": "«Пробудитесь!»",
+      "sourceUrls": [
+        "https://www.jw.org/ru/информация-для-мирового-профессионального-сообщества/лексика-и-терминология-свидетелей-иеговы/"
+      ],
+      "confidence": "high",
+      "notes": "Guide confirms publication history: launched 1919 as «Золотой век» (Golden Age), renamed in 1937 to what became «Пробудитесь!». Includes exclamation mark as part of the proper title, matching the app's English context note."
+    },
+    {
+      "termEn": "New World Translation",
+      "official": "«Библия. Перевод „Новый мир“»",
+      "sourceUrls": [
+        "https://www.jw.org/ru/информация-для-мирового-профессионального-сообщества/лексика-и-терминология-свидетелей-иеговы/"
+      ],
+      "confidence": "high",
+      "notes": "Full official name per the terminology guide."
+    },
+    {
+      "termEn": "JW Library",
+      "official": "JW Library",
+      "sourceUrls": ["https://www.jw.org/ru/онлайн-справка/jw-library/"],
+      "confidence": "high",
+      "notes": "App name is not translated/transliterated — the Russian help page's own title and heading both read \"JW Library\" verbatim, consistent with the app's own context note that this is a proper noun."
+    },
+    {
+      "termEn": "jw.org",
+      "official": "jw.org",
+      "sourceUrls": ["https://www.jw.org/ru/"],
+      "confidence": "high",
+      "notes": "Domain/brand name is kept unchanged. The Russian homepage's own <title> is \"Официальный сайт Свидетелей Иеговы: jw.org\" (\"The official website of Jehovah's Witnesses: jw.org\"), which matches the app's in-app phrasing pattern (\"the official website of jw.org\") almost exactly."
+    },
+    {
+      "termEn": "songbook",
+      "official": "песенник",
+      "sourceUrls": [
+        "https://wol.jw.org/ru/wol/d/r2/lp-u/1200277315",
+        "https://wol.jw.org/en/wol/d/r1/lp-e/1200277315"
+      ],
+      "confidence": "high",
+      "notes": "Generic word for \"songbook\" is \"песенник\"; the current specific songbook in use is titled «Радостно пойте Иегове» (Sing Out Joyfully to Jehovah), confirmed at the same glossary ID as the English \"Sing Out Joyfully to Jehovah (Songbook)\" entry."
+    },
+    {
+      "termEn": "convention",
+      "official": "конгресс",
+      "sourceUrls": [
+        "https://www.jw.org/ru/информация-для-мирового-профессионального-сообщества/лексика-и-терминология-свидетелей-иеговы/"
+      ],
+      "confidence": "high",
+      "notes": "\"Конгресс\" is the umbrella term the guide itself uses (entry reads \"конгресс — смотрите: [international convention, regional convention]\"), with subtypes \"международный конгресс\" (international convention, 3-day) and \"региональный конгресс\" (regional convention, annual 3-day). See also \"assembly\" below for the smaller circuit-level gathering."
+    },
+    {
+      "termEn": "assembly",
+      "official": "районный конгресс",
+      "sourceUrls": [
+        "https://www.jw.org/ru/информация-для-мирового-профессионального-сообщества/лексика-и-терминология-свидетелей-иеговы/",
+        "https://wol.jw.org/ru/wol/d/r2/lp-u/1200271236"
+      ],
+      "confidence": "high",
+      "notes": "This is the one-day, twice-yearly \"circuit assembly\" — smaller than the multi-day conventions above, matching the app's context (\"a larger JW gathering, smaller than a convention\"). Terminology guide gives the singular \"районный конгресс\"; the wol.jw.org glossary index (same ID as English \"Circuit Assemblies\") uses the plural \"Районные конгрессы.\""
+    },
+    {
+      "termEn": "theocratic school",
+      "official": "теократические школы",
+      "sourceUrls": [
+        "https://wol.jw.org/ru/wol/d/r2/lp-u/1200277115",
+        "https://wol.jw.org/en/wol/d/r1/lp-e/1200277115"
+      ],
+      "confidence": "high",
+      "notes": "Current, actively-maintained glossary umbrella term (matches English \"Theocratic Schools\" at the same ID), covering things like the Pioneer Service School and Kingdom Ministry School. Note the older \"Theocratic Ministry School\" (a specific weekly congregation program, discontinued in 2016) is a distinct, now-defunct thing — don't confuse the two if reviewing older strings."
+    },
+    {
+      "termEn": "sign language",
+      "official": "жестовый язык",
+      "sourceUrls": [
+        "https://wol.jw.org/ru/wol/d/r2/lp-u/1200275321",
+        "https://wol.jw.org/en/wol/d/r1/lp-e/1200275321"
+      ],
+      "confidence": "high",
+      "notes": "Confirmed both via the glossary (matches English \"Sign Language (Deaf)\" at the same ID) and via jw.org's own language picker, which lists \"русский жестовый\" for Russian Sign Language."
+    },
+    {
+      "termEn": "meeting workbook",
+      "official": "«Наша христианская жизнь и служение». Рабочая тетрадь",
+      "sourceUrls": [
+        "https://www.jw.org/ru/библиотека/свидетелей-иеговы-встреча-рабочая-тетрадь/"
+      ],
+      "confidence": "high",
+      "notes": "Full official title of the Life and Ministry Meeting Workbook; \"рабочая тетрадь\" = \"workbook.\" The underlying midweek-meeting program itself is also called «Наша христианская жизнь и служение» (see \"midweek meeting\")."
+    },
+    {
+      "termEn": "yeartext",
+      "official": "годовой текст",
+      "sourceUrls": [
+        "https://wol.jw.org/ru/wol/d/r2/lp-u/1200276311",
+        "https://wol.jw.org/en/wol/d/r1/lp-e/1200276311"
+      ],
+      "confidence": "high",
+      "notes": "Matches English \"Yeartexts\" at the same glossary ID."
+    },
+    {
+      "termEn": "branch office",
+      "official": "филиал",
+      "sourceUrls": [
+        "https://www.jw.org/ru/информация-для-мирового-профессионального-сообщества/лексика-и-терминология-свидетелей-иеговы/"
+      ],
+      "confidence": "high",
+      "notes": "Guide defines \"комитет филиала\" (branch committee) as a related, separate entry — three-or-more elders who direct activity in a country/group of countries out of a given \"филиал\" (branch office)."
+    },
+    {
+      "termEn": "Governing Body",
+      "official": "Руководящий совет Свидетелей Иеговы",
+      "sourceUrls": [
+        "https://www.jw.org/ru/информация-для-мирового-профессионального-сообщества/лексика-и-терминология-свидетелей-иеговы/"
+      ],
+      "confidence": "high",
+      "notes": "Guide confirms it is often shortened to just «Руководящий совет»."
+    }
+  ]
+}

@@ -2,6 +2,13 @@ import { log } from 'src/shared/vanilla';
 
 import { errorCatcher } from './error-catcher';
 
+class UnsupportedKeyboardShortcutError extends Error {
+  constructor(shortcut: string) {
+    super(`Unsupported keyboard shortcut format: ${shortcut}`);
+    this.name = 'UnsupportedKeyboardShortcutError';
+  }
+}
+
 /**
  * Sends a keyboard shortcut using robotjs
  * @param shortcut - The keyboard shortcut string (e.g., "ctrl+shift+s", "cmd+alt+f4")
@@ -21,7 +28,7 @@ export const sendKeyboardShortcut = (
       'log',
     );
 
-    const { robot } = globalThis.electronApi;
+    const { sendKeyTap } = globalThis.electronApi;
 
     // Parse the shortcut string (e.g., "ctrl+shift+s" or "cmd+shift+s")
     const keys = shortcut.toLowerCase().split('+');
@@ -40,16 +47,16 @@ export const sendKeyboardShortcut = (
 
     // Send the key combination
     if (robotKeys.length === 1 && robotKeys[0]) {
-      robot.keyTap(robotKeys[0]);
+      sendKeyTap(robotKeys[0]);
     } else if (robotKeys.length === 2 && robotKeys[0] && robotKeys[1]) {
-      robot.keyTap(robotKeys[1], [robotKeys[0]]);
+      sendKeyTap(robotKeys[1], [robotKeys[0]]);
     } else if (
       robotKeys.length === 3 &&
       robotKeys[0] &&
       robotKeys[1] &&
       robotKeys[2]
     ) {
-      robot.keyTap(robotKeys[2], [robotKeys[0], robotKeys[1]]);
+      sendKeyTap(robotKeys[2], [robotKeys[0], robotKeys[1]]);
     } else if (
       robotKeys.length === 4 &&
       robotKeys[0] &&
@@ -57,9 +64,9 @@ export const sendKeyboardShortcut = (
       robotKeys[2] &&
       robotKeys[3]
     ) {
-      robot.keyTap(robotKeys[3], [robotKeys[0], robotKeys[1], robotKeys[2]]);
+      sendKeyTap(robotKeys[3], [robotKeys[0], robotKeys[1], robotKeys[2]]);
     } else {
-      errorCatcher(new Error('Unsupported keyboard shortcut format'), {
+      errorCatcher(new UnsupportedKeyboardShortcutError(shortcut), {
         contexts: {
           fn: {
             context,

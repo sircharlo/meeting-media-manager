@@ -2,9 +2,10 @@
   <q-toggle
     v-model="model"
     checked-icon="mmm-check"
-    :color="settingId === 'disableMediaFetching' ? 'negative' : 'primary'"
+    :color="isDangerousToggle ? 'negative' : 'primary'"
     :disable="customDisabled"
     :disabled="customDisabled"
+    :name="settingId"
   />
 </template>
 
@@ -35,6 +36,18 @@ const customDisabled = computed(() => {
     undefined
   );
 });
+
+// Danger Zone toggles whose ON state is the risky one - shown in red to
+// match, unlike a normal toggle where "on" has no inherent risk connotation.
+const dangerousToggleIds = new Set<keyof SettingsValues>([
+  'disableHardwareAcceleration',
+  'disableMediaFetching',
+  'suppressHardwareAccelerationReminder',
+]);
+
+const isDangerousToggle = computed(
+  () => !!props.settingId && dangerousToggleIds.has(props.settingId),
+);
 
 const model = defineModel<boolean | undefined>({ required: true });
 

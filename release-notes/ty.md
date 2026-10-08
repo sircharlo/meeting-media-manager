@@ -4,6 +4,49 @@
 
 No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera parau, a hi’o i ta māua pu’e parau CHANGELOG.md i ni’a i GitHub.
 
+## v26.9.0
+
+### ✨ Te mau rave’a ‘āpī
+
+- ✨ Ohipa vitiviti na mua'tu/i muri iho i te putuputuraa: Te vai ra te hoê api api faahiahia e tauturu i te tiai-ru-raa i mua e i muri iho i te putuputuraa taitahi — te tatauraa mata i te mata, te haamata/faaea i te puhipuhi upaupa i muri mai i te hoê noa patia, te haamata/faaea i te ta, e te hoê tabula hiˈopoaraa no te amuiraa taitahi tei tuuhia i roto i te mau pǔpǔ e te nehenehe e faahuru-ê-hia mai roto mai i te mau Tavini-raa. E mou taue te api no mua i te putuputuraa ia haamata anaˈe te putuputuraa e ia oti te tabula hiˈopoaraa (aore ra i muri iti noa aˈe i te taime faataa-ê-hia), e e nehenehe â e iriti noa ma te rima.
+
+## v26.8.0
+
+### ✨ Te mau rave’a ‘āpī
+
+- ✨ Fa’afa’amura’a rahi nō te tau’ira’a: Te mau tau’ira’a rahi i ni’a i te mau matira’a, te tabula/te upoo parau o te mau tauhaa, te mau Fa’anahora’a, me te Tauturu Ha’amatara’a. Te Tauturu Ha’amatara’a, o te hō’ē pūra’a hutira’a hō’ē u’ira’a nō te mau matira’a e te hō’ē ta’ata fa’ati’a. Ua tauihia te mau u’ira’a i te mau matira’a tapao, e nō te maiti i te mau api PDF (nō te mau tufa’a e te taviri-e-tape’a), te fa’aohipa nei oia i te hō’ē tāvira hi’ora’a hōho’a ri’i no te mono i te papa’ira’a noa. Ua tāpiritia mai te hō’ē arata’i Ha’amatara’a ’Ōfati i muri iho i te otira’a te Tauturu Ha’amatara’a. Te vai ato’a ra te hō’ē fa’ahutira’a nō te mau papa’i / upoo parau mā te mau ata i ni’a i te huru poupou e te mau fa’ati’ara’a i te huru poupou
+- ✨ Api Fa’anahora’a: Ua fa’ahutihia ei pa’e piti, ma te tuhaa nō te ao ato’a nō te mau fa’afā’anorora’a (fa’ahou-noa-ra’a e te beta) i iritihia mai roto mai i te parau nō ni’a (tei riro mai ei hi’ora’a ana’e).
+- ✨ Patara’a Apiti i te mau tauhaa: Ua tu’uhia mai te hō’ē fa’anahora’a nō te maiti i te mau tuhaa putuputura’a e fa’aite i te patara’a “apiti i te mau tauhaa”, e te hō’ē huru poto (hōho’a ana’e).
+- ✨ Tabula Tauhaa: E fa’aite te mau tauhaa i te mau tu’ati’a ha’amatara’a i te ta’ime e apitihia mai ai eiaha e vai rapaau, e fa’aite te mau pŭpŭ tauhaa i te faito o te mau tauhaa hunahia i roto i ta ratou tapa’o (e piti tauhaa hunahia), e nehenehe e taviri-e-tape’a i te mau tamarii i roto i te mau pŭpŭ, e i ni’a i te mau varou piri roa e ta’ahia te mau tauhaa ei mau tauhaa poto i ni’a i te poro’i eiaha e tu’ati i ni’a i te reni.
+
+## v26.7.7
+
+### ✨ Te mau rave’a ‘āpī
+
+- ✨ Te huru o te faʻaite-mua-raʻa i te mau nota: E faʻa-hoʻē-faahou-hia te mauhohoʻa ata video na roto i te matini taʻahia (canvas) ma te huri-haihai-raʻa teitei, e na reira e tano ai te mau faʻaite-mua-raʻa matauhia (no te mau parau hīmene rahi i niʻa i te mau nota). E tāpuni hoʻi te faʻaite-mua-raʻa ia ˈna iho mai te peu e e titauhia ia faʻatonu-faahou-hia te taime tahe (playback) i niʻa i hoʻi hoʻhoʻa ata video anaʻe, e hoʻi hoʻi hoʻokahi noa patoraa ia faʻa-puru-faahou.
+
+## v26.7.6
+
+### ✨ Te mau rave’a ‘āpī
+
+- ✨ Te taʻiraa ata video no te Haʻapiiraa Bibilia a te amuiraa (CBS): Ua tuʻu-atoa-hia te hoʻē faʻatonuraga no te tuʻu i te pae i te mau ata video no te Haʻapiiraa Bibilia a te amuiraa no roto mai i te mau Papai taa ê (tei faaauhia i niʻa i te buka Haere ma te Puai e te Atua), ma te hoʻē taioraa imiraa papai.
+- ✨ Te numera api o te mau Papai: E faʻaitehia i teie nei te numera api (aore ra te mau numera api mai te peu e e rave rahi api) o te mau Papai i muri i to ratou iʻoa, i roto i te tapura no te mau Papai e no te JWPUB. E tauturu teie ia oe ia imi oioi i te mau nota taa ê ia ite oe i te numera api o te vahi i reira i te iteraahia.
+
+## v26.7.4
+
+### ✨ Te mau rave’a ‘āpī
+
+- ✨ Te fa'aora-raa i te mau nota ere:
+  Te mau nota o te pūpū i ni'a i te rahi pāto'ai i ere, e fa'aite nei i te hoê pātene pā'ī i'ore e nehenehe, i te hoê tapa'o 'ere' e fa'aite ana i te pūpū ia rapa, e te hoê ohipa 'Rapa i te pūpū' no te fa'afariu i te nota i te hoê pūpū i ni'a i te diska.
+- ✨ Te ha'apōpō-raa no te fa'ahō'ē: Ua tāpūhia te hoê parau e nehenehe e fa'aru'e, e ha'apōpō nei i te mau ta'ata no ni'a i te mau pūnaha fa'atere e te mau tuhaa e tatai e ore e fa'atupu-hia (mai te macOS 12 Monterey e te Windows 32-bit) ia fa'apī i to ratou rahi pāto'ai i mua a'e i te mau faaapīraa o te mau taupiti e titau i te mau pūnaha fa'atere api.
+
+## v26.7.0
+
+### ✨ Te mau rave’a ‘āpī
+
+- ✨ Taioraa upaupa amui: Ua faaôhia mai te ravea no te hauti i te upaupa no roto mai i te hoê manaˈo (fichier) e te video no roto mai i te tahi atu manaˈo amui. E nehenehe te reira e tauturu ia hauti i te mau video faaiteite hohoˈa (slideshows) e te upaupa tei amui-atoa-hia.
+- ✨ Mau huru faanahoraa no te mau video mataitaihia: Ua faaôhia mai te ravea no te haamanaˈo i te mau video i mataitaihia e te huru i faanahohia ˈi te mau tuhaa i roto i te mau pueraa parau (dossiers) i mataitaihia. E faaite te reira e ua riro te tapura o te mau video mai te reira noa te huru i te iteraa, noa ˈtu e ua tuatihia (synchronisé) te pueraa parau (dossier) i mataitaihia na nia i te mau matini huru rau.
+
 ## v26.6.1
 
 ### ✨ Te mau rave’a ‘āpī
@@ -98,7 +141,7 @@ No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera 
 - ✨ Tāpo’i rorouira nō te fa’a’ite’itera’a i ni’a i te matini teata: Tāpo’i rorouira fa’a’āmuhia nō te ha’amaita’i i te ’itera’a i te niuniu tō’o i ni’a i te mau fa’a’ite’itera’a teata.
 - ✨ Pāhonora’a i te putuputura’a: Ua fa’a’āpīhia te hō’ē rāve’a pāhonora’a ’āpī nō te putuputura’a, nō te ha’avī i te hō’ē tauihaa pāhonora’a i rāpae.
 - ✨ ’Imi-’āura’a i ni’a i te reni: Ua tāpiri-’āpī-hia te rāve’a nō te ’imi i te mau rorouira aore rā te mau nene’ira’a i ni’a i te reni nā roto i te ’imi-’āura’a pa’ari.
-- ✨ Tāpiri-’ōhie-ra’a i te mau nene’ira’a: Ua tāpiri-’āpī-hia te rāve’a nō te tāpiri-’ōhie i te mau nene’ira’a nō roto mai i te JW.org, mai te mau vea, te mau buka, te mau porotarama e te mau titau-manihini-ra’a.
+- ✨ Te rave-ohie-raa mai i te mau papai: Ua apitihia mai te ravea no te rave-ohie-raa mai i te mau papai no nia mai i te tahua natirara ohipa, mai te vea, te buka, te mau porotaramu, e te mau titau-manihini-raa.
 - ✨ Te mau ha’amaita’ira’a nō te reo tapa’o: Ua tāpiri-’āpī-hia te hō’ē fa’a’itera’a ha’apāpū-ra’a hou te ha’amatara’a i te ta’o-’ā’oa-ra’a o te mau rorouira reo tapa’o, e te rāve’a nō te mā’iti i te mau tuha’a rorouira e rave rahi, mai te peu e e tai’o-’ā’oa-hia te mau paratarapha e rave rahi.
 - ✨ Te terera’a o te mau tuha’a rorouira: Ua tāpiri-’āpī-hia te faito taime i ni’a i te tāpura o te mau tuha’a rorouira e ua ha’amaitai-hia te terera’a o te mau tuha’a rorouira.
 - 🛠️ Fa’a’itera’a rorouira: Ua ha’apāpū-hia e e ’itehia te fa’a’itera’a rorouira ia ha’amata te ta’o-’ā’oa-ra’a, noa atu e ua hunahia te reira na mua a’e.
@@ -224,22 +267,22 @@ No te tā’āto’ara’a o te mau fa’ahopura’a i rotopū i te mau nūmera 
 
 ### ✨ Te mau rave’a ‘āpī
 
-- 🚀 Fa’a’itera’a: Ua fariihia i teie nei te fa’a’itera’a i te tahua iteneta i ni’a i te matini macOS.
-- 🚀 Mau tāvirira’a papatāpuni: Ua tu’uhia mai te mau tāvirira’a papatāpuni nō te fa’a’ore, te fa’ata’a, e te fa’ahiti-fa’ahou-ra’a i te harura’a mēdia.
-- Mā’itira’a i te vāhi uta-mai-ra’a mēdia: Ua tu’uhia mai te rāve’a nō te fa’ata’a i te vāhi iteneta e uta-mai-hia ai te mau mēdia 🚀
-- 🚀 Mā’itira’a ta’o-rā’i no te OBS Studio: Ua tu’uhia mai te rāve’a mā’itira’a ta’o-rā’i vitiviti no te OBS Studio, e ua fa’a’āpī-roa-hia te fa’anahora’a o te mā’itira’a ta’o-rā’i i roto i te mau fa’anahora’a
-- 🚀 Ha’a’amura’a i te tahua iteneta nō te mau ha’amāramaramara’a: Ua fa’a’ā’ano-hia te tahua iteneta nō te mau ha’amāramaramara’a ’ia farii i te tahi atu mau reo
+- 🖥️ Fa’ahitiraa i te mau api reva (website) i nia i te macOS: Te vai ra teie tauturu i teie nei i nia i te macOS 🚀
+- ⌨️ Tapura taviri no te upaupa: Ua faaôhia mai te mau taviri no te tapea, faaea rii, e no te haamata faahou i te haruru upaupa 🚀
+- 🌐 **Tāura tauturu nō te tāviri parau nō te hōhoʻa**: Ua tuʻu-atoʻa-hia mai te raveʻa nō te tāpeʻa i te tāura parau i reira te mau hōhoʻa e rave-hia mai 🚀
+- 🎬 Mātārava rītia no te OBS: Ua tuʻu-atoʻa-hia mai te mātaʻrava rītia no te OBS Studio e ua faahouhia te raveʻa no te mātaʻrava i roto i te mau faahororaa
+- 📖 Te mau reo hau no te mau papai: Ua faararahia te api reva no te mau papai ia tia ia tauturu i te mau reo rau
 
 ## 24.10.10
 
 ### ✨ Te mau rave’a ‘āpī
 
-- ✨ Mau tāvirira’a papatāpuni nō te tere i roto i te mau mēdia: Ua tu’uhia mai te mau tāvirira’a papatāpuni nō te haere i te mēdia i muri mai ’aore rā i te mēdia i mua nei
-- ✨ Tāpura i te pae’au atau: Ua tu’uhia mai te hō’ē tāpura i te pae’au atau i ni’a i te mau mēdia, nō te huna i te mau mēdia ’aore rā nō te taui i tō rātou i’oa
-- ✨ Fa’a’ohipa-’aunoa-ra’a i te mau tau ’i’iri video: Ua fa’a’ohipahia i teie nei te mau tau ’i’iri (trimmed times) o te mau video i roto i te mau tapura (playlists) JWL i uta-mai-hia mai
+- ⌨️ Mau taviri no te hororaa i nia i te upaupa: Ua faaôhia mai te mau taviri no te horo i nia i te mauhaa upaupa i muri mai / na mua atu
+- 🖱️ Faʻahororaa nō te hōhoʻa i te pae tauatini: Ua tuʻu-atoʻa-hia mai te faʻahororaa i te pae tauatini nō te mau hōhoʻa nō te huna i te mau hōhoʻa e nō te faʻahuru i tō rātou iʻoa
+- ✂️ Faʻaʻoti-māramahia-hia te tāpaʻuraʻa JWL: Te haapaʻo-māite-hia nei te taime tano o te mau hōhoʻa i roto i te mau tāpaʻuraʻa JWL i faaōhia mai
 
 ## 24.10.9
 
 ### ✨ Te mau rave’a ‘āpī
 
-- 🚀 Mā’itira’a nō te ’iriti i te mau mēdia hau: Ua tu’uhia mai te hō’ē rāve’a nō te ’iriti i te mau mēdia hau ato’a nō te mahana i mā’itihia i teie nei
+- 🗑️ Faʻaʻore i te mau hōhoʻa hau no te hoê mahana: Ua tuʻu-atoʻa-hia mai te raveʻa no te faʻaʻore i te mau hōhoʻa hau atoa no te mahana i maʻitihia i teie nei

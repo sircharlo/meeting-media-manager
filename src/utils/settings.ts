@@ -6,7 +6,7 @@ import type {
 } from 'src/types';
 
 import { ZOOM_CONTROL_IDS } from 'src/constants/zoom';
-import { syncMeetingSchedule } from 'src/helpers/congregation-schedule';
+import { syncMeetingScheduleManually } from 'src/helpers/congregation-schedule';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { captureZoomButtonTitle, captureZoomTabTitle } from 'src/helpers/zoom';
 import { getDateDiff, getSpecificWeekday, isInPast } from 'src/utils/date';
@@ -91,7 +91,7 @@ export const performActions = (actions: SettingsItemAction[] | undefined) => {
           new CustomEvent<undefined>('obsConnectFromSettings'),
         );
       } else if (action === 'syncMeetingSchedule') {
-        syncMeetingSchedule(true);
+        syncMeetingScheduleManually();
       } else if (action === 'openCongregationLookup') {
         globalThis.dispatchEvent(
           new CustomEvent<undefined>('openCongregationLookup'),

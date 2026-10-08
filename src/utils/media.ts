@@ -1,5 +1,5 @@
 import type { IAudioMetadata } from 'music-metadata';
-import type { MultimediaItem } from 'src/types';
+import type { DateInfo, MediaItem, MultimediaItem } from 'src/types';
 
 import {
   AUDIO_EXTENSIONS,
@@ -22,7 +22,7 @@ const {
   parseMediaFile,
   pathToFileURL,
 } = globalThis.electronApi;
-const { exists } = fs;
+const { pathExists } = fs;
 
 /**
  * Checks if a file is of a certain type.
@@ -146,6 +146,163 @@ export const isJwPlaylist = (filepath: string) => {
 };
 
 /**
+ * Stops every track of a live camera/screen-capture MediaStream. Detaching
+ * an element's srcObject alone does NOT stop capture - the camera/screen
+ * keeps recording (OS privacy indicator stays lit) until each track is
+ * explicitly stopped.
+ */
+// getUserMedia/getDisplayMedia rejections caused by the environment rather
+// than by the app: the OS or user denying access (NotAllowedError), another
+// app holding the device (NotReadableError), the capture source timing out
+// or going away (AbortError), or no such device (NotFoundError).
+const EXPECTED_MEDIA_ACCESS_ERROR_NAMES = [
+  'AbortError',
+  'NotAllowedError',
+  'NotFoundError',
+  'NotReadableError',
+];
+
+/**
+ * Whether a camera/screen/tab capture request failed for an environmental
+ * reason the user is (or should be) told about, rather than an app bug.
+ * @param error The rejection from getUserMedia/getDisplayMedia
+ * @returns Whether the failure is expected
+ */
+export const isExpectedMediaAccessError = (error: unknown) => {
+  if (typeof error !== 'object' || error === null) return false;
+  const { message, name } = error as { message?: unknown; name?: unknown };
+  return EXPECTED_MEDIA_ACCESS_ERROR_NAMES.some(
+    (expected) =>
+      name === expected ||
+      (typeof message === 'string' && message.startsWith(`${expected}:`)),
+  );
+};
+
+export const stopMediaStreamTracks = (
+  srcObject: MediaProvider | null | undefined,
+) => {
+  if (srcObject instanceof MediaStream) {
+    // getAudioTracks()/getVideoTracks() rather than the getTracks()
+    // combinator - functionally identical per spec (getTracks() is defined
+    // as exactly their union), but some MediaStream implementations (e.g.
+    // happy-dom, used in this project's component tests) only implement the
+    // two more specific accessors.
+    srcObject
+      .getAudioTracks()
+      .concat(srcObject.getVideoTracks())
+      .forEach((track) => track.stop());
+  }
+};
+
+/**
+ * Largest rectangle with `sourceWidth`:`sourceHeight` proportions that fits
+ * inside a `targetWidth` x `targetHeight` box, centered - the same geometry
+ * as CSS `object-fit: contain`. Meant as the destination rect for a canvas
+ * drawImage() call, which otherwise stretches the source to whatever box it
+ * is handed. Falls back to the full target box when any size is unusable.
+ */
+export const getContainFitRect = (
+  sourceWidth: number,
+  sourceHeight: number,
+  targetWidth: number,
+  targetHeight: number,
+) => {
+  if (!(
+    sourceWidth > 0 &&
+    sourceHeight > 0 &&
+    targetWidth > 0 &&
+    targetHeight > 0
+  )) {
+    return { height: targetHeight, width: targetWidth, x: 0, y: 0 };
+  }
+
+  const scale = Math.min(
+    targetWidth / sourceWidth,
+    targetHeight / sourceHeight,
+  );
+  const width = Math.round(sourceWidth * scale);
+  const height = Math.round(sourceHeight * scale);
+
+  return {
+    height,
+    width,
+    x: Math.round((targetWidth - width) / 2),
+    y: Math.round((targetHeight - height) / 2),
+  };
+};
+
+export interface CaptureSizeBounds {
+  maxHeight: number;
+  maxWidth: number;
+  minHeight: number;
+  minWidth: number;
+}
+
+const CAPTURE_MIN_DIMENSION = 2;
+const CAPTURE_FLOOR = { height: 180, width: 320 };
+const CAPTURE_CEILING = { height: 2160, width: 3840 };
+
+/**
+ * Legacy (`mandatory`) size bounds for a Chromium `chromeMediaSource: 'tab'`
+ * capture of the media window, sized to the viewport that will display the
+ * captured frames (CSS px, scaled by `devicePixelRatio`).
+ *
+ * Two things ride on these bounds:
+ *
+ * 1. Cost. Chromium scales the source down to fit inside the max, aspect
+ *    preserved, at the source (GPU-side, before frames cross to the
+ *    renderer), and delivers it as-is when it already fits. Capping at the
+ *    displaying viewport means a 1080p/4K media window isn't captured,
+ *    transferred and redrawn at full size for a preview that can never show
+ *    more than that viewport.
+ * 2. Shape. For 'tab' sources specifically, Chromium's legacy-constraint
+ *    parser (media_stream_constraints_util_video_content.cc) defaults to a
+ *    FIXED_RESOLUTION policy whose fixed frame is the largest width and the
+ *    largest height across *all* connected displays, combined - a shape that
+ *    matches no window on a mixed-aspect setup - and letterboxes the source
+ *    into it with black bars baked into every frame. That parser only
+ *    considers explicit bounds when every min is > 1, and only picks the
+ *    size-following ANY_WITHIN_LIMIT policy when they are neither a fixed
+ *    size (min == max) nor a fixed aspect ratio (its check: floor(100*w/h)
+ *    equal for min and max). The 2x2 min and the square-viewport nudge
+ *    below keep both conditions true for any viewport.
+ */
+export const getCaptureSizeBounds = (
+  viewportWidth: number,
+  viewportHeight: number,
+  devicePixelRatio = 1,
+): CaptureSizeBounds => {
+  const dpr = devicePixelRatio > 0 ? devicePixelRatio : 1;
+  const scale = (value: number, floor: number, ceiling: number) =>
+    Math.min(ceiling, Math.max(floor, Math.round((value || 0) * dpr)));
+
+  let maxWidth = scale(
+    viewportWidth,
+    CAPTURE_FLOOR.width,
+    CAPTURE_CEILING.width,
+  );
+  const maxHeight = scale(
+    viewportHeight,
+    CAPTURE_FLOOR.height,
+    CAPTURE_CEILING.height,
+  );
+
+  // A (near-)square viewport would give the max the same approximate aspect
+  // as the 2x2 min, which Chromium reads as a fixed-aspect request (and
+  // letterboxes accordingly). Widen it by 1% - a cap, so harmless.
+  if (Math.floor((100 * maxWidth) / maxHeight) === 100) {
+    maxWidth = Math.ceil(maxHeight * 1.01);
+  }
+
+  return {
+    maxHeight,
+    maxWidth,
+    minHeight: CAPTURE_MIN_DIMENSION,
+    minWidth: CAPTURE_MIN_DIMENSION,
+  };
+};
+
+/**
  * Checks if a media item is a song.
  * @param multimediaItem The multimedia item to check.
  * @returns False if the multimedia item is not a song, otherwise the track number.
@@ -196,6 +353,74 @@ export const isImageString = (url: string) => {
 };
 
 /**
+ * Derives a filename search mask from a publication media id, for use as a
+ * native file dialog's `defaultPath` hint. Media file names are usually the
+ * pubMediaId plus some zero-padding/resolution suffix (e.g. pubMediaId
+ * `S-337-26v_F_2` vs file `S-337-26v_F_02_r720P.mp4`), so the last
+ * underscore-delimited segment is replaced with a wildcard rather than
+ * matched literally.
+ * @param pubMediaId The publication media id to derive a mask from.
+ * @returns A wildcard filename mask, or undefined if no id was given.
+ * @example
+ * getFileNameMaskFromPubMediaId('S-337-26v_F_2') // 'S-337-26v_F_*'
+ * getFileNameMaskFromPubMediaId('nwt')           // 'nwt*'
+ */
+export const getFileNameMaskFromPubMediaId = (
+  pubMediaId?: string,
+): string | undefined => {
+  if (!pubMediaId) return undefined;
+  return pubMediaId.includes('_')
+    ? `${pubMediaId.replace(/_[^_]*$/, '_')}*`
+    : `${pubMediaId}*`;
+};
+
+/**
+ * Gets visible meeting items from a DateInfo, optionally filtered to songs
+ * only. Extracted from MediaCalendarPage.vue's `getVisibleMeetingSongs()`.
+ */
+export const getVisibleMeetingItems = (
+  dateInfo: DateInfo | null | undefined,
+  opts?: { songsOnly?: boolean },
+): MediaItem[] => {
+  return (dateInfo?.mediaSections ?? []).flatMap((section) =>
+    (section.items ?? []).filter(
+      (item) => !item.hidden && (!opts?.songsOnly || item.tag?.type === 'song'),
+    ),
+  );
+};
+
+/**
+ * Error messages music-metadata throws when a file ends before its own
+ * headers say it should - the normal outcome when a file that is still
+ * downloading (or was copied incompletely) is read before it finished:
+ * - strtok3 (every tokenizer) throws "End-Of-Stream" when it runs out of
+ *   bytes mid-read.
+ * - Since music-metadata 11.16.0, parsers check declared sizes against the
+ *   file size up front, so a cut-short MP4/M4A fails with "Atom size exceeds
+ *   remaining bytes: N > M" and a cut-short MP3 with "ID3v2 tag size N
+ *   exceeds remaining file size M" instead.
+ */
+const TRUNCATED_MEDIA_ERROR_PATTERNS = [
+  /^End-Of-Stream$/,
+  /^Atom size exceeds remaining bytes: \d+ > \d+$/,
+  /exceeds remaining file size/,
+];
+
+/**
+ * Whether a metadata-parse failure signals a partial/truncated media file
+ * rather than a real bug, so it should not be reported to Sentry. Matches on
+ * the message (which survives the contextBridge crossing) rather than the
+ * error class, which doesn't.
+ */
+const isTruncatedMediaError = (error: unknown) => {
+  const message = (error as null | undefined | { message?: unknown })?.message;
+  return (
+    typeof message === 'string' &&
+    TRUNCATED_MEDIA_ERROR_PATTERNS.some((pattern) => pattern.test(message))
+  );
+};
+
+/**
  * Gets the metadata of a media file.
  * @param mediaPath The path to the media file.
  * @returns The metadata of the media file.
@@ -220,7 +445,7 @@ export const getMetadataFromMediaPath = async (
   };
   try {
     mediaPath = fileUrlToPath(mediaPath);
-    if (!mediaPath || !(await exists(mediaPath))) {
+    if (!mediaPath || !(await pathExists(mediaPath))) {
       return defaultMetadata;
     }
 
@@ -268,7 +493,9 @@ export const getMetadataFromMediaPath = async (
     }
     return metadata;
   } catch (error) {
-    if (error instanceof Event) return defaultMetadata;
+    if (error instanceof Event || isTruncatedMediaError(error)) {
+      return defaultMetadata;
+    }
     errorCatcher(error, {
       contexts: { fn: { mediaPath, name: 'getMetadataFromMediaPath' } },
     });

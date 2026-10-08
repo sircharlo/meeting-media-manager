@@ -14,7 +14,6 @@ import type {
   PublicationFiles,
   UrlVariables,
 } from 'src/types';
-import type { Songbook } from 'stores/current-state';
 
 import { defineStore } from 'pinia';
 import { MAX_SONGS } from 'src/constants/jw';
@@ -24,13 +23,19 @@ import {
   findMediaSection,
   getOrCreateMediaSection,
 } from 'src/helpers/media-sections';
-import { log } from 'src/shared/vanilla';
+import {
+  extractCssUrls,
+  findIconUrlInCss,
+  getYeartextFontUrlsFromCss,
+  log,
+} from 'src/shared/vanilla';
 import {
   fetchJwLanguages,
   fetchMemorials,
   fetchPubMediaLinks,
   fetchRaw,
   fetchYeartext,
+  shouldReportCaughtError,
 } from 'src/utils/api';
 import {
   dateFromString,
@@ -38,9 +43,39 @@ import {
   getDateDiff,
   isInPast,
 } from 'src/utils/date';
+import { createDebouncedStorage } from 'src/utils/debounced-storage';
 import { findBestResolution, isMediaLink } from 'src/utils/jw';
+import { type Songbook, useCurrentStateStore } from 'stores/current-state';
+import { isDemoModeActive } from 'stores/demo-mode';
 
 const oldDate = new Date(0);
+
+// Debounce the jw store's persistence so bursts of mutations (e.g. the
+// day-by-day schedule population during a media refresh) collapse into a
+// single synchronous localStorage write instead of one per mutation. The
+// write is flushed on window close so a clean shutdown never loses the last
+// mutation.
+//
+// FE-10 (full-audit-2026-09-04.md): a forced-quit/OS-shutdown/main-process
+// crash can skip both `beforeunload` and `pagehide`, discarding up to
+// JW_STORE_PERSIST_DEBOUNCE_MS of the latest mutation - accepted
+// intentionally, not overlooked. An Electron `before-quit`/`will-quit`
+// main-process hook can't close this gap either: those are graceful-exit
+// hooks too, and don't fire for the exact scenarios this risk describes
+// (a force-kill, OS shutdown, or crash bypasses them the same way it
+// bypasses the DOM events above). The only way to fully close this window
+// is a synchronous write on every mutation, which is the performance
+// problem this debounce exists to solve. Impact is bounded to re-fetchable
+// JW.org cache data (meeting schedule, songs, yeartexts), not irreplaceable
+// user input, so the tradeoff is accepted as-is.
+const JW_STORE_PERSIST_DEBOUNCE_MS = 500;
+const jwStoreStorage = createDebouncedStorage(
+  window.localStorage,
+  JW_STORE_PERSIST_DEBOUNCE_MS,
+);
+
+window.addEventListener('beforeunload', jwStoreStorage.flush);
+window.addEventListener('pagehide', jwStoreStorage.flush);
 
 /**
  * Checks if a caches list should be updated
@@ -97,16 +132,25 @@ interface Store {
   yeartexts: Partial<Record<number, Partial<Record<JwLangCode, string>>>>;
 }
 
-export function addUniqueByIdToTop<T extends { uniqueId: string }>(
+/**
+ * Inserts the unique items from sourceArray into targetArray at the given
+ * index, preserving their relative order and skipping items whose uniqueId
+ * already exists in targetArray (or earlier in sourceArray itself).
+ */
+export function addUniqueByIdAt<T extends { uniqueId: string }>(
   targetArray: (T | undefined)[],
   sourceArray: (T | undefined)[],
+  index: number,
 ): void {
-  // Add to the beginning of the array (reverse source to maintain original order)
-  [...sourceArray].reverse().forEach((item) => {
-    if (!targetArray.some((obj) => obj?.uniqueId === item?.uniqueId)) {
-      targetArray.unshift(item);
-    }
-  });
+  const newItems: (T | undefined)[] = [];
+  for (const item of sourceArray) {
+    const alreadyExists =
+      targetArray.some((obj) => obj?.uniqueId === item?.uniqueId) ||
+      newItems.some((obj) => obj?.uniqueId === item?.uniqueId);
+    if (!alreadyExists) newItems.push(item);
+  }
+  if (!newItems.length) return;
+  targetArray.splice(index, 0, ...newItems);
 }
 
 export function deduplicateById<T extends { uniqueId: string }>(
@@ -121,7 +165,10 @@ export function deduplicateById<T extends { uniqueId: string }>(
 
 /**
  * Replaces existing media items across all sections in the target day with matching items
- * from the newMediaItems, if the existing item is a placeholder (has no fileUrl).
+ * from the newMediaItems, if the existing item is a placeholder (has no fileUrl) or if the
+ * incoming item's own content has changed (see hasDynamicMediaContentChanged) - preserving
+ * the existing item's `hidden`/`sortOrderOriginal` state in the latter case, since those are
+ * user customizations rather than JW.org-sourced content.
  * If there is no match at all, the item from the source array will be added to
  * the appropriate section.
  * @param targetDay The day object containing mediaSections to search and modify
@@ -131,11 +178,41 @@ export function replaceMissingMediaByPubMediaId(
   targetDay: DateInfo,
   newMediaItems: Record<string, MediaItem[]> | undefined,
 ): void {
+  // FE-2 follow-up (full-audit backlog): tracks, per actual target section
+  // (resolved via each item's own originalSection - not necessarily the
+  // outer sectionId key below), which pubMediaIds this fetch actually
+  // returned, so a removal pass afterwards can drop dynamic items that have
+  // fallen out of the upstream data entirely (previously: only ever added/
+  // updated, so a removed pubMediaId lingered on the schedule forever).
+  const seenPubMediaIdsByTargetSection = new Map<
+    NonNullable<DateInfo['mediaSections']>[number],
+    Set<string>
+  >();
+
   // Iterate through all new media items from all sections
   if (!newMediaItems) return;
   for (const sectionId in newMediaItems) {
     const sectionItems = newMediaItems[sectionId];
     if (!sectionItems || !targetDay.mediaSections) continue;
+
+    // FE-2 follow-up: register this section as touched by the fetch even if
+    // it returned zero items (e.g. bonus content removed for this section
+    // entirely) - sectionId here is the outer grouping key, which matches a
+    // section's own config.uniqueId directly (see the `{ tgw: [...] }` test
+    // fixtures), independent of any item's own originalSection below. Without
+    // this, a section going from "has dynamic items" to "fetch returned none
+    // at all" would never be visited by the removal pass, since nothing
+    // would resolve into it via the per-item path.
+    const outerTargetSection = findMediaSection(
+      targetDay.mediaSections,
+      sectionId,
+    );
+    if (
+      outerTargetSection &&
+      !seenPubMediaIdsByTargetSection.has(outerTargetSection)
+    ) {
+      seenPubMediaIdsByTargetSection.set(outerTargetSection, new Set());
+    }
 
     // Process each item in the section
     sectionItems.forEach((item) => {
@@ -181,6 +258,13 @@ export function replaceMissingMediaByPubMediaId(
       }
 
       // Handle items with pubMediaId
+      let seenPubMediaIds = seenPubMediaIdsByTargetSection.get(targetSection);
+      if (!seenPubMediaIds) {
+        seenPubMediaIds = new Set();
+        seenPubMediaIdsByTargetSection.set(targetSection, seenPubMediaIds);
+      }
+      seenPubMediaIds.add(item.pubMediaId);
+
       const index = targetSection.items.findIndex(
         (obj) => obj?.pubMediaId === item?.pubMediaId,
       );
@@ -190,14 +274,58 @@ export function replaceMissingMediaByPubMediaId(
         targetSection.items.push(item);
       } else {
         const existing = targetSection.items[index];
-        // Replace only if it's a placeholder (fileUrl is the same as pubMediaId) and has no children
+        if (!existing) return;
+
+        // Replace unconditionally if it's still a placeholder (fileUrl is the
+        // same as pubMediaId) and has no children.
         if (
-          existing?.fileUrl === existing?.pubMediaId &&
-          !existing?.children?.length
+          existing.fileUrl === existing.pubMediaId &&
+          !existing.children?.length
         ) {
           targetSection.items[index] = item;
+        } else if (hasDynamicMediaContentChanged(existing, item)) {
+          // Already resolved (e.g. downloaded), but JW.org's own data for
+          // this pubMediaId has genuinely changed - adopt the new content
+          // while keeping the user's hidden/sort-order state.
+          targetSection.items[index] = {
+            ...item,
+            hidden: existing.hidden,
+            sortOrderOriginal: existing.sortOrderOriginal,
+          };
         }
       }
+    });
+  }
+
+  // FE-2 follow-up: drop dynamic items whose pubMediaId this fetch no longer
+  // returned for their section - list-only removal (matches the existing
+  // deleteMediaItems/removeFromAdditionMediaMap precedent, never touches
+  // already-downloaded cache files). Only ever removes items that were
+  // actually candidates in this fetch's target sections, so a section this
+  // fetch didn't touch at all is left alone. Skips the currently-playing
+  // item specifically - upstream data disappearing mid-meeting shouldn't
+  // yank something off the schedule while it's on screen.
+  const currentlyPlayingUrl = (() => {
+    try {
+      return useCurrentStateStore().mediaPlaying.url;
+    } catch {
+      return '';
+    }
+  })();
+  for (const [
+    targetSection,
+    seenPubMediaIds,
+  ] of seenPubMediaIdsByTargetSection) {
+    if (!targetSection.items) continue;
+    targetSection.items = targetSection.items.filter((existingItem) => {
+      if (existingItem.source !== 'dynamic' || !existingItem.pubMediaId) {
+        return true;
+      }
+      if (seenPubMediaIds.has(existingItem.pubMediaId)) return true;
+      if (currentlyPlayingUrl && existingItem.fileUrl === currentlyPlayingUrl) {
+        return true;
+      }
+      return false;
     });
   }
 
@@ -216,41 +344,95 @@ export function replaceMissingMediaByPubMediaId(
 }
 
 /**
- * Extracts CSS URLs from HTML content
+ * Feeds the stylesheets of the configured site's pages to `onCss` until one
+ * page yields a match. WOL's own page comes first; the main site's home page
+ * declares the same @font-face rules and is tried next, because WOL can
+ * answer non-browser requests with an empty bot-challenge page (a 2xx with
+ * no body, MMM-V2-3H3) that leaves nothing to discover.
+ * @param base The configured base domain (e.g. `jw.org`)
+ * @param fnName The calling action's name, for error contexts
+ * @param onCss Called with each stylesheet; returns whether it found a match
+ * @param options.cache Whether to reuse cached responses
+ * @param options.firstMatchOnly Stop at the first matching stylesheet instead
+ * of scanning the rest of that page's stylesheets
+ * @returns The network error that prevented discovery, if any (already
+ * classified as not worth reporting), so font loading can tell "couldn't
+ * reach the site" apart from "the site no longer exposes the font".
  */
-function extractCssUrls(html: string, baseUrl: string): string[] {
-  const cssRegex = /href=["']([^"']+\.css)["']/g;
-  const cssUrls: string[] = [];
-  let match;
-  while ((match = cssRegex.exec(html)) !== null) {
-    let url = match[1];
-    if (!url) continue;
-    if (url.startsWith('/')) {
-      url = `https://wol.${baseUrl}${url}`;
+async function discoverFromSiteCss(
+  base: string,
+  fnName: string,
+  onCss: (cssText: string, cssUrl: string) => boolean,
+  options: { cache: boolean; firstMatchOnly: boolean },
+): Promise<unknown> {
+  const online = useCurrentStateStore().online;
+  const pageUrls = [
+    `https://wol.${base}/en/wol/h/r1/lp-e`,
+    `https://www.${base}/en/`,
+  ];
+  let unreportedError: unknown;
+
+  for (const pageUrl of pageUrls) {
+    let found = false;
+    try {
+      const response = await fetchRaw(pageUrl, undefined, options.cache);
+      if (!response.ok) continue;
+      const cssUrls = extractCssUrls(await response.text(), pageUrl);
+
+      for (const cssUrl of cssUrls) {
+        try {
+          const cssResponse = await fetchRaw(cssUrl, undefined, options.cache);
+          if (!cssResponse.ok) continue;
+          if (onCss(await cssResponse.text(), cssUrl)) {
+            found = true;
+            if (options.firstMatchOnly) return;
+          }
+        } catch (e) {
+          // A flaky connection to the site is not a bug (MMM-V2-3H4).
+          if (!(await shouldReportCaughtError(e, online))) {
+            unreportedError = e;
+            continue;
+          }
+          errorCatcher(e, {
+            contexts: { fn: { args: { cssUrl }, name: `${fnName} - cssUrl` } },
+          });
+        }
+      }
+    } catch (e) {
+      if (!(await shouldReportCaughtError(e, online))) {
+        unreportedError = e;
+        continue;
+      }
+      errorCatcher(e, {
+        contexts: { fn: { args: { pageUrl }, name: `${fnName} - main` } },
+      });
+      return;
     }
-    cssUrls.push(url);
+    if (found) return;
   }
-  return cssUrls;
+  return unreportedError;
 }
 
 /**
- * Finds the jw-icons font URL within CSS text
+ * Whether a freshly-fetched dynamic media item's own content looks different
+ * from the already-stored item it matched by pubMediaId. `duration` and
+ * `title` are populated directly from JW.org's own source data (not
+ * user-editable), so a difference here is a real upstream change - e.g. a
+ * corrected video/caption for the same pubMediaId slot - not routine
+ * per-fetch noise. This is intentionally conservative: it only compares
+ * fields the app already treats as content identity elsewhere, rather than a
+ * full field-by-field diff, so it can't misfire on user customizations like
+ * `hidden`/`sortOrderOriginal`.
+ * @param existing The already-stored media item
+ * @param incoming The newly-fetched media item matched to it by pubMediaId
  */
-function findIconUrlInCss(cssText: string, cssUrl: string): null | string {
-  const fontFaceBlocks = cssText.match(/@font-face\s*\{[^}]*\}/gi);
-  if (!fontFaceBlocks) return null;
-
-  for (const block of fontFaceBlocks) {
-    if (block.includes('jw-icons')) {
-      const fontMatch = new RegExp(
-        /url\(["']?([^"']+\.(woff2?|ttf|otf)[^"']*)["']?\)/i,
-      ).exec(block);
-      if (fontMatch?.[1]) {
-        return new URL(fontMatch[1], cssUrl).href;
-      }
-    }
-  }
-  return null;
+function hasDynamicMediaContentChanged(
+  existing: MediaItem,
+  incoming: MediaItem,
+): boolean {
+  return (
+    existing.duration !== incoming.duration || existing.title !== incoming.title
+  );
 }
 
 export const useJwStore = defineStore('jw-store', {
@@ -261,6 +443,7 @@ export const useJwStore = defineStore('jw-store', {
       currentCongregation: string,
       selectedDateObject: DateInfo | null,
       coWeek: boolean,
+      appendToEnd = false,
     ) {
       try {
         // Early exit if no media or selected date object
@@ -286,6 +469,11 @@ export const useJwStore = defineStore('jw-store', {
           };
           this.lookupPeriod[currentCongregation].push(period);
         }
+        // An existing period found above can predate mediaSections being
+        // populated (e.g. a stub created elsewhere before the schedule
+        // fetch filled it in) - date.ts's own helpers guard the same field
+        // with `?.` for this reason; getOrCreateMediaSection below doesn't.
+        period.mediaSections ??= [];
 
         // Determine the target section
         let targetSection: MediaSectionIdentifier = 'imported-media';
@@ -321,7 +509,17 @@ export const useJwStore = defineStore('jw-store', {
         });
 
         // Add media items to the section
-        addUniqueByIdToTop(sectionMedia, mediaArray);
+        if (appendToEnd) {
+          // e.g. a closing song: goes after everything else in the section
+          addUniqueByIdAt(sectionMedia, mediaArray, sectionMedia.length);
+        } else {
+          // Keep an opening song in first place instead of bumping it down
+          const isFirstSection =
+            period.mediaSections[0] === targetSectionContainer;
+          const songIsFirst = sectionMedia[0]?.tag?.type === 'song';
+          const insertIndex = isFirstSection && songIsFirst ? 1 : 0;
+          addUniqueByIdAt(sectionMedia, mediaArray, insertIndex);
+        }
       } catch (e) {
         errorCatcher(e);
       }
@@ -454,46 +652,26 @@ export const useJwStore = defineStore('jw-store', {
         });
       });
     },
-    async updateJwIconsUrl() {
-      try {
-        const wolUrl = `https://wol.${this.urlVariables.base}/en/wol/h/r1/lp-e`;
-        const response = await fetchRaw(wolUrl, undefined, true);
-        if (!response.ok) return;
-
-        const html = await response.text();
-        const cssUrls = extractCssUrls(html, this.urlVariables.base);
-
-        for (const cssUrl of cssUrls) {
-          try {
-            const cssResponse = await fetchRaw(cssUrl, undefined, true);
-            if (!cssResponse.ok) continue;
-            const cssText = await cssResponse.text();
-            const fontUrl = findIconUrlInCss(cssText, cssUrl);
-            if (fontUrl) {
-              this.jwIconsUrl = fontUrl;
-              return; // Found it, we can stop
-            }
-          } catch (e) {
-            errorCatcher(e, {
-              contexts: {
-                fn: {
-                  args: { cssUrl },
-                  name: 'updateJwIconsUrl - cssUrl',
-                },
-              },
-            });
-          }
-        }
-      } catch (e) {
-        errorCatcher(e, {
-          contexts: {
-            fn: {
-              args: {},
-              name: 'updateJwIconsUrl - main',
-            },
-          },
-        });
-      }
+    /**
+     * Discovers the current jw-icons font URL from the site's CSS.
+     * @returns The network error that prevented discovery, if any - see
+     * discoverFromSiteCss.
+     */
+    async updateJwIconsUrl(): Promise<unknown> {
+      // This whole method exists to get the *current* truth after a
+      // cached/default URL just failed - fetchRaw's cache has no TTL, so
+      // reusing it here could wedge the session on an already-dead URL
+      // (from an earlier call) until restart. Always fetch fresh.
+      return discoverFromSiteCss(
+        this.urlVariables.base,
+        'updateJwIconsUrl',
+        (cssText, cssUrl) => {
+          const fontUrl = findIconUrlInCss(cssText, cssUrl);
+          if (fontUrl) this.jwIconsUrl = fontUrl;
+          return !!fontUrl;
+        },
+        { cache: false, firstMatchOnly: true },
+      );
     },
     async updateJwLanguages(online: boolean) {
       if (!online) return;
@@ -615,7 +793,7 @@ export const useJwStore = defineStore('jw-store', {
       online: boolean;
     }) {
       try {
-        if (!online || !lang || isSignLanguage) return;
+        if (!online || !lang || isSignLanguage || isDemoModeActive()) return;
 
         const year = new Date().getFullYear();
         const promises: Promise<{ wtlocale: JwLangCode; yeartext?: string }>[] =
@@ -653,99 +831,44 @@ export const useJwStore = defineStore('jw-store', {
         errorCatcher(error);
       }
     },
-    async updateYeartextFontUrls() {
-      try {
-        const wolUrl = `https://wol.${this.urlVariables.base}/en/wol/h/r1/lp-e`;
-        const response = await fetchRaw(wolUrl, undefined, true);
-        if (!response.ok) return;
-
-        const html = await response.text();
-        const cssUrls = extractCssUrls(html, this.urlVariables.base);
-
-        // WT/JW/Manna font names to search for in CSS @font-face declarations
-        const wtFontCssNames: Record<string, FontName> = {
-          WTClearTextGeorgian: 'WTClearTextGeorgian',
-          WTClearTextJapanese: 'WTClearTextJapanese',
-          WTMannaSansKaren: 'WTMannaSansKaren',
-          WTMannaSansMongolian: 'WTMannaSansMongolian',
-          WTMannaSansMyammar: 'WTMannaSansMyanmar', // CSS typo in JW.org
-          WTMannaSansMyanmar: 'WTMannaSansMyanmar',
-          WTMannaSansTibetan: 'WTMannaSansTibetan',
-          WTSetthaSpecial: 'WTSetthaSpecial',
-          WTTextNew: 'WTTextNew',
-          WTXBZSpecial: 'WTXBZSpecial',
-        };
-
-        for (const cssUrl of cssUrls) {
-          try {
-            const cssResponse = await fetchRaw(cssUrl, undefined, true);
-            if (!cssResponse.ok) continue;
-            const cssText = await cssResponse.text();
-
-            // Parse @font-face blocks for WT fonts
-            const fontFaceRegex =
-              /@font-face\s*\{[^}]*font-family:\s*['"]?(\w+)['"]?[^}]*\}/g;
-            let match;
-            while ((match = fontFaceRegex.exec(cssText)) !== null) {
-              const cssName = match[1];
-              if (!cssName) continue;
-
-              const fontName = wtFontCssNames[cssName];
-              if (!fontName) continue;
-
-              // Extract woff2 URL, falling back to woff
-              const block = match[0];
-              const woff2Match = new RegExp(
-                /url\(["']?(https?:\/\/[^"')]+\.woff2)["']?\)/,
-              ).exec(block);
-              const woffMatch = new RegExp(
-                /url\(["']?(https?:\/\/[^"')]+\.woff)["']?\)/,
-              ).exec(block);
-              const url = woff2Match?.[1] || woffMatch?.[1];
-              if (url) {
-                this.yeartextFontUrls[fontName] = url;
-              }
-            }
-          } catch (e) {
-            errorCatcher(e, {
-              contexts: {
-                fn: { args: { cssUrl }, name: 'updateYeartextFontUrls' },
-              },
-            });
-          }
-        }
-      } catch (e) {
-        errorCatcher(e, {
-          contexts: { fn: { name: 'updateYeartextFontUrls - main' } },
-        });
-      }
+    /**
+     * Discovers the yeartext font URLs from the site's CSS.
+     * @returns The network error that prevented discovery, if any - see
+     * discoverFromSiteCss.
+     */
+    async updateYeartextFontUrls(): Promise<unknown> {
+      return discoverFromSiteCss(
+        this.urlVariables.base,
+        'updateYeartextFontUrls',
+        (cssText) => {
+          const fontUrls = getYeartextFontUrlsFromCss(cssText);
+          this.yeartextFontUrls = { ...this.yeartextFontUrls, ...fontUrls };
+          return Object.keys(fontUrls).length > 0;
+        },
+        { cache: true, firstMatchOnly: false },
+      );
     },
   },
   getters: {
     fontUrls: (state): Record<FontName, string> => {
-      const { urlVariables } = state;
-
-      const getFontUrl = (type: 'base' | 'mediator', path = '') => {
-        const url = urlVariables[type];
-        if (!type || !url) return '';
-        try {
-          const baseUrl = type === 'base' ? `https://wol.${url}` : url;
-          const hostname = new URL(baseUrl).hostname;
-          return `https://${hostname}${path}`;
-        } catch (error) {
-          errorCatcher(error);
-          return '';
-        }
-      };
-
+      // SEC-3 (full-audit-2026-09-04.md): pinned rather than `@latest` -
+      // static font bytes are lower risk than the pdf-parse worker script
+      // above, but an unpinned CDN reference still means an unreviewed
+      // future version gets served automatically. Fontsource publishes every
+      // font package under one synchronized version number (confirmed via
+      // `npm view`, matching this project's own pinned
+      // `@fontsource-variable/inter`/`noto-serif` dependencies), so a single
+      // constant covers all of them - bump it when those dependencies bump.
+      const FONTSOURCE_VERSION = '5.3.0';
       const jsdelivr = (font: string, file: string) =>
-        `https://cdn.jsdelivr.net/fontsource/fonts/${font}@latest/${file}`;
+        `https://cdn.jsdelivr.net/fontsource/fonts/${font}@${FONTSOURCE_VERSION}/${file}`;
 
       return {
         AbyssinicaSIL: jsdelivr('abyssinica-sil', 'latin-400-normal.woff2'),
-        'jw-icons-all':
-          state.jwIconsUrl ||
-          getFontUrl('base', '/assets/fonts/jw-icons-all-81d446b.woff'),
+        // No hardcoded fallback here: The website rotates this asset's hash
+        // periodically, so a baked-in URL inevitably goes stale and 404s.
+        // jwIconsUrl is discovered dynamically via updateJwIconsUrl().
+        'jw-icons-all': state.jwIconsUrl,
         NotoNaskhArabic: jsdelivr(
           'noto-naskh-arabic:vf',
           'arabic-wght-normal.woff2',
@@ -815,14 +938,13 @@ export const useJwStore = defineStore('jw-store', {
           'noto-serif-sinhala:vf',
           'sinhala-wght-normal.woff2',
         ),
-        'Wt-BaeumMyungjo': getFontUrl(
-          'mediator',
-          '/fonts/wt-baeum-myungjo/1.000/Wt-BaeumMyungjo-Regular.woff',
-        ),
-        'Wt-ClearText-Bold': getFontUrl(
-          'mediator',
-          '/fonts/wt-clear-text/1.029/Wt-ClearText-Bold.woff2',
-        ),
+        // No hardcoded fallback here either: these paths are versioned
+        // (e.g. /1.000/, /1.029/) and the website bumps that version
+        // periodically, so a baked-in URL inevitably goes stale. Discovered
+        // dynamically via updateYeartextFontUrls(), same as the other
+        // WT/Manna yeartext fonts below.
+        'Wt-BaeumMyungjo': state.yeartextFontUrls['Wt-BaeumMyungjo'] || '',
+        'Wt-ClearText-Bold': state.yeartextFontUrls['Wt-ClearText-Bold'] || '',
         ...state.yeartextFontUrls,
       } as Record<FontName, string>;
     },
@@ -850,6 +972,8 @@ export const useJwStore = defineStore('jw-store', {
         });
       });
     },
+    omit: ['jwBibleFiles', 'jwMepsLanguages'],
+    storage: jwStoreStorage,
   },
   state: (): Store => {
     return {

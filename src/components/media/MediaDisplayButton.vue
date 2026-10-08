@@ -9,6 +9,7 @@
           ? 'white-transparent'
           : 'negative'
     "
+    data-wizard-target="media-display-button"
     :icon="
       mediaWindowVisible
         ? 'mmm-media-display-active'

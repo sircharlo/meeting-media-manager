@@ -6,6 +6,8 @@
     <!-- Side navigation -->
     <NavDrawer v-model="miniState" />
 
+    <DialogCongregationSwitcher />
+
     <!-- Main content -->
     <q-page-container class="app-main-scroll main-bg">
       <AnnouncementBanner />
@@ -27,6 +29,41 @@
     >
       <ActionIsland />
     </q-footer>
+
+    <ConfirmDialog
+      v-model="macosPermissionPromptOpen"
+      :confirm-label="t('choose-a-folder')"
+      dialog-id="macos-folder-permission-prompt"
+      icon="mmm-folder-open"
+      icon-color="primary"
+      :message="
+        t('macos-folder-permission-message', {
+          folder: macosPermissionPromptTarget?.label,
+          path: macosPermissionPromptTarget?.path,
+        })
+      "
+      persistent
+      :title="t('macos-folder-permission-title')"
+      @cancel="cancelMacosPermission"
+      @confirm="confirmMacosPermission"
+    />
+
+    <ConfirmDialog
+      v-model="baseUrlChangeConfirmOpen"
+      dialog-id="base-url-change-confirm"
+      icon="mmm-warning"
+      icon-color="warning"
+      :message="
+        t('base-url-change-confirm-message', {
+          newBaseUrl: baseUrlChangeConfirmDetails?.newBaseUrl,
+          oldBaseUrl: baseUrlChangeConfirmDetails?.oldBaseUrl,
+        })
+      "
+      persistent
+      :title="t('base-url-change-confirm-title')"
+      @cancel="rejectBaseUrlChange"
+      @confirm="acceptBaseUrlChange"
+    />
   </q-layout>
 </template>
 
@@ -45,11 +82,14 @@ import type {
 
 import {
   useBroadcastChannel,
+  useIntervalFn,
   watchDebounced,
   watchImmediate,
   whenever,
 } from '@vueuse/core';
 import { queues } from 'boot/globals';
+import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
+import DialogCongregationSwitcher from 'components/dialog/DialogCongregationSwitcher.vue';
 import HeaderBase from 'components/header/HeaderBase.vue';
 import MediaPreview from 'components/media/MediaPreview.vue';
 import ActionIsland from 'components/ui/ActionIsland.vue';
@@ -76,6 +116,7 @@ import { exportAllDays } from 'src/helpers/export-media';
 import { setElementFont } from 'src/helpers/fonts';
 import { watchExternalFolder } from 'src/helpers/fs';
 import {
+  clearMeetingCheckStatusPruneTimers,
   downloadSongbookVideos,
   getJwMepsInfo,
   setUrlVariables,
@@ -86,9 +127,15 @@ import {
   registerAllCustomShortcuts,
   unregisterAllCustomShortcuts,
 } from 'src/helpers/keyboardShortcuts';
-import { getOrCreateMediaSection } from 'src/helpers/media-sections';
+import {
+  getOrCreateMediaSection,
+  removeWatchedMediaSectionInfo,
+} from 'src/helpers/media-sections';
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
-import { createTemporaryNotification } from 'src/helpers/notifications';
+import {
+  checkLowDiskSpaceAndNotify,
+  createTemporaryNotification,
+} from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
 import { log, type LogPrefix } from 'src/shared/vanilla';
 import { useAppSettingsStore } from 'src/stores/app-settings';
@@ -103,7 +150,7 @@ import { formatDate, getSpecificWeekday, isInPast } from 'src/utils/date';
 import { kebabToCamelCase } from 'src/utils/general';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 
 // Local state
 const miniState = ref(true);
@@ -111,7 +158,7 @@ const miniState = ref(true);
 // Pause flag for yeartext watcher during preview
 const yeartextWatcherPaused = ref(false);
 
-const productName = process.env.PRODUCT_NAME;
+const productName = import.meta.env.PRODUCT_NAME;
 
 useMeta({
   titleTemplate: (title) => (title ? `${title} - M³` : `${productName}`),
@@ -139,7 +186,6 @@ $q.iconMapFn = (iconName) => {
 };
 
 // Routes and translations
-const route = useRoute();
 const router = useRouter();
 const { locale, t } = useI18n({ useScope: 'global' });
 
@@ -158,6 +204,7 @@ const {
   isSelectedDayToday,
   mediaIsPlaying,
   mediaPlaying,
+  meetingCheckStatus,
   online,
   selectedDate,
   selectedDayMeetingType,
@@ -172,6 +219,7 @@ const { lookupPeriod } = storeToRefs(jwStore);
 const {
   basename,
   dirname,
+  ensureMacosFolderPermission,
   isArchitectureMismatch,
   onDownloadCancelled,
   onDownloadCompleted,
@@ -187,6 +235,7 @@ const {
   onWatchFolderError,
   onWatchFolderUpdate,
   pathToFileURL,
+  PLATFORM,
   relaunchApp,
   removeListeners,
   resolve,
@@ -199,16 +248,201 @@ const {
 updateMemorials(online.value);
 updateJwLanguages(online.value);
 
-const hasActiveDownloads = () => {
-  return Object.values(downloadProgress.value).some(
-    (item) =>
-      !item.complete &&
-      !item.error &&
-      (!item.loaded || !item.total || item.loaded < item.total),
-  );
-};
+const hasActiveDownloads = () => currentState.hasActiveMediaWork;
 
 let cacheClearTriggered = false;
+let dismissUpdatesDisabledNotification: (() => void) | undefined;
+const macosFolderPermissionPrompts = new Set<string>();
+
+type MacosFolderPermissionSetting = Extract<
+  keyof SettingsValues,
+  | 'cacheFolder'
+  | 'folderToWatch'
+  | 'mediaAutoExportFolder'
+  | 'pinyinSongFolder'
+  | 'recordingFolder'
+>;
+
+interface MacosFolderPermissionTarget {
+  label: string;
+  path: string;
+  setting: MacosFolderPermissionSetting;
+}
+
+const addMacosFolderPermissionTarget = (
+  targets: MacosFolderPermissionTarget[],
+  setting: MacosFolderPermissionSetting,
+  path: null | string | undefined,
+  label: string,
+) => {
+  if (!path) return;
+  targets.push({ label, path, setting });
+};
+
+const getMacosFolderPermissionTargets = () => {
+  const settings = currentSettings.value;
+  const targets: MacosFolderPermissionTarget[] = [];
+  if (!settings) return targets;
+
+  addMacosFolderPermissionTarget(
+    targets,
+    'cacheFolder',
+    settings.cacheFolder,
+    t('cacheFolder'),
+  );
+
+  if (settings.enableFolderWatcher) {
+    addMacosFolderPermissionTarget(
+      targets,
+      'folderToWatch',
+      settings.folderToWatch,
+      t('folderToWatch'),
+    );
+  }
+
+  if (settings.enableMediaAutoExport) {
+    addMacosFolderPermissionTarget(
+      targets,
+      'mediaAutoExportFolder',
+      settings.mediaAutoExportFolder,
+      t('mediaAutoExportFolder'),
+    );
+  }
+
+  if (settings.enablePinyinSongs) {
+    addMacosFolderPermissionTarget(
+      targets,
+      'pinyinSongFolder',
+      settings.pinyinSongFolder,
+      t('pinyinSongFolder'),
+    );
+  }
+
+  if (settings.recordingEnable) {
+    addMacosFolderPermissionTarget(
+      targets,
+      'recordingFolder',
+      settings.recordingFolder,
+      t('recordingFolder'),
+    );
+  }
+
+  return targets;
+};
+
+const macosPermissionPromptOpen = ref(false);
+const macosPermissionPromptTarget = ref<MacosFolderPermissionTarget | null>(
+  null,
+);
+let resolveMacosPermissionPrompt: ((value: boolean) => void) | null = null;
+
+const confirmMacosFolderPermissionPrompt = (
+  target: MacosFolderPermissionTarget,
+) => {
+  macosPermissionPromptTarget.value = target;
+  macosPermissionPromptOpen.value = true;
+  return new Promise<boolean>((resolve) => {
+    resolveMacosPermissionPrompt = resolve;
+  });
+};
+
+const confirmMacosPermission = () => {
+  macosPermissionPromptOpen.value = false;
+  resolveMacosPermissionPrompt?.(true);
+  resolveMacosPermissionPrompt = null;
+};
+
+const cancelMacosPermission = () => {
+  macosPermissionPromptOpen.value = false;
+  resolveMacosPermissionPrompt?.(false);
+  resolveMacosPermissionPrompt = null;
+};
+
+// SEC-4 (full-audit-2026-09-04.md): baseUrl is a free-text "danger zone"
+// setting - the app trusts whatever mediator/CDN URLs the resulting
+// domain's homepage declares (CSP, CORS, navigation, media permissions), so
+// an edit here widens the app's trust boundary to a new domain. Free text is
+// kept (rather than an allowlist) so users in regions where jw.org is
+// blocked/mirrored can still point at a legitimate alternate address, but a
+// real edit now requires explicit confirmation instead of applying silently.
+const baseUrlChangeConfirmOpen = ref(false);
+const baseUrlChangeConfirmDetails = ref<null | {
+  newBaseUrl: string;
+  oldBaseUrl: string;
+}>(null);
+let resolveBaseUrlChangeConfirm: ((value: boolean) => void) | null = null;
+
+const confirmBaseUrlChange = (newBaseUrl: string, oldBaseUrl: string) => {
+  baseUrlChangeConfirmDetails.value = { newBaseUrl, oldBaseUrl };
+  baseUrlChangeConfirmOpen.value = true;
+  return new Promise<boolean>((resolve) => {
+    resolveBaseUrlChangeConfirm = resolve;
+  });
+};
+
+const acceptBaseUrlChange = () => {
+  baseUrlChangeConfirmOpen.value = false;
+  resolveBaseUrlChangeConfirm?.(true);
+  resolveBaseUrlChangeConfirm = null;
+};
+
+const rejectBaseUrlChange = () => {
+  baseUrlChangeConfirmOpen.value = false;
+  resolveBaseUrlChangeConfirm?.(false);
+  resolveBaseUrlChangeConfirm = null;
+};
+
+const checkMacosFolderPermission = async (
+  target: MacosFolderPermissionTarget,
+) => {
+  if (PLATFORM !== 'darwin') return;
+  if (macosFolderPermissionPrompts.has(target.path)) return;
+
+  macosFolderPermissionPrompts.add(target.path);
+  try {
+    const probe = await ensureMacosFolderPermission(target.path, false);
+    if (probe.status === 'granted' || probe.status === 'not-needed') return;
+
+    const confirmed = await confirmMacosFolderPermissionPrompt(target);
+    if (!confirmed) return;
+
+    const result = await ensureMacosFolderPermission(target.path, true);
+    if (result.status !== 'granted') {
+      createTemporaryNotification({
+        message: t('macos-folder-permission-failed'),
+        type: 'warning',
+      });
+      return;
+    }
+
+    if (
+      result.selectedPath &&
+      result.selectedPath !== target.path &&
+      currentSettings.value
+    ) {
+      currentSettings.value[target.setting] = result.selectedPath;
+    }
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          name: 'checkMacosFolderPermission',
+          path: target.path,
+          setting: target.setting,
+        },
+      },
+    });
+  } finally {
+    macosFolderPermissionPrompts.delete(target.path);
+  }
+};
+
+const checkMacosProfileFolderPermissions = async () => {
+  if (PLATFORM !== 'darwin') return;
+  for (const target of getMacosFolderPermissionTargets()) {
+    await checkMacosFolderPermission(target);
+  }
+};
 
 const delayedCacheClear = () => {
   if (!currentSettings.value?.enableCacheAutoClear || cacheClearTriggered)
@@ -259,12 +493,10 @@ const delayedCacheClear = () => {
   setTimeout(checkAndClear, 30000);
 };
 
-const navigateToCongregationSelector = () => {
+const showCongregationSwitcher = (opts?: { isBootstrap?: boolean }) => {
   try {
-    if (!route.fullPath.includes('/congregation-selector')) {
-      router.push({ path: '/congregation-selector' });
-      selectedDate.value = '';
-    }
+    currentState.openCongregationSwitcher(opts);
+    selectedDate.value = '';
   } catch (error) {
     errorCatcher(error);
   }
@@ -359,8 +591,6 @@ async function handleUnlinkCleanup(changedPath: string) {
     const filename = basename(changedPath);
     const watchedDayFolder = dirname(changedPath);
     if (watchedDayFolder) {
-      const { removeWatchedMediaSectionInfo } =
-        await import('src/helpers/media-sections');
       await removeWatchedMediaSectionInfo(watchedDayFolder, filename);
     }
   } catch (error) {
@@ -420,13 +650,26 @@ const updateWatchFolderRef = async ({
   try {
     // Prevent self-feedback loops when auto-export writes into (or under)
     // the watched folder. Those events could trigger expensive watched-item
-    // remapping on startup/playback and cause a temporary UI freeze.
-    if (changedPath && currentSettings.value?.mediaAutoExportFolder) {
+    // remapping on startup/playback and cause a temporary UI freeze. Only
+    // applies while auto-export is actually enabled, and only to the export
+    // folder itself or a genuine subfolder of it — a plain startsWith would
+    // also match unrelated sibling folders that merely share a name prefix
+    // (e.g. export folder "temp" would wrongly swallow watch folder "temp2").
+    if (
+      changedPath &&
+      currentSettings.value?.enableMediaAutoExport &&
+      currentSettings.value?.mediaAutoExportFolder
+    ) {
       const normalizedChangedPath = resolve(changedPath);
       const normalizedExportFolder = resolve(
         currentSettings.value.mediaAutoExportFolder,
       );
-      if (normalizedChangedPath.startsWith(normalizedExportFolder)) return;
+      if (
+        normalizedChangedPath === normalizedExportFolder ||
+        normalizedChangedPath.startsWith(`${normalizedExportFolder}/`)
+      ) {
+        return;
+      }
     }
 
     day = day?.replaceAll('-', '/');
@@ -867,15 +1110,38 @@ const { post: postHideMediaLogo } = useBroadcastChannel<
   name: 'hide-media-logo',
 }); // Send hideMediaLogo to the media player page using useBroadcastChannel
 
+const { post: postObsEnabled } = useBroadcastChannel<
+  boolean | undefined,
+  boolean | undefined
+>({
+  name: 'obs-enabled',
+}); // Send obsEnable to the media player page using useBroadcastChannel
+
+const handleAutoUpdatesToggled = (event: Event) => {
+  if (!(event as CustomEvent<boolean>).detail) return;
+  dismissUpdatesDisabledNotification?.();
+  dismissUpdatesDisabledNotification = undefined;
+};
+
 onMounted(() => {
   void cleanTempPathOnStartup();
   congregationSettings.updateCongregationsWithMissingSettings();
-  if (!currentSettings.value) navigateToCongregationSelector();
+  // Guard against clobbering a bootstrap open already triggered by
+  // RouteHelper (fresh launch) before this component even mounted - only
+  // open it here (as a plain, non-bootstrap open) if nothing already did.
+  if (!currentSettings.value && !currentState.congregationSwitcherOpen) {
+    showCongregationSwitcher();
+  }
   initListeners();
+  globalThis.addEventListener('autoUpdatesToggled', handleAutoUpdatesToggled);
 });
 
 onBeforeUnmount(() => {
   removeListenersLocal();
+  globalThis.removeEventListener(
+    'autoUpdatesToggled',
+    handleAutoUpdatesToggled,
+  );
 });
 
 watchImmediate(
@@ -915,6 +1181,13 @@ watchImmediate(
   () => currentSettings.value?.hideMediaLogo,
   (newHideMediaLogo) => {
     postHideMediaLogo(newHideMediaLogo);
+  },
+);
+
+watchImmediate(
+  () => currentSettings.value?.obsEnable,
+  (newObsEnable) => {
+    postObsEnabled(newObsEnable);
   },
 );
 
@@ -991,6 +1264,7 @@ watchImmediate(
     });
     postOnline(online.value);
     postHideMediaLogo(currentSettings.value?.hideMediaLogo);
+    postObsEnabled(currentSettings.value?.obsEnable);
     if (!yeartextWatcherPaused.value) {
       postYeartext(yeartext.value);
     }
@@ -1015,9 +1289,17 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
       toggleMediaWindowVisibility(false);
       toggleTimerWindow(false);
       currentState.setTimerWindowVisible(false);
-      navigateToCongregationSelector();
+      showCongregationSwitcher();
       return; // exit early — no need to run notifications
     }
+
+    // The cleanCache() call at startup runs before a congregation has been
+    // selected (currentCongregation is still empty then), so its
+    // folderToWatch/mediaAutoExportFolder cleanup silently no-ops -
+    // currentSettings resolves to undefined until a congregation is active.
+    // Re-run it now that one is, and again on every later switch, so those
+    // folders actually get cleaned up.
+    cleanCache();
 
     setElectronUrlVariables(JSON.stringify(jwStore.urlVariables));
 
@@ -1034,11 +1316,21 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
     }
 
     downloadProgress.value = {};
+    clearMeetingCheckStatusPruneTimers();
+    meetingCheckStatus.value = {};
 
     const scheduleChanged = !!(await syncMeetingSchedule());
 
     if (!scheduleChanged) updateLookupPeriod();
     delayedCacheClear();
+
+    // On macOS, a custom cacheFolder (e.g. under ~/Documents) can lose TCC
+    // access between launches. Confirm access — reprompting the user if
+    // needed — before the queue starts reading from it; otherwise every
+    // file read races the (debounced, human-interactive) permission check
+    // and fails until the user responds. No-op on other platforms and when
+    // access is already granted, so this adds no latency in the common case.
+    await checkMacosProfileFolderPermissions();
 
     if (queues.meetings[newCongregation]) {
       log(
@@ -1067,19 +1359,30 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
 
     const { updatesDisabled } = await import('src/utils/fs');
 
-    const isBetaVersion = process.env.IS_BETA;
+    const isBetaVersion = import.meta.env.IS_BETA;
     const areUpdatesDisabled = await updatesDisabled();
     const hasArchitectureMismatch = await isArchitectureMismatch();
 
     // Priority: beta warning first
     if (isBetaVersion) {
       createTemporaryNotification({
+        deferWhileDialogOpen: true,
         message: t('beta-version-warning'),
         timeout: 30000,
         type: 'warning',
       });
     } else if (areUpdatesDisabled) {
-      createTemporaryNotification({
+      dismissUpdatesDisabledNotification = createTemporaryNotification({
+        actions: [
+          {
+            color: 'white',
+            handler: () => {
+              router.push('/settings/autoUpdateApp');
+            },
+            label: t('go-to-settings'),
+          },
+        ],
+        deferWhileDialogOpen: true,
         message: t('updates-disabled-warning'),
         timeout: 10000,
         type: 'info',
@@ -1088,6 +1391,7 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
     if (hasArchitectureMismatch) {
       createTemporaryNotification({
         caption: t('architecture-mismatch-explain'),
+        deferWhileDialogOpen: true,
         message: t('architecture-mismatch'),
         timeout: 30000,
         type: 'info',
@@ -1137,6 +1441,7 @@ watch(
       // Automatic sync is now disabled for this congregation
       createTemporaryNotification({
         caption: t('automatic-sync-disabled-explain'),
+        deferWhileDialogOpen: true,
         message: t('automatic-sync-disabled'),
         timeout: 10000,
         type: 'warning',
@@ -1144,6 +1449,7 @@ watch(
     } else if (!newCongregationNameModified && oldCongregationNameModified) {
       // Automatic sync is now enabled for this congregation
       createTemporaryNotification({
+        deferWhileDialogOpen: true,
         message: t('automatic-sync-enabled'),
         timeout: 10000,
         type: 'positive',
@@ -1186,7 +1492,7 @@ watch(online, (isNowOnline) => {
 });
 
 watch(currentSettings, (newSettings) => {
-  if (!newSettings) navigateToCongregationSelector();
+  if (!newSettings) showCongregationSwitcher();
 });
 
 watchImmediate(
@@ -1202,6 +1508,22 @@ watchImmediate(
       ),
     );
   },
+);
+
+watchDebounced(
+  () => [
+    currentSettings.value?.cacheFolder,
+    currentSettings.value?.enableFolderWatcher,
+    currentSettings.value?.folderToWatch,
+    currentSettings.value?.enableMediaAutoExport,
+    currentSettings.value?.mediaAutoExportFolder,
+    currentSettings.value?.enablePinyinSongs,
+    currentSettings.value?.pinyinSongFolder,
+    currentSettings.value?.recordingEnable,
+    currentSettings.value?.recordingFolder,
+  ],
+  () => checkMacosProfileFolderPermissions(),
+  { debounce: 500, immediate: true },
 );
 
 watchImmediate(
@@ -1244,10 +1566,26 @@ whenever(
 
 watchDebounced(
   () => [currentSettings.value?.baseUrl, currentCongregation.value],
-  async ([newBaseUrl, newCongregation], [oldBaseUrl]) => {
-    if (!!newCongregation && newBaseUrl !== oldBaseUrl) {
-      await setUrlVariables(newBaseUrl);
+  async ([newBaseUrl, newCongregation], [oldBaseUrl, oldCongregation]) => {
+    if (!newCongregation || newBaseUrl === oldBaseUrl) return;
+
+    // Only confirm when the currently-active congregation's own baseUrl was
+    // actually edited by the user - not when switching to a different,
+    // already-configured congregation profile that happens to have a
+    // different (already-trusted-when-it-was-set) baseUrl.
+    const isUserEdit = newCongregation === oldCongregation && !!oldBaseUrl;
+    if (isUserEdit) {
+      const confirmed = await confirmBaseUrlChange(
+        newBaseUrl ?? '',
+        oldBaseUrl,
+      );
+      if (!confirmed) {
+        if (currentSettings.value) currentSettings.value.baseUrl = oldBaseUrl;
+        return;
+      }
     }
+
+    await setUrlVariables(newBaseUrl);
   },
   { debounce: 500 },
 );
@@ -1414,6 +1752,8 @@ watch(
   },
 );
 
+let dismissHardwareAccelerationDisabledNotification: (() => void) | undefined;
+
 watchImmediate(
   () => currentSettings.value?.disableHardwareAcceleration,
   (newDisableHardwareAcceleration) => {
@@ -1424,21 +1764,27 @@ watchImmediate(
         newDisableHardwareAcceleration &&
         !currentSettings.value?.suppressHardwareAccelerationReminder
       ) {
-        createTemporaryNotification({
-          actions: [
-            {
-              color: 'white',
-              handler: () => {
-                router.push('/settings/disableHardwareAcceleration');
+        dismissHardwareAccelerationDisabledNotification =
+          createTemporaryNotification({
+            actions: [
+              {
+                color: 'white',
+                handler: () => {
+                  router.push('/settings/disableHardwareAcceleration');
+                },
+                label: t('go-to-settings'),
               },
-              label: t('go-to-settings'),
-            },
-          ],
-          caption: t('hardwareAccelerationDisabledExplain'),
-          message: t('hardwareAccelerationDisabled'),
-          timeout: 10000,
-          type: 'info',
-        });
+            ],
+            caption: t('hardwareAccelerationDisabledExplain'),
+            message: t('hardwareAccelerationDisabled'),
+            timeout: 10000,
+            type: 'info',
+          });
+      } else {
+        // The user re-enabled hardware acceleration; the reminder no longer
+        // applies, so dismiss it instead of leaving it to expire on its own.
+        dismissHardwareAccelerationDisabledNotification?.();
+        dismissHardwareAccelerationDisabledNotification = undefined;
       }
     }
   },
@@ -1474,5 +1820,19 @@ watchImmediate(
       unregisterAllCustomShortcuts();
     }
   },
+);
+
+// BE-8 (full-audit-2026-09-04.md): the only other low-disk-space check fires
+// once, at the moment a congregation is chosen - a long download session
+// (e.g. an initial multi-week sync for a newly added congregation) can keep
+// consuming space for a long time afterward with no further warning. Poll
+// periodically, but only while a download is actually in progress, so this
+// doesn't add a recurring background disk check for a user who isn't
+// downloading anything.
+useIntervalFn(
+  () => {
+    if (currentState.hasActiveDownloads) void checkLowDiskSpaceAndNotify();
+  },
+  2 * 60 * 1000,
 );
 </script>

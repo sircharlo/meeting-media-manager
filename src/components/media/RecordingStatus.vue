@@ -9,25 +9,19 @@
     "
     class="super-rounded"
     :color="
-      recordingPopup
-        ? 'white'
-        : props.isRecording
-          ? 'negative'
-          : 'white-transparent'
+      recordingPopup ? 'white' : isRecording ? 'negative' : 'white-transparent'
     "
     :disable="!currentSettings?.recordingStartShortcut"
     no-caps
     rounded
-    :style="props.isRecording ? 'min-width: 110px;' : ''"
-    :text-color="
-      recordingPopup ? (props.isRecording ? 'negative' : 'primary') : ''
-    "
+    :style="isRecording ? 'min-width: 110px;' : ''"
+    :text-color="recordingPopup ? (isRecording ? 'negative' : 'primary') : ''"
     unelevated
     @click="onClick"
   >
     <q-icon name="mmm-record" />
-    <div v-if="props.isRecording" class="recording-status__duration q-ml-sm">
-      {{ props.recordingDuration }}
+    <div v-if="isRecording" class="recording-status__duration q-ml-sm">
+      {{ formattedDuration }}
     </div>
 
     <q-tooltip v-if="!recordingPopup" :delay="1000" :offset="[14, 22]">
@@ -39,16 +33,16 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useRecordingStore } from 'stores/recording-state';
 import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);
 
+const recording = useRecordingStore();
+const { formattedDuration, isRecording } = storeToRefs(recording);
+
 const recordingPopup = defineModel<boolean>({ default: false });
-const props = defineProps<{
-  isRecording: boolean;
-  recordingDuration: string;
-}>();
 
 const { t } = useI18n();
 

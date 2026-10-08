@@ -7,9 +7,20 @@ import pkg from './package.json';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  define: {
+    'import.meta.env.repository': JSON.stringify(
+      pkg.repository.url.replace('.git', ''),
+    ),
+    'import.meta.env.version': JSON.stringify('1.2.3'),
+    'import.meta.env.VITEST': JSON.stringify(true),
+  },
   plugins: [],
   resolve: {
     alias: {
+      // tsconfigPaths (below) picks up '#q-app' as a type-only path pointing
+      // at a .d.ts file; this alias takes priority and resolves it to the
+      // real runtime package instead, matching @quasar/app-vite's own config.
+      '#q-app': '@quasar/app-vite',
       app: fileURLToPath(new URL('.', import.meta.url)),
       assets: fileURLToPath(new URL('./src/assets', import.meta.url)),
       boot: fileURLToPath(new URL('./src/boot', import.meta.url)),
@@ -28,8 +39,6 @@ export default defineConfig({
   },
   test: {
     env: {
-      repository: pkg.repository.url.replace('.git', ''),
-      version: '1.2.3',
       VITEST: 'true',
     },
     projects: [
@@ -44,6 +53,17 @@ export default defineConfig({
         ],
         test: {
           environment: 'happy-dom',
+          // msw 3 intercepts below `fetch` (at the socket level), so requests
+          // now go through happy-dom's own fetch first, which sends a CORS
+          // preflight (OPTIONS) for every cross-origin URL - msw has no
+          // handler for it, so the mocked GET handlers would never answer.
+          // The Electron app relaxes CORS for its trusted domains anyway
+          // (see src-electron/main/session.ts).
+          environmentOptions: {
+            happyDOM: {
+              settings: { fetch: { disableSameOriginPolicy: true } },
+            },
+          },
           include: ['src/**/*.test.ts'],
           name: 'quasar',
           server: { deps: { inline: ['fs-extra', 'graceful-fs'] } },
@@ -56,7 +76,9 @@ export default defineConfig({
           environment: 'node',
           include: ['src-electron/**/*.test.ts'],
           name: 'electron',
-          server: { deps: { inline: ['fs-extra', 'graceful-fs'] } },
+          server: {
+            deps: { inline: ['fs-extra', 'graceful-fs', '@quasar/app-vite'] },
+          },
           setupFiles: 'test/vitest/setup/setup.electron.ts',
         },
       },
@@ -71,5 +93,6 @@ export default defineConfig({
         },
       },
     ],
+    testTimeout: 15000,
   },
 });

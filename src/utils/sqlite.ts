@@ -14,6 +14,7 @@ const { executeQuery, join } = globalThis.electronApi;
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { log } from 'src/shared/vanilla';
 import { findFile, getPublicationDirectory } from 'src/utils/fs';
+import { decodeEntities } from 'src/utils/general';
 import { useCurrentStateStore } from 'stores/current-state';
 
 let getDbFromJWPUBProvider:
@@ -88,14 +89,16 @@ export const findDb = async (publicationDirectory: string | undefined) => {
   return findFile(publicationDirectory, '.db');
 };
 
-export const tableExists = (db: string, tableName: string) => {
+export const tableExists = async (db: string, tableName: string) => {
   try {
     if (!db || !tableName) return false;
     return (
-      executeQuery<{ name: string }>(
-        db,
-        "SELECT name FROM sqlite_master WHERE type='table' AND name=?",
-        [tableName],
+      (
+        await executeQuery<{ name: string }>(
+          db,
+          "SELECT name FROM sqlite_master WHERE type='table' AND name=?",
+          [tableName],
+        )
       ).length > 0
     );
   } catch (error) {
@@ -104,15 +107,106 @@ export const tableExists = (db: string, tableName: string) => {
   }
 };
 
-export const getMediaVideoMarkers = (
+/**
+ * Filters a list of column names down to those that actually exist on a
+ * table, so optional columns (e.g. ones absent from older publication
+ * schemas) can be added to a SELECT without risking a query failure.
+ * @param db Database path.
+ * @param tableName Table to inspect.
+ * @param columns Candidate column names.
+ * @returns The subset of `columns` that exist on `tableName`.
+ */
+export const getExistingColumns = async (
+  db: string,
+  tableName: string,
+  columns: string[],
+) => {
+  try {
+    if (!db || !tableName || !/^\w+$/.test(tableName)) return [];
+    const existing = new Set(
+      (
+        await executeQuery<{ name: string }>(
+          db,
+          `PRAGMA table_info(${tableName})`,
+        )
+      ).map((column) => column.name),
+    );
+    return columns.filter((column) => existing.has(column));
+  } catch (error) {
+    errorCatcher(error);
+    return [];
+  }
+};
+
+const publicationTitleColumns = [
+  'DisplayTitle',
+  'ShortTitle',
+  'Title',
+  'ReferenceTitle',
+  'UndatedReferenceTitle',
+  'DisplayTitleRich',
+  'ShortTitleRich',
+  'TitleRich',
+  'ReferenceTitleRich',
+  'UndatedReferenceTitleRich',
+  'Symbol',
+  'UndatedSymbol',
+  'UniqueSymbol',
+  'EnglishSymbol',
+  'UniqueEnglishSymbol',
+  'RootSymbol',
+];
+
+const cleanPublicationTitle = (value: unknown) => {
+  if (typeof value !== 'string') return '';
+  return decodeEntities(value).trim();
+};
+
+export const getPublicationTitleFromDb = async (db: string) => {
+  try {
+    if (!db || !(await tableExists(db, 'Publication'))) return '';
+
+    const columns = new Set(
+      (
+        await executeQuery<{ name: string }>(
+          db,
+          'PRAGMA table_info(Publication)',
+        )
+      ).map((column) => column.name),
+    );
+    const availableTitleColumns = publicationTitleColumns.filter((column) =>
+      columns.has(column),
+    );
+    if (!availableTitleColumns.length) return '';
+
+    const publication = (
+      await executeQuery<Record<string, unknown>>(
+        db,
+        `SELECT ${availableTitleColumns.join(', ')} FROM Publication LIMIT 1`,
+      )
+    )[0];
+    if (!publication) return '';
+
+    return (
+      availableTitleColumns
+        .map((column) => cleanPublicationTitle(publication[column]))
+        .find(Boolean) ?? ''
+    );
+  } catch (error) {
+    errorCatcher(error);
+    return '';
+  }
+};
+
+export const getMediaVideoMarkers = async (
   source: MultimediaItemsFetcher,
   mediaId: number,
 ) => {
   try {
     if (!source.db || !mediaId) return [];
-    const videoMarkerTableExists = tableExists(source.db, 'VideoMarker');
+    const videoMarkerTableExists = await tableExists(source.db, 'VideoMarker');
     if (!videoMarkerTableExists) return [];
-    const mediaVideoMarkers = executeQuery<VideoMarker>(
+    const mediaVideoMarkers = await executeQuery<VideoMarker>(
       source.db,
       'SELECT VideoMarkerId, Label, StartTimeTicks, DurationTicks, EndTransitionDurationTicks from VideoMarker WHERE MultimediaId = ? ORDER by StartTimeTicks',
       [mediaId],
@@ -124,15 +218,19 @@ export const getMediaVideoMarkers = (
   }
 };
 
-export const getPublicationInfoFromDb = (db: string): PublicationFetcher => {
+export const getPublicationInfoFromDb = async (
+  db: string,
+): Promise<PublicationFetcher> => {
   try {
-    const pubQuery = executeQuery<{
-      IssueTagNumber: number;
-      MepsLanguageIndex: number;
-      UndatedSymbol: string;
-    }>(
-      db,
-      'SELECT IssueTagNumber, MepsLanguageIndex, UndatedSymbol FROM Publication',
+    const pubQuery = (
+      await executeQuery<{
+        IssueTagNumber: number;
+        MepsLanguageIndex: number;
+        UndatedSymbol: string;
+      }>(
+        db,
+        'SELECT IssueTagNumber, MepsLanguageIndex, UndatedSymbol FROM Publication',
+      )
     )[0];
 
     if (!pubQuery) return { issue: '', langwritten: '', pub: '' };
@@ -150,22 +248,26 @@ export const getPublicationInfoFromDb = (db: string): PublicationFetcher => {
   }
 };
 
-export const getMepsLanguagesByMediaItem = (source: MultimediaItemsFetcher) => {
+export interface MepsLanguageByMediaItem {
+  IssueTagNumber: number;
+  KeySymbol: null | string;
+  MepsLanguageIndex: number;
+  Track: null | number;
+}
+
+export const getMepsLanguagesByMediaItem = async (
+  source: MultimediaItemsFetcher,
+): Promise<MepsLanguageByMediaItem[]> => {
   try {
     if (!source.db) return [];
-    const mepsLanguagesByMediaItem: {
-      IssueTagNumber: number;
-      KeySymbol: null | string;
-      MepsLanguageIndex: number;
-      Track: null | number;
-    }[] = [];
+    const mepsLanguagesByMediaItem: MepsLanguageByMediaItem[] = [];
     for (const table of [
       'Multimedia',
       'DocumentMultimedia',
       'ExtractMultimedia',
     ]) {
       try {
-        const thisTableExists = tableExists(source.db, table);
+        const thisTableExists = await tableExists(source.db, table);
         if (!thisTableExists) continue;
       } catch (error) {
         errorCatcher(error, {
@@ -175,7 +277,7 @@ export const getMepsLanguagesByMediaItem = (source: MultimediaItemsFetcher) => {
         });
         continue;
       }
-      const columnQueryResult = executeQuery<{ name: string }>(
+      const columnQueryResult = await executeQuery<{ name: string }>(
         source.db,
         `PRAGMA table_info(${table})`,
       );
@@ -189,15 +291,10 @@ export const getMepsLanguagesByMediaItem = (source: MultimediaItemsFetcher) => {
 
       if (columnKSExists && columnMLIExists)
         mepsLanguagesByMediaItem.push(
-          ...executeQuery<{
-            IssueTagNumber: number;
-            KeySymbol: null | string;
-            MepsLanguageIndex: number;
-            Track: null | number;
-          }>(
+          ...(await executeQuery<MepsLanguageByMediaItem>(
             source.db,
             `SELECT DISTINCT IssueTagNumber, KeySymbol, MepsLanguageIndex, Track from ${table} ORDER by KeySymbol, IssueTagNumber, Track`,
-          ),
+          )),
         );
     }
 
@@ -233,20 +330,20 @@ export const getMepsLanguagesByMediaItem = (source: MultimediaItemsFetcher) => {
  * @param docId Document ID
  * @returns Array of ordinals sorted by SortPosition
  */
-export const getSjjExtractOrdinals = (db: string, docId: number) => {
+export const getSjjExtractOrdinals = async (db: string, docId: number) => {
   try {
     if (!db || !docId) return [];
 
     // Check if required tables exist
     if (
-      !tableExists(db, 'DocumentExtract') ||
-      !tableExists(db, 'Extract') ||
-      !tableExists(db, 'RefPublication')
+      !(await tableExists(db, 'DocumentExtract')) ||
+      !(await tableExists(db, 'Extract')) ||
+      !(await tableExists(db, 'RefPublication'))
     ) {
       return [];
     }
 
-    const ordinals = executeQuery<{
+    const ordinals = await executeQuery<{
       BeginParagraphOrdinal: number;
       EndParagraphOrdinal: number;
       SortPosition: number;
@@ -269,10 +366,12 @@ export const getSjjExtractOrdinals = (db: string, docId: number) => {
   }
 };
 
-const getDbMetadata = (db: string) => {
-  const DocumentMultimediaTable = executeQuery<{ name: string }>(
-    db,
-    "SELECT name FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'",
+const getDbMetadata = async (db: string) => {
+  const DocumentMultimediaTable = (
+    await executeQuery<{ name: string }>(
+      db,
+      "SELECT name FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'",
+    )
   ).map((item) => item.name);
 
   const mmTable =
@@ -280,7 +379,7 @@ const getDbMetadata = (db: string) => {
       ? 'Multimedia'
       : DocumentMultimediaTable[0];
 
-  const columnQueryResult = executeQuery<{ name: string }>(
+  const columnQueryResult = await executeQuery<{ name: string }>(
     db,
     `PRAGMA table_info(${mmTable})`,
   );
@@ -289,7 +388,7 @@ const getDbMetadata = (db: string) => {
     (column) => column.name === 'BeginParagraphOrdinal',
   );
 
-  const QuestionTableInfo = executeQuery<{ name: string }>(
+  const QuestionTableInfo = await executeQuery<{ name: string }>(
     db,
     "PRAGMA table_info('Question')",
   );
@@ -298,10 +397,11 @@ const getDbMetadata = (db: string) => {
     QuestionTableInfo.some(
       (item) => item.name === 'TargetParagraphNumberLabel',
     ) &&
-    !!executeQuery<TableItemCount>(db, 'SELECT COUNT(*) FROM Question')[0]
-      ?.count;
+    !!(
+      await executeQuery<TableItemCount>(db, 'SELECT COUNT(*) FROM Question')
+    )[0]?.count;
 
-  const MultimediaTableInfo = executeQuery<{ name: string }>(
+  const MultimediaTableInfo = await executeQuery<{ name: string }>(
     db,
     "PRAGMA table_info('Multimedia')",
   );
@@ -323,7 +423,7 @@ const getDbMetadata = (db: string) => {
   };
 };
 
-const buildDocumentMultimediaQuery = (
+const buildDocumentMultimediaQuery = async (
   db: string,
   source: MultimediaItemsFetcher,
   includePrinted: boolean | undefined,
@@ -334,13 +434,51 @@ const buildDocumentMultimediaQuery = (
     ParagraphColumnsExist,
     suppressZoomExists,
     targetParNrExists,
-  } = getDbMetadata(db);
+  } = await getDbMetadata(db);
 
   let select = 'SELECT Document.*, Multimedia.*';
   if (mmTable === 'DocumentMultimedia') select += ', DocumentMultimedia.*';
   if (ParagraphColumnsExist) select += ', DocumentParagraph.*';
   if (LinkMultimediaIdExists)
     select += ', LinkedMultimedia.FilePath AS LinkedPreviewFilePath';
+  if (ParagraphColumnsExist) {
+    // The same MultimediaId can appear in multiple DocumentMultimedia rows
+    // (e.g. one picture referenced at several points in a document), and the
+    // outer query GROUP BYs on MultimediaId, arbitrarily collapsing those rows
+    // into one. Aggregate the paragraph range across *all* of a media item's
+    // placements so the label reflects every paragraph it's associated with,
+    // not just whichever placement SQLite happened to keep.
+    const aggregatedBegin = `(SELECT MIN(dmAgg.BeginParagraphOrdinal) FROM ${mmTable} dmAgg WHERE dmAgg.DocumentId = ${mmTable}.DocumentId AND dmAgg.MultimediaId = ${mmTable}.MultimediaId)`;
+    const aggregatedEnd = `(SELECT MAX(dmAgg.EndParagraphOrdinal) FROM ${mmTable} dmAgg WHERE dmAgg.DocumentId = ${mmTable}.DocumentId AND dmAgg.MultimediaId = ${mmTable}.MultimediaId)`;
+
+    // A media item can span a range of paragraphs (BeginParagraphOrdinal to
+    // EndParagraphOrdinal), and not every paragraph in that range has a label
+    // (e.g. headings). Find the label of the first and last *labeled*
+    // paragraph in the range so multi-paragraph items can be shown as
+    // "first-last" instead of just the (possibly unlabeled) first paragraph.
+    const labeledParagraphInRange = (order: 'ASC' | 'DESC') =>
+      `(SELECT dpr.ParagraphNumberLabel FROM DocumentParagraph dpr
+          WHERE dpr.DocumentId = ${mmTable}.DocumentId
+            AND dpr.ParagraphIndex >= ${aggregatedBegin}
+            AND dpr.ParagraphIndex <= ${aggregatedEnd}
+            AND dpr.ParagraphNumberLabel IS NOT NULL
+            AND dpr.ParagraphNumberLabel <> ''
+          ORDER BY dpr.ParagraphIndex ${order} LIMIT 1)`;
+    const firstLabel = labeledParagraphInRange('ASC');
+    const lastLabel = labeledParagraphInRange('DESC');
+    const rangeLabel = `CASE
+        WHEN ${firstLabel} IS NULL THEN NULL
+        WHEN ${firstLabel} = ${lastLabel} THEN ${firstLabel}
+        ELSE ${firstLabel} || '-' || ${lastLabel}
+      END`;
+
+    // Question.TargetParagraphNumberLabel only exists for documents with study
+    // questions (e.g. Watchtower study articles); fall back to the paragraph
+    // range label so a real paragraph number is always available.
+    select += targetParNrExists
+      ? `, COALESCE(Question.TargetParagraphNumberLabel, ${rangeLabel}) AS TargetParagraphNumberLabel`
+      : `, ${rangeLabel} AS TargetParagraphNumberLabel`;
+  }
 
   let from = ' FROM Multimedia';
   if (mmTable === 'DocumentMultimedia') {
@@ -405,7 +543,7 @@ const buildDocumentMultimediaQuery = (
   };
 };
 
-const fixSjjmItems = (
+const fixSjjmItems = async (
   items: MultimediaItem[],
   db: string,
   docId: number | undefined,
@@ -414,7 +552,7 @@ const fixSjjmItems = (
   const sjjmItems = items.filter((item) => item?.KeySymbol?.includes('sjj'));
   if (sjjmItems.length === 0 || docId === undefined) return;
 
-  const sjjOrdinals = getSjjExtractOrdinals(db, docId);
+  const sjjOrdinals = await getSjjExtractOrdinals(db, docId);
   if (sjjOrdinals.length === 0) return;
 
   // Capture original ordinals to reliably identify "between" items
@@ -523,7 +661,47 @@ const fixSjjmItems = (
   }
 };
 
-export const getDocumentMultimediaItems = (
+/**
+ * When a Multimedia row has a LinkMultimediaId, it and the row it points to
+ * are two variants of the same picture (e.g. a portrait "content" crop and a
+ * widescreen "television" crop). Only one should be shown: keep the item that
+ * carries the paragraph/document association and adopt the linked item's file,
+ * then drop the linked item from the results.
+ *
+ * This does not apply to videos (CategoryType === -1): there, LinkMultimediaId
+ * points to the video's cover thumbnail picture, a distinct, unrelated media
+ * item that must be kept separately rather than merged into the video.
+ */
+export const dedupeLinkedMultimedia = (
+  items: MultimediaItem[],
+): MultimediaItem[] => {
+  const deduped = items.map((item) => {
+    if (
+      item.MultimediaId !== null &&
+      item.LinkMultimediaId &&
+      item.CategoryType !== -1
+    ) {
+      const linkedItem = items.find(
+        (i) => i.MultimediaId === item.LinkMultimediaId,
+      );
+      if (linkedItem?.FilePath) {
+        item.FilePath = linkedItem.FilePath;
+        item.LinkMultimediaId = null;
+        linkedItem.LinkMultimediaId = linkedItem.MultimediaId;
+      }
+    }
+    return item;
+  });
+
+  // Videos are exempt from the "truthy LinkMultimediaId means drop" rule
+  // below: their LinkMultimediaId is left pointing at their (unrelated,
+  // separately kept) cover picture rather than being cleared by a merge.
+  return deduped.filter(
+    (item) => item.CategoryType === -1 || !item.LinkMultimediaId,
+  );
+};
+
+export const getDocumentMultimediaItems = async (
   source: MultimediaItemsFetcher,
   includePrinted: boolean | undefined,
 ) => {
@@ -531,24 +709,26 @@ export const getDocumentMultimediaItems = (
     if (!source.db) return [];
 
     const { ParagraphColumnsExist, params, query } =
-      buildDocumentMultimediaQuery(source.db, source, includePrinted);
+      await buildDocumentMultimediaQuery(source.db, source, includePrinted);
 
-    const items = executeQuery<MultimediaItem>(source.db, query, params);
+    const items = await executeQuery<MultimediaItem>(source.db, query, params);
 
-    for (const item of items) {
-      if (!item) continue;
-      const videoMarkers = getMediaVideoMarkers(
-        { db: source.db },
-        item.MultimediaId,
-      );
-      if (videoMarkers) item.VideoMarkers = videoMarkers;
-    }
+    await Promise.all(
+      items.map(async (item) => {
+        if (!item) return;
+        const videoMarkers = await getMediaVideoMarkers(
+          { db: source.db },
+          item.MultimediaId,
+        );
+        if (videoMarkers) item.VideoMarkers = videoMarkers;
+      }),
+    );
 
     // Hack: Fix unreliable BeginParagraphOrdinal and EndParagraphOrdinal for sjjm items
     // by mapping them from DocumentExtract (sjj) ordinals sequentially
-    fixSjjmItems(items, source.db, source.docId, ParagraphColumnsExist);
+    await fixSjjmItems(items, source.db, source.docId, ParagraphColumnsExist);
 
-    return items;
+    return dedupeLinkedMultimedia(items);
   } catch (error) {
     errorCatcher(error);
     return [];
@@ -624,14 +804,19 @@ const getExtractMultimedia = async (
   defaultLang: JwLangCode,
   settings: ReturnType<typeof useCurrentStateStore>['currentSettings'],
   isSignLanguage: boolean | undefined,
-): Promise<MultimediaItem[]> => {
+): Promise<{
+  items: MultimediaItem[];
+  mepsLanguagesByMediaItem: MepsLanguageByMediaItem[];
+}> => {
   const extractLangOrig = getExtractLanguage(extract, defaultLang);
   const symbol = getExtractSymbol(
     extract.UniqueEnglishSymbol,
     extract.IssueTagNumber,
   );
 
-  if (['it', 'snnw'].includes(symbol)) return [];
+  const empty = { items: [], mepsLanguagesByMediaItem: [] };
+
+  if (['it', 'snnw'].includes(symbol)) return empty;
 
   let extractLang = extractLangOrig;
   let extractDb = await getDbFromJWPUB(
@@ -655,7 +840,18 @@ const getExtractMultimedia = async (
     );
   }
 
-  if (!extractDb) return [];
+  if (!extractDb) return empty;
+
+  // The extract's own database is the authoritative source for what
+  // languages its embedded media actually exist in (e.g. a video nested
+  // inside this referenced document that isn't available in the
+  // congregation's language may carry a different, but valid, MepsLanguageIndex
+  // of its own — such as a sign language other than the congregation's).
+  // Surface this alongside the items so callers can verify against it
+  // instead of only the outer meeting document's database.
+  const mepsLanguagesByMediaItem = await getMepsLanguagesByMediaItem({
+    db: extractDb,
+  });
 
   const requestParams = getMultimediaRequestParams(
     symbol,
@@ -664,18 +860,21 @@ const getExtractMultimedia = async (
     extractLang,
   );
 
-  const extractItems = getDocumentMultimediaItems(
-    requestParams,
-    settings?.includePrinted,
+  const extractItems = (
+    await getDocumentMultimediaItems(requestParams, settings?.includePrinted)
   )
-    .map(
-      (extractItem): MultimediaItem => ({
-        ...extractItem,
-        BeginParagraphOrdinal: extract.BeginParagraphOrdinal,
-        EndParagraphOrdinal: extract.EndParagraphOrdinal,
-        ExtractCaption: extract.ExtractCaption,
-      }),
-    )
+    .map((extractItem): MultimediaItem => ({
+      ...extractItem,
+      BeginParagraphOrdinal: extract.BeginParagraphOrdinal,
+      EndParagraphOrdinal: extract.EndParagraphOrdinal,
+      ExtractCaption: extract.ExtractCaption,
+      // The item's own KeySymbol identifies where its file comes from (e.g. a
+      // video pulled in from a separate video-compilation publication), which
+      // can differ from the publication being read/discussed here. Keep that
+      // distinct so callers can tell "what pub is this reading" from "what
+      // pub does this specific file belong to".
+      ExtractSymbol: symbol,
+    }))
     .filter(
       (extractItem) =>
         isSignLanguage ||
@@ -686,7 +885,7 @@ const getExtractMultimedia = async (
     const item = extractItems[i];
     if (!item) continue;
 
-    const videoMarkers = getMediaVideoMarkers(
+    const videoMarkers = await getMediaVideoMarkers(
       { db: extractDb },
       item.MultimediaId,
     );
@@ -699,20 +898,23 @@ const getExtractMultimedia = async (
     });
   }
 
-  return extractItems;
+  return { items: extractItems, mepsLanguagesByMediaItem };
 };
 
 export const getDocumentExtractItems = async (
   db: string,
   docId: number,
   meetingDate: string,
-) => {
+): Promise<{
+  items: MultimediaItem[];
+  mepsLanguagesByMediaItem: MepsLanguageByMediaItem[];
+}> => {
   try {
     const currentStateStore = useCurrentStateStore();
     const settings = currentStateStore.currentSettings;
     const defaultLang = settings?.lang || 'E';
 
-    const extracts = executeQuery<MultimediaExtractItem>(
+    const extracts = await executeQuery<MultimediaExtractItem>(
       db,
       `SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.EndParagraphOrdinal,DocumentExtract.DocumentId,
       Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UniqueEnglishSymbol,IssueTagNumber,
@@ -730,20 +932,25 @@ export const getDocumentExtractItems = async (
     );
 
     const allExtractItems: MultimediaItem[] = [];
+    const allMepsLanguagesByMediaItem: MepsLanguageByMediaItem[] = [];
 
     for (const extract of extracts) {
-      const extractItems = await getExtractMultimedia(
+      const { items, mepsLanguagesByMediaItem } = await getExtractMultimedia(
         extract,
         meetingDate,
         defaultLang,
         settings,
         currentStateStore.currentLangObject?.isSignLanguage,
       );
-      allExtractItems.push(...extractItems);
+      allExtractItems.push(...items);
+      allMepsLanguagesByMediaItem.push(...mepsLanguagesByMediaItem);
     }
-    return allExtractItems;
+    return {
+      items: allExtractItems,
+      mepsLanguagesByMediaItem: allMepsLanguagesByMediaItem,
+    };
   } catch (e: unknown) {
     errorCatcher(e);
-    return [];
+    return { items: [], mepsLanguagesByMediaItem: [] };
   }
 };

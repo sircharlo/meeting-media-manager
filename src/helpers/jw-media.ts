@@ -24,6 +24,7 @@ import type {
 
 import { queues } from 'boot/globals';
 import { i18n } from 'boot/i18n';
+import { DOWNLOAD_ROW_AUTO_COLLAPSE_MS } from 'src/constants/general';
 import {
   FEB_2023,
   FOOTNOTE_TARGET_PARAGRAPH,
@@ -38,17 +39,24 @@ import {
   isMwMeetingDay,
   isReplacedByMemorial,
   isWeMeetingDay,
+  updateLookupPeriod,
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { exportAllDays } from 'src/helpers/export-media';
 import {
+  getRendererPlatform,
   getSubtitlesUrl,
   getThumbnailUrl,
   registerMediaProviders,
 } from 'src/helpers/fs';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { updateLastUsedDate } from 'src/helpers/usage';
-import { isPossiblyNetworkFolderPath } from 'src/shared/filesystem-errors';
+import {
+  getFilesystemErrorCode,
+  isCloudStoragePath,
+  isExpectedNetworkPathAccessError,
+  isPossiblyNetworkFolderPath,
+} from 'src/shared/filesystem-errors';
 import { NETWORK_ERROR_CODES } from 'src/shared/network-errors';
 import { log, sanitizeFilename, uuid } from 'src/shared/vanilla';
 import {
@@ -71,6 +79,7 @@ import {
   findFile,
   getPublicationDirectory,
   getTempPath,
+  invalidateCustomCachePath,
   trimFilepathAsNeeded,
 } from 'src/utils/fs';
 import { sanitizeId } from 'src/utils/general';
@@ -85,30 +94,41 @@ import {
   isSong,
   isVideo,
 } from 'src/utils/media';
+import { createQueue } from 'src/utils/queue';
 import {
   addFullFilePathToMultimediaItem,
+  dedupeLinkedMultimedia,
   findDb,
   getDocumentExtractItems,
   getDocumentMultimediaItems,
   getMediaVideoMarkers,
   getMepsLanguagesByMediaItem,
   getPublicationInfoFromDb,
+  type MepsLanguageByMediaItem,
   registerSqliteProviders,
   tableExists,
 } from 'src/utils/sqlite';
 import { timeToSeconds } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
+import { isDemoModeActive } from 'stores/demo-mode';
 import {
   replaceMissingMediaByPubMediaId,
   shouldUpdateList,
   useJwStore,
 } from 'stores/jw';
 
-import { createMeetingSections } from './media-sections';
+import {
+  createMeetingSections,
+  findMediaSection,
+  getExportedFilenamePlacement,
+  getWatchedMediaSectionInfo,
+} from './media-sections';
 
 const {
   basename,
   changeExt,
+  closeSqliteConnection,
+  closeSqliteConnections,
   dirname,
   downloadFile,
   executeQuery,
@@ -117,6 +137,7 @@ const {
   fileUrlToPath,
   fs,
   getZipEntries,
+  isSqliteDbCorrupt,
   isUsablePath: isUsablePathRaw,
   join,
   pathToFileURL,
@@ -124,7 +145,7 @@ const {
   setElectronUrlVariables,
   unzip,
 } = globalThis.electronApi;
-const { copy, ensureDir, exists, pathExists, remove, rename, stat } = fs;
+const { copy, ensureDir, pathExists, remove, rename, stat } = fs;
 
 const backgroundMusicLibraryCache = new Map<string, Promise<SongItem[]>>();
 const publicationMediaLinksCache = new Map<string, Promise<MediaLink[]>>();
@@ -136,10 +157,16 @@ const mediaItemIsDynamic = (item?: MediaItem): boolean => {
 };
 
 export const ensureWatchedMeetingDayFolders = async () => {
+  // Tracked outside the try block so the catch below can both report which
+  // folder failed and check whether the failure is expected flakiness on a
+  // network/cloud-sync drive (e.g. a virtual drive letter briefly
+  // unmounted).
+  let watchFolder: string | undefined;
+
   try {
     const currentStateStore = useCurrentStateStore();
     const { currentCongregation, currentSettings } = currentStateStore;
-    const watchFolder = currentSettings?.folderToWatch;
+    watchFolder = currentSettings?.folderToWatch;
     if (
       !currentCongregation ||
       !currentSettings?.enableFolderWatcher ||
@@ -147,6 +174,12 @@ export const ensureWatchedMeetingDayFolders = async () => {
     ) {
       return;
     }
+
+    // Guards against malformed values a native folder picker can hand back
+    // in rare cases (e.g. a bare UNC-prefix stub like '\\?' when browsing
+    // "Network" without fully selecting a share) rather than attempting
+    // mkdir against a path that was never a real directory to begin with.
+    if (!(await isUsablePath(watchFolder))) return;
 
     const jwStore = useJwStore();
     const days = jwStore.lookupPeriod[currentCongregation] ?? [];
@@ -166,10 +199,22 @@ export const ensureWatchedMeetingDayFolders = async () => {
       await ensureDir(join(watchFolder, folderName));
     }
   } catch (error) {
+    if (
+      watchFolder &&
+      isExpectedNetworkPathAccessError(
+        error,
+        watchFolder,
+        getRendererPlatform(),
+      )
+    ) {
+      return;
+    }
+
     errorCatcher(error, {
       contexts: {
         fn: {
           name: 'ensureWatchedMeetingDayFolders',
+          watchFolder,
         },
       },
     });
@@ -210,6 +255,19 @@ const getBestPublicationMediaLinks = (
   );
 };
 
+// Falls back to whatever this songbook's picker list last had cached
+// (persisted in jw-store, survives restarts) when the live media-links
+// fetch fails or comes back empty - without this, a cold start with no
+// connection yields an empty song library even though the actual song
+// files may already be sitting on disk from a previous session.
+const getCachedPublicationMediaLinksFallback = (
+  publication: PublicationFetcher,
+): MediaLink[] => {
+  if (!publication.langwritten) return [];
+  const cachedList = useJwStore().jwSongs[publication.langwritten]?.list ?? [];
+  return getBestPublicationMediaLinks(cachedList, publication);
+};
+
 const getPublicationMediaLinks = async (
   publication: PublicationFetcher,
 ): Promise<MediaLink[]> => {
@@ -220,7 +278,11 @@ const getPublicationMediaLinks = async (
       cacheKey,
       (async () => {
         const publicationInfo = await getPubMediaLinks(publication);
-        if (!publication.fileformat || !publicationInfo?.files) return [];
+        if (!publication.fileformat || !publicationInfo?.files) {
+          const fallback = getCachedPublicationMediaLinksFallback(publication);
+          if (!fallback.length) publicationMediaLinksCache.delete(cacheKey);
+          return fallback;
+        }
 
         const mediaLinks = (
           publication.langwritten
@@ -236,11 +298,12 @@ const getPublicationMediaLinks = async (
           );
 
         const bestLinks = getBestPublicationMediaLinks(mediaLinks, publication);
-        if (!bestLinks.length) {
-          publicationMediaLinksCache.delete(cacheKey);
-        }
+        if (bestLinks.length) return bestLinks;
 
-        return bestLinks;
+        publicationMediaLinksCache.delete(cacheKey);
+        const fallback = getCachedPublicationMediaLinksFallback(publication);
+        if (!fallback.length) publicationMediaLinksCache.delete(cacheKey);
+        return fallback;
       })().catch((error: unknown) => {
         publicationMediaLinksCache.delete(cacheKey);
         throw error;
@@ -258,7 +321,7 @@ const getExpectedDownloadPath = async (
 
 const getValidLocalSongPath = async (song: SongItem): Promise<string> => {
   try {
-    if (!song.path || !(await exists(song.path))) return '';
+    if (!song.path || !(await pathExists(song.path))) return '';
 
     if (!song.filesize) return song.path;
 
@@ -380,17 +443,6 @@ const ongoingUnzips = new Map<string, Promise<string | undefined>>();
 const ZIP_ENTRY_DIAGNOSTIC_LIMIT = 50;
 const MAX_IDENTIFY_IN_MEMORY_CONTENTS_SIZE = 150000000; // 150 MB
 
-const isCloudStoragePath = (path: string) => {
-  const normalizedPath = path.replaceAll('\\', '/').toLowerCase();
-  return (
-    normalizedPath.includes('/library/mobile documents/') ||
-    normalizedPath.includes('/icloud drive/') ||
-    normalizedPath.includes('/dropbox/') ||
-    normalizedPath.includes('/onedrive') ||
-    normalizedPath.includes('/google drive/')
-  );
-};
-
 const isCloudStorageReadError = (error: unknown) => {
   const errorCode = (error as { code?: string })?.code;
   if (errorCode && NETWORK_ERROR_CODES.has(errorCode)) return true;
@@ -399,6 +451,13 @@ const isCloudStorageReadError = (error: unknown) => {
   return /connection timed out|resource busy|temporarily unavailable/i.test(
     message,
   );
+};
+
+const PERMISSION_ERROR_CODES = new Set(['EACCES', 'EPERM']);
+
+const isPermissionError = (error: unknown) => {
+  const errorCode = (error as { code?: string })?.code;
+  return !!errorCode && PERMISSION_ERROR_CODES.has(errorCode);
 };
 
 interface DirectoryDiagnostic {
@@ -443,7 +502,7 @@ const isJwpubFileUnavailableError = (error: unknown, jwpubPath: string) => {
   if (errorCode === 'ENOENT') return true;
   if (isCloudStorageReadError(error)) return true;
   return (
-    isPossiblyNetworkFolderPath(dirname(jwpubPath)) &&
+    isPossiblyNetworkFolderPath(dirname(jwpubPath), getRendererPlatform()) &&
     ['EINVAL', 'UNKNOWN'].includes(errorCode ?? '')
   );
 };
@@ -586,7 +645,7 @@ const getMediaFromJwPlaylist = async (
     if (!dbFile) return [];
     let playlistName = '';
     try {
-      const playlistNameQuery = executeQuery<PlaylistTagItem>(
+      const playlistNameQuery = await executeQuery<PlaylistTagItem>(
         dbFile,
         'SELECT Name FROM Tag ORDER BY TagId ASC LIMIT 1;',
       );
@@ -607,7 +666,7 @@ const getMediaFromJwPlaylist = async (
         },
       });
     }
-    const playlistItems = executeQuery<JwPlaylistItem>(
+    const playlistItems = await executeQuery<JwPlaylistItem>(
       dbFile,
       `SELECT
         pi.PlaylistItemId,
@@ -663,17 +722,31 @@ const getMediaFromJwPlaylist = async (
             );
             item.ThumbnailFilePath += '.jpg';
           } catch (error) {
-            await errorCatcher(error, {
-              contexts: {
-                fn: {
-                  args: {
-                    item,
-                    outputPath,
+            // Playlist items are processed concurrently and can share the
+            // same thumbnail file. If another item already renamed it, the
+            // target now exists — that's a benign race, not an error.
+            // `rename` is exposed straight through Electron's contextBridge,
+            // so the thrown error's `code` doesn't survive the crossing —
+            // getFilesystemErrorCode falls back to parsing it back out of
+            // the message text.
+            if (
+              getFilesystemErrorCode(error) === 'ENOENT' &&
+              (await pathExists(item.ThumbnailFilePath + '.jpg'))
+            ) {
+              item.ThumbnailFilePath += '.jpg';
+            } else {
+              await errorCatcher(error, {
+                contexts: {
+                  fn: {
+                    args: {
+                      item,
+                      outputPath,
+                    },
+                    name: 'getMediaFromJwPlaylist rename thumbnail',
                   },
-                  name: 'getMediaFromJwPlaylist rename thumbnail',
                 },
-              },
-            });
+              });
+            }
           }
         }
         const durationTicks =
@@ -690,8 +763,8 @@ const getMediaFromJwPlaylist = async (
             ? item.StartTrimOffsetTicks / 10000 / 1000
             : null;
 
-        const VerseNumbers = globalThis.electronApi
-          .executeQuery<{
+        const VerseNumbers = (
+          await globalThis.electronApi.executeQuery<{
             Label: string;
           }>(
             dbFile,
@@ -703,14 +776,14 @@ const getMediaFromJwPlaylist = async (
             PlaylistItemId = ?`,
             [item.PlaylistItemId],
           )
-          .map((v) =>
-            Number.parseInt(
-              Array.from(
-                v.Label.matchAll(VERSE_NUMBER_PATTERN),
-                (m) => m[1],
-              )[0] ?? '0',
-            ),
-          );
+        ).map((v) =>
+          Number.parseInt(
+            Array.from(
+              v.Label.matchAll(VERSE_NUMBER_PATTERN),
+              (m) => m[1],
+            )[0] ?? '0',
+          ),
+        );
 
         const playlistItemName = `${i + 1} - ${item.Label}`;
 
@@ -767,6 +840,16 @@ const getMediaFromJwPlaylist = async (
         },
       },
     });
+
+    const t = i18n.global.t;
+    createTemporaryNotification({
+      group: 'jwPlaylistWatchedImportFailed',
+      message: t('jw-playlist-watched-import-failed', {
+        fileName: basename(jwPlaylistPath),
+      }),
+      type: 'negative',
+    });
+
     return [];
   }
 };
@@ -836,6 +919,9 @@ export async function identifyJwpub(jwpubPath: string) {
 
   const extractionId = uuid();
   const tempExplodePath = join(tempDir, `identify-${extractionId}`);
+  // Hoisted so the finally block can release the throwaway identification db
+  // even when extraction fails before reaching the query below.
+  let dbPath: string | undefined;
 
   try {
     // 1. Peek at JWPUB to find 'contents'
@@ -849,6 +935,7 @@ export async function identifyJwpub(jwpubPath: string) {
         'error',
         error,
       );
+      if (isPermissionError(error)) invalidateCustomCachePath(error);
       warnCloudJwpubUnavailable(jwpubPath, error);
       return;
     }
@@ -856,7 +943,7 @@ export async function identifyJwpub(jwpubPath: string) {
 
     // 2. For small publications, read 'contents' in memory and write only the inner .db file to temp.
     // Huge publications fall back to streamed disk extraction to avoid RAM spikes.
-    const dbPath = await extractIdentificationDb(
+    dbPath = await extractIdentificationDb(
       jwpubPath,
       tempExplodePath,
       jwpubEntries.contents,
@@ -864,8 +951,10 @@ export async function identifyJwpub(jwpubPath: string) {
     if (!dbPath) return;
 
     // 3. Get publication info
-    return getPublicationInfoFromDb(dbPath);
+    return await getPublicationInfoFromDb(dbPath);
   } catch (error) {
+    if (isPermissionError(error)) invalidateCustomCachePath(error);
+
     errorCatcher(error, {
       contexts: {
         fn: {
@@ -876,7 +965,10 @@ export async function identifyJwpub(jwpubPath: string) {
     });
     return undefined;
   } finally {
-    // Cleanup
+    // Cleanup. Release the throwaway identification db's connection/cache
+    // first so removing its temp dir doesn't fail with EBUSY on Windows and
+    // the worker doesn't pin an open handle + cached result per call.
+    if (dbPath) await closeSqliteConnection(dbPath).catch(() => undefined);
     await remove(tempExplodePath).catch(() => undefined);
   }
 }
@@ -897,9 +989,11 @@ const extractContentsFromJwpub = async (
       error,
     );
     warnCloudJwpubUnavailable(jwpubPath, error);
+    if (isPermissionError(error)) invalidateCustomCachePath(error);
     // If we can't read the entries to even start extraction, the file might be locked, damaged, or still downloading from cloud storage.
-    // Cloud-managed placeholders should not be deleted because the provider may hydrate them after this attempt.
-    if (!isCloudStorageReadError(error)) {
+    // Cloud-managed placeholders should not be deleted because the provider may hydrate them after this attempt,
+    // and permission errors mean the folder is inaccessible right now, not that the file itself is corrupt.
+    if (!isCloudStorageReadError(error) && !isPermissionError(error)) {
       await remove(jwpubPath).catch(() => undefined);
     }
     throw error;
@@ -936,9 +1030,12 @@ const extractContentsFromJwpub = async (
       });
     } catch (error) {
       warnCloudJwpubUnavailable(jwpubPath, error);
+      if (isPermissionError(error)) invalidateCustomCachePath(error);
       // If unzipping the JWPUB fails, it's likely corrupted.
-      // Remove it to force a re-download on next attempt unless cloud storage may still be hydrating the file.
-      if (isCloudStorageReadError(error)) throw error;
+      // Remove it to force a re-download on next attempt unless cloud storage may still
+      // be hydrating the file, or the folder is just temporarily inaccessible.
+      if (isCloudStorageReadError(error) || isPermissionError(error))
+        throw error;
 
       await remove(jwpubPath).catch((removeError) =>
         errorCatcher(removeError, {
@@ -999,11 +1096,33 @@ const extractDbFromContents = async (outputPath: string, jwpubPath: string) => {
         'warn',
       );
     }
+    // Release any open read-only SQLite handle on the existing .db before
+    // re-extracting over it (the old file is about to be replaced). Kept
+    // outside the try below: a failure to close says nothing about the
+    // extracted files, so it must never reach the delete-as-corrupt path
+    // (MMM-V2-3K9). If a handle really is still open, the unzip itself fails
+    // with a permission error, which that path already leaves alone.
+    await closeSqliteConnections().catch((closeError) =>
+      errorCatcher(closeError, {
+        contexts: {
+          fn: {
+            args: { jwpubPath, outputPath },
+            name: 'jwpubExtractor closeSqliteConnections',
+          },
+        },
+      }),
+    );
     try {
       await unzip(contentsPath, outputPath);
       const dbFileAfterUnzip = await findDb(outputPath);
       if (!dbFileAfterUnzip) throw new Error('DB still not found after unzip');
     } catch (error) {
+      if (isPermissionError(error)) invalidateCustomCachePath(error);
+      // Cloud-managed placeholders and permission errors mean the files are
+      // temporarily inaccessible, not that they're corrupt — don't delete them.
+      if (isCloudStorageReadError(error) || isPermissionError(error))
+        throw error;
+
       // If unzipping contents fails, it might be corrupted.
       // Remove it so it can be re-extracted next time.
       await remove(contentsPath).catch((removeError) =>
@@ -1033,8 +1152,17 @@ const jwpubExtractor = async (jwpubPath: string, outputPath: string) => {
 
     return outputPath;
   } catch (error) {
+    // A permission error here means the coarse startup probe for the custom
+    // cache folder passed, but a real read/write against it just failed.
+    // Stop resolving publication directories to it for the rest of the
+    // session instead of retrying the same broken folder on every publication.
+    if (isPermissionError(error)) invalidateCustomCachePath(error);
+
     // If anything fails, clean up the output directory to avoid partial extractions
     try {
+      // Release any open read-only SQLite handle on the partially-extracted
+      // .db before removing it.
+      await closeSqliteConnections();
       await remove(outputPath);
     } catch (removeError) {
       await errorCatcher(removeError, {
@@ -1092,6 +1220,9 @@ export const unzipJwpub = async (
 
     // If force, clear the output directory before filling it
     if (force) {
+      // Release any open read-only SQLite handle on the old .db before
+      // removing it, so the delete doesn't fail with EBUSY/EPERM on Windows.
+      await closeSqliteConnections();
       try {
         await remove(outputPath);
       } catch (e) {
@@ -1163,9 +1294,15 @@ export const copyToDatedAdditionalMedia = async (
     currentStateStore.selectedDate,
   );
 
+  // Tracked outside the try block so the catch below can check whether a
+  // copy failure is expected flakiness on a cloud-synced source/destination
+  // (same EINVAL/ENOENT/UNKNOWN-on-network-path pattern already tolerated
+  // for jwpub reads - see isJwpubFileUnavailableError above).
+  let datedAdditionalMediaPath: string | undefined;
+
   try {
-    if (!filepathToCopy || !(await exists(filepathToCopy))) return '';
-    let datedAdditionalMediaPath = join(
+    if (!filepathToCopy || !(await pathExists(filepathToCopy))) return '';
+    datedAdditionalMediaPath = join(
       datedAdditionalMediaDir,
       basename(filepathToCopy),
     );
@@ -1175,12 +1312,19 @@ export const copyToDatedAdditionalMedia = async (
         '-' +
         pathToFileURL(datedAdditionalMediaPath),
     );
-    if (await exists(datedAdditionalMediaPath)) {
+    if (await pathExists(datedAdditionalMediaPath)) {
       if (filepathToCopy !== datedAdditionalMediaPath) {
         try {
           await remove(datedAdditionalMediaPath);
         } catch (e) {
-          errorCatcher(e);
+          errorCatcher(e, {
+            contexts: {
+              fn: {
+                datedAdditionalMediaPath,
+                name: 'copyToDatedAdditionalMedia remove existing',
+              },
+            },
+          });
         }
         jwStore.removeFromAdditionMediaMap(
           uniqueId,
@@ -1201,7 +1345,27 @@ export const copyToDatedAdditionalMedia = async (
     }
     return datedAdditionalMediaPath;
   } catch (error) {
-    errorCatcher(error);
+    const platform = getRendererPlatform();
+    if (
+      isExpectedNetworkPathAccessError(error, filepathToCopy, platform) ||
+      (datedAdditionalMediaPath &&
+        isExpectedNetworkPathAccessError(
+          error,
+          datedAdditionalMediaPath,
+          platform,
+        ))
+    ) {
+      return '';
+    }
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          datedAdditionalMediaPath,
+          filepathToCopy,
+          name: 'copyToDatedAdditionalMedia',
+        },
+      },
+    });
     return '';
   }
 };
@@ -1213,6 +1377,7 @@ export const createMediaItemFromPath = async (
     duration?: number;
     filesize?: number;
     song?: string;
+    thumbnailStreamUrl?: string;
     thumbnailUrl?: string;
     title?: string;
     url?: string;
@@ -1236,9 +1401,19 @@ export const createMediaItemFromPath = async (
       basename(additionalFilePath).replace(extname(additionalFilePath), '');
 
     if (!uniqueId) {
+      // Two clips trimmed from the same underlying file (e.g. different
+      // verse ranges from the same Bible chapter video) would otherwise
+      // collide on the same uniqueId and get silently dropped as a
+      // duplicate by addUniqueByIdAt - so fold the trim range in, matching
+      // the durationPart approach in mapDynamicMediaItem.
+      const durationPart =
+        customDuration?.min || customDuration?.max
+          ? `${customDuration.min ?? ''}_${customDuration.max ?? ''}-`
+          : '';
       uniqueId = sanitizeId(
         formatDate(currentStateStore.selectedDate, 'YYYYMMDD') +
           '-' +
+          durationPart +
           pathToFileURL(additionalFilePath),
       );
     }
@@ -1261,6 +1436,7 @@ export const createMediaItemFromPath = async (
         type: additionalInfo?.song ? 'song' : undefined,
         value: additionalInfo?.song ?? undefined,
       },
+      thumbnailStreamUrl: additionalInfo?.thumbnailStreamUrl,
       thumbnailUrl:
         additionalInfo?.thumbnailUrl ??
         (await getThumbnailUrl(additionalFilePath, true)),
@@ -1291,11 +1467,13 @@ export const addToAdditionMediaMapFromPath = async (
     duration?: number;
     filesize?: number;
     song?: string;
+    thumbnailStreamUrl?: string;
     thumbnailUrl?: string;
     title?: string;
     url?: string;
   },
   customDuration?: { max: number; min: number },
+  appendToEnd = false,
 ) => {
   try {
     const item = await createMediaItemFromPath(
@@ -1319,6 +1497,7 @@ export const addToAdditionMediaMapFromPath = async (
       currentStateStore.currentCongregation,
       currentStateStore.selectedDateObject,
       isCoWeek(currentStateStore.selectedDateObject?.date),
+      appendToEnd,
     );
     return item.uniqueId;
   } catch (error) {
@@ -1349,8 +1528,8 @@ export const addJwpubDocumentMediaToFiles = async (
   const currentStateStore = useCurrentStateStore();
   try {
     if (!dbPath) return;
-    const publication = getPublicationInfoFromDb(dbPath);
-    const multimediaItems = getDocumentMultimediaItems(
+    const publication = await getPublicationInfoFromDb(dbPath);
+    const multimediaItems = await getDocumentMultimediaItems(
       {
         db: dbPath,
         docId: document.DocumentId,
@@ -1394,6 +1573,85 @@ export const addJwpubDocumentMediaToFiles = async (
   }
 };
 
+interface DownloadProgress {
+  filename?: string;
+  meetingDate?: string;
+  progressCategory: FileDownloader['progressCategory'];
+  total?: number;
+}
+
+// No new bytes for this long is treated as a stalled transfer rather than
+// a merely slow one - large media files legitimately take a long time on
+// slow-but-working connections (this app explicitly serves congregations
+// with poor connectivity), so this only fires on genuinely zero forward
+// progress, never on a connection that's just slow.
+const DOWNLOAD_STALL_TIMEOUT_MS = 45000;
+
+const pollUntilDownloaded = (
+  downloadId: string,
+  destinationPath: string,
+  remoteSize: number,
+  currentStateStore: ReturnType<typeof useCurrentStateStore>,
+): Promise<DownloadedFile> =>
+  new Promise<DownloadedFile>((resolve) => {
+    let lastLoaded =
+      currentStateStore.downloadProgress[downloadId]?.loaded ?? 0;
+    let lastProgressAt = Date.now();
+    const interval = setInterval(() => {
+      if (currentStateStore.downloadProgress[downloadId]?.error) {
+        clearInterval(interval);
+        resolve({ error: true, path: destinationPath });
+        return;
+      }
+      if (currentStateStore.downloadProgress[downloadId]?.complete) {
+        clearInterval(interval);
+        void resolveDownloadedFile(destinationPath, remoteSize, resolve);
+        return;
+      }
+      const loaded =
+        currentStateStore.downloadProgress[downloadId]?.loaded ?? 0;
+      if (loaded > lastLoaded) {
+        lastLoaded = loaded;
+        lastProgressAt = Date.now();
+        return;
+      }
+      if (Date.now() - lastProgressAt > DOWNLOAD_STALL_TIMEOUT_MS) {
+        clearInterval(interval);
+        resolve({ error: true, path: destinationPath });
+      }
+    }, 500);
+  });
+
+const resolveDownloadedFile = async (
+  destinationPath: string,
+  remoteSize: number,
+  resolve: (value: DownloadedFile) => void,
+) => {
+  const maxAttempts = 10;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    try {
+      if (await pathExists(destinationPath)) {
+        const statistics = await stat(destinationPath);
+        const hasExpectedSize =
+          remoteSize <= 0 || statistics.size === remoteSize;
+        if (statistics.size > 0 && hasExpectedSize) {
+          resolve({ new: true, path: destinationPath });
+          return;
+        }
+      }
+    } catch {
+      // The file can vanish between the pathExists() check and stat() if a
+      // concurrent cache-clear pass removes it (MMM-V2-3GB/3GA were
+      // unhandled rejections from this race). Treat it as not-ready-yet
+      // and let the retry loop below re-check.
+    }
+    await new Promise((settle) => {
+      setTimeout(settle, 200);
+    });
+  }
+  resolve({ error: true, path: destinationPath });
+};
+
 export const downloadFileIfNeeded = async ({
   dir,
   filename,
@@ -1426,7 +1684,7 @@ export const downloadFileIfNeeded = async ({
           return +(response?.headers?.get('content-length') || 0);
         })
         .catch(() => 0));
-    if (await exists(destinationPath)) {
+    if (await pathExists(destinationPath)) {
       const statistics = await stat(destinationPath);
       const localSize = statistics.size;
       if (remoteSize > 0 && localSize === remoteSize) {
@@ -1436,68 +1694,38 @@ export const downloadFileIfNeeded = async ({
         };
       }
     }
-    const downloadId = await downloadFile(url, dir, filename, lowPriority);
+    const downloadResult = await downloadFile(url, dir, filename, lowPriority);
 
-    // Seed meeting date on progress right away so UI can group even before onDownloadStarted
-    if (downloadId) {
-      const seed = currentStateStore.downloadProgress[downloadId] || {};
-      currentStateStore.downloadProgress[downloadId] = {
-        ...(seed as Record<string, unknown>),
-        filename,
-        meetingDate:
-          (seed as { meetingDate?: string })?.meetingDate || meetingDate,
-        progressCategory:
-          (seed as { progressCategory?: FileDownloader['progressCategory'] })
-            ?.progressCategory || progressCategory,
-      } as never;
+    if (!downloadResult) {
+      return { error: true, path: destinationPath };
     }
 
-    const result = await new Promise<DownloadedFile>((resolve) => {
-      const interval = setInterval(() => {
-        if (!downloadId) {
-          clearInterval(interval);
-          resolve({
-            error: true,
-            path: destinationPath,
-          });
-          return;
-        }
-        if (currentStateStore.downloadProgress[downloadId]?.complete) {
-          clearInterval(interval);
-          void (async () => {
-            const maxAttempts = 10;
-            for (let attempt = 0; attempt < maxAttempts; attempt++) {
-              if (await exists(destinationPath)) {
-                const statistics = await stat(destinationPath);
-                const hasExpectedSize =
-                  remoteSize <= 0 || statistics.size === remoteSize;
-                if (statistics.size > 0 && hasExpectedSize) {
-                  resolve({
-                    new: true,
-                    path: destinationPath,
-                  });
-                  return;
-                }
-              }
-              await new Promise((settle) => {
-                setTimeout(settle, 200);
-              });
-            }
-            resolve({
-              error: true,
-              path: destinationPath,
-            });
-          })();
-        }
-        if (currentStateStore.downloadProgress[downloadId]?.error) {
-          clearInterval(interval);
-          resolve({
-            error: true,
-            path: destinationPath,
-          });
-        }
-      }, 500); // Check every 500ms
-    });
+    const { key: downloadId, saveDir: resolvedDir } = downloadResult;
+    // downloadFile can fall back to a temp directory if `dir` turned out to
+    // be unusable (e.g. a permission error); recompute the destination so we
+    // poll/report the path the file will actually land at.
+    if (resolvedDir !== dir) {
+      destinationPath = join(resolvedDir, filename);
+    }
+
+    // Seed meeting date on progress right away so UI can group even before onDownloadStarted
+    const seed = (currentStateStore.downloadProgress[downloadId] ??
+      {}) as DownloadProgress;
+
+    currentStateStore.downloadProgress[downloadId] = {
+      ...seed,
+      filename,
+      meetingDate: seed.meetingDate ?? meetingDate,
+      progressCategory: seed.progressCategory ?? progressCategory,
+      total: seed.total ?? (remoteSize > 0 ? remoteSize : undefined),
+    } as never;
+
+    const result = await pollUntilDownloaded(
+      downloadId,
+      destinationPath,
+      remoteSize,
+      currentStateStore,
+    );
     return result;
   } catch (error) {
     errorCatcher(error, {
@@ -1520,11 +1748,294 @@ export const downloadFileIfNeeded = async ({
   }
 };
 
-export const fetchMedia = async () => {
+const checkMissingDynamicMediaFile = async (
+  media: MediaItem,
+  mediaIndex: number,
+) => {
+  const shouldCheckFile =
+    !media?.children?.length && media?.source === 'dynamic' && media?.fileUrl;
+  const fileExists =
+    shouldCheckFile && (await pathExists(fileUrlToPath(media.fileUrl)));
+  const isMissing = shouldCheckFile && !fileExists;
+
+  if (isMissing) {
+    log(
+      `    ❌ Missing media file at media[${mediaIndex}]: ${media.fileUrl}`,
+      'mediaFetching',
+      'error',
+    );
+  }
+
+  return isMissing;
+};
+
+const fetchMeetingMediaForDay = async (
+  dayDate: Date,
+  meetingType: null | string,
+) => {
+  if (meetingType === 'we') {
+    log('🌅 Fetching weekend meeting media', 'mediaFetching', 'info');
+    return await getWeMedia(dayDate);
+  }
+
+  if (meetingType === 'mw') {
+    log('🌆 Fetching midweek meeting media', 'mediaFetching', 'info');
+    return await getMwMedia(dayDate);
+  }
+
+  return null;
+};
+
+const getMeetingDayRefreshCandidate = async (
+  day: DateInfo,
+  index: number,
+  meteredConnection: boolean,
+) => {
   const currentStateStore = useCurrentStateStore();
-  const { getMeetingType } = currentStateStore;
-  try {
+  const meetingType = currentStateStore.getMeetingType(day.date);
+  if (!meetingType) return null;
+
+  if (markPastErroredMeetingComplete(day)) return null;
+  if (shouldSkipMeteredMeeting(day, index, meteredConnection)) return null;
+
+  const hasIncompleteOrErrorMeeting = day.status !== 'complete';
+  if (hasIncompleteOrErrorMeeting) {
+    logIncompleteMeeting(day, index, meetingType);
+  }
+
+  // dynamicMediaMapper groups media sharing an extractCaption (e.g. every
+  // reference-publication citation) under a synthetic parent wrapper, with
+  // the actual playable items nested in that parent's `children` - a flat
+  // section.items pass alone never reaches them, so a missing file inside a
+  // group (checkMissingDynamicMediaFile itself already skips the wrapper via
+  // its own children-length guard) would never get detected, leaving the day
+  // marked complete indefinitely even though the UI still shows it missing.
+  const flattenMediaItems = (items: MediaItem[]): MediaItem[] =>
+    items.flatMap((item) => [
+      item,
+      ...(item.children?.length ? flattenMediaItems(item.children) : []),
+    ]);
+
+  const allMedia = flattenMediaItems(
+    Object.values(day.mediaSections ?? {}).flatMap(
+      (section) => section.items || [],
+    ),
+  );
+  const missingMediaCheckResults = await Promise.all(
+    allMedia.map((media, mediaIndex) =>
+      checkMissingDynamicMediaFile(media, mediaIndex),
+    ),
+  );
+  const hasMissingMediaFile = missingMediaCheckResults.includes(true);
+  if (hasMissingMediaFile) {
+    day.status = null;
+  }
+
+  const hasDuplicates = hasDuplicateMediaUniqueIds(allMedia);
+  const shouldRefresh =
+    hasIncompleteOrErrorMeeting || hasMissingMediaFile || hasDuplicates;
+  if (shouldRefresh) {
+    log(
+      `✅ Day ${index + 1} - ${day.date.toISOString().split('T')[0]} to be refreshed`,
+      'mediaFetching',
+      'info',
+    );
+  }
+
+  return shouldRefresh ? day : null;
+};
+
+const getMeetingTypeDescription = (meetingType: null | string) => {
+  switch (meetingType) {
+    case 'mw':
+      return 'Midweek';
+    case 'we':
+      return 'Weekend';
+    default:
+      return 'Unknown';
+  }
+};
+
+const hasDuplicateMediaUniqueIds = (allMedia: MediaItem[]) => {
+  const uniqueIds = allMedia.map((m) => m.uniqueId);
+  const hasDuplicates = uniqueIds.length > new Set(uniqueIds).size;
+
+  if (hasDuplicates) {
+    log(
+      `⚠️ Duplicate uniqueIds found: ${uniqueIds.length} total, ${new Set(uniqueIds).size} unique`,
+      'mediaFetching',
+      'error',
+    );
+  }
+
+  return hasDuplicates;
+};
+
+const logIncompleteMeeting = (
+  day: DateInfo,
+  index: number,
+  meetingType: string,
+) => {
+  log(
+    `📅 Day ${index + 1} - ${day.date.toISOString().split('T')[0]}`,
+    'mediaFetching',
+    'info',
+  );
+  log(
+    `🔍 Incomplete or error meeting detected: ${meetingType} - ${day.status}`,
+    'mediaFetching',
+    'info',
+  );
+};
+
+const markPastErroredMeetingComplete = (day: DateInfo) => {
+  if (!isInPast(day.date) || !day.status || day.status === 'complete') {
+    return false;
+  }
+
+  log(
+    `⏭️ Skipping refresh for past meeting with ${day.status} status: ${day.date.toISOString().split('T')[0]}`,
+    'mediaFetching',
+    'info',
+  );
+  day.status = 'complete';
+  return true;
+};
+
+const processQueuedMeetingDay = async (day: DateInfo) => {
+  const currentStateStore = useCurrentStateStore();
+  const meetingType = currentStateStore.getMeetingType(day.date);
+  log(
+    `📅 Processing ${getMeetingTypeDescription(meetingType)} Meeting - ${day.date.toISOString().split('T')[0]}`,
+    'mediaFetching',
+    'info',
+  );
+
+  const fetchResult = await fetchMeetingMediaForDay(day.date, meetingType);
+  if (!fetchResult) {
+    log('❌ Failed to fetch media', 'mediaFetching', 'error');
+    day.status = isInPast(day.date) ? 'complete' : 'error';
+    return;
+  }
+
+  log('✅ Media fetched successfully', 'mediaFetching', 'info');
+  day.mediaSections ??= [];
+  createMeetingSections(day);
+  replaceMissingMediaByPubMediaId(day, fetchResult.media);
+  applyFetchedSectionTitles(day, fetchResult.sectionTitles);
+  updateFetchedMeetingDayStatus(day, fetchResult.error);
+};
+
+// The document title (e.g. the specific Watchtower study article) isn't
+// known until the media fetch resolves, so it's applied as a subtitle onto
+// the already-created section config rather than being part of the
+// standard section setup in createMeetingSections().
+const applyFetchedSectionTitles = (
+  day: DateInfo,
+  sectionTitles?: Partial<Record<MediaSectionIdentifier, string>>,
+) => {
+  if (!sectionTitles) return;
+  for (const [sectionId, title] of Object.entries(sectionTitles)) {
+    const section = findMediaSection(
+      day.mediaSections ?? [],
+      sectionId as MediaSectionIdentifier,
+    );
+    if (section) section.config.documentTitle = title;
+  }
+};
+
+const shouldSkipMeteredMeeting = (
+  day: DateInfo,
+  index: number,
+  meteredConnection: boolean,
+) => {
+  if (!meteredConnection || getDateDiff(day.date, new Date(), 'days') <= 1) {
+    return false;
+  }
+
+  log(
+    `Skipping day ${index + 1} - ${day.date.toISOString().split('T')[0]} because metered connection is enabled and target date is after tomorrow`,
+    'mediaFetching',
+    'info',
+  );
+  return true;
+};
+
+const updateFetchedMeetingDayStatus = (day: DateInfo, error: boolean) => {
+  if (error && isInPast(day.date)) {
+    log(
+      `⚠️ Silencing meeting media fetch error for past date ${formatDate(day.date, 'YYYY/MM/DD')}`,
+      'mediaFetching',
+      'warn',
+    );
+    day.status = 'complete';
+    return;
+  }
+
+  day.status = error ? 'error' : 'complete';
+};
+
+// Tracked so a date re-checked before its previous prune fires doesn't leave
+// two redundant timers running, and so a congregation switch can cancel all
+// of them via clearMeetingCheckStatusPruneTimers() instead of leaking timers
+// that would otherwise mutate the next congregation's state after the fact.
+const meetingCheckPruneTimers = new Map<
+  string,
+  ReturnType<typeof setTimeout>
+>();
+
+// Removes a resolved-with-nothing-to-download date from meetingCheckStatus
+// once its popup row would have finished collapsing, so it doesn't linger
+// forever. Errors are left in place - they persist like downloadProgress
+// errors do, until overwritten or the congregation changes.
+const scheduleMeetingCheckStatusPrune = (dateKey: string) => {
+  const existingTimer = meetingCheckPruneTimers.get(dateKey);
+  if (existingTimer) clearTimeout(existingTimer);
+
+  const timer = setTimeout(() => {
+    meetingCheckPruneTimers.delete(dateKey);
     const currentStateStore = useCurrentStateStore();
+    if (currentStateStore.meetingCheckStatus[dateKey] !== 'complete') return;
+    const hasDownloadItems = Object.values(
+      currentStateStore.downloadProgress,
+    ).some((item) => item.meetingDate === dateKey);
+    if (hasDownloadItems) return;
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+    delete currentStateStore.meetingCheckStatus[dateKey];
+  }, DOWNLOAD_ROW_AUTO_COLLAPSE_MS + 250);
+
+  meetingCheckPruneTimers.set(dateKey, timer);
+};
+
+// Called when the congregation changes so a still-pending prune from the
+// previous congregation can't later delete/misjudge the new one's state.
+export const clearMeetingCheckStatusPruneTimers = () => {
+  for (const timer of meetingCheckPruneTimers.values()) clearTimeout(timer);
+  meetingCheckPruneTimers.clear();
+};
+
+export const fetchMedia = async () => {
+  // Set synchronously (before the first await) so anything reacting to it -
+  // e.g. MediaCalendarPage's error/missing-media notifications and the
+  // per-day skeleton - sees "a refresh just started" immediately, rather
+  // than for however long it takes this function to actually reach the
+  // point of updating each day's real status. Without this, switching
+  // congregations (or any other fetchMedia() trigger) has a window where
+  // stale leftover status from before the refresh is still all that's
+  // available, and gets shown as if it were current.
+  const currentStateStore = useCurrentStateStore();
+  currentStateStore.mediaRefreshPending = true;
+  // Swept in the finally below: if anything throws after a day is flagged
+  // 'checking' but before its own per-day .finally() gets a chance to
+  // settle it (e.g. formatDate throwing on a malformed date mid-batch),
+  // that day would otherwise sit under a skeleton until the next refresh
+  // cycle instead of resolving to a real status right away.
+  const checkingDateKeys = new Set<string>();
+  try {
+    // Live demo-mode gate: also returns early while a dev has demo mode
+    // enabled at runtime, so a refresh can't overwrite the seeded demo media.
+    if (isDemoModeActive()) return;
+
     if (
       !currentStateStore.currentCongregation ||
       !!currentStateStore.currentSettings?.disableMediaFetching
@@ -1547,6 +2058,8 @@ export const fetchMedia = async () => {
       );
       return;
     }
+
+    updateLookupPeriod();
 
     const dedupeDays = (days: DateInfo[]) => {
       try {
@@ -1596,143 +2109,37 @@ export const fetchMedia = async () => {
     const meetingsToFetch = (
       await Promise.all(
         jwStore.lookupPeriod[currentStateStore.currentCongregation]?.map(
-          async (day, index) => {
-            // Skip non-meeting days entirely
-            if (!getMeetingType(day.date)) {
-              return null;
-            }
-
-            const isPastMeetingDay = isInPast(day.date);
-
-            // Past meeting errors should never block startup navigation or stay pending.
-            if (isPastMeetingDay && day.status && day.status !== 'complete') {
-              log(
-                `⏭️ Skipping refresh for past meeting with ${day.status} status: ${day.date.toISOString().split('T')[0]}`,
-                'mediaFetching',
-                'info',
-              );
-              day.status = 'complete';
-              return null;
-            }
-
-            // Skip if metered connection is enabled and target date is after tomorrow
-            if (
-              currentStateStore.currentSettings?.meteredConnection &&
-              getDateDiff(day.date, new Date(), 'days') > 1
-            ) {
-              log(
-                `Skipping day ${index + 1} - ${day.date.toISOString().split('T')[0]} because metered connection is enabled and target date is after tomorrow`,
-                'mediaFetching',
-                'info',
-              );
-              return null;
-            }
-
-            // Condition 1: Incomplete or error meeting
-            const hasIncompleteOrErrorMeeting =
-              getMeetingType(day.date) && day.status !== 'complete';
-            if (hasIncompleteOrErrorMeeting) {
-              log(
-                `📅 Day ${index + 1} - ${day.date.toISOString().split('T')[0]}`,
-                'mediaFetching',
-                'info',
-              );
-              log(
-                `🔍 Incomplete or error meeting detected: ${getMeetingType(day.date)} - ${day.status}`,
-                'mediaFetching',
-                'info',
-              );
-            }
-
-            // Condition 2: Missing media file
-            const allMedia = Object.values(day.mediaSections ?? {}).flatMap(
-              (section) => section.items || [],
-            );
-
-            const missingMediaCheckResults = await Promise.all(
-              allMedia.map(async (media, mediaIndex) => {
-                const shouldCheckFile =
-                  !media?.children?.length &&
-                  media?.source === 'dynamic' &&
-                  media?.fileUrl;
-                const fileExists =
-                  shouldCheckFile &&
-                  (await pathExists(fileUrlToPath(media.fileUrl)));
-
-                const isMissing = shouldCheckFile && !fileExists;
-
-                if (isMissing) {
-                  log(
-                    `    ❌ Missing media file at media[${mediaIndex}]: ${media.fileUrl}`,
-                    'mediaFetching',
-                    'error',
-                  );
-                }
-
-                return isMissing;
-              }),
-            );
-
-            const hasMissingMediaFile = missingMediaCheckResults.includes(true);
-            if (hasMissingMediaFile) {
-              day.status = null;
-            }
-
-            // Condition 3: Duplicate `uniqueId`s in mediaSections
-            const uniqueIds = allMedia.map((m) => m.uniqueId);
-            const hasDuplicates = uniqueIds.length > new Set(uniqueIds).size;
-
-            if (hasDuplicates) {
-              log(
-                `⚠️ Duplicate uniqueIds found: ${uniqueIds.length} total, ${new Set(uniqueIds).size} unique`,
-                'mediaFetching',
-                'error',
-              );
-            }
-
-            // Summary for this day
-            const shouldRefresh =
-              hasIncompleteOrErrorMeeting ||
-              hasMissingMediaFile ||
-              hasDuplicates;
-
-            if (shouldRefresh) {
-              log(
-                `✅ Day ${index + 1} - ${day.date.toISOString().split('T')[0]} to be refreshed`,
-                'mediaFetching',
-                'info',
-              );
-            }
-
-            return shouldRefresh ? day : null;
-          },
+          (day, index) =>
+            getMeetingDayRefreshCandidate(
+              day,
+              index,
+              !!currentStateStore.currentSettings?.meteredConnection,
+            ),
         ) || [],
       )
     ).filter((day) => !!day);
 
     meetingsToFetch.forEach((day) => {
       day.status = null;
+      const dateKey = formatDate(day.date, 'YYYYMMDD');
+      currentStateStore.meetingCheckStatus[dateKey] = 'checking';
+      checkingDateKeys.add(dateKey);
     });
+    // Every day's fate is now determined: candidates are flagged 'checking'
+    // above, everything else was left exactly as it was. From here on,
+    // per-day meetingCheckStatus is the authoritative signal - this global
+    // flag only needed to cover the gap before that determination existed.
+    // Clearing it now (rather than waiting for the whole queue below,
+    // including downloads, to finish) matters because a day not part of
+    // meetingsToFetch (e.g. one that already has valid media) would
+    // otherwise sit under a skeleton for however long the OTHER days in this
+    // batch take to download, despite its own status already being settled.
+    currentStateStore.mediaRefreshPending = false;
     if (queues.meetings[currentStateStore.currentCongregation]) {
       queues.meetings[currentStateStore.currentCongregation]?.start();
     } else {
-      const { default: PQueue } = await import('p-queue');
-      queues.meetings[currentStateStore.currentCongregation] = new PQueue({
-        concurrency: 2,
-      });
-
-      const q = queues.meetings[currentStateStore.currentCongregation];
-      if (q) {
-        const updateCount = () => {
-          currentStateStore.fetchingMeetingsCount = q.size + q.pending;
-        };
-        q.on('add', updateCount);
-        q.on('active', updateCount);
-        q.on('completed', updateCount);
-        q.on('idle', () => {
-          currentStateStore.fetchingMeetingsCount = 0;
-        });
-      }
+      queues.meetings[currentStateStore.currentCongregation] =
+        await createQueue(2);
     }
     const queue = queues.meetings[currentStateStore.currentCongregation];
     if (meetingsToFetch.length) {
@@ -1743,72 +2150,26 @@ export const fetchMedia = async () => {
       );
     }
     for (const day of meetingsToFetch) {
+      const dateKey = formatDate(day.date, 'YYYYMMDD');
       try {
         queue
-          ?.add(async () => {
-            const meetingType = getMeetingType(day.date);
-            const meetingTypeDescription = (meetingType: null | string) => {
-              switch (meetingType) {
-                case 'mw':
-                  return 'Midweek';
-                case 'we':
-                  return 'Weekend';
-                default:
-                  return 'Unknown';
-              }
-            };
-            log(
-              `📅 Processing ${meetingTypeDescription(meetingType)} Meeting - ${day.date.toISOString().split('T')[0]}`,
-              'mediaFetching',
-              'info',
-            );
-            if (!day) {
-              log('⚠️ No day data', 'mediaFetching', 'warn');
-              return;
-            }
-            const dayDate = day.date;
-            if (!dayDate) {
-              day.status = 'error';
-              log('❌ No date for day', 'mediaFetching', 'error');
-              return;
-            }
-            let fetchResult = null;
-            if (meetingType === 'we') {
-              log('🌅 Fetching weekend meeting media', 'mediaFetching', 'info');
-              fetchResult = await getWeMedia(dayDate);
-            } else if (meetingType === 'mw') {
-              log('🌆 Fetching midweek meeting media', 'mediaFetching', 'info');
-              fetchResult = await getMwMedia(dayDate);
-            }
-            if (fetchResult) {
-              log('✅ Media fetched successfully', 'mediaFetching', 'info');
-              // Get all media from all sections for replacement
-              if (!day.mediaSections) day.mediaSections = [];
-              createMeetingSections(day);
-              replaceMissingMediaByPubMediaId(day, fetchResult.media);
-              if (fetchResult.error && isInPast(dayDate)) {
-                log(
-                  `⚠️ Silencing meeting media fetch error for past date ${formatDate(dayDate, 'YYYY/MM/DD')}`,
-                  'mediaFetching',
-                  'warn',
-                );
-                day.status = 'complete';
-              } else {
-                day.status = fetchResult.error ? 'error' : 'complete';
-              }
-            } else {
-              log('❌ Failed to fetch media', 'mediaFetching', 'error');
-              day.status = isInPast(dayDate) ? 'complete' : 'error';
-            }
-          })
+          ?.add(async () => processQueuedMeetingDay(day))
           .catch((error) => {
             log('❌ Error during media processing:', 'mediaFetching', 'error');
             day.status = isInPast(day.date) ? 'complete' : 'error';
-            throw error;
+            errorCatcher(error, {
+              contexts: { fn: { dateKey, name: 'fetchMedia' } },
+            });
+          })
+          .finally(() => {
+            currentStateStore.meetingCheckStatus[dateKey] =
+              day.status === 'error' ? 'error' : 'complete';
+            scheduleMeetingCheckStatusPrune(dateKey);
           });
       } catch (error) {
         errorCatcher(error);
         day.status = 'error';
+        currentStateStore.meetingCheckStatus[dateKey] = 'error';
       }
     }
     await queue?.onIdle();
@@ -1820,6 +2181,133 @@ export const fetchMedia = async () => {
   } catch (error) {
     log('❌ Error in fetchMedia:', 'mediaFetching', 'error');
     errorCatcher(error);
+  } finally {
+    currentStateStore.mediaRefreshPending = false;
+    checkingDateKeys.forEach((dateKey) => {
+      if (currentStateStore.meetingCheckStatus[dateKey] === 'checking') {
+        currentStateStore.meetingCheckStatus[dateKey] = 'error';
+      }
+    });
+  }
+};
+
+// Database checks in flight, keyed by publication directory, so concurrent
+// lookups of one publication share a single probe - and, if the file turns
+// out to be damaged, a single re-extraction instead of deleting each other's
+// freshly extracted copy.
+const ongoingDbChecks = new Map<string, Promise<string | undefined>>();
+
+/**
+ * Re-extracts a publication's damaged .db from its JWPUB. If even the fresh
+ * copy is unreadable, the JWPUB itself is suspect, so everything extracted
+ * from it is removed and the next lookup downloads and extracts it anew.
+ * @param dbFile The damaged database file
+ * @param jwpubPath The JWPUB it was extracted from
+ * @param publicationDirectory The directory both live in
+ * @returns The path of the readable, re-extracted database
+ */
+const reextractCorruptDb = async (
+  dbFile: string,
+  jwpubPath: string,
+  publicationDirectory: string,
+) => {
+  const currentState = useCurrentStateStore();
+  log(
+    `[getDbFromJWPUB] ${dbFile} is corrupt, re-extracting it from ${jwpubPath}`,
+    'mediaFetching',
+    'warn',
+  );
+
+  // Releases the worker's handle on the file (and its corrupt mark) first,
+  // so the delete doesn't fail with EBUSY/EPERM on Windows.
+  await closeSqliteConnection(dbFile);
+  await remove(dbFile);
+  // unzipJwpub skips a directory it already extracted this session.
+  currentState.extractedFiles[publicationDirectory] = undefined;
+  await unzipJwpub(jwpubPath, publicationDirectory);
+
+  const reextractedDb = await findDb(publicationDirectory);
+  if (reextractedDb && !(await isSqliteDbCorrupt(reextractedDb))) {
+    return reextractedDb;
+  }
+
+  if (reextractedDb) await closeSqliteConnection(reextractedDb);
+  await Promise.all(
+    [reextractedDb, join(publicationDirectory, 'contents'), jwpubPath]
+      .filter((path): path is string => !!path)
+      .map((path) => remove(path).catch(() => undefined)),
+  );
+  currentState.extractedFiles[publicationDirectory] = undefined;
+  throw new Error('Publication database still corrupt after re-extraction');
+};
+
+/**
+ * Returns the publication's extracted .db once it is readable, re-extracting
+ * it if the existing copy is damaged. A crash or power loss mid-extraction
+ * can leave a .db SQLite can't read ("file is not a database", "database
+ * disk image is malformed"), and since extraction only runs when the .db is
+ * missing or the JWPUB is new, that copy used to be reused on every launch,
+ * silently emptying every query against it (MMM-V2-3JJ).
+ * @param jwpubPath The JWPUB the database is extracted from
+ * @param publicationDirectory The directory it is extracted to
+ * @returns The readable database's path, or `undefined` if there is none
+ */
+export const getReadableDb = (
+  jwpubPath: string,
+  publicationDirectory: string,
+) => {
+  let check = ongoingDbChecks.get(publicationDirectory);
+  if (!check) {
+    check = (async () => {
+      const dbFile = await findDb(publicationDirectory);
+      if (!dbFile || !(await isSqliteDbCorrupt(dbFile))) return dbFile;
+      return reextractCorruptDb(dbFile, jwpubPath, publicationDirectory);
+    })().finally(() => ongoingDbChecks.delete(publicationDirectory));
+    ongoingDbChecks.set(publicationDirectory, check);
+  }
+  return check;
+};
+
+/**
+ * Like {@link getDbFromJWPUB}, but also says why no db was returned:
+ * 'download' (the jwpub download failed - already surfaced as a download
+ * error), 'error' (extraction failed - already reported here), or
+ * 'missing' (extracted fine, but no .db inside).
+ */
+const loadDbFromJWPUB = async (
+  publication: PublicationFetcher,
+  meetingDate?: string,
+  progressCategory?: FileDownloader['progressCategory'],
+): Promise<{
+  db: null | string;
+  failure?: 'download' | 'error' | 'missing';
+}> => {
+  let jwpubPath: string | undefined;
+  let publicationDirectory: string | undefined;
+  try {
+    const jwpub = await downloadJwpub(
+      publication,
+      meetingDate,
+      progressCategory,
+    );
+    if (jwpub.error) return { db: null, failure: 'download' };
+    jwpubPath = jwpub.path;
+    publicationDirectory = await getPublicationDirectory(publication);
+    if (jwpub.new || !(await findDb(publicationDirectory))) {
+      await unzipJwpub(jwpub.path, publicationDirectory);
+    }
+    const dbFile = await getReadableDb(jwpub.path, publicationDirectory);
+    return dbFile ? { db: dbFile } : { db: null, failure: 'missing' };
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          args: { jwpubPath, meetingDate, publication, publicationDirectory },
+          name: 'getDbFromJWPUB',
+        },
+      },
+    });
+    return { db: null, failure: 'error' };
   }
 };
 
@@ -1827,32 +2315,7 @@ export const getDbFromJWPUB = async (
   publication: PublicationFetcher,
   meetingDate?: string,
   progressCategory?: FileDownloader['progressCategory'],
-) => {
-  try {
-    const jwpub = await downloadJwpub(
-      publication,
-      meetingDate,
-      progressCategory,
-    );
-    if (jwpub.error) return null;
-    const publicationDirectory = await getPublicationDirectory(publication);
-    if (jwpub.new || !(await findDb(publicationDirectory))) {
-      await unzipJwpub(jwpub.path, publicationDirectory);
-    }
-    const dbFile = await findDb(publicationDirectory);
-    return dbFile ?? null;
-  } catch (error) {
-    errorCatcher(error, {
-      contexts: {
-        fn: {
-          args: { meetingDate, publication },
-          name: 'getDbFromJWPUB',
-        },
-      },
-    });
-    return null;
-  }
-};
+) => (await loadDbFromJWPUB(publication, meetingDate, progressCategory)).db;
 
 export const resolveFilePath = async (
   targetPath: string,
@@ -1861,7 +2324,7 @@ export const resolveFilePath = async (
     if (!targetPath) return undefined;
 
     // Check if the file exists
-    if (await exists(targetPath)) return targetPath;
+    if (await pathExists(targetPath)) return targetPath;
 
     // If it doesn't exist, try to find it (handling missing extension)
     const dir = dirname(targetPath);
@@ -2132,13 +2595,13 @@ const getStudyBibleBooksUncached: () => Promise<
           Document.Type = 2;
     `;
 
-    const bibleBookItems = executeQuery<MultimediaItem>(
+    const bibleBookItems = await executeQuery<MultimediaItem>(
       nwtStyDb,
       bibleBooksQuery,
     );
 
     if (nwtStyDb_E && nwtStyDb_E !== nwtStyDb) {
-      const englishBookItems = executeQuery<MultimediaItem>(
+      const englishBookItems = await executeQuery<MultimediaItem>(
         nwtStyDb_E,
         bibleBooksQuery,
       );
@@ -2163,7 +2626,7 @@ const getStudyBibleBooksUncached: () => Promise<
           Class = 1
     `;
 
-      const bibleBookLocalNames = executeQuery<{
+      const bibleBookLocalNames = await executeQuery<{
         ChapterNumber: number;
         Title: string;
       }>(nwtDb, bibleBooksSimpleQuery);
@@ -2194,13 +2657,13 @@ const getStudyBibleBooksUncached: () => Promise<
       FROM BibleChapter 
       GROUP BY BookNumber
     `;
-    const chapterCounts = executeQuery<{
+    const chapterCounts = await executeQuery<{
       BookNumber: number;
       ChapterCount: number;
     }>(nwtStyDb, chapterCountsQuery);
 
     if (nwtDb) {
-      const chapterCountsNwt = executeQuery<{
+      const chapterCountsNwt = await executeQuery<{
         BookNumber: number;
         ChapterCount: number;
       }>(nwtDb, chapterCountsQuery);
@@ -2274,7 +2737,7 @@ const getStudyBibleCategoriesUncached = async () => {
         and ParentPublicationViewItemId < 0
     `;
 
-    const bibleMediaCategories = executeQuery<{ Title: string }>(
+    const bibleMediaCategories = await executeQuery<{ Title: string }>(
       nwtStyDb,
       bibleMediaCategoriesQuery,
     );
@@ -2357,7 +2820,7 @@ const getStudyBibleMediaUncached = async (
     const bibleBookMediaItemsParams = [bookNumber, chapterNumber].filter(
       (v) => v !== undefined,
     );
-    const bibleBookMediaItems = executeQuery<MultimediaItem>(
+    const bibleBookMediaItems = await executeQuery<MultimediaItem>(
       nwtStyDb,
       bibleBookMediaItemsQuery,
       bibleBookMediaItemsParams,
@@ -2391,100 +2854,54 @@ const getStudyBibleMediaUncached = async (
 
     const bibleBookRelatedMediaItemsParams =
       bookNumber === undefined ? [] : [bookNumber];
-    const bibleBookRelatedMediaItems = executeQuery<MultimediaItem>(
+    const bibleBookRelatedMediaItems = await executeQuery<MultimediaItem>(
       nwtStyDb,
       bibleBookRelatedMediaItemsQuery,
       bibleBookRelatedMediaItemsParams,
     );
 
-    let filteredMediaItems: MultimediaItem[] = [];
-
-    if (chapterNumber === 0) {
-      filteredMediaItems = bibleBookRelatedMediaItems;
-    } else if (chapterNumber && chapterNumber > 0) {
-      filteredMediaItems = bibleBookMediaItems;
-    } else {
-      filteredMediaItems = bibleBookMediaItems.concat(
-        bibleBookRelatedMediaItems,
-      );
-    }
+    const filteredMediaItems = getStudyBibleMediaItemsForChapter(
+      bibleBookMediaItems,
+      bibleBookRelatedMediaItems,
+      chapterNumber,
+    );
 
     // Fallback to English
     if (nwtStyDb_E && nwtStyDb_E !== nwtStyDb) {
-      const englishBibleBookMediaItems = executeQuery<MultimediaItem>(
+      const englishBibleBookMediaItems = await executeQuery<MultimediaItem>(
         nwtStyDb_E,
         bibleBookMediaItemsQuery,
         bibleBookMediaItemsParams,
       );
 
-      const englishBibleBookRelatedMediaItems = executeQuery<MultimediaItem>(
-        nwtStyDb_E,
-        bibleBookRelatedMediaItemsQuery,
-        bibleBookRelatedMediaItemsParams,
-      );
-
-      let englishItems;
-
-      if (chapterNumber === 0) {
-        englishItems = englishBibleBookRelatedMediaItems;
-      } else if (chapterNumber && chapterNumber > 0) {
-        englishItems = englishBibleBookMediaItems;
-      } else {
-        englishItems = [
-          ...englishBibleBookMediaItems,
-          ...englishBibleBookRelatedMediaItems,
-        ];
-      }
-
-      englishItems.forEach((englishItem) => {
-        const styItem = filteredMediaItems.find(
-          (item) =>
-            englishItem.FilePath.replace(
-              '_E_',
-              `_${nwtStyPublication?.langwritten}_`,
-            ) === item.FilePath,
+      const englishBibleBookRelatedMediaItems =
+        await executeQuery<MultimediaItem>(
+          nwtStyDb_E,
+          bibleBookRelatedMediaItemsQuery,
+          bibleBookRelatedMediaItemsParams,
         );
-        if (!styItem) {
-          filteredMediaItems.push({
-            ...englishItem,
-            MepsLanguageIndex: 0,
-          });
-        }
-      });
+
+      mergeEnglishStudyBibleItems(
+        filteredMediaItems,
+        getStudyBibleMediaItemsForChapter(
+          englishBibleBookMediaItems,
+          englishBibleBookRelatedMediaItems,
+          chapterNumber,
+        ),
+        nwtStyPublication.langwritten,
+      );
     }
 
     return {
       bibleBookDocumentsEndAtId: 0, // Not really needed anymore with new logic
       bibleBookDocumentsStartAtId: 0,
       mediaItems: await Promise.all(
-        filteredMediaItems
-          // .filter((item) => !item.LinkMultimediaId) // Exclude images that are thumbnails
-          .map(async (item) => {
-            const publication =
-              item.MepsLanguageIndex === 0
-                ? nwtStyPublication_E
-                : nwtStyPublication;
-
-            if (!item.KeySymbol && publication?.pub) {
-              item.KeySymbol = publication.pub;
-            }
-
-            const isVideo =
-              item.CategoryType === -1 || item.MimeType?.includes('video');
-
-            item = await addFullFilePathToMultimediaItem(item, publication);
-
-            // For videos, don't cache FilePath - we'll download on demand
-            // For images, resolve the file path
-            const updatedItem = isVideo ? { ...item, FilePath: '' } : item;
-            updatedItem.VerseNumber = item.VerseLabel
-              ? Number.parseInt(
-                  new RegExp(/>(\d+)</).exec(item.VerseLabel)?.[1] || '',
-                  10,
-                )
-              : null;
-            return updatedItem;
+        filteredMediaItems.map((item) =>
+          prepareStudyBibleMediaItem(item, {
+            english: nwtStyPublication_E,
+            localized: nwtStyPublication,
           }),
+        ),
       ),
     };
   } catch (error) {
@@ -2495,6 +2912,69 @@ const getStudyBibleMediaUncached = async (
       mediaItems: [],
     };
   }
+};
+
+const getStudyBibleMediaItemsForChapter = (
+  bibleBookMediaItems: MultimediaItem[],
+  bibleBookRelatedMediaItems: MultimediaItem[],
+  chapterNumber?: number,
+) => {
+  if (chapterNumber === 0) return [...bibleBookRelatedMediaItems];
+  if (chapterNumber && chapterNumber > 0) return [...bibleBookMediaItems];
+
+  return [...bibleBookMediaItems, ...bibleBookRelatedMediaItems];
+};
+
+const mergeEnglishStudyBibleItems = (
+  filteredMediaItems: MultimediaItem[],
+  englishItems: MultimediaItem[],
+  localizedLang: string,
+) => {
+  for (const englishItem of englishItems) {
+    const localizedPath = englishItem.FilePath.replace(
+      '_E_',
+      `_${localizedLang}_`,
+    );
+    const hasLocalizedItem = filteredMediaItems.some(
+      (item) => localizedPath === item.FilePath,
+    );
+    if (!hasLocalizedItem) {
+      filteredMediaItems.push({
+        ...englishItem,
+        MepsLanguageIndex: 0,
+      });
+    }
+  }
+};
+
+const prepareStudyBibleMediaItem = async (
+  item: MultimediaItem,
+  publications: {
+    english?: PublicationFetcher;
+    localized: PublicationFetcher;
+  },
+) => {
+  const publication =
+    item.MepsLanguageIndex === 0
+      ? (publications.english ?? publications.localized)
+      : publications.localized;
+
+  if (!item.KeySymbol && publication?.pub) {
+    item.KeySymbol = publication.pub;
+  }
+
+  const isVideo = item.CategoryType === -1 || item.MimeType?.includes('video');
+  const itemWithPath = await addFullFilePathToMultimediaItem(item, publication);
+  const updatedItem = isVideo
+    ? { ...itemWithPath, FilePath: '' }
+    : itemWithPath;
+  updatedItem.VerseNumber = item.VerseLabel
+    ? Number.parseInt(
+        new RegExp(/>(\d+)</).exec(item.VerseLabel)?.[1] || '',
+        10,
+      )
+    : null;
+  return updatedItem;
 };
 
 export const getBibleMedia = async (
@@ -2515,7 +2995,6 @@ export const getBibleMedia = async (
       }
     }
 
-    const returnedItems: Partial<Publication>[] = [];
     const publication: PublicationFetcher = {
       booknum: 0,
       fileformat: currentStateStore.currentLangObject?.isSignLanguage
@@ -2525,60 +3004,13 @@ export const getBibleMedia = async (
       langwritten: '',
       pub: 'nwt',
     };
-    const languages = [
-      ...new Set(
-        langwritten
-          ? [langwritten]
-          : [
-              currentStateStore.currentSettings?.lang,
-              currentStateStore.currentSettings?.langFallback,
-            ],
-      ),
-    ].filter((l): l is JwLangCode => !!l);
+    const languages = getBibleMediaLanguages(langwritten);
+    const { backupNameNeeded, returnedItems } = await fetchBibleBookMedia(
+      publication,
+      languages,
+    );
+    await applyBibleBookBackupNames(returnedItems, backupNameNeeded);
 
-    const backupNameNeeded: number[] = [];
-
-    for (const booknum of Array.from({ length: 66 }, (_, i) => i + 1)) {
-      for (const lang of languages) {
-        publication.booknum = booknum;
-        publication.langwritten = lang;
-        const bibleMediaItems = await getPubMediaLinks(publication);
-        if (!bibleMediaItems) {
-          backupNameNeeded.push(booknum);
-          returnedItems.push({ booknum });
-          break;
-        }
-        returnedItems.push(bibleMediaItems);
-      }
-    }
-
-    if (backupNameNeeded.length) {
-      const { nwtDb, nwtStyDb } = await getStudyBible();
-
-      if (!(nwtStyDb || nwtDb)) return;
-
-      const bibleBooksSimpleQuery = `
-        SELECT ChapterNumber, Title
-        FROM 
-            Document
-        WHERE
-            Class = 1
-      `;
-
-      const bibleBookLocalNames = executeQuery<{
-        ChapterNumber: number;
-        Title: string;
-      }>(nwtStyDb || nwtDb || '', bibleBooksSimpleQuery);
-      for (const booknum of backupNameNeeded) {
-        const pubName = bibleBookLocalNames.find(
-          (item) => item.ChapterNumber === booknum,
-        )?.Title;
-        returnedItems[booknum - 1] = {
-          booknum,
-          pubName,
-        };
-      }
-    }
     jwStore.jwBibleFiles[lang] = {
       list: returnedItems,
       updated: new Date(),
@@ -2589,6 +3021,101 @@ export const getBibleMedia = async (
     return [];
   }
 };
+
+const applyBibleBookBackupNames = async (
+  returnedItems: Partial<Publication>[],
+  backupNameNeeded: number[],
+) => {
+  if (!backupNameNeeded.length) return;
+
+  const { nwtDb, nwtStyDb } = await getStudyBible();
+  if (!(nwtStyDb || nwtDb)) return;
+
+  const bibleBookLocalNames = await getLocalBibleBookNames(
+    nwtStyDb || nwtDb || '',
+  );
+  for (const booknum of backupNameNeeded) {
+    const pubName = bibleBookLocalNames.find(
+      (item) => item.ChapterNumber === booknum,
+    )?.Title;
+    returnedItems[booknum - 1] = {
+      booknum,
+      pubName,
+    };
+  }
+};
+
+const fetchBibleBookMedia = async (
+  publication: PublicationFetcher,
+  languages: JwLangCode[],
+) => {
+  const returnedItems: Partial<Publication>[] = [];
+  const backupNameNeeded: number[] = [];
+
+  for (const booknum of Array.from({ length: 66 }, (_, i) => i + 1)) {
+    const { items, needsBackupName } = await fetchBibleBookMediaForLanguages(
+      publication,
+      booknum,
+      languages,
+    );
+    returnedItems.push(...items);
+
+    if (needsBackupName) {
+      backupNameNeeded.push(booknum);
+      returnedItems.push({ booknum });
+    }
+  }
+
+  return { backupNameNeeded, returnedItems };
+};
+
+const fetchBibleBookMediaForLanguages = async (
+  publication: PublicationFetcher,
+  booknum: number,
+  languages: JwLangCode[],
+) => {
+  const items: Publication[] = [];
+
+  for (const lang of languages) {
+    publication.booknum = booknum;
+    publication.langwritten = lang;
+    const bibleMediaItems = await getPubMediaLinks(publication);
+    if (!bibleMediaItems) return { items, needsBackupName: true };
+
+    items.push(bibleMediaItems);
+  }
+
+  return { items, needsBackupName: false };
+};
+
+const getBibleMediaLanguages = (langwritten?: JwLangCode) => {
+  const currentStateStore = useCurrentStateStore();
+  return [
+    ...new Set(
+      langwritten
+        ? [langwritten]
+        : [
+            currentStateStore.currentSettings?.lang,
+            currentStateStore.currentSettings?.langFallback,
+          ],
+    ),
+  ].filter((l): l is JwLangCode => !!l);
+};
+
+const getLocalBibleBookNames = async (db: string) =>
+  executeQuery<{
+    ChapterNumber: number;
+    Title: string;
+  }>(
+    db,
+    `
+      SELECT ChapterNumber, Title
+      FROM 
+          Document
+      WHERE
+          Class = 1
+    `,
+  );
 
 export const getMemorialMedia = async (
   forceRefetch = false,
@@ -2631,17 +3158,17 @@ export const getMemorialMedia = async (
 
           if (!db) return undefined;
 
-          const hasDocMM = tableExists(db, 'DocumentMultimedia');
+          const hasDocMM = await tableExists(db, 'DocumentMultimedia');
           const joinDocMM = hasDocMM
             ? 'INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId '
             : '';
 
-          const bgItems = executeQuery<MultimediaItem>(
+          const bgItems = await executeQuery<MultimediaItem>(
             db,
             `SELECT * FROM Multimedia ${joinDocMM} WHERE Multimedia.CategoryType = 26`,
           );
 
-          const videoItems = executeQuery<MultimediaItem>(
+          const videoItems = await executeQuery<MultimediaItem>(
             db,
             `SELECT * FROM Multimedia ${joinDocMM} WHERE Multimedia.CategoryType = -1` +
               (hasDocMM
@@ -2714,6 +3241,7 @@ const getWtIssue = async (
   docId: number;
   issueString: string;
   publication: PublicationFetcher;
+  title: string;
   weekNr: number;
 }> => {
   const defaultResult: {
@@ -2721,6 +3249,7 @@ const getWtIssue = async (
     docId: number;
     issueString: string;
     publication: PublicationFetcher;
+    title: string;
     weekNr: number;
   } = {
     db: '',
@@ -2730,6 +3259,7 @@ const getWtIssue = async (
       langwritten: '',
       pub: '',
     },
+    title: '',
     weekNr: -1,
   };
   try {
@@ -2743,12 +3273,26 @@ const getWtIssue = async (
       langwritten,
       pub: 'w',
     };
-    const db = await getDbFromJWPUB(
+    const { db, failure } = await loadDbFromJWPUB(
       publication,
       formatDate(lookupDate ?? monday, 'YYYYMMDD'),
     );
-    if (!db) throw new Error('No db file found: ' + issueString);
-    const datedTexts = executeQuery<{ FirstDateOffset: number }>(
+    if (!db) {
+      // A failed download is already shown as a download error, and a
+      // failed extraction was already reported by loadDbFromJWPUB - a
+      // second "No db file found" report for the same failure adds nothing
+      // (MMM-V2-3J4: the jwpub download had never even started).
+      if (failure !== 'missing') {
+        log(
+          `[getWtIssue] No Watchtower db for ${issueString} (${failure})`,
+          'mediaFetching',
+          'warn',
+        );
+        return defaultResult;
+      }
+      throw new Error('No db file found: ' + issueString);
+    }
+    const datedTexts = await executeQuery<{ FirstDateOffset: number }>(
       db,
       'SELECT FirstDateOffset FROM DatedText',
     );
@@ -2763,52 +3307,134 @@ const getWtIssue = async (
     if (weekNr === -1) {
       return defaultResult;
     }
-    const docId =
-      executeQuery<{ DocumentId: number }>(
+    const wtDocument = (
+      await executeQuery<{ DocumentId: number; Title: string }>(
         db,
-        `SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET ${weekNr}`,
-      )[0]?.DocumentId ?? -1;
-    return { db, docId, issueString, publication, weekNr };
+        `SELECT Document.DocumentId, Document.Title FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET ${weekNr}`,
+      )
+    )[0];
+    const docId = wtDocument?.DocumentId ?? -1;
+    const title = wtDocument?.Title ?? '';
+    return { db, docId, issueString, publication, title, weekNr };
   } catch (e) {
     if (lastChance) errorCatcher(e);
     return defaultResult;
   }
 };
 
-const getParagraphNumbers = (
+const CAPTION_NUMBER_PATTERN =
+  /\d+(?:(?:\s*[-–—,;]\s*|\s+\p{L}{1,20}\s+)\d+)?/gu;
+const REFERENCE_SYMBOL_PATTERN = /(?:[^\p{L}\p{N}\s]|\p{L}\.)\s*$/u;
+const TRAILING_PUNCTUATION_PATTERN = /^[\s.!?,;:，。！？；：)\]}»”'’…]*$/u;
+
+interface CaptionNumberCandidate {
+  end: number;
+  start: number;
+  text: string;
+}
+
+const getCaptionNumberCandidates = (caption: string) =>
+  Array.from(caption.matchAll(CAPTION_NUMBER_PATTERN), (match) => ({
+    end: (match.index ?? 0) + match[0].length,
+    start: match.index ?? 0,
+    text: match[0].trim(),
+  }));
+
+const getCandidateNumbers = (candidate: CaptionNumberCandidate) =>
+  Array.from(candidate.text.matchAll(/\d+/g), (match) =>
+    Number.parseInt(match[0], 10),
+  );
+
+const getParagraphLabelNumbers = (paragraphLabel: number | string) =>
+  String(paragraphLabel)
+    .match(/\d+/g)
+    ?.map((value) => Number.parseInt(value, 10)) ?? [];
+
+const isCandidateCompatibleWithParagraphLabel = (
+  paragraphLabel: number | string,
+  candidate: CaptionNumberCandidate,
+) => {
+  const labelNumbers = getParagraphLabelNumbers(paragraphLabel).filter(
+    (number) => number > 0,
+  );
+  if (labelNumbers.length === 0) return false;
+
+  // Media can be attached to the paragraph immediately before a referenced
+  // paragraph, so accept the adjacent label as well as an exact match.
+  return getCandidateNumbers(candidate).some((candidateNumber) =>
+    labelNumbers.some(
+      (labelNumber) => Math.abs(candidateNumber - labelNumber) <= 1,
+    ),
+  );
+};
+
+const getTrailingParenthetical = (caption: string) => {
+  const match = /\([^()]*\)\s*[.!?,;:，。！？；：]*$/u.exec(caption);
+  if (!match || match.index === undefined) return undefined;
+
+  return {
+    content: match[0].slice(1, match[0].lastIndexOf(')')),
+    end: match.index + match[0].lastIndexOf(')'),
+    start: match.index,
+  };
+};
+
+const isParagraphReference = (
+  paragraphLabel: number | string,
+  caption: string,
+  candidate: CaptionNumberCandidate,
+) => {
+  const candidateNumbers = getCandidateNumbers(candidate);
+  const numberBeforeCandidate = caption[candidate.start - 1] ?? '';
+  const numberAfterCandidate = caption[candidate.end] ?? '';
+  if (
+    candidateNumbers.some((number) => number < 1 || number >= 100) ||
+    /[:：]/u.test(numberBeforeCandidate) ||
+    /[:：]/u.test(numberAfterCandidate)
+  ) {
+    return false;
+  }
+
+  const hasReferenceSymbol = REFERENCE_SYMBOL_PATTERN.test(
+    caption.slice(0, candidate.start).trimEnd(),
+  );
+  const isCompatibleWithLabel = isCandidateCompatibleWithParagraphLabel(
+    paragraphLabel,
+    candidate,
+  );
+  const parenthetical = getTrailingParenthetical(caption);
+  if (parenthetical) {
+    const hasReferenceText = /\p{L}/u.test(parenthetical.content);
+    return (
+      candidate.start > parenthetical.start &&
+      candidate.end <= parenthetical.end &&
+      hasReferenceText &&
+      (hasReferenceSymbol || isCompatibleWithLabel)
+    );
+  }
+
+  return (
+    TRAILING_PUNCTUATION_PATTERN.test(caption.slice(candidate.end)) &&
+    (hasReferenceSymbol || isCompatibleWithLabel)
+  );
+};
+
+export const getParagraphNumbers = (
   paragraphLabel: number | string,
   caption: string,
 ) => {
   try {
     if (!caption) return paragraphLabel || '';
 
-    const numbers = [...caption.matchAll(/\d+/g)]
-      .map((m) => Number.parseInt(m[0]))
-      .filter((n) => n > 0 && n < 100);
-
-    if (numbers.length === 0) return paragraphLabel || '';
-    if (numbers.length === 1) return numbers[0];
-
-    // If paragraphLabel exists but isn't in caption, return it
-    if (paragraphLabel && !numbers.includes(Number(paragraphLabel))) {
-      return paragraphLabel;
-    }
-
-    const first = numbers[0];
-    const last = numbers.at(-1);
-
-    // Check if it's a simple range (no numbers between first and last that break the sequence)
-    const between = numbers.slice(1, -1);
-    if (first && last && between.some((n) => n > last || n < first))
-      return last;
-
-    // Try to extract the range string
-    const rangeMatch = new RegExp(`${first}.*?${last}`).exec(caption);
-    if (rangeMatch && rangeMatch[0]?.length <= 15) return rangeMatch[0];
-
-    return paragraphLabel || '';
-  } catch (e) {
-    errorCatcher(e);
+    const candidate = getCaptionNumberCandidates(caption)
+      .reverse()
+      .find((item) => isParagraphReference(paragraphLabel, caption, item));
+    if (!candidate) return '';
+    return /^\d+$/u.test(candidate.text)
+      ? Number.parseInt(candidate.text, 10)
+      : candidate.text;
+  } catch (error) {
+    errorCatcher(error);
     return paragraphLabel || '';
   }
 };
@@ -2830,6 +3456,21 @@ const getTagValue = (
   if (paragraphNumbers) return paragraphNumbers;
   return undefined;
 };
+
+// A media item is considered part of the Congregation Bible Study when it
+// falls in the last ~2 paragraphs of a non-additional midweek meeting.
+const isCbsParagraph = (
+  media: Pick<MultimediaItem, 'BeginParagraphOrdinal'>,
+  context: {
+    isAdditional: boolean;
+    isMeetingMw: boolean;
+    lastParagraph: number;
+  },
+) =>
+  !context.isAdditional &&
+  context.isMeetingMw &&
+  media.BeginParagraphOrdinal >= context.lastParagraph - 2 &&
+  media.BeginParagraphOrdinal < context.lastParagraph;
 
 export const dynamicMediaMapper = async (
   allMedia: MultimediaItem[],
@@ -2864,7 +3505,7 @@ export const dynamicMediaMapper = async (
 
       if (m.Duration) return m.Duration;
 
-      if (await exists(m.FilePath)) {
+      if (await pathExists(m.FilePath)) {
         const meta = await getMetadataFromMediaPath(m.FilePath);
         if (meta?.format.duration) return meta.format.duration;
       }
@@ -2887,10 +3528,17 @@ export const dynamicMediaMapper = async (
 
     // --- Helper: generate pubMediaId --------------------------------------
     const createPubMediaId = (m: MultimediaItem) => {
+      // Fall back to MultimediaId (unique per picture within the document)
+      // when there's no KeySymbol/IssueTagNumber/MepsDocumentId to key off of.
+      // Without this, plain in-document illustrations that share the same
+      // MepsLanguageIndex (e.g. a set of embedded-language picture variants
+      // like "_F_cnt_4/5/6") would all resolve to the same id, causing
+      // replaceMissingMediaByPubMediaId to treat them as duplicates of one
+      // another and silently drop all but the first.
       const base =
         m.KeySymbol || m.IssueTagNumber
           ? [m.KeySymbol, m.IssueTagNumber]
-          : [m.MepsDocumentId];
+          : [m.MepsDocumentId || m.MultimediaId];
 
       const extra = [
         m.MepsLanguageIndex === undefined
@@ -2902,129 +3550,43 @@ export const dynamicMediaMapper = async (
       return [...base, ...extra].filter(Boolean).join('_');
     };
 
+    const mapperContext = {
+      calculatedSource,
+      currentSettings,
+      isAdditional,
+      isMeetingMw,
+      isMeetingWe,
+      lastParagraph,
+      lookupDate,
+      middleSongParagraph,
+      pinyinActive: currentStateStore.pinyinActive,
+      resolveDuration,
+    };
+
+    // --- Exclude CBS videos from configured publications --------------------
+    // Filtered out before mapping/downloading so excluded videos are never
+    // fetched in the first place. ExtractSymbol (the publication being
+    // read/discussed) is preferred over KeySymbol, since an embedded video
+    // often has a different publication symbol than the one being read.
+    const excludeCbsPubs = (currentSettings?.excludeCbsPubs || []).map((s) =>
+      s.toLowerCase(),
+    );
+    const filteredMedia = excludeCbsPubs.length
+      ? allMedia.filter((m) => {
+          const symbol = m.ExtractSymbol || m.KeySymbol;
+          if (!symbol) return true;
+          if (!isCbsParagraph(m, { isAdditional, isMeetingMw, lastParagraph }))
+            return true;
+          if (!excludeCbsPubs.includes(symbol.toLowerCase())) return true;
+          return !(m.MimeType?.includes('video') || isVideo(m.FilePath));
+        })
+      : allMedia;
+
     // --- Map media ---------------------------------------------------------
     const mediaItems = await Promise.all(
-      allMedia.map(async (m, index) => {
-        m.FilePath = await convertImageIfNeeded(m.FilePath);
-
-        const pubMediaId = createPubMediaId(m);
-        const isSongItem = isSong(m);
-
-        let fileUrl = isLikelyFile(m.FilePath)
-          ? pathToFileURL(m.FilePath)
-          : pubMediaId;
-
-        const isVideoFile =
-          m.MimeType?.includes('video') || isVideo(m.FilePath);
-        const isAudioFile =
-          m.MimeType?.includes('audio') || isAudio(m.FilePath);
-
-        // --- Pinyin song substitution --------------------------------------
-        if (
-          m.KeySymbol?.includes('sjj') &&
-          m.Track &&
-          currentSettings?.lang === 'CHS' &&
-          currentSettings?.enablePinyinSongs &&
-          currentStateStore.pinyinActive &&
-          currentSettings?.pinyinSongFolder
-        ) {
-          const trackNum = String(m.Track).padStart(3, '0');
-          const pinyinPath = join(
-            currentSettings.pinyinSongFolder,
-            `sjjm_s-Pi_CHS_${trackNum}_r720P.mp4`,
-          );
-          if (await pathExists(pinyinPath)) {
-            fileUrl = pathToFileURL(pinyinPath);
-          }
-        }
-
-        const duration = await resolveDuration(m, isVideoFile, isAudioFile);
-
-        const customDuration =
-          m.StartTime || m.EndTime
-            ? {
-                max: m.EndTime ?? duration,
-                min: m.StartTime ?? 0,
-              }
-            : undefined;
-
-        // --- Tagging -------------------------------------------------------
-        const paragraphNumbers = getParagraphNumbers(
-          m.TargetParagraphNumberLabel,
-          m.Caption,
-        );
-
-        const tagType = getTagType(isSongItem, paragraphNumbers);
-
-        const tagValue = getTagValue(isSongItem, paragraphNumbers);
-
-        const tag = tagType ? { type: tagType, value: tagValue } : undefined;
-
-        // --- Unique ID -----------------------------------------------------
-        const datePart = formatDate(lookupDate, 'YYYYMMDD');
-        const durationPart =
-          isAdditional && (customDuration?.min || customDuration?.max)
-            ? `${customDuration.min ?? ''}_${customDuration.max ?? ''}-`
-            : '';
-
-        const uniqueId = sanitizeId(`${datePart}-${durationPart}${fileUrl}`);
-
-        // --- Section determination -----------------------------------------
-        let section: MediaSectionIdentifier;
-
-        if (!isAdditional) {
-          section = 'wt';
-        } else if (isMeetingWe) {
-          section = 'pt';
-        } else {
-          section = 'imported-media';
-        }
-
-        if (isMeetingMw && middleSongParagraph > 0) {
-          if (m.BeginParagraphOrdinal >= middleSongParagraph) {
-            section = 'lac';
-          } else if (m.BeginParagraphOrdinal >= 18) {
-            section = 'ayfm';
-          } else {
-            section = 'tgw';
-          }
-        }
-
-        const thumbnailUrl =
-          m.ThumbnailUrl ||
-          pathToFileURL(m.LinkedPreviewFilePath || '') ||
-          (await getThumbnailUrl(m.ThumbnailFilePath || m.FilePath));
-
-        return {
-          cbs:
-            !isAdditional &&
-            isMeetingMw &&
-            m.BeginParagraphOrdinal >= lastParagraph - 2 &&
-            m.BeginParagraphOrdinal < lastParagraph,
-          customDuration,
-          duration,
-          extractCaption: m.ExtractCaption,
-          fileUrl,
-          isAudio: isAudioFile,
-          isImage: isImage(m.FilePath),
-          isVideo: isVideoFile,
-          markers: m.VideoMarkers,
-          originalSection: section,
-          pubMediaId,
-          repeat: !!m.Repeat,
-          sortOrderOriginal: m.BeginParagraphOrdinal || index,
-          source: calculatedSource,
-          streamUrl: m.StreamUrl,
-          subtitlesUrl: isVideoFile ? await getSubtitlesUrl(m, duration) : '',
-          tag,
-          thumbnailUrl,
-          title: isSongItem
-            ? m.Label.replace(/^\d+\.\s*/, '')
-            : m.Label || m.Caption,
-          type: 'media',
-          uniqueId,
-        } as MediaItem;
-      }),
+      filteredMedia.map((m, index) =>
+        mapDynamicMediaItem(m, index, mapperContext, createPubMediaId),
+      ),
     );
 
     // --- Group by extractCaption ------------------------------------------
@@ -3039,6 +3601,10 @@ export const dynamicMediaMapper = async (
           cbs: item.cbs,
           children: [],
           extractCaption: item.extractCaption,
+          // Captured from this first child before it's overwritten below -
+          // this is the group's own paragraph-ordinal position among its
+          // siblings/other top-level items, used by the .sort() right after
+          // this reduce() and unrelated to the overwrite that follows.
           sortOrderOriginal: item.sortOrderOriginal,
           source: item.source,
           title: item.extractCaption,
@@ -3046,7 +3612,21 @@ export const dynamicMediaMapper = async (
           uniqueId: `group-${item.extractCaption}`,
         };
 
-        acc[item.extractCaption]?.children?.push(item);
+        // Every child sharing this extractCaption typically also shares the
+        // same BeginParagraphOrdinal (that's the granularity of the API
+        // field - it identifies a paragraph, not a specific piece of media
+        // within it), which is exactly why they got grouped together here
+        // in the first place. Left as-is, every child in a group would
+        // carry an identical (or otherwise non-distinguishing)
+        // sortOrderOriginal, making it useless for detecting/restoring this
+        // group's own child order (see HeaderCalendar's mediaSortCanBeReset/
+        // resetSort). Overwriting it with the child's position within this
+        // group is safe: once an item has an extractCaption it only ever
+        // exists as a child from here on, so nothing downstream expects its
+        // original paragraph-ordinal value.
+        const group = acc[item.extractCaption];
+        item.sortOrderOriginal = group?.children?.length ?? 0;
+        group?.children?.push(item);
         return acc;
       }, {}),
     ).sort((a, b) => {
@@ -3082,12 +3662,170 @@ export const dynamicMediaMapper = async (
   }
 };
 
+const getDynamicMediaFileUrl = async (
+  media: MultimediaItem,
+  pubMediaId: string,
+  context: {
+    currentSettings: ReturnType<typeof useCurrentStateStore>['currentSettings'];
+    pinyinActive: boolean;
+  },
+) => {
+  const fileUrl = isLikelyFile(media.FilePath)
+    ? pathToFileURL(media.FilePath)
+    : pubMediaId;
+
+  const pinyinPath = getPinyinSongPath(media, context);
+  if (pinyinPath && (await pathExists(pinyinPath))) {
+    return pathToFileURL(pinyinPath);
+  }
+
+  return fileUrl;
+};
+
+const getDynamicMediaSection = (
+  media: MultimediaItem,
+  context: {
+    isAdditional: boolean;
+    isMeetingMw: boolean;
+    isMeetingWe: boolean;
+    middleSongParagraph: number;
+  },
+): MediaSectionIdentifier => {
+  if (context.isMeetingMw && context.middleSongParagraph > 0) {
+    return getMidweekDynamicMediaSection(media, context.middleSongParagraph);
+  }
+
+  if (!context.isAdditional) return 'wt';
+  return context.isMeetingWe ? 'pt' : 'imported-media';
+};
+
+const getMidweekDynamicMediaSection = (
+  media: MultimediaItem,
+  middleSongParagraph: number,
+): MediaSectionIdentifier => {
+  if (media.BeginParagraphOrdinal >= middleSongParagraph) return 'lac';
+  if (media.BeginParagraphOrdinal >= 18) return 'ayfm';
+  return 'tgw';
+};
+
+const getPinyinSongPath = (
+  media: MultimediaItem,
+  context: {
+    currentSettings: ReturnType<typeof useCurrentStateStore>['currentSettings'];
+    pinyinActive: boolean;
+  },
+) => {
+  const { currentSettings } = context;
+  if (
+    !media.KeySymbol?.includes('sjj') ||
+    !media.Track ||
+    currentSettings?.lang !== 'CHS' ||
+    !currentSettings?.enablePinyinSongs ||
+    !context.pinyinActive ||
+    !currentSettings?.pinyinSongFolder
+  ) {
+    return '';
+  }
+
+  const trackNum = String(media.Track).padStart(3, '0');
+  return join(
+    currentSettings.pinyinSongFolder,
+    `sjjm_s-Pi_CHS_${trackNum}_r720P.mp4`,
+  );
+};
+
+const mapDynamicMediaItem = async (
+  media: MultimediaItem,
+  index: number,
+  context: {
+    calculatedSource: 'additional' | 'dynamic' | 'watched';
+    currentSettings: ReturnType<typeof useCurrentStateStore>['currentSettings'];
+    isAdditional: boolean;
+    isMeetingMw: boolean;
+    isMeetingWe: boolean;
+    lastParagraph: number;
+    lookupDate: Date;
+    middleSongParagraph: number;
+    pinyinActive: boolean;
+    resolveDuration: (
+      media: MultimediaItem,
+      isVideo: boolean,
+      isAudio: boolean,
+    ) => Promise<number>;
+  },
+  createPubMediaId: (media: MultimediaItem) => string,
+) => {
+  media.FilePath = await convertImageIfNeeded(media.FilePath);
+
+  const pubMediaId = createPubMediaId(media);
+  const isSongItem = isSong(media);
+  const fileUrl = await getDynamicMediaFileUrl(media, pubMediaId, context);
+  const isVideoFile =
+    media.MimeType?.includes('video') || isVideo(media.FilePath);
+  const isAudioFile =
+    media.MimeType?.includes('audio') || isAudio(media.FilePath);
+  const duration = await context.resolveDuration(
+    media,
+    isVideoFile,
+    isAudioFile,
+  );
+  const customDuration =
+    media.StartTime || media.EndTime
+      ? {
+          max: media.EndTime ?? duration,
+          min: media.StartTime ?? 0,
+        }
+      : undefined;
+  const paragraphNumbers = getParagraphNumbers(
+    media.TargetParagraphNumberLabel,
+    media.Caption,
+  );
+  const tagType = getTagType(isSongItem, paragraphNumbers);
+  const tagValue = getTagValue(isSongItem, paragraphNumbers);
+  const tag = tagType ? { type: tagType, value: tagValue } : undefined;
+  const datePart = formatDate(context.lookupDate, 'YYYYMMDD');
+  const durationPart =
+    context.isAdditional && (customDuration?.min || customDuration?.max)
+      ? `${customDuration.min ?? ''}_${customDuration.max ?? ''}-`
+      : '';
+  const uniqueId = sanitizeId(`${datePart}-${durationPart}${fileUrl}`);
+  const thumbnailUrl =
+    media.ThumbnailUrl ||
+    pathToFileURL(media.LinkedPreviewFilePath || '') ||
+    (await getThumbnailUrl(media.ThumbnailFilePath || media.FilePath));
+
+  return {
+    cbs: isCbsParagraph(media, context),
+    customDuration,
+    duration,
+    extractCaption: media.ExtractCaption,
+    fileUrl,
+    isAudio: isAudioFile,
+    isImage: isImage(media.FilePath),
+    isVideo: isVideoFile,
+    markers: media.VideoMarkers,
+    originalSection: getDynamicMediaSection(media, context),
+    pubMediaId,
+    repeat: !!media.Repeat,
+    sortOrderOriginal: media.BeginParagraphOrdinal || index,
+    source: context.calculatedSource,
+    streamUrl: media.StreamUrl,
+    subtitlesUrl: isVideoFile ? await getSubtitlesUrl(media, duration) : '',
+    tag,
+    thumbnailUrl,
+    title: isSongItem
+      ? media.Label.replace(/^\d+\.\s*/, '')
+      : media.Label || media.Caption,
+    type: 'media',
+    uniqueId,
+  } as MediaItem;
+};
+
 export const watchedItemMapper: (
   parentDate: string,
   watchedItemPath: string,
 ) => Promise<MediaItem[] | undefined> = async (parentDate, watchedItemPath) => {
   try {
-    const currentStateStore = useCurrentStateStore();
     if (!parentDate || !watchedItemPath) return undefined;
 
     const dateString = parentDate.replaceAll('-', '');
@@ -3100,16 +3838,11 @@ export const watchedItemMapper: (
 
     if (!(video || audio || image)) {
       if (isJwPlaylist(watchedItemPath)) {
-        const additionalMedia: MediaItem[] = (
-          await getMediaFromJwPlaylist(
-            watchedItemPath,
-            dateFromString(parentDate),
-            await currentStateStore.getDatedAdditionalMediaDirectory(
-              dateString,
-            ),
-          )
-        ).map((m: MediaItem) => ({ ...m, source: 'watched' }));
-        return additionalMedia;
+        return await getWatchedPlaylistItems(
+          watchedItemPath,
+          parentDate,
+          dateString,
+        );
       }
       return undefined;
     }
@@ -3128,63 +3861,12 @@ export const watchedItemMapper: (
     const thumbnailUrl = await getThumbnailUrl(watchedItemPath);
 
     // Parse section information and order from filename or section order file
-    let section: MediaSectionIdentifier | undefined;
-    let order: number | undefined;
     const filename = basename(watchedItemPath);
-
-    // First, try to get section info and order from the section order file in the watched day folder
-    try {
-      const watchedDayFolder = dirname(watchedItemPath);
-      log(`watchedDayFolder: ${watchedDayFolder}`, 'watchedFolder', 'info');
-      if (watchedDayFolder) {
-        const { getWatchedMediaSectionInfo } =
-          await import('src/helpers/media-sections');
-        const sectionInfo = await getWatchedMediaSectionInfo(
-          watchedDayFolder,
-          filename,
-        );
-        log(
-          `sectionInfo: ${JSON.stringify(sectionInfo)}`,
-          'watchedFolder',
-          'info',
-        );
-        if (sectionInfo) {
-          section = sectionInfo.section;
-          order = sectionInfo.order;
-        }
-      }
-    } catch (error) {
-      errorCatcher(error, {
-        contexts: {
-          fn: {
-            filename,
-            name: 'watchedItemMapper',
-            parentDate,
-            watchedItemPath,
-          },
-        },
-      });
-    }
-
-    // Fallback: Check if filename already has section information (legacy support)
-    if (!section) {
-      const sectionMatch = new RegExp(/^Section-([^-]+) - /).exec(filename);
-      if (sectionMatch) {
-        section = sectionMatch[1];
-      }
-    }
-
-    // Final fallback: Default section based on meeting day
-    if (!section) {
-      const meetingDate = dateFromString(parentDate);
-      const isCo = isCoWeek(meetingDate);
-
-      if (isWeMeetingDay(meetingDate) && !isCo) {
-        section = 'pt';
-      } else if (isMwMeetingDay(meetingDate)) {
-        section = isCo ? 'circuit-overseer' : 'lac';
-      }
-    }
+    const { order, section } = await getWatchedMediaPlacement({
+      filename,
+      parentDate,
+      watchedItemPath,
+    });
 
     return [
       {
@@ -3208,7 +3890,493 @@ export const watchedItemMapper: (
   }
 };
 
-export const getWeMedia = async (lookupDate: Date) => {
+const getDefaultWatchedSection = (
+  parentDate: string,
+): MediaSectionIdentifier | undefined => {
+  const meetingDate = dateFromString(parentDate);
+  const isCo = isCoWeek(meetingDate);
+
+  if (isWeMeetingDay(meetingDate) && !isCo) return 'pt';
+  if (isMwMeetingDay(meetingDate)) return isCo ? 'circuit-overseer' : 'lac';
+  return undefined;
+};
+
+const getLegacyWatchedSection = (
+  filename: string,
+): MediaSectionIdentifier | undefined => {
+  const sectionMatch = new RegExp(/^Section-([^-]+) - /).exec(filename);
+  return sectionMatch?.[1];
+};
+
+const getWatchedMediaPlacement = async ({
+  filename,
+  parentDate,
+  watchedItemPath,
+}: {
+  filename: string;
+  parentDate: string;
+  watchedItemPath: string;
+}) => {
+  const sectionInfo = await getWatchedMediaSectionInfoSafe({
+    filename,
+    parentDate,
+    watchedItemPath,
+  });
+
+  if (sectionInfo) {
+    return { order: sectionInfo.order, section: sectionInfo.section };
+  }
+
+  // No explicit override on record: fall back to the order/section encoded
+  // in the filename by the media auto-export feature (or reproduced manually).
+  const filenamePlacement = getExportedFilenamePlacement(filename);
+
+  return {
+    order: filenamePlacement?.order,
+    section:
+      filenamePlacement?.section ||
+      getLegacyWatchedSection(filename) ||
+      getDefaultWatchedSection(parentDate),
+  };
+};
+
+const getWatchedMediaSectionInfoSafe = async ({
+  filename,
+  parentDate,
+  watchedItemPath,
+}: {
+  filename: string;
+  parentDate: string;
+  watchedItemPath: string;
+}) => {
+  try {
+    const watchedDayFolder = dirname(watchedItemPath);
+    log(`watchedDayFolder: ${watchedDayFolder}`, 'watchedFolder', 'info');
+    if (!watchedDayFolder) return null;
+
+    const sectionInfo = await getWatchedMediaSectionInfo(
+      watchedDayFolder,
+      filename,
+    );
+    log(`sectionInfo: ${JSON.stringify(sectionInfo)}`, 'watchedFolder', 'info');
+    return sectionInfo;
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          filename,
+          name: 'watchedItemMapper',
+          parentDate,
+          watchedItemPath,
+        },
+      },
+    });
+    return null;
+  }
+};
+
+const getWatchedPlaylistItems = async (
+  watchedItemPath: string,
+  parentDate: string,
+  dateString: string,
+) => {
+  const currentStateStore = useCurrentStateStore();
+  const additionalMedia: MediaItem[] = (
+    await getMediaFromJwPlaylist(
+      watchedItemPath,
+      dateFromString(parentDate),
+      await currentStateStore.getDatedAdditionalMediaDirectory(dateString),
+    )
+  ).map((m: MediaItem) => ({ ...m, source: 'watched' }));
+  return additionalMedia;
+};
+
+const addFullPathsToMultimediaItems = async (
+  items: MultimediaItem[],
+  publication: PublicationFetcher,
+) => {
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (item) {
+      items[i] = await addFullFilePathToMultimediaItem(item, publication);
+    }
+  }
+};
+
+const applyMepsLanguageOverrides = async (
+  allMedia: MultimediaItem[],
+  options: {
+    db: string;
+    docId: number;
+    includeVideoMarkers?: boolean;
+  },
+  // Language data sourced from databases other than `options.db` — e.g. the
+  // per-item databases opened while resolving nested extract media (see
+  // getDocumentExtractItems) — so media embedded inside a referenced
+  // publication can still be verified against the database it actually
+  // came from, not just the outer meeting document's own database.
+  extraMepsLanguagesByMediaItem: MepsLanguageByMediaItem[] = [],
+) => {
+  const currentStateStore = useCurrentStateStore();
+  const mepsLanguagesByMediaItem = [
+    ...(await getMepsLanguagesByMediaItem(options)),
+    ...extraMepsLanguagesByMediaItem,
+  ];
+
+  for (const media of allMedia) {
+    applyMepsLanguageOverride(media, mepsLanguagesByMediaItem);
+    if (options.includeVideoMarkers) {
+      const videoMarkers = await getMediaVideoMarkers(
+        options,
+        media.MultimediaId,
+      );
+      if (videoMarkers) media.VideoMarkers = videoMarkers;
+    }
+  }
+
+  return mepsLanguagesByMediaItem;
+
+  function applyMepsLanguageOverride(
+    media: MultimediaItem,
+    mepsLanguages: MepsLanguageByMediaItem[],
+  ) {
+    const mediaKeySymbol =
+      media.KeySymbol === 'sjjm'
+        ? currentStateStore.currentSongbook?.pub
+        : media.KeySymbol;
+    const mepsLanguage = mepsLanguages.find(
+      (item) =>
+        item.KeySymbol === mediaKeySymbol &&
+        item.Track === media.Track &&
+        item.IssueTagNumber === media.IssueTagNumber,
+    );
+    if (
+      mepsLanguage?.MepsLanguageIndex !== undefined &&
+      mepsLanguage?.MepsLanguageIndex !== media.MepsLanguageIndex
+    ) {
+      media.MepsLanguageAlternativeIndex = mepsLanguage.MepsLanguageIndex;
+    }
+  }
+};
+
+const groupMediaByOriginalSection = (mediaForDay: MediaItem[]) => {
+  const groupedMedia: Record<string, MediaItem[]> = {};
+  mediaForDay.forEach((mediaItem) => {
+    const section = mediaItem.originalSection || 'tgw';
+    groupedMedia[section] ??= [];
+    groupedMedia[section].push(mediaItem);
+  });
+  return groupedMedia;
+};
+
+const getWeekendIssueWithFallback = async (monday: Date, lookupDate: Date) => {
+  const currentStateStore = useCurrentStateStore();
+  const weeksToTry = [6, 8, 10, 12];
+  const primaryLang = currentStateStore.currentSettings?.lang;
+  const fallbackLang = currentStateStore.currentSettings?.langFallback;
+
+  const primaryResult = await getWeekendIssueForLanguage(
+    monday,
+    lookupDate,
+    weeksToTry,
+    primaryLang,
+  );
+  if (primaryResult.db) return primaryResult;
+
+  const fallbackResult = await getWeekendIssueForLanguage(
+    monday,
+    lookupDate,
+    weeksToTry,
+    fallbackLang,
+    true,
+  );
+  if (fallbackResult.db) return fallbackResult;
+
+  return getEmptyWeekendIssue();
+};
+
+const getWeekendIssueForLanguage = async (
+  monday: Date,
+  lookupDate: Date,
+  weeksToTry: number[],
+  langwritten?: JwLangCode | null,
+  lastChance = false,
+) => {
+  if (!langwritten) return getEmptyWeekendIssue();
+
+  for (const weeks of weeksToTry) {
+    const result = await getWtIssue(
+      monday,
+      weeks,
+      langwritten,
+      lookupDate,
+      lastChance,
+    );
+    if (result.db?.length > 0) {
+      return result;
+    }
+  }
+
+  return getEmptyWeekendIssue();
+};
+
+const getEmptyWeekendIssue = () => ({
+  db: '',
+  docId: -1,
+  issueString: '',
+  publication: {
+    langwritten: '' as const,
+    pub: '',
+  },
+  title: '',
+  weekNr: -1,
+});
+
+const getWeekendSongs = async (
+  options: {
+    db: string;
+    docId: number;
+    issueString: string;
+  },
+  videosNotInParagraphs: MultimediaItem[],
+) => {
+  if (+options.issueString < FEB_2023) {
+    return executeQuery<MultimediaItem>(
+      options.db,
+      `SELECT *
+        FROM Multimedia
+        INNER JOIN DocumentMultimedia
+          ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId
+        WHERE DataType = 2
+        AND DocumentId = ?
+        ORDER BY BeginParagraphOrdinal
+        LIMIT 2`,
+      [options.docId],
+    );
+  }
+
+  if (!videosNotInParagraphs?.length) return [];
+
+  const sortedVideos = videosNotInParagraphs.toSorted(
+    (a, b) => (a.MultimediaId || 0) - (b.MultimediaId || 0),
+  );
+  if (sortedVideos.length <= 2) return sortedVideos;
+
+  const songs = sortedVideos.filter(
+    (v) => !!v.Track && v.Track > 0 && v.KeySymbol?.includes('sjj'),
+  );
+  return songs.length > 2 ? sortedVideos.slice(0, 2).filter(Boolean) : songs;
+};
+
+const getMidweekDocumentId = async (db: string, monday: Date) =>
+  (
+    await executeQuery<{ DocumentId: number }>(
+      db,
+      `SELECT DocumentId FROM DatedText WHERE FirstDateOffset = ${formatDate(
+        monday,
+        'YYYYMMDD',
+      )}`,
+    )
+  )[0]?.DocumentId ?? -1;
+
+const getMidweekIssueDb = async (
+  publication: PublicationFetcher,
+  issueString: string,
+  lookupDate: Date,
+) => {
+  const currentStateStore = useCurrentStateStore();
+  const fetchIssueDb = async (langwritten?: JwLangCode | null) => {
+    if (!langwritten) return '';
+    publication.issue = issueString;
+    publication.langwritten = langwritten;
+    publication.pub = 'mwb';
+    return await getDbFromJWPUB(
+      publication,
+      formatDate(lookupDate, 'YYYYMMDD'),
+    );
+  };
+
+  const primaryDb = await fetchIssueDb(currentStateStore.currentSettings?.lang);
+  if (primaryDb) return primaryDb;
+
+  return await fetchIssueDb(currentStateStore.currentSettings?.langFallback);
+};
+
+const checkMediaFileExistence = async (media: MultimediaItem) => {
+  if (!media.KeySymbol && !media.MepsDocumentId) return null;
+
+  // A FilePath means a local copy was expected: verify it's actually still
+  // on disk rather than trusting a StreamUrl set alongside it (StreamUrl is
+  // also set after a successful download, not only for stream-only media).
+  const exists = media.FilePath
+    ? await pathExists(media.FilePath)
+    : !!media.StreamUrl;
+  return { exists, media };
+};
+
+const processWeekendMedia = (
+  mediaWithoutVideos: MultimediaItem[],
+  videosInParagraphs: MultimediaItem[],
+  videosNotInParagraphs: MultimediaItem[],
+  currentStateStore: ReturnType<typeof useCurrentStateStore>,
+): MultimediaItem[] => {
+  const combined = [
+    ...mediaWithoutVideos,
+    ...videosInParagraphs,
+    ...videosNotInParagraphs,
+  ];
+
+  // Separate items with and without BeginPosition
+  const withBegin = combined.filter(
+    (item) => item.BeginPosition !== undefined && item.BeginPosition !== null,
+  );
+  const withoutBegin = combined.filter(
+    (item) => item.BeginPosition === undefined || item.BeginPosition === null,
+  );
+
+  // Sort those with BeginPosition
+  withBegin.sort((a, b) => (a.BeginPosition || 0) - (b.BeginPosition || 0));
+
+  // Final result: Insert all withoutBegin *before* the last item with BeginPosition
+  let final: MultimediaItem[] = [];
+  if (withBegin.length === 0) {
+    final.push(...withoutBegin);
+  } else {
+    const lastIndex = withBegin.length - 1;
+    const lastItem = withBegin[lastIndex];
+    if (!lastItem) return [];
+    final.push(...withBegin.slice(0, lastIndex), ...withoutBegin, lastItem);
+  }
+
+  final = final
+    .map((mediaObj) => {
+      // Mark media as being in a footnote if it's outside numbered paragraphs
+      // IsInNumberedParagraphs will be 0 for footnotes, 1 for regular content
+      if (
+        mediaObj &&
+        'IsInNumberedParagraphs' in mediaObj &&
+        mediaObj.IsInNumberedParagraphs === 0 &&
+        !mediaObj.TargetParagraphNumberLabel
+      ) {
+        return {
+          ...mediaObj,
+          TargetParagraphNumberLabel: FOOTNOTE_TARGET_PARAGRAPH,
+        };
+      }
+      return mediaObj;
+    })
+    .filter((item) => !!item)
+    .filter((v) => {
+      try {
+        // Exclude videos from paragraphs in the WT study if setting is enabled
+        if (
+          currentStateStore.currentSettings?.excludeWtParagraphVideos &&
+          v.IsInNumberedParagraphs === 1 &&
+          v.MimeType.includes('video')
+        ) {
+          return false;
+        }
+
+        // Exclude items from footnotes in the WT study if setting is enabled
+        if (
+          currentStateStore.currentSettings?.excludeFootnotes &&
+          v.TargetParagraphNumberLabel === FOOTNOTE_TARGET_PARAGRAPH
+        ) {
+          return false;
+        }
+
+        // Include all other items
+        return true;
+      } catch (e) {
+        // In case of error, include the item to be safe
+        errorCatcher(e);
+        return true;
+      }
+    });
+
+  return dedupeLinkedMultimedia(final);
+};
+
+const mergeWeekendSongs = (
+  allMedia: MultimediaItem[],
+  songs: MultimediaItem[],
+  songMultimediaExtractItems: MultimediaExtractItem[],
+  currentStateStore: ReturnType<typeof useCurrentStateStore>,
+): MultimediaItem[] => {
+  let songMepsLanguageCodes: ('' | JwLangCode)[] = [];
+  try {
+    songMepsLanguageCodes = songMultimediaExtractItems.map((item) => {
+      const match = new RegExp(/\/(.*)\//).exec(item.Link);
+      const langOverride = match ? (match[1]?.split(':')[0] as JwLangCode) : '';
+      return langOverride === currentStateStore.currentSettings?.lang
+        ? ''
+        : langOverride;
+    });
+  } catch (e: unknown) {
+    errorCatcher(e);
+    songMepsLanguageCodes = songs.map(
+      () => currentStateStore.currentSettings?.lang || 'E',
+    );
+  }
+
+  const mergedSongs: MultimediaItem[] = songs
+    .map((song, index) => {
+      if (!songMepsLanguageCodes[index]) return song;
+      const langId = getJwLangId(songMepsLanguageCodes[index]);
+      return {
+        ...song,
+        ...(langId === undefined
+          ? {}
+          : { MepsLanguageAlternativeIndex: langId }),
+      };
+    })
+    .sort((a, b) => (a.MultimediaId || 0) - (b.MultimediaId || 0));
+
+  if (mergedSongs[0]) {
+    mergedSongs[0].BeginParagraphOrdinal = 0;
+    const index0 = allMedia.findIndex(
+      (item) =>
+        item.Track === mergedSongs[0]?.Track &&
+        item.KeySymbol === mergedSongs[0]?.KeySymbol,
+    );
+
+    if (index0 === -1) {
+      allMedia.unshift(mergedSongs[0]);
+    } else {
+      allMedia[index0] = mergedSongs[0];
+    }
+
+    if (mergedSongs[1]) {
+      mergedSongs[1].BeginParagraphOrdinal = LAST_SONG_ORDINAL;
+      const index1 = allMedia.findIndex(
+        (item) =>
+          item.Track === mergedSongs[1]?.Track &&
+          item.KeySymbol === mergedSongs[1]?.KeySymbol,
+      );
+
+      if (index1 === -1) {
+        allMedia.push(mergedSongs[1]);
+      } else {
+        allMedia[index1] = mergedSongs[1];
+      }
+    }
+  }
+
+  return allMedia;
+};
+
+// Shared by getWeMedia/getMwMedia so fetchMeetingMediaForDay's inferred
+// return type carries `sectionTitles` as optional on both branches, instead
+// of TS rejecting the property access on whichever branch omits it.
+interface MeetingMediaFetchResult {
+  error: boolean;
+  media: Record<string, MediaItem[]>;
+  sectionTitles?: Partial<Record<MediaSectionIdentifier, string>>;
+}
+
+export const getWeMedia = async (
+  lookupDate: Date,
+): Promise<MeetingMediaFetchResult> => {
   log(
     `Getting weekend meeting media for date: ${formatDate(lookupDate, 'YYYYMMDD')}`,
     'weMedia',
@@ -3228,66 +4396,8 @@ export const getWeMedia = async (lookupDate: Date) => {
     }
 
     const monday = getSpecificWeekday(lookupDate, 0);
-
-    const getIssueWithFallback = async (
-      monday: Date,
-    ): Promise<{
-      db: string;
-      docId: number;
-      issueString: string;
-      publication: PublicationFetcher;
-      weekNr: number;
-    }> => {
-      const weeksToTry = [6, 8, 10, 12];
-      const primaryLang = currentStateStore.currentSettings?.lang;
-      const fallbackLang = currentStateStore.currentSettings?.langFallback;
-
-      // First try primary language for all week offsets
-      if (primaryLang) {
-        for (const weeks of weeksToTry) {
-          const result = await getWtIssue(
-            monday,
-            weeks,
-            primaryLang,
-            lookupDate,
-          );
-          if (result.db?.length > 0) {
-            return result;
-          }
-        }
-      }
-
-      // If no match with primary language, try fallback language
-      if (fallbackLang) {
-        for (const weeks of weeksToTry) {
-          const result = await getWtIssue(
-            monday,
-            weeks,
-            fallbackLang,
-            lookupDate,
-            true,
-          );
-          if (result.db?.length > 0) {
-            return result;
-          }
-        }
-      }
-
-      // Return empty result if nothing found
-      return {
-        db: '',
-        docId: -1,
-        issueString: '',
-        publication: {
-          langwritten: '',
-          pub: '',
-        },
-        weekNr: -1,
-      };
-    };
-
-    const { db, docId, issueString, publication } =
-      await getIssueWithFallback(monday);
+    const { db, docId, issueString, publication, title } =
+      await getWeekendIssueWithFallback(monday, lookupDate);
 
     if (!db || docId < 0) {
       return {
@@ -3295,7 +4405,7 @@ export const getWeMedia = async (lookupDate: Date) => {
         media: {} as Record<string, MediaItem[]>,
       };
     }
-    const videos = executeQuery<MultimediaItem>(
+    const videos = await executeQuery<MultimediaItem>(
       db,
       `SELECT m.*, dm.*, dp.*, q.*,
          CASE
@@ -3322,7 +4432,7 @@ export const getWeMedia = async (lookupDate: Date) => {
          INNER JOIN DocumentParagraph dp
            ON dm.BeginParagraphOrdinal = dp.ParagraphIndex
            AND dm.DocumentId = dp.DocumentId
-    		 LEFT JOIN Question q
+     		 LEFT JOIN Question q
            ON q.DocumentId = dm.DocumentId
            AND q.TargetParagraphOrdinal = dm.BeginParagraphOrdinal
          WHERE dm.DocumentId = ?
@@ -3337,271 +4447,103 @@ export const getWeMedia = async (lookupDate: Date) => {
       (video) => !video.TargetParagraphNumberLabel,
     );
 
-    const mediaWithoutVideos = executeQuery<MultimediaItem>(
+    // The same MultimediaId can appear in multiple DocumentMultimedia rows
+    // (e.g. one picture referenced at several points in a document), and the
+    // query below GROUP BYs on MultimediaId, arbitrarily collapsing those rows
+    // into one. Aggregate the paragraph range across *all* of a picture's
+    // placements so the label reflects every paragraph it's associated with,
+    // not just whichever placement SQLite happened to keep.
+    const aggregatedBegin = `(SELECT MIN(dmAgg.BeginParagraphOrdinal) FROM DocumentMultimedia dmAgg WHERE dmAgg.DocumentId = DocumentMultimedia.DocumentId AND dmAgg.MultimediaId = DocumentMultimedia.MultimediaId)`;
+    const aggregatedEnd = `(SELECT MAX(dmAgg.EndParagraphOrdinal) FROM DocumentMultimedia dmAgg WHERE dmAgg.DocumentId = DocumentMultimedia.DocumentId AND dmAgg.MultimediaId = DocumentMultimedia.MultimediaId)`;
+
+    // A picture can span a range of paragraphs (BeginParagraphOrdinal to
+    // EndParagraphOrdinal), and not every paragraph in that range has a label
+    // (e.g. headings). Find the label of the first and last *labeled*
+    // paragraph in the range so multi-paragraph pictures can be shown as
+    // "first-last" instead of just the (possibly unlabeled) first paragraph.
+    const labeledParagraphInRange = (order: 'ASC' | 'DESC') =>
+      `(SELECT dpr.ParagraphNumberLabel FROM DocumentParagraph dpr
+          WHERE dpr.DocumentId = DocumentMultimedia.DocumentId
+            AND dpr.ParagraphIndex >= ${aggregatedBegin}
+            AND dpr.ParagraphIndex <= ${aggregatedEnd}
+            AND dpr.ParagraphNumberLabel IS NOT NULL
+            AND dpr.ParagraphNumberLabel <> ''
+          ORDER BY dpr.ParagraphIndex ${order} LIMIT 1)`;
+    const firstLabel = labeledParagraphInRange('ASC');
+    const lastLabel = labeledParagraphInRange('DESC');
+    const rangeLabel = `CASE
+        WHEN ${firstLabel} IS NULL THEN NULL
+        WHEN ${firstLabel} = ${lastLabel} THEN ${firstLabel}
+        ELSE ${firstLabel} || '-' || ${lastLabel}
+      END`;
+
+    const mediaWithoutVideos = await executeQuery<MultimediaItem>(
       db,
-      `SELECT *
+      `SELECT *,
+         COALESCE(Question.TargetParagraphNumberLabel, ${rangeLabel}) AS TargetParagraphNumberLabel
        FROM DocumentMultimedia
          INNER JOIN Multimedia
            ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId
          INNER JOIN DocumentParagraph
            ON DocumentMultimedia.DocumentId = DocumentParagraph.DocumentId
-    		  AND DocumentMultimedia.BeginParagraphOrdinal = DocumentParagraph.ParagraphIndex
+     		  AND DocumentMultimedia.BeginParagraphOrdinal = DocumentParagraph.ParagraphIndex
          LEFT JOIN Question
            ON Question.DocumentId = DocumentMultimedia.DocumentId
            AND Question.TargetParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal
-         WHERE DocumentMultimedia.DocumentId = ${docId}
+         WHERE DocumentMultimedia.DocumentId = ?
            AND CategoryType <> 9
            AND CategoryType <> -1
-           AND (KeySymbol != '${currentStateStore.currentSongbook?.pub}' OR KeySymbol IS NULL)
+           AND (KeySymbol != ? OR KeySymbol IS NULL)
          GROUP BY DocumentMultimedia.MultimediaId
          ORDER BY DocumentParagraph.BeginPosition`, // pictures
+      [docId, currentStateStore.currentSongbook?.pub ?? null],
     );
-    for (let i = 0; i < mediaWithoutVideos.length; i++) {
-      const item = mediaWithoutVideos[i];
-      if (item) {
-        mediaWithoutVideos[i] = await addFullFilePathToMultimediaItem(
-          item,
-          publication,
-        );
-      }
-    }
+    await addFullPathsToMultimediaItems(mediaWithoutVideos, publication);
 
-    const combined = [
-      ...mediaWithoutVideos,
-      ...videosInParagraphs,
-      ...videosNotInParagraphs,
-    ];
-
-    // Separate items with and without BeginPosition
-    const withBegin = combined.filter(
-      (item) => item.BeginPosition !== undefined && item.BeginPosition !== null,
-    );
-    const withoutBegin = combined.filter(
-      (item) => item.BeginPosition === undefined || item.BeginPosition === null,
+    const finalMedia = processWeekendMedia(
+      mediaWithoutVideos,
+      videosInParagraphs,
+      videosNotInParagraphs,
+      currentStateStore,
     );
 
-    // Sort those with BeginPosition
-    withBegin.sort((a, b) => (a.BeginPosition || 0) - (b.BeginPosition || 0));
-
-    // Final result: Insert all withoutBegin *before* the last item with BeginPosition
-    let final = [];
-    if (withBegin.length === 0) {
-      final.push(...withoutBegin);
-    } else {
-      const lastIndex = withBegin.length - 1;
-      final.push(
-        ...withBegin.slice(0, lastIndex),
-        ...withoutBegin,
-        withBegin[lastIndex],
-      );
-    }
-
-    final = final
-      .map((mediaObj) => {
-        // Mark media as being in a footnote if it's outside numbered paragraphs
-        // IsInNumberedParagraphs will be 0 for footnotes, 1 for regular content
-        if (
-          mediaObj &&
-          'IsInNumberedParagraphs' in mediaObj &&
-          mediaObj.IsInNumberedParagraphs === 0 &&
-          !mediaObj.TargetParagraphNumberLabel
-        ) {
-          return {
-            ...mediaObj,
-            TargetParagraphNumberLabel: FOOTNOTE_TARGET_PARAGRAPH,
-          };
-        }
-        return mediaObj;
-      })
-      .filter((item) => !!item)
-      .filter((v) => {
-        try {
-          // Exclude videos from paragraphs in the WT study if setting is enabled
-          if (
-            currentStateStore.currentSettings?.excludeWtParagraphVideos &&
-            v.IsInNumberedParagraphs === 1 &&
-            v.MimeType.includes('video')
-          ) {
-            return false;
-          }
-
-          // Exclude items from footnotes in the WT study if setting is enabled
-          if (
-            currentStateStore.currentSettings?.excludeFootnotes &&
-            v.TargetParagraphNumberLabel === FOOTNOTE_TARGET_PARAGRAPH
-          ) {
-            return false;
-          }
-
-          // Include all other items
-          return true;
-        } catch (e) {
-          // In case of error, include the item to be safe
-          errorCatcher(e);
-          return true;
-        }
-      });
-
-    const updatedMedia = final.map((item) => {
-      if (item.MultimediaId !== null && item.LinkMultimediaId !== null) {
-        const linkedItem = final.find(
-          (i) => i.MultimediaId === item.LinkMultimediaId,
-        );
-        if (linkedItem?.FilePath) {
-          item.FilePath = linkedItem.FilePath;
-          item.LinkMultimediaId = null;
-          linkedItem.LinkMultimediaId = linkedItem.MultimediaId;
-        }
-      }
-      return item;
-    });
-
-    const finalMedia = updatedMedia.filter(
-      (item) => item.LinkMultimediaId === null,
-    );
-
-    let songs: MultimediaItem[] = [];
-
-    // Watchtowers before Feb 2023 don't include songs in DocumentMultimedia
-    if (+issueString < FEB_2023) {
-      // Using SELECT * because the returned MultimediaItem objects are merged with other media
-      // and passed to functions that expect full MultimediaItem objects with all properties.
-      // The songs are combined with other media items and processed through dynamicMediaMapper
-      // which requires all MultimediaItem properties to be present.
-      songs = executeQuery<MultimediaItem>(
+    const songs = await getWeekendSongs(
+      {
         db,
-        `SELECT *
-          FROM Multimedia
-          INNER JOIN DocumentMultimedia
-            ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId
-          WHERE DataType = 2
-          AND DocumentId = ?
-          ORDER BY BeginParagraphOrdinal
-          LIMIT 2`,
-        [docId],
-      );
-    } else if (videosNotInParagraphs?.length) {
-      const sortedVideos = videosNotInParagraphs.toSorted(
-        (a, b) => (a.MultimediaId || 0) - (b.MultimediaId || 0),
-      );
-      if (sortedVideos.length <= 2) {
-        songs = sortedVideos;
-      } else {
-        // There are more than 2 videos for this WE meeting
-        // First, try to remove non-songs
-        songs = sortedVideos.filter(
-          (v) => !!v.Track && v.Track > 0 && v.KeySymbol?.includes('sjj'),
-        );
+        docId,
+        issueString,
+      },
+      videosNotInParagraphs,
+    );
 
-        // If still more than 2, just take the first two
-        if (songs.length > 2) {
-          songs = sortedVideos.slice(0, 2).filter(Boolean);
-        }
-      }
-    } else {
-      songs = [];
-    }
+    const songMultimediaExtractItems: MultimediaExtractItem[] = (
+      await globalThis.electronApi.executeQuery<MultimediaExtractItem>(
+        db,
+        `SELECT Extract.ExtractId, Extract.Link, DocumentExtract.BeginParagraphOrdinal
+         FROM Extract
+         INNER JOIN DocumentExtract ON Extract.ExtractId = DocumentExtract.ExtractId
+         WHERE Extract.RefMepsDocumentClass = 31
+           AND DocumentExtract.DocumentId = ${docId}
+         ORDER BY Extract.ExtractId
+         LIMIT 2`,
+      )
+    ).sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal);
 
-    const songMultimediaExtractItems: MultimediaExtractItem[] =
-      globalThis.electronApi
-        .executeQuery<MultimediaExtractItem>(
-          db,
-          `SELECT Extract.ExtractId, Extract.Link, DocumentExtract.BeginParagraphOrdinal
-           FROM Extract
-           INNER JOIN DocumentExtract ON Extract.ExtractId = DocumentExtract.ExtractId
-           WHERE Extract.RefMepsDocumentClass = 31
-             AND DocumentExtract.DocumentId = ${docId}
-           ORDER BY Extract.ExtractId
-           LIMIT 2`,
-        )
-        .sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal);
+    const allMedia = mergeWeekendSongs(
+      finalMedia,
+      songs,
+      songMultimediaExtractItems,
+      currentStateStore,
+    );
 
-    let songMepsLanguageCodes: ('' | JwLangCode)[] = [];
-    try {
-      songMepsLanguageCodes = songMultimediaExtractItems.map((item) => {
-        const match = new RegExp(/\/(.*)\//).exec(item.Link);
-        const langOverride = match
-          ? (match[1]?.split(':')[0] as JwLangCode)
-          : '';
-        return langOverride === currentStateStore.currentSettings?.lang
-          ? ''
-          : langOverride;
-      });
-    } catch (e: unknown) {
-      errorCatcher(e);
-      songMepsLanguageCodes = songs.map(
-        () => currentStateStore.currentSettings?.lang || 'E',
-      );
-    }
-
-    const mergedSongs: MultimediaItem[] = songs
-      .map((song, index) => {
-        if (!songMepsLanguageCodes[index]) return song;
-        const langId = getJwLangId(songMepsLanguageCodes[index]);
-        return {
-          ...song,
-          ...(langId === undefined
-            ? {}
-            : { MepsLanguageAlternativeIndex: langId }),
-        };
-      })
-      .sort((a, b) => (a.MultimediaId || 0) - (b.MultimediaId || 0));
-
-    const allMedia = finalMedia;
-    if (mergedSongs[0]) {
-      mergedSongs[0].BeginParagraphOrdinal = 0;
-      const index0 = allMedia.findIndex(
-        (item) =>
-          item.Track === mergedSongs[0]?.Track &&
-          item.KeySymbol === mergedSongs[0]?.KeySymbol,
-      );
-
-      if (index0 === -1) {
-        allMedia.unshift(mergedSongs[0]);
-      } else {
-        allMedia[index0] = mergedSongs[0];
-      }
-
-      if (mergedSongs[1]) {
-        mergedSongs[1].BeginParagraphOrdinal = LAST_SONG_ORDINAL;
-        const index1 = allMedia.findIndex(
-          (item) =>
-            item.Track === mergedSongs[1]?.Track &&
-            item.KeySymbol === mergedSongs[1]?.KeySymbol,
-        );
-
-        if (index1 === -1) {
-          allMedia.push(mergedSongs[1]);
-        } else {
-          allMedia[index1] = mergedSongs[1];
-        }
-      }
-    }
-
-    const mepsLanguagesByMediaItem = getMepsLanguagesByMediaItem({ db, docId });
-    for (const media of allMedia) {
-      const mediaKeySymbol =
-        media.KeySymbol === 'sjjm'
-          ? currentStateStore.currentSongbook?.pub
-          : media.KeySymbol;
-      const mepsLanguage = mepsLanguagesByMediaItem.find(
-        (item) =>
-          item.KeySymbol === mediaKeySymbol &&
-          item.Track === media.Track &&
-          item.IssueTagNumber === media.IssueTagNumber,
-      );
-      if (
-        mepsLanguage?.MepsLanguageIndex !== undefined &&
-        mepsLanguage?.MepsLanguageIndex !== media.MepsLanguageIndex
-      ) {
-        media.MepsLanguageAlternativeIndex = mepsLanguage.MepsLanguageIndex;
-      }
-      const videoMarkers = getMediaVideoMarkers(
-        { db, docId },
-        media.MultimediaId,
-      );
-      if (videoMarkers) media.VideoMarkers = videoMarkers;
-    }
+    const mepsLanguagesByMediaItem = await applyMepsLanguageOverrides(
+      allMedia,
+      {
+        db,
+        docId,
+        includeVideoMarkers: true,
+      },
+    );
     await processMissingMediaInfo({
       allMedia,
       isDynamicMedia: true,
@@ -3617,6 +4559,7 @@ export const getWeMedia = async (lookupDate: Date) => {
     return {
       error: false,
       media: { wt: mediaForDay },
+      sectionTitles: title ? { wt: title } : undefined,
     };
   } catch (e) {
     errorCatcher(e, {
@@ -3629,7 +4572,9 @@ export const getWeMedia = async (lookupDate: Date) => {
   }
 };
 
-export const getMwMedia = async (lookupDate: Date) => {
+export const getMwMedia = async (
+  lookupDate: Date,
+): Promise<MeetingMediaFetchResult> => {
   log(
     `Getting midweek meeting media for date: ${formatDate(lookupDate, 'YYYYMMDD')}`,
     'mwMedia',
@@ -3659,32 +4604,11 @@ export const getMwMedia = async (lookupDate: Date) => {
       langwritten: '',
       pub: '',
     };
-    const getMwbIssue = async (langwritten?: JwLangCode) => {
-      if (!langwritten) return '';
-      publication.issue = issueString;
-      publication.langwritten = langwritten;
-      publication.pub = 'mwb';
-      return await getDbFromJWPUB(
-        publication,
-        formatDate(lookupDate, 'YYYYMMDD'),
-      );
-    };
-
-    let db = await getMwbIssue(currentStateStore.currentSettings?.lang);
-    if (!db && currentStateStore.currentSettings?.langFallback) {
-      db = await getMwbIssue(currentStateStore.currentSettings?.langFallback);
-    }
+    const db = await getMidweekIssueDb(publication, issueString, lookupDate);
 
     if (!db) return { error: true, media: {} as Record<string, MediaItem[]> };
 
-    const docId =
-      executeQuery<{ DocumentId: number }>(
-        db,
-        `SELECT DocumentId FROM DatedText WHERE FirstDateOffset = ${formatDate(
-          monday,
-          'YYYYMMDD',
-        )}`,
-      )[0]?.DocumentId ?? -1;
+    const docId = await getMidweekDocumentId(db, monday);
 
     if (docId < 0)
       throw new Error(
@@ -3696,18 +4620,11 @@ export const getMwMedia = async (lookupDate: Date) => {
           db.split('/').pop(),
       );
 
-    const mms = getDocumentMultimediaItems(
+    const mms = await getDocumentMultimediaItems(
       { db, docId },
       currentStateStore.currentSettings?.includePrinted,
     );
-    for (let i = 0; i < mms.length; i++) {
-      const multimediaItem = mms[i];
-      if (!multimediaItem) continue;
-      mms[i] = await addFullFilePathToMultimediaItem(
-        multimediaItem,
-        publication,
-      );
-    }
+    await addFullPathsToMultimediaItems(mms, publication);
 
     // To think about: Enabling InternalLink lookups: is this needed?
     // const internalLinkMedia = getInternalLinkItems({ db, docId }).map(
@@ -3716,7 +4633,10 @@ export const getMwMedia = async (lookupDate: Date) => {
     //   },
     // );
 
-    const extracts = await getDocumentExtractItems(
+    const {
+      items: extracts,
+      mepsLanguagesByMediaItem: extractMepsLanguagesByMediaItem,
+    } = await getDocumentExtractItems(
       db,
       docId,
       formatDate(lookupDate, 'YYYYMMDD'),
@@ -3726,25 +4646,11 @@ export const getMwMedia = async (lookupDate: Date) => {
       .concat(extracts)
       .sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal);
 
-    const mepsLanguagesByMediaItem = getMepsLanguagesByMediaItem({ db, docId });
-    for (const media of allMedia) {
-      const mediaKeySymbol =
-        media.KeySymbol === 'sjjm'
-          ? currentStateStore.currentSongbook?.pub
-          : media.KeySymbol;
-      const mepsLanguage = mepsLanguagesByMediaItem.find(
-        (item) =>
-          item.KeySymbol === mediaKeySymbol &&
-          item.Track === media.Track &&
-          item.IssueTagNumber === media.IssueTagNumber,
-      );
-      if (
-        mepsLanguage?.MepsLanguageIndex !== undefined &&
-        mepsLanguage?.MepsLanguageIndex !== media.MepsLanguageIndex
-      ) {
-        media.MepsLanguageAlternativeIndex = mepsLanguage.MepsLanguageIndex;
-      }
-    }
+    const mepsLanguagesByMediaItem = await applyMepsLanguageOverrides(
+      allMedia,
+      { db, docId },
+      extractMepsLanguagesByMediaItem,
+    );
     const errors =
       (await processMissingMediaInfo({
         allMedia,
@@ -3758,21 +4664,219 @@ export const getMwMedia = async (lookupDate: Date) => {
       'dynamic',
     );
 
-    // Group media items by their originalSection property
-    const groupedMedia: Record<string, MediaItem[]> = {};
-    mediaForDay.forEach((mediaItem) => {
-      const section = mediaItem.originalSection || 'tgw'; // Default to 'tgw' if no section assigned
-      groupedMedia[section] ??= [];
-      groupedMedia[section].push(mediaItem);
-    });
-
     return {
       error: errors.length > 0,
-      media: groupedMedia,
+      media: groupMediaByOriginalSection(mediaForDay),
     };
   } catch (e) {
     errorCatcher(e);
     return { error: true, media: {} as Record<string, MediaItem[]> };
+  }
+};
+
+const normalizeWatchtowerMagazineSymbol = (media: MultimediaItem) => {
+  if (
+    media.KeySymbol === 'w' &&
+    media.IssueTagNumber &&
+    Number.parseInt(media.IssueTagNumber.toString()) >= 20080101 &&
+    media.IssueTagNumber.toString().endsWith('01')
+  ) {
+    media.KeySymbol = 'wp';
+    log(
+      `Updated magazine symbol to wp: ${media.KeySymbol}`,
+      'mediaProcessing',
+      'info',
+    );
+  }
+};
+
+const getEffectiveMediaKeySymbol = (
+  media: MultimediaItem,
+  isSignLanguage: boolean,
+) => {
+  const currentStateStore = useCurrentStateStore();
+  if (media.KeySymbol === 'sjjm' && isSignLanguage) {
+    return currentStateStore.currentSongbook?.pub || media.KeySymbol;
+  }
+
+  return media.KeySymbol;
+};
+
+const mediaHasMepsLanguage = (
+  effectiveMediaKeySymbol: null | string | undefined,
+  mepsLanguageIndex: number | undefined,
+  isSignLanguage: boolean,
+  mepsLanguagesByMediaItem: MepsLanguageByMediaItem[] | undefined,
+) => {
+  if (mepsLanguageIndex === undefined) return false;
+  if (!isSignLanguage) return true;
+
+  return !!mepsLanguagesByMediaItem?.some(
+    (item) =>
+      item.KeySymbol === effectiveMediaKeySymbol &&
+      item.MepsLanguageIndex === mepsLanguageIndex,
+  );
+};
+
+const getMediaLanguageCandidates = (
+  media: MultimediaItem,
+  effectiveMediaKeySymbol: null | string | undefined,
+  isSignLanguage: boolean,
+  mepsLanguagesByMediaItem: MepsLanguageByMediaItem[] | undefined,
+) => {
+  const currentStateStore = useCurrentStateStore();
+  const mediaMepsLanguage =
+    mediaHasMepsLanguage(
+      effectiveMediaKeySymbol,
+      media.MepsLanguageIndex,
+      isSignLanguage,
+      mepsLanguagesByMediaItem,
+    ) && getJwLangCode(media.MepsLanguageIndex);
+  const mediaAltMepsLanguage =
+    media.MepsLanguageAlternativeIndex !== media.MepsLanguageIndex &&
+    mediaHasMepsLanguage(
+      effectiveMediaKeySymbol,
+      media.MepsLanguageAlternativeIndex,
+      isSignLanguage,
+      mepsLanguagesByMediaItem,
+    ) &&
+    getJwLangCode(media.MepsLanguageAlternativeIndex);
+
+  return [
+    currentStateStore.currentSettings?.lang,
+    mediaMepsLanguage,
+    mediaAltMepsLanguage,
+    currentStateStore.currentSettings?.langFallback,
+  ];
+};
+
+const isJwLangCandidate = (lang: unknown): lang is JwLangCode => {
+  return typeof lang === 'string' && !!lang;
+};
+
+const createMissingMediaPublicationFetcher = (
+  media: MultimediaItem,
+  langwritten: JwLangCode,
+): PublicationFetcher => ({
+  docid: media.MepsDocumentId,
+  fileformat: media.MimeType?.includes('audio') ? 'MP3' : 'MP4',
+  issue: media.IssueTagNumber,
+  langwritten,
+  pub: media.KeySymbol,
+  ...(typeof media.Track === 'number' &&
+    media.Track > 0 && { track: media.Track }),
+});
+
+const getBibleVerseDuration = (
+  media: MultimediaItem,
+  chapterMedia: MediaLink[],
+) => {
+  let min = 0;
+  let max = 0;
+  const verses = media.VerseNumbers?.sort((a, b) => a - b);
+  if (!verses) return { max, min };
+
+  min = timeToSeconds(
+    chapterMedia.map((item) =>
+      item.markers.markers.find((marker) => marker.verseNumber === verses[0]),
+    )?.[0]?.startTime || '0',
+  );
+
+  const endVerse = chapterMedia.map((item) =>
+    item.markers.markers.find((marker) => marker.verseNumber === verses.at(-1)),
+  )?.[0];
+
+  max = endVerse
+    ? timeToSeconds(endVerse.startTime) + timeToSeconds(endVerse.duration)
+    : 0;
+
+  return { max, min };
+};
+
+const downloadBibleMissingMedia = async (
+  media: MultimediaItem,
+  langwritten: JwLangCode,
+  meetingDate: null | string | undefined,
+) => {
+  const pubs = await getBibleMedia(false, langwritten);
+  const bookMedia: MediaLink[] =
+    Object.values(
+      pubs?.find((p) => p.booknum === media.BookNumber)?.files?.[langwritten] ??
+        {},
+    )[0] ?? [];
+  const chapterMedia = bookMedia.filter(
+    (item) => item.track === media.ChapterNumber && !!item.markers,
+  );
+
+  return downloadAdditionalRemoteVideo({
+    customDuration: getBibleVerseDuration(media, chapterMedia),
+    mediaItemLinks: chapterMedia,
+    meetingDate: meetingDate || undefined,
+    section: undefined,
+    song: false,
+    thumbnailUrl: media.ThumbnailFilePath,
+    title: media.Label,
+  });
+};
+
+const downloadStandardMissingMedia = async ({
+  isDynamicMedia,
+  keepMediaLabels,
+  media,
+  meetingDate,
+  publicationFetcher,
+}: {
+  isDynamicMedia: boolean;
+  keepMediaLabels: boolean;
+  media: MultimediaItem;
+  meetingDate?: null | string;
+  publicationFetcher: PublicationFetcher;
+}) => {
+  const currentStateStore = useCurrentStateStore();
+
+  if (!media.FilePath || !(await pathExists(media.FilePath))) {
+    const { FilePath, Label, StreamDuration, StreamThumbnailUrl, StreamUrl } =
+      await downloadMissingMedia(
+        publicationFetcher,
+        meetingDate || currentStateStore.selectedDate,
+        isDynamicMedia,
+        true,
+      );
+    media.FilePath = FilePath ?? media.FilePath;
+    media.Label = keepMediaLabels
+      ? media.Label || Label || ''
+      : Label || media.Label;
+    media.StreamUrl = StreamUrl ?? media.StreamUrl;
+    media.Duration = StreamDuration ?? media.Duration;
+    media.ThumbnailUrl = StreamThumbnailUrl ?? media.ThumbnailUrl;
+  }
+
+  if (!media.FilePath && !media.StreamUrl) return false;
+
+  if (!media.Label) {
+    media.Label =
+      media.Label ||
+      media.Caption ||
+      (await getJwMediaInfo(publicationFetcher)).title ||
+      '';
+  }
+
+  return true;
+};
+
+const markMissingMediaDownloadErrors = (
+  publicationFetchers: PublicationFetcher[],
+  meetingDate: null | string | undefined,
+) => {
+  const currentStateStore = useCurrentStateStore();
+
+  for (const publicationFetcher of publicationFetchers) {
+    const downloadId = getPubId(publicationFetcher, true);
+    currentStateStore.downloadProgress[downloadId] = {
+      error: true,
+      filename: downloadId,
+      meetingDate,
+    };
   }
 };
 
@@ -3787,44 +4891,17 @@ export async function processMissingMediaInfo({
   isDynamicMedia?: boolean;
   keepMediaLabels?: boolean;
   meetingDate?: null | string;
-  mepsLanguagesByMediaItem?: {
-    IssueTagNumber: number;
-    KeySymbol: null | string;
-    MepsLanguageIndex: number;
-    Track: null | number;
-  }[];
+  mepsLanguagesByMediaItem?: MepsLanguageByMediaItem[];
 }) {
   try {
     const currentStateStore = useCurrentStateStore();
     const errors = [];
 
-    // Special handling for wp
-    for (const m of allMedia) {
-      if (
-        m.KeySymbol === 'w' &&
-        m.IssueTagNumber &&
-        Number.parseInt(m.IssueTagNumber.toString()) >= 20080101 &&
-        m.IssueTagNumber.toString().endsWith('01')
-      ) {
-        m.KeySymbol = 'wp';
-        log(
-          `Updated magazine symbol to wp: ${m.KeySymbol}`,
-          'mediaProcessing',
-          'info',
-        );
-      }
-    }
+    allMedia.forEach(normalizeWatchtowerMagazineSymbol);
 
-    const mediaExistenceChecks = allMedia.map(async (m) => {
-      if (m.KeySymbol || m.MepsDocumentId) {
-        const exists =
-          !!m.StreamUrl || (!!m.FilePath && (await pathExists(m.FilePath)));
-        return { exists, media: m };
-      }
-      return null;
-    });
-
-    const mediaChecksResults = await Promise.all(mediaExistenceChecks);
+    const mediaChecksResults = await Promise.all(
+      allMedia.map(checkMediaFileExistence),
+    );
 
     const mediaToProcess = mediaChecksResults.filter(
       (result): result is { exists: false; media: MultimediaItem } =>
@@ -3834,38 +4911,19 @@ export async function processMissingMediaInfo({
     for (const { media } of mediaToProcess) {
       const isSignLanguage =
         !!currentStateStore.currentLangObject?.isSignLanguage;
-      const effectiveMediaKeySymbol =
-        media.KeySymbol === 'sjjm' && isSignLanguage
-          ? currentStateStore.currentSongbook?.pub || media.KeySymbol
-          : media.KeySymbol;
-
-      const mediaHasMepsLanguage = (mepsLanguageIndex?: number) => {
-        if (mepsLanguageIndex === undefined) return false;
-        if (!isSignLanguage) return true;
-
-        return !!mepsLanguagesByMediaItem?.some(
-          (i) =>
-            i.KeySymbol === effectiveMediaKeySymbol &&
-            i.MepsLanguageIndex === mepsLanguageIndex,
-        );
-      };
-
-      const mediaMepsLanguage =
-        mediaHasMepsLanguage(media.MepsLanguageIndex) &&
-        getJwLangCode(media.MepsLanguageIndex);
-      const mediaAltMepsLanguage =
-        media.MepsLanguageAlternativeIndex !== media.MepsLanguageIndex &&
-        mediaHasMepsLanguage(media.MepsLanguageAlternativeIndex) &&
-        getJwLangCode(media.MepsLanguageAlternativeIndex);
-
-      const languageCandidates = [
-        currentStateStore.currentSettings?.lang,
-        mediaMepsLanguage,
-        mediaAltMepsLanguage,
-        currentStateStore.currentSettings?.langFallback,
-      ];
-
-      const langsWritten = [...new Set(languageCandidates)].filter(Boolean);
+      const effectiveMediaKeySymbol = getEffectiveMediaKeySymbol(
+        media,
+        isSignLanguage,
+      );
+      const languageCandidates = getMediaLanguageCandidates(
+        media,
+        effectiveMediaKeySymbol,
+        isSignLanguage,
+        mepsLanguagesByMediaItem,
+      );
+      const langsWritten = [...new Set(languageCandidates)].filter(
+        isJwLangCandidate,
+      );
 
       log(
         '[processMissingMediaInfo] Language resolution',
@@ -3887,19 +4945,13 @@ export async function processMissingMediaInfo({
       const triedPublicationFetchers: PublicationFetcher[] = [];
 
       for (const langwritten of langsWritten) {
-        if (!langwritten || !(media.KeySymbol || media.MepsDocumentId)) {
+        if (!langwritten || !(media.KeySymbol || media.MepsDocumentId))
           continue;
-        }
 
-        const publicationFetcher: PublicationFetcher = {
-          docid: media.MepsDocumentId,
-          fileformat: media.MimeType?.includes('audio') ? 'MP3' : 'MP4',
-          issue: media.IssueTagNumber,
+        const publicationFetcher = createMissingMediaPublicationFetcher(
+          media,
           langwritten,
-          pub: media.KeySymbol,
-          ...(typeof media.Track === 'number' &&
-            media.Track > 0 && { track: media.Track }),
-        };
+        );
         triedPublicationFetchers.push(publicationFetcher);
 
         log(
@@ -3910,104 +4962,31 @@ export async function processMissingMediaInfo({
         );
 
         if (media.KeySymbol === 'nwt') {
-          const pubs = await getBibleMedia(false, langwritten);
-          const bookMedia: MediaLink[] =
-            Object.values(
-              pubs?.find((p) => p.booknum === media.BookNumber)?.files?.[
-                langwritten
-              ] ?? {},
-            )[0] ?? [];
-          const chapterMedia = bookMedia.filter(
-            (m) => m.track === media.ChapterNumber && !!m.markers,
-          );
+          mediaWasDownloaded =
+            !!(await downloadBibleMissingMedia(
+              media,
+              langwritten,
+              meetingDate,
+            )) || mediaWasDownloaded;
+          continue;
+        }
 
-          let min = 0;
-          let max = 0;
-          const verses = media.VerseNumbers?.sort((a, b) => a - b);
-
-          if (verses) {
-            min = timeToSeconds(
-              chapterMedia.map((item) =>
-                item.markers.markers.find(
-                  (marker) => marker.verseNumber === verses[0],
-                ),
-              )?.[0]?.startTime || '0',
-            );
-
-            const endVerse = chapterMedia.map((item) =>
-              item.markers.markers.find(
-                (marker) => marker.verseNumber === verses.at(-1),
-              ),
-            )?.[0];
-
-            max = endVerse
-              ? timeToSeconds(endVerse.startTime) +
-                timeToSeconds(endVerse.duration)
-              : 0;
-          }
-
-          const uniqueId = await downloadAdditionalRemoteVideo(
-            chapterMedia,
-            meetingDate || undefined,
-            media.ThumbnailFilePath,
-            false,
-            media.Label,
-            undefined,
-            { max, min },
-          );
-
-          if (!uniqueId) {
-            continue;
-          }
-          mediaWasDownloaded = true;
-        } else {
-          try {
-            if (!media.FilePath || !(await pathExists(media.FilePath))) {
-              const {
-                FilePath,
-                Label,
-                StreamDuration,
-                StreamThumbnailUrl,
-                StreamUrl,
-              } = await downloadMissingMedia(
-                publicationFetcher,
-                meetingDate || currentStateStore.selectedDate,
-                isDynamicMedia,
-                true,
-              );
-              media.FilePath = FilePath ?? media.FilePath;
-              media.Label = keepMediaLabels
-                ? media.Label || Label || ''
-                : Label || media.Label;
-              media.StreamUrl = StreamUrl ?? media.StreamUrl;
-              media.Duration = StreamDuration ?? media.Duration;
-              media.ThumbnailUrl = StreamThumbnailUrl ?? media.ThumbnailUrl;
-            }
-            if (!media.FilePath && !media.StreamUrl) {
-              continue;
-            }
-            mediaWasDownloaded = true;
-            if (!media.Label) {
-              media.Label =
-                media.Label ||
-                media.Caption ||
-                (await getJwMediaInfo(publicationFetcher)).title ||
-                '';
-            }
-          } catch (e) {
-            errorCatcher(e);
-          }
+        try {
+          mediaWasDownloaded =
+            (await downloadStandardMissingMedia({
+              isDynamicMedia,
+              keepMediaLabels,
+              media,
+              meetingDate,
+              publicationFetcher,
+            })) || mediaWasDownloaded;
+        } catch (e) {
+          errorCatcher(e);
         }
       }
+
       if (!mediaWasDownloaded) {
-        for (const triedPublicationFetcher of triedPublicationFetchers) {
-          const downloadId = getPubId(triedPublicationFetcher, true);
-          currentStateStore.downloadProgress[downloadId] = {
-            error: true,
-            filename: downloadId,
-            meetingDate,
-          };
-        }
+        markMissingMediaDownloadErrors(triedPublicationFetchers, meetingDate);
         errors.push(...triedPublicationFetchers);
       }
     }
@@ -4059,55 +5038,209 @@ export const getPubMediaLinks = async (
   }
 };
 
-export const getJwMepsInfo = async () => {
-  try {
-    const jwStore = useJwStore();
+// Guards against overlapping runs: the download + 3-level unzip below takes long
+// enough that the urlVariables watcher in MainLayout.vue can re-trigger a second
+// call before the first finishes, racing two extractions into the same directory.
+let jwMepsInfoPromise: null | Promise<void> = null;
 
-    if (!shouldUpdateList(jwStore.jwMepsLanguages, 3)) {
-      return;
-    }
+export const getJwMepsInfo = (): Promise<void> => {
+  if (jwMepsInfoPromise) return jwMepsInfoPromise;
+  if (isDemoModeActive()) return Promise.resolve();
 
-    const file = await downloadMissingMedia({
-      fileformat: 'ZIP',
-      langwritten: 'E',
-      pub: 'jwlb',
-    });
-    if (!file.FilePath) return;
-    const dir = dirname(file.FilePath);
-    await unzip(file.FilePath, dir);
-    const msixbundle = await findFile(dir, '.msixbundle');
-    if (!msixbundle) return;
-    await unzip(msixbundle, dir);
-    const msix = await findFile(dir, '_x64.msix');
-    if (!msix) return;
-    await unzip(msix, dir);
-    const mepsunit = await findFile(join(dir, 'Data'), '.db');
-    if (!mepsunit) return;
-    const dynamicMepsLangs = globalThis.electronApi
-      .executeQuery<JwMepsLanguage>(
-        mepsunit,
-        'SELECT LanguageId, PrimaryIetfCode, Symbol FROM Language',
-      )
-      .map((l) => ({
+  jwMepsInfoPromise = (async () => {
+    try {
+      const jwStore = useJwStore();
+
+      if (!shouldUpdateList(jwStore.jwMepsLanguages, 3)) {
+        return;
+      }
+
+      const file = await downloadMissingMedia({
+        fileformat: 'ZIP',
+        langwritten: 'E',
+        pub: 'jwlb',
+      });
+      if (!file.FilePath) return;
+      const dir = dirname(file.FilePath);
+      await unzip(file.FilePath, dir);
+      const msixbundle = await findFile(dir, '.msixbundle');
+      if (!msixbundle) return;
+      await unzip(msixbundle, dir);
+      const msix = await findFile(dir, '_x64.msix');
+      if (!msix) return;
+      await unzip(msix, dir);
+      const mepsunit = await findFile(join(dir, 'Data'), '.db');
+      if (!mepsunit) return;
+      const dynamicMepsLangs = (
+        await globalThis.electronApi.executeQuery<JwMepsLanguage>(
+          mepsunit,
+          'SELECT LanguageId, PrimaryIetfCode, Symbol FROM Language',
+        )
+      ).map((l) => ({
         ...l,
         PrimaryIetfCode: l.PrimaryIetfCode.toLowerCase() as JwLangSymbol,
       }));
-    if (dynamicMepsLangs.length < jwStore.jwMepsLanguages.list.length) return;
-    jwStore.jwMepsLanguages = {
-      list: dynamicMepsLangs,
-      updated: new Date(),
-    };
-  } catch (e) {
-    errorCatcher(e);
+      if (dynamicMepsLangs.length < jwStore.jwMepsLanguages.list.length) {
+        return;
+      }
+      jwStore.jwMepsLanguages = {
+        list: dynamicMepsLangs,
+        updated: new Date(),
+      };
+    } catch (e) {
+      errorCatcher(e);
+    } finally {
+      jwMepsInfoPromise = null;
+    }
+  })();
+
+  return jwMepsInfoPromise;
+};
+
+const findExistingPublicationFile = async (
+  publication: PublicationFetcher,
+  pubDir: string,
+) => {
+  if (!(await pathExists(pubDir))) return { FilePath: '' };
+
+  const dirItems = await readdir(pubDir);
+
+  // JW media filenames drop the trailing "00" day placeholder some issue
+  // tags carry (e.g. issue 20241000 downloads as "..._202410_...", never
+  // "..._20241000_..."), so match on that truncated form instead of the
+  // raw value.
+  const issueStr = publication.issue?.toString();
+  const issueParam =
+    issueStr?.endsWith('00') && issueStr.length > 2
+      ? issueStr.slice(0, -2)
+      : issueStr;
+
+  // Mirrors fetchPubMediaLinks' own docid-vs-pub priority (see api.ts): a
+  // real download only ever encodes ONE of the two in its filename - docid
+  // alone, or pub+issue+track, never both. createMissingMediaPublicationFetcher
+  // sets both on the same object regardless of which one the download
+  // actually ends up using, so requiring every one of them to match (as
+  // this used to) could never find a file that was actually fetched via
+  // the pub+issue+track fallback (e.g. sign-language media, see the docid
+  // priority fix in fetchPubMediaLinks).
+  const params = [
+    issueParam,
+    publication.track,
+    publication.pub,
+    publication.pub ? undefined : publication.docid,
+  ]
+    .filter((item) => item !== undefined && item !== null)
+    .map((item) => item.toString());
+
+  const matchingFile = dirItems.find((item) => {
+    if (!item.isFile || !item.name) return false;
+
+    const filePath = join(pubDir, item.name);
+    const fileExtension = extname(filePath).toLowerCase();
+    const nameMatches = params.every((param) =>
+      basename(item.name).includes(param),
+    );
+    const formatMatches =
+      !publication.fileformat ||
+      fileExtension.includes(publication.fileformat.toLowerCase());
+
+    return nameMatches && formatMatches;
+  });
+
+  return matchingFile
+    ? { FilePath: join(pubDir, matchingFile.name) }
+    : { FilePath: '' };
+};
+
+const getPublicationMediaItems = (
+  publication: PublicationFetcher,
+  responseObject: Publication,
+) => {
+  if (!publication.fileformat && publication.langwritten) {
+    publication.fileformat = Object.keys(
+      responseObject.files[publication.langwritten] || {},
+    )[0] as keyof PublicationFiles;
+  }
+
+  if (!publication.langwritten || !publication.fileformat) return [];
+
+  return (
+    responseObject.files[publication.langwritten]?.[publication.fileformat] ||
+    []
+  );
+};
+
+const shouldDownloadLowPriority = (
+  isMemorialMeeting: boolean,
+  meetingDate: string | undefined,
+) => {
+  if (isMemorialMeeting || !meetingDate) return false;
+  return getDateDiff(meetingDate, new Date(), 'days') > 1;
+};
+
+const downloadRelatedMediaAssets = async ({
+  bestItem,
+  downloadedFile,
+  isMemorialMeeting,
+  jwMediaInfo,
+  meetingDate,
+  pubDir,
+}: {
+  bestItem: MediaLink;
+  downloadedFile: DownloadedFile;
+  isMemorialMeeting: boolean;
+  jwMediaInfo: {
+    duration: number;
+    subtitles: string;
+    thumbnail: string;
+    title: string;
+  };
+  meetingDate?: string;
+  pubDir: string;
+}) => {
+  const currentStateStore = useCurrentStateStore();
+  const relatedUrls = [
+    currentStateStore.currentSettings?.enableSubtitles
+      ? jwMediaInfo.subtitles
+      : undefined,
+    jwMediaInfo.thumbnail,
+  ].filter((url): url is string => !!url);
+
+  for (const itemUrl of relatedUrls) {
+    const itemFilename = changeExt(
+      basename(bestItem.file.url),
+      extname(itemUrl),
+    );
+
+    if (
+      bestItem.file?.url &&
+      (downloadedFile?.new || !(await pathExists(join(pubDir, itemFilename))))
+    ) {
+      await downloadFileIfNeeded({
+        dir: pubDir,
+        filename: itemFilename,
+        lowPriority: shouldDownloadLowPriority(isMemorialMeeting, meetingDate),
+        meetingDate,
+        url: itemUrl,
+      });
+    }
   }
 };
+
+interface MissingMediaDownloadResult {
+  FilePath: string;
+  Label?: string;
+  StreamDuration?: number;
+  StreamThumbnailUrl?: string;
+  StreamUrl?: string;
+}
 
 const downloadMissingMedia = async (
   publication: PublicationFetcher,
   meetingDate?: string,
   isDynamicMedia = false,
   suppressDownloadError = false,
-) => {
+): Promise<MissingMediaDownloadResult> => {
   try {
     const currentStateStore = useCurrentStateStore();
     const isMemorialMeeting =
@@ -4127,56 +5260,13 @@ const downloadMissingMedia = async (
       suppressDownloadError,
     );
     if (!responseObject?.files) {
-      if (!(await pathExists(pubDir))) return { FilePath: '' };
-      const files: string[] = [];
-      const dirItems = await readdir(pubDir);
-      const items = dirItems.filter((item) => item.isFile);
-      for (const item of items) {
-        const filePath = join(pubDir, item.name);
-        const fileExtension = extname(filePath).toLowerCase();
-
-        let match = true;
-        const params = [
-          publication.issue,
-          publication.track,
-          publication.pub,
-          publication.docid,
-        ]
-          .filter((i) => i !== undefined && i !== null)
-          .map((i) => i.toString());
-
-        for (const test of params) {
-          if (!item.name || !basename(item.name).includes(test)) {
-            match = false;
-            break;
-          }
-        }
-        if (
-          match &&
-          publication.fileformat &&
-          !fileExtension.includes(publication.fileformat.toLowerCase())
-        ) {
-          match = false;
-        }
-
-        if (match) {
-          files.push(filePath);
-        }
-      }
-      return files.length > 0 ? { FilePath: files[0] } : { FilePath: '' };
+      return findExistingPublicationFile(publication, pubDir);
     }
-    if (!responseObject) return { FilePath: '' };
-    if (!publication.fileformat && publication.langwritten) {
-      publication.fileformat = Object.keys(
-        responseObject.files[publication.langwritten] || {},
-      )[0] as keyof PublicationFiles;
-    }
-    const mediaItemLinks =
-      publication.langwritten && publication.fileformat
-        ? responseObject.files[publication.langwritten]?.[
-            publication.fileformat
-          ] || []
-        : [];
+
+    const mediaItemLinks = getPublicationMediaItems(
+      publication,
+      responseObject,
+    );
     const bestItem = findBestResolution(
       mediaItemLinks,
       useCurrentStateStore().currentSettings?.maxRes,
@@ -4203,60 +5293,192 @@ const downloadMissingMedia = async (
       size: bestItem.filesize,
       url: bestItem.file.url,
     });
-    for (const itemUrl of [
-      currentStateStore.currentSettings?.enableSubtitles
-        ? jwMediaInfo.subtitles
-        : undefined,
-      jwMediaInfo.thumbnail,
-    ].filter((u): u is string => !!u)) {
-      const itemFilename = changeExt(
-        basename(bestItem.file.url),
-        extname(itemUrl),
-      );
-
-      let lowPriority = false;
-
-      if (!isMemorialMeeting && meetingDate) {
-        lowPriority = getDateDiff(meetingDate, new Date(), 'days') > 1;
-      }
-
-      if (
-        bestItem.file?.url &&
-        (downloadedFile?.new || !(await exists(join(pubDir, itemFilename))))
-      ) {
-        await downloadFileIfNeeded({
-          dir: pubDir,
-          filename: itemFilename,
-          lowPriority,
-          meetingDate,
-          url: itemUrl,
-        });
-      }
+    if (downloadedFile.error) {
+      return { FilePath: '' };
     }
+    await downloadRelatedMediaAssets({
+      bestItem,
+      downloadedFile,
+      isMemorialMeeting,
+      jwMediaInfo,
+      meetingDate,
+      pubDir,
+    });
     return {
-      FilePath: join(pubDir, basename(bestItem.file.url)),
+      FilePath: downloadedFile.path,
       Label: bestItem.title,
       StreamDuration: bestItem.duration,
       StreamThumbnailUrl: jwMediaInfo.thumbnail,
       StreamUrl: bestItem.file.url,
     };
   } catch (e) {
-    errorCatcher(e);
+    errorCatcher(e, {
+      contexts: {
+        fn: {
+          isDynamicMedia,
+          meetingDate,
+          name: 'downloadMissingMedia',
+          publication,
+        },
+      },
+    });
     return { FilePath: '' };
   }
 };
 
+const getMediaLinkUrl = (item: MediaItemsMediatorFile | MediaLink) => {
+  if ('progressiveDownloadURL' in item) return item.progressiveDownloadURL;
+  return item.file.url;
+};
+
+const createPinyinAdditionalMedia = async ({
+  bestItemUrl,
+  currentSettings,
+  onlyCreateItem,
+  section,
+  song,
+  title,
+}: {
+  bestItemUrl: string | undefined;
+  currentSettings: ReturnType<typeof useCurrentStateStore>['currentSettings'];
+  onlyCreateItem: boolean;
+  section?: MediaSectionIdentifier;
+  song: false | number | string;
+  title?: string;
+}) => {
+  if (
+    !song ||
+    currentSettings?.lang !== 'CHS' ||
+    !currentSettings?.enablePinyinSongs ||
+    !useCurrentStateStore().pinyinActive ||
+    !currentSettings?.pinyinSongFolder
+  ) {
+    return undefined;
+  }
+
+  const trackNum = String(song).padStart(3, '0');
+  const pinyinPath = join(
+    currentSettings.pinyinSongFolder,
+    `sjjm_s-Pi_CHS_${trackNum}_r720P.mp4`,
+  );
+  if (!(await pathExists(pinyinPath))) return undefined;
+
+  const mediaOptions = {
+    song: song.toString(),
+    title,
+    url: bestItemUrl,
+  };
+
+  if (onlyCreateItem) {
+    return createMediaItemFromPath(pinyinPath, undefined, mediaOptions);
+  }
+
+  return addToAdditionMediaMapFromPath(
+    pinyinPath,
+    section,
+    undefined,
+    mediaOptions,
+  );
+};
+
+const queueAdditionalMediaDownload = ({
+  bestItem,
+  bestItemUrl,
+  datedAdditionalMediaDir,
+  meetingDate,
+  progressCategory,
+}: {
+  bestItem: MediaItemsMediatorFile | MediaLink;
+  bestItemUrl: string;
+  datedAdditionalMediaDir: string;
+  meetingDate?: string;
+  progressCategory: FileDownloader['progressCategory'];
+}) => {
+  downloadFileIfNeeded({
+    dir: datedAdditionalMediaDir,
+    lowPriority: false,
+    meetingDate,
+    progressCategory,
+    size: bestItem.filesize,
+    url: bestItemUrl,
+  });
+};
+
+const isRemoteUrl = (value: string) => /^https?:\/\//i.test(value);
+
+/**
+ * Resolves the thumbnail to use for a remote video, in priority order:
+ * an explicitly provided thumbnail (e.g. one embedded in a jwpub/playlist
+ * package), then a website thumbnail looked up from `thumbnailLookup`.
+ * Any remote (http/https) thumbnail is downloaded and cached alongside the
+ * video so it survives offline use; local file:// thumbnails pass through
+ * untouched. If neither source yields anything, both fields are undefined
+ * and the caller falls back to the video-embedded/frame-grab thumbnail once
+ * the video file itself is available (see getThumbnailUrl in helpers/fs.ts).
+ * `remoteUrl` (the original http(s) source, when there was one) is returned
+ * alongside `localUrl` so it can be persisted on the media item and reused
+ * to redownload the thumbnail later if the local copy goes missing.
+ */
+const resolveRemoteThumbnailUrl = async (
+  thumbnailUrl: string | undefined,
+  thumbnailLookup: PublicationFetcher | undefined,
+  dir: string,
+): Promise<{ localUrl: string | undefined; remoteUrl: string | undefined }> => {
+  try {
+    const resolvedUrl =
+      thumbnailUrl ||
+      (thumbnailLookup
+        ? (await getJwMediaInfo(thumbnailLookup)).thumbnail || undefined
+        : undefined);
+    if (!resolvedUrl || !isRemoteUrl(resolvedUrl)) {
+      return { localUrl: resolvedUrl, remoteUrl: undefined };
+    }
+
+    const { path } = await downloadFileIfNeeded({
+      dir,
+      lowPriority: true,
+      url: resolvedUrl,
+    });
+    return {
+      localUrl: path ? pathToFileURL(path) : resolvedUrl,
+      remoteUrl: resolvedUrl,
+    };
+  } catch (e) {
+    errorCatcher(e);
+    return { localUrl: thumbnailUrl, remoteUrl: undefined };
+  }
+};
+
+export interface DownloadAdditionalRemoteVideoOptions {
+  appendToEnd?: boolean;
+  customDuration?: { max: number; min: number };
+  mediaItemLinks: MediaItemsMediatorFile[] | MediaLink[];
+  meetingDate?: string;
+  onlyCreateItem?: boolean;
+  progressCategory?: FileDownloader['progressCategory'];
+  section?: MediaSectionIdentifier;
+  song?: false | number | string;
+  thumbnailLookup?: PublicationFetcher;
+  thumbnailUrl?: string;
+  title?: string;
+}
+
 export const downloadAdditionalRemoteVideo = async (
-  mediaItemLinks: MediaItemsMediatorFile[] | MediaLink[],
-  meetingDate?: string,
-  thumbnailUrl?: string,
-  song: false | number | string = false,
-  title?: string,
-  section?: MediaSectionIdentifier,
-  customDuration?: { max: number; min: number },
-  onlyCreateItem = false,
-  progressCategory?: FileDownloader['progressCategory'],
+  options: DownloadAdditionalRemoteVideoOptions,
 ): Promise<MediaItem | string | undefined> => {
+  const {
+    appendToEnd = false,
+    customDuration,
+    mediaItemLinks,
+    meetingDate,
+    onlyCreateItem = false,
+    progressCategory,
+    section,
+    song = false,
+    thumbnailLookup,
+    thumbnailUrl: thumbnailUrlOption,
+    title,
+  } = options;
   try {
     const currentStateStore = useCurrentStateStore();
     const currentSettings = currentStateStore.currentSettings;
@@ -4265,45 +5487,18 @@ export const downloadAdditionalRemoteVideo = async (
       mediaItemLinks,
       currentSettings?.maxRes,
     );
-
-    let bestItemUrl: string | undefined;
-
-    if (bestItem) {
-      if ('progressiveDownloadURL' in bestItem) {
-        bestItemUrl = bestItem.progressiveDownloadURL;
-      } else {
-        bestItemUrl = bestItem.file.url;
-      }
-    }
+    const bestItemUrl = bestItem ? getMediaLinkUrl(bestItem) : undefined;
 
     // Pinyin song substitution: use local pinyin file instead of downloading
-    if (
-      song &&
-      currentSettings?.lang === 'CHS' &&
-      currentSettings?.enablePinyinSongs &&
-      currentStateStore.pinyinActive &&
-      currentSettings?.pinyinSongFolder
-    ) {
-      const trackNum = String(song).padStart(3, '0');
-      const pinyinPath = join(
-        currentSettings.pinyinSongFolder,
-        `sjjm_s-Pi_CHS_${trackNum}_r720P.mp4`,
-      );
-      if (await pathExists(pinyinPath)) {
-        if (onlyCreateItem) {
-          return createMediaItemFromPath(pinyinPath, undefined, {
-            song: song.toString(),
-            title,
-            url: bestItemUrl,
-          });
-        }
-        return addToAdditionMediaMapFromPath(pinyinPath, section, undefined, {
-          song: song.toString(),
-          title,
-          url: bestItemUrl,
-        });
-      }
-    }
+    const pinyinMedia = await createPinyinAdditionalMedia({
+      bestItemUrl,
+      currentSettings,
+      onlyCreateItem,
+      section,
+      song,
+      title,
+    });
+    if (pinyinMedia) return pinyinMedia;
 
     if (!bestItem || !bestItemUrl) return undefined;
 
@@ -4315,6 +5510,13 @@ export const downloadAdditionalRemoteVideo = async (
       meetingDate || currentStateStore.selectedDate,
     );
 
+    const { localUrl: thumbnailUrl, remoteUrl: thumbnailStreamUrl } =
+      await resolveRemoteThumbnailUrl(
+        thumbnailUrlOption,
+        thumbnailLookup,
+        datedAdditionalMediaDir,
+      );
+
     const mediaFilePath = join(datedAdditionalMediaDir, basename(bestItemUrl));
 
     if (onlyCreateItem) {
@@ -4325,6 +5527,7 @@ export const downloadAdditionalRemoteVideo = async (
           duration: bestItem.duration,
           filesize: bestItem.filesize,
           song: song ? song.toString() : undefined,
+          thumbnailStreamUrl,
           thumbnailUrl,
           title,
           url: bestItemUrl,
@@ -4332,14 +5535,12 @@ export const downloadAdditionalRemoteVideo = async (
         customDuration,
       );
 
-      downloadFileIfNeeded({
-        dir: datedAdditionalMediaDir,
-        // Additional media added by user should be a high priority download
-        lowPriority: false,
+      queueAdditionalMediaDownload({
+        bestItem,
+        bestItemUrl,
+        datedAdditionalMediaDir,
         meetingDate,
         progressCategory,
-        size: bestItem.filesize,
-        url: bestItemUrl,
       });
 
       return mediaItem;
@@ -4353,21 +5554,21 @@ export const downloadAdditionalRemoteVideo = async (
         duration: bestItem.duration,
         filesize: bestItem.filesize,
         song: song ? song.toString() : undefined,
+        thumbnailStreamUrl,
         thumbnailUrl,
         title,
         url: bestItemUrl,
       },
       customDuration,
+      appendToEnd,
     );
 
-    downloadFileIfNeeded({
-      dir: datedAdditionalMediaDir,
-      // Additional media added by user should be a high priority download
-      lowPriority: false,
+    queueAdditionalMediaDownload({
+      bestItem,
+      bestItemUrl,
+      datedAdditionalMediaDir,
       meetingDate,
       progressCategory,
-      size: bestItem.filesize,
-      url: bestItemUrl,
     });
 
     const key = bestItemUrl + datedAdditionalMediaDir;
@@ -4378,41 +5579,46 @@ export const downloadAdditionalRemoteVideo = async (
   }
 };
 
+const getPreferredImageTypes = (square: boolean): (keyof ImageTypeSizes)[] => {
+  if (square) return ['sqr', 'wss', 'lsr', 'pnr'];
+  return ['wss', 'lsr', 'sqr', 'pnr'];
+};
+
+const getImageSizesToConsider = (
+  minSize: keyof ImageSizes | undefined,
+): (keyof ImageSizes)[] => {
+  const sizeOrder: (keyof ImageSizes)[] = ['sm', 'md', 'lg', 'xl'];
+  const startIndex = minSize ? sizeOrder.indexOf(minSize) : 0;
+  return sizeOrder.slice(startIndex);
+};
+
+const getFirstPreferredImageSize = (
+  imageSizes: ImageSizes,
+  sizesToConsider: (keyof ImageSizes)[],
+) => {
+  const preferredSize = sizesToConsider.find((size) => size in imageSizes);
+  if (preferredSize) return imageSizes[preferredSize];
+
+  const fallbackSize = (Object.keys(imageSizes) as (keyof ImageSizes)[]).find(
+    (size) => !sizesToConsider.includes(size),
+  );
+  return fallbackSize ? imageSizes[fallbackSize] : undefined;
+};
+
 export function getBestImageUrl(
   images: ImageTypeSizes,
   minSize?: keyof ImageSizes,
   square = false,
 ) {
   try {
-    const preferredOrder: (keyof ImageTypeSizes)[] = [
-      'wss',
-      'lsr',
-      'sqr',
-      'pnr',
-    ];
-    if (square) {
-      const sqrIndex = preferredOrder.indexOf('sqr');
-      if (sqrIndex !== -1) {
-        preferredOrder.splice(sqrIndex, 1);
-        preferredOrder.unshift('sqr');
-      }
-    }
-    const sizeOrder: (keyof ImageSizes)[] = ['sm', 'md', 'lg', 'xl'];
-    const startIndex = minSize ? sizeOrder.indexOf(minSize) : 0;
-    const sizesToConsider = sizeOrder.slice(startIndex);
-    for (const key of preferredOrder) {
-      if (images[key] !== undefined) {
-        for (const size of sizesToConsider) {
-          if (size in images[key]) return images[key][size];
-        }
-        // If none of the preferred sizes are found, return any other size
-        const otherSizes = (
-          Object.keys(images[key]) as (keyof ImageSizes)[]
-        ).find((size) => !sizesToConsider.includes(size));
-        if (otherSizes) {
-          return images[key][otherSizes];
-        }
-      }
+    const sizesToConsider = getImageSizesToConsider(minSize);
+
+    for (const key of getPreferredImageTypes(square)) {
+      const imageSizes = images[key];
+      if (!imageSizes) continue;
+
+      const imageUrl = getFirstPreferredImageSize(imageSizes, sizesToConsider);
+      if (imageUrl) return imageUrl;
     }
   } catch (e) {
     errorCatcher(e);
@@ -4718,7 +5924,7 @@ const downloadJwpub = async (
       };
       const cachedJwpub = await getExistingJwpub(publicationDir);
       if (cachedJwpub.path) return cachedJwpub;
-      return { new: false, path: '' };
+      return { error: true, new: false, path: '' };
     };
     const publicationInfo = await getPubMediaLinks(publication, meetingDate);
     if (!publicationInfo?.files) {
@@ -4802,6 +6008,15 @@ export const setUrlVariables = async (baseUrl: string | undefined) => {
     jwStore.urlVariables.pubMedia = '';
   };
 
+  const isHttpsUrl = (value?: string) => {
+    if (!value) return false;
+    try {
+      return new URL(value).protocol === 'https:';
+    } catch {
+      return false;
+    }
+  };
+
   const isValidUrlBasePart = (basePart?: string) => {
     if (!basePart) return false;
     const basePartWithoutPath = basePart.split('/')[0];
@@ -4864,12 +6079,14 @@ export const setUrlVariables = async (baseUrl: string | undefined) => {
     }
 
     const attributes = { ...div?.[0]?.attribs };
+    const mediatorUrl = attributes['data-mediator_url'];
+    const pubMediaUrl = attributes['data-pubmedia_url'];
 
-    if (attributes['data-mediator_url']) {
-      jwStore.urlVariables.mediator = attributes['data-mediator_url'];
+    if (mediatorUrl && isHttpsUrl(mediatorUrl)) {
+      jwStore.urlVariables.mediator = mediatorUrl;
     }
-    if (attributes['data-pubmedia_url']) {
-      jwStore.urlVariables.pubMedia = attributes['data-pubmedia_url'];
+    if (pubMediaUrl && isHttpsUrl(pubMediaUrl)) {
+      jwStore.urlVariables.pubMedia = pubMediaUrl;
     }
 
     if (!jwStore.urlVariables.mediator || !jwStore.urlVariables.pubMedia) {

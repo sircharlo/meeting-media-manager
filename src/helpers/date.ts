@@ -220,11 +220,13 @@ export const isMeetingDay = (lookupDate?: Date) => {
 };
 
 export function updateLookupPeriod({
-  allCongregations,
+  congregationIds,
+  multipleCongregations,
   onlyForWeekIncluding,
   reset,
 }: {
-  allCongregations?: boolean;
+  congregationIds?: string[];
+  multipleCongregations?: boolean;
   onlyForWeekIncluding?: string;
   reset?: boolean;
 } = {}) {
@@ -233,8 +235,8 @@ export function updateLookupPeriod({
 
     if (!lookupPeriod || typeof lookupPeriod !== 'object') return;
 
-    if (reset && allCongregations) {
-      resetAllCongregations(lookupPeriod);
+    if (reset && multipleCongregations) {
+      resetAllCongregations(lookupPeriod, congregationIds);
       return;
     }
 
@@ -313,18 +315,22 @@ function getDaysForWeek(days: DateInfo[], dateStr: string) {
 
 function resetAllCongregations(
   lookupPeriod: Partial<Record<string, (DateInfo | undefined)[]>>,
+  congregationIds?: string[],
 ) {
-  const congregationIds = Object.keys(lookupPeriod).filter(
-    (id) => id && Array.isArray(lookupPeriod[id]),
+  const targetCongregationIds = Object.keys(lookupPeriod).filter(
+    (id) =>
+      id &&
+      Array.isArray(lookupPeriod[id]) &&
+      (!congregationIds || congregationIds.includes(id)),
   );
 
   log(
-    `🔄 [updateLookupPeriod] Resetting dynamic media for ${congregationIds.length} congregations`,
+    `🔄 [updateLookupPeriod] Resetting dynamic media for ${targetCongregationIds.length} congregations`,
     'dateHelpers',
     'log',
   );
 
-  for (const congId of congregationIds) {
+  for (const congId of targetCongregationIds) {
     try {
       const days = lookupPeriod[congId];
       if (!Array.isArray(days)) continue;
@@ -406,6 +412,7 @@ function updateMeetingScheduleIfNeeded(settings: SettingsValues) {
 
   // Notify user
   createTemporaryNotification({
+    deferWhileDialogOpen: true,
     message: i18n.global.t('meeting-schedule-change-applied'),
     timeout: 10000,
     type: 'info',
@@ -425,38 +432,53 @@ function updateMeetingScheduleIfNeeded(settings: SettingsValues) {
   updateLookupPeriod({ reset: true });
 }
 
-export const remainingTimeBeforeMeetingStart = () => {
+// Today's meeting start time as an actual Date, or null if today isn't a
+// meeting day or no start time is configured. Shared by
+// remainingTimeBeforeMeetingStart() and anything that needs to display the
+// planned start time itself, not just a countdown to it.
+export const getTodaysMeetingStartDateTime = (
+  referenceDate = new Date(),
+): Date | null => {
   try {
     const currentState = useCurrentStateStore();
     const meetingDay =
       !!currentState.isSelectedDayToday &&
       !!currentState.selectedDayMeetingType;
-    if (meetingDay) {
-      const now = new Date();
-      const weMeeting = currentState.selectedDayMeetingType === 'we';
-      const meetingStartTimes = shouldUseChangedMeetingSchedule(now)
-        ? {
-            mw:
-              currentState.currentSettings?.meetingScheduleChangeMwStartTime ??
-              currentState.currentSettings?.mwStartTime,
-            we:
-              currentState.currentSettings?.meetingScheduleChangeWeStartTime ??
-              currentState.currentSettings?.weStartTime,
-          }
-        : {
-            mw: currentState.currentSettings?.mwStartTime,
-            we: currentState.currentSettings?.weStartTime,
-          };
-      const meetingStartTime = meetingStartTimes[weMeeting ? 'we' : 'mw'];
-      if (!meetingStartTime) return 0;
-      const [hours, minutes] = meetingStartTime.split(':').map(Number);
-      const meetingStartDateTime = new Date(now);
-      meetingStartDateTime.setHours(hours ?? 0, minutes, 0, 0);
-      const dateDiff = getDateDiff(meetingStartDateTime, now, 'seconds');
-      return dateDiff;
-    } else {
-      return 0;
-    }
+    if (!meetingDay) return null;
+
+    const now = new Date(referenceDate);
+    const weMeeting = currentState.selectedDayMeetingType === 'we';
+    const meetingStartTimes = shouldUseChangedMeetingSchedule(now)
+      ? {
+          mw:
+            currentState.currentSettings?.meetingScheduleChangeMwStartTime ??
+            currentState.currentSettings?.mwStartTime,
+          we:
+            currentState.currentSettings?.meetingScheduleChangeWeStartTime ??
+            currentState.currentSettings?.weStartTime,
+        }
+      : {
+          mw: currentState.currentSettings?.mwStartTime,
+          we: currentState.currentSettings?.weStartTime,
+        };
+    const meetingStartTime = meetingStartTimes[weMeeting ? 'we' : 'mw'];
+    if (!meetingStartTime) return null;
+
+    const [hours, minutes] = meetingStartTime.split(':').map(Number);
+    const meetingStartDateTime = new Date(now);
+    meetingStartDateTime.setHours(hours ?? 0, minutes, 0, 0);
+    return meetingStartDateTime;
+  } catch (error) {
+    errorCatcher(error);
+    return null;
+  }
+};
+
+export const remainingTimeBeforeMeetingStart = (referenceDate = new Date()) => {
+  try {
+    const meetingStartDateTime = getTodaysMeetingStartDateTime(referenceDate);
+    if (!meetingStartDateTime) return 0;
+    return getDateDiff(meetingStartDateTime, referenceDate, 'seconds');
   } catch (error) {
     errorCatcher(error);
     return 0;

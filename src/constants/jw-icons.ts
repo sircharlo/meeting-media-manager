@@ -2,6 +2,7 @@
  * Centralized map of JW Icons Unicode strings
  * Keys are the identifiers used in the app, values are the Unicode escape sequences
  */
+// Source font: https://wol.jw.org/assets/fonts/jw-icons-all-ad2eb6a.woff (auto-refreshed 2026-07-20)
 export const fallbackJwIconsGlyphMap: Record<string, string> = {
   arena: '\ue60a',
   'awake-exclamation-mark': '\ue646',

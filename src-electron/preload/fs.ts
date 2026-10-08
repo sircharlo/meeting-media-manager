@@ -1,22 +1,132 @@
 // eslint-env node
 
 import type { IOptions } from 'music-metadata';
-import type { FileItem, VideoDuration } from 'src/types';
+import type { ElectronFsApi, FileItem, VideoDuration } from 'src/types';
 
-import { type Dirent, exists, readdir, stat } from 'fs-extra';
+import {
+  copy,
+  copyFile,
+  type Dirent,
+  emptyDir,
+  ensureDir,
+  ensureFile,
+  move,
+  pathExists,
+  readdir,
+  readFile,
+  readJSON,
+  remove,
+  rename,
+  stat,
+  writeFile,
+} from 'fs-extra';
 import url from 'node:url';
 import { PLATFORM } from 'src-electron/constants';
 import { capturePreloadError } from 'src-electron/preload/log';
 import { join, normalize } from 'upath';
 
+// Short-circuits before the IPC round-trip on non-macOS - this runs ahead
+// of every fs call below, so skipping it there (not just in the main-
+// process handler, which would still no-op but only after the hop) matters
+// for every Windows/Linux user, not just the macOS ones that need it.
+//
+// Lazily imported (like the media-parsing libraries below) rather than at
+// module scope - a test mock re-exports pure path helpers from this file
+// without going through Electron, and a static import of the ipcRenderer
+// wrapper would drag in an unresolvable 'electron/renderer' for it.
+const startSecurityScopedAccess = async (filePath: string) => {
+  if (PLATFORM !== 'darwin') return;
+  const { invoke } = await import('src-electron/preload/ipc');
+  await invoke('startSecurityScopedAccess', filePath);
+};
+
+const activatePaths = async (...paths: (string | undefined)[]) => {
+  if (PLATFORM !== 'darwin') return;
+  for (const path of paths) {
+    if (path) await startSecurityScopedAccess(path);
+  }
+};
+
+// All of these read/write arbitrary user-chosen paths (cache folder,
+// watched folder, additional media, ...) directly in the preload/renderer
+// process - see the getVideoDuration/parseMediaFile comment below for why
+// that means a macOS security-scoped bookmark activated in the main
+// process doesn't cover them on its own. Confirmed to matter for more than
+// just media reads: MMM-V2-3FN (open) and MMM-V2-3FS (unlink) hit the same
+// gap on two different operations for the same user/folder.
+export const fs: ElectronFsApi = {
+  copy: async (src, dest, options) => {
+    await activatePaths(src, dest);
+    return copy(src, dest, options as never);
+  },
+  copyFile: async (src, dest, mode) => {
+    await activatePaths(src, dest);
+    return copyFile(src, dest, mode);
+  },
+  emptyDir: async (dir) => {
+    await activatePaths(dir);
+    return emptyDir(dir);
+  },
+  ensureDir: async (dir, options) => {
+    await activatePaths(dir);
+    return ensureDir(dir, options as never);
+  },
+  ensureFile: async (file) => {
+    await activatePaths(file);
+    return ensureFile(file);
+  },
+  move: async (src, dest, options) => {
+    await activatePaths(src, dest);
+    return move(src, dest, options as never);
+  },
+  pathExists: async (path) => {
+    await activatePaths(path);
+    return pathExists(path);
+  },
+  readFile: (async (path: string, options?: unknown) => {
+    await activatePaths(path);
+    return readFile(path, options as never);
+  }) as ElectronFsApi['readFile'],
+  readJSON: async (file, options) => {
+    await activatePaths(file);
+    return readJSON(file, options);
+  },
+  remove: async (path) => {
+    await activatePaths(path);
+    return remove(path);
+  },
+  rename: async (oldPath, newPath) => {
+    await activatePaths(oldPath, newPath);
+    return rename(oldPath, newPath);
+  },
+  stat: async (path) => {
+    await activatePaths(path);
+    return stat(path);
+  },
+  writeFile: async (path, data, options) => {
+    await activatePaths(path);
+    return writeFile(path, data, options);
+  },
+};
+
+// Unlike the jwpub zip-read funnel (getZipFileStats/decompress in
+// src-electron/main/fs.ts), these read arbitrary media files directly in
+// the preload/renderer process rather than the main process. A macOS
+// security-scoped bookmark activated via startAccessingSecurityScopedResource
+// in the main process doesn't extend across that process boundary, so a
+// custom (e.g. Documents-folder) cache/watch location can still EPERM here
+// even after the main-process fix. No-op on non-macOS and when access is
+// already active (see startSecurityScopedAccess in src-electron/main/fs.ts).
 export const getVideoDuration = async (
   filePath: string,
 ): Promise<VideoDuration> => {
+  await startSecurityScopedAccess(filePath);
   const { videoDuration } = await import('@numairawan/video-duration');
   return videoDuration(filePath);
 };
 
 export const parseMediaFile = async (filePath: string, options?: IOptions) => {
+  await startSecurityScopedAccess(filePath);
   const musicMetadata = await import('music-metadata');
   return musicMetadata.parseFile(filePath, options);
 };
@@ -74,7 +184,12 @@ export const showFileOnWindows = async (filePath: string) => {
     const { promisify } = await import('node:util');
     const execFileAsync = promisify(execFile);
 
-    await execFileAsync('attrib', ['-h', filePath]);
+    // Not just -h: on a file that's also System, `attrib -h` leaves it
+    // hidden ("Not resetting system file") yet still exits 0, and Windows
+    // refuses to overwrite a Hidden, System or Read-only file in place -
+    // so the caller's write failed with `EPERM ... open` (MMM-V2-3KQ).
+    // Only ever called on this app's own marker files.
+    await execFileAsync('attrib', ['-h', '-s', '-r', filePath]);
   } catch (error) {
     capturePreloadError(error, {
       contexts: {
@@ -115,7 +230,7 @@ export const readDirectory = async (
   recursive?: boolean,
 ) => {
   try {
-    if (!(await exists(dir))) return [];
+    if (!(await pathExists(dir))) return [];
     return await readDirRecursive(dir, withSizes, recursive);
   } catch (error) {
     capturePreloadError(error);

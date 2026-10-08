@@ -1,13 +1,11 @@
 import type { ElectronApi } from 'src/types/electron';
 
-import robot from '@jitsi/robotjs';
 import { contextBridge, webUtils } from 'electron/renderer';
-import fs from 'fs-extra';
-import { PLATFORM } from 'src-electron/constants';
+import { IS_DEMO_MODE, IS_DEV, PLATFORM } from 'src-electron/constants';
 import { initCloseListeners } from 'src-electron/preload/close';
-import { convertHeic } from 'src-electron/preload/converters';
 import {
   fileUrlToPath,
+  fs,
   getVideoDuration,
   hideFileOnWindows,
   inferExtension,
@@ -21,9 +19,10 @@ import {
   listen,
   removeAllIpcListeners,
   send,
+  sendSync,
 } from 'src-electron/preload/ipc';
+import { sendKeyTap } from 'src-electron/preload/robot';
 import { initScreenListeners } from 'src-electron/preload/screen';
-import { executeQuery } from 'src-electron/preload/sqlite';
 import {
   closeWebsiteWindow,
   initWebsiteListeners,
@@ -64,14 +63,22 @@ const electronApi: ElectronApi = {
   changeExt,
   checkForUpdates: () => send('checkForUpdates'),
   clickZoomElement: (h, o) => invoke('clickZoomElement', h, o),
+  closeSqliteConnection: (dbPath: string) =>
+    invoke('closeSqliteConnection', dbPath),
+  closeSqliteConnections: () => invoke('closeSqliteConnections'),
   closeWebsiteWindow,
-  convertHeic,
+  convertHeic: (image) => invoke('convertHeic', image),
   createVideoFromNonVideo: (f, fP, oD) =>
     invoke('createVideoFromNonVideo', f, fP, oD),
+  decryptSecretSync: (cipherText) => sendSync('decryptSecretSync', cipherText),
   dirname,
   downloadFile: (u, sD, dF, lP) => invoke('downloadFile', u, sD, dF, lP),
+  encryptSecretSync: (plainText) => sendSync('encryptSecretSync', plainText),
+  ensureMacosFolderPermission: (folderPath, prompt) =>
+    invoke('ensureMacosFolderPermission', folderPath, prompt),
   ensureZoomRequirements: () => invoke('ensureZoomRequirements'),
-  executeQuery,
+  executeQuery: (db, query, params) =>
+    invoke('executeQuery', db, query, params),
   extname,
   extractNestedZipEntry: (i, e, o, op) =>
     invoke('extractNestedZipEntry', i, e, o, op),
@@ -84,8 +91,11 @@ const electronApi: ElectronApi = {
   getLocales: () => invoke('getLocales'),
   getLocalPathFromFileObject: (fo) => getPathFromFileObject(fo),
   getLowDiskSpaceStatus: () => invoke('getLowDiskSpaceStatus'),
+  getMediaWindowCaptureSourceId: () => invoke('getMediaWindowCaptureSourceId'),
+  getOsSupportWarning: () => invoke('getOsSupportWarning'),
   getScreenAccessStatus: () => invoke('getScreenAccessStatus'),
   getSharedDataPath: () => invoke('getSharedDataPath'),
+  getUpdaterState: () => invoke('getUpdaterState'),
   getUpdatesDisabledPath: () => invoke('getUpdatesDisabledPath'),
   getUserDataPath: () => invoke('getUserDataPath'),
   getVideoDuration,
@@ -96,9 +106,15 @@ const electronApi: ElectronApi = {
   hideFileOnWindows,
   inferExtension,
   isArchitectureMismatch: () => invoke('isArchitectureMismatch'),
+  isDemoMode: IS_DEMO_MODE,
+  isDev: IS_DEV,
   isDownloadComplete: (downloadId: string) =>
     invoke('isDownloadComplete', downloadId),
   isDownloadErrorExpected: () => invoke('isDownloadErrorExpected'),
+  isOnline: () => invoke('isOnline'),
+  isSecretEncryptionAvailableSync: () =>
+    sendSync('isSecretEncryptionAvailableSync'),
+  isSqliteDbCorrupt: (dbPath: string) => invoke('isSqliteDbCorrupt', dbPath),
   isUsablePath: (p) => invoke('isUsablePath', p),
   isZoomPythonInstalled: () => invoke('isZoomPythonInstalled'),
   join,
@@ -108,6 +124,7 @@ const electronApi: ElectronApi = {
   moveTimerWindow: (t, w) => send('moveTimerWindow', t, w),
   navigateWebsiteWindow,
   normalize,
+  onDevMenuCommand: (cb) => listen('dev-menu-command', cb),
   onDownloadCancelled: (cb) => listen('downloadCancelled', cb),
   onDownloadCompleted: (cb) => listen('downloadCompleted', cb),
   onDownloadError: (cb) => listen('downloadError', cb),
@@ -130,12 +147,13 @@ const electronApi: ElectronApi = {
   onWebsiteWindowClosed: (cb) => listen('websiteWindowClosed', cb),
   openDiscussion: (c, t, p) => send('openDiscussion', c, t, p),
   openExternal: (w) => send('openExternal', w),
-  openFileDialog: (s, f) => invoke('openFileDialog', s, f),
+  openFileDialog: (s, f, d) => invoke('openFileDialog', s, f, d),
   openFolder: (path) => invoke('openFolder', path),
   openFolderDialog: () => invoke('openFolderDialog'),
   openWebsiteWindow,
   parse,
   parseMediaFile,
+  passWafChallenge: (url) => invoke('passWafChallenge', url),
   pathToFileURL,
   pauseAllDownloads: () => send('pauseAllDownloads'),
   PLATFORM,
@@ -147,11 +165,13 @@ const electronApi: ElectronApi = {
   resolve,
   restartZoomHelper: () => invoke('restartZoomHelper'),
   resumeAllDownloads: () => send('resumeAllDownloads'),
-  robot,
   saveFileDialog: (d, f) => invoke('saveFileDialog', d, f),
+  sendDevMenuState: (state) => send('dev-menu-state', state),
+  sendKeyTap: (k, m) => sendKeyTap(k, m),
   sendZoomWindowKeys: (h, k) => invoke('sendZoomWindowKeys', h, k),
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),
   setElectronUrlVariables: (v) => send('setElectronUrlVariables', v),
+  setExecutable: (p) => invoke('setExecutable', p),
   setHardwareAcceleration: (v) => invoke('set-hardware-acceleration', v),
   setPathProbeNotificationPaths: (paths) =>
     send('setPathProbeNotificationPaths', paths),
@@ -163,9 +183,9 @@ const electronApi: ElectronApi = {
   toggleTimerWindow: (s) => send('toggleTimerWindow', s),
   unregisterAllShortcuts: () => send('unregisterAllShortcuts'),
   unregisterShortcut: (s) => send('unregisterShortcut', s),
-  unwatchFolders: () => send('unwatchFolders'),
+  unwatchFolders: () => invoke('unwatchFolders'),
   unzip: (i, o, op) => invoke('unzip', i, o, op),
-  watchFolder: (p) => send('watchFolder', p),
+  watchFolder: (p) => invoke('watchFolder', p),
   zoomWebsiteWindow,
 };
 

@@ -5,14 +5,14 @@ import {
   BrowserWindow,
   type BrowserWindowConstructorOptions,
 } from 'electron';
-import { pathExists, readJson } from 'fs-extra/esm';
-import { fileURLToPath } from 'node:url';
 import {
   IS_BETA,
+  IS_DEMO_MODE,
   IS_DEV,
   PLATFORM,
   PRODUCT_NAME,
 } from 'src-electron/constants';
+import { readJsonResilient } from 'src-electron/main/resilient-storage';
 import { urlVariables } from 'src-electron/main/session';
 import { captureElectronError, getIconPath } from 'src-electron/main/utils';
 import {
@@ -69,14 +69,7 @@ export function createWindow(
       preload:
         name === 'website'
           ? undefined
-          : resolve(
-              fileURLToPath(new URL('.', import.meta.url)),
-              join(
-                process.env.QUASAR_ELECTRON_PRELOAD_FOLDER,
-                'electron-preload' +
-                  process.env.QUASAR_ELECTRON_PRELOAD_EXTENSION,
-              ),
-            ),
+          : join(import.meta.dirname, 'electron-preload.cjs'),
       sandbox: name === 'website',
       webSecurity: !IS_DEV,
       ...options?.webPreferences,
@@ -102,12 +95,17 @@ export function createWindow(
   });
 
   // Hide the menu bar
-  if (PLATFORM !== 'darwin' && (name !== 'main' || !process.env.DEBUGGING)) {
+  if (
+    PLATFORM !== 'darwin' &&
+    (name !== 'main' || !import.meta.env.QUASAR_DEBUG)
+  ) {
     win.setMenuBarVisibility(false);
   }
 
   // Load the app
-  let page = 'initial-congregation-selector';
+  let page = IS_DEMO_MODE
+    ? 'media-calendar/initial'
+    : 'initial-congregation-selector';
   switch (name) {
     case 'media':
       page = 'media-player';
@@ -116,23 +114,13 @@ export function createWindow(
       page = 'timer';
       break;
     case 'website':
-      if (websiteParams?.site) {
-        const siteUrlBySelection = {
-          jwevent: 'https://www.jwevent.org/',
-          stream: 'https://stream.jw.org/',
-        } as const;
-
-        const selectedSiteUrl = siteUrlBySelection[websiteParams.site];
-        page = `${selectedSiteUrl}?lang=${websiteParams?.langSymbol || ''}`;
-      } else {
-        page = `https://www.${urlVariables?.base || 'jw.org'}/${websiteParams?.langSymbol || ''}`;
-      }
+      page = buildWebsitePage(websiteParams, urlVariables?.base);
       break;
   }
-  if (page.startsWith('https://')) {
+  if (page.startsWith('https://') || page === 'about:blank') {
     win.loadURL(page);
-  } else if (process.env.DEV) {
-    win.loadURL(process.env.APP_URL + `?page=${page}`);
+  } else if (import.meta.env.QUASAR_DEV) {
+    win.loadURL(import.meta.env.QUASAR_APP_URL + `?page=${page}`);
   } else {
     // Use absolute path for index.html in production builds
     const indexPath = resolve(app.getAppPath(), 'index.html');
@@ -141,7 +129,7 @@ export function createWindow(
 
   // Devtools
   let devToolsOpenedCount = 0; // Track the number of times the devtools-opened event is fired
-  if (process.env.DEBUGGING) {
+  if (import.meta.env.QUASAR_DEBUG) {
     win.webContents.openDevTools(); // I like having dev tools open for all windows in dev
   } else {
     // Prevent devtools from being opened in production unless it's attempted more than twice
@@ -161,28 +149,27 @@ export function createWindow(
 export async function loadWindowPrefs(
   windowName: 'main' | 'media' | 'timer',
 ): Promise<null | WindowState> {
-  const mediaWindowStateFile = join(
-    app.getPath('userData'),
-    `${windowName}-window-state.json`,
-  );
+  const configFileName = `${windowName}-window-state.json`;
+  const userDataPath = app.getPath('userData');
 
   try {
-    if (!(await pathExists(mediaWindowStateFile))) {
+    const state = await readJsonResilient(userDataPath, configFileName);
+    if (!state) {
       log(
         '[loadWindowPrefs - ' + windowName + '] File does not exist:',
         'electronWindow',
         'log',
-        mediaWindowStateFile,
+        join(userDataPath, configFileName),
       );
       return null;
     }
-    return await readJson(mediaWindowStateFile, { throws: false });
+    return state as WindowState;
   } catch (e) {
     captureElectronError(e, {
       contexts: {
         fn: {
           name: 'loadWindowPrefs - ' + windowName,
-          path: mediaWindowStateFile,
+          path: join(userDataPath, configFileName),
         },
       },
     });
@@ -196,7 +183,7 @@ export function logToWindow(
   ctx: boolean | number | Record<string, unknown> | string = {},
   level: 'debug' | 'error' | 'info' | 'warn' = 'info',
 ) {
-  if (level === 'debug' && !process.env.DEBUGGING) return;
+  if (level === 'debug' && !import.meta.env.QUASAR_DEBUG) return;
   sendToWindow(win, 'log', { ctx, level, msg });
 }
 
@@ -208,3 +195,38 @@ export function sendToWindow(
   if (!win || win.isDestroyed() || win.webContents.isDestroyed()) return;
   win.webContents.send(channel, ...args);
 }
+
+/**
+ * Builds the URL/page string for the `website` window from its site
+ * selection and language symbol.
+ *
+ * SEC-13 (full-audit-2026-09-05.md): `langSymbol` normally comes from the
+ * app's own enabled-language list, but reaches here over the raw IPC
+ * channel - encoded rather than trusted to already be URL-safe.
+ */
+function buildWebsitePage(
+  websiteParams: JwSiteParams | undefined,
+  base: string | undefined,
+) {
+  const langSymbol = encodeURIComponent(websiteParams?.langSymbol || '');
+  if (websiteParams?.site) {
+    // JW Stream and the conventions site are jw.org's own: never opened for
+    // a different Website.
+    if (base !== 'jw.org') return 'about:blank';
+
+    const siteUrlBySelection = {
+      jwevent: 'https://www.jwevent.org/',
+      stream: 'https://stream.jw.org/',
+    } as const;
+
+    return `${siteUrlBySelection[websiteParams.site]}?lang=${langSymbol}`;
+  }
+  // Never jw.org in place of a different Website: without a known base
+  // (not sent yet, or the configured one was invalid) show nothing.
+  if (!base) return 'about:blank';
+  return `https://www.${base}/${langSymbol}`;
+}
+
+export const __testables = {
+  buildWebsitePage,
+};

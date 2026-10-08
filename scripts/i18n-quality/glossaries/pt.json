@@ -1,0 +1,262 @@
+{
+  "_comment": "Grounded JW terminology for pt (Brazilian Portuguese), cross-checked against official jw.org pages. Reusable beyond translation-quality review. Regenerate via scripts/i18n-quality/prompts/grounding-agent.md.",
+  "_fetchedAt": "2026-09-10",
+  "_language": "pt",
+  "terms": [
+    {
+      "termEn": "Jehovah's Witnesses",
+      "official": "Testemunhas de Jeová",
+      "sourceUrls": [
+        "https://www.jw.org/pt/informacoes-autoridades-jornalistas/guia-de-terminologia/"
+      ],
+      "confidence": "high",
+      "notes": "Guia de estilo e terminologia (Brazilian pt, hreflang=\"pt\" - distinct from pt-pt for Portugal) gives the full official name; guide explicitly instructs using the complete name \"Testemunhas de Jeová\" and, for an individual, \"uma Testemunha de Jeová\"."
+    },
+    {
+      "termEn": "Kingdom Hall",
+      "official": "Salão do Reino das Testemunhas de Jeová",
+      "sourceUrls": [
+        "https://www.jw.org/pt/informacoes-autoridades-jornalistas/guia-de-terminologia/"
+      ],
+      "confidence": "high",
+      "notes": "Guide gives the full form and notes it is often shortened to \"Salão do Reino\"; explicitly says to avoid the term \"igreja\" (church)."
+    },
+    {
+      "termEn": "circuit overseer",
+      "official": "superintendente de circuito",
+      "sourceUrls": [
+        "https://www.jw.org/pt/informacoes-autoridades-jornalistas/guia-de-terminologia/"
+      ],
+      "confidence": "high",
+      "notes": "Term is not used as an honorific title, per the guide."
+    },
+    {
+      "termEn": "congregation",
+      "official": "congregação",
+      "sourceUrls": [
+        "https://www.jw.org/pt/informacoes-autoridades-jornalistas/guia-de-terminologia/"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "termEn": "elder",
+      "official": "ancião",
+      "sourceUrls": [
+        "https://www.jw.org/pt/informacoes-autoridades-jornalistas/guia-de-terminologia/"
+      ],
+      "confidence": "high",
+      "notes": "Guide stresses elders are unpaid and the term is not used as an honorific title."
+    },
+    {
+      "termEn": "presiding overseer",
+      "official": "coordenador do corpo de anciãos",
+      "sourceUrls": ["https://wol.jw.org/pt/wol/d/r5/lp-t/1200276968"],
+      "confidence": "high",
+      "notes": "\"Presiding overseer\" (superintendente presidente) is a discontinued role name; jw.org's current official designation is \"coordenador do corpo de anciãos\" (coordinator of the body of elders), confirmed verbatim in the WOL page title. Not present in the terminology guide itself, which only lists media-facing terms."
+    },
+    {
+      "termEn": "ministerial servant",
+      "official": "servo ministerial",
+      "sourceUrls": [
+        "https://www.jw.org/pt/informacoes-autoridades-jornalistas/guia-de-terminologia/"
+      ],
+      "confidence": "high",
+      "notes": "Unpaid appointment supporting elders with non-pastoral duties; term not used as an honorific title."
+    },
+    {
+      "termEn": "pioneer",
+      "official": "pioneiro",
+      "sourceUrls": [
+        "https://www.jw.org/pt/informacoes-autoridades-jornalistas/guia-de-terminologia/"
+      ],
+      "confidence": "high",
+      "notes": "Guide distinguishes \"pioneiro regular\" (regular pioneer, 600 h/year) and \"pioneiro auxiliar\" (auxiliary pioneer, 15-30 h/month); plain \"pioneiro\" is often used as shorthand for regular pioneer."
+    },
+    {
+      "termEn": "field service",
+      "official": "serviço de campo",
+      "sourceUrls": [
+        "https://www.jw.org/pt/informacoes-autoridades-jornalistas/guia-de-terminologia/"
+      ],
+      "confidence": "high",
+      "notes": "Guide cross-references this from \"pregação\" (preaching); \"serviço de campo\" is the headword definition."
+    },
+    {
+      "termEn": "Memorial",
+      "official": "Celebração da morte de Cristo",
+      "sourceUrls": [
+        "https://www.jw.org/pt/informacoes-autoridades-jornalistas/guia-de-terminologia/"
+      ],
+      "confidence": "high",
+      "notes": "IMPORTANT for reviewers: Brazilian Portuguese does NOT use a literal cognate of \"Memorial\" as the primary official term - jw.org's own term is \"Celebração da morte de Cristo\", commonly shortened to just \"Celebração\" (also referenced as Ceia do Senhor / Santa Ceia / Última Ceia). A translation using a literal \"Memorial\" cognate should be flagged."
+    },
+    {
+      "termEn": "Congregation Bible Study",
+      "official": "Estudo Bíblico de Congregação",
+      "sourceUrls": ["https://wol.jw.org/pt/wol/d/r5/lp-t/1200276966"],
+      "confidence": "high",
+      "notes": "Not in the media-facing terminology guide; confirmed verbatim as the WOL glossary entry title. Superseded former names include \"Estudo de Livro de Congregação\"."
+    },
+    {
+      "termEn": "midweek meeting",
+      "official": "reunião do meio de semana",
+      "sourceUrls": [
+        "https://www.jw.org/pt/informacoes-autoridades-jornalistas/guia-de-terminologia/"
+      ],
+      "confidence": "high",
+      "notes": "Guide describes its three-part program \"Nossa Vida e Ministério Cristão\"."
+    },
+    {
+      "termEn": "weekend meeting",
+      "official": "Reunião Pública",
+      "sourceUrls": [
+        "https://www.jw.org/pt/informacoes-autoridades-jornalistas/guia-de-terminologia/"
+      ],
+      "confidence": "high",
+      "notes": "Guide's headword for the weekly meeting held generally on the weekend, consisting of the public talk plus the Watchtower Study."
+    },
+    {
+      "termEn": "public talk",
+      "official": "discurso público",
+      "sourceUrls": [
+        "https://wol.jw.org/pt/wol/d/r5/lp-t/1200274680",
+        "https://www.jw.org/pt/informacoes-autoridades-jornalistas/guia-de-terminologia/"
+      ],
+      "confidence": "high",
+      "notes": "Not a standalone headword in the terminology guide (which describes it only as \"discurso bíblico preparado para o público em geral\" within the Reunião Pública entry), but \"discurso público\" (plural: discursos públicos) is confirmed as jw.org's own term via the WOL glossary page title."
+    },
+    {
+      "termEn": "Watchtower Study",
+      "official": "Estudo de A Sentinela",
+      "sourceUrls": [
+        "https://www.jw.org/pt/informacoes-autoridades-jornalistas/guia-de-terminologia/"
+      ],
+      "confidence": "high",
+      "notes": "Described within the Reunião Pública entry as a one-hour Q&A consideration of a Watchtower study-edition article."
+    },
+    {
+      "termEn": "The Watchtower",
+      "official": "A Sentinela",
+      "sourceUrls": [
+        "https://www.jw.org/pt/informacoes-autoridades-jornalistas/guia-de-terminologia/"
+      ],
+      "confidence": "high",
+      "notes": "Full official title is \"A Sentinela Anunciando o Reino de Jeová\"; public and study editions both referred to simply as \"A Sentinela\"."
+    },
+    {
+      "termEn": "Awake!",
+      "official": "Despertai!",
+      "sourceUrls": [
+        "https://www.jw.org/pt/informacoes-autoridades-jornalistas/guia-de-terminologia/"
+      ],
+      "confidence": "high",
+      "notes": "Guide notes prior titles \"A Idade de Ouro\" (1919) and \"Consolação\" (1937) before \"Despertai!\" was adopted in 1946. Exclamation mark is part of the proper title, matching English \"Awake!\"."
+    },
+    {
+      "termEn": "New World Translation",
+      "official": "Tradução do Novo Mundo da Bíblia Sagrada",
+      "sourceUrls": [
+        "https://www.jw.org/pt/informacoes-autoridades-jornalistas/guia-de-terminologia/"
+      ],
+      "confidence": "high",
+      "notes": "Often shortened to \"Tradução do Novo Mundo\"; an earlier edition was titled \"Tradução do Novo Mundo das Escrituras Sagradas\"."
+    },
+    {
+      "termEn": "JW Library",
+      "official": "JW Library",
+      "sourceUrls": [
+        "https://www.jw.org/pt/informacoes-autoridades-jornalistas/guia-de-terminologia/"
+      ],
+      "confidence": "high",
+      "notes": "App/proper-noun name kept untranslated on the Brazilian Portuguese site (appears as \"JW Library®\" in the page footer), consistent with the seed context that the app name itself is not translated."
+    },
+    {
+      "termEn": "jw.org",
+      "official": "jw.org",
+      "sourceUrls": [
+        "https://www.jw.org/pt/informacoes-autoridades-jornalistas/guia-de-terminologia/"
+      ],
+      "confidence": "high",
+      "notes": "Site footer renders it \"JW.ORG® / SITE OFICIAL DAS TESTEMUNHAS DE JEOVÁ\", matching the app's in-context phrase \"the official website of jw.org\" -> \"o site oficial das Testemunhas de Jeová, jw.org\"."
+    },
+    {
+      "termEn": "songbook",
+      "official": "Cante de Coração para Jeová",
+      "sourceUrls": [
+        "https://www.jw.org/pt/biblioteca/musicas-canticos/cante-de-coracao/"
+      ],
+      "confidence": "high",
+      "notes": "Not in the terminology guide; this is the current official Brazilian Portuguese title of the JW songbook (announced 2016), confirmed via jw.org's own hreflang=\"pt\" alternate-language metadata and page title. European Portuguese (pt-pt) uses a different title, ‘Cantemos com Alegria’ a Jeová, and Mozambican Portuguese (pt-mz) uses yet another - do not conflate. Generic references to \"our songbook\" in the app likely don't need the full proper title, but translators should recognize this as the current work."
+    },
+    {
+      "termEn": "convention",
+      "official": "congresso",
+      "sourceUrls": [
+        "https://www.jw.org/pt/informacoes-autoridades-jornalistas/guia-de-terminologia/"
+      ],
+      "confidence": "high",
+      "notes": "Guide splits into \"congresso internacional\" (international convention, 3 days) and \"congresso regional\" (regional convention, 3 days) - both larger than an assembly."
+    },
+    {
+      "termEn": "assembly",
+      "official": "assembleia de circuito",
+      "sourceUrls": [
+        "https://www.jw.org/pt/informacoes-autoridades-jornalistas/guia-de-terminologia/"
+      ],
+      "confidence": "high",
+      "notes": "One-day gathering held twice a year for several congregations of a circuit; smaller than a \"congresso\" (convention), matching the seed's context distinction."
+    },
+    {
+      "termEn": "theocratic school",
+      "official": "escola teocrática",
+      "sourceUrls": [
+        "https://www.jw.org/pt/noticias/por-regiao/mundial/Retorno-das-assembleias-de-circuito-e-escolas-teocr%C3%A1ticas-presenciais/"
+      ],
+      "confidence": "high",
+      "notes": "Not in the terminology guide. Confirmed via jw.org's own hreflang=\"pt\" alternate for the English news article \"In-Person Circuit Assemblies and Theocratic Schools Resume\", whose Brazilian Portuguese title is \"Retorno das assembleias de circuito e escolas teocráticas presenciais\" (plural: escolas teocráticas), matching the app's exact phrasing pattern (\"theocratic schools, assemblies, or conventions\"). This is a generic umbrella term covering various named schools (e.g. Escola de Serviço de Precursor, Escola para Anciãos de Congregação); the historic \"Escola do Ministério Teocrático\" midweek-meeting school of the same name has since been discontinued, so don't confuse the two."
+    },
+    {
+      "termEn": "sign language",
+      "official": "língua de sinais",
+      "sourceUrls": ["https://wol.jw.org/pt/wol/d/r5/lp-t/1200275321"],
+      "confidence": "high",
+      "notes": "Not in the terminology guide. For \"sign-language congregations\" specifically, jw.org materials use \"congregação em língua de sinais\"; Brazil's own sign language is also called \"Libras\" (Língua Brasileira de Sinais) in Brazil-specific contexts, but \"língua de sinais\" is the generic term used across jw.org."
+    },
+    {
+      "termEn": "meeting workbook",
+      "official": "Nossa Vida e Ministério Cristão — Apostila da Reunião",
+      "sourceUrls": ["https://www.jw.org/pt/biblioteca/jw-apostila-do-mes/"],
+      "confidence": "high",
+      "notes": "Not in the terminology guide; confirmed via jw.org's own hreflang=\"pt\" alternate-language metadata and page title for the \"Our Christian Life and Ministry—Meeting Workbook\" library page. Note the em dash and that other Portuguese variants differ: pt-pt uses \"Vida e Ministério Cristãos – Manual de Atividades\", pt-mz uses a similar \"Manual de Atividades\", and pt-ao uses \"Programa da Reunião\" - don't conflate these with the Brazilian title."
+    },
+    {
+      "termEn": "yeartext",
+      "official": "texto do ano",
+      "sourceUrls": [
+        "https://wol.jw.org/pt/wol/d/r5/lp-t/1102022212",
+        "https://wol.jw.org/pt/wol/d/r5/lp-t/1200027067"
+      ],
+      "confidence": "high",
+      "notes": "Not in the terminology guide. Confirmed verbatim on WOL pages (singular \"Texto do ano\" and glossary index \"Textos do ano\", plural)."
+    },
+    {
+      "termEn": "branch office",
+      "official": "filial",
+      "sourceUrls": [
+        "https://www.jw.org/pt/informacoes-autoridades-jornalistas/guia-de-terminologia/"
+      ],
+      "confidence": "high",
+      "notes": "Guide's related entry \"Comissão de Filial\" (Branch Committee) is the group of elders overseeing a branch; often colloquially called \"sede\" (headquarters) too, per the guide."
+    },
+    {
+      "termEn": "Governing Body",
+      "official": "Corpo Governante das Testemunhas de Jeová",
+      "sourceUrls": [
+        "https://www.jw.org/pt/informacoes-autoridades-jornalistas/guia-de-terminologia/"
+      ],
+      "confidence": "high",
+      "notes": "Guide notes the shorter form \"Corpo Governante\" is generally used."
+    }
+  ]
+}

@@ -9,7 +9,10 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <div class="action-popup action-popup--scroll-layout q-py-md">
+    <div
+      ref="popupContent"
+      class="action-popup action-popup--scroll-layout q-py-md"
+    >
       <div class="card-title row q-px-md q-mb-none">
         {{ t('media-display-settings') }}
       </div>
@@ -306,7 +309,12 @@
   </q-menu>
   <BaseDialog v-model="showCustomBackgroundPicker" :dialog-id="props.dialogId">
     <div class="bg-secondary-contrast flex q-px-none" style="flex-flow: column">
-      <div class="text-h6 row q-px-md q-pt-lg">
+      <div
+        class="row items-center no-wrap text-bigger text-semibold text-primary q-px-md q-pt-lg"
+      >
+        <div class="icon-chip q-mr-sm">
+          <q-icon name="mmm-background" size="xs" />
+        </div>
         {{ t('choose-an-image') }}
       </div>
       <div class="row q-px-md q-py-md">
@@ -345,15 +353,7 @@
         />
       </div>
       <div class="q-px-md q-py-md row justify-end">
-        <q-btn
-          color="negative"
-          flat
-          @click="
-            jwpubImportFilePath = '';
-            jwpubImages = [];
-            showCustomBackgroundPicker = false;
-          "
-        >
+        <q-btn flat @click="showCustomBackgroundPicker = false">
           {{ t('cancel') }}
         </q-btn>
       </div>
@@ -384,14 +384,17 @@ import { createTemporaryNotification } from 'src/helpers/notifications';
 import { log } from 'src/shared/vanilla';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import { getTempPath } from 'src/utils/fs';
+import { withTimeout } from 'src/utils/general';
 import { isImage, isJwpub } from 'src/utils/media';
 import { findDb } from 'src/utils/sqlite';
 import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, ref, useTemplateRef, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const displayPopup = useTemplateRef<QMenu>('displayPopup');
+const popupContent = useTemplateRef<HTMLElement>('popupContent');
+let popupResizeObserver: ResizeObserver | undefined;
 
 const { t } = useI18n();
 
@@ -512,9 +515,18 @@ const isScreenSelected = (_index: number, screen: Display) => {
 const jwpubImportFilePath = ref('');
 const jwpubImages = ref<{ FilePath: string }[]>([]);
 
-const showCustomBackgroundPicker = computed(
-  () => !!jwpubImportFilePath.value || jwpubImages.value.length > 0,
-);
+// The picker's visibility is derived from the import state, so closing it
+// (Cancel, Esc or a backdrop click through BaseDialog's v-model) must clear
+// that state. A getter-only computed would silently ignore the write and
+// leave the dialog open.
+const showCustomBackgroundPicker = computed({
+  get: () => !!jwpubImportFilePath.value || jwpubImages.value.length > 0,
+  set: (value: boolean) => {
+    if (value) return;
+    jwpubImportFilePath.value = '';
+    jwpubImages.value = [];
+  },
+});
 
 const processJwpubBackground = async (filepath: string) => {
   jwpubImportFilePath.value = filepath;
@@ -528,10 +540,9 @@ const processJwpubBackground = async (filepath: string) => {
 
   const query =
     "SELECT FilePath FROM Multimedia WHERE CategoryType >= 0 AND CategoryType <> 9 AND FilePath <> '';";
-  const results = globalThis.electronApi.executeQuery<Partial<MultimediaItem>>(
-    db,
-    query,
-  );
+  const results = await globalThis.electronApi.executeQuery<
+    Partial<MultimediaItem>
+  >(db, query);
 
   jwpubImages.value = results.map((multimediaItem) => ({
     FilePath: join(unzipDir, multimediaItem.FilePath || ''),
@@ -539,6 +550,13 @@ const processJwpubBackground = async (filepath: string) => {
 
   if (jwpubImages.value.length === 0) {
     notifyInvalidBackgroundFile();
+    // Without this, showCustomBackgroundPicker/q-inner-loading's
+    // `!!jwpubImportFilePath` condition never goes false again since
+    // nothing else clears it on this particular (no-throw, just empty-
+    // results) path - unlike the catch blocks elsewhere in this file that
+    // already reset it - so the loading spinner would stay stuck forever
+    // instead of settling into the empty-state message below.
+    jwpubImportFilePath.value = '';
   }
 };
 
@@ -628,11 +646,27 @@ const chooseCustomBackground = async (reset?: boolean) => {
   }
 };
 
+const SCREEN_FETCH_TIMEOUT_MS = 5000;
+
+// Guards against piling up overlapping getAllScreens() IPC round-trips -
+// e.g. several 'screen-trigger-update' events landing while the popup is
+// open and a previous fetch is still in flight - and against ever leaving
+// the popup waiting forever if the main process is slow to reply.
+let fetchingScreens = false;
+
 const fetchScreens = async () => {
+  if (fetchingScreens) return;
+  fetchingScreens = true;
   try {
-    screenList.value = await getAllScreens();
+    screenList.value = await withTimeout(
+      getAllScreens(),
+      SCREEN_FETCH_TIMEOUT_MS,
+      'getAllScreens timed out',
+    );
   } catch (error) {
     errorCatcher(error);
+  } finally {
+    fetchingScreens = false;
   }
 };
 
@@ -652,7 +686,16 @@ const getCameras = async () => {
 
   try {
     log('🎬 [getCameras] Enumerating video input devices', 'display', 'log');
-    cameras.value = (await navigator.mediaDevices.enumerateDevices())
+    // enumerateDevices() has been known to hang indefinitely on some systems
+    // (misbehaving virtual-camera drivers, privacy/AV software intercepting
+    // device access) - bound it so the popup doesn't wait on it forever.
+    cameras.value = (
+      await withTimeout(
+        navigator.mediaDevices.enumerateDevices(),
+        4000,
+        'enumerateDevices timed out',
+      )
+    )
       .filter((d) => d.kind === 'videoinput')
       .map((d) => ({ label: d.label, value: d.deviceId }));
   } catch (error) {
@@ -687,6 +730,7 @@ const notifyInvalidBackgroundFile = () => {
 const notifyCustomBackgroundSet = () => {
   createTemporaryNotification({
     caption: t('custom-background-will-not-persist'),
+    icon: 'mmm-background',
     message: t('custom-background-set'),
     type: 'positive',
   });
@@ -694,7 +738,7 @@ const notifyCustomBackgroundSet = () => {
 
 const notifyCustomBackgroundRemoved = () => {
   createTemporaryNotification({
-    icon: 'mmm-reset',
+    icon: 'mmm-background-remove',
     message: t('custom-background-removed'),
     type: 'positive',
   });
@@ -795,17 +839,22 @@ whenever(
   },
 );
 
-// UI update handler
-watch(
-  () => [screenPreferences.value.preferWindowed, mediaWindowVisible.value],
-  () => {
-    setTimeout(() => {
-      if (displayPopup.value) {
-        displayPopup.value.updatePosition();
-      }
-    }, 10);
-  },
-);
+// Anchored bottom-up (self="bottom middle") so it visually grows out of the
+// action island. A ResizeObserver repositions it whenever its rendered size
+// actually changes - screen list thresholds, camera picker, custom
+// background label, etc. - instead of guessing which reactive values might
+// affect height.
+watch(popupContent, (el) => {
+  popupResizeObserver?.disconnect();
+  popupResizeObserver = undefined;
+  if (!el) return;
+  popupResizeObserver = new ResizeObserver(() => {
+    displayPopup.value?.updatePosition();
+  });
+  popupResizeObserver.observe(el);
+});
+
+onBeforeUnmount(() => popupResizeObserver?.disconnect());
 
 watchImmediate(
   () => getCurrentMediaWindowVariables.value,

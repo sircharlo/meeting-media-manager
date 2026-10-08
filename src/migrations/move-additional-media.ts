@@ -12,95 +12,345 @@ import { useJwStore } from 'stores/jw';
 
 import type { MigrationFunction } from './types';
 
-export const moveAdditionalMediaMaps: MigrationFunction = async () => {
-  try {
-    const jwStore = useJwStore();
-    const successfulMigration = true;
+const reportMoveAdditionalMediaError = (
+  message: string,
+  context: Record<string, unknown> = {},
+) => {
+  errorCatcher(new Error(message), {
+    contexts: {
+      fn: {
+        ...context,
+        name: context.name || 'moveAdditionalMediaMaps',
+      },
+    },
+  });
+};
 
-    // Validate that jwStore exists and is properly initialized
-    if (!jwStore || typeof jwStore !== 'object') {
-      errorCatcher(
-        new Error('Invalid jwStore structure in moveAdditionalMediaMaps'),
-        {
-          contexts: {
-            fn: {
-              name: 'moveAdditionalMediaMaps',
-            },
-          },
-        },
-      );
-      return successfulMigration;
-    }
+const isRecord = (value: unknown): value is Record<string, unknown> => {
+  return !!value && typeof value === 'object' && !Array.isArray(value);
+};
 
-    let storedData: {
-      additionalMediaMaps?: Record<string, Partial<Record<string, unknown[]>>>;
-    };
+const normalizeMoveAdditionalMediaDay = (
+  congId: string,
+  day: DateInfo,
+  dayIndex: number,
+) => {
+  if (!isRecord(day)) {
+    reportMoveAdditionalMediaError(
+      'Invalid day object structure in moveAdditionalMediaMaps',
+      { congId, day, dayIndex },
+    );
+    return false;
+  }
 
+  if (day.date && !(day.date instanceof Date)) {
     try {
-      const storedDataString = String(
-        QuasarStorage.getItem('jw-store') || '{}',
+      reportMoveAdditionalMediaError(
+        'Invalid date object structure in moveAdditionalMediaMaps',
+        { congId, day, dayIndex },
       );
-      storedData = JSON.parse(storedDataString) as {
-        additionalMediaMaps?: Record<
-          string,
-          Partial<Record<string, unknown[]>>
-        >;
-      };
+      day.date = dateFromString(day.date);
     } catch (error) {
       errorCatcher(error, {
         contexts: {
           fn: {
-            name: 'move-additional-mediaMaps parse stored data',
+            congId,
+            day,
+            dayIndex,
+            name: 'moveAdditionalMediaMaps convert corrupted date object',
           },
         },
       });
-      return successfulMigration;
+      return false;
+    }
+  }
+
+  return true;
+};
+
+const resetImportedMediaSection = (
+  congId: string,
+  day: DateInfo,
+  dayIndex: number,
+) => {
+  day.mediaSections ??= [];
+  try {
+    const additionalSection = getOrCreateMediaSection(
+      day.mediaSections,
+      'imported-media',
+    );
+    additionalSection.items = [];
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          congId,
+          day,
+          dayIndex,
+          name: 'moveAdditionalMediaMaps get or create media section',
+        },
+      },
+    });
+  }
+  day.status = null;
+};
+
+const isValidTargetDate = (targetDate: string, congId: string) => {
+  // additionalMediaMaps was historically keyed by selectedDate, which this
+  // app has always stored as YYYY/MM/DD (see e.g. current-state's
+  // selectedDate) - not just the YYYY-MM-DD/YYYYMMDD forms below. Missing
+  // this format made the migration reject and drop real, migratable data.
+  const hasValidFormat =
+    /^\d{4}-\d{2}-\d{2}$/.test(targetDate) ||
+    /^\d{4}\/\d{2}\/\d{2}$/.test(targetDate) ||
+    /^\d{8}$/.test(targetDate);
+  if (targetDate.trim() && hasValidFormat) return true;
+
+  reportMoveAdditionalMediaError(
+    'Invalid targetDate structure in moveAdditionalMediaMaps',
+    { congId, targetDate },
+  );
+  return false;
+};
+
+const getValidAdditionalItems = (
+  additionalItems: unknown,
+  congId: string,
+  targetDate: string,
+) => {
+  if (!Array.isArray(additionalItems)) {
+    reportMoveAdditionalMediaError(
+      'Invalid additionalItems structure in moveAdditionalMediaMaps',
+      { additionalItems, congId },
+    );
+    return [];
+  }
+
+  const validItems: MediaItem[] = [];
+  (additionalItems as MediaItem[]).forEach((item, index) => {
+    if (item && typeof item === 'object' && item.uniqueId) {
+      item.source = 'additional';
+      validItems.push(item);
+      return;
     }
 
-    const currentAdditionalMediaMaps: Record<
-      string,
-      Partial<Record<string, unknown[]>>
-    > = storedData.additionalMediaMaps || {};
+    reportMoveAdditionalMediaError(
+      'Invalid item structure in moveAdditionalMediaMaps',
+      { congId, index, item, targetDate },
+    );
+  });
 
-    // Validate that storedData is a proper object
-    if (
-      !storedData ||
-      typeof storedData !== 'object' ||
-      Array.isArray(storedData)
-    ) {
-      errorCatcher(
-        new Error('Invalid storedData structure in moveAdditionalMediaMaps'),
+  // Only worth reporting when there was actually something to migrate and
+  // all of it turned out invalid (each invalid item already reported its
+  // own error above, right where it happened). An additionalItems array
+  // that was already empty is a normal "nothing stored for this date" case
+  // - see MMM-V2-3HA, where this fired for an empty array with no
+  // accompanying invalid-item errors.
+  if (additionalItems.length && !validItems.length) {
+    reportMoveAdditionalMediaError(
+      'No valid items found for targetDate in moveAdditionalMediaMaps',
+      { congId, targetDate },
+    );
+  }
+
+  return validItems;
+};
+
+const datesMatchForMoveAdditionalMedia = (
+  day: DateInfo,
+  targetDate: string,
+  congId: string,
+) => {
+  if (day.date && !(day.date instanceof Date)) {
+    try {
+      reportMoveAdditionalMediaError(
+        'Converting corrupted date object in datesAreSame comparison in moveAdditionalMediaMaps',
         {
-          contexts: {
-            fn: {
-              name: 'moveAdditionalMediaMaps',
-            },
-          },
+          congId,
+          name: 'moveAdditionalMediaMaps convert corrupted date object in datesAreSame comparison',
+          targetDate,
         },
       );
-      return successfulMigration;
-    }
-
-    // Validate that currentAdditionalMediaMaps is a proper object
-    if (
-      !currentAdditionalMediaMaps ||
-      typeof currentAdditionalMediaMaps !== 'object' ||
-      Array.isArray(currentAdditionalMediaMaps)
-    ) {
-      errorCatcher(
-        new Error(
-          'Invalid currentAdditionalMediaMaps structure in moveAdditionalMediaMaps',
-        ),
-        {
-          contexts: {
-            fn: {
-              name: 'moveAdditionalMediaMaps',
-            },
+      day.date = dateFromString(day.date);
+    } catch (error) {
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            name: 'move-additional-mediaMaps convert corrupted date object in datesAreSame comparison',
           },
         },
-      );
-      return successfulMigration;
+      });
+      return false;
     }
+  }
+
+  try {
+    return datesAreSame(day.date, targetDate);
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          name: 'move-additional-mediaMaps compare dates',
+        },
+      },
+    });
+    return false;
+  }
+};
+
+const appendAdditionalItemsToDate = (
+  dateInfo: DateInfo,
+  validItems: MediaItem[],
+) => {
+  dateInfo.mediaSections ??= [];
+  const additionalSection = findMediaSection(
+    dateInfo.mediaSections,
+    'imported-media',
+  );
+  const existingItems = additionalSection?.items || [];
+  const newAdditionalItems = validItems.filter(
+    (item) => !existingItems.some((media) => media.uniqueId === item.uniqueId),
+  );
+
+  const targetSection = getOrCreateMediaSection(
+    dateInfo.mediaSections,
+    'imported-media',
+  );
+  targetSection.items ??= [];
+  targetSection.items.push(...newAdditionalItems);
+};
+
+const getStoredAdditionalMediaMaps = (): Record<
+  string,
+  Partial<Record<string, unknown[]>>
+> => {
+  try {
+    const storedDataString = String(QuasarStorage.getItem('jw-store') || '{}');
+    const storedData = JSON.parse(storedDataString) as Record<string, unknown>;
+    if (isRecord(storedData) && isRecord(storedData.additionalMediaMaps)) {
+      return storedData.additionalMediaMaps as Record<
+        string,
+        Partial<Record<string, unknown[]>>
+      >;
+    }
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          name: 'move-additional-mediaMaps parse stored data',
+        },
+      },
+    });
+  }
+  return {};
+};
+
+const normalizeAndResetDays = (congId: string, days: DateInfo[]) => {
+  days.forEach((day, dayIndex) => {
+    if (normalizeMoveAdditionalMediaDay(congId, day, dayIndex)) {
+      resetImportedMediaSection(congId, day, dayIndex);
+    }
+  });
+};
+
+const migrateTargetDateItems = (
+  congId: string,
+  targetDate: string,
+  additionalItems: unknown,
+  lookupPeriodForCongregation: DateInfo[],
+) => {
+  if (!targetDate || !additionalItems) return;
+  if (!isValidTargetDate(targetDate, congId)) return;
+
+  const validItems = getValidAdditionalItems(
+    additionalItems,
+    congId,
+    targetDate,
+  );
+  if (!validItems.length) return;
+
+  const existingMediaItemsForDate = lookupPeriodForCongregation.find((day) =>
+    datesMatchForMoveAdditionalMedia(day, targetDate, congId),
+  );
+
+  if (existingMediaItemsForDate) {
+    try {
+      appendAdditionalItemsToDate(existingMediaItemsForDate, validItems);
+    } catch (error) {
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            name: 'move-additional-mediaMaps append additional media items',
+          },
+        },
+      });
+    }
+  } else {
+    try {
+      const parsedDate = dateFromString(targetDate);
+      lookupPeriodForCongregation.push({
+        date: parsedDate,
+        mediaSections: [],
+        status: 'complete',
+      });
+    } catch (error) {
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            name: 'move-additional-mediaMaps parse targetDate',
+          },
+        },
+      });
+    }
+  }
+};
+
+const migrateCongregationMedia = (
+  congId: string,
+  dates: unknown,
+  lookupPeriodForCongregation: DateInfo[],
+) => {
+  if (!isRecord(dates)) {
+    reportMoveAdditionalMediaError(
+      'Invalid dates structure for congregation in moveAdditionalMediaMaps',
+      { congId, dates },
+    );
+    return;
+  }
+
+  if (!Array.isArray(lookupPeriodForCongregation)) {
+    reportMoveAdditionalMediaError(
+      'Invalid lookupPeriodForCongregation structure for congregation in moveAdditionalMediaMaps',
+      { congId, lookupPeriodForCongregation },
+    );
+    return;
+  }
+
+  normalizeAndResetDays(congId, lookupPeriodForCongregation);
+
+  for (const [targetDate, additionalItems] of Object.entries(dates)) {
+    migrateTargetDateItems(
+      congId,
+      targetDate,
+      additionalItems,
+      lookupPeriodForCongregation,
+    );
+  }
+};
+
+export const moveAdditionalMediaMaps: MigrationFunction = async () => {
+  try {
+    const jwStore = useJwStore();
+
+    // Validate that jwStore exists and is properly initialized
+    if (!isRecord(jwStore)) {
+      reportMoveAdditionalMediaError(
+        'Invalid jwStore structure in moveAdditionalMediaMaps',
+      );
+      return true;
+    }
+
+    const currentAdditionalMediaMaps = getStoredAdditionalMediaMaps();
 
     // Validate that jwStore.lookupPeriod exists and is properly initialized
     if (
@@ -108,17 +358,8 @@ export const moveAdditionalMediaMaps: MigrationFunction = async () => {
       typeof jwStore.lookupPeriod !== 'object' ||
       Array.isArray(jwStore.lookupPeriod)
     ) {
-      errorCatcher(
-        new Error(
-          'Invalid jwStore.lookupPeriod structure in moveAdditionalMediaMaps',
-        ),
-        {
-          contexts: {
-            fn: {
-              name: 'moveAdditionalMediaMaps',
-            },
-          },
-        },
+      reportMoveAdditionalMediaError(
+        'Invalid jwStore.lookupPeriod structure in moveAdditionalMediaMaps',
       );
       jwStore.lookupPeriod = {};
     }
@@ -144,338 +385,7 @@ export const moveAdditionalMediaMaps: MigrationFunction = async () => {
       const lookupPeriodForCongregation = currentLookupPeriods[congId];
       if (!lookupPeriodForCongregation) continue;
 
-      // Validate that dates is a proper object with string keys
-      if (!dates || typeof dates !== 'object' || Array.isArray(dates)) {
-        errorCatcher(
-          new Error(
-            'Invalid dates structure for congregation in moveAdditionalMediaMaps',
-          ),
-          {
-            contexts: {
-              fn: {
-                congId,
-                dates,
-                name: 'moveAdditionalMediaMaps',
-              },
-            },
-          },
-        );
-        continue;
-      }
-
-      // Ensure lookupPeriodForCongregation is an array
-      if (!Array.isArray(lookupPeriodForCongregation)) {
-        errorCatcher(
-          new Error(
-            'Invalid lookupPeriodForCongregation structure for congregation in moveAdditionalMediaMaps',
-          ),
-          {
-            contexts: {
-              fn: {
-                congId,
-                lookupPeriodForCongregation,
-                name: 'moveAdditionalMediaMaps',
-              },
-            },
-          },
-        );
-        continue;
-      }
-
-      lookupPeriodForCongregation.forEach((day, dayIndex) => {
-        // Validate day object structure
-        if (!day || typeof day !== 'object') {
-          errorCatcher(
-            new Error(
-              'Invalid day object structure in moveAdditionalMediaMaps',
-            ),
-            {
-              contexts: {
-                fn: {
-                  congId,
-                  day,
-                  dayIndex,
-                  name: 'moveAdditionalMediaMaps',
-                },
-              },
-            },
-          );
-          return;
-        }
-
-        // Ensure the date is properly converted to a Date object
-        if (day.date && !(day.date instanceof Date)) {
-          try {
-            errorCatcher(
-              new Error(
-                'Invalid date object structure in moveAdditionalMediaMaps',
-              ),
-              {
-                contexts: {
-                  fn: {
-                    congId,
-                    day,
-                    dayIndex,
-                    name: 'moveAdditionalMediaMaps',
-                  },
-                },
-              },
-            );
-            day.date = dateFromString(day.date);
-          } catch (error) {
-            errorCatcher(error, {
-              contexts: {
-                fn: {
-                  congId,
-                  day,
-                  dayIndex,
-                  name: 'moveAdditionalMediaMaps convert corrupted date object',
-                },
-              },
-            });
-            return;
-          }
-        }
-
-        // Initialize mediaSections if it doesn't exist
-        day.mediaSections ??= [];
-        // Clear additional section
-        try {
-          const additionalSection = getOrCreateMediaSection(
-            day.mediaSections,
-            'imported-media',
-          );
-          additionalSection.items = [];
-        } catch (error) {
-          errorCatcher(error, {
-            contexts: {
-              fn: {
-                congId,
-                day,
-                dayIndex,
-                name: 'moveAdditionalMediaMaps get or create media section',
-              },
-            },
-          });
-        }
-        day.status = null;
-      });
-      for (const [targetDate, additionalItems] of Object.entries(dates)) {
-        if (!targetDate || !additionalItems) continue;
-
-        // Skip if targetDate is not a valid date string (e.g., empty object)
-        if (typeof targetDate !== 'string' || !targetDate.trim()) {
-          errorCatcher(
-            new Error(
-              'Invalid targetDate structure in moveAdditionalMediaMaps',
-            ),
-            {
-              contexts: {
-                fn: {
-                  congId,
-                  name: 'moveAdditionalMediaMaps',
-                  targetDate,
-                },
-              },
-            },
-          );
-          continue;
-        }
-
-        // Additional validation: check if targetDate looks like a valid date format
-        if (
-          !/^\d{4}-\d{2}-\d{2}$/.test(targetDate) &&
-          !/^\d{8}$/.test(targetDate)
-        ) {
-          errorCatcher(
-            new Error(
-              'Invalid targetDate structure in moveAdditionalMediaMaps',
-            ),
-            {
-              contexts: {
-                fn: {
-                  congId,
-                  name: 'moveAdditionalMediaMaps',
-                  targetDate,
-                },
-              },
-            },
-          );
-          continue;
-        }
-
-        // Ensure additionalItems is an array
-        if (!Array.isArray(additionalItems)) {
-          errorCatcher(
-            new Error(
-              'Invalid additionalItems structure in moveAdditionalMediaMaps',
-            ),
-            {
-              contexts: {
-                fn: {
-                  additionalItems,
-                  congId,
-                  name: 'moveAdditionalMediaMaps',
-                },
-              },
-            },
-          );
-          continue;
-        }
-
-        // Validate and process each item
-        const validItems: MediaItem[] = [];
-        (additionalItems as MediaItem[]).forEach((item, index) => {
-          if (item && typeof item === 'object' && item.uniqueId) {
-            item.source = 'additional';
-            validItems.push(item);
-          } else {
-            errorCatcher(
-              new Error('Invalid item structure in moveAdditionalMediaMaps'),
-              {
-                contexts: {
-                  fn: {
-                    congId,
-                    index,
-                    item,
-                    name: 'moveAdditionalMediaMaps',
-                    targetDate,
-                  },
-                },
-              },
-            );
-          }
-        });
-
-        if (validItems.length === 0) {
-          errorCatcher(
-            new Error(
-              'No valid items found for targetDate in moveAdditionalMediaMaps',
-            ),
-            {
-              contexts: {
-                fn: {
-                  congId,
-                  name: 'moveAdditionalMediaMaps',
-                  targetDate,
-                },
-              },
-            },
-          );
-          continue;
-        }
-
-        const existingMediaItemsForDate = lookupPeriodForCongregation.find(
-          (d) => {
-            // Ensure d.date is a proper Date object before comparison
-            if (d.date && !(d.date instanceof Date)) {
-              try {
-                errorCatcher(
-                  new Error(
-                    'Converting corrupted date object in datesAreSame comparison in moveAdditionalMediaMaps',
-                  ),
-                  {
-                    contexts: {
-                      fn: {
-                        congId,
-                        name: 'moveAdditionalMediaMaps convert corrupted date object in datesAreSame comparison',
-                        targetDate,
-                      },
-                    },
-                  },
-                );
-                d.date = dateFromString(d.date);
-              } catch (error) {
-                errorCatcher(error, {
-                  contexts: {
-                    fn: {
-                      name: 'move-additional-mediaMaps convert corrupted date object in datesAreSame comparison',
-                    },
-                  },
-                });
-                return false;
-              }
-            }
-
-            try {
-              return datesAreSame(d.date, targetDate);
-            } catch (error) {
-              errorCatcher(error, {
-                contexts: {
-                  fn: {
-                    name: 'move-additional-mediaMaps compare dates',
-                  },
-                },
-              });
-              return false;
-            }
-          },
-        );
-        if (existingMediaItemsForDate) {
-          existingMediaItemsForDate.mediaSections ??= [];
-          let additionalSection;
-          try {
-            additionalSection = findMediaSection(
-              existingMediaItemsForDate.mediaSections,
-              'imported-media',
-            );
-          } catch (error) {
-            errorCatcher(error, {
-              contexts: {
-                fn: {
-                  name: 'move-additional-mediaMaps find media section for existing media items',
-                },
-              },
-            });
-            continue;
-          }
-          const existingItems = additionalSection?.items || [];
-
-          const newAdditionalItems = validItems.filter(
-            (item) =>
-              !existingItems.some(
-                (m: MediaItem) => m.uniqueId === item.uniqueId,
-              ),
-          );
-
-          let targetSection;
-          try {
-            targetSection = getOrCreateMediaSection(
-              existingMediaItemsForDate.mediaSections,
-              'imported-media',
-            );
-            targetSection.items ??= [];
-            targetSection.items.push(...newAdditionalItems);
-          } catch (error) {
-            errorCatcher(error, {
-              contexts: {
-                fn: {
-                  name: 'move-additional-mediaMaps get or create target media section',
-                },
-              },
-            });
-            continue;
-          }
-        } else {
-          try {
-            const parsedDate = dateFromString(targetDate);
-            lookupPeriodForCongregation.push({
-              date: parsedDate,
-              mediaSections: [],
-              status: 'complete',
-            });
-          } catch (error) {
-            errorCatcher(error, {
-              contexts: {
-                fn: {
-                  name: 'move-additional-mediaMaps parse targetDate',
-                },
-              },
-            });
-            continue;
-          }
-        }
-      }
+      migrateCongregationMedia(congId, dates, lookupPeriodForCongregation);
     }
     if ('additionalMediaMaps' in jwStore) {
       delete (jwStore as Record<string, unknown>)['additionalMediaMaps'];

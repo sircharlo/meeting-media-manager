@@ -4,29 +4,37 @@ import type { JwLangCode } from 'src/types/jw/lang.d.ts';
 
 export type LanguageValue =
   | 'bzs'
+  | 'cmnHans'
+  | 'cmnHant'
   | 'de'
   | 'en'
   | 'es'
   | 'et'
   | 'fr'
   | 'hu'
+  | 'it'
+  | 'ko'
   | 'nl'
   | 'pt'
   | 'ru'
   | 'sl'
   | 'ty'
-  | 'uk';
+  | 'uk'
+  | 'zh';
 
 // As a sort of rule, let's only enable a language once it's reached a threshold of 50% translated in Crowdin.
 // Modify this file along with src/i18n/index.ts to enable a language both on the docs website and in the app.
 
 export const enabled: LanguageValue[] = [
+  'cmnHans',
   'de',
   'en',
   'es',
   'et',
   'fr',
   'hu',
+  'it',
+  'ko',
   'nl',
   'pt',
   'ru',
@@ -44,6 +52,12 @@ export const locales: {
   signLangCodes?: JwLangCode[];
   value: LanguageValue;
 }[] = [
+  {
+    englishName: 'Chinese Mandarin (Simplified)',
+    label: '中文简体（普通话）',
+    langcode: 'CHS',
+    value: 'cmnHans',
+  },
   {
     englishName: 'German',
     label: 'Deutsch',
@@ -123,6 +137,18 @@ export const locales: {
     label: 'magyar',
     langcode: 'H',
     value: 'hu',
+  },
+  {
+    englishName: 'Italian',
+    label: 'Italiano',
+    langcode: 'I',
+    value: 'it',
+  },
+  {
+    englishName: 'Korean',
+    label: '한국어',
+    langcode: 'KO',
+    value: 'ko',
   },
   {
     englishName: 'Dutch',

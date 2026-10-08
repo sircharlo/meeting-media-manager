@@ -1,13 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  getCloudStorageProvider,
+  getFilesystemErrorCode,
+  isCloudStoragePath,
   isExpectedNetworkPathAccessError,
   isPossiblyNetworkFolderPath,
   shouldIgnoreWatchFolderError,
 } from './filesystem-errors';
 
 describe('filesystem error helpers', () => {
-  it('detects UNC, WebDAV, and mapped Windows network-like paths', () => {
+  it('detects UNC, WebDAV, mapped Windows, and cloud-sync network-like paths', () => {
     expect(
       isPossiblyNetworkFolderPath(String.raw`\\server\share`, 'win32'),
     ).toBe(true);
@@ -21,6 +24,115 @@ describe('filesystem error helpers', () => {
     expect(isPossiblyNetworkFolderPath('C:/Users/test/cache', 'win32')).toBe(
       false,
     );
+    expect(
+      isPossiblyNetworkFolderPath(
+        String.raw`C:\Users\PC\Nextcloud\Hall\MediaSyncer`,
+        'win32',
+      ),
+    ).toBe(true);
+  });
+
+  it('treats anything under /Volumes as removable/network on macOS only', () => {
+    expect(
+      isPossiblyNetworkFolderPath(
+        '/Volumes/Meeting Media Manager 26.7.5-universal',
+        'darwin',
+      ),
+    ).toBe(true);
+    expect(
+      isPossiblyNetworkFolderPath('/Volumes/External Drive/Media', 'darwin'),
+    ).toBe(true);
+    expect(
+      isPossiblyNetworkFolderPath('/Users/test/Library/Caches', 'darwin'),
+    ).toBe(false);
+    // /Volumes is only meaningful as a macOS mount point - don't treat a
+    // same-named folder as network-like on other platforms.
+    expect(isPossiblyNetworkFolderPath('/Volumes/Media', 'linux')).toBe(false);
+  });
+
+  it('recognizes known cloud-sync providers from a path, including Nextcloud', () => {
+    expect(
+      getCloudStorageProvider(
+        String.raw`C:\Users\PC\Nextcloud\Hall\MediaSyncer`,
+      ),
+    ).toBe('Nextcloud');
+    expect(isCloudStoragePath('C:/Users/test/OneDrive/Media')).toBe(true);
+    expect(isCloudStoragePath('C:/Users/test/cache')).toBe(false);
+  });
+
+  it('recognizes a Google Drive desktop "Mirror files" account folder by its "(email)" suffix, regardless of locale', () => {
+    expect(
+      getCloudStorageProvider(
+        String.raw`C:\Users\PC\Meu Drive (suporteavjw@gmail.com)\Outras midias`,
+      ),
+    ).toBe('Google Drive');
+    expect(
+      isPossiblyNetworkFolderPath(
+        String.raw`C:\Users\PC\Meu Drive (suporteavjw@gmail.com)\Outras midias`,
+        'win32',
+      ),
+    ).toBe(true);
+    // A parenthesized suffix that isn't email-shaped shouldn't match.
+    expect(isCloudStoragePath(String.raw`C:\Users\PC\Documents (backup)`)).toBe(
+      false,
+    );
+  });
+
+  it('normalizes unmapped raw OS error codes to UNKNOWN', () => {
+    // Node falls back to `Unknown system error <errno>` (via
+    // util.getSystemErrorName) as both `code` and `message` when libuv can't
+    // translate a raw OS error - this isn't the generic 'UNKNOWN' code.
+    expect(
+      getFilesystemErrorCode({ code: 'Unknown system error -214545202' }),
+    ).toBe('UNKNOWN');
+    expect(getFilesystemErrorCode({ code: 'EACCES' })).toBe('EACCES');
+  });
+
+  // Errors from fs functions exposed straight through contextBridge reach
+  // the renderer with only name/message/stack - no `code`.
+  it('parses the code from a bridged error message, including non-E codes', () => {
+    expect(
+      getFilesystemErrorCode(new Error('UNKNOWN: unknown error, read')),
+    ).toBe('UNKNOWN');
+    expect(
+      getFilesystemErrorCode(
+        new Error(
+          "Unknown system error -118: Unknown system error -118, open 'C:/x'",
+        ),
+      ),
+    ).toBe('UNKNOWN');
+    expect(
+      getFilesystemErrorCode(
+        new Error("ENOENT: no such file or directory, open 'C:/x'"),
+      ),
+    ).toBe('ENOENT');
+    expect(getFilesystemErrorCode(new Error('Something else'))).toBe(undefined);
+    expect(
+      isExpectedNetworkPathAccessError(
+        new Error("UNKNOWN: unknown error, copyfile 'a' -> 'b'"),
+        'C:/Users/test/OneDrive/Documents/photo.jpg',
+        'win32',
+      ),
+    ).toBe(true);
+  });
+
+  it('treats a timed-out read of a cloud-only placeholder as expected', () => {
+    const iCloudPath =
+      '/Users/test/Library/Mobile Documents/com~apple~CloudDocs/MMM/video.mp4';
+    const timeout = new Error(
+      `ETIMEDOUT: connection timed out, copyfile '${iCloudPath}' -> '/tmp/x'`,
+    );
+
+    expect(
+      isExpectedNetworkPathAccessError(timeout, iCloudPath, 'darwin'),
+    ).toBe(true);
+    expect(
+      isExpectedNetworkPathAccessError(
+        timeout,
+        '/Users/test/local.mp4',
+        'darwin',
+      ),
+    ).toBe(false);
   });
 
   it('classifies transient access errors only for likely network paths', () => {
@@ -28,40 +140,130 @@ describe('filesystem error helpers', () => {
       isExpectedNetworkPathAccessError(
         { code: 'UNKNOWN' },
         String.raw`\\server@SSL@2078\DavWWWRoot`,
+        'win32',
       ),
     ).toBe(true);
     expect(
       isExpectedNetworkPathAccessError(
         { code: 'UNKNOWN' },
         'C:/Users/test/cache',
+        'win32',
       ),
     ).toBe(false);
     expect(
       isExpectedNetworkPathAccessError(
         { code: 'EACCES' },
         String.raw`\\server@SSL@2078\DavWWWRoot`,
+        'win32',
       ),
     ).toBe(false);
+    // Real-world Nextcloud VFS probe failure: raw untranslated OS error on a
+    // local, cloud-synced folder should be treated as transient, not a bug.
+    expect(
+      isExpectedNetworkPathAccessError(
+        { code: 'Unknown system error -214545202' },
+        String.raw`C:\Users\PC\Nextcloud\Hall\MediaSyncer`,
+        'win32',
+      ),
+    ).toBe(true);
   });
 
   it('keeps watch-folder ignore behavior centralized', () => {
     expect(
-      shouldIgnoreWatchFolderError('C:/Users/test/cache', {
-        code: 'UNKNOWN',
-        syscall: 'stat',
-      }),
+      shouldIgnoreWatchFolderError(
+        'C:/Users/test/cache',
+        { code: 'UNKNOWN', syscall: 'stat' },
+        'win32',
+      ),
     ).toBe(true);
     expect(
-      shouldIgnoreWatchFolderError(String.raw`\\server\share`, {
-        code: 'EISDIR',
-        syscall: 'watch',
-      }),
+      shouldIgnoreWatchFolderError(
+        String.raw`\\server\share`,
+        { code: 'EISDIR', syscall: 'watch' },
+        'win32',
+      ),
     ).toBe(true);
     expect(
-      shouldIgnoreWatchFolderError('C:/Users/test/cache', {
-        code: 'EACCES',
-        syscall: 'watch',
-      }),
+      shouldIgnoreWatchFolderError(
+        'C:/Users/test/cache',
+        { code: 'EACCES', syscall: 'watch' },
+        'win32',
+      ),
+    ).toBe(false);
+    // Real-world case: chokidar's fs.watch() hitting a file a Google Drive
+    // desktop "Mirror files" folder (localized "My Drive (email)" naming,
+    // not the /google drive/ marker) is transiently locking mid-sync.
+    expect(
+      shouldIgnoreWatchFolderError(
+        String.raw`C:\Users\PC\Meu Drive (suporteavjw@gmail.com)\Outras midias`,
+        { code: 'EBUSY', syscall: 'watch' },
+        'win32',
+      ),
+    ).toBe(true);
+    // Real-world case (MMM-V2-3FH): the same transient lock (AV real-time
+    // scan, search indexer) also hits a plain local Documents folder with
+    // no cloud sync involved, so EBUSY-on-watch isn't gated on the
+    // network-path heuristic like EISDIR/UNKNOWN are.
+    expect(
+      shouldIgnoreWatchFolderError(
+        String.raw`C:\Users\PC\Documents\M3 - Arquivos recorrentes`,
+        { code: 'EBUSY', syscall: 'watch' },
+        'win32',
+      ),
+    ).toBe(true);
+    expect(
+      shouldIgnoreWatchFolderError(
+        'C:/Users/test/cache',
+        { code: 'EISDIR', syscall: 'watch' },
+        'win32',
+      ),
+    ).toBe(false);
+    // Real-world case (MMM-V2-3HQ): chokidar's own lstat check on a Google
+    // Drive "My Drive" folder (G:) transiently failing with EINVAL mid-sync.
+    expect(
+      shouldIgnoreWatchFolderError(
+        String.raw`G:\My Drive\Meeting Media`,
+        { code: 'EINVAL', syscall: 'lstat' },
+        'win32',
+      ),
+    ).toBe(true);
+    expect(
+      shouldIgnoreWatchFolderError(
+        String.raw`G:\My Drive\Meeting Media`,
+        { code: 'UNKNOWN', syscall: 'lstat' },
+        'win32',
+      ),
+    ).toBe(true);
+  });
+
+  it('ignores transient scandir errors on cloud-sync/network paths', () => {
+    expect(
+      shouldIgnoreWatchFolderError(
+        String.raw`G:\.shortcut-targets-by-id\1uhAUmZUpn-NK8Ccr27CZmB9qoh30K4cw\AV Zoom Duty Documents\Meeting Media\2026-07-04`,
+        { code: 'UNKNOWN', syscall: 'scandir' },
+        'win32',
+      ),
+    ).toBe(true);
+    expect(
+      shouldIgnoreWatchFolderError(
+        'G:/Meeting Media/2026-07-04',
+        { code: 'ENOENT', syscall: 'scandir' },
+        'win32',
+      ),
+    ).toBe(true);
+    expect(
+      shouldIgnoreWatchFolderError(
+        'C:/Users/test/cache',
+        { code: 'UNKNOWN', syscall: 'scandir' },
+        'win32',
+      ),
+    ).toBe(false);
+    expect(
+      shouldIgnoreWatchFolderError(
+        'G:/Meeting Media/2026-07-04',
+        { code: 'EACCES', syscall: 'scandir' },
+        'win32',
+      ),
     ).toBe(false);
   });
 });

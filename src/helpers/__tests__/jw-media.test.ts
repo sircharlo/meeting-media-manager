@@ -1,10 +1,19 @@
+import type { MultimediaItem } from 'src/types';
+
+import { fetchRaw } from 'src/utils/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const errorCatcherMock = vi.fn();
 const createTemporaryNotificationMock = vi.fn();
 const logMock = vi.fn();
+const updateLookupPeriodMock = vi.fn();
 const extractNestedZipEntryMock = vi.fn();
 const getZipEntriesMock = vi.fn();
+const closeSqliteConnectionMock = vi.fn(async () => undefined);
+const closeSqliteConnectionsMock = vi.fn(async () => undefined);
+const isSqliteDbCorruptMock = vi.fn<(dbPath: string) => Promise<boolean>>(
+  async () => false,
+);
 const unzipMock = vi.fn();
 const statMock = vi.fn();
 const removeMock = vi.fn();
@@ -18,14 +27,16 @@ const basenameMock = vi.fn(
 const ensureDirMock = vi.fn();
 const formatDateMock = vi.fn();
 const getTempPathMock = vi.fn(async () => '/tmp');
+const isUsablePathMock = vi.fn(async () => true);
 const currentStateStore = {
   currentCongregation: '',
-  currentSettings: {},
+  currentLangObject: undefined as undefined | { isSignLanguage?: boolean },
+  currentSettings: {} as Record<string, unknown>,
   extractedFiles: {} as Record<string, string | undefined>,
   getMeetingType: vi.fn(),
 };
 const jwStore = {
-  jwMepsLanguages: { list: [] },
+  jwMepsLanguages: { list: [] as { LanguageId: number; Symbol: string }[] },
   lookupPeriod: {},
   urlVariables: {},
 };
@@ -63,6 +74,7 @@ vi.mock('src/helpers/date', () => ({
   isMwMeetingDay: vi.fn(),
   isReplacedByMemorial: vi.fn(),
   isWeMeetingDay: vi.fn(),
+  updateLookupPeriod: updateLookupPeriodMock,
 }));
 
 vi.mock('src/helpers/error-catcher', () => ({
@@ -74,6 +86,7 @@ vi.mock('src/helpers/export-media', () => ({
 }));
 
 vi.mock('src/helpers/fs', () => ({
+  getRendererPlatform: vi.fn(() => 'win32'),
   getSubtitlesUrl: vi.fn(),
   getThumbnailUrl: vi.fn(),
   registerMediaProviders: vi.fn(),
@@ -173,14 +186,43 @@ vi.mock('../media-sections', () => ({
 }));
 
 describe('jw-media helpers', () => {
+  describe('paragraph number detection', () => {
+    it('uses only a reference-shaped caption fragment', async () => {
+      const { getParagraphNumbers } = await import('../jw-media');
+
+      expect(
+        getParagraphNumbers(
+          '',
+          'Picture A: Part of an ancient Egyptian list of slaves that features more than 40 Semitic names, indicating the presence of Israelite slaves in Egypt',
+        ),
+      ).toBe('');
+      expect(getParagraphNumbers(1, 'See paragraph 2')).toBe(2);
+      expect(getParagraphNumbers(11, 'See paragraphs 11-12')).toBe('11-12');
+      expect(getParagraphNumbers('', '¶ 7')).toBe(7);
+    });
+
+    it('retains the paragraph label for captions without a reference', async () => {
+      const { getParagraphNumbers } = await import('../jw-media');
+
+      expect(getParagraphNumbers(4, '')).toBe(4);
+      expect(getParagraphNumbers(4, 'A list containing 40 names')).toBe('');
+      expect(getParagraphNumbers(4, 'John 4:6-9')).toBe('');
+      expect(
+        getParagraphNumbers(4, 'Choose what is valuable (Compare page 46.)'),
+      ).toBe('');
+    });
+  });
+
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
     currentStateStore.currentCongregation = '';
+    currentStateStore.currentLangObject = undefined;
     currentStateStore.currentSettings = {};
     currentStateStore.extractedFiles = {};
     currentStateStore.getMeetingType.mockReturnValue(null);
     jwStore.lookupPeriod = {};
+    jwStore.jwMepsLanguages = { list: [] };
 
     extractNestedZipEntryMock.mockResolvedValue({ path: '/tmp/db.db' });
     getZipEntriesMock.mockResolvedValue({});
@@ -194,6 +236,8 @@ describe('jw-media helpers', () => {
     vi.stubGlobal('electronApi', {
       basename: basenameMock,
       changeExt: vi.fn(),
+      closeSqliteConnection: closeSqliteConnectionMock,
+      closeSqliteConnections: closeSqliteConnectionsMock,
       dirname: vi.fn(),
       downloadFile: vi.fn(),
       executeQuery: vi.fn(),
@@ -203,7 +247,6 @@ describe('jw-media helpers', () => {
       fs: {
         copy: copyMock,
         ensureDir: ensureDirMock,
-        exists: vi.fn(),
         pathExists: pathExistsMock,
         readdir: readdirMock,
         remove: removeMock,
@@ -211,13 +254,207 @@ describe('jw-media helpers', () => {
         stat: statMock,
       },
       getZipEntries: getZipEntriesMock,
-      isUsablePath: vi.fn(),
+      isSqliteDbCorrupt: isSqliteDbCorruptMock,
+      isUsablePath: isUsablePathMock,
       join: joinMock,
       pathToFileURL: vi.fn(),
       readdir: readdirMock,
       setElectronUrlVariables: vi.fn(),
       unzip: unzipMock,
     });
+  });
+
+  it('closes sqlite connections before removing files when force-unzipping', async () => {
+    const { unzipJwpub } = await import('../jw-media');
+
+    await expect(
+      unzipJwpub('/tmp/publication.jwpub', '/tmp/out', true),
+    ).rejects.toThrow('JWPUB does not contain contents entry');
+
+    expect(closeSqliteConnectionsMock).toHaveBeenCalled();
+
+    const sqliteCallOrder =
+      closeSqliteConnectionsMock.mock.invocationCallOrder[0];
+    const removeCallOrder = removeMock.mock.invocationCallOrder[0];
+
+    expect(sqliteCallOrder).toBeDefined();
+    expect(removeCallOrder).toBeDefined();
+    expect(sqliteCallOrder ?? 0).toBeLessThan(removeCallOrder ?? 0);
+  });
+
+  // MMM-V2-3K9: a closeSqliteConnections() failure used to sit inside the
+  // try whose catch treats the extraction as corrupt and deletes the jwpub.
+  it('does not delete the jwpub when closing sqlite connections fails before re-extracting the db', async () => {
+    const { findDb } = await import('src/utils/sqlite');
+    vi.mocked(findDb)
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce('/tmp/out/pub.db');
+    getZipEntriesMock
+      .mockResolvedValueOnce({ contents: 100 })
+      .mockResolvedValueOnce({ 'pub.db': 50 });
+    statMock.mockImplementation(async (path: string) => {
+      if (path === '/tmp/out/contents') return { size: 100 };
+      throw Object.assign(new Error('missing'), { code: 'ENOENT' });
+    });
+    closeSqliteConnectionsMock.mockRejectedValueOnce(
+      new Error('Timed out waiting for SQLite worker after 8000ms'),
+    );
+    const { unzipJwpub } = await import('../jw-media');
+
+    await expect(
+      unzipJwpub('/tmp/publication.jwpub', '/tmp/out'),
+    ).resolves.toBe('/tmp/out');
+
+    expect(unzipMock).toHaveBeenCalledWith('/tmp/out/contents', '/tmp/out');
+    expect(removeMock).not.toHaveBeenCalledWith('/tmp/publication.jwpub');
+    expect(errorCatcherMock).toHaveBeenCalledWith(
+      expect.any(Error),
+      expect.objectContaining({
+        contexts: expect.objectContaining({
+          fn: expect.objectContaining({
+            name: 'jwpubExtractor closeSqliteConnections',
+          }),
+        }),
+      }),
+    );
+  });
+
+  // MMM-V2-3JJ: a .db left unreadable by an interrupted write was reused on
+  // every launch, since extraction only ran when it was missing.
+  describe('getReadableDb', () => {
+    const jwpubPath = '/tmp/out/publication.jwpub';
+    const dbPath = '/tmp/out/pub.db';
+
+    // What jwpubExtractor needs to re-extract only the .db: the jwpub's
+    // contents entry is already extracted at the right size.
+    const mockContentsAlreadyExtracted = () => {
+      getZipEntriesMock.mockImplementation(async (path: string) =>
+        path === jwpubPath ? { contents: 100 } : { 'pub.db': 50 },
+      );
+      statMock.mockImplementation(async (path: string) => {
+        if (path === '/tmp/out/contents') return { size: 100 };
+        throw Object.assign(new Error('missing'), { code: 'ENOENT' });
+      });
+    };
+
+    it('returns a readable db without touching it', async () => {
+      const { findDb } = await import('src/utils/sqlite');
+      vi.mocked(findDb).mockResolvedValueOnce(dbPath);
+      const { getReadableDb } = await import('../jw-media');
+
+      await expect(getReadableDb(jwpubPath, '/tmp/out')).resolves.toBe(dbPath);
+
+      expect(isSqliteDbCorruptMock).toHaveBeenCalledWith(dbPath);
+      expect(removeMock).not.toHaveBeenCalled();
+      expect(unzipMock).not.toHaveBeenCalled();
+    });
+
+    it('returns undefined without probing when there is no db', async () => {
+      const { getReadableDb } = await import('../jw-media');
+
+      await expect(getReadableDb(jwpubPath, '/tmp/out')).resolves.toBe(
+        undefined,
+      );
+
+      expect(isSqliteDbCorruptMock).not.toHaveBeenCalled();
+    });
+
+    it('re-extracts a corrupt db from the jwpub', async () => {
+      const { findDb } = await import('src/utils/sqlite');
+      vi.mocked(findDb)
+        .mockResolvedValueOnce(dbPath) // the corrupt copy
+        .mockResolvedValueOnce(undefined) // deleted, so extract it again
+        .mockResolvedValueOnce(dbPath) // extracted
+        .mockResolvedValueOnce(dbPath); // the fresh copy
+      isSqliteDbCorruptMock
+        .mockResolvedValueOnce(true)
+        .mockResolvedValueOnce(false);
+      mockContentsAlreadyExtracted();
+      // Already extracted earlier this session, which would make unzipJwpub
+      // skip the directory.
+      currentStateStore.extractedFiles['/tmp/out'] = '/tmp/out';
+      const { getReadableDb } = await import('../jw-media');
+
+      await expect(getReadableDb(jwpubPath, '/tmp/out')).resolves.toBe(dbPath);
+
+      expect(closeSqliteConnectionMock).toHaveBeenCalledWith(dbPath);
+      expect(removeMock).toHaveBeenCalledWith(dbPath);
+      expect(
+        closeSqliteConnectionMock.mock.invocationCallOrder[0] ?? 0,
+      ).toBeLessThan(removeMock.mock.invocationCallOrder[0] ?? 0);
+      expect(unzipMock).toHaveBeenCalledWith('/tmp/out/contents', '/tmp/out');
+      // The jwpub itself is fine and must be kept.
+      expect(removeMock).not.toHaveBeenCalledWith(jwpubPath);
+      expect(logMock).toHaveBeenCalledWith(
+        expect.stringContaining('is corrupt, re-extracting it'),
+        'mediaFetching',
+        'warn',
+      );
+    });
+
+    it('shares one re-extraction between concurrent lookups', async () => {
+      const { findDb } = await import('src/utils/sqlite');
+      vi.mocked(findDb)
+        .mockResolvedValueOnce(dbPath)
+        .mockResolvedValueOnce(undefined)
+        .mockResolvedValueOnce(dbPath)
+        .mockResolvedValueOnce(dbPath);
+      isSqliteDbCorruptMock
+        .mockResolvedValueOnce(true)
+        .mockResolvedValueOnce(false);
+      mockContentsAlreadyExtracted();
+      const { getReadableDb } = await import('../jw-media');
+
+      await expect(
+        Promise.all([
+          getReadableDb(jwpubPath, '/tmp/out'),
+          getReadableDb(jwpubPath, '/tmp/out'),
+        ]),
+      ).resolves.toEqual([dbPath, dbPath]);
+
+      expect(removeMock).toHaveBeenCalledTimes(1);
+      expect(unzipMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('removes the jwpub and its extraction when the fresh copy is still corrupt', async () => {
+      const { findDb } = await import('src/utils/sqlite');
+      vi.mocked(findDb)
+        .mockResolvedValueOnce(dbPath)
+        .mockResolvedValueOnce(undefined)
+        .mockResolvedValueOnce(dbPath)
+        .mockResolvedValueOnce(dbPath);
+      isSqliteDbCorruptMock
+        .mockResolvedValueOnce(true)
+        .mockResolvedValueOnce(true);
+      mockContentsAlreadyExtracted();
+      const { getReadableDb } = await import('../jw-media');
+
+      await expect(getReadableDb(jwpubPath, '/tmp/out')).rejects.toThrow(
+        'Publication database still corrupt after re-extraction',
+      );
+
+      expect(removeMock).toHaveBeenCalledWith(jwpubPath);
+      expect(removeMock).toHaveBeenCalledWith('/tmp/out/contents');
+      expect(removeMock).toHaveBeenCalledWith(dbPath);
+      expect(currentStateStore.extractedFiles['/tmp/out']).toBeUndefined();
+    });
+  });
+
+  it('closes the identification db connection before removing its temp dir', async () => {
+    getZipEntriesMock.mockResolvedValue({ contents: 100 });
+    const { identifyJwpub } = await import('../jw-media');
+
+    await identifyJwpub('/tmp/publication.jwpub');
+
+    expect(closeSqliteConnectionMock).toHaveBeenCalledWith('/tmp/db.db');
+
+    const closeCallOrder =
+      closeSqliteConnectionMock.mock.invocationCallOrder[0];
+    const removeCallOrder = removeMock.mock.invocationCallOrder[0];
+
+    expect(closeCallOrder).toBeDefined();
+    expect(removeCallOrder).toBeDefined();
+    expect(closeCallOrder ?? 0).toBeLessThan(removeCallOrder ?? 0);
   });
 
   it('captures diagnostics when a jwpub is missing the contents entry', async () => {
@@ -325,6 +562,39 @@ describe('jw-media helpers', () => {
     expect(errorCatcherMock).not.toHaveBeenCalled();
   });
 
+  it('does not report a copy failure that is expected flakiness on a cloud-synced additional-media destination', async () => {
+    const { trimFilepathAsNeeded } = await import('src/utils/fs');
+    const { sanitizeId } = await import('src/utils/general');
+
+    vi.mocked(trimFilepathAsNeeded).mockImplementation((p: string) => p);
+    vi.mocked(sanitizeId).mockImplementation((value: string) => value);
+    (
+      currentStateStore as unknown as {
+        getDatedAdditionalMediaDirectory: () => Promise<string>;
+      }
+    ).getDatedAdditionalMediaDirectory = vi.fn(
+      async () =>
+        String.raw`C:\Users\test\OneDrive\Pictures\Additional Media\cong\20260801`,
+    );
+    pathExistsMock.mockResolvedValueOnce(true).mockResolvedValueOnce(false);
+    copyMock.mockRejectedValue(
+      Object.assign(new Error('UNKNOWN: unknown error, copyfile'), {
+        code: 'UNKNOWN',
+      }),
+    );
+
+    const { copyToDatedAdditionalMedia } = await import('../jw-media');
+
+    await expect(
+      copyToDatedAdditionalMedia(
+        String.raw`C:\Users\test\OneDrive\Desktop\photo.jpeg`,
+        undefined,
+      ),
+    ).resolves.toBe('');
+
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+  });
+
   it('creates watched folders for meeting days with dynamic media', async () => {
     const meetingDate = new Date('2026-06-14T12:00:00.000Z');
     const childDynamicDate = new Date('2026-06-21T12:00:00.000Z');
@@ -393,5 +663,339 @@ describe('jw-media helpers', () => {
     expect(ensureDirMock).toHaveBeenCalledTimes(2);
     expect(ensureDirMock).toHaveBeenCalledWith('/watch/2026-06-14');
     expect(ensureDirMock).toHaveBeenCalledWith('/watch/2026-06-21');
+  });
+
+  it('skips creating watched folders when the watch folder is not a usable path', async () => {
+    currentStateStore.currentCongregation = 'abc';
+    currentStateStore.currentSettings = {
+      enableFolderWatcher: true,
+      // What a native folder picker can hand back in rare cases when
+      // browsing "Network" without fully selecting a share.
+      folderToWatch: String.raw`\\?`,
+    };
+    jwStore.lookupPeriod = {};
+    isUsablePathMock.mockResolvedValueOnce(false);
+
+    const { ensureWatchedMeetingDayFolders } = await import('../jw-media');
+
+    await ensureWatchedMeetingDayFolders();
+
+    expect(isUsablePathMock).toHaveBeenCalledWith(String.raw`\\?`);
+    expect(ensureDirMock).not.toHaveBeenCalled();
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+  });
+
+  it('tolerates a mapped-drive EINVAL when creating a watched folder', async () => {
+    const meetingDate = new Date('2026-06-14T12:00:00.000Z');
+    currentStateStore.currentCongregation = 'abc';
+    currentStateStore.currentSettings = {
+      enableFolderWatcher: true,
+      // A Google Drive Stream-style virtual drive letter can briefly
+      // unmount, making even the drive root fail recursive mkdir.
+      folderToWatch: String.raw`H:\Meu Drive\MIDIAS Cong Leste`,
+    };
+    currentStateStore.getMeetingType.mockReturnValue('we');
+    formatDateMock.mockReturnValue('2026-06-14');
+    jwStore.lookupPeriod = {
+      abc: [
+        {
+          date: meetingDate,
+          mediaSections: [{ items: [{ source: 'dynamic' }] }],
+        },
+      ],
+    };
+    ensureDirMock.mockRejectedValueOnce(
+      Object.assign(new Error("EINVAL: invalid argument, mkdir 'H:'"), {
+        code: 'EINVAL',
+        syscall: 'mkdir',
+      }),
+    );
+
+    const { ensureWatchedMeetingDayFolders } = await import('../jw-media');
+
+    await ensureWatchedMeetingDayFolders();
+
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+  });
+
+  it('updates the lookup period before fetching meeting media', async () => {
+    currentStateStore.currentCongregation = 'abc';
+    currentStateStore.currentSettings = {};
+    jwStore.lookupPeriod = { abc: [] };
+    jwStore.urlVariables = {
+      base: 'jw.org',
+      mediator: 'https://b.jw-cdn.org/apis/mediator',
+    };
+
+    const { fetchMedia } = await import('../jw-media');
+
+    await fetchMedia();
+
+    expect(updateLookupPeriodMock).toHaveBeenCalledOnce();
+  });
+
+  it('accepts valid https mediator and pubMedia URLs scraped from the base site', async () => {
+    jwStore.urlVariables = {};
+    vi.mocked(fetchRaw).mockResolvedValue({
+      ok: true,
+      text: () =>
+        Promise.resolve(
+          '<div id="pageConfig" data-mediator_url="https://b.jw-cdn.org/apis/mediator" data-pubmedia_url="https://b.jw-cdn.org/apis/pub-media"></div>',
+        ),
+    } as Response);
+
+    const { setUrlVariables } = await import('../jw-media');
+    await setUrlVariables('jw.org');
+
+    expect(jwStore.urlVariables).toEqual({
+      base: 'jw.org',
+      mediator: 'https://b.jw-cdn.org/apis/mediator',
+      pubMedia: 'https://b.jw-cdn.org/apis/pub-media',
+    });
+  });
+
+  it('discards a scraped mediator URL that is not https and resets url variables', async () => {
+    jwStore.urlVariables = {};
+    vi.mocked(fetchRaw).mockResolvedValue({
+      ok: true,
+      text: () =>
+        Promise.resolve(
+          '<div id="pageConfig" data-mediator_url="javascript:alert(1)" data-pubmedia_url="https://b.jw-cdn.org/apis/pub-media"></div>',
+        ),
+    } as Response);
+
+    const { setUrlVariables } = await import('../jw-media');
+    await setUrlVariables('jw.org');
+
+    expect(jwStore.urlVariables).toEqual({
+      base: 'jw.org',
+      mediator: '',
+      pubMedia: '',
+    });
+  });
+
+  it('excludes CBS videos from configured publications but keeps CBS images and non-CBS videos', async () => {
+    currentStateStore.currentSettings = { excludeCbsPubs: ['WCG'] };
+
+    const { isCoWeek, isMwMeetingDay, isWeMeetingDay } =
+      await import('src/helpers/date');
+    const { convertImageIfNeeded } = await import('src/utils/converters');
+    const { sanitizeId } = await import('src/utils/general');
+    const { isLikelyFile } = await import('src/utils/media');
+
+    vi.mocked(isMwMeetingDay).mockReturnValue(true);
+    vi.mocked(isWeMeetingDay).mockReturnValue(false);
+    vi.mocked(isCoWeek).mockReturnValue(false);
+    vi.mocked(convertImageIfNeeded).mockImplementation(
+      async (path) => path as string,
+    );
+    vi.mocked(sanitizeId).mockImplementation((value: string) => value);
+    vi.mocked(isLikelyFile).mockReturnValue(false);
+    formatDateMock.mockReturnValue('20260615');
+
+    const baseItem = (overrides: Partial<MultimediaItem>): MultimediaItem => ({
+      BeginParagraphOrdinal: 0,
+      Caption: '',
+      CategoryType: 1,
+      DocumentId: 1,
+      FilePath: '/tmp/file',
+      Label: 'Label',
+      MajorType: 1,
+      MimeType: 'video/mp4',
+      MultimediaId: 1,
+      TargetParagraphNumberLabel: 0,
+      ...overrides,
+    });
+
+    // Not in the CBS paragraph range: kept even though it's a wcg video.
+    const earlyWcgVideo = baseItem({
+      BeginParagraphOrdinal: 5,
+      KeySymbol: 'wcg',
+    });
+    // In the CBS paragraph range and a video from an excluded pub: dropped
+    // before mapping/downloading.
+    const cbsWcgVideo = baseItem({
+      BeginParagraphOrdinal: 24,
+      KeySymbol: 'wcg',
+    });
+    // In the CBS paragraph range but an image, not a video: kept.
+    const cbsWcgImage = baseItem({
+      BeginParagraphOrdinal: 24,
+      IssueTagNumber: 1001,
+      KeySymbol: 'wcg',
+      MimeType: 'image/jpeg',
+    });
+    // Real-world case: a video embedded in the wcg reading, but sourced from
+    // a different publication (a video compilation). ExtractSymbol carries
+    // the reading's own pub ('wcg'), while KeySymbol is the video's own
+    // source pub ('jwbcov21') - exclusion must key off ExtractSymbol.
+    const cbsVideoFromDifferentSourcePub = baseItem({
+      BeginParagraphOrdinal: 24,
+      ExtractSymbol: 'wcg',
+      IssueTagNumber: 1002,
+      KeySymbol: 'jwbcov21',
+    });
+    // Last item (defines lastParagraph); unrelated pub, kept.
+    const lastVideo = baseItem({
+      BeginParagraphOrdinal: 25,
+      KeySymbol: 'xyz',
+    });
+
+    const { dynamicMediaMapper } = await import('../jw-media');
+
+    const result = await dynamicMediaMapper(
+      [
+        earlyWcgVideo,
+        cbsWcgVideo,
+        cbsWcgImage,
+        cbsVideoFromDifferentSourcePub,
+        lastVideo,
+      ],
+      new Date('2026-06-15'),
+      'dynamic',
+    );
+
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+
+    const pubMediaIds = result.map((m) => m.pubMediaId);
+    expect(pubMediaIds).toContain('wcg');
+    expect(pubMediaIds).toContain('wcg_1001');
+    expect(pubMediaIds).toContain('xyz');
+    expect(pubMediaIds).not.toContain('jwbcov21_1002');
+    expect(result).toHaveLength(3);
+  });
+
+  it('keeps a video from an excluded CBS publication when it is not actually part of the CBS (e.g. a manual import)', async () => {
+    currentStateStore.currentSettings = { excludeCbsPubs: ['wcg'] };
+
+    const { isCoWeek, isMwMeetingDay, isWeMeetingDay } =
+      await import('src/helpers/date');
+    const { convertImageIfNeeded } = await import('src/utils/converters');
+    const { sanitizeId } = await import('src/utils/general');
+    const { isLikelyFile } = await import('src/utils/media');
+
+    vi.mocked(isMwMeetingDay).mockReturnValue(true);
+    vi.mocked(isWeMeetingDay).mockReturnValue(false);
+    vi.mocked(isCoWeek).mockReturnValue(false);
+    vi.mocked(convertImageIfNeeded).mockImplementation(
+      async (path) => path as string,
+    );
+    vi.mocked(sanitizeId).mockImplementation((value: string) => value);
+    vi.mocked(isLikelyFile).mockReturnValue(false);
+    formatDateMock.mockReturnValue('20260615');
+
+    const baseItem = (overrides: Partial<MultimediaItem>): MultimediaItem => ({
+      BeginParagraphOrdinal: 0,
+      Caption: '',
+      CategoryType: 1,
+      DocumentId: 1,
+      FilePath: '/tmp/file',
+      Label: 'Label',
+      MajorType: 1,
+      MimeType: 'video/mp4',
+      MultimediaId: 1,
+      TargetParagraphNumberLabel: 0,
+      ...overrides,
+    });
+
+    // Same paragraph ordinal as the CBS example above, but manually imported
+    // (source: 'additional'), so it isn't actually part of the CBS and
+    // should not be excluded.
+    const manuallyImportedWcgVideo = baseItem({
+      BeginParagraphOrdinal: 24,
+      KeySymbol: 'wcg',
+    });
+    const lastVideo = baseItem({
+      BeginParagraphOrdinal: 25,
+      KeySymbol: 'xyz',
+    });
+
+    const { dynamicMediaMapper } = await import('../jw-media');
+
+    const result = await dynamicMediaMapper(
+      [manuallyImportedWcgVideo, lastVideo],
+      new Date('2026-06-15'),
+      'additional',
+    );
+
+    expect(errorCatcherMock).not.toHaveBeenCalled();
+
+    const pubMediaIds = result.map((m) => m.pubMediaId);
+    expect(pubMediaIds).toContain('wcg');
+    expect(result).toHaveLength(2);
+    expect(result.find((m) => m.pubMediaId === 'wcg')?.cbs).toBe(false);
+  });
+
+  describe('processMissingMediaInfo language resolution for sign-language congregations', () => {
+    // A video embedded inside a nested extract publication (e.g. a lesson
+    // pulled in from "lff", referencing a clip from "lrc") that isn't
+    // available in the congregation's sign language, but does carry a
+    // different, real sign language (here ASL) on its own MepsLanguageIndex.
+    const nestedExtractVideo: MultimediaItem = {
+      BeginParagraphOrdinal: 20,
+      Caption: '',
+      CategoryType: 1,
+      DocumentId: 21,
+      FilePath: '',
+      IssueTagNumber: 0,
+      KeySymbol: 'lrc',
+      Label: '',
+      MajorType: 1,
+      MepsLanguageIndex: 420,
+      MimeType: 'video/mp4',
+      MultimediaId: 391,
+      TargetParagraphNumberLabel: 0,
+      Track: 1,
+    };
+
+    const getLoggedLanguageResolution = () =>
+      logMock.mock.calls.find(
+        (call) => call[0] === '[processMissingMediaInfo] Language resolution',
+      )?.[3];
+
+    beforeEach(() => {
+      currentStateStore.currentSettings = { lang: 'LSQ', langFallback: 'F' };
+      currentStateStore.currentLangObject = { isSignLanguage: true };
+      jwStore.jwMepsLanguages = { list: [{ LanguageId: 420, Symbol: 'ASL' }] };
+    });
+
+    it('trusts a nested extract video language once verified against that extract database', async () => {
+      const { processMissingMediaInfo } = await import('../jw-media');
+
+      await processMissingMediaInfo({
+        allMedia: [{ ...nestedExtractVideo }],
+        // What getDocumentExtractItems now contributes: language data read
+        // directly from the nested extract's own database (see
+        // getExtractMultimedia / getMepsLanguagesByMediaItem in sqlite.ts).
+        mepsLanguagesByMediaItem: [
+          {
+            IssueTagNumber: 0,
+            KeySymbol: 'lrc',
+            MepsLanguageIndex: 420,
+            Track: 1,
+          },
+        ],
+      });
+
+      expect(getLoggedLanguageResolution()).toMatchObject({
+        langsWritten: ['LSQ', 'ASL', 'F'],
+      });
+    });
+
+    it('falls back straight to the configured fallback language when the nested video language cannot be verified', async () => {
+      const { processMissingMediaInfo } = await import('../jw-media');
+
+      await processMissingMediaInfo({
+        allMedia: [{ ...nestedExtractVideo }],
+        // No cross-reference data available for this KeySymbol at all (the
+        // pre-fix behavior, and still correct when a MepsLanguageIndex truly
+        // can't be verified for a sign-language congregation).
+        mepsLanguagesByMediaItem: [],
+      });
+
+      expect(getLoggedLanguageResolution()).toMatchObject({
+        langsWritten: ['LSQ', 'F'],
+      });
+    });
   });
 });

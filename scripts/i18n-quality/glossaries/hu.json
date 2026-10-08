@@ -1,0 +1,266 @@
+{
+  "_comment": "Grounded JW terminology for hu, cross-checked against official jw.org pages. Reusable beyond translation-quality review. Regenerate via scripts/i18n-quality/prompts/grounding-agent.md.",
+  "_fetchedAt": "2026-09-10",
+  "_language": "hu",
+  "terms": [
+    {
+      "termEn": "Jehovah's Witnesses",
+      "official": "Jehova Tanúi",
+      "sourceUrls": [
+        "https://www.jw.org/hu/hivatalos-tajekoztatas/kifejezesek-jehova-tanui-hasznalnak/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology guide (\"Kifejezések, melyeket Jehova Tanúi használnak\", found via the English guide's hreflang=\"hu\" link): \"Olyan keresztények, akik Jehova Istent imádják, és az idejük egy részében bibliai oktatómunkát végeznek.\""
+    },
+    {
+      "termEn": "Kingdom Hall",
+      "official": "Jehova Tanúi királyságterme",
+      "sourceUrls": [
+        "https://www.jw.org/hu/hivatalos-tajekoztatas/kifejezesek-jehova-tanui-hasznalnak/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology guide gives the full media-facing form \"Jehova Tanúi királyságterme\" (\"Imádati hely, melyet egy vagy több gyülekezet használ\"); everyday/congregation-facing content consistently shortens this to just \"királyságterem\"."
+    },
+    {
+      "termEn": "circuit overseer",
+      "official": "körzetfelvigyázó",
+      "sourceUrls": [
+        "https://www.jw.org/hu/hivatalos-tajekoztatas/kifejezesek-jehova-tanui-hasznalnak/"
+      ],
+      "confidence": "high",
+      "notes": "\"Egy tapasztalt vén, aki a fiókhivatal felvigyázása alatt szolgál ..., és rendszeresen, általában évente kétszer, meglátogatja a körzetéhez tartozó gyülekezeteket. ... Ez az elnevezés nem rangot jelöl.\""
+    },
+    {
+      "termEn": "congregation",
+      "official": "gyülekezet",
+      "sourceUrls": [
+        "https://www.jw.org/hu/hivatalos-tajekoztatas/kifejezesek-jehova-tanui-hasznalnak/"
+      ],
+      "confidence": "high",
+      "notes": "Used consistently as the base term throughout the terminology guide (\"Jehova Tanúinak egy szervezett csoportja\") and every other jw.org page checked."
+    },
+    {
+      "termEn": "elder",
+      "official": "vén",
+      "sourceUrls": [
+        "https://www.jw.org/hu/hivatalos-tajekoztatas/kifejezesek-jehova-tanui-hasznalnak/"
+      ],
+      "confidence": "high",
+      "notes": "\"Jehova Tanúi közül egy olyan férfi, aki érett, és azzal a feladattal lett megbízva, hogy tanítsa a gyülekezetet, és pásztorkodjon felette.\" \"Felvigyázó\" (overseer) is used interchangeably with \"vén\" on the same page."
+    },
+    {
+      "termEn": "presiding overseer",
+      "official": "a vének testületének koordinátora",
+      "sourceUrls": [
+        "https://wol.jw.org/hu/wol/d/r17/lp-h/1200271868",
+        "https://wol.jw.org/hu/wol/d/r17/lp-h/1102014935"
+      ],
+      "confidence": "medium",
+      "notes": "Not covered by the terminology guide (an internal congregation role, not explained to media). This role/title has been restructured in recent years: current Watchtower Online Library content describes \"a vének testületének koordinátora\" (coordinator of the body of elders) as the one who now chairs meetings of the body of elders, alongside other assigned elders (secretary, service overseer, Watchtower study conductor, life-and-ministry-meeting overseer). Could not find the older literal \"elnöklő felvigyázó\" (presiding overseer) still in current use on jw.org - if the app text predates the restructuring, a verbatim \"elnöklő felvigyázó\" may still appear in older strings. Verify against actual app context before treating a mismatch here as an error."
+    },
+    {
+      "termEn": "ministerial servant",
+      "official": "kisegítőszolga",
+      "sourceUrls": [
+        "https://www.jw.org/hu/hivatalos-tajekoztatas/kifejezesek-jehova-tanui-hasznalnak/"
+      ],
+      "confidence": "high",
+      "notes": "\"Komoly gondolkodású, Jehova Tanújaként megkeresztelt férfi, aki támogatja a vének munkáját.\""
+    },
+    {
+      "termEn": "pioneer",
+      "official": "úttörő",
+      "sourceUrls": [
+        "https://www.jw.org/hu/hivatalos-tajekoztatas/kifejezesek-jehova-tanui-hasznalnak/"
+      ],
+      "confidence": "high",
+      "notes": "\"Megkeresztelt Tanú, aki vállalja, hogy egy meghatározott óraszámot tölt el a nyilvános szolgálatban.\" Guide also distinguishes \"általános úttörő\" (regular pioneer) and \"kisegítő úttörő\" (auxiliary pioneer)."
+    },
+    {
+      "termEn": "field service",
+      "official": "szántóföldi szolgálat",
+      "sourceUrls": [
+        "https://www.jw.org/hu/hivatalos-tajekoztatas/kifejezesek-jehova-tanui-hasznalnak/"
+      ],
+      "confidence": "high",
+      "notes": "\"Jehova Tanúi nyilvános szolgálata, mely során Jézus példáját követve megosztják a 'királyságról szóló jó hírt' az emberekkel.\""
+    },
+    {
+      "termEn": "Memorial",
+      "official": "Krisztus halálának emlékünnepe",
+      "sourceUrls": [
+        "https://www.jw.org/hu/hivatalos-tajekoztatas/kifejezesek-jehova-tanui-hasznalnak/"
+      ],
+      "confidence": "high",
+      "notes": "\"Évenkénti megemlékezés Jézus Krisztus haláláról. Úgy is történik rá utalás, mint az Úr vacsorája, utolsó vacsora, emlékünnep vagy Jézus halálának emlékünnepe.\" Congregation-facing content commonly shortens this to just \"emlékünnep\"."
+    },
+    {
+      "termEn": "Congregation Bible Study",
+      "official": "gyülekezeti bibliatanulmányozás",
+      "sourceUrls": ["https://wol.jw.org/hu/wol/d/r17/lp-h/1200273746"],
+      "confidence": "medium",
+      "notes": "Not covered by the terminology guide. A Watchtower Online Library meetings-index page lists it as \"gyülekezeti bibliatanulmányozás (korábban gyülekezeti könyvtanulmányozás)\" - i.e. formerly called \"congregation book study\". Attested but not independently cross-checked against a second page."
+    },
+    {
+      "termEn": "midweek meeting",
+      "official": "hét közbeni összejövetel",
+      "sourceUrls": [
+        "https://www.jw.org/hu/hivatalos-tajekoztatas/kifejezesek-jehova-tanui-hasznalnak/",
+        "https://wol.jw.org/hu/wol/d/r17/lp-h/1200273746"
+      ],
+      "confidence": "high",
+      "notes": "Terminology guide: \"Hetente, általában hétköznap este megtartott gyülekezeti összejövetel. A Keresztényi életünk és szolgálatunk elnevezésű programnak ... az a célja, hogy segítsen a Tanúknak Isten még jobb szolgáivá válni.\" Confirmed independently by a WOL meetings index, which also gives the fuller current label \"az életünk és szolgálatunk összejövetel\"."
+    },
+    {
+      "termEn": "weekend meeting",
+      "official": "nyilvános összejövetel",
+      "sourceUrls": [
+        "https://www.jw.org/hu/hivatalos-tajekoztatas/kifejezesek-jehova-tanui-hasznalnak/",
+        "https://wol.jw.org/hu/wol/d/r17/lp-h/1200273746"
+      ],
+      "confidence": "high",
+      "notes": "Terminology guide: \"Hetente, általában hétvégén megtartott gyülekezeti összejövetel, mely során a hallgatóság egy ... 30 perces bibliai témájú előadást hallgathat meg ... Ezt követően egy egyórás program következik, melynek keretében az Őrtorony ... egyik cikke kerül megbeszélésre.\" A WOL meetings index instead labels the same meeting \"hétvégi összejövetel\" (literally \"weekend meeting\") - treat both as acceptable, and check app context for which register it uses."
+    },
+    {
+      "termEn": "public talk",
+      "official": "nyilvános előadás",
+      "sourceUrls": ["https://wol.jw.org/hu/wol/d/r17/lp-h/1200274680"],
+      "confidence": "high",
+      "notes": "Confirmed via a dedicated Watchtower Online Library index page titled \"Nyilvános előadások\" (plural), covering talk outlines/titles used from 1945-2023. Not a separate entry in the terminology guide, which folds it into the \"nyilvános összejövetel\" definition instead."
+    },
+    {
+      "termEn": "Watchtower Study",
+      "official": "Őrtorony-tanulmányozás",
+      "sourceUrls": [
+        "https://wol.jw.org/hu/wol/d/r17/lp-h/1200273746",
+        "https://www.jw.org/hu/hivatalos-tajekoztatas/kifejezesek-jehova-tanui-hasznalnak/"
+      ],
+      "confidence": "high",
+      "notes": "WOL meetings index gives \"Őrtorony-tanulmányozás\" as the meeting-part name. The terminology guide describes the same segment without using this exact compound, referring instead to \"az Őrtorony tanulmányozásra szánt kiadásának\" (\"the Watchtower's study edition\") - the magazine issue used for it. See also \"The Watchtower\" entry."
+    },
+    {
+      "termEn": "The Watchtower",
+      "official": "Az Őrtorony hirdeti Jehova királyságát",
+      "sourceUrls": [
+        "https://www.jw.org/hu/hivatalos-tajekoztatas/kifejezesek-jehova-tanui-hasznalnak/"
+      ],
+      "confidence": "high",
+      "notes": "Full official title per the terminology guide. Consistently shortened to just \"Őrtorony\" in body text and issue titles (e.g. \"Őrtorony (tanulmányozásra szánt kiadás)\")."
+    },
+    {
+      "termEn": "Awake!",
+      "official": "Ébredjetek!",
+      "sourceUrls": [
+        "https://www.jw.org/hu/hivatalos-tajekoztatas/kifejezesek-jehova-tanui-hasznalnak/"
+      ],
+      "confidence": "high",
+      "notes": "Confirmed verbatim, including the exclamation mark, on the terminology guide (\"Egy folyóirat, melyet Jehova Tanúi adnak ki\")."
+    },
+    {
+      "termEn": "New World Translation",
+      "official": "Szentírás – Új világ fordítás",
+      "sourceUrls": [
+        "https://www.jw.org/hu/hivatalos-tajekoztatas/kifejezesek-jehova-tanui-hasznalnak/"
+      ],
+      "confidence": "high",
+      "notes": "Terminology guide: \"A Jehova Tanúi által fordított és közreadott\" Bible translation. Often shortened to \"Új világ fordítás\" in body text."
+    },
+    {
+      "termEn": "JW Library",
+      "official": "JW Library",
+      "sourceUrls": [
+        "https://www.jw.org/hu/hivatalos-tajekoztatas/kifejezesek-jehova-tanui-hasznalnak/"
+      ],
+      "confidence": "high",
+      "notes": "App/proper-noun name is kept untranslated in Hungarian jw.org content (appears as \"JW Library®\" in the guide's footer links), consistent with the seed's instruction not to translate it."
+    },
+    {
+      "termEn": "jw.org",
+      "official": "jw.org",
+      "sourceUrls": [
+        "https://www.jw.org/hu/hivatalos-tajekoztatas/kifejezesek-jehova-tanui-hasznalnak/"
+      ],
+      "confidence": "high",
+      "notes": "Domain/proper noun kept as-is; the Hungarian site's own page header reads \"JW.ORG / JEHOVA TANÚI HIVATALOS HONLAPJA\" (\"jw.org / Jehovah's Witnesses' official website\"), matching the app's in-context phrase \"the official website of jw.org\"."
+    },
+    {
+      "termEn": "songbook",
+      "official": "énekeskönyv",
+      "sourceUrls": ["https://wol.jw.org/hu/wol/d/r17/lp-h/2010925"],
+      "confidence": "medium",
+      "notes": "Generic category term (\"Jehova Tanúi énekeskönyve\"), not a terminology-guide entry. The current specific songbook is titled \"Énekeljünk Jehovának!\" (\"Sing to Jehovah\", 2009/2016), superseding the older \"Énekeljetek dicséreteket Jehovának\"."
+    },
+    {
+      "termEn": "convention",
+      "official": "kongresszus",
+      "sourceUrls": [
+        "https://www.jw.org/hu/hivatalos-tajekoztatas/kifejezesek-jehova-tanui-hasznalnak/"
+      ],
+      "confidence": "high",
+      "notes": "Generic entry \"kongresszus\" points to two current sub-types: \"regionális kongresszus\" (regional convention, 3 days/year, for congregations in a given area) and \"nemzetközi kongresszus\" (international convention, 3 days, delegates from multiple countries). Either qualified form may appear depending on scope; see \"assembly\" for the smaller one-day gathering."
+    },
+    {
+      "termEn": "assembly",
+      "official": "körzetkongresszus",
+      "sourceUrls": [
+        "https://www.jw.org/hu/hivatalos-tajekoztatas/kifejezesek-jehova-tanui-hasznalnak/"
+      ],
+      "confidence": "high",
+      "notes": "\"Jehova Tanúi több gyülekezetének egynapos összejövetele, melyet évente kétszer tartanak\" - i.e. the circuit assembly, matching the seed's description of a gathering smaller than a convention. Literally \"circuit convention\" - Hungarian uses the same base word \"kongresszus\" qualified differently rather than a distinct word for \"assembly\"; do not flag this as a mistranslation of \"convention\"."
+    },
+    {
+      "termEn": "theocratic school",
+      "official": "teokratikus iskola",
+      "sourceUrls": [
+        "https://wol.jw.org/hu/wol/d/r17/lp-h/2012686",
+        "https://wol.jw.org/hu/wol/d/r17/lp-h/1102001051"
+      ],
+      "confidence": "low",
+      "notes": "Ambiguous/likely dated. \"Teokratikus szolgálati iskola\" (Theocratic Ministry School) was a specific midweek-meeting program discontinued in the 2009 meeting restructuring; a 2012 Watchtower article titled \"Teokratikus iskolák\" (\"Theocratic Schools\", plural) uses the generic phrase more broadly. No current jw.org reference names a single program by this exact generic label alongside assemblies/conventions - if the app text refers to a specific still-active program (e.g. Kingdom Ministry School, Pioneer Service School, Gilead), the correct Hungarian name would differ (e.g. \"Gileád-iskola\" per the terminology guide). Verify against actual app context before relying on this rendering."
+    },
+    {
+      "termEn": "sign language",
+      "official": "jelnyelv",
+      "sourceUrls": [
+        "https://www.jw.org/hu/konyvtar/folyoiratok/g200711/Tartalomjegyz%C3%A9k/"
+      ],
+      "confidence": "medium",
+      "notes": "Generic compound term, well established across jw.org's multilingual infrastructure (Hungarian Sign Language content and congregations are branded \"Magyar jelnyelv\", locale code hsh/HDF). Not a terminology-guide entry and no single definitional quote was found, hence medium rather than high confidence."
+    },
+    {
+      "termEn": "meeting workbook",
+      "official": "Keresztényi Életünk és Szolgálatunk – Munkafüzet",
+      "sourceUrls": [
+        "https://wol.jw.org/hu/wol/d/r17/lp-h/202025160",
+        "https://wol.jw.org/hu/wol/d/r17/lp-h/1200273746"
+      ],
+      "confidence": "high",
+      "notes": "Full official title, confirmed consistently across many dated Watchtower Online Library issue pages (e.g. \"Keresztényi Életünk és Szolgálatunk – Munkafüzet, 2025. május–június\")."
+    },
+    {
+      "termEn": "yeartext",
+      "official": "éviszöveg",
+      "sourceUrls": ["https://wol.jw.org/hu/wol/d/r17/lp-h/1200276311"],
+      "confidence": "high",
+      "notes": "Confirmed via a Watchtower Online Library index page titled \"Éviszövegek\" (plural), a chronological index of annual scriptural themes from 1915-2025. Not a terminology-guide entry."
+    },
+    {
+      "termEn": "branch office",
+      "official": "fiókhivatal",
+      "sourceUrls": [
+        "https://www.jw.org/hu/hivatalos-tajekoztatas/kifejezesek-jehova-tanui-hasznalnak/"
+      ],
+      "confidence": "high",
+      "notes": "\"Helyi adminisztrációs központ, ahonnan a fiókbizottság felügyeli és támogatja Jehova Tanúi egy vagy több országban folyó vallási tevékenységeit.\""
+    },
+    {
+      "termEn": "Governing Body",
+      "official": "Jehova Tanúi vezetőtestülete",
+      "sourceUrls": [
+        "https://www.jw.org/hu/hivatalos-tajekoztatas/kifejezesek-jehova-tanui-hasznalnak/"
+      ],
+      "confidence": "high",
+      "notes": "\"Vének egy kisebb csoportja, akik segítenek a világszerte élő Tanúknak, hogy jó kapcsolatot ápoljanak Istennel. A rövid elnevezése 'vezetőtestület'.\""
+    }
+  ]
+}

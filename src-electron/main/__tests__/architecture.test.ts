@@ -10,7 +10,7 @@ async function getAllFiles(dir: string, fileList: string[] = []) {
   for (const file of files) {
     const filePath = join(dir, file);
     if ((await stat(filePath)).isDirectory()) {
-      if (file !== '__tests__') {
+      if (file !== '__tests__' && file !== 'node_modules') {
         await getAllFiles(filePath, fileList);
       }
     } else if (filePath.endsWith('.ts') && !filePath.endsWith('.test.ts')) {

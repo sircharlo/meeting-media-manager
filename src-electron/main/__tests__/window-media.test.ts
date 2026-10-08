@@ -114,6 +114,7 @@ describe('window-media placement helpers', () => {
         screenBounds: { height: 1080, width: 1920, x: 0, y: 0 },
       },
       {
+        isDestroyed: () => false,
         isFullScreen: () => false,
         isMaximized: () => false,
       } as never,
@@ -258,5 +259,184 @@ describe('window-media placement helpers', () => {
 
     expect(getDisplayMatching).toHaveBeenCalled();
     expect(result).toBe(1);
+  });
+
+  // MMM-V2-3KG: the media window can be closed while calculateAutoTarget
+  // awaits the saved-prefs disk read; touching it afterwards threw "Object
+  // has been destroyed".
+  it('stops calculating a target when the media window is destroyed during the prefs lookup', async () => {
+    let destroyed = false;
+    const isFullScreen = vi.fn(() => {
+      if (destroyed) throw new TypeError('Object has been destroyed');
+      return false;
+    });
+    const mediaWindow = {
+      isDestroyed: () => destroyed,
+      isFullScreen,
+      isMaximized: isFullScreen,
+    };
+    mockLoadWindowPrefs.mockImplementation(async () => {
+      destroyed = true;
+      return undefined;
+    });
+
+    const { __testables } = await import('../window/window-media');
+
+    const result = await __testables.calculateAutoTarget(
+      {
+        currentBounds: { height: 720, width: 1280, x: 0, y: 0 },
+        currentDisplayNr: 0,
+        isEffectivelyFullscreen: false,
+        screenBounds: { height: 1080, width: 1920, x: 0, y: 0 },
+      },
+      mediaWindow as never,
+      [
+        {
+          bounds: { height: 1080, width: 1920, x: 0, y: 0 },
+          id: 1,
+          mainWindow: true,
+        },
+        {
+          bounds: { height: 1080, width: 1920, x: 1920, y: 0 },
+          id: 2,
+          mainWindow: false,
+        },
+      ] as never,
+    );
+
+    expect(result).toBeNull();
+    expect(isFullScreen).not.toHaveBeenCalled();
+  });
+
+  it('treats a destroyed media window as neither fullscreen nor maximized', async () => {
+    const { __testables } = await import('../window/window-media');
+    const isFullScreen = vi.fn(() => {
+      throw new TypeError('Object has been destroyed');
+    });
+
+    expect(
+      __testables.isFullscreenOrMaximized(
+        {
+          currentBounds: { height: 720, width: 1280, x: 0, y: 0 },
+          currentDisplayNr: 0,
+          isEffectivelyFullscreen: false,
+          screenBounds: undefined,
+        },
+        { isDestroyed: () => true, isFullScreen } as never,
+      ),
+    ).toBe(false);
+    expect(isFullScreen).not.toHaveBeenCalled();
+  });
+
+  // BE-16 (full-audit-2026-09-05.md): a bare `screens.length === 1` check
+  // also blocked calculateAutoTarget's own recovery for a monitor unplugged
+  // mid-presentation while the media window was fullscreen on it.
+  describe('shouldSkipSingleScreenReposition', () => {
+    const fullscreenBounds = {
+      currentBounds: { height: 1080, width: 1920, x: 0, y: 0 },
+      currentDisplayNr: 0,
+      isEffectivelyFullscreen: true,
+      screenBounds: { height: 1080, width: 1920, x: 0, y: 0 },
+    };
+    const windowedBounds = {
+      ...fullscreenBounds,
+      isEffectivelyFullscreen: false,
+    };
+    const fullscreenWindow = {
+      isDestroyed: () => false,
+      isFullScreen: () => true,
+      isMaximized: () => false,
+    } as never;
+    const windowedWindow = {
+      isDestroyed: () => false,
+      isFullScreen: () => false,
+      isMaximized: () => false,
+    } as never;
+    const oneScreen = [
+      { bounds: { height: 1080, width: 1920, x: 0, y: 0 }, id: 1 },
+    ] as never;
+
+    it('allows repositioning when a topology change just left a fullscreen window stranded on one screen', async () => {
+      const { __testables } = await import('../window/window-media');
+
+      expect(
+        __testables.shouldSkipSingleScreenReposition(
+          oneScreen,
+          true,
+          true, // screenConfigChanged: a monitor was just removed
+          fullscreenBounds,
+          fullscreenWindow,
+        ),
+      ).toBe(false);
+    });
+
+    it('keeps skipping repositioning for an ordinary single-screen fullscreen user once settled (no topology change)', async () => {
+      const { __testables } = await import('../window/window-media');
+
+      expect(
+        __testables.shouldSkipSingleScreenReposition(
+          oneScreen,
+          true,
+          false, // screenConfigChanged: nothing changed since last check
+          fullscreenBounds,
+          fullscreenWindow,
+        ),
+      ).toBe(true);
+    });
+
+    it('keeps skipping repositioning for a windowed single-screen user even right after a topology change', async () => {
+      const { __testables } = await import('../window/window-media');
+
+      expect(
+        __testables.shouldSkipSingleScreenReposition(
+          oneScreen,
+          true,
+          true,
+          windowedBounds,
+          windowedWindow,
+        ),
+      ).toBe(true);
+    });
+
+    it('never skips before the initial positioning has happened', async () => {
+      const { __testables } = await import('../window/window-media');
+
+      expect(
+        __testables.shouldSkipSingleScreenReposition(
+          oneScreen,
+          false,
+          false,
+          windowedBounds,
+          windowedWindow,
+        ),
+      ).toBe(false);
+    });
+  });
+
+  it('skips the preferred-screen lookup when saved prefs have invalid bounds', async () => {
+    mockLoadWindowPrefs.mockResolvedValue({
+      height: 0,
+      width: 0,
+      x: 0,
+      y: 0,
+    });
+
+    const { __testables } = await import('../window/window-media');
+
+    const result = await __testables.getPreferredScreenFromPrefs([
+      {
+        bounds: { height: 1080, width: 1920, x: 0, y: 0 },
+        id: 1,
+        mainWindow: true,
+      },
+      {
+        bounds: { height: 1080, width: 1920, x: 1920, y: 0 },
+        id: 2,
+        mainWindow: false,
+      },
+    ] as never);
+
+    expect(getDisplayMatching).not.toHaveBeenCalled();
+    expect(result).toBe(-1);
   });
 });

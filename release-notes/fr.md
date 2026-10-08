@@ -4,6 +4,48 @@
 
 Pour la liste complète des changements entre les versions, consultez notre fichier CHANGELOG.md sur GitHub.
 
+## v26.9.0
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **Actions rapides avant et après les réunions** : Un nouveau panneau doté de boutons bien visibles facilite la mise en route et la fin de chaque réunion : un compte à rebours en temps réel, la possibilité de lancer et d'arrêter la musique de fond d'un simple clic, de démarrer et d'arrêter l'enregistrement, ainsi qu'une liste de contrôle spécifique à chaque assemblée locale, regroupée par catégories et modifiable à partir des paramètres. Le panneau « Avant la réunion » se ferme automatiquement dès que la réunion commence et que la liste de contrôle est complétée (ou bien, après un court délai prédéterminé), et peut également être fermé manuellement à tout moment.
+
+## v26.8.0
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **Refonte complète de l'application** : Une mise à jour visuelle et fonctionnelle à grande échelle touchant les boîtes de dialogue, l'en-tête et la liste des médias, les paramètres et l'assistant de configuration. L'assistant de configuration se présente désormais sous la forme d'un parcours comportant une question par écran, accompagné d'une barre de progression. Toutes les invites ont été remplacées par une boîte de dialogue cohérente avec l'identité visuelle de l'application, et la sélection d'une plage de pages dans un PDF (pour les publications et les importations par glisser-déposer) s'effectue désormais à l'aide d'un sélecteur sous forme de grille de vignettes, au lieu d'une invite de saisie libre. Ajout d'un nouveau guide de démarrage rapide à la fin de l'assistant d'installation. Comprend également un nouveau style pour les fiches et les en-têtes, avec des ombres adaptées au mode sombre, ainsi que plusieurs corrections de contraste en mode sombre (libellés des champs actifs, pourcentages de progression des téléchargements).
+- ✨ **Page des paramètres** : Réorganisée en une mise en page à deux volets, avec une nouvelle section « Préférences globales » permettant d'activer ou de désactiver les mises à jour automatiques et les mises à jour bêta, qui a été déplacée hors de la boîte de dialogue « À propos » (qui est désormais purement informationnelle).
+- ✨ **Bouton « Ajouter d'autres éléments multimédias »** : Ajout d'un paramètre permettant de choisir précisément les sections de la réunion pour lesquelles le bouton de raccourci « Ajouter d'autres éléments multimédias » doit s'afficher, ainsi qu'un paramètre pour un mode compact qui n'affiche que les icônes.
+- ✨ **Liste des médias** : Les éléments s'affichent désormais sous forme de silhouettes de chargement pendant leur ajout, au lieu de ne pas apparaître du tout ; les groupes de médias indiquent le nombre d'éléments masqués dans leur badge (par exemple « 9 éléments (2 masq.) ») ; les éléments secondaires d'un groupe peuvent être réorganisés par glisser-déposer ; et lorsque la largeur de la fenêtre est très réduite, les éléments se replient en petites icônes compactes accompagnées d'une info-bulle, au lieu d'encombrer la ligne.
+
+## v26.7.7
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **Qualité de l’aperçu des médias** : L’aperçu des médias affiche désormais les images des vidéos avec une mise à l’échelle de haute qualité, ce qui corrige les aperçus saccadés ou flous (en particulier pour les contenus comportant beaucoup de texte, comme les cantiques). L'aperçu se désactive également automatiquement si elle doit corriger à plusieurs reprises un décalage de lecture sur une même vidéo, mais il est possible de la réactiver d'un simple clic.
+
+## v26.7.6
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **Exclusion des vidéos de l'étude biblique de l'assemblée** : Ajout d'un paramètre permettant d'exclure les vidéos de l'étude biblique de l'assemblée de certaines publications (par défaut, le livre **Marche courageusement avec Dieu**), avec un sélecteur de publications permettant d'effectuer une recherche.
+- ✨ **Numéros de page des documents** : Les listes des médias pour les publications et les fichiers JWPUB affichent désormais le(s) numéro(s) de page(s) de chaque document après son titre. Cette fonction peut vous aider à retrouver rapidement un élément multimédia précis lorsque vous connaissez le numéro de page sur lequel il se trouve.
+
+## v26.7.4
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **Récupération des médias manquants** : Les éléments multimédias dont le fichier local a disparu (par exemple, supprimé lors de l'effacement automatique du cache ou supprimé manuellement) affichent désormais un bouton de lecture désactivé, une légende « manquant » indiquant le nom du fichier à rechercher, ainsi qu'une nouvelle action « Localiser le fichier » permettant de relier à nouveau l'élément à un fichier sur le disque.
+- ✨ **Avertissement de compatibilité** : Ajout d'une bannière (qui peut être masquée) avertissant les utilisateurs que certaines combinaisons de systèmes d'exploitation et d'architectures (macOS 12 Monterey et Windows 32 bits) ne seront bientôt plus prises en charge, afin qu'ils procèdent à une mise à niveau avant que les futures mises à jour de l'application n'exigent un système plus récent.
+
+## 7.0 v26.0
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **Lecture audio liée** : Ajout de la prise en charge de la lecture de l'audio d'un fichier en même temps que la vidéo d'un autre fichier. Cela peut s'avérer utile pour lire des diaporamas vidéo accompagnés de musique.
+- ✨ **Dispositions des médias surveillés** : Ajout de la persistance pour les éléments multimédias surveillés et l'ordre des sections dans tous les dossiers surveillés. Cela garantit que la liste des fichiers multimédias s'affiche de la même manière, même lorsqu'un dossier surveillé est synchronisé entre plusieurs appareils.
+
 ## v26.6.1
 
 ### ✨ Nouvelles fonctionnalités
@@ -98,7 +140,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 - ✨ **Superposition du curseur pour l'affichage sur télévision** : Affichage amélioré du curseur dans la fenêtre du site Web pour une meilleure visibilité du curseur de la souris sur les écrans de télévision.
 - ✨ **Enregistrement des réunions** : Ajout d'une nouvelle fonctionnalité d'enregistrement des réunions, permettant de contrôler une application d'enregistrement externe.
 - ✨ **Recherche sur le site** : Ajout d'une fonctionnalité permettant de rechercher des médias ou des publications sur le site à l'aide d'une recherche intelligente.
-- ✨ **Importation manuelle facile des publications** : Ajout d'une fonctionnalité permettant d'importer facilement des publications depuis JW.org, telles que des revues, des livres, des programmes et des invitations.
+- ✨ **Importation manuelle facile des publications** : Ajout d'une fonctionnalité permettant d'importer facilement des publications depuis le site officiel, telles que des revues, des livres, des programmes et des invitations.
 - ✨ **Améliorations apportées pour les langues des signes** : Ajout d'une confirmation avant la lecture intégrale des fichiers pour les langues des signes et prise en charge de la sélection de plusieurs clips, par exemple lorsque plusieurs paragraphes doivent être lus consécutivement.
 - ✨ **Navigation entre clips** : Ajout de l'affichage de la durée aux éléments de la liste des clips et amélioration de la navigation entre clips.
 - 🛠️ **Affichage multimédia** : L'affichage multimédia revient au premier plan lorsque la lecture des médias commence, même s'il était masqué auparavant.
@@ -224,22 +266,22 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 ### ✨ Nouvelles fonctionnalités
 
-- **fonctionnalité** : La présentation du site web est désormais prise en charge sur macOS 🚀
-- **fonctionnalité** : Ajout de raccourcis clavier pour arrêter, mettre en pause et reprendre la lecture multimédia 🚀
-- **fonctionnalité** : Possibilité de définir l'adresse Web à partir de laquelle les fichiers multimédias doivent être téléchargés 🚀
-- **fonctionnalité** : Ajout du sélecteur de scènes instantané pour OBS Studio et refonte de la fonctionnalité du sélecteur de scènes dans les paramètres
-- **fonctionnalité** : Amélioration du site web de documentation pour prendre en charge davantage de langues
+- 🖥️ **Présentation du site web sous macOS** : La rediffusion du site web est désormais prise en charge sous macOS 🚀
+- ⌨️ **Raccourcis clavier pour la lecture** : Ajout de raccourcis clavier pour arrêter, mettre en pause et reprendre la lecture des fichiers multimédias 🚀
+- 🌐 **Adresse de téléchargement personnalisée des fichiers multimédias** : Ajout de la prise en charge de la configuration de l'adresse Web à partir de laquelle les fichiers multimédias doivent être téléchargés 🚀
+- 🎬 **Sélecteur de scènes instantané OBS** : Ajout d'un sélecteur de scènes instantané pour OBS Studio et refonte de la fonctionnalité du sélecteur de scènes dans les paramètres
+- 📖 **Plus de langues pour la documentation** : Le site web de documentation a été enrichi pour prendre en charge davantage de langues
 
 ## 24.10.10
 
 ### ✨ Nouvelles fonctionnalités
 
-- **nouveau** : Ajout de raccourcis clavier pour accéder à l'élément média suivant/précédent
-- **nouveau** : Ajout d'un menu contextuel permettant de masquer et de renommer les éléments multimédias
-- **nouveau** : Les durées des vidéos découpées sont désormais prises en compte dans les listes de lecture JWL importées
+- ⌨️ **Raccourcis de navigation entre les fichiers multimédias** : Ajout de raccourcis clavier pour passer au fichier multimédia suivant ou précédent
+- 🖱️ **Menu contextuel des éléments multimédias** : Ajout d'un menu contextuel permettant de masquer et de renommer les éléments multimédias
+- ✂️ **Importation de playlists JWL avec durées raccourcies** : Les durées raccourcies des vidéos sont désormais prises en compte dans les playlists JWL importées
 
 ## 24.10.9
 
 ### ✨ Nouvelles fonctionnalités
 
-- **fonctionnalité** : Ajout d'une option pour supprimer tous les fichiers multimédias supplémentaires pour le jour sélectionné
+- 🗑️ **Supprimer les fichiers multimédias supplémentaires pour une journée** : Ajout d'une option permettant de supprimer tous les fichiers multimédias supplémentaires correspondant à la journée actuellement sélectionnée

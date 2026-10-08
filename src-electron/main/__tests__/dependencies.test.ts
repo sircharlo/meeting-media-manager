@@ -4,10 +4,10 @@ import { extname, join, resolve } from 'upath';
 import { describe, expect, it } from 'vitest';
 
 import { dependencies } from '../../../package.json';
+import { dependencies as electronDependencies } from '../../package.json';
 
 const projectRoot = resolve(__dirname, '../../..');
 const srcElectronDir = resolve(projectRoot, 'src-electron');
-const quasarConfigPath = resolve(projectRoot, 'quasar.config.ts');
 
 async function getAllFiles(
   dir: string,
@@ -19,6 +19,7 @@ async function getAllFiles(
     const filePath = join(dir, file);
     const fileStat = await stat(filePath);
     if (fileStat?.isDirectory()) {
+      if (file === 'node_modules') continue;
       results = results.concat(await getAllFiles(filePath, extensions));
     } else {
       if (filePath.includes('__tests__')) continue;
@@ -33,21 +34,8 @@ async function getAllFiles(
   return results;
 }
 
-async function getElectronDepsFromConfig() {
-  const configContent = await readFile(quasarConfigPath, 'utf-8');
-  const match = new RegExp(
-    /const electronDeps = new Set\(\[([\s\S]*?)\]\);/,
-  ).exec(configContent);
-  if (!match?.[1]) {
-    throw new Error('Could not find electronDeps Set in quasar.config.ts');
-  }
-  const depsContent = match[1];
-  const deps = depsContent
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => line.startsWith("'") || line.startsWith('"'))
-    .map((line) => line.replaceAll(/['",]/g, ''));
-  return new Set(deps);
+function getElectronDepsFromConfig() {
+  return new Set(Object.keys(electronDependencies));
 }
 
 async function getImportsFromFile(filePath: string): Promise<string[]> {
@@ -82,7 +70,7 @@ function getProductionDependencies() {
 describe('Electron Dependencies', () => {
   it('should list all used dependencies in electronDeps in quasar.config.ts', async () => {
     const prodDeps = getProductionDependencies();
-    const whitelistedDeps = await getElectronDepsFromConfig();
+    const whitelistedDeps = getElectronDepsFromConfig();
     const files = await getAllFiles(srcElectronDir);
 
     const usedDeps = new Set<string>();
@@ -101,6 +89,9 @@ describe('Electron Dependencies', () => {
         // Skip electron dependencies
         if (imp === 'electron') continue;
         if (imp === 'electron/renderer') continue;
+
+        // Skip virtual Quasar CLI aliases (not real npm packages)
+        if (imp.startsWith('#q-app')) continue;
 
         // Skip built-in node dependencies
         if (imp.startsWith('node:')) continue;

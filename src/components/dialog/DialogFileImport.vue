@@ -13,16 +13,21 @@
       style="flex-flow: column"
     >
       <!-- {{ totalFiles || (!!jwpubDb && jwpubLoading) }} -->
-      <div class="text-h6 row q-px-md q-pt-lg q-pb-md">
-        {{
-          t(
-            jwpubDocuments?.length && !(!!jwpubDb && jwpubLoading)
-              ? 'choose-a-document-for-import'
-              : 'add-extra-media',
-          )
-        }}
+      <div
+        class="row items-center no-wrap text-bigger text-semibold text-primary q-px-md q-pt-lg q-pb-md"
+      >
+        <div class="icon-chip q-mr-sm">
+          <q-icon name="mmm-add-media" size="xs" />
+        </div>
+        {{ jwpubTitle || t('add-extra-media') }}
       </div>
       <template v-if="jwpubDocuments?.length && !(!!jwpubDb && jwpubLoading)">
+        <div
+          v-if="jwpubDocuments?.length && !(!!jwpubDb && jwpubLoading)"
+          class="row q-px-md q-pb-sm text-body2 text-secondary"
+        >
+          {{ t('choose-a-document-for-import') }}
+        </div>
         <div class="row q-px-md overflow-auto">
           <q-list class="full-width">
             <q-item
@@ -33,7 +38,25 @@
               @click="handleJwpubImport(jwpubImportDocument)"
             >
               <q-item-section class="no-wrap">
-                {{ jwpubImportDocument.Title }}
+                <q-item-label>{{ jwpubImportDocument.Title }}</q-item-label>
+                <q-item-label
+                  v-if="
+                    formatPageLabel(
+                      t,
+                      jwpubImportDocument.FirstPageNumber,
+                      jwpubImportDocument.LastPageNumber,
+                    )
+                  "
+                  caption
+                >
+                  {{
+                    formatPageLabel(
+                      t,
+                      jwpubImportDocument.FirstPageNumber,
+                      jwpubImportDocument.LastPageNumber,
+                    )
+                  }}
+                </q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
@@ -56,28 +79,35 @@
       </template>
       <template v-else>
         <div class="row q-px-md">
-          <p>{{ t('local-media-explain-1') }}</p>
-          <a>
-            {{ t('local-media-explain-2') }}
-            <q-tooltip>
-              <div class="row">
-                <strong>{{ t('images:') }}&nbsp;</strong>
-                {{ IMG_EXTENSIONS.sort().join(', ') }}
-              </div>
-              <div class="row">
-                <strong>{{ t('videos:') }}&nbsp;</strong>
-                {{ VIDEO_EXTENSIONS.sort().join(', ') }}
-              </div>
-              <div class="row">
-                <strong>{{ t('audio:') }}&nbsp;</strong>
-                {{ AUDIO_EXTENSIONS.sort().join(', ') }}
-              </div>
-              <div class="row">
-                <strong>{{ t('other:') }}&nbsp;</strong>
-                {{ OTHER_EXTENSIONS.sort().join(', ') }}
-              </div>
-            </q-tooltip>
-          </a>
+          <p>
+            {{ t('local-media-explain-1') }} {{ t('local-media-explain-2') }}
+            <q-icon
+              class="q-ml-xs cursor-pointer"
+              color="primary"
+              name="mmm-info"
+              size="xs"
+              tabindex="0"
+            >
+              <q-tooltip>
+                <div class="row">
+                  <strong>{{ t('images:') }}&nbsp;</strong>
+                  {{ IMG_EXTENSIONS.sort().join(', ') }}
+                </div>
+                <div class="row">
+                  <strong>{{ t('videos:') }}&nbsp;</strong>
+                  {{ VIDEO_EXTENSIONS.sort().join(', ') }}
+                </div>
+                <div class="row">
+                  <strong>{{ t('audio:') }}&nbsp;</strong>
+                  {{ AUDIO_EXTENSIONS.sort().join(', ') }}
+                </div>
+                <div class="row">
+                  <strong>{{ t('other:') }}&nbsp;</strong>
+                  {{ OTHER_EXTENSIONS.sort().join(', ') }}
+                </div>
+              </q-tooltip>
+            </q-icon>
+          </p>
         </div>
         <div class="row q-px-md q-pt-md">
           <div
@@ -127,12 +157,7 @@
         </div>
       </template>
       <div class="row q-px-md q-py-md justify-end">
-        <q-btn
-          color="negative"
-          flat
-          :label="t('cancel')"
-          @click="handleCancel"
-        />
+        <q-btn flat :label="t('cancel')" @click="handleCancel" />
       </div>
     </div>
   </BaseDialog>
@@ -151,6 +176,7 @@ import {
 } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { log } from 'src/shared/vanilla';
+import { formatPageLabel } from 'src/utils/general';
 import { computed, onUnmounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -161,6 +187,7 @@ const props = defineProps<{
   dialogId: string;
   jwpubDb?: string;
   jwpubDocuments?: DocumentItem[];
+  jwpubTitle?: string;
   modelValue: boolean;
   section: MediaSectionIdentifier | undefined;
   totalFiles: number;

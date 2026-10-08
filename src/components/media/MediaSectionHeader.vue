@@ -16,7 +16,7 @@
         { 'jw-icon': mediaList.config?.jwIconKeyword },
       ]"
     >
-      <template v-if="mediaList.config?.jwIconKeyword">
+      <template v-if="mediaList.config?.jwIconKeyword && !isDemoMode">
         {{ getJwIconFromKeyword(mediaList.config?.jwIconKeyword) }}
       </template>
       <template v-else>
@@ -26,8 +26,10 @@
 
     <q-item-section
       ref="sectionHeader"
-      class="text-bold text-uppercase text-spaced row justify-between col-grow"
-      :class="{ 'cursor-pointer': isHovered && isCustom }"
+      :class="{
+        'cursor-pointer': isHovered && isCustom,
+        'section-title': !isRenaming,
+      }"
       @click.stop="isCustom && !canCollapse ? undefined : () => {}"
       @dblclick="isCustom ? handleDoubleClick() : undefined"
     >
@@ -49,23 +51,30 @@
             ? t('imported-media')
             : mediaList.config?.label || t(mediaList.config?.uniqueId)
         }}
+        <div v-if="mediaList.config?.documentTitle" class="section-subtitle">
+          {{ mediaList.config.documentTitle }}
+        </div>
       </template>
     </q-item-section>
 
     <q-item-section side>
-      <div class="row items-center">
+      <div class="row items-center q-gutter-sm">
         <!-- Three-dots menu for other controls -->
         <template v-if="isCustom && !selectedDayMeetingType">
           <q-btn
-            class="custom-text-color"
+            :aria-label="t('more-options')"
+            class="custom-text-color btn-tonal"
             flat
             icon="mmm-dots"
             round
             size="sm"
             @click.stop
           >
-            <q-menu>
-              <q-list style="min-width: 150px">
+            <q-tooltip v-if="!moreOptionsMenuActive" :delay="500">
+              {{ t('more-options') }}
+            </q-tooltip>
+            <q-menu v-model="moreOptionsMenuActive">
+              <q-list role="menu" style="min-width: 150px">
                 <!-- Color Picker -->
                 <q-item clickable @click="showColorPicker = true">
                   <q-item-section avatar>
@@ -167,6 +176,7 @@
           "
         >
           <q-btn
+            :aria-label="t('stop-repeat-section')"
             color="positive"
             icon="mmm-repeat"
             round
@@ -182,26 +192,26 @@
         <!-- Add Media Button -->
         <template v-if="hasAddMediaButton">
           <q-btn
-            class="add-media-shortcut"
-            :class="[
-              !buttonLabel
+            :aria-label="!buttonLabel ? tooltipText : undefined"
+            class="add-media-shortcut btn-tonal"
+            :class="
+              isCustom && selectedDayMeetingType !== 'we'
                 ? 'custom-text-color'
-                : 'bg-' + mediaList.config?.uniqueId,
-            ]"
+                : undefined
+            "
             :color="
               !isCustom || (isCustom && selectedDayMeetingType === 'we')
                 ? mediaList.config?.uniqueId
                 : undefined
             "
-            :flat="!buttonLabel"
+            flat
             :icon="isSongButton ? 'mmm-music-note' : 'mmm-add-media'"
             :label="buttonLabel"
-            :outline="!!buttonLabel"
             :round="!buttonLabel"
             size="sm"
             @click.stop="handleAddClick"
           >
-            <q-tooltip v-if="!$q.screen.gt.xs" :delay="500">
+            <q-tooltip v-if="!buttonLabel" :delay="500">
               {{ tooltipText }}
             </q-tooltip>
           </q-btn>
@@ -209,9 +219,10 @@
         <!-- Chevron for collapsing (non-meeting days only) -->
         <template v-if="canCollapse">
           <q-btn
-            class="q-ml-sm"
+            :aria-label="collapsed ? t('expand') : t('collapse')"
+            class="btn-tonal"
             color="primary"
-            :flat="!collapsed"
+            flat
             :icon="collapsed ? 'mmm-left' : 'mmm-down'"
             round
             size="sm"
@@ -238,7 +249,8 @@ import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { getJwIconFromKeyword } from 'src/helpers/fonts';
 import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, nextTick, ref } from 'vue';
+import { useDemoModeStore } from 'stores/demo-mode';
+import { computed, nextTick, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const props = defineProps<{
@@ -268,7 +280,12 @@ const emit = defineEmits<{
 const $q = useQuasar();
 const { t } = useI18n();
 const currentState = useCurrentStateStore();
-const { selectedDayMeetingType } = storeToRefs(currentState);
+const { currentSettings, selectedDayMeetingType } = storeToRefs(currentState);
+
+// The jw-icons glyph font can't load in demo mode (no network), so the
+// section header would show an empty square — render a bundled placeholder
+// icon instead.
+const isDemoMode = computed(() => useDemoModeStore().enabled);
 
 // Section repeat functionality
 const { isSectionRepeating, toggleSectionRepeat } = useMediaSectionRepeat();
@@ -282,9 +299,14 @@ const isHovered = useElementHover(sectionHeader);
 const renameInput = ref<HTMLInputElement>();
 const hexValue = ref(props.mediaList.config?.bgColor || '#ffffff');
 const showColorPicker = ref(false);
+const moreOptionsMenuActive = ref(false);
 
 // Computed properties
 const buttonLabel = computed(() => {
+  if (currentSettings.value?.compactAddMediaButton !== false) {
+    return undefined;
+  }
+
   if (!$q.screen.gt.xs) return undefined;
 
   if (props.isSongButton) {
@@ -399,6 +421,18 @@ const updateSectionRepeatState = (newState: boolean) => {
   }
 };
 
+// props.mediaList.config is a shared reactive object that DialogCustomSectionEdit's
+// bulk "Edit sections" dialog can also mutate directly - hexValue is only a
+// local staging copy (kept separate from the prop so the picker can update
+// live while dragging, only committing via handleColorChange's @change), so
+// without this it could keep showing a stale color from before an edit made
+// elsewhere. Resync it every time the popup opens, not continuously, so it
+// doesn't fight the user's own in-progress drag.
+watch(showColorPicker, (open) => {
+  if (!open) return;
+  hexValue.value = props.mediaList.config?.bgColor || '#ffffff';
+});
+
 // Expose the method for parent components
 defineExpose({
   updateSectionRepeatState,
@@ -418,4 +452,34 @@ defineExpose({
   max-width: 100%;
   border-radius: 4px;
 }
+
+// Overrides the global .section-title (src/css/app.scss) just for this
+// component's instances. The template also puts Quasar's "row" (flex)
+// class on this div; flex wraps the raw text in an anonymous flex item
+// that has its own implicit min-width: auto, which defeats text-overflow
+// no matter what's set here. Forcing block layout removes that anonymous
+// flex item so the ellipsis rules below actually apply.
+.section-title {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Sits below the section title as a quieter second line, so the specific
+// document (e.g. this week's study article) reads as detail rather than
+// competing with the section name for attention.
+.section-subtitle {
+  font-size: 0.8em;
+  font-weight: 500;
+  opacity: 0.75;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// .section-title lives in src/css/app.scss as a global utility - it's also
+// reused (unstyled here) by PresentWebsite.vue's section headers, which
+// share the same text-{id} convention.
 </style>

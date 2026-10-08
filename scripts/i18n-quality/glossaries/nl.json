@@ -1,0 +1,262 @@
+{
+  "_comment": "Grounded JW terminology for nl, cross-checked against official jw.org pages. Reusable beyond translation-quality review. Regenerate via scripts/i18n-quality/prompts/grounding-agent.md.",
+  "_fetchedAt": "2026-09-10",
+  "_language": "nl",
+  "terms": [
+    {
+      "termEn": "Jehovah's Witnesses",
+      "official": "Jehovah's Getuigen",
+      "sourceUrls": [
+        "https://www.jw.org/nl/internationale-communicatie/stijlgids-en-begrippenlijst/"
+      ],
+      "confidence": "high",
+      "notes": "Style guide: use the full official name at first reference; acceptable shorter alternative is 'de Getuigen'. For an individual, 'een Getuige' or 'een van Jehovah's Getuigen' (not 'Jehovah's Getuige' or 'Jehovah Getuige')."
+    },
+    {
+      "termEn": "Kingdom Hall",
+      "official": "Koninkrijkszaal van Jehovah's Getuigen",
+      "sourceUrls": [
+        "https://www.jw.org/nl/internationale-communicatie/stijlgids-en-begrippenlijst/"
+      ],
+      "confidence": "high",
+      "notes": "Commonly shortened to 'Koninkrijkszaal'. Style guide explicitly recommends against using 'kerk' (church)."
+    },
+    {
+      "termEn": "circuit overseer",
+      "official": "kringopziener",
+      "sourceUrls": [
+        "https://www.jw.org/nl/internationale-communicatie/stijlgids-en-begrippenlijst/"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "termEn": "congregation",
+      "official": "gemeente",
+      "sourceUrls": [
+        "https://www.jw.org/nl/internationale-communicatie/stijlgids-en-begrippenlijst/"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "termEn": "elder",
+      "official": "ouderling",
+      "sourceUrls": [
+        "https://www.jw.org/nl/internationale-communicatie/stijlgids-en-begrippenlijst/"
+      ],
+      "confidence": "high",
+      "notes": "Not used as an honorific title; elders are not a paid/clergy class."
+    },
+    {
+      "termEn": "presiding overseer",
+      "official": "coördinator van het lichaam van ouderlingen",
+      "sourceUrls": [
+        "https://wol.jw.org/nl/wol/d/r18/lp-o/1200276968",
+        "https://wol.jw.org/nl/wol/d/r18/lp-o/1200274607"
+      ],
+      "confidence": "medium",
+      "notes": "jw.org's own Watchtower Publications Index (wol.jw.org) marks 'Presiderend opziener' as an OLD term (formerly 'Gemeenteopziener', 'Gemeentedienaar', 'Dienstleider'; not in the current terminology guide). The current official term for this coordinating role is 'coördinator van het lichaam van ouderlingen'. If the app string means only 'whichever elder chairs a given meeting' (a rotating, weekly duty) rather than the standing coordinator role, the plain word used is simply 'voorzitter'."
+    },
+    {
+      "termEn": "ministerial servant",
+      "official": "dienaar in de bediening",
+      "sourceUrls": [
+        "https://www.jw.org/nl/internationale-communicatie/stijlgids-en-begrippenlijst/"
+      ],
+      "confidence": "high",
+      "notes": "Not used as an honorific title."
+    },
+    {
+      "termEn": "pioneer",
+      "official": "pionier",
+      "sourceUrls": [
+        "https://www.jw.org/nl/internationale-communicatie/stijlgids-en-begrippenlijst/"
+      ],
+      "confidence": "high",
+      "notes": "Often used as short for 'gewone pionier' (regular pioneer) or 'hulppionier' (auxiliary pioneer)."
+    },
+    {
+      "termEn": "field service",
+      "official": "velddienst",
+      "sourceUrls": [
+        "https://www.jw.org/nl/internationale-communicatie/stijlgids-en-begrippenlijst/"
+      ],
+      "confidence": "high",
+      "notes": "Style guide cross-references 'prediking' (preaching) as a synonym redirecting to 'velddienst'."
+    },
+    {
+      "termEn": "Memorial",
+      "official": "Herdenking van de dood van Christus",
+      "sourceUrls": [
+        "https://www.jw.org/nl/internationale-communicatie/stijlgids-en-begrippenlijst/"
+      ],
+      "confidence": "high",
+      "notes": "Commonly shortened to 'Herdenking' (used as a nav label elsewhere on jw.org). Also historically called 'het Avondmaal des Heren', 'het Laatste Avondmaal', or 'het Avondmaal'."
+    },
+    {
+      "termEn": "Congregation Bible Study",
+      "official": "Gemeentebijbelstudie",
+      "sourceUrls": ["https://wol.jw.org/nl/wol/d/r18/lp-o/1201038"],
+      "confidence": "high",
+      "notes": "Written as one word, lowercase, in the official 'Richtlijnen voor de leven-en-dienenvergadering' (Life and Ministry Meeting Guidelines) page. Not covered by the general-audience terminology guide."
+    },
+    {
+      "termEn": "midweek meeting",
+      "official": "doordeweekse vergadering",
+      "sourceUrls": [
+        "https://www.jw.org/nl/internationale-communicatie/stijlgids-en-begrippenlijst/"
+      ],
+      "confidence": "high",
+      "notes": "Style-guide (press) term for the meeting whose program is titled 'Leven en dienen als christenen'. Congregation-internal literature also calls it the 'leven-en-dienenvergadering' (Life and Ministry Meeting)."
+    },
+    {
+      "termEn": "weekend meeting",
+      "official": "openbare vergadering",
+      "sourceUrls": [
+        "https://www.jw.org/nl/internationale-communicatie/stijlgids-en-begrippenlijst/"
+      ],
+      "confidence": "high",
+      "notes": "Refers to the whole weekend meeting (public talk + Watchtower Study), as distinct from 'openbare lezing', which names only the public-talk portion."
+    },
+    {
+      "termEn": "public talk",
+      "official": "openbare lezing",
+      "sourceUrls": ["https://wol.jw.org/nl/wol/d/r18/lp-o/1200274680"],
+      "confidence": "high",
+      "notes": "jw.org's Watchtower Publications Index notes this part was formerly called 'openbare vergadering' in older publications; that name is now reserved for the weekend meeting as a whole."
+    },
+    {
+      "termEn": "Watchtower Study",
+      "official": "Wachttoren-studie",
+      "sourceUrls": [
+        "https://www.jw.org/nl/internationale-communicatie/stijlgids-en-begrippenlijst/"
+      ],
+      "confidence": "high",
+      "notes": "Appears inline within the style guide's 'openbare vergadering' entry rather than as its own headword; a one-hour question-and-answer discussion following the public talk."
+    },
+    {
+      "termEn": "The Watchtower",
+      "official": "De Wachttoren",
+      "sourceUrls": [
+        "https://www.jw.org/nl/internationale-communicatie/stijlgids-en-begrippenlijst/"
+      ],
+      "confidence": "high",
+      "notes": "Full title 'De Wachttoren — Aankondiger van Jehovah's Koninkrijk'; has a public edition and a study edition."
+    },
+    {
+      "termEn": "Awake!",
+      "official": "Ontwaakt!",
+      "sourceUrls": [
+        "https://www.jw.org/nl/internationale-communicatie/stijlgids-en-begrippenlijst/"
+      ],
+      "confidence": "high",
+      "notes": "Proper noun, includes exclamation mark. Adopted this Dutch title in 1951 (previously 'Het Gouden Tijdperk', then 'Vertroosting')."
+    },
+    {
+      "termEn": "New World Translation",
+      "official": "Nieuwewereldvertaling",
+      "sourceUrls": [
+        "https://www.jw.org/nl/internationale-communicatie/stijlgids-en-begrippenlijst/"
+      ],
+      "confidence": "high",
+      "notes": "Full form 'Nieuwewereldvertaling van de Bijbel'; written as a single compound word per current style guide."
+    },
+    {
+      "termEn": "JW Library",
+      "official": "JW Library",
+      "sourceUrls": [
+        "https://www.jw.org/nl/internationale-communicatie/stijlgids-en-begrippenlijst/"
+      ],
+      "confidence": "high",
+      "notes": "Proper noun / app name, not translated — confirmed as-is on the Dutch jw.org site."
+    },
+    {
+      "termEn": "jw.org",
+      "official": "jw.org",
+      "sourceUrls": [
+        "https://www.jw.org/nl/internationale-communicatie/stijlgids-en-begrippenlijst/"
+      ],
+      "confidence": "high",
+      "notes": "Rendered 'JW.ORG' in logo/brand contexts (all caps) and lowercase 'jw.org' in running text. Site tagline: 'Officiële website van Jehovah's Getuigen'."
+    },
+    {
+      "termEn": "songbook",
+      "official": "Zing lofzangen voor Jehovah",
+      "sourceUrls": [
+        "https://wol.jw.org/nl/wol/d/r18/lp-o/1994322",
+        "https://wol.jw.org/nl/wol/d/r18/lp-o/1200275422"
+      ],
+      "confidence": "medium",
+      "notes": "This is the title of the current JW songbook ('Sing Praises to Jehovah'), which superseded 'Zing met vreugde voor Jehovah' (2016) and 'Zing voor Jehovah' (2009). If the app's 'songbook' string is a generic noun rather than this specific title, a generic word such as 'liederenbundel' may be what's used in-app — check context before flagging a mismatch."
+    },
+    {
+      "termEn": "convention",
+      "official": "congres",
+      "sourceUrls": [
+        "https://www.jw.org/nl/internationale-communicatie/stijlgids-en-begrippenlijst/"
+      ],
+      "confidence": "high",
+      "notes": "Style guide's 'congres' entry redirects to the two specific types: 'internationaal congres' (international convention) and 'regionaal congres' (regional convention). 'regionaal congres' most closely matches the seed's 'regional convention' sense."
+    },
+    {
+      "termEn": "assembly",
+      "official": "kringvergadering",
+      "sourceUrls": [
+        "https://www.jw.org/nl/internationale-communicatie/stijlgids-en-begrippenlijst/"
+      ],
+      "confidence": "high",
+      "notes": "A one-day, twice-yearly circuit-level meeting — smaller than a 'congres' (convention), matching the seed's context."
+    },
+    {
+      "termEn": "theocratic school",
+      "official": "theocratische school",
+      "sourceUrls": ["https://wol.jw.org/nl/wol/d/r18/lp-o/1102001126"],
+      "confidence": "medium",
+      "notes": "Also 'theocratische bedieningsschool'. This matches the pre-2023 congregation meeting structure (a weekly training school discontinued in the current 'leven-en-dienenvergadering' format) and is documented only in older Watchtower Library material — not in the current terminology guide. Confirm whether the app's usage is historical/legacy content or refers to a different training program held at assemblies/conventions."
+    },
+    {
+      "termEn": "sign language",
+      "official": "gebarentaal",
+      "sourceUrls": [
+        "https://www.jw.org/nl/internationale-communicatie/stijlgids-en-begrippenlijst/"
+      ],
+      "confidence": "high",
+      "notes": "Generic Dutch word, confirmed via jw.org's own language-selector UI ('Alleen gebarentalen' = sign languages only) rather than a glossary headword."
+    },
+    {
+      "termEn": "meeting workbook",
+      "official": "Werkboek voor vergaderingen",
+      "sourceUrls": [
+        "https://www.jw.org/nl/internationale-communicatie/stijlgids-en-begrippenlijst/"
+      ],
+      "confidence": "high",
+      "notes": "Generic label used in jw.org's own Library navigation for this publication category (the Our Christian Life and Ministry Meeting Workbook)."
+    },
+    {
+      "termEn": "yeartext",
+      "official": "jaartekst",
+      "sourceUrls": ["https://wol.jw.org/nl/wol/d/r18/lp-o/1200028490"],
+      "confidence": "high",
+      "notes": "Confirmed via the Watchtower Publications Index ('Jaarteksten', plural, as the index headword)."
+    },
+    {
+      "termEn": "branch office",
+      "official": "bijkantoor",
+      "sourceUrls": [
+        "https://www.jw.org/nl/internationale-communicatie/stijlgids-en-begrippenlijst/"
+      ],
+      "confidence": "high",
+      "notes": ""
+    },
+    {
+      "termEn": "Governing Body",
+      "official": "Besturende Lichaam",
+      "sourceUrls": [
+        "https://www.jw.org/nl/internationale-communicatie/stijlgids-en-begrippenlijst/"
+      ],
+      "confidence": "high",
+      "notes": "Full form 'Besturende Lichaam van Jehovah's Getuigen'; commonly shortened to 'Besturende Lichaam'."
+    }
+  ]
+}

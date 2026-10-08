@@ -3,6 +3,11 @@ import type { LanguageValue } from 'src/constants/locales';
 import type { RESOLUTIONS } from 'src/constants/settings';
 
 import type { JwLangCode } from './jw/lang';
+import type { MediaSectionIdentifier } from './media';
+import type {
+  MeetingChecklistCategory,
+  MeetingChecklistItem,
+} from './meeting-quick-actions';
 
 export type MaxRes = (typeof RESOLUTIONS)[number];
 
@@ -118,7 +123,9 @@ export type SettingsGroupKey =
   | 'app'
   | 'congregationMeetings'
   | 'integrations'
-  | 'mediaRetrievalPlayback';
+  | 'interfaceShortcuts'
+  | 'mediaRetrievalPlayback'
+  | 'meetingTimer';
 
 export type SettingsGroups = Record<SettingsGroupKey, SettingsGroup>;
 
@@ -138,7 +145,7 @@ export interface SettingsItem {
   platforms?: string[];
   rules?: SettingsItemRule[];
   step?: number;
-  subgroup?: SettingsItemSubgroup;
+  subgroup: SettingsItemSubgroup;
   type: SettingsItemType;
   unless?: (keyof SettingsValues)[] | keyof SettingsValues;
 }
@@ -176,20 +183,33 @@ export type SettingsItemRule = 'notEmpty' | 'portNumber' | 'regular';
 export type SettingsItems = Record<keyof SettingsValues, SettingsItem>;
 
 export type SettingsItemSubgroup =
+  | 'addMediaButton'
   | 'cache'
+  | 'congregationIdentity'
   | 'customEvents'
   | 'dangerZone'
+  | 'display'
+  | 'dragAndDrop'
   | 'folderWatcher'
   | 'keyboardShortcuts'
+  | 'language'
   | 'media-display'
   | 'mediaExport'
   | 'meetingRecording'
+  | 'meetingSchedule'
   | 'meetingScheduleChange'
   | 'obsStudio'
+  | 'pinyin'
+  | 'playback'
+  | 'quickActions'
   | 'setupWizard'
   | 'setupWizard.backgroundMusic'
+  | 'specialDates'
+  | 'startup'
   | 'subtitles'
-  | 'timer'
+  | 'timerColors'
+  | 'timerCountdown'
+  | 'timerDisplay'
   | 'zoomIntegration'
   | 'zoomMeetingManager';
 
@@ -198,7 +218,9 @@ export type SettingsItemType =
   | 'color'
   | 'date'
   | 'list'
+  | 'mediaSections'
   | 'path'
+  | 'pubSymbols'
   | 'shortcut'
   | 'slider'
   | 'text'
@@ -206,11 +228,13 @@ export type SettingsItemType =
   | 'toggle';
 
 export interface SettingsValues {
+  addMediaButtonSections: MediaSectionIdentifier[];
   autoStartAtLogin: boolean;
   autoStartMusic: boolean;
   baseUrl: string;
   beginPlaybackPaused: boolean;
   cacheFolder: null | string;
+  compactAddMediaButton: boolean;
   congregationName: null | string;
   congregationNameModified: boolean;
   convertFilesToMp4: boolean;
@@ -232,11 +256,13 @@ export interface SettingsValues {
   enableMediaDisplayButton: boolean;
   enableMediaPreview: boolean;
   enableMediaWindowFadeTransitions: boolean;
+  enableMeetingQuickActions: boolean;
   enableMusicButton: boolean;
   enablePinyinSongs: boolean;
   enablePlaybackSpeedControl: boolean;
   enableSubtitles: boolean;
   enableTimerDisplay: boolean;
+  excludeCbsPubs: string[];
   excludeFootnotes: boolean;
   excludeTh: boolean;
   excludeWtParagraphVideos: boolean;
@@ -251,6 +277,10 @@ export interface SettingsValues {
   localDateFormat: string;
   maxRes: MaxRes;
   mediaAutoExportFolder: string;
+  meetingQuickActionsCategoriesAfter: MeetingChecklistCategory[];
+  meetingQuickActionsCategoriesBefore: MeetingChecklistCategory[];
+  meetingQuickActionsChecklistAfter: MeetingChecklistItem[];
+  meetingQuickActionsChecklistBefore: MeetingChecklistItem[];
   meetingScheduleChangeDate: `${number}/${number}/${number}` | null;
   meetingScheduleChangeMwDay: `${number}` | null;
   meetingScheduleChangeMwStartTime: `${number}:${number}` | null;
@@ -288,6 +318,7 @@ export interface SettingsValues {
   shortcutMediaStop: null | string;
   shortcutMediaWindow: null | string;
   shortcutMusic: null | string;
+  showMediaDragHandle: boolean;
   suppressHardwareAccelerationReminder: boolean;
   timerAutoOpen: boolean;
   timerBackgroundColor: string;

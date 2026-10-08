@@ -1,10 +1,15 @@
 <template>
-  <q-dialog v-model="dialogValue" :persistent="false" transition-duration="200">
-    <q-card class="section-picker-card" flat>
-      <q-card-section class="q-pa-sm">
-        <div class="text-subtitle2 q-mb-sm">
-          {{ t('choose-section-for-files') }}
+  <BaseDialog v-model="dialogValue" :dialog-id="dialogId">
+    <q-card class="round-card section-picker-card">
+      <q-card-section
+        class="row items-center no-wrap text-bigger text-semibold text-primary q-pb-none"
+      >
+        <div class="icon-chip q-mr-sm">
+          <q-icon name="mmm-additional-media" size="xs" />
         </div>
+        {{ t('choose-section-for-files') }}
+      </q-card-section>
+      <q-card-section class="q-pa-sm">
         <div class="row">
           <div
             v-for="section in availableSections"
@@ -40,12 +45,13 @@
         </div>
       </q-card-section>
     </q-card>
-  </q-dialog>
+  </BaseDialog>
 </template>
 
 <script setup lang="ts">
 import type { MediaSectionIdentifier, MediaSectionWithConfig } from 'src/types';
 
+import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { getMeetingSections } from 'src/constants/media';
 import { isCoWeek, isMeetingDay, isWeMeetingDay } from 'src/helpers/date';
@@ -58,6 +64,7 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
 const props = defineProps<{
+  dialogId: string;
   files: (File | string)[];
   modelValue: boolean;
 }>();
@@ -143,18 +150,8 @@ const selectSection = (section: MediaSectionIdentifier) => {
 
 <style lang="scss" scoped>
 .section-picker-card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   margin: 16px;
   max-width: 400px;
-
-  body.body--dark & {
-    background: rgba(30, 30, 30, 0.95);
-    border-color: rgba(255, 255, 255, 0.1);
-  }
 }
 
 .section-btn {

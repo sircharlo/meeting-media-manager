@@ -73,7 +73,7 @@
         fit="contain"
         no-spinner
         :src="displayLayer1.url"
-        @load="handleImageLoad()"
+        @load="handleImageLoad(1)"
       />
       <video
         v-else-if="
@@ -85,9 +85,10 @@
         disableRemotePlayback
         :muted="isSlideshowDisplayVideo(displayLayer1.url)"
         preload="metadata"
-        :src="displayLayer1.url"
+        :src="displayLayer1.url || undefined"
         @canplay="handleVideoCanPlay()"
         @ended="endOrLoop()"
+        @error="handleMediaError(1)"
         @loadedmetadata="playMedia()"
         @pause="handleVideoPause()"
       >
@@ -102,6 +103,8 @@
         v-else-if="isAudio(displayLayer1.url) && !videoStreaming"
         ref="mediaElement1"
         style="display: none"
+        @ended="endOrLoop()"
+        @error="handleMediaError(1)"
         @loadedmetadata="playMedia()"
       >
         <source :src="displayLayer1.url" />
@@ -123,7 +126,7 @@
         fit="contain"
         no-spinner
         :src="displayLayer2.url"
-        @load="handleImageLoad()"
+        @load="handleImageLoad(2)"
       />
       <video
         v-else-if="isVideo(displayLayer2.url)"
@@ -136,6 +139,7 @@
         :src="displayLayer2.url"
         @canplay="handleVideoCanPlay()"
         @ended="endOrLoop()"
+        @error="handleMediaError(2)"
         @loadedmetadata="playMedia()"
         @pause="handleVideoPause()"
       >
@@ -150,6 +154,8 @@
         v-else-if="isAudio(displayLayer2.url)"
         ref="mediaElement2"
         style="display: none"
+        @ended="endOrLoop()"
+        @error="handleMediaError(2)"
         @loadedmetadata="playMedia()"
       >
         <source :src="displayLayer2.url" />
@@ -185,7 +191,13 @@ import {
 } from 'src/helpers/fonts';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { log } from 'src/shared/vanilla';
-import { isAudio, isImage, isVideo } from 'src/utils/media';
+import {
+  isAudio,
+  isExpectedMediaAccessError,
+  isImage,
+  isVideo,
+  stopMediaStreamTracks,
+} from 'src/utils/media';
 import { useJwStore } from 'stores/jw';
 import {
   computed,
@@ -224,12 +236,21 @@ $q.iconMapFn = (iconName) => {
   };
 };
 
+// UX-11 (full-audit-2026-09-05.md): clearing an element's src as part of
+// deliberate teardown below can fire a spurious `error` event on some
+// engines, even though nothing actually failed to play. Tracked in a
+// WeakSet (no manual removal needed - entries fall out once the element
+// itself is garbage-collected) so handleMediaError can tell that apart from
+// a genuine mid-playback failure.
+const elementsBeingCleanedUp = new WeakSet<HTMLMediaElement>();
+
 /**
  * Robustly cleans up a media element to prevent renderer crashes.
  * @param element The HTMLAudioElement or HTMLVideoElement to clean up.
  */
 const cleanupMediaElement = (element: HTMLMediaElement | null | undefined) => {
   if (!element) return;
+  elementsBeingCleanedUp.add(element);
 
   log(
     '🎬 [cleanupMediaElement] Cleaning up media element',
@@ -240,6 +261,8 @@ const cleanupMediaElement = (element: HTMLMediaElement | null | undefined) => {
   try {
     // Stop playback
     element.pause();
+
+    stopMediaStreamTracks(element.srcObject);
 
     // Clear sources to free up internal buffers/decoders
     element.src = '';
@@ -268,6 +291,26 @@ const cleanupMediaElement = (element: HTMLMediaElement | null | undefined) => {
       contexts: { fn: { name: 'cleanupMediaElement' } },
     });
   }
+};
+
+const IMAGE_DECODE_TIMEOUT_MS = 500;
+
+// Waits for an image to be decoded (ready to paint without jank), capped by a
+// timeout so a slow/failed decode can't hang the crossfade indefinitely.
+const waitForImageDecode = (url: string): Promise<void> => {
+  const img = new Image();
+  img.src = url;
+
+  const decodeAttempt =
+    typeof img.decode === 'function'
+      ? img.decode().catch(() => undefined)
+      : Promise.resolve();
+
+  const fallback = new Promise<void>((resolve) => {
+    setTimeout(resolve, IMAGE_DECODE_TIMEOUT_MS);
+  });
+
+  return Promise.race([decodeAttempt, fallback]);
 };
 
 const isEnding = ref(false);
@@ -357,17 +400,32 @@ const { post: postCurrentTime } = useBroadcastChannel<number, number>({
   name: 'current-time',
 });
 
+const { post: postDuration } = useBroadcastChannel<number, number>({
+  name: 'media-duration',
+});
+
 const { data: mediaAction } = useBroadcastChannel<string, string>({
   name: 'main-window-media-action',
 });
 
-const handleImageLoad = () => {
+const handleImageLoad = (layer: 1 | 2) => {
   // Image loaded - apply current zoom/pan state if available
   if (zoomPanState.value && Object.keys(zoomPanState.value).length > 0) {
     // Skip animation on initial load
     skipZoomPanAnimation.value = true;
     applyZoomPanState(zoomPanState.value);
+    return;
   }
+
+  // No active zoom/pan for this item. The image element (mediaImage1/2) is
+  // reused across different images - only its `src` changes - so without an
+  // explicit reset here, a transform left over from a previous image can
+  // stay visually applied to this brand-new one until the next real
+  // zoom/pan broadcast arrives.
+  const imageElem = document.getElementById(`mediaImage${layer}`);
+  if (!imageElem) return;
+  imageElem.style.transition = 'none';
+  imageElem.style.transform = '';
 };
 
 let lastZoomPanTime = 0;
@@ -665,6 +723,12 @@ const endOrLoop = () => {
       currentMediaElement.value.currentTime = customMin.value;
       playMediaElement();
       triggerSlideshowAudioPlay();
+      // Re-arm the custom-duration boundary check: updateTime's rAF loop
+      // bails out immediately while isEnding is true, and without this
+      // reset the trim would only be honored on the very first loop -
+      // subsequent iterations would play past customMax to the source's
+      // natural end (or native `ended`) instead of looping within it.
+      isEnding.value = false;
     }
   } else {
     log('🎬 [endOrLoop] Posting ended state', 'mediaPlayer', 'log');
@@ -672,6 +736,44 @@ const endOrLoop = () => {
     // Don't clear mediaCustomDuration immediately to avoid race condition
     // It will be cleared when the media state is handled by the main window
   }
+};
+
+// UX-11 (full-audit-2026-09-05.md): a corrupted file, an unsupported codec,
+// or a cache-path change invalidating the source used to fire the native
+// `error` event straight into the void - no auto-advance, no notification,
+// no visual fallback, so a live meeting could sit on a stalled/blank screen
+// indefinitely with no operator-visible signal anything had gone wrong.
+const handleMediaError = (layer: 1 | 2) => {
+  const element = layer === 1 ? mediaElement1.value : mediaElement2.value;
+  if (!element || elementsBeingCleanedUp.has(element)) return;
+
+  const layerRef = layer === 1 ? displayLayer1 : displayLayer2;
+
+  // A live stream (website mirroring) renders this <video> with no url
+  // while its srcObject is still being requested; an empty src attribute
+  // makes Chromium fail resource selection with "Empty src attribute"
+  // before the stream is even attached (MMM-V2-3J0). No file can have
+  // failed without a url, so this is never a real playback error - and
+  // it must not be treated as end-of-media either.
+  if (!layerRef.value.url) return;
+
+  errorCatcher(new Error(element.error?.message || 'Media playback error'), {
+    contexts: {
+      fn: {
+        code: element.error?.code,
+        layer,
+        name: 'handleMediaError',
+        url: layerRef.value.url,
+      },
+    },
+  });
+
+  // Never loop back into whatever just failed, even if repeat is on - treat
+  // any playback error as an end-of-media signal so the main window's
+  // existing end-of-media handling (MediaCalendarPage.vue's
+  // lastEndTimestamp watcher) takes over instead of the display staying
+  // stuck expecting content that will never arrive.
+  postLastEndTimestamp(Date.now());
 };
 
 const handleVideoPause = () => {
@@ -717,6 +819,13 @@ const handleVideoCanPlay = () => {
 const fadeOutDurationInSeconds = MEDIA_STOP_FADE_DURATION_SECONDS;
 const fadeOutDurationInMilliseconds = fadeOutDurationInSeconds * 1000;
 
+// When OBS integration is on, keep the yeartext layer blanked for this long
+// after media stops before revealing it again, so it doesn't flash through
+// while OBS is still mid-transition away from the media scene. Mirrors the
+// 600ms delay MediaCalendarPage.vue uses for the opposite (media-starting)
+// case.
+const OBS_CAMERA_SCENE_REVEAL_DELAY_MS = 600;
+
 const playMedia = () => {
   log(
     '🔄 [playMedia] Playing media',
@@ -729,6 +838,13 @@ const playMedia = () => {
     if (!currentMediaElement.value) {
       return;
     }
+
+    // playMedia() runs on @loadedmetadata, so duration is already known here.
+    // Guard against Infinity/NaN (e.g. a live/streaming source, or a file
+    // that fails to report a real duration) - consumers (the media preview's
+    // progress bar) treat 0 as "unknown" already.
+    const { duration } = currentMediaElement.value;
+    postDuration(Number.isFinite(duration) ? duration : 0);
 
     let lastUpdate = 0;
     const updateInterval = fadeOutDurationInMilliseconds;
@@ -748,7 +864,14 @@ const playMedia = () => {
           postCurrentTime(currentTime);
           lastUpdate = Date.now();
         } catch (e) {
-          errorCatcher(e);
+          // The BroadcastChannel can close mid-flight if this window is
+          // being torn down while a throttled update was already queued -
+          // expected shutdown race, not a real failure.
+          if (!(
+            e instanceof Error && e.message.includes('Channel is closed')
+          )) {
+            errorCatcher(e);
+          }
         }
       }
 
@@ -760,6 +883,12 @@ const playMedia = () => {
         isEnding.value = true;
         endOrLoop();
         cancelAnimationFrame(rafId);
+        // Reset so the ontimeupdate handler below is able to restart this
+        // loop on the next native timeupdate event - needed for looped
+        // (repeat) playback, where endOrLoop seeks back and keeps playing
+        // instead of ending for good. cancelAnimationFrame() alone doesn't
+        // clear this, so it would otherwise stay a stale truthy id forever.
+        rafId = 0;
         return;
       }
 
@@ -820,7 +949,7 @@ const crossfadeToNewMedia = (newUrl: string) => {
   }
 
   // Fade in the new layer
-  setTimeout(() => {
+  const startFadeIn = () => {
     if (nextLayer.value.url !== newUrl) {
       return;
     }
@@ -845,7 +974,22 @@ const crossfadeToNewMedia = (newUrl: string) => {
       }
       isTransitioning.value = false;
     }, fadeOutDurationInMilliseconds); // Match the CSS transition duration
-  }, 50); // Small delay to ensure the new media starts loading
+  };
+
+  const hasOutgoingLayer =
+    !!currentLiveLayer && currentLiveLayer.value !== nextLayer.value;
+
+  if (isImage(newUrl) && hasOutgoingLayer) {
+    // Wait for the new image to actually be decoded before starting the
+    // crossfade, so the outgoing layer never fades out ahead of the
+    // incoming one having pixels to show.
+    waitForImageDecode(newUrl).then(() => {
+      setTimeout(startFadeIn, 50);
+    });
+  } else {
+    // Small delay to ensure the new media starts loading
+    setTimeout(startFadeIn, 50);
+  }
 };
 
 // Handle clearing media (fade out current layer)
@@ -857,6 +1001,17 @@ const clearCurrentMedia = () => {
   if (currentLiveLayer?.value.url) {
     const clearingUrl = currentLiveLayer.value.url;
     const clearingToken = ++currentLiveLayer.value.token;
+
+    // When OBS is enabled, hide the yeartext layer for a beat so it doesn't
+    // flash through while OBS is still transitioning away from the media
+    // scene (mirrors the entry-side delay in MediaCalendarPage.vue). Without
+    // OBS, there's no scene transition to hide behind, so leave behavior as-is.
+    if (obsEnabled.value && !isAudio(clearingUrl)) {
+      isTransitioning.value = true;
+      setTimeout(() => {
+        isTransitioning.value = false;
+      }, OBS_CAMERA_SCENE_REVEAL_DELAY_MS);
+    }
 
     // Skip zoom/pan animation when clearing media
     if (isImage(clearingUrl)) {
@@ -924,6 +1079,10 @@ const { data: online } = useBroadcastChannel<boolean, boolean>({
 
 const { data: hideMediaLogo } = useBroadcastChannel<boolean, boolean>({
   name: 'hide-media-logo',
+});
+
+const { data: obsEnabled } = useBroadcastChannel<boolean, boolean>({
+  name: 'obs-enabled',
 });
 
 const { post: postMediaPlayingAction } = useBroadcastChannel<string, string>({
@@ -1013,13 +1172,21 @@ const requestStream = async (isCamera: boolean, deviceId?: string) => {
         const temp = await getMedia();
         temp.getTracks().forEach((track) => track.stop());
       } catch (e) {
-        errorCatcher(e, {
-          contexts: {
-            fn: {
-              name: isCamera ? 'requestCameraAccess' : 'requestDisplayAccess',
+        // This probe exists only to make the OS show its permission prompt;
+        // it failing with a denied/unavailable source is an expected
+        // outcome, and the checkAccess() below tells the user
+        // (MMM-V2-3J5).
+        if (isExpectedMediaAccessError(e)) {
+          log('Media access probe failed', 'mediaPlayer', 'warn', e);
+        } else {
+          errorCatcher(e, {
+            contexts: {
+              fn: {
+                name: isCamera ? 'requestCameraAccess' : 'requestDisplayAccess',
+              },
             },
-          },
-        });
+          });
+        }
       }
 
       if (!(await checkAccess())) {
@@ -1030,9 +1197,15 @@ const requestStream = async (isCamera: boolean, deviceId?: string) => {
 
     return await getMedia();
   } catch (e) {
-    errorCatcher(e, {
-      contexts: { fn: { name: isCamera ? 'streamCamera' : 'streamDisplay' } },
-    });
+    // The camera path tells the user below; a busy/denied camera is
+    // environmental, not a bug.
+    if (!(isCamera && isExpectedMediaAccessError(e))) {
+      errorCatcher(e, {
+        contexts: {
+          fn: { name: isCamera ? 'streamCamera' : 'streamDisplay' },
+        },
+      });
+    }
     if (isCamera) notifyAccessDenied(isCamera);
     return null;
   }
@@ -1065,6 +1238,62 @@ const loadFonts = async () => {
   }
 
   fontsSet.value = true;
+};
+
+const clearWebsiteStream = () => {
+  // cleanupMediaElement (not a manual pause/srcObject reset) so the
+  // resulting `error` event on currentMediaElement is recognized as
+  // deliberate teardown instead of reported as a real playback failure -
+  // see the UX-11 note above elementsBeingCleanedUp.
+  cleanupMediaElement(currentMediaElement.value);
+  postMediaPlayingAction('');
+  displayLayer1.value.isLive = false;
+  displayLayer1.value.url = '';
+};
+
+const resetFailedWebsiteStream = (
+  stream: MediaStream | null,
+  ready: boolean,
+) => {
+  if (!ready && stream) {
+    errorCatcher(new Error('Timed out waiting for media element'), {
+      contexts: { fn: { name: 'streamDisplay' } },
+    });
+  }
+  // stream is the freshly-created stream that never made it onto
+  // currentMediaElement (ready/element check failed) - it's otherwise fully
+  // orphaned and live, so it needs its own explicit stop, separate from
+  // whatever's currently attached to the element below.
+  stopMediaStreamTracks(stream);
+  videoStreaming.value = false;
+  postMediaPlayingAction('');
+  cleanupMediaElement(currentMediaElement.value);
+};
+
+const shouldClearWebsiteStream = (
+  newWebStreamData: typeof webStreamData.value,
+  oldWebStreamData: typeof webStreamData.value,
+) =>
+  newWebStreamData !== 'previewingWebsite' &&
+  (oldWebStreamData === 'mirroringWebsite' ||
+    oldWebStreamData === 'previewingWebsite');
+
+const startWebsiteMirrorStream = async () => {
+  if (cameraStreamId.value) cameraStreamId.value = '';
+
+  displayLayer1.value.isLive = true;
+  displayLayer1.value.url = '';
+
+  const stream = await requestStream(false);
+  const ready = stream && (await ensureMediaElementReady(50));
+
+  if (!stream || !ready || !currentMediaElement.value) {
+    resetFailedWebsiteStream(stream, !!ready);
+    return;
+  }
+
+  currentMediaElement.value.srcObject = stream;
+  playMediaElement(false, true);
 };
 
 whenever(
@@ -1259,51 +1488,13 @@ watch(
   async (newWebStreamData, oldWebStreamData) => {
     videoStreaming.value = newWebStreamData === 'mirroringWebsite';
     if (newWebStreamData !== 'mirroringWebsite') {
-      if (newWebStreamData !== 'previewingWebsite') {
-        if (
-          oldWebStreamData !== 'mirroringWebsite' &&
-          oldWebStreamData !== 'previewingWebsite'
-        ) {
-          return;
-        }
-
-        if (currentMediaElement.value) {
-          currentMediaElement.value.pause();
-          currentMediaElement.value.srcObject = null;
-        }
-        postMediaPlayingAction('');
-        displayLayer1.value.isLive = false;
-        displayLayer1.value.url = '';
+      if (shouldClearWebsiteStream(newWebStreamData, oldWebStreamData)) {
+        clearWebsiteStream();
       }
       return;
     }
 
-    if (cameraStreamId.value) cameraStreamId.value = '';
-
-    // Activate a display layer for streaming
-    displayLayer1.value.isLive = true;
-    displayLayer1.value.url = ''; // No URL for streaming, just activate the layer
-
-    const stream = await requestStream(false);
-    const ready = stream && (await ensureMediaElementReady(50));
-
-    if (!stream || !ready || !currentMediaElement.value) {
-      if (!ready && stream) {
-        errorCatcher(new Error('Timed out waiting for media element'), {
-          contexts: { fn: { name: 'streamDisplay' } },
-        });
-      }
-      videoStreaming.value = false;
-      postMediaPlayingAction('');
-      currentMediaElement.value?.pause();
-      if (currentMediaElement.value?.srcObject) {
-        currentMediaElement.value.srcObject = null;
-      }
-      return;
-    }
-
-    currentMediaElement.value.srcObject = stream;
-    playMediaElement(false, true);
+    await startWebsiteMirrorStream();
   },
 );
 
@@ -1318,6 +1509,7 @@ watchImmediate(
     if (!deviceId) {
       if (cameraElement.value) {
         cameraElement.value.pause();
+        stopMediaStreamTracks(cameraElement.value.srcObject);
         cameraElement.value.srcObject = null;
       }
       return;
@@ -1348,8 +1540,13 @@ watchImmediate(
         'mediaPlayer',
         'warn',
       );
+      // stream is the freshly-requested camera stream that never made it
+      // onto cameraElement (ready/element check failed) - fully orphaned
+      // and live otherwise.
+      stopMediaStreamTracks(stream);
       cameraElement.value?.pause();
       if (cameraElement.value?.srcObject) {
+        stopMediaStreamTracks(cameraElement.value.srcObject);
         cameraElement.value.srcObject = null;
       }
       return;
@@ -1460,7 +1657,11 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 100%;
   background-color: black;
-  z-index: 1.5;
+  /* z-index must be an integer - 1.5 is invalid and gets dropped (auto) by
+     Chromium. Above .base-layer (1) and tied with .display-layer (2), which
+     resolves in .display-layer's favor via DOM order (it comes later in the
+     template), matching the intended base < camera < display stacking. */
+  z-index: 2;
 }
 
 .display-layer.is-audio {
@@ -1474,13 +1675,13 @@ onBeforeUnmount(() => {
   left: 0;
   width: 100%;
   height: 100%;
+  background-color: black;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
   z-index: 2;
 }
 
 .display-layer.is-live {
-  background-color: black;
   opacity: 1;
   z-index: 3;
 }

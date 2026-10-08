@@ -27,9 +27,27 @@ SRC_I18N     = REPO_ROOT / "src" / "i18n"
 DOCS_LOCALES = REPO_ROOT / "docs" / "locales"
 DOCS_SRC     = REPO_ROOT / "docs" / "src"
 SRC_CONSTANTS_LOCALES = REPO_ROOT / "src" / "constants" / "locales.ts"
+JW_LANGUAGES_CACHE = SCRIPT_DIR / "jw-languages-cache.json"
 TODAY        = date.today().strftime("%Y-%m-%d")
-PERCENTAGE_THRESHOLD = 40
+PERCENTAGE_THRESHOLD = 5
 IGNORED_DOCS_SRC_DIRS = {"assets", "public"}
+
+
+# ── website languages cache ──────────────────────────────────────────────────────
+# A one-time snapshot of https://www.jw.org/en/languages/ (see
+# scripts/jw-languages-cache.json), used to auto-fill englishName/label/langcode
+# for newly-enabled languages so a human doesn't need to look them up. Only
+# languages added to the website *after* the snapshot was taken will miss the cache
+# and fall back to PLACEHOLDER_* values needing manual entry — rare, since new
+# website languages are added infrequently. Regenerate the snapshot with:
+#   curl -s https://www.jw.org/en/languages/
+# (see the "languages" array; keep symbol/langcode/name/vernacularName).
+
+def load_jw_languages_cache(path: Path) -> dict[str, dict]:
+    if not path.exists():
+        return {}
+    data = json.loads(path.read_text(encoding="utf-8"))
+    return {lang["symbol"]: lang for lang in data.get("languages", [])}
 
 # Matches locale JSON import lines (active or commented-out)
 LOCALE_IMPORT_LINE = re.compile(
@@ -195,11 +213,12 @@ def build_translation_stats(i18n_dir: Path) -> dict[str, tuple[str, float]]:
 
 # ── Import-block builder ──────────────────────────────────────────────────────
 
-def build_import_block(stats: dict[str, tuple[str, float]], inactive_too: bool = False) -> str:
+def build_import_block(stats: dict[str, tuple[str, float]]) -> str:
     """
     Returns the new import block string.
     All locales found on disk are included as active imports,
     sorted by % translated descending, then alphabetically.
+    Under-threshold locales are commented out.
     """
     sorted_keys = sorted(stats, key=lambda k: (0 if k == "en" else 1, -stats[k][1], k))
 
@@ -207,7 +226,7 @@ def build_import_block(stats: dict[str, tuple[str, float]], inactive_too: bool =
     for key in sorted_keys:
         stem, pct = stats[key]
         comment   = f"// {pct}% translated as of {TODAY}"
-        lines.append(f"{comment}\n{"// " if pct < PERCENTAGE_THRESHOLD and not inactive_too else ""}import {key} from './{stem}.json' with {{ type: 'json' }};")
+        lines.append(f"{comment}\n{"// " if pct < PERCENTAGE_THRESHOLD else ""}import {key} from './{stem}.json' with {{ type: 'json' }};")
 
     return "\n\n".join(lines)
 
@@ -250,20 +269,19 @@ def update_index(
         print(f"⚠️   {label} not found at {path}, skipping.")
         return
     content = path.read_text(encoding="utf-8")
-    block   = build_import_block(stats, inactive_too=False)
+    block   = build_import_block(stats)
     updated = replace_locale_import_block(content, block)
     
     active_keys = sorted(k for k, (_, p) in stats.items() if p >= PERCENTAGE_THRESHOLD)
     keys_str = ",\n  ".join(active_keys)
-    active_keys_str = ",\n  ".join(active_keys)
-    
+
     # Also update the export object if this is an index file
     if label == "src/i18n/index.ts":
-        new_export = f"export default {{\n  {active_keys_str},\n}};"
+        new_export = f"export default {{\n  {keys_str},\n}};"
         updated = re.sub(r"export\s+default\s*\{[\s\S]*?\};", new_export, updated)
     elif label == "docs/locales/index.ts":
         new_export = f"const messages: Partial<Record<LanguageValue, Partial<typeof en>>> = {{\n  {keys_str},\n}};"
-        updated = re.sub(r"const\s+messages:\s*Record<LanguageValue,\s*Partial<typeof\s*en>>\s*=\s*\{[\s\S]*?\};", new_export, updated)
+        updated = re.sub(r"const\s+messages:\s*Partial<Record<LanguageValue,\s*Partial<typeof\s*en>>>\s*=\s*\{[\s\S]*?\};", new_export, updated)
         
     path.write_text(updated, encoding="utf-8")
     print(f"✅  Updated {path}")
@@ -277,21 +295,51 @@ def parse_locales_array(content: str) -> list[dict]:
     Each entry captures: value, englishName, label, langcode, signLangCodes (optional).
     Uses a regex to find each object block inside the array.
     """
-    # Extract the full locales array body
+    array_body = extract_locales_array_body(content)
+    if not array_body:
+        return []
+
+    return [
+        entry
+        for entry in (parse_locale_entry(block) for block in split_object_blocks(array_body))
+        if "value" in entry
+    ]
+
+
+def extract_locales_array_body(content: str) -> str:
     array_match = re.search(
         r"export const locales(?::[^=]+)?=\s*\[([\s\S]*?)\];\s*$",
         content,
         re.MULTILINE,
     )
-    if not array_match:
-        return []
+    return array_match.group(1) if array_match else ""
 
-    array_body = array_match.group(1)
 
-    # Split into individual object blocks by top-level braces
+def get_locale_entry_string_property(block: str, property_name: str) -> str | None:
+    match = re.search(rf"{property_name}:\s*'([^']+)'", block)
+    return match.group(1) if match else None
+
+
+def parse_locale_entry(block: str) -> dict:
+    entry = {}
+
+    for property_name in ("value", "englishName", "label", "langcode"):
+        value = get_locale_entry_string_property(block, property_name)
+        if value:
+            entry[property_name] = value
+
+    sign_lang_match = re.search(r"signLangCodes:\s*\[([^\]]*)\]", block)
+    if sign_lang_match:
+        entry["signLangCodes"] = re.findall(r"'([^']+)'", sign_lang_match.group(1))
+
+    return entry
+
+
+def split_object_blocks(array_body: str) -> list[str]:
     entries = []
     depth = 0
     current = []
+
     for char in array_body:
         if char == '{':
             depth += 1
@@ -303,35 +351,7 @@ def parse_locales_array(content: str) -> list[dict]:
                 entries.append("".join(current).strip())
                 current = []
 
-    parsed = []
-    for block in entries:
-        entry = {}
-
-        m = re.search(r"value:\s*'([^']+)'", block)
-        if m:
-            entry["value"] = m.group(1)
-
-        m = re.search(r"englishName:\s*'([^']+)'", block)
-        if m:
-            entry["englishName"] = m.group(1)
-
-        m = re.search(r"label:\s*'([^']+)'", block)
-        if m:
-            entry["label"] = m.group(1)
-
-        m = re.search(r"langcode:\s*'([^']+)'", block)
-        if m:
-            entry["langcode"] = m.group(1)
-
-        m = re.search(r"signLangCodes:\s*\[([^\]]*)\]", block)
-        if m:
-            codes = re.findall(r"'([^']+)'", m.group(1))
-            entry["signLangCodes"] = codes
-
-        if "value" in entry:
-            parsed.append(entry)
-
-    return parsed
+    return entries
 
 
 def build_locale_entry(entry: dict) -> str:
@@ -345,7 +365,7 @@ def build_locale_entry(entry: dict) -> str:
         lines.append(f"    signLangCodes: [{codes}],")
     lines.append(f"    value: '{entry['value']}',")
     lines.append("  }")
-    return "\n  ".join(lines)
+    return "\n".join(lines)
 
 
 def update_locales_type(stats: dict[str, tuple[str, float]], path: Path) -> None:
@@ -364,8 +384,7 @@ def update_locales_type(stats: dict[str, tuple[str, float]], path: Path) -> None
     updated = re.sub(r"export\s+type\s+LanguageValue\s*=[\s\S]*?;", new_type, content)
 
     # ── 2. Update enabled[] ──────────────────────────────────────────────────
-    looper = all_keys if 'docs' in path.parts else active_keys
-    enabled_items = "\n  ".join(f"'{k}'," for k in looper)
+    enabled_items = "\n  ".join(f"'{k}'," for k in active_keys)
     new_enabled = f"export const enabled: LanguageValue[] = [\n  {enabled_items}\n];"
     updated = re.sub(
         r"export\s+const\s+enabled\s*:\s*LanguageValue\[\]\s*=\s*\[[\s\S]*?\];",
@@ -378,16 +397,29 @@ def update_locales_type(stats: dict[str, tuple[str, float]], path: Path) -> None
     existing_by_value = {e["value"]: e for e in existing_entries}
 
     # Remove entries whose value is no longer in LanguageValue
-    # Add placeholder entries for brand-new values
+    # Add new entries for brand-new values, filled from the website cache when
+    # possible, otherwise as a placeholder needing manual entry.
+    jw_cache = load_jw_languages_cache(JW_LANGUAGES_CACHE)
     new_entries = []
     removed = []
-    added = []
+    added_from_cache = []
+    added_as_placeholder = []
 
     for key in active_keys:
+        stem = stats[key][0]
         if key in existing_by_value:
             new_entries.append(existing_by_value[key])
+        elif stem in jw_cache:
+            cached = jw_cache[stem]
+            new_entries.append({
+                "value": key,
+                "englishName": cached["name"],
+                "label": cached["vernacularName"],
+                "langcode": cached["langcode"],
+            })
+            added_from_cache.append(key)
         else:
-            # New lang detected — insert placeholder
+            # Brand-new lang not in the website snapshot — insert placeholder
             placeholder = {
                 "value": key,
                 "englishName": "PLACEHOLDER_ENGLISH_NAME",
@@ -395,7 +427,7 @@ def update_locales_type(stats: dict[str, tuple[str, float]], path: Path) -> None
                 "langcode": "PLACEHOLDER_LANGCODE",
             }
             new_entries.append(placeholder)
-            added.append(key)
+            added_as_placeholder.append(key)
 
     for existing_key in existing_by_value:
         if existing_key not in active_keys:
@@ -403,8 +435,10 @@ def update_locales_type(stats: dict[str, tuple[str, float]], path: Path) -> None
 
     if removed:
         print(f"  🗑️   Removed from locales[]: {', '.join(removed)}")
-    if added:
-        print(f"  ➕  Added placeholder(s) to locales[]: {', '.join(added)}")
+    if added_from_cache:
+        print(f"  ➕  Added to locales[] from the website cache: {', '.join(added_from_cache)}")
+    if added_as_placeholder:
+        print(f"  ⚠️   Added placeholder(s) to locales[] (not in the website cache): {', '.join(added_as_placeholder)}")
 
     # Render the new array
     rendered_entries = ",\n  ".join(build_locale_entry(e) for e in new_entries)

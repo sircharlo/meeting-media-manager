@@ -1,4 +1,5 @@
 import type {
+  CongregationMeeting,
   CongregationSearchResult,
   MeetingLanguage,
   MeetingSearchResponse,
@@ -14,25 +15,47 @@ import { log } from 'src/shared/vanilla';
 import { fetchJson } from 'src/utils/api';
 import { isInPast } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useJwStore } from 'stores/jw';
 
 import { updateLookupPeriod } from './date';
 import { errorCatcher } from './error-catcher';
+import { fetchMedia } from './jw-media';
 
-let meetingLanguagesPromise: null | Promise<Map<string, string>> = null;
+// The configured Website's own meetings API - never jw.org's when a
+// different Website is set. No base, no URL (fetchJson('') returns null).
+const getMeetingsApiUrl = (endpoint: string) => {
+  const { base } = useJwStore().urlVariables;
+  return base ? `https://hub.${base}/meetings/api/${endpoint}` : '';
+};
+
+// Keyed by URL, so switching Website doesn't reuse another host's answer.
+const meetingLanguagesPromises = new Map<
+  string,
+  Promise<Map<string, string>>
+>();
+
+type SyncableScheduleSettings = SettingsValues & {
+  congregationName: string;
+};
 
 export const getMeetingLanguageMap = async () => {
-  meetingLanguagesPromise ??= (async () => {
-    const languages =
-      (await fetchJson<MeetingLanguage[]>(
-        'https://hub.jw.org/meetings/api/languages',
-        undefined,
-        useCurrentStateStore().online,
-      )) || [];
-    return new Map(
-      languages.map((language) => [language.languageGuid, language.code]),
-    );
-  })();
-  return meetingLanguagesPromise;
+  const url = getMeetingsApiUrl('languages');
+  let promise = meetingLanguagesPromises.get(url);
+  if (!promise) {
+    promise = (async () => {
+      const languages =
+        (await fetchJson<MeetingLanguage[]>(
+          url,
+          undefined,
+          useCurrentStateStore().online,
+        )) || [];
+      return new Map(
+        languages.map((language) => [language.languageGuid, language.code]),
+      );
+    })();
+    meetingLanguagesPromises.set(url, promise);
+  }
+  return promise;
 };
 
 export const normalizeSchedule = (
@@ -129,125 +152,202 @@ export const applyScheduleToSettings = (
   return { currentChanged, futureChanged };
 };
 
-export const syncMeetingSchedule = async (force = false) => {
+/**
+ * Outcome of a sync attempt, granular enough for a manually-triggered sync
+ * (see {@link syncMeetingScheduleManually}) to give the user feedback
+ * covering every case, not just "something changed". `unavailable` covers
+ * every reason the sync couldn't run to completion (offline, congregation
+ * name not set/not matched, no online meeting found, or a thrown error) -
+ * these aren't distinguished further since the user-facing message is the
+ * same actionable "check your connection and congregation name" either way.
+ */
+type MeetingScheduleSyncOutcome = 'unavailable' | 'unchanged' | 'updated';
+
+const runMeetingScheduleSync = async (
+  force: boolean,
+): Promise<MeetingScheduleSyncOutcome> => {
   try {
     const currentState = useCurrentStateStore();
     const { currentSettings, online } = storeToRefs(currentState);
+    const settings = currentSettings.value;
 
-    if (!currentSettings.value || !online.value) return false;
-
-    // Only sync if enabled or forced
-    if (!force && !currentSettings.value.enableAutomaticMeetingScheduleUpdates)
-      return false;
-
-    // Only sync if name hasn't been modified
-    if (
-      currentSettings.value.congregationNameModified ||
-      !currentSettings.value.congregationName
-    )
-      return false;
-
-    // Skip if a future change is already scheduled
-    if (currentSettings.value.meetingScheduleChangeDate) {
-      log(
-        '🔄 [syncMeetingSchedule] Skipping lookup as a future change is already scheduled.',
-        'congregationSchedule',
-        'log',
-      );
-      return false;
+    if (!canSyncMeetingSchedule(settings, online.value, force)) {
+      return 'unavailable';
     }
 
     const suggestions = await fetchCongregationSuggestions(
-      currentSettings.value.congregationName,
+      settings.congregationName,
     );
-    const exactMatch = suggestions.find(
-      (result) =>
-        result.name.toLowerCase() ===
-        currentSettings.value?.congregationName?.toLowerCase(),
+    const exactMatch = getExactCongregationMatch(
+      suggestions,
+      settings.congregationName,
     );
-    if (!exactMatch) return false;
+    if (!exactMatch) return 'unavailable';
+
     const response = await fetchMeetingLocations(exactMatch.congregationGuid);
-
-    const congregationOnlineInfo = response?.items?.find((item) =>
-      item.congregationMeetings.some(
-        (meeting) => meeting.name === currentSettings.value?.congregationName,
-      ),
+    const selectedMeeting = findOnlineCongregationMeeting(
+      response,
+      settings.congregationName,
     );
+    if (!selectedMeeting) return 'unavailable';
 
-    if (congregationOnlineInfo) {
-      const selectedMeeting = congregationOnlineInfo.congregationMeetings.find(
-        (meeting) => meeting.name === currentSettings.value?.congregationName,
-      );
-      if (!selectedMeeting) return false;
-      const normalized = normalizeSchedule({
-        changeStamp: null,
-        current: {
-          midweek: {
-            time: selectedMeeting.midweekMeetingTime.slice(
-              0,
-              5,
-            ) as `${number}:${number}`,
-            weekday:
-              selectedMeeting.midweekMeetingDay === 0
-                ? 7
-                : selectedMeeting.midweekMeetingDay,
-          },
-          weekend: {
-            time: selectedMeeting.weekendMeetingTime.slice(
-              0,
-              5,
-            ) as `${number}:${number}`,
-            weekday:
-              selectedMeeting.weekendMeetingDay === 0
-                ? 7
-                : selectedMeeting.weekendMeetingDay,
-          },
-        },
-        future: null,
-        futureDate: null,
-      });
+    const normalized = normalizeOnlineMeetingSchedule(selectedMeeting);
+    const changes = applyScheduleToSettings(settings, normalized);
+    await handleScheduleSyncChanges(changes);
 
-      const { currentChanged, futureChanged } = applyScheduleToSettings(
-        currentSettings.value,
-        normalized,
-      );
-
-      if (currentChanged) {
-        createTemporaryNotification({
-          message: i18n.global.t('meeting-current-schedule-updated'),
-          timeout: 10000,
-          type: 'info',
-        });
-      }
-
-      if (futureChanged) {
-        createTemporaryNotification({
-          message: i18n.global.t('meeting-future-schedule-updated'),
-          timeout: 10000,
-          type: 'info',
-        });
-      }
-
-      const scheduleChanged = currentChanged || futureChanged;
-      if (scheduleChanged) {
-        updateLookupPeriod({ reset: true });
-        const { fetchMedia } = await import('./jw-media');
-        await fetchMedia();
-      }
-
-      return scheduleChanged;
-    }
+    return changes.currentChanged || changes.futureChanged
+      ? 'updated'
+      : 'unchanged';
   } catch (error) {
     errorCatcher(error, {
       contexts: { fn: { name: 'syncMeetingSchedule' } },
     });
+    return 'unavailable';
+  }
+};
+
+export const syncMeetingSchedule = async (force = false): Promise<boolean> =>
+  (await runMeetingScheduleSync(force)) === 'updated';
+
+/**
+ * Same sync as {@link syncMeetingSchedule}, but for the user-initiated
+ * "Refresh meeting schedule" settings button - always shows a notification
+ * covering every outcome, not just "something changed" (see UX-2 in
+ * full-audit-2026-09-04.md: a volunteer clicking this to check for a stale
+ * schedule before a meeting previously got no feedback at all unless the
+ * schedule actually changed). The automatic background sync
+ * (`syncMeetingSchedule`, called from `MainLayout.vue` on launch/congregation
+ * switch) intentionally stays silent on `unavailable`/`unchanged` - being
+ * offline or not-yet-configured at launch is normal and shouldn't nag.
+ */
+export const syncMeetingScheduleManually = async (): Promise<void> => {
+  const outcome = await runMeetingScheduleSync(true);
+
+  if (outcome === 'updated') return; // already notified by handleScheduleSyncChanges
+
+  createTemporaryNotification({
+    deferWhileDialogOpen: true,
+    message: i18n.global.t(
+      outcome === 'unchanged'
+        ? 'meeting-schedule-already-up-to-date'
+        : 'meeting-schedule-sync-unavailable',
+    ),
+    timeout: outcome === 'unchanged' ? 6000 : 10000,
+    type: outcome === 'unchanged' ? 'info' : 'warning',
+  });
+};
+
+const canSyncMeetingSchedule = (
+  currentSettings: null | SettingsValues | undefined,
+  online: boolean,
+  force: boolean,
+): currentSettings is SyncableScheduleSettings => {
+  if (!currentSettings || !online) return false;
+  if (!force && !currentSettings.enableAutomaticMeetingScheduleUpdates)
     return false;
+  if (
+    currentSettings.congregationNameModified ||
+    !currentSettings.congregationName
+  )
+    return false;
+
+  if (!currentSettings.meetingScheduleChangeDate) return true;
+
+  log(
+    '🔄 [syncMeetingSchedule] Skipping lookup as a future change is already scheduled.',
+    'congregationSchedule',
+    'log',
+  );
+  return false;
+};
+
+const findOnlineCongregationMeeting = (
+  response: MeetingSearchResponse | null,
+  congregationName: string,
+) => {
+  const congregationOnlineInfo = response?.items?.find((item) =>
+    item.congregationMeetings.some(
+      (meeting) => meeting.name === congregationName,
+    ),
+  );
+
+  return congregationOnlineInfo?.congregationMeetings.find(
+    (meeting) => meeting.name === congregationName,
+  );
+};
+
+const getExactCongregationMatch = (
+  suggestions: CongregationSearchResult[],
+  congregationName: string,
+) =>
+  suggestions.find(
+    (result) => result.name.toLowerCase() === congregationName.toLowerCase(),
+  );
+
+const getOnlineMeetingWeekday = (weekday: number) =>
+  weekday === 0 ? 7 : weekday;
+
+const handleScheduleSyncChanges = async (changes: {
+  currentChanged: boolean;
+  futureChanged: boolean;
+}) => {
+  notifyScheduleSyncChanges(changes);
+
+  if (!changes.currentChanged && !changes.futureChanged) return;
+
+  updateLookupPeriod({ reset: true });
+  await fetchMedia();
+};
+
+const normalizeOnlineMeetingSchedule = (selectedMeeting: CongregationMeeting) =>
+  normalizeSchedule({
+    changeStamp: null,
+    current: {
+      midweek: {
+        time: selectedMeeting.midweekMeetingTime.slice(
+          0,
+          5,
+        ) as `${number}:${number}`,
+        weekday: getOnlineMeetingWeekday(selectedMeeting.midweekMeetingDay),
+      },
+      weekend: {
+        time: selectedMeeting.weekendMeetingTime.slice(
+          0,
+          5,
+        ) as `${number}:${number}`,
+        weekday: getOnlineMeetingWeekday(selectedMeeting.weekendMeetingDay),
+      },
+    },
+    future: null,
+    futureDate: null,
+  });
+
+const notifyScheduleSyncChanges = (changes: {
+  currentChanged: boolean;
+  futureChanged: boolean;
+}) => {
+  if (changes.currentChanged) {
+    createTemporaryNotification({
+      deferWhileDialogOpen: true,
+      message: i18n.global.t('meeting-current-schedule-updated'),
+      timeout: 10000,
+      type: 'info',
+    });
+  }
+
+  if (changes.futureChanged) {
+    createTemporaryNotification({
+      deferWhileDialogOpen: true,
+      message: i18n.global.t('meeting-future-schedule-updated'),
+      timeout: 10000,
+      type: 'info',
+    });
   }
 };
 
 export const fetchCongregationSuggestions = async (keywords: string) =>
   (await fetchJson<CongregationSearchResult[]>(
-    'https://hub.jw.org/meetings/api/congregations',
+    getMeetingsApiUrl('congregations'),
     new URLSearchParams({
       congregationName: keywords,
     }),
@@ -261,7 +361,7 @@ export const fetchMeetingLocations = async (
     return { hasResultsOutsideViewport: false, items: [] };
 
   const details = await fetchJson<MeetingSearchResponse>(
-    'https://hub.jw.org/meetings/api/meeting-search',
+    getMeetingsApiUrl('meeting-search'),
     new URLSearchParams({
       first: '20',
       meetingLocationEventGuid,

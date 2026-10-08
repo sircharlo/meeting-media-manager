@@ -30,8 +30,7 @@
       v-ripple
       :class="route.path.startsWith('/media-calendar') ? navActiveClass : ''"
       clickable
-      :disable="!currentSettings || invalidSettings()"
-      :disabled="mediaIsPlaying || undefined"
+      :disable="!currentSettings || invalidSettings() || mediaIsPlaying"
       :to="mediaIsPlaying ? undefined : { path: '/media-calendar' }"
       @click="stopPlayingMediaFirst()"
     >
@@ -56,8 +55,7 @@
       v-ripple
       :class="route.path.startsWith('/present-website') ? navActiveClass : ''"
       clickable
-      :disable="!currentSettings || invalidSettings()"
-      :disabled="mediaIsPlaying || undefined"
+      :disable="!currentSettings || invalidSettings() || mediaIsPlaying"
       :to="mediaIsPlaying ? undefined : { path: '/present-website' }"
       @click="stopPlayingMediaFirst()"
     >
@@ -77,13 +75,13 @@
     <q-space />
     <q-item
       v-ripple
-      :class="
-        route.path.startsWith('/congregation-selector') ? navActiveClass : ''
-      "
+      :class="congregationSwitcherOpen ? navActiveClass : ''"
       clickable
-      :disabled="mediaIsPlaying || undefined"
-      :to="mediaIsPlaying ? undefined : { path: '/congregation-selector' }"
-      @click="stopPlayingMediaFirst()"
+      :disable="mediaIsPlaying"
+      @click="
+        stopPlayingMediaFirst();
+        !mediaIsPlaying && currentState.openCongregationSwitcher();
+      "
     >
       <q-tooltip
         v-if="miniState && !mediaIsPlaying"
@@ -104,8 +102,9 @@
       v-ripple
       :class="route.path.startsWith('/settings') ? navActiveClass : ''"
       clickable
-      :disable="!currentSettings || route.fullPath.includes('wizard')"
-      :disabled="mediaIsPlaying || undefined"
+      :disable="
+        !currentSettings || route.fullPath.includes('wizard') || mediaIsPlaying
+      "
       :to="mediaIsPlaying ? undefined : { path: '/settings' }"
       @click="stopPlayingMediaFirst()"
     >
@@ -149,7 +148,8 @@ const isHovered = useElementHover(drawerElement, {
 
 const currentState = useCurrentStateStore();
 const { invalidSettings } = currentState;
-const { currentSettings, mediaIsPlaying } = storeToRefs(currentState);
+const { congregationSwitcherOpen, currentSettings, mediaIsPlaying } =
+  storeToRefs(currentState);
 
 const $q = useQuasar();
 const route = useRoute();
@@ -157,10 +157,10 @@ const route = useRoute();
 const drawer = ref(true);
 const miniState = defineModel<boolean>({ required: true });
 
-const navActiveClass = computed(
-  () =>
-    ($q.dark.isActive ? 'bg-accent-400' : 'bg-accent-100') +
-    ' text-primary blue-bar',
+const navActiveClass = computed(() =>
+  $q.dark.isActive
+    ? 'bg-accent-400 text-primary-emphasis blue-bar'
+    : 'bg-accent-100 text-primary blue-bar',
 );
 
 const { t } = useI18n();
@@ -172,6 +172,7 @@ const stopPlayingMediaFirst = () => {
       group: 'stop-playing-media',
       icon: 'mmm-media',
       message: ref(t('stop-playing-media-first-explain')).value,
+      type: 'warning',
     });
   }
 };

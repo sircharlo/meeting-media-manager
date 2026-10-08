@@ -55,6 +55,36 @@ export const capitalize = (str: string) =>
   str.charAt(0).toUpperCase() + str.slice(1);
 
 /**
+ * Rejects if the given promise doesn't settle within the given time, so a
+ * stalled IPC call or browser API (e.g. a main-process invoke blocked behind
+ * a slow native call, or a device-enumeration API that never resolves)
+ * can't leave callers awaiting it forever.
+ * @param promise The promise to race against the timeout.
+ * @param ms The timeout in milliseconds.
+ * @param message The error message to reject with on timeout.
+ * @returns The original promise's value, or a rejection if it times out.
+ */
+export const withTimeout = <T>(
+  promise: Promise<T>,
+  ms: number,
+  message = 'Timed out',
+): Promise<T> => {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(message)), ms);
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (error: unknown) => {
+        clearTimeout(timer);
+        reject(error as Error);
+      },
+    );
+  });
+};
+
+/**
  * Checks if a value is empty.
  * @param val The value to check.
  * @returns Whether the value is empty.
@@ -220,23 +250,51 @@ export const parseJsonSafe = <T>(json: null | string | T, fallback: T): T => {
  */
 export const decodeEntities = (input?: string) => {
   try {
-    let output = input;
-    if (!output) return output ?? '';
+    if (!input) return input ?? '';
 
-    // First, remove all HTML tags
-    output = DOMPurify.sanitize(output, { ALLOWED_TAGS: [] });
+    // Strip <script>/<style> tags along with their text content first:
+    // DOMPurify's ALLOWED_TAGS allowlist unwraps disallowed tags but keeps
+    // their inner text, which would otherwise leak raw script/style source.
+    const stripTemplate = document.createElement('template');
+    stripTemplate.innerHTML = input;
+    stripTemplate.content
+      .querySelectorAll('script, style')
+      .forEach((el) => el.remove());
 
-    // Then, decode HTML entities
-    const textarea = document.createElement('textarea');
-    textarea.innerHTML = output;
-    output = textarea.value;
-    textarea.remove();
-
-    // Finally, return the sanitized string
-    return output;
+    const cleanHtml = DOMPurify.sanitize(stripTemplate.innerHTML, {
+      ALLOWED_TAGS: [],
+    });
+    const template = document.createElement('template');
+    template.innerHTML = cleanHtml;
+    return template.content.textContent ?? '';
   } catch {
     return input ?? '';
   }
+};
+
+/**
+ * Formats a document's page number(s) for display (e.g. in a document
+ * listing), handling documents with no page info, a single page, or a
+ * page range.
+ * @param t The i18n translate function.
+ * @param firstPageNumber The document's first page number, if any.
+ * @param lastPageNumber The document's last page number, if any.
+ * @returns The formatted page label, or an empty string if no page info is available.
+ * @example
+ * formatPageLabel(t, 32, 32) // 'Page 32'
+ * formatPageLabel(t, 2, 7) // 'Pages 2-7'
+ * formatPageLabel(t, 0, 0) // ''
+ */
+export const formatPageLabel = (
+  t: (key: string, params: Record<string, unknown>) => string,
+  firstPageNumber?: null | number,
+  lastPageNumber?: null | number,
+) => {
+  if (!firstPageNumber) return '';
+  if (!lastPageNumber || lastPageNumber === firstPageNumber) {
+    return t('page-number', { page: firstPageNumber });
+  }
+  return t('page-range', { first: firstPageNumber, last: lastPageNumber });
 };
 
 /**
@@ -252,6 +310,11 @@ export function toRawDeep<T>(observed: T): T {
   }
 
   if (val === null) return null as T;
+
+  // Date (and other built-ins like RegExp) have no enumerable own
+  // properties, so the generic Object.entries/fromEntries path below would
+  // silently flatten them to {} instead of preserving their value.
+  if (val instanceof Date) return new Date(val.getTime()) as T;
 
   if (typeof val === 'object') {
     const entries = Object.entries(val).map(([key, val]) => [

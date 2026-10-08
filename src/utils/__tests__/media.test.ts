@@ -1,7 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import {
+  getCaptureSizeBounds,
+  getContainFitRect,
+  getFileNameMaskFromPubMediaId,
   isAudio,
+  isExpectedMediaAccessError,
   isHeic,
   isImage,
   isJwPlaylist,
@@ -17,7 +21,60 @@ vi.mock('src/helpers/error-catcher', () => ({
   errorCatcher: vi.fn(),
 }));
 
+// MMM-V2-3J5/3K6/3JW/3JN: camera/screen/tab capture failures caused by the
+// environment, which the app already handles (notification or fallback).
+describe('isExpectedMediaAccessError', () => {
+  it.each([
+    ['NotReadableError', 'Could not start video source'],
+    ['AbortError', 'Timeout starting video source'],
+    ['AbortError', 'Error starting tab capture'],
+    ['NotAllowedError', 'Permission denied'],
+    ['NotFoundError', 'Requested device not found'],
+  ])('treats a %s as expected', (name, message) => {
+    expect(isExpectedMediaAccessError(new DOMException(message, name))).toBe(
+      true,
+    );
+  });
+
+  it('recognizes the name when it only survives in the message', () => {
+    expect(
+      isExpectedMediaAccessError(
+        new Error('NotReadableError: Could not start video source'),
+      ),
+    ).toBe(true);
+  });
+
+  it('does not treat other failures as expected', () => {
+    expect(isExpectedMediaAccessError(new TypeError('x is undefined'))).toBe(
+      false,
+    );
+    expect(
+      isExpectedMediaAccessError(
+        new DOMException('bad', 'OverconstrainedError'),
+      ),
+    ).toBe(false);
+    expect(isExpectedMediaAccessError('NotAllowedError')).toBe(false);
+  });
+});
+
 describe('Media Utilities', () => {
+  describe('getFileNameMaskFromPubMediaId', () => {
+    it('should replace the last underscore segment with a wildcard', () => {
+      expect(getFileNameMaskFromPubMediaId('S-337-26v_F_2')).toBe(
+        'S-337-26v_F_*',
+      );
+    });
+
+    it('should append a wildcard when there is no underscore', () => {
+      expect(getFileNameMaskFromPubMediaId('nwt')).toBe('nwt*');
+    });
+
+    it('should return undefined when no pubMediaId is given', () => {
+      expect(getFileNameMaskFromPubMediaId(undefined)).toBeUndefined();
+      expect(getFileNameMaskFromPubMediaId('')).toBeUndefined();
+    });
+  });
+
   describe('isLikelyFile', () => {
     it('should return true for files with extensions', () => {
       expect(isLikelyFile('image.jpg')).toBe(true);
@@ -162,6 +219,143 @@ describe('Media Utilities', () => {
     it('should return false for non-JWL files', () => {
       expect(isJwPlaylist('playlist.m3u')).toBe(false);
       expect(isJwPlaylist('playlist.txt')).toBe(false);
+    });
+  });
+
+  describe('getContainFitRect', () => {
+    it('fills the target box when the aspect ratios already match', () => {
+      expect(getContainFitRect(1920, 1080, 320, 180)).toEqual({
+        height: 180,
+        width: 320,
+        x: 0,
+        y: 0,
+      });
+    });
+
+    it('pillarboxes a source narrower than the target, centered', () => {
+      // A 4:3 video frame drawn into a 16:9 preview box.
+      expect(getContainFitRect(1440, 1080, 320, 180)).toEqual({
+        height: 180,
+        width: 240,
+        x: 40,
+        y: 0,
+      });
+    });
+
+    it('letterboxes a source wider than the target, centered', () => {
+      // A 21:9 capture frame drawn into a 16:9 preview box.
+      expect(getContainFitRect(3440, 1440, 320, 180)).toEqual({
+        height: 134,
+        width: 320,
+        x: 0,
+        y: 23,
+      });
+    });
+
+    it('never exceeds the target box after rounding', () => {
+      const rect = getContainFitRect(1001, 999, 333, 187);
+      expect(rect.x + rect.width).toBeLessThanOrEqual(333);
+      expect(rect.y + rect.height).toBeLessThanOrEqual(187);
+      expect(rect.x).toBeGreaterThanOrEqual(0);
+      expect(rect.y).toBeGreaterThanOrEqual(0);
+    });
+
+    it('falls back to the full target box when a size is unusable', () => {
+      const full = { height: 180, width: 320, x: 0, y: 0 };
+      expect(getContainFitRect(0, 0, 320, 180)).toEqual(full);
+      expect(getContainFitRect(Number.NaN, 1080, 320, 180)).toEqual(full);
+      expect(getContainFitRect(-1920, 1080, 320, 180)).toEqual(full);
+    });
+  });
+
+  describe('getCaptureSizeBounds', () => {
+    // Chromium's own integer aspect comparison for legacy size bounds.
+    const approxAspect = (width: number, height: number) =>
+      Math.floor((100 * width) / height);
+    // What Chromium needs to see to follow the source size instead of
+    // letterboxing into a fixed frame: every min > 1, min != max, and
+    // min/max aspect ratios that differ by its comparison. Returns the
+    // broken invariants so a failure says which one.
+    const sizeFollowingViolations = (
+      bounds: ReturnType<typeof getCaptureSizeBounds>,
+    ) => {
+      const violations: string[] = [];
+      if (!(bounds.minWidth > 1)) violations.push('minWidth must be > 1');
+      if (!(bounds.minHeight > 1)) violations.push('minHeight must be > 1');
+      if (!(bounds.maxWidth > bounds.minWidth)) {
+        violations.push('maxWidth must exceed minWidth');
+      }
+      if (!(bounds.maxHeight > bounds.minHeight)) {
+        violations.push('maxHeight must exceed minHeight');
+      }
+      if (
+        approxAspect(bounds.minWidth, bounds.minHeight) ===
+        approxAspect(bounds.maxWidth, bounds.maxHeight)
+      ) {
+        violations.push('min and max aspect ratios must differ');
+      }
+      return violations;
+    };
+
+    it('caps at the viewport in device pixels', () => {
+      const bounds = getCaptureSizeBounds(1200, 800, 1.5);
+      expect(bounds).toMatchObject({ maxHeight: 1200, maxWidth: 1800 });
+      expect(sizeFollowingViolations(bounds)).toEqual([]);
+    });
+
+    it('treats a missing or invalid device pixel ratio as 1', () => {
+      expect(getCaptureSizeBounds(1200, 800)).toMatchObject({
+        maxHeight: 800,
+        maxWidth: 1200,
+      });
+      expect(getCaptureSizeBounds(1200, 800, 0)).toMatchObject({
+        maxHeight: 800,
+        maxWidth: 1200,
+      });
+    });
+
+    it('never goes below the floor or above the ceiling', () => {
+      expect(getCaptureSizeBounds(100, 50)).toMatchObject({
+        maxHeight: 180,
+        maxWidth: 320,
+      });
+      expect(getCaptureSizeBounds(0, 0)).toMatchObject({
+        maxHeight: 180,
+        maxWidth: 320,
+      });
+      expect(getCaptureSizeBounds(5120, 2880, 2)).toMatchObject({
+        maxHeight: 2160,
+        maxWidth: 3840,
+      });
+    });
+
+    it('nudges a square viewport so the max aspect never matches the 2x2 min', () => {
+      for (const [width, height] of [
+        [1000, 1000],
+        [1005, 1000],
+        [720, 720],
+      ] as const) {
+        const bounds = getCaptureSizeBounds(width, height);
+        expect(sizeFollowingViolations(bounds)).toEqual([]);
+        expect(bounds.maxWidth).toBeGreaterThan(bounds.maxHeight);
+        // A cap, so widening it slightly is harmless - but only slightly.
+        expect(bounds.maxWidth).toBeLessThanOrEqual(
+          Math.ceil(bounds.maxHeight * 1.01),
+        );
+      }
+    });
+
+    it('stays size-following for landscape and portrait viewports alike', () => {
+      for (const [width, height] of [
+        [3440, 1440],
+        [1920, 1200],
+        [600, 1000],
+        [510, 540],
+      ] as const) {
+        expect(
+          sizeFollowingViolations(getCaptureSizeBounds(width, height)),
+        ).toEqual([]);
+      }
     });
   });
 });

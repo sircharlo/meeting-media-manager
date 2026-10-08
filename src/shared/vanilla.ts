@@ -1,3 +1,5 @@
+import type { FontName } from 'src/types';
+
 /**
  * Generates a UUID.
  * @returns The generated UUID.
@@ -91,6 +93,69 @@ export const delay = (ms: number) =>
     setTimeout(resolve, ms);
   });
 
+// Matches the OS home-directory segment of a filesystem path or file:// URL
+// (Windows `C:\Users\<name>` or `C:/Users/<name>`, macOS `/Users/<name>`,
+// Linux `/home/<name>`) so the username can be redacted while the rest of
+// the path is preserved.
+const HOME_DIRECTORY_PATH_PATTERNS: RegExp[] = [
+  /([A-Za-z]:[\\/]Users[\\/])[^\\/]+/g,
+  /(\/Users\/)[^/]+/g,
+  /(\/home\/)[^/]+/g,
+];
+
+/**
+ * Redacts the username segment of any OS home-directory path found in a
+ * string, so error messages don't leak PII and so the same underlying error
+ * from different users' machines produces an identical message (letting
+ * Sentry group them into a single issue instead of one per user/path).
+ * @param value The string to scrub
+ * @returns The string with home-directory usernames replaced by `<user>`
+ */
+export const scrubUserPaths = (value: string): string =>
+  HOME_DIRECTORY_PATH_PATTERNS.reduce(
+    (result, pattern) => result.replace(pattern, '$1<user>'),
+    value,
+  );
+
+// SEC-8 (full-audit-2026-09-04.md): no current call site attaches
+// obsPassword (or a full SettingsValues object) to a Sentry error context,
+// so this isn't a confirmed leak today - but nothing previously caught one
+// if a future PR did, the way it already would for a stray home-directory
+// path. Matches by key name (not an exact field list) so it also covers any
+// future password/secret/token-shaped field without needing this list kept
+// in sync.
+const SENSITIVE_KEY_PATTERN = /api[-_]?key|password|secret|token/i;
+const REDACTED_VALUE = '<redacted>';
+
+/**
+ * Recursively applies {@link scrubUserPaths} to every string value (and
+ * object key) in an object/array tree, e.g. a Sentry event (exception messages, stack frame
+ * paths, breadcrumbs, extra/context data, etc). Any object key matching
+ * {@link SENSITIVE_KEY_PATTERN} (e.g. `obsPassword`) has its value replaced
+ * outright instead of being recursed into.
+ * @param value The value to scrub
+ * @returns A deep copy of `value` with home-directory usernames and
+ * secret-bearing fields redacted
+ */
+export const scrubUserPathsDeep = <T>(value: T): T => {
+  if (typeof value === 'string') return scrubUserPaths(value) as T;
+  if (Array.isArray(value)) return value.map(scrubUserPathsDeep) as T;
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([key, val]) => [
+        // Keys can be paths too, e.g. current-state's downloadProgress map
+        // is keyed by url + save directory, which leaked home-directory
+        // usernames in the Pinia state attached to events.
+        scrubUserPaths(key),
+        SENSITIVE_KEY_PATTERN.test(key)
+          ? REDACTED_VALUE
+          : scrubUserPathsDeep(val),
+      ]),
+    ) as T;
+  }
+  return value;
+};
+
 const logPrefixes = {
   api: '🌐 API',
   backgroundMusic: '🎵 Background Music',
@@ -112,6 +177,7 @@ const logPrefixes = {
   electronFilesystem: '📁 Electron Filesystem',
   electronIpc: '🔌 Electron IPC',
   electronScreen: '🖥️ Electron Screen',
+  electronShortcuts: '⌨️ Electron Shortcuts',
   electronUpdater: '🆕 Electron Updater',
   electronWindow: '🪟 Electron Window',
   errorHandling: '🚨 Error Handling',
@@ -135,6 +201,8 @@ const logPrefixes = {
   mwMedia: '🌅 Midweek Meeting Media',
   obs: '📡 OBS',
   publicationMedia: '📰 Publication Media',
+  recording: '🔴 Recording',
+  sentry: '🐛 Sentry',
   shortcutInput: '🎹 Shortcut Input',
   sqlite: '🗄️ SQLite',
   stores: '🧠 Stores',
@@ -151,8 +219,7 @@ type ConsoleMethod = (...args: unknown[]) => void;
 
 const getConsoleMethod = (type: LogType): ConsoleMethod => {
   const consoleObject = Reflect.get(globalThis, 'console') as
-    | Partial<Record<LogType, ConsoleMethod>>
-    | undefined;
+    Partial<Record<LogType, ConsoleMethod>> | undefined;
 
   return consoleObject?.[type] ?? consoleObject?.log ?? (() => undefined);
 };
@@ -229,4 +296,126 @@ export const sanitizeFilename = (input: string, replacement = ''): string => {
   if (!replacement) return output;
 
   return sanitizeFilenameInternal(output, '');
+};
+
+/**
+ * Extracts .css stylesheet URLs referenced via `<link href="...">` tags in
+ * HTML, resolving any relative ones against the page they were found on.
+ * Framework-agnostic so it can also run outside the app (e.g. the
+ * scripts/refresh-jw-icons-fallbacks.mjs CI script).
+ * @param html The HTML to scan
+ * @param pageUrl The URL `html` was fetched from
+ * @returns The list of discovered, fully-qualified CSS URLs
+ */
+export const extractCssUrls = (html: string, pageUrl: string): string[] => {
+  const cssRegex = /href=["']([^"']+\.css)["']/g;
+  const cssUrls: string[] = [];
+  let match;
+  while ((match = cssRegex.exec(html)) !== null) {
+    const url = match[1];
+    if (!url) continue;
+    cssUrls.push(new URL(url, pageUrl).href);
+  }
+  return cssUrls;
+};
+
+/**
+ * Finds the jw-icons font URL within CSS text by locating its @font-face
+ * block and extracting the url() it declares.
+ * @param cssText The CSS to scan
+ * @param cssUrl The URL `cssText` was fetched from, used to resolve
+ * relative url()s
+ * @returns The absolute font URL, or null if no jw-icons @font-face was found
+ */
+export const findIconUrlInCss = (
+  cssText: string,
+  cssUrl: string,
+): null | string => {
+  const fontFaceBlocks = cssText.match(/@font-face\s*\{[^}]*\}/gi);
+  if (!fontFaceBlocks) return null;
+
+  for (const block of fontFaceBlocks) {
+    if (block.includes('jw-icons')) {
+      const fontMatch = new RegExp(
+        /url\(["']?([^"']+\.(woff2?|ttf|otf)[^"']*)["']?\)/i,
+      ).exec(block);
+      if (fontMatch?.[1]) {
+        return new URL(fontMatch[1], cssUrl).href;
+      }
+    }
+  }
+  return null;
+};
+
+// Maps the CSS font-family name WOL's stylesheets use for each WT/Manna
+// yeartext font to this app's FontName identifier.
+const wtFontCssNames: Record<string, FontName> = {
+  WTBaeumMyungjo: 'Wt-BaeumMyungjo',
+  WTClearText: 'Wt-ClearText-Bold',
+  WTClearTextGeorgian: 'WTClearTextGeorgian',
+  WTClearTextJapanese: 'WTClearTextJapanese',
+  WTMannaSansKaren: 'WTMannaSansKaren',
+  WTMannaSansMongolian: 'WTMannaSansMongolian',
+  WTMannaSansMyammar: 'WTMannaSansMyanmar',
+  WTMannaSansMyanmar: 'WTMannaSansMyanmar',
+  WTMannaSansTibetan: 'WTMannaSansTibetan',
+  WTSetthaSpecial: 'WTSetthaSpecial',
+  WTTextNew: 'WTTextNew',
+  WTXBZSpecial: 'WTXBZSpecial',
+};
+
+const getFontFileUrl = (fontFaceBlock: string): string | undefined => {
+  const urlRegex = /url\(["']?(https?:\/\/[^"')]+\.woff2?)["']?\)/g;
+  let woffUrl: string | undefined;
+
+  let match;
+  while ((match = urlRegex.exec(fontFaceBlock)) !== null) {
+    const url = match[1];
+    if (!url) continue;
+    if (url.endsWith('.woff2')) return url; // prefer woff2, return immediately
+    if (!woffUrl && url.endsWith('.woff')) woffUrl = url;
+  }
+
+  return woffUrl;
+};
+
+/**
+ * Extracts each WT/Manna yeartext font's URL from WOL's CSS by matching its
+ * @font-face block's font-family name against {@link wtFontCssNames}.
+ * @param cssText The CSS to scan
+ * @returns A map of discovered font URLs, keyed by FontName
+ */
+export const getYeartextFontUrlsFromCss = (
+  cssText: string,
+): Partial<Record<FontName, string>> => {
+  const fontUrls: Partial<Record<FontName, string>> = {};
+
+  // Use [\s\S] instead of [^}]* to handle newlines, and [\s\S]*? to avoid
+  // crossing block boundaries while staying SonarQube-safe
+  const fontFaceRegex = /@font-face\s*\{([\s\S]*?)\}/g;
+  const fontFamilyRegex = /font-family:\s*['"]?([\w-]+)['"]?/;
+  const fontStyleRegex = /font-style:\s*italic/i;
+
+  let match;
+  while ((match = fontFaceRegex.exec(cssText)) !== null) {
+    const blockContent = match[1];
+    if (!blockContent) continue;
+
+    const familyMatch = fontFamilyRegex.exec(blockContent);
+    const cssName = familyMatch?.[1];
+    if (!cssName) continue;
+
+    // Some families (e.g. WTClearText, WTBaeumMyungjo) declare an italic
+    // @font-face under the same font-family name - skip it so it doesn't
+    // win over the upright weight when both share a FontName below.
+    if (fontStyleRegex.test(blockContent)) continue;
+
+    const fontName = wtFontCssNames[cssName];
+    const url = getFontFileUrl(match[0]);
+    if (fontName && url) {
+      fontUrls[fontName] = url;
+    }
+  }
+
+  return fontUrls;
 };

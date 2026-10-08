@@ -1,6 +1,7 @@
 import type { Display } from 'src/types/electron';
 
 import { app, type BrowserWindow, screen } from 'electron';
+import { getDisplayMatchingSafe } from 'src-electron/main/screen-utils';
 import { captureElectronError } from 'src-electron/main/utils';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import {
@@ -19,6 +20,7 @@ let isScreenListenerInitialized = false;
  * Handles screen changes by moving open presentation windows if necessary
  */
 const onDisplayChanged = () => {
+  invalidateScreensSnapshot();
   try {
     moveMediaWindowThrottled();
     moveTimerWindowThrottled();
@@ -69,23 +71,89 @@ export const initScreenListeners = () => {
     });
 };
 
+// =============================================================================
+// Resilient display lookup
+// =============================================================================
+
+// `screen.getAllDisplays()` and `screen.getDisplayMatching()` are synchronous
+// native calls that can block the main-process event loop on Windows while the
+// display topology is changing (projector connect/disconnect, Zoom screen
+// share, remote desktop, DPI change). When that happens every other IPC
+// handler — including "hide media display" — freezes too, because the single
+// main-process event loop can no longer run.
+//
+// JavaScript can't interrupt a synchronous native call, so we make the lookups
+// resilient in two ways instead:
+//   1. Snapshot the result and reuse it for a short TTL, invalidated whenever a
+//      display event fires. The many internal callers (moveMediaWindow,
+//      focusMediaWindow, getWindowScreen, and the renderer's getAllScreens IPC)
+//      then share one lookup instead of each re-hitting the screen module.
+//   2. Guard each window-to-display match so it is performed at most once per
+//      window, never on a destroyed window, and never on invalid bounds.
+
+interface ScreensSnapshot {
+  at: number;
+  displays: Display[];
+}
+
+const SCREENS_CACHE_TTL_MS = 250;
+
+let screensSnapshot: null | ScreensSnapshot = null;
+
+const invalidateScreensSnapshot = () => {
+  screensSnapshot = null;
+};
+
+/**
+ * Returns the id of the display the given window currently sits on, or
+ * `undefined` when there is nothing safe to match (missing/destroyed window or
+ * invalid bounds). The synchronous `screen.getDisplayMatching()` lookup is
+ * performed at most once, through {@link getDisplayMatchingSafe}.
+ */
+const getDisplayIdForWindow = (
+  window: BrowserWindow | null | undefined,
+): number | undefined => {
+  if (!window || window.isDestroyed()) return undefined;
+
+  let bounds: Electron.Rectangle;
+  try {
+    bounds = window.getBounds();
+  } catch (e) {
+    captureElectronError(e, {
+      contexts: { fn: { name: 'getDisplayIdForWindow', step: 'getBounds' } },
+    });
+    return undefined;
+  }
+
+  return getDisplayMatchingSafe(bounds)?.id;
+};
+
 export const getAllScreens = (): Display[] => {
+  const now = Date.now();
+  if (screensSnapshot && now - screensSnapshot.at < SCREENS_CACHE_TTL_MS) {
+    return screensSnapshot.displays;
+  }
+
   const displays: Display[] = screen
     .getAllDisplays()
     .sort((a, b) => a.bounds.x + a.bounds.y - (b.bounds.x + b.bounds.y));
 
-  try {
-    const mainWindowScreen = displays.find(
-      (display) =>
-        mainWindowInfo.mainWindow &&
-        display.id ===
-          screen.getDisplayMatching(mainWindowInfo.mainWindow.getBounds()).id,
-    );
-    if (mainWindowScreen) {
-      mainWindowScreen.mainWindow = true;
+  const mainWindowDisplayId = getDisplayIdForWindow(mainWindowInfo.mainWindow);
+  const mediaWindowDisplayId = getDisplayIdForWindow(
+    mediaWindowInfo.mediaWindow,
+  );
+  const timerWindowDisplayId = getDisplayIdForWindow(
+    timerWindowInfo.timerWindow,
+  );
+
+  for (const display of displays) {
+    if (
+      mainWindowDisplayId !== undefined &&
+      display.id === mainWindowDisplayId
+    ) {
+      display.mainWindow = true;
       try {
-        mainWindowScreen.mainWindowBounds =
-          mainWindowInfo.mainWindow?.getBounds();
+        display.mainWindowBounds = mainWindowInfo.mainWindow?.getBounds();
       } catch (e) {
         captureElectronError(e, {
           contexts: {
@@ -94,49 +162,29 @@ export const getAllScreens = (): Display[] => {
         });
       }
     }
-  } catch (e) {
-    captureElectronError(e, {
-      contexts: { fn: { name: 'getAllScreens', window: 'mainWindow' } },
-    });
-  }
 
-  try {
-    const mediaWindowScreen = displays.find(
-      (display) =>
-        mediaWindowInfo.mediaWindow &&
-        display.id ===
-          screen.getDisplayMatching(mediaWindowInfo.mediaWindow.getBounds()).id,
-    );
-    if (mediaWindowScreen) mediaWindowScreen.mediaWindow = true;
-  } catch (e) {
-    captureElectronError(e, {
-      contexts: { fn: { name: 'getAllScreens', window: 'mediaWindow' } },
-    });
-  }
+    if (
+      mediaWindowDisplayId !== undefined &&
+      display.id === mediaWindowDisplayId
+    ) {
+      display.mediaWindow = true;
+    }
 
-  if (timerWindowInfo.timerWindow) {
-    try {
-      const timerWindowScreen = displays.find(
-        (display) =>
-          timerWindowInfo.timerWindow &&
-          display.id ===
-            screen.getDisplayMatching(timerWindowInfo.timerWindow.getBounds())
-              .id,
-      );
-      if (timerWindowScreen) timerWindowScreen.timerWindow = true;
-    } catch (e) {
-      captureElectronError(e, {
-        contexts: { fn: { name: 'getAllScreens', window: 'timerWindow' } },
-      });
+    if (
+      timerWindowDisplayId !== undefined &&
+      display.id === timerWindowDisplayId
+    ) {
+      display.timerWindow = true;
     }
   }
 
+  screensSnapshot = { at: now, displays };
   return displays;
 };
 
 export const getWindowScreen = (window: BrowserWindow | null) => {
-  if (!window) return 0;
+  const displayId = getDisplayIdForWindow(window);
+  if (displayId === undefined) return 0;
   const allScreens = getAllScreens();
-  const windowDisplay = screen.getDisplayMatching(window.getBounds());
-  return allScreens.findIndex((display) => display.id === windowDisplay.id);
+  return allScreens.findIndex((display) => display.id === displayId);
 };

@@ -25,8 +25,9 @@ import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
-const { fs, join, normalize, readdir } = globalThis.electronApi;
-const { exists, pathExists, remove } = fs;
+const { closeSqliteConnections, fs, join, normalize, readdir } =
+  globalThis.electronApi;
+const { pathExists, remove } = fs;
 
 /**
  * Builds a map of file sizes by path
@@ -180,6 +181,33 @@ function isFileReferenced(
 }
 
 /**
+ * Additional media is stored in per-date (YYYYMMDD) subfolders under
+ * `Additional Media/{congId}`. Those folders aren't tied to a fetchable
+ * fileUrl the way website media is, so they can't rely on the in-memory
+ * store to know they're still needed. Protect any dated subfolder whose
+ * date is today or in the future, regardless of what's currently loaded
+ * in the store.
+ */
+function isInFutureDatedFolder(
+  parentPath: string,
+  dateFolderRoot?: string,
+): boolean {
+  if (!dateFolderRoot) return false;
+
+  const normalizedRoot = normalizePath(dateFolderRoot);
+  const normalizedParent = normalizePath(parentPath);
+  if (!normalizedParent.startsWith(normalizedRoot)) return false;
+
+  const relative = parentPath
+    .slice(dateFolderRoot.length)
+    .replaceAll(/^[/\\]+/g, '');
+  const dateSegment = relative.split(/[/\\]/)[0];
+  if (!dateSegment || !/^\d{8}$/.test(dateSegment)) return false;
+
+  return !isInPast(dateFromString(dateSegment));
+}
+
+/**
  * Checks if a file should be protected from deletion
  */
 function isProtectedFile(fileName: string, parentFolder: string): boolean {
@@ -219,6 +247,7 @@ function pathsOverlap(path1: string, path2: string): boolean {
 async function processCacheDirectory(
   cacheDir: string,
   referencedParentDirectories: Set<string>,
+  dateFolderRoot?: string,
 ): Promise<CacheFile[]> {
   const files: CacheFile[] = [];
 
@@ -242,6 +271,12 @@ async function processCacheDirectory(
         normalizedParentPath,
         referencedParentDirectories,
       );
+
+      // Protect additional media saved for a future/today's meeting, even
+      // if the store hasn't (re)loaded that day's media yet this session
+      if (!isReferenced) {
+        isReferenced = isInFutureDatedFolder(item.parentPath, dateFolderRoot);
+      }
 
       // If not proactively referenced, check the "last used" date
       if (!isReferenced) {
@@ -312,40 +347,76 @@ export const cleanPersistedStores = () => {
   cleanCongregationRecord(useJwStore().lookupPeriod, congIds);
 };
 
-const cleanCongregationFolders = async (root: string, congIds: Set<string>) => {
-  if (!root || !congIds || !(await exists(root))) return;
-  const folders = await readdir(root);
-  await Promise.allSettled(
-    folders
-      .filter((f) => !congIds.has(f.name))
-      .map((f) => remove(join(root, f.name))),
-  );
-};
-
-const cleanPublicTalkPubs = async (folder: string, congIds: Set<string>) => {
-  if (!folder || !congIds || !(await exists(folder))) return;
+/**
+ * Removes the S-34/S-34mp public talk outline file(s) tagged for a specific
+ * congregation ID (filename shape `S-34(mp)?_{congId}_...`).
+ */
+const removeCongregationPublicTalkPubs = async (
+  folder: string,
+  congId: string,
+) => {
+  if (!folder || !congId || !(await pathExists(folder))) return;
   const files = await readdir(folder);
 
   await Promise.allSettled(
     files
-      .filter((f) => /^S-34(?:mp_|_)/.test(f.name))
-      .map((f) => {
-        const congIdOrLang = f.name.split('_')[1];
-        if (!congIdOrLang?.includes('-') || congIds.has(congIdOrLang))
-          return Promise.resolve();
-        return remove(join(folder, f));
-      }),
+      .filter(
+        (f) => /^S-34(?:mp_|_)/.test(f.name) && f.name.split('_')[1] === congId,
+      )
+      .map((f) => remove(join(folder, f.name))),
   );
 };
 
+/**
+ * Deletes a specific congregation's cached data (Additional Media,
+ * Cong Preferences, S-34 outlines). Congregation IDs are generated locally
+ * per install, not tied to a shared account identity, so a machine-wide
+ * cache folder can end up holding data for congregations that a *different*
+ * install/profile sharing that folder (e.g. a dev build and the installed
+ * app) doesn't know about. That means "this process doesn't recognize this
+ * congId" is never a safe signal to delete it - only an explicit user action
+ * (removing the congregation here) is. Call this right after removing a
+ * congregation from the store, while its ID is still known for certain to be
+ * gone.
+ */
+export const removeCongregationCache = async (
+  congId: string,
+): Promise<void> => {
+  if (!congId) return;
+
+  try {
+    const additionalMediaPath = await getAdditionalMediaPath();
+
+    await Promise.allSettled([
+      remove(join(additionalMediaPath, congId)),
+      remove(join(await congPreferencesPath(), congId)),
+      removeCongregationPublicTalkPubs(additionalMediaPath, congId),
+    ]);
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: { fn: { congId, name: 'removeCongregationCache' } },
+    });
+  }
+};
+
+/**
+ * Matches the two date-folder name shapes this app creates:
+ * `YYYYMMDD` (Additional Media, per-congregation) and `YYYY-MM-DD`
+ * (folderToWatch, mediaAutoExportFolder) - see dateFromString's
+ * parseStringToDate for the same pair of formats.
+ */
+const DATE_FOLDER_NAME = /^(?:\d{8}|\d{4}-\d{2}-\d{2})$/;
+
 const cleanDateFolders = async (root?: string) => {
-  if (!root || !(await exists(root))) return;
+  if (!root || !(await pathExists(root))) return;
 
   const folders = await readdir(root);
 
   await Promise.allSettled(
     folders
+      .filter((f) => f.isDirectory)
       .filter((f) => !f.name.includes('.jwlplaylist'))
+      .filter((f) => DATE_FOLDER_NAME.test(f.name))
       .filter((f) => isInPast(getSpecificWeekday(f.name, 6)))
       .map((f) => remove(join(root, f.name))),
   );
@@ -525,7 +596,10 @@ const buildReferencedFileUrls = (mediaItems: MediaItem[]): Set<string> => {
   return referencedFileUrls;
 };
 
-const getCacheFiles = async (cacheDirs: string[]): Promise<CacheFile[]> => {
+const getCacheFiles = async (
+  cacheDirs: string[],
+  dateFolderRoot?: string,
+): Promise<CacheFile[]> => {
   try {
     // Collect all media items
     const allMediaItems = collectAllMediaItems();
@@ -540,7 +614,11 @@ const getCacheFiles = async (cacheDirs: string[]): Promise<CacheFile[]> => {
     // Process each cache directory
     const fileArrays = await Promise.all(
       cacheDirs.map((cacheDir) =>
-        processCacheDirectory(cacheDir, referencedParentDirectories),
+        processCacheDirectory(
+          cacheDir,
+          referencedParentDirectories,
+          dateFolderRoot,
+        ),
       ),
     );
 
@@ -600,18 +678,15 @@ export const analyzeCacheFiles = async (): Promise<CacheAnalysis> => {
     const frequentlyUsedDirectories = await loadFrequentlyUsedDirectories();
 
     // Get cache directories
+    const additionalMediaCongDir = currentState.currentCongregation
+      ? join(await getAdditionalMediaPath(), currentState.currentCongregation)
+      : undefined;
+
     const dirs = [
       ...new Set([
         await getPublicationsPath(),
         await getTempPath(),
-        ...(currentState.currentCongregation
-          ? [
-              join(
-                await getAdditionalMediaPath(),
-                currentState.currentCongregation,
-              ),
-            ]
-          : []),
+        ...(additionalMediaCongDir ? [additionalMediaCongDir] : []),
       ]),
     ];
 
@@ -622,7 +697,7 @@ export const analyzeCacheFiles = async (): Promise<CacheAnalysis> => {
     ).filter((s) => typeof s === 'string');
 
     // Get all cache files
-    const cacheFiles = await getCacheFiles(cacheDirs);
+    const cacheFiles = await getCacheFiles(cacheDirs, additionalMediaCongDir);
 
     // Calculate used and unused directories
     const usedParentDirectories = calculateUsedParentDirectories(cacheFiles);
@@ -733,6 +808,11 @@ export const deleteCacheFiles = async (
 
     log('[Cache] Filepaths to delete:', 'cleanup', 'log', filepathsToDelete);
 
+    // Release any open read-only SQLite handles (and their cached results)
+    // before deleting, so a publication .db being removed/replaced doesn't
+    // fail with EBUSY/EPERM on Windows or leave stale query results behind.
+    await closeSqliteConnections();
+
     // Delete cache files/directories
     const deletionResult =
       type === 'smart'
@@ -744,6 +824,11 @@ export const deleteCacheFiles = async (
 
     // Remove empty directories
     await cleanupEmptyDirectories(analysis.untouchableDirectories);
+
+    // Let mounted media items know they should re-verify local file presence
+    if (deletionResult.itemsDeleted > 0) {
+      useCurrentStateStore().lastCacheClearAt = Date.now();
+    }
 
     // Update lookup period if deleting all cache
     if (type === 'all') {
@@ -769,35 +854,50 @@ export const deleteCacheFiles = async (
 };
 
 export const cleanCache = async () => {
+  let ok = true;
+
+  // Isolated from the settings-based branches below: a failure resolving
+  // additionalMediaPath (e.g. the base-path IPC call not being ready yet
+  // right after window creation - see getCachePath's own fallback handling)
+  // used to abort the whole function, silently skipping mediaAutoExportFolder
+  // and folderToWatch cleanup too, even though neither depends on it.
   try {
     const congregationStore = useCongregationSettingsStore();
     const congIds = new Set(Object.keys(congregationStore.congregations));
-
-    const settings = useCurrentStateStore().currentSettings;
-
     const additionalMediaPath = await getAdditionalMediaPath();
-
-    cleanPublicTalkPubs(additionalMediaPath, congIds);
-    cleanCongregationFolders(additionalMediaPath, congIds);
-    cleanCongregationFolders(await congPreferencesPath(), congIds);
 
     congIds.forEach((congId) => {
       cleanDateFolders(join(additionalMediaPath, congId));
     });
+  } catch (error) {
+    ok = false;
+    errorCatcher(error, {
+      contexts: {
+        fn: { name: 'cleanCache (additional media)' },
+      },
+    });
+  }
+
+  try {
+    const settings = useCurrentStateStore().currentSettings;
 
     if (settings?.enableMediaAutoExport && settings?.mediaAutoExportFolder) {
       cleanDateFolders(settings.mediaAutoExportFolder);
     }
 
-    return true;
+    if (settings?.enableFolderWatcher && settings?.folderToWatch) {
+      cleanDateFolders(settings.folderToWatch);
+    }
   } catch (error) {
+    ok = false;
     errorCatcher(error, {
       contexts: {
-        fn: { name: 'cleanCache' },
+        fn: { name: 'cleanCache (watched/export folders)' },
       },
     });
-    return false;
   }
+
+  return ok;
 };
 
 let startupTempPathCleaned = false;

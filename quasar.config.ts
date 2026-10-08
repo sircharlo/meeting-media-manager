@@ -1,19 +1,21 @@
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file
 
-import { defineConfig } from '@quasar/app-vite/wrappers';
-import { sentryEsbuildPlugin } from '@sentry/esbuild-plugin';
+import { sentryRollupPlugin } from '@sentry/rollup-plugin';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { fileURLToPath } from 'node:url';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { mergeConfig } from 'vite'; // use mergeConfig helper to avoid overwriting the default config
 
+import { defineConfig } from '#q-app';
+
 import { name, productName, repository, version } from './package.json';
+import { dependencies as electronDependencies } from './src-electron/package.json';
 
 // Environment
 const IS_DEV = process.env.NODE_ENV === 'development';
 const IS_BETA = version.includes('beta');
-const IS_TEST = process.env.TEST_VERSION == 'true';
+const IS_TEST = process.env.TEST_VERSION === 'true';
 
 // App
 const APP_NAME = `${name}${IS_TEST ? '-test' : ''}`;
@@ -25,15 +27,18 @@ const SENTRY_ORG = 'jw-projects';
 const SENTRY_PROJECT = 'mmm-v2';
 const SENTRY_VERSION = `${name}@${version}`;
 const SENTRY_AUTH_TOKEN = process.env.SENTRY_AUTH_TOKEN;
+const SENTRY_DSN = process.env.SENTRY_DSN ?? '';
 const ENABLE_SOURCE_MAPS = !!SENTRY_AUTH_TOKEN && !IS_TEST;
 
 const repoURL = repository.url.replace('.git', '');
 
 const getIconPath = (iconType: 'icns' | 'ico' | 'png' | 'splash') => {
+  // electron-builder resolves these relative paths against /src-electron
+  // (its "project dir" in v3), not the repo root.
   if (iconType === 'splash') {
-    return `build/logos/splash-portable.bmp`;
+    return `../build/logos/splash-portable.bmp`;
   }
-  return `icons/${IS_BETA ? 'beta' : 'icon'}.${iconType}`;
+  return `electron-assets/icons/${IS_BETA ? 'beta' : 'icon'}.${iconType}`;
 };
 
 export default defineConfig((ctx) => {
@@ -45,20 +50,39 @@ export default defineConfig((ctx) => {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['fonts', 'sentry', 'i18n', 'globals', 'notify-types'],
+    boot: [
+      'demo-mode',
+      'dev-menu',
+      'fonts',
+      'sentry',
+      'i18n',
+      'globals',
+      'notify-types',
+    ],
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#build
     build: {
       alias: {
+        // Quasar CLI v3 only auto-injects '@/' (-> /src) and '#q-app'.
+        // Re-inject the old aliases so the rest of the app doesn't need
+        // to be rewritten to use '@/'.
+        app: fileURLToPath(new URL('.', import.meta.url)),
+        assets: fileURLToPath(new URL('./src/assets', import.meta.url)),
+        boot: fileURLToPath(new URL('./src/boot', import.meta.url)),
+        components: fileURLToPath(new URL('./src/components', import.meta.url)),
+        layouts: fileURLToPath(new URL('./src/layouts', import.meta.url)),
         main: fileURLToPath(new URL('./src-electron/main', import.meta.url)),
+        pages: fileURLToPath(new URL('./src/pages', import.meta.url)),
         preload: fileURLToPath(
           new URL('./src-electron/preload', import.meta.url),
         ),
+        src: fileURLToPath(new URL('./src', import.meta.url)),
         'src-electron': fileURLToPath(
           new URL('./src-electron', import.meta.url),
         ),
+        stores: fileURLToPath(new URL('./src/stores', import.meta.url)),
       },
-      env: {
+      defineEnv: {
         APP_ID,
         APP_NAME,
         IS_BETA,
@@ -66,6 +90,7 @@ export default defineConfig((ctx) => {
         IS_TEST,
         PRODUCT_NAME,
         repository: repoURL,
+        SENTRY_DSN,
         version,
       },
       extendViteConf(viteConf) {
@@ -134,6 +159,9 @@ export default defineConfig((ctx) => {
           target: 'AppImage',
         },
         mac: {
+          // Unlike other resource paths in this config, mac.entitlements is read
+          // via fs.readFile relative to process.cwd() (the repo root), not
+          // resolved against src-electron/projectDir — so no '../' prefix here.
           entitlements: 'build/entitlements.mac.plist',
           extendInfo: {
             NSAppleEventsUsageDescription:
@@ -152,11 +180,15 @@ export default defineConfig((ctx) => {
             arch: ['universal'],
             target: 'default',
           },
-          x64ArchFiles: '**/@napi-rs/**',
+          // Prebuilt native bindings installed for the build machine's arch
+          // only, so they're identical in the x64 and arm64 halves of the
+          // universal build and can't be lipo'd. @oxc-parser comes in via
+          // @sentry/electron v8 (@sentry/node -> @sentry/bundler-plugins).
+          x64ArchFiles: '**/{@napi-rs,@oxc-parser}/**',
         },
         nsis: {
           deleteAppDataOnUninstall: true,
-          include: 'build/installer.nsh',
+          include: '../build/installer.nsh',
           oneClick: false,
         },
         portable: {
@@ -176,78 +208,51 @@ export default defineConfig((ctx) => {
         },
       },
       bundler: 'builder', // 'packager' or 'builder'
-      extendElectronMainConf: (esbuildConf) => {
+      extendElectronMainConf: (rolldownConf) => {
+        // build.sourcemap (set below) already propagates to the Rolldown
+        // output config, so only the Sentry plugin needs adding here.
         if (ctx.prod && !ctx.debug && ENABLE_SOURCE_MAPS) {
-          esbuildConf.sourcemap = true;
-          esbuildConf.plugins ??= [];
-          esbuildConf.plugins.push(
-            sentryEsbuildPlugin({
+          rolldownConf.plugins = [
+            ...(Array.isArray(rolldownConf.plugins)
+              ? rolldownConf.plugins
+              : []),
+            sentryRollupPlugin({
               authToken: SENTRY_AUTH_TOKEN,
               org: SENTRY_ORG,
               project: SENTRY_PROJECT,
               release: { name: SENTRY_VERSION },
               telemetry: false,
             }),
-          );
+          ];
         }
       },
-      extendElectronPreloadConf: (esbuildConf) => {
+      extendElectronPreloadConf: (rolldownConf) => {
+        // Unlike the main process config, the preload config doesn't
+        // externalize node_modules by default (dev or prod), so native
+        // modules like @jitsi/robotjs would get inlined and lose the
+        // ability to resolve their compiled .node binary at runtime.
+        rolldownConf.external = [
+          ...(Array.isArray(rolldownConf.external)
+            ? rolldownConf.external
+            : []),
+          'electron/renderer',
+          ...Object.keys(electronDependencies),
+        ];
+
         if (ctx.prod && !ctx.debug && ENABLE_SOURCE_MAPS) {
-          esbuildConf.sourcemap = true;
-          esbuildConf.plugins ??= [];
-          esbuildConf.plugins.push(
-            sentryEsbuildPlugin({
+          rolldownConf.plugins = [
+            ...(Array.isArray(rolldownConf.plugins)
+              ? rolldownConf.plugins
+              : []),
+            sentryRollupPlugin({
               authToken: SENTRY_AUTH_TOKEN,
               org: SENTRY_ORG,
               project: SENTRY_PROJECT,
               release: { name: SENTRY_VERSION },
               telemetry: false,
             }),
-          );
+          ];
         }
-      },
-      extendPackageJson(pkg) {
-        // All dependencies required by the main and preload scripts need to be listed here
-        const electronDeps = new Set([
-          '@jitsi/robotjs',
-          '@numairawan/video-duration',
-          '@sentry/core',
-          '@sentry/electron',
-          'check-disk-space',
-          'chokidar',
-          'countries-and-timezones',
-          'electron-dl-manager',
-          'electron-updater',
-          'fluent-ffmpeg',
-          'fs-extra',
-          'heic-convert',
-          'image-size',
-          'is-online',
-          'mime',
-          'music-metadata',
-          'robotjs',
-          'upath',
-          'yauzl',
-        ]);
-
-        // Add hacky dependencies here
-        electronDeps.add('@opentelemetry/api-logs');
-        electronDeps.add('require-in-the-middle');
-        electronDeps.add('ms');
-        electronDeps.add('process-nextick-args');
-        electronDeps.add('readable-stream');
-        electronDeps.add('core-util-is');
-        electronDeps.add('wrappy');
-
-        // Remove unneeded dependencies from production build
-        Object.keys(pkg.dependencies).forEach((dep) => {
-          if (!electronDeps.has(dep)) {
-            // eslint-disable-next-line no-console
-            console.log(`Removing dependency: ${dep}`);
-            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-            delete pkg.dependencies[dep];
-          }
-        });
       },
     },
 

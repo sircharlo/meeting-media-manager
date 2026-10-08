@@ -3,6 +3,7 @@ import type { OldAppConfig, SettingsValues } from 'src/types';
 
 import { defaultSettings } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { cloneMeetingQuickActionSettings } from 'src/utils/clone-settings';
 import { kebabToCamelCase } from 'src/utils/general';
 
 const { basename, fs, join, readdir } = globalThis.electronApi;
@@ -48,7 +49,19 @@ export const parsePrefsFile: (path: string) => Promise<OldAppConfig> = async (
 
 export const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
   try {
-    const newPrefsObject: SettingsValues = {
+    // Partial, not SettingsValues: this only ever carries fields the old
+    // pre-M³ app actually had a concept of - every setting M³ has since
+    // added (Meeting Quick Actions among them) is intentionally absent here
+    // and comes from defaultSettings below instead. Typing this as the full
+    // SettingsValues previously masked a real bug (FE-14,
+    // full-audit-2026-09-05.md): ~58 fields were silently missing from the
+    // object actually written to the congregations map, which vue-tsc never
+    // flagged only because 3 unrelated, correctly `@ts-expect-error`'d
+    // per-property mismatches below (coWeek/mwStartTime/weStartTime are
+    // branded template-literal types, assigned plain strings) suppressed
+    // TypeScript's separate "object literal is missing the following
+    // properties" diagnostic for the object as a whole.
+    const migratedPrefs: Partial<SettingsValues> = {
       autoStartAtLogin: oldPrefs.app?.autoRunAtBoot || false,
       autoStartMusic: oldPrefs.meeting?.autoStartMusic || true,
       baseUrl: 'jw.org',
@@ -121,9 +134,12 @@ export const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
       // @ts-expect-error: weStartTime is a string
       weStartTime: oldPrefs.meeting?.weStartTime?.toString() || '',
     };
-    return newPrefsObject;
+    return cloneMeetingQuickActionSettings({
+      ...defaultSettings,
+      ...migratedPrefs,
+    });
   } catch (error) {
     errorCatcher(error);
-    return { ...defaultSettings };
+    return cloneMeetingQuickActionSettings({ ...defaultSettings });
   }
 };

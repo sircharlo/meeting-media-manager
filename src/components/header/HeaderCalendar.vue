@@ -15,7 +15,7 @@
     >
       <q-icon
         :class="{ 'q-mr-sm': $q.screen.gt.md }"
-        name="mmm-reset"
+        name="mmm-reset-order"
         size="xs"
       />
       {{ $q.screen.gt.md ? t('reset-sort-order') : '' }}
@@ -52,8 +52,12 @@
     <q-tooltip v-if="!$q.screen.gt.sm" :delay="1000">
       {{ t('extra-media') }}
     </q-tooltip>
-    <q-menu ref="importMenu" :offset="[0, 11]">
-      <q-list class="list-primary">
+    <q-menu
+      ref="importMenu"
+      :offset="[0, 11]"
+      @before-show="handleImportMenuBeforeShow"
+    >
+      <q-list class="list-primary" role="menu">
         <q-item-label header>{{ t('from-jw-org') }}</q-item-label>
         <q-item
           v-close-popup
@@ -61,7 +65,6 @@
           :disable="!online"
           @click="
             () => {
-              clearSection();
               openSongPicker(section);
             }
           "
@@ -80,7 +83,6 @@
           :disable="!online"
           @click="
             () => {
-              clearSection();
               openRemoteVideo();
             }
           "
@@ -101,7 +103,6 @@
           :disable="!online"
           @click="
             () => {
-              clearSection();
               openPublicationMedia();
             }
           "
@@ -122,7 +123,6 @@
           :disable="!online"
           @click="
             () => {
-              clearSection();
               openStudyBible();
             }
           "
@@ -141,7 +141,6 @@
           :disable="!online"
           @click="
             () => {
-              clearSection();
               openBible();
             }
           "
@@ -175,7 +174,6 @@
           clickable
           @click="
             () => {
-              clearSection();
               openPublicTalkMediaPicker();
             }
           "
@@ -201,7 +199,6 @@
             clickable
             @click="
               () => {
-                clearSection();
                 openFileImportDialog();
               }
             "
@@ -266,38 +263,23 @@
       </q-list>
     </q-menu>
   </q-btn>
-  <BaseDialog v-model="mediaDeleteAllPending" :dialog-id="dialogId" persistent>
-    <q-card class="modal-confirm">
-      <q-card-section
-        class="row items-center text-bigger text-semibold text-negative q-pb-none"
-      >
-        <q-icon class="q-mr-sm" name="mmm-delete" />
-        {{ t('delete-all-additional-media') }}
-      </q-card-section>
-      <q-card-section class="row items-center">
-        {{ t('are-you-sure-delete-all') }}
-      </q-card-section>
-      <q-card-actions align="right" class="text-primary">
-        <q-btn
-          flat
-          :label="t('cancel')"
-          @click="mediaDeleteAllPending = false"
-        />
-        <q-btn
-          color="negative"
-          flat
-          :label="t('delete')"
-          @click="
-            clearAdditionalMediaForSelectedDate(
-              currentCongregation,
-              selectedDateObject,
-            );
-            mediaDeleteAllPending = false;
-          "
-        />
-      </q-card-actions>
-    </q-card>
-  </BaseDialog>
+  <ConfirmDialog
+    v-model="mediaDeleteAllPending"
+    :confirm-label="t('delete')"
+    :dialog-id="dialogId"
+    icon="mmm-delete"
+    :message="t('are-you-sure-delete-all')"
+    persistent
+    :title="t('delete-all-additional-media')"
+    @cancel="mediaDeleteAllPending = false"
+    @confirm="
+      clearAdditionalMediaForSelectedDate(
+        currentCongregation,
+        selectedDateObject,
+      );
+      mediaDeleteAllPending = false;
+    "
+  />
   <q-btn color="white-transparent" :disable="mediaIsPlaying" unelevated>
     <q-icon
       :class="{ 'q-mr-sm': $q.screen.gt.xs }"
@@ -305,23 +287,9 @@
       size="xs"
     />
     <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
-      {{
-        getLocalDate(
-          selectedDate,
-          dateLocale,
-          currentSettings?.localDateFormat,
-        ) || t('select-a-date')
-      }}
+      {{ calendarDateLabel }}
     </q-tooltip>
-    {{
-      $q.screen.gt.xs
-        ? getLocalDate(
-            selectedDate,
-            dateLocale,
-            currentSettings?.localDateFormat,
-          ) || t('select-a-date')
-        : ''
-    }}
+    {{ $q.screen.gt.xs ? calendarDateLabel : '' }}
     <q-popup-proxy v-model="datePickerActive" :offset="[0, 11]">
       <q-date
         v-model="selectedDate"
@@ -367,6 +335,7 @@
   />
   <DialogSectionPicker
     v-model="showSectionPicker"
+    dialog-id="header-calendar-section-picker"
     :files="pendingFiles"
     @section-selected="handleSectionSelected"
   />
@@ -428,7 +397,7 @@ import type {
 } from 'src/types';
 
 import { useEventListener, watchImmediate } from '@vueuse/core';
-import BaseDialog from 'components/dialog/BaseDialog.vue';
+import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import DialogBible from 'components/dialog/DialogBible.vue';
 import DialogCustomSectionEdit from 'components/dialog/DialogCustomSectionEdit.vue';
 import DialogJwPlaylist from 'components/dialog/DialogJwPlaylist.vue';
@@ -450,6 +419,7 @@ import {
   getJwMediaInfo,
   getPubMediaLinks,
 } from 'src/helpers/jw-media';
+import { withPendingSectionImport } from 'src/helpers/pending-section-imports';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import {
   datesAreSame,
@@ -461,6 +431,7 @@ import {
   getMinDate,
 } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useDemoModeStore } from 'stores/demo-mode';
 import { useJwStore } from 'stores/jw';
 import { computed, ref, useTemplateRef } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -479,6 +450,7 @@ const { dateLocale } = useLocale();
 
 const currentState = useCurrentStateStore();
 const { getMeetingType } = currentState;
+const demoMode = useDemoModeStore();
 const {
   currentCongregation,
   currentLangObject,
@@ -493,6 +465,22 @@ const {
 
 const section = ref<MediaSectionIdentifier | undefined>();
 const datePickerActive = ref(false);
+
+// Screenshot reproducibility: the demo congregation's meeting day is always
+// "today" (see src/helpers/demo-mode.ts), so the label would differ on
+// every run — freeze only the displayed text, leaving selectedDate and the
+// rest of the calendar logic untouched. Live so it also applies when a dev
+// enables demo mode at runtime via the Demo menu.
+const calendarDateLabel = computed(() => {
+  if (demoMode.enabled) return 'September 1, 1914';
+  return (
+    getLocalDate(
+      selectedDate.value,
+      dateLocale.value,
+      currentSettings.value?.localDateFormat,
+    ) || t('select-a-date')
+  );
+});
 
 // Dialog state refs
 const showCustomSectionEdit = ref(false);
@@ -650,11 +638,33 @@ const maxDate = () => {
 };
 
 const importMenu = useTemplateRef<QMenu>('importMenu');
+// Set alongside `section` whenever openImportMenu is given a real section,
+// so handleImportMenuBeforeShow (bound to the menu's own @before-show, not
+// a click handler on the anchor button - that fought Quasar's own
+// anchor-click show/hide toggle and broke opening the menu) can tell "this
+// open already has a known section" apart from "this open came from the
+// generic top-of-page button, which has no section wiring of its own", and
+// only clear `section` in the latter case.
+let sectionExplicitlySet = false;
+
 const openImportMenu = (newSection?: MediaSectionIdentifier) => {
-  if (newSection) {
-    section.value = newSection;
-  }
+  // Always reflects exactly what triggered this open: a specific section's
+  // own "add media" button sets it, the generic (not-tied-to-any-section)
+  // trigger passes nothing and correctly clears any section left over from
+  // a previous open. Doing this once, here, rather than each menu item
+  // clearing it again on click (as this used to), is what lets a
+  // specific-section open skip the redundant section-picker prompt below.
+  section.value = newSection;
+  sectionExplicitlySet = !!newSection;
   importMenu.value?.show();
+};
+
+const handleImportMenuBeforeShow = () => {
+  if (sectionExplicitlySet) {
+    sectionExplicitlySet = false;
+    return;
+  }
+  section.value = undefined;
 };
 
 const dateOptions = (lookupDate: string) => {
@@ -686,7 +696,7 @@ const getEventDayColor = (eventDate: string) => {
     if (lookupDate?.status === 'error') {
       return 'negative';
     } else if (lookupDate?.status === 'complete' || isMemorialDay(eventDate)) {
-      return 'primary';
+      return 'positive';
     }
     if (additionalMediaForDayExists(eventDate)) return 'imported-media';
   } catch (error) {
@@ -797,6 +807,30 @@ const mediaSortCanBeReset = computed<boolean>(() => {
       return true; // Array is not sorted
     }
   }
+
+  // A group's children can now be reordered independently of their parent
+  // group (dragging within an expanded group) - none of the checks above
+  // look inside `children` at all, so that kind of change was invisible to
+  // this button. Every media source that populates `children` also gives
+  // each child its own `sortOrderOriginal`, same as top-level items.
+  const hasChildOrderChange =
+    selectedDateObject.value?.mediaSections?.some((section) =>
+      section.items?.some((item) => {
+        const children = item.children;
+        if (!children || children.length < 2) return false;
+        for (let i = 0; i < children.length - 1; i++) {
+          const firstOrder = children[i]?.sortOrderOriginal ?? 0;
+          const secondOrder = children[i + 1]?.sortOrderOriginal ?? 0;
+          if (firstOrder > secondOrder) return true;
+        }
+        return false;
+      }),
+    ) ?? false;
+
+  if (hasChildOrderChange) {
+    return true;
+  }
+
   return false; // Array is sorted
 });
 
@@ -895,6 +929,22 @@ const resetSort = () => {
       ),
     );
   });
+
+  // Also restore any group's children to their original order - dragging
+  // within an expanded group reorders `children` independently of its
+  // parent item, so resetting the top-level sections above doesn't touch it.
+  selectedDateObject.value?.mediaSections.forEach((sectionMedia) => {
+    sectionMedia.items?.forEach((item) => {
+      if (!item.children?.length) return;
+      item.children.sort((a, b) =>
+        SORTER.compare(
+          a?.sortOrderOriginal?.toString() ?? '0',
+          b?.sortOrderOriginal?.toString() ?? '0',
+        ),
+      );
+    });
+  });
+
   globalThis.dispatchEvent(new CustomEvent('reset-sort-order'));
 };
 
@@ -912,10 +962,6 @@ const handleSectionSelected = async (
     await processPendingImport(selectedSection);
     pendingImport.value = null;
   }
-};
-
-const clearSection = () => {
-  section.value = undefined;
 };
 
 // Wrapper functions that check for section specification
@@ -995,144 +1041,249 @@ const handleImport = async (
   }
 };
 
+// How many MediaItems this import is expected to add once it resolves, so
+// the number of skeletons shown matches reality for multi-item imports
+// (study Bible selections, JW Playlist files) instead of always just one.
+const getPendingImportCount = (importItem: PendingImport): number => {
+  switch (importItem.type) {
+    case 'jw-playlist':
+      return importItem.data.items.length || 1;
+    case 'study-bible':
+      return importItem.data.items.length || 1;
+    default:
+      return 1;
+  }
+};
+
 const processPendingImport = async (targetSection: MediaSectionIdentifier) => {
   if (!pendingImport.value) return;
   const importItem = pendingImport.value;
 
-  try {
-    switch (importItem.type) {
-      case 'bible':
-        await downloadAdditionalRemoteVideo(
-          importItem.data.files,
-          selectedDate.value,
-          undefined,
-          false,
-          importItem.data.title,
-          targetSection,
-          importItem.data.customDuration,
-        );
-        break;
-      case 'jw-playlist': {
-        // ✅ Dialog handles all processing - just add processed items to store
-        if (importItem.data.items.length) {
-          jwStore.addToAdditionMediaMap(
-            importItem.data.items,
-            targetSection,
-            currentCongregation.value,
-            selectedDateObject.value,
-            isCoWeek(selectedDateObject.value?.date),
-          );
-        }
-        break;
+  // Tracks this section as having add-media operation(s) in flight, so
+  // MediaList can show skeleton placeholders for the gap between picking
+  // media and it actually landing in the store (which can involve a network
+  // fetch, e.g. downloading a thumbnail, before the item exists to render).
+  await withPendingSectionImport(
+    targetSection,
+    getPendingImportCount(importItem),
+    async () => {
+      try {
+        await importPendingMediaItem(importItem, targetSection);
+      } catch (error) {
+        errorCatcher(error);
       }
-      case 'pt-media':
-        await addJwpubDocumentMediaToFiles(
-          importItem.data.dbPath,
-          importItem.data.doc,
-          targetSection,
-          {
-            issue: currentCongregation.value,
-            langwritten: '',
-            pub: 'S-34',
-          },
-        );
-        break;
-      case 'publication-media':
-        if (importItem.data.type === 'jwpub') {
-          await addJwpubDocumentMediaToFiles(
-            importItem.data.dbPath,
-            importItem.data.doc,
-            targetSection,
-          );
-        } else {
-          await downloadAdditionalRemoteVideo(
-            [importItem.data.media],
-            selectedDate.value,
-            importItem.data.media.trackImage.url,
-            false,
-            importItem.data.media.title,
-            targetSection,
-            undefined,
-            false,
-            'publication-media',
-          );
-        }
-        break;
-      case 'remote-video':
-        await downloadAdditionalRemoteVideo(
-          importItem.data.mediaItemLinks,
-          selectedDate.value,
-          importItem.data.thumbnailUrl,
-          false,
-          importItem.data.title,
-          targetSection,
-        );
-        break;
-      case 'song':
-        await downloadAdditionalRemoteVideo(
-          importItem.data.files,
-          selectedDate.value,
-          importItem.data.thumbnail,
-          importItem.data.songTrack,
-          importItem.data.title,
-          targetSection,
-        );
-        break;
-      case 'study-bible': {
-        const mediaItemsToAdd: MediaItem[] = [];
-        // Process MultimediaItems: images need conversion, videos need download
-        for (const mediaItem of importItem.data.items) {
-          if (mediaItem.MimeType.includes('image')) {
-            const filePath = await convertImageIfNeeded(mediaItem.FilePath);
-            const item = await createMediaItemFromPath(filePath, undefined, {
-              title: mediaItem.Label,
-            });
-            if (item) mediaItemsToAdd.push(item);
-          } else {
-            // Study Bible video
-            const lang = currentSettings.value?.lang || 'E';
-            const mediaLookup: PublicationFetcher = {
-              booknum: mediaItem.BookNumber,
-              docid: mediaItem.DocumentId || mediaItem.MepsDocumentId,
-              fileformat: 'MP4',
-              issue: mediaItem.IssueTagNumber,
-              langwritten: lang,
-              pub: mediaItem.KeySymbol,
-              track: mediaItem.Track || undefined,
-            };
-            const mediaItemFiles = await getPubMediaLinks(mediaLookup);
-            const { thumbnail, title } = await getJwMediaInfo(mediaLookup);
-            const item = await downloadAdditionalRemoteVideo(
-              mediaItemFiles?.files?.[lang]?.MP4 || [],
-              selectedDate.value,
-              thumbnail,
-              false,
-              title.replace(/^\d+\.\s*/, ''),
-              targetSection,
-              undefined,
-              true, // onlyCreateItem
-              'study-bible',
-            );
-            if (item && typeof item !== 'string') {
-              mediaItemsToAdd.push(item);
-            }
-          }
-        }
-        if (mediaItemsToAdd.length) {
-          addToAdditionMediaMap(
-            mediaItemsToAdd,
-            targetSection,
-            currentCongregation.value,
-            selectedDateObject.value,
-            isCoWeek(selectedDateObject.value?.date),
-          );
-        }
-        break;
-      }
-    }
-  } catch (error) {
-    errorCatcher(error);
+    },
+  );
+};
+
+const addImportedMediaItems = (
+  items: MediaItem[],
+  targetSection: MediaSectionIdentifier,
+) => {
+  if (!items.length) return;
+
+  addToAdditionMediaMap(
+    items,
+    targetSection,
+    currentCongregation.value,
+    selectedDateObject.value,
+    isCoWeek(selectedDateObject.value?.date),
+  );
+};
+
+const importBibleMedia = async (
+  importItem: Extract<PendingImport, { type: 'bible' }>,
+  targetSection: MediaSectionIdentifier,
+) => {
+  await downloadAdditionalRemoteVideo({
+    customDuration: importItem.data.customDuration,
+    mediaItemLinks: importItem.data.files,
+    meetingDate: selectedDate.value,
+    section: targetSection,
+    song: false,
+    thumbnailUrl: undefined,
+    title: importItem.data.title,
+  });
+};
+
+const importJwPlaylistMedia = (
+  importItem: Extract<PendingImport, { type: 'jw-playlist' }>,
+  targetSection: MediaSectionIdentifier,
+) => {
+  if (!importItem.data.items.length) return;
+
+  jwStore.addToAdditionMediaMap(
+    importItem.data.items,
+    targetSection,
+    currentCongregation.value,
+    selectedDateObject.value,
+    isCoWeek(selectedDateObject.value?.date),
+  );
+};
+
+const importPendingMediaItem = async (
+  importItem: PendingImport,
+  targetSection: MediaSectionIdentifier,
+) => {
+  switch (importItem.type) {
+    case 'bible':
+      await importBibleMedia(importItem, targetSection);
+      break;
+    case 'jw-playlist':
+      importJwPlaylistMedia(importItem, targetSection);
+      break;
+    case 'pt-media':
+      await importPublicTalkMedia(importItem, targetSection);
+      break;
+    case 'publication-media':
+      await importPublicationMedia(importItem, targetSection);
+      break;
+    case 'remote-video':
+      await importRemoteVideo(importItem, targetSection);
+      break;
+    case 'song':
+      await importSongMedia(importItem, targetSection);
+      break;
+    case 'study-bible':
+      await importStudyBibleMedia(importItem, targetSection);
+      break;
   }
+};
+
+const importPublicTalkMedia = async (
+  importItem: Extract<PendingImport, { type: 'pt-media' }>,
+  targetSection: MediaSectionIdentifier,
+) => {
+  await addJwpubDocumentMediaToFiles(
+    importItem.data.dbPath,
+    importItem.data.doc,
+    targetSection,
+    {
+      issue: currentCongregation.value,
+      langwritten: '',
+      pub: 'S-34',
+    },
+  );
+};
+
+const importPublicationMedia = async (
+  importItem: Extract<PendingImport, { type: 'publication-media' }>,
+  targetSection: MediaSectionIdentifier,
+) => {
+  if (importItem.data.type === 'jwpub') {
+    await addJwpubDocumentMediaToFiles(
+      importItem.data.dbPath,
+      importItem.data.doc,
+      targetSection,
+    );
+    return;
+  }
+
+  await downloadAdditionalRemoteVideo({
+    customDuration: undefined,
+    mediaItemLinks: [importItem.data.media],
+    meetingDate: selectedDate.value,
+    onlyCreateItem: false,
+    progressCategory: 'publication-media',
+    section: targetSection,
+    song: false,
+    thumbnailUrl: importItem.data.media.trackImage.url,
+    title: importItem.data.media.title,
+  });
+};
+
+const importRemoteVideo = async (
+  importItem: Extract<PendingImport, { type: 'remote-video' }>,
+  targetSection: MediaSectionIdentifier,
+) => {
+  await downloadAdditionalRemoteVideo({
+    mediaItemLinks: importItem.data.mediaItemLinks,
+    meetingDate: selectedDate.value,
+    section: targetSection,
+    song: false,
+    thumbnailUrl: importItem.data.thumbnailUrl,
+    title: importItem.data.title,
+  });
+};
+
+const importSongMedia = async (
+  importItem: Extract<PendingImport, { type: 'song' }>,
+  targetSection: MediaSectionIdentifier,
+) => {
+  await downloadAdditionalRemoteVideo({
+    // A song added to the circuit overseer section is always the closing
+    // song, so it belongs at the end rather than pushed to the top
+    appendToEnd: targetSection === 'circuit-overseer',
+    mediaItemLinks: importItem.data.files,
+    meetingDate: selectedDate.value,
+    section: targetSection,
+    song: importItem.data.songTrack,
+    thumbnailUrl: importItem.data.thumbnail,
+    title: importItem.data.title,
+  });
+};
+
+const importStudyBibleMedia = async (
+  importItem: Extract<PendingImport, { type: 'study-bible' }>,
+  targetSection: MediaSectionIdentifier,
+) => {
+  const mediaItemsToAdd: MediaItem[] = [];
+
+  for (const mediaItem of importItem.data.items) {
+    const item = mediaItem.MimeType.includes('image')
+      ? await createStudyBibleImageItem(mediaItem)
+      : await createStudyBibleVideoItem(mediaItem, targetSection);
+
+    if (item) mediaItemsToAdd.push(item);
+  }
+
+  addImportedMediaItems(mediaItemsToAdd, targetSection);
+};
+
+const createStudyBibleImageItem = async (
+  mediaItem: Extract<
+    PendingImport,
+    { type: 'study-bible' }
+  >['data']['items'][number],
+) => {
+  const filePath = await convertImageIfNeeded(mediaItem.FilePath);
+  return await createMediaItemFromPath(filePath, undefined, {
+    title: mediaItem.Label,
+  });
+};
+
+const createStudyBibleVideoItem = async (
+  mediaItem: Extract<
+    PendingImport,
+    { type: 'study-bible' }
+  >['data']['items'][number],
+  targetSection: MediaSectionIdentifier,
+) => {
+  const lang = currentSettings.value?.lang || 'E';
+  const mediaLookup: PublicationFetcher = {
+    booknum: mediaItem.BookNumber,
+    docid: mediaItem.DocumentId || mediaItem.MepsDocumentId,
+    fileformat: 'MP4',
+    issue: mediaItem.IssueTagNumber,
+    langwritten: lang,
+    pub: mediaItem.KeySymbol,
+    track: mediaItem.Track || undefined,
+  };
+  const mediaItemFiles = await getPubMediaLinks(mediaLookup);
+  const { thumbnail, title } = await getJwMediaInfo(mediaLookup);
+  const item = await downloadAdditionalRemoteVideo({
+    customDuration: undefined,
+    mediaItemLinks: mediaItemFiles?.files?.[lang]?.MP4 || [],
+    meetingDate: selectedDate.value,
+    onlyCreateItem: true,
+    progressCategory: 'study-bible',
+    section: targetSection,
+    song: false,
+    thumbnailUrl: thumbnail,
+    title: title.replace(/^\d+\.\s*/, ''),
+  });
+
+  return item && typeof item !== 'string' ? item : null;
 };
 
 watchImmediate(

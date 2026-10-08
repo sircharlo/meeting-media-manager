@@ -10,12 +10,16 @@ import { i18n } from 'boot/i18n';
 import { getMeetingSections } from 'src/constants/media';
 import { isCoWeek, isMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { setupFFmpeg } from 'src/helpers/fs';
-import { sanitizeFilename } from 'src/shared/vanilla';
+import { getRendererPlatform, setupFFmpeg } from 'src/helpers/fs';
+import { withLockRetry } from 'src/helpers/fs-retry';
+import { createTemporaryNotification } from 'src/helpers/notifications';
+import { isExpectedNetworkPathAccessError } from 'src/shared/filesystem-errors';
+import { log, sanitizeFilename } from 'src/shared/vanilla';
 import { datesAreSame, formatDate, getSpecificWeekday } from 'src/utils/date';
 import { getTempPath, trimFilepathAsNeeded } from 'src/utils/fs';
 import { pad } from 'src/utils/general';
 import { isJwPlaylist, isVideo } from 'src/utils/media';
+import { createQueue } from 'src/utils/queue';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
@@ -28,7 +32,7 @@ const {
   join,
   readdir,
 } = globalThis.electronApi;
-const { copy, ensureDir, exists, remove, stat } = fs;
+const { copy, ensureDir, pathExists, remove, stat } = fs;
 
 // Create a queue to limit the number of exports running at the same time
 let folderExportQueue: PQueue | undefined;
@@ -39,10 +43,7 @@ export const pendingDays = new Set<string>();
 const dirtyDays = new Set<string>();
 
 const getQueue = async () => {
-  if (!folderExportQueue) {
-    const { default: PQueue } = await import('p-queue');
-    folderExportQueue = new PQueue({ concurrency: 2 });
-  }
+  folderExportQueue ??= await createQueue(2);
   return folderExportQueue;
 };
 
@@ -96,9 +97,28 @@ const exportDayToFolder = async (targetDate?: Date) => {
       return;
     }
 
-    const expectedFiles = await processAllSections(day, destFolder);
+    const { conversionFailures, expectedFiles } = await processAllSections(
+      day,
+      destFolder,
+    );
 
     await cleanupUnexpectedFiles(destFolder, expectedFiles);
+
+    // FE-9 (full-audit-2026-09-04.md): a conversion failure previously only
+    // went to errorCatcher (Sentry/log) - the user found out only by later
+    // noticing the file missing from the export folder. Grouped into one
+    // notification per day (not per file) since a single ffmpeg/codec
+    // problem often fails every non-video item in the same export run.
+    if (conversionFailures.size > 0) {
+      createTemporaryNotification({
+        message: i18n.global.t(
+          'media-export-conversion-failed',
+          { count: conversionFailures.size },
+          conversionFailures.size,
+        ),
+        type: 'negative',
+      });
+    }
   } catch (error) {
     errorCatcher(error, {
       contexts: {
@@ -151,7 +171,10 @@ const ensureDestinationFolder = async (
   destFolder: string,
 ): Promise<boolean> => {
   try {
-    await ensureDir(destFolder);
+    // The auto-export destination is commonly a cloud-synced folder
+    // (OneDrive, Dropbox, ...) whose sync client can hold a transient lock
+    // on a just-created/renamed path (MMM-V2-3FW: EPERM on mkdir).
+    await withLockRetry(() => ensureDir(destFolder));
     return true;
   } catch (error) {
     errorCatcher(error, {
@@ -169,8 +192,9 @@ const ensureDestinationFolder = async (
 const processAllSections = async (
   day: DateInfo,
   destFolder: string,
-): Promise<Set<string>> => {
+): Promise<{ conversionFailures: Set<string>; expectedFiles: Set<string> }> => {
   const expectedFiles = new Set<string>();
+  const conversionFailures = new Set<string>();
 
   const sortedSections = getSortedSections(day);
   let sectionIndex = 1;
@@ -191,10 +215,11 @@ const processAllSections = async (
       sectionPrefix,
       sanitizedSectionName,
       expectedFiles,
+      conversionFailures,
     );
   }
 
-  return expectedFiles;
+  return { conversionFailures, expectedFiles };
 };
 
 const getSortedSections = (day: DateInfo) => {
@@ -268,6 +293,7 @@ const processSectionItems = async (
   sectionPrefix: string,
   sanitizedSectionName: string,
   expectedFiles: Set<string>,
+  conversionFailures: Set<string>,
 ) => {
   for (let i = 0; i < visibleItems.length; i++) {
     try {
@@ -275,6 +301,7 @@ const processSectionItems = async (
       if (!mediaItem) continue;
 
       await processMediaItem({
+        conversionFailures,
         destFolder,
         expectedFiles,
         index: i,
@@ -284,12 +311,39 @@ const processSectionItems = async (
         totalItems: visibleItems.length,
       });
     } catch (error) {
-      errorCatcher(error);
+      // A cloud-synced export folder (Nextcloud, OneDrive, ...) can
+      // transiently fail a stat/copy while its sync client holds or swaps the
+      // file (MMM-V2-3KX). The next export run retries it; not an app bug.
+      if (
+        isExpectedNetworkPathAccessError(
+          error,
+          destFolder,
+          getRendererPlatform(),
+        )
+      ) {
+        log(
+          `Could not export to cloud/network folder ${destFolder}`,
+          'filesystem',
+          'warn',
+          error,
+        );
+        continue;
+      }
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            destFolder,
+            fileUrl: visibleItems[i]?.fileUrl,
+            name: 'processSectionItems',
+          },
+        },
+      });
     }
   }
 };
 
 const processMediaItem = async ({
+  conversionFailures,
   destFolder,
   expectedFiles,
   index,
@@ -298,6 +352,7 @@ const processMediaItem = async ({
   sectionPrefix,
   totalItems,
 }: {
+  conversionFailures: Set<string>;
   destFolder: string;
   expectedFiles: Set<string>;
   index: number;
@@ -307,7 +362,7 @@ const processMediaItem = async ({
   totalItems: number;
 }) => {
   const sourceFilePath = fileUrlToPath(mediaItem.fileUrl);
-  if (!sourceFilePath || !(await exists(sourceFilePath))) return;
+  if (!sourceFilePath || !(await pathExists(sourceFilePath))) return;
 
   const destFilePath = await buildDestinationPath({
     destFolder,
@@ -326,7 +381,10 @@ const processMediaItem = async ({
     return;
   }
 
-  const finalSourcePath = await convertIfNeeded(sourceFilePath);
+  const finalSourcePath = await convertIfNeeded(
+    sourceFilePath,
+    conversionFailures,
+  );
   if (!finalSourcePath) return;
 
   expectedFiles.add(fileBaseName);
@@ -378,7 +436,7 @@ const canSkipFile = async (
   sourceFilePath: string,
   destFilePath: string,
 ): Promise<boolean> => {
-  if (!(await exists(destFilePath))) {
+  if (!(await pathExists(destFilePath))) {
     return false;
   }
 
@@ -401,6 +459,7 @@ const canSkipFile = async (
 
 const convertIfNeeded = async (
   sourceFilePath: string,
+  conversionFailures: Set<string>,
 ): Promise<null | string> => {
   const currentStateStore = useCurrentStateStore();
 
@@ -415,13 +474,31 @@ const convertIfNeeded = async (
 
   try {
     const ffmpegPath = await setupFFmpeg();
+    // setupFFmpeg() already reported (or deliberately suppressed, e.g. while
+    // offline) whatever went wrong and returns '' rather than throwing -
+    // asking the main process to convert with no binary would just add a
+    // second, uglier "Refusing to use non-FFmpeg path" error on top.
+    if (!ffmpegPath) return null;
+    // The source file can vanish between the copy phase and conversion
+    // (deleted by the user, unplugged volume, etc.) - ffmpeg would then fail
+    // in the main process with a raw ENOENT. Skip quietly instead.
+    if (!(await pathExists(sourceFilePath))) return null;
     return await createVideoFromNonVideo(
       sourceFilePath,
       ffmpegPath,
       await getTempPath(),
     );
   } catch (error) {
-    errorCatcher(error);
+    // FE-9 (full-audit-2026-09-04.md): a genuine conversion failure (as
+    // opposed to the two quiet cases above) previously only went to
+    // errorCatcher - the user found out only by later noticing the file
+    // missing from the export folder. Collected here (not notified
+    // directly) so the caller can show one grouped notification per day
+    // instead of one per failed file.
+    conversionFailures.add(sourceFilePath);
+    errorCatcher(error, {
+      contexts: { fn: { name: 'convertIfNeeded', sourceFilePath } },
+    });
     return null;
   }
 };
@@ -456,7 +533,7 @@ const deleteOldExportFolders = async () => {
   const destFolder = currentStateStore.currentSettings.mediaAutoExportFolder;
 
   try {
-    if (!(await exists(destFolder))) return;
+    if (!(await pathExists(destFolder))) return;
 
     const dirItems: FileItem[] = await readdir(destFolder);
     const today = new Date();

@@ -4,8 +4,24 @@
       class="bg-secondary-contrast flex medium-overlay q-px-none"
       style="flex-flow: column"
     >
-      <div class="text-h6 row q-px-md q-pt-lg">
+      <div
+        class="text-bigger text-semibold text-primary row q-px-md q-pt-lg items-center"
+      >
+        <div class="icon-chip q-mr-sm">
+          <q-icon name="mmm-lectern" size="xs" />
+        </div>
         {{ t('import-media-from-s34mp') }}
+        <q-icon
+          class="q-ml-sm cursor-pointer"
+          color="primary"
+          name="mmm-info"
+          size="xs"
+          tabindex="0"
+        >
+          <q-tooltip max-width="320px">
+            {{ t('import-media-from-s34mp-explain') }}
+          </q-tooltip>
+        </q-icon>
       </div>
       <div class="row q-px-md q-pt-md">
         {{
@@ -25,7 +41,7 @@
           </template>
           <q-spinner v-else color="primary" size="sm" />
         </div>
-        <q-btn color="primary" outline @click="browse">
+        <q-btn color="primary" @click="browse">
           <q-icon class="q-mr-sm" name="mmm-local-media" />
           {{ s34Db ? t('replace') : t('browse') }}
         </q-btn>
@@ -77,12 +93,7 @@
         </div>
       </template>
       <div class="row q-px-md q-py-md justify-end">
-        <q-btn
-          color="negative"
-          flat
-          :label="t('cancel')"
-          @click="dismissPopup"
-        />
+        <q-btn flat :label="t('cancel')" @click="dismissPopup" />
       </div>
     </div>
   </BaseDialog>
@@ -154,11 +165,11 @@ const { ensureDir } = fs;
 const populatePublicTalks = async () => {
   s34Db.value = await findDb(s34Dir.value);
   if (!s34Db.value) return;
-  publicTalks.value = executeQuery<DocumentItem>(
+  publicTalks.value = await executeQuery<DocumentItem>(
     s34Db.value,
     'SELECT DISTINCT Document.DocumentId, Title FROM Document INNER JOIN DocumentMultimedia ON Document.DocumentId = DocumentMultimedia.DocumentId',
   );
-  const PublicationInfos = executeQuery<PublicationInfo>(
+  const PublicationInfos = await executeQuery<PublicationInfo>(
     s34Db.value,
     'SELECT DISTINCT VersionNumber, Year FROM Publication',
   );

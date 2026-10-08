@@ -88,7 +88,6 @@
     "hoverable",
     "icns",
     "iconfont",
-    "icongenie",
     "Ietf",
     "Ikinyarwanda",
     "Ilokano",
@@ -196,6 +195,7 @@
   "prettier.configPath": ".prettierrc",
 
   "notebook.formatOnSave.enabled": true,
+  "npm.packageManager": "yarn",
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },

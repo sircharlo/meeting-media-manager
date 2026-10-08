@@ -1,5 +1,5 @@
-import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-unit-vitest';
 import { flushPromises, mount } from '@vue/test-utils';
+import { installQuasarPlugin } from 'app/test/vitest/helpers/install-quasar-plugin';
 import {
   announcements as mixedAnnouncements,
   validAnnouncements,

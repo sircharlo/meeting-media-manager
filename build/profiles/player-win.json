@@ -1,0 +1,18 @@
+{
+  "params": {
+    "icon": "build/logos/display-icon-512-Windows.png"
+  },
+  "assets": [
+    {
+      "generator": "ico",
+      "name": "media-player.ico",
+      "folder": "src-electron/electron-assets/icons"
+    },
+    {
+      "generator": "png",
+      "name": "media-player.png",
+      "folder": "src-electron/electron-assets/icons",
+      "sizes": [512]
+    }
+  ]
+}

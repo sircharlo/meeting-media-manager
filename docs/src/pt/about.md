@@ -1,4 +1,4 @@
-# Sobre o Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
+# About Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
 
 ![M³ banner](./../assets/m3-banner.png)
 
@@ -8,74 +8,74 @@
 
 O M³ oferece suporte para gerenciar mídias de reuniões normais e personalizadas, múltiplas congregações e/ou grupos usando a mesma conta do computador, além de recursos avançados de apresentação que tornam fácil o compartilhamento de.
 
-:::info Nota
+:::info Note
 
-Este aplicativo era conhecido como JWMMF (JW Meeting Media Fetcher), mas foi renomeado para Meeting Media Manager em maio de 2022.
+This app used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed to Meeting Media Manager in May 2022.
 
 :::
 
-## Por que escolher o M³? {#why-choose-m3}
+## Why choose M³? {#why-choose-m3}
 
-O M³ é a ferramenta mais completa para gerenciar as mídias das reuniões, oferecendo uma experiência suave, confiável e com muitos recursos em diversas plataformas. Ele foi desenvolvido especificamente para as necessidades das reuniões de congregação e oferece tudo o que é necessário para uma apresentação de mídia eficaz.
+M³ is the ultimate tool for managing meeting media, offering a seamless, reliable, and feature-rich experience across platforms. It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation.
 
-### Principais benefícios {#key-benefits}
+### Key benefits {#key-benefits}
 
-- **Apresentação de mídia sem esforço**: A melhor forma de apresentar mídias — apenas abra o M³ e está tudo pronto. Não são necessárias configurações complexas ou etapas extras.
+- **Effortless media presentation**: Presenting media at its finest — just open M³ and everything works. No complex setup or extra steps required.
 
-- **Suporte para várias congregações**: Gerencie facilmente configurações para diversas congregações ou grupos dentro de um único aplicativo.
+- **Multi-congregation support**: Manage settings for multiple congregations or groups easily within a single application.
 
-- **Recursos avançados**: Adicione facilmente mídias extras, importe conteúdos personalizados e compartilhe automaticamente o que acontece no Salão do Reino com os participantes no Zoom.
+- **Advanced features**: Easily add extra media, import custom content, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
 
-- **Desempenho otimizado em várias plataformas**: Desfrute de uma experiência suave e responsiva no Windows, macOS e Linux, mesmo em sistemas antigos ou computadores com recursos limitados.
+- **Optimized cross-platform performance**: Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
 
-- **Confiável e estável**: Feito para funcionar bem quando você mais precisa. Encontrou um problema? Reporte-o e ele será tratado rapidamente.
+- **Reliable and stable**: Built to perform when you need it most. Encounter a bug? Report it, and it will be addressed promptly.
 
-- **Ferramentas avançadas de apresentação**: Controles avançados de mídia, recursos de zoom e movimentação, temporização personalizada e integração perfeita com Zoom e OBS Studio.
+- **Advanced presentation tools**: Advanced media controls, zoom/pan capabilities, custom timing, and seamless Zoom and OBS Studio integration.
 
-## O que o M³ faz? {#what-can-m3-do}
+## What can M³ do? {#what-can-m3-do}
 
-O M³ é uma solução completa de gerenciamento de mídias que permite baixar, sincronizar, compartilhar e apresentar todas as mídias das reuniões de forma fácil e automática. Veja o que torna o M³ poderoso:
+M³ is a comprehensive media management solution that allows you to easily and automatically download, synchronize, share, and present all meeting media. Here's what makes M³ powerful:
 
-### Gerenciamento Central de Mídia {#core-media-management}
+### Core Media Management {#core-media-management}
 
-- **Download automático de mídias**: Baixa automaticamente todas as mídias necessárias para as próximas reuniões
-- **Suporte a múltiplos idiomas**: Baixe mídias em qualquer um dos centenas de idiomas disponíveis
-- **Cache inteligente**: Sistema de cache inteligente que mantém as mídias organizadas e atualizadas
-- **Organização de mídias**: Organiza automaticamente as mídias por data e seção da reunião
+- **Automatic media downloads**: Automatically fetches and downloads all media needed for upcoming meetings
+- **Multi-language support**: Download media in any of hundreds of available languages
+- **Smart caching**: Intelligent caching system that keeps media organized and up-to-date
+- **Media organization**: Automatically organizes media by date and meeting section
 
-### Recursos de Apresentação de Mídia {#about-presentation-features}
+### Media Presentation Features {#about-presentation-features}
 
-Para reuniões congregacionais **híbridas** ou **presenciais**, o modo integrado de apresentação de mídia inclui:
+For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode includes:
 
-- **Controles avançados de mídia**: Miniaturas de mídia com recursos de zoom e movimentação
-- **Temporização personalizada**: Defina pontos de início e fim específicos para a reprodução da mídia
-- **Controles de reprodução**: Botões de reproduzir/pausar/parar fáceis de usar, com atalhos de teclado
-- **Pré-visualização ao vivo e controle de velocidade**: visualize o visor de público e ajuste opcionalmente a velocidade de reprodução de áudio ou vídeo
-- **Suporte a múltiplos monitores**: Detecção e gerenciamento automático de monitores externos
-- **Apresentação limpa**: Interface de apresentação de mídia sem distrações
+- **Advanced media controls**: Media thumbnails with zoom and pan capabilities
+- **Custom timing**: Set custom start and end times for media playback
+- **Playback controls**: Easy-to-use pause/play/stop buttons with keyboard shortcuts
+- **Live preview and speed control**: Preview the audience display and optionally adjust audio or video playback speed
+- **Multi-monitor support**: Automatic external monitor detection and management
+- **Clean presentation**: Distraction-free media presentation interface
 
-### Música de Fundo {#about-background-music}
+### Background Music {#about-background-music}
 
-- **Reprodução inteligente**: Música de fundo que para automaticamente antes do início das reuniões
-- **Reinício com um clique**: Retoma a música de fundo com um único clique após as reuniões
-- **Controle de volume**: Volume da música de fundo ajustável, com recurso de fade-out
+- **Intelligent playback**: Background music that automatically stops before meetings start
+- **One-click restart**: Resume background music with a single click after meetings
+- **Volume control**: Adjustable background music volume with fade-out capabilities
 
-### Integração com Zoom {#about-zoom-integration}
+### Zoom Integration {#about-zoom-integration}
 
-- **Compartilhamento de tela automático**: Inicie e interrompa o compartilhamento de tela no Zoom automaticamente ao reproduzir ou parar a mídia
+- **Automatic screen sharing**: Start and stop Zoom screen sharing automatically when you play or stop media
 
 ### Integração com OBS Studio {#about-obs-integration}
 
 - **Troca automática de cenas**: integração sem interrupções com o OBS Studio para reuniões híbridas
 - **Gerenciamento de cenas**: Troca automática entre câmera, mídia e outras cenas
-- **Controles de gravação**: Iniciar e parar gravações do OBS do M3 quando ativado
+- **Recording controls**: Start and stop OBS recordings from M³ when enabled
 
 ### Importação e Gerenciamento de Mídias {#about-media-import}
 
 - **Arquivos JWPUB**: Importe e gerencie arquivos JWPUB facilmente
 - **Arquivos JWLPLAYLIST**: Suporte para arquivos de playlist do JW Library
 - **Mídia personalizada**: Importar vídeos personalizados, imagens, arquivos de áudio e PDF.
-- **Mídia da Bíblia**: Importar mídia da Bíblia de Estudo, mídia da Bíblia de linguagem de sinal e gravações de áudio da Tradução do Novo Mundo
+- **Bible media**: Import Study Bible media, sign-language Bible media, and audio recordings of the New World Translation
 - **Discursos públicos**: tenha sempre uma visão geral da mídia de discursos públicos pronta para uso com o importador do S-34
 
 ### Recursos Avançados {#about-advanced-features}
@@ -83,12 +83,12 @@ Para reuniões congregacionais **híbridas** ou **presenciais**, o modo integrad
 - **Monitoramento de pastas**: sincronizar automaticamente as mídias das pastas selecionadas(Dropbox, OneDrive, etc.)
 - **Exportação de mídia**: Exportar mídias automaticamente para pastas, organizadas por data
 - **Apresentação do site**: Apresente o site oficial em monitores externos
-- **Temporizador de reunião**: Janela opcional de temporizador das partes da reunião
-- **Reunião de assistentes de gravação**: Controle OBS gravação ou um aplicativo de gravação externo
+- **Meeting timer**: Optional timer window for timing meeting parts
+- **Meeting recording helpers**: Control OBS recording or an external recording application
 - **Atalhos de teclado**: Atalhos de teclado personalizáveis para muitas funções
-- **Vários perfis**: gerenciar diferentes congregações ou grupos com perfis separados, incluindo a importação e exportação de configurações de perfil
+- **Multiple profiles**: Manage different congregations or groups with separate profiles, including profile settings import and export
 
-## O M³ está disponível no meu idioma? {#does-m3-work-in-my-language}
+## Does M³ work in my language? {#does-m3-work-in-my-language}
 
 **Sim!** O M³ oferece suporte abrangente em vários idiomas:
 
@@ -96,14 +96,14 @@ Mídias para as reuniões das Testemunhas de Jeová podem ser baixadas automatic
 
 ### Idiomas de interface {#interface-languages}
 
-O próprio M³ foi traduzido para vários idiomas por voluntários. Você pode configurar o idioma que gostaria de ser exibido na interface do M3, independente do idioma usado para downloads de mídia. Isso significa que você pode usar o M3 no seu idioma de preferência, enquanto baixa mídia em qualquer outro idioma suportado. Isso significa que você pode usar o M3 no seu idioma de preferência, enquanto baixa mídia em qualquer outro idioma suportado.
+O próprio M³ foi traduzido para vários idiomas por voluntários. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. Isso significa que você pode usar o M3 no seu idioma de preferência, enquanto baixa mídia em qualquer outro idioma suportado.
 
-Para detalhes sobre idiomas alternativos e legendas, consulte as [Perguntas frequentes](faq#language-support).
+For details about fallback languages and subtitles, see the [FAQ](faq#language-support).
 
 ## Requisitos de Sistema {#system-requirements}
 
-Para sistemas operacionais suportados e requisitos, consulte as respostas nas [Perguntas frequentes](faq#technical-questions).
+For supported operating systems and requirements, see the answers in the [FAQ](faq#technical-questions).
 
-**Experimente hoje o M³ e veja com os próprios olhos o que ele pode fazer! A exibição de mídias nas reuniões congregacionais nunca foi tão fácil.**
+**Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
 
 ![M³ preview](./../assets/m3-preview.png)

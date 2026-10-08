@@ -28,6 +28,7 @@ vi.mock('electron', () => ({
 }));
 
 vi.mock('src-electron/constants', () => ({
+  SENTRY_DSN: 'https://fake-key@fake.ingest.sentry.io/123456',
   TRUSTED_DOMAINS: [],
   WINDOW_MOVE_THROTTLE_MS: 100,
 }));
@@ -77,6 +78,52 @@ describe('session listeners', () => {
     expect(onHeadersReceivedMock).toHaveBeenCalledTimes(1);
   });
 
+  it('ignores non-https mediator/pubMedia URLs and malformed base domains', async () => {
+    const { setElectronUrlVariables, urlVariables } =
+      await import('../session');
+
+    setElectronUrlVariables({
+      base: 'valid-domain.test',
+      mediator: 'https://mediator.test/',
+      pubMedia: 'https://pubmedia.test/',
+    });
+
+    setElectronUrlVariables({
+      base: 'not a domain!',
+      mediator: 'javascript:alert(1)',
+      pubMedia: 'not-a-url',
+    });
+
+    expect(urlVariables).toEqual({
+      base: 'valid-domain.test',
+      mediator: 'https://mediator.test/',
+      pubMedia: 'https://pubmedia.test/',
+    });
+  });
+
+  it('accepts empty strings to reset previously set URL variables', async () => {
+    const { setElectronUrlVariables, urlVariables } =
+      await import('../session');
+
+    setElectronUrlVariables({
+      base: 'valid-domain.test',
+      mediator: 'https://mediator.test/',
+      pubMedia: 'https://pubmedia.test/',
+    });
+
+    setElectronUrlVariables({
+      base: '',
+      mediator: '',
+      pubMedia: '',
+    });
+
+    expect(urlVariables).toEqual({
+      base: '',
+      mediator: '',
+      pubMedia: '',
+    });
+  });
+
   it('updates referer and origin for trusted requests using the single registered listener', async () => {
     const { initSessionListeners } = await import('../session');
 
@@ -107,19 +154,11 @@ describe('session listeners', () => {
     });
   });
 
-  it('includes custom base domain origins in CSP when URL variables are updated', async () => {
-    const { initSessionListeners, setElectronUrlVariables } =
-      await import('../session');
+  it('does not allow unsafe-inline or unsafe-eval scripts in the CSP', async () => {
+    const { initSessionListeners } = await import('../session');
     const utilsModule = await import('src-electron/main/utils');
 
     vi.mocked(utilsModule.isSelf).mockReturnValue(true);
-
-    setElectronUrlVariables({
-      base: 'custom-domain.test',
-      mediator: 'https://media-api.custom-domain.test/apis/mediator',
-      pubMedia:
-        'https://media-api.custom-domain.test/apis/pub-media/GETPUBMEDIALINKS',
-    });
 
     initSessionListeners();
     readyCallbacks[0]?.();
@@ -145,16 +184,24 @@ describe('session listeners', () => {
         'Content-Security-Policy'
       ]?.[0];
 
-    expect(csp).toContain('https://*.custom-domain.test');
+    const scriptSrc = csp
+      ?.split(';')
+      .map((directive: string) => directive.trim())
+      .find((directive: string) => directive.startsWith('script-src'));
+
+    expect(scriptSrc).not.toContain("'unsafe-inline'");
+    expect(scriptSrc).not.toContain("'unsafe-eval'");
   });
 
-  it('ignores badly formed hostnames when building CSP origins', async () => {
+  // connect-src must allow any HTTPS host: the media API hosts come from the
+  // user-configurable Website setting and are only discovered after the page
+  // (and its CSP) loaded (MMM-V2-3JB/3JP). The websocket wildcard stays
+  // scoped to localhost (OBS).
+  it('allows any HTTPS host in connect-src but scopes websockets to localhost', async () => {
     const { initSessionListeners } = await import('../session');
-    const constantsModule = await import('src-electron/constants');
     const utilsModule = await import('src-electron/main/utils');
 
     vi.mocked(utilsModule.isSelf).mockReturnValue(true);
-    constantsModule.TRUSTED_DOMAINS.push('badly formed hostname');
 
     initSessionListeners();
     readyCallbacks[0]?.();
@@ -167,20 +214,77 @@ describe('session listeners', () => {
     ) => void;
 
     const callback = vi.fn();
-    expect(() =>
+    handler(
+      {
+        responseHeaders: {},
+        url: 'file:///index.html',
+      },
+      callback,
+    );
+
+    const csp =
+      callback.mock.calls[0]?.[0]?.responseHeaders?.[
+        'Content-Security-Policy'
+      ]?.[0];
+
+    const connectSrc = csp
+      ?.split(';')
+      .map((directive: string) => directive.trim())
+      .find((directive: string) => directive.startsWith('connect-src'));
+    const connectSrcTokens = connectSrc?.split(/\s+/) ?? [];
+
+    expect(connectSrcTokens).toContain("'self'");
+    expect(connectSrcTokens).toContain('https:');
+    expect(connectSrcTokens).toContain('ws://127.0.0.1:*');
+    expect(connectSrcTokens).not.toContain('ws:');
+    expect(connectSrcTokens).not.toContain('http:');
+  });
+
+  // MMM-V2-3KV: images and media load from the configured Website's CDN
+  // (e.g. streaming before the local copy exists), and that host isn't known
+  // yet when the CSP is built.
+  it.each(['img-src', 'media-src'])(
+    'allows any HTTPS host in %s before URL variables are known',
+    async (directiveName) => {
+      const { initSessionListeners } = await import('../session');
+      const utilsModule = await import('src-electron/main/utils');
+
+      vi.mocked(utilsModule.isSelf).mockReturnValue(true);
+
+      initSessionListeners();
+      readyCallbacks[0]?.();
+
+      const handler = onHeadersReceivedMock.mock.calls[0]?.[0] as (
+        details: { responseHeaders?: Record<string, string[]>; url: string },
+        callback: (result: {
+          responseHeaders?: Record<string, string[]>;
+        }) => void,
+      ) => void;
+
+      const callback = vi.fn();
       handler(
         {
           responseHeaders: {},
           url: 'file:///index.html',
         },
         callback,
-      ),
-    ).not.toThrow();
+      );
 
-    const csp =
-      callback.mock.calls[0]?.[0]?.responseHeaders?.[
-        'Content-Security-Policy'
-      ]?.[0];
-    expect(csp).not.toContain('badly formed hostname');
-  });
+      const csp =
+        callback.mock.calls[0]?.[0]?.responseHeaders?.[
+          'Content-Security-Policy'
+        ]?.[0];
+
+      const directiveTokens =
+        csp
+          ?.split(';')
+          .map((directive: string) => directive.trim())
+          .find((directive: string) => directive.startsWith(directiveName))
+          ?.split(/\s+/) ?? [];
+
+      expect(directiveTokens).toContain('https:');
+      expect(directiveTokens).toContain('file:');
+      expect(directiveTokens).not.toContain('http:');
+    },
+  );
 });

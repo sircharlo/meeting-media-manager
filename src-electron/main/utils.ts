@@ -1,3 +1,5 @@
+import type { PreloadErrorContext, SerializedPreloadError } from 'src/types';
+
 import { addBreadcrumb, captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
 import { app } from 'electron';
@@ -5,12 +7,14 @@ import { fileURLToPath } from 'node:url';
 import {
   IS_DEV,
   JW_DOMAINS,
+  NAVIGABLE_TRUSTED_DOMAINS,
   PLATFORM,
   PRODUCT_NAME,
   TRUSTED_DOMAINS,
 } from 'src-electron/constants';
 import { isUsablePath } from 'src-electron/main/fs';
 import { urlVariables } from 'src-electron/main/session';
+import { getNodeFsErrorFingerprint } from 'src/shared/filesystem-errors';
 import {
   isFetchNetworkError,
   NETWORK_ERROR_CODES,
@@ -18,22 +22,9 @@ import {
 import { log } from 'src/shared/vanilla';
 import { join, resolve } from 'upath';
 
+import { resolveElectronAssetsPath } from '#q-app/electron/main';
+
 type CaptureCtx = Parameters<typeof captureException>[1];
-interface NativeCrashEvent {
-  exception?: {
-    values?: NativeCrashException[];
-  };
-}
-interface NativeCrashException {
-  stacktrace?: {
-    frames?: NativeCrashFrame[];
-  };
-  type?: string;
-  value?: string;
-}
-interface NativeCrashFrame {
-  function?: string;
-}
 const UPDATER_FULL_DOWNLOAD_FALLBACK_MESSAGE =
   'Cannot download differentially, fallback to full download';
 const UPDATER_FULL_DOWNLOAD_FALLBACK_IGNORE_MS = 5 * 60 * 1000;
@@ -42,14 +33,30 @@ const UPDATE_IGNORE_ERRORS: (string | string[])[] = [
   ...NETWORK_ERROR_CODES,
   'ENOSPC',
   'EPIPE',
+  'ERR_ADDRESS_UNREACHABLE',
   'ERR_CONNECTION_CLOSED',
   'ERR_CONNECTION_RESET',
   'ERR_CONNECTION_TIMED_OUT',
+  // A mid-download HTTP/2 stream reset, seen as an unhandled rejection
+  // from the updater's download (MMM-V2-AN).
+  'ERR_HTTP2_PROTOCOL_ERROR',
+  'ERR_HTTP2_SERVER_REFUSED_STREAM',
+  'ERR_INTERNET_DISCONNECTED',
+  'ERR_NAME_NOT_RESOLVED',
   'ERR_NETWORK_CHANGED',
+  'ERR_NETWORK_IO_SUSPENDED',
+  'ERR_PROXY_CONNECTION_FAILED',
+  // Sibling of ERR_PROXY_CONNECTION_FAILED: a proxy that refuses or can't
+  // complete the HTTPS CONNECT tunnel to the update server (MMM-V2-AN).
+  'ERR_TUNNEL_CONNECTION_FAILED',
+  'ERR_TIMED_OUT',
   'SELF_SIGNED_CERT_IN_CHAIN',
   'YAMLException',
   'releases feed',
   ['404', 'HttpError'],
+  // GitHub's own brief edge outages serve the releases feed as a 500
+  // (MMM-V2-3KS); the next scheduled check retries.
+  ['500', 'HttpError'],
   ['502', 'HttpError'],
   ['503', 'HttpError'],
   ['504', 'Gateway'],
@@ -82,15 +89,7 @@ export function getIconPath(icon: 'beta' | 'icon' | 'media-player' | 'timer') {
 
   const ext = extByPlatform[PLATFORM] ?? 'png';
 
-  return resolve(
-    join(
-      fileURLToPath(
-        new URL(IS_DEV ? './../../src-electron' : '.', import.meta.url),
-      ),
-      'icons',
-      `${icon}.${ext}`,
-    ),
-  );
+  return resolveElectronAssetsPath('icons', `${icon}.${ext}`);
 }
 
 let isMachineWideAlreadyLogged = false;
@@ -163,7 +162,7 @@ export function isJwDomain(url: string): boolean {
       [urlVariables?.base]
         .filter((d): d is string => !!d)
         .map((d) => new URL(`https://${d}/`).hostname),
-    ).some((domain) => parsedUrl.hostname.endsWith(domain));
+    ).some((domain) => isHostnameOrSubdomain(parsedUrl.hostname, domain));
   } catch {
     return false;
   }
@@ -177,7 +176,7 @@ export function isMachineWideInstallation(): boolean {
   const exe = app.getPath('exe');
   if (PLATFORM === 'win32') {
     return (
-      !!process.env.DEBUGGING || // Always show as machine-wide when debugging
+      !!import.meta.env.QUASAR_DEBUG || // Always show as machine-wide when debugging
       (exe.toLowerCase().includes('program files') &&
         !exe.toLowerCase().includes('users'))
     );
@@ -187,6 +186,15 @@ export function isMachineWideInstallation(): boolean {
     return exe.startsWith('/usr') || exe.startsWith('/opt');
   }
 }
+
+// SEC-10 (full-audit-2026-09-05.md): memoized rather than computed at
+// module-load time - app.getAppPath() doesn't require app.whenReady(), but
+// there's no need to call it before isSelf() is first actually invoked.
+let cachedAppIndexPath: null | string = null;
+const getAppIndexPath = (): string => {
+  cachedAppIndexPath ??= resolve(app.getAppPath(), 'index.html');
+  return cachedAppIndexPath;
+};
 
 /**
  * Checks if a given url is the same as the current app url
@@ -198,42 +206,96 @@ export function isSelf(url?: string): boolean {
     if (!url) return false;
     const parsedUrl = new URL(url);
 
-    if (process.env.DEV) {
-      return parsedUrl.origin === process.env.APP_URL;
+    if (import.meta.env.QUASAR_DEV) {
+      return parsedUrl.origin === import.meta.env.QUASAR_APP_URL;
     }
 
-    return (
-      (parsedUrl.protocol === 'file:' &&
-        parsedUrl.pathname.toLowerCase().endsWith('index.html')) ||
-      parsedUrl.protocol === 'app:'
-    );
+    if (parsedUrl.protocol === 'app:') return true;
+    if (parsedUrl.protocol !== 'file:') return false;
+
+    // SEC-10: previously matched any local file merely ending in the
+    // literal substring "index.html" (e.g. "/foo/myindex.html" also
+    // matched), with no check that it was actually the app's own bundled
+    // index.html - this is the single trust-boundary check gating every IPC
+    // handler, so it's worth comparing against the real resolved path
+    // instead. fileURLToPath handles the file: URL's platform-specific
+    // encoding (Windows drive-letter form, %20 escapes, etc.) correctly;
+    // resolve() (upath) then normalizes both sides to the same
+    // forward-slash form for comparison.
+    const requestedPath = resolve(fileURLToPath(parsedUrl));
+    return PLATFORM === 'win32' || PLATFORM === 'darwin'
+      ? requestedPath.toLowerCase() === getAppIndexPath().toLowerCase()
+      : requestedPath === getAppIndexPath();
   } catch {
     return false;
   }
 }
 
+// The congregation-configured mediator/pubMedia/base endpoints are real,
+// user-confirmed JW infrastructure (base changes are gated behind SEC-4's
+// confirmation dialog) - legitimate to trust regardless of which domain
+// list (broad or navigation-only) is being checked against.
+const getDynamicTrustedHostnames = (): string[] =>
+  [
+    urlVariables?.mediator,
+    urlVariables?.pubMedia,
+    urlVariables?.base ? `https://${urlVariables.base}/` : undefined,
+  ]
+    .filter((d): d is string => !!d)
+    .map((d) => new URL(d).hostname);
+
+const matchesTrustedDomain = (url: string, domains: string[]): boolean => {
+  try {
+    const parsedUrl = new URL(url);
+    if (parsedUrl.protocol !== 'https:') return false;
+    return domains
+      .concat(getDynamicTrustedHostnames())
+      .some((domain) => isHostnameOrSubdomain(parsedUrl.hostname, domain));
+  } catch {
+    return false;
+  }
+};
+
 /**
- * Check if a given url is a trusted domain
+ * Check if a given url is a trusted domain for loading a media asset
+ * (img-src/media-src/connect-src, CORS header rewriting) - includes
+ * multi-tenant CDN hosts (`akamaihd.net`/`cloudfront.net`) that JW media
+ * assets are genuinely served from. Do not use this to decide whether a URL
+ * may be navigated to, granted a permission, or opened as a webview/new
+ * window - use {@link isTrustedNavigationTarget} for those.
  * @param url The url to check
  * @returns Whether the url is a trusted domain
  */
 export function isTrustedDomain(url?: string): boolean {
   if (!url) return false;
-  try {
-    const parsedUrl = new URL(url);
-    if (parsedUrl.protocol !== 'https:') return false;
-    return TRUSTED_DOMAINS.concat(
-      [
-        urlVariables?.mediator,
-        urlVariables?.pubMedia,
-        urlVariables?.base ? `https://${urlVariables.base}/` : undefined,
-      ]
-        .filter((d): d is string => !!d)
-        .map((d) => new URL(d).hostname),
-    ).some((domain) => parsedUrl.hostname.endsWith(domain));
-  } catch {
-    return false;
-  }
+  return matchesTrustedDomain(url, TRUSTED_DOMAINS);
+}
+
+/**
+ * Check if a given url is safe to navigate to, open as a webview/new
+ * window, or grant a permission request from. Deliberately narrower than
+ * {@link isTrustedDomain}: excludes the self-service multi-tenant CDN hosts
+ * that list also trusts for loading media assets, since anyone can
+ * provision a subdomain on either one - fine for treating it as a source of
+ * an image/video, not fine for treating it as a navigable origin.
+ * @param url The url to check
+ * @returns Whether the url is safe to navigate to
+ */
+export function isTrustedNavigationTarget(url?: string): boolean {
+  if (!url) return false;
+  return matchesTrustedDomain(url, NAVIGABLE_TRUSTED_DOMAINS);
+}
+
+/**
+ * Checks whether a hostname is exactly a given domain or one of its subdomains.
+ * Using a plain `endsWith` check would incorrectly match look-alike domains
+ * such as `evil-jw.org` against `jw.org`, so a `.` boundary is required.
+ * @param hostname The hostname to check
+ * @param domain The trusted domain to match against
+ * @returns Whether the hostname is the domain or a subdomain of it
+ */
+function isHostnameOrSubdomain(hostname: string, domain: string): boolean {
+  return hostname === domain || hostname.endsWith(`.${domain}`);
 }
 
 /**
@@ -251,16 +313,33 @@ export const isValidUrl = (url: string): boolean => {
 };
 
 /**
- * Checks if a native crash report is a known Node/V8 worker delayed-task abort
- * emitted by Electron during process teardown.
- * @param event The Sentry event to check
- * @returns Whether the event should be ignored
+ * Checks whether a Sentry error event is an unhandled rejection carrying a
+ * known-benign update/network error (see isIgnoredUpdateError). These
+ * originate from Electron's native net stack (used internally by
+ * electron-updater's HTTP executor) as raw unhandled promise rejections, so
+ * they never reach the explicit isIgnoredUpdateError checks in updater.ts and
+ * must be filtered at the Sentry beforeSend level instead.
+ * @param event The Sentry error event to check
+ * @returns Whether the event should be dropped
  */
-export function isIgnoredNativeCrashEvent(event: NativeCrashEvent): boolean {
-  const exceptions = event.exception?.values;
-  if (!exceptions) return false;
-
-  return exceptions.some(isNodeWorkerDelayedTaskAbort);
+export function isIgnoredUnhandledNetworkEvent(event: {
+  exception?: {
+    values?: {
+      mechanism?: { handled?: boolean };
+      type?: string;
+      value?: string;
+    }[];
+  };
+}): boolean {
+  const values = event.exception?.values ?? [];
+  return values.some(
+    (value) =>
+      value.mechanism?.handled === false &&
+      isIgnoredUpdateError({
+        message: value.value ?? '',
+        name: value.type,
+      } as Error),
+  );
 }
 
 /**
@@ -329,22 +408,6 @@ export function markUpdaterFullDownloadFallback(message: unknown) {
   updaterFullDownloadFallbackAt = Date.now();
 }
 
-/**
- * Checks whether any native stack frame function contains the expected text.
- * Minidump frame names can include namespaces, class names, or symbol prefixes,
- * so substring matching keeps the signature resilient without broadening it too
- * far.
- * @param frames The native stack frames from the minidump exception
- * @param expectedFunction The function name fragment to find
- * @returns Whether any frame function contains the expected fragment
- */
-function frameFunctionIncludes(
-  frames: NativeCrashFrame[],
-  expectedFunction: string,
-) {
-  return frames.some((frame) => frame.function?.includes(expectedFunction));
-}
-
 function getErrorDetails(error: unknown) {
   if (typeof error === 'string') {
     return {
@@ -355,10 +418,14 @@ function getErrorDetails(error: unknown) {
   }
 
   return {
-    code: (error as { code?: string })?.code,
+    code: getErrorDetailText((error as { code?: unknown })?.code),
     message: error instanceof Error ? error.message : undefined,
-    name: (error as Error)?.name,
+    name: getErrorDetailText((error as { name?: unknown })?.name),
   };
+}
+
+function getErrorDetailText(value: unknown) {
+  return typeof value === 'string' ? value : undefined;
 }
 
 /**
@@ -392,41 +459,6 @@ async function handleFetchException(
       },
     });
   }
-}
-
-/**
- * Checks for a known Electron/Node native abort where V8's memory-pool cleanup
- * reposts a delayed worker-thread task through libuv while the async handle is
- * closing. The signature is intentionally strict so unrelated breakpoint
- * minidumps still reach Sentry.
- * @param exception The native crash exception from the Sentry minidump event
- * @returns Whether the exception matches the Node worker delayed-task abort
- */
-function isNodeWorkerDelayedTaskAbort(exception: NativeCrashException) {
-  if (!exception.type?.includes('EXCEPTION_BREAKPOINT')) return false;
-  if (!exception.value?.includes('Fatal Error')) return false;
-
-  const frames = exception.stacktrace?.frames;
-  if (!frames) return false;
-
-  const hasNativeAbort =
-    frameFunctionIncludes(frames, 'wil::details::DebugBreak') &&
-    frameFunctionIncludes(frames, 'uv_fatal_error');
-  const hasAsyncSend = frameFunctionIncludes(frames, 'uv_async_send');
-  const hasDelayedTaskScheduler = frameFunctionIncludes(
-    frames,
-    'WorkerThreadsTaskRunner::DelayedTaskScheduler::PostDelayedTask',
-  );
-  const hasMemoryPoolReleaseTask = frameFunctionIncludes(
-    frames,
-    'MemoryPool::PostDelayedReleaseTask',
-  );
-
-  return (
-    hasNativeAbort &&
-    hasAsyncSend &&
-    (hasDelayedTaskScheduler || hasMemoryPoolReleaseTask)
-  );
 }
 
 /**
@@ -530,8 +562,75 @@ export function captureElectronError(error: unknown, context?: CaptureCtx) {
     log(error, 'electron', 'error');
     log('context', 'electron', 'warn', context);
   } else {
-    captureException(error, context);
+    // Same path-independent grouping the renderer's errorCatcher applies -
+    // without it, one recurring main-process fs failure split into a
+    // separate Sentry issue per file path (e.g. MMM-V2-3KB..3KF).
+    const fingerprint = getNodeFsErrorFingerprint(error, context);
+    captureException(
+      error,
+      fingerprint && typeof context !== 'function'
+        ? ({ ...context, fingerprint } as CaptureCtx)
+        : context,
+    );
   }
+}
+
+const optionalString = (value: unknown) =>
+  typeof value === 'string' ? value : undefined;
+
+const isPlainRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+/**
+ * Rebuilds an Error from a preload report so Sentry parses the preload's
+ * own stack frames, not this function's.
+ * @param serialized The error as the preload serialized it
+ * @returns An Error carrying the original name, message, stack, code and syscall
+ */
+const rebuildPreloadError = (serialized: SerializedPreloadError) => {
+  const error = new Error(serialized.message);
+  error.name = serialized.name;
+  error.stack = serialized.stack ?? `${serialized.name}: ${serialized.message}`;
+  if (serialized.code) Object.assign(error, { code: serialized.code });
+  if (serialized.syscall) Object.assign(error, { syscall: serialized.syscall });
+  return error;
+};
+
+/**
+ * Reports an error the preload forwarded over the `capturePreloadError`
+ * channel. The preload's isolated world has no Sentry client of its own (see
+ * capturePreloadError in src-electron/preload/log.ts), so its errors are
+ * reported from here, with the same grouping and path scrubbing as any other
+ * main-process error.
+ * @param report The forwarded report (validated here, as IPC input)
+ */
+export function capturePreloadErrorReport(report: unknown) {
+  const error = isPlainRecord(report) ? report.error : undefined;
+  if (!isPlainRecord(error) || typeof error.message !== 'string') {
+    log('Ignored a malformed preload error report', 'electron', 'warn');
+    return;
+  }
+
+  const contexts =
+    isPlainRecord(report) && isPlainRecord(report.context)
+      ? report.context.contexts
+      : undefined;
+  const rebuilt = rebuildPreloadError({
+    code: optionalString(error.code),
+    message: error.message,
+    name: optionalString(error.name) || 'Error',
+    stack: optionalString(error.stack),
+    syscall: optionalString(error.syscall),
+  });
+
+  captureElectronError(rebuilt, {
+    ...(isPlainRecord(contexts) && {
+      contexts: contexts as PreloadErrorContext['contexts'],
+    }),
+    // Overrides the SDK's 'browser' default so preload errors stay
+    // distinguishable from main-process ones in Sentry.
+    tags: { 'event.process': 'preload' },
+  });
 }
 
 /**

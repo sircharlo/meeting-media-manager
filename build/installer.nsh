@@ -7,7 +7,10 @@
     # Use $1 to explicitly target C:\ProgramData
     ReadEnvStr $1 "PROGRAMDATA"
     CreateDirectory "$1\Meeting Media Manager"
-    nsExec::ExecToLog 'cmd /C icacls "$1\Meeting Media Manager" /grant *S-1-5-32-545:(OI)(CI)M /T'
+    CreateDirectory "$1\Meeting Media Manager\Additional Media"
+    CreateDirectory "$1\Meeting Media Manager\Fonts"
+    CreateDirectory "$1\Meeting Media Manager\Publications"
+    nsExec::ExecToLog 'cmd /C icacls "$1\Meeting Media Manager" /grant *S-1-5-32-545:(OI)(CI)M /T /C'
     
     Pop $0
     ${If} $0 != 0

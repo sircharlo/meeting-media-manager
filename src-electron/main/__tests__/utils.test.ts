@@ -1,10 +1,22 @@
+import { pathToFileURL } from 'node:url';
+import { resolve } from 'upath';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+const mockAppPath = '/mock/app/resources/app';
 
 vi.mock('electron', () => ({
   app: {
+    getAppPath: vi.fn(() => mockAppPath),
     getPath: vi.fn(),
     getVersion: vi.fn(),
+    once: vi.fn(),
   },
+}));
+
+vi.mock('#q-app/electron/main', () => ({
+  resolveElectronAssetsPath: vi.fn((...args: string[]) =>
+    ['electron-assets', ...args].join('/'),
+  ),
 }));
 
 vi.mock('@sentry/electron/main', () => ({
@@ -25,12 +37,111 @@ vi.mock('app/package.json', () => ({
 
 import {
   fetchJsonFromMainProcess,
-  isIgnoredNativeCrashEvent,
+  isIgnoredUnhandledNetworkEvent,
   isIgnoredUpdateError,
+  isJwDomain,
+  isSelf,
+  isTrustedDomain,
+  isTrustedNavigationTarget,
   isUpdaterFullDownloadFallbackError,
   markUpdaterFullDownloadFallback,
   utils,
 } from '../utils';
+
+// SEC-10 (full-audit-2026-09-05.md): previously matched any local file
+// merely ending in the literal substring "index.html" - not anchored to the
+// app's actual bundled index.html path at all. Both the "expected" and
+// "actual" paths below go through the same resolve()/pathToFileURL()
+// transformation as the real code, so the assertions hold regardless of
+// which OS runs the test.
+describe('isSelf', () => {
+  it("accepts the app's real, resolved index.html path", () => {
+    const realIndexPath = resolve(mockAppPath, 'index.html');
+    expect(isSelf(pathToFileURL(realIndexPath).href)).toBe(true);
+  });
+
+  it('rejects a different local file that merely ends in "index.html"', () => {
+    const lookalikePath = resolve(mockAppPath, 'foo', 'myindex.html');
+    expect(isSelf(pathToFileURL(lookalikePath).href)).toBe(false);
+  });
+
+  it('accepts the app: protocol unconditionally', () => {
+    expect(isSelf('app://anything')).toBe(true);
+  });
+
+  it('rejects non-file/app protocols', () => {
+    expect(isSelf('https://jw.org/')).toBe(false);
+  });
+
+  it('rejects an undefined url', () => {
+    expect(isSelf(undefined)).toBe(false);
+  });
+});
+
+describe('isJwDomain', () => {
+  it('accepts jw.org and its subdomains', () => {
+    expect(isJwDomain('https://jw.org/')).toBe(true);
+    expect(isJwDomain('https://www.jw.org/en/')).toBe(true);
+    expect(isJwDomain('https://stream.jw.org/')).toBe(true);
+  });
+
+  it('rejects look-alike domains that merely end with a trusted suffix', () => {
+    expect(isJwDomain('https://evil-jw.org/')).toBe(false);
+    expect(isJwDomain('https://notjw.org/')).toBe(false);
+    expect(isJwDomain('https://xjw.org/')).toBe(false);
+    expect(isJwDomain('https://jw.org.evil.com/')).toBe(false);
+  });
+
+  it('rejects non-https protocols', () => {
+    expect(isJwDomain('http://jw.org/')).toBe(false);
+  });
+});
+
+describe('isTrustedDomain', () => {
+  it('accepts trusted domains and their subdomains', () => {
+    expect(isTrustedDomain('https://jw.org/')).toBe(true);
+    expect(isTrustedDomain('https://cdn.jw-cdn.org/')).toBe(true);
+    expect(isTrustedDomain('https://d1.cloudfront.net/')).toBe(true);
+  });
+
+  it('rejects look-alike domains that merely end with a trusted suffix', () => {
+    expect(isTrustedDomain('https://evil-jw-cdn.org/')).toBe(false);
+    expect(isTrustedDomain('https://notcloudfront.net/')).toBe(false);
+    expect(isTrustedDomain('https://fakeakamaihd.net/')).toBe(false);
+  });
+
+  it('rejects an undefined url', () => {
+    expect(isTrustedDomain(undefined)).toBe(false);
+  });
+});
+
+// SEC-9 (full-audit-2026-09-05.md): akamaihd.net/cloudfront.net are
+// self-service, multi-tenant CDN platforms - fine to trust for loading a
+// media asset (isTrustedDomain, above), but an attacker-provisioned
+// subdomain on either should never be treated as safe to navigate to, open
+// as a webview/new window, or grant a permission request from.
+describe('isTrustedNavigationTarget', () => {
+  it('accepts JW domains and their subdomains', () => {
+    expect(isTrustedNavigationTarget('https://jw.org/')).toBe(true);
+    expect(isTrustedNavigationTarget('https://cdn.jw-cdn.org/')).toBe(true);
+    expect(isTrustedNavigationTarget('https://stream.jw.org/')).toBe(true);
+  });
+
+  it('rejects the multi-tenant CDN hosts isTrustedDomain accepts', () => {
+    expect(isTrustedNavigationTarget('https://d1.cloudfront.net/')).toBe(false);
+    expect(
+      isTrustedNavigationTarget('https://assetsnffrgf-a.akamaihd.net/'),
+    ).toBe(false);
+  });
+
+  it('rejects look-alike domains that merely end with a trusted suffix', () => {
+    expect(isTrustedNavigationTarget('https://evil-jw-cdn.org/')).toBe(false);
+  });
+
+  it('rejects an undefined url', () => {
+    expect(isTrustedNavigationTarget(undefined)).toBe(false);
+  });
+});
 
 describe('isIgnoredUpdateError', () => {
   it('should return true for ERR_NETWORK_CHANGED', () => {
@@ -49,8 +160,31 @@ describe('isIgnoredUpdateError', () => {
   it('should return true for other ignored errors', () => {
     expect(isIgnoredUpdateError('ECONNRESET')).toBe(true);
     expect(isIgnoredUpdateError('HttpError: 404')).toBe(true);
+    // MMM-V2-3KS: GitHub's edge served the releases feed as a 500.
+    expect(
+      isIgnoredUpdateError(
+        Object.assign(
+          new Error(
+            '500 \n"method: GET url: https://github.com/sircharlo/meeting-media-manager/releases.atom',
+          ),
+          { name: 'HttpError' },
+        ),
+      ),
+    ).toBe(true);
     expect(isIgnoredUpdateError('504 Gateway Time-out')).toBe(true);
     expect(isIgnoredUpdateError('net::ERR_CONNECTION_CLOSED')).toBe(true);
+    expect(isIgnoredUpdateError('net::ERR_NAME_NOT_RESOLVED')).toBe(true);
+    expect(isIgnoredUpdateError('net::ERR_TIMED_OUT')).toBe(true);
+    expect(isIgnoredUpdateError('net::ERR_INTERNET_DISCONNECTED')).toBe(true);
+    expect(isIgnoredUpdateError('net::ERR_NETWORK_IO_SUSPENDED')).toBe(true);
+    expect(isIgnoredUpdateError('net::ERR_PROXY_CONNECTION_FAILED')).toBe(true);
+    expect(isIgnoredUpdateError('net::ERR_TUNNEL_CONNECTION_FAILED')).toBe(
+      true,
+    );
+    expect(isIgnoredUpdateError('net::ERR_HTTP2_PROTOCOL_ERROR')).toBe(true);
+    expect(isIgnoredUpdateError('net::ERR_HTTP2_SERVER_REFUSED_STREAM')).toBe(
+      true,
+    );
     expect(
       isIgnoredUpdateError(
         "Error: ENOENT: no such file or directory, unlink '/home/test/dir/meeting-media-manager-30.1.4-x86_64.AppImage'",
@@ -82,32 +216,22 @@ describe('isIgnoredUpdateError', () => {
     error.name = 'YAMLException';
     expect(isIgnoredUpdateError(error)).toBe(true);
   });
+
+  it('should return true for ERR_ADDRESS_UNREACHABLE', () => {
+    expect(isIgnoredUpdateError('net::ERR_ADDRESS_UNREACHABLE')).toBe(true);
+  });
 });
 
-describe('isIgnoredNativeCrashEvent', () => {
-  it('ignores Node worker delayed-task native aborts', () => {
+describe('isIgnoredUnhandledNetworkEvent', () => {
+  it('should ignore unhandled rejections carrying a known network error', () => {
     expect(
-      isIgnoredNativeCrashEvent({
+      isIgnoredUnhandledNetworkEvent({
         exception: {
           values: [
             {
-              stacktrace: {
-                frames: [
-                  { function: 'wil::details::DebugBreak' },
-                  { function: 'uv_fatal_error' },
-                  { function: 'uv_async_send' },
-                  {
-                    function:
-                      'node::WorkerThreadsTaskRunner::DelayedTaskScheduler::PostDelayedTask',
-                  },
-                  {
-                    function:
-                      'v8::internal::MemoryPool::PostDelayedReleaseTask',
-                  },
-                ],
-              },
-              type: 'EXCEPTION_BREAKPOINT / 0x76982622',
-              value: 'Fatal Error: EXCEPTION_BREAKPOINT / 0x76982622',
+              mechanism: { handled: false },
+              type: 'Error',
+              value: 'net::ERR_NETWORK_CHANGED',
             },
           ],
         },
@@ -115,25 +239,40 @@ describe('isIgnoredNativeCrashEvent', () => {
     ).toBe(true);
   });
 
-  it('does not ignore unrelated native breakpoints', () => {
+  it('should not ignore handled exceptions with the same message', () => {
     expect(
-      isIgnoredNativeCrashEvent({
+      isIgnoredUnhandledNetworkEvent({
         exception: {
           values: [
             {
-              stacktrace: {
-                frames: [
-                  { function: 'wil::details::DebugBreak' },
-                  { function: 'uv_fatal_error' },
-                ],
-              },
-              type: 'EXCEPTION_BREAKPOINT / 0x76982622',
-              value: 'Fatal Error: EXCEPTION_BREAKPOINT / 0x76982622',
+              mechanism: { handled: true },
+              type: 'Error',
+              value: 'net::ERR_NETWORK_CHANGED',
             },
           ],
         },
       }),
     ).toBe(false);
+  });
+
+  it('should not ignore unhandled rejections with an unrelated message', () => {
+    expect(
+      isIgnoredUnhandledNetworkEvent({
+        exception: {
+          values: [
+            {
+              mechanism: { handled: false },
+              type: 'Error',
+              value: 'Fatal exception',
+            },
+          ],
+        },
+      }),
+    ).toBe(false);
+  });
+
+  it('should not ignore events without exception values', () => {
+    expect(isIgnoredUnhandledNetworkEvent({})).toBe(false);
   });
 });
 
@@ -167,6 +306,23 @@ describe('isUpdaterFullDownloadFallbackError', () => {
 
     expect(
       isUpdaterFullDownloadFallbackError(new Error('Fatal exception')),
+    ).toBe(false);
+  });
+
+  it('should handle non-string error fields during updater full download fallback', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-06-04T12:00:00.000Z'));
+
+    markUpdaterFullDownloadFallback(
+      'Cannot download differentially, fallback to full download: Error: net::ERR_NETWORK_IO_SUSPENDED',
+    );
+
+    expect(
+      isUpdaterFullDownloadFallbackError({
+        code: 500,
+        message: 'net::ERR_NETWORK_IO_SUSPENDED',
+        name: { value: 'Error' },
+      }),
     ).toBe(false);
   });
 

@@ -1,12 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import type { ElectronApi } from 'src/types';
+import type { ElectronApi, ElectronFsApi } from 'src/types';
 
-const robot = {
-  getMousePos: () => ({ x: 0, y: 0 }),
-  mouseClick: () => undefined,
-  moveMouse: () => undefined,
-};
 import fs, { ensureDir } from 'fs-extra';
 import {
   fileUrlToPath,
@@ -39,14 +34,15 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   basename,
-  cancelAllDownloads: function () {
-    throw new Error('Function not implemented.');
-  },
+  cancelAllDownloads: () => void 0,
   changeExt,
   checkForUpdates: () => void 0,
   clickZoomElement: function (elementId) {
     throw new Error('Function not implemented.');
   },
+  closeSqliteConnection: async () => undefined,
+  closeSqliteConnections: async () => undefined,
+
   closeWebsiteWindow: function () {
     throw new Error('Function not implemented.');
   },
@@ -56,14 +52,20 @@ export const electronApi: ElectronApi = {
   createVideoFromNonVideo: function (originalFile, ffmpegPath) {
     throw new Error('Function not implemented.');
   },
+  decryptSecretSync: (cipherText) => cipherText,
   dirname,
   downloadFile: function (url, saveDir, destFilename, lowPriority) {
     throw new Error('Function not implemented.');
   },
+  encryptSecretSync: (plainText) => plainText,
+  ensureMacosFolderPermission: async (folderPath) => ({
+    path: folderPath,
+    status: 'not-needed',
+  }),
   ensureZoomRequirements: function () {
     throw new Error('Function not implemented.');
   },
-  executeQuery: function (dbPath, query) {
+  executeQuery: async function (dbPath, query) {
     throw new Error('Function not implemented.');
   },
   extname,
@@ -74,7 +76,7 @@ export const electronApi: ElectronApi = {
   focusMediaWindow: function () {
     throw new Error('Function not implemented.');
   },
-  fs,
+  fs: fs as unknown as ElectronFsApi,
   getAllScreens: function () {
     throw new Error('Function not implemented.');
   },
@@ -87,10 +89,19 @@ export const electronApi: ElectronApi = {
   getLowDiskSpaceStatus: function () {
     throw new Error('Function not implemented.');
   },
+  getMediaWindowCaptureSourceId: function () {
+    throw new Error('Function not implemented.');
+  },
+  getOsSupportWarning: async () => null,
   getScreenAccessStatus: function () {
     throw new Error('Function not implemented.');
   },
   getSharedDataPath: async () => fakePath('/app/shared'),
+  getUpdaterState: async () => ({
+    phase: null,
+    progress: null,
+    versionInfo: null,
+  }),
   getUpdatesDisabledPath: async () => fakePath('app/updates-disabled', false),
   getUserDataPath: async () => fakePath('app/meeting-media-manager'),
   getVideoDuration: function (filePath) {
@@ -113,8 +124,13 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   isArchitectureMismatch: async () => false,
+  isDemoMode: false,
+  isDev: false,
   isDownloadComplete: async () => null,
   isDownloadErrorExpected: async () => false,
+  isOnline: async () => true,
+  isSecretEncryptionAvailableSync: () => true,
+  isSqliteDbCorrupt: async () => false,
   isUsablePath: async function (path) {
     return true;
   },
@@ -138,6 +154,9 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   normalize,
+  onDevMenuCommand: function () {
+    return () => undefined;
+  },
   onDownloadCancelled: function (callback) {
     throw new Error('Function not implemented.');
   },
@@ -191,6 +210,7 @@ export const electronApi: ElectronApi = {
   },
   onWebsiteWindowClosed: function (callback) {
     log('onWebsiteWindowClosed called but not implemented');
+    return () => undefined;
   },
   openDiscussion: function (category, title, params) {
     throw new Error('Function not implemented.');
@@ -214,6 +234,7 @@ export const electronApi: ElectronApi = {
   parseMediaFile: function (filePath, options) {
     throw new Error('Function not implemented.');
   },
+  passWafChallenge: async () => false,
   pathToFileURL,
   pauseAllDownloads: function () {
     throw new Error('Function not implemented.');
@@ -237,9 +258,14 @@ export const electronApi: ElectronApi = {
   resumeAllDownloads: function () {
     throw new Error('Function not implemented.');
   },
-  robot,
   saveFileDialog: function (defaultPath, filter) {
     throw new Error('Function not implemented.');
+  },
+  sendDevMenuState: function () {
+    // no-op in tests
+  },
+  sendKeyTap: function (key, modifiers) {
+    // no-op in tests
   },
   sendZoomWindowKeys: function (handle, keys) {
     throw new Error('Function not implemented.');
@@ -250,6 +276,9 @@ export const electronApi: ElectronApi = {
   setElectronUrlVariables: function (variables) {
     throw new Error('Function not implemented.');
   },
+  setExecutable: function (path) {
+    throw new Error('Function not implemented.');
+  },
   setHardwareAcceleration: function (disabled) {
     throw new Error('Function not implemented.');
   },
@@ -258,9 +287,7 @@ export const electronApi: ElectronApi = {
   },
   showFileOnWindows: async () => undefined,
   startZoomHelper: async () => true,
-  stopZoomHelper: function () {
-    throw new Error('Function not implemented.');
-  },
+  stopZoomHelper: () => void 0,
   toggleAuthorizedClose: function () {
     throw new Error('Function not implemented.');
   },
@@ -276,13 +303,13 @@ export const electronApi: ElectronApi = {
   unregisterShortcut: function (shortcut) {
     throw new Error('Function not implemented.');
   },
-  unwatchFolders: function () {
+  unwatchFolders: async function () {
     throw new Error('Function not implemented.');
   },
   unzip: function (input, output, opts) {
     throw new Error('Function not implemented.');
   },
-  watchFolder: function (path) {
+  watchFolder: async function (path) {
     throw new Error('Function not implemented.');
   },
   zoomWebsiteWindow: function (direction) {
