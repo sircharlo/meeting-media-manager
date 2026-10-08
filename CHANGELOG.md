@@ -6,6 +6,10 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ## UPCOMING VERSION
 
+### ✨ New Features
+
+- ✨ **Zoom Meeting Manager (beta, Windows)**: A new integration that operates Zoom for you around each meeting. It can launch your congregation's Zoom meeting when background music starts before the meeting. When the music stops just before the meeting starts, it joins computer audio, turns on the host video, and mutes everyone without letting them unmute. When music plays before or after a meeting, it does the reverse: it leaves computer audio, turns off the host video, and lets everyone unmute again (asking them to do so). It can also share the media window in Zoom automatically while media is being shown. A new Zoom button in the action island shows whether a Zoom meeting window was found and lets you run these steps manually. Requires Python to be installed.
+
 ### 🐞 Bug Fixes
 
 - 🐞 **Yeartext & Icons**: Fixed the yeartext font and media icons failing to load for some congregations, depending on their Website setting.
