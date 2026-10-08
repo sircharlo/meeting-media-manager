@@ -390,18 +390,35 @@ export const getVisibleMeetingItems = (
 };
 
 /**
- * Whether a metadata-parse failure signals a partial/truncated media file
- * rather than a real bug. music-metadata (via strtok3) throws an
- * "End-Of-Stream" error when it runs out of bytes mid-parse - the normal
- * outcome when a file that is still downloading (or was copied incompletely)
- * is read before it finished, so it should not be reported to Sentry. The
- * same message string is produced by every strtok3 tokenizer, so matching
- * the message (which survives the contextBridge crossing) is more reliable
- * than matching the class instance.
+ * Error messages music-metadata throws when a file ends before its own
+ * headers say it should - the normal outcome when a file that is still
+ * downloading (or was copied incompletely) is read before it finished:
+ * - strtok3 (every tokenizer) throws "End-Of-Stream" when it runs out of
+ *   bytes mid-read.
+ * - Since music-metadata 11.16.0, parsers check declared sizes against the
+ *   file size up front, so a cut-short MP4/M4A fails with "Atom size exceeds
+ *   remaining bytes: N > M" and a cut-short MP3 with "ID3v2 tag size N
+ *   exceeds remaining file size M" instead.
  */
-const isEndOfStreamError = (error: unknown) =>
-  (error as null | undefined | { message?: string })?.message ===
-  'End-Of-Stream';
+const TRUNCATED_MEDIA_ERROR_PATTERNS = [
+  /^End-Of-Stream$/,
+  /^Atom size exceeds remaining bytes: \d+ > \d+$/,
+  /exceeds remaining file size/,
+];
+
+/**
+ * Whether a metadata-parse failure signals a partial/truncated media file
+ * rather than a real bug, so it should not be reported to Sentry. Matches on
+ * the message (which survives the contextBridge crossing) rather than the
+ * error class, which doesn't.
+ */
+const isTruncatedMediaError = (error: unknown) => {
+  const message = (error as null | undefined | { message?: unknown })?.message;
+  return (
+    typeof message === 'string' &&
+    TRUNCATED_MEDIA_ERROR_PATTERNS.some((pattern) => pattern.test(message))
+  );
+};
 
 /**
  * Gets the metadata of a media file.
@@ -476,7 +493,7 @@ export const getMetadataFromMediaPath = async (
     }
     return metadata;
   } catch (error) {
-    if (error instanceof Event || isEndOfStreamError(error)) {
+    if (error instanceof Event || isTruncatedMediaError(error)) {
       return defaultMetadata;
     }
     errorCatcher(error, {
