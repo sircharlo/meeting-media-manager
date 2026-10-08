@@ -419,6 +419,7 @@ import {
   settingsGroups,
 } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { getRendererPlatform } from 'src/helpers/fs';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
 import {
@@ -427,7 +428,6 @@ import {
   toggleBetaUpdates,
   updatesDisabled,
 } from 'src/utils/fs';
-import { getCurrentPlatform } from 'src/utils/platform';
 import {
   exportProfileSettingsToFile,
   importProfileSettingsFromFile,
@@ -589,7 +589,7 @@ const { scenes } = storeToRefs(obsState);
 const settingsFormDynamic = useTemplateRef<QForm>('settingsFormDynamic');
 const settingsValid = ref(true);
 
-const PLATFORM = getCurrentPlatform();
+const PLATFORM = getRendererPlatform();
 
 const settingsGroupsEntries = Object.entries(settingsGroups).filter(
   ([, group]) => !group.platforms || group.platforms.includes(PLATFORM),

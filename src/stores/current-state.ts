@@ -19,6 +19,7 @@ import { LONG_MEDIA_DURATION } from 'src/constants/jw';
 import { settingsDefinitions } from 'src/constants/settings';
 import { isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { getRendererPlatform } from 'src/helpers/fs';
 import { dismissAllTemporaryNotifications } from 'src/helpers/notifications';
 import { log } from 'src/shared/vanilla';
 import { datesAreSame, formatDate } from 'src/utils/date';
@@ -29,7 +30,6 @@ import {
   registerCachePathProvider,
 } from 'src/utils/fs';
 import { isEmpty, isUUID } from 'src/utils/general';
-import { getCurrentPlatform } from 'src/utils/platform';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
@@ -138,8 +138,6 @@ const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
   keyof SettingsItems,
   SettingsItem,
 ][];
-
-const PLATFORM = getCurrentPlatform();
 
 let zoomHelperSyncInProgress = false;
 
@@ -367,7 +365,11 @@ export const useCurrentStateStore = defineStore('current-state', {
       this.timerWindowVisible = visible;
     },
     async syncZoomHelper() {
-      if (PLATFORM !== 'win32' || zoomHelperSyncInProgress) return;
+      // Resolved here rather than at module load: src/helpers/fs imports
+      // this store, so a top-level call could run before it's initialized.
+      if (getRendererPlatform() !== 'win32' || zoomHelperSyncInProgress) {
+        return;
+      }
 
       const enabled = this.currentSettings?.zoomMeetingManagerEnable;
 
