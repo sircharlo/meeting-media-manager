@@ -350,12 +350,21 @@
           :done="step > 200"
           icon="mmm-integrations"
           :name="200"
-          :title="t('zoomEnable')"
+          :title="
+            zoomManagerAvailable ? t('zoomMeetingManager') : t('zoomEnable')
+          "
         >
           <p class="text-subtitle1">
             {{ t('would-you-like-to-integrate-zoom') }}
+            <q-badge v-if="zoomManagerAvailable" align="top" class="q-ml-xs">
+              {{ t('beta') }}
+            </q-badge>
           </p>
-          <p>
+          <template v-if="zoomManagerAvailable">
+            <p>{{ t('setup-wizard-zoom-manager-explain') }}</p>
+            <p>{{ t('zoom-setup-requirements') }}</p>
+          </template>
+          <p v-else>
             {{ t('zoom-integration-explain') }}
           </p>
           <q-stepper-navigation class="q-gutter-sm">
@@ -364,19 +373,58 @@
               :label="t('back')"
               @click="step = regularProfile ? 10 : 7"
             />
-            <q-btn flat :label="t('no')" @click="step = 103" />
+            <q-btn
+              flat
+              :label="t('no')"
+              @click="
+                setZoomChosen(false);
+                step = 103;
+              "
+            />
             <q-btn
               color="primary"
               :label="t('yes')"
               @click="
-                currentSettings.zoomEnable = true;
+                setZoomChosen(true);
                 step = 201;
               "
             />
           </q-stepper-navigation>
         </q-step>
         <q-step
-          v-if="step >= 201 && currentSettings?.zoomEnable"
+          v-if="step >= 201 && zoomManagerAvailable && zoomChosen"
+          :done="step > 201"
+          icon="mmm-integrations"
+          :name="201"
+          :title="t('zoom-setup-title')"
+        >
+          <p>{{ t('setup-wizard-zoom-manager-setup-explain') }}</p>
+          <p v-if="zoomManagerReady" class="text-positive">
+            <q-icon class="q-mr-xs" name="mmm-check" />
+            {{ t('setup-wizard-zoom-manager-ready') }}
+          </p>
+          <q-stepper-navigation class="q-gutter-sm">
+            <q-btn flat :label="t('back')" @click="step = 200" />
+            <q-btn
+              class="btn-tonal"
+              color="primary"
+              flat
+              :label="t('zoom-setup-open')"
+              @click="openZoomSetupAssistant"
+            />
+            <q-btn
+              color="primary"
+              :label="
+                zoomManagerReady
+                  ? t('continue')
+                  : t('setup-wizard-zoom-manager-later')
+              "
+              @click="step = 300"
+            />
+          </q-stepper-navigation>
+        </q-step>
+        <q-step
+          v-if="step >= 201 && !zoomManagerAvailable && zoomChosen"
           :disable="!currentSettings?.zoomEnable"
           :done="step > 201"
           icon="mmm-integrations"
@@ -656,6 +704,7 @@ import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
 import { removeCongregationCache } from 'src/helpers/cleanup';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { getRendererPlatform } from 'src/helpers/fs';
 import { downloadSongbookVideos, fetchMedia } from 'src/helpers/jw-media';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
@@ -857,6 +906,40 @@ onBeforeRouteLeave(async (_to, _from, next) => {
 
 const step = ref(1);
 
+// The Zoom Meeting Manager (Windows only) is offered in place of the older
+// Zoom integration, which only sends a screen-sharing keyboard shortcut.
+const zoomManagerAvailable = getRendererPlatform() === 'win32';
+
+/** Whether the user answered "yes" to Zoom (in whichever form it's offered). */
+const zoomChosen = computed(() =>
+  zoomManagerAvailable
+    ? !!currentSettings.value?.zoomMeetingManagerEnable
+    : !!currentSettings.value?.zoomEnable,
+);
+
+const setZoomChosen = (chosen: boolean) => {
+  if (!currentSettings.value) return;
+  if (zoomManagerAvailable) {
+    currentSettings.value.zoomMeetingManagerEnable = chosen;
+    // The two Zoom integrations exclude each other.
+    if (chosen) currentSettings.value.zoomEnable = false;
+  } else {
+    currentSettings.value.zoomEnable = chosen;
+  }
+};
+
+/** Whether the Zoom setup assistant has learned what it needs from Zoom. */
+const zoomManagerReady = computed(
+  () =>
+    !!currentSettings.value?.zoomVideoOnTitle &&
+    !!currentSettings.value?.zoomVideoOffTitle,
+);
+
+const openZoomSetupAssistant = () => {
+  // Shown by MainLayout, over the wizard.
+  globalThis.dispatchEvent(new CustomEvent('openZoomSetupAssistant'));
+};
+
 // The wizard branches a lot (regular vs. special profile, OBS, Zoom, sign
 // language...), so there's no single "step 7 of 12" that's true for every
 // session. Rather than compute the exact reachable path (which would also
@@ -888,7 +971,7 @@ const reachableStepNames = computed(() => {
     names.push(9, 10);
   }
   names.push(200);
-  if (currentSettings.value?.zoomEnable) {
+  if (zoomChosen.value) {
     names.push(201);
   } else {
     names.push(103);
