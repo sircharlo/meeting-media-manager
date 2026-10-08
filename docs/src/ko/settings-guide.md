@@ -686,7 +686,7 @@ The checklist categories and tasks for both the before-meeting and after-meeting
 
 ### Profile Settings Transfer {#profile-settings-transfer}
 
-Export the current profile's settings to a JSON file or import a previously exported profile settings file. Importing replaces the current profile's settings.
+Export the current profile's settings to a JSON file or import a previously exported profile settings file. 프로필을 가져오면 현재 프로필의 설정이 가져온 설정으로 대체됩니다.
 
 ### Danger Zone {#danger-zone}
 
