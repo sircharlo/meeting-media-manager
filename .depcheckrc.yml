@@ -29,7 +29,7 @@ ignores:
   # implicitly for the package they describe.
   - '@types/*'
   # Only invoked via the "electron-rebuild" package.json script, never
-  # imported - rebuilds @jitsi/robotjs's native binding for this machine's
+  # imported - rebuilds robotjs's native binding for this machine's
   # Node/Electron ABI.
   - '@electron/rebuild'
   # Referenced by plugin id string in quasar.config.ts's vitePlugins array,
@@ -52,7 +52,6 @@ ignores:
   # a package.json without anything there actually importing it) is what
   # shipped a crash to every user in 2026-07 - see git blame on this file.
   - '@carboneio/image-size'
-  - '@jitsi/robotjs'
   - '@numairawan/video-duration'
   - '@opentelemetry/api-logs'
   - '@sentry/core'
@@ -65,5 +64,6 @@ ignores:
   - heic-convert
   - is-online
   - mime
+  - robotjs
   - upath
   - yauzl

@@ -162,17 +162,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jitsi/robotjs@npm:^0.6.24":
-  version: 0.6.24
-  resolution: "@jitsi/robotjs@npm:0.6.24"
-  dependencies:
-    node-addon-api: "npm:^8.3.0"
-    node-gyp: "npm:latest"
-    node-gyp-build: "npm:^4.8.4"
-  checksum: 10c0/4e6295df47344ecd5d6b9da472f1582de12aa38365bdbabb1965d5b19c8ae3d986941328c78259eb180a26662f17ae78a16620c9e744c3d64f548d1400f330bd
-  languageName: node
-  linkType: hard
-
 "@jridgewell/sourcemap-codec@npm:^1.6.0":
   version: 1.6.0
   resolution: "@jridgewell/sourcemap-codec@npm:1.6.0"
@@ -2440,7 +2429,6 @@ __metadata:
   resolution: "meeting-media-manager-electron@workspace:."
   dependencies:
     "@carboneio/image-size": "npm:3.0.0"
-    "@jitsi/robotjs": "npm:^0.6.24"
     "@numairawan/video-duration": "npm:^1.0.0"
     "@sentry/electron": "npm:^8.1.0"
     "@types/fluent-ffmpeg": "npm:^2.1.28"
@@ -2459,6 +2447,7 @@ __metadata:
     is-online: "npm:^12.0.2"
     mime: "npm:^4.1.0"
     music-metadata: "npm:^11.16.0"
+    robotjs: "npm:^0.9.1"
     upath: "npm:^3.0.8"
     yauzl: "npm:^3.4.0"
   languageName: unknown
@@ -2621,12 +2610,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-addon-api@npm:^8.3.0":
-  version: 8.9.0
-  resolution: "node-addon-api@npm:8.9.0"
+"node-addon-api@npm:^4.2.0":
+  version: 4.3.0
+  resolution: "node-addon-api@npm:4.3.0"
   dependencies:
     node-gyp: "npm:latest"
-  checksum: 10c0/6d687ffbc66e9735f4182e4c05d137d083be1fa5972b1762307e007804a85b70f810fed5b908f27f48caa4ed831517c95eec5137c8a02eaa08893bdef7fec05e
+  checksum: 10c0/5febe94d58cdef319bc96a357b43d7a13776c93ee3f2edb374000f16454e65cec06035497947d5fdaa50db1cc7ab8e3a30ca8669bb07a1b159f0307dc2c1ccdf
   languageName: node
   linkType: hard
 
@@ -3149,6 +3138,17 @@ __metadata:
     semver-compare: "npm:^1.0.0"
     sprintf-js: "npm:^1.1.2"
   checksum: 10c0/7d01d4c14513c461778dd673a8f9e53255221f8d04173aafeb8e11b23d8b659bb83f1c90cfe81af7f9c213b8084b404b918108fd792bda76678f555340cc64ec
+  languageName: node
+  linkType: hard
+
+"robotjs@npm:^0.9.1":
+  version: 0.9.1
+  resolution: "robotjs@npm:0.9.1"
+  dependencies:
+    node-addon-api: "npm:^4.2.0"
+    node-gyp: "npm:latest"
+    node-gyp-build: "npm:^4.8.4"
+  checksum: 10c0/3e96ce5820047fee9223ee0557354ddefd4e6fb312e4d5e9f2412e873e09f9a823f9ff6aa1308bfe911918f37eb92fb89904a2a1453bb5f751e3885f43822d2a
   languageName: node
   linkType: hard
 

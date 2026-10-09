@@ -17,7 +17,7 @@
     "url": "https://github.com/sircharlo/meeting-media-manager.git"
   },
   "scripts": {
-    "electron-rebuild": "electron-rebuild -f -m ./node_modules/@jitsi/robotjs",
+    "electron-rebuild": "electron-rebuild -f -m ./node_modules/robotjs",
     "generate:icons": "node ./build/svg2font.js",
     "generate:jw-icons-fallbacks": "node ./scripts/update-jw-icons-fallbacks.mjs",
     "generate:logos": "node ./build/generate-logos.js",
@@ -45,7 +45,6 @@
     "@fontsource-variable/inter": "^5.3.0",
     "@fontsource-variable/noto-serif": "^5.3.0",
     "@formkit/drag-and-drop": "^0.6.1",
-    "@jitsi/robotjs": "^0.6.24",
     "@numairawan/video-duration": "^1.0.0",
     "@opentelemetry/api-logs": "^0.222.0",
     "@quasar/extras": "^2.1.0",
@@ -78,6 +77,7 @@
     "pinia-plugin-persistedstate": "^4.7.1",
     "pretty-bytes": "^7.2.0",
     "quasar": "^2.33.2",
+    "robotjs": "^0.9.1",
     "type-fest": "^5.10.0",
     "upath": "^3.0.8",
     "vue": "^3.5.43",
