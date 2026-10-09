@@ -46,7 +46,7 @@
     "@fontsource-variable/noto-serif": "^5.3.0",
     "@formkit/drag-and-drop": "^0.6.1",
     "@numairawan/video-duration": "^1.0.0",
-    "@opentelemetry/api-logs": "^0.222.0",
+    "@opentelemetry/api-logs": "^0.223.0",
     "@quasar/extras": "^2.1.0",
     "@sentry/core": "^11.4.0",
     "@sentry/electron": "^8.1.0",
