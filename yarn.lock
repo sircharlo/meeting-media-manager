@@ -8137,6 +8137,7 @@ __metadata:
     "@fontsource-variable/inter": "npm:^5.3.0"
     "@fontsource-variable/noto-serif": "npm:^5.3.0"
     "@formkit/drag-and-drop": "npm:^0.6.1"
+    "@intlify/message-compiler": "npm:11.4.13"
     "@intlify/unplugin-vue-i18n": "npm:^11.2.5"
     "@numairawan/video-duration": "npm:^1.0.0"
     "@pinia/testing": "npm:^2.0.1"
