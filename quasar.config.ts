@@ -184,11 +184,13 @@ export default defineConfig((ctx) => {
             arch: ['universal'],
             target: 'default',
           },
-          // Prebuilt native bindings installed for the build machine's arch
-          // only, so they're identical in the x64 and arm64 halves of the
-          // universal build and can't be lipo'd. @oxc-parser comes in via
-          // @sentry/electron v8 (@sentry/node -> @sentry/bundler-plugins).
-          x64ArchFiles: '**/{@napi-rs,@oxc-parser}/**',
+          // Prebuilt native bindings that are identical in the x64 and arm64
+          // halves of the universal build and so can't be lipo'd: @napi-rs
+          // and @oxc-parser (via @sentry/electron v8: @sentry/node ->
+          // @sentry/bundler-plugins) are installed for the build machine's
+          // arch only, and robotjs ships both darwin prebuilds in every
+          // install, with node-gyp-build picking the right one at runtime.
+          x64ArchFiles: '**/{@napi-rs,@oxc-parser,robotjs}/**',
         },
         nsis: {
           deleteAppDataOnUninstall: true,
