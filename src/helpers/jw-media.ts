@@ -50,7 +50,7 @@ import {
   registerMediaProviders,
 } from 'src/helpers/fs';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { updateLastUsedDate } from 'src/helpers/usage';
+import { LAST_USED_FILENAME, updateLastUsedDate } from 'src/helpers/usage';
 import {
   getFilesystemErrorCode,
   isCloudStoragePath,
@@ -76,7 +76,6 @@ import {
   subtractFromDate,
 } from 'src/utils/date';
 import {
-  findFile,
   getPublicationDirectory,
   getTempPath,
   invalidateCustomCachePath,
@@ -5038,6 +5037,94 @@ export const getPubMediaLinks = async (
   }
 };
 
+const extractMatchingZipEntry = async (
+  zipPath: string,
+  outputDir: string,
+  matches: (entryName: string) => boolean,
+) => {
+  const entryName = Object.keys(await getZipEntries(zipPath)).find(matches);
+  if (!entryName) return undefined;
+  const [extracted] = await unzip(zipPath, outputDir, {
+    includes: [entryName],
+  });
+  return extracted ? join(outputDir, extracted.path) : undefined;
+};
+
+/**
+ * Extracts JW Library's language database from its downloaded zip.
+ *
+ * The zip holds an msixbundle, which holds one msix per CPU architecture, and
+ * the database is the one file needed from the x64 msix. Each of those archives
+ * holds far more than that (installer scripts, every architecture's build, the
+ * app's executables and its 120 MB+ dll), so each level is listed first and
+ * only the one entry needed from it is extracted. Extracting everything wrote
+ * about 1 GB per run, and antivirus software locking the freshly written
+ * executables made it fail (MMM-V2-3KZ). Listing the archive just extracted,
+ * rather than searching the folder, also keeps an msixbundle left over from an
+ * older JW Library version from being picked instead of the current one.
+ *
+ * @param jwlbZipPath The downloaded JW Library zip.
+ * @returns The extracted database, if every level had the expected entry.
+ */
+export const extractMepsUnitDb = async (jwlbZipPath: string) => {
+  const dir = dirname(jwlbZipPath);
+  const msixbundle = await extractMatchingZipEntry(jwlbZipPath, dir, (name) =>
+    name.endsWith('.msixbundle'),
+  );
+  if (!msixbundle) return undefined;
+  const msix = await extractMatchingZipEntry(msixbundle, dir, (name) =>
+    name.endsWith('_x64.msix'),
+  );
+  if (!msix) return undefined;
+  return extractMatchingZipEntry(
+    msix,
+    dir,
+    (name) => name.startsWith('Data/') && name.endsWith('.db'),
+  );
+};
+
+/**
+ * Deletes everything in the JW Library folder except the downloaded zip (kept
+ * so the next refresh can skip downloading an unchanged JW Library), the
+ * extracted database and the last-used marker. The rest is this run's
+ * intermediate archives plus whatever older JW Library versions and the full
+ * extractions of earlier releases left behind - about 1 GB on some installs.
+ *
+ * @param jwlbZipPath The downloaded JW Library zip.
+ */
+const removeMepsUnitLeftovers = async (jwlbZipPath: string) => {
+  const dir = dirname(jwlbZipPath);
+  // The download always lands in JW Library's own folder (Publications/jwlb_E,
+  // or the download fallback folder of the same name); never empty any other.
+  if (!basename(dir).startsWith('jwlb')) return;
+  const keep = new Set([basename(jwlbZipPath), 'Data', LAST_USED_FILENAME]);
+
+  try {
+    const leftovers = (await readdir(dir)).filter(
+      (item) => !keep.has(item.name),
+    );
+    await Promise.all(
+      leftovers.map(async (item) => {
+        try {
+          await remove(join(dir, item.name));
+        } catch (error) {
+          // Most likely antivirus software still scanning a file this run
+          // just wrote; the next refresh tries again.
+          log(
+            'Could not remove a JW Library leftover',
+            'jw',
+            'warn',
+            item.name,
+            error,
+          );
+        }
+      }),
+    );
+  } catch (error) {
+    log('Could not list the JW Library folder', 'jw', 'warn', dir, error);
+  }
+};
+
 // Guards against overlapping runs: the download + 3-level unzip below takes long
 // enough that the urlVariables watcher in MainLayout.vue can re-trigger a second
 // call before the first finishes, racing two extractions into the same directory.
@@ -5061,32 +5148,30 @@ export const getJwMepsInfo = (): Promise<void> => {
         pub: 'jwlb',
       });
       if (!file.FilePath) return;
-      const dir = dirname(file.FilePath);
-      await unzip(file.FilePath, dir);
-      const msixbundle = await findFile(dir, '.msixbundle');
-      if (!msixbundle) return;
-      await unzip(msixbundle, dir);
-      const msix = await findFile(dir, '_x64.msix');
-      if (!msix) return;
-      await unzip(msix, dir);
-      const mepsunit = await findFile(join(dir, 'Data'), '.db');
-      if (!mepsunit) return;
-      const dynamicMepsLangs = (
-        await globalThis.electronApi.executeQuery<JwMepsLanguage>(
-          mepsunit,
-          'SELECT LanguageId, PrimaryIetfCode, Symbol FROM Language',
-        )
-      ).map((l) => ({
-        ...l,
-        PrimaryIetfCode: l.PrimaryIetfCode.toLowerCase() as JwLangSymbol,
-      }));
-      if (dynamicMepsLangs.length < jwStore.jwMepsLanguages.list.length) {
-        return;
+      try {
+        const mepsunit = await extractMepsUnitDb(file.FilePath);
+        if (!mepsunit) return;
+        const dynamicMepsLangs = (
+          await globalThis.electronApi.executeQuery<JwMepsLanguage>(
+            mepsunit,
+            'SELECT LanguageId, PrimaryIetfCode, Symbol FROM Language',
+          )
+        ).map((l) => ({
+          ...l,
+          PrimaryIetfCode: l.PrimaryIetfCode.toLowerCase() as JwLangSymbol,
+        }));
+        // A shorter list than the stored one is more likely a partial read
+        // than languages being dropped, so the stored list is kept - but the
+        // check is still recorded, since the list is persisted and an old
+        // date would rerun all of this on every launch.
+        const list =
+          dynamicMepsLangs.length < jwStore.jwMepsLanguages.list.length
+            ? jwStore.jwMepsLanguages.list
+            : dynamicMepsLangs;
+        jwStore.jwMepsLanguages = { list, updated: new Date() };
+      } finally {
+        await removeMepsUnitLeftovers(file.FilePath);
       }
-      jwStore.jwMepsLanguages = {
-        list: dynamicMepsLangs,
-        updated: new Date(),
-      };
     } catch (e) {
       errorCatcher(e);
     } finally {

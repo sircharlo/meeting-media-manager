@@ -1,7 +1,7 @@
 import type { MultimediaItem } from 'src/types';
 
 import { fetchRaw } from 'src/utils/api';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const errorCatcherMock = vi.fn();
 const createTemporaryNotificationMock = vi.fn();
@@ -35,8 +35,16 @@ const currentStateStore = {
   extractedFiles: {} as Record<string, string | undefined>,
   getMeetingType: vi.fn(),
 };
+interface MepsLanguageMock {
+  LanguageId: number;
+  PrimaryIetfCode?: string;
+  Symbol: string;
+}
 const jwStore = {
-  jwMepsLanguages: { list: [] as { LanguageId: number; Symbol: string }[] },
+  jwMepsLanguages: { list: [] } as {
+    list: MepsLanguageMock[];
+    updated?: Date;
+  },
   lookupPeriod: {},
   urlVariables: {},
 };
@@ -97,6 +105,7 @@ vi.mock('src/helpers/notifications', () => ({
 }));
 
 vi.mock('src/helpers/usage', () => ({
+  LAST_USED_FILENAME: '.last-used',
   updateLastUsedDate: vi.fn(),
 }));
 
@@ -995,6 +1004,174 @@ describe('jw-media helpers', () => {
 
       expect(getLoggedLanguageResolution()).toMatchObject({
         langsWritten: ['LSQ', 'F'],
+      });
+    });
+  });
+
+  describe('JW Library language database', () => {
+    const dir = '/pubs/jwlb_E';
+    const zipPath = `${dir}/jwlb_E.zip`;
+    const bundle = 'JWLibrary_15.9.54.0_x64_arm64.msixbundle';
+    const msix = 'JWLibrary_15.9.54.0_x64.msix';
+    // Trimmed-down listings of the real archives: each holds far more than
+    // the one entry needed from it.
+    const zipEntries: Record<string, Record<string, number>> = {
+      [`${dir}/${bundle}`]: {
+        'AppxBlockMap.xml': 1,
+        'JWLibrary_15.9.54.0_ARM64.msix': 1,
+        'JWLibrary_15.9.54.0_scale-100.msix': 1,
+        [msix]: 1,
+      },
+      [`${dir}/${msix}`]: {
+        'Assets/Logo.png': 1,
+        'Data/mepsunit.db': 1,
+        'JWLibrary.dll': 1,
+        'JWLibrary.exe': 1,
+        'JWLibrary.exe.config': 1,
+      },
+      [zipPath]: {
+        'Add-AppDevPackage.ps1': 1,
+        [bundle]: 1,
+        'Dependencies/x64/Microsoft.UI.Xaml.2.8.appx': 1,
+        'JWLibrary_15.9.54.0_x64_arm64.cer': 1,
+      },
+    };
+    const folderItem = (name: string, isDirectory = false) => ({
+      isDirectory,
+      isFile: !isDirectory,
+      name,
+      parentPath: dir,
+    });
+    const executeQueryMock = vi.fn();
+
+    beforeEach(() => {
+      getZipEntriesMock.mockImplementation(
+        async (path: string) => zipEntries[path] ?? {},
+      );
+      unzipMock.mockImplementation(
+        async (
+          _input: string,
+          _output: string,
+          opts?: { includes?: string[] },
+        ) => (opts?.includes ?? []).map((path) => ({ path })),
+      );
+      executeQueryMock.mockResolvedValue([
+        { LanguageId: 0, PrimaryIetfCode: 'EN', Symbol: 'E' },
+      ]);
+      Object.assign(globalThis.electronApi, {
+        dirname: (path: string) => path.slice(0, path.lastIndexOf('/')),
+        executeQuery: executeQueryMock,
+        extname: (path: string) => path.slice(path.lastIndexOf('.')),
+      });
+    });
+
+    it('extracts only the one entry needed from each archive level', async () => {
+      const { extractMepsUnitDb } = await import('../jw-media');
+
+      await expect(extractMepsUnitDb(zipPath)).resolves.toBe(
+        `${dir}/Data/mepsunit.db`,
+      );
+
+      expect(unzipMock.mock.calls).toEqual([
+        [zipPath, dir, { includes: [bundle] }],
+        [`${dir}/${bundle}`, dir, { includes: [msix] }],
+        [`${dir}/${msix}`, dir, { includes: ['Data/mepsunit.db'] }],
+      ]);
+    });
+
+    it('stops without extracting anything when an archive lacks the expected entry', async () => {
+      getZipEntriesMock.mockResolvedValue({ 'Install.ps1': 1 });
+      const { extractMepsUnitDb } = await import('../jw-media');
+
+      await expect(extractMepsUnitDb(zipPath)).resolves.toBeUndefined();
+      expect(unzipMock).not.toHaveBeenCalled();
+    });
+
+    describe('getJwMepsInfo', () => {
+      beforeEach(async () => {
+        Object.assign(currentStateStore, {
+          currentSongbook: { pub: 'sjjm', signLanguage: false },
+          downloadProgress: {},
+        });
+        Object.assign(jwStore, { jwLanguages: { list: [] } });
+        const { getPublicationDirectory } = await import('src/utils/fs');
+        vi.mocked(getPublicationDirectory).mockResolvedValue(dir);
+        const { shouldUpdateList } = await import('stores/jw');
+        vi.mocked(shouldUpdateList).mockReturnValue(true);
+        pathExistsMock.mockResolvedValue(true);
+        // The folder as earlier releases left it: an older JW Library's
+        // bundle and a full extraction of its msix next to the download.
+        readdirMock.mockResolvedValue([
+          folderItem('.last-used'),
+          folderItem('Assets', true),
+          folderItem('Data', true),
+          folderItem('JWLibrary.exe.config'),
+          folderItem('JWLibrary_15.8.59.0_x64_arm64.msixbundle'),
+          folderItem('jwlb_E.zip'),
+        ]);
+      });
+
+      afterEach(() => {
+        Reflect.deleteProperty(currentStateStore, 'currentSongbook');
+        Reflect.deleteProperty(currentStateStore, 'downloadProgress');
+        Reflect.deleteProperty(jwStore, 'jwLanguages');
+      });
+
+      it('stores the language list and removes everything but the download and the database', async () => {
+        const { getJwMepsInfo } = await import('../jw-media');
+
+        await getJwMepsInfo();
+
+        expect(executeQueryMock).toHaveBeenCalledWith(
+          `${dir}/Data/mepsunit.db`,
+          expect.stringContaining('FROM Language'),
+        );
+        expect(jwStore.jwMepsLanguages).toEqual({
+          list: [{ LanguageId: 0, PrimaryIetfCode: 'en', Symbol: 'E' }],
+          updated: expect.any(Date),
+        });
+        expect(removeMock.mock.calls.map(([path]) => path).sort()).toEqual([
+          `${dir}/Assets`,
+          `${dir}/JWLibrary.exe.config`,
+          `${dir}/JWLibrary_15.8.59.0_x64_arm64.msixbundle`,
+        ]);
+        expect(errorCatcherMock).not.toHaveBeenCalled();
+      });
+
+      it('keeps a longer stored list but still records the check', async () => {
+        const storedList = [
+          { LanguageId: 0, PrimaryIetfCode: 'en', Symbol: 'E' },
+          { LanguageId: 1, PrimaryIetfCode: 'es', Symbol: 'S' },
+        ];
+        jwStore.jwMepsLanguages = { list: storedList, updated: new Date(0) };
+        const { getJwMepsInfo } = await import('../jw-media');
+
+        await getJwMepsInfo();
+
+        expect(jwStore.jwMepsLanguages.list).toBe(storedList);
+        expect(jwStore.jwMepsLanguages.updated?.getTime()).toBeGreaterThan(0);
+      });
+
+      it('still removes the leftovers when extraction fails', async () => {
+        const lockError = Object.assign(new Error('EPERM'), { code: 'EPERM' });
+        unzipMock.mockRejectedValueOnce(lockError);
+        const { getJwMepsInfo } = await import('../jw-media');
+
+        await getJwMepsInfo();
+
+        expect(errorCatcherMock).toHaveBeenCalledWith(lockError);
+        expect(executeQueryMock).not.toHaveBeenCalled();
+        expect(removeMock).toHaveBeenCalledWith(`${dir}/JWLibrary.exe.config`);
+      });
+
+      it("never empties a folder that isn't JW Library's own", async () => {
+        const { getPublicationDirectory } = await import('src/utils/fs');
+        vi.mocked(getPublicationDirectory).mockResolvedValue('/pubs/Temp');
+        const { getJwMepsInfo } = await import('../jw-media');
+
+        await getJwMepsInfo();
+
+        expect(removeMock).not.toHaveBeenCalled();
       });
     });
   });

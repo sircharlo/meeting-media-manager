@@ -972,7 +972,10 @@ export const useJwStore = defineStore('jw-store', {
         });
       });
     },
-    omit: ['jwBibleFiles', 'jwMepsLanguages'],
+    // jwMepsLanguages stays persisted despite being refetchable: refetching
+    // it means downloading and extracting JW Library (see getJwMepsInfo),
+    // which would otherwise run on every launch instead of every few months.
+    omit: ['jwBibleFiles'],
     storage: jwStoreStorage,
   },
   state: (): Store => {

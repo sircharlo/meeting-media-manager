@@ -30,6 +30,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 - 🐞 **Publications**: Fixed a publication's media going missing on every start after its extracted database was damaged, for example by a crash or power cut while M³ was extracting it. M³ now detects a damaged database and extracts it again from the downloaded publication.
 - 🐞 **Media Fetching**: Fixed a meeting's entire media list coming up empty when just one of its SVG illustrations couldn't be loaded. Now only that one image is affected.
 - 🐞 **Media List**: Fixed dragging selected media items to reorder them not doing anything, including a single item you had just clicked. Dragging a selected item now moves exactly the highlighted items in that section, including selections made with the keyboard (Ctrl+A, Shift+arrows).
+- 🐞 **Startup**: Fixed M³ unpacking the entire JW Library installer, about 1 GB of files, every time it started, just to read JW Library's list of languages. That list is now refreshed every few months again, only the one file it needs is extracted, and the leftover installer files are removed, freeing about 1 GB on many computers. This also fixes "operation not permitted" errors where antivirus software blocked those files, and the list sometimes being read from an older version of JW Library.
 
 ### 🔧 Chores
 
