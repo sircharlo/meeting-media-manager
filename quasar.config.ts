@@ -3,9 +3,6 @@
 
 import { sentryRollupPlugin } from '@sentry/rollup-plugin';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
-import { type AfterPackContext, Arch } from 'electron-builder';
-import { access, copyFile, mkdir } from 'node:fs/promises';
-import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { mergeConfig } from 'vite'; // use mergeConfig helper to avoid overwriting the default config
@@ -42,47 +39,6 @@ const getIconPath = (iconType: 'icns' | 'ico' | 'png' | 'splash') => {
     return `../build/logos/splash-portable.bmp`;
   }
   return `electron-assets/icons/${IS_BETA ? 'beta' : 'icon'}.${iconType}`;
-};
-
-// Copies the robotjs native module prebuilt by the build workflow's
-// robotjs-native matrix (see .github/workflows/build.yml) into the Electron
-// project's node_modules before packaging. Upstream robotjs loads
-// ./build/Release/robotjs.node directly, so the macOS universal build needs
-// a lipo'd binary and Windows needs the matching-arch one; Linux keeps the
-// normal local build path. No-op outside the workflow (the env var is unset).
-const copyRobotjsNativeArtifact = async (context: AfterPackContext) => {
-  const artifactsDir = process.env.ROBOTJS_NATIVE_ARTIFACTS_DIR;
-
-  if (!artifactsDir) {
-    return;
-  }
-
-  const platform = context.electronPlatformName;
-  const arch = Arch[context.arch];
-
-  if (platform === 'linux') {
-    return;
-  }
-
-  const artifact =
-    platform === 'darwin' && arch === 'universal'
-      ? 'robotjs-darwin-universal.node'
-      : `robotjs-${platform}-${arch}.node`;
-  const source = path.join(artifactsDir, artifact);
-
-  await access(source);
-
-  const target = path.join(
-    context.packager.info.appDir,
-    'node_modules',
-    'robotjs',
-    'build',
-    'Release',
-    'robotjs.node',
-  );
-
-  await mkdir(path.dirname(target), { recursive: true });
-  await copyFile(source, target);
 };
 
 export default defineConfig((ctx) => {
@@ -192,7 +148,6 @@ export default defineConfig((ctx) => {
         appId: APP_ID,
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: APP_NAME + '-${version}-${arch}.${ext}',
-        beforePack: copyRobotjsNativeArtifact,
         generateUpdatesFilesForAllChannels: true,
         linux: {
           category: 'Utility',
