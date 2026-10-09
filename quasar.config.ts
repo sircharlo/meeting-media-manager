@@ -169,6 +169,14 @@ export default defineConfig((ctx) => {
             NSScreenCaptureUsageDescription:
               'Screen recording access is required in order to use the website mirroring feature. Please note that this app will never record your screen content.',
           },
+          // robotjs ships Node-API prebuilds for darwin-x64 and darwin-arm64
+          // that node-gyp-build picks at runtime. @electron/rebuild only
+          // recognises the arm64 one under an "armv8.node" name, so it
+          // compiles robotjs for arm64 but not for x64, and the resulting
+          // build/Release/robotjs.node in one half only makes
+          // @electron/universal refuse to merge the two. Leave the compiled
+          // binary out; node-gyp-build then falls back to prebuilds/.
+          files: ['!**/node_modules/robotjs/build/**'],
           hardenedRuntime: true,
           icon: getIconPath('icns'),
           minimumSystemVersion: '10.15',
