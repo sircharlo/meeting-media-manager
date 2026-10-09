@@ -4,6 +4,12 @@
 
 Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGELOG.md su GitHub.
 
+## UPCOMING VERSION
+
+### ✨ Nuove Funzionalità
+
+- ✨ **Zoom Meeting Manager (beta, Windows)**: A new integration that operates Zoom for you around each meeting. It can launch your congregation's Zoom meeting when background music starts before the meeting. When the music stops just before the meeting starts, it joins computer audio, turns on the host video, and mutes everyone without letting them unmute. When music plays before or after a meeting, it does the reverse: it leaves computer audio, turns off the host video, and lets everyone unmute again (asking them to do so). It can also share the media window in Zoom automatically while media is being shown, making sure the media window is what gets shared and never anything else on your screen. A new Zoom button in the action island shows whether a Zoom meeting window was found and lets you run these steps manually. A setup assistant, offered when you turn the option on (the initial setup wizard now offers it on Windows instead of the keyboard-shortcut screen sharing) and available anytime from the Zoom button or Settings, checks your Zoom, learns the names of its buttons in your language, and tries every step with you. When M³ starts, it also checks that everything it automates in Zoom works, opening the meeting if needed on meeting days in the hour and a quarter before it starts (only looking, without pressing anything, if others are already in the meeting); if something doesn't, it tells you and pauses its Zoom automations until it's restarted or a new check passes, so nothing goes wrong during the meeting. This check is on by default and can be turned off in Settings. It works whatever language Zoom is in, and needs nothing installed beyond Zoom itself.
+
 ## v26.9.0
 
 ### ✨ Nuove Funzionalità
@@ -12,7 +18,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.8.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **App-Wide Redesign**: un ampio aggiornamento visivo e di interazione attraverso le finestre di dialogo, la lista dei supporti/intestazione, le impostazioni e la procedura guidata di configurazione. La procedura guidata di configurazione è ora un flusso di una domanda per schermo con una barra di avanzamento. Tutti i prompt sono stati sostituiti con una finestra di dialogo marchiata coerente, e la selezione dell'intervallo di pagine PDF (per le importazioni di pubblicazione e trascinamento) ora utilizza un selettore di griglie-miniature invece di un prompt di testo libero. Aggiunto un nuovo tour della Guida di Avvio Rapido dopo il completamento dell'Installazione Guidata. Include anche lo styling ricaricato della carta/intestazione con ombre oscure e diverse correzioni di contrasto della modalità scura (etichette di campo focalizzate, percentuali di scarico-avanzamento).
 - ✨ **Pagina delle impostazioni**: Rielaborato in un layout a due pannelli, con una nuova sezione globale di Preferenze per l'aggiornamento automatico/aggiornamento beta-commuta fuori dalla finestra di dialogo Informazioni (che ora è puramente informativa).
@@ -21,7 +27,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.7.7
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Media Preview Quality**: Ora l'anteprima dei media rende i fotogrammi video tramite tela con downscaling di alta qualità, fissando anteprime jagged/blurry (soprattutto su contenuti testo-pesanti come le canzoni). L'anteprima si disattiva automaticamente anche se deve correggere ripetutamente la deriva di riproduzione su un singolo video, con un clic per riaccenderlo.
 
@@ -41,14 +47,14 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.7.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Riproduzione audio collegata**: aggiunto il supporto per riprodurre l'audio di un file insieme al video di un altro file. Può essere utile per riprodurre presentazioni video con musica di accompagnamento.
 - ✨ **Layout dei media monitorati**: aggiunta la persistenza degli elementi multimediali monitorati e dell'ordine delle sezioni tra le cartelle monitorate. Questo garantisce che l'elenco dei media venga mostrato allo stesso modo anche quando la cartella monitorata è sincronizzata tra più dispositivi.
 
 ## v26.6.1
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Anteprima dei media**: aggiunto un overlay di anteprima dei media dal vivo che può essere attivato o disattivato dalle impostazioni o dal popup di visualizzazione.
 - ✨ **Cerca media**: aggiunta una casella di ricerca rapida nell'elenco dei media che consente di trovare rapidamente i media per titolo. Per usarla, basta usare la scorciatoia da tastiera standard per la ricerca (Ctrl+F o Cmd+F).
@@ -57,7 +63,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.6.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Timer**: aggiunte modalità di visualizzazione analogica e lo stato del resoconto dei tempi.
 - ✨ **Profili**: aggiunte l'importazione e l'esportazione delle impostazioni del profilo nelle impostazioni Avanzate e nella Configurazione guidata.
@@ -65,7 +71,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.5.0
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Importazione PDF**: aggiunto un nuovo flusso di importazione PDF alla finestra Media delle pubblicazioni, che consente di importare automaticamente la versione PDF di una pubblicazione come singole immagini quando desiderato.
 
@@ -133,7 +139,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v25.11.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Selezione dei media JWPUB**: aggiunto un modo per selezionare singoli media dai file JWPUB.
 - ✨ **Focus automatico della finestra multimediale**: aggiunta un'impostazione facoltativa per mettere automaticamente a fuoco la finestra multimediale dopo la condivisione dello schermo su Zoom.
@@ -147,7 +153,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v25.10.1
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Configurazione guidata – Passaggio Zoom**: aggiunto un passaggio di integrazione con Zoom alla configurazione guidata per una configurazione iniziale più semplice.
 - ✨ **Miglioramenti al selettore di schermi**: mostra una rappresentazione visiva accurata di tutti gli schermi, oltre alla dimensione e posizione attuali della finestra principale, nel popup di visualizzazione. Questo rende più facile scegliere lo schermo corretto su cui mostrare la finestra multimediale.
@@ -180,14 +186,14 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v25.8.3
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Transizioni in dissolvenza della finestra multimediale**: aggiunta una nuova impostazione avanzata per far comparire e scomparire in dissolvenza la finestra multimediale, offrendo transizioni visive più morbide.
 - ✨ **Controllo della durata delle immagini e monitoraggio dell'avanzamento**: aggiunte le funzioni di controllo della durata delle immagini e di monitoraggio dell'avanzamento per le sezioni ripetute.
 
 ## v25.8.1
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Sezioni Media personalizzate**: Sistema completo per creare, modificare e gestire sezioni multimediali personalizzate con personalizzazione del colore e riordinamento trascina-e-rilascia.
 - ✨ **Separatori dei media**: aggiunge separatori con titolo negli elenchi dei media per una migliore organizzazione, con opzioni di posizionamento in alto/in basso.
@@ -229,7 +235,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## 25.3.0
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - 🎵 **Riproduci la musica di sottofondo con i video**: consente alla musica di sottofondo di continuare a suonare mentre si guardano i video.
 - 🎥 **Feed della videocamera per i media nella lingua dei segni**: aggiunge la possibilità di mostrare un feed della videocamera nella finestra multimediale specificamente per gli utenti della lingua dei segni.
@@ -238,14 +244,14 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## 25.2.1
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - 🔄 **Consenti tentativi di ricostruzione OBS**: Introdurre la possibilità di forzare manualmente OBS a riconnettersi quando necessario.
 - 🗑️ **Auto Cleanup Old Export Date Folders**: Rimuovere automaticamente le cartelle di data di esportazione obsolete per mantenere lo storage organizzato.
 
 ## 25.2.0
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - 🌍 **Use System Locale by Default**: Rilevare e utilizzare automaticamente il locale del sistema per un'esperienza più personalizzata.
 - 🏷️ **Tag Support for Exported Media**: Aggiungi tag di metadati ai file multimediali esportati per una migliore organizzazione.
