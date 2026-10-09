@@ -2501,13 +2501,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/bundler-plugins@npm:^10.64.0":
-  version: 10.75.3
-  resolution: "@sentry/bundler-plugins@npm:10.75.3"
+"@sentry/bundler-plugins@npm:^10.76.0":
+  version: 10.76.0
+  resolution: "@sentry/bundler-plugins@npm:10.76.0"
   dependencies:
     "@babel/core": "npm:^7.18.5"
     "@sentry/cli": "npm:^2.58.6"
-    "@sentry/core": "npm:10.75.3"
+    "@sentry/core": "npm:10.76.0"
     dotenv: "npm:^17.4.2"
     find-up: "npm:^5.0.0"
     glob: "npm:^13.0.6"
@@ -2520,7 +2520,7 @@ __metadata:
       optional: true
     webpack:
       optional: true
-  checksum: 10c0/624d484d5b69935c1d53f61488bf86947bc7ca11a035a67446ebe32869adc1ad071fdd8cfb375bb00907cde8bf074e2f347e389e5e4601ad16d1f647688bffee
+  checksum: 10c0/a63797c9daa6a078d8784fdade9cf5c4f17098db58d75f567aa81b6e41f07cfb947c6033a26fe615cd6051d7606e2a996a05eab75de9d5dca5be5267098c9fb6
   languageName: node
   linkType: hard
 
@@ -2641,12 +2641,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:10.75.3":
-  version: 10.75.3
-  resolution: "@sentry/core@npm:10.75.3"
+"@sentry/core@npm:10.76.0":
+  version: 10.76.0
+  resolution: "@sentry/core@npm:10.76.0"
   dependencies:
     "@sentry/conventions": "npm:^0.16.0"
-  checksum: 10c0/7e631644fe1c00d7b3f53443663b5136d6d6b79576285c1db1875ae6253955f8d56ae38fa69ed3bf6799545b1b052de34eff1a03c0ab12cf1a7b1869e169edd4
+  checksum: 10c0/f7acf9716eb3892adebd12ad09d333783e537883e8771f4f121c1ae8e922201f3d2fa2479a4d3727c9d1f69078841243b09269a2aded897d63947e88e4d4b369
   languageName: node
   linkType: hard
 
@@ -2733,17 +2733,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/rollup-plugin@npm:^5.4.0":
-  version: 5.4.0
-  resolution: "@sentry/rollup-plugin@npm:5.4.0"
+"@sentry/rollup-plugin@npm:^5.4.1":
+  version: 5.4.1
+  resolution: "@sentry/rollup-plugin@npm:5.4.1"
   dependencies:
-    "@sentry/bundler-plugins": "npm:^10.64.0"
+    "@sentry/bundler-plugins": "npm:^10.76.0"
   peerDependencies:
     rollup: ">=3.2.0"
   peerDependenciesMeta:
     rollup:
       optional: true
-  checksum: 10c0/3136471217ca58718b877cbbdad092ab32ab9c36ed38e304a0fd78295fe59b0e36bf1cd87d6cedc8477a5a0d3fad2f75271cdcc57032847a627f7eb09de401ff
+  checksum: 10c0/27ca8cb29d8c30ef82aa69e26066d35c5245e1e77b5ef86867823b4b4309c98b075041e0f07c29a53647bbc6ef68fda33c445a3f965e24d3b91c445baddc083e
   languageName: node
   linkType: hard
 
@@ -2768,12 +2768,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/vite-plugin@npm:^5.4.0":
-  version: 5.4.0
-  resolution: "@sentry/vite-plugin@npm:5.4.0"
+"@sentry/vite-plugin@npm:^5.4.1":
+  version: 5.4.1
+  resolution: "@sentry/vite-plugin@npm:5.4.1"
   dependencies:
-    "@sentry/bundler-plugins": "npm:^10.64.0"
-  checksum: 10c0/ee1ee8a3e08368ee54a8055194bd46f12367dc387935b5cbb1067422d32e64ee79fadee8babc6a2795a68a0a304e1a498eebba27e8fba20c5f5bbdbe679b6ca3
+    "@sentry/bundler-plugins": "npm:^10.76.0"
+  checksum: 10c0/307fd8f89a2ec6726da70a9ef7d7c57e2c1a2f5cf3597411ebead0f9a2d1c142adef034ed77681053c187cc038a6de27f9775766d5c4f6cf968b313fdcd04632
   languageName: node
   linkType: hard
 
@@ -8183,8 +8183,8 @@ __metadata:
     "@quasar/vite-plugin": "npm:^2.0.2"
     "@sentry/core": "npm:^11.4.0"
     "@sentry/electron": "npm:^8.1.0"
-    "@sentry/rollup-plugin": "npm:^5.4.0"
-    "@sentry/vite-plugin": "npm:^5.4.0"
+    "@sentry/rollup-plugin": "npm:^5.4.1"
+    "@sentry/vite-plugin": "npm:^5.4.1"
     "@sentry/vue": "npm:^11.4.0"
     "@types/fluent-ffmpeg": "npm:^2.1.28"
     "@types/fontkit": "npm:^2.0.9"
