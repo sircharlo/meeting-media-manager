@@ -4,7 +4,12 @@
       class="bg-secondary-contrast large-overlay q-px-none flex"
       style="flex-flow: column"
     >
-      <div class="row q-px-md q-pt-lg text-h6">
+      <div
+        class="row q-px-md q-pt-lg text-bigger text-semibold text-primary items-center"
+      >
+        <div class="icon-chip q-mr-sm">
+          <q-icon name="mmm-jwlplaylist" size="xs" />
+        </div>
         <div class="col">
           {{ t('jw-playlist-import') }}
         </div>
@@ -104,7 +109,7 @@
                     <q-img
                       v-if="item.ResolvedPreviewPath"
                       size="md"
-                      :src="'file://' + item.ResolvedPreviewPath"
+                      :src="pathToFileURL(item.ResolvedPreviewPath)"
                     />
                     <q-icon
                       v-else
@@ -170,19 +175,17 @@
         </div>
         <div class="col-shrink q-gutter-x-sm">
           <q-btn
-            v-if="selectedItems.length"
-            color="primary"
-            :label="t('add') + ` (${selectedItems.length})`"
-            :loading="isProcessing"
-            @click="addSelectedItems"
-          />
-          <q-btn
-            v-else
-            color="negative"
             :disable="isProcessing"
             flat
             :label="t('cancel')"
             @click="handleCancel"
+          />
+          <q-btn
+            v-if="selectedItems.length"
+            color="primary"
+            :label="t('add-count', { count: selectedItems.length })"
+            :loading="isProcessing"
+            @click="addSelectedItems"
           />
         </div>
       </div>
@@ -198,6 +201,7 @@ import type {
   MediaSectionIdentifier,
   MultimediaItem,
   PlaylistTagItem,
+  PublicationFetcher,
 } from 'src/types';
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
@@ -214,7 +218,8 @@ import {
   resolveFilePath,
 } from 'src/helpers/jw-media';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { log } from 'src/shared/vanilla';
+import { getFilesystemErrorCode } from 'src/shared/filesystem-errors';
+import { log, uuid } from 'src/shared/vanilla';
 import { getTempPath } from 'src/utils/fs';
 import { isImage } from 'src/utils/media';
 import { findDb } from 'src/utils/sqlite';
@@ -255,6 +260,8 @@ const playlistItems = ref<
 >([]);
 const selectedItems = ref<number[]>([]);
 const playlistName = ref<string>('');
+// Where the currently loaded playlist was extracted to (see loadPlaylistItems).
+const extractedPlaylistPath = ref('');
 
 const includePrefix = ref(true);
 const customPrefix = ref('');
@@ -263,28 +270,65 @@ const includeNumbering = ref(true);
 const currentState = useCurrentStateStore();
 const { selectedDate, selectedDateObject } = storeToRefs(currentState);
 
-const { basename, executeQuery, extname, fs, join, pathToFileURL, unzip } =
-  globalThis.electronApi;
+const {
+  basename,
+  closeSqliteConnection,
+  dirname,
+  executeQuery,
+  extname,
+  fs,
+  join,
+  pathToFileURL,
+  readdir,
+  unzip,
+} = globalThis.electronApi;
 const { pathExists, rename } = fs;
 
+// The jwPlaylistPath watcher and the dialog-open watcher below can both
+// fire for the same path change (path changes while the dialog opens),
+// which would otherwise run this whole extraction/processing pipeline
+// twice concurrently and race on the file renames further down.
+let loadingPlaylistPath: string | undefined;
+
 const loadPlaylistItems = async () => {
+  if (!props.jwPlaylistPath || loadingPlaylistPath === props.jwPlaylistPath) {
+    return;
+  }
+  loadingPlaylistPath = props.jwPlaylistPath;
   loading.value = true;
+  let outputPath = '';
+  let openedDbFile: string | undefined;
 
   try {
-    if (!props.jwPlaylistPath) return;
-
-    // Extract package
-    const tempDir = await getTempPath();
-    const outputPath = join(tempDir, basename(props.jwPlaylistPath));
+    // Extract package into a folder unique to this import. Re-importing a
+    // playlist with the same filename used to extract over the previous
+    // import's folder, whose userData.db was still held open (WAL mode
+    // memory-maps userData.db-shm, which Windows then refuses to overwrite:
+    // MMM-V2-3K5/3JT/3JY) - and could serve the previous version's cached
+    // query results against the new files (MMM-V2-3JK).
+    outputPath = join(
+      await getTempPath(),
+      `${basename(props.jwPlaylistPath)}-${uuid()}`,
+    );
+    extractedPlaylistPath.value = outputPath;
 
     try {
       await unzip(props.jwPlaylistPath, outputPath);
     } catch (err) {
+      // The main process already reports unzip failures it can act on
+      // (with full context); a corrupt or truncated file picked by the user
+      // isn't a bug. Just tell the user.
+      log(
+        `Could not extract JW playlist ${props.jwPlaylistPath}`,
+        'jwPlaylist',
+        'warn',
+        err,
+      );
       createTemporaryNotification({
         message: t('error-reading-playlist-file'),
         type: 'negative',
       });
-      throw err;
+      return;
     }
 
     const dbFile = await findDb(outputPath);
@@ -295,21 +339,24 @@ const loadPlaylistItems = async () => {
       });
       return;
     }
+    openedDbFile = dbFile;
 
     // ---- Get Playlist Name ----
     try {
-      const [tag] = executeQuery<PlaylistTagItem>(
+      const [tag] = await executeQuery<PlaylistTagItem>(
         dbFile,
         'SELECT Name FROM Tag ORDER BY TagId ASC LIMIT 1;',
       );
       playlistName.value = tag?.Name ?? '';
       customPrefix.value = playlistName.value;
     } catch (err) {
-      errorCatcher(err);
+      errorCatcher(err, {
+        contexts: { fn: { dbFile, name: 'loadPlaylistItems playlist name' } },
+      });
     }
 
     // ---- Get Playlist Items ----
-    const rawItems = executeQuery<
+    const rawItems = await executeQuery<
       JwPlaylistItem & {
         ResolvedPreviewPath?: string;
         ThumbnailFilePath: string;
@@ -350,63 +397,131 @@ const loadPlaylistItems = async () => {
       `,
     );
 
+    // JW Library sometimes stores playlist image assets (thumbnails as well
+    // as independent-media pictures) under a bare UUID filename with no
+    // extension at all. Every consumer downstream (isImage(), the browser's
+    // file:// mime lookup, etc.) keys off the extension, so an extensionless
+    // asset silently fails to be recognized as an image — jpg is by far the
+    // most common actual format for these, so rename to add it when missing.
+    const ensureJpgExtension = async (absolutePath: string) => {
+      const ext = extname(absolutePath).slice(1).toLowerCase();
+      if (ext && JPG_EXTENSIONS.includes(ext)) return absolutePath;
+      const newPath = absolutePath + '.jpg';
+      try {
+        await rename(absolutePath, newPath);
+        return newPath;
+      } catch (err) {
+        // Playlist items are processed concurrently below and can share the
+        // same thumbnail/independent-media file. If another item already
+        // renamed it, the target now exists — that's a benign race, not an
+        // error. `rename` is exposed straight through Electron's
+        // contextBridge, so the thrown error's `code` doesn't survive the
+        // crossing — getFilesystemErrorCode falls back to parsing it back
+        // out of the message text.
+        if (
+          getFilesystemErrorCode(err) === 'ENOENT' &&
+          (await pathExists(newPath))
+        ) {
+          return newPath;
+        }
+        // The source is genuinely missing rather than just already renamed
+        // by a concurrent call — capture what's actually in the containing
+        // directory to tell apart "never extracted" from "renamed to
+        // something unexpected" next time this comes up in Sentry.
+        const dirListing = await readdir(dirname(absolutePath));
+        errorCatcher(err, {
+          contexts: {
+            fn: {
+              dirListing: dirListing.map((entry) => entry.name),
+              name: 'ensureJpgExtension rename',
+            },
+          },
+        });
+        return absolutePath;
+      }
+    };
+
     // ---- Process Items ----
     const processedItems = await Promise.all(
       rawItems.map(async (item) => {
-        item.ThumbnailFilePath = item.ThumbnailFilePath
+        // Resolve thumbnail path
+        let thumbnailPath = item.ThumbnailFilePath
           ? join(outputPath, item.ThumbnailFilePath)
           : '';
 
-        // Normalize thumbnail extension → JPG
-        if (
-          item.ThumbnailFilePath &&
-          (await pathExists(item.ThumbnailFilePath))
-        ) {
-          const ext = extname(item.ThumbnailFilePath).slice(1).toLowerCase();
-          if (!ext || !JPG_EXTENSIONS.includes(ext)) {
-            try {
-              const newPath = item.ThumbnailFilePath + '.jpg';
-              await rename(item.ThumbnailFilePath, newPath);
-              item.ThumbnailFilePath = newPath;
-            } catch (err) {
-              errorCatcher(err);
-            }
-          }
+        if (thumbnailPath) {
+          thumbnailPath = await ensureJpgExtension(thumbnailPath);
         }
 
-        // Extract verse numbers
-        const verseRows = executeQuery<{ Label: string }>(
+        // The independent-media file itself can suffer from the same
+        // missing-extension issue; only image assets get the jpg fallback,
+        // since audio/video files must keep their real extension.
+        let independentMediaFilePath = item.IndependentMediaFilePath;
+        if (independentMediaFilePath && item.MimeType?.includes('image')) {
+          const normalizedPath = await ensureJpgExtension(
+            join(outputPath, independentMediaFilePath),
+          );
+          independentMediaFilePath = normalizedPath.slice(
+            outputPath.length + 1,
+          );
+        }
+
+        // Extract verse numbers (parameterized query to avoid SQL injection)
+        const verseRows = await executeQuery<{ Label: string }>(
           dbFile,
-          `SELECT Label FROM PlaylistItemMarker WHERE PlaylistItemId = ${item.PlaylistItemId}`,
+          `SELECT Label FROM PlaylistItemMarker WHERE PlaylistItemId = ?`,
+          [item.PlaylistItemId],
         );
 
-        const VerseNumbers = verseRows.map((v) => {
-          const match = v.Label.match(/\w+ (?:\d+:)?(\d+)/);
-          return match?.[1] ? Number.parseInt(match[1]) : 0;
+        const verseNumbers = verseRows.map((v) => {
+          // Matches e.g. "John 3:16" or "Genesis 1", captures the verse number
+          const match = v.Label.match(/^\S+ (?:\d+:)?(\d+)/);
+          return match?.[1] ? Number.parseInt(match[1], 10) : 0;
         });
 
         // Determine best preview path
         const candidatePath =
-          isImage(item.IndependentMediaFilePath) &&
-          item.IndependentMediaFilePath
-            ? join(outputPath, item.IndependentMediaFilePath)
-            : item.ThumbnailFilePath;
+          independentMediaFilePath && isImage(independentMediaFilePath)
+            ? join(outputPath, independentMediaFilePath)
+            : thumbnailPath;
 
-        const ResolvedPreviewPath = await resolveFilePath(candidatePath);
+        const resolvedPreviewPath = await resolveFilePath(candidatePath);
 
         return {
           ...item,
-          ResolvedPreviewPath,
-          ThumbnailFilePath: item.ThumbnailFilePath || '',
-          VerseNumbers,
+          IndependentMediaFilePath: independentMediaFilePath,
+          ResolvedPreviewPath: resolvedPreviewPath,
+          ThumbnailFilePath: thumbnailPath,
+          VerseNumbers: verseNumbers,
         };
       }),
     );
 
     playlistItems.value = processedItems;
   } catch (err) {
-    errorCatcher(err);
+    errorCatcher(err, {
+      contexts: {
+        fn: {
+          jwPlaylistPath: props.jwPlaylistPath,
+          name: 'loadPlaylistItems',
+          outputPath,
+        },
+      },
+    });
   } finally {
+    // Everything needed from the playlist db has been read; don't keep the
+    // handle (and its cached results) open for the rest of the session.
+    if (openedDbFile) {
+      await closeSqliteConnection(openedDbFile).catch((err) =>
+        log(
+          `Could not close playlist db ${openedDbFile}`,
+          'jwPlaylist',
+          'warn',
+          err,
+        ),
+      );
+    }
+    loadingPlaylistPath = undefined;
     loading.value = false;
   }
 };
@@ -609,14 +724,16 @@ async function processVideoItem(
 ) {
   const lang = getJwLangCode(item.MepsLanguage) || 'E';
 
-  const pubDownload = await getPubMediaLinks({
+  const mediaLookup: PublicationFetcher = {
     booknum: item.BookNumber,
     docid: item.DocumentId,
     issue: item.IssueTagNumber,
     langwritten: lang,
     pub: item.KeySymbol,
     track: item.Track,
-  });
+  };
+
+  const pubDownload = await getPubMediaLinks(mediaLookup);
 
   const videoLinks = pubDownload?.files?.[lang]?.['MP4'];
   if (!videoLinks) return { type: 'skip' };
@@ -632,16 +749,17 @@ async function processVideoItem(
     item.ThumbnailFilePath,
   );
 
-  const mediaItem = await downloadAdditionalRemoteVideo(
-    videoLinks,
-    selectedDate.value,
-    thumbnailPath ? pathToFileURL(thumbnailPath) : undefined,
-    false,
-    itemLabel,
-    sectionToUse || props.section,
+  const mediaItem = await downloadAdditionalRemoteVideo({
     customDuration,
-    true, // onlyCreateItem
-  );
+    mediaItemLinks: videoLinks,
+    meetingDate: selectedDate.value,
+    onlyCreateItem: true,
+    section: sectionToUse || props.section,
+    song: false,
+    thumbnailLookup: mediaLookup,
+    thumbnailUrl: thumbnailPath ? pathToFileURL(thumbnailPath) : undefined,
+    title: itemLabel,
+  });
 
   return { mediaItem, type: 'video' };
 }
@@ -654,20 +772,37 @@ const addSelectedItems = async () => {
       .map((i) => playlistItems.value[i])
       .filter((item): item is NonNullable<typeof item> => !!item);
 
-    const outputPath = join(
-      await getTempPath(),
-      basename(props.jwPlaylistPath),
-    );
+    const outputPath = extractedPlaylistPath.value;
 
     isProcessing.value = true;
 
-    // Process all items in playlist order, keeping them all in one array
+    // Process all items in playlist order, keeping them all in one array.
+    // Each item gets its own try/catch: one item's network/file failure
+    // (e.g. a video that fails to download) shouldn't discard every other
+    // item that already processed successfully - the whole batch used to
+    // abort silently on the first failure.
     const processedMediaItems: DialogImportPayload['items'] = [];
 
     for (const [idx, item] of selectedPlaylistItems.entries()) {
-      const result = await processSingleItem(item, idx, outputPath);
-      if (result?.mappedItems?.length) {
-        processedMediaItems.push(...result.mappedItems);
+      try {
+        const result = await processSingleItem(item, idx, outputPath);
+        if (result?.mappedItems?.length) {
+          processedMediaItems.push(...result.mappedItems);
+        }
+      } catch (error) {
+        createTemporaryNotification({
+          caption: getItemLabel(idx, item),
+          message: t('fileProcessError'),
+          type: 'negative',
+        });
+        errorCatcher(error, {
+          contexts: {
+            fn: {
+              args: { item },
+              name: 'addSelectedItems (processSingleItem)',
+            },
+          },
+        });
       }
     }
 

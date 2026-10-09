@@ -1,6 +1,13 @@
-import type { MediaSectionIdentifier, MediaSectionWithConfig } from 'src/types';
+import type {
+  MediaItem,
+  MediaSectionIdentifier,
+  MediaSectionWithConfig,
+} from 'src/types';
 
-import { standardSections } from 'src/constants/media';
+import {
+  CUSTOM_MEDIA_SECTIONS_ID,
+  standardSections,
+} from 'src/constants/media';
 import {
   findMediaSection,
   getOrCreateMediaSection,
@@ -36,13 +43,21 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     return sectionData.value?.items?.filter((item) => !item.hidden) || [];
   });
 
+  // A group with children renders nothing (see MediaGroup's root v-if) once
+  // every one of its children is hidden, even though the group item itself
+  // was never marked hidden - so it must count as hidden here too, or the
+  // section-level indicators below go stale the moment that happens.
+  const isItemEffectivelyHidden = (item: MediaItem) =>
+    item.hidden ||
+    (!!item.children?.length && item.children.every((child) => child.hidden));
+
   const someItemsAreHidden = computed(() => {
-    return sectionData.value?.items?.some((item) => item.hidden) || false;
+    return sectionData.value?.items?.some(isItemEffectivelyHidden) || false;
   });
 
   const allItemsAreHidden = computed(() => {
     const items = sectionData.value?.items;
-    return !!items?.length && items.every((item) => item.hidden);
+    return !!items?.length && items.every(isItemEffectivelyHidden);
   });
 
   // Check if section is empty
@@ -51,13 +66,18 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   });
 
   const hasAddMediaButton = computed(() => {
-    return (
-      mediaList.config?.uniqueId === 'imported-media' ||
-      mediaList.config?.uniqueId.startsWith('custom-') ||
-      mediaList.config?.uniqueId === 'pt' ||
-      mediaList.config?.uniqueId === 'circuit-overseer' ||
-      mediaList.config?.uniqueId === 'lac'
-    );
+    const uniqueId = mediaList.config?.uniqueId;
+    if (!uniqueId) return false;
+
+    const configuredSections =
+      currentStateStore.currentSettings?.addMediaButtonSections;
+    if (!configuredSections) return false;
+
+    if (uniqueId === 'imported-media' || uniqueId.startsWith('custom-')) {
+      return configuredSections.includes(CUSTOM_MEDIA_SECTIONS_ID);
+    }
+
+    return configuredSections.includes(uniqueId);
   });
 
   // Check if this is a song button section
@@ -150,10 +170,15 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
 
       if (newDate === oldDate || !Array.isArray(items)) return;
 
-      log('🔄 Updating expanded groups for section:', 'mediaSections', 'log', {
-        itemCount: items.length,
-        sectionId: mediaList.config?.uniqueId,
-      });
+      log(
+        '🔄 Updating expanded groups for section:',
+        'mediaSections',
+        'debug',
+        {
+          itemCount: items.length,
+          sectionId: mediaList.config?.uniqueId,
+        },
+      );
 
       expandedGroups.value = items.reduce(
         (acc, item) => {
@@ -162,7 +187,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
             log(
               '📂 Setting expanded state for group:',
               'mediaSections',
-              'log',
+              'debug',
               {
                 expanded: !!item.cbs,
                 hasChildren: !!item.children?.length,
@@ -176,7 +201,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
         {} as Record<string, boolean>,
       );
 
-      log('✅ Expanded groups updated:', 'mediaSections', 'log', {
+      log('✅ Expanded groups updated:', 'mediaSections', 'debug', {
         expandedGroups: expandedGroups.value,
         sectionId: mediaList.config?.uniqueId,
       });
@@ -186,7 +211,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
 
   // Actions
   const updateSectionLabel = (label: string) => {
-    log('🏷️ Updating section label:', 'mediaSections', 'log', {
+    log('🏷️ Updating section label:', 'mediaSections', 'debug', {
       hasCustomSections: !!selectedDateObject.value?.mediaSections,
       newLabel: label,
       sectionId: mediaList.config?.uniqueId,
@@ -211,7 +236,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   };
 
   const updateSectionColor = (bgColor: string) => {
-    log('🎨 Updating section color:', 'mediaSections', 'log', {
+    log('🎨 Updating section color:', 'mediaSections', 'debug', {
       hasCustomSections: !!selectedDateObject.value?.mediaSections,
       newColor: bgColor,
       sectionId: mediaList.config?.uniqueId,
@@ -236,7 +261,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   };
 
   const updateSectionRepeat = (repeat: boolean, interval?: number) => {
-    log('🔄 Updating section repeat:', 'mediaSections', 'log', {
+    log('🔄 Updating section repeat:', 'mediaSections', 'debug', {
       hasCustomSections: !!selectedDateObject.value?.mediaSections,
       newInterval: interval,
       newRepeat: repeat,
@@ -270,7 +295,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   };
 
   const moveSection = (direction: 'down' | 'up') => {
-    log('📦 Moving section:', 'mediaSections', 'log', {
+    log('📦 Moving section:', 'mediaSections', 'debug', {
       direction,
       hasCustomSections: !!selectedDateObject.value?.mediaSections,
       sectionId: mediaList.config?.uniqueId,
@@ -334,7 +359,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   };
 
   const deleteSection = () => {
-    log('🗑️ Deleting section:', 'mediaSections', 'log', {
+    log('🗑️ Deleting section:', 'mediaSections', 'debug', {
       hasCustomSections: !!selectedDateObject.value?.mediaSections,
       sectionId: mediaList.config?.uniqueId,
     });
@@ -384,7 +409,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   };
 
   const addSong = (section: MediaSectionIdentifier | undefined) => {
-    log('🎵 Adding song to section:', 'mediaSections', 'log', {
+    log('🎵 Adding song to section:', 'mediaSections', 'debug', {
       section,
       sectionId: mediaList.config?.uniqueId,
     });

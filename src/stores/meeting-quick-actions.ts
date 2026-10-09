@@ -1,0 +1,166 @@
+import { defineStore, storeToRefs } from 'pinia';
+import { formatDate } from 'src/utils/date';
+import { useCurrentStateStore } from 'stores/current-state';
+import { useDemoModeStore } from 'stores/demo-mode';
+import { computed, reactive } from 'vue';
+
+interface ScopeState {
+  /** Items M³ ticked itself (e.g. the Zoom Meeting Manager's actions). */
+  automaticallyCheckedItemIds: Record<string, boolean>;
+  checkedItemIds: Record<string, boolean>;
+  dismissedAfterPanel: boolean;
+  dismissedBeforePanel: boolean;
+  lastSongEndedAt: null | number;
+}
+
+const createScopeState = (): ScopeState => ({
+  automaticallyCheckedItemIds: {},
+  checkedItemIds: {},
+  dismissedAfterPanel: false,
+  dismissedBeforePanel: false,
+  lastSongEndedAt: null,
+});
+
+export const useMeetingQuickActionsStore = defineStore(
+  'meeting-quick-actions',
+  () => {
+    const currentState = useCurrentStateStore();
+    const { currentCongregation, selectedDate, selectedDateObject } =
+      storeToRefs(currentState);
+    const demoMode = useDemoModeStore();
+    const scopes = reactive<Record<string, ScopeState>>({});
+
+    const getScopeKey = (congregationId?: string, date?: Date | string) => {
+      const congregation = congregationId ?? currentCongregation.value;
+      const selectedDateValue =
+        date ?? selectedDate.value ?? selectedDateObject.value?.date;
+      if (!congregation || !selectedDateValue) return '';
+      return `${congregation}:${formatDate(selectedDateValue, 'YYYY/MM/DD')}`;
+    };
+
+    const getScope = (congregationId?: string, date?: Date | string) => {
+      const key = getScopeKey(congregationId, date);
+      if (!key) return null;
+      scopes[key] ??= createScopeState();
+      return scopes[key];
+    };
+
+    // Cached for the common case (no explicit congregation/date) so every
+    // getter/action call - including the several per-item template
+    // bindings in MeetingQuickActionsChecklist.vue - doesn't redundantly
+    // re-run getScopeKey()'s formatDate call on every access; only
+    // recomputes when the congregation or selected date actually changes.
+    const currentScope = computed(() => getScope());
+
+    const checkedItemIds = computed(
+      () => currentScope.value?.checkedItemIds ?? {},
+    );
+    const dismissedAfterPanel = computed(
+      () => currentScope.value?.dismissedAfterPanel ?? false,
+    );
+    const dismissedBeforePanel = computed(
+      () => currentScope.value?.dismissedBeforePanel ?? false,
+    );
+    const lastSongEndedAt = computed(
+      () => currentScope.value?.lastSongEndedAt ?? null,
+    );
+
+    const isItemChecked = (itemId: string) =>
+      !!currentScope.value?.checkedItemIds[itemId];
+
+    const isItemCheckedAutomatically = (itemId: string) =>
+      isItemChecked(itemId) &&
+      !!currentScope.value?.automaticallyCheckedItemIds[itemId];
+
+    const setItemChecked = (itemId: string, checked: boolean) => {
+      const scope = currentScope.value;
+      if (!scope || !itemId) return;
+      scope.checkedItemIds[itemId] = checked;
+      // Ticked (or unticked) by the user now, whoever did it before.
+      scope.automaticallyCheckedItemIds[itemId] = false;
+    };
+
+    /**
+     * Ticks or unticks an item for something M³ did (or undid) itself.
+     * Always in today's scope, like recordLastSongEnded below, whichever
+     * date the calendar happens to show.
+     */
+    const setItemCheckedAutomatically = (itemId: string, checked: boolean) => {
+      const scope = getScope(undefined, new Date());
+      if (!scope || !itemId) return;
+      scope.checkedItemIds[itemId] = checked;
+      scope.automaticallyCheckedItemIds[itemId] = checked;
+    };
+
+    const toggleItemChecked = (itemId: string) => {
+      setItemChecked(itemId, !isItemChecked(itemId));
+    };
+
+    const dismissAfter = () => {
+      const scope = currentScope.value;
+      if (scope) scope.dismissedAfterPanel = true;
+    };
+
+    const dismissBefore = () => {
+      const scope = currentScope.value;
+      if (scope) scope.dismissedBeforePanel = true;
+    };
+
+    const resetCurrentScope = () => {
+      const scope = currentScope.value;
+      if (scope) Object.assign(scope, createScopeState());
+    };
+
+    // UX-15 (full-audit-2026-09-05.md follow-up): dismissing used to have no
+    // production way back short of restarting M³. These give the "dismissed
+    // panel" banner's Show button somewhere to call - MeetingQuickActionsPanel.vue
+    // re-checks its own visibility window afterwards, so restoring a panel
+    // whose window has already closed (e.g. the before-panel's checklist all
+    // checked, or its grace period elapsed) can still auto-dismiss again
+    // shortly after.
+    const undismissAfter = () => {
+      const scope = currentScope.value;
+      if (scope) scope.dismissedAfterPanel = false;
+    };
+
+    const undismissBefore = () => {
+      const scope = currentScope.value;
+      if (scope) scope.dismissedBeforePanel = false;
+    };
+
+    // FE-18 (full-audit-2026-09-05.md): the real (non-demo-button) call site
+    // in MediaCalendarPage.vue calls this with no argument, so it used to
+    // fall back to the real wall clock even while an automated demo session
+    // (virtual clock) is active - unlike every other timing computation in
+    // this feature, which reads music.ts's getClockDate()-equivalent pattern.
+    const recordLastSongEnded = (
+      endedAt = demoMode.enabled ? demoMode.now : Date.now(),
+    ) => {
+      // Always scoped to today, not whatever date is currently browsed in
+      // the calendar - this event fires off the actual media player state,
+      // so if the operator navigates away from today while the last song
+      // is still finishing, it must still land in today's scope rather
+      // than wherever the calendar happens to be pointed at that instant.
+      const scope = getScope(undefined, new Date());
+      if (scope) scope.lastSongEndedAt = endedAt;
+    };
+
+    return {
+      checkedItemIds,
+      dismissAfter,
+      dismissBefore,
+      dismissedAfterPanel,
+      dismissedBeforePanel,
+      isItemChecked,
+      isItemCheckedAutomatically,
+      lastSongEndedAt,
+      recordLastSongEnded,
+      resetCurrentScope,
+      setItemChecked,
+      setItemCheckedAutomatically,
+      toggleItemChecked,
+      undismissAfter,
+      undismissBefore,
+    };
+  },
+);

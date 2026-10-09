@@ -9,19 +9,19 @@ hero:
   actions:
     - theme: brand
       text: Herunterladen
-      link: /download
+      link: /de/download
     - theme: brand
       text: Über
-      link: /about
+      link: /de/about
     - theme: brand
       text: Benutzerhandbuch
-      link: /user-guide
+      link: /de/user-guide
     - theme: brand
       text: Einstellungs-Handbuch
-      link: /settings-guide
+      link: /de/settings-guide
     - theme: brand
       text: FAQ
-      link: /faq
+      link: /de/faq
 features:
   - icon: 🚀
     title: Automatische Medienverwaltung
@@ -46,8 +46,8 @@ features:
     details: Synchronisieren Sie Medien automatisch aus überwachten Ordnern (wie Dropbox oder OneDrive) und exportieren Sie Medien in Ordner.
   - icon: 🎯
     title: Erweiterte Funktionen
-    details: Importieren Sie benutzerdefinierte Medien, JWPUB-Dateien, Wiedergabelisten, Audio-Bibel Aufnahmen, Study Bibel Media, Public Talk Medien und verwalten Sie mehrere Gemeinden.
+    details: Import custom media, JWPUB files, playlists, audio Bible recordings, Study Bible media, public talk media, and manage multiple congregations.
   - icon: ⏱️
-    title: Meeting-Timer und Recording Controls
-    details: Verwenden Sie eine optionale Timeranzeige, um OBS oder externe Aufzeichnungs-Apps von M3 zu steuern und zu steuern.
+    title: Meeting Timer and Recording Controls
+    details: Use an optional timer display for participant timing and control OBS or external recording apps from M³.
 ---

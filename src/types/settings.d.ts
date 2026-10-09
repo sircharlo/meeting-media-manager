@@ -3,6 +3,11 @@ import type { LanguageValue } from 'src/constants/locales';
 import type { RESOLUTIONS } from 'src/constants/settings';
 
 import type { JwLangCode } from './jw/lang';
+import type { MediaSectionIdentifier } from './media';
+import type {
+  MeetingChecklistCategory,
+  MeetingChecklistItem,
+} from './meeting-quick-actions';
 
 export type MaxRes = (typeof RESOLUTIONS)[number];
 
@@ -110,6 +115,7 @@ export interface SettingsGroup {
   icon: string;
   name: keyof MessageSchema;
   order?: number;
+  platforms?: string[];
 }
 
 export type SettingsGroupKey =
@@ -117,14 +123,19 @@ export type SettingsGroupKey =
   | 'app'
   | 'congregationMeetings'
   | 'integrations'
-  | 'mediaRetrievalPlayback';
+  | 'interfaceShortcuts'
+  | 'mediaRetrievalPlayback'
+  | 'meetingTimer';
 
 export type SettingsGroups = Record<SettingsGroupKey, SettingsGroup>;
 
 export interface SettingsItem {
   actions?: SettingsItemAction[];
   beta?: boolean;
+  /** i18n key of an action button's label (otherwise its value is shown). */
+  buttonLabel?: keyof MessageSchema;
   depends?: (keyof SettingsValues)[] | keyof SettingsValues;
+  disableWhen?: (keyof SettingsValues)[] | keyof SettingsValues;
   group: SettingsGroupKey;
   hidden?: boolean;
   icon?: string;
@@ -133,9 +144,10 @@ export interface SettingsItem {
   min?: number;
   options?: SettingsItemOption[];
   order?: number;
+  platforms?: string[];
   rules?: SettingsItemRule[];
   step?: number;
-  subgroup?: SettingsItemSubgroup;
+  subgroup: SettingsItemSubgroup;
   type: SettingsItemType;
   unless?: (keyof SettingsValues)[] | keyof SettingsValues;
 }
@@ -143,8 +155,15 @@ export interface SettingsItem {
 export type SettingsItemAction =
   | 'obsConnect'
   | 'openCongregationLookup'
+  | 'openZoomSetupAssistant'
+  | 'openZoomSetupAssistantIfNeeded'
   | 'setBackgroundMusicVolume'
-  | 'syncMeetingSchedule';
+  | 'syncMeetingSchedule'
+  | 'zoomCaptureMicOffTitle'
+  | 'zoomCaptureMicOnTitle'
+  | 'zoomCaptureShareButtonTitle'
+  | 'zoomCaptureVideoOffTitle'
+  | 'zoomCaptureVideoOnTitle';
 
 export type SettingsItemListKey =
   | 'appLanguages'
@@ -166,28 +185,44 @@ export type SettingsItemRule = 'notEmpty' | 'portNumber' | 'regular';
 export type SettingsItems = Record<keyof SettingsValues, SettingsItem>;
 
 export type SettingsItemSubgroup =
+  | 'addMediaButton'
   | 'cache'
+  | 'congregationIdentity'
   | 'customEvents'
   | 'dangerZone'
+  | 'display'
+  | 'dragAndDrop'
   | 'folderWatcher'
   | 'keyboardShortcuts'
+  | 'language'
   | 'media-display'
   | 'mediaExport'
   | 'meetingRecording'
+  | 'meetingSchedule'
   | 'meetingScheduleChange'
   | 'obsStudio'
+  | 'pinyin'
+  | 'playback'
+  | 'quickActions'
   | 'setupWizard'
   | 'setupWizard.backgroundMusic'
+  | 'specialDates'
+  | 'startup'
   | 'subtitles'
-  | 'timer'
-  | 'zoomIntegration';
+  | 'timerColors'
+  | 'timerCountdown'
+  | 'timerDisplay'
+  | 'zoomIntegration'
+  | 'zoomMeetingManager';
 
 export type SettingsItemType =
   | 'button'
   | 'color'
   | 'date'
   | 'list'
+  | 'mediaSections'
   | 'path'
+  | 'pubSymbols'
   | 'shortcut'
   | 'slider'
   | 'text'
@@ -195,11 +230,13 @@ export type SettingsItemType =
   | 'toggle';
 
 export interface SettingsValues {
+  addMediaButtonSections: MediaSectionIdentifier[];
   autoStartAtLogin: boolean;
   autoStartMusic: boolean;
   baseUrl: string;
   beginPlaybackPaused: boolean;
   cacheFolder: null | string;
+  compactAddMediaButton: boolean;
   congregationName: null | string;
   congregationNameModified: boolean;
   convertFilesToMp4: boolean;
@@ -221,11 +258,13 @@ export interface SettingsValues {
   enableMediaDisplayButton: boolean;
   enableMediaPreview: boolean;
   enableMediaWindowFadeTransitions: boolean;
+  enableMeetingQuickActions: boolean;
   enableMusicButton: boolean;
   enablePinyinSongs: boolean;
   enablePlaybackSpeedControl: boolean;
   enableSubtitles: boolean;
   enableTimerDisplay: boolean;
+  excludeCbsPubs: string[];
   excludeFootnotes: boolean;
   excludeTh: boolean;
   excludeWtParagraphVideos: boolean;
@@ -240,6 +279,10 @@ export interface SettingsValues {
   localDateFormat: string;
   maxRes: MaxRes;
   mediaAutoExportFolder: string;
+  meetingQuickActionsCategoriesAfter: MeetingChecklistCategory[];
+  meetingQuickActionsCategoriesBefore: MeetingChecklistCategory[];
+  meetingQuickActionsChecklistAfter: MeetingChecklistItem[];
+  meetingQuickActionsChecklistBefore: MeetingChecklistItem[];
   meetingScheduleChangeDate: `${number}/${number}/${number}` | null;
   meetingScheduleChangeMwDay: `${number}` | null;
   meetingScheduleChangeMwStartTime: `${number}:${number}` | null;
@@ -277,6 +320,7 @@ export interface SettingsValues {
   shortcutMediaStop: null | string;
   shortcutMediaWindow: null | string;
   shortcutMusic: null | string;
+  showMediaDragHandle: boolean;
   suppressHardwareAccelerationReminder: boolean;
   timerAutoOpen: boolean;
   timerBackgroundColor: string;
@@ -300,5 +344,19 @@ export interface SettingsValues {
   weStartTime: `${number}:${number}` | null;
   zoomAutoFocusMediaWindow: boolean;
   zoomEnable: boolean;
+  zoomMeetingManagerAutoLaunchMeeting: boolean;
+  zoomMeetingManagerAutomateMediaSharing: boolean;
+  zoomMeetingManagerAutomateMeetingAudioSettings: boolean;
+  zoomMeetingManagerAutomatePostMeetingAudioSettings: boolean;
+  zoomMeetingManagerEnable: boolean;
+  zoomMeetingManagerMeetingId: null | string;
+  /** No value: the setting is the button opening the setup assistant. */
+  zoomMeetingManagerSetupAssistant: null;
+  zoomMeetingManagerStartupCheck: boolean;
+  zoomMicOffTitle: null | string;
+  zoomMicOnTitle: null | string;
   zoomScreenShareShortcut: null | string;
+  zoomShareButtonTitle: null | string;
+  zoomVideoOffTitle: null | string;
+  zoomVideoOnTitle: null | string;
 }

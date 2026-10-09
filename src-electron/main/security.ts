@@ -1,5 +1,5 @@
 import { app, session, shell } from 'electron';
-import { isSelf, isTrustedDomain } from 'src-electron/main/utils';
+import { isSelf, isTrustedNavigationTarget } from 'src-electron/main/utils';
 import { logToWindow } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
 
@@ -7,13 +7,22 @@ app.on('ready', () => {
   // Handle session permission requests from remote content
   // See: https://www.electronjs.org/docs/latest/tutorial/security#5-handle-session-permission-requests-from-remote-content
   session.defaultSession.setPermissionRequestHandler(
-    (webContents, permission, callback) => {
-      const url = webContents.getURL();
-      if (!isSelf(url) && !isTrustedDomain(url)) {
+    (webContents, permission, callback, details) => {
+      // getURL() is empty while a webContents has no committed navigation
+      // yet (e.g. a request made during startup), which wrongly blocked our
+      // own pages (MMM-V2-3JN). Fall back to the requesting frame's URL -
+      // it goes through the same trust checks below.
+      const url = webContents.getURL() || details?.requestingUrl || '';
+      if (!isSelf(url) && !isTrustedNavigationTarget(url)) {
         logToWindow(
           mainWindowInfo.mainWindow,
           'Blocked permission request from untrusted domain',
-          url,
+          {
+            permission,
+            requestingUrl: details?.requestingUrl ?? '',
+            url,
+            webContentsId: webContents.id,
+          },
         );
         return callback(false);
       }
@@ -45,7 +54,7 @@ app.on('web-contents-created', (_event, contents) => {
     webPreferences.nodeIntegration = false;
 
     // Verify URL being loaded
-    if (!isSelf(params.src) && !isTrustedDomain(params.src)) {
+    if (!isSelf(params.src) && !isTrustedNavigationTarget(params.src)) {
       event.preventDefault();
       logToWindow(
         mainWindowInfo.mainWindow,
@@ -59,7 +68,7 @@ app.on('web-contents-created', (_event, contents) => {
   // Disable or limit navigation
   // See: https://www.electronjs.org/docs/latest/tutorial/security#13-disable-or-limit-navigation
   contents.on('will-navigate', (event, navigationUrl) => {
-    if (!isSelf(navigationUrl) && !isTrustedDomain(navigationUrl)) {
+    if (!isSelf(navigationUrl) && !isTrustedNavigationTarget(navigationUrl)) {
       event.preventDefault();
       logToWindow(
         mainWindowInfo.mainWindow,
@@ -73,7 +82,7 @@ app.on('web-contents-created', (_event, contents) => {
   // Disable or limit creation of new windows
   // See: https://www.electronjs.org/docs/latest/tutorial/security#14-disable-or-limit-creation-of-new-windows
   contents.setWindowOpenHandler(({ url }) => {
-    if (isTrustedDomain(url)) {
+    if (isTrustedNavigationTarget(url)) {
       setImmediate(() => {
         shell.openExternal(url);
       });

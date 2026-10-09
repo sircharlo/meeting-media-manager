@@ -1,0 +1,262 @@
+{
+  "_comment": "Grounded JW terminology for de, cross-checked against official jw.org pages. Reusable beyond translation-quality review. Regenerate via scripts/i18n-quality/prompts/grounding-agent.md.",
+  "_fetchedAt": "2026-09-11",
+  "_language": "de",
+  "terms": [
+    {
+      "termEn": "Jehovah's Witnesses",
+      "official": "Jehovas Zeugen",
+      "sourceUrls": [
+        "https://www.jw.org/de/informationen-fuer-behoerden-medien-wissenschaft/terminologie-und-ausdrucksweise/"
+      ],
+      "confidence": "high",
+      "notes": "Terminologie und Ausdrucksweise: \"Eine christliche Religionsgemeinschaft, deren Mitglieder Gott Jehova anbeten...\" Guide notes it is linguistically incorrect to say \"ein Jehovas Zeuge\"/\"eine Jehovas Zeugin\" - the plural form is used for individuals too, e.g. \"ein Zeuge Jehovas\"."
+    },
+    {
+      "termEn": "Kingdom Hall",
+      "official": "Königreichssaal von Jehovas Zeugen",
+      "sourceUrls": [
+        "https://www.jw.org/de/informationen-fuer-behoerden-medien-wissenschaft/terminologie-und-ausdrucksweise/"
+      ],
+      "confidence": "high",
+      "notes": "Commonly shortened to just \"Königreichssaal\" per the guide (\"Oft auch einfach 'Königreichssaal' genannt\"). Guide explicitly asks to avoid the word \"Kirche\" (church) for it."
+    },
+    {
+      "termEn": "circuit overseer",
+      "official": "Kreisaufseher",
+      "sourceUrls": [
+        "https://www.jw.org/de/informationen-fuer-behoerden-medien-wissenschaft/terminologie-und-ausdrucksweise/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Ein erfahrener Ältester, der ... unter der Anleitung des Zweigbüros regelmäßig jede Versammlung (Gemeinde) in einem Kreis ... besucht.\" Not used as an honorific title."
+    },
+    {
+      "termEn": "congregation",
+      "official": "Versammlung",
+      "sourceUrls": [
+        "https://www.jw.org/de/informationen-fuer-behoerden-medien-wissenschaft/terminologie-und-ausdrucksweise/"
+      ],
+      "confidence": "high",
+      "notes": "The guide consistently glosses \"Versammlung\" with a parenthetical \"(Gemeinde)\" throughout (e.g. \"Versammlung (Gemeinde) von Zeugen Jehovas\") to help general readers, but \"Versammlung\" alone is the term JW.org itself uses as the headword - unlike French, there is no competing official synonym here."
+    },
+    {
+      "termEn": "elder",
+      "official": "Ältester",
+      "sourceUrls": [
+        "https://www.jw.org/de/informationen-fuer-behoerden-medien-wissenschaft/terminologie-und-ausdrucksweise/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Ein Zeuge Jehovas (männlich), der im Glauben gefestigt ist... 'Ältester' ist kein Ehrentitel.\" Not a paid/clergy role."
+    },
+    {
+      "termEn": "presiding overseer",
+      "official": "Koordinator der Ältestenschaft",
+      "sourceUrls": [
+        "https://wol.jw.org/de/wol/d/r10/lp-x/1200276968",
+        "https://wol.jw.org/de/wol/d/r10/lp-x/1200274607"
+      ],
+      "confidence": "high",
+      "notes": "Not covered by the general-audience terminology guide (an internal congregation role). Confirmed via jw.org's own Watchtower Publications Index: the index page for numeric ID 1200274607 is titled \"Vorsitzführender Aufseher (eingestellt)\" - i.e. \"Presiding Overseer (DISCONTINUED)\" - and explicitly cross-references \"(Später Koordinator der Ältestenschaft genannt)\" = \"later called Koordinator der Ältestenschaft\". The current term's own index page (ID 1200276968) confirms \"KOORDINATOR DER ÄLTESTENSCHAFT (Früher Vorsitzführender Aufseher; Versammlungsaufseher; Versammlungsdiener; Dienstleiter genannt)\". This matches the 2023 congregation-restructuring change reported for other languages - do not use \"Vorsitzführender Aufseher\", it is explicitly marked discontinued."
+    },
+    {
+      "termEn": "ministerial servant",
+      "official": "Dienstamtgehilfe",
+      "sourceUrls": [
+        "https://www.jw.org/de/informationen-fuer-behoerden-medien-wissenschaft/terminologie-und-ausdrucksweise/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Ein im Glauben starker Zeuge Jehovas (männlich), der die Ältesten einer Versammlung (Gemeinde) bei organisatorischen und praktischen Aufgaben unterstützt.\" Not an honorific title; written as one word."
+    },
+    {
+      "termEn": "pioneer",
+      "official": "Pionier",
+      "sourceUrls": [
+        "https://www.jw.org/de/informationen-fuer-behoerden-medien-wissenschaft/terminologie-und-ausdrucksweise/"
+      ],
+      "confidence": "high",
+      "notes": "Guide distinguishes \"allgemeiner Pionier\" (regular pioneer, 600 h/year) from \"Hilfspionier\" (auxiliary pioneer, 15-30 h/month); bare \"Pionier\" usually implies the former. Not an honorific title."
+    },
+    {
+      "termEn": "field service",
+      "official": "Predigtdienst",
+      "sourceUrls": [
+        "https://www.jw.org/de/informationen-fuer-behoerden-medien-wissenschaft/terminologie-und-ausdrucksweise/"
+      ],
+      "confidence": "high",
+      "notes": "The guide's \"Predigen\" (preaching) entry simply redirects to \"Predigtdienst\", so the two English seed concepts (field service / preaching) map to a single German term."
+    },
+    {
+      "termEn": "Memorial",
+      "official": "Abendmahl",
+      "sourceUrls": [
+        "https://www.jw.org/de/informationen-fuer-behoerden-medien-wissenschaft/terminologie-und-ausdrucksweise/",
+        "https://www.jw.org/de/jehovas-zeugen/erinnerung-an-jesu-tod/"
+      ],
+      "confidence": "high",
+      "notes": "Grounded carefully per instructions, from two independent official pages that partly disagree on the short label, so a reviewer should treat all of these as acceptable: (1) the press-facing terminology guide gives the full descriptive name \"Feier zum Gedenken an den Tod Christi\", noting it is 'also called \"Abendmahl des Herrn\" or \"Gedächtnismahl\"'; (2) jw.org's own live Memorial landing page (fetched raw, not summarized) uses \"Abendmahl\" as its site-nav/category label (menu items \"Zusammenkünfte > Abendmahl\", section header \"ABENDMAHL\") in exactly the structural slot English uses \"Memorial\", while its running body text mostly says \"Gedenkfeier\" (e.g. \"Wie lange dauert die Gedenkfeier?\"), and an older congregation-index entry (WOL km 4/92) headed the same event \"Gedächtnismahl\". CAUTION: \"Abendmahl\" is also the generic mainstream-Christian word for the Eucharist/Lord's Supper - jw.org deliberately reuses it for its own single annual observance, so this is confirmed official usage, not a false-friend slip, but do not be surprised to see \"Gedächtnismahl\" or \"Gedenkfeier\" instead in-app; flag only something unrelated (e.g. a discontinued/generic holiday name) as wrong."
+    },
+    {
+      "termEn": "Congregation Bible Study",
+      "official": "Versammlungsbibelstudium",
+      "sourceUrls": ["https://wol.jw.org/de/wol/d/r10/lp-x/1200276966"],
+      "confidence": "high",
+      "notes": "Not covered by the general-audience terminology guide. Confirmed via jw.org's Watchtower Publications Index using the cross-language numeric-ID technique (English ID 1200276966 = current \"Congregation Bible Study\" entry; the identical German ID resolves to \"VERSAMMLUNGSBIBELSTUDIUM\"). The same index page notes prior names: \"Früher Versammlungsbuchstudium; Beröer-Bibelstudium; Tagesanbruch-Bibelstudien genannt\" - do not use those older names."
+    },
+    {
+      "termEn": "midweek meeting",
+      "official": "Zusammenkunft unter der Woche",
+      "sourceUrls": [
+        "https://www.jw.org/de/informationen-fuer-behoerden-medien-wissenschaft/terminologie-und-ausdrucksweise/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: program titled \"Unser Leben und Dienst als Christ\". Congregation-internal literature (S-38 guidelines, etc.) also calls it the \"Leben-und-Dienst-Zusammenkunft\"."
+    },
+    {
+      "termEn": "weekend meeting",
+      "official": "Zusammenkunft für die Öffentlichkeit",
+      "sourceUrls": [
+        "https://www.jw.org/de/informationen-fuer-behoerden-medien-wissenschaft/terminologie-und-ausdrucksweise/"
+      ],
+      "confidence": "high",
+      "notes": "Guide describes it as including a 30-minute public talk followed by the Watchtower Study."
+    },
+    {
+      "termEn": "public talk",
+      "official": "öffentlicher Vortrag",
+      "sourceUrls": ["https://wol.jw.org/de/wol/d/r10/lp-x/1102001126"],
+      "confidence": "medium",
+      "notes": "Not a separate headword in the terminology guide (folded into the \"Zusammenkunft für die Öffentlichkeit\" definition as \"30-minütiger biblischer Vortrag\"). \"öffentlichen Vortrag\" is attested verbatim in the official elders' guidelines document \"Richtlinien für Schulaufseher\" (\"... in der Woche, in der er einen öffentlichen Vortrag in der Versammlung hält\"); an older WOL article title also uses the plural \"Öffentliche biblische Vorträge\"."
+    },
+    {
+      "termEn": "Watchtower Study",
+      "official": "Wachtturm-Studium",
+      "sourceUrls": [
+        "https://www.jw.org/de/informationen-fuer-behoerden-medien-wissenschaft/terminologie-und-ausdrucksweise/"
+      ],
+      "confidence": "high",
+      "notes": "Appears inline in the terminology guide's \"Zusammenkunft für die Öffentlichkeit\" entry: \"... folgt in der Regel das Wachtturm-Studium, ein einstündiger Programmteil mit Zuhörerbeteiligung.\""
+    },
+    {
+      "termEn": "The Watchtower",
+      "official": "Der Wachtturm",
+      "sourceUrls": [
+        "https://www.jw.org/de/informationen-fuer-behoerden-medien-wissenschaft/terminologie-und-ausdrucksweise/"
+      ],
+      "confidence": "high",
+      "notes": "Full official title per the guide is \"Der Wachtturm verkündigt Jehovas Königreich\"; guide says it is \"kurz auch Wachtturm genannt\". Has a public edition and a study edition; published continuously since 1879."
+    },
+    {
+      "termEn": "Awake!",
+      "official": "Erwachet!",
+      "sourceUrls": [
+        "https://www.jw.org/de/informationen-fuer-behoerden-medien-wissenschaft/terminologie-und-ausdrucksweise/"
+      ],
+      "confidence": "high",
+      "notes": "Confirmed verbatim, including the exclamation mark. Formerly \"The Golden Age\" (1919) and \"Consolation\" (1937) in English; adopted current name with the issue of August 22, 1946."
+    },
+    {
+      "termEn": "New World Translation",
+      "official": "Neue-Welt-Übersetzung",
+      "sourceUrls": [
+        "https://www.jw.org/de/informationen-fuer-behoerden-medien-wissenschaft/terminologie-und-ausdrucksweise/"
+      ],
+      "confidence": "high",
+      "notes": "Full title per the guide: \"Die Bibel. Neue-Welt-Übersetzung\"; can be shortened to \"Neue-Welt-Übersetzung\"."
+    },
+    {
+      "termEn": "JW Library",
+      "official": "JW Library",
+      "sourceUrls": [
+        "https://www.jw.org/de/informationen-fuer-behoerden-medien-wissenschaft/terminologie-und-ausdrucksweise/"
+      ],
+      "confidence": "high",
+      "notes": "Proper-noun app name, not translated - confirmed as-is verbatim in the German jw.org page's own footer navigation, consistent with the seed's instruction."
+    },
+    {
+      "termEn": "jw.org",
+      "official": "jw.org",
+      "sourceUrls": [
+        "https://www.jw.org/de/informationen-fuer-behoerden-medien-wissenschaft/terminologie-und-ausdrucksweise/"
+      ],
+      "confidence": "high",
+      "notes": "Domain/proper noun kept as-is; rendered \"JW.ORG\" in the logo/brand lockup (all caps) and lowercase \"jw.org\" in running/copyright text. Site tagline: \"OFFIZIELLE WEBSITE VON JEHOVAS ZEUGEN\" - matching the app's own phrase \"the official website of jw.org\"."
+    },
+    {
+      "termEn": "songbook",
+      "official": "Liederbuch",
+      "sourceUrls": [
+        "https://wol.jw.org/de/wol/d/r10/lp-x/1200027263",
+        "https://wol.jw.org/de/wol/publication/r10/lp-x/sn/136"
+      ],
+      "confidence": "medium",
+      "notes": "\"Liederbuch\"/\"Liederbücher\" is the generic category label used in jw.org's own publications index. Not a terminology-guide entry. The current specific songbook in active use is \"Singt Lieder für Jehova\" (publication symbol \"sn\", 135+ songs, periodically extended with \"neue Lieder\"), which superseded the older \"Singt Jehova Loblieder\" (1986) and \"Singt und spielt dabei Jehova in euren Herzen\" (1969). If the app's string names a specific book rather than the generic noun, \"Singt Lieder für Jehova\" is more likely what appears."
+    },
+    {
+      "termEn": "convention",
+      "official": "Kongress",
+      "sourceUrls": [
+        "https://www.jw.org/de/informationen-fuer-behoerden-medien-wissenschaft/terminologie-und-ausdrucksweise/"
+      ],
+      "confidence": "high",
+      "notes": "Guide's \"Kongress\" entry redirects to the specific types: \"Internationaler Kongress\" (3-day, annual, rotating host cities) and \"Regionaler Kongress\" (3-day, annual, regional). Either compound is a valid rendering of \"convention\" depending on context; see the \"assembly\" entry for the smaller \"Kreiskongress\"."
+    },
+    {
+      "termEn": "assembly",
+      "official": "Kreiskongress",
+      "sourceUrls": [
+        "https://www.jw.org/de/informationen-fuer-behoerden-medien-wissenschaft/terminologie-und-ausdrucksweise/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Ganztägiger Gottesdienst mehrerer Versammlungen (Gemeinden) von Jehovas Zeugen, der zweimal im Jahr abgehalten wird\" - a one-day, twice-yearly circuit-level meeting, matching the seed's \"smaller than a convention\" sense (English's \"circuit assembly\"). Note German folds this into the \"Kongress\" family of compounds rather than using an unrelated word."
+    },
+    {
+      "termEn": "theocratic school",
+      "official": "Theokratische Predigtdienstschule",
+      "sourceUrls": ["https://wol.jw.org/de/wol/d/r10/lp-x/1102001126"],
+      "confidence": "medium",
+      "notes": "Not in the current terminology guide. This was a weekly training program within the pre-2016 midweek meeting structure (discontinued when the \"Life and Ministry\" meeting format was introduced), documented in older Watchtower Library material such as \"Richtlinien für Schulaufseher\". If the app's usage refers to a still-active training program held in connection with assemblies/conventions rather than this legacy weekly school, verify against current app context before relying on this rendering."
+    },
+    {
+      "termEn": "sign language",
+      "official": "Gebärdensprache",
+      "sourceUrls": ["https://wol.jw.org/de/wol/d/r10/lp-x/1200275321"],
+      "confidence": "high",
+      "notes": "Generic, well-established German word; confirmed as a Watchtower Publications Index headword (\"GEBÄRDENSPRACHE\", cross-referencing \"Amerikanische Gebärdensprache\", \"Gehörlose\"). Not a dedicated terminology-guide entry."
+    },
+    {
+      "termEn": "meeting workbook",
+      "official": "Unser Leben und Dienst als Christ: Arbeitsheft",
+      "sourceUrls": ["https://wol.jw.org/de/wol/d/r10/lp-x/202025000"],
+      "confidence": "high",
+      "notes": "Full title of the Our Christian Life and Ministry Meeting Workbook, confirmed via multiple dated jw.org/WOL editions (e.g. \"...Arbeitsheft, Januar/Februar 2025\"). \"Arbeitsheft\" alone is the generic term for \"workbook\"."
+    },
+    {
+      "termEn": "yeartext",
+      "official": "Jahrestext",
+      "sourceUrls": [
+        "https://wol.jw.org/de/wol/d/r10/lp-x/1200028490",
+        "https://wol.jw.org/de/wol/d/r10/lp-x/1200276311"
+      ],
+      "confidence": "high",
+      "notes": "Confirmed via Watchtower Publications Index headwords \"JAHRESTEXT\" (singular concept entry) and \"JAHRESTEXTE\" (plural, chronological list of every yeartext back to 1915)."
+    },
+    {
+      "termEn": "branch office",
+      "official": "Zweigbüro",
+      "sourceUrls": [
+        "https://www.jw.org/de/informationen-fuer-behoerden-medien-wissenschaft/terminologie-und-ausdrucksweise/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Örtlicher Verwaltungssitz des jeweiligen Zweigkomitees ... Manchmal auch 'Zweig' genannt.\" Related term \"Zweigkomitee\" = Branch Committee."
+    },
+    {
+      "termEn": "Governing Body",
+      "official": "Leitende Körperschaft von Jehovas Zeugen",
+      "sourceUrls": [
+        "https://www.jw.org/de/informationen-fuer-behoerden-medien-wissenschaft/terminologie-und-ausdrucksweise/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Eine kleine Gruppe von Ältesten, die die geistliche Leitung von Jehovas Zeugen weltweit bildet.\" Commonly shortened to \"Leitende Körperschaft\". Offices located at the World Headquarters in Warwick, New York."
+    }
+  ]
+}

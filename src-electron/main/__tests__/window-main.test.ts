@@ -5,9 +5,10 @@ const createWindow = vi.fn();
 const closeOtherWindows = vi.fn();
 const sendToWindow = vi.fn();
 const createMediaWindow = vi.fn();
-const cancelAllDownloads = vi.fn();
+const cancelAllDownloads = vi.fn(() => Promise.resolve());
 const setAppQuitting = vi.fn();
 const setShouldQuit = vi.fn();
+const captureElectronError = vi.fn();
 const quitStatus = { isAppQuitting: false, shouldQuit: false };
 
 vi.mock('electron', () => ({
@@ -29,6 +30,10 @@ vi.mock('src-electron/main/session', () => ({
   quitStatus,
   setAppQuitting,
   setShouldQuit,
+}));
+
+vi.mock('src-electron/main/utils', () => ({
+  captureElectronError,
 }));
 
 vi.mock('src-electron/main/window/window-base', () => ({

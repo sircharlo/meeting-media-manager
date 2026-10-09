@@ -2,6 +2,8 @@ import type { JwLangCode } from './lang';
 export interface DocumentItem {
   DocumentId: number;
   FeatureTitle: string;
+  FirstPageNumber?: null | number;
+  LastPageNumber?: null | number;
   Title: string;
 }
 
@@ -75,6 +77,10 @@ export interface MultimediaItem {
   EndParagraphOrdinal?: number;
   EndTime?: number;
   ExtractCaption?: string;
+  // The publication symbol of the extract/reading this item was pulled in
+  // for (e.g. 'wcg'), as opposed to KeySymbol, which identifies where the
+  // item's own file comes from and can point to a different publication.
+  ExtractSymbol?: string;
   FileName?: string;
   FilePath: string;
   FormattedVerseLabel?: string;
@@ -105,7 +111,7 @@ export interface MultimediaItem {
   StreamUrl?: string;
   SuppressZoom?: number;
   tableQuestionIsUsed?: boolean;
-  TargetParagraphNumberLabel: number;
+  TargetParagraphNumberLabel: number | string;
   ThumbnailFilePath?: string;
   ThumbnailUrl?: string;
   Title?: string;

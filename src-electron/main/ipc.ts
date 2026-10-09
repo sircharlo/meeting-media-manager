@@ -1,7 +1,10 @@
 import type {
+  ConversionOptions,
+  DevMenuState,
   DiscussionCategory,
   ElectronIpcInvokeKey,
   ElectronIpcSendKey,
+  ElectronIpcSendSyncKey,
   ExternalWebsite,
   ExtractNestedZipEntryOptions,
   FileDialogFilter,
@@ -10,6 +13,8 @@ import type {
   NavigateWebsiteAction,
   SettingsValues,
   UnzipOptions,
+  UrlVariables,
+  ZoomTestParticipantsRequest,
 } from 'src/types';
 
 import { homepage, repository } from 'app/package.json';
@@ -22,8 +27,10 @@ import {
   systemPreferences,
 } from 'electron';
 import { pathExists } from 'fs-extra/esm';
+import { stat } from 'node:fs/promises';
 import { arch, platform } from 'node:os';
 import { PLATFORM } from 'src-electron/constants';
+import { updateDevMenuState } from 'src-electron/main/dev-menu';
 import { getLowDiskSpaceStatus } from 'src-electron/main/disk-space';
 import {
   cancelAllDownloads,
@@ -35,6 +42,7 @@ import {
 } from 'src-electron/main/downloads';
 import { createVideoFromNonVideo } from 'src-electron/main/ffmpeg';
 import {
+  ensureMacosFolderPermission,
   extractNestedZipEntry,
   getAppDataPath,
   getZipEntries,
@@ -42,29 +50,54 @@ import {
   openFileDialog,
   openFolderDialog,
   saveFileDialog,
+  setExecutable,
   setPathProbeNotificationPaths,
+  startSecurityScopedAccess,
   unwatchFolders,
   unzipFile,
   watchFolder,
 } from 'src-electron/main/fs';
+import { convertHeic } from 'src-electron/main/heic';
+import { getOsSupportWarning } from 'src-electron/main/os-support';
 import { getAllScreens } from 'src-electron/main/screen';
-import { quitStatus, setElectronUrlVariables } from 'src-electron/main/session';
+import {
+  decryptSecret,
+  encryptSecret,
+  isSecretEncryptionAvailable,
+} from 'src-electron/main/secrets';
+import {
+  quitStatus,
+  setElectronUrlVariables,
+  urlVariables,
+} from 'src-electron/main/session';
 import {
   registerShortcut,
   unregisterAllShortcuts,
   unregisterShortcut,
 } from 'src-electron/main/shortcuts';
 import {
+  closeAllConnections,
+  closeConnection,
+  executeQuery,
+  isDbCorrupt,
+} from 'src-electron/main/sqlite';
+import {
   getBetaUpdatesPath,
+  getUpdaterState,
   getUpdatesDisabledPath,
   quitAndInstallUpdate,
   triggerUpdateCheck,
 } from 'src-electron/main/updater';
 import {
   captureElectronError,
+  capturePreloadErrorReport,
   getSharedDataPath,
   isSelf,
 } from 'src-electron/main/utils';
+import {
+  getChallengeHost,
+  passWafChallenge,
+} from 'src-electron/main/waf-challenge';
 import { logToWindow } from 'src-electron/main/window/window-base';
 import {
   mainWindowInfo,
@@ -88,6 +121,14 @@ import {
   websiteWindowInfo,
   zoomWebsiteWindow,
 } from 'src-electron/main/window/window-website';
+import {
+  restartZoomHelper,
+  runZoomHelperCommand,
+  startZoomHelper,
+  stopZoomHelper,
+} from 'src-electron/main/zoom-helper-manager';
+import { isZoomCommand } from 'src-electron/main/zoom-helper-process';
+import { handleZoomTestParticipants } from 'src-electron/main/zoom-test-participants';
 import { join } from 'upath';
 
 const { openExternal, openPath } = shell;
@@ -111,9 +152,70 @@ function handleIpcSend(
       );
       return;
     }
-    listener(e, ...args);
+    // `listener` is fire-and-forget from ipcMain.on's perspective: an async
+    // listener's rejection (e.g. a window destroyed mid-await) would
+    // otherwise be unobserved by anything. Catch both sync throws and async
+    // rejections here once, for every handleIpcSend consumer, rather than
+    // requiring each listener to guard itself.
+    try {
+      Promise.resolve(listener(e, ...args)).catch((error: unknown) => {
+        captureElectronError(error, {
+          contexts: { fn: { channel, name: 'handleIpcSend' } },
+        });
+      });
+    } catch (error) {
+      captureElectronError(error, {
+        contexts: { fn: { channel, name: 'handleIpcSend' } },
+      });
+    }
   });
 }
+
+// IPC sendSync/on with event.returnValue
+
+function handleIpcSendSync<T>(
+  channel: ElectronIpcSendSyncKey,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  listener: (event: IpcMainEvent, ...args: any[]) => T,
+) {
+  ipcMain.on(channel, (e, ...args) => {
+    if (!isSelf(e.senderFrame?.url)) {
+      logToWindow(
+        mainWindowInfo.mainWindow,
+        `Blocked IPC sendSync from ${e.senderFrame?.url}`,
+        {},
+        'warn',
+      );
+      e.returnValue = undefined;
+      return;
+    }
+    // BE-20 (full-audit-2026-09-05.md): mirrors handleIpcSend's guard - a
+    // synchronous throw here would otherwise propagate unguarded and
+    // e.returnValue would never be set, leaving the renderer's blocking
+    // sendSync() call waiting forever (a worse failure mode than an
+    // unobserved async rejection).
+    try {
+      e.returnValue = listener(e, ...args);
+    } catch (error) {
+      captureElectronError(error, {
+        contexts: { fn: { channel, name: 'handleIpcSendSync' } },
+      });
+      e.returnValue = undefined;
+    }
+  });
+}
+
+handleIpcSendSync('encryptSecretSync', (_e, plainText: string) =>
+  encryptSecret(plainText),
+);
+
+handleIpcSendSync('decryptSecretSync', (_e, cipherText: string) =>
+  decryptSecret(cipherText),
+);
+
+handleIpcSendSync('isSecretEncryptionAvailableSync', () =>
+  isSecretEncryptionAvailable(),
+);
 
 handleIpcSend(
   'toggleMediaWindow',
@@ -163,8 +265,27 @@ handleIpcSend('pauseAllDownloads', () => {
 
 handleIpcSend('checkForUpdates', () => triggerUpdateCheck());
 
+// The preload's isolated world has no Sentry client, so it forwards its
+// errors here to be reported (see capturePreloadError in preload/log.ts).
+handleIpcSend('capturePreloadError', (_e, report: unknown) => {
+  capturePreloadErrorReport(report);
+});
+
+// Renderer → main state sync for the dev-only Demo menu (checkboxes and
+// enabled/disabled states). updateDevMenuState() no-ops unless the dev menu
+// was actually built, so this is harmless in production.
+handleIpcSend('dev-menu-state', (_e, state: DevMenuState) => {
+  updateDevMenuState(state);
+});
+
 handleIpcSend('setElectronUrlVariables', (_e, variables: string) => {
-  setElectronUrlVariables(JSON.parse(variables));
+  try {
+    setElectronUrlVariables(JSON.parse(variables) as UrlVariables);
+  } catch (error) {
+    captureElectronError(error, {
+      contexts: { fn: { name: 'setElectronUrlVariables', variables } },
+    });
+  }
 });
 
 handleIpcSend('setPathProbeNotificationPaths', (_e, paths: string[]) => {
@@ -198,6 +319,13 @@ handleIpcSend(
 
 handleIpcSend('zoomWebsiteWindow', (_e, direction: 'in' | 'out') => {
   zoomWebsiteWindow(direction);
+});
+
+handleIpcSend('launchZoomMeeting', (_e, meetingId: string) => {
+  if (!meetingId) return;
+  openExternal(
+    `zoommtg://zoom.us/join?confno=${encodeURIComponent(meetingId)}`,
+  );
 });
 
 handleIpcSend('navigateWebsiteWindow', (_e, action: NavigateWebsiteAction) => {
@@ -244,20 +372,24 @@ handleIpcSend('openExternal', (_e, website: ExternalWebsite) => {
 handleIpcSend(
   'openDiscussion',
   (_e, category: DiscussionCategory, title: string, params = '{}') => {
+    let parsedParams: Record<string, string> = {};
+    try {
+      parsedParams = JSON.parse(params) as Record<string, string>;
+    } catch (error) {
+      captureElectronError(error, {
+        contexts: { fn: { name: 'openDiscussion', params } },
+      });
+    }
+
     const search = new URLSearchParams({
       category,
       title,
-      ...JSON.parse(params),
+      ...parsedParams,
     }).toString();
     openExternal(
       `${repository.url.replace('.git', '/discussions/new')}?${search}`,
     );
   },
-);
-
-handleIpcSend('unwatchFolders', () => unwatchFolders());
-handleIpcSend('watchFolder', (_e, folderPath: string) =>
-  watchFolder(folderPath),
 );
 
 // IPC invoke/handle
@@ -325,15 +457,26 @@ handleIpcInvoke('getAppDataPath', async () => getAppDataPath());
 handleIpcInvoke('getBetaUpdatesPath', async () => getBetaUpdatesPath());
 handleIpcInvoke('getLowDiskSpaceStatus', async () => getLowDiskSpaceStatus());
 handleIpcInvoke('getUpdatesDisabledPath', async () => getUpdatesDisabledPath());
+handleIpcInvoke('getUpdaterState', async () => getUpdaterState());
 handleIpcInvoke('getSharedDataPath', async () => getSharedDataPath());
 handleIpcInvoke('getUserDataPath', async () => app.getPath('userData'));
 handleIpcInvoke('getLocales', async () => app.getPreferredSystemLanguages());
 handleIpcInvoke('isUsablePath', async (_e, p: string) => isUsablePath(p));
+handleIpcInvoke('startZoomHelper', async () => startZoomHelper());
+handleIpcSend('stopZoomHelper', () => stopZoomHelper());
+handleIpcInvoke('restartZoomHelper', async () => restartZoomHelper());
 
 handleIpcInvoke(
   'isArchitectureMismatch',
   async () => process.arch === 'ia32' && (await isOS64Bit()),
 );
+
+handleIpcInvoke('isOnline', async () => {
+  const { default: isOnline } = await import('is-online');
+  return isOnline();
+});
+
+handleIpcInvoke('getOsSupportWarning', async () => getOsSupportWarning());
 
 handleIpcInvoke(
   'getScreenAccessStatus',
@@ -344,6 +487,35 @@ handleIpcInvoke(
 );
 
 handleIpcInvoke('getAllScreens', async () => getAllScreens());
+
+// Media-preview capture mode: lets MediaPreview.vue mirror the media
+// window's actual composited pixels via getUserMedia({chromeMediaSource})
+// instead of re-decoding the same file a second time. Deliberately not
+// reusing window-website.ts's setDisplayMediaRequestHandler pattern - that's
+// registered once per session, and since all windows share the default
+// session, a second registration here would silently replace the existing
+// website-mirror handler and break OBS/Zoom screen-share.
+handleIpcInvoke('getMediaWindowCaptureSourceId', async (e) => {
+  const media = mediaWindowInfo.mediaWindow;
+  if (!media || media.isDestroyed()) return null;
+  return media.webContents.getMediaSourceId(e.sender);
+});
+handleIpcInvoke('closeSqliteConnection', async (_e, dbPath: string) =>
+  closeConnection(dbPath),
+);
+handleIpcInvoke('closeSqliteConnections', async () => closeAllConnections());
+handleIpcInvoke('isSqliteDbCorrupt', async (_e, dbPath: string) =>
+  isDbCorrupt(dbPath),
+);
+handleIpcInvoke(
+  'executeQuery',
+  async (
+    _e,
+    dbPath: string,
+    query: string,
+    params?: (null | number | string)[],
+  ) => executeQuery(dbPath, query, params),
+);
 handleIpcInvoke('isDownloadComplete', async (_e, downloadId: string) =>
   isDownloadComplete(downloadId),
 );
@@ -351,16 +523,29 @@ handleIpcInvoke('isDownloadErrorExpected', async () =>
   isDownloadErrorExpected(),
 );
 
+handleIpcInvoke('passWafChallenge', async (_e, url: string) => {
+  const host = getChallengeHost(url, urlVariables.base);
+  return host ? passWafChallenge(host) : false;
+});
+
 handleIpcInvoke(
   'registerShortcut',
   async (_e, name: keyof SettingsValues, keySequence: string) =>
     registerShortcut(name, keySequence),
 );
 
+handleIpcInvoke('convertHeic', async (_e, image: ConversionOptions) =>
+  convertHeic(image),
+);
+
 handleIpcInvoke(
   'createVideoFromNonVideo',
   async (_e, path: string, ffmpegPath: string, outputDir?: string) =>
     createVideoFromNonVideo(path, ffmpegPath, outputDir),
+);
+
+handleIpcInvoke('setExecutable', async (_e, path: string) =>
+  setExecutable(path),
 );
 
 handleIpcInvoke(
@@ -376,11 +561,21 @@ handleIpcInvoke(
 
 handleIpcInvoke(
   'openFileDialog',
-  async (_e, single: boolean, filter: FileDialogFilter) =>
-    openFileDialog(single, filter),
+  async (_e, single: boolean, filter: FileDialogFilter, defaultPath?: string) =>
+    openFileDialog(single, filter, defaultPath),
 );
 
 handleIpcInvoke('openFolderDialog', async () => openFolderDialog());
+
+handleIpcInvoke(
+  'ensureMacosFolderPermission',
+  async (_e, folderPath: string, prompt?: boolean) =>
+    ensureMacosFolderPermission(folderPath, prompt),
+);
+
+handleIpcInvoke('startSecurityScopedAccess', async (_e, filePath: string) =>
+  startSecurityScopedAccess(filePath),
+);
 
 handleIpcInvoke(
   'saveFileDialog',
@@ -388,12 +583,45 @@ handleIpcInvoke(
     saveFileDialog(defaultPath, filter),
 );
 
-handleIpcInvoke('openFolder', async (_e, path: string) => openPath(path));
+handleIpcInvoke('openFolder', async (_e, path: string) => {
+  // shell.openPath executes files (not just directories), so refuse to
+  // open anything that isn't an actual directory rather than trusting the
+  // caller's assumption that `path` points at a folder.
+  try {
+    const stats = await stat(path);
+    if (!stats.isDirectory()) return 'Path is not a directory';
+  } catch (error) {
+    captureElectronError(error, {
+      contexts: { fn: { name: 'openFolder', path } },
+    });
+    return 'Path does not exist';
+  }
+
+  return openPath(path);
+});
 
 handleIpcInvoke(
   'unzip',
   async (_e, input: string, output: string, opts?: UnzipOptions) =>
     unzipFile(input, output, opts),
+);
+
+handleIpcInvoke('unwatchFolders', async () => unwatchFolders());
+handleIpcInvoke('watchFolder', async (_e, folderPath: string) =>
+  watchFolder(folderPath),
+);
+
+handleIpcInvoke('zoomCommand', async (_e, command: unknown) => {
+  if (!isZoomCommand(command)) {
+    return { error: 'invalid-command', ok: false };
+  }
+  return runZoomHelperCommand(command);
+});
+
+handleIpcInvoke(
+  'zoomTestParticipants',
+  async (_e, request: ZoomTestParticipantsRequest) =>
+    handleZoomTestParticipants(request),
 );
 
 handleIpcInvoke('getZipEntries', async (_e, zipPath: string) =>

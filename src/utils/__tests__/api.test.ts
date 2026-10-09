@@ -5,6 +5,7 @@ import {
 } from 'app/test/vitest/mocks/github';
 import { jwLangs, jwYeartext } from 'app/test/vitest/mocks/jw';
 import { installPinia } from 'app/test/vitest/mocks/pinia';
+import { useDemoModeStore } from 'stores/demo-mode';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 installPinia();
@@ -22,8 +23,11 @@ import {
   fetchJwLanguages,
   fetchLatestVersion,
   fetchMemorials,
+  fetchPubMediaLinks,
   fetchRaw,
+  fetchReleaseNotes,
   fetchYeartext,
+  getLibraryFilterUrl,
 } from '../api';
 import * as dateUtils from '../date';
 
@@ -74,7 +78,7 @@ describe('fetchAnnouncements', () => {
 
   it('should fetch the announcements', async () => {
     const result = await fetchAnnouncements();
-    expect(result.length).toBe(validAnnouncements.length);
+    expect(result).toHaveLength(validAnnouncements.length);
     expect(result).toEqual(expect.arrayContaining(validAnnouncements));
   });
 });
@@ -214,6 +218,85 @@ describe('fetchRaw caching', () => {
 
     expect(fetchSpy).toHaveBeenCalledTimes(2);
   });
+
+  // FE-1 (full-audit-2026-09-04.md): a JW.org response cached with no TTL
+  // could never be re-fetched for the rest of a long-running session, even
+  // after a genuine mid-week content correction upstream.
+  it('should re-fetch once a cached entry is older than the cache TTL', async () => {
+    vi.useFakeTimers();
+    try {
+      const fetchSpy = vi
+        .spyOn(globalThis, 'fetch')
+        .mockImplementation(() =>
+          Promise.resolve(
+            new Response(JSON.stringify(jwLangs), { status: 200 }),
+          ),
+        );
+
+      await fetchRaw(handledUrl, { method: 'GET' }, true);
+      await vi.advanceTimersByTimeAsync(15 * 60 * 1000 + 1);
+      await fetchRaw(handledUrl, { method: 'GET' }, true);
+
+      expect(fetchSpy).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('should keep serving a cached entry that has not exceeded the cache TTL', async () => {
+    vi.useFakeTimers();
+    try {
+      const fetchSpy = vi
+        .spyOn(globalThis, 'fetch')
+        .mockImplementation(() =>
+          Promise.resolve(
+            new Response(JSON.stringify(jwLangs), { status: 200 }),
+          ),
+        );
+
+      await fetchRaw(handledUrl, { method: 'GET' }, true);
+      await vi.advanceTimersByTimeAsync(60 * 1000);
+      await fetchRaw(handledUrl, { method: 'GET' }, true);
+
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});
+
+describe('fetchRaw demo mode', () => {
+  beforeEach(() => {
+    // The fetchRaw caching describe above leaves a fetch spy installed.
+    vi.restoreAllMocks();
+    clearFetchCache();
+  });
+
+  afterEach(() => {
+    // The demo store is shared across the whole test file via installPinia.
+    useDemoModeStore().enabled = false;
+    vi.restoreAllMocks();
+    clearFetchCache();
+  });
+
+  it('blocks the network while demo mode is enabled at runtime, and unblocks when disabled', async () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
+    const demoMode = useDemoModeStore();
+    expect(demoMode.enabled).toBe(false);
+
+    demoMode.enabled = true;
+    await expect(
+      fetchRaw('https://example.com/', undefined, false),
+    ).rejects.toThrow();
+    expect(fetchSpy).not.toHaveBeenCalled();
+
+    demoMode.enabled = false;
+    fetchSpy.mockResolvedValue(new Response('{}', { status: 200 }));
+    await expect(
+      fetchRaw('https://example.com/', undefined, false),
+    ).resolves.toBeDefined();
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe('fetchJson network errors', () => {
@@ -252,10 +335,144 @@ describe('fetchJson network errors', () => {
     expect(result).toBeNull();
     expect(errorCatcher).not.toHaveBeenCalled();
   });
+
+  it('should not report a 503 Service Unavailable status', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(null, { status: 503 }),
+    );
+
+    const result = await fetchJson(handledUrl);
+
+    expect(result).toBeNull();
+    expect(errorCatcher).not.toHaveBeenCalled();
+  });
+
+  // MMM-V2-3D2: GitHub's API briefly served 500s during its own outage.
+  it('should not report a 500 from the GitHub API', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(null, { status: 500 }),
+    );
+
+    const result = await fetchJson(
+      'https://api.github.com/repos/sircharlo/meeting-media-manager/releases',
+    );
+
+    expect(result).toBeNull();
+    expect(errorCatcher).not.toHaveBeenCalled();
+  });
+
+  it('should still report a 500 from other hosts', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(null, { status: 500 }),
+    );
+
+    await fetchJson(handledUrl);
+
+    expect(errorCatcher).toHaveBeenCalled();
+  });
+
+  it('should not report a 504 Gateway Timeout status', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(null, { status: 504 }),
+    );
+
+    const result = await fetchJson(handledUrl);
+
+    expect(result).toBeNull();
+    expect(errorCatcher).not.toHaveBeenCalled();
+  });
+
+  it('should not report an empty/truncated JSON response body', async () => {
+    // A 200 OK with an empty body throws a SyntaxError out of response.json()
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response('', { status: 200 }),
+    );
+
+    const result = await fetchJson(handledUrl);
+
+    expect(result).toBeNull();
+    expect(errorCatcher).not.toHaveBeenCalled();
+  });
+
+  it('retries a transient network error and returns the eventual result', async () => {
+    const error = Object.assign(new Error('connect ECONNRESET'), {
+      code: 'ECONNRESET',
+    });
+    vi.spyOn(globalThis, 'fetch')
+      .mockRejectedValueOnce(error)
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ ok: true }), { status: 200 }),
+      );
+
+    const result = await fetchJson(handledUrl);
+
+    expect(result).toEqual({ ok: true });
+    expect(globalThis.fetch).toHaveBeenCalledTimes(2);
+    expect(errorCatcher).not.toHaveBeenCalled();
+  });
+
+  it('retries once the per-attempt timeout aborts a hung request', async () => {
+    // AbortSignal.timeout()'s internal timer isn't controlled by
+    // vi.useFakeTimers(), so drive the abort directly instead of waiting
+    // out the real 15s timeout.
+    const controllers: AbortController[] = [];
+    vi.spyOn(AbortSignal, 'timeout').mockImplementation(() => {
+      const controller = new AbortController();
+      controllers.push(controller);
+      return controller.signal;
+    });
+
+    let callCount = 0;
+    vi.spyOn(globalThis, 'fetch').mockImplementation(
+      (_url, init) =>
+        new Promise((resolve, reject) => {
+          callCount++;
+          if (callCount === 1) {
+            // Simulates a connection that's up but never completes - never
+            // resolves on its own, only reacts to the abort signal fetchJson
+            // passes in, same as a real fetch() would.
+            (init as RequestInit | undefined)?.signal?.addEventListener(
+              'abort',
+              () => {
+                reject(
+                  new DOMException('The operation was aborted', 'AbortError'),
+                );
+              },
+            );
+          } else {
+            resolve(
+              new Response(JSON.stringify({ ok: true }), { status: 200 }),
+            );
+          }
+        }),
+    );
+
+    const promise = fetchJson(handledUrl);
+    await vi.waitFor(() => expect(controllers).toHaveLength(1));
+    controllers[0]?.abort();
+
+    await expect(promise).resolves.toEqual({ ok: true });
+    expect(callCount).toBe(2);
+    expect(errorCatcher).not.toHaveBeenCalled();
+  });
+
+  it.each(['ewt', 'cew'])(
+    'should not report a 400 for pub=%s, confirmed to have no media',
+    async (pub) => {
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+        new Response(null, { status: 400 }),
+      );
+
+      const result = await fetchJson(handledUrl, new URLSearchParams({ pub }));
+
+      expect(result).toBeNull();
+      expect(errorCatcher).not.toHaveBeenCalled();
+    },
+  );
 });
 
 describe('fetchMemorials', () => {
-  const memorialsUrl = `${process.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/memorials.json`;
+  const memorialsUrl = `${import.meta.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/memorials.json`;
 
   afterEach(() => {
     vi.restoreAllMocks();
@@ -283,7 +500,10 @@ describe('fetchMemorials', () => {
 
     const memorials = await fetchMemorials();
 
-    expect(globalThis.fetch).toHaveBeenCalledWith(memorialsUrl, undefined);
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      memorialsUrl,
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
     expect(memorials).toEqual({ 2025: '2025/04/12' });
   });
 
@@ -303,5 +523,233 @@ describe('fetchMemorials', () => {
     const memorials = await fetchMemorials();
 
     expect(memorials).toBeNull();
+  });
+});
+
+describe('fetchReleaseNotes', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    clearFetchCache();
+  });
+
+  it('should not report a plain network failure', async () => {
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(
+      new TypeError('Failed to fetch'),
+    );
+
+    const result = await fetchReleaseNotes('en');
+
+    expect(result).toBeNull();
+    expect(errorCatcher).not.toHaveBeenCalled();
+  });
+
+  it('should still report a non-network failure', async () => {
+    const error = new Error('boom');
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(error);
+
+    const result = await fetchReleaseNotes('en');
+
+    expect(result).toBeNull();
+    expect(errorCatcher).toHaveBeenCalledWith(error);
+  });
+});
+
+describe('fetchPubMediaLinks docid/pub fallback', () => {
+  const pubMediaUrl = 'https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS';
+  const okBody = JSON.stringify({ files: { LSQ: { MP4: [] } } });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    clearFetchCache();
+  });
+
+  it('sends docid (and omits pub) when docid is present', async () => {
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(new Response(okBody, { status: 200 }));
+
+    await fetchPubMediaLinks(
+      {
+        docid: 2026403,
+        fileformat: 'MP4',
+        issue: 20260500,
+        langwritten: 'LSQ',
+        pub: 'w',
+        track: 4,
+      },
+      pubMediaUrl,
+    );
+
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    const requestedUrl = new URL(fetchSpy.mock.calls[0]?.[0] as string);
+    expect(requestedUrl.searchParams.get('docid')).toBe('2026403');
+    expect(requestedUrl.searchParams.get('pub')).toBe('');
+  });
+
+  it('falls back to pub/issue/track when the docid lookup 404s', async () => {
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(new Response(null, { status: 404 }))
+      .mockResolvedValueOnce(new Response(okBody, { status: 200 }));
+
+    const response = await fetchPubMediaLinks(
+      {
+        docid: 2026403,
+        fileformat: 'MP4',
+        issue: 20260500,
+        langwritten: 'LSQ',
+        pub: 'w',
+        track: 4,
+      },
+      pubMediaUrl,
+    );
+
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+
+    const firstUrl = new URL(fetchSpy.mock.calls[0]?.[0] as string);
+    expect(firstUrl.searchParams.get('docid')).toBe('2026403');
+    expect(firstUrl.searchParams.get('pub')).toBe('');
+
+    const secondUrl = new URL(fetchSpy.mock.calls[1]?.[0] as string);
+    expect(secondUrl.searchParams.get('docid')).toBe('');
+    expect(secondUrl.searchParams.get('pub')).toBe('w');
+    expect(secondUrl.searchParams.get('issue')).toBe('20260500');
+    expect(secondUrl.searchParams.get('track')).toBe('4');
+
+    expect(response).not.toBeNull();
+  });
+
+  it('does not retry when there is no pub to fall back to', async () => {
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(new Response(null, { status: 404 }));
+
+    const response = await fetchPubMediaLinks(
+      { docid: 2026403, fileformat: 'MP4', langwritten: 'LSQ' },
+      pubMediaUrl,
+    );
+
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(response).toBeNull();
+  });
+
+  it('does not retry when the docid lookup succeeds', async () => {
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(new Response(okBody, { status: 200 }));
+
+    await fetchPubMediaLinks(
+      {
+        docid: 2026403,
+        fileformat: 'MP4',
+        issue: 20260500,
+        langwritten: 'LSQ',
+        pub: 'w',
+        track: 4,
+      },
+      pubMediaUrl,
+    );
+
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+});
+
+// Some configured Website hosts put WOL behind a bot challenge that answers
+// with an empty 202 until a real browser has passed it once.
+describe('fetchRaw bot challenge', () => {
+  const finderUrl = 'https://wol.example.test/wol/finder';
+  const challenge = () =>
+    new Response(null, {
+      headers: { 'x-amzn-waf-action': 'challenge' },
+      status: 202,
+    });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    clearFetchCache();
+  });
+
+  it('retries once after the main process clears the challenge', async () => {
+    const passSpy = vi
+      .spyOn(globalThis.electronApi, 'passWafChallenge')
+      .mockResolvedValue(true);
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(challenge())
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify(jwYeartext), { status: 200 }),
+      );
+
+    const result = await fetchYeartext('E', 'example.test');
+
+    expect(passSpy).toHaveBeenCalledWith(
+      expect.stringContaining(`${finderUrl}?`),
+    );
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+    expect(result.yeartext).toBe(jwYeartext.content);
+  });
+
+  it('returns the challenge as-is when it could not be cleared', async () => {
+    vi.spyOn(globalThis.electronApi, 'passWafChallenge').mockResolvedValue(
+      false,
+    );
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(challenge());
+
+    const response = await fetchRaw(finderUrl);
+
+    expect(response.status).toBe(202);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('never caches a challenge response', async () => {
+    vi.spyOn(globalThis.electronApi, 'passWafChallenge').mockResolvedValue(
+      false,
+    );
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockImplementation(async () => challenge());
+
+    await fetchRaw(finderUrl, undefined, true);
+    await fetchRaw(finderUrl, undefined, true);
+
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not involve the main process for a normal response', async () => {
+    const passSpy = vi.spyOn(globalThis.electronApi, 'passWafChallenge');
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response('{}', { status: 200 }),
+    );
+
+    await fetchRaw(finderUrl);
+
+    expect(passSpy).not.toHaveBeenCalled();
+  });
+});
+
+// A different Website must never fall back to jw.org.
+describe('getLibraryFilterUrl', () => {
+  it("builds the endpoint on the configured Website's own host", () => {
+    expect(
+      getLibraryFilterUrl(
+        'example.test',
+        'brochures',
+        'PseudoSearchViewsFilter',
+      ),
+    ).toBe(
+      'https://www.example.test/en/library/brochures/json/filters/PseudoSearchViewsFilter/',
+    );
+  });
+
+  it('returns no URL at all without a Website', () => {
+    expect(getLibraryFilterUrl('', 'magazines', 'IssueYearViewsFilter')).toBe(
+      '',
+    );
   });
 });

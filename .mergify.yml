@@ -10,6 +10,11 @@ queue_rules:
       - -files ~= ^(?!.*\.(md|json)$)
     merge_conditions:
       - -draft
+      - or:
+          - check-success = "docs:lint"
+          - check-neutral = "docs:lint"
+          - check-skipped = "docs:lint"
+          - -files ~= ^docs/
     batch_size: 10
   - name: bots
     queue_conditions:

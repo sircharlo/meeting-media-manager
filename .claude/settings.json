@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(source .env.sentry)",
+      "Bash(yarn vue-tsc --noEmit -p tsconfig.json*)",
+      "Bash(npx vue-tsc --noEmit -p tsconfig.json*)",
+      "Bash(yarn vitest run*)"
+    ]
+  }
+}

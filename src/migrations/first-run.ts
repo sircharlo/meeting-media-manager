@@ -12,7 +12,7 @@ import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import type { MigrationFunction } from './types';
 
 const { fs, getAppDataPath, join } = globalThis.electronApi;
-const { exists } = fs;
+const { pathExists } = fs;
 
 export const firstRun: MigrationFunction = async () => {
   try {
@@ -44,7 +44,7 @@ export const firstRun: MigrationFunction = async () => {
       await getAppDataPath(),
       'meeting-media-manager',
     );
-    if (await exists(oldVersionPath)) {
+    if (await pathExists(oldVersionPath)) {
       let oldPrefsPaths: string[];
       try {
         oldPrefsPaths = await getOldPrefsPaths(oldVersionPath);
@@ -124,7 +124,7 @@ export const firstRun: MigrationFunction = async () => {
     }
     return successfulMigration;
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, { contexts: { fn: { name: 'firstRun' } } });
     return false;
   }
 };

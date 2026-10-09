@@ -1,6 +1,7 @@
 import type { SettingsValues } from 'src/types';
 
 import { defaultSettings } from 'src/constants/settings';
+import { cloneMeetingQuickActionSettings } from 'src/utils/clone-settings';
 
 const PROFILE_SETTINGS_EXPORT_VERSION = 1;
 
@@ -76,10 +77,10 @@ export const normalizeProfileSettings = (value: unknown): SettingsValues => {
     );
   }
 
-  return {
+  return cloneMeetingQuickActionSettings({
     ...defaultSettings,
     ...importedSettings,
-  };
+  });
 };
 
 export const exportProfileSettingsToFile = async (

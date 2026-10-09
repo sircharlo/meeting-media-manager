@@ -16,7 +16,7 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 
 - ✨ Kokousajastin: Uusi kokousajastinominaisuus on lisätty. Valinnainen toiminto, voidaan ottaa käyttöön lisäasetuksissa. Ajastinta voidaan käyttää auttamaan mediaoperaattoria seuraamaan eri kokousosioihin käytettyä aikaa tai näyttämään kulunut aika nykyisessä kokousosiossa erillisellä näytöllä, joka on näkyvissä vain puhujalle.
 
-## v26,3.0
+## v26.3.0
 
 ### ✨ Mitä uutta
 
@@ -129,7 +129,7 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 - ✨ **Osion toistotila**: Mahdollistaa jatkuvan toiston tietyissä osioissa, jotta toistosta tulee saumaton.
 - ✨ **Zoom-integraatio**: Automaattinen näytönjaon käynnistys ja pysäytys median toiston yhteydessä.
 
-## v25,7,0
+## v25.7.0
 
 ### ✨ Mitä uutta
 

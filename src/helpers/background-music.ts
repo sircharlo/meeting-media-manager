@@ -22,6 +22,27 @@ interface SongQueueOptions {
   timeBeforeMeetingStart: number;
 }
 
+/**
+ * Shuffles songs randomly, giving songs with a higher track number (JW's
+ * song number in the songbook) a slightly higher chance of sorting earlier,
+ * so newer songs get played somewhat more often without excluding older
+ * ones. Uses the standard Efraimidis-Spirakis weighted sampling key
+ * (random()^(1/weight), sorted descending) rather than a flat random sort.
+ */
+function weightedShuffle(songs: SongItem[]): SongItem[] {
+  const maxTrack = Math.max(1, ...songs.map((song) => song.track ?? 0));
+  const TRACK_WEIGHT_BIAS = maxTrack * 0.5;
+
+  return songs
+    .map((song) => {
+      const normalizedTrack = (song.track ?? 0) / maxTrack;
+      const weight = 1 + normalizedTrack * TRACK_WEIGHT_BIAS;
+      return { key: Math.random() ** (1 / weight), song };
+    })
+    .sort((a, b) => b.key - a.key)
+    .map(({ song }) => song);
+}
+
 const getDebugTimestamp = () => new Date().toISOString();
 
 const getElapsedMilliseconds = (startedAt: number) => {
@@ -84,14 +105,48 @@ export function calculateOptimalSongQueue(
     let totalDuration = 0;
     const queue: SongItem[] = [];
 
+    // FE-16 (full-audit-2026-09-05.md): songLibrary.length never decreases
+    // (shift-then-push just cycles the same songs), so if every song's
+    // duration is 0/undefined (e.g. a malformed/incomplete JW.org API
+    // response for the songbook publication), totalDuration would never
+    // advance and this loop would spin forever with no `await` inside it,
+    // pinning the renderer's JS thread. No realistic library/available-time
+    // combination comes anywhere close to this many iterations, so the cap
+    // is a pure safety net, not a real constraint on normal queue building.
+    const MAX_QUEUE_BUILD_ITERATIONS = 10_000;
+    let iterations = 0;
+
     // Build the queue by cycling through songs until we exceed the available time
-    while (totalDuration < timeBeforeMeetingStart && songLibrary.length) {
+    while (
+      totalDuration < timeBeforeMeetingStart &&
+      songLibrary.length &&
+      iterations < MAX_QUEUE_BUILD_ITERATIONS
+    ) {
+      iterations += 1;
       const song = songLibrary.shift();
       if (!song) break;
 
       queue.unshift(song); // Add to beginning to maintain order
       songLibrary.push(song); // Add back to end for cycling
       totalDuration += song.duration ?? 0;
+    }
+
+    if (iterations >= MAX_QUEUE_BUILD_ITERATIONS) {
+      errorCatcher(
+        new Error(
+          'calculateOptimalSongQueue hit its iteration safety cap - songs may have a zero/invalid duration',
+        ),
+        {
+          contexts: {
+            fn: {
+              name: 'calculateOptimalSongQueue',
+              songLibraryLength: songLibrary.length,
+              timeBeforeMeetingStart,
+              totalDuration,
+            },
+          },
+        },
+      );
     }
 
     // Calculate how far into the first song we should start
@@ -186,6 +241,12 @@ export function extractMeetingDaySongs(
       })
       .filter((song): song is SongItem => !!song);
 
+    // Flag them so the UI can highlight which song(s) are scheduled to end
+    // right as the meeting starts, rather than just being regular filler.
+    meetingSongs.forEach((song) => {
+      song.isMeetingSong = true;
+    });
+
     logBackgroundMusicTiming('extract meeting day songs finished', startedAt, {
       meetingSongs: meetingSongs.length,
     });
@@ -207,9 +268,7 @@ export async function fetchSongLibrary(lang: JwLangCode): Promise<SongItem[]> {
       lang,
     });
 
-    const songs = (await fetchBackgroundMusicSongLibrary(lang)).sort(
-      () => Math.random() - 0.5,
-    );
+    const songs = weightedShuffle(await fetchBackgroundMusicSongLibrary(lang));
 
     logBackgroundMusicTiming('fetch API song library finished', startedAt, {
       songs: songs.length,
@@ -230,16 +289,26 @@ export function formatRemainingTime(seconds: number): string {
 }
 
 /**
- * Gets the next song from the queue
+ * Gets the next song from the queue.
+ *
+ * `requeue` controls what happens to the song once it's taken off the
+ * front: true cycles it back to the end for continuous ambient playback,
+ * false leaves it consumed. Meeting-day queues are built by
+ * calculateOptimalSongQueue() to run exactly up to fadeout time, with the
+ * meeting's own song(s) placed last - requeueing there would loop playback
+ * back around to earlier, non-meeting songs instead of naturally ending
+ * after the meeting song.
  */
 export async function getNextSongFromQueue(
   songQueue: SongItem[],
   currentSongTitle: (title: string) => void,
+  requeue = true,
 ): Promise<NextSongResult> {
   const startedAt = performance.now();
   try {
     logBackgroundMusicTiming('get next song from queue started', undefined, {
       queueLength: songQueue.length,
+      requeue,
     });
 
     if (!songQueue.length) {
@@ -252,8 +321,10 @@ export async function getNextSongFromQueue(
       return { nextSongUrl: '', secsFromEnd: 0 };
     }
 
-    // Add song back to end of queue for continuous play
-    songQueue.push(nextSong);
+    if (requeue) {
+      // Add song back to end of queue for continuous play
+      songQueue.push(nextSong);
+    }
 
     currentSongTitle(nextSong.title || basename(nextSong.path));
     const playbackUrlStartedAt = performance.now();

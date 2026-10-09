@@ -4,20 +4,33 @@
       class="bg-secondary-contrast flex medium-overlay q-px-none"
       style="flex-flow: column"
     >
-      <div class="text-h6 row q-px-md q-pt-lg">
+      <div
+        class="text-bigger text-semibold text-primary row q-px-md q-pt-lg items-center"
+      >
+        <div class="icon-chip q-mr-sm">
+          <q-icon name="mmm-music-note" size="xs" />
+        </div>
         <div class="col">
           {{ t('choose-a-song') }}
         </div>
         <div class="col-shrink">
           <q-btn
+            :aria-label="t('click-to-refresh-list')"
             color="primary"
             flat
             icon="mmm-cloud-done"
-            :loading="loading || !filteredSongs?.length"
+            :loading="loading"
             round
             size="sm"
             @click="startSongUpdate()"
-          />
+          >
+            <q-tooltip :delay="500">
+              <div>{{ t('click-to-refresh-list') }}</div>
+              <div v-if="songsUpdated">
+                {{ t('list-last-updated', { date: songsUpdated }) }}
+              </div>
+            </q-tooltip>
+          </q-btn>
         </div>
       </div>
       <div class="row q-px-md q-pt-md">
@@ -76,7 +89,7 @@
             @mouseout="if (!loading) hoveredSong = null;"
             @mouseover="if (!loading) hoveredSong = song.track;"
           >
-            <q-tooltip v-if="!loading" class="bg-black text-white">
+            <q-tooltip v-if="!loading">
               {{ song.title }}
             </q-tooltip>
           </q-btn>
@@ -84,12 +97,7 @@
       </div>
       <div class="row q-px-md q-py-md row">
         <div class="col text-right">
-          <q-btn
-            color="negative"
-            flat
-            :label="t('cancel')"
-            @click="dismissPopup"
-          />
+          <q-btn flat :label="t('cancel')" @click="dismissPopup" />
         </div>
       </div>
     </div>
@@ -164,6 +172,13 @@ const resetDialogState = () => {
   isProcessing.value = false;
 };
 
+const songsUpdated = computed(() => {
+  const lang = currentSettings.value?.lang;
+  const updated = lang ? jwStore.jwSongs[lang]?.updated : null;
+  if (!updated || new Date(updated).getTime() === 0) return undefined;
+  return new Date(updated).toLocaleString();
+});
+
 const filteredSongs = computed((): MediaLink[] => {
   if (filter.value) {
     const searchTerms = filter.value.toLowerCase().split(/\s+/).filter(Boolean);
@@ -197,16 +212,33 @@ const addSong = async (songTrack: number) => {
         getJwMediaInfo(songTrackItem),
       ]);
 
-      const files =
+      let files =
         songTrackFiles?.files?.[currentSettings.value?.lang || 'E']?.['MP4'] ||
         [];
+      let resolvedTitle = title;
+
+      // The live fetch can fail/return nothing on a flaky connection even
+      // though this exact song was already downloaded in a previous
+      // session - currentSongs is the same persisted list that populated
+      // this picker's buttons, so a match here is a real local file
+      // candidate (downloadFileIfNeeded short-circuits to it once
+      // filesize matches, no network needed).
+      if (!files.length) {
+        const cachedSong = currentSongs.value?.find(
+          (s) => s.track === songTrack,
+        );
+        if (cachedSong) {
+          files = [cachedSong];
+          resolvedTitle ||= cachedSong.title;
+        }
+      }
 
       // ✅ Always emit - parent handles section assignment
       emit('import', {
         files,
         songTrack,
         thumbnail,
-        title: title.replace(/^\d+\.\s*/, ''),
+        title: resolvedTitle.replace(/^\d+\.\s*/, ''),
       });
       resetDialogState();
       dialogValue.value = false;

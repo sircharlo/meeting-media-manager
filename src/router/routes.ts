@@ -29,14 +29,6 @@ const routes: RouteRecordRaw[] = [
   },
 
   mainChildRoute(
-    '/congregation-selector',
-    'congregation-selector',
-    'CongregationSelectorPage',
-    { icon: 'mmm-groups', title: 'titles.profileSelection' },
-    { alias: ['/initial-congregation-selector'] },
-  ),
-
-  mainChildRoute(
     '/media-calendar/:typeOfLoad?',
     'media-calendar',
     'MediaCalendarPage',

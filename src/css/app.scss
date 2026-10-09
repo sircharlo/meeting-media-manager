@@ -13,12 +13,9 @@
   @extend .one-hundred-vw;
 }
 
-.app-main-scroll {
-  height: calc(100vh - 56px);
-  margin-top: 56px;
-  overflow-x: hidden !important;
-  overflow-y: auto;
-  padding-top: 0 !important;
+.app-main-scroll,
+.action-popup__scroll,
+.feature-carousel__scroll {
   scrollbar-width: thin;
 
   &::-webkit-scrollbar {
@@ -36,7 +33,21 @@
   }
 }
 
-body.body--light .app-main-scroll {
+.app-main-scroll {
+  height: calc(100vh - 56px);
+  margin-top: 56px;
+  overflow-x: hidden !important;
+  overflow-y: auto;
+  padding-top: 0 !important;
+}
+
+.feature-carousel__scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+body.body--light .app-main-scroll,
+body.body--light .action-popup__scroll,
+body.body--light .feature-carousel__scroll {
   scrollbar-color: rgba($primary, 0.45) transparent;
 
   &::-webkit-scrollbar-thumb {
@@ -48,7 +59,9 @@ body.body--light .app-main-scroll {
   }
 }
 
-body.body--dark .app-main-scroll {
+body.body--dark .app-main-scroll,
+body.body--dark .action-popup__scroll,
+body.body--dark .feature-carousel__scroll {
   scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
 
   &::-webkit-scrollbar-thumb {
@@ -188,13 +201,20 @@ body.body--light {
     color: $accent-400;
   }
 
+  .text-primary-emphasis {
+    color: $primary;
+  }
+
   .list-primary .q-hoverable:hover {
     background: $accent-100 !important;
   }
 
   .media-section {
     background: white;
-    border: 1px solid $accent-300;
+    border: 1px solid color-mix(in srgb, $accent-300 45%, transparent);
+    box-shadow:
+      0px 2px 12px 0px rgba(35, 60, 120, 0.06),
+      0px 6px 20px 0px rgba(35, 60, 120, 0.05);
 
     & .q-item.selected-to-drag {
       background-color: $accent-200;
@@ -248,6 +268,17 @@ body.body--dark {
     color: $dark-grey-dark;
   }
 
+  // Quasar floats a field's label up into the primary theme color while
+  // it's focused (`.q-field--highlighted .q-field__label { color:
+  // currentColor }`, inheriting the field's `text-primary` class) - fine on
+  // the light background this color was tuned for, but low-contrast and
+  // hard to read against dark-mode field backgrounds. Unfocused labels use
+  // the default (already-legible) text color, so only this focused state
+  // needs a dark-mode-specific override.
+  .q-field--highlighted .q-field__label {
+    color: color-mix(in srgb, $primary 55%, white);
+  }
+
   .text-accent-200 {
     color: $accent-200-dark;
   }
@@ -260,6 +291,15 @@ body.body--dark {
     color: $accent-100-dark;
   }
 
+  // Same low-contrast-focused-label problem as the .q-field--highlighted
+  // override above, but for text that's directly `text-primary` on a
+  // dark-mode tinted background (e.g. NavDrawer's active nav item) rather
+  // than an inherited `currentColor` - same fix, brightened primary rather
+  // than the saturated brand blue tuned for light backgrounds.
+  .text-primary-emphasis {
+    color: color-mix(in srgb, $primary 55%, white);
+  }
+
   .text-secondary {
     color: $secondary-contrast !important;
   }
@@ -270,7 +310,10 @@ body.body--dark {
 
   .media-section {
     background: $dark;
-    border-color: $accent-100-dark;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+      0 2px 10px rgba(0, 0, 0, 0.35),
+      0 6px 20px rgba(0, 0, 0, 0.25);
 
     &
       .clip:not(.bg-accent-100):not(.bg-accent-100-transparent):not(
@@ -304,6 +347,14 @@ body.body--dark {
     background-color: $sorting-bg-dark !important;
     border-color: $sorting-border-dark !important;
   }
+
+  .q-menu,
+  .round-card {
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow:
+      0 2px 10px rgba(0, 0, 0, 0.35),
+      0 8px 24px rgba(0, 0, 0, 0.25);
+  }
 }
 
 .list-droppable {
@@ -325,7 +376,7 @@ body.body--dark {
   padding-top: 1em;
   padding-bottom: 1em;
   position: relative;
-  border-radius: 0.75em;
+  border-radius: 1.1em;
   margin-bottom: 1em;
 
   &:before {
@@ -422,6 +473,17 @@ body.body--dark {
   font-weight: 200;
 }
 
+// Normal-case, medium-weight section title. Used by MediaSectionHeader.vue
+// and PresentWebsite.vue. In both consumers the leading icon avatar is a
+// sibling element, not a child of this div (which wraps only the text run),
+// so this stays a plain single-child flex container.
+.section-title {
+  align-items: center;
+  display: flex;
+  font-size: 1.1em;
+  font-weight: 650;
+}
+
 .bg-white-transparent {
   background: $whiteTransparent;
 }
@@ -440,6 +502,21 @@ body.body--dark {
   border: 1px solid $accent-300;
   box-shadow: 0px 8px 24px 0px $shadow;
   font-size: 0.9em;
+}
+
+// Always light-on-dark (independent of body--light/body--dark), like native
+// OS/app tooltips (VSCode, Chrome, Slack) — a solid inverse chip reads the
+// same, unambiguously-elevated way over any background, without needing a
+// border or glow to separate it from the content underneath.
+.q-tooltip.q-tooltip--style {
+  padding: 0.45em 0.75em;
+  font-size: 0.85em;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: $secondary-contrast;
+  background: $secondary;
+  border-radius: $button-border-radius;
+  box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.2);
 }
 
 .super-rounded {
@@ -544,10 +621,14 @@ body.body--dark {
 .q-list,
 .q-notification,
 .q-time,
-.q-date,
-.q-item:focus-visible {
+.q-date {
   user-select: none;
   outline: none;
+}
+
+.q-item:focus-visible {
+  outline: 2px solid var(--q-primary);
+  outline-offset: -2px;
 }
 
 .q-dialog .q-list,
@@ -605,7 +686,9 @@ a {
   display: flex;
   flex-flow: column;
   overflow: hidden;
-  max-height: min(600px, max(250px, 64vh));
+  // Just under QMenu's own 65vh limit: a tall window gets a tall popup,
+  // rather than one capped at a fixed height that scrolls needlessly.
+  max-height: max(250px, 64vh);
 }
 
 .action-popup__scroll {
@@ -613,19 +696,315 @@ a {
   min-height: 0;
   overflow: auto;
   overscroll-behavior: contain;
+  // No space kept for a scrollbar that isn't there, which would stop the
+  // separators inside short of the popup's right edge.
 }
 
 .action-popup__footer {
   flex: 0 0 auto;
 }
 
-.media-tag {
-  min-width: 80px;
-  border-radius: 6px;
+// A soft wash of the button's own current color instead of a border, so
+// small icon-only actions still read as clearly filled/interactive at rest
+// without the stroked-ring look of an outline button. `currentColor` picks
+// up whatever text color the button already has (a Quasar text-* utility,
+// or a custom color like the per-section --bg-color), so this one class
+// works everywhere without needing a variant per color.
+.btn-tonal {
+  background: color-mix(in srgb, currentColor 16%, transparent);
 }
 
-.media-tag .q-chip__content {
+// A small tinted circle for a leading icon in a dialog header, colored via
+// the same currentColor trick as .btn-tonal - it inherits whatever text-*
+// color class its container already sets (e.g. text-negative, text-primary)
+// so one class works for every severity/intent without a modifier per color.
+.icon-chip {
+  align-items: center;
+  background: color-mix(in srgb, currentColor 15%, transparent);
+  border-radius: 0.75em;
+  display: flex;
+  flex-shrink: 0;
+  height: 2em;
   justify-content: center;
+  width: 2em;
+}
+
+// Same tint idiom as .icon-chip, but for a single line of truncating text
+// instead of a fixed-size icon - fills whatever width its flex parent gives
+// it (block, not shrink-to-fit) and expects an `.ellipsis` sibling class for
+// the actual overflow/text-overflow/white-space truncation. Pair with a
+// `q-tooltip` carrying the untruncated text.
+.text-chip {
+  background: color-mix(in srgb, currentColor 10%, transparent);
+  border-radius: 0.75em;
+  display: block;
+  min-width: 0;
+  padding: 0.35em 0.75em;
+  width: 100%;
+}
+
+// Hidden until its .hover-reveal-group ancestor is hovered (or focused, for
+// keyboard users - :focus-within so tabbing to the revealed control itself
+// keeps it visible), then fades in after a short pause so a passing cursor
+// doesn't flash it. Fade-out on mouse-leave/blur stays instant (no delay) -
+// only the appearing direction is delayed. Same idiom already used ad hoc by
+// the tag-chip pencil-hint badge and the congregation switcher's dots
+// button; reach for this shared pair instead of re-implementing it a third
+// time.
+.hover-reveal {
+  opacity: 0;
+}
+
+.hover-reveal-group:hover .hover-reveal,
+.hover-reveal-group:focus-within .hover-reveal {
+  opacity: 1;
+}
+
+// Cursor affordance for anything using @formkit/drag-and-drop's dragHandle
+// selector (see useMediaDragAndDrop.ts) - shared by media rows, group
+// headers and dividers, so it lives here instead of being copy-pasted into
+// each of their scoped styles.
+.media-drag-handle {
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+// UX-21 (full-audit-2026-09-05.md): this used to repaint an opaque swatch
+// (`--row-bg`, four hardcoded values) behind the icon cluster to fake a soft
+// edge against the text it overlaps - but Quasar's own hover/focus/ripple
+// feedback on the clickable row is a separate rendered layer, not a
+// background-color change, so no fixed swatch value could ever track it: the
+// exact moment the overlay fades in (hover/focus) is also the exact moment
+// the real backdrop shifts away from whatever flat color this last painted,
+// producing a visibly mismatched patch (confirmed against a user-reported
+// screenshot). Fixed by not faking a background at all - the overlay itself
+// is fully transparent now, and .fades-under-hover-actions (below) masks
+// the *text* it overlaps instead, so whatever's really behind the row
+// (hover tint, ripple, selection color) shows through naturally.
+.hover-actions-overlay {
+  padding: 2px 2px 2px 28px;
+  // Invisible (opacity: 0, via .hover-reveal) still means "present in the
+  // DOM" - without this, invisible icons sit in front of whatever's
+  // underneath (e.g. a title's dblclick-to-rename) and eat its clicks.
+  pointer-events: none;
+}
+
+.hover-reveal-group:hover .hover-actions-overlay,
+.hover-reveal-group:focus-within .hover-actions-overlay {
+  pointer-events: auto;
+}
+
+// Fades a text element's own right edge to transparent over the last 56px -
+// wide enough to clear .hover-actions-overlay's icon cluster (drag handle +
+// "..." button) - instead of that overlay faking a background to hide a hard
+// clip edge. Apply to whatever text sits underneath the overlay (a
+// `position: relative` ancestor shared with it, sized to overlap). Covers
+// the element's *full* height deliberately (not just the icon cluster's own
+// line) - .hover-actions-overlay is `.absolute-right` (top/right/bottom: 0),
+// stretching its hit area the full height of that shared ancestor, so a
+// wrapped multi-line title can bring any of its lines under the cluster and
+// all of them need to be safe to overlap.
+//
+// `to right` is deliberate, not `to left`: a linear-gradient's percentage
+// stops run from the *start* side (opposite the `to` keyword) to the `to`
+// side, so `to left` would put the `calc(100% - 56px)` stop 56px from the
+// *left* edge and fade that side instead - confirmed against a
+// user-reported screenshot showing the fade on the wrong (left) side of the
+// title, nowhere near the "..." cluster on the right.
+//
+// Both states share one gradient shape (`to right`, opaque then transparent)
+// and only differ in the opaque stop's position, so `mask-image` itself can
+// transition smoothly between them - snapping straight from "no mask" to
+// "masked" wouldn't. The transition-delay is only set on the hover/focus
+// rule (mirroring .hover-reveal below) so leaving reverts instantly on the
+// base rule's un-delayed transition, but entering waits the same 400ms as
+// the icon cluster's own fade-in before softening the text, so the two
+// appear in sync instead of the text dimming before the icons are visible.
+.fades-under-hover-actions {
+  mask-image: linear-gradient(to right, #000 100%, transparent);
+}
+
+.hover-reveal-group:hover .fades-under-hover-actions,
+.hover-reveal-group:focus-within .fades-under-hover-actions {
+  // Electron-only (browserslist: "Electron >= 37") - no -webkit- prefix
+  // needed for mask-image at that Chromium baseline.
+  mask-image: linear-gradient(to right, #000 calc(100% - 104px), transparent);
+}
+
+// A solid, opaque selection badge for grid/thumbnail multiselect UIs (photo-
+// picker style: click a thumbnail to toggle it, selected ones get this
+// corner checkmark) - deliberately not .icon-chip's translucent currentColor
+// tint, since that only reads well over a plain surface and can nearly
+// disappear over a bright/light thumbnail image sitting behind it. Solid
+// fill + a white ring keeps it visible regardless of what's underneath.
+// Expects a `position: relative` (or Quasar's .relative-position) ancestor.
+.grid-select-check {
+  align-items: center;
+  background: var(--q-primary);
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  display: flex;
+  height: 22px;
+  justify-content: center;
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  width: 22px;
+}
+
+.media-tag {
+  border-radius: 11px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  height: 48px;
+  overflow: hidden;
+  position: relative;
+  width: 44px;
+}
+
+// Reserves the live-preview chip's footprint in the tag-edit dialog
+// (MediaItem.vue) so the dialog's height stays constant whether or not a
+// chip is currently rendered - a dashed outline of the same dimensions
+// stands in for it when there's no type/value to preview yet. Also reused
+// (as a plain fixed-width cell, no chip inside) for the "Preview" caption
+// above it, so the caption and the chip/ghost stay centered on each other.
+.tag-preview-slot {
+  flex-shrink: 0;
+  width: 44px;
+}
+
+.media-tag-ghost {
+  border: 2px dashed $accent-300;
+  border-radius: 11px;
+  height: 48px;
+  width: 44px;
+}
+
+body.body--dark .media-tag-ghost {
+  border-color: $accent-300-dark;
+}
+
+// Matches the value field's outlined box to the 48px-tall preview chip next
+// to it, so the two line up instead of the (shorter, dense-by-default) field
+// looking mismatched against its own preview. Needs `height` (not
+// min-height) on both elements Quasar's own dense-mode rule targets:
+// `.q-field__control-container` sets `height: inherit`, copying whatever
+// `.q-field__control`'s computed `height` property is - min-height alone
+// grows the rendered box but leaves that computed value (and everything
+// that inherits it) still pinned to Quasar's dense 40px, so the border grows
+// while the label/input content inside stays confined to the old height.
+.tag-value-input.q-field--dense .q-field__control,
+.tag-value-input.q-field--dense .q-field__marginal {
+  height: 48px;
+}
+
+// The tag-type segmented toggle (MediaItem.vue) otherwise renders inactive
+// options with a transparent background, which just shows the dialog's own
+// white card behind them - flat and disconnected from the rest of the app's
+// tonal-surface language (icon-chip, .btn-tonal, the accent-100 field right
+// below it). Giving inactive segments the same accent-100 wash as that field
+// ties the whole control together; the active segment's own .bg-primary
+// class (from toggle-color="primary") is left untouched.
+.tag-type-toggle {
+  border-radius: $generic-border-radius;
+  overflow: hidden;
+
+  .q-btn:not(.bg-primary) {
+    background: $accent-100;
+  }
+}
+
+body.body--dark .tag-type-toggle .q-btn:not(.bg-primary) {
+  background: $accent-100-dark;
+}
+
+// The tag is editable via a single click, but nothing about its resting
+// state says so - this pencil badge fades in on hover as a discoverability
+// hint.
+.media-tag__edit-badge {
+  background: $primary;
+  border-radius: 50%;
+  color: white;
+  opacity: 0;
+  padding: 2px;
+  // `opacity: 0` (unlike `visibility: hidden`) leaves the element hit-
+  // testable, so without this it's a real, invisible click target at rest -
+  // disabled here and re-enabled only once actually revealed below.
+  pointer-events: none;
+  position: absolute;
+  // Inset rather than overlapping the edge: .media-tag has overflow:hidden
+  // (needed to clip its own icon/value sections' corners), so a badge
+  // positioned outside the box - as this originally was - gets clipped
+  // and never actually shows.
+  right: 2px;
+  top: 2px;
+  transition: opacity 150ms ease;
+}
+
+.media-tag:hover .media-tag__edit-badge {
+  opacity: 1;
+  pointer-events: auto;
+  // Only the fade-IN is delayed (hovering briefly while passing over the
+  // item shouldn't flash the badge); fading back out on mouse-leave stays
+  // instant since that transition-delay isn't set on this base rule.
+  transition-delay: 400ms;
+}
+
+.media-tag__icon,
+.media-tag__value {
+  align-items: center;
+  display: flex;
+  flex: 1 1 0;
+  justify-content: center;
+  min-height: 0;
+  overflow: hidden;
+  width: 100%;
+}
+
+.media-tag__icon {
+  font-size: 18px;
+}
+
+.media-tag__value {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  padding: 0 3px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Icon-only tags carry no content (source/provenance markers, e.g. watched
+// or fetched-as-additional-media) and sit next to the transport controls, so
+// they stay small and quiet rather than competing with the play button.
+.media-tag--icon-only {
+  border-radius: 8px;
+  height: 26px;
+  width: 26px;
+}
+
+.media-tag--icon-only .media-tag__icon {
+  flex: 1 1 100%;
+  font-size: 13px;
+}
+
+// Song tag's value text picks up the cap's blue instead of the default ink
+// color, so the number reads as part of the same tag as the note icon above
+// it. Set explicitly (rather than the text-accent-* utilities) because those
+// are remapped for use on the page background, not on this chip's own
+// bg-accent-200 fill, and collide with it in dark mode.
+.media-tag--song .media-tag__value {
+  color: $accent-400;
+}
+
+body.body--dark .media-tag--song .media-tag__value {
+  color: $accent-200;
 }
 
 .q-menu .q-item__section--avatar,
@@ -641,7 +1020,6 @@ a {
 
 .time-duration {
   font-size: 0.9em;
-  color: $accent-300;
 }
 
 .text-smaller {
@@ -689,14 +1067,6 @@ a {
 
 .study-bible-item-selected {
   border-color: $primary;
-}
-
-.study-bible-item-selected .q-checkbox {
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 0;
-  background: transparent;
 }
 
 .study-bible-item .q-badge {

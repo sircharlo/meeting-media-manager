@@ -6,7 +6,7 @@ import type { MigrationFunction } from './types';
 export const refreshDynamicMedia: MigrationFunction = async () => {
   try {
     // Refresh dynamic media for all congregations
-    updateLookupPeriod({ allCongregations: true, reset: true });
+    updateLookupPeriod({ multipleCongregations: true, reset: true });
     return true;
   } catch (error) {
     errorCatcher(error, {

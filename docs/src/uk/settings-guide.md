@@ -2,7 +2,7 @@
 
 This comprehensive guide explains all the settings available in M³, organized by category. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
 
-## Application Configuration {#application-configuration}
+## General {#application-configuration}
 
 ### Display Language {#display-language}
 
@@ -140,7 +140,7 @@ The week of the next circuit overseer's visit.
 
 <!-- **Setting**: `memorialDate` -->
 
-Дата наступного святкування Меморіалу.
+The date of the next Memorial celebration.
 
 **Format**: MM/DD/YYYY
 
@@ -157,21 +157,27 @@ These settings allow you to configure temporary changes to your meeting schedule
 - **New Weekend Day**: New day for weekend meeting
 - **New Weekend Time**: New time for weekend meeting
 
-### Автоматичні оновлення Зустрічей {#automatic-meeting-schedule-updates}
+### Automatic Meeting Schedule Updates {#automatic-meeting-schedule-updates}
 
 <!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
 
-Коли відмічено, M3 періодично перевіряє офіційний сайт Свідок Єгови на зустріч і час змін у часі та оновлює поточний профіль автоматично.
+When enabled, M³ periodically checks the official website of Jehovah's Witnesses for meeting day and time changes and updates the current profile automatically.
 
-Це працює лише для профілів, які були додані до перегляду зборів і назва збори яких не було змінено вручну. Якщо синхронізацію було вимкнено через зміну назви збірок - використовуйте **Увімкнути синхронізацію розкладу**, щоб зв'язати профіль знову.
+This only works for profiles that were added with congregation lookup and whose congregation name has not been manually changed. If synchronization was disabled because the congregation name changed, use **Enable schedule sync** to link the profile again.
 
-#### Оновити Розклад Зустрічей {#refresh-meeting-schedule}
+#### Enable Schedule Sync {#relink-congregation}
+
+<!-- **Setting**: `relinkCongregationButton` -->
+
+Re-links the current profile to congregation lookup so automatic meeting day and time updates can resume. Only shown once the congregation name has been changed manually, since that's what breaks the link in the first place.
+
+#### Refresh Meeting Schedule {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
-Синхронізуйте поточний і майбутній графік зустрічі з інформацією з офіційного веб-сайту.
+Manually synchronize the current and future meeting schedule with the information from the official website.
 
-## Media Retrieval and Playback {#media-retrieval-and-playback}
+## Media & Playback {#media-retrieval-and-playback}
 
 ### Metered Connection {#metered-connection}
 
@@ -189,11 +195,11 @@ Enable the media display functionality. This is required to present media on a s
 
 **Default**: `false`
 
-#### Увімкнути Media Preview {#enable-media-preview}
+#### Enable Media Preview {#enable-media-preview}
 
 <!-- **Setting**: `enableMediaPreview` -->
 
-Показувати прев'ю вікна в реальному часі, коли відображається зображення або відео.
+Show a live preview of the media window while an image or video is being displayed.
 
 **Default**: `true`
 
@@ -241,6 +247,107 @@ Volume level for background music (1-100%).
 
 **Default**: 100%
 
+### Playback and Download Options {#media-display}
+
+<!-- This section covers mediaRetrievalPlayback's `media-display` settings subgroup -
+these control the media window's playback behavior and which downloaded media is
+filtered out, as distinct from the "Media Display" section above (which is about
+whether the media window feature is enabled at all). -->
+
+#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+
+<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+
+Enable fade-in/out transitions when showing or hiding the media window.
+
+**Default**: `true`
+
+#### Enable Playback Speed Control {#enable-playback-speed-control}
+
+<!-- **Setting**: `enablePlaybackSpeedControl` -->
+
+Allow audio and video playback speed to be adjusted from the media item's context menu.
+
+**Default**: `false`
+
+#### Hide Media Logo {#hide-media-logo}
+
+<!-- **Setting**: `hideMediaLogo` -->
+
+Hide the logo in the media window.
+
+**Default**: `false`
+
+#### Maximum Resolution {#maximum-resolution}
+
+<!-- **Setting**: `maxRes` -->
+
+Maximum resolution for downloaded media files.
+
+**Options**: 240p, 360p, 480p, 720p, 1080p
+
+**Default**: 720p
+
+#### Include Printed Media {#include-printed-media}
+
+<!-- **Setting**: `includePrinted` -->
+
+Include media from the printed publications in media downloads.
+
+**Default**: `true`
+
+#### Exclude Footnotes {#exclude-footnotes}
+
+<!-- **Setting**: `excludeFootnotes` -->
+
+Exclude footnote images from media downloads when possible.
+
+**Default**: `false`
+
+#### Exclude Additional Watchtower Study Videos {#exclude-additional-watchtower-study-videos}
+
+<!-- **Setting**: `excludeWtParagraphVideos` -->
+
+Exclude additional videos that are referenced in Watchtower Study paragraphs.
+
+**Default**: `false`
+
+#### Exclude Congregation Bible Study Videos {#exclude-cbs-pubs}
+
+<!-- **Setting**: `excludeCbsPubs` -->
+
+Choose publications whose referenced videos should not be shown during the Congregation Bible Study. Search by publication title or symbol.
+
+**Default**: Walk Courageously With God (`wcg`)
+
+#### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
+
+<!-- **Setting**: `excludeTh` -->
+
+Exclude media from the Teaching (th) brochure from media downloads.
+
+**Default**: `true`
+
+### Subtitles {#subtitles}
+
+#### Enable Subtitles {#enable-subtitles}
+
+<!-- **Setting**: `enableSubtitles` -->
+
+Enable subtitle support for media playback.
+
+**Default**: `false`
+
+#### Subtitle Language {#subtitle-language}
+
+<!-- **Setting**: `langSubtitles` -->
+
+Language for subtitles (can be different from media language).
+
+**Options**: All available languages from the official website of Jehovah's Witnesses
+
+**Default**: None
+
 ### Cache Management {#cache-management}
 
 #### Enable Extra Cache {#enable-extra-cache}
@@ -267,6 +374,50 @@ Automatically clear old cached files to save disk space.
 
 **Default**: `true`
 
+### Pinyin Song Titles {#pinyin-song-titles}
+
+#### Prefer Pinyin Songs {#enable-pinyin-songs}
+
+<!-- **Setting**: `enablePinyinSongs` -->
+
+When a pinyin version of a meeting song is found in the pinyin song folder, use it instead of the standard song.
+
+**Default**: `false`
+
+#### Pinyin Song Folder {#pinyin-song-folder}
+
+<!-- **Setting**: `pinyinSongFolder` -->
+
+Folder containing pinyin video songs (e.g. `sjjm_s-Pi_CHS_066_r720P.mp4`). When a pinyin file matching the meeting song number is found, it will be played instead of the standard song.
+
+**Default**: Empty
+
+### Media Export {#settings-guide-media-export}
+
+#### Enable Media Auto-Export {#enable-media-auto-export}
+
+<!-- **Setting**: `enableMediaAutoExport` -->
+
+Automatically export media files to a specified folder.
+
+**Default**: `false`
+
+#### Media Export Folder {#media-export-folder}
+
+<!-- **Setting**: `mediaAutoExportFolder` -->
+
+Folder path where media files will be automatically exported.
+
+**Default**: Empty
+
+#### Convert Files to MP4 {#convert-files-to-mp4}
+
+**Setting**: `convertFilesToMp4`
+
+Convert exported media files to MP4 format for better compatibility.
+
+**Default**: `false`
+
 ### Folder Monitoring {#settings-guide-folder-monitoring}
 
 #### Enable Folder Watcher {#enable-folder-watcher}
@@ -284,6 +435,40 @@ Monitor a folder for new media files and automatically add them to M³.
 The folder path to monitor for new media files.
 
 **Default**: Empty
+
+## Meeting Timer {#meeting-timer}
+
+### Enable Meeting Timer {#enable-meeting-timer}
+
+<!-- **Setting**: `enableTimerDisplay` -->
+
+Enable a separate timer window for timing meeting parts. This is a beta feature and should only be enabled if approved locally.
+
+**Default**: `false`
+
+### Timer Window Behavior {#timer-window-behavior}
+
+<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
+
+Configure whether the timer window opens automatically, whether participant timers count up or down by default, whether the clock uses 12-hour or 24-hour time, and whether the current timer value is shown on the action island timer button.
+
+### Timer Display Formats {#timer-display-formats}
+
+<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
+
+Choose analog or digital display formats for the time of day and countdown timers. The countdown warning indicator can shift the analog countdown ring toward a warning color during the final minute.
+
+### Meeting Countdown and Schedule Status {#meeting-countdown-and-schedule-status}
+
+<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
+
+Show a countdown before scheduled meetings and optionally display whether the meeting is ahead of or behind schedule. The meeting countdown appears only on the timer display, not on the main media display.
+
+### Timer Appearance and Overtime {#timer-appearance-and-overtime}
+
+<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
+
+Customize the timer text size and colors, and configure overtime indicators such as alternate colors, blinking, and showing only the elapsed overtime amount in count-up mode.
 
 ## Integrations {#integrations}
 
@@ -304,6 +489,14 @@ Enable Zoom meeting integration features.
 Keyboard shortcut to trigger Zoom screen sharing.
 
 **Default**: None
+
+#### Auto-Focus Media Window {#zoom-auto-focus-media-window}
+
+<!-- **Setting**: `zoomAutoFocusMediaWindow` -->
+
+Automatically focus the media window after Zoom screen sharing starts. This is usually not required, but can help on some systems if the media window regularly loses focus after screen sharing starts.
+
+**Default**: `false`
 
 ### OBS Studio Integration {#settings-guide-obs-integration}
 
@@ -354,7 +547,7 @@ Configure which OBS scenes to use for different purposes:
 - **Switch Scene After Media**: Automatically return to previous scene after media
 - **Remember Previous Scene**: Remember and restore the previous scene
 - **Hide Icons**: Hide OBS-related icons in the interface
-- **Керування записом**: Показати управління, що починаються і припиняють OBS запис з M3
+- **Recording Controls**: Show controls that start and stop OBS recording from M³
 
 :::warning Important Note
 
@@ -408,59 +601,25 @@ Shortcut that is triggered when the last song is played during a meeting.
 
 **Default**: None
 
-### Записи зустрічей {#meeting-recordings}
+### Meeting Recordings {#meeting-recordings}
 
-#### Увімкнути інтеграцію з зовнішніми записами {#enable-external-recording-app-integration}
+#### Enable External Recording App Integration {#enable-external-recording-app-integration}
 
 <!-- **Setting**: `recordingEnable` -->
 
-Дозвольте M3 керувати окремим записуванням застосунком за допомогою гарячих клавіш. Це не записується всередині M3 ; він надсилає налаштовані ярлики при натисканні **Почати запис** або **Зупинити запис** в спливаючому вікні наради записів.
+Let M³ control a separate recording application with keyboard shortcuts. This does not record inside M³; it sends the configured shortcuts when you press **Start Recording** or **Stop Recording** in the meeting recordings popup.
 
-Ця опція прихована, коли активовано керування OBS записом. Якщо ви використовуєте OBS Studio, використовуйте кнопки запису OBS в інтеграції з OBS.
+This option is hidden when OBS recording controls are enabled. If you use OBS Studio, use the OBS recording controls in the OBS integration instead.
 
 **Default**: `false`
 
-#### Комбінації записів ярликів і теки {#recording-shortcuts-and-folder}
+#### Recording Shortcuts and Folder {#recording-shortcuts-and-folder}
 
 <!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
 
-Налаштуйте комбінацію клавіатури, що починають записувати, необов'язковий ярлик, який зупиняє запис і папку, де зовнішня програма зберігає записи. Якщо не надано ярлик зупинки, M3 повторно використовує ярлик запуску. Коли папка налаштована, M3 показує кнопку для відкриття.
+Configure the keyboard shortcut that starts recording, the optional shortcut that stops recording, and the folder where the external app saves recordings. If no stop shortcut is provided, M³ reuses the start shortcut. When a folder is configured, M³ shows a button to open it.
 
-### Таймер зустрічі {#meeting-timer}
-
-#### Увімкнути таймер зустрічі {#enable-meeting-timer}
-
-<!-- **Setting**: `enableTimerDisplay` -->
-
-Увімкніть окреме вікно таймера для розділів зустрічей. Це є бета-функція і має бути увімкнена лише за умови затвердження локально.
-
-**Default**: `false`
-
-#### Поведінка Вікна Таймера {#timer-window-behavior}
-
-<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
-
-Налаштуйте чи вікно таймера відкривається автоматично, чи рахуються таймери учасників за замовчуванням чи використовує годинник 12-годинний або 24-годинний час, і чи відображається поточний таймер значення таймера на таймері на острові дії.
-
-#### Формат відображення таймера {#timer-display-formats}
-
-<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
-
-Вибір аналогового або цифрового форматів для часу доби і зворотного відліку. Індикатор попередження зворотного відліку може змістити аналоговий відлік до кольору попередження протягом останньої хвилини.
-
-#### Зворотний відлік зустрічі та запланований статус {#meeting-countdown-and-schedule-status}
-
-<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
-
-Показати зворотний відлік до запланованих зустрічей і навмисно позначати чи нараду випереджав за розкладом. Зворотний відлік зустрічі з'являється лише на дисплеї таймера, а не на головному медіадисплеї.
-
-#### Вигляд таймера і протягом наступного часу {#таймер-зовнішній і оверчас} {#timer-appearance-and-overtime}
-
-<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
-
-Налаштуйте розмір і кольори таймера, і налаштуйте накладні індикатори часу, такі як альтернативні кольори, блимання і відображення лише минулу загальну кількість часу у режимі реального часу.
-
-## Advanced Settings {#advanced-settings}
+## Interface & Shortcuts {#interface-shortcuts}
 
 ### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
 
@@ -483,123 +642,51 @@ Configure shortcuts for media playback:
 - **Stop Media**: Stop media playback
 - **Music Toggle**: Toggle background music
 
-### Media Display {#media-display}
+### Add More Media Button {#add-more-media-button}
 
-#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+#### Sections with an Add Media Button {#add-media-button-sections}
 
-<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+<!-- **Setting**: `addMediaButtonSections` -->
 
-Enable fade-in/out transitions when showing or hiding the media window.
+Choose which meeting sections show their own button for adding your own media, in addition to the "Add media" button in the top toolbar, which always works for every section.
 
-**Default**: `true`
+**Default**: Public Talk, Living as Christians, Circuit Overseer's Visit, and Custom sections
 
-#### Ввімкнути контроль швидкості Playback {#enable-playback-speed-control}
+#### Compact Add Media Button {#compact-add-media-button}
 
-<!-- **Setting**: `enablePlaybackSpeedControl` -->
+<!-- **Setting**: `compactAddMediaButton` -->
 
-Дозволити змінювати швидкість відтворення аудіо і відео з контекстного меню медіа-елемента.
-
-**Default**: `false`
-
-#### Hide Media Logo {#hide-media-logo}
-
-<!-- **Setting**: `hideMediaLogo` -->
-
-Hide the logo in the media window.
-
-**Default**: `false`
-
-#### Maximum Resolution {#maximum-resolution}
-
-<!-- **Setting**: `maxRes` -->
-
-Maximum resolution for downloaded media files.
-
-**Додатки**: 240p, 360p, 480p, 720p, 1080p
-
-**Default**: 720p
-
-#### Include Printed Media {#include-printed-media}
-
-<!-- **Setting**: `includePrinted` -->
-
-Include media from the printed publications in media downloads.
+Only show an icon for the "Add more media"/"Add a song" button in section headers. When disabled, the button also shows text alongside the icon when there's enough room.
 
 **Default**: `true`
 
-#### Exclude Footnotes {#exclude-footnotes}
+### Media Drag Handle {#media-drag-handle}
 
-<!-- **Setting**: `excludeFootnotes` -->
+#### Show Drag Handle {#show-media-drag-handle}
 
-Exclude footnote images from media downloads when possible.
+<!-- **Setting**: `showMediaDragHandle` -->
 
-**Default**: `false`
-
-#### Виключати додаткові навчальні відео для спостереження спостереження {#exclude-additional-watchtower-study-videos}
-
-<!-- **Setting**: `excludeWtParagraphVideos` -->
-
-Не включати додаткові відео, на які посилаються у Сторожовій Вежі для вивчення абзац.
-
-**Default**: `false`
-
-#### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
-
-<!-- **Setting**: `excludeTh` -->
-
-Exclude media from the Teaching (th) brochure from media downloads.
+Show a small handle on each media item for dragging it to reorder. Media items can always be reordered by dragging anywhere on them; this only affects whether the handle icon itself is shown.
 
 **Default**: `true`
 
-### Subtitles {#subtitles}
+### Before/After Meeting Quick Actions {#before-after-meeting-quick-actions}
 
-#### Enable Subtitles {#enable-subtitles}
+#### Show Meeting Quick Actions {#enable-meeting-quick-actions}
 
-<!-- **Setting**: `enableSubtitles` -->
+<!-- **Setting**: `enableMeetingQuickActions` -->
 
-Enable subtitle support for media playback.
+Show a before-meeting panel and an after-meeting panel with useful controls (background music, recording) and a customizable checklist for each.
 
-**Default**: `false`
+**Default**: `true`
 
-#### Subtitle Language {#subtitle-language}
+The checklist categories and tasks for both the before-meeting and after-meeting panels are managed from this same settings section: add, rename, reorder, or delete categories and tasks as needed for your congregation.
 
-<!-- **Setting**: `langSubtitles` -->
+## Advanced {#advanced-settings}
 
-Language for subtitles (can be different from media language).
+### Profile Settings Transfer {#profile-settings-transfer}
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
-
-**Default**: None
-
-### Media Export {#settings-guide-media-export}
-
-#### Enable Media Auto-Export {#enable-media-auto-export}
-
-<!-- **Setting**: `enableMediaAutoExport` -->
-
-Automatically export media files to a specified folder.
-
-**Default**: `false`
-
-#### Media Export Folder {#media-export-folder}
-
-<!-- **Setting**: `mediaAutoExportFolder` -->
-
-Folder path where media files will be automatically exported.
-
-**Default**: Empty
-
-#### Convert Files to MP4 {#convert-files-to-mp4}
-
-**Setting**: `convertFilesToMp4`
-
-Convert exported media files to MP4 format for better compatibility.
-
-**Default**: `false`
-
-### Налаштування профілю передачі {#profile-settings-transfer}
-
-Експортувати поточні налаштування профілю в JSON файл або імпортувати раніше експортований файл профілю. Імпорт замінює параметри поточного профілю.
+Export the current profile's settings to a JSON file or import a previously exported profile settings file. Importing replaces the current profile's settings.
 
 ### Danger Zone {#danger-zone}
 
@@ -617,19 +704,19 @@ Base domain used to download publications and media.
 
 **Default**: `jw.org`
 
-#### Вимкнути апаратне прискорення {#disable-hardware-acceleration}
+#### Disable Hardware Acceleration {#disable-hardware-acceleration}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
-Вимкнути апаратне прискорення після перезапуску M3. Це може допомогти з графічними збоями або збоями в деяких системах, але в іншому випадку не рекомендується.
+Disable hardware acceleration after restarting M³. This may help with graphical glitches or crashes on some systems, but is not otherwise recommended.
 
 **Default**: `false`
 
-#### Ігнорувати апаратне прискорення {#suppress-hardware-acceleration-reminder}
+#### Suppress Hardware Acceleration Reminder {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
-Сховати нагадування про повторне увімкнення апаратного прискорення після того, як це було вручну вимкнено.
+Hide the reminder to re-enable hardware acceleration after it has been manually disabled.
 
 **Default**: `false`
 

@@ -11,6 +11,7 @@ interface Store {
   currentSceneType: ObsSceneType;
   obsConnectionState: ObsConnectionState;
   obsMessage: string;
+  obsSceneListError: boolean;
   previousScene: string;
   scenes: JsonObject[];
 }
@@ -41,6 +42,7 @@ export const useObsStateStore = defineStore('obs-state', {
       currentSceneType: 'camera',
       obsConnectionState: 'notConnected',
       obsMessage: '',
+      obsSceneListError: false,
       previousScene: '',
       scenes: [],
     };

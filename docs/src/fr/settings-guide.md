@@ -2,7 +2,7 @@
 
 Ce guide complet explique tous les paramètres disponibles dans M³, organisés par catégorie. Comprendre ces paramètres vous aidera à configurer M³ pour qu'il fonctionne parfaitement selon les besoins de votre assemblée locale.
 
-## Configuration de l'application {#application-configuration}
+## Général {#application-configuration}
 
 ### Langue d'affichage {#display-language}
 
@@ -165,13 +165,19 @@ Lorsque cette fonction est activée, M³ consulte régulièrement le site offici
 
 Cela ne fonctionne que pour les profils qui ont été ajoutés via la recherche d'assemblées locales et dont le nom de l'assemblée locale n'a pas été modifié manuellement. Si la synchronisation a été désactivée en raison d'un changement de nom de l'assemblée locale, utilisez l'option **Activer la synchronisation des horaires** pour reconnecter le profil.
 
+#### Activer la synchronisation des horaires {#relink-congregation}
+
+<!-- **Setting**: `relinkCongregationButton` -->
+
+Réassocie le profil actuel à la recherche d'assemblée locale afin que les mises à jour automatiques des jours et heures de réunion puissent reprendre. Cette option n'apparaît qu'une fois que le nom de l'assemblée a été modifié manuellement, car c'est précisément cette modification qui provoque la rupture du lien.
+
 #### Rafraîchir l'horaire de la réunion {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
 Synchronisez manuellement l'horaire actuel des réunions et celui à venir avec les informations disponibles sur le site officiel.
 
-## Récupération et lecture des médias {#media-retrieval-and-playback}
+## Médias et lecture {#media-retrieval-and-playback}
 
 ### Connexion limitée {#metered-connection}
 
@@ -241,6 +247,107 @@ Niveau de volume pour la musique de fond (1-100%).
 
 **Par défaut** : 100%
 
+### Options de lecture et de téléchargement {#media-display}
+
+<!-- This section covers mediaRetrievalPlayback's `media-display` settings subgroup -
+these control the media window's playback behavior and which downloaded media is
+filtered out, as distinct from the "Media Display" section above (which is about
+whether the media window feature is enabled at all). -->
+
+#### Activer la transition en fondu lors du masquage ou de l'affichage de la fenêtre des médias {#enable-media-window-fade-transitions}
+
+<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+
+Lorsque activé, la fenêtre des médias se cachera et apparaîtra en douceur au lieu de ce faire instantanément. Cela offre une expérience visuelle plus raffinée.
+
+**Par défaut** : `vrai`
+
+#### Activer le contrôle de vitesse de lecture {#enable-playback-speed-control}
+
+<!-- **Setting**: `enablePlaybackSpeedControl` -->
+
+Permettre de régler la vitesse de lecture audio et vidéo à partir du menu contextuel de l'élément média.
+
+**Par défaut** : `faux`
+
+#### Masquer le logo des médias {#hide-media-logo}
+
+<!-- **Setting**: `hideMediaLogo` -->
+
+Masquer le logo dans la fenêtre multimédia.
+
+**Par défaut** : `faux`
+
+#### Résolution maximale {#maximum-resolution}
+
+<!-- **Setting**: `maxRes` -->
+
+Résolution maximale pour les fichiers multimédias téléchargés.
+
+**Options** : 240p, 360p, 480p, 720p, 1080p
+
+**Par défaut** : 720p
+
+#### Inclure les médias imprimés {#include-printed-media}
+
+<!-- **Setting**: `includePrinted` -->
+
+Inclure les médias des publications imprimées dans les téléchargements de médias.
+
+**Par défaut** : `vrai`
+
+#### Exclure les notes de bas de page {#exclude-footnotes}
+
+<!-- **Setting**: `excludeFootnotes` -->
+
+Exclure les images de notes de bas de page des téléchargements de médias quand c'est possible.
+
+**Par défaut** : `faux`
+
+#### Exclure les vidéos supplémentaires de La Tour de Garde {#exclude-additional-watchtower-study-videos}
+
+<!-- **Setting**: `excludeWtParagraphVideos` -->
+
+Exclure les vidéos supplémentaires mentionnées dans les paragraphes de l'étude de La Tour de Garde.
+
+**Par défaut** : `faux`
+
+#### Exclure les vidéos de l'étude biblique de l'assemblée {#exclude-cbs-pubs}
+
+<!-- **Setting**: `excludeCbsPubs` -->
+
+Choisissez les publications dont les vidéos référencées ne sont pas normalement diffusées pendant l'étude biblique de l'assemblée. Recherche par titre ou symbole de publication.
+
+**Par défaut** : Marche courageusement avec Dieu (`wcg`)
+
+#### Exclure les médias de la brochure Enseignement {#exclude-theocratic-ministry-school}
+
+<!-- **Setting**: `excludeTh` -->
+
+Exclure les médias de la brochure Enseignement (th) des téléchargements de médias.
+
+**Par défaut** : `vrai`
+
+### Sous-titres {#subtitles}
+
+#### Activer les sous-titres {#enable-subtitles}
+
+<!-- **Setting**: `enableSubtitles` -->
+
+Activez le support des sous-titres pour la lecture des médias.
+
+**Par défaut** : `faux`
+
+#### Langue des sous-titres {#subtitle-language}
+
+<!-- **Setting**: `langSubtitles` -->
+
+Langue pour les sous-titres (peut être différente de la langue des médias).
+
+**Options** : Toutes les langues disponibles sur le site officiel des Témoins de Jéhovah
+
+**Par défaut** : Aucune
+
 ### Gestion du cache {#cache-management}
 
 #### Activer le cache supplémentaire {#enable-extra-cache}
@@ -267,6 +374,50 @@ Effacez automatiquement les anciens fichiers mis en cache pour économiser l'esp
 
 **Par défaut** : `vrai`
 
+### Titres de cantiques Pinyin {#pinyin-song-titles}
+
+#### Préférer les cantiques en pinyin {#enable-pinyin-songs}
+
+<!-- **Setting**: `enablePinyinSongs` -->
+
+Lorsqu'une version en pinyin d'un cantique de réunion se trouve dans le dossier des cantiques en pinyin, utiliser celle-ci à la place du cantique standard.
+
+**Par défaut** : `faux`
+
+#### Dossier de cantiques pinyin {#pinyin-song-folder}
+
+<!-- **Setting**: `pinyinSongFolder` -->
+
+Dossier contenant des vidéos de cantiques en pinyin (par exemple : `sjjm_s-Pi_CHS_066_r720P.mp4`). Lorsqu'un fichier en pinyin correspondant au numéro du cantique est trouvé, celui-ci sera lu à la place du cantique standard.
+
+**Par défaut** : Vide
+
+### Exportation des médias {#settings-guide-media-export}
+
+#### Activer l'exportation automatique des médias {#enable-media-auto-export}
+
+<!-- **Setting**: `enableMediaAutoExport` -->
+
+Exporter automatiquement les fichiers multimédias vers un dossier spécifié.
+
+**Par défaut** : `faux`
+
+#### Dossier d'exportation des médias {#media-export-folder}
+
+<!-- **Setting**: `mediaAutoExportFolder` -->
+
+Chemin du dossier où les fichiers multimédias seront exportés automatiquement.
+
+**Par défaut** : Vide
+
+#### Convertir les fichiers en MP4 {#convert-files-to-mp4}
+
+**Paramètre**: `convertFilesToMp4`
+
+Convertir les fichiers multimédias exportés au format MP4 pour une meilleure compatibilité.
+
+**Par défaut** : `faux`
+
 ### Surveillance de dossiers {#settings-guide-folder-monitoring}
 
 #### Activer le surveillant de dossier {#enable-folder-watcher}
@@ -284,6 +435,40 @@ Surveillez un dossier pour les nouveaux fichiers multimédias et ajoutez-les aut
 Le chemin du dossier à surveiller pour les nouveaux fichiers multimédias.
 
 **Par défaut** : Vide
+
+## Minuteur de réunion {#meeting-timer}
+
+### Activer le minuteur de réunion {#enable-meeting-timer}
+
+<!-- **Setting**: `enableTimerDisplay` -->
+
+Activer une fenêtre de minuterie séparée pour chronométrer les parties d'une réunion. Il s'agit d'une fonctionnalité bêta qui ne devrait être activée que si elle est approuvée localement.
+
+**Par défaut** : `faux`
+
+### Comportement de la fenêtre de minuterie {#timer-window-behavior}
+
+<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
+
+Configurer si la fenêtre de minuterie s'ouvre automatiquement, si le minuteur compte en montant ou bien à rebours, si l'horloge utilise 12 heures ou 24 heures, et si la valeur actuelle du minuteur devrait être affichée sur le bouton de minuterie dans l'île d'action.
+
+### Formats d'affichage du minuteur {#timer-display-formats}
+
+<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
+
+Choisissez des formats d’affichage analogique ou numérique pour l’heure et les minuteurs à rebours. L'indicateur d'alerte du compte à rebours peut faire passer l'anneau de compte à rebours analogique à une couleur d'alerte pendant la dernière minute.
+
+### Compte à rebours et horaire des réunions {#meeting-countdown-and-schedule-status}
+
+<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
+
+Afficher un compte à rebours avant les réunions et, si désiré, indiquer si la réunion est en avance ou en retard par rapport à l'horaire prévu. Le minuteur de la réunion apparaît uniquement sur l'affichage du minuteur, et non sur la fenêtre d'affichage des médias.
+
+### Apparence du minuteur et du surtemps {#timer-appearance-and-overtime}
+
+<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
+
+Personnalisez la taille et les couleurs du texte du chronomètre, et configurez les indicateurs de surtemps tels que les couleurs alternées, le clignotement et la possibilité d'afficher le surtemps écoulé uniquement en mode de comptage ascendant.
 
 ## Intégrations {#integrations}
 
@@ -304,6 +489,14 @@ Activez les fonctionnalités d'intégration des réunions Zoom.
 Raccourci clavier pour déclencher le partage d'écran Zoom.
 
 **Par défaut** : Aucune
+
+#### Mise en évidence automatique de la fenêtre multimédia {#zoom-auto-focus-media-window}
+
+<!-- **Setting**: `zoomAutoFocusMediaWindow` -->
+
+Mettre automatiquement au premier plan la fenêtre multimédia dès le démarrage du partage d'écran sur Zoom. Ceci n'est généralement pas nécessaire, mais peut s'avérer utile sur certains systèmes si la fenêtre multimédia perd régulièrement le focus une fois le partage d'écran lancé.
+
+**Par défaut** : `faux`
 
 ### Intégration OBS Studio {#settings-guide-obs-integration}
 
@@ -426,41 +619,7 @@ Cette option est masquée lorsque le contrôle des enregistrements pour OBS Stud
 
 Configurez le raccourci clavier qui lance l'enregistrement, un raccourci facultatif qui interrompt l'enregistrement, ainsi que le dossier dans lequel l'application externe enregistre les fichiers. Si aucun raccourci d'arrêt n'est défini, M³ réutilisera le raccourci de démarrage. Lorsqu'un dossier est configuré, M³ affichera un bouton pour l'ouvrir.
 
-### Minuteur de réunion {#meeting-timer}
-
-#### Activer le minuteur de réunion {#enable-meeting-timer}
-
-<!-- **Setting**: `enableTimerDisplay` -->
-
-Activer une fenêtre de minuterie séparée pour chronométrer les parties d'une réunion. Il s'agit d'une fonctionnalité bêta qui ne devrait être activée que si elle est approuvée localement.
-
-**Par défaut** : `faux`
-
-#### Comportement de la fenêtre de minuterie {#timer-window-behavior}
-
-<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
-
-Configurer si la fenêtre de minuterie s'ouvre automatiquement, si le minuteur compte en montant ou bien à rebours, si l'horloge utilise 12 heures ou 24 heures, et si la valeur actuelle du minuteur devrait être affichée sur le bouton de minuterie dans l'île d'action.
-
-#### Formats d'affichage du minuteur {#timer-display-formats}
-
-<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
-
-Choisissez des formats d’affichage analogique ou numérique pour l’heure et les minuteurs à rebours. L'indicateur d'alerte du compte à rebours peut faire passer l'anneau de compte à rebours analogique à une couleur d'alerte pendant la dernière minute.
-
-#### Compte à rebours et horaire des réunions {#meeting-countdown-and-schedule-status}
-
-<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
-
-Afficher un compte à rebours avant les réunions et, si désiré, indiquer si la réunion est en avance ou en retard par rapport à l'horaire prévu. Le minuteur de la réunion apparaît uniquement sur l'affichage du minuteur, et non sur la fenêtre d'affichage des médias.
-
-#### Apparence du minuteur et du surtemps {#timer-appearance-and-overtime}
-
-<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
-
-Personnalisez la taille et les couleurs du texte du chronomètre, et configurez les indicateurs de surtemps tels que les couleurs alternées, le clignotement et la possibilité d'afficher le surtemps écoulé uniquement en mode de comptage ascendant.
-
-## Paramètres avancés {#advanced-settings}
+## Interface et raccourcis {#interface-raccourcis clavier } {#interface-shortcuts}
 
 ### Raccourcis clavier {#settings-guide-keyboard-shortcuts}
 
@@ -483,119 +642,47 @@ Configurez les raccourcis pour la lecture des médias :
 - **Arrêter les médias** : Arrêter la lecture des médias
 - **Basculement de la musique** : Basculer la musique de fond
 
-### Affichage des médias {#media-display}
+### Bouton "Ajouter des médias" {#add-more-media-button}
 
-#### Activer la transition en fondu lors du masquage ou de l'affichage de la fenêtre des médias {#enable-media-window-fade-transitions}
+#### Sections avec un bouton Ajouter des médias {#add-media-button-sections}
 
-<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+<!-- **Setting**: `addMediaButtonSections` -->
 
-Lorsque activé, la fenêtre des médias se cachera et apparaîtra en douceur au lieu de ce faire instantanément. Cela offre une expérience visuelle plus raffinée.
+Choisissez les sections de la réunion qui afficheront leur propre bouton permettant d'ajouter vos propres fichiers multimédias, en plus du bouton « Ajouter des médias » situé dans la barre d'outils supérieure, qui fonctionne toujours pour toutes les sections.
 
-**Par défaut** : `vrai`
+**Par défaut** : « Discours public », « Vie chrétienne », « Visite du responsable de circonscription » et « Personnalisé »
 
-#### Activer le contrôle de vitesse de lecture {#enable-playback-speed-control}
+#### Bouton "Ajouter des médias" compact {#compact-add-media-button}
 
-<!-- **Setting**: `enablePlaybackSpeedControl` -->
+<!-- **Setting**: `compactAddMediaButton` -->
 
-Permettre de régler la vitesse de lecture audio et vidéo à partir du menu contextuel de l'élément média.
-
-**Par défaut** : `faux`
-
-#### Masquer le logo des médias {#hide-media-logo}
-
-<!-- **Setting**: `hideMediaLogo` -->
-
-Masquer le logo dans la fenêtre multimédia.
-
-**Par défaut** : `faux`
-
-#### Résolution maximale {#maximum-resolution}
-
-<!-- **Setting**: `maxRes` -->
-
-Résolution maximale pour les fichiers multimédias téléchargés.
-
-**Options** : 240p, 360p, 480p, 720p, 1080p
-
-**Par défaut** : 720p
-
-#### Inclure les médias imprimés {#include-printed-media}
-
-<!-- **Setting**: `includePrinted` -->
-
-Inclure les médias des publications imprimées dans les téléchargements de médias.
+N'afficher qu'une icône pour le bouton « Ajouter des médias » / « Ajouter un cantique » dans les en-têtes de section. Lorsque cette option est désactivée, le bouton affiche également du texte à côté de l'icône s'il y a suffisamment d'espace.
 
 **Par défaut** : `vrai`
 
-#### Exclure les notes de bas de page {#exclude-footnotes}
+### Poignée de glissement des médias {#media-drag-handle}
 
-<!-- **Setting**: `excludeFootnotes` -->
+#### Afficher la poignée de glissement {#show-media-drag-handle}
 
-Exclure les images de notes de bas de page des téléchargements de médias quand c'est possible.
+<!-- **Setting**: `showMediaDragHandle` -->
 
-**Par défaut** : `faux`
-
-#### Exclure les vidéos supplémentaires de La Tour de Garde {#exclude-additional-watchtower-study-videos}
-
-<!-- **Setting**: `excludeWtParagraphVideos` -->
-
-Exclure les vidéos supplémentaires mentionnées dans les paragraphes de l'étude de La Tour de Garde.
-
-**Par défaut** : `faux`
-
-#### Exclure les médias de la brochure Enseignement {#exclude-theocratic-ministry-school}
-
-<!-- **Setting**: `excludeTh` -->
-
-Exclure les médias de la brochure Enseignement (th) des téléchargements de médias.
+Afficher une petite poignée sur chaque élément multimédia pour pouvoir le faire glisser et le réorganiser. Il est toujours possible de réorganiser les éléments multimédias en les faisant glisser en cliquant n'importe où sur ceux-ci ; cette option n'a pour seul effet que d'afficher ou de masquer l'icône de poignée.
 
 **Par défaut** : `vrai`
 
-### Sous-titres {#subtitles}
+### Actions rapides pour avant et après les réunions {#before-after-meeting-quick-actions}
 
-#### Activer les sous-titres {#enable-subtitles}
+#### Afficher les actions rapides de réunion {#enable-meeting-quick-actions}
 
-<!-- **Setting**: `enableSubtitles` -->
+<!-- **Setting**: `enableMeetingQuickActions` -->
 
-Activez le support des sous-titres pour la lecture des médias.
+Afficher un panneau d'avant-réunion et d'après-réunion comprenant des commandes utiles (musique de fond, enregistrement) ainsi qu'une liste de contrôle personnalisable pour chacun d'entre eux.
 
-**Par défaut** : `faux`
+**Par défaut** : `vrai`
 
-#### Langue des sous-titres {#subtitle-language}
+Les catégories et les tâches des listes de contrôle, tant pour les rubriques d'avant-réunion que d'après-réunion, sont gérées à partir de cette même section de paramètres : vous pouvez ajouter, renommer, réorganiser ou supprimer des catégories et des tâches selon les besoins de votre assemblée.
 
-<!-- **Setting**: `langSubtitles` -->
-
-Langue pour les sous-titres (peut être différente de la langue des médias).
-
-**Options** : Toutes les langues disponibles sur le site officiel des Témoins de Jéhovah
-
-**Par défaut** : Aucune
-
-### Exportation des médias {#settings-guide-media-export}
-
-#### Activer l'exportation automatique des médias {#enable-media-auto-export}
-
-<!-- **Setting**: `enableMediaAutoExport` -->
-
-Exporter automatiquement les fichiers multimédias vers un dossier spécifié.
-
-**Par défaut** : `faux`
-
-#### Dossier d'exportation des médias {#media-export-folder}
-
-<!-- **Setting**: `mediaAutoExportFolder` -->
-
-Chemin du dossier où les fichiers multimédias seront exportés automatiquement.
-
-**Par défaut** : Vide
-
-#### Convertir les fichiers en MP4 {#convert-files-to-mp4}
-
-**Paramètre**: `convertFilesToMp4`
-
-Convertir les fichiers multimédias exportés au format MP4 pour une meilleure compatibilité.
-
-**Par défaut** : `faux`
+## Paramètres avancés {#advanced-settings}
 
 ### Transfert des paramètres du profil {#profile-settings-transfer}
 

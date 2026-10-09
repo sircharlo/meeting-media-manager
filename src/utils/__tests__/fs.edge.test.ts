@@ -14,7 +14,7 @@ import {
 installPinia();
 
 const { fs } = globalThis.electronApi;
-const { emptyDir, ensureDir, ensureFile, exists, remove } = fs;
+const { emptyDir, ensureDir, ensureFile, pathExists, remove } = fs;
 
 describe('fs edge cases', () => {
   describe('isFileUrl - tricky inputs', () => {
@@ -65,13 +65,13 @@ describe('fs edge cases', () => {
           pub: 'bt',
         });
         expect(all.some((p) => p.path.endsWith('subdir'))).toBe(false);
-        expect(all.length).toBe(3);
+        expect(all).toHaveLength(3);
 
         const jpgsUpper = await getPublicationDirectoryContents(
           { issue: '0', langwritten: 'E', pub: 'bt' },
           'JPG',
         );
-        expect(jpgsUpper.length).toBe(2);
+        expect(jpgsUpper).toHaveLength(2);
       } finally {
         await remove(pubDir);
       }
@@ -102,9 +102,9 @@ describe('fs edge cases', () => {
 
       await removeEmptyDirs(root);
 
-      expect(await exists(empty1)).toBe(false);
+      expect(await pathExists(empty1)).toBe(false);
       // empty2 might still exist due to simulated failure
-      expect(await exists(file)).toBe(true);
+      expect(await pathExists(file)).toBe(true);
 
       removeSpy.mockRestore();
       await remove(root);

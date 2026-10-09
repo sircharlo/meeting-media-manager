@@ -4,6 +4,55 @@
 
 Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.md na GitHubu.
 
+## PRIHAJAJOČA RAZLIČICA
+
+### ✨ Nove funkcije
+
+- ✨ **Zoom Meeting Manager (beta, Windows)**: A new integration that operates Zoom for you around each meeting. It can launch your congregation's Zoom meeting when background music starts before the meeting. When the music stops just before the meeting starts, it joins computer audio, unmutes the microphone, turns on the host video, and mutes everyone without letting them unmute. When music plays before or after a meeting, it does the reverse: it leaves computer audio, turns off the host video, and lets everyone unmute again (asking them to do so). It can also share the media window in Zoom automatically while media is being shown, making sure the media window is what gets shared and never anything else on your screen. A new Zoom button in the action island shows whether a Zoom meeting window was found and lets you run these steps manually. A setup assistant, offered when you turn the option on (the initial setup wizard now offers it on Windows instead of the keyboard-shortcut screen sharing) and available anytime from the Zoom button or Settings, checks your Zoom, learns the names of its microphone and camera buttons in your language, and tries every step with you. When M³ starts, it also checks that everything it automates in Zoom works, opening the meeting if needed on meeting days in the hour and a quarter before it starts (only looking, without pressing anything, if others are already in the meeting); if something doesn't, it tells you and pauses its Zoom automations until it's restarted or a new check passes, so nothing goes wrong during the meeting. This check is on by default and can be turned off in Settings. As each of these steps succeeds, the matching reminders in the before- and after-meeting checklists of the meeting quick actions are ticked off for you, marked as done automatically in Zoom. Since it can't be used together with the keyboard-shortcut screen sharing, Settings says so under whichever of the two is unavailable, naming the one to turn off. It works whatever language Zoom is in, and needs nothing installed beyond Zoom itself.
+
+## v26.9.0
+
+### ✨ Nove funkcije
+
+- ✨ **Hitri koraki pred in po shodu**: Nova plošča z velikimi gumbi pomaga pri pripravi na shod in takoj po njem — vključno z živim odštevanjem, enotnim gumbom za začetek/ustavitev glasbe v ozadju, začetkom/ustavitvijo snemanja ter kontrolnim seznamom, razdeljenim v kategorije, ki ga je mogoče urejati v Nastavitvah. Plošča pred shodom se samodejno zapre, ko se shod začne in je kontrolni seznam dokončan (ali po kratkem odlogu), vedno pa jo je mogoče zapreti tudi ročno.
+
+## v26.8.0
+
+### ✨ Nove funkcije
+
+- ✨ **Celostna prenova aplikacije**: Obsežna vizualna in interakcijska osvežitev pogovornih oken, seznama multimedijske vsebine/glave, nastavitev in čarovnika za začetno nastavitev. Čarovnik za začetno nastavitev je zdaj zasnovan kot potek z enim vprašanjem na zaslon in s prikazom napredka. Vsa pozivna okna so bila zamenjana z enotnim, označenim pogovornim oknom, izbira obsega strani PDF (pri publikacijah in uvozu s povleci‑in‑spusti) pa zdaj uporablja izbirnik s predoglednimi sličicami namesto prostega vnosa besedila. Dodan je nov vodnik za hitri začetek po zaključku čarovnika. Vključuje tudi osvežen slog kartic/glav s sencami, prilagojenimi temnemu načinu, ter več popravkov kontrasta v temnem načinu (oznake aktivnih polj, odstotki napredka pri prenosu).
+- ✨ **Stran z nastavitvami**: Preoblikovana v dvopanelno postavitev z novim razdelkom za globalne nastavitve za stikala samodejnih/beta posodobitev, ki so bila premaknjena iz pogovornega okna »O programu« (to je zdaj izključno informativno).
+- ✨ **Gumb »Dodaj več multimedijske vsebine«**: Dodana nastavitev za izbiro tega, kateri razdelki shodov prikazujejo gumb »Dodaj več multimedijske vsebine«, skupaj z nastavitvijo za kompaktni način (samo ikona).
+- ✨ **Seznam multimedijske vsebine**: Postavke zdaj med dodajanjem prikazujejo okostja nalaganja namesto praznih mest. Skupine multimedijske vsebine prikazujejo število skritih postavk v znački (npr. »9 postavk (2 skriti)«). Podrejene postavke v skupini je mogoče razvrščati s povleci‑in‑spusti. Pri zelo ozkih širinah okna se postavke skrčijo v kompaktne oznake z namigi (tooltipi), da se vrstica ne preobremeni.
+
+## v26.7.7
+
+### ✨ Nove funkcije
+
+- ✨ **Kakovost predogleda multimedijske vsebine**: Predogled multimedijske vsebine zdaj izrisuje sličice videoposnetkov prek platna (canvas) z visokokakovostnim pomanjševanjem, kar odpravi nazobčane ali zamegljene predoglede (zlasti pri vsebini z veliko besedila, kot so pesmi). Predogled se tudi samodejno izklopi, če mora pri enem videoposnetku večkrat popravljati zamik predvajanja, pri čemer je na voljo možnost za ponovno vklop z enim klikom.
+
+## v26.7.6
+
+### ✨ Nove funkcije
+
+- ✨ **Izključitev videoposnetkov za OPB**: Dodana je nastavitev za izključitev videoposnetkov za Občinsko preučevanje Biblije iz določenih publikacij (privzeto iz knjige **Pogumno hodi z Bogom**). Na voljo je tudi iskalnik za izbiro publikacije po naslovu ali simbolu.
+- ✨ **Številke strani dokumentov**: Seznam multimedijske vsebine v publikacijah ter uvoz JWPUB datotek zdaj prikazujeta številko strani vsakega dokumenta (ali več številk, če je dokument na več straneh). To pomaga hitreje najti določeno multimedijsko datoteko, če veš, na kateri strani se nahaja.
+
+## v26.7.4
+
+### ✨ Nove funkcije
+
+- v26.7.4
+  ✨ \*\*Obnovitev manjkajoče multimedijske datoteke: Multimedijske datoteke, katerih lokalna datoteka je izginila (npr. izbrisana zaradi samodejnega čiščenja predpomnilnika ali odstranjena ročno), zdaj prikažejo onemogočen gumb za predvajanje, oznako »manjka« z imenom datoteke, ki jo je treba poiskati, ter novo možnost »Poišči datoteko« za ponovno povezavo z datoteko na disku.
+- ✨ **Opozorilo o združljivosti**: Dodana je pasica z opozorilom za uporabnike, ki uporabljajo kombinacije sistema/arhitekture (macOS 12 Monterey in 32-bitni Windows), ki kmalu ne bodo več podprte. Opozorilo priporoča nadgradnjo, preden bodo prihodnje posodobitve zahtevale novejšo sistemsko podporo.
+
+## v26.7.0
+
+### ✨ Nove funkcije
+
+- ✨ **Povezano predvajanje avdioposnetka**: Dodana je podpora za predvajanje avdioposnetka iz ene datoteke skupaj z videoposnetkom iz druge datoteke. To je uporabno pri predvajanju video predstavitev z glasbeno spremljavo.
+- ✨ **Postavitve spremljanih multimedijskih datotek**: M³ si zdaj zapomni, kako imaš razporejene multimedijske datoteke v spremljanih mapah — vključno z vrstnim redom razdelkov in označenimi datotekami. Zato bo seznam multimedijske vsebine videti enako na vseh napravah, ki uporabljajo isto spremljano mapo.
+
 ## v26.6.1
 
 ### ✨ Nove funkcije
@@ -98,7 +147,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 - ✨ **Prekrivanje miškinega kazalca za TV zaslonu**: Izboljšano prekrivanje kazalca v oknu spletne strani za boljšo vidnost miškinega kazalca na TV zaslonih.
 - ✨ **Snemanje shodov**: Dodana nova funkcija snemanja shodov za nadzor zunanje aplikacije za snemanje.
 - ✨ **Iskanje po spletnem mestu**: Dodana možnost pametnega iskanja multimedijske vsebine ali publikacij na spletnem mestu.
-- ✨ **Enostaven ročni uvoz publikacij**: Dodana funkcionalnost za enostaven uvoz publikacij z jw.org, kot so revije, knjige, programi in vabila.
+- ✨ **Enostaven ročni uvoz publikacij**: Dodana je možnost za preprost uvoz publikacij z uradnega spletnega mesta, kot so revije, knjige, programi in vabila.
 - ✨ **Izboljšave za znakovni jezik**: Dodano potrjevanje pred predvajanjem celotnih datotek v znakovnem jeziku in podpora za izbiro več posnetkov, na primer kadar je treba zapored prebrati več odstavkov.
 - ✨ **Navigacija med posnetki**: Dodan prikaz trajanja pri elementih seznama posnetkov in izboljšana navigacija.
 - 🛠️ **Multimedijski zaslon**: Poskrbljeno, da se multimedijski zaslon ob začetku predvajanja prikaže, tudi če je bil prej skrit.
@@ -224,22 +273,22 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- **feat**: Predvajanje spletnega mesta je zdaj podprto tudi v macOS 🚀
-- **feat**: Dodane so bližnjice na tipkovnici za ustavitev, premor in nadaljevanje predvajanja multimedijske vsebine 🚀
-- **feat**: Dodana podpora za nastavitev spletnega naslova, s katerega naj se prenaša multimedijska vsebina 🚀
-- **feat**: Dodan je takojšnji izbirnik prizorov za OBS Studio in prenovljena funkcionalnost izbirnika prizorov v nastavitvah
-- **feat**: Razširjeno spletno mesto z dokumentacijo, ki zdaj podpira več jezikov
+- 🖥️ **Predvajanje spletnega mesta v macOS**: Predvajanje spletnega mesta je zdaj podprto tudi v macOS 🚀
+- ⌨️ **Bližnjice za predvajanje**: Dodane so tipkovne bližnjice za ustavitev, premor in nadaljevanje predvajanja multimedijske vsebine 🚀
+- 🌐 **Naslov za prenos multimedijske vsebine po meri**: Dodana je možnost nastavitve spletnega naslova, s katerega naj se prenaša multimedijska vsebina 🚀
+- 🎬 **Hitri izbirnik prizorov za OBS**: Dodan je takojšnji izbirnik prizorov za OBS Studio in prenovljena funkcionalnost izbirnika prizorov v nastavitvah
+- 📖 **Več jezikov dokumentacije**: Spletno mesto z dokumentacijo je razširjeno tako, da podpira več jezikov
 
 ## 24.10.10
 
 ### ✨ Nove funkcije
 
-- **novo**: Dodane bližnjice na tipkovnici za premikanje na naslednji oziroma prejšnji element multimedijske vsebine
-- **novo**: Dodan desni klik meni na elemente multimedijske vsebine za skrivanje elementov in preimenovanje
-- **novo**: Obrezani časi videov se zdaj pravilno upoštevajo pri uvoženih JWL seznamih predvajanja
+- ⌨️ **Bližnjice za krmarjenje po multimedijski vsebini**: Dodane so tipkovne bližnjice za prehod na naslednjo/prejšnjo multimedijsko vsebino
+- 🖱️ **Meni ob desnem kliku na multimedijsko vsebino**: Dodan je meni ob desnem kliku na multimedijsko vsebino za skrivanje in preimenovanje multimedijske vsebine
+- ✂️ **Obrezan uvoz seznama predvajanja**: Obrezani časi videoposnetkov v seznamu predvajanj JW Library se zdaj upoštevajo pri uvozu
 
 ## 24.10.9
 
 ### ✨ Nove funkcije
 
-- **feat**: Dodana možnost za brisanje vseh dodatnih multimedijskih datotek za trenutno izbrani dan
+- 🗑️ **Izbriši dodatno multimedijsko vsebino za dan**: Dodana je možnost za izbris vse dodatne multimedijske vsebine za trenutno izbrani dan

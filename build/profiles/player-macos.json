@@ -1,0 +1,12 @@
+{
+  "params": {
+    "icon": "build/logos/display-icon-macOS.png"
+  },
+  "assets": [
+    {
+      "generator": "icns",
+      "name": "media-player.icns",
+      "folder": "src-electron/electron-assets/icons"
+    }
+  ]
+}

@@ -9,19 +9,22 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <div class="action-popup action-popup--scroll-layout q-py-md">
+    <div
+      ref="popupContent"
+      class="action-popup action-popup--scroll-layout q-py-md"
+    >
       <div class="card-title col-shrink full-width q-px-md q-mb-none">
         {{ t('meetingRecording') }}
       </div>
 
       <div class="action-popup__scroll full-width">
-        <template v-if="props.isRecording">
+        <template v-if="isRecording">
           <p class="card-section-title text-dark-grey row q-px-md">
             {{ t('recording-duration') }}
           </p>
           <div class="row q-px-md q-pt-xs q-pb-sm">
             <div class="recording-popup__duration col text-weight-medium">
-              {{ props.recordingDuration }}
+              {{ formattedDuration }}
             </div>
           </div>
         </template>
@@ -48,7 +51,7 @@
             :icon="isRecording ? 'mmm-stop' : 'mmm-record'"
             :label="isRecording ? t('stop-recording') : t('start-recording')"
             unelevated
-            @click="toggleRecording"
+            @click="toggleRecording()"
           />
         </div>
       </div>
@@ -60,67 +63,43 @@
 import type { QMenu } from 'quasar';
 
 import { storeToRefs } from 'pinia';
-import { sendKeyboardShortcut } from 'src/helpers/keyboard-shortcuts';
 import { useCurrentStateStore } from 'stores/current-state';
-import { useTemplateRef, watch } from 'vue';
+import { useRecordingStore } from 'stores/recording-state';
+import { onBeforeUnmount, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);
 
+const recording = useRecordingStore();
+const { formattedDuration, isRecording } = storeToRefs(recording);
+const { toggleRecording } = recording;
 const { openFolder } = globalThis.electronApi;
 
 const open = defineModel<boolean>({ default: false });
-const props = defineProps<{
-  isRecording: boolean;
-  recordingDuration: string;
-}>();
-const emit = defineEmits<{
-  'update:isRecording': [value: boolean];
-}>();
 
 const { t } = useI18n();
 
 const recordingPopup = useTemplateRef<QMenu>('recordingPopup');
-
-const toggleRecording = () => {
-  if (!currentSettings.value) return;
-
-  if (props.isRecording) {
-    // Stop recording
-    const stopShortcut =
-      currentSettings.value.recordingStopShortcut ||
-      currentSettings.value.recordingStartShortcut;
-    if (stopShortcut) {
-      sendKeyboardShortcut(stopShortcut, 'Recording');
-      emit('update:isRecording', false);
-    }
-  } else {
-    // Start recording
-    const startShortcut = currentSettings.value.recordingStartShortcut;
-    if (startShortcut) {
-      sendKeyboardShortcut(startShortcut, 'Recording');
-      emit('update:isRecording', true);
-    }
-  }
-};
+const popupContent = useTemplateRef<HTMLElement>('popupContent');
+let popupResizeObserver: ResizeObserver | undefined;
 
 const openRecordingFolder = () => {
   if (!currentSettings.value?.recordingFolder) return;
   openFolder(currentSettings.value.recordingFolder);
 };
 
-// Update popup position when recording state changes
-watch(
-  () => props.isRecording,
-  () => {
-    setTimeout(() => {
-      if (recordingPopup.value) {
-        recordingPopup.value.updatePosition();
-      }
-    }, 10);
-  },
-);
+watch(popupContent, (el) => {
+  popupResizeObserver?.disconnect();
+  popupResizeObserver = undefined;
+  if (!el) return;
+  popupResizeObserver = new ResizeObserver(() => {
+    recordingPopup.value?.updatePosition();
+  });
+  popupResizeObserver.observe(el);
+});
+
+onBeforeUnmount(() => popupResizeObserver?.disconnect());
 </script>
 
 <style scoped>

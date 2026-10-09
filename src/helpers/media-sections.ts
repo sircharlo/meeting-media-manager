@@ -7,8 +7,11 @@ import type {
   MediaSectionWithConfig,
 } from 'src/types';
 
+import { i18n } from 'boot/i18n';
 import { getMeetingSections, standardSections } from 'src/constants/media';
 import { isCoWeek } from 'src/helpers/date';
+import { withLockRetry } from 'src/helpers/fs-retry';
+import { isExpectedNetworkPathAccessError } from 'src/shared/filesystem-errors';
 import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'src/stores/current-state';
 
@@ -222,13 +225,11 @@ export const getSectionBgColor = (section: MediaSection | undefined) => {
   return section.bgColor || 'var(--q-primary)';
 };
 
-export const getTextColor = (section?: MediaSectionWithConfig) => {
-  const bgColor = section?.config?.bgColor;
-  if (!bgColor) return '#ffffff';
-  // Convert HEX to RGB
+// Parses a "#rgb"/"#rrggbb" or "rgb(a)(...)" color string into channels.
+const parseColorToRgb = (color: string): [number, number, number] | null => {
   let b, g, r;
-  if (bgColor.startsWith('#')) {
-    const hex = bgColor.replace('#', '');
+  if (color.startsWith('#')) {
+    const hex = color.replace('#', '');
     [r, g, b] = [0, 1, 2].map((i) =>
       Number.parseInt(
         hex.length === 3
@@ -237,26 +238,45 @@ export const getTextColor = (section?: MediaSectionWithConfig) => {
         16,
       ),
     );
-  } else if (bgColor.startsWith('rgb')) {
-    [r, g, b] = bgColor
+  } else if (color.startsWith('rgb')) {
+    [r, g, b] = color
       .replaceAll(/rgba?|\(|\)|\s/g, '')
       .split(',')
       .map(Number);
   } else {
+    return null;
+  }
+
+  return r === undefined || g === undefined || b === undefined
+    ? null
+    : [r, g, b];
+};
+
+// Gamma-corrected relative-luminance black/white contrast pick, usable for
+// any bgColor string (hex or rgb()) - not just a MediaSection's own color.
+// getTextColor() below wraps this for the section-shaped call sites; other
+// consumers needing text-on-arbitrary-color contrast (e.g. the congregation
+// switcher's hashed avatar colors) should call this directly rather than
+// re-implementing their own luminance math.
+export const getTextColorForBgColor = (bgColor?: string) => {
+  if (!bgColor) return '#ffffff';
+
+  const rgb = parseColorToRgb(bgColor);
+  if (!rgb) {
     errorCatcher(new Error('Invalid color format'), {
       contexts: {
         fn: {
           bgColor,
-          name: 'getTextColor',
+          name: 'getTextColorForBgColor',
         },
       },
     });
     return '#ffffff'; // Default to white if invalid input
   }
+  const [r, g, b] = rgb;
 
   // Calculate relative luminance
-  const luminance = (val: number | undefined) => {
-    if (val === undefined) return 0;
+  const luminance = (val: number) => {
     val /= 255;
     return val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4);
   };
@@ -266,6 +286,50 @@ export const getTextColor = (section?: MediaSectionWithConfig) => {
 
   // Return white or black based on contrast
   return lum > 0.3 ? '#000000' : '#ffffff';
+};
+
+export const getTextColor = (section?: MediaSectionWithConfig) =>
+  getTextColorForBgColor(section?.config?.bgColor);
+
+// Mirrors the hardcoded left-bar colors in the `.media-section` SCSS rules
+// for the meeting sections that always use the same color (see app.scss).
+// Custom sections (including "imported-media" and "pt") use their own
+// stored bgColor instead, applied via the `--bg-color` CSS variable.
+const STANDARD_SECTION_COLORS: Record<string, string> = {
+  ayfm: 'rgb(214, 143, 0)',
+  'circuit-overseer': 'rgb(148, 94, 181)',
+  lac: 'rgb(191, 47, 19)',
+  tgw: 'rgb(60, 127, 139)',
+  wt: 'rgb(214, 143, 0)',
+};
+
+export const getSectionAccentColor = (
+  sectionId: MediaSectionIdentifier | undefined,
+  mediaSections?: MediaSectionWithConfig[],
+): string => {
+  const standardColor = sectionId ? STANDARD_SECTION_COLORS[sectionId] : null;
+  if (standardColor) return standardColor;
+
+  const section = sectionId
+    ? findMediaSection(mediaSections ?? [], sectionId)
+    : undefined;
+  return section?.config.bgColor || defaultAdditionalSection.config.bgColor;
+};
+
+export const withAlpha = (color: string, alpha: number): string => {
+  const rgb = parseColorToRgb(color);
+  if (!rgb) return color;
+  const [r, g, b] = rgb;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
+export const mixWithWhite = (color: string, weight: number): string => {
+  const rgb = parseColorToRgb(color);
+  if (!rgb) return color;
+  const [r, g, b] = rgb;
+  const mix = (channel: number) =>
+    Math.round(channel * (1 - weight) + 255 * weight);
+  return `rgb(${mix(r)}, ${mix(g)}, ${mix(b)})`;
 };
 
 const getNumericSortOrder = (item?: MediaItem) => {
@@ -320,14 +384,70 @@ const getWatchedOrder = (items: MediaItem[], itemIndex: number) => {
   return itemIndex;
 };
 
+// Sections the media auto-export feature can produce a folder name for (see
+// buildDestinationPath in helpers/export-media.ts), used to reverse-match an
+// exported section name back to a MediaSectionIdentifier.
+const EXPORTABLE_SECTION_IDS: MediaSectionIdentifier[] = [
+  ...standardSections,
+  'pt',
+];
+
+// Matches the naming convention written by the media auto-export feature:
+// "<section#> <section name> - <item#> <title>.<ext>". Used as a fallback
+// ordering signal for watched items with no .section-order.json entry, e.g.
+// files brought into the watch folder from another device's export, or
+// copied in manually following the same numbering convention.
+const EXPORTED_FILENAME_PATTERN = /^(\d{1,3})\s+(.+?)\s-\s(\d{1,3})\s/;
+
+const getSectionIdFromExportedName = (
+  sectionName: string,
+): MediaSectionIdentifier | undefined => {
+  const normalized = sectionName.trim().toLowerCase();
+  return EXPORTABLE_SECTION_IDS.find(
+    (id) => i18n.global.t(id).trim().toLowerCase() === normalized,
+  );
+};
+
+export const getExportedFilenamePlacement = (
+  filename: string,
+): null | { order: number; section?: MediaSectionIdentifier } => {
+  const match = EXPORTED_FILENAME_PATTERN.exec(filename);
+  if (!match) return null;
+
+  const [, sectionNumber, sectionName, itemNumber] = match;
+  const sectionIndex = Number.parseInt(sectionNumber ?? '', 10);
+  const itemIndex = Number.parseInt(itemNumber ?? '', 10);
+  if (Number.isNaN(sectionIndex) || Number.isNaN(itemIndex)) return null;
+
+  return {
+    order: sectionIndex * 1000 + itemIndex,
+    section: getSectionIdFromExportedName(sectionName ?? ''),
+  };
+};
+
+// Guards every section-order read/write against a corrupted or stale
+// watched-item fileUrl pointing outside the folder the user actually
+// configured (e.g. one that ended up resolving to C:\Windows\System32 -
+// see MMM-V2-3H7). Without this, a single bad fileUrl persisted in a
+// user's layout would make every subsequent save retry a doomed write
+// against an arbitrary filesystem location forever.
+const isWithinWatchedFolder = (path: string): boolean => {
+  const folderToWatch = useCurrentStateStore().currentSettings?.folderToWatch;
+  if (!path || !folderToWatch) return false;
+
+  return path.startsWith(globalThis.electronApi.resolve(folderToWatch));
+};
+
 const readWatchedMediaSectionOrder = async (
   sectionOrderFilePath: string,
 ): Promise<WatchedMediaSectionOrder> => {
   try {
-    const { fs, hideFileOnWindows, showFileOnWindows } = globalThis.electronApi;
-    const { exists, readJSON } = fs;
+    if (!isWithinWatchedFolder(sectionOrderFilePath)) return {};
 
-    if (!(await exists(sectionOrderFilePath))) return {};
+    const { fs, hideFileOnWindows, showFileOnWindows } = globalThis.electronApi;
+    const { pathExists, readJSON } = fs;
+
+    if (!(await pathExists(sectionOrderFilePath))) return {};
 
     await showFileOnWindows(sectionOrderFilePath);
     const result = await readJSON(sectionOrderFilePath);
@@ -335,6 +455,24 @@ const readWatchedMediaSectionOrder = async (
 
     return result;
   } catch (error) {
+    // A cloud-sync or network drive can briefly fail a read while it swaps
+    // placeholders mid-sync (e.g. Google Drive's `EINVAL ... fstat`,
+    // MMM-V2-3KR); the next refresh reads it again.
+    if (
+      isExpectedNetworkPathAccessError(
+        error,
+        sectionOrderFilePath,
+        globalThis.electronApi.PLATFORM as NodeJS.Platform,
+      )
+    ) {
+      log(
+        `Section-order file temporarily unreadable: ${sectionOrderFilePath}`,
+        'mediaSections',
+        'warn',
+        error,
+      );
+      return {};
+    }
     errorCatcher(error, {
       contexts: {
         fn: {
@@ -347,21 +485,66 @@ const readWatchedMediaSectionOrder = async (
   }
 };
 
+// Serializes read-modify-write cycles per section-order file. Without this,
+// two overlapping saves for the same folder (e.g. rapid reorders that each
+// fire an unawaited saveWatchedMediaLayout call) can both write their own
+// temp file with the same Date.now()-based name, then race to rename it into
+// place - the second rename fails with ENOENT because the first already
+// moved that path away.
+const sectionOrderWriteLocks = new Map<string, Promise<void>>();
+
+const withSectionOrderLock = (
+  sectionOrderFilePath: string,
+  task: () => Promise<void>,
+): Promise<void> => {
+  const previous =
+    sectionOrderWriteLocks.get(sectionOrderFilePath) ?? Promise.resolve();
+  const next = previous.then(task, task);
+  sectionOrderWriteLocks.set(
+    sectionOrderFilePath,
+    next.catch(() => undefined),
+  );
+  return next;
+};
+
 const writeWatchedMediaSectionOrder = async (
   sectionOrderFilePath: string,
   data: WatchedMediaSectionOrder,
 ) => {
-  const { fs, hideFileOnWindows, showFileOnWindows } = globalThis.electronApi;
-  const { writeFile } = fs;
+  if (!isWithinWatchedFolder(sectionOrderFilePath)) {
+    log(
+      `Refused to write section-order file outside the watched folder: ${sectionOrderFilePath}`,
+      'mediaSections',
+      'warn',
+    );
+    return;
+  }
 
-  await showFileOnWindows(sectionOrderFilePath);
-  await writeFile(sectionOrderFilePath, JSON.stringify(data, null, 2), 'utf-8');
+  const { fs, hideFileOnWindows } = globalThis.electronApi;
+  const { rename, writeFile } = fs;
+
+  // Write to a temp file and rename into place rather than writing the
+  // target directly. A rename is atomic; a multi-KB write is not, and this
+  // file commonly lives in a cloud-synced folder (OneDrive, Dropbox, ...)
+  // whose background sync I/O can interleave with an in-place write and
+  // leave truncated/corrupted JSON for the next reader to trip over. The
+  // sync client can also hold a transient lock on the temp/target file
+  // during that same window, so both steps get the Windows lock retry.
+  const tempPath = `${sectionOrderFilePath}.${Date.now()}.tmp`;
+  await withLockRetry(() =>
+    writeFile(tempPath, JSON.stringify(data, null, 2), 'utf-8'),
+  );
+  await withLockRetry(() => rename(tempPath, sectionOrderFilePath));
   await hideFileOnWindows(sectionOrderFilePath);
 };
 
 export const saveWatchedMediaLayout = async (
   mediaSections: MediaSectionWithConfig[],
 ): Promise<void> => {
+  // Tracked outside the try block so the catch below can report which
+  // folder's write actually failed, instead of just the function name.
+  let sectionOrderFilePath: string | undefined;
+
   try {
     const { basename, dirname, fileUrlToPath, join } = globalThis.electronApi;
     const dataByFolder: Record<string, WatchedMediaSectionOrder> = {};
@@ -387,13 +570,21 @@ export const saveWatchedMediaLayout = async (
     });
 
     for (const [datedFolderPath, layoutData] of Object.entries(dataByFolder)) {
-      const sectionOrderFilePath = join(datedFolderPath, '.section-order.json');
-      const existingData =
-        await readWatchedMediaSectionOrder(sectionOrderFilePath);
+      const currentSectionOrderFilePath = join(
+        datedFolderPath,
+        '.section-order.json',
+      );
+      sectionOrderFilePath = currentSectionOrderFilePath;
 
-      await writeWatchedMediaSectionOrder(sectionOrderFilePath, {
-        ...existingData,
-        ...layoutData,
+      await withSectionOrderLock(currentSectionOrderFilePath, async () => {
+        const existingData = await readWatchedMediaSectionOrder(
+          currentSectionOrderFilePath,
+        );
+
+        await writeWatchedMediaSectionOrder(currentSectionOrderFilePath, {
+          ...existingData,
+          ...layoutData,
+        });
       });
     }
   } catch (error) {
@@ -401,6 +592,7 @@ export const saveWatchedMediaLayout = async (
       contexts: {
         fn: {
           name: 'saveWatchedMediaLayout',
+          sectionOrderFilePath,
         },
       },
     });
@@ -444,35 +636,30 @@ export const removeWatchedMediaSectionInfo = async (
   filename: string,
 ): Promise<void> => {
   try {
-    // Access electron API functions
-    const { fs, hideFileOnWindows, join, showFileOnWindows } =
-      globalThis.electronApi;
-    const { exists, readJSON, writeFile } = fs;
-
+    const { join } = globalThis.electronApi;
     const sectionOrderFilePath = join(datedFolderPath, '.section-order.json');
 
-    if (!(await exists(sectionOrderFilePath))) {
-      return;
-    }
+    // Goes through the same read/write helpers (and lock) as
+    // saveWatchedMediaLayout, rather than reading/writing this file
+    // directly: a direct in-place write here was exactly the kind of
+    // non-atomic write that a cloud sync client (iCloud, OneDrive, ...) can
+    // interleave with and leave truncated for the next reader - see the
+    // comment on writeWatchedMediaSectionOrder.
+    await withSectionOrderLock(sectionOrderFilePath, async () => {
+      const sectionOrderData =
+        await readWatchedMediaSectionOrder(sectionOrderFilePath);
 
-    const sectionOrderData: Record<
-      string,
-      { order: number; section: MediaSectionIdentifier }
-    > = await readJSON(sectionOrderFilePath);
+      if (!sectionOrderData[filename]) return;
 
-    if (sectionOrderData[filename]) {
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete sectionOrderData[filename];
 
-      await showFileOnWindows(sectionOrderFilePath);
-      await writeFile(
+      await writeWatchedMediaSectionOrder(
         sectionOrderFilePath,
-        JSON.stringify(sectionOrderData, null, 2),
-        'utf-8',
+        sectionOrderData,
       );
-      await hideFileOnWindows(sectionOrderFilePath);
       log(`✅ Removed section info for ${filename}`, 'mediaSections', 'log');
-    }
+    });
   } catch (error) {
     errorCatcher(error, {
       contexts: {

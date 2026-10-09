@@ -1,13 +1,59 @@
 <template>
   <q-item
-    ref="dividerElement"
-    :class="['media-divider', { 'is-editing': isEditing }]"
+    :class="['media-divider hover-reveal-group', { 'is-editing': isEditing }]"
     dense
     :style="{
       ...dividerStyles,
       '--divider-bg-color': divider.bgColor || 'var(--q-secondary)',
     }"
   >
+    <q-item-section avatar>
+      <q-icon
+        class="media-drag-handle section-drag-handle"
+        name="mmm-drag-n-drop"
+        size="sm"
+        :style="{ color: divider.textColor }"
+      >
+        <q-tooltip v-if="!isDragging" :delay="500">
+          {{ t('drag-to-reorder') }}
+        </q-tooltip>
+      </q-icon>
+    </q-item-section>
+
+    <!--
+      UX-6 (full-audit-2026-09-04.md): the drag handle above has no
+      keyboard/screen-reader equivalent - these buttons are the accessible
+      alternative activation path.
+    -->
+    <q-item-section avatar>
+      <div class="row items-center no-wrap">
+        <q-btn
+          :aria-label="t('move-up')"
+          dense
+          :disable="!canMoveUp"
+          flat
+          icon="mmm-up"
+          round
+          :style="{ color: divider.textColor }"
+          @click="emit('move', -1)"
+        >
+          <q-tooltip :delay="500">{{ t('move-up') }}</q-tooltip>
+        </q-btn>
+        <q-btn
+          :aria-label="t('move-down')"
+          dense
+          :disable="!canMoveDown"
+          flat
+          icon="mmm-down"
+          round
+          :style="{ color: divider.textColor }"
+          @click="emit('move', 1)"
+        >
+          <q-tooltip :delay="500">{{ t('move-down') }}</q-tooltip>
+        </q-btn>
+      </div>
+    </q-item-section>
+
     <q-item-section>
       <q-input
         v-if="isEditing"
@@ -28,17 +74,17 @@
     <q-item-section side>
       <div class="row items-center">
         <q-btn
-          :disabled="isEditing"
+          v-if="!isEditing"
+          class="hover-reveal"
           flat
           icon="mmm-edit"
           round
           size="sm"
-          :style="{
-            visibility: !isEditing && isHovering ? 'visible' : 'hidden',
-            color: divider.textColor,
-          }"
+          :style="{ color: divider.textColor }"
           @click="startEdit"
-        />
+        >
+          <q-tooltip :delay="500">{{ t('edit') }}</q-tooltip>
+        </q-btn>
         <q-btn
           v-if="isEditing"
           flat
@@ -47,7 +93,9 @@
           size="sm"
           :style="{ color: divider.textColor }"
           @click="saveTitle"
-        />
+        >
+          <q-tooltip :delay="500">{{ t('save') }}</q-tooltip>
+        </q-btn>
         <q-btn
           v-if="isEditing"
           flat
@@ -56,6 +104,7 @@
           size="sm"
           :style="{ color: divider.textColor }"
         >
+          <q-tooltip :delay="500">{{ t('change-color') }}</q-tooltip>
           <q-popup-proxy cover transition-hide="scale" transition-show="scale">
             <q-color
               v-model="currentBgColor"
@@ -74,7 +123,9 @@
           size="sm"
           :style="{ color: divider.textColor }"
           @click="deleteDivider"
-        />
+        >
+          <q-tooltip :delay="500">{{ t('delete') }}</q-tooltip>
+        </q-btn>
       </div>
     </q-item-section>
   </q-item>
@@ -83,55 +134,37 @@
 <script setup lang="ts">
 import type { MediaDivider } from 'src/types';
 
-import { useElementHover, whenever } from '@vueuse/core';
+import { whenever } from '@vueuse/core';
 import {
   findMediaSection,
   getSectionBgColor,
+  getTextColorForBgColor,
 } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed, nextTick, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps<{
+  canMoveDown?: boolean;
+  canMoveUp?: boolean;
   divider: MediaDivider;
+  isDragging?: boolean;
 }>();
 
 const emit = defineEmits<{
   delete: [dividerId: string];
+  move: [delta: number];
   'update:color': [bgColor: string, textColor: string];
   'update:title': [title: string];
 }>();
 
-const dividerElement = ref<HTMLElement>();
 const isEditing = ref(false);
-const isHovering = useElementHover(dividerElement);
 const editTitle = ref('');
 const currentBgColor = ref(props.divider.bgColor || 'var(--q-secondary)');
 
 const editTitleInput = ref<HTMLInputElement>();
-
-// Calculate luminance and determine text color (memoized)
-const calculateLuminance = (hexColor: string): number => {
-  // Remove # if present and validate
-  const hex = hexColor.replace('#', '');
-  if (hex.length !== 6) return 0.5; // Default to middle luminance for invalid colors
-
-  // Convert to RGB
-  const r = Number.parseInt(hex.substr(0, 2), 16);
-  const g = Number.parseInt(hex.substr(2, 2), 16);
-  const b = Number.parseInt(hex.substr(4, 2), 16);
-
-  // Calculate relative luminance using sRGB coefficients
-  const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
-  return luminance;
-};
-
-const getContrastTextColor = (bgColor: string): string => {
-  // Handle CSS variables and non-hex colors
-  if (!bgColor.startsWith('#')) return '#ffffff';
-
-  const luminance = calculateLuminance(bgColor);
-  return luminance > 0.5 ? '#000000' : '#ffffff';
-};
 
 const dividerStyles = computed(() => {
   const { selectedDateObject } = useCurrentStateStore();
@@ -174,7 +207,7 @@ const cancelEdit = () => {
 };
 
 const handleColorChange = (newColor: string) => {
-  const textColor = getContrastTextColor(newColor);
+  const textColor = getTextColorForBgColor(newColor);
   emit('update:color', newColor, textColor);
 };
 
@@ -219,14 +252,5 @@ whenever(isEditing, () => {
   &:hover {
     opacity: 0.8;
   }
-}
-
-.media-divider:hover .q-item-section--side {
-  opacity: 1;
-}
-
-.q-item-section--side {
-  opacity: 0;
-  transition: opacity 0.2s ease;
 }
 </style>

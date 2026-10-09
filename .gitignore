@@ -2,6 +2,18 @@
 .thumbs.db
 node_modules
 
+# Personal local scratch files
+/qa-checklist.html
+/design-audit-notes.md
+/settings-mockup.html
+
+# Freebuff thread-local metadata and scratch files
+/.freebuff/
+
+# Per-run output of scripts/i18n-quality (proposed edits, reports) - the
+# committed glossaries under scripts/i18n-quality/glossaries/ are NOT here
+/reports/translation-quality/
+
 # Quasar core related directories
 .quasar
 /dist
@@ -49,6 +61,7 @@ yarn-error.log*
 !.yarn/sdks
 !.yarn/versions
 .yarn/install-state.gz
+src-electron/.yarn/
 
 # VitePress
 docs/.vitepress/dist
@@ -64,8 +77,8 @@ src/css/mmm-icons.*
 # Output of 'yarn generate:logos'
 docs/src/public/icons/*.png
 docs/src/public/favicon.ico
-src-electron/icons/*
-!src-electron/icons/.gitkeep
+src-electron/electron-assets/icons/*
+!src-electron/electron-assets/icons/.gitkeep
 
 # Custom dep helper script
 depChecker.js
@@ -85,3 +98,4 @@ stats.html
 .yalc
 yalc.lock
 __pycache__/
+test/playwright/debug-output/*

@@ -6,6 +6,7 @@ import {
   setAppQuitting,
   setShouldQuit,
 } from 'src-electron/main/session';
+import { captureElectronError } from 'src-electron/main/utils';
 import {
   closeOtherWindows,
   createWindow,
@@ -69,7 +70,11 @@ export function createMainWindow() {
           quitStatus.isAppQuitting ||
           closeAttempts > 2)
       ) {
-        cancelAllDownloads();
+        cancelAllDownloads().catch((error: unknown) => {
+          captureElectronError(error, {
+            contexts: { fn: { name: 'mainWindow close cancelAllDownloads' } },
+          });
+        });
         closeOtherWindows(mainWindowInfo.mainWindow);
       } else {
         setShouldQuit(false);

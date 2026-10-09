@@ -4,13 +4,18 @@
       class="bg-secondary-contrast flex large-overlay q-px-none medium-overlay"
       style="flex-flow: column"
     >
-      <div class="text-h6 row q-px-md q-pt-lg">
+      <div
+        class="text-bigger text-semibold text-primary row q-px-md q-pt-lg items-center"
+      >
+        <div class="icon-chip q-mr-sm">
+          <q-icon name="mmm-bookshelf" size="xs" />
+        </div>
         <div class="col">{{ t('publication-media') }}</div>
         <div class="col-shrink">
           <q-spinner v-if="loading" color="primary" />
         </div>
       </div>
-      <div class="text-subtitle2 q-pb-sm q-px-md">
+      <div class="text-subtitle2 q-pt-md q-px-md">
         <q-breadcrumbs>
           <q-breadcrumbs-el
             v-for="(crumb, i) in breadcrumbs"
@@ -23,7 +28,7 @@
       <!-- Search Input -->
       <div
         v-if="step === 'search' || step === 'category'"
-        class="q-px-md q-pb-md"
+        class="q-px-md q-py-md"
       >
         <q-input
           v-model="searchQuery"
@@ -135,13 +140,13 @@
                           </q-img>
                         </q-card-section>
                         <q-card-section class="q-pt-md">
-                          <div class="text-caption text-grey-6 q-mb-xs">
+                          <div class="text-caption text-dark-grey q-mb-xs">
                             {{ decodeEntities(result.context) }}
                           </div>
                           <div class="text-body2 text-weight-medium q-mb-sm">
                             {{ decodeEntities(result.title) }}
                           </div>
-                          <div class="text-caption text-grey-7">
+                          <div class="text-caption text-dark-grey">
                             {{ decodeEntities(result.snippet) }}
                           </div>
                         </q-card-section>
@@ -345,6 +350,24 @@
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>{{ doc.Title }}</q-item-label>
+                  <q-item-label
+                    v-if="
+                      formatPageLabel(
+                        t,
+                        doc.FirstPageNumber,
+                        doc.LastPageNumber,
+                      )
+                    "
+                    caption
+                  >
+                    {{
+                      formatPageLabel(
+                        t,
+                        doc.FirstPageNumber,
+                        doc.LastPageNumber,
+                      )
+                    }}
+                  </q-item-label>
                 </q-item-section>
                 <q-item-section v-if="!docHasMedia.has(doc.DocumentId)" side>
                   <q-icon color="grey" name="mmm-info">
@@ -450,7 +473,6 @@
             @click="importPdfVersion"
           />
           <q-btn
-            color="negative"
             :disable="isProcessing"
             flat
             :label="t('cancel')"
@@ -460,6 +482,11 @@
       </div>
     </div>
   </BaseDialog>
+
+  <DialogPdfPageSelection
+    ref="pdfPageSelectionRef"
+    dialog-id="publication-media-pdf-page-selection"
+  />
 </template>
 
 <script setup lang="ts">
@@ -476,8 +503,8 @@ import type { MediaLink, Publication } from 'src/types/jw/publications';
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import DialogDownloadProgress from 'components/dialog/DialogDownloadProgress.vue';
+import DialogPdfPageSelection from 'components/dialog/DialogPdfPageSelection.vue';
 import { storeToRefs } from 'pinia';
-import { useQuasar } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getJwIconFromKeyword } from 'src/helpers/fonts';
@@ -488,17 +515,21 @@ import {
   getPubMediaLinks,
 } from 'src/helpers/jw-media';
 import { log } from 'src/shared/vanilla';
-import { fetchJson, fetchPubMediaLinks } from 'src/utils/api';
-import { convertPdfToImages, getNrOfPdfPages } from 'src/utils/converters';
+import {
+  fetchJson,
+  fetchPubMediaLinks,
+  getLibraryFilterUrl,
+} from 'src/utils/api';
+import { convertPdfToImages } from 'src/utils/converters';
 import { getLocalDate } from 'src/utils/date';
 import {
   getPublicationDirectory,
   getPublicationDirectoryContents,
   getTempPath,
 } from 'src/utils/fs';
-import { decodeEntities } from 'src/utils/general';
+import { decodeEntities, formatPageLabel } from 'src/utils/general';
 import { findBestResolutions } from 'src/utils/jw';
-import { tableExists } from 'src/utils/sqlite';
+import { getExistingColumns, tableExists } from 'src/utils/sqlite';
 import { formatTime } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -529,8 +560,6 @@ const dialogValue = computed({
   get: () => props.modelValue,
   set: (value) => emit('update:modelValue', value),
 });
-
-const $q = useQuasar();
 
 const jwStore = useJwStore();
 const { urlVariables } = storeToRefs(jwStore);
@@ -632,26 +661,26 @@ const breadcrumbs = computed(() => {
 
 async function buildDocumentHasMedia(db: string) {
   try {
-    const hasDocMM = !!executeQuery<{ name: string }>(
-      db,
-      "SELECT name FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'",
+    const hasDocMM = !!(
+      await executeQuery<{ name: string }>(
+        db,
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'",
+      )
     )?.length;
 
     let ids: { DocumentId: number }[] = [];
     if (hasDocMM) {
-      ids =
-        executeQuery<{ DocumentId: number }>(
-          db,
-          `SELECT DISTINCT DocumentMultimedia.DocumentId as DocumentId
-           FROM DocumentMultimedia
-           JOIN Multimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId`,
-        ) || [];
+      ids = await executeQuery<{ DocumentId: number }>(
+        db,
+        `SELECT DISTINCT DocumentMultimedia.DocumentId as DocumentId
+         FROM DocumentMultimedia
+         JOIN Multimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId`,
+      );
     } else {
-      ids =
-        executeQuery<{ DocumentId: number }>(
-          db,
-          `SELECT DISTINCT DocumentId FROM Multimedia WHERE DocumentId IS NOT NULL`,
-        ) || [];
+      ids = await executeQuery<{ DocumentId: number }>(
+        db,
+        `SELECT DISTINCT DocumentId FROM Multimedia WHERE DocumentId IS NOT NULL`,
+      );
     }
     docHasMedia.value = new Set(ids.map((r) => r.DocumentId));
   } catch (e) {
@@ -667,9 +696,9 @@ async function buildDocumentPreviews(db: string) {
     if (!db || !documents.value?.length) return;
 
     const baseDir = dirname(db);
-    const hasDocMM = tableExists(db, 'DocumentMultimedia');
+    const hasDocMM = await tableExists(db, 'DocumentMultimedia');
 
-    const getFirstLinkedImage = (docId: number) => {
+    const getFirstLinkedImage = async (docId: number) => {
       if (!hasDocMM) return null;
 
       const sql = `
@@ -682,10 +711,10 @@ async function buildDocumentPreviews(db: string) {
         LIMIT 1
       `;
 
-      return executeQuery<{ FilePath: string }>(db, sql)?.[0]?.FilePath;
+      return (await executeQuery<{ FilePath: string }>(db, sql))?.[0]?.FilePath;
     };
 
-    const getFallbackImage = (docId: number) => {
+    const getFallbackImage = async (docId: number) => {
       const join = hasDocMM
         ? 'INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId'
         : '';
@@ -704,37 +733,49 @@ async function buildDocumentPreviews(db: string) {
         LIMIT 1
       `;
 
-      return executeQuery<{ FilePath: string }>(db, sql)?.[0]?.FilePath;
+      return (await executeQuery<{ FilePath: string }>(db, sql))?.[0]?.FilePath;
     };
 
-    for (const doc of documents.value) {
-      const docId = doc?.DocumentId;
-      if (!docId) continue;
+    await Promise.all(
+      documents.value.map(async (doc) => {
+        const docId = doc?.DocumentId;
+        if (!docId) return;
 
-      const previewPath = getFirstLinkedImage(docId) || getFallbackImage(docId);
+        const previewPath =
+          (await getFirstLinkedImage(docId)) || (await getFallbackImage(docId));
 
-      if (!previewPath) continue;
+        if (!previewPath) return;
 
-      try {
-        const abs = join(baseDir, previewPath);
-        const url = pathToFileURL(abs)?.toString();
-        if (url) docPreviews.value[docId] = url;
-      } catch (err) {
-        errorCatcher(err);
-      }
-    }
+        try {
+          const abs = join(baseDir, previewPath);
+          const url = pathToFileURL(abs)?.toString();
+          if (url) docPreviews.value[docId] = url;
+        } catch (err) {
+          errorCatcher(err);
+        }
+      }),
+    );
   } catch (err) {
     errorCatcher(err);
   }
 }
 
+// The search API and its token live on the configured Website's media API
+// host - never jw.org's when a different Website is set. No host, no
+// search (an endpoint without a url is skipped).
+const mediaApiOrigin = computed(
+  () => URL.parse(urlVariables.value.mediator)?.origin,
+);
+
 // Search endpoints configuration
-const searchEndpoints = ref([
+const searchEndpoints = computed(() => [
   {
     enabled: true,
     name: 'Publications',
     queryParam: 'q',
-    url: `https://b.jw-cdn.org/apis/search/results/${currentSettings.value?.lang}/publications`,
+    url: mediaApiOrigin.value
+      ? `${mediaApiOrigin.value}/apis/search/results/${currentSettings.value?.lang || 'E'}/publications`
+      : '',
   },
 ]);
 
@@ -854,7 +895,9 @@ async function fetchJwtToken(): Promise<boolean> {
       return true;
     }
 
-    const response = await fetch('https://b.jw-cdn.org/tokens/jworg.jwt', {
+    if (!mediaApiOrigin.value) return false;
+
+    const response = await fetch(`${mediaApiOrigin.value}/tokens/jworg.jwt`, {
       headers: {
         Accept: 'text/plain',
       },
@@ -881,6 +924,20 @@ async function fetchJwtToken(): Promise<boolean> {
     errorCatcher(error);
     return false;
   }
+}
+
+async function getPublicationDocuments(
+  dbPath: string,
+): Promise<DocumentItem[]> {
+  const pageColumns = await getExistingColumns(dbPath, 'Document', [
+    'FirstPageNumber',
+    'LastPageNumber',
+  ]);
+  const columns = ['DocumentId', 'Title', ...pageColumns].join(', ');
+  return executeQuery<DocumentItem>(
+    dbPath,
+    `SELECT ${columns} FROM Document WHERE Type <> 1 ORDER BY DocumentId`,
+  );
 }
 
 function goBack() {
@@ -972,11 +1029,7 @@ async function handleJwpubResult(
   if (!dbPath) return false;
 
   selection.dbPath = dbPath;
-  const docs = executeQuery<DocumentItem>(
-    dbPath,
-    `SELECT DocumentId, Title FROM Document WHERE Type <> 1 ORDER BY DocumentId`,
-  );
-  documents.value = docs;
+  documents.value = await getPublicationDocuments(dbPath);
   await buildDocumentHasMedia(dbPath);
   await buildDocumentPreviews(dbPath);
   step.value = 'article';
@@ -1060,6 +1113,10 @@ async function importDocument(doc: DocumentItem) {
   dialogValue.value = false;
 }
 
+const pdfPageSelectionRef = ref<InstanceType<
+  typeof DialogPdfPageSelection
+> | null>(null);
+
 async function importPdfVersion() {
   try {
     if (!pdfImportAvailable.value || loading.value) return;
@@ -1100,45 +1157,9 @@ async function importPdfVersion() {
 
     const tempDir = await getTempPath();
 
-    const totalPages = await getNrOfPdfPages(pdfPath);
-    let selectedPages = new Set(
-      Array.from({ length: totalPages }, (_, i) => i),
-    );
-    if (totalPages > 5) {
-      const selectionInput = await new Promise<null | string>((resolve) => {
-        $q.dialog({
-          cancel: true,
-          persistent: true,
-          prompt: {
-            model: `1-${totalPages}`,
-            type: 'text',
-          },
-          title: t('pdf-page-selection-prompt', { totalPages }),
-        })
-          .onOk((data: string) => resolve(data))
-          .onCancel(() => resolve(null));
-      });
-      if (!selectionInput) return;
-      const parsed = selectionInput
-        .split(',')
-        .flatMap((part) => {
-          const trimmed = part.trim();
-          if (trimmed.includes('-')) {
-            const [a, b] = trimmed.split('-').map((n) => Number.parseInt(n));
-            if (Number.isNaN(a) || Number.isNaN(b)) return [];
-            return Array.from(
-              { length: (b || 0) - (a || 0) + 1 },
-              (_, i) => (a || 0) + i,
-            );
-          }
-          const n = Number.parseInt(trimmed);
-          return Number.isNaN(n) ? [] : [n];
-        })
-        .filter((n) => n >= 1 && n <= totalPages)
-        .map((n) => n - 1);
-      if (!parsed.length) return;
-      selectedPages = new Set(parsed);
-    }
+    const selectedPages =
+      await pdfPageSelectionRef.value?.selectPdfPages(pdfPath);
+    if (!selectedPages) return;
     const convertedImages = await convertPdfToImages(
       pdfPath,
       tempDir,
@@ -1313,14 +1334,16 @@ async function performSearch() {
   }
 }
 
-async function refreshPdfAvailability() {
+async function refreshPdfAvailability(issueOverride?: string) {
   try {
     pdfImportAvailable.value = false;
     if (step.value !== 'article' || !selection.publication) return;
     const lang = (currentSettings.value?.lang || 'E') as JwLangCode;
-    const issue = selection.month
-      ? buildIssue(selection.year, selection.month, selection.publication)
-      : '0';
+    const issue =
+      issueOverride ??
+      (selection.month
+        ? buildIssue(selection.year, selection.month, selection.publication)
+        : '0');
     const info = await fetchPubMediaLinks(
       {
         fileformat: 'PDF',
@@ -1394,7 +1417,11 @@ async function selectCategory(key: string) {
       step.value = 'year';
       loading.value = true;
       // Fetch years for Meeting Workbook
-      const url = `https://www.jw.org/en/library/jw-meeting-workbook/json/filters/IssueYearViewsFilter/`;
+      const url = getLibraryFilterUrl(
+        urlVariables.value.base,
+        'jw-meeting-workbook',
+        'IssueYearViewsFilter',
+      );
       const result = await fetchJson<{ choices: FilterChoice[]; id: string }>(
         url,
         new URLSearchParams({
@@ -1410,7 +1437,11 @@ async function selectCategory(key: string) {
       // Fetch brochure/booklet list
       step.value = 'publicationListing';
       loading.value = true;
-      const url = `https://www.jw.org/en/library/brochures/json/filters/PseudoSearchViewsFilter/`;
+      const url = getLibraryFilterUrl(
+        urlVariables.value.base,
+        'brochures',
+        'PseudoSearchViewsFilter',
+      );
       const result = await fetchJson<{ choices: FilterChoice[]; id: string }>(
         url,
         new URLSearchParams({
@@ -1428,7 +1459,11 @@ async function selectCategory(key: string) {
       // Fetch tracts and invitations list
       step.value = 'publicationListing';
       loading.value = true;
-      const url = `https://www.jw.org/en/library/tracts/json/filters/PseudoSearchViewsFilter/`;
+      const url = getLibraryFilterUrl(
+        urlVariables.value.base,
+        'tracts',
+        'PseudoSearchViewsFilter',
+      );
       const result = await fetchJson<{ choices: FilterChoice[]; id: string }>(
         url,
         new URLSearchParams({
@@ -1446,7 +1481,11 @@ async function selectCategory(key: string) {
       // Fetch programs list
       step.value = 'publicationListing';
       loading.value = true;
-      const url = `https://www.jw.org/en/library/programs/json/filters/PseudoSearchViewsFilter/`;
+      const url = getLibraryFilterUrl(
+        urlVariables.value.base,
+        'programs',
+        'PseudoSearchViewsFilter',
+      );
       const result = await fetchJson<{ choices: FilterChoice[]; id: string }>(
         url,
         new URLSearchParams({
@@ -1474,7 +1513,11 @@ async function selectMagazine(choice: FilterChoice) {
     step.value = 'year';
     loading.value = true;
     // Fetch year list for selected magazine
-    const url = `https://www.jw.org/en/library/magazines/json/filters/IssueYearViewsFilter/`;
+    const url = getLibraryFilterUrl(
+      urlVariables.value.base,
+      'magazines',
+      'IssueYearViewsFilter',
+    );
     const result = await fetchJson<{ choices: FilterChoice[]; id: string }>(
       url,
       new URLSearchParams({
@@ -1518,11 +1561,7 @@ async function selectMonth(m: number) {
     }
     selection.dbPath = db;
     // Load articles (documents)
-    const docs = executeQuery<DocumentItem>(
-      db,
-      `SELECT DocumentId, Title FROM Document WHERE Type <> 1 ORDER BY DocumentId`,
-    );
-    documents.value = docs;
+    documents.value = await getPublicationDocuments(db);
     await buildDocumentHasMedia(db);
     await buildDocumentPreviews(db);
     step.value = 'article';
@@ -1556,11 +1595,7 @@ async function selectPublication(choice: FilterChoice) {
       return;
     }
     selection.dbPath = db;
-    const docs = executeQuery<DocumentItem>(
-      db,
-      `SELECT DocumentId, Title FROM Document WHERE Type <> 1 ORDER BY DocumentId`,
-    );
-    documents.value = docs;
+    documents.value = await getPublicationDocuments(db);
     await buildDocumentHasMedia(db);
     await buildDocumentPreviews(db);
     step.value = 'article';
@@ -1603,7 +1638,7 @@ async function selectSearchResult(result: SearchResultItem) {
 
     if (jwpubFileArray?.length) {
       await handleJwpubResult(publication, issue, lang);
-      await refreshPdfAvailability();
+      await refreshPdfAvailability(issue);
     } else {
       await handleMediaResult(
         pubMediaLinks,

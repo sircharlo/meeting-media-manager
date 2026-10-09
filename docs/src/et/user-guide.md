@@ -50,14 +50,14 @@ M³ korraldab meedia automaatselt koosoleku tüübi ja sektsiooni järgi:
 
 - **Koosoleku osad** – Meedia on rühmitatud koosoleku osade järgi (avalik kõne, Aarded Jumala sõnast jne)
 - **Kohandatud osad** – võid luua kohandatud osad täiendavate meediafailide jaoks, kui sellel konkreetsel päeval ei ole ühtegi koosolekut plaanis
-- **Manual Sorting** - Drag media items into the order you need, or reset the order when needed
-- **Repeated Playback** - Loop a single media item or repeat every item in a section until playback is stopped manually
+- **Käsitsi sorteerimine** – lohista meediaelemendid soovitud järjekorda või taasta vajaduse korral algne järjekord
+- **Kordus** – ühe meediaelemendi kordamine või jaotises olevate elementide kordamine, kuni taasesitus käsitsi peatatakse
 
-### Hidden and Missing Media {#hidden-and-missing-media}
+### Peidetud ja puuduvad meediaelemendid {#hidden-and-missing-media}
 
-Media can be hidden from the meeting list without deleting the automatically downloaded files. If media is hidden by mistake, use **Show hidden media** for the selected day.
+Meediafailid saab koosolekute nimekirjast peita, ilma et automaatselt alla laaditud faile kustutataks. Kui meedia on kogemata peidetud, kasuta valitud päeva puhul funktsiooni **Näita peidetud meediat**.
 
-If M³ reports missing media, first check whether the item is expected to become available closer to the meeting date. You can also add the missing item manually with the **Add media** menu or by dragging it into the media list.
+Kui M³ teatab puuduvatest materjalidest, kontrollige esmalt, kas need peaksid saadaval olema lähemalt koosoleku kuupäevale. Võid puuduva elemendi lisada ka käsitsi menüüvaliku **Lisa meedia** kaudu või lohistades selle meedianimekirja.
 
 ## Meedia esitlemine {#media-presentation}
 
@@ -83,8 +83,8 @@ Meediamängija pakub põhjalikke juhtnuppe:
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
 - **Suurenda/Liiguta** – Kasuta hiirerulli suurendamiseks, lohista pildi liigutamiseks
-- **Live Preview** - When enabled, show a preview of the audience media window in the main app
-- **Playback Speed** - When enabled in settings, adjust audio and video speed from the media item context menu
+- **Reaalajas eelvaade** – Kui see on sisse lülitatud, kuvatakse peaaknas vaatajaskonna meediaakna eelvaade
+- **Taasesituskiirus** – Kui see on seadetes sisse lülitatud, saad meediaelemendi kontekstimenüüst reguleerida heli ja video taasesituskiirust
 
 ### Täiustatud esitlusfunktsioonid {#advanced-presentation}
 
@@ -128,26 +128,26 @@ Määra endale sobivad klaviatuuri otseteed. Pane tähele, et vaikimisi otseteed
 
 **Märge (\*)**: Globaalne kiirklahv – saadaval ka rakenduse fookuseta
 
-## Display Tools {#display-tools}
+## Kuvamisvahendid {#display-tools}
 
-### Media Display Window {#media-display-window}
+### Meedia kuvamisaken {#media-display-window}
 
-The media display window is the audience-facing window. It can be placed on an external screen or used in a windowed setup depending on your equipment.
+Meediaekraani aken on vaatajale suunatud aken. Sõltuvalt teie seadmetest saab seda kuvada välisel ekraanil või kasutada akna režiimis.
 
-Use the display popup to:
+Kasuta ekraanil kuvatavat hüpikakent, et:
 
-- Show or hide the media display
-- Choose the display or window type
-- Select a temporary custom background instead of the yeartext
-- Use an available camera as the background. This is mostly used in sign-language congregations.
+- Meediaekraani kuvamiseks või peitmiseks
+- Ekraani või akna tüübi valimiseks
+- Aasta teksti asemel ajutise kohandatud tausta valimiseks
+- Olemasoleva kaamera kasutamiseks taustana. Seda kasutatakse peamiselt viipekeele kogudustes.
 
-Please note that custom backgrounds are temporary and are not saved after M³ quits.
+Pane tähele, et kohandatud taustapildid on ajutised ja neid ei salvestata pärast M³ sulgemist.
 
-### Meeting Timer {#user-guide-meeting-timer}
+### Koosoleku taimer {#user-guide-meeting-timer}
 
-When the meeting timer is enabled, M³ can show a separate timer window for timing participant parts. The timer can count up or down, show the current time, show a meeting countdown before scheduled meetings, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+Kui koosoleku taimer on sisse lülitatud, võib M³ kuvada eraldi taimeri akent osalejate kommentaaride ajastamiseks. See suudab aega üles- või allapoole loendada, näidata praegust kellaaega, kuvada koosoleku alguseni jäänud aega ning vajaduse korral näidata, kas koosolek kestab üle aja või on ajakavast ees.
 
-The timer is a beta feature and should only be used when approved locally.
+Taimer on beetafunktsioon ja seda tuleks lubada ainult heakskiidu korral.
 
 ## Taustamuusika {#user-guide-background-music}
 
@@ -190,7 +190,7 @@ M³ vahetab ettekannete ajal OBS-i stseene automaatselt:
 - **Meediastseen** – Kuvab meediasisu
 - **Pildistseen** – Kuvab pilte (saab soovi korral edasi lükata)
 - **Automaatne lülitumine** – Stseenid vahetuvad meediatüübi ja seadete järgi
-- **Recording Controls** - If enabled, M³ can start and stop OBS recording from the OBS popup
+- **Salvestamise juhtimisfunktsioonid** – Kui see on sisse lülitatud, saab M³ OBS-i hüpikaknas OBS-i salvestamist alustada ja lõpetada
 
 ### OBS täiendavad võimalused {#advanced-obs}
 
@@ -267,8 +267,8 @@ Lisa oma meediafailid M³-sse:
 3. **Kausta jälgimine** - Sea jälgitav kaust automaatseks impordiks
 4. **JWPUB failid ja esitusloendid** - Impordi väljaanded ja esitusloendid
 5. **Avaliku kõne meedia (S-34 / S-34mp)** – Impordi avaliku kõne meedia S‑34 või S‑34mp JWPUB-failidega
-6. **Videos from the official website** - Search for videos and add them to the selected date
-7. **Study Bible and sign-language Bible media** - Add images, videos, maps, historical references, or sign-language Bible videos for selected passages
+6. **Videod ametlikult veebilehelt** – Otsi videoid ja lisa need valitud kuupäevale
+7. **Õppepiibel ja viipekeelne piiblimaterjal** – Lisa valitud lõikudele pilte, videoid, kaarte, ajaloolisi viiteid või viipekeelseid piiblivideoid
 
 ### Imporditud meedia haldamine {#managing-imported-media}
 
@@ -287,9 +287,9 @@ Impordi Piibli salmide helisalvestised:
 4. Laadi helifailid alla
 5. Kasuta neid
 
-### Profile Settings Import and Export {#profile-settings-import-export}
+### Profiili seadete import ja eksport {#profile-settings-import-export}
 
-Each profile's settings can be exported to a JSON file from Settings. Importing a profile settings file replaces the current profile's settings, which is useful when moving a setup to another computer or restoring a known configuration.
+Iga profiili seaded saab menüüst „Seaded” eksportida JSON-failina. Profiili seadete faili importimine asendab praeguse profiili seaded, mis on kasulik seadistuse teisele arvutile üleviimisel või teadaoleva konfiguratsiooni taastamisel.
 
 ## Kausta jälgimine ja eksport {#user-guide-folder-monitoring}
 
@@ -323,21 +323,21 @@ Ametliku veebisaidi näitamine välistel ekraanidel:
 
 ### Brauseri juhtnupud {#website-controls}
 
-- **Open Website** - Open a separate website window
-- **Start Mirroring** - Show the website window in the media display for the audience
-- **Stop Mirroring** - Stop showing the website and return to the yeartext or media display background
+- **Ava veebileht** – ava eraldi veebilehe aken
+- **Peegeldamise alustamine** – veebilehe akna kuvamine publikule meediaekraanil
+- **Peegeldamise lõpetamine** – Lõpeta veebilehe kuvamine ja naase aastateksti või meedia taustapildi juurde
 - **Navigeerimine** - Tavalised brauseri liikumisnupud
 - \*\*Värskenda \*\* - Laadi praegune leht uuesti
 - \*\*Sulge \*\* - Välju veebiesitluse režiimist
-- **Auto Return** - Optionally return to the media list automatically after stopping website mirroring
+- **Automaatne tagasipöördumine** – soovi korral naaseb pärast veebilehe peegeldamise lõpetamist automaatselt meedianimekirja
 
 ## Koosolekute salvestused {#meeting-recordings}
 
-M³ can help control meeting recording, but it does not include a built-in recorder.
+M³ aitab koosolekute salvestamist hallata, kuid sellel puudub sisseehitatud salvestusseade.
 
-- **OBS Recording** - If OBS recording controls are enabled, use the OBS popup to start and stop OBS recording
-- **External Recording App** - Configure keyboard shortcuts for a separate recording app, then use the meeting recordings popup to send those shortcuts
-- **Recording Folder** - Configure a recording folder to show a quick button that opens the folder where recordings are saved
+- **OBS-salvestus** – Kui OBS-salvestuse juhtnupud on sisse lülitatud, kasuta OBS-i hüpikakent, et OBS-salvestust alustada ja lõpetada
+- **Väline salvestusrakendus** – seadista klaviatuurikombinatsioonid eraldi salvestusrakendusele ja kasuta seejärel koosoleku salvestuste hüpikakent, et need klaviatuurikombinatsioonid edastada
+- **Salvestuskaust** – Määra salvestuskaust, et kuvada kiirnupp, mis avab kausta, kuhu salvestised salvestatakse
 
 ## Lisasätted {#user-guide-advanced-features}
 
@@ -388,7 +388,7 @@ Loo endale sobivad kiirklahvid sujuvaks kasutuseks:
 - Vähenda maksimaalset eraldusvõimet
 - Puhasta vanad vahemälufailid
 - Veendu kettaruumi olemasolus
-- If the app shows graphical glitches or crashes, try disabling hardware acceleration and restart M³
+- Kui rakenduses esineb graafilisi häireid või see jookseb kokku, proovi riistvarakiirendust välja lülitada ja M³ uuesti käivitada
 
 #### Keeleprobleemid {#user-guide-language-issues}
 

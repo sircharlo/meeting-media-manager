@@ -38,6 +38,16 @@ export function useMediaSectionRepeat() {
     }
   >({ name: 'section-repeat' });
 
+  // Broadcast channel used to tell MediaPlayerPage to replay the same item.
+  // Created once here (inside the composable's own setup scope, so VueUse's
+  // auto-close-on-unmount actually applies) rather than inside playNextItem —
+  // playNextItem is a plain function invoked later from an event handler,
+  // outside any active effect scope, where useBroadcastChannel's cleanup
+  // silently never registers and each call leaked a new native channel.
+  const { post: postMediaRepeatNow } = useBroadcastChannel<number, number>({
+    name: 'media-repeat-now',
+  });
+
   // Track the current section being repeated
   const currentRepeatingSection = ref<MediaSectionIdentifier | null>(null);
   const isRepeating = ref(false);
@@ -194,10 +204,6 @@ export function useMediaSectionRepeat() {
       return;
     }
 
-    const { post: postMediaRepeatNow } = useBroadcastChannel<number, number>({
-      name: 'media-repeat-now',
-    });
-
     const nextUrl = nextItem.fileUrl || nextItem.streamUrl || '';
     const isSameItem = mediaPlaying.value.url === nextUrl;
 
@@ -219,12 +225,18 @@ export function useMediaSectionRepeat() {
     mediaPlaying.value = {
       action: 'play',
       currentPosition: 0,
+      currentPositionUpdatedAt: 0,
+      duration: 0,
       pan: {
         x: 0,
         y: 0,
       },
+      playbackConfirmedToken: 0,
       playbackRate: 1,
+      playToken: 0,
       seekTo: 0,
+      shouldLoop: false,
+      slideshowAudioUrl: '',
       subtitlesUrl: nextItem.subtitlesUrl || '',
       uniqueId: nextItem.uniqueId,
       url: nextUrl,

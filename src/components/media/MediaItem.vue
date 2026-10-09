@@ -3,6 +3,7 @@
     v-show="!media.hidden"
     ref="mediaItem"
     :class="{
+      'hover-reveal-group': true,
       'items-center': true,
       'justify-center': true,
       'media-filter-filename-match': filenameOnlyMatchesMediaFilter,
@@ -10,17 +11,25 @@
       'q-px-sm': child,
       'sortable-selected': props.selected,
     }"
+    clickable
     :data-id="media.uniqueId"
     :style="{
       'padding: 8px 6px': child,
       'flex-direction': 'column',
     }"
+    @keydown.enter.space.prevent="(evt: KeyboardEvent) => emit('click', evt)"
     @mouseup.left.passive="(evt: MouseEvent) => emit('click', evt)"
   >
-    <div class="row full-width items-center justify-center">
+    <div
+      class="row full-width items-center justify-center"
+      :class="{
+        'group-child-drag-handle': child,
+        'section-drag-handle': !child,
+      }"
+    >
       <div class="col-shrink">
         <div
-          class="q-pr-none rounded-borders overflow-hidden relative-position bg-black"
+          class="q-pr-none rounded-borders overflow-hidden relative-position bg-black media-thumbnail-frame"
           :style="{
             opacity: !fileIsAvailable && !streamIsAvailable ? 0.64 : undefined,
           }"
@@ -40,7 +49,7 @@
               :pan="mediaPan"
               :pan-enabled="false"
               :selector="'#' + randomId"
-              style="width: 150px; height: 84px"
+              :style="{ width: thumbnailWidth, height: thumbnailHeight }"
               :wheel-zoom-step="0.1"
               :zoom="mediaZoom"
               :zoom-enabled="control || shift"
@@ -67,12 +76,12 @@
                 <q-img
                   ref="mediaImage"
                   fit="contain"
+                  :no-spinner="isDemoMode"
                   :ratio="16 / 9"
-                  :src="
-                    thumbnailFromMetadata ||
-                    (media.isImage ? media.fileUrl : media.thumbnailUrl)
-                  "
-                  width="150px"
+                  spinner-color="white"
+                  spinner-size="1em"
+                  :src="mediaThumbnailUrl"
+                  :width="thumbnailWidth"
                   @error="imageLoadingError"
                 >
                   <q-badge
@@ -94,10 +103,15 @@
                     />
                     {{
                       customDurationIsSet
-                        ? formatTime(mediaCustomDuration.min ?? 0) + ' - '
+                        ? formatTime(appliedCustomDuration.min ?? 0) + ' - '
                         : ''
                     }}
-                    {{ formatTime(mediaCustomDuration.max ?? media.duration) }}
+                    {{
+                      formatTime(appliedCustomDuration.max ?? media.duration)
+                    }}
+                    <q-tooltip :delay="500">
+                      {{ t('set-custom-durations') }}
+                    </q-tooltip>
                   </q-badge>
                 </q-img>
               </div>
@@ -175,7 +189,8 @@
                   style="padding: 5px !important; cursor: pointer"
                   @click="zoomReset(true)"
                 >
-                  <q-icon color="white" name="mmm-refresh" />
+                  <q-icon color="white" name="mmm-reset" />
+                  <q-tooltip :delay="500">{{ t('reset-zoom') }}</q-tooltip>
                 </q-badge>
               </div>
             </transition>
@@ -200,6 +215,7 @@
                     @mouseup="stopZoom"
                   >
                     <q-icon color="white" name="mmm-minus" />
+                    <q-tooltip :delay="500">{{ t('zoom-out') }}</q-tooltip>
                   </q-badge>
                   <q-separator class="bg-grey-8 q-my-xs" vertical />
                   <q-badge
@@ -211,27 +227,40 @@
                     @mouseup="stopZoom"
                   >
                     <q-icon color="white" name="mmm-plus" />
+                    <q-tooltip :delay="500">{{ t('zoom-in') }}</q-tooltip>
                   </q-badge>
                 </div>
               </div>
             </transition>
           </template>
 
-          <q-img
+          <div
             v-else
-            ref="mediaImage"
-            fit="contain"
-            :ratio="16 / 9"
-            :src="
-              thumbnailFromMetadata ||
-              (media.isImage ? media.fileUrl : media.thumbnailUrl)
-            "
-            width="150px"
-            @error="imageLoadingError"
+            class="media-thumbnail-container relative-position"
+            :style="{ width: thumbnailWidth }"
           >
+            <q-img
+              v-if="!showAudioThumbnailFallback"
+              ref="mediaImage"
+              fit="contain"
+              :no-spinner="isDemoMode"
+              :ratio="16 / 9"
+              spinner-color="white"
+              spinner-size="1em"
+              :src="mediaThumbnailUrl"
+              :width="thumbnailWidth"
+              @error="imageLoadingError"
+            />
+            <div
+              v-else
+              class="media-audio-thumbnail-fallback"
+              :style="{ width: thumbnailWidth }"
+            >
+              <q-icon color="white" name="mmm-music-note" size="2.5rem" />
+            </div>
             <q-badge
               v-if="media.duration"
-              class="q-mt-sm q-ml-sm cursor-pointer rounded-borders-sm bg-semi-black"
+              class="absolute-top-left q-mt-sm q-ml-sm cursor-pointer rounded-borders-sm bg-semi-black"
               style="padding: 5px !important"
               @click="showMediaDurationPopup()"
             >
@@ -248,20 +277,26 @@
               />
               {{
                 customDurationIsSet
-                  ? formatTime(mediaCustomDuration.min ?? 0) + ' - '
+                  ? formatTime(appliedCustomDuration.min ?? 0) + ' - '
                   : ''
               }}
-              {{ formatTime(mediaCustomDuration.max ?? media.duration) }}
+              {{ formatTime(appliedCustomDuration.max ?? media.duration) }}
+              <q-tooltip :delay="500">
+                {{ t('set-custom-durations') }}
+              </q-tooltip>
             </q-badge>
             <BaseDialog
               v-model="mediaDurationPopup"
               :dialog-id="'media-duration-popup-' + props.media.uniqueId"
               persistent
             >
-              <q-card>
+              <q-card class="round-card">
                 <q-card-section
-                  class="row items-center text-bigger text-semibold q-pb-none"
+                  class="row items-center no-wrap text-bigger text-semibold text-primary q-pb-none"
                 >
+                  <div class="icon-chip q-mr-sm">
+                    <q-icon name="mmm-time" size="xs" />
+                  </div>
                   {{ t('set-custom-durations') }}
                 </q-card-section>
                 <q-card-section>
@@ -279,9 +314,10 @@
                     <div class="col-shrink q-pr-md time-duration">
                       <q-input
                         v-model="customDurationMinUserInput"
-                        class="text-center q-pa-none"
+                        class="bg-accent-100 text-center"
                         dense
-                        style="width: 3.5em"
+                        outlined
+                        style="width: 4.5em"
                         @update:model-value="
                           if ($event && media.duration) {
                             let val = Math.max(
@@ -293,18 +329,17 @@
                             );
                             if (val >= media.duration) val = 0;
                             customDurationMinUserInput = formatTime(val);
-                            mediaCustomDuration.min = val;
+                            draftCustomDuration.min = val;
                           }
                         "
                       />
                     </div>
                     <div class="col flex">
                       <q-range
-                        v-model="mediaCustomDuration"
+                        v-model="draftCustomDuration"
                         :max="media.duration"
                         :min="0"
                         :step="0.1"
-                        @change="updateMediaCustomDuration($event)"
                         @update:model-value="
                           customDurationMinUserInput = formatTime($event.min);
                           customDurationMaxUserInput = formatTime($event.max);
@@ -314,9 +349,10 @@
                     <div class="col-shrink q-pl-md time-duration">
                       <q-input
                         v-model="customDurationMaxUserInput"
-                        class="text-center q-pa-none"
+                        class="bg-accent-100 text-center"
                         dense
-                        style="width: 3.5em"
+                        outlined
+                        style="width: 4.5em"
                         @update:model-value="
                           if ($event && media.duration) {
                             let val = Math.max(
@@ -327,7 +363,7 @@
                               0,
                             );
                             customDurationMaxUserInput = formatTime(val);
-                            mediaCustomDuration.max = val;
+                            draftCustomDuration.max = val;
                           }
                         "
                       />
@@ -342,6 +378,11 @@
                     @click="resetMediaDuration()"
                   />
                   <q-btn
+                    flat
+                    :label="t('cancel')"
+                    @click="cancelMediaDuration()"
+                  />
+                  <q-btn
                     color="primary"
                     flat
                     :label="t('save')"
@@ -350,67 +391,71 @@
                 </q-card-actions>
               </q-card>
             </BaseDialog>
-          </q-img>
+          </div>
         </div>
       </div>
       <div class="col">
         <div class="row items-center">
-          <div
-            v-if="
-              (media.source !== 'dynamic' &&
-                !currentSettings?.disableMediaFetching &&
-                fileIsAvailable) ||
-              media.tag?.type
-            "
-            :class="mediaTagClasses"
-            side
-          >
-            <q-chip
-              :class="[
-                'media-tag full-width',
-                media.tag?.type === 'song'
-                  ? currentSongIsDuplicated
-                    ? 'bg-warning'
-                    : 'bg-accent-400'
-                  : 'bg-accent-200',
-              ]"
-              :clickable="false"
-              :ripple="false"
-              :text-color="media.tag?.type === 'song' ? 'white' : undefined"
+          <div v-if="showContentTag" :class="mediaTagClasses" side>
+            <div
+              class="media-tag"
+              :class="{
+                'media-tag--icon-only': !tagValueText,
+                'media-tag--song': tagVariant === 'song',
+              }"
+              @dblclick="openEditTagDialog"
             >
-              <q-icon
-                :class="{ 'q-mr-xs': media.tag?.type }"
-                :name="
-                  media.source === 'watched'
-                    ? 'mmm-watched-media'
-                    : media.source === 'additional' &&
-                        !currentSettings?.disableMediaFetching &&
-                        fileIsAvailable
-                      ? 'mmm-add-media'
-                      : media.tag?.type === 'paragraph'
-                        ? media.tag.value !== FOOTNOTE_TARGET_PARAGRAPH
-                          ? 'mmm-paragraph'
-                          : 'mmm-footnote'
-                        : 'mmm-music-note'
+              <div
+                class="media-tag__icon text-white"
+                :class="
+                  tagVariant === 'song'
+                    ? 'bg-accent-400'
+                    : tagVariant === 'warn'
+                      ? 'bg-warning'
+                      : tagVariant === 'neutral'
+                        ? 'bg-accent-300'
+                        : undefined
                 "
+                :style="
+                  tagVariant === 'paragraph' ? paragraphCapStyle : undefined
+                "
+              >
+                <q-icon :name="tagIconName" />
+              </div>
+              <div
+                v-if="showTagValue"
+                class="media-tag__value"
+                :class="
+                  tagVariant === 'warn'
+                    ? 'bg-warning text-white'
+                    : tagVariant === 'song'
+                      ? 'bg-accent-200'
+                      : undefined
+                "
+                :style="[
+                  { fontSize: tagValueFontSize },
+                  tagVariant === 'paragraph' ? paragraphValueStyle : {},
+                ]"
+              >
+                {{ tagValueText }}
+              </div>
+              <q-icon
+                class="media-tag__edit-badge cursor-pointer"
+                name="mmm-edit"
+                size="10px"
+                @click="openEditTagDialog"
               />
-              <q-tooltip v-if="tagTooltipText" :delay="500">
-                {{ tagTooltipText }}
+              <q-tooltip v-if="contentTagTooltipText" :delay="500">
+                {{ contentTagTooltipText }}
               </q-tooltip>
-              <template v-if="media?.tag?.type">
-                {{
-                  media.tag?.type === 'paragraph' &&
-                  media.tag.value === FOOTNOTE_TARGET_PARAGRAPH
-                    ? t('footnote')
-                    : media.tag?.value
-                }}
-              </template>
-            </q-chip>
+            </div>
           </div>
           <div
             :class="{
               'q-px-md': true,
               col: true,
+              'relative-position': true,
+
               'text-grey': !fileIsAvailable && !streamIsAvailable,
             }"
           >
@@ -424,15 +469,36 @@
               @keyup.esc="handleTitleEdit(false)"
             />
             <div
+              v-else-if="isTiny"
+              class="text-chip ellipsis fades-under-hover-actions"
+              @dblclick="handleTitleEdit(true)"
+            >
+              {{ displayMediaTitle }}
+              <q-tooltip :delay="500">{{ displayMediaTitle }}</q-tooltip>
+            </div>
+            <div
               v-else
-              :class="
+              :class="[
+                'fades-under-hover-actions',
                 ($q.screen.gt.xs || !media.tag) &&
                 (displayMediaTitle.match(/\s/g) || []).length
                   ? 'ellipsis-3-lines'
-                  : 'ellipsis'
-              "
+                  : 'ellipsis',
+              ]"
               @dblclick="handleTitleEdit(true)"
             >
+              <q-badge
+                v-if="
+                  media.pubMediaId &&
+                  media.source === 'additional' &&
+                  !fileIsAvailable &&
+                  !streamIsAvailable
+                "
+                class="q-mr-sm bg-primary-semi-transparent"
+                :label="media.pubMediaId"
+                rounded
+                text-color="white"
+              />
               <!-- eslint-disable-next-line vue/no-v-html -->
               <span v-html="highlightedDisplayMediaTitle"></span>
               <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
@@ -441,9 +507,49 @@
             </div>
             <div
               v-if="!fileIsAvailable && !streamIsAvailable"
-              class="text-caption"
+              class="text-caption fades-under-hover-actions"
             >
               {{ t('media-item-missing-explain') }}
+            </div>
+            <div
+              class="hover-actions-overlay hover-reveal absolute-right row items-center no-wrap q-mr-sm"
+            >
+              <q-icon
+                v-if="currentSettings?.showMediaDragHandle"
+                :class="[
+                  'media-drag-handle',
+                  child ? 'group-child-drag-handle' : 'section-drag-handle',
+                  'q-mr-xs',
+                ]"
+                color="accent-400"
+                name="mmm-drag-n-drop"
+                size="sm"
+              >
+                <q-tooltip v-if="!isDragging" :delay="500">
+                  {{ t('drag-to-reorder') }}
+                </q-tooltip>
+              </q-icon>
+              <q-btn
+                ref="moreButton"
+                :aria-label="t('more-options')"
+                class="q-mr-xs"
+                color="accent-400"
+                dense
+                flat
+                icon="mmm-dots"
+                round
+                size="sm"
+                @click="
+                  () => {
+                    menuTarget = moreButton?.$el;
+                    contextMenu = true;
+                  }
+                "
+              >
+                <q-tooltip v-if="!contextMenu && !isDragging" :delay="500">
+                  {{ t('more-options') }}
+                </q-tooltip>
+              </q-btn>
             </div>
           </div>
           <div class="col-shrink">
@@ -460,30 +566,50 @@
                 </q-tooltip>
               </q-icon>
               <q-btn
-                ref="moreButton"
-                color="accent-400"
+                v-if="
+                  media.source === 'additional' &&
+                  !fileIsAvailable &&
+                  !streamIsAvailable
+                "
+                :aria-label="t('locate-missing-media')"
+                class="btn-tonal"
+                color="primary"
                 flat
-                icon="mmm-dots"
+                icon="mmm-folder-open"
                 round
                 size="sm"
-                :style="`visibility: ${hoveringMediaItem || contextMenu ? 'visible' : 'hidden'}`"
-                @click="
-                  () => {
-                    menuTarget = moreButton?.$el;
-                    contextMenu = true;
-                  }
-                "
-              />
-              <q-icon v-if="repeat" color="warning" name="mmm-repeat" size="sm">
+                @click.stop="locateMissingFile"
+              >
                 <q-tooltip :delay="500">
-                  {{ t('repeat') }}
+                  {{ t('locate-missing-media') }}
+                </q-tooltip>
+              </q-btn>
+              <q-icon
+                v-if="repeat || isSlideshowLooping"
+                color="warning"
+                name="mmm-repeat"
+                size="sm"
+              >
+                <q-tooltip :delay="500">
+                  {{ repeatTooltip }}
+                </q-tooltip>
+              </q-icon>
+              <q-icon
+                v-if="isSlideshowMasterVideo"
+                color="negative"
+                name="mmm-volume-off"
+                size="sm"
+              >
+                <q-tooltip :delay="500">
+                  {{ t('muted-slideshow-video') }}
                 </q-tooltip>
               </q-icon>
               <q-btn
                 v-if="playbackRate !== 1"
+                class="btn-tonal"
                 color="negative"
+                flat
                 icon="mmm-playback-speed"
-                outline
                 round
                 size="sm"
                 @click.stop="changePlaybackRate(0, true)"
@@ -512,12 +638,14 @@
           >
             <div class="row flex-center">
               <div
-                class="col-shrink text-caption text-accent-400 q-mx-sm text-left"
-                style="min-width: 40px"
+                class="col-shrink text-caption text-accent-400 q-mx-sm text-left media-item__time"
               >
                 {{
                   formatTime(
-                    Math.max(mediaElapsed - (mediaCustomDuration.min || 0), 0),
+                    Math.max(
+                      mediaElapsed - (appliedCustomDuration.min || 0),
+                      0,
+                    ),
                   )
                 }}
               </div>
@@ -525,8 +653,8 @@
                 <q-slider
                   v-model="mediaElapsed"
                   color="primary"
-                  :inner-max="mediaCustomDuration.max"
-                  :inner-min="mediaCustomDuration.min"
+                  :inner-max="appliedCustomDuration.max"
+                  :inner-min="appliedCustomDuration.min"
                   inner-track-color="accent-400"
                   label
                   :label-color="
@@ -549,14 +677,13 @@
                 />
               </div>
               <div
-                class="col-shrink text-caption text-accent-400 q-mx-sm text-right"
-                style="min-width: 40px"
+                class="col-shrink text-caption text-accent-400 q-mx-sm text-right media-item__time"
               >
                 {{
                   '-' +
                   formatTime(
                     Math.max(
-                      (mediaCustomDuration.max ||
+                      (appliedCustomDuration.max ||
                         media.duration ||
                         imageDuration) - mediaElapsed,
                       0,
@@ -567,6 +694,13 @@
             </div>
           </div>
         </transition>
+      </div>
+      <div v-if="showSourceTag" class="col-shrink q-mr-sm">
+        <q-icon color="accent-400" :name="sourceIconName" size="sm">
+          <q-tooltip v-if="sourceTooltipText" :delay="500">
+            {{ sourceTooltipText }}
+          </q-tooltip>
+        </q-icon>
       </div>
       <template v-if="shouldShowPlayButton">
         <div
@@ -606,16 +740,13 @@
                     (isVideo(mediaPlaying.url) || isAudio(mediaPlaying.url))) ||
                   (!fileIsAvailable && !streamIsAvailable)
                 "
-                :icon="localFile ? 'mmm-play' : 'mmm-stream-play'"
+                :icon="playButtonIcon"
                 rounded
                 :unelevated="!fileIsAvailable && !streamIsAvailable"
                 @click="setMediaPlaying(media)"
               >
-                <q-tooltip
-                  v-if="!fileIsAvailable && streamIsAvailable"
-                  :delay="1000"
-                >
-                  {{ t('play-while-downloading') }}
+                <q-tooltip :delay="1000">
+                  {{ playButtonTooltip }}
                 </q-tooltip>
               </q-btn>
             </div>
@@ -623,17 +754,23 @@
           <template v-else>
             <q-btn
               ref="playButton"
-              color="primary"
+              :color="fileIsAvailable || streamIsAvailable ? 'primary' : 'grey'"
               :disable="
-                mediaPlaying.url !== '' &&
-                (isVideo(mediaPlaying.url) || isAudio(mediaPlaying.url))
+                (mediaPlaying.url !== '' &&
+                  (isVideo(mediaPlaying.url) || isAudio(mediaPlaying.url))) ||
+                (!fileIsAvailable && !streamIsAvailable)
               "
               icon="mmm-play-sign-language"
               :outline="markersPanelOpen"
               push
               rounded
+              :unelevated="!fileIsAvailable && !streamIsAvailable"
               @click="markersPanelOpen = !markersPanelOpen"
-            />
+            >
+              <q-tooltip :delay="500">
+                {{ t('choose-a-clip') }}
+              </q-tooltip>
+            </q-btn>
           </template>
         </div>
         <template v-else>
@@ -664,12 +801,17 @@
             <q-btn
               v-if="mediaPlaying.action === 'pause'"
               ref="pauseResumeButton"
+              class="btn-tonal"
               color="primary"
+              flat
               icon="mmm-play"
-              outline
               rounded
               @click="mediaPlaying.action = 'play'"
-            />
+            >
+              <q-tooltip :delay="1000">
+                {{ t('resume') }}
+              </q-tooltip>
+            </q-btn>
             <q-btn
               v-else-if="
                 localFile &&
@@ -677,16 +819,21 @@
                 (mediaPlaying.action === 'play' || !mediaPlaying.action)
               "
               ref="pauseResumeButton"
+              class="btn-tonal"
               color="negative"
+              flat
               icon="mmm-pause"
-              outline
               rounded
               @click="mediaPlaying.action = 'pause'"
-            />
+            >
+              <q-tooltip :delay="1000">
+                {{ t('pause') }}
+              </q-tooltip>
+            </q-btn>
             <q-btn
               v-if="mediaPlaying.action !== '' || mediaPlaying.action === ''"
               ref="stopButton"
-              class="q-ml-sm"
+              :class="{ 'q-ml-sm': stopButtonHasPrecedingButton }"
               color="negative"
               :icon="
                 !localFile && mediaPlaying.currentPosition === 0
@@ -704,6 +851,9 @@
                 v-if="!localFile && mediaPlaying.currentPosition === 0"
                 size="xs"
               />
+              <q-tooltip :delay="1000">
+                {{ t('stop') }}
+              </q-tooltip>
             </q-btn>
           </div>
         </template>
@@ -715,13 +865,30 @@
         :target="menuTarget"
         touch-position
       >
-        <q-list>
+        <q-list role="menu">
           <template v-if="selectedMediaItems && multipleMediaItemsSelected">
             <q-item-label header>
               {{ t('selected-media-items') }} ({{
                 selectedMediaItems?.length || 0
               }})
             </q-item-label>
+            <q-item
+              v-if="slideshowVideoPair"
+              v-close-popup
+              clickable
+              :disable="!!mediaPlaying.url"
+              @click="playSlideshowVideo()"
+            >
+              <q-item-section avatar>
+                <q-icon name="mmm-play" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('play-video-with-audio') }}</q-item-label>
+                <q-item-label caption>
+                  {{ t('play-video-with-audio-explain') }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
             <q-item
               v-if="canDeleteSelected"
               v-close-popup
@@ -749,7 +916,7 @@
               :disable="isCurrentlyPlaying"
               @click="
                 hideMediaItems(
-                  selectedMediaItems,
+                  selectedMediaItems || [],
                   currentCongregation,
                   selectedDateObject,
                 )
@@ -772,6 +939,44 @@
           </template>
           <template v-else>
             <q-item-label header>{{ displayMediaTitle }}</q-item-label>
+            <!--
+              UX-6 (full-audit-2026-09-04.md / full-audit backlog): keyboard/
+              screen-reader equivalent to the pointer-only drag handle -
+              placed here (rather than as always-visible row buttons, unlike
+              MediaDivider.vue/MediaGroup.vue) since this menu is already a
+              keyboard-focusable trigger and a media list can be dense
+              enough that two more always-visible icons per row would add
+              real clutter. Covers both top-level items and a group's own
+              children (MediaGroup.vue passes the same can-move-up/
+              can-move-down/@move contract for its children, reordering
+              only within the group - see moveChildItem there).
+            -->
+            <q-item
+              v-close-popup
+              clickable
+              :disable="!canMoveUp"
+              @click="emit('move', -1)"
+            >
+              <q-item-section avatar>
+                <q-icon name="mmm-up" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('move-up') }}</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              v-close-popup
+              clickable
+              :disable="!canMoveDown"
+              @click="emit('move', 1)"
+            >
+              <q-item-section avatar>
+                <q-icon name="mmm-down" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('move-down') }}</q-item-label>
+              </q-item-section>
+            </q-item>
             <q-item
               v-close-popup
               clickable
@@ -802,7 +1007,7 @@
                 <q-item-label caption>{{ t('rename-explain') }}</q-item-label>
               </q-item-section>
             </q-item>
-            <q-item v-close-popup clickable @click="mediaEditTagDialog = true">
+            <q-item v-close-popup clickable @click="openEditTagDialog">
               <q-item-section avatar>
                 <q-icon name="mmm-tag" />
               </q-item-section>
@@ -860,7 +1065,11 @@
                     round
                     size="sm"
                     @click.stop="changePlaybackRate(-0.5)"
-                  />
+                  >
+                    <q-tooltip :delay="500">
+                      {{ t('decrease-playback-speed') }}
+                    </q-tooltip>
+                  </q-btn>
                   <span
                     class="text-caption text-weight-bold"
                     style="min-width: 36px; text-align: center"
@@ -877,8 +1086,32 @@
                     round
                     size="sm"
                     @click.stop="changePlaybackRate(0.5)"
-                  />
+                  >
+                    <q-tooltip :delay="500">
+                      {{ t('increase-playback-speed') }}
+                    </q-tooltip>
+                  </q-btn>
                 </div>
+              </q-item-section>
+            </q-item>
+            <q-item
+              v-if="
+                media.source === 'additional' &&
+                !fileIsAvailable &&
+                !streamIsAvailable
+              "
+              v-close-popup
+              clickable
+              @click="locateMissingFile"
+            >
+              <q-item-section avatar>
+                <q-icon color="primary" name="mmm-folder-open" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('locate-missing-media') }}</q-item-label>
+                <q-item-label caption>
+                  {{ t('locate-missing-media-explain') }}
+                </q-item-label>
               </q-item-section>
             </q-item>
             <q-item
@@ -954,8 +1187,9 @@
                         startSelectedMarker.VideoMarkerId ===
                           marker.VideoMarkerId))
                   "
+                  class="btn-tonal"
                   color="primary"
-                  outline
+                  flat
                   push
                   rounded
                   size="sm"
@@ -1000,99 +1234,154 @@
     v-model="mediaEditTagDialog"
     :dialog-id="'media-edit-tag-dialog-' + props.media.uniqueId"
   >
-    <q-card class="modal-confirm">
+    <q-card class="modal-confirm round-card tag-edit-card">
+      <q-card-section
+        class="row items-center no-wrap text-bigger text-semibold text-primary q-pb-none"
+      >
+        <div class="icon-chip q-mr-sm">
+          <q-icon name="mmm-tag" size="xs" />
+        </div>
+        {{ t('change-tag') }}
+      </q-card-section>
       <q-card-section class="items-center">
-        <q-option-group
+        <q-btn-toggle
           v-model="mediaTag.type"
-          color="primary"
-          inline
-          name="tagType"
+          class="full-width q-mb-md tag-type-toggle"
           :options="tagTypes"
+          spread
+          toggle-color="primary"
+          unelevated
         />
-        <q-input
-          v-model="mediaTag.value"
-          dense
-          :disable="!mediaTag.type"
-          focused
-          outlined
-        />
+        <div class="row items-center no-wrap q-gutter-sm">
+          <div class="col text-smaller text-dark-grey">
+            {{
+              mediaTag.type
+                ? tagTypes.find((option) => option.value === mediaTag.type)
+                    ?.label
+                : ''
+            }}
+          </div>
+          <div class="text-smaller text-dark-grey text-center tag-preview-slot">
+            {{ t('preview') }}
+          </div>
+        </div>
+        <div class="row items-start no-wrap q-gutter-sm">
+          <q-input
+            ref="tagValueInput"
+            v-model="mediaTag.value"
+            class="col bg-accent-100 tag-value-input"
+            dense
+            :disable="!mediaTag.type"
+            outlined
+          />
+          <div class="tag-preview-slot">
+            <div
+              v-if="mediaTag.type && mediaTag.value"
+              class="media-tag"
+              :class="{ 'media-tag--song': mediaTag.type === 'song' }"
+            >
+              <div
+                class="media-tag__icon text-white"
+                :class="mediaTag.type === 'song' ? 'bg-accent-400' : undefined"
+                :style="
+                  mediaTag.type === 'paragraph' ? paragraphCapStyle : undefined
+                "
+              >
+                <q-icon
+                  :name="
+                    mediaTag.type === 'song'
+                      ? 'mmm-music-note'
+                      : 'mmm-paragraph'
+                  "
+                />
+              </div>
+              <div
+                class="media-tag__value"
+                :class="mediaTag.type === 'song' ? 'bg-accent-200' : undefined"
+                :style="
+                  mediaTag.type === 'paragraph' ? paragraphValueStyle : {}
+                "
+              >
+                {{ mediaTag.value }}
+              </div>
+            </div>
+            <div v-else class="media-tag-ghost" />
+          </div>
+        </div>
       </q-card-section>
       <q-card-actions align="right">
-        <q-btn
-          color="negative"
-          flat
-          :label="t('dismiss')"
-          @click="mediaEditTagDialog = false"
-        />
-        <q-btn
-          color="primary"
-          flat
-          :label="t('save')"
-          @click="
-            emit('update:tag', mediaTag);
-            mediaEditTagDialog = false;
-          "
-        />
+        <q-btn flat :label="t('cancel')" @click="cancelEditTag" />
+        <q-btn color="primary" flat :label="t('save')" @click="saveEditTag" />
       </q-card-actions>
     </q-card>
   </BaseDialog>
-  <BaseDialog
+  <ConfirmDialog
     v-model="mediaStopPending"
+    :confirm-label="t('stop')"
     :dialog-id="'media-stop-pending-' + props.media.uniqueId"
-  >
-    <q-card class="modal-confirm">
-      <q-card-section
-        class="row items-center text-bigger text-semibold text-negative q-pb-none"
-      >
-        <q-icon class="q-mr-sm" name="mmm-stop" />
-        {{ t('stop-media') }}
-      </q-card-section>
-      <q-card-section class="row items-center">
-        {{ t('sureStopVideo') }}
-      </q-card-section>
-      <q-card-actions align="right" class="text-primary">
-        <q-btn flat :label="t('cancel')" @click="mediaToStop = ''" />
-        <q-btn
-          ref="stopButton"
-          color="negative"
-          flat
-          :label="t('stop')"
-          @click="stopMedia()"
-        />
-      </q-card-actions>
-    </q-card>
-  </BaseDialog>
-  <BaseDialog
+    icon="mmm-stop"
+    :message="t('sureStopVideo')"
+    persistent
+    :title="t('stop-media')"
+    @cancel="mediaToStop = ''"
+    @confirm="stopMedia()"
+  />
+  <ConfirmDialog
     v-model="mediaDeletePending"
+    :confirm-label="t('delete')"
     :dialog-id="'media-delete-pending-' + props.media.uniqueId"
-  >
-    <q-card class="modal-confirm">
-      <q-card-section
-        class="row items-center text-bigger text-semibold text-negative q-pb-none"
-      >
-        <q-icon class="q-mr-sm" name="mmm-delete" />
-        {{ t('delete-media') }}
-      </q-card-section>
-      <q-card-section class="row items-center">
-        {{
-          t('are-you-sure-delete', {
-            mediaToDelete:
-              props.media.title ||
-              (props.media.fileUrl ? getBasename(props.media.fileUrl) : ''),
-          })
-        }}
-      </q-card-section>
-      <q-card-actions align="right" class="text-primary">
-        <q-btn flat :label="t('cancel')" @click="mediaToDelete = ''" />
-        <q-btn
-          color="negative"
-          flat
-          :label="t('delete')"
-          @click="deleteMedia()"
-        />
-      </q-card-actions>
-    </q-card>
-  </BaseDialog>
+    icon="mmm-delete"
+    :message="
+      t('are-you-sure-delete', {
+        mediaToDelete:
+          props.media.title ||
+          (props.media.fileUrl ? getBasename(props.media.fileUrl) : ''),
+      })
+    "
+    persistent
+    :title="t('delete-media')"
+    @cancel="mediaToDelete = ''"
+    @confirm="deleteMedia()"
+  />
+  <ConfirmDialog
+    v-model="replayMarkerConfirmPending"
+    :confirm-label="t('confirm')"
+    :dialog-id="'media-replay-marker-pending-' + props.media.uniqueId"
+    icon="mmm-play"
+    icon-color="primary"
+    :message="t('play-only-this-clip-question')"
+    persistent
+    :title="t('confirm')"
+    @cancel="pendingReplayMarker = null"
+    @confirm="confirmReplayMarker"
+  />
+  <ConfirmDialog
+    v-model="entireFileConfirmPending"
+    :confirm-label="t('play-entire-file')"
+    :dialog-id="'media-play-entire-file-pending-' + props.media.uniqueId"
+    icon="mmm-play"
+    icon-color="primary"
+    :message="t('entireFile-question')"
+    persistent
+    :title="t('confirm')"
+    @cancel="entireFileConfirmPending = false"
+    @confirm="confirmPlayEntireFile"
+  />
+  <ConfirmDialog
+    v-model="deleteSelectedMediaConfirmPending"
+    :confirm-label="t('delete')"
+    :dialog-id="'media-delete-selected-pending-' + props.media.uniqueId"
+    icon="mmm-delete"
+    :message="
+      t('delete-selected-media-confirmation', {
+        count: deletableSelectedMediaItems?.length || 0,
+      })
+    "
+    persistent
+    :title="t('confirm')"
+    @cancel="deleteSelectedMediaConfirmPending = false"
+    @confirm="doDeleteSelectedMedia"
+  />
 </template>
 
 <script setup lang="ts">
@@ -1109,23 +1398,44 @@ import {
   whenever,
 } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import { storeToRefs } from 'pinia';
-import { type QBtn, type QImg, QItem, useQuasar } from 'quasar';
+import { type QBtn, type QImg, type QInput, QItem, useQuasar } from 'quasar';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
+import { TINY_SCREEN_WIDTH } from 'src/constants/general';
 import { FOOTNOTE_TARGET_PARAGRAPH } from 'src/constants/jw';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { getThumbnailUrl } from 'src/helpers/fs';
+import { getRendererPlatform, getThumbnailUrl } from 'src/helpers/fs';
+import {
+  copyToDatedAdditionalMedia,
+  createMediaItemFromPath,
+  downloadFileIfNeeded,
+} from 'src/helpers/jw-media';
+import {
+  getSectionAccentColor,
+  mixWithWhite,
+  withAlpha,
+} from 'src/helpers/media-sections';
 import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { triggerMediaWindowAutoHide } from 'src/helpers/mediaWindowAutoHide';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { triggerZoomScreenShare } from 'src/helpers/zoom';
+import {
+  automateZoomMediaSharing,
+  triggerZoomScreenShare,
+} from 'src/helpers/zoom';
 import { isExpectedNetworkPathAccessError } from 'src/shared/filesystem-errors';
 import { log, throttleWithTrailing, uuid } from 'src/shared/vanilla';
 import { isFileUrl } from 'src/utils/fs';
-import { isAudio, isImage, isVideo } from 'src/utils/media';
+import {
+  getFileNameMaskFromPubMediaId,
+  isAudio,
+  isImage,
+  isVideo,
+} from 'src/utils/media';
 import { sendObsSceneEvent } from 'src/utils/obs';
 import { formatTime, timeToSeconds } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useDemoModeStore } from 'stores/demo-mode';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
 import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue';
@@ -1152,6 +1462,69 @@ const currentlySpotlit = computed(
 
 const multipleMediaItemsSelected = computed(() => {
   return (props.selectedMediaItems?.length || 0) >= 2;
+});
+
+const selectedMediaForDay = computed(() => {
+  if (!props.selectedMediaItems || !selectedDateObject.value) return [];
+
+  const mediaItemsForDay = Object.values(
+    selectedDateObject.value.mediaSections,
+  ).flatMap((sectionMedia) =>
+    (sectionMedia.items ?? []).flatMap((item) => [
+      item,
+      ...(item.children ?? []),
+    ]),
+  );
+
+  return props.selectedMediaItems
+    .map((selectedId) =>
+      mediaItemsForDay.find((item) => item.uniqueId === selectedId),
+    )
+    .filter((item): item is MediaItem => !!item);
+});
+
+const canProvideSlideshowAudio = (media: MediaItem) => {
+  const url = media.fileUrl ?? media.streamUrl ?? '';
+  return !!media.isAudio || !!media.isVideo || isAudio(url) || isVideo(url);
+};
+
+const canProvideSlideshowVideo = (media: MediaItem) => {
+  const url = media.fileUrl ?? media.streamUrl ?? '';
+  return !!media.isVideo || isVideo(url);
+};
+
+const slideshowVideoPair = computed(() => {
+  if (selectedMediaForDay.value.length !== 2) return null;
+
+  const [firstMedia, secondMedia] = selectedMediaForDay.value;
+  if (!firstMedia || !secondMedia) return null;
+
+  const bothCanProvideAudio =
+    canProvideSlideshowAudio(firstMedia) &&
+    canProvideSlideshowAudio(secondMedia);
+  const selectedVideoItems = selectedMediaForDay.value.filter(
+    canProvideSlideshowVideo,
+  );
+
+  if (!bothCanProvideAudio || !selectedVideoItems.length) return null;
+
+  if (canProvideSlideshowVideo(props.media)) {
+    const audioMedia = selectedMediaForDay.value.find(
+      (item) => item.uniqueId !== props.media.uniqueId,
+    );
+    if (!audioMedia) return null;
+    return { audioMedia, videoMedia: props.media };
+  }
+
+  if (selectedVideoItems.length !== 1) return null;
+
+  const [videoMedia] = selectedVideoItems;
+  const audioMedia = selectedMediaForDay.value.find(
+    (item) => item.uniqueId !== videoMedia?.uniqueId,
+  );
+  if (!audioMedia || !videoMedia) return null;
+
+  return { audioMedia, videoMedia };
 });
 
 const deletableSelectedMediaItems = computed(() => {
@@ -1184,9 +1557,19 @@ const { currentSceneType, obsConnectionState } = storeToRefs(obsState);
 
 const mediaDurationPopup = ref(false);
 const mediaToStop = ref('');
-const mediaStopPending = computed(() => !!mediaToStop.value);
+const mediaStopPending = computed({
+  get: () => !!mediaToStop.value,
+  set: (value) => {
+    if (!value) mediaToStop.value = '';
+  },
+});
 const mediaToDelete = ref('');
-const mediaDeletePending = computed(() => !!mediaToDelete.value);
+const mediaDeletePending = computed({
+  get: () => !!mediaToDelete.value,
+  set: (value) => {
+    if (!value) mediaToDelete.value = '';
+  },
+});
 
 // Section repeat functionality
 const {
@@ -1228,12 +1611,21 @@ const imageProgressPercentage = ref(0);
 const imageStartTime = ref<null | number>(null);
 
 const props = defineProps<{
+  canMoveDown?: boolean;
+  canMoveUp?: boolean;
   child?: boolean;
+  isDragging?: boolean;
   media: MediaItem;
   mediaFilterTerms?: string[];
   selected?: boolean;
   selectedMediaItems?: string[];
 }>();
+
+const demoMode = useDemoModeStore();
+// Live demo-mode flag: true when launched with M3_DEMO_MODE or when a dev
+// enables demo mode at runtime via the Demo menu. The UI tweaks below
+// (spinner hiding, play icons, synthetic-file availability) react to it.
+const isDemoMode = computed(() => demoMode.enabled);
 
 const repeat = defineModel<boolean | undefined>('repeat', { required: true });
 
@@ -1241,7 +1633,9 @@ const emit = defineEmits<{
   (e: 'update:hidden', value: boolean): void;
   (e: 'update:tag', value: Tag): void;
   (e: 'update:customDuration' | 'update:title', value: string): void;
+  (e: 'update:relink', value: Partial<MediaItem>): void;
   (e: 'click', value: Event): void;
+  (e: 'move', delta: number): void;
 }>();
 
 const mediaItem = useTemplateRef<QItem>('mediaItem');
@@ -1257,8 +1651,11 @@ const menuTarget = ref<boolean | string | undefined>(true);
 const isEditingTitle = ref(false);
 const titleInput = ref<HTMLInputElement>();
 const mediaTitle = ref(props.media.title);
+const discoveredThumbnailUrl = ref('');
+const failedThumbnailUrl = ref('');
 
-const { basename, fileUrlToPath, fs } = globalThis.electronApi;
+const { basename, dirname, fileUrlToPath, fs, openFileDialog } =
+  globalThis.electronApi;
 
 const { pathExists, stat } = fs;
 const PATH_ACCESS_WARNING_THROTTLE_MS = 30000;
@@ -1287,6 +1684,41 @@ const displayMediaFilename = computed(() => {
   if (filename) return filename;
   if (!props.media.fileUrl) return '';
   return basename(props.media.fileUrl);
+});
+
+const getDisplayableThumbnailUrl = (thumbnailUrl?: string) => {
+  if (!thumbnailUrl) return '';
+  if (thumbnailUrl.startsWith('?')) return '';
+  if (thumbnailUrl === failedThumbnailUrl.value) return '';
+  return thumbnailUrl;
+};
+
+const mediaIsAudio = computed(() => {
+  return !!props.media.isAudio || isAudio(props.media.fileUrl ?? '');
+});
+
+const mediaThumbnailUrl = computed(() => {
+  const discoveredUrl = getDisplayableThumbnailUrl(
+    discoveredThumbnailUrl.value,
+  );
+  if (discoveredUrl) return discoveredUrl;
+  if (props.media.isImage) return props.media.fileUrl ?? '';
+
+  const explicitUrl = getDisplayableThumbnailUrl(props.media.thumbnailUrl);
+  if (explicitUrl) return explicitUrl;
+
+  // No thumbnail known yet: point q-img at the underlying file itself so its
+  // native spinner shows immediately. The file isn't a valid <img> source,
+  // so it errors out quickly, and @error routes into imageLoadingError ->
+  // findThumbnailUrl(), which does the real lookup (embedded picture/video
+  // metadata, then a frame-grab) once the file exists on disk.
+  return mediaIsAudio.value
+    ? ''
+    : getDisplayableThumbnailUrl(props.media.fileUrl);
+});
+
+const showAudioThumbnailFallback = computed(() => {
+  return mediaIsAudio.value && !mediaThumbnailUrl.value;
 });
 
 function escapeHtml(value: string): string {
@@ -1356,30 +1788,212 @@ const mediaTag = ref<Tag>({
   }),
 });
 
+const tagValueInput = ref<QInput>();
+
+// Re-derive from the item's current saved tag on every open, rather than
+// only once at component setup, so a stale edit left over from a previous
+// (possibly cancelled) session - or a tag that changed underneath this item
+// after mount - doesn't linger in the dialog.
+const openEditTagDialog = () => {
+  mediaTag.value = {
+    ...(props.media.tag || {
+      type: '',
+      value: '',
+    }),
+  };
+  mediaEditTagDialog.value = true;
+};
+
+// Explicit Save/Cancel (rather than applying edits live) so Cancel can
+// discard the in-progress draft: `mediaTag` only ever gets re-derived from
+// the item's actual saved tag when the dialog is opened
+// (openEditTagDialog above), so simply closing without emitting on Cancel
+// is enough to "revert" - next open starts fresh from the real saved value.
+const saveEditTag = () => {
+  emit('update:tag', {
+    type: mediaTag.value.type,
+    // Kept even when type is empty (tag switched to "None" and saved) -
+    // every read site (tagVariant, tagValueText, showContentTag, etc.)
+    // already gates on `type` first, so a value sitting unused alongside an
+    // empty type is inert. Keeping it means picking a type again later
+    // (here or on a future open) restores the last value typed instead of
+    // starting blank.
+    value: mediaTag.value.value,
+  });
+  mediaEditTagDialog.value = false;
+};
+
+const cancelEditTag = () => {
+  mediaEditTagDialog.value = false;
+};
+
 const tagTypes = [
   {
+    icon: 'mmm-clear',
     label: t('none'),
     value: '',
   },
   {
+    icon: 'mmm-music-note',
     label: t('song'),
     value: 'song',
   },
   {
+    icon: 'mmm-paragraph',
     label: t('paragraph'),
     value: 'paragraph',
   },
 ];
 
 const $q = useQuasar();
-const mediaTagClasses = computed(() => {
-  return {
-    'col-12': !$q.screen.gt.xs,
-    'col-shrink': $q.screen.gt.xs,
-    'q-pl-md': $q.screen.gt.xs,
-    'q-pr-none': $q.screen.gt.xs,
-    'q-px-md': !$q.screen.gt.xs,
-  };
+const isTiny = computed(() => $q.screen.width < TINY_SCREEN_WIDTH);
+const thumbnailWidth = computed(() => (isTiny.value ? '100px' : '150px'));
+const thumbnailHeight = computed(() => (isTiny.value ? '56px' : '84px'));
+// Always left-aligned/vertically-centered, same as on wide screens - no
+// longer stacks full-width+centered below the `xs` breakpoint, so the tag
+// stays consistent at every width instead of jumping to a different layout.
+const mediaTagClasses = {
+  'col-shrink': true,
+  'q-pl-md': true,
+  'q-pr-none': true,
+};
+
+const tagVariant = computed(() => {
+  if (props.media.tag?.type === 'song') {
+    return currentSongIsDuplicated.value ? 'warn' : 'song';
+  }
+  if (props.media.tag?.type === 'paragraph') return 'paragraph';
+  return 'neutral';
+});
+
+// Paragraph tags borrow the color of the meeting section the item belongs
+// to (the same one behind that section's colored left-edge bar), rather
+// than a fixed color, so they read as part of that section at a glance.
+const paragraphSectionColor = computed(() =>
+  getSectionAccentColor(
+    props.media.originalSection,
+    selectedDateObject.value?.mediaSections,
+  ),
+);
+
+const paragraphCapStyle = computed(() => ({
+  backgroundColor: paragraphSectionColor.value,
+}));
+
+const paragraphValueStyle = computed(() => {
+  const color = paragraphSectionColor.value;
+  return $q.dark.isActive
+    ? {
+        backgroundColor: withAlpha(color, 0.3),
+        color: mixWithWhite(color, 0.55),
+      }
+    : { backgroundColor: withAlpha(color, 0.16), color };
+});
+
+// Shared by both tags: mirrors the file-fetch/availability gate that used
+// to guard the single combined tag before it was split in two.
+const sourceTagFetchOk = computed(() => {
+  return (
+    props.media.source !== 'dynamic' &&
+    !currentSettings.value?.disableMediaFetching &&
+    fileIsAvailable.value
+  );
+});
+
+// The provenance badge (watched / fetched-as-additional). Independent of
+// the content tag below so both can appear side by side, e.g. an
+// additional-media song.
+const showSourceTag = computed(() => {
+  if (props.media.source !== 'watched' && props.media.source !== 'additional') {
+    return false;
+  }
+  if (!sourceTagFetchOk.value) return false;
+  if (isDemoMode.value && !props.media.tag?.type) return false;
+  return true;
+});
+
+const sourceIconName = computed(() =>
+  props.media.source === 'watched' ? 'mmm-watched-media' : 'mmm-add-media',
+);
+
+const sourceTooltipText = computed(() => {
+  if (props.media.source === 'watched') return t('watched-media-item-explain');
+  if (props.media.source === 'additional') return t('extra-media-item-explain');
+  return null;
+});
+
+// The content tag (song/paragraph number, or a plain fetched-media marker
+// when there's no tag at all). Skip the plain-marker fallback when the
+// source tag is already showing, so a watched/additional item with no real
+// tag doesn't get a second, redundant badge next to the thumbnail.
+const showContentTag = computed(() => {
+  if (props.media.tag?.type) return true;
+  if (isDemoMode.value || showSourceTag.value) return false;
+  return sourceTagFetchOk.value;
+});
+
+const tagIconName = computed(() => {
+  if (props.media.tag?.type === 'paragraph') {
+    return props.media.tag.value !== FOOTNOTE_TARGET_PARAGRAPH
+      ? 'mmm-paragraph'
+      : 'mmm-footnote';
+  }
+  return 'mmm-music-note';
+});
+
+const contentTagTooltipText = computed(() => {
+  if (currentSongIsDuplicated.value) return t('this-song-is-duplicated');
+
+  if (props.media.tag?.type === 'song') return t('song-media-item-explain');
+
+  if (props.media.tag?.type === 'paragraph') {
+    if (props.media.tag.value === FOOTNOTE_TARGET_PARAGRAPH) {
+      return t('footnote-media-item-explain');
+    }
+
+    const value = props.media.tag.value?.toString() ?? '';
+    return t(
+      /^\d+$/.test(value)
+        ? 'paragraph-media-item-explain'
+        : 'paragraphs-media-item-explain',
+      { value },
+    );
+  }
+
+  return null;
+});
+
+// Footnote tags drop the "Footnote" text section and keep only the `*`
+// marker: the translated label varies a lot in length across locales and
+// says little beyond what the icon already conveys, so the icon section
+// stretches to the full tag height instead (its flex centering keeps the
+// marker vertically centered).
+const isFootnoteTag = computed(
+  () =>
+    props.media.tag?.type === 'paragraph' &&
+    props.media.tag.value === FOOTNOTE_TARGET_PARAGRAPH,
+);
+
+const tagValueText = computed(() => {
+  if (!props.media.tag?.type) return null;
+  if (isFootnoteTag.value) return t('footnote');
+  return props.media.tag.value?.toString() ?? null;
+});
+
+// Only the footnote tag hides its value at full size (unlike
+// media-tag--icon-only, which shrinks the whole chip); everything else
+// keeps its text section.
+const showTagValue = computed(
+  () => !isFootnoteTag.value && !!tagValueText.value,
+);
+
+// Song/paragraph numbers are usually 1-2 digits, but paragraph ranges
+// ("88-93") or translated footnote labels can run longer than the fixed-width
+// tag comfortably fits at full size, so shrink the text instead of clipping it.
+const tagValueFontSize = computed(() => {
+  const length = tagValueText.value?.length ?? 0;
+  if (length <= 3) return '13px';
+  return '10.5px';
 });
 
 const handleTitleEdit = (value: boolean) => {
@@ -1408,7 +2022,7 @@ const updateMediaCustomDuration = (customDuration?: {
   min: number;
 }) => {
   emit('update:customDuration', JSON.stringify(customDuration || ''));
-  mediaCustomDuration.value = {
+  draftCustomDuration.value = {
     max: customDuration?.max ?? props.media.duration,
     min: customDuration?.min ?? 0,
   };
@@ -1423,7 +2037,19 @@ const customDurationIsSet = computed(() => {
   );
 });
 
-const mediaCustomDuration = ref({
+// The actually-applied trim range (badge text, live playback slider) -
+// sourced from the persisted prop, not the popup's in-progress draft below,
+// so editing (typing or dragging) doesn't visibly "live apply" anywhere
+// outside the popup before Save is clicked.
+const appliedCustomDuration = computed(() => ({
+  max: props.media.customDuration?.max ?? props.media.duration,
+  min: props.media.customDuration?.min ?? 0,
+}));
+
+// The duration popup's own working copy while it's open - only persisted
+// (via updateMediaCustomDuration, which emits update:customDuration) when
+// Save is clicked. Cancel just discards whatever's in here.
+const draftCustomDuration = ref({
   max: props.media.duration
     ? props.media.customDuration?.max || props.media.duration
     : undefined,
@@ -1431,11 +2057,11 @@ const mediaCustomDuration = ref({
 });
 
 const customDurationMinUserInput = ref(
-  formatTime(mediaCustomDuration.value.min),
+  formatTime(draftCustomDuration.value.min),
 );
 
 const customDurationMaxUserInput = ref(
-  formatTime(mediaCustomDuration.value.max),
+  formatTime(draftCustomDuration.value.max),
 );
 
 const getBasename = (fileUrl: string) => {
@@ -1469,7 +2095,9 @@ const fileIsLocal = async () => {
     if (localSize !== props.media.filesize) return false;
     return true;
   } catch (error) {
-    if (isExpectedNetworkPathAccessError(error, filePath)) {
+    if (
+      isExpectedNetworkPathAccessError(error, filePath, getRendererPlatform())
+    ) {
       notifyPathAccessWarning();
     } else {
       errorCatcher(error, {
@@ -1488,15 +2116,195 @@ const fileIsLocal = async () => {
 const localFile = ref(false);
 let localFileCheckId = 0;
 
-const updateLocalFile = async () => {
-  const checkId = ++localFileCheckId;
-  const isLocal = await fileIsLocal();
-  if (checkId === localFileCheckId) {
-    localFile.value = isLocal;
+const getPlaybackUrl = (media: MediaItem) => {
+  if (media.uniqueId === props.media.uniqueId && localFile.value) {
+    return media.fileUrl ?? '';
+  }
+
+  return media.streamUrl ?? media.fileUrl ?? '';
+};
+
+// Poll quickly at first (a download or manual fix is often seconds away),
+// then back off to a slow heartbeat rather than hammering pathExists/stat
+// once a second forever for a file that isn't coming back on its own. Reset
+// to the fast phase whenever a cache clear might have changed something (see
+// the lastCacheClearAt watch below).
+const LOCAL_FILE_POLL_FAST_INTERVAL_MS = 1000;
+const LOCAL_FILE_POLL_SLOW_INTERVAL_MS = 60000;
+const LOCAL_FILE_POLL_FAST_ATTEMPTS = 30;
+
+let localFilePollAttempts = 0;
+const localFilePollInterval = computed(() =>
+  localFilePollAttempts < LOCAL_FILE_POLL_FAST_ATTEMPTS
+    ? LOCAL_FILE_POLL_FAST_INTERVAL_MS
+    : LOCAL_FILE_POLL_SLOW_INTERVAL_MS,
+);
+
+// Additional-media items picked from the website (songs, videos) keep the remote
+// streamUrl they were originally fetched from, unlike a plain locally
+// imported file. When one of those goes missing, redownload it straight back
+// to its original path instead of only ever offering the manual
+// "locate missing file" picker. Throttled independently of the (much
+// cheaper) pathExists poll above so a persistently missing file doesn't
+// retry the actual network request every second.
+const REDOWNLOAD_MIN_INTERVAL_MS = 15000;
+let redownloadInFlight = false;
+let lastRedownloadAttemptAt = 0;
+
+// Call whenever a file that was missing is confirmed restored at `fileUrl`
+// (auto-redownload above, or a manual locateMissingFile relink below), to
+// make the thumbnail catch up. For images, the file itself doubles as its
+// own thumbnail (see mediaThumbnailUrl) - if the restored copy landed at the
+// exact same path as before (e.g. relinking to a same-named backup, or
+// redownloading in place), that src string never actually changes, so
+// neither Vue nor the browser would retry loading it on their own; force a
+// fresh request with a cache-busting query string. Non-image items instead
+// fall back through to the explicit thumbnailUrl / fileUrl error cycle,
+// which naturally re-triggers findThumbnailUrl() once the (possibly new)
+// fileUrl/thumbnailUrl prop lands and the file exists.
+const refreshThumbnailAfterFileRestored = (
+  fileUrl?: string,
+  isImage?: boolean,
+) => {
+  discoveredThumbnailUrl.value =
+    isImage && fileUrl ? `${fileUrl}?restored=${Date.now()}` : '';
+  failedThumbnailUrl.value = '';
+};
+
+// The thumbnail image (when the website provided a distinct one, e.g. a song's
+// still image) lives next to the main file and can go missing along with
+// it. Only worth attempting once the main file redownload above already
+// succeeded - it's a small nice-to-have alongside restoring playback, not
+// worth its own independent poll/trigger.
+const redownloadMissingThumbnailIfNeeded = async () => {
+  if (!props.media.thumbnailStreamUrl || !isFileUrl(props.media.thumbnailUrl)) {
+    return;
+  }
+  const thumbnailPath = fileUrlToPath(props.media.thumbnailUrl);
+  if (!thumbnailPath || (await pathExists(thumbnailPath))) return;
+
+  await downloadFileIfNeeded({
+    dir: dirname(thumbnailPath),
+    filename: basename(thumbnailPath),
+    url: props.media.thumbnailStreamUrl,
+  });
+};
+
+const attemptAdditionalMediaRedownload = async () => {
+  if (redownloadInFlight) return;
+  if (props.media.source !== 'additional' || !props.media.streamUrl) return;
+  if (Date.now() - lastRedownloadAttemptAt < REDOWNLOAD_MIN_INTERVAL_MS) return;
+
+  const filePath = fileUrlToPath(props.media.fileUrl);
+  if (!filePath) return;
+
+  lastRedownloadAttemptAt = Date.now();
+  redownloadInFlight = true;
+  try {
+    const result = await downloadFileIfNeeded({
+      dir: dirname(filePath),
+      filename: basename(filePath),
+      url: props.media.streamUrl,
+    });
+    if (result.error || !result.path) return;
+
+    await redownloadMissingThumbnailIfNeeded();
+
+    // updateLocalFile() below picks up the false -> true transition and
+    // handles the thumbnail refresh itself.
+    localFilePollAttempts = 0;
+    await updateLocalFile();
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          mediaId: props.media.uniqueId,
+          name: 'attemptAdditionalMediaRedownload',
+        },
+      },
+    });
+  } finally {
+    redownloadInFlight = false;
   }
 };
 
-const { pause } = useTimeoutPoll(updateLocalFile, 1000);
+const updateLocalFile = async () => {
+  localFilePollAttempts++;
+  const checkId = ++localFileCheckId;
+  const isLocal = await fileIsLocal();
+  if (checkId === localFileCheckId) {
+    const wasLocal = localFile.value;
+    localFile.value = isLocal;
+    // Catch-all for a file reappearing regardless of how: our own
+    // auto-redownload, a manual locateMissingFile relink, or a completely
+    // separate flow like dropping a same-named replacement onto the media
+    // list (MediaCalendarPage.vue mutates the store item directly there,
+    // with no way to reach this component's local thumbnail state). Keying
+    // off the false -> true transition here means every recovery path gets
+    // this for free instead of needing its own explicit refresh call.
+    if (isLocal && !wasLocal) {
+      refreshThumbnailAfterFileRestored(
+        props.media.fileUrl,
+        props.media.isImage,
+      );
+    }
+  }
+  if (!isLocal) {
+    void attemptAdditionalMediaRedownload();
+  }
+};
+
+const { pause, resume } = useTimeoutPoll(
+  updateLocalFile,
+  localFilePollInterval,
+);
+
+const locateMissingFile = async () => {
+  try {
+    const result = await openFileDialog(
+      true,
+      undefined,
+      getFileNameMaskFromPubMediaId(props.media.pubMediaId),
+    );
+    const filePath = result?.filePaths[0];
+    if (!filePath) return;
+
+    const destPath = await copyToDatedAdditionalMedia(
+      filePath,
+      props.media.originalSection,
+      false,
+    );
+    if (!destPath) return;
+
+    const relinked = await createMediaItemFromPath(
+      destPath,
+      props.media.uniqueId,
+    );
+    if (!relinked) return;
+
+    emit('update:relink', {
+      duration: relinked.duration,
+      fileUrl: relinked.fileUrl,
+      isAudio: relinked.isAudio,
+      isImage: relinked.isImage,
+      isVideo: relinked.isVideo,
+      thumbnailUrl: relinked.thumbnailUrl,
+      title: relinked.title,
+    });
+
+    // The parent's @update:relink handler (MediaList.vue) mutates the same
+    // reactive media object in place, so props.media.fileUrl already
+    // reflects the relink by the time emit() returns. Re-run the poll now
+    // so the false -> true transition (and thumbnail refresh) fires
+    // immediately instead of waiting for the next scheduled tick.
+    localFilePollAttempts = 0;
+    await updateLocalFile();
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: { fn: { name: 'MediaItem.locateMissingFile' } },
+    });
+  }
+};
 
 const markersPanelOpen = ref(false);
 const startSelectedMarker = ref<null | VideoMarker>(null);
@@ -1511,22 +2319,23 @@ const setMediaPlaying = async (
   signLanguage = false,
   marker?: VideoMarker,
 ) => {
+  const shouldStartZoomManagerSharing =
+    !mediaPlaying.value.url &&
+    currentSettings.value?.zoomMeetingManagerEnable &&
+    currentSettings.value?.zoomMeetingManagerAutomateMediaSharing;
+
   if (!mediaPlaying.value.url) {
     // Start one-shot workflows when media starts playing and no media was playing before
     triggerMediaWindowAutoHide(true);
-    triggerZoomScreenShare(true);
+    if (!shouldStartZoomManagerSharing) {
+      triggerZoomScreenShare(true);
+    }
+  } else if (isImage(mediaPlaying.value.url)) {
+    stopMedia(true);
   }
   if (signLanguage) {
     if (marker) {
-      updateMediaCustomDuration({
-        max:
-          (marker.StartTimeTicks +
-            marker.DurationTicks -
-            marker.EndTransitionDurationTicks) /
-          10000 /
-          1000,
-        min: marker.StartTimeTicks / 10000 / 1000,
-      });
+      updateMediaCustomDuration(getMarkerTimes(marker));
     } else if (!skipCustomDurationUpdateOnce.value) {
       updateMediaCustomDuration();
     }
@@ -1541,15 +2350,65 @@ const setMediaPlaying = async (
         ? 'play'
         : 'pause',
     currentPosition: 0,
+    currentPositionUpdatedAt: 0,
+    duration: 0,
     pan: calculatedPan.value,
+    playbackConfirmedToken: 0,
     playbackRate: playbackRate.value,
+    playToken: 0,
     seekTo: 0,
+    shouldLoop: false,
+    slideshowAudioUrl: '',
     subtitlesUrl: media.subtitlesUrl ?? '',
     uniqueId: media.uniqueId,
-    url: localFile.value
-      ? (media.fileUrl ?? '')
-      : (media.streamUrl ?? media.fileUrl ?? ''),
+    url: getPlaybackUrl(media),
     zoom: mediaZoom.value,
+  };
+
+  toggleMediaWindowVisibility(true);
+
+  nextTick(() => {
+    globalThis.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
+  });
+
+  if (shouldStartZoomManagerSharing) {
+    const sharingStarted = await automateZoomMediaSharing(true);
+    if (!sharingStarted) {
+      log('Zoom media sharing did not start', 'zoom', 'warn', {
+        mediaTitle: media.title,
+        uniqueId: media.uniqueId,
+      });
+    }
+  }
+};
+
+const playSlideshowVideo = async () => {
+  const pair = slideshowVideoPair.value;
+  if (!pair) return;
+
+  if (!mediaPlaying.value.url) {
+    triggerMediaWindowAutoHide(true);
+    triggerZoomScreenShare(true);
+  }
+
+  await updateLocalFile();
+
+  mediaPlaying.value = {
+    action: 'play',
+    currentPosition: 0,
+    currentPositionUpdatedAt: 0,
+    duration: 0,
+    pan: { x: 0, y: 0 },
+    playbackConfirmedToken: 0,
+    playbackRate: 1,
+    playToken: 0,
+    seekTo: 0,
+    shouldLoop: true,
+    slideshowAudioUrl: getPlaybackUrl(pair.audioMedia),
+    subtitlesUrl: pair.videoMedia.subtitlesUrl ?? '',
+    uniqueId: pair.videoMedia.uniqueId,
+    url: getPlaybackUrl(pair.videoMedia),
+    zoom: 1,
   };
 
   toggleMediaWindowVisibility(true);
@@ -1561,7 +2420,7 @@ const setMediaPlaying = async (
 
 const getMarkerTimes = (m: VideoMarker) => {
   const max =
-    (m.StartTimeTicks + m.DurationTicks - m.EndTransitionDurationTicks) /
+    (m.StartTimeTicks + m.DurationTicks - (m.EndTransitionDurationTicks || 0)) /
     10000 /
     1000;
   const min = m.StartTimeTicks / 10000 / 1000;
@@ -1585,6 +2444,14 @@ const setRangeAndPlay = (min: number, max: number) => {
   endSelectedMarker.value = null;
 };
 
+const pendingReplayMarker = ref<null | VideoMarker>(null);
+const replayMarkerConfirmPending = computed({
+  get: () => !!pendingReplayMarker.value,
+  set: (value) => {
+    if (!value) pendingReplayMarker.value = null;
+  },
+});
+
 const playMarkerOnly = (marker: VideoMarker) => {
   const playMarker = () => {
     const { max, min } = getMarkerTimes(marker);
@@ -1595,27 +2462,27 @@ const playMarkerOnly = (marker: VideoMarker) => {
     playMarker();
     return;
   }
-  $q.dialog({
-    cancel: { label: t('cancel') },
-    message: t('play-only-this-clip-question'),
-    ok: { label: t('confirm') },
-    persistent: true,
-    title: t('confirm'),
-  }).onOk(() => {
-    playMarker();
-  });
+  pendingReplayMarker.value = marker;
 };
 
+const confirmReplayMarker = () => {
+  const marker = pendingReplayMarker.value;
+  pendingReplayMarker.value = null;
+  if (!marker) return;
+  const { max, min } = getMarkerTimes(marker);
+  setRangeAndPlay(min, max);
+  playedMarkerIds.value.add(marker.VideoMarkerId);
+};
+
+const entireFileConfirmPending = ref(false);
+
 const onPlayEntireFileClick = () => {
-  $q.dialog({
-    cancel: { label: t('cancel') },
-    message: t('entireFile-question'),
-    ok: { label: t('play-entire-file') },
-    persistent: true,
-    title: t('confirm'),
-  }).onOk(() => {
-    setMediaPlaying(props.media, true);
-  });
+  entireFileConfirmPending.value = true;
+};
+
+const confirmPlayEntireFile = () => {
+  entireFileConfirmPending.value = false;
+  setMediaPlaying(props.media, true);
 };
 
 const getMarkerDuration = (marker: VideoMarker) => {
@@ -1640,10 +2507,9 @@ const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
   name: 'get-current-media-window-variables',
 });
 
-const thumbnailFromMetadata = ref('');
-
 const imageLoadingError = () => {
-  findThumbnailUrl();
+  failedThumbnailUrl.value = mediaThumbnailUrl.value;
+  void findThumbnailUrl();
 };
 
 const onMarkerClick = (marker: VideoMarker) => {
@@ -1708,7 +2574,17 @@ useEventListener(
   { passive: true },
 );
 
+// runThumbnailCheck schedules its own retries via setTimeout rather than
+// awaiting them, so the chain outlives the initial findThumbnailUrl() call.
+// Without this guard, every @error firing (e.g. one per second from the
+// local-file poll above re-swapping the <q-img> src) would spawn another
+// independent 30-retry chain on top of whichever ones are already running.
+let thumbnailLookupInProgress = false;
+
 async function findThumbnailUrl() {
+  if (thumbnailLookupInProgress) return;
+  thumbnailLookupInProgress = true;
+
   let fileRetryCount = 0;
   let thumbnailRetryCount = 0;
 
@@ -1720,20 +2596,25 @@ async function findThumbnailUrl() {
       if (fileRetryCount < 30) {
         fileRetryCount++;
         setTimeout(runThumbnailCheck, 2000); // Retry after 2 seconds
+        return;
       }
+      thumbnailLookupInProgress = false;
       return;
     }
 
-    if (fileExists) {
-      const thumbnailUrl = await getThumbnailUrl(props.media.fileUrl);
-      if (!thumbnailFromMetadata.value) {
-        thumbnailFromMetadata.value = thumbnailUrl;
-      }
-      if (!thumbnailFromMetadata.value && thumbnailRetryCount < 5) {
-        thumbnailRetryCount++;
-        setTimeout(runThumbnailCheck, 2000); // Retry after 2 seconds
-      }
+    const thumbnailUrl = getDisplayableThumbnailUrl(
+      await getThumbnailUrl(props.media.fileUrl),
+    );
+    if (!discoveredThumbnailUrl.value) {
+      discoveredThumbnailUrl.value = thumbnailUrl;
     }
+    const retryLimit = mediaIsAudio.value ? 0 : 5;
+    if (!discoveredThumbnailUrl.value && thumbnailRetryCount < retryLimit) {
+      thumbnailRetryCount++;
+      setTimeout(runThumbnailCheck, 2000); // Retry after 2 seconds
+      return;
+    }
+    thumbnailLookupInProgress = false;
   };
 
   // Run immediately
@@ -1742,10 +2623,16 @@ async function findThumbnailUrl() {
 
 const showMediaDurationPopup = () => {
   try {
-    mediaCustomDuration.value = props.media.customDuration || {
+    draftCustomDuration.value = props.media.customDuration || {
       max: props.media.duration,
       min: 0,
     };
+    customDurationMinUserInput.value = formatTime(
+      draftCustomDuration.value.min,
+    );
+    customDurationMaxUserInput.value = formatTime(
+      draftCustomDuration.value.max,
+    );
     mediaDurationPopup.value = true;
   } catch (error) {
     errorCatcher(error);
@@ -1757,10 +2644,10 @@ const resetMediaDuration = () => {
     mediaDurationPopup.value = false;
     updateMediaCustomDuration();
     customDurationMinUserInput.value = formatTime(
-      mediaCustomDuration.value.min,
+      draftCustomDuration.value.min,
     );
     customDurationMaxUserInput.value = formatTime(
-      mediaCustomDuration.value.max,
+      draftCustomDuration.value.max,
     );
   } catch (error) {
     errorCatcher(error);
@@ -1769,10 +2656,27 @@ const resetMediaDuration = () => {
 
 const saveMediaDuration = () => {
   try {
+    // Neither dragging the range slider nor typing into the min/max fields
+    // persists on its own anymore (draftCustomDuration is popup-local) -
+    // Save is the only thing that actually applies whatever the draft
+    // currently holds, regardless of how it got there.
+    if (
+      draftCustomDuration.value.min !== undefined &&
+      draftCustomDuration.value.max !== undefined
+    ) {
+      updateMediaCustomDuration({
+        max: draftCustomDuration.value.max,
+        min: draftCustomDuration.value.min,
+      });
+    }
     mediaDurationPopup.value = false;
   } catch (error) {
     errorCatcher(error);
   }
+};
+
+const cancelMediaDuration = () => {
+  mediaDurationPopup.value = false;
 };
 
 const { post } = useBroadcastChannel<number, number>({ name: 'seek-to' });
@@ -1819,9 +2723,15 @@ function stopMedia(forOtherMediaItem = false) {
   mediaPlaying.value = {
     action: '',
     currentPosition: 0,
+    currentPositionUpdatedAt: 0,
+    duration: 0,
     pan: { x: 0, y: 0 },
+    playbackConfirmedToken: 0,
     playbackRate: 1,
+    playToken: 0,
     seekTo: 0,
+    shouldLoop: false,
+    slideshowAudioUrl: '',
     subtitlesUrl: '',
     uniqueId: '',
     url: '',
@@ -1834,7 +2744,14 @@ function stopMedia(forOtherMediaItem = false) {
   if (!forOtherMediaItem) {
     // Stop one-shot workflows when media is stopped (unless it's a media switch instead of a stop)
     triggerMediaWindowAutoHide(false);
-    triggerZoomScreenShare(false);
+    if (
+      currentSettings.value?.zoomMeetingManagerEnable &&
+      currentSettings.value?.zoomMeetingManagerAutomateMediaSharing
+    ) {
+      void automateZoomMediaSharing(false);
+    } else {
+      triggerZoomScreenShare(false);
+    }
     nextTick(() => {
       globalThis.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));
     });
@@ -1846,6 +2763,65 @@ const isCurrentlyPlaying = computed(() => {
     (mediaPlaying.value.url === props.media.fileUrl ||
       mediaPlaying.value.url === props.media.streamUrl) &&
     mediaPlaying.value.uniqueId === props.media.uniqueId
+  );
+});
+
+const mediaPlaybackUrls = computed(() => {
+  return [props.media.fileUrl, props.media.streamUrl].filter(
+    (url): url is string => !!url,
+  );
+});
+
+const isSlideshowMasterVideo = computed(() => {
+  return (
+    !!mediaPlaying.value.slideshowAudioUrl &&
+    mediaPlaying.value.uniqueId === props.media.uniqueId
+  );
+});
+
+const isSlideshowLinkedAudio = computed(() => {
+  return (
+    !!mediaPlaying.value.slideshowAudioUrl &&
+    mediaPlaying.value.uniqueId !== props.media.uniqueId &&
+    mediaPlaybackUrls.value.includes(mediaPlaying.value.slideshowAudioUrl)
+  );
+});
+
+const isSlideshowLooping = computed(() => {
+  return isSlideshowMasterVideo.value || isSlideshowLinkedAudio.value;
+});
+
+const repeatTooltip = computed(() => {
+  return isSlideshowLooping.value ? t('slideshow-audio-loop') : t('repeat');
+});
+
+const playButtonIcon = computed(() => {
+  if (isSlideshowLinkedAudio.value) return 'mmm-link';
+  if (isDemoMode.value) return 'mmm-play';
+  return localFile.value ? 'mmm-play' : 'mmm-stream-play';
+});
+
+const playButtonTooltip = computed(() => {
+  if (isSlideshowLinkedAudio.value) return t('linked-slideshow-audio');
+  if (!fileIsAvailable.value && streamIsAvailable.value) {
+    return t('play-while-downloading');
+  }
+  if (!fileIsAvailable.value && !streamIsAvailable.value) {
+    return t('media-item-missing-explain');
+  }
+  return t('play');
+});
+
+const stopButtonHasPrecedingButton = computed(() => {
+  return (
+    (isImage(mediaPlaying.value.url) &&
+      obsConnectionState.value === 'connected') ||
+    mediaPlaying.value.action === 'pause' ||
+    !!(
+      localFile.value &&
+      props.media.duration &&
+      (mediaPlaying.value.action === 'play' || !mediaPlaying.value.action)
+    )
   );
 });
 
@@ -2000,29 +2976,25 @@ function deleteMedia() {
   mediaToDelete.value = '';
 }
 
+const deleteSelectedMediaConfirmPending = ref(false);
+
 const confirmDeleteSelectedMedia = () => {
-  $q.dialog({
-    cancel: { label: t('cancel') },
-    message: t('delete-selected-media-confirmation', {
-      count: deletableSelectedMediaItems.value?.length || 0,
-    }),
-    ok: { color: 'negative', label: t('delete') },
-    persistent: true,
-    title: t('confirm'),
-  }).onOk(() => {
-    deleteMediaItems(
-      deletableSelectedMediaItems.value,
-      currentCongregation.value,
-      selectedDateObject.value,
-    );
-  });
+  deleteSelectedMediaConfirmPending.value = true;
+};
+
+const doDeleteSelectedMedia = () => {
+  deleteSelectedMediaConfirmPending.value = false;
+  deleteMediaItems(
+    deletableSelectedMediaItems.value,
+    currentCongregation.value,
+    selectedDateObject.value,
+  );
 };
 
 onMounted(async () => {
   void updateLocalFile();
   initializeImageDuration();
-  if (props.media.duration && !props.media.thumbnailUrl)
-    await findThumbnailUrl();
+  if (!mediaThumbnailUrl.value) await findThumbnailUrl();
 });
 
 const playButton = useTemplateRef<QBtn>('playButton');
@@ -2094,31 +3066,15 @@ const currentSongIsDuplicated = computed(() => {
 });
 
 const fileIsAvailable = computed(() => {
-  return isFileUrl(props.media.fileUrl);
+  // Demo mode's placeholder items have no real file on disk by design —
+  // treat them as available so the play button and "missing" messaging
+  // don't make a synthetic screenshot look broken.
+  if (isDemoMode.value) return true;
+  return isFileUrl(props.media.fileUrl) && localFile.value;
 });
 
 const streamIsAvailable = computed(() => {
   return !!props.media.streamUrl;
-});
-
-const tagTooltipText = computed(() => {
-  if (currentSongIsDuplicated.value) {
-    return t('this-song-is-duplicated');
-  }
-
-  if (props.media.source === 'watched') {
-    return t('watched-media-item-explain');
-  }
-
-  if (
-    props.media.source === 'additional' &&
-    !currentSettings.value?.disableMediaFetching &&
-    fileIsAvailable.value
-  ) {
-    return t('extra-media-item-explain');
-  }
-
-  return null;
 });
 
 // Image duration control functions
@@ -2229,7 +3185,7 @@ watchImmediate(
   () => [repeat.value, mediaPlaying.value.uniqueId],
   ([newMediaRepeat, newMediaPlayingUniqueId]) => {
     if (newMediaPlayingUniqueId !== props.media.uniqueId) return;
-    postRepeat(!!newMediaRepeat);
+    postRepeat(!!newMediaRepeat || mediaPlaying.value.shouldLoop);
   },
 );
 
@@ -2238,7 +3194,7 @@ watchImmediate(
   () => {
     // Push current repeat state when requested (only if this media is currently playing)
     if (mediaPlaying.value.uniqueId === props.media.uniqueId) {
-      postRepeat(!!repeat.value);
+      postRepeat(!!repeat.value || mediaPlaying.value.shouldLoop);
     }
   },
 );
@@ -2249,6 +3205,19 @@ watch(isCurrentlyPlaying, (playing) => {
   }
 });
 
+// The poll above pauses itself once a local file is confirmed present (see
+// the `whenever` below), so it won't notice a file that's deleted later
+// (e.g. by cache auto-clear) while this item stays mounted. Re-arm it
+// whenever a cache clear actually removed something.
+watch(
+  () => currentState.lastCacheClearAt,
+  (clearedAt) => {
+    if (!clearedAt) return;
+    localFilePollAttempts = 0;
+    resume();
+  },
+);
+
 whenever(
   () => localFile.value,
   () => {
@@ -2256,9 +3225,30 @@ whenever(
   },
   { immediate: true },
 );
+
+// The tag value field is disabled until a type is chosen, so a plain
+// `autofocus` prop only ever focuses it when a type is already set at
+// mount time. Watching for the type becoming set - whether that's already
+// true on open, or happens moments later via the option group - covers
+// both cases.
+watch(
+  () => mediaEditTagDialog.value && !!mediaTag.value.type,
+  (canFocus) => {
+    if (!canFocus) return;
+    nextTick(() => tagValueInput.value?.focus());
+  },
+);
 </script>
 
 <style lang="scss" scoped>
+// The tag-type toggle's 3 segments now each carry both an icon and a label,
+// spread to fill the card evenly - without a floor on the card's own width,
+// a longer-locale label (e.g. German "Absatz") has less room to breathe
+// before wrapping/crowding its segment.
+.tag-edit-card {
+  min-width: 320px;
+}
+
 .media-filter-filename-match {
   background: rgba(255, 235, 112, 0.2);
 }
@@ -2267,10 +3257,39 @@ whenever(
   animation: media-filter-bounce 360ms ease;
 }
 
+.media-thumbnail-container,
+.media-audio-thumbnail-fallback {
+  aspect-ratio: 16 / 9;
+  width: 150px;
+}
+
+.media-audio-thumbnail-fallback {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+// A subtle diagonal wash instead of flat black - so the letterboxed edges
+// around a contained image/video, and the audio fallback's own background,
+// read as an intentional frame rather than a missing image.
+.media-thumbnail-frame {
+  background-image: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.6),
+    rgba(0, 0, 0, 0.8)
+  ) !important;
+}
+
+.media-item__time {
+  font-variant-numeric: tabular-nums;
+  min-width: 40px;
+  white-space: nowrap;
+}
+
 :deep(.media-filter__highlight) {
   background: #ffeb70;
   border-radius: 3px;
-  color: inherit;
+  color: #1d1d1d;
   display: inline-block;
   padding: 0 0.08em;
 }

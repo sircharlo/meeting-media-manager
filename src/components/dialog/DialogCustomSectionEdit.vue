@@ -4,10 +4,15 @@
       class="bg-secondary-contrast flex medium-overlay q-px-none"
       style="flex-flow: column"
     >
-      <div class="text-h6 row q-px-md q-pt-lg q-pb-md">
+      <div
+        class="row items-center no-wrap text-bigger text-semibold text-primary q-px-md q-pt-lg q-pb-md"
+      >
+        <div class="icon-chip q-mr-sm">
+          <q-icon name="mmm-tune" size="xs" />
+        </div>
         {{ t('edit-sections') }}
       </div>
-      <div class="row q-px-md q-py-md">
+      <div class="row text-dark-grey q-px-md q-py-md">
         {{ t('edit-sections-explain') }}
       </div>
       <div class="row q-px-md">
@@ -19,7 +24,7 @@
         >
           <div ref="listContainer">
             <q-item
-              v-for="element in sortableItems"
+              v-for="(element, index) in sortableItems"
               :key="element.config?.uniqueId"
               :data-unique-id="element.config?.uniqueId"
               :style="{
@@ -29,20 +34,52 @@
               <q-item-section side>
                 <div class="row">
                   <q-icon
-                    class="drag-handle"
-                    color="accent-100"
-                    flat
+                    aria-hidden="true"
+                    class="drag-handle text-dark-grey"
                     name="mmm-sort"
                     size="sm"
                     style="cursor: grab"
                   />
                 </div>
               </q-item-section>
+              <!--
+                UX-6 (full-audit-2026-09-04.md): the drag handle above has no
+                keyboard/screen-reader equivalent - these buttons are the
+                accessible alternative activation path.
+              -->
+              <q-item-section side>
+                <div class="row">
+                  <q-btn
+                    :aria-label="t('move-up')"
+                    dense
+                    :disable="index === 0"
+                    flat
+                    icon="mmm-up"
+                    round
+                    @click="moveCustomSection(index, -1)"
+                  >
+                    <q-tooltip :delay="500">{{ t('move-up') }}</q-tooltip>
+                  </q-btn>
+                  <q-btn
+                    :aria-label="t('move-down')"
+                    dense
+                    :disable="index === sortableItems.length - 1"
+                    flat
+                    icon="mmm-down"
+                    round
+                    @click="moveCustomSection(index, 1)"
+                  >
+                    <q-tooltip :delay="500">{{ t('move-down') }}</q-tooltip>
+                  </q-btn>
+                </div>
+              </q-item-section>
               <q-item-section>
                 <q-item-label>
                   <q-input
                     v-model="labels[element.config?.uniqueId || '']"
+                    class="bg-accent-100"
                     dense
+                    outlined
                     @blur="updateLabel(element.config?.uniqueId)"
                     @keyup.enter="updateLabel(element.config?.uniqueId)"
                   />
@@ -50,7 +87,24 @@
               </q-item-section>
               <q-item-section side>
                 <div class="row">
-                  <q-btn flat icon="mmm-palette" round>
+                  <q-btn
+                    :aria-label="t('change-color')"
+                    :class="{ 'btn-tonal': !element.config?.bgColor }"
+                    :color="element.config?.bgColor ? undefined : 'primary'"
+                    flat
+                    icon="mmm-palette"
+                    round
+                    :style="
+                      element.config?.bgColor
+                        ? {
+                            backgroundColor:
+                              hexValues[element.config?.uniqueId || ''],
+                            color: getTextColor(element),
+                          }
+                        : undefined
+                    "
+                  >
+                    <q-tooltip :delay="500">{{ t('change-color') }}</q-tooltip>
                     <q-popup-proxy
                       cover
                       transition-hide="scale"
@@ -71,12 +125,16 @@
                   </q-btn>
 
                   <q-btn
+                    :aria-label="t('delete')"
+                    class="btn-tonal"
                     color="negative"
                     flat
                     icon="mmm-delete"
                     round
-                    @click="handleDeleteSection(element.config?.uniqueId)"
-                  />
+                    @click="confirmDeleteSection(element)"
+                  >
+                    <q-tooltip :delay="500">{{ t('delete') }}</q-tooltip>
+                  </q-btn>
                 </div>
               </q-item-section>
             </q-item>
@@ -89,10 +147,11 @@
       >
         <q-btn
           v-if="selectedDateObject"
+          class="btn-tonal"
           color="primary"
+          flat
           icon="mmm-plus"
           :label="t('new-section')"
-          outline
           @click="handleAddSection"
         />
       </div>
@@ -101,6 +160,22 @@
       </div>
     </div>
   </BaseDialog>
+
+  <ConfirmDialog
+    v-model="deleteSectionPending"
+    :confirm-label="t('delete')"
+    dialog-id="custom-section-delete-dialog"
+    icon="mmm-delete"
+    :message="
+      t('delete-section-confirmation', {
+        name: sectionPendingDeleteLabel,
+      })
+    "
+    persistent
+    :title="t('delete')"
+    @cancel="sectionPendingDelete = undefined"
+    @confirm="doDeleteSection"
+  />
 </template>
 
 <script setup lang="ts">
@@ -109,9 +184,14 @@ import type { MediaSectionWithConfig } from 'src/types';
 import { useDragAndDrop } from '@formkit/drag-and-drop/vue';
 import { whenever } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import { storeToRefs } from 'pinia';
 import { MW_MEETING_SECTIONS, WE_MEETING_SECTIONS } from 'src/constants/media';
-import { addSection, deleteSection } from 'src/helpers/media-sections';
+import {
+  addSection,
+  deleteSection,
+  getTextColor,
+} from 'src/helpers/media-sections';
 import { log } from 'src/shared/vanilla';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed, ref, watch } from 'vue';
@@ -195,6 +275,20 @@ const [listContainer, sortableItems] = useDragAndDrop<MediaSectionWithConfig>(
   },
 );
 
+// UX-6 (full-audit-2026-09-04.md): keyboard-accessible alternative to the
+// drag handle above, which has no keyboard/screen-reader equivalent.
+const moveCustomSection = (index: number, delta: number) => {
+  const targetIndex = index + delta;
+  if (targetIndex < 0 || targetIndex >= sortableItems.value.length) return;
+
+  const items = [...sortableItems.value];
+  const [moved] = items.splice(index, 1);
+  if (!moved) return;
+  items.splice(targetIndex, 0, moved);
+  sortableItems.value = items;
+  handleOrderChange();
+};
+
 const closeDialog = () => {
   emit('update:modelValue', false);
 };
@@ -207,7 +301,26 @@ const handleAddSection = () => {
   }, 0);
 };
 
-const handleDeleteSection = (uniqueId: string | undefined) => {
+const sectionPendingDelete = ref<MediaSectionWithConfig>();
+const deleteSectionPending = computed({
+  get: () => !!sectionPendingDelete.value,
+  set: (value) => {
+    if (!value) sectionPendingDelete.value = undefined;
+  },
+});
+const sectionPendingDeleteLabel = computed(
+  () =>
+    labels.value[sectionPendingDelete.value?.config?.uniqueId || ''] ||
+    t('imported-media'),
+);
+
+const confirmDeleteSection = (element: MediaSectionWithConfig) => {
+  sectionPendingDelete.value = element;
+};
+
+const doDeleteSection = () => {
+  const uniqueId = sectionPendingDelete.value?.config?.uniqueId;
+  sectionPendingDelete.value = undefined;
   if (!uniqueId) return;
   deleteSection(uniqueId);
   // Force re-initialization after deleting a section
@@ -301,13 +414,6 @@ whenever(dialogValue, () => {
 </script>
 
 <style lang="scss" scoped>
-.custom-text-color {
-  color: var(--bg-color);
-}
-.custom-bg-color {
-  background-color: var(--bg-color);
-  color: var(--text-color);
-}
 .q-dialog__backdrop {
   backdrop-filter: blur(7px);
 }

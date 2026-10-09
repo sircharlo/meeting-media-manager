@@ -1,61 +1,50 @@
 <template>
-  <BaseDialog v-model="dialogValue" :dialog-id="dialogId" persistent>
-    <q-card class="modal-confirm large-overlay">
-      <q-card-section
-        class="row items-center text-bigger text-semibold text-negative q-pb-none"
+  <ConfirmDialog
+    v-model="dialogValue"
+    card-class="large-overlay"
+    :confirm-label="t('delete')"
+    :dialog-id="dialogId"
+    icon="mmm-delete"
+    :loading="deletingCacheFiles"
+    :message="
+      t(
+        cacheClearType === 'all'
+          ? 'are-you-sure-delete-cache'
+          : 'are-you-sure-delete-unused-cache',
+      )
+    "
+    persistent
+    :title="t('clear-cache')"
+    @cancel="handleCancel"
+    @confirm="handleDeleteCacheFiles(cacheClearType)"
+  >
+    <q-card-section class="q-pt-none">
+      <q-expansion-item
+        class="bg-accent-100"
+        :label="
+          (cacheClearType === 'all' ? t('files') : t('directories')) +
+          ': ' +
+          filepathsToDelete.length
+        "
       >
-        <q-icon class="q-mr-sm" name="mmm-delete" />
-        {{ t('clear-cache') }}
-      </q-card-section>
-      <q-card-section class="row items-center">
-        {{
-          t(
-            cacheClearType === 'all'
-              ? 'are-you-sure-delete-cache'
-              : 'are-you-sure-delete-unused-cache',
-          )
-        }}
-      </q-card-section>
-      <q-card-section>
-        <q-expansion-item
-          class="bg-accent-100"
-          :label="
-            (cacheClearType === 'all' ? t('files') : t('directories')) +
-            ': ' +
-            filepathsToDelete.length
-          "
-        >
-          <q-scroll-area style="height: 200px; width: 100%">
-            <ul
-              v-for="(filepath, index) in filepathsToDelete"
-              :key="index"
-              class="text-body2"
-              dense
-            >
-              <li>
-                <pre>{{ filepath }}</pre>
-              </li>
-            </ul>
-          </q-scroll-area>
-        </q-expansion-item>
-      </q-card-section>
-      <q-card-actions align="right" class="text-primary">
-        <q-btn flat :label="t('cancel')" @click="handleCancel" />
-        <q-btn
-          color="negative"
-          flat
-          :label="t('delete')"
-          :loading="deletingCacheFiles"
-          @click="handleDeleteCacheFiles(cacheClearType)"
-        />
-      </q-card-actions>
-    </q-card>
-  </BaseDialog>
+        <q-scroll-area style="height: 200px; width: 100%">
+          <div
+            v-for="(filepath, index) in filepathsToDelete"
+            :key="index"
+            class="cache-file-row ellipsis"
+            :title="filepath"
+          >
+            {{ filepath }}
+          </div>
+        </q-scroll-area>
+      </q-expansion-item>
+    </q-card-section>
+  </ConfirmDialog>
 </template>
 <script setup lang="ts">
 import type { CacheAnalysis } from 'src/types';
 
-import BaseDialog from 'components/dialog/BaseDialog.vue';
+import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import prettyBytes from 'pretty-bytes';
 import { deleteCacheFiles } from 'src/helpers/cleanup';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -130,7 +119,34 @@ const handleDeleteCacheFiles = async (type: '' | 'all' | 'smart') => {
     }
   } catch (error) {
     errorCatcher(error);
+  } finally {
+    // This dialog is mounted unconditionally (toggled via v-model, not
+    // v-if), so the component instance - and this ref - persists across
+    // repeated opens. Resetting on every exit path (not just the catch
+    // block) keeps the Confirm button clickable again next time the dialog
+    // opens; previously a *successful* clear never reset it, permanently
+    // stuck the button behind Quasar's loading no-op click guard.
     deletingCacheFiles.value = false;
   }
 };
 </script>
+
+<style scoped>
+/* Each path was previously its own <ul><li><pre> - a fresh bulleted list
+   per row plus <pre>'s default browser styling (border, background, no
+   truncation) instead of one plain, evenly-spaced list. */
+.cache-file-row {
+  border-bottom: 1px solid rgba(128, 128, 128, 0.12);
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  padding: 0.35em 0.5em;
+}
+
+.cache-file-row:last-child {
+  border-bottom: none;
+}
+
+.cache-file-row:nth-child(odd) {
+  background: rgba(128, 128, 128, 0.05);
+}
+</style>

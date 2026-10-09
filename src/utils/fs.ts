@@ -1,7 +1,11 @@
 import type { PublicationFetcher } from 'src/types';
 
-import { Buffer } from 'buffer/';
+import { Buffer } from 'buffer'; // NOSONAR: this is not nodejs Buffer, it's the browser one
 import { errorCatcher } from 'src/helpers/error-catcher';
+import {
+  getFilesystemErrorCode,
+  isExpectedNetworkPathAccessError,
+} from 'src/shared/filesystem-errors';
 import { log } from 'src/shared/vanilla';
 import { getPubId } from 'src/utils/jw';
 
@@ -31,15 +35,7 @@ const isUsablePath = (path: string) => {
   isUsablePathPromises.set(path, promise);
   return promise;
 };
-const {
-  ensureDir,
-  ensureFile,
-  exists,
-  pathExists,
-  readFile,
-  remove,
-  writeFile,
-} = fs;
+const { ensureDir, ensureFile, pathExists, readFile, remove, writeFile } = fs;
 
 let defaultDataPath: null | string = null;
 
@@ -56,8 +52,65 @@ export const registerCachePathProvider = (
   getCacheFolderProvider = provider;
 };
 
+// Once a real read/write against the custom cache folder fails with a
+// permission-class error, the coarse isUsablePath probe can no longer be
+// trusted for it (it only tests creating a brand-new file, which can succeed
+// even when pre-existing files are unreadable). Rather than re-probing and
+// looping on the same broken folder, stop resolving to it for the rest of
+// the session so every getPublicationDirectory() caller (extraction,
+// playback path building, rediscovery on next launch) consistently lands on
+// the writable app-default path instead.
+let customCachePathDisabledForSession = false;
+
+/**
+ * Disables the custom cache folder for the remainder of the session after a
+ * real filesystem operation (not just the startup probe) fails against it
+ * with a permission-class error. Safe to call repeatedly/without a custom
+ * path configured; it's a no-op after the first call.
+ * @param error The filesystem error that triggered the fallback.
+ */
+export const invalidateCustomCachePath = (error: unknown) => {
+  if (customCachePathDisabledForSession) return;
+  customCachePathDisabledForSession = true;
+  defaultDataPath = null;
+
+  log(
+    '📁 Custom cache folder became inaccessible. Using default app data path for the rest of this session.',
+    'filesystem',
+    'warn',
+    error,
+  );
+
+  errorCatcher(
+    new Error(
+      'Custom cache folder became inaccessible; falling back to the default app data location for this session',
+    ),
+    {
+      contexts: {
+        fn: {
+          errorCode:
+            typeof error === 'object' && error !== null && 'code' in error
+              ? (error as { code?: unknown }).code
+              : undefined,
+          name: 'invalidateCustomCachePath',
+        },
+      },
+      fingerprint: ['custom-cache-folder-disabled-for-session'],
+    },
+  );
+};
+
+const PERMISSION_ERROR_CODES = new Set(['EACCES', 'EPERM']);
+
+const isPermissionError = (error: unknown) => {
+  const code = getFilesystemErrorCode(error);
+  return !!code && PERMISSION_ERROR_CODES.has(code);
+};
+
 export const getCachedUserDataPath = async (): Promise<string> => {
-  const customPath = getCacheFolderProvider?.();
+  const customPath = customCachePathDisabledForSession
+    ? undefined
+    : getCacheFolderProvider?.();
 
   // Fast path: already resolved
   if (defaultDataPath) {
@@ -111,7 +164,11 @@ const CONG_PREFERENCES_FOLDER = 'Cong Preferences';
  * @param create Whether to create the directory if it doesn't exist.
  * @returns The full path of the directory.
  */
-const getCachePath = async (paths: string | string[], create = false) => {
+const getCachePath = async (
+  paths: string | string[],
+  create = false,
+  { bypassCustomPath = false } = {},
+) => {
   const pathArray = Array.isArray(paths) ? paths : [paths];
   const parts = pathArray.filter((p) => !!p);
 
@@ -123,28 +180,69 @@ const getCachePath = async (paths: string | string[], create = false) => {
     return dir;
   };
 
+  let basePath: string | undefined;
   try {
-    return await buildPath(await getCachedUserDataPath());
+    basePath = bypassCustomPath
+      ? await getAppDataPath()
+      : await getCachedUserDataPath();
+    if (!basePath) {
+      // Both resolvers are typed to always return a string, but the IPC
+      // call underlying getAppDataPath() has occasionally resolved to a
+      // falsy value in practice (cause unconfirmed - a main-process
+      // handler race is suspected). Turn that into a self-describing
+      // error instead of the opaque "path argument must be of type
+      // string" TypeError that join() would otherwise throw, so the next
+      // occurrence is diagnosable from the Sentry report alone.
+      throw new Error(
+        `getCachePath: base path resolver returned a falsy value (${JSON.stringify(basePath)})`,
+      );
+    }
+    return await buildPath(basePath);
   } catch (error) {
     defaultDataPath = await getAppDataPath();
     const fallbackPath = await buildPath(defaultDataPath);
-    errorCatcher(error, {
-      contexts: {
-        fn: {
-          create,
-          fallbackPath,
-          name: 'getCachePath',
-          newDefaultDataPath: defaultDataPath,
-          paths,
+
+    // A permission-class failure against the custom cache folder (e.g. an
+    // external SSD that got unmounted mid-session, leaving its /Volumes
+    // mount point uncreatable) is an expected environmental condition, not
+    // an app bug. Disable the custom folder for the rest of the session and
+    // let invalidateCustomCachePath emit its one clean, fingerprinted report
+    // instead of a raw EACCES/EPERM per path.
+    const customPath = getCacheFolderProvider?.();
+    if (
+      !bypassCustomPath &&
+      customPath &&
+      basePath === customPath &&
+      isPermissionError(error)
+    ) {
+      invalidateCustomCachePath(error);
+    } else {
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            create,
+            fallbackPath,
+            name: 'getCachePath',
+            newDefaultDataPath: defaultDataPath,
+            paths,
+          },
         },
-      },
-    });
+      });
+    }
     return fallbackPath;
   }
 };
 
 export const getFontsPath = () => getCachePath('Fonts');
-export const getTempPath = () => getCachePath('Temp', true);
+
+// Temp is pure scratch space (jwpub extraction staging, PDF conversion,
+// etc.) with no benefit from being shared across installs, unlike
+// Publications/Fonts/Additional Media. Routing it through a cloud-synced
+// custom cache folder buys nothing and exposes rapid ephemeral read/write
+// churn to sync-agent hydration/locking issues (e.g. OneDrive), so it
+// always uses the shared/machine-wide-or-per-user path instead.
+export const getTempPath = () =>
+  getCachePath('Temp', true, { bypassCustomPath: true });
 export const getPublicationsPath = () =>
   getCachePath(PUBLICATION_FOLDER, false);
 export const getAdditionalMediaPath = () =>
@@ -308,7 +406,7 @@ export const trimFilepathAsNeeded = (filepath: string, maxBytes = 230) => {
  * @returns Whether auto updates are disabled.
  */
 export const updatesDisabled = async () =>
-  exists(await getUpdatesDisabledPath());
+  pathExists(await getUpdatesDisabledPath());
 
 /**
  * Toggles auto updates.
@@ -322,6 +420,12 @@ export const toggleAutoUpdates = async (enable: boolean) => {
     } else {
       await ensureFile(await getUpdatesDisabledPath());
     }
+    // Let any listener (the header's "updates disabled" badge, the
+    // "updates disabled" startup reminder, ...) know the setting changed,
+    // wherever the toggle was flipped from.
+    globalThis.dispatchEvent(
+      new CustomEvent<boolean>('autoUpdatesToggled', { detail: enable }),
+    );
   } catch (error) {
     errorCatcher(error, { contexts: { fn: { name: 'enableUpdates' } } });
   }
@@ -332,7 +436,7 @@ export const toggleAutoUpdates = async (enable: boolean) => {
  * @returns Wether beta updates are disabled.
  */
 export const betaUpdatesDisabled = async () =>
-  !(await exists(await getBetaUpdatesPath()));
+  !(await pathExists(await getBetaUpdatesPath()));
 
 /**
  * Toggles beta updates
@@ -360,29 +464,56 @@ const lastVersionPath = (congId: string) =>
  * Verifies whether a new version has been installed.
  */
 export const wasUpdateInstalled = async (congId: string, newCong = false) => {
+  let lastVersionFile: string | undefined;
+
   try {
-    const lastVersionFile = await lastVersionPath(congId);
+    lastVersionFile = await lastVersionPath(congId);
     await ensureDir(dirname(lastVersionFile));
 
     if (newCong) {
-      await writeFile(lastVersionFile, process.env.version ?? '');
+      await writeFile(lastVersionFile, import.meta.env.version ?? '');
       return false;
     }
 
-    if (await exists(lastVersionFile)) {
+    if (await pathExists(lastVersionFile)) {
       const lastVersion = await readFile(lastVersionFile, {
         encoding: 'utf-8',
       });
-      await writeFile(lastVersionFile, process.env.version ?? '');
-      return lastVersion !== (process.env.version ?? '');
+      await writeFile(lastVersionFile, import.meta.env.version ?? '');
+      return lastVersion !== (import.meta.env.version ?? '');
     } else {
-      await writeFile(lastVersionFile, process.env.version ?? '', {
+      await writeFile(lastVersionFile, import.meta.env.version ?? '', {
         encoding: 'utf-8',
       });
       return true;
     }
   } catch (error) {
-    errorCatcher(error, { contexts: { fn: { name: 'wasUpdateInstalled' } } });
+    // A cong preferences folder living in a cloud-synced location (iCloud,
+    // OneDrive, ...) can transiently fail this read/write with an
+    // unclassified error (surfaces as 'UNKNOWN' on Windows) while the sync
+    // client holds the file - not an app bug, just the same class of
+    // network-path flakiness other cloud-path reads already tolerate.
+    if (
+      lastVersionFile &&
+      isExpectedNetworkPathAccessError(
+        error,
+        lastVersionFile,
+        globalThis.electronApi.PLATFORM as NodeJS.Platform,
+      )
+    ) {
+      return false;
+    }
+
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          congId,
+          lastVersionFile,
+          name: 'wasUpdateInstalled',
+          newCong,
+        },
+      },
+    });
     return false;
   }
 };

@@ -3,10 +3,18 @@ import type {
   SettingsItemAction,
   SettingsItemOption,
   SettingsItemRule,
+  SettingsValues,
 } from 'src/types';
 
-import { syncMeetingSchedule } from 'src/helpers/congregation-schedule';
+import { settingsDefinitions } from 'src/constants/settings';
+import { syncMeetingScheduleManually } from 'src/helpers/congregation-schedule';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import {
+  captureZoomMicTitle,
+  captureZoomShareButtonTitle,
+  captureZoomVideoTitle,
+  isZoomSetupNeeded,
+} from 'src/helpers/zoom';
 import { getDateDiff, getSpecificWeekday, isInPast } from 'src/utils/date';
 
 const requiredRule: ValidationRule = (val: boolean | string) =>
@@ -55,6 +63,34 @@ export const getDateOptions = (options: SettingsItemOption[] | undefined) => {
   }
 };
 
+// Whether a setting is on, with the settings it depends on on too.
+const isSettingInEffect = (
+  settings: Partial<SettingsValues>,
+  settingId: keyof SettingsValues,
+): boolean => {
+  if (!settings[settingId]) return false;
+  const depends = settingsDefinitions[settingId]?.depends;
+  if (!depends) return true;
+  const dependencies = Array.isArray(depends) ? depends : [depends];
+  return dependencies.every((dependency) => !!settings[dependency]);
+};
+
+/**
+ * The settings (see `disableWhen`) that make this one unavailable right now,
+ * e.g. the other Zoom integration, as both would drive Zoom's screen sharing.
+ */
+export const getBlockingSettings = (
+  settings: null | Partial<SettingsValues> | undefined,
+  settingId: keyof SettingsValues,
+): (keyof SettingsValues)[] => {
+  const { disableWhen, type } = settingsDefinitions[settingId] ?? {};
+  if (!settings || !disableWhen) return [];
+  // A toggle that is on can always be turned off, even if both ended up on.
+  if (type === 'toggle' && settings[settingId]) return [];
+  const blockers = Array.isArray(disableWhen) ? disableWhen : [disableWhen];
+  return blockers.filter((blocker) => isSettingInEffect(settings, blocker));
+};
+
 export const getRules = (
   rules: SettingsItemRule[] | undefined,
   disableMediaFetching: boolean | undefined,
@@ -89,11 +125,30 @@ export const performActions = (actions: SettingsItemAction[] | undefined) => {
           new CustomEvent<undefined>('obsConnectFromSettings'),
         );
       } else if (action === 'syncMeetingSchedule') {
-        syncMeetingSchedule(true);
+        syncMeetingScheduleManually();
       } else if (action === 'openCongregationLookup') {
         globalThis.dispatchEvent(
           new CustomEvent<undefined>('openCongregationLookup'),
         );
+      } else if (action === 'openZoomSetupAssistant') {
+        globalThis.dispatchEvent(new CustomEvent('openZoomSetupAssistant'));
+      } else if (action === 'openZoomSetupAssistantIfNeeded') {
+        // Turning the Zoom Meeting Manager on opens the assistant, unless
+        // it was already set up (so finishing the assistant, which turns
+        // it on, doesn't open it again).
+        if (isZoomSetupNeeded()) {
+          globalThis.dispatchEvent(new CustomEvent('openZoomSetupAssistant'));
+        }
+      } else if (action === 'zoomCaptureVideoOffTitle') {
+        captureZoomVideoTitle('zoomVideoOffTitle');
+      } else if (action === 'zoomCaptureVideoOnTitle') {
+        captureZoomVideoTitle('zoomVideoOnTitle');
+      } else if (action === 'zoomCaptureMicOffTitle') {
+        captureZoomMicTitle('zoomMicOffTitle');
+      } else if (action === 'zoomCaptureMicOnTitle') {
+        captureZoomMicTitle('zoomMicOnTitle');
+      } else if (action === 'zoomCaptureShareButtonTitle') {
+        captureZoomShareButtonTitle();
       }
     } catch (error) {
       errorCatcher(error);

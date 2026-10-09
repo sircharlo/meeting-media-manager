@@ -9,7 +9,10 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <div class="action-popup action-popup--scroll-layout q-py-md">
+    <div
+      ref="popupContent"
+      class="action-popup action-popup--scroll-layout q-py-md"
+    >
       <div class="card-title row q-px-md q-mb-none">
         {{ t('timer') }}
       </div>
@@ -204,14 +207,13 @@
                   {{ t('cbs-custom-end-time') }}
                 </div>
                 <div class="row q-px-md q-pb-sm">
-                  <q-input
+                  <TimeInput
                     v-model="cbsCustomEndTime"
-                    class="full-width"
                     :disable="timerRunning"
+                    :extra-rules="cbsEndTimeRules"
+                    full-width
                     :label="t('end-time')"
-                    mask="##:##"
-                    outlined
-                    :rules="cbsEndTimeRules"
+                    :options="undefined"
                   />
                 </div>
               </template>
@@ -227,14 +229,13 @@
               {{ t('wt-custom-end-time') }}
             </div>
             <div class="row q-px-md q-pb-sm">
-              <q-input
+              <TimeInput
                 v-model="wtCustomEndTime"
-                class="full-width"
                 :disable="timerRunning"
-                filled
+                :extra-rules="wtEndTimeRules"
+                full-width
                 :label="t('end-time')"
-                mask="##:##"
-                :rules="wtEndTimeRules"
+                :options="undefined"
               />
             </div>
           </template>
@@ -273,6 +274,7 @@
               <div class="col-auto">
                 <div class="row q-gutter-xs">
                   <q-btn
+                    :aria-label="t('move-up')"
                     dense
                     :disable="timerRunning || index === 0"
                     flat
@@ -283,6 +285,7 @@
                     <q-tooltip>{{ t('move-up') }}</q-tooltip>
                   </q-btn>
                   <q-btn
+                    :aria-label="t('move-down')"
                     dense
                     :disable="
                       timerRunning || index === customTimerParts.length - 1
@@ -295,6 +298,7 @@
                     <q-tooltip>{{ t('move-down') }}</q-tooltip>
                   </q-btn>
                   <q-btn
+                    :aria-label="t('delete')"
                     color="negative"
                     dense
                     :disable="timerRunning || customTimerParts.length <= 1"
@@ -351,7 +355,19 @@
                   {{ part.icon }}
                 </q-item-section>
                 <q-item-section>
-                  <q-item-label>{{ part.label }}</q-item-label>
+                  <q-item-label>
+                    {{ part.label }}
+                    <q-icon
+                      v-if="part.warning"
+                      color="warning"
+                      name="mmm-warning"
+                      size="xs"
+                    >
+                      <q-tooltip>{{
+                        t('part-duration-mismatch-warning')
+                      }}</q-tooltip>
+                    </q-icon>
+                  </q-item-label>
                   <q-item-label caption>
                     {{ getPartStatusText(part.value) }}
                   </q-item-label>
@@ -359,21 +375,25 @@
                 <q-item-section side>
                   <div class="row q-gutter-xs">
                     <q-btn
+                      :aria-label="t('decrease-duration')"
+                      class="btn-tonal"
                       color="primary"
                       dense
                       :disable="(partDurations[part.value] || 0) <= 1"
+                      flat
                       icon="mmm-minus"
-                      outline
                       size="sm"
                       @click.stop="adjustPartDuration(part.value, -1)"
                     >
                       <q-tooltip>{{ t('decrease-duration') }}</q-tooltip>
                     </q-btn>
                     <q-btn
+                      :aria-label="t('increase-duration')"
+                      class="btn-tonal"
                       color="primary"
                       dense
+                      flat
                       icon="mmm-plus"
-                      outline
                       size="sm"
                       @click.stop="adjustPartDuration(part.value, 1)"
                     >
@@ -385,31 +405,27 @@
                           partTimings[part.value]?.endTime) &&
                         !timerRunning
                       "
+                      :aria-label="t('reset')"
+                      class="btn-tonal"
                       color="warning"
                       dense
+                      flat
                       icon="mmm-reset"
-                      outline
                       size="sm"
-                      @click.stop="
-                        () => {
-                          partTimings[part.value] ??= {
-                            endTime: null,
-                            startTime: null,
-                          };
-                          partTimings[part.value]!.startTime = null;
-                          partTimings[part.value]!.endTime = null;
-                        }
-                      "
+                      @click.stop="openResetConfirm(part.value)"
                     >
+                      <q-tooltip>{{ t('reset') }}</q-tooltip>
                     </q-btn>
                     <q-btn
                       v-if="
                         !timerRunning && !partTimings[part.value]?.startTime
                       "
+                      :aria-label="t('start-timer')"
+                      class="btn-tonal"
                       color="positive"
                       dense
+                      flat
                       icon="mmm-play"
-                      outline
                       size="sm"
                       @click.stop="selectPart(part.value)"
                     >
@@ -417,6 +433,7 @@
                     </q-btn>
                     <q-btn
                       v-if="currentPart === part.value && timerRunning"
+                      :aria-label="t('stop-timer')"
                       color="negative"
                       dense
                       icon="mmm-stop"
@@ -447,7 +464,7 @@
                 unelevated
                 @click="startTimer()"
               >
-                <q-icon class="q-mr-sm" name="play_arrow" />
+                <q-icon class="q-mr-sm" name="mmm-play" />
                 {{ t('start') }}
               </q-btn>
             </template>
@@ -471,7 +488,7 @@
                   unelevated
                   @click="stopTimer()"
                 >
-                  <q-icon class="q-mr-sm" name="stop" />
+                  <q-icon class="q-mr-sm" name="mmm-stop" />
                   {{ t('stop') }}
                 </q-btn>
               </div>
@@ -483,7 +500,7 @@
             unelevated
             @click="exportPdfReport"
           >
-            <q-icon class="q-mr-sm" name="picture_as_pdf" />
+            <q-icon class="q-mr-sm" name="mmm-file" />
             {{ t('export-pdf-report') }}
           </q-btn>
 
@@ -495,7 +512,7 @@
             >
               {{ formattedTime }}
             </div>
-            <div class="text-caption text-grey-6">
+            <div class="text-caption text-dark-grey">
               {{ timerMode === 'countup' ? t('elapsed') : t('remaining') }}
             </div>
           </div>
@@ -542,27 +559,43 @@
   </q-menu>
 
   <!-- Edit Dialog -->
-  <q-dialog v-model="editDialogOpen">
-    <q-card>
-      <q-card-section>
-        <div class="text-h6">{{ editPart?.label }}</div>
-      </q-card-section>
+  <ConfirmDialog
+    v-model="editDialogOpen"
+    :confirm-label="t('save')"
+    dialog-id="timer-edit-part"
+    icon="mmm-time"
+    icon-color="primary"
+    :title="editPart?.label ?? ''"
+    @cancel="cancelEdit"
+    @confirm="saveEdit"
+  >
+    <q-card-section>
+      <q-input
+        v-model.number="editDuration"
+        class="bg-accent-100"
+        dense
+        :label="t('duration-minutes')"
+        min="1"
+        outlined
+        type="number"
+      />
+    </q-card-section>
+  </ConfirmDialog>
 
-      <q-card-section class="q-pt-none">
-        <q-input
-          v-model.number="editDuration"
-          :label="t('duration-minutes')"
-          min="1"
-          type="number"
-        />
-      </q-card-section>
-
-      <q-card-actions align="right">
-        <q-btn v-close-popup flat :label="t('cancel')" @click="cancelEdit" />
-        <q-btn v-close-popup flat :label="t('save')" @click="saveEdit" />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
+  <!-- Reset Part Timing Confirmation -->
+  <ConfirmDialog
+    v-model="resetConfirmOpen"
+    confirm-color="warning"
+    :confirm-label="t('reset')"
+    dialog-id="timer-reset-part"
+    icon="mmm-reset"
+    icon-color="warning"
+    :message="t('reset-part-timing-confirmation')"
+    persistent
+    :title="t('reset')"
+    @cancel="cancelResetPart"
+    @confirm="confirmResetPart"
+  />
 </template>
 
 <script setup lang="ts">
@@ -575,6 +608,8 @@ import {
   watchImmediate,
   whenever,
 } from '@vueuse/core';
+import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
+import TimeInput from 'components/form-inputs/TimeInput.vue';
 import { storeToRefs } from 'pinia';
 import { QMenu } from 'quasar';
 import useTimer from 'src/composables/useTimer';
@@ -586,12 +621,15 @@ import {
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useAppSettingsStore } from 'src/stores/app-settings';
+import { withTimeout } from 'src/utils/general';
 import { getTimerReportStatus } from 'src/utils/timer-report';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, ref, useTemplateRef, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const timerPopup = useTemplateRef<QMenu>('timerPopup');
+const popupContent = useTemplateRef<HTMLElement>('popupContent');
+let popupResizeObserver: ResizeObserver | undefined;
 
 const { t } = useI18n();
 
@@ -653,6 +691,13 @@ const usedParts = ref<Set<MeetingPart>>(new Set());
 const editDialogOpen = ref(false);
 const editPart = ref<null | { label: string; value: MeetingPart }>(null);
 const editDuration = ref(0);
+
+// Reset-part-timing confirmation (UX-3, full-audit-2026-09-04.md): clearing
+// a part's recorded start/end time fed into the exported timing report was
+// previously a single click with no confirmation, unlike every other
+// destructive action in the app.
+const resetConfirmOpen = ref(false);
+const resetPartValue = ref<MeetingPart | null>(null);
 
 const rebalancePartDurations = (
   prefix: 'ayfm' | 'lac',
@@ -736,6 +781,24 @@ const saveEdit = () => {
 // Cancel edit
 const cancelEdit = () => {
   editDialogOpen.value = false;
+};
+
+const openResetConfirm = (partValue: MeetingPart) => {
+  resetPartValue.value = partValue;
+  resetConfirmOpen.value = true;
+};
+
+const confirmResetPart = () => {
+  const partValue = resetPartValue.value;
+  if (!partValue) return;
+
+  partTimings.value[partValue] = { endTime: null, startTime: null };
+
+  resetConfirmOpen.value = false;
+};
+
+const cancelResetPart = () => {
+  resetConfirmOpen.value = false;
 };
 
 const getReportStatusText = (
@@ -824,13 +887,29 @@ const { data: timerPageReady } = useBroadcastChannel<string, string>({
   name: 'timer-page-ready',
 });
 
+const SCREEN_FETCH_TIMEOUT_MS = 5000;
+
+// Guards against piling up overlapping getAllScreens() IPC round-trips -
+// this listener stays mounted for the component's whole lifetime (not just
+// while the popup is open), so a burst of 'screen-trigger-update' events
+// must not stack up concurrent calls or wait forever on a slow reply.
+let fetchingScreens = false;
+
 const fetchScreens = async () => {
+  if (fetchingScreens) return;
+  fetchingScreens = true;
   try {
-    screenList.value = await getAllScreens();
+    screenList.value = await withTimeout(
+      getAllScreens(),
+      SCREEN_FETCH_TIMEOUT_MS,
+      'getAllScreens timed out',
+    );
   } catch (error) {
     void errorCatcher(error, {
       contexts: { timer: { action: 'fetchScreens' } },
     });
+  } finally {
+    fetchingScreens = false;
   }
 };
 
@@ -961,21 +1040,22 @@ whenever(
   },
 );
 
-// UI update handler
-watch(
-  () => [
-    timerRunning.value,
-    timerMode.value,
-    timerPreferences.value?.preferWindowed,
-  ],
-  () => {
-    setTimeout(() => {
-      if (timerPopup.value) {
-        timerPopup.value.updatePosition();
-      }
-    }, 10);
-  },
-);
+// Anchored bottom-up (self="bottom middle") so it visually grows out of the
+// action island. A ResizeObserver repositions it whenever its rendered size
+// actually changes - custom timer parts added/removed, meeting-day section
+// swaps, screen list thresholds, etc. - instead of guessing which reactive
+// values might affect height.
+watch(popupContent, (el) => {
+  popupResizeObserver?.disconnect();
+  popupResizeObserver = undefined;
+  if (!el) return;
+  popupResizeObserver = new ResizeObserver(() => {
+    timerPopup.value?.updatePosition();
+  });
+  popupResizeObserver.observe(el);
+});
+
+onBeforeUnmount(() => popupResizeObserver?.disconnect());
 
 watch(
   screenList,

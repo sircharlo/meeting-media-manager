@@ -5,9 +5,12 @@
       style="flex-flow: column"
     >
       <!-- Header -->
-      <div class="text-h6 row q-px-md q-pt-lg items-center">
+      <div
+        class="text-bigger text-semibold text-primary row q-px-md q-pt-lg items-center"
+      >
         <q-btn
           v-if="bibleBook"
+          :aria-label="t('back')"
           class="q-mr-sm"
           dense
           :disable="isProcessing"
@@ -15,7 +18,14 @@
           icon="mmm-left"
           round
           @click="goBack"
-        />
+        >
+          <q-tooltip :delay="500">
+            {{ t('back') }}
+          </q-tooltip>
+        </q-btn>
+        <div class="icon-chip q-mr-sm">
+          <q-icon name="mmm-bible" size="xs" />
+        </div>
         <template v-if="!bibleBook">
           {{ t('add-media-study-bible') }}
         </template>
@@ -170,7 +180,7 @@
             v-for="([label, mediaItems], index) in groupedMediaItems"
             :key="label"
           >
-            <div class="text-subtitle2 q-mt-md q-mb-sm text-grey-8">
+            <div class="text-subtitle2 q-mt-md q-mb-sm text-dark-grey">
               {{ label || t('general') }}
             </div>
             <div class="row q-col-gutter-sm">
@@ -208,12 +218,9 @@
                       <q-icon class="q-mr-xs" color="white" name="mmm-play" />
                       {{ t('video') }}
                     </q-badge>
-                    <q-checkbox
-                      v-if="isSelected(mediaItem)"
-                      class="absolute-top-right q-ma-xs"
-                      color="primary"
-                      model-value
-                    />
+                    <div v-if="isSelected(mediaItem)" class="grid-select-check">
+                      <q-icon color="white" name="mmm-check" size="xs" />
+                    </div>
                     <div
                       class="absolute-bottom text-caption gradient-transparent-to-black ellipsis q-px-sm"
                     >
@@ -237,19 +244,17 @@
       <!-- Footer Actions -->
       <div class="row q-px-md q-py-md justify-end q-gutter-sm">
         <q-btn
-          v-if="selectedMediaItems.length > 0"
-          color="primary"
-          :label="t('add') + ` (${selectedMediaItems.length})`"
-          :loading="isProcessing"
-          @click="addSelectedMediaItems"
-        />
-        <q-btn
-          v-else
-          color="negative"
           :disable="isProcessing"
           flat
           :label="t('cancel')"
           @click="dialogValue = false"
+        />
+        <q-btn
+          v-if="selectedMediaItems.length > 0"
+          color="primary"
+          :label="t('add-count', { count: selectedMediaItems.length })"
+          :loading="isProcessing"
+          @click="addSelectedMediaItems"
         />
       </div>
     </div>
@@ -505,14 +510,12 @@ body.body--dark .study-bible-item :deep(img) {
 
 .study-bible-chapter-unavailable {
   background-color: #e0e0e0 !important;
-  /* border: 1px solid #c2c2c2; */
   color: #757575 !important;
   opacity: 1 !important;
 }
 
 body.body--dark .study-bible-chapter-unavailable {
   background-color: #343434 !important;
-  /* border-color: #4a4a4a; */
   color: #9e9e9e !important;
 }
 </style>

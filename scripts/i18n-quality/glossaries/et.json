@@ -1,0 +1,262 @@
+{
+  "_comment": "Grounded JW terminology for et, cross-checked against official jw.org pages. Reusable beyond translation-quality review. Regenerate via scripts/i18n-quality/prompts/grounding-agent.md.",
+  "_fetchedAt": "2026-09-11",
+  "_language": "et",
+  "terms": [
+    {
+      "termEn": "Jehovah's Witnesses",
+      "official": "Jehoova tunnistajad",
+      "sourceUrls": [
+        "https://www.jw.org/et/rahvusvaheline-kommunikatsioon/terminite-selgitused/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Jehoova tunnistajad. Kristlik usuliikumine. Jehoova tunnistajad usuvad, et Jumala nimi on Jehoova ja tema poeg on Jeesus Kristus...\" Also used as the page's own site name (<h2 id=\"siteName\">Jehoova tunnistajad</h2>). Guide asks not to use \"jehovistid\", \"jehoovakad\" or \"jehoovad\"."
+    },
+    {
+      "termEn": "Kingdom Hall",
+      "official": "Jehoova tunnistajate kuningriigisaal",
+      "sourceUrls": [
+        "https://www.jw.org/et/rahvusvaheline-kommunikatsioon/terminite-selgitused/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"kuningriigisaal. Jehoova tunnistajate koosolekupaik, mida kasutab üks või mitu kogudust. Ametlik nimetus on Jehoova tunnistajate kuningriigisaal. Palun ärge kasutage selle kohta terminit „kirik”.\" Commonly shortened to just \"kuningriigisaal\"."
+    },
+    {
+      "termEn": "circuit overseer",
+      "official": "ringkonnaülevaataja",
+      "sourceUrls": [
+        "https://www.jw.org/et/rahvusvaheline-kommunikatsioon/terminite-selgitused/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Kogenud kogudusevanem, kes külastab koos oma naisega (kui ta on abielus) kaks korda aastas igat kogudust oma ringkonnas.\" Term is not used as an honorific title."
+    },
+    {
+      "termEn": "congregation",
+      "official": "kogudus",
+      "sourceUrls": [
+        "https://www.jw.org/et/rahvusvaheline-kommunikatsioon/terminite-selgitused/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Samas paikkonnas elavad Jehoova tunnistajad, kes jumalateenimiseks regulaarselt kokku tulevad.\""
+    },
+    {
+      "termEn": "elder",
+      "official": "kogudusevanem",
+      "sourceUrls": [
+        "https://www.jw.org/et/rahvusvaheline-kommunikatsioon/terminite-selgitused/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Meessoost Jehoova tunnistaja, kes on määratud kogudust õpetama ja selle eest hoolt kandma.\" Not paid, not clergy; term is not used as an honorific."
+    },
+    {
+      "termEn": "presiding overseer",
+      "official": "juhtiv ülevaataja",
+      "sourceUrls": [
+        "https://wol.jw.org/et/wol/d/r37/lp-st/1200274607",
+        "https://wol.jw.org/et/wol/d/r37/lp-st/1200276968"
+      ],
+      "confidence": "medium",
+      "notes": "IMPORTANT: this role's English name changed after the 2023 congregation restructuring. jw.org's Watch Tower Publications Index marks the Estonian entry at id 1200274607 as \"JUHTIV ÜLEVAATAJA (nimetus muutunud)\" - \"Presiding Overseer (name changed)\" - listing prior names \"koguduse ülevaataja, kogudusesulane, teenistusjuhataja\". The current replacement role/term (id 1200276968, matching English \"Coordinator of Body of Elders\") is \"Vanematekogu koordineerija\". Neither term appears in the current jw.org terminology guide (which likewise omits \"presiding overseer\"/\"coordinator\" in English) - found only via the wol.jw.org cross-language numeric-ID trick. A reviewer should check whether the app string actually means the old or new role before trusting either rendering."
+    },
+    {
+      "termEn": "ministerial servant",
+      "official": "koguduseabiline",
+      "sourceUrls": [
+        "https://www.jw.org/et/rahvusvaheline-kommunikatsioon/terminite-selgitused/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Meessoost Jehoova tunnistaja, kelle ülesanne on aidata kogudusevanemaid.\" Not paid; term is not used as an honorific."
+    },
+    {
+      "termEn": "pioneer",
+      "official": "pioneer",
+      "sourceUrls": [
+        "https://www.jw.org/et/rahvusvaheline-kommunikatsioon/terminite-selgitused/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Ristitud Jehoova tunnistaja, kes on otsustanud pühendada aasta jooksul kindla arvu tunde misjonitööle.\" Spelled identically to the English word. Covers \"üldpioneer\" (regular pioneer, 600 h/year) and \"abipioneer\" (auxiliary pioneer, 15 or 30 h/month). Not used as an honorific title."
+    },
+    {
+      "termEn": "field service",
+      "official": "kuulutustöö",
+      "sourceUrls": [
+        "https://www.jw.org/et/rahvusvaheline-kommunikatsioon/terminite-selgitused/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"kuulutustöö. Misjonitöö, mida Jehoova tunnistajad teevad, et täita Jeesuse käsku kuulutada „head sõnumit kuningriigist ... kogu maailmas...\""
+    },
+    {
+      "termEn": "Memorial",
+      "official": "mälestusõhtu",
+      "sourceUrls": [
+        "https://www.jw.org/et/rahvusvaheline-kommunikatsioon/terminite-selgitused/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Jeesus Kristuse surma-aastapäeva tähistamine. Nimetatakse ka Issanda õhtusöömaajaks ja pühaks õhtusöömaajaks.\" Described as the year's most important event, the only ceremony Jesus commanded be observed."
+    },
+    {
+      "termEn": "Congregation Bible Study",
+      "official": "Koguduse piibliuurimine",
+      "sourceUrls": ["https://wol.jw.org/et/wol/d/r37/lp-st/1200276966"],
+      "confidence": "high",
+      "notes": "Watch Tower Publications Index entry, title \"KOGUDUSE PIIBLIUURIMINE\", found by substituting the Estonian language segment (r37/lp-st) into the identical English numeric id 1200276966 (\"Congregation Bible Study\"). Notes prior names \"koguduse raamatu-uurimine, Beroia piibliuurimisringid, Koidiku piibliuurimisringid\", matching the English page's \"Congregation Book Study, Berean Circles for Bible Study, Dawn Circles for Bible Study\"."
+    },
+    {
+      "termEn": "midweek meeting",
+      "official": "nädalasisene koosolek",
+      "sourceUrls": [
+        "https://www.jw.org/et/rahvusvaheline-kommunikatsioon/terminite-selgitused/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Iganädalane koguduse koosolek. Nimetatakse ka „Kristliku elu ja teenistuse” koosolekuks. Toimub tavaliselt mõne tööpäeva õhtul kuningriigisaalis...\""
+    },
+    {
+      "termEn": "weekend meeting",
+      "official": "üldsusele suunatud koosolek",
+      "sourceUrls": [
+        "https://www.jw.org/et/rahvusvaheline-kommunikatsioon/terminite-selgitused/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Iganädalane koguduse koosolek, mis toimub tavaliselt nädalavahetusel kuningriigisaalis ... Seal esitatakse 30-minutine kõne ... Sellele järgneb Vahitorni-uurimine...\" - matches the English guide's \"Public Meeting\" entry structure exactly (30-minute talk followed by the Watchtower Study)."
+    },
+    {
+      "termEn": "public talk",
+      "official": "avalik kõne",
+      "sourceUrls": [
+        "https://wol.jw.org/et/wol/d/r37/lp-st/1102014937",
+        "https://wol.jw.org/et/wol/d/r37/lp-st/1200274680"
+      ],
+      "confidence": "high",
+      "notes": "No standalone headword in the terminology guide itself (the English guide likewise folds this into its \"Public Meeting\" entry rather than giving \"public talk\" its own entry). Confirmed instead in running prose on an official wol.jw.org article: \"Kui leidub piisavalt kõnepidajaid, peetakse koguduses avalik kõne iga nädal.\" Cross-referenced via the Publications Index entry at id 1200274680 (\"AVALIKUD KÕNED\", plural), matching English \"Public Talks\" at the same numeric id."
+    },
+    {
+      "termEn": "Watchtower Study",
+      "official": "Vahitorni-uurimine",
+      "sourceUrls": [
+        "https://www.jw.org/et/rahvusvaheline-kommunikatsioon/terminite-selgitused/"
+      ],
+      "confidence": "high",
+      "notes": "Appears verbatim inside the terminology guide's \"üldsusele suunatud koosolek\" (weekend meeting) entry: \"Sellele järgneb Vahitorni-uurimine: ühetunnine küsimuste-vastuste vormis piibliteemaline arutelu, mille aluseks on artikkel ajakirjast Vahitorn.\" It is not given its own bolded headword, but is the term used on the authoritative page itself."
+    },
+    {
+      "termEn": "The Watchtower",
+      "official": "Vahitorn",
+      "sourceUrls": [
+        "https://www.jw.org/et/rahvusvaheline-kommunikatsioon/terminite-selgitused/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Vahitorn. Peamine ajakiri, mida Jehoova tunnistajad välja annavad ja levitavad. Täisnimi on Vahitorn Kuulutab Jehoova Kuningriiki.\" Published since 1879."
+    },
+    {
+      "termEn": "Awake!",
+      "official": "Ärgake!",
+      "sourceUrls": [
+        "https://www.jw.org/et/rahvusvaheline-kommunikatsioon/terminite-selgitused/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"Ärgake!. Ajakiri, mida Jehoova tunnistajad välja annavad ja levitavad. See hakkas ilmuma aastal 1919 ja kandis tollal nime Kuldne Aeg. 1937. aastal sai selle ajakirja nimeks Lohutus. Praegune nimi Ärgake! on kasutusel alates 1946. aasta 22. augusti numbrist.\" Includes the exclamation mark as part of the proper noun, matching English usage."
+    },
+    {
+      "termEn": "New World Translation",
+      "official": "Uue maailma tõlge",
+      "sourceUrls": [
+        "https://www.jw.org/et/rahvusvaheline-kommunikatsioon/terminite-selgitused/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"„Uue maailma tõlge”. Piiblitõlge, mille Jehoova tunnistajad on tõlkinud ja välja andnud. ... Täispikk pealkiri on „Piibel. Uue maailma tõlge”.\""
+    },
+    {
+      "termEn": "JW Library",
+      "official": "JW Library",
+      "sourceUrls": [
+        "https://www.jw.org/et/v%C3%B5rguspikker/jw-library/android/"
+      ],
+      "confidence": "high",
+      "notes": "App name kept untranslated in Estonian, same as in English. Found via the English JW Library Android help page's own hreflang=\"et\" alternate link, whose title attribute reads \"JW Library Androidi™ seadmele\" - the app name itself is left as \"JW Library\"."
+    },
+    {
+      "termEn": "jw.org",
+      "official": "jw.org",
+      "sourceUrls": ["https://www.jw.org/et/"],
+      "confidence": "high",
+      "notes": "Domain/brand name, not translated in any language - the Estonian site itself brands as \"JW.ORG\" (e.g. footer tagline \"JW.ORG® / JEHOOVA TUNNISTAJATE AMETLIK VEEBISAIT\")."
+    },
+    {
+      "termEn": "songbook",
+      "official": "laulik",
+      "sourceUrls": [
+        "https://wol.jw.org/et/wol/d/r37/lp-st/1200277041",
+        "https://www.jw.org/et/raamatukogu/muusika-laulud/laulgem-roomsalt-jehoovale/"
+      ],
+      "confidence": "high",
+      "notes": "Publications Index entry at id 1200277041 titled \"„LAULGE JEHOOVALE” (laulik)\", cross-referenced to the identical English numeric id titled \"Sing to Jehovah (Songbook)\" - confirms laulik = songbook. The current (2025-) songbook is titled \"Laulgem rõõmsalt Jehoovale!\", confirmed via the English \"'Sing Out Joyfully' to Jehovah\" library page's hreflang=\"et\" alternate link."
+    },
+    {
+      "termEn": "convention",
+      "official": "üldkokkutulek",
+      "sourceUrls": [
+        "https://www.jw.org/et/rahvusvaheline-kommunikatsioon/terminite-selgitused/"
+      ],
+      "confidence": "high",
+      "notes": "Guide's \"üldkokkutulek\" entry matches the English guide's \"regional convention\" (annual three-day event, open to public). jw.org also has a larger \"rahvusvaheline kokkutulek\" (international convention); both share the generic root \"kokkutulek\". Per the seed list's own framing (convention = larger, assembly = smaller), \"üldkokkutulek\" is the best match for generic app strings labeled \"convention\"."
+    },
+    {
+      "termEn": "assembly",
+      "official": "ringkondlik kokkutulek",
+      "sourceUrls": [
+        "https://www.jw.org/et/rahvusvaheline-kommunikatsioon/terminite-selgitused/"
+      ],
+      "confidence": "high",
+      "notes": "Guide's \"ringkondlik kokkutulek\" entry matches the English guide's \"circuit assembly\" (one-day meeting held twice yearly) - smaller than \"üldkokkutulek\" (convention), matching the seed list's own size distinction."
+    },
+    {
+      "termEn": "theocratic school",
+      "official": "teokraatlik kool",
+      "sourceUrls": ["https://wol.jw.org/et/wol/d/r37/lp-st/1200277115"],
+      "confidence": "medium",
+      "notes": "Not present in the terminology guide (English or Estonian). Only found as a Publications Index umbrella entry, id 1200277115, titled \"TEOKRAATLIKUD KOOLID\" (plural), cross-referenced to the identical English id \"Theocratic Schools\" - this covers several distinct, now-discontinued historical training programs (Theocratic Ministry School, Kingdom Ministry School, etc.), not one single current named program. The singular \"teokraatlik kool\" is a reasonable literal derivation from the plural index title rather than a directly confirmed dedicated headword."
+    },
+    {
+      "termEn": "sign language",
+      "official": "viipekeel",
+      "sourceUrls": ["https://wol.jw.org/et/wol/d/r37/lp-st/1200275321"],
+      "confidence": "high",
+      "notes": "Publications Index entry at id 1200275321 titled \"Viipekeel\", cross-referenced to the identical English numeric id titled \"Sign Language (Deaf)\". \"Eesti viipekeel\" (Estonian Sign Language) is the standard compound for the specific national sign language."
+    },
+    {
+      "termEn": "meeting workbook",
+      "official": "„Kristliku elu ja teenistuse” koosoleku töövihik",
+      "sourceUrls": [
+        "https://wol.jw.org/et/wol/d/r37/lp-st/1200277265",
+        "https://wol.jw.org/et/wol/d/r37/lp-st/202025160"
+      ],
+      "confidence": "high",
+      "notes": "Publications Index entry at id 1200277265 titled \"„Kristliku elu ja teenistuse” koosoleku töövihik\", matching the identical English id \"Life and Ministry Meeting Workbook\". Confirmed further by a specific dated issue at id 202025160: \"„Kristliku elu ja teenistuse” koosoleku töövihik, mai–juuni 2025\", matching English \"Our Christian Life and Ministry—Meeting Workbook, May-June 2025\" at the same id."
+    },
+    {
+      "termEn": "yeartext",
+      "official": "aastatekst",
+      "sourceUrls": ["https://wol.jw.org/et/wol/d/r37/lp-st/1200276311"],
+      "confidence": "high",
+      "notes": "Publications Index entry at id 1200276311 titled \"AASTATEKSTID\" (plural), cross-referenced to the identical English numeric id titled \"Yeartexts\". Singular \"aastatekst\" derived via the standard Estonian -d plural suffix; not separately confirmed in running prose, since the specific dated yeartext article tried (id 301974007) 404s under the Estonian site."
+    },
+    {
+      "termEn": "branch office",
+      "official": "harubüroo",
+      "sourceUrls": [
+        "https://www.jw.org/et/rahvusvaheline-kommunikatsioon/terminite-selgitused/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"harubüroo. Kohalik halduskeskus, kus koordineeritakse Jehoova tunnistajate usulist tegevust ühes või mitmes riigis.\""
+    },
+    {
+      "termEn": "Governing Body",
+      "official": "juhtiv kogu",
+      "sourceUrls": [
+        "https://www.jw.org/et/rahvusvaheline-kommunikatsioon/terminite-selgitused/"
+      ],
+      "confidence": "high",
+      "notes": "Guide: \"juhtiv kogu. Väike rühm kogudusevanemaid, kelle ülesandeks on koordineerida Jehoova tunnistajate usulist tegevust kogu maailmas. ... Juhtiv kogu asub Jehoova tunnistajate peakorteris Warwickis New Yorgi osariigis USA-s.\""
+    }
+  ]
+}

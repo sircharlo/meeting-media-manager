@@ -1,0 +1,18 @@
+{
+  "params": {
+    "icon": "build/logos/timer-icon-512-Windows.png"
+  },
+  "assets": [
+    {
+      "generator": "ico",
+      "name": "timer.ico",
+      "folder": "src-electron/electron-assets/icons"
+    },
+    {
+      "generator": "png",
+      "name": "timer.png",
+      "folder": "src-electron/electron-assets/icons",
+      "sizes": [512]
+    }
+  ]
+}

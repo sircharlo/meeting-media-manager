@@ -1,0 +1,550 @@
+import type { QueryResponseItem } from 'src/types';
+
+import { Worker } from 'node:worker_threads';
+import { captureElectronError } from 'src-electron/main/utils';
+import { getCloudStorageProvider } from 'src/shared/filesystem-errors';
+import { log } from 'src/shared/vanilla';
+
+// These lookups run in the main process (via the `executeQuery` IPC handler in
+// ipc.ts), but the actual `node:sqlite` work is dispatched to a worker thread
+// so a slow query can't block the main-process event loop and freeze IPC
+// replies to every window at once. Two caches in the worker keep the path
+// cheap:
+//   1. Results are memoized by (path, query, params), so repeated reads while
+//      scanning a publication's many media tables don't re-query.
+//   2. A read-only connection is reused per database path instead of being
+//      opened and closed on every query - opening the SQLite file is the
+//      expensive part.
+//
+// Both caches are invalidated by `closeAllConnections`, which must be called
+// before any cache cleanup / publication re-extraction that deletes or
+// overwrites a `.db` file: a live read handle can make the delete fail with
+// EBUSY/EPERM on Windows, and a result cached against the old file would
+// otherwise be served after the file is replaced with new content.
+
+type QueryParams = (null | number | string)[];
+
+interface SqliteWorkerRequest {
+  dbPath?: string;
+  id: number;
+  params?: QueryParams;
+  query?: string;
+  type: 'closeAll' | 'closeOne' | 'query';
+}
+
+interface SqliteWorkerResponse {
+  cached?: boolean;
+  error?: {
+    errcode?: number;
+    errstr?: string;
+    message: string;
+    stack?: string;
+  };
+  id: number;
+  result?: unknown[];
+}
+
+// Inlined (rather than a separate module) so the worker needs no additional
+// bundler entry point: the worker thread is created with `eval: true` and
+// only relies on Node builtins. Avoid template literals/`${}` here.
+const workerSource = `
+'use strict';
+const { parentPort } = require('node:worker_threads');
+const { DatabaseSync } = require('node:sqlite');
+
+const connections = new Map();
+const queryCache = new Map();
+
+const closeAll = () => {
+  for (const db of connections.values()) db.close();
+  connections.clear();
+  queryCache.clear();
+};
+
+const closeOne = (dbPath) => {
+  const db = connections.get(dbPath);
+  if (db) {
+    db.close();
+    connections.delete(dbPath);
+  }
+
+  // Cache keys are dbPath + ':' + query + ':' + JSON.stringify(params),
+  // so a prefix match on dbPath + ':' evicts only this path's entries.
+  const prefix = dbPath + ':';
+  for (const key of queryCache.keys()) {
+    if (key.startsWith(prefix)) queryCache.delete(key);
+  }
+};
+
+const runQuery = (dbPath, query, params) => {
+  const cacheKey = dbPath + ':' + query + ':' + JSON.stringify(params);
+  const cached = queryCache.get(cacheKey);
+  if (cached) return { cached: true, result: cached };
+
+  let db = connections.get(dbPath);
+  if (!db) {
+    db = new DatabaseSync(dbPath, { readOnly: true });
+    connections.set(dbPath, db);
+  }
+
+  try {
+    const stmt = db.prepare(query);
+
+    // The heavy Content BLOB column (raw media payloads) must not cross
+    // IPC. Its presence is fixed by the query's result schema, so check the
+    // prepared statement's columns once instead of probing every row -
+    // most queries (PRAGMA, sqlite_master, targeted column lists) never
+    // select it, and the schema check works even for empty result sets.
+    const hasContent = stmt.columns().some((c) => c.name === 'Content');
+    const result = stmt.all(...params);
+
+    if (hasContent) {
+      for (const item of result) delete item.Content;
+    }
+
+    queryCache.set(cacheKey, result);
+    return { cached: false, result };
+  } catch (error) {
+    // Drop the connection so a later query reopens it fresh (e.g. the file was
+    // replaced or deleted by a cache cleanup while we held it open).
+    connections.delete(dbPath);
+    try {
+      db.close();
+    } catch (_) {}
+    throw error;
+  }
+};
+
+parentPort.on('message', (message) => {
+  try {
+    if (message.type === 'closeAll') {
+      closeAll();
+      parentPort.postMessage({ id: message.id });
+    } else if (message.type === 'closeOne') {
+      closeOne(message.dbPath);
+      parentPort.postMessage({ id: message.id });
+    } else {
+      const { cached, result } = runQuery(
+        message.dbPath,
+        message.query,
+        message.params || [],
+      );
+      parentPort.postMessage({ cached, id: message.id, result });
+    }
+  } catch (error) {
+    parentPort.postMessage({
+      error: {
+        errcode: error ? error.errcode : undefined,
+        errstr: error ? error.errstr : undefined,
+        message: error && error.message ? error.message : String(error),
+        stack: error && error.stack ? error.stack : undefined,
+      },
+      id: message.id,
+    });
+  }
+});
+`;
+
+let worker: undefined | Worker;
+let nextRequestId = 1;
+const pendingRequests = new Map<
+  number,
+  {
+    reject: (error: Error) => void;
+    resolve: (value: SqliteWorkerResponse) => void;
+  }
+>();
+
+const rejectAllPending = (error: Error) => {
+  stallWatchdog.stop();
+  for (const { reject } of pendingRequests.values()) reject(error);
+  pendingRequests.clear();
+};
+
+const getWorker = () => {
+  if (worker) return worker;
+
+  const newWorker = new Worker(workerSource, { eval: true });
+  // The worker must not keep the process alive on its own.
+  newWorker.unref();
+
+  newWorker.on('message', (message: SqliteWorkerResponse) => {
+    const pending = pendingRequests.get(message.id);
+    if (!pending) return;
+    pendingRequests.delete(message.id);
+
+    // The worker just finished a request, so it isn't stuck: give whatever
+    // is still queued behind it a fresh window instead of counting the time
+    // it spent waiting in line.
+    if (pendingRequests.size > 0) {
+      stallWatchdog.touch();
+    } else {
+      stallWatchdog.stop();
+    }
+
+    if (message.error) {
+      // Keep node:sqlite's errcode/errstr: "disk I/O error" alone doesn't
+      // say which I/O failed (MMM-V2-3JJ).
+      const error = Object.assign(new Error(message.error.message), {
+        errcode: message.error.errcode,
+        errstr: message.error.errstr,
+      });
+      error.stack = message.error.stack;
+      pending.reject(error);
+    } else {
+      pending.resolve(message);
+    }
+  });
+
+  // A worker terminated by the stall watchdog below still emits 'exit'
+  // (asynchronously, after a replacement worker may already be serving new
+  // requests), so only react to events from the current worker - otherwise
+  // the late 'exit' would reject the replacement's requests and orphan it.
+  newWorker.on('error', (error) => {
+    if (worker !== newWorker) return;
+    rejectAllPending(error instanceof Error ? error : new Error(String(error)));
+    worker = undefined;
+  });
+
+  newWorker.on('exit', (code) => {
+    if (worker !== newWorker) return;
+    if (code !== 0) {
+      rejectAllPending(new Error(`SQLite worker exited with code ${code}`));
+    }
+    worker = undefined;
+  });
+
+  worker = newWorker;
+  return worker;
+};
+
+// BE-14 (full-audit-2026-09-05.md): lower-confidence sibling of the same gap
+// found in heic.ts/image-size.ts - node:sqlite is far less likely than a
+// third-party binary-format parser to infinite-loop on malformed input (more
+// likely to throw a corruption error), so this is defensive rather than a
+// confirmed exploitable hang, but a plain request/response promise with no
+// timeout would still wait forever if the worker ever did get stuck.
+//
+// The timeout is a *progress* watchdog, not a per-request deadline: the
+// worker handles requests one at a time, and callers fire whole batches of
+// queries at once (Promise.all), so a per-request timer started at post time
+// also counted the time spent queued behind other queries. Under load (large
+// jwpub extraction, many downloads) that tripped on trivial queries, tore
+// down a perfectly healthy worker and silently turned every queued query
+// into an empty result (MMM-V2-3JR, and the bogus "No document id found"
+// in MMM-V2-3K7). The watchdog only fires if the worker completes nothing at
+// all for SQLITE_TIMEOUT_MS while requests are outstanding.
+//
+// Generous on purpose: it's there to catch a hung worker, not a slow disk.
+// On old hardware during startup (many downloads and extractions at once)
+// a single millisecond-scale query was still unanswered after 8s, and the
+// stall threw away every queued query as an empty result (MMM-V2-3KT).
+export const SQLITE_TIMEOUT_MS = 30000;
+
+export class SqliteWorkerStallError extends Error {
+  constructor(
+    readonly timeoutMs: number,
+    readonly outstandingRequests: number,
+  ) {
+    super(`Timed out waiting for SQLite worker after ${timeoutMs}ms`);
+    this.name = 'SqliteWorkerStallError';
+  }
+}
+
+/**
+ * A resettable inactivity timer: `onStall` runs only if `touch()` isn't
+ * called again within `timeoutMs`. `touch()` (re)arms it, `stop()` disarms it.
+ * @param timeoutMs How long without progress counts as a stall
+ * @param onStall Called once when the timer elapses
+ * @returns The watchdog controls
+ */
+export const createProgressWatchdog = (
+  timeoutMs: number,
+  onStall: () => void,
+) => {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+
+  const stop = () => {
+    if (timer) clearTimeout(timer);
+    timer = undefined;
+  };
+
+  return {
+    isArmed: () => !!timer,
+    stop,
+    touch: () => {
+      stop();
+      timer = setTimeout(() => {
+        timer = undefined;
+        onStall();
+      }, timeoutMs);
+    },
+  };
+};
+
+// Settles once the most recently stalled worker has actually exited (and
+// with it, released every database handle it held).
+let lastStallTermination: Promise<unknown> = Promise.resolve();
+
+const stallWatchdog = createProgressWatchdog(SQLITE_TIMEOUT_MS, () => {
+  const stallError = new SqliteWorkerStallError(
+    SQLITE_TIMEOUT_MS,
+    pendingRequests.size,
+  );
+  const hungWorker = worker;
+  worker = undefined;
+  lastStallTermination = hungWorker?.terminate() ?? Promise.resolve();
+  rejectAllPending(stallError);
+});
+
+const postToWorkerWithTimeout = (
+  request: Omit<SqliteWorkerRequest, 'id'>,
+): Promise<SqliteWorkerResponse> => {
+  const id = nextRequestId++;
+
+  return new Promise((resolve, reject) => {
+    pendingRequests.set(id, { reject, resolve });
+
+    // Arm only when the worker goes from idle to busy; while it's already
+    // working through a queue, each completed request re-arms it instead.
+    if (!stallWatchdog.isArmed()) stallWatchdog.touch();
+
+    getWorker().postMessage({ ...request, id });
+  });
+};
+
+// SEC-7 (full-audit-2026-09-04.md): the renderer's query string is run
+// verbatim (only params are bound) against a read-only-opened connection -
+// not exploitable today (gated by isSelf() and every current call site in
+// src/utils/sqlite.ts only ever passes a hardcoded SELECT/PRAGMA), but a
+// defense-in-depth backstop against, say, a crafted ATTACH DATABASE
+// statement reaching a file this dbPath check never sees. All real query
+// shapes in use were confirmed to start with SELECT or PRAGMA before adding
+// this.
+const ALLOWED_QUERY_PREFIX = /^\s*\(?\s*(pragma|select)\b/i;
+
+// SQLite's primary result code for an OS-level read/write failure (the
+// extended codes, e.g. 266 SQLITE_IOERR_READ, share it in their low byte).
+const SQLITE_IOERR = 10;
+const reportedIoErrorPaths = new Set<string>();
+
+// SQLite's primary result codes for a damaged file: SQLITE_CORRUPT ("database
+// disk image is malformed") and SQLITE_NOTADB ("file is not a database").
+// An extracted publication .db ends up like this when a crash or power loss
+// interrupts its write - a zero-filled file of the right size is NOTADB, a
+// truncated one CORRUPT - and no retry can read it: the file has to be
+// replaced (MMM-V2-3JJ).
+const SQLITE_CORRUPT = 11;
+const SQLITE_NOTADB = 26;
+const reportedCorruptDbPaths = new Set<string>();
+
+// Databases a query found damaged since their connection was last closed.
+// isDbCorrupt() answers `true` for these without probing, so damage the
+// cheap probe can't see (deep inside a table) still gets the file replaced
+// on its next load. Closing a connection clears its mark: callers close it
+// right before deleting or replacing the file.
+const corruptDbPaths = new Set<string>();
+
+const getSqliteErrcode = (error: unknown) => {
+  const errcode = (error as undefined | { errcode?: unknown })?.errcode;
+  return typeof errcode === 'number' ? errcode : undefined;
+};
+
+const isCorruptionErrcode = (errcode: number | undefined) => {
+  if (errcode === undefined) return false;
+  // Extended result codes share the primary code in their low byte.
+  const primaryErrcode = errcode & 0xff;
+  return primaryErrcode === SQLITE_CORRUPT || primaryErrcode === SQLITE_NOTADB;
+};
+
+export const executeQuery = async <T extends object = QueryResponseItem>(
+  dbPath: string,
+  query: string,
+  params: QueryParams = [],
+): Promise<T[]> => {
+  if (!ALLOWED_QUERY_PREFIX.test(query)) {
+    captureElectronError(new Error('Rejected non-SELECT/PRAGMA query'), {
+      contexts: { fn: { name: 'executeQuery', path: dbPath, query } },
+    });
+    return [];
+  }
+
+  try {
+    const response = await postToWorkerWithTimeout({
+      dbPath,
+      params,
+      query,
+      type: 'query',
+    });
+
+    const db = dbPath.split('/').pop();
+    if (response.cached) {
+      log('executeQuery (cached)', 'sqlite', 'debug', {
+        count: response.result?.length,
+        db,
+        query,
+      });
+    } else {
+      log('executeQuery', 'sqlite', 'debug', {
+        count: response.result?.length,
+        db,
+        params,
+        query,
+      });
+    }
+
+    return (response.result ?? []) as T[];
+  } catch (e) {
+    // The worker dropped the connection it used when a query fails, so a
+    // later query reopens it fresh.
+    const errcode = getSqliteErrcode(e);
+    const cloudProvider = getCloudStorageProvider(dbPath);
+    const isIoError =
+      errcode !== undefined && (errcode & 0xff) === SQLITE_IOERR;
+
+    // A cloud-sync client (OneDrive, ...) locking or hydrating the file
+    // makes opening/reading it fail with SQLITE_IOERR - environmental, not
+    // a bug (MMM-V2-3JJ). Elsewhere, report an I/O error once per db per
+    // session instead of once per query in the same burst.
+    if (isIoError && (cloudProvider || reportedIoErrorPaths.has(dbPath))) {
+      log('SQLite I/O error', 'sqlite', 'warn', {
+        cloudProvider,
+        errcode,
+        path: dbPath,
+      });
+      return [];
+    }
+    if (isIoError) reportedIoErrorPaths.add(dbPath);
+
+    // A damaged file fails every query against it the same way: mark it so
+    // the next isDbCorrupt() check gets it replaced, and report it once per
+    // db per session instead of once per query in the same burst.
+    if (isCorruptionErrcode(errcode)) {
+      corruptDbPaths.add(dbPath);
+      if (reportedCorruptDbPaths.has(dbPath)) {
+        log('SQLite database is corrupt', 'sqlite', 'warn', {
+          errcode,
+          path: dbPath,
+        });
+        return [];
+      }
+      reportedCorruptDbPaths.add(dbPath);
+    }
+
+    captureElectronError(e, {
+      contexts: {
+        fn: {
+          cloudProvider,
+          errcode,
+          errstr: (e as { errstr?: unknown }).errstr,
+          name: 'executeQuery',
+          outstandingRequests:
+            e instanceof SqliteWorkerStallError
+              ? e.outstandingRequests
+              : undefined,
+          path: dbPath,
+          query,
+        },
+      },
+    });
+    return [];
+  }
+};
+
+// Reads only the header page and the schema table: enough to catch the
+// damage an interrupted write leaves behind (a zero-filled or truncated file)
+// in a few milliseconds. PRAGMA quick_check would also catch damage deep
+// inside a table, but it reads the whole file - seconds for the larger
+// publications on a slow disk, once per database per session - so that case
+// relies on corruptDbPaths instead. The worker caches the successful result
+// until the connection is closed, so repeat checks are free.
+const CORRUPTION_PROBE_QUERY =
+  'SELECT count(*) AS tableCount FROM sqlite_master';
+
+/**
+ * Whether the database file at `dbPath` is damaged beyond reading: a cheap
+ * probe fails with SQLITE_CORRUPT/SQLITE_NOTADB, or an earlier query on it
+ * already did. Any other failure (a locked or missing file, a stalled worker)
+ * isn't corruption and returns `false`, so callers never delete a file that
+ * is only unavailable right now.
+ * @param dbPath The database file to check
+ * @returns Whether the file has to be replaced
+ */
+export const isDbCorrupt = async (dbPath: string): Promise<boolean> => {
+  if (corruptDbPaths.has(dbPath)) return true;
+
+  try {
+    await postToWorkerWithTimeout({
+      dbPath,
+      params: [],
+      query: CORRUPTION_PROBE_QUERY,
+      type: 'query',
+    });
+    return false;
+  } catch (e) {
+    const errcode = getSqliteErrcode(e);
+    if (!isCorruptionErrcode(errcode)) {
+      log('SQLite corruption probe failed', 'sqlite', 'warn', {
+        errcode,
+        message: e instanceof Error ? e.message : String(e),
+        path: dbPath,
+      });
+      return false;
+    }
+
+    log('SQLite database is corrupt', 'sqlite', 'warn', {
+      errcode,
+      path: dbPath,
+    });
+    corruptDbPaths.add(dbPath);
+    return true;
+  }
+};
+
+/**
+ * Sends a close request to the worker. If the worker stalls before getting
+ * to it, the stall watchdog terminates the worker - which releases every
+ * handle and drops both caches, i.e. exactly what the close was asking for -
+ * so that counts as success once the termination has completed. Callers
+ * close connections right before deleting/overwriting .db files, and a
+ * rejected close there used to fall into "the extraction must be corrupt"
+ * cleanup that deleted a perfectly good .jwpub (MMM-V2-3K9).
+ * @param request The close request
+ */
+const closeViaWorker = async (request: Omit<SqliteWorkerRequest, 'id'>) => {
+  try {
+    await postToWorkerWithTimeout(request);
+  } catch (error) {
+    if (!(error instanceof SqliteWorkerStallError)) throw error;
+    await lastStallTermination;
+  }
+};
+
+/**
+ * Closes every cached read-only connection and drops the result cache.
+ *
+ * Must be called before any cache cleanup or publication re-extraction that
+ * deletes or overwrites a `.db` file: a live read handle can make the delete
+ * fail with EBUSY/EPERM on Windows, and a result cached against the old file
+ * would otherwise be served after the file is replaced with new content.
+ */
+export const closeAllConnections = async () => {
+  corruptDbPaths.clear();
+  if (!worker) return;
+  await closeViaWorker({ type: 'closeAll' });
+};
+
+/**
+ * Closes the cached read-only connection (and any cached results) for a single
+ * database path.
+ *
+ * Use this for throwaway per-call databases (e.g. identifyJwpub's temp
+ * identification db) so their handles and cache entries don't accumulate for
+ * the rest of the session - without tearing down the connections other flows
+ * are actively reusing, which is what {@link closeAllConnections} is for.
+ */
+export const closeConnection = async (dbPath: string) => {
+  corruptDbPaths.delete(dbPath);
+  if (!worker) return;
+  await closeViaWorker({ dbPath, type: 'closeOne' });
+};

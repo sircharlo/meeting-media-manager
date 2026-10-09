@@ -12,6 +12,44 @@ const EN_LOCALE = 'en';
 const args = new Set(process.argv.slice(2));
 const checkOnly = args.has('--check');
 const verbose = args.has('--verbose');
+const LINK_LINE_RE = /^([ \t]*)link:[ \t]*(\S[^\n]*\S|\S)/gm;
+
+/**
+ * Rename duplicate trailing heading anchors so every anchor in a file is
+ * unique. The first occurrence of each anchor is kept; later ones get a
+ * numeric suffix (e.g. `{#foo-2}`), mirroring how markdown-it-anchor
+ * disambiguates auto-generated slugs.
+ */
+function dedupeHeadingAnchors(lines) {
+  const counts = new Map();
+  const headings = [];
+
+  lines.forEach((line, index) => {
+    if (!/^(#{1,6})[ \t]+\S/.test(line)) return;
+    const anchor = getHeadingAnchors(line).at(-1);
+    if (!anchor) return;
+    headings.push({ anchor, index });
+    counts.set(anchor, (counts.get(anchor) ?? 0) + 1);
+  });
+
+  const seen = new Map();
+  const updatedLines = [...lines];
+  let changes = 0;
+
+  for (const { anchor, index } of headings) {
+    if ((counts.get(anchor) ?? 0) < 2) continue;
+    const seenCount = seen.get(anchor) ?? 0;
+    seen.set(anchor, seenCount + 1);
+    if (seenCount === 0) continue; // keep the first occurrence
+    updatedLines[index] = replaceHeadingAnchor(
+      lines[index],
+      `${anchor}-${seenCount + 1}`,
+    );
+    changes += 1;
+  }
+
+  return { changed: changes > 0, changes, lines: updatedLines };
+}
 
 async function fixIndexLinks(locale, totals) {
   const indexPath = resolve(DOCS_SRC_DIR, locale, 'index.md');
@@ -19,22 +57,36 @@ async function fixIndexLinks(locale, totals) {
 
   const original = await readFile(indexPath, 'utf-8');
 
-  const updated = original.replaceAll(
-    /(^|\n)(\s*)link:\s*(.+?)\s*(?=\n|$)/g,
-    (m, lead, indent, linkValue) => {
-      const fixed = fixLink(locale, linkValue);
-      if (fixed !== linkValue.trim()) {
-        totals.linkChanges += 1;
-        if (verbose) {
-          console.log(
-            `[link] ${getRelativePath(indexPath)}: ${linkValue.trim()} -> ${fixed}`,
-          );
-        }
-        return `${lead}${indent}link: ${fixed}`;
+  // English source links, in document order. Used to recover the slug when a
+  // translator mangled a link: value (e.g. `link: ""`), which has no slug of
+  // its own to localize.
+  const enPath = resolve(DOCS_SRC_DIR, EN_LOCALE, 'index.md');
+  const enLinks = (await pathExists(enPath))
+    ? [...(await readFile(enPath, 'utf-8')).matchAll(LINK_LINE_RE)].map(
+        (match) => match[2],
+      )
+    : [];
+
+  let linkIndex = 0;
+  const updated = original.replaceAll(LINK_LINE_RE, (m, indent, linkValue) => {
+    const enLink = enLinks[linkIndex];
+    linkIndex += 1;
+    let fixed = fixLink(locale, linkValue);
+    if (fixed === linkValue && isCorruptLinkValue(linkValue) && enLink) {
+      fixed = fixLink(locale, enLink);
+    }
+    if (fixed !== linkValue) {
+      // no need to .trim() anymore
+      totals.linkChanges += 1;
+      if (verbose) {
+        console.log(
+          `[link] ${getRelativePath(indexPath)}: ${linkValue} -> ${fixed}`,
+        );
       }
-      return m;
-    },
-  );
+      return `${indent}link: ${fixed}`;
+    }
+    return m;
+  });
 
   if (updated !== original && !checkOnly) {
     await writeFile(indexPath, updated, 'utf-8');
@@ -57,6 +109,10 @@ async function fixIndexLinks(locale, totals) {
 function fixLink(locale, link) {
   const trimmed = (link || '').trim();
   if (trimmed.startsWith('https://')) return trimmed;
+
+  // Not a local path (e.g. a mangled `""`) - leave it alone; fixIndexLinks
+  // recovers the correct slug from the English source in that case.
+  if (!trimmed.startsWith('/')) return trimmed;
 
   // Extract just the slug - last non-empty segment.
   const slug = trimmed.replace(/^\/+/, '').split('/').findLast(Boolean);
@@ -81,7 +137,7 @@ async function fixMarkdownAnchors(locale, markdownFile, totals) {
       .map((heading, index) => [heading.anchor, index])
       .filter(([anchor]) => anchor),
   );
-  const lines = localeContent.split('\n');
+  let lines = localeContent.split('\n');
   const state = {
     cursor: 0,
     usedAnchors: new Set(),
@@ -89,10 +145,7 @@ async function fixMarkdownAnchors(locale, markdownFile, totals) {
   let changed = false;
 
   if (enHeadings.length !== localeHeadings.length) {
-    totals.anchorWarnings += 1;
-    console.warn(
-      `[anchor] ${getRelativePath(localePath)}: heading count differs from English (${localeHeadings.length} vs ${enHeadings.length})`,
-    );
+    reportHeadingCountMismatch(localePath, localeHeadings, enHeadings, totals);
   }
 
   for (const localeHeading of localeHeadings) {
@@ -120,27 +173,39 @@ async function fixMarkdownAnchors(locale, markdownFile, totals) {
     totals.anchorChanges += 1;
     changed = true;
     lines[localeHeading.index] = updatedLine;
+    logAnchorReplacement(localePath, localeHeading, expectedAnchor, lines);
+  }
 
-    let before = '(missing)';
-    if (localeHeading.anchor) {
-      before =
-        localeHeading.anchorCount === 1
-          ? `{#${localeHeading.anchor}}`
-          : `${localeHeading.anchorCount} anchors ending with {#${localeHeading.anchor}}`;
-    }
-    const after = `{#${expectedAnchor}}`;
+  // VitePress fails the build when two headings in a file define the same
+  // explicit anchor ("User defined id attribute ... is not unique"). Crowdin
+  // content can diverge from English (extra or missing headings), which makes
+  // the alignment above assign an anchor that a later heading already carries.
+  // Rename later duplicates with numeric suffixes to guarantee uniqueness.
+  const {
+    changed: dedupeChanged,
+    changes,
+    lines: dedupedLines,
+  } = dedupeHeadingAnchors(lines);
+  if (dedupeChanged) {
+    changed = true;
+    totals.anchorChanges += changes;
+    lines = dedupedLines;
     console.log(
-      `[anchor] ${getRelativePath(localePath)}:${localeHeading.index + 1}: ${before} -> ${after}`,
+      `[anchor] ${getRelativePath(localePath)}: fixed ${changes} duplicate anchor${changes === 1 ? '' : 's'}`,
     );
-    if (verbose) {
-      console.log(`  before: ${localeHeading.line}`);
-      console.log(`  after:  ${lines[localeHeading.index]}`);
-    }
   }
 
   if (changed && !checkOnly) {
     await writeFile(localePath, lines.join('\n'), 'utf-8');
   }
+}
+
+function getAnchorDescription(heading) {
+  if (!heading.anchor) return '(missing)';
+
+  return heading.anchorCount === 1
+    ? `{#${heading.anchor}}`
+    : `${heading.anchorCount} anchors ending with {#${heading.anchor}}`;
 }
 
 function getExpectedAnchor(localeHeading, enHeadings, enAnchorIndexes, state) {
@@ -177,12 +242,7 @@ function getExpectedAnchor(localeHeading, enHeadings, enAnchorIndexes, state) {
 }
 
 function getHeadingAnchors(line) {
-  const match = /((?:\s*\{#[^}\s]+\})+)\s*$/.exec(line);
-  if (!match) return [];
-
-  return [...match[1].matchAll(/\{#([^}\s]+)\}/g)].map(
-    (anchorMatch) => anchorMatch[1],
-  );
+  return getTrailingHeadingAnchors(line).anchors;
 }
 
 async function getLocaleDirs() {
@@ -191,7 +251,7 @@ async function getLocaleDirs() {
       (d) => d.isDirectory() && d.name !== 'assets' && d.name !== 'public',
     )
     .map((d) => d.name)
-    .sort();
+    .sort((a, b) => a.localeCompare(b));
 }
 
 async function getMarkdownFiles(dir, prefix = '') {
@@ -217,6 +277,60 @@ async function getMarkdownFiles(dir, prefix = '') {
 
 function getRelativePath(path) {
   return relative(resolve(__dirname, '../..'), path).replaceAll('\\', '/');
+}
+
+function getTrailingHeadingAnchors(line) {
+  const anchors = [];
+  let cursor = trimEndIndex(line);
+
+  while (cursor > 0 && line[cursor - 1] === '}') {
+    const openIndex = line.lastIndexOf('{#', cursor - 1);
+    if (openIndex === -1) break;
+
+    const anchor = line.slice(openIndex + 2, cursor - 1);
+    if (!isValidAnchor(anchor)) break;
+
+    anchors.unshift(anchor);
+    cursor = trimEndIndex(line, openIndex);
+  }
+
+  const start = anchors.length > 0 ? cursor : line.length;
+  return { anchors, start };
+}
+
+/**
+ * A link: value with no localizable slug: empty, non-path, or containing
+ * quote characters (translators have mangled slugs into `""`).
+ */
+function isCorruptLinkValue(value) {
+  const trimmed = (value || '').trim();
+  if (trimmed === '') return true;
+  if (/^https?:\/\//i.test(trimmed)) return false;
+  if (!trimmed.startsWith('/')) return true;
+  return /["']/.test(trimmed);
+}
+
+function isValidAnchor(anchor) {
+  if (!anchor) return false;
+
+  return [...anchor].every((char) => char !== '}' && char.trim() !== '');
+}
+
+function logAnchorReplacement(
+  localePath,
+  localeHeading,
+  expectedAnchor,
+  lines,
+) {
+  const before = getAnchorDescription(localeHeading);
+  const after = `{#${expectedAnchor}}`;
+  console.log(
+    `[anchor] ${getRelativePath(localePath)}:${localeHeading.index + 1}: ${before} -> ${after}`,
+  );
+  if (!verbose) return;
+
+  console.log(`  before: ${localeHeading.line}`);
+  console.log(`  after:  ${lines[localeHeading.index]}`);
 }
 
 async function main() {
@@ -246,7 +360,6 @@ async function main() {
       }
     }
 
-    const changeCount = totals.linkChanges + totals.anchorChanges;
     console.log(
       `Done. ${checkOnly ? 'Found' : 'Fixed'} ${totals.linkChanges} link${totals.linkChanges === 1 ? '' : 's'} and ${totals.anchorChanges} anchor${totals.anchorChanges === 1 ? '' : 's'}.`,
     );
@@ -257,7 +370,15 @@ async function main() {
       );
     }
 
-    if (checkOnly && changeCount > 0) {
+    // link: frontmatter isn't exposed by Crowdin as a translatable string
+    // (URL-like values are excluded from translation - confirmed against the
+    // live project), so it can never come back from Crowdin correctly
+    // prefixed, and there's nothing "wrong" for a human to fix. It's also
+    // harmless: config.mts's transformPageData hook re-derives every hero
+    // action link from its slug at build time regardless of what's stored
+    // here. So --check only fails the build on anchor drift, which is a
+    // real, human-fixable-in-Crowdin defect.
+    if (checkOnly && totals.anchorChanges > 0) {
       process.exit(1);
     }
   } catch (error) {
@@ -279,7 +400,7 @@ function parseHeadings(content) {
 
     if (inFence) return;
 
-    const headingMatch = /^(#{1,6})\s+(.+?)\s*$/.exec(line);
+    const headingMatch = /^(#{1,6})[ \t]+\S/.exec(line);
     if (!headingMatch) return;
 
     const anchors = getHeadingAnchors(line);
@@ -297,8 +418,28 @@ function parseHeadings(content) {
 }
 
 function replaceHeadingAnchor(line, anchor) {
-  const withoutAnchors = line.replace(/(?:\s*\{#[^}\s]+\})+\s*$/, '');
+  const withoutAnchors = line.slice(0, getTrailingHeadingAnchors(line).start);
   return `${withoutAnchors} {#${anchor}}`;
+}
+
+function reportHeadingCountMismatch(
+  localePath,
+  localeHeadings,
+  enHeadings,
+  totals,
+) {
+  totals.anchorWarnings += 1;
+  console.warn(
+    `[anchor] ${getRelativePath(localePath)}: heading count differs from English (${localeHeadings.length} vs ${enHeadings.length})`,
+  );
+}
+
+function trimEndIndex(value, end = value.length) {
+  let cursor = end;
+  while (cursor > 0 && value[cursor - 1].trim() === '') {
+    cursor -= 1;
+  }
+  return cursor;
 }
 
 await main();

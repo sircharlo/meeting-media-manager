@@ -1,16 +1,28 @@
-import { Buffer } from 'buffer/';
+import { Buffer } from 'buffer'; // NOSONAR: this is not nodejs Buffer, it's the browser one
 import { FULL_HD } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { getFilesystemErrorCode } from 'src/shared/filesystem-errors';
 import { getTempPath } from 'src/utils/fs';
 import { isHeic, isPdf, isSvg } from 'src/utils/media';
 
 const { convertHeic, fs, parse, pathToFileURL } = globalThis.electronApi;
-const { readFile, writeFile } = fs;
+const { readFile, stat, writeFile } = fs;
 
+import { dependencies as appDependencies } from 'app/package.json';
 import { PDFParse } from 'pdf-parse';
 
+// SEC-3 (full-audit-2026-09-04.md): pinned to the pdf-parse version declared
+// in package.json (pdf-parse's own package.json isn't importable - its
+// `exports` map doesn't expose it) rather than `@latest` - this loads and
+// executes a JS worker script, so an unpinned `@latest` would auto-run
+// whatever the newest published pdf-parse version is on every launch, with
+// no version bump, review, or app release on this project's side involved
+// if that package (or jsdelivr) were ever compromised. Bump this alongside
+// any future `pdf-parse` version change in package.json.
+const pdfParseVersion = appDependencies['pdf-parse'].replace(/^[\^~]/, '');
+
 PDFParse.setWorker(
-  'https://cdn.jsdelivr.net/npm/pdf-parse@latest/dist/pdf-parse/web/pdf.worker.mjs',
+  `https://cdn.jsdelivr.net/npm/pdf-parse@${pdfParseVersion}/dist/pdf-parse/web/pdf.worker.mjs`,
 );
 
 export const getNrOfPdfPages = async (pdfPath: string): Promise<number> => {
@@ -26,42 +38,113 @@ export const getNrOfPdfPages = async (pdfPath: string): Promise<number> => {
   }
 };
 
+// Small enough to render quickly and stay light in memory for a PDF with
+// hundreds of pages, but still legible enough to recognize a page's content
+// in a thumbnail grid.
+const PDF_THUMBNAIL_WIDTH = 220;
+
+export interface PdfThumbnailSession {
+  destroy: () => Promise<void>;
+  getThumbnail: (pageNumber: number) => Promise<null | string>;
+}
+
+/**
+ * Loads a PDF once and returns a handle for rendering individual page
+ * thumbnails on demand, so a caller (e.g. a paginated thumbnail grid) can
+ * request only the pages currently in view - one at a time or in small
+ * batches - instead of rendering the entire document up front. Reuses the
+ * same parsed document across calls; only `destroy()` re-reads/re-parses.
+ */
+export const openPdfThumbnailSession = async (
+  pdfPath: string,
+): Promise<PdfThumbnailSession> => {
+  const buffer = await readFile(pdfPath);
+  const parser = new PDFParse({ data: buffer });
+  // Cancelling mid-render (dialog closed/cancelled while a getScreenshot()
+  // call is still in flight) makes that call reject once destroy() tears
+  // down the parser - expected during a normal cancel, not a real failure,
+  // so it shouldn't get reported to errorCatcher.
+  let destroyed = false;
+
+  return {
+    destroy: () => {
+      destroyed = true;
+      return parser.destroy();
+    },
+    getThumbnail: async (pageNumber: number) => {
+      try {
+        const result = await parser.getScreenshot({
+          desiredWidth: PDF_THUMBNAIL_WIDTH,
+          imageBuffer: false,
+          imageDataUrl: true,
+          partial: [pageNumber],
+        });
+        return result.pages[0]?.dataUrl || null;
+      } catch (e) {
+        if (!destroyed) errorCatcher(e);
+        return null;
+      }
+    },
+  };
+};
+
 export const convertPdfToImages = async (
   pdfPath: string,
   outputFolder: string,
   pages?: Set<number>,
 ): Promise<string[]> => {
-  const outputImages: string[] = [];
   try {
     const buffer = await readFile(pdfPath);
     const parser = new PDFParse({ data: buffer });
 
+    // `pages` is 0-indexed; `partial` expects 1-indexed page numbers, and
+    // restricts rendering to just those pages instead of the whole document.
+    const pageNumbers = pages?.size
+      ? [...pages].sort((a, b) => a - b).map((page) => page + 1)
+      : undefined;
+
     const result = await parser.getScreenshot({
       desiredWidth: FULL_HD.width * 2,
       imageBuffer: false,
+      partial: pageNumbers,
     });
 
     const parsedPath = parse(pdfPath);
 
-    for (let i = 0; i < result.pages.length; i++) {
-      if (pages && !pages.has(i)) continue;
+    const writeResults = await Promise.allSettled(
+      result.pages.map(async (page) => {
+        const pageDataUrl = page.dataUrl;
+        if (!pageDataUrl) return null;
 
-      const pageDataUrl = result.pages[i]?.dataUrl;
-      if (pageDataUrl) {
-        const outputPath = `${outputFolder}/${parsedPath.name}_${i + 1}.png`;
+        // Paired directly from the same getScreenshot() response rather
+        // than re-derived from its array index - safe even if a requested
+        // page were ever out of range and silently dropped from the
+        // result, which would otherwise shift every later index and
+        // mislabel the remaining pages.
+        const pageNumber = page.pageNumber;
+        const outputPath = `${outputFolder}/${parsedPath.name}_${pageNumber}.png`;
         await writeFile(
           outputPath,
           Buffer.from(pageDataUrl.split(',')[1] ?? '', 'base64'),
         );
-        outputImages.push(outputPath);
-      }
-    }
+        return outputPath;
+      }),
+    );
 
     await parser.destroy();
+
+    const outputImages: string[] = [];
+    for (const writeResult of writeResults) {
+      if (writeResult.status === 'fulfilled') {
+        if (writeResult.value) outputImages.push(writeResult.value);
+      } else {
+        errorCatcher(writeResult.reason);
+      }
+    }
     return outputImages;
   } catch (e) {
     errorCatcher(e);
-    return outputImages;
+    return [];
   }
 };
 
@@ -83,6 +166,18 @@ const convertHeicToJpg = async (filepath: string) => {
   }
 };
 
+// An <img> error event carries no detail ({"isTrusted":true}), so stat the
+// file to tell a missing/empty/unreadable one (e.g. a cloud-sync placeholder)
+// apart from a file that is there but won't decode.
+const describeFileForDiagnostics = async (filepath: string) => {
+  try {
+    const { size } = await stat(filepath);
+    return { size };
+  } catch (error) {
+    return { statError: getFilesystemErrorCode(error) ?? String(error) };
+  }
+};
+
 const convertSvgToJpg = async (filepath: string): Promise<string> => {
   try {
     if (!isSvg(filepath)) return filepath;
@@ -96,7 +191,11 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
     const img = new Image();
     img.src = pathToFileURL(filepath);
 
-    return new Promise((resolve, reject) => {
+    // Never rejects: on failure it falls back to the original SVG, like the
+    // other converters. Callers map a whole meeting's media through
+    // Promise.all, so a rejection here emptied every item for that day, not
+    // just this one (MMM-V2-3KY).
+    return new Promise((resolve) => {
       img.onload = async function () {
         const canvasH = canvas.height,
           canvasW = canvas.width;
@@ -126,23 +225,27 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
           resolve(newPath);
         } catch (error) {
           canvas.remove();
-          reject(error);
+          errorCatcher(error, {
+            contexts: {
+              fn: { filepath, name: 'convertSvgToJpg write', newPath },
+            },
+          });
+          resolve(filepath);
         }
       };
 
-      img.onerror = function (event) {
-        const rejectionError = new Error(`Failed to load SVG: ${filepath}`);
+      img.onerror = async function () {
         canvas.remove();
-        errorCatcher(rejectionError, {
+        errorCatcher(new Error(`Failed to load SVG: ${filepath}`), {
           contexts: {
             fn: {
-              event: JSON.stringify(event, Object.getOwnPropertyNames(event)),
+              file: await describeFileForDiagnostics(filepath),
               filepath,
               name: 'convertSvgToJpg',
             },
           },
         });
-        reject(rejectionError);
+        resolve(filepath);
       };
     });
   } catch (error) {

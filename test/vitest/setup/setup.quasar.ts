@@ -26,6 +26,19 @@ vi.mock('src/helpers/error-catcher', async (importOriginal) => {
 
 vi.stubGlobal('electronApi', electronApi);
 
+// Since Quasar 2.34, its Screen plugin reads `window.screen.orientation`
+// (type, angle, 'change' events) on install, which happy-dom doesn't
+// implement - so every component using it failed to mount.
+if (!window.screen.orientation) {
+  Object.defineProperty(window.screen, 'orientation', {
+    configurable: true,
+    value: Object.assign(new EventTarget(), {
+      angle: 0,
+      type: 'landscape-primary',
+    }),
+  });
+}
+
 const i18n = createI18n({
   allowComposition: true,
   legacy: false,
@@ -43,14 +56,14 @@ initHttpHandlers([
     HttpResponse.json(jwYeartext),
   ),
   http.get(
-    `${process.env.repository?.replace(
+    `${import.meta.env.repository?.replace(
       'github.com',
       'api.github.com/repos',
     )}/releases`,
     () => HttpResponse.json(releases),
   ),
   http.get(
-    `${process.env.repository?.replace(
+    `${import.meta.env.repository?.replace(
       'github',
       'raw.githubusercontent',
     )}/refs/heads/master/announcements.json`,

@@ -102,7 +102,7 @@ This project uses [ESLint](https://eslint.org/) and [Prettier](https://prettier.
 
 ### Release Procedure
 
-To release a new version of the application, a draft release must be created on GitHub. The [package.json](package.json) version must be updated to the desired version and the changes committed with the message `chore(release): vx.x.x` (e.g. `chore(release): v26.3.1`). Afterwards, the build/release workflow will be executed automatically and will add the necessary executable files to the release draft. After adding a description of the release (features, bug fixes, etc.), it can be published.
+To release a new version of the application, run the `Manual Release` workflow from the Actions tab (or `gh workflow run manual-release.yml`). It calculates and bumps the version itself, commits the change as `chore: bump version to vX.Y.Z [skip ci]`, and creates or updates the draft GitHub release; the build workflow then runs automatically and adds the necessary executable files to the release draft. Beta versions are released the same way via the `Release Beta Version` workflow, which also runs automatically every night. After adding a description of the release (features, bug fixes, etc.), it can be published. The version in [package.json](package.json) should not be updated by hand.
 
 ### Internationalization
 

@@ -1,0 +1,490 @@
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { DatabaseSync } from 'node:sqlite';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
+vi.mock('src-electron/main/utils', () => ({
+  captureElectronError: vi.fn(),
+}));
+
+vi.mock('src/shared/vanilla', () => ({
+  log: vi.fn(),
+}));
+
+import { captureElectronError } from 'src-electron/main/utils';
+import { log } from 'src/shared/vanilla';
+
+import {
+  closeAllConnections,
+  closeConnection,
+  createProgressWatchdog,
+  executeQuery,
+  isDbCorrupt,
+} from '../sqlite';
+
+const tempDirs: string[] = [];
+
+const createTestDb = () => {
+  const dbPath = join(tempDirs.at(-1) ?? tmpdir(), 'readonly.sqlite');
+  const db = new DatabaseSync(dbPath);
+
+  try {
+    db.exec(`
+      CREATE TABLE media (
+        id INTEGER PRIMARY KEY,
+        title TEXT NOT NULL,
+        Content BLOB
+      );
+      INSERT INTO media (title, Content)
+      VALUES ('Opening Song', x'010203');
+    `);
+  } finally {
+    db.close();
+  }
+
+  return dbPath;
+};
+
+describe('executeQuery', () => {
+  afterEach(async () => {
+    await closeAllConnections();
+    await Promise.all(
+      tempDirs.splice(0).map((dir) =>
+        rm(dir, {
+          force: true,
+          recursive: true,
+        }),
+      ),
+    );
+  });
+
+  it('reads from SQLite databases through the read-only node:sqlite API', async () => {
+    tempDirs.push(await mkdtemp(join(tmpdir(), 'mmm-sqlite-')));
+    const dbPath = createTestDb();
+
+    const result = await executeQuery<{ Content?: Uint8Array; title: string }>(
+      dbPath,
+      'SELECT title, Content FROM media WHERE id = ?',
+      [1],
+    );
+
+    expect(result).toEqual([{ title: 'Opening Song' }]);
+  });
+
+  it('strips Content only when the query result schema has it', async () => {
+    tempDirs.push(await mkdtemp(join(tmpdir(), 'mmm-sqlite-')));
+
+    // Same table shape as createTestDb, but with a second table lacking
+    // the heavy Content column (the common case: PRAGMA, sqlite_master,
+    // targeted column lists).
+    const dbPath = join(tempDirs.at(-1) ?? tmpdir(), 'readonly.sqlite');
+    const db = new DatabaseSync(dbPath);
+    try {
+      db.exec(`
+        CREATE TABLE media (
+          id INTEGER PRIMARY KEY,
+          title TEXT NOT NULL,
+          Content BLOB
+        );
+        CREATE TABLE meta (
+          id INTEGER PRIMARY KEY,
+          name TEXT NOT NULL
+        );
+        INSERT INTO media (title, Content) VALUES ('With Content', x'010203');
+        INSERT INTO media (title) VALUES ('No Content');
+        INSERT INTO meta (name) VALUES ('just meta');
+      `);
+    } finally {
+      db.close();
+    }
+
+    // Column present: Content is stripped from every row.
+    const withContent = await executeQuery<{
+      Content?: Uint8Array;
+      title: string;
+    }>(dbPath, 'SELECT title, Content FROM media');
+    expect(withContent).toEqual([
+      { title: 'With Content' },
+      { title: 'No Content' },
+    ]);
+    expect(withContent[0]?.Content).toBeUndefined();
+
+    // Column absent: rows pass through untouched, no Content key added.
+    const withoutContent = await executeQuery<{ name: string }>(
+      dbPath,
+      'SELECT name FROM meta',
+    );
+    expect(withoutContent).toEqual([{ name: 'just meta' }]);
+    expect(Object.hasOwn(withoutContent[0] ?? {}, 'Content')).toBe(false);
+
+    // Empty result set: schema check still applies, nothing to strip.
+    const empty = await executeQuery<{ title: string }>(
+      dbPath,
+      'SELECT title FROM media WHERE id = 999',
+    );
+    expect(empty).toEqual([]);
+  });
+
+  it('does not allow writes through the read-only connection', async () => {
+    tempDirs.push(await mkdtemp(join(tmpdir(), 'mmm-sqlite-')));
+    const dbPath = createTestDb();
+
+    const writeResult = await executeQuery<{ id: number }>(
+      dbPath,
+      "INSERT INTO media (title) VALUES ('Closing Song') RETURNING id",
+    );
+
+    const rows = await executeQuery<{ count: number }>(
+      dbPath,
+      'SELECT COUNT(*) AS count FROM media',
+    );
+
+    expect(writeResult).toEqual([]);
+    expect(rows).toEqual([{ count: 1 }]);
+  });
+
+  // SEC-7 (full-audit-2026-09-04.md): defense-in-depth backstop, on top of
+  // the read-only connection above - rejects a query before it ever reaches
+  // the database if it isn't shaped like the SELECT/PRAGMA queries every
+  // real call site uses. The INSERT case above is now caught by this filter
+  // before it would even reach the read-only connection; these tests cover
+  // the filter itself directly.
+  it('rejects a non-SELECT/PRAGMA query without touching the database', async () => {
+    tempDirs.push(await mkdtemp(join(tmpdir(), 'mmm-sqlite-')));
+    const dbPath = createTestDb();
+
+    const result = await executeQuery<{ id: number }>(
+      dbPath,
+      "INSERT INTO media (title) VALUES ('Closing Song') RETURNING id",
+    );
+
+    expect(result).toEqual([]);
+    expect(captureElectronError).toHaveBeenCalledWith(
+      expect.any(Error),
+      expect.objectContaining({
+        contexts: expect.objectContaining({
+          fn: expect.objectContaining({ name: 'executeQuery' }),
+        }),
+      }),
+    );
+
+    const rows = await executeQuery<{ count: number }>(
+      dbPath,
+      'SELECT COUNT(*) AS count FROM media',
+    );
+    expect(rows).toEqual([{ count: 1 }]);
+  });
+
+  it('allows SELECT and PRAGMA queries, case-insensitively and with leading whitespace', async () => {
+    tempDirs.push(await mkdtemp(join(tmpdir(), 'mmm-sqlite-')));
+    const dbPath = createTestDb();
+
+    await expect(
+      executeQuery<{ title: string }>(dbPath, '  select title FROM media'),
+    ).resolves.toEqual([{ title: 'Opening Song' }]);
+
+    await expect(
+      executeQuery<{ name: string }>(dbPath, 'pragma table_info(media)'),
+    ).resolves.not.toEqual([]);
+  });
+
+  it('closeConnection evicts only the given path connection and cache', async () => {
+    const logMock = vi.mocked(log);
+
+    const dirA = await mkdtemp(join(tmpdir(), 'mmm-sqlite-a-'));
+    const dirB = await mkdtemp(join(tmpdir(), 'mmm-sqlite-b-'));
+    tempDirs.push(dirA, dirB);
+
+    const dbA = join(dirA, 'a.sqlite');
+    const dbB = join(dirB, 'b.sqlite');
+
+    const writeDb = (dbPath: string, title: string) => {
+      const db = new DatabaseSync(dbPath);
+      try {
+        db.exec(`
+          CREATE TABLE media (id INTEGER PRIMARY KEY, title TEXT NOT NULL);
+          INSERT INTO media (title) VALUES ('${title}');
+        `);
+      } finally {
+        db.close();
+      }
+    };
+
+    const query = 'SELECT title FROM media WHERE id = ?';
+
+    writeDb(dbA, 'A First');
+    writeDb(dbB, 'B First');
+
+    await executeQuery<{ title: string }>(dbA, query, [1]);
+    await executeQuery<{ title: string }>(dbB, query, [1]);
+
+    await closeConnection(dbA);
+
+    // The other path's connection/cache is untouched: re-querying it is still
+    // served from the cache rather than re-reading the file.
+    logMock.mockClear();
+    expect(await executeQuery<{ title: string }>(dbB, query, [1])).toEqual([
+      { title: 'B First' },
+    ]);
+    expect(logMock).toHaveBeenCalledWith(
+      'executeQuery (cached)',
+      'sqlite',
+      'debug',
+      expect.anything(),
+    );
+
+    // The closed path was evicted: replacing its file and re-querying reads
+    // the new content instead of the stale cached result.
+    await rm(dbA);
+    writeDb(dbA, 'A Second');
+    expect(await executeQuery<{ title: string }>(dbA, query, [1])).toEqual([
+      { title: 'A Second' },
+    ]);
+  });
+
+  it('closeAllConnections releases the handle and cache so a replaced db is re-read', async () => {
+    tempDirs.push(await mkdtemp(join(tmpdir(), 'mmm-sqlite-')));
+    const dbPath = join(tempDirs.at(-1) ?? tmpdir(), 'readonly.sqlite');
+
+    const writeDb = (title: string) => {
+      const db = new DatabaseSync(dbPath);
+      try {
+        db.exec(`
+          CREATE TABLE media (
+            id INTEGER PRIMARY KEY,
+            title TEXT NOT NULL
+          );
+          INSERT INTO media (title) VALUES ('${title}');
+        `);
+      } finally {
+        db.close();
+      }
+    };
+
+    writeDb('First Song');
+    expect(
+      await executeQuery<{ title: string }>(
+        dbPath,
+        'SELECT title FROM media WHERE id = ?',
+        [1],
+      ),
+    ).toEqual([{ title: 'First Song' }]);
+
+    await closeAllConnections();
+
+    await rm(dbPath);
+    writeDb('Second Song');
+
+    expect(
+      await executeQuery<{ title: string }>(
+        dbPath,
+        'SELECT title FROM media WHERE id = ?',
+        [1],
+      ),
+    ).toEqual([{ title: 'Second Song' }]);
+  });
+});
+
+// MMM-V2-3JJ: extracted publication databases that a crash or power loss left
+// unreadable ("file is not a database" / "database disk image is malformed")
+// were reused on every launch, silently emptying every query against them.
+describe('isDbCorrupt', () => {
+  afterEach(async () => {
+    await closeAllConnections();
+    await Promise.all(
+      tempDirs.splice(0).map((dir) =>
+        rm(dir, {
+          force: true,
+          recursive: true,
+        }),
+      ),
+    );
+  });
+
+  // A table spanning many pages, so damage can sit outside page 1, which
+  // holds the whole schema.
+  const createMultiPageDb = async () => {
+    tempDirs.push(await mkdtemp(join(tmpdir(), 'mmm-sqlite-corrupt-')));
+    const dbPath = join(tempDirs.at(-1) ?? tmpdir(), 'publication.db');
+    const db = new DatabaseSync(dbPath);
+    try {
+      db.exec(
+        'CREATE TABLE media (id INTEGER PRIMARY KEY, title TEXT NOT NULL)',
+      );
+      const insert = db.prepare('INSERT INTO media (title) VALUES (?)');
+      for (let i = 0; i < 200; i++) insert.run('x'.repeat(500));
+    } finally {
+      db.close();
+    }
+    return dbPath;
+  };
+
+  const damage = async (
+    dbPath: string,
+    corrupt: (bytes: Buffer, pageSize: number) => Buffer,
+  ) => {
+    const bytes = await readFile(dbPath);
+    await writeFile(dbPath, corrupt(bytes, bytes.readUInt16BE(16)));
+  };
+
+  it('is false for a readable database', async () => {
+    const dbPath = await createMultiPageDb();
+
+    await expect(isDbCorrupt(dbPath)).resolves.toBe(false);
+  });
+
+  it('detects a zero-filled file of the right size (SQLITE_NOTADB)', async () => {
+    const dbPath = await createMultiPageDb();
+    await damage(dbPath, (bytes) => Buffer.alloc(bytes.length));
+
+    await expect(isDbCorrupt(dbPath)).resolves.toBe(true);
+  });
+
+  it('detects a damaged schema page (SQLITE_CORRUPT)', async () => {
+    const dbPath = await createMultiPageDb();
+    await damage(dbPath, (bytes) => {
+      const damaged = Buffer.from(bytes);
+      // Page 1's b-tree page type.
+      damaged[100] = 0;
+      return damaged;
+    });
+
+    await expect(isDbCorrupt(dbPath)).resolves.toBe(true);
+  });
+
+  it('is false for a missing file, which is not corruption', async () => {
+    tempDirs.push(await mkdtemp(join(tmpdir(), 'mmm-sqlite-corrupt-')));
+
+    await expect(
+      isDbCorrupt(join(tempDirs.at(-1) ?? tmpdir(), 'missing.db')),
+    ).resolves.toBe(false);
+  });
+
+  it('remembers damage only a real query found, until the connection is closed', async () => {
+    const dbPath = await createMultiPageDb();
+    await damage(dbPath, (bytes, pageSize) =>
+      Buffer.concat([
+        bytes.subarray(0, pageSize),
+        Buffer.alloc(bytes.length - pageSize),
+      ]),
+    );
+
+    // The schema on page 1 is intact, so the cheap probe can't see this.
+    await expect(isDbCorrupt(dbPath)).resolves.toBe(false);
+
+    await expect(
+      executeQuery(dbPath, 'SELECT count(*) AS n FROM media'),
+    ).resolves.toEqual([]);
+    await expect(isDbCorrupt(dbPath)).resolves.toBe(true);
+
+    // Closing the connection means the file is about to be replaced.
+    await closeConnection(dbPath);
+    await expect(isDbCorrupt(dbPath)).resolves.toBe(false);
+  });
+
+  it('reports a corrupt database once, not once per query', async () => {
+    vi.mocked(captureElectronError).mockClear();
+    const dbPath = await createMultiPageDb();
+    await damage(dbPath, (bytes) => Buffer.alloc(bytes.length));
+
+    await Promise.all([
+      executeQuery(dbPath, 'SELECT 1'),
+      executeQuery(dbPath, 'SELECT 2'),
+      executeQuery(dbPath, 'SELECT 3'),
+    ]);
+
+    expect(captureElectronError).toHaveBeenCalledTimes(1);
+    expect(captureElectronError).toHaveBeenCalledWith(
+      expect.objectContaining({ errcode: 26 }),
+      expect.objectContaining({
+        contexts: {
+          fn: expect.objectContaining({ errcode: 26, path: dbPath }),
+        },
+      }),
+    );
+  });
+});
+
+describe('createProgressWatchdog', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  // MMM-V2-3JR: the old per-request timer started at post time, so a long
+  // queue of fast queries could exceed it even though the worker was making
+  // steady progress. Each completed request now re-arms the watchdog.
+  it('does not fire while progress keeps being reported', () => {
+    vi.useFakeTimers();
+    const onStall = vi.fn();
+    const watchdog = createProgressWatchdog(1000, onStall);
+
+    watchdog.touch();
+    for (let i = 0; i < 10; i++) {
+      vi.advanceTimersByTime(900);
+      watchdog.touch();
+    }
+
+    expect(onStall).not.toHaveBeenCalled();
+    expect(watchdog.isArmed()).toBe(true);
+  });
+
+  it('fires once after the timeout elapses without progress', () => {
+    vi.useFakeTimers();
+    const onStall = vi.fn();
+    const watchdog = createProgressWatchdog(1000, onStall);
+
+    watchdog.touch();
+    vi.advanceTimersByTime(1000);
+
+    expect(onStall).toHaveBeenCalledTimes(1);
+    expect(watchdog.isArmed()).toBe(false);
+  });
+
+  it('never fires once stopped', () => {
+    vi.useFakeTimers();
+    const onStall = vi.fn();
+    const watchdog = createProgressWatchdog(1000, onStall);
+
+    watchdog.touch();
+    watchdog.stop();
+    vi.advanceTimersByTime(5000);
+
+    expect(onStall).not.toHaveBeenCalled();
+  });
+});
+
+describe('executeQuery batches', () => {
+  afterEach(async () => {
+    await closeAllConnections();
+    await Promise.all(
+      tempDirs.splice(0).map((dir) =>
+        rm(dir, {
+          force: true,
+          recursive: true,
+        }),
+      ),
+    );
+  });
+
+  it('resolves a large parallel batch of queries without errors', async () => {
+    tempDirs.push(await mkdtemp(join(tmpdir(), 'mmm-sqlite-')));
+    const dbPath = createTestDb();
+    vi.mocked(captureElectronError).mockClear();
+
+    const results = await Promise.all(
+      Array.from({ length: 200 }, (_, i) =>
+        executeQuery<{ title: string }>(
+          dbPath,
+          'SELECT title FROM media WHERE id = ? OR ? < 0',
+          [1, i],
+        ),
+      ),
+    );
+
+    expect(results.every((rows) => rows[0]?.title === 'Opening Song')).toBe(
+      true,
+    );
+    expect(captureElectronError).not.toHaveBeenCalled();
+  });
+});

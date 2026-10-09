@@ -1,6 +1,6 @@
 import type { default as FsExtra } from 'fs-extra';
 import type { IAudioMetadata, IOptions } from 'music-metadata';
-import type robot from 'robotjs';
+import type { Stats, WriteFileOptions } from 'node:fs';
 import type {
   FileItem,
   JwSiteParams,
@@ -8,6 +8,18 @@ import type {
   SettingsValues,
   VideoDuration,
 } from 'src/types/electron';
+import type {
+  OsSupportWarning,
+  UpdaterState,
+  UpdateVersionInfo,
+} from 'src/types/general';
+import type {
+  ZoomCommand,
+  ZoomCommandResult,
+  ZoomHelperStartResult,
+  ZoomTestParticipantsRequest,
+  ZoomTestParticipantsResponse,
+} from 'src/types/zoom';
 import type {
   basename,
   changeExt,
@@ -35,12 +47,40 @@ export interface ConversionOptions {
   quality?: number;
 }
 
+/**
+ * Dev-only commands sent from the main process's Demo menu to the main
+ * window. The menu only exists in dev builds and the renderer listener
+ * (src/boot/dev-menu.ts) no-ops unless `electronApi.isDev`, so these never
+ * fire in production.
+ */
+export type DevMenuCommand =
+  | { enabled: boolean; type: 'set-demo-enabled' }
+  | { offline: boolean; type: 'set-offline' }
+  | { type: 'dismiss-after-panel' }
+  | { type: 'dismiss-before-panel' }
+  | { type: 'finish-last-song' }
+  | { type: 'jump-last-song' }
+  | { type: 'jump-pre-meeting' }
+  | { type: 'play-music' }
+  | { type: 'reseed-demo' }
+  | { type: 'reset-demo' }
+  | { type: 'reshow-panels' }
+  | { type: 'stop-music' }
+  | { type: 'toggle-media-window' }
+  | { type: 'toggle-timer-window' };
+
+/**
+ * Toggle state the renderer reports back so the Demo menu's checkbox and
+ * enabled/disabled states reflect the current runtime state.
+ */
+export interface DevMenuState {
+  demoEnabled: boolean;
+  /** Whether the app is simulating an offline connection. */
+  offline: boolean;
+}
+
 export type DiscussionCategory =
-  | 'general'
-  | 'ideas'
-  | 'polls'
-  | 'q-a'
-  | 'translations';
+  'general' | 'ideas' | 'polls' | 'q-a' | 'translations';
 
 export type Display = Electron.Display & {
   mainWindow?: boolean;
@@ -55,6 +95,8 @@ export interface ElectronApi {
   cancelAllDownloads: () => void;
   changeExt: typeof changeExt;
   checkForUpdates: () => void;
+  closeSqliteConnection: (dbPath: string) => Promise<void>;
+  closeSqliteConnections: () => Promise<void>;
   closeWebsiteWindow: () => void;
   convertHeic: (image: ConversionOptions) => Promise<ArrayBuffer>;
   /**
@@ -69,18 +111,33 @@ export interface ElectronApi {
     ffmpegPath: string,
     outputDir?: string,
   ) => Promise<string>;
+  /**
+   * Decrypts a secret previously encrypted with {@link encryptSecretSync}.
+   * @param cipherText The stored value to decrypt
+   */
+  decryptSecretSync: (cipherText: string) => string;
   dirname: typeof dirname;
   downloadFile: (
     url: string,
     saveDir: string,
     destFilename?: string,
     lowPriority?: boolean,
-  ) => Promise<null | string>;
+  ) => Promise<null | { key: string; saveDir: string }>;
+  /**
+   * Encrypts a secret (e.g. the OBS websocket password) using the OS
+   * keychain, so it isn't persisted to disk as plain text.
+   * @param plainText The secret to encrypt
+   */
+  encryptSecretSync: (plainText: string) => string;
+  ensureMacosFolderPermission: (
+    folderPath: string,
+    prompt?: boolean,
+  ) => Promise<MacosFolderPermissionResult>;
   executeQuery: <T extends object = QueryResponseItem>(
     dbPath: string,
     query: string,
     params?: (null | number | string)[],
-  ) => T[];
+  ) => Promise<T[]>;
   extname: typeof extname;
   extractNestedZipEntry: (
     input: string,
@@ -100,15 +157,29 @@ export interface ElectronApi {
    */
   fileUrlToPath: (url?: string) => string;
   focusMediaWindow: () => void;
-  fs: typeof FsExtra;
+  fs: ElectronFsApi;
   getAllScreens: () => Promise<Display[]>;
   getAppDataPath: () => Promise<string>;
   getBetaUpdatesPath: () => Promise<string>;
   getLocales: () => Promise<string[]>;
   getLocalPathFromFileObject: (fileObject: File | string | undefined) => string;
   getLowDiskSpaceStatus: () => Promise<boolean>;
+  /**
+   * Returns a capture-source id (via webContents.getMediaSourceId) scoped to
+   * the calling renderer, for mirroring the media window's live composited
+   * output into a preview instead of re-decoding the same file a second
+   * time. Null if there's no media window (or it's been destroyed).
+   */
+  getMediaWindowCaptureSourceId: () => Promise<null | string>;
+  getOsSupportWarning: () => Promise<null | OsSupportWarning>;
   getScreenAccessStatus: () => Promise<MediaAccessStatus>;
   getSharedDataPath: () => Promise<null | string>;
+  /**
+   * Returns the auto-updater's current lifecycle state (downloading /
+   * downloaded) so the renderer can catch up on an update that started
+   * before it mounted and missed the push events.
+   */
+  getUpdaterState: () => Promise<UpdaterState>;
   getUpdatesDisabledPath: () => Promise<string>;
   getUserDataPath: () => Promise<string>;
   /**
@@ -123,10 +194,36 @@ export interface ElectronApi {
   hideFileOnWindows: (filePath: string) => Promise<void>;
   inferExtension: (filename: string, filetype?: string) => Promise<string>;
   isArchitectureMismatch: () => Promise<boolean>;
+  /** `true` when the app was launched with `M3_DEMO_MODE` set, for automated screenshotting. */
+  isDemoMode: boolean;
+  /** `true` for a local dev build (`quasar dev`), `false` for packaged/prod/test builds. */
+  isDev: boolean;
   isDownloadComplete: (downloadId: string) => Promise<boolean | null>;
   isDownloadErrorExpected: () => Promise<boolean>;
+  /**
+   * Checks internet connectivity from the main process, where the
+   * `is-online` package's outbound IP-lookup requests (icanhazip.com,
+   * ipify.org, etc.) aren't subject to the renderer's locked-down
+   * `connect-src` CSP.
+   */
+  isOnline: () => Promise<boolean>;
+  /**
+   * Whether {@link encryptSecretSync} can actually encrypt (the OS
+   * keychain/secret-service is available). When `false`, secrets like the
+   * OBS password are stored as plain text - the renderer should warn the
+   * user rather than silently accepting that.
+   */
+  isSecretEncryptionAvailableSync: () => boolean;
+  /**
+   * Whether the SQLite file at `dbPath` is damaged beyond reading ("file is
+   * not a database" / "database disk image is malformed"), so it has to be
+   * replaced. A locked, missing or otherwise unavailable file is not
+   * corruption and resolves `false`.
+   */
+  isSqliteDbCorrupt: (dbPath: string) => Promise<boolean>;
   isUsablePath: (path: string) => Promise<boolean>;
   join: typeof join;
+  launchZoomMeeting: (meetingId: string) => void;
   moveMediaWindow: (
     targetScreenNumber?: number,
     windowedMode?: boolean,
@@ -137,6 +234,11 @@ export interface ElectronApi {
   ) => void;
   navigateWebsiteWindow: (action: NavigateWebsiteAction) => void;
   normalize: typeof normalize;
+  /**
+   * Subscribes to dev-only commands from the main process's Demo menu
+   * (present only in dev builds). Returns an unsubscribe function.
+   */
+  onDevMenuCommand: (callback: (command: DevMenuCommand) => void) => () => void;
   onDownloadCancelled: (callback: (args: { id: string }) => void) => void;
   onDownloadCompleted: (
     callback: (args: { filePath: string; id: string }) => void,
@@ -169,8 +271,8 @@ export interface ElectronApi {
   onShortcut: (
     callback: (args: { shortcut: keyof SettingsValues }) => void,
   ) => void;
-  onUpdateAvailable: (callback: () => void) => void;
-  onUpdateDownloaded: (callback: () => void) => void;
+  onUpdateAvailable: (callback: (args: UpdateVersionInfo) => void) => void;
+  onUpdateDownloaded: (callback: (args: UpdateVersionInfo) => void) => void;
   onUpdateDownloadProgress: (
     callback: (args: {
       bytesPerSecond: number;
@@ -195,7 +297,7 @@ export interface ElectronApi {
       event: string;
     }) => void,
   ) => void;
-  onWebsiteWindowClosed: (callback: () => void) => void;
+  onWebsiteWindowClosed: (callback: () => void) => () => void;
   openDiscussion: (
     category: DiscussionCategory,
     title: string,
@@ -205,6 +307,7 @@ export interface ElectronApi {
   openFileDialog: (
     single?: boolean,
     filter?: FileDialogFilter,
+    defaultPath?: string,
   ) => Promise<Electron.OpenDialogReturnValue | undefined>;
   openFolder: (path: string) => Promise<string>;
   openFolderDialog: () => Promise<Electron.OpenDialogReturnValue | undefined>;
@@ -214,6 +317,13 @@ export interface ElectronApi {
     filePath: string,
     options?: IOptions,
   ) => Promise<IAudioMetadata>;
+  /**
+   * Clears a bot challenge on the configured Website's WOL host so requests
+   * to it can be retried.
+   * @param url The URL whose request was challenged
+   * @returns Whether the challenge was cleared
+   */
+  passWafChallenge: (url: string) => Promise<boolean>;
   /**
    * Converts a file path to a file url.
    *
@@ -237,61 +347,186 @@ export interface ElectronApi {
   relaunchApp: () => void;
   removeListeners: (channel: ElectronIpcListenKey) => void;
   resolve: typeof resolve;
+  restartZoomHelper: () => Promise<ZoomHelperStartResult>;
   resumeAllDownloads: () => void;
-  robot: typeof robot;
   saveFileDialog: (
     defaultPath: string,
     filter?: FileDialogFilter,
   ) => Promise<Electron.SaveDialogReturnValue | undefined>;
+  /**
+   * Reports the current dev-only toggle state (demo mode, offline
+   * simulation) back to the main process so the Demo menu's checkboxes and
+   * enabled/disabled states stay in sync. No-op outside dev builds.
+   */
+  sendDevMenuState: (state: DevMenuState) => void;
+  /**
+   * Taps a key, optionally with modifier keys held down.
+   * @param key The key to tap.
+   * @param modifiers Modifier keys to hold while tapping.
+   */
+  sendKeyTap: (key: string, modifiers?: string[]) => void;
   setAutoStartAtLogin: (value: boolean) => void;
   setElectronUrlVariables: (variables: string) => void;
+  /**
+   * Gives a file the executable bit, on the platforms that have one.
+   *
+   * @param path - The file to make executable.
+   * @returns Whether the file can be executed afterwards. Always true on
+   *   Windows, which has no such bit.
+   */
+  setExecutable: (path: string) => Promise<boolean>;
   setHardwareAcceleration: (disabled: boolean) => void;
   setPathProbeNotificationPaths: (paths: string[]) => void;
   showFileOnWindows: (filePath: string) => Promise<void>;
+  startZoomHelper: () => Promise<ZoomHelperStartResult>;
+  stopZoomHelper: () => void;
+  toggleAuthorizedClose: (authorized: boolean) => void;
   toggleMediaWindow: (show: boolean, enableFadeTransitions?: boolean) => void;
   toggleTimerWindow: (show: boolean) => void;
   unregisterAllShortcuts: () => void;
   unregisterShortcut: (shortcut: string) => void;
-  unwatchFolders: () => void;
+  unwatchFolders: () => Promise<void>;
   unzip: (
     input: string,
     output: string,
     opts?: UnzipOptions,
   ) => Promise<UnzipResult[]>;
-  watchFolder: (path: string) => void;
+  watchFolder: (path: string) => Promise<void>;
+  /** Runs one complete Zoom action through the Zoom helper. */
+  zoomCommand: (command: ZoomCommand) => Promise<ZoomCommandResult>;
+  /**
+   * Development builds only: test participants joining the Zoom test
+   * meeting from .env.zoom-test (see scripts/zoom-live/participants.mjs).
+   */
+  zoomTestParticipants: (
+    request: ZoomTestParticipantsRequest,
+  ) => Promise<ZoomTestParticipantsResponse>;
   zoomWebsiteWindow: (direction: 'in' | 'out') => void;
 }
 
+/**
+ * The subset of fs-extra actually used by renderer code, exposed across the
+ * context bridge instead of the full fs-extra module so the renderer cannot
+ * reach filesystem capabilities (e.g. symlinks, permission changes, raw
+ * streams) that no app feature needs.
+ *
+ * The passthrough fs methods below (copyFile, readFile, readJSON, rename,
+ * stat, writeFile) are hand-typed instead of picked from `typeof FsExtra`:
+ * @types/fs-extra re-exports these from Node's plain callback/sync `fs`
+ * types, which don't reflect that fs-extra wraps them with `universalify`
+ * to also support promises. Picking from the merged type produces target
+ * signatures the actual (string-path-only) promise-based values can't
+ * satisfy.
+ */
+export type ElectronFsApi = Pick<
+  typeof FsExtra,
+  | 'copy'
+  | 'emptyDir'
+  | 'ensureDir'
+  | 'ensureFile'
+  | 'move'
+  | 'pathExists'
+  | 'remove'
+> & {
+  copyFile: (src: string, dest: string, mode?: number) => Promise<void>;
+  readFile: {
+    (
+      path: string,
+      options?:
+        | null
+        | undefined
+        | { encoding?: null | undefined; flag?: string | undefined },
+    ): Promise<Buffer>;
+    (
+      path: string,
+      options:
+        | BufferEncoding
+        | { encoding: BufferEncoding; flag?: string | undefined },
+    ): Promise<string>;
+    (
+      path: string,
+      options?:
+        | null
+        | string
+        | undefined
+        | {
+            encoding?: BufferEncoding | null | undefined;
+            flag?: string | undefined;
+          },
+    ): Promise<Buffer | string>;
+  };
+  readJSON: (
+    file: string,
+    options?:
+      | null
+      | string
+      | undefined
+      | {
+          encoding?: string | undefined;
+          flag?: string | undefined;
+          throws?: boolean | undefined;
+        },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ) => Promise<any>;
+  rename: (oldPath: string, newPath: string) => Promise<void>;
+  stat: (path: string) => Promise<Stats>;
+  writeFile: (
+    path: string,
+    data: NodeJS.ArrayBufferView | string,
+    options?: BufferEncoding | WriteFileOptions,
+  ) => Promise<void>;
+};
+
 // ipcMain.handle / ipcRenderer.invoke channels
 export type ElectronIpcInvokeKey =
+  | 'closeSqliteConnection'
+  | 'closeSqliteConnections'
+  | 'convertHeic'
   | 'createVideoFromNonVideo'
   | 'downloadFile'
+  | 'ensureMacosFolderPermission'
+  | 'executeQuery'
   | 'extractNestedZipEntry'
   | 'getAllScreens'
   | 'getAppDataPath'
   | 'getBetaUpdatesPath'
   | 'getLocales'
   | 'getLowDiskSpaceStatus'
+  | 'getMediaWindowCaptureSourceId'
+  | 'getOsSupportWarning'
   | 'getScreenAccessStatus'
   | 'getSharedDataPath'
+  | 'getUpdaterState'
   | 'getUpdatesDisabledPath'
   | 'getUserDataPath'
   | 'getZipEntries'
   | 'isArchitectureMismatch'
   | 'isDownloadComplete'
   | 'isDownloadErrorExpected'
+  | 'isOnline'
+  | 'isSqliteDbCorrupt'
   | 'isUsablePath'
   | 'openFileDialog'
   | 'openFolder'
   | 'openFolderDialog'
+  | 'passWafChallenge'
   | 'registerShortcut'
+  | 'restartZoomHelper'
   | 'saveFileDialog'
   | 'set-hardware-acceleration'
-  | 'unzip';
+  | 'setExecutable'
+  | 'startSecurityScopedAccess'
+  | 'startZoomHelper'
+  | 'unwatchFolders'
+  | 'unzip'
+  | 'watchFolder'
+  | 'zoomCommand'
+  | 'zoomTestParticipants';
 
 // BrowserWindow.webContents.send / ipcRenderer.on channels
 export type ElectronIpcListenKey =
   | 'attemptedClose'
+  | 'dev-menu-command'
   | 'downloadCancelled'
   | 'downloadCompleted'
   | 'downloadError'
@@ -303,7 +538,9 @@ export type ElectronIpcListenKey =
   | 'pathProbeNetworkWarning'
   | 'screenChange'
   | 'screenPrefsChange'
+  | 'setShouldQuit'
   | 'shortcut'
+  | 'syncMeetingSchedule'
   | 'update-available'
   | 'update-download-progress'
   | 'update-downloaded'
@@ -318,8 +555,11 @@ export type ElectronIpcSendKey =
   | 'askForMediaAccess'
   | 'authorizedClose'
   | 'cancelAllDownloads'
+  | 'capturePreloadError'
   | 'checkForUpdates'
+  | 'dev-menu-state'
   | 'focusMediaWindow'
+  | 'launchZoomMeeting'
   | 'moveMediaWindow'
   | 'moveTimerWindow'
   | 'navigateWebsiteWindow'
@@ -331,16 +571,19 @@ export type ElectronIpcSendKey =
   | 'resumeAllDownloads'
   | 'setElectronUrlVariables'
   | 'setPathProbeNotificationPaths'
+  | 'stopZoomHelper'
   | 'toggleMediaWindow'
   | 'toggleOpenAtLogin'
   | 'toggleTimerWindow'
   | 'toggleWebsiteWindow'
   | 'unregisterAllShortcuts'
   | 'unregisterShortcut'
-  | 'unwatchFolders'
-  | 'watchFolder'
   | 'websiteWindowClosed'
   | 'zoomWebsiteWindow';
+
+// ipcMain.on with event.returnValue / ipcRenderer.sendSync channels
+export type ElectronIpcSendSyncKey =
+  'decryptSecretSync' | 'encryptSecretSync' | 'isSecretEncryptionAvailableSync';
 
 export type ExternalWebsite = 'docs' | 'latestRelease' | 'repo';
 
@@ -352,21 +595,43 @@ export interface ExtractNestedZipEntryOptions {
 }
 
 export type FileDialogFilter =
-  | 'image'
-  | 'image+pdf'
-  | 'json'
-  | 'jwpub'
-  | 'jwpub+image'
-  | 'jwpub+image+pdf';
+  'image' | 'image+pdf' | 'json' | 'jwpub' | 'jwpub+image' | 'jwpub+image+pdf';
+
+export interface MacosFolderPermissionResult {
+  errorCode?: string;
+  path: string;
+  selectedPath?: string;
+  status: 'cancelled' | 'failed' | 'granted' | 'not-needed';
+}
 
 export type MediaAccessStatus =
-  | 'denied'
-  | 'granted'
-  | 'not-determined'
-  | 'restricted'
-  | 'unknown';
+  'denied' | 'granted' | 'not-determined' | 'restricted' | 'unknown';
 
 export type NavigateWebsiteAction = 'back' | 'forward' | 'refresh';
+
+/** Sentry capture context a preload error can carry to the main process. */
+export interface PreloadErrorContext {
+  contexts?: Record<string, Record<string, unknown>>;
+}
+
+/**
+ * A preload error forwarded to the main process over the
+ * `capturePreloadError` channel. The preload's isolated world has no Sentry
+ * client, so the main process reports it. Plain data only: a raw Error
+ * loses `code`/`syscall` (used for Sentry grouping) to structured clone.
+ */
+export interface PreloadErrorReport {
+  context?: PreloadErrorContext;
+  error: SerializedPreloadError;
+}
+
+export interface SerializedPreloadError {
+  code?: string;
+  message: string;
+  name: string;
+  stack?: string;
+  syscall?: string;
+}
 
 export interface UnzipOptions {
   includes?: string[];

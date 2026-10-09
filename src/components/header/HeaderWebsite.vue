@@ -3,21 +3,34 @@
     v-if="(mediaPlaying.action || '').toLowerCase().includes('website')"
   >
     <q-btn-group unelevated>
-      <q-btn color="white-transparent" @click="zoomWebsiteWindow('out')">
+      <q-btn
+        :aria-label="t('zoom-out')"
+        color="white-transparent"
+        @click="zoomWebsiteWindow('out')"
+      >
         <q-icon name="mmm-minus" size="xs" />
         <q-tooltip :delay="1000">{{ t('zoom-out') }}</q-tooltip>
       </q-btn>
-      <q-btn color="white-transparent" @click="zoomWebsiteWindow('in')">
+      <q-btn
+        :aria-label="t('zoom-in')"
+        color="white-transparent"
+        @click="zoomWebsiteWindow('in')"
+      >
         <q-icon name="mmm-plus" size="xs" />
         <q-tooltip :delay="1000">{{ t('zoom-in') }}</q-tooltip>
       </q-btn>
     </q-btn-group>
     <q-btn-group unelevated>
-      <q-btn color="white-transparent" @click="navigateWebsiteWindow('back')">
+      <q-btn
+        :aria-label="t('back')"
+        color="white-transparent"
+        @click="navigateWebsiteWindow('back')"
+      >
         <q-icon name="mmm-arrow-back" size="xs" />
         <q-tooltip :delay="1000">{{ t('back') }}</q-tooltip>
       </q-btn>
       <q-btn
+        :aria-label="t('forward')"
         color="white-transparent"
         @click="navigateWebsiteWindow('forward')"
       >
@@ -25,6 +38,7 @@
         <q-tooltip :delay="1000">{{ t('forward') }}</q-tooltip>
       </q-btn>
       <q-btn
+        :aria-label="t('refresh')"
         color="white-transparent"
         @click="navigateWebsiteWindow('refresh')"
       >
@@ -35,6 +49,7 @@
   </template>
   <q-btn
     v-if="mediaPlaying.action === 'mirroringWebsite'"
+    :aria-label="t('stop-mirroring')"
     color="white-transparent"
     unelevated
     @click="stopStreaming()"
@@ -70,6 +85,7 @@ import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { sendObsSceneEvent } from 'src/utils/obs';
 import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
+import { onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
@@ -145,9 +161,15 @@ const { post: postWebStream } = useBroadcastChannel<
   name: 'web-stream',
 });
 
-// Listen for window close IPC event
-onWebsiteWindowClosed(() => {
+// Listen for window close IPC event. This component mounts/unmounts on
+// every visit to/away from the Present Website page, and the underlying
+// ipcRenderer listener has no dedup - without unsubscribing here, closing
+// the website window after N visits would fire stopStreaming() N times.
+const unsubscribeWebsiteWindowClosed = onWebsiteWindowClosed(() => {
   stopStreaming();
+});
+onUnmounted(() => {
+  unsubscribeWebsiteWindowClosed();
 });
 
 const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
@@ -162,10 +184,8 @@ watchImmediate(
   () => {
     postWebStream(
       (mediaPlaying.value.action as
-        | ''
-        | 'inactive'
-        | 'mirroringWebsite'
-        | 'previewingWebsite') || 'inactive',
+        '' | 'inactive' | 'mirroringWebsite' | 'previewingWebsite') ||
+        'inactive',
     );
   },
 );

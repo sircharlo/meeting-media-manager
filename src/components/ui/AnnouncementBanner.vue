@@ -1,62 +1,9 @@
 <template>
-  <q-slide-transition>
-    <q-banner
-      v-if="showAutoUpdateAvailableBanner"
-      class="bg-info q-ma-md"
-      rounded
-    >
-      <div>
-        {{ t('update-downloading') }}
-        <div v-if="downloadProgress" class="q-mt-sm">
-          <q-linear-progress
-            color="primary"
-            rounded
-            size="md"
-            stripe
-            :value="(downloadProgress.percent || 0) / 100"
-          />
-          <div v-if="downloadProgressText" class="text-caption q-mt-xs">
-            {{ downloadProgressText }}
-          </div>
-        </div>
-      </div>
-      <template #avatar>
-        <q-icon name="mmm-download" />
-      </template>
-      <template #action>
-        <q-btn
-          flat
-          :label="t('dismiss')"
-          @click="showAutoUpdateAvailableBanner = false"
-        />
-      </template>
-    </q-banner>
-    <q-banner
-      v-else-if="showAutoUpdateDownloadedBanner"
-      class="bg-positive q-ma-md"
-      rounded
-    >
-      {{ t('update-downloaded') }}
-      <template #avatar>
-        <q-icon name="mmm-check" />
-      </template>
-      <template #action>
-        <q-btn flat :label="t('quit-and-install')" @click="quitAndInstall()" />
-        <q-btn
-          flat
-          :label="t('dismiss')"
-          @click="showAutoUpdateDownloadedBanner = false"
-        />
-      </template>
-    </q-banner>
-  </q-slide-transition>
-  <q-slide-transition>
-    <q-banner
-      v-for="announcement in activeAnnouncements"
-      :key="announcement.id"
-      :class="`q-ma-md ${bgColor(announcement.type)}`"
-      rounded
-    >
+  <q-slide-transition
+    v-for="announcement in activeAnnouncements"
+    :key="announcement.id"
+  >
+    <q-banner :class="`q-ma-md ${bgColor(announcement.type)}`" rounded>
       {{ t(announcement.message) }}
       <template #avatar>
         <q-icon
@@ -77,10 +24,16 @@
   </q-slide-transition>
 </template>
 <script setup lang="ts">
-import type { Announcement, AnnouncementAction } from 'src/types';
+import type {
+  Announcement,
+  AnnouncementAction,
+  OsSupportWarning,
+  UpdaterProgressInfo,
+  UpdateVersionInfo,
+} from 'src/types';
 
 import prettyBytes from 'pretty-bytes';
-import { useQuasar } from 'quasar';
+import { type QNotifyUpdateOptions, useQuasar } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
@@ -89,15 +42,17 @@ import { updatesDisabled } from 'src/utils/fs';
 import { getPreviousVersion, isVersionWithinBounds } from 'src/utils/general';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, onMounted, ref, watchEffect } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const $q = useQuasar();
-const { t } = useI18n();
+const { locale, t } = useI18n();
 const currentStateStore = useCurrentStateStore();
 const congregationStore = useCongregationSettingsStore();
 
 const {
+  getOsSupportWarning,
+  getUpdaterState,
   onUpdateAvailable,
   onUpdateDownloaded,
   onUpdateDownloadProgress,
@@ -107,7 +62,7 @@ const {
   quitAndInstall,
 } = globalThis.electronApi;
 
-const version = process.env.version;
+const version = import.meta.env.version;
 const latestVersion = ref('');
 const updatesEnabled = ref(true);
 
@@ -144,56 +99,166 @@ const loadAnnouncements = async () => {
   announcements.value = await fetchAnnouncements();
 };
 
-const showAutoUpdateAvailableBanner = ref(false);
-const showAutoUpdateDownloadedBanner = ref(false);
-const downloadProgress = ref<null | {
-  bytesPerSecond: number;
-  delta: number;
-  percent: number;
-  total: number;
-  transferred: number;
-}>(null);
+// The updater function returned by Notify.create()/createTemporaryNotification():
+// calling it with props updates the existing notification in place (per
+// https://quasar.dev/quasar-plugins/notify#updatable-notifications); calling
+// it with no args dismisses it. Only non-grouped notifications support this,
+// which is why the update/downloaded notification below never sets `group`.
+let updateNotify: ((props?: QNotifyUpdateOptions) => void) | undefined;
 
-const downloadProgressText = computed(() => {
-  if (!downloadProgress.value) return '';
+// Tracks which step of the updater lifecycle is currently shown, so the
+// notification's text can be re-translated in place if the active locale
+// changes (e.g. when switching to a congregation with a different app
+// language) without losing or resetting the notification itself.
+type UpdatePhase = 'downloaded' | 'downloading' | null;
+let updatePhase: UpdatePhase = null;
+let lastProgressInfo: undefined | UpdaterProgressInfo;
 
+// True once any updater event has been received over IPC. The main process
+// runs the update check at startup, concurrently with the renderer booting,
+// so update-available/download-progress/update-downloaded can fire before
+// these listeners are registered and get silently dropped. When that
+// happens we catch up via getUpdaterState() on mount instead; this flag
+// prevents double-showing when the events did arrive normally.
+let updateEventReceived = false;
+
+const downloadProgressCaption = (info: UpdaterProgressInfo) => {
   const parts: string[] = [];
 
-  // Add percentage if available
-  if (downloadProgress.value.percent != null) {
-    parts.push(`${Math.round(downloadProgress.value.percent)}%`);
+  if (info.percent != null) {
+    parts.push(`${Math.round(info.percent)}%`);
   }
 
-  // Add transferred/total if both are available
-  if (
-    downloadProgress.value.transferred != null &&
-    downloadProgress.value.total != null
-  ) {
-    parts.push(
-      `${prettyBytes(downloadProgress.value.transferred)} / ${prettyBytes(downloadProgress.value.total)}`,
-    );
+  if (info.transferred != null && info.total != null) {
+    parts.push(`${prettyBytes(info.transferred)} / ${prettyBytes(info.total)}`);
   }
 
-  // Add speed if available
-  if (
-    downloadProgress.value.bytesPerSecond != null &&
-    downloadProgress.value.bytesPerSecond > 0
-  ) {
-    parts.push(
-      `(${prettyBytes(downloadProgress.value.bytesPerSecond)}${t('perSecond')})`,
-    );
+  if (info.bytesPerSecond != null && info.bytesPerSecond > 0) {
+    parts.push(`(${prettyBytes(info.bytesPerSecond)}${t('perSecond')})`);
   }
 
   return parts.join(' - ');
-});
+};
+
+const handleUpdateAvailable = () => {
+  updateEventReceived = true;
+  updateNotify?.();
+  updatePhase = 'downloading';
+  lastProgressInfo = undefined;
+  updateNotify = createTemporaryNotification({
+    caption: t('update-preparing'),
+    message: t('update-downloading'),
+    // Survives dismissAllTemporaryNotifications() (e.g. congregation
+    // switches) since it isn't tied to any specific congregation.
+    protect: true,
+    type: 'ongoing',
+  });
+};
+
+const handleUpdateDownloadProgress = (info: UpdaterProgressInfo) => {
+  updateEventReceived = true;
+  lastProgressInfo = info;
+  updateNotify?.({ caption: downloadProgressCaption(info) });
+};
+
+// SEC-6 (full-audit backlog): a pending downgrade (expected when switching
+// off beta updates - allowDowngrade is always on) previously installed with
+// the exact same one-click wording as a normal update, no indication given.
+// Purely informational - still a single "Quit & Install" click either way.
+const updateDownloadedMessage = (versionInfo?: UpdateVersionInfo) =>
+  versionInfo?.isDowngrade
+    ? t('update-downloaded-downgrade', { version: versionInfo.version })
+    : t('update-downloaded');
+
+const handleUpdateDownloaded = (versionInfo?: UpdateVersionInfo) => {
+  updateEventReceived = true;
+
+  // Already in downloaded state — avoid re-creating or re-updating the
+  // notification when the same event fires more than once (e.g. the IPC
+  // event arriving after catchUpUpdaterState already handled it).
+  if (updatePhase === 'downloaded') return;
+
+  updatePhase = 'downloaded';
+
+  const message = updateDownloadedMessage(versionInfo);
+
+  // When an update was already downloaded in a previous session,
+  // electron-updater may fire update-downloaded directly without a
+  // preceding update-available, so updateNotify may not exist yet.
+  if (updateNotify) {
+    updateNotify({
+      actions: [
+        {
+          color: 'white',
+          handler: () => quitAndInstall(),
+          label: t('quit-and-install'),
+        },
+        { color: 'white', icon: 'close', round: true },
+      ],
+      caption: undefined,
+      icon: 'mmm-check',
+      message,
+      spinner: false,
+      timeout: 0,
+      type: 'positive',
+    });
+  } else {
+    updateNotify = createTemporaryNotification({
+      actions: [
+        {
+          color: 'white',
+          handler: () => quitAndInstall(),
+          label: t('quit-and-install'),
+        },
+        { color: 'white', icon: 'close', round: true },
+      ],
+      icon: 'mmm-check',
+      message,
+      protect: true,
+      timeout: 0,
+      type: 'positive',
+    });
+  }
+};
+
+// The updater check runs at startup, concurrently with the renderer booting,
+// so its push events can arrive before these listeners are registered and be
+// silently dropped - the download would still proceed and install on quit,
+// but no notification would ever appear. Re-query the main process's tracked
+// state on mount so a missed update is still announced.
+const catchUpUpdaterState = async () => {
+  if (updateEventReceived) return;
+
+  try {
+    const state = await getUpdaterState();
+    // Re-check after the await: a real update-available/downloaded event
+    // may have arrived over IPC while this round-trip was in flight, and
+    // its handler already set updateEventReceived - acting on the
+    // now-stale catch-up snapshot here would redundantly replay
+    // handleUpdateAvailable() and reset the notification it just built.
+    if (updateEventReceived) return;
+    if (!state || !state.phase) return;
+
+    // Build the base notification first (it may not exist yet if the
+    // update-available event was also missed), then apply the current step.
+    handleUpdateAvailable();
+    if (state.phase === 'downloading') {
+      if (state.progress) handleUpdateDownloadProgress(state.progress);
+    } else if (state.phase === 'downloaded') {
+      handleUpdateDownloaded(state.versionInfo ?? undefined);
+    }
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: { fn: { name: 'getUpdaterState' } },
+    });
+  }
+};
 
 onMounted(() => {
   try {
     onUpdateAvailable(() => {
       try {
-        showAutoUpdateAvailableBanner.value = true;
-        showAutoUpdateDownloadedBanner.value = false;
-        downloadProgress.value = null;
+        handleUpdateAvailable();
       } catch (error) {
         errorCatcher(error, {
           contexts: { fn: { name: 'onUpdateAvailable' } },
@@ -203,7 +268,7 @@ onMounted(() => {
 
     onUpdateDownloadProgress((info) => {
       try {
-        downloadProgress.value = info;
+        handleUpdateDownloadProgress(info);
       } catch (error) {
         errorCatcher(error, {
           contexts: { fn: { info, name: 'onUpdateDownloadProgress' } },
@@ -211,11 +276,9 @@ onMounted(() => {
       }
     });
 
-    onUpdateDownloaded(() => {
+    onUpdateDownloaded((versionInfo) => {
       try {
-        showAutoUpdateAvailableBanner.value = false;
-        showAutoUpdateDownloadedBanner.value = true;
-        downloadProgress.value = null;
+        handleUpdateDownloaded(versionInfo);
       } catch (error) {
         errorCatcher(error, {
           contexts: { fn: { name: 'onUpdateDownloaded' } },
@@ -236,9 +299,84 @@ onMounted(() => {
       contexts: { fn: { name: 'onUpdateListeners' } },
     });
   }
+
+  void catchUpUpdaterState();
 });
 
-const isTestVersion = process.env.IS_TEST;
+// Dev-only: lets a developer preview the whole updater notification
+// lifecycle (downloading -> progress -> downloaded) without a real update.
+if (import.meta.env.DEV) {
+  const simulateUpdateFlow = () => {
+    handleUpdateAvailable();
+
+    const total = 87 * 1024 * 1024;
+    let transferred = 0;
+    const interval = setInterval(() => {
+      transferred = Math.min(
+        total,
+        transferred + total * (0.05 + Math.random() * 0.1),
+      );
+      handleUpdateDownloadProgress({
+        bytesPerSecond: total * 0.08,
+        delta: 0,
+        percent: (transferred / total) * 100,
+        total,
+        transferred,
+      });
+
+      if (transferred >= total) {
+        clearInterval(interval);
+        handleUpdateDownloaded();
+      }
+    }, 500);
+  };
+
+  onMounted(() => {
+    createTemporaryNotification({
+      actions: [
+        {
+          color: 'white',
+          handler: simulateUpdateFlow,
+          label: 'Simulate updater',
+          noDismiss: true,
+        },
+        { color: 'white', icon: 'close', round: true },
+      ],
+      message: 'Dev only: preview the auto-updater notifications',
+      timeout: 0,
+      type: 'info',
+    });
+  });
+}
+
+const osSupportWarning = ref<null | OsSupportWarning>(null);
+
+onMounted(async () => {
+  try {
+    osSupportWarning.value = await getOsSupportWarning();
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: { fn: { name: 'getOsSupportWarning' } },
+    });
+  }
+});
+
+// Banner warning users whose OS/architecture will soon lose Electron support
+const osSupportAnnouncement = computed((): Announcement => {
+  return {
+    icon: 'warning',
+    id: `os-support-${osSupportWarning.value}`,
+    message:
+      osSupportWarning.value === 'mac-legacy'
+        ? 'os-support-warning-mac'
+        : 'os-support-warning-win32-ia32',
+    persistent: true,
+    platform: osSupportWarning.value ? 'all' : 'none',
+    type: 'warning',
+  };
+});
+
+const isTestVersion = import.meta.env.IS_TEST;
 
 // Test version banner for users who are using a test version
 const testVersionAnnouncement = computed((): Announcement => {
@@ -334,6 +472,7 @@ const systemAnnouncements = computed(() =>
     newUpdateAnnouncement.value,
     untranslatedAnnouncement.value,
     testVersionAnnouncement.value,
+    osSupportAnnouncement.value,
   ].filter((a) => !!a),
 );
 
@@ -348,11 +487,52 @@ const activeAnnouncements = computed(() =>
   }),
 );
 
-watchEffect(() => {
-  if (!currentStateStore.online) return;
-  loadLatestVersion();
-  loadAnnouncements();
-  getUpdatesEnabled();
+// A plain watchEffect here is a trap: loadAnnouncements()/loadLatestVersion()
+// each read their guard ref (announcements.value / latestVersion.value)
+// synchronously before their first await, so watchEffect's auto-tracking
+// picks them up as dependencies too. When the fetch keeps failing (e.g. no
+// network, or demo mode's fetchRaw() rejects instantly), the later
+// `announcements.value = []` / `latestVersion.value = ''` write is a *new*
+// value that re-triggers this effect — an infinite reactive loop with no
+// real I/O in between, since demo mode's rejection is synchronous. Watching
+// only `online` explicitly avoids tracking those incidental reads.
+watch(
+  () => currentStateStore.online,
+  (online) => {
+    if (!online) return;
+    loadLatestVersion();
+    loadAnnouncements();
+    getUpdatesEnabled();
+  },
+  { immediate: true },
+);
+
+// Re-translate the in-progress updater notification, if any, when the
+// active locale changes (e.g. after switching to a congregation configured
+// with a different app language) so its text always matches what's shown.
+watch(locale, () => {
+  if (!updateNotify || !updatePhase) return;
+
+  if (updatePhase === 'downloading') {
+    updateNotify({
+      caption: lastProgressInfo
+        ? downloadProgressCaption(lastProgressInfo)
+        : t('update-preparing'),
+      message: t('update-downloading'),
+    });
+  } else if (updatePhase === 'downloaded') {
+    updateNotify({
+      actions: [
+        {
+          color: 'white',
+          handler: () => quitAndInstall(),
+          label: t('quit-and-install'),
+        },
+        { color: 'white', icon: 'close', round: true },
+      ],
+      message: t('update-downloaded'),
+    });
+  }
 });
 
 if (import.meta.env.NEVER) {

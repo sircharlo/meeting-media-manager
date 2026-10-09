@@ -4,6 +4,327 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## UPCOMING VERSION
+
+### ✨ New Features
+
+- ✨ **Zoom Meeting Manager (beta, Windows)**: A new integration that operates Zoom for you around each meeting. It can launch your congregation's Zoom meeting when background music starts before the meeting. When the music stops just before the meeting starts, it joins computer audio, unmutes the microphone, turns on the host video, and mutes everyone without letting them unmute. When music plays before or after a meeting, it does the reverse: it leaves computer audio, turns off the host video, and lets everyone unmute again (asking them to do so). It can also share the media window in Zoom automatically while media is being shown, making sure the media window is what gets shared and never anything else on your screen. A new Zoom button in the action island shows whether a Zoom meeting window was found and lets you run these steps manually. A setup assistant, offered when you turn the option on (the initial setup wizard now offers it on Windows instead of the keyboard-shortcut screen sharing) and available anytime from the Zoom button or Settings, checks your Zoom, learns the names of its microphone and camera buttons in your language, and tries every step with you. When M³ starts, it also checks that everything it automates in Zoom works, opening the meeting if needed on meeting days in the hour and a quarter before it starts (only looking, without pressing anything, if others are already in the meeting); if something doesn't, it tells you and pauses its Zoom automations until it's restarted or a new check passes, so nothing goes wrong during the meeting. This check is on by default and can be turned off in Settings. As each of these steps succeeds, the matching reminders in the before- and after-meeting checklists of the meeting quick actions are ticked off for you, marked as done automatically in Zoom. Since it can't be used together with the keyboard-shortcut screen sharing, Settings says so under whichever of the two is unavailable, naming the one to turn off. It works whatever language Zoom is in, and needs nothing installed beyond Zoom itself.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Action Island Popups**: Popups such as the media display settings now grow with a tall window instead of stopping at a fixed height and scrolling.
+- 🛠️ **Media Sync**: Every date in the media sync popup now lines up the same way, whether it's still being checked, done, or has files to show, and the progress summary is set apart from the list.
+- 🛠️ **Show Image for Zoom Participants**: The button that shows an image to Zoom participants has a clearer new icon: the picture on a meeting's main screen, above the participants.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Yeartext & Icons**: Fixed the yeartext font and media icons failing to load for some congregations, depending on their Website setting.
+- 🐞 **Yeartext**: Fixed the yeartext never updating for some congregations, depending on their Website setting.
+- 🐞 **Website Setting**: Publication search and browsing, congregation lookup, the automatic meeting schedule update, and presenting a website now always use the address set in the Website setting, with no fallback to the default address; the JW Stream and conventions website options are only offered with the default address. Clearing that field now restores the default address, after a confirmation.
+- 🐞 **Media Playback**: Fixed videos and audio that hadn't finished downloading yet failing to play for some congregations, depending on their Website setting.
+- 🐞 **Media List**: Fixed an error when dropping something onto the media list right after it had changed (for example just after importing a publication's media).
+- 🐞 **Cache**: Fixed M³ failing to record when a publication folder was last used (with a burst of "operation not permitted" errors) on Windows computers where its small tracking files had been marked as system or read-only files, which could make the automatic cache cleanup misjudge which media was still in use.
+- 🐞 **Media Fetching**: Fixed meeting parts occasionally coming up empty on older or slower computers right after starting M³, while it was busy downloading and extracting publications.
+- 🐞 **Custom Background**: The image picker shown after choosing a publication as the media display's custom background can now be closed with Esc or by clicking outside it, like other dialogs.
+- 🐞 **JW Library Playlists**: Fixed item previews not showing when importing a `.jwlplaylist` file whose name contains a `#`.
+- 🐞 **Publications**: Fixed a publication's media going missing on every start after its extracted database was damaged, for example by a crash or power cut while M³ was extracting it. M³ now detects a damaged database and extracts it again from the downloaded publication.
+- 🐞 **Media Fetching**: Fixed a meeting's entire media list coming up empty when just one of its SVG illustrations couldn't be loaded. Now only that one image is affected.
+- 🐞 **Media List**: Fixed dragging selected media items to reorder them not doing anything, including a single item you had just clicked. Dragging a selected item now moves exactly the highlighted items in that section, including selections made with the keyboard (Ctrl+A, Shift+arrows).
+- 🐞 **Startup**: Fixed M³ unpacking the entire JW Library installer, about 1 GB of files, every time it started, just to read JW Library's list of languages. That list is now refreshed every few months again, only the one file it needs is extracted, and the leftover installer files are removed, freeing about 1 GB on many computers. This also fixes "operation not permitted" errors where antivirus software blocked those files, and the list sometimes being read from an older version of JW Library.
+
+### 🔧 Chores
+
+- 🔧 **Error Reporting**: A watched folder on a cloud-synced or network drive (Google Drive, OneDrive, a mapped drive, etc.) that briefly can't be read mid-sync is no longer reported as an error, and neither is a brief outage on GitHub's side while checking for updates.
+- 🔧 **Error Reporting**: Fixed error reports from some of M³'s background file operations (such as reading a folder's contents, or hiding and unhiding its small tracking files) never being sent, so problems there can now be diagnosed and fixed.
+- 🔧 **Error Reporting**: A video or song that M³ reads before it has finished downloading or copying (so the file is still incomplete) is no longer reported as an error, as was already the case before a recent update to the library M³ uses to read media details.
+
+## v26.10.0
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Downloads**: Media downloads now pick up where they left off after a dropped connection, instead of starting over — a big help on slow or unreliable connections. Under the hood, M³ now uses its own download engine, which also lets it tell a file that's missing on the server apart from a network problem.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Media Fetching**: Fixed meeting media failing to load for some congregations, depending on their Website setting — a security tightening in v26.9.1 accidentally blocked some legitimate media servers.
+- 🐞 **Media Fetching**: Fixed meeting parts occasionally coming up empty (or reporting a missing document) while M³ was busy — for example while extracting a large publication or downloading many songs at once — because publication lookups waiting in line were mistaken for a frozen database reader.
+- 🐞 **Publications**: Fixed a perfectly good publication file occasionally being deleted (and re-downloaded) when M³ was briefly too busy to release its database before re-extracting it, and a just-downloaded publication failing to open when antivirus software briefly locked it for scanning.
+- 🐞 **JW Library Playlists**: Fixed importing the same `.jwlplaylist` file a second time (for example after updating it in JW Library) failing with an error until M³ was restarted, or showing the previous version's items.
+- 🐞 **Media Window**: Fixed a rare error when the media window was closed at the exact moment M³ was repositioning it (for example right after startup).
+- 🐞 **OBS Studio**: Turning the OBS integration off now properly resets its connection status, so turning it back on reconnects cleanly instead of briefly acting on the old, closed connection.
+- 🐞 **Thumbnails**: Fixed video thumbnails failing to save on computers whose Windows username (or any folder in the media path) contains a dot.
+- 🐞 **Media Fetching**: A request to the official website that times out on a slow connection is now retried automatically, as intended, instead of failing on the first attempt.
+- 🐞 **Downloads**: Fixed media downloads that could stay paused, or never start at all, until M³ was restarted. A download interrupted by a connection problem is now retried (and shown as failed if it keeps failing) instead of silently holding up every download queued behind it, and a download that stops receiving data is restarted automatically. Downloads are also no longer held back whenever free disk space drops below 10 GB — only once it is critically low (under 1 GB) — and they resume on their own once space frees up.
+
+### 🔧 Chores
+
+- 🔧 **Error Reporting**: Cut down on noise from expected, harmless errors so real problems stand out: temporary read errors and timeouts from cloud-synced folders (iCloud Drive, OneDrive, Dropbox, etc.) — including when importing files from them — are no longer reported as failures, and M³ no longer tries to recreate folders on a drive that has been unplugged or renamed when a custom media folder lived there. Starting to present a website no longer logs a bogus media playback error, OBS Studio answering "not ready yet" while it is still starting up is now waited out instead of reported, and not being able to reach GitHub to set up the video converter (FFmpeg) is no longer reported as an error.
+
+## v26.9.1
+
+### 🐞 Bug Fixes
+
+- 🐞 **Settings**: Fixed a rare crash (`blur is not a function`) that could occur when a date or time field's picker popup opened via certain interactions.
+- 🐞 **Sign Language Videos**: Fixed the background sign-language list update failing with a file-not-found error after its download had to fall back to a temporary folder (e.g. a temporary permissions issue with the usual one).
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Downloads**: When M³ detects a pattern of download issues it already expects for your connection, it now shows a gentle reminder to check your internet connection and the Website address in Settings.
+
+### 🔧 Chores
+
+- 🔧 **Error Reporting**: A failed Watchtower Study Edition download and a failed camera/screen-share stream teardown could each be misreported — the former masked as a generic "no database file found" instead of the real cause, the latter generating a second, misleading error alongside the real one. Both now report accurately. A transient network hiccup while fetching a font or the yearly text is also no longer reported as a hard error, matching the same handling already used elsewhere for flaky connections.
+
+## v26.9.0
+
+### ✨ New Features
+
+- ✨ **Before/After Meeting Quick Actions**: A new big-button panel assists with the run-up to and immediately after each meeting — a live countdown, one-tap background music start/stop, start/stop recording, and a per-congregation checklist grouped into categories and editable from Settings. The before-meeting panel auto-dismisses once the meeting starts and the checklist is complete (or after a short grace period), and can always be dismissed manually.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Platform Support**: This is the last version of M³ that supports 32-bit Windows and macOS 12 (Monterey). Future releases will require a 64-bit version of Windows and macOS 13 (Ventura) or later; users on these systems are warned in-app and will no longer be offered app updates after this version.
+- 🛠️ **Media Window**: The windowed media window can now reach Full HD (1920×1080) on large enough screens, move requests arriving mid-transition are queued instead of dropped, and a watchdog keeps the window responsive when a fullscreen-exit request is ignored.
+- 🛠️ **Timer Window**: Positioning now waits for a fullscreen transition to actually finish before applying the next move, the same protection already in place for the media window — a move request arriving mid-transition is now queued instead of risking a corrupted position.
+- 🛠️ **Performance**: SQLite queries now run in a main-process worker thread, HEIC photos are decoded in a separate utility process (importing iPhone photos no longer stutters the interface), download-progress updates are throttled, display snapshots and OBS-password encryption are cached, and store persistence is debounced.
+- 🛠️ **Update Lifecycle**: The app now lets the main window catch up on a missed update-lifecycle event, so update banners and prompts stay accurate; a pending update that's actually a downgrade (e.g. switching off beta updates back to the latest stable release) is now labeled as such before you install it.
+- 🛠️ **Media Preview**: The preview thumbnail now mirrors the media window's actual output directly instead of re-decoding the same file a second time — it also now shows a live camera feed and images, not just video, and looks noticeably sharper at its small size.
+- 🛠️ **Memorial**: Added the 2029 Memorial date.
+- 🛠️ **Media List**: Watchtower footnote tags now show only the asterisk marker, stretched across the full tag height with the icon vertically centered.
+- 🛠️ **Advanced Settings**: Changing the "Website address" setting now shows a confirmation explaining what trusting the new address means before it takes effect, since it controls where M³ downloads media from.
+- 🛠️ **Accessibility**: Media items in the calendar can now be selected and multi-selected with the keyboard (Enter/Space, plus Ctrl/Shift for multi-select), not just the mouse; media items, dividers, groups, custom sections, and now a group's own child items too, can all be reordered with keyboard-operable move-up/move-down controls in addition to drag-and-drop; icon-only buttons in the timer popup now have proper screen-reader labels; the Settings category rail now keeps a screen-reader-visible label and shows a tooltip on hover at the narrower icon-only window width, instead of losing its label entirely; the website window's zoom/back/forward/refresh/stop-mirroring buttons now have proper screen-reader labels too; video tiles from the official website and PDF page-selection tiles can now be selected with the keyboard, not just the mouse; and a configured keyboard shortcut is now a single labeled, focusable control instead of one redundant tab stop per key.
+- 🛠️ **Meeting Timer**: A mismatched AYFM/LAC part duration is now flagged with a warning icon and explanation, not just a color change; resetting a part's recorded timing now asks for confirmation first, since it's used in the exported timing report and can't be undone.
+- 🛠️ **Initial Setup**: The OBS Studio port/password step now shows an inline "Connected" / "Could not connect" banner as you type, instead of the only feedback being a small footer button; a "Cancel" action is now available on every step instead of only the first; steps with a required field now show a short hint when "Continue" is disabled, instead of just a greyed-out button with no explanation; and navigating away from an unfinished setup via the nav drawer or header now asks for confirmation first, instead of silently abandoning a half-configured congregation profile.
+- 🛠️ **Cache Location**: The Settings explanation for the cache location folder now clarifies that changing it doesn't move already-cached files — content not yet present in the new location is simply re-downloaded or re-extracted there.
+- 🛠️ **Present Website**: The page's own instructions now mention the zoom and navigation buttons available once the website window is open, instead of leaving a first-time user to notice them on their own.
+
+### 🐞 Bug Fixes
+
+- 🐞 **About Dialog**: Fixed "What's New" feature descriptions showing a stray leading colon in languages that put a space before the colon (e.g. French) or use a full-width colon.
+- 🐞 **Localization**: Fixed corrupted release-notes version headers (French, Spanish, Finnish) that hid those releases from the About dialog's "What's New" carousel, and added hourly Crowdin auto-repair so localized version numbers are reset to the English source.
+- 🐞 **Localization**: Crowdin auto-repair now also resets dangling publication/OBS links, mangled link casing, and localized parameter names in translations (e.g. Italian, Slovenian, Estonian), which previously rendered as raw key fragments.
+- 🐞 **Paragraph Tags**: Ignored incidental numbers in media captions unless the caption has a structural paragraph-reference pattern, while preserving paragraph references across languages.
+- 🐞 **Media Preview**: The preview no longer disables itself when it repeatedly drifts from the media window — it falls back to lighter video rendering first, and only turns off if drift persists even then. False drift detection at high playback speeds and during paused scrubbing was also fixed.
+- 🐞 **Meeting Quick Actions**: Dismissing the before- or after-meeting panel is no longer permanent for the rest of the session — an inobtrusive banner with a "Show" button appears in its place while it would otherwise still be relevant.
+- 🐞 **Dynamic Media**: A dynamic media item that's no longer present in a fresh fetch (e.g. removed from the official website) is now actually removed from the schedule instead of lingering indefinitely, unless it's the item currently playing.
+- 🐞 **Localization**: Fixed corrupted Estonian translations that crashed the Settings page, and added automated Crowdin repair so corrupted source strings can't break the app again.
+- 🐞 **OBS Integration**: Stopped UUID scene IDs from being sent as scene names (which made OBS report "No source was found by the name of"), scene-list fetch failures are now surfaced in the interface instead of failing silently, and the recording indicator now re-checks OBS's actual recording state after a reconnect instead of potentially showing stale status.
+- 🐞 **Watched Folders**: Refused to read or write watched-media section-order files outside the watch folder, made section-order removal atomic, and retried transient Windows file locks during writes and unzip.
+- 🐞 **Reliability**: Watch-folder errors caused by transient cloud-sync artifacts (e.g. a Google Drive folder swap mid-sync) are no longer misreported as app bugs, and a media file that is still downloading no longer trips a recurring "End-Of-Stream" metadata-parse error.
+- 🐞 **Media Player**: Stopped camera capture when playback is cleaned up, fixed audio auto-advance and loop-trim behavior, and a video/audio file that fails to play (corrupted download, unsupported codec) now advances past it and reports the failure instead of leaving the display stalled on a blank screen indefinitely.
+- 🐞 **Timer**: Fixed display flashes when stopping or showing the timer window, unpadded times in validation messages, and option lists not refreshing after an app-language change.
+- 🐞 **Reliability**: Fixed broadcast-channel, drag-listener, and font-cache leaks, stopped accumulating website-window IPC listeners, guarded display/timer popups against screen-lookup hangs and IPC pile-up, added a main-process safety net so an unexpected error in a background task (like queueing a download or repositioning the media window) is reported instead of silently going unnoticed, moved image-dimension reading (used when converting a photo for the media window) into its own process with a timeout so a malformed image file can no longer freeze the whole app, stopped a failed photo/audio-to-video conversion from leaving a broken file behind that a later attempt could mistake for a finished one, narrowed the app's content-security policy to the specific hosts it actually talks to instead of allowing any HTTPS/WebSocket destination, and downloads that were paused going into system sleep now automatically resume on wake instead of staying paused until manually restarted.
+- 🐞 **Fonts**: Clarified the error when the JW icon font URL can't be resolved, and skipped font fallback when the CDN URL is empty.
+- 🐞 **Cache Folder**: Invalid custom cache folders are now flagged on permission errors instead of surfacing raw access errors.
+- 🐞 **Offline Resilience**: The song picker and background music library now fall back to cached data when offline, and background-music refresh and download were hardened.
+- 🐞 **Background Music**: Fixed a boot crash ("Must be called at the top of a setup function") when the music store was created before any component mounted; it now translates through the global i18n composer.
+- 🐞 **Migrating from the old app**: A congregation profile imported from a pre-M³ install could end up missing every setting added since (including Before/After Meeting Quick Actions), potentially crashing if that feature was then enabled — every current default is now correctly backfilled during the migration.
+- 🐞 **Updates (macOS)**: Clicking "Quit & Install" could silently do nothing if the main window's own quit-confirmation logic intercepted the close first.
+- 🐞 **Settings**: The invalid-setting indicator on a category could count a setting that was actually hidden by another setting, leaving no visible row to fix it on; searching Settings for "quick action" or "checklist" now finds the Before/After Meeting Quick Actions checklist editor, which previously never matched; deleting a custom checklist category or task now asks for confirmation first, since a category delete also removes every task in it.
+- 🐞 **Before/After Meeting Quick Actions**: Dismissing a panel now asks for confirmation first, since it can't be brought back for that meeting without restarting M³.
+- 🐞 **Downloads**: Handled files that vanish mid-poll, capped concurrent directory creation, retried metadata fetches on transient network errors, made "cancel all" actually stop a download that was still starting up instead of letting it keep running in the background, stopped the same file from being queued twice when requested again while it was still waiting for a download slot, paused the queue (with a warning) instead of continuing to fill up an already critically low disk during a long download session, now automatically retries a download a couple of times before giving up instead of requiring a manual resubmit for every transient network blip (re-checking whether the destination folder is still usable before each retry, instead of repeatedly failing against one that had become unavailable), and fixed a case where downloads paused for low disk space could resume again on their own before space had actually freed up.
+- 🐞 **Error Reporting**: Stopped reporting a batch of transient or benign errors (503 responses, yeartext network noise, empty additional items, FFmpeg offline failures, duplicate preload causes, and transient auto-updater network errors (ERR_NETWORK_IO_SUSPENDED)).
+- 🐞 **Media List and UI**: The section color picker no longer shows a stale value after reopening, announcement banners no longer get dropped or leak intervals, the "stop playing media first" notification now uses warning styling like other blocked-action notifications instead of neutral styling, and a visibly mismatched patch that could appear behind a media item's drag-handle/"..." button while hovering or clicking it is gone.
+- 🐞 **Media List Drag and Drop**: Dropping something onto the media list that wasn't actually being dragged within M³ (an OS file drag, for example) could crash the interface — this is now handled gracefully.
+- 🐞 **Reliability**: A malformed or corrupted HEIC photo could hang the background process that decodes it, silently blocking every subsequent HEIC import for the rest of the session — it's now timed out and recovered from automatically, the same way an unresponsive image-dimension read already was; background-music queue building is now guarded against a malformed song-duration response that could otherwise freeze the interface.
+- 🐞 **Quick Start Guide**: The tour is now marked as seen only once it's actually been shown and dismissed, rather than the moment it's requested — a guide that didn't appear on its first attempt is no longer permanently skipped for that congregation.
+- 🐞 **Meeting Schedule**: The "Refresh meeting schedule" settings button now always shows a result — updated, already up to date, or couldn't check — instead of staying silent unless something actually changed.
+- 🐞 **Supply-Chain Hardening**: The PDF-reading and font-download scripts M³ loads from a CDN are now pinned to a specific, reviewed version instead of always fetching whatever is newest.
+- 🐞 **Startup Files**: Window-position and crash-detection files are now written atomically (temp file plus rename), so a crash or power loss mid-write can no longer leave one of them corrupted — which, undetected, could silently mask a real crash loop.
+- 🐞 **Crash-Loop Detection**: Quitting and quickly relaunching M³ no longer counts toward the crash-loop threshold that disables hardware acceleration — only a launch following a session that never shut down normally (an actual crash, forced quit, or power loss) does now; a fresh install's very first launch is also no longer miscounted as an actual crash.
+- 🐞 **Meeting Media Freshness**: Responses from the official website are no longer cached indefinitely for the life of a running session, and a corrected video, audio recording, or caption for a day already loaded is now picked up automatically instead of requiring a restart — while still keeping any hidden/reordered items exactly as the user left them.
+- 🐞 **Congregation Deletion**: Deleting a congregation now also clears its dismissed announcements, quick-start-tour, and cached meeting-schedule data immediately, instead of leaving them behind indefinitely (or until the next app restart).
+- 🐞 **Congregation Switching**: Rapidly picking a second congregation before the first switch had finished could leave the app navigating based on the wrong profile's settings; the picker now finishes one switch before starting another.
+- 🐞 **Keyboard Shortcuts**: Picking a key combination already assigned to another shortcut is now rejected with an explanation, instead of appearing to work while silently never taking effect.
+- 🐞 **OBS Integration**: M³ now automatically attempts to reconnect if OBS closes, crashes, or restarts while it's running, instead of requiring a manual retry click; a stalled connection attempt also no longer gets stuck in a "connecting" state that blocked both automatic and manual retries.
+- 🐞 **Settings Validation**: A free-text setting (like the OBS port) that's left in an invalid state when you click away is now reverted to its last valid value with an explanation, instead of silently saving exactly as typed.
+- 🐞 **Media Auto-Export**: A file that fails to convert during automatic export now shows a warning naming how many files were affected, instead of silently vanishing from the export folder with no explanation.
+- 🐞 **Timer**: A backward system clock change (daylight saving, time sync, manual adjustment) while the timer is running or paused no longer garbles the displayed time or makes it briefly count in the wrong direction.
+
+### 🔧 Chores
+
+- 🔧 **CI**: Pull requests that touch the docs site now run a `docs:lint` gate, so corrupted Crowdin translations are rejected before they can merge and break the docs deploy.
+- 🔧 **Dependencies**: Updated Quasar, Electron, Vue i18n, ESLint, Sentry, and several other dependencies.
+- 🔧 **Docs**: Fixed the renamed VitePress image option and deduplicated heading anchors to unblock the docs build.
+- 🔧 **Dev Tooling**: Added dev-only demo-mode tooling and made the Electron rebuild script cross-platform.
+- 🔧 **Release Process**: Renamed the in-progress changelog section from `vPENDING` to `UPCOMING VERSION` and now syncs it into the release notes for early translation.
+- 🔧 **Dependencies**: Pinned `plist` to `3.1.1` in both dependency trees so the packaging toolchain picks up the patched `@xmldom/xmldom` — the pinned `plist@3.1.0` otherwise keeps the vulnerable `0.8.x` line installed (and can't simply be paired with the fixed `0.9.x`, whose stricter parser it doesn't support), which Dependabot cannot resolve on its own.
+- 🔧 **Dependencies**: Replaced `image-size` with the actively maintained, pure-JavaScript `probe-image-size` for reading photo dimensions, after `image-size` gained infinite-loop DoS advisories with no fixed release published; reported dimensions and EXIF orientation behavior are pinned by contract tests, and the isolated worker process with its timeout is unchanged.
+
+## v26.8.0
+
+### ✨ New Features
+
+- ✨ **App-Wide Redesign**: A broad visual and interaction refresh across dialogs, the media list/header, Settings, and the Setup Wizard. The Setup Wizard is now a one-question-per-screen flow with a progress bar. All prompts were replaced with a consistent branded dialog, and PDF page-range selection (for publication and drag-and-drop imports) now uses a thumbnail-grid picker instead of a free-text prompt. Added a new Quick Start Guide tour after the Setup Wizard completes. Also includes refreshed card/header styling with dark-mode-aware shadows and several dark-mode contrast fixes (focused field labels, download-progress percentages).
+- ✨ **Settings Page**: Reworked into a two-pane layout, with a new global Preferences section for auto-update/beta-update toggles moved out of the About dialog (which is now purely informational).
+- ✨ **Add More Media Button**: Added a setting to choose exactly which meeting sections show the "add more media" shortcut button, along with a setting for a compact (icon-only) mode.
+- ✨ **Media List**: Items now show loading skeletons while being added instead of appearing empty, media groups show a hidden-item count in their badge (e.g. "9 items (2 hidden)"), children within a group can be reordered via drag-and-drop, and at very narrow window widths items collapse into compact, tooltip-carrying chips instead of crowding the row.
+
+### 🐞 Bug Fixes
+
+- 🐞 **macOS Permissions**: Fixed EPERM errors reading or writing custom cache, watch, or additional-media folders on macOS by activating the security-scoped bookmark before every filesystem call made from the preload/renderer process (not just main-process zip reads), and by detecting stale permission grants via a read probe against an existing file instead of a newly-created one, which Apple's Documents/Desktop protection doesn't gate.
+- 🐞 **Cache Cleanup**: Stopped cache cleanup from erroring on non-date folders (e.g. "Additional Media") inside user-configured watch/export folders, made it resilient to a failed additional-media path lookup instead of aborting entirely, and matched both `YYYYMMDD` and `YYYY-MM-DD` date-folder naming.
+- 🐞 **Cloud-Sync Folders**: Recognized localized Google Drive "Mirror files" folder names (not just the English default), widened the shared Windows lock retry with exponential backoff for slower Dropbox locks, tolerated expected network-path errors when watching meeting-day folders, copying additional media, or exporting media to a cloud-synced destination, and added a retry for transient locks when creating the dated auto-export folder or writing a captured video thumbnail.
+- 🐞 **OBS Integration**: Stopped OBS scene/recording calls from throwing when issued before the connection finished identifying, stopped an OBS websocket disconnect race and a scene-switch failure from being reported as bugs, and fixed a brief yeartext flash during OBS's own scene transition when media ends.
+- 🐞 **Background Music**: Added a cooldown before retrying auto-start after a failure, which previously could retry nonstop for as long as the auto-start window stayed open, and stopped benign playback interruptions from being treated as errors when starting music or advancing to the next track.
+- 🐞 **Error Reporting**: Stopped reporting transient font-load fallback recovery, benign teardown races when tearing down the media player, network errors from the What's New fetch, and HTML error pages returned where JSON was expected; fixed a raw error object losing its message when reported; and fixed a renderer-process crash from a platform check that only works in the main process.
+- 🐞 **Media List and Player**: Fixed hiding one child in a media group hiding the entire group, corrected video marker end-time trims and a duplicate-clip bug affecting separate trims of the same file, fixed a false "no media" message flashing before a congregation finishes loading, fixed being unable to type spaces in Settings text/search fields, and replaced the reset-order icon with a clearer custom glyph.
+- 🐞 **Sign-Language Media**: Corrected language resolution and file matching so valid nested/extract sign-language videos are no longer treated as unavailable.
+- 🐞 **Additional Media**: Fixed a migration that was silently dropping additional media dated with slash-separated (`YYYY/MM/DD`) dates instead of migrating them.
+- 🐞 **Localization**: Fixed a corrupted Dutch translation for "previous" that crashed rendering wherever it was used.
+
+### 🔧 Chores
+
+- 🔧 **Dependencies**: Updated Sentry (core, Vue, Electron), Quasar, Vite, ESLint, Playwright, vue-i18n, vue-tsc, and several other dependencies.
+
+## v26.7.8
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Update Notifications**: Replaced the auto-update banners with in-place notifications. The "ready to install" notification stays open until the app is quit or the notification is dismissed.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Crash Recovery**: Fixed GPU-fatal-crash detection reading the wrong Sentry context, so it never actually tagged the crash it was written for, and now proactively relaunches the app (with hardware acceleration already disabled) after a second in-session GPU crash instead of waiting for Chromium to force-quit uncontrolled.
+- 🐞 **Meeting Icons**: Fixed meeting icons (public talk, Watchtower, etc.) sometimes rendering blank on first load until navigating away and back, caused by a non-reactive dependency on the async `jw-icons` glyph map.
+- 🐞 **Media Preview**: Throttled preview/live playback sync checks to roughly every 5 seconds instead of every playback tick (~300ms), while still resyncing immediately on real transitions (source change, play/pause) and on scrubbing while paused.
+- 🐞 **Error Reporting**: Stopped reporting transient network blips from the auto-updater's request layer that were bypassing the existing error allowlist, and metadata-thumbnail lookups that still have a working video-frame fallback, and added congregation ID and file path context to update-marker read errors.
+- 🐞 **Watched Folders**: Serialized concurrent watched-media section-order writes per file to stop a race where overlapping saves could fail, and added a retry for transient Windows file locks (e.g. from Dropbox) during those same writes.
+- 🐞 **Cache Cleanup**: Stopped stray non-folder entries (e.g. macOS `.DS_Store`) from breaking expired date-folder cleanup, and treated corrupted `.last-used` marker files as missing instead of misreading them as "used today" and skipping cleanup.
+
+## v26.7.7
+
+### ✨ New Features
+
+- ✨ **Media Preview Quality**: Media preview now renders video frames via canvas with high-quality downscaling, fixing jagged/blurry previews (especially on text-heavy content like songs). The preview also auto-disables itself if it has to repeatedly correct playback drift on a single video, with a one-click way to turn it back on.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Cache Cleanup**: Fixed dated watched/export folders never actually being cleaned up, since cache cleanup was in some cases running before a congregation had been selected.
+- 🐞 **Watched Folders**: Stopped a disabled or leftover auto-export folder path from blocking the folder watcher whenever a watched folder's name merely shared a prefix with it.
+- 🐞 **Fonts**: Resolved font URLs dynamically instead of from hardcoded, version-pinned paths that went stale, and stopped italic font variants from being matched ahead of the intended upright glyph. Also retried the `jw-icons` font download once before falling back to the static glyph map if the font file went missing (e.g. due to antivirus quarantine on Windows).
+- 🐞 **JWPUB and Zip Import**: Captured directory listings on genuine (non-race) `ENOENT` errors during thumbnail extraction to aid diagnosis, and fixed the same playlist import running twice concurrently on a normal file drop, which could cause renames to race each other.
+- 🐞 **Media Preview**: Fixed the preview racing ahead of and visibly resyncing with the actual media window, by waiting for confirmed, moving playback before starting it.
+- 🐞 **Error Reporting**: Matched additional "Failed to fetch" network-error variants so they're no longer reported to Sentry, preserved `Date` objects instead of silently corrupting them into `{}` when relaying data across some internal calls (which could collapse a day's media onto today), and preserved filesystem error codes/syscalls across Electron's context bridge so related errors group correctly and benign-race detection works.
+
+### 🔧 Chores
+
+- 🔧 **jw-icons Fallback Map**: Added a monthly automated check that rediscovers the `jw-icons` glyph map's source font URL and opens a PR when it changes, instead of relying solely on manual updates.
+- 🔧 **Logging**: Reduced log noise from routine media section updates.
+- 🔧 **Dependencies**: Updated `p-queue`, `postcss`, and `brace-expansion`.
+
+## v26.7.6
+
+### ✨ New Features
+
+- ✨ **CBS Video Exclusion**: Added a setting to exclude Congregation Bible Study videos from specific publications (defaults to the **Walk Courageously With God** book), with a searchable publication picker.
+- ✨ **Document Page Numbers**: Publication Media and JWPUB import listings now show each document's page number (or numbers when there are multiple pages) after its title. This can help you to quickly find specific media when you know the page number on which it is found.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Tooltips**: Redesigned tooltip styling for a consistent look in light and dark mode, and added tooltips to many previously-unlabeled icon-only buttons.
+- 🛠️ **Media List**: Reworked media item tags with section-matched colors, added a collapse animation to media lists, switched several dialogs to a flatter button style, and added a Watchtower study article subtitle under the appropriate section header.
+- 🛠️ **Background Music**: Smoothed the action-island music button's size transitions, added a status summary and clock times to the background music popup, highlighted meeting-day songs in the upcoming list, and fixed the meeting-day song queue looping instead of stopping after the meeting's song.
+- 🛠️ **Downloads Popup**: Showed meeting-date checking progress before downloads start, and fixed action-island popups drifting out of alignment as their content changed.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Security**: Parameterized SQL queries built from document IDs, songbook publication codes, and table names to prevent SQL injection.
+- 🐞 **Error Reporting**: Hardened Sentry error reporting — moved the DSN out of source into a build-time secret, improved PII scrubbing and better issue grouping, stopped reporting transient network failures, 504s/empty API responses, raw DOM events, and duplicate error causes as bugs, fixed the reported environment showing as "undefined", grouped filesystem errors by code/syscall instead of file path, and cut attachment bandwidth by no longer attaching a full Pinia state dump to every event.
+- 🐞 **Watched Folders**: Skipped creating watched folders when the folder isn't usable, properly cleaned up watched folders for past dates, stopped deleting unrecognized congregation folders from shared cache, and recognized macOS `/Volumes` paths as possibly removable/network locations.
+- 🐞 **JWPUB and Zip Import**: Transparently read JWPUB/zip sources that were extracted into a directory, hardened zip reads against cloud-sync and network path failures, fixed resolved zip entry paths retaining a trailing slash, and avoided deleting JWPUB files on permission errors, tolerating an `EEXIST` directory race on Windows.
+- 🐞 **Additional Media**: Automatically healed missing additional media instead of failing indefinitely, fixed a case where the dated additional-media directory could resolve to an empty path, and retried an empty song library before giving up on background music.
+- 🐞 **Thumbnails**: Fixed spurious ENOENT errors being reported as bugs when concurrent JW Playlist imports raced to rename shared thumbnail files, and fixed an oversized loading spinner on thumbnails.
+- 🐞 **Media List**: Fixed incorrect singular/plural media item counts and missing tooltips, fixed the stop button's margin when no sibling button precedes it, stopped the Study Bible download progress bar from decreasing, and ignored benign playback-interruption errors during media preview sync.
+- 🐞 **Reliability**: Retried `.last-used` file operations on transient Windows file locks, wrote `.section-order.json` atomically via a temp file and rename, stopped re-caching `updateJwIconsUrl`'s own lookups, made a cache-path error self-diagnosing when given a falsy base path, broadened the malformed-path check to catch any bare `?` path segment, gated the meeting fetch queue start on the macOS folder permission check, and fixed a `robotjs` key-tap argument-count bug causing key-tap failures.
+
+### 🔧 Chores
+
+- 🔧 **Release Process**: Replaced the version-bump GitHub Action with an inline script, excluded Crowdin translation-sync commits from generated release notes, and prevented transient SonarQube failures from blocking release publishing.
+
+## v26.7.5
+
+### 🐞 Bug Fixes
+
+- 🐞 **Meeting Media**: Fixed pictures being silently dropped from the media list when a document's illustration set included multiple embedded-language picture variants with no other distinguishing info (e.g. some Watchtower study article illustrations) — only the first would show. Affected congregations will have this week's media refreshed automatically after updating.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Update Notifications**: Smoothed the update-download progress bar animation, which previously sat static and then snapped between values.
+
+## v26.7.4
+
+### ✨ New Features
+
+- ✨ **Missing Media Recovery**: Media items whose local file went missing (e.g. deleted by the cache auto-clear, or removed manually) now show a disabled play button, a "missing" caption naming the file to look for, and a new "Locate file" action to relink the item to a file on disk.
+- ✨ **Compatibility Warning**: Added a dismissible banner warning users on soon-to-be-unsupported OS/architecture combos (macOS 12 Monterey and Windows 32-bit) to upgrade before future app updates require newer system support.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Cache Clearing**: Prevented smart cache clear from racing the background meeting-fetch queue and deleting future-dated or manually added additional media before it was fully loaded, and fixed media not being redownloaded once its stream URL was set.
+- 🐞 **Video Thumbnails**: Fixed videos with a cover thumbnail being dropped when importing JWPUB publications.
+
+## v26.7.3
+
+### 🐞 Bug Fixes
+
+- 🐞 **Security and Hardening**: Hardened Electron's domain trust checks, narrowed the preload API surface, removed unsafe CSP directives, fixed a zip-slip path-traversal vulnerability in JWPUB/zip extraction, and encrypted the OBS WebSocket password at rest.
+- 🐞 **Watched Folders**: Notified the user when a watched-folder playlist import fails instead of silently dropping it, restored the intended item order/section when only the auto-export filename numbering is available, and ignored transient cloud-sync scan errors (Google Drive, Nextcloud, and similar).
+- 🐞 **Cloud Storage**: Recognized Nextcloud-synced folders during cloud-storage detection.
+- 🐞 **Media Labels**: Fixed missing paragraph labels outside study articles and deduplicated linked picture variants in the midweek/additional-media picker.
+- 🐞 **Media List**: Fixed the background color for multiple-item group descriptions and fixed dragging items in sections showing the empty-state placeholder.
+- 🐞 **Additional Media**: Fixed the closing song being added to the top of a section instead of the bottom, and kept opening songs first.
+- 🐞 **Playlist Import**: Reduced false-positive zip-bomb detection that could reject legitimate `.jwlplaylist` imports.
+- 🐞 **Downloads and Caching**: Fell back to temporary storage when downloads or a custom cache folder become unusable, and hardened download directory creation against transient errors on shared cache folders.
+- 🐞 **Reliability**: Fell back to a writable location for window-state and crash-count files when the user data folder is locked, and guarded against concurrent JW MEPS info downloads corrupting each other.
+- 🐞 **Updater**: Ignored `net::ERR_INTERNET_DISCONNECTED` during update checks instead of reporting it as a crash.
+
+### 🔧 Chores
+
+- 🔧 **Dependencies**: Replaced `icongenie` with `sharp`/`png2icons` to drop vulnerable transitive dependencies, and cleaned up `buffer` and Electron dependency management.
+- 🔧 **Build Tooling**: Upgraded `@quasar/app-vite` to 3.0.0 and fixed related build and publish issues.
+- 🔧 **Testing**: Parameterized date utility tests and stabilized CI test timing and platform detection.
+
+## v26.7.2
+
+### 🐞 Bug Fixes
+
+- 🐞 **Updater Workflow**: Improved the update-and-quit workflow on macOS.
+- 🐞 **Updater Downloads**: Fixed a rare edge case where the wrong version of a build could be downloaded by the auto-updater.
+
+## v26.7.1
+
+### No user-facing changes
+
+## v26.7.0
+
+### ✨ New Features
+
+- ✨ **Linked Audio Playback**: Added support for playing audio from one file together with video from another file. This can be useful for playing video slideshows with accompanying music.
+- ✨ **Watched Media Layouts**: Added persistence for watched media items and section order across watched folders. This ensures that the media list is displayed the same way even when the watched folder is synced across devices.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **JWPUB Import**: Improved JWPUB publication title display, so that selected documents are easier to identify.
+
+### 🐞 Bug Fixes
+
+- 🐞 **JWPUB Import**: Fixed cases where the JWPUB document picker did not appear when needed.
+- 🐞 **Media Fetching**: Normalized lookup periods before fetching media to avoid refreshing media for past meetings.
+- 🐞 **Media Preview**: Kept media preview synchronized while paused media is being scrubbed.
+- 🐞 **Audio Media**: Showed a fallback icon for audio files without thumbnails.
+- 🐞 **Search**: Fixed search popups not showing reliably in media and settings views.
+- 🐞 **macOS Folder Access**: Added folder reauthorization handling when macOS denies access to selected folders.
+- 🐞 **GPU Recovery**: Added a relaunch action for GPU crash recovery.
+- 🐞 **Updater and Crash Reporting**: Ignored non-actionable updater network errors and stopped reporting crash-loop fallback behavior to Sentry.
+- 🐞 **Security and Hardening**: Hardened shared cache installer permissions and validated nested shared cache directories.
+
+### 🔧 Chores
+
+- 🔧 **Code Quality**: Reduced cognitive complexity and resolved SonarQube findings.
+- 🔧 **Database**: Removed `better-sqlite3` in favor of Node.js' built-in SQLite3 support.
+- 🔧 **Testing**: Added focused coverage for watched folders, media section persistence, audio media, macOS folder access, and Electron app handler behavior.
+
 ## v26.6.1
 
 ### ✨ New Features
@@ -621,7 +942,7 @@ Thanks to @DarkCodeYG for the contributions and new features!
 - ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
 - ✨ **Meeting Recording**: Added a new meeting recording feature, to control an external recording app.
 - ✨ **Site Search**: Added ability to search for media or publications on the site using smart search.
-- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from JW.org, such as magazine, books, programs and invitations.
+- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from the official website, such as magazine, books, programs and invitations.
 - ✨ **Sign Language Improvements**: Added confirmation before playing entire files for sign languages and support for selecting multiple clips, such as for when multiple paragraphs are to be read consecutively.
 - ✨ **Clip Navigation**: Added duration display to clip list items and improved clip navigation.
 - 🛠️ **Media Display**: Ensured media display becomes visible when playback starts, even if it was hidden before.
@@ -1402,11 +1723,11 @@ This release includes critical fixes, exciting new features, and numerous under-
 
 ### ✨ New Features
 
-- **feat**: Presenting the website is now supported on macOS 🚀
-- **feat**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
-- **feat**: Added support for setting the web address from which media should be downloaded 🚀
-- **feat**: Added OBS Studio instant scene picker and overhauled scene picker functionality in settings
-- **feat**: Expanded documentation website to support more languages
+- 🖥️ **Website Presentation on macOS**: Presenting the website is now supported on macOS 🚀
+- ⌨️ **Playback Keyboard Shortcuts**: Introduced keyboard shortcuts for stopping, pausing, and resuming media playback 🚀
+- 🌐 **Custom Media Download Address**: Added support for setting the web address from which media should be downloaded 🚀
+- 🎬 **OBS Instant Scene Picker**: Added OBS Studio instant scene picker and overhauled scene picker functionality in settings
+- 📖 **More Documentation Languages**: Expanded documentation website to support more languages
 
 ### 🔧 Fixes & Improvements
 
@@ -1441,9 +1762,9 @@ This release includes critical fixes, exciting new features, and numerous under-
 
 ### ✨ New Features
 
-- **new**: Added keyboard shortcuts to navigate to the next/previous media item
-- **new**: Added a right-click menu to media items to hide media items and rename them
-- **new**: Trimmed video times are now respected in imported JWL playlists
+- ⌨️ **Media Navigation Shortcuts**: Added keyboard shortcuts to navigate to the next/previous media item
+- 🖱️ **Media Item Right-Click Menu**: Added a right-click menu to media items to hide media items and rename them
+- ✂️ **Trimmed JWL Playlist Import**: Trimmed video times are now respected in imported JWL playlists
 
 ### 🎨 UI/UX
 
@@ -1493,7 +1814,7 @@ This release includes critical fixes, exciting new features, and numerous under-
 
 ### ✨ New Features
 
-- **feat**: Added an option to delete all extra media files for the currently selected day
+- 🗑️ **Delete Extra Media for a Day**: Added an option to delete all extra media files for the currently selected day
 
 ### 🔧 Fixes & Improvements
 

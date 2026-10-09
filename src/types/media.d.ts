@@ -102,6 +102,7 @@ export interface MediaItem {
   subtitlesUrl?: string;
   tag?: Tag;
   textColor?: string;
+  thumbnailStreamUrl?: string;
   thumbnailUrl?: string;
   title: string;
   type: 'divider' | 'media';
@@ -110,6 +111,7 @@ export interface MediaItem {
 
 export interface MediaSection {
   bgColor?: string;
+  documentTitle?: string;
   jwIconKeyword?: string;
   label?: string;
   repeat?: boolean; // Whether the section should repeat
@@ -127,9 +129,14 @@ export type MediaSectionIdentifier =
   | 'wt'
   | string;
 
+export type MeetingCheckStatus = 'checking' | 'complete' | 'error';
+
+export type MeetingCheckStatuses = Record<string, MeetingCheckStatus>;
+
 export interface SongItem {
   duration?: number; // or the correct type for duration
   filesize?: number;
+  isMeetingSong?: boolean;
   path: string;
   remoteUrl?: string;
   title?: string;

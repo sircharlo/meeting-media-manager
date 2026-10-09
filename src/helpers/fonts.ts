@@ -1,19 +1,21 @@
 import type { FontName } from 'src/types';
 
-import { Buffer } from 'buffer/';
+import { Buffer } from 'buffer'; // NOSONAR: this is not nodejs Buffer, it's the browser one
 import { create, type Font } from 'fontkit';
 import {
   fallbackJwIconsGlyphMap,
   keywordToJwIconMapping,
 } from 'src/constants/jw-icons';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { fetchRaw } from 'src/utils/api';
+import { getFilesystemErrorCode } from 'src/shared/filesystem-errors';
+import { fetchRaw, shouldReportCaughtError } from 'src/utils/api';
 import { getFontsPath } from 'src/utils/fs';
+import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { ref } from 'vue';
 
 const { extname, fs, join } = globalThis.electronApi;
-const { ensureDir, exists, readFile, writeFile } = fs;
+const { ensureDir, pathExists, readFile, remove, writeFile } = fs;
 
 let jwIconsGlyphMapPromise: null | Promise<void> = null;
 let jwIconsGlyphMap: null | Record<string, string> = null;
@@ -30,7 +32,7 @@ const DEFAULT_YEARTEXT_FONT: YeartextFontConfig = {
 };
 
 // Maps JwLanguage.script (uppercase) to font config
-// Based on JW.org's jwac.ms-* CSS classes
+// Based on the website's jwac.ms-* CSS classes
 const YEARTEXT_FONTS: Record<string, YeartextFontConfig> = {
   ARABIC: {
     cdnFont: 'NotoNaskhArabic',
@@ -140,7 +142,7 @@ const YEARTEXT_FONTS: Record<string, YeartextFontConfig> = {
 };
 
 // Language-specific overrides (script.langCode → font config)
-// From JW.org CSS: .jwac.ms-SCRIPT.ml-LANG rules
+// From the website's CSS: .jwac.ms-SCRIPT.ml-LANG rules
 const YEARTEXT_LANG_OVERRIDES: Record<string, YeartextFontConfig> = {
   'ARABIC.AJA': {
     cdnFont: 'WTXBZSpecial',
@@ -274,12 +276,31 @@ const getExistingLocalFontPath = async (
   fontName: FontName,
 ) => {
   for (const fontPath of getFontPathCandidates(fontsDir, fontName)) {
-    if (await exists(fontPath)) {
+    if (await pathExists(fontPath)) {
       return fontPath;
     }
   }
 
   return null;
+};
+
+const parseJwIconsGlyphMap = (buffer: Buffer) => {
+  const font = create(buffer) as Font;
+  const characterSet = font.characterSet; // id: dec code point
+  const map: Record<string, string> = {};
+  let unusedGlyphs = 0;
+  for (let i = 0; i < font.numGlyphs; i++) {
+    const glyph = font.getGlyph(i);
+    if (['.notdef', '.null', 'nonmarkingreturn'].includes(glyph.name)) {
+      unusedGlyphs++;
+      continue;
+    }
+    const codePoint = characterSet[glyph.id - unusedGlyphs];
+    if (glyph.name && codePoint) {
+      map[glyph.name] = String.fromCodePoint(codePoint);
+    }
+  }
+  return map;
 };
 
 const buildJwIconsMap = async (fontPath: string) => {
@@ -288,36 +309,54 @@ const buildJwIconsMap = async (fontPath: string) => {
 
   jwIconsGlyphMapPromise = (async () => {
     try {
-      const buffer = await readFile(fontPath);
-      const font = create(buffer) as Font;
-      const characterSet = font.characterSet; // id: dec code point
-      const map: Record<string, string> = {};
-      let unusedGlyphs = 0;
-      for (let i = 0; i < font.numGlyphs; i++) {
-        const glyph = font.getGlyph(i);
-        if (['.notdef', '.null', 'nonmarkingreturn'].includes(glyph.name)) {
-          unusedGlyphs++;
-          continue;
-        }
-        const codePoint = characterSet[glyph.id - unusedGlyphs];
-        if (glyph.name && codePoint) {
-          map[glyph.name] = String.fromCodePoint(codePoint);
+      jwIconsGlyphMap = parseJwIconsGlyphMap(await readFile(fontPath));
+    } catch (error) {
+      // The local font file can be unusable in two ways worth one retry
+      // each: it can vanish between setElementFont() confirming/downloading
+      // it and this read (ENOENT, seen in Sentry as MMM-V2-3EH, likely AV
+      // quarantine on Windows), or it can exist but have unparseable
+      // content (a truncated/corrupted download written to disk without
+      // validation, seen as fontkit's "Unknown font format"). Both are
+      // recoverable the same way: redownload once to get an accurate,
+      // up-to-date glyph map instead of dropping straight to the static
+      // fallback.
+      let recovered = false;
+      let reportedError = error;
+      const isRecoverable =
+        getFilesystemErrorCode(error) === 'ENOENT' ||
+        (error instanceof Error && error.message === 'Unknown font format');
+      if (isRecoverable) {
+        try {
+          // getLocalFontPath() reuses an existing file at this path without
+          // re-downloading, so a corrupted-but-present file (as opposed to
+          // one that's already vanished) has to be cleared out first or the
+          // "retry" would just re-parse the same bad bytes.
+          await remove(fontPath).catch(() => undefined);
+          delete localFontPathPromises['jw-icons-all'];
+          const freshFontPath = await getLocalFontPath('jw-icons-all');
+          jwIconsGlyphMap = parseJwIconsGlyphMap(await readFile(freshFontPath));
+          recovered = true;
+        } catch (retryError) {
+          reportedError = retryError;
         }
       }
-      jwIconsGlyphMap = map;
-      jwIconsGlyphMapVersion.value++;
-    } catch (error) {
-      errorCatcher(error, {
-        contexts: { fn: { fontPath, name: 'buildJwIconsMap' } },
-      });
-      jwIconsGlyphMap = fallbackJwIconsGlyphMap;
-      jwIconsGlyphMapVersion.value++;
+
+      if (!recovered) {
+        errorCatcher(reportedError, {
+          contexts: { fn: { fontPath, name: 'buildJwIconsMap' } },
+        });
+        jwIconsGlyphMap = fallbackJwIconsGlyphMap;
+      }
     }
+    jwIconsGlyphMapVersion.value++;
   })();
   return jwIconsGlyphMapPromise;
 };
 
 export const getJwIconFromKeyword = (keyword: number | string | undefined) => {
+  // Establish a reactive dependency so callers (used directly in templates)
+  // re-render once the glyph map finishes loading asynchronously.
+  void jwIconsGlyphMapVersion.value;
   if (!keyword) return '';
   const icon = keywordToJwIconMapping[keyword.toString()];
   if (!icon) return '';
@@ -341,17 +380,17 @@ export const setElementFont = async (fontName: FontName) => {
         await buildJwIconsMap(fontPath);
       }
       return true;
-    } catch (error) {
-      errorCatcher(error, {
-        contexts: { fn: { fontName, name: 'setElementFont first try' } },
-      });
+    } catch {
+      // The local font file can be transiently unavailable (still
+      // downloading, briefly locked by a sync agent, etc.) - fall back to
+      // loading directly from the CDN URL. setFallbackFont() already
+      // reports its own failure with full context, so this first attempt
+      // isn't reported separately: it's noise when the fallback recovers,
+      // and double reporting when it doesn't.
       const url = useJwStore().fontUrls[fontName];
       const fallbackLoaded = await setFallbackFont(fontName, url);
 
       if (!fallbackLoaded) {
-        errorCatcher(error, {
-          contexts: { fn: { fontName, name: 'setElementFont fallback', url } },
-        });
         fontFacePromises[fontName] = undefined;
       }
 
@@ -366,6 +405,14 @@ const setFallbackFont = async (
   fontName: FontName,
   url: string,
 ): Promise<boolean> => {
+  // 'jw-icons-all' has no baked-in CDN URL: it's discovered dynamically via
+  // updateJwIconsUrl(), so fontUrls['jw-icons-all'] is legitimately '' until
+  // discovery succeeds (offline, first run, or a failed discovery fetch).
+  // Loading a FontFace from a blank URL always rejects with a misleading
+  // NetworkError; the underlying download failure is already reported by
+  // getLocalFontPath(), so give up quietly instead of double-reporting.
+  if (!url) return false;
+
   try {
     const fontFace = new FontFace(fontName, 'url("' + url + '")');
     await fontFace.load();
@@ -392,6 +439,16 @@ const withTimeout = async <T>(
   }
 };
 
+// The font's URL has to be discovered from WOL's CSS, and WOL couldn't be
+// reached (offline, flaky connection, blocked) - an environmental failure,
+// not a bug (MMM-V2-3H3).
+class FontSourceUnreachableError extends Error {
+  constructor(fontName: FontName, cause: unknown) {
+    super(`Could not reach the source of font ${fontName}`, { cause });
+    this.name = 'FontSourceUnreachableError';
+  }
+}
+
 const resolveFontRequest = async (
   fontName: FontName,
   method: 'GET' | 'HEAD',
@@ -405,10 +462,21 @@ const resolveFontRequest = async (
     );
 
   let resolvedUrl = originalUrl;
-  let response = await fetchFont(resolvedUrl);
+  // originalUrl can be empty for jw-icons-all and the two WT yeartext fonts
+  // below (no static fallback — see jw.ts fontUrls getter), so skip
+  // straight to discovering it below instead of issuing a fetch with an
+  // empty URL.
+  let response = resolvedUrl ? await fetchFont(resolvedUrl) : undefined;
 
-  if (!response?.ok && fontName === 'jw-icons-all') {
-    await store.updateJwIconsUrl();
+  const isJwIcons = fontName === 'jw-icons-all';
+  const isDynamicYeartextFont =
+    fontName === 'Wt-BaeumMyungjo' || fontName === 'Wt-ClearText-Bold';
+
+  let discoveryError: unknown;
+  if (!response?.ok && (isJwIcons || isDynamicYeartextFont)) {
+    discoveryError = isJwIcons
+      ? await store.updateJwIconsUrl()
+      : await store.updateYeartextFontUrls();
     const fallbackUrl = store.fontUrls[fontName];
     if (fallbackUrl && fallbackUrl !== originalUrl) {
       resolvedUrl = fallbackUrl;
@@ -416,9 +484,14 @@ const resolveFontRequest = async (
     }
   }
 
+  if (!response && discoveryError !== undefined) {
+    throw new FontSourceUnreachableError(fontName, discoveryError);
+  }
   if (!response?.ok) {
     throw new Error(
-      `Failed to download font: ${response?.statusText || response?.status}`,
+      response
+        ? `Failed to download font: ${response.statusText || response.status}`
+        : `Could not resolve font URL for ${fontName}`,
     );
   }
 
@@ -453,19 +526,31 @@ export const getLocalFontPath = async (fontName: FontName) => {
       return await downloadFont(fontsDir, fontName);
     } catch (error) {
       const fallbackPath = await getExistingLocalFontPath(fontsDir, fontName);
-      errorCatcher(error, {
-        contexts: {
-          fn: {
-            fontName,
-            fontPath: fallbackPath,
-            fontsDir,
-            name: 'getLocalFontPath',
-            url: useJwStore().fontUrls[fontName],
+      const online = useCurrentStateStore().online;
+      if (
+        !(error instanceof FontSourceUnreachableError) &&
+        (await shouldReportCaughtError(error, online))
+      ) {
+        errorCatcher(error, {
+          contexts: {
+            fn: {
+              fontName,
+              fontPath: fallbackPath,
+              fontsDir,
+              name: 'getLocalFontPath',
+              url: useJwStore().fontUrls[fontName],
+            },
           },
-        },
-      });
+        });
+      }
 
       if (!fallbackPath) {
+        // Don't leave a rejected promise cached forever - a transient
+        // failure (network blip during startup) would otherwise permanently
+        // break this font for the rest of the session, since every later
+        // call would keep returning this same rejection even after
+        // connectivity is restored. Mirrors fontFacePromises's reset above.
+        localFontPathPromises[fontName] = undefined;
         throw new Error(
           `Failed to download font ${fontName} and no local copy exists`,
           { cause: error },

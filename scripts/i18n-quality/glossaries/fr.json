@@ -1,0 +1,252 @@
+{
+  "_comment": "Grounded JW terminology for fr, cross-checked against official jw.org pages. Reusable beyond translation-quality review. Regenerate via scripts/i18n-quality/prompts/grounding-agent.md.",
+  "_fetchedAt": "2026-09-10",
+  "_language": "fr",
+  "terms": [
+    {
+      "termEn": "Jehovah's Witnesses",
+      "official": "Témoins de Jéhovah",
+      "sourceUrls": [
+        "https://www.jw.org/fr/infos-pour-representants-de-l-etat/lexique/"
+      ],
+      "confidence": "high",
+      "notes": "Lexique defines it as \"Groupe religieux chrétien dont les membres adorent Jéhovah Dieu et diffusent activement l'enseignement contenu dans la Bible.\""
+    },
+    {
+      "termEn": "Kingdom Hall",
+      "official": "Salle du Royaume",
+      "sourceUrls": [
+        "https://www.jw.org/fr/infos-pour-representants-de-l-etat/lexique/",
+        "https://wol.jw.org/fr/wol/d/r30/lp-f/301995012"
+      ],
+      "confidence": "high",
+      "notes": "Official/media-facing Lexique gives the full form \"salle du Royaume des Témoins de Jéhovah\"; congregation-facing publications consistently shorten this to \"Salle du Royaume\"."
+    },
+    {
+      "termEn": "circuit overseer",
+      "official": "responsable de circonscription",
+      "sourceUrls": [
+        "https://www.jw.org/fr/infos-pour-representants-de-l-etat/lexique/",
+        "https://wol.jw.org/fr/wol/d/r30/lp-f/1200271237"
+      ],
+      "confidence": "high",
+      "notes": "Current official term per both the Lexique (\"Ancien expérimenté qui, sous la conduite de la filiale, visite en général deux fois par an chaque assemblée d'une circonscription\") and a WOL index heading. \"Surveillant de circonscription\" is an older, superseded French title (listed among historical names on the WOL page) - watch for it as a stale translation."
+    },
+    {
+      "termEn": "congregation",
+      "official": "congrégation",
+      "sourceUrls": [
+        "https://wol.jw.org/fr/wol/d/r30/lp-f/201984244",
+        "https://www.jw.org/fr/infos-pour-representants-de-l-etat/lexique/"
+      ],
+      "confidence": "high",
+      "notes": "IMPORTANT false-friend risk: the official government/media Lexique defines \"congregation\" as \"assemblée locale\", not \"congrégation\" - and jw.org also uses bare \"assemblée\" to mean congregation in some official/formal text (e.g. an index heading renders \"Congregation Bible Study\" as \"étude biblique de l'assemblée\"). Everyday congregation-facing publications overwhelmingly use \"congrégation\" instead, which is almost certainly what the app should use, but a reviewer should not flag \"assemblée locale\" as wrong if encountered - and should double check any use of plain \"assemblée\" to make sure it isn't ambiguous with assembly/convention senses (see \"convention\"/\"assembly\" entries)."
+    },
+    {
+      "termEn": "elder",
+      "official": "ancien",
+      "sourceUrls": [
+        "https://www.jw.org/fr/infos-pour-representants-de-l-etat/lexique/"
+      ],
+      "confidence": "high",
+      "notes": "Lexique: \"Homme Témoin de Jéhovah, exercé dans la doctrine, choisi pour enseigner et prendre soin de l'assemblée [= la congrégation].\""
+    },
+    {
+      "termEn": "presiding overseer",
+      "official": "surveillant-président",
+      "sourceUrls": ["https://wol.jw.org/fr/wol/d/r30/lp-f/301995012"],
+      "confidence": "medium",
+      "notes": "Not covered by jw.org's Lexique (an internal congregation role, not explained to media). Found used on a WOL congregation-history page (\"frère Sahaï a été nommé directeur de groupe (surveillant-président)\"). Could not cross-check against a second independent source, and note the underlying English role/title has reportedly evolved in recent years (\"coordinator of the body of elders\"), so this may not reflect the very latest usage - worth a fresh spot-check if precision matters."
+    },
+    {
+      "termEn": "ministerial servant",
+      "official": "serviteur ministériel",
+      "sourceUrls": [
+        "https://wol.jw.org/fr/wol/d/r30/lp-f/301995012",
+        "https://www.jw.org/fr/infos-pour-representants-de-l-etat/lexique/"
+      ],
+      "confidence": "high",
+      "notes": "\"Serviteur ministériel\" is the term used throughout congregation/publication content (e.g. \"les anciens et les serviteurs ministériels\"). Note the Lexique (aimed at journalists/officials) instead uses a plain-language gloss, \"assistant\" (\"Homme ... choisi pour aider les anciens dans des tâches pratiques\") - an app is far more likely to use \"serviteur ministériel\"."
+    },
+    {
+      "termEn": "pioneer",
+      "official": "pionnier",
+      "sourceUrls": [
+        "https://www.jw.org/fr/infos-pour-representants-de-l-etat/lexique/"
+      ],
+      "confidence": "high",
+      "notes": "Lexique: \"Terme utilisé pour un Témoin baptisé qui s'engage à consacrer à l'évangélisation publique un certain nombre d'heures.\""
+    },
+    {
+      "termEn": "field service",
+      "official": "service du champ",
+      "sourceUrls": [
+        "https://wol.jw.org/fr/wol/d/r30/lp-f/201977088",
+        "https://www.jw.org/fr/infos-pour-representants-de-l-etat/lexique/"
+      ],
+      "confidence": "high",
+      "notes": "\"Service du champ\" is the term historically and currently used in congregation-facing content (e.g. \"réunions pour le service du champ\", \"Sujets de conversation pour le service du champ\"). Note jw.org's Lexique does not have a separate \"field service\" entry at all - it merges English's \"Field service\" and \"Preaching\" into one French entry, \"prédication, ou ministère\" (\"L'activité des Témoins de Jéhovah consistant à faire connaître leurs croyances\"). Either \"service du champ\" or \"prédication\"/\"ministère\" could plausibly appear in-app depending on register."
+    },
+    {
+      "termEn": "Memorial",
+      "official": "Mémorial",
+      "sourceUrls": [
+        "https://www.jw.org/fr/infos-pour-representants-de-l-etat/lexique/"
+      ],
+      "confidence": "high",
+      "notes": "Full official name per the Lexique is \"Mémorial du sacrifice de Jésus\" (\"Commémoration annuelle du sacrifice de Jésus Christ\"); congregation content commonly shortens this to just \"le Mémorial\", matching the seed's short English form."
+    },
+    {
+      "termEn": "Congregation Bible Study",
+      "official": "étude biblique de la congrégation",
+      "sourceUrls": ["https://wol.jw.org/fr/wol/d/r30/lp-f/1200276966"],
+      "confidence": "medium",
+      "notes": "Not covered by the Lexique. A WOL index page for this exact meeting part is titled \"ÉTUDE BIBLIQUE DE L'ASSEMBLÉE\" (using \"assemblée\" in its congregation sense - see the \"congregation\" entry's false-friend note), with \"étude de livre de la congrégation\" listed as a formerly-used name. Search results paraphrasing current meeting-workbook text used \"étude biblique de la congrégation\", which is likely closer to what appears in the app, but this could not be independently verified verbatim from a fetched page - worth a spot check if precision matters."
+    },
+    {
+      "termEn": "midweek meeting",
+      "official": "réunion de semaine",
+      "sourceUrls": [
+        "https://www.jw.org/fr/infos-pour-representants-de-l-etat/lexique/"
+      ],
+      "confidence": "high",
+      "notes": "Lexique: \"Réunion hebdomadaire de l'assemblée [= la congrégation] locale tenue généralement un soir de semaine.\" Confirmed independently by a matching WOL index heading (\"RÉUNION DE SEMAINE\"). A variant \"réunion de milieu de semaine\" also appears in some body text but the Lexique's \"réunion de semaine\" is the canonical short form."
+    },
+    {
+      "termEn": "weekend meeting",
+      "official": "réunion publique",
+      "sourceUrls": [
+        "https://www.jw.org/fr/infos-pour-representants-de-l-etat/lexique/",
+        "https://wol.jw.org/fr/wol/d/r30/lp-f/1200277375"
+      ],
+      "confidence": "high",
+      "notes": "Lexique: \"Réunion hebdomadaire de l'assemblée locale tenue généralement le week-end durant laquelle est présenté un discours biblique de 30 minutes.\" A WOL index heading instead uses \"RÉUNION DE WEEK-END\" for the same meeting - this more literal/colloquial form is plausibly what a scheduling-oriented app like this one actually displays, so treat both as acceptable and check app context."
+    },
+    {
+      "termEn": "public talk",
+      "official": "discours public",
+      "sourceUrls": ["https://wol.jw.org/fr/wol/d/r30/lp-f/202009287"],
+      "confidence": "medium",
+      "notes": "Not a separate Lexique entry (folded into the \"réunion publique\" definition as \"un discours biblique de 30 minutes\"). \"Discours public\" is well attested in congregation content as the name of this meeting segment."
+    },
+    {
+      "termEn": "Watchtower Study",
+      "official": "étude de la Tour de Garde",
+      "sourceUrls": ["https://wol.jw.org/fr/wol/d/r30/lp-f/1102014937"],
+      "confidence": "medium",
+      "notes": "Not a Lexique entry. Attested via search-indexed jw.org content describing the second half of the weekend meeting; could not fetch a page quoting the exact phrase verbatim, so treat as reasonably but not fully confirmed."
+    },
+    {
+      "termEn": "The Watchtower",
+      "official": "La Tour de Garde annonce le Royaume de Jéhovah",
+      "sourceUrls": [
+        "https://www.jw.org/fr/infos-pour-representants-de-l-etat/lexique/"
+      ],
+      "confidence": "high",
+      "notes": "Full official title per the Lexique (\"Principale revue publiée et diffusée par les Témoins de Jéhovah\"). In-app and everyday usage almost always shortens this to \"La Tour de Garde\"."
+    },
+    {
+      "termEn": "Awake!",
+      "official": "Réveillez-vous !",
+      "sourceUrls": [
+        "https://www.jw.org/fr/infos-pour-representants-de-l-etat/lexique/"
+      ],
+      "confidence": "high",
+      "notes": "Confirmed verbatim, including the exclamation mark, on the Lexique. Note French convention requires a space before \"!\" (\"Réveillez-vous !\"). Formerly published as \"L'Âge d'Or\" (1924) per the same entry."
+    },
+    {
+      "termEn": "New World Translation",
+      "official": "La Bible. Traduction du monde nouveau",
+      "sourceUrls": [
+        "https://www.jw.org/fr/infos-pour-representants-de-l-etat/lexique/"
+      ],
+      "confidence": "high",
+      "notes": "Current title per the Lexique. Older jw.org/WOL content uses the pre-revision full title \"Les Saintes Écritures — Traduction du monde nouveau\"; both refer to the same Bible translation, but the Lexique's shorter modern title is likely the current standard."
+    },
+    {
+      "termEn": "JW Library",
+      "official": "JW Library",
+      "sourceUrls": ["https://www.jw.org/en/online-help/jw-library/"],
+      "confidence": "high",
+      "notes": "App/proper-noun name is not translated in French jw.org content, consistent with the seed's own instruction not to translate it."
+    },
+    {
+      "termEn": "jw.org",
+      "official": "jw.org",
+      "sourceUrls": ["https://www.jw.org/fr/"],
+      "confidence": "high",
+      "notes": "Domain/proper noun kept as-is; the French site's own title tag reads \"Les Témoins de Jéhovah : site officiel | jw.org | Français\", and elsewhere jw.org is introduced as \"le site officiel des Témoins de Jéhovah\" - matching the app's in-context phrase \"the official website of jw.org\"."
+    },
+    {
+      "termEn": "songbook",
+      "official": "recueil de cantiques",
+      "sourceUrls": ["https://wol.jw.org/fr/wol/d/r30/lp-f/1200275422"],
+      "confidence": "medium",
+      "notes": "Confirmed as a generic category label via a WOL index page (\"Recueils de cantiques\"). Not a Lexique entry. The current specific songbook title in use is \"Chantons joyeusement pour Jéhovah\"; older editions include \"Louons Jéhovah par nos chants\" and \"Chantons à Jéhovah\"."
+    },
+    {
+      "termEn": "convention",
+      "official": "assemblée régionale / assemblée internationale",
+      "sourceUrls": [
+        "https://www.jw.org/fr/infos-pour-representants-de-l-etat/lexique/"
+      ],
+      "confidence": "high",
+      "notes": "IMPORTANT: French has no standalone word for \"convention\" in this sense - jw.org always uses \"assemblée\" plus a qualifier. Per the Lexique: \"assemblée régionale\" = \"Rassemblement annuel de trois jours qui réunit plusieurs assemblées locales d'une région donnée\"; \"assemblée internationale\" = \"Rassemblement de trois jours ... organisé ... tous les ans\" (larger/international scope). Do not flag a translation using \"assemblée\" instead of a literal \"convention\" as wrong."
+    },
+    {
+      "termEn": "assembly",
+      "official": "assemblée de circonscription",
+      "sourceUrls": [
+        "https://www.jw.org/fr/infos-pour-representants-de-l-etat/lexique/"
+      ],
+      "confidence": "high",
+      "notes": "Per the Lexique: \"Rassemblement de plusieurs assemblées locales de Témoins de Jéhovah sur une journée, deux fois par an\" - matches the seed's description of a gathering smaller than a convention. See the \"convention\" entry for the broader \"assemblée\" false-friend note, and the \"congregation\" entry for the unrelated sense of bare \"assemblée\" meaning congregation."
+    },
+    {
+      "termEn": "theocratic school",
+      "official": "école théocratique",
+      "sourceUrls": ["https://wol.jw.org/fr/wol/d/r30/lp-f/201977406"],
+      "confidence": "low",
+      "notes": "Only found attested on a 1978-era WOL article about the discontinued \"Theocratic Ministry School\" (part of the old midweek meeting structure eliminated in the 2016 meeting restructuring). No current jw.org reference found. Not in the Lexique. If the app text refers to a still-active program (e.g. a school held in connection with assemblies/conventions), the current official French name could differ - treat this rendering with caution and verify against actual current app context before using it as a check."
+    },
+    {
+      "termEn": "sign language",
+      "official": "langue des signes",
+      "sourceUrls": ["https://www.jw.org/en/library/jw-meeting-workbook/"],
+      "confidence": "medium",
+      "notes": "Generic compound term, well established across jw.org's multilingual infrastructure (e.g. French Sign Language content is labelled \"langue des signes française\", locale codes such as sgn-CD/lsf). Not a dedicated Lexique entry and no single definitional quote was found, hence medium rather than high confidence."
+    },
+    {
+      "termEn": "meeting workbook",
+      "official": "Cahier pour la réunion Vie chrétienne et ministère",
+      "sourceUrls": ["https://www.jw.org/en/library/jw-meeting-workbook/"],
+      "confidence": "high",
+      "notes": "Full official title. Commonly shortened in monthly issue titles to \"Cahier Vie et ministère\" (e.g. \"Cahier Vie et ministère | Novembre-décembre 2025\") - either form should be acceptable in-app."
+    },
+    {
+      "termEn": "yeartext",
+      "official": "texte de l'année",
+      "sourceUrls": ["https://wol.jw.org/fr/wol/d/r30/lp-f/1200276311"],
+      "confidence": "high",
+      "notes": "Confirmed via a WOL index heading (\"Texte de l'année\") plus a concrete example - the 2025 yeartext was rendered as \"Rendez à Jéhovah la gloire qui revient à son nom\" (Psaume 96:8)."
+    },
+    {
+      "termEn": "branch office",
+      "official": "filiale",
+      "sourceUrls": [
+        "https://www.jw.org/fr/infos-pour-representants-de-l-etat/lexique/"
+      ],
+      "confidence": "high",
+      "notes": "Lexique entry \"filiale, ou siège national\": \"Le centre administratif d'un comité de filiale utilisé pour superviser les activités religieuses des Témoins de Jéhovah dans un ou plusieurs pays.\" The informal synonym \"Béthel\" is also common in congregation-facing content."
+    },
+    {
+      "termEn": "Governing Body",
+      "official": "Collège central des Témoins de Jéhovah",
+      "sourceUrls": [
+        "https://www.jw.org/fr/infos-pour-representants-de-l-etat/lexique/"
+      ],
+      "confidence": "high",
+      "notes": "Lexique: \"Petit groupe d'anciens choisis pour prendre soin des besoins spirituels des Témoins de Jéhovah du monde entier.\" Commonly shortened to \"Collège central\" in body text."
+    }
+  ]
+}

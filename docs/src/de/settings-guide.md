@@ -2,7 +2,7 @@
 
 Dieses umfassende Handbuch erklärt alle in M³ verfügbaren Einstellungen, organisiert nach Kategorien. Das Verständnis dieser Einstellungen hilft Ihnen, M³ so zu konfigurieren, dass es perfekt für die Bedürfnisse Ihrer Versammlung funktioniert.
 
-## Anwendungskonfiguration {#application-configuration}
+## General {#application-configuration}
 
 ### Anzeigesprache {#display-language}
 
@@ -140,7 +140,7 @@ Die Woche des nächsten Besuchs des Kreisaufsehers.
 
 <!-- **Setting**: `memorialDate` -->
 
-Das Datum des nächsten Gedenkfestes.
+The date of the next Memorial celebration.
 
 **Format**: MM/TT/JJJJ
 
@@ -157,21 +157,27 @@ Diese Einstellungen ermöglichen es Ihnen, vorübergehende Änderungen an Ihrem 
 - **Neuer Tag (Wochenende)**: Neuer Tag für die Zusammenkunft am Wochenende
 - **Neue Zeit (Wochenende)**: Neue Zeit für die Zusammenkunft am Wochenende
 
-### Automatische Terminplan-Updates {#automatic-meeting-schedule-updates}
+### Automatic Meeting Schedule Updates {#automatic-meeting-schedule-updates}
 
 <!-- **Setting**: `enableAutomaticMeetingScheduleUpdates` -->
 
-Wenn aktiviert, prüft M3 regelmäßig die offizielle Website der Zeugen Jehovas auf Tag- und Uhrzeitänderungen und aktualisiert das aktuelle Profil automatisch.
+When enabled, M³ periodically checks the official website of Jehovah's Witnesses for meeting day and time changes and updates the current profile automatically.
 
-Dies funktioniert nur für Profile, die mit der Gemeindesuche hinzugefügt wurden und deren Kongregation Name nicht manuell geändert wurde. Wenn die Synchronisierung deaktiviert wurde, weil der Name der Kongregation geändert wurde, verwenden Sie **Zeitplan synchronisieren** um das Profil erneut zu verknüpfen.
+This only works for profiles that were added with congregation lookup and whose congregation name has not been manually changed. If synchronization was disabled because the congregation name changed, use **Enable schedule sync** to link the profile again.
 
-#### Meeting-Zeitplan aktualisieren {#refresh-meeting-schedule}
+#### Enable Schedule Sync {#relink-congregation}
+
+<!-- **Setting**: `relinkCongregationButton` -->
+
+Re-links the current profile to congregation lookup so automatic meeting day and time updates can resume. Only shown once the congregation name has been changed manually, since that's what breaks the link in the first place.
+
+#### Refresh Meeting Schedule {#refresh-meeting-schedule}
 
 <!-- **Setting**: `reSyncMeetingScheduleButton` -->
 
-Synchronisieren Sie den aktuellen und zukünftigen Terminplan manuell mit den Informationen der offiziellen Website.
+Manually synchronize the current and future meeting schedule with the information from the official website.
 
-## Medienabruf und -wiedergabe {#media-retrieval-and-playback}
+## Media & Playback {#media-retrieval-and-playback}
 
 ### Getaktete Verbindung {#metered-connection}
 
@@ -189,11 +195,11 @@ Aktivieren Sie die Medienanzeigefunktionalität. Dies ist erforderlich, um Medie
 
 **Standard**: `false`
 
-#### Medienvorschau aktivieren {#enable-media-preview}
+#### Enable Media Preview {#enable-media-preview}
 
 <!-- **Setting**: `enableMediaPreview` -->
 
-Zeigt eine Live-Vorschau des Medienfensters an, während ein Bild oder Video angezeigt wird.
+Show a live preview of the media window while an image or video is being displayed.
 
 **Standard**: `true`
 
@@ -241,6 +247,107 @@ Lautstärkepegel für Hintergrundmusik (1-100%).
 
 **Standard**: 100%
 
+### Playback and Download Options {#media-display}
+
+<!-- This section covers mediaRetrievalPlayback's `media-display` settings subgroup -
+these control the media window's playback behavior and which downloaded media is
+filtered out, as distinct from the "Media Display" section above (which is about
+whether the media window feature is enabled at all). -->
+
+#### Überblendungen für Medienfenster aktivieren {#enable-media-window-fade-transitions}
+
+<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+
+Aktivieren Sie Ein-/Ausblendübergänge beim Anzeigen oder Ausblenden des Medienfensters.
+
+**Standard**: `true`
+
+#### Enable Playback Speed Control {#enable-playback-speed-control}
+
+<!-- **Setting**: `enablePlaybackSpeedControl` -->
+
+Allow audio and video playback speed to be adjusted from the media item's context menu.
+
+**Standard**: `false`
+
+#### Medienlogo ausblenden {#hide-media-logo}
+
+<!-- **Setting**: `hideMediaLogo` -->
+
+Blenden Sie das Logo im Medienfenster aus.
+
+**Standard**: `false`
+
+#### Maximale Auflösung {#maximum-resolution}
+
+<!-- **Setting**: `maxRes` -->
+
+Maximale Auflösung für heruntergeladene Mediendateien.
+
+**Options**: 240p, 360p, 480p, 720p, 1080p
+
+**Standard**: 720p
+
+#### Gedruckte Medien einbeziehen {#include-printed-media}
+
+<!-- **Setting**: `includePrinted` -->
+
+Schließen Sie Medien aus den gedruckten Publikationen in Medien-Downloads ein.
+
+**Standard**: `true`
+
+#### Fußnoten ausschließen {#exclude-footnotes}
+
+<!-- **Setting**: `excludeFootnotes` -->
+
+Schließen Sie Fußnotenbilder nach Möglichkeit aus Medien-Downloads aus.
+
+**Standard**: `false`
+
+#### Exclude Additional Watchtower Study Videos {#exclude-additional-watchtower-study-videos}
+
+<!-- **Setting**: `excludeWtParagraphVideos` -->
+
+Exclude additional videos that are referenced in Watchtower Study paragraphs.
+
+**Standard**: `false`
+
+#### Exclude Congregation Bible Study Videos {#exclude-cbs-pubs}
+
+<!-- **Setting**: `excludeCbsPubs` -->
+
+Choose publications whose referenced videos should not be shown during the Congregation Bible Study. Search by publication title or symbol.
+
+**Default**: Walk Courageously With God (`wcg`)
+
+#### Medien aus der Lehren-Broschüre ausschließen {#exclude-theocratic-ministry-school}
+
+<!-- **Setting**: `excludeTh` -->
+
+Schließen Sie Medien aus der Lehren-Broschüre (th) aus Medien-Downloads aus.
+
+**Standard**: `true`
+
+### Untertitel {#subtitles}
+
+#### Untertitel aktivieren {#enable-subtitles}
+
+<!-- **Setting**: `enableSubtitles` -->
+
+Aktivieren Sie die Untertitelunterstützung für die Medienwiedergabe.
+
+**Standard**: `false`
+
+#### Untertitelsprache {#subtitle-language}
+
+<!-- **Setting**: `langSubtitles` -->
+
+Sprache für Untertitel (kann von der Mediensprache abweichen).
+
+**Optionen**: Alle verfügbaren Sprachen von der offiziellen Website der Zeugen Jehovas
+
+**Standard**: Keine
+
 ### Cache-Verwaltung {#cache-management}
 
 #### Extra-Cache aktivieren {#enable-extra-cache}
@@ -267,6 +374,50 @@ Löschen Sie alte zwischengespeicherte Dateien automatisch, um Speicherplatz zu 
 
 **Standard**: `true`
 
+### Pinyin Song Titles {#pinyin-song-titles}
+
+#### Prefer Pinyin Songs {#enable-pinyin-songs}
+
+<!-- **Setting**: `enablePinyinSongs` -->
+
+When a pinyin version of a meeting song is found in the pinyin song folder, use it instead of the standard song.
+
+**Standard**: `false`
+
+#### Pinyin Song Folder {#pinyin-song-folder}
+
+<!-- **Setting**: `pinyinSongFolder` -->
+
+Folder containing pinyin video songs (e.g. `sjjm_s-Pi_CHS_066_r720P.mp4`). When a pinyin file matching the meeting song number is found, it will be played instead of the standard song.
+
+**Standard**: Leer
+
+### Medienexport {#settings-guide-media-export}
+
+#### Automatischen Medienexport aktivieren {#enable-media-auto-export}
+
+<!-- **Setting**: `enableMediaAutoExport` -->
+
+Exportieren Sie Mediendateien automatisch in einen angegebenen Ordner.
+
+**Standard**: `false`
+
+#### Medienexport-Ordner {#media-export-folder}
+
+<!-- **Setting**: `mediaAutoExportFolder` -->
+
+Ordnerpfad, in dem Mediendateien automatisch exportiert werden.
+
+**Standard**: Leer
+
+#### Dateien in MP4 konvertieren {#convert-files-to-mp4}
+
+**Einstellung**: `convertFilesToMp4`
+
+Konvertieren Sie exportierte Mediendateien in das MP4-Format für eine bessere Kompatibilität.
+
+**Standard**: `false`
+
 ### Ordnerüberwachung {#settings-guide-folder-monitoring}
 
 #### Ordnerüberwachung aktivieren {#enable-folder-watcher}
@@ -284,6 +435,40 @@ Löschen Sie alte zwischengespeicherte Dateien automatisch, um Speicherplatz zu 
 Der Ordnerpfad, der auf neue Mediendateien überwacht werden soll.
 
 **Standard**: Leer
+
+## Meeting Timer {#meeting-timer}
+
+### Enable Meeting Timer {#enable-meeting-timer}
+
+<!-- **Setting**: `enableTimerDisplay` -->
+
+Enable a separate timer window for timing meeting parts. This is a beta feature and should only be enabled if approved locally.
+
+**Standard**: `false`
+
+### Timer Window Behavior {#timer-window-behavior}
+
+<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
+
+Configure whether the timer window opens automatically, whether participant timers count up or down by default, whether the clock uses 12-hour or 24-hour time, and whether the current timer value is shown on the action island timer button.
+
+### Timer Display Formats {#timer-display-formats}
+
+<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
+
+Choose analog or digital display formats for the time of day and countdown timers. The countdown warning indicator can shift the analog countdown ring toward a warning color during the final minute.
+
+### Meeting Countdown and Schedule Status {#meeting-countdown-and-schedule-status}
+
+<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
+
+Show a countdown before scheduled meetings and optionally display whether the meeting is ahead of or behind schedule. The meeting countdown appears only on the timer display, not on the main media display.
+
+### Timer Appearance and Overtime {#timer-appearance-and-overtime}
+
+<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
+
+Customize the timer text size and colors, and configure overtime indicators such as alternate colors, blinking, and showing only the elapsed overtime amount in count-up mode.
 
 ## Integrationen {#integrations}
 
@@ -304,6 +489,14 @@ Aktivieren Sie die Integrationsfunktionen für Zoom-Meetings.
 Tastenkürzel zum Auslösen der Zoom-Bildschirmfreigabe.
 
 **Standard**: Keine
+
+#### Auto-Focus Media Window {#zoom-auto-focus-media-window}
+
+<!-- **Setting**: `zoomAutoFocusMediaWindow` -->
+
+Automatically focus the media window after Zoom screen sharing starts. This is usually not required, but can help on some systems if the media window regularly loses focus after screen sharing starts.
+
+**Standard**: `false`
 
 ### OBS Studio-Integration {#settings-guide-obs-integration}
 
@@ -354,7 +547,7 @@ Konfigurieren Sie, welche OBS-Szenen für verschiedene Zwecke verwendet werden s
 - **Szene nach Medien wechseln**: Kehren Sie nach Medien automatisch zur vorherigen Szene zurück
 - **Vorherige Szene merken**: Merken Sie sich die vorherige Szene und stellen Sie sie wieder her
 - **Symbole ausblenden**: Blenden Sie OBS-bezogene Symbole in der Benutzeroberfläche aus
-- **Aufnahmesteuerung**: Steuerelemente anzeigen, die die OBS-Aufnahme von M3 starten und stoppen
+- **Recording Controls**: Show controls that start and stop OBS recording from M³
 
 :::warning Wichtiger Hinweis
 
@@ -408,59 +601,25 @@ Kürzel, das ausgelöst wird, wenn das letzte Lied während einer Zusammenkunft 
 
 **Standard**: Keine
 
-### Besprechungsaufnahmen {#meeting-recordings}
+### Meeting Recordings {#meeting-recordings}
 
-#### Aktiviere externe Aufnahme-App Integration {#enable-external-recording-app-integration}
+#### Enable External Recording App Integration {#enable-external-recording-app-integration}
 
 <!-- **Setting**: `recordingEnable` -->
 
-Lassen Sie M3 eine separate Aufzeichnungsanwendung mit Tastaturkürzel steuern. Dies speichert nicht innerhalb von M3; es sendet die konfigurierten Verknüpfungen, wenn Sie die **Aufnahme starten** oder **Stop Recording** im Popup für Besprechungen drücken.
+Let M³ control a separate recording application with keyboard shortcuts. This does not record inside M³; it sends the configured shortcuts when you press **Start Recording** or **Stop Recording** in the meeting recordings popup.
 
-Diese Option wird ausgeblendet, wenn OBS Aufnahme-Steuerelemente aktiviert sind. Wenn Sie OBS Studio verwenden, verwenden Sie stattdessen die OBS-Aufnahme-Steuerelemente in der OBS-Integration.
+This option is hidden when OBS recording controls are enabled. If you use OBS Studio, use the OBS recording controls in the OBS integration instead.
 
 **Standard**: `false`
 
-#### Aufnahme von Verknüpfungen und Ordner {#Aufnahme-Verknüpfungen und Ordner} {#recording-shortcuts-and-folder}
+#### Recording Shortcuts and Folder {#recording-shortcuts-and-folder}
 
 <!-- **Settings**: `recordingStartShortcut`, `recordingStopShortcut`, `recordingFolder` -->
 
-Konfigurieren Sie das Tastaturkürzel, das die Aufnahme beginnt, die optionale Verknüpfung, die die Aufnahme stoppt, und den Ordner, in dem die externe App Aufnahmen speichert. Wenn kein Stopp-Verknüpfung angegeben wird, verwendet M3 den Startabschnitt. Wenn ein Ordner konfiguriert ist, zeigt M3 einen Knopf, um ihn zu öffnen.
+Configure the keyboard shortcut that starts recording, the optional shortcut that stops recording, and the folder where the external app saves recordings. If no stop shortcut is provided, M³ reuses the start shortcut. When a folder is configured, M³ shows a button to open it.
 
-### Meeting-Timer {#meeting-timer}
-
-#### Meeting Timer {#Enable-Meeting Timer} aktivieren {#enable-meeting-timer}
-
-<!-- **Setting**: `enableTimerDisplay` -->
-
-Aktivieren Sie ein separates Timer-Fenster für das Timing von Meetingteilen. Dies ist eine Beta-Funktion und sollte nur aktiviert werden, wenn sie lokal genehmigt wird.
-
-**Standard**: `false`
-
-#### Timer-Fenster Verhalten {#timer-window-behavior}
-
-<!-- **Settings**: `timerAutoOpen`, `timerMode`, `timerHourFormat`, `timerShowOnActionIsland` -->
-
-Legen Sie fest, ob sich das Timer-Fenster automatisch öffnet, ob die Teilnehmer-Timer standardmäßig hochgezählt oder nicht angezeigt werden ob die Uhr 12 Stunden oder 24 Stunden dauert, und ob der aktuelle Timerwert auf dem Actionsinsel-Timer angezeigt wird.
-
-#### Timer-Anzeigeformate {#timer-display-formats}
-
-<!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
-
-Wählen Sie analoge oder digitale Anzeigeformate für Tageszeit und Countdown-Timer. Der Countdown-Warnindikator kann den analogen Countdownring in der letzten Minute auf eine Warnfarbe umstellen.
-
-#### Meeting-Countdown und Zeitplan Status {#meeting-countdown-and-schedule-status}
-
-<!-- **Settings**: `timerEnableMeetingCountdown`, `timerMeetingCountdownMinutes`, `timerEnableMeetingAheadBehind` -->
-
-Zeige einen Countdown vor geplanten Meetings und wahlweise anzeigen, ob das Meeting vor oder hinter dem Zeitplan liegt. Der Meeting-Countdown erscheint nur auf der Timer-Anzeige und nicht auf der Hauptmedien-Anzeige.
-
-#### Timer Aussehen und Überstunden {#Timer-Aussehen und Überstunden} {#timer-appearance-and-overtime}
-
-<!-- **Settings**: `timerBackgroundColor`, `timerTextColor`, `timerTextSize`, `timerOvertimeIndicator`, `timerOvertimeBackgroundColor`, `timerOvertimeTextColor`, `timerOvertimeAnimation`, `timerOvertimeShowAmountOnly` -->
-
-Passen Sie Größe und Farbe des Timers an und konfigurieren Sie Überstundenindikatoren wie alternative Farben, blinken und nur die vergangene Überstundenmenge im Zählmodus anzeigen.
-
-## Erweiterte Einstellungen {#advanced-settings}
+## Interface & Shortcuts {#interface-shortcuts}
 
 ### Tastenkürzel {#settings-guide-keyboard-shortcuts}
 
@@ -483,123 +642,51 @@ Konfigurieren Sie Kürzel für die Medienwiedergabe:
 - **Medien stoppen**: Medienwiedergabe stoppen
 - **Musik umschalten**: Hintergrundmusik umschalten
 
-### Medienanzeige {#media-display}
+### Add More Media Button {#add-more-media-button}
 
-#### Überblendungen für Medienfenster aktivieren {#enable-media-window-fade-transitions}
+#### Sections with an Add Media Button {#add-media-button-sections}
 
-<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+<!-- **Setting**: `addMediaButtonSections` -->
 
-Aktivieren Sie Ein-/Ausblendübergänge beim Anzeigen oder Ausblenden des Medienfensters.
+Choose which meeting sections show their own button for adding your own media, in addition to the "Add media" button in the top toolbar, which always works for every section.
 
-**Standard**: `true`
+**Default**: Public Talk, Living as Christians, Circuit Overseer's Visit, and Custom sections
 
-#### Playback Speed Control {#enable-playback-speed control} aktivieren {#enable-playback-speed-control}
+#### Compact Add Media Button {#compact-add-media-button}
 
-<!-- **Setting**: `enablePlaybackSpeedControl` -->
+<!-- **Setting**: `compactAddMediaButton` -->
 
-Ermöglicht die Anpassung der Audio- und Video-Wiedergabegeschwindigkeit aus dem Kontextmenü des Medien-Elements.
-
-**Standard**: `false`
-
-#### Medienlogo ausblenden {#hide-media-logo}
-
-<!-- **Setting**: `hideMediaLogo` -->
-
-Blenden Sie das Logo im Medienfenster aus.
-
-**Standard**: `false`
-
-#### Maximale Auflösung {#maximum-resolution}
-
-<!-- **Setting**: `maxRes` -->
-
-Maximale Auflösung für heruntergeladene Mediendateien.
-
-**Optionen**: 240p, 360p, 480p, 720p, 1080p
-
-**Standard**: 720p
-
-#### Gedruckte Medien einbeziehen {#include-printed-media}
-
-<!-- **Setting**: `includePrinted` -->
-
-Schließen Sie Medien aus den gedruckten Publikationen in Medien-Downloads ein.
+Only show an icon for the "Add more media"/"Add a song" button in section headers. When disabled, the button also shows text alongside the icon when there's enough room.
 
 **Standard**: `true`
 
-#### Fußnoten ausschließen {#exclude-footnotes}
+### Media Drag Handle {#media-drag-handle}
 
-<!-- **Setting**: `excludeFootnotes` -->
+#### Show Drag Handle {#show-media-drag-handle}
 
-Schließen Sie Fußnotenbilder nach Möglichkeit aus Medien-Downloads aus.
+<!-- **Setting**: `showMediaDragHandle` -->
 
-**Standard**: `false`
-
-#### Exklusive Videos für zusätzliche Wachturmstudien {#exclude-additional-watchtower-study-videos}
-
-<!-- **Setting**: `excludeWtParagraphVideos` -->
-
-Ausgenommen sind zusätzliche Videos, auf die in den Absätzen von Watchtower Study verwiesen wird.
-
-**Standard**: `false`
-
-#### Medien aus der Lehren-Broschüre ausschließen {#exclude-theocratic-ministry-school}
-
-<!-- **Setting**: `excludeTh` -->
-
-Schließen Sie Medien aus der Lehren-Broschüre (th) aus Medien-Downloads aus.
+Show a small handle on each media item for dragging it to reorder. Media items can always be reordered by dragging anywhere on them; this only affects whether the handle icon itself is shown.
 
 **Standard**: `true`
 
-### Untertitel {#subtitles}
+### Before/After Meeting Quick Actions {#before-after-meeting-quick-actions}
 
-#### Untertitel aktivieren {#enable-subtitles}
+#### Show Meeting Quick Actions {#enable-meeting-quick-actions}
 
-<!-- **Setting**: `enableSubtitles` -->
+<!-- **Setting**: `enableMeetingQuickActions` -->
 
-Aktivieren Sie die Untertitelunterstützung für die Medienwiedergabe.
+Show a before-meeting panel and an after-meeting panel with useful controls (background music, recording) and a customizable checklist for each.
 
-**Standard**: `false`
+**Standard**: `true`
 
-#### Untertitelsprache {#subtitle-language}
+The checklist categories and tasks for both the before-meeting and after-meeting panels are managed from this same settings section: add, rename, reorder, or delete categories and tasks as needed for your congregation.
 
-<!-- **Setting**: `langSubtitles` -->
+## Advanced {#advanced-settings}
 
-Sprache für Untertitel (kann von der Mediensprache abweichen).
+### Profile Settings Transfer {#profile-settings-transfer}
 
-**Optionen**: Alle verfügbaren Sprachen von der offiziellen Website der Zeugen Jehovas
-
-**Standard**: Keine
-
-### Medienexport {#settings-guide-media-export}
-
-#### Automatischen Medienexport aktivieren {#enable-media-auto-export}
-
-<!-- **Setting**: `enableMediaAutoExport` -->
-
-Exportieren Sie Mediendateien automatisch in einen angegebenen Ordner.
-
-**Standard**: `false`
-
-#### Medienexport-Ordner {#media-export-folder}
-
-<!-- **Setting**: `mediaAutoExportFolder` -->
-
-Ordnerpfad, in dem Mediendateien automatisch exportiert werden.
-
-**Standard**: Leer
-
-#### Dateien in MP4 konvertieren {#convert-files-to-mp4}
-
-**Einstellung**: `convertFilesToMp4`
-
-Konvertieren Sie exportierte Mediendateien in das MP4-Format für eine bessere Kompatibilität.
-
-**Standard**: `false`
-
-### Profileinstellungen Übertragung {#profile-settings-transfer}
-
-Exportieren Sie die Einstellungen des aktuellen Profils in eine JSON-Datei oder importieren Sie eine zuvor exportierte Profil-Einstellungsdatei. Das Importieren ersetzt die Einstellungen des aktuellen Profils.
+Export the current profile's settings to a JSON file or import a previously exported profile settings file. Importing replaces the current profile's settings.
 
 ### Gefahrenzone {#danger-zone}
 
@@ -617,19 +704,19 @@ Basisdomäne, die zum Herunterladen von Publikationen und Medien verwendet wird.
 
 **Standard**: `jw.org`
 
-#### Deaktiviere Hardwarebeschleunigung {#disable-hardware-acceleration}
+#### Disable Hardware Acceleration {#disable-hardware-acceleration}
 
 <!-- **Setting**: `disableHardwareAcceleration` -->
 
-Deaktivieren Sie die Hardwarebeschleunigung nach dem Neustart von M3. Dies kann bei grafischen Fehlern oder Abstürzen auf einigen Systemen helfen, wird aber nicht anderweitig empfohlen.
+Disable hardware acceleration after restarting M³. This may help with graphical glitches or crashes on some systems, but is not otherwise recommended.
 
 **Standard**: `false`
 
-#### Hardware-Beschleunigungs-Erinnerung unterdrücken {#suppress-hardware-acceleration-reminder}
+#### Suppress Hardware Acceleration Reminder {#suppress-hardware-acceleration-reminder}
 
 <!-- **Setting**: `suppressHardwareAccelerationReminder` -->
 
-Erinnerung ausblenden, um die Hardwarebeschleunigung wieder zu aktivieren, nachdem sie manuell deaktiviert wurde.
+Hide the reminder to re-enable hardware acceleration after it has been manually disabled.
 
 **Standard**: `false`
 

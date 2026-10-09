@@ -2,9 +2,10 @@
   <q-toggle
     v-model="model"
     checked-icon="mmm-check"
-    :color="settingId === 'disableMediaFetching' ? 'negative' : 'primary'"
+    :color="isDangerousToggle ? 'negative' : 'primary'"
     :disable="customDisabled"
     :disabled="customDisabled"
+    :name="settingId"
   />
 </template>
 
@@ -22,17 +23,31 @@ const { obsConnectionState } = storeToRefs(obsState);
 // Define props
 const props = defineProps<{
   actions: SettingsItemAction[] | undefined;
+  disable?: boolean;
   settingId?: keyof SettingsValues;
 }>();
 
 const customDisabled = computed(() => {
   return (
+    props.disable ||
     (props.settingId !== 'obsEnable' &&
       props.settingId?.startsWith('obs') &&
       obsConnectionState.value !== 'connected') ||
     undefined
   );
 });
+
+// Danger Zone toggles whose ON state is the risky one - shown in red to
+// match, unlike a normal toggle where "on" has no inherent risk connotation.
+const dangerousToggleIds = new Set<keyof SettingsValues>([
+  'disableHardwareAcceleration',
+  'disableMediaFetching',
+  'suppressHardwareAccelerationReminder',
+]);
+
+const isDangerousToggle = computed(
+  () => !!props.settingId && dangerousToggleIds.has(props.settingId),
+);
 
 const model = defineModel<boolean | undefined>({ required: true });
 

@@ -9,19 +9,19 @@ hero:
   actions:
     - theme: brand
       text: Tāvira
-      link: /download
+      link: /ty/download
     - theme: brand
       text: Nō ni’a
-      link: /about
+      link: /ty/about
     - theme: brand
       text: Puta Arata’i nō te Fa’a’ohipa
-      link: /user-guide
+      link: /ty/user-guide
     - theme: brand
       text: Arata’ira’a nō te mau nīnamu-ra’a
-      link: /settings-guide
+      link: /ty/settings-guide
     - theme: brand
       text: Te mau uira’a e uihia pinepine nei
-      link: /faq
+      link: /ty/faq
 features:
   - icon: 🚀
     title: Fa’anahora’a ’āfaro o te mau rāve’a ha’apararera’a

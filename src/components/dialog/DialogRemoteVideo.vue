@@ -4,13 +4,29 @@
       class="bg-secondary-contrast flex large-overlay q-px-none medium-overlay"
       style="flex-flow: column"
     >
-      <div class="text-h6 row q-px-md q-pt-lg">
+      <div
+        class="text-bigger text-semibold text-primary row q-px-md q-pt-lg items-center"
+      >
+        <div class="icon-chip q-mr-sm">
+          <q-icon name="mmm-movie" size="xs" />
+        </div>
         <div class="col">
           {{ t('add-video-jw-org') }}
         </div>
         <div class="col-shrink">
-          <q-spinner v-if="videosAreLoading" color="primary" />
-          <q-icon v-else color="accent-400" name="mmm-cloud-done" />
+          <q-btn
+            :aria-label="t('click-to-refresh-list')"
+            color="primary"
+            flat
+            icon="mmm-cloud-done"
+            :loading="videosAreLoading"
+            round
+            @click="refreshVideos"
+          >
+            <q-tooltip :delay="500">
+              {{ t('click-to-refresh-list') }}
+            </q-tooltip>
+          </q-btn>
         </div>
       </div>
       <div class="row q-px-md q-pt-md">
@@ -59,20 +75,21 @@
           :key="video.guid"
         >
           <div class="col col-xs-6 col-sm-4 col-md-3 col-lg-2">
-            <div
-              v-ripple
+            <q-item
               :class="{
-                'cursor-pointer': !isProcessing,
+                'q-pa-none': true,
                 'rounded-borders-lg': true,
                 'full-height': true,
                 'bg-accent-100': hoveredRemoteVideo === video.guid,
-                disabled: isProcessing,
               }"
-              @click="!isProcessing && addVideo(video)"
+              clickable
+              :disable="isProcessing"
+              style="min-height: 0"
+              @click="addVideo(video)"
               @mouseout="hoveredRemoteVideo = ''"
               @mouseover="hoveredRemoteVideo = video.guid"
             >
-              <q-card-section class="q-pa-sm">
+              <q-card-section class="q-pa-sm full-width">
                 <q-img
                   class="rounded-borders"
                   :src="getBestImageUrl(video.images, 'md', true)"
@@ -94,7 +111,7 @@
                   </q-tooltip>
                 </q-img>
               </q-card-section>
-            </div>
+            </q-item>
           </div>
         </template>
       </div>
@@ -119,12 +136,7 @@
           />
         </div>
         <div class="col text-right">
-          <q-btn
-            color="negative"
-            flat
-            :label="t('cancel')"
-            @click="cancelDialog"
-          />
+          <q-btn flat :label="t('cancel')" @click="cancelDialog" />
         </div>
       </div>
     </div>
@@ -287,10 +299,17 @@ const getJwVideos = async () => {
         b.firstPublished.localeCompare(a.firstPublished),
       );
     }
-    videosAreLoading.value = false;
   } catch (error) {
     errorCatcher(error);
+  } finally {
+    videosAreLoading.value = false;
   }
+};
+
+const refreshVideos = async () => {
+  if (videosAreLoading.value) return;
+  remoteVideos.value = [];
+  await getJwVideos();
 };
 
 const addVideo = async (video: MediaItemsMediatorItem) => {

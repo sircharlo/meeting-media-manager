@@ -6,50 +6,70 @@ import {
   Menu,
   type MenuItem,
   type MenuItemConstructorOptions,
+  powerMonitor,
   protocol,
   screen,
   shell,
 } from 'electron';
 import {
-  pathExists,
-  pathExistsSync,
-  readJson,
-  readJsonSync,
-  writeJson,
-  writeJsonSync,
-} from 'fs-extra/esm';
-import {
   APP_ID,
+  IS_DEMO_MODE,
+  IS_DEV,
   IS_TEST,
   PLATFORM,
   PRODUCT_NAME,
+  SENTRY_DSN,
+  SENTRY_ENVIRONMENT,
 } from 'src-electron/constants';
-import { cancelAllDownloads } from 'src-electron/main/downloads';
+import {
+  markCleanExit,
+  recordStartupCrashCount,
+} from 'src-electron/main/crash-loop';
+import { createDevMenu } from 'src-electron/main/dev-menu';
+import {
+  cancelAllDownloads,
+  resumeAllDownloads,
+} from 'src-electron/main/downloads';
+import { cleanupFfmpegConversions } from 'src-electron/main/ffmpeg';
+import { cleanupHeicWorker } from 'src-electron/main/heic';
+import {
+  pruneStaleFallbackEntries,
+  readJsonResilient,
+  readJsonResilientSync,
+  writeJsonResilient,
+  writeJsonResilientSync,
+} from 'src-electron/main/resilient-storage';
 import { initScreenListeners } from 'src-electron/main/screen';
 import {
   initSessionListeners,
-  quitStatus,
   setAppQuitting,
   setShouldQuit,
 } from 'src-electron/main/session';
-import { initUpdater } from 'src-electron/main/updater';
+import {
+  initUpdater,
+  isUpdateInstallInProgress,
+} from 'src-electron/main/updater';
 import {
   captureElectronError,
-  isIgnoredNativeCrashEvent,
-  isIgnoredUpdateError,
-  isUpdaterFullDownloadFallbackError,
+  isIgnoredUnhandledNetworkEvent,
+  isSelf,
 } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
-import 'src-electron/main/ipc';
-import 'src-electron/main/security';
 import {
   authorizedClose,
   createMainWindow,
   focusMainWindow,
   mainWindowInfo,
 } from 'src-electron/main/window/window-main';
-import { log } from 'src/shared/vanilla';
+import 'src-electron/main/ipc';
+import 'src-electron/main/security';
+import { log, scrubUserPathsDeep } from 'src/shared/vanilla';
 import { join, resolve } from 'upath';
+
+import { registerQuasarRuntime } from '#q-app/electron/main';
+
+const GPU_DIAGNOSTICS_FILE = 'gpu-diagnostics.json';
+const HW_ACCEL_FILE = 'hw-accel-disabled.json';
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -64,63 +84,102 @@ protocol.registerSchemesAsPrivileged([
   },
 ]);
 
-initSentry({
-  beforeSend(event) {
-    try {
-      if (quitStatus.isAppQuitting) {
-        return null;
-      }
+function findLogFatalMessage(contexts: Record<string, unknown> | undefined) {
+  if (!contexts) return undefined;
 
-      if (isIgnoredNativeCrashEvent(event)) {
-        return null;
-      }
+  for (const context of Object.values(contexts)) {
+    if (!context || typeof context !== 'object') continue;
 
-      const crashpad = event.contexts?.crashpad ?? event.contexts?.electron;
-      const dumpFile = crashpad?.['DumpWithoutCrashing-file'];
+    const direct = (context as Record<string, unknown>).LOG_FATAL;
+    if (typeof direct === 'string') return direct;
 
-      // Ignore known non-fatal native crash reports
-      if (typeof dumpFile === 'string') {
-        // Filter site_info.cc crashes
-        if (dumpFile.includes('site_info.cc')) {
-          return null;
-        }
-
-        // Filter GPU/graphics diagnostic crashes
-        if (dumpFile.includes('dcomp_presenter.cc')) {
-          return null;
-        }
-      }
-
-      const logFatal = event.contexts?.electron?.LOG_FATAL;
-      if (
-        typeof logFatal === 'string' &&
-        logFatal.includes("GPU process isn't usable")
-      ) {
-        event.contexts = {
-          ...event.contexts,
-          gpuDiagnostic: getGpuDiagnosticSnapshot('sentry-before-send'),
-        };
-        event.tags = { ...event.tags, gpuFatal: 'unusable-gpu-process' };
-      }
-
-      const error = event.exception?.values?.[0];
-      if (
-        error?.value &&
-        (isIgnoredUpdateError(error.value) ||
-          isUpdaterFullDownloadFallbackError(error.value) ||
-          error.value.includes('EPIPE'))
-      ) {
-        return null;
-      }
-    } catch (err) {
-      log(err, 'electron', 'error');
+    // Electron/Crashpad nests custom annotations one level deeper on some platforms.
+    const crashpad = (context as Record<string, unknown>).crashpad;
+    if (crashpad && typeof crashpad === 'object') {
+      const nested = (crashpad as Record<string, unknown>).LOG_FATAL;
+      if (typeof nested === 'string') return nested;
     }
-    return event;
-  },
-  dsn: 'https://40b7d92d692d42814570d217655198db@o1401005.ingest.us.sentry.io/4507449197920256',
-  environment: IS_TEST ? 'test' : process.env.NODE_ENV,
-  release: `${name}@${version}`,
-  tracesSampleRate: 1,
+  }
+
+  return undefined;
+}
+
+if (SENTRY_DSN) {
+  const sentryRelease = `${name}@${version}`;
+
+  log('Sentry initialized (main process)', 'sentry', 'debug', {
+    dsn: SENTRY_DSN,
+    environment: SENTRY_ENVIRONMENT,
+    release: sentryRelease,
+  });
+
+  initSentry({
+    beforeSend(event) {
+      if (isIgnoredUnhandledNetworkEvent(event)) return null;
+
+      try {
+        const logFatal = findLogFatalMessage(event.contexts);
+        if (
+          typeof logFatal === 'string' &&
+          logFatal.includes("GPU process isn't usable")
+        ) {
+          event.contexts = {
+            ...event.contexts,
+            gpuDiagnostic: getGpuDiagnosticSnapshot('sentry-before-send'),
+          };
+          event.tags = { ...event.tags, gpuFatal: 'unusable-gpu-process' };
+        }
+      } catch (err) {
+        log(err, 'electron', 'error');
+      }
+
+      const scrubbedEvent = scrubUserPathsDeep(event);
+      log('Sentry event sending (main process)', 'sentry', 'debug', {
+        dsn: SENTRY_DSN,
+        event: scrubbedEvent,
+      });
+      return scrubbedEvent;
+    },
+    // @sentry/electron v8 replaced sendDefaultPii with dataCollection, whose
+    // defaults now have Sentry record the user's IP address on events,
+    // sessions and native crash reports. Keep the v7 behavior of not
+    // collecting it.
+    dataCollection: { userInfo: false },
+    dsn: SENTRY_DSN,
+    environment: SENTRY_ENVIRONMENT,
+    release: sentryRelease,
+    // v8 streams spans by default, which turns every main-process request
+    // (each media download, update check, etc.) into its own root span sent
+    // to Sentry. Keep the v7 transaction-based model, where requests only
+    // produce spans inside an active transaction.
+    traceLifecycle: 'static',
+    tracesSampleRate: 1,
+  });
+} else {
+  log(
+    'Sentry DSN is undefined, Sentry will not be initialized in main process',
+    'sentry',
+    'debug',
+    { SENTRY_DSN },
+  );
+}
+
+// Without these, an unguarded async error anywhere in the main process (e.g.
+// a fire-and-forget IPC listener throwing after an await, or a dynamic
+// import() failing) is invisible to Sentry and can terminate the whole app
+// via Node's default unhandled-rejection/uncaught-exception behavior. Capture
+// and continue instead, mirroring the process.stdout/stderr error handling
+// below.
+process.on('unhandledRejection', (reason) => {
+  captureElectronError(reason, {
+    contexts: { fn: { name: 'process.on(unhandledRejection)' } },
+  });
+});
+
+process.on('uncaughtException', (error) => {
+  captureElectronError(error, {
+    contexts: { fn: { name: 'process.on(uncaughtException)' } },
+  });
 });
 
 const gotTheLock = app.requestSingleInstanceLock();
@@ -190,6 +249,10 @@ function createApplicationMenu() {
     ...(PLATFORM === 'darwin' ? [appMenu] : []),
     { role: 'fileMenu' },
     { role: 'editMenu' },
+    // Dev-only: a Demo menu for runtime demo mode + manual-testing toggles.
+    // Never included in packaged/prod builds (IS_DEV is a compile-time flag
+    // that is false for every `quasar build`).
+    ...(IS_DEV && !IS_TEST ? [createDevMenu()] : []),
     {
       label: 'View',
       submenu: [
@@ -335,10 +398,10 @@ function isTruthyEnvironmentValue(value: string | undefined) {
 
 async function readGpuDiagnosticSnapshots() {
   try {
-    const filePath = getGpuDiagnosticsFilePath();
-    if (!(await pathExists(filePath))) return [];
-
-    const data = await readJson(filePath);
+    const data = await readJsonResilient(
+      app.getPath('userData'),
+      GPU_DIAGNOSTICS_FILE,
+    );
     return Array.isArray(data) ? data : [];
   } catch (error) {
     log('Failed to read GPU diagnostics:', 'electron', 'warn', error);
@@ -350,11 +413,11 @@ async function writeGpuDiagnosticSnapshot(
   snapshot: ReturnType<typeof getGpuDiagnosticSnapshot>,
 ) {
   try {
-    const filePath = getGpuDiagnosticsFilePath();
     const existing = await readGpuDiagnosticSnapshots();
-    await writeJson(filePath, [...existing.slice(-19), snapshot], {
-      spaces: 2,
-    });
+    await writeJsonResilient(app.getPath('userData'), GPU_DIAGNOSTICS_FILE, [
+      ...existing.slice(-19),
+      snapshot,
+    ]);
   } catch (error) {
     log('Failed to write GPU diagnostics:', 'electron', 'warn', error);
   }
@@ -363,28 +426,22 @@ async function writeGpuDiagnosticSnapshot(
 if (gotTheLock) {
   configureAppDataPaths();
 
-  // Check for crash loop on startup
-  const crashCount = incrementCrashCount();
+  // Check for crash loop on startup (see crash-loop.ts for why this is
+  // gated on the previous session's clean-exit flag rather than just
+  // incrementing on every launch)
+  const crashCount = recordStartupCrashCount();
   log(`Startup crash count: ${crashCount}`, 'electron', 'log');
 
   if (crashCount >= 3) {
     if (!isHwAccelDisabled()) {
-      captureElectronError(
-        new Error(
-          'Detected crash loop (3+ crashes). Disabling hardware acceleration.',
-        ),
-        {
-          contexts: { fn: { name: 'initCrashListeners' } },
-        },
+      log(
+        'Detected crash loop (3+ crashes). Disabling hardware acceleration.',
+        'electron',
+        'warn',
       );
       setHwAccelDisabled(true, true);
     }
   }
-
-  // If we survive for 10 seconds, reset the crash count
-  setTimeout(() => {
-    void resetCrashCount();
-  }, 10000);
 
   // Check if hardware acceleration should be disabled
   if (isHwAccelDisabled()) {
@@ -417,13 +474,30 @@ if (gotTheLock) {
     app.commandLine.appendSwitch('gtk-version', '3'); // Force GTK 3 on Linux (Workaround for https://github.com/electron/electron/issues/46538)
   }
 
-  initUpdater();
+  if (!IS_DEMO_MODE) initUpdater();
 
   initScreenListeners();
   createApplicationMenu();
   initSessionListeners();
 
+  // BE-19 (full-audit backlog): resume any downloads that were paused going
+  // into sleep - e.g. the existing auto-stalled-queue pause below, or the
+  // low-disk-space pause - so they don't just sit paused indefinitely after
+  // wake. Window repositioning is already covered without this: the screen
+  // module's own display-added/-removed/-metrics-changed events (wired in
+  // initScreenListeners) fire natively on wake whenever the OS-reported
+  // display config actually changed, so no separate handling is needed here.
+  // A download that was still ACTIVE (not yet paused) going into sleep and
+  // comes back with a dead socket isn't covered - that needs a "last
+  // progress" staleness signal this app doesn't track today, deliberately
+  // left as a separate, more speculative piece of work.
+  powerMonitor.on('resume', () => {
+    void resumeAllDownloads('power-resume');
+  });
+
   let videoCaptureCrashCount = 0;
+  let gpuCrashCount = 0;
+  let hasRelaunchedForGpuCrash = false;
 
   function handleProcessCrash(
     type: string,
@@ -451,6 +525,28 @@ if (gotTheLock) {
         );
         // Persist to user prefs for next run and notify user
         setHwAccelDisabled(true, true);
+      }
+    }
+
+    if (isGpuCrash) {
+      gpuCrashCount++;
+      log(`GPU crash count this session: ${gpuCrashCount}`, 'electron', 'log');
+
+      // Once Chromium exhausts its own GPU fallback modes it kills the whole
+      // browser process (IntentionallyCrashBrowserForUnusableGpuProcess), with
+      // no JS event and no chance for the user to see the disabled-hw-accel
+      // flag above take effect. Relaunch proactively on a second crash in the
+      // same session so the flag is picked up before Chromium can do that.
+      if (gpuCrashCount >= 2 && !hasRelaunchedForGpuCrash) {
+        hasRelaunchedForGpuCrash = true;
+        log(
+          'Repeated GPU crashes this session. Relaunching with hardware acceleration disabled.',
+          'electron',
+          'warn',
+        );
+        app.relaunch();
+        app.exit(0);
+        return;
       }
     }
 
@@ -520,7 +616,12 @@ if (gotTheLock) {
 
   app.on('before-quit', (e) => {
     setAppQuitting(true);
+
+    // Windows/Linux close prompts are handled by the BrowserWindow 'close'
+    // listener. This handler only adds the macOS app-quit prompt, and updater
+    // installs must bypass it so quitAndInstall can complete.
     if (PLATFORM !== 'darwin') return;
+    if (isUpdateInstallInProgress()) return;
     if (!mainWindowInfo.mainWindow || mainWindowInfo.mainWindow.isDestroyed())
       return;
     if (authorizedClose.authorized) {
@@ -530,6 +631,16 @@ if (gotTheLock) {
       setShouldQuit(true);
       sendToWindow(mainWindowInfo.mainWindow, 'attemptedClose');
     }
+  });
+
+  app.on('will-quit', () => {
+    cleanupHeicWorker();
+    cleanupFfmpegConversions();
+    // will-quit (unlike before-quit) isn't reached until any interactive
+    // "confirm quit" prompt is resolved and the app is actually about to
+    // exit - see crash-loop.ts's markCleanExit doc comment for why that
+    // matters.
+    markCleanExit();
   });
 
   app.on('activate', () => {
@@ -557,73 +668,44 @@ process.stderr.on('error', (err: NodeJS.ErrnoException) => {
 });
 
 function createWindowAndCaptureErrors() {
-  app.whenReady().then(createMainWindow).catch(captureElectronError);
-}
-
-function getCrashCount() {
-  try {
-    const filePath = getCrashCountFilePath();
-    if (pathExistsSync(filePath)) {
-      const data = readJsonSync(filePath);
-      return typeof data.count === 'number' ? data.count : 0;
-    }
-  } catch (error) {
-    log('Failed to read crash count:', 'electron', 'warn', error);
-  }
-  return 0;
-}
-
-function getCrashCountFilePath() {
-  return join(app.getPath('userData'), 'crash-count.json');
-}
-
-function getGpuDiagnosticsFilePath() {
-  return join(app.getPath('userData'), 'gpu-diagnostics.json');
-}
-
-function getHwAccelFilePath() {
-  return join(app.getPath('userData'), 'hw-accel-disabled.json');
-}
-
-function incrementCrashCount() {
-  try {
-    const count = getCrashCount() + 1;
-    writeJsonSync(getCrashCountFilePath(), { count });
-    return count;
-  } catch (error) {
-    log('Failed to write crash count:', 'electron', 'warn', error);
-    return 0;
-  }
+  app
+    .whenReady()
+    .then(registerQuasarRuntime)
+    .then(createMainWindow)
+    .catch(captureElectronError);
+  app
+    .whenReady()
+    .then(pruneStaleFallbackEntries)
+    .catch((error: unknown) =>
+      captureElectronError(error, {
+        contexts: { fn: { name: 'pruneStaleFallbackEntries' } },
+      }),
+    );
 }
 
 function isHwAccelDisabled() {
   try {
-    const filePath = getHwAccelFilePath();
-    if (pathExistsSync(filePath)) {
-      const data = readJsonSync(filePath);
-      return data.disabled === true;
-    }
+    const data = readJsonResilientSync(
+      app.getPath('userData'),
+      HW_ACCEL_FILE,
+    ) as null | { disabled?: boolean };
+    return data?.disabled === true;
   } catch (error) {
     log('Failed to read hw accel setting:', 'electron', 'warn', error);
   }
   return false;
 }
 
-async function resetCrashCount() {
-  try {
-    await writeJson(getCrashCountFilePath(), { count: 0 });
-    log('Crash count reset to 0', 'electron', 'log');
-  } catch (error) {
-    log('Failed to reset crash count:', 'electron', 'warn', error);
-  }
-}
-
 function setHwAccelDisabled(disabled: boolean, temporary = false) {
   try {
-    const filePath = getHwAccelFilePath();
-    writeJsonSync(filePath, { disabled, temporary });
-    if (disabled) {
-      // Notify user that a restart is recommended
+    writeJsonResilientSync(app.getPath('userData'), HW_ACCEL_FILE, {
+      disabled,
+      temporary,
+    });
+    if (disabled && temporary) {
+      // Only notify about a crash when hardware acceleration was disabled
+      // because of an actual crash, not when the user disabled it manually
+      // via settings.
       if (
         mainWindowInfo.mainWindow &&
         !mainWindowInfo.mainWindow.isDestroyed()
@@ -637,18 +719,24 @@ function setHwAccelDisabled(disabled: boolean, temporary = false) {
 }
 
 // IPC handler to update hardware acceleration setting from renderer
-ipcMain.handle('set-hardware-acceleration', (_, disabled: boolean) => {
+ipcMain.handle('set-hardware-acceleration', (e, disabled: boolean) => {
+  if (!isSelf(e.senderFrame?.url)) {
+    log(`Blocked IPC invoke from ${e.senderFrame?.url}`, 'electron', 'warn', {
+      channel: 'set-hardware-acceleration',
+    });
+    return;
+  }
   setHwAccelDisabled(disabled, false);
 });
 
 // Check if hardware acceleration was temporarily disabled due to a crash
 function wasHwAccelTemporarilyDisabled() {
   try {
-    const filePath = getHwAccelFilePath();
-    if (pathExistsSync(filePath)) {
-      const data = readJsonSync(filePath);
-      return data.disabled === true && data.temporary === true;
-    }
+    const data = readJsonResilientSync(
+      app.getPath('userData'),
+      HW_ACCEL_FILE,
+    ) as null | { disabled?: boolean; temporary?: boolean };
+    return data?.disabled === true && data?.temporary === true;
   } catch (error) {
     log('Failed to read hw accel setting:', 'electron', 'warn', error);
   }

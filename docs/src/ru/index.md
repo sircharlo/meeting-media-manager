@@ -9,19 +9,19 @@ hero:
   actions:
     - theme: brand
       text: Скачать
-      link: /download
+      link: /ru/download
     - theme: brand
       text: О программе
-      link: /about
+      link: /ru/about
     - theme: brand
       text: Руководство пользователя
-      link: /user-guide
+      link: /ru/user-guide
     - theme: brand
       text: Руководство по настройкам
-      link: /settings-guide
+      link: /ru/settings-guide
     - theme: brand
       text: ЧАВО
-      link: /faq
+      link: /ru/faq
 features:
   - icon: 🚀
     title: Автоматическое управление мультимедиа
@@ -46,8 +46,8 @@ features:
     details: Автоматически синхронизируйте мультимедиа из папок, которые наблюдаются (например, Dropbox или OneDrive), и экспортируйте мультимедиа в папки.
   - icon: 🎯
     title: Расширенные функции
-    details: Импортируйте пользовательские медиа, JWPUB файлы, плейлисты, аудио-записи Библии, Изучение Библии медиа, публичные речи и управление множеством конгрегаций.
+    details: Import custom media, JWPUB files, playlists, audio Bible recordings, Study Bible media, public talk media, and manage multiple congregations.
   - icon: ⏱️
-    title: Контроль времени встречи и управление записью
-    details: Используйте необязательный таймер дисплея для тайминга и управления OBS или внешними приложениями записи из M3.
+    title: Meeting Timer and Recording Controls
+    details: Use an optional timer display for participant timing and control OBS or external recording apps from M³.
 ---

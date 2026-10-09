@@ -9,19 +9,19 @@ hero:
   actions:
     - theme: brand
       text: Download
-      link: /download
+      link: /bzs/download
     - theme: brand
       text: About
-      link: /about
+      link: /bzs/about
     - theme: brand
       text: User Guide
-      link: /user-guide
+      link: /bzs/user-guide
     - theme: brand
       text: Settings Guide
-      link: /settings-guide
+      link: /bzs/settings-guide
     - theme: brand
       text: FAQ
-      link: /faq
+      link: /bzs/faq
 features:
   - icon: 🚀
     title: Automatic Media Management

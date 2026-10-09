@@ -1,7 +1,12 @@
 <template>
   <BaseDialog v-model="dialogValue" :dialog-id="dialogId" persistent>
     <div class="bg-secondary-contrast flex q-px-none" style="flex-flow: column">
-      <div class="text-h6 row q-px-md q-pt-lg">
+      <div
+        class="row items-center no-wrap text-bigger text-semibold text-primary q-px-md q-pt-lg"
+      >
+        <div class="icon-chip q-mr-sm">
+          <q-icon name="mmm-groups" size="xs" />
+        </div>
         {{ t('congregation-lookup') }}
       </div>
       <div class="row q-px-md q-pt-md">
@@ -13,6 +18,7 @@
           v-model="congregationFilter"
           clearable
           dense
+          :label="t('congregation-lookup')"
           outlined
           spellcheck="false"
           @update:model-value="lookupCongregation"
@@ -27,7 +33,7 @@
           class="q-pr-scroll full-width"
           padding
           separator
-          style="max-height: 20vh"
+          style="max-height: min(40vh, 320px)"
         >
           <!-- Loading skeletons -->
           <template v-if="loading">
@@ -51,6 +57,32 @@
               </q-item-section>
             </q-item>
           </template>
+          <q-item v-else-if="lookupError">
+            <q-item-section avatar>
+              <q-icon color="negative" name="mmm-cloud-error" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ t('congregation-lookup-error') }}</q-item-label>
+              <q-item-label caption>
+                {{
+                  online
+                    ? t('congregation-lookup-error-explain-online')
+                    : t('congregation-lookup-error-explain-offline')
+                }}
+              </q-item-label>
+            </q-item-section>
+            <q-item-section side>
+              <q-btn
+                dense
+                flat
+                icon="mmm-refresh"
+                round
+                @click="lookupCongregation"
+              >
+                <q-tooltip :delay="500">{{ t('try-again') }}</q-tooltip>
+              </q-btn>
+            </q-item-section>
+          </q-item>
           <q-item v-else-if="!results?.length">
             <q-item-section>
               <q-item-label>
@@ -88,18 +120,37 @@
       </div>
       <div class="row q-px-md q-py-md row flex-center">
         <div class="col text-right">
-          <q-btn color="negative" flat @click="dismissPopup">
+          <q-btn flat @click="dismissPopup">
             {{ t('cancel') }}
           </q-btn>
         </div>
       </div>
     </div>
   </BaseDialog>
+
+  <ConfirmDialog
+    v-model="confirmPending"
+    :confirm-label="t('confirm')"
+    dialog-id="congregation-lookup-confirm"
+    icon="mmm-groups"
+    icon-color="primary"
+    :message="
+      t('congregation-lookup-confirm-explain', {
+        congregationName: pendingCongregation?.name,
+      })
+    "
+    persistent
+    :title="t('congregation-lookup-confirm')"
+    @cancel="pendingCongregation = null"
+    @confirm="confirmCongregation"
+  />
 </template>
 <script setup lang="ts">
 import { whenever } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import { storeToRefs } from 'pinia';
+import { defaultSettings } from 'src/constants/settings';
 import {
   applyScheduleToSettings,
   fetchCongregationSuggestions,
@@ -120,7 +171,7 @@ const jwStore = useJwStore();
 const { jwLanguages } = storeToRefs(jwStore);
 
 const currentState = useCurrentStateStore();
-const { currentSettings } = storeToRefs(currentState);
+const { currentSettings, online } = storeToRefs(currentState);
 
 const props = defineProps<{
   dialogId: string;
@@ -128,6 +179,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+  applied: [];
   'update:modelValue': [value: boolean];
 }>();
 
@@ -146,31 +198,40 @@ interface CongregationSuggestion {
 }
 
 const results = ref<CongregationSuggestion[]>([]);
+const lookupError = ref(false);
 const lookupDebounce = ref<null | ReturnType<typeof setTimeout>>(null);
+const pendingCongregation = ref<CongregationSuggestion | null>(null);
+const confirmPending = computed({
+  get: () => !!pendingCongregation.value,
+  set: (value: boolean) => {
+    if (!value) pendingCongregation.value = null;
+  },
+});
 
-const lookupCongregation = async () => {
-  if (lookupDebounce.value) clearTimeout(lookupDebounce.value);
-  lookupDebounce.value = setTimeout(async () => {
-    try {
-      loading.value = true;
-      results.value = [];
-      if (congregationFilter.value?.length > 2) {
-        results.value = await fetchCongregationSuggestions(
-          congregationFilter.value,
-        );
-      } else {
-        results.value = [];
-      }
-    } catch (error) {
-      errorCatcher(error);
-      results.value = [];
-    } finally {
-      loading.value = false;
-    }
-  }, 500);
-};
+// Only worth confirming if there's actually meaningful, already-configured
+// info this lookup would overwrite - a blank/default profile (nothing but
+// the fallback language and no schedule yet) has nothing to lose, so
+// applying the lookup result there should be immediate, not gated behind
+// an extra "are you sure" step.
+const hasConfiguredCongregationInfo = computed(() => {
+  const settings = currentSettings.value;
+  if (!settings) return false;
 
-const selectCongregation = async (congregation: CongregationSuggestion) => {
+  const nameConfigured =
+    !!settings.congregationName &&
+    settings.congregationName !== defaultSettings.congregationName;
+  const langConfigured =
+    !!settings.lang && settings.lang !== defaultSettings.lang;
+  const timesConfigured =
+    settings.mwDay != null &&
+    settings.weDay != null &&
+    !!settings.mwStartTime &&
+    !!settings.weStartTime;
+
+  return nameConfigured && langConfigured && timesConfigured;
+});
+
+const applyCongregation = async (congregation: CongregationSuggestion) => {
   try {
     if (!currentSettings.value) return;
 
@@ -233,12 +294,14 @@ const selectCongregation = async (congregation: CongregationSuggestion) => {
       currentSettings.value.congregationName = congregation.name;
       currentSettings.value.congregationNameModified = false;
     }
+
+    emit('applied');
   } catch (error) {
     errorCatcher(error, {
       contexts: {
         fn: {
           name: 'DialogCongregationLookup.vue',
-          subroutine: 'selectCongregation',
+          subroutine: 'applyCongregation',
         },
       },
     });
@@ -247,8 +310,48 @@ const selectCongregation = async (congregation: CongregationSuggestion) => {
   dismissPopup();
 };
 
+const confirmCongregation = async () => {
+  const congregation = pendingCongregation.value;
+  pendingCongregation.value = null;
+  if (!congregation) return;
+  await applyCongregation(congregation);
+};
+
+const selectCongregation = (congregation: CongregationSuggestion) => {
+  if (hasConfiguredCongregationInfo.value) {
+    pendingCongregation.value = congregation;
+  } else {
+    applyCongregation(congregation);
+  }
+};
+
+const lookupCongregation = async () => {
+  if (lookupDebounce.value) clearTimeout(lookupDebounce.value);
+  lookupDebounce.value = setTimeout(async () => {
+    try {
+      loading.value = true;
+      lookupError.value = false;
+      results.value = [];
+      if (congregationFilter.value?.length > 2) {
+        results.value = await fetchCongregationSuggestions(
+          congregationFilter.value,
+        );
+      } else {
+        results.value = [];
+      }
+    } catch (error) {
+      errorCatcher(error);
+      results.value = [];
+      lookupError.value = true;
+    } finally {
+      loading.value = false;
+    }
+  }, 500);
+};
+
 const dismissPopup = () => {
   results.value = [];
+  lookupError.value = false;
   congregationFilter.value = '';
   dialogValue.value = false;
 };

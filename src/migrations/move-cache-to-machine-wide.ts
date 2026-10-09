@@ -1,10 +1,39 @@
-import type { MediaItem } from 'src/types';
+import type { DateInfo, MediaItem, MediaSectionWithConfig } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
 
 import type { MigrationFunction } from './types';
+
+function* getDateInfoItems(dateInfo: DateInfo | undefined) {
+  if (!dateInfo?.mediaSections) return;
+
+  for (const section of Object.values(dateInfo.mediaSections)) {
+    yield* getMediaSectionItems(section);
+  }
+}
+
+function* getLookupPeriodItems() {
+  const jwStore = useJwStore();
+  if (!jwStore.lookupPeriod) return;
+
+  for (const dates of Object.values(jwStore.lookupPeriod)) {
+    if (!dates) continue;
+
+    for (const dateInfo of dates) {
+      yield* getDateInfoItems(dateInfo);
+    }
+  }
+}
+
+function* getMediaSectionItems(section: MediaSectionWithConfig | undefined) {
+  if (!section?.items) return;
+
+  for (const item of section.items) {
+    yield item;
+  }
+}
 
 function hasCustomCacheFolder(): boolean {
   const congStore = useCongregationSettingsStore();
@@ -15,7 +44,7 @@ async function moveStandardFolders(
   folders: string[],
   userDataPath: string,
   sharedPath: string,
-  exists: (p: string) => Promise<boolean>,
+  pathExists: (p: string) => Promise<boolean>,
   move: (a: string, b: string) => Promise<void>,
   join: (...p: string[]) => string,
 ) {
@@ -23,10 +52,10 @@ async function moveStandardFolders(
     const src = join(userDataPath, folder);
     const dest = join(sharedPath, folder);
 
-    const srcExists = await exists(src);
+    const srcExists = await pathExists(src);
     if (!srcExists) continue;
 
-    const destExists = await exists(dest);
+    const destExists = await pathExists(dest);
     if (destExists) continue;
 
     await move(src, dest);
@@ -44,23 +73,8 @@ function replaceIfStartsWith(
 }
 
 function updateLookupPeriodPaths(userDataPath: string, sharedPath: string) {
-  const jwStore = useJwStore();
-  if (!jwStore.lookupPeriod) return;
-
-  for (const dates of Object.values(jwStore.lookupPeriod)) {
-    if (!dates) continue;
-
-    for (const dateInfo of dates) {
-      if (!dateInfo?.mediaSections) continue;
-
-      for (const section of Object.values(dateInfo.mediaSections)) {
-        if (!section?.items) continue;
-
-        for (const item of section.items) {
-          updateMediaItemPaths(item, userDataPath, sharedPath);
-        }
-      }
-    }
+  for (const item of getLookupPeriodItems()) {
+    updateMediaItemPaths(item, userDataPath, sharedPath);
   }
 }
 
@@ -94,7 +108,7 @@ export const moveCacheToMachineWide: MigrationFunction = async () => {
   try {
     const { fs, getSharedDataPath, getUserDataPath, join } =
       globalThis.electronApi;
-    const { exists, move } = fs;
+    const { move, pathExists } = fs;
 
     const sharedPath = await getSharedDataPath();
     if (!sharedPath) return true;
@@ -111,7 +125,7 @@ export const moveCacheToMachineWide: MigrationFunction = async () => {
       foldersToMove,
       userDataPath,
       sharedPath,
-      exists,
+      pathExists,
       move,
       join,
     );
@@ -131,7 +145,9 @@ export const moveCacheToMachineWide: MigrationFunction = async () => {
 
     return true;
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: { fn: { name: 'moveCacheToMachineWide' } },
+    });
     return false;
   }
 };

@@ -1,7 +1,7 @@
 import { readdir, readFile } from 'fs-extra';
 import { enabled, locales as localeOptions } from 'src/constants/locales';
 import appMessages from 'src/i18n';
-import { camelToKebabCase } from 'src/utils/general';
+import { camelToKebabCase, kebabToCamelCase } from 'src/utils/general';
 import { normalize, resolve } from 'upath';
 import { describe, expect, it } from 'vitest';
 
@@ -25,8 +25,10 @@ describe('Locales', () => {
       .map((f) => f.replace('.json', ''))
       .sort((a, b) => a.localeCompare(b));
 
+    // Filenames on disk are kebab-case (e.g. cmn-hans.json), while message
+    // keys are camelCase (e.g. cmnHans), so convert before comparing.
     const enabledLocaleFiles = allLocaleFiles.filter((f) =>
-      messages.includes(f),
+      messages.includes(kebabToCamelCase(f)),
     );
 
     const inactiveLocaleFiles = enabledLocaleFiles.filter(
@@ -51,6 +53,7 @@ describe('Locales', () => {
       'layouts',
       'pages',
       'stores',
+      'utils',
     ]);
 
     const files = await Promise.all(
@@ -99,6 +102,67 @@ describe('Locales', () => {
     expect(
       unusedKeys,
       `The following translation keys are unused: ${unusedKeys.join(', ')}`,
+    ).toHaveLength(0);
+  });
+
+  it('should not have messages that fail to compile', async () => {
+    // Mirror the runtime's message compilation (see src/boot/i18n.ts): any
+    // string the vue-i18n compiler rejects throws during render in production
+    // builds, crashing the page (e.g. MMM-V2-3H6). Guard every locale so
+    // malformed Crowdin output fails CI instead of shipping.
+    const { baseCompile } = await import('@intlify/message-compiler');
+    const compile = (message: string) =>
+      baseCompile(message, {
+        jit: true,
+        location: false,
+        onError: (error: unknown) => {
+          throw error;
+        },
+      });
+
+    const failures: {
+      code?: number;
+      key: string;
+      locale: string;
+      message: string;
+      value: string;
+    }[] = [];
+
+    const walk = (obj: unknown, path: string, locale: string): void => {
+      for (const [key, value] of Object.entries(
+        obj as Record<string, unknown>,
+      )) {
+        const fullKey = path ? `${path}.${key}` : key;
+        if (typeof value === 'string') {
+          try {
+            compile(value);
+          } catch (error) {
+            failures.push({
+              code: (error as { code?: number }).code,
+              key: fullKey,
+              locale,
+              message: String((error as Error).message),
+              value,
+            });
+          }
+        } else if (value && typeof value === 'object') {
+          walk(value, fullKey, locale);
+        }
+      }
+    };
+
+    for (const [locale, messages] of Object.entries(appMessages)) {
+      walk(messages, '', locale);
+    }
+
+    expect(
+      failures,
+      `The following messages fail to compile (${failures.length}):\n${failures
+        .map(
+          (f) =>
+            `  ${f.locale}.${f.key} (code ${f.code ?? '?'}): ${JSON.stringify(f.value)}`,
+        )
+        .join('\n')}`,
     ).toHaveLength(0);
   });
 });

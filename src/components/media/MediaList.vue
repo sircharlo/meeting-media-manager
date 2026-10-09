@@ -29,94 +29,116 @@
       @update-label="updateSectionLabel"
     />
     <!-- Empty State -->
-    <SectionEmptyState
-      v-if="(isEmpty || someItemsAreHidden) && !isDragging"
+    <EmptyState
+      v-if="(isEmpty || someItemsAreHidden) && !pendingImportCount"
       :all-items-are-hidden="allItemsAreHidden"
+      compact
       :is-dragging="isDragging"
       :selected-date="selectedDateObject"
       :some-items-are-hidden="someItemsAreHidden"
     />
     <!-- Media Items -->
-    <div
-      v-show="!isCollapsed || hasMediaFilterTerms"
-      ref="dragDropContainer"
-      class="sortable-media"
-      :class="{ 'drop-here': isDragging }"
-      :data-list="mediaList.config?.uniqueId"
-    >
-      <template v-if="(isEmpty || someItemsAreHidden) && isDragging">
-        <SectionEmptyState
-          :all-items-are-hidden="allItemsAreHidden"
-          :is-dragging="isDragging"
-          :selected-date="selectedDateObject"
-          :some-items-are-hidden="someItemsAreHidden"
+    <q-slide-transition>
+      <div
+        v-show="!isCollapsed || hasMediaFilterTerms"
+        ref="dragDropContainer"
+        class="sortable-media"
+        :class="{ 'drop-here': isDragging }"
+        :data-list="mediaList.config?.uniqueId"
+      >
+        <!-- Skeleton placeholders for add-media operations still in flight -->
+        <MediaItemSkeleton
+          v-for="n in pendingImportCount"
+          :key="`pending-import-skeleton-${n}`"
         />
-      </template>
-      <template v-for="element in sortableItems" :key="element.uniqueId">
-        <!-- Render dividers -->
-        <MediaDivider
-          v-if="element.type === 'divider'"
-          :divider="element as any"
-          @delete="handleDeleteDivider"
-          @update:color="
-            (bgColor, textColor) =>
-              handleUpdateDividerColor(element.uniqueId, bgColor, textColor)
-          "
-          @update:title="
-            (title) => handleUpdateDividerTitle(element.uniqueId, title)
-          "
-        />
-        <!-- Render media groups -->
-        <MediaGroup
-          v-else-if="element.children"
-          :element="element"
-          :expanded="expandedGroups[element.uniqueId] ?? false"
-          :media-filter-terms="mediaFilterTerms"
-          :selected="selectedMediaItems?.includes(element.uniqueId)"
-          :selected-media-items="selectedMediaItems"
-          @item-clicked="
-            (payload) =>
-              emit('item-clicked', {
-                event: payload.event as MouseEvent,
-                mediaItemId: payload.mediaItemId,
-                sectionId: element.uniqueId,
+        <template
+          v-for="(element, index) in sortableItems"
+          :key="element.uniqueId"
+        >
+          <!-- Render dividers -->
+          <MediaDivider
+            v-if="element.type === 'divider'"
+            :can-move-down="index < sortableItems.length - 1"
+            :can-move-up="index > 0"
+            :divider="element as any"
+            :is-dragging="isDragging"
+            @delete="handleDeleteDivider"
+            @move="(delta) => moveTopLevelItem(index, delta)"
+            @update:color="
+              (bgColor, textColor) =>
+                handleUpdateDividerColor(element.uniqueId, bgColor, textColor)
+            "
+            @update:title="
+              (title) => handleUpdateDividerTitle(element.uniqueId, title)
+            "
+          />
+          <!-- Render media groups -->
+          <MediaGroup
+            v-else-if="element.children"
+            :can-move-down="index < sortableItems.length - 1"
+            :can-move-up="index > 0"
+            :element="element"
+            :expanded="expandedGroups[element.uniqueId] ?? false"
+            :is-dragging="isDragging"
+            :media-filter-terms="mediaFilterTerms"
+            :selected="selectedMediaItems?.includes(element.uniqueId)"
+            :selected-media-items="selectedMediaItems"
+            @item-clicked="
+              (payload) =>
+                emit('item-clicked', {
+                  event: payload.event as MouseEvent,
+                  mediaItemId: payload.mediaItemId,
+                  sectionId: element.uniqueId,
+                })
+            "
+            @move="(delta) => moveTopLevelItem(index, delta)"
+            @update:child-hidden="
+              (hidden, childUniqueId) => {
+                const child = element.children?.find(
+                  (c) => c.uniqueId === childUniqueId,
+                );
+                if (child) child.hidden = !!hidden;
+              }
+            "
+            @update:children-order="element.children = $event"
+            @update:expanded="expandedGroups[element.uniqueId] = $event"
+            @update:hidden="element.hidden = !!$event"
+          />
+          <!-- Render media items -->
+          <MediaItem
+            v-else
+            v-model:repeat="element.repeat"
+            :can-move-down="index < sortableItems.length - 1"
+            :can-move-up="index > 0"
+            :is-dragging="isDragging"
+            :media="element"
+            :media-filter-terms="mediaFilterTerms"
+            :selected="selectedMediaItems?.includes(element.uniqueId)"
+            :selected-media-items="selectedMediaItems"
+            @click="
+              (evt) =>
+                emit('item-clicked', {
+                  event: evt as MouseEvent,
+                  mediaItemId: element.uniqueId,
+                  sectionId: props.mediaList.config?.uniqueId,
+                })
+            "
+            @move="(delta) => moveTopLevelItem(index, delta)"
+            @update:custom-duration="
+              element.customDuration = JSON.parse($event) || undefined
+            "
+            @update:hidden="element.hidden = !!$event"
+            @update:relink="Object.assign(element, $event)"
+            @update:tag="element.tag = $event"
+            @update:title="
+              nextTick(() => {
+                element.title = $event;
               })
-          "
-          @update:child-hidden="
-            element.children.forEach((child) => (child.hidden = !!$event))
-          "
-          @update:expanded="expandedGroups[element.uniqueId] = $event"
-          @update:hidden="element.hidden = !!$event"
-        />
-        <!-- Render media items -->
-        <MediaItem
-          v-else
-          v-model:repeat="element.repeat"
-          :media="element"
-          :media-filter-terms="mediaFilterTerms"
-          :selected="selectedMediaItems?.includes(element.uniqueId)"
-          :selected-media-items="selectedMediaItems"
-          @click="
-            (evt) =>
-              emit('item-clicked', {
-                event: evt as MouseEvent,
-                mediaItemId: element.uniqueId,
-                sectionId: props.mediaList.config?.uniqueId,
-              })
-          "
-          @update:custom-duration="
-            element.customDuration = JSON.parse($event) || undefined
-          "
-          @update:hidden="element.hidden = !!$event"
-          @update:tag="element.tag = $event"
-          @update:title="
-            nextTick(() => {
-              element.title = $event;
-            })
-          "
-        />
-      </template>
-    </div>
+            "
+          />
+        </template>
+      </div>
+    </q-slide-transition>
 
     <!-- Add Divider Dialog -->
     <DialogAddDivider
@@ -144,11 +166,12 @@ import {
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, nextTick, ref, watch } from 'vue';
 
+import EmptyState from './EmptyState.vue';
 import MediaDivider from './MediaDivider.vue';
 import MediaGroup from './MediaGroup.vue';
 import MediaItem from './MediaItem.vue';
+import MediaItemSkeleton from './MediaItemSkeleton.vue';
 import MediaSectionHeader from './MediaSectionHeader.vue';
-import SectionEmptyState from './SectionEmptyState.vue';
 
 const props = defineProps<{
   mediaFilterTerms?: string[];
@@ -158,7 +181,18 @@ const props = defineProps<{
 }>();
 
 const currentState = useCurrentStateStore();
-const { selectedDateObject } = storeToRefs(currentState);
+const { pendingSectionImports, selectedDateObject } = storeToRefs(currentState);
+
+// Number of add-media operations currently in flight for this section - see
+// the `pendingSectionImports` doc comment in the current-state store. Shown
+// as skeleton placeholders below to bridge the gap before the real item
+// appears.
+const pendingImportCount = computed(
+  () =>
+    pendingSectionImports.value.filter(
+      (sectionId) => sectionId === props.mediaList.config?.uniqueId,
+    ).length,
+);
 
 // Ref to the section header
 const sectionHeaderRef = ref<InstanceType<typeof MediaSectionHeader> | null>(
@@ -202,6 +236,7 @@ const { addDivider, deleteDivider, updateDividerColors, updateDividerTitle } =
 // Use the drag and drop composable - pass the reactive sectionData items directly
 const { dragDropContainer, isDragging, sortableItems } = useMediaDragAndDrop(
   sectionData.value?.items || [],
+  { getSelectedIds: () => props.selectedMediaItems },
 );
 
 /**
@@ -236,6 +271,24 @@ function handleWatchedMediaPersistence() {
  * Updates the section data in the Pinia store to match the sorted order.
  */
 let watchedMediaPersistenceQueued = false;
+
+// UX-6 (full-audit-2026-09-04.md): keyboard-accessible alternative to
+// @formkit/drag-and-drop's pointer-only handle, which has no
+// tabindex/keyboard handler and no fallback anywhere. Reassigning
+// sortableItems (rather than mutating in place) is what the existing watch
+// below picks up to persist the new order, the same as a real drag does.
+function moveTopLevelItem(index: number, delta: number) {
+  if (!sortableItems.value) return;
+
+  const targetIndex = index + delta;
+  if (targetIndex < 0 || targetIndex >= sortableItems.value.length) return;
+
+  const items = [...sortableItems.value];
+  const [moved] = items.splice(index, 1);
+  if (!moved) return;
+  items.splice(targetIndex, 0, moved);
+  sortableItems.value = items;
+}
 
 function queueWatchedMediaPersistence() {
   if (watchedMediaPersistenceQueued) return;

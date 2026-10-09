@@ -1,0 +1,264 @@
+{
+  "_comment": "Grounded JW terminology for uk, cross-checked against official jw.org pages. Reusable beyond translation-quality review. Regenerate via scripts/i18n-quality/prompts/grounding-agent.md.",
+  "_fetchedAt": "2026-09-10",
+  "_language": "uk",
+  "terms": [
+    {
+      "termEn": "Jehovah's Witnesses",
+      "official": "Свідки Єгови",
+      "sourceUrls": [
+        "https://www.jw.org/uk/глобальні-комунікації/термінологічний-словник/"
+      ],
+      "confidence": "high",
+      "notes": "First reference should use the full name «Свідки Єгови»; acceptable short forms are «Свідок»/«Свідки» per the guide's own note."
+    },
+    {
+      "termEn": "Kingdom Hall",
+      "official": "Зал Царства Свідків Єгови; Зал Царства",
+      "sourceUrls": [
+        "https://www.jw.org/uk/глобальні-комунікації/термінологічний-словник/"
+      ],
+      "confidence": "high",
+      "notes": "The guide explicitly says to avoid the word «церква» (church) for this."
+    },
+    {
+      "termEn": "circuit overseer",
+      "official": "районний наглядач",
+      "sourceUrls": [
+        "https://www.jw.org/uk/глобальні-комунікації/термінологічний-словник/"
+      ],
+      "confidence": "high",
+      "notes": "«район» = circuit (a group of congregations); not used as an honorific title per the guide."
+    },
+    {
+      "termEn": "congregation",
+      "official": "збір",
+      "sourceUrls": [
+        "https://www.jw.org/uk/глобальні-комунікації/термінологічний-словник/"
+      ],
+      "confidence": "high",
+      "notes": "«збір» is the formal glossary headword, but jw.org's own running text (including elsewhere on this same glossary page and in meeting-workbook articles) very commonly uses «громада» as a synonym for a local congregation. Both are legitimate; a review should not flag «громада» as wrong."
+    },
+    {
+      "termEn": "elder",
+      "official": "старійшина",
+      "sourceUrls": [
+        "https://www.jw.org/uk/глобальні-комунікації/термінологічний-словник/"
+      ],
+      "confidence": "high",
+      "notes": "Not used as an honorific title/form of address per the guide."
+    },
+    {
+      "termEn": "presiding overseer",
+      "official": "координатор ради старійшин",
+      "sourceUrls": ["https://wol.jw.org/uk/wol/d/r15/lp-k/1102014935"],
+      "confidence": "high",
+      "notes": "IMPORTANT: this role was renamed org-wide in the 2023 congregation-role restructuring; \"presiding overseer\" no longer exists as a role in current English JW terminology either (replaced by \"coordinator of the body of elders\"). Not present in jw.org's official Terminology Guide (neither the EN nor UK version lists it), so grounded instead from an official Watchtower Online Library article (\"Наглядачі, призначені пасти отару\"), which quotes verbatim: «Координатор ради старійшин бере провід на зустрічах ради старійшин.» If the app still shows an older term like «головуючий наглядач», that is now outdated."
+    },
+    {
+      "termEn": "ministerial servant",
+      "official": "служитель збору",
+      "sourceUrls": [
+        "https://www.jw.org/uk/глобальні-комунікації/термінологічний-словник/"
+      ],
+      "confidence": "high",
+      "notes": "Literally \"servant of the congregation\"; not used as an honorific title."
+    },
+    {
+      "termEn": "pioneer",
+      "official": "піонер",
+      "sourceUrls": [
+        "https://www.jw.org/uk/глобальні-комунікації/термінологічний-словник/"
+      ],
+      "confidence": "high",
+      "notes": "Subtypes: «сталий піонер» (regular pioneer, 600 hrs/year) and «допоміжний піонер» (auxiliary pioneer, 15-30 hrs/month). Not an honorific title."
+    },
+    {
+      "termEn": "field service",
+      "official": "проповідницьке служіння; проповідування",
+      "sourceUrls": [
+        "https://www.jw.org/uk/глобальні-комунікації/термінологічний-словник/"
+      ],
+      "confidence": "high",
+      "notes": "Both forms appear as one combined headword on the official glossary."
+    },
+    {
+      "termEn": "Memorial",
+      "official": "Спомин Христової смерті",
+      "sourceUrls": [
+        "https://www.jw.org/uk/глобальні-комунікації/термінологічний-словник/"
+      ],
+      "confidence": "high",
+      "notes": "Short form used everywhere in running text (confirmed independently in a 2025 meeting-workbook article) is simply «Спомин». Also called «Господня вечеря» in the full definition. Flag any app string using a discontinued Christian-holiday word (e.g. anything resembling \"Пасха\"/\"Великдень\") or an invented cognate of \"memorial\" (e.g. \"меморіал\") as wrong — «меморіал» is NOT the term jw.org uses for this event."
+    },
+    {
+      "termEn": "Congregation Bible Study",
+      "official": "Вивчення Біблії у зборі",
+      "sourceUrls": [
+        "https://www.jw.org/uk/бібліотека/посібник-для-зібрання/березень-квітень-2025-mwb/Розклад-зібрання-Християнського-життя-і-служіння-на-7-13-квітня-2025-року/"
+      ],
+      "confidence": "high",
+      "notes": "Verified verbatim as agenda item \"8. Вивчення Біблії у зборі (30 хв)\" in a live meeting-workbook schedule page (raw HTML, not a search summary). Not covered by the general Terminology Guide."
+    },
+    {
+      "termEn": "midweek meeting",
+      "official": "зібрання серед тижня",
+      "sourceUrls": [
+        "https://www.jw.org/uk/глобальні-комунікації/термінологічний-словник/"
+      ],
+      "confidence": "high",
+      "notes": "Officially named program is «Наше християнське життя і служіння» (Our Christian Life and Ministry)."
+    },
+    {
+      "termEn": "weekend meeting",
+      "official": "публічне зібрання",
+      "sourceUrls": [
+        "https://www.jw.org/uk/глобальні-комунікації/термінологічний-словник/"
+      ],
+      "confidence": "high",
+      "notes": "The glossary's «публічне зібрання» entry covers the whole weekend meeting (public talk + Watchtower Study), not just the talk portion."
+    },
+    {
+      "termEn": "public talk",
+      "official": "публічна промова",
+      "sourceUrls": ["https://wol.jw.org/uk/wol/d/r15/lp-k/1200274680"],
+      "confidence": "high",
+      "notes": "Not a separate headword in the Terminology Guide itself (which folds it into the «публічне зібрання» definition as a \"30-minute talk\"), but «Публічні промови» (plural) is the exact title of an official Watchtower Online Library section/category, confirming «публічна промова» as the standard singular term."
+    },
+    {
+      "termEn": "Watchtower Study",
+      "official": "Вивчення «Вартової башти»",
+      "sourceUrls": [
+        "https://www.jw.org/uk/глобальні-комунікації/термінологічний-словник/",
+        "https://wol.jw.org/uk/wol/meetings/r15/lp-k/2024/22"
+      ],
+      "confidence": "high",
+      "notes": "Named as \"this part is called «вивченням «Вартової башти»»\" within the weekend-meeting definition, and independently confirmed as a schedule label on a WOL meetings page."
+    },
+    {
+      "termEn": "The Watchtower",
+      "official": "«Вартова башта»",
+      "sourceUrls": [
+        "https://www.jw.org/uk/глобальні-комунікації/термінологічний-словник/"
+      ],
+      "confidence": "high",
+      "notes": "Full title: «Вартова башта оголошує Царство Єгови». Published since 1879; has Public and Study editions."
+    },
+    {
+      "termEn": "Awake!",
+      "official": "«Пробудись!»",
+      "sourceUrls": [
+        "https://www.jw.org/uk/глобальні-комунікації/термінологічний-словник/"
+      ],
+      "confidence": "high",
+      "notes": "Includes the exclamation mark, per the glossary's own usage. Historical prior titles noted on the page: «Золотий вік» (1919), «Вістник Потіхи» (1937), current title since Aug 22, 1946."
+    },
+    {
+      "termEn": "New World Translation",
+      "official": "«Переклад нового світу»",
+      "sourceUrls": [
+        "https://www.jw.org/uk/глобальні-комунікації/термінологічний-словник/"
+      ],
+      "confidence": "high",
+      "notes": "Full name: «Біблія. Переклад нового світу»."
+    },
+    {
+      "termEn": "JW Library",
+      "official": "JW Library",
+      "sourceUrls": [
+        "https://www.jw.org/uk/глобальні-комунікації/термінологічний-словник/"
+      ],
+      "confidence": "high",
+      "notes": "Confirmed via the site's own footer navigation on the Ukrainian glossary page — the app name is kept in English/Latin script, not translated or transliterated."
+    },
+    {
+      "termEn": "jw.org",
+      "official": "JW.ORG",
+      "sourceUrls": [
+        "https://www.jw.org/uk/глобальні-комунікації/термінологічний-словник/"
+      ],
+      "confidence": "high",
+      "notes": "Brand/logo form is all-caps «JW.ORG» (seen repeatedly in the page's own header/footer); in running prose the site refers to itself in lowercase as \"jw.org\", also untranslated/untransliterated."
+    },
+    {
+      "termEn": "songbook",
+      "official": "«Радісно співайте Єгові»",
+      "sourceUrls": [
+        "https://www.jw.org/uk/бібліотека/музика-пісні/радісно-співайте-єгові/"
+      ],
+      "confidence": "high",
+      "notes": "This is the title of the current official songbook (\"Sing Out Joyfully to Jehovah\"), found via the English songbook page's own hreflang=\"uk\" alternate-link metadata. If the app uses a generic word for \"songbook\" rather than this proper title, a close generic equivalent would be «збірник пісень», but jw.org itself names the actual book as above."
+    },
+    {
+      "termEn": "convention",
+      "official": "конгрес (регіональний конгрес / міжнародний конгрес)",
+      "sourceUrls": [
+        "https://www.jw.org/uk/глобальні-комунікації/термінологічний-словник/"
+      ],
+      "confidence": "medium",
+      "notes": "Ukrainian does not lexically split \"assembly\" vs \"convention\" the way the English glossary's headwords do; it uses one base word «конгрес» plus a qualifier for every size/level: «районний конгрес» (circuit assembly), «регіональний конгрес» (regional convention), «міжнародний конгрес» (international convention). Marked medium because mapping the app's generic seed term \"convention\" onto one exact Ukrainian string required interpretation across three related headwords rather than a single 1:1 match."
+    },
+    {
+      "termEn": "assembly",
+      "official": "районний конгрес",
+      "sourceUrls": [
+        "https://www.jw.org/uk/глобальні-комунікації/термінологічний-словник/"
+      ],
+      "confidence": "high",
+      "notes": "Corresponds to the English glossary's \"circuit assembly\" (a one-day meeting held twice yearly) — the smaller gathering relative to \"convention\". Also relevant: «Зал конгресів (Свідків Єгови)» = Assembly Hall."
+    },
+    {
+      "termEn": "theocratic school",
+      "official": "Школа теократичного служіння",
+      "sourceUrls": [
+        "https://wol.jw.org/uk/wol/d/r15/lp-k/201998403",
+        "https://wol.jw.org/uk/wol/d/r15/lp-k/202002408"
+      ],
+      "confidence": "medium",
+      "notes": "This is a legacy/historical term (Theocratic Ministry School, running from 1943 until it was folded into the current \"Our Christian Life and Ministry\" meeting/school in the 2013 meeting-format reorganization). Not in the current Terminology Guide. If the app is describing current programs, this term should NOT appear as a live feature name — flag any current-tense usage as likely outdated; it's only valid in a historical context."
+    },
+    {
+      "termEn": "sign language",
+      "official": "жестова мова / жестові мови",
+      "sourceUrls": [
+        "https://www.jw.org/uk/глобальні-комунікації/термінологічний-словник/"
+      ],
+      "confidence": "high",
+      "notes": "Confirmed from the site's own language-picker UI text on the Ukrainian glossary page itself: «Показати тільки жестові мови» (\"Show only sign languages\")."
+    },
+    {
+      "termEn": "meeting workbook",
+      "official": "«Наше християнське життя і служіння. Посібник для зібрання»",
+      "sourceUrls": ["https://www.jw.org/uk/бібліотека/посібник-для-зібрання/"],
+      "confidence": "high",
+      "notes": "Found via the English workbook index page's hreflang=\"uk\" alternate-link title metadata. Often just called «Посібник для зібрання» for short."
+    },
+    {
+      "termEn": "yeartext",
+      "official": "вірш на [рік] рік",
+      "sourceUrls": [
+        "https://www.jw.org/uk/бібліотека/журнали/вартова-башта-вивчення-січень-2026/Задовольняйте-свої-духовні-потреби/"
+      ],
+      "confidence": "high",
+      "notes": "Verified verbatim in the raw HTML of the January 2026 Watchtower Study article, which opens with the heading «ВІРШ НА 2026 РІК:» before quoting Matthew 5:3. NOT «текст року» — a plausible-looking calque that does not appear on jw.org; the actual official phrasing is «вірш на [рік] рік» (\"verse for the year [X]\")."
+    },
+    {
+      "termEn": "branch office",
+      "official": "філіал",
+      "sourceUrls": [
+        "https://www.jw.org/uk/глобальні-комунікації/термінологічний-словник/"
+      ],
+      "confidence": "high",
+      "notes": "Full definition refers to it as a religious center from which the «комітет філіалу» (Branch Committee) supports and coordinates spiritual activity in one or more countries."
+    },
+    {
+      "termEn": "Governing Body",
+      "official": "Керівний орган Свідків Єгови",
+      "sourceUrls": [
+        "https://www.jw.org/uk/глобальні-комунікації/термінологічний-словник/"
+      ],
+      "confidence": "high",
+      "notes": "Commonly shortened to «Керівний орган», per the guide's own note."
+    }
+  ]
+}

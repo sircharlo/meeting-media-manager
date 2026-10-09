@@ -5,16 +5,24 @@ import type {
   JwSite,
   MediaItem,
   MediaLink,
+  MediaSectionIdentifier,
+  MeetingCheckStatuses,
+  SettingsGroupKey,
   SettingsItem,
   SettingsItems,
   SettingsValues,
 } from 'src/types';
 
 import { defineStore } from 'pinia';
+import { i18n } from 'src/boot/i18n';
 import { LONG_MEDIA_DURATION } from 'src/constants/jw';
 import { settingsDefinitions } from 'src/constants/settings';
+import { getZoomHelperErrorMessageKey } from 'src/constants/zoom';
 import { isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { getRendererPlatform } from 'src/helpers/fs';
+import { dismissAllTemporaryNotifications } from 'src/helpers/notifications';
+import { log } from 'src/shared/vanilla';
 import { datesAreSame, formatDate } from 'src/utils/date';
 import {
   getAdditionalMediaPath,
@@ -33,9 +41,36 @@ const { ensureDir } = fs;
 export interface MediaPlayingState {
   action: MediaPlayingStateAction;
   currentPosition: number;
+  /**
+   * `Date.now()` timestamp at which `currentPosition` was last set from a
+   * media window report. Lets consumers extrapolate the real, current
+   * position (accounting for report throttling/round-trip time) instead of
+   * treating `currentPosition` as still accurate by the time they read it.
+   */
+  currentPositionUpdatedAt: number;
+  /**
+   * The playing item's total duration in seconds, as read from the media
+   * window's own decoded element (`loadedmetadata`) - 0 until reported.
+   * Lets consumers that never locally decode the file (e.g. the media
+   * preview's capture mode, which mirrors the media window's rendered
+   * output instead) still show accurate playback progress.
+   */
+  duration: number;
   pan: Partial<{ x: number; y: number }>;
+  /**
+   * Set to the current `playToken` once `currentPosition` (driven by the
+   * media window's `current-time` reports) is observed actually advancing
+   * for that play request, not just reporting a value. Lets consumers like
+   * the media preview wait for confirmed, moving playback instead of
+   * assuming playback started as soon as it was requested.
+   */
+  playbackConfirmedToken: number;
   playbackRate: number;
+  /** Bumped whenever a genuinely new playback request starts. */
+  playToken: number;
   seekTo: number;
+  shouldLoop: boolean;
+  slideshowAudioUrl: string;
   subtitlesUrl: string;
   uniqueId: string;
   url: string;
@@ -43,11 +78,7 @@ export interface MediaPlayingState {
 }
 
 export type MediaPlayingStateAction =
-  | ''
-  | 'mirroringWebsite'
-  | 'pause'
-  | 'play'
-  | 'previewingWebsite';
+  '' | 'mirroringWebsite' | 'pause' | 'play' | 'previewingWebsite';
 
 export interface Songbook {
   fileformat: 'MP3' | 'MP4';
@@ -56,23 +87,52 @@ export interface Songbook {
 }
 
 interface Store {
+  /**
+   * Which Settings-page category (rail item) is active, per congregation
+   * profile. Deliberately session-only (not in this store's `persist.pick`
+   * allowlist below) - it only needs to survive navigating away from and
+   * back to the Settings page within a running session, not an app
+   * restart.
+   */
+  activeSettingsGroup: Partial<Record<string, SettingsGroupKey>>;
   autoReturnFromWebsite: boolean;
+  /**
+   * Whether the congregation switcher opened as part of the app's initial
+   * bootstrap (fresh launch, no congregation selected yet) rather than a
+   * manual reopen. Mirrors the old `/initial-congregation-selector` route's
+   * `isHomePage` distinction: only the bootstrap open auto-selects a lone
+   * existing congregation.
+   */
+  congregationSwitcherBootstrap: boolean;
+  congregationSwitcherOpen: boolean;
   currentCongregation: string;
   downloadProgress: DownloadProgressItems;
   extractedFiles: Partial<Record<string, string>>;
-  fetchingMeetingsCount: number;
   ffmpegPath: string;
+  lastCacheClearAt: number;
   lookupInProgress: boolean;
   mediaPlaying: MediaPlayingState;
+  mediaRefreshPending: boolean;
   mediaWindowCustomBackground: string;
   mediaWindowVisible: boolean;
+  meetingCheckStatus: MeetingCheckStatuses;
   meetingDay: boolean;
   online: boolean;
   onlyShowInvalidSettings: boolean;
+  /**
+   * Section identifiers with an add-media operation in flight (song/video/
+   * publication import, etc). One entry per concurrent operation targeting
+   * that section, so a section can appear more than once. Lets MediaList
+   * show a skeleton placeholder for the gap between picking media and it
+   * landing in the store, since that step can involve a network fetch
+   * (thumbnail download) before the item exists to render.
+   */
+  pendingSectionImports: MediaSectionIdentifier[];
   pinyinActive: boolean;
   selectedDate: string;
   timerWindowVisible: boolean;
   websiteSelection: JwSite;
+  zoomHelperLogs: string[];
 }
 
 const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
@@ -80,8 +140,26 @@ const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
   SettingsItem,
 ][];
 
+let zoomHelperSyncInProgress = false;
+
+/** Local time with milliseconds, e.g. 14:03:12.345. */
+const formatLogTime = (date: Date) =>
+  date.toLocaleTimeString('en-GB', {
+    fractionalSecondDigits: 3,
+    hour: '2-digit',
+    hour12: false,
+    minute: '2-digit',
+    second: '2-digit',
+  });
+
 export const useCurrentStateStore = defineStore('current-state', {
   actions: {
+    addZoomHelperLog(log: string) {
+      this.zoomHelperLogs.push(`${formatLogTime(new Date())} ${log}`);
+      if (this.zoomHelperLogs.length > 100) {
+        this.zoomHelperLogs.shift();
+      }
+    },
     areDependenciesSatisfied(
       settingsDefinition: SettingsItem,
       congregation: string,
@@ -101,10 +179,18 @@ export const useCurrentStateStore = defineStore('current-state', {
     },
     async getDatedAdditionalMediaDirectory(destDate?: string) {
       try {
-        if (!destDate) destDate = this.selectedDate;
-        if (!destDate) return '';
+        // Falling back to '' here (e.g. right after a congregation switch,
+        // before selectedDate has initialized) is dangerous: callers join()
+        // it with a filename, producing a bare relative path that Node
+        // resolves against process.cwd() - the app's own install directory
+        // in a packaged build. Default to today instead of ever returning
+        // an unusable empty directory.
+        if (!destDate) destDate = this.selectedDate || undefined;
         const additionalMediaPath = await getAdditionalMediaPath();
-        const dateString = formatDate(new Date(destDate), 'YYYYMMDD');
+        const dateString = formatDate(
+          destDate ? new Date(destDate) : new Date(),
+          'YYYYMMDD',
+        );
         const datedAdditionalMediaDirectory = join(
           additionalMediaPath,
           this.currentCongregation,
@@ -133,6 +219,10 @@ export const useCurrentStateStore = defineStore('current-state', {
 
           if (
             this.areDependenciesSatisfied(
+              settingsDefinition,
+              congregation as string,
+            ) &&
+            !this.isHiddenByUnless(
               settingsDefinition,
               congregation as string,
             ) &&
@@ -176,6 +266,39 @@ export const useCurrentStateStore = defineStore('current-state', {
       if (!congregation) return false;
       return this.getInvalidSettings(congregation).length > 0;
     },
+    // UX-12 (full-audit-2026-09-05.md): mirrors SettingsPage.vue's
+    // shouldShowSetting()/checkUnlessEffective() unless-evaluation exactly,
+    // but against the given congregation's own settings object rather than
+    // the reactive currentSettings computed (this action is called for
+    // arbitrary congregations, not just the currently active one). A
+    // setting hidden by `unless` must never count as invalid - there would
+    // be no visible row for the user to fix it on.
+    isHiddenByUnless(
+      settingsDefinition: SettingsItem,
+      congregation: string,
+    ): boolean {
+      if (!settingsDefinition.unless) return false;
+      const congregationSettingsStore = useCongregationSettingsStore();
+      const settings = congregationSettingsStore.congregations[congregation];
+
+      const checkUnlessEffective = (unlessKey: keyof SettingsValues) => {
+        const unlessSetting = settingsDefinitions[unlessKey];
+        if (!settings?.[unlessKey]) return false; // disabled, so not effective
+        return (
+          !unlessSetting?.depends ||
+          (Array.isArray(unlessSetting.depends)
+            ? unlessSetting.depends.every((dep) => settings?.[dep])
+            : !!settings?.[unlessSetting.depends])
+        );
+      };
+
+      if (Array.isArray(settingsDefinition.unless)) {
+        return settingsDefinition.unless.some((dep) =>
+          checkUnlessEffective(dep),
+        );
+      }
+      return checkUnlessEffective(settingsDefinition.unless);
+    },
     isSettingInvalid(
       settingsDefinitionId: keyof SettingsItems,
       settingsDefinition: SettingsItem,
@@ -209,24 +332,81 @@ export const useCurrentStateStore = defineStore('current-state', {
 
       return false;
     },
+    openCongregationSwitcher(opts?: { isBootstrap?: boolean }) {
+      this.congregationSwitcherBootstrap = !!opts?.isBootstrap;
+      this.congregationSwitcherOpen = true;
+    },
     setCongregation: async function (value: number | string) {
       if (!value) return false;
 
       // Cancel all pending downloads from the previous congregation
       cancelAllDownloads();
       this.downloadProgress = {};
+      this.meetingCheckStatus = {};
+
+      // Set before currentCongregation changes below, so anything watching
+      // currentCongregation (e.g. MediaCalendarPage's error/missing-media
+      // notifications) already sees a refresh as pending on the very same
+      // reactive flush that the switch itself triggers - fetchMedia() (called
+      // separately, once the new congregation's page has settled) only
+      // reaches its own point of setting this moments later, which would
+      // otherwise leave a window where this flag still reads false and the
+      // previous congregation's stale leftover status gets shown as current.
+      this.mediaRefreshPending = true;
 
       // Dismiss all active notifications when changing congregation
-      const { dismissAllTemporaryNotifications } =
-        await import('src/helpers/notifications');
       dismissAllTemporaryNotifications();
 
-      this.currentCongregation = value.toString();
+      // FE-17 (full-audit-2026-09-05.md): captured locally rather than
+      // re-read from this.currentCongregation after the await below - a
+      // second overlapping setCongregation call (e.g. a rapid double
+      // switch) can reassign currentCongregation in between, which would
+      // otherwise make this call resolve invalid-settings for whichever
+      // congregation happens to be current when it wakes up, not the one
+      // it was actually asked to switch to.
+      const newCongregation = value.toString();
+      this.currentCongregation = newCongregation;
       await getCachedUserDataPath();
-      return this.getInvalidSettings(this.currentCongregation).length > 0;
+
+      await this.syncZoomHelper();
+
+      return this.getInvalidSettings(newCongregation).length > 0;
     },
     setTimerWindowVisible(visible: boolean) {
       this.timerWindowVisible = visible;
+    },
+    async syncZoomHelper() {
+      // Resolved here rather than at module load: src/helpers/fs imports
+      // this store, so a top-level call could run before it's initialized.
+      if (getRendererPlatform() !== 'win32' || zoomHelperSyncInProgress) {
+        return;
+      }
+
+      const { startZoomHelper, stopZoomHelper } = globalThis.electronApi;
+
+      if (!this.currentSettings?.zoomMeetingManagerEnable) {
+        stopZoomHelper();
+        return;
+      }
+
+      zoomHelperSyncInProgress = true;
+      try {
+        const result = await startZoomHelper();
+        if (!result.ok) {
+          log('Zoom helper did not start', 'zoom', 'error', result);
+          const { createTemporaryNotification } =
+            await import('src/helpers/notifications');
+          const t = i18n.global.t as (key: string) => string;
+          createTemporaryNotification({
+            caption: t(getZoomHelperErrorMessageKey(result.error)),
+            message: t('zoom-helper-start-failed'),
+            timeout: 0,
+            type: 'negative',
+          });
+        }
+      } finally {
+        zoomHelperSyncInProgress = false;
+      }
     },
   },
   getters: {
@@ -353,6 +533,27 @@ export const useCurrentStateStore = defineStore('current-state', {
       if (!currentLanguage) return [];
       return jwStore.jwSongs[currentLanguage]?.list || [];
     },
+    // Extracted so BE-8's periodic low-disk-space check (MainLayout.vue) can
+    // gate on "downloads specifically" without also polling while only a
+    // meeting-schedule check (no disk writes) is in progress.
+    hasActiveDownloads(): boolean {
+      return Object.values(this.downloadProgress).some(
+        (item) =>
+          !item.complete &&
+          !item.error &&
+          (!item.loaded || !item.total || item.loaded < item.total),
+      );
+    },
+    // Single source of truth for "is a meeting refresh doing anything right
+    // now" - covers checking meeting dates and downloading files, so the
+    // island button, the popup, and the cache auto-clear guard can never
+    // disagree with each other.
+    hasActiveMediaWork(): boolean {
+      if (Object.values(this.meetingCheckStatus).includes('checking')) {
+        return true;
+      }
+      return this.hasActiveDownloads;
+    },
     isSelectedDayToday(): boolean {
       try {
         const selectedDateObj = this.selectedDateObject;
@@ -363,6 +564,14 @@ export const useCurrentStateStore = defineStore('current-state', {
         return false;
       }
     },
+    // Narrower than mediaIsPlaying, which is really "a media item is loaded
+    // /selected" (url !== '') and stays true long after that item finishes
+    // playing, until something else is selected or explicitly stopped. Use
+    // this one specifically for "is audio/video actively playing right now"
+    // checks (e.g. gating background music) - mediaIsPlaying would otherwise
+    // keep background music blocked for the rest of the day after the last
+    // meeting item finishes.
+    mediaIsActivelyPlaying: (state) => state.mediaPlaying.action === 'play',
     // Direct access to media sections - no need for getter methods anymore
     // Use selectedDateObject.mediaSections directly for all media
     // Use selectedDateObject.mediaSections.find(s => s.config.uniqueId === section)?.items.filter(item => !item.hidden) for visible media
@@ -460,33 +669,46 @@ export const useCurrentStateStore = defineStore('current-state', {
   },
   state: (): Store => {
     return {
+      activeSettingsGroup: {},
       autoReturnFromWebsite: false,
+      congregationSwitcherBootstrap: false,
+      congregationSwitcherOpen: false,
       currentCongregation: '',
       downloadProgress: {},
       extractedFiles: {},
-      fetchingMeetingsCount: 0,
       ffmpegPath: '',
+      lastCacheClearAt: 0,
       lookupInProgress: false,
       mediaPlaying: {
         action: '',
         currentPosition: 0,
+        currentPositionUpdatedAt: 0,
+        duration: 0,
         pan: { x: 0, y: 0 },
+        playbackConfirmedToken: 0,
         playbackRate: 1,
+        playToken: 0,
         seekTo: 0,
+        shouldLoop: false,
+        slideshowAudioUrl: '',
         subtitlesUrl: '',
         uniqueId: '',
         url: '',
         zoom: 1,
       },
+      mediaRefreshPending: false,
       mediaWindowCustomBackground: '',
       mediaWindowVisible: true,
+      meetingCheckStatus: {},
       meetingDay: false,
       online: true,
       onlyShowInvalidSettings: false,
+      pendingSectionImports: [],
       pinyinActive: false,
       selectedDate: formatDate(new Date(), 'YYYY/MM/DD'),
       timerWindowVisible: false,
       websiteSelection: undefined,
+      zoomHelperLogs: [],
     };
   },
 });

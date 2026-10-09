@@ -1,0 +1,244 @@
+{
+  "_comment": "Grounded JW terminology for ty, cross-checked against official jw.org pages. Reusable beyond translation-quality review. Regenerate via scripts/i18n-quality/prompts/grounding-agent.md.",
+  "_fetchedAt": "2026-09-10",
+  "_language": "ty",
+  "_note": "jw.org's official Terminology Guide (https://www.jw.org/en/global-communications/terminology-guide/) has NO Tahitian (ty) hreflang alternate - checked its <head> directly via curl and Tahitian is absent from its ~90 hreflang entries. Tahitian is a lower-resource language on jw.org than languages grounded previously (fr, hu, it, ko, nl, pt, uk, ru); all terms below were instead grounded against jw.org's public Tahitian site (jw.org/ty/) and wol.jw.org's Tahitian edition (wol.jw.org/ty/wol/d/r154/lp-th/<id>, sharing numeric ids with the English edition at .../r1/lp-e/<id> for actual translated articles). Several internal jw.org 'topic index' pages that exist only in major languages (numeric ids in the 1200xxxxxx / 1001xxxxxx range covering presiding overseer, ministerial servant, pioneer, Congregation Bible Study, public talk, yeartext as index entries) returned HTTP 404 when the same ids were requested under /ty/ - confirming those specific granular role/topic pages are simply not published in Tahitian, rather than a lookup mistake.",
+  "terms": [
+    {
+      "termEn": "Jehovah's Witnesses",
+      "official": "Ite no Iehova",
+      "sourceUrls": ["https://www.jw.org/ty/"],
+      "confidence": "high",
+      "notes": "Used throughout jw.org/ty/ (site title, nav, every page footer)."
+    },
+    {
+      "termEn": "Kingdom Hall",
+      "official": "Piha a te Basileia",
+      "sourceUrls": [
+        "https://www.jw.org/ty/ite-no-iehova/uiraa-a-te-taata/piha-basileia-ite-no-iehova/",
+        "https://www.jw.org/ty/ite-no-iehova/putuputuraa/"
+      ],
+      "confidence": "high",
+      "notes": "FAQ page title is literally 'No te aha “Piha a te Basileia”?' (Why 'Kingdom Hall'?). piha = hall/room, Basileia = Kingdom (Greek loanword, capitalized)."
+    },
+    {
+      "termEn": "circuit overseer",
+      "official": "tiaau haaati",
+      "sourceUrls": [
+        "https://www.jw.org/ty/ite-no-iehova/uiraa-a-te-taata/amuiraa-faanahohia/"
+      ],
+      "confidence": "high",
+      "notes": "From the official 'How are congregations organized' FAQ: 'E tere atu te tahi mau matahiapo ratere, parauhia tiaau haaati na roto i te mau amuiraa' (Traveling elders, called circuit overseers, visit the congregations). tiaau = overseer, haaati = circuit."
+    },
+    {
+      "termEn": "congregation",
+      "official": "amuiraa",
+      "sourceUrls": [
+        "https://www.jw.org/ty/ite-no-iehova/uiraa-a-te-taata/amuiraa-faanahohia/"
+      ],
+      "confidence": "high",
+      "notes": "Used consistently across jw.org/ty/ for 'congregation' (e.g. page title 'Nafea te mau amuiraa a te mau Ite no Iehova e faanahohia ˈi?')."
+    },
+    {
+      "termEn": "elder",
+      "official": "matahiapo",
+      "sourceUrls": [
+        "https://www.jw.org/ty/ite-no-iehova/uiraa-a-te-taata/amuiraa-faanahohia/"
+      ],
+      "confidence": "high",
+      "notes": "'Na te hoê tino matahiapo e tiaau i te amuiraa' (A body of elders oversees the congregation) - tino matahiapo = body of elders, matahiapo = elder."
+    },
+    {
+      "termEn": "presiding overseer",
+      "official": "",
+      "sourceUrls": [],
+      "confidence": "low",
+      "notes": "Not found in Tahitian. IMPORTANT: jw.org's own English terminology for this role changed after the 2023 congregation restructuring - 'Presiding Overseer' is now marked '(Discontinued)' on wol.jw.org (id 1200274607) and the current English term is 'Coordinator of the Body of Elders' (id 1200276968). Both the old and new English index pages return HTTP 404 when requested under wol.jw.org/ty/ - this specific role terminology does not appear to be published on the public Tahitian site at all. A reviewer should treat any Tahitian app string for this role with caution and verify separately (e.g. via a current Tahitian congregation resource) rather than trusting a literal translation of either 'presiding overseer' or 'coordinator'."
+    },
+    {
+      "termEn": "ministerial servant",
+      "official": "",
+      "sourceUrls": [],
+      "confidence": "low",
+      "notes": "Not found. The generic verb/root 'tavini' (to serve/servant) is well attested in Tahitian JW content, but no dedicated compound term for this specific congregation role was located on jw.org/ty/ or wol.jw.org/ty/ after multiple searches; the English index page (wol id 1200273848) 404s under /ty/."
+    },
+    {
+      "termEn": "pioneer",
+      "official": "",
+      "sourceUrls": [],
+      "confidence": "low",
+      "notes": "Not found on jw.org/ty/ or wol.jw.org/ty/ despite multiple targeted searches. Do not guess - this may be a transliterated loanword (as in French 'pionnier') or a native compound; needs verification from a current Tahitian publication."
+    },
+    {
+      "termEn": "field service",
+      "official": "taviniraa",
+      "sourceUrls": [
+        "https://www.jw.org/ty/piahia/faaineineraa-putuputuraa-ite-no-iehova/tetepa-atopa-2026-mwb/Porotarama-Oraraa-e-taviniraa-Kerisetiano-o-te-7-13-no-Tetepa-2026/"
+      ],
+      "confidence": "medium",
+      "notes": "No single fixed noun phrase corresponding to the English idiom 'field service' was found. The live meeting-workbook program page (an actual official schedule, not a guess) uses 'taviniraa' (ministry/service) for the general concept - section heading 'A RAVE MAITE I TA OE TAVINIRAA' (Apply Yourself to the Ministry) - and 'pororaa' (preaching) for specific methods, e.g. 'PORORAA FAANAHO-ORE-HIA' (informal witnessing) and 'I TERA E TERA FARE' (house to house). A reviewer should expect the app's 'field service' strings to map to 'taviniraa' or 'pororaa' depending on context rather than one fixed compound."
+    },
+    {
+      "termEn": "Memorial",
+      "official": "Oroa haamanaˈoraa",
+      "sourceUrls": ["https://www.jw.org/ty/ite-no-iehova/oroa-haamanaoraa/"],
+      "confidence": "high",
+      "notes": "Full official form is 'Oroa haamanaˈoraa o te pohe o Iesu' (Memorial of Jesus' death) - confirmed verbatim in the page's <title>, <h1>, and og:title/og:description. oroa = observance/ceremony, haamanaˈoraa = remembrance/commemoration. Checked specifically per the task's standing note that 'Memorial' is a frequent mistranslation trap in other languages - this is a clear, unambiguous, dedicated official rendering, not a cognate or borrowed holiday term. Note: jw.org's Tahitian site renders the ʻeta (glottal stop) using the character U+02C8 (MODIFIER LETTER VERTICAL LINE, ˈ) rather than the more common ʻokina (ʻ/ʼ) - reproduced here exactly as published."
+    },
+    {
+      "termEn": "Congregation Bible Study",
+      "official": "Haapiiraa Bibilia a te amuiraa",
+      "sourceUrls": [
+        "https://www.jw.org/ty/piahia/faaineineraa-putuputuraa-ite-no-iehova/tetepa-atopa-2026-mwb/Porotarama-Oraraa-e-taviniraa-Kerisetiano-o-te-7-13-no-Tetepa-2026/"
+      ],
+      "confidence": "high",
+      "notes": "Found verbatim as item 8 of an actual, current (Sept 2026) Tahitian midweek-meeting program: 'Haapiiraa Bibilia a te amuiraa (30 min.)'. Literally 'Bible study of the congregation'."
+    },
+    {
+      "termEn": "midweek meeting",
+      "official": "Putuputuraa Oraraa e taviniraa Kerisetiano",
+      "sourceUrls": [
+        "https://www.jw.org/ty/piahia/faaineineraa-putuputuraa-ite-no-iehova/",
+        "https://www.jw.org/ty/ite-no-iehova/putuputuraa/"
+      ],
+      "confidence": "medium",
+      "notes": "jw.org does not use a literal 'midweek'/'weekend' label publicly (its general meetings page just says congregations meet twice a week). The formal name of this meeting itself, taken from the meeting-workbook title, is 'Putuputuraa Oraraa e taviniraa Kerisetiano' (Christian Life and Ministry Meeting) - this is what the app's 'midweek meeting' string most likely corresponds to, but it is not literally the word 'midweek'."
+    },
+    {
+      "termEn": "weekend meeting",
+      "official": "",
+      "sourceUrls": [],
+      "confidence": "low",
+      "notes": "No distinct official Tahitian name found for this meeting as a whole (jw.org/ty/ite-no-iehova/putuputuraa/ describes meetings generically, twice a week, without naming each one). Its components are separately attested: the talk portion likely corresponds to 'oreroraa parau' (see 'public talk') and the study portion to 'Te Pare Tiairaa (Neneiraa no te haapiiraa)' (see 'Watchtower Study'), but no combined official label was located."
+    },
+    {
+      "termEn": "public talk",
+      "official": "oreroraa parau",
+      "sourceUrls": [
+        "https://www.jw.org/ty/ite-no-iehova/tairururaa-toru-mahana/"
+      ],
+      "confidence": "medium",
+      "notes": "'oreroraa parau' (discourse/talk) appears on the official 2026 convention page describing a program talk ('I roto i te oreroraa parau “Ua itehia anei ia outou te taˈoa rahi?”'). This is a generic word for 'talk/discourse' seen in a convention program, not confirmed as a fixed label specifically for the weekend meeting's opening talk - treat as a reasonable but unconfirmed candidate."
+    },
+    {
+      "termEn": "Watchtower Study",
+      "official": "Te Pare Tiairaa (Neneiraa no te haapiiraa)",
+      "sourceUrls": ["https://www.jw.org/ty/piahia/vea/"],
+      "confidence": "high",
+      "notes": "'Neneiraa no te haapiiraa' = study edition, appended to the magazine name 'Te Pare Tiairaa' on the official magazines page."
+    },
+    {
+      "termEn": "The Watchtower",
+      "official": "Te Pare Tiairaa",
+      "sourceUrls": ["https://www.jw.org/ty/piahia/vea/"],
+      "confidence": "high",
+      "notes": "Page title 'Te Pare Tiairaa e A ara mai na!' (The Watchtower and Awake!). Pare tiairaa ≈ 'watchtower/lookout post'."
+    },
+    {
+      "termEn": "Awake!",
+      "official": "A ara mai na!",
+      "sourceUrls": ["https://www.jw.org/ty/piahia/vea/"],
+      "confidence": "high",
+      "notes": "Exclamation mark is part of the official title, matching the seed's note that it's a proper noun including the '!'."
+    },
+    {
+      "termEn": "New World Translation",
+      "official": "Te Bibilia, Huriraa o te ao apî",
+      "sourceUrls": [
+        "https://www.jw.org/ty/ite-no-iehova/uiraa-a-te-taata/jw-bibilia-nwt/",
+        "https://www.jw.org/ty/piahia/bibilia/"
+      ],
+      "confidence": "high",
+      "notes": "Confirmed verbatim repeatedly (e.g. 'Ua faaohipa te mau Ite no Iehova e rave rahi huriraa a haapii ai i te Bibilia. E rave râ matou i Te Bibilia, Huriraa o te ao apî'). Often shortened to 'Huriraa o te ao apî' (Translation of the New World) in running text; abbreviation 'NWT' is also used as-is."
+    },
+    {
+      "termEn": "JW Library",
+      "official": "JW Library",
+      "sourceUrls": ["https://www.jw.org/en/online-help/jw-library/"],
+      "confidence": "high",
+      "notes": "App/brand name is kept unchanged across all jw.org language editions, including Tahitian - consistent with the seed's note not to translate the app name. Could not find a Tahitian jw.org page mentioning it by name directly (the Tahitian site's app-related pages found during this run were about free Bible study offers, not the app), but jw.org's universal branding convention for this proper noun is well established."
+    },
+    {
+      "termEn": "jw.org",
+      "official": "jw.org",
+      "sourceUrls": ["https://www.jw.org/ty/"],
+      "confidence": "high",
+      "notes": "Domain name / proper noun, never localized, as on every other language edition of the site."
+    },
+    {
+      "termEn": "songbook",
+      "official": "Himene ma te oaoa ia Iehova",
+      "sourceUrls": ["https://www.jw.org/ty/piahia/upaupa-himene/"],
+      "confidence": "high",
+      "notes": "Current official songbook title, equivalent to English 'Sing Out Joyfully to Jehovah!'. The general music/songs section is titled 'Upaupa no te haamoriraa Kerisetiano' (Music for Christian Worship); the previous songbook 'Himene ia Iehova' (Sing to Jehovah) is also listed as an older edition."
+    },
+    {
+      "termEn": "convention",
+      "official": "Tairururaa e toru mahana",
+      "sourceUrls": [
+        "https://www.jw.org/ty/ite-no-iehova/tairururaa-toru-mahana/"
+      ],
+      "confidence": "high",
+      "notes": "Literally 'three-day convention', the current regional convention. Base word 'tairururaa' (large gathering/convention) is shared with 'assembly' below and disambiguated by a qualifier - see that entry for the smaller circuit assembly."
+    },
+    {
+      "termEn": "assembly",
+      "official": "tairururaa haaati",
+      "sourceUrls": ["https://wol.jw.org/ty/wol/d/r154/lp-th/402018287"],
+      "confidence": "high",
+      "notes": "Circuit assembly (smaller than the regional convention), confirmed verbatim in a Tahitian Watchtower article: 'I te mau tairururaa haaati, ua matau te hoê taeae...' (At circuit assemblies, a brother...). haaati = circuit."
+    },
+    {
+      "termEn": "theocratic school",
+      "official": "",
+      "sourceUrls": [],
+      "confidence": "low",
+      "notes": "Not found on jw.org/ty/ or wol.jw.org/ty/. This may refer to a discontinued/renamed program (e.g. the former Theocratic Ministry School, folded into the current meeting structure after past restructurings) - do not guess a Tahitian rendering."
+    },
+    {
+      "termEn": "sign language",
+      "official": "reo aparaa rima",
+      "sourceUrls": [
+        "https://www.jw.org/ty/piahia/tapura-vairaa-papai/",
+        "https://www.jw.org/ty/piahia/upaupa-himene/"
+      ],
+      "confidence": "high",
+      "notes": "Used consistently and extensively across jw.org/ty/ language pickers, e.g. 'Reo aparaa rima Farani' (French Sign Language), 'Reo aparaa rima Beretane' (British Sign Language), etc. Literally 'hand-touching language'."
+    },
+    {
+      "termEn": "meeting workbook",
+      "official": "Faaineineraa no te putuputuraa: Oraraa e taviniraa Kerisetiano",
+      "sourceUrls": [
+        "https://www.jw.org/ty/piahia/faaineineraa-putuputuraa-ite-no-iehova/"
+      ],
+      "confidence": "high",
+      "notes": "Official title, equivalent to English 'Our Christian Life and Ministry Meeting Workbook'. faaineineraa = preparation, putuputuraa = meeting."
+    },
+    {
+      "termEn": "yeartext",
+      "official": "",
+      "sourceUrls": [],
+      "confidence": "low",
+      "notes": "Not found on jw.org/ty/ or wol.jw.org/ty/ despite targeted searches; the English wol.jw.org index page for 'Yeartexts' (id 1200276311) has no located Tahitian counterpart."
+    },
+    {
+      "termEn": "branch office",
+      "official": "Piha ohipa",
+      "sourceUrls": [
+        "https://www.jw.org/ty/ite-no-iehova/piha-ohipa-e-mataitairaa/"
+      ],
+      "confidence": "high",
+      "notes": "Page title 'Piha ohipa e mataitairaa: Pu rahi a te mau Ite no Iehova e te mau piha ohipa na te ao nei' (Branch offices and visits: world headquarters and branch offices worldwide). The page itself notes branch offices are commonly called 'Betela' (Bethel) informally: 'parau-pinepine-hia Betela'."
+    },
+    {
+      "termEn": "Governing Body",
+      "official": "Tino aratai",
+      "sourceUrls": [
+        "https://www.jw.org/ty/ite-no-iehova/uiraa-a-te-taata/tino-aratai/",
+        "https://www.jw.org/ty/piahia/faaineineraa-putuputuraa-ite-no-iehova/tetepa-atopa-2026-mwb/Porotarama-Oraraa-e-taviniraa-Kerisetiano-o-te-7-13-no-Tetepa-2026/"
+      ],
+      "confidence": "high",
+      "notes": "FAQ page title: 'Eaha te Tino aratai a te mau Ite no Iehova?' (What is the Governing Body of Jehovah's Witnesses?). Also confirmed in live use in an official 2026 meeting program referencing 'Video parau apî n° 6 a te Tino aratai 2024' (Governing Body Update video number 6, 2024). Literally 'leading/guiding body'."
+    }
+  ]
+}

@@ -46,6 +46,16 @@ const shortcutCallbacks: Partial<Record<keyof SettingsValues, () => void>> = {
   },
 };
 
+// FE-11 (full-audit-2026-09-04.md): byte-identical to executeLocalShortcut
+// below - verified this is the intentional split, not leftover duplication.
+// This one is called from MainLayout.vue in response to a *global*
+// Electron `globalShortcut` event (fires regardless of which window/page
+// has focus); executeLocalShortcut is called directly from in-page keydown
+// handlers (e.g. MediaCalendarPage.vue's arrow-key media navigation) that
+// only fire while that page is focused. Kept separate (rather than
+// collapsed to one function) specifically so global vs. local shortcut
+// handling can diverge later without first having to split a merged
+// function - if that divergence never happens, revisit collapsing them.
 export const executeShortcut = (shortcutName: keyof SettingsValues) => {
   // Don't execute shortcuts if any dialog is open
   if (isAnyDialogOpen()) {
@@ -70,6 +80,9 @@ export const executeShortcut = (shortcutName: keyof SettingsValues) => {
     });
 };
 
+// See executeShortcut's comment above - called from in-page keydown
+// handlers (local to the focused page), as opposed to a global
+// Electron `globalShortcut` event.
 export const executeLocalShortcut = (shortcutName: keyof SettingsValues) => {
   // Don't execute shortcuts if any dialog is open
   if (isAnyDialogOpen()) {
@@ -108,6 +121,36 @@ export const getCurrentShortcuts = () => {
   } catch (error) {
     errorCatcher(error);
     return [];
+  }
+};
+
+/**
+ * FE-5 (full-audit-2026-09-04.md): finds which *other* shortcut already owns
+ * `keySequence`, so a picker can reject a conflicting combination instead of
+ * silently keeping it displayed while never actually registering it. Returns
+ * `undefined` for an unused combination, or when it's only "used" by
+ * `excludeShortcutName` itself (re-picking the same combo currently assigned
+ * to the one being edited is not a conflict).
+ */
+export const getConflictingShortcutName = (
+  keySequence: string,
+  excludeShortcutName: keyof SettingsValues,
+): keyof SettingsValues | undefined => {
+  try {
+    const currentState = useCurrentStateStore();
+    if (!currentState.currentSettings) return undefined;
+    for (const shortcutName of Object.keys(shortcutCallbacks)) {
+      if (shortcutName === excludeShortcutName) continue;
+      const shortcutVal =
+        currentState.currentSettings[shortcutName as keyof SettingsValues];
+      if (shortcutVal === keySequence) {
+        return shortcutName as keyof SettingsValues;
+      }
+    }
+    return undefined;
+  } catch (error) {
+    errorCatcher(error);
+    return undefined;
   }
 };
 
@@ -184,7 +227,7 @@ export const registerAllCustomShortcuts = () => {
     log(
       '⌨️ Registering configured keyboard shortcuts',
       'keyboardShortcuts',
-      'info',
+      'debug',
     );
     for (const shortcutName of Object.keys(shortcutCallbacks)) {
       registerCustomShortcut(shortcutName as keyof SettingsValues);
@@ -203,7 +246,7 @@ export const unregisterAllCustomShortcuts = () => {
   log(
     '⌨️ Unregistering all currently active keyboard shortcuts',
     'keyboardShortcuts',
-    'info',
+    'debug',
   );
   try {
     unregisterAllShortcuts();

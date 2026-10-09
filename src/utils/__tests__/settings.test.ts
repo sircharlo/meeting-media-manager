@@ -7,6 +7,7 @@ import type {
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
+  getBlockingSettings,
   getDateOptions,
   getRules,
   meetingTime,
@@ -172,6 +173,42 @@ describe('Settings Utilities', () => {
 
     it('should handle undefined actions', () => {
       expect(() => performActions(undefined)).not.toThrow();
+    });
+  });
+
+  describe('getBlockingSettings', () => {
+    it('names the other Zoom integration while it is on', () => {
+      expect(
+        getBlockingSettings({ zoomEnable: true }, 'zoomMeetingManagerEnable'),
+      ).toEqual(['zoomEnable']);
+      expect(
+        getBlockingSettings(
+          { zoomEnable: true },
+          'zoomMeetingManagerSetupAssistant',
+        ),
+      ).toEqual(['zoomEnable']);
+      expect(
+        getBlockingSettings({ zoomMeetingManagerEnable: true }, 'zoomEnable'),
+      ).toEqual(['zoomMeetingManagerEnable']);
+    });
+
+    it('blocks nothing while the other integration is off', () => {
+      expect(
+        getBlockingSettings({ zoomEnable: false }, 'zoomMeetingManagerEnable'),
+      ).toEqual([]);
+      expect(getBlockingSettings({ zoomEnable: true }, 'obsEnable')).toEqual(
+        [],
+      );
+      expect(getBlockingSettings(undefined, 'zoomEnable')).toEqual([]);
+    });
+
+    it('never locks a toggle that is on, so it can be turned off', () => {
+      expect(
+        getBlockingSettings(
+          { zoomEnable: true, zoomMeetingManagerEnable: true },
+          'zoomEnable',
+        ),
+      ).toEqual([]);
     });
   });
 

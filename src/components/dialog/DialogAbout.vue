@@ -27,7 +27,11 @@
           </div>
         </div>
         <div class="col-shrink">
-          <q-btn flat icon="close" round @click="handleHide" />
+          <q-btn flat icon="mmm-clear" round @click="handleHide">
+            <q-tooltip :delay="500">
+              {{ t('close') }}
+            </q-tooltip>
+          </q-btn>
         </div>
       </div>
       <div class="row">
@@ -42,28 +46,47 @@
           ref="carousel"
           v-model="spotlitFeature"
           animated
-          autoplay
+          :autoplay="autoplayDelay"
           class="bg-accent-100 full-width rounded-borders"
           infinite
           padding
-          style="height: 200px"
+          style="height: 220px"
           vertical
+          @mouseenter="autoplayDelay = false"
+          @mouseleave="autoplayDelay = 5000"
         >
           <q-carousel-slide
             v-for="(feature, index) in parsedFeatures"
             :key="index"
-            class="column no-wrap flex-center q-gutter-md q-pa-lg position-relative"
+            class="column no-wrap q-pa-md"
             :name="index + 1"
           >
-            <div class="text-subtitle2 text-center">
+            <div class="row items-center no-wrap q-mb-sm q-gutter-x-sm">
+              <q-icon
+                v-if="feature.title"
+                color="primary"
+                name="mmm-shimmer"
+                size="18px"
+              />
+              <div
+                v-if="feature.title"
+                class="col text-subtitle2 text-weight-bold text-primary ellipsis-2-lines"
+              >
+                {{ feature.title }}
+              </div>
+              <q-space v-else />
+              <q-badge
+                class="text-weight-medium"
+                color="accent-400"
+                :label="feature.version"
+                text-color="white"
+              />
+            </div>
+            <div
+              class="col feature-carousel__scroll scroll full-width text-body2"
+            >
               {{ feature.text }}
             </div>
-            <q-badge
-              class="absolute-bottom-left q-mb-md text-caption"
-              color="accent-400"
-              :label="feature.version"
-              text-color="white"
-            />
           </q-carousel-slide>
           <template #control>
             <q-carousel-control
@@ -78,8 +101,12 @@
                 round
                 size="sm"
                 text-color="white"
-                @click="carousel.previous()"
-              />
+                @click="carousel?.previous()"
+              >
+                <q-tooltip :delay="500">
+                  {{ t('previous') }}
+                </q-tooltip>
+              </q-btn>
               <q-btn
                 color="primary"
                 dense
@@ -87,8 +114,12 @@
                 round
                 size="sm"
                 text-color="white"
-                @click="carousel.next()"
-              />
+                @click="carousel?.next()"
+              >
+                <q-tooltip :delay="500">
+                  {{ t('next') }}
+                </q-tooltip>
+              </q-btn>
             </q-carousel-control>
           </template>
         </q-carousel>
@@ -99,21 +130,21 @@
       <div class="row q-gutter-x-md">
         <div class="col">
           <q-btn
-            class="q-pa-md full-width"
-            color="accent-400"
+            class="btn-tonal q-pa-md full-width"
+            color="primary"
+            flat
             no-caps
-            outline
-            target="_blank"
+            rounded
             @click="openExternal('repo')"
           >
             <div class="row q-gutter-x-md full-width items-center">
               <div class="col-shrink text-primary q-ml-none">
                 <q-icon name="mmm-github" />
               </div>
-              <div class="col-shrink text-secondary">
+              <div class="col-shrink text-primary">
                 {{ t('github-repo') }}
               </div>
-              <div class="col text-right text-accent-400">
+              <div class="col text-right text-primary">
                 <q-icon name="mmm-arrow-outward" />
               </div>
             </div>
@@ -121,79 +152,24 @@
         </div>
         <div class="col">
           <q-btn
-            class="q-pa-md full-width"
-            color="accent-400"
+            class="btn-tonal q-pa-md full-width"
+            color="primary"
+            flat
             no-caps
-            outline
-            target="_blank"
+            rounded
             @click="openExternal('docs')"
           >
             <div class="row q-gutter-x-md full-width items-center">
               <div class="col-shrink text-primary q-ml-none">
                 <q-icon name="mmm-guide" />
               </div>
-              <div class="col-shrink text-secondary">
+              <div class="col-shrink text-primary">
                 {{ t('user-guide') }}
               </div>
-              <div class="col text-right text-accent-400">
+              <div class="col text-right text-primary">
                 <q-icon name="mmm-arrow-outward" />
               </div>
             </div>
-          </q-btn>
-        </div>
-      </div>
-      <div class="row text-subtitle1">
-        {{ t('app-updates') }}
-      </div>
-      <div class="row">
-        <div class="col">
-          <q-toggle
-            v-model="updatesEnabled"
-            checked-icon="mmm-check"
-            class="q-mr-sm"
-            :color="!updatesEnabled ? 'negative' : 'primary'"
-            dense
-            keep-color
-            :label="t('auto-update-app')"
-            unchecked-icon="mmm-clear"
-          />
-          <q-btn
-            v-if="!updatesEnabled"
-            color="negative"
-            flat
-            icon="mmm-warning"
-            round
-            size="sm"
-          >
-            <q-tooltip>
-              {{ t('auto-update-app-explain') }}
-            </q-tooltip>
-          </q-btn>
-        </div>
-      </div>
-      <div v-if="updatesEnabled" class="row">
-        <div class="col">
-          <q-toggle
-            v-model="betaUpdatesEnabled"
-            checked-icon="mmm-check"
-            class="q-mr-sm"
-            :color="betaUpdatesEnabled ? 'negative' : 'primary'"
-            dense
-            keep-color
-            unchecked-icon="mmm-clear"
-          >
-            {{ t('receive-beta-updates') }}
-          </q-toggle>
-          <q-btn
-            :color="betaUpdatesEnabled ? 'negative' : 'primary'"
-            flat
-            :icon="betaUpdatesEnabled ? 'mmm-warning' : 'mmm-info'"
-            round
-            size="sm"
-          >
-            <q-tooltip>
-              {{ t('receive-beta-updates-explain') }}
-            </q-tooltip>
           </q-btn>
         </div>
       </div>
@@ -204,14 +180,9 @@
 import { watchImmediate, whenever } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
+import { QCarousel } from 'quasar';
 import { fetchReleaseNotes } from 'src/utils/api';
-import {
-  betaUpdatesDisabled,
-  toggleAutoUpdates,
-  toggleBetaUpdates,
-  updatesDisabled,
-  wasUpdateInstalled,
-} from 'src/utils/fs';
+import { wasUpdateInstalled } from 'src/utils/fs';
 import { camelToKebabCase, sleep } from 'src/utils/general';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, watch } from 'vue';
@@ -241,19 +212,8 @@ const handleHide = () => {
 };
 
 const { locale, t } = useI18n();
-const appVersion = process.env.version;
-const isBetaVersion = process.env.IS_BETA;
-
-const updatesEnabled = ref(true);
-const betaUpdatesEnabled = ref(false);
-
-const getUpdatesEnabled = async () => {
-  updatesEnabled.value = !(await updatesDisabled());
-};
-
-const getBetaUpdatesEnabled = async () => {
-  betaUpdatesEnabled.value = !(await betaUpdatesDisabled());
-};
+const appVersion = import.meta.env.version;
+const isBetaVersion = import.meta.env.IS_BETA;
 
 const checkLastVersion = async (congId: string) => {
   if (await wasUpdateInstalled(congId)) {
@@ -269,10 +229,24 @@ const { currentCongregation } = storeToRefs(useCurrentStateStore());
 
 const releaseNotes = ref('');
 const releaseNotesExpansionItem = ref(false);
-const parsedFeatures = ref<{ text: string; version: string }[]>([]);
+const parsedFeatures = ref<{ text: string; title: string; version: string }[]>(
+  [],
+);
 const spotlitFeature = ref(1);
+const autoplayDelay = ref<false | number>(5000);
 
-const carousel = ref();
+const carousel = ref<QCarousel>();
+
+// Older release notes prefix bullets with a variety of emoji (flags, tools, etc.),
+// not just ✨, before the bold title - strip any of them so the title still parses.
+const LEADING_EMOJI =
+  /^(?:\p{Extended_Pictographic}\uFE0F?|\p{Regional_Indicator})+\s*/u;
+
+// The release-notes file also contains a "## UPCOMING VERSION" section
+// (synced from the changelog for early Crowdin translation). Skip it and any
+// other non-version header (e.g. its translated heading in other locales) so
+// unreleased changes aren't shown in the About dialog.
+const VERSION_HEADER_PATTERN = /^v?\d+\.\d+\.\d+/;
 
 const parseReleaseNotes = () => {
   const md = releaseNotes.value;
@@ -286,12 +260,20 @@ const parseReleaseNotes = () => {
     const versionMatch = line.match(/^## (.+)$/);
     if (versionMatch) {
       currentVersion = versionMatch[1] || '';
-      if (!currentVersion.startsWith('v')) {
+      if (!VERSION_HEADER_PATTERN.test(currentVersion)) {
+        currentVersion = '';
+      } else if (!currentVersion.startsWith('v')) {
         currentVersion = `v${currentVersion}`;
       }
-    } else if (line.startsWith('- ')) {
+    } else if (currentVersion && line.startsWith('- ')) {
+      const raw = line.replace(/^-\s*/, '').replace(LEADING_EMOJI, '');
+      // French typography puts a (narrow) non-breaking space before the colon
+      // ("**Title** : text"), and CJK locales use a full-width colon ("**Title**：text"),
+      // so allow optional whitespace before an ASCII or full-width colon.
+      const titleMatch = raw.match(/^\*\*(.+?)\*\*\s*[:：]?\s*(.*)$/u);
       parsedFeatures.value.push({
-        text: line.replace(/^- ✨?\s*/, '').replace(/\*\*(.*?)\*\*/, '$1'),
+        text: (titleMatch ? (titleMatch[2] ?? '') : raw).trim(),
+        title: (titleMatch?.[1] ?? '').trim(),
         version: currentVersion,
       });
     }
@@ -305,8 +287,6 @@ const loadReleaseNotes = async () => {
 };
 
 whenever(dialogValue, () => {
-  getUpdatesEnabled();
-  getBetaUpdatesEnabled();
   spotlitFeature.value = 1;
 });
 
@@ -317,17 +297,18 @@ watch(currentCongregation, (val) => {
 watchImmediate(locale, () => {
   loadReleaseNotes();
 });
-
-watch(updatesEnabled, (val) => {
-  toggleAutoUpdates(val);
-});
-
-watch(betaUpdatesEnabled, (val) => {
-  toggleBetaUpdates(val);
-});
-
-defineExpose({
-  betaUpdatesEnabled,
-  updatesEnabled,
-});
 </script>
+
+<style scoped>
+/* Hints that the feature description keeps going below the fold instead of
+   hard-clipping the last visible line when it overflows the fixed-height slide. */
+.feature-carousel__scroll {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 calc(100% - 18px),
+    transparent
+  );
+  line-height: 1.4;
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 18px), transparent);
+}
+</style>
