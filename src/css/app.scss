@@ -686,7 +686,9 @@ a {
   display: flex;
   flex-flow: column;
   overflow: hidden;
-  max-height: min(600px, max(250px, 64vh));
+  // Just under QMenu's own 65vh limit: a tall window gets a tall popup,
+  // rather than one capped at a fixed height that scrolls needlessly.
+  max-height: max(250px, 64vh);
 }
 
 .action-popup__scroll {
@@ -694,7 +696,8 @@ a {
   min-height: 0;
   overflow: auto;
   overscroll-behavior: contain;
-  scrollbar-gutter: stable;
+  // No space kept for a scrollbar that isn't there, which would stop the
+  // separators inside short of the popup's right edge.
 }
 
 .action-popup__footer {

@@ -12,6 +12,8 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🛠️ Improvements and Tweaks
 
+- 🛠️ **Action Island Popups**: Popups such as the media display settings now grow with a tall window instead of stopping at a fixed height and scrolling.
+- 🛠️ **Media Sync**: Every date in the media sync popup now lines up the same way, whether it's still being checked, done, or has files to show, and the progress summary is set apart from the list.
 - 🛠️ **Show Image for Zoom Participants**: The button that shows an image to Zoom participants has a clearer new icon: the picture on a meeting's main screen, above the participants.
 
 ### 🐞 Bug Fixes
