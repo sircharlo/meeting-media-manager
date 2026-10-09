@@ -4,6 +4,12 @@
 
 Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in unserer CHANGELOG.md Datei auf GitHub.
 
+## UPCOMING VERSION
+
+### ✨ Neue Funktionen
+
+- ✨ **Zoom Meeting Manager (beta, Windows)**: A new integration that operates Zoom for you around each meeting. It can launch your congregation's Zoom meeting when background music starts before the meeting. When the music stops just before the meeting starts, it joins computer audio, turns on the host video, and mutes everyone without letting them unmute. When music plays before or after a meeting, it does the reverse: it leaves computer audio, turns off the host video, and lets everyone unmute again (asking them to do so). It can also share the media window in Zoom automatically while media is being shown, making sure the media window is what gets shared and never anything else on your screen. A new Zoom button in the action island shows whether a Zoom meeting window was found and lets you run these steps manually. A setup assistant, offered when you turn the option on (the initial setup wizard now offers it on Windows instead of the keyboard-shortcut screen sharing) and available anytime from the Zoom button or Settings, checks your Zoom, learns the names of its buttons in your language, and tries every step with you. When M³ starts, it also checks that everything it automates in Zoom works, opening the meeting if needed on meeting days in the hour and a quarter before it starts (only looking, without pressing anything, if others are already in the meeting); if something doesn't, it tells you and pauses its Zoom automations until it's restarted or a new check passes, so nothing goes wrong during the meeting. This check is on by default and can be turned off in Settings. It works whatever language Zoom is in, and needs nothing installed beyond Zoom itself.
+
 ## v26.9.0
 
 ### ✨ Neue Funktionen
