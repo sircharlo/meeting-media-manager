@@ -1286,10 +1286,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"content-type@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "content-type@npm:2.0.0"
-  checksum: 10c0/491539fff707d7594b0ca4fabcc084bef2a31ffa754ff0a4f80c4377e3963cff0394317f9271c24087596c97fa675bc123d61fa34ffe65b4904e7d3d3098de72
+"content-type@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "content-type@npm:2.1.0"
+  checksum: 10c0/f5d420f55fd0c7a7f7cbae9637777ce67a074aa79b489d8d9fee8599089592b5f8bb194e1d6885741fee20271034baca0d68d5419535b52d070c4f7e39f4b448
   languageName: node
   linkType: hard
 
@@ -2458,7 +2458,7 @@ __metadata:
     heic-convert: "npm:^2.1.0"
     is-online: "npm:^12.0.2"
     mime: "npm:^4.1.0"
-    music-metadata: "npm:^11.13.0"
+    music-metadata: "npm:^11.16.0"
     upath: "npm:^3.0.8"
     yauzl: "npm:^3.4.0"
   languageName: unknown
@@ -2594,13 +2594,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^11.13.0":
-  version: 11.13.0
-  resolution: "music-metadata@npm:11.13.0"
+"music-metadata@npm:^11.16.0":
+  version: 11.16.0
+  resolution: "music-metadata@npm:11.16.0"
   dependencies:
     "@borewit/text-codec": "npm:^0.2.2"
     "@tokenizer/token": "npm:^0.3.0"
-    content-type: "npm:^2.0.0"
+    content-type: "npm:^2.1.0"
     debug: "npm:^4.4.3"
     file-type: "npm:^21.3.4"
     media-typer: "npm:^2.0.0"
@@ -2608,7 +2608,7 @@ __metadata:
     token-types: "npm:^6.1.2"
     uint8array-extras: "npm:^1.5.0"
     win-guid: "npm:^0.2.1"
-  checksum: 10c0/5539fd227b7cf10780ab05ca8954b46ae069916ee90b9e855fd2074b8265b62b32dfdf0e548eebdd8115f4bd008f56d3b210b49243244413ded4287caf25b68a
+  checksum: 10c0/e93a6436232709f22e2e730251da39cdcde517c5f5d62807c0c7c95711d0aaa9052e2cbb8bc8407c368026a8f816a7e7c9b4f8ed62033dc9dd5bc95f76220768
   languageName: node
   linkType: hard
 
