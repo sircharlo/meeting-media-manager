@@ -160,6 +160,21 @@ describe('DialogZoomMeetingManagerPopup', () => {
     expect(() => findButton('Apply before/after-meeting settings')).toThrow();
   });
 
+  it('opens the setup assistant from an icon button named for screen readers', async () => {
+    await mountPopup({ meeting: MEETING });
+    const dispatchSpy = vi.spyOn(globalThis, 'dispatchEvent');
+
+    const button = document.querySelector<HTMLButtonElement>(
+      'button[aria-label="Setup assistant"]',
+    );
+    expect(button?.textContent).not.toContain('Setup assistant');
+    button?.click();
+
+    expect(dispatchSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'openZoomSetupAssistant' }),
+    );
+  });
+
   it('launches the configured meeting, and only when an ID is set', async () => {
     const launchSpy = vi.spyOn(globalThis.electronApi, 'launchZoomMeeting');
     launchSpy.mockImplementation(() => undefined);

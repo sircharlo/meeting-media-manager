@@ -710,6 +710,7 @@ import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
 import { camelToKebabCase } from 'src/utils/general';
 import { importProfileSettingsFromFile } from 'src/utils/profile-settings';
+import { areZoomButtonsLearned } from 'src/utils/zoom';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -929,10 +930,8 @@ const setZoomChosen = (chosen: boolean) => {
 };
 
 /** Whether the Zoom setup assistant has learned what it needs from Zoom. */
-const zoomManagerReady = computed(
-  () =>
-    !!currentSettings.value?.zoomVideoOnTitle &&
-    !!currentSettings.value?.zoomVideoOffTitle,
+const zoomManagerReady = computed(() =>
+  areZoomButtonsLearned(currentSettings.value),
 );
 
 const openZoomSetupAssistant = () => {

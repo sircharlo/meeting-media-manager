@@ -90,6 +90,38 @@ describe('meeting quick-actions store', () => {
     expect(quickActions.lastSongEndedAt).toBeNull();
   });
 
+  it("ticks items automatically in today's scope, whichever date is shown", () => {
+    const currentState = useCurrentStateStore();
+    const quickActions = useMeetingQuickActionsStore();
+    currentState.currentCongregation = 'congregation-a';
+    currentState.selectedDate = '2026/08/22';
+
+    quickActions.setItemCheckedAutomatically('task-1', true);
+    expect(quickActions.isItemChecked('task-1')).toBe(false);
+
+    currentState.selectedDate = '2026/08/21';
+    expect(quickActions.isItemChecked('task-1')).toBe(true);
+    expect(quickActions.isItemCheckedAutomatically('task-1')).toBe(true);
+
+    quickActions.setItemCheckedAutomatically('task-1', false);
+    expect(quickActions.isItemChecked('task-1')).toBe(false);
+    expect(quickActions.isItemCheckedAutomatically('task-1')).toBe(false);
+  });
+
+  it('no longer counts an item as ticked automatically once the user toggles it', () => {
+    const currentState = useCurrentStateStore();
+    const quickActions = useMeetingQuickActionsStore();
+    currentState.currentCongregation = 'congregation-a';
+    currentState.selectedDate = '2026/08/21';
+
+    quickActions.setItemCheckedAutomatically('task-1', true);
+    quickActions.toggleItemChecked('task-1');
+    quickActions.toggleItemChecked('task-1');
+
+    expect(quickActions.isItemChecked('task-1')).toBe(true);
+    expect(quickActions.isItemCheckedAutomatically('task-1')).toBe(false);
+  });
+
   // FE-18 (full-audit-2026-09-05.md): the real (non-demo-button) call site
   // calls recordLastSongEnded() with no argument - its default used to
   // ignore demo mode's virtual clock entirely, unlike every other timing

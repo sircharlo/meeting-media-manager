@@ -159,6 +159,8 @@ export type SettingsItemAction =
   | 'openZoomSetupAssistantIfNeeded'
   | 'setBackgroundMusicVolume'
   | 'syncMeetingSchedule'
+  | 'zoomCaptureMicOffTitle'
+  | 'zoomCaptureMicOnTitle'
   | 'zoomCaptureShareButtonTitle'
   | 'zoomCaptureVideoOffTitle'
   | 'zoomCaptureVideoOnTitle';
@@ -351,6 +353,8 @@ export interface SettingsValues {
   /** No value: the setting is the button opening the setup assistant. */
   zoomMeetingManagerSetupAssistant: null;
   zoomMeetingManagerStartupCheck: boolean;
+  zoomMicOffTitle: null | string;
+  zoomMicOnTitle: null | string;
   zoomScreenShareShortcut: null | string;
   zoomShareButtonTitle: null | string;
   zoomVideoOffTitle: null | string;

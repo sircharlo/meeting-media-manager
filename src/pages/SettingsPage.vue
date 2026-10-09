@@ -346,6 +346,18 @@
                         <q-icon name="mmm-warning" size="xs" />
                         {{ t('obs-password-not-encrypted-warning') }}
                       </q-item-label>
+                      <q-item-label
+                        v-if="isSettingDisabled(settingId)"
+                        caption
+                        class="text-primary"
+                      >
+                        <q-icon name="mmm-info" size="xs" />
+                        {{
+                          t('setting-unavailable-while-enabled', {
+                            setting: getBlockingSettingNames(settingId),
+                          })
+                        }}
+                      </q-item-label>
                     </q-item-section>
                     <q-item-section
                       side
@@ -356,7 +368,7 @@
                     >
                       <BaseInput
                         v-model="currentSettings[settingId]"
-                        :disable="isSettingDisabled(item)"
+                        :disable="isSettingDisabled(settingId)"
                         :item="item"
                         :setting-id="settingId"
                         :style="
@@ -432,6 +444,7 @@ import {
   exportProfileSettingsToFile,
   importProfileSettingsFromFile,
 } from 'src/utils/profile-settings';
+import { getBlockingSettings } from 'src/utils/settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
@@ -978,27 +991,13 @@ const shouldShowSetting = (
   }
 };
 
-const isSettingDisabled = (item: SettingsItem): boolean => {
-  if (!item.disableWhen) return false;
+const isSettingDisabled = (settingId: keyof SettingsValues): boolean =>
+  getBlockingSettings(currentSettings.value, settingId).length > 0;
 
-  const checkDisableEffective = (disableKey: keyof SettingsValues): boolean => {
-    const disableSetting = settingsDefinitions[disableKey];
-    if (!currentSettings.value?.[disableKey]) return false; // disabled, so not effective
-    // enabled, check if dependencies are satisfied
-    return (
-      !disableSetting?.depends ||
-      (Array.isArray(disableSetting.depends)
-        ? disableSetting.depends.every((d) => currentSettings.value?.[d])
-        : !!currentSettings.value?.[disableSetting.depends])
-    );
-  };
-
-  if (Array.isArray(item.disableWhen)) {
-    return item.disableWhen.some((dep) => checkDisableEffective(dep));
-  } else {
-    return checkDisableEffective(item.disableWhen);
-  }
-};
+const getBlockingSettingNames = (settingId: keyof SettingsValues): string =>
+  getBlockingSettings(currentSettings.value, settingId)
+    .map((blocker) => t(blocker))
+    .join(', ');
 
 const settingParam = useRouteParams<keyof SettingsValues | undefined>(
   'setting',

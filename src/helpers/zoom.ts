@@ -10,12 +10,17 @@ import { i18n } from 'boot/i18n';
 import { Dialog } from 'quasar';
 import { MEDIA_WINDOW_TITLE } from 'src/constants/zoom';
 import { log } from 'src/shared/vanilla';
+import { areZoomButtonsLearned } from 'src/utils/zoom';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useZoomStateStore } from 'stores/zoom-state';
 
 import { errorCatcher } from './error-catcher';
 import { sendKeyboardShortcut } from './keyboard-shortcuts';
 import { toggleMediaWindowVisibility } from './mediaPlayback';
+import {
+  updateChecklistFromZoom,
+  type ZoomChecklistState,
+} from './meeting-quick-actions';
 import { createTemporaryNotification } from './notifications';
 
 // The Zoom Meeting Manager drives the Zoom desktop app through a UI
@@ -31,6 +36,10 @@ const t = (key: string, named?: Record<string, unknown>) =>
   );
 
 export interface ZoomTitles {
+  /** Name of the microphone button while the host is muted. */
+  micOffTitle: null | string;
+  /** Name of the microphone button while the host is unmuted. */
+  micOnTitle: null | string;
   /** Name of the Share entry in the user's Zoom language. */
   shareButtonTitle: null | string;
   /** Name of the video button while the host's video is off. */
@@ -50,6 +59,8 @@ const saveSetting = (settingKey: keyof SettingsValues, value: string) => {
 export const getZoomTitlesFromSettings = (): ZoomTitles => {
   const settings = getSettings();
   return {
+    micOffTitle: settings?.zoomMicOffTitle ?? null,
+    micOnTitle: settings?.zoomMicOnTitle ?? null,
     shareButtonTitle: settings?.zoomShareButtonTitle ?? null,
     videoOffTitle: settings?.zoomVideoOffTitle ?? null,
     videoOnTitle: settings?.zoomVideoOnTitle ?? null,
@@ -71,23 +82,24 @@ const runCommand = async (command: ZoomCommand): Promise<ZoomCommandResult> => {
   }
 };
 
-let notificationsMuted = 0;
+let feedbackMuted = 0;
 
 /**
- * Runs Zoom actions without their per-action notifications, e.g. for a
- * self-test, which reports its own results.
+ * Runs Zoom actions without their per-action notifications and without
+ * ticking the meeting checklist, e.g. for a self-test, which reports its own
+ * results and puts Zoom back as it found it.
  */
-export const withoutZoomNotifications = async <T>(run: () => Promise<T>) => {
-  notificationsMuted++;
+export const withoutZoomFeedback = async <T>(run: () => Promise<T>) => {
+  feedbackMuted++;
   try {
     return await run();
   } finally {
-    notificationsMuted--;
+    feedbackMuted--;
   }
 };
 
 const notifyInfo = (group: string, messageKey: string) => {
-  if (notificationsMuted) return;
+  if (feedbackMuted) return;
   createTemporaryNotification({
     group,
     icon: 'mmm-info',
@@ -97,13 +109,19 @@ const notifyInfo = (group: string, messageKey: string) => {
 };
 
 const notifyFailure = (group: string, messageKey: string) => {
-  if (notificationsMuted) return;
+  if (feedbackMuted) return;
   createTemporaryNotification({
     group,
     icon: 'mmm-error',
     message: t(messageKey),
     type: 'negative',
   });
+};
+
+/** Ticks (or unticks) the meeting checklist items an action did (or undid). */
+const updateChecklist = (state: ZoomChecklistState) => {
+  if (feedbackMuted) return;
+  updateChecklistFromZoom(state);
 };
 
 /**
@@ -127,13 +145,41 @@ export const joinZoomAudio = async () => {
       'zoom-audio',
       result.changed ? 'zoom-audio-joined' : 'zoom-audio-already-joined',
     );
+    updateChecklist({ audioJoined: true });
   }
   return result;
 };
 
 export const leaveZoomAudio = async () => {
   const result = await runCommand({ type: 'leave-audio' });
-  if (result.ok && result.changed) notifyInfo('zoom-audio', 'zoom-audio-left');
+  if (result.ok) {
+    if (result.changed) notifyInfo('zoom-audio', 'zoom-audio-left');
+    // Out of computer audio, nothing from the hall reaches Zoom either.
+    updateChecklist({ audioJoined: false, hostMicOn: false });
+  }
+  return result;
+};
+
+/** Unmutes or mutes the host's microphone (computer audio has to be joined). */
+export const setZoomHostMic = async (
+  on: boolean,
+  titles: Pick<
+    ZoomTitles,
+    'micOffTitle' | 'micOnTitle'
+  > = getZoomTitlesFromSettings(),
+) => {
+  const result = await runCommand({
+    offTitle: titles.micOffTitle,
+    on,
+    onTitle: titles.micOnTitle,
+    type: 'set-mic',
+  });
+  if (result.ok) {
+    if (result.changed) {
+      notifyInfo('zoom-host', on ? 'zoom-host-mic-on' : 'zoom-host-mic-off');
+    }
+    updateChecklist({ hostMicOn: on });
+  }
   return result;
 };
 
@@ -150,8 +196,14 @@ export const setZoomHostVideo = async (
     onTitle: titles.videoOnTitle,
     type: 'set-video',
   });
-  if (result.ok && result.changed) {
-    notifyInfo('zoom-host', on ? 'zoom-host-video-on' : 'zoom-host-video-off');
+  if (result.ok) {
+    if (result.changed) {
+      notifyInfo(
+        'zoom-host',
+        on ? 'zoom-host-video-on' : 'zoom-host-video-off',
+      );
+    }
+    updateChecklist({ hostVideoOn: on });
   }
   return result;
 };
@@ -166,6 +218,10 @@ export const muteAllZoomParticipants = async (allowSelfUnmute: boolean) => {
         : 'zoom-participants-unmute-disallowed',
     );
     notifyInfo('zoom-participants', 'zoom-participants-muted');
+    updateChecklist({
+      participantsCanUnmute: allowSelfUnmute,
+      participantsMuted: true,
+    });
   }
   return result;
 };
@@ -188,6 +244,7 @@ export const askAllZoomParticipantsToUnmute = async () => {
   const result = await runCommand({ type: 'ask-all-to-unmute' });
   if (result.ok) {
     notifyInfo('zoom-participants', 'zoom-participants-asked-to-unmute');
+    updateChecklist({ participantsMuted: false });
   }
   return result;
 };
@@ -230,6 +287,14 @@ export interface ZoomSequenceResult {
   ok: boolean;
 }
 
+// The microphone and the video need their button names learned by the setup
+// assistant; without them, M³ leaves those as they are rather than counting
+// the whole sequence as failed.
+const NOT_LEARNED_ERRORS = new Set([
+  'mic-titles-not-captured',
+  'video-titles-not-captured',
+]);
+
 const runSequence = async (
   name: string,
   steps: [string, () => Promise<ZoomCommandResult>][],
@@ -244,9 +309,7 @@ const runSequence = async (
   const failedSteps: string[] = [];
   for (const [step, run] of steps) {
     const result = await run();
-    // Video needs titles captured in Settings; without them, M³ leaves the
-    // video as is rather than counting the whole sequence as failed.
-    if (!result.ok && result.error !== 'video-titles-not-captured') {
+    if (!result.ok && !NOT_LEARNED_ERRORS.has(result.error ?? '')) {
       failedSteps.push(step);
     }
   }
@@ -257,13 +320,14 @@ const runSequence = async (
   return { failedSteps, ok: failedSteps.length === 0 };
 };
 
-/** Joins computer audio, turns on the host video, and mutes everyone without
- * letting them unmute. */
+/** Joins computer audio, unmutes the host's microphone, turns on the host
+ * video, and mutes everyone without letting them unmute. */
 export const runZoomMeetingSequence = (
   titles: ZoomTitles = getZoomTitlesFromSettings(),
 ) =>
   runSequence('Zoom meeting settings', [
     ['join-audio', joinZoomAudio],
+    ['mic-on', () => setZoomHostMic(true, titles)],
     ['video-on', () => setZoomHostVideo(true, titles)],
     ['mute-all', () => muteAllZoomParticipants(false)],
   ]);
@@ -401,13 +465,13 @@ export const automateZoomMediaSharing = async (start: boolean) => {
 
 /**
  * Whether the Zoom Meeting Manager is turned on but hasn't been through the
- * setup assistant (its camera button names are what the assistant learns).
+ * setup assistant (its microphone and camera button names are what the
+ * assistant learns).
  */
 export const isZoomSetupNeeded = () => {
   const settings = getSettings();
   return (
-    !!settings?.zoomMeetingManagerEnable &&
-    !(settings.zoomVideoOnTitle && settings.zoomVideoOffTitle)
+    !!settings?.zoomMeetingManagerEnable && !areZoomButtonsLearned(settings)
   );
 };
 
@@ -418,32 +482,58 @@ export const diagnoseZoom = async (): Promise<null | ZoomDiagnosis> => {
 };
 
 /**
- * Learns the camera button's name in both states (Zoom only shows them in
- * the user's language): switches the camera once, then back, and saves
- * both names to Settings.
- * @param cameraIsOn What the user says their camera is doing right now.
+ * Learns a two-state button's name in both states (Zoom only shows them in
+ * the user's language): switches it once, then back, and saves both names
+ * to Settings.
+ * @param isOn What the user says the button's state is right now.
  */
-export const learnZoomVideoTitles = async (
-  cameraIsOn: boolean,
+const learnButtonTitles = async (
+  what: 'mic' | 'video',
+  isOn: boolean,
+  settingKeys: { off: keyof SettingsValues; on: keyof SettingsValues },
 ): Promise<{ error?: string; ok: boolean }> => {
-  const switched = await runCommand({ type: 'toggle-video' });
+  const toggle = what === 'mic' ? 'toggle-mic' : 'toggle-video';
+  const switched = await runCommand({ type: toggle });
   if (!switched.ok || !switched.before || !switched.after) {
-    return { error: switched.error ?? 'video-not-changed', ok: false };
+    return { error: switched.error ?? `${what}-not-changed`, ok: false };
   }
-  const back = await runCommand({ type: 'toggle-video' });
+  const back = await runCommand({ type: toggle });
   if (!back.ok || back.after !== switched.before) {
-    return { error: back.error ?? 'video-not-restored', ok: false };
+    return { error: back.error ?? `${what}-not-restored`, ok: false };
   }
-  saveSetting(
-    'zoomVideoOnTitle',
-    cameraIsOn ? switched.before : switched.after,
-  );
-  saveSetting(
-    'zoomVideoOffTitle',
-    cameraIsOn ? switched.after : switched.before,
-  );
+  saveSetting(settingKeys.on, isOn ? switched.before : switched.after);
+  saveSetting(settingKeys.off, isOn ? switched.after : switched.before);
   return { ok: true };
 };
+
+/**
+ * Learns the camera button's names: switches the camera once, then back.
+ * @param cameraIsOn What the user says their camera is doing right now.
+ */
+export const learnZoomVideoTitles = (cameraIsOn: boolean) =>
+  learnButtonTitles('video', cameraIsOn, {
+    off: 'zoomVideoOffTitle',
+    on: 'zoomVideoOnTitle',
+  });
+
+/**
+ * Learns the microphone button's names: mutes or unmutes once, then back.
+ * Computer audio has to be joined first (see joinZoomAudioForSetup).
+ * @param micIsOn What the user says their microphone is doing right now.
+ */
+export const learnZoomMicTitles = (micIsOn: boolean) =>
+  learnButtonTitles('mic', micIsOn, {
+    off: 'zoomMicOffTitle',
+    on: 'zoomMicOnTitle',
+  });
+
+/**
+ * Joins computer audio for the setup assistant, without a notification or
+ * the meeting checklist: Zoom only has a microphone button once joined.
+ * Resolves to whether computer audio is joined.
+ */
+export const joinZoomAudioForSetup = async () =>
+  (await runCommand({ type: 'join-audio' })).ok;
 
 /**
  * Checks that Zoom's share picker opens through the given Share entry (or
@@ -477,19 +567,28 @@ export const getZoomShareEntries = async (): Promise<{
 // --- Capturing Zoom's translated names into Settings -----------------------
 
 /**
- * Saves the video button's current name, which Zoom only exposes in the
- * user's Zoom language, as the name for the video state being captured.
+ * Saves a button's current name, which Zoom only exposes in the user's Zoom
+ * language, as its name for the state being captured.
  */
-export const captureZoomVideoTitle = async (
-  settingKey: 'zoomVideoOffTitle' | 'zoomVideoOnTitle',
+const captureButtonTitle = async (
+  command: 'mic-title' | 'video-title',
+  settingKey: keyof SettingsValues,
 ) => {
-  const result = await runCommand({ type: 'video-title' });
+  const result = await runCommand({ type: command });
   if (result.ok && result.title) {
     saveSetting(settingKey, result.title);
   } else {
     notifyFailure('zoom-settings', 'zoom-capture-failed');
   }
 };
+
+export const captureZoomVideoTitle = (
+  settingKey: 'zoomVideoOffTitle' | 'zoomVideoOnTitle',
+) => captureButtonTitle('video-title', settingKey);
+
+export const captureZoomMicTitle = (
+  settingKey: 'zoomMicOffTitle' | 'zoomMicOnTitle',
+) => captureButtonTitle('mic-title', settingKey);
 
 /** Lets the user pick which toolbar or "More" entry is Share. */
 export const captureZoomShareButtonTitle = async () => {

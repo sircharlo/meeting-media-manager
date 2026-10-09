@@ -142,10 +142,20 @@ const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
 
 let zoomHelperSyncInProgress = false;
 
+/** Local time with milliseconds, e.g. 14:03:12.345. */
+const formatLogTime = (date: Date) =>
+  date.toLocaleTimeString('en-GB', {
+    fractionalSecondDigits: 3,
+    hour: '2-digit',
+    hour12: false,
+    minute: '2-digit',
+    second: '2-digit',
+  });
+
 export const useCurrentStateStore = defineStore('current-state', {
   actions: {
     addZoomHelperLog(log: string) {
-      this.zoomHelperLogs.push(log);
+      this.zoomHelperLogs.push(`${formatLogTime(new Date())} ${log}`);
       if (this.zoomHelperLogs.length > 100) {
         this.zoomHelperLogs.shift();
       }

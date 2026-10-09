@@ -13,10 +13,11 @@ import {
   muteAllZoomParticipants,
   runZoomMeetingSequence,
   runZoomPostMeetingSequence,
+  setZoomHostMic,
   setZoomHostVideo,
   startSharingMediaInZoom,
   stopSharingMediaInZoom,
-  withoutZoomNotifications,
+  withoutZoomFeedback,
   type ZoomTitles,
 } from 'src/helpers/zoom';
 
@@ -32,6 +33,8 @@ export const ZOOM_SELF_TEST_STEPS = [
   'participants-join',
   'leave-audio',
   'join-audio',
+  'mic-off',
+  'mic-on',
   'video-off',
   'video-on',
   'mute-all-locked',
@@ -77,6 +80,8 @@ export const ZOOM_SELF_TEST_STEP_LABELS: Record<ZoomSelfTestStepId, string> = {
   'leave-audio': 'zoom-self-test-step-leave-audio',
   meeting: 'zoom-self-test-step-meeting',
   'meeting-sequence': 'zoom-self-test-step-meeting-sequence',
+  'mic-off': 'zoom-self-test-step-mic-off',
+  'mic-on': 'zoom-self-test-step-mic-on',
   'mute-all-locked': 'zoom-self-test-step-mute-all-locked',
   'mute-all-unlocked': 'zoom-self-test-step-mute-all-unlocked',
   'participants-join': 'zoom-self-test-step-participants-join',
@@ -123,8 +128,7 @@ const expectOk = (result: ZoomCommandResult, what: string) => {
 /** Runs the self-test; it reports each step itself, without notifications. */
 export const runZoomSelfTest = (
   options: ZoomSelfTestOptions,
-): Promise<ZoomSelfTestStep[]> =>
-  withoutZoomNotifications(() => runSteps(options));
+): Promise<ZoomSelfTestStep[]> => withoutZoomFeedback(() => runSteps(options));
 
 const runSteps = async (
   options: ZoomSelfTestOptions,
@@ -193,7 +197,14 @@ const runSteps = async (
 
   let restoreMediaWindow: (() => Promise<void> | void) | undefined;
   let initialAudioJoined: boolean | null | undefined;
+  let initialMicTitle: null | string | undefined;
   let initialVideoTitle: null | string | undefined;
+
+  const requireMicTitles = () => {
+    if (!titles.micOnTitle || !titles.micOffTitle) {
+      skip('Capture both microphone button titles in Settings first');
+    }
+  };
 
   const requireVideoTitles = () => {
     if (!titles.videoOnTitle || !titles.videoOffTitle) {
@@ -207,6 +218,14 @@ const runSteps = async (
       (state) => state.audioJoined === joined,
     );
     if (!done) fail(`Zoom still shows audio ${joined ? 'left' : 'joined'}`);
+  };
+
+  const expectHostMic = async (title: null | string) => {
+    const { done, value } = await waitFor(
+      meetingState,
+      (state) => state.micTitle === title,
+    );
+    if (!done) fail(`Microphone button reads "${value.micTitle}"`);
   };
 
   const expectHostVideo = async (title: null | string) => {
@@ -242,6 +261,7 @@ const runSteps = async (
       const state = await meetingState();
       if (!state.found) fail('No Zoom meeting window found');
       initialAudioJoined = state.audioJoined;
+      initialMicTitle = state.micTitle;
       initialVideoTitle = state.videoTitle;
       return state.title;
     },
@@ -249,6 +269,7 @@ const runSteps = async (
       const result = await runZoomMeetingSequence(titles);
       if (!result.ok) fail(`Failed steps: ${result.failedSteps.join(', ')}`);
       await expectHostAudio(true);
+      if (titles.micOnTitle) await expectHostMic(titles.micOnTitle);
       if (titles.videoOnTitle) await expectHostVideo(titles.videoOnTitle);
       if (!participants || !participantsReady) return 'Host side only';
       await participants.act('reset-events');
@@ -258,6 +279,16 @@ const runSteps = async (
         'Nobody can unmute themselves',
         (p) => hasEvent(p, 'unmute-blocked') && p.micMuted === true,
       );
+    },
+    'mic-off': async () => {
+      requireMicTitles();
+      expectOk(await setZoomHostMic(false, titles), 'Mute the microphone');
+      await expectHostMic(titles.micOffTitle);
+    },
+    'mic-on': async () => {
+      requireMicTitles();
+      expectOk(await setZoomHostMic(true, titles), 'Unmute the microphone');
+      await expectHostMic(titles.micOnTitle);
     },
     'mute-all-locked': async () => {
       const probe = readyParticipants();
@@ -331,6 +362,14 @@ const runSteps = async (
     },
     restore: async () => {
       if (initialAudioJoined) await joinZoomAudio();
+      if (
+        initialAudioJoined &&
+        initialMicTitle &&
+        titles.micOnTitle &&
+        titles.micOffTitle
+      ) {
+        await setZoomHostMic(initialMicTitle === titles.micOnTitle, titles);
+      }
       if (initialVideoTitle && titles.videoOnTitle && titles.videoOffTitle) {
         await setZoomHostVideo(
           initialVideoTitle === titles.videoOnTitle,

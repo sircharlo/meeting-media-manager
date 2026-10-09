@@ -41,8 +41,16 @@
             :name="isItemChecked(item.id) ? 'mmm-check' : 'mmm-plus'"
             size="20px"
           />
-          <span :class="{ 'text-strike': isItemChecked(item.id) }">
-            {{ getItemLabel(item) }}
+          <span class="column items-start">
+            <span :class="{ 'text-strike': isItemChecked(item.id) }">
+              {{ getItemLabel(item) }}
+            </span>
+            <span
+              v-if="isItemCheckedAutomatically(item.id)"
+              class="quick-actions-checklist__automatic text-caption"
+            >
+              {{ t('quick-actions-checklist-done-in-zoom') }}
+            </span>
           </span>
         </q-btn>
       </q-card-section>
@@ -69,7 +77,8 @@ const { t } = useI18n();
 const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);
 const quickActions = useMeetingQuickActionsStore();
-const { isItemChecked, toggleItemChecked } = quickActions;
+const { isItemChecked, isItemCheckedAutomatically, toggleItemChecked } =
+  quickActions;
 
 const getCategories = (settings: SettingsValues) =>
   props.mode === 'before'
@@ -139,5 +148,10 @@ const getItemLabel = (item: MeetingChecklistItem) =>
   justify-content: flex-start;
   min-height: 48px;
   text-align: left;
+}
+
+.quick-actions-checklist__automatic {
+  line-height: 1.2;
+  opacity: 0.85;
 }
 </style>

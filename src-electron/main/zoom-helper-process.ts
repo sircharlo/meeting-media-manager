@@ -26,14 +26,17 @@ const COMMAND_TYPES = new Set<ZoomCommandType>([
   'join-audio',
   'leave-audio',
   'meeting',
+  'mic-title',
   'mute-all',
   'participants',
   'ping',
+  'set-mic',
   'set-video',
   'share-entries',
   'start-share',
   'stop-share',
   'test-share-picker',
+  'toggle-mic',
   'toggle-video',
   'video-title',
 ]);
@@ -51,6 +54,8 @@ export interface ZoomHelperProcessOptions {
   onExit?: (code: null | number) => void;
   /** The helper's log lines (its stderr). */
   onLog?: (line: string) => void;
+  /** The helper started and is ready for commands. */
+  onReady?: () => void;
   /** How long one action may take before the helper counts as stuck. */
   requestTimeoutMs?: number;
   scriptPath: string;
@@ -125,6 +130,7 @@ export class ZoomHelperProcess {
       cacheDir,
       onExit,
       onLog,
+      onReady,
       scriptPath,
       spawn = nodeSpawn,
       startTimeoutMs = DEFAULT_START_TIMEOUT_MS,
@@ -184,6 +190,7 @@ export class ZoomHelperProcess {
           if (message.ready === true) {
             this.ready = true;
             finishStart({ ok: true });
+            onReady?.();
           } else {
             finishStart({
               detail:

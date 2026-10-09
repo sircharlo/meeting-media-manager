@@ -17,7 +17,8 @@
 // - window classes (the join-audio dialog, the mute-everyone dialog, menus);
 // - control types and their order in a dialog or menu;
 // - titles M³ controls (its media window) or that the user captured in M³'s
-//   settings (the video button in each state, the Share entry).
+//   settings (the microphone and video buttons in each state, the Share
+//   entry).
 //
 // Controls are pressed through UI Automation patterns (Invoke, Toggle),
 // which don't move the user's mouse, falling back to a real click for the
@@ -664,14 +665,19 @@ namespace M3.ZoomHelper
             return Uia.Descendants(ControlPanel(window), Uia.MenuItemType);
         }
 
-        /// <summary>The toolbar always starts with the microphone button. Joined to
-        /// computer audio, its name includes its keyboard shortcut (Alt+A, or
-        /// whatever the user chose instead); not joined, it's a "Join audio"
-        /// button without one.</summary>
-        static bool AudioJoined(El window)
+        /// <summary>The microphone button. The toolbar always starts with it:
+        /// joined to computer audio, its name includes its keyboard shortcut
+        /// (Alt+A, or whatever the user chose instead); not joined, it's a
+        /// "Join audio" button without one (null here).</summary>
+        static El MicButton(El window)
         {
             var buttons = ToolbarButtons(window);
-            return buttons.Count > 0 && AnyHotkey.IsMatch(buttons[0].Name);
+            return buttons.Count > 0 && AnyHotkey.IsMatch(buttons[0].Name) ? buttons[0] : null;
+        }
+
+        static bool AudioJoined(El window)
+        {
+            return MicButton(window) != null;
         }
 
         /// <summary>The camera button: the one with Zoom's Alt+V shortcut, or,
@@ -712,12 +718,14 @@ namespace M3.ZoomHelper
                 }
                 catch (ZoomActionError) { }
             }
+            El mic = toolbarVisible ? MicButton(window) : null;
             El video = toolbarVisible ? VideoButton(window) : null;
             return new Dictionary<string, object>
             {
-                { "audioJoined", toolbarVisible ? (object)AudioJoined(window) : null },
+                { "audioJoined", toolbarVisible ? (object)(mic != null) : null },
                 { "found", true },
                 { "handle", window.Raw.CurrentNativeWindowHandle.ToInt64() },
+                { "micTitle", mic == null ? null : FirstSegment(mic.Name) },
                 { "participantsPanelOpen", MuteAllButton(window) != null },
                 { "sharing", sharing },
                 { "title", window.Name },
@@ -776,35 +784,64 @@ namespace M3.ZoomHelper
             return Changed(true);
         }
 
-        public static Dictionary<string, object> SetVideo(bool on, string onTitle, string offTitle)
+        /// <summary>Puts a two-state toolbar button (the microphone or the camera)
+        /// in the state named `on ? onTitle : offTitle`, telling its states
+        /// apart by the names captured in M³'s settings. `what` ("mic",
+        /// "video") starts the error names.</summary>
+        static Dictionary<string, object> SetButtonState(El window, Func<El> find, string what, bool on, string onTitle, string offTitle)
         {
-            var window = RequireMeetingWindow();
-            var button = VideoButton(window);
-            if (button == null) throw new ZoomActionError("video-button-not-found");
+            var button = find();
+            if (button == null) throw new ZoomActionError(what + "-button-not-found");
             var current = FirstSegment(button.Name);
             onTitle = FirstSegment(onTitle);
             offTitle = FirstSegment(offTitle);
-            if (onTitle.Length == 0 || offTitle.Length == 0) throw new ZoomActionError("video-titles-not-captured");
-            if (current != onTitle && current != offTitle) throw new ZoomActionError("video-title-unrecognized:" + current);
+            if (onTitle.Length == 0 || offTitle.Length == 0) throw new ZoomActionError(what + "-titles-not-captured");
+            if (current != onTitle && current != offTitle) throw new ZoomActionError(what + "-title-unrecognized:" + current);
             if ((current == onTitle) == on) return Changed(false);
             Focus(window);
             Press(button);
             var wanted = on ? onTitle : offTitle;
             var done = WaitUntil(() =>
             {
-                var latest = VideoButton(window);
+                var latest = find();
                 return latest != null && FirstSegment(latest.Name) == wanted;
             }, WaitTimeoutMs);
-            if (!done) throw new ZoomActionError("video-not-changed");
+            if (!done) throw new ZoomActionError(what + "-not-changed");
             return Changed(true);
+        }
+
+        public static Dictionary<string, object> SetVideo(bool on, string onTitle, string offTitle)
+        {
+            var window = RequireMeetingWindow();
+            return SetButtonState(window, () => VideoButton(window), "video", on, onTitle, offTitle);
+        }
+
+        /// <summary>Unmutes or mutes the host's microphone, which only exists
+        /// once joined to computer audio.</summary>
+        public static Dictionary<string, object> SetMic(bool on, string onTitle, string offTitle)
+        {
+            var window = RequireMeetingWindow();
+            if (!AudioJoined(window)) throw new ZoomActionError("audio-not-joined");
+            return SetButtonState(window, () => MicButton(window), "mic", on, onTitle, offTitle);
+        }
+
+        static Dictionary<string, object> ButtonTitle(El button, string what)
+        {
+            if (button == null) throw new ZoomActionError(what + "-button-not-found");
+            return new Dictionary<string, object> { { "title", FirstSegment(button.Name) } };
         }
 
         public static Dictionary<string, object> VideoTitle()
         {
             var window = RequireMeetingWindow();
-            var button = VideoButton(window);
-            if (button == null) throw new ZoomActionError("video-button-not-found");
-            return new Dictionary<string, object> { { "title", FirstSegment(button.Name) } };
+            return ButtonTitle(VideoButton(window), "video");
+        }
+
+        public static Dictionary<string, object> MicTitle()
+        {
+            var window = RequireMeetingWindow();
+            if (!AudioJoined(window)) throw new ZoomActionError("audio-not-joined");
+            return ButtonTitle(MicButton(window), "mic");
         }
 
         // --- Participants ----------------------------------------------------------
@@ -1320,27 +1357,41 @@ namespace M3.ZoomHelper
             return result;
         }
 
-        /// <summary>Switches the host's camera once and reports the camera
-        /// button's name before and after, so the setup assistant can learn
-        /// both names (they're only shown in the user's Zoom language).</summary>
-        public static Dictionary<string, object> ToggleVideo()
+        /// <summary>Switches a two-state toolbar button (the microphone or the
+        /// camera) once and reports its name before and after, so the setup
+        /// assistant can learn both names (they're only shown in the user's
+        /// Zoom language).</summary>
+        static Dictionary<string, object> ToggleButton(El window, Func<El> find, string what)
         {
-            var window = RequireMeetingWindow();
-            ControlPanel(window);
-            var button = VideoButton(window);
-            if (button == null) throw new ZoomActionError("video-button-not-found");
+            var button = find();
+            if (button == null) throw new ZoomActionError(what + "-button-not-found");
             var before = FirstSegment(button.Name);
             Focus(window);
             Press(button);
             string after = null;
             var changed = WaitUntil(() =>
             {
-                var latest = VideoButton(window);
+                var latest = find();
                 after = latest == null ? null : FirstSegment(latest.Name);
                 return after != null && after != before;
             }, WaitTimeoutMs);
-            if (!changed) throw new ZoomActionError("video-not-changed");
+            if (!changed) throw new ZoomActionError(what + "-not-changed");
             return new Dictionary<string, object> { { "after", after }, { "before", before } };
+        }
+
+        public static Dictionary<string, object> ToggleVideo()
+        {
+            var window = RequireMeetingWindow();
+            ControlPanel(window);
+            return ToggleButton(window, () => VideoButton(window), "video");
+        }
+
+        public static Dictionary<string, object> ToggleMic()
+        {
+            var window = RequireMeetingWindow();
+            ControlPanel(window);
+            if (!AudioJoined(window)) throw new ZoomActionError("audio-not-joined");
+            return ToggleButton(window, () => MicButton(window), "mic");
         }
 
         /// <summary>Opens Zoom's share picker the way sharing would, checks that
@@ -1431,6 +1482,9 @@ namespace M3.ZoomHelper
                 case "set-video":
                     return SetVideo(GetBool(request, "on"), GetString(request, "onTitle"), GetString(request, "offTitle"));
                 case "video-title": return VideoTitle();
+                case "set-mic":
+                    return SetMic(GetBool(request, "on"), GetString(request, "onTitle"), GetString(request, "offTitle"));
+                case "mic-title": return MicTitle();
                 case "mute-all": return MuteAll(GetBool(request, "allowSelfUnmute"));
                 case "ask-all-to-unmute": return AskAllToUnmute();
                 case "participants": return Participants();
@@ -1442,6 +1496,7 @@ namespace M3.ZoomHelper
                 case "diagnose":
                     return new Dictionary<string, object> { { "diagnosis", Diagnose() } };
                 case "toggle-video": return ToggleVideo();
+                case "toggle-mic": return ToggleMic();
                 case "test-share-picker":
                     return TestSharePicker(GetString(request, "windowTitle") ?? "", GetString(request, "shareButtonTitle"));
                 default: throw new ZoomActionError("unknown-command");

@@ -205,6 +205,8 @@ describe('Zoom startup check', () => {
           'meeting',
           'leave-audio',
           'join-audio',
+          'mic-off',
+          'mic-on',
           'video-off',
           'video-on',
           'restore',

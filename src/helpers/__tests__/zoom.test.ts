@@ -9,12 +9,17 @@ const currentSettings = {
   zoomMeetingManagerAutomatePostMeetingAudioSettings: false,
   zoomMeetingManagerEnable: true,
   zoomMeetingManagerMeetingId: '123 456' as null | string,
+  zoomMicOffTitle: 'Unmute' as null | string,
+  zoomMicOnTitle: 'Mute' as null | string,
   zoomShareButtonTitle: 'Share' as null | string,
   zoomVideoOffTitle: 'Start Video' as null | string,
   zoomVideoOnTitle: 'Stop Video' as null | string,
 };
 
-const { notifyMock } = vi.hoisted(() => ({ notifyMock: vi.fn() }));
+const { notifyMock, updateChecklistMock } = vi.hoisted(() => ({
+  notifyMock: vi.fn(),
+  updateChecklistMock: vi.fn(),
+}));
 
 vi.mock('stores/current-state', () => ({
   useCurrentStateStore: () => ({ currentSettings }),
@@ -40,6 +45,10 @@ vi.mock('src/helpers/keyboard-shortcuts', () => ({
   sendKeyboardShortcut: vi.fn(),
 }));
 
+vi.mock('src/helpers/meeting-quick-actions', () => ({
+  updateChecklistFromZoom: updateChecklistMock,
+}));
+
 const zoomCommandMock =
   vi.fn<(command: ZoomCommand) => Promise<ZoomCommandResult>>();
 const launchZoomMeetingMock = vi.fn();
@@ -58,6 +67,8 @@ beforeEach(() => {
     zoomMeetingManagerAutoLaunchMeeting: false,
     zoomMeetingManagerAutomateMeetingAudioSettings: false,
     zoomMeetingManagerAutomatePostMeetingAudioSettings: false,
+    zoomMicOffTitle: 'Unmute',
+    zoomMicOnTitle: 'Mute',
     zoomVideoOffTitle: 'Start Video',
     zoomVideoOnTitle: 'Stop Video',
   });
@@ -85,9 +96,16 @@ describe('Zoom meeting automation', () => {
     expect(commandTypes()).toEqual([
       'meeting',
       'join-audio',
+      'set-mic',
       'set-video',
       'mute-all',
     ]);
+    expect(zoomCommandMock).toHaveBeenCalledWith({
+      offTitle: 'Unmute',
+      on: true,
+      onTitle: 'Mute',
+      type: 'set-mic',
+    });
     expect(zoomCommandMock).toHaveBeenCalledWith({
       offTitle: 'Start Video',
       on: true,
@@ -158,6 +176,71 @@ describe('Zoom meeting automation', () => {
     const result = await runZoomPostMeetingSequence();
 
     expect(result).toEqual({ failedSteps: [], ok: true });
+  });
+
+  it('leaves the microphone alone, without failing, when its titles were never captured', async () => {
+    failing = { 'set-mic': 'mic-titles-not-captured' };
+    const { runZoomMeetingSequence } = await import('../zoom');
+
+    const result = await runZoomMeetingSequence();
+
+    expect(result).toEqual({ failedSteps: [], ok: true });
+  });
+});
+
+describe('Zoom actions and the meeting checklist', () => {
+  const checklistUpdates = () =>
+    updateChecklistMock.mock.calls.map(([state]) => state);
+
+  it('reports what the in-meeting settings did, step by step', async () => {
+    const { runZoomMeetingSequence } = await import('../zoom');
+
+    await runZoomMeetingSequence();
+
+    expect(checklistUpdates()).toEqual([
+      { audioJoined: true },
+      { hostMicOn: true },
+      { hostVideoOn: true },
+      { participantsCanUnmute: false, participantsMuted: true },
+    ]);
+  });
+
+  it('reports what the before/after-meeting settings did, step by step', async () => {
+    const { runZoomPostMeetingSequence } = await import('../zoom');
+
+    await runZoomPostMeetingSequence();
+
+    expect(checklistUpdates()).toEqual([
+      { audioJoined: false, hostMicOn: false },
+      { hostVideoOn: false },
+      { participantsCanUnmute: true, participantsMuted: true },
+      { participantsMuted: false },
+    ]);
+  });
+
+  it('reports nothing for a step that failed', async () => {
+    failing = {
+      'join-audio': 'audio-not-joined',
+      'set-mic': 'audio-not-joined',
+      'set-video': 'video-titles-not-captured',
+    };
+    const { runZoomMeetingSequence } = await import('../zoom');
+
+    await runZoomMeetingSequence();
+
+    expect(checklistUpdates()).toEqual([
+      { participantsCanUnmute: false, participantsMuted: true },
+    ]);
+  });
+
+  it('leaves the checklist alone during a self-test', async () => {
+    const { runZoomMeetingSequence, withoutZoomFeedback } =
+      await import('../zoom');
+
+    await withoutZoomFeedback(() => runZoomMeetingSequence());
+
+    expect(updateChecklistMock).not.toHaveBeenCalled();
+    expect(notifyMock).not.toHaveBeenCalled();
   });
 });
 
@@ -251,6 +334,7 @@ describe('Zoom automations and the startup check', () => {
     expect(commandTypes()).toEqual([
       'meeting',
       'join-audio',
+      'set-mic',
       'set-video',
       'mute-all',
     ]);
@@ -258,7 +342,7 @@ describe('Zoom automations and the startup check', () => {
 });
 
 describe('Zoom setup assistant', () => {
-  it('is only needed once the Manager is on and the camera button is unknown', async () => {
+  it('is only needed once the Manager is on and a button is unknown', async () => {
     const { isZoomSetupNeeded } = await import('../zoom');
 
     currentSettings.zoomMeetingManagerEnable = true;
@@ -269,9 +353,42 @@ describe('Zoom setup assistant', () => {
     currentSettings.zoomVideoOffTitle = 'Start Video';
     expect(isZoomSetupNeeded()).toBe(false);
 
+    currentSettings.zoomMicOnTitle = null;
+    expect(isZoomSetupNeeded()).toBe(true);
+    currentSettings.zoomMicOnTitle = 'Mute';
+
     currentSettings.zoomMeetingManagerEnable = false;
     currentSettings.zoomVideoOnTitle = null;
     expect(isZoomSetupNeeded()).toBe(false);
     currentSettings.zoomMeetingManagerEnable = true;
+  });
+
+  it('learns the microphone button by switching it once and back', async () => {
+    currentSettings.zoomMicOnTitle = null;
+    currentSettings.zoomMicOffTitle = null;
+    const toggles = [
+      { after: 'Unmute', before: 'Mute', ok: true },
+      { after: 'Mute', before: 'Unmute', ok: true },
+    ];
+    zoomCommandMock.mockImplementation(
+      async () => toggles.shift() ?? { ok: false },
+    );
+    const { learnZoomMicTitles } = await import('../zoom');
+
+    expect(await learnZoomMicTitles(true)).toEqual({ ok: true });
+
+    expect(commandTypes()).toEqual(['toggle-mic', 'toggle-mic']);
+    expect(currentSettings.zoomMicOnTitle).toBe('Mute');
+    expect(currentSettings.zoomMicOffTitle).toBe('Unmute');
+  });
+
+  it('joins computer audio for the microphone step without telling the checklist', async () => {
+    const { joinZoomAudioForSetup } = await import('../zoom');
+
+    expect(await joinZoomAudioForSetup()).toBe(true);
+
+    expect(commandTypes()).toEqual(['join-audio']);
+    expect(updateChecklistMock).not.toHaveBeenCalled();
+    expect(notifyMock).not.toHaveBeenCalled();
   });
 });

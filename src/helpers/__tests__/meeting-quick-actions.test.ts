@@ -1,15 +1,24 @@
 import type { DateInfo } from 'src/types';
-import type { MediaPlayingState } from 'stores/current-state';
 
+import { createPinia, setActivePinia } from 'pinia';
+import { defaultSettings } from 'src/constants/settings';
 import { getTodaysMeetingStartDateTime } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { describe, expect, it, vi } from 'vitest';
+import { useCongregationSettingsStore } from 'stores/congregation-settings';
+import {
+  type MediaPlayingState,
+  useCurrentStateStore,
+} from 'stores/current-state';
+import { useMeetingQuickActionsStore } from 'stores/meeting-quick-actions';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type * as DateHelpers from '../date';
 
 import {
+  getTodaysChecklistMode,
   getTodaysScheduledMeetingEndDateTime,
   predictLastSongEndDateTime,
+  updateChecklistFromZoom,
 } from '../meeting-quick-actions';
 
 vi.mock('src/helpers/date', async (importOriginal) => {
@@ -134,5 +143,164 @@ describe('getTodaysScheduledMeetingEndDateTime', () => {
         }),
       }),
     );
+  });
+});
+
+describe('the meeting checklist and the Zoom Meeting Manager', () => {
+  const meetingStart = new Date('2026-10-09T19:00:00');
+  const at = (time: string) => {
+    vi.setSystemTime(new Date(`2026-10-09T${time}`));
+  };
+
+  const BEFORE_ITEMS = [
+    'quick-actions-checklist-mute-zoom-participants',
+    'quick-actions-checklist-disallow-unmute-zoom-participants',
+    'quick-actions-checklist-unmute-kh-audio',
+    'quick-actions-checklist-activate-kh-video-zoom',
+  ];
+  const AFTER_ITEMS = [
+    'quick-actions-checklist-disconnect-zoom-audio',
+    'quick-actions-checklist-unmute-zoom-participants',
+    'quick-actions-checklist-allow-unmute-zoom-participants',
+    'quick-actions-checklist-mute-kh-audio',
+    'quick-actions-checklist-deactivate-kh-video',
+  ];
+
+  // What the in-meeting and before/after-meeting settings report, in order.
+  const applyMeetingSettings = () => {
+    updateChecklistFromZoom({ audioJoined: true });
+    updateChecklistFromZoom({ hostMicOn: true });
+    updateChecklistFromZoom({ hostVideoOn: true });
+    updateChecklistFromZoom({
+      participantsCanUnmute: false,
+      participantsMuted: true,
+    });
+  };
+  const applyPostMeetingSettings = () => {
+    updateChecklistFromZoom({ audioJoined: false, hostMicOn: false });
+    updateChecklistFromZoom({ hostVideoOn: false });
+    updateChecklistFromZoom({
+      participantsCanUnmute: true,
+      participantsMuted: true,
+    });
+    updateChecklistFromZoom({ participantsMuted: false });
+  };
+
+  const checked = (ids: string[]) => {
+    const quickActions = useMeetingQuickActionsStore();
+    return ids.filter((id) => quickActions.isItemChecked(id));
+  };
+
+  const getSettings = () => {
+    const settings = useCurrentStateStore().currentSettings;
+    if (!settings) throw new Error('No congregation settings');
+    return settings;
+  };
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    at('18:00:00');
+    setActivePinia(createPinia());
+    useCongregationSettingsStore().congregations['test-cong'] =
+      structuredClone(defaultSettings);
+    useCurrentStateStore().currentCongregation = 'test-cong';
+    vi.mocked(getTodaysMeetingStartDateTime).mockReturnValue(meetingStart);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.mocked(getTodaysMeetingStartDateTime).mockReset();
+  });
+
+  it('counts actions for the before-meeting checklist until 5 minutes into the meeting', () => {
+    expect(getTodaysChecklistMode(new Date('2026-10-09T19:04:59'))).toBe(
+      'before',
+    );
+    expect(getTodaysChecklistMode(new Date('2026-10-09T19:05:00'))).toBe(
+      'after',
+    );
+
+    vi.mocked(getTodaysMeetingStartDateTime).mockReturnValue(null);
+    expect(getTodaysChecklistMode(new Date('2026-10-09T19:00:00'))).toBeNull();
+  });
+
+  it('ticks the before-meeting items as the in-meeting settings are applied', () => {
+    at('18:59:00');
+    applyMeetingSettings();
+
+    expect(checked(BEFORE_ITEMS)).toEqual(BEFORE_ITEMS);
+    expect(checked(AFTER_ITEMS)).toEqual([]);
+    const quickActions = useMeetingQuickActionsStore();
+    expect(
+      BEFORE_ITEMS.every((id) => quickActions.isItemCheckedAutomatically(id)),
+    ).toBe(true);
+  });
+
+  it("doesn't count joining computer audio as the Kingdom Hall audio being on", () => {
+    at('18:59:00');
+    updateChecklistFromZoom({ audioJoined: true });
+    expect(checked(['quick-actions-checklist-unmute-kh-audio'])).toEqual([]);
+
+    updateChecklistFromZoom({ hostMicOn: true });
+    expect(checked(['quick-actions-checklist-unmute-kh-audio'])).toEqual([
+      'quick-actions-checklist-unmute-kh-audio',
+    ]);
+  });
+
+  it('unticks before-meeting items that a later action undid', () => {
+    applyMeetingSettings();
+    // Background music started again before the meeting.
+    applyPostMeetingSettings();
+
+    expect(checked(BEFORE_ITEMS)).toEqual([]);
+    expect(checked(AFTER_ITEMS)).toEqual([]);
+  });
+
+  it('ticks the after-meeting items only for what happens after the meeting', () => {
+    // Background music starting before the meeting...
+    at('17:50:00');
+    applyPostMeetingSettings();
+    at('18:59:00');
+    applyMeetingSettings();
+    expect(checked(AFTER_ITEMS)).toEqual([]);
+
+    // ...and again after it.
+    at('20:45:00');
+    applyPostMeetingSettings();
+
+    expect(checked(AFTER_ITEMS)).toEqual(AFTER_ITEMS);
+    // The before-meeting checklist still shows what was done before.
+    expect(checked(BEFORE_ITEMS)).toEqual(BEFORE_ITEMS);
+  });
+
+  it('leaves custom and hidden items alone', () => {
+    const settings = getSettings();
+    const videoItem = settings.meetingQuickActionsChecklistBefore.find(
+      (item) => item.id === 'quick-actions-checklist-activate-kh-video-zoom',
+    );
+    if (!videoItem) throw new Error('No video item');
+    videoItem.enabled = false;
+    settings.meetingQuickActionsChecklistBefore.push({
+      categoryId: 'quick-actions-category-kh-av',
+      enabled: true,
+      id: 'custom-item',
+      isDefault: false,
+      label: 'Turn on the stage lights',
+    });
+
+    applyMeetingSettings();
+
+    expect(checked([videoItem.id, 'custom-item'])).toEqual([]);
+  });
+
+  it('does nothing without a meeting today or with the quick actions off', () => {
+    vi.mocked(getTodaysMeetingStartDateTime).mockReturnValue(null);
+    applyMeetingSettings();
+    expect(checked(BEFORE_ITEMS)).toEqual([]);
+
+    vi.mocked(getTodaysMeetingStartDateTime).mockReturnValue(meetingStart);
+    getSettings().enableMeetingQuickActions = false;
+    applyMeetingSettings();
+    expect(checked(BEFORE_ITEMS)).toEqual([]);
   });
 });

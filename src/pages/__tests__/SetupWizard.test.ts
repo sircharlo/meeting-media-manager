@@ -103,9 +103,15 @@ describe('SetupWizard, Zoom', () => {
       expect.objectContaining({ type: 'openZoomSetupAssistant' }),
     );
 
-    // What the assistant saves once it has learned the camera button.
+    // What the assistant saves once it has learned the camera button...
     settings().zoomVideoOnTitle = 'Stop Video';
     settings().zoomVideoOffTitle = 'Start Video';
+    await flushPromises();
+    expect(text()).not.toContain('The Zoom Meeting Manager is set up.');
+
+    // ...and the microphone button.
+    settings().zoomMicOnTitle = 'Mute';
+    settings().zoomMicOffTitle = 'Unmute';
     await flushPromises();
     expect(text()).toContain('The Zoom Meeting Manager is set up.');
   });

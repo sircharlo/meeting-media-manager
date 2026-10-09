@@ -8,7 +8,7 @@
     <q-card class="zoom-setup round-card">
       <q-card-section class="row items-center no-wrap q-pb-sm">
         <div class="icon-chip text-primary q-mr-sm">
-          <q-icon name="mmm-picture-for-zoom-participants" size="xs" />
+          <q-icon name="mmm-video-meeting" size="xs" />
         </div>
         <div class="col">
           <div class="text-bigger text-semibold">
@@ -160,66 +160,59 @@
           </div>
 
           <!-- The camera button's names, in the user's Zoom language -->
-          <div v-else-if="step === 'video'" key="video">
-            <div class="text-h6 q-mb-sm">{{ t('zoom-setup-video-title') }}</div>
-            <p>{{ t('zoom-setup-video-intro') }}</p>
-            <template v-if="videoStatus === 'passed'">
-              <StatusRow
-                status="passed"
-                :text="
-                  t('zoom-setup-video-done', {
-                    off: currentSettings?.zoomVideoOffTitle,
-                    on: currentSettings?.zoomVideoOnTitle,
-                  })
-                "
-              />
-              <q-btn
-                class="q-mt-sm"
-                color="primary"
-                dense
-                flat
-                :label="t('zoom-setup-learn-again')"
-                no-caps
-                @click="videoStatus = 'pending'"
-              />
-            </template>
-            <template v-else>
-              <div class="text-subtitle2 q-mb-sm">
-                {{ t('zoom-setup-video-question') }}
-              </div>
-              <div class="row q-col-gutter-sm">
-                <div
-                  v-for="choice in VIDEO_CHOICES"
-                  :key="choice.label"
-                  class="col-6"
-                >
-                  <q-btn
-                    class="zoom-setup__choice btn-tonal full-width"
-                    color="primary"
-                    :disable="videoStatus === 'running'"
-                    flat
-                    no-caps
-                    @click="learnVideo(choice.cameraIsOn)"
-                  >
-                    <div class="column items-center q-py-sm">
-                      <q-icon :name="choice.icon" size="md" />
-                      <div class="q-mt-xs">{{ t(choice.label) }}</div>
-                    </div>
-                  </q-btn>
-                </div>
-              </div>
-              <StatusRow
-                v-if="videoStatus === 'running' || videoStatus === 'failed'"
-                class="q-mt-md"
-                :status="videoStatus"
-                :text="
-                  videoStatus === 'failed'
-                    ? t('zoom-setup-video-failed')
-                    : t('zoom-setup-video-learning')
-                "
-              />
-            </template>
-          </div>
+          <ButtonStep
+            v-else-if="step === 'video'"
+            key="video"
+            :choices="videoChoices"
+            :done-text="
+              t('zoom-setup-video-done', {
+                off: currentSettings?.zoomVideoOffTitle,
+                on: currentSettings?.zoomVideoOnTitle,
+              })
+            "
+            :intro="t('zoom-setup-video-intro')"
+            :question="t('zoom-setup-video-question')"
+            :status="videoStatus"
+            :status-text="
+              videoStatus === 'failed'
+                ? t('zoom-setup-video-failed')
+                : t('zoom-setup-video-learning')
+            "
+            :title="t('zoom-setup-video-title')"
+            @learn="learnVideo"
+            @relearn="videoStatus = 'pending'"
+          />
+
+          <!-- The microphone button's names, once computer audio is joined -->
+          <ButtonStep
+            v-else-if="step === 'mic'"
+            key="mic"
+            :choices="micChoices"
+            :done-text="
+              t('zoom-setup-mic-done', {
+                off: currentSettings?.zoomMicOffTitle,
+                on: currentSettings?.zoomMicOnTitle,
+              })
+            "
+            :intro="t('zoom-setup-mic-intro')"
+            :question="t('zoom-setup-mic-question')"
+            :status="micStatus"
+            :status-text="micStatusText"
+            :title="t('zoom-setup-mic-title')"
+            :waiting="!micAudioJoined"
+            @learn="learnMic"
+            @relearn="joinAudioForMic"
+          >
+            <q-btn
+              v-if="micStatus === 'failed' && !micAudioJoined"
+              color="primary"
+              dense
+              flat
+              :label="t('try-again')"
+              no-caps
+              @click="joinAudioForMic"
+            />
+          </ButtonStep>
 
           <!-- Sharing: Zoom's share window offering the media window -->
           <div v-else-if="step === 'share'" key="share">
@@ -421,6 +414,7 @@ import type { ZoomDiagnosis } from 'src/types';
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import ZoomSelfTestSteps from 'components/dialog/ZoomSelfTestSteps.vue';
+import ButtonStep from 'components/dialog/ZoomSetupButtonStep.vue';
 import StatusRow from 'components/dialog/ZoomSetupStatusRow.vue';
 import { storeToRefs } from 'pinia';
 import {
@@ -432,6 +426,8 @@ import {
   getZoomMeetingState,
   getZoomShareEntries,
   getZoomTitlesFromSettings,
+  joinZoomAudioForSetup,
+  learnZoomMicTitles,
   learnZoomVideoTitles,
   prepareMediaWindowForZoomTest,
   testZoomShareEntry,
@@ -452,6 +448,7 @@ const STEPS = [
   'meeting',
   'checks',
   'video',
+  'mic',
   'share',
   'automations',
   'test',
@@ -467,8 +464,13 @@ const FEATURES = [
 ] as const;
 
 const VIDEO_CHOICES = [
-  { cameraIsOn: true, icon: 'mmm-video', label: 'zoom-setup-video-on' },
-  { cameraIsOn: false, icon: 'mmm-video-off', label: 'zoom-setup-video-off' },
+  { icon: 'mmm-video', isOn: true, label: 'zoom-setup-video-on' },
+  { icon: 'mmm-video-off', isOn: false, label: 'zoom-setup-video-off' },
+] as const;
+
+const MIC_CHOICES = [
+  { icon: 'mmm-microphone', isOn: true, label: 'zoom-setup-mic-on' },
+  { icon: 'mmm-microphone-off', isOn: false, label: 'zoom-setup-mic-off' },
 ] as const;
 
 // The host-only part of the self-test: it never mutes other people.
@@ -476,6 +478,8 @@ const USER_TEST_STEPS = [
   'meeting',
   'leave-audio',
   'join-audio',
+  'mic-off',
+  'mic-on',
   'video-off',
   'video-on',
   'share-start',
@@ -577,10 +581,49 @@ const runChecks = async () => {
 
 const videoStatus = ref<Status>('pending');
 
+const videoChoices = computed(() =>
+  VIDEO_CHOICES.map((choice) => ({ ...choice, label: t(choice.label) })),
+);
+
 const learnVideo = async (cameraIsOn: boolean) => {
   videoStatus.value = 'running';
   const result = await learnZoomVideoTitles(cameraIsOn);
   videoStatus.value = result.ok ? 'passed' : 'failed';
+};
+
+// --- Microphone ----------------------------------------------------------------
+
+// Zoom only has a microphone button once computer audio is joined, and only
+// then can the user tell whether it's on: M³ joins it before asking.
+const micStatus = ref<Status>('pending');
+const micAudioJoined = ref(false);
+
+const micChoices = computed(() =>
+  MIC_CHOICES.map((choice) => ({ ...choice, label: t(choice.label) })),
+);
+
+const micStatusText = computed(() => {
+  if (!micAudioJoined.value) {
+    return micStatus.value === 'failed'
+      ? t('zoom-setup-mic-join-failed')
+      : t('zoom-setup-mic-joining');
+  }
+  return micStatus.value === 'failed'
+    ? t('zoom-setup-mic-failed')
+    : t('zoom-setup-mic-learning');
+});
+
+const joinAudioForMic = async () => {
+  micStatus.value = 'running';
+  micAudioJoined.value = false;
+  micAudioJoined.value = await joinZoomAudioForSetup();
+  micStatus.value = micAudioJoined.value ? 'pending' : 'failed';
+};
+
+const learnMic = async (micIsOn: boolean) => {
+  micStatus.value = 'running';
+  const result = await learnZoomMicTitles(micIsOn);
+  micStatus.value = result.ok ? 'passed' : 'failed';
 };
 
 // --- Share -----------------------------------------------------------------
@@ -762,6 +805,10 @@ const summary = computed(() => {
       text: t('zoom-setup-summary-camera'),
     },
     {
+      status: micStatus.value === 'passed' ? 'passed' : 'pending',
+      text: t('zoom-setup-summary-mic'),
+    },
+    {
       status: shareStatus.value === 'passed' ? 'passed' : 'pending',
       text: t('zoom-setup-summary-share'),
     },
@@ -782,6 +829,8 @@ const canContinue = computed(() => {
       return (
         meetingFound.value && (!meetingIdInput.value || !!parsedMeetingId.value)
       );
+    case 'mic':
+      return micStatus.value === 'passed';
     case 'share':
       return shareStatus.value === 'passed';
     case 'test':
@@ -799,6 +848,7 @@ const canContinue = computed(() => {
 const canSkip = computed(
   () =>
     (step.value === 'video' && videoStatus.value !== 'passed') ||
+    (step.value === 'mic' && micStatus.value !== 'passed') ||
     (step.value === 'share' && shareStatus.value !== 'passed') ||
     (step.value === 'test' && !testRunning.value && !testOutcome.value),
 );
@@ -832,6 +882,7 @@ const enterStep = (next: Step) => {
   step.value = next;
   if (next === 'meeting') watchMeeting();
   if (next === 'checks') void runChecks();
+  if (next === 'mic' && micStatus.value !== 'passed') void joinAudioForMic();
 };
 
 const goNext = () => {
@@ -861,6 +912,12 @@ const reset = () => {
     currentSettings.value.zoomVideoOffTitle
       ? 'passed'
       : 'pending';
+  micStatus.value =
+    currentSettings.value?.zoomMicOnTitle &&
+    currentSettings.value.zoomMicOffTitle
+      ? 'passed'
+      : 'pending';
+  micAudioJoined.value = false;
   shareStatus.value = 'pending';
   shareEntries.value = { more: [], toolbar: [] };
   shareEntryTried.value = false;
@@ -905,11 +962,6 @@ onBeforeUnmount(stopWatchingMeeting);
   max-height: min(560px, 70vh);
   min-height: 300px;
   overflow: auto;
-}
-
-.zoom-setup__choice {
-  border-radius: 12px;
-  min-height: 96px;
 }
 
 .zoom-setup__entries {

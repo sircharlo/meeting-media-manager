@@ -106,6 +106,7 @@ import {
   resetDemo,
 } from 'src/helpers/demo-mode';
 import {
+  BEFORE_PANEL_GRACE_MS,
   getTodaysScheduledMeetingEndDateTime,
   getVisibleChecklistItemIds,
   predictLastSongEndDateTime,
@@ -116,11 +117,6 @@ import { useMeetingQuickActionsStore } from 'stores/meeting-quick-actions';
 import { AUTO_START_WINDOW_HOURS } from 'stores/music';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-
-// How long the before-panel stays visible past the meeting's start time
-// before auto-dismissing, giving the operator a few minutes where unchecked
-// items still act as a visual reminder even after the meeting has begun.
-const BEFORE_PANEL_GRACE_MS = 5 * 60 * 1000;
 
 const props = defineProps<{ location: 'after' | 'before' }>();
 

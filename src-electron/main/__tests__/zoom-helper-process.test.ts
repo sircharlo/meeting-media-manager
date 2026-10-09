@@ -78,10 +78,12 @@ afterEach(() => {
 
 describe('ZoomHelperProcess', () => {
   it('starts PowerShell on the helper script and waits for it to be ready', async () => {
-    const { helper, spawn } = createHelper({ cacheDir: 'C:\\cache' });
+    const onReady = vi.fn();
+    const { helper, spawn } = createHelper({ cacheDir: 'C:\\cache', onReady });
 
     expect(await startReady(helper)).toEqual({ ok: true });
     expect(helper.running).toBe(true);
+    expect(onReady).toHaveBeenCalledOnce();
     expect(spawn).toHaveBeenCalledWith(
       'powershell.exe',
       [
@@ -99,7 +101,8 @@ describe('ZoomHelperProcess', () => {
   });
 
   it('reports why the helper could not start', async () => {
-    const { helper } = createHelper();
+    const onReady = vi.fn();
+    const { helper } = createHelper({ onReady });
     const started = helper.start();
     await vi.waitFor(() => expect(fakes).toHaveLength(1));
     fakes[0]?.reply({
@@ -114,6 +117,7 @@ describe('ZoomHelperProcess', () => {
       ok: false,
     });
     expect(helper.running).toBe(false);
+    expect(onReady).not.toHaveBeenCalled();
   });
 
   it('reports a missing PowerShell', async () => {
@@ -239,7 +243,8 @@ describe('ZoomHelperProcess', () => {
 
   it('fails the current command when the helper crashes, then recovers', async () => {
     const onExit = vi.fn();
-    const { helper } = createHelper({ onExit });
+    const onReady = vi.fn();
+    const { helper } = createHelper({ onExit, onReady });
     await startReady(helper);
 
     const pending = helper.request({ type: 'leave-audio' });
@@ -257,6 +262,7 @@ describe('ZoomHelperProcess', () => {
       ok: true,
     });
     expect(await next).toMatchObject({ ok: true });
+    expect(onReady).toHaveBeenCalledTimes(2);
   });
 
   it('returns the start failure to commands when the helper cannot start', async () => {
@@ -316,6 +322,8 @@ describe('isZoomCommand', () => {
     expect(isZoomCommand({ echo: 'x', type: 'ping' })).toBe(true);
     expect(isZoomCommand({ type: 'diagnose' })).toBe(true);
     expect(isZoomCommand({ type: 'toggle-video' })).toBe(true);
+    expect(isZoomCommand({ type: 'toggle-mic' })).toBe(true);
+    expect(isZoomCommand({ type: 'mic-title' })).toBe(true);
     expect(
       isZoomCommand({
         shareButtonTitle: null,

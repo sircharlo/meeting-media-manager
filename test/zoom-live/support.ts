@@ -32,6 +32,8 @@ export const meetingId = (env.ZOOM_TEST_MEETING_ID ?? '').replaceAll(/\D/g, '');
 export const canRunLive = !!meetingId && process.platform === 'win32';
 
 export const titles = {
+  micOffTitle: env.ZOOM_TEST_MIC_OFF_TITLE || null,
+  micOnTitle: env.ZOOM_TEST_MIC_ON_TITLE || null,
   shareButtonTitle: env.ZOOM_TEST_SHARE_BUTTON_TITLE || null,
   videoOffTitle: env.ZOOM_TEST_VIDEO_OFF_TITLE || null,
   videoOnTitle: env.ZOOM_TEST_VIDEO_ON_TITLE || null,

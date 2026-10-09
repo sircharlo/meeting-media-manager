@@ -14,6 +14,8 @@ const zoom = vi.hoisted(() => ({
   diagnoseZoom: vi.fn(),
   getZoomMeetingState: vi.fn(),
   getZoomShareEntries: vi.fn(),
+  joinZoomAudioForSetup: vi.fn(),
+  learnZoomMicTitles: vi.fn(),
   learnZoomVideoTitles: vi.fn(),
   runZoomSelfTest: vi.fn(),
   testZoomShareEntry: vi.fn(),
@@ -24,10 +26,14 @@ vi.mock('src/helpers/zoom', () => ({
   getZoomMeetingState: zoom.getZoomMeetingState,
   getZoomShareEntries: zoom.getZoomShareEntries,
   getZoomTitlesFromSettings: () => ({
+    micOffTitle: 'Unmute',
+    micOnTitle: 'Mute',
     shareButtonTitle: null,
     videoOffTitle: 'Start Video',
     videoOnTitle: 'Stop Video',
   }),
+  joinZoomAudioForSetup: zoom.joinZoomAudioForSetup,
+  learnZoomMicTitles: zoom.learnZoomMicTitles,
   learnZoomVideoTitles: zoom.learnZoomVideoTitles,
   prepareMediaWindowForZoomTest: async () => () => undefined,
   testZoomShareEntry: zoom.testZoomShareEntry,
@@ -117,6 +123,14 @@ const reachVideoStep = async () => {
   await click('Continue'); // checks
 };
 
+/** Answers the camera and microphone questions, reaching the Share step. */
+const learnButtons = async () => {
+  await click("Yes, it's on"); // camera
+  await click('Continue');
+  await click("Yes, it's on"); // microphone
+  await click('Continue');
+};
+
 beforeEach(() => {
   vi.clearAllMocks();
   vi.spyOn(globalThis.electronApi, 'startZoomHelper').mockResolvedValue({
@@ -130,6 +144,12 @@ beforeEach(() => {
   zoom.learnZoomVideoTitles.mockImplementation(async () => {
     settings().zoomVideoOnTitle = 'Stop Video';
     settings().zoomVideoOffTitle = 'Start Video';
+    return { ok: true };
+  });
+  zoom.joinZoomAudioForSetup.mockResolvedValue(true);
+  zoom.learnZoomMicTitles.mockImplementation(async () => {
+    settings().zoomMicOnTitle = 'Mute';
+    settings().zoomMicOffTitle = 'Unmute';
     return { ok: true };
   });
   zoom.testZoomShareEntry.mockResolvedValue({
@@ -224,6 +244,36 @@ describe('DialogZoomSetupAssistant', () => {
     expect(isDisabled(button('Continue'))).toBe(false);
   });
 
+  it('joins computer audio, then learns the microphone button from one answer', async () => {
+    await mountAssistant();
+    await reachVideoStep();
+    await click("Yes, it's on"); // camera
+    await click('Continue');
+
+    expect(zoom.joinZoomAudioForSetup).toHaveBeenCalledOnce();
+    expect(text()).toContain('Is your microphone on');
+    expect(isDisabled(button('Continue'))).toBe(true);
+    await click("No, it's muted");
+
+    expect(zoom.learnZoomMicTitles).toHaveBeenCalledWith(false);
+    expect(text()).toContain("“Mute” while it's on");
+    expect(isDisabled(button('Continue'))).toBe(false);
+  });
+
+  it('only asks about the microphone once computer audio is joined', async () => {
+    zoom.joinZoomAudioForSetup.mockResolvedValueOnce(false);
+    await mountAssistant();
+    await reachVideoStep();
+    await click("Yes, it's on"); // camera
+    await click('Continue');
+
+    expect(text()).toContain("M³ couldn't join computer audio");
+    expect(text()).not.toContain('Is your microphone on');
+
+    await click('Try again');
+    expect(text()).toContain('Is your microphone on');
+  });
+
   it("lets the user pick the Share entry when Zoom's default does not open sharing", async () => {
     zoom.testZoomShareEntry
       .mockResolvedValueOnce({
@@ -247,8 +297,7 @@ describe('DialogZoomSetupAssistant', () => {
     });
     await mountAssistant();
     await reachVideoStep();
-    await click("Yes, it's on");
-    await click('Continue');
+    await learnButtons();
 
     await click('Check sharing');
     expect(zoom.testZoomShareEntry).toHaveBeenCalledWith(null);
@@ -298,8 +347,7 @@ describe('DialogZoomSetupAssistant', () => {
       });
     await mountAssistant();
     await reachVideoStep();
-    await click("Yes, it's on");
-    await click('Continue');
+    await learnButtons();
 
     await click('Check sharing');
     expect(text()).toContain("the media window wasn't in it");
@@ -323,8 +371,7 @@ describe('DialogZoomSetupAssistant', () => {
     });
     await mountAssistant();
     await reachVideoStep();
-    await click("Yes, it's on");
-    await click('Continue');
+    await learnButtons();
 
     await click('Check sharing');
     expect(text()).toContain('Make sure your Zoom meeting is still open');
@@ -334,8 +381,7 @@ describe('DialogZoomSetupAssistant', () => {
   it('turns automations and background music on, and tests only host-side actions', async () => {
     await mountAssistant({ enableMusicButton: false });
     await reachVideoStep();
-    await click("Yes, it's on");
-    await click('Continue');
+    await learnButtons();
     await click('Check sharing');
     await click('Continue');
 
@@ -368,6 +414,8 @@ describe('DialogZoomSetupAssistant', () => {
     await reachVideoStep();
 
     await click('Skip'); // camera
+    expect(text()).toContain('Your microphone');
+    await click('Skip'); // microphone
     expect(text()).toContain('Sharing the media window');
     await click('Skip'); // sharing
     expect(text()).toContain('What should M³ do?');

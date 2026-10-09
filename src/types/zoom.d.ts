@@ -10,6 +10,12 @@ export type ZoomCommand =
       offTitle: null | string;
       on: boolean;
       onTitle: null | string;
+      type: 'set-mic';
+    }
+  | {
+      offTitle: null | string;
+      on: boolean;
+      onTitle: null | string;
       type: 'set-video';
     }
   | { reveal?: boolean; type: 'meeting' }
@@ -27,6 +33,7 @@ export type ZoomCommand =
   | { type: 'diagnose' }
   | { type: 'join-audio' }
   | { type: 'leave-audio' }
+  | { type: 'mic-title' }
   /**
    * `reveal` brings Zoom's auto-hidden toolbar back (moving the mouse over
    * the meeting) to read the audio and video states; without it, nothing
@@ -35,14 +42,15 @@ export type ZoomCommand =
   | { type: 'participants' }
   | { type: 'share-entries' }
   | { type: 'stop-share' }
+  | { type: 'toggle-mic' }
   | { type: 'toggle-video' }
   | { type: 'video-title' };
 
 export interface ZoomCommandResult {
   admitted?: string[];
-  /** `toggle-video`: the camera button's name after switching. */
+  /** `toggle-mic`/`toggle-video`: the button's name after switching. */
   after?: string;
-  /** `toggle-video`: the camera button's name before switching. */
+  /** `toggle-mic`/`toggle-video`: the button's name before switching. */
   before?: string;
   /** Whether the action changed anything (false: already in that state). */
   changed?: boolean;
@@ -102,6 +110,11 @@ export interface ZoomMeetingState {
   audioJoined?: boolean | null;
   found: boolean;
   handle?: number;
+  /**
+   * The microphone button's name, in the user's Zoom language (null until
+   * computer audio is joined, or while Zoom has its toolbar hidden).
+   */
+  micTitle?: null | string;
   participantsPanelOpen?: boolean;
   sharing: boolean;
   title?: string;

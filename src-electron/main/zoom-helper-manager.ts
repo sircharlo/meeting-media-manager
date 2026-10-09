@@ -68,6 +68,14 @@ const getHelper = () => {
         'info',
       );
     },
+    onReady: () => {
+      logToWindow(
+        mainWindowInfo.mainWindow,
+        '[Zoom Helper] Process started',
+        {},
+        'info',
+      );
+    },
     scriptPath: getZoomHelperScriptPath(),
   });
   return helper;

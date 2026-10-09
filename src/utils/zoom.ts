@@ -1,3 +1,20 @@
+import type { SettingsValues } from 'src/types';
+
+/**
+ * Whether the setup assistant learned what Zoom's microphone and camera
+ * buttons say in both states (Zoom only names them in the user's language),
+ * which the meeting automations need.
+ */
+export const areZoomButtonsLearned = (
+  settings: null | Partial<SettingsValues> | undefined,
+) =>
+  !!(
+    settings?.zoomMicOnTitle &&
+    settings.zoomMicOffTitle &&
+    settings.zoomVideoOnTitle &&
+    settings.zoomVideoOffTitle
+  );
+
 // Zoom meeting IDs are 9 to 11 digits ("123 4567 8901"); invitation links
 // carry them after /j/ or /s/ (https://us02web.zoom.us/j/12345678901?pwd=...).
 const MEETING_ID_DIGITS = /^\d{9,11}$/;

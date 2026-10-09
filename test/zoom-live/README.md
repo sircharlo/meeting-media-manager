@@ -4,10 +4,10 @@
 desktop app on your computer:
 
 - `zoom.live.test.ts` runs every action M³ performs (join/leave computer
-  audio, host video on/off, mute everyone with and without self-unmute, ask
-  everyone to unmute, both meeting sequences, sharing the media window) and
-  verifies each one from the host's Zoom window and from the test
-  participants' side.
+  audio, host microphone and video on/off, mute everyone with and without
+  self-unmute, ask everyone to unmute, both meeting sequences, sharing the
+  media window) and verifies each one from the host's Zoom window and from
+  the test participants' side.
 - `zoom-startup.live.test.ts` runs the check M³ makes when it starts: it
   opens the meeting if needed and tests everything with the host alone, and
   only looks (pressing nothing anyone would notice) once others are in.
@@ -42,7 +42,10 @@ ZOOM_TEST_PASSCODE=1234
 # 0-5 browser participants joining through Zoom's web client
 ZOOM_TEST_PARTICIPANTS=3
 # Names of Zoom's controls in YOUR Zoom language (what M³'s Settings
-# capture). The video steps are skipped without the two video names.
+# capture). The microphone and video steps are skipped without their two
+# names.
+ZOOM_TEST_MIC_ON_TITLE=Mute
+ZOOM_TEST_MIC_OFF_TITLE=Unmute
 ZOOM_TEST_VIDEO_ON_TITLE=Stop Video
 ZOOM_TEST_VIDEO_OFF_TITLE=Start Video
 ZOOM_TEST_SHARE_BUTTON_TITLE=Share

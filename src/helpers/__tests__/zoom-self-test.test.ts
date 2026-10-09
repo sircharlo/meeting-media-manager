@@ -19,6 +19,7 @@ const world = {
   allowSelfUnmute: true,
   audioJoined: true,
   found: true,
+  micOn: false,
   participants: [] as ZoomTestParticipant[],
   sharing: false,
   videoOn: true,
@@ -51,6 +52,7 @@ vi.mock('src/helpers/zoom', () => ({
   getZoomMeetingState: vi.fn(async () => ({
     audioJoined: world.audioJoined,
     found: world.found,
+    micTitle: world.audioJoined ? (world.micOn ? 'Mute' : 'Unmute') : null,
     sharing: world.sharing,
     title: 'Zoom Meeting',
     videoTitle: world.videoOn ? 'Stop Video' : 'Start Video',
@@ -66,6 +68,7 @@ vi.mock('src/helpers/zoom', () => ({
   muteAllZoomParticipants: vi.fn(async (allow: boolean) => muteAll(allow)),
   runZoomMeetingSequence: vi.fn(async () => {
     world.audioJoined = true;
+    world.micOn = true;
     world.videoOn = true;
     muteAll(false);
     return { failedSteps: [], ok: true };
@@ -76,6 +79,11 @@ vi.mock('src/helpers/zoom', () => ({
     muteAll(true);
     askAllToUnmute();
     return { failedSteps: [], ok: true };
+  }),
+  setZoomHostMic: vi.fn(async (on: boolean) => {
+    if (!world.audioJoined) return { error: 'audio-not-joined', ok: false };
+    world.micOn = on;
+    return ok();
   }),
   setZoomHostVideo: vi.fn(async (on: boolean) => {
     world.videoOn = on;
@@ -89,7 +97,7 @@ vi.mock('src/helpers/zoom', () => ({
     world.sharing = false;
     return true;
   }),
-  withoutZoomNotifications: <T>(run: () => Promise<T>) => run(),
+  withoutZoomFeedback: <T>(run: () => Promise<T>) => run(),
 }));
 
 const probe: ZoomTestParticipantsProbe = {
@@ -108,6 +116,8 @@ const probe: ZoomTestParticipantsProbe = {
 };
 
 const TITLES = {
+  micOffTitle: 'Unmute',
+  micOnTitle: 'Mute',
   shareButtonTitle: 'Share',
   videoOffTitle: 'Start Video',
   videoOnTitle: 'Stop Video',
@@ -123,6 +133,7 @@ beforeEach(() => {
     allowSelfUnmute: true,
     audioJoined: true,
     found: true,
+    micOn: false,
     participants: ['M3 Test 1', 'M3 Test 2'].map((name) => ({
       events: [],
       micMuted: false,
@@ -149,6 +160,7 @@ describe('runZoomSelfTest', () => {
     expect(restore).toHaveBeenCalledOnce();
     // Put back the way it was found.
     expect(world.audioJoined).toBe(true);
+    expect(world.micOn).toBe(false);
     expect(world.videoOn).toBe(true);
     expect(world.sharing).toBe(false);
   });
@@ -170,10 +182,12 @@ describe('runZoomSelfTest', () => {
     expect(step?.detail).toContain('Nobody can unmute themselves');
   });
 
-  it('skips participant and video steps it has no way to check', async () => {
+  it('skips participant, microphone and video steps it has no way to check', async () => {
     const steps = await runZoomSelfTest({
       timeouts: FAST,
       titles: {
+        micOffTitle: null,
+        micOnTitle: null,
         shareButtonTitle: null,
         videoOffTitle: null,
         videoOnTitle: null,
@@ -185,6 +199,8 @@ describe('runZoomSelfTest', () => {
       'join-audio': 'passed',
       'leave-audio': 'passed',
       meeting: 'passed',
+      'mic-off': 'skipped',
+      'mic-on': 'skipped',
       'mute-all-locked': 'skipped',
       'participants-join': 'skipped',
       'share-start': 'skipped',

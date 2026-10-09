@@ -61,7 +61,8 @@ const sleep = (ms: number) =>
 const getNeeds = () => {
   const settings = useCurrentStateStore().currentSettings;
   return {
-    // Both audio automations also switch the camera and mute everyone.
+    // Both audio automations also switch the microphone and the camera,
+    // and mute everyone.
     audio:
       !!settings?.zoomMeetingManagerAutomateMeetingAudioSettings ||
       !!settings?.zoomMeetingManagerAutomatePostMeetingAudioSettings,
@@ -113,7 +114,15 @@ const testEverything = async (): Promise<string[]> => {
   const needs = getNeeds();
   const steps: ZoomSelfTestStepId[] = ['meeting'];
   if (needs.audio) {
-    steps.push('leave-audio', 'join-audio', 'video-off', 'video-on', 'restore');
+    steps.push(
+      'leave-audio',
+      'join-audio',
+      'mic-off',
+      'mic-on',
+      'video-off',
+      'video-on',
+      'restore',
+    );
   }
   if (needs.sharing) steps.push('share-start', 'share-stop');
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { parseZoomMeetingId } from '../zoom';
+import { areZoomButtonsLearned, parseZoomMeetingId } from '../zoom';
 
 describe('parseZoomMeetingId', () => {
   it.each([
@@ -28,5 +28,25 @@ describe('parseZoomMeetingId', () => {
     ['514618515a'],
   ])('finds no meeting ID in %j', (input) => {
     expect(parseZoomMeetingId(input)).toBeNull();
+  });
+});
+
+describe('areZoomButtonsLearned', () => {
+  const learned = {
+    zoomMicOffTitle: 'Unmute',
+    zoomMicOnTitle: 'Mute',
+    zoomVideoOffTitle: 'Start Video',
+    zoomVideoOnTitle: 'Stop Video',
+  };
+
+  it('needs both names of both the microphone and the camera button', () => {
+    expect(areZoomButtonsLearned(learned)).toBe(true);
+    expect(areZoomButtonsLearned({ ...learned, zoomMicOnTitle: null })).toBe(
+      false,
+    );
+    expect(areZoomButtonsLearned({ ...learned, zoomVideoOffTitle: null })).toBe(
+      false,
+    );
+    expect(areZoomButtonsLearned(undefined)).toBe(false);
   });
 });

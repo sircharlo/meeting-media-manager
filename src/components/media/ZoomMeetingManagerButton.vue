@@ -3,7 +3,7 @@
     v-if="currentSettings?.zoomMeetingManagerEnable"
     class="super-rounded"
     :color="zoomMeetingManagerPopup ? 'white' : 'white-transparent'"
-    icon="mmm-picture-for-zoom-participants"
+    icon="mmm-video-meeting"
     rounded
     :text-color="zoomMeetingManagerPopup ? 'primary' : ''"
     unelevated

@@ -39,7 +39,12 @@
         v-if="setupNeeded"
         class="zoom-popup__banner row items-center no-wrap q-mx-md q-mb-sm q-pa-sm bg-accent-100"
       >
-        <q-icon class="q-mr-sm" color="primary" name="mmm-guide" size="18px" />
+        <q-icon
+          class="q-mr-sm"
+          color="primary"
+          name="mmm-cog-sparkles"
+          size="18px"
+        />
         <div class="col text-caption text-weight-medium">
           {{ t('zoom-setup-banner') }}
         </div>
@@ -183,18 +188,21 @@
             {{ t('zoom-meeting-manager-meeting-id-missing') }}
           </q-tooltip>
         </div>
-        <div class="col-6">
+        <div class="col-auto">
           <q-btn
-            class="full-width"
+            :aria-label="t('zoomMeetingManagerSetupAssistant')"
+            class="btn-tonal full-height"
             color="secondary"
-            icon="mmm-guide"
-            :label="t('zoomMeetingManagerSetupAssistant')"
-            no-caps
-            unelevated
+            flat
+            icon="mmm-cog-sparkles"
             @click="openSetupAssistant"
-          />
+          >
+            <q-tooltip :delay="500">
+              {{ t('zoomMeetingManagerSetupAssistant') }}
+            </q-tooltip>
+          </q-btn>
         </div>
-        <div class="col-6">
+        <div class="col">
           <q-btn
             class="full-width btn-tonal"
             color="secondary"
