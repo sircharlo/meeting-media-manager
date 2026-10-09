@@ -4,7 +4,7 @@
 
 关于各版本之间完整的更改清单，请参阅 GitHub 上的 CHANGELOG.md 文件。
 
-## UPCOMING VERSION
+## 即将发布的版本
 
 ### ✨ 新功能
 
