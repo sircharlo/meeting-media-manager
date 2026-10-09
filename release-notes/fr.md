@@ -4,7 +4,7 @@
 
 Pour la liste complète des changements entre les versions, consultez notre fichier CHANGELOG.md sur GitHub.
 
-## UPCOMING VERSION
+## VERSION À VENIR
 
 ### ✨ Nouvelles fonctionnalités
 
