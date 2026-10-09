@@ -14,11 +14,15 @@ import type {
 } from 'src/types';
 
 import { defineStore } from 'pinia';
+import { i18n } from 'src/boot/i18n';
 import { LONG_MEDIA_DURATION } from 'src/constants/jw';
 import { settingsDefinitions } from 'src/constants/settings';
+import { getZoomHelperErrorMessageKey } from 'src/constants/zoom';
 import { isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { getRendererPlatform } from 'src/helpers/fs';
 import { dismissAllTemporaryNotifications } from 'src/helpers/notifications';
+import { log } from 'src/shared/vanilla';
 import { datesAreSame, formatDate } from 'src/utils/date';
 import {
   getAdditionalMediaPath,
@@ -128,6 +132,7 @@ interface Store {
   selectedDate: string;
   timerWindowVisible: boolean;
   websiteSelection: JwSite;
+  zoomHelperLogs: string[];
 }
 
 const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
@@ -135,8 +140,16 @@ const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
   SettingsItem,
 ][];
 
+let zoomHelperSyncInProgress = false;
+
 export const useCurrentStateStore = defineStore('current-state', {
   actions: {
+    addZoomHelperLog(log: string) {
+      this.zoomHelperLogs.push(log);
+      if (this.zoomHelperLogs.length > 100) {
+        this.zoomHelperLogs.shift();
+      }
+    },
     areDependenciesSatisfied(
       settingsDefinition: SettingsItem,
       congregation: string,
@@ -344,10 +357,46 @@ export const useCurrentStateStore = defineStore('current-state', {
       const newCongregation = value.toString();
       this.currentCongregation = newCongregation;
       await getCachedUserDataPath();
+
+      await this.syncZoomHelper();
+
       return this.getInvalidSettings(newCongregation).length > 0;
     },
     setTimerWindowVisible(visible: boolean) {
       this.timerWindowVisible = visible;
+    },
+    async syncZoomHelper() {
+      // Resolved here rather than at module load: src/helpers/fs imports
+      // this store, so a top-level call could run before it's initialized.
+      if (getRendererPlatform() !== 'win32' || zoomHelperSyncInProgress) {
+        return;
+      }
+
+      const { startZoomHelper, stopZoomHelper } = globalThis.electronApi;
+
+      if (!this.currentSettings?.zoomMeetingManagerEnable) {
+        stopZoomHelper();
+        return;
+      }
+
+      zoomHelperSyncInProgress = true;
+      try {
+        const result = await startZoomHelper();
+        if (!result.ok) {
+          log('Zoom helper did not start', 'zoom', 'error', result);
+          const { createTemporaryNotification } =
+            await import('src/helpers/notifications');
+          const t = i18n.global.t as (key: string) => string;
+          createTemporaryNotification({
+            caption: t(getZoomHelperErrorMessageKey(result.error)),
+            message: t('zoom-helper-start-failed'),
+            timeout: 0,
+            type: 'negative',
+          });
+        }
+      } finally {
+        zoomHelperSyncInProgress = false;
+      }
     },
   },
   getters: {
@@ -649,6 +698,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       selectedDate: formatDate(new Date(), 'YYYY/MM/DD'),
       timerWindowVisible: false,
       websiteSelection: undefined,
+      zoomHelperLogs: [],
     };
   },
 });

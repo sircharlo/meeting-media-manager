@@ -30,6 +30,7 @@ import {
   openWebsiteWindow,
   zoomWebsiteWindow,
 } from 'src-electron/preload/website';
+import { launchZoomMeeting } from 'src-electron/preload/zoom';
 import {
   basename,
   changeExt,
@@ -111,6 +112,7 @@ const electronApi: ElectronApi = {
   isSqliteDbCorrupt: (dbPath: string) => invoke('isSqliteDbCorrupt', dbPath),
   isUsablePath: (p) => invoke('isUsablePath', p),
   join,
+  launchZoomMeeting,
   moveMediaWindow: (t, w) => send('moveMediaWindow', t, w),
   moveTimerWindow: (t, w) => send('moveTimerWindow', t, w),
   navigateWebsiteWindow,
@@ -154,6 +156,7 @@ const electronApi: ElectronApi = {
   relaunchApp: () => send('relaunchApp'),
   removeListeners: (c) => removeAllIpcListeners(c),
   resolve,
+  restartZoomHelper: () => invoke('restartZoomHelper'),
   resumeAllDownloads: () => send('resumeAllDownloads'),
   saveFileDialog: (d, f) => invoke('saveFileDialog', d, f),
   sendDevMenuState: (state) => send('dev-menu-state', state),
@@ -165,6 +168,9 @@ const electronApi: ElectronApi = {
   setPathProbeNotificationPaths: (paths) =>
     send('setPathProbeNotificationPaths', paths),
   showFileOnWindows,
+  startZoomHelper: () => invoke('startZoomHelper'),
+  stopZoomHelper: () => send('stopZoomHelper'),
+  toggleAuthorizedClose: (v) => send('authorizedClose', v),
   toggleMediaWindow: (s, f) => send('toggleMediaWindow', s, f),
   toggleTimerWindow: (s) => send('toggleTimerWindow', s),
   unregisterAllShortcuts: () => send('unregisterAllShortcuts'),
@@ -172,6 +178,8 @@ const electronApi: ElectronApi = {
   unwatchFolders: () => invoke('unwatchFolders'),
   unzip: (i, o, op) => invoke('unzip', i, o, op),
   watchFolder: (p) => invoke('watchFolder', p),
+  zoomCommand: (c) => invoke('zoomCommand', c),
+  zoomTestParticipants: (r) => invoke('zoomTestParticipants', r),
   zoomWebsiteWindow,
 };
 

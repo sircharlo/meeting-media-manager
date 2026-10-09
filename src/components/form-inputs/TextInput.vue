@@ -14,6 +14,7 @@
       :class="settingId === 'localDateFormat' ? 'q-mb-xs' : ''"
       :clearable="settingId === 'localDateFormat' || settingId === 'baseUrl'"
       dense
+      :disable="disable"
       :error="customError"
       hide-bottom-space
       v-bind="{
@@ -165,6 +166,7 @@ const customSuccess = computed(() => {
 
 const props = defineProps<{
   actions?: SettingsItemAction[];
+  disable?: boolean;
   label?: null | string;
   rules?: SettingsItemRule[];
   settingId?: keyof SettingsValues;

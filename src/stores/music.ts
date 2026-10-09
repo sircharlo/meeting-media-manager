@@ -25,6 +25,11 @@ import {
 import { getDemoSongLibrary } from 'src/helpers/demo-mode';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadBackgroundMusic } from 'src/helpers/jw-media';
+import {
+  autoLaunchZoomMeetingIfNeeded,
+  automateZoomMeetingSettings,
+  automateZoomPostMeetingSettings,
+} from 'src/helpers/zoom';
 import { log } from 'src/shared/vanilla';
 import { sleep } from 'src/utils/general';
 import { formatTime } from 'src/utils/time';
@@ -565,7 +570,7 @@ export const useMusicStore = defineStore('music', () => {
           'backgroundMusic',
           'info',
         );
-        stopMusic();
+        stopMusic(false, 5, true);
         return;
       }
 
@@ -591,7 +596,11 @@ export const useMusicStore = defineStore('music', () => {
     }
   }
 
-  function stopMusic(manualStop = false, fadeSeconds = 5) {
+  function stopMusic(
+    manualStop = false,
+    fadeSeconds = 5,
+    automateMeetingSettings = false,
+  ) {
     musicStartId.value += 1;
     activeFadeId += 1;
     clearTimeout(autoStartRetryTimer);
@@ -606,6 +615,9 @@ export const useMusicStore = defineStore('music', () => {
       }
 
       musicState.value = 'music.stopping';
+      if (automateMeetingSettings) {
+        automateZoomMeetingSettings();
+      }
       fadeToVolumeLevel(0, fadeSeconds);
     } catch (error) {
       errorCatcher(error);
@@ -787,6 +799,8 @@ export const useMusicStore = defineStore('music', () => {
     () => musicPlaying.value && duration.value > 0,
     () => {
       musicState.value = 'music.playing';
+      autoLaunchZoomMeetingIfNeeded(timeUntilMeeting.value);
+      automateZoomPostMeetingSettings();
     },
   );
 
@@ -850,7 +864,7 @@ export const useMusicStore = defineStore('music', () => {
         'backgroundMusic',
         'info',
       );
-      stopMusic();
+      stopMusic(false, 5, true);
     }
   });
 

@@ -14,6 +14,13 @@ import type {
   UpdateVersionInfo,
 } from 'src/types/general';
 import type {
+  ZoomCommand,
+  ZoomCommandResult,
+  ZoomHelperStartResult,
+  ZoomTestParticipantsRequest,
+  ZoomTestParticipantsResponse,
+} from 'src/types/zoom';
+import type {
   basename,
   changeExt,
   dirname,
@@ -216,6 +223,7 @@ export interface ElectronApi {
   isSqliteDbCorrupt: (dbPath: string) => Promise<boolean>;
   isUsablePath: (path: string) => Promise<boolean>;
   join: typeof join;
+  launchZoomMeeting: (meetingId: string) => void;
   moveMediaWindow: (
     targetScreenNumber?: number,
     windowedMode?: boolean,
@@ -339,6 +347,7 @@ export interface ElectronApi {
   relaunchApp: () => void;
   removeListeners: (channel: ElectronIpcListenKey) => void;
   resolve: typeof resolve;
+  restartZoomHelper: () => Promise<ZoomHelperStartResult>;
   resumeAllDownloads: () => void;
   saveFileDialog: (
     defaultPath: string,
@@ -369,6 +378,9 @@ export interface ElectronApi {
   setHardwareAcceleration: (disabled: boolean) => void;
   setPathProbeNotificationPaths: (paths: string[]) => void;
   showFileOnWindows: (filePath: string) => Promise<void>;
+  startZoomHelper: () => Promise<ZoomHelperStartResult>;
+  stopZoomHelper: () => void;
+  toggleAuthorizedClose: (authorized: boolean) => void;
   toggleMediaWindow: (show: boolean, enableFadeTransitions?: boolean) => void;
   toggleTimerWindow: (show: boolean) => void;
   unregisterAllShortcuts: () => void;
@@ -380,6 +392,15 @@ export interface ElectronApi {
     opts?: UnzipOptions,
   ) => Promise<UnzipResult[]>;
   watchFolder: (path: string) => Promise<void>;
+  /** Runs one complete Zoom action through the Zoom helper. */
+  zoomCommand: (command: ZoomCommand) => Promise<ZoomCommandResult>;
+  /**
+   * Development builds only: test participants joining the Zoom test
+   * meeting from .env.zoom-test (see scripts/zoom-live/participants.mjs).
+   */
+  zoomTestParticipants: (
+    request: ZoomTestParticipantsRequest,
+  ) => Promise<ZoomTestParticipantsResponse>;
   zoomWebsiteWindow: (direction: 'in' | 'out') => void;
 }
 
@@ -490,13 +511,17 @@ export type ElectronIpcInvokeKey =
   | 'openFolderDialog'
   | 'passWafChallenge'
   | 'registerShortcut'
+  | 'restartZoomHelper'
   | 'saveFileDialog'
   | 'set-hardware-acceleration'
   | 'setExecutable'
   | 'startSecurityScopedAccess'
+  | 'startZoomHelper'
   | 'unwatchFolders'
   | 'unzip'
-  | 'watchFolder';
+  | 'watchFolder'
+  | 'zoomCommand'
+  | 'zoomTestParticipants';
 
 // BrowserWindow.webContents.send / ipcRenderer.on channels
 export type ElectronIpcListenKey =
@@ -513,7 +538,9 @@ export type ElectronIpcListenKey =
   | 'pathProbeNetworkWarning'
   | 'screenChange'
   | 'screenPrefsChange'
+  | 'setShouldQuit'
   | 'shortcut'
+  | 'syncMeetingSchedule'
   | 'update-available'
   | 'update-download-progress'
   | 'update-downloaded'
@@ -532,6 +559,7 @@ export type ElectronIpcSendKey =
   | 'checkForUpdates'
   | 'dev-menu-state'
   | 'focusMediaWindow'
+  | 'launchZoomMeeting'
   | 'moveMediaWindow'
   | 'moveTimerWindow'
   | 'navigateWebsiteWindow'
@@ -543,6 +571,7 @@ export type ElectronIpcSendKey =
   | 'resumeAllDownloads'
   | 'setElectronUrlVariables'
   | 'setPathProbeNotificationPaths'
+  | 'stopZoomHelper'
   | 'toggleMediaWindow'
   | 'toggleOpenAtLogin'
   | 'toggleTimerWindow'

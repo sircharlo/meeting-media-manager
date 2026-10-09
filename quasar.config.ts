@@ -196,6 +196,19 @@ export default defineConfig((ctx) => {
         productName: PRODUCT_NAME,
         publish: ['github'],
         win: {
+          // The Zoom Meeting Manager's UI Automation helper, compiled at
+          // runtime by Windows PowerShell. An absolute path: a relative one
+          // would resolve against src-electron (see getIconPath), and a
+          // missing folder is skipped without any error.
+          extraResources: [
+            {
+              filter: ['*.cs', '*.ps1'],
+              from: fileURLToPath(
+                new URL('./src-electron/zoom-helper', import.meta.url),
+              ),
+              to: 'zoom-helper',
+            },
+          ],
           icon: getIconPath('ico'),
           target: [
             { arch: ctx.debug ? 'x64' : ['x64', 'ia32'], target: 'nsis' },

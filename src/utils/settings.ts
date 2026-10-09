@@ -7,6 +7,11 @@ import type {
 
 import { syncMeetingScheduleManually } from 'src/helpers/congregation-schedule';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import {
+  captureZoomShareButtonTitle,
+  captureZoomVideoTitle,
+  isZoomSetupNeeded,
+} from 'src/helpers/zoom';
 import { getDateDiff, getSpecificWeekday, isInPast } from 'src/utils/date';
 
 const requiredRule: ValidationRule = (val: boolean | string) =>
@@ -94,6 +99,21 @@ export const performActions = (actions: SettingsItemAction[] | undefined) => {
         globalThis.dispatchEvent(
           new CustomEvent<undefined>('openCongregationLookup'),
         );
+      } else if (action === 'openZoomSetupAssistant') {
+        globalThis.dispatchEvent(new CustomEvent('openZoomSetupAssistant'));
+      } else if (action === 'openZoomSetupAssistantIfNeeded') {
+        // Turning the Zoom Meeting Manager on opens the assistant, unless
+        // it was already set up (so finishing the assistant, which turns
+        // it on, doesn't open it again).
+        if (isZoomSetupNeeded()) {
+          globalThis.dispatchEvent(new CustomEvent('openZoomSetupAssistant'));
+        }
+      } else if (action === 'zoomCaptureVideoOffTitle') {
+        captureZoomVideoTitle('zoomVideoOffTitle');
+      } else if (action === 'zoomCaptureVideoOnTitle') {
+        captureZoomVideoTitle('zoomVideoOnTitle');
+      } else if (action === 'zoomCaptureShareButtonTitle') {
+        captureZoomShareButtonTitle();
       }
     } catch (error) {
       errorCatcher(error);

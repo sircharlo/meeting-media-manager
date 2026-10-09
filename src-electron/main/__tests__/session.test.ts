@@ -30,6 +30,7 @@ vi.mock('electron', () => ({
 vi.mock('src-electron/constants', () => ({
   SENTRY_DSN: 'https://fake-key@fake.ingest.sentry.io/123456',
   TRUSTED_DOMAINS: [],
+  WINDOW_MOVE_THROTTLE_MS: 100,
 }));
 
 vi.mock('src-electron/main/utils', () => ({
@@ -54,7 +55,7 @@ describe('session listeners', () => {
     initSessionListeners();
     initSessionListeners();
 
-    expect(appOnMock).toHaveBeenCalledTimes(1);
+    expect(appOnMock).toHaveBeenCalledTimes(2);
     expect(readyCallbacks).toHaveLength(1);
 
     readyCallbacks[0]?.();

@@ -7,6 +7,7 @@
     <NavDrawer v-model="miniState" />
 
     <DialogCongregationSwitcher />
+    <DialogZoomSetupAssistant v-model="zoomSetupAssistantOpen" />
 
     <!-- Main content -->
     <q-page-container class="app-main-scroll main-bg">
@@ -82,6 +83,7 @@ import type {
 
 import {
   useBroadcastChannel,
+  useEventListener,
   useIntervalFn,
   watchDebounced,
   watchImmediate,
@@ -90,6 +92,7 @@ import {
 import { queues } from 'boot/globals';
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import DialogCongregationSwitcher from 'components/dialog/DialogCongregationSwitcher.vue';
+import DialogZoomSetupAssistant from 'components/dialog/DialogZoomSetupAssistant.vue';
 import HeaderBase from 'components/header/HeaderBase.vue';
 import MediaPreview from 'components/media/MediaPreview.vue';
 import ActionIsland from 'components/ui/ActionIsland.vue';
@@ -136,6 +139,7 @@ import {
   checkLowDiskSpaceAndNotify,
   createTemporaryNotification,
 } from 'src/helpers/notifications';
+import { scheduleZoomStartupCheck } from 'src/helpers/zoom-startup-check';
 import { localeOptions } from 'src/i18n';
 import { log, type LogPrefix } from 'src/shared/vanilla';
 import { useAppSettingsStore } from 'src/stores/app-settings';
@@ -331,6 +335,13 @@ const getMacosFolderPermissionTargets = () => {
 };
 
 const macosPermissionPromptOpen = ref(false);
+
+// Opened from Settings, the Zoom popup, or by turning the Zoom Meeting
+// Manager on (see the openZoomSetupAssistant settings actions).
+const zoomSetupAssistantOpen = ref(false);
+useEventListener(globalThis, 'openZoomSetupAssistant', () => {
+  zoomSetupAssistantOpen.value = true;
+});
 const macosPermissionPromptTarget = ref<MacosFolderPermissionTarget | null>(
   null,
 );
@@ -766,6 +777,9 @@ bcClose.onmessage = (event) => {
 const initListeners = () => {
   onLog(({ ctx, level, msg }) => {
     log(`[main] ${msg}`, ctx as unknown as LogPrefix, level, ctx);
+    if (msg.startsWith('[Zoom Helper')) {
+      currentState.addZoomHelperLog(msg);
+    }
   });
 
   onShortcut(({ shortcut }) => {
@@ -1698,6 +1712,25 @@ watch(
   () => currentSettings.value?.autoStartAtLogin,
   (newAutoStartAtLogin) => {
     setAutoStartAtLogin(!!newAutoStartAtLogin);
+  },
+);
+
+watch(
+  () => [
+    currentCongregation.value,
+    currentSettings.value?.zoomMeetingManagerEnable,
+  ],
+  () => {
+    currentState.syncZoomHelper();
+  },
+);
+
+// Once M³ has started (or a congregation is opened), check its Zoom before
+// any automation relies on it. The check itself runs only once per session.
+watchImmediate(
+  () => currentCongregation.value,
+  (congregation) => {
+    if (congregation) scheduleZoomStartupCheck();
   },
 );
 

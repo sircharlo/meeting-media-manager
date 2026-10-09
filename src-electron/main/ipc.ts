@@ -14,6 +14,7 @@ import type {
   SettingsValues,
   UnzipOptions,
   UrlVariables,
+  ZoomTestParticipantsRequest,
 } from 'src/types';
 
 import { homepage, repository } from 'app/package.json';
@@ -120,6 +121,14 @@ import {
   websiteWindowInfo,
   zoomWebsiteWindow,
 } from 'src-electron/main/window/window-website';
+import {
+  restartZoomHelper,
+  runZoomHelperCommand,
+  startZoomHelper,
+  stopZoomHelper,
+} from 'src-electron/main/zoom-helper-manager';
+import { isZoomCommand } from 'src-electron/main/zoom-helper-process';
+import { handleZoomTestParticipants } from 'src-electron/main/zoom-test-participants';
 import { join } from 'upath';
 
 const { openExternal, openPath } = shell;
@@ -312,6 +321,13 @@ handleIpcSend('zoomWebsiteWindow', (_e, direction: 'in' | 'out') => {
   zoomWebsiteWindow(direction);
 });
 
+handleIpcSend('launchZoomMeeting', (_e, meetingId: string) => {
+  if (!meetingId) return;
+  openExternal(
+    `zoommtg://zoom.us/join?confno=${encodeURIComponent(meetingId)}`,
+  );
+});
+
 handleIpcSend('navigateWebsiteWindow', (_e, action: NavigateWebsiteAction) => {
   navigateWebsiteWindow(action);
 });
@@ -446,6 +462,9 @@ handleIpcInvoke('getSharedDataPath', async () => getSharedDataPath());
 handleIpcInvoke('getUserDataPath', async () => app.getPath('userData'));
 handleIpcInvoke('getLocales', async () => app.getPreferredSystemLanguages());
 handleIpcInvoke('isUsablePath', async (_e, p: string) => isUsablePath(p));
+handleIpcInvoke('startZoomHelper', async () => startZoomHelper());
+handleIpcSend('stopZoomHelper', () => stopZoomHelper());
+handleIpcInvoke('restartZoomHelper', async () => restartZoomHelper());
 
 handleIpcInvoke(
   'isArchitectureMismatch',
@@ -590,6 +609,19 @@ handleIpcInvoke(
 handleIpcInvoke('unwatchFolders', async () => unwatchFolders());
 handleIpcInvoke('watchFolder', async (_e, folderPath: string) =>
   watchFolder(folderPath),
+);
+
+handleIpcInvoke('zoomCommand', async (_e, command: unknown) => {
+  if (!isZoomCommand(command)) {
+    return { error: 'invalid-command', ok: false };
+  }
+  return runZoomHelperCommand(command);
+});
+
+handleIpcInvoke(
+  'zoomTestParticipants',
+  async (_e, request: ZoomTestParticipantsRequest) =>
+    handleZoomTestParticipants(request),
 );
 
 handleIpcInvoke('getZipEntries', async (_e, zipPath: string) =>

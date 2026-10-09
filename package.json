@@ -37,6 +37,7 @@
     "lint": "eslint -c ./eslint.config.js './src/**/*.{js,ts,cjs,mjs,mts,vue}' './src-electron/**/*.{js,ts,cjs,mjs,mts}' && vue-tsc --noEmit -p tsconfig.json",
     "depcheck": "depcheck --skip-missing && depcheck src-electron --skip-missing",
     "test:unit": "node scripts/fix-i18n-locales.mjs --check && vitest --project quasar --project electron",
+    "test:zoom-live": "vitest run --config test/zoom-live/vitest.config.mts",
     "screenshot:refresh": "node test/playwright/run.mjs"
   },
   "dependencies": {

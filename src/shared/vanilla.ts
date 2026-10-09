@@ -88,6 +88,11 @@ export const debounce = <T extends unknown[]>(
   };
 };
 
+export const delay = (ms: number) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
 // Matches the OS home-directory segment of a filesystem path or file:// URL
 // (Windows `C:\Users\<name>` or `C:/Users/<name>`, macOS `/Users/<name>`,
 // Linux `/home/<name>`) so the username can be redacted while the rest of
