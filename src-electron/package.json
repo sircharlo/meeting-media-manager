@@ -28,7 +28,7 @@
     "heic-convert": "^2.1.0",
     "is-online": "^12.0.2",
     "mime": "^4.1.0",
-    "music-metadata": "^11.13.0",
+    "music-metadata": "^11.16.0",
     "upath": "^3.0.8",
     "yauzl": "^3.4.0"
   },
