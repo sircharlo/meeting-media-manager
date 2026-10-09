@@ -53,7 +53,6 @@ ignores:
   # shipped a crash to every user in 2026-07 - see git blame on this file.
   - '@carboneio/image-size'
   - '@numairawan/video-duration'
-  - '@opentelemetry/api-logs'
   - '@sentry/core'
   - '@sentry/electron'
   - check-disk-space

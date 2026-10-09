@@ -677,13 +677,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/heic-convert@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "@types/heic-convert@npm:2.1.1"
-  checksum: 10c0/7d937ae85e034e30254fa241d3c6bf5136f2a4a9e813556e2ddad67ba07d85a9796c5fc0b18db09b3767314a8635ee73185ed6f8548a8d1417ec42b66b135d29
-  languageName: node
-  linkType: hard
-
 "@types/http-cache-semantics@npm:*, @types/http-cache-semantics@npm:^4.0.2":
   version: 4.2.0
   resolution: "@types/http-cache-semantics@npm:4.2.0"
@@ -2433,7 +2426,6 @@ __metadata:
     "@sentry/electron": "npm:^8.1.0"
     "@types/fluent-ffmpeg": "npm:^2.1.28"
     "@types/fs-extra": "npm:^11.0.4"
-    "@types/heic-convert": "npm:^2.1.1"
     "@types/yauzl": "npm:^3.4.0"
     check-disk-space: "npm:^3.4.0"
     chokidar: "npm:^5.0.0"

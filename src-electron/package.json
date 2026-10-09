@@ -35,7 +35,6 @@
   "devDependencies": {
     "@types/fluent-ffmpeg": "^2.1.28",
     "@types/fs-extra": "^11.0.4",
-    "@types/heic-convert": "^2.1.1",
     "@types/yauzl": "^3.4.0",
     "electron": "^43.0.0",
     "electron-builder": "^26.15.3"
