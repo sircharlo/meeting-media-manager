@@ -45,7 +45,7 @@ queue_rules:
           - author = dependabot[bot]
           - or:
               - title ~= ^((chore|build)(\(deps(?:-dev)*\))*:) bump [^\s]+ from
-                ([1-9][\d]*)\..+ to \4\.
+                (\d+)\..+ to \4\.
               - title ~= ^((chore|build)(\(deps(-dev)?\))?:) bump the .+ group
                 (across|with) .+ updates
     batch_size: 10
