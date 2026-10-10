@@ -128,7 +128,7 @@ Le funzioni della musica di sottofondo includono:
 
 ### :stopwatch: M³ include un timer per l'adunanza? {#faq-meeting-timer}
 
-Sì. Quando abilitato, M³ può mostrare una finestra timer separata per cronometrare i partecipanti. Può contare in avanti o alla rovescia, mostrare l'ora corrente, mostrare un conto alla rovescia prima dell'adunanza e, se vuoi, indicare il tempo superato o se l'adunanza è in anticipo o in ritardo sul programma.
+Sì. Quando abilitato, M³ può mostrare una finestra timer separata per cronometrare i partecipanti. Può contare in avanti o alla rovescia, mostrare l'ora corrente, mostrare un conto alla rovescia prima dell'adunanza e, se vuoi, indicare il tempo superato o se l'adunanza è in anticipo o in ritardo sul programma. Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
 
 Il timer è una funzione beta e dovrebbe essere abilitato solo se approvato localmente.
 

@@ -128,7 +128,7 @@ M³ 支持自定义以下快捷键：
 
 ### :stopwatch: M³ 有聚会计时器吗？ {#faq-meeting-timer}
 
-是！**有。** 启用后，M³ 可以显示一个单独的计时器窗口，为聚会节目参与者计时。计时器可以正计时或倒计时，也可以显示当前时间、聚会开始前的倒计时，并根据设置显示超时情况，或显示聚会整体是提前还是超时。它可以向上或向下计算，显示当前时间，显示会前倒计时。 并可选择说明加班或会议是否提前或晚于时间表。
+是！**有。** 启用后，M³ 可以显示一个单独的计时器窗口，为聚会节目参与者计时。计时器可以正计时或倒计时，也可以显示当前时间、聚会开始前的倒计时，并根据设置显示超时情况，或显示聚会整体是提前还是超时。它可以向上或向下计算，显示当前时间，显示会前倒计时。 并可选择说明加班或会议是否提前或晚于时间表。 Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
 
 计时器目前属于测试功能，只有在得到当地批准后才应启用。
 

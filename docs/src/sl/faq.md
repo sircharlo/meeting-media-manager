@@ -128,7 +128,7 @@ Funkcije glasbe v ozadju vključujejo:
 
 ### :stopwatch: Ali M³ vključuje časovnik za shode? {#faq-meeting-timer}
 
-Da. Ko je ta funkcija omogočena, lahko M³ prikaže ločeno okno časovnika za merjenje časa udeležencev. Časovnik lahko šteje navzgor ali navzdol, prikazuje lahko trenutni čas, odšteva do začetka shoda in po želji označi prekoračitev časa in to, ali program shoda prehiteva ali zaostaja.
+Da. Ko je ta funkcija omogočena, lahko M³ prikaže ločeno okno časovnika za merjenje časa udeležencev. Časovnik lahko šteje navzgor ali navzdol, prikazuje lahko trenutni čas, odšteva do začetka shoda in po želji označi prekoračitev časa in to, ali program shoda prehiteva ali zaostaja. Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
 
 Časovnik je funkcija v beta fazi in jo je treba omogočiti samo, če je lokalno odobrena.
 

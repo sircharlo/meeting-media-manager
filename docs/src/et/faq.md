@@ -128,7 +128,7 @@ Taustamuusika funktsioon hõlmab:
 
 ### :stopwatch: Kas M³-s on koosolekute taimer? {#faq-meeting-timer}
 
-Jah. Kui see funktsioon on sisse lülitatud, võib M³ kuvada osalejate aja mõõtmiseks eraldi taimeri akna. See suudab aega üles- või allapoole loendada, näidata praegust kellaaega, kuvada koosoleku alguseni jäänud aega ning vajaduse korral näidata, kas koosolek kestab üle aja või on ajakavast ees.
+Jah. Kui see funktsioon on sisse lülitatud, võib M³ kuvada osalejate aja mõõtmiseks eraldi taimeri akna. See suudab aega üles- või allapoole loendada, näidata praegust kellaaega, kuvada koosoleku alguseni jäänud aega ning vajaduse korral näidata, kas koosolek kestab üle aja või on ajakavast ees. Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
 
 Taimer on beetafunktsioon ja seda tuleks lubada ainult heakskiidu korral.
 

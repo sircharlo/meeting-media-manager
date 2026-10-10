@@ -10,6 +10,16 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 - ✨ **Zoom Meeting Manager (beta, Windows)**: Una nuova integrazione che gestisce Zoom per ogni riunione. Può lanciare la riunione di Zoom della tua comunità quando la musica di sottofondo inizia prima della riunione. Quando la musica si ferma poco prima dell'inizio della riunione, si unisce all'audio del computer, disattiva il microfono, accende il video dell'host, e attiva tutti senza lasciarli disattivare. Quando la musica suona prima o dopo una riunione, fa il contrario: lascia l'audio del computer, spegne il video dell'host, e lascia che tutti smuti di nuovo (chiedendogli di farlo). Può anche condividere la finestra multimediale in Zoom automaticamente durante la visualizzazione dei media, assicurandosi che la finestra multimediale sia ciò che viene condiviso e mai nient'altro sullo schermo. Un nuovo pulsante Zoom nell'isola di azione mostra se è stata trovata una finestra di riunione Zoom e ti permette di eseguire questi passaggi manualmente. Un assistente di configurazione, offerto quando si attiva l'opzione (la procedura guidata di configurazione iniziale ora lo offre su Windows invece della condivisione della schermata di scorciatoia da tastiera) e disponibile in qualsiasi momento dal pulsante Zoom o Impostazioni, controlla il tuo Zoom, impara i nomi dei suoi pulsanti microfono e fotocamera nella tua lingua, e prova ogni passo con te. Quando M3 inizia, controlla anche che tutto ciò che automatizza in Zoom funziona, aprire la riunione se necessario nei giorni di riunione nell'ora e un quarto prima dell'inizio (solo guardando, senza premere nulla, se gli altri sono già in riunione); se qualcosa non lo fa, ti dice e mette in pausa le sue automazioni Zoom fino a quando non viene riavviato o un nuovo check passa, quindi niente va storto durante la riunione. Questo controllo è attivo per impostazione predefinita e può essere disattivato nelle Impostazioni. Come ognuno di questi passi ha successo, i promemoria corrispondenti nelle liste di controllo prima e dopo la riunione delle azioni rapide sono spuntati fuori per voi, segnato come fatto automaticamente in Zoom. Dal momento che non può essere utilizzato insieme alla condivisione dello schermo di tastiera-scorciatoia, Le impostazioni lo dicono sotto qualsiasi dei due non è disponibile, nominando quello da disattivare. Funziona in qualsiasi lingua Zoom è in, e non ha bisogno di niente installato oltre Zoom stesso.
 
+- ✨ **Meeting Timer**: Custom parts can now be added on meeting days too, for Governing Body updates, special programs and anything else that isn't on the regular schedule. Each is timed like any other part, and its name and length can be changed from the timer popup or from the parts list.
+
+- ✨ **Meeting Timer**: Quicker access to the timer. Hovering the timer button on the action island now shows the part being timed with Start, Pause, Stop and Next part buttons, without opening the popup (a setting, on by default). A new setting also keeps the whole parts list and the timer controls in a panel docked on the right side of the main window, always in view.
+
+- ✨ **Meeting Timer**: A new "Analog clock with time arc" countdown display shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a red wedge. It also works for the pre-meeting countdown and in count-up mode.
+
+- ✨ **Meeting Timer**: The pre-meeting countdown is now labelled "Meeting starts in", and the timer display shows the name of the part being timed, so "4:59" can no longer be mistaken for the time of day.
+
+- ✨ **Meeting Timer**: Each day's recorded timings can be cleared in one go, after a confirmation, from the timer popup or the docked panel.
+
 ## v26.9.0
 
 ### ✨ Nuove Funzionalità
@@ -47,14 +57,14 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.7.0
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Riproduzione audio collegata**: aggiunto il supporto per riprodurre l'audio di un file insieme al video di un altro file. Può essere utile per riprodurre presentazioni video con musica di accompagnamento.
 - ✨ **Layout dei media monitorati**: aggiunta la persistenza degli elementi multimediali monitorati e dell'ordine delle sezioni tra le cartelle monitorate. Questo garantisce che l'elenco dei media venga mostrato allo stesso modo anche quando la cartella monitorata è sincronizzata tra più dispositivi.
 
 ## v26.6.1
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Anteprima dei media**: aggiunto un overlay di anteprima dei media dal vivo che può essere attivato o disattivato dalle impostazioni o dal popup di visualizzazione.
 - ✨ **Cerca media**: aggiunta una casella di ricerca rapida nell'elenco dei media che consente di trovare rapidamente i media per titolo. Per usarla, basta usare la scorciatoia da tastiera standard per la ricerca (Ctrl+F o Cmd+F).
