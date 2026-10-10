@@ -77,6 +77,7 @@ const electronApi: ElectronApi = {
     invoke('ensureMacosFolderPermission', folderPath, prompt),
   executeQuery: (db, query, params) =>
     invoke('executeQuery', db, query, params),
+  exportHtmlToPdf: (html, name) => invoke('exportHtmlToPdf', html, name),
   extname,
   extractNestedZipEntry: (i, e, o, op) =>
     invoke('extractNestedZipEntry', i, e, o, op),
@@ -129,6 +130,7 @@ const electronApi: ElectronApi = {
   onLog: (cb) => listen('log', cb),
   onPathProbeNetworkWarning: (cb) => listen('pathProbeNetworkWarning', cb),
   onShortcut: (cb) => listen('shortcut', cb),
+  onTimerWindowClosed: (cb) => listen('timerWindowClosed', cb),
   onUpdateAvailable: (cb) => listen('update-available', cb),
   onUpdateDownloaded: (cb) => listen('update-downloaded', cb),
   onUpdateDownloadProgress: (cb) => listen('update-download-progress', cb),

@@ -822,6 +822,10 @@ const listOptionLabels = (item: SettingsItem): string[] => {
 
   if (item.list === 'resolutions') return [...RESOLUTIONS];
 
+  if (item.list === 'timerCountdownDisplayFormats') {
+    return [t('digital'), t('analog'), t('analog-digital'), t('analog-clock')];
+  }
+
   if (item.list === 'timerDisplayFormats') {
     return [t('digital'), t('analog'), t('analog-digital')];
   }

@@ -8,6 +8,7 @@ import type {
   MeetingChecklistCategory,
   MeetingChecklistItem,
 } from './meeting-quick-actions';
+import type { TimerCountdownDisplay, TimerTimeOfDayDisplay } from './timer';
 
 export type MaxRes = (typeof RESOLUTIONS)[number];
 
@@ -174,6 +175,7 @@ export type SettingsItemListKey =
   | 'obsAllScenes'
   | 'obsScenes'
   | 'resolutions'
+  | 'timerCountdownDisplayFormats'
   | 'timerDisplayFormats'
   | 'timerHourFormats'
   | 'timerModes';
@@ -324,11 +326,13 @@ export interface SettingsValues {
   suppressHardwareAccelerationReminder: boolean;
   timerAutoOpen: boolean;
   timerBackgroundColor: string;
-  timerCountdownDisplay: 'analog' | 'analog-digital' | 'digital';
+  timerCountdownDisplay: TimerCountdownDisplay;
   timerCountdownWarningIndicator: boolean;
+  timerDockedPanel: boolean;
   timerEnableMeetingAheadBehind: boolean;
   timerEnableMeetingCountdown: boolean;
   timerHourFormat: '12h' | '24h';
+  timerIslandHoverControls: boolean;
   timerMeetingCountdownMinutes: number;
   timerMode: 'countdown' | 'countup';
   timerOvertimeAnimation: boolean;
@@ -339,7 +343,7 @@ export interface SettingsValues {
   timerShowOnActionIsland: boolean;
   timerTextColor: string;
   timerTextSize: string;
-  timerTimeOfDayDisplay: 'analog' | 'analog-digital' | 'digital';
+  timerTimeOfDayDisplay: TimerTimeOfDayDisplay;
   weDay: `${number}` | null;
   weStartTime: `${number}:${number}` | null;
   zoomAutoFocusMediaWindow: boolean;

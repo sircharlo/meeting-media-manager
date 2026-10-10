@@ -59,6 +59,7 @@ import {
 } from 'src-electron/main/fs';
 import { convertHeic } from 'src-electron/main/heic';
 import { getOsSupportWarning } from 'src-electron/main/os-support';
+import { exportHtmlToPdf } from 'src-electron/main/pdf';
 import { getAllScreens } from 'src-electron/main/screen';
 import {
   decryptSecret,
@@ -581,6 +582,12 @@ handleIpcInvoke(
   'saveFileDialog',
   async (_e, defaultPath: string, filter?: FileDialogFilter) =>
     saveFileDialog(defaultPath, filter),
+);
+
+handleIpcInvoke(
+  'exportHtmlToPdf',
+  async (_e, html: unknown, defaultFileName: unknown) =>
+    exportHtmlToPdf(html, defaultFileName),
 );
 
 handleIpcInvoke('openFolder', async (_e, path: string) => {

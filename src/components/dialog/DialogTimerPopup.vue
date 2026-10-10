@@ -139,7 +139,7 @@
                   <q-icon
                     v-if="!screen.mainWindow && !screen.mediaWindow"
                     class="q-mr-sm"
-                    name="mmm-timer"
+                    name="mmm-time"
                     size="xs"
                   />
                   {{
@@ -156,297 +156,202 @@
 
         <q-separator class="bg-accent-200 q-mb-md" />
 
-        <!-- Meeting Part Selection (only on meeting days) -->
-        <template v-if="isMeetingDay(selectedDateObject?.date)">
-          <template v-if="isMwMeetingDay(selectedDateObject?.date)">
-            <template v-if="timerMode === 'countdown'">
-              <q-separator class="bg-accent-200 q-mb-md" />
-              <div class="card-section-title row q-px-md">
-                {{ t('ayfm') }}
-              </div>
-              <div class="row q-px-md q-py-sm">
-                {{ t('number-of-ayfm-parts') }}
-              </div>
-              <div class="row q-px-md q-pb-sm">
-                <q-btn-toggle
-                  v-model="ayfmPartsCount"
-                  class="full-width"
-                  :disable="timerRunning"
-                  :options="[
-                    { label: '1', value: 1 },
-                    { label: '2', value: 2 },
-                    { label: '3', value: 3 },
-                    { label: '4', value: 4 },
-                    { label: '5', value: 5 },
-                  ]"
-                  spread
-                />
-              </div>
-              <q-separator class="bg-accent-200 q-mb-md" />
-              <div class="card-section-title row q-px-md">
-                {{ t('lac') }}
-              </div>
-              <div class="row q-px-md q-py-sm">
-                {{ t('number-of-lac-parts') }}
-              </div>
-              <div class="row q-px-md q-pb-sm">
-                <q-btn-toggle
-                  v-model="lacPartsCount"
-                  class="full-width"
-                  :disable="timerRunning"
-                  :options="[
-                    { label: '1', value: 1 },
-                    { label: '2', value: 2 },
-                    { label: '3', value: 3 },
-                  ]"
-                  spread
-                />
-              </div>
-              <template v-if="!isCoWeek(selectedDateObject?.date)">
-                <div class="row q-px-md q-py-sm">
-                  {{ t('cbs-custom-end-time') }}
-                </div>
-                <div class="row q-px-md q-pb-sm">
-                  <TimeInput
-                    v-model="cbsCustomEndTime"
-                    :disable="timerRunning"
-                    :extra-rules="cbsEndTimeRules"
-                    full-width
-                    :label="t('end-time')"
-                    :options="undefined"
-                  />
-                </div>
-              </template>
-            </template>
-          </template>
+        <!-- Meeting structure (midweek): number of parts and study end time -->
+        <template v-if="isMwMeetingDay(selectedDateObject?.date)">
+          <div class="card-section-title row q-px-md">
+            {{ t('ayfm') }}
+          </div>
+          <div class="row q-px-md q-py-sm">
+            {{ t('number-of-ayfm-parts') }}
+          </div>
+          <div class="row q-px-md q-pb-sm">
+            <q-btn-toggle
+              v-model="ayfmPartsCount"
+              class="full-width"
+              :disable="timerRunning"
+              :options="[
+                { label: '1', value: 1 },
+                { label: '2', value: 2 },
+                { label: '3', value: 3 },
+                { label: '4', value: 4 },
+                { label: '5', value: 5 },
+              ]"
+              spread
+            />
+          </div>
+          <q-separator class="bg-accent-200 q-mb-md" />
+          <div class="card-section-title row q-px-md">
+            {{ t('lac') }}
+          </div>
+          <div class="row q-px-md q-py-sm">
+            {{ t('number-of-lac-parts') }}
+          </div>
+          <div class="row q-px-md q-pb-sm">
+            <q-btn-toggle
+              v-model="lacPartsCount"
+              class="full-width"
+              :disable="timerRunning"
+              :options="[
+                { label: '1', value: 1 },
+                { label: '2', value: 2 },
+                { label: '3', value: 3 },
+              ]"
+              spread
+            />
+          </div>
           <template
-            v-else-if="
-              timerMode === 'countdown' &&
-              isWeMeetingDay(selectedDateObject?.date)
+            v-if="
+              timerMode === 'countdown' && !isCoWeek(selectedDateObject?.date)
             "
           >
             <div class="row q-px-md q-py-sm">
-              {{ t('wt-custom-end-time') }}
+              {{ t('cbs-custom-end-time') }}
             </div>
             <div class="row q-px-md q-pb-sm">
               <TimeInput
-                v-model="wtCustomEndTime"
+                v-model="cbsCustomEndTime"
                 :disable="timerRunning"
-                :extra-rules="wtEndTimeRules"
+                :extra-rules="cbsEndTimeRules"
                 full-width
                 :label="t('end-time')"
                 :options="undefined"
               />
             </div>
           </template>
-        </template>
-        <template v-else>
           <q-separator class="bg-accent-200 q-mb-md" />
-          <div class="card-section-title row q-px-md">
-            {{ t('custom-timer-parts') }}
+        </template>
+        <template
+          v-else-if="
+            timerMode === 'countdown' &&
+            isWeMeetingDay(selectedDateObject?.date)
+          "
+        >
+          <div class="row q-px-md q-py-sm">
+            {{ t('wt-custom-end-time') }}
           </div>
-          <div class="column q-px-md q-pb-sm q-gutter-sm">
-            <div
-              v-for="(part, index) in customTimerParts"
-              :key="part.id"
-              class="row items-center q-col-gutter-sm"
-            >
-              <div class="col">
-                <q-input
-                  v-model="part.label"
-                  dense
-                  :disable="timerRunning"
-                  filled
-                  :label="t('meeting-part')"
-                />
-              </div>
-              <div class="col-4">
-                <q-input
-                  v-model.number="part.duration"
-                  dense
-                  :disable="timerRunning"
-                  filled
-                  :label="t('duration-minutes')"
-                  min="1"
-                  type="number"
-                />
-              </div>
-              <div class="col-auto">
-                <div class="row q-gutter-xs">
-                  <q-btn
-                    :aria-label="t('move-up')"
-                    dense
-                    :disable="timerRunning || index === 0"
-                    flat
-                    icon="mmm-up"
-                    round
-                    @click="moveCustomTimerPart(index, index - 1)"
-                  >
-                    <q-tooltip>{{ t('move-up') }}</q-tooltip>
-                  </q-btn>
-                  <q-btn
-                    :aria-label="t('move-down')"
-                    dense
-                    :disable="
-                      timerRunning || index === customTimerParts.length - 1
-                    "
-                    flat
-                    icon="mmm-down"
-                    round
-                    @click="moveCustomTimerPart(index, index + 1)"
-                  >
-                    <q-tooltip>{{ t('move-down') }}</q-tooltip>
-                  </q-btn>
-                  <q-btn
-                    :aria-label="t('delete')"
-                    color="negative"
-                    dense
-                    :disable="timerRunning || customTimerParts.length <= 1"
-                    flat
-                    icon="mmm-delete"
-                    round
-                    @click="removeCustomTimerPart(part.id)"
-                  >
-                    <q-tooltip>{{ t('delete') }}</q-tooltip>
-                  </q-btn>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <q-btn
-                color="primary"
-                :disable="timerRunning"
-                flat
-                icon="mmm-plus"
-                :label="t('add')"
-                @click="addCustomTimerPart"
+          <div class="row q-px-md q-pb-sm">
+            <TimeInput
+              v-model="wtCustomEndTime"
+              :disable="timerRunning"
+              :extra-rules="wtEndTimeRules"
+              full-width
+              :label="t('end-time')"
+              :options="undefined"
+            />
+          </div>
+          <q-separator class="bg-accent-200 q-mb-md" />
+        </template>
+
+        <!-- Custom parts: the whole list on days without a meeting, and extra
+             parts for special programs on meeting days -->
+        <div class="card-section-title row q-px-md">
+          {{ t('custom-timer-parts') }}
+        </div>
+        <div
+          v-if="isMeetingDay(selectedDateObject?.date)"
+          class="row q-px-md q-pb-sm text-caption text-dark-grey"
+        >
+          {{ t('custom-timer-parts-explain') }}
+        </div>
+        <div class="column q-px-md q-pb-sm q-gutter-sm">
+          <div
+            v-for="(part, index) in customTimerParts"
+            :key="part.id"
+            class="row items-center q-col-gutter-sm"
+          >
+            <div class="col">
+              <q-input
+                dense
+                :disable="timerRunning && currentPart === part.id"
+                filled
+                :label="t('meeting-part')"
+                :model-value="part.label"
+                @update:model-value="
+                  (value) =>
+                    updateCustomTimerPart(part.id, {
+                      label: String(value ?? ''),
+                    })
+                "
               />
             </div>
+            <div class="col-4">
+              <q-input
+                dense
+                :disable="timerRunning && currentPart === part.id"
+                filled
+                :label="t('duration-minutes')"
+                min="0"
+                :model-value="part.duration"
+                type="number"
+                @update:model-value="
+                  (value) =>
+                    updateCustomTimerPart(part.id, { duration: Number(value) })
+                "
+              />
+            </div>
+            <div class="col-auto">
+              <div class="row q-gutter-xs">
+                <q-btn
+                  :aria-label="t('move-up')"
+                  dense
+                  :disable="timerRunning || index === 0"
+                  flat
+                  icon="mmm-up"
+                  round
+                  @click="moveCustomTimerPart(index, index - 1)"
+                >
+                  <q-tooltip>{{ t('move-up') }}</q-tooltip>
+                </q-btn>
+                <q-btn
+                  :aria-label="t('move-down')"
+                  dense
+                  :disable="
+                    timerRunning || index === customTimerParts.length - 1
+                  "
+                  flat
+                  icon="mmm-down"
+                  round
+                  @click="moveCustomTimerPart(index, index + 1)"
+                >
+                  <q-tooltip>{{ t('move-down') }}</q-tooltip>
+                </q-btn>
+                <q-btn
+                  :aria-label="t('delete')"
+                  color="negative"
+                  dense
+                  :disable="
+                    (timerRunning && currentPart === part.id) ||
+                    (!isMeetingDay(selectedDateObject?.date) &&
+                      customTimerParts.length <= 1)
+                  "
+                  flat
+                  icon="mmm-delete"
+                  round
+                  @click="removeCustomTimerPart(part.id)"
+                >
+                  <q-tooltip>{{ t('delete') }}</q-tooltip>
+                </q-btn>
+              </div>
+            </div>
           </div>
-        </template>
+          <div class="row">
+            <q-btn
+              color="primary"
+              flat
+              icon="mmm-plus"
+              :label="t('add-custom-part')"
+              no-caps
+              @click="addCustomTimerPart"
+            />
+          </div>
+        </div>
+
         <q-separator class="bg-accent-200 q-mb-md" />
         <div class="card-section-title row q-px-md">
           {{ t('meeting-part') }}
         </div>
         <div class="row q-px-md q-pb-sm">
-          <q-list class="full-width">
-            <template
-              v-for="(part, index) in meetingPartsOptions"
-              :key="part.value"
-            >
-              <q-item-label
-                v-if="
-                  part.section &&
-                  (index === 0 ||
-                    meetingPartsOptions[index - 1]?.section !== part.section)
-                "
-                class="q-pa-sm bg-accent-100 text-weight-bold text-uppercase text-caption"
-                header
-              >
-                {{ t(part.section) }}
-              </q-item-label>
-              <q-item
-                :class="{ 'text-warning': part.warning }"
-                clickable
-                @click="openEditDialog(part)"
-                @contextmenu.prevent="openEditDialog(part)"
-              >
-                <q-item-section avatar class="jw-icon text-h6">
-                  {{ part.icon }}
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>
-                    {{ part.label }}
-                    <q-icon
-                      v-if="part.warning"
-                      color="warning"
-                      name="mmm-warning"
-                      size="xs"
-                    >
-                      <q-tooltip>{{
-                        t('part-duration-mismatch-warning')
-                      }}</q-tooltip>
-                    </q-icon>
-                  </q-item-label>
-                  <q-item-label caption>
-                    {{ getPartStatusText(part.value) }}
-                  </q-item-label>
-                </q-item-section>
-                <q-item-section side>
-                  <div class="row q-gutter-xs">
-                    <q-btn
-                      :aria-label="t('decrease-duration')"
-                      class="btn-tonal"
-                      color="primary"
-                      dense
-                      :disable="(partDurations[part.value] || 0) <= 1"
-                      flat
-                      icon="mmm-minus"
-                      size="sm"
-                      @click.stop="adjustPartDuration(part.value, -1)"
-                    >
-                      <q-tooltip>{{ t('decrease-duration') }}</q-tooltip>
-                    </q-btn>
-                    <q-btn
-                      :aria-label="t('increase-duration')"
-                      class="btn-tonal"
-                      color="primary"
-                      dense
-                      flat
-                      icon="mmm-plus"
-                      size="sm"
-                      @click.stop="adjustPartDuration(part.value, 1)"
-                    >
-                      <q-tooltip>{{ t('increase-duration') }}</q-tooltip>
-                    </q-btn>
-                    <q-btn
-                      v-if="
-                        (partTimings[part.value]?.startTime ||
-                          partTimings[part.value]?.endTime) &&
-                        !timerRunning
-                      "
-                      :aria-label="t('reset')"
-                      class="btn-tonal"
-                      color="warning"
-                      dense
-                      flat
-                      icon="mmm-reset"
-                      size="sm"
-                      @click.stop="openResetConfirm(part.value)"
-                    >
-                      <q-tooltip>{{ t('reset') }}</q-tooltip>
-                    </q-btn>
-                    <q-btn
-                      v-if="
-                        !timerRunning && !partTimings[part.value]?.startTime
-                      "
-                      :aria-label="t('start-timer')"
-                      class="btn-tonal"
-                      color="positive"
-                      dense
-                      flat
-                      icon="mmm-play"
-                      size="sm"
-                      @click.stop="selectPart(part.value)"
-                    >
-                      <q-tooltip>{{ t('start-timer') }}</q-tooltip>
-                    </q-btn>
-                    <q-btn
-                      v-if="currentPart === part.value && timerRunning"
-                      :aria-label="t('stop-timer')"
-                      color="negative"
-                      dense
-                      icon="mmm-stop"
-                      size="sm"
-                      @click.stop="stopTimer()"
-                    >
-                      <q-tooltip>{{ t('stop-timer') }}</q-tooltip>
-                    </q-btn>
-                  </div>
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-list>
+          <TimerPartsList dialog-id="timer-popup" />
         </div>
 
         <!-- Timer Controls -->
@@ -455,67 +360,36 @@
           {{ t('timer-controls') }}
         </div>
 
-        <div class="q-px-md q-pt-md">
-          <template v-if="!isMeetingDay(selectedDateObject?.date)">
-            <template v-if="!timerRunning">
-              <q-btn
-                class="full-width q-mb-sm"
-                color="primary"
-                unelevated
-                @click="startTimer()"
-              >
-                <q-icon class="q-mr-sm" name="mmm-play" />
-                {{ t('start') }}
-              </q-btn>
-            </template>
-            <template v-else>
-              <div class="row q-gutter-sm q-mb-sm">
-                <q-btn
-                  class="col"
-                  :color="timerPaused ? 'positive' : 'warning'"
-                  unelevated
-                  @click="timerPaused ? resumeTimer() : pauseTimer()"
-                >
-                  <q-icon
-                    class="q-mr-sm"
-                    :name="timerPaused ? 'play_arrow' : 'pause'"
-                  />
-                  {{ timerPaused ? t('resume') : t('pause') }}
-                </q-btn>
-                <q-btn
-                  class="col"
-                  color="negative"
-                  unelevated
-                  @click="stopTimer()"
-                >
-                  <q-icon class="q-mr-sm" name="mmm-stop" />
-                  {{ t('stop') }}
-                </q-btn>
-              </div>
-            </template>
-          </template>
+        <div class="q-px-md q-pt-sm">
+          <TimerQuickControls class="q-mb-md" />
+
+          <div
+            v-if="timerRunning && aheadBehindText"
+            class="text-center text-caption text-dark-grey q-mb-sm"
+          >
+            {{ aheadBehindText }}
+          </div>
+
           <q-btn
             class="full-width q-mb-sm"
             color="info"
+            :loading="exportingReport"
             unelevated
-            @click="exportPdfReport"
+            @click="exportReport"
           >
             <q-icon class="q-mr-sm" name="mmm-file" />
             {{ t('export-pdf-report') }}
           </q-btn>
-
-          <!-- Timer Display -->
-          <div v-if="timerRunning" class="text-center q-py-md">
-            <div
-              class="timer-popup__display text-h4 text-weight-bold"
-              :class="{ blink: timerPaused }"
-            >
-              {{ formattedTime }}
-            </div>
-            <div class="text-caption text-dark-grey">
-              {{ timerMode === 'countup' ? t('elapsed') : t('remaining') }}
-            </div>
-          </div>
+          <q-btn
+            class="full-width q-mb-sm"
+            color="warning"
+            :disable="!hasAnyPartTimings || timerRunning"
+            flat
+            @click="resetAllConfirmOpen = true"
+          >
+            <q-icon class="q-mr-sm" name="mmm-reset" />
+            {{ t('reset-all-timings') }}
+          </q-btn>
         </div>
       </div>
 
@@ -558,49 +432,22 @@
     </div>
   </q-menu>
 
-  <!-- Edit Dialog -->
   <ConfirmDialog
-    v-model="editDialogOpen"
-    :confirm-label="t('save')"
-    dialog-id="timer-edit-part"
-    icon="mmm-time"
-    icon-color="primary"
-    :title="editPart?.label ?? ''"
-    @cancel="cancelEdit"
-    @confirm="saveEdit"
-  >
-    <q-card-section>
-      <q-input
-        v-model.number="editDuration"
-        class="bg-accent-100"
-        dense
-        :label="t('duration-minutes')"
-        min="1"
-        outlined
-        type="number"
-      />
-    </q-card-section>
-  </ConfirmDialog>
-
-  <!-- Reset Part Timing Confirmation -->
-  <ConfirmDialog
-    v-model="resetConfirmOpen"
+    v-model="resetAllConfirmOpen"
     confirm-color="warning"
     :confirm-label="t('reset')"
-    dialog-id="timer-reset-part"
+    dialog-id="timer-reset-all"
     icon="mmm-reset"
     icon-color="warning"
-    :message="t('reset-part-timing-confirmation')"
+    :message="t('reset-all-timings-confirmation')"
     persistent
-    :title="t('reset')"
-    @cancel="cancelResetPart"
-    @confirm="confirmResetPart"
+    :title="t('reset-all-timings')"
+    @confirm="confirmResetAll"
   />
 </template>
 
 <script setup lang="ts">
-import type { CellInput } from 'jspdf-autotable';
-import type { Display, MeetingPart } from 'src/types';
+import type { Display } from 'src/types';
 
 import {
   useBroadcastChannel,
@@ -610,9 +457,12 @@ import {
 } from '@vueuse/core';
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import TimeInput from 'components/form-inputs/TimeInput.vue';
+import TimerPartsList from 'components/media/TimerPartsList.vue';
+import TimerQuickControls from 'components/media/TimerQuickControls.vue';
 import { storeToRefs } from 'pinia';
 import { QMenu } from 'quasar';
 import useTimer from 'src/composables/useTimer';
+import { useTimerAheadBehindText } from 'src/composables/useTimerAheadBehindText';
 import {
   isCoWeek,
   isMeetingDay,
@@ -620,9 +470,9 @@ import {
   isWeMeetingDay,
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { exportTimerReport } from 'src/helpers/timer-report';
 import { useAppSettingsStore } from 'src/stores/app-settings';
 import { withTimeout } from 'src/utils/general';
-import { getTimerReportStatus } from 'src/utils/timer-report';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -659,225 +509,54 @@ const {
   cbsEndTimeRules,
   currentPart,
   customTimerParts,
-  formattedTime,
   getDuration,
-  getPlannedStartTime,
   getTimeString,
   handleTimerWindowVisibility,
+  hasAnyPartTimings,
   lacPartsCount,
   meetingPartsOptions,
   moveCustomTimerPart,
   partDurations,
   partTimings,
-  pauseTimer,
-  refreshCountdownTarget,
   removeCustomTimerPart,
-  resumeTimer,
-  startTimer,
-  stopTimer,
+  resetAllPartTimings,
   timerMode,
-  timerPaused,
   timerRunning,
+  updateCustomTimerPart,
   updateTimerWindow,
   wtCustomEndTime,
   wtEndTimeRules,
 } = useTimer();
 
-const selectingPart = ref(false);
+const aheadBehindText = useTimerAheadBehindText();
 
-const usedParts = ref<Set<MeetingPart>>(new Set());
+const resetAllConfirmOpen = ref(false);
 
-// Edit dialog
-const editDialogOpen = ref(false);
-const editPart = ref<null | { label: string; value: MeetingPart }>(null);
-const editDuration = ref(0);
-
-// Reset-part-timing confirmation (UX-3, full-audit-2026-09-04.md): clearing
-// a part's recorded start/end time fed into the exported timing report was
-// previously a single click with no confirmation, unlike every other
-// destructive action in the app.
-const resetConfirmOpen = ref(false);
-const resetPartValue = ref<MeetingPart | null>(null);
-
-const rebalancePartDurations = (
-  prefix: 'ayfm' | 'lac',
-  editedPartValue: MeetingPart,
-  totalMinutes: number,
-  totalParts: number,
-) => {
-  const splitEditedPart = editedPartValue.split('-');
-  const partIndexString = splitEditedPart[1];
-  const partIndex = Number.parseInt(partIndexString || '0');
-
-  let consumedMinutes = 0;
-  for (let i = 1; i <= partIndex; i++) {
-    consumedMinutes +=
-      partDurations.value[`${prefix}-${i}` as MeetingPart] || 0;
-  }
-
-  const remainingMinutes = totalMinutes - consumedMinutes;
-  const remainingParts = totalParts - partIndex;
-
-  if (remainingParts > 0) {
-    const baseDuration = Math.floor(remainingMinutes / remainingParts);
-    let remainder = remainingMinutes % remainingParts;
-
-    for (let i = partIndex + 1; i <= totalParts; i++) {
-      partDurations.value[`${prefix}-${i}` as MeetingPart] =
-        baseDuration + (remainder > 0 ? 1 : 0);
-      if (remainder > 0) {
-        remainder--;
-      }
-    }
-  } else if (remainingParts === 0 && consumedMinutes !== totalMinutes) {
-    partDurations.value[editedPartValue] += totalMinutes - consumedMinutes;
-  }
+const confirmResetAll = () => {
+  resetAllPartTimings();
+  resetAllConfirmOpen.value = false;
 };
 
-// Open edit dialog for a part
-const openEditDialog = (part: { label: string; value: MeetingPart }) => {
-  editPart.value = part;
-  editDuration.value = partDurations.value[part.value] || 0;
-  editDialogOpen.value = true;
-};
+const exportingReport = ref(false);
 
-const setPartDuration = (editedPartValue: MeetingPart, duration: number) => {
-  const newDuration = Math.max(1, Math.round(Number(duration) || 1));
-  partDurations.value[editedPartValue] = newDuration;
-
-  if (editedPartValue.startsWith('ayfm-')) {
-    rebalancePartDurations(
-      'ayfm',
-      editedPartValue,
-      15 - ayfmPartsCount.value,
-      ayfmPartsCount.value,
-    );
-  } else if (editedPartValue.startsWith('lac-')) {
-    rebalancePartDurations('lac', editedPartValue, 15, lacPartsCount.value);
-  } else if (editedPartValue.startsWith('custom-')) {
-    const customPart = customTimerParts.value.find(
-      (part) => part.id === editedPartValue,
-    );
-    if (customPart) {
-      customPart.duration = newDuration;
-    }
-  }
-
-  refreshCountdownTarget();
-};
-
-const adjustPartDuration = (part: MeetingPart, delta: number) => {
-  setPartDuration(part, (partDurations.value[part] || 1) + delta);
-};
-
-// Save edits
-const saveEdit = () => {
-  if (!editPart.value) return;
-
-  setPartDuration(editPart.value.value, editDuration.value);
-  editDialogOpen.value = false;
-};
-
-// Cancel edit
-const cancelEdit = () => {
-  editDialogOpen.value = false;
-};
-
-const openResetConfirm = (partValue: MeetingPart) => {
-  resetPartValue.value = partValue;
-  resetConfirmOpen.value = true;
-};
-
-const confirmResetPart = () => {
-  const partValue = resetPartValue.value;
-  if (!partValue) return;
-
-  partTimings.value[partValue] = { endTime: null, startTime: null };
-
-  resetConfirmOpen.value = false;
-};
-
-const cancelResetPart = () => {
-  resetConfirmOpen.value = false;
-};
-
-const getReportStatusText = (
-  status: ReturnType<typeof getTimerReportStatus>,
-) => {
-  if (status.kind === 'missing') return '';
-  if (status.kind === 'on-time') return t('on-time');
-
-  const label = status.kind === 'overtime' ? t('overtime') : t('undertime');
-  return `${label} ${status.amountMinutes} min.`;
-};
-
-// PDF Report Generation
-const exportPdfReport = async () => {
-  const { jsPDF } = await import('jspdf');
-  const { autoTable } = await import('jspdf-autotable');
-
-  const doc = new jsPDF();
-
-  const meetingDate = selectedDateObject.value?.date
-    ? new Date(selectedDateObject.value.date).toLocaleDateString()
-    : 'N/A';
-
-  doc.setFontSize(18);
-  doc.text(`Meeting Report - ${meetingDate}`, 14, 22);
-
-  const tableColumn = [
-    t('meeting-part'),
-    `${t('start-time')} (hh:mm:ss)`,
-    'End (hh:mm:ss)',
-    'Duration (mm:ss)',
-    t('status'),
-  ];
-  const tableRows: CellInput[][] = [];
-
-  for (const partOption of meetingPartsOptions.value) {
-    const partValue = partOption.value;
-    const timings = partTimings.value[partValue];
-    const duration = partDurations.value[partValue];
-
-    const formattedStartTime = getTimeString(timings?.startTime ?? null, true);
-    const formattedEndTime = getTimeString(timings?.endTime ?? null, true);
-    const formattedDuration = getDuration(timings ?? null, duration);
-    const status = getTimerReportStatus(timings, duration);
-    const statusText = getReportStatusText(status);
-    const statusCell: CellInput = {
-      content: statusText,
-      styles: {
-        fontStyle: status.kind === 'missing' ? undefined : 'bold',
-        textColor: status.kind === 'overtime' ? [255, 0, 0] : [0, 0, 0],
+const exportReport = async () => {
+  if (exportingReport.value) return;
+  exportingReport.value = true;
+  try {
+    await exportTimerReport(
+      {
+        date: selectedDateObject.value?.date,
+        getDuration,
+        getTimeString,
+        partDurations: partDurations.value,
+        parts: meetingPartsOptions.value,
+        partTimings: partTimings.value,
       },
-    };
-
-    tableRows.push([
-      partOption.label,
-      formattedStartTime,
-      formattedEndTime,
-      formattedDuration,
-      statusCell,
-    ]);
+      currentSettings.value?.congregationName ?? '',
+    );
+  } finally {
+    exportingReport.value = false;
   }
-
-  autoTable(doc, {
-    body: tableRows,
-    columnStyles: {
-      0: { cellWidth: 60 },
-      1: { cellWidth: 34 },
-      2: { cellWidth: 34 },
-      3: { cellWidth: 30 },
-      4: { cellWidth: 36 },
-    },
-    head: [tableColumn],
-    headStyles: { fillColor: '#42A5F5' }, // Quasar primary color
-    startY: 30,
-    styles: { cellPadding: 3, fontSize: 10 },
-    theme: 'grid',
-  });
-
-  doc.save(`Meeting_Report_${meetingDate}.pdf`);
 };
 
 const { getAllScreens, moveTimerWindow } = globalThis.electronApi;
@@ -906,7 +585,7 @@ const fetchScreens = async () => {
     );
   } catch (error) {
     void errorCatcher(error, {
-      contexts: { timer: { action: 'fetchScreens' } },
+      contexts: { fn: { name: 'fetchScreens' } },
     });
   } finally {
     fetchingScreens = false;
@@ -1005,34 +684,6 @@ const isTimerScreenSelected = (index: number, screen: Display) => {
   );
 };
 
-const selectPart = (value: MeetingPart) => {
-  selectingPart.value = true;
-  currentPart.value = value;
-  usedParts.value.add(value);
-  startTimer();
-  selectingPart.value = false;
-};
-
-const getPartStatusText = (part: MeetingPart) => {
-  const timings = partTimings.value[part];
-  const duration = partDurations.value[part];
-
-  if (timings?.startTime) {
-    if (timings?.endTime) {
-      return getDuration(timings, duration);
-    }
-
-    return `${t('start-time')}: ${getTimeString(timings.startTime, true)}`;
-  }
-
-  const plannedStartTime = getPlannedStartTime(part);
-  if (plannedStartTime) {
-    return `${t('planned-start-time')}: ${getTimeString(plannedStartTime)}`;
-  }
-
-  return `${t('duration-minutes')}: ${duration || 0}`;
-};
-
 whenever(
   () => open.value,
   async () => {
@@ -1067,17 +718,6 @@ watch(
   { immediate: true },
 );
 
-// Watch for timer mode changes
-watch(
-  [timerMode, currentPart],
-  () => {
-    if (!selectingPart.value && timerRunning.value) {
-      stopTimer();
-    }
-  },
-  { flush: 'sync' },
-);
-
 // Watch for timer settings changes and broadcast to timer window
 watchImmediate(
   () => [
@@ -1091,6 +731,11 @@ watchImmediate(
     currentSettings.value?.timerEnableMeetingAheadBehind,
     currentSettings.value?.timerEnableMeetingCountdown,
     currentSettings.value?.timerMeetingCountdownMinutes,
+    currentSettings.value?.timerOvertimeIndicator,
+    currentSettings.value?.timerOvertimeAnimation,
+    currentSettings.value?.timerOvertimeShowAmountOnly,
+    currentSettings.value?.timerOvertimeBackgroundColor,
+    currentSettings.value?.timerOvertimeTextColor,
     currentSettings.value?.mwDay,
     currentSettings.value?.weDay,
     currentSettings.value?.mwStartTime,
@@ -1119,28 +764,7 @@ watch(timerWindowVisible, (visible) => {
 </script>
 
 <style scoped>
-.blink {
-  animation: gentle-blink 2s infinite;
-}
-
 .border-dashed::before {
   border-style: dashed;
-}
-
-.timer-popup__display {
-  font-variant-numeric: tabular-nums;
-  min-width: 6ch;
-  white-space: nowrap;
-}
-
-@keyframes gentle-blink {
-  0%,
-  60% {
-    opacity: 1;
-  }
-  61%,
-  100% {
-    opacity: 0.7;
-  }
 }
 </style>

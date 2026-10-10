@@ -10,14 +10,32 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 - ✨ **Zoom Meeting Manager (beta, Windows)**: A new integration that operates Zoom for you around each meeting. It can launch your congregation's Zoom meeting when background music starts before the meeting. When the music stops just before the meeting starts, it joins computer audio, unmutes the microphone, turns on the host video, and mutes everyone without letting them unmute. When music plays before or after a meeting, it does the reverse: it leaves computer audio, turns off the host video, and lets everyone unmute again (asking them to do so). It can also share the media window in Zoom automatically while media is being shown, making sure the media window is what gets shared and never anything else on your screen. A new Zoom button in the action island shows whether a Zoom meeting window was found and lets you run these steps manually. A setup assistant, offered when you turn the option on (the initial setup wizard now offers it on Windows instead of the keyboard-shortcut screen sharing) and available anytime from the Zoom button or Settings, checks your Zoom, learns the names of its microphone and camera buttons in your language, and tries every step with you. When M³ starts, it also checks that everything it automates in Zoom works, opening the meeting if needed on meeting days in the hour and a quarter before it starts (only looking, without pressing anything, if others are already in the meeting); if something doesn't, it tells you and pauses its Zoom automations until it's restarted or a new check passes, so nothing goes wrong during the meeting. This check is on by default and can be turned off in Settings. As each of these steps succeeds, the matching reminders in the before- and after-meeting checklists of the meeting quick actions are ticked off for you, marked as done automatically in Zoom. Since it can't be used together with the keyboard-shortcut screen sharing, Settings says so under whichever of the two is unavailable, naming the one to turn off. It works whatever language Zoom is in, and needs nothing installed beyond Zoom itself.
 
+- ✨ **Meeting Timer**: Custom parts can now be added on meeting days too, for Governing Body updates, special programs and anything else that isn't on the regular schedule. Each is timed like any other part, and its name and length can be changed from the timer popup or from the parts list.
+- ✨ **Meeting Timer**: Quicker access to the timer. Hovering the timer button on the action island now shows the part being timed with Start, Pause, Stop and Next part buttons, without opening the popup (a setting, on by default). A new setting also keeps the whole parts list and the timer controls in a panel docked on the right side of the main window, always in view.
+- ✨ **Meeting Timer**: A new "Analog clock with time arc" countdown display shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a red wedge. It also works for the pre-meeting countdown and in count-up mode.
+- ✨ **Meeting Timer**: The pre-meeting countdown is now labelled "Meeting starts in", and the timer display shows the name of the part being timed, so "4:59" can no longer be mistaken for the time of day.
+- ✨ **Meeting Timer**: Each day's recorded timings can be cleared in one go, after a confirmation, from the timer popup or the docked panel.
+
 ### 🛠️ Improvements and Tweaks
 
+- 🛠️ **Meeting Timer**: Part durations are now free-form: any part, including Apply Yourself and Living as Christians parts, can be set to any number of minutes, including 0 to skip it, and the change sticks. A warning icon still points out sections whose parts don't add up to the time allotted to them, without changing anything on its own.
+- 🛠️ **Meeting Timer**: The number of Apply Yourself and Living as Christians parts can now be chosen in count-up mode as well, so every student part can be timed separately whichever mode is used. New meeting days start with three Apply Yourself parts and two Living as Christians parts.
+- 🛠️ **Meeting Timer**: Part counts, changed durations, custom parts and recorded timings are now kept with each day, so they survive restarting M³ and never mix one meeting's timings into another's.
+- 🛠️ **Meeting Timer**: The timing report is now produced through M³'s own rendering engine, so part names print correctly in every language and writing direction, its headings are translated, and it includes each part's planned length.
 - 🛠️ **Action Island Popups**: Popups such as the media display settings now grow with a tall window instead of stopping at a fixed height and scrolling.
 - 🛠️ **Media Sync**: Every date in the media sync popup now lines up the same way, whether it's still being checked, done, or has files to show, and the progress summary is set apart from the list.
 - 🛠️ **Show Image for Zoom Participants**: The button that shows an image to Zoom participants has a clearer new icon: the picture on a meeting's main screen, above the participants.
 
 ### 🐞 Bug Fixes
 
+- 🐞 **Meeting Timer**: Fixed changes to the duration of Apply Yourself and Living as Christians parts being silently undone, with no way to set a part to 0 minutes or to a length that didn't add up to the section's usual total.
+- 🐞 **Meeting Timer**: Fixed a part whose length had been reduced to 0 still being listed with a default length, while its countdown went straight into overtime.
+- 🐞 **Meeting Timer**: Fixed count-up mode only ever listing one Apply Yourself part and one Living as Christians part.
+- 🐞 **Meeting Timer**: Fixed one meeting's recorded start and end times carrying over into the next meeting's list and report when M³ stayed open in between.
+- 🐞 **Meeting Timer**: Fixed the ahead/behind indicator never showing for custom parts.
+- 🐞 **Meeting Timer**: Fixed the timer display's clock always using English AM/PM in 12-hour mode: it now follows M³'s language.
+- 🐞 **Meeting Timer**: Fixed the timer button and popup still showing the timer display as open after its window was closed from outside M³ (for example with Alt+F4).
+- 🐞 **Meeting Timer**: Fixed the timer window opening at a very large size the first time it was shown on a computer; it now starts in a corner of the main window's screen.
 - 🐞 **Yeartext & Icons**: Fixed the yeartext font and media icons failing to load for some congregations, depending on their Website setting.
 - 🐞 **Yeartext**: Fixed the yeartext never updating for some congregations, depending on their Website setting.
 - 🐞 **Website Setting**: Publication search and browsing, congregation lookup, the automatic meeting schedule update, and presenting a website now always use the address set in the Website setting, with no fallback to the default address; the JW Stream and conventions website options are only offered with the default address. Clearing that field now restores the default address, after a confirmation.
@@ -34,6 +52,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🔧 Chores
 
+- 🔧 **Dependencies**: Removed the PDF library that was only used for the meeting timing report.
 - 🔧 **Keyboard Shortcut Automation**: Switched the native module used to send keyboard shortcuts from the `@jitsi/robotjs` fork to the actively maintained upstream `robotjs` package, which now ships prebuilt binaries for every platform M³ supports.
 - 🔧 **Error Reporting**: A watched folder on a cloud-synced or network drive (Google Drive, OneDrive, a mapped drive, etc.) that briefly can't be read mid-sync is no longer reported as an error, and neither is a brief outage on GitHub's side while checking for updates.
 - 🔧 **Error Reporting**: Fixed error reports from some of M³'s background file operations (such as reading a folder's contents, or hiding and unhiding its small tracking files) never being sent, so problems there can now be diagnosed and fixed.
