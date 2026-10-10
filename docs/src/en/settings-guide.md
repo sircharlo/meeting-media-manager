@@ -509,6 +509,20 @@ Automatically focus the media window after Zoom screen sharing starts. This is u
 
 **Default**: `false`
 
+### Zoom Meeting Manager {#zoom-meeting-manager}
+
+The Zoom Meeting Manager (beta, Windows only) operates the Zoom desktop app for you around each meeting. Its setup assistant, offered when you turn it on, walks you through each automation.
+
+#### Raised-Hand Alert {#zoom-meeting-manager-hand-alert}
+
+<!-- **Settings**: `zoomMeetingManagerHandAlert`, `zoomHandRaisedPhrase` -->
+
+During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a large hand with their name appears on the [meeting timer](#meeting-timer) display for the chairman, and a notification in M³ lets you mute or unmute that participant with one click. The Zoom button on the action island lists the raised hands too, with the same button, and a **Hand alert** button there and in the timer popup shows the hand on the timer display by hand.
+
+Zoom marks raised hands in its own language, so M³ first needs to learn how: with your meeting open in Zoom, click **Learn how Zoom marks raised hands**. M³ raises your own hand, reads how Zoom marks it in the participants list, then lowers it again.
+
+**Default**: `false`
+
 ### OBS Studio Integration {#settings-guide-obs-integration}
 
 #### Enable OBS {#enable-obs}

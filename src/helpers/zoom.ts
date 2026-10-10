@@ -249,6 +249,66 @@ export const askAllZoomParticipantsToUnmute = async () => {
   return result;
 };
 
+// --- Raised hands -------------------------------------------------------------
+
+/**
+ * Learns how Zoom marks a raised hand in the user's language, by raising
+ * and lowering the host's own hand, and saves it to Settings.
+ */
+export const learnZoomHandRaisedPhrase = async () => {
+  const result = await runCommand({ type: 'learn-hand-raised' });
+  if (result.ok && result.phrase) {
+    saveSetting('zoomHandRaisedPhrase', result.phrase);
+    createTemporaryNotification({
+      group: 'zoom-settings',
+      icon: 'mmm-check',
+      message: t('zoom-hand-learned', { phrase: result.phrase }),
+      type: 'positive',
+    });
+  } else {
+    notifyFailure('zoom-settings', 'zoom-hand-learn-failed');
+  }
+  return result;
+};
+
+/**
+ * Who in the meeting has their hand raised, or null if Zoom's participants
+ * list couldn't be read (no meeting, or the phrase isn't learned yet).
+ */
+export const getZoomRaisedHands = async (): Promise<null | string[]> => {
+  const result = await runCommand({
+    phrase: getSettings()?.zoomHandRaisedPhrase ?? null,
+    type: 'raised-hands',
+  });
+  if (!result.ok || !result.raisedHands) return null;
+  return result.raisedHands;
+};
+
+/**
+ * Presses the microphone button on a participant's row in Zoom: mutes
+ * someone unmuted, asks someone muted to unmute (or unmutes them, where Zoom
+ * allows it).
+ */
+export const pressZoomParticipantMic = async (name: string) => {
+  const result = await runCommand({ name, type: 'press-participant-mic' });
+  if (result.ok) {
+    createTemporaryNotification({
+      group: 'zoom-participants',
+      icon: 'mmm-microphone',
+      message: t('zoom-hand-mic-pressed', { name }),
+      type: 'info',
+    });
+  } else {
+    createTemporaryNotification({
+      group: 'zoom-participants',
+      icon: 'mmm-error',
+      message: t('zoom-hand-mic-failed', { name }),
+      type: 'negative',
+    });
+  }
+  return result;
+};
+
 // --- Automations and the startup check ---------------------------------------
 
 let zoomCheckInProgress: null | Promise<unknown> = null;

@@ -334,6 +334,13 @@ describe('isZoomCommand', () => {
     expect(isZoomCommand({ allowSelfUnmute: true, type: 'mute-all' })).toBe(
       true,
     );
+    expect(isZoomCommand({ type: 'learn-hand-raised' })).toBe(true);
+    expect(isZoomCommand({ phrase: 'Hand raised', type: 'raised-hands' })).toBe(
+      true,
+    );
+    expect(isZoomCommand({ name: 'Ann', type: 'press-participant-mic' })).toBe(
+      true,
+    );
     expect(isZoomCommand({ type: 'format-c-drive' })).toBe(false);
     expect(isZoomCommand({ type: 'toString' })).toBe(false);
     expect(isZoomCommand('meeting')).toBe(false);

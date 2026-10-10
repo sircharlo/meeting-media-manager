@@ -153,6 +153,10 @@ The timer popup on the action island lists the parts of the selected day's meeti
 
 Part counts, changed durations, custom parts and recorded timings are kept with each day, so they survive restarting M³ and never mix one meeting's timings into another's. A day's recorded timings can be cleared in one go with **Reset all timings for this day**, and a PDF timing report can be exported at any time.
 
+#### Hand Alert {#user-guide-timer-hand-alert}
+
+A **Hand alert** button in the timer popup shows a large hand on the timer display, to get the chairman's attention, for example when someone on Zoom has raised their hand. With the [Zoom Meeting Manager](/settings-guide#zoom-meeting-manager-hand-alert), M³ can show it automatically whenever someone raises their hand in Zoom, with their name, and let you mute or unmute them with one click.
+
 #### Quick Access {#user-guide-timer-quick-access}
 
 Hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons. A setting can also dock a timer panel on the right side of the main window with the whole list of parts and the timer controls, always in view. See the [Settings Guide](/settings-guide#timer-quick-access).

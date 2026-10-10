@@ -127,6 +127,33 @@
       </div>
     </transition>
 
+    <!-- Hand alert: someone on Zoom raised their hand (or the operator
+         switched it on), shown big enough to catch the chairman's eye. -->
+    <transition name="q-transition--scale">
+      <div
+        v-if="timerData?.handAlertActive"
+        aria-live="polite"
+        class="hand-alert"
+        role="status"
+      >
+        <div class="hand-alert__hand">
+          <svg
+            aria-hidden="true"
+            class="hand-alert__icon"
+            focusable="false"
+            viewBox="0 0 64 64"
+          >
+            <path
+              d="M22 58c-5 0-9-3-11-7L4 36c-1-3 1-6 4-6s4 2 5 4l4 8V12c0-2 2-4 4-4s4 2 4 4v18h2V7c0-2 2-4 4-4s4 2 4 4v23h2V10c0-2 2-4 4-4s4 2 4 4v20h2V17c0-2 2-4 4-4s4 2 4 4v27c0 8-6 14-14 14H22z"
+            />
+          </svg>
+        </div>
+        <div v-if="timerData?.handAlertNames?.length" class="hand-alert__names">
+          {{ timerData.handAlertNames.join(' · ') }}
+        </div>
+      </div>
+    </transition>
+
     <!-- Ahead/Behind overlay -->
     <div
       v-if="aheadBehindText"
@@ -636,6 +663,58 @@ watch(isClockArcDisplay, (showing) => {
 <style scoped>
 .blink {
   animation: gentle-blink 2s infinite;
+}
+
+.hand-alert {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+  inset: 0;
+  justify-content: center;
+  pointer-events: none;
+  position: absolute;
+  z-index: 20;
+}
+
+.hand-alert__hand {
+  animation: hand-alert-pulse 1.2s ease-in-out infinite;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 50%;
+  display: flex;
+  padding: 4vh;
+}
+
+.hand-alert__icon {
+  fill: #ffd60a;
+  filter: drop-shadow(0 0 1.5vh rgba(0, 0, 0, 0.6));
+  height: min(50vh, 50vw);
+  width: min(50vh, 50vw);
+}
+
+.hand-alert__names {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 999px;
+  color: #ffd60a;
+  font-size: clamp(1rem, 4vh, 3rem);
+  font-weight: bold;
+  max-width: 90vw;
+  overflow: hidden;
+  padding: 0.3em 1em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@keyframes hand-alert-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(0.94);
+  }
 }
 
 .ahead-behind-overlay {
