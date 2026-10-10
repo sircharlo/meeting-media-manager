@@ -2,7 +2,7 @@
 
 ## General Questions {#general-questions}
 
-### :earth_americas: Чи залежить ця програма від зовнішніх сайтів, джерел або "кураторів" для завантаження публікацій, медіа для зібрань та іншого контенту? {#external-dependencies}
+### :earth_americas: Чи залежить ця програма від зовнішніх сайтів, джерел або "кураторів" для завантаження публікацій, медіа для зібрань та іншого контенту?  {#external-dependencies}
 
 **Ні.** Додаток поводиться аналогічно як JW Library. Він завантажує публікації, медіа та інший контент безпосередньо з офіційного вебсайту Свідків Єгови та їх мережі надсилання контенту. Додаток автоматично визначає, що потрібно завантажити, та коли раніше завантажений контент більше не є актуальним і повинен бути завантажений заново.
 
@@ -12,7 +12,7 @@
 
 :::
 
-### :thinking: Чи цей додаток порушує Умови Використання офіційного сайту Свідків Єгови? {#terms-of-use}
+### :thinking: Чи цей додаток порушує Умови Використання офіційного сайту Свідків Єгови?  {#terms-of-use}
 
 **Ні.** [Умови використання](https://www.jw.org/finder?docid=1011511&prefer=content) офіційного вебсайту Свідків Єгови чітко дозволяють використання, яке ми здійснюємо. Ось відповідний уривок з цих умов (з виділенням):
 
@@ -128,7 +128,7 @@ Background music features include:
 
 ### :stopwatch: Does M³ include a meeting timer? {#faq-meeting-timer}
 
-Yes. When enabled, M³ can show a separate timer window for participant timing. It can count up or down, show the current time, show a pre-meeting countdown, and optionally indicate overtime or whether the meeting is ahead of or behind schedule.
+Yes. When enabled, M³ can show a separate timer window for participant timing. It can count up or down, show the current time, show a pre-meeting countdown, and optionally indicate overtime or whether the meeting is ahead of or behind schedule. Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
 
 The timer is a beta feature and should only be enabled if approved locally.
 
