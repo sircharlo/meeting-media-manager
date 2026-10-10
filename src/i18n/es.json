@@ -1149,5 +1149,18 @@
   "timer-report-duration": "Duration",
   "timer-report-planned-duration": "Planned",
   "timer-report-saved": "The meeting timing report was saved.",
-  "timer-report-not-saved": "The meeting timing report could not be saved."
+  "timer-report-not-saved": "The meeting timing report could not be saved.",
+  "timerRemoteEnable": "Timer remote (page for a tablet or phone)",
+  "timerRemoteEnable-explain": "Serve a read-only copy of the timer display as a web page on your local network, for example for a tablet at the lectern, so the speaker sees the remaining time without it being on the congregation's screen or in a Zoom share. All the controls stay in M³. Anyone on the same network can open the page while this is on.",
+  "timerRemotePort": "Timer remote port",
+  "timerRemotePort-explain": "The network port the timer page is served on. Change it only if another program already uses it.",
+  "timer-remote": "Timer remote",
+  "timer-remote-open-on-device": "Open one of these addresses in the browser of a tablet or phone on the same network:",
+  "timer-remote-no-network": "No network connection was found. Connect this computer to the same network as the tablet.",
+  "timer-remote-copy": "Copy address",
+  "timer-remote-copied": "Address copied.",
+  "timer-remote-port-in-use": "The timer remote couldn't start: another program already uses its port. Choose another port in the settings.",
+  "timer-remote-start-failed": "The timer remote couldn't start.",
+  "timer-remote-reconnecting": "Reconnecting…",
+  "paused": "Paused"
 }
