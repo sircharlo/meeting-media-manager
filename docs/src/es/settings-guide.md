@@ -452,11 +452,22 @@ Activa una ventana independiente del cronómetro para controlar el tiempo de las
 
 Configura si la ventana del cronómetro se abre automáticamente, si los cronómetros de los participantes cuentan de forma progresiva o regresiva de manera predeterminada, si el reloj usa el formato de 12 o 24 horas y si el valor actual del cronómetro se muestra en el botón del cronómetro de la isla de acciones.
 
+### Quick Access to the Timer {#timer-quick-access}
+
+<!-- **Settings**: `timerIslandHoverControls`, `timerDockedPanel` -->
+
+Choose how the timer is reached from the main window:
+
+- **Quick controls when hovering the timer button**: hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons, without opening the full timer popup. On by default.
+- **Show a timer panel in the main window**: keeps the whole list of meeting parts and the timer controls in a panel docked on the right side of the main window, always in view. The full popup remains available from the action island for the window and display settings.
+
 ### Formatos de visualización del cronómetro {#timer-display-formats}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
 Elige formatos de visualización analógicos o digitales para la hora y los cronómetros de cuenta regresiva. El indicador de advertencia de la cuenta regresiva puede cambiar el anillo analógico de cuenta regresiva hacia un color de advertencia durante el último minuto.
+
+The **Analog clock with time arc** countdown format shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a second wedge in the overtime color. It also applies to the pre-meeting countdown and works in count-up mode.
 
 ### Cuenta regresiva de la reunión y estado del programa {#meeting-countdown-and-schedule-status}
 
