@@ -10,46 +10,46 @@ export const localeOptions = locales.filter((locale) =>
 // 100.0% translated as of 2026-10-10
 import en from './en.json' with { type: 'json' };
 
-// 97.7% translated as of 2026-10-10
+// 96.6% translated as of 2026-10-10
 import fr from './fr.json' with { type: 'json' };
 
-// 97.0% translated as of 2026-10-10
+// 96.0% translated as of 2026-10-10
 import es from './es.json' with { type: 'json' };
 
-// 97.0% translated as of 2026-10-10
+// 96.0% translated as of 2026-10-10
 import it from './it.json' with { type: 'json' };
 
-// 95.5% translated as of 2026-10-10
+// 94.4% translated as of 2026-10-10
 import sl from './sl.json' with { type: 'json' };
 
-// 90.5% translated as of 2026-10-10
+// 89.5% translated as of 2026-10-10
 import ty from './ty.json' with { type: 'json' };
 
-// 81.8% translated as of 2026-10-10
+// 80.8% translated as of 2026-10-10
 import cmnHans from './cmn-hans.json' with { type: 'json' };
 
-// 81.1% translated as of 2026-10-10
+// 80.2% translated as of 2026-10-10
 import ko from './ko.json' with { type: 'json' };
 
-// 77.8% translated as of 2026-10-10
+// 77.0% translated as of 2026-10-10
 import et from './et.json' with { type: 'json' };
 
-// 58.6% translated as of 2026-10-10
+// 58.0% translated as of 2026-10-10
 import pt from './pt.json' with { type: 'json' };
 
-// 54.5% translated as of 2026-10-10
+// 53.9% translated as of 2026-10-10
 import de from './de.json' with { type: 'json' };
 
-// 43.4% translated as of 2026-10-10
+// 42.9% translated as of 2026-10-10
 import ru from './ru.json' with { type: 'json' };
 
-// 40.7% translated as of 2026-10-10
+// 40.3% translated as of 2026-10-10
 import nl from './nl.json' with { type: 'json' };
 
-// 34.2% translated as of 2026-10-10
+// 33.8% translated as of 2026-10-10
 import hu from './hu.json' with { type: 'json' };
 
-// 29.0% translated as of 2026-10-10
+// 28.7% translated as of 2026-10-10
 import uk from './uk.json' with { type: 'json' };
 
 // 0.4% translated as of 2026-10-10
