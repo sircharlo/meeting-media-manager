@@ -372,6 +372,17 @@
 
           <q-btn
             class="full-width q-mb-sm"
+            :color="handAlert.active ? 'warning' : 'primary'"
+            :outline="!handAlert.manual"
+            unelevated
+            @click="handAlert.toggleManual()"
+          >
+            <q-icon class="q-mr-sm" name="mmm-groups" />
+            {{ t('hand-alert') }}
+            <q-tooltip :delay="500">{{ t('hand-alert-explain') }}</q-tooltip>
+          </q-btn>
+          <q-btn
+            class="full-width q-mb-sm"
             color="info"
             :loading="exportingReport"
             unelevated
@@ -474,6 +485,7 @@ import { exportTimerReport } from 'src/helpers/timer-report';
 import { useAppSettingsStore } from 'src/stores/app-settings';
 import { withTimeout } from 'src/utils/general';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useHandAlertStore } from 'stores/hand-alert';
 import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -495,6 +507,8 @@ const {
 
 const appSettingsStore = useAppSettingsStore();
 const { timerPreferences } = storeToRefs(appSettingsStore);
+
+const handAlert = useHandAlertStore();
 
 defineProps<{
   dialogId?: string;

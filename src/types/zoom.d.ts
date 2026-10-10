@@ -5,6 +5,7 @@
 export type ZoomCommand =
   | { allowSelfUnmute: boolean; type: 'mute-all' }
   | { echo?: string; type: 'ping' }
+  | { name: string; type: 'press-participant-mic' }
   | { names: string[]; type: 'admit' }
   | {
       offTitle: null | string;
@@ -18,6 +19,7 @@ export type ZoomCommand =
       onTitle: null | string;
       type: 'set-video';
     }
+  | { phrase: null | string; type: 'raised-hands' }
   | { reveal?: boolean; type: 'meeting' }
   | {
       shareButtonTitle: null | string;
@@ -32,6 +34,7 @@ export type ZoomCommand =
   | { type: 'ask-all-to-unmute' }
   | { type: 'diagnose' }
   | { type: 'join-audio' }
+  | { type: 'learn-hand-raised' }
   | { type: 'leave-audio' }
   | { type: 'mic-title' }
   /**
@@ -68,6 +71,10 @@ export interface ZoomCommandResult {
   /** `test-share-picker`: whether Zoom's share picker opened. */
   opened?: boolean;
   participants?: ZoomParticipantRow[];
+  /** `learn-hand-raised`: how Zoom marks a raised hand, in its language. */
+  phrase?: null | string;
+  /** `raised-hands`: who in the meeting has their hand raised. */
+  raisedHands?: string[];
   title?: null | string;
   version?: number;
   /** `test-share-picker`: whether M³'s media window was offered. */

@@ -147,6 +147,10 @@ import {
   checkLowDiskSpaceAndNotify,
   createTemporaryNotification,
 } from 'src/helpers/notifications';
+import {
+  startHandAlertDisplaySync,
+  syncZoomHandAlertWatcher,
+} from 'src/helpers/zoom-hand-alert';
 import { scheduleZoomStartupCheck } from 'src/helpers/zoom-startup-check';
 import { localeOptions } from 'src/i18n';
 import { log, type LogPrefix } from 'src/shared/vanilla';
@@ -1737,6 +1741,20 @@ watch(
   ],
   () => {
     currentState.syncZoomHelper();
+  },
+);
+
+// Watch Zoom for raised hands whenever the raised-hand alert is set up.
+watchImmediate(
+  () => [
+    currentCongregation.value,
+    currentSettings.value?.zoomMeetingManagerEnable,
+    currentSettings.value?.zoomMeetingManagerHandAlert,
+    currentSettings.value?.zoomHandRaisedPhrase,
+  ],
+  () => {
+    startHandAlertDisplaySync();
+    syncZoomHandAlertWatcher();
   },
 );
 

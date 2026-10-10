@@ -34,6 +34,7 @@ import {
   MAX_LAC_PARTS,
 } from 'src/helpers/meeting-parts';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useHandAlertStore } from 'stores/hand-alert';
 import { computed, effectScope, ref, watch } from 'vue';
 
 // FE-8 (full-audit-2026-09-04.md): both wall-clock diffs below could
@@ -793,8 +794,11 @@ const createTimer = () => {
 
   const updateTimerWindow = () => {
     // Send timer data to the timer window via broadcast channel
+    const handAlert = useHandAlertStore();
     const timerData: TimerData = {
       aheadBehindMinutes: aheadBehindMinutes.value,
+      handAlertActive: handAlert.active,
+      handAlertNames: [...handAlert.raisedHands],
       locale: i18n.global.locale.value,
       mode: timerMode.value,
       mwDay: currentSettings.value?.mwDay,

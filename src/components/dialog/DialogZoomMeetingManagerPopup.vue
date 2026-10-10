@@ -147,6 +147,81 @@
           </div>
         </template>
 
+        <template v-if="currentSettings?.zoomMeetingManagerHandAlert">
+          <p class="card-section-title text-dark-grey row q-px-md q-pt-sm">
+            {{ t('zoom-raised-hands') }}
+          </p>
+          <div
+            v-if="!currentSettings?.zoomHandRaisedPhrase"
+            class="zoom-popup__banner row items-center no-wrap q-mx-md q-mb-sm q-pa-sm bg-accent-100"
+          >
+            <q-icon
+              class="q-mr-sm"
+              color="primary"
+              name="mmm-cog-sparkles"
+              size="18px"
+            />
+            <div class="col text-caption">
+              {{ t('zoomHandRaisedPhrase-explain') }}
+            </div>
+            <q-btn
+              color="primary"
+              dense
+              :disable="!meetingFound"
+              flat
+              :label="t('zoom-hand-learn')"
+              :loading="learningHand"
+              no-caps
+              @click="learnHand"
+            />
+          </div>
+          <template v-else>
+            <div
+              v-if="raisedHands.length === 0"
+              class="q-px-md q-pb-sm text-caption text-dark-grey"
+            >
+              {{ t('zoom-no-raised-hands') }}
+            </div>
+            <q-list v-else dense>
+              <q-item v-for="name in raisedHands" :key="name" class="q-px-md">
+                <q-item-section avatar>
+                  <q-icon color="warning" name="mmm-groups" />
+                </q-item-section>
+                <q-item-section class="ellipsis">{{ name }}</q-item-section>
+                <q-item-section side>
+                  <q-btn
+                    class="btn-tonal"
+                    color="primary"
+                    dense
+                    :disable="pressingMic === name"
+                    flat
+                    icon="mmm-microphone"
+                    :label="t('zoom-hand-mic')"
+                    :loading="pressingMic === name"
+                    no-caps
+                    size="sm"
+                    @click="pressMic(name)"
+                  />
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </template>
+          <div class="q-px-md q-pb-sm">
+            <q-btn
+              class="full-width"
+              :color="handAlert.active ? 'warning' : 'primary'"
+              icon="mmm-groups"
+              :label="t('hand-alert')"
+              no-caps
+              :outline="!handAlert.manual"
+              unelevated
+              @click="handAlert.toggleManual()"
+            >
+              <q-tooltip :delay="500">{{ t('hand-alert-explain') }}</q-tooltip>
+            </q-btn>
+          </div>
+        </template>
+
         <div v-if="zoomHelperLogs.length" class="q-px-md q-pt-md">
           <q-expansion-item
             v-model="logsExpanded"
@@ -228,11 +303,14 @@ import { storeToRefs } from 'pinia';
 import {
   getZoomMeetingState,
   isZoomSetupNeeded,
+  learnZoomHandRaisedPhrase,
+  pressZoomParticipantMic,
   runZoomMeetingSequence,
   runZoomPostMeetingSequence,
 } from 'src/helpers/zoom';
 import { runZoomStartupCheck } from 'src/helpers/zoom-startup-check';
 import { useCurrentStateStore } from 'stores/current-state';
+import { useHandAlertStore } from 'stores/hand-alert';
 import { useZoomStateStore } from 'stores/zoom-state';
 import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -261,6 +339,29 @@ const { currentSettings, zoomHelperLogs } = storeToRefs(currentState);
 
 const zoomState = useZoomStateStore();
 const { automationsPaused, checkRunning, pause } = storeToRefs(zoomState);
+
+const handAlert = useHandAlertStore();
+const { raisedHands } = storeToRefs(handAlert);
+const learningHand = ref(false);
+const pressingMic = ref<null | string>(null);
+
+const learnHand = async () => {
+  learningHand.value = true;
+  try {
+    await learnZoomHandRaisedPhrase();
+  } finally {
+    learningHand.value = false;
+  }
+};
+
+const pressMic = async (name: string) => {
+  pressingMic.value = name;
+  try {
+    await pressZoomParticipantMic(name);
+  } finally {
+    pressingMic.value = null;
+  }
+};
 
 const pausedProblems = computed(() =>
   (pause.value?.problems ?? []).map((key) => t(key)).join(', '),

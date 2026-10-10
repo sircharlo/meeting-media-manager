@@ -164,7 +164,8 @@ export type SettingsItemAction =
   | 'zoomCaptureMicOnTitle'
   | 'zoomCaptureShareButtonTitle'
   | 'zoomCaptureVideoOffTitle'
-  | 'zoomCaptureVideoOnTitle';
+  | 'zoomCaptureVideoOnTitle'
+  | 'zoomLearnHandRaised';
 
 export type SettingsItemListKey =
   | 'appLanguages'
@@ -348,11 +349,13 @@ export interface SettingsValues {
   weStartTime: `${number}:${number}` | null;
   zoomAutoFocusMediaWindow: boolean;
   zoomEnable: boolean;
+  zoomHandRaisedPhrase: null | string;
   zoomMeetingManagerAutoLaunchMeeting: boolean;
   zoomMeetingManagerAutomateMediaSharing: boolean;
   zoomMeetingManagerAutomateMeetingAudioSettings: boolean;
   zoomMeetingManagerAutomatePostMeetingAudioSettings: boolean;
   zoomMeetingManagerEnable: boolean;
+  zoomMeetingManagerHandAlert: boolean;
   zoomMeetingManagerMeetingId: null | string;
   /** No value: the setting is the button opening the setup assistant. */
   zoomMeetingManagerSetupAssistant: null;

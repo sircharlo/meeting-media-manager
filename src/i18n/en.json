@@ -1149,5 +1149,20 @@
   "timer-report-duration": "Duration",
   "timer-report-planned-duration": "Planned",
   "timer-report-saved": "The meeting timing report was saved.",
-  "timer-report-not-saved": "The meeting timing report could not be saved."
+  "timer-report-not-saved": "The meeting timing report could not be saved.",
+  "zoomMeetingManagerHandAlert": "Raised-hand alert",
+  "zoomMeetingManagerHandAlert-explain": "During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a large hand appears on the timer display for the chairman, and a notification in M³ lets you mute or unmute that participant with one click. M³ first needs to learn how Zoom marks raised hands in your language, with the button below.",
+  "zoomHandRaisedPhrase": "Learn how Zoom marks raised hands",
+  "zoomHandRaisedPhrase-explain": "With your meeting open in Zoom, M³ raises your own hand, reads how Zoom marks it in the participants list, then lowers it again.",
+  "zoom-hand-learn": "Learn",
+  "zoom-hand-learned": "M³ now recognizes raised hands in Zoom (“{phrase}”).",
+  "zoom-hand-learn-failed": "M³ couldn't learn how Zoom marks raised hands. Make sure your meeting is open in Zoom and that its participants panel can be shown, then try again.",
+  "zoom-hand-raised": "{name} raised their hand in Zoom",
+  "zoom-hand-mic": "Mute/unmute",
+  "zoom-hand-mic-pressed": "Pressed the microphone button for {name} in Zoom",
+  "zoom-hand-mic-failed": "Couldn't press the microphone button for {name} in Zoom.",
+  "zoom-raised-hands": "Raised hands",
+  "zoom-no-raised-hands": "No hands raised",
+  "hand-alert": "Hand alert",
+  "hand-alert-explain": "Show a large hand on the timer display to get the chairman's attention, for example when someone on Zoom has raised their hand."
 }

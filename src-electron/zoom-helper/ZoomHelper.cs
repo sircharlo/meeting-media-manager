@@ -1019,6 +1019,140 @@ namespace M3.ZoomHelper
             return new Dictionary<string, object> { { "admitted", admitted }, { "changed", admitted.Count > 0 } };
         }
 
+        // --- Raised hands -----------------------------------------------------------
+
+        /// <summary>What Zoom says about each person in the meeting (not the
+        /// waiting room), by name.</summary>
+        static Dictionary<string, string> MeetingRowDetails(El window)
+        {
+            var result = new Dictionary<string, string>();
+            foreach (var row in ParticipantRows(window))
+                if (row.Section == "meeting" && !result.ContainsKey(row.Name)) result[row.Name] = row.Details;
+            return result;
+        }
+
+        /// <summary>A row's name, split into Zoom's comma-separated pieces
+        /// ("Name, Host, me, Audio muted, Hand raised").</summary>
+        static List<string> Segments(string details)
+        {
+            var result = new List<string>();
+            foreach (var piece in (details ?? "").Split(','))
+            {
+                var trimmed = piece.Trim();
+                if (trimmed.Length > 0) result.Add(trimmed);
+            }
+            return result;
+        }
+
+        /// <summary>Learns how Zoom marks a raised hand in the user's language:
+        /// raises the host's own hand (Alt+Y), reads what Zoom added to the
+        /// host's row in the participants list, then lowers it again and makes
+        /// sure the words went away with it.</summary>
+        public static Dictionary<string, object> LearnHandRaised()
+        {
+            var window = RequireMeetingWindow();
+            OpenParticipantsPanel(window);
+            var before = MeetingRowDetails(window);
+            if (before.Count == 0) throw new ZoomActionError("participants-not-found");
+            Focus(window);
+            AltKey('Y');
+            string phrase = null;
+            string name = null;
+            var raised = WaitUntil(() =>
+            {
+                foreach (var entry in MeetingRowDetails(window))
+                {
+                    string old;
+                    if (!before.TryGetValue(entry.Key, out old) || old == entry.Value) continue;
+                    var oldSegments = Segments(old);
+                    var added = new List<string>();
+                    foreach (var segment in Segments(entry.Value))
+                        if (!oldSegments.Contains(segment)) added.Add(segment);
+                    if (added.Count != 1) continue;
+                    phrase = added[0];
+                    name = entry.Key;
+                    return true;
+                }
+                return false;
+            }, 5000);
+            if (!raised) throw new ZoomActionError("hand-not-raised");
+            Focus(window);
+            AltKey('Y');
+            var lowered = WaitUntil(() =>
+            {
+                string now;
+                return MeetingRowDetails(window).TryGetValue(name, out now) && !Segments(now).Contains(phrase);
+            }, 5000);
+            if (!lowered) throw new ZoomActionError("hand-not-lowered");
+            return new Dictionary<string, object> { { "phrase", phrase } };
+        }
+
+        /// <summary>Who in the meeting has their hand raised, going by the words
+        /// learned with LearnHandRaised. Reads the list only: with the
+        /// participants panel open it moves neither mouse nor focus.</summary>
+        public static Dictionary<string, object> RaisedHands(string phrase)
+        {
+            if (string.IsNullOrEmpty(phrase)) throw new ZoomActionError("hand-phrase-not-learned");
+            var window = RequireMeetingWindow();
+            OpenParticipantsPanel(window);
+            var names = new List<object>();
+            foreach (var row in ParticipantRows(window))
+                if (row.Section == "meeting" && Segments(row.Details).Contains(phrase) && !names.Contains(row.Name)) names.Add(row.Name);
+            return new Dictionary<string, object> { { "raisedHands", names } };
+        }
+
+        static Row MeetingRow(El window, string name)
+        {
+            foreach (var row in ParticipantRows(window))
+                if (row.Section == "meeting" && row.Name == name) return row;
+            return null;
+        }
+
+        /// <summary>Presses the microphone button on a participant's row: "Mute"
+        /// for someone unmuted, "Ask to unmute" (or "Unmute") for someone muted.
+        /// Like the Admit button, it only shows while the row is hovered, and
+        /// it comes first ("More" follows it).</summary>
+        public static Dictionary<string, object> PressParticipantMic(string name)
+        {
+            if (string.IsNullOrEmpty(name)) throw new ZoomActionError("participant-name-missing");
+            var window = RequireMeetingWindow();
+            OpenParticipantsPanel(window);
+            var row = MeetingRow(window, name);
+            if (row == null) throw new ZoomActionError("participant-not-found");
+            var before = row.Details;
+            var handle = window.Raw.CurrentNativeWindowHandle;
+            Focus(window);
+            Func<bool> pressMic = () =>
+            {
+                Hover(row.Element);
+                Thread.Sleep(500);
+                var hovered = MeetingRow(window, name);
+                if (hovered == null) return false;
+                var buttons = Named(Uia.Descendants(hovered.Element, Uia.ButtonType));
+                if (buttons.Count == 0) return false;
+                Press(buttons[0]);
+                return true;
+            };
+            var pressed = ShowsAt(handle, row.Element.CenterX, row.Element.CenterY)
+                ? pressMic()
+                : Lifted(handle, pressMic);
+            if (!pressed) throw new ZoomActionError("participant-mic-button-not-found");
+            // Muting changes the row at once; asking someone to unmute only
+            // sends them a request, so the row may well stay as it was.
+            var changed = WaitUntil(() =>
+            {
+                var latest = MeetingRow(window, name);
+                return latest != null && latest.Details != before;
+            }, 3000);
+            var after = MeetingRow(window, name);
+            return new Dictionary<string, object>
+            {
+                { "after", after == null ? null : after.Details },
+                { "before", before },
+                { "changed", changed },
+            };
+        }
+
         // --- Screen sharing -----------------------------------------------------------
 
         static string GridEntryName(El item)
@@ -1489,6 +1623,9 @@ namespace M3.ZoomHelper
                 case "ask-all-to-unmute": return AskAllToUnmute();
                 case "participants": return Participants();
                 case "admit": return Admit(GetStrings(request, "names"));
+                case "learn-hand-raised": return LearnHandRaised();
+                case "raised-hands": return RaisedHands(GetString(request, "phrase"));
+                case "press-participant-mic": return PressParticipantMic(GetString(request, "name"));
                 case "share-entries": return ShareEntries();
                 case "start-share":
                     return StartShare(GetString(request, "windowTitle") ?? "", GetString(request, "shareButtonTitle"));
