@@ -6,6 +6,13 @@
     <!-- Side navigation -->
     <NavDrawer v-model="miniState" />
 
+    <!-- Meeting timer, docked at the side (a setting) -->
+    <TimerDockPanel
+      v-if="
+        currentSettings?.enableTimerDisplay && currentSettings?.timerDockedPanel
+      "
+    />
+
     <DialogCongregationSwitcher />
     <DialogZoomSetupAssistant v-model="zoomSetupAssistantOpen" />
 
@@ -95,6 +102,7 @@ import DialogCongregationSwitcher from 'components/dialog/DialogCongregationSwit
 import DialogZoomSetupAssistant from 'components/dialog/DialogZoomSetupAssistant.vue';
 import HeaderBase from 'components/header/HeaderBase.vue';
 import MediaPreview from 'components/media/MediaPreview.vue';
+import TimerDockPanel from 'components/media/TimerDockPanel.vue';
 import ActionIsland from 'components/ui/ActionIsland.vue';
 import AnnouncementBanner from 'components/ui/AnnouncementBanner.vue';
 import NavDrawer from 'components/ui/NavDrawer.vue';
@@ -235,6 +243,7 @@ const {
   onLog,
   onPathProbeNetworkWarning,
   onShortcut,
+  onTimerWindowClosed,
   onVideoCaptureCrashDetected,
   onWatchFolderError,
   onWatchFolderUpdate,
@@ -785,6 +794,12 @@ const initListeners = () => {
   onShortcut(({ shortcut }) => {
     if (!currentSettings.value?.enableKeyboardShortcuts) return;
     executeShortcut(shortcut as keyof SettingsValues);
+  });
+
+  // The timer window can be closed from outside M³ (Alt+F4, the OS): the
+  // island button and the popup must not go on showing it as open.
+  onTimerWindowClosed(() => {
+    currentState.setTimerWindowVisible(false);
   });
 
   onWatchFolderError(() => {

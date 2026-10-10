@@ -138,6 +138,14 @@ export interface ElectronApi {
     query: string,
     params?: (null | number | string)[],
   ) => Promise<T[]>;
+  /**
+   * Renders HTML to a PDF (through Chromium, so every script and writing
+   * direction comes out right) and lets the user choose where to save it.
+   */
+  exportHtmlToPdf: (
+    html: string,
+    defaultFileName: string,
+  ) => Promise<ExportPdfResult>;
   extname: typeof extname;
   extractNestedZipEntry: (
     input: string,
@@ -271,6 +279,7 @@ export interface ElectronApi {
   onShortcut: (
     callback: (args: { shortcut: keyof SettingsValues }) => void,
   ) => void;
+  onTimerWindowClosed: (callback: () => void) => () => void;
   onUpdateAvailable: (callback: (args: UpdateVersionInfo) => void) => void;
   onUpdateDownloaded: (callback: (args: UpdateVersionInfo) => void) => void;
   onUpdateDownloadProgress: (
@@ -486,6 +495,7 @@ export type ElectronIpcInvokeKey =
   | 'downloadFile'
   | 'ensureMacosFolderPermission'
   | 'executeQuery'
+  | 'exportHtmlToPdf'
   | 'extractNestedZipEntry'
   | 'getAllScreens'
   | 'getAppDataPath'
@@ -541,6 +551,7 @@ export type ElectronIpcListenKey =
   | 'setShouldQuit'
   | 'shortcut'
   | 'syncMeetingSchedule'
+  | 'timerWindowClosed'
   | 'update-available'
   | 'update-download-progress'
   | 'update-downloaded'
@@ -584,6 +595,13 @@ export type ElectronIpcSendKey =
 // ipcMain.on with event.returnValue / ipcRenderer.sendSync channels
 export type ElectronIpcSendSyncKey =
   'decryptSecretSync' | 'encryptSecretSync' | 'isSecretEncryptionAvailableSync';
+
+export interface ExportPdfResult {
+  /** The user closed the save dialog without choosing a file. */
+  canceled: boolean;
+  error?: string;
+  filePath?: string;
+}
 
 export type ExternalWebsite = 'docs' | 'latestRelease' | 'repo';
 

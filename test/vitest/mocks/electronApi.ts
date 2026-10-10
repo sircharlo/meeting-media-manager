@@ -62,6 +62,7 @@ export const electronApi: ElectronApi = {
   executeQuery: async function (dbPath, query) {
     throw new Error('Function not implemented.');
   },
+  exportHtmlToPdf: async () => ({ canceled: true }),
   extname,
   extractNestedZipEntry: function () {
     throw new Error('Function not implemented.');
@@ -165,6 +166,9 @@ export const electronApi: ElectronApi = {
   },
   onShortcut: function (callback) {
     throw new Error('Function not implemented.');
+  },
+  onTimerWindowClosed: function () {
+    return () => void 0;
   },
   onUpdateAvailable: function (callback) {
     log('onUpdateAvailable called but not implemented');

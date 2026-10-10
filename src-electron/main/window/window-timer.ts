@@ -11,8 +11,10 @@ import { captureElectronError, getIconPath } from 'src-electron/main/utils';
 import {
   createWindow,
   loadWindowPrefs,
+  sendToWindow,
 } from 'src-electron/main/window/window-base';
 import { normalizeWindowBounds } from 'src-electron/main/window/window-bounds';
+import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import { log, throttleWithTrailing } from 'src/shared/vanilla';
 
 export const timerWindowInfo: {
@@ -141,8 +143,36 @@ export function createTimerWindow() {
     }
   }
 
+  // Without saved bounds (the first time the timer is shown on this
+  // computer), the window would otherwise come up at its 1920x1080 creation
+  // size wherever the OS puts it. Start it small, in the corner of the
+  // screen the main window is on, where the popup's windowed mode puts it.
+  void loadWindowPrefs('timer').then((prefs) => {
+    if (prefs) return;
+    const window = timerWindowInfo.timerWindow;
+    if (!window || window.isDestroyed() || window.isFullScreen()) return;
+    const screens = getAllScreens();
+    const homeScreen =
+      screens.find((screen) => screen.mainWindow) ?? screens[0];
+    if (!homeScreen) return;
+    const bounds = normalizeWindowBounds(
+      getWindowedTimerBounds(homeScreen.bounds),
+    );
+    if (!bounds) return;
+    log(
+      '[createTimerWindow] No saved bounds, using default windowed bounds',
+      'timer',
+      'log',
+      bounds,
+    );
+    window.setBounds(bounds);
+  });
+
   timerWindowInfo.timerWindow.on('closed', () => {
     timerWindowInfo.timerWindow = null;
+    // Closed from outside M³ (Alt+F4, the OS) as well as by M³ itself: the
+    // renderer keeps its own idea of whether the window is showing.
+    sendToWindow(mainWindowInfo.mainWindow, 'timerWindowClosed');
   });
 }
 

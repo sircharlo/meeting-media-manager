@@ -64,8 +64,6 @@
     "fs-extra": "^11.4.1",
     "heic-convert": "^2.1.0",
     "is-online": "^12.0.2",
-    "jspdf": "^4.2.1",
-    "jspdf-autotable": "^5.0.8",
     "mime": "^4.1.0",
     "mousetrap": "^1.6.5",
     "music-metadata": "^12.0.0",

@@ -1,9 +1,11 @@
 import type {
   CustomTimerPart,
-  MediaSectionIdentifier,
+  DateInfo,
   MeetingPart,
+  MeetingPartOption,
   MeetingPartTimings,
   TimerData,
+  TimerPartCounts,
 } from 'src/types';
 
 import {
@@ -11,6 +13,7 @@ import {
   useIntervalFn,
   watchImmediate,
 } from '@vueuse/core';
+import { i18n } from 'boot/i18n';
 import { storeToRefs } from 'pinia';
 import {
   isCoWeek,
@@ -21,13 +24,17 @@ import {
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getJwIconFromKeyword } from 'src/helpers/fonts';
 import {
+  defaultPartCounts,
   defaultPartDurations,
+  distributeSectionMinutes,
   getMeetingPartOffsetMinutes,
   getMeetingPartSequence,
+  getSectionPartMinutes,
+  MAX_AYFM_PARTS,
+  MAX_LAC_PARTS,
 } from 'src/helpers/meeting-parts';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { computed, effectScope, ref, watch } from 'vue';
 
 // FE-8 (full-audit-2026-09-04.md): both wall-clock diffs below could
 // otherwise go negative on a backward system-clock jump (DST fallback, NTP
@@ -44,9 +51,71 @@ export const computeElapsedSeconds = (now: number, startTime: number): number =>
 export const computePauseDuration = (now: number, pausedTime: number): number =>
   Math.max(0, now - pausedTime);
 
-const useTimer = () => {
+/** A part's duration as the user typed it: whole, non-negative minutes. */
+export const normalizePartDuration = (duration: unknown): number => {
+  const minutes = Math.round(Number(duration));
+  if (!Number.isFinite(minutes) || minutes < 0) return 0;
+  return minutes;
+};
+
+/**
+ * Whether a section's parts add up to the minutes allotted to it (the
+ * warning shown next to each of its parts when they don't).
+ */
+export const getSectionDurationWarning = (
+  prefix: 'ayfm' | 'lac',
+  count: number,
+  partDurations: Partial<Record<MeetingPart, number>>,
+): boolean => {
+  let total = 0;
+  for (let i = 1; i <= count; i++) {
+    total += partDurations[`${prefix}-${i}` as MeetingPart] ?? 0;
+  }
+  return total !== getSectionPartMinutes(prefix, count);
+};
+
+export const formatMinutesSeconds = (totalSeconds: number): string => {
+  const safeSeconds = Math.max(0, Math.floor(totalSeconds));
+  const minutes = Math.floor(safeSeconds / 60);
+  const seconds = safeSeconds % 60;
+  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+};
+
+const isCustomPart = (part: MeetingPart): part is `custom-${string}` =>
+  part.startsWith('custom-');
+
+const t = (key: string, named?: Record<string, unknown>) =>
+  (i18n.global.t as (key: string, named?: Record<string, unknown>) => string)(
+    key,
+    named ?? {},
+  );
+
+/**
+ * Where the timer keeps what belongs to one day: the part counts, the
+ * durations the user changed, the recorded timings and the custom parts.
+ * These live on the day itself (persisted with the jw store's lookup
+ * period), so switching between days or restarting M³ never mixes one
+ * meeting's timings into another's.
+ */
+type TimerDayState = Pick<
+  DateInfo,
+  'timerPartCounts' | 'timerPartDurations' | 'timerParts' | 'timerPartTimings'
+>;
+
+const createTimer = () => {
+  const currentState = useCurrentStateStore();
+  const { currentSettings, selectedDateObject } = storeToRefs(currentState);
+
   const createCustomPartId = (): `custom-${string}` =>
     `custom-${Math.random().toString(36).slice(2, 10)}`;
+
+  // Only used while no day is selected (which the calendar page never
+  // allows for long): the timer still works, it just doesn't persist.
+  const fallbackDayState = ref<TimerDayState>({});
+  const dayState = computed<TimerDayState>(
+    () => selectedDateObject.value ?? fallbackDayState.value,
+  );
+  const selectedDate = computed(() => selectedDateObject.value?.date);
 
   const timerRunning = ref(false);
   const timerPaused = ref(false);
@@ -55,99 +124,59 @@ const useTimer = () => {
   const elapsedSeconds = ref(0);
   const countdownTarget = ref<number>(0);
   const timerMode = computed(
-    () => currentState.currentSettings?.timerMode ?? 'countup',
+    () => currentSettings.value?.timerMode ?? 'countup',
   );
   const currentPart = ref<MeetingPart>('public-talk');
   const wtCustomEndTime = ref<string>('');
   const cbsCustomEndTime = ref('');
-  const ayfmPartsCount = ref<number>(1);
-  const lacPartsCount = ref<number>(1);
 
-  const distributePartDurations = (
-    prefix: 'ayfm' | 'lac',
-    count: number,
-    totalMinutes: number,
-  ) => {
-    const maxParts = prefix === 'ayfm' ? 5 : 3;
-    const base = Math.floor(totalMinutes / count);
-    const remainder = totalMinutes % count;
+  // --- Part counts (per day) --------------------------------------------------
 
-    for (let i = 1; i <= maxParts; i++) {
-      const key = `${prefix}-${i}` as MeetingPart;
-      if (i <= count) {
-        partDurations.value[key] = base + (i <= remainder ? 1 : 0);
-      } else {
-        partDurations.value[key] = 0;
-      }
-    }
+  const getPartCounts = (): TimerPartCounts =>
+    dayState.value.timerPartCounts ?? { ...defaultPartCounts };
+
+  const setPartCount = (prefix: 'ayfm' | 'lac', count: number) => {
+    const maxParts = prefix === 'ayfm' ? MAX_AYFM_PARTS : MAX_LAC_PARTS;
+    const safeCount = Math.min(Math.max(1, Math.floor(count)), maxParts);
+    const counts = { ...getPartCounts(), [prefix]: safeCount };
+    dayState.value.timerPartCounts = counts;
+    // A new number of parts is a fresh start for the section: share its
+    // minutes out evenly, then let the user adjust each part freely.
+    const distributed = distributeSectionMinutes(
+      prefix,
+      safeCount,
+      getSectionPartMinutes(prefix, safeCount),
+    );
+    dayState.value.timerPartDurations = {
+      ...dayState.value.timerPartDurations,
+      ...distributed,
+    };
+    refreshCountdownTarget();
   };
 
-  const getTimeString = (timestamp: null | number, seconds = false): string => {
-    try {
-      return timestamp
-        ? new Date(timestamp).toLocaleTimeString([], {
-            hour: '2-digit',
-            hour12: currentSettings.value?.timerHourFormat === '12h',
-            minute: '2-digit',
-            second: seconds ? '2-digit' : undefined,
-          })
-        : '';
-    } catch {
-      return '';
-    }
-  };
-
-  const initialPartTimings: Record<MeetingPart, MeetingPartTimings> = {
-    'abbreviated-wt': { endTime: null, startTime: null },
-    'ayfm-1': { endTime: null, startTime: null },
-    'ayfm-2': { endTime: null, startTime: null },
-    'ayfm-3': { endTime: null, startTime: null },
-    'ayfm-4': { endTime: null, startTime: null },
-    'ayfm-5': { endTime: null, startTime: null },
-    'bible-reading': { endTime: null, startTime: null },
-    cbs: { endTime: null, startTime: null },
-    'co-final-talk': { endTime: null, startTime: null },
-    'co-service-talk': { endTime: null, startTime: null },
-    'concluding-comments': { endTime: null, startTime: null },
-    gems: { endTime: null, startTime: null },
-    introduction: { endTime: null, startTime: null },
-    'lac-1': { endTime: null, startTime: null },
-    'lac-2': { endTime: null, startTime: null },
-    'lac-3': { endTime: null, startTime: null },
-    'public-talk': { endTime: null, startTime: null },
-    'song-and-optional-prayer': { endTime: null, startTime: null },
-    treasures: { endTime: null, startTime: null },
-    wt: { endTime: null, startTime: null },
-  };
-
-  const partTimings =
-    ref<Record<MeetingPart, MeetingPartTimings>>(initialPartTimings);
-
-  const { t } = useI18n();
-
-  const customTimerParts = computed<CustomTimerPart[]>(() => {
-    if (isMeetingDay(selectedDateObject.value?.date)) return [];
-    return selectedDateObject.value?.timerParts ?? [];
+  const ayfmPartsCount = computed<number>({
+    get: () => getPartCounts().ayfm,
+    set: (count) => setPartCount('ayfm', count),
   });
 
-  const ensureNonMeetingTimerParts = () => {
-    if (
-      isMeetingDay(selectedDateObject.value?.date) ||
-      !selectedDateObject.value
-    )
-      return;
+  const lacPartsCount = computed<number>({
+    get: () => getPartCounts().lac,
+    set: (count) => setPartCount('lac', count),
+  });
 
-    if (selectedDateObject.value.timerParts?.length) {
-      selectedDateObject.value.timerParts.forEach((part) => {
-        if (!(part.id in partDurations.value)) {
-          partDurations.value[part.id] = part.duration;
-        }
-        if (!(part.id in partTimings.value)) {
-          partTimings.value[part.id] = { endTime: null, startTime: null };
-        }
-      });
-      return;
-    }
+  // --- Custom parts (per day) -------------------------------------------------
+
+  const customTimerParts = computed<CustomTimerPart[]>(
+    () => dayState.value.timerParts ?? [],
+  );
+
+  /**
+   * Days without a meeting start with one custom part per custom media
+   * section (or a single part), so the timer is usable right away.
+   */
+  const ensureNonMeetingTimerParts = () => {
+    if (isMeetingDay(selectedDate.value) || !selectedDateObject.value) return;
+    if (selectedDateObject.value.timerParts?.length) return;
 
     const sectionParts = (selectedDateObject.value.mediaSections ?? [])
       .filter(
@@ -168,204 +197,37 @@ const useTimer = () => {
             label: `${t('meeting-part')} 1`,
           },
         ];
-
-    selectedDateObject.value.timerParts.forEach((part) => {
-      partDurations.value[part.id] = part.duration;
-      partTimings.value[part.id] = { endTime: null, startTime: null };
-    });
   };
-
-  const syncCustomTimerPartState = () => {
-    customTimerParts.value.forEach((part, index) => {
-      part.duration = Math.max(1, Number(part.duration) || 1);
-      part.label ||= `${t('meeting-part')} ${index + 1}`;
-      partDurations.value[part.id] = part.duration;
-      partTimings.value[part.id] ??= { endTime: null, startTime: null };
-    });
-  };
-
-  // Watch AYFM parts count to adjust durations
-  watch(ayfmPartsCount, (newCount) => {
-    distributePartDurations('ayfm', newCount, 15 - newCount);
-  });
-
-  // Watch LAC parts count to adjust durations
-  watch(lacPartsCount, (newCount) => {
-    distributePartDurations('lac', newCount, 15);
-  });
-
-  const meetingPartsOptions = computed<
-    {
-      icon?: string;
-      label: string;
-      section?: MediaSectionIdentifier;
-      value: MeetingPart;
-      warning?: boolean;
-    }[]
-  >(() => {
-    const date = selectedDateObject.value?.date;
-    if (isWeMeetingDay(date)) {
-      const options: {
-        icon?: string;
-        label: string;
-        section?: MediaSectionIdentifier;
-        value: MeetingPart;
-        warning?: boolean;
-      }[] = [
-        {
-          icon: getJwIconFromKeyword('public-talk'),
-          label: t('public-talk'),
-          section: 'pt',
-          value: 'public-talk',
-        },
-        {
-          icon: getJwIconFromKeyword('wt'),
-          label: t('wt'),
-          section: 'wt',
-          value: 'wt',
-        },
-      ];
-
-      if (isCoWeek(date)) {
-        options.push({
-          icon: getJwIconFromKeyword('co-final-talk'),
-          label: t('co-final-talk'),
-          section: 'co',
-          value: 'co-final-talk',
-        });
-      }
-
-      return options;
-    } else if (isMwMeetingDay(date)) {
-      const isCo = isCoWeek(date);
-      const options: {
-        icon?: string;
-        label: string;
-        section?: MediaSectionIdentifier;
-        value: MeetingPart;
-        warning?: boolean;
-      }[] = [
-        {
-          icon: getJwIconFromKeyword('introduction'),
-          label: t('introduction'),
-          value: 'introduction',
-        },
-        {
-          icon: getJwIconFromKeyword('treasures'),
-          label: t('treasures-talk'),
-          section: 'tgw',
-          value: 'treasures',
-        },
-        {
-          icon: getJwIconFromKeyword('gems'),
-          label: t('gems'),
-          section: 'tgw',
-          value: 'gems',
-        },
-        {
-          icon: getJwIconFromKeyword('bible-reading'),
-          label: t('bible-reading'),
-          section: 'tgw',
-          value: 'bible-reading',
-        },
-      ];
-      // Add AYFM parts
-      for (let i = 1; i <= ayfmPartsCount.value; i++) {
-        const totalDuration = Array.from(
-          { length: ayfmPartsCount.value },
-          (_, idx) =>
-            partDurations.value[`ayfm-${idx + 1}` as MeetingPart] || 0,
-        ).reduce((a, b) => a + b, 0);
-        const warning = totalDuration !== 15 - ayfmPartsCount.value;
-        const dur = partDurations.value[`ayfm-${i}` as MeetingPart] || 14;
-        options.push({
-          icon: getJwIconFromKeyword('ayfm-part'),
-          label: t('ayfm-part', { duration: dur, part: i }),
-          section: 'ayfm',
-          value: `ayfm-${i}` as MeetingPart,
-          warning,
-        });
-      }
-      // Add LAC parts
-      for (let i = 1; i <= lacPartsCount.value; i++) {
-        const totalDuration = Array.from(
-          { length: lacPartsCount.value },
-          (_, idx) => partDurations.value[`lac-${idx + 1}` as MeetingPart] || 0,
-        ).reduce((a, b) => a + b, 0);
-        const warning = totalDuration !== 15;
-        const dur = partDurations.value[`lac-${i}` as MeetingPart] || 15;
-        options.push({
-          icon: getJwIconFromKeyword('lac-part'),
-          label: t('lac-part', { duration: dur, part: i }),
-          section: 'lac',
-          value: `lac-${i}` as MeetingPart,
-          warning,
-        });
-      }
-      if (isCo) {
-        options.push({
-          icon: getJwIconFromKeyword('co-service-talk'),
-          label: t('co-service-talk'),
-          section: 'co',
-          value: 'co-service-talk',
-        });
-      } else {
-        options.push({
-          icon: getJwIconFromKeyword('cbs'),
-          label: t('cbs'),
-          section: 'lac',
-          value: 'cbs',
-        });
-      }
-      options.push({
-        icon: getJwIconFromKeyword('concluding-comments'),
-        label: t('concluding-comments'),
-        value: 'concluding-comments',
-      });
-      return options;
-    }
-
-    ensureNonMeetingTimerParts();
-
-    return customTimerParts.value.map((part) => ({
-      label: `${part.label} (${part.duration} min.)`,
-      value: part.id,
-    }));
-  });
-
-  // Part durations in minutes (reactive)
-  const partDurations = ref<Record<MeetingPart, number>>({
-    ...defaultPartDurations,
-  });
-
-  const { toggleTimerWindow } = globalThis.electronApi;
-
-  const currentState = useCurrentStateStore();
-  const { currentSettings, selectedDateObject } = storeToRefs(currentState);
 
   const addCustomTimerPart = () => {
-    ensureNonMeetingTimerParts();
-    if (!selectedDateObject.value) return;
-
-    const nextIndex = (selectedDateObject.value.timerParts?.length ?? 0) + 1;
+    const nextIndex = customTimerParts.value.length + 1;
     const newPart: CustomTimerPart = {
       duration: 5,
       id: createCustomPartId(),
       label: `${t('meeting-part')} ${nextIndex}`,
     };
-
-    selectedDateObject.value.timerParts ??= [];
-    selectedDateObject.value.timerParts.push(newPart);
-    partDurations.value[newPart.id] = newPart.duration;
-    partTimings.value[newPart.id] = { endTime: null, startTime: null };
-
-    if (currentPart.value.startsWith('custom-')) {
+    dayState.value.timerParts = [...customTimerParts.value, newPart];
+    if (!isMeetingDay(selectedDate.value) && !isCustomPart(currentPart.value)) {
       currentPart.value = newPart.id;
+    }
+    return newPart;
+  };
+
+  const updateCustomTimerPart = (
+    partId: MeetingPart,
+    changes: Partial<Pick<CustomTimerPart, 'duration' | 'label'>>,
+  ) => {
+    const part = customTimerParts.value.find((p) => p.id === partId);
+    if (!part) return;
+    if (changes.label !== undefined) part.label = changes.label;
+    if (changes.duration !== undefined) {
+      part.duration = normalizePartDuration(changes.duration);
+      refreshCountdownTarget();
     }
   };
 
   const moveCustomTimerPart = (fromIndex: number, toIndex: number) => {
-    const parts = selectedDateObject.value?.timerParts;
+    const parts = dayState.value.timerParts;
     if (
       !parts ||
       toIndex < 0 ||
@@ -380,36 +242,298 @@ const useTimer = () => {
   };
 
   const removeCustomTimerPart = (partId: MeetingPart) => {
-    const parts = selectedDateObject.value?.timerParts;
+    const parts = dayState.value.timerParts;
     if (!parts) return;
+    // A day without a meeting needs at least one part to time.
+    if (!isMeetingDay(selectedDate.value) && parts.length <= 1) return;
 
-    if (parts.length <= 1) return;
-
-    selectedDateObject.value.timerParts = parts.filter(
-      (part) => part.id !== partId,
-    );
+    dayState.value.timerParts = parts.filter((part) => part.id !== partId);
 
     if (currentPart.value === partId) {
       currentPart.value =
-        selectedDateObject.value.timerParts[0]?.id ?? currentPart.value;
+        dayState.value.timerParts[0]?.id ??
+        meetingPartsOptions.value[0]?.value ??
+        currentPart.value;
     }
   };
 
-  const handleTimerWindowVisibility = (visible: boolean) => {
-    toggleTimerWindow(visible);
-    currentState.setTimerWindowVisible(visible);
-    if (visible) {
-      // Broadcast the actual current state (updateTimerWindow, defined
-      // below) rather than a hardcoded idle snapshot - showing/hiding the
-      // timer window while a timer is already running previously flashed
-      // the plain clock for one tick before the next 500ms update
-      // self-corrected it.
-      updateTimerWindow();
+  // --- Durations (per day) ----------------------------------------------------
+
+  /**
+   * Every part's planned length in minutes: the defaults, the day's own
+   * changes over them, and the custom parts' lengths. 0 means the part is
+   * skipped (no planned length).
+   */
+  const partDurations = computed<Record<MeetingPart, number>>(() => {
+    const durations: Record<MeetingPart, number> = { ...defaultPartDurations };
+    for (const [part, minutes] of Object.entries(
+      dayState.value.timerPartDurations ?? {},
+    )) {
+      if (typeof minutes === 'number') {
+        durations[part as MeetingPart] = minutes;
+      }
     }
+    for (const part of customTimerParts.value) {
+      durations[part.id] = normalizePartDuration(part.duration);
+    }
+    return durations;
+  });
+
+  const setPartDuration = (part: MeetingPart, duration: number) => {
+    const minutes = normalizePartDuration(duration);
+    if (isCustomPart(part)) {
+      updateCustomTimerPart(part, { duration: minutes });
+      return;
+    }
+    dayState.value.timerPartDurations = {
+      ...dayState.value.timerPartDurations,
+      [part]: minutes,
+    };
+    refreshCountdownTarget();
+  };
+
+  const adjustPartDuration = (part: MeetingPart, delta: number) => {
+    setPartDuration(part, (partDurations.value[part] ?? 0) + delta);
   };
 
   const getPartDurationSeconds = (part: MeetingPart) =>
     (partDurations.value[part] || 0) * 60;
+
+  // --- Timings (per day) ------------------------------------------------------
+
+  const partTimings = computed<
+    Partial<Record<MeetingPart, MeetingPartTimings>>
+  >(() => dayState.value.timerPartTimings ?? {});
+
+  // The day the running part belongs to: when the user moves to another day
+  // while a part is running, its end time still goes on the day it started.
+  let runningDayState: null | TimerDayState = null;
+
+  const setPartTiming = (
+    part: MeetingPart,
+    changes: Partial<MeetingPartTimings>,
+    target: TimerDayState = dayState.value,
+  ) => {
+    const current = target.timerPartTimings?.[part] ?? {
+      endTime: null,
+      startTime: null,
+    };
+    target.timerPartTimings = {
+      ...target.timerPartTimings,
+      [part]: { ...current, ...changes },
+    };
+  };
+
+  const resetPartTiming = (part: MeetingPart) => {
+    if (!dayState.value.timerPartTimings) return;
+    dayState.value.timerPartTimings = Object.fromEntries(
+      Object.entries(dayState.value.timerPartTimings).filter(
+        ([key]) => key !== part,
+      ),
+    );
+  };
+
+  const resetAllPartTimings = () => {
+    dayState.value.timerPartTimings = {};
+  };
+
+  const hasAnyPartTimings = computed(() =>
+    Object.values(partTimings.value).some(
+      (timing) => !!timing?.startTime || !!timing?.endTime,
+    ),
+  );
+
+  // --- The list of parts ------------------------------------------------------
+
+  const getTimeString = (timestamp: null | number, seconds = false): string => {
+    if (!timestamp) return '';
+    const options: Intl.DateTimeFormatOptions = {
+      hour: '2-digit',
+      hour12: currentSettings.value?.timerHourFormat === '12h',
+      minute: '2-digit',
+      second: seconds ? '2-digit' : undefined,
+    };
+    try {
+      return new Date(timestamp).toLocaleTimeString(
+        i18n.global.locale.value,
+        options,
+      );
+    } catch {
+      try {
+        return new Date(timestamp).toLocaleTimeString([], options);
+      } catch {
+        return '';
+      }
+    }
+  };
+
+  const customPartOptions = computed<MeetingPartOption[]>(() =>
+    customTimerParts.value.map((part) => ({
+      label: `${part.label} (${normalizePartDuration(part.duration)} min.)`,
+      section: 'custom-timer-parts',
+      value: part.id,
+    })),
+  );
+
+  const weekendPartOptions = (date: Date): MeetingPartOption[] => {
+    const options: MeetingPartOption[] = [
+      {
+        icon: getJwIconFromKeyword('public-talk'),
+        label: t('public-talk'),
+        section: 'pt',
+        value: 'public-talk',
+      },
+      {
+        icon: getJwIconFromKeyword('wt'),
+        label: t('wt'),
+        section: 'wt',
+        value: 'wt',
+      },
+    ];
+
+    if (isCoWeek(date)) {
+      options.push({
+        icon: getJwIconFromKeyword('co-final-talk'),
+        label: t('co-final-talk'),
+        section: 'co',
+        value: 'co-final-talk',
+      });
+    }
+
+    return options;
+  };
+
+  const midweekPartOptions = (date: Date): MeetingPartOption[] => {
+    const isCo = isCoWeek(date);
+    const options: MeetingPartOption[] = [
+      {
+        icon: getJwIconFromKeyword('introduction'),
+        label: t('introduction'),
+        value: 'introduction',
+      },
+      {
+        icon: getJwIconFromKeyword('treasures'),
+        label: t('treasures-talk'),
+        section: 'tgw',
+        value: 'treasures',
+      },
+      {
+        icon: getJwIconFromKeyword('gems'),
+        label: t('gems'),
+        section: 'tgw',
+        value: 'gems',
+      },
+      {
+        icon: getJwIconFromKeyword('bible-reading'),
+        label: t('bible-reading'),
+        section: 'tgw',
+        value: 'bible-reading',
+      },
+    ];
+
+    const ayfmWarning = getSectionDurationWarning(
+      'ayfm',
+      ayfmPartsCount.value,
+      partDurations.value,
+    );
+    for (let i = 1; i <= ayfmPartsCount.value; i++) {
+      const part = `ayfm-${i}` as MeetingPart;
+      options.push({
+        icon: getJwIconFromKeyword('ayfm-part'),
+        label: t('ayfm-part', {
+          duration: partDurations.value[part] ?? 0,
+          part: i,
+        }),
+        section: 'ayfm',
+        value: part,
+        warning: ayfmWarning,
+      });
+    }
+
+    const lacWarning = getSectionDurationWarning(
+      'lac',
+      lacPartsCount.value,
+      partDurations.value,
+    );
+    for (let i = 1; i <= lacPartsCount.value; i++) {
+      const part = `lac-${i}` as MeetingPart;
+      options.push({
+        icon: getJwIconFromKeyword('lac-part'),
+        label: t('lac-part', {
+          duration: partDurations.value[part] ?? 0,
+          part: i,
+        }),
+        section: 'lac',
+        value: part,
+        warning: lacWarning,
+      });
+    }
+
+    if (isCo) {
+      options.push({
+        icon: getJwIconFromKeyword('co-service-talk'),
+        label: t('co-service-talk'),
+        section: 'co',
+        value: 'co-service-talk',
+      });
+    } else {
+      options.push({
+        icon: getJwIconFromKeyword('cbs'),
+        label: t('cbs'),
+        section: 'lac',
+        value: 'cbs',
+      });
+    }
+    options.push({
+      icon: getJwIconFromKeyword('concluding-comments'),
+      label: t('concluding-comments'),
+      value: 'concluding-comments',
+    });
+    return options;
+  };
+
+  const meetingPartsOptions = computed<MeetingPartOption[]>(() => {
+    const date = selectedDate.value;
+    if (date && isWeMeetingDay(date)) {
+      return [...weekendPartOptions(date), ...customPartOptions.value];
+    }
+    if (date && isMwMeetingDay(date)) {
+      return [...midweekPartOptions(date), ...customPartOptions.value];
+    }
+    // No meeting: only the custom parts, which need no section header.
+    return customPartOptions.value.map((option) => ({
+      label: option.label,
+      value: option.value,
+    }));
+  });
+
+  const currentPartOption = computed(() =>
+    meetingPartsOptions.value.find(
+      (option) => option.value === currentPart.value,
+    ),
+  );
+
+  const currentPartLabel = computed(() => currentPartOption.value?.label ?? '');
+
+  /**
+   * The part to time next: the first one after the current part that hasn't
+   * been started, else the first unstarted part anywhere in the list.
+   */
+  const nextPart = computed<MeetingPartOption | null>(() => {
+    const options = meetingPartsOptions.value;
+    const currentIndex = options.findIndex(
+      (option) => option.value === currentPart.value,
+    );
+    const notStarted = (option: MeetingPartOption) =>
+      !partTimings.value[option.value]?.startTime;
+    return (
+      options.slice(currentIndex + 1).find(notStarted) ??
+      options.find(notStarted) ??
+      null
+    );
+  });
+
+  // --- Countdown targets ------------------------------------------------------
 
   const getCustomEndTimeCountdownTarget = (
     date: Date,
@@ -461,14 +585,9 @@ const useTimer = () => {
   };
 
   const getWeekendCountdownTarget = (date: Date) => {
-    const weekendDurations: Partial<Record<MeetingPart, number>> = {
-      'co-final-talk': getPartDurationSeconds('co-final-talk'),
-      'co-service-talk': getPartDurationSeconds('co-service-talk'),
-      'public-talk': getPartDurationSeconds('public-talk'),
-    };
-    const duration = weekendDurations[currentPart.value];
-    if (duration !== undefined) return duration;
-    if (currentPart.value !== 'wt') return 0;
+    if (currentPart.value !== 'wt') {
+      return getPartDurationSeconds(currentPart.value);
+    }
 
     const wtPart = isCoWeek(date) ? 'abbreviated-wt' : 'wt';
     const wtMaxDuration = getPartDurationSeconds(wtPart);
@@ -482,25 +601,9 @@ const useTimer = () => {
   };
 
   const getMidweekCountdownTarget = (date: Date) => {
-    const midweekDurations: Partial<Record<MeetingPart, number>> = {
-      'bible-reading': getPartDurationSeconds('bible-reading'),
-      'co-service-talk': getPartDurationSeconds('co-service-talk'),
-      'concluding-comments': getPartDurationSeconds('concluding-comments'),
-      gems: getPartDurationSeconds('gems'),
-      introduction: getPartDurationSeconds('introduction'),
-      treasures: getPartDurationSeconds('treasures'),
-    };
-    const duration = midweekDurations[currentPart.value];
-    if (duration !== undefined) return duration;
-
-    if (
-      currentPart.value.startsWith('ayfm-') ||
-      currentPart.value.startsWith('lac-')
-    ) {
+    if (currentPart.value !== 'cbs') {
       return getPartDurationSeconds(currentPart.value);
     }
-
-    if (currentPart.value !== 'cbs') return 0;
 
     const cbsMaxDuration = getPartDurationSeconds('cbs');
     return getTimedEndCountdownTarget(
@@ -513,19 +616,20 @@ const useTimer = () => {
   };
 
   const calculateCountdownTarget = () => {
-    const date = selectedDateObject.value?.date;
+    const date = selectedDate.value;
     if (!date || timerMode.value === 'countup') return 0;
-    if (!isMeetingDay(date)) return getPartDurationSeconds(currentPart.value);
     if (isWeMeetingDay(date)) return getWeekendCountdownTarget(date);
     if (isMwMeetingDay(date)) return getMidweekCountdownTarget(date);
-    return 0;
+    return getPartDurationSeconds(currentPart.value);
   };
 
+  // --- Running the timer ------------------------------------------------------
+
   const startTimer = () => {
-    if (!isMeetingDay(selectedDateObject.value?.date)) {
+    if (!isMeetingDay(selectedDate.value)) {
       ensureNonMeetingTimerParts();
       const firstCustomPart = customTimerParts.value[0];
-      if (!currentPart.value.startsWith('custom-') && firstCustomPart) {
+      if (!isCustomPart(currentPart.value) && firstCustomPart) {
         currentPart.value = firstCustomPart.id;
       }
     }
@@ -540,16 +644,24 @@ const useTimer = () => {
     timerPausedTime.value = null;
 
     // Log the start time for the current part
-    partTimings.value[currentPart.value] = {
-      ...(partTimings.value[currentPart.value] ?? {
-        endTime: null,
-        startTime: null,
-      }),
-      startTime: Date.now(),
-    };
+    runningDayState = dayState.value;
+    setPartTiming(currentPart.value, { startTime: Date.now() });
 
     resumeInterval();
     updateTimerWindow();
+  };
+
+  /** Times a part: stops the running one first, if any. */
+  const selectPart = (part: MeetingPart) => {
+    if (timerRunning.value) stopTimer();
+    currentPart.value = part;
+    startTimer();
+  };
+
+  const startNextPart = () => {
+    const part = nextPart.value;
+    if (!part) return;
+    selectPart(part.value);
   };
 
   const pauseTimer = () => {
@@ -582,30 +694,6 @@ const useTimer = () => {
 
   const stopTimer = () => {
     pauseInterval();
-    // Immediately send cleared timer data to external window
-    safePostTimerData({
-      mode: timerMode.value,
-      paused: false,
-      running: false,
-      time: '',
-      timerBackgroundColor: currentSettings.value?.timerBackgroundColor,
-      timerCountdownDisplay: currentSettings.value?.timerCountdownDisplay,
-      timerCountdownTargetSeconds: countdownTarget.value,
-      timerCountdownWarningIndicator:
-        currentSettings.value?.timerCountdownWarningIndicator,
-      timerElapsedSeconds: elapsedSeconds.value,
-      timerHourFormat: currentSettings.value?.timerHourFormat,
-      timerOvertimeAnimation: currentSettings.value?.timerOvertimeAnimation,
-      timerOvertimeBackgroundColor:
-        currentSettings.value?.timerOvertimeBackgroundColor,
-      timerOvertimeIndicator: currentSettings.value?.timerOvertimeIndicator,
-      timerOvertimeShowAmountOnly:
-        currentSettings.value?.timerOvertimeShowAmountOnly,
-      timerOvertimeTextColor: currentSettings.value?.timerOvertimeTextColor,
-      timerTextColor: currentSettings.value?.timerTextColor,
-      timerTextSize: currentSettings.value?.timerTextSize,
-      timerTimeOfDayDisplay: currentSettings.value?.timerTimeOfDayDisplay,
-    });
     timerRunning.value = false;
     timerPaused.value = false;
     elapsedSeconds.value = 0;
@@ -614,15 +702,23 @@ const useTimer = () => {
     countdownTarget.value = 0;
 
     // Log the end time for the current part
-    partTimings.value[currentPart.value] = {
-      ...(partTimings.value[currentPart.value] ?? {
-        endTime: null,
-        startTime: null,
-      }),
-      endTime: Date.now(),
-    };
+    setPartTiming(
+      currentPart.value,
+      { endTime: Date.now() },
+      runningDayState ?? dayState.value,
+    );
+    runningDayState = null;
 
     updateTimerWindow();
+  };
+
+  const togglePause = () => {
+    if (!timerRunning.value) return;
+    if (timerPaused.value) {
+      resumeTimer();
+    } else {
+      pauseTimer();
+    }
   };
 
   const formattedTime = computed(() => {
@@ -632,7 +728,7 @@ const useTimer = () => {
 
     if (isCountup) {
       // 0 means no limit defined
-      const partMaxSeconds = (partDurations.value[currentPart.value] || 0) * 60;
+      const partMaxSeconds = getPartDurationSeconds(currentPart.value);
       isOvertime = partMaxSeconds > 0 && elapsedSeconds.value > partMaxSeconds;
 
       if (isOvertime && currentSettings.value?.timerOvertimeShowAmountOnly) {
@@ -646,42 +742,39 @@ const useTimer = () => {
       totalSeconds = Math.abs(remaining);
     }
 
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
     const sign = isOvertime ? '-' : '';
-    return `${sign}${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    return `${sign}${formatMinutesSeconds(totalSeconds)}`;
   });
 
   const getDuration = (
-    timings: MeetingPartTimings | null,
+    timings: MeetingPartTimings | null | undefined,
     duration?: number,
   ): string => {
-    let formattedDuration = '';
     if (timings?.startTime && timings?.endTime) {
-      const diffSeconds = Math.floor(
-        (timings.endTime - timings.startTime) / 1000,
-      );
-      const minutes = Math.floor(diffSeconds / 60);
-      const seconds = diffSeconds % 60;
-      formattedDuration = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    } else if (duration) {
-      // If no actual start/end time, use the planned duration
-      formattedDuration = `${duration.toString().padStart(2, '0')}:00`;
+      return formatMinutesSeconds((timings.endTime - timings.startTime) / 1000);
     }
-    return formattedDuration;
+    if (duration) {
+      // If no actual start/end time, use the planned duration
+      return formatMinutesSeconds(duration * 60);
+    }
+    return '';
   };
 
   // Timer logic
-  const { pause: pauseInterval, resume: resumeInterval } = useIntervalFn(() => {
-    if (timerRunning.value && !timerPaused.value) {
-      const now = Date.now();
-      const startTime = timerStartTime.value;
-      if (startTime) {
-        elapsedSeconds.value = computeElapsedSeconds(now, startTime);
-        updateTimerWindow(); // Update the timer window with new time
+  const { pause: pauseInterval, resume: resumeInterval } = useIntervalFn(
+    () => {
+      if (timerRunning.value && !timerPaused.value) {
+        const now = Date.now();
+        const startTime = timerStartTime.value;
+        if (startTime) {
+          elapsedSeconds.value = computeElapsedSeconds(now, startTime);
+          updateTimerWindow(); // Update the timer window with new time
+        }
       }
-    }
-  }, 500);
+    },
+    500,
+    { immediate: false },
+  );
 
   // Broadcast channel for timer data
   const { post: postTimerData } = useBroadcastChannel<TimerData, TimerData>({
@@ -693,15 +786,16 @@ const useTimer = () => {
       postTimerData(timerData);
     } catch (error) {
       void errorCatcher(error, {
-        contexts: { timer: { action: 'postTimerData' } },
+        contexts: { fn: { name: 'postTimerData' } },
       });
     }
   };
 
   const updateTimerWindow = () => {
     // Send timer data to the timer window via broadcast channel
-    const timerData = {
-      aheadBehindMinutes: calculateAheadBehindMinutes(),
+    const timerData: TimerData = {
+      aheadBehindMinutes: aheadBehindMinutes.value,
+      locale: i18n.global.locale.value,
       mode: timerMode.value,
       mwDay: currentSettings.value?.mwDay,
       mwStartTime: currentSettings.value?.mwStartTime,
@@ -713,6 +807,7 @@ const useTimer = () => {
       timerCountdownTargetSeconds: countdownTarget.value,
       timerCountdownWarningIndicator:
         currentSettings.value?.timerCountdownWarningIndicator,
+      timerCurrentPartLabel: timerRunning.value ? currentPartLabel.value : '',
       timerElapsedSeconds: elapsedSeconds.value,
       timerEnableMeetingCountdown:
         currentSettings.value?.timerEnableMeetingCountdown,
@@ -726,6 +821,7 @@ const useTimer = () => {
       timerOvertimeShowAmountOnly:
         currentSettings.value?.timerOvertimeShowAmountOnly,
       timerOvertimeTextColor: currentSettings.value?.timerOvertimeTextColor,
+      timerPartTargetSeconds: getPartDurationSeconds(currentPart.value),
       timerTextColor: currentSettings.value?.timerTextColor,
       timerTextSize: currentSettings.value?.timerTextSize,
       timerTimeOfDayDisplay: currentSettings.value?.timerTimeOfDayDisplay,
@@ -736,32 +832,38 @@ const useTimer = () => {
     safePostTimerData(timerData);
   };
 
-  const sequence = computed(() =>
-    getMeetingPartSequence(selectedDateObject.value?.date),
-  );
+  const { toggleTimerWindow } = globalThis.electronApi;
 
-  // Calculate ahead/behind minutes
-  const calculateAheadBehindMinutes = (): null | number => {
-    if (!currentSettings.value?.timerEnableMeetingAheadBehind) {
-      return null;
+  const handleTimerWindowVisibility = (visible: boolean) => {
+    toggleTimerWindow(visible);
+    currentState.setTimerWindowVisible(visible);
+    if (visible) {
+      // Broadcast the actual current state rather than a hardcoded idle
+      // snapshot - showing/hiding the timer window while a timer is already
+      // running previously flashed the plain clock for one tick before the
+      // next 500ms update self-corrected it.
+      updateTimerWindow();
     }
-
-    const currentPartIndex = sequence.value.indexOf(currentPart.value);
-    if (currentPartIndex === -1) return null;
-
-    const currentPartInfo = sequence.value[currentPartIndex];
-    if (!currentPartInfo) return null;
-
-    const actualStartTime = partTimings.value[currentPart.value]?.startTime;
-    if (!actualStartTime) return null;
-
-    const plannedStartTime = getPlannedStartTime(currentPartInfo);
-    if (!plannedStartTime) return null;
-
-    // Return difference in minutes (positive = behind, negative = ahead)
-    const diffMinutes = (actualStartTime - plannedStartTime) / (1000 * 60);
-    return diffMinutes;
   };
+
+  // --- Planned start times and ahead/behind --------------------------------------
+
+  const sequence = computed(() => getMeetingPartSequence(selectedDate.value));
+
+  const meetingStartTime = computed(() => {
+    const date = selectedDate.value;
+    if (!date || (!isWeMeetingDay(date) && !isMwMeetingDay(date))) return null;
+    const startTimeStr = isMwMeetingDay(date)
+      ? currentSettings.value?.mwStartTime
+      : currentSettings.value?.weStartTime;
+    if (!startTimeStr) return null;
+    const parts = startTimeStr.split(':');
+    const hour = Number(parts[0]);
+    const min = Number(parts[1]);
+    const start = new Date(date);
+    start.setHours(hour, min, 0, 0);
+    return start;
+  });
 
   const getCustomPartOffsetMinutes = (
     parts: CustomTimerPart[],
@@ -770,28 +872,29 @@ const useTimer = () => {
   ) => {
     let offsetMinutes = 0;
     for (let i = startIndex; i < endIndex; i++) {
-      offsetMinutes += parts[i]?.duration ?? 0;
+      offsetMinutes += normalizePartDuration(parts[i]?.duration);
     }
     return offsetMinutes;
   };
 
+  /**
+   * A custom part's planned start, worked out from the first custom part
+   * that was actually started (there's no schedule to go by otherwise).
+   */
   const getCustomPlannedStartTime = (part: MeetingPart) => {
     const parts = customTimerParts.value;
     const index = parts.findIndex((customPart) => customPart.id === part);
     if (index === -1) return null;
 
-    const anchorPart = parts.find(
+    const anchorIndex = parts.findIndex(
       (customPart) => partTimings.value[customPart.id]?.startTime,
     );
+    const anchorPart = parts[anchorIndex];
     const anchorStartTime = anchorPart
       ? partTimings.value[anchorPart.id]?.startTime
       : null;
-
     if (!anchorPart || !anchorStartTime) return null;
 
-    const anchorIndex = parts.findIndex(
-      (customPart) => customPart.id === anchorPart.id,
-    );
     const offsetStart = Math.min(index, anchorIndex);
     const offsetEnd = Math.max(index, anchorIndex);
     const offsetMinutes = getCustomPartOffsetMinutes(
@@ -806,17 +909,9 @@ const useTimer = () => {
     return anchorStartTime - offsetMinutes * 60 * 1000;
   };
 
-  const meetingPartOffsetMinutes = (partIndex: number) =>
-    getMeetingPartOffsetMinutes(partIndex, sequence.value, partDurations.value);
-
   // Get planned start time for a meeting part
   const getPlannedStartTime = (part: MeetingPart): null | number => {
-    const date = selectedDateObject.value?.date;
-    if (!date) return null;
-
-    if (!isWeMeetingDay(date) && !isMwMeetingDay(date)) {
-      return getCustomPlannedStartTime(part);
-    }
+    if (isCustomPart(part)) return getCustomPlannedStartTime(part);
 
     const meetingStart = meetingStartTime.value?.getTime();
     if (!meetingStart) return null;
@@ -824,132 +919,119 @@ const useTimer = () => {
     const index = sequence.value.indexOf(part);
     if (index === -1) return null;
 
-    return meetingStart + meetingPartOffsetMinutes(index) * 60 * 1000;
+    const offsetMinutes = getMeetingPartOffsetMinutes(
+      index,
+      sequence.value,
+      partDurations.value,
+    );
+    return meetingStart + offsetMinutes * 60 * 1000;
   };
 
-  const meetingStartTime = computed(() => {
-    const date = selectedDateObject.value?.date;
-    if (!date || (!isWeMeetingDay(date) && !isMwMeetingDay(date))) return null;
-    const startTimeStr = isMwMeetingDay(date)
-      ? currentSettings.value?.mwStartTime
-      : currentSettings.value?.weStartTime;
-    if (!startTimeStr) return null;
-    const parts = startTimeStr.split(':');
-    const hour = Number(parts[0]);
-    const min = Number(parts[1]);
-    const start = new Date(date);
-    start.setHours(hour, min, 0, 0);
-    return start;
+  /**
+   * How far the meeting is behind (positive) or ahead of (negative) its
+   * schedule, in minutes, judged by when the current part actually started.
+   */
+  const aheadBehindMinutes = computed<null | number>(() => {
+    if (!currentSettings.value?.timerEnableMeetingAheadBehind) return null;
+
+    const actualStartTime = partTimings.value[currentPart.value]?.startTime;
+    if (!actualStartTime) return null;
+
+    const plannedStartTime = getPlannedStartTime(currentPart.value);
+    if (!plannedStartTime) return null;
+
+    return (actualStartTime - plannedStartTime) / (1000 * 60);
   });
+
+  const toHoursMinutes = (timestamp: number) => {
+    const date = new Date(timestamp);
+    return (
+      date.getHours().toString().padStart(2, '0') +
+      ':' +
+      date.getMinutes().toString().padStart(2, '0')
+    );
+  };
 
   const cbsAdaptiveDefaultEndTime = computed(() => {
     const startTime = getPlannedStartTime('cbs');
     if (!startTime) return '';
-    const duration = partDurations.value.cbs * 60 * 1000;
-    const endTime = new Date(startTime + duration);
-    return endTime.toTimeString().slice(0, 5); // hh:mm
+    return toHoursMinutes(startTime + getPartDurationSeconds('cbs') * 1000);
   });
 
   const wtAdaptiveDefaultEndTime = computed(() => {
-    const date = selectedDateObject.value?.date;
+    const date = selectedDate.value;
     const isCo = date ? isCoWeek(date) : false;
     const wtPart = isCo ? 'abbreviated-wt' : 'wt';
     const startTime = getPlannedStartTime(wtPart);
     if (!startTime) return '';
-    const durationKey = wtPart;
-    const duration = partDurations.value[durationKey] * 60 * 1000;
-    const endTime = new Date(startTime + duration);
-    return endTime.toTimeString().slice(0, 5); // hh:mm
+    return toHoursMinutes(startTime + getPartDurationSeconds(wtPart) * 1000);
   });
+
+  const endTimeRule =
+    (minOffsetMinutes: number, maxOffsetMinutes: number) => (val: string) => {
+      const parts = val.split(':');
+      const h = Number(parts[0]);
+      const m = Number(parts[1]);
+      const meetingStart = meetingStartTime.value?.getTime() || 0;
+      const endTime = new Date(meetingStart);
+      endTime.setHours(h, m, 0, 0);
+      const minTime = meetingStart + minOffsetMinutes * 60 * 1000;
+      const maxTime = meetingStart + maxOffsetMinutes * 60 * 1000;
+      return (
+        (endTime.getTime() >= minTime && endTime.getTime() <= maxTime) ||
+        t('time-must-be-between', {
+          maxTime: toHoursMinutes(maxTime),
+          minTime: toHoursMinutes(minTime),
+        })
+      );
+    };
 
   const cbsEndTimeRules = [
     (val: string) => !!val || t('required'),
-    (val: string) => {
-      const parts = val.split(':');
-      const h = Number(parts[0]);
-      const m = Number(parts[1]);
-      const endTime = new Date(meetingStartTime.value?.getTime() || 0);
-      endTime.setHours(h, m, 0, 0);
-      const minTime = new Date(
-        (meetingStartTime.value?.getTime() || 0) + 68 * 60 * 1000,
-      );
-      const maxTime = new Date(
-        (meetingStartTime.value?.getTime() || 0) + 97 * 60 * 1000,
-      );
-      return (
-        (endTime >= minTime && endTime <= maxTime) ||
-        t('time-must-be-between', {
-          maxTime:
-            maxTime.getHours().toString().padStart(2, '0') +
-            ':' +
-            maxTime.getMinutes().toString().padStart(2, '0'),
-          minTime:
-            minTime.getHours().toString().padStart(2, '0') +
-            ':' +
-            minTime.getMinutes().toString().padStart(2, '0'),
-        })
-      );
-    },
+    endTimeRule(68, 97),
   ];
   const wtEndTimeRules = [
     (val: string) => !!val || t('required'),
-    (val: string) => {
-      const parts = val.split(':');
-      const h = Number(parts[0]);
-      const m = Number(parts[1]);
-      const endTime = new Date(meetingStartTime.value?.getTime() || 0);
-      endTime.setHours(h, m, 0, 0);
-      const minTime = new Date(
-        (meetingStartTime.value?.getTime() || 0) + 36 * 60 * 1000,
-      );
-      const maxTime = new Date(
-        (meetingStartTime.value?.getTime() || 0) + 100 * 60 * 1000,
-      );
-      return (
-        (endTime >= minTime && endTime <= maxTime) ||
-        t('time-must-be-between', {
-          maxTime:
-            maxTime.getHours().toString().padStart(2, '0') +
-            ':' +
-            maxTime.getMinutes().toString().padStart(2, '0'),
-          minTime:
-            minTime.getHours().toString().padStart(2, '0') +
-            ':' +
-            minTime.getMinutes().toString().padStart(2, '0'),
-        })
-      );
-    },
+    endTimeRule(36, 100),
   ];
 
-  // Watch selected date to set default adaptive end times
+  // --- Keeping up with the selected day ------------------------------------------
+
+  // A new day means a new list of parts: a running timer belongs to the
+  // previous day, so it's stopped (its end time recorded on that day).
+  watch(selectedDate, (date, previousDate) => {
+    if (date?.getTime() === previousDate?.getTime()) return;
+    if (timerRunning.value) stopTimer();
+  });
+
   watchImmediate(selectedDateObject, () => {
+    ensureNonMeetingTimerParts();
     cbsCustomEndTime.value = cbsAdaptiveDefaultEndTime.value;
     wtCustomEndTime.value = wtAdaptiveDefaultEndTime.value;
-    ensureNonMeetingTimerParts();
-    syncCustomTimerPartState();
 
-    if (!isMeetingDay(selectedDateObject.value?.date)) {
-      const firstCustomPart = customTimerParts.value[0];
-      if (firstCustomPart) {
-        currentPart.value = firstCustomPart.id;
-      }
+    const options = meetingPartsOptions.value;
+    const stillListed = options.some(
+      (option) => option.value === currentPart.value,
+    );
+    if (!stillListed && options[0]) {
+      currentPart.value = options[0].value;
     }
   });
 
-  watch(
-    customTimerParts,
-    () => {
-      syncCustomTimerPartState();
-    },
-    { deep: true },
-  );
+  watch(timerMode, () => {
+    if (timerRunning.value) stopTimer();
+  });
 
   return {
     addCustomTimerPart,
+    adjustPartDuration,
+    aheadBehindMinutes,
     ayfmPartsCount,
     cbsCustomEndTime,
     cbsEndTimeRules,
     currentPart,
+    currentPartLabel,
+    currentPartOption,
     customTimerParts,
     elapsedSeconds,
     formattedTime,
@@ -957,15 +1039,22 @@ const useTimer = () => {
     getPlannedStartTime,
     getTimeString,
     handleTimerWindowVisibility,
+    hasAnyPartTimings,
     lacPartsCount,
     meetingPartsOptions,
     moveCustomTimerPart,
+    nextPart,
     partDurations,
-    partTimings, // Expose partTimings
+    partTimings,
     pauseTimer,
     refreshCountdownTarget,
     removeCustomTimerPart,
+    resetAllPartTimings,
+    resetPartTiming,
     resumeTimer,
+    selectPart,
+    setPartDuration,
+    startNextPart,
     startTimer,
     stopTimer,
     timerMode,
@@ -973,10 +1062,36 @@ const useTimer = () => {
     timerPausedTime,
     timerRunning,
     timerStartTime,
+    togglePause,
+    updateCustomTimerPart,
     updateTimerWindow,
     wtCustomEndTime,
     wtEndTimeRules,
   };
+};
+
+export type Timer = ReturnType<typeof createTimer>;
+
+let timer: null | Timer = null;
+
+/**
+ * The meeting timer, shared by everything that shows or drives it (the
+ * action island popup and its hover controls, the docked panel): one timer,
+ * created on first use and kept for the life of the main window, so a part
+ * started from one place can be paused or stopped from another.
+ */
+const useTimer = (): Timer => {
+  if (!timer) {
+    const scope = effectScope(true);
+    timer = scope.run(createTimer) ?? null;
+    if (!timer) throw new Error('The meeting timer could not be created');
+  }
+  return timer;
+};
+
+/** Test-only: forgets the shared timer so the next useTimer() starts afresh. */
+export const __resetTimerForTests = () => {
+  timer = null;
 };
 
 export default useTimer;
