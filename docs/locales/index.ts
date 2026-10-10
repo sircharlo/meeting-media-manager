@@ -13,7 +13,7 @@ export const enabled: LanguageValue[] = baseEnabled.filter((l) => l !== 'en');
 // 100.0% translated as of 2026-10-10
 import en from './en.json' with { type: 'json' };
 
-// 96.6% translated as of 2026-10-10
+// 99.3% translated as of 2026-10-10
 import fr from './fr.json' with { type: 'json' };
 
 // 96.0% translated as of 2026-10-10
