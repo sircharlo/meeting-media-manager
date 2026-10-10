@@ -452,11 +452,22 @@ Fa'anahora'a tumu: `Hape`
 
 A fa’anaho i te huru o te ha’amāramarama tāime: ia ’īrava ’ōpani-’ore-hia anei te reira, ia faito i ni’a a’e aore rā i raro te tāime o te mau ta’ata ’orero, ia fa’a’ohipa i te hora 12 aore rā 24, e ia fa’a’ite-hia anei te tāime i ni’a i te tuha’a fa’a’itera’a o te tāime.
 
+### Quick Access to the Timer {#timer-quick-access}
+
+<!-- **Settings**: `timerIslandHoverControls`, `timerDockedPanel` -->
+
+Choose how the timer is reached from the main window:
+
+- **Quick controls when hovering the timer button**: hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons, without opening the full timer popup. On by default.
+- **Show a timer panel in the main window**: keeps the whole list of meeting parts and the timer controls in a panel docked on the right side of the main window, always in view. The full popup remains available from the action island for the window and display settings.
+
 ### Te mau huru fa’a’itera’a o te tāime {#timer-display-formats}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
 A mā’iti i te huru fa’a’itera’a, ’aiguille’ aore rā ’digital’, nō te hora o te mahana e nō te mau tāime tāta’u ha’amau. E nehenehe te tā’u ha’amau fa’aara e fa’ahuri i te rōpī ’analog’ o te tā’u i ni’a i te ho’e hoho’a fa’aara i te roara’a o te minuti hope’a.
+
+The **Analog clock with time arc** countdown format shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a second wedge in the overtime color. It also applies to the pre-meeting countdown and works in count-up mode.
 
 ### Tāime tāta’u o te putuputura’a e te huru o te porotarama {#meeting-countdown-and-schedule-status}
 

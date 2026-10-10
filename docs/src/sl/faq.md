@@ -56,7 +56,7 @@ M³ vključuje čarovnik za nastavitev, ki te vodi skozi osnovno konfiguracijo:
 
 ## Upravljanje multimedijske vsebine {#faq-media-management}
 
-### :desktop_computer: Kako M³ prenese multimedijsko vsebino? {#media-download}
+### :desktop_computer: Kako M³ prenese multimedijsko vsebino?  {#media-download}
 
 M³ samodejno prenese multimedijsko vsebino za prihajajoče shode:
 
@@ -66,7 +66,7 @@ M³ samodejno prenese multimedijsko vsebino za prihajajoče shode:
 4. Razvrščanje multimedijske vsebine po datumu in vrsti shoda
 5. Shranjevanje datotek v predpomnilnik za uporabo brez internetne povezave
 
-### :calendar: Ali lahko prenesem multimedijsko vsebino za določene datume? {#specific-dates}
+### :calendar: Ali lahko prenesem multimedijsko vsebino za določene datume?  {#specific-dates}
 
 Da! M³ ti omogoča:
 
@@ -84,7 +84,7 @@ Prilagojeno multimedijsko vsebino lahko uvoziš na več načinov:
 - **Multimedijska vsebina za javni govor**: Uvozi JWPUB datoteke S-34 ali S-34mp za multimedijsko vsebino javnega govora
 - **Orodja za Sveto pismo in Study Bible**: Dodaj zvočne posnetke Svetega pisma, multimedijsko vsebino iz Study Bible ali multimedijsko vsebino v znakovnem jeziku
 
-### :speaker: Ali lahko uvozim zvočne posnetke Svetega pisma? {#audio-bible}
+### :speaker: Ali lahko uvozim zvočne posnetke Svetega pisma?  {#audio-bible}
 
 Da! M³ vključuje funkcijo Avdio Biblija, ki ti omogoča:
 
@@ -95,7 +95,7 @@ Da! M³ vključuje funkcijo Avdio Biblija, ki ti omogoča:
 
 ## Funkcije predstavitve {#faq-presentation-features}
 
-### :tv: Kako predvajam multimedijsko vsebino med shodi? {#present-media}
+### :tv: Kako predvajam multimedijsko vsebino med shodi?  {#present-media}
 
 Če želiš predvajati multimedijsko vsebino:
 
@@ -105,7 +105,7 @@ Da! M³ vključuje funkcijo Avdio Biblija, ki ti omogoča:
 4. uporabi funkcije povečave/pomanjšave za slike,
 5. po potrebi nastavi časovni razpored po meri.
 
-### :keyboard: Katere bližnjice na tipkovnici so na voljo? {#faq-keyboard-shortcuts}
+### :keyboard: Katere bližnjice na tipkovnici so na voljo?  {#faq-keyboard-shortcuts}
 
 M³ podpira prilagodljive bližnjice za:
 
@@ -116,7 +116,7 @@ M³ podpira prilagodljive bližnjice za:
 
 <!-- - Fullscreen mode -->
 
-### :notes: Kako deluje glasba v ozadju? {#faq-background-music}
+### :notes: Kako deluje glasba v ozadju?  {#faq-background-music}
 
 Funkcije glasbe v ozadju vključujejo:
 
@@ -126,13 +126,13 @@ Funkcije glasbe v ozadju vključujejo:
 - neodvisen nadzor glasnosti,
 - nastavljiv časovni zamik za zaustavitev.
 
-### :stopwatch: Ali M³ vključuje časovnik za shode? {#faq-meeting-timer}
+### :stopwatch: Ali M³ vključuje časovnik za shode?  {#faq-meeting-timer}
 
-Da. Ko je ta funkcija omogočena, lahko M³ prikaže ločeno okno časovnika za merjenje časa udeležencev. Časovnik lahko šteje navzgor ali navzdol, prikazuje lahko trenutni čas, odšteva do začetka shoda in po želji označi prekoračitev časa in to, ali program shoda prehiteva ali zaostaja.
+Da. Ko je ta funkcija omogočena, lahko M³ prikaže ločeno okno časovnika za merjenje časa udeležencev. Časovnik lahko šteje navzgor ali navzdol, prikazuje lahko trenutni čas, odšteva do začetka shoda in po želji označi prekoračitev časa in to, ali program shoda prehiteva ali zaostaja. Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
 
 Časovnik je funkcija v beta fazi in jo je treba omogočiti samo, če je lokalno odobrena.
 
-### :video_camera: Kako nastavim združevanje z Zoomom? {#zoom-setup}
+### :video_camera: Kako nastavim združevanje z Zoomom?  {#zoom-setup}
 
 Za združevanje z Zoomom:
 
@@ -142,7 +142,7 @@ Za združevanje z Zoomom:
 
 ## Združevanje z OBS Studio {#faq-obs-integration}
 
-### :video_camera: Kako nastavim združevanje z OBS Studio? {#faq-obs-setup}
+### :video_camera: Kako nastavim združevanje z OBS Studio?  {#faq-obs-setup}
 
 Za združevanje z OBS Studio:
 
@@ -152,7 +152,7 @@ Za združevanje z OBS Studio:
 4. Nastavi prizore za kamero, multimedijsko vsebino in slike
 5. Preizkusi predvajanje
 
-### :arrows_counterclockwise: Kako deluje samodejno preklapljanje prizorov v OBS? {#faq-scene-switching}
+### :arrows_counterclockwise: Kako deluje samodejno preklapljanje prizorov v OBS?  {#faq-scene-switching}
 
 M³ samodejno preklaplja prizore v OBS glede na:
 
@@ -161,7 +161,7 @@ M³ samodejno preklaplja prizore v OBS glede na:
 - Nastavitve, kot je »Odloži slike« (Postpone Images)
 - To, ali naj se po predvajanju multimedijske vsebine vrne na prejšnji prizor
 
-### :pause_button: Kaj pomeni funkcija »Odloži slike«? {#faq-postpone-images}
+### :pause_button: Kaj pomeni funkcija »Odloži slike«?  {#faq-postpone-images}
 
 Ta funkcija odloži deljenje slik z OBS Studiem, dokler jih ročno ne sprožiš. To je uporabno za:
 
@@ -169,7 +169,7 @@ Ta funkcija odloži deljenje slik z OBS Studiem, dokler jih ročno ne sprožiš.
 - Večji nadzor nad časom prikaza
 - Izogibanje prezgodnjim spremembam prizorov
 
-### :record_button: Ali lahko M³ snema shode? {#faq-recordings}
+### :record_button: Ali lahko M³ snema shode?  {#faq-recordings}
 
 M³ nima vgrajenega snemalnika, lahko pa pomaga pri nadzoru snemanja na dva načina:
 
@@ -178,7 +178,7 @@ M³ nima vgrajenega snemalnika, lahko pa pomaga pri nadzoru snemanja na dva nač
 
 ## Napredne funkcije {#faq-advanced-features}
 
-### :cloud: Kako deluje spremljanje map? {#faq-folder-monitoring}
+### :cloud: Kako deluje spremljanje map?  {#faq-folder-monitoring}
 
 Spremljanje map ti omogoča, da:
 
@@ -194,7 +194,7 @@ S samodejnim izvozom multimedijske vsebine se zgodi naslednje:
 3. Po želji se datoteke pretvorijo v format MP4
 4. Ohranja se urejena varnostna kopija multimedijske vsebine za shode
 
-### :family: Ali lahko upravljam več občin? {#faq-multiple-congregations}
+### :family: Ali lahko upravljam več občin?  {#faq-multiple-congregations}
 
 Da! M³ podpira več profilov za:
 
@@ -207,7 +207,7 @@ Profile lahko izvoziš tudi v datoteko JSON in ga uvoziš na drug računalnik al
 
 ## Odpravljanje težav {#faq-troubleshooting}
 
-### :warning: Multimedijska vsebina se ne prenaša s spleta. Kaj naj preverim? {#faq-media-not-downloading}
+### :warning: Multimedijska vsebina se ne prenaša s spleta. Kaj naj preverim?  {#faq-media-not-downloading}
 
 Preveri naslednje pogoste težave:
 
@@ -218,7 +218,7 @@ Preveri naslednje pogoste težave:
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: Združevanje z OBS Studiem ne deluje. Kaj naj preverim? {#faq-obs-not-working}
+### :video_camera: Združevanje z OBS Studiem ne deluje. Kaj naj preverim?  {#faq-obs-not-working}
 
 Preveri naslednje nastavitve, povezane z OBS Studiem:
 

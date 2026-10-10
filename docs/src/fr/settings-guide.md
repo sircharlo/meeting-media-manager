@@ -452,11 +452,22 @@ Activer une fenêtre de minuterie séparée pour chronométrer les parties d'une
 
 Configurer si la fenêtre de minuterie s'ouvre automatiquement, si le minuteur compte en montant ou bien à rebours, si l'horloge utilise 12 heures ou 24 heures, et si la valeur actuelle du minuteur devrait être affichée sur le bouton de minuterie dans l'île d'action.
 
+### Quick Access to the Timer {#timer-quick-access}
+
+<!-- **Settings**: `timerIslandHoverControls`, `timerDockedPanel` -->
+
+Choose how the timer is reached from the main window:
+
+- **Quick controls when hovering the timer button**: hovering the timer button on the action island shows the part being timed, with Start, Pause, Stop and Next part buttons, without opening the full timer popup. On by default.
+- **Show a timer panel in the main window**: keeps the whole list of meeting parts and the timer controls in a panel docked on the right side of the main window, always in view. The full popup remains available from the action island for the window and display settings.
+
 ### Formats d'affichage du minuteur {#timer-display-formats}
 
 <!-- **Settings**: `timerTimeOfDayDisplay`, `timerCountdownDisplay`, `timerCountdownWarningIndicator` -->
 
 Choisissez des formats d’affichage analogique ou numérique pour l’heure et les minuteurs à rebours. L'indicateur d'alerte du compte à rebours peut faire passer l'anneau de compte à rebours analogique à une couleur d'alerte pendant la dernière minute.
+
+The **Analog clock with time arc** countdown format shows the time left for a part as a wedge on an analog clock face, from the minute hand to the planned end, so one glance shows both the time of day and what's left. Overtime shows as a second wedge in the overtime color. It also applies to the pre-meeting countdown and works in count-up mode.
 
 ### Compte à rebours et horaire des réunions {#meeting-countdown-and-schedule-status}
 
