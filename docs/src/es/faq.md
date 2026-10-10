@@ -128,7 +128,7 @@ Las funciones de música de fondo incluyen:
 
 ### :stopwatch: ¿M³ incluye un cronómetro para la reunión? {#faq-meeting-timer}
 
-Sí. Cuando está activado, M³ puede mostrar una ventana independiente del cronómetro para controlar el tiempo de los participantes. Puede contar de forma progresiva o regresiva, mostrar la hora actual, mostrar una cuenta regresiva antes de la reunión y, si quieres, indicar el tiempo excedido o si la reunión va adelantada o atrasada con respecto al programa.
+Sí. Cuando está activado, M³ puede mostrar una ventana independiente del cronómetro para controlar el tiempo de los participantes. Puede contar de forma progresiva o regresiva, mostrar la hora actual, mostrar una cuenta regresiva antes de la reunión y, si quieres, indicar el tiempo excedido o si la reunión va adelantada o atrasada con respecto al programa. Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
 
 El cronómetro es una función beta y solo debería activarse si se ha aprobado localmente.
 
