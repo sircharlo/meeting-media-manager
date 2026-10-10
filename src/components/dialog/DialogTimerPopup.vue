@@ -393,6 +393,41 @@
         </div>
       </div>
 
+      <!-- Timer remote: where to open the read-only page -->
+      <template v-if="currentSettings?.timerRemoteEnable">
+        <q-separator class="bg-accent-200" />
+        <div class="q-px-md q-py-sm">
+          <div class="card-section-title row">
+            {{ t('timer-remote') }}
+          </div>
+          <div class="text-caption text-dark-grey q-mb-xs">
+            {{
+              timerRemoteUrls.length
+                ? t('timer-remote-open-on-device')
+                : t('timer-remote-no-network')
+            }}
+          </div>
+          <div
+            v-for="url in timerRemoteUrls"
+            :key="url"
+            class="row items-center no-wrap q-gutter-x-sm"
+          >
+            <code class="col ellipsis timer-remote__url">{{ url }}</code>
+            <q-btn
+              :aria-label="t('timer-remote-copy')"
+              dense
+              flat
+              icon="mmm-link"
+              round
+              size="sm"
+              @click="copyRemoteUrl(url)"
+            >
+              <q-tooltip :delay="500">{{ t('timer-remote-copy') }}</q-tooltip>
+            </q-btn>
+          </div>
+        </div>
+      </template>
+
       <!-- Show/Hide Section -->
       <q-separator class="bg-accent-200" />
       <div class="action-popup__footer q-px-md q-pt-md row">
@@ -460,7 +495,7 @@ import TimeInput from 'components/form-inputs/TimeInput.vue';
 import TimerPartsList from 'components/media/TimerPartsList.vue';
 import TimerQuickControls from 'components/media/TimerQuickControls.vue';
 import { storeToRefs } from 'pinia';
-import { QMenu } from 'quasar';
+import { copyToClipboard, QMenu } from 'quasar';
 import useTimer from 'src/composables/useTimer';
 import { useTimerAheadBehindText } from 'src/composables/useTimerAheadBehindText';
 import {
@@ -470,6 +505,7 @@ import {
   isWeMeetingDay,
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { createTemporaryNotification } from 'src/helpers/notifications';
 import { exportTimerReport } from 'src/helpers/timer-report';
 import { useAppSettingsStore } from 'src/stores/app-settings';
 import { withTimeout } from 'src/utils/general';
@@ -490,8 +526,23 @@ const {
   currentCongregation,
   currentSettings,
   selectedDateObject,
+  timerRemoteUrls,
   timerWindowVisible,
 } = storeToRefs(currentState);
+
+const copyRemoteUrl = async (url: string) => {
+  try {
+    await copyToClipboard(url);
+    createTemporaryNotification({
+      group: 'timer-remote',
+      icon: 'mmm-link',
+      message: t('timer-remote-copied'),
+      type: 'positive',
+    });
+  } catch (error) {
+    errorCatcher(error, { contexts: { fn: { name: 'copyRemoteUrl' } } });
+  }
+};
 
 const appSettingsStore = useAppSettingsStore();
 const { timerPreferences } = storeToRefs(appSettingsStore);
@@ -766,5 +817,10 @@ watch(timerWindowVisible, (visible) => {
 <style scoped>
 .border-dashed::before {
   border-style: dashed;
+}
+
+.timer-remote__url {
+  font-size: 0.85em;
+  min-width: 0;
 }
 </style>

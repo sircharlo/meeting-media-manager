@@ -170,8 +170,12 @@ const electronApi: ElectronApi = {
   setPathProbeNotificationPaths: (paths) =>
     send('setPathProbeNotificationPaths', paths),
   showFileOnWindows,
+  startTimerRemote: (port) => invoke('startTimerRemote', port),
   startZoomHelper: () => invoke('startZoomHelper'),
+  stopTimerRemote: () => send('stopTimerRemote'),
   stopZoomHelper: () => send('stopZoomHelper'),
+  timerRemoteText: (t) => send('timerRemoteText', t),
+  timerRemoteUpdate: (d) => send('timerRemoteUpdate', d),
   toggleAuthorizedClose: (v) => send('authorizedClose', v),
   toggleMediaWindow: (s, f) => send('toggleMediaWindow', s, f),
   toggleTimerWindow: (s) => send('toggleTimerWindow', s),
