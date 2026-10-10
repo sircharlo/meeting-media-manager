@@ -471,6 +471,19 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'timerDisplay',
     type: 'toggle',
   },
+  timerRemoteEnable: {
+    depends: 'enableTimerDisplay',
+    group: 'meetingTimer',
+    subgroup: 'timerDisplay',
+    type: 'toggle',
+  },
+  timerRemotePort: {
+    depends: ['enableTimerDisplay', 'timerRemoteEnable'],
+    group: 'meetingTimer',
+    rules: ['notEmpty', 'portNumber'],
+    subgroup: 'timerDisplay',
+    type: 'text',
+  },
   timerEnableMeetingCountdown: {
     depends: 'enableTimerDisplay',
     group: 'meetingTimer',
@@ -1138,6 +1151,8 @@ export const defaultSettings: SettingsValues = {
   timerOvertimeIndicator: false,
   timerOvertimeShowAmountOnly: true,
   timerOvertimeTextColor: '#ff0000',
+  timerRemoteEnable: false,
+  timerRemotePort: '8787',
   timerShowOnActionIsland: false,
   timerTextColor: '#ffffff',
   timerTextSize: '10vw',

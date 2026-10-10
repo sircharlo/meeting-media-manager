@@ -830,6 +830,15 @@ const createTimer = () => {
     };
 
     safePostTimerData(timerData);
+    if (currentSettings.value?.timerRemoteEnable) {
+      try {
+        globalThis.electronApi.timerRemoteUpdate(timerData);
+      } catch (error) {
+        void errorCatcher(error, {
+          contexts: { fn: { name: 'timerRemoteUpdate' } },
+        });
+      }
+    }
   };
 
   const { toggleTimerWindow } = globalThis.electronApi;

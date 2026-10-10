@@ -147,6 +147,7 @@ import {
   checkLowDiskSpaceAndNotify,
   createTemporaryNotification,
 } from 'src/helpers/notifications';
+import { syncTimerRemote } from 'src/helpers/timer-remote';
 import { scheduleZoomStartupCheck } from 'src/helpers/zoom-startup-check';
 import { localeOptions } from 'src/i18n';
 import { log, type LogPrefix } from 'src/shared/vanilla';
@@ -1737,6 +1738,21 @@ watch(
   ],
   () => {
     currentState.syncZoomHelper();
+  },
+);
+
+// Serve the timer remote page whenever it's turned on (and restart it on a
+// new port), stop it otherwise.
+watchImmediate(
+  () => [
+    currentCongregation.value,
+    currentSettings.value?.enableTimerDisplay,
+    currentSettings.value?.timerRemoteEnable,
+    currentSettings.value?.timerRemotePort,
+    locale.value,
+  ],
+  () => {
+    void syncTimerRemote();
   },
 );
 
