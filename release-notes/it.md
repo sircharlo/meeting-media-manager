@@ -20,6 +20,8 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 - ✨ **Meeting Timer**: Each day's recorded timings can be cleared in one go, after a confirmation, from the timer popup or the docked panel.
 
+- ✨ **Meeting Timer**: A new, optional timer remote. When turned on, M³ serves a read-only copy of the timer display as a web page on the local network, so a tablet or phone at the lectern can show the speaker the remaining time without it being on the congregation's screen or in a Zoom share. The page follows the timer in real time (parts, pre-meeting countdown, clock, overtime colors, hand alert) and all the controls stay in M³. The addresses to open are shown in the timer popup, with a copy button.
+
 ## v26.9.0
 
 ### ✨ Nuove Funzionalità
@@ -28,7 +30,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.8.0
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **App-Wide Redesign**: un ampio aggiornamento visivo e di interazione attraverso le finestre di dialogo, la lista dei supporti/intestazione, le impostazioni e la procedura guidata di configurazione. La procedura guidata di configurazione è ora un flusso di una domanda per schermo con una barra di avanzamento. Tutti i prompt sono stati sostituiti con una finestra di dialogo marchiata coerente, e la selezione dell'intervallo di pagine PDF (per le importazioni di pubblicazione e trascinamento) ora utilizza un selettore di griglie-miniature invece di un prompt di testo libero. Aggiunto un nuovo tour della Guida di Avvio Rapido dopo il completamento dell'Installazione Guidata. Include anche lo styling ricaricato della carta/intestazione con ombre oscure e diverse correzioni di contrasto della modalità scura (etichette di campo focalizzate, percentuali di scarico-avanzamento).
 - ✨ **Pagina delle impostazioni**: Rielaborato in un layout a due pannelli, con una nuova sezione globale di Preferenze per l'aggiornamento automatico/aggiornamento beta-commuta fuori dalla finestra di dialogo Informazioni (che ora è puramente informativa).
@@ -239,7 +241,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## 25.3.1
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - 🌏 **Nuova lingua: coreano**: aggiunge il supporto per la lingua coreana, ampliando l'accessibilità per più utenti.
 
