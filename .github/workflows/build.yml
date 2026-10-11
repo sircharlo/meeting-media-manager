@@ -218,7 +218,7 @@ jobs:
           security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
       - name: Upload artifacts
         if: ${{ !inputs.publish-release }}
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: M³ test build for ${{ matrix.os == 'macos-latest' && 'macOS' || matrix.os == 'windows-latest' && 'Windows' || 'Linux' }}
           path: |
