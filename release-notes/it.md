@@ -20,6 +20,8 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 - ✨ **Meeting Timer**: Each day's recorded timings can be cleared in one go, after a confirmation, from the timer popup or the docked panel.
 
+- ✨ **Zoom Meeting Manager (beta, Windows)**: A new raised-hand helper. During a meeting, M³ watches Zoom's participants list for raised hands. When someone raises their hand, a notification in M³ lets the operator unmute that participant with one click, and, once they're done speaking, mute them again and lower their hand with another; the Zoom button on the action island lists the raised hands with the same buttons. Every action goes to that participant's own row in Zoom, by their exact name, and M³ touches no one when two participants share a name. If the meeting timer is enabled, a large hand with the participant's name also appears on the timer display for the chairman, and can be switched on by hand from the timer or Zoom popups. M³ learns how Zoom marks raised hands in your language with a single button (it raises and lowers your own hand), offered in the setup assistant as well.
+
 - ✨ **Meeting Timer**: A new, optional timer remote. When turned on, M³ serves a read-only copy of the timer display as a web page on the local network, so a tablet or phone at the lectern can show the speaker the remaining time without it being on the congregation's screen or in a Zoom share. The page follows the timer in real time (parts, pre-meeting countdown, clock, overtime colors, hand alert) and all the controls stay in M³. The addresses to open are shown in the timer popup, with a copy button.
 
 ## v26.9.0
@@ -66,7 +68,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.6.1
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **Anteprima dei media**: aggiunto un overlay di anteprima dei media dal vivo che può essere attivato o disattivato dalle impostazioni o dal popup di visualizzazione.
 - ✨ **Cerca media**: aggiunta una casella di ricerca rapida nell'elenco dei media che consente di trovare rapidamente i media per titolo. Per usarla, basta usare la scorciatoia da tastiera standard per la ricerca (Ctrl+F o Cmd+F).
@@ -89,13 +91,13 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## v26.4.8
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - ✨ **JW Stream**: Aggiunto JW Stream alla lista dei siti web che possono essere mirrored.
 
 ## v26.4.0
 
-### ✨ Nuove Funzionalità
+### ✨ Nuove funzionalità
 
 - ✨ **Timer di riunione**: È stata aggiunta una nuova funzione di timer di riunione. È facoltativo e può essere abilitato nelle impostazioni avanzate, se lo si desidera. Il timer può essere utilizzato per consentire all'operatore multimediale di tenere traccia del tempo dedicato alle parti di riunione, o per visualizzare il tempo trascorso sulla parte di riunione corrente su uno schermo dedicato visibile solo all'altoparlante.
 
@@ -256,7 +258,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ## 25.2.1
 
-### ✨ Nuove funzionalità
+### ✨ Nuove Funzionalità
 
 - 🔄 **Consenti tentativi di ricostruzione OBS**: Introdurre la possibilità di forzare manualmente OBS a riconnettersi quando necessario.
 - 🗑️ **Auto Cleanup Old Export Date Folders**: Rimuovere automaticamente le cartelle di data di esportazione obsolete per mantenere lo storage organizzato.
