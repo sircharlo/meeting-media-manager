@@ -114,6 +114,10 @@ namespace M3.ZoomHelper
             }
         }
         [DllImport("user32.dll")] public static extern bool SetCursorPos(int x, int y);
+        [DllImport("user32.dll")] public static extern bool PostMessage(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam);
+        [DllImport("user32.dll")] public static extern IntPtr SendMessage(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam);
+        [DllImport("user32.dll")] public static extern bool ScreenToClient(IntPtr hwnd, ref Point point);
+        public const uint WmMouseMove = 0x0200;
         [DllImport("user32.dll")] public static extern bool GetCursorPos(out Point point);
 
         [StructLayout(LayoutKind.Sequential)]
@@ -169,6 +173,7 @@ namespace M3.ZoomHelper
         public const int TextType = 50020;
         public const int SplitButtonType = 50031;
         public const int InvokePattern = 10000;
+        public const int ScrollItemPattern = 10017;
         public const int SelectionItemPattern = 10010;
         public const int TogglePattern = 10015;
 
@@ -479,26 +484,75 @@ namespace M3.ZoomHelper
             Native.keybd_event(Native.VkEscape, 0, Native.KeyUp, UIntPtr.Zero);
         }
 
-        /// <summary>Invokes a control without moving the mouse, or clicks it if
-        /// Zoom doesn't support Invoke on it.</summary>
-        static void Press(El element)
+        /// <summary>Invokes a control without moving the mouse. False if Zoom
+        /// doesn't support Invoke on it (or turns it down).</summary>
+        static bool TryInvoke(El element)
         {
             try
             {
                 var pattern = element.Raw.GetCurrentPattern(Uia.InvokePattern) as IUIAutomationInvokePattern;
-                if (pattern != null)
-                {
-                    pattern.Invoke();
-                    return;
-                }
+                if (pattern == null) return false;
+                pattern.Invoke();
+                return true;
             }
             catch (Exception)
             {
-                // Zoom turns some Invoke calls down (COMException, or
-                // InvalidOperationException through the interop): a real
-                // click still works there.
+                return false;
             }
-            Click(element);
+        }
+
+        /// <summary>Selects a list entry without the mouse, when it supports it.</summary>
+        static bool TrySelect(El element)
+        {
+            try
+            {
+                var pattern = element.Raw.GetCurrentPattern(Uia.SelectionItemPattern) as IUIAutomationSelectionItemPattern;
+                if (pattern == null) return false;
+                pattern.Select();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>Brings a control into view without the mouse wheel, when it
+        /// supports it.</summary>
+        static bool TryScrollIntoView(El element)
+        {
+            try
+            {
+                var pattern = element.Raw.GetCurrentPattern(Uia.ScrollItemPattern) as IUIAutomationScrollItemPattern;
+                if (pattern == null) return false;
+                pattern.ScrollIntoView();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>Tells a window the mouse moved over a point, without moving
+        /// it: a posted WM_MOUSEMOVE to the window under that point.</summary>
+        static void PostMouseMove(IntPtr window, int x, int y)
+        {
+            var under = Native.WindowFromPoint(new Native.Point { X = x, Y = y });
+            var target = under == IntPtr.Zero ? window : under;
+            var client = new Native.Point { X = x, Y = y };
+            Native.ScreenToClient(target, ref client);
+            Native.PostMessage(target, Native.WmMouseMove, IntPtr.Zero, new IntPtr(((client.Y & 0xFFFF) << 16) | (client.X & 0xFFFF)));
+        }
+
+        /// <summary>Invokes a control without moving the mouse, or clicks it if
+        /// Zoom doesn't support Invoke on it.</summary>
+        static void Press(El element)
+        {
+            // Zoom turns some Invoke calls down (COMException, or
+            // InvalidOperationException through the interop): a real click
+            // still works there.
+            if (!TryInvoke(element)) Click(element);
         }
 
         static bool SetChecked(El checkbox, bool isChecked)
@@ -610,6 +664,22 @@ namespace M3.ZoomHelper
             if (panel != null) return panel;
             Focus(window);
             var handle = window.Raw.CurrentNativeWindowHandle;
+            // First without moving the mouse: tell Zoom the mouse moved over
+            // the meeting. Only if that doesn't bring the toolbar back is the
+            // cursor really moved.
+            panel = WaitFor(() =>
+            {
+                var bounds = window.Raw.CurrentBoundingRectangle;
+                var x = (bounds.left + bounds.right) / 2;
+                var y = (bounds.top + bounds.bottom) / 2;
+                for (int i = 0; i < 4; i++)
+                {
+                    PostMouseMove(handle, x + i * 5, y + i * 5);
+                    Thread.Sleep(40);
+                }
+                return Uia.FirstByClass(window, ControlPanelClass);
+            }, found => found != null, 1200);
+            if (panel != null) return panel;
             Func<El> reveal = () => WaitFor(() =>
             {
                 // Read afresh: Focus may just have restored a minimized window,
@@ -902,7 +972,7 @@ namespace M3.ZoomHelper
             }
             if (more == null) throw new ZoomActionError("participants-more-button-not-found");
             Focus(window);
-            Click(more); // Zoom doesn't support Invoke on this one
+            Press(more); // Invoke where Zoom allows it, a click otherwise
             var menu = WaitForWindow(MenuClass, 4000);
             if (menu == null) throw new ZoomActionError("participants-menu-not-found");
             // "Ask all to unmute" heads the menu, alone in its group. Where it
@@ -998,22 +1068,28 @@ namespace M3.ZoomHelper
                 var current = name;
                 var row = WaitingRow(window, current);
                 if (row == null) continue;
-                Focus(window);
-                Func<bool> pressAdmit = () =>
+                // Zoom only paints the Admit button while the row is hovered,
+                // but exposes it all the time: no mouse needed, usually.
+                var unhovered = Named(Uia.Descendants(row.Element, Uia.ButtonType));
+                var pressed = unhovered.Count > 0 && TryInvoke(unhovered[0]);
+                if (!pressed)
                 {
-                    Hover(row.Element);
-                    Thread.Sleep(500);
-                    var hovered = WaitingRow(window, current);
-                    if (hovered == null) return false;
-                    var buttons = Named(Uia.Descendants(hovered.Element, Uia.ButtonType));
-                    if (buttons.Count == 0) return false;
-                    Press(buttons[0]);
-                    return true;
-                };
-                // The row only shows its button while the mouse is over it.
-                var pressed = ShowsAt(handle, row.Element.CenterX, row.Element.CenterY)
-                    ? pressAdmit()
-                    : Lifted(handle, pressAdmit);
+                    Focus(window);
+                    Func<bool> pressAdmit = () =>
+                    {
+                        Hover(row.Element);
+                        Thread.Sleep(500);
+                        var hovered = WaitingRow(window, current);
+                        if (hovered == null) return false;
+                        var buttons = Named(Uia.Descendants(hovered.Element, Uia.ButtonType));
+                        if (buttons.Count == 0) return false;
+                        Press(buttons[0]);
+                        return true;
+                    };
+                    pressed = ShowsAt(handle, row.Element.CenterX, row.Element.CenterY)
+                        ? pressAdmit()
+                        : Lifted(handle, pressAdmit);
+                }
                 if (pressed && WaitUntil(() => WaitingRow(window, current) == null, 5000)) admitted.Add(name);
             }
             return new Dictionary<string, object> { { "admitted", admitted }, { "changed", admitted.Count > 0 } };
@@ -1064,10 +1140,11 @@ namespace M3.ZoomHelper
                 && inner.Rect.top >= outer.top && inner.Rect.bottom <= outer.bottom;
         }
 
-        /// <summary>The buttons a participant's row shows while hovered (the
-        /// microphone one first, "More" last), checked to belong to that very
-        /// row: found again by name after hovering, and inside its rectangle.
-        /// Null if the row is gone or shows no buttons.</summary>
+        /// <summary>A participant row's buttons (the microphone one first,
+        /// "More" last), checked to belong to that very row: found by name and
+        /// inside its rectangle. Zoom only paints them while the row is
+        /// hovered, but exposes them (and their Invoke) all the time. Null if
+        /// the row is gone or has no buttons.</summary>
         static List<El> HoveredRowButtons(El window, string name)
         {
             var hovered = UniqueMeetingRow(window, name);
@@ -1082,20 +1159,33 @@ namespace M3.ZoomHelper
             return buttons;
         }
 
-        /// <summary>Hovers a row and runs an action on its buttons, lifting the
-        /// window above always-on-top ones if needed (see Admit).</summary>
-        static T WithRowButtons<T>(El window, Row row, string name, Func<List<El>, T> action, T notFound)
+        /// <summary>Runs an action on a row's buttons. They're read without
+        /// moving the mouse; only a row that exposes none is hovered for real
+        /// (lifting the window above always-on-top ones if needed, see Admit),
+        /// which `hovered` reports.</summary>
+        static T WithRowButtons<T>(El window, Row row, string name, Func<List<El>, T> action, T notFound, out bool hovered)
         {
+            hovered = false;
+            var buttons = HoveredRowButtons(window, name);
+            if (buttons != null) return action(buttons);
+
+            hovered = true;
             var handle = window.Raw.CurrentNativeWindowHandle;
             Focus(window);
             Func<T> run = () =>
             {
                 Hover(row.Element);
                 Thread.Sleep(500);
-                var buttons = HoveredRowButtons(window, name);
-                return buttons == null ? notFound : action(buttons);
+                var found = HoveredRowButtons(window, name);
+                return found == null ? notFound : action(found);
             };
             return ShowsAt(handle, row.Element.CenterX, row.Element.CenterY) ? run() : Lifted(handle, run);
+        }
+
+        static T WithRowButtons<T>(El window, Row row, string name, Func<List<El>, T> action, T notFound)
+        {
+            bool hovered;
+            return WithRowButtons(window, row, name, action, notFound, out hovered);
         }
 
         /// <summary>Opens a row's "More" menu (its last button) and returns the
@@ -1105,7 +1195,7 @@ namespace M3.ZoomHelper
             var opened = WithRowButtons(window, row, name, buttons =>
             {
                 if (buttons.Count < 2) return false;
-                Click(buttons[buttons.Count - 1]); // like the panel's own More button, Invoke is turned down
+                Press(buttons[buttons.Count - 1]);
                 return true;
             }, false);
             if (!opened) return null;
@@ -1274,6 +1364,7 @@ namespace M3.ZoomHelper
             string learnedLowerHandTitle = null;
             string learnedAskToUnmuteTitle = null;
             var found = false;
+            bool hovered;
             var handRaised = !string.IsNullOrEmpty(phrase) && Segments(row.Details).Contains(phrase);
             var pressed = WithRowButtons(window, row, name, buttons =>
             {
@@ -1286,7 +1377,7 @@ namespace M3.ZoomHelper
                 if (layout.Unmuted == on) return false; // already as wanted
                 Press(layout.Mic);
                 return true;
-            }, false);
+            }, false, out hovered);
             if (!found) throw new ZoomActionError("participant-mic-button-not-found");
             // Muting changes the row at once; asking someone to unmute only
             // sends them a request, so the row may well stay as it was.
@@ -1301,6 +1392,7 @@ namespace M3.ZoomHelper
                 { "askToUnmuteTitle", learnedAskToUnmuteTitle },
                 { "buttonTitle", buttonTitle },
                 { "changed", changed },
+                { "hovered", hovered },
                 { "lowerHandTitle", learnedLowerHandTitle },
                 { "pressed", pressed },
             };
@@ -1321,6 +1413,7 @@ namespace M3.ZoomHelper
             if (row == null) throw new ZoomActionError("participant-not-found");
             if (!Segments(row.Details).Contains(phrase)) return Changed(false);
             string learnedLowerHandTitle = null;
+            bool hovered;
             var pressed = WithRowButtons(window, row, name, buttons =>
             {
                 var layout = ReadRowLayout(buttons, FirstSegment(micOnTitle ?? ""), FirstSegment(micOffTitle ?? ""), lowerTitle, FirstSegment(askToUnmuteTitle ?? ""), true);
@@ -1328,7 +1421,7 @@ namespace M3.ZoomHelper
                 learnedLowerHandTitle = layout.LowerHandTitle;
                 Press(layout.LowerHand);
                 return true;
-            }, false);
+            }, false, out hovered);
             if (!pressed) throw new ZoomActionError("lower-hand-item-not-found");
             var lowered = WaitUntil(() =>
             {
@@ -1337,7 +1430,7 @@ namespace M3.ZoomHelper
                 return latest != null && !Segments(latest.Details).Contains(phrase);
             }, 4000);
             if (!lowered) throw new ZoomActionError("hand-not-lowered");
-            return new Dictionary<string, object> { { "changed", true }, { "lowerHandTitle", learnedLowerHandTitle } };
+            return new Dictionary<string, object> { { "changed", true }, { "hovered", hovered }, { "lowerHandTitle", learnedLowerHandTitle } };
         }
 
         /// <summary>Diagnostics: everything a participant's row shows, hovered
@@ -1407,7 +1500,7 @@ namespace M3.ZoomHelper
             var menus = ToolbarMenus(window);
             if (menus.Count == 0) return null;
             Focus(window);
-            Click(menus[menus.Count - 1]); // "More" is the toolbar's last menu
+            Press(menus[menus.Count - 1]); // "More" is the toolbar's last menu
             return WaitForWindow(MoreGridClass, 4000);
         }
 
@@ -1473,7 +1566,7 @@ namespace M3.ZoomHelper
                 {
                     if (GridEntryName(item) == wanted || item.Name.StartsWith(wanted, StringComparison.Ordinal))
                     {
-                        Click(item);
+                        Press(item);
                         return;
                     }
                 }
@@ -1541,14 +1634,21 @@ namespace M3.ZoomHelper
         }
 
         /// <summary>Scrolls the picker until its entry for the window can be
-        /// clicked. The picker can't be scrolled through UI Automation, so this
-        /// turns the mouse wheel over it.</summary>
+        /// clicked: through UI Automation where the entry supports it, else by
+        /// turning the mouse wheel over the picker.</summary>
         static El ScrollShareItemIntoReach(El picker, string windowTitle)
         {
             var item = ShareItem(picker, windowTitle);
             for (int i = 0; i < 12 && item != null; i++)
             {
                 if (IsClickable(item)) return item;
+                if (TryScrollIntoView(item))
+                {
+                    Thread.Sleep(300);
+                    item = ShareItem(picker, windowTitle);
+                    if (item != null && IsClickable(item)) return item;
+                    if (item == null) break;
+                }
                 var area = picker.Raw.CurrentBoundingRectangle;
                 var middle = (area.top + area.bottom) / 2;
                 Native.SetCursorPos(item.CenterX, middle);
@@ -1599,7 +1699,9 @@ namespace M3.ZoomHelper
             {
                 var item = ScrollShareItemIntoReach(picker, windowTitle);
                 if (item == null) return "window-to-share-not-selected";
-                Click(item);
+                // Without the mouse where Zoom allows it (selecting the entry
+                // through UI Automation), a real click otherwise.
+                if (!TrySelect(item) && !TryInvoke(item)) Click(item);
                 if (WaitUntil(() => IsOnlyShareSelection(picker, windowTitle), 1500)) return null;
             }
             return "window-to-share-not-selected";
