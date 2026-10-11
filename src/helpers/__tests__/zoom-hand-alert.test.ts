@@ -35,8 +35,8 @@ vi.mock('src/helpers/notifications', () => ({ createTemporaryNotification }));
 
 vi.mock('src/helpers/zoom', () => ({
   getZoomRaisedHands,
-  muteZoomParticipantAndLowerHand: vi.fn(),
-  unmuteZoomParticipant: vi.fn(),
+  muteZoomParticipantAndLowerHand: vi.fn(async () => ({ ok: false })),
+  unmuteZoomParticipant: vi.fn(async () => ({ ok: false })),
 }));
 
 vi.mock('src/helpers/fs', () => ({ getRendererPlatform: () => 'win32' }));
@@ -100,6 +100,32 @@ describe('handleRaisedHands', () => {
 
     handleRaisedHands([]);
     expect(store.active).toBe(false);
+  });
+
+  it('takes a hand notification down again when that hand goes down unanswered', () => {
+    const dismiss = vi.fn();
+    createTemporaryNotification.mockReturnValue(dismiss);
+
+    handleRaisedHands(['Ann']);
+    handleRaisedHands(['Ann']); // still up: nothing happens
+    expect(dismiss).not.toHaveBeenCalled();
+
+    handleRaisedHands([]);
+    expect(dismiss).toHaveBeenCalledOnce();
+  });
+
+  it('leaves the notification alone once the operator acted on it', () => {
+    const dismiss = vi.fn();
+    createTemporaryNotification.mockReturnValue(dismiss);
+
+    handleRaisedHands(['Ann']);
+    const options = createTemporaryNotification.mock.calls.at(-1)?.[0] as {
+      actions: { handler?: () => void; label: string }[];
+    };
+    options.actions.find((a) => a.label === 'zoom-hand-unmute')?.handler?.();
+
+    handleRaisedHands([]);
+    expect(dismiss).not.toHaveBeenCalled();
   });
 
   it('leaves a manually switched-on alert alone', () => {

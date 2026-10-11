@@ -28,7 +28,6 @@ const t = (key: string, named?: Record<string, unknown>) =>
 export const HAND_POLL_INTERVAL_MS = 4000;
 /** How often to look again while no Zoom meeting is open. */
 export const HAND_NO_MEETING_INTERVAL_MS = 30_000;
-const NOTIFICATION_TIMEOUT_MS = 30_000;
 
 let pollTimer: ReturnType<typeof setTimeout> | undefined;
 let pollInProgress = false;
@@ -68,11 +67,35 @@ const notifyParticipantSpeaking = (name: string) => {
   });
 };
 
+// The "raised their hand" notifications the operator hasn't acted on yet,
+// by participant name, so one can be taken down again when that hand goes
+// down (the participant changed their mind before being picked).
+const pendingHandNotifications = new Map<string, () => void>();
+
+const forgetHandNotification = (name: string) => {
+  pendingHandNotifications.delete(name);
+};
+
+const dismissHandNotification = (name: string) => {
+  const dismiss = pendingHandNotifications.get(name);
+  if (!dismiss) return;
+  pendingHandNotifications.delete(name);
+  try {
+    dismiss();
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: { fn: { name: 'dismissHandNotification' } },
+    });
+  }
+};
+
 const notifyHandRaised = (name: string) => {
-  createTemporaryNotification({
+  dismissHandNotification(name);
+  const dismiss = createTemporaryNotification({
     actions: [
       {
         handler: () => {
+          forgetHandNotification(name);
           void unmuteZoomParticipant(name).then((result) => {
             if (result.ok) notifyParticipantSpeaking(name);
           });
@@ -82,26 +105,45 @@ const notifyHandRaised = (name: string) => {
       },
       {
         handler: () => {
+          forgetHandNotification(name);
           void muteZoomParticipantAndLowerHand(name);
         },
         label: t('zoom-hand-mute-and-lower'),
         noCaps: true,
       },
-      { label: t('dismiss'), noCaps: true },
+      {
+        handler: () => {
+          forgetHandNotification(name);
+        },
+        label: t('dismiss'),
+        noCaps: true,
+      },
     ],
     group: `zoom-hand-${name}`,
     icon: 'mmm-groups',
     message: t('zoom-hand-raised', { name }),
-    timeout: NOTIFICATION_TIMEOUT_MS,
+    // Stays until the operator acts or the hand goes down.
+    timeout: 0,
     type: 'warning',
   });
+  if (dismiss) pendingHandNotifications.set(name, dismiss);
 };
 
-/** Records what Zoom reports, telling the operator about each new hand. */
+/**
+ * Records what Zoom reports: tells the operator about each new hand, and
+ * takes down the notification of a hand that went down unanswered.
+ */
 export const handleRaisedHands = (names: string[]) => {
   const store = useHandAlertStore();
   const newNames = names.filter((name) => !store.raisedHands.includes(name));
+  const loweredNames = store.raisedHands.filter(
+    (name) => !names.includes(name),
+  );
   store.setRaisedHands(names);
+  for (const name of loweredNames) {
+    log(`Hand lowered in Zoom: ${name}`, 'zoom', 'info');
+    dismissHandNotification(name);
+  }
   for (const name of newNames) {
     log(`Raised hand in Zoom: ${name}`, 'zoom', 'info');
     notifyHandRaised(name);
@@ -154,6 +196,9 @@ export const stopZoomHandAlertWatcher = () => {
   if (pollTimer === undefined) return;
   clearTimeout(pollTimer);
   pollTimer = undefined;
+  for (const name of [...pendingHandNotifications.keys()]) {
+    dismissHandNotification(name);
+  }
   useHandAlertStore().setRaisedHands([]);
   log('Stopped watching Zoom for raised hands', 'zoom', 'info');
 };
@@ -189,6 +234,7 @@ export const __testables = {
     clearTimeout(pollTimer);
     pollTimer = undefined;
     pollInProgress = false;
+    pendingHandNotifications.clear();
     stopDisplaySync?.();
     stopDisplaySync = undefined;
   },
