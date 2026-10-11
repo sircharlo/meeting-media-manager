@@ -128,7 +128,7 @@ M³에서는 다음 기능의 키보드 단축키를 원하는 대로 설정할 
 
 ### :stopwatch: M³에 집회 타이머 기능도 있나요? {#faq-meeting-timer}
 
-네. 이 기능을 활성화하면 M³에서 프로그램 참여자의 시간을 측정하는 별도의 타이머 창을 표시할 수 있습니다. 경과 시간이나 남은 시간을 표시하고, 현재 시각과 집회 시작까지 남은 시간을 확인할 수 있습니다. 또한 프로그램이 예정된 시간을 초과했는지, 집회가 예정보다 빠르게 또는 늦게 진행되고 있는지를 선택적으로 표시할 수 있습니다.
+네. 이 기능을 활성화하면 M³에서 프로그램 참여자의 시간을 측정하는 별도의 타이머 창을 표시할 수 있습니다. 경과 시간이나 남은 시간을 표시하고, 현재 시각과 집회 시작까지 남은 시간을 확인할 수 있습니다. 또한 프로그램이 예정된 시간을 초과했는지, 집회가 예정보다 빠르게 또는 늦게 진행되고 있는지를 선택적으로 표시할 수 있습니다. Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
 
 타이머는 현재 베타 기능이므로, 현지에서 사용 승인을 받은 경우에만 활성화해야 합니다.
 

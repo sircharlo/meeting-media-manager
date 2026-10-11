@@ -266,8 +266,12 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   showFileOnWindows: async () => undefined,
+  startTimerRemote: async () => ({ running: true, urls: [] }),
   startZoomHelper: async () => ({ ok: true }),
+  stopTimerRemote: () => void 0,
   stopZoomHelper: () => void 0,
+  timerRemoteText: () => void 0,
+  timerRemoteUpdate: () => void 0,
   toggleAuthorizedClose: function () {
     throw new Error('Function not implemented.');
   },

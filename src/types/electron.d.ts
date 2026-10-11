@@ -31,6 +31,8 @@ import type {
   resolve,
 } from 'upath';
 
+import type { TimerData } from './timer';
+
 export interface ConversionOptions {
   /**
    * the HEIC file buffer
@@ -387,8 +389,15 @@ export interface ElectronApi {
   setHardwareAcceleration: (disabled: boolean) => void;
   setPathProbeNotificationPaths: (paths: string[]) => void;
   showFileOnWindows: (filePath: string) => Promise<void>;
+  /** Serves the read-only timer page on the local network. */
+  startTimerRemote: (port: number) => Promise<TimerRemoteStatus>;
   startZoomHelper: () => Promise<ZoomHelperStartResult>;
+  stopTimerRemote: () => void;
   stopZoomHelper: () => void;
+  /** The timer page's few words, in M3's language. */
+  timerRemoteText: (text: Record<string, string>) => void;
+  /** The latest timer state, pushed to every open timer page. */
+  timerRemoteUpdate: (data: TimerData) => void;
   toggleAuthorizedClose: (authorized: boolean) => void;
   toggleMediaWindow: (show: boolean, enableFadeTransitions?: boolean) => void;
   toggleTimerWindow: (show: boolean) => void;
@@ -526,6 +535,7 @@ export type ElectronIpcInvokeKey =
   | 'set-hardware-acceleration'
   | 'setExecutable'
   | 'startSecurityScopedAccess'
+  | 'startTimerRemote'
   | 'startZoomHelper'
   | 'unwatchFolders'
   | 'unzip'
@@ -582,7 +592,10 @@ export type ElectronIpcSendKey =
   | 'resumeAllDownloads'
   | 'setElectronUrlVariables'
   | 'setPathProbeNotificationPaths'
+  | 'stopTimerRemote'
   | 'stopZoomHelper'
+  | 'timerRemoteText'
+  | 'timerRemoteUpdate'
   | 'toggleMediaWindow'
   | 'toggleOpenAtLogin'
   | 'toggleTimerWindow'
@@ -649,6 +662,14 @@ export interface SerializedPreloadError {
   name: string;
   stack?: string;
   syscall?: string;
+}
+
+export interface TimerRemoteStatus {
+  /** `invalid-port`, `port-in-use` or `start-failed`. */
+  error?: string;
+  running: boolean;
+  /** Where the page can be opened from other devices on the network. */
+  urls: string[];
 }
 
 export interface UnzipOptions {

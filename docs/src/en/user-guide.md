@@ -156,6 +156,9 @@ Part counts, changed durations, custom parts and recorded timings are kept with 
 #### Hand Alert {#user-guide-timer-hand-alert}
 
 A **Hand alert** button in the timer popup shows a large hand on the timer display, to get the chairman's attention, for example when someone on Zoom has raised their hand. With the [Zoom Meeting Manager's raised-hand helper](/settings-guide#zoom-meeting-manager-hand-alert), M³ shows it automatically whenever someone raises their hand in Zoom, with their name, and lets you unmute them, then mute them and lower their hand, with one click each.
+#### Timer on a Tablet {#user-guide-timer-remote}
+
+The optional [timer remote](/settings-guide#timer-remote) serves a read-only copy of the timer display as a web page on your local network. Open the address shown in the timer popup in the browser of a tablet or phone at the lectern, and the speaker sees the remaining time privately, while all the controls stay in M³.
 
 #### Quick Access {#user-guide-timer-quick-access}
 

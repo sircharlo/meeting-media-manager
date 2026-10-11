@@ -130,6 +130,8 @@ interface Store {
   pendingSectionImports: MediaSectionIdentifier[];
   pinyinActive: boolean;
   selectedDate: string;
+  /** Where the timer remote page can be opened, while it's served. */
+  timerRemoteUrls: string[];
   timerWindowVisible: boolean;
   websiteSelection: JwSite;
   zoomHelperLogs: string[];
@@ -371,6 +373,9 @@ export const useCurrentStateStore = defineStore('current-state', {
       await this.syncZoomHelper();
 
       return this.getInvalidSettings(newCongregation).length > 0;
+    },
+    setTimerRemoteUrls(urls: string[]) {
+      this.timerRemoteUrls = urls;
     },
     setTimerWindowVisible(visible: boolean) {
       this.timerWindowVisible = visible;
@@ -706,6 +711,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       pendingSectionImports: [],
       pinyinActive: false,
       selectedDate: formatDate(new Date(), 'YYYY/MM/DD'),
+      timerRemoteUrls: [],
       timerWindowVisible: false,
       websiteSelection: undefined,
       zoomHelperLogs: [],

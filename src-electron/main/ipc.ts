@@ -83,6 +83,12 @@ import {
   isDbCorrupt,
 } from 'src-electron/main/sqlite';
 import {
+  setTimerRemoteText,
+  startTimerRemote,
+  stopTimerRemote,
+  updateTimerRemote,
+} from 'src-electron/main/timer-remote';
+import {
   getBetaUpdatesPath,
   getUpdaterState,
   getUpdatesDisabledPath,
@@ -350,6 +356,22 @@ handleIpcSend('moveMediaWindow', async (_e, displayNr, fullscreen) => {
 
 handleIpcSend('moveTimerWindow', async (_e, displayNr, fullscreen) => {
   await moveTimerWindow(displayNr, fullscreen);
+});
+
+handleIpcInvoke('startTimerRemote', async (_e, port: unknown) =>
+  startTimerRemote(port),
+);
+
+handleIpcSend('stopTimerRemote', () => {
+  stopTimerRemote();
+});
+
+handleIpcSend('timerRemoteText', (_e, text: unknown) => {
+  setTimerRemoteText(text);
+});
+
+handleIpcSend('timerRemoteUpdate', (_e, data: unknown) => {
+  updateTimerRemote(data);
 });
 
 handleIpcSend('openExternal', (_e, website: ExternalWebsite) => {
