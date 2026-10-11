@@ -13,14 +13,14 @@ import en from './en.json' with { type: 'json' };
 // 94.8% translated as of 2026-10-11
 import fr from './fr.json' with { type: 'json' };
 
+// 92.0% translated as of 2026-10-11
+import sl from './sl.json' with { type: 'json' };
+
 // 91.6% translated as of 2026-10-11
 import es from './es.json' with { type: 'json' };
 
 // 91.6% translated as of 2026-10-11
 import it from './it.json' with { type: 'json' };
-
-// 90.1% translated as of 2026-10-11
-import sl from './sl.json' with { type: 'json' };
 
 // 85.4% translated as of 2026-10-11
 import ty from './ty.json' with { type: 'json' };
