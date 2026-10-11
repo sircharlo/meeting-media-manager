@@ -157,12 +157,12 @@ M³ automatically switches OBS scenes based on:
 
 - Media type (video, image, etc.)
 - Your scene configuration
-- Settings like "Postpone Images"
+- Settings like "Do not automatically share images"
 - Whether to return to previous scene after media
 
-### :pause_button: What is the "Postpone Images" feature? {#faq-postpone-images}
+### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
 
-This feature delays sharing images to OBS until you manually trigger them. This is useful for:
+This setting delays sharing images to OBS until you manually trigger them. This is useful for:
 
 - Showing images to in-person audience first
 - Having more control over timing
@@ -244,7 +244,7 @@ M³ plays media with sound on your computer, but this audio is not automatically
 
 Try these performance optimizations:
 
-1. **Enable Extra Cache**: Turn on additional caching in settings
+1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
 2. **Close Other Apps**: Close unnecessary applications
 3. **Check Disk Space**: Ensure you have sufficient free disk space
 4. **Reduce Resolution**: Lower the maximum resolution setting
