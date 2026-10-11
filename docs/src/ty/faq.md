@@ -126,7 +126,7 @@ Teie te mau rāve’a nō te hīmene aratō:
 - Te fa’atere-ano’i-’ō’oā o te pūai reo
 - Te taime fa’ata’ara’a-tāpū-muri e nehenehe e fa’ahuru ’ē
 
-### :stopwatch: Te vai ra anei te ho’ē taime putuputura’a i roto i te M³? {#faq-meeting-timer}
+### :stopwatch: Te vai ra anei te ho’ē taime putuputura’a i roto i te M³?  {#faq-meeting-timer}
 
 E. Ia ha’amā-hia, e nehenehe te M³ e fa’a’ite i te ho’ē ha’amaramarama taime taa ’ē nō te faito i te taime o te feiā e paraparau ra. E nehenehe te reira e taio i ni’a aore rā i raro, e fa’a’ite i te hora mau, e fa’a’ite i te taime fa’ataime nō te putuputura’a, e mai te peu e hina’aro ’oe, e fa’a’ite i te taime hau aore rā mai te peu e te mua ra te putuputura’a aore rā te muri ra i ni’a i te porotarama. Part durations can be adjusted freely, custom parts can be added for special programs, and the timer can be driven from the action island (including on hover) or from a panel docked in the main window.
 
@@ -158,18 +158,18 @@ E taui noa te fa’anahora’a M³ i te mau ’āfata OBS ia au i te:
 
 - Huru pāpāho (teata, hōho’a, tōpāto)
 - Tō ’oe fa’anahora’a tiri
-- Te mau fa’anahora’a mai te "Fa’atōrorea i te mau hōho’a"
+- Settings like "Do not automatically share images"
 - Ē ho’i ā rānei i ni’a i te tiri nā mua atu i muri a’e i te pāpāho
 
-### :pause_button: E aha te huru fa’anahora’a "Fa’atōrorea i te mau hōho’a"? {#faq-postpone-images}
+### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
 
-Tē fa’atōrorea nei teie fa’anahora’a i te tū’oha’ara’a hōho’a i ni’a ia OBS ē tae noa atu ’ia fa’atupu rima ’oe i te reira. E mea faufa’a teie nō:
+This setting delays sharing images to OBS until you manually trigger them. E mea faufa’a teie nō:
 
 - Te fa’ahōho’ara’a nā mua i te mau hōho’a i mua i te feiā e fāri’i-tinana-hia ra
 - Te fā’fa’ahiahia o te rāve’a nō te fa’atere pāpū i te taime
 - Te ’ape’ara’a i te tauira’a tiri vitiviti roa
 
-### :record_button: E nehenehe anei te M³ e haruharu i te putuputura’a? {#faq-recordings}
+### :record_button: E nehenehe anei te M³ e haruharu i te putuputura’a?  {#faq-recordings}
 
 Aita te M³ e fa’a’ohipa ra i te ho’ē matini haruharu-reo o roto, tera rā, e nehenehe te reira e tauturu i te fa’atere-ra’a i te haruharu-reo nā roto e piti huru:
 
@@ -246,7 +246,7 @@ Nō te aha e mea faufa’a ai teie rāve’a?
 
 ’A tāmata i teie mau rāve’a nō te ha’amaita’i i te terera’a:
 
-1. Ha’amana i te Ha’aputura’a Pāpāho Hau: ’A tāmau i te fa’anahora’a ha’aputura’a parau pāpāho hau i roto i te mau fa’anahora’a
+1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
 2. ’A piri i te tahi atu mau rorouira ’ohipa: ’A piri i te mau rorouira ’ohipa faufa’a ’ore
 3. Hi’opo’a i te vāhi vata o te ha’aputura’a parau: ’A ha’apāpū ē tē vai ra te vāhi vata nahu i ni’a i tā ’outou rorouira
 4. Fa’ahā’ha’i i te hōho’a: ’A fa’aha’ama’i i te fa’anahora’a teitei roa a’e o te hōho’a
