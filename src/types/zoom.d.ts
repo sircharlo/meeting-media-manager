@@ -4,7 +4,9 @@
  */
 export type ZoomCommand =
   | {
-      /** The "Lower hand" button name once learned (a sanity check). */
+      /** The "Ask to unmute" button name once learned. */
+      askToUnmuteTitle: null | string;
+      /** The "Lower hand" button name once learned. */
       lowerHandTitle: null | string;
       micOffTitle: null | string;
       micOnTitle: null | string;
@@ -14,6 +16,8 @@ export type ZoomCommand =
       type: 'lower-participant-hand';
     }
   | {
+      /** The "Ask to unmute" button name once learned. */
+      askToUnmuteTitle: null | string;
       /** The learned "Lower hand" button name, never to be pressed here. */
       lowerHandTitle: null | string;
       /** The host's own "Unmute" button name. */
@@ -77,6 +81,8 @@ export interface ZoomCommandResult {
   admitted?: string[];
   /** `toggle-mic`/`toggle-video`: the button's name after switching. */
   after?: string;
+  /** `set-participant-mic`: the "Ask to unmute" button's name, when first seen. */
+  askToUnmuteTitle?: null | string;
   /** `toggle-mic`/`toggle-video`: the button's name before switching. */
   before?: string;
   /** `set-participant-mic`: what the row's microphone button said. */

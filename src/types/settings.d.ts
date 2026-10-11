@@ -347,6 +347,7 @@ export interface SettingsValues {
   timerTimeOfDayDisplay: TimerTimeOfDayDisplay;
   weDay: `${number}` | null;
   weStartTime: `${number}:${number}` | null;
+  zoomAskToUnmuteTitle: null | string;
   zoomAutoFocusMediaWindow: boolean;
   zoomCancelAutomationShortcut: null | string;
   zoomEnable: boolean;

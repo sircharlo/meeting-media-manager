@@ -395,6 +395,7 @@ export const getZoomRaisedHands = async (): Promise<null | string[]> => {
 export const unmuteZoomParticipant = async (name: string) => {
   const settings = getSettings();
   const result = await runCommand({
+    askToUnmuteTitle: settings?.zoomAskToUnmuteTitle ?? null,
     lowerHandTitle: settings?.zoomLowerHandTitle ?? null,
     micOffTitle: settings?.zoomMicOffTitle ?? null,
     micOnTitle: settings?.zoomMicOnTitle ?? null,
@@ -403,7 +404,7 @@ export const unmuteZoomParticipant = async (name: string) => {
     phrase: settings?.zoomHandRaisedPhrase ?? null,
     type: 'set-participant-mic',
   });
-  rememberLowerHandTitle(result);
+  rememberRowButtonTitles(result);
   if (!result.ok) {
     notifyNamedFailure('zoom-hand-unmute-failed', name, result.error);
     return result;
@@ -429,6 +430,7 @@ export const unmuteZoomParticipant = async (name: string) => {
 export const muteZoomParticipantAndLowerHand = async (name: string) => {
   const settings = getSettings();
   const muted = await runCommand({
+    askToUnmuteTitle: settings?.zoomAskToUnmuteTitle ?? null,
     lowerHandTitle: settings?.zoomLowerHandTitle ?? null,
     micOffTitle: settings?.zoomMicOffTitle ?? null,
     micOnTitle: settings?.zoomMicOnTitle ?? null,
@@ -437,12 +439,13 @@ export const muteZoomParticipantAndLowerHand = async (name: string) => {
     phrase: settings?.zoomHandRaisedPhrase ?? null,
     type: 'set-participant-mic',
   });
-  rememberLowerHandTitle(muted);
+  rememberRowButtonTitles(muted);
   if (!muted.ok) {
     notifyNamedFailure('zoom-hand-mute-failed', name, muted.error);
     return muted;
   }
   const lowered = await runCommand({
+    askToUnmuteTitle: getSettings()?.zoomAskToUnmuteTitle ?? null,
     lowerHandTitle: getSettings()?.zoomLowerHandTitle ?? null,
     micOffTitle: settings?.zoomMicOffTitle ?? null,
     micOnTitle: settings?.zoomMicOnTitle ?? null,
@@ -450,7 +453,7 @@ export const muteZoomParticipantAndLowerHand = async (name: string) => {
     phrase: settings?.zoomHandRaisedPhrase ?? null,
     type: 'lower-participant-hand',
   });
-  rememberLowerHandTitle(lowered);
+  rememberRowButtonTitles(lowered);
   if (!lowered.ok) {
     notifyNamedFailure('zoom-hand-lower-failed', name, lowered.error);
     return lowered;
@@ -465,15 +468,25 @@ export const muteZoomParticipantAndLowerHand = async (name: string) => {
 };
 
 /**
- * The "Lower hand" button is named in the user's Zoom language and only
- * shows on other people's rows (the host's own hand button reads
- * differently), so its name is learned from the first raised hand acted on
- * and then serves as a sanity check on every later row.
+ * The "Lower hand" and "Ask to unmute" buttons are named in the user's Zoom
+ * language and only show on other people's rows (the host's own row reads
+ * differently), so their names are learned from the first rows acted on;
+ * from then on, buttons are found by name.
  */
-const rememberLowerHandTitle = (result: ZoomCommandResult) => {
-  const title = result.lowerHandTitle;
-  if (!title || getSettings()?.zoomLowerHandTitle === title) return;
-  saveSetting('zoomLowerHandTitle', title);
+const rememberRowButtonTitles = (result: ZoomCommandResult) => {
+  const settings = getSettings();
+  if (
+    result.lowerHandTitle &&
+    settings?.zoomLowerHandTitle !== result.lowerHandTitle
+  ) {
+    saveSetting('zoomLowerHandTitle', result.lowerHandTitle);
+  }
+  if (
+    result.askToUnmuteTitle &&
+    settings?.zoomAskToUnmuteTitle !== result.askToUnmuteTitle
+  ) {
+    saveSetting('zoomAskToUnmuteTitle', result.askToUnmuteTitle);
+  }
 };
 
 const notifyNamedFailure = (

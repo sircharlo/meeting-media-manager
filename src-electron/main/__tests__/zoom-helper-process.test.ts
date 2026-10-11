@@ -351,6 +351,7 @@ describe('isZoomCommand', () => {
     ).toBe(true);
     expect(
       isZoomCommand({
+        askToUnmuteTitle: 'Ask to unmute',
         lowerHandTitle: 'Lower hand',
         micOffTitle: 'Unmute',
         micOnTitle: 'Mute',

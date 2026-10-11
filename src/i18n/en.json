@@ -1184,7 +1184,7 @@
   "zoom-setup-hand-timer-off": "The notifications and buttons work on their own. If you enable the meeting timer, a large hand with the participant's name will also appear on the timer display for the chairman.",
   "zoom-setup-feature-hand": "Tells you when someone raises their hand, to unmute them with one click",
   "zoom-setup-summary-hand": "Raised hands recognized",
-  "zoom-hand-mic-ambiguous": "This row in Zoom's participants list isn't laid out the way M³ expects, so it pressed nothing. If this keeps happening after a Zoom update, please report it.",
+  "zoom-hand-mic-ambiguous": "M³ couldn't tell this row's buttons apart in Zoom's participants list, so it pressed nothing. If this keeps happening after a Zoom update, please report it.",
   "zoomCancelAutomationShortcut": "Shortcut to cancel a Zoom automation",
   "zoomCancelAutomationShortcut-explain": "While M³ operates Zoom (which moves the mouse and focus for a moment), this keyboard shortcut stops it at once, even while Zoom has the focus. It is only active while an automation is running.",
   "zoom-run-title": "M³ is operating Zoom",
