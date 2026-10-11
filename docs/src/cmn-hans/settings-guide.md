@@ -350,11 +350,11 @@ whether the media window feature is enabled at all). -->
 
 ### 缓存管理 {#cache-management}
 
-#### 缓存诗歌视频文件 {#enable-extra-cache}
+#### Cache Songbook Video Files {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-缓存额外媒体，以改善加载和播放性能。
+Cache all songbook videos ahead of time for better performance. Note that this increases the size of the media cache.
 
 **Default**: `false`
 
@@ -587,7 +587,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 #### OBS 高级选项 {#obs-advanced-options}
 
-- **不要自动共享图片**：在手动触发前，不向 Zoom 参与者显示图片
+- **Do Not Automatically Share Images**: Delay sharing images to OBS until manually triggered
 - **快速场景切换器**：在界面中快速打开场景切换器
 - **媒体播放结束后再切换场景**：等当前媒体播放完毕后再切换场景
 - **恢复之前使用的场景**：媒体播放结束后恢复媒体播放前所使用的场景
@@ -778,7 +778,7 @@ OBS Studio WebSocket 连接所使用的密码。
 ### 新用户 {#new-users}
 
 1. 使用初始设置完成基本配置
-2. 启用“媒体显示”，以便在外部屏幕上显示媒体
+2. Turn on "Enable media playback" to access presentation features
 3. 正确设置聚会日期和时间
 4. 如果使用混合聚会，可以根据实际需要配置 Zoom 或 OBS Studio 集成
 
@@ -791,7 +791,7 @@ OBS Studio WebSocket 连接所使用的密码。
 
 ### 性能优化 {#performance-optimization}
 
-1. 缓存所有诗歌视频，以提高性能。请注意，这会增加媒体缓存占用的空间。
+1. Cache songbook video files for better performance
 2. 根据需要选择合适的视频最高分辨率
 3. 启用缓存自动清理，控制磁盘空间占用
 4. 如果网络流量有限，可以启用按流量计费的网络连接设置
