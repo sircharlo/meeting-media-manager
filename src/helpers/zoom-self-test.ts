@@ -18,6 +18,7 @@ import {
   startSharingMediaInZoom,
   stopSharingMediaInZoom,
   withoutZoomFeedback,
+  withZoomRun,
   type ZoomTitles,
 } from 'src/helpers/zoom';
 
@@ -128,7 +129,10 @@ const expectOk = (result: ZoomCommandResult, what: string) => {
 /** Runs the self-test; it reports each step itself, without notifications. */
 export const runZoomSelfTest = (
   options: ZoomSelfTestOptions,
-): Promise<ZoomSelfTestStep[]> => withoutZoomFeedback(() => runSteps(options));
+): Promise<ZoomSelfTestStep[]> =>
+  withZoomRun('zoom-run-self-test', () =>
+    withoutZoomFeedback(() => runSteps(options)),
+  );
 
 const runSteps = async (
   options: ZoomSelfTestOptions,

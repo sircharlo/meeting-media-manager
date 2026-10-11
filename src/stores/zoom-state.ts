@@ -12,19 +12,50 @@ export interface ZoomAutomationPause {
 }
 
 interface Store {
+  /** The user asked for the running automation to stop. */
+  cancelRequested: boolean;
   /** Congregations whose Zoom was checked since M³ started. */
   checkedCongregations: string[];
   checkRunning: boolean;
   pause: null | ZoomAutomationPause;
+  /** How many nested automation runs are going (0: none). */
+  runDepth: number;
+  /** i18n key of the outermost run going, shown on the overlay. */
+  runLabel: null | string;
+  /** i18n key of the Zoom action running right now. */
+  runStep: null | string;
 }
 
 export const useZoomStateStore = defineStore('zoom-state', {
   actions: {
+    /** A Zoom automation that moves the mouse or focus starts. */
+    beginRun(labelKey: string) {
+      if (this.runDepth === 0) {
+        this.runLabel = labelKey;
+        this.cancelRequested = false;
+      }
+      this.runDepth++;
+    },
+    endRun() {
+      if (this.runDepth === 0) return;
+      this.runDepth--;
+      if (this.runDepth === 0) {
+        this.runLabel = null;
+        this.runStep = null;
+        this.cancelRequested = false;
+      }
+    },
     pauseAutomations(congregationId: string, problems: string[]) {
       this.pause = { congregationId, problems };
     },
+    requestCancel() {
+      if (this.runDepth > 0) this.cancelRequested = true;
+    },
     resumeAutomations() {
       this.pause = null;
+    },
+    setRunStep(stepKey: null | string) {
+      if (this.runDepth > 0) this.runStep = stepKey;
     },
   },
   getters: {
@@ -32,10 +63,15 @@ export const useZoomStateStore = defineStore('zoom-state', {
     automationsPaused: (state) =>
       !!state.pause &&
       state.pause.congregationId === useCurrentStateStore().currentCongregation,
+    runActive: (state) => state.runDepth > 0,
   },
   state: (): Store => ({
+    cancelRequested: false,
     checkedCongregations: [],
     checkRunning: false,
     pause: null,
+    runDepth: 0,
+    runLabel: null,
+    runStep: null,
   }),
 });

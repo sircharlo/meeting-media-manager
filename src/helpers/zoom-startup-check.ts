@@ -13,6 +13,7 @@ import {
   prepareMediaWindowForZoomTest,
   runWhileHoldingZoomAutomations,
   testZoomShareEntry,
+  withZoomRun,
 } from 'src/helpers/zoom';
 import {
   runZoomSelfTest,
@@ -285,7 +286,7 @@ export const runZoomStartupCheck = async ({
   try {
     log('Zoom check: starting', 'zoom', 'info', { manual });
     const found = await runWhileHoldingZoomAutomations(() =>
-      findProblems(manual),
+      withZoomRun('zoom-run-startup-check', () => findProblems(manual)),
     );
     if (found === null) {
       log('Zoom check: no meeting to check now', 'zoom', 'info');

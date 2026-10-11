@@ -15,6 +15,7 @@
 
     <DialogCongregationSwitcher />
     <DialogZoomSetupAssistant v-model="zoomSetupAssistantOpen" />
+    <DialogZoomAutomationOverlay />
 
     <!-- Main content -->
     <q-page-container class="app-main-scroll main-bg">
@@ -99,6 +100,7 @@ import {
 import { queues } from 'boot/globals';
 import ConfirmDialog from 'components/dialog/ConfirmDialog.vue';
 import DialogCongregationSwitcher from 'components/dialog/DialogCongregationSwitcher.vue';
+import DialogZoomAutomationOverlay from 'components/dialog/DialogZoomAutomationOverlay.vue';
 import DialogZoomSetupAssistant from 'components/dialog/DialogZoomSetupAssistant.vue';
 import HeaderBase from 'components/header/HeaderBase.vue';
 import MediaPreview from 'components/media/MediaPreview.vue';
@@ -147,6 +149,7 @@ import {
   checkLowDiskSpaceAndNotify,
   createTemporaryNotification,
 } from 'src/helpers/notifications';
+import { cancelZoomRun } from 'src/helpers/zoom';
 import {
   startHandAlertDisplaySync,
   syncZoomHandAlertWatcher,
@@ -796,6 +799,12 @@ const initListeners = () => {
   });
 
   onShortcut(({ shortcut }) => {
+    // The cancel shortcut for Zoom automations is only registered while one
+    // runs, and must work whatever the keyboard-shortcuts setting says.
+    if (shortcut === 'zoomCancelAutomationShortcut') {
+      void cancelZoomRun();
+      return;
+    }
     if (!currentSettings.value?.enableKeyboardShortcuts) return;
     executeShortcut(shortcut as keyof SettingsValues);
   });

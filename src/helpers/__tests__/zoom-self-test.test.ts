@@ -98,6 +98,7 @@ vi.mock('src/helpers/zoom', () => ({
     return true;
   }),
   withoutZoomFeedback: <T>(run: () => Promise<T>) => run(),
+  withZoomRun: <T>(_label: string, run: () => Promise<T>) => run(),
 }));
 
 const probe: ZoomTestParticipantsProbe = {

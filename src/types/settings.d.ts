@@ -348,6 +348,7 @@ export interface SettingsValues {
   weDay: `${number}` | null;
   weStartTime: `${number}:${number}` | null;
   zoomAutoFocusMediaWindow: boolean;
+  zoomCancelAutomationShortcut: null | string;
   zoomEnable: boolean;
   zoomHandRaisedPhrase: null | string;
   zoomLowerHandTitle: null | string;

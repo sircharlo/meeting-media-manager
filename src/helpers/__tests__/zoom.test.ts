@@ -25,7 +25,30 @@ vi.mock('stores/current-state', () => ({
   useCurrentStateStore: () => ({ currentSettings }),
 }));
 
-const zoomState = { automationsPaused: false };
+const zoomState = {
+  automationsPaused: false,
+  beginRun: vi.fn((label: string) => {
+    if (zoomState.runDepth === 0) zoomState.runLabel = label;
+    zoomState.runDepth++;
+  }),
+  cancelRequested: false,
+  endRun: vi.fn(() => {
+    zoomState.runDepth = Math.max(0, zoomState.runDepth - 1);
+    if (zoomState.runDepth === 0) {
+      zoomState.runLabel = null;
+      zoomState.cancelRequested = false;
+    }
+  }),
+  requestCancel: vi.fn(() => {
+    zoomState.cancelRequested = true;
+  }),
+  get runActive() {
+    return zoomState.runDepth > 0;
+  },
+  runDepth: 0,
+  runLabel: null as null | string,
+  setRunStep: vi.fn(),
+};
 
 vi.mock('stores/zoom-state', () => ({
   useZoomStateStore: () => zoomState,
@@ -52,6 +75,7 @@ vi.mock('src/helpers/meeting-quick-actions', () => ({
 const zoomCommandMock =
   vi.fn<(command: ZoomCommand) => Promise<ZoomCommandResult>>();
 const launchZoomMeetingMock = vi.fn();
+const restartZoomHelperMock = vi.fn(async () => ({ ok: true }));
 
 let meetingFound = true;
 let failing: Partial<Record<ZoomCommand['type'], string>> = {};
@@ -63,6 +87,9 @@ beforeEach(() => {
   meetingFound = true;
   failing = {};
   zoomState.automationsPaused = false;
+  zoomState.cancelRequested = false;
+  zoomState.runDepth = 0;
+  zoomState.runLabel = null;
   Object.assign(currentSettings, {
     zoomMeetingManagerAutoLaunchMeeting: false,
     zoomMeetingManagerAutomateMeetingAudioSettings: false,
@@ -82,6 +109,7 @@ beforeEach(() => {
   vi.stubGlobal('electronApi', {
     focusMediaWindow: vi.fn(),
     launchZoomMeeting: launchZoomMeetingMock,
+    restartZoomHelper: restartZoomHelperMock,
     zoomCommand: zoomCommandMock,
   });
 });
@@ -413,5 +441,53 @@ describe('stopping Zoom sharing after media', () => {
     stopZoomSharingAfterMedia();
     await Promise.resolve();
     expect(commandTypes()).not.toContain('stop-share');
+  });
+});
+
+describe('telling the user while M³ operates Zoom', () => {
+  it('runs a whole sequence under one label and clears it afterwards', async () => {
+    const labels: (null | string)[] = [];
+    zoomCommandMock.mockImplementation(async (command) => {
+      labels.push(zoomState.runLabel);
+      if (command.type === 'meeting') {
+        return { meeting: { found: true, sharing: false }, ok: true };
+      }
+      return { changed: true, ok: true };
+    });
+    const { runZoomMeetingSequence } = await import('../zoom');
+
+    await runZoomMeetingSequence();
+
+    // The read-only meeting lookup shows nothing; every action after it runs
+    // under the sequence's label, not its own.
+    expect(labels[0]).toBeNull();
+    expect(new Set(labels.slice(1))).toEqual(
+      new Set(['zoom-run-meeting-sequence']),
+    );
+    expect(zoomState.runActive).toBe(false);
+  });
+
+  it('shows nothing for read-only lookups', async () => {
+    const { getZoomRaisedHands } = await import('../zoom');
+    await getZoomRaisedHands();
+    expect(zoomState.beginRun).not.toHaveBeenCalled();
+  });
+
+  it('sends nothing more to Zoom once cancelled', async () => {
+    const { cancelZoomRun, runZoomMeetingSequence } = await import('../zoom');
+    zoomCommandMock.mockImplementation(async (command) => {
+      if (command.type === 'meeting') {
+        return { meeting: { found: true, sharing: false }, ok: true };
+      }
+      if (command.type === 'join-audio') await cancelZoomRun();
+      return { changed: true, ok: true };
+    });
+
+    const result = await runZoomMeetingSequence();
+
+    expect(result.ok).toBe(false);
+    expect(commandTypes()).toEqual(['meeting', 'join-audio']);
+    expect(restartZoomHelperMock).toHaveBeenCalled();
+    expect(zoomState.runActive).toBe(false);
   });
 });

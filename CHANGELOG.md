@@ -19,6 +19,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🛠️ Improvements and Tweaks
 
+- 🛠️ **Zoom Meeting Manager**: While M³ operates the Zoom app, which moves the mouse and the focused window for a moment, its window now shows a full-window "M³ is operating Zoom" notice naming what is going on, with a Cancel button, so nobody wonders why the mouse is moving. The same notice shows during the setup assistant's checks and the self-test. A new global shortcut (default Ctrl+Alt+Escape, configurable), active only while an automation runs, cancels it from anywhere, even while Zoom has the focus. Read-only checks, such as watching for raised hands, show nothing.
 - 🛠️ **Meeting Timer**: Part durations are now free-form: any part, including Apply Yourself and Living as Christians parts, can be set to any number of minutes, including 0 to skip it, and the change sticks. A warning icon still points out sections whose parts don't add up to the time allotted to them, without changing anything on its own.
 - 🛠️ **Meeting Timer**: The number of Apply Yourself and Living as Christians parts can now be chosen in count-up mode as well, so every student part can be timed separately whichever mode is used. New meeting days start with three Apply Yourself parts and two Living as Christians parts.
 - 🛠️ **Meeting Timer**: Part counts, changed durations, custom parts and recorded timings are now kept with each day, so they survive restarting M³ and never mix one meeting's timings into another's.

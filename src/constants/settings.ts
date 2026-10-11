@@ -674,6 +674,13 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'zoomMeetingManager',
     type: 'toggle',
   },
+  zoomCancelAutomationShortcut: {
+    depends: 'zoomMeetingManagerEnable',
+    group: 'integrations',
+    platforms: ['win32'],
+    subgroup: 'zoomMeetingManager',
+    type: 'shortcut',
+  },
   zoomMeetingManagerHandAlert: {
     depends: 'zoomMeetingManagerEnable',
     group: 'integrations',
@@ -1168,6 +1175,7 @@ export const defaultSettings: SettingsValues = {
   weDay: null,
   weStartTime: null,
   zoomAutoFocusMediaWindow: false,
+  zoomCancelAutomationShortcut: 'Ctrl+Alt+Escape',
   zoomEnable: false,
   zoomHandRaisedPhrase: null,
   zoomLowerHandTitle: null,
