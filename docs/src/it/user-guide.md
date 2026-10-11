@@ -165,7 +165,7 @@ Un pulsante **Avviso mano** nel popup del timer mostra una grande mano sul displ
 
 Il [timer remoto](/settings-guide#timer-remote) opzionale serve una copia di sola lettura del display timer come pagina web sulla rete locale. Aprire l'indirizzo mostrato nel timer popup nel browser di un tablet o telefono al lectern, e l'altoparlante vede il tempo rimanente in privato, mentre tutti i controlli rimangono in M3.
 
-#### Accesso rapido al Timer {#timer-quick-access}
+#### Accesso rapido al Timer {#user-guide-timer-quick-access}
 
 Il passaggio del timer sull'isola di azione mostra il tempo della parte con i pulsanti Start, Pause, Stop e Next Parte. Un'impostazione può anche agganciare un timer pannello sul lato destro della finestra principale con l'intera lista delle parti e i controlli del timer, sempre in vista. Vedi la [Guida alle impostazioni](/settings-guide#timer-quick-access).
 
