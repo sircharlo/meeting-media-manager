@@ -209,12 +209,12 @@ M³ automatically switches OBS scenes during presentations:
 
 ### Advanced OBS Features {#advanced-obs}
 
-#### Postpone Images {#user-guide-postpone-images}
+#### Do Not Automatically Share Images {#user-guide-postpone-images}
 
 Enable this option to delay sharing images to OBS until manually triggered:
 
-1. Enable "Postpone Images" in OBS settings
-2. Images will only be shared when you click the button to show them using OBS Studio. This is useful for showing images to in-person audience first.
+1. Enable "Do not automatically share images" in OBS settings
+2. Images will only be shared when you click the **Show image for Zoom participants** button on the image being displayed. This is useful for showing images to in-person audience first.
 
 #### Scene Switching Behavior {#user-guide-scene-switching}
 
@@ -400,7 +400,7 @@ Configure custom keyboard shortcuts for efficient operation:
 
 #### Performance Issues {#user-guide-performance-issues}
 
-- Enable extra cache
+- Cache songbook video files
 - Reduce maximum resolution
 - Clear old cached files
 - Check available disk space
