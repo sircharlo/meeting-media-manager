@@ -158,12 +158,12 @@ M³ 会根据以下因素自动切换 OBS Studio 场景：
 
 - 媒体类型，例如视频或图片
 - 已配置的场景
-- “延迟图片（Postpone Images）”等设置
+- Settings like "Do not automatically share images"
 - 媒体播放结束后是否恢复之前使用的场景
 
-### :pause_button: 什么是“延迟图片（Postpone Images）”功能？ {#faq-postpone-images}
+### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
 
-该功能会在您手动触发前，延迟把图片共享到 OBS。这对于以下情况很有用：好处:
+This setting delays sharing images to OBS until you manually trigger them. 好处:
 
 - 先向现场观众显示图片
 - 更灵活地控制演示时机
@@ -246,7 +246,7 @@ M³ 在您的电脑上播放带有声音的媒体，但当使用 OBS Studio 时�
 
 尝试以下性能优化：
 
-1. **启用额外缓存**：在设置中开启额外缓存
+1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
 2. **关闭不需要的程序**：释放计算机资源
 3. **检查磁盘空间**：确保有足够的可用磁盘空间
 4. **降低分辨率**：降低视频最高分辨率设置

@@ -214,12 +214,12 @@ M³ 可以与 Zoom 集成，以便自动触发屏幕共享：
 
 ### 高级功能 {#advanced-obs}
 
-#### 延迟图片 {#user-guide-postpone-images}
+#### Do Not Automatically Share Images {#user-guide-postpone-images}
 
 启用此选项以延迟共享图像到 OBS 直到手动触发：
 
-1. 在设置中启用“延迟图片”
-2. 只有点击“在 OBS Studio 中显示”按钮后，图片才会显示给 Zoom 参与者这有助于首先将图像展示给亲自观看者。
+1. Enable "Do not automatically share images" in OBS settings
+2. Images will only be shared when you click the **Show image for Zoom participants** button on the image being displayed. 这有助于首先将图像展示给亲自观看者。
 
 #### 场景切换行为 {#user-guide-scene-switching}
 
@@ -404,7 +404,7 @@ M³ 可以帮助控制聚会录制，但本身没有内置录制功能。
 
 #### 性能问题 {#user-guide-performance-issues}
 
-- 启用额外缓存
+- Cache songbook video files
 - 降低最高视频分辨率
 - 清理旧缓存文件
 - 检查可用磁盘空间

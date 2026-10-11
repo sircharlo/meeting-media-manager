@@ -158,12 +158,12 @@ M³ lülitab OBS Studio-stseene automaatselt ümber järgmiste kriteeriumide alu
 
 - Meedia tüüp (video, pilt jne)
 - Sinu stseeni seadistus
-- Säte nagu "Lükka pildi esitamine edasi"
+- Settings like "Do not automatically share images"
 - Kas pärast meedia esitamist naasta eelmisele stseenile või mitte
 
-### :pause_button: Mida tähendab "Lükka pildi esitamine edasi" funktsioon? {#faq-postpone-images}
+### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
 
-See funktsioon lükkab piltide jagamise OBS Studio-iga edasi, kuni sa need käsitsi käivitad. See on kasulik kui:
+This setting delays sharing images to OBS until you manually trigger them. See on kasulik kui:
 
 - Pilte näidatakse esmalt kohapeal viibivale kuulajaskonnale
 - On vaja suuremat kontrolli ajastuse üle
@@ -246,7 +246,7 @@ M³ mängib sinu arvutis heli sisaldavat meediat, kuid OBS Studio kasutamisel ei
 
 Proovi järgmisi jõudluse optimeerimisi:
 
-1. **Luba lisamälu**: lülita sisse täiendav vahemälu seadetes
+1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
 2. **Sulge muud rakendused**: Sulge mittevajalikud rakendused
 3. **Kontrolli kettaruumi**: veendu, et sul on piisavalt vaba kettaruumi
 4. **Vähenda resolutsiooni**: vähenda maksimaalset resolutsiooni seadet

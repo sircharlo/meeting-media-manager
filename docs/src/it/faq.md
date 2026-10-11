@@ -158,10 +158,10 @@ M³ cambia automaticamente le scene di OBS in base a:
 
 - Il tipo di media (video, immagine, ecc.)
 - La tua configurazione delle scene
-- Impostazioni come «Posticipa le immagini»
+- Impostazioni come "Non condividere automaticamente le immagini"
 - Se tornare alla scena precedente dopo il media
 
-### :pause_button: Cos'è la funzione «Posticipa le immagini»? {#faq-postpone-images}
+### :pause_button: Cosa fa l'impostazione "Non condividere automaticamente le immagini" ? {#faq-postpone-images}
 
 Questa funzione ritarda la condivisione delle immagini a OBS finché non le attivi manualmente. È utile per:
 
@@ -246,7 +246,7 @@ M³ riproduce i media con l'audio sul tuo computer, ma questo audio non viene tr
 
 Prova queste ottimizzazioni delle prestazioni:
 
-1. **Abilita la cache extra**: attiva la memorizzazione aggiuntiva nella cache nelle impostazioni
+1. **Cache Songbook Video Files**: Cache tutti i video del songbook prima del tempo nelle impostazioni
 2. **Chiudi le altre app**: chiudi le applicazioni non necessarie
 3. **Controlla lo spazio su disco**: assicurati di avere spazio libero su disco sufficiente
 4. **Riduci la risoluzione**: abbassa l'impostazione della risoluzione massima

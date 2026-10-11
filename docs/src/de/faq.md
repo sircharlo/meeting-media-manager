@@ -158,12 +158,12 @@ M³ wechselt automatisch OBS-Szenen basierend auf:
 
 - Medientyp (Video, Bild usw.)
 - Ihrer Szenenkonfiguration
-- Einstellungen wie "Bilder aufschieben"
+- Settings like "Do not automatically share images"
 - Ob nach dem Medium zur vorherigen Szene zurückgekehrt werden soll
 
-### :pause_button: Was ist die Funktion "Bilder aufschieben"? {#faq-postpone-images}
+### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
 
-Diese Funktion verzögert das Teilen von Bildern mit OBS, bis Sie sie manuell auslösen. Dies ist nützlich für:
+This setting delays sharing images to OBS until you manually trigger them. Dies ist nützlich für:
 
 - Das Zeigen von Bildern zuerst für das anwesende Publikum
 - Mehr Kontrolle über das Timing
@@ -246,7 +246,7 @@ M³ spielt Medien mit Ton auf Ihrem Computer ab, aber dieser Ton wird nicht auto
 
 Versuchen Sie diese Leistungsoptimierungen:
 
-1. **Extra-Cache aktivieren**: Schalten Sie zusätzliches Caching in den Einstellungen ein
+1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
 2. **Andere Apps schließen**: Schließen Sie unnötige Anwendungen
 3. **Speicherplatz prüfen**: Stellen Sie sicher, dass Sie genügend freien Speicherplatz haben
 4. **Auflösung reduzieren**: Verringern Sie die Einstellung für die maximale Auflösung

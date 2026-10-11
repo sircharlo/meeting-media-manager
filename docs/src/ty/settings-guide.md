@@ -350,11 +350,11 @@ Fa’anahora’a tumu: ’Aita
 
 ### Fa’anahora’a o te tairura’a {#cache-management}
 
-#### Fa’ati’a i te tairura’a hau {#enable-extra-cache}
+#### Cache Songbook Video Files {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Fa’ati’a i te tairura’a hau nō te fa’anahora’a maita’i a’e.
+Cache all songbook videos ahead of time for better performance. Note that this increases the size of the media cache.
 
 Fa'anahora'a tumu: `Hape`
 
@@ -587,7 +587,7 @@ Fa’anaho i te mau tōpata OBS e fa’a’ohipahia nō te mau hina’aro ta’a
 
 #### Te mau mā’itira’a nō te OBS {#obs-advanced-options}
 
-- Fa’ataere i te mau hoho’a: E fa’ataere i te hōro’a-ra’a i te mau hoho’a i te OBS ē tae roa i te taime e fa’a’ohipa-hia ’i e te rima
+- **Do Not Automatically Share Images**: Delay sharing images to OBS until manually triggered
 - Tāpere-’ōhie: E fa’ati’a i te tū’era’a/tī’era’a ’ōhie nō te tūhonora’a OBS
 - Taui i te tōpata i muri a’e i te rorouira: Fa’aho’i-’ōhie-ra’a i te tōpata na mua atu i te hope’a o te rorouira
 - Ha’amana’o i te tōpata na mua atu: Ha’amana’o ’e fa’aho’i mai i te tōpata i fa’a’ohipa-hia na mua atu
@@ -778,7 +778,7 @@ Fa'anahora'a tumu: `Hape`
 ### Nō te feiā ’āpī e fa’a’ohipa ra {#new-users}
 
 1. ’Ia ha’amata i te rāve’a fa’anahora’a mātāmua nō te fa’atano i te mau fa’anahora’a tumu
-2. ’Ia ha’amaita’i i te « Pātene fa’a’itera’a i te mau rāve’a ha’amāramaramara’a » nō te tomo i te rāve’a fa’a’itera’a
+2. Turn on "Enable media playback" to access presentation features
 3. ’Ia fa’atano maita’i i tō ’oe tāpura putuputura’a
 4. ’Ia fa’anahohia te fa’a’ohipara’a o te OBS mai te mea e fa’a’ohipa ’oe i te mau putuputura’a hō’ēra’a (hybrid)
 
@@ -791,7 +791,7 @@ Fa'anahora'a tumu: `Hape`
 
 ### Te fa’a’au maita’i-ra’a i te puai o te mātini {#performance-optimization}
 
-1. ’Ia fa’ati’a i te pu’e-parau-tāpuni (cache) hau nō te hō’ē fa’a’ohipara’a maita’i a’e
+1. Cache songbook video files for better performance
 2. ’A fa’a’ohipa i te nūmera nō te fa’ahotura’a teitei roa a’e i au i tō ’oe mau hina’aro
 3. Fa’anaho i te fa’a’ore-’ōhie-ra’a i te tahi’o nō te ha’amaita’i i te vāhi teimaha i ni’a i te matini
 4. ’A hi’o i te fa’anahora’a nō te hō’ē ta’amura’a ta’ohia mai te mea e iti te terera’a o te ’uterete

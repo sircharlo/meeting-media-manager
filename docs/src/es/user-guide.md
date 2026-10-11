@@ -214,12 +214,12 @@ M³ cambia automáticamente las escenas de OBS durante las presentaciones:
 
 ### Funciones avanzadas de OBS {#advanced-obs}
 
-#### Posponer imágenes {#user-guide-postpone-images}
+#### Do Not Automatically Share Images {#user-guide-postpone-images}
 
 Activa esta opción para retrasar el envío de imágenes a OBS hasta que se active manualmente:
 
-1. Activa "Posponer imágenes" en la configuración de OBS
-2. Las imágenes solo se compartirán cuando hagas clic en el botón para mostrarlas mediante OBS Studio. Esto es útil para mostrar primero las imágenes al auditorio presencial.
+1. Enable "Do not automatically share images" in OBS settings
+2. Images will only be shared when you click the **Show image for Zoom participants** button on the image being displayed. Esto es útil para mostrar primero las imágenes al auditorio presencial.
 
 #### Comportamiento del cambio de escenas {#user-guide-scene-switching}
 
@@ -405,7 +405,7 @@ Configura atajos de teclado personalizados para trabajar con eficiencia:
 
 #### Problemas de rendimiento {#user-guide-performance-issues}
 
-- Activa la caché adicional
+- Cache songbook video files
 - Reduce la resolución máxima
 - Borra archivos antiguos de la caché
 - Comprueba el espacio disponible en disco
