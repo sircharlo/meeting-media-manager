@@ -158,12 +158,12 @@ O M³ muda automaticamente as cenas do OBS com base em:
 
 - Tipo de mídia (vídeo, imagem, etc.)
 - Sua configuração de cenas
-- Configurações como "Adiar imagens"
+- Settings like "Do not automatically share images"
 - Se deve retornar à cena anterior após a mídia
 
-### :pause_button: O que é o recurso "Adiar imagens"? {#faq-postpone-images}
+### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
 
-Este recurso adia o compartilhamento de imagens para o OBS até que você as acione manualmente. Isso é útil para:
+This setting delays sharing images to OBS until you manually trigger them. Isso é útil para:
 
 - Mostrar as imagens primeiro para o público presencial
 - Ter mais controle sobre o tempo
@@ -246,7 +246,7 @@ O M³ reproduz mídias com som no seu computador, mas esse áudio não é transm
 
 Tente estas otimizações de desempenho:
 
-1. **Habilitar cache extra**: Ative o cache adicional nas configurações
+1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
 2. **Fechar outros aplicativos**: Feche aplicativos desnecessários
 3. **Verificar espaço em disco**: Certifique-se de ter espaço livre suficiente em disco
 4. **Reduzir resolução**: Diminua a configuração de resolução máxima
