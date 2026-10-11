@@ -51,6 +51,7 @@ const notifyParticipantSpeaking = (name: string) => {
   createTemporaryNotification({
     actions: [
       {
+        color: 'white',
         handler: () => {
           void muteZoomParticipantAndLowerHand(name);
         },
@@ -94,6 +95,7 @@ const notifyHandRaised = (name: string) => {
   const dismiss = createTemporaryNotification({
     actions: [
       {
+        color: 'dark',
         handler: () => {
           forgetHandNotification(name);
           void unmuteZoomParticipant(name).then((result) => {
@@ -104,6 +106,7 @@ const notifyHandRaised = (name: string) => {
         noCaps: true,
       },
       {
+        color: 'dark',
         handler: () => {
           forgetHandNotification(name);
           void muteZoomParticipantAndLowerHand(name);
@@ -112,6 +115,7 @@ const notifyHandRaised = (name: string) => {
         noCaps: true,
       },
       {
+        color: 'dark',
         handler: () => {
           forgetHandNotification(name);
         },
