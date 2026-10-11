@@ -76,7 +76,11 @@
           <div class="text-weight-medium">
             {{ t('zoom-automations-paused') }}
           </div>
-          <div>{{ pausedProblems }}</div>
+          <div>
+            {{
+              t('zoom-automations-paused-failed', { problems: pausedProblems })
+            }}
+          </div>
         </div>
         <q-btn
           color="primary"

@@ -32,6 +32,8 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 ### 🐞 Bug Fixes
 
 - 🛠️ **Zoom Meeting Manager**: A "raised their hand" notification now stays until the operator acts on it, and goes away by itself when that participant lowers their hand before being picked.
+- 🐞 **Zoom Meeting Manager**: Fixed the "M³ is operating Zoom" notice staying up, with its Cancel button spinning, when the run behind it (such as the startup check) kept polling after a cancel. One press on Cancel now frees the window at once, a cancel also stops the read-only lookups the automations poll with, a run that doesn't unwind within 15 seconds is force-ended, and no run may last more than 5 minutes.
+- 🛠️ **Zoom Meeting Manager**: The "Zoom automations paused" notice in the Zoom popup now says that the line under it is what failed at the last check.
 - 🐞 **Zoom Meeting Manager**: Fixed "Ask all to unmute" failing whenever someone had a reaction or a raised hand, because Zoom then adds a "Clear all feedback" entry next to it in the participants menu.
 - 🐞 **Zoom Meeting Manager**: Fixed the automatic media sharing in Zoom not stopping when a video ended on its own (it only stopped when media was stopped by hand).
 - 🐞 **Meeting Timer**: Fixed changes to the duration of Apply Yourself and Living as Christians parts being silently undone, with no way to set a part to 0 minutes or to a length that didn't add up to the section's usual total.

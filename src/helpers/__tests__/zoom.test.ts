@@ -26,6 +26,11 @@ vi.mock('stores/current-state', () => ({
 }));
 
 const zoomState = {
+  abortRun: vi.fn(() => {
+    zoomState.runDepth = 0;
+    zoomState.runLabel = null;
+    zoomState.cancelRequested = false;
+  }),
   automationsPaused: false,
   beginRun: vi.fn((label: string) => {
     if (zoomState.runDepth === 0) zoomState.runLabel = label;
@@ -489,5 +494,16 @@ describe('telling the user while M³ operates Zoom', () => {
     expect(commandTypes()).toEqual(['meeting', 'join-audio']);
     expect(restartZoomHelperMock).toHaveBeenCalled();
     expect(zoomState.runActive).toBe(false);
+  });
+});
+
+describe('cancelling also stops the read-only lookups', () => {
+  it('answers "cancelled" to a meeting lookup while a cancel is pending', async () => {
+    zoomState.runDepth = 1;
+    zoomState.cancelRequested = true;
+    const { getZoomMeetingState } = await import('../zoom');
+
+    expect(await getZoomMeetingState()).toBeNull();
+    expect(zoomCommandMock).not.toHaveBeenCalled();
   });
 });

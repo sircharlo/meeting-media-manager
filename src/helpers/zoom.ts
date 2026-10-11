@@ -135,9 +135,26 @@ export const isZoomRunCancelled = () => useZoomStateStore().cancelRequested;
  */
 export const cancelZoomRun = async () => {
   const zoomState = useZoomStateStore();
-  if (!zoomState.runActive || zoomState.cancelRequested) return;
+  if (!zoomState.runActive) return;
+  if (zoomState.cancelRequested) {
+    // Asked twice: don't wait for the run to unwind any longer.
+    zoomState.abortRun();
+    return;
+  }
   zoomState.requestCancel();
   log('Zoom automation cancelled by the user', 'zoom', 'warn');
+  // Whatever the run was in the middle of, it must not hold things up
+  // beyond this.
+  setTimeout(() => {
+    if (zoomState.runActive && zoomState.cancelRequested) {
+      log(
+        'Zoom automation did not unwind after cancel: force-ended',
+        'zoom',
+        'warn',
+      );
+      zoomState.abortRun();
+    }
+  }, ABORT_FALLBACK_MS);
   try {
     await globalThis.electronApi.restartZoomHelper();
   } catch (error) {
@@ -151,11 +168,15 @@ export const cancelZoomRun = async () => {
   });
 };
 
-const runCommand = async (command: ZoomCommand): Promise<ZoomCommandResult> => {
-  if (isSilentCommand(command)) return sendCommand(command);
+// Once a cancel is asked for, nothing further goes to Zoom, including the
+// read-only lookups the automations poll with, so their waiting loops end
+// at once and the run unwinds.
+const ABORT_FALLBACK_MS = 15_000;
 
+const runCommand = async (command: ZoomCommand): Promise<ZoomCommandResult> => {
   const zoomState = useZoomStateStore();
-  if (zoomState.cancelRequested) return CANCELLED;
+  if (zoomState.cancelRequested && command.type !== 'ping') return CANCELLED;
+  if (isSilentCommand(command)) return sendCommand(command);
   return withZoomRun(
     COMMAND_STEP_KEYS[command.type] ?? 'zoom-run-generic',
     async () => {

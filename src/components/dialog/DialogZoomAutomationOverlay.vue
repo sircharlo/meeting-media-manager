@@ -30,12 +30,8 @@
       <q-btn
         class="q-mt-md"
         color="negative"
-        :disable="cancelRequested"
         icon="mmm-clear"
-        :label="
-          cancelRequested ? t('zoom-run-cancelling') : t('zoom-run-cancel')
-        "
-        :loading="cancelRequested"
+        :label="t('zoom-run-cancel')"
         no-caps
         unelevated
         @click="cancel"
@@ -65,9 +61,10 @@ const { cancelRequested, runActive, runLabel, runStep } =
   storeToRefs(zoomState);
 const { currentSettings } = storeToRefs(useCurrentStateStore());
 
+// One press on Cancel frees the window at once; the run unwinds behind.
 const open = computed({
-  get: () => runActive.value,
-  set: () => undefined, // only the run's end closes it
+  get: () => runActive.value && !cancelRequested.value,
+  set: () => undefined, // only the run's end (or a cancel) closes it
 });
 
 const cancelShortcut = computed(
