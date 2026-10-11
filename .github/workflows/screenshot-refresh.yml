@@ -43,7 +43,7 @@ jobs:
         run: xvfb-run -a --server-args="-screen 0 2560x1440x24" yarn screenshot:refresh
       - name: Upload debug output on failure
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: screenshot-debug-output
           path: test/playwright/debug-output/
