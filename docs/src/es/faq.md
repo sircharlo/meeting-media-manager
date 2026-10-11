@@ -158,12 +158,12 @@ M³ cambia automáticamente las escenas de OBS según:
 
 - El tipo de archivo multimedia (video, imagen, etc.)
 - Tu configuración de escenas
-- Opciones como "Posponer imágenes"
+- Settings like "Do not automatically share images"
 - Si debe volver a la escena anterior después de reproducir archivos multimedia
 
-### :pause_button: ¿Qué es la función "Posponer imágenes"? {#faq-postpone-images}
+### :pause_button: What does the "Do not automatically share images" setting do? {#faq-postpone-images}
 
-Esta función retrasa el envío de imágenes a OBS hasta que lo actives manualmente. Esto es útil para:
+This setting delays sharing images to OBS until you manually trigger them. Esto es útil para:
 
 - Mostrar primero las imágenes al auditorio presencial
 - Tener más control sobre el momento de mostrarlas
@@ -246,7 +246,7 @@ M³ reproduce archivos multimedia con sonido en tu computadora, pero este audio 
 
 Prueba estas optimizaciones de rendimiento:
 
-1. **Activar caché adicional**: Activa el almacenamiento adicional en caché en la configuración
+1. **Cache Songbook Video Files**: Cache all songbook videos ahead of time in settings
 2. **Cerrar otras aplicaciones**: Cierra las aplicaciones que no necesites
 3. **Comprobar espacio en disco**: Asegúrate de tener suficiente espacio libre en disco
 4. **Reducir resolución**: Baja la configuración de resolución máxima
